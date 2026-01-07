@@ -48,16 +48,14 @@ const socialMediaLinks = {
 
 const skillsSection = {
   title: "Skills",
-  subTitle: "웹 서비스 운영까지 고려한 개발 역량",
+  subTitle: "웹 주력 + 운영 이슈 해결 중심",
   skills: [
-    emoji("Frontend: React/TypeScript 기반 SPA 개발"),
-    emoji("컴포넌트 설계, 상태 흐름 기반 화면 구성, API 연동"),
-    emoji("Backend: Spring Boot 기반 REST API 설계"),
-    emoji("JPA 기반 데이터 모델링 및 비즈니스 로직 분리"),
-    emoji("Auth: JWT 인증/인가 + Refresh Token Rotation 적용"),
-    emoji("Infra: AWS(EC2/RDS/S3/CloudFront/Route53) 운영"),
-    emoji("HTTPS/Mixed Content, CORS 트러블슈팅 경험"),
-    emoji("Game/XR: Unity 기반 VR/AR 인터랙션 구현")
+    emoji("Frontend: React/TypeScript 기반 SPA 설계 및 구현"),
+    emoji("컴포넌트 구조화, 상태 흐름 설계, API 연동"),
+    emoji("Backend: Spring Boot + JPA로 REST API 설계/구현"),
+    emoji("Auth: JWT 인증/인가 + Refresh Token Rotation"),
+    emoji("Infra: AWS 배포 및 HTTPS/Mixed Content/CORS 해결"),
+    emoji("Unity XR/AR: 인터랙션 및 상태/AI 제어 경험")
   ],
 
   /* Make Sure to include correct Font Awesome Classname to view your icon
@@ -112,6 +110,14 @@ const educationInfo = {
         "웹(React/Spring Boot) 중심 프로젝트 경험",
         "Unity XR/AR 프로젝트로 인터랙션 경험 확장"
       ]
+    },
+    {
+      schoolName: "아주대학교",
+      logo: require("./assets/images/stanfordLogo.png"),
+      subHeader: "인공지능 융합학과 (복수전공)",
+      duration: "2021.03 ~ 2026.02 (예정)",
+      desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
+      descBullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
     }
   ]
 };
@@ -180,6 +186,24 @@ const bigProjects = {
     },
     {
       image: require("./assets/images/nextuLogo.webp"),
+      projectName: "TSEROF",
+      projectDesc: "Unity 게임 프로젝트 (스팀 출시 경험 포함).",
+      footerLink: []
+    },
+    {
+      image: require("./assets/images/saayaHealthLogo.webp"),
+      projectName: "A club",
+      projectDesc: "React 프론트엔드 프로젝트.",
+      footerLink: []
+    },
+    {
+      image: require("./assets/images/pwaLogo.webp"),
+      projectName: "INTO MONSTER POINT",
+      projectDesc: "Unity AR Foundation 기반 AR 프로젝트.",
+      footerLink: []
+    },
+    {
+      image: require("./assets/images/nextuLogo.webp"),
       projectName: "Ajou Campus Foodmap",
       projectDesc:
         "React(Vite) + Express + MongoDB + Passport(Session) 풀스택, Vercel/Render/Atlas 배포.",
@@ -194,6 +218,18 @@ const bigProjects = {
         {name: "aClub", url: "https://ajouclub.co.kr"},
         {name: "ajouchong", url: "https://ajouchong.com"}
       ]
+    },
+    {
+      image: require("./assets/images/nextuLogo.webp"),
+      projectName: "Ajou Game Project",
+      projectDesc: "게임 프로젝트.",
+      footerLink: []
+    },
+    {
+      image: require("./assets/images/googleAssistantLogo.webp"),
+      projectName: "The Other Side (Unity VR Game)",
+      projectDesc: "Unity XR Interaction Toolkit 기반 VR 프로젝트.",
+      footerLink: []
     }
   ],
   display: true // Set false to hide this section, defaults to true
@@ -299,7 +335,7 @@ const talkSection = {
 const podcastSection = {
   title: "About Me",
   subtitle:
-    "저는 React·TypeScript 기반 SPA와 Spring Boot 기반 REST API를 중심으로 서비스의 기능 구현뿐 아니라 배포/운영 단계에서 발생하는 문제까지 해결해온 Full-Stack(Web) 개발자 정재훈입니다. 운영 환경에서 자주 발생하는 HTTPS/Mixed Content, CORS 설정, 세션·토큰 갱신 흐름 같은 이슈를 직접 겪고 해결하며 로컬과 배포 환경의 차이를 원인 분해 → 재현 → 수정 → 검증하는 방식으로 정리해왔습니다. 인증 영역에서는 Refresh Token Rotation을 적용해 토큰 탈취/재사용 위험을 줄이는 방향으로 설계를 고민했고, 프론트에서는 사용자 흐름을 끊지 않는 갱신 UX를 만들기 위해 상태/요청 구조를 안정적으로 구성하는 데 집중했습니다. 웹을 주력으로 하되 Unity 기반 AR/VR 프로젝트를 통해 인터랙션·상태 제어·AI(NavMesh) 등 실시간 시스템 경험도 함께 쌓고 있습니다.",
+    "React·TypeScript와 Spring Boot를 중심으로 서비스 설계부터 배포/운영까지 책임져온 Full-Stack(Web) 개발자입니다. HTTPS/Mixed Content, CORS, 인증 갱신 등 운영 이슈를 직접 해결하며 원인 분석 → 재현 → 수정 → 검증 흐름을 체득했습니다. 웹을 주력으로 하되 Unity XR/AR 경험을 통해 인터랙션과 실시간 시스템 감각도 함께 키우고 있습니다.",
 
   // Please Provide with Your Podcast embeded Link
   podcast: [],
