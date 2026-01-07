@@ -182,32 +182,78 @@ const bigProjects = {
       projectName: "득근득근 (MuscleUp)",
       projectDesc:
         "React + Spring Boot 기반 Full-Stack 웹. AWS 배포/HTTPS·CORS 이슈 해결, Refresh Token Rotation 적용.",
-      footerLink: []
+      footerLink: [],
+      details: {
+        summary:
+          "피트니스 커뮤니티 + AI 코치 웹 서비스. 운영 환경 문제를 직접 해결하며 안정적인 사용자 경험을 목표로 개발했습니다.",
+        role: "기획, 디자인, 프론트엔드, 백엔드, 배포 전 과정",
+        highlights: [
+          "HTTPS/Mixed Content/CORS 이슈 추적 및 해결",
+          "Refresh Token Rotation 기반 인증/갱신 구조 설계",
+          "커뮤니티 CRUD, 댓글, 좋아요, 권한 체크 구현",
+          "AI 코치 플로우(분석 → 루틴 생성 → 대화 저장)"
+        ],
+        stack: "React, TypeScript, Spring Boot, JPA, JWT, MySQL, AWS",
+        links: []
+      }
     },
     {
       image: require("./assets/images/nextuLogo.webp"),
       projectName: "TSEROF",
       projectDesc: "Unity 게임 프로젝트 (스팀 출시 경험 포함).",
-      footerLink: []
+      footerLink: [],
+      details: {
+        summary: "Unity 기반 게임 프로젝트로 스팀 출시 경험이 포함됩니다.",
+        role: "게임 시스템/로직 구현",
+        highlights: ["Unity/C# 기반 구현", "Steam 출시 경험 포함"],
+        stack: "Unity, C#",
+        links: []
+      }
     },
     {
       image: require("./assets/images/saayaHealthLogo.webp"),
       projectName: "A club",
       projectDesc: "React 프론트엔드 프로젝트.",
-      footerLink: []
+      footerLink: [],
+      details: {
+        summary: "운영형 프론트엔드 프로젝트로 화면 구성과 사용자 흐름 개선에 집중했습니다.",
+        role: "프론트엔드 개발",
+        highlights: ["React 기반 화면 구성", "운영 관점의 UX 개선"],
+        stack: "React, React Router, Styled Components, Axios",
+        links: []
+      }
     },
     {
       image: require("./assets/images/pwaLogo.webp"),
       projectName: "INTO MONSTER POINT",
       projectDesc: "Unity AR Foundation 기반 AR 프로젝트.",
-      footerLink: []
+      footerLink: [],
+      details: {
+        summary: "AR Foundation 기반 AR 프로젝트로 공간 인식과 인터랙션을 구현했습니다.",
+        role: "AR 기능 구현",
+        highlights: ["Plane Scan", "Boundary 처리", "AR 인터랙션 설계"],
+        stack: "Unity, AR Foundation",
+        links: []
+      }
     },
     {
       image: require("./assets/images/nextuLogo.webp"),
       projectName: "Ajou Campus Foodmap",
       projectDesc:
         "React(Vite) + Express + MongoDB + Passport(Session) 풀스택, Vercel/Render/Atlas 배포.",
-      footerLink: []
+      footerLink: [],
+      details: {
+        summary:
+          "React(Vite) + Express + MongoDB 기반 풀스택 서비스로 세션 인증과 배포까지 경험했습니다.",
+        role: "풀스택 개발",
+        highlights: [
+          "Passport(Session) 기반 인증 흐름 구성",
+          "CORS + withCredentials로 세션 유지 문제 해결",
+          "Vercel/Render/Atlas 배포"
+        ],
+        stack: "React(Vite), Express, MongoDB, Passport, Mongoose",
+        links: []
+      }
     },
     {
       image: require("./assets/images/saayaHealthLogo.webp"),
@@ -217,19 +263,43 @@ const bigProjects = {
       footerLink: [
         {name: "aClub", url: "https://ajouclub.co.kr"},
         {name: "ajouchong", url: "https://ajouchong.com"}
-      ]
+      ],
+      details: {
+        summary: "운영형 프론트 프로젝트로 유입/행동 데이터를 분석하며 개선 경험을 쌓았습니다.",
+        role: "프론트엔드 개발 및 운영",
+        highlights: ["GA4/GSC 연동 및 지표 기반 개선", "배포 운영 경험"],
+        stack: "React, GA4, GSC",
+        links: [
+          {name: "aClub", url: "https://ajouclub.co.kr"},
+          {name: "ajouchong", url: "https://ajouchong.com"}
+        ]
+      }
     },
     {
       image: require("./assets/images/nextuLogo.webp"),
       projectName: "Ajou Game Project",
       projectDesc: "게임 프로젝트.",
-      footerLink: []
+      footerLink: [],
+      details: {
+        summary: "아주대 관련 게임 프로젝트입니다.",
+        role: "게임 시스템/로직 구현",
+        highlights: ["Unity 기반 게임 시스템 구현"],
+        stack: "Unity, C#",
+        links: []
+      }
     },
     {
       image: require("./assets/images/googleAssistantLogo.webp"),
       projectName: "The Other Side (Unity VR Game)",
       projectDesc: "Unity XR Interaction Toolkit 기반 VR 프로젝트.",
-      footerLink: []
+      footerLink: [],
+      details: {
+        summary: "Unity XR Interaction Toolkit 기반 VR 프로젝트로 AI 및 인터랙션 설계를 경험했습니다.",
+        role: "VR 인터랙션/AI 설계",
+        highlights: ["NavMesh 기반 AI", "VR 인터랙션 구성"],
+        stack: "Unity, XR Interaction Toolkit",
+        links: []
+      }
     }
   ],
   display: true // Set false to hide this section, defaults to true

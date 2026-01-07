@@ -64,6 +64,142 @@
   gap: 1rem 1rem;
 }
 
+.project-detail-button {
+  margin-top: 0.75rem;
+  border: 1px solid $subTitle;
+  background: transparent;
+  color: $subTitle;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.project-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  z-index: 999;
+}
+
+.project-modal {
+  background: $lightBackground1;
+  color: $textColor;
+  width: min(960px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 16px;
+  padding: 2rem;
+  position: relative;
+}
+
+.project-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 1rem;
+  border: none;
+  background: transparent;
+  color: $subTitle;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.project-modal-header {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  gap: 1.5rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.project-modal-image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.project-modal-title {
+  font-size: 32px;
+  margin: 0 0 0.5rem 0;
+}
+
+.project-modal-subtitle {
+  margin: 0;
+}
+
+.project-modal-stack {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.project-modal-label {
+  font-weight: 600;
+}
+
+.project-modal-section {
+  margin-top: 1.5rem;
+}
+
+.project-modal-section-title {
+  font-size: 20px;
+  margin-bottom: 0.75rem;
+}
+
+.project-modal-paragraph {
+  line-height: 1.7;
+}
+
+.project-modal-list {
+  padding-left: 1.2rem;
+}
+
+.project-modal-list-item {
+  margin-bottom: 0.5rem;
+}
+
+.project-modal-links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.project-modal-link {
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid $subTitle;
+  color: $subTitle;
+  text-decoration: none;
+}
+
+.dark-mode .project-modal {
+  background: $darkBackground;
+  color: $textColorDark;
+}
+
+.dark-mode .project-modal-link,
+.dark-mode .project-modal-close,
+.dark-mode .project-detail-button,
+.dark-mode .project-modal-back {
+  color: $textColorDark;
+  border-color: $textColorDark;
+}
+
+@media (max-width: 768px) {
+  .project-modal-header {
+    grid-template-columns: 1fr;
+  }
+
+  .project-modal-title {
+    font-size: 24px;
+  }
+}
+
 .project-card-footer span.project-tag {
   background: $buttonColor;
   color: $lightBackground3;
