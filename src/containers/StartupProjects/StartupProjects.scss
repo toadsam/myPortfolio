@@ -144,10 +144,14 @@
 
 .project-modal-section {
   margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid $lightBorder1;
 }
 
 .project-modal-section-title {
   font-size: 20px;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid $lightBorder1;
   margin-bottom: 0.75rem;
 }
 
@@ -177,6 +181,220 @@
   text-decoration: none;
 }
 
+.project-overview {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid $lightBorder1;
+}
+
+.project-overview-header {
+  margin-bottom: 1rem;
+}
+
+.project-overview-title {
+  font-size: 28px;
+  margin: 0 0 0.4rem 0;
+}
+
+.project-overview-subtitle {
+  margin: 0 0 1.25rem 0;
+  font-size: 18px;
+  color: $subTitle;
+}
+
+.project-overview-media {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.project-overview-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: $lightBoxShadowDark 0px 10px 30px -15px;
+}
+
+.project-overview-caption {
+  margin-top: 0.5rem;
+  font-size: 14px;
+  color: $subTitle;
+}
+
+.project-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.project-overview-block-title {
+  font-size: 16px;
+  margin: 0 0 0.5rem 0;
+}
+
+.project-overview-block-text {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.project-overview-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.project-overview-list-item {
+  margin-bottom: 0.4rem;
+}
+
+.project-overview-link {
+  color: $skillsColor;
+  text-decoration: underline;
+}
+
+.project-overview-links {
+  margin-top: 1rem;
+}
+
+.project-ps-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.project-ps-card {
+  border: 2px solid #bfeee3;
+  border-radius: 12px;
+  padding: 1.25rem;
+  background: $lightBackground1;
+}
+
+.project-ps-title {
+  font-size: 18px;
+  margin: 0 0 0.75rem 0;
+  color: $titleColor;
+}
+
+.project-ps-text {
+  margin: 0;
+  line-height: 1.7;
+  color: $textColor;
+}
+
+.project-ps-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.project-ps-list-item {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.project-ps-outcome {
+  border-color: #d7f4ed;
+  background: $lightBackground3;
+}
+
+.project-strategy-list {
+  display: grid;
+  gap: 2rem;
+}
+
+.project-strategy-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+}
+
+.project-strategy-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #dff6f1;
+  color: #2f4a65;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.project-strategy-title {
+  font-size: 20px;
+  margin: 0 0 0.5rem 0;
+  color: $titleColor;
+}
+
+.project-strategy-desc {
+  margin: 0;
+  line-height: 1.7;
+  color: $textColor;
+}
+
+.project-strategy-media {
+  text-align: center;
+}
+
+.project-strategy-image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: $lightBoxShadowDark 0px 10px 24px -16px;
+}
+
+.project-strategy-caption {
+  margin-top: 0.5rem;
+  font-size: 14px;
+  color: $subTitle;
+}
+
+.project-feature-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.project-feature-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 2rem;
+  align-items: center;
+}
+
+.project-feature-title {
+  font-size: 20px;
+  margin: 0 0 0.75rem 0;
+  color: $titleColor;
+}
+
+.project-feature-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.project-feature-list-item {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.project-feature-media {
+  text-align: center;
+}
+
+.project-feature-image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: $lightBoxShadowDark 0px 10px 24px -16px;
+}
+
+.project-feature-caption {
+  margin-top: 0.5rem;
+  font-size: 14px;
+  color: $subTitle;
+}
+
 .dark-mode .project-modal {
   background: $darkBackground;
   color: $textColorDark;
@@ -190,6 +408,54 @@
   border-color: $textColorDark;
 }
 
+.dark-mode .project-overview-subtitle,
+.dark-mode .project-overview-caption {
+  color: $textColorDark;
+}
+
+.dark-mode .project-overview-link {
+  color: $textColorDark;
+}
+
+.dark-mode .project-modal-section {
+  border-top-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode .project-modal-section-title {
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode .project-overview {
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode .project-ps-card {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dark-mode .project-ps-title,
+.dark-mode .project-ps-text,
+.dark-mode .project-strategy-title,
+.dark-mode .project-strategy-desc,
+.dark-mode .project-feature-title {
+  color: $textColorDark;
+}
+
+.dark-mode .project-ps-outcome {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dark-mode .project-strategy-step {
+  background: rgba(255, 255, 255, 0.16);
+  color: $textColorDark;
+}
+
+.dark-mode .project-strategy-caption,
+.dark-mode .project-feature-caption {
+  color: $textColorDark;
+}
+
 @media (max-width: 768px) {
   .project-modal-header {
     grid-template-columns: 1fr;
@@ -197,6 +463,16 @@
 
   .project-modal-title {
     font-size: 24px;
+  }
+
+  .project-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-ps-grid,
+  .project-strategy-item,
+  .project-feature-item {
+    grid-template-columns: 1fr;
   }
 }
 

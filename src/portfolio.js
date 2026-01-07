@@ -184,16 +184,135 @@ const bigProjects = {
         "React + Spring Boot 기반 Full-Stack 웹. AWS 배포/HTTPS·CORS 이슈 해결, Refresh Token Rotation 적용.",
       footerLink: [],
       details: {
-        summary:
-          "피트니스 커뮤니티 + AI 코치 웹 서비스. 운영 환경 문제를 직접 해결하며 안정적인 사용자 경험을 목표로 개발했습니다.",
-        role: "기획, 디자인, 프론트엔드, 백엔드, 배포 전 과정",
-        highlights: [
-          "HTTPS/Mixed Content/CORS 이슈 추적 및 해결",
-          "Refresh Token Rotation 기반 인증/갱신 구조 설계",
-          "커뮤니티 CRUD, 댓글, 좋아요, 권한 체크 구현",
-          "AI 코치 플로우(분석 → 루틴 생성 → 대화 저장)"
+        overview: {
+          title: "득근득근 - 프로젝트 개요",
+          subtitle: "AI 피트니스 커뮤니티 실서비스 풀스택 개발",
+          image: require("./assets/images/saayaHealthLogo.webp"),
+          caption: "득근득근 서비스 메인 화면",
+          role:
+            "기획, UI 설계, 백엔드 API 개발, 인증/권한 구현, 배포 담당 (개인 개발)",
+          period: "2025.09 - (진행중)",
+          coreValue:
+            "운동 기록-커뮤니티-AI 코치를 하나의 실서비스 흐름으로 통합한 풀스택 시스템 구현",
+          techStack: [
+            "Frontend: React, Vite, Axios",
+            "Backend: Spring Boot, Spring Security, JWT",
+            "Database: MySQL, JPA",
+            "Infrastructure: AWS (S3, CloudFront, Route53, ACM, RDS)",
+            "AI: OpenAI GPT API"
+          ],
+          links: [
+            {name: "배포 주소 (Deployment)", url: "https://muscle-up.click"},
+            {
+              name: "GitHub",
+              url: "https://github.com/toadsam/Ajou_MuscleUp"
+            },
+            {
+              name: "시연 영상 (Demo Video)",
+              url:
+                "https://www.youtube.com/watch?v=y6pbAoxveQM&feature=youtu.be"
+            }
+          ]
+        },
+        problemSolution: {
+          problem: [
+            "운동 루틴/식단/기록이 흩어져 '오늘 뭐 하지?'에서 멈춤",
+            "혼자 하면 지속률이 낮아 성과 공유/피드백이 필요"
+          ],
+          solution:
+            "AI 분석 → 4주 루틴 생성 → 대화 히스토리 저장, 커뮤니티 자랑글/댓글/좋아요 강화",
+          outcome:
+            "인증·보안·배포·운영까지 고려한 실사용 가능한 풀스택 서비스 완성"
+        },
+        strategySteps: [
+          {
+            step: "1",
+            title: "AI 기반 개인 맞춤 운동 루틴 제공",
+            description:
+              "사용자의 운동 수준, 목표, 신체 데이터를 분석해 최적화된 루틴을 제공하여 운동 효과를 극대화",
+            image: require("./assets/images/saayaHealthLogo.webp"),
+            caption: "AI 상담 화면"
+          },
+          {
+            step: "2",
+            title: "운동 성과 공유 중심 커뮤니티 설계",
+            description:
+              "기록 공유, 챌린지 참여, 소셜 인터랙션을 통해 사용자 간 동기 부여와 지속적인 습관 형성",
+            image: require("./assets/images/nextuLogo.webp"),
+            caption: "자랑방 화면"
+          },
+          {
+            step: "3",
+            title: "초보자 기준 UX로 정보 과부하 최소화",
+            description:
+              "직관적인 인터페이스와 쉬운 가이드라인으로 운동 초보자도 쉽게 참여할 수 있도록 설계",
+            image: require("./assets/images/googleAssistantLogo.webp"),
+            caption: "소개 화면"
+          }
         ],
-        stack: "React, TypeScript, Spring Boot, JPA, JWT, MySQL, AWS",
+        coreFeatureShots: [
+          {
+            title: "JWT 이중 쿠키 + Refresh Token 로테이션",
+            bullets: [
+              "Threat: 로컬스토리지 토큰은 XSS에 취약",
+              "Design: Access/Refresh 수명 분리 + DB 저장",
+              "Control: 재발급 시 기존 Refresh 폐기",
+              "Hardening: HttpOnly 쿠키 + Role 기반 보호"
+            ],
+            image: require("./assets/images/pwaLogo.webp"),
+            caption: "JWT 보안 인증 및 DB 설계 코드"
+          },
+          {
+            title: "소셜/이메일 인증",
+            bullets: [
+              "SMTP 연동을 통한 이메일 인증 플로우",
+              "구글 소셜 로그인 OAuth2 연동",
+              "회원가입/로그인 UX 일관성 유지"
+            ],
+            image: require("./assets/images/saayaHealthLogo.webp"),
+            caption: "인증 화면"
+          }
+        ],
+        summary:
+          "JWT 인증 + AI 코치 + 커뮤니티 운영까지 완성한 피트니스 서비스.",
+        role: "기획, 프론트엔드, 백엔드, 배포/운영 전 과정",
+        highlights: [
+          "JWT + Refresh Token Rotation 적용",
+          "AI 코치 루틴 생성 + 대화 히스토리 저장",
+          "커뮤니티 CRUD/댓글/좋아요/권한 체크",
+          "AWS 배포 환경 문제 재현-해결-검증"
+        ],
+        stack:
+          "React, TypeScript, Spring Boot, Spring Security, JPA, MySQL, AWS, Nginx",
+        problemGoal: [
+          "운동 기록/인증/커뮤니티가 분산되어 지속 동기 유지가 어려움",
+          "로그인/갱신 불안정은 서비스 신뢰 하락으로 직결",
+          "배포 후 HTTPS/CORS 문제로 오류가 반복 발생",
+          "안정적인 인증을 기준으로 설계하고 운영 체크리스트화"
+        ],
+        architecture: [
+          "React SPA → Spring Boot REST API → MySQL(RDS)",
+          "Access/Refresh 수명 분리 + HttpOnly Cookie 기반 인증",
+          "Refresh Rotation으로 탈취 토큰 재사용 차단",
+          "파일 업로드는 UUID/경로 검증으로 안전 처리"
+        ],
+        authSecurity: [
+          "Access 만료 시 401 처리",
+          "Refresh 쿠키로 재발급",
+          "Rotation으로 기존 Refresh 폐기 + 신규 저장",
+          "Role 기반 접근 제어 및 표준화된 에러 처리"
+        ],
+        coreFeatures: [
+          "AI 코치: 분석 → 4주 루틴 생성 → 히스토리 저장",
+          "커뮤니티: 자랑글 CRUD + 댓글/좋아요 + 권한 체크",
+          "파일: 업로드/목록/삭제, UUID/경로 검증"
+        ],
+        deployment: [
+          "EC2 + RDS(MySQL) 운영 환경 구축",
+          "S3/CloudFront 정적 리소스 구성",
+          "HTTPS 통일 및 Mixed Content 방지",
+          "CORS allowlist + credentials 설정"
+        ],
         links: []
       }
     },
