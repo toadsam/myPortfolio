@@ -55,9 +55,7 @@ export default function StartupProject() {
                   <div
                     key={i}
                     className={
-                      isDark
-                        ? "dark-mode project-card project-card-dark"
-                        : "project-card project-card-light"
+                      isDark ? "experience-card-dark" : "experience-card"
                     }
                     role="button"
                     tabIndex={0}
@@ -68,24 +66,45 @@ export default function StartupProject() {
                       }
                     }}
                   >
-                    {project.image ? (
-                      <div className="project-image">
+                    <div className="experience-banner">
+                      <div className="experience-blurred_div"></div>
+                      <div className="experience-div-company">
+                        <h5 className="experience-text-company">
+                          {project.projectName}
+                        </h5>
+                      </div>
+                      {project.image ? (
                         <img
+                          className="experience-roundedimg"
                           src={project.image}
                           alt={project.projectName}
-                          className="card-image"
-                        ></img>
-                      </div>
-                    ) : null}
-                    <div className="project-detail">
+                        />
+                      ) : null}
+                    </div>
+                    <div className="experience-text-details project-detail">
                       <h5
-                        className={isDark ? "dark-mode card-title" : "card-title"}
+                        className={
+                          isDark
+                            ? "experience-text-role dark-mode-text"
+                            : "experience-text-role"
+                        }
                       >
                         {project.projectName}
                       </h5>
+                      <h5
+                        className={
+                          isDark
+                            ? "experience-text-date dark-mode-text"
+                            : "experience-text-date"
+                        }
+                      >
+                        Main Project
+                      </h5>
                       <p
                         className={
-                          isDark ? "dark-mode card-subtitle" : "card-subtitle"
+                          isDark
+                            ? "subTitle experience-text-desc dark-mode-text"
+                            : "subTitle experience-text-desc"
                         }
                       >
                         {project.projectDesc}
