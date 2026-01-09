@@ -12,6 +12,34 @@ export default function Skills() {
   if (!skillsSection.display) {
     return null;
   }
+  const renderSkillText = skill => {
+    let skillText = null;
+    if (typeof skill === "string") {
+      skillText = skill;
+    } else if (
+      Array.isArray(skill) &&
+      skill.length > 0 &&
+      skill.every(item => typeof item === "string")
+    ) {
+      skillText = skill.join("");
+    }
+    if (!skillText) {
+      return skill;
+    }
+    const separatorIndex = skillText.indexOf(":");
+    if (separatorIndex === -1) {
+      return skillText;
+    }
+    const label = skillText.slice(0, separatorIndex).trim();
+    const detail = skillText.slice(separatorIndex + 1).trim();
+    return (
+      <>
+        <span className="skills-text-label">{label}</span>
+        <span className="skills-text-separator">:</span>
+        <span className="skills-text-detail"> {detail}</span>
+      </>
+    );
+  };
   return (
     <div className={isDark ? "dark-mode main" : "main"} id="skills">
       <div className="skills-main-div">
@@ -55,7 +83,7 @@ export default function Skills() {
                         : "subTitle skills-text"
                     }
                   >
-                    {skills}
+                    {renderSkillText(skills)}
                   </p>
                 );
               })}

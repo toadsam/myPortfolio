@@ -24,6 +24,39 @@
   font-size: 56px;
   font-weight: 400;
 }
+
+.skills-text-subtitle {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: $textColor;
+}
+
+.skills-text {
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.skills-text-label,
+.skills-text-separator {
+  font-weight: 700;
+  font-size: 19px;
+  color: $textColor;
+}
+
+.skills-text-detail {
+  color: $subTitle;
+  font-weight: 400;
+}
+
+.dark-mode .skills-text-subtitle {
+  color: $textColorDark;
+}
+
+.dark-mode .skills-text-label,
+.dark-mode .skills-text-separator {
+  color: $textColorDark;
+}
 .subTitle {
   color: $subTitle;
 }
@@ -54,7 +87,7 @@
     font-size: 16px;
   }
   .skills-text-subtitle {
-    font-size: 16px;
+    font-size: 18px;
     text-align: center;
   }
   .skills-image-div {

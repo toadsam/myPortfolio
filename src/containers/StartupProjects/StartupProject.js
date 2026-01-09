@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+﻿import React, {useContext, useEffect, useState} from "react";
 import "./StartupProjects.scss";
 import {bigProjects} from "../../portfolio";
 import {Fade} from "react-reveal";
@@ -32,6 +32,41 @@ export default function StartupProject() {
   if (!bigProjects.display) {
     return null;
   }
+
+  const renderFeatureSection = (title, shots) => {
+    if (!shots?.length) {
+      return null;
+    }
+    return (
+      <section className="project-modal-section">
+        <h3 className="project-modal-section-title">{title}</h3>
+        <div className="project-feature-grid">
+          {shots.map((shot, i) => (
+            <div key={i} className="project-feature-item">
+              <div className="project-feature-text">
+                <h4 className="project-feature-title">{shot.title}</h4>
+                <ul className="project-feature-list">
+                  {shot.bullets.map((item, j) => (
+                    <li key={j} className="project-feature-list-item">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="project-feature-media">
+                <img
+                  src={shot.image}
+                  alt={shot.title}
+                  className="project-feature-image"
+                />
+                <div className="project-feature-caption">{shot.caption}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  };
 
   return (
     <>
@@ -143,7 +178,7 @@ export default function StartupProject() {
                           setSelectedProject(project);
                         }}
                       >
-                        자세히 보기
+                        ?먯꽭??蹂닿린
                       </button>
                     </div>
                   </div>
@@ -202,7 +237,7 @@ export default function StartupProject() {
                 <div className="project-overview-grid">
                   {selectedProject.details.overview.role && (
                     <div className="project-overview-block">
-                      <h4 className="project-overview-block-title">역할</h4>
+                      <h4 className="project-overview-block-title">??븷</h4>
                       <p className="project-overview-block-text">
                         {selectedProject.details.overview.role}
                       </p>
@@ -211,7 +246,7 @@ export default function StartupProject() {
                   {selectedProject.details.overview.techStack?.length ? (
                     <div className="project-overview-block">
                       <h4 className="project-overview-block-title">
-                        기술 스택
+                        湲곗닠 ?ㅽ깮
                       </h4>
                       <ul className="project-overview-list">
                         {selectedProject.details.overview.techStack.map(
@@ -226,7 +261,7 @@ export default function StartupProject() {
                   ) : null}
                   {selectedProject.details.overview.period && (
                     <div className="project-overview-block">
-                      <h4 className="project-overview-block-title">기간</h4>
+                      <h4 className="project-overview-block-title">湲곌컙</h4>
                       <p className="project-overview-block-text">
                         {selectedProject.details.overview.period}
                       </p>
@@ -235,8 +270,7 @@ export default function StartupProject() {
                   {selectedProject.details.overview.coreValue && (
                     <div className="project-overview-block">
                       <h4 className="project-overview-block-title">
-                        핵심 가치
-                      </h4>
+                        ?듭떖 媛移?                      </h4>
                       <p className="project-overview-block-text">
                         {selectedProject.details.overview.coreValue}
                       </p>
@@ -245,7 +279,7 @@ export default function StartupProject() {
                 </div>
                 {selectedProject.details.overview.links?.length ? (
                   <div className="project-overview-links">
-                    <h4 className="project-overview-block-title">링크</h4>
+                    <h4 className="project-overview-block-title">留곹겕</h4>
                     <ul className="project-overview-list">
                       {selectedProject.details.overview.links.map((link, i) => (
                         <li key={i} className="project-overview-list-item">
@@ -303,7 +337,7 @@ export default function StartupProject() {
             {selectedProject.details?.problemSolution && (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">
-                  문제 정의 & 해결 전략
+                  臾몄젣 ?뺤쓽 & ?닿껐 ?꾨왂
                 </h3>
                 <div className="project-ps-grid">
                   <div className="project-ps-card">
@@ -336,7 +370,7 @@ export default function StartupProject() {
             {selectedProject.details?.strategySteps?.length ? (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">
-                  MuscleUp의 해결 전략
+                  MuscleUp???닿껐 ?꾨왂
                 </h3>
                 <div className="project-strategy-list">
                   {selectedProject.details.strategySteps.map((step, i) => (
@@ -435,39 +469,30 @@ export default function StartupProject() {
                 </ul>
               </section>
             ) : null}
-            {selectedProject.details?.coreFeatureShots?.length ? (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">
-                  득근득근 - 핵심 기능 (1/2)
-                </h3>
-                <div className="project-feature-grid">
-                  {selectedProject.details.coreFeatureShots.map((shot, i) => (
-                    <div key={i} className="project-feature-item">
-                      <div className="project-feature-text">
-                        <h4 className="project-feature-title">{shot.title}</h4>
-                        <ul className="project-feature-list">
-                          {shot.bullets.map((item, j) => (
-                            <li key={j} className="project-feature-list-item">
-                              {item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="project-feature-media">
-                        <img
-                          src={shot.image}
-                          alt={shot.title}
-                          className="project-feature-image"
-                        />
-                        <div className="project-feature-caption">
-                          {shot.caption}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            ) : null}
+            {renderFeatureSection(
+              "득근득근 - 핵심 기능 (1/2)",
+              selectedProject.details?.coreFeatureShots
+            )}
+            {renderFeatureSection(
+              "득근득근 - 핵심 기능 (2/2)",
+              selectedProject.details?.coreFeatureShots2
+            )}
+            {renderFeatureSection(
+              "MySQL 스키마 설계",
+              selectedProject.details?.schemaDesignShots
+            )}
+            {renderFeatureSection(
+              "AWS 정적 배포 운영",
+              selectedProject.details?.awsDeploymentShots
+            )}
+            {renderFeatureSection(
+              "AWS 배포 - 운영 이슈 해결 & 설계 요약",
+              selectedProject.details?.awsIssueSummaryShots
+            )}
+            {renderFeatureSection(
+              "득근득근 - 주요 트러블슈팅",
+              selectedProject.details?.troubleshootingShots
+            )}
             {selectedProject.details?.deployment?.length ? (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">
@@ -506,3 +531,7 @@ export default function StartupProject() {
     </>
   );
 }
+
+
+
+
