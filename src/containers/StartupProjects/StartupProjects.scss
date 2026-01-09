@@ -88,11 +88,11 @@
 .project-modal {
   background: $lightBackground1;
   color: $textColor;
-  width: min(960px, 100%);
+  width: min(1100px, 100%);
   max-height: 90vh;
   overflow: auto;
   border-radius: 16px;
-  padding: 2rem;
+  padding: 2.25rem;
   position: relative;
 }
 
@@ -143,7 +143,8 @@
 }
 
 .project-modal-section {
-  margin-top: 1.5rem;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
   padding-top: 1.5rem;
   border-top: 1px solid $lightBorder1;
 }
@@ -253,6 +254,268 @@
 
 .project-overview-links {
   margin-top: 1rem;
+}
+
+.project-quick-summary {
+  margin-top: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.project-quick-summary .project-detail-card {
+  background: #151a24;
+  color: $textColorDark;
+}
+
+.project-quick-summary .project-detail-card-item {
+  color: $textColorDark;
+}
+
+.project-hero-proof {
+  margin: 2.5rem 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.project-hero-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  object-fit: cover;
+}
+
+.project-hero-caption {
+  font-size: 14px;
+  color: $subTitle;
+}
+
+.project-detail-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.project-detail-card {
+  border-radius: 18px;
+  padding: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #1a2030;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.project-detail-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.project-detail-card-title {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+.project-detail-card-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.project-detail-card-item {
+  margin-bottom: 0.6rem;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.project-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+  color: $textColorDark;
+}
+
+.project-badge-icon {
+  font-size: 0.85rem;
+}
+
+.project-badge-star {
+  background: rgba(255, 215, 0, 0.15);
+}
+
+.project-badge-fire {
+  background: rgba(255, 120, 60, 0.14);
+}
+
+.project-badge-check {
+  background: rgba(0, 255, 170, 0.12);
+}
+
+.project-proof {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.project-proof-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: $textColorDark;
+  text-transform: uppercase;
+}
+
+.project-proof-thumb {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: transparent;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.project-proof-thumb img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
+  object-fit: cover;
+  transition: filter 0.2s ease;
+}
+
+.project-proof-thumb:hover img {
+  filter: brightness(1.04);
+}
+
+.project-proof-caption {
+  font-size: 13px;
+  color: $subTitle;
+}
+
+.project-card-accordion {
+  margin-top: 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.project-card-accordion-summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.project-card-accordion-list {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1.1rem;
+}
+
+.project-card-accordion-item {
+  margin-bottom: 0.5rem;
+  line-height: 1.65;
+  font-size: 13px;
+}
+
+.project-proof-button {
+  margin-left: auto;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: $textColorDark;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.project-proof-button:hover {
+  text-decoration: underline;
+}
+
+.project-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.project-lightbox {
+  position: relative;
+  width: min(900px, 92vw);
+  background: #10151f;
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.project-lightbox-image {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.project-lightbox-caption {
+  margin-top: 0.75rem;
+  color: $textColorDark;
+  font-size: 14px;
+}
+
+.project-lightbox-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  border: none;
+  background: transparent;
+  color: $textColorDark;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.project-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: $textColorDark;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.project-lightbox-prev {
+  left: 8px;
+}
+
+.project-lightbox-next {
+  right: 8px;
+}
+
+.project-accordion {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  background: #151a24;
+  color: $textColorDark;
+  margin-bottom: 0.75rem;
+}
+
+.project-accordion-summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.project-accordion-body {
+  margin-top: 0.75rem;
 }
 
 .project-ps-grid {
@@ -456,6 +719,29 @@
   color: $textColorDark;
 }
 
+.dark-mode .project-detail-card {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.dark-mode .project-detail-card-title,
+.dark-mode .project-detail-card-item {
+  color: $textColorDark;
+}
+
+.dark-mode .project-badge {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: $textColorDark;
+}
+
+.dark-mode .project-badge-star,
+.dark-mode .project-badge-fire,
+.dark-mode .project-badge-check {
+  background: rgba(255, 255, 255, 0.12);
+  color: $textColorDark;
+}
+
 @media (max-width: 768px) {
   .project-modal-header {
     grid-template-columns: 1fr;
@@ -472,6 +758,10 @@
   .project-ps-grid,
   .project-strategy-item,
   .project-feature-item {
+    grid-template-columns: 1fr;
+  }
+
+  .project-detail-card-grid {
     grid-template-columns: 1fr;
   }
 }

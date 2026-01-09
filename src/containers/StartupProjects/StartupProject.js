@@ -6,6 +6,10 @@ import StyleContext from "../../contexts/StyleContext";
 
 export default function StartupProject() {
   const [selectedProject, setSelectedProject] = useState(null);
+  const [lightbox, setLightbox] = useState(null);
+  const isMuscleUp =
+    selectedProject?.projectName &&
+    selectedProject.projectName.includes("MuscleUp");
 
   function openUrlInNewTab(url) {
     if (!url) {
@@ -20,14 +24,41 @@ export default function StartupProject() {
   useEffect(() => {
     function handleKeyDown(event) {
       if (event.key === "Escape") {
+        if (lightbox) {
+          setLightbox(null);
+          return;
+        }
         setSelectedProject(null);
+      }
+      if (!lightbox) {
+        return;
+      }
+      if (event.key === "ArrowRight") {
+        setLightbox(prev => {
+          if (!prev) {
+            return prev;
+          }
+          return {...prev, index: (prev.index + 1) % prev.items.length};
+        });
+      }
+      if (event.key === "ArrowLeft") {
+        setLightbox(prev => {
+          if (!prev) {
+            return prev;
+          }
+          return {
+            ...prev,
+            index:
+              (prev.index - 1 + prev.items.length) % prev.items.length
+          };
+        });
       }
     }
     if (selectedProject) {
       window.addEventListener("keydown", handleKeyDown);
     }
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedProject]);
+  }, [selectedProject, lightbox]);
 
   if (!bigProjects.display) {
     return null;
@@ -67,6 +98,242 @@ export default function StartupProject() {
       </section>
     );
   };
+
+  const Badge = ({icon, label, tone = "default"}) => {
+    return (
+      <span className={`project-badge project-badge-${tone}`}>
+        <span className="project-badge-icon">{icon}</span>
+        {label}
+      </span>
+    );
+  };
+
+  const DetailCard = ({badge, title, bullets, proof, onViewProof}) => {
+    return (
+      <div className="project-detail-card">
+        <div className="project-detail-card-header">
+          {badge}
+          <h4 className="project-detail-card-title">{title}</h4>
+          {proof?.length ? (
+            <button
+              className="project-proof-button"
+              type="button"
+              onClick={() => onViewProof(proof, 0)}
+            >
+              View Proof ↗
+            </button>
+          ) : null}
+        </div>
+        <ul className="project-detail-card-list">
+          {bullets.map((item, i) => (
+            <li key={i} className="project-detail-card-item">
+              {i === 0 ? <strong>{item}</strong> : item}
+            </li>
+          ))}
+        </ul>
+        {proof?.length ? (
+          <div className="project-proof">
+            <div className="project-proof-label">Proof</div>
+            <ProofThumb
+              item={proof[0]}
+              onClick={() => onViewProof(proof, 0)}
+            />
+            {proof[0]?.caption ? (
+              <div className="project-proof-caption">{proof[0].caption}</div>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+    );
+  };
+
+  const ProofThumb = ({item, onClick}) => {
+    if (!item) {
+      return null;
+    }
+    return (
+      <button className="project-proof-thumb" type="button" onClick={onClick}>
+        <img src={item.src} alt={item.alt} />
+      </button>
+    );
+  };
+
+  const ProofLightbox = ({items, index, onClose, onPrev, onNext}) => {
+    if (!items?.length) {
+      return null;
+    }
+    const current = items[index];
+    return (
+      <div className="project-lightbox-overlay" role="presentation">
+        <div className="project-lightbox">
+          <button
+            className="project-lightbox-close"
+            type="button"
+            onClick={onClose}
+          >
+            X
+          </button>
+          {items.length > 1 ? (
+            <>
+              <button
+                className="project-lightbox-nav project-lightbox-prev"
+                type="button"
+                onClick={onPrev}
+              >
+                ←
+              </button>
+              <button
+                className="project-lightbox-nav project-lightbox-next"
+                type="button"
+                onClick={onNext}
+              >
+                →
+              </button>
+            </>
+          ) : null}
+          <img
+            src={current.src}
+            alt={current.alt}
+            className="project-lightbox-image"
+          />
+          {current.caption ? (
+            <div className="project-lightbox-caption">{current.caption}</div>
+          ) : null}
+        </div>
+      </div>
+    );
+  };
+
+  const Accordion = ({title, children}) => {
+    return (
+      <details className="project-accordion">
+        <summary className="project-accordion-summary">{title}</summary>
+        <div className="project-accordion-body">{children}</div>
+      </details>
+    );
+  };
+
+  const openLightbox = (items, index = 0) => {
+    setLightbox({items, index});
+  };
+
+  const heroProofImage =
+    selectedProject?.details?.overview?.image ??
+    require("../../assets/images/saayaHealthLogo.webp");
+
+  const proofImages = {
+    jwt: {
+      src: require("../../assets/images/pwaLogo.webp"),
+      alt: "JWT Rotation proof",
+      caption: "Rotation: 재발급 시 기존 Refresh 폐기 로직"
+    },
+    ai: {
+      src: require("../../assets/images/googleAssistantLogo.webp"),
+      alt: "AI endpoints proof",
+      caption: "Endpoints 분리 + 히스토리 저장 로직"
+    },
+    erd: {
+      src: require("../../assets/images/nextuLogo.webp"),
+      alt: "ERD proof",
+      caption: "핵심 테이블(users, brag_post, ai_chat_messages, refresh_tokens)"
+    },
+    aws: {
+      src: require("../../assets/images/saayaHealthLogo.webp"),
+      alt: "AWS ops proof",
+      caption: "ACM us-east-1 + CloudFront Invalidation 및 CORS 설정"
+    }
+  };
+
+  const buildMuscleUpCards = details => {
+    return [
+      {
+        badge: <Badge icon="⭐" label="인증/보안" tone="star" />,
+        title: "JWT 이중 쿠키 + Rotation",
+        bullets: [
+          "Refresh Token Rotation으로 탈취 토큰 재사용을 차단",
+          "Access(15m)/Refresh(14d) 분리 + Refresh DB 저장 + 재발급 시 기존 Refresh 즉시 폐기",
+          "HttpOnly 쿠키 + Role 기반 보호로 세션 안정성과 보안 강화"
+        ],
+        proof: [proofImages.jwt],
+        extra: [
+          "Threat: 로컬스토리지 토큰 XSS 취약",
+          "Control: 기존 토큰 폐기 + 신규 저장"
+        ]
+      },
+      {
+        badge: <Badge icon="⭐" label="AI 코치" tone="star" />,
+        title: "상태 기반 AI 코치",
+        bullets: [
+          "단순 챗봇이 아닌 ‘상태 기반 AI 코치’로 반복 사용 흐름 구현",
+          "Flow: analyze → plan → chat, 대화 히스토리 DB 저장 + 공유 상태 관리",
+          "사용자 맥락 유지로 루틴 수정/재생성이 가능한 제품 형태"
+        ],
+        proof: [proofImages.ai],
+        extra: [
+          "/ai/analyze, /ai/plan, /ai/chat 분리 이유",
+          "share/unshare 상태 저장"
+        ]
+      },
+      {
+        badge: <Badge icon="✅" label="DB/스키마" tone="check" />,
+        title: "도메인 분리 ERD",
+        bullets: [
+          "사용자/커뮤니티/AI/로그 도메인 분리로 확장 가능한 스키마",
+          "FK 기반 무결성 + 조회 중심 인덱스/페이지네이션 고려",
+          "기능 확장 시 충돌 최소화, 핵심 행동 테이블 중심 운영"
+        ],
+        proof: [proofImages.erd],
+        extra: ["Domain split 이유", "Performance 고려 포인트"]
+      },
+      {
+        badge: <Badge icon="🔥" label="배포/운영" tone="fire" />,
+        title: "AWS 운영 이슈 해결",
+        bullets: [
+          "CloudFront+S3 HTTPS 배포를 운영하며 장애 이슈를 재현-해결-검증",
+          "HTTPS 통일(Mixed Content 차단) + CORS allowlist/credentials로 쿠키 인증 유지",
+          "배포 반영/보안/세션 이슈를 운영 관점에서 안정화"
+        ],
+        proof: [proofImages.aws],
+        extra: [
+          "Issue 1: ACM us-east-1",
+          "Issue 2: 캐시 미반영 → Invalidation",
+          "CORS: credentials true + allowlist"
+        ]
+      }
+    ];
+  };
+
+  const renderMuscleUpSummary = () => (
+    <section className="project-quick-summary">
+      <DetailCard
+        badge={<Badge icon="⭐" label="Quick Summary" tone="star" />}
+        title="10초 핵심 요약"
+        bullets={[
+          "⭐ JWT 이중 쿠키 + Refresh Token Rotation(재사용 차단)",
+          "⭐ AI 분석 → 4주 루틴 → 대화 히스토리 DB 저장",
+          "🔥 AWS HTTPS/CDN 배포 + CORS/MixedContent/ACM 이슈 해결",
+          "✅ 배포: CloudFront+S3 HTTPS, RDS(MySQL) 운영",
+          "✅ 핵심 테이블: users, brag_post, ai_chat_messages, refresh_tokens"
+        ]}
+      />
+    </section>
+  );
+
+  const renderMuscleUpHeroProof = () => (
+    <section className="project-modal-section">
+      <h3 className="project-modal-section-title">Hero Proof</h3>
+      <div className="project-hero-proof">
+        <img
+          src={heroProofImage}
+          alt="득근득근 메인 화면"
+          className="project-hero-image"
+        />
+        <div className="project-hero-caption">
+          득근득근 메인 화면 (실서비스)
+        </div>
+      </div>
+    </section>
+  );
 
   return (
     <>
@@ -178,7 +445,7 @@ export default function StartupProject() {
                           setSelectedProject(project);
                         }}
                       >
-                        ?먯꽭??蹂닿린
+                        자세히 보기
                       </button>
                     </div>
                   </div>
@@ -210,6 +477,27 @@ export default function StartupProject() {
             >
               X
             </button>
+            {lightbox && (
+              <ProofLightbox
+                items={lightbox.items}
+                index={lightbox.index}
+                onClose={() => setLightbox(null)}
+                onPrev={() =>
+                  setLightbox(prev => ({
+                    ...prev,
+                    index:
+                      (prev.index - 1 + prev.items.length) %
+                      prev.items.length
+                  }))
+                }
+                onNext={() =>
+                  setLightbox(prev => ({
+                    ...prev,
+                    index: (prev.index + 1) % prev.items.length
+                  }))
+                }
+              />
+            )}
             {selectedProject.details?.overview ? (
               <section className="project-overview">
                 <div className="project-overview-header">
@@ -220,82 +508,87 @@ export default function StartupProject() {
                     {selectedProject.details.overview.subtitle}
                   </p>
                 </div>
-                <div className="project-overview-media">
-                  {selectedProject.details.overview.image ? (
-                    <img
-                      src={selectedProject.details.overview.image}
-                      alt={selectedProject.projectName}
-                      className="project-overview-image"
-                    />
-                  ) : null}
-                  {selectedProject.details.overview.caption && (
-                    <div className="project-overview-caption">
-                      {selectedProject.details.overview.caption}
+                {!isMuscleUp && (
+                  <>
+                    <div className="project-overview-media">
+                      {selectedProject.details.overview.image ? (
+                        <img
+                          src={selectedProject.details.overview.image}
+                          alt={selectedProject.projectName}
+                          className="project-overview-image"
+                        />
+                      ) : null}
+                      {selectedProject.details.overview.caption && (
+                        <div className="project-overview-caption">
+                          {selectedProject.details.overview.caption}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="project-overview-grid">
-                  {selectedProject.details.overview.role && (
-                    <div className="project-overview-block">
-                      <h4 className="project-overview-block-title">??븷</h4>
-                      <p className="project-overview-block-text">
-                        {selectedProject.details.overview.role}
-                      </p>
+                    <div className="project-overview-grid">
+                      {selectedProject.details.overview.role && (
+                        <div className="project-overview-block">
+                          <h4 className="project-overview-block-title">역할</h4>
+                          <p className="project-overview-block-text">
+                            {selectedProject.details.overview.role}
+                          </p>
+                        </div>
+                      )}
+                      {selectedProject.details.overview.techStack?.length ? (
+                        <div className="project-overview-block">
+                          <h4 className="project-overview-block-title">
+                            기술 스택
+                          </h4>
+                          <ul className="project-overview-list">
+                            {selectedProject.details.overview.techStack.map(
+                              (item, i) => (
+                                <li key={i} className="project-overview-list-item">
+                                  {item}
+                                </li>
+                              )
+                            )}
+                          </ul>
+                        </div>
+                      ) : null}
+                      {selectedProject.details.overview.period && (
+                        <div className="project-overview-block">
+                          <h4 className="project-overview-block-title">기간</h4>
+                          <p className="project-overview-block-text">
+                            {selectedProject.details.overview.period}
+                          </p>
+                        </div>
+                      )}
+                      {selectedProject.details.overview.coreValue && (
+                        <div className="project-overview-block">
+                          <h4 className="project-overview-block-title">핵심 가치</h4>
+                          <p className="project-overview-block-text">
+                            {selectedProject.details.overview.coreValue}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  )}
-                  {selectedProject.details.overview.techStack?.length ? (
-                    <div className="project-overview-block">
-                      <h4 className="project-overview-block-title">
-                        湲곗닠 ?ㅽ깮
-                      </h4>
-                      <ul className="project-overview-list">
-                        {selectedProject.details.overview.techStack.map(
-                          (item, i) => (
-                            <li key={i} className="project-overview-list-item">
-                              {item}
-                            </li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                  ) : null}
-                  {selectedProject.details.overview.period && (
-                    <div className="project-overview-block">
-                      <h4 className="project-overview-block-title">湲곌컙</h4>
-                      <p className="project-overview-block-text">
-                        {selectedProject.details.overview.period}
-                      </p>
-                    </div>
-                  )}
-                  {selectedProject.details.overview.coreValue && (
-                    <div className="project-overview-block">
-                      <h4 className="project-overview-block-title">
-                        ?듭떖 媛移?                      </h4>
-                      <p className="project-overview-block-text">
-                        {selectedProject.details.overview.coreValue}
-                      </p>
-                    </div>
-                  )}
-                </div>
-                {selectedProject.details.overview.links?.length ? (
-                  <div className="project-overview-links">
-                    <h4 className="project-overview-block-title">留곹겕</h4>
-                    <ul className="project-overview-list">
-                      {selectedProject.details.overview.links.map((link, i) => (
-                        <li key={i} className="project-overview-list-item">
-                          <a
-                            className="project-overview-link"
-                            href={link.url}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {link.name}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
+                    {selectedProject.details.overview.links?.length ? (
+                      <div className="project-overview-links">
+                        <h4 className="project-overview-block-title">링크</h4>
+                        <ul className="project-overview-list">
+                          {selectedProject.details.overview.links.map(
+                            (link, i) => (
+                              <li key={i} className="project-overview-list-item">
+                                <a
+                                  className="project-overview-link"
+                                  href={link.url}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  {link.name}
+                                </a>
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </>
+                )}
               </section>
             ) : (
               <>
@@ -326,7 +619,9 @@ export default function StartupProject() {
                 )}
               </>
             )}
-            {selectedProject.details?.summary && (
+            {isMuscleUp && renderMuscleUpSummary()}
+            {isMuscleUp && renderMuscleUpHeroProof()}
+            {!isMuscleUp && selectedProject.details?.summary && (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">Summary</h3>
                 <p className="project-modal-paragraph">
@@ -334,10 +629,10 @@ export default function StartupProject() {
                 </p>
               </section>
             )}
-            {selectedProject.details?.problemSolution && (
+            {!isMuscleUp && selectedProject.details?.problemSolution && (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">
-                  臾몄젣 ?뺤쓽 & ?닿껐 ?꾨왂
+                  문제 정의 & 해결 전략
                 </h3>
                 <div className="project-ps-grid">
                   <div className="project-ps-card">
@@ -367,10 +662,10 @@ export default function StartupProject() {
                 </div>
               </section>
             )}
-            {selectedProject.details?.strategySteps?.length ? (
+            {!isMuscleUp && selectedProject.details?.strategySteps?.length ? (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">
-                  MuscleUp???닿껐 ?꾨왂
+                  득근득근 해결 전략
                 </h3>
                 <div className="project-strategy-list">
                   {selectedProject.details.strategySteps.map((step, i) => (
@@ -401,7 +696,26 @@ export default function StartupProject() {
                 </div>
               </section>
             ) : null}
-            {selectedProject.details?.problemGoal?.length ? (
+            {isMuscleUp ? (
+              <section className="project-modal-section">
+                <h3 className="project-modal-section-title">
+                  핵심 카드 요약
+                </h3>
+                <div className="project-detail-card-grid">
+                  {buildMuscleUpCards(selectedProject.details).map((card, i) => (
+                    <DetailCard
+                      key={i}
+                      badge={card.badge}
+                      title={card.title}
+                      bullets={[...card.bullets, ...(card.extra || [])]}
+                      proof={card.proof}
+                      onViewProof={openLightbox}
+                    />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+            {!isMuscleUp && selectedProject.details?.problemGoal?.length ? (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">Problem & Goal</h3>
                 <ul className="project-modal-list">
@@ -413,7 +727,7 @@ export default function StartupProject() {
                 </ul>
               </section>
             ) : null}
-            {selectedProject.details?.architecture?.length ? (
+            {!isMuscleUp && selectedProject.details?.architecture?.length ? (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">Architecture</h3>
                 <ul className="project-modal-list">
@@ -425,7 +739,7 @@ export default function StartupProject() {
                 </ul>
               </section>
             ) : null}
-            {selectedProject.details?.authSecurity?.length ? (
+            {!isMuscleUp && selectedProject.details?.authSecurity?.length ? (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">Auth & Security</h3>
                 <ul className="project-modal-list">
@@ -437,7 +751,7 @@ export default function StartupProject() {
                 </ul>
               </section>
             ) : null}
-            {selectedProject.details?.role && (
+            {!isMuscleUp && selectedProject.details?.role && (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">Role</h3>
                 <p className="project-modal-paragraph">
@@ -445,7 +759,7 @@ export default function StartupProject() {
                 </p>
               </section>
             )}
-            {selectedProject.details?.highlights?.length ? (
+            {!isMuscleUp && selectedProject.details?.highlights?.length ? (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">Highlights</h3>
                 <ul className="project-modal-list">
@@ -457,7 +771,7 @@ export default function StartupProject() {
                 </ul>
               </section>
             ) : null}
-            {selectedProject.details?.coreFeatures?.length ? (
+            {!isMuscleUp && selectedProject.details?.coreFeatures?.length ? (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">Core Features</h3>
                 <ul className="project-modal-list">
@@ -469,31 +783,7 @@ export default function StartupProject() {
                 </ul>
               </section>
             ) : null}
-            {renderFeatureSection(
-              "득근득근 - 핵심 기능 (1/2)",
-              selectedProject.details?.coreFeatureShots
-            )}
-            {renderFeatureSection(
-              "득근득근 - 핵심 기능 (2/2)",
-              selectedProject.details?.coreFeatureShots2
-            )}
-            {renderFeatureSection(
-              "MySQL 스키마 설계",
-              selectedProject.details?.schemaDesignShots
-            )}
-            {renderFeatureSection(
-              "AWS 정적 배포 운영",
-              selectedProject.details?.awsDeploymentShots
-            )}
-            {renderFeatureSection(
-              "AWS 배포 - 운영 이슈 해결 & 설계 요약",
-              selectedProject.details?.awsIssueSummaryShots
-            )}
-            {renderFeatureSection(
-              "득근득근 - 주요 트러블슈팅",
-              selectedProject.details?.troubleshootingShots
-            )}
-            {selectedProject.details?.deployment?.length ? (
+            {!isMuscleUp && selectedProject.details?.deployment?.length ? (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">
                   Deployment & Troubleshooting
@@ -507,7 +797,52 @@ export default function StartupProject() {
                 </ul>
               </section>
             ) : null}
-            {selectedProject.details?.links?.length ? (
+            {isMuscleUp && (
+              <section className="project-modal-section">
+                <h3 className="project-modal-section-title">
+                  Tech + Links (Accordion)
+                </h3>
+                <Accordion title="Tech Stack">
+                  {selectedProject.details?.overview?.techStack?.length ? (
+                    <ul className="project-modal-list">
+                      {selectedProject.details.overview.techStack.map(
+                        (item, i) => (
+                          <li key={i} className="project-modal-list-item">
+                            {item}
+                          </li>
+                        )
+                      )}
+                    </ul>
+                  ) : (
+                    <p className="project-modal-paragraph">
+                      기술 스택 정보를 업데이트해 주세요.
+                    </p>
+                  )}
+                </Accordion>
+                <Accordion title="Links">
+                  {selectedProject.details?.overview?.links?.length ? (
+                    <div className="project-modal-links">
+                      {selectedProject.details.overview.links.map((link, i) => (
+                        <a
+                          key={i}
+                          className="project-modal-link"
+                          href={link.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {link.name}
+                        </a>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="project-modal-paragraph">
+                      링크 정보를 업데이트해 주세요.
+                    </p>
+                  )}
+                </Accordion>
+              </section>
+            )}
+            {!isMuscleUp && selectedProject.details?.links?.length ? (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">Links</h3>
                 <div className="project-modal-links">
@@ -531,6 +866,15 @@ export default function StartupProject() {
     </>
   );
 }
+
+
+
+
+
+
+
+
+
 
 
 
