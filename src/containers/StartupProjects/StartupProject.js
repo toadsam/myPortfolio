@@ -349,6 +349,55 @@ export default function StartupProject() {
     </section>
   );
 
+  const renderMuscleUpIntro = () => (
+    <section className="project-modal-section muscleup-intro">
+      <h3 className="project-modal-section-title">What is MuscleUp?</h3>
+      <p className="muscleup-intro-subtitle">
+        운동 기록·커뮤니티·AI 코치를 하나의 흐름으로 연결한 실서비스
+      </p>
+      <div className="muscleup-intro-grid">
+        <div className="muscleup-intro-text">
+          <div className="muscleup-highlight">
+            운동 기록 + 커뮤니티 + AI 코치를 한 흐름으로 묶은 실서비스
+          </div>
+          <div className="muscleup-intro-lines">
+            <p>
+              <strong>Problem:</strong> 루틴/기록 분산으로 “오늘 뭐 하지?”에서
+              멈춤 + 지속 동기 부족
+            </p>
+            <p>
+              <strong>Solution:</strong> AI 분석→4주 루틴 + 커뮤니티
+              공유/피드백
+            </p>
+            <p>
+              <strong>Outcome:</strong> 인증·보안·배포까지 고려한 풀스택
+              실서비스 구현
+            </p>
+          </div>
+          <div className="muscleup-flow">
+            <div className="muscleup-flow-item">⚡ AI 루틴 생성</div>
+            <div className="muscleup-flow-item">🤝 커뮤니티 공유/동기부여</div>
+            <div className="muscleup-flow-item">✅ 초보자 UX로 진입장벽 최소화</div>
+          </div>
+        </div>
+        <div className="muscleup-intro-media">
+          <div className="muscleup-intro-image-card">
+            <img src={heroProofImage} alt="서비스 메인 화면" />
+          </div>
+          <div className="muscleup-intro-image-card">
+            <img
+              src={require("../../assets/images/saayaHealthLogo.webp")}
+              alt="AI/커뮤니티 화면"
+            />
+          </div>
+          <div className="muscleup-proof-caption">
+            서비스 메인/AI/커뮤니티 화면
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
   const renderMuscleUpCard = card => {
     const proofItem = card.proof?.[0];
     const description = (
@@ -722,6 +771,7 @@ export default function StartupProject() {
             )}
             {isMuscleUp && renderMuscleUpSummary()}
             {isMuscleUp && renderMuscleUpHeroProof()}
+            {isMuscleUp && renderMuscleUpIntro()}
             {!isMuscleUp && selectedProject.details?.summary && (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">Summary</h3>
