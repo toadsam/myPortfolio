@@ -127,7 +127,7 @@ export default function StartupProject() {
         <ul className="project-detail-card-list">
           {bullets.map((item, i) => (
             <li key={i} className="project-detail-card-item">
-              {i === 0 ? <strong>{item}</strong> : item}
+              {item}
             </li>
           ))}
         </ul>
@@ -244,61 +244,75 @@ export default function StartupProject() {
     }
   };
 
-  const buildMuscleUpCards = details => {
+  const buildMuscleUpCards = () => {
     return [
       {
-        badge: <Badge icon="⭐" label="인증/보안" tone="star" />,
+        badge: <Badge icon="⭐" label="Core Design" tone="star" />,
+        keyPoint: "KEY POINT",
         title: "JWT 이중 쿠키 + Rotation",
         bullets: [
-          "Refresh Token Rotation으로 탈취 토큰 재사용을 차단",
-          "Access(15m)/Refresh(14d) 분리 + Refresh DB 저장 + 재발급 시 기존 Refresh 즉시 폐기",
-          "HttpOnly 쿠키 + Role 기반 보호로 세션 안정성과 보안 강화"
+          <>
+            Refresh Token <strong>Rotation</strong>으로 탈취 토큰 재사용을
+            차단
+          </>,
+          <>
+            <strong>Access(15m)</strong>/<strong>Refresh(14d)</strong> 분리
+            + Refresh DB 저장 + 재발급 시 기존 Refresh 즉시 폐기
+          </>,
+          <>
+            <strong>HttpOnly</strong> 쿠키 + <strong>Role</strong> 기반
+            보호로 세션 안정성과 보안 강화
+          </>
         ],
+        highlight: "Rotation으로 탈취 토큰 재사용을 차단",
         proof: [proofImages.jwt],
-        extra: [
-          "Threat: 로컬스토리지 토큰 XSS 취약",
-          "Control: 기존 토큰 폐기 + 신규 저장"
-        ]
+        layout: "hero"
       },
       {
-        badge: <Badge icon="⭐" label="AI 코치" tone="star" />,
+        badge: <Badge icon="⭐" label="Core Design" tone="star" />,
+        keyPoint: "KEY POINT",
         title: "상태 기반 AI 코치",
         bullets: [
           "단순 챗봇이 아닌 ‘상태 기반 AI 코치’로 반복 사용 흐름 구현",
-          "Flow: analyze → plan → chat, 대화 히스토리 DB 저장 + 공유 상태 관리",
+          <>
+            Flow: <strong>analyze → plan → chat</strong>, 대화 히스토리 DB
+            저장 + 공유 상태 관리
+          </>,
           "사용자 맥락 유지로 루틴 수정/재생성이 가능한 제품 형태"
         ],
+        highlight: "analyze → plan → chat 흐름을 상태로 관리",
         proof: [proofImages.ai],
-        extra: [
-          "/ai/analyze, /ai/plan, /ai/chat 분리 이유",
-          "share/unshare 상태 저장"
-        ]
+        layout: "row-reverse"
       },
       {
-        badge: <Badge icon="✅" label="DB/스키마" tone="check" />,
+        badge: <Badge icon="✅" label="Outcome" tone="check" />,
         title: "도메인 분리 ERD",
         bullets: [
-          "사용자/커뮤니티/AI/로그 도메인 분리로 확장 가능한 스키마",
+          <>
+            사용자/커뮤니티/AI/로그 <strong>도메인 분리</strong>로 확장 가능한
+            스키마
+          </>,
           "FK 기반 무결성 + 조회 중심 인덱스/페이지네이션 고려",
           "기능 확장 시 충돌 최소화, 핵심 행동 테이블 중심 운영"
         ],
+        highlight: "도메인 분리로 확장 가능한 스키마 확보",
         proof: [proofImages.erd],
-        extra: ["Domain split 이유", "Performance 고려 포인트"]
+        layout: "split"
       },
       {
-        badge: <Badge icon="🔥" label="배포/운영" tone="fire" />,
+        badge: <Badge icon="🔥" label="Ops & Issue" tone="fire" />,
         title: "AWS 운영 이슈 해결",
         bullets: [
           "CloudFront+S3 HTTPS 배포를 운영하며 장애 이슈를 재현-해결-검증",
-          "HTTPS 통일(Mixed Content 차단) + CORS allowlist/credentials로 쿠키 인증 유지",
+          <>
+            <strong>HTTPS</strong> 통일(Mixed Content 차단) +{" "}
+            <strong>CORS allowlist/credentials</strong>로 쿠키 인증 유지
+          </>,
           "배포 반영/보안/세션 이슈를 운영 관점에서 안정화"
         ],
+        highlight: "운영 이슈를 재현-해결-검증",
         proof: [proofImages.aws],
-        extra: [
-          "Issue 1: ACM us-east-1",
-          "Issue 2: 캐시 미반영 → Invalidation",
-          "CORS: credentials true + allowlist"
-        ]
+        layout: "row"
       }
     ];
   };
@@ -334,6 +348,93 @@ export default function StartupProject() {
       </div>
     </section>
   );
+
+  const renderMuscleUpCard = card => {
+    const proofItem = card.proof?.[0];
+    const description = (
+      <>
+        <div className="muscleup-card-header">
+          {card.badge}
+          {card.keyPoint && (
+            <span className="muscleup-keypoint">{card.keyPoint}</span>
+          )}
+        </div>
+        <h4 className="muscleup-card-title">{card.title}</h4>
+        {card.highlight && (
+          <div className="muscleup-highlight">{card.highlight}</div>
+        )}
+        <ul className="muscleup-card-list">
+          {card.bullets.map((item, i) => (
+            <li key={i} className="muscleup-card-item">
+              {i === 0 ? <strong>{item}</strong> : item}
+            </li>
+          ))}
+        </ul>
+      </>
+    );
+
+    if (card.layout === "hero") {
+      return (
+        <section className="muscleup-section muscleup-hero">
+          <div className="muscleup-desc">{description}</div>
+          {proofItem && (
+            <div className="muscleup-proof">
+              <div className="muscleup-proof-label">Proof</div>
+              <ProofThumb
+                item={proofItem}
+                onClick={() => openLightbox(card.proof, 0)}
+              />
+              <div className="muscleup-proof-caption">
+                {proofItem.caption}
+              </div>
+            </div>
+          )}
+        </section>
+      );
+    }
+
+    if (card.layout === "split") {
+      return (
+        <section className="muscleup-section muscleup-split">
+          <div className="muscleup-desc">{description}</div>
+          {proofItem && (
+            <div className="muscleup-proof-card">
+              <div className="muscleup-proof-label">Proof</div>
+              <ProofThumb
+                item={proofItem}
+                onClick={() => openLightbox(card.proof, 0)}
+              />
+              <div className="muscleup-proof-caption">
+                {proofItem.caption}
+              </div>
+            </div>
+          )}
+        </section>
+      );
+    }
+
+    return (
+      <section
+        className={`muscleup-section muscleup-row${
+          card.layout === "row-reverse" ? " reverse" : ""
+        }`}
+      >
+        <div className="muscleup-desc">{description}</div>
+        {proofItem && (
+          <div className="muscleup-proof">
+            <div className="muscleup-proof-label">Proof</div>
+            <ProofThumb
+              item={proofItem}
+              onClick={() => openLightbox(card.proof, 0)}
+            />
+            <div className="muscleup-proof-caption">
+              {proofItem.caption}
+            </div>
+          </div>
+        )}
+      </section>
+    );
+  };
 
   return (
     <>
@@ -701,16 +802,9 @@ export default function StartupProject() {
                 <h3 className="project-modal-section-title">
                   핵심 카드 요약
                 </h3>
-                <div className="project-detail-card-grid">
-                  {buildMuscleUpCards(selectedProject.details).map((card, i) => (
-                    <DetailCard
-                      key={i}
-                      badge={card.badge}
-                      title={card.title}
-                      bullets={[...card.bullets, ...(card.extra || [])]}
-                      proof={card.proof}
-                      onViewProof={openLightbox}
-                    />
+                <div className="muscleup-core-stack">
+                  {buildMuscleUpCards().map((card, i) => (
+                    <div key={i}>{renderMuscleUpCard(card)}</div>
                   ))}
                 </div>
               </section>
@@ -866,6 +960,13 @@ export default function StartupProject() {
     </>
   );
 }
+
+
+
+
+
+
+
 
 
 

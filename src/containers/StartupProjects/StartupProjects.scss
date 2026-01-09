@@ -518,6 +518,135 @@
   margin-top: 0.75rem;
 }
 
+.muscleup-core-stack {
+  display: grid;
+  gap: 2rem;
+}
+
+.muscleup-section {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.muscleup-row {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.muscleup-row.reverse {
+  grid-template-columns: 0.9fr 1.1fr;
+}
+
+.muscleup-hero {
+  padding: 1.5rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #1a2030;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.muscleup-hero .muscleup-desc,
+.muscleup-hero .muscleup-proof {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.muscleup-split {
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.muscleup-desc {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #1a2030;
+}
+
+.muscleup-card-header {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.muscleup-keypoint {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+  color: $textColorDark;
+}
+
+.muscleup-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.muscleup-highlight {
+  font-size: 15px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 0, 0.18);
+  color: $textColorDark;
+  display: inline-flex;
+  width: fit-content;
+}
+
+.muscleup-card-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.muscleup-card-item {
+  margin-bottom: 0.6rem;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.muscleup-proof,
+.muscleup-proof-card {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #151a24;
+}
+
+.muscleup-proof-card {
+  padding: 1.25rem;
+}
+
+.muscleup-proof-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: $textColorDark;
+  text-transform: uppercase;
+}
+
+.muscleup-proof-caption {
+  font-size: 13px;
+  color: $subTitle;
+}
+
+@media (max-width: 900px) {
+  .muscleup-row,
+  .muscleup-row.reverse,
+  .muscleup-split {
+    grid-template-columns: 1fr;
+  }
+}
+
 .project-ps-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
