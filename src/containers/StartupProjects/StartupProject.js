@@ -432,60 +432,29 @@ export default function StartupProject() {
     </section>
   );
 
-  const QuickSummarySection = () => (
-    <section className="project-modal-section">
-      <div className="muscleup-summary-box muscleup-summary-wide">
-        <h3 className="project-modal-section-title">Quick Summary</h3>
-        <div className="muscleup-summary-row">
-          <div className="muscleup-summary-item">
-            <span className="muscleup-summary-icon">JWT</span>
-            <div>
-              <div className="muscleup-summary-title">JWT Rotation</div>
-              <div className="muscleup-summary-desc">
-                탈취 Refresh 재사용 차단
+  const QuickSummarySection = ({items}) => {
+    if (!items?.length) {
+      return null;
+    }
+    return (
+      <section className="project-modal-section">
+        <div className="muscleup-summary-box muscleup-summary-wide">
+          <h3 className="project-modal-section-title">Quick Summary</h3>
+          <div className="muscleup-summary-row">
+            {items.map((item, index) => (
+              <div key={index} className="muscleup-summary-item">
+                <span className="muscleup-summary-icon">{item.icon}</span>
+                <div>
+                  <div className="muscleup-summary-title">{item.title}</div>
+                  <div className="muscleup-summary-desc">{item.desc}</div>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className="muscleup-summary-item">
-            <span className="muscleup-summary-icon">AI</span>
-            <div>
-              <div className="muscleup-summary-title">상태 기반 AI 코칭</div>
-              <div className="muscleup-summary-desc">
-                히스토리 저장으로 맥락 유지
-              </div>
-            </div>
-          </div>
-          <div className="muscleup-summary-item">
-            <span className="muscleup-summary-icon">AWS</span>
-            <div>
-              <div className="muscleup-summary-title">AWS 실서비스 운영</div>
-              <div className="muscleup-summary-desc">
-                HTTPS/CORS/ACM 이슈 해결
-              </div>
-            </div>
-          </div>
-          <div className="muscleup-summary-item">
-            <span className="muscleup-summary-icon">ERD</span>
-            <div>
-              <div className="muscleup-summary-title">도메인 분리 설계</div>
-              <div className="muscleup-summary-desc">
-                User / Community / AI 확장 구조
-              </div>
-            </div>
-          </div>
-          <div className="muscleup-summary-item">
-            <span className="muscleup-summary-icon">OPS</span>
-            <div>
-              <div className="muscleup-summary-title">운영 안정성 확보</div>
-              <div className="muscleup-summary-desc">
-                배포·인증 이슈 재현-해결-검증
-              </div>
-            </div>
+            ))}
           </div>
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  };
 
   const SecuritySection = () => (
     <ProofSection
@@ -596,6 +565,180 @@ export default function StartupProject() {
     />
   );
 
+  const muscleupQuickSummaryItems = [
+    {
+      icon: "JWT",
+      title: "JWT Rotation",
+      desc: "탈취 Refresh 재사용 차단"
+    },
+    {
+      icon: "AI",
+      title: "상태 기반 AI 코칭",
+      desc: "히스토리 저장으로 맥락 유지"
+    },
+    {
+      icon: "AWS",
+      title: "AWS 실서비스 운영",
+      desc: "HTTPS/CORS/ACM 이슈 해결"
+    },
+    {
+      icon: "ERD",
+      title: "도메인 분리 설계",
+      desc: "User / Community / AI 확장 구조"
+    },
+    {
+      icon: "OPS",
+      title: "운영 안정성 확보",
+      desc: "배포·인증 이슈 재현-해결-검증"
+    }
+  ];
+
+  const buildQuickSummaryItems = (details, project) => {
+    if (!details) {
+      return [];
+    }
+    const items = [];
+    const addItem = (icon, title, desc) => {
+      if (title && desc) {
+        items.push({icon, title, desc});
+      }
+    };
+    if (details.highlights?.length) {
+      addItem("KEY", "핵심 설계", details.highlights[0]);
+    }
+    if (details.coreFeatures?.length) {
+      addItem("FEAT", "핵심 기능", details.coreFeatures[0]);
+    }
+    if (details.authSecurity?.length) {
+      addItem("SEC", "보안/인증", details.authSecurity[0]);
+    }
+    if (details.deployment?.length) {
+      addItem("OPS", "운영 이슈", details.deployment[0]);
+    }
+    if (details.role) {
+      addItem("ROLE", "담당 범위", details.role);
+    }
+    if (!items.length && project?.projectDesc) {
+      addItem("INFO", "프로젝트 요약", project.projectDesc);
+    }
+    return items.slice(0, 5);
+  };
+
+  const buildIntroLines = (details, project) => {
+    const fallbackSummary = details?.summary || project?.projectDesc || "";
+    const problem =
+      details?.problemSolution?.problem?.[0] || fallbackSummary;
+    const solution =
+      details?.problemSolution?.solution ||
+      details?.highlights?.[0] ||
+      details?.coreFeatures?.[0] ||
+      "";
+    const outcome =
+      details?.problemSolution?.outcome ||
+      details?.role ||
+      details?.deployment?.[0] ||
+      "";
+    return {problem, solution, outcome};
+  };
+
+  const buildCoreDesignItems = details => {
+    if (!details) {
+      return [];
+    }
+    const items = [];
+    const stackSnippet = details.stack
+      ? details.stack.split(",").slice(0, 4).join(" · ")
+      : "";
+    const summary = details.summary || "";
+    const source = [
+      ...(details.highlights || []),
+      ...(details.coreFeatures || []),
+      ...(details.authSecurity || []),
+      ...(details.architecture || [])
+    ];
+    source.forEach(entry => {
+      if (!entry) {
+        return;
+      }
+      items.push({
+        title: entry,
+        oneLiner: entry,
+        how: stackSnippet ? `How: ${stackSnippet}` : "",
+        result: summary ? `Result: ${summary}` : ""
+      });
+    });
+    return items.slice(0, 4);
+  };
+
+  const buildOpsItem = details => {
+    if (!details?.deployment?.length) {
+      return null;
+    }
+    const [first, second, third] = details.deployment;
+    return {
+      oneLiner: first,
+      how: second,
+      result: third
+    };
+  };
+
+  const ProjectIntroSection = ({project}) => {
+    if (!project) {
+      return null;
+    }
+    const details = project.details || {};
+    const {problem, solution, outcome} = buildIntroLines(details, project);
+    const image =
+      details.overview?.image ||
+      project.image ||
+      require("../../assets/images/saayaHealthLogo.webp");
+    return (
+      <section className="project-modal-section muscleup-intro">
+        <div className="muscleup-intro-grid">
+          <div className="muscleup-intro-copy">
+            <h3 className="muscleup-intro-title">What is This Project?</h3>
+            {details.summary ? (
+              <p className="muscleup-intro-hero">
+                <HighlightText>{details.summary}</HighlightText>
+              </p>
+            ) : null}
+            <div className="muscleup-intro-points">
+              {problem ? (
+                <div className="muscleup-intro-point">
+                  <span className="muscleup-intro-icon">P</span>
+                  <span>
+                    <strong>Problem</strong> {problem}
+                  </span>
+                </div>
+              ) : null}
+              {solution ? (
+                <div className="muscleup-intro-point">
+                  <span className="muscleup-intro-icon">S</span>
+                  <span>
+                    <strong>Solution</strong> {solution}
+                  </span>
+                </div>
+              ) : null}
+              {outcome ? (
+                <div className="muscleup-intro-point">
+                  <span className="muscleup-intro-icon">O</span>
+                  <span>
+                    <strong>Outcome</strong> {outcome}
+                  </span>
+                </div>
+              ) : null}
+            </div>
+          </div>
+          <div className="muscleup-intro-media">
+            <img src={image} alt={`${project.projectName} 화면`} />
+            <div className="muscleup-proof-caption">
+              대표 화면/결과물
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  };
   const normalizeCategory = label => {
     const key = label.toLowerCase().trim();
     if (key.includes("front")) return "Frontend";
@@ -614,15 +757,24 @@ export default function StartupProject() {
     "AI"
   ];
 
-  const buildTechCategories = techStack => {
-    if (!techStack?.length) {
+  const buildTechCategories = (techStack, fallbackStack) => {
+    const stackList = Array.isArray(techStack) ? techStack : [];
+    if (!stackList.length) {
+      if (fallbackStack) {
+        return [
+          {
+            category: "Frontend",
+            items: [fallbackStack]
+          }
+        ];
+      }
       return [];
     }
     const buckets = techCategoryOrder.reduce((acc, key) => {
       acc[key] = [];
       return acc;
     }, {});
-    techStack.forEach(item => {
+    stackList.forEach(item => {
       const parts = item.split(":");
       const label = parts[0] ? parts[0].trim() : "";
       const category = normalizeCategory(label);
@@ -646,6 +798,42 @@ export default function StartupProject() {
     Infrastructure: "INF",
     AI: "AI"
   };
+
+  const buildGenericBullets = (item, keyPrefix) => {
+    const bullets = [
+      <span className="muscleup-one-liner" key={`${keyPrefix}-one`}>
+        <strong>One-liner:</strong> {item.oneLiner}
+      </span>
+    ];
+    if (item.how) {
+      bullets.push(item.how);
+    }
+    if (item.result) {
+      bullets.push(item.result);
+    }
+    return bullets;
+  };
+
+  const quickSummaryItems = isMuscleUp
+    ? muscleupQuickSummaryItems
+    : buildQuickSummaryItems(selectedProject?.details, selectedProject);
+  const coreDesignItems = !isMuscleUp
+    ? buildCoreDesignItems(selectedProject?.details)
+    : [];
+  const opsItem = !isMuscleUp ? buildOpsItem(selectedProject?.details) : null;
+  const genericProofImage =
+    selectedProject?.details?.overview?.image ||
+    selectedProject?.image ||
+    require("../../assets/images/saayaHealthLogo.webp");
+  const techCategories = buildTechCategories(
+    selectedProject?.details?.overview?.techStack,
+    selectedProject?.details?.stack
+  );
+  const linkItems =
+    selectedProject?.details?.overview?.links ||
+    selectedProject?.details?.links ||
+    selectedProject?.footerLink ||
+    [];
 
   return (
     <>
@@ -931,9 +1119,15 @@ export default function StartupProject() {
                 )}
               </>
             )}
-            {isMuscleUp && <QuickSummarySection />}
-            {isMuscleUp && <ServiceIntroSection />}
-            {isMuscleUp && (
+            {quickSummaryItems.length ? (
+              <QuickSummarySection items={quickSummaryItems} />
+            ) : null}
+            {isMuscleUp ? (
+              <ServiceIntroSection />
+            ) : (
+              <ProjectIntroSection project={selectedProject} />
+            )}
+            {isMuscleUp ? (
               <>
                 <SectionHeading
                   icon="*"
@@ -950,240 +1144,119 @@ export default function StartupProject() {
                 />
                 <AwsSection />
               </>
-            )}
-            {!isMuscleUp && selectedProject.details?.summary && (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">Summary</h3>
-                <p className="project-modal-paragraph">
-                  {selectedProject.details.summary}
-                </p>
-              </section>
-            )}
-            {!isMuscleUp && selectedProject.details?.problemSolution && (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">
-                  문제 정의 & 해결 전략
-                </h3>
-                <div className="project-ps-grid">
-                  <div className="project-ps-card">
-                    <h4 className="project-ps-title">Problem</h4>
-                    <ul className="project-ps-list">
-                      {selectedProject.details.problemSolution.problem.map(
-                        (item, i) => (
-                          <li key={i} className="project-ps-list-item">
-                            {item}
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  </div>
-                  <div className="project-ps-card">
-                    <h4 className="project-ps-title">Solution</h4>
-                    <p className="project-ps-text">
-                      {selectedProject.details.problemSolution.solution}
-                    </p>
-                  </div>
-                </div>
-                <div className="project-ps-card project-ps-outcome">
-                  <h4 className="project-ps-title">Outcome</h4>
-                  <p className="project-ps-text">
-                    {selectedProject.details.problemSolution.outcome}
-                  </p>
-                </div>
-              </section>
-            )}
-            {!isMuscleUp && selectedProject.details?.strategySteps?.length ? (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">
-                  득근득근 해결 전략
-                </h3>
-                <div className="project-strategy-list">
-                  {selectedProject.details.strategySteps.map((step, i) => (
-                    <div key={i} className="project-strategy-item">
-                      <div className="project-strategy-text">
-                        <div className="project-strategy-step">
-                          {step.step}
-                        </div>
-                        <h4 className="project-strategy-title">
-                          {step.title}
-                        </h4>
-                        <p className="project-strategy-desc">
-                          {step.description}
-                        </p>
-                      </div>
-                      <div className="project-strategy-media">
-                        <img
-                          src={step.image}
-                          alt={step.title}
-                          className="project-strategy-image"
+            ) : (
+              <>
+                {coreDesignItems.length ? (
+                  <>
+                    <SectionHeading
+                      icon="*"
+                      title="Core Design"
+                      subtitle="설계 판단과 구조적 증거"
+                    />
+                    {coreDesignItems.map((item, index) => (
+                      <ProofSection
+                        key={`${item.title}-${index}`}
+                        pattern={index % 2 === 0 ? "A" : "B"}
+                        text={
+                          <TextBlock
+                            badge={
+                              <Badge
+                                icon="*"
+                                label="Core Design"
+                                tone="star"
+                              />
+                            }
+                            title={item.title}
+                            bullets={buildGenericBullets(item, `core-${index}`)}
+                          />
+                        }
+                        proof={{
+                          src: genericProofImage,
+                          alt: `${selectedProject.projectName} proof`
+                        }}
+                        caption={`${item.title} 증명`}
+                      />
+                    ))}
+                  </>
+                ) : null}
+                {opsItem ? (
+                  <>
+                    <SectionHeading
+                      icon="!"
+                      title="Ops & Issue"
+                      subtitle="운영 이슈 대응 요약"
+                    />
+                    <ProofSection
+                      pattern="B"
+                      text={
+                        <TextBlock
+                          badge={<Badge icon="!" label="Ops & Issue" tone="fire" />}
+                          title="운영 이슈 대응"
+                          bullets={buildGenericBullets(opsItem, "ops")}
+                          variant="ops"
                         />
-                        <div className="project-strategy-caption">
-                          {step.caption}
+                      }
+                      proof={{
+                        src: genericProofImage,
+                        alt: `${selectedProject.projectName} ops proof`
+                      }}
+                      caption="운영 이슈 증명"
+                    />
+                  </>
+                ) : null}
+              </>
+            )}
+            <section className="project-modal-section">
+              <h3 className="project-modal-section-title">
+                Tech + Links (Accordion)
+              </h3>
+              <Accordion title="Tech Stack">
+                {techCategories.length ? (
+                  <div className="muscleup-tech-grid">
+                    {techCategories.map(group => (
+                      <div key={group.category} className="muscleup-tech-card">
+                        <div className="muscleup-tech-header">
+                          <span className="muscleup-tech-icon">
+                            {techCategoryIcons[group.category]}
+                          </span>
+                          <span className="muscleup-tech-title">
+                            {group.category}
+                          </span>
+                        </div>
+                        <div className="muscleup-tech-items">
+                          {group.items.join(" · ")}
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            ) : null}
-            {!isMuscleUp && selectedProject.details?.problemGoal?.length ? (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">Problem & Goal</h3>
-                <ul className="project-modal-list">
-                  {selectedProject.details.problemGoal.map((item, i) => (
-                    <li key={i} className="project-modal-list-item">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-            {!isMuscleUp && selectedProject.details?.architecture?.length ? (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">Architecture</h3>
-                <ul className="project-modal-list">
-                  {selectedProject.details.architecture.map((item, i) => (
-                    <li key={i} className="project-modal-list-item">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-            {!isMuscleUp && selectedProject.details?.authSecurity?.length ? (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">Auth & Security</h3>
-                <ul className="project-modal-list">
-                  {selectedProject.details.authSecurity.map((item, i) => (
-                    <li key={i} className="project-modal-list-item">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-            {!isMuscleUp && selectedProject.details?.role && (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">Role</h3>
-                <p className="project-modal-paragraph">
-                  {selectedProject.details.role}
-                </p>
-              </section>
-            )}
-            {!isMuscleUp && selectedProject.details?.highlights?.length ? (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">Highlights</h3>
-                <ul className="project-modal-list">
-                  {selectedProject.details.highlights.map((item, i) => (
-                    <li key={i} className="project-modal-list-item">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-            {!isMuscleUp && selectedProject.details?.coreFeatures?.length ? (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">Core Features</h3>
-                <ul className="project-modal-list">
-                  {selectedProject.details.coreFeatures.map((item, i) => (
-                    <li key={i} className="project-modal-list-item">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-            {!isMuscleUp && selectedProject.details?.deployment?.length ? (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">
-                  Deployment & Troubleshooting
-                </h3>
-                <ul className="project-modal-list">
-                  {selectedProject.details.deployment.map((item, i) => (
-                    <li key={i} className="project-modal-list-item">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ) : null}
-            {isMuscleUp && (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">
-                  Tech + Links (Accordion)
-                </h3>
-                <Accordion title="Tech Stack">
-                  {selectedProject.details?.overview?.techStack?.length ? (
-                    <div className="muscleup-tech-grid">
-                      {buildTechCategories(
-                        selectedProject.details.overview.techStack
-                      ).map(group => (
-                        <div
-                          key={group.category}
-                          className="muscleup-tech-card"
-                        >
-                          <div className="muscleup-tech-header">
-                            <span className="muscleup-tech-icon">
-                              {techCategoryIcons[group.category]}
-                            </span>
-                            <span className="muscleup-tech-title">
-                              {group.category}
-                            </span>
-                          </div>
-                          <div className="muscleup-tech-items">
-                            {group.items.join(" · ")}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="project-modal-paragraph">
-                      기술 스택 정보를 업데이트해 주세요.
-                    </p>
-                  )}
-                </Accordion>
-                <Accordion title="Links">
-                  {selectedProject.details?.overview?.links?.length ? (
-                    <div className="project-modal-links">
-                      {selectedProject.details.overview.links.map((link, i) => (
-                        <a
-                          key={i}
-                          className="project-modal-link"
-                          href={link.url}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {link.name}
-                        </a>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="project-modal-paragraph">
-                      링크 정보를 업데이트해 주세요.
-                    </p>
-                  )}
-                </Accordion>
-              </section>
-            )}
-            {!isMuscleUp && selectedProject.details?.links?.length ? (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">Links</h3>
-                <div className="project-modal-links">
-                  {selectedProject.details.links.map((link, i) => (
-                    <a
-                      key={i}
-                      className="project-modal-link"
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {link.name}
-                    </a>
-                  ))}
-                </div>
-              </section>
-            ) : null}
+                    ))}
+                  </div>
+                ) : (
+                  <p className="project-modal-paragraph">
+                    기술 스택 정보를 업데이트해 주세요.
+                  </p>
+                )}
+              </Accordion>
+              <Accordion title="Links">
+                {linkItems.length ? (
+                  <div className="project-modal-links">
+                    {linkItems.map((link, i) => (
+                      <a
+                        key={i}
+                        className="project-modal-link"
+                        href={link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {link.name}
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="project-modal-paragraph">
+                    링크 정보를 업데이트해 주세요.
+                  </p>
+                )}
+              </Accordion>
+            </section>
           </div>
         </div>
       )}

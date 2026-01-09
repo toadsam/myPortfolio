@@ -1,5 +1,27 @@
 @import "../../_globalColor";
 
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .card-image {
   max-width: 100%;
   height: auto;
@@ -72,6 +94,24 @@
   padding: 0.5rem 0.9rem;
   border-radius: 999px;
   cursor: pointer;
+  opacity: 0.45;
+  transition: opacity 0.2s ease;
+}
+
+.experience-card,
+.experience-card-dark {
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.experience-card:hover,
+.experience-card-dark:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+}
+
+.experience-card:hover .project-detail-button,
+.experience-card-dark:hover .project-detail-button {
+  opacity: 1;
 }
 
 .project-modal-overlay {
@@ -94,6 +134,9 @@
   border-radius: 16px;
   padding: 2.25rem;
   position: relative;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: modalEnter 0.5s ease-out forwards;
 }
 
 .project-modal-close {
@@ -515,6 +558,15 @@
 
 .project-accordion-body {
   margin-top: 0.75rem;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.project-accordion[open] .project-accordion-body {
+  max-height: 800px;
+  opacity: 1;
 }
 
 .muscleup-tech-grid {
@@ -796,6 +848,19 @@
   height: 100%;
 }
 
+.muscleup-text-block,
+.muscleup-proof-block {
+  transition: transform 0.22s ease, box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.muscleup-text-block:hover,
+.muscleup-proof-block:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.32);
+  border-color: rgba(202, 255, 92, 0.28);
+}
+
 .muscleup-text-block-ops {
   background: #1b1e2a;
   border-color: rgba(255, 148, 88, 0.3);
@@ -970,6 +1035,7 @@
   justify-content: center;
   align-items: center;
   flex: 1;
+  position: relative;
 }
 
 .muscleup-proof-thumb img {
@@ -981,11 +1047,25 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   object-fit: contain;
   display: block;
-  transition: filter 0.2s ease;
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .muscleup-proof-thumb:hover img {
-  filter: brightness(1.05);
+  transform: scale(1.02);
+  filter: brightness(1.04);
+}
+
+.muscleup-proof-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.muscleup-proof-thumb:hover::after {
+  opacity: 1;
 }
 
 .muscleup-proof-caption {
@@ -1051,6 +1131,29 @@
   background: rgba(21, 26, 36, 0.2);
   font-size: 13px;
   color: $subTitle;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: fadeUp 0.4s ease-out forwards;
+}
+
+.muscleup-summary-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.muscleup-summary-item:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.muscleup-summary-item:nth-child(3) {
+  animation-delay: 0.19s;
+}
+
+.muscleup-summary-item:nth-child(4) {
+  animation-delay: 0.26s;
+}
+
+.muscleup-summary-item:nth-child(5) {
+  animation-delay: 0.33s;
 }
 
 .muscleup-summary-icon {
@@ -1351,6 +1454,34 @@
 
   .muscleup-tech-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-modal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .muscleup-summary-item {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .muscleup-text-block,
+  .muscleup-proof-block,
+  .muscleup-proof-thumb img,
+  .experience-card,
+  .experience-card-dark {
+    transition: none;
+  }
+
+  .project-accordion-body {
+    transition: none;
+    max-height: none;
+    opacity: 1;
   }
 }
 
