@@ -143,10 +143,9 @@
 }
 
 .project-modal-section {
-  margin-top: 3rem;
-  margin-bottom: 3rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid $lightBorder1;
+  margin: 0 0 96px;
+  padding-top: 0;
+  border-top: none;
 }
 
 .project-modal-section-title {
@@ -518,74 +517,129 @@
   margin-top: 0.75rem;
 }
 
+.muscleup-tech-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.muscleup-tech-card {
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.muscleup-tech-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.muscleup-tech-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(202, 255, 92, 0.16);
+  color: #eaffb0;
+  text-transform: uppercase;
+}
+
+.muscleup-tech-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: $textColorDark;
+}
+
+.muscleup-tech-items {
+  color: $subTitle;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .muscleup-core-stack {
   display: grid;
   gap: 2rem;
 }
 
 .muscleup-intro {
-  padding: 2rem;
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: #151a24;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-}
-
-.muscleup-intro-subtitle {
-  margin: 0 0 1.5rem 0;
-  color: $subTitle;
-  font-size: 16px;
+  padding: 32px 28px;
+  background: linear-gradient(
+      150deg,
+      rgba(38, 48, 70, 0.92),
+      rgba(21, 26, 36, 0.96)
+    ),
+    #151a24;
+  border-radius: 20px;
 }
 
 .muscleup-intro-grid {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
-  gap: 1.5rem;
-  align-items: start;
+  gap: 2rem;
+  align-items: center;
 }
 
-.muscleup-intro-text {
+.muscleup-intro-copy {
   display: grid;
   gap: 1.25rem;
 }
 
-.muscleup-intro-lines p {
-  margin: 0 0 0.5rem 0;
-  line-height: 1.7;
-  font-size: 14px;
+.muscleup-intro-title {
+  margin: 0;
+  font-size: 24px;
 }
 
-.muscleup-flow {
+.muscleup-intro-hero {
+  margin: 0;
+  font-size: 16px;
+}
+
+.muscleup-intro-points {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.65rem;
+  color: $subTitle;
+  font-size: 14px;
 }
 
-.muscleup-flow-item {
-  padding: 0.5rem 0.75rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
-  font-size: 14px;
+.muscleup-intro-point {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 0.5rem;
+  align-items: start;
+}
+
+.muscleup-intro-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(202, 255, 92, 0.18);
+  color: #eaffb0;
 }
 
 .muscleup-intro-media {
   display: grid;
   gap: 0.75rem;
+  text-align: center;
 }
 
-.muscleup-intro-image-card {
+.muscleup-intro-media img {
+  width: 100%;
+  max-width: 70%;
+  margin: 0 auto;
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  background: #10151f;
-}
-
-.muscleup-intro-image-card img {
-  width: 100%;
-  aspect-ratio: 16 / 9;
   object-fit: cover;
-  display: block;
 }
 
 .muscleup-section {
@@ -713,9 +767,337 @@
     grid-template-columns: 1fr;
   }
 
+  .muscleup-summary-row {
+    grid-template-columns: 1fr;
+  }
+
+  .muscleup-intro-media img {
+    max-width: 100%;
+  }
+
+  .muscleup-proof-thumb img {
+    max-width: 100%;
+  }
+
   .muscleup-row,
   .muscleup-row.reverse,
   .muscleup-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+.muscleup-card-surface,
+.muscleup-proof-surface,
+.muscleup-text-block {
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #1a2030;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  height: 100%;
+}
+
+.muscleup-text-block-ops {
+  background: #1b1e2a;
+  border-color: rgba(255, 148, 88, 0.3);
+}
+
+.muscleup-card-surface-intro {
+  background: #1d2536;
+}
+
+.muscleup-card-surface,
+.muscleup-text-block {
+  padding: 28px 30px;
+}
+
+.muscleup-proof-surface {
+  padding: 18px;
+  background: #151a24;
+}
+
+.muscleup-proof-surface img {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: block;
+  object-fit: cover;
+}
+
+
+.muscleup-section {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 140px;
+}
+
+.muscleup-section-heading {
+  padding: 0;
+  margin-bottom: 56px;
+}
+
+.muscleup-section-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.muscleup-section-heading-icon {
+  font-size: 18px;
+}
+
+.muscleup-section-heading-title {
+  margin: 0;
+  font-size: 22px;
+}
+
+.muscleup-section-heading-subtitle {
+  margin: 0.35rem 0 0;
+  color: $subTitle;
+  font-size: 14px;
+}
+
+.muscleup-pattern-a,
+.muscleup-pattern-b,
+.muscleup-pattern-d {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 1.75rem;
+  align-items: stretch;
+}
+
+.muscleup-pattern-b {
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+}
+
+.muscleup-pattern-c {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.muscleup-highlight-text {
+  font-weight: 700;
+  font-size: 15px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: linear-gradient(
+    transparent 55%,
+    rgba(202, 255, 92, 0.4) 0
+  );
+  color: #eaffb0;
+}
+
+.muscleup-keyword {
+  font-weight: 700;
+  color: #caff5a;
+}
+
+.muscleup-one-liner {
+  font-weight: 700;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: linear-gradient(
+    transparent 55%,
+    rgba(202, 255, 92, 0.35) 0
+  );
+  color: #eaffb0;
+  display: inline-block;
+}
+
+.muscleup-card-header {
+  margin-bottom: 0.75rem;
+}
+
+.muscleup-card-title {
+  font-size: 20px;
+  margin-bottom: 0.5rem;
+}
+
+.muscleup-card-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.muscleup-card-item {
+  margin-bottom: 0.6rem;
+  line-height: 1.65;
+}
+
+.muscleup-chip-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.muscleup-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(180, 130, 255, 0.12);
+  font-size: 12px;
+}
+
+.muscleup-proof-block {
+  display: grid;
+  gap: 0.75rem;
+  padding: 22px 24px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #151a24;
+  height: 100%;
+}
+
+.muscleup-proof-block-large {
+  padding: 26px 28px;
+}
+
+.muscleup-proof-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: $textColorDark;
+}
+
+.muscleup-proof-thumb {
+  border: none;
+  padding: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  background: transparent;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.muscleup-proof-thumb img {
+  width: 100%;
+  max-width: 70%;
+  max-height: 360px;
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  object-fit: contain;
+  display: block;
+  transition: filter 0.2s ease;
+}
+
+.muscleup-proof-thumb:hover img {
+  filter: brightness(1.05);
+}
+
+.muscleup-proof-caption {
+  font-size: 13px;
+  color: $subTitle;
+}
+
+.muscleup-issue-list {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 13px;
+  color: $subTitle;
+}
+
+.muscleup-issue-item {
+  display: flex;
+  gap: 0.4rem;
+  align-items: baseline;
+}
+
+.muscleup-issue-label {
+  font-weight: 700;
+  margin-right: 0.4rem;
+  color: $textColorDark;
+}
+
+.muscleup-issue-text {
+  color: $subTitle;
+}
+
+.muscleup-summary-box {
+  padding: 18px 22px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(
+      150deg,
+      rgba(38, 48, 70, 0.92),
+      rgba(21, 26, 36, 0.96)
+    ),
+    #151a24;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.muscleup-summary-wide {
+  width: 100%;
+}
+
+.muscleup-summary-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+.muscleup-summary-item {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(21, 26, 36, 0.2);
+  font-size: 13px;
+  color: $subTitle;
+}
+
+.muscleup-summary-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 28px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(202, 255, 92, 0.16);
+  color: #eaffb0;
+  text-transform: uppercase;
+}
+
+.muscleup-summary-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: $textColorDark;
+}
+
+.muscleup-summary-desc {
+  font-size: 12px;
+  color: $subTitle;
+}
+
+.muscleup-summary-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  line-height: 1.65;
+}
+
+.muscleup-summary-list li {
+  margin-bottom: 0.45rem;
+}
+
+.project-hero-image {
+  min-height: 320px;
+  max-height: 420px;
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .muscleup-pattern-a,
+  .muscleup-pattern-b,
+  .muscleup-pattern-d {
     grid-template-columns: 1fr;
   }
 }
@@ -964,6 +1346,10 @@
   }
 
   .project-detail-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .muscleup-tech-grid {
     grid-template-columns: 1fr;
   }
 }

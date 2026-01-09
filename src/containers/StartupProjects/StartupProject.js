@@ -180,14 +180,14 @@ export default function StartupProject() {
                 type="button"
                 onClick={onPrev}
               >
-                ←
+                {"<"}
               </button>
               <button
                 className="project-lightbox-nav project-lightbox-next"
                 type="button"
                 onClick={onNext}
               >
-                →
+                {">"}
               </button>
             </>
           ) : null}
@@ -243,246 +243,408 @@ export default function StartupProject() {
       caption: "ACM us-east-1 + CloudFront Invalidation 및 CORS 설정"
     }
   };
+  const HighlightText = ({children}) => (
+    <span className="muscleup-highlight-text">{children}</span>
+  );
 
-  const buildMuscleUpCards = () => {
-    return [
-      {
-        badge: <Badge icon="⭐" label="Core Design" tone="star" />,
-        keyPoint: "KEY POINT",
-        title: "JWT 이중 쿠키 + Rotation",
-        bullets: [
-          <>
-            Refresh Token <strong>Rotation</strong>으로 탈취 토큰 재사용을
-            차단
-          </>,
-          <>
-            <strong>Access(15m)</strong>/<strong>Refresh(14d)</strong> 분리
-            + Refresh DB 저장 + 재발급 시 기존 Refresh 즉시 폐기
-          </>,
-          <>
-            <strong>HttpOnly</strong> 쿠키 + <strong>Role</strong> 기반
-            보호로 세션 안정성과 보안 강화
-          </>
-        ],
-        highlight: "Rotation으로 탈취 토큰 재사용을 차단",
-        proof: [proofImages.jwt],
-        layout: "hero"
-      },
-      {
-        badge: <Badge icon="⭐" label="Core Design" tone="star" />,
-        keyPoint: "KEY POINT",
-        title: "상태 기반 AI 코치",
-        bullets: [
-          "단순 챗봇이 아닌 ‘상태 기반 AI 코치’로 반복 사용 흐름 구현",
-          <>
-            Flow: <strong>analyze → plan → chat</strong>, 대화 히스토리 DB
-            저장 + 공유 상태 관리
-          </>,
-          "사용자 맥락 유지로 루틴 수정/재생성이 가능한 제품 형태"
-        ],
-        highlight: "analyze → plan → chat 흐름을 상태로 관리",
-        proof: [proofImages.ai],
-        layout: "row-reverse"
-      },
-      {
-        badge: <Badge icon="✅" label="Outcome" tone="check" />,
-        title: "도메인 분리 ERD",
-        bullets: [
-          <>
-            사용자/커뮤니티/AI/로그 <strong>도메인 분리</strong>로 확장 가능한
-            스키마
-          </>,
-          "FK 기반 무결성 + 조회 중심 인덱스/페이지네이션 고려",
-          "기능 확장 시 충돌 최소화, 핵심 행동 테이블 중심 운영"
-        ],
-        highlight: "도메인 분리로 확장 가능한 스키마 확보",
-        proof: [proofImages.erd],
-        layout: "split"
-      },
-      {
-        badge: <Badge icon="🔥" label="Ops & Issue" tone="fire" />,
-        title: "AWS 운영 이슈 해결",
-        bullets: [
-          "CloudFront+S3 HTTPS 배포를 운영하며 장애 이슈를 재현-해결-검증",
-          <>
-            <strong>HTTPS</strong> 통일(Mixed Content 차단) +{" "}
-            <strong>CORS allowlist/credentials</strong>로 쿠키 인증 유지
-          </>,
-          "배포 반영/보안/세션 이슈를 운영 관점에서 안정화"
-        ],
-        highlight: "운영 이슈를 재현-해결-검증",
-        proof: [proofImages.aws],
-        layout: "row"
-      }
-    ];
+  const ProofBlock = ({item, caption, onOpen, large = false}) => {
+    if (!item) {
+      return null;
+    }
+    return (
+      <div
+        className={
+          large
+            ? "muscleup-proof-block muscleup-proof-block-large"
+            : "muscleup-proof-block"
+        }
+      >
+        <div className="muscleup-proof-label">PROOF</div>
+        <button
+          className="muscleup-proof-thumb"
+          type="button"
+          onClick={onOpen}
+        >
+          <img src={item.src} alt={item.alt} />
+        </button>
+        <div className="muscleup-proof-caption">
+          {caption || item.caption}
+        </div>
+      </div>
+    );
   };
 
-  const renderMuscleUpSummary = () => (
-    <section className="project-quick-summary">
-      <DetailCard
-        badge={<Badge icon="⭐" label="Quick Summary" tone="star" />}
-        title="10초 핵심 요약"
-        bullets={[
-          "⭐ JWT 이중 쿠키 + Refresh Token Rotation(재사용 차단)",
-          "⭐ AI 분석 → 4주 루틴 → 대화 히스토리 DB 저장",
-          "🔥 AWS HTTPS/CDN 배포 + CORS/MixedContent/ACM 이슈 해결",
-          "✅ 배포: CloudFront+S3 HTTPS, RDS(MySQL) 운영",
-          "✅ 핵심 테이블: users, brag_post, ai_chat_messages, refresh_tokens"
-        ]}
-      />
-    </section>
-  );
-
-  const renderMuscleUpHeroProof = () => (
-    <section className="project-modal-section">
-      <h3 className="project-modal-section-title">Hero Proof</h3>
-      <div className="project-hero-proof">
-        <img
-          src={heroProofImage}
-          alt="득근득근 메인 화면"
-          className="project-hero-image"
-        />
-        <div className="project-hero-caption">
-          득근득근 메인 화면 (실서비스)
-        </div>
+  const TextBlock = ({
+    badge,
+    title,
+    highlight,
+    bullets,
+    chips,
+    issueLines,
+    variant
+  }) => (
+    <div
+      className={`muscleup-text-block${
+        variant ? ` muscleup-text-block-${variant}` : ""
+      }`}
+    >
+      <div className="muscleup-card-header">
+        {badge}
+        <span className="muscleup-keypoint">KEY POINT</span>
       </div>
-    </section>
-  );
-
-  const renderMuscleUpIntro = () => (
-    <section className="project-modal-section muscleup-intro">
-      <h3 className="project-modal-section-title">What is MuscleUp?</h3>
-      <p className="muscleup-intro-subtitle">
-        운동 기록·커뮤니티·AI 코치를 하나의 흐름으로 연결한 실서비스
-      </p>
-      <div className="muscleup-intro-grid">
-        <div className="muscleup-intro-text">
-          <div className="muscleup-highlight">
-            운동 기록 + 커뮤니티 + AI 코치를 한 흐름으로 묶은 실서비스
-          </div>
-          <div className="muscleup-intro-lines">
-            <p>
-              <strong>Problem:</strong> 루틴/기록 분산으로 “오늘 뭐 하지?”에서
-              멈춤 + 지속 동기 부족
-            </p>
-            <p>
-              <strong>Solution:</strong> AI 분석→4주 루틴 + 커뮤니티
-              공유/피드백
-            </p>
-            <p>
-              <strong>Outcome:</strong> 인증·보안·배포까지 고려한 풀스택
-              실서비스 구현
-            </p>
-          </div>
-          <div className="muscleup-flow">
-            <div className="muscleup-flow-item">⚡ AI 루틴 생성</div>
-            <div className="muscleup-flow-item">🤝 커뮤니티 공유/동기부여</div>
-            <div className="muscleup-flow-item">✅ 초보자 UX로 진입장벽 최소화</div>
-          </div>
-        </div>
-        <div className="muscleup-intro-media">
-          <div className="muscleup-intro-image-card">
-            <img src={heroProofImage} alt="서비스 메인 화면" />
-          </div>
-          <div className="muscleup-intro-image-card">
-            <img
-              src={require("../../assets/images/saayaHealthLogo.webp")}
-              alt="AI/커뮤니티 화면"
-            />
-          </div>
-          <div className="muscleup-proof-caption">
-            서비스 메인/AI/커뮤니티 화면
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-
-  const renderMuscleUpCard = card => {
-    const proofItem = card.proof?.[0];
-    const description = (
-      <>
-        <div className="muscleup-card-header">
-          {card.badge}
-          {card.keyPoint && (
-            <span className="muscleup-keypoint">{card.keyPoint}</span>
-          )}
-        </div>
-        <h4 className="muscleup-card-title">{card.title}</h4>
-        {card.highlight && (
-          <div className="muscleup-highlight">{card.highlight}</div>
-        )}
-        <ul className="muscleup-card-list">
-          {card.bullets.map((item, i) => (
-            <li key={i} className="muscleup-card-item">
-              {i === 0 ? <strong>{item}</strong> : item}
-            </li>
+      <h4 className="muscleup-card-title">{title}</h4>
+      {highlight && <HighlightText>{highlight}</HighlightText>}
+      {chips?.length ? (
+        <div className="muscleup-chip-row">
+          {chips.map((chip, i) => (
+            <span key={i} className="muscleup-chip">
+              {chip}
+            </span>
           ))}
-        </ul>
-      </>
-    );
-
-    if (card.layout === "hero") {
-      return (
-        <section className="muscleup-section muscleup-hero">
-          <div className="muscleup-desc">{description}</div>
-          {proofItem && (
-            <div className="muscleup-proof">
-              <div className="muscleup-proof-label">Proof</div>
-              <ProofThumb
-                item={proofItem}
-                onClick={() => openLightbox(card.proof, 0)}
-              />
-              <div className="muscleup-proof-caption">
-                {proofItem.caption}
-              </div>
+        </div>
+      ) : null}
+      <ul className="muscleup-card-list">
+        {bullets.map((item, i) => (
+          <li key={i} className="muscleup-card-item">
+            {item}
+          </li>
+        ))}
+      </ul>
+      {issueLines?.length ? (
+        <div className="muscleup-issue-list">
+          {issueLines.map((line, i) => (
+            <div key={i} className="muscleup-issue-item">
+              <span className="muscleup-issue-label">{line.label}</span>
+              <span className="muscleup-issue-text">{line.text}</span>
             </div>
-          )}
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+
+  const ProofSection = ({pattern, text, proof, caption}) => {
+    if (pattern === "C") {
+      return (
+        <section className="muscleup-section muscleup-pattern-c">
+          {text}
+          <ProofBlock
+            item={proof}
+            caption={caption}
+            onOpen={() => openLightbox([proof], 0)}
+            large
+          />
         </section>
       );
     }
 
-    if (card.layout === "split") {
+    if (pattern === "D") {
       return (
-        <section className="muscleup-section muscleup-split">
-          <div className="muscleup-desc">{description}</div>
-          {proofItem && (
-            <div className="muscleup-proof-card">
-              <div className="muscleup-proof-label">Proof</div>
-              <ProofThumb
-                item={proofItem}
-                onClick={() => openLightbox(card.proof, 0)}
-              />
-              <div className="muscleup-proof-caption">
-                {proofItem.caption}
-              </div>
-            </div>
-          )}
+        <section className="muscleup-section muscleup-pattern-d">
+          <div className="muscleup-card-surface">{text}</div>
+          <div className="muscleup-proof-surface">
+            <ProofBlock
+              item={proof}
+              caption={caption}
+              onOpen={() => openLightbox([proof], 0)}
+            />
+          </div>
+        </section>
+      );
+    }
+
+    if (pattern === "B") {
+      return (
+        <section className="muscleup-section muscleup-pattern-b">
+          <ProofBlock
+            item={proof}
+            caption={caption}
+            onOpen={() => openLightbox([proof], 0)}
+          />
+          {text}
         </section>
       );
     }
 
     return (
-      <section
-        className={`muscleup-section muscleup-row${
-          card.layout === "row-reverse" ? " reverse" : ""
-        }`}
-      >
-        <div className="muscleup-desc">{description}</div>
-        {proofItem && (
-          <div className="muscleup-proof">
-            <div className="muscleup-proof-label">Proof</div>
-            <ProofThumb
-              item={proofItem}
-              onClick={() => openLightbox(card.proof, 0)}
-            />
-            <div className="muscleup-proof-caption">
-              {proofItem.caption}
-            </div>
-          </div>
-        )}
+      <section className="muscleup-section muscleup-pattern-a">
+        {text}
+        <ProofBlock
+          item={proof}
+          caption={caption}
+          onOpen={() => openLightbox([proof], 0)}
+        />
       </section>
     );
+  };
+
+  const SectionHeading = ({icon, title, subtitle}) => (
+    <section className="project-modal-section muscleup-section-heading">
+      <div className="muscleup-section-heading-row">
+        <span className="muscleup-section-heading-icon">{icon}</span>
+        <h3 className="muscleup-section-heading-title">{title}</h3>
+      </div>
+      {subtitle ? (
+        <p className="muscleup-section-heading-subtitle">{subtitle}</p>
+      ) : null}
+    </section>
+  );
+
+  const ServiceIntroSection = () => (
+    <section className="project-modal-section muscleup-intro">
+      <div className="muscleup-intro-grid">
+        <div className="muscleup-intro-copy">
+          <h3 className="muscleup-intro-title">What is MuscleUp?</h3>
+          <p className="muscleup-intro-hero">
+            <HighlightText>
+              운동 기록 / 커뮤니티 / AI 코치를 하나의 실서비스 흐름으로 통합
+            </HighlightText>
+          </p>
+          <div className="muscleup-intro-points">
+            <div className="muscleup-intro-point">
+              <span className="muscleup-intro-icon">P</span>
+              <span>
+                <strong>Problem</strong> 기록/루틴 분산으로 "오늘 뭐 하지?"에서
+                멈춤
+              </span>
+            </div>
+            <div className="muscleup-intro-point">
+              <span className="muscleup-intro-icon">S</span>
+              <span>
+                <strong>Solution</strong> AI 분석 -> 4주 루틴 + 커뮤니티 피드백
+              </span>
+            </div>
+            <div className="muscleup-intro-point">
+              <span className="muscleup-intro-icon">O</span>
+              <span>
+                <strong>Outcome</strong> 인증/보안/배포까지 고려한 실서비스 완성
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="muscleup-intro-media">
+          <img src={heroProofImage} alt="MuscleUp 서비스 화면" />
+          <div className="muscleup-proof-caption">
+            실서비스 메인 화면 (모바일/웹)
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  const QuickSummarySection = () => (
+    <section className="project-modal-section">
+      <div className="muscleup-summary-box muscleup-summary-wide">
+        <h3 className="project-modal-section-title">Quick Summary</h3>
+        <div className="muscleup-summary-row">
+          <div className="muscleup-summary-item">
+            <span className="muscleup-summary-icon">JWT</span>
+            <div>
+              <div className="muscleup-summary-title">JWT Rotation</div>
+              <div className="muscleup-summary-desc">
+                탈취 Refresh 재사용 차단
+              </div>
+            </div>
+          </div>
+          <div className="muscleup-summary-item">
+            <span className="muscleup-summary-icon">AI</span>
+            <div>
+              <div className="muscleup-summary-title">상태 기반 AI 코칭</div>
+              <div className="muscleup-summary-desc">
+                히스토리 저장으로 맥락 유지
+              </div>
+            </div>
+          </div>
+          <div className="muscleup-summary-item">
+            <span className="muscleup-summary-icon">AWS</span>
+            <div>
+              <div className="muscleup-summary-title">AWS 실서비스 운영</div>
+              <div className="muscleup-summary-desc">
+                HTTPS/CORS/ACM 이슈 해결
+              </div>
+            </div>
+          </div>
+          <div className="muscleup-summary-item">
+            <span className="muscleup-summary-icon">ERD</span>
+            <div>
+              <div className="muscleup-summary-title">도메인 분리 설계</div>
+              <div className="muscleup-summary-desc">
+                User / Community / AI 확장 구조
+              </div>
+            </div>
+          </div>
+          <div className="muscleup-summary-item">
+            <span className="muscleup-summary-icon">OPS</span>
+            <div>
+              <div className="muscleup-summary-title">운영 안정성 확보</div>
+              <div className="muscleup-summary-desc">
+                배포·인증 이슈 재현-해결-검증
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  const SecuritySection = () => (
+    <ProofSection
+      pattern="A"
+      text={
+        <TextBlock
+          badge={<Badge icon="*" label="Core Design" tone="star" />}
+          title="JWT 이중 쿠키 + Rotation"
+          bullets={[
+            <span className="muscleup-one-liner" key="jwt-one">
+              <strong>One-liner:</strong> Rotation으로 탈취 Refresh 재사용 차단
+            </span>,
+            <>
+              <strong>How:</strong>{" "}
+              <span className="muscleup-keyword">Access(15m)</span>/
+              <span className="muscleup-keyword">Refresh(14d)</span> 분리 +
+              Refresh DB 저장, 재발급 시 기존 토큰 즉시 폐기
+            </>,
+            <>
+              <strong>Result:</strong>{" "}
+              <span className="muscleup-keyword">HttpOnly</span> 쿠키 + Role 기반
+              보호로 세션 안정성 강화
+            </>
+          ]}
+          issueLines={[
+            {label: "Threat", text: "로컬스토리지 토큰 XSS 취약"},
+            {label: "Control", text: "기존 토큰 폐기 + 신규 저장"}
+          ]}
+        />
+      }
+      proof={proofImages.jwt}
+      caption="Rotation 로직과 Refresh 저장 구조 증명"
+    />
+  );
+
+  const AiSection = () => (
+    <ProofSection
+      pattern="B"
+      text={
+        <TextBlock
+          badge={<Badge icon="*" label="Core Design" tone="star" />}
+          title="상태 기반 히스토리 저장 AI"
+          chips={["analyze", "plan", "chat"]}
+          bullets={[
+            <span className="muscleup-one-liner" key="ai-one">
+              <strong>One-liner:</strong> 상태 기반 AI 코치로 반복 사용 흐름 유지
+            </span>,
+            "How: analyze -> plan -> chat 단계 분리, 대화 히스토리 DB 저장",
+            "Result: 사용자 맥락 유지로 루틴 수정/재생성이 가능한 제품 형태"
+          ]}
+        />
+      }
+      proof={proofImages.ai}
+      caption="AI 엔드포인트 분리 + 히스토리 저장 증명"
+    />
+  );
+
+  const DbSection = () => (
+    <ProofSection
+      pattern="A"
+      text={
+        <TextBlock
+          badge={<Badge icon="OK" label="Outcome" tone="check" />}
+          title="도메인 분리 ERD"
+          bullets={[
+            <span className="muscleup-one-liner" key="db-one">
+              <strong>One-liner:</strong> 사용자/커뮤니티/AI 분리로 확장 가능한
+              스키마
+            </span>,
+            "How: FK 무결성 + 조회 중심 인덱스/페이지네이션 기준 설계",
+            <>
+              <strong>Result:</strong> users, brag_post, ai_chat_messages,
+              refresh_tokens 중심 운영
+            </>
+          ]}
+        />
+      }
+      proof={proofImages.erd}
+      caption="핵심 테이블 분리와 관계 설계 증명"
+    />
+  );
+
+  const AwsSection = () => (
+    <ProofSection
+      pattern="B"
+      text={
+        <TextBlock
+          badge={<Badge icon="!" label="Ops & Issue" tone="fire" />}
+          title="AWS 운영 이슈 해결"
+          bullets={[
+            <span className="muscleup-one-liner" key="aws-one">
+              <strong>One-liner:</strong> 운영 이슈를 재현 -> 해결 -> 검증까지
+              수행
+            </span>,
+            "How: CloudFront/S3 HTTPS 통일 + CORS allowlist/credentials 유지",
+            "Result: 배포 안정성, 보안, 세션 유지 이슈를 운영 관점에서 안정화"
+          ]}
+          issueLines={[
+            {label: "Issue", text: "ACM us-east-1 필요 + Mixed Content 발생"},
+            {label: "Fix", text: "CloudFront Invalidation + HTTPS 통일"},
+            {label: "Result", text: "CORS credentials 유지, 배포 정상화"}
+          ]}
+          variant="ops"
+        />
+      }
+      proof={proofImages.aws}
+      caption="ACM/CloudFront/CORS 설정 증명"
+    />
+  );
+
+  const normalizeCategory = label => {
+    const key = label.toLowerCase().trim();
+    if (key.includes("front")) return "Frontend";
+    if (key.includes("back")) return "Backend";
+    if (key.includes("db") || key.includes("data")) return "Database";
+    if (key.includes("infra")) return "Infrastructure";
+    if (key.includes("ai")) return "AI";
+    return null;
+  };
+
+  const techCategoryOrder = [
+    "Frontend",
+    "Backend",
+    "Database",
+    "Infrastructure",
+    "AI"
+  ];
+
+  const buildTechCategories = techStack => {
+    if (!techStack?.length) {
+      return [];
+    }
+    const buckets = techCategoryOrder.reduce((acc, key) => {
+      acc[key] = [];
+      return acc;
+    }, {});
+    techStack.forEach(item => {
+      const parts = item.split(":");
+      const label = parts[0] ? parts[0].trim() : "";
+      const category = normalizeCategory(label);
+      const list = parts[1] ? parts[1].trim() : item.trim();
+      if (category && list) {
+        buckets[category].push(list);
+      }
+    });
+    return techCategoryOrder
+      .map(category => ({
+        category,
+        items: buckets[category]
+      }))
+      .filter(group => group.items.length);
+  };
+
+  const techCategoryIcons = {
+    Frontend: "FE",
+    Backend: "BE",
+    Database: "DB",
+    Infrastructure: "INF",
+    AI: "AI"
   };
 
   return (
@@ -769,9 +931,26 @@ export default function StartupProject() {
                 )}
               </>
             )}
-            {isMuscleUp && renderMuscleUpSummary()}
-            {isMuscleUp && renderMuscleUpHeroProof()}
-            {isMuscleUp && renderMuscleUpIntro()}
+            {isMuscleUp && <QuickSummarySection />}
+            {isMuscleUp && <ServiceIntroSection />}
+            {isMuscleUp && (
+              <>
+                <SectionHeading
+                  icon="*"
+                  title="Core Design"
+                  subtitle="설계 판단과 구조적 증거"
+                />
+                <SecuritySection />
+                <AiSection />
+                <DbSection />
+                <SectionHeading
+                  icon="!"
+                  title="Ops & Issue"
+                  subtitle="CloudFront / HTTPS / CORS / ACM"
+                />
+                <AwsSection />
+              </>
+            )}
             {!isMuscleUp && selectedProject.details?.summary && (
               <section className="project-modal-section">
                 <h3 className="project-modal-section-title">Summary</h3>
@@ -843,18 +1022,6 @@ export default function StartupProject() {
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </section>
-            ) : null}
-            {isMuscleUp ? (
-              <section className="project-modal-section">
-                <h3 className="project-modal-section-title">
-                  핵심 카드 요약
-                </h3>
-                <div className="muscleup-core-stack">
-                  {buildMuscleUpCards().map((card, i) => (
-                    <div key={i}>{renderMuscleUpCard(card)}</div>
                   ))}
                 </div>
               </section>
@@ -948,15 +1115,28 @@ export default function StartupProject() {
                 </h3>
                 <Accordion title="Tech Stack">
                   {selectedProject.details?.overview?.techStack?.length ? (
-                    <ul className="project-modal-list">
-                      {selectedProject.details.overview.techStack.map(
-                        (item, i) => (
-                          <li key={i} className="project-modal-list-item">
-                            {item}
-                          </li>
-                        )
-                      )}
-                    </ul>
+                    <div className="muscleup-tech-grid">
+                      {buildTechCategories(
+                        selectedProject.details.overview.techStack
+                      ).map(group => (
+                        <div
+                          key={group.category}
+                          className="muscleup-tech-card"
+                        >
+                          <div className="muscleup-tech-header">
+                            <span className="muscleup-tech-icon">
+                              {techCategoryIcons[group.category]}
+                            </span>
+                            <span className="muscleup-tech-title">
+                              {group.category}
+                            </span>
+                          </div>
+                          <div className="muscleup-tech-items">
+                            {group.items.join(" · ")}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   ) : (
                     <p className="project-modal-paragraph">
                       기술 스택 정보를 업데이트해 주세요.
@@ -1010,6 +1190,18 @@ export default function StartupProject() {
     </>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
