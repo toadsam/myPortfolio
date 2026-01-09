@@ -801,23 +801,39 @@ export default function StartupProject() {
 
   const getProjectBannerClass = project => {
     const name = (project?.projectName || "").toLowerCase();
-    if (name.includes("muscleup") || name.includes("득근득근")) {
+    const desc = (project?.projectDesc || "").toLowerCase();
+    const value = `${name} ${desc}`;
+    const hasOps =
+      value.includes("aws") ||
+      value.includes("deploy") ||
+      value.includes("https") ||
+      value.includes("cors") ||
+      value.includes("infra") ||
+      value.includes("acm") ||
+      value.includes("cloudfront");
+    if (value.includes("muscleup") || value.includes("득근득근")) {
       return "project-banner-web-ai";
     }
-    if (name.includes("tserof") || name.includes("game")) {
+    if (hasOps && (value.includes("web") || value.includes("react"))) {
+      return "project-banner-web-ops";
+    }
+    if (value.includes("tserof") || value.includes("game")) {
       return "project-banner-game";
     }
-    if (name.includes("monster") || name.includes("ar") || name.includes("xr")) {
+    if (value.includes("monster") || value.includes("ar") || value.includes("xr")) {
       return "project-banner-ar";
     }
-    if (name.includes("ajou campus") || name.includes("foodmap")) {
+    if (value.includes("ajou campus") || value.includes("foodmap")) {
       return "project-banner-web";
     }
-    if (name.includes("club") || name.includes("ajouchong")) {
+    if (value.includes("club") || value.includes("ajouchong")) {
       return "project-banner-web";
     }
-    if (name.includes("other side") || name.includes("vr")) {
+    if (value.includes("other side") || value.includes("vr")) {
       return "project-banner-game";
+    }
+    if (hasOps) {
+      return "project-banner-ops";
     }
     return "project-banner-web";
   };
@@ -863,7 +879,31 @@ export default function StartupProject() {
       <Fade bottom duration={1000} distance="20px">
         <div className="main" id="projects">
           <div>
-            <h1 className="skills-heading">{bigProjects.title}</h1>
+            <div className="project-header-row">
+              <h1 className="skills-heading">{bigProjects.title}</h1>
+              <div className="project-legend">
+              <span className="project-legend-item">
+                <span className="project-legend-dot project-legend-web"></span>
+                Blue/Teal: Web Service · Full-Stack 중심의 실서비스 개발
+              </span>
+              <span className="project-legend-item">
+                <span className="project-legend-dot project-legend-ai"></span>
+                Indigo/Violet: Data · AI 기반 로직 설계 및 분석 중심 프로젝트
+              </span>
+              <span className="project-legend-item">
+                <span className="project-legend-dot project-legend-game"></span>
+                Emerald/Cyan: Game · Unity 기반 인터랙티브 콘텐츠 개발
+              </span>
+              <span className="project-legend-item">
+                <span className="project-legend-dot project-legend-ar"></span>
+                Amber/Orange: AR · XR 기반 실감형 사용자 경험 구현
+              </span>
+              <span className="project-legend-item">
+                <span className="project-legend-dot project-legend-ops"></span>
+                Gray: Ops · 배포, 운영, 인증, 인프라 안정화 중심 프로젝트
+              </span>
+              </div>
+            </div>
             <p
               className={
                 isDark
@@ -1294,9 +1334,6 @@ export default function StartupProject() {
     </>
   );
 }
-
-
-
 
 
 

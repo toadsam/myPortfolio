@@ -114,6 +114,55 @@
   opacity: 1;
 }
 
+.project-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.project-legend {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.35rem 0 0;
+  color: $subTitle;
+  font-size: 12px;
+  max-width: 520px;
+}
+
+.project-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.project-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.project-legend-web {
+  background: rgba(48, 167, 196, 0.8);
+}
+
+.project-legend-ai {
+  background: rgba(118, 96, 214, 0.8);
+}
+
+.project-legend-game {
+  background: rgba(40, 190, 154, 0.8);
+}
+
+.project-legend-ar {
+  background: rgba(234, 154, 64, 0.8);
+}
+
+.project-legend-ops {
+  background: rgba(140, 150, 160, 0.8);
+}
+
 .project-modal-overlay {
   position: fixed;
   inset: 0;
@@ -135,7 +184,7 @@
   padding: 2.25rem;
   position: relative;
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(12px) scale(0.98);
   animation: modalEnter 0.5s ease-out forwards;
 }
 
@@ -1553,5 +1602,24 @@
     rgba(48, 167, 196, 0.16) 70%,
     rgba(118, 96, 214, 0.16) 85%,
     rgba(118, 96, 214, 0) 100%
+  );
+}
+
+.projects-container .experience-blurred_div.project-banner-ops {
+  background: linear-gradient(
+    180deg,
+    rgba(140, 150, 160, 0.22) 0%,
+    rgba(140, 150, 160, 0.16) 70%,
+    rgba(140, 150, 160, 0) 100%
+  );
+}
+
+.projects-container .experience-blurred_div.project-banner-web-ops {
+  background: linear-gradient(
+    180deg,
+    rgba(48, 167, 196, 0.22) 0%,
+    rgba(48, 167, 196, 0.16) 70%,
+    rgba(140, 150, 160, 0.16) 85%,
+    rgba(140, 150, 160, 0) 100%
   );
 }
