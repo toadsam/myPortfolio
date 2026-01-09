@@ -1509,3 +1509,49 @@
     text-align: center;
   }
 }
+
+.projects-container .experience-blurred_div.project-banner-web {
+  background: linear-gradient(
+    180deg,
+    rgba(48, 167, 196, 0.22) 0%,
+    rgba(48, 167, 196, 0.16) 70%,
+    rgba(48, 167, 196, 0) 100%
+  );
+}
+
+.projects-container .experience-blurred_div.project-banner-ai {
+  background: linear-gradient(
+    180deg,
+    rgba(118, 96, 214, 0.22) 0%,
+    rgba(118, 96, 214, 0.16) 70%,
+    rgba(118, 96, 214, 0) 100%
+  );
+}
+
+.projects-container .experience-blurred_div.project-banner-game {
+  background: linear-gradient(
+    180deg,
+    rgba(40, 190, 154, 0.22) 0%,
+    rgba(40, 190, 154, 0.16) 70%,
+    rgba(40, 190, 154, 0) 100%
+  );
+}
+
+.projects-container .experience-blurred_div.project-banner-ar {
+  background: linear-gradient(
+    180deg,
+    rgba(234, 154, 64, 0.22) 0%,
+    rgba(234, 154, 64, 0.16) 70%,
+    rgba(234, 154, 64, 0) 100%
+  );
+}
+
+.projects-container .experience-blurred_div.project-banner-web-ai {
+  background: linear-gradient(
+    180deg,
+    rgba(48, 167, 196, 0.22) 0%,
+    rgba(48, 167, 196, 0.16) 70%,
+    rgba(118, 96, 214, 0.16) 85%,
+    rgba(118, 96, 214, 0) 100%
+  );
+}

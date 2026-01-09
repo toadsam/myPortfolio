@@ -799,6 +799,29 @@ export default function StartupProject() {
     AI: "AI"
   };
 
+  const getProjectBannerClass = project => {
+    const name = (project?.projectName || "").toLowerCase();
+    if (name.includes("muscleup") || name.includes("득근득근")) {
+      return "project-banner-web-ai";
+    }
+    if (name.includes("tserof") || name.includes("game")) {
+      return "project-banner-game";
+    }
+    if (name.includes("monster") || name.includes("ar") || name.includes("xr")) {
+      return "project-banner-ar";
+    }
+    if (name.includes("ajou campus") || name.includes("foodmap")) {
+      return "project-banner-web";
+    }
+    if (name.includes("club") || name.includes("ajouchong")) {
+      return "project-banner-web";
+    }
+    if (name.includes("other side") || name.includes("vr")) {
+      return "project-banner-game";
+    }
+    return "project-banner-web";
+  };
+
   const buildGenericBullets = (item, keyPrefix) => {
     const bullets = [
       <span className="muscleup-one-liner" key={`${keyPrefix}-one`}>
@@ -868,8 +891,16 @@ export default function StartupProject() {
                       }
                     }}
                   >
-                    <div className="experience-banner">
-                      <div className="experience-blurred_div"></div>
+                    <div
+                      className={`experience-banner ${getProjectBannerClass(
+                        project
+                      )}`}
+                    >
+                      <div
+                        className={`experience-blurred_div ${getProjectBannerClass(
+                          project
+                        )}`}
+                      ></div>
                       <div className="experience-div-company">
                         <h5 className="experience-text-company">
                           {project.projectName}
@@ -1263,8 +1294,6 @@ export default function StartupProject() {
     </>
   );
 }
-
-
 
 
 
