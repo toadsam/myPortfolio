@@ -1,4 +1,5 @@
 ﻿import React, {useContext, useEffect, useState} from "react";
+import {createPortal} from "react-dom";
 import "./StartupProjects.scss";
 import {bigProjects} from "../../portfolio";
 import {Fade} from "react-reveal";
@@ -228,17 +229,17 @@ export default function StartupProject() {
       caption: "Rotation: 재발급 시 기존 Refresh 폐기 로직"
     },
     ai: {
-      src: require("../../assets/images/googleAssistantLogo.webp"),
+      src: require("../../assets/images/득근득근/득근AI관련코드.png"),
       alt: "AI endpoints proof",
       caption: "Endpoints 분리 + 히스토리 저장 로직"
     },
     erd: {
-      src: require("../../assets/images/nextuLogo.webp"),
+      src: require("../../assets/images/득근득근/득근ERD.png"),
       alt: "ERD proof",
       caption: "핵심 테이블(users, brag_post, ai_chat_messages, refresh_tokens)"
     },
     aws: {
-      src: require("../../assets/images/saayaHealthLogo.webp"),
+      src: require("../../assets/images/득근득근/득근 AWS.png"),
       alt: "AWS ops proof",
       caption: "ACM us-east-1 + CloudFront Invalidation 및 CORS 설정"
     }
@@ -927,18 +928,34 @@ export default function StartupProject() {
   };
 
   const buildGenericBullets = (item, keyPrefix) => {
-    const bullets = [
-      <span className="muscleup-one-liner" key={`${keyPrefix}-one`}>
-        <strong>One-liner:</strong> {item.oneLiner}
-      </span>
-    ];
+    const groups = [];
+    if (item.oneLiner) {
+      groups.push(
+        <div className="muscleup-bullet-group" key={`${keyPrefix}-one`}>
+          <div className="muscleup-bullet-label">ONE-LINER</div>
+          <div className="muscleup-bullet-line">
+            <span className="muscleup-one-liner">{item.oneLiner}</span>
+          </div>
+        </div>
+      );
+    }
     if (item.how) {
-      bullets.push(item.how);
+      groups.push(
+        <div className="muscleup-bullet-group" key={`${keyPrefix}-how`}>
+          <div className="muscleup-bullet-label">HOW</div>
+          <div className="muscleup-bullet-line">{item.how}</div>
+        </div>
+      );
     }
     if (item.result) {
-      bullets.push(item.result);
+      groups.push(
+        <div className="muscleup-bullet-group" key={`${keyPrefix}-result`}>
+          <div className="muscleup-bullet-label">RESULT</div>
+          <div className="muscleup-bullet-line">{item.result}</div>
+        </div>
+      );
     }
-    return bullets;
+    return groups;
   };
 
   const quickSummaryItems = isMuscleUp
@@ -1138,27 +1155,30 @@ export default function StartupProject() {
             >
               X
             </button>
-            {lightbox && (
-              <ProofLightbox
-                items={lightbox.items}
-                index={lightbox.index}
-                onClose={() => setLightbox(null)}
-                onPrev={() =>
-                  setLightbox(prev => ({
-                    ...prev,
-                    index:
-                      (prev.index - 1 + prev.items.length) %
-                      prev.items.length
-                  }))
-                }
-                onNext={() =>
-                  setLightbox(prev => ({
-                    ...prev,
-                    index: (prev.index + 1) % prev.items.length
-                  }))
-                }
-              />
-            )}
+            {lightbox && typeof document !== "undefined"
+              ? createPortal(
+                  <ProofLightbox
+                    items={lightbox.items}
+                    index={lightbox.index}
+                    onClose={() => setLightbox(null)}
+                    onPrev={() =>
+                      setLightbox(prev => ({
+                        ...prev,
+                        index:
+                          (prev.index - 1 + prev.items.length) %
+                          prev.items.length
+                      }))
+                    }
+                    onNext={() =>
+                      setLightbox(prev => ({
+                        ...prev,
+                        index: (prev.index + 1) % prev.items.length
+                      }))
+                    }
+                  />,
+                  document.body
+                )
+              : null}
             {selectedProject.details?.overview ? (
               <section className="project-overview">
                 <div className="project-overview-header">

@@ -542,6 +542,7 @@
   padding: 0;
   overflow: hidden;
   cursor: pointer;
+  position: relative;
 }
 
 .project-proof-thumb img {
@@ -550,10 +551,30 @@
   display: block;
   object-fit: cover;
   transition: filter 0.2s ease;
+  position: relative;
+  z-index: 0;
 }
 
 .project-proof-thumb:hover img {
   filter: brightness(1.04);
+}
+
+.project-proof-thumb::before {
+  content: "🔍";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 100px;
+  color: rgba(255, 255, 255, 0.85);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.project-proof-thumb:hover::before {
+  opacity: 1;
 }
 
 .project-proof-caption {
@@ -613,7 +634,7 @@
 
 .project-lightbox {
   position: relative;
-  width: min(900px, 92vw);
+  width: min(1200px, 100vw);
   background: #10151f;
   border-radius: 16px;
   padding: 1.5rem;
@@ -1205,6 +1226,8 @@
   object-fit: contain;
   display: block;
   transition: transform 0.2s ease, filter 0.2s ease;
+  position: relative;
+  z-index: 0;
 }
 
 .muscleup-proof-thumb:hover img {
@@ -1219,9 +1242,28 @@
   background: rgba(0, 0, 0, 0.12);
   opacity: 0;
   transition: opacity 0.2s ease;
+  z-index: 1;
+}
+
+.muscleup-proof-thumb::before {
+  content: "🔍";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 60px;
+  color: rgba(255, 255, 255, 0.85);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 2;
 }
 
 .muscleup-proof-thumb:hover::after {
+  opacity: 1;
+}
+
+.muscleup-proof-thumb:hover::before {
   opacity: 1;
 }
 

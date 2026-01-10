@@ -321,7 +321,7 @@ const bigProjects = {
     },
 
     {
-      image: require("./assets/images/nextuLogo.webp"),
+      image: require("./assets/images/AjouCampusFood/ACF로고.png"),
       projectName: "Ajou Campus Foodmap",
       projectDesc:
         "세션 기반 OAuth 로그인 + 맛집 등록 워크플로우를 포함한 Full-Stack 서비스",
@@ -337,7 +337,7 @@ const bigProjects = {
           title: "Ajou Campus Foodmap",
           subtitle:
             "React(Vite) + Express + MongoDB 기반 맛집 지도/등록 서비스 (Local/OAuth 로그인, 운영 배포 포함)",
-          image: require("./assets/images/nextuLogo.webp"),
+          image: require("./assets/images/AjouCampusFood/ACF메인화면.png"),
           caption: "서비스 메인/맛집 목록/등록 흐름(대표 화면)",
           role: "Full-Stack 개발",
           period: "2024.10 - 2024.12",
@@ -360,8 +360,7 @@ const bigProjects = {
             "배포 환경에서도 로그인 유지/등록 흐름이 안정적으로 동작하고, 운영 관점까지 포함한 실서비스 구조 완성",
           caption: "서비스 메인/맛집 목록/등록 흐름(대표 화면)",
           images: [
-            require("./assets/images/nextuLogo.webp"),
-            require("./assets/images/saayaHealthLogo.webp")
+            require("./assets/images/AjouCampusFood/ACF수락화면.png"),
           ]
         },
         quickSummary: [
@@ -399,7 +398,7 @@ const bigProjects = {
               "How: Client 환경별 API URL 분기 + Server mongoose 옵션/운영 DB 분리 + 배포 환경변수 매핑",
             result: "Result: 배포 환경에서도 설정 충돌/연결 불안정 감소, 운영 안정성 확보",
             proofCaption: "환경변수/DB 커넥션/배포 설정 캡처",
-            proofImage: require("./assets/images/pwaLogo.webp")
+            proofImage: require("./assets/images/AjouCampusFood/ACF환경분리코드.png")
           },
           {
             title: "교차 도메인 세션 유지 (SPA + API 분리)",
