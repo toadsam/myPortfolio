@@ -1369,4 +1369,3 @@ export default function StartupProject() {
     </>
   );
 }
-
