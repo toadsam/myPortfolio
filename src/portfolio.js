@@ -204,18 +204,7 @@ const bigProjects = {
             "Infrastructure: AWS (S3, CloudFront, Route53, ACM, RDS)",
             "AI: OpenAI GPT API"
           ],
-          links: [
-            {name: "배포 주소 (Deployment)", url: "https://muscle-up.click"},
-            {
-              name: "GitHub",
-              url: "https://github.com/toadsam/Ajou_MuscleUp"
-            },
-            {
-              name: "시연 영상 (Demo Video)",
-              url:
-                "https://www.youtube.com/watch?v=y6pbAoxveQM&feature=youtu.be"
-            }
-          ]
+          
         },
         problemSolution: {
           problem: [
@@ -316,7 +305,18 @@ const bigProjects = {
           "HTTPS 통일 및 Mixed Content 방지",
           "CORS allowlist + credentials 설정"
         ],
-        links: []
+        links: [
+          {name: "배포 주소 (Deployment)", url: "https://muscle-up.click"},
+          {
+            name: "GitHub",
+            url: "https://github.com/toadsam/Ajou_MuscleUp"
+          },
+          {
+            name: "시연 영상 (Demo Video)",
+            url:
+              "https://www.youtube.com/watch?v=y6pbAoxveQM&feature=youtu.be"
+          }
+        ]
       }
     },
 

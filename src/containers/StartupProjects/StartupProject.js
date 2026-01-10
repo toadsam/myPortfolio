@@ -567,27 +567,27 @@ export default function StartupProject() {
 
   const muscleupQuickSummaryItems = [
     {
-      icon: "JWT",
+      icon: "🔐",
       title: "JWT Rotation",
       desc: "탈취 Refresh 재사용 차단"
     },
     {
-      icon: "AI",
+      icon: "🤖",
       title: "상태 기반 AI 코칭",
       desc: "히스토리 저장으로 맥락 유지"
     },
     {
-      icon: "AWS",
+      icon: "☁️",
       title: "AWS 실서비스 운영",
       desc: "HTTPS/CORS/ACM 이슈 해결"
     },
     {
-      icon: "ERD",
+      icon: "🧩",
       title: "도메인 분리 설계",
       desc: "User / Community / AI 확장 구조"
     },
     {
-      icon: "OPS",
+      icon: "🛠️",
       title: "운영 안정성 확보",
       desc: "배포·인증 이슈 재현-해결-검증"
     }
@@ -919,8 +919,28 @@ export default function StartupProject() {
     selectedProject?.footerLink ||
     [];
 
-  return (
-    <>
+    const buildOverviewTechStack = techStack => {
+      const items = Array.isArray(techStack) ? techStack : [];
+      return items
+        .map(entry => {
+          const [rawCategory, rawItems] = entry.split(":");
+          if (!rawItems) {
+            return {category: "", items: [entry.trim()]};
+          }
+          const category = rawCategory.trim();
+          const stackItems = rawItems
+            .split(",")
+            .map(value => value.trim())
+            .filter(Boolean);
+          return {category, items: stackItems};
+        })
+        .filter(item => item.items.length);
+    };
+    const overviewTechStack = buildOverviewTechStack(
+      selectedProject?.details?.overview?.techStack
+    );
+    return (
+      <>
       <Fade bottom duration={1000} distance="20px">
         <div className="main" id="projects">
           <div>
@@ -1106,7 +1126,6 @@ export default function StartupProject() {
                     {selectedProject.details.overview.subtitle}
                   </p>
                 </div>
-                {!isMuscleUp && (
                   <>
                     <div className="project-overview-media">
                       {selectedProject.details.overview.image ? (
@@ -1123,46 +1142,59 @@ export default function StartupProject() {
                       )}
                     </div>
                     <div className="project-overview-grid">
-                      {selectedProject.details.overview.role && (
-                        <div className="project-overview-block">
-                          <h4 className="project-overview-block-title">역할</h4>
-                          <p className="project-overview-block-text">
-                            {selectedProject.details.overview.role}
-                          </p>
-                        </div>
-                      )}
-                      {selectedProject.details.overview.techStack?.length ? (
-                        <div className="project-overview-block">
-                          <h4 className="project-overview-block-title">
-                            기술 스택
-                          </h4>
-                          <ul className="project-overview-list">
-                            {selectedProject.details.overview.techStack.map(
-                              (item, i) => (
-                                <li key={i} className="project-overview-list-item">
-                                  {item}
-                                </li>
-                              )
-                            )}
-                          </ul>
+                      <div className="project-overview-col">
+                        {selectedProject.details.overview.role && (
+                          <div className="project-overview-block">
+                            <h4 className="project-overview-block-title">ROLE</h4>
+                            <p className="project-overview-block-text">
+                              {selectedProject.details.overview.role}
+                            </p>
+                          </div>
+                        )}
+                        {selectedProject.details.overview.period && (
+                          <div className="project-overview-block">
+                            <h4 className="project-overview-block-title">
+                              PERIOD
+                            </h4>
+                            <p className="project-overview-block-text">
+                              {selectedProject.details.overview.period}
+                            </p>
+                          </div>
+                        )}
+                        {selectedProject.details.overview.coreValue && (
+                          <div className="project-overview-block project-overview-core">
+                            <h4 className="project-overview-block-title">
+                              CORE VALUE
+                            </h4>
+                            <p className="project-overview-block-text">
+                              {selectedProject.details.overview.coreValue}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      {overviewTechStack.length ? (
+                        <div className="project-overview-col">
+                          <div className="project-overview-block">
+                            <h4 className="project-overview-block-title">
+                              TECH STACK
+                            </h4>
+                            <div className="project-overview-tech-grid">
+                              {overviewTechStack.map((group, i) => (
+                                <div key={i} className="project-overview-tech">
+                                  {group.category ? (
+                                    <div className="project-overview-tech-title">
+                                      {group.category}
+                                    </div>
+                                  ) : null}
+                                  <div className="project-overview-tech-items">
+                                    {group.items.join(" · ")}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       ) : null}
-                      {selectedProject.details.overview.period && (
-                        <div className="project-overview-block">
-                          <h4 className="project-overview-block-title">기간</h4>
-                          <p className="project-overview-block-text">
-                            {selectedProject.details.overview.period}
-                          </p>
-                        </div>
-                      )}
-                      {selectedProject.details.overview.coreValue && (
-                        <div className="project-overview-block">
-                          <h4 className="project-overview-block-title">핵심 가치</h4>
-                          <p className="project-overview-block-text">
-                            {selectedProject.details.overview.coreValue}
-                          </p>
-                        </div>
-                      )}
                     </div>
                     {selectedProject.details.overview.links?.length ? (
                       <div className="project-overview-links">
@@ -1186,7 +1218,6 @@ export default function StartupProject() {
                       </div>
                     ) : null}
                   </>
-                )}
               </section>
             ) : (
               <>
@@ -1363,9 +1394,6 @@ export default function StartupProject() {
     </>
   );
 }
-
-
-
 
 
 

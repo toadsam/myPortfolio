@@ -210,8 +210,8 @@
 .project-modal {
   background: $lightBackground1;
   color: $textColor;
-  width: min(1100px, 100%);
-  max-height: 90vh;
+  width: min(1600px, 100%);
+  max-height: 100vh;
   overflow: auto;
   border-radius: 16px;
   padding: 2.25rem;
@@ -347,19 +347,59 @@
 
 .project-overview-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.75rem;
   margin-bottom: 1.5rem;
 }
 
+.project-overview-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.project-overview-block {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+}
+
 .project-overview-block-title {
-  font-size: 16px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
   margin: 0 0 0.5rem 0;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .project-overview-block-text {
   margin: 0;
+  font-size: 15px;
   line-height: 1.6;
+  color: $textColorDark;
+}
+
+.project-overview-core {
+  background: rgba(255, 255, 255, 0.06);
+  border-left: 3px solid rgba(118, 96, 214, 0.7);
+}
+
+.project-overview-tech-grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.project-overview-tech-title {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.2rem;
+}
+
+.project-overview-tech-items {
+  font-size: 14px;
+  color: $textColorDark;
+  line-height: 1.5;
 }
 
 .project-overview-list {
