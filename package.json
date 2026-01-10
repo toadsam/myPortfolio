@@ -1,5 +1,5 @@
 {
-  "homepage": "https://developerfolio.js.org/",
+  "homepage": "https://toadsam.github.io/myPortfolio/",
   "name": "developerfolio",
   "version": "0.1.0",
   "private": true,
@@ -56,4 +56,6 @@
     "dotenv": "^8.2.0",
     "prettier": "^2.3.1"
   }
+
+  
 }
