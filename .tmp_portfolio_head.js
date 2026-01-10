@@ -104,8 +104,7 @@ const educationInfo = {
       logo: require("./assets/images/harvardLogo.png"),
       subHeader: "디지털미디어학과 (전공)",
       duration: "2021.03 ~ 2026.02 (예정)",
-      desc:
-        "웹/소프트웨어 엔지니어링 중심으로 학습하며 서비스 구조 설계와 구현 역량을 확장했습니다.",
+      desc: "웹/소프트웨어 엔지니어링 중심으로 학습하며 서비스 구조 설계와 구현 역량을 확장했습니다.",
       descBullets: [
         "웹(React/Spring Boot) 중심 프로젝트 경험",
         "Unity XR/AR 프로젝트로 인터랙션 경험 확장"
@@ -153,8 +152,7 @@ const workExperiences = {
       company: "웹 · 게임 · XR",
       companylogo: require("./assets/images/facebookLogo.png"),
       date: "재학 중",
-      desc:
-        "웹 주력 개발과 XR 서브 경험을 바탕으로 서비스 구조와 UX를 동시에 고려한 개발을 수행.",
+      desc: "웹 주력 개발과 XR 서브 경험을 바탕으로 서비스 구조와 UX를 동시에 고려한 개발을 수행.",
       descBullets: [
         "다수의 개인·팀 프로젝트 경험",
         "기획 → 개발 → 배포 → 운영 전 과정 수행"
@@ -189,8 +187,7 @@ const bigProjects = {
           subtitle: "AI 피트니스 커뮤니티 실서비스 풀스택 개발",
           image: require("./assets/images/saayaHealthLogo.webp"),
           caption: "득근득근 서비스 메인 화면",
-          role:
-            "기획, UI 설계, 백엔드 API 개발, 인증/권한 구현, 배포 담당 (개인 개발)",
+          role: "기획, UI 설계, 백엔드 API 개발, 인증/권한 구현, 배포 담당 (개인 개발)",
           period: "2025.09 - (진행중)",
           coreValue:
             "운동 기록-커뮤니티-AI 코치를 하나의 실서비스 흐름으로 통합한 풀스택 시스템 구현",
@@ -209,8 +206,7 @@ const bigProjects = {
             },
             {
               name: "시연 영상 (Demo Video)",
-              url:
-                "https://www.youtube.com/watch?v=y6pbAoxveQM&feature=youtu.be"
+              url: "https://www.youtube.com/watch?v=y6pbAoxveQM&feature=youtu.be"
             }
           ]
         },
@@ -335,7 +331,8 @@ const bigProjects = {
       projectDesc: "React 프론트엔드 프로젝트.",
       footerLink: [],
       details: {
-        summary: "운영형 프론트엔드 프로젝트로 화면 구성과 사용자 흐름 개선에 집중했습니다.",
+        summary:
+          "운영형 프론트엔드 프로젝트로 화면 구성과 사용자 흐름 개선에 집중했습니다.",
         role: "프론트엔드 개발",
         highlights: ["React 기반 화면 구성", "운영 관점의 UX 개선"],
         stack: "React, React Router, Styled Components, Axios",
@@ -348,7 +345,8 @@ const bigProjects = {
       projectDesc: "Unity AR Foundation 기반 AR 프로젝트.",
       footerLink: [],
       details: {
-        summary: "AR Foundation 기반 AR 프로젝트로 공간 인식과 인터랙션을 구현했습니다.",
+        summary:
+          "AR Foundation 기반 AR 프로젝트로 공간 인식과 인터랙션을 구현했습니다.",
         role: "AR 기능 구현",
         highlights: ["Plane Scan", "Boundary 처리", "AR 인터랙션 설계"],
         stack: "Unity, AR Foundation",
@@ -384,7 +382,8 @@ const bigProjects = {
         {name: "ajouchong", url: "https://ajouchong.com"}
       ],
       details: {
-        summary: "운영형 프론트 프로젝트로 유입/행동 데이터를 분석하며 개선 경험을 쌓았습니다.",
+        summary:
+          "운영형 프론트 프로젝트로 유입/행동 데이터를 분석하며 개선 경험을 쌓았습니다.",
         role: "프론트엔드 개발 및 운영",
         highlights: ["GA4/GSC 연동 및 지표 기반 개선", "배포 운영 경험"],
         stack: "React, GA4, GSC",
@@ -413,7 +412,8 @@ const bigProjects = {
       projectDesc: "Unity XR Interaction Toolkit 기반 VR 프로젝트.",
       footerLink: [],
       details: {
-        summary: "Unity XR Interaction Toolkit 기반 VR 프로젝트로 AI 및 인터랙션 설계를 경험했습니다.",
+        summary:
+          "Unity XR Interaction Toolkit 기반 VR 프로젝트로 AI 및 인터랙션 설계를 경험했습니다.",
         role: "VR 인터랙션/AI 설계",
         highlights: ["NavMesh 기반 AI", "VR 인터랙션 구성"],
         stack: "Unity, XR Interaction Toolkit",

@@ -104,8 +104,7 @@ const educationInfo = {
       logo: require("./assets/images/아주대로고.png"),
       subHeader: "디지털미디어학과 (전공)",
       duration: "2021.03 ~ 2026.02 (예정)",
-      desc:
-        "웹/소프트웨어 엔지니어링 중심으로 학습하며 서비스 구조 설계와 구현 역량을 확장했습니다.",
+      desc: "웹/소프트웨어 엔지니어링 중심으로 학습하며 서비스 구조 설계와 구현 역량을 확장했습니다.",
       descBullets: [
         "웹(React/Spring Boot) 중심 프로젝트 경험",
         "Unity XR/AR 프로젝트로 인터랙션 경험 확장"
@@ -153,8 +152,7 @@ const workExperiences = {
       company: "웹 · 게임 · XR",
       companylogo: require("./assets/images/facebookLogo.png"),
       date: "재학 중",
-      desc:
-        "웹 주력 개발과 XR 서브 경험을 바탕으로 서비스 구조와 UX를 동시에 고려한 개발을 수행.",
+      desc: "웹 주력 개발과 XR 서브 경험을 바탕으로 서비스 구조와 UX를 동시에 고려한 개발을 수행.",
       descBullets: [
         "다수의 개인·팀 프로젝트 경험",
         "기획 → 개발 → 배포 → 운영 전 과정 수행"
@@ -175,7 +173,7 @@ const openSource = {
 
 const bigProjects = {
   title: "Main Projects",
-   
+
   projects: [
     {
       image: require("./assets/images/득근득근/득근득근로고.png"),
@@ -192,8 +190,7 @@ const bigProjects = {
           subtitle: "AI 피트니스 커뮤니티 실서비스 풀스택 개발",
           image: require("./assets/images/득근득근/득근득근메인화면.png"),
           caption: "득근득근 서비스 메인 화면",
-          role:
-            "기획, UI 설계, 백엔드 API 개발, 인증/권한 구현, 배포 담당 (개인 개발)",
+          role: "기획, UI 설계, 백엔드 API 개발, 인증/권한 구현, 배포 담당 (개인 개발)",
           period: "2025.09 - (진행중)",
           coreValue:
             "운동 기록-커뮤니티-AI 코치를 하나의 실서비스 흐름으로 통합한 풀스택 시스템 구현",
@@ -203,8 +200,7 @@ const bigProjects = {
             "Database: MySQL, JPA",
             "Infrastructure: AWS (S3, CloudFront, Route53, ACM, RDS)",
             "AI: OpenAI GPT API"
-          ],
-          
+          ]
         },
         problemSolution: {
           problem: [
@@ -313,8 +309,7 @@ const bigProjects = {
           },
           {
             name: "시연 영상 (Demo Video)",
-            url:
-              "https://www.youtube.com/watch?v=y6pbAoxveQM&feature=youtu.be"
+            url: "https://www.youtube.com/watch?v=y6pbAoxveQM&feature=youtu.be"
           }
         ]
       }
@@ -329,8 +324,14 @@ const bigProjects = {
         "세션 기반 OAuth 로그인과 맛집 등록 플로우를 구현한 캠퍼스 지도 서비스",
       tags: ["#FullStack", "#OAuth", "#Workflow"],
       footerLink: [
-        {name: "GitHub Client", url: "https://github.com/toadsam/pwd-week6-client"},
-        {name: "GitHub Server", url: "https://github.com/toadsam/pwd-week6-server"}
+        {
+          name: "GitHub Client",
+          url: "https://github.com/toadsam/pwd-week6-client"
+        },
+        {
+          name: "GitHub Server",
+          url: "https://github.com/toadsam/pwd-week6-server"
+        }
       ],
       details: {
         overview: {
@@ -359,9 +360,7 @@ const bigProjects = {
           outcome:
             "배포 환경에서도 로그인 유지/등록 흐름이 안정적으로 동작하고, 운영 관점까지 포함한 실서비스 구조 완성",
           caption: "서비스 메인/맛집 목록/등록 흐름(대표 화면)",
-          images: [
-            require("./assets/images/AjouCampusFood/ACF수락화면.png"),
-          ]
+          images: [require("./assets/images/AjouCampusFood/ACF수락화면.png")]
         },
         quickSummary: [
           {
@@ -393,58 +392,67 @@ const bigProjects = {
         coreDesign: [
           {
             title: "배포 환경 분기 — URL/DB 설정 분리 운영",
-            oneLiner: "운영/로컬 환경 차이로 생기는 URL·DB 연결 오류를 환경변수 분기로 차단",
-            how:
-              "How: Client 환경별 API URL 분기 + Server mongoose 옵션/운영 DB 분리 + 배포 환경변수 매핑",
-            result: "Result: 배포 환경에서도 설정 충돌/연결 불안정 감소, 운영 안정성 확보",
+            oneLiner:
+              "운영/로컬 환경 차이로 생기는 URL·DB 연결 오류를 환경변수 분기로 차단",
+            how: "How: Client 환경별 API URL 분기 + Server mongoose 옵션/운영 DB 분리 + 배포 환경변수 매핑",
+            result:
+              "Result: 배포 환경에서도 설정 충돌/연결 불안정 감소, 운영 안정성 확보",
             proofCaption: "환경변수/DB 커넥션/배포 설정 캡처",
             proofImage: require("./assets/images/AjouCampusFood/ACF환경분리코드.png")
           },
           {
             title: "교차 도메인 세션 유지 (SPA + API 분리)",
-            oneLiner: "서버/클라이언트 분리 환경에서도 쿠키 기반 로그인 세션이 끊기지 않게 유지",
-            how:
-              "How: axios withCredentials + CORS allowlist/credentials=true 적용",
+            oneLiner:
+              "서버/클라이언트 분리 환경에서도 쿠키 기반 로그인 세션이 끊기지 않게 유지",
+            how: "How: axios withCredentials + CORS allowlist/credentials=true 적용",
             result: "Result: 운영에서도 로그인 상태 유지/세션 기반 기능 안정화",
             proofCaption: "withCredentials 코드 + CORS 설정 캡처",
             proofImage: require("./assets/images/nextuLogo.webp")
           },
           {
             title: "Session + MongoStore — 세션 DB 저장",
-            oneLiner: "세션을 메모리가 아닌 DB에 저장해 서버 재시작/HTTPS에서도 로그인 지속",
-            how:
-              "How: session store를 MongoStore로 구성 + credentials/origin 정책 적용",
+            oneLiner:
+              "세션을 메모리가 아닌 DB에 저장해 서버 재시작/HTTPS에서도 로그인 지속",
+            how: "How: session store를 MongoStore로 구성 + credentials/origin 정책 적용",
             result: "Result: 배포/재시작 환경에서도 세션 유지, 운영 이슈 감소",
             proofCaption: "MongoStore 코드 + DB 저장 확인 캡처",
             proofImage: require("./assets/images/saayaHealthLogo.webp")
           },
           {
             title: "Passport Local + bcrypt — 기본 로그인 보안",
-            oneLiner: "Passport Local 인증 + bcrypt 해시로 비밀번호 저장/검증을 표준화",
-            how:
-              "How: serialize/deserialize + UserSchema pre-save bcrypt 적용",
+            oneLiner:
+              "Passport Local 인증 + bcrypt 해시로 비밀번호 저장/검증을 표준화",
+            how: "How: serialize/deserialize + UserSchema pre-save bcrypt 적용",
             result: "Result: 보안/인증 흐름 명확화, 세션 기반 UX 안정화",
             proofCaption: "serialize/deserialize + bcrypt 코드 캡처",
             proofImage: require("./assets/images/googleAssistantLogo.webp")
           },
           {
             title: "OAuth(Google/Naver) + 운영/권한(관리자)",
-            oneLiner: "OAuth 로그인과 관리자 권한 제어를 붙여 ‘운영 가능한 서비스’로 완성",
-            how:
-              "How: Passport Strategy + req.login() 세션 생성 + 관리자 미들웨어/시드 스크립트",
-            result: "Result: 운영 측면(관리자 기능 보안/계정 관리)까지 포함한 실서비스 구조",
+            oneLiner:
+              "OAuth 로그인과 관리자 권한 제어를 붙여 ‘운영 가능한 서비스’로 완성",
+            how: "How: Passport Strategy + req.login() 세션 생성 + 관리자 미들웨어/시드 스크립트",
+            result:
+              "Result: 운영 측면(관리자 기능 보안/계정 관리)까지 포함한 실서비스 구조",
             proofCaption: "권한 미들웨어 코드 + admin seed 캡처",
             proofImage: require("./assets/images/saayaHealthLogo.webp")
           }
         ],
         ops: {
-          oneLiner: "Issue: 배포 환경에서 URL/DB 불일치, 교차 도메인 세션 쿠키 미전달",
+          oneLiner:
+            "Issue: 배포 환경에서 URL/DB 불일치, 교차 도메인 세션 쿠키 미전달",
           how: "Fix: 환경변수 분리 + CORS allowlist/credentials + MongoStore 세션 저장",
           result: "Result: 운영에서도 로그인/세션/DB 연결이 안정적으로 동작"
         },
         links: [
-          {name: "GitHub (Client)", url: "https://github.com/toadsam/pwd-week6-client"},
-          {name: "GitHub (Server)", url: "https://github.com/toadsam/pwd-week6-server"}
+          {
+            name: "GitHub (Client)",
+            url: "https://github.com/toadsam/pwd-week6-client"
+          },
+          {
+            name: "GitHub (Server)",
+            url: "https://github.com/toadsam/pwd-week6-server"
+          }
         ]
       }
     },
@@ -477,7 +485,8 @@ const bigProjects = {
         },
         intro: {
           headline: "What is ajouchong?",
-          highlight: "총학생회 운영 정보를 사용자 흐름 기준으로 재구성한 운영형 웹",
+          highlight:
+            "총학생회 운영 정보를 사용자 흐름 기준으로 재구성한 운영형 웹",
           problem:
             "유입 이후 ‘무엇을 어디서 해야 하는지’가 분산되어 문의/이탈이 반복됨",
           solution:
@@ -621,7 +630,8 @@ const bigProjects = {
         coreDesign: [
           {
             title: "플레이 흐름 — 이탈 방지",
-            oneLiner: "세이브/스테이지 선택으로 “처음부터 다시” 스트레스를 제거",
+            oneLiner:
+              "세이브/스테이지 선택으로 “처음부터 다시” 스트레스를 제거",
             how: "How: 스테이지 선택/진행 저장 구조로 반복 도전 UX 구성",
             result: "Result: 플레이 지속성 확보 + 난이도 구간에서 이탈 완화",
             proofCaption: "스테이지 선택 화면 / 진행 저장 UI",
@@ -761,8 +771,7 @@ const bigProjects = {
           {
             title: "Player Mode Switching (1인칭/3인칭)",
             oneLiner: "모드 충돌 없는 컨트롤 전환으로 조작 일관성 확보",
-            how:
-              "How: 컨트롤러 enable/disable, 카메라 parent 기준 정리, enum/switch로 상태 전환",
+            how: "How: 컨트롤러 enable/disable, 카메라 parent 기준 정리, enum/switch로 상태 전환",
             result: "Result: 전환 시 입력 꼬임 없이 동일한 UX 유지",
             proofCaption: "Mode Switching 구조 증명",
             proofImage: require("./assets/images/saayaHealthLogo.webp")
@@ -770,8 +779,7 @@ const bigProjects = {
           {
             title: "Level-Up & Random Skill Selection",
             oneLiner: "레벨업 순간 ‘정지-선택-재개’ 루프로 성장 경험 강화",
-            how:
-              "How: 랜덤 3개 스킬 제시, UI 슬롯 세팅, Time.timeScale=0으로 일시정지 처리",
+            how: "How: 랜덤 3개 스킬 제시, UI 슬롯 세팅, Time.timeScale=0으로 일시정지 처리",
             result: "Result: 전투 흐름은 유지하면서 선택 UX는 명확하게 분리",
             proofCaption: "Random Skill UI 증명",
             proofImage: require("./assets/images/pwaLogo.webp")
@@ -780,13 +788,15 @@ const bigProjects = {
             title: "Enemy AI (NavMesh + Boss Pattern)",
             oneLiner: "NavMesh 기반 추적 + 보스 패턴으로 전투 밀도 설계",
             how: "How: detectRange/attackRange로 상태 분기, AI 상태(추적/공격 등) 구성",
-            result: "Result: 일반 몬스터/보스 모두 예측 가능한 규칙 위에서 난이도 조절",
+            result:
+              "Result: 일반 몬스터/보스 모두 예측 가능한 규칙 위에서 난이도 조절",
             proofCaption: "NavMesh AI / Boss Pattern 증명",
             proofImage: require("./assets/images/nextuLogo.webp")
           },
           {
             title: "UI ↔ Game World",
-            oneLiner: "UI가 ‘정보 표시’가 아니라 ‘게임 진행의 일부’가 되게 설계",
+            oneLiner:
+              "UI가 ‘정보 표시’가 아니라 ‘게임 진행의 일부’가 되게 설계",
             how: "How: 퀘스트/상태/상호작용 UI가 월드 오브젝트/진행 상태와 동기화",
             result: "Result: 플레이 중 ‘다음 행동’이 UI로 자연스럽게 안내됨",
             proofCaption: "UI-월드 동기화 증명",
@@ -873,8 +883,7 @@ const bigProjects = {
             title: "XR Interaction Toolkit 기반 상호작용",
             oneLiner:
               "VR 환경에 맞춘 Grab / Ray / Socket 상호작용으로 퍼즐 조작을 직관화",
-            how:
-              "How: XR Grab Interactable로 집기 + Ray Interactor로 원거리 선택 + Socket 조합 설계",
+            how: "How: XR Grab Interactable로 집기 + Ray Interactor로 원거리 선택 + Socket 조합 설계",
             result: "Result: VR 초보자도 이해하기 쉬운 상호작용 UX 완성",
             proofCaption: "XR Interactor 설정 화면 및 퍼즐 오브젝트 캡처",
             proofImage: require("./assets/images/nextuLogo.webp")
@@ -883,8 +892,7 @@ const bigProjects = {
             title: "상태 기반 몬스터 AI",
             oneLiner:
               "플레이어 조건에 따라 행동이 달라지는 상태 머신 기반 AI 구현",
-            how:
-              "How: Idle/Chase/Attack 상태 분리 + 거리/시야 조건 전환 + NavMesh 추적 이동",
+            how: "How: Idle/Chase/Attack 상태 분리 + 거리/시야 조건 전환 + NavMesh 추적 이동",
             result: "Result: 예측 불가능한 추적 패턴으로 공포 몰입도 상승",
             proofCaption: "몬스터 AI 스크립트 및 추적 장면 캡처",
             proofImage: require("./assets/images/pwaLogo.webp")
@@ -893,17 +901,16 @@ const bigProjects = {
             title: "퍼즐 중심 레벨 구조",
             oneLiner:
               "단서 수집과 환경 상호작용으로 진행되는 퍼즐 기반 스테이지 설계",
-            how:
-              "How: 트리거 이벤트로 단계 관리 + 조건 충족 시 공간 개방 + 실패 시 긴장 요소 연계",
-            result: "Result: 단순 이동이 아닌 사고를 요구하는 VR 플레이 경험 제공",
+            how: "How: 트리거 이벤트로 단계 관리 + 조건 충족 시 공간 개방 + 실패 시 긴장 요소 연계",
+            result:
+              "Result: 단순 이동이 아닌 사고를 요구하는 VR 플레이 경험 제공",
             proofCaption: "퍼즐 오브젝트 및 이벤트 흐름 캡처",
             proofImage: require("./assets/images/saayaHealthLogo.webp")
           },
           {
             title: "VR UX 안정화 설계",
             oneLiner: "VR 멀미를 줄이기 위한 시점·이동·인터랙션 설계",
-            how:
-              "How: 카메라 이동 최소화 + 즉각 피드백 제공 + 순간 이동/안전 거리 유지",
+            how: "How: 카메라 이동 최소화 + 즉각 피드백 제공 + 순간 이동/안전 거리 유지",
             result: "Result: 장시간 플레이에도 부담이 적은 VR UX 확보",
             proofCaption: "플레이 시점 설정 및 이동 방식 캡처",
             proofImage: require("./assets/images/googleAssistantLogo.webp")
@@ -930,7 +937,11 @@ const bigProjects = {
           caption: "AR Plane Scan 기반 전투 공간 생성 및 전투 진행 화면",
           role: "AR 전투 로직/스폰/무기 시스템 구현",
           period: "2024.06 - 2024.08",
-          techStack: ["Engine: Unity", "Platform: AR (AR Foundation)", "Language: C#"]
+          techStack: [
+            "Engine: Unity",
+            "Platform: AR (AR Foundation)",
+            "Language: C#"
+          ]
         },
         intro: {
           headline: "What is AR Monster Shooter?",
@@ -979,8 +990,7 @@ const bigProjects = {
             title: "Plane Scan → 전투 공간 고정",
             oneLiner:
               "Plane Detection으로 전투 공간을 ‘고정’하고 이후 전투를 해당 영역 기준으로 진행",
-            how:
-              "How: 평면 탐지 ON/OFF 토글 + boundary 월드 좌표 변환 + 스캔 종료 시 탐지/시각화 비활성화",
+            how: "How: 평면 탐지 ON/OFF 토글 + boundary 월드 좌표 변환 + 스캔 종료 시 탐지/시각화 비활성화",
             result:
               "Result: 스캔 이후 전투 영역이 흔들리지 않고 현실 공간 기준으로 안정적인 전투 진행",
             proofCaption: "Plane Scan 코드 캡처 + AR 스캔 전/후 화면",
@@ -990,8 +1000,7 @@ const bigProjects = {
             title: "boundary 기반 바닥/벽 생성 로직",
             oneLiner:
               "boundary를 수집해 min/max 범위를 계산하고 바닥 스케일링 + 4방향 벽 생성",
-            how:
-              "How: allWorldPoints 수집 + min/max 계산 + 바닥 스케일 조정 + CreateWall 로직",
+            how: "How: allWorldPoints 수집 + min/max 계산 + 바닥 스케일 조정 + CreateWall 로직",
             result:
               "Result: 사용자 공간 크기에 맞는 전투 맵이 자동 구성되어 플레이 일관성 향상",
             proofCaption: "boundary 기반 맵 확장 코드 캡처 + 바닥/벽 결과",
@@ -1001,8 +1010,7 @@ const bigProjects = {
             title: "스폰 포인트 자동 생성 + 스포너 이동",
             oneLiner:
               "바닥 꼭짓점(floorCorners) 기반으로 스폰 포인트를 만들고 스포너를 랜덤 이동",
-            how:
-              "How: floorCorners 기반 스폰 배열 생성 + isGameStart 이후 랜덤 위치 갱신",
+            how: "How: floorCorners 기반 스폰 배열 생성 + isGameStart 이후 랜덤 위치 갱신",
             result:
               "Result: AR 공간 변화에도 스폰이 분산되고 전투 리듬이 단조롭지 않게 진행",
             proofCaption: "스포너 이동/랜덤 스폰 코드 캡처 + 스폰 장면",
@@ -1012,8 +1020,7 @@ const bigProjects = {
             title: "웨이브 스폰 + 보스 트리거",
             oneLiner:
               "spawnInterval로 웨이브를 진행하고 counterBoss 조건 달성 시 보스 소환",
-            how:
-              "How: 일반 몬스터 스폰 + 처치 카운트 누적 → bossOn 트리거",
+            how: "How: 일반 몬스터 스폰 + 처치 카운트 누적 → bossOn 트리거",
             result:
               "Result: 스폰→처치 누적→보스 등장 흐름이 명확해져 게임 구조가 선명해짐",
             proofCaption: "웨이브/보스 트리거 코드 캡처 + 보스 등장 화면",
@@ -1023,8 +1030,7 @@ const bigProjects = {
             title: "무기 발사(조이스틱) + 잠금/쿨타임 제어",
             oneLiner:
               "조이스틱 입력 기반 발사에 잠금/쿨타임을 붙여 조작감과 전략적 깊이 향상",
-            how:
-              "How: 입력 방향 감지 + nextFire 쿨타임 + isUnlocked 잠금 + 카메라 기준 조준",
+            how: "How: 입력 방향 감지 + nextFire 쿨타임 + isUnlocked 잠금 + 카메라 기준 조준",
             result:
               "Result: 무기별 전투 템포가 살아나고 상황에 맞는 전략 운용 가능",
             proofCaption:
@@ -1035,7 +1041,7 @@ const bigProjects = {
         links: []
       }
     }
-],
+  ],
   display: true // Set false to hide this section, defaults to true
 };
 
@@ -1192,11 +1198,3 @@ export {
   isHireable,
   resumeSection
 };
-
-
-
-
-
-
-
-
