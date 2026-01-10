@@ -594,15 +594,114 @@ const bigProjects = {
     },
     {
       image: require("./assets/images/nextuLogo.webp"),
-      projectName: "Ajou Game Project",
-      projectDesc: "게임 프로젝트.",
-      footerLink: [],
+      projectName: "아주대탐험 (Ajou Indie Game)",
+      projectDesc:
+        "대학 캠퍼스를 배경으로 한 캐주얼 액션 어드벤처: Player·Skill·AI·Event 시스템을 Unity로 통합 구현",
+      footerLink: [
+        {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
+        {
+          name: "Demo Video",
+          url: "https://www.youtube.com/watch?v=mtIiIWmrSdg&feature=youtu.be"
+        }
+      ],
       details: {
-        summary: "아주대 관련 게임 프로젝트입니다.",
-        role: "게임 시스템/로직 구현",
-        highlights: ["Unity 기반 게임 시스템 구현"],
-        stack: "Unity, C#",
-        links: []
+        overview: {
+          title: "아주대탐험 (Ajou Indie Game)",
+          subtitle:
+            "대학 캠퍼스를 배경으로 한 캐주얼 액션 어드벤처: Player·Skill·AI·Event 시스템을 Unity로 통합 구현",
+          image: require("./assets/images/nextuLogo.webp"),
+          caption: "플레이 화면 기반 결과물(인게임 UI·전투·이벤트 흐름)",
+          role: "Player/Skill/UI/AI/Event 구현",
+          period: "2024.08 - 2024.12",
+          techStack: [
+            "Engine: Unity",
+            "Language: C#",
+            "Key Features: NavMesh, UI System, Event System, Skill System"
+          ]
+        },
+        intro: {
+          headline: "What is Ajou Indie Game?",
+          highlight:
+            "캠퍼스 탐험형 액션/성장 게임의 코어 루프를 통합 설계한 인디 프로젝트",
+          problem:
+            "캠퍼스 탐험형 액션/성장 게임에서 “플레이 흐름(이동-전투-성장-진행)”이 끊기지 않게 시스템을 연결해야 했다.",
+          solution:
+            "Core Loop를 기준으로 Player/Skill/UI/AI/Event를 모듈화하고, 서로 연결되는 지점을 명확히 설계했다.",
+          outcome:
+            "플레이어 조작·성장·전투·이벤트가 하나의 루프로 자연스럽게 이어지는 구조를 완성했다.",
+          caption: "플레이 화면 기반 결과물(인게임 UI·전투·이벤트 흐름)",
+          images: [require("./assets/images/nextuLogo.webp")]
+        },
+        quickSummary: [
+          {
+            icon: "🎮",
+            title: "Player Mode Switching",
+            desc: "1인칭/3인칭 전환을 안정적으로 연결해 조작 일관성 유지"
+          },
+          {
+            icon: "🧭",
+            title: "Level-Up & Random Skill",
+            desc: "랜덤 3스킬 선택 + 일시정지로 성장 순간을 명확히 분리"
+          },
+          {
+            icon: "🤖",
+            title: "Enemy AI + Boss Pattern",
+            desc: "NavMesh 기반 추적과 패턴 설계로 전투 밀도 강화"
+          },
+          {
+            icon: "🧩",
+            title: "UI ↔ Game World",
+            desc: "상태/퀘스트/상호작용 UI가 월드 진행과 동기화"
+          },
+          {
+            icon: "✨",
+            title: "Event Systems",
+            desc: "Special Quest/Portal/Summon Skill 이벤트로 루프 확장"
+          }
+        ],
+        coreDesign: [
+          {
+            title: "Player Mode Switching (1인칭/3인칭)",
+            oneLiner: "모드 충돌 없는 컨트롤 전환으로 조작 일관성 확보",
+            how:
+              "How: 컨트롤러 enable/disable, 카메라 parent 기준 정리, enum/switch로 상태 전환",
+            result: "Result: 전환 시 입력 꼬임 없이 동일한 UX 유지",
+            proofCaption: "Mode Switching 구조 증명",
+            proofImage: require("./assets/images/saayaHealthLogo.webp")
+          },
+          {
+            title: "Level-Up & Random Skill Selection",
+            oneLiner: "레벨업 순간 ‘정지-선택-재개’ 루프로 성장 경험 강화",
+            how:
+              "How: 랜덤 3개 스킬 제시, UI 슬롯 세팅, Time.timeScale=0으로 일시정지 처리",
+            result: "Result: 전투 흐름은 유지하면서 선택 UX는 명확하게 분리",
+            proofCaption: "Random Skill UI 증명",
+            proofImage: require("./assets/images/pwaLogo.webp")
+          },
+          {
+            title: "Enemy AI (NavMesh + Boss Pattern)",
+            oneLiner: "NavMesh 기반 추적 + 보스 패턴으로 전투 밀도 설계",
+            how: "How: detectRange/attackRange로 상태 분기, AI 상태(추적/공격 등) 구성",
+            result: "Result: 일반 몬스터/보스 모두 예측 가능한 규칙 위에서 난이도 조절",
+            proofCaption: "NavMesh AI / Boss Pattern 증명",
+            proofImage: require("./assets/images/nextuLogo.webp")
+          },
+          {
+            title: "UI ↔ Game World",
+            oneLiner: "UI가 ‘정보 표시’가 아니라 ‘게임 진행의 일부’가 되게 설계",
+            how: "How: 퀘스트/상태/상호작용 UI가 월드 오브젝트/진행 상태와 동기화",
+            result: "Result: 플레이 중 ‘다음 행동’이 UI로 자연스럽게 안내됨",
+            proofCaption: "UI-월드 동기화 증명",
+            proofImage: require("./assets/images/googleAssistantLogo.webp")
+          }
+        ],
+        links: [
+          {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
+          {
+            name: "Demo Video",
+            url: "https://www.youtube.com/watch?v=mtIiIWmrSdg&feature=youtu.be"
+          }
+        ]
       }
     },
     {
