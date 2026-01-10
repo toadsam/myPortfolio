@@ -1095,6 +1095,36 @@
   display: inline-block;
 }
 
+.muscleup-bullet-group {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.muscleup-bullet-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.muscleup-bullet-line {
+  position: relative;
+  padding-left: 16px;
+  font-size: 14px;
+  color: $textColorDark;
+  line-height: 1.55;
+}
+
+.muscleup-bullet-line::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+
 .muscleup-card-header {
   margin-bottom: 0.75rem;
 }
@@ -1167,8 +1197,8 @@
 
 .muscleup-proof-thumb img {
   width: 100%;
-  max-width: 70%;
-  max-height: 360px;
+  max-width: 88%;
+  max-height: 500px;
   aspect-ratio: 16 / 9;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.08);

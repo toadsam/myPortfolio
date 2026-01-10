@@ -101,7 +101,7 @@ const educationInfo = {
   schools: [
     {
       schoolName: "아주대학교",
-      logo: require("./assets/images/harvardLogo.png"),
+      logo: require("./assets/images/아주대로고.png"),
       subHeader: "디지털미디어학과 (전공)",
       duration: "2021.03 ~ 2026.02 (예정)",
       desc:
@@ -113,7 +113,7 @@ const educationInfo = {
     },
     {
       schoolName: "아주대학교",
-      logo: require("./assets/images/stanfordLogo.png"),
+      logo: require("./assets/images/아주대로고.png"),
       subHeader: "인공지능 융합학과 (복수전공)",
       duration: "2021.03 ~ 2026.02 (예정)",
       desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
@@ -129,7 +129,7 @@ const techStack = {
   experience: [
     {
       Stack: "Web (Frontend)",
-      progressPercentage: "90%"
+      progressPercentage: "60%"
     },
     {
       Stack: "Web (Backend)",
@@ -137,7 +137,7 @@ const techStack = {
     },
     {
       Stack: "Game/XR",
-      progressPercentage: "60%"
+      progressPercentage: "80%"
     }
   ],
   displayCodersrank: false // Set true to display codersrank badges section need to changes your username in src/containers/skillProgress/skillProgress.js:17:62, defaults to false
@@ -178,7 +178,7 @@ const bigProjects = {
    
   projects: [
     {
-      image: require("./assets/images/saayaHealthLogo.webp"),
+      image: require("./assets/images/득근득근/득근득근로고.png"),
       projectName: "득근득근 (MuscleUp)",
       projectDesc:
         "React + Spring Boot 기반 Full-Stack 웹. AWS 배포/HTTPS·CORS 이슈 해결, Refresh Token Rotation 적용.",
@@ -190,7 +190,7 @@ const bigProjects = {
         overview: {
           title: "득근득근 - 프로젝트 개요",
           subtitle: "AI 피트니스 커뮤니티 실서비스 풀스택 개발",
-          image: require("./assets/images/saayaHealthLogo.webp"),
+          image: require("./assets/images/득근득근/득근득근메인화면.png"),
           caption: "득근득근 서비스 메인 화면",
           role:
             "기획, UI 설계, 백엔드 API 개발, 인증/권한 구현, 배포 담당 (개인 개발)",

@@ -223,7 +223,7 @@ export default function StartupProject() {
 
   const proofImages = {
     jwt: {
-      src: require("../../assets/images/pwaLogo.webp"),
+      src: require("../../assets/images/득근득근/득근득근토큰페기코드.png"),
       alt: "JWT Rotation proof",
       caption: "Rotation: 재발급 시 기존 Refresh 폐기 로직"
     },
@@ -464,24 +464,27 @@ export default function StartupProject() {
           badge={<Badge icon="*" label="Core Design" tone="star" />}
           title="JWT 이중 쿠키 + Rotation"
           bullets={[
-            <span className="muscleup-one-liner" key="jwt-one">
-              <strong>One-liner:</strong> Rotation으로 탈취 Refresh 재사용 차단
-            </span>,
-            <>
-              <strong>How:</strong>{" "}
-              <span className="muscleup-keyword">Access(15m)</span>/
-              <span className="muscleup-keyword">Refresh(14d)</span> 분리 +
-              Refresh DB 저장, 재발급 시 기존 토큰 즉시 폐기
-            </>,
-            <>
-              <strong>Result:</strong>{" "}
-              <span className="muscleup-keyword">HttpOnly</span> 쿠키 + Role 기반
-              보호로 세션 안정성 강화
-            </>
-          ]}
-          issueLines={[
-            {label: "Threat", text: "로컬스토리지 토큰 XSS 취약"},
-            {label: "Control", text: "기존 토큰 폐기 + 신규 저장"}
+            <div className="muscleup-bullet-group" key="jwt-one">
+              <div className="muscleup-bullet-label">ONE-LINER</div>
+              <div className="muscleup-bullet-line">
+                <span className="muscleup-one-liner">
+                  Refresh Token 재사용을 원천 차단하는 Rotation 기반 인증 설계
+                </span>
+              </div>
+            </div>,
+            <div className="muscleup-bullet-group" key="jwt-how">
+              <div className="muscleup-bullet-label">HOW</div>
+              <div className="muscleup-bullet-line">
+                Access(15m) / Refresh(14d) 분리 + Refresh DB 저장 및 재발급 시
+                즉시 폐기
+              </div>
+            </div>,
+            <div className="muscleup-bullet-group" key="jwt-result">
+              <div className="muscleup-bullet-label">RESULT</div>
+              <div className="muscleup-bullet-line">
+                HttpOnly 쿠키 + Role 기반 보호로 세션 안정성 강화
+              </div>
+            </div>
           ]}
         />
       }
@@ -493,20 +496,35 @@ export default function StartupProject() {
   const AiSection = () => (
     <ProofSection
       pattern="B"
-      text={
-        <TextBlock
-          badge={<Badge icon="*" label="Core Design" tone="star" />}
-          title="상태 기반 히스토리 저장 AI"
-          chips={["analyze", "plan", "chat"]}
-          bullets={[
-            <span className="muscleup-one-liner" key="ai-one">
-              <strong>One-liner:</strong> 상태 기반 AI 코치로 반복 사용 흐름 유지
-            </span>,
-            "How: analyze -> plan -> chat 단계 분리, 대화 히스토리 DB 저장",
-            "Result: 사용자 맥락 유지로 루틴 수정/재생성이 가능한 제품 형태"
-          ]}
-        />
-      }
+        text={
+          <TextBlock
+            badge={<Badge icon="*" label="Core Design" tone="star" />}
+            title="상태 기반 히스토리 저장 AI"
+            chips={["analyze", "plan", "chat"]}
+            bullets={[
+              <div className="muscleup-bullet-group" key="ai-one">
+                <div className="muscleup-bullet-label">ONE-LINER</div>
+                <div className="muscleup-bullet-line">
+                  <span className="muscleup-one-liner">
+                    상태 기반 AI 코치로 반복 사용 흐름 유지
+                  </span>
+                </div>
+              </div>,
+              <div className="muscleup-bullet-group" key="ai-how">
+                <div className="muscleup-bullet-label">HOW</div>
+                <div className="muscleup-bullet-line">
+                  analyze -&gt; plan -&gt; chat 단계 분리, 대화 히스토리 DB 저장
+                </div>
+              </div>,
+              <div className="muscleup-bullet-group" key="ai-result">
+                <div className="muscleup-bullet-label">RESULT</div>
+                <div className="muscleup-bullet-line">
+                  사용자 맥락 유지로 루틴 수정/재생성이 가능한 제품 형태
+                </div>
+              </div>
+            ]}
+          />
+        }
       proof={proofImages.ai}
       caption="AI 엔드포인트 분리 + 히스토리 저장 증명"
     />
@@ -515,23 +533,34 @@ export default function StartupProject() {
   const DbSection = () => (
     <ProofSection
       pattern="A"
-      text={
-        <TextBlock
-          badge={<Badge icon="OK" label="Outcome" tone="check" />}
-          title="도메인 분리 ERD"
-          bullets={[
-            <span className="muscleup-one-liner" key="db-one">
-              <strong>One-liner:</strong> 사용자/커뮤니티/AI 분리로 확장 가능한
-              스키마
-            </span>,
-            "How: FK 무결성 + 조회 중심 인덱스/페이지네이션 기준 설계",
-            <>
-              <strong>Result:</strong> users, brag_post, ai_chat_messages,
-              refresh_tokens 중심 운영
-            </>
-          ]}
-        />
-      }
+        text={
+          <TextBlock
+            badge={<Badge icon="OK" label="Outcome" tone="check" />}
+            title="도메인 분리 ERD"
+            bullets={[
+              <div className="muscleup-bullet-group" key="db-one">
+                <div className="muscleup-bullet-label">ONE-LINER</div>
+                <div className="muscleup-bullet-line">
+                  <span className="muscleup-one-liner">
+                    사용자/커뮤니티/AI 분리로 확장 가능한 스키마
+                  </span>
+                </div>
+              </div>,
+              <div className="muscleup-bullet-group" key="db-how">
+                <div className="muscleup-bullet-label">HOW</div>
+                <div className="muscleup-bullet-line">
+                  FK 무결성 + 조회 중심 인덱스/페이지네이션 기준 설계
+                </div>
+              </div>,
+              <div className="muscleup-bullet-group" key="db-result">
+                <div className="muscleup-bullet-label">RESULT</div>
+                <div className="muscleup-bullet-line">
+                  users, brag_post, ai_chat_messages, refresh_tokens 중심 운영
+                </div>
+              </div>
+            ]}
+          />
+        }
       proof={proofImages.erd}
       caption="핵심 테이블 분리와 관계 설계 증명"
     />
@@ -540,20 +569,34 @@ export default function StartupProject() {
   const AwsSection = () => (
     <ProofSection
       pattern="B"
-      text={
-        <TextBlock
-          badge={<Badge icon="!" label="Ops & Issue" tone="fire" />}
-          title="AWS 운영 이슈 해결"
-          bullets={[
-            <span className="muscleup-one-liner" key="aws-one">
-              <strong>One-liner:</strong> 운영 이슈를 재현 -> 해결 -> 검증까지
-              수행
-            </span>,
-            "How: CloudFront/S3 HTTPS 통일 + CORS allowlist/credentials 유지",
-            "Result: 배포 안정성, 보안, 세션 유지 이슈를 운영 관점에서 안정화"
-          ]}
-          issueLines={[
-            {label: "Issue", text: "ACM us-east-1 필요 + Mixed Content 발생"},
+        text={
+          <TextBlock
+            badge={<Badge icon="!" label="Ops & Issue" tone="fire" />}
+            title="AWS 운영 이슈 해결"
+            bullets={[
+              <div className="muscleup-bullet-group" key="aws-one">
+                <div className="muscleup-bullet-label">ONE-LINER</div>
+                <div className="muscleup-bullet-line">
+                  <span className="muscleup-one-liner">
+                    운영 이슈를 재현 -&gt; 해결 -&gt; 검증까지 수행
+                  </span>
+                </div>
+              </div>,
+              <div className="muscleup-bullet-group" key="aws-how">
+                <div className="muscleup-bullet-label">HOW</div>
+                <div className="muscleup-bullet-line">
+                  CloudFront/S3 HTTPS 통일 + CORS allowlist/credentials 유지
+                </div>
+              </div>,
+              <div className="muscleup-bullet-group" key="aws-result">
+                <div className="muscleup-bullet-label">RESULT</div>
+                <div className="muscleup-bullet-line">
+                  배포 안정성, 보안, 세션 유지 이슈를 운영 관점에서 안정화
+                </div>
+              </div>
+            ]}
+            issueLines={[
+              {label: "Issue", text: "ACM us-east-1 필요 + Mixed Content 발생"},
             {label: "Fix", text: "CloudFront Invalidation + HTTPS 통일"},
             {label: "Result", text: "CORS credentials 유지, 배포 정상화"}
           ]}
@@ -1394,9 +1437,6 @@ export default function StartupProject() {
     </>
   );
 }
-
-
-
 
 
 
