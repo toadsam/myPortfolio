@@ -465,14 +465,121 @@ const bigProjects = {
     },
     {
       image: require("./assets/images/pwaLogo.webp"),
-      projectName: "INTO MONSTER POINT",
-      projectDesc: "Unity AR Foundation 기반 AR 프로젝트.",
+      projectName: "AR Monster Shooter",
+      projectDesc:
+        "AR Plane Scan 기반 전투 공간 자동 생성 + 웨이브/보스 트리거 슈터",
       footerLink: [],
       details: {
-        summary: "AR Foundation 기반 AR 프로젝트로 공간 인식과 인터랙션을 구현했습니다.",
-        role: "AR 기능 구현",
-        highlights: ["Plane Scan", "Boundary 처리", "AR 인터랙션 설계"],
-        stack: "Unity, AR Foundation",
+        overview: {
+          title: "AR Monster Shooter",
+          subtitle:
+            "Unity AR Foundation 기반 AR 전투 게임 — Plane Scan으로 공간 고정 후 웨이브/보스 전투 진행",
+          image: require("./assets/images/pwaLogo.webp"),
+          caption: "AR Plane Scan 기반 전투 공간 생성 및 전투 진행 화면",
+          role: "AR 전투 로직/스폰/무기 시스템 구현",
+          period: "2024.06 - 2024.08",
+          techStack: ["Engine: Unity", "Platform: AR (AR Foundation)", "Language: C#"]
+        },
+        intro: {
+          headline: "What is AR Monster Shooter?",
+          highlight: "AR Plane Scan 기반 전투 공간을 자동 생성하는 슈터 게임",
+          problem:
+            "AR 환경에서 전투를 진행하려면 현실 공간 기준의 전투 영역 고정이 필요함",
+          solution:
+            "Plane Detection으로 전투 공간을 스캔하고, boundary 기반 바닥/벽 자동 생성 + 웨이브/보스 트리거를 적용",
+          outcome:
+            "현실 공간 크기에 맞춰 전투 맵이 자동 생성되어 몰입도가 높아지고, 웨이브→보스 전환 구조가 안정화됨",
+          caption: "AR Plane Scan 기반 전투 공간 생성 및 전투 진행 화면",
+          images: [
+            require("./assets/images/pwaLogo.webp"),
+            require("./assets/images/saayaHealthLogo.webp")
+          ]
+        },
+        quickSummary: [
+          {
+            icon: "🧭",
+            title: "Plane Scan 전투 공간 고정",
+            desc: "Plane Detection으로 전투 영역을 고정하고 전투 진행"
+          },
+          {
+            icon: "🧱",
+            title: "boundary 기반 바닥/벽 자동 생성",
+            desc: "boundary를 월드 좌표로 변환해 바닥 스케일 + 4방향 벽 생성"
+          },
+          {
+            icon: "📍",
+            title: "스폰 포인트 자동 생성 + 스포너 이동",
+            desc: "floorCorners 기반 스폰 포인트 배열 생성 + 랜덤 스포너 이동"
+          },
+          {
+            icon: "🌊",
+            title: "웨이브 스폰 + 보스 트리거",
+            desc: "spawnInterval 웨이브 진행 + counterBoss 조건에서 보스 전환"
+          },
+          {
+            icon: "🎮",
+            title: "무기 발사 + 잠금/쿨타임",
+            desc: "조이스틱 발사 + isUnlocked/nextFire로 전투 템포 제어"
+          }
+        ],
+        coreDesign: [
+          {
+            title: "Plane Scan → 전투 공간 고정",
+            oneLiner:
+              "Plane Detection으로 전투 공간을 ‘고정’하고 이후 전투를 해당 영역 기준으로 진행",
+            how:
+              "How: 평면 탐지 ON/OFF 토글 + boundary 월드 좌표 변환 + 스캔 종료 시 탐지/시각화 비활성화",
+            result:
+              "Result: 스캔 이후 전투 영역이 흔들리지 않고 현실 공간 기준으로 안정적인 전투 진행",
+            proofCaption: "Plane Scan 코드 캡처 + AR 스캔 전/후 화면",
+            proofImage: require("./assets/images/pwaLogo.webp")
+          },
+          {
+            title: "boundary 기반 바닥/벽 생성 로직",
+            oneLiner:
+              "boundary를 수집해 min/max 범위를 계산하고 바닥 스케일링 + 4방향 벽 생성",
+            how:
+              "How: allWorldPoints 수집 + min/max 계산 + 바닥 스케일 조정 + CreateWall 로직",
+            result:
+              "Result: 사용자 공간 크기에 맞는 전투 맵이 자동 구성되어 플레이 일관성 향상",
+            proofCaption: "boundary 기반 맵 확장 코드 캡처 + 바닥/벽 결과",
+            proofImage: require("./assets/images/nextuLogo.webp")
+          },
+          {
+            title: "스폰 포인트 자동 생성 + 스포너 이동",
+            oneLiner:
+              "바닥 꼭짓점(floorCorners) 기반으로 스폰 포인트를 만들고 스포너를 랜덤 이동",
+            how:
+              "How: floorCorners 기반 스폰 배열 생성 + isGameStart 이후 랜덤 위치 갱신",
+            result:
+              "Result: AR 공간 변화에도 스폰이 분산되고 전투 리듬이 단조롭지 않게 진행",
+            proofCaption: "스포너 이동/랜덤 스폰 코드 캡처 + 스폰 장면",
+            proofImage: require("./assets/images/saayaHealthLogo.webp")
+          },
+          {
+            title: "웨이브 스폰 + 보스 트리거",
+            oneLiner:
+              "spawnInterval로 웨이브를 진행하고 counterBoss 조건 달성 시 보스 소환",
+            how:
+              "How: 일반 몬스터 스폰 + 처치 카운트 누적 → bossOn 트리거",
+            result:
+              "Result: 스폰→처치 누적→보스 등장 흐름이 명확해져 게임 구조가 선명해짐",
+            proofCaption: "웨이브/보스 트리거 코드 캡처 + 보스 등장 화면",
+            proofImage: require("./assets/images/pwaLogo.webp")
+          },
+          {
+            title: "무기 발사(조이스틱) + 잠금/쿨타임 제어",
+            oneLiner:
+              "조이스틱 입력 기반 발사에 잠금/쿨타임을 붙여 조작감과 전략적 깊이 향상",
+            how:
+              "How: 입력 방향 감지 + nextFire 쿨타임 + isUnlocked 잠금 + 카메라 기준 조준",
+            result:
+              "Result: 무기별 전투 템포가 살아나고 상황에 맞는 전략 운용 가능",
+            proofCaption:
+              "WeaponShooterWithJoystick 코드 캡처 + 무기(활/칼/마법/총) UI/플레이",
+            proofImage: require("./assets/images/googleAssistantLogo.webp")
+          }
+        ],
         links: []
       }
     },
@@ -480,19 +587,126 @@ const bigProjects = {
       image: require("./assets/images/nextuLogo.webp"),
       projectName: "Ajou Campus Foodmap",
       projectDesc:
-        "React(Vite) + Express + MongoDB + Passport(Session) 풀스택, Vercel/Render/Atlas 배포.",
-      footerLink: [],
+        "세션 기반 OAuth 로그인 + 맛집 등록 워크플로우를 포함한 Full-Stack 서비스",
+      footerLink: [
+        {name: "GitHub Client", url: "https://github.com/toadsam/pwd-week6-client"},
+        {name: "GitHub Server", url: "https://github.com/toadsam/pwd-week6-server"}
+      ],
       details: {
-        summary:
-          "React(Vite) + Express + MongoDB 기반 풀스택 서비스로 세션 인증과 배포까지 경험했습니다.",
-        role: "풀스택 개발",
-        highlights: [
-          "Passport(Session) 기반 인증 흐름 구성",
-          "CORS + withCredentials로 세션 유지 문제 해결",
-          "Vercel/Render/Atlas 배포"
+        overview: {
+          title: "Ajou Campus Foodmap",
+          subtitle:
+            "React(Vite) + Express + MongoDB 기반 맛집 지도/등록 서비스 (Local/OAuth 로그인, 운영 배포 포함)",
+          image: require("./assets/images/nextuLogo.webp"),
+          caption: "서비스 메인/맛집 목록/등록 흐름(대표 화면)",
+          role: "Full-Stack 개발",
+          period: "2024.10 - 2024.12",
+          techStack: [
+            "Frontend: React(Vite) / React Query / Axios",
+            "Backend: Express / Passport / Session / Mongoose",
+            "Database: MongoDB Atlas",
+            "Infra: Vercel + Render"
+          ]
+        },
+        intro: {
+          headline: "What is Ajou Campus Foodmap?",
+          highlight:
+            "맛집 등록/승인 흐름과 인증을 통합한 캠퍼스 맛집 지도 서비스",
+          problem:
+            "맛집 정보가 흩어져 있고, 사용자 참여형 등록/승인 흐름이 없으면 데이터 품질 관리가 어려움",
+          solution:
+            "맛집 등록 → 승인(pending/approved/rejected) 워크플로우를 스키마/권한 기반으로 설계",
+          outcome:
+            "배포 환경에서도 로그인 유지/등록 흐름이 안정적으로 동작하고, 운영 관점까지 포함한 실서비스 구조 완성",
+          caption: "서비스 메인/맛집 목록/등록 흐름(대표 화면)",
+          images: [
+            require("./assets/images/nextuLogo.webp"),
+            require("./assets/images/saayaHealthLogo.webp")
+          ]
+        },
+        quickSummary: [
+          {
+            icon: "🌍",
+            title: "배포 환경 분기",
+            desc: "로컬/운영 URL·DB 설정 충돌을 환경변수 기반으로 분리"
+          },
+          {
+            icon: "🍪",
+            title: "교차 도메인 세션 유지",
+            desc: "withCredentials + CORS allowlist/credentials로 로그인 유지"
+          },
+          {
+            icon: "🗃️",
+            title: "Session DB 저장",
+            desc: "MongoStore로 세션을 저장해 재시작/HTTPS에서도 지속"
+          },
+          {
+            icon: "🔐",
+            title: "인증(Local + OAuth)",
+            desc: "Passport Local + Google/Naver OAuth를 단일 흐름으로 통합"
+          },
+          {
+            icon: "🛡️",
+            title: "운영/관리 + 권한",
+            desc: "관리자 권한 분리 + 초기 계정 시드로 운영 효율 확보"
+          }
         ],
-        stack: "React(Vite), Express, MongoDB, Passport, Mongoose",
-        links: []
+        coreDesign: [
+          {
+            title: "배포 환경 분기 — URL/DB 설정 분리 운영",
+            oneLiner: "운영/로컬 환경 차이로 생기는 URL·DB 연결 오류를 환경변수 분기로 차단",
+            how:
+              "How: Client 환경별 API URL 분기 + Server mongoose 옵션/운영 DB 분리 + 배포 환경변수 매핑",
+            result: "Result: 배포 환경에서도 설정 충돌/연결 불안정 감소, 운영 안정성 확보",
+            proofCaption: "환경변수/DB 커넥션/배포 설정 캡처",
+            proofImage: require("./assets/images/pwaLogo.webp")
+          },
+          {
+            title: "교차 도메인 세션 유지 (SPA + API 분리)",
+            oneLiner: "서버/클라이언트 분리 환경에서도 쿠키 기반 로그인 세션이 끊기지 않게 유지",
+            how:
+              "How: axios withCredentials + CORS allowlist/credentials=true 적용",
+            result: "Result: 운영에서도 로그인 상태 유지/세션 기반 기능 안정화",
+            proofCaption: "withCredentials 코드 + CORS 설정 캡처",
+            proofImage: require("./assets/images/nextuLogo.webp")
+          },
+          {
+            title: "Session + MongoStore — 세션 DB 저장",
+            oneLiner: "세션을 메모리가 아닌 DB에 저장해 서버 재시작/HTTPS에서도 로그인 지속",
+            how:
+              "How: session store를 MongoStore로 구성 + credentials/origin 정책 적용",
+            result: "Result: 배포/재시작 환경에서도 세션 유지, 운영 이슈 감소",
+            proofCaption: "MongoStore 코드 + DB 저장 확인 캡처",
+            proofImage: require("./assets/images/saayaHealthLogo.webp")
+          },
+          {
+            title: "Passport Local + bcrypt — 기본 로그인 보안",
+            oneLiner: "Passport Local 인증 + bcrypt 해시로 비밀번호 저장/검증을 표준화",
+            how:
+              "How: serialize/deserialize + UserSchema pre-save bcrypt 적용",
+            result: "Result: 보안/인증 흐름 명확화, 세션 기반 UX 안정화",
+            proofCaption: "serialize/deserialize + bcrypt 코드 캡처",
+            proofImage: require("./assets/images/googleAssistantLogo.webp")
+          },
+          {
+            title: "OAuth(Google/Naver) + 운영/권한(관리자)",
+            oneLiner: "OAuth 로그인과 관리자 권한 제어를 붙여 ‘운영 가능한 서비스’로 완성",
+            how:
+              "How: Passport Strategy + req.login() 세션 생성 + 관리자 미들웨어/시드 스크립트",
+            result: "Result: 운영 측면(관리자 기능 보안/계정 관리)까지 포함한 실서비스 구조",
+            proofCaption: "권한 미들웨어 코드 + admin seed 캡처",
+            proofImage: require("./assets/images/saayaHealthLogo.webp")
+          }
+        ],
+        ops: {
+          oneLiner: "Issue: 배포 환경에서 URL/DB 불일치, 교차 도메인 세션 쿠키 미전달",
+          how: "Fix: 환경변수 분리 + CORS allowlist/credentials + MongoStore 세션 저장",
+          result: "Result: 운영에서도 로그인/세션/DB 연결이 안정적으로 동작"
+        },
+        links: [
+          {name: "GitHub (Client)", url: "https://github.com/toadsam/pwd-week6-client"},
+          {name: "GitHub (Server)", url: "https://github.com/toadsam/pwd-week6-server"}
+        ]
       }
     },
     {
@@ -706,14 +920,108 @@ const bigProjects = {
     },
     {
       image: require("./assets/images/googleAssistantLogo.webp"),
-      projectName: "The Other Side (Unity VR Game)",
-      projectDesc: "Unity XR Interaction Toolkit 기반 VR 프로젝트.",
+      projectName: "The Other Side (VR Horror Game)",
+      projectDesc: "XR Interaction Toolkit 기반 VR 공포 퍼즐 탈출 게임",
       footerLink: [],
       details: {
-        summary: "Unity XR Interaction Toolkit 기반 VR 프로젝트로 AI 및 인터랙션 설계를 경험했습니다.",
-        role: "VR 인터랙션/AI 설계",
-        highlights: ["NavMesh 기반 AI", "VR 인터랙션 구성"],
-        stack: "Unity, XR Interaction Toolkit",
+        overview: {
+          title: "The Other Side",
+          subtitle:
+            "Unity XR 기반 1인칭 VR 공포 퍼즐 게임 (상태 기반 AI, 인터랙션 중심 설계)",
+          image: require("./assets/images/googleAssistantLogo.webp"),
+          caption: "VR 플레이 화면 및 퍼즐/추적 장면",
+          role: "VR 인터랙션/AI 설계",
+          period: "2024.07 - 2024.10",
+          techStack: [
+            "Engine: Unity",
+            "VR: XR Interaction Toolkit",
+            "AI: NavMesh, State Machine",
+            "Platform: PC VR (Meta / SteamVR)"
+          ]
+        },
+        intro: {
+          headline: "What is The Other Side?",
+          highlight: "상호작용과 추적 패턴을 중심으로 설계한 VR 공포 퍼즐 게임",
+          problem:
+            "VR 공포 게임에서 단순 점프 스케어 위주의 연출은 몰입도가 빠르게 떨어짐",
+          solution:
+            "XR Interaction Toolkit 기반 자연스러운 오브젝트 상호작용 설계 + 상태 머신 AI + 퍼즐 연계 레벨 흐름 구성",
+          outcome:
+            "VR 환경에서도 조작 부담이 적은 퍼즐 중심 공포 게임 구현 및 몰입형 플레이 경험 제공",
+          caption: "VR 플레이 화면 및 퍼즐/추적 장면",
+          images: [
+            require("./assets/images/googleAssistantLogo.webp"),
+            require("./assets/images/saayaHealthLogo.webp")
+          ]
+        },
+        quickSummary: [
+          {
+            icon: "🕶️",
+            title: "VR 상호작용 중심 설계",
+            desc: "Grab/Ray/Socket 기반 퍼즐 인터랙션 구현"
+          },
+          {
+            icon: "👾",
+            title: "상태 기반 몬스터 AI",
+            desc: "거리·시야 조건으로 대기/추적/공격 상태 전환"
+          },
+          {
+            icon: "🧩",
+            title: "퍼즐 연계 월드 구조",
+            desc: "오브젝트 조합·트리거로 이어지는 퍼즐 흐름"
+          },
+          {
+            icon: "🎢",
+            title: "VR UX 최적화",
+            desc: "시점 흔들림 최소화 + 상호작용 피드백 강화"
+          },
+          {
+            icon: "🧱",
+            title: "확장 가능한 구조",
+            desc: "스테이지/퍼즐/AI 로직 확장에 유리한 설계"
+          }
+        ],
+        coreDesign: [
+          {
+            title: "XR Interaction Toolkit 기반 상호작용",
+            oneLiner:
+              "VR 환경에 맞춘 Grab / Ray / Socket 상호작용으로 퍼즐 조작을 직관화",
+            how:
+              "How: XR Grab Interactable로 집기 + Ray Interactor로 원거리 선택 + Socket 조합 설계",
+            result: "Result: VR 초보자도 이해하기 쉬운 상호작용 UX 완성",
+            proofCaption: "XR Interactor 설정 화면 및 퍼즐 오브젝트 캡처",
+            proofImage: require("./assets/images/nextuLogo.webp")
+          },
+          {
+            title: "상태 기반 몬스터 AI",
+            oneLiner:
+              "플레이어 조건에 따라 행동이 달라지는 상태 머신 기반 AI 구현",
+            how:
+              "How: Idle/Chase/Attack 상태 분리 + 거리/시야 조건 전환 + NavMesh 추적 이동",
+            result: "Result: 예측 불가능한 추적 패턴으로 공포 몰입도 상승",
+            proofCaption: "몬스터 AI 스크립트 및 추적 장면 캡처",
+            proofImage: require("./assets/images/pwaLogo.webp")
+          },
+          {
+            title: "퍼즐 중심 레벨 구조",
+            oneLiner:
+              "단서 수집과 환경 상호작용으로 진행되는 퍼즐 기반 스테이지 설계",
+            how:
+              "How: 트리거 이벤트로 단계 관리 + 조건 충족 시 공간 개방 + 실패 시 긴장 요소 연계",
+            result: "Result: 단순 이동이 아닌 사고를 요구하는 VR 플레이 경험 제공",
+            proofCaption: "퍼즐 오브젝트 및 이벤트 흐름 캡처",
+            proofImage: require("./assets/images/saayaHealthLogo.webp")
+          },
+          {
+            title: "VR UX 안정화 설계",
+            oneLiner: "VR 멀미를 줄이기 위한 시점·이동·인터랙션 설계",
+            how:
+              "How: 카메라 이동 최소화 + 즉각 피드백 제공 + 순간 이동/안전 거리 유지",
+            result: "Result: 장시간 플레이에도 부담이 적은 VR UX 확보",
+            proofCaption: "플레이 시점 설정 및 이동 방식 캡처",
+            proofImage: require("./assets/images/googleAssistantLogo.webp")
+          }
+        ],
         links: []
       }
     }
