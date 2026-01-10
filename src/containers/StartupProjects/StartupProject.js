@@ -1,4 +1,4 @@
-﻿import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {createPortal} from "react-dom";
 import "./StartupProjects.scss";
 import {bigProjects} from "../../portfolio";
@@ -11,14 +11,6 @@ export default function StartupProject() {
   const isMuscleUp =
     selectedProject?.projectName &&
     selectedProject.projectName.includes("MuscleUp");
-
-  function openUrlInNewTab(url) {
-    if (!url) {
-      return;
-    }
-    var win = window.open(url, "_blank");
-    win.focus();
-  }
 
   const {isDark} = useContext(StyleContext);
 
@@ -64,83 +56,12 @@ export default function StartupProject() {
     return null;
   }
 
-  const renderFeatureSection = (title, shots) => {
-    if (!shots?.length) {
-      return null;
-    }
-    return (
-      <section className="project-modal-section">
-        <h3 className="project-modal-section-title">{title}</h3>
-        <div className="project-feature-grid">
-          {shots.map((shot, i) => (
-            <div key={i} className="project-feature-item">
-              <div className="project-feature-text">
-                <h4 className="project-feature-title">{shot.title}</h4>
-                <ul className="project-feature-list">
-                  {shot.bullets.map((item, j) => (
-                    <li key={j} className="project-feature-list-item">
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="project-feature-media">
-                <img
-                  src={shot.image}
-                  alt={shot.title}
-                  className="project-feature-image"
-                />
-                <div className="project-feature-caption">{shot.caption}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
-  };
-
   const Badge = ({icon, label, tone = "default"}) => {
     return (
       <span className={`project-badge project-badge-${tone}`}>
         <span className="project-badge-icon">{icon}</span>
         {label}
       </span>
-    );
-  };
-
-  const DetailCard = ({badge, title, bullets, proof, onViewProof}) => {
-    return (
-      <div className="project-detail-card">
-        <div className="project-detail-card-header">
-          {badge}
-          <h4 className="project-detail-card-title">{title}</h4>
-          {proof?.length ? (
-            <button
-              className="project-proof-button"
-              type="button"
-              onClick={() => onViewProof(proof, 0)}
-            >
-              View Proof ↗
-            </button>
-          ) : null}
-        </div>
-        <ul className="project-detail-card-list">
-          {bullets.map((item, i) => (
-            <li key={i} className="project-detail-card-item">
-              {item}
-            </li>
-          ))}
-        </ul>
-        {proof?.length ? (
-          <div className="project-proof">
-            <div className="project-proof-label">Proof</div>
-            <ProofThumb item={proof[0]} onClick={() => onViewProof(proof, 0)} />
-            {proof[0]?.caption ? (
-              <div className="project-proof-caption">{proof[0].caption}</div>
-            ) : null}
-          </div>
-        ) : null}
-      </div>
     );
   };
 
@@ -1448,3 +1369,4 @@ export default function StartupProject() {
     </>
   );
 }
+
