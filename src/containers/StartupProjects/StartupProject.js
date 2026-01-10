@@ -65,17 +65,6 @@ export default function StartupProject() {
     );
   };
 
-  const ProofThumb = ({item, onClick}) => {
-    if (!item) {
-      return null;
-    }
-    return (
-      <button className="project-proof-thumb" type="button" onClick={onClick}>
-        <img src={item.src} alt={item.alt} />
-      </button>
-    );
-  };
-
   const ProofLightbox = ({items, index, onClose, onPrev, onNext}) => {
     if (!items?.length) {
       return null;
