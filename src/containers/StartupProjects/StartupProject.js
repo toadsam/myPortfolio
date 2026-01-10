@@ -597,6 +597,9 @@ export default function StartupProject() {
     if (!details) {
       return [];
     }
+    if (details.quickSummary?.length) {
+      return details.quickSummary;
+    }
     const items = [];
     const addItem = (icon, title, desc) => {
       if (title && desc) {
@@ -645,6 +648,9 @@ export default function StartupProject() {
     if (!details) {
       return [];
     }
+    if (details.coreDesign?.length) {
+      return details.coreDesign;
+    }
     const items = [];
     const stackSnippet = details.stack
       ? details.stack.split(",").slice(0, 4).join(" · ")
@@ -671,6 +677,13 @@ export default function StartupProject() {
   };
 
   const buildOpsItem = details => {
+    if (details?.ops) {
+      return {
+        oneLiner: details.ops.oneLiner,
+        how: details.ops.how,
+        result: details.ops.result
+      };
+    }
     if (!details?.deployment?.length) {
       return null;
     }
@@ -687,53 +700,70 @@ export default function StartupProject() {
       return null;
     }
     const details = project.details || {};
+    const intro = details.intro || {};
     const {problem, solution, outcome} = buildIntroLines(details, project);
-    const image =
-      details.overview?.image ||
-      project.image ||
-      require("../../assets/images/saayaHealthLogo.webp");
+    const introProblem = intro.problem || problem;
+    const introSolution = intro.solution || solution;
+    const introOutcome = intro.outcome || outcome;
+    const headline = intro.headline || "What is This Project?";
+    const highlight = intro.highlight || details.summary;
+    const caption = intro.caption || "대표 화면/결과물";
+    const images =
+      intro.images && intro.images.length
+        ? intro.images
+        : [
+            details.overview?.image ||
+              project.image ||
+              require("../../assets/images/saayaHealthLogo.webp")
+          ];
     return (
       <section className="project-modal-section muscleup-intro">
         <div className="muscleup-intro-grid">
           <div className="muscleup-intro-copy">
-            <h3 className="muscleup-intro-title">What is This Project?</h3>
-            {details.summary ? (
+            <h3 className="muscleup-intro-title">{headline}</h3>
+            {highlight ? (
               <p className="muscleup-intro-hero">
-                <HighlightText>{details.summary}</HighlightText>
+                <HighlightText>{highlight}</HighlightText>
               </p>
             ) : null}
             <div className="muscleup-intro-points">
-              {problem ? (
+              {introProblem ? (
                 <div className="muscleup-intro-point">
                   <span className="muscleup-intro-icon">P</span>
                   <span>
-                    <strong>Problem</strong> {problem}
+                    <strong>Problem</strong> {introProblem}
                   </span>
                 </div>
               ) : null}
-              {solution ? (
+              {introSolution ? (
                 <div className="muscleup-intro-point">
                   <span className="muscleup-intro-icon">S</span>
                   <span>
-                    <strong>Solution</strong> {solution}
+                    <strong>Solution</strong> {introSolution}
                   </span>
                 </div>
               ) : null}
-              {outcome ? (
+              {introOutcome ? (
                 <div className="muscleup-intro-point">
                   <span className="muscleup-intro-icon">O</span>
                   <span>
-                    <strong>Outcome</strong> {outcome}
+                    <strong>Outcome</strong> {introOutcome}
                   </span>
                 </div>
               ) : null}
             </div>
           </div>
           <div className="muscleup-intro-media">
-            <img src={image} alt={`${project.projectName} 화면`} />
-            <div className="muscleup-proof-caption">
-              대표 화면/결과물
+            <div className="muscleup-intro-media-list">
+              {images.map((img, index) => (
+                <img
+                  key={`${project.projectName}-${index}`}
+                  src={img}
+                  alt={`${project.projectName} 화면 ${index + 1}`}
+                />
+              ))}
             </div>
+            <div className="muscleup-proof-caption">{caption}</div>
           </div>
         </div>
       </section>
@@ -746,6 +776,11 @@ export default function StartupProject() {
     if (key.includes("db") || key.includes("data")) return "Database";
     if (key.includes("infra")) return "Infrastructure";
     if (key.includes("ai")) return "AI";
+    if (key.includes("analytics")) return "Analytics";
+    if (key.includes("deploy")) return "Deploy";
+    if (key.includes("tooling") || key.includes("tools")) return "Tooling";
+    if (key.includes("content")) return "Content Ops";
+    if (key.includes("promotion")) return "Promotion";
     return null;
   };
 
@@ -754,7 +789,12 @@ export default function StartupProject() {
     "Backend",
     "Database",
     "Infrastructure",
-    "AI"
+    "AI",
+    "Analytics",
+    "Deploy",
+    "Tooling",
+    "Content Ops",
+    "Promotion"
   ];
 
   const buildTechCategories = (techStack, fallbackStack) => {
@@ -796,7 +836,12 @@ export default function StartupProject() {
     Backend: "BE",
     Database: "DB",
     Infrastructure: "INF",
-    AI: "AI"
+    AI: "AI",
+    Analytics: "AN",
+    Deploy: "DEP",
+    Tooling: "TL",
+    "Content Ops": "OPS",
+    Promotion: "PR"
   };
 
   const getProjectBannerClass = project => {
@@ -1242,10 +1287,12 @@ export default function StartupProject() {
                           />
                         }
                         proof={{
-                          src: genericProofImage,
-                          alt: `${selectedProject.projectName} proof`
+                          src: item.proofImage || genericProofImage,
+                          alt:
+                            item.proofAlt ||
+                            `${selectedProject.projectName} proof`
                         }}
-                        caption={`${item.title} 증명`}
+                        caption={item.proofCaption || `${item.title} 증명`}
                       />
                     ))}
                   </>
@@ -1334,11 +1381,6 @@ export default function StartupProject() {
     </>
   );
 }
-
-
-
-
-
 
 
 

@@ -734,6 +734,11 @@
   text-align: center;
 }
 
+.muscleup-intro-media-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
 .muscleup-intro-media img {
   width: 100%;
   max-width: 70%;

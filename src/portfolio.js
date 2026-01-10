@@ -1,4 +1,4 @@
-/* Change this file to get your personal Portfolio */
+﻿/* Change this file to get your personal Portfolio */
 
 // To change portfolio colors globally go to the  _globalColor.scss file
 
@@ -319,19 +319,140 @@ const bigProjects = {
     {
       image: require("./assets/images/nextuLogo.webp"),
       projectName: "TSEROF",
-      projectDesc: "Unity 게임 프로젝트 (스팀 출시 경험 포함).",
+      projectDesc: "출시/배포까지 완료한 3D 액션 플랫폼 게임",
       footerLink: [],
       details: {
-        summary: "Unity 기반 게임 프로젝트로 스팀 출시 경험이 포함됩니다.",
-        role: "게임 시스템/로직 구현",
-        highlights: ["Unity/C# 기반 구현", "Steam 출시 경험 포함"],
-        stack: "Unity, C#",
-        links: []
+        overview: {
+          title: "TSEROF — 프로젝트 개요",
+          subtitle: "출시/배포까지 완료한 3D 액션 플랫폼 게임",
+          image: require("./assets/images/nextuLogo.webp"),
+          caption: "게임 플레이/스테이지 선택 화면",
+          role: "게임 시스템/플레이 로직 구현",
+          period: "2024.09 - 2025.02",
+          techStack: [
+            "Engine: Unity",
+            "Language: C#",
+            "Tools/Etc: Unity Profiler, Addressables"
+          ]
+        },
+        intro: {
+          headline: "What is TSEROF?",
+          highlight: "출시/배포까지 완료한 3D 액션 플랫폼 게임",
+          problem:
+            "플랫폼 게임에서 반복 실패가 잦으면 이탈이 빨라지고, 저장/성능 문제가 있으면 완성도가 급락한다.",
+          solution:
+            "스테이지 선택 + 진행 저장으로 반복 도전을 유도하고, 충돌/레이캐스트/오브젝트 생성 비용을 최적화해 플레이 흐름을 안정화했다.",
+          outcome:
+            "출시/배포까지 완료된 3D 액션 플랫폼 게임을 구현하고, 저장 안정성(XOR)과 성능(충돌/레이캐스트/풀링)을 개선해 완성도를 확보했다.",
+          caption: "플레이 화면/스테이지 선택 화면",
+          images: [
+            require("./assets/images/nextuLogo.webp"),
+            require("./assets/images/pwaLogo.webp")
+          ]
+        },
+        quickSummary: [
+          {
+            icon: "🎮",
+            title: "Steam 출시/배포 완료",
+            desc: "스토어 공개 및 외부 사용자 플레이 가능 상태"
+          },
+          {
+            icon: "🧭",
+            title: "스테이지 선택 + 진행 저장",
+            desc: "반복 도전 구조로 이탈 방지"
+          },
+          {
+            icon: "⚡",
+            title: "충돌/콜라이더 최적화",
+            desc: "불필요 충돌 체크 제거로 프레임 안정화"
+          },
+          {
+            icon: "🎯",
+            title: "Raycast 최적화",
+            desc: "RaycastAll → NonAlloc + LayerMask로 비용 절감"
+          },
+          {
+            icon: "🔐",
+            title: "저장 데이터 XOR 암호화",
+            desc: "세이브 변조/삭제 리스크 완화"
+          },
+          {
+            icon: "🧺",
+            title: "Object Pooling + Caching",
+            desc: "반복 생성/GC 부담 감소"
+          }
+        ],
+        coreDesign: [
+          {
+            title: "플레이 흐름 — 이탈 방지",
+            oneLiner: "세이브/스테이지 선택으로 “처음부터 다시” 스트레스를 제거",
+            how: "How: 스테이지 선택/진행 저장 구조로 반복 도전 UX 구성",
+            result: "Result: 플레이 지속성 확보 + 난이도 구간에서 이탈 완화",
+            proofCaption: "스테이지 선택 화면 / 진행 저장 UI",
+            proofImage: require("./assets/images/nextuLogo.webp")
+          },
+          {
+            title: "레벨/장애물 — 학습 곡선 설계",
+            oneLiner: "관찰 → 학습 → 응용의 난이도 곡선으로 재미 유지",
+            how: "How: 장애물 패턴을 단계적으로 복잡하게 설계",
+            result: "Result: 단순 조작에서도 ‘판단하는 재미’ 강화",
+            proofCaption: "스테이지/장애물 플레이 캡처",
+            proofImage: require("./assets/images/saayaHealthLogo.webp")
+          },
+          {
+            title: "충돌 최적화 (Collision Optimization)",
+            oneLiner: "Collider 단순화 + 불필요 충돌 체크 제거로 성능 회복",
+            how: "How: Collider 구조 정리 / ignore 조건으로 충돌 체크 최소화",
+            result: "Result: 프레임 안정화 + 입력/조작감 개선",
+            proofCaption: "Collision 최적화 관련 코드 캡처",
+            proofImage: require("./assets/images/pwaLogo.webp")
+          },
+          {
+            title: "Object Pooling + Caching",
+            oneLiner: "반복 생성 대신 재사용으로 GC/CPU 부담 감소",
+            how: "How: Object Pooling 적용 + WaitForSeconds 등 코루틴 객체 캐싱",
+            result: "Result: 끊김 감소 + 장시간 플레이 안정화",
+            proofCaption: "풀링/캐싱 구조 설명 캡처",
+            proofImage: require("./assets/images/googleAssistantLogo.webp")
+          },
+          {
+            title: "Raycast 최적화",
+            oneLiner: "RaycastAll 비용 제거 → NonAlloc + LayerMask로 최적화",
+            how: "How: RaycastNonAlloc 사용 + 필요한 Layer만 감지",
+            result: "Result: 메모리 할당 감소 + CPU 비용 절감",
+            proofCaption: "Raycast 개선 전/후 코드 캡처",
+            proofImage: require("./assets/images/nextuLogo.webp")
+          },
+          {
+            title: "XOR 저장 데이터 보호",
+            oneLiner: "세이브 데이터 변조/삭제 리스크를 낮추는 XOR 암호화",
+            how: "How: JSON 저장 시 XOR 암호화 적용",
+            result: "Result: 데이터 변경 가능성을 시각적으로/구조적으로 낮춤",
+            proofCaption: "XOR 저장 로직 캡처",
+            proofImage: require("./assets/images/saayaHealthLogo.webp")
+          }
+        ],
+        ops: {
+          oneLiner: "Optimization & Stability",
+          how: "How: 충돌/풀링/레이캐스트 최적화 및 저장 안정화 적용",
+          result: "Result: 프레임 안정화와 장시간 플레이 안정성을 확보"
+        },
+        links: [
+          {
+            name: "Steam",
+            url: "https://store.steampowered.com/app/2743860/TSEROF/?l=koreana"
+          },
+          {name: "GitHub", url: "https://github.com/KimEoJin24/TSEROF"},
+          {
+            name: "YouTube",
+            url: "https://www.youtube.com/watch?v=1Lm-lpVsmq8"
+          }
+        ]
       }
     },
     {
       image: require("./assets/images/saayaHealthLogo.webp"),
-      projectName: "A club",
+      projectName: "아주대학교총학생회",
       projectDesc: "React 프론트엔드 프로젝트.",
       footerLink: [],
       details: {
@@ -376,18 +497,95 @@ const bigProjects = {
     },
     {
       image: require("./assets/images/saayaHealthLogo.webp"),
-      projectName: "aClub / ajouchong",
-      projectDesc:
-        "React 프론트 + GA4/GSC 분석 운영형 사이트 (배포/깃헙 링크 포함).",
+      projectName: "ajouchong",
+      projectDesc: "총학생회 운영형 홍보·정보 제공 웹 + 유입/행동 분석",
       footerLink: [
         {name: "aClub", url: "https://ajouclub.co.kr"},
         {name: "ajouchong", url: "https://ajouchong.com"}
       ],
       details: {
-        summary: "운영형 프론트 프로젝트로 유입/행동 데이터를 분석하며 개선 경험을 쌓았습니다.",
-        role: "프론트엔드 개발 및 운영",
-        highlights: ["GA4/GSC 연동 및 지표 기반 개선", "배포 운영 경험"],
-        stack: "React, GA4, GSC",
+        overview: {
+          title: "ajouchong - 프로젝트 개요",
+          subtitle: "총학생회 운영형 홍보·정보 제공 웹 + 유입/행동 분석",
+          image: require("./assets/images/saayaHealthLogo.webp"),
+          caption: "서비스 메인/공지/자료/상세 화면",
+          role: "Frontend 개발, 운영 구조 설계 및 분석 연계",
+          period: "2025.03 - 2025.08",
+          techStack: [
+            "Frontend: React, Vite, Axios",
+            "Analytics: GA4, Google Search Console",
+            "Deploy: Vercel, Cloudflare",
+            "Tooling: Notion, Figma"
+          ]
+        },
+        intro: {
+          headline: "What is ajouchong?",
+          highlight: "총학생회 운영 정보를 사용자 흐름 기준으로 재구성한 운영형 웹",
+          problem:
+            "유입 이후 ‘무엇을 어디서 해야 하는지’가 분산되어 문의/이탈이 반복됨",
+          solution:
+            "공지·신청·안내를 사용자 흐름 기준으로 재구성 + 외부 채널 유입 연결",
+          outcome:
+            "정보 탐색 시간이 줄고, 참여 동선이 명확해져 운영 효율이 개선됨",
+          caption: "서비스 메인/공지/자료/상세 화면",
+          images: [
+            require("./assets/images/saayaHealthLogo.webp"),
+            require("./assets/images/nextuLogo.webp")
+          ]
+        },
+        quickSummary: [
+          {
+            icon: "📣",
+            title: "운영형 홍보",
+            desc: "공지/이벤트/지원 정보를 ‘탐색→확인→참여’ 흐름으로 정리"
+          },
+          {
+            icon: "🔍",
+            title: "정보 구조·UX",
+            desc: "메뉴/카테고리 구조를 단순화해 필요한 정보를 빠르게 찾게 설계"
+          },
+          {
+            icon: "📈",
+            title: "유입·행동 분석",
+            desc: "GA4/GSC로 유입·클릭·체류 데이터를 수집해 개선 포인트 도출"
+          },
+          {
+            icon: "🤝",
+            title: "채널 연동 운영",
+            desc: "Everytime·카카오톡 등 외부 채널과 연결해 실사용 유입을 설계"
+          },
+          {
+            icon: "⚙️",
+            title: "Ops · Deploy",
+            desc: "배포/운영 관점에서 안정적으로 유지·개선 가능한 구조로 관리"
+          }
+        ],
+        coreDesign: [
+          {
+            title: "정보 구조·탐색 UX",
+            oneLiner: "공지/지원 정보를 사용 흐름 기준으로 재구성",
+            how: "How: 메뉴/카테고리/CTA 동선을 ‘찾기→확인→신청’으로 정리",
+            result: "Result: 반복 문의 감소 + 필요한 정보 도달 속도 향상",
+            proofCaption: "메인 화면/메뉴 구조/CTA 영역 캡처",
+            proofImage: require("./assets/images/saayaHealthLogo.webp")
+          },
+          {
+            title: "유입·행동 분석(운영 개선 루프)",
+            oneLiner: "데이터로 개선 포인트를 확인하는 운영 구조",
+            how: "How: GA4로 페이지뷰/체류/이벤트, GSC로 검색 유입/CTR 확인",
+            result: "Result: 콘텐츠/동선 개선의 근거 확보",
+            proofCaption: "GA4/GSC 화면 또는 지표 캡처",
+            proofImage: require("./assets/images/nextuLogo.webp")
+          },
+          {
+            title: "홍보 채널 연동 운영",
+            oneLiner: "외부 채널 유입을 서비스 참여로 연결",
+            how: "How: Everytime/카카오톡에서 들어온 사용자가 바로 행동할 수 있게 링크/CTA 설계",
+            result: "Result: 홍보→유입→참여 전환 흐름 강화",
+            proofCaption: "채널 홍보/링크 구조/랜딩 캡처",
+            proofImage: require("./assets/images/pwaLogo.webp")
+          }
+        ],
         links: [
           {name: "aClub", url: "https://ajouclub.co.kr"},
           {name: "ajouchong", url: "https://ajouchong.com"}
@@ -577,3 +775,6 @@ export {
   isHireable,
   resumeSection
 };
+
+
+
