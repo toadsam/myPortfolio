@@ -65,6 +65,39 @@
 .project-detail {
   text-align: center;
 }
+
+.project-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.project-recommendation {
+  margin-top: 0.25rem;
+}
+
+.project-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.project-card-tag {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: $subTitle;
+  font-size: 12px;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.project-card-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  padding-top: 0.75rem;
+}
 .project-card-light:hover {
   box-shadow: $lightBoxShadowDark 0px 20px 30px -10px;
 }

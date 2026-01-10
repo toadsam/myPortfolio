@@ -999,71 +999,53 @@ export default function StartupProject() {
                         />
                       ) : null}
                     </div>
-                    <div className="experience-text-details project-detail">
-                      <h5
-                        className={
-                          isDark
-                            ? "experience-text-role dark-mode-text"
-                            : "experience-text-role"
-                        }
-                      >
-                        {project.projectName}
-                      </h5>
-                      <h5
-                        className={
-                          isDark
-                            ? "experience-text-date dark-mode-text"
-                            : "experience-text-date"
-                        }
-                      >
-                        Main Project
-                      </h5>
-                      <p
-                        className={
-                          isDark
-                            ? "subTitle experience-text-desc dark-mode-text"
-                            : "subTitle experience-text-desc"
-                        }
-                      >
-                        {project.projectDesc}
-                      </p>
-                      {project.footerLink ? (
-                        <div className="project-card-footer">
-                          {project.footerLink.map((link, i) => {
-                            return (
-                              <span
-                                key={i}
-                                className={
-                                  isDark
-                                    ? "dark-mode project-tag"
-                                    : "project-tag"
-                                }
-                                onClick={event => {
-                                  event.stopPropagation();
-                                  openUrlInNewTab(link.url);
-                                }}
-                              >
-                                {link.name}
-                              </span>
-                            );
-                          })}
+                      <div className="experience-text-details project-detail">
+                        <div className="project-card-content">
+                          <h5
+                            className={
+                              isDark
+                                ? "experience-text-role dark-mode-text"
+                                : "experience-text-role"
+                            }
+                          >
+                            {project.projectName}
+                          </h5>
+                          <p
+                            className={
+                              isDark
+                                ? "subTitle experience-text-desc project-recommendation dark-mode-text"
+                                : "subTitle experience-text-desc project-recommendation"
+                            }
+                          >
+                            {project.recommendation || project.projectDesc}
+                          </p>
+                          {project.tags?.length ? (
+                            <div className="project-card-tags">
+                              {project.tags.map((tag, tagIndex) => (
+                                <span key={tagIndex} className="project-card-tag">
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          ) : null}
                         </div>
-                      ) : null}
-                      <button
-                        className={
-                          isDark
-                            ? "dark-mode project-detail-button"
-                            : "project-detail-button"
-                        }
-                        type="button"
-                        onClick={event => {
-                          event.stopPropagation();
-                          setSelectedProject(project);
-                        }}
-                      >
-                        자세히 보기
-                      </button>
-                    </div>
+                        <div className="project-card-actions">
+                          <button
+                            className={
+                              isDark
+                                ? "dark-mode project-detail-button"
+                                : "project-detail-button"
+                            }
+                            type="button"
+                            onClick={event => {
+                              event.stopPropagation();
+                              setSelectedProject(project);
+                            }}
+                          >
+                            자세히 보기
+                          </button>
+                        </div>
+                      </div>
                   </div>
                 );
               })}
@@ -1381,7 +1363,6 @@ export default function StartupProject() {
     </>
   );
 }
-
 
 
 

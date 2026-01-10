@@ -175,13 +175,16 @@ const openSource = {
 
 const bigProjects = {
   title: "Main Projects",
-  subtitle: "프로젝트 요약 (한 줄씩)",
+   
   projects: [
     {
       image: require("./assets/images/saayaHealthLogo.webp"),
       projectName: "득근득근 (MuscleUp)",
       projectDesc:
         "React + Spring Boot 기반 Full-Stack 웹. AWS 배포/HTTPS·CORS 이슈 해결, Refresh Token Rotation 적용.",
+      recommendation:
+        "운영을 전제로 인증·보안·배포까지 설계한 피트니스 커뮤니티 풀스택 서비스",
+      tags: ["#FullStack", "#JWT", "#AWS", "#Security"],
       footerLink: [],
       details: {
         overview: {
@@ -322,6 +325,9 @@ const bigProjects = {
       projectName: "Ajou Campus Foodmap",
       projectDesc:
         "세션 기반 OAuth 로그인 + 맛집 등록 워크플로우를 포함한 Full-Stack 서비스",
+      recommendation:
+        "세션 기반 OAuth 로그인과 맛집 등록 플로우를 구현한 캠퍼스 지도 서비스",
+      tags: ["#FullStack", "#OAuth", "#Workflow"],
       footerLink: [
         {name: "GitHub Client", url: "https://github.com/toadsam/pwd-week6-client"},
         {name: "GitHub Server", url: "https://github.com/toadsam/pwd-week6-server"}
@@ -448,6 +454,9 @@ const bigProjects = {
       image: require("./assets/images/saayaHealthLogo.webp"),
       projectName: "ajouchong",
       projectDesc: "총학생회 운영형 홍보·정보 제공 웹 + 유입/행동 분석",
+      recommendation:
+        "실사용 조직 운영을 위한 정보 제공·홍보 흐름 중심 웹 서비스",
+      tags: ["#WebService", "#Operations", "#UX"],
       footerLink: [
         {name: "aClub", url: "https://ajouclub.co.kr"},
         {name: "ajouchong", url: "https://ajouchong.com"}
@@ -546,6 +555,8 @@ const bigProjects = {
       image: require("./assets/images/nextuLogo.webp"),
       projectName: "TSEROF",
       projectDesc: "출시/배포까지 완료한 3D 액션 플랫폼 게임",
+      recommendation: "출시·배포까지 완주한 3D 액션 플랫폼 게임 프로젝트",
+      tags: ["#Unity", "#GameDev", "#3D"],
       footerLink: [],
       details: {
         overview: {
@@ -682,6 +693,9 @@ const bigProjects = {
       projectName: "아주대탐험 (Ajou Indie Game)",
       projectDesc:
         "대학 캠퍼스를 배경으로 한 캐주얼 액션 어드벤처: Player·Skill·AI·Event 시스템을 Unity로 통합 구현",
+      recommendation:
+        "스킬·AI·이벤트 시스템을 통합 구현한 캐주얼 액션 어드벤처 게임",
+      tags: ["#Unity", "#AI", "#GameSystem"],
       footerLink: [
         {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
         {
@@ -794,6 +808,8 @@ const bigProjects = {
       image: require("./assets/images/googleAssistantLogo.webp"),
       projectName: "The Other Side (VR Horror Game)",
       projectDesc: "XR Interaction Toolkit 기반 VR 공포 퍼즐 탈출 게임",
+      recommendation: "XR Interaction Toolkit 기반 VR 공포 퍼즐 탈출 게임",
+      tags: ["#VR", "#XR", "#Unity"],
       footerLink: [],
       details: {
         overview: {
@@ -903,6 +919,8 @@ const bigProjects = {
       projectName: "AR Monster Shooter",
       projectDesc:
         "AR Plane Scan 기반 전투 공간 자동 생성 + 웨이브/보스 트리거 슈터",
+      recommendation: "AR Plane 스캔 기반 전투 공간 생성 슈터 데모 프로젝트",
+      tags: ["#AR", "#Unity", "#Shooter"],
       footerLink: [],
       details: {
         overview: {
