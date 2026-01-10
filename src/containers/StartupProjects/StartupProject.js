@@ -49,8 +49,7 @@ export default function StartupProject() {
           }
           return {
             ...prev,
-            index:
-              (prev.index - 1 + prev.items.length) % prev.items.length
+            index: (prev.index - 1 + prev.items.length) % prev.items.length
           };
         });
       }
@@ -135,10 +134,7 @@ export default function StartupProject() {
         {proof?.length ? (
           <div className="project-proof">
             <div className="project-proof-label">Proof</div>
-            <ProofThumb
-              item={proof[0]}
-              onClick={() => onViewProof(proof, 0)}
-            />
+            <ProofThumb item={proof[0]} onClick={() => onViewProof(proof, 0)} />
             {proof[0]?.caption ? (
               <div className="project-proof-caption">{proof[0].caption}</div>
             ) : null}
@@ -261,16 +257,10 @@ export default function StartupProject() {
         }
       >
         <div className="muscleup-proof-label">PROOF</div>
-        <button
-          className="muscleup-proof-thumb"
-          type="button"
-          onClick={onOpen}
-        >
+        <button className="muscleup-proof-thumb" type="button" onClick={onOpen}>
           <img src={item.src} alt={item.alt} />
         </button>
-        <div className="muscleup-proof-caption">
-          {caption || item.caption}
-        </div>
+        <div className="muscleup-proof-caption">{caption || item.caption}</div>
       </div>
     );
   };
@@ -497,35 +487,35 @@ export default function StartupProject() {
   const AiSection = () => (
     <ProofSection
       pattern="B"
-        text={
-          <TextBlock
-            badge={<Badge icon="*" label="Core Design" tone="star" />}
-            title="상태 기반 히스토리 저장 AI"
-            chips={["analyze", "plan", "chat"]}
-            bullets={[
-              <div className="muscleup-bullet-group" key="ai-one">
-                <div className="muscleup-bullet-label">ONE-LINER</div>
-                <div className="muscleup-bullet-line">
-                  <span className="muscleup-one-liner">
-                    상태 기반 AI 코치로 반복 사용 흐름 유지
-                  </span>
-                </div>
-              </div>,
-              <div className="muscleup-bullet-group" key="ai-how">
-                <div className="muscleup-bullet-label">HOW</div>
-                <div className="muscleup-bullet-line">
-                  analyze -&gt; plan -&gt; chat 단계 분리, 대화 히스토리 DB 저장
-                </div>
-              </div>,
-              <div className="muscleup-bullet-group" key="ai-result">
-                <div className="muscleup-bullet-label">RESULT</div>
-                <div className="muscleup-bullet-line">
-                  사용자 맥락 유지로 루틴 수정/재생성이 가능한 제품 형태
-                </div>
+      text={
+        <TextBlock
+          badge={<Badge icon="*" label="Core Design" tone="star" />}
+          title="상태 기반 히스토리 저장 AI"
+          chips={["analyze", "plan", "chat"]}
+          bullets={[
+            <div className="muscleup-bullet-group" key="ai-one">
+              <div className="muscleup-bullet-label">ONE-LINER</div>
+              <div className="muscleup-bullet-line">
+                <span className="muscleup-one-liner">
+                  상태 기반 AI 코치로 반복 사용 흐름 유지
+                </span>
               </div>
-            ]}
-          />
-        }
+            </div>,
+            <div className="muscleup-bullet-group" key="ai-how">
+              <div className="muscleup-bullet-label">HOW</div>
+              <div className="muscleup-bullet-line">
+                analyze -&gt; plan -&gt; chat 단계 분리, 대화 히스토리 DB 저장
+              </div>
+            </div>,
+            <div className="muscleup-bullet-group" key="ai-result">
+              <div className="muscleup-bullet-label">RESULT</div>
+              <div className="muscleup-bullet-line">
+                사용자 맥락 유지로 루틴 수정/재생성이 가능한 제품 형태
+              </div>
+            </div>
+          ]}
+        />
+      }
       proof={proofImages.ai}
       caption="AI 엔드포인트 분리 + 히스토리 저장 증명"
     />
@@ -534,34 +524,34 @@ export default function StartupProject() {
   const DbSection = () => (
     <ProofSection
       pattern="A"
-        text={
-          <TextBlock
-            badge={<Badge icon="OK" label="Outcome" tone="check" />}
-            title="도메인 분리 ERD"
-            bullets={[
-              <div className="muscleup-bullet-group" key="db-one">
-                <div className="muscleup-bullet-label">ONE-LINER</div>
-                <div className="muscleup-bullet-line">
-                  <span className="muscleup-one-liner">
-                    사용자/커뮤니티/AI 분리로 확장 가능한 스키마
-                  </span>
-                </div>
-              </div>,
-              <div className="muscleup-bullet-group" key="db-how">
-                <div className="muscleup-bullet-label">HOW</div>
-                <div className="muscleup-bullet-line">
-                  FK 무결성 + 조회 중심 인덱스/페이지네이션 기준 설계
-                </div>
-              </div>,
-              <div className="muscleup-bullet-group" key="db-result">
-                <div className="muscleup-bullet-label">RESULT</div>
-                <div className="muscleup-bullet-line">
-                  users, brag_post, ai_chat_messages, refresh_tokens 중심 운영
-                </div>
+      text={
+        <TextBlock
+          badge={<Badge icon="OK" label="Outcome" tone="check" />}
+          title="도메인 분리 ERD"
+          bullets={[
+            <div className="muscleup-bullet-group" key="db-one">
+              <div className="muscleup-bullet-label">ONE-LINER</div>
+              <div className="muscleup-bullet-line">
+                <span className="muscleup-one-liner">
+                  사용자/커뮤니티/AI 분리로 확장 가능한 스키마
+                </span>
               </div>
-            ]}
-          />
-        }
+            </div>,
+            <div className="muscleup-bullet-group" key="db-how">
+              <div className="muscleup-bullet-label">HOW</div>
+              <div className="muscleup-bullet-line">
+                FK 무결성 + 조회 중심 인덱스/페이지네이션 기준 설계
+              </div>
+            </div>,
+            <div className="muscleup-bullet-group" key="db-result">
+              <div className="muscleup-bullet-label">RESULT</div>
+              <div className="muscleup-bullet-line">
+                users, brag_post, ai_chat_messages, refresh_tokens 중심 운영
+              </div>
+            </div>
+          ]}
+        />
+      }
       proof={proofImages.erd}
       caption="핵심 테이블 분리와 관계 설계 증명"
     />
@@ -570,34 +560,34 @@ export default function StartupProject() {
   const AwsSection = () => (
     <ProofSection
       pattern="B"
-        text={
-          <TextBlock
-            badge={<Badge icon="!" label="Ops & Issue" tone="fire" />}
-            title="AWS 운영 이슈 해결"
-            bullets={[
-              <div className="muscleup-bullet-group" key="aws-one">
-                <div className="muscleup-bullet-label">ONE-LINER</div>
-                <div className="muscleup-bullet-line">
-                  <span className="muscleup-one-liner">
-                    운영 이슈를 재현 -&gt; 해결 -&gt; 검증까지 수행
-                  </span>
-                </div>
-              </div>,
-              <div className="muscleup-bullet-group" key="aws-how">
-                <div className="muscleup-bullet-label">HOW</div>
-                <div className="muscleup-bullet-line">
-                  CloudFront/S3 HTTPS 통일 + CORS allowlist/credentials 유지
-                </div>
-              </div>,
-              <div className="muscleup-bullet-group" key="aws-result">
-                <div className="muscleup-bullet-label">RESULT</div>
-                <div className="muscleup-bullet-line">
-                  배포 안정성, 보안, 세션 유지 이슈를 운영 관점에서 안정화
-                </div>
+      text={
+        <TextBlock
+          badge={<Badge icon="!" label="Ops & Issue" tone="fire" />}
+          title="AWS 운영 이슈 해결"
+          bullets={[
+            <div className="muscleup-bullet-group" key="aws-one">
+              <div className="muscleup-bullet-label">ONE-LINER</div>
+              <div className="muscleup-bullet-line">
+                <span className="muscleup-one-liner">
+                  운영 이슈를 재현 -&gt; 해결 -&gt; 검증까지 수행
+                </span>
               </div>
-            ]}
-            issueLines={[
-              {label: "Issue", text: "ACM us-east-1 필요 + Mixed Content 발생"},
+            </div>,
+            <div className="muscleup-bullet-group" key="aws-how">
+              <div className="muscleup-bullet-label">HOW</div>
+              <div className="muscleup-bullet-line">
+                CloudFront/S3 HTTPS 통일 + CORS allowlist/credentials 유지
+              </div>
+            </div>,
+            <div className="muscleup-bullet-group" key="aws-result">
+              <div className="muscleup-bullet-label">RESULT</div>
+              <div className="muscleup-bullet-line">
+                배포 안정성, 보안, 세션 유지 이슈를 운영 관점에서 안정화
+              </div>
+            </div>
+          ]}
+          issueLines={[
+            {label: "Issue", text: "ACM us-east-1 필요 + Mixed Content 발생"},
             {label: "Fix", text: "CloudFront Invalidation + HTTPS 통일"},
             {label: "Result", text: "CORS credentials 유지, 배포 정상화"}
           ]}
@@ -673,8 +663,7 @@ export default function StartupProject() {
 
   const buildIntroLines = (details, project) => {
     const fallbackSummary = details?.summary || project?.projectDesc || "";
-    const problem =
-      details?.problemSolution?.problem?.[0] || fallbackSummary;
+    const problem = details?.problemSolution?.problem?.[0] || fallbackSummary;
     const solution =
       details?.problemSolution?.solution ||
       details?.highlights?.[0] ||
@@ -909,7 +898,11 @@ export default function StartupProject() {
     if (value.includes("tserof") || value.includes("game")) {
       return "project-banner-game";
     }
-    if (value.includes("monster") || value.includes("ar") || value.includes("xr")) {
+    if (
+      value.includes("monster") ||
+      value.includes("ar") ||
+      value.includes("xr")
+    ) {
       return "project-banner-ar";
     }
     if (value.includes("ajou campus") || value.includes("foodmap")) {
@@ -979,54 +972,54 @@ export default function StartupProject() {
     selectedProject?.footerLink ||
     [];
 
-    const buildOverviewTechStack = techStack => {
-      const items = Array.isArray(techStack) ? techStack : [];
-      return items
-        .map(entry => {
-          const [rawCategory, rawItems] = entry.split(":");
-          if (!rawItems) {
-            return {category: "", items: [entry.trim()]};
-          }
-          const category = rawCategory.trim();
-          const stackItems = rawItems
-            .split(",")
-            .map(value => value.trim())
-            .filter(Boolean);
-          return {category, items: stackItems};
-        })
-        .filter(item => item.items.length);
-    };
-    const overviewTechStack = buildOverviewTechStack(
-      selectedProject?.details?.overview?.techStack
-    );
-    return (
-      <>
+  const buildOverviewTechStack = techStack => {
+    const items = Array.isArray(techStack) ? techStack : [];
+    return items
+      .map(entry => {
+        const [rawCategory, rawItems] = entry.split(":");
+        if (!rawItems) {
+          return {category: "", items: [entry.trim()]};
+        }
+        const category = rawCategory.trim();
+        const stackItems = rawItems
+          .split(",")
+          .map(value => value.trim())
+          .filter(Boolean);
+        return {category, items: stackItems};
+      })
+      .filter(item => item.items.length);
+  };
+  const overviewTechStack = buildOverviewTechStack(
+    selectedProject?.details?.overview?.techStack
+  );
+  return (
+    <>
       <Fade bottom duration={1000} distance="20px">
         <div className="main" id="projects">
           <div>
             <div className="project-header-row">
               <h1 className="skills-heading">{bigProjects.title}</h1>
               <div className="project-legend">
-              <span className="project-legend-item">
-                <span className="project-legend-dot project-legend-web"></span>
-                Blue/Teal: Web Service · Full-Stack 중심의 실서비스 개발
-              </span>
-              <span className="project-legend-item">
-                <span className="project-legend-dot project-legend-ai"></span>
-                Indigo/Violet: Data · AI 기반 로직 설계 및 분석 중심 프로젝트
-              </span>
-              <span className="project-legend-item">
-                <span className="project-legend-dot project-legend-game"></span>
-                Emerald/Cyan: Game · Unity 기반 인터랙티브 콘텐츠 개발
-              </span>
-              <span className="project-legend-item">
-                <span className="project-legend-dot project-legend-ar"></span>
-                Amber/Orange: AR · XR 기반 실감형 사용자 경험 구현
-              </span>
-              <span className="project-legend-item">
-                <span className="project-legend-dot project-legend-ops"></span>
-                Gray: Ops · 배포, 운영, 인증, 인프라 안정화 중심 프로젝트
-              </span>
+                <span className="project-legend-item">
+                  <span className="project-legend-dot project-legend-web"></span>
+                  Blue/Teal: Web Service · Full-Stack 중심의 실서비스 개발
+                </span>
+                <span className="project-legend-item">
+                  <span className="project-legend-dot project-legend-ai"></span>
+                  Indigo/Violet: Data · AI 기반 로직 설계 및 분석 중심 프로젝트
+                </span>
+                <span className="project-legend-item">
+                  <span className="project-legend-dot project-legend-game"></span>
+                  Emerald/Cyan: Game · Unity 기반 인터랙티브 콘텐츠 개발
+                </span>
+                <span className="project-legend-item">
+                  <span className="project-legend-dot project-legend-ar"></span>
+                  Amber/Orange: AR · XR 기반 실감형 사용자 경험 구현
+                </span>
+                <span className="project-legend-item">
+                  <span className="project-legend-dot project-legend-ops"></span>
+                  Gray: Ops · 배포, 운영, 인증, 인프라 안정화 중심 프로젝트
+                </span>
               </div>
             </div>
             <p
@@ -1079,53 +1072,53 @@ export default function StartupProject() {
                         />
                       ) : null}
                     </div>
-                      <div className="experience-text-details project-detail">
-                        <div className="project-card-content">
-                          <h5
-                            className={
-                              isDark
-                                ? "experience-text-role dark-mode-text"
-                                : "experience-text-role"
-                            }
-                          >
-                            {project.projectName}
-                          </h5>
-                          <p
-                            className={
-                              isDark
-                                ? "subTitle experience-text-desc project-recommendation dark-mode-text"
-                                : "subTitle experience-text-desc project-recommendation"
-                            }
-                          >
-                            {project.recommendation || project.projectDesc}
-                          </p>
-                          {project.tags?.length ? (
-                            <div className="project-card-tags">
-                              {project.tags.map((tag, tagIndex) => (
-                                <span key={tagIndex} className="project-card-tag">
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          ) : null}
-                        </div>
-                        <div className="project-card-actions">
-                          <button
-                            className={
-                              isDark
-                                ? "dark-mode project-detail-button"
-                                : "project-detail-button"
-                            }
-                            type="button"
-                            onClick={event => {
-                              event.stopPropagation();
-                              setSelectedProject(project);
-                            }}
-                          >
-                            자세히 보기
-                          </button>
-                        </div>
+                    <div className="experience-text-details project-detail">
+                      <div className="project-card-content">
+                        <h5
+                          className={
+                            isDark
+                              ? "experience-text-role dark-mode-text"
+                              : "experience-text-role"
+                          }
+                        >
+                          {project.projectName}
+                        </h5>
+                        <p
+                          className={
+                            isDark
+                              ? "subTitle experience-text-desc project-recommendation dark-mode-text"
+                              : "subTitle experience-text-desc project-recommendation"
+                          }
+                        >
+                          {project.recommendation || project.projectDesc}
+                        </p>
+                        {project.tags?.length ? (
+                          <div className="project-card-tags">
+                            {project.tags.map((tag, tagIndex) => (
+                              <span key={tagIndex} className="project-card-tag">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        ) : null}
                       </div>
+                      <div className="project-card-actions">
+                        <button
+                          className={
+                            isDark
+                              ? "dark-mode project-detail-button"
+                              : "project-detail-button"
+                          }
+                          type="button"
+                          onClick={event => {
+                            event.stopPropagation();
+                            setSelectedProject(project);
+                          }}
+                        >
+                          자세히 보기
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 );
               })}
@@ -1189,98 +1182,98 @@ export default function StartupProject() {
                     {selectedProject.details.overview.subtitle}
                   </p>
                 </div>
-                  <>
-                    <div className="project-overview-media">
-                      {selectedProject.details.overview.image ? (
-                        <img
-                          src={selectedProject.details.overview.image}
-                          alt={selectedProject.projectName}
-                          className="project-overview-image"
-                        />
-                      ) : null}
-                      {selectedProject.details.overview.caption && (
-                        <div className="project-overview-caption">
-                          {selectedProject.details.overview.caption}
+                <>
+                  <div className="project-overview-media">
+                    {selectedProject.details.overview.image ? (
+                      <img
+                        src={selectedProject.details.overview.image}
+                        alt={selectedProject.projectName}
+                        className="project-overview-image"
+                      />
+                    ) : null}
+                    {selectedProject.details.overview.caption && (
+                      <div className="project-overview-caption">
+                        {selectedProject.details.overview.caption}
+                      </div>
+                    )}
+                  </div>
+                  <div className="project-overview-grid">
+                    <div className="project-overview-col">
+                      {selectedProject.details.overview.role && (
+                        <div className="project-overview-block">
+                          <h4 className="project-overview-block-title">ROLE</h4>
+                          <p className="project-overview-block-text">
+                            {selectedProject.details.overview.role}
+                          </p>
+                        </div>
+                      )}
+                      {selectedProject.details.overview.period && (
+                        <div className="project-overview-block">
+                          <h4 className="project-overview-block-title">
+                            PERIOD
+                          </h4>
+                          <p className="project-overview-block-text">
+                            {selectedProject.details.overview.period}
+                          </p>
+                        </div>
+                      )}
+                      {selectedProject.details.overview.coreValue && (
+                        <div className="project-overview-block project-overview-core">
+                          <h4 className="project-overview-block-title">
+                            CORE VALUE
+                          </h4>
+                          <p className="project-overview-block-text">
+                            {selectedProject.details.overview.coreValue}
+                          </p>
                         </div>
                       )}
                     </div>
-                    <div className="project-overview-grid">
+                    {overviewTechStack.length ? (
                       <div className="project-overview-col">
-                        {selectedProject.details.overview.role && (
-                          <div className="project-overview-block">
-                            <h4 className="project-overview-block-title">ROLE</h4>
-                            <p className="project-overview-block-text">
-                              {selectedProject.details.overview.role}
-                            </p>
-                          </div>
-                        )}
-                        {selectedProject.details.overview.period && (
-                          <div className="project-overview-block">
-                            <h4 className="project-overview-block-title">
-                              PERIOD
-                            </h4>
-                            <p className="project-overview-block-text">
-                              {selectedProject.details.overview.period}
-                            </p>
-                          </div>
-                        )}
-                        {selectedProject.details.overview.coreValue && (
-                          <div className="project-overview-block project-overview-core">
-                            <h4 className="project-overview-block-title">
-                              CORE VALUE
-                            </h4>
-                            <p className="project-overview-block-text">
-                              {selectedProject.details.overview.coreValue}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                      {overviewTechStack.length ? (
-                        <div className="project-overview-col">
-                          <div className="project-overview-block">
-                            <h4 className="project-overview-block-title">
-                              TECH STACK
-                            </h4>
-                            <div className="project-overview-tech-grid">
-                              {overviewTechStack.map((group, i) => (
-                                <div key={i} className="project-overview-tech">
-                                  {group.category ? (
-                                    <div className="project-overview-tech-title">
-                                      {group.category}
-                                    </div>
-                                  ) : null}
-                                  <div className="project-overview-tech-items">
-                                    {group.items.join(" · ")}
+                        <div className="project-overview-block">
+                          <h4 className="project-overview-block-title">
+                            TECH STACK
+                          </h4>
+                          <div className="project-overview-tech-grid">
+                            {overviewTechStack.map((group, i) => (
+                              <div key={i} className="project-overview-tech">
+                                {group.category ? (
+                                  <div className="project-overview-tech-title">
+                                    {group.category}
                                   </div>
+                                ) : null}
+                                <div className="project-overview-tech-items">
+                                  {group.items.join(" · ")}
                                 </div>
-                              ))}
-                            </div>
+                              </div>
+                            ))}
                           </div>
                         </div>
-                      ) : null}
-                    </div>
-                    {selectedProject.details.overview.links?.length ? (
-                      <div className="project-overview-links">
-                        <h4 className="project-overview-block-title">링크</h4>
-                        <ul className="project-overview-list">
-                          {selectedProject.details.overview.links.map(
-                            (link, i) => (
-                              <li key={i} className="project-overview-list-item">
-                                <a
-                                  className="project-overview-link"
-                                  href={link.url}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                >
-                                  {link.name}
-                                </a>
-                              </li>
-                            )
-                          )}
-                        </ul>
                       </div>
                     ) : null}
-                  </>
+                  </div>
+                  {selectedProject.details.overview.links?.length ? (
+                    <div className="project-overview-links">
+                      <h4 className="project-overview-block-title">링크</h4>
+                      <ul className="project-overview-list">
+                        {selectedProject.details.overview.links.map(
+                          (link, i) => (
+                            <li key={i} className="project-overview-list-item">
+                              <a
+                                className="project-overview-link"
+                                href={link.url}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                {link.name}
+                              </a>
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+                  ) : null}
+                </>
               </section>
             ) : (
               <>
@@ -1352,11 +1345,7 @@ export default function StartupProject() {
                         text={
                           <TextBlock
                             badge={
-                              <Badge
-                                icon="*"
-                                label="Core Design"
-                                tone="star"
-                              />
+                              <Badge icon="*" label="Core Design" tone="star" />
                             }
                             title={item.title}
                             bullets={buildGenericBullets(item, `core-${index}`)}
@@ -1384,7 +1373,9 @@ export default function StartupProject() {
                       pattern="B"
                       text={
                         <TextBlock
-                          badge={<Badge icon="!" label="Ops & Issue" tone="fire" />}
+                          badge={
+                            <Badge icon="!" label="Ops & Issue" tone="fire" />
+                          }
                           title="운영 이슈 대응"
                           bullets={buildGenericBullets(opsItem, "ops")}
                           variant="ops"
@@ -1457,18 +1448,3 @@ export default function StartupProject() {
     </>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

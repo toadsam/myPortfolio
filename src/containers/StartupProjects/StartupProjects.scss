@@ -1036,7 +1036,6 @@
   object-fit: cover;
 }
 
-
 .muscleup-section {
   display: grid;
   gap: 6px;
@@ -1092,10 +1091,7 @@
   font-size: 15px;
   padding: 4px 6px;
   border-radius: 6px;
-  background: linear-gradient(
-    transparent 55%,
-    rgba(202, 255, 92, 0.4) 0
-  );
+  background: linear-gradient(transparent 55%, rgba(202, 255, 92, 0.4) 0);
   color: #eaffb0;
 }
 
@@ -1108,10 +1104,7 @@
   font-weight: 700;
   padding: 4px 6px;
   border-radius: 6px;
-  background: linear-gradient(
-    transparent 55%,
-    rgba(202, 255, 92, 0.35) 0
-  );
+  background: linear-gradient(transparent 55%, rgba(202, 255, 92, 0.35) 0);
   color: #eaffb0;
   display: inline-block;
 }
@@ -1144,7 +1137,6 @@
   top: 0;
   color: rgba(255, 255, 255, 0.45);
 }
-
 
 .muscleup-card-header {
   margin-bottom: 0.75rem;
