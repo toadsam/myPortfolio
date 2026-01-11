@@ -1209,30 +1209,25 @@ const achievementSection = {
 // Blogs Section
 
 const blogSection = {
-  title: "Development Principles",
-  subtitle: "개발 철학",
+  title: "Development Records",
+  subtitle: "개발 기록",
   displayMediumBlogs: "false", // Set true to display fetched medium blogs instead of hardcoded ones
   blogs: [
     {
-      url: "",
-      title: "기능보다 구조를 먼저 설계",
-      description: "확장성과 유지보수를 고려한 아키텍처를 우선합니다."
+      url: "https://simple-club-a2b.notion.site/f4211dd073904c08bb779f4504ffa716?v=8b02760b1a944b7592694ffd13e06166&source=copy_link",
+      title: "개발하며 기억에 남은 하루의 기록",
+      description: "개발 중 인상 깊었던 문제와 배운 점, 그날의 고민을 짧게 정리합니다."
     },
     {
       url: "",
-      title: "역할 분리와 유지보수 가능한 코드",
-      description: "비즈니스 로직과 표현 계층을 분리해 변경에 강합니다."
+      title: "개발 개념과 구조 학습 정리",
+      description: "핵심 개념과 구조를 중심으로 학습 내용을 정리합니다."
     },
     {
-      url: "",
-      title: "설계 의사결정을 설명할 수 있는 코드",
-      description: "왜 이 구조가 필요한지 근거를 남깁니다."
+      url: "https://simple-club-a2b.notion.site/13a6894d4ed349c983db120db7e3f4c4?v=673a55f82ff1425fb58b291d97917157&p=a44e8eb59dce482ea3960c09bf983e13&pm=s",
+      title: "코딩 테스트 문제 풀이 기록",
+      description: "문제 풀이 과정과 접근 방식을 정리합니다."
     },
-    {
-      url: "",
-      title: "사용자 흐름 기반 UX",
-      description: "동선을 기준으로 인터페이스를 설계합니다."
-    }
   ],
   display: true // Set false to hide this section, defaults to true
 };
