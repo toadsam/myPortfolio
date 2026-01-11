@@ -111,9 +111,41 @@ const educationInfo = {
       ]
     },
     {
+      schoolName: "코드잇",
+      logo: require("./assets/images/코드잇.png"),
+      subHeader: "인공지능 융합학과 (복수전공)",
+      duration: "2021.03 ~ 2026.02 (예정)",
+      desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
+      descBullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
+    },
+    {
+      schoolName: "구름",
+      logo: require("./assets/images/구름.png"),
+      subHeader: "인공지능 융합학과 (복수전공)",
+      duration: "2021.03 ~ 2026.02 (예정)",
+      desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
+      descBullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
+    },
+    {
       schoolName: "아주대학교",
       logo: require("./assets/images/아주대로고.png"),
       subHeader: "인공지능 융합학과 (복수전공)",
+      duration: "2021.03 ~ 2026.02 (예정)",
+      desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
+      descBullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
+    },
+    {
+      schoolName: "스파르타 내일 배움 캠프",
+      logo: require("./assets/images/스파르타.png"),
+      subHeader: "인공지능 융합학과 (복수전공)",
+      duration: "2021.03 ~ 2026.02 (예정)",
+      desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
+      descBullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
+    },
+    {
+      schoolName: "아주대학교",
+      logo: require("./assets/images/아주대로고.png"),
+      subHeader: "메타버스기획마이크로전공 (부전공)",
       duration: "2021.03 ~ 2026.02 (예정)",
       desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
       descBullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
