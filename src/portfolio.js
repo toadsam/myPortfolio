@@ -407,7 +407,7 @@ const bigProjects = {
             how: "How: axios withCredentials + CORS allowlist/credentials=true 적용",
             result: "Result: 운영에서도 로그인 상태 유지/세션 기반 기능 안정화",
             proofCaption: "withCredentials 코드 + CORS 설정 캡처",
-            proofImage: require("./assets/images/nextuLogo.webp")
+            proofImage: require("./assets/images/AjouCampusFood/ACF교차도메인코드.png")
           },
           {
             title: "Session + MongoStore — 세션 DB 저장",
@@ -416,7 +416,7 @@ const bigProjects = {
             how: "How: session store를 MongoStore로 구성 + credentials/origin 정책 적용",
             result: "Result: 배포/재시작 환경에서도 세션 유지, 운영 이슈 감소",
             proofCaption: "MongoStore 코드 + DB 저장 확인 캡처",
-            proofImage: require("./assets/images/saayaHealthLogo.webp")
+            proofImage: require("./assets/images/AjouCampusFood/ACF 서버 재시작 대응.png")
           },
           {
             title: "Passport Local + bcrypt — 기본 로그인 보안",
@@ -425,7 +425,7 @@ const bigProjects = {
             how: "How: serialize/deserialize + UserSchema pre-save bcrypt 적용",
             result: "Result: 보안/인증 흐름 명확화, 세션 기반 UX 안정화",
             proofCaption: "serialize/deserialize + bcrypt 코드 캡처",
-            proofImage: require("./assets/images/googleAssistantLogo.webp")
+            proofImage: require("./assets/images/AjouCampusFood/ACF 비밀번호 보호코드.png")
           },
           {
             title: "OAuth(Google/Naver) + 운영/권한(관리자)",
@@ -435,14 +435,16 @@ const bigProjects = {
             result:
               "Result: 운영 측면(관리자 기능 보안/계정 관리)까지 포함한 실서비스 구조",
             proofCaption: "권한 미들웨어 코드 + admin seed 캡처",
-            proofImage: require("./assets/images/saayaHealthLogo.webp")
+            proofImage: require("./assets/images/AjouCampusFood/ACF 소셜로그인코드.png")
           }
         ],
         ops: {
           oneLiner:
-            "Issue: 배포 환경에서 URL/DB 불일치, 교차 도메인 세션 쿠키 미전달",
-          how: "Fix: 환경변수 분리 + CORS allowlist/credentials + MongoStore 세션 저장",
-          result: "Result: 운영에서도 로그인/세션/DB 연결이 안정적으로 동작"
+            "Issue: 서버 기반 인증·권한 검증을 통한 관리자 기능 접근 제어",
+          how: "초기 관리자 계정 생성을 위한 운영 스크립트 제공으로 권한 관리 단순화",
+          result: "권한 검증이 서버 중심으로 일관되게 적용되어 관리자 기능의 보안 안정성 ",
+          proofCaption: "관리자 권한 코드 캡처",
+          proofImage: require("./assets/images/AjouCampusFood/ACF관리자코드.png")
         },
         links: [
           {
@@ -560,7 +562,7 @@ const bigProjects = {
     },
 
     {
-      image: require("./assets/images/nextuLogo.webp"),
+      image: require("./assets/images/트세로프/트세로프로고.png"),
       projectName: "TSEROF",
       projectDesc: "출시/배포까지 완료한 3D 액션 플랫폼 게임",
       recommendation: "출시·배포까지 완주한 3D 액션 플랫폼 게임 프로젝트",
@@ -570,10 +572,10 @@ const bigProjects = {
         overview: {
           title: "TSEROF — 프로젝트 개요",
           subtitle: "출시/배포까지 완료한 3D 액션 플랫폼 게임",
-          image: require("./assets/images/nextuLogo.webp"),
+          image: require("./assets/images/트세로프/트세로프로고.png"),
           caption: "게임 플레이/스테이지 선택 화면",
           role: "게임 시스템/플레이 로직 구현",
-          period: "2024.09 - 2025.02",
+          period: "2023.11 - 2024.02",
           techStack: [
             "Engine: Unity",
             "Language: C#",
@@ -591,8 +593,7 @@ const bigProjects = {
             "출시/배포까지 완료된 3D 액션 플랫폼 게임을 구현하고, 저장 안정성(XOR)과 성능(충돌/레이캐스트/풀링)을 개선해 완성도를 확보했다.",
           caption: "플레이 화면/스테이지 선택 화면",
           images: [
-            require("./assets/images/nextuLogo.webp"),
-            require("./assets/images/pwaLogo.webp")
+            require("./assets/images/트세로프/트세로프난이도선택.png")
           ]
         },
         quickSummary: [
@@ -635,7 +636,7 @@ const bigProjects = {
             how: "How: 스테이지 선택/진행 저장 구조로 반복 도전 UX 구성",
             result: "Result: 플레이 지속성 확보 + 난이도 구간에서 이탈 완화",
             proofCaption: "스테이지 선택 화면 / 진행 저장 UI",
-            proofImage: require("./assets/images/nextuLogo.webp")
+            proofImage: require("./assets/images/트세로프/트세로프 저장.png")
           },
           {
             title: "레벨/장애물 — 학습 곡선 설계",
@@ -643,7 +644,7 @@ const bigProjects = {
             how: "How: 장애물 패턴을 단계적으로 복잡하게 설계",
             result: "Result: 단순 조작에서도 ‘판단하는 재미’ 강화",
             proofCaption: "스테이지/장애물 플레이 캡처",
-            proofImage: require("./assets/images/saayaHealthLogo.webp")
+            proofImage: require("./assets/images/트세로프/트세로프난이도.png")
           },
           {
             title: "충돌 최적화 (Collision Optimization)",
@@ -651,7 +652,7 @@ const bigProjects = {
             how: "How: Collider 구조 정리 / ignore 조건으로 충돌 체크 최소화",
             result: "Result: 프레임 안정화 + 입력/조작감 개선",
             proofCaption: "Collision 최적화 관련 코드 캡처",
-            proofImage: require("./assets/images/pwaLogo.webp")
+            proofImage: require("./assets/images/트세로프/트세로프충돌개선코드.png")
           },
           {
             title: "Object Pooling + Caching",
@@ -659,7 +660,7 @@ const bigProjects = {
             how: "How: Object Pooling 적용 + WaitForSeconds 등 코루틴 객체 캐싱",
             result: "Result: 끊김 감소 + 장시간 플레이 안정화",
             proofCaption: "풀링/캐싱 구조 설명 캡처",
-            proofImage: require("./assets/images/googleAssistantLogo.webp")
+            proofImage: require("./assets/images/트세로프/트세로프고드름코드.png")
           },
           {
             title: "Raycast 최적화",
@@ -667,21 +668,14 @@ const bigProjects = {
             how: "How: RaycastNonAlloc 사용 + 필요한 Layer만 감지",
             result: "Result: 메모리 할당 감소 + CPU 비용 절감",
             proofCaption: "Raycast 개선 전/후 코드 캡처",
-            proofImage: require("./assets/images/nextuLogo.webp")
-          },
-          {
-            title: "XOR 저장 데이터 보호",
-            oneLiner: "세이브 데이터 변조/삭제 리스크를 낮추는 XOR 암호화",
-            how: "How: JSON 저장 시 XOR 암호화 적용",
-            result: "Result: 데이터 변경 가능성을 시각적으로/구조적으로 낮춤",
-            proofCaption: "XOR 저장 로직 캡처",
-            proofImage: require("./assets/images/saayaHealthLogo.webp")
+            proofImage: require("./assets/images/트세로프/트세로프레이케이스코드.png")
           }
         ],
         ops: {
-          oneLiner: "Optimization & Stability",
-          how: "How: 충돌/풀링/레이캐스트 최적화 및 저장 안정화 적용",
-          result: "Result: 프레임 안정화와 장시간 플레이 안정성을 확보"
+          oneLiner: "User Test–Driven UX Improvement",
+          how: "How: 실제 플레이어 대상 단계별 유저테스트를 진행하고, 플레이 로그·피드백 기반으로 난이도·UX를 반복 개선",
+          result: "Result: 조작 이해도 향상과 초반 이탈 감소, 플레이 흐름 안정화",
+          proofImage: require("./assets/images/트세로프/트세로프유저피드백.png"),
         },
         links: [
           {

@@ -624,7 +624,9 @@ export default function StartupProject() {
       return {
         oneLiner: details.ops.oneLiner,
         how: details.ops.how,
-        result: details.ops.result
+        result: details.ops.result,
+        proofImage: details.ops.proofImage,
+        proofCaption: details.ops.proofCaption
       };
     }
     if (!details?.deployment?.length) {
@@ -1279,24 +1281,24 @@ export default function StartupProject() {
                       title="Ops & Issue"
                       subtitle="운영 이슈 대응 요약"
                     />
-                    <ProofSection
-                      pattern="B"
-                      text={
-                        <TextBlock
-                          badge={
-                            <Badge icon="!" label="Ops & Issue" tone="fire" />
-                          }
-                          title="운영 이슈 대응"
-                          bullets={buildGenericBullets(opsItem, "ops")}
-                          variant="ops"
-                        />
-                      }
-                      proof={{
-                        src: genericProofImage,
-                        alt: `${selectedProject.projectName} ops proof`
-                      }}
-                      caption="운영 이슈 증명"
-                    />
+                      <ProofSection
+                        pattern="B"
+                        text={
+                          <TextBlock
+                            badge={
+                              <Badge icon="!" label="Ops & Issue" tone="fire" />
+                            }
+                            title="운영 이슈 대응"
+                            bullets={buildGenericBullets(opsItem, "ops")}
+                            variant="ops"
+                          />
+                        }
+                        proof={{
+                          src: opsItem.proofImage || genericProofImage,
+                          alt: `${selectedProject.projectName} ops proof`
+                        }}
+                        caption={opsItem.proofCaption || "운영 이슈 증명"}
+                      />
                   </>
                 ) : null}
               </>
