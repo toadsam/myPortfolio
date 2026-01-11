@@ -1050,10 +1050,10 @@ const achievementSection = {
       image: require("./assets/images/서브 프로젝트/르탄게임.png"),
       imageAlt: "덱 빌딩 카드 게임 개발",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
+          {name: "GitHub", url: "https://github.com/KimDaeMins/CardGame"},
           {
             name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=mtIiIWmrSdg&feature=youtu.be"
+            url: "https://www.youtube.com/watch?v=fsbsZMmkxDE"
           }
         ]
     },
@@ -1106,7 +1106,7 @@ const achievementSection = {
           {name: "GitHub", url: "https://github.com/KimEoJin24/Fossil_Runner"},
           {
             name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=mtIiIWmrSdg&feature=youtu.be"
+            url: "https://www.youtube.com/watch?v=Le8jc3p3Z68"
           }
         ]
     },
