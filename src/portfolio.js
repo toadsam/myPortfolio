@@ -145,7 +145,7 @@ const techStack = {
 // Work experience section
 
 const workExperiences = {
-  display: true, //Set it to true to show workExperiences Section
+  display: false, //Set it to true to show workExperiences Section
   experience: [
     {
       role: "개인/팀 프로젝트",
@@ -1030,32 +1030,177 @@ const bigProjects = {
 // Include certificates, talks etc
 
 const achievementSection = {
-  title: emoji("Sub Projects (Game / XR)"),
+  title: emoji("Sub Projects"),
   subtitle: "프로젝트 요약 (한 줄씩)",
 
   achievementsCards: [
     {
-      title: "TSEROF",
-      subtitle: "Unity 게임 프로젝트 (스팀 출시 경험 포함).",
-      image: require("./assets/images/codeInLogo.webp"),
-      imageAlt: "TSEROF",
-      footerLink: []
+      title: "고양이로부터 지켜라",
+      subtitle: "타워 디펜스 게임 1인 개발",
+      image: require("./assets/images/서브 프로젝트/고양이로부터 지켜라.png"),
+      imageAlt: "고양이로부터 지켜라",
+      footerLink: [
+          
+        ]
     },
     {
-      title: "The Other Side (VR)",
+      title: "루탄의 카드 게임",
       subtitle:
-        "Unity XR Interaction Toolkit 기반 VR 게임, NavMesh 기반 AI/상태 설계.",
-      image: require("./assets/images/googleAssistantLogo.webp"),
-      imageAlt: "The Other Side VR",
-      footerLink: []
+        "덱 빌딩 카드 게임 개발",
+      image: require("./assets/images/서브 프로젝트/르탄게임.png"),
+      imageAlt: "덱 빌딩 카드 게임 개발",
+      footerLink: [
+          {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
+          {
+            name: "Demo Video",
+            url: "https://www.youtube.com/watch?v=mtIiIWmrSdg&feature=youtu.be"
+          }
+        ]
     },
     {
-      title: "AR Monster Shooter / INTO MONSTER POINT",
+      title: "내 꿈이 현실의 버그에 침식당하기 시작해서 위험해",
       subtitle:
-        "Unity AR Foundation 기반 AR 프로젝트 (Plane Scan, boundary 등).",
+        "잠든 개발자가 꿈속 코드 세계에서 버그를 해결하는 게임",
+      image: require("./assets/images/서브 프로젝트/개발자게임.png"),
+      imageAlt: "내 꿈이 현실의 버그에 침식당하기 시작해서 위험해",
+      footerLink: [
+          {name: "GitHub", url: "https://github.com/phw97123/B10_DreamsComeTrue"},
+          {
+            name: "Demo Video",
+            url: "https://www.youtube.com/watch?v=3ZMRb3Ro87o"
+
+          },
+          {
+            name: "Notion",
+            url: "https://teamsparta.notion.site/10-75e0e926db5b44e7a07f009b57ee577a"
+
+          }
+        ]
+    },
+    {
+      title: "스파르타 던전 배틀 (Text 게임)",
+      subtitle:
+        "나만의 캐릭터를 생성하고, 그 캐릭터를 활용한 텍스트 게임",
+      image: require("./assets/images/서브 프로젝트/스파르터 던전 배틀.png"),
+      imageAlt: "스파르타 던전 배틀 (Text 게임)",
+      footerLink: [
+          {name: "GitHub", url: "https://github.com/toadsam/2-1teamproject?tab=readme-ov-file##-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%86%8C%EA%B0%9C"},
+          {
+            name: "Demo Video",
+            url: "https://www.youtube.com/watch?v=akilbeG1NyY"
+          },
+          {
+            name: "Notion",
+            url: "https://teamsparta.notion.site/02-BE-077931748646472e87afa346c1c84063"
+          }
+        
+        ]
+    },
+    {
+      title: "Fossil Runner",
+      subtitle:
+        "섬에서 자원을 모아 성장하고, 용을 처치해 현실로 돌아가는 게임",
+      image: require("./assets/images/서브 프로젝트/파슬러너.png"),
+      imageAlt: "Fossil Runner",
+      footerLink: [
+          {name: "GitHub", url: "https://github.com/KimEoJin24/Fossil_Runner"},
+          {
+            name: "Demo Video",
+            url: "https://www.youtube.com/watch?v=mtIiIWmrSdg&feature=youtu.be"
+          }
+        ]
+    },
+    {
+      title: "MOVYDICK",
+      subtitle:
+        "이더리옴 고래 활동 추적 및 매매 시점 예측 시스템 개발",
+      image: require("./assets/images/서브 프로젝트/MOVYDICK.png"),
+      imageAlt: "MOVYDICK",
+      footerLink: [
+          
+          {
+            name: "Demo Video",
+            url: "https://youtu.be/Ul-gFH8Dd8U"
+          },
+          {
+            name: "Notion",
+            url: "https://www.notion.so/1350657d60d380a2bc93cf97bf660b53"
+          }
+        ]
+    },
+    {
+      title: "NovelKub",
+      subtitle:
+        "NPC 단서 수집 기반 살인사건 추리 게임",
+      image: require("./assets/images/서브 프로젝트/노벨.png"),
+      imageAlt: "NovelKub",
+      footerLink: [
+          {name: "GitHub", url: "https://github.com/jwonp9127/Novelkub"},
+          {
+            name: "Demo Video",
+            url: "https://www.youtube.com/watch?v=Xkv1aamogcA"
+          },
+          {
+            name: "Notion",
+            url: "https://teamsparta.notion.site/03-Rumikub-d735d92158cb45b296e8b3b79bd68da0"
+          }
+        ]
+    },
+    {
+      title: "Time 게임",
+      subtitle:
+        "Godot 기반 퍼즐 게발",
+      image: require("./assets/images/pwaLogo.webp"),
+      imageAlt: "Time 게임",
+      footerLink: [
+          {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
+          {
+            name: "Demo Video",
+            url: "https://www.youtube.com/watch?v=mtIiIWmrSdg&feature=youtu.be"
+          }
+        ]
+    },
+    {
+      title: "불빛아래",
+      subtitle:
+        "AI 디자인 적용 3D 공포 게임",
       image: require("./assets/images/pwaLogo.webp"),
       imageAlt: "AR Monster Shooter",
-      footerLink: []
+      footerLink: [
+          {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
+          {
+            name: "Demo Video",
+            url: "https://www.youtube.com/watch?v=EswL1T42w-w"
+          }
+        ]
+    },
+    {
+      title: "로블록스",
+      subtitle:
+        "AI 디자인 적용 3D 공포 게임",
+      image: require("./assets/images/pwaLogo.webp"),
+      imageAlt: "AR Monster Shooter",
+      footerLink: [
+          {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
+          {
+            name: "Demo Video",
+            url: "https://www.youtube.com/watch?v=EswL1T42w-w"
+          }
+        ]
+    },
+    {
+      title: "곤충ar",
+      subtitle:
+        "AI 디자인 적용 3D 공포 게임",
+      image: require("./assets/images/pwaLogo.webp"),
+      imageAlt: "AR Monster Shooter",
+      footerLink: [
+          {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
+          {
+            name: "Demo Video",
+            url: "https://www.youtube.com/watch?v=EswL1T42w-w"
+          }
+        ]
     }
   ],
   display: true // Set false to hide this section, defaults to true
