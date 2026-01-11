@@ -460,7 +460,7 @@ const bigProjects = {
     },
 
     {
-      image: require("./assets/images/saayaHealthLogo.webp"),
+      image: require("./assets/images/aclub로고.png"),
       projectName: "ajouchong",
       projectDesc: "총학생회 운영형 홍보·정보 제공 웹 + 유입/행동 분석",
       recommendation:
@@ -692,7 +692,7 @@ const bigProjects = {
     },
 
     {
-      image: require("./assets/images/nextuLogo.webp"),
+      image: require("./assets/images/아주대탐험/아주대탐험로고.png"),
       projectName: "아주대탐험 (Ajou Indie Game)",
       projectDesc:
         "대학 캠퍼스를 배경으로 한 캐주얼 액션 어드벤처: Player·Skill·AI·Event 시스템을 Unity로 통합 구현",
@@ -711,7 +711,7 @@ const bigProjects = {
           title: "아주대탐험 (Ajou Indie Game)",
           subtitle:
             "대학 캠퍼스를 배경으로 한 캐주얼 액션 어드벤처: Player·Skill·AI·Event 시스템을 Unity로 통합 구현",
-          image: require("./assets/images/nextuLogo.webp"),
+          image: require("./assets/images/아주대탐험/인게임화면.png"),
           caption: "플레이 화면 기반 결과물(인게임 UI·전투·이벤트 흐름)",
           role: "Player/Skill/UI/AI/Event 구현",
           period: "2024.08 - 2024.12",
@@ -732,7 +732,7 @@ const bigProjects = {
           outcome:
             "플레이어 조작·성장·전투·이벤트가 하나의 루프로 자연스럽게 이어지는 구조를 완성했다.",
           caption: "플레이 화면 기반 결과물(인게임 UI·전투·이벤트 흐름)",
-          images: [require("./assets/images/nextuLogo.webp")]
+          images: [require("./assets/images/아주대탐험/치토.png")]
         },
         quickSummary: [
           {
@@ -768,7 +768,7 @@ const bigProjects = {
             how: "How: 컨트롤러 enable/disable, 카메라 parent 기준 정리, enum/switch로 상태 전환",
             result: "Result: 전환 시 입력 꼬임 없이 동일한 UX 유지",
             proofCaption: "Mode Switching 구조 증명",
-            proofImage: require("./assets/images/saayaHealthLogo.webp")
+            proofImage: require("./assets/images/아주대탐험/아주대탐험1인칭코드.png")
           },
           {
             title: "Level-Up & Random Skill Selection",
@@ -776,7 +776,7 @@ const bigProjects = {
             how: "How: 랜덤 3개 스킬 제시, UI 슬롯 세팅, Time.timeScale=0으로 일시정지 처리",
             result: "Result: 전투 흐름은 유지하면서 선택 UX는 명확하게 분리",
             proofCaption: "Random Skill UI 증명",
-            proofImage: require("./assets/images/pwaLogo.webp")
+            proofImage: require("./assets/images/아주대탐험/레벨업 ui.png")
           },
           {
             title: "Enemy AI (NavMesh + Boss Pattern)",
@@ -785,7 +785,7 @@ const bigProjects = {
             result:
               "Result: 일반 몬스터/보스 모두 예측 가능한 규칙 위에서 난이도 조절",
             proofCaption: "NavMesh AI / Boss Pattern 증명",
-            proofImage: require("./assets/images/nextuLogo.webp")
+            proofImage: require("./assets/images/아주대탐험/아주대탐험몬스터상태분기코드.png")
           },
           {
             title: "UI ↔ Game World",
@@ -794,7 +794,7 @@ const bigProjects = {
             how: "How: 퀘스트/상태/상호작용 UI가 월드 오브젝트/진행 상태와 동기화",
             result: "Result: 플레이 중 ‘다음 행동’이 UI로 자연스럽게 안내됨",
             proofCaption: "UI-월드 동기화 증명",
-            proofImage: require("./assets/images/googleAssistantLogo.webp")
+            proofImage: require("./assets/images/아주대탐험/아주대탐험UI활성화비활성화.png")
           }
         ],
         links: [
@@ -808,8 +808,8 @@ const bigProjects = {
     },
 
     {
-      image: require("./assets/images/googleAssistantLogo.webp"),
-      projectName: "The Other Side (VR Horror Game)",
+      image: require("./assets/images/VR/VR로고.png"),
+      projectName: "The Other Side(VR)",
       projectDesc: "XR Interaction Toolkit 기반 VR 공포 퍼즐 탈출 게임",
       recommendation: "XR Interaction Toolkit 기반 VR 공포 퍼즐 탈출 게임",
       tags: ["#VR", "#XR", "#Unity"],
@@ -819,10 +819,10 @@ const bigProjects = {
           title: "The Other Side",
           subtitle:
             "Unity XR 기반 1인칭 VR 공포 퍼즐 게임 (상태 기반 AI, 인터랙션 중심 설계)",
-          image: require("./assets/images/googleAssistantLogo.webp"),
+          image: require("./assets/images/VR/메인제목.png"),
           caption: "VR 플레이 화면 및 퍼즐/추적 장면",
           role: "VR 인터랙션/AI 설계",
-          period: "2024.07 - 2024.10",
+          period: "2025.04 - 2024.6",
           techStack: [
             "Engine: Unity",
             "VR: XR Interaction Toolkit",
@@ -841,8 +841,7 @@ const bigProjects = {
             "VR 환경에서도 조작 부담이 적은 퍼즐 중심 공포 게임 구현 및 몰입형 플레이 경험 제공",
           caption: "VR 플레이 화면 및 퍼즐/추적 장면",
           images: [
-            require("./assets/images/googleAssistantLogo.webp"),
-            require("./assets/images/saayaHealthLogo.webp")
+            require("./assets/images/VR/따라오는 몬스터.png")
           ]
         },
         quickSummary: [
@@ -880,7 +879,7 @@ const bigProjects = {
             how: "How: XR Grab Interactable로 집기 + Ray Interactor로 원거리 선택 + Socket 조합 설계",
             result: "Result: VR 초보자도 이해하기 쉬운 상호작용 UX 완성",
             proofCaption: "XR Interactor 설정 화면 및 퍼즐 오브젝트 캡처",
-            proofImage: require("./assets/images/nextuLogo.webp")
+            proofImage: require("./assets/images/VR/특수한 카메라.png")
           },
           {
             title: "상태 기반 몬스터 AI",
@@ -889,7 +888,7 @@ const bigProjects = {
             how: "How: Idle/Chase/Attack 상태 분리 + 거리/시야 조건 전환 + NavMesh 추적 이동",
             result: "Result: 예측 불가능한 추적 패턴으로 공포 몰입도 상승",
             proofCaption: "몬스터 AI 스크립트 및 추적 장면 캡처",
-            proofImage: require("./assets/images/pwaLogo.webp")
+            proofImage: require("./assets/images/VR/VR몬스터상태전환코드.png")
           },
           {
             title: "퍼즐 중심 레벨 구조",
@@ -899,15 +898,15 @@ const bigProjects = {
             result:
               "Result: 단순 이동이 아닌 사고를 요구하는 VR 플레이 경험 제공",
             proofCaption: "퍼즐 오브젝트 및 이벤트 흐름 캡처",
-            proofImage: require("./assets/images/saayaHealthLogo.webp")
+            proofImage: require("./assets/images/VR/VR단서스룹동기화코드.png")
           },
           {
-            title: "VR UX 안정화 설계",
-            oneLiner: "VR 멀미를 줄이기 위한 시점·이동·인터랙션 설계",
-            how: "How: 카메라 이동 최소화 + 즉각 피드백 제공 + 순간 이동/안전 거리 유지",
-            result: "Result: 장시간 플레이에도 부담이 적은 VR UX 확보",
+            title: "중앙 제어 구조 설계",
+            oneLiner: "AI 중앙 제어 아키텍처",
+            how: "How: 감지 로직과 AI 행동 로직을 분리하고, GameManager에서 추적·공격 상태를 일괄 제어",
+            result: "Result: 유지보수성 향상 및 조건 기반 AI 제어 확장 가능",
             proofCaption: "플레이 시점 설정 및 이동 방식 캡처",
-            proofImage: require("./assets/images/googleAssistantLogo.webp")
+            proofImage: require("./assets/images/VR/VR중앙제어코드.png")
           }
         ],
         links: []
@@ -915,8 +914,8 @@ const bigProjects = {
     },
 
     {
-      image: require("./assets/images/pwaLogo.webp"),
-      projectName: "AR Monster Shooter",
+      image: require("./assets/images/AR/AR로고.png"),
+      projectName: "INTO MONSTER POINT(AR)",  
       projectDesc:
         "AR Plane Scan 기반 전투 공간 자동 생성 + 웨이브/보스 트리거 슈터",
       recommendation: "AR Plane 스캔 기반 전투 공간 생성 슈터 데모 프로젝트",
@@ -924,10 +923,10 @@ const bigProjects = {
       footerLink: [],
       details: {
         overview: {
-          title: "AR Monster Shooter",
+          title: "INTO MONSTER POINT",
           subtitle:
             "Unity AR Foundation 기반 AR 전투 게임 — Plane Scan으로 공간 고정 후 웨이브/보스 전투 진행",
-          image: require("./assets/images/pwaLogo.webp"),
+          image: require("./assets/images/AR/게임시작화면.png"),
           caption: "AR Plane Scan 기반 전투 공간 생성 및 전투 진행 화면",
           role: "AR 전투 로직/스폰/무기 시스템 구현",
           period: "2024.06 - 2024.08",
@@ -938,7 +937,7 @@ const bigProjects = {
           ]
         },
         intro: {
-          headline: "What is AR Monster Shooter?",
+          headline: "What is INTO MONSTER POINT?",
           highlight: "AR Plane Scan 기반 전투 공간을 자동 생성하는 슈터 게임",
           problem:
             "AR 환경에서 전투를 진행하려면 현실 공간 기준의 전투 영역 고정이 필요함",
@@ -948,8 +947,7 @@ const bigProjects = {
             "현실 공간 크기에 맞춰 전투 맵이 자동 생성되어 몰입도가 높아지고, 웨이브→보스 전환 구조가 안정화됨",
           caption: "AR Plane Scan 기반 전투 공간 생성 및 전투 진행 화면",
           images: [
-            require("./assets/images/pwaLogo.webp"),
-            require("./assets/images/saayaHealthLogo.webp")
+            require("./assets/images/AR/보스몬스터 사진.png")
           ]
         },
         quickSummary: [
@@ -988,7 +986,7 @@ const bigProjects = {
             result:
               "Result: 스캔 이후 전투 영역이 흔들리지 않고 현실 공간 기준으로 안정적인 전투 진행",
             proofCaption: "Plane Scan 코드 캡처 + AR 스캔 전/후 화면",
-            proofImage: require("./assets/images/pwaLogo.webp")
+            proofImage: require("./assets/images/AR/ARplane고정코드.png")
           },
           {
             title: "boundary 기반 바닥/벽 생성 로직",
@@ -998,7 +996,7 @@ const bigProjects = {
             result:
               "Result: 사용자 공간 크기에 맞는 전투 맵이 자동 구성되어 플레이 일관성 향상",
             proofCaption: "boundary 기반 맵 확장 코드 캡처 + 바닥/벽 결과",
-            proofImage: require("./assets/images/nextuLogo.webp")
+            proofImage: require("./assets/images/AR/AR바닥생성코드.png")
           },
           {
             title: "스폰 포인트 자동 생성 + 스포너 이동",
@@ -1008,7 +1006,7 @@ const bigProjects = {
             result:
               "Result: AR 공간 변화에도 스폰이 분산되고 전투 리듬이 단조롭지 않게 진행",
             proofCaption: "스포너 이동/랜덤 스폰 코드 캡처 + 스폰 장면",
-            proofImage: require("./assets/images/saayaHealthLogo.webp")
+            proofImage: require("./assets/images/AR/AR스포너기반몬스터생성코드.png")
           },
           {
             title: "웨이브 스폰 + 보스 트리거",
@@ -1018,18 +1016,7 @@ const bigProjects = {
             result:
               "Result: 스폰→처치 누적→보스 등장 흐름이 명확해져 게임 구조가 선명해짐",
             proofCaption: "웨이브/보스 트리거 코드 캡처 + 보스 등장 화면",
-            proofImage: require("./assets/images/pwaLogo.webp")
-          },
-          {
-            title: "무기 발사(조이스틱) + 잠금/쿨타임 제어",
-            oneLiner:
-              "조이스틱 입력 기반 발사에 잠금/쿨타임을 붙여 조작감과 전략적 깊이 향상",
-            how: "How: 입력 방향 감지 + nextFire 쿨타임 + isUnlocked 잠금 + 카메라 기준 조준",
-            result:
-              "Result: 무기별 전투 템포가 살아나고 상황에 맞는 전략 운용 가능",
-            proofCaption:
-              "WeaponShooterWithJoystick 코드 캡처 + 무기(활/칼/마법/총) UI/플레이",
-            proofImage: require("./assets/images/googleAssistantLogo.webp")
+            proofImage: require("./assets/images/AR/AR웨이브보스트러거코드.png")
           }
         ],
         links: []
