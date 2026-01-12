@@ -113,18 +113,18 @@ const educationInfo = {
     {
       schoolName: "코드잇",
       logo: require("./assets/images/코드잇.png"),
-      subHeader: "인공지능 융합학과 (복수전공)",
-      duration: "2021.03 ~ 2026.02 (예정)",
-      desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
-      descBullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
+      subHeader: "대학생코딩캠프",
+      duration: "2021.03 ~ 2021.04",
+      desc: "프로그래밍에 대한 기초 이해와 웹 개발 전반에 대한 감각을 익혔습니다.",
+      descBullets: ["프로그래밍에 대한 기초 이해 확장"]
     },
     {
       schoolName: "구름",
       logo: require("./assets/images/구름.png"),
-      subHeader: "인공지능 융합학과 (복수전공)",
-      duration: "2021.03 ~ 2026.02 (예정)",
-      desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
-      descBullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
+      subHeader: "군장병 AI/SW 역량강화",
+      duration: "2023.3 ~ 2023.12",
+      desc: "HTML, CSS, JavaScript대한 기초 감각을 익혔습니다.",
+      descBullets: ["프론트엔드 기초 감각 확장"]
     },
     {
       schoolName: "아주대학교",
