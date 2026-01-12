@@ -126,17 +126,18 @@ const educationInfo = {
       desc: "HTML, CSS, JavaScript대한 기초 감각을 익혔습니다.",
       descBullets: ["프론트엔드 기초 감각 확장"]
     },
-    {
-      schoolName: "아주대학교",
-      logo: require("./assets/images/아주대로고.png"),
-      subHeader: "인공지능 융합학과 (복수전공)",
-      duration: "2021.03 ~ 2026.02 (예정)",
-      desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
-      descBullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
-    },
+    
     {
       schoolName: "스파르타 내일 배움 캠프",
       logo: require("./assets/images/스파르타.png"),
+      subHeader: "Unity 게임개발자 양성과정",
+      duration: "2023.09 ~ 2024.02",
+      desc: "Unity 기반 게임 개발 역량을 확장했습니다.",
+      descBullets: ["Unity 기반 게임 개발 프로젝트 경험"]
+    },
+    {
+      schoolName: "아주대학교",
+      logo: require("./assets/images/아주대로고.png"),
       subHeader: "인공지능 융합학과 (복수전공)",
       duration: "2021.03 ~ 2026.02 (예정)",
       desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
@@ -147,8 +148,8 @@ const educationInfo = {
       logo: require("./assets/images/아주대로고.png"),
       subHeader: "메타버스기획마이크로전공 (부전공)",
       duration: "2021.03 ~ 2026.02 (예정)",
-      desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
-      descBullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
+      desc: "메타버스 플랫폼에서 상호작용 콘텐츠를 제작했습니다.",
+      descBullets: ["메타버스 플랫폼 콘텐츠 제작 경험"]
     }
   ]
 };
@@ -1179,10 +1180,10 @@ const achievementSection = {
         ]
     },
     {
-      title: "time rewimder",
+      title: "time rewinder",
       subtitle:
         "Godot 기반 퍼즐 게발",
-      image: require("./assets/images/pwaLogo.webp"),
+      image: require("./assets/images/time rewinder2.png"),
       imageAlt: "Time 게임",
       footerLink: [
           {
@@ -1195,10 +1196,10 @@ const achievementSection = {
       title: "불빛아래",
       subtitle:
         "AI 디자인 적용 3D 공포 게임",
-      image: require("./assets/images/pwaLogo.webp"),
+      image: require("./assets/images/서브 프로젝트/불빛아래.png"),
       imageAlt: "AR Monster Shooter",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
+          {name: "GitHub", url: "https://github.com/toadsam/GameEnginePrograming"},
           {
             name: "Demo Video",
             url: "https://www.youtube.com/watch?v=EswL1T42w-w"
@@ -1266,8 +1267,8 @@ const blogSection = {
 // Talks Sections
 
 const talkSection = {
-  title: "Experience & Activities",
-  subtitle: "학업 및 활동",
+  title: "Values I Believe In",
+  subtitle: "나만의 기준과 태도",
 
   talks: [
     {
