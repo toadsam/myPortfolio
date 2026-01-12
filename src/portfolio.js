@@ -1179,16 +1179,15 @@ const achievementSection = {
         ]
     },
     {
-      title: "Time 게임",
+      title: "time rewimder",
       subtitle:
         "Godot 기반 퍼즐 게발",
       image: require("./assets/images/pwaLogo.webp"),
       imageAlt: "Time 게임",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
           {
             name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=mtIiIWmrSdg&feature=youtu.be"
+            url: "https://youtu.be/HkcLSAoo6bE"
           }
         ]
     },
@@ -1207,30 +1206,30 @@ const achievementSection = {
         ]
     },
     {
-      title: "로블록스",
+      title: "경복궁을 지켜라",
       subtitle:
-        "AI 디자인 적용 3D 공포 게임",
-      image: require("./assets/images/pwaLogo.webp"),
-      imageAlt: "AR Monster Shooter",
+        "로블록스 기반으로 제작된 경복궁을 복원하는 게임",
+      image: require("./assets/images/경복궁을 지켜라.png"),
+      imageAlt: "경복궁을 지켜라",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
+          
           {
             name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=EswL1T42w-w"
+            url: "https://youtu.be/bhqtLzMQlz0"
           }
         ]
     },
     {
-      title: "곤충ar",
+      title: "페스트러너",
       subtitle:
-        "AI 디자인 적용 3D 공포 게임",
-      image: require("./assets/images/pwaLogo.webp"),
+        "곤충을 피해 도망하가는 ar기반 러너 게임",
+      image: require("./assets/images/페스트러너.png"),
       imageAlt: "AR Monster Shooter",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/toadsam/Ajou_IndiGame"},
+          {name: "GitHub", url: "https://github.com/HyunmoSeomoon/MetaverseProgramming"},
           {
             name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=EswL1T42w-w"
+            url: "https://www.youtube.com/watch?v=48f_wfQ1NO4"
           }
         ]
     }
