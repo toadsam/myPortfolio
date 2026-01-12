@@ -1,29 +1,17 @@
 import React from "react";
 import "./TalkCard.scss";
 
-export default function TalkCard({talkDetails}) {
+export default function TalkCard({value, isDark, onOpen, style}) {
   return (
-    <div>
-      <div className="container">
-        <div
-          className={
-            talkDetails.isDark ? "dark-rectangle rectangle" : "rectangle"
-          }
-        >
-          <div className="diagonal-fill"></div>
-          <div className="talk-card-title">{talkDetails.title}</div>
-          <p className="talk-card-subtitle">{talkDetails.subtitle}</p>
-
-          <div className="card-footer-button-div">
-            <a href={talkDetails.slides_url} target="_" className="talk-button">
-              Slides
-            </a>
-            <a href={talkDetails.event_url} target="_" className="talk-button">
-              Event
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
+    <button
+      className={isDark ? "values-card dark-mode" : "values-card"}
+      type="button"
+      onClick={onOpen}
+      style={style}
+    >
+      <div className="values-card-title">{value.key}</div>
+      <p className="values-card-summary">{value.summary}</p>
+      <div className="values-card-cta">View</div>
+    </button>
   );
 }

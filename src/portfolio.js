@@ -1268,26 +1268,68 @@ const blogSection = {
 
 const talkSection = {
   title: "Values I Believe In",
-  subtitle: "나만의 기준과 태도",
-
-  talks: [
+  subtitle: "개발을 대하는 나만의 기준과 태도",
+  values: [
     {
-      title: "디지털미디어학과 전공",
-      subtitle: "웹/소프트웨어 엔지니어링 중심 학습",
-      slides_url: "",
-      event_url: ""
+      key: "소통",
+      summary: "생각과 상황을 공유하며 방향을 맞춥니다.",
+      description: [
+        "문제를 혼자 해결하기보다,",
+        "상황과 생각을 공유하며 함께 방향을 맞추는 것을 중요하게 생각합니다.",
+        "의도를 말로 정리하고 피드백을 주고받는 과정에서",
+        "팀의 이해와 결과가 더 좋아진다고 믿습니다."
+      ],
+      images: [
+        require("./assets/images/득근득근/득근득근메인화면.png"),
+        require("./assets/images/AjouCampusFood/ACF메인화면.png"),
+        require("./assets/images/아주대로고.png"),
+        require("./assets/images/saayaHealthLogo.webp")
+      ]
     },
     {
-      title: "인공지능 융합학과 복수전공",
-      subtitle: "AI·데이터 기반 개발 경험",
-      slides_url: "",
-      event_url: ""
+      key: "협력",
+      summary: "역할을 존중하며 함께 더 나은 결과를 만듭니다.",
+      description: [
+        "각자의 역할을 존중하며 협업하는 환경을 지향합니다.",
+        "혼자 잘하는 것보다,",
+        "함께 더 나은 결과를 만드는 과정에 가치를 둡니다."
+      ],
+      images: [
+        require("./assets/images/aclub로고.png"),
+        require("./assets/images/AjouCampusFood/ACF환경분리코드.png"),
+        require("./assets/images/아주대탐험 제목.png"),
+        require("./assets/images/saayaHealthLogo.webp")
+      ]
     },
     {
-      title: "다수의 개인·팀 프로젝트 수행",
-      subtitle: "웹/게임/XR 융합적 개발 경험",
-      slides_url: "",
-      event_url: ""
+      key: "성실",
+      summary: "작은 기록과 반복을 통해 꾸준히 성장합니다.",
+      description: [
+        "매일 완벽하지 않아도 기록하고 돌아보는 습관을 지켜왔습니다.",
+        "작은 공부와 반복이 쌓여",
+        "결국 실력이 된다고 믿으며 꾸준함을 중요하게 생각합니다."
+      ],
+      images: [
+        require("./assets/images/트세로프/트세로프로고.png"),
+        require("./assets/images/아주대로고.png"),
+        require("./assets/images/saayaHealthLogo.webp"),
+        require("./assets/images/득근득근/득근득근토큰페기코드.png")
+      ]
+    },
+    {
+      key: "도전",
+      summary: "익숙함에 머무르지 않고 새로운 시도를 선택합니다.",
+      description: [
+        "익숙한 방식에 안주하기보다",
+        "이해가 필요한 새로운 기술과 구조에 도전하려 합니다.",
+        "모르는 것을 마주하는 경험을 성장의 기회로 삼습니다."
+      ],
+      images: [
+        require("./assets/images/ar로고.png"),
+        require("./assets/images/득근득근/득근ERD.png"),
+        require("./assets/images/AjouCampusFood/ACF수락화면.png"),
+        require("./assets/images/아주대탐험 제목.png")
+      ]
     }
   ],
   display: true // Set false to hide this section, defaults to true

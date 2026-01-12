@@ -1,4 +1,4 @@
-@import "../../_globalColor";
+﻿@import "../../_globalColor";
 
 .talk-header-title {
   font-size: 56px;
@@ -6,14 +6,210 @@
   line-height: 0px;
 }
 
-.talk-cards-div {
+.talk-header-subtitle {
+  margin-top: 0.5rem;
+}
+
+.values-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-  gap: 1rem 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+.values-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+.values-lightbox-overlay.closing {
+  opacity: 0;
+}
+
+.values-lightbox {
+  width: min(960px, 92vw);
+  background: linear-gradient(160deg, rgba(62, 34, 110, 0.95), rgba(16, 20, 36, 0.98));
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  position: relative;
+  animation: valuesLightboxIn 0.35s ease forwards;
+  transform-origin: center;
+}
+
+.values-lightbox.closing {
+  animation: valuesLightboxOut 0.25s ease forwards;
+}
+
+.values-lightbox-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: $textColorDark;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.values-lightbox-slider {
+  position: relative;
+  background: #0b0f18;
+  padding: 1.5rem 1.5rem 2rem;
+}
+
+.values-lightbox-carousel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.values-lightbox-image {
+  width: 100%;
+  height: min(300px, 42vh);
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
+.values-lightbox-image.active {
+  height: min(360px, 48vh);
+  transform: scale(1.02);
+  animation: valuesKenBurns 4s ease-in-out;
+}
+
+.values-lightbox-image.side {
+  opacity: 0.55;
+  transform: scale(0.9);
+}
+
+.values-lightbox-dots {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.9rem;
+}
+
+.values-lightbox-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+}
+
+.values-lightbox-dot.active {
+  background: rgba(176, 118, 255, 0.9);
+  box-shadow: 0 0 10px rgba(176, 118, 255, 0.6);
+}
+
+.values-lightbox-text {
+  padding: 1.5rem 1.75rem 2rem;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.values-lightbox-title {
+  font-size: 24px;
+  color: $textColorDark;
+  margin: 0;
+  animation: valuesTextTitle 0.35s ease forwards;
+}
+
+.values-lightbox-description {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.values-lightbox-description p {
+  margin: 0;
+  color: $subTitle;
+  line-height: 1.6;
+  opacity: 0;
+  animation: valuesTextLine 0.4s ease forwards;
 }
 
 .subTitle {
   color: $subTitle;
+}
+
+@keyframes valuesLightboxIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes valuesLightboxOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
+@keyframes valuesSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes valuesKenBurns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes valuesTextTitle {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes valuesTextLine {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {
@@ -25,5 +221,11 @@
     font-size: 16px;
     line-height: normal;
     text-align: center;
+  }
+  .values-lightbox {
+    width: min(92vw, 560px);
+  }
+  .values-lightbox-image {
+    height: 220px;
   }
 }
