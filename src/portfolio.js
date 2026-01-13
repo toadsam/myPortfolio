@@ -991,7 +991,7 @@ const bigProjects = {
             "Engine: Unity",
             "VR: XR Interaction Toolkit",
             "AI: NavMesh, State Machine",
-            "Platform: PC VR (Meta / SteamVR)"
+            "Platform: PC VR (Meta)"
           ]
         },
         intro: {
@@ -1069,11 +1069,15 @@ const bigProjects = {
             oneLiner: "AI 중앙 제어 아키텍처",
             how: "How: 감지 로직과 AI 행동 로직을 분리하고, GameManager에서 추적·공격 상태를 일괄 제어",
             result: "Result: 유지보수성 향상 및 조건 기반 AI 제어 확장 가능",
-            proofCaption: "플레이 시점 설정 및 이동 방식 캡처",
+            proofCaption: "중앙 제어 증명",
             proofImage: require("./assets/images/VR/VR중앙제어코드.png")
           }
         ],
-        links: []
+        links: [{name: "GitHub", url: "https://github.com/kbwon/IMP_VR"},
+          {
+            name: "Demo Video",
+            url: "https://youtu.be/sK9OoBNC9vc"
+          }]
       }
     },
 
@@ -1094,7 +1098,7 @@ const bigProjects = {
           image: require("./assets/images/AR/게임시작화면.png"),
           caption: "AR Plane Scan 기반 전투 공간 생성 및 전투 진행 화면",
           role: "AR 전투 로직/스폰/무기 시스템 구현",
-          period: "2024.06 - 2024.08",
+          period: "2025.04 - 2025.05",
           techStack: [
             "Engine: Unity",
             "Platform: AR (AR Foundation)",
@@ -1184,7 +1188,11 @@ const bigProjects = {
             proofImage: require("./assets/images/AR/AR웨이브보스트러거코드.png")
           }
         ],
-        links: []
+        links: [{name: "GitHub", url: "https://github.com/toadsam/IMP"},
+          {
+            name: "Demo Video",
+            url: "https://youtu.be/9Lf2K1qBJ2E"
+          }]
       }
     }
   ],
