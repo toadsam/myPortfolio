@@ -14,6 +14,24 @@ export default function StartupProject() {
 
   const {isDark} = useContext(StyleContext);
 
+  const getProjectStatus = status => {
+    if (!status) {
+      return null;
+    }
+    const normalized = String(status).toLowerCase();
+    if (normalized === "live") {
+      return {key: "live", label: "운영 중"};
+    }
+    if (normalized === "archived") {
+      return {
+        key: "archived",
+        label: "완료 프로젝트",
+        tooltip: "완료 프로젝트입니다."
+      };
+    }
+    return null;
+  };
+
   useEffect(() => {
     function handleKeyDown(event) {
       if (event.key === "Escape") {
@@ -963,6 +981,7 @@ export default function StartupProject() {
 
             <div className="projects-container">
               {bigProjects.projects.map((project, i) => {
+                const statusMeta = getProjectStatus(project.status);
                 return (
                   <div
                     key={i}
@@ -978,6 +997,17 @@ export default function StartupProject() {
                       }
                     }}
                   >
+                    {statusMeta ? (
+                      <div
+                        className={`project-status project-status-${statusMeta.key}`}
+                        title={statusMeta.tooltip}
+                      >
+                        <span className="project-status-dot" />
+                        <span className="project-status-text">
+                          {statusMeta.label}
+                        </span>
+                      </div>
+                    ) : null}
                     <div
                       className={`experience-banner ${getProjectBannerClass(
                         project

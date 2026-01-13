@@ -139,6 +139,46 @@
 .experience-card,
 .experience-card-dark {
   transition: transform 0.22s ease, box-shadow 0.22s ease;
+  position: relative;
+}
+
+.project-status {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: $subTitle;
+  pointer-events: auto;
+  cursor: default;
+  z-index: 2;
+}
+
+.experience-card-dark .project-status {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.project-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.project-status-live .project-status-dot {
+  background: #22c55e;
+}
+
+.project-status-archived .project-status-dot {
+  background: #9ca3af;
 }
 
 .experience-card:hover,
@@ -1768,7 +1808,5 @@
     rgba(140, 150, 160, 0) 100%
   );
 }
-
-
 
 
