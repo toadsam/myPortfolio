@@ -494,22 +494,137 @@ const bigProjects = {
 
     {
       image: require("./assets/images/aclub로고.png"),
-      projectName: "ajouchong",
-      projectDesc: "총학생회 운영형 홍보·정보 제공 웹 + 유입/행동 분석",
+      projectName: "aClub",
+      projectDesc:
+        "동아리/소모임 운영형 홍보·정보 제공 웹 + 유입/행동 분석 기반 개선",
       recommendation:
-        "실사용 조직 운영을 위한 정보 제공·홍보 흐름 중심 웹 서비스",
-      tags: ["#WebService", "#Operations", "#UX"],
-      footerLink: [
-        {name: "aClub", url: "https://ajouclub.co.kr"},
-        {name: "ajouchong", url: "https://ajouchong.com"}
-      ],
+        "실사용 운영에서 ‘문의 감소·참여 동선 명확화’를 목표로 만든 운영형 웹 서비스",
+      tags: ["#WebService", "#Operations", "#UX", "#Analytics"],
+      footerLink: [{name: "aClub", url: "https://ajouclub.co.kr"}],
+      details: {
+        overview: {
+          title: "aClub - 프로젝트 개요",
+          subtitle:
+            "동아리 공지·모집·행사·자료 정보를 한 곳에 정리하고, 데이터/피드백으로 반복 개선한 운영형 웹",
+          image: require("./assets/images/aclub/동아리홈페이지 메인.jpg"),
+          caption: "메인 / 모집 / 공지 / 상세(신청·문의) 화면",
+          role: "Frontend 개발 + 운영 구조 설계 + 분석(GA4/GSC) 기반 개선",
+          period: "2025.01 - 2025.04 - 리메이크 중",
+          techStack: [
+            "Frontend: React, Vite, Axios",
+            "Analytics: GA4, Google Search Console",
+            "Deploy: Vercel, Cloudflare",
+            "Tooling: Notion, Figma"
+          ]
+        },
+        intro: {
+          headline: "What is aClub?",
+          highlight:
+            "동아리 정보를 ‘탐색→확인→참여’ 흐름으로 설계하고 운영 개선까지 연결한 웹",
+          problem:
+            "동아리 정보가 흩어져 있어 유입 후 ‘어디서 확인하고 어떻게 참여하는지’가 불명확했고, 같은 문의가 반복됨",
+          solution:
+            "모집/공지/행사/자료 구조를 사용자 흐름 기준으로 재구성 + CTA(신청/문의/링크) 배치 최적화 + GA4/GSC로 이탈/클릭 구간을 확인하며 지속 수정",
+          outcome:
+            "정보 도달 시간이 줄고 참여 동선이 단순해져, 운영자가 반복 안내하던 문의를 줄이며 운영 효율을 개선",
+          caption: "메인→상세→참여 CTA 흐름 / 개선 전후 비교 캡처",
+          images: [
+            require("./assets/images/aclub/동아리 세부 저장.jpg")
+          ]
+        },
+        quickSummary: [
+          {
+            icon: "🧩",
+            title: "기능 개발",
+            desc:
+              "모집/공지/행사/자료 페이지와 상세 화면을 컴포넌트 기반으로 구현하고, 사용자 동선 중심 라우팅 구조 설계"
+          },
+          {
+            icon: "🧭",
+            title: "정보 구조·UX",
+            desc:
+              "메뉴/카테고리를 단순화하고, 핵심 행동(신청·문의) CTA를 ‘바로 보이는 위치’로 재배치"
+          },
+          {
+            icon: "📈",
+            title: "데이터 기반 개선",
+            desc:
+              "GA4로 페이지 흐름/체류/이벤트를, GSC로 검색 유입/CTR을 확인해 개선 포인트를 근거로 확정"
+          },
+          {
+            icon: "🛠️",
+            title: "운영 피드백 반영",
+            desc:
+              "배포 후 반복 문의/혼선이 생기는 구간을 수집해 문구·배치·링크 구조를 빠르게 개선"
+          },
+          {
+            icon: "🚀",
+            title: "배포·운영",
+            desc:
+              "운영 사이트를 안정적으로 배포하고, 변경 사항을 빠르게 반영할 수 있는 운영 프로세스 유지"
+          }
+        ],
+        coreDesign: [
+          {
+            title: "동아리 참여 동선 설계(UX)",
+            oneLiner: "유입 후 ‘참여’까지 막히지 않도록 동선을 짧게 설계",
+            how:
+              "How: 메인에서 모집/행사 진입 → 상세에서 핵심 정보 요약 → 하단 고정 CTA(신청/문의/링크)로 행동 유도",
+            result:
+              "Result: ‘어디서 신청해요?’ 같은 반복 문의 감소 + 참여 전환 흐름 강화",
+            proofCaption: "메인/상세/CTA 위치 전후 비교 캡처",
+            proofImage: require("./assets/images/aclub/동아리 소확회 저장.jpg")
+          },
+          {
+            title: "운영 피드백 반영(실사용 개선)",
+            oneLiner: "Everytime/카카오톡 유입을 ‘바로 행동’으로 연결",
+            how:
+              "How: 홍보 글/공지 링크를 메인·모집 상세로 연결하고, 상세 상단에 신청/문의 CTA를 고정 배치해 진입 즉시 행동 가능하게 설계",
+            result:
+              "Result: Result: 홍보→유입→참여 흐름이 명확해져 전환 동선 강화",
+            proofCaption: "Everytime 홍보글/카톡 공지 + 랜딩 화면(CTA 위치) 캡처",
+            proofImage: require("./assets/images/aclub/동아리에타카톡.png")
+          },
+          {
+            title: "GA4/GSC 기반 개선 루프",
+            oneLiner: "감이 아닌 지표로 운영 개선 우선순위를 결정",
+            how:
+              "How: GA4 홈 지표(조회수/사용자/참여시간)로 운영 성과를 추적하고, (추가로) 페이지·이벤트 리포트와 GSC 성과를 함께 보며 개선안을 도출",
+            result:
+              "Result: 운영 개선을 ‘측정→수정→검증’ 루프로 반복 가능하게 정착",
+            proofCaption: "GA4 핵심 지표(조회수/사용자/참여시간) 캡처",
+            proofImage: require("./assets/images/aclub/동아리분석.png")
+          },
+          {
+            title: "토큰 기반 인증(자동 재발급)",
+            oneLiner: "Access Token 만료 상황을 사용자에게 노출하지 않는 인증 흐름 구현",
+            how: "How: Access Token 만료(401) 시 HttpOnly Refresh Token 쿠키로 재발급 요청을 보내고, 새 토큰으로 기존 API 요청을 자동 재시도하도록 구성",
+            result: "Result: 로그인 유지 경험 개선 + 운영 중 인증 오류/재로그인 요구 감소",
+            proofCaption: "401 발생 시 Refresh Token 기반 Access Token 자동 재발급 및 재요청 처리 코드",
+            proofImage: require('./assets/images/aclub/동아리토큰코드.png')
+          }
+        ],
+        links: [{name: "aClub", url: "https://ajouclub.co.kr"}]
+      }
+    },
+
+    {
+      image: require("./assets/images/아주총/총학홈페이지.jpg"),
+      projectName: "ajouchong",
+      projectDesc:
+        "총학생회 운영형 홍보·정보 제공 웹 + 운영 피드백·데이터 기반 개선",
+      recommendation:
+        "실사용 운영에서 반복 문의를 줄이고 ‘공지→확인→신청’ 동선을 명확히 만든 운영형 웹 서비스",
+      tags: ["#WebService", "#Operations", "#UX", "#Analytics"],
+      footerLink: [{name: "ajouchong", url: "https://ajouchong.com"}],
       details: {
         overview: {
           title: "ajouchong - 프로젝트 개요",
-          subtitle: "총학생회 운영형 홍보·정보 제공 웹 + 유입/행동 분석",
-          image: require("./assets/images/saayaHealthLogo.webp"),
-          caption: "서비스 메인/공지/자료/상세 화면",
-          role: "Frontend 개발, 운영 구조 설계 및 분석 연계",
+          subtitle:
+            "총학생회 공지·행사·지원·자료·신청 정보를 한 곳에 정리하고, 운영 피드백과 분석 지표로 지속 개선",
+          image: require("./assets/images/ajouchong_main.webp"),
+          caption: "메인 / 공지 / 자료 / 상세(신청) 화면",
+          role: "Frontend 개발 + 운영 구조 설계 + GA4/GSC 분석 기반 개선",
           period: "2025.03 - 2025.08",
           techStack: [
             "Frontend: React, Vite, Axios",
@@ -521,76 +636,85 @@ const bigProjects = {
         intro: {
           headline: "What is ajouchong?",
           highlight:
-            "총학생회 운영 정보를 사용자 흐름 기준으로 재구성한 운영형 웹",
+            "총학생회 운영 정보를 사용자 흐름 기준으로 재구성하고, 배포 후 피드백·데이터로 개선한 운영형 웹",
           problem:
-            "유입 이후 ‘무엇을 어디서 해야 하는지’가 분산되어 문의/이탈이 반복됨",
+            "유입 이후 필요한 정보(공지/지원/신청/자료)가 분산되어 ‘어디서 무엇을 해야 하는지’ 혼선이 생기고 문의/이탈이 반복됨",
           solution:
-            "공지·신청·안내를 사용자 흐름 기준으로 재구성 + 외부 채널 유입 연결",
+            "정보 구조(메뉴·카테고리·상세)를 ‘탐색→확인→신청’ 흐름으로 재설계 + CTA/문구/링크를 운영 피드백과 지표 기반으로 반복 개선",
           outcome:
-            "정보 탐색 시간이 줄고, 참여 동선이 명확해져 운영 효율이 개선됨",
-          caption: "서비스 메인/공지/자료/상세 화면",
+            "정보 도달 시간이 줄고 참여 동선이 명확해져 반복 문의가 감소하고 운영 효율이 개선됨",
+          caption: "메인→상세→참여(신청/문의) CTA 흐름 및 개선 포인트",
           images: [
-            require("./assets/images/saayaHealthLogo.webp"),
-            require("./assets/images/nextuLogo.webp")
+            require("./assets/images/ajouchong_flow.webp"),
+            require("./assets/images/ajouchong_analytics.webp")
           ]
         },
         quickSummary: [
           {
-            icon: "📣",
-            title: "운영형 홍보",
-            desc: "공지/이벤트/지원 정보를 ‘탐색→확인→참여’ 흐름으로 정리"
+            icon: "🧩",
+            title: "프론트 기능 구현",
+            desc:
+              "공지/행사/지원/자료/신청 흐름을 페이지 단위로 구성하고 라우팅 기반 탐색 구조를 설계"
           },
           {
             icon: "🔍",
             title: "정보 구조·UX",
-            desc: "메뉴/카테고리 구조를 단순화해 필요한 정보를 빠르게 찾게 설계"
+            desc:
+              "메뉴/카테고리를 단순화하고 사용자가 빠르게 ‘필요한 정보→행동’까지 가도록 동선 최적화"
+          },
+          {
+            icon: "📣",
+            title: "운영형 홍보",
+            desc:
+              "공지/안내 콘텐츠를 운영 목적에 맞게 구조화하고 핵심 CTA로 참여를 유도"
           },
           {
             icon: "📈",
             title: "유입·행동 분석",
-            desc: "GA4/GSC로 유입·클릭·체류 데이터를 수집해 개선 포인트 도출"
+            desc:
+              "GA4/GSC로 유입·CTR·체류·이벤트를 확인해 개선 우선순위를 결정"
           },
           {
-            icon: "🤝",
-            title: "채널 연동 운영",
-            desc: "Everytime·카카오톡 등 외부 채널과 연결해 실사용 유입을 설계"
-          },
-          {
-            icon: "⚙️",
-            title: "Ops · Deploy",
-            desc: "배포/운영 관점에서 안정적으로 유지·개선 가능한 구조로 관리"
+            icon: "🛠️",
+            title: "피드백 반영 개선",
+            desc:
+              "배포 후 반복 문의가 생기는 지점을 수집해 문구·배치·링크 구조를 빠르게 수정"
           }
         ],
         coreDesign: [
           {
             title: "정보 구조·탐색 UX",
-            oneLiner: "공지/지원 정보를 사용 흐름 기준으로 재구성",
-            how: "How: 메뉴/카테고리/CTA 동선을 ‘찾기→확인→신청’으로 정리",
-            result: "Result: 반복 문의 감소 + 필요한 정보 도달 속도 향상",
-            proofCaption: "메인 화면/메뉴 구조/CTA 영역 캡처",
-            proofImage: require("./assets/images/saayaHealthLogo.webp")
+            oneLiner: "공지/지원/신청을 ‘찾기→확인→신청’ 흐름으로 재구성",
+            how:
+              "How: 메뉴/카테고리 구조를 정리하고, 상세 화면에 핵심 정보 요약 + CTA(신청/문의/링크)를 명확한 위치에 배치",
+            result:
+              "Result: ‘어디서 신청하나요?’ 같은 반복 문의 감소 + 필요한 정보 도달 속도 향상",
+            proofCaption: "메인/메뉴 구조/상세 CTA 영역 캡처(전후 비교 추천)",
+            proofImage: require("./assets/images/ajouchong_ux.webp")
+          },
+          {
+            title: "운영 피드백 반영(실사용 개선)",
+            oneLiner:
+              "운영 중 발생한 혼선 구간을 빠르게 수정하는 개선 루프 구축",
+            how:
+              "How: 자주 들어오는 질문/혼선 포인트를 기준으로 안내 문구를 짧고 명확하게 수정하고, 버튼 라벨·배치·링크 위치를 행동 중심으로 개선",
+            result:
+              "Result: 운영자 안내 부담 감소 + 사용자 self-serve(스스로 해결) 비율 증가",
+            proofCaption: "문구/버튼/배치 수정 캡처(피드백 반영 사례)",
+            proofImage: require("./assets/images/ajouchong_feedback.webp")
           },
           {
             title: "유입·행동 분석(운영 개선 루프)",
-            oneLiner: "데이터로 개선 포인트를 확인하는 운영 구조",
-            how: "How: GA4로 페이지뷰/체류/이벤트, GSC로 검색 유입/CTR 확인",
-            result: "Result: 콘텐츠/동선 개선의 근거 확보",
-            proofCaption: "GA4/GSC 화면 또는 지표 캡처",
-            proofImage: require("./assets/images/nextuLogo.webp")
-          },
-          {
-            title: "홍보 채널 연동 운영",
-            oneLiner: "외부 채널 유입을 서비스 참여로 연결",
-            how: "How: Everytime/카카오톡에서 들어온 사용자가 바로 행동할 수 있게 링크/CTA 설계",
-            result: "Result: 홍보→유입→참여 전환 흐름 강화",
-            proofCaption: "채널 홍보/링크 구조/랜딩 캡처",
-            proofImage: require("./assets/images/pwaLogo.webp")
+            oneLiner: "감이 아닌 지표로 개선 포인트를 확정",
+            how:
+              "How: GA4로 페이지 흐름/체류/이벤트를 확인하고, GSC로 검색 유입/CTR을 확인해 콘텐츠/랜딩 구조 개선 근거를 확보",
+            result:
+              "Result: 개선의 우선순위와 효과를 설명 가능한 형태로 축적",
+            proofCaption: "GA4/GSC 화면 또는 핵심 지표 캡처",
+            proofImage: require("./assets/images/ajouchong_ga4gsc.webp")
           }
         ],
-        links: [
-          {name: "aClub", url: "https://ajouclub.co.kr"},
-          {name: "ajouchong", url: "https://ajouchong.com"}
-        ]
+        links: [{name: "ajouchong", url: "https://ajouchong.com"}]
       }
     },
 
