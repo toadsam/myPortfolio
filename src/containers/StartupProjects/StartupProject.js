@@ -65,6 +65,23 @@ export default function StartupProject() {
     );
   };
 
+  const renderMultilineText = (text, className) => {
+    if (!text) {
+      return null;
+    }
+    const lines = String(text).split("\n");
+    return (
+      <p className={className}>
+        {lines.map((line, index) => (
+          <React.Fragment key={`${line}-${index}`}>
+            {line}
+            {index < lines.length - 1 && <br />}
+          </React.Fragment>
+        ))}
+      </p>
+    );
+  };
+
   const ProofLightbox = ({items, index, onClose, onPrev, onNext}) => {
     if (!items?.length) {
       return null;
@@ -995,15 +1012,12 @@ export default function StartupProject() {
                         >
                           {project.projectName}
                         </h5>
-                        <p
-                          className={
-                            isDark
-                              ? "subTitle experience-text-desc project-recommendation dark-mode-text"
-                              : "subTitle experience-text-desc project-recommendation"
-                          }
-                        >
-                          {project.recommendation || project.projectDesc}
-                        </p>
+                        {renderMultilineText(
+                          project.recommendation || project.projectDesc,
+                          isDark
+                            ? "subTitle experience-text-desc project-recommendation dark-mode-text project-desc-text"
+                            : "subTitle experience-text-desc project-recommendation project-desc-text"
+                        )}
                         {project.tags?.length ? (
                           <div className="project-card-tags">
                             {project.tags.map((tag, tagIndex) => (
@@ -1201,9 +1215,10 @@ export default function StartupProject() {
                     <h2 className="project-modal-title">
                       {selectedProject.projectName}
                     </h2>
-                    <p className="project-modal-subtitle">
-                      {selectedProject.projectDesc}
-                    </p>
+                    {renderMultilineText(
+                      selectedProject.projectDesc,
+                      "project-modal-subtitle project-desc-text"
+                    )}
                   </div>
                 </div>
                 {selectedProject.details?.stack && (

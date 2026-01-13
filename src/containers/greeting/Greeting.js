@@ -12,6 +12,7 @@ import StyleContext from "../../contexts/StyleContext";
 export default function Greeting() {
   const {isDark} = useContext(StyleContext);
   const titleLines = greeting.title.split("\n");
+  const subTitleLines = greeting.subTitle.split("\n");
   if (!greeting.displayGreeting) {
     return null;
   }
@@ -48,7 +49,14 @@ export default function Greeting() {
                     : "greeting-text-p subTitle"
                 }
               >
-                {greeting.subTitle}
+                {subTitleLines.map((line, index) => (
+                  <React.Fragment key={`${line}-${index}`}>
+                    <span className="greeting-subtitle-line">{line}</span>
+                    {index < subTitleLines.length - 1 && (
+                      <br className="greeting-subtitle-break" />
+                    )}
+                  </React.Fragment>
+                ))}
               </p>
               <div id="resume" className="empty-div"></div>
               <SocialMedia />

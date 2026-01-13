@@ -76,6 +76,11 @@
   margin-top: 0.25rem;
 }
 
+.project-desc-text {
+  white-space: pre-line;
+  word-break: keep-all;
+}
+
 .project-card-tags {
   display: flex;
   flex-wrap: wrap;
@@ -1763,7 +1768,6 @@
     rgba(140, 150, 160, 0) 100%
   );
 }
-
 
 
 

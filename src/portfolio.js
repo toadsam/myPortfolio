@@ -22,9 +22,9 @@ const illustration = {
 const greeting = {
   username: "정재훈",
   title: "웹을 주력으로,\n운영 문제까지 해결하는\n개발자 정재훈",
-  subTitle: emoji(`React · Spring Boot 기반 Full-Stack(Web) 개발
+  subTitle: `React · Spring Boot 기반 Full-Stack(Web) 개발
 인증·보안(Refresh Rotation)과 운영 이슈(HTTPS·CORS) 해결 경험
-Unity XR·게임 개발 경험 보유`),
+Unity XR·게임 개발 경험 보유`,
   resumeLink: "", // Set to empty to hide the button
   displayGreeting: true // Set false to hide this section, defaults to true
 };
@@ -212,7 +212,7 @@ const bigProjects = {
       image: require("./assets/images/득근득근/득근득근로고.png"),
       projectName: "득근득근 (MuscleUp)",
       projectDesc:
-        "React + Spring Boot 기반 Full-Stack 웹. AWS 배포/HTTPS·CORS 이슈 해결, Refresh Token Rotation 적용.",
+        "React + Spring Boot 기반 Full-Stack 웹.\nAWS 배포/HTTPS·CORS 이슈 해결.\nRefresh Token Rotation 적용.",
       recommendation:
         "운영을 전제로 인증·보안·배포까지 설계한 피트니스 커뮤니티 풀스택 서비스",
       tags: ["#FullStack", "#JWT", "#AWS", "#Security"],
@@ -352,7 +352,7 @@ const bigProjects = {
       image: require("./assets/images/AjouCampusFood/ACF로고.png"),
       projectName: "Ajou Campus Foodmap",
       projectDesc:
-        "세션 기반 OAuth 로그인 + 맛집 등록 워크플로우를 포함한 Full-Stack 서비스",
+        "세션 기반 OAuth 로그인.\n맛집 등록 워크플로우.\nFull-Stack 서비스",
       recommendation:
         "세션 기반 OAuth 로그인과 맛집 등록 플로우를 구현한 캠퍼스 지도 서비스",
       tags: ["#FullStack", "#OAuth", "#Workflow"],
@@ -496,7 +496,7 @@ const bigProjects = {
       image: require("./assets/images/aclub로고.png"),
       projectName: "aClub",
       projectDesc:
-        "동아리/소모임 운영형 홍보·정보 제공 웹 + 유입/행동 분석 기반 개선",
+        "동아리/소모임 운영형 홍보·정보 제공 웹.\n유입/행동 분석 기반 개선",
       recommendation:
         "실사용 운영에서 ‘문의 감소·참여 동선 명확화’를 목표로 만든 운영형 웹 서비스",
       tags: ["#WebService", "#Operations", "#UX", "#Analytics"],
@@ -612,7 +612,7 @@ const bigProjects = {
       image: require("./assets/images/아주총/총학홈페이지.jpg"),
       projectName: "ajouchong",
       projectDesc:
-        "총학생회 운영형 홍보·정보 제공 웹 + 운영 피드백·데이터 기반 개선",
+        "총학생회 운영형 홍보·정보 제공 웹.\n운영 피드백·데이터 기반 개선",
       recommendation:
         "실사용 운영에서 반복 문의를 줄이고 ‘공지→확인→신청’ 동선을 명확히 만든 운영형 웹 서비스",
       tags: ["#WebService", "#Operations", "#UX", "#Analytics"],
@@ -721,7 +721,7 @@ const bigProjects = {
     {
       image: require("./assets/images/트세로프/트세로프로고.png"),
       projectName: "TSEROF",
-      projectDesc: "출시/배포까지 완료한 3D 액션 플랫폼 게임",
+      projectDesc: "출시/배포까지 완료한\n3D 액션 플랫폼 게임",
       recommendation: "출시·배포까지 완주한 3D 액션 플랫폼 게임 프로젝트",
       tags: ["#Unity", "#GameDev", "#3D"],
       footerLink: [],
@@ -852,7 +852,7 @@ const bigProjects = {
       image: require("./assets/images/아주대탐험/아주대탐험로고.png"),
       projectName: "아주대탐험 (Ajou Indie Game)",
       projectDesc:
-        "대학 캠퍼스를 배경으로 한 캐주얼 액션 어드벤처: Player·Skill·AI·Event 시스템을 Unity로 통합 구현",
+        "대학 캠퍼스를 배경으로 한 캐주얼 액션 어드벤처.\nPlayer·Skill·AI·Event 시스템을 Unity로 통합 구현",
       recommendation:
         "스킬·AI·이벤트 시스템을 통합 구현한 캐주얼 액션 어드벤처 게임",
       tags: ["#Unity", "#AI", "#GameSystem"],
@@ -967,7 +967,7 @@ const bigProjects = {
     {
       image: require("./assets/images/VR/VR로고.png"),
       projectName: "The Other Side(VR)",
-      projectDesc: "XR Interaction Toolkit 기반 VR 공포 퍼즐 탈출 게임",
+      projectDesc: "XR Interaction Toolkit 기반\nVR 공포 퍼즐 탈출 게임",
       recommendation: "XR Interaction Toolkit 기반 VR 공포 퍼즐 탈출 게임",
       tags: ["#VR", "#XR", "#Unity"],
       footerLink: [],
@@ -1074,7 +1074,7 @@ const bigProjects = {
       image: require("./assets/images/AR/AR로고.png"),
       projectName: "INTO MONSTER POINT(AR)",  
       projectDesc:
-        "AR Plane Scan 기반 전투 공간 자동 생성 + 웨이브/보스 트리거 슈터",
+        "AR Plane Scan 기반 전투 공간 자동 생성.\n웨이브/보스 트리거 슈터",
       recommendation: "AR Plane 스캔 기반 전투 공간 생성 슈터 데모 프로젝트",
       tags: ["#AR", "#Unity", "#Shooter"],
       footerLink: [],
@@ -1188,7 +1188,7 @@ const bigProjects = {
 
 const achievementSection = {
   title: emoji("Sub Projects"),
-  subtitle: "프로젝트 요약 (한 줄씩)",
+  subtitle: "프로젝트 요약한 줄씩",
 
   achievementsCards: [
     {

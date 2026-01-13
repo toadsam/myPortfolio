@@ -60,6 +60,11 @@
   font-size: 30px;
   line-height: 40px;
   white-space: pre-line;
+  word-break: keep-all;
+}
+
+.greeting-subtitle-line {
+  display: inline-block;
 }
 
 .greeting-image-div > img {
