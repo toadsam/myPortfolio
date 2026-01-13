@@ -374,7 +374,7 @@ const bigProjects = {
           subtitle:
             "React(Vite) + Express + MongoDB 기반 맛집 지도/등록 서비스 (Local/OAuth 로그인, 운영 배포 포함)",
           image: require("./assets/images/AjouCampusFood/ACF메인화면.png"),
-          caption: "서비스 메인/맛집 목록/등록 흐름(대표 화면)",
+          caption: "서비스 관리자 페이지)",
           role: "Full-Stack 개발",
           period: "2024.10 - 2024.12",
           techStack: [
@@ -510,7 +510,7 @@ const bigProjects = {
           subtitle:
             "동아리 공지·모집·행사·자료 정보를 한 곳에 정리하고, 데이터/피드백으로 반복 개선한 운영형 웹",
           image: require("./assets/images/aclub/동아리홈페이지 메인.jpg"),
-          caption: "메인 / 모집 / 공지 / 상세(신청·문의) 화면",
+          caption: "메인화면",
           role: "Frontend 개발 + 운영 구조 설계 + 분석(GA4/GSC) 기반 개선",
           period: "v1(운영/배포): 2025.01 – 2025.04\nv2(리메이크): 2025.12 – 현재",
           techStack: [
@@ -530,7 +530,7 @@ const bigProjects = {
             "모집/공지/행사/자료 구조를 사용자 흐름 기준으로 재구성 + CTA(신청/문의/링크) 배치 최적화 + GA4/GSC로 이탈/클릭 구간을 확인하며 지속 수정",
           outcome:
             "정보 도달 시간이 줄고 참여 동선이 단순해져, 운영자가 반복 안내하던 문의를 줄이며 운영 효율을 개선",
-          caption: "메인→상세→참여 CTA 흐름 / 개선 전후 비교 캡처",
+          caption: "메인→상세→참여 캡처",
           images: [
             require("./assets/images/aclub/동아리 세부 저장.jpg")
           ]
@@ -575,7 +575,7 @@ const bigProjects = {
               "How: 메인에서 모집/행사 진입 → 상세에서 핵심 정보 요약 → 하단 고정 CTA(신청/문의/링크)로 행동 유도",
             result:
               "Result: ‘어디서 신청해요?’ 같은 반복 문의 감소 + 참여 전환 흐름 강화",
-            proofCaption: "메인/상세/CTA 위치 전후 비교 캡처",
+            proofCaption: "소학회 전체 페이지 캡처",
             proofImage: require("./assets/images/aclub/동아리 소확회 저장.jpg")
           },
           {
@@ -585,7 +585,7 @@ const bigProjects = {
               "How: 홍보 글/공지 링크를 메인·모집 상세로 연결하고, 상세 상단에 신청/문의 CTA를 고정 배치해 진입 즉시 행동 가능하게 설계",
             result:
               "Result: Result: 홍보→유입→참여 흐름이 명확해져 전환 동선 강화",
-            proofCaption: "Everytime 홍보글/카톡 공지 + 랜딩 화면(CTA 위치) 캡처",
+            proofCaption: "Everytime 홍보글/카톡 캡처",
             proofImage: require("./assets/images/aclub/동아리에타카톡.png")
           },
           {
@@ -875,7 +875,7 @@ const bigProjects = {
           subtitle:
             "대학 캠퍼스를 배경으로 한 캐주얼 액션 어드벤처: Player·Skill·AI·Event 시스템을 Unity로 통합 구현",
           image: require("./assets/images/아주대탐험/인게임화면.png"),
-          caption: "플레이 화면 기반 결과물(인게임 UI·전투·이벤트 흐름)",
+          caption: "플레이 화면 캡처",
           role: "Player/Skill/UI/AI/Event 구현",
           period: "2024.08 - 2024.12",
           techStack: [
@@ -894,7 +894,7 @@ const bigProjects = {
             "Core Loop를 기준으로 Player/Skill/UI/AI/Event를 모듈화하고, 서로 연결되는 지점을 명확히 설계했다.",
           outcome:
             "플레이어 조작·성장·전투·이벤트가 하나의 루프로 자연스럽게 이어지는 구조를 완성했다.",
-          caption: "플레이 화면 기반 결과물(인게임 UI·전투·이벤트 흐름)",
+          caption: "아주대 마스코트 치토 캡처(게임 주인공)",
           images: [require("./assets/images/아주대탐험/치토.png")]
         },
         quickSummary: [
@@ -938,7 +938,7 @@ const bigProjects = {
             oneLiner: "레벨업 순간 ‘정지-선택-재개’ 루프로 성장 경험 강화",
             how: "How: 랜덤 3개 스킬 제시, UI 슬롯 세팅, Time.timeScale=0으로 일시정지 처리",
             result: "Result: 전투 흐름은 유지하면서 선택 UX는 명확하게 분리",
-            proofCaption: "Random Skill UI 증명",
+            proofCaption: "Random Skill UI",
             proofImage: require("./assets/images/아주대탐험/레벨업 ui.png")
           },
           {

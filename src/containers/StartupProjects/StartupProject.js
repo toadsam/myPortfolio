@@ -794,21 +794,40 @@ export default function StartupProject() {
       acc[key] = [];
       return acc;
     }, {});
+    const extraBuckets = {};
+    const extraOrder = [];
     stackList.forEach(item => {
       const parts = item.split(":");
       const label = parts[0] ? parts[0].trim() : "";
       const category = normalizeCategory(label);
       const list = parts[1] ? parts[1].trim() : item.trim();
-      if (category && list) {
-        buckets[category].push(list);
+      if (!list) {
+        return;
       }
+      if (category) {
+        buckets[category].push(list);
+        return;
+      }
+      const extraKey = label || "Other";
+      if (!extraBuckets[extraKey]) {
+        extraBuckets[extraKey] = [];
+        extraOrder.push(extraKey);
+      }
+      extraBuckets[extraKey].push(list);
     });
-    return techCategoryOrder
+    const primaryGroups = techCategoryOrder
       .map(category => ({
         category,
         items: buckets[category]
       }))
       .filter(group => group.items.length);
+    const extraGroups = extraOrder
+      .map(category => ({
+        category,
+        items: extraBuckets[category]
+      }))
+      .filter(group => group.items.length);
+    return [...primaryGroups, ...extraGroups];
   };
 
   const techCategoryIcons = {
@@ -1359,7 +1378,7 @@ export default function StartupProject() {
                       <div key={group.category} className="muscleup-tech-card">
                         <div className="muscleup-tech-header">
                           <span className="muscleup-tech-icon">
-                            {techCategoryIcons[group.category]}
+                            {techCategoryIcons[group.category] || "ST"}
                           </span>
                           <span className="muscleup-tech-title">
                             {group.category}
