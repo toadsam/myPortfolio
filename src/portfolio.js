@@ -21,10 +21,10 @@ const illustration = {
 
 const greeting = {
   username: "정재훈",
-  title: "웹을 주력으로, 운영 문제까지 해결하는 개발자 정재훈",
-  subTitle: emoji(
-    "React · Spring Boot 기반 Full-Stack(Web) 개발 | 인증·보안(Refresh Rotation)과 운영 이슈(HTTPS·CORS) 해결 경험 | Unity XR·게임 개발 경험 보유"
-  ),
+  title: "웹을 주력으로,\n운영 문제까지 해결하는\n개발자 정재훈",
+  subTitle: emoji(`React · Spring Boot 기반 Full-Stack(Web) 개발
+인증·보안(Refresh Rotation)과 운영 이슈(HTTPS·CORS) 해결 경험
+Unity XR·게임 개발 경험 보유`),
   resumeLink: "", // Set to empty to hide the button
   displayGreeting: true // Set false to hide this section, defaults to true
 };
@@ -1463,8 +1463,10 @@ const talkSection = {
 
 const podcastSection = {
   title: "About Me",
-  subtitle:
-    "React·TypeScript와 Spring Boot를 중심으로 서비스 설계부터 배포/운영까지 책임져온 Full-Stack(Web) 개발자입니다. HTTPS/Mixed Content, CORS, 인증 갱신 등 운영 이슈를 직접 해결하며 원인 분석 → 재현 → 수정 → 검증 흐름을 체득했습니다. 웹을 주력으로 하되 Unity XR/AR 경험을 통해 인터랙션과 실시간 시스템 감각도 함께 키우고 있습니다.",
+  subtitle: `작은 기능도 끝까지 다듬어 ‘운영 가능한 상태’로 만듭니다.
+배포 후 생기는 HTTPS·CORS 같은 문제를 로그/설정/네트워크까지 파고들어 해결해왔습니다.
+저는 운영과 사용자 소통까지 이어져야 비로소 ‘완성된 개발’이라고 생각합니다.
+웹이 주력이지만, Unity XR 경험으로 인터랙션 영역도 다룰 수 있습니다.`,
 
   // Please Provide with Your Podcast embeded Link
   podcast: [],

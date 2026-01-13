@@ -11,6 +11,7 @@ import StyleContext from "../../contexts/StyleContext";
 
 export default function Greeting() {
   const {isDark} = useContext(StyleContext);
+  const titleLines = greeting.title.split("\n");
   if (!greeting.displayGreeting) {
     return null;
   }
@@ -23,9 +24,22 @@ export default function Greeting() {
               <h1
                 className={isDark ? "dark-mode greeting-text" : "greeting-text"}
               >
-                {" "}
-                {greeting.title}{" "}
-                <span className="wave-emoji">{emoji("👋")}</span>
+                {titleLines.map((line, index) => (
+                  <React.Fragment key={`${line}-${index}`}>
+                    <span className="greeting-title-line">
+                      {line}
+                      {index === titleLines.length - 1 && (
+                        <>
+                          {" "}
+                          <span className="wave-emoji">{emoji("👋")}</span>
+                        </>
+                      )}
+                    </span>
+                    {index < titleLines.length - 1 && (
+                      <br className="greeting-title-break" />
+                    )}
+                  </React.Fragment>
+                ))}
               </h1>
               <p
                 className={

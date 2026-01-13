@@ -19,6 +19,10 @@
   color: $subTitle;
 }
 
+.podcast-header-subtitle {
+  white-space: pre-line;
+}
+
 @media (max-width: 768px) {
   .podcast-header-title {
     font-size: 30px;
