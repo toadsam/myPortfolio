@@ -512,7 +512,7 @@ const bigProjects = {
           image: require("./assets/images/aclub/동아리홈페이지 메인.jpg"),
           caption: "메인 / 모집 / 공지 / 상세(신청·문의) 화면",
           role: "Frontend 개발 + 운영 구조 설계 + 분석(GA4/GSC) 기반 개선",
-          period: "2025.01 - 2025.04\n리메이크 진행 중 (2026.01 – )",
+          period: "v1(운영/배포): 2025.01 – 2025.04\nv2(리메이크): 2025.12 – 현재",
           techStack: [
             "Frontend: React, Vite, Axios",
             "Analytics: GA4, Google Search Console",
@@ -629,7 +629,7 @@ const bigProjects = {
           image: require("./assets/images/ajouchong_main.webp"),
           caption: "메인 / 공지 / 자료 / 상세(신청) 화면",
           role: "Frontend 개발 + 운영 구조 설계 + GA4/GSC 분석 기반 개선",
-          period: "2025.03 - 2025.08",
+          period: "v1(운영/배포): 2025.03 – 2025.08\nv2(리메이크): 2026.01 – 현재",
           techStack: [
             "Frontend: React, Vite, Axios",
             "Analytics: GA4, Google Search Console",
@@ -1409,7 +1409,7 @@ const talkSection = {
         "문제를 혼자 끌고 가기보다, 상황과 맥락을 공유해 같은 방향을 보는 것을 더 중요하게 생각합니다.",
         "헬스 동아리 회장으로 활동하며 목표·일정·역할을 정리해 팀이 흔들리지 않게 운영했고,",
         "아주대학교 정보통신대학교 학생회 대외협력국에서는 외부 협업을 조율하며 ‘상대가 이해하는 언어’로 정리해 전달하는 법을 배웠습니다.",
-        "또한 총학생회 생활복지국·소통발전국에서 학생들의 문의와 피드백을 직접 듣고 연결하면서",
+        "또한 총학생회 생활복지국·소통발전국에서 학생들의 문의와 피드백을 직접 듣고, 우선순위를 세워 개선으로 연결하면서",
         "소통은 ‘말을 잘하는 것’이 아니라 문제를 해결 가능한 형태로 정리해 합의하는 과정이라는 걸 체감했습니다."
       ],
       images: [
