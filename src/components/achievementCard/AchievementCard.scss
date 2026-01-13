@@ -16,6 +16,8 @@
   color: $cardSubtitle;
   font-size: 0.85rem;
   line-height: 1.5rem;
+  word-break: keep-all;
+  text-wrap: balance;
 }
 .certificate-card {
   background-color: $lightBackground2;
