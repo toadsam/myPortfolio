@@ -22,8 +22,7 @@ import {useLocalStorage} from "../hooks/useLocalStorage";
 import "./Main.scss";
 
 const Main = () => {
-  const darkPref = window.matchMedia("(prefers-color-scheme: dark)");
-  const [isDark, setIsDark] = useLocalStorage("isDark", darkPref.matches);
+  const [isDark, setIsDark] = useLocalStorage("isDark", true);
   const [isShowingSplashAnimation, setIsShowingSplashAnimation] =
     useState(true);
 
@@ -40,6 +39,14 @@ const Main = () => {
   }, []);
 
   const changeTheme = () => {
+    if (isDark) {
+      const ok = window.confirm(
+        "이 페이지는 다크모드에 최적화되어있습니다. 그래도 바꾸시겠습니까?"
+      );
+      if (!ok) {
+        return;
+      }
+    }
     setIsDark(!isDark);
   };
 
