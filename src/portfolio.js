@@ -1412,10 +1412,10 @@ const talkSection = {
         "운영 과정에서는 사용자와의 대화를 통해 더 나은 해답을 배웠습니다."
       ],
       images: [
-        require("./assets/images/득근득근/득근득근메인화면.png"),
-        require("./assets/images/AjouCampusFood/ACF메인화면.png"),
-        require("./assets/images/아주대로고.png"),
-        require("./assets/images/saayaHealthLogo.webp")
+        require("./assets/images/소통/소통.jpg"),
+        require("./assets/images/소통/소통2.jpg"),
+        require("./assets/images/소통/소통3.jpg"),
+        require("./assets/images/소통/소통4.jpg")
       ]
     },
     {
@@ -1445,9 +1445,10 @@ const talkSection = {
       ],
       images: [
         require("./assets/images/성실/바프.jpg"),
-        require("./assets/images/아주대로고.png"),
-        require("./assets/images/saayaHealthLogo.webp"),
-        require("./assets/images/득근득근/득근득근토큰페기코드.png")
+        require("./assets/images/성실/성실.jpg"),
+        require("./assets/images/성실/성실1.jpg"),
+        require("./assets/images/성실/성실2.jpg"),
+        require("./assets/images/성실/성실3.jpg")
       ]
     },
     {
@@ -1460,10 +1461,11 @@ const talkSection = {
         "다음 시도를 더 정확하게 만드는 최고의 학습 도구라고 생각합니다."
       ],
       images: [
-        require("./assets/images/ar로고.png"),
-        require("./assets/images/득근득근/득근ERD.png"),
-        require("./assets/images/AjouCampusFood/ACF수락화면.png"),
-        require("./assets/images/아주대탐험 제목.png")
+        require("./assets/images/도전/도전.jpg"),
+        require("./assets/images/도전/도전2.jpg"),
+        require("./assets/images/도전/도전3.jpg"),
+        require("./assets/images/도전/도전4.jpg"),
+        require("./assets/images/도전/도전5.jpg")
       ]
     }
   ],
