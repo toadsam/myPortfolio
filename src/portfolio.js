@@ -1378,12 +1378,12 @@ const blogSection = {
   displayMediumBlogs: "false", // Set true to display fetched medium blogs instead of hardcoded ones
   blogs: [
     {
-      url: "https://simple-club-a2b.notion.site/f4211dd073904c08bb779f4504ffa716?v=8b02760b1a944b7592694ffd13e06166&source=copy_link",
+      url: "https://simple-club-a2b.notion.site/f4211dd073904c08bb779f4504ffa716?v=8b02760b1a944b7592694ffd13e06166&pvs=74",
       title: "개발하며 기억에 남은 하루의 기록",
       description: "개발 중 인상 깊었던 문제와 배운 점, 그날의 고민을 짧게 정리합니다."
     },
     {
-      url: "",
+      url: "https://simple-club-a2b.notion.site/56fcb56e1eb746d1acd4fab0e8e03569?pvs=74",
       title: "개발 개념과 구조 학습 정리",
       description: "핵심 개념과 구조를 중심으로 학습 내용을 정리합니다."
     },
@@ -1444,7 +1444,7 @@ const talkSection = {
         "개발도 마찬가지로, 작은 개선과 반복을 끝까지 쌓아 결과로 보여줍니다."
       ],
       images: [
-        require("./assets/images/트세로프/트세로프로고.png"),
+        require("./assets/images/성실/바프.jpg"),
         require("./assets/images/아주대로고.png"),
         require("./assets/images/saayaHealthLogo.webp"),
         require("./assets/images/득근득근/득근득근토큰페기코드.png")
