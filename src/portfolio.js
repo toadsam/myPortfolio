@@ -83,12 +83,32 @@ https://fontawesome.com/icons?d=gallery */
       fontAwesomeClassname: "fab fa-node"
     },
     {
+      skillName: "Spring Boot",
+      fontAwesomeClassname: "fas fa-leaf"
+    },
+    {
       skillName: "Database",
       fontAwesomeClassname: "fas fa-database"
     },
     {
       skillName: "AWS",
       fontAwesomeClassname: "fab fa-aws"
+    },
+    {
+      skillName: "Unity",
+      fontAwesomeClassname: "fab fa-unity"
+    },
+    {
+      skillName: "C#",
+      fontAwesomeClassname: "fas fa-code"
+    },
+    {
+      skillName: "Game Dev",
+      fontAwesomeClassname: "fas fa-gamepad"
+    },
+    {
+      skillName: "3D",
+      fontAwesomeClassname: "fas fa-cube"
     }
   ],
   display: true // Set false to hide this section, defaults to true
