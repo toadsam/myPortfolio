@@ -209,7 +209,7 @@ const bigProjects = {
 
   projects: [
     {
-      image: require("./assets/images/득근득근/득근득근로고.png"),
+      image: require("./assets/images/득근득근/득근로고확대버전.png"),
       projectName: "득근득근 (MuscleUp)",
       status: "live",
       projectDesc:
