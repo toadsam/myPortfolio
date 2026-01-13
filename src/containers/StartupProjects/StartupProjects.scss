@@ -423,6 +423,7 @@
   font-size: 15px;
   line-height: 1.6;
   color: $textColorDark;
+  white-space: pre-line;
 }
 
 .project-overview-core {
@@ -1808,5 +1809,4 @@
     rgba(140, 150, 160, 0) 100%
   );
 }
-
 

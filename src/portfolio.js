@@ -512,7 +512,7 @@ const bigProjects = {
           image: require("./assets/images/aclub/동아리홈페이지 메인.jpg"),
           caption: "메인 / 모집 / 공지 / 상세(신청·문의) 화면",
           role: "Frontend 개발 + 운영 구조 설계 + 분석(GA4/GSC) 기반 개선",
-          period: "2025.01 - 2025.04 - 리메이크 중",
+          period: "2025.01 - 2025.04\n리메이크 진행 중 (2026.01 – )",
           techStack: [
             "Frontend: React, Vite, Axios",
             "Analytics: GA4, Google Search Console",
