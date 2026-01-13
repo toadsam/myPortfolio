@@ -1400,16 +1400,17 @@ const blogSection = {
 
 const talkSection = {
   title: "Values I Believe In",
-  subtitle: "개발을 대하는 나만의 기준과 태도",
+  subtitle: "인생을 대하는 나만의 기준과 태도",
   values: [
     {
       key: "소통",
       summary: "생각과 상황을 공유하며 방향을 맞춥니다.",
       description: [
-        "문제를 혼자 해결하기보다,",
-        "상황과 생각을 공유하며 함께 방향을 맞추는 것을 중요하게 생각합니다.",
-        "개발 과정에서는 팀원과의 소통을 통해 맥락을 맞추고,",
-        "운영 과정에서는 사용자와의 대화를 통해 더 나은 해답을 배웠습니다."
+        "문제를 혼자 끌고 가기보다, 상황과 맥락을 공유해 같은 방향을 보는 것을 더 중요하게 생각합니다.",
+        "헬스 동아리 회장으로 활동하며 목표·일정·역할을 정리해 팀이 흔들리지 않게 운영했고,",
+        "아주대학교 정보통신대학교 학생회 대외협력국에서는 외부 협업을 조율하며 ‘상대가 이해하는 언어’로 정리해 전달하는 법을 배웠습니다.",
+        "또한 총학생회 생활복지국·소통발전국에서 학생들의 문의와 피드백을 직접 듣고 연결하면서",
+        "소통은 ‘말을 잘하는 것’이 아니라 문제를 해결 가능한 형태로 정리해 합의하는 과정이라는 걸 체감했습니다."
       ],
       images: [
         require("./assets/images/소통/소통.jpg"),
@@ -1428,10 +1429,11 @@ const talkSection = {
         "함께 더 나은 결과를 만드는 과정 자체를 중요하게 생각합니다."
       ],
       images: [
-        require("./assets/images/aclub로고.png"),
-        require("./assets/images/AjouCampusFood/ACF환경분리코드.png"),
-        require("./assets/images/아주대탐험 제목.png"),
-        require("./assets/images/saayaHealthLogo.webp")
+        require("./assets/images/협력/협력.jpg"),
+        require("./assets/images/협력/협력1.jpg"),
+        require("./assets/images/협력/협력2.jpg"),
+        require("./assets/images/협력/협력3.jpg"),
+        require("./assets/images/협력/협력.jpg")
       ]
     },
     {

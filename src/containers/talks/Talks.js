@@ -13,6 +13,8 @@ export default function Talks() {
   const [isPaused, setIsPaused] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
+  const [viewerImage, setViewerImage] = useState(null);
+  const [viewerClosing, setViewerClosing] = useState(false);
 
   useEffect(() => {
     if (!activeValue || isPaused) {
@@ -39,6 +41,19 @@ export default function Talks() {
       setCurrentIndex(0);
       setIsClosing(false);
     }, 260);
+  };
+
+  const openViewer = image => {
+    setViewerImage(image);
+    setViewerClosing(false);
+  };
+
+  const closeViewer = () => {
+    setViewerClosing(true);
+    setTimeout(() => {
+      setViewerImage(null);
+      setViewerClosing(false);
+    }, 220);
   };
 
   const getPrevIndex = () => {
@@ -152,22 +167,40 @@ export default function Talks() {
                     onTouchEnd={handleTouchEnd}
                   >
                     <div className="values-lightbox-carousel">
-                      <img
-                        className="values-lightbox-image side"
-                        src={activeValue.images[getPrevIndex()]}
-                        alt={`${activeValue.key} preview`}
-                      />
-                      <img
+                      <button
+                        className="values-lightbox-image-wrap side"
+                        type="button"
+                        onClick={() => openViewer(activeValue.images[getPrevIndex()])}
+                      >
+                        <img
+                          className="values-lightbox-image"
+                          src={activeValue.images[getPrevIndex()]}
+                          alt={`${activeValue.key} preview`}
+                        />
+                      </button>
+                      <button
                         key={currentIndex}
-                        className="values-lightbox-image active"
-                        src={activeValue.images[currentIndex]}
-                        alt={activeValue.key}
-                      />
-                      <img
-                        className="values-lightbox-image side"
-                        src={activeValue.images[getNextIndex()]}
-                        alt={`${activeValue.key} preview`}
-                      />
+                        className="values-lightbox-image-wrap active"
+                        type="button"
+                        onClick={() => openViewer(activeValue.images[currentIndex])}
+                      >
+                        <img
+                          className="values-lightbox-image"
+                          src={activeValue.images[currentIndex]}
+                          alt={activeValue.key}
+                        />
+                      </button>
+                      <button
+                        className="values-lightbox-image-wrap side"
+                        type="button"
+                        onClick={() => openViewer(activeValue.images[getNextIndex()])}
+                      >
+                        <img
+                          className="values-lightbox-image"
+                          src={activeValue.images[getNextIndex()]}
+                          alt={`${activeValue.key} preview`}
+                        />
+                      </button>
                     </div>
                     <div className="values-lightbox-dots">
                       {activeValue.images.map((_, index) => (
@@ -197,6 +230,37 @@ export default function Talks() {
                       ))}
                     </div>
                   </div>
+                </div>
+              </div>,
+              document.body
+            )
+          : null}
+        {viewerImage && typeof document !== "undefined"
+          ? createPortal(
+              <div
+                className={`values-viewer-overlay${
+                  viewerClosing ? " closing" : ""
+                }`}
+                role="presentation"
+                onClick={closeViewer}
+              >
+                <div
+                  className={`values-viewer${
+                    viewerClosing ? " closing" : ""
+                  }`}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label="Image viewer"
+                  onClick={event => event.stopPropagation()}
+                >
+                  <button
+                    className="values-viewer-close"
+                    type="button"
+                    onClick={closeViewer}
+                  >
+                    ×
+                  </button>
+                  <img src={viewerImage} alt="Full view" />
                 </div>
               </div>,
               document.body
