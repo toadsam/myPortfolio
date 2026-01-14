@@ -632,7 +632,7 @@ const bigProjects = {
     },
 
     {
-      image: require("./assets/images/아주총/총학홈페이지.jpg"),
+      image: require("./assets/images/아주대로고.png"),
       projectName: "아주대학교 총학생회",
       status: "live",
       projectDesc:
