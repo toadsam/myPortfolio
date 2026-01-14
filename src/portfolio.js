@@ -633,7 +633,7 @@ const bigProjects = {
 
     {
       image: require("./assets/images/아주총/총학홈페이지.jpg"),
-      projectName: "ajouchong",
+      projectName: "아주대학교 총학생회",
       status: "live",
       projectDesc:
         "총학생회 운영형 홍보·정보 제공 웹.\n운영 피드백·데이터 기반 개선",
@@ -643,11 +643,11 @@ const bigProjects = {
       footerLink: [{name: "ajouchong", url: "https://ajouchong.com"}],
       details: {
         overview: {
-          title: "ajouchong - 프로젝트 개요",
+          title: "아주대학교총학생회 - 프로젝트 개요",
           subtitle:
             "총학생회 공지·행사·지원·자료·신청 정보를 한 곳에 정리하고, 운영 피드백과 분석 지표로 지속 개선",
-          image: require("./assets/images/ajouchong_main.webp"),
-          caption: "메인 / 공지 / 자료 / 상세(신청) 화면",
+          image: require("./assets/images/아주총/홈페이지 화면2.png"),
+          caption: "메인 화면",
           role: "Frontend 개발 + 운영 구조 설계 + GA4/GSC 분석 기반 개선",
           period: "v1(운영/배포): 2025.03 – 2025.08\nv2(리메이크): 2026.01 – 현재",
           techStack: [
@@ -658,7 +658,7 @@ const bigProjects = {
           ]
         },
         intro: {
-          headline: "What is ajouchong?",
+          headline: "What is 총학홈페이지?",
           highlight:
             "총학생회 운영 정보를 사용자 흐름 기준으로 재구성하고, 배포 후 피드백·데이터로 개선한 운영형 웹",
           problem:
@@ -667,10 +667,9 @@ const bigProjects = {
             "정보 구조(메뉴·카테고리·상세)를 ‘탐색→확인→신청’ 흐름으로 재설계 + CTA/문구/링크를 운영 피드백과 지표 기반으로 반복 개선",
           outcome:
             "정보 도달 시간이 줄고 참여 동선이 명확해져 반복 문의가 감소하고 운영 효율이 개선됨",
-          caption: "메인→상세→참여(신청/문의) CTA 흐름 및 개선 포인트",
+          caption: "소개 페이지",
           images: [
-            require("./assets/images/ajouchong_flow.webp"),
-            require("./assets/images/ajouchong_analytics.webp")
+            require("./assets/images/아주총/총학생회소개 페이지.png")
           ]
         },
         quickSummary: [
@@ -713,8 +712,8 @@ const bigProjects = {
               "How: 메뉴/카테고리 구조를 정리하고, 상세 화면에 핵심 정보 요약 + CTA(신청/문의/링크)를 명확한 위치에 배치",
             result:
               "Result: ‘어디서 신청하나요?’ 같은 반복 문의 감소 + 필요한 정보 도달 속도 향상",
-            proofCaption: "메인/메뉴 구조/상세 CTA 영역 캡처(전후 비교 추천)",
-            proofImage: require("./assets/images/ajouchong_ux.webp")
+            proofCaption: "메인/메뉴 구조/상세",
+            proofImage: require("./assets/images/아주총/세부보여주는 페이지.png")
           },
           {
             title: "운영 피드백 반영(실사용 개선)",
@@ -725,7 +724,7 @@ const bigProjects = {
             result:
               "Result: 운영자 안내 부담 감소 + 사용자 self-serve(스스로 해결) 비율 증가",
             proofCaption: "문구/버튼/배치 수정 캡처(피드백 반영 사례)",
-            proofImage: require("./assets/images/ajouchong_feedback.webp")
+            proofImage: require("./assets/images/아주총/총학생회 공지사항 페이지.png")
           },
           {
             title: "유입·행동 분석(운영 개선 루프)",
@@ -734,8 +733,8 @@ const bigProjects = {
               "How: GA4로 페이지 흐름/체류/이벤트를 확인하고, GSC로 검색 유입/CTR을 확인해 콘텐츠/랜딩 구조 개선 근거를 확보",
             result:
               "Result: 개선의 우선순위와 효과를 설명 가능한 형태로 축적",
-            proofCaption: "GA4/GSC 화면 또는 핵심 지표 캡처",
-            proofImage: require("./assets/images/ajouchong_ga4gsc.webp")
+            proofCaption: "GA4/GSC 화면",
+            proofImage: require("./assets/images/아주총/총학생회 배포자료.png")
           }
         ],
         links: [{name: "ajouchong", url: "https://ajouchong.com"}]
@@ -875,7 +874,7 @@ const bigProjects = {
 
     {
       image: require("./assets/images/아주대탐험/아주대탐험로고.png"),
-      projectName: "아주대탐험 (Ajou Indie Game)",
+      projectName: "아주대탐험",
       status: "archived",
       projectDesc:
         "대학 캠퍼스를 배경으로 한 캐주얼 액션 어드벤처.\nPlayer·Skill·AI·Event 시스템을 Unity로 통합 구현",
@@ -891,7 +890,7 @@ const bigProjects = {
       ],
       details: {
         overview: {
-          title: "아주대탐험 (Ajou Indie Game)",
+          title: "아주대탐험",
           subtitle:
             "대학 캠퍼스를 배경으로 한 캐주얼 액션 어드벤처: Player·Skill·AI·Event 시스템을 Unity로 통합 구현",
           image: require("./assets/images/아주대탐험/인게임화면.png"),
