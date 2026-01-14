@@ -875,7 +875,7 @@ export default function StartupProject() {
       return "project-banner-web";
     }
     if (value.includes("club") || value.includes("ajouchong")) {
-      return "project-banner-web";
+      return "project-banner-ops";
     }
     if (value.includes("other side") || value.includes("vr")) {
       return "project-banner-game";
