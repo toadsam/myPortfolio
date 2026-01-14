@@ -874,7 +874,7 @@ export default function StartupProject() {
     if (value.includes("ajou campus") || value.includes("foodmap")) {
       return "project-banner-web";
     }
-    if (value.includes("club") || value.includes("ajouchong")) {
+    if (value.includes("club") || value.includes("아주대학교 총학생회")) {
       return "project-banner-ops";
     }
     if (value.includes("other side") || value.includes("vr")) {
