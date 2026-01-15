@@ -137,6 +137,8 @@ export default function StartupProject() {
             src={current.src}
             alt={current.alt}
             className="project-lightbox-image"
+            loading="lazy"
+            decoding="async"
           />
           {current.caption ? (
             <div className="project-lightbox-caption">{current.caption}</div>
@@ -203,7 +205,7 @@ export default function StartupProject() {
       >
         <div className="muscleup-proof-label">PROOF</div>
         <button className="muscleup-proof-thumb" type="button" onClick={onOpen}>
-          <img src={item.src} alt={item.alt} />
+          <img src={item.src} alt={item.alt} loading="lazy" decoding="async" />
         </button>
         <div className="muscleup-proof-caption">{caption || item.caption}</div>
       </div>
@@ -359,7 +361,12 @@ export default function StartupProject() {
           </div>
         </div>
         <div className="muscleup-intro-media">
-          <img src={heroProofImage} alt="MuscleUp 서비스 화면" />
+          <img
+            src={heroProofImage}
+            alt="MuscleUp 서비스 화면"
+            loading="lazy"
+            decoding="async"
+          />
           <div className="muscleup-proof-caption">
             실서비스 메인 화면 (모바일/웹)
           </div>
@@ -740,6 +747,8 @@ export default function StartupProject() {
                   key={`${project.projectName}-${index}`}
                   src={img}
                   alt={`${project.projectName} 화면 ${index + 1}`}
+                  loading="lazy"
+                  decoding="async"
                 />
               ))}
             </div>
@@ -1047,6 +1056,8 @@ export default function StartupProject() {
                           className="experience-roundedimg"
                           src={project.image}
                           alt={project.projectName}
+                          loading="lazy"
+                          decoding="async"
                         />
                       ) : null}
                     </div>
@@ -1164,6 +1175,8 @@ export default function StartupProject() {
                         src={selectedProject.details.overview.image}
                         alt={selectedProject.projectName}
                         className="project-overview-image"
+                        loading="lazy"
+                        decoding="async"
                       />
                     ) : null}
                     {selectedProject.details.overview.caption && (
@@ -1238,7 +1251,7 @@ export default function StartupProject() {
                                 className="project-overview-link"
                                 href={link.url}
                                 target="_blank"
-                                rel="noreferrer"
+                                rel="noopener noreferrer"
                               >
                                 {link.name}
                               </a>
@@ -1258,6 +1271,8 @@ export default function StartupProject() {
                       src={selectedProject.image}
                       alt={selectedProject.projectName}
                       className="project-modal-image"
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : null}
                   <div>
@@ -1405,7 +1420,7 @@ export default function StartupProject() {
                         className="project-modal-link"
                         href={link.url}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                       >
                         {link.name}
                       </a>

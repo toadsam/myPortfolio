@@ -45,6 +45,8 @@ export default function ExperienceCard({cardInfo, isDark}) {
           src={cardInfo.companylogo}
           alt={cardInfo.company}
           onLoad={() => getColorArrays()}
+          loading="lazy"
+          decoding="async"
         />
       </div>
       <div className="experience-text-details">

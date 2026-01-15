@@ -53,6 +53,8 @@ export default function GithubProfileCard({prof}) {
               src={prof.avatarUrl}
               alt={prof.name}
               className="profile-image"
+              loading="lazy"
+              decoding="async"
             />
           </div>
         </div>

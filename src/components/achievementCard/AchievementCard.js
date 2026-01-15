@@ -7,8 +7,11 @@ export default function AchievementCard({cardInfo, isDark}) {
       console.log(`URL for ${name} not found`);
       return;
     }
-    var win = window.open(url, "_blank");
-    win.focus();
+    const win = window.open(url, "_blank", "noopener,noreferrer");
+    if (win) {
+      win.opener = null;
+      win.focus();
+    }
   }
 
   return (
@@ -18,6 +21,8 @@ export default function AchievementCard({cardInfo, isDark}) {
           src={cardInfo.image}
           alt={cardInfo.imageAlt || "Card Thumbnail"}
           className="card-image"
+          loading="lazy"
+          decoding="async"
         ></img>
       </div>
       <div className="certificate-detail-div">

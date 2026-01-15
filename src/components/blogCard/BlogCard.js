@@ -7,8 +7,11 @@ export default function BlogCard({blog, isDark}) {
       console.log(`URL for ${name} not found`);
       return;
     }
-    var win = window.open(url, "_blank");
-    win.focus();
+    const win = window.open(url, "_blank", "noopener,noreferrer");
+    if (win) {
+      win.opener = null;
+      win.focus();
+    }
   }
 
   return (

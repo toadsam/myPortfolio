@@ -17,7 +17,7 @@ export default function Footer() {
           <a
             href="https://github.com/toadsam"
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
           >
             developerFolio
           </a>
