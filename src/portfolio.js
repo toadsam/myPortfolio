@@ -1474,10 +1474,10 @@ const talkSection = {
       ],
       images: [
         require("./assets/images/성실/바프.jpg"),
-        require("./assets/images/성실/성실.jpg"),
-        require("./assets/images/성실/성실1.jpg"),
-        require("./assets/images/성실/성실2.jpg"),
-        require("./assets/images/성실/성실3.jpg")
+        require("./assets/images/성실/성실_1.jpg"),
+        require("./assets/images/성실/성실_2.jpg"),
+        require("./assets/images/성실/성실_3.jpg"),
+        require("./assets/images/성실/성실_4.jpg")
       ]
     },
     {
