@@ -13,7 +13,7 @@ export default function Footer() {
           {emoji("정재훈 | Full-Stack Developer · Unity Developer")}
         </p>
         <p className={isDark ? "dark-mode footer-text" : "footer-text"}>
-          Theme by{" "}
+          Inspired by{" "}
           <a
             href="https://github.com/toadsam"
             target="_blank"
