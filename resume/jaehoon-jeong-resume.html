@@ -1,0 +1,1097 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>정재훈 이력서 | Full-Stack Web Developer</title>
+    <style>
+      :root {
+        --ink: #111827;
+        --body: #243044;
+        --muted: #667085;
+        --line: #d7dee8;
+        --soft: #f5f7fa;
+        --paper: #ffffff;
+        --navy: #16324f;
+        --blue: #2563eb;
+        --teal: #047481;
+        --green: #21725e;
+        --amber: #a15c07;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        background: #e8edf3;
+        color: var(--ink);
+        font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic",
+          "Segoe UI", Arial, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        line-height: 1.52;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .sheet {
+        width: min(1060px, calc(100% - 32px));
+        margin: 28px auto;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        box-shadow: 0 24px 70px rgba(17, 24, 39, 0.14);
+      }
+
+      .toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+      }
+
+      .toolbar a,
+      .toolbar button {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--ink);
+        padding: 8px 11px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .top {
+        display: grid;
+        grid-template-columns: 1fr 290px;
+        gap: 32px;
+        padding: 44px 52px 30px;
+        border-bottom: 1px solid var(--line);
+        background:
+          linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(4, 116, 129, 0.06)),
+          #fff;
+      }
+
+      .label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 10px;
+        color: var(--teal);
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .label::before {
+        content: "";
+        width: 26px;
+        height: 2px;
+        background: var(--teal);
+      }
+
+      h1 {
+        margin: 0;
+        color: var(--navy);
+        font-size: 54px;
+        line-height: 1.05;
+        letter-spacing: 0;
+      }
+
+      .headline {
+        margin: 10px 0 12px;
+        color: var(--blue);
+        font-size: 20px;
+        font-weight: 900;
+      }
+
+      .summary {
+        max-width: 720px;
+        margin: 0;
+        color: var(--body);
+        font-size: 16px;
+      }
+
+      .summary strong {
+        color: var(--navy);
+      }
+
+      .signal-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .signal {
+        min-height: 94px;
+        padding: 13px 14px;
+        border: 1px solid rgba(4, 116, 129, 0.18);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .signal strong {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--navy);
+        font-size: 13px;
+      }
+
+      .signal span {
+        display: block;
+        color: #475467;
+        font-size: 13px;
+      }
+
+      .contact {
+        align-self: start;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .contact-title {
+        margin: 0 0 14px;
+        color: var(--navy);
+        font-size: 16px;
+        font-weight: 900;
+      }
+
+      .contact dl {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+      }
+
+      .contact div {
+        display: grid;
+        gap: 2px;
+      }
+
+      dt {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      dd {
+        margin: 0;
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 800;
+        word-break: break-word;
+      }
+
+      .body {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 32px;
+        padding: 34px 52px 44px;
+      }
+
+      section {
+        margin-bottom: 28px;
+      }
+
+      h2 {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin: 0 0 14px;
+        color: var(--navy);
+        font-size: 17px;
+        line-height: 1.2;
+      }
+
+      h2::before {
+        content: "";
+        width: 4px;
+        height: 20px;
+        border-radius: 2px;
+        background: var(--teal);
+      }
+
+      h3 {
+        margin: 0;
+        color: var(--ink);
+        font-size: 16px;
+        line-height: 1.35;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      ul {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+
+      li {
+        margin: 3px 0;
+        color: #344054;
+        font-size: 13px;
+      }
+
+      .side-block {
+        padding: 16px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--soft);
+      }
+
+      .side-block + .side-block {
+        margin-top: 10px;
+      }
+
+      .side-block h3 {
+        margin-bottom: 9px;
+        color: var(--navy);
+        font-size: 14px;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .chips span {
+        border: 1px solid rgba(4, 116, 129, 0.2);
+        border-radius: 999px;
+        background: #fff;
+        color: #184f59;
+        padding: 4px 8px;
+        font-size: 11.5px;
+        font-weight: 800;
+      }
+
+      .metric-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .metric {
+        padding: 13px 15px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .metric strong {
+        display: block;
+        margin-bottom: 3px;
+        color: var(--green);
+        font-size: 14px;
+      }
+
+      .metric span {
+        color: #475467;
+        font-size: 13px;
+      }
+
+      .project {
+        margin-bottom: 15px;
+        padding: 18px 19px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .project.primary {
+        border-color: rgba(37, 99, 235, 0.28);
+        background: linear-gradient(180deg, rgba(37, 99, 235, 0.045), #fff 42%);
+      }
+
+      .project-head {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 16px;
+        margin-bottom: 8px;
+      }
+
+      .project-meta {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .role {
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 900;
+        text-align: right;
+        white-space: pre-line;
+      }
+
+      .project-desc {
+        color: var(--body);
+        font-size: 13.5px;
+      }
+
+      .project-grid {
+        display: grid;
+        grid-template-columns: 88px 1fr;
+        gap: 8px 12px;
+        margin-top: 10px;
+      }
+
+      .project-grid strong {
+        color: var(--navy);
+        font-size: 12px;
+      }
+
+      .project-grid span {
+        color: #344054;
+        font-size: 13px;
+      }
+
+      .project .chips {
+        margin-top: 11px;
+      }
+
+      .link-list {
+        display: grid;
+        gap: 7px;
+      }
+
+      .link-list a,
+      .link-list span {
+        display: block;
+        color: #184f59;
+        font-size: 12px;
+        font-weight: 800;
+        word-break: break-word;
+      }
+
+      .compact-list {
+        display: grid;
+        gap: 9px;
+      }
+
+      .compact-item {
+        padding-left: 14px;
+        border-left: 3px solid rgba(4, 116, 129, 0.28);
+      }
+
+      .compact-item strong {
+        display: block;
+        color: var(--ink);
+        font-size: 13.5px;
+      }
+
+      .compact-item span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .compact-item p {
+        color: #475467;
+        font-size: 12.5px;
+      }
+
+      .activity {
+        padding: 14px 16px;
+        border-left: 4px solid var(--amber);
+        background: #fff8ed;
+      }
+
+      .activity strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #7a3e06;
+        font-size: 13px;
+      }
+
+      .activity p {
+        color: #475467;
+        font-size: 13px;
+      }
+
+      .footer {
+        padding: 20px 52px 30px;
+        border-top: 1px solid var(--line);
+        background: var(--navy);
+        color: #fff;
+      }
+
+      .footer strong {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 16px;
+      }
+
+      .footer span {
+        color: #d7e5f0;
+        font-size: 13px;
+      }
+
+      @media (max-width: 860px) {
+        .top,
+        .body,
+        .project-head,
+        .signal-row {
+          grid-template-columns: 1fr;
+        }
+
+        .top,
+        .body,
+        .footer {
+          padding-left: 24px;
+          padding-right: 24px;
+        }
+
+        h1 {
+          font-size: 42px;
+        }
+
+        .role {
+          text-align: left;
+        }
+      }
+
+      @media print {
+        @page {
+          size: A4;
+          margin: 8mm;
+        }
+
+        html,
+        body {
+          background: #fff;
+        }
+
+        .sheet {
+          width: 100%;
+          margin: 0;
+          border: 0;
+          box-shadow: none;
+        }
+
+        .toolbar {
+          display: none;
+        }
+
+        .top,
+        .body,
+        .footer {
+          padding-left: 0;
+          padding-right: 0;
+        }
+
+        .top {
+          grid-template-columns: 1fr 245px;
+          padding-top: 0;
+          padding-bottom: 13px;
+        }
+
+        .body {
+          grid-template-columns: 250px 1fr;
+          gap: 17px;
+          padding-top: 16px;
+          padding-bottom: 12px;
+        }
+
+        h1 {
+          font-size: 34px;
+        }
+
+        .headline {
+          font-size: 14px;
+          margin-bottom: 8px;
+        }
+
+        .summary {
+          font-size: 10.6px;
+        }
+
+        h2 {
+          margin-bottom: 8px;
+          font-size: 13px;
+        }
+
+        h2::before {
+          height: 15px;
+        }
+
+        h3 {
+          font-size: 12px;
+        }
+
+        .signal-row {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 7px;
+          margin-top: 12px;
+        }
+
+        .signal {
+          min-height: 58px;
+          padding: 7px 8px;
+        }
+
+        .signal strong,
+        .signal span {
+          font-size: 9.4px;
+        }
+
+        .contact {
+          padding: 12px;
+        }
+
+        .contact-title {
+          margin-bottom: 8px;
+          font-size: 12px;
+        }
+
+        .contact dl {
+          gap: 6px;
+        }
+
+        dt {
+          font-size: 8.8px;
+        }
+
+        dd {
+          font-size: 9.8px;
+        }
+
+        .signal span,
+        .metric span,
+        .project-desc,
+        .project-grid span,
+        li,
+        .activity p,
+        .compact-item p {
+          font-size: 9.2px;
+        }
+
+        .metric {
+          padding: 8px 9px;
+        }
+
+        .metric strong {
+          font-size: 10.2px;
+        }
+
+        .project {
+          break-inside: avoid;
+          margin-bottom: 7px;
+          padding: 8px 9px;
+        }
+
+        .project-head {
+          gap: 8px;
+          margin-bottom: 5px;
+        }
+
+        .project-meta,
+        .role,
+        .project-grid strong {
+          font-size: 8.9px;
+        }
+
+        .project-grid {
+          grid-template-columns: 58px 1fr;
+          gap: 3px 7px;
+          margin-top: 6px;
+        }
+
+        .chips span {
+          font-size: 8.4px;
+          padding: 1px 5px;
+        }
+
+        .chips {
+          gap: 4px;
+        }
+
+        section {
+          margin-bottom: 11px;
+        }
+
+        .side-block {
+          padding: 8px;
+        }
+
+        .side-block + .side-block {
+          margin-top: 6px;
+        }
+
+        .side-block h3 {
+          margin-bottom: 5px;
+          font-size: 10.5px;
+        }
+
+        .compact-list {
+          gap: 6px;
+        }
+
+        .link-list {
+          gap: 4px;
+        }
+
+        .link-list a,
+        .link-list span {
+          font-size: 8.8px;
+        }
+
+        .compact-item {
+          padding-left: 9px;
+        }
+
+        .compact-item strong {
+          font-size: 10.4px;
+        }
+
+        .compact-item span {
+          font-size: 8.8px;
+        }
+
+        .activity {
+          padding: 8px 10px;
+        }
+
+        .activity strong {
+          font-size: 10.3px;
+        }
+
+        .project-links-section {
+          display: none;
+        }
+
+        .screen-detail,
+        .screen-detail + span {
+          display: none;
+        }
+
+        .footer {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <article class="sheet">
+      <div class="toolbar">
+        <a href="./jaehoon-jeong-resume.md">ATS Markdown</a>
+        <button type="button" onclick="window.print()">PDF 저장</button>
+      </div>
+
+      <header class="top">
+        <div>
+          <p class="label">Company Submission Resume</p>
+          <h1>정재훈</h1>
+          <p class="headline">Full-Stack Web Developer</p>
+          <p class="summary">
+            React와 Spring Boot를 중심으로 <strong>서비스 구현, 인증/보안, 배포 운영 이슈</strong>까지
+            직접 다루는 신입 개발자입니다. 기능을 만드는 데서 멈추지 않고
+            사용자 흐름, API 책임, 토큰/세션 유지, HTTPS/CORS 같은 운영 조건까지
+            확인해 실제 서비스로 닫는 개발을 지향합니다. 공개 GitHub에는 최신 웹 풀스택,
+            접근성/교육 서비스, 알고리즘, Unity 프로젝트가 함께 정리되어 있습니다.
+          </p>
+          <div class="signal-row">
+            <div class="signal">
+              <strong>주력 직무</strong>
+              <span>React/Spring Boot 기반 웹 풀스택, 프론트엔드, 백엔드</span>
+            </div>
+            <div class="signal">
+              <strong>차별점</strong>
+              <span>JWT Rotation, OAuth/Session, CORS, HTTPS 등 운영형 문제 해결</span>
+            </div>
+            <div class="signal">
+              <strong>증거</strong>
+              <span>공개 GitHub 44개 repo, 2026년 최신 Web/Java/TypeScript repo 보유</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="contact">
+          <p class="contact-title">Contact</p>
+          <dl>
+            <div>
+              <dt>Email</dt>
+              <dd><a href="mailto:toadsam@naver.com">toadsam@naver.com</a></dd>
+            </div>
+            <div>
+              <dt>Phone</dt>
+              <dd><a href="tel:010-6428-6247">010-6428-6247</a></dd>
+            </div>
+            <div>
+              <dt>GitHub</dt>
+              <dd><a href="https://github.com/toadsam">github.com/toadsam</a></dd>
+            </div>
+            <div>
+              <dt>Portfolio</dt>
+              <dd>
+                <a href="https://toadsam.github.io/myPortfolio/">
+                  toadsam.github.io/myPortfolio
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt>Target</dt>
+              <dd>Web Full-Stack / Frontend / Backend</dd>
+            </div>
+          </dl>
+        </aside>
+      </header>
+
+      <div class="body">
+        <aside>
+          <section>
+            <h2>Technical Skills</h2>
+            <div class="side-block">
+              <h3>Frontend</h3>
+              <div class="chips">
+                <span>React</span>
+                <span>Vite</span>
+                <span>TypeScript</span>
+                <span>JavaScript</span>
+                <span>React Query</span>
+                <span>Axios</span>
+                <span>Expo</span>
+                <span>React Native</span>
+                <span>Responsive UI</span>
+              </div>
+            </div>
+            <div class="side-block">
+              <h3>Backend</h3>
+              <div class="chips">
+                <span>Java</span>
+                <span>Spring Boot</span>
+                <span>JPA</span>
+                <span>REST API</span>
+                <span>Express</span>
+                <span>Passport</span>
+                <span>Session</span>
+              </div>
+            </div>
+            <div class="side-block">
+              <h3>Auth / Infra / Data</h3>
+              <div class="chips">
+                <span>JWT</span>
+                <span>Refresh Rotation</span>
+                <span>OAuth2</span>
+                <span>AWS</span>
+                <span>CloudFront</span>
+                <span>S3</span>
+                <span>CORS</span>
+                <span>HTTPS</span>
+                <span>SSE</span>
+                <span>Firebase</span>
+                <span>MySQL</span>
+                <span>MongoDB</span>
+              </div>
+            </div>
+            <div class="side-block">
+              <h3>Unity / XR</h3>
+              <div class="chips">
+                <span>Unity</span>
+                <span>C#</span>
+                <span>AR Foundation</span>
+                <span>XR Interaction Toolkit</span>
+                <span>NavMesh</span>
+                <span>Object Pooling</span>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2>GitHub Evidence</h2>
+            <div class="compact-list">
+              <div class="compact-item">
+                <span>Public Profile</span>
+                <strong>44 public repositories</strong>
+                <p>TypeScript, Java, JavaScript, C++, C# 프로젝트가 공개되어 있으며 2026년 5월까지 최근 repo 업데이트가 확인됩니다.</p>
+              </div>
+              <div class="compact-item">
+                <span>Current Web Repos</span>
+                <strong>FestFlow · Sign-Language · Ajou_MuscleUp</strong>
+                <p>Spring Boot, React/Vite, TypeScript, JWT, SSE, PWA, Expo 기반 프로젝트 코드와 README가 공개되어 있습니다.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="project-links-section">
+            <h2>Project Links</h2>
+            <div class="side-block">
+              <h3>Verified Links</h3>
+              <div class="link-list">
+                <a href="https://github.com/toadsam/FestFlow">github.com/toadsam/FestFlow</a>
+                <a href="https://github.com/toadsam/Ajou_MuscleUp">github.com/toadsam/Ajou_MuscleUp</a>
+                <a href="https://github.com/toadsam/Sign-Language">github.com/toadsam/Sign-Language</a>
+                <a href="https://github.com/toadsam/Algorithm">github.com/toadsam/Algorithm</a>
+                <a href="https://ajouclub.co.kr">ajouclub.co.kr</a>
+                <a href="https://ajouchong.com">ajouchong.com</a>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2>Education</h2>
+            <div class="compact-list">
+              <div class="compact-item">
+                <span>2021.03 - 2026.02</span>
+                <strong>아주대학교</strong>
+                <p>디지털미디어학과 전공</p>
+              </div>
+              <div class="compact-item">
+                <span>2021.03 - 2026.02</span>
+                <strong>아주대학교</strong>
+                <p>인공지능융합학과 복수전공, 메타버스기획마이크로전공</p>
+              </div>
+              <div class="compact-item">
+                <span>2023.09 - 2024.02</span>
+                <strong>스파르타 내일배움캠프</strong>
+                <p>Unity 게임개발자 양성과정</p>
+              </div>
+              <div class="compact-item">
+                <span>2021 - 2023</span>
+                <strong>코드잇 · 구름</strong>
+                <p>웹 개발 및 AI/SW 역량 강화 과정</p>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2>Collaboration</h2>
+            <div class="activity">
+              <strong>학생회·동아리 운영 경험</strong>
+              <p>
+                헬스 동아리 회장, 정보통신대학교 학생회 대외협력국,
+                총학생회 생활복지국·소통발전국 활동을 통해 일정, 역할, 문의,
+                피드백을 정리해 실행으로 연결한 경험이 있습니다.
+              </p>
+            </div>
+          </section>
+        </aside>
+
+        <main>
+          <section>
+            <h2>Hiring Signals</h2>
+            <div class="metric-list">
+              <div class="metric">
+                <strong>서비스 전체 흐름을 구현합니다.</strong>
+                <span>화면, API, 인증, DB, 배포 환경을 분리해서 보지 않고 사용자가 실제로 지나가는 흐름 기준으로 설계합니다.</span>
+              </div>
+              <div class="metric">
+                <strong>운영 중 터지는 문제를 해결해 본 경험이 있습니다.</strong>
+                <span>HTTPS, Mixed Content, CORS credentials, Refresh Token 재발급, 세션 저장소처럼 배포 후 드러나는 문제를 직접 재현하고 수정했습니다.</span>
+              </div>
+              <div class="metric">
+                <strong>실사용 피드백을 제품 개선으로 연결합니다.</strong>
+                <span>GA4/GSC 지표와 운영 피드백을 바탕으로 정보 구조, CTA, 링크 흐름, 문구를 개선했습니다.</span>
+              </div>
+              <div class="metric">
+                <strong>대표 트러블슈팅을 설명할 수 있습니다.</strong>
+                <span>CORS credentials, 쿠키 기반 세션 유지, HTTPS/Mixed Content, Refresh Token 재발급, SSE 연결처럼 프론트와 서버 설정을 함께 봐야 하는 문제를 다뤘습니다.</span>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2>Core Projects</h2>
+
+            <article class="project primary">
+              <div class="project-head">
+                <div>
+                  <h3>FestFlow</h3>
+                  <div class="project-meta">2026.05 업데이트 · 공개 GitHub repo · Full-Stack Festival Management Web App</div>
+                </div>
+                <div class="role">React / Spring Boot
+JWT / SSE / PWA</div>
+              </div>
+              <p class="project-desc">
+                대학교 축제 운영을 위한 웹앱으로, 사용자 지도/부스 탐색과 관리자 운영, 실시간 공지·혼잡도·공연 상태를 함께 다루는 서비스입니다.
+              </p>
+              <div class="project-grid">
+                <strong>Scope</strong>
+                <span>개인 프로젝트 / 공개 GitHub repo / 사용자·관리자 양쪽 기능 구현</span>
+                <strong>Problem</strong>
+                <span>축제 현장에서는 부스 위치, 혼잡도, 공연 상태, 공지, 분실물, 관리자 운영 데이터가 빠르게 바뀌어 실시간성과 운영 권한이 중요합니다.</span>
+                <strong>Action</strong>
+                <span>React(Vite)와 Tailwind 기반 PWA, Spring Boot 3/JPA/Security/JWT, MySQL 구조로 사용자 기능과 관리자 API를 분리했습니다.</span>
+                <strong>Result</strong>
+                <span>SSE 기반 혼잡도·공연·공지 스트림, 관리자 CRUD/CSV 업로드, KPI/감사 로그, GPS 기반 혼잡도 계산, 분석 API까지 포함한 운영형 구조를 구현했습니다.</span>
+                <strong class="screen-detail">Evidence</strong>
+                <span>README 기준 SSE 스트림 3개, 관리자 보호 API, CSV 일괄 업로드, KPI, 감사 로그, PWA/오프라인 페이지 구조가 공개되어 있습니다.</span>
+              </div>
+              <div class="chips">
+                <span>React</span>
+                <span>Vite</span>
+                <span>Tailwind</span>
+                <span>PWA</span>
+                <span>Spring Boot 3</span>
+                <span>JPA</span>
+                <span>JWT</span>
+                <span>SSE</span>
+                <span>MySQL</span>
+              </div>
+            </article>
+
+            <article class="project primary">
+              <div class="project-head">
+                <div>
+                  <h3>득근득근 MuscleUp</h3>
+                  <div class="project-meta">2025.09 - 진행 중 · 개인 개발 · Full-Stack Web</div>
+                </div>
+                <div class="role">기획 / UI 설계 / API 개발
+인증·권한 / 배포 담당</div>
+              </div>
+              <p class="project-desc">
+                운동 기록, 커뮤니티, AI 코칭을 하나의 사용자 흐름으로 통합한 피트니스 커뮤니티 서비스입니다.
+              </p>
+              <div class="project-grid">
+                <strong>Scope</strong>
+                <span>개인 개발 / 기획, UI, 백엔드 API, 인증·권한, 배포 담당</span>
+                <strong>Problem</strong>
+                <span>운동 기록, 커뮤니티, AI 코칭이 분리되면 사용자가 루틴을 지속하기 어렵고 인증/배포 조건까지 고려해야 했습니다.</span>
+                <strong>Action</strong>
+                <span>React/Spring Boot 기반으로 화면과 API를 구성하고, Access/Refresh Token 분리와 Refresh Token Rotation을 적용했습니다.</span>
+                <strong>Result</strong>
+                <span>AWS 배포 과정의 HTTPS, Mixed Content, CORS credentials 이슈를 해결해 운영 가능한 풀스택 서비스 형태로 완성했습니다.</span>
+                <strong class="screen-detail">Evidence</strong>
+                <span>GitHub에 Auth, AI, Analytics, Crew, Friend, Ranking, Review 등 도메인별 controller/entity 구조와 RefreshToken 엔티티가 공개되어 있습니다.</span>
+              </div>
+              <div class="chips">
+                <span>React</span>
+                <span>Spring Boot</span>
+                <span>JPA</span>
+                <span>JWT</span>
+                <span>Refresh Rotation</span>
+                <span>AWS</span>
+                <span>AI Coaching</span>
+              </div>
+            </article>
+
+            <article class="project">
+              <div class="project-head">
+                <div>
+                  <h3>Sign-Language</h3>
+                  <div class="project-meta">2026.05 업데이트 · 공개 GitHub repo · 수어 학습/표현 서비스</div>
+                </div>
+                <div class="role">Expo / Spring Boot
+OAuth2 / JWT / Firebase</div>
+              </div>
+              <p class="project-desc">
+                수어 아바타 기반 퀴즈 학습과 텍스트 입력 기반 수어 표현을 결합한 접근성/교육 목적 서비스입니다.
+              </p>
+              <div class="project-grid">
+                <strong>Scope</strong>
+                <span>팀 도전과제 시제품 / Expo 앱과 Spring Boot API 기반 학습·표현 흐름 구현</span>
+                <strong>Problem</strong>
+                <span>수어를 처음 접하는 사용자는 동작과 의미를 반복적으로 연결해 학습할 도구가 부족하고, 입력한 표현을 즉시 수어로 확인하기 어렵습니다.</span>
+                <strong>Action</strong>
+                <span>Expo/React Native 프론트와 Spring Boot 백엔드를 구성하고, Google OAuth2, JWT, Firebase, 퀴즈/번역 API 흐름을 설계했습니다.</span>
+                <strong>Result</strong>
+                <span>수어 읽기 학습, 정답 피드백, 텍스트 기반 수어 표현, 사용자 인증을 포함한 시제품 구조를 공개 repo로 관리했습니다.</span>
+                <strong class="screen-detail">Evidence</strong>
+                <span>README에 30개 이상 기본 수어 단어 학습 콘텐츠와 텍스트 기반 수어 표현 기능 목표가 정리되어 있고, backend/frontendcodes 구조가 공개되어 있습니다.</span>
+              </div>
+              <div class="chips">
+                <span>TypeScript</span>
+                <span>Expo</span>
+                <span>React Native</span>
+                <span>Spring Boot</span>
+                <span>JWT</span>
+                <span>OAuth2</span>
+                <span>Firebase</span>
+              </div>
+            </article>
+
+            <article class="project">
+              <div class="project-head">
+                <div>
+                  <h3>운영형 웹사이트 개선: aClub / 아주대학교 총학생회</h3>
+                  <div class="project-meta">2025.01 - 진행 중 · 운영형 홍보/정보 제공 웹</div>
+                </div>
+                <div class="role">Frontend
+정보 구조 / GA4·GSC</div>
+              </div>
+              <p class="project-desc">
+                동아리와 총학생회 정보를 공지, 모집, 행사, 자료, 신청 흐름으로 정리하고 운영 피드백과 분석 지표로 개선한 웹사이트입니다.
+              </p>
+              <div class="project-grid">
+                <strong>Scope</strong>
+                <span>Frontend 개발 / 정보 구조 설계 / GA4·GSC 기반 운영 개선</span>
+                <strong>Problem</strong>
+                <span>학생 사용자가 필요한 정보를 찾고 신청/문의까지 이동하는 과정에서 메뉴, 공지, 링크 구조가 명확해야 했습니다.</span>
+                <strong>Action</strong>
+                <span>페이지 단위 정보 구조와 상세 CTA를 재배치하고, GA4/GSC와 운영 문의를 기준으로 문구·배치·링크 흐름을 반복 수정했습니다.</span>
+                <strong>Result</strong>
+                <span>실사용 운영에서 반복 문의가 생기는 지점을 개선하고, 공지 확인부터 신청/문의까지의 행동 동선을 짧게 만들었습니다.</span>
+                <strong class="screen-detail">Evidence</strong>
+                <span>aClub과 아주대학교 총학생회 서비스 URL이 공개되어 있으며, 포트폴리오에 GA4/GSC와 운영 피드백 기반 개선 기록을 정리했습니다.</span>
+              </div>
+              <div class="chips">
+                <span>React</span>
+                <span>Vite</span>
+                <span>Axios</span>
+                <span>GA4</span>
+                <span>GSC</span>
+                <span>UX</span>
+                <span>Operations</span>
+              </div>
+            </article>
+
+          </section>
+
+          <section>
+            <h2>Additional Technical Projects</h2>
+            <div class="compact-list">
+              <div class="compact-item">
+                <span>2024.10 - 2024.12 · React / Express / MongoDB</span>
+                <strong>Ajou Campus Foodmap</strong>
+                <p>
+                  Passport Local과 Google/Naver OAuth를 통합하고 MongoStore, withCredentials, CORS allowlist로
+                  SPA/API 분리 환경의 세션 유지 문제를 해결했습니다.
+                </p>
+              </div>
+              <div class="compact-item">
+                <span>2026.03 업데이트 · C++</span>
+                <strong>Algorithm</strong>
+                <p>
+                  BaekjoonHub 기반 알고리즘 풀이 repo를 별도로 관리하며 C++ 문제 풀이 기록을 지속적으로 축적했습니다.
+                </p>
+              </div>
+              <div class="compact-item">
+                <span>2023.11 - 2025.05 · Unity / C# / AR</span>
+                <strong>TSEROF · INTO MONSTER POINT · 아주대탐험</strong>
+                <p>
+                  출시/배포 게임, AR Plane 기반 전투 공간 생성, NavMesh AI, 스킬 선택, Object Pooling,
+                  Raycast 최적화 등 인터랙션과 게임 시스템 구현 경험을 쌓았습니다.
+                </p>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <footer class="footer">
+        <strong>Positioning</strong>
+        <span>
+          정재훈은 신입이지만 단순 기능 구현보다 운영 가능한 서비스 완성을 기준으로 사고하는 개발자입니다.
+          웹 직무에서는 React/Spring Boot 기반 구현력과 인증/배포 이슈 해결 경험을, 협업에서는 실제 운영 피드백을 제품 개선으로 연결한 경험을 강점으로 제공합니다.
+        </span>
+      </footer>
+    </article>
+  </body>
+</html>
