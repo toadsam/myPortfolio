@@ -1010,6 +1010,10 @@ export default function StartupProject() {
             <div className="projects-container">
               {bigProjects.projects.map((project, i) => {
                 const statusMeta = getProjectStatus(project.status);
+                const liveFooterLinks =
+                  String(project.status).toLowerCase() === "live"
+                    ? project.footerLink || []
+                    : [];
                 return (
                   <div
                     key={i}
@@ -1089,6 +1093,26 @@ export default function StartupProject() {
                         ) : null}
                       </div>
                       <div className="project-card-actions">
+                        {liveFooterLinks.length ? (
+                          <div className="project-card-action-links">
+                            {liveFooterLinks.map((link, linkIndex) => (
+                              <a
+                                key={`${link.name}-${linkIndex}`}
+                                className={
+                                  isDark
+                                    ? "dark-mode project-card-link"
+                                    : "project-card-link"
+                                }
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={event => event.stopPropagation()}
+                              >
+                                {link.name}
+                              </a>
+                            ))}
+                          </div>
+                        ) : null}
                         <button
                           className={
                             isDark

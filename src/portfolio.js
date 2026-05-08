@@ -237,7 +237,7 @@ const bigProjects = {
       recommendation:
         "운영을 전제로 인증·보안·배포까지 설계한 피트니스 커뮤니티 풀스택 서비스",
       tags: ["#FullStack", "#JWT", "#AWS", "#Security"],
-      footerLink: [],
+      footerLink: [{name: "MuscleHub", url: "https://musclehub.co.kr/"}],
       details: {
         overview: {
           title: "득근득근 - 프로젝트 개요",
@@ -1410,7 +1410,7 @@ const blogSection = {
       description: "개발 중 인상 깊었던 문제와 배운 점, 그날의 고민을 짧게 정리합니다."
     },
     {
-      url: "https://simple-club-a2b.notion.site/56fcb56e1eb746d1acd4fab0e8e03569?pvs=74",
+      url: "https://www.notion.so/hyuuna/b2febb5d7e174118b40ea32b551db3d8?source=copy_link",
       title: "개발 개념과 구조 학습 정리",
       description: "핵심 개념과 구조를 중심으로 학습 내용을 정리합니다."
     },
