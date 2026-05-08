@@ -356,7 +356,7 @@ const bigProjects = {
           "CORS allowlist + credentials 설정"
         ],
         links: [
-          {name: "배포 주소 (Deployment)", url: "https://muscle-up.click"},
+          {name: "배포 주소 (Deployment)", url: "https://musclehub.co.kr/"},
           {
             name: "GitHub",
             url: "https://github.com/toadsam/Ajou_MuscleUp"
@@ -523,7 +523,7 @@ const bigProjects = {
       recommendation:
         "실사용 운영에서 ‘문의 감소·참여 동선 명확화’를 목표로 만든 운영형 웹 서비스",
       tags: ["#WebService", "#Operations", "#UX", "#Analytics"],
-      footerLink: [{name: "aClub", url: "https://ajouclub.co.kr"}],
+      footerLink: [{name: "aClub", url: "https://aclub.co.kr/"}],
       details: {
         overview: {
           title: "aClub - 프로젝트 개요",
@@ -627,7 +627,7 @@ const bigProjects = {
             proofImage: require('./assets/images/aclub/동아리토큰코드.png')
           }
         ],
-        links: [{name: "aClub", url: "https://ajouclub.co.kr"}]
+        links: [{name: "aClub", url: "https://aclub.co.kr/"}]
       }
     },
 

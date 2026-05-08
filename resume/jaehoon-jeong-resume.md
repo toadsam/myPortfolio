@@ -36,7 +36,7 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 - Ajou_MuscleUp: https://github.com/toadsam/Ajou_MuscleUp
 - Sign-Language: https://github.com/toadsam/Sign-Language
 - Algorithm: https://github.com/toadsam/Algorithm
-- aClub: https://ajouclub.co.kr
+- aClub: https://aclub.co.kr/
 - Ajou Student Council: https://ajouchong.com
 
 ## Hiring Signals
