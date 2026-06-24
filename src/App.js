@@ -1,13 +1,8 @@
 import React from "react";
-import "./App.scss";
-import Main from "./containers/Main";
+import PortfolioApp from "./components/portfolio/PortfolioApp";
 
 function App() {
-  return (
-    <div>
-      <Main />
-    </div>
-  );
+  return <PortfolioApp />;
 }
 
 export default App;
