@@ -719,12 +719,69 @@ function SkillLinkedRow(props) {
   );
 }
 
+function SkillLiveSystem(props) {
+  const {isActive, type} = props;
+  const className = "skill-live-system skill-live-system--" + type + (isActive ? " is-live" : "");
+
+  if (type === "backend") {
+    return (
+      <div className={className} aria-hidden="true">
+        <div className="live-node live-node--client">UI</div>
+        <div className="live-flow"><i /><i /><i /></div>
+        <div className="live-node live-node--server">API</div>
+        <div className="live-flow live-flow--delay"><i /><i /><i /></div>
+        <div className="live-node live-node--db">DB</div>
+        <div className="live-status">
+          <span>POST /auth</span>
+          <strong>128ms</strong>
+        </div>
+      </div>
+    );
+  }
+
+  if (type === "game") {
+    return (
+      <div className={className} aria-hidden="true">
+        <div className="live-game-field">
+          <span className="live-game-player" />
+          <span className="live-game-target" />
+          <span className="live-game-pulse" />
+          <i className="live-game-path" />
+        </div>
+        <div className="live-game-hud">
+          <span>INPUT</span>
+          <span>PHYSICS</span>
+          <span>FEEDBACK</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={className} aria-hidden="true">
+      <div className="live-ui-shell">
+        <div className="live-ui-topbar"><span /><span /><span /></div>
+        <div className="live-ui-hero" />
+        <div className="live-ui-grid"><i /><i /><i /></div>
+        <div className="live-ui-cursor" />
+      </div>
+      <div className="live-ui-stack">
+        <span />
+        <span />
+        <span />
+      </div>
+    </div>
+  );
+}
+
 function SkillsSection(props) {
-  const {onSelectSkill} = props;
+  const {onSelectSkill, pointer} = props;
   const [activeAreaId, setActiveAreaId] = useState(skillAreas[0].id);
   const activeArea = skillAreas.find(function findArea(area) {
     return area.id === activeAreaId;
   }) || skillAreas[0];
+  const pointerX = (pointer && pointer.x) || 0;
+  const pointerY = (pointer && pointer.y) || 0;
 
   function selectArea(area) {
     setActiveAreaId(area.id);
@@ -746,8 +803,17 @@ function SkillsSection(props) {
   return (
     <section
       className="portfolio-section skills-section skills-section--linked"
+      data-active-area={activeArea.id}
       id="skills"
-      style={{"--skill-accent": activeArea.accent}}
+      style={{
+        "--skill-accent": activeArea.accent,
+        "--skill-card-x": pointerX * 2.2 + "px",
+        "--skill-card-y": pointerY * 2.2 + "px",
+        "--skill-pointer-x": pointerX * 28 + "px",
+        "--skill-pointer-y": pointerY * 28 + "px",
+        "--skill-pointer-x-soft": pointerX * -15 + "px",
+        "--skill-pointer-y-soft": pointerY * -15 + "px"
+      }}
     >
       <div className="skills-linked-grid">
         <Reveal className="section-copy skills-linked-copy">
@@ -803,6 +869,7 @@ function SkillsSection(props) {
                     })}
                   </div>
                   <div className="skill-card-details" aria-hidden={!isActive}>
+                    {isActive ? <SkillLiveSystem isActive={isActive} type={area.id} /> : null}
                     <span className="skill-card-divider" />
                     <ul>
                       {area.bullets.map(function renderBullet(bullet, index) {
@@ -1560,7 +1627,7 @@ function PortfolioApp() {
       <SectionIndicator activeId={activeId} />
       <main>
         <IntroSection pointer={pointer} />
-        <SkillsSection onSelectSkill={setSelectedSkill} />
+        <SkillsSection onSelectSkill={setSelectedSkill} pointer={pointer} />
         <MainProjectsSection
           activeProject={activeProject}
           onSelectProject={setActiveProject}

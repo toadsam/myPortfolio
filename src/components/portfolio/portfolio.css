@@ -789,10 +789,66 @@ main {
 }
 
 .skills-section--linked {
+  position: relative;
+  overflow: hidden;
   padding-bottom: clamp(3rem, 6vw, 5rem);
 }
 
+.skills-section--linked::before,
+.skills-section--linked::after {
+  position: absolute;
+  inset: 4% 3% auto auto;
+  z-index: 0;
+  width: min(680px, 58vw);
+  height: min(680px, 58vw);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(47, 189, 95, 0.12), transparent 58%),
+    conic-gradient(from 120deg, transparent, rgba(47, 189, 95, 0.16), transparent 42%);
+  content: "";
+  filter: blur(4px);
+  opacity: 0.72;
+  pointer-events: none;
+  transform: translate3d(var(--skill-pointer-x, 0), var(--skill-pointer-y, 0), 0);
+  transition: transform 0.28s ease, opacity 0.32s ease;
+  animation: skill-orbit-field 12s linear infinite;
+}
+
+.skills-section--linked::after {
+  inset: auto auto 8% 4%;
+  width: min(440px, 42vw);
+  height: min(440px, 42vw);
+  background:
+    linear-gradient(90deg, transparent 0 48%, rgba(47, 189, 95, 0.1) 48% 52%, transparent 52%),
+    linear-gradient(0deg, transparent 0 48%, rgba(47, 189, 95, 0.08) 48% 52%, transparent 52%);
+  background-size: 42px 42px;
+  border-radius: 32px;
+  opacity: 0.34;
+  transform: translate3d(var(--skill-pointer-x-soft, 0), var(--skill-pointer-y-soft, 0), 0) rotate(-8deg);
+  animation: skill-grid-drift 14s ease-in-out infinite alternate;
+}
+
+.skills-section--linked[data-active-area="frontend"]::before {
+  inset: 2% 22% auto auto;
+}
+
+.skills-section--linked[data-active-area="backend"]::before {
+  inset: 6% 8% auto auto;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(47, 189, 95, 0.14), transparent 56%),
+    repeating-linear-gradient(90deg, transparent 0 22px, rgba(47, 189, 95, 0.08) 22px 24px);
+}
+
+.skills-section--linked[data-active-area="game"]::before {
+  inset: 1% 2% auto auto;
+  background:
+    radial-gradient(circle at 68% 38%, rgba(47, 189, 95, 0.16), transparent 34%),
+    radial-gradient(circle at 24% 66%, rgba(47, 189, 95, 0.08), transparent 30%);
+}
+
 .skills-linked-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: minmax(280px, 0.38fr) minmax(680px, 1fr);
   align-items: start;
@@ -913,10 +969,24 @@ main {
 .skill-area-card::before {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 14% 0%, rgba(47, 189, 95, 0.1), transparent 32%);
+  background:
+    radial-gradient(circle at calc(20% + var(--skill-pointer-x, 0px)) calc(6% + var(--skill-pointer-y, 0px)), rgba(47, 189, 95, 0.14), transparent 34%),
+    linear-gradient(135deg, rgba(47, 189, 95, 0.04), transparent 42%);
   content: "";
   opacity: 0;
   transition: opacity 0.28s ease;
+}
+
+.skill-area-card::after {
+  position: absolute;
+  inset: auto 1.4rem 1.2rem 1.4rem;
+  z-index: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(47, 189, 95, 0.55), transparent);
+  content: "";
+  opacity: 0;
+  transform: scaleX(0.3);
+  transform-origin: left;
 }
 
 .skill-area-card:hover,
@@ -937,15 +1007,20 @@ main {
 }
 
 .skill-area-card.is-active {
-  min-height: 462px;
+  min-height: 602px;
   border-color: var(--green);
   box-shadow: var(--shadow-strong), 0 0 0 1px rgba(47, 189, 95, 0.12), 0 24px 90px rgba(47, 189, 95, 0.16);
   opacity: 1;
-  transform: scale(1.01);
+  transform: translate3d(var(--skill-card-x, 0), var(--skill-card-y, 0), 0) scale(1.01);
 }
 
 .skill-area-card.is-active::before {
   opacity: 1;
+}
+
+.skill-area-card.is-active::after {
+  opacity: 1;
+  animation: skill-card-scan 3.8s ease-in-out infinite;
 }
 
 .skill-area-cards:has(.skill-area-card.is-active) .skill-area-card:not(.is-active) {
@@ -1154,9 +1229,328 @@ main {
 }
 
 .skill-area-card.is-active .skill-card-details {
-  max-height: 430px;
+  max-height: 620px;
   opacity: 1;
   transform: translateY(0);
+}
+
+.skill-live-system {
+  position: relative;
+  display: grid;
+  min-height: 126px;
+  margin-top: 1.15rem;
+  overflow: hidden;
+  border: 1px solid rgba(47, 189, 95, 0.16);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(47, 189, 95, 0.08), transparent 58%),
+    rgba(255, 255, 255, 0.46);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.32s ease, transform 0.32s ease;
+}
+
+body.portfolio-dark .skill-live-system {
+  background:
+    linear-gradient(135deg, rgba(47, 189, 95, 0.12), transparent 58%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.skill-area-card.is-active .skill-live-system,
+.skill-live-system.is-live {
+  opacity: 1;
+  transform: translate3d(var(--skill-card-x, 0), var(--skill-card-y, 0), 0);
+}
+
+.skill-live-system::before {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, transparent, rgba(47, 189, 95, 0.13), transparent),
+    radial-gradient(circle at 20% 20%, rgba(47, 189, 95, 0.1), transparent 26%);
+  content: "";
+  opacity: 0.72;
+  transform: translateX(-70%);
+  animation: skill-live-sweep 4.8s ease-in-out infinite;
+}
+
+.live-ui-shell {
+  position: absolute;
+  top: 17px;
+  left: 18px;
+  display: grid;
+  gap: 0.48rem;
+  width: 58%;
+  padding: 0.58rem;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: var(--card-strong);
+  box-shadow: 0 16px 36px rgba(18, 28, 22, 0.08);
+  animation: live-ui-breathe 5.2s ease-in-out infinite;
+}
+
+.live-ui-topbar {
+  display: flex;
+  gap: 0.22rem;
+}
+
+.live-ui-topbar span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(47, 189, 95, 0.35);
+}
+
+.live-ui-hero {
+  height: 25px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(47, 189, 95, 0.34), rgba(47, 189, 95, 0.1));
+  animation: live-ui-fill 3.8s ease-in-out infinite;
+}
+
+.live-ui-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35rem;
+}
+
+.live-ui-grid i {
+  height: 21px;
+  border-radius: 7px;
+  background: rgba(47, 189, 95, 0.1);
+  animation: live-ui-tile 4.2s ease-in-out infinite;
+}
+
+.live-ui-grid i:nth-child(2) {
+  animation-delay: 0.35s;
+}
+
+.live-ui-grid i:nth-child(3) {
+  animation-delay: 0.7s;
+}
+
+.live-ui-cursor {
+  position: absolute;
+  right: 16px;
+  bottom: 18px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 8px rgba(47, 189, 95, 0.12);
+  animation: live-cursor-path 4.6s ease-in-out infinite;
+}
+
+.live-ui-stack {
+  position: absolute;
+  right: 18px;
+  bottom: 20px;
+  display: grid;
+  gap: 0.38rem;
+  width: 31%;
+}
+
+.live-ui-stack span {
+  height: 18px;
+  border: 1px solid rgba(47, 189, 95, 0.16);
+  border-radius: 8px;
+  background: var(--card-strong);
+  animation: live-stack-rise 4.8s ease-in-out infinite;
+}
+
+.live-ui-stack span:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.live-ui-stack span:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+.skill-live-system--backend {
+  grid-template-columns: 42px 1fr 52px 1fr 42px;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.9rem;
+}
+
+.live-node {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(47, 189, 95, 0.24);
+  border-radius: 13px;
+  background: var(--card-strong);
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  box-shadow: 0 0 0 0 rgba(47, 189, 95, 0.18);
+  animation: live-node-pulse 3.8s ease-in-out infinite;
+}
+
+.live-node--server {
+  width: 52px;
+  height: 52px;
+  animation-delay: 0.35s;
+}
+
+.live-node--db {
+  animation-delay: 0.7s;
+}
+
+.live-flow {
+  position: relative;
+  z-index: 1;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(47, 189, 95, 0.12);
+}
+
+.live-flow i {
+  position: absolute;
+  top: -3px;
+  left: -8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(47, 189, 95, 0.7);
+  animation: live-data-travel 2.4s linear infinite;
+}
+
+.live-flow i:nth-child(2) {
+  animation-delay: 0.55s;
+}
+
+.live-flow i:nth-child(3) {
+  animation-delay: 1.1s;
+}
+
+.live-flow--delay i {
+  animation-delay: 0.28s;
+}
+
+.live-flow--delay i:nth-child(2) {
+  animation-delay: 0.83s;
+}
+
+.live-flow--delay i:nth-child(3) {
+  animation-delay: 1.38s;
+}
+
+.live-status {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.75rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.38rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card-strong);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.58rem;
+}
+
+.live-status strong {
+  color: var(--green);
+}
+
+.skill-live-system--game {
+  align-content: stretch;
+  padding: 0.85rem;
+}
+
+.live-game-field {
+  position: relative;
+  min-height: 84px;
+  overflow: hidden;
+  border-radius: 13px;
+  background:
+    linear-gradient(135deg, rgba(16, 23, 21, 0.9), rgba(21, 40, 32, 0.72)),
+    radial-gradient(circle at 80% 30%, rgba(47, 189, 95, 0.42), transparent 30%);
+}
+
+.live-game-player {
+  position: absolute;
+  z-index: 3;
+  left: 22%;
+  top: 48%;
+  width: 18px;
+  height: 18px;
+  border-radius: 7px;
+  background: var(--green);
+  box-shadow: 0 0 0 8px rgba(47, 189, 95, 0.16);
+  animation: live-player-loop 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.live-game-target {
+  position: absolute;
+  right: 22%;
+  top: 28%;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.86);
+  border-radius: 50%;
+  animation: live-target-ping 2.1s ease-in-out infinite;
+}
+
+.live-game-pulse {
+  position: absolute;
+  right: 18%;
+  top: 21%;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(47, 189, 95, 0.7);
+  border-radius: 50%;
+  opacity: 0;
+  animation: live-impact-pulse 4.2s ease-out infinite;
+}
+
+.live-game-path {
+  position: absolute;
+  left: 27%;
+  top: 52%;
+  width: 48%;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.75) 0 8px, transparent 8px 15px);
+  opacity: 0.32;
+  transform: rotate(-17deg);
+}
+
+.live-game-hud {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.55rem;
+}
+
+.live-game-hud span {
+  flex: 1;
+  padding: 0.34rem 0.2rem;
+  border: 1px solid rgba(47, 189, 95, 0.18);
+  border-radius: 999px;
+  background: var(--card-strong);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.52rem;
+  text-align: center;
+  animation: live-hud-flash 4.2s ease-in-out infinite;
+}
+
+.live-game-hud span:nth-child(2) {
+  animation-delay: 0.45s;
+}
+
+.live-game-hud span:nth-child(3) {
+  animation-delay: 0.9s;
 }
 
 .skill-card-divider {
@@ -2577,6 +2971,188 @@ body.portfolio-dark .contact-form textarea {
   }
 }
 
+@keyframes skill-orbit-field {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes skill-grid-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 42px 28px;
+  }
+}
+
+@keyframes skill-card-scan {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scaleX(0.24) translateX(-18%);
+  }
+  45% {
+    opacity: 0.9;
+    transform: scaleX(1) translateX(0);
+  }
+  70% {
+    opacity: 0.28;
+    transform: scaleX(0.36) translateX(54%);
+  }
+}
+
+@keyframes skill-live-sweep {
+  0%,
+  100% {
+    transform: translateX(-72%);
+  }
+  48% {
+    transform: translateX(72%);
+  }
+}
+
+@keyframes live-ui-breathe {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.015);
+  }
+}
+
+@keyframes live-ui-fill {
+  0%,
+  100% {
+    opacity: 0.62;
+    transform: scaleX(0.72);
+    transform-origin: left;
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes live-ui-tile {
+  0%,
+  100% {
+    background: rgba(47, 189, 95, 0.1);
+    transform: translateY(0);
+  }
+  50% {
+    background: rgba(47, 189, 95, 0.22);
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes live-cursor-path {
+  0%,
+  100% {
+    transform: translate3d(-42px, -34px, 0);
+  }
+  35% {
+    transform: translate3d(-8px, -22px, 0);
+  }
+  68% {
+    transform: translate3d(4px, 4px, 0);
+  }
+}
+
+@keyframes live-stack-rise {
+  0%,
+  100% {
+    opacity: 0.58;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-4px);
+  }
+}
+
+@keyframes live-node-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(47, 189, 95, 0.16);
+    transform: scale(1);
+  }
+  45% {
+    box-shadow: 0 0 0 8px rgba(47, 189, 95, 0.06);
+    transform: scale(1.035);
+  }
+}
+
+@keyframes live-data-travel {
+  from {
+    left: -8px;
+  }
+  to {
+    left: calc(100% + 8px);
+  }
+}
+
+@keyframes live-player-loop {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  42% {
+    transform: translate3d(88px, -20px, 0) rotate(10deg);
+  }
+  64% {
+    transform: translate3d(96px, -20px, 0) rotate(10deg);
+  }
+  82% {
+    transform: translate3d(36px, 12px, 0) rotate(-8deg);
+  }
+}
+
+@keyframes live-target-ping {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(47, 189, 95, 0.12);
+    transform: scale(1.1);
+  }
+}
+
+@keyframes live-impact-pulse {
+  0%,
+  42% {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  56% {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+  78%,
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@keyframes live-hud-flash {
+  0%,
+  100% {
+    color: var(--muted);
+    border-color: rgba(47, 189, 95, 0.18);
+  }
+  50% {
+    color: var(--green);
+    border-color: rgba(47, 189, 95, 0.44);
+  }
+}
+
 @keyframes skill-pulse {
   0%,
   100% {
@@ -2753,6 +3329,18 @@ body.portfolio-dark .contact-form textarea {
   .skill-card-details,
   .skill-area-card.is-active .skill-card-details {
     transition-duration: 0.3s;
+  }
+
+  .skill-live-system {
+    min-height: 112px;
+  }
+
+  .live-ui-shell {
+    width: 56%;
+  }
+
+  .live-ui-stack {
+    width: 30%;
   }
 
   .skill-linked-panels {
