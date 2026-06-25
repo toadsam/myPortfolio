@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, {useEffect, useRef, useState} from "react";
+import * as THREE from "three";
 import "./portfolio.css";
 
 const sections = [
@@ -348,6 +350,51 @@ const detailSections = [
   {id: "detail-flow", number: "07", label: "UI Flow"},
   {id: "detail-results", number: "08", label: "Results"},
   {id: "detail-learned", number: "09", label: "What I Learned"}
+];
+
+const growthMilestones = [
+  {
+    id: "ajou-media",
+    date: "2021.03",
+    title: "Ajou University",
+    focus: "Digital Media major",
+    badge: "University"
+  },
+  {
+    id: "codeit-camp",
+    date: "2021.03",
+    title: "Codeit",
+    focus: "College coding camp completion",
+    badge: "Bootcamp"
+  },
+  {
+    id: "goorm-ai-sw",
+    date: "2023.03",
+    title: "Goorm",
+    focus: "Military AI/SW capability program",
+    badge: "Education"
+  },
+  {
+    id: "sparta-unity",
+    date: "2023.09",
+    title: "Sparta Tomorrow Learning Camp",
+    focus: "Unity game developer course",
+    badge: "Bootcamp"
+  },
+  {
+    id: "ajou-ai",
+    date: "2021.03",
+    title: "Ajou University",
+    focus: "AI convergence double major",
+    badge: "Double Major"
+  },
+  {
+    id: "ajou-metaverse",
+    date: "2021.03",
+    title: "Ajou University",
+    focus: "Metaverse planning micro major",
+    badge: "Micro Major"
+  }
 ];
 
 function scrollToSection(id) {
@@ -1841,126 +1888,717 @@ function ContactSection() {
   );
 }
 
-function PortfolioApp() {
-  const pointer = usePointer();
-  const activeId = useActiveSection();
-  const treePulseId = useRef(0);
-  const treePulseTimer = useRef(null);
-  const [darkMode, setDarkMode] = useState(false);
-  const [activeProject, setActiveProject] = useState(projects[0]);
-  const [selectedSkill, setSelectedSkill] = useState("");
-  const [selectedSkillArea, setSelectedSkillArea] = useState(skillAreas[0].id);
-  const [cursorVariant, setCursorVariant] = useState("default");
-  const [treePulse, setTreePulse] = useState(null);
+const treeExplorerParts = [
+  {
+    id: "skills",
+    nav: "Trunk",
+    title: "Skills grow through the trunk.",
+    kicker: "Trunk / Skills",
+    helper: "Click the trunk to inspect Frontend, Backend, and Game systems.",
+    camera: [0.05, 1.15, 3.35],
+    target: [0, 0.78, 0],
+    marker: [0.08, 0.7, 0.28],
+    hotspot: [0.06, 0.52, 0.24],
+    radius: 0.48
+  },
+  {
+    id: "projects",
+    nav: "Leaves",
+    title: "Projects live in the canopy.",
+    kicker: "Leaves / Projects",
+    helper: "Click the leaves to see the work gathered in the crown.",
+    camera: [1.35, 2.25, 3.1],
+    target: [0.62, 1.84, -0.05],
+    marker: [0.72, 1.85, 0.04],
+    hotspot: [0.68, 1.82, 0.08],
+    radius: 0.72
+  },
+  {
+    id: "growth",
+    nav: "Roots",
+    title: "Roots show the growth record.",
+    kicker: "Roots / Growth",
+    helper: "Click the roots to trace education, bootcamps, and steady practice.",
+    camera: [-1.35, -0.35, 3.35],
+    target: [-0.35, -1.04, 0],
+    marker: [-0.58, -1.02, 0.2],
+    hotspot: [-0.42, -1.08, 0.12],
+    radius: 0.72
+  },
+  {
+    id: "detail",
+    nav: "Fruit",
+    title: "Fruit opens the main case study.",
+    kicker: "Fruit / Detail",
+    helper: "Click a fruit to zoom into the strongest project story.",
+    camera: [1.95, 1.34, 2.75],
+    target: [1.03, 1.18, 0],
+    marker: [1.15, 1.16, 0.22],
+    hotspot: [1.14, 1.2, 0.16],
+    radius: 0.38
+  },
+  {
+    id: "sub-projects",
+    nav: "Sprouts",
+    title: "Small sprouts keep experimenting.",
+    kicker: "Sprouts / Sub Projects",
+    helper: "Click the young sprouts to browse smaller experiments.",
+    camera: [-1.75, 0.55, 3.2],
+    target: [-1.06, 0.08, 0],
+    marker: [-1.12, 0.06, 0.18],
+    hotspot: [-1.1, 0.06, 0.18],
+    radius: 0.42
+  },
+  {
+    id: "contact",
+    nav: "Hollow",
+    title: "The hollow is the contact point.",
+    kicker: "Hollow / Contact",
+    helper: "Click the glowing hollow when you want to reach out.",
+    camera: [0.55, 0.32, 2.45],
+    target: [0.08, 0.08, 0],
+    marker: [0.13, 0.04, 0.31],
+    hotspot: [0.12, 0.04, 0.28],
+    radius: 0.34
+  }
+];
 
-  useEffect(function applyTheme() {
-    document.body.classList.toggle("portfolio-dark", darkMode);
-    return function cleanup() {
-      document.body.classList.remove("portfolio-dark");
-    };
-  }, [darkMode]);
+const treeExplorerPartMap = treeExplorerParts.reduce(function mapParts(result, part) {
+  result[part.id] = part;
+  return result;
+}, {});
 
-  useEffect(function watchCursorTargets() {
-    function handlePointerOver(event) {
-      const target = event.target.closest("[data-cursor]");
+function createTreeTube(points, radius, material, segments) {
+  const curve = new THREE.CatmullRomCurve3(points.map(function mapPoint(point) {
+    return new THREE.Vector3(point[0], point[1], point[2]);
+  }));
+  const geometry = new THREE.TubeGeometry(curve, segments || 64, radius, 12, false);
 
-      if (target) {
-        setCursorVariant(target.getAttribute("data-cursor") || "default");
-      }
+  return new THREE.Mesh(geometry, material);
+}
+
+function seededValue(index, salt) {
+  const raw = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
+  return raw - Math.floor(raw);
+}
+
+function ThreeTreeScene(props) {
+  const {activePart, hoverPart, onHoverPart, onSelectPart} = props;
+  const mountRef = useRef(null);
+  const activePartRef = useRef(activePart);
+  const hoverPartRef = useRef(hoverPart);
+  const onHoverPartRef = useRef(onHoverPart);
+  const onSelectPartRef = useRef(onSelectPart);
+
+  useEffect(function updateActivePartRef() {
+    activePartRef.current = activePart;
+  }, [activePart]);
+
+  useEffect(function updateHoverPartRef() {
+    hoverPartRef.current = hoverPart;
+  }, [hoverPart]);
+
+  useEffect(function updateHandlers() {
+    onHoverPartRef.current = onHoverPart;
+    onSelectPartRef.current = onSelectPart;
+  }, [onHoverPart, onSelectPart]);
+
+  useEffect(function mountTreeScene() {
+    const mount = mountRef.current;
+
+    if (!mount) {
+      return undefined;
     }
 
-    function handlePointerOut(event) {
-      const target = event.target.closest("[data-cursor]");
-      const nextTarget = event.relatedTarget;
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 80);
+    const renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2(8, 8);
+    const overviewCamera = new THREE.Vector3(0, 0.85, 6.4);
+    const overviewTarget = new THREE.Vector3(0, 0.45, 0);
+    const desiredCamera = overviewCamera.clone();
+    const desiredTarget = overviewTarget.clone();
+    const currentTarget = overviewTarget.clone();
+    const treeGroup = new THREE.Group();
+    const markerMap = {};
+    const hotspotMeshes = [];
+    const leafMeshes = [];
+    const fruitMeshes = [];
+    const fireflies = [];
+    const fireflyLights = [];
+    let animationFrame = 0;
+    let hoveredId = "";
 
-      if (target && (!nextTarget || !target.contains(nextTarget))) {
-        setCursorVariant("default");
-      }
-    }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setClearColor(0x000000, 0);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    mount.appendChild(renderer.domElement);
 
-    document.addEventListener("pointerover", handlePointerOver);
-    document.addEventListener("pointerout", handlePointerOut);
+    camera.position.copy(overviewCamera);
+    scene.add(new THREE.AmbientLight(0x7fcf94, 1.15));
 
-    return function cleanup() {
-      document.removeEventListener("pointerover", handlePointerOver);
-      document.removeEventListener("pointerout", handlePointerOut);
-    };
-  }, []);
+    const moonLight = new THREE.DirectionalLight(0xdfffe5, 2.2);
+    moonLight.position.set(-3.2, 4.6, 4.8);
+    scene.add(moonLight);
 
-  useEffect(function watchLivingTreeActions() {
-    function handlePointerDown(event) {
-      if (!event.target || !event.target.closest) {
-        return;
-      }
+    const sapLight = new THREE.PointLight(0x44ff88, 4.2, 6.5);
+    sapLight.position.set(0.2, 0.4, 1.4);
+    scene.add(sapLight);
 
-      const target = event.target.closest("[data-cursor], button, a");
+    scene.add(treeGroup);
 
-      if (!target || target.closest(".living-tree-layer")) {
-        return;
-      }
-
-      treePulseId.current += 1;
-      setTreePulse({
-        id: treePulseId.current,
-        x: event.clientX,
-        y: event.clientY,
-        type: target.getAttribute("data-cursor") || "button"
+    const barkMaterial = new THREE.MeshStandardMaterial({
+      color: 0x5c3f24,
+      roughness: 0.82,
+      metalness: 0.04
+    });
+    const barkDarkMaterial = new THREE.MeshStandardMaterial({
+      color: 0x2c1f14,
+      roughness: 0.92,
+      metalness: 0.02
+    });
+    const rootMaterial = new THREE.MeshStandardMaterial({
+      color: 0x3f2c1d,
+      roughness: 0.88,
+      metalness: 0.02
+    });
+    const leafMaterials = [0x295c34, 0x347a42, 0x2fbd5f, 0x5bd67e].map(function makeLeafMaterial(color) {
+      return new THREE.MeshStandardMaterial({
+        color: color,
+        roughness: 0.62,
+        metalness: 0.02,
+        emissive: color,
+        emissiveIntensity: 0.04
       });
-      if (treePulseTimer.current) {
-        window.clearTimeout(treePulseTimer.current);
-      }
-      treePulseTimer.current = window.setTimeout(function clearTreePulse() {
-        setTreePulse(null);
-      }, 1400);
+    });
+    const fruitMaterial = new THREE.MeshStandardMaterial({
+      color: 0xff9f42,
+      emissive: 0x58ff8f,
+      emissiveIntensity: 0.24,
+      roughness: 0.52,
+      metalness: 0.02
+    });
+    const markerMaterial = new THREE.MeshBasicMaterial({
+      color: 0xaaffbf,
+      transparent: true,
+      opacity: 0.82
+    });
+    const markerRingMaterial = new THREE.MeshBasicMaterial({
+      color: 0x63ff96,
+      transparent: true,
+      opacity: 0.44,
+      side: THREE.DoubleSide
+    });
+
+    const trunk = createTreeTube(
+      [
+        [0, -1.55, 0],
+        [-0.08, -0.78, 0.03],
+        [0.05, -0.08, 0.02],
+        [0.02, 0.78, -0.02],
+        [-0.05, 1.35, 0]
+      ],
+      0.18,
+      barkMaterial,
+      96
+    );
+    treeGroup.add(trunk);
+
+    const trunkCore = createTreeTube(
+      [
+        [0.04, -1.35, 0.16],
+        [0.08, -0.52, 0.2],
+        [0.11, 0.16, 0.18],
+        [0.08, 0.76, 0.15]
+      ],
+      0.035,
+      barkDarkMaterial,
+      64
+    );
+    treeGroup.add(trunkCore);
+
+    [
+      [[0.0, 0.72, 0], [0.46, 1.08, 0.03], [0.9, 1.58, -0.04], [1.42, 1.78, -0.12]],
+      [[-0.03, 0.56, 0], [-0.46, 0.86, 0.06], [-0.92, 1.2, 0], [-1.32, 1.32, -0.1]],
+      [[0.0, 1.04, 0], [-0.08, 1.42, 0.04], [0.12, 1.86, -0.05], [0.18, 2.26, -0.16]],
+      [[0.02, 0.36, 0], [0.42, 0.58, 0.02], [0.78, 0.82, 0.04], [1.13, 1.14, 0]],
+      [[-0.01, 0.16, 0], [-0.36, 0.3, 0.02], [-0.78, 0.16, 0.04], [-1.18, 0.04, 0.02]]
+    ].forEach(function addBranch(points, index) {
+      treeGroup.add(createTreeTube(points, index === 2 ? 0.06 : 0.075, barkMaterial, 64));
+    });
+
+    [
+      [[-0.04, -1.44, 0], [-0.58, -1.58, 0.08], [-1.24, -1.42, 0.02], [-1.82, -1.2, -0.08]],
+      [[0.02, -1.5, 0], [0.42, -1.62, 0.1], [1.08, -1.48, 0.02], [1.72, -1.18, -0.08]],
+      [[0.0, -1.45, 0], [-0.22, -1.7, -0.08], [-0.4, -1.96, -0.12], [-0.62, -2.14, -0.18]],
+      [[0.08, -1.42, 0], [0.26, -1.72, -0.08], [0.46, -1.96, -0.12], [0.72, -2.12, -0.16]]
+    ].forEach(function addRoot(points) {
+      treeGroup.add(createTreeTube(points, 0.055, rootMaterial, 56));
+    });
+
+    const leafGeometry = new THREE.SphereGeometry(0.095, 16, 12);
+    const canopyCenters = [
+      [-0.96, 1.28, -0.12],
+      [-0.42, 1.76, -0.18],
+      [0.26, 2.08, -0.2],
+      [0.88, 1.72, -0.14],
+      [1.22, 1.22, -0.02],
+      [0.24, 1.48, 0.06]
+    ];
+
+    for (let i = 0; i < 108; i += 1) {
+      const center = canopyCenters[i % canopyCenters.length];
+      const angle = seededValue(i, 1) * Math.PI * 2;
+      const radius = 0.08 + seededValue(i, 2) * 0.52;
+      const leaf = new THREE.Mesh(leafGeometry, leafMaterials[i % leafMaterials.length]);
+      leaf.position.set(
+        center[0] + Math.cos(angle) * radius * 1.25,
+        center[1] + (seededValue(i, 3) - 0.5) * 0.62,
+        center[2] + Math.sin(angle) * radius * 0.82 + (seededValue(i, 4) - 0.5) * 0.12
+      );
+      leaf.scale.set(
+        0.58 + seededValue(i, 5) * 0.78,
+        0.18 + seededValue(i, 6) * 0.28,
+        0.32 + seededValue(i, 7) * 0.42
+      );
+      leaf.rotation.set(seededValue(i, 8) * Math.PI, seededValue(i, 9) * Math.PI, seededValue(i, 10) * Math.PI);
+      leaf.userData.seed = seededValue(i, 11) * Math.PI * 2;
+      leaf.userData.baseScale = leaf.scale.clone();
+      leafMeshes.push(leaf);
+      treeGroup.add(leaf);
     }
 
-    document.addEventListener("pointerdown", handlePointerDown, true);
+    const fruitGeometry = new THREE.SphereGeometry(0.075, 18, 14);
+    [
+      [1.08, 1.24, 0.24],
+      [0.86, 1.68, 0.08],
+      [1.35, 1.55, -0.06],
+      [-0.54, 1.42, 0.1],
+      [0.24, 2.0, 0.04],
+      [-1.05, 1.18, 0.04],
+      [0.56, 1.18, 0.22]
+    ].forEach(function addFruit(position, index) {
+      const fruit = new THREE.Mesh(fruitGeometry, fruitMaterial);
+      fruit.position.set(position[0], position[1], position[2]);
+      fruit.scale.setScalar(0.85 + seededValue(index, 22) * 0.55);
+      fruit.userData.seed = index * 0.72;
+      fruit.userData.baseScale = fruit.scale.x;
+      fruit.userData.baseY = fruit.position.y;
+      fruitMeshes.push(fruit);
+      treeGroup.add(fruit);
+    });
 
-    return function cleanup() {
-      document.removeEventListener("pointerdown", handlePointerDown, true);
-      if (treePulseTimer.current) {
-        window.clearTimeout(treePulseTimer.current);
+    treeExplorerParts.forEach(function addHotspot(part) {
+      const markerGroup = new THREE.Group();
+      const markerPosition = new THREE.Vector3(part.marker[0], part.marker[1], part.marker[2]);
+      const core = new THREE.Mesh(new THREE.SphereGeometry(0.035, 18, 12), markerMaterial);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.006, 8, 36), markerRingMaterial);
+      const hotspot = new THREE.Mesh(
+        new THREE.SphereGeometry(part.radius, 18, 12),
+        new THREE.MeshBasicMaterial({transparent: true, opacity: 0, depthWrite: false})
+      );
+
+      markerGroup.position.copy(markerPosition);
+      ring.rotation.x = Math.PI / 2;
+      markerGroup.add(core);
+      markerGroup.add(ring);
+      markerGroup.userData.partId = part.id;
+      markerMap[part.id] = markerGroup;
+      treeGroup.add(markerGroup);
+
+      hotspot.position.set(part.hotspot[0], part.hotspot[1], part.hotspot[2]);
+      hotspot.userData.partId = part.id;
+      hotspotMeshes.push(hotspot);
+      treeGroup.add(hotspot);
+    });
+
+    const fireflyGeometry = new THREE.SphereGeometry(0.018, 10, 8);
+    const fireflyMaterial = new THREE.MeshBasicMaterial({color: 0xdffff0, transparent: true, opacity: 0.9});
+    for (let i = 0; i < 36; i += 1) {
+      const firefly = new THREE.Mesh(fireflyGeometry, fireflyMaterial.clone());
+      firefly.userData.seed = seededValue(i, 40) * Math.PI * 2;
+      firefly.userData.radius = 1.2 + seededValue(i, 41) * 2.2;
+      firefly.userData.height = -1.1 + seededValue(i, 42) * 3.4;
+      firefly.userData.speed = 0.18 + seededValue(i, 43) * 0.32;
+      fireflies.push(firefly);
+      scene.add(firefly);
+
+      if (i < 6) {
+        const light = new THREE.PointLight(0x8fffaa, 0.6, 1.8);
+        fireflyLights.push({light: light, source: firefly});
+        scene.add(light);
+      }
+    }
+
+    function resize() {
+      const rect = mount.getBoundingClientRect();
+      const width = Math.max(1, rect.width);
+      const height = Math.max(1, rect.height);
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    }
+
+    function setHover(nextHover) {
+      if (hoveredId === nextHover) {
+        return;
+      }
+
+      hoveredId = nextHover;
+      hoverPartRef.current = nextHover;
+      onHoverPartRef.current(nextHover);
+      mount.classList.toggle("is-hovering-tree", !!nextHover);
+    }
+
+    function handlePointerMove(event) {
+      const rect = mount.getBoundingClientRect();
+      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const intersections = raycaster.intersectObjects(hotspotMeshes, false);
+      setHover(intersections.length ? intersections[0].object.userData.partId : "");
+    }
+
+    function handlePointerLeave() {
+      pointer.set(8, 8);
+      setHover("");
+    }
+
+    function handlePointerDown() {
+      if (hoveredId) {
+        onSelectPartRef.current(hoveredId);
+      }
+    }
+
+    function animate(time) {
+      const elapsed = time * 0.001;
+      const selected = activePartRef.current;
+      const selectedDefinition = selected ? treeExplorerPartMap[selected] : null;
+      const hover = hoverPartRef.current;
+
+      if (selectedDefinition) {
+        desiredCamera.fromArray(selectedDefinition.camera);
+        desiredTarget.fromArray(selectedDefinition.target);
+      } else {
+        desiredCamera.copy(overviewCamera);
+        desiredTarget.copy(overviewTarget);
+      }
+
+      treeGroup.rotation.y = Math.sin(elapsed * 0.24) * 0.045;
+      treeGroup.rotation.x = Math.sin(elapsed * 0.18) * 0.018;
+
+      leafMeshes.forEach(function animateLeaf(leaf, index) {
+        const pulse = Math.sin(elapsed * 1.18 + leaf.userData.seed) * 0.035;
+        const baseScale = leaf.userData.baseScale;
+        leaf.rotation.z += Math.sin(elapsed + index) * 0.0008;
+        leaf.scale.set(baseScale.x, Math.max(0.12, baseScale.y + pulse), baseScale.z);
+      });
+
+      fruitMeshes.forEach(function animateFruit(fruit) {
+        const pulse = Math.sin(elapsed * 1.8 + fruit.userData.seed);
+        fruit.position.y = fruit.userData.baseY + Math.sin(elapsed * 1.6 + fruit.userData.seed) * 0.028;
+        fruit.scale.setScalar(fruit.userData.baseScale + pulse * 0.025);
+      });
+
+      treeExplorerParts.forEach(function animateMarker(part) {
+        const marker = markerMap[part.id];
+        const isActive = selected === part.id;
+        const isHover = hover === part.id;
+        const scale = isActive ? 1.68 : isHover ? 1.36 : 1 + Math.sin(elapsed * 2.2 + part.marker[0]) * 0.08;
+        marker.scale.lerp(new THREE.Vector3(scale, scale, scale), 0.14);
+        marker.children.forEach(function updateMarkerChild(child) {
+          if (child.material && typeof child.material.opacity === "number") {
+            child.material.opacity = isActive ? 0.95 : isHover ? 0.8 : 0.42;
+          }
+        });
+      });
+
+      fireflies.forEach(function animateFirefly(firefly, index) {
+        const seed = firefly.userData.seed;
+        const speed = firefly.userData.speed;
+        const radius = firefly.userData.radius;
+        const angle = elapsed * speed + seed;
+        firefly.position.set(
+          Math.cos(angle) * radius + Math.sin(angle * 2.1) * 0.22,
+          firefly.userData.height + Math.sin(elapsed * 0.9 + seed) * 0.36,
+          Math.sin(angle) * 0.72 + Math.cos(angle * 1.7) * 0.18
+        );
+        firefly.material.opacity = 0.38 + Math.sin(elapsed * 2.4 + index) * 0.28;
+      });
+
+      fireflyLights.forEach(function syncFireflyLight(item) {
+        item.light.position.copy(item.source.position);
+        item.light.intensity = 0.38 + Math.max(0, item.source.material.opacity) * 0.72;
+      });
+
+      camera.position.lerp(desiredCamera, selectedDefinition ? 0.055 : 0.04);
+      currentTarget.lerp(desiredTarget, selectedDefinition ? 0.06 : 0.045);
+      camera.lookAt(currentTarget);
+      renderer.render(scene, camera);
+      animationFrame = window.requestAnimationFrame(animate);
+    }
+
+    resize();
+    window.addEventListener("resize", resize);
+    mount.addEventListener("pointermove", handlePointerMove);
+    mount.addEventListener("pointerleave", handlePointerLeave);
+    mount.addEventListener("pointerdown", handlePointerDown);
+    animationFrame = window.requestAnimationFrame(animate);
+
+    return function cleanupTreeScene() {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("resize", resize);
+      mount.removeEventListener("pointermove", handlePointerMove);
+      mount.removeEventListener("pointerleave", handlePointerLeave);
+      mount.removeEventListener("pointerdown", handlePointerDown);
+      renderer.dispose();
+      if (renderer.domElement.parentNode === mount) {
+        mount.removeChild(renderer.domElement);
       }
     };
   }, []);
+
+  return <div className="tree-explorer-scene" ref={mountRef} />;
+}
+
+function TreeExplorerDock(props) {
+  const {activePart, hoverPart, onSelectPart, onReset} = props;
 
   return (
-    <div className="interactive-portfolio">
-      <CursorGlow pointer={pointer} variant={cursorVariant} />
-      <LivingTreeLayer
-        activeAreaId={selectedSkillArea}
-        activeId={activeId}
-        pointer={pointer}
-        pulse={treePulse}
+    <nav className="tree-explorer-dock" aria-label="Tree portfolio parts">
+      {treeExplorerParts.map(function renderPart(part) {
+        return (
+          <button
+            className={[
+              "tree-dock-button",
+              activePart === part.id ? "is-active" : "",
+              hoverPart === part.id ? "is-hovered" : ""
+            ].join(" ").trim()}
+            key={part.id}
+            type="button"
+            onClick={function handleClick() {
+              onSelectPart(part.id);
+            }}
+          >
+            <span>{part.nav}</span>
+            <strong>{part.kicker.split(" / ")[1]}</strong>
+          </button>
+        );
+      })}
+      <button className="tree-dock-reset" type="button" onClick={onReset}>
+        Full tree
+      </button>
+    </nav>
+  );
+}
+
+function TreeProjectCard(props) {
+  const {project, onOpenDetail} = props;
+
+  return (
+    <button
+      className="tree-project-card"
+      style={{"--project-color": project.color}}
+      type="button"
+      onClick={function handleClick() {
+        onOpenDetail(project);
+      }}
+    >
+      <span>{project.category}</span>
+      <strong>{project.title}</strong>
+      <p>{project.metric}</p>
+    </button>
+  );
+}
+
+function TreeExplorerPanel(props) {
+  const {activePart, activeProject, onClose, onOpenDetail, onSelectPart} = props;
+  const part = activePart ? treeExplorerPartMap[activePart] : null;
+
+  if (!part) {
+    return (
+      <aside className="tree-panel tree-panel--intro">
+        <p className="tree-panel__eyebrow">Interactive tree portfolio</p>
+        <h1>
+          Explore the tree.
+          <br />
+          Each part opens a story.
+        </h1>
+        <p>
+          The trunk holds skills, leaves hold projects, roots hold growth, fruit opens case studies,
+          sprouts collect experiments, and the hollow connects to contact.
+        </p>
+        <div className="tree-panel__actions">
+          <button type="button" onClick={function openSkills() { onSelectPart("skills"); }}>
+            Start at trunk
+          </button>
+          <button type="button" onClick={function openProjects() { onSelectPart("projects"); }}>
+            View leaves
+          </button>
+        </div>
+      </aside>
+    );
+  }
+
+  return (
+    <aside className={"tree-panel is-" + activePart}>
+      <div className="tree-panel__head">
+        <div>
+          <p className="tree-panel__eyebrow">{part.kicker}</p>
+          <h2>{part.title}</h2>
+          <p>{part.helper}</p>
+        </div>
+        <button className="tree-panel__close" type="button" aria-label="Return to full tree" onClick={onClose}>
+          Back
+        </button>
+      </div>
+
+      {activePart === "skills" ? (
+        <div className="tree-panel__skills">
+          {skillAreas.map(function renderSkillArea(area) {
+            return (
+              <article className="tree-skill-card" key={area.id}>
+                <span>{area.label}</span>
+                <strong>{area.summary}</strong>
+                <p>{area.short}</p>
+                <div>
+                  {area.tags.slice(0, 5).map(function renderTag(tag) {
+                    return <small key={tag}>{tag}</small>;
+                  })}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {activePart === "projects" ? (
+        <div className="tree-panel__projects">
+          {projects.slice(0, 6).map(function renderProject(project) {
+            return <TreeProjectCard key={project.id} project={project} onOpenDetail={onOpenDetail} />;
+          })}
+        </div>
+      ) : null}
+
+      {activePart === "growth" ? (
+        <ol className="tree-growth-list">
+          {growthMilestones.map(function renderGrowth(item) {
+            return (
+              <li key={item.id}>
+                <span>{item.date}</span>
+                <strong>{item.title}</strong>
+                <p>{item.focus}</p>
+                <small>{item.badge}</small>
+              </li>
+            );
+          })}
+        </ol>
+      ) : null}
+
+      {activePart === "detail" ? (
+        <div className="tree-detail-card" style={{"--project-color": activeProject.color}}>
+          <span>{activeProject.category}</span>
+          <h3>{activeProject.title}</h3>
+          <p>{activeProject.description}</p>
+          <div>
+            {activeProject.tags.map(function renderTag(tag) {
+              return <small key={tag}>{tag}</small>;
+            })}
+          </div>
+          <button type="button" onClick={function openLeaves() { onSelectPart("projects"); }}>
+            Choose another fruit
+          </button>
+        </div>
+      ) : null}
+
+      {activePart === "sub-projects" ? (
+        <div className="tree-sub-grid">
+          {subProjects.map(function renderSubProject(item) {
+            return (
+              <article key={item[0]}>
+                <span>{item[3]}</span>
+                <strong>{item[0]}</strong>
+                <p>{item[1]}</p>
+                <small>{item[2]}</small>
+              </article>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {activePart === "contact" ? (
+        <div className="tree-contact-card">
+          <a href="mailto:jaehoon.dev@gmail.com">jaehoon.dev@gmail.com</a>
+          <a href="https://github.com/toadsam" rel="noopener noreferrer" target="_blank">github.com/toadsam</a>
+          <a href="https://linkedin.com/in/jaehoon-dev" rel="noopener noreferrer" target="_blank">linkedin.com/in/jaehoon-dev</a>
+        </div>
+      ) : null}
+    </aside>
+  );
+}
+
+function TreeExplorerExperience() {
+  const [activePart, setActivePart] = useState(null);
+  const [hoverPart, setHoverPart] = useState("");
+  const [activeProject, setActiveProject] = useState(projects[0]);
+
+  useEffect(function applyTreeTheme() {
+    document.body.classList.add("portfolio-dark", "tree-portfolio-body");
+    return function cleanupTreeTheme() {
+      document.body.classList.remove("portfolio-dark", "tree-portfolio-body");
+    };
+  }, []);
+
+  function selectPart(partId) {
+    setActivePart(partId);
+  }
+
+  function openProjectDetail(project) {
+    setActiveProject(project);
+    setActivePart("detail");
+  }
+
+  return (
+    <div className={activePart ? "tree-explorer has-active-panel" : "tree-explorer"}>
+      <ThreeTreeScene
+        activePart={activePart}
+        hoverPart={hoverPart}
+        onHoverPart={setHoverPart}
+        onSelectPart={selectPart}
       />
-      <TopNav
-        activeId={activeId}
-        darkMode={darkMode}
-        onToggleTheme={function toggleTheme() {
-          setDarkMode(function update(current) {
-            return !current;
-          });
+      <div className="tree-explorer__shade" />
+      <header className="tree-explorer__header">
+        <strong>JH</strong>
+        <span>3D living portfolio</span>
+      </header>
+      <div className="tree-explorer__hint">
+        <span>{hoverPart ? treeExplorerPartMap[hoverPart].kicker : "Move over the tree"}</span>
+        <strong>{hoverPart ? treeExplorerPartMap[hoverPart].helper : "Click trunk, leaves, roots, fruit, sprouts, or hollow."}</strong>
+      </div>
+      <TreeExplorerDock
+        activePart={activePart}
+        hoverPart={hoverPart}
+        onReset={function resetTree() {
+          setActivePart(null);
         }}
+        onSelectPart={selectPart}
       />
-      <SectionIndicator activeId={activeId} />
-      <main>
-        <IntroSection pointer={pointer} />
-        <SkillsSection
-          onSelectArea={setSelectedSkillArea}
-          onSelectSkill={setSelectedSkill}
-          pointer={pointer}
-        />
-        <MainProjectsSection
-          activeProject={activeProject}
-          onSelectProject={setActiveProject}
-          selectedSkill={selectedSkill}
-        />
-        <ProjectDetailSection activeProject={activeProject} />
-        <SubProjectsSection />
-        <ContactSection />
-      </main>
+      <TreeExplorerPanel
+        activePart={activePart}
+        activeProject={activeProject}
+        onClose={function closePanel() {
+          setActivePart(null);
+        }}
+        onOpenDetail={openProjectDetail}
+        onSelectPart={selectPart}
+      />
     </div>
   );
+}
+
+function PortfolioApp() {
+  return <TreeExplorerExperience />;
 }
 
 export default PortfolioApp;

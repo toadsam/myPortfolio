@@ -4528,6 +4528,518 @@ body.portfolio-dark .contact-form textarea {
   }
 }
 
+body.tree-portfolio-body {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(80, 255, 142, 0.16), transparent 28%),
+    radial-gradient(circle at 18% 80%, rgba(33, 120, 63, 0.18), transparent 32%),
+    linear-gradient(180deg, #020806 0%, #07140d 45%, #0a160e 100%);
+}
+
+.tree-explorer {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(57, 204, 103, 0.14), transparent 29%),
+    radial-gradient(circle at 82% 18%, rgba(204, 255, 202, 0.07), transparent 22%),
+    linear-gradient(180deg, rgba(2, 8, 6, 0.76), rgba(3, 12, 7, 0.96));
+  color: #eef8f0;
+  isolation: isolate;
+}
+
+.tree-explorer::before,
+.tree-explorer::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  content: "";
+  pointer-events: none;
+}
+
+.tree-explorer::before {
+  background:
+    linear-gradient(90deg, rgba(139, 255, 170, 0.035) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(139, 255, 170, 0.025) 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: radial-gradient(circle at 50% 50%, black 0 48%, transparent 82%);
+}
+
+.tree-explorer::after {
+  background:
+    radial-gradient(circle at 48% 50%, transparent 0 33%, rgba(1, 7, 4, 0.42) 72%),
+    linear-gradient(90deg, rgba(2, 8, 5, 0.8), transparent 26%, transparent 74%, rgba(2, 8, 5, 0.8));
+}
+
+.tree-explorer-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: grab;
+}
+
+.tree-explorer-scene.is-hovering-tree {
+  cursor: pointer;
+}
+
+.tree-explorer-scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tree-explorer__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background:
+    radial-gradient(circle at 50% 44%, transparent 0 34%, rgba(0, 0, 0, 0.26) 72%),
+    linear-gradient(180deg, rgba(1, 7, 4, 0.36), transparent 28%, rgba(1, 7, 4, 0.54));
+  pointer-events: none;
+}
+
+.tree-explorer__header {
+  position: absolute;
+  top: 28px;
+  left: 34px;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: #eaffee;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tree-explorer__header strong {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(156, 255, 181, 0.34);
+  border-radius: 50%;
+  background: rgba(7, 18, 11, 0.62);
+  box-shadow: 0 0 30px rgba(71, 255, 126, 0.16);
+}
+
+.tree-explorer__hint {
+  position: absolute;
+  right: 34px;
+  bottom: 34px;
+  z-index: 7;
+  width: min(430px, calc(100vw - 68px));
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(156, 255, 181, 0.18);
+  border-radius: 18px;
+  background: rgba(4, 13, 8, 0.62);
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px);
+}
+
+.tree-explorer__hint span,
+.tree-panel__eyebrow,
+.tree-dock-button span,
+.tree-project-card span,
+.tree-detail-card > span,
+.tree-sub-grid span {
+  color: #65ee94;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.tree-explorer__hint strong {
+  display: block;
+  margin-top: 0.32rem;
+  color: rgba(238, 248, 240, 0.82);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.tree-explorer-dock {
+  position: absolute;
+  top: 92px;
+  left: 34px;
+  z-index: 7;
+  display: grid;
+  gap: 0.58rem;
+  width: 190px;
+}
+
+.tree-dock-button,
+.tree-dock-reset,
+.tree-panel button,
+.tree-project-card {
+  border: 1px solid rgba(156, 255, 181, 0.17);
+  background: rgba(5, 17, 10, 0.58);
+  color: #eef8f0;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+}
+
+.tree-dock-button {
+  display: grid;
+  gap: 0.18rem;
+  min-height: 58px;
+  padding: 0.76rem 0.9rem;
+  border-radius: 16px;
+  text-align: left;
+  transition: border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+}
+
+.tree-dock-button strong {
+  font-size: 0.94rem;
+}
+
+.tree-dock-button.is-active,
+.tree-dock-button.is-hovered {
+  border-color: rgba(105, 255, 151, 0.62);
+  background: rgba(28, 102, 52, 0.42);
+  box-shadow: 0 0 38px rgba(70, 255, 128, 0.16);
+  transform: translateX(6px);
+}
+
+.tree-dock-reset {
+  min-height: 44px;
+  border-radius: 999px;
+  color: #93ffad;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tree-panel {
+  position: absolute;
+  top: 88px;
+  right: 34px;
+  z-index: 8;
+  width: min(520px, calc(100vw - 280px));
+  max-height: calc(100vh - 170px);
+  overflow: auto;
+  padding: 1.15rem;
+  border: 1px solid rgba(151, 255, 178, 0.2);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(81, 255, 137, 0.13), transparent 36%),
+    rgba(5, 15, 9, 0.72);
+  box-shadow: 0 34px 140px rgba(0, 0, 0, 0.42), inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(22px);
+  animation: tree-panel-in 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tree-panel--intro {
+  top: auto;
+  right: auto;
+  bottom: 34px;
+  left: 34px;
+  width: min(560px, calc(100vw - 68px));
+  max-height: none;
+}
+
+.tree-panel__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1.1rem;
+}
+
+.tree-panel h1,
+.tree-panel h2 {
+  margin: 0.3rem 0 0.65rem;
+  color: #f4fff5;
+  font-size: clamp(2rem, 4vw, 4.2rem);
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+}
+
+.tree-panel h2 {
+  font-size: clamp(1.55rem, 2.5vw, 2.65rem);
+}
+
+.tree-panel p {
+  margin: 0;
+  color: rgba(238, 248, 240, 0.7);
+  line-height: 1.7;
+}
+
+.tree-panel__close {
+  min-width: 72px;
+  min-height: 38px;
+  border-radius: 999px;
+  color: #92ffad;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tree-panel__actions,
+.tree-detail-card div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.58rem;
+  margin-top: 1.2rem;
+}
+
+.tree-panel__actions button,
+.tree-detail-card button {
+  min-height: 44px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  color: #dffff0;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.tree-panel__skills,
+.tree-panel__projects,
+.tree-sub-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.tree-skill-card,
+.tree-sub-grid article,
+.tree-growth-list li,
+.tree-detail-card,
+.tree-contact-card {
+  border: 1px solid rgba(156, 255, 181, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.tree-skill-card {
+  padding: 0.95rem;
+}
+
+.tree-skill-card strong,
+.tree-sub-grid strong {
+  display: block;
+  margin: 0.36rem 0;
+  color: #f5fff6;
+}
+
+.tree-skill-card div,
+.tree-detail-card div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+  margin-top: 0.8rem;
+}
+
+.tree-skill-card small,
+.tree-detail-card small {
+  padding: 0.34rem 0.52rem;
+  border: 1px solid rgba(140, 255, 170, 0.16);
+  border-radius: 999px;
+  color: rgba(238, 248, 240, 0.72);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+}
+
+.tree-panel__projects {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tree-project-card {
+  display: grid;
+  gap: 0.34rem;
+  min-height: 128px;
+  padding: 0.9rem;
+  overflow: hidden;
+  border-radius: 18px;
+  text-align: left;
+  background:
+    radial-gradient(circle at 88% 18%, var(--project-color), transparent 34%),
+    rgba(255, 255, 255, 0.048);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tree-project-card:hover {
+  border-color: rgba(132, 255, 164, 0.56);
+  box-shadow: 0 0 44px rgba(47, 189, 95, 0.16);
+  transform: translateY(-4px);
+}
+
+.tree-project-card strong {
+  color: #f5fff6;
+  font-size: 1.05rem;
+}
+
+.tree-project-card p {
+  align-self: end;
+  color: rgba(238, 248, 240, 0.74);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+}
+
+.tree-growth-list {
+  display: grid;
+  gap: 0.68rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tree-growth-list li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  min-height: 74px;
+  padding: 0.82rem;
+}
+
+.tree-growth-list li::before {
+  position: absolute;
+  top: 50%;
+  left: 42px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #69ff97;
+  box-shadow: 0 0 24px rgba(105, 255, 151, 0.8);
+  content: "";
+  transform: translateY(-50%);
+}
+
+.tree-growth-list span,
+.tree-growth-list small {
+  color: #65ee94;
+  font-family: var(--mono);
+  font-size: 0.64rem;
+}
+
+.tree-growth-list strong {
+  color: #f5fff6;
+}
+
+.tree-growth-list p {
+  grid-column: 2 / 3;
+  font-size: 0.82rem;
+}
+
+.tree-detail-card {
+  padding: 1rem;
+  background:
+    radial-gradient(circle at 84% 18%, var(--project-color), transparent 34%),
+    rgba(255, 255, 255, 0.052);
+}
+
+.tree-detail-card h3 {
+  margin: 0.36rem 0 0.62rem;
+  color: #f5fff6;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  letter-spacing: -0.06em;
+}
+
+.tree-sub-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tree-sub-grid article {
+  min-height: 132px;
+  padding: 0.9rem;
+}
+
+.tree-contact-card {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1rem;
+}
+
+.tree-contact-card a {
+  display: block;
+  padding: 0.85rem;
+  border: 1px solid rgba(156, 255, 181, 0.14);
+  border-radius: 14px;
+  color: #f5fff6;
+  font-family: var(--mono);
+  font-size: 0.84rem;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.tree-contact-card a:hover {
+  border-color: rgba(132, 255, 164, 0.52);
+  background: rgba(47, 189, 95, 0.1);
+}
+
+@keyframes tree-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@media (max-width: 960px) {
+  .tree-explorer-dock {
+    top: auto;
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: auto;
+  }
+
+  .tree-dock-button {
+    min-height: 52px;
+    padding: 0.62rem;
+  }
+
+  .tree-dock-reset {
+    grid-column: span 3;
+  }
+
+  .tree-panel,
+  .tree-panel--intro {
+    top: auto;
+    right: 1rem;
+    bottom: 8.6rem;
+    left: 1rem;
+    width: auto;
+    max-height: 44vh;
+  }
+
+  .tree-explorer__hint {
+    display: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .tree-explorer__header {
+    top: 18px;
+    left: 18px;
+  }
+
+  .tree-panel__projects,
+  .tree-sub-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tree-growth-list li {
+    grid-template-columns: 68px minmax(0, 1fr);
+  }
+
+  .tree-growth-list small {
+    grid-column: 2;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
