@@ -119,44 +119,65 @@ const projects = [
 ];
 
 const subProjects = [
-  ["Pixel Adventure", "2D Platformer Game", "Unity"],
-  ["Weather Dashboard", "날씨 정보 대시보드", "React"],
-  ["API Gateway", "마이크로서비스 게이트웨이", "Node.js"],
-  ["Dev Blog", "개발 블로그 사이트", "Next.js"],
-  ["Memory Puzzle", "퍼즐 게임", "Unity"],
-  ["Chat Application", "실시간 채팅 서비스", "Socket.io"],
-  ["Portfolio v1", "이전 포트폴리오 버전", "React"],
-  ["Asset Store", "게임 에셋 마켓플레이스", "Spring Boot"]
+  ["Pixel Adventure", "2D Platformer Game", "Unity", "Game"],
+  ["Weather Dashboard", "Realtime weather dashboard", "React", "Web"],
+  ["API Gateway", "Microservice routing gateway", "Node.js", "Tool"],
+  ["Dev Blog", "Writing system for build notes", "Next.js", "Web"],
+  ["Memory Puzzle", "Small puzzle game loop", "Unity", "Game"],
+  ["Chat Application", "Realtime chat service", "Socket.io", "Experiment"],
+  ["Portfolio v1", "Previous interactive portfolio", "React", "Experiment"],
+  ["Asset Store", "Game asset management tool", "Spring Boot", "Tool"]
 ];
 
 const codeSnippets = {
   frontend: [
-    "const FestivalCard = ({ data }) => {",
+    "function FestivalCard({ data, onSelect }) {",
     "  return (",
-    "    <article className=\"card\">",
+    "    <article className=\"card\" onClick={() => onSelect(data.id)}>",
     "      <img src={data.image} />",
     "      <h3>{data.title}</h3>",
-    "      <p>{data.location}</p>",
+    "      <StatusBadge value={data.realtimeStatus} />",
     "    </article>",
     "  );",
-    "};"
-  ],
-  backend: [
-    "@GetMapping(\"/api/festivals\")",
-    "public ResponseEntity<List<Festival>> getFestivals() {",
-    "  List<Festival> list = festivalService.getAll();",
-    "  return ResponseEntity.ok(list);",
     "}"
   ],
-  realtime: [
-    "socket.on(\"message\", (msg) => {",
-    "  setMessages(prev => [",
-    "    ...prev,",
-    "    {...msg, time: new Date()}",
-    "  ]);",
-    "});"
+  backend: [
+    "@GetMapping(\"/api/festivals/{id}\")",
+    "public ResponseEntity<FestivalDto> getFestival(@PathVariable Long id) {",
+    "  Festival festival = festivalService.findDetail(id);",
+    "  return ResponseEntity.ok(FestivalDto.from(festival));",
+    "}"
+  ],
+  database: [
+    "SELECT festival_id, COUNT(*) AS views, AVG(rating) AS score",
+    "FROM festival_logs",
+    "WHERE created_at >= NOW() - INTERVAL '7 days'",
+    "GROUP BY festival_id",
+    "ORDER BY views DESC",
+    "LIMIT 10;"
+  ],
+  game: [
+    "public class PlayerController : MonoBehaviour {",
+    "  void Update() {",
+    "    Vector3 input = ReadMovementInput();",
+    "    character.Move(input * moveSpeed * Time.deltaTime);",
+    "    interaction.TryInteract(currentTarget);",
+    "  }",
+    "}"
   ]
 };
+
+const detailSections = [
+  {id: "detail-overview", number: "01", label: "Overview"},
+  {id: "detail-problem", number: "02", label: "Problem"},
+  {id: "detail-solution", number: "03", label: "Solution"},
+  {id: "detail-role", number: "04", label: "My Role"},
+  {id: "detail-code", number: "05", label: "Code"},
+  {id: "detail-features", number: "06", label: "Features"},
+  {id: "detail-flow", number: "07", label: "UI Flow"},
+  {id: "detail-results", number: "08", label: "Results"},
+  {id: "detail-learned", number: "09", label: "What I Learned"}
+];
 
 function scrollToSection(id) {
   const target = document.getElementById(id);
@@ -222,16 +243,25 @@ function useActiveSection() {
 }
 
 function CursorGlow(props) {
-  const {pointer} = props;
+  const {pointer, variant} = props;
+  const scaleMap = {
+    button: 2.2,
+    card: 3,
+    code: 1.6,
+    game: 2.8,
+    default: 1
+  };
+  const scale = scaleMap[variant] || scaleMap.default;
 
   return (
     <div
       aria-hidden="true"
-      className="cursor-glow"
+      className={"cursor-glow is-" + (variant || "default")}
       style={{
         transform: "translate3d("
-          .concat(pointer.rawX - 120, "px, ")
-          .concat(pointer.rawY - 120, "px, 0)")
+          .concat(pointer.rawX, "px, ")
+          .concat(pointer.rawY, "px, 0) translate(-50%, -50%) scale(")
+          .concat(scale, ")")
       }}
     />
   );
@@ -264,6 +294,7 @@ function TopNav(props) {
       <button
         aria-label="Toggle color mode"
         className={darkMode ? "theme-toggle is-dark" : "theme-toggle"}
+        data-cursor="button"
         type="button"
         onClick={onToggleTheme}
       >
@@ -295,6 +326,7 @@ function SectionIndicator(props) {
             <button
               aria-label={section.label}
               className={activeId === section.id ? "section-dot is-active" : "section-dot"}
+              data-cursor="button"
               key={section.id}
               type="button"
               onClick={function handleClick() {
@@ -372,6 +404,7 @@ function MagneticButton(props) {
   return (
     <button
       className={variant ? "magnetic-button is-" + variant : "magnetic-button"}
+      data-cursor="button"
       type="button"
       onMouseMove={handleMove}
       onMouseLeave={function reset() { setOffset({x: 0, y: 0}); }}
@@ -390,6 +423,7 @@ function CodeCard(props) {
   return (
     <article
       className="floating-card code-card"
+      data-cursor="code"
       style={{transform: "translate3d(".concat(pointer.x * 18, "px, ").concat(pointer.y * 12, "px, 0)")}}
     >
       <div className="window-dots"><i /><i /><i /></div>
@@ -398,8 +432,8 @@ function CodeCard(props) {
         <code>
           <span><em>const</em> developer = {"{"}</span>
           <span>  name: <b>'Jaehoon'</b>,</span>
-          <span>  role: <b>'Full Stack Developer'</b>,</span>
-          <span>  focus: [<b>'Web Service'</b>, <b>'Game Dev'</b>],</span>
+          <span>  stack: <b>'React + TypeScript'</b>,</span>
+          <span>  role: <b>'Full-stack / Game Developer'</b>,</span>
           <span>  passion: <b>'Building products users love'</b>,</span>
           <span>{"};"}</span>
         </code>
@@ -415,6 +449,7 @@ function GamePreviewCard(props) {
   return (
     <article
       className="floating-card game-card"
+      data-cursor="game"
       style={{transform: "translate3d(".concat(pointer.x * -24, "px, ").concat(pointer.y * 18, "px, 0) rotate(1deg)")}}
     >
       <div className="game-scene">
@@ -428,8 +463,8 @@ function GamePreviewCard(props) {
         </div>
       </div>
       <div className="mini-card game-label">
-        <strong>RPG Project</strong>
-        <span>Unity / C#</span>
+        <strong>Unity Game System</strong>
+        <span>Controller / Quest / Physics</span>
       </div>
     </article>
   );
@@ -441,13 +476,14 @@ function ApiCard(props) {
   return (
     <article
       className="floating-card api-card"
+      data-cursor="card"
       style={{transform: "translate3d(".concat(pointer.x * 14, "px, ").concat(pointer.y * -16, "px, 0)")}}
     >
       <div className="api-card__head">
-        <strong>API Server</strong>
+        <strong>Spring Boot API</strong>
         <span>ONLINE</span>
       </div>
-      <p>Uptime 23d 14h 32m</p>
+      <p>Response 128ms · Uptime 23d 14h</p>
       <svg viewBox="0 0 220 70" role="img" aria-label="API uptime graph">
         <path d="M4 44 C30 18, 44 54, 72 38 S118 42, 142 26 S188 8, 216 24" />
       </svg>
@@ -464,10 +500,10 @@ function IntroSection(props) {
         <Reveal className="hero-copy">
           <p className="eyebrow">01 Intro</p>
           <h1>
-            <span>Hi, I'm <mark>Jaehoon</mark></span>
-            <span>I build interactive</span>
+            <span>Hi, I'm <mark>Jaehoon.</mark></span>
+            <span>I build <mark>interactive</mark></span>
             <span><mark>web services</mark></span>
-            <span>and immersive <mark>games</mark>.</span>
+            <span>and playful <mark>game systems</mark>.</span>
           </h1>
           <p>
             사용자 경험을 설계하고, 확장 가능한 풀스택 서비스를 개발하며,
@@ -496,11 +532,12 @@ function IntroSection(props) {
           <ApiCard pointer={pointer} />
           <article
             className="floating-card performance-card"
+            data-cursor="card"
             style={{transform: "translate3d(".concat(pointer.x * -12, "px, ").concat(pointer.y * -10, "px, 0)")}}
           >
-            <span>Performance</span>
+            <span>Lighthouse / UX / FPS</span>
             <strong>99</strong>
-            <small>/100</small>
+            <small>API 128ms · 60fps</small>
           </article>
         </div>
       </div>
@@ -535,6 +572,7 @@ function SkillsSection(props) {
                     return (
                       <button
                         className="skill-chip"
+                        data-cursor="button"
                         key={skill}
                         style={{transitionDelay: groupIndex * 60 + index * 40 + "ms"}}
                         type="button"
@@ -575,7 +613,11 @@ function ProjectVisual(props) {
   const {project} = props;
 
   return (
-    <div className="project-visual" style={{"--project-color": project.color}}>
+    <div
+      className="project-visual"
+      data-cursor={project.category === "Game" ? "game" : "card"}
+      style={{"--project-color": project.color}}
+    >
       <div className="mock-browser">
         <div className="mock-browser__bar"><i /><i /><i /></div>
         <div className="mock-browser__hero">
@@ -602,6 +644,7 @@ function MainProjectsSection(props) {
   const {activeProject, onSelectProject, selectedSkill} = props;
   const [filter, setFilter] = useState("All");
   const [dragStart, setDragStart] = useState(null);
+  const [openingId, setOpeningId] = useState("");
   const filters = ["All", "Web", "Full-stack", "Game", "Tool", "Experiment"];
   const filteredProjects = projects.filter(function filterProject(project) {
     return filter === "All" || project.category === filter;
@@ -640,6 +683,15 @@ function MainProjectsSection(props) {
     }
   }
 
+  function openProjectDetail(project) {
+    onSelectProject(project);
+    setOpeningId(project.id);
+    window.setTimeout(function scrollDetail() {
+      scrollToSection("detail");
+      setOpeningId("");
+    }, 180);
+  }
+
   return (
     <section className="portfolio-section projects-section" id="projects">
       <div className="projects-head">
@@ -653,6 +705,7 @@ function MainProjectsSection(props) {
             return (
               <button
                 className={filter === item ? "filter-button is-active" : "filter-button"}
+                data-cursor="button"
                 key={item}
                 type="button"
                 onClick={function handleClick() {
@@ -667,7 +720,7 @@ function MainProjectsSection(props) {
       </div>
 
       <div className="project-carousel-wrap">
-        <button className="round-control" type="button" onClick={function previous() { moveProject(-1); }}>←</button>
+        <button className="round-control" data-cursor="button" type="button" onClick={function previous() { moveProject(-1); }}>←</button>
         <div
           className="project-carousel"
           onMouseDown={function startDrag(event) { setDragStart(event.clientX); }}
@@ -685,16 +738,26 @@ function MainProjectsSection(props) {
                 className={[
                   "project-card",
                   isActive ? "is-active" : "",
-                  isSkillMatch ? "is-highlighted" : ""
+                  isSkillMatch ? "is-highlighted" : "",
+                  openingId === project.id ? "is-opening" : ""
                 ].join(" ").trim()}
+                data-cursor="card"
                 key={project.id}
                 style={{
                   "--project-color": project.color,
-                  transform: "translateX(".concat(offset * 78, "%) scale(").concat(isActive ? 1 : 0.9, ")"),
+                  transform: "translateX(".concat(offset * 78, "%) scale(").concat(
+                    openingId === project.id ? 1.05 : isActive ? 1 : 0.9,
+                    ")"
+                  ),
                   opacity: isActive ? 1 : 0.55,
                   zIndex: isActive ? 5 : 3 - Math.abs(offset)
                 }}
                 onClick={function handleClick() {
+                  if (isActive) {
+                    openProjectDetail(project);
+                    return;
+                  }
+
                   onSelectProject(project);
                 }}
               >
@@ -707,7 +770,14 @@ function MainProjectsSection(props) {
                       return <small key={tag}>{tag}</small>;
                     })}
                   </div>
-                  <button type="button" onClick={function openDetail(event) { event.stopPropagation(); scrollToSection("detail"); }}>
+                  <button
+                    data-cursor="button"
+                    type="button"
+                    onClick={function openDetail(event) {
+                      event.stopPropagation();
+                      openProjectDetail(project);
+                    }}
+                  >
                     View project →
                   </button>
                 </div>
@@ -716,7 +786,7 @@ function MainProjectsSection(props) {
             );
           })}
         </div>
-        <button className="round-control" type="button" onClick={function next() { moveProject(1); }}>→</button>
+        <button className="round-control" data-cursor="button" type="button" onClick={function next() { moveProject(1); }}>→</button>
       </div>
 
       <div className="project-counter">
@@ -732,9 +802,10 @@ function CodeTabs() {
   const [activeTab, setActiveTab] = useState("frontend");
   const [copied, setCopied] = useState(false);
   const tabs = [
-    ["frontend", "Frontend"],
-    ["backend", "Backend"],
-    ["realtime", "Realtime"]
+    ["frontend", "Frontend / React"],
+    ["backend", "Backend / Spring Boot"],
+    ["database", "Database / SQL"],
+    ["game", "Game Logic / Unity C#"]
   ];
 
   function copySnippet() {
@@ -751,12 +822,13 @@ function CodeTabs() {
   }
 
   return (
-    <div className="code-tabs">
+    <div className="code-tabs" data-cursor="code">
       <div className="code-tabs__nav">
         {tabs.map(function renderTab(tab) {
           return (
             <button
               className={activeTab === tab[0] ? "is-active" : ""}
+              data-cursor="button"
               key={tab[0]}
               type="button"
               onClick={function handleClick() {
@@ -767,7 +839,7 @@ function CodeTabs() {
             </button>
           );
         })}
-        <button className="copy-button" type="button" onClick={copySnippet}>
+        <button className="copy-button" data-cursor="button" type="button" onClick={copySnippet}>
           {copied ? "Copied" : "Copy"}
         </button>
       </div>
@@ -775,7 +847,7 @@ function CodeTabs() {
         <code>
           {codeSnippets[activeTab].map(function renderLine(line, index) {
             return (
-              <span key={line + index}>
+              <span className={index === 2 || index === 4 ? "is-important" : ""} key={line + index}>
                 <i>{String(index + 1).padStart(2, "0")}</i>
                 {line}
               </span>
@@ -789,6 +861,47 @@ function CodeTabs() {
 
 function ProjectDetailSection(props) {
   const {activeProject} = props;
+  const [detailActive, setDetailActive] = useState(detailSections[0].id);
+  const [activeFlow, setActiveFlow] = useState(2);
+  const flowSteps = [
+    ["01", "Onboarding", "User intent and project context"],
+    ["02", "Select Interests", "Choose web, API, or game interaction goals"],
+    ["03", "Main Dashboard", "Show realtime state and core content"],
+    ["04", "Detail Page", "Open deeper data, screenshots, and code"],
+    ["05", "Save / Plan", "Persist selected content or gameplay state"],
+    ["06", "Result", "Return measurable feedback and next actions"]
+  ];
+
+  useEffect(function observeDetailSections() {
+    const nodes = detailSections
+      .map(function mapSection(section) {
+        return document.getElementById(section.id);
+      })
+      .filter(Boolean);
+
+    if (!nodes.length) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      function onIntersect(entries) {
+        entries.forEach(function each(entry) {
+          if (entry.isIntersecting) {
+            setDetailActive(entry.target.id);
+          }
+        });
+      },
+      {rootMargin: "-28% 0px -58% 0px", threshold: 0.12}
+    );
+
+    nodes.forEach(function observe(node) {
+      observer.observe(node);
+    });
+
+    return function cleanup() {
+      observer.disconnect();
+    };
+  }, [activeProject]);
 
   return (
     <section className="portfolio-section detail-section" id="detail">
@@ -816,64 +929,179 @@ function ProjectDetailSection(props) {
         </Reveal>
       </div>
 
-      <div className="detail-nav">
-        {["Overview", "Features", "Tech Stack", "Code", "Challenges", "What I Learned"].map(function renderItem(item, index) {
-          return <button className={index === 0 ? "is-active" : ""} key={item} type="button">{item}</button>;
-        })}
-      </div>
+      <div className="detail-scroll-layout">
+        <aside className="detail-side-nav">
+          <p className="eyebrow">Case Study</p>
+          {detailSections.map(function renderDetailNav(section) {
+            return (
+              <button
+                className={detailActive === section.id ? "is-active" : ""}
+                data-cursor="button"
+                key={section.id}
+                type="button"
+                onClick={function handleClick() {
+                  scrollToSection(section.id);
+                }}
+              >
+                <span>{section.number}</span>
+                <i />
+                <strong>{section.label}</strong>
+              </button>
+            );
+          })}
+        </aside>
 
-      <div className="detail-content-grid">
-        <Reveal className="detail-panel problem-panel">
-          <p className="eyebrow">Overview</p>
-          <h3>코드로 문제를 해결합니다.</h3>
-          <p>
-            실제 프로젝트 흐름에서 필요한 데이터, 인터랙션, API 연결, 실시간 상태를
-            한 화면에서 이해할 수 있도록 구조화했습니다.
-          </p>
-          <div className="metric-grid">
-            {["2,300+ users", "150+ contents", "10,000+ views", "AWS deploy"].map(function renderMetric(metric) {
-              return <strong key={metric}>{metric}</strong>;
-            })}
-          </div>
-        </Reveal>
+        <div className="detail-story">
+          <Reveal className="detail-panel detail-story-section" id="detail-overview">
+            <p className="eyebrow">01 Overview</p>
+            <h3>Build the product as a connected system.</h3>
+            <p>
+              {activeProject.title} is presented as a full product flow: frontend UI,
+              backend API, realtime data, deployment context, and interaction design.
+              The goal is to show how the project was structured, not just what it looks like.
+            </p>
+            <div className="metric-grid">
+              {["2,300+ users", "150+ contents", "10,000+ views", "AWS deploy"].map(function renderMetric(metric) {
+                return <strong key={metric}>{metric}</strong>;
+              })}
+            </div>
+          </Reveal>
 
-        <Reveal className="detail-panel" delay={100}>
-          <p className="eyebrow">Problem → Solution</p>
-          <div className="problem-solution">
-            {[
-              ["Information Overload", "Unified Discovery"],
-              ["Poor Planning Tools", "Smart Schedule"],
-              ["Scattered Updates", "Live Updates"]
-            ].map(function renderPair(pair) {
-              return (
-                <article key={pair[0]}>
-                  <span>{pair[0]}</span>
-                  <i />
-                  <strong>{pair[1]}</strong>
-                </article>
-              );
-            })}
-          </div>
-        </Reveal>
+          <Reveal className="detail-panel detail-story-section" delay={80} id="detail-problem">
+            <p className="eyebrow">02 Problem</p>
+            <div className="issue-grid">
+              {["Information overload", "Poor planning tools", "Low engagement", "Scattered updates"].map(function renderIssue(issue) {
+                return (
+                  <article data-cursor="card" key={issue}>
+                    <span>Problem</span>
+                    <strong>{issue}</strong>
+                    <p>Users need a clearer path from discovery to action.</p>
+                  </article>
+                );
+              })}
+            </div>
+          </Reveal>
 
-        <Reveal className="detail-panel code-panel" delay={180}>
-          <p className="eyebrow">Code</p>
-          <CodeTabs />
-        </Reveal>
+          <Reveal className="detail-panel detail-story-section" delay={100} id="detail-solution">
+            <p className="eyebrow">03 Solution</p>
+            <div className="problem-solution">
+              {[
+                ["Information overload", "Unified discovery"],
+                ["Poor planning tools", "Smart schedule"],
+                ["Scattered updates", "Realtime status"]
+              ].map(function renderPair(pair) {
+                return (
+                  <article data-cursor="card" key={pair[0]}>
+                    <span>{pair[0]}</span>
+                    <i />
+                    <strong>{pair[1]}</strong>
+                  </article>
+                );
+              })}
+            </div>
+          </Reveal>
 
-        <Reveal className="detail-panel" delay={220}>
-          <p className="eyebrow">UI Flow</p>
-          <div className="flow-stepper">
-            {["Onboarding", "Select Interests", "AI Recommendations", "Build Schedule", "Explore Map", "Earn Rewards"].map(function renderStep(step, index) {
-              return (
-                <button className={index === 2 ? "is-active" : ""} key={step} type="button">
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  {step}
-                </button>
-              );
-            })}
-          </div>
-        </Reveal>
+          <Reveal className="detail-panel detail-story-section" delay={120} id="detail-role">
+            <p className="eyebrow">04 My Role</p>
+            <div className="role-card-grid">
+              {[
+                ["Frontend Development", "Built responsive pages, API data rendering, and interaction states."],
+                ["Backend API", "Designed controller/service boundaries and reliable response DTOs."],
+                ["Database Modeling", "Structured data for logs, saved content, and statistics."],
+                ["Game System Design", "Connected player control, interaction, quest, inventory, and physics logic."],
+                ["Deployment", "Handled release checks, uptime, and production edge cases."]
+              ].map(function renderRole(role) {
+                return (
+                  <article data-cursor="card" key={role[0]}>
+                    <strong>{role[0]}</strong>
+                    <p>{role[1]}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </Reveal>
+
+          <Reveal className="detail-panel detail-story-section code-panel" delay={140} id="detail-code">
+            <p className="eyebrow">05 Code</p>
+            <h3>Full-stack and game logic in one case study.</h3>
+            <CodeTabs />
+          </Reveal>
+
+          <Reveal className="detail-panel detail-story-section" delay={160} id="detail-features">
+            <p className="eyebrow">06 Features</p>
+            <div className="feature-grid">
+              {["AI Recommendations", "Smart Schedule", "Live Updates", "Rewards & Badges", "Map Discovery", "Game Interaction"].map(function renderFeature(feature) {
+                return (
+                  <article data-cursor="card" key={feature}>
+                    <i />
+                    <strong>{feature}</strong>
+                    <p>Hover states and clear feedback make the feature feel responsive.</p>
+                  </article>
+                );
+              })}
+            </div>
+          </Reveal>
+
+          <Reveal className="detail-panel detail-story-section" delay={180} id="detail-flow">
+            <p className="eyebrow">07 UI Flow</p>
+            <div className="flow-stepper">
+              {flowSteps.map(function renderStep(step, index) {
+                return (
+                  <button
+                    className={activeFlow === index ? "is-active" : ""}
+                    data-cursor="button"
+                    key={step[1]}
+                    type="button"
+                    onClick={function handleFlowClick() {
+                      setActiveFlow(index);
+                    }}
+                  >
+                    <span>{step[0]}</span>
+                    {step[1]}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flow-description">
+              <strong>{flowSteps[activeFlow][1]}</strong>
+              <p>{flowSteps[activeFlow][2]}</p>
+            </div>
+          </Reveal>
+
+          <Reveal className="detail-panel detail-story-section" delay={200} id="detail-results">
+            <p className="eyebrow">08 Results</p>
+            <div className="result-grid">
+              {[
+                ["12.3K+", "tracked actions"],
+                ["47.2%", "completion lift"],
+                ["3m 18s", "avg session"],
+                ["4.8 / 5", "rating"]
+              ].map(function renderResult(result) {
+                return (
+                  <article data-cursor="card" key={result[0]}>
+                    <strong>{result[0]}</strong>
+                    <span>{result[1]}</span>
+                    <i />
+                  </article>
+                );
+              })}
+            </div>
+          </Reveal>
+
+          <Reveal className="detail-panel detail-story-section" delay={220} id="detail-learned">
+            <p className="eyebrow">09 What I Learned</p>
+            <div className="learning-grid">
+              {[
+                "A strong product demo needs visible system thinking, not only screenshots.",
+                "Realtime feedback and motion should clarify state instead of adding noise.",
+                "Game interaction work improves how I think about web micro-interactions.",
+                "Backend reliability shapes frontend trust more than users directly notice."
+              ].map(function renderLearning(item) {
+                return <article data-cursor="card" key={item}>{item}</article>;
+              })}
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
@@ -882,6 +1110,9 @@ function ProjectDetailSection(props) {
 function SubProjectsSection() {
   const [filter, setFilter] = useState("All");
   const filters = ["All", "Web", "Game", "Tool", "Experiment"];
+  const visibleSubProjects = subProjects.filter(function filterSubProject(item) {
+    return filter === "All" || item[3] === filter;
+  });
 
   return (
     <section className="portfolio-section sub-projects-section" id="sub-projects">
@@ -896,6 +1127,7 @@ function SubProjectsSection() {
             return (
               <button
                 className={filter === item ? "filter-button is-active" : "filter-button"}
+                data-cursor="button"
                 key={item}
                 type="button"
                 onClick={function handleClick() {
@@ -910,16 +1142,16 @@ function SubProjectsSection() {
       </div>
 
       <div className="sub-project-grid">
-        {subProjects.map(function renderProject(item, index) {
+        {visibleSubProjects.map(function renderProject(item, index) {
           return (
-            <Reveal className="sub-project-card" delay={index * 45} key={item[0]}>
+            <Reveal className="sub-project-card" data-cursor="card" delay={index * 45} key={item[0]}>
               <i>{String(index + 1).padStart(2, "0")}</i>
               <div>
                 <strong>{item[0]}</strong>
                 <p>{item[1]}</p>
                 <span>{item[2]}</span>
               </div>
-              <button type="button">→</button>
+              <button data-cursor="button" type="button">→</button>
             </Reveal>
           );
         })}
@@ -928,7 +1160,7 @@ function SubProjectsSection() {
       <Reveal className="micro-grid">
         {["Ripple Effect", "Cursor Blob", "Card Lift", "Loading Skeleton", "Joystick Widget"].map(function renderMicro(title) {
           return (
-            <article className="micro-card" key={title}>
+            <article className="micro-card" data-cursor="card" key={title}>
               <div className="micro-visual" />
               <strong>{title}</strong>
               <span>micro interaction</span>
@@ -961,6 +1193,8 @@ function ContactSection() {
           <div className="terminal-card">
             <span>$ whoami</span>
             <strong>&gt; jaehoon.dev</strong>
+            <span>$ role</span>
+            <strong>&gt; full-stack & game developer</strong>
             <span>$ status</span>
             <strong className="is-green">&gt; available for work</strong>
           </div>
@@ -973,7 +1207,7 @@ function ContactSection() {
             ["LinkedIn", "linkedin.com/in/jaehoon-dev"]
           ].map(function renderLink(link) {
             return (
-              <a href={link[0] === "Email" ? "mailto:jaehoon.dev@gmail.com" : "https://" + link[1]} key={link[0]} rel="noopener noreferrer" target={link[0] === "Email" ? undefined : "_blank"}>
+              <a data-cursor="card" href={link[0] === "Email" ? "mailto:jaehoon.dev@gmail.com" : "https://" + link[1]} key={link[0]} rel="noopener noreferrer" target={link[0] === "Email" ? undefined : "_blank"}>
                 <i>{link[0].slice(0, 2)}</i>
                 <span>{link[0]}</span>
                 <strong>{link[1]}</strong>
@@ -995,7 +1229,7 @@ function ContactSection() {
             <span>Message</span>
             <textarea placeholder="메시지를 입력하세요" rows="5" />
           </label>
-          <button type="submit">
+          <button data-cursor="button" type="submit">
             {status === "sending" ? "Sending..." : status === "sent" ? "Sent!" : "Send message"} →
           </button>
         </Reveal>
@@ -1010,6 +1244,7 @@ function PortfolioApp() {
   const [darkMode, setDarkMode] = useState(false);
   const [activeProject, setActiveProject] = useState(projects[0]);
   const [selectedSkill, setSelectedSkill] = useState("");
+  const [cursorVariant, setCursorVariant] = useState("default");
 
   useEffect(function applyTheme() {
     document.body.classList.toggle("portfolio-dark", darkMode);
@@ -1018,9 +1253,36 @@ function PortfolioApp() {
     };
   }, [darkMode]);
 
+  useEffect(function watchCursorTargets() {
+    function handlePointerOver(event) {
+      const target = event.target.closest("[data-cursor]");
+
+      if (target) {
+        setCursorVariant(target.getAttribute("data-cursor") || "default");
+      }
+    }
+
+    function handlePointerOut(event) {
+      const target = event.target.closest("[data-cursor]");
+      const nextTarget = event.relatedTarget;
+
+      if (target && (!nextTarget || !target.contains(nextTarget))) {
+        setCursorVariant("default");
+      }
+    }
+
+    document.addEventListener("pointerover", handlePointerOver);
+    document.addEventListener("pointerout", handlePointerOut);
+
+    return function cleanup() {
+      document.removeEventListener("pointerover", handlePointerOver);
+      document.removeEventListener("pointerout", handlePointerOut);
+    };
+  }, []);
+
   return (
     <div className="interactive-portfolio">
-      <CursorGlow pointer={pointer} />
+      <CursorGlow pointer={pointer} variant={cursorVariant} />
       <TopNav
         activeId={activeId}
         darkMode={darkMode}
