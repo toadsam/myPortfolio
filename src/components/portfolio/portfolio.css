@@ -782,33 +782,87 @@ main {
 }
 
 .section-grid.is-skills {
-  grid-template-columns: minmax(260px, 0.58fr) minmax(520px, 1.42fr);
+  grid-template-columns: minmax(260px, 0.5fr) minmax(620px, 1.5fr);
+  align-items: start;
+  min-height: auto;
 }
 
-.section-copy small {
-  display: inline-block;
-  margin-top: 3rem;
-  color: var(--muted);
+.skill-copy {
+  position: sticky;
+  top: 116px;
+}
+
+.skill-focus-card {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 2rem;
+  padding: 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--skill-accent) 12%, transparent), transparent 58%),
+    var(--card);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(24px);
+}
+
+.skill-focus-card > span {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--skill-accent) 18%, transparent);
+  color: var(--skill-accent);
   font-family: var(--mono);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.skill-focus-card strong {
+  font-size: 1.05rem;
+}
+
+.skill-focus-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.65;
+}
+
+.skill-focus-card button {
+  justify-self: start;
+  min-height: 38px;
+  margin-top: 0.5rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card-strong);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 700;
   text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
 }
 
-.skill-lanes {
+.skill-focus-card button:hover {
+  border-color: var(--skill-accent);
+  color: var(--skill-accent);
+  transform: translateY(-2px);
+}
+
+.skill-board {
   display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr);
   gap: 1rem;
+  width: 100%;
 }
 
-.skill-lane {
-  display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
-  align-items: stretch;
-  gap: 1rem;
-}
-
-.skill-lane__label,
-.skill-row,
-.architecture-card,
+.skill-visual-card,
+.skill-lane,
+.skill-pipeline-card,
 .detail-panel,
 .sub-project-card,
 .micro-card,
@@ -822,12 +876,374 @@ main {
   backdrop-filter: blur(24px);
 }
 
-.skill-lane__label {
+.skill-visual-card {
+  position: sticky;
+  top: 116px;
+  display: grid;
+  align-content: space-between;
+  min-height: 520px;
+  padding: 1rem;
+  overflow: hidden;
+}
+
+.skill-visual-card::before {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 74% 14%, color-mix(in srgb, var(--skill-accent) 24%, transparent), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent);
+  content: "";
+  pointer-events: none;
+}
+
+.skill-visual-card__head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.skill-visual-card__head span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.skill-visual-card__head strong {
+  color: var(--skill-accent);
+  font-size: 0.98rem;
+}
+
+.skill-scene {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-height: 340px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.28)),
+    radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--skill-accent) 16%, transparent), transparent 48%);
+}
+
+body.portfolio-dark .skill-scene {
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+    radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--skill-accent) 20%, transparent), transparent 48%);
+}
+
+.skill-scene::before {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(18, 24, 21, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18, 24, 21, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+  content: "";
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.ui-shell,
+.scene-window,
+.db-table,
+.cache-card,
+.game-mini-map,
+.tool-step {
+  position: relative;
+  z-index: 1;
+  border: 1px solid var(--line);
+  background: var(--card-strong);
+  box-shadow: 0 24px 70px rgba(19, 31, 24, 0.12);
+}
+
+.ui-shell {
+  display: grid;
+  gap: 1rem;
+  width: min(280px, 86%);
+  padding: 1rem;
+  border-radius: 22px;
+  transform: rotate(-2deg);
+}
+
+.ui-hero {
+  height: 80px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--skill-accent), rgba(18, 30, 24, 0.88));
+}
+
+.ui-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+}
+
+.ui-grid span {
+  height: 54px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--skill-accent) 16%, transparent);
+}
+
+.ui-floating-card {
+  position: absolute;
+  right: 10%;
+  bottom: 14%;
+  z-index: 2;
+  display: grid;
+  gap: 0.22rem;
+  min-width: 172px;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card-strong);
+  box-shadow: var(--shadow);
+  animation: float-card 4.5s ease-in-out infinite;
+}
+
+.ui-floating-card span,
+.api-route span,
+.cache-card span,
+.game-readout span,
+.tool-step span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  text-transform: uppercase;
+}
+
+.ui-floating-card strong,
+.game-readout strong,
+.cache-card strong,
+.tool-step strong {
+  font-size: 0.86rem;
+}
+
+.scene-window {
+  display: grid;
+  gap: 0.7rem;
+  width: min(320px, 88%);
+  padding: 1rem;
+  border-radius: 22px;
+}
+
+.api-route {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  align-items: center;
+  gap: 0.8rem;
+  min-height: 48px;
+  padding: 0 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.api-route.is-live {
+  border-color: color-mix(in srgb, var(--skill-accent) 45%, var(--line));
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--skill-accent) 10%, transparent);
+}
+
+.scene-pulse {
+  position: absolute;
+  right: 18%;
+  bottom: 22%;
+  z-index: 0;
+  width: 120px;
+  height: 120px;
+  border: 1px solid var(--skill-accent);
+  border-radius: 50%;
+  opacity: 0.35;
+  animation: skill-pulse 2.4s ease-in-out infinite;
+}
+
+.skill-scene--database {
+  grid-template-columns: 1fr 72px 1fr;
+  padding: 1.2rem;
+}
+
+.db-table {
+  display: grid;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 18px;
+}
+
+.db-table strong {
+  color: var(--skill-accent);
+  font-size: 0.92rem;
+}
+
+.db-table span {
+  padding: 0.48rem 0.6rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--skill-accent) 10%, transparent);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.7rem;
+}
+
+.db-link {
+  position: relative;
+  z-index: 1;
+  height: 2px;
+  background: linear-gradient(90deg, var(--skill-accent), transparent);
+}
+
+.cache-card {
+  display: grid;
+  gap: 0.4rem;
+  padding: 1rem;
+  border-radius: 18px;
+}
+
+.game-mini-map {
+  width: min(320px, 88%);
+  aspect-ratio: 1.4;
+  overflow: hidden;
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(28, 39, 34, 0.9), rgba(18, 26, 48, 0.72)),
+    radial-gradient(circle at 82% 25%, var(--skill-accent), transparent 28%);
+}
+
+.game-mini-map::before,
+.game-mini-map::after {
+  position: absolute;
+  content: "";
+}
+
+.game-mini-map::before {
+  right: 16%;
+  bottom: 18%;
+  left: 14%;
+  height: 36%;
+  border-radius: 18px 18px 0 0;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--skill-accent) 62%, #ffffff), rgba(255, 255, 255, 0.08));
+  transform: skewX(-12deg);
+}
+
+.game-mini-map::after {
+  inset: 18% 13% auto auto;
+  width: 56px;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 22px 0 rgba(255, 255, 255, 0.48), 0 44px 0 rgba(255, 255, 255, 0.38);
+}
+
+.mini-player,
+.mini-target {
+  position: absolute;
+  z-index: 2;
+  border-radius: 50%;
+}
+
+.mini-player {
+  left: 23%;
+  bottom: 28%;
+  width: 30px;
+  height: 30px;
+  background: var(--skill-accent);
+  box-shadow: 0 0 0 10px color-mix(in srgb, var(--skill-accent) 18%, transparent);
+}
+
+.mini-target {
+  right: 24%;
+  top: 26%;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #fff;
+}
+
+.game-mini-map i {
+  position: absolute;
+  left: 28%;
+  top: 37%;
+  z-index: 1;
+  width: 44%;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, #fff 0 8px, transparent 8px 16px);
+  opacity: 0.42;
+  transform: rotate(-18deg);
+}
+
+.game-readout {
+  position: absolute;
+  right: 9%;
+  bottom: 10%;
+  z-index: 3;
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card-strong);
+  box-shadow: var(--shadow);
+}
+
+.skill-scene--tools {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding: 1.2rem;
+}
+
+.tool-step {
   display: grid;
   align-content: center;
-  gap: 0.3rem;
-  min-height: 86px;
+  gap: 0.35rem;
+  min-height: 150px;
+  padding: 0.9rem;
+  border-radius: 18px;
+}
+
+.tool-step:nth-child(even) {
+  transform: translateY(24px);
+}
+
+.skill-preview-list {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.skill-preview-list span {
+  padding: 0.46rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card-strong);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+}
+
+.skill-lane {
+  display: grid;
+  gap: 0.8rem;
   padding: 1rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.skill-lane:hover,
+.skill-lane.is-active {
+  border-color: color-mix(in srgb, var(--skill-accent) 48%, var(--line));
+  box-shadow: var(--shadow), 0 0 60px color-mix(in srgb, var(--skill-accent) 16%, transparent);
+  transform: translateY(-3px);
+}
+
+.skill-lane__label {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
 }
 
 .skill-lane__label i {
@@ -836,8 +1252,8 @@ main {
   width: 34px;
   height: 34px;
   border-radius: 12px;
-  background: var(--green-soft);
-  color: var(--green);
+  background: color-mix(in srgb, var(--skill-accent) 16%, transparent);
+  color: var(--skill-accent);
   font-family: var(--mono);
   font-size: 0.7rem;
   font-style: normal;
@@ -845,6 +1261,7 @@ main {
 }
 
 .skill-lane__label strong {
+  display: block;
   font-size: 0.92rem;
 }
 
@@ -857,9 +1274,8 @@ main {
 .skill-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  min-height: 86px;
-  padding: 0.9rem;
+  flex-wrap: wrap;
+  gap: 0.55rem;
 }
 
 .skill-chip {
@@ -868,7 +1284,7 @@ main {
   gap: 0.55rem;
   min-height: 44px;
   padding: 0 0.9rem;
-  border: 1px solid transparent;
+  border: 1px solid var(--line);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.62);
   color: var(--text);
@@ -886,69 +1302,90 @@ body.portfolio-dark .skill-chip {
   width: 24px;
   height: 24px;
   border-radius: 8px;
-  background: var(--green-soft);
-  color: var(--green);
+  background: color-mix(in srgb, var(--skill-accent) 14%, transparent);
+  color: var(--skill-accent);
   font-family: var(--mono);
   font-size: 0.62rem;
   font-weight: 700;
 }
 
-.skill-chip:hover {
-  border-color: var(--line-strong);
-  box-shadow: 0 16px 45px rgba(47, 189, 95, 0.16);
+.skill-chip:hover,
+.skill-chip.is-active {
+  border-color: color-mix(in srgb, var(--skill-accent) 55%, var(--line));
+  box-shadow: 0 16px 45px color-mix(in srgb, var(--skill-accent) 16%, transparent);
+  color: var(--skill-accent);
   transform: translateY(-4px);
 }
 
-.architecture-card {
+.skill-pipeline-card {
   display: grid;
   grid-template-columns: minmax(240px, 0.8fr) minmax(360px, 1.2fr);
+  align-items: center;
   gap: 2rem;
   width: min(1050px, 100%);
   margin: 3rem auto 0;
   padding: 1.4rem;
+  overflow: hidden;
 }
 
-.architecture-card h3 {
+.skill-pipeline-card h3 {
   margin: 0;
   font-size: clamp(1.4rem, 2.4vw, 2rem);
   letter-spacing: -0.04em;
 }
 
-.architecture-card p {
+.skill-pipeline-card p {
   color: var(--muted);
   line-height: 1.7;
 }
 
-.architecture-map {
+.skill-project-strip {
   position: relative;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
 }
 
-.architecture-map::before {
+.skill-project-strip::before {
   position: absolute;
   top: 50%;
-  right: 6%;
-  left: 6%;
+  right: 0;
+  left: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  background: linear-gradient(90deg, transparent, var(--skill-accent), transparent);
   content: "";
+  opacity: 0.45;
 }
 
-.architecture-map button {
+.skill-project-strip button {
   position: relative;
   z-index: 1;
-  min-height: 72px;
+  display: grid;
+  gap: 0.35rem;
+  min-width: 170px;
+  min-height: 78px;
+  padding: 0.9rem 1rem;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--card-strong);
   cursor: pointer;
+  text-align: left;
   transition: border-color 0.25s ease, transform 0.25s ease;
 }
 
-.architecture-map button:hover {
-  border-color: var(--line-strong);
+.skill-project-strip button span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.64rem;
+  text-transform: uppercase;
+}
+
+.skill-project-strip button strong {
+  font-size: 0.9rem;
+}
+
+.skill-project-strip button:hover {
+  border-color: var(--skill-accent);
   transform: translateY(-4px);
 }
 
@@ -2063,6 +2500,18 @@ body.portfolio-dark .contact-form textarea {
   }
 }
 
+@keyframes skill-pulse {
+  0%,
+  100% {
+    opacity: 0.12;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.38;
+    transform: scale(1.16);
+  }
+}
+
 @keyframes terminal-type {
   from {
     opacity: 0;
@@ -2080,8 +2529,21 @@ body.portfolio-dark .contact-form textarea {
   .detail-hero,
   .detail-scroll-layout,
   .contact-grid,
-  .architecture-card {
+  .skill-pipeline-card {
     grid-template-columns: 1fr;
+  }
+
+  .skill-copy,
+  .skill-visual-card {
+    position: static;
+  }
+
+  .skill-board {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-visual-card {
+    min-height: 440px;
   }
 
   .detail-side-nav {
@@ -2190,12 +2652,56 @@ body.portfolio-dark .contact-form textarea {
     display: none;
   }
 
-  .skill-lane {
+  .skill-visual-card {
+    min-height: 390px;
+    padding: 0.85rem;
+  }
+
+  .skill-scene {
+    min-height: 280px;
+  }
+
+  .skill-scene--database,
+  .skill-scene--tools {
     grid-template-columns: 1fr;
   }
 
+  .db-link {
+    width: 2px;
+    height: 40px;
+    justify-self: center;
+    background: linear-gradient(180deg, var(--skill-accent), transparent);
+  }
+
+  .tool-step,
+  .tool-step:nth-child(even) {
+    min-height: 72px;
+    transform: none;
+  }
+
+  .skill-lane {
+    padding: 0.9rem;
+  }
+
+  .skill-lane__label {
+    align-items: flex-start;
+  }
+
   .skill-row {
-    overflow-x: auto;
+    overflow: visible;
+  }
+
+  .skill-chip {
+    flex: 1 1 145px;
+    justify-content: flex-start;
+  }
+
+  .skill-pipeline-card {
+    margin-top: 1.25rem;
+  }
+
+  .skill-project-strip button {
+    flex: 1 1 100%;
   }
 
   .projects-head {

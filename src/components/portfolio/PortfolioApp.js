@@ -14,32 +14,62 @@ const skillGroups = [
   {
     label: "Frontend",
     icon: "FE",
+    scene: "frontend",
+    accent: "#2fbd5f",
     skills: ["React", "TypeScript", "Next.js", "Tailwind CSS"],
-    detail: "Component UI, hooks, state flow, responsive motion"
+    detail: "Component UI, hooks, state flow, responsive motion",
+    summary: "Builds interfaces as reusable systems with clean state and motion.",
+    signal: "UI system",
+    preview: ["Atomic layout", "State sync", "Responsive motion"],
+    related: ["FestFlow", "Portfolio v1", "Dev Blog"]
   },
   {
     label: "Backend",
     icon: "BE",
+    scene: "backend",
+    accent: "#48b9e7",
     skills: ["Spring Boot", "Node.js", "REST API", "Socket.io"],
-    detail: "Service layer, authentication, realtime events, API design"
+    detail: "Service layer, authentication, realtime events, API design",
+    summary: "Shapes product logic into reliable APIs and realtime events.",
+    signal: "API flow",
+    preview: ["Auth guard", "DTO response", "Realtime channel"],
+    related: ["FestFlow", "API Gateway", "Chat Application"]
   },
   {
     label: "Database & Infra",
     icon: "DB",
+    scene: "database",
+    accent: "#f2b84b",
     skills: ["MySQL", "MongoDB", "Redis", "AWS"],
-    detail: "Schema design, caching, deployment, operational debugging"
+    detail: "Schema design, caching, deployment, operational debugging",
+    summary: "Connects data models, cache layers, and deployment paths.",
+    signal: "Data path",
+    preview: ["Schema", "Cache hit", "Deploy"],
+    related: ["FestFlow", "Asset Store", "Weather Dashboard"]
   },
   {
     label: "Game Development",
     icon: "GM",
+    scene: "game",
+    accent: "#5575ff",
     skills: ["Unity", "C#", "Unreal Engine", "Photon"],
-    detail: "Game logic, physics, UI interaction, multiplayer systems"
+    detail: "Game logic, physics, UI interaction, multiplayer systems",
+    summary: "Turns input, physics, feedback, and multiplayer into playable loops.",
+    signal: "Game loop",
+    preview: ["Controller", "Quest trigger", "Network sync"],
+    related: ["RPG: Project Eclipse", "Battle Arena", "Pixel Adventure"]
   },
   {
     label: "Tools & Others",
     icon: "TO",
+    scene: "tools",
+    accent: "#a577ff",
     skills: ["Git", "Docker", "GitHub Actions", "Figma"],
-    detail: "Version control, CI/CD, design handoff, release workflow"
+    detail: "Version control, CI/CD, design handoff, release workflow",
+    summary: "Keeps releases traceable from design handoff to CI checks.",
+    signal: "Release path",
+    preview: ["Branch", "Build", "Ship"],
+    related: ["Portfolio v1", "Dev Blog", "Asset Store"]
   }
 ];
 
@@ -545,63 +575,219 @@ function IntroSection(props) {
   );
 }
 
+function SkillScene(props) {
+  const {group, activeSkill} = props;
+
+  if (group.scene === "backend") {
+    return (
+      <div className="skill-scene skill-scene--backend">
+        <div className="scene-window">
+          <div className="window-dots"><i /><i /><i /></div>
+          <div className="api-route is-live"><span>POST</span><strong>/auth/session</strong></div>
+          <div className="api-route"><span>GET</span><strong>/festival/list</strong></div>
+          <div className="api-route"><span>WS</span><strong>/live/status</strong></div>
+        </div>
+        <div className="scene-pulse" />
+      </div>
+    );
+  }
+
+  if (group.scene === "database") {
+    return (
+      <div className="skill-scene skill-scene--database">
+        <div className="db-table">
+          <strong>festival_log</strong>
+          <span>id</span>
+          <span>user_id</span>
+          <span>created_at</span>
+        </div>
+        <div className="db-link" />
+        <div className="cache-card">
+          <span>Redis</span>
+          <strong>cache hit</strong>
+        </div>
+      </div>
+    );
+  }
+
+  if (group.scene === "game") {
+    return (
+      <div className="skill-scene skill-scene--game">
+        <div className="game-mini-map">
+          <span className="mini-player" />
+          <span className="mini-target" />
+          <i />
+        </div>
+        <div className="game-readout">
+          <strong>{activeSkill}</strong>
+          <span>input - physics - feedback</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (group.scene === "tools") {
+    return (
+      <div className="skill-scene skill-scene--tools">
+        {["Design", "Commit", "CI", "Deploy"].map(function renderStep(step, index) {
+          return (
+            <div className="tool-step" key={step}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <strong>{step}</strong>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  return (
+    <div className="skill-scene skill-scene--frontend">
+      <div className="ui-shell">
+        <div className="window-dots"><i /><i /><i /></div>
+        <div className="ui-hero" />
+        <div className="ui-grid"><span /><span /><span /></div>
+      </div>
+      <div className="ui-floating-card">
+        <span>{activeSkill}</span>
+        <strong>interactive state</strong>
+      </div>
+    </div>
+  );
+}
+
 function SkillsSection(props) {
   const {onSelectSkill} = props;
+  const [activeGroupIndex, setActiveGroupIndex] = useState(0);
+  const [activeSkill, setActiveSkill] = useState(skillGroups[0].skills[0]);
+  const activeGroup = skillGroups[activeGroupIndex];
+  const relatedProjects = projects.filter(function filterRelated(project) {
+    return project.tags.indexOf(activeSkill) >= 0 ||
+      activeGroup.skills.some(function hasSkill(skill) {
+        return project.tags.indexOf(skill) >= 0;
+      }) ||
+      activeGroup.related.indexOf(project.title) >= 0;
+  }).slice(0, 3);
+
+  function selectSkill(group, groupIndex, skill) {
+    setActiveGroupIndex(groupIndex);
+    setActiveSkill(skill);
+    onSelectSkill(skill);
+  }
 
   return (
     <section className="portfolio-section skills-section" id="skills">
       <div className="section-grid is-skills">
-        <Reveal className="section-copy">
+        <Reveal className="section-copy skill-copy">
           <p className="eyebrow">02 Skills</p>
           <h2>My <mark>Skills</mark></h2>
           <p>다양한 기술 스택을 활용해 아이디어를 현실화합니다.</p>
-          <small>[ scroll down ]</small>
+          <div className="skill-focus-card" style={{"--skill-accent": activeGroup.accent}}>
+            <span>{activeGroup.icon}</span>
+            <strong>{activeGroup.label}</strong>
+            <p>{activeGroup.summary}</p>
+            <button
+              data-cursor="button"
+              type="button"
+              onClick={function handleRelatedClick() {
+                onSelectSkill(activeSkill);
+                scrollToSection("projects");
+              }}
+            >
+              View related work
+            </button>
+          </div>
         </Reveal>
 
-        <div className="skill-lanes">
-          {skillGroups.map(function renderGroup(group, groupIndex) {
-            return (
-              <Reveal className="skill-lane" delay={groupIndex * 100} key={group.label}>
-                <div className="skill-lane__label">
-                  <i>{group.icon}</i>
-                  <strong>{group.label}</strong>
-                  <span>{group.detail}</span>
-                </div>
-                <div className="skill-row">
-                  {group.skills.map(function renderSkill(skill, index) {
-                    return (
-                      <button
-                        className="skill-chip"
-                        data-cursor="button"
-                        key={skill}
-                        style={{transitionDelay: groupIndex * 60 + index * 40 + "ms"}}
-                        type="button"
-                        onClick={function handleSkillClick() {
-                          onSelectSkill(skill);
-                          scrollToSection("projects");
-                        }}
-                      >
-                        <span>{skill.slice(0, 2)}</span>
-                        {skill}
-                      </button>
-                    );
-                  })}
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
+        <Reveal className="skill-board" delay={120} style={{"--skill-accent": activeGroup.accent}}>
+          <div className="skill-visual-card" data-cursor="card">
+            <div className="skill-visual-card__head">
+              <span>{activeGroup.signal}</span>
+              <strong>{activeSkill}</strong>
+            </div>
+            <SkillScene group={activeGroup} activeSkill={activeSkill} />
+            <div className="skill-preview-list">
+              {activeGroup.preview.map(function renderPreview(item) {
+                return <span key={item}>{item}</span>;
+              })}
+            </div>
+          </div>
+
+          <div className="skill-map">
+            {skillGroups.map(function renderGroup(group, groupIndex) {
+              const isGroupActive = groupIndex === activeGroupIndex;
+
+              return (
+                <article
+                  className={isGroupActive ? "skill-lane is-active" : "skill-lane"}
+                  key={group.label}
+                  onMouseEnter={function handleGroupHover() {
+                    setActiveGroupIndex(groupIndex);
+                    setActiveSkill(group.skills[0]);
+                    onSelectSkill(group.skills[0]);
+                  }}
+                  style={{"--skill-accent": group.accent}}
+                >
+                  <div className="skill-lane__label">
+                    <i>{group.icon}</i>
+                    <div>
+                      <strong>{group.label}</strong>
+                      <span>{group.detail}</span>
+                    </div>
+                  </div>
+                  <div className="skill-row">
+                    {group.skills.map(function renderSkill(skill, index) {
+                      const isActive = isGroupActive && activeSkill === skill;
+
+                      return (
+                        <button
+                          className={isActive ? "skill-chip is-active" : "skill-chip"}
+                          data-cursor="button"
+                          key={skill}
+                          style={{transitionDelay: groupIndex * 40 + index * 25 + "ms"}}
+                          type="button"
+                          onClick={function handleSkillClick() {
+                            selectSkill(group, groupIndex, skill);
+                          }}
+                          onMouseEnter={function handleSkillHover() {
+                            selectSkill(group, groupIndex, skill);
+                          }}
+                        >
+                          <span>{skill.slice(0, 2)}</span>
+                          {skill}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </Reveal>
       </div>
 
-      <Reveal className="architecture-card">
+      <Reveal className="skill-pipeline-card" style={{"--skill-accent": activeGroup.accent}}>
         <div>
-          <p className="eyebrow">Architecture</p>
-          <h3>Client → API → Service → Database → Realtime</h3>
-          <p>프론트엔드 화면부터 서버, 데이터, 실시간 이벤트까지 하나의 흐름으로 설계합니다.</p>
+          <p className="eyebrow">Skill graph</p>
+          <h3>{activeGroup.label} connects to product output.</h3>
+          <p>{activeGroup.summary}</p>
         </div>
-        <div className="architecture-map">
-          {["Client", "API", "Service", "DB", "Cache", "Game"].map(function renderNode(node) {
-            return <button key={node} type="button">{node}</button>;
+        <div className="skill-project-strip">
+          {(relatedProjects.length ? relatedProjects : projects.slice(0, 3)).map(function renderProject(project) {
+            return (
+              <button
+                data-cursor="button"
+                key={project.id}
+                type="button"
+                onClick={function handleProjectClick() {
+                  onSelectSkill(activeSkill);
+                  scrollToSection("projects");
+                }}
+              >
+                <span>{project.category}</span>
+                <strong>{project.title}</strong>
+              </button>
+            );
           })}
         </div>
       </Reveal>
