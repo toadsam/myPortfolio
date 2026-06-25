@@ -313,7 +313,8 @@ body.portfolio-dark .living-tree-layer {
 }
 
 .living-tree-leaves,
-.living-fireflies {
+.living-fireflies,
+.living-cursor-lights {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -364,9 +365,9 @@ body.portfolio-dark .living-tree-layer {
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 255, 234, 1) 0 18%, rgba(126, 255, 157, 0.96) 28%, rgba(47, 189, 95, 0.42) 58%, transparent 72%);
   box-shadow:
-    0 0 12px rgba(238, 255, 210, 0.98),
-    0 0 32px rgba(47, 189, 95, 0.44),
-    0 0 62px rgba(47, 189, 95, 0.22);
+    0 0 18px rgba(255, 255, 217, 1),
+    0 0 48px rgba(116, 255, 143, 0.56),
+    0 0 96px rgba(47, 189, 95, 0.28);
   opacity: 0;
   transform: translate3d(0, 0, 0) scale(0.7);
   animation: firefly-drift var(--firefly-duration) ease-in-out infinite;
@@ -382,19 +383,103 @@ body.portfolio-dark .living-tree-layer {
 }
 
 .living-firefly::before {
-  inset: -11px;
-  background: radial-gradient(circle, rgba(151, 255, 171, 0.18), transparent 68%);
-  animation: firefly-halo 4.4s ease-in-out infinite;
+  inset: -24px;
+  background: radial-gradient(circle, rgba(232, 255, 201, 0.26), rgba(112, 255, 150, 0.14) 42%, transparent 72%);
+  filter: blur(2px);
+  animation: firefly-halo 4.8s ease-in-out infinite;
 }
 
 .living-firefly::after {
   top: 50%;
   left: 50%;
-  width: 42px;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(141, 255, 164, 0.3), transparent);
-  opacity: 0.28;
+  width: 74px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(219, 255, 176, 0.42), rgba(116, 255, 143, 0.18), transparent);
+  opacity: 0.36;
   transform: translate(-50%, -50%) rotate(-18deg);
+}
+
+.living-cursor-lights {
+  z-index: 6;
+  position: fixed;
+}
+
+.cursor-light-field {
+  position: fixed;
+  top: var(--cursor-light-y);
+  left: var(--cursor-light-x);
+  width: clamp(300px, 31vw, 520px);
+  height: clamp(300px, 31vw, 520px);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(249, 255, 224, 0.24) 0 4%, rgba(126, 255, 157, 0.15) 18%, rgba(47, 189, 95, 0.075) 40%, transparent 72%);
+  filter: blur(10px);
+  opacity: 0.5;
+  transform: translate(-50%, -50%);
+  transition: top 0.74s cubic-bezier(0.16, 1, 0.3, 1), left 0.74s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+  animation: cursor-light-breathe 4.8s ease-in-out infinite;
+}
+
+.cursor-firefly {
+  position: fixed;
+  top: var(--cursor-light-y);
+  left: var(--cursor-light-x);
+  width: var(--cursor-firefly-size);
+  height: var(--cursor-firefly-size);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #fffff0 0 16%, #dfffaa 20% 31%, rgba(127, 255, 143, 0.96) 38%, rgba(47, 189, 95, 0.5) 58%, transparent 76%);
+  box-shadow:
+    0 0 22px rgba(255, 255, 220, 1),
+    0 0 58px rgba(139, 255, 142, 0.82),
+    0 0 148px rgba(47, 189, 95, 0.4);
+  opacity: 0.94;
+  transform: translate(-50%, -50%);
+  transition: top var(--cursor-firefly-follow) cubic-bezier(0.16, 1, 0.3, 1), left var(--cursor-firefly-follow) cubic-bezier(0.16, 1, 0.3, 1);
+  animation: cursor-firefly-orbit var(--cursor-firefly-duration) ease-in-out infinite;
+  animation-delay: var(--cursor-firefly-delay);
+}
+
+.cursor-firefly::before,
+.cursor-firefly::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.cursor-firefly::before {
+  inset: -58px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(249, 255, 214, 0.34), rgba(132, 255, 154, 0.17) 34%, rgba(47, 189, 95, 0.07) 56%, transparent 74%);
+  filter: blur(5px);
+  animation: cursor-firefly-halo 3.8s ease-in-out infinite;
+  animation-delay: var(--cursor-firefly-delay);
+}
+
+.cursor-firefly::after {
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(241, 255, 188, 0.52), rgba(82, 239, 139, 0.16), transparent);
+  opacity: 0.38;
+  filter: blur(0.4px);
+  transform: translate(-50%, -50%) rotate(-22deg);
+  transform-origin: left center;
+}
+
+.living-tree-layer.has-pulse .cursor-light-field {
+  opacity: 0.78;
+  animation-duration: 1.8s;
+}
+
+.living-tree-layer.has-pulse .cursor-firefly {
+  box-shadow:
+    0 0 26px rgba(255, 255, 218, 1),
+    0 0 72px rgba(139, 255, 142, 0.9),
+    0 0 178px rgba(47, 189, 95, 0.48);
 }
 
 body.portfolio-dark .living-tree-wood {
@@ -1498,8 +1583,13 @@ main {
 .skill-area-card:hover,
 .skill-area-card:focus-visible {
   border-color: var(--line-strong);
-  box-shadow: var(--shadow-strong);
+  box-shadow: var(--shadow-strong), 0 0 46px rgba(47, 189, 95, 0.12);
   transform: translateY(-4px);
+}
+
+.skill-area-card:hover::before,
+.skill-area-card:focus-visible::before {
+  opacity: 0.76;
 }
 
 .skill-area-card:hover .skill-area-icon,
@@ -3673,6 +3763,55 @@ body.portfolio-dark .contact-form textarea {
   }
 }
 
+@keyframes cursor-light-breathe {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: translate(-50%, -50%) scale(0.92);
+  }
+
+  50% {
+    opacity: 0.72;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+@keyframes cursor-firefly-orbit {
+  0%,
+  100% {
+    opacity: 0.52;
+    transform: translate(calc(-50% + var(--cursor-orbit-x)), calc(-50% + var(--cursor-orbit-y))) scale(0.78);
+  }
+
+  24% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--cursor-orbit-x-2)), calc(-50% + var(--cursor-orbit-y-2))) scale(1.16);
+  }
+
+  52% {
+    opacity: 0.68;
+    transform: translate(calc(-50% + var(--cursor-orbit-x-3)), calc(-50% + var(--cursor-orbit-y-3))) scale(0.9);
+  }
+
+  78% {
+    opacity: 0.96;
+    transform: translate(calc(-50% + var(--cursor-orbit-x-4)), calc(-50% + var(--cursor-orbit-y-4))) scale(1.04);
+  }
+}
+
+@keyframes cursor-firefly-halo {
+  0%,
+  100% {
+    opacity: 0.32;
+    transform: scale(0.82);
+  }
+
+  45% {
+    opacity: 0.82;
+    transform: scale(1.3);
+  }
+}
+
 @keyframes title-rise {
   from {
     opacity: 0;
@@ -4179,9 +4318,23 @@ body.portfolio-dark .contact-form textarea {
   }
 
   .living-fireflies {
-    opacity: 0.7;
+    opacity: 0.62;
   }
 
+  .living-cursor-lights {
+    opacity: 0.38;
+  }
+
+  .cursor-light-field {
+    width: 240px;
+    height: 240px;
+  }
+
+  .cursor-firefly {
+    opacity: 0.54;
+  }
+
+  .cursor-firefly::after,
   .living-firefly::after {
     display: none;
   }

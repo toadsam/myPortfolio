@@ -54,24 +54,42 @@ const livingTreeLeaves = [
 ];
 
 const livingFireflies = [
-  {id: "fly-01", x: "14%", y: "64%", size: "4px", dx: "56px", dy: "-38px", duration: "14s", delay: "-1s"},
-  {id: "fly-02", x: "21%", y: "44%", size: "3px", dx: "-34px", dy: "-58px", duration: "17s", delay: "-8s"},
-  {id: "fly-03", x: "32%", y: "78%", size: "5px", dx: "72px", dy: "-28px", duration: "18s", delay: "-4s"},
-  {id: "fly-04", x: "42%", y: "36%", size: "3px", dx: "-42px", dy: "34px", duration: "15s", delay: "-11s"},
-  {id: "fly-05", x: "54%", y: "22%", size: "4px", dx: "62px", dy: "46px", duration: "19s", delay: "-6s"},
-  {id: "fly-06", x: "63%", y: "58%", size: "3px", dx: "-54px", dy: "-42px", duration: "13s", delay: "-3s"},
-  {id: "fly-07", x: "71%", y: "19%", size: "5px", dx: "44px", dy: "64px", duration: "20s", delay: "-13s"},
-  {id: "fly-08", x: "83%", y: "41%", size: "4px", dx: "-68px", dy: "30px", duration: "16s", delay: "-7s"},
-  {id: "fly-09", x: "91%", y: "69%", size: "3px", dx: "-48px", dy: "-54px", duration: "18s", delay: "-15s"},
-  {id: "fly-10", x: "49%", y: "88%", size: "4px", dx: "38px", dy: "-72px", duration: "21s", delay: "-10s"},
-  {id: "fly-11", x: "18%", y: "22%", size: "3px", dx: "70px", dy: "32px", duration: "16s", delay: "-5s"},
-  {id: "fly-12", x: "73%", y: "83%", size: "4px", dx: "-76px", dy: "-24px", duration: "22s", delay: "-17s"},
-  {id: "fly-13", x: "38%", y: "18%", size: "3px", dx: "52px", dy: "54px", duration: "15s", delay: "-9s"},
-  {id: "fly-14", x: "58%", y: "72%", size: "5px", dx: "-38px", dy: "-60px", duration: "19s", delay: "-12s"},
-  {id: "fly-15", x: "8%", y: "84%", size: "3px", dx: "66px", dy: "-44px", duration: "17s", delay: "-14s"},
-  {id: "fly-16", x: "94%", y: "23%", size: "4px", dx: "-58px", dy: "52px", duration: "18s", delay: "-2s"},
-  {id: "fly-17", x: "27%", y: "58%", size: "4px", dx: "46px", dy: "-66px", duration: "20s", delay: "-16s"},
-  {id: "fly-18", x: "79%", y: "55%", size: "3px", dx: "-62px", dy: "-34px", duration: "14s", delay: "-6s"}
+  {id: "fly-01", x: "14%", y: "64%", size: "7px", dx: "72px", dy: "-48px", duration: "14s", delay: "-1s"},
+  {id: "fly-02", x: "21%", y: "44%", size: "5px", dx: "-42px", dy: "-66px", duration: "17s", delay: "-8s"},
+  {id: "fly-03", x: "32%", y: "78%", size: "9px", dx: "88px", dy: "-34px", duration: "18s", delay: "-4s"},
+  {id: "fly-04", x: "42%", y: "36%", size: "6px", dx: "-56px", dy: "42px", duration: "15s", delay: "-11s"},
+  {id: "fly-05", x: "54%", y: "22%", size: "8px", dx: "78px", dy: "58px", duration: "19s", delay: "-6s"},
+  {id: "fly-06", x: "63%", y: "58%", size: "5px", dx: "-68px", dy: "-52px", duration: "13s", delay: "-3s"},
+  {id: "fly-07", x: "71%", y: "19%", size: "9px", dx: "54px", dy: "78px", duration: "20s", delay: "-13s"},
+  {id: "fly-08", x: "83%", y: "41%", size: "7px", dx: "-82px", dy: "42px", duration: "16s", delay: "-7s"},
+  {id: "fly-09", x: "91%", y: "69%", size: "5px", dx: "-62px", dy: "-70px", duration: "18s", delay: "-15s"},
+  {id: "fly-10", x: "49%", y: "88%", size: "7px", dx: "48px", dy: "-86px", duration: "21s", delay: "-10s"},
+  {id: "fly-11", x: "18%", y: "22%", size: "5px", dx: "84px", dy: "42px", duration: "16s", delay: "-5s"},
+  {id: "fly-12", x: "73%", y: "83%", size: "7px", dx: "-92px", dy: "-34px", duration: "22s", delay: "-17s"},
+  {id: "fly-13", x: "38%", y: "18%", size: "6px", dx: "66px", dy: "64px", duration: "15s", delay: "-9s"},
+  {id: "fly-14", x: "58%", y: "72%", size: "9px", dx: "-48px", dy: "-74px", duration: "19s", delay: "-12s"},
+  {id: "fly-15", x: "8%", y: "84%", size: "5px", dx: "80px", dy: "-56px", duration: "17s", delay: "-14s"},
+  {id: "fly-16", x: "94%", y: "23%", size: "7px", dx: "-72px", dy: "64px", duration: "18s", delay: "-2s"},
+  {id: "fly-17", x: "27%", y: "58%", size: "7px", dx: "58px", dy: "-80px", duration: "20s", delay: "-16s"},
+  {id: "fly-18", x: "79%", y: "55%", size: "5px", dx: "-74px", dy: "-44px", duration: "14s", delay: "-6s"},
+  {id: "fly-19", x: "11%", y: "39%", size: "8px", dx: "96px", dy: "22px", duration: "23s", delay: "-19s"},
+  {id: "fly-20", x: "25%", y: "82%", size: "6px", dx: "-46px", dy: "-88px", duration: "18s", delay: "-2.8s"},
+  {id: "fly-21", x: "34%", y: "30%", size: "10px", dx: "64px", dy: "-52px", duration: "24s", delay: "-21s"},
+  {id: "fly-22", x: "46%", y: "65%", size: "6px", dx: "-78px", dy: "48px", duration: "16s", delay: "-9.6s"},
+  {id: "fly-23", x: "52%", y: "43%", size: "8px", dx: "94px", dy: "-62px", duration: "21s", delay: "-14.4s"},
+  {id: "fly-24", x: "61%", y: "14%", size: "5px", dx: "-38px", dy: "92px", duration: "18s", delay: "-7.6s"},
+  {id: "fly-25", x: "69%", y: "74%", size: "10px", dx: "52px", dy: "-78px", duration: "25s", delay: "-12.3s"},
+  {id: "fly-26", x: "77%", y: "33%", size: "6px", dx: "-96px", dy: "54px", duration: "19s", delay: "-4.8s"},
+  {id: "fly-27", x: "87%", y: "86%", size: "8px", dx: "-70px", dy: "-82px", duration: "22s", delay: "-16.7s"},
+  {id: "fly-28", x: "96%", y: "52%", size: "5px", dx: "-104px", dy: "18px", duration: "15s", delay: "-6.4s"},
+  {id: "fly-29", x: "6%", y: "18%", size: "7px", dx: "82px", dy: "76px", duration: "20s", delay: "-11.2s"},
+  {id: "fly-30", x: "43%", y: "93%", size: "6px", dx: "74px", dy: "-94px", duration: "24s", delay: "-18.6s"}
+];
+
+const cursorFireflies = [
+  {id: "cursor-fly-01", size: "12px", orbitX: "54px", orbitY: "-42px", orbitX2: "34px", orbitY2: "28px", orbitX3: "-28px", orbitY3: "42px", orbitX4: "-30px", orbitY4: "-24px", delay: "-0.8s", duration: "7.4s", follow: "0.68s"},
+  {id: "cursor-fly-02", size: "9px", orbitX: "-72px", orbitY: "34px", orbitX2: "-26px", orbitY2: "-38px", orbitX3: "42px", orbitY3: "-32px", orbitX4: "22px", orbitY4: "34px", delay: "-3.1s", duration: "9.2s", follow: "1.04s"},
+  {id: "cursor-fly-03", size: "7px", orbitX: "32px", orbitY: "74px", orbitX2: "-54px", orbitY2: "16px", orbitX3: "-18px", orbitY3: "-66px", orbitX4: "48px", orbitY4: "-14px", delay: "-4.7s", duration: "8.4s", follow: "1.32s"}
 ];
 
 const simpleIconBaseUrl = "https://cdn.simpleicons.org/";
@@ -427,6 +445,8 @@ function LivingTreeLayer(props) {
   const focus = skillFocus || sectionFocus;
   const pointerX = pointer ? pointer.x : 0;
   const pointerY = pointer ? pointer.y : 0;
+  const cursorX = pointer && typeof pointer.rawX === "number" ? pointer.rawX : -200;
+  const cursorY = pointer && typeof pointer.rawY === "number" ? pointer.rawY : -200;
   const pulseType = pulse ? pulse.type || "button" : "idle";
 
   return (
@@ -435,6 +455,7 @@ function LivingTreeLayer(props) {
       className={[
         "living-tree-layer",
         "is-" + focus.mode,
+        pulse ? "has-pulse" : "",
         activeId ? "is-section-" + activeId : "",
         skillFocus ? "is-skill-" + activeAreaId : ""
       ].join(" ").trim()}
@@ -443,6 +464,8 @@ function LivingTreeLayer(props) {
         "--tree-y": focus.y + "%",
         "--tree-secondary-x": focus.secondaryX + "%",
         "--tree-secondary-y": focus.secondaryY + "%",
+        "--cursor-light-x": cursorX + "px",
+        "--cursor-light-y": cursorY + "px",
         "--tree-drift-x": pointerX * 18 + "px",
         "--tree-drift-y": pointerY * 18 + "px",
         "--tree-drift-soft-x": pointerX * -10 + "px",
@@ -562,6 +585,31 @@ function LivingTreeLayer(props) {
                 "--firefly-size": firefly.size,
                 "--firefly-x": firefly.x,
                 "--firefly-y": firefly.y
+              }}
+            />
+          );
+        })}
+      </div>
+      <div className="living-cursor-lights">
+        <span className="cursor-light-field" />
+        {cursorFireflies.map(function renderCursorFirefly(firefly) {
+          return (
+            <span
+              className="cursor-firefly"
+              key={firefly.id}
+              style={{
+                "--cursor-firefly-delay": firefly.delay,
+                "--cursor-firefly-duration": firefly.duration,
+                "--cursor-firefly-follow": firefly.follow,
+                "--cursor-firefly-size": firefly.size,
+                "--cursor-orbit-x": firefly.orbitX,
+                "--cursor-orbit-y": firefly.orbitY,
+                "--cursor-orbit-x-2": firefly.orbitX2,
+                "--cursor-orbit-y-2": firefly.orbitY2,
+                "--cursor-orbit-x-3": firefly.orbitX3,
+                "--cursor-orbit-y-3": firefly.orbitY3,
+                "--cursor-orbit-x-4": firefly.orbitX4,
+                "--cursor-orbit-y-4": firefly.orbitY4
               }}
             />
           );
@@ -1797,6 +1845,7 @@ function PortfolioApp() {
   const pointer = usePointer();
   const activeId = useActiveSection();
   const treePulseId = useRef(0);
+  const treePulseTimer = useRef(null);
   const [darkMode, setDarkMode] = useState(false);
   const [activeProject, setActiveProject] = useState(projects[0]);
   const [selectedSkill, setSelectedSkill] = useState("");
@@ -1857,12 +1906,21 @@ function PortfolioApp() {
         y: event.clientY,
         type: target.getAttribute("data-cursor") || "button"
       });
+      if (treePulseTimer.current) {
+        window.clearTimeout(treePulseTimer.current);
+      }
+      treePulseTimer.current = window.setTimeout(function clearTreePulse() {
+        setTreePulse(null);
+      }, 1400);
     }
 
     document.addEventListener("pointerdown", handlePointerDown, true);
 
     return function cleanup() {
       document.removeEventListener("pointerdown", handlePointerDown, true);
+      if (treePulseTimer.current) {
+        window.clearTimeout(treePulseTimer.current);
+      }
     };
   }, []);
 
