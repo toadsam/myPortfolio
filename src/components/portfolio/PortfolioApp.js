@@ -705,6 +705,7 @@ function SkillLinkedRow(props) {
               key={name}
               style={{
                 "--tag-color": item.color || "var(--green)",
+                "--pulse-delay": index * 0.34 + "s",
                 transitionDelay: index * 50 + "ms"
               }}
               title={item.tooltip || name}
@@ -924,7 +925,10 @@ function SkillsSection(props) {
                   className="skill-project-card"
                   data-cursor="button"
                   key={project}
-                  style={{transitionDelay: index * 80 + "ms"}}
+                  style={{
+                    "--project-pulse-delay": index * 0.28 + "s",
+                    transitionDelay: index * 80 + "ms"
+                  }}
                   type="button"
                   onClick={goToRelatedProjects}
                 >
