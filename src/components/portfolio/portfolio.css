@@ -94,6 +94,247 @@ mark {
   pointer-events: none;
 }
 
+.living-tree-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.82;
+  transition: opacity 0.45s ease;
+  --tree-sap: rgba(47, 189, 95, 0.36);
+  --tree-sap-strong: rgba(92, 223, 132, 0.58);
+  --tree-warm: rgba(188, 143, 74, 0.1);
+}
+
+.living-tree-layer::before,
+.living-tree-layer::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.living-tree-layer::before {
+  inset: -18% -10% -12%;
+  background:
+    linear-gradient(116deg, transparent 0 18%, rgba(47, 189, 95, 0.055) 18.3% 18.8%, transparent 19.2% 100%),
+    linear-gradient(64deg, transparent 0 46%, rgba(173, 222, 185, 0.07) 46.2% 46.8%, transparent 47.2% 100%),
+    repeating-linear-gradient(92deg, transparent 0 72px, rgba(47, 189, 95, 0.036) 73px 74px, transparent 75px 148px);
+  filter: blur(0.2px);
+  mask-image: radial-gradient(ellipse at var(--tree-x) var(--tree-y), black 0 30%, transparent 72%);
+  opacity: 0.72;
+  transform: translate3d(var(--tree-drift-soft-x), var(--tree-drift-soft-y), 0);
+  animation: tree-canopy-breathe 16s ease-in-out infinite;
+}
+
+.living-tree-layer::after {
+  right: -8%;
+  bottom: -18%;
+  left: -8%;
+  height: 48vh;
+  background:
+    linear-gradient(5deg, rgba(47, 189, 95, 0.09), transparent 64%),
+    repeating-linear-gradient(168deg, transparent 0 34px, rgba(110, 92, 57, 0.075) 35px 36px, transparent 37px 76px);
+  mask-image: linear-gradient(0deg, black 0 48%, transparent 92%);
+  opacity: 0.52;
+  transform: translate3d(calc(var(--tree-drift-x) * -0.45), 0, 0);
+  animation: tree-root-breathe 19s ease-in-out infinite;
+}
+
+body.portfolio-dark .living-tree-layer {
+  opacity: 0.9;
+  --tree-sap: rgba(82, 239, 139, 0.3);
+  --tree-sap-strong: rgba(126, 255, 174, 0.54);
+  --tree-warm: rgba(255, 196, 111, 0.06);
+}
+
+.living-tree-veins {
+  position: absolute;
+  inset: -2% 0 0;
+  width: 100%;
+  height: 106%;
+  filter: drop-shadow(0 0 16px rgba(47, 189, 95, 0.13));
+  opacity: 0.56;
+  transform: translate3d(calc(var(--tree-drift-x) * 0.32), calc(var(--tree-drift-y) * 0.24), 0);
+  transition: transform 0.28s ease-out, opacity 0.45s ease;
+}
+
+.living-tree-path {
+  fill: none;
+  stroke: url("#living-tree-sap");
+  stroke-dasharray: 18 24;
+  stroke-linecap: round;
+  stroke-width: 0.2;
+  vector-effect: non-scaling-stroke;
+  animation: tree-sap-flow 18s linear infinite, tree-vein-breathe 9s ease-in-out infinite;
+}
+
+.living-tree-path--main {
+  stroke-width: 0.28;
+  animation-duration: 15s, 8.8s;
+}
+
+.living-tree-path--branch-a {
+  stroke-dasharray: 12 22;
+  animation-delay: -3s, -1s;
+}
+
+.living-tree-path--branch-b {
+  stroke-dasharray: 10 24;
+  animation-delay: -7s, -3s;
+}
+
+.living-tree-path--root-a {
+  stroke-dasharray: 16 30;
+  animation-delay: -10s, -5s;
+}
+
+.living-tree-path--root-b {
+  stroke-dasharray: 9 26;
+  animation-delay: -13s, -6s;
+}
+
+.living-tree-fiber {
+  position: absolute;
+  width: clamp(360px, 43vw, 760px);
+  height: clamp(220px, 32vw, 500px);
+  border-radius: 56% 44% 48% 52%;
+  background:
+    conic-gradient(from 122deg at 42% 48%, transparent, rgba(47, 189, 95, 0.12), transparent 42%),
+    linear-gradient(96deg, transparent 8%, rgba(47, 189, 95, 0.11) 31%, rgba(171, 223, 182, 0.08) 56%, transparent 82%);
+  filter: blur(24px);
+  mix-blend-mode: multiply;
+  opacity: 0.48;
+  transform: translate3d(-50%, -50%, 0);
+  transition: left 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.45s ease;
+  animation: tree-fiber-breathe 12s ease-in-out infinite;
+}
+
+.living-tree-fiber--primary {
+  top: var(--tree-y);
+  left: var(--tree-x);
+}
+
+.living-tree-fiber--secondary {
+  top: var(--tree-secondary-y);
+  left: var(--tree-secondary-x);
+  width: clamp(260px, 31vw, 560px);
+  height: clamp(160px, 24vw, 360px);
+  opacity: 0.34;
+  transform: translate3d(-50%, -50%, 0) rotate(-14deg);
+  animation-delay: -5s;
+}
+
+body.portfolio-dark .living-tree-fiber {
+  mix-blend-mode: screen;
+}
+
+.living-tree-core {
+  position: absolute;
+  top: var(--tree-y);
+  left: var(--tree-x);
+  width: clamp(330px, 36vw, 690px);
+  height: clamp(210px, 27vw, 470px);
+  border-radius: 48% 52% 58% 42%;
+  background:
+    radial-gradient(ellipse at 38% 45%, rgba(84, 235, 137, 0.28), transparent 50%),
+    linear-gradient(122deg, transparent 8%, rgba(244, 255, 239, 0.32) 34%, rgba(47, 189, 95, 0.16) 54%, transparent 76%);
+  filter: blur(18px);
+  opacity: 0.5;
+  transform: translate3d(calc(-50% + var(--tree-drift-x)), calc(-50% + var(--tree-drift-y)), 0) rotate(-3deg);
+  transition: left 0.68s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.68s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.36s ease;
+  animation: tree-core-breathe 10.8s ease-in-out infinite;
+}
+
+.living-tree-understory {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 86px;
+  height: 42vh;
+  background:
+    linear-gradient(0deg, rgba(47, 189, 95, 0.08), transparent 72%),
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  mask-image: linear-gradient(0deg, black, transparent 82%);
+  opacity: 0.48;
+  transform: translate3d(0, var(--tree-drift-soft-y), 0);
+  animation: tree-understory-breathe 14s ease-in-out infinite;
+}
+
+.living-tree-layer.is-root .living-tree-veins,
+.living-tree-layer.is-xylem .living-tree-veins {
+  opacity: 0.66;
+}
+
+.living-tree-layer.is-canopy .living-tree-core,
+.living-tree-layer.is-leaf .living-tree-core {
+  opacity: 0.62;
+}
+
+.living-tree-layer.is-spark .living-tree-path {
+  stroke-dasharray: 9 18;
+  animation-duration: 11s, 7s;
+}
+
+.living-tree-pulse {
+  position: fixed;
+  top: var(--pulse-y);
+  left: var(--pulse-x);
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(47, 189, 95, 0.78);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(47, 189, 95, 0.2), 0 0 34px rgba(47, 189, 95, 0.36);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.45);
+  animation: tree-click-pulse 1.2s ease-out forwards;
+  --pulse-angle: -18deg;
+  --pulse-length: 168px;
+}
+
+.living-tree-pulse::before,
+.living-tree-pulse::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.living-tree-pulse::before {
+  top: 50%;
+  left: 50%;
+  width: var(--pulse-length);
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(47, 189, 95, 0.82), rgba(191, 255, 211, 0.44), transparent);
+  filter: blur(0.2px);
+  transform: translate(0, -50%) rotate(var(--pulse-angle)) scaleX(0);
+  transform-origin: left center;
+  animation: tree-pulse-run 1.08s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.living-tree-pulse::after {
+  inset: -24px;
+  border: 1px solid rgba(47, 189, 95, 0.22);
+  border-radius: 50%;
+  transform: scale(0.34);
+  animation: tree-pulse-ring 1.15s ease-out forwards;
+}
+
+.living-tree-pulse.is-card {
+  --pulse-angle: -28deg;
+  --pulse-length: 210px;
+}
+
+.living-tree-pulse.is-game {
+  --pulse-angle: 18deg;
+  --pulse-length: 220px;
+}
+
+.living-tree-pulse.is-code {
+  --pulse-angle: 6deg;
+}
+
 .cursor-glow {
   position: fixed;
   top: 0;
@@ -216,6 +457,7 @@ body.portfolio-dark .top-nav {
 .top-nav__item.is-active::after {
   background: var(--green);
   transform: translateX(50%) scale(1);
+  animation: tree-nav-seed 4.8s ease-in-out infinite;
 }
 
 .theme-toggle {
@@ -313,6 +555,7 @@ body.portfolio-dark .section-indicator {
   box-shadow: 0 0 0 8px var(--green-soft);
   opacity: 1;
   transform: scale(1.4);
+  animation: tree-nav-seed 4.8s ease-in-out infinite;
 }
 
 .section-indicator__links {
@@ -2896,6 +3139,155 @@ body.portfolio-dark .contact-form textarea {
   transform: translateY(-2px);
 }
 
+@keyframes tree-canopy-breathe {
+  0%,
+  100% {
+    opacity: 0.62;
+    transform: translate3d(var(--tree-drift-soft-x), var(--tree-drift-soft-y), 0) scale(1);
+  }
+
+  50% {
+    opacity: 0.84;
+    transform: translate3d(calc(var(--tree-drift-soft-x) + 10px), calc(var(--tree-drift-soft-y) - 8px), 0) scale(1.035);
+  }
+}
+
+@keyframes tree-root-breathe {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: translate3d(calc(var(--tree-drift-x) * -0.45), 0, 0);
+  }
+
+  50% {
+    opacity: 0.62;
+    transform: translate3d(calc(var(--tree-drift-x) * -0.45 - 12px), -8px, 0);
+  }
+}
+
+@keyframes tree-sap-flow {
+  from {
+    stroke-dashoffset: 64;
+  }
+
+  to {
+    stroke-dashoffset: -64;
+  }
+}
+
+@keyframes tree-vein-breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes tree-fiber-breathe {
+  0%,
+  100% {
+    border-radius: 56% 44% 48% 52%;
+    filter: blur(25px);
+  }
+
+  50% {
+    border-radius: 44% 56% 54% 46%;
+    filter: blur(18px);
+  }
+}
+
+@keyframes tree-core-breathe {
+  0%,
+  100% {
+    border-radius: 48% 52% 58% 42%;
+    filter: blur(20px);
+    opacity: 0.42;
+  }
+
+  50% {
+    border-radius: 54% 46% 45% 55%;
+    filter: blur(15px);
+    opacity: 0.64;
+  }
+}
+
+@keyframes tree-understory-breathe {
+  0%,
+  100% {
+    opacity: 0.36;
+  }
+
+  50% {
+    opacity: 0.58;
+  }
+}
+
+@keyframes tree-click-pulse {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.36);
+  }
+
+  16% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(3.4);
+  }
+}
+
+@keyframes tree-pulse-run {
+  0% {
+    opacity: 0;
+    transform: translate(0, -50%) rotate(var(--pulse-angle)) scaleX(0);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  78% {
+    opacity: 0.82;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(28px, -50%) rotate(var(--pulse-angle)) scaleX(1);
+  }
+}
+
+@keyframes tree-pulse-ring {
+  0% {
+    opacity: 0;
+    transform: scale(0.24);
+  }
+
+  18% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.34);
+  }
+}
+
+@keyframes tree-nav-seed {
+  0%,
+  100% {
+    box-shadow: 0 0 0 5px rgba(47, 189, 95, 0.08);
+  }
+
+  50% {
+    box-shadow: 0 0 0 9px rgba(47, 189, 95, 0.12), 0 0 26px rgba(47, 189, 95, 0.22);
+  }
+}
+
 @keyframes title-rise {
   from {
     opacity: 0;
@@ -3283,6 +3675,20 @@ body.portfolio-dark .contact-form textarea {
 }
 
 @media (max-width: 1180px) {
+  .living-tree-layer {
+    opacity: 0.68;
+  }
+
+  .living-tree-core {
+    width: min(620px, 62vw);
+    height: min(420px, 46vw);
+  }
+
+  .living-tree-fiber {
+    width: min(680px, 66vw);
+    height: min(440px, 48vw);
+  }
+
   .section-grid,
   .section-grid.is-skills,
   .skills-linked-grid,
@@ -3347,6 +3753,35 @@ body.portfolio-dark .contact-form textarea {
 @media (max-width: 820px) {
   .cursor-glow {
     display: none;
+  }
+
+  .living-tree-layer {
+    opacity: 0.52;
+  }
+
+  .living-tree-veins {
+    opacity: 0.4;
+  }
+
+  .living-tree-core {
+    width: 86vw;
+    height: 48vh;
+    filter: blur(26px);
+  }
+
+  .living-tree-fiber {
+    width: 92vw;
+    height: 42vh;
+    filter: blur(28px);
+  }
+
+  .living-tree-understory {
+    left: 0;
+    height: 34vh;
+  }
+
+  .living-tree-pulse {
+    --pulse-length: 112px;
   }
 
   .top-nav {

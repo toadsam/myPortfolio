@@ -10,6 +10,21 @@ const sections = [
   {id: "contact", number: "06", label: "Contact"}
 ];
 
+const treeSections = {
+  intro: {x: 20, y: 32, secondaryX: 68, secondaryY: 18, mode: "seed"},
+  skills: {x: 52, y: 33, secondaryX: 84, secondaryY: 42, mode: "branch"},
+  projects: {x: 72, y: 47, secondaryX: 28, secondaryY: 68, mode: "canopy"},
+  detail: {x: 58, y: 63, secondaryX: 78, secondaryY: 74, mode: "ring"},
+  "sub-projects": {x: 38, y: 74, secondaryX: 66, secondaryY: 82, mode: "sprout"},
+  contact: {x: 28, y: 84, secondaryX: 56, secondaryY: 58, mode: "root"}
+};
+
+const treeSkillAreas = {
+  frontend: {x: 48, y: 28, secondaryX: 34, secondaryY: 42, mode: "leaf"},
+  backend: {x: 64, y: 34, secondaryX: 74, secondaryY: 52, mode: "xylem"},
+  game: {x: 82, y: 30, secondaryX: 66, secondaryY: 68, mode: "spark"}
+};
+
 const simpleIconBaseUrl = "https://cdn.simpleicons.org/";
 
 const skillLogoSlugs = {
@@ -353,6 +368,61 @@ function CursorGlow(props) {
           .concat(scale, ")")
       }}
     />
+  );
+}
+
+function LivingTreeLayer(props) {
+  const {activeAreaId, activeId, pointer, pulse} = props;
+  const sectionFocus = treeSections[activeId] || treeSections.intro;
+  const skillFocus = activeId === "skills" ? treeSkillAreas[activeAreaId] : null;
+  const focus = skillFocus || sectionFocus;
+  const pointerX = pointer ? pointer.x : 0;
+  const pointerY = pointer ? pointer.y : 0;
+  const pulseType = pulse ? pulse.type || "button" : "idle";
+
+  return (
+    <div
+      aria-hidden="true"
+      className={[
+        "living-tree-layer",
+        "is-" + focus.mode,
+        activeId ? "is-section-" + activeId : "",
+        skillFocus ? "is-skill-" + activeAreaId : ""
+      ].join(" ").trim()}
+      style={{
+        "--tree-x": focus.x + "%",
+        "--tree-y": focus.y + "%",
+        "--tree-secondary-x": focus.secondaryX + "%",
+        "--tree-secondary-y": focus.secondaryY + "%",
+        "--tree-drift-x": pointerX * 18 + "px",
+        "--tree-drift-y": pointerY * 18 + "px",
+        "--tree-drift-soft-x": pointerX * -10 + "px",
+        "--tree-drift-soft-y": pointerY * -10 + "px",
+        "--pulse-x": pulse ? pulse.x + "px" : "-200px",
+        "--pulse-y": pulse ? pulse.y + "px" : "-200px"
+      }}
+    >
+      <svg className="living-tree-veins" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="living-tree-sap" x1="0%" x2="100%" y1="100%" y2="0%">
+            <stop offset="0%" stopColor="rgba(47, 189, 95, 0)" />
+            <stop offset="38%" stopColor="rgba(47, 189, 95, 0.42)" />
+            <stop offset="62%" stopColor="rgba(166, 245, 192, 0.68)" />
+            <stop offset="100%" stopColor="rgba(47, 189, 95, 0)" />
+          </linearGradient>
+        </defs>
+        <path className="living-tree-path living-tree-path--main" d="M3 97 C18 82 27 70 34 52 C43 30 55 18 71 4" />
+        <path className="living-tree-path living-tree-path--branch-a" d="M16 88 C32 78 39 66 48 49 C58 30 70 24 94 18" />
+        <path className="living-tree-path living-tree-path--branch-b" d="M9 68 C27 63 41 58 54 45 C68 32 78 31 97 35" />
+        <path className="living-tree-path living-tree-path--root-a" d="M2 98 C24 94 38 86 51 75 C66 62 76 58 98 62" />
+        <path className="living-tree-path living-tree-path--root-b" d="M0 82 C19 77 34 78 49 84 C64 90 77 88 100 77" />
+      </svg>
+      <div className="living-tree-fiber living-tree-fiber--primary" />
+      <div className="living-tree-fiber living-tree-fiber--secondary" />
+      <div className="living-tree-core" />
+      <div className="living-tree-understory" />
+      {pulse ? <span key={pulse.id} className={"living-tree-pulse is-" + pulseType} /> : null}
+    </div>
   );
 }
 
@@ -776,7 +846,7 @@ function SkillLiveSystem(props) {
 }
 
 function SkillsSection(props) {
-  const {onSelectSkill, pointer} = props;
+  const {onSelectArea, onSelectSkill, pointer} = props;
   const [activeAreaId, setActiveAreaId] = useState(skillAreas[0].id);
   const activeArea = skillAreas.find(function findArea(area) {
     return area.id === activeAreaId;
@@ -787,6 +857,9 @@ function SkillsSection(props) {
   function selectArea(area) {
     setActiveAreaId(area.id);
     onSelectSkill(area.projectSkill);
+    if (onSelectArea) {
+      onSelectArea(area.id);
+    }
   }
 
   function handleAreaKeyDown(event, area) {
@@ -1577,10 +1650,13 @@ function ContactSection() {
 function PortfolioApp() {
   const pointer = usePointer();
   const activeId = useActiveSection();
+  const treePulseId = useRef(0);
   const [darkMode, setDarkMode] = useState(false);
   const [activeProject, setActiveProject] = useState(projects[0]);
   const [selectedSkill, setSelectedSkill] = useState("");
+  const [selectedSkillArea, setSelectedSkillArea] = useState(skillAreas[0].id);
   const [cursorVariant, setCursorVariant] = useState("default");
+  const [treePulse, setTreePulse] = useState(null);
 
   useEffect(function applyTheme() {
     document.body.classList.toggle("portfolio-dark", darkMode);
@@ -1616,9 +1692,43 @@ function PortfolioApp() {
     };
   }, []);
 
+  useEffect(function watchLivingTreeActions() {
+    function handlePointerDown(event) {
+      if (!event.target || !event.target.closest) {
+        return;
+      }
+
+      const target = event.target.closest("[data-cursor], button, a");
+
+      if (!target || target.closest(".living-tree-layer")) {
+        return;
+      }
+
+      treePulseId.current += 1;
+      setTreePulse({
+        id: treePulseId.current,
+        x: event.clientX,
+        y: event.clientY,
+        type: target.getAttribute("data-cursor") || "button"
+      });
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown, true);
+
+    return function cleanup() {
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+    };
+  }, []);
+
   return (
     <div className="interactive-portfolio">
       <CursorGlow pointer={pointer} variant={cursorVariant} />
+      <LivingTreeLayer
+        activeAreaId={selectedSkillArea}
+        activeId={activeId}
+        pointer={pointer}
+        pulse={treePulse}
+      />
       <TopNav
         activeId={activeId}
         darkMode={darkMode}
@@ -1631,7 +1741,11 @@ function PortfolioApp() {
       <SectionIndicator activeId={activeId} />
       <main>
         <IntroSection pointer={pointer} />
-        <SkillsSection onSelectSkill={setSelectedSkill} pointer={pointer} />
+        <SkillsSection
+          onSelectArea={setSelectedSkillArea}
+          onSelectSkill={setSelectedSkill}
+          pointer={pointer}
+        />
         <MainProjectsSection
           activeProject={activeProject}
           onSelectProject={setActiveProject}
