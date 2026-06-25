@@ -10,67 +10,126 @@ const sections = [
   {id: "contact", number: "06", label: "Contact"}
 ];
 
-const skillGroups = [
+const simpleIconBaseUrl = "https://cdn.simpleicons.org/";
+
+const skillLogoSlugs = {
+  "C#": "dotnet",
+  Docker: "docker",
+  Figma: "figma",
+  "Framer Motion": "framer",
+  Git: "git",
+  GitHub: "github",
+  "GitHub Actions": "githubactions",
+  Java: "openjdk",
+  JavaScript: "javascript",
+  MySQL: "mysql",
+  "Next.js": "nextdotjs",
+  "Node.js": "nodedotjs",
+  PostgreSQL: "postgresql",
+  Postman: "postman",
+  Python: "python",
+  React: "react",
+  Redis: "redis",
+  "Socket.io": "socketdotio",
+  "Spring Boot": "springboot",
+  SQL: "postgresql",
+  "Tailwind CSS": "tailwindcss",
+  TypeScript: "typescript",
+  Unity: "unity/111111"
+};
+
+const skillAreas = [
   {
+    id: "frontend",
     label: "Frontend",
-    icon: "FE",
-    scene: "frontend",
+    icon: "screen",
     accent: "#2fbd5f",
-    skills: ["React", "TypeScript", "Next.js", "Tailwind CSS"],
-    detail: "Component UI, hooks, state flow, responsive motion",
-    summary: "Builds interfaces as reusable systems with clean state and motion.",
-    signal: "UI system",
-    preview: ["Atomic layout", "State sync", "Responsive motion"],
-    related: ["FestFlow", "Portfolio v1", "Dev Blog"]
+    title: "From web services\nto game systems.",
+    intro: "사용자에게 직접 보이는 화면과 인터랙션을 깔끔한 컴포넌트 구조와 부드러운 움직임으로 구현합니다.",
+    summary: "Build responsive, accessible interfaces with great UX.",
+    short: "User-facing interfaces with motion and structure.",
+    bullets: [
+      "Component-driven UI architecture",
+      "Performance optimization",
+      "Responsive & accessible design",
+      "Modern tooling & workflows"
+    ],
+    tags: ["React", "TypeScript", "Next.js", "Tailwind CSS", "Framer Motion"],
+    languages: ["JavaScript", "TypeScript"],
+    tools: ["Git", "GitHub", "Figma", "Framer Motion"],
+    projects: ["FestFlow", "MyWave", "Portfolio", "UI Motion Lab"],
+    projectSkill: "React"
   },
   {
+    id: "backend",
     label: "Backend",
-    icon: "BE",
-    scene: "backend",
-    accent: "#48b9e7",
-    skills: ["Spring Boot", "Node.js", "REST API", "Socket.io"],
-    detail: "Service layer, authentication, realtime events, API design",
-    summary: "Shapes product logic into reliable APIs and realtime events.",
-    signal: "API flow",
-    preview: ["Auth guard", "DTO response", "Realtime channel"],
-    related: ["FestFlow", "API Gateway", "Chat Application"]
+    icon: "server",
+    accent: "#2fbd5f",
+    title: "From APIs\nto reliable systems.",
+    intro: "서비스 로직, API, 데이터 흐름을 설계하며 안정적인 제품 경험을 뒷받침하는 구조를 만듭니다.",
+    summary: "Design reliable APIs and scalable server-side systems.",
+    short: "Service logic, data flow, and scalable APIs.",
+    bullets: [
+      "REST API design",
+      "Authentication & authorization",
+      "Database modeling",
+      "Service layer architecture",
+      "Realtime event handling"
+    ],
+    tags: ["Spring Boot", "Node.js", "REST API", "PostgreSQL", "MySQL", "Redis", "Socket.io"],
+    languages: ["Java", "JavaScript", "SQL", "Python"],
+    tools: ["Docker", "AWS", "Postman", "GitHub Actions", "GitHub"],
+    projects: ["Demotion", "MetricHub", "API Gateway", "Admin CMS"],
+    projectSkill: "Spring Boot"
   },
   {
-    label: "Database & Infra",
-    icon: "DB",
-    scene: "database",
-    accent: "#f2b84b",
-    skills: ["MySQL", "MongoDB", "Redis", "AWS"],
-    detail: "Schema design, caching, deployment, operational debugging",
-    summary: "Connects data models, cache layers, and deployment paths.",
-    signal: "Data path",
-    preview: ["Schema", "Cache hit", "Deploy"],
-    related: ["FestFlow", "Asset Store", "Weather Dashboard"]
-  },
-  {
+    id: "game",
     label: "Game Development",
-    icon: "GM",
-    scene: "game",
-    accent: "#5575ff",
-    skills: ["Unity", "C#", "Unreal Engine", "Photon"],
-    detail: "Game logic, physics, UI interaction, multiplayer systems",
-    summary: "Turns input, physics, feedback, and multiplayer into playable loops.",
-    signal: "Game loop",
-    preview: ["Controller", "Quest trigger", "Network sync"],
-    related: ["RPG: Project Eclipse", "Battle Arena", "Pixel Adventure"]
-  },
-  {
-    label: "Tools & Others",
-    icon: "TO",
-    scene: "tools",
-    accent: "#a577ff",
-    skills: ["Git", "Docker", "GitHub Actions", "Figma"],
-    detail: "Version control, CI/CD, design handoff, release workflow",
-    summary: "Keeps releases traceable from design handoff to CI checks.",
-    signal: "Release path",
-    preview: ["Branch", "Build", "Ship"],
-    related: ["Portfolio v1", "Dev Blog", "Asset Store"]
+    icon: "gamepad",
+    accent: "#2fbd5f",
+    title: "From input\nto playable systems.",
+    intro: "플레이어의 입력, 상호작용, 게임 로직을 구현하며 반응성 있고 재미있는 게임 시스템을 만듭니다.",
+    summary: "Create engaging gameplay systems and interactive experiences.",
+    short: "Gameplay loops, interaction systems, and prototypes.",
+    bullets: [
+      "Player input & interaction",
+      "Physics-based mechanics",
+      "Inventory / quest / reward systems",
+      "Game UI implementation",
+      "Prototype and iteration"
+    ],
+    tags: ["Unity", "C#", "Physics", "Game Logic", "UI", "Interaction"],
+    languages: ["C#"],
+    tools: ["Unity", "Git", "GitHub", "Figma"],
+    projects: ["Void Runners", "Farm DTx", "Pixel Adventure", "AR Demo"],
+    projectSkill: "Unity"
   }
+];
+
+const languageItems = [
+  {name: "JavaScript", slug: "javascript", color: "#f7df1e"},
+  {name: "TypeScript", slug: "typescript", color: "#3178c6"},
+  {name: "Java", slug: "openjdk", color: "#e11d2e"},
+  {name: "C#", slug: "dotnet", color: "#512bd4"},
+  {name: "SQL", slug: "postgresql", color: "#4169e1"},
+  {name: "Python", slug: "python", color: "#3776ab"}
+];
+
+const toolItems = [
+  {name: "Git", slug: "git", color: "#f05032", tooltip: "Version control and branching workflow"},
+  {name: "GitHub", slug: "github", color: "#181717", tooltip: "Repository collaboration and reviews"},
+  {name: "Docker", slug: "docker", color: "#2496ed", tooltip: "Containerized development and deployment"},
+  {
+    name: "AWS",
+    color: "#ff9900",
+    url: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-original-wordmark.svg",
+    tooltip: "Cloud deployment and service operations"
+  },
+  {name: "Figma", slug: "figma", color: "#f24e1e", tooltip: "UI design and handoff"},
+  {name: "Postman", slug: "postman", color: "#ff6c37", tooltip: "API testing and documentation"},
+  {name: "Unity", slug: "unity/111111", color: "#111111", tooltip: "Gameplay systems and interactive prototypes"},
+  {name: "GitHub Actions", slug: "githubactions", color: "#2088ff", tooltip: "CI checks and release workflows"},
+  {name: "Framer Motion", slug: "framer", color: "#0055ff", tooltip: "Motion design for interface feedback"}
 ];
 
 const projects = [
@@ -575,82 +634,86 @@ function IntroSection(props) {
   );
 }
 
-function SkillScene(props) {
-  const {group, activeSkill} = props;
+function getLogoFallback(name) {
+  return name.split(/\s+/).map(function mapWord(word) {
+    return word.charAt(0);
+  }).join("").replace(/[^a-z0-9#+]/gi, "").slice(0, 3).toUpperCase();
+}
 
-  if (group.scene === "backend") {
-    return (
-      <div className="skill-scene skill-scene--backend">
-        <div className="scene-window">
-          <div className="window-dots"><i /><i /><i /></div>
-          <div className="api-route is-live"><span>POST</span><strong>/auth/session</strong></div>
-          <div className="api-route"><span>GET</span><strong>/festival/list</strong></div>
-          <div className="api-route"><span>WS</span><strong>/live/status</strong></div>
-        </div>
-        <div className="scene-pulse" />
-      </div>
-    );
-  }
+function SkillLogo(props) {
+  const {fallback, name, slug, url} = props;
+  const logoSlug = slug || skillLogoSlugs[name];
+  const imageUrl = url || (logoSlug ? simpleIconBaseUrl + logoSlug : "");
 
-  if (group.scene === "database") {
-    return (
-      <div className="skill-scene skill-scene--database">
-        <div className="db-table">
-          <strong>festival_log</strong>
-          <span>id</span>
-          <span>user_id</span>
-          <span>created_at</span>
-        </div>
-        <div className="db-link" />
-        <div className="cache-card">
-          <span>Redis</span>
-          <strong>cache hit</strong>
-        </div>
-      </div>
-    );
-  }
+  if (!imageUrl) {
+    if (!fallback) {
+      return null;
+    }
 
-  if (group.scene === "game") {
     return (
-      <div className="skill-scene skill-scene--game">
-        <div className="game-mini-map">
-          <span className="mini-player" />
-          <span className="mini-target" />
-          <i />
-        </div>
-        <div className="game-readout">
-          <strong>{activeSkill}</strong>
-          <span>input - physics - feedback</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (group.scene === "tools") {
-    return (
-      <div className="skill-scene skill-scene--tools">
-        {["Design", "Commit", "CI", "Deploy"].map(function renderStep(step, index) {
-          return (
-            <div className="tool-step" key={step}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <strong>{step}</strong>
-            </div>
-          );
-        })}
-      </div>
+      <span className="skill-logo-frame skill-logo-frame--fallback" aria-hidden="true">
+        {fallback}
+      </span>
     );
   }
 
   return (
-    <div className="skill-scene skill-scene--frontend">
-      <div className="ui-shell">
-        <div className="window-dots"><i /><i /><i /></div>
-        <div className="ui-hero" />
-        <div className="ui-grid"><span /><span /><span /></div>
+    <span className="skill-logo-frame" aria-hidden="true">
+      <img
+        alt=""
+        onError={function handleLogoError(event) {
+          event.currentTarget.parentElement.classList.add("is-broken");
+        }}
+        src={imageUrl}
+      />
+      <span className="skill-logo-fallback">{fallback || getLogoFallback(name)}</span>
+    </span>
+  );
+}
+
+function SkillAreaIcon(props) {
+  const {type} = props;
+  return (
+    <span className={"skill-area-icon skill-area-icon--" + type} aria-hidden="true">
+      <i />
+      <i />
+      <i />
+    </span>
+  );
+}
+
+function SkillLinkedRow(props) {
+  const {activeItems, items, kind, title, subtitle} = props;
+
+  return (
+    <div className={"skill-linked-row skill-linked-row--" + kind}>
+      <div className="skill-linked-row__label">
+        <span>{kind === "languages" ? "</>" : "TL"}</span>
+        <div>
+          <strong>{title}</strong>
+          <p>{subtitle}</p>
+        </div>
       </div>
-      <div className="ui-floating-card">
-        <span>{activeSkill}</span>
-        <strong>interactive state</strong>
+      <div className="skill-linked-tags">
+        {items.map(function renderItem(item, index) {
+          const name = item.name || item;
+          const isActive = activeItems.indexOf(name) >= 0;
+
+          return (
+            <span
+              className={isActive ? "linked-tag is-active" : "linked-tag"}
+              key={name}
+              style={{
+                "--tag-color": item.color || "var(--green)",
+                transitionDelay: index * 50 + "ms"
+              }}
+              title={item.tooltip || name}
+            >
+              <SkillLogo fallback={item.fallback} name={name} slug={item.slug} url={item.url} />
+              {name}
+            </span>
+          );
+        })}
       </div>
     </div>
   );
@@ -658,106 +721,104 @@ function SkillScene(props) {
 
 function SkillsSection(props) {
   const {onSelectSkill} = props;
-  const [activeGroupIndex, setActiveGroupIndex] = useState(0);
-  const [activeSkill, setActiveSkill] = useState(skillGroups[0].skills[0]);
-  const activeGroup = skillGroups[activeGroupIndex];
-  const relatedProjects = projects.filter(function filterRelated(project) {
-    return project.tags.indexOf(activeSkill) >= 0 ||
-      activeGroup.skills.some(function hasSkill(skill) {
-        return project.tags.indexOf(skill) >= 0;
-      }) ||
-      activeGroup.related.indexOf(project.title) >= 0;
-  }).slice(0, 3);
+  const [activeAreaId, setActiveAreaId] = useState(skillAreas[0].id);
+  const activeArea = skillAreas.find(function findArea(area) {
+    return area.id === activeAreaId;
+  }) || skillAreas[0];
 
-  function selectSkill(group, groupIndex, skill) {
-    setActiveGroupIndex(groupIndex);
-    setActiveSkill(skill);
-    onSelectSkill(skill);
+  function selectArea(area) {
+    setActiveAreaId(area.id);
+    onSelectSkill(area.projectSkill);
+  }
+
+  function handleAreaKeyDown(event, area) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      selectArea(area);
+    }
+  }
+
+  function goToRelatedProjects() {
+    onSelectSkill(activeArea.projectSkill);
+    scrollToSection("projects");
   }
 
   return (
-    <section className="portfolio-section skills-section" id="skills">
-      <div className="section-grid is-skills">
-        <Reveal className="section-copy skill-copy">
+    <section
+      className="portfolio-section skills-section skills-section--linked"
+      id="skills"
+      style={{"--skill-accent": activeArea.accent}}
+    >
+      <div className="skills-linked-grid">
+        <Reveal className="section-copy skills-linked-copy">
           <p className="eyebrow">02 Skills</p>
-          <h2>My <mark>Skills</mark></h2>
-          <p>다양한 기술 스택을 활용해 아이디어를 현실화합니다.</p>
-          <div className="skill-focus-card" style={{"--skill-accent": activeGroup.accent}}>
-            <span>{activeGroup.icon}</span>
-            <strong>{activeGroup.label}</strong>
-            <p>{activeGroup.summary}</p>
-            <button
-              data-cursor="button"
-              type="button"
-              onClick={function handleRelatedClick() {
-                onSelectSkill(activeSkill);
-                scrollToSection("projects");
-              }}
-            >
-              View related work
-            </button>
+          <div className="skills-copy-switch" key={activeArea.id}>
+            <h2>
+              {activeArea.title.split("\n").map(function renderTitleLine(line) {
+                return <span key={line}>{line}</span>;
+              })}
+            </h2>
+            <p>{activeArea.intro}</p>
           </div>
+          <button className="skills-related-button" data-cursor="button" type="button" onClick={goToRelatedProjects}>
+            View related projects <i />
+          </button>
         </Reveal>
 
-        <Reveal className="skill-board" delay={120} style={{"--skill-accent": activeGroup.accent}}>
-          <div className="skill-visual-card" data-cursor="card">
-            <div className="skill-visual-card__head">
-              <span>{activeGroup.signal}</span>
-              <strong>{activeSkill}</strong>
-            </div>
-            <SkillScene group={activeGroup} activeSkill={activeSkill} />
-            <div className="skill-preview-list">
-              {activeGroup.preview.map(function renderPreview(item) {
-                return <span key={item}>{item}</span>;
-              })}
-            </div>
-          </div>
-
-          <div className="skill-map">
-            {skillGroups.map(function renderGroup(group, groupIndex) {
-              const isGroupActive = groupIndex === activeGroupIndex;
+        <Reveal className="skill-area-panel" delay={120}>
+          <div className="skill-area-cards" data-active-area={activeArea.id}>
+            {skillAreas.map(function renderArea(area) {
+              const isActive = area.id === activeArea.id;
 
               return (
                 <article
-                  className={isGroupActive ? "skill-lane is-active" : "skill-lane"}
-                  key={group.label}
-                  onMouseEnter={function handleGroupHover() {
-                    setActiveGroupIndex(groupIndex);
-                    setActiveSkill(group.skills[0]);
-                    onSelectSkill(group.skills[0]);
+                  aria-pressed={isActive}
+                  className={isActive ? "skill-area-card is-active" : "skill-area-card"}
+                  data-cursor="card"
+                  key={area.id}
+                  onClick={function handleClick() {
+                    selectArea(area);
                   }}
-                  style={{"--skill-accent": group.accent}}
+                  onKeyDown={function handleKeyDown(event) {
+                    handleAreaKeyDown(event, area);
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
-                  <div className="skill-lane__label">
-                    <i>{group.icon}</i>
-                    <div>
-                      <strong>{group.label}</strong>
-                      <span>{group.detail}</span>
-                    </div>
+                  <div className="skill-area-card__top">
+                    <SkillAreaIcon type={area.icon} />
+                    {isActive ? <span className="skill-active-badge">Active</span> : null}
+                    <span className="skill-card-arrow" aria-hidden="true" />
                   </div>
-                  <div className="skill-row">
-                    {group.skills.map(function renderSkill(skill, index) {
-                      const isActive = isGroupActive && activeSkill === skill;
-
+                  <h3>{area.label}</h3>
+                  <p>{isActive ? area.summary : area.short}</p>
+                  <div className="skill-card-compact-tags">
+                    {area.tags.slice(0, 3).map(function renderCompactTag(tag) {
                       return (
-                        <button
-                          className={isActive ? "skill-chip is-active" : "skill-chip"}
-                          data-cursor="button"
-                          key={skill}
-                          style={{transitionDelay: groupIndex * 40 + index * 25 + "ms"}}
-                          type="button"
-                          onClick={function handleSkillClick() {
-                            selectSkill(group, groupIndex, skill);
-                          }}
-                          onMouseEnter={function handleSkillHover() {
-                            selectSkill(group, groupIndex, skill);
-                          }}
-                        >
-                          <span>{skill.slice(0, 2)}</span>
-                          {skill}
-                        </button>
+                        <span key={tag}>
+                          <SkillLogo name={tag} />
+                          {tag}
+                        </span>
                       );
                     })}
+                  </div>
+                  <div className="skill-card-details" aria-hidden={!isActive}>
+                    <span className="skill-card-divider" />
+                    <ul>
+                      {area.bullets.map(function renderBullet(bullet, index) {
+                        return <li key={bullet} style={{transitionDelay: index * 70 + "ms"}}>{bullet}</li>;
+                      })}
+                    </ul>
+                    <div className="skill-card-tags">
+                      {area.tags.map(function renderTag(tag, index) {
+                        return (
+                          <span key={tag} style={{transitionDelay: 180 + index * 45 + "ms"}}>
+                            <SkillLogo name={tag} />
+                            {tag}
+                          </span>
+                        );
+                      })}
+                    </div>
                   </div>
                 </article>
               );
@@ -766,29 +827,47 @@ function SkillsSection(props) {
         </Reveal>
       </div>
 
-      <Reveal className="skill-pipeline-card" style={{"--skill-accent": activeGroup.accent}}>
-        <div>
-          <p className="eyebrow">Skill graph</p>
-          <h3>{activeGroup.label} connects to product output.</h3>
-          <p>{activeGroup.summary}</p>
-        </div>
-        <div className="skill-project-strip">
-          {(relatedProjects.length ? relatedProjects : projects.slice(0, 3)).map(function renderProject(project) {
-            return (
-              <button
-                data-cursor="button"
-                key={project.id}
-                type="button"
-                onClick={function handleProjectClick() {
-                  onSelectSkill(activeSkill);
-                  scrollToSection("projects");
-                }}
-              >
-                <span>{project.category}</span>
-                <strong>{project.title}</strong>
-              </button>
-            );
-          })}
+      <Reveal className="skill-linked-panels" delay={220}>
+        <SkillLinkedRow
+          activeItems={activeArea.languages}
+          items={languageItems}
+          kind="languages"
+          title="Languages"
+          subtitle="Core languages I work with"
+        />
+        <SkillLinkedRow
+          activeItems={activeArea.tools}
+          items={toolItems}
+          kind="tools"
+          title="Tools"
+          subtitle="Daily tools & platforms"
+        />
+        <div className="skill-linked-row skill-linked-row--projects">
+          <div className="skill-linked-row__label">
+            <span>RP</span>
+            <div>
+              <strong>Related projects</strong>
+              <p>Projects that showcase my {activeArea.label.toLowerCase()} work</p>
+            </div>
+          </div>
+          <div className="skill-project-cards" key={activeArea.id}>
+            {activeArea.projects.map(function renderProject(project, index) {
+              return (
+                <button
+                  className="skill-project-card"
+                  data-cursor="button"
+                  key={project}
+                  style={{transitionDelay: index * 80 + "ms"}}
+                  type="button"
+                  onClick={goToRelatedProjects}
+                >
+                  <span>{project.slice(0, 1)}</span>
+                  <strong>{project}</strong>
+                  <i />
+                </button>
+              );
+            })}
+          </div>
         </div>
       </Reveal>
     </section>
