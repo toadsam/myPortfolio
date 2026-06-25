@@ -25,6 +25,55 @@ const treeSkillAreas = {
   game: {x: 82, y: 30, secondaryX: 66, secondaryY: 68, mode: "spark"}
 };
 
+const livingTreePaths = {
+  trunk: "M12 100 C16 82 24 63 39 48 C49 38 55 29 63 17",
+  frontend: "M39 48 C49 39 59 31 71 25 C81 20 90 18 99 13",
+  backend: "M40 52 C53 48 65 45 78 40 C87 37 94 33 100 28",
+  game: "M38 57 C52 59 66 63 78 70 C88 76 95 82 100 89",
+  rootA: "M12 100 C23 92 36 88 51 88 C68 88 82 83 100 77",
+  rootB: "M12 100 C8 92 4 84 0 75",
+  rootC: "M12 100 C18 92 18 84 27 76 C35 70 43 70 55 69",
+  canopyA: "M60 20 C66 14 74 10 84 9 C91 9 96 11 100 14",
+  canopyB: "M55 30 C64 24 73 23 83 25 C91 27 96 31 100 36",
+  canopyC: "M56 56 C67 56 78 61 87 70 C94 77 98 84 100 92"
+};
+
+const livingTreeLeaves = [
+  {id: "leaf-01", x: "68%", y: "16%", size: "21px", rotate: "-24deg", delay: "-1.2s"},
+  {id: "leaf-02", x: "76%", y: "13%", size: "17px", rotate: "18deg", delay: "-4.2s"},
+  {id: "leaf-03", x: "86%", y: "17%", size: "20px", rotate: "-8deg", delay: "-6.1s"},
+  {id: "leaf-04", x: "62%", y: "25%", size: "15px", rotate: "36deg", delay: "-2.7s"},
+  {id: "leaf-05", x: "72%", y: "30%", size: "18px", rotate: "-38deg", delay: "-5.5s"},
+  {id: "leaf-06", x: "86%", y: "33%", size: "16px", rotate: "24deg", delay: "-8.1s"},
+  {id: "leaf-07", x: "66%", y: "55%", size: "14px", rotate: "-18deg", delay: "-3.3s"},
+  {id: "leaf-08", x: "76%", y: "63%", size: "19px", rotate: "14deg", delay: "-6.8s"},
+  {id: "leaf-09", x: "88%", y: "72%", size: "16px", rotate: "-32deg", delay: "-9.4s"},
+  {id: "leaf-10", x: "32%", y: "67%", size: "13px", rotate: "28deg", delay: "-7.3s"},
+  {id: "leaf-11", x: "44%", y: "83%", size: "16px", rotate: "-16deg", delay: "-5.9s"},
+  {id: "leaf-12", x: "56%", y: "86%", size: "14px", rotate: "34deg", delay: "-2.1s"}
+];
+
+const livingFireflies = [
+  {id: "fly-01", x: "14%", y: "64%", size: "4px", dx: "56px", dy: "-38px", duration: "14s", delay: "-1s"},
+  {id: "fly-02", x: "21%", y: "44%", size: "3px", dx: "-34px", dy: "-58px", duration: "17s", delay: "-8s"},
+  {id: "fly-03", x: "32%", y: "78%", size: "5px", dx: "72px", dy: "-28px", duration: "18s", delay: "-4s"},
+  {id: "fly-04", x: "42%", y: "36%", size: "3px", dx: "-42px", dy: "34px", duration: "15s", delay: "-11s"},
+  {id: "fly-05", x: "54%", y: "22%", size: "4px", dx: "62px", dy: "46px", duration: "19s", delay: "-6s"},
+  {id: "fly-06", x: "63%", y: "58%", size: "3px", dx: "-54px", dy: "-42px", duration: "13s", delay: "-3s"},
+  {id: "fly-07", x: "71%", y: "19%", size: "5px", dx: "44px", dy: "64px", duration: "20s", delay: "-13s"},
+  {id: "fly-08", x: "83%", y: "41%", size: "4px", dx: "-68px", dy: "30px", duration: "16s", delay: "-7s"},
+  {id: "fly-09", x: "91%", y: "69%", size: "3px", dx: "-48px", dy: "-54px", duration: "18s", delay: "-15s"},
+  {id: "fly-10", x: "49%", y: "88%", size: "4px", dx: "38px", dy: "-72px", duration: "21s", delay: "-10s"},
+  {id: "fly-11", x: "18%", y: "22%", size: "3px", dx: "70px", dy: "32px", duration: "16s", delay: "-5s"},
+  {id: "fly-12", x: "73%", y: "83%", size: "4px", dx: "-76px", dy: "-24px", duration: "22s", delay: "-17s"},
+  {id: "fly-13", x: "38%", y: "18%", size: "3px", dx: "52px", dy: "54px", duration: "15s", delay: "-9s"},
+  {id: "fly-14", x: "58%", y: "72%", size: "5px", dx: "-38px", dy: "-60px", duration: "19s", delay: "-12s"},
+  {id: "fly-15", x: "8%", y: "84%", size: "3px", dx: "66px", dy: "-44px", duration: "17s", delay: "-14s"},
+  {id: "fly-16", x: "94%", y: "23%", size: "4px", dx: "-58px", dy: "52px", duration: "18s", delay: "-2s"},
+  {id: "fly-17", x: "27%", y: "58%", size: "4px", dx: "46px", dy: "-66px", duration: "20s", delay: "-16s"},
+  {id: "fly-18", x: "79%", y: "55%", size: "3px", dx: "-62px", dy: "-34px", duration: "14s", delay: "-6s"}
+];
+
 const simpleIconBaseUrl = "https://cdn.simpleicons.org/";
 
 const skillLogoSlugs = {
@@ -402,25 +451,122 @@ function LivingTreeLayer(props) {
         "--pulse-y": pulse ? pulse.y + "px" : "-200px"
       }}
     >
-      <svg className="living-tree-veins" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <svg className="living-tree-organism" viewBox="0 0 100 100" preserveAspectRatio="none">
         <defs>
-          <linearGradient id="living-tree-sap" x1="0%" x2="100%" y1="100%" y2="0%">
+          <linearGradient id="living-tree-bark-gradient" x1="0%" x2="100%" y1="100%" y2="0%">
+            <stop offset="0%" stopColor="rgba(49, 68, 45, 0.28)" />
+            <stop offset="42%" stopColor="rgba(31, 104, 55, 0.42)" />
+            <stop offset="100%" stopColor="rgba(47, 189, 95, 0.26)" />
+          </linearGradient>
+          <linearGradient id="living-tree-sap-gradient" x1="0%" x2="100%" y1="100%" y2="0%">
             <stop offset="0%" stopColor="rgba(47, 189, 95, 0)" />
-            <stop offset="38%" stopColor="rgba(47, 189, 95, 0.42)" />
-            <stop offset="62%" stopColor="rgba(166, 245, 192, 0.68)" />
+            <stop offset="44%" stopColor="rgba(104, 238, 143, 0.86)" />
+            <stop offset="56%" stopColor="rgba(224, 255, 229, 0.95)" />
             <stop offset="100%" stopColor="rgba(47, 189, 95, 0)" />
           </linearGradient>
+          <filter id="living-tree-runner-glow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="1.4" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
-        <path className="living-tree-path living-tree-path--main" d="M3 97 C18 82 27 70 34 52 C43 30 55 18 71 4" />
-        <path className="living-tree-path living-tree-path--branch-a" d="M16 88 C32 78 39 66 48 49 C58 30 70 24 94 18" />
-        <path className="living-tree-path living-tree-path--branch-b" d="M9 68 C27 63 41 58 54 45 C68 32 78 31 97 35" />
-        <path className="living-tree-path living-tree-path--root-a" d="M2 98 C24 94 38 86 51 75 C66 62 76 58 98 62" />
-        <path className="living-tree-path living-tree-path--root-b" d="M0 82 C19 77 34 78 49 84 C64 90 77 88 100 77" />
+        <path className="living-tree-shadow living-tree-shadow--trunk" d={livingTreePaths.trunk} />
+        <path className="living-tree-shadow living-tree-shadow--root" d={livingTreePaths.rootA} />
+        <path className="living-tree-shadow living-tree-shadow--branch" d={livingTreePaths.frontend} />
+        <path className="living-tree-shadow living-tree-shadow--branch" d={livingTreePaths.backend} />
+        <path className="living-tree-shadow living-tree-shadow--branch" d={livingTreePaths.game} />
+        <path className="living-tree-wood living-tree-trunk" id="living-tree-path-trunk" d={livingTreePaths.trunk} />
+        <path className="living-tree-wood living-tree-root root--a" id="living-tree-path-root-a" d={livingTreePaths.rootA} />
+        <path className="living-tree-wood living-tree-root root--b" d={livingTreePaths.rootB} />
+        <path className="living-tree-wood living-tree-root root--c" d={livingTreePaths.rootC} />
+        <path className="living-tree-wood living-tree-branch branch--frontend" id="living-tree-path-frontend" d={livingTreePaths.frontend} />
+        <path className="living-tree-wood living-tree-branch branch--backend" id="living-tree-path-backend" d={livingTreePaths.backend} />
+        <path className="living-tree-wood living-tree-branch branch--game" id="living-tree-path-game" d={livingTreePaths.game} />
+        <path className="living-tree-wood living-tree-canopy-vein" d={livingTreePaths.canopyA} />
+        <path className="living-tree-wood living-tree-canopy-vein" d={livingTreePaths.canopyB} />
+        <path className="living-tree-wood living-tree-canopy-vein" d={livingTreePaths.canopyC} />
+        <path className="living-tree-sap-path sap--trunk" d={livingTreePaths.trunk} />
+        <path className="living-tree-sap-path sap--root" d={livingTreePaths.rootA} />
+        <path className="living-tree-sap-path sap--frontend" d={livingTreePaths.frontend} />
+        <path className="living-tree-sap-path sap--backend" d={livingTreePaths.backend} />
+        <path className="living-tree-sap-path sap--game" d={livingTreePaths.game} />
+        <g className="living-tree-nodes">
+          <circle className="living-tree-node node--trunk" cx="39" cy="48" r="1.2" />
+          <circle className="living-tree-node node--frontend" cx="88" cy="18" r="1" />
+          <circle className="living-tree-node node--backend" cx="87" cy="37" r="1" />
+          <circle className="living-tree-node node--game" cx="88" cy="76" r="1" />
+          <circle className="living-tree-node node--root" cx="51" cy="88" r="0.9" />
+        </g>
+        <g className="living-tree-runners" filter="url(#living-tree-runner-glow)">
+          <circle className="living-tree-runner runner--trunk" r="0.56">
+            <animateMotion dur="13s" repeatCount="indefinite" begin="-2s">
+              <mpath href="#living-tree-path-trunk" />
+            </animateMotion>
+          </circle>
+          <circle className="living-tree-runner runner--frontend" r="0.42">
+            <animateMotion dur="10s" repeatCount="indefinite" begin="-6s">
+              <mpath href="#living-tree-path-frontend" />
+            </animateMotion>
+          </circle>
+          <circle className="living-tree-runner runner--backend" r="0.44">
+            <animateMotion dur="11s" repeatCount="indefinite" begin="-4s">
+              <mpath href="#living-tree-path-backend" />
+            </animateMotion>
+          </circle>
+          <circle className="living-tree-runner runner--game" r="0.44">
+            <animateMotion dur="12s" repeatCount="indefinite" begin="-8s">
+              <mpath href="#living-tree-path-game" />
+            </animateMotion>
+          </circle>
+          <circle className="living-tree-runner runner--root" r="0.38">
+            <animateMotion dur="16s" repeatCount="indefinite" begin="-10s">
+              <mpath href="#living-tree-path-root-a" />
+            </animateMotion>
+          </circle>
+        </g>
       </svg>
       <div className="living-tree-fiber living-tree-fiber--primary" />
       <div className="living-tree-fiber living-tree-fiber--secondary" />
       <div className="living-tree-core" />
       <div className="living-tree-understory" />
+      <div className="living-tree-leaves">
+        {livingTreeLeaves.map(function renderLeaf(leaf) {
+          return (
+            <span
+              className="living-tree-leaf"
+              key={leaf.id}
+              style={{
+                "--leaf-delay": leaf.delay,
+                "--leaf-rotate": leaf.rotate,
+                "--leaf-size": leaf.size,
+                "--leaf-x": leaf.x,
+                "--leaf-y": leaf.y
+              }}
+            />
+          );
+        })}
+      </div>
+      <div className="living-fireflies">
+        {livingFireflies.map(function renderFirefly(firefly) {
+          return (
+            <span
+              className="living-firefly"
+              key={firefly.id}
+              style={{
+                "--firefly-delay": firefly.delay,
+                "--firefly-duration": firefly.duration,
+                "--firefly-dx": firefly.dx,
+                "--firefly-dy": firefly.dy,
+                "--firefly-size": firefly.size,
+                "--firefly-x": firefly.x,
+                "--firefly-y": firefly.y
+              }}
+            />
+          );
+        })}
+      </div>
       {pulse ? <span key={pulse.id} className={"living-tree-pulse is-" + pulseType} /> : null}
     </div>
   );
