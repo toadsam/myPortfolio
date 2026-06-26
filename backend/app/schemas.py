@@ -29,7 +29,7 @@ class ActivityOut(BaseModel):
 
 
 LightLevel = Literal["dark", "dim", "normal", "bright"]
-NpcMood = Literal["sleepy", "calm", "busy", "proud", "training"]
+NpcMood = Literal["sleepy", "calm", "busy", "proud", "training", "curious", "focused", "worried", "excited"]
 
 
 class BuildingState(BaseModel):
@@ -62,6 +62,59 @@ class ChatMessageOut(BaseModel):
     npc_id: str
     reply: str
     used_ai: bool
+
+
+class NpcTickIn(BaseModel):
+    npc_id: str
+    mood: NpcMood = "calm"
+    energy: int = Field(default=50, ge=0, le=100)
+    assigned_building_id: str | None = None
+    nearby_npc_ids: list[str] = []
+    recent_memory: list[str] = []
+
+
+class NpcTickOut(BaseModel):
+    npc_id: str
+    bubble_text: str
+    mood: NpcMood
+    energy: int = Field(ge=0, le=100)
+    next_goal: str
+    memory: str
+    used_ai: bool
+    cooldown_seconds: int
+
+
+class EncounterParticipant(BaseModel):
+    npc_id: str
+    mood: NpcMood = "calm"
+    energy: int = Field(default=50, ge=0, le=100)
+    assigned_building_id: str | None = None
+    recent_memory: list[str] = []
+
+
+class NpcDialogueLine(BaseModel):
+    npc_id: str
+    text: str
+
+
+class NpcStateChange(BaseModel):
+    npc_id: str
+    mood: NpcMood
+    energy: int = Field(ge=0, le=100)
+
+
+class NpcEncounterIn(BaseModel):
+    npc_a: EncounterParticipant
+    npc_b: EncounterParticipant
+    recent_memory: list[str] = []
+
+
+class NpcEncounterOut(BaseModel):
+    dialogue: list[NpcDialogueLine]
+    state_changes: list[NpcStateChange]
+    memory: str
+    used_ai: bool
+    cooldown_seconds: int
 
 
 class GithubSyncOut(BaseModel):

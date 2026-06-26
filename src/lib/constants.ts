@@ -55,60 +55,101 @@ const plazaBuilding: BuildingData = {
   accentColor: "#00d4ff"
 };
 
-// ─── 프로젝트 구역 (왼쪽, x ~ -6.5) ──────────────────────────────────────────
+// ─── 프로젝트 구역 (왼쪽 + 좌상단, 10개) ────────────────────────────────────
 
 const projectBuildings: BuildingData[] = [
-  {
-    id: "project-demotion",
-    sectionId: "projects",
-    district: "projects",
-    contentId: "demotion",
-    kind: "tower",
-    name: "Demotion",
-    label: "B2B SaaS",
-    description: "B2B SaaS 데모 생성 및 마케팅 인사이트 플랫폼",
-    position: [-6.5, 0, -3.5],
-    size: [1.9, 2.8, 1.9],
-    color: "#0d1f3a",
-    roofColor: "#1a3a6a",
-    accentColor: "#00d4ff",
-    techStack: ["Spring Boot", "React", "PostgreSQL"],
-    // glbPath: "/models/demotion.glb"
-  },
+  // 웹앱 클러스터 (좌측)
   {
     id: "project-mywave",
-    sectionId: "projects",
-    district: "projects",
-    contentId: "mywave",
-    kind: "office-rounded",
-    name: "MyWave",
-    label: "Fintech",
+    sectionId: "projects", district: "projects", contentId: "mywave",
+    kind: "office-rounded", name: "MyWave", label: "Fintech",
     description: "나만의 투자 흐름을 만드는 금융/투자 관리 웹앱",
-    position: [-6.5, 0, 1],
-    size: [2.1, 1.9, 2.1],
-    color: "#0d2a1a",
-    roofColor: "#1a4a2a",
-    accentColor: "#00ff88",
+    position: [-7, 0, -4], size: [2.0, 1.9, 2.0],
+    color: "#0d2a1a", roofColor: "#1a4a2a", accentColor: "#00ff88",
     techStack: ["React", "TypeScript", "Chart UI"],
-    // glbPath: "/models/mywave.glb"
   },
   {
-    id: "project-farm",
-    sectionId: "projects",
-    district: "projects",
-    contentId: "farm-owner",
-    kind: "compact-studio",
-    name: "일해라 농장주",
-    label: "Game / DTx",
-    description: "스마트폰 과의존 완화를 위한 농장 육성 DTx 게임",
-    position: [-6.5, 0, 5.5],
-    size: [1.9, 1.5, 1.9],
-    color: "#1a0d2e",
-    roofColor: "#3a1a5a",
-    accentColor: "#aa44ff",
+    id: "project-mystock",
+    sectionId: "projects", district: "projects", contentId: "mystock",
+    kind: "tower", name: "MyStock-Desk", label: "Finance AI",
+    description: "거래 기록 기반 투자 포트폴리오 분석 + AI 체크포인트",
+    position: [-7, 0, -0.5], size: [1.9, 2.6, 1.9],
+    color: "#0d1f3a", roofColor: "#1a3a6a", accentColor: "#00d4ff",
+    techStack: ["React", "TypeScript", "Spring Boot"],
+  },
+  {
+    id: "project-festflow",
+    sectionId: "projects", district: "projects", contentId: "festflow",
+    kind: "flat-hub", name: "FestFlow", label: "Festival",
+    description: "대학교 축제 운영을 위한 실시간 관리 웹앱",
+    position: [-7, 0, 3], size: [2.2, 1.5, 2.2],
+    color: "#1a1a0d", roofColor: "#3a3a1a", accentColor: "#ffcc00",
+    techStack: ["React", "Spring Boot", "SSE", "PWA"],
+  },
+  {
+    id: "project-sign-language",
+    sectionId: "projects", district: "projects", contentId: "sign-language",
+    kind: "dome", name: "수어지교", label: "Social Tech",
+    description: "수어 아바타 기반 학습·표현 서비스",
+    position: [-7, 0, 6.5], size: [2.0, 1.8, 2.0],
+    color: "#0d1a2e", roofColor: "#1a2e4a", accentColor: "#7eb8ff",
+    techStack: ["Spring Boot", "React", "TypeScript"],
+  },
+  {
+    id: "project-aclub",
+    sectionId: "projects", district: "projects", contentId: "aclub",
+    kind: "minimal-office", name: "ACLUB", label: "Platform",
+    description: "동아리 탐색·모집 플랫폼 프론트엔드",
+    position: [-4, 0, -6], size: [1.8, 1.6, 1.8],
+    color: "#1a0d2e", roofColor: "#3a1a5a", accentColor: "#cc88ff",
+    techStack: ["React", "TypeScript", "Vite"],
+  },
+  // 게임 클러스터 (좌하단)
+  {
+    id: "project-ajou-adventure",
+    sectionId: "projects", district: "projects", contentId: "ajou-adventure",
+    kind: "arcade", name: "아주분투", label: "Web Game",
+    description: "아주대 캠퍼스 배경 2D 캐주얼 러닝 게임",
+    position: [-4, 0, 8.5], size: [1.9, 1.7, 1.9],
+    color: "#1a2a0d", roofColor: "#2a4a1a", accentColor: "#88ff44",
+    techStack: ["TypeScript", "Phaser 3", "Vite"],
+  },
+  {
+    id: "project-ajouchong",
+    sectionId: "projects", district: "projects", contentId: "ajouchong",
+    kind: "compact-studio", name: "아주총총", label: "Student Council",
+    description: "아주대학교 총학생회 공식 웹사이트",
+    position: [-4, 0, 11], size: [1.8, 1.4, 1.8],
+    color: "#1f0d0d", roofColor: "#3a1a1a", accentColor: "#ff6644",
+    techStack: ["React", "Docker", "Nginx"],
+  },
+  {
+    id: "project-muscleup",
+    sectionId: "projects", district: "projects", contentId: "muscleup",
+    kind: "server-tower", name: "득근득근", label: "Fitness",
+    description: "운동 기록을 게임처럼 지속하게 만드는 피트니스 플랫폼",
+    position: [-7, 0, 9.5], size: [1.8, 2.2, 1.8],
+    color: "#1a0d0d", roofColor: "#3a1a1a", accentColor: "#ff4488",
+    techStack: ["TypeScript", "Spring Boot", "SSE", "OAuth"],
+  },
+  {
+    id: "project-darklab",
+    sectionId: "projects", district: "projects", contentId: "darklab",
+    kind: "townhouse", name: "DarkLab", label: "Horror Game",
+    description: "1인칭 탐색 기반 3D 공포 어드벤처 게임",
+    position: [-10, 0, 2], size: [1.9, 1.8, 1.9],
+    color: "#0d0d0d", roofColor: "#1a1a1a", accentColor: "#882200",
+    techStack: ["Unity", "C#", "Cinemachine", "URP"],
+  },
+  {
+    id: "project-tserof",
+    sectionId: "projects", district: "projects", contentId: "tserof",
+    kind: "compact-studio", name: "TSEROF", label: "3D Platformer",
+    description: "숨겨진 아이템을 찾아 스테이지를 클리어하는 3D 플랫포머",
+    position: [-10, 0, 6], size: [1.7, 1.5, 1.7],
+    color: "#0d1a0d", roofColor: "#1a2e1a", accentColor: "#44aa66",
     techStack: ["Unity", "C#"],
-    // glbPath: "/models/farm.glb"
-  }
+  },
 ];
 
 // ─── 스킬 구역 (위쪽 중앙) ────────────────────────────────────────────────────
@@ -273,7 +314,6 @@ const contactBuilding: BuildingData = {
 };
 
 export const villageBuildings: BuildingData[] = [
-  plazaBuilding,
   ...projectBuildings,
   ...skillBuildings,
   ...experienceBuildings,

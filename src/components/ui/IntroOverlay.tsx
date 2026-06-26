@@ -6,6 +6,7 @@ import type {ExplorationMode} from "@/types/portfolio";
 
 interface IntroOverlayProps {
   onStart: (mode: ExplorationMode) => void;
+  onResume: () => void;
 }
 
 const textItem = {
@@ -14,13 +15,18 @@ const textItem = {
   exit: {opacity: 0, y: -12, transition: {duration: 0.22}}
 };
 
-export function IntroOverlay({onStart}: IntroOverlayProps) {
+export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
   const [isExiting, setIsExiting] = useState(false);
 
   function handleStart(mode: ExplorationMode) {
     if (isExiting) return;
     setIsExiting(true);
     setTimeout(() => onStart(mode), 820);
+  }
+
+  function handleResume() {
+    if (isExiting) return;
+    onResume();
   }
 
   return (
@@ -152,6 +158,23 @@ export function IntroOverlay({onStart}: IntroOverlayProps) {
                   <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#00ff88]/8 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
                 </button>
               </motion.div>
+
+              {/* 면접관용 빠른 보기 */}
+              <motion.button
+                className="group mt-5 flex items-center gap-2 font-mono text-xs font-bold tracking-[0.12em] transition-all"
+                style={{color: "rgba(255,255,255,0.45)"}}
+                onClick={handleResume}
+                type="button"
+                transition={{duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 3.2}}
+                variants={textItem}
+                whileHover={{x: 3}}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#fff"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "rgba(255,255,255,0.45)"; }}
+              >
+                <span className="text-sm">📄</span>
+                시간이 없다면 — 빠르게 이력서 보기
+                <span className="transition-transform group-hover:translate-x-1">→</span>
+              </motion.button>
 
               <motion.p
                 className="mt-8 font-mono text-xs"

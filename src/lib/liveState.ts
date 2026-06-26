@@ -19,6 +19,10 @@ export function moodLabel(mood: NpcState["mood"] | undefined): string {
   if (mood === "busy") return "busy";
   if (mood === "proud") return "proud";
   if (mood === "training") return "training";
+  if (mood === "curious") return "curious";
+  if (mood === "focused") return "focused";
+  if (mood === "worried") return "worried";
+  if (mood === "excited") return "excited";
   if (mood === "sleepy") return "sleepy";
   return "calm";
 }

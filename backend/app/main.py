@@ -4,10 +4,22 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import get_db, init_db
-from app.schemas import ActivityIn, ActivityOut, ChatMessageIn, ChatMessageOut, GithubSyncOut, VillageState
+from app.schemas import (
+    ActivityIn,
+    ActivityOut,
+    ChatMessageIn,
+    ChatMessageOut,
+    GithubSyncOut,
+    NpcEncounterIn,
+    NpcEncounterOut,
+    NpcTickIn,
+    NpcTickOut,
+    VillageState,
+)
 from app.services.activity_service import get_or_create_today, upsert_activity
 from app.services.chat_service import answer_npc_message
 from app.services.github_service import fetch_today_commit_count
+from app.services.npc_brain_service import generate_npc_encounter, generate_npc_tick
 from app.services.village_service import derive_village_state
 
 app = FastAPI(title="AI Portfolio Village API", version="0.1.0")
@@ -57,6 +69,18 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
     reply, used_ai = await answer_npc_message(payload.npc_id, payload.message, activity)
     return ChatMessageOut(npc_id=payload.npc_id, reply=reply, used_ai=used_ai)
+
+
+@app.post("/npc/tick", response_model=NpcTickOut)
+async def npc_tick(payload: NpcTickIn, db: Session = Depends(get_db)):
+    activity = get_or_create_today(db)
+    return await generate_npc_tick(payload, activity)
+
+
+@app.post("/npc/encounter", response_model=NpcEncounterOut)
+async def npc_encounter(payload: NpcEncounterIn, db: Session = Depends(get_db)):
+    activity = get_or_create_today(db)
+    return await generate_npc_encounter(payload.npc_a, payload.npc_b, payload.recent_memory, activity)
 
 
 @app.post("/github/sync", response_model=GithubSyncOut)

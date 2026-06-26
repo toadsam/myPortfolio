@@ -1,4 +1,13 @@
-import type {ActivityInput, DailyActivity, NpcChatResponse, VillageState} from "@/types/live";
+import type {
+  ActivityInput,
+  DailyActivity,
+  NpcChatResponse,
+  NpcEncounterParticipant,
+  NpcEncounterResponse,
+  NpcTickRequest,
+  NpcTickResponse,
+  VillageState,
+} from "@/types/live";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
@@ -43,5 +52,23 @@ export function sendNpcMessage(npcId: string, message: string): Promise<NpcChatR
   return requestJson<NpcChatResponse>("/npc/chat", {
     method: "POST",
     body: JSON.stringify({npc_id: npcId, message}),
+  });
+}
+
+export function requestNpcTick(payload: NpcTickRequest): Promise<NpcTickResponse> {
+  return requestJson<NpcTickResponse>("/npc/tick", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function requestNpcEncounter(
+  npcA: NpcEncounterParticipant,
+  npcB: NpcEncounterParticipant,
+  recentMemory: string[],
+): Promise<NpcEncounterResponse> {
+  return requestJson<NpcEncounterResponse>("/npc/encounter", {
+    method: "POST",
+    body: JSON.stringify({npc_a: npcA, npc_b: npcB, recent_memory: recentMemory}),
   });
 }

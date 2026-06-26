@@ -3,12 +3,14 @@
 import {useFrame, useThree} from "@react-three/fiber";
 import {useEffect, useRef} from "react";
 import {Group, Vector3} from "three";
+import {villageBuildings} from "@/lib/constants";
+import {isWalkablePosition} from "@/lib/worldCollision";
 
 const SPEED = 4.5;
 const TURN_SPEED = 2.4;
-const X_BOUND = 6.2;
-const Z_BOUND_MIN = -5.2;
-const Z_BOUND_MAX = 5.8;
+const X_BOUND = 11.5;
+const Z_BOUND_MIN = -8.8;
+const Z_BOUND_MAX = 12.5;
 
 export function CharacterController() {
   const {camera} = useThree();
@@ -44,17 +46,25 @@ export function CharacterController() {
     const dx = -Math.sin(rotRef.current);
     const dz = -Math.cos(rotRef.current);
 
+    let nextX = posRef.current.x;
+    let nextZ = posRef.current.z;
+
     if (keys.has("KeyW") || keys.has("ArrowUp")) {
-      posRef.current.x += dx * speed;
-      posRef.current.z += dz * speed;
+      nextX += dx * speed;
+      nextZ += dz * speed;
     }
     if (keys.has("KeyS") || keys.has("ArrowDown")) {
-      posRef.current.x -= dx * speed * 0.6;
-      posRef.current.z -= dz * speed * 0.6;
+      nextX -= dx * speed * 0.6;
+      nextZ -= dz * speed * 0.6;
     }
 
-    posRef.current.x = Math.max(-X_BOUND, Math.min(X_BOUND, posRef.current.x));
-    posRef.current.z = Math.max(Z_BOUND_MIN, Math.min(Z_BOUND_MAX, posRef.current.z));
+    nextX = Math.max(-X_BOUND, Math.min(X_BOUND, nextX));
+    nextZ = Math.max(Z_BOUND_MIN, Math.min(Z_BOUND_MAX, nextZ));
+
+    if (isWalkablePosition({x: nextX, z: nextZ}, villageBuildings, {padding: 0.42})) {
+      posRef.current.x = nextX;
+      posRef.current.z = nextZ;
+    }
 
     if (groupRef.current) {
       groupRef.current.position.set(posRef.current.x, 0, posRef.current.z);

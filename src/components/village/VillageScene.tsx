@@ -4,11 +4,12 @@ import {Canvas, useFrame} from "@react-three/fiber";
 import {ContactShadows, Environment, Float, Html, useGLTF} from "@react-three/drei";
 import {Suspense, useRef} from "react";
 import type {Group} from "three";
-import {npcs} from "@/data/npcs";
+import {npcBehaviorProfiles} from "@/data/npcBehaviors";
+import {autonomousNpcs} from "@/data/npcRoster";
 import {rockPositions, treePositions, villageBuildings} from "@/lib/constants";
 import {getBuildingState, getNpcState} from "@/lib/liveState";
-import type {VillageState} from "@/types/live";
-import type {ExplorationMode, NPCData, SectionId} from "@/types/portfolio";
+import type {NpcRuntimeState, NpcState, VillageState} from "@/types/live";
+import type {ExplorationMode, NPCData, SectionId, Vector3Tuple} from "@/types/portfolio";
 import {Building} from "./Building";
 import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
@@ -24,149 +25,28 @@ interface VillageSceneProps {
   onSelectSection: (sectionId: SectionId) => void;
   onSelectNpc: (npc: NPCData) => void;
   onRequestEnter: (buildingId: string) => void;
+  npcRuntimeStates: Record<string, NpcRuntimeState>;
+  onNpcPositionChange: (npcId: string, position: Vector3Tuple) => void;
   villageState: VillageState | null;
 }
 
 // ─── 시그니처 광장 (</ 정재훈 >) ────────────────────────────────────────────────
 
-function SignaturePlaza() {
-  const ringRef = useRef<Group>(null);
+// ─── 중앙 석상 ────────────────────────────────────────────────────────────────
 
-  useFrame(({clock}) => {
-    if (ringRef.current) {
-      ringRef.current.rotation.y = clock.getElapsedTime() * 0.18;
-    }
-  });
-
-  // LED 도트 개수
-  const LED_COUNT = 48;
-  const LED_RADIUS = 2.52;
-  const leds = Array.from({length: LED_COUNT}, (_, i) => {
-    const angle = (i / LED_COUNT) * Math.PI * 2;
-    return {x: Math.cos(angle) * LED_RADIUS, z: Math.sin(angle) * LED_RADIUS};
-  });
-
-  // 회로 방사선 (이미지처럼 중심에서 바깥으로)
-  const SPOKE_COUNT = 16;
-  const spokes = Array.from({length: SPOKE_COUNT}, (_, i) => ({
-    angle: (i / SPOKE_COUNT) * Math.PI * 2,
-    length: 0.9 + (i % 3) * 0.18,
-  }));
-
+function Statue() {
+  const {scene} = useGLTF("/models/statue.glb");
   return (
-    <group position={[0, 0.005, 0]}>
-      {/* 메인 원형 디스크 — 가장 바깥 */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-        <circleGeometry args={[2.7, 80]} />
-        <meshStandardMaterial color="#050d1a" roughness={0.6} metalness={0.5} />
-      </mesh>
-
-      {/* 바깥 테두리 링 */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.004, 0]}>
-        <ringGeometry args={[2.58, 2.7, 80]} />
-        <meshStandardMaterial color="#0a2040" roughness={0.4} metalness={0.7} />
-      </mesh>
-
-      {/* 바깥 네온 링 */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.008, 0]}>
-        <ringGeometry args={[2.62, 2.68, 80]} />
-        <meshBasicMaterial color="#00d4ff" transparent opacity={0.7} />
-      </mesh>
-
-      {/* LED 도트들 */}
-      {leds.map((led, i) => (
-        <mesh key={i} position={[led.x, 0.012, led.z]} rotation={[-Math.PI / 2, 0, 0]}>
-          <circleGeometry args={[0.038, 8]} />
-          <meshBasicMaterial color="#00d4ff" transparent opacity={i % 3 === 0 ? 1.0 : 0.55} />
-        </mesh>
-      ))}
-      {/* LED 포인트라이트 2개만 */}
-      <pointLight color="#00d4ff" intensity={0.5} distance={3} decay={2} position={[LED_RADIUS, 0.1, 0]} />
-      <pointLight color="#00d4ff" intensity={0.5} distance={3} decay={2} position={[-LED_RADIUS, 0.1, 0]} />
-
-      {/* 안쪽 링 */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.006, 0]}>
-        <ringGeometry args={[2.3, 2.38, 72]} />
-        <meshBasicMaterial color="#003a6a" transparent opacity={0.55} />
-      </mesh>
-
-      {/* 회로 방사선 (spokes) */}
-      {spokes.map((s, i) => {
-        const cx = Math.cos(s.angle) * (0.68 + s.length / 2);
-        const cz = Math.sin(s.angle) * (0.68 + s.length / 2);
-        return (
-          <mesh key={i} position={[cx, 0.009, cz]} rotation={[-Math.PI / 2, 0, s.angle]}>
-            <planeGeometry args={[s.length, 0.018]} />
-            <meshBasicMaterial color="#0a4a8a" transparent opacity={0.7} />
-          </mesh>
-        );
-      })}
-
-      {/* 회로 분기 점들 */}
-      {spokes.map((s, i) => {
-        const r = 1.1 + (i % 4) * 0.22;
-        return (
-          <mesh key={i} position={[Math.cos(s.angle) * r, 0.011, Math.sin(s.angle) * r]} rotation={[-Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[0.028, 6]} />
-            <meshBasicMaterial color="#0a6aaa" transparent opacity={0.65} />
-          </mesh>
-        );
-      })}
-
-      {/* 중앙 원형 배경 */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-        <circleGeometry args={[0.72, 48]} />
-        <meshStandardMaterial color="#030810" roughness={0.3} metalness={0.8} />
-      </mesh>
-
-      {/* 중앙 링 테두리 */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.013, 0]}>
-        <ringGeometry args={[0.68, 0.74, 48]} />
-        <meshBasicMaterial color="#00d4ff" transparent opacity={0.65} />
-      </mesh>
-
-      {/* 회전 링 (천천히 회전) */}
-      <group ref={ringRef}>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.016, 0]}>
-          <ringGeometry args={[1.55, 1.6, 64]} />
-          <meshBasicMaterial color="#005588" transparent opacity={0.5} />
-        </mesh>
-        {/* 회전 링 노치 */}
-        {Array.from({length: 8}, (_, i) => {
-          const a = (i / 8) * Math.PI * 2;
-          return (
-            <mesh key={i} position={[Math.cos(a) * 1.575, 0.018, Math.sin(a) * 1.575]} rotation={[-Math.PI / 2, 0, a]}>
-              <planeGeometry args={[0.12, 0.04]} />
-              <meshBasicMaterial color="#00d4ff" transparent opacity={0.8} />
-            </mesh>
-          );
-        })}
-      </group>
-
-      {/* </정재훈> HTML 라벨 */}
-      <Html center position={[0, 0.06, 0]} zIndexRange={[2, 0]}>
-        <div
-          style={{
-            fontFamily: "monospace",
-            fontSize: 13,
-            fontWeight: 900,
-            color: "#00d4ff",
-            textShadow: "0 0 12px #00d4ff, 0 0 28px #00aaff88",
-            letterSpacing: "0.06em",
-            userSelect: "none",
-            pointerEvents: "none",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {"</정재훈>"}
-        </div>
-      </Html>
-
-      {/* 중앙 포인트라이트 */}
-      <pointLight color="#00d4ff" intensity={1.8} distance={5} decay={2} position={[0, 0.3, 0]} />
-    </group>
+    <primitive
+      object={scene}
+      position={[0, 2.5, 2]}
+      scale={[3.5, 3.5, 3.5]}
+      castShadow
+    />
   );
 }
+
+useGLTF.preload("/models/statue.glb");
 
 // ─── 바닥 ─────────────────────────────────────────────────────────────────────
 
@@ -342,7 +222,7 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
 
 export function VillageScene({
   activeSection, activeNpcId, explorationMode, isIntro = false,
-  onSelectNpc, onSelectSection, onRequestEnter, villageState
+  onSelectNpc, onSelectSection, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
 
@@ -369,7 +249,7 @@ export function VillageScene({
         <Suspense fallback={null}>
           <Environment preset="night" />
           <Ground />
-          <SignaturePlaza />
+          <Statue />
 
           {/* 구역 표지판 */}
           <DistrictSign label="Project District" position={[-8.5, 0, -5.5]} color="#00d4ff" />
@@ -389,13 +269,17 @@ export function VillageScene({
             />
           ))}
 
-          {npcs.map((npc) => (
+          {autonomousNpcs.map((npc) => (
             <NPC
+              behavior={npcBehaviorProfiles[npc.id]}
+              bubbleText={visibleBubble(npcRuntimeStates[npc.id])}
+              buildings={villageBuildings}
               isActive={activeNpcId === npc.id}
               key={npc.id}
               npc={npc}
-              npcState={getNpcState(villageState, npc.id)}
-              onSelect={isWalkMode ? () => {} : onSelectNpc}
+              npcState={displayNpcState(npc.id, npcRuntimeStates[npc.id], getNpcState(villageState, npc.id))}
+              onPositionChange={onNpcPositionChange}
+              onSelect={onSelectNpc}
             />
           ))}
 
@@ -433,4 +317,19 @@ export function VillageScene({
       )}
     </div>
   );
+}
+
+function visibleBubble(runtime?: NpcRuntimeState) {
+  if (!runtime?.bubbleText || !runtime.bubbleExpiresAt) return undefined;
+  return runtime.bubbleExpiresAt > Date.now() ? runtime.bubbleText : undefined;
+}
+
+function displayNpcState(npcId: string, runtime?: NpcRuntimeState, base?: NpcState): NpcState | undefined {
+  if (!runtime && !base) return undefined;
+
+  return {
+    npc_id: npcId,
+    mood: runtime?.mood ?? base?.mood ?? "calm",
+    status_text: runtime?.memory ?? base?.status_text ?? "",
+  };
 }

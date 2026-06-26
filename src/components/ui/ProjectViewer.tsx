@@ -2,7 +2,12 @@
 
 import {AnimatePresence, motion, useMotionValue, useSpring} from "framer-motion";
 import {useEffect, useRef, useState} from "react";
+import {getProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
+import {DashboardProjectViewer} from "./project-viewers/DashboardProjectViewer";
+import {GameProjectViewer} from "./project-viewers/GameProjectViewer";
+import {PlatformProjectViewer} from "./project-viewers/PlatformProjectViewer";
+import {RealtimeProjectViewer} from "./project-viewers/RealtimeProjectViewer";
 
 // ─── 상수 ────────────────────────────────────────────────────────────────────
 
@@ -511,7 +516,44 @@ interface Props {
   onClose: () => void;
 }
 
+// 카테고리별 셸 라우팅 — 카테고리마다 완전히 다른 연출의 전용 뷰어로.
 export function ProjectViewer({project, onClose}: Props) {
+  const projectTheme = project ? getProjectTheme(project.id) : null;
+  if (project && projectTheme) {
+    const shared = {key: project.id, project, theme: projectTheme, onClose};
+    if (projectTheme.category === "game") {
+      return (
+        <AnimatePresence>
+          <GameProjectViewer {...shared} />
+        </AnimatePresence>
+      );
+    }
+    if (projectTheme.category === "dashboard") {
+      return (
+        <AnimatePresence>
+          <DashboardProjectViewer {...shared} />
+        </AnimatePresence>
+      );
+    }
+    if (projectTheme.category === "realtime") {
+      return (
+        <AnimatePresence>
+          <RealtimeProjectViewer {...shared} />
+        </AnimatePresence>
+      );
+    }
+    if (projectTheme.category === "platform") {
+      return (
+        <AnimatePresence>
+          <PlatformProjectViewer {...shared} />
+        </AnimatePresence>
+      );
+    }
+  }
+  return <DefaultProjectViewer project={project} onClose={onClose} />;
+}
+
+function DefaultProjectViewer({project, onClose}: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const color = STEP_ACCENT[currentStep] ?? "#7ed9ff";
