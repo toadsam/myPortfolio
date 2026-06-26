@@ -379,3 +379,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ---
+
+## Credits
+
+This portfolio keeps the original developerFolio project credits above. The current interactive direction also references the structure and interaction ideas of [Jayant Potdar's 3D Portfolio](https://github.com/Jayant-1/3D-Portfolio), which is distributed under the MIT License. The implementation, content, visuals, project data, and Living Tree concept in this repository are customized for this portfolio.

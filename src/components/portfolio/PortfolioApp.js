@@ -1,8 +1,8 @@
 import React from "react";
-import DigitalHabitat from "../digitalHabitat/DigitalHabitat";
+import LivingTreePortfolio from "../livingTree/LivingTreePortfolio";
 
 function PortfolioApp() {
-  return <DigitalHabitat />;
+  return <LivingTreePortfolio />;
 }
 
 export default PortfolioApp;
