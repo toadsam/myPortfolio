@@ -18,6 +18,10 @@ function colorNumber(value) {
   return Number.parseInt(value.replace("#", ""), 16);
 }
 
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
 function seeded(index, salt) {
   const raw = Math.sin(index * 12.9898 + salt * 78.233) * 43758.5453;
   return raw - Math.floor(raw);
@@ -1049,6 +1053,9 @@ function HabitatScene(props) {
     const currentTarget = vectorFromArray(defaultTarget.target);
     const desiredPosition = vectorFromArray(defaultTarget.position);
     const desiredTarget = vectorFromArray(defaultTarget.target);
+    const orbitPosition = new THREE.Vector3();
+    const orbitOffset = new THREE.Vector3();
+    const orbitSpherical = new THREE.Spherical();
 
     const ambient = new THREE.HemisphereLight(0x94a3b8, 0x050816, 0.54);
     const key = new THREE.DirectionalLight(0xe0f2fe, 1.75);
@@ -1083,6 +1090,23 @@ function HabitatScene(props) {
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2(10, 10);
     const tempScale = new THREE.Vector3();
+    const orbitState = {
+      yaw: 0,
+      pitch: 0,
+      zoom: 1,
+      targetYaw: 0,
+      targetPitch: 0,
+      targetZoom: 1
+    };
+    const dragState = {
+      isDown: false,
+      isDragging: false,
+      pointerId: null,
+      startX: 0,
+      startY: 0,
+      lastX: 0,
+      lastY: 0
+    };
     let activeHover = "";
     let frame = 0;
     let previousElapsed = 0;
@@ -1108,24 +1132,112 @@ function HabitatScene(props) {
       onHoverRef.current(next);
     }
 
-    function pointerMove(event) {
+    function updatePointerFromEvent(event) {
       const rect = mount.getBoundingClientRect();
       pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+
+    function updateHoverFromPointer() {
       raycaster.setFromCamera(pointer, camera);
       const hits = raycaster.intersectObjects(world.interactiveMeshes, false);
       setHover(hits.length ? hits[0].object.userData.layerId : "");
     }
 
+    function pointerMove(event) {
+      updatePointerFromEvent(event);
+
+      if (dragState.isDown) {
+        const movementX = event.clientX - dragState.lastX;
+        const movementY = event.clientY - dragState.lastY;
+        const totalX = event.clientX - dragState.startX;
+        const totalY = event.clientY - dragState.startY;
+        const totalDistance = Math.sqrt(totalX * totalX + totalY * totalY);
+
+        dragState.lastX = event.clientX;
+        dragState.lastY = event.clientY;
+
+        if (!dragState.isDragging && totalDistance > 4) {
+          dragState.isDragging = true;
+          mount.classList.add("is-dragging-world");
+          setHover("");
+        }
+
+        if (dragState.isDragging) {
+          orbitState.targetYaw -= movementX * 0.0042;
+          orbitState.targetPitch = clamp(orbitState.targetPitch + movementY * 0.0032, -0.5, 0.58);
+          event.preventDefault();
+          return;
+        }
+      }
+
+      updateHoverFromPointer();
+    }
+
     function pointerLeave() {
+      if (!dragState.isDown) {
+        pointer.set(10, 10);
+        setHover("");
+      }
+    }
+
+    function pointerDown(event) {
+      if (event.button != null && event.button !== 0) {
+        return;
+      }
+      dragState.isDown = true;
+      dragState.isDragging = false;
+      dragState.pointerId = event.pointerId;
+      dragState.startX = event.clientX;
+      dragState.startY = event.clientY;
+      dragState.lastX = event.clientX;
+      dragState.lastY = event.clientY;
+      updatePointerFromEvent(event);
+      if (mount.setPointerCapture && event.pointerId != null) {
+        mount.setPointerCapture(event.pointerId);
+      }
+    }
+
+    function pointerUp(event) {
+      if (!dragState.isDown) {
+        return;
+      }
+
+      if (mount.releasePointerCapture && dragState.pointerId != null) {
+        try {
+          mount.releasePointerCapture(dragState.pointerId);
+        } catch (error) {
+          // Pointer capture may already be released by the browser.
+        }
+      }
+
+      updatePointerFromEvent(event);
+      if (!dragState.isDragging) {
+        updateHoverFromPointer();
+      }
+
+      if (!dragState.isDragging && activeHover) {
+        onSelectRef.current(activeHover);
+      }
+      dragState.isDown = false;
+      dragState.isDragging = false;
+      dragState.pointerId = null;
+      mount.classList.remove("is-dragging-world");
+    }
+
+    function pointerCancel() {
+      dragState.isDown = false;
+      dragState.isDragging = false;
+      dragState.pointerId = null;
+      mount.classList.remove("is-dragging-world");
       pointer.set(10, 10);
       setHover("");
     }
 
-    function pointerDown() {
-      if (activeHover) {
-        onSelectRef.current(activeHover);
-      }
+    function wheel(event) {
+      event.preventDefault();
+      const zoomFactor = Math.exp(-event.deltaY * 0.0012);
+      orbitState.targetZoom = clamp(orbitState.targetZoom * zoomFactor, 0.58, 1.9);
     }
 
     function updateMaterialGlow(group, amount) {
@@ -1146,6 +1258,9 @@ function HabitatScene(props) {
       const cam = getCameraTarget(selected || "world");
       desiredPosition.fromArray(cam.position);
       desiredTarget.fromArray(cam.target);
+      orbitState.yaw += (orbitState.targetYaw - orbitState.yaw) * 0.12;
+      orbitState.pitch += (orbitState.targetPitch - orbitState.pitch) * 0.12;
+      orbitState.zoom += (orbitState.targetZoom - orbitState.zoom) * 0.12;
 
       world.root.position.y = Math.sin(elapsed * animationConfig.ambientFloatSpeed) * 0.045;
       world.root.rotation.y = Math.sin(elapsed * 0.14) * 0.04;
@@ -1319,9 +1434,15 @@ function HabitatScene(props) {
         }
       });
 
-      camera.position.lerp(desiredPosition, selected ? animationConfig.cameraLerpActive : animationConfig.cameraLerpIdle);
+      orbitOffset.copy(desiredPosition).sub(desiredTarget);
+      orbitSpherical.setFromVector3(orbitOffset);
+      orbitSpherical.theta += orbitState.yaw;
+      orbitSpherical.phi = clamp(orbitSpherical.phi + orbitState.pitch, 0.34, 1.5);
+      orbitPosition.setFromSpherical(orbitSpherical).add(desiredTarget);
+
+      camera.position.lerp(orbitPosition, selected ? animationConfig.cameraLerpActive : animationConfig.cameraLerpIdle);
       currentTarget.lerp(desiredTarget, selected ? animationConfig.targetLerpActive : animationConfig.targetLerpIdle);
-      camera.zoom += (cam.zoom - camera.zoom) * 0.05;
+      camera.zoom += (cam.zoom * orbitState.zoom - camera.zoom) * 0.08;
       camera.updateProjectionMatrix();
       camera.lookAt(currentTarget);
       composer.render();
@@ -1333,6 +1454,9 @@ function HabitatScene(props) {
     mount.addEventListener("pointermove", pointerMove);
     mount.addEventListener("pointerleave", pointerLeave);
     mount.addEventListener("pointerdown", pointerDown);
+    mount.addEventListener("pointerup", pointerUp);
+    mount.addEventListener("pointercancel", pointerCancel);
+    mount.addEventListener("wheel", wheel, {passive: false});
     frame = window.requestAnimationFrame(animate);
 
     return function cleanup() {
@@ -1342,6 +1466,9 @@ function HabitatScene(props) {
       mount.removeEventListener("pointermove", pointerMove);
       mount.removeEventListener("pointerleave", pointerLeave);
       mount.removeEventListener("pointerdown", pointerDown);
+      mount.removeEventListener("pointerup", pointerUp);
+      mount.removeEventListener("pointercancel", pointerCancel);
+      mount.removeEventListener("wheel", wheel);
       scene.traverse(function disposeNode(node) {
         if (node.geometry) {
           node.geometry.dispose();

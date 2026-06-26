@@ -48,10 +48,15 @@ body.digital-habitat-body {
   inset: 0;
   z-index: 1;
   cursor: grab;
+  touch-action: none;
 }
 
 .habitat-scene.is-hovering-layer {
   cursor: pointer;
+}
+
+.habitat-scene.is-dragging-world {
+  cursor: grabbing;
 }
 
 .habitat-scene canvas {
