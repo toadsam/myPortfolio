@@ -1,5 +1,6 @@
 "use client";
 
+import {motion} from "framer-motion";
 import {sectionMeta} from "@/lib/constants";
 import type {SectionId} from "@/types/portfolio";
 
@@ -10,45 +11,85 @@ interface HeaderProps {
 
 const visibleNav: SectionId[] = ["projects", "github", "experience", "contact"];
 
+const NAV_COLORS: Record<string, string> = {
+  projects: "#00d4ff",
+  github: "#00ff88",
+  experience: "#aa44ff",
+  contact: "#ff6600",
+};
+
 export function Header({activeSection, onSelectSection}: HeaderProps) {
   return (
-    <header className="fixed left-0 right-0 top-0 z-40 border-b border-[#dac88c]/70 bg-[#fff8e5]/92 backdrop-blur-xl">
+    <motion.header
+      animate={{opacity: 1, y: 0}}
+      className="fixed left-0 right-0 top-0 z-40 border-b border-[#00d4ff]/15 bg-[#050d1a]/92 backdrop-blur-xl"
+      initial={{opacity: 0, y: -12}}
+      transition={{duration: 0.5, ease: [0.22, 1, 0.36, 1]}}
+    >
       <div className="mx-auto flex max-w-[1540px] items-center justify-between gap-4 px-4 py-3 md:px-6">
-        <button className="flex min-w-0 items-center gap-3 text-left" onClick={() => onSelectSection("intro")} type="button">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-[#9bbb70] bg-[#e6f6d5] text-sm font-black text-[#3d7748] shadow-sm">
+        {/* 로고 */}
+        <motion.button
+          className="flex min-w-0 items-center gap-3 text-left"
+          onClick={() => onSelectSection("intro")}
+          type="button"
+          whileHover={{x: 2}}
+          whileTap={{scale: 0.97}}
+        >
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-[#00d4ff]/40 bg-[#0a1a30] font-mono text-sm font-black text-[#00d4ff] shadow-[0_0_12px_rgba(0,212,255,0.2)]">
             AI
           </span>
           <span className="min-w-0">
-            <strong className="block truncate text-sm font-black uppercase tracking-[0.2em] text-[#1f2a24]">AI Portfolio Village</strong>
-            <small className="hidden text-xs font-semibold text-[#6c735c] sm:block">정재훈의 프로젝트와 경험이 살아 움직이는 3D 포트폴리오</small>
+            <strong className="block truncate font-mono text-sm font-black uppercase tracking-[0.2em] text-white">
+              Developer's City
+            </strong>
+            <small className="hidden font-mono text-xs font-semibold text-[#00d4ff]/50 sm:block">
+              정재훈의 3D 포트폴리오
+            </small>
           </span>
-        </button>
+        </motion.button>
 
-        <nav className="hidden items-center gap-2 md:flex" aria-label="Portfolio village sections">
+        {/* 네비게이션 */}
+        <nav className="hidden items-center gap-2 md:flex" aria-label="Portfolio sections">
           {visibleNav.map((sectionId) => {
             const section = sectionMeta.find((item) => item.id === sectionId);
-
-            if (!section) {
-              return null;
-            }
+            if (!section) return null;
+            const isActive = activeSection === section.id;
+            const color = NAV_COLORS[sectionId] ?? "#00d4ff";
 
             return (
-              <button
-                className={
-                  activeSection === section.id
-                    ? "rounded-lg border border-[#78b95d] bg-[#dff4c4] px-3.5 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#2e6438] shadow-sm"
-                    : "rounded-lg border border-transparent px-3.5 py-2 text-xs font-black uppercase tracking-[0.14em] text-[#68715e] transition hover:border-[#cdbb81] hover:bg-white/70 hover:text-[#1f2a24]"
-                }
+              <motion.button
+                className="relative rounded-lg px-4 py-2 font-mono text-xs font-black uppercase tracking-[0.14em] transition-all duration-200"
                 key={section.id}
                 onClick={() => onSelectSection(section.id)}
+                style={{
+                  color: isActive ? color : "rgba(255,255,255,0.45)",
+                  background: isActive ? `${color}14` : "transparent",
+                  border: isActive ? `1px solid ${color}50` : "1px solid transparent",
+                  boxShadow: isActive ? `0 0 14px ${color}22` : "none",
+                }}
                 type="button"
+                whileHover={{
+                  color: color,
+                  background: `${color}0e`,
+                  border: `1px solid ${color}40`,
+                  y: -1,
+                }}
+                whileTap={{scale: 0.96}}
               >
                 {section.navLabel}
-              </button>
+                {isActive && (
+                  <motion.div
+                    className="absolute -bottom-[13px] left-0 right-0 h-[2px] rounded-full"
+                    layoutId="nav-underline"
+                    style={{background: color, boxShadow: `0 0 8px ${color}`}}
+                    transition={{type: "spring", stiffness: 380, damping: 30}}
+                  />
+                )}
+              </motion.button>
             );
           })}
         </nav>
       </div>
-    </header>
+    </motion.header>
   );
 }

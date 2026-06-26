@@ -84,10 +84,10 @@ export function CameraController({activeSection, isIntro = false}: CameraControl
       enableDamping
       enablePan={false}
       enableZoom
-      maxDistance={14}
-      maxPolarAngle={Math.PI / 2.05}
-      minDistance={4}
-      minPolarAngle={Math.PI / 7}
+      maxDistance={24}
+      maxPolarAngle={Math.PI / 2.1}
+      minDistance={3}
+      minPolarAngle={Math.PI / 9}
       rotateSpeed={0.75}
       zoomSpeed={1.1}
     />
