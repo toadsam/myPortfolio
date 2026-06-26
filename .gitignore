@@ -8,6 +8,9 @@
 # testing
 /coverage
 /build
+/.next
+/out
+tsconfig.tsbuildinfo
 
 
 # misc

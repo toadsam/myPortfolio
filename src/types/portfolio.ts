@@ -1,0 +1,76 @@
+export type SectionId = "intro" | "projects" | "github" | "experience" | "contact";
+
+export type BuildingKind = "plaza" | "lab" | "workshop" | "archive" | "post";
+
+export type NPCType = "guide" | "project" | "developer" | "archivist" | "contact";
+
+export type Vector3Tuple = [number, number, number];
+
+export interface SectionMeta {
+  id: SectionId;
+  label: string;
+  navLabel: string;
+  title: string;
+  description: string;
+}
+
+export interface BuildingData {
+  id: string;
+  sectionId: SectionId;
+  kind: BuildingKind;
+  name: string;
+  label: string;
+  description: string;
+  position: Vector3Tuple;
+  size: Vector3Tuple;
+  color: string;
+  roofColor: string;
+  accentColor: string;
+}
+
+export interface NPCData {
+  id: string;
+  sectionId: SectionId;
+  type: NPCType;
+  name: string;
+  location: string;
+  role: string;
+  dialogue: string;
+  position: Vector3Tuple;
+  color: string;
+  accessoryColor: string;
+}
+
+export interface ProjectLink {
+  label: "GitHub" | "Demo";
+  href: string;
+}
+
+export interface ProjectData {
+  id: string;
+  title: string;
+  description: string;
+  role: string;
+  tech: string[];
+  features: string[];
+  learning: string;
+  links: ProjectLink[];
+}
+
+export interface SkillData {
+  name: string;
+  group: "Frontend" | "3D / Motion" | "Backend" | "Game / XR" | "Workflow";
+  description: string;
+}
+
+export interface PortfolioLink {
+  label: string;
+  value: string;
+  href: string;
+}
+
+export interface ExperienceItem {
+  year: string;
+  title: string;
+  description: string;
+}
