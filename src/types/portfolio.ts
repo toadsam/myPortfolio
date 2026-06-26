@@ -1,4 +1,5 @@
 export type SectionId = "intro" | "projects" | "github" | "experience" | "contact";
+export type ExplorationMode = "click" | "walk";
 
 export type BuildingKind = "plaza" | "lab" | "workshop" | "archive" | "post";
 

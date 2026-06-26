@@ -253,7 +253,8 @@ function getFeatureImage(project, fallback) {
     overview.image ||
     asArray(intro.images)[0] ||
     project.image ||
-    sourceProjects[0].image
+    (sourceProjects[0] && sourceProjects[0].image) ||
+    null
   );
 }
 
@@ -396,7 +397,8 @@ function getGallery(project) {
     );
   }
 
-  return items.length ? items : [{image: sourceProjects[0].image, caption: project.projectName, body: project.projectDesc}];
+  const fallbackImage = (sourceProjects[0] && sourceProjects[0].image) || project.image;
+  return items.length ? items : [{image: fallbackImage, caption: project.projectName, body: project.projectDesc}];
 }
 
 function getFlow(project) {
@@ -522,8 +524,13 @@ const stackCards = skillNames.map(function mapStackCard(name) {
   };
 });
 
-const skillGroups = asArray(techStack.experience).map(function mapSkillGroup(item, index) {
-  const tags = skillNames.slice(index * 4, index * 4 + 4);
+const experienceItems = asArray(techStack.experience);
+const skillChunkSize = experienceItems.length
+  ? Math.ceil(skillNames.length / experienceItems.length)
+  : 4;
+const skillGroups = experienceItems.map(function mapSkillGroup(item, index) {
+  const start = index * skillChunkSize;
+  const tags = skillNames.slice(start, start + skillChunkSize);
 
   return {
     title: item.Stack,

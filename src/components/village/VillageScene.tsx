@@ -5,9 +5,10 @@ import {ContactShadows, Environment, Float} from "@react-three/drei";
 import {Suspense} from "react";
 import {npcs} from "@/data/npcs";
 import {rockPositions, treePositions, villageBuildings} from "@/lib/constants";
-import type {NPCData, SectionId} from "@/types/portfolio";
+import type {ExplorationMode, NPCData, SectionId} from "@/types/portfolio";
 import {Building} from "./Building";
 import {CameraController} from "./CameraController";
+import {CharacterController} from "./CharacterController";
 import {Fence, PathSegment, Rock, SignPost} from "./Decorations";
 import {NPC} from "./NPC";
 import {Tree} from "./Tree";
@@ -15,8 +16,10 @@ import {Tree} from "./Tree";
 interface VillageSceneProps {
   activeSection: SectionId;
   activeNpcId?: string;
+  explorationMode: ExplorationMode;
   onSelectSection: (sectionId: SectionId) => void;
   onSelectNpc: (npc: NPCData) => void;
+  onRequestEnter: (buildingId: string) => void;
 }
 
 function Ground() {
@@ -88,7 +91,9 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
   );
 }
 
-export function VillageScene({activeSection, activeNpcId, onSelectNpc, onSelectSection}: VillageSceneProps) {
+export function VillageScene({activeSection, activeNpcId, explorationMode, onSelectNpc, onSelectSection, onRequestEnter}: VillageSceneProps) {
+  const isWalkMode = explorationMode === "walk";
+
   return (
     <div className="relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#d8c48c]/70 bg-[#d7f0d7] shadow-[inset_0_-30px_70px_rgba(93,121,70,0.18)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r">
       <Canvas camera={{fov: 42, position: [6.4, 6, 7.2]}} dpr={[1, 1.75]} gl={{antialias: true}} shadows="percentage">
@@ -102,25 +107,37 @@ export function VillageScene({activeSection, activeNpcId, onSelectNpc, onSelectS
           <Environment preset="park" />
           <Ground />
           <VillageDecorations />
-          <ActiveRoute activeSection={activeSection} />
+          {!isWalkMode && <ActiveRoute activeSection={activeSection} />}
           {villageBuildings.map((building) => (
             <Float floatIntensity={building.sectionId === "intro" ? 0.04 : 0.018} key={building.id} rotationIntensity={0.01} speed={1.1}>
-              <Building building={building} isActive={activeSection === building.sectionId} onSelect={onSelectSection} />
+              <Building building={building} isActive={activeSection === building.sectionId} onRequestEnter={isWalkMode ? () => {} : onRequestEnter} />
             </Float>
           ))}
           {npcs.map((npc) => (
-            <NPC isActive={activeNpcId === npc.id} key={npc.id} npc={npc} onSelect={onSelectNpc} />
+            <NPC isActive={activeNpcId === npc.id} key={npc.id} npc={npc} onSelect={isWalkMode ? () => {} : onSelectNpc} />
           ))}
           {treePositions.map((position, index) => (
             <Tree key={position.join("-")} position={position} scale={index % 3 === 0 ? 1.15 : 0.92 + (index % 2) * 0.18} />
           ))}
           <ContactShadows blur={2.4} far={8} opacity={0.28} position={[0, 0.02, 0]} scale={12} />
+          {isWalkMode ? <CharacterController /> : <CameraController activeSection={activeSection} />}
         </Suspense>
-        <CameraController activeSection={activeSection} />
       </Canvas>
-      <div className="pointer-events-none absolute left-4 top-4 rounded-lg border border-white/75 bg-white/72 px-3 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#4a6841] shadow-sm backdrop-blur-md">
-        Click buildings or NPCs
-      </div>
+
+      {isWalkMode ? (
+        <div className="pointer-events-none absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-xl border border-white/75 bg-white/80 px-4 py-2.5 shadow-sm backdrop-blur-md">
+          {[["W", "앞"], ["A", "좌회전"], ["S", "뒤"], ["D", "우회전"]].map(([key, label]) => (
+            <span className="flex flex-col items-center gap-0.5" key={key}>
+              <kbd className="rounded border border-[#b8d0a8] bg-white px-2 py-0.5 text-xs font-black text-[#3a5c34]">{key}</kbd>
+              <span className="text-[10px] text-[#6a8864]">{label}</span>
+            </span>
+          ))}
+        </div>
+      ) : (
+        <div className="pointer-events-none absolute left-4 top-4 rounded-lg border border-white/75 bg-white/72 px-3 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#4a6841] shadow-sm backdrop-blur-md">
+          Click buildings · Drag to rotate · Scroll to zoom
+        </div>
+      )}
     </div>
   );
 }

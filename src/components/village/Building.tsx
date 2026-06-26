@@ -3,15 +3,15 @@
 import {Html, useCursor} from "@react-three/drei";
 import {useState} from "react";
 import type {ThreeEvent} from "@react-three/fiber";
-import type {BuildingData, SectionId} from "@/types/portfolio";
+import type {BuildingData} from "@/types/portfolio";
 
 interface BuildingProps {
   building: BuildingData;
   isActive: boolean;
-  onSelect: (sectionId: SectionId) => void;
+  onRequestEnter: (buildingId: string) => void;
 }
 
-export function Building({building, isActive, onSelect}: BuildingProps) {
+export function Building({building, isActive, onRequestEnter}: BuildingProps) {
   const [hovered, setHovered] = useState(false);
   const [width, height, depth] = building.size;
   const isHighlighted = hovered || isActive;
@@ -26,7 +26,7 @@ export function Building({building, isActive, onSelect}: BuildingProps) {
 
   function handleClick(event: ThreeEvent<MouseEvent>) {
     event.stopPropagation();
-    onSelect(building.sectionId);
+    onRequestEnter(building.id);
   }
 
   return (
@@ -68,7 +68,7 @@ export function Building({building, isActive, onSelect}: BuildingProps) {
       <Html center distanceFactor={9.5} position={[0, height + 1.28, 0]} zIndexRange={[10, 0]}>
         <button
           className={isHighlighted ? "scene-label scene-label-active" : "scene-label"}
-          onClick={() => onSelect(building.sectionId)}
+          onClick={() => onRequestEnter(building.id)}
           type="button"
         >
           <span>{building.label}</span>

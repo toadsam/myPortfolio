@@ -1,3 +1,5 @@
+export {contactLinks} from "../../data/siteData";
+
 export const zoneOrder = ["about", "skills", "projects", "backend", "game", "growth", "contact"];
 
 export const zones = [
@@ -228,9 +230,3 @@ export const growthSteps = [
   ["07", "Built 3D interactive portfolio", "Evolved the portfolio into an exploratory 3D world with practical information panels."]
 ];
 
-export const contactLinks = [
-  {label: "Email", value: "jaehoon.dev@gmail.com", href: "mailto:jaehoon.dev@gmail.com"},
-  {label: "GitHub", value: "github.com/toadsam", href: "https://github.com/toadsam"},
-  {label: "Resume", value: "Download resume", href: "#"},
-  {label: "Contact", value: "Open to collaboration", href: "mailto:jaehoon.dev@gmail.com"}
-];

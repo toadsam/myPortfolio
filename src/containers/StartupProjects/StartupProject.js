@@ -112,8 +112,12 @@ export default function StartupProject() {
             className="project-lightbox-close"
             type="button"
             onClick={onClose}
+            aria-label="닫기"
           >
-            X
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <line x1="3" y1="3" x2="15" y2="15" />
+              <line x1="15" y1="3" x2="3" y2="15" />
+            </svg>
           </button>
           {items.length > 1 ? (
             <>
@@ -121,15 +125,21 @@ export default function StartupProject() {
                 className="project-lightbox-nav project-lightbox-prev"
                 type="button"
                 onClick={onPrev}
+                aria-label="이전"
               >
-                {"<"}
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="10 3 5 8 10 13" />
+                </svg>
               </button>
               <button
                 className="project-lightbox-nav project-lightbox-next"
                 type="button"
                 onClick={onNext}
+                aria-label="다음"
               >
-                {">"}
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 3 11 8 6 13" />
+                </svg>
               </button>
             </>
           ) : null}
@@ -404,7 +414,7 @@ export default function StartupProject() {
       pattern="A"
       text={
         <TextBlock
-          badge={<Badge icon="*" label="Core Design" tone="star" />}
+          badge={<Badge icon="✦" label="Core Design" tone="star" />}
           title="JWT 이중 쿠키 + Rotation"
           bullets={[
             <div className="muscleup-bullet-group" key="jwt-one">
@@ -441,7 +451,7 @@ export default function StartupProject() {
       pattern="B"
       text={
         <TextBlock
-          badge={<Badge icon="*" label="Core Design" tone="star" />}
+          badge={<Badge icon="✦" label="Core Design" tone="star" />}
           title="상태 기반 히스토리 저장 AI"
           chips={["analyze", "plan", "chat"]}
           bullets={[
@@ -478,7 +488,7 @@ export default function StartupProject() {
       pattern="A"
       text={
         <TextBlock
-          badge={<Badge icon="OK" label="Outcome" tone="check" />}
+          badge={<Badge icon="✓" label="Outcome" tone="check" />}
           title="도메인 분리 ERD"
           bullets={[
             <div className="muscleup-bullet-group" key="db-one">
@@ -514,7 +524,7 @@ export default function StartupProject() {
       pattern="B"
       text={
         <TextBlock
-          badge={<Badge icon="!" label="Ops & Issue" tone="fire" />}
+          badge={<Badge icon="▲" label="Ops & Issue" tone="fire" />}
           title="AWS 운영 이슈 해결"
           bullets={[
             <div className="muscleup-bullet-group" key="aws-one">
@@ -1154,9 +1164,12 @@ export default function StartupProject() {
               className="project-modal-close"
               type="button"
               onClick={() => setSelectedProject(null)}
-              aria-label="Close"
+              aria-label="닫기"
             >
-              X
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="4" y1="4" x2="16" y2="16" />
+                <line x1="16" y1="4" x2="4" y2="16" />
+              </svg>
             </button>
             {lightbox && typeof document !== "undefined"
               ? createPortal(
@@ -1330,7 +1343,7 @@ export default function StartupProject() {
             {isMuscleUp ? (
               <>
                 <SectionHeading
-                  icon="*"
+                  icon="✦"
                   title="Core Design"
                   subtitle="설계 판단과 구조적 증거"
                 />
@@ -1338,7 +1351,7 @@ export default function StartupProject() {
                 <AiSection />
                 <DbSection />
                 <SectionHeading
-                  icon="!"
+                  icon="▲"
                   title="Ops & Issue"
                   subtitle="CloudFront / HTTPS / CORS / ACM"
                 />
@@ -1349,7 +1362,7 @@ export default function StartupProject() {
                 {coreDesignItems.length ? (
                   <>
                     <SectionHeading
-                      icon="*"
+                      icon="✦"
                       title="Core Design"
                       subtitle="설계 판단과 구조적 증거"
                     />
@@ -1360,7 +1373,7 @@ export default function StartupProject() {
                         text={
                           <TextBlock
                             badge={
-                              <Badge icon="*" label="Core Design" tone="star" />
+                              <Badge icon="✦" label="Core Design" tone="star" />
                             }
                             title={item.title}
                             bullets={buildGenericBullets(item, `core-${index}`)}
@@ -1380,7 +1393,7 @@ export default function StartupProject() {
                 {opsItem ? (
                   <>
                     <SectionHeading
-                      icon="!"
+                      icon="▲"
                       title="Ops & Issue"
                       subtitle="운영 이슈 대응 요약"
                     />
@@ -1389,7 +1402,7 @@ export default function StartupProject() {
                         text={
                           <TextBlock
                             badge={
-                              <Badge icon="!" label="Ops & Issue" tone="fire" />
+                              <Badge icon="▲" label="Ops & Issue" tone="fire" />
                             }
                             title="운영 이슈 대응"
                             bullets={buildGenericBullets(opsItem, "ops")}
@@ -1407,9 +1420,6 @@ export default function StartupProject() {
               </>
             )}
             <section className="project-modal-section">
-              <h3 className="project-modal-section-title">
-                Tech + Links (Accordion)
-              </h3>
               <Accordion title="Tech Stack">
                 {techCategories.length ? (
                   <div className="muscleup-tech-grid">

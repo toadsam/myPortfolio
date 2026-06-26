@@ -1,3 +1,5 @@
+export {contactLinks} from "../../data/siteData";
+
 export const habitatIntro = {
   title: "The World I Build",
   subtitle: "A living system of interfaces, projects, backend flows, simulations, and growth.",
@@ -181,8 +183,3 @@ export const evolutionLogs = [
   ["07", "3D interactive portfolio", "Turning the portfolio into a living digital habitat."]
 ];
 
-export const contactLinks = [
-  {label: "Email", value: "jaehoon.dev@gmail.com", href: "mailto:jaehoon.dev@gmail.com"},
-  {label: "GitHub", value: "github.com/toadsam", href: "https://github.com/toadsam"},
-  {label: "Resume", value: "Download resume", href: "#"}
-];
