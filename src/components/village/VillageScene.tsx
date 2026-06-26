@@ -58,9 +58,39 @@ function VillageDecorations() {
   );
 }
 
+function ActiveRoute({activeSection}: {activeSection: SectionId}) {
+  const building = villageBuildings.find((item) => item.sectionId === activeSection);
+
+  if (!building || activeSection === "intro") {
+    return (
+      <mesh position={[0, 0.045, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[1.48, 1.58, 48]} />
+        <meshBasicMaterial color="#7ed957" transparent opacity={0.42} />
+      </mesh>
+    );
+  }
+
+  const [x, , z] = building.position;
+  const distance = Math.sqrt(x * x + z * z);
+  const angle = Math.atan2(z, x);
+
+  return (
+    <group>
+      <mesh position={[x / 2, 0.05, z / 2]} rotation={[-Math.PI / 2, 0, angle]}>
+        <planeGeometry args={[distance, 0.18]} />
+        <meshBasicMaterial color={building.accentColor} transparent opacity={0.42} />
+      </mesh>
+      <mesh position={[x, 0.12, z]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[1.12, 1.24, 40]} />
+        <meshBasicMaterial color={building.accentColor} transparent opacity={0.52} />
+      </mesh>
+    </group>
+  );
+}
+
 export function VillageScene({activeSection, activeNpcId, onSelectNpc, onSelectSection}: VillageSceneProps) {
   return (
-    <div className="relative h-[54vh] min-h-[455px] overflow-hidden border-y border-[#d8c48c]/70 bg-[#d7f0d7] shadow-[inset_0_-30px_70px_rgba(93,121,70,0.18)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r">
+    <div className="relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#d8c48c]/70 bg-[#d7f0d7] shadow-[inset_0_-30px_70px_rgba(93,121,70,0.18)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r">
       <Canvas camera={{fov: 42, position: [6.4, 6, 7.2]}} dpr={[1, 1.75]} gl={{antialias: true}} shadows="percentage">
         <color args={["#d8efd7"]} attach="background" />
         <fog args={["#d8efd7", 10, 20]} attach="fog" />
@@ -72,6 +102,7 @@ export function VillageScene({activeSection, activeNpcId, onSelectNpc, onSelectS
           <Environment preset="park" />
           <Ground />
           <VillageDecorations />
+          <ActiveRoute activeSection={activeSection} />
           {villageBuildings.map((building) => (
             <Float floatIntensity={building.sectionId === "intro" ? 0.04 : 0.018} key={building.id} rotationIntensity={0.01} speed={1.1}>
               <Building building={building} isActive={activeSection === building.sectionId} onSelect={onSelectSection} />

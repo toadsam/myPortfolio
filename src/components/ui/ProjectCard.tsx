@@ -2,17 +2,16 @@ import type {ProjectData} from "@/types/portfolio";
 
 interface ProjectCardProps {
   project: ProjectData;
+  onOpen: (project: ProjectData) => void;
 }
 
-export function ProjectCard({project}: ProjectCardProps) {
+export function ProjectCard({onOpen, project}: ProjectCardProps) {
   return (
     <article className="rounded-lg border border-[#e0ce98] bg-[#fffdf6] p-4 shadow-[0_10px_34px_rgba(79,72,49,0.08)]">
-      <div className="mb-4 flex items-start justify-between gap-3 border-b border-[#eadfbf] pb-4">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#5e9b5b]">Project Case</p>
-          <h3 className="mt-1 text-xl font-black text-[#1f2a24]">{project.title}</h3>
-          <p className="mt-2 text-sm leading-6 text-[#63705f]">{project.description}</p>
-        </div>
+      <div className="mb-4 border-b border-[#eadfbf] pb-4">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#5e9b5b]">Project Case</p>
+        <h3 className="mt-1 text-xl font-black text-[#1f2a24]">{project.title}</h3>
+        <p className="mt-2 text-sm leading-6 text-[#63705f]">{project.description}</p>
       </div>
 
       <dl className="grid gap-4 text-sm">
@@ -53,13 +52,16 @@ export function ProjectCard({project}: ProjectCardProps) {
       </dl>
 
       <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          className="rounded-md border border-[#6fac58] bg-[#6fac58] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-white transition hover:bg-[#5f9b4d]"
+          onClick={() => onOpen(project)}
+          type="button"
+        >
+          View Details
+        </button>
         {project.links.map((link) => (
           <a
-            className={
-              link.label === "Demo"
-                ? "rounded-md border border-[#6fac58] bg-[#6fac58] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-white transition hover:bg-[#5f9b4d]"
-                : "rounded-md border border-[#cdbb81] bg-[#fff7df] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#3c473b] transition hover:border-[#6fac58] hover:bg-[#eef8db]"
-            }
+            className="rounded-md border border-[#cdbb81] bg-[#fff7df] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#3c473b] transition hover:border-[#6fac58] hover:bg-[#eef8db]"
             href={link.href}
             key={link.label}
             rel="noreferrer"

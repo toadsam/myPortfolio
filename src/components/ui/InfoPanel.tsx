@@ -1,13 +1,15 @@
 "use client";
 
 import {AnimatePresence, motion} from "framer-motion";
+import {useState} from "react";
 import {experienceItems} from "@/data/experience";
 import {portfolioLinks} from "@/data/links";
 import {projects} from "@/data/projects";
 import {skills} from "@/data/skills";
 import {sectionMeta} from "@/lib/constants";
-import type {SectionId} from "@/types/portfolio";
+import type {ProjectData, SectionId} from "@/types/portfolio";
 import {ProjectCard} from "./ProjectCard";
+import {ProjectDetail} from "./ProjectDetail";
 
 interface InfoPanelProps {
   activeSection: SectionId;
@@ -74,10 +76,22 @@ function IntroPanel() {
 }
 
 function ProjectsPanel() {
+  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
+
+  if (selectedProject) {
+    return <ProjectDetail project={selectedProject} onBack={() => setSelectedProject(null)} />;
+  }
+
   return (
     <div className="grid gap-4">
+      <section className="rounded-xl border border-[#d9c58a] bg-[#fffdf6] p-5">
+        <h3 className="font-black text-[#1f2a24]">대표 프로젝트</h3>
+        <p className="mt-2 text-sm leading-6 text-[#5e6757]">
+          각 프로젝트 카드를 열면 문제 정의, 접근 방식, 내 기여, 결과를 상세히 볼 수 있습니다.
+        </p>
+      </section>
       {projects.map((project) => (
-        <ProjectCard key={project.id} project={project} />
+        <ProjectCard key={project.id} onOpen={setSelectedProject} project={project} />
       ))}
     </div>
   );

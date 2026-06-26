@@ -54,6 +54,11 @@ export interface ProjectData {
   tech: string[];
   features: string[];
   learning: string;
+  problem: string;
+  approach: string[];
+  contribution: string[];
+  result: string;
+  nextStep: string;
   links: ProjectLink[];
 }
 
