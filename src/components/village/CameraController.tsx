@@ -90,6 +90,10 @@ export function CameraController({activeSection, isIntro = false}: CameraControl
       minPolarAngle={Math.PI / 9}
       rotateSpeed={0.75}
       zoomSpeed={1.1}
+      onStart={() => {
+        // 유저가 드래그/줌 시작하면 카메라 전환 즉시 중단
+        isTransitioning.current = false;
+      }}
     />
   );
 }

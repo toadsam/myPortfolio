@@ -1,11 +1,13 @@
 "use client";
 
 import {Canvas, useFrame} from "@react-three/fiber";
-import {ContactShadows, Environment, Float, Html} from "@react-three/drei";
+import {ContactShadows, Environment, Float, Html, useGLTF} from "@react-three/drei";
 import {Suspense, useRef} from "react";
 import type {Group} from "three";
 import {npcs} from "@/data/npcs";
 import {rockPositions, treePositions, villageBuildings} from "@/lib/constants";
+import {getBuildingState, getNpcState} from "@/lib/liveState";
+import type {VillageState} from "@/types/live";
 import type {ExplorationMode, NPCData, SectionId} from "@/types/portfolio";
 import {Building} from "./Building";
 import {CameraController} from "./CameraController";
@@ -22,6 +24,7 @@ interface VillageSceneProps {
   onSelectSection: (sectionId: SectionId) => void;
   onSelectNpc: (npc: NPCData) => void;
   onRequestEnter: (buildingId: string) => void;
+  villageState: VillageState | null;
 }
 
 // ─── 시그니처 광장 (</ 정재훈 >) ────────────────────────────────────────────────
@@ -168,56 +171,23 @@ function SignaturePlaza() {
 // ─── 바닥 ─────────────────────────────────────────────────────────────────────
 
 function Ground() {
-  // 그리드 간격 넓게, 개수 줄임 (550개 → 40개)
-  const gridX = Array.from({length: 10}, (_, i) => (i - 5) * 3.6);
-  const gridZ = Array.from({length: 10}, (_, i) => (i - 2) * 3.6);
-
+  const {scene} = useGLTF("/models/ground.glb");
   return (
     <group>
-      {/* 바닥 메인 — 단일 큰 평면 */}
-      <mesh receiveShadow position={[0, -0.04, 3]} rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[40, 40]} />
-        <meshStandardMaterial color="#050d1a" roughness={0.95} metalness={0.08} />
-      </mesh>
-
-      {/* 그리드 X (sparse) */}
-      {gridX.map((x) => (
-        <mesh key={`gx-${x}`} position={[x, 0.001, 3]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[0.022, 40]} />
-          <meshBasicMaterial color="#0a3a6e" transparent opacity={0.2} />
-        </mesh>
-      ))}
-      {/* 그리드 Z (sparse) */}
-      {gridZ.map((z) => (
-        <mesh key={`gz-${z}`} position={[0, 0.001, z + 3]} rotation={[-Math.PI / 2, 0, 0]}>
-          <planeGeometry args={[40, 0.022]} />
-          <meshBasicMaterial color="#0a3a6e" transparent opacity={0.2} />
-        </mesh>
-      ))}
-
-      {/* 중앙 광장 플랫폼 */}
-      <mesh receiveShadow position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[5.5, 32]} />
-        <meshStandardMaterial color="#071220" roughness={0.88} metalness={0.2} />
-      </mesh>
-
-      {/* 중앙 네온 링 */}
-      <mesh position={[0, 0.008, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[5.2, 5.34, 48]} />
-        <meshBasicMaterial color="#0044aa" transparent opacity={0.28} />
-      </mesh>
-
-      {/* 구역 연결 경로 */}
-      <DistrictPath fromX={-1.5} fromZ={0}  toX={-5.5} toZ={1}   color="#00d4ff" />
-      <DistrictPath fromX={0}    fromZ={-1.5} toX={0}   toZ={-5}  color="#aa44ff" />
-      <DistrictPath fromX={1.5}  fromZ={0}   toX={5.5}  toZ={4}   color="#00ff88" />
-      <DistrictPath fromX={0}    fromZ={1.5}  toX={0}   toZ={7.5} color="#ff6600" />
-
-      {/* 조명은 최소화 — 중앙 하나만 */}
+      <primitive
+        object={scene}
+        position={[0, -0.6, 2]}
+        scale={[12, 12, 12]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        receiveShadow
+      />
+      {/* 중앙 조명 */}
       <pointLight color="#00d4ff" intensity={2.5} distance={12} decay={2} position={[0, 1.5, 0]} />
     </group>
   );
 }
+
+useGLTF.preload("/models/ground.glb");
 
 function DistrictPath({fromX, fromZ, toX, toZ, color}: {
   fromX: number; fromZ: number; toX: number; toZ: number; color: string;
@@ -319,9 +289,60 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
 
 // ─── 메인 씬 ──────────────────────────────────────────────────────────────────
 
+function LiveDecorations({villageState}: {villageState: VillageState | null}) {
+  if (!villageState) return null;
+
+  const unlocked = new Set(villageState.unlocked_items);
+
+  return (
+    <group>
+      {unlocked.has("training-statue") ? (
+        <group position={[1.7, 0, 1.8]}>
+          <mesh castShadow position={[0, 0.18, 0]}>
+            <cylinderGeometry args={[0.35, 0.42, 0.36, 18]} />
+            <meshStandardMaterial color="#26364a" metalness={0.5} roughness={0.35} />
+          </mesh>
+          <mesh castShadow position={[0, 0.72, 0]}>
+            <boxGeometry args={[0.28, 0.72, 0.18]} />
+            <meshStandardMaterial color="#7ed957" emissive="#7ed957" emissiveIntensity={0.18} />
+          </mesh>
+          <pointLight color="#7ed957" intensity={0.8} distance={3} decay={2} position={[0, 1.1, 0]} />
+        </group>
+      ) : null}
+
+      {unlocked.has("lab-beacon") ? (
+        <group position={[-4.2, 0, -3.4]}>
+          <mesh castShadow position={[0, 0.5, 0]}>
+            <cylinderGeometry args={[0.08, 0.12, 1, 12]} />
+            <meshStandardMaterial color="#0a1a2e" metalness={0.8} roughness={0.2} />
+          </mesh>
+          <mesh position={[0, 1.1, 0]}>
+            <sphereGeometry args={[0.16, 18, 18]} />
+            <meshBasicMaterial color="#00d4ff" />
+          </mesh>
+          <pointLight color="#00d4ff" intensity={1.5} distance={5} decay={2} position={[0, 1.2, 0]} />
+        </group>
+      ) : null}
+
+      {unlocked.has("study-fountain") ? (
+        <group position={[2.2, 0, -2.1]}>
+          <mesh position={[0, 0.08, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[0.35, 0.48, 32]} />
+            <meshBasicMaterial color="#00ff88" transparent opacity={0.65} />
+          </mesh>
+          <mesh position={[0, 0.42, 0]}>
+            <sphereGeometry args={[0.12, 16, 16]} />
+            <meshStandardMaterial color="#00ff88" emissive="#00ff88" emissiveIntensity={0.4} />
+          </mesh>
+        </group>
+      ) : null}
+    </group>
+  );
+}
+
 export function VillageScene({
   activeSection, activeNpcId, explorationMode, isIntro = false,
-  onSelectNpc, onSelectSection, onRequestEnter
+  onSelectNpc, onSelectSection, onRequestEnter, villageState
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
 
@@ -356,18 +377,26 @@ export function VillageScene({
           <DistrictSign label="Experience District" position={[9.2, 0, 5]}  color="#00ff88" />
 
           {!isWalkMode && <ActiveRoute activeSection={activeSection} />}
+          <LiveDecorations villageState={villageState} />
 
           {villageBuildings.map((building) => (
             <Building
               key={building.id}
               building={building}
+              buildingState={getBuildingState(villageState, building.id)}
               isActive={activeSection === building.sectionId}
               onRequestEnter={isWalkMode ? () => {} : onRequestEnter}
             />
           ))}
 
           {npcs.map((npc) => (
-            <NPC isActive={activeNpcId === npc.id} key={npc.id} npc={npc} onSelect={isWalkMode ? () => {} : onSelectNpc} />
+            <NPC
+              isActive={activeNpcId === npc.id}
+              key={npc.id}
+              npc={npc}
+              npcState={getNpcState(villageState, npc.id)}
+              onSelect={isWalkMode ? () => {} : onSelectNpc}
+            />
           ))}
 
           {treePositions.map((position, index) => (

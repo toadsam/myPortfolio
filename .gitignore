@@ -11,6 +11,9 @@
 /.next
 /out
 tsconfig.tsbuildinfo
+backend/.venv/
+backend/*.db
+/portfolio_village.db
 
 
 # misc

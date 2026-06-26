@@ -3,6 +3,8 @@
 import {Html, useCursor, useGLTF} from "@react-three/drei";
 import {useState} from "react";
 import type {ThreeEvent} from "@react-three/fiber";
+import {lightIntensity} from "@/lib/liveState";
+import type {BuildingState} from "@/types/live";
 import type {BuildingData} from "@/types/portfolio";
 
 // ─── GLB 에셋 렌더러 ──────────────────────────────────────────────────────────
@@ -22,11 +24,12 @@ function GlbModel({glbPath, size}: {glbPath: string; size: [number, number, numb
 
 // ─── 공통 라벨 ────────────────────────────────────────────────────────────────
 
-function BuildingLabel({building, height, highlighted, onEnter}: {
+function BuildingLabel({building, buildingState, height, highlighted, onEnter}: {
   building: BuildingData;
   height: number;
   highlighted: boolean;
   onEnter: () => void;
+  buildingState?: BuildingState;
 }) {
   const color = building.accentColor;
   return (
@@ -71,6 +74,20 @@ function BuildingLabel({building, height, highlighted, onEnter}: {
         }}>
           {building.name}
         </strong>
+        {buildingState && buildingState.light_level !== "dark" ? (
+          <span style={{
+            marginTop: 2,
+            borderTop: `1px solid ${color}33`,
+            color: `${color}cc`,
+            fontFamily: "monospace",
+            fontSize: 7,
+            fontWeight: 900,
+            paddingTop: 2,
+            textTransform: "uppercase",
+          }}>
+            live {buildingState.light_level}
+          </span>
+        ) : null}
         {building.techStack && highlighted && (
           <span style={{
             fontFamily: "monospace",
@@ -396,6 +413,7 @@ function PostBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
 
 interface BuildingProps {
   building: BuildingData;
+  buildingState?: BuildingState;
   isActive: boolean;
   onRequestEnter: (buildingId: string) => void;
 }
@@ -419,9 +437,10 @@ function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
   }
 }
 
-export function Building({building, isActive, onRequestEnter}: BuildingProps) {
+export function Building({building, buildingState, isActive, onRequestEnter}: BuildingProps) {
   const [hovered, setHovered] = useState(false);
-  const isHighlighted = hovered || isActive;
+  const liveGlow = lightIntensity(buildingState?.light_level);
+  const isHighlighted = hovered || isActive || liveGlow >= 0.65;
   const [, h] = building.size;
 
   useCursor(hovered);
@@ -448,10 +467,20 @@ export function Building({building, isActive, onRequestEnter}: BuildingProps) {
       >
         <BuildingGeometry b={building} hl={isHighlighted} />
         <GroundRing color={building.accentColor} highlighted={isHighlighted} radius={Math.max(building.size[0], building.size[2])} />
+        {liveGlow > 0 ? (
+          <pointLight
+            color={building.accentColor}
+            decay={2}
+            distance={4 + liveGlow * 4}
+            intensity={liveGlow * 1.8}
+            position={[0, h + 0.6, 0]}
+          />
+        ) : null}
       </group>
 
       <BuildingLabel
         building={building}
+        buildingState={buildingState}
         height={building.kind === "plaza" ? 1.0 : h}
         highlighted={isHighlighted}
         onEnter={() => onRequestEnter(building.id)}

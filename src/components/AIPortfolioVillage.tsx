@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useGLTF} from "@react-three/drei";
 import {DialogueBox} from "@/components/ui/DialogueBox";
 import {EnterConfirmDialog} from "@/components/ui/EnterConfirmDialog";
@@ -11,6 +11,9 @@ import {IntroOverlay} from "@/components/ui/IntroOverlay";
 import {SceneTransition} from "@/components/ui/SceneTransition";
 import {SectionTabs} from "@/components/ui/SectionTabs";
 import {villageBuildings} from "@/lib/constants";
+import {fetchVillageState} from "@/lib/liveApi";
+import {getNpcState} from "@/lib/liveState";
+import type {VillageState} from "@/types/live";
 import type {ExplorationMode, NPCData, SectionId} from "@/types/portfolio";
 
 const VillageScene = dynamic(
@@ -63,8 +66,36 @@ export function AIPortfolioVillage() {
   const [interiorSectionId, setInteriorSectionId] = useState<SectionId | null>(null);
   const [interiorProjectId, setInteriorProjectId] = useState<string | null>(null);
   const [showTransitionOverlay, setShowTransitionOverlay] = useState(false);
+  const [villageState, setVillageState] = useState<VillageState | null>(null);
+  const [liveError, setLiveError] = useState<string | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadVillageState() {
+      try {
+        const nextState = await fetchVillageState();
+        if (!ignore) {
+          setVillageState(nextState);
+          setLiveError(null);
+        }
+      } catch {
+        if (!ignore) {
+          setLiveError("FastAPI backend offline");
+        }
+      }
+    }
+
+    loadVillageState();
+    const intervalId = setInterval(loadVillageState, 60000);
+
+    return () => {
+      ignore = true;
+      clearInterval(intervalId);
+    };
+  }, []);
 
   function openSection(sectionId: SectionId, contentId?: string) {
     setShowIntro(false);
@@ -183,16 +214,23 @@ export function AIPortfolioVillage() {
               onRequestEnter={handleRequestEnter}
               onSelectNpc={openNpc}
               onSelectSection={openSection}
+              villageState={villageState}
             />
             {showIntro ? <IntroOverlay onStart={startExploring} /> : null}
           </section>
+          <LiveStatusPanel error={liveError} villageState={villageState} />
           <InfoPanel
             activeSection={activeSection}
             activeContentId={activeContentId}
             isOpen={isPanelOpen}
             onClose={() => setIsPanelOpen(false)}
           />
-          <DialogueBox npc={selectedNpc} onClose={() => setSelectedNpc(null)} onOpenSection={openSection} />
+          <DialogueBox
+            npc={selectedNpc}
+            npcState={selectedNpc ? getNpcState(villageState, selectedNpc.id) : undefined}
+            onClose={() => setSelectedNpc(null)}
+            onOpenSection={openSection}
+          />
           <SectionTabs activeSection={activeSection} onSelectSection={openSection} />
         </>
       ) : null}
@@ -212,5 +250,36 @@ export function AIPortfolioVillage() {
       />
       <SceneTransition active={showTransitionOverlay} />
     </main>
+  );
+}
+
+function LiveStatusPanel({error, villageState}: {error: string | null; villageState: VillageState | null}) {
+  if (!villageState && !error) return null;
+
+  return (
+    <aside className="fixed left-4 top-[78px] z-30 hidden max-w-[310px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-4 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md md:block">
+      <p className="font-black uppercase tracking-[0.2em] text-[#00d4ff]">{">"} Live Village</p>
+      {error ? (
+        <p className="mt-2 leading-5 text-[#ff9a6c]">{error}. 기본 마을 화면으로 표시 중입니다.</p>
+      ) : villageState ? (
+        <>
+          <p className="mt-2 leading-5 text-white/70">{villageState.summary}</p>
+          <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+            <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
+              <strong className="block text-[#00d4ff]">{villageState.activity.github_commits}</strong>
+              commits
+            </span>
+            <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
+              <strong className="block text-[#00ff88]">{villageState.activity.study_minutes}</strong>
+              study
+            </span>
+            <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
+              <strong className="block text-[#ff9a6c]">{villageState.activity.workout_done ? "yes" : "no"}</strong>
+              workout
+            </span>
+          </div>
+        </>
+      ) : null}
+    </aside>
   );
 }

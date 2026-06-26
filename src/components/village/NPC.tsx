@@ -5,19 +5,23 @@ import {useFrame} from "@react-three/fiber";
 import {useRef, useState} from "react";
 import type {ThreeEvent} from "@react-three/fiber";
 import type {Group} from "three";
+import {moodLabel} from "@/lib/liveState";
+import type {NpcState} from "@/types/live";
 import type {NPCData} from "@/types/portfolio";
 
 interface NPCProps {
   npc: NPCData;
+  npcState?: NpcState;
   isActive: boolean;
   onSelect: (npc: NPCData) => void;
 }
 
-export function NPC({npc, isActive, onSelect}: NPCProps) {
+export function NPC({npc, npcState, isActive, onSelect}: NPCProps) {
   const groupRef = useRef<Group | null>(null);
   const elapsedRef = useRef(0);
   const [hovered, setHovered] = useState(false);
   const highlighted = hovered || isActive;
+  const mood = moodLabel(npcState?.mood);
 
   useCursor(hovered);
 
@@ -28,7 +32,9 @@ export function NPC({npc, isActive, onSelect}: NPCProps) {
       return;
     }
 
-    groupRef.current.position.y = Math.sin(elapsedRef.current * 2.4 + npc.position[0]) * 0.05;
+    const speed = mood === "busy" ? 4.2 : mood === "sleepy" ? 1.2 : 2.4;
+    const height = mood === "busy" ? 0.08 : mood === "sleepy" ? 0.025 : 0.05;
+    groupRef.current.position.y = Math.sin(elapsedRef.current * speed + npc.position[0]) * height;
   });
 
   function handlePointer(event: ThreeEvent<PointerEvent>, nextHovered: boolean) {
@@ -71,7 +77,8 @@ export function NPC({npc, isActive, onSelect}: NPCProps) {
             onClick={() => onSelect(npc)}
             type="button"
           >
-            {npc.name}
+            <span className="block">{npc.name}</span>
+            {npcState ? <span className="block text-[9px] uppercase tracking-[0.12em] opacity-65">{mood}</span> : null}
           </button>
         </Html>
       </Billboard>
