@@ -14,9 +14,10 @@ type OrbitController = {
 
 interface CameraControllerProps {
   activeSection: SectionId;
+  isIntro?: boolean;
 }
 
-export function CameraController({activeSection}: CameraControllerProps) {
+export function CameraController({activeSection, isIntro = false}: CameraControllerProps) {
   const controlsRef = useRef<OrbitController | null>(null);
   const {camera} = useThree();
   const target = cameraTargets[activeSection] || cameraTargets.intro;
@@ -24,9 +25,20 @@ export function CameraController({activeSection}: CameraControllerProps) {
   const desiredCamera = useMemo(() => new Vector3(...target.position), [target.position]);
   const desiredLookAt = useMemo(() => new Vector3(...target.lookAt), [target.lookAt]);
 
-  // 섹션이 바뀔 때만 true — 정착 후엔 OrbitControls에 완전히 위임
   const isTransitioning = useRef(true);
   const prevSection = useRef(activeSection);
+  const introDone = useRef(false);
+
+  // 시네마틱 인트로: 첫 마운트 시 카메라를 높은 위치에서 시작
+  useEffect(() => {
+    if (isIntro && !introDone.current) {
+      camera.position.set(1.5, 30, 4);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!isIntro) introDone.current = true;
+  }, [isIntro]);
 
   useEffect(() => {
     if (prevSection.current !== activeSection) {
@@ -38,10 +50,14 @@ export function CameraController({activeSection}: CameraControllerProps) {
   useFrame(() => {
     if (!isTransitioning.current) return;
 
-    camera.position.lerp(desiredCamera, 0.062);
+    // 인트로 중엔 느리게 하강 (시네마틱), 이후엔 빠르게 전환
+    const lerpSpeed = isIntro && !introDone.current ? 0.014 : 0.062;
+    const targetSpeed = isIntro && !introDone.current ? 0.018 : 0.076;
+
+    camera.position.lerp(desiredCamera, lerpSpeed);
 
     if (controlsRef.current) {
-      controlsRef.current.target.lerp(desiredLookAt, 0.076);
+      controlsRef.current.target.lerp(desiredLookAt, targetSpeed);
       controlsRef.current.update();
     }
 

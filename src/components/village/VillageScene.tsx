@@ -17,6 +17,7 @@ interface VillageSceneProps {
   activeSection: SectionId;
   activeNpcId?: string;
   explorationMode: ExplorationMode;
+  isIntro?: boolean;
   onSelectSection: (sectionId: SectionId) => void;
   onSelectNpc: (npc: NPCData) => void;
   onRequestEnter: (buildingId: string) => void;
@@ -91,7 +92,7 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
   );
 }
 
-export function VillageScene({activeSection, activeNpcId, explorationMode, onSelectNpc, onSelectSection, onRequestEnter}: VillageSceneProps) {
+export function VillageScene({activeSection, activeNpcId, explorationMode, isIntro = false, onSelectNpc, onSelectSection, onRequestEnter}: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
 
   return (
@@ -120,7 +121,7 @@ export function VillageScene({activeSection, activeNpcId, explorationMode, onSel
             <Tree key={position.join("-")} position={position} scale={index % 3 === 0 ? 1.15 : 0.92 + (index % 2) * 0.18} />
           ))}
           <ContactShadows blur={2.4} far={8} opacity={0.28} position={[0, 0.02, 0]} scale={12} />
-          {isWalkMode ? <CharacterController /> : <CameraController activeSection={activeSection} />}
+          {isWalkMode ? <CharacterController /> : <CameraController activeSection={activeSection} isIntro={isIntro} />}
         </Suspense>
       </Canvas>
 

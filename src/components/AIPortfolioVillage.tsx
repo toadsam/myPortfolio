@@ -124,6 +124,7 @@ export function AIPortfolioVillage() {
               activeNpcId={selectedNpc?.id}
               activeSection={activeSection}
               explorationMode={explorationMode}
+              isIntro={showIntro}
               onRequestEnter={handleRequestEnter}
               onSelectNpc={openNpc}
               onSelectSection={openSection}

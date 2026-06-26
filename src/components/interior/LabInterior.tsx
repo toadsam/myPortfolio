@@ -1,13 +1,13 @@
 "use client";
 
-import {ContactShadows} from "@react-three/drei";
-import {Html} from "@react-three/drei";
-import {Canvas} from "@react-three/fiber";
-import {AnimatePresence, motion} from "framer-motion";
-import {Suspense, useState} from "react";
+import {ContactShadows, Html, OrbitControls} from "@react-three/drei";
+import {Canvas, useFrame} from "@react-three/fiber";
+import {motion} from "framer-motion";
+import {Suspense, useEffect, useRef, useState} from "react";
+import {Group, MathUtils} from "three";
 import {projects} from "@/data/projects";
 import type {ProjectData} from "@/types/portfolio";
-import {InteriorCharacterController} from "./InteriorCharacterController";
+import {ProjectViewer} from "@/components/ui/ProjectViewer";
 
 const COLS = 3;
 const COL_GAP = 3.4;
@@ -24,22 +24,62 @@ function getPanelPosition(index: number): [number, number, number] {
   return [x, PANEL_Y, z];
 }
 
+// 클릭 시 바닥에서 퍼지는 리플 링
+function ClickRipple({position, color, onDone}: {position: [number, number, number]; color: string; onDone: () => void}) {
+  const meshRef = useRef<Group>(null);
+  const t = useRef(0);
+
+  useFrame((_, delta) => {
+    t.current += delta * 1.8;
+    if (meshRef.current) {
+      const s = 1 + t.current * 2.2;
+      meshRef.current.scale.setScalar(s);
+    }
+    if (t.current >= 1) onDone();
+  });
+
+  return (
+    <group ref={meshRef} position={[position[0], 0.03, position[2]]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.7, 0.88, 40]} />
+        <meshBasicMaterial color={color} transparent opacity={Math.max(0, 1 - (t.current ?? 0))} />
+      </mesh>
+    </group>
+  );
+}
+
 function ProjectPanel({
   project,
   position,
+  delay,
   onSelect
 }: {
   project: ProjectData;
   position: [number, number, number];
-  onSelect: (p: ProjectData) => void;
+  delay: number;
+  onSelect: (p: ProjectData, pos: [number, number, number]) => void;
 }) {
   const [hovered, setHovered] = useState(false);
+  const [shouldShow, setShouldShow] = useState(false);
+  const groupRef = useRef<Group>(null);
+  const scaleRef = useRef(0);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShouldShow(true), delay);
+    return () => clearTimeout(t);
+  }, [delay]);
+
+  useFrame((_, delta) => {
+    const target = shouldShow ? (hovered ? 1.06 : 1) : 0;
+    scaleRef.current = MathUtils.lerp(scaleRef.current, target, delta * 6);
+    if (groupRef.current) groupRef.current.scale.setScalar(scaleRef.current);
+  });
 
   return (
     <group
+      ref={groupRef}
       position={position}
-      scale={hovered ? [1.06, 1.06, 1.06] : [1, 1, 1]}
-      onClick={() => onSelect(project)}
+      onClick={() => onSelect(project, [position[0], 0, position[2]])}
       onPointerEnter={() => setHovered(true)}
       onPointerLeave={() => setHovered(false)}
     >
@@ -54,100 +94,40 @@ function ProjectPanel({
         <meshStandardMaterial
           color="#060e1e"
           emissive="#0d2244"
-          emissiveIntensity={hovered ? 0.5 : 0.2}
+          emissiveIntensity={hovered ? 0.55 : 0.2}
           metalness={0.5}
           roughness={0.3}
         />
       </mesh>
-      {/* Top accent strip */}
+      {/* Top strip */}
       <mesh position={[0, 1.65, 0.06]}>
         <boxGeometry args={[2.5, 0.12, 0.05]} />
         <meshBasicMaterial color={hovered ? "#7ed9ff" : "#3a6eb5"} transparent opacity={hovered ? 1 : 0.6} />
       </mesh>
-      {/* Floor glow ring */}
+      {/* Floor ring */}
       <mesh position={[0, -PANEL_Y + 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[1.05, 1.2, 40]} />
         <meshBasicMaterial color={hovered ? "#7ed9ff" : "#3a6eb5"} transparent opacity={hovered ? 0.55 : 0.18} />
       </mesh>
-      {/* Html content on panel */}
+      {/* Content */}
       <Html center distanceFactor={9} position={[0, 0.1, 0.12]} zIndexRange={[5, 0]}>
-        <div
-          style={{
-            pointerEvents: "none",
-            userSelect: "none",
-            width: 160,
-            textAlign: "center",
-            fontFamily: "system-ui, sans-serif"
-          }}
-        >
-          <div
-            style={{
-              fontSize: 10,
-              fontWeight: 900,
-              letterSpacing: "0.18em",
-              textTransform: "uppercase",
-              color: hovered ? "#7ed9ff" : "#5a9abf",
-              marginBottom: 8
-            }}
-          >
+        <div style={{pointerEvents: "none", userSelect: "none", width: 160, textAlign: "center", fontFamily: "system-ui, sans-serif"}}>
+          <div style={{fontSize: 10, fontWeight: 900, letterSpacing: "0.18em", textTransform: "uppercase", color: hovered ? "#7ed9ff" : "#5a9abf", marginBottom: 8}}>
             {project.tech[0] ?? "Project"}
           </div>
-          <div
-            style={{
-              fontSize: 14,
-              fontWeight: 900,
-              color: "#ffffff",
-              lineHeight: 1.3,
-              marginBottom: 8
-            }}
-          >
+          <div style={{fontSize: 14, fontWeight: 900, color: "#ffffff", lineHeight: 1.3, marginBottom: 8}}>
             {project.title}
           </div>
-          <div
-            style={{
-              fontSize: 9,
-              color: "#7a9db5",
-              lineHeight: 1.5
-            }}
-          >
+          <div style={{fontSize: 9, color: "#7a9db5", lineHeight: 1.5}}>
             {project.description.slice(0, 55)}…
           </div>
-          <div
-            style={{
-              marginTop: 10,
-              display: "flex",
-              flexWrap: "wrap",
-              gap: 3,
-              justifyContent: "center"
-            }}
-          >
+          <div style={{marginTop: 10, display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "center"}}>
             {project.tech.slice(0, 3).map((t) => (
-              <span
-                key={t}
-                style={{
-                  fontSize: 8,
-                  fontWeight: 700,
-                  color: "#3a6eb5",
-                  border: "1px solid #3a6eb5",
-                  borderRadius: 4,
-                  padding: "1px 5px"
-                }}
-              >
-                {t}
-              </span>
+              <span key={t} style={{fontSize: 8, fontWeight: 700, color: "#3a6eb5", border: "1px solid #3a6eb5", borderRadius: 4, padding: "1px 5px"}}>{t}</span>
             ))}
           </div>
           {hovered ? (
-            <div
-              style={{
-                marginTop: 12,
-                fontSize: 9,
-                fontWeight: 900,
-                color: "#7ed9ff",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase"
-              }}
-            >
+            <div style={{marginTop: 12, fontSize: 9, fontWeight: 900, color: "#7ed9ff", letterSpacing: "0.12em", textTransform: "uppercase"}}>
               클릭해서 상세보기 →
             </div>
           ) : null}
@@ -160,12 +140,10 @@ function ProjectPanel({
 function LabRoom() {
   return (
     <group>
-      {/* Floor */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[20, 18]} />
         <meshStandardMaterial color="#0c1320" metalness={0.4} roughness={0.25} />
       </mesh>
-      {/* Floor grid lines */}
       {Array.from({length: 11}, (_, i) => i - 5).map((i) => (
         <group key={`grid-${i}`}>
           <mesh position={[i * 1.8, 0.005, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -178,34 +156,13 @@ function LabRoom() {
           </mesh>
         </group>
       ))}
-      {/* Back wall */}
-      <mesh position={[0, 2.5, -8]}>
-        <planeGeometry args={[20, 5]} />
-        <meshStandardMaterial color="#06090f" roughness={0.95} />
-      </mesh>
-      {/* Left wall */}
-      <mesh position={[-10, 2.5, 0]} rotation={[0, Math.PI / 2, 0]}>
-        <planeGeometry args={[18, 5]} />
-        <meshStandardMaterial color="#06090f" roughness={0.95} />
-      </mesh>
-      {/* Right wall */}
-      <mesh position={[10, 2.5, 0]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[18, 5]} />
-        <meshStandardMaterial color="#06090f" roughness={0.95} />
-      </mesh>
-      {/* Front wall */}
-      <mesh position={[0, 2.5, 8]} rotation={[0, Math.PI, 0]}>
-        <planeGeometry args={[20, 5]} />
-        <meshStandardMaterial color="#06090f" roughness={0.95} />
-      </mesh>
-      {/* Ceiling */}
-      <mesh position={[0, 5, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[20, 18]} />
-        <meshStandardMaterial color="#040608" roughness={1} />
-      </mesh>
-      {/* Ceiling strip lights */}
+      <mesh position={[0, 2.5, -8]}><planeGeometry args={[20, 5]} /><meshStandardMaterial color="#06090f" roughness={0.95} /></mesh>
+      <mesh position={[-10, 2.5, 0]} rotation={[0, Math.PI / 2, 0]}><planeGeometry args={[18, 5]} /><meshStandardMaterial color="#06090f" roughness={0.95} /></mesh>
+      <mesh position={[10, 2.5, 0]} rotation={[0, -Math.PI / 2, 0]}><planeGeometry args={[18, 5]} /><meshStandardMaterial color="#06090f" roughness={0.95} /></mesh>
+      <mesh position={[0, 2.5, 8]} rotation={[0, Math.PI, 0]}><planeGeometry args={[20, 5]} /><meshStandardMaterial color="#06090f" roughness={0.95} /></mesh>
+      <mesh position={[0, 5, 0]} rotation={[Math.PI / 2, 0, 0]}><planeGeometry args={[20, 18]} /><meshStandardMaterial color="#040608" roughness={1} /></mesh>
       {[-3.5, 0, 3.5].map((x) => (
-        <group key={`light-strip-${x}`}>
+        <group key={`strip-${x}`}>
           <mesh position={[x, 4.92, 0]}>
             <boxGeometry args={[0.18, 0.04, 14]} />
             <meshBasicMaterial color="#4a9eff" />
@@ -213,29 +170,6 @@ function LabRoom() {
           <pointLight color="#4a9eff" decay={2} distance={8} intensity={1.2} position={[x, 4.7, 0]} />
         </group>
       ))}
-      {/* Section sign on back wall */}
-      <Html center distanceFactor={14} position={[0, 3.8, -7.9]} zIndexRange={[5, 0]}>
-        <div
-          style={{
-            pointerEvents: "none",
-            fontFamily: "system-ui, sans-serif",
-            textAlign: "center",
-            userSelect: "none"
-          }}
-        >
-          <div
-            style={{
-              fontSize: 11,
-              fontWeight: 900,
-              letterSpacing: "0.28em",
-              textTransform: "uppercase",
-              color: "#3a6eb5"
-            }}
-          >
-            PROJECT LAB
-          </div>
-        </div>
-      </Html>
     </group>
   );
 }
@@ -246,9 +180,23 @@ interface Props {
 
 export function LabInterior({onBack}: Props) {
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
+  const [ripples, setRipples] = useState<{id: number; pos: [number, number, number]}[]>([]);
+  const rippleId = useRef(0);
+
+  function handleSelect(project: ProjectData, pos: [number, number, number]) {
+    setSelectedProject(project);
+    const id = rippleId.current++;
+    setRipples((r) => [...r, {id, pos}]);
+  }
+
+  function removeRipple(id: number) {
+    setRipples((r) => r.filter((item) => item.id !== id));
+  }
+
+  const uiDelay = (n: number) => ({initial: {opacity: 0, y: n < 0 ? -10 : 10}, animate: {opacity: 1, y: 0}, transition: {duration: 0.5, delay: 0.3 + n * 0.1, ease: [0.22, 1, 0.36, 1] as const}});
 
   return (
-    <div className="fixed inset-0 z-40 bg-[#050810]">
+    <div className="fixed inset-0 z-40 bg-[#040608]">
       <Canvas camera={{fov: 58, position: [0, 3.5, 9.5]}} dpr={[1, 1.75]} gl={{antialias: true}} shadows>
         <color args={["#040608"]} attach="background" />
         <fog args={["#040608", 14, 26]} attach="fog" />
@@ -261,140 +209,65 @@ export function LabInterior({onBack}: Props) {
           {projects.map((project, index) => (
             <ProjectPanel
               key={project.id}
-              onSelect={setSelectedProject}
+              delay={index * 140 + 350}
+              onSelect={handleSelect}
               position={getPanelPosition(index)}
               project={project}
             />
           ))}
+          {ripples.map((r) => (
+            <ClickRipple key={r.id} color="#7ed9ff" position={r.pos} onDone={() => removeRipple(r.id)} />
+          ))}
           <ContactShadows blur={3.5} far={7} opacity={0.7} position={[0, 0.01, 0]} scale={22} />
-          <InteriorCharacterController
-            bounds={{xMin: -8.5, xMax: 8.5, zMin: -6.5, zMax: 7}}
-            startPosition={[0, 0, 5]}
+          <OrbitControls
+            enablePan={false}
+            maxDistance={14}
+            maxPolarAngle={Math.PI / 2.1}
+            minDistance={4}
+            target={[0, 1.5, -1]}
           />
         </Suspense>
       </Canvas>
 
-      {/* Back button */}
-      <button
+      {/* 뒤로가기 */}
+      <motion.button
+        {...uiDelay(-1)}
         className="fixed left-4 top-4 z-50 flex items-center gap-2 rounded-xl border border-[#3a6eb5]/60 bg-[#060e1e]/90 px-4 py-2.5 text-sm font-bold text-[#7ed9ff] shadow-lg backdrop-blur-md transition hover:bg-[#0d1e3a]"
         onClick={onBack}
         type="button"
+        whileHover={{x: -2}}
+        whileTap={{scale: 0.96}}
       >
         ← 마을로 돌아가기
-      </button>
+      </motion.button>
 
-      {/* Title */}
-      <div className="pointer-events-none fixed left-1/2 top-4 z-50 -translate-x-1/2 rounded-xl border border-[#3a6eb5]/40 bg-[#060e1e]/80 px-5 py-2 text-xs font-black uppercase tracking-[0.22em] text-[#7ed9ff] backdrop-blur-md">
+      {/* 타이틀 */}
+      <motion.div
+        {...uiDelay(-1)}
+        className="pointer-events-none fixed left-1/2 top-4 z-50 -translate-x-1/2 rounded-xl border border-[#3a6eb5]/40 bg-[#060e1e]/80 px-5 py-2 text-xs font-black uppercase tracking-[0.22em] text-[#7ed9ff] backdrop-blur-md"
+        transition={{...uiDelay(-1).transition, delay: 0.4}}
+      >
         프로젝트 연구소
-      </div>
+      </motion.div>
 
-      {/* Controls */}
-      <div className="pointer-events-none fixed bottom-5 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-xl border border-[#3a6eb5]/40 bg-[#060e1e]/80 px-4 py-2.5 backdrop-blur-md">
-        {[
-          ["W", "앞"],
-          ["A", "좌"],
-          ["S", "뒤"],
-          ["D", "우"]
-        ].map(([key, label]) => (
-          <span className="flex flex-col items-center gap-0.5" key={key}>
-            <kbd className="rounded border border-[#3a6eb5]/60 bg-[#0c1320] px-2 py-0.5 text-xs font-black text-[#7ed9ff]">
-              {key}
-            </kbd>
-            <span className="text-[9px] text-[#4a7a9a]">{label}</span>
-          </span>
-        ))}
-        <span className="ml-2 h-4 w-px bg-[#3a6eb5]/30" />
-        <span className="flex flex-col items-center gap-0.5">
-          <span className="text-[9px] font-bold text-[#7ed9ff]">패널 클릭</span>
-          <span className="text-[9px] text-[#4a7a9a]">상세보기</span>
-        </span>
-      </div>
+      {/* 컨트롤 힌트 */}
+      <motion.div
+        {...uiDelay(1)}
+        className="pointer-events-none fixed bottom-5 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-xl border border-[#3a6eb5]/40 bg-[#060e1e]/80 px-4 py-2.5 backdrop-blur-md"
+        transition={{...uiDelay(1).transition, delay: 0.55}}
+      >
+        <span className="text-[9px] text-[#4a7a9a]">🖱 드래그</span>
+        <span className="text-[9px] font-bold text-[#7ed9ff]">시점 회전</span>
+        <span className="mx-2 h-4 w-px bg-[#3a6eb5]/30" />
+        <span className="text-[9px] text-[#4a7a9a]">🖱 스크롤</span>
+        <span className="text-[9px] font-bold text-[#7ed9ff]">줌</span>
+        <span className="mx-2 h-4 w-px bg-[#3a6eb5]/30" />
+        <span className="text-[9px] text-[#4a7a9a]">패널 클릭</span>
+        <span className="text-[9px] font-bold text-[#7ed9ff]">상세보기</span>
+      </motion.div>
 
-      {/* Project detail modal */}
-      <AnimatePresence>
-        {selectedProject ? (
-          <motion.div
-            animate={{opacity: 1}}
-            className="fixed inset-0 z-[60] flex items-center justify-center"
-            exit={{opacity: 0}}
-            initial={{opacity: 0}}
-            transition={{duration: 0.2}}
-          >
-            <div className="absolute inset-0 bg-black/75 backdrop-blur-sm" onClick={() => setSelectedProject(null)} />
-            <motion.div
-              animate={{opacity: 1, scale: 1, y: 0}}
-              className="relative z-10 mx-4 max-h-[80vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-[#3a6eb5] bg-[#060e1e] p-7 shadow-2xl"
-              exit={{opacity: 0, scale: 0.95, y: 8}}
-              initial={{opacity: 0, scale: 0.95, y: 8}}
-              onClick={(e) => e.stopPropagation()}
-              transition={{duration: 0.22, ease: [0.22, 1, 0.36, 1]}}
-            >
-              <button
-                className="absolute right-4 top-4 h-8 w-8 rounded-lg text-[#5a8aaa] transition hover:bg-[#0d1e3a] hover:text-[#7ed9ff]"
-                onClick={() => setSelectedProject(null)}
-                type="button"
-              >
-                ✕
-              </button>
-
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#7ed9ff]">Project</p>
-              <h2 className="mt-2 text-2xl font-black text-white">{selectedProject.title}</h2>
-              <p className="mt-3 text-sm leading-6 text-[#8abed8]">{selectedProject.description}</p>
-
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {selectedProject.tech.map((t) => (
-                  <span
-                    className="rounded-full border border-[#3a6eb5] bg-[#0c1320] px-3 py-1 text-xs font-bold text-[#7ed9ff]"
-                    key={t}
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-
-              <div className="mt-5 space-y-3">
-                <div className="rounded-xl border border-[#1a3a5c] bg-[#0c1320] p-4">
-                  <h4 className="mb-2 text-xs font-black uppercase tracking-[0.15em] text-[#7ed9ff]">역할</h4>
-                  <p className="text-sm leading-6 text-[#8abed8]">{selectedProject.role}</p>
-                </div>
-                <div className="rounded-xl border border-[#1a3a5c] bg-[#0c1320] p-4">
-                  <h4 className="mb-2 text-xs font-black uppercase tracking-[0.15em] text-[#7ed9ff]">문제 정의</h4>
-                  <p className="text-sm leading-6 text-[#8abed8]">{selectedProject.problem}</p>
-                </div>
-                <div className="rounded-xl border border-[#1a3a5c] bg-[#0c1320] p-4">
-                  <h4 className="mb-2 text-xs font-black uppercase tracking-[0.15em] text-[#7ed9ff]">접근 방식</h4>
-                  <ul className="space-y-1.5">
-                    {selectedProject.approach.map((a, i) => (
-                      <li className="text-sm leading-6 text-[#8abed8]" key={i}>
-                        <span className="mr-2 font-black text-[#3a6eb5]">·</span>
-                        {a}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="rounded-xl border border-[#1a3a5c] bg-[#0c1320] p-4">
-                  <h4 className="mb-2 text-xs font-black uppercase tracking-[0.15em] text-[#7ed9ff]">결과</h4>
-                  <p className="text-sm leading-6 text-[#8abed8]">{selectedProject.result}</p>
-                </div>
-              </div>
-
-              <div className="mt-5 flex gap-3">
-                {selectedProject.links.map((link) => (
-                  <a
-                    className="flex-1 rounded-xl border border-[#3a6eb5] py-2.5 text-center text-sm font-bold text-[#7ed9ff] transition hover:bg-[#0d1e3a]"
-                    href={link.href}
-                    key={link.label}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    {link.label} ↗
-                  </a>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      {/* 시네마틱 프로젝트 뷰어 */}
+      <ProjectViewer project={selectedProject} onClose={() => setSelectedProject(null)} />
     </div>
   );
 }
