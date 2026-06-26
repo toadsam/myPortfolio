@@ -332,10 +332,12 @@ export function VillageScene({
         dpr={[1, 1.5]}
         gl={{antialias: true, powerPreference: "high-performance"}}
       >
-        <color args={["#050d1a"]} attach="background" />
-        <fog args={["#050d1a", 22, 42]} attach="fog" />
-        <ambientLight color="#0a2040" intensity={0.7} />
-        <directionalLight color="#1a4a8a" intensity={0.6} position={[4, 10, 5]} />
+        <color args={["#a8c8e8"]} attach="background" />
+        <fog args={["#b8d4ee", 35, 70]} attach="fog" />
+        <ambientLight color="#ffffff" intensity={4.5} />
+        <directionalLight color="#fff8e8" intensity={5.0} position={[8, 20, 8]} />
+        <directionalLight color="#d0e8ff" intensity={2.5} position={[-6, 12, -4]} />
+        <hemisphereLight args={["#87ceeb", "#4a7a3a", 3.0]} />
 
         {/* 구역별 조명 — 포인트라이트 4개로 줄임 */}
         <pointLight color="#00d4ff" intensity={1.8} distance={22} decay={2} position={[-5, 5, 0]} />

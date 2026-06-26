@@ -30,6 +30,20 @@ const InteriorScene = dynamic(
   {ssr: false}
 );
 
+const ProjectInterior = dynamic(
+  () => import("@/components/interior/ProjectInterior").then((m) => m.ProjectInterior),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="fixed inset-0 z-40 flex items-center justify-center bg-[#020d1a]">
+        <span className="font-mono text-xs font-black uppercase tracking-[0.25em] text-[#00d4ff]/50">
+          {">"} Loading Project...
+        </span>
+      </div>
+    )
+  }
+);
+
 const FADE_DURATION = 480;
 
 // Draco 디코더 경로 설정 (압축된 GLB 로드용)
@@ -45,8 +59,9 @@ export function AIPortfolioVillage() {
   const [explorationMode, setExplorationMode] = useState<ExplorationMode>("click");
 
   const [pendingBuildingId, setPendingBuildingId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"village" | "interior">("village");
+  const [viewMode, setViewMode] = useState<"village" | "interior" | "project-interior">("village");
   const [interiorSectionId, setInteriorSectionId] = useState<SectionId | null>(null);
+  const [interiorProjectId, setInteriorProjectId] = useState<string | null>(null);
   const [showTransitionOverlay, setShowTransitionOverlay] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -99,9 +114,15 @@ export function AIPortfolioVillage() {
 
     const {district, sectionId, contentId} = building;
 
-    // 프로젝트 / 스킬 / 경험 / 연락처 → 인포패널에서 해당 콘텐츠 직접 오픈
-    if (district === "projects") {
-      openSection("projects", contentId);
+    // 프로젝트 건물 → 전용 3D 인테리어 씬으로 입장
+    if (district === "projects" && contentId) {
+      setShowTransitionOverlay(true);
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        setInteriorProjectId(contentId);
+        setViewMode("project-interior");
+        setShowTransitionOverlay(false);
+      }, FADE_DURATION);
       return;
     }
     if (district === "skills") {
@@ -136,6 +157,7 @@ export function AIPortfolioVillage() {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       setInteriorSectionId(null);
+      setInteriorProjectId(null);
       setViewMode("village");
       setShowTransitionOverlay(false);
     }, FADE_DURATION);
@@ -177,6 +199,10 @@ export function AIPortfolioVillage() {
 
       {viewMode === "interior" && interiorSectionId ? (
         <InteriorScene sectionId={interiorSectionId} onBack={handleExitInterior} />
+      ) : null}
+
+      {viewMode === "project-interior" && interiorProjectId ? (
+        <ProjectInterior projectId={interiorProjectId} onBack={handleExitInterior} />
       ) : null}
 
       <EnterConfirmDialog
