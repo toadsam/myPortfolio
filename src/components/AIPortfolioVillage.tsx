@@ -54,6 +54,7 @@ const ResumeMode = dynamic(
 );
 
 const FADE_DURATION = 480;
+const CORE_NPC_IDS = new Set(["guide-npc", "project-npc", "developer-npc", "archivist-npc", "contact-npc"]);
 
 useGLTF.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
 
@@ -474,6 +475,12 @@ export function AIPortfolioVillage() {
             </button>
           ) : null}
           {!showIntro ? <LiveStatusPanel error={liveError} villageState={villageState} /> : null}
+          {!showIntro ? (
+            <NpcQuickDock
+              activeNpcId={selectedNpc?.id}
+              onSelect={openNpc}
+            />
+          ) : null}
           {encounterNotice ? <EncounterNotice text={encounterNotice} /> : null}
           <InfoPanel
             activeSection={activeSection}
@@ -484,6 +491,7 @@ export function AIPortfolioVillage() {
           <DialogueBox
             npc={selectedNpc}
             npcState={selectedNpc ? getDisplayedNpcState(selectedNpc.id) : undefined}
+            npcRuntimeState={selectedNpc ? npcRuntimeStates[selectedNpc.id] : undefined}
             onClose={() => setSelectedNpc(null)}
             onOpenSection={openSection}
           />
@@ -541,6 +549,36 @@ function LiveStatusPanel({error, villageState}: {error: string | null; villageSt
           </div>
         </>
       ) : null}
+    </aside>
+  );
+}
+
+function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onSelect: (npc: NPCData) => void}) {
+  const coreNpcs = autonomousNpcs.filter((npc) => CORE_NPC_IDS.has(npc.id));
+
+  return (
+    <aside className="fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:bottom-20 md:right-auto md:w-auto md:max-w-[520px]">
+      <span className="shrink-0 px-2 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75">
+        AI NPC
+      </span>
+      {coreNpcs.map((npc) => (
+        <button
+          className={
+            activeNpcId === npc.id
+              ? "shrink-0 rounded-lg border border-[#00ff88]/50 bg-[#00ff88]/18 px-3 py-2 text-left text-xs font-black text-white"
+              : "shrink-0 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2 text-left text-xs font-black text-white/68 transition hover:border-[#00d4ff]/45 hover:text-white"
+          }
+          key={npc.id}
+          onClick={() => onSelect(npc)}
+          title={npc.agent?.specialty ?? npc.role}
+          type="button"
+        >
+          <span className="block">{npc.name}</span>
+          <span className="mt-0.5 block font-mono text-[9px] font-bold uppercase tracking-[0.1em] text-white/42">
+            {npc.type}
+          </span>
+        </button>
+      ))}
     </aside>
   );
 }

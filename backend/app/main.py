@@ -90,7 +90,7 @@ async def github_sync(db: Session = Depends(get_db)):
 
     if not settings.github_token:
         commits = 0
-        warning = "GITHUB_TOKEN이 없어 GitHub 동기화를 건너뛰었습니다. backend/.env에 토큰을 설정하면 오늘 커밋 수를 가져옵니다."
+        warning = "GITHUB_TOKEN이 없어 GitHub 동기화를 건너뛰었습니다. backend/.env에 토큰을 설정하면 오늘 커밋 수를 가져올 수 있습니다."
     else:
         try:
             commits = await fetch_today_commit_count()

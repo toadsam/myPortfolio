@@ -62,7 +62,7 @@ def derive_village_state(activity: DailyActivity) -> VillageState:
                 building_id=building_id,
                 light_level=_light_for_score(commit_score),
                 activity_score=commit_score,
-                reason=f"오늘 GitHub 커밋 {activity.github_commits}개가 프로젝트 구역 조명에 반영됐습니다.",
+                reason=f"오늘 GitHub 커밋 {activity.github_commits}개가 프로젝트 구역 조명에 반영되었습니다.",
             )
         )
 
@@ -72,26 +72,28 @@ def derive_village_state(activity: DailyActivity) -> VillageState:
                 building_id=building_id,
                 light_level=_light_for_score(study_score),
                 activity_score=study_score,
-                reason=f"오늘 공부 {activity.study_minutes}분이 기술 스택 구역의 에너지로 전환됐습니다.",
+                reason=f"오늘 공부 {activity.study_minutes}분이 기술 스택 구역의 에너지로 전환되었습니다.",
             )
         )
 
     for building_id in EXPERIENCE_BUILDING_IDS:
+        score = max(memo_score, study_score // 2)
         buildings.append(
             BuildingState(
                 building_id=building_id,
-                light_level=_light_for_score(max(memo_score, study_score // 2)),
-                activity_score=max(memo_score, study_score // 2),
+                light_level=_light_for_score(score),
+                activity_score=score,
                 reason="오늘 메모와 학습 시간이 경험 기록관의 분위기를 만듭니다.",
             )
         )
 
+    contact_score = max(overall_score // 2, memo_score)
     buildings.append(
         BuildingState(
             building_id="post-office",
-            light_level=_light_for_score(max(overall_score // 2, memo_score)),
-            activity_score=max(overall_score // 2, memo_score),
-            reason="전체 활동과 메모가 연락 우체국의 응답 준비 상태를 나타냅니다.",
+            light_level=_light_for_score(contact_score),
+            activity_score=contact_score,
+            reason="전체 활동과 메모가 연락 우체국의 응답 준비 상태를 높입니다.",
         )
     )
 
@@ -102,10 +104,26 @@ def derive_village_state(activity: DailyActivity) -> VillageState:
 
     npcs = [
         NpcState(npc_id="guide-npc", mood=guide_mood, status_text=_guide_status(activity)),
-        NpcState(npc_id="project-npc", mood=project_mood, status_text=f"커밋 {activity.github_commits}개를 바탕으로 프로젝트 기록을 정리 중입니다."),
-        NpcState(npc_id="developer-npc", mood=developer_mood, status_text=f"오늘 학습 시간은 {activity.study_minutes}분입니다."),
-        NpcState(npc_id="archivist-npc", mood=archivist_mood, status_text=activity.memo or "오늘의 기록을 기다리고 있습니다."),
-        NpcState(npc_id="contact-npc", mood="calm", status_text="방문자에게 연락 동선을 안내하고 있습니다."),
+        NpcState(
+            npc_id="project-npc",
+            mood=project_mood,
+            status_text=f"커밋 {activity.github_commits}개를 바탕으로 대표 프로젝트 추천 순서를 정리 중입니다.",
+        ),
+        NpcState(
+            npc_id="developer-npc",
+            mood=developer_mood,
+            status_text=f"오늘 공부 시간 {activity.study_minutes}분을 기술 설명의 집중도에 반영했습니다.",
+        ),
+        NpcState(
+            npc_id="archivist-npc",
+            mood=archivist_mood,
+            status_text=activity.memo or "오늘의 메모를 기다리며 성장 기록을 정리하고 있습니다.",
+        ),
+        NpcState(
+            npc_id="contact-npc",
+            mood="calm",
+            status_text="방문자가 관심을 보이면 이메일과 GitHub 동선을 바로 안내할 준비가 되어 있습니다.",
+        ),
     ]
 
     unlocked_items: list[str] = []
@@ -135,7 +153,7 @@ def _guide_status(activity: DailyActivity) -> str:
 
 def _summary(activity: DailyActivity, overall_score: int) -> str:
     if overall_score >= 80:
-        return "오늘의 정재훈 마을은 매우 활발합니다."
+        return "오늘의 정재훈 마을은 매우 활발합니다. NPC들이 방문자 응대를 적극적으로 준비하고 있어요."
     if overall_score >= 40:
         return "오늘의 정재훈 마을은 안정적으로 움직이고 있습니다."
     if overall_score > 0:

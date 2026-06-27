@@ -56,6 +56,16 @@ export interface NPCData {
   position: Vector3Tuple;
   color: string;
   accessoryColor: string;
+  agent?: NPCAgentProfile;
+}
+
+export interface NPCAgentProfile {
+  personality: string;
+  specialty: string;
+  emotionalBias: string;
+  currentGoal: string;
+  memoryHooks: string[];
+  presetQuestions: string[];
 }
 
 export interface ProjectLink {

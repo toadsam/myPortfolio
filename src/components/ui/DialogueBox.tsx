@@ -2,14 +2,18 @@
 
 import {AnimatePresence, motion} from "framer-motion";
 import {useEffect, useMemo, useState} from "react";
+import type {FormEvent} from "react";
+import {npcDefaultPresetQuestions} from "@/data/npcRoster";
 import {sectionMeta} from "@/lib/constants";
 import {sendNpcMessage} from "@/lib/liveApi";
-import type {NpcState} from "@/types/live";
+import {moodLabel} from "@/lib/liveState";
+import type {NpcRuntimeState, NpcState} from "@/types/live";
 import type {NPCData, SectionId} from "@/types/portfolio";
 
 interface DialogueBoxProps {
   npc: NPCData | null;
   npcState?: NpcState;
+  npcRuntimeState?: NpcRuntimeState;
   onClose: () => void;
   onOpenSection: (sectionId: SectionId) => void;
 }
@@ -20,26 +24,48 @@ interface ChatLine {
   usedAi?: boolean;
 }
 
-const PRESET_QUESTIONS = [
-  "대표 프로젝트 추천해줘",
-  "이 사람의 강점 요약해줘",
-  "기술 스택을 설명해줘",
-  "연락 방법 알려줘"
-];
+const MOOD_LABELS: Record<string, string> = {
+  sleepy: "졸림",
+  calm: "차분함",
+  busy: "바쁨",
+  proud: "뿌듯함",
+  training: "활기",
+  curious: "호기심",
+  focused: "집중",
+  worried: "걱정",
+  excited: "신남"
+};
 
 function storageKey(npcId: string) {
   return `portfolio-village-chat:${npcId}`;
 }
 
-export function DialogueBox({npc, npcState, onClose, onOpenSection}: DialogueBoxProps) {
+function uniqueItems(items: string[]) {
+  return Array.from(new Set(items.filter(Boolean)));
+}
+
+export function DialogueBox({npc, npcState, npcRuntimeState, onClose, onOpenSection}: DialogueBoxProps) {
   const section = npc ? sectionMeta.find((item) => item.id === npc.sectionId) : null;
   const [message, setMessage] = useState("");
   const [lines, setLines] = useState<ChatLine[]>([]);
   const [isSending, setIsSending] = useState(false);
+  const agent = npc?.agent;
+  const mood = moodLabel(npcRuntimeState?.mood ?? npcState?.mood);
+  const moodText = MOOD_LABELS[mood] ?? mood;
+  const energy = npcRuntimeState?.energy ?? (mood === "sleepy" ? 32 : mood === "busy" || mood === "excited" ? 78 : 55);
+  const lastVisitorLine = [...lines].reverse().find((line) => line.role === "visitor");
+
+  const presetQuestions = useMemo(() => {
+    const agentQuestions = agent?.presetQuestions ?? [];
+    return uniqueItems([...agentQuestions, ...npcDefaultPresetQuestions]).slice(0, 6);
+  }, [agent]);
 
   const recentMessages = useMemo(
-    () => lines.slice(-8).map((line) => `${line.role === "visitor" ? "방문자" : "NPC"}: ${line.text}`),
-    [lines]
+    () =>
+      lines
+        .slice(-8)
+        .map((line) => `${line.role === "visitor" ? "방문자" : npc?.name ?? "NPC"}: ${line.text}`),
+    [lines, npc?.name]
   );
 
   useEffect(() => {
@@ -84,16 +110,19 @@ export function DialogueBox({npc, npcState, onClose, onOpenSection}: DialogueBox
       const response = await sendNpcMessage(npc.id, nextMessage, recentMessages);
       setLines((current) => current.concat({role: "npc", text: response.reply, usedAi: response.used_ai}));
     } catch {
-      setLines((current) => current.concat({
-        role: "npc",
-        text: "지금은 백엔드와 연결되지 않아 자세한 답변을 가져오지 못했습니다. FastAPI 서버가 켜져 있는지 확인해 주세요."
-      }));
+      setLines((current) =>
+        current.concat({
+          role: "npc",
+          text:
+            "지금은 백엔드와 연결되지 않아 실시간 기억을 가져오지 못했어요. 그래도 이 NPC의 기본 포트폴리오 기억으로 안내를 이어갈 수 있어요."
+        })
+      );
     } finally {
       setIsSending(false);
     }
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     void ask(message);
   }
@@ -109,104 +138,171 @@ export function DialogueBox({npc, npcState, onClose, onOpenSection}: DialogueBox
       {npc ? (
         <motion.aside
           animate={{opacity: 1, y: 0}}
-          className="fixed bottom-24 left-4 z-30 max-w-[calc(100vw-32px)] rounded-lg border border-[#d7c184] bg-[#fffdf6] p-4 text-[#1f2a24] shadow-panel md:bottom-6 md:left-6 md:w-[480px] md:p-5"
+          className="fixed bottom-24 left-4 z-30 max-w-[calc(100vw-32px)] overflow-hidden rounded-lg border border-[#00d4ff]/25 bg-[#06111f]/95 text-white shadow-[0_22px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl md:bottom-6 md:left-6 md:w-[520px]"
           exit={{opacity: 0, y: 18}}
           initial={{opacity: 0, y: 18}}
           role="dialog"
         >
-          <div className="mb-3 flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-[#57965a]">{npc.location}</p>
-              <h2 className="mt-1 text-lg font-black">{npc.name}</h2>
-              <p className="text-sm font-semibold text-[#6d725e]">{npc.role}</p>
-              {npcState ? <p className="mt-1 text-xs font-bold text-[#57965a]">{npcState.status_text}</p> : null}
-            </div>
-            <button
-              className="rounded-md border border-[#d7c184] px-2 py-1 text-xs font-bold text-[#68715e] hover:bg-[#f4e9c7]"
-              onClick={onClose}
-              type="button"
-            >
-              닫기
-            </button>
-          </div>
-
-          <div className="mb-3 flex flex-wrap gap-2">
-            {PRESET_QUESTIONS.map((preset) => (
+          <div className="border-b border-white/10 bg-[#071827] p-4 md:p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]">
+                  {npc.location} · {moodText}
+                </p>
+                <h2 className="mt-1 text-xl font-black text-white">{npc.name}</h2>
+                <p className="mt-1 text-sm font-semibold text-white/65">{npc.role}</p>
+              </div>
               <button
-                className="rounded-full border border-[#d7c184] bg-[#fff7df] px-3 py-1.5 text-xs font-bold text-[#5d644f] transition hover:bg-[#f1e3bc]"
-                disabled={isSending}
-                key={preset}
-                onClick={() => void ask(preset)}
+                className="rounded-md border border-white/15 px-2.5 py-1.5 text-xs font-bold text-white/70 transition hover:border-[#00d4ff]/60 hover:text-white"
+                onClick={onClose}
                 type="button"
               >
-                {preset}
+                닫기
               </button>
-            ))}
-          </div>
+            </div>
 
-          <div className="max-h-[290px] space-y-2 overflow-y-auto rounded-lg border border-[#eadcae] bg-[#fff9e8] p-3">
-            {lines.map((line, index) => (
-              <div
-                className={
-                  line.role === "visitor"
-                    ? "ml-8 rounded-lg bg-[#5f9f4f] px-3 py-2 text-sm leading-6 text-white"
-                    : "mr-8 rounded-lg bg-white px-3 py-2 text-sm leading-6 text-[#38443a]"
-                }
-                key={`${line.role}-${index}`}
-              >
-                {line.text}
-                {line.role === "npc" ? (
-                  <span className="mt-1 block text-[10px] font-black uppercase tracking-[0.12em] text-[#57965a]">
-                    {line.usedAi ? "AI response" : "portfolio memory"}
-                  </span>
-                ) : null}
+            <div className="mt-4 grid grid-cols-[1fr_auto] items-center gap-3">
+              <div>
+                <div className="flex items-center justify-between font-mono text-[10px] font-black uppercase tracking-[0.16em] text-white/45">
+                  <span>emotional energy</span>
+                  <span>{energy}</span>
+                </div>
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/10">
+                  <div
+                    className="h-full rounded-full bg-[#00ff88] shadow-[0_0_18px_rgba(0,255,136,0.45)]"
+                    style={{width: `${Math.max(8, Math.min(100, energy))}%`}}
+                  />
+                </div>
               </div>
-            ))}
-            {isSending ? <p className="px-1 text-xs font-bold text-[#68715e]">NPC가 답변을 정리하는 중입니다...</p> : null}
+              <span className="rounded-full border border-[#00ff88]/25 bg-[#00ff88]/10 px-3 py-1.5 font-mono text-[10px] font-black uppercase tracking-[0.14em] text-[#98ffbe]">
+                {npcRuntimeState?.memory ? "live memory" : "base memory"}
+              </span>
+            </div>
+
+            {agent ? (
+              <div className="mt-4 space-y-2 text-sm leading-6 text-white/72">
+                <p>{agent.personality}</p>
+                <p className="text-white/55">{agent.currentGoal}</p>
+              </div>
+            ) : null}
           </div>
 
-          <form className="mt-3 flex gap-2" onSubmit={handleSubmit}>
-            <input
-              className="min-w-0 flex-1 rounded-lg border border-[#d7c184] bg-white px-3 py-2 text-sm outline-none focus:border-[#5f9f4f]"
-              onChange={(event) => setMessage(event.target.value)}
-              placeholder="NPC에게 질문하기"
-              type="text"
-              value={message}
-            />
-            <button
-              className="rounded-lg border border-[#5f9f4f] bg-[#5f9f4f] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-white disabled:opacity-50"
-              disabled={isSending || !message.trim()}
-              type="submit"
-            >
-              Send
-            </button>
-          </form>
+          <div className="space-y-3 p-4 md:p-5">
+            <div className="grid gap-2 md:grid-cols-2">
+              <AgentFact label="전문 분야" value={agent?.specialty ?? npc.role} />
+              <AgentFact label="감정 경향" value={agent?.emotionalBias ?? "방문자의 질문에 따라 상태가 바뀝니다."} />
+            </div>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            <button
-              className="rounded-lg border border-[#5f9f4f] bg-[#5f9f4f] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-white transition hover:bg-[#4f8d42]"
-              onClick={() => onOpenSection(npc.sectionId)}
-              type="button"
-            >
-              {section?.navLabel || "Section"} 열기
-            </button>
-            <button
-              className="rounded-lg border border-[#d7c184] bg-[#fff7df] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#5d644f] transition hover:bg-[#f4e9c7]"
-              onClick={clearHistory}
-              type="button"
-            >
-              대화 초기화
-            </button>
-            <button
-              className="rounded-lg border border-[#d7c184] bg-[#fff7df] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#5d644f] transition hover:bg-[#f4e9c7]"
-              onClick={onClose}
-              type="button"
-            >
-              계속 탐험
-            </button>
+            <div className="flex flex-wrap gap-2">
+              {(agent?.memoryHooks ?? ["최근 질문", "방문자가 본 구역", "오늘 활동 기록"]).slice(0, 4).map((hook) => (
+                <span
+                  className="rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-1 text-[11px] font-bold text-white/58"
+                  key={hook}
+                >
+                  기억: {hook}
+                </span>
+              ))}
+            </div>
+
+            {npcState?.status_text || npcRuntimeState?.nextGoal || lastVisitorLine ? (
+              <div className="rounded-lg border border-[#00d4ff]/15 bg-[#00d4ff]/[0.06] p-3 text-xs leading-5 text-[#b8e9ff]">
+                {npcRuntimeState?.nextGoal ? <p>현재 목표: {npcRuntimeState.nextGoal}</p> : null}
+                {npcState?.status_text ? <p>상태 기억: {npcState.status_text}</p> : null}
+                {lastVisitorLine ? <p>최근 방문자 질문: {lastVisitorLine.text}</p> : null}
+              </div>
+            ) : null}
+
+            <div className="flex flex-wrap gap-2">
+              {presetQuestions.map((preset) => (
+                <button
+                  className="rounded-full border border-[#00d4ff]/20 bg-[#00d4ff]/10 px-3 py-1.5 text-xs font-bold text-[#c8efff] transition hover:border-[#00d4ff]/55 hover:bg-[#00d4ff]/18 disabled:opacity-50"
+                  disabled={isSending}
+                  key={preset}
+                  onClick={() => void ask(preset)}
+                  type="button"
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
+
+            <div className="max-h-[300px] space-y-2 overflow-y-auto rounded-lg border border-white/10 bg-black/18 p-3">
+              {lines.map((line, index) => (
+                <div
+                  className={
+                    line.role === "visitor"
+                      ? "ml-8 rounded-lg bg-[#00d4ff]/18 px-3 py-2 text-sm leading-6 text-[#dff8ff]"
+                      : "mr-8 rounded-lg bg-white/[0.07] px-3 py-2 text-sm leading-6 text-white/82"
+                  }
+                  key={`${line.role}-${index}`}
+                >
+                  {line.text}
+                  {line.role === "npc" ? (
+                    <span className="mt-1 block font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#00ff88]/70">
+                      {line.usedAi ? "AI live response" : "portfolio fallback memory"}
+                    </span>
+                  ) : null}
+                </div>
+              ))}
+              {isSending ? (
+                <p className="px-1 font-mono text-xs font-bold text-[#00d4ff]/70">
+                  {npc.name}가 기억과 감정 상태를 정리하는 중...
+                </p>
+              ) : null}
+            </div>
+
+            <form className="flex gap-2" onSubmit={handleSubmit}>
+              <input
+                className="min-w-0 flex-1 rounded-lg border border-white/12 bg-white/[0.06] px-3 py-2 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#00d4ff]/70"
+                onChange={(event) => setMessage(event.target.value)}
+                placeholder={`${npc.name}에게 질문하기`}
+                type="text"
+                value={message}
+              />
+              <button
+                className="rounded-lg border border-[#00ff88]/45 bg-[#00ff88]/18 px-4 py-2 font-mono text-xs font-black uppercase tracking-[0.12em] text-[#baffd2] transition hover:bg-[#00ff88]/25 disabled:opacity-45"
+                disabled={isSending || !message.trim()}
+                type="submit"
+              >
+                Send
+              </button>
+            </form>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                className="rounded-lg border border-[#00d4ff]/35 bg-[#00d4ff]/12 px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.12em] text-[#c8efff] transition hover:bg-[#00d4ff]/20"
+                onClick={() => onOpenSection(npc.sectionId)}
+                type="button"
+              >
+                {section?.navLabel || "Section"} 열기
+              </button>
+              <button
+                className="rounded-lg border border-white/12 bg-white/[0.05] px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.12em] text-white/60 transition hover:text-white"
+                onClick={clearHistory}
+                type="button"
+              >
+                기억 초기화
+              </button>
+              <button
+                className="rounded-lg border border-white/12 bg-white/[0.05] px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.12em] text-white/60 transition hover:text-white"
+                onClick={onClose}
+                type="button"
+              >
+                계속 탐험
+              </button>
+            </div>
           </div>
         </motion.aside>
       ) : null}
     </AnimatePresence>
+  );
+}
+
+function AgentFact({label, value}: {label: string; value: string}) {
+  return (
+    <div className="rounded-lg border border-white/10 bg-white/[0.045] p-3">
+      <p className="font-mono text-[10px] font-black uppercase tracking-[0.15em] text-white/38">{label}</p>
+      <p className="mt-1 text-xs font-semibold leading-5 text-white/68">{value}</p>
+    </div>
   );
 }
