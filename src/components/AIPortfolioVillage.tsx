@@ -433,7 +433,8 @@ export function AIPortfolioVillage() {
     <main className="min-h-screen bg-[#050d1a] pb-24 text-white md:pb-0">
       {viewMode === "village" ? (
         <>
-          <Header activeSection={activeSection} onSelectSection={openSection} />
+          {/* 인트로 중엔 헤더 숨김 — 첫 화면 집중 */}
+          {!showIntro ? <Header activeSection={activeSection} onSelectSection={openSection} /> : null}
           <section
             className={
               isPanelOpen
@@ -472,7 +473,7 @@ export function AIPortfolioVillage() {
               )}
             </button>
           ) : null}
-          <LiveStatusPanel error={liveError} villageState={villageState} />
+          {!showIntro ? <LiveStatusPanel error={liveError} villageState={villageState} /> : null}
           {encounterNotice ? <EncounterNotice text={encounterNotice} /> : null}
           <InfoPanel
             activeSection={activeSection}

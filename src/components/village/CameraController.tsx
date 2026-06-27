@@ -20,6 +20,7 @@ interface CameraControllerProps {
 export function CameraController({activeSection, isIntro = false}: CameraControllerProps) {
   const controlsRef = useRef<OrbitController | null>(null);
   const {camera} = useThree();
+  const regress = useThree((s) => s.performance.regress);
   const target = cameraTargets[activeSection] || cameraTargets.intro;
 
   const desiredCamera = useMemo(() => new Vector3(...target.position), [target.position]);
@@ -49,6 +50,7 @@ export function CameraController({activeSection, isIntro = false}: CameraControl
 
   useFrame(() => {
     if (!isTransitioning.current) return;
+    regress(); // 전환 중 해상도 저하
 
     // 인트로 중엔 느리게 하강 (시네마틱), 이후엔 빠르게 전환
     const lerpSpeed = isIntro && !introDone.current ? 0.014 : 0.062;
@@ -94,6 +96,7 @@ export function CameraController({activeSection, isIntro = false}: CameraControl
         // 유저가 드래그/줌 시작하면 카메라 전환 즉시 중단
         isTransitioning.current = false;
       }}
+      onChange={() => regress()}
     />
   );
 }

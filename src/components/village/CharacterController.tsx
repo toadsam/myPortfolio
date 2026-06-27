@@ -15,6 +15,7 @@ const Z_BOUND_MAX = 12.5;
 
 export function CharacterController() {
   const {camera} = useThree();
+  const regress = useThree((s) => s.performance.regress);
   const groupRef = useRef<Group>(null);
   const posRef = useRef(new Vector3(0, 0, 3.5));
   const rotRef = useRef(0);
@@ -78,6 +79,10 @@ export function CharacterController() {
     moveStateRef.current = (movingForward || movingBack) && moved
       ? (running && movingForward ? "run" : "walk")
       : "idle";
+
+    if (moved || keys.has("KeyA") || keys.has("KeyD") || keys.has("ArrowLeft") || keys.has("ArrowRight")) {
+      regress(); // 이동/회전 중 해상도 저하
+    }
 
     if (groupRef.current) {
       groupRef.current.position.set(posRef.current.x, 0, posRef.current.z);

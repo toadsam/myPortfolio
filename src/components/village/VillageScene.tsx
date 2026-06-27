@@ -1,7 +1,7 @@
 "use client";
 
 import {Canvas} from "@react-three/fiber";
-import {ContactShadows, Html, useGLTF} from "@react-three/drei";
+import {AdaptiveDpr, AdaptiveEvents, ContactShadows, Html, useGLTF} from "@react-three/drei";
 import {Suspense} from "react";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
@@ -192,9 +192,13 @@ export function VillageScene({
     <div className="relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#00d4ff]/15 bg-[#050d1a] shadow-[inset_0_-30px_70px_rgba(0,100,255,0.1)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r">
       <Canvas
         camera={{fov: 40, position: [4, 14, 16]}}
-        dpr={[1, 1.5]}
+        dpr={[1, 1.25]}
+        performance={{min: 0.5}}
         gl={{antialias: true, powerPreference: "high-performance"}}
       >
+        {/* 움직일 땐 해상도/이벤트 자동 저하 → 멈추면 선명하게 */}
+        <AdaptiveDpr pixelated={false} />
+        <AdaptiveEvents />
         <color args={["#a8c8e8"]} attach="background" />
         <fog args={["#b8d4ee", 35, 70]} attach="fog" />
         <ambientLight color="#ffffff" intensity={4.5} />

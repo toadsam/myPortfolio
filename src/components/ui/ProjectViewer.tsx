@@ -1,7 +1,7 @@
 "use client";
 
 import {AnimatePresence, motion, useMotionValue, useSpring} from "framer-motion";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {getProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
 import {DashboardProjectViewer} from "./project-viewers/DashboardProjectViewer";
@@ -69,14 +69,17 @@ function AnimatedCheck({color, delay}: {color: string; delay: number}) {
 // ─── 파티클 배경 ──────────────────────────────────────────────────────────────
 
 function Particles({color}: {color: string}) {
-  const dots = Array.from({length: 18}, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: 2 + Math.random() * 3,
-    dur: 4 + Math.random() * 5,
-    delay: Math.random() * 3,
-  }));
+  const [dots, setDots] = useState<{id:number;x:number;y:number;size:number;dur:number;delay:number}[]>([]);
+  useEffect(() => {
+    setDots(Array.from({length: 18}, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: 2 + Math.random() * 3,
+      dur: 4 + Math.random() * 5,
+      delay: Math.random() * 3,
+    })));
+  }, []);
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {dots.map((d) => (
