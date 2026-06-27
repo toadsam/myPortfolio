@@ -2,6 +2,7 @@
 
 import {Canvas} from "@react-three/fiber";
 import {AdaptiveDpr, AdaptiveEvents, ContactShadows, Html, useGLTF} from "@react-three/drei";
+import {Selection} from "@react-three/postprocessing";
 import {Suspense} from "react";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
@@ -15,6 +16,7 @@ import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
 import {Rock} from "./Decorations";
 import {NPC} from "./NPC";
+import {EditorOutline, PropsEditorTray, PropsLayer, usePropsEditor} from "./PropsEditor";
 import {Tree} from "./Tree";
 
 interface VillageSceneProps {
@@ -191,9 +193,21 @@ export function VillageScene({
   onSelectNpc, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
+  const propsApi = usePropsEditor();
+  const editing = propsApi.enabled && propsApi.editMode;
 
   return (
-    <div className="relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#00d4ff]/15 bg-[#050d1a] shadow-[inset_0_-30px_70px_rgba(0,100,255,0.1)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r">
+    <div
+      className="relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#00d4ff]/15 bg-[#050d1a] shadow-[inset_0_-30px_70px_rgba(0,100,255,0.1)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r"
+      onDragOver={editing ? (e) => e.preventDefault() : undefined}
+      onDrop={editing ? (e) => {
+        const glb = e.dataTransfer.getData("application/x-prop-glb");
+        if (glb) {
+          e.preventDefault();
+          propsApi.setPendingDrop({glb, clientX: e.clientX, clientY: e.clientY});
+        }
+      } : undefined}
+    >
       <Canvas
         camera={{fov: 40, position: [4, 14, 16]}}
         dpr={[1, 1.25]}
@@ -216,6 +230,7 @@ export function VillageScene({
         <pointLight color="#ff6600" intensity={1.2} distance={16} decay={2} position={[0, 4, 9]} />
 
         <Suspense fallback={null}>
+         <Selection>
           <Ground />
           <Statue />
 
@@ -226,16 +241,31 @@ export function VillageScene({
           {!isWalkMode && <ActiveRoute activeSection={activeSection} />}
           <BuildingNetwork buildings={projectNetworkBuildings} />
           <LiveDecorations villageState={villageState} />
+          <PropsLayer api={propsApi} />
 
-          {villageBuildings.map((building) => (
-            <Building
-              key={building.id}
-              building={building}
-              buildingState={getBuildingState(villageState, building.id)}
-              isActive={activeSection === building.sectionId}
-              onRequestEnter={isWalkMode ? () => {} : onRequestEnter}
-            />
-          ))}
+          {villageBuildings.map((building) => {
+            const ov = propsApi.buildingOverrides[building.id];
+            const merged = ov?.position ? {...building, position: ov.position} : building;
+            return (
+              <Building
+                key={building.id}
+                building={merged}
+                buildingState={getBuildingState(villageState, building.id)}
+                isActive={activeSection === building.sectionId}
+                onRequestEnter={isWalkMode || editing ? () => {} : onRequestEnter}
+                edit={editing ? {
+                  editing: true,
+                  selected: propsApi.selection?.kind === "building" && propsApi.selection.id === building.id,
+                  rotationY: ov?.rotationY ?? 0,
+                  scale: ov?.scale ?? 1,
+                  onSelectDown: () => {
+                    propsApi.setSelection({kind: "building", id: building.id});
+                    propsApi.setDragging(true);
+                  },
+                } : undefined}
+              />
+            );
+          })}
 
           {autonomousNpcs.map((npc) => (
             <NPC
@@ -262,10 +292,13 @@ export function VillageScene({
 
           <ContactShadows blur={1.5} far={8} frames={1} opacity={0.15} position={[0, 0.02, 2]} scale={18} />
 
+          {editing ? <EditorOutline /> : null}
+
           {isWalkMode
             ? <CharacterController />
-            : <CameraController activeSection={activeSection} isIntro={isIntro} />
+            : <CameraController activeSection={activeSection} isIntro={isIntro} lockRotate={editing} />
           }
+         </Selection>
         </Suspense>
       </Canvas>
 
@@ -283,6 +316,8 @@ export function VillageScene({
           {">"} click / drag / scroll
         </div>
       )}
+
+      <PropsEditorTray api={propsApi} />
     </div>
   );
 }

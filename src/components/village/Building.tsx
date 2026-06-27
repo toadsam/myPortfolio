@@ -1,6 +1,7 @@
 "use client";
 
 import {Html, useCursor, useGLTF} from "@react-three/drei";
+import {Select} from "@react-three/postprocessing";
 import {useRef, useState} from "react";
 import {useFrame, type ThreeEvent} from "@react-three/fiber";
 import {AdditiveBlending, type Mesh} from "three";
@@ -467,6 +468,13 @@ interface BuildingProps {
   buildingState?: BuildingState;
   isActive: boolean;
   onRequestEnter: (buildingId: string) => void;
+  edit?: {
+    editing: boolean;
+    selected: boolean;
+    rotationY: number;
+    scale: number;
+    onSelectDown: () => void;
+  };
 }
 
 function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
@@ -488,13 +496,14 @@ function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
   }
 }
 
-export function Building({building, buildingState, isActive, onRequestEnter}: BuildingProps) {
+export function Building({building, buildingState, isActive, onRequestEnter, edit}: BuildingProps) {
   const [hovered, setHovered] = useState(false);
   const liveGlow = lightIntensity(buildingState?.light_level);
-  const isHighlighted = hovered || isActive || liveGlow >= 0.65;
+  const editing = edit?.editing ?? false;
+  const isHighlighted = !editing && (hovered || isActive || liveGlow >= 0.65);
   const [, h] = building.size;
 
-  useCursor(hovered);
+  useCursor(hovered || (editing && (edit?.selected ?? false)));
 
   function handlePointer(event: ThreeEvent<PointerEvent>, next: boolean) {
     event.stopPropagation();
@@ -506,17 +515,28 @@ export function Building({building, buildingState, isActive, onRequestEnter}: Bu
     onRequestEnter(building.id);
   }
 
-  const scale = isHighlighted ? 1.04 : 1;
+  const rotY = edit?.rotationY ?? 0;
+  const extraScale = edit?.scale ?? 1;
+  const scale = (isHighlighted ? 1.04 : 1) * extraScale;
 
   return (
-    <group position={building.position}>
+    <group position={building.position} rotation={[0, rotY, 0]}>
       <group
-        onClick={handleClick}
-        onPointerEnter={(e) => handlePointer(e, true)}
-        onPointerLeave={(e) => handlePointer(e, false)}
+        onClick={editing ? undefined : handleClick}
+        onPointerDown={editing ? (e) => {e.stopPropagation(); edit?.onSelectDown();} : undefined}
+        onPointerEnter={editing ? undefined : (e) => handlePointer(e, true)}
+        onPointerLeave={editing ? undefined : (e) => handlePointer(e, false)}
         scale={[scale, scale, scale]}
       >
-        <BuildingGeometry b={building} hl={isHighlighted} />
+        {editing && edit?.selected ? (
+          <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[Math.max(building.size[0], building.size[2]) * 0.9, Math.max(building.size[0], building.size[2]) * 1.02, 44]} />
+            <meshBasicMaterial color="#86b0e6" transparent opacity={0.95} />
+          </mesh>
+        ) : null}
+        <Select enabled={editing && (edit?.selected ?? false)}>
+          <BuildingGeometry b={building} hl={isHighlighted} />
+        </Select>
         <GroundRing color={building.accentColor} highlighted={isHighlighted} radius={Math.max(building.size[0], building.size[2])} />
         <HighlightFX
           active={isHighlighted}

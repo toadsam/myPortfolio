@@ -15,9 +15,10 @@ type OrbitController = {
 interface CameraControllerProps {
   activeSection: SectionId;
   isIntro?: boolean;
+  lockRotate?: boolean;
 }
 
-export function CameraController({activeSection, isIntro = false}: CameraControllerProps) {
+export function CameraController({activeSection, isIntro = false, lockRotate = false}: CameraControllerProps) {
   const controlsRef = useRef<OrbitController | null>(null);
   const {camera} = useThree();
   const regress = useThree((s) => s.performance.regress);
@@ -85,6 +86,7 @@ export function CameraController({activeSection, isIntro = false}: CameraControl
       dampingFactor={0.08}
       enableDamping
       enablePan={false}
+      enableRotate={!lockRotate}
       enableZoom
       maxDistance={24}
       maxPolarAngle={Math.PI / 2.1}
