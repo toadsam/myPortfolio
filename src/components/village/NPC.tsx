@@ -76,7 +76,7 @@ export function NPC({npc, npcState, behavior, bubbleText, buildings, isActive, o
         retargetAtRef.current = 0;
       }
     }
-    moveStateRef.current = walking ? "walk" : "idle";
+    moveStateRef.current = walking ? (rawMood === "busy" || rawMood === "excited" ? "run" : "walk") : "idle";
 
     groupRef.current.position.y = Math.sin(elapsedRef.current * speed + home[0]) * height;
 
@@ -175,4 +175,3 @@ function pickTarget(
 
   return home;
 }
-

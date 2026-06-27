@@ -67,8 +67,18 @@ def village_state(db: Session = Depends(get_db)):
 @app.post("/npc/chat", response_model=ChatMessageOut)
 async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
-    reply, used_ai = await answer_npc_message(payload.npc_id, payload.message, activity, payload.recent_messages)
-    return ChatMessageOut(npc_id=payload.npc_id, reply=reply, used_ai=used_ai)
+    reply, used_ai, suggested_action = await answer_npc_message(
+        payload.npc_id,
+        payload.message,
+        activity,
+        payload.recent_messages,
+    )
+    return ChatMessageOut(
+        npc_id=payload.npc_id,
+        reply=reply,
+        used_ai=used_ai,
+        suggested_action=suggested_action,
+    )
 
 
 @app.post("/npc/tick", response_model=NpcTickOut)

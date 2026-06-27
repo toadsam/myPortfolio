@@ -14,7 +14,15 @@ import {autonomousNpcs} from "@/data/npcRoster";
 import {villageBuildings} from "@/lib/constants";
 import {fetchVillageState, requestNpcEncounter, requestNpcTick} from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
-import type {NpcMood, NpcRuntimeState, NpcState, VillageState} from "@/types/live";
+import type {
+  NpcActionDefinition,
+  NpcActionState,
+  NpcMood,
+  NpcRuntimeState,
+  NpcState,
+  NpcSuggestedAction,
+  VillageState
+} from "@/types/live";
 import type {ExplorationMode, NPCData, SectionId, Vector3Tuple} from "@/types/portfolio";
 
 const VillageScene = dynamic(
@@ -97,7 +105,13 @@ export function AIPortfolioVillage() {
 
         for (const [npcId, state] of Object.entries(states)) {
           if (state.bubbleExpiresAt && state.bubbleExpiresAt <= now) {
-            next[npcId] = {...state, bubbleText: undefined, bubbleExpiresAt: undefined};
+            next[npcId] = {...(next[npcId] ?? state), bubbleText: undefined, bubbleExpiresAt: undefined};
+            changed = true;
+          }
+
+          const actionExpiresAt = state.currentAction ? state.currentAction.startedAt + state.currentAction.durationMs : 0;
+          if (actionExpiresAt && actionExpiresAt <= now) {
+            next[npcId] = {...(next[npcId] ?? state), currentAction: undefined};
             changed = true;
           }
         }
@@ -173,19 +187,24 @@ export function AIPortfolioVillage() {
           remember(response.memory);
           setNpcRuntimeStates((states) => ({
             ...states,
-            [npc.id]: {
-              mood: response.mood,
-              energy: response.energy,
-              bubbleText: response.bubble_text,
-              bubbleExpiresAt: Date.now() + 8500,
-              memory: response.memory,
-              nextGoal: response.next_goal
-            }
+            [npc.id]: applySuggestedActionToRuntime(
+              {
+                ...(states[npc.id] ?? {}),
+                mood: response.mood,
+                energy: response.energy,
+                bubbleText: response.bubble_text,
+                bubbleExpiresAt: Date.now() + 8500,
+                memory: response.memory,
+                nextGoal: response.next_goal
+              },
+              response.suggested_action
+            )
           }));
         } catch {
           setNpcRuntimeStates((states) => ({
             ...states,
             [npc.id]: {
+              ...(states[npc.id] ?? current ?? {}),
               mood: current?.mood ?? baseMood,
               energy: current?.energy ?? 45,
               bubbleText: "잠깐 생각을 정리하는 중이에요.",
@@ -276,6 +295,16 @@ export function AIPortfolioVillage() {
                 };
               }
 
+              for (const action of response.suggested_actions) {
+                next[action.npc_id] = applySuggestedActionToRuntime(
+                  next[action.npc_id] ?? {
+                    mood: getNpcState(villageState, action.npc_id)?.mood ?? "curious",
+                    energy: 55
+                  },
+                  action
+                );
+              }
+
               return next;
             });
           } catch {
@@ -321,6 +350,26 @@ export function AIPortfolioVillage() {
 
   function handleNpcPositionChange(npcId: string, position: Vector3Tuple) {
     npcPositionsRef.current[npcId] = position;
+  }
+
+  function handleNpcSuggestedAction(action: NpcSuggestedAction | null | undefined) {
+    if (!action) return;
+
+    const actionState = suggestedActionToState(action);
+    setNpcRuntimeStates((states) => ({
+      ...states,
+      [actionState.npcId]: applyActionStateToRuntime(states[actionState.npcId], actionState)
+    }));
+    remember(actionState.statusText);
+  }
+
+  function runManualNpcAction(npc: NPCData, action: NpcActionDefinition) {
+    const actionState = actionDefinitionToState(npc, action);
+    setNpcRuntimeStates((states) => ({
+      ...states,
+      [npc.id]: applyActionStateToRuntime(states[npc.id], actionState)
+    }));
+    remember(actionState.statusText);
   }
 
   function getDisplayedNpcState(npcId: string): NpcState | undefined {
@@ -494,6 +543,8 @@ export function AIPortfolioVillage() {
             npcRuntimeState={selectedNpc ? npcRuntimeStates[selectedNpc.id] : undefined}
             onClose={() => setSelectedNpc(null)}
             onOpenSection={openSection}
+            onRunAction={runManualNpcAction}
+            onSuggestedAction={handleNpcSuggestedAction}
           />
           <SectionTabs activeSection={activeSection} onSelectSection={openSection} />
         </>
@@ -520,6 +571,53 @@ function distance(a: Vector3Tuple, b: Vector3Tuple) {
   const dx = a[0] - b[0];
   const dz = a[2] - b[2];
   return Math.sqrt(dx * dx + dz * dz);
+}
+
+function suggestedActionToState(action: NpcSuggestedAction): NpcActionState {
+  return {
+    npcId: action.npc_id,
+    actionId: action.action_id,
+    label: action.label,
+    description: action.description,
+    statusText: action.status_text,
+    animationKey: action.animation_key,
+    startedAt: Date.now(),
+    durationMs: action.duration_ms,
+    targetId: action.target_id ?? undefined,
+    source: action.source
+  };
+}
+
+function actionDefinitionToState(npc: NPCData, action: NpcActionDefinition): NpcActionState {
+  return {
+    npcId: npc.id,
+    actionId: action.id,
+    label: action.label,
+    description: action.description,
+    statusText: `${npc.name}가 ${action.label} 행동을 실행합니다.`,
+    animationKey: action.animationKey,
+    startedAt: Date.now(),
+    durationMs: action.durationMs,
+    targetId: action.targetId,
+    source: "manual"
+  };
+}
+
+function applySuggestedActionToRuntime(
+  state: NpcRuntimeState,
+  action?: NpcSuggestedAction | null
+): NpcRuntimeState {
+  if (!action) return state;
+  return applyActionStateToRuntime(state, suggestedActionToState(action));
+}
+
+function applyActionStateToRuntime(state: NpcRuntimeState | undefined, action: NpcActionState): NpcRuntimeState {
+  const base = state ?? {mood: "curious" as NpcMood, energy: 55};
+  return {
+    ...base,
+    currentAction: action,
+    recentActions: [action, ...(base.recentActions ?? [])].slice(0, 5)
+  };
 }
 
 function LiveStatusPanel({error, villageState}: {error: string | null; villageState: VillageState | null}) {

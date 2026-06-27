@@ -30,6 +30,20 @@ class ActivityOut(BaseModel):
 
 LightLevel = Literal["dark", "dim", "normal", "bright"]
 NpcMood = Literal["sleepy", "calm", "busy", "proud", "training", "curious", "focused", "worried", "excited"]
+NpcAnimationKey = Literal["wave", "point", "think", "type", "send", "walk-to-building", "open-hologram"]
+NpcActionSource = Literal["chat", "tick", "encounter", "manual"]
+
+
+class NpcActionOut(BaseModel):
+    npc_id: str
+    action_id: str
+    label: str
+    description: str
+    status_text: str
+    animation_key: NpcAnimationKey
+    duration_ms: int = Field(default=4500, ge=500, le=30000)
+    target_id: str | None = None
+    source: NpcActionSource = "chat"
 
 
 class BuildingState(BaseModel):
@@ -63,6 +77,7 @@ class ChatMessageOut(BaseModel):
     npc_id: str
     reply: str
     used_ai: bool
+    suggested_action: NpcActionOut | None = None
 
 
 class NpcTickIn(BaseModel):
@@ -83,6 +98,7 @@ class NpcTickOut(BaseModel):
     memory: str
     used_ai: bool
     cooldown_seconds: int
+    suggested_action: NpcActionOut | None = None
 
 
 class EncounterParticipant(BaseModel):
@@ -116,6 +132,7 @@ class NpcEncounterOut(BaseModel):
     memory: str
     used_ai: bool
     cooldown_seconds: int
+    suggested_actions: list[NpcActionOut] = Field(default_factory=list)
 
 
 class GithubSyncOut(BaseModel):

@@ -4,6 +4,8 @@ from typing import Any
 from app.catalog import NPCS, PROJECTS
 from app.config import settings
 from app.models import DailyActivity
+from app.schemas import NpcActionOut
+from app.services.npc_action_service import choose_npc_action
 
 
 async def answer_npc_message(
@@ -11,17 +13,18 @@ async def answer_npc_message(
     message: str,
     activity: DailyActivity,
     recent_messages: list[str] | None = None,
-) -> tuple[str, bool]:
+) -> tuple[str, bool, NpcActionOut]:
     npc = NPCS.get(npc_id, _npc_profile_for_dynamic_id(npc_id))
     context = build_context(npc_id, activity, recent_messages or [])
+    suggested_action = choose_npc_action(npc_id, message=message, activity=activity, source="chat")
 
     if settings.openai_api_key:
         try:
-            return await answer_with_openai(npc, context, message), True
+            return await answer_with_openai(npc, context, message), True, suggested_action
         except Exception:
-            return answer_without_ai(npc_id, message, activity), False
+            return answer_without_ai(npc_id, message, activity), False, suggested_action
 
-    return answer_without_ai(npc_id, message, activity), False
+    return answer_without_ai(npc_id, message, activity), False, suggested_action
 
 
 def build_context(npc_id: str, activity: DailyActivity, recent_messages: list[str] | None = None) -> str:

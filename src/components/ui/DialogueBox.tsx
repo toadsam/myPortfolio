@@ -3,11 +3,12 @@
 import {AnimatePresence, motion} from "framer-motion";
 import {useEffect, useMemo, useState} from "react";
 import type {FormEvent} from "react";
+import {getNpcActions} from "@/data/npcActions";
 import {npcDefaultPresetQuestions} from "@/data/npcRoster";
 import {sectionMeta} from "@/lib/constants";
 import {sendNpcMessage} from "@/lib/liveApi";
 import {moodLabel} from "@/lib/liveState";
-import type {NpcRuntimeState, NpcState} from "@/types/live";
+import type {NpcActionDefinition, NpcRuntimeState, NpcState, NpcSuggestedAction} from "@/types/live";
 import type {NPCData, SectionId} from "@/types/portfolio";
 
 interface DialogueBoxProps {
@@ -16,6 +17,8 @@ interface DialogueBoxProps {
   npcRuntimeState?: NpcRuntimeState;
   onClose: () => void;
   onOpenSection: (sectionId: SectionId) => void;
+  onRunAction: (npc: NPCData, action: NpcActionDefinition) => void;
+  onSuggestedAction: (action: NpcSuggestedAction | null | undefined) => void;
 }
 
 interface ChatLine {
@@ -44,12 +47,22 @@ function uniqueItems(items: string[]) {
   return Array.from(new Set(items.filter(Boolean)));
 }
 
-export function DialogueBox({npc, npcState, npcRuntimeState, onClose, onOpenSection}: DialogueBoxProps) {
+export function DialogueBox({
+  npc,
+  npcState,
+  npcRuntimeState,
+  onClose,
+  onOpenSection,
+  onRunAction,
+  onSuggestedAction
+}: DialogueBoxProps) {
   const section = npc ? sectionMeta.find((item) => item.id === npc.sectionId) : null;
   const [message, setMessage] = useState("");
   const [lines, setLines] = useState<ChatLine[]>([]);
   const [isSending, setIsSending] = useState(false);
   const agent = npc?.agent;
+  const currentAction = npcRuntimeState?.currentAction;
+  const recentActions = npcRuntimeState?.recentActions ?? [];
   const mood = moodLabel(npcRuntimeState?.mood ?? npcState?.mood);
   const moodText = MOOD_LABELS[mood] ?? mood;
   const energy = npcRuntimeState?.energy ?? (mood === "sleepy" ? 32 : mood === "busy" || mood === "excited" ? 78 : 55);
@@ -59,6 +72,8 @@ export function DialogueBox({npc, npcState, npcRuntimeState, onClose, onOpenSect
     const agentQuestions = agent?.presetQuestions ?? [];
     return uniqueItems([...agentQuestions, ...npcDefaultPresetQuestions]).slice(0, 6);
   }, [agent]);
+
+  const actionCandidates = useMemo(() => (npc ? getNpcActions(npc.id).slice(0, 3) : []), [npc]);
 
   const recentMessages = useMemo(
     () =>
@@ -108,7 +123,12 @@ export function DialogueBox({npc, npcState, npcRuntimeState, onClose, onOpenSect
 
     try {
       const response = await sendNpcMessage(npc.id, nextMessage, recentMessages);
-      setLines((current) => current.concat({role: "npc", text: response.reply, usedAi: response.used_ai}));
+      onSuggestedAction(response.suggested_action);
+      setLines((current) => {
+        const next = current.concat({role: "npc" as const, text: response.reply, usedAi: response.used_ai});
+        if (!response.suggested_action) return next;
+        return next.concat({role: "npc" as const, text: response.suggested_action.status_text, usedAi: false});
+      });
     } catch {
       setLines((current) =>
         current.concat({
@@ -131,6 +151,18 @@ export function DialogueBox({npc, npcState, npcRuntimeState, onClose, onOpenSect
     if (!npc) return;
     window.localStorage.removeItem(storageKey(npc.id));
     setLines([{role: "npc", text: npc.dialogue}]);
+  }
+
+  function handleRunAction(action: NpcActionDefinition) {
+    if (!npc) return;
+    onRunAction(npc, action);
+    setLines((current) =>
+      current.concat({
+        role: "npc",
+        text: `${npc.name}가 ${action.label} 행동을 실행합니다.`,
+        usedAi: false
+      })
+    );
   }
 
   return (
@@ -209,6 +241,51 @@ export function DialogueBox({npc, npcState, npcRuntimeState, onClose, onOpenSect
                 {npcRuntimeState?.nextGoal ? <p>현재 목표: {npcRuntimeState.nextGoal}</p> : null}
                 {npcState?.status_text ? <p>상태 기억: {npcState.status_text}</p> : null}
                 {lastVisitorLine ? <p>최근 방문자 질문: {lastVisitorLine.text}</p> : null}
+              </div>
+            ) : null}
+
+            {currentAction ? (
+              <div className="rounded-lg border border-[#00ff88]/25 bg-[#00ff88]/[0.08] p-3 text-xs leading-5 text-[#c9ffd9]">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-[#8fffb3]">
+                    current action
+                  </p>
+                  <span className="rounded-full border border-white/10 bg-black/20 px-2 py-0.5 font-mono text-[10px] text-white/50">
+                    {currentAction.animationKey}
+                  </span>
+                </div>
+                <p className="mt-1 font-bold text-white/86">{currentAction.statusText}</p>
+                <p className="mt-1 text-white/55">{currentAction.description}</p>
+              </div>
+            ) : null}
+
+            {actionCandidates.length > 0 ? (
+              <div className="rounded-lg border border-white/10 bg-white/[0.04] p-3">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <p className="font-mono text-[10px] font-black uppercase tracking-[0.16em] text-white/42">
+                    action queue
+                  </p>
+                  {recentActions.length > 0 ? (
+                    <span className="text-[11px] font-bold text-white/38">최근 {recentActions[0]?.label}</span>
+                  ) : null}
+                </div>
+                <div className="grid gap-2 md:grid-cols-3">
+                  {actionCandidates.map((action) => (
+                    <button
+                      className="min-h-[58px] rounded-lg border border-[#00d4ff]/18 bg-[#00d4ff]/8 px-2.5 py-2 text-left text-xs font-bold leading-5 text-[#d8f6ff] transition hover:border-[#00ff88]/45 hover:bg-[#00ff88]/10 disabled:opacity-50"
+                      disabled={isSending}
+                      key={action.id}
+                      onClick={() => handleRunAction(action)}
+                      title={action.description}
+                      type="button"
+                    >
+                      <span className="block">{action.label}</span>
+                      <span className="mt-0.5 block font-mono text-[9px] font-black uppercase tracking-[0.08em] text-white/35">
+                        {action.animationKey}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : null}
 

@@ -3,26 +3,26 @@
 import {useAnimations, useGLTF} from "@react-three/drei";
 import {useFrame, useThree} from "@react-three/fiber";
 import {useEffect, useMemo, useRef} from "react";
+import type {MutableRefObject} from "react";
 import {Mesh, Vector3, type Group} from "three";
 import {SkeletonUtils} from "three-stdlib";
 
-export type NpcMoveState = "idle" | "walk";
+export type NpcMoveState = "idle" | "walk" | "run";
 
-// NPC는 저폴리(디시메이트) 버전 사용
-const WALK_URL = "/models/characters/warrior-walk-lite.glb";
+const ROBOT_URL = "/models/characters/neon-robot-npc.glb";
 
 // 플레이어(1.1)보다 1.5배 작게
 const NPC_SCALE = 0.73;
-const MODEL_FACING = Math.PI;
+const MODEL_FACING = 0;
 // 카메라에서 이 거리 밖이면 렌더/애니 정지
 const CULL_DISTANCE = 22;
 
 const _tmp = new Vector3();
 
-export function NpcWarrior({stateRef}: {stateRef: React.MutableRefObject<NpcMoveState>}) {
+export function NpcWarrior({stateRef}: {stateRef: MutableRefObject<NpcMoveState>}) {
   const innerRef = useRef<Group>(null);
   const {camera} = useThree();
-  const {scene, animations} = useGLTF(WALK_URL);
+  const {scene, animations} = useGLTF(ROBOT_URL);
 
   // 인스턴스마다 골격 복제 + 그림자 비활성화 (스킨드 그림자는 비용 2배)
   const cloned = useMemo(() => {
@@ -38,10 +38,14 @@ export function NpcWarrior({stateRef}: {stateRef: React.MutableRefObject<NpcMove
   }, [scene]);
 
   const clips = useMemo(() => {
-    if (!animations[0]) return [];
-    const w = animations[0].clone();
-    w.name = "walk";
-    return [w];
+    return animations
+      .map((clip) => {
+        const nextClip = clip.clone();
+        const normalizedName = clip.name.toLowerCase();
+        nextClip.name = normalizedName.includes("run") ? "run" : "walk";
+        return nextClip;
+      })
+      .filter((clip, index, list) => list.findIndex((item) => item.name === clip.name) === index);
   }, [animations]);
 
   const {actions} = useAnimations(clips, innerRef);
@@ -50,8 +54,9 @@ export function NpcWarrior({stateRef}: {stateRef: React.MutableRefObject<NpcMove
 
   useEffect(() => {
     // NPC들이 같은 위상으로 걷지 않게 시작 시점 분산
-    const act = actions.walk;
-    if (act) act.time = Math.random() * 1.2;
+    for (const action of Object.values(actions)) {
+      if (action) action.time = Math.random() * 1.2;
+    }
   }, [actions]);
 
   useFrame(() => {
@@ -69,8 +74,10 @@ export function NpcWarrior({stateRef}: {stateRef: React.MutableRefObject<NpcMove
     // 가까울 때만 애니메이션 상태 전환
     const target = stateRef.current;
     if (target !== currentRef.current) {
-      if (target === "walk") actions.walk?.reset().fadeIn(0.2).play();
-      else actions.walk?.fadeOut(0.25);
+      if (currentRef.current !== "idle") actions[currentRef.current]?.fadeOut(0.2);
+      if (target !== "idle") {
+        actions[target]?.reset().setEffectiveTimeScale(target === "run" ? 1.08 : 1).fadeIn(0.2).play();
+      }
       currentRef.current = target;
     }
   });
@@ -82,4 +89,4 @@ export function NpcWarrior({stateRef}: {stateRef: React.MutableRefObject<NpcMove
   );
 }
 
-useGLTF.preload(WALK_URL);
+useGLTF.preload(ROBOT_URL);

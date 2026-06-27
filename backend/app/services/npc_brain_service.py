@@ -14,6 +14,7 @@ from app.schemas import (
     NpcTickOut,
 )
 from app.services.chat_service import build_context
+from app.services.npc_action_service import choose_npc_action
 
 VALID_MOODS: set[str] = {
     "sleepy",
@@ -39,7 +40,7 @@ async def generate_npc_tick(payload: NpcTickIn, activity: DailyActivity) -> NpcT
                 user_prompt=json.dumps(payload.model_dump(), ensure_ascii=False),
                 max_tokens=260,
             )
-            return _tick_from_data(payload.npc_id, data, used_ai=True)
+            return _tick_from_data(payload.npc_id, data, used_ai=True, activity=activity)
         except Exception:
             pass
 
@@ -70,7 +71,7 @@ async def generate_npc_encounter(
                 ),
                 max_tokens=360,
             )
-            return _encounter_from_data(npc_a.npc_id, npc_b.npc_id, data, used_ai=True)
+            return _encounter_from_data(npc_a.npc_id, npc_b.npc_id, data, used_ai=True, activity=activity)
         except Exception:
             pass
 
@@ -188,21 +189,42 @@ def _encounter_system_prompt(a_profile: dict[str, Any], b_profile: dict[str, Any
     )
 
 
-def _tick_from_data(npc_id: str, data: dict[str, Any], used_ai: bool) -> NpcTickOut:
+def _tick_from_data(
+    npc_id: str,
+    data: dict[str, Any],
+    used_ai: bool,
+    activity: DailyActivity | None = None,
+) -> NpcTickOut:
     mood = _normalize_mood(data.get("mood"), "calm")
+    bubble_text = str(data.get("bubble_text") or "방문자에게 맞는 안내를 정리하고 있어요.")
+    next_goal = str(data.get("next_goal") or "방문자의 관심사를 관찰하기")
     return NpcTickOut(
         npc_id=npc_id,
-        bubble_text=str(data.get("bubble_text") or "방문자에게 맞는 안내를 정리하고 있어요."),
+        bubble_text=bubble_text,
         mood=mood,
         energy=_clamp_int(data.get("energy"), 50),
-        next_goal=str(data.get("next_goal") or "방문자의 관심사를 관찰하기"),
+        next_goal=next_goal,
         memory=str(data.get("memory") or "NPC가 마을 상태를 확인했습니다."),
         used_ai=used_ai,
         cooldown_seconds=_clamp_int(data.get("cooldown_seconds"), 60, 30, 140),
+        suggested_action=choose_npc_action(
+            npc_id,
+            message=bubble_text,
+            mood=mood,
+            next_goal=next_goal,
+            activity=activity,
+            source="tick",
+        ),
     )
 
 
-def _encounter_from_data(npc_a_id: str, npc_b_id: str, data: dict[str, Any], used_ai: bool) -> NpcEncounterOut:
+def _encounter_from_data(
+    npc_a_id: str,
+    npc_b_id: str,
+    data: dict[str, Any],
+    used_ai: bool,
+    activity: DailyActivity | None = None,
+) -> NpcEncounterOut:
     raw_dialogue = data.get("dialogue") if isinstance(data.get("dialogue"), list) else []
     dialogue = [
         NpcDialogueLine(npc_id=str(item.get("npc_id") or npc_a_id), text=str(item.get("text") or "..."))
@@ -231,12 +253,34 @@ def _encounter_from_data(npc_a_id: str, npc_b_id: str, data: dict[str, Any], use
             NpcStateChange(npc_id=npc_b_id, mood="focused", energy=58),
         ]
 
+    text_by_npc = {
+        npc_id: " ".join(line.text for line in dialogue if line.npc_id == npc_id)
+        for npc_id in (npc_a_id, npc_b_id)
+    }
+    mood_by_npc = {change.npc_id: change.mood for change in changes}
+
     return NpcEncounterOut(
         dialogue=dialogue,
         state_changes=changes,
         memory=str(data.get("memory") or "두 NPC가 방문자 관심사와 마을 상태를 공유했습니다."),
         used_ai=used_ai,
         cooldown_seconds=_clamp_int(data.get("cooldown_seconds"), 180, 120, 360),
+        suggested_actions=[
+            choose_npc_action(
+                npc_a_id,
+                message=text_by_npc.get(npc_a_id, ""),
+                mood=mood_by_npc.get(npc_a_id, "curious"),
+                activity=activity,
+                source="encounter",
+            ),
+            choose_npc_action(
+                npc_b_id,
+                message=text_by_npc.get(npc_b_id, ""),
+                mood=mood_by_npc.get(npc_b_id, "focused"),
+                activity=activity,
+                source="encounter",
+            ),
+        ],
     )
 
 
@@ -247,16 +291,25 @@ def _fallback_tick(payload: NpcTickIn, activity: DailyActivity) -> NpcTickOut:
 
     bubble_text = _fallback_bubble(payload.npc_id, activity)
     energy = 78 if mood in {"busy", "focused", "training", "excited"} else 52
+    next_goal = _fallback_goal(payload.npc_id, payload.assigned_building_id)
 
     return NpcTickOut(
         npc_id=payload.npc_id,
         bubble_text=bubble_text,
         mood=mood,
         energy=energy,
-        next_goal=_fallback_goal(payload.npc_id, payload.assigned_building_id),
+        next_goal=next_goal,
         memory=_fallback_memory(payload.npc_id, activity),
         used_ai=False,
         cooldown_seconds=90,
+        suggested_action=choose_npc_action(
+            payload.npc_id,
+            message=bubble_text,
+            mood=mood,
+            next_goal=next_goal,
+            activity=activity,
+            source="tick",
+        ),
     )
 
 
@@ -281,6 +334,10 @@ def _fallback_encounter(
         memory="두 NPC가 오늘 활동과 방문자 안내 전략을 공유했습니다.",
         used_ai=False,
         cooldown_seconds=240,
+        suggested_actions=[
+            choose_npc_action(npc_a.npc_id, message=first_line, mood=mood, activity=activity, source="encounter"),
+            choose_npc_action(npc_b.npc_id, message=second_line, mood="focused", activity=activity, source="encounter"),
+        ],
     )
 
 

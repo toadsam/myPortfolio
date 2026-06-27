@@ -1,5 +1,44 @@
 export type LightLevel = "dark" | "dim" | "normal" | "bright";
 export type NpcMood = "sleepy" | "calm" | "busy" | "proud" | "training" | "curious" | "focused" | "worried" | "excited";
+export type NpcActionSource = "chat" | "tick" | "encounter" | "manual";
+export type NpcAnimationKey = "wave" | "point" | "think" | "type" | "send" | "walk-to-building" | "open-hologram";
+
+export interface NpcSuggestedAction {
+  npc_id: string;
+  action_id: string;
+  label: string;
+  description: string;
+  status_text: string;
+  animation_key: NpcAnimationKey;
+  duration_ms: number;
+  target_id?: string | null;
+  source: NpcActionSource;
+}
+
+export interface NpcActionState {
+  npcId: string;
+  actionId: string;
+  label: string;
+  description: string;
+  statusText: string;
+  animationKey: NpcAnimationKey;
+  startedAt: number;
+  durationMs: number;
+  targetId?: string;
+  source: NpcActionSource;
+}
+
+export interface NpcActionDefinition {
+  id: string;
+  npcId: string;
+  label: string;
+  description: string;
+  triggerKeywords: string[];
+  preferredMoods: NpcMood[];
+  animationKey: NpcAnimationKey;
+  targetId?: string;
+  durationMs: number;
+}
 
 export interface DailyActivity {
   id: number;
@@ -42,6 +81,8 @@ export interface NpcRuntimeState {
   bubbleExpiresAt?: number;
   memory?: string;
   nextGoal?: string;
+  currentAction?: NpcActionState;
+  recentActions?: NpcActionState[];
 }
 
 export interface VillageState {
@@ -56,6 +97,7 @@ export interface NpcChatResponse {
   npc_id: string;
   reply: string;
   used_ai: boolean;
+  suggested_action?: NpcSuggestedAction | null;
 }
 
 export interface NpcTickRequest {
@@ -76,6 +118,7 @@ export interface NpcTickResponse {
   memory: string;
   used_ai: boolean;
   cooldown_seconds: number;
+  suggested_action?: NpcSuggestedAction | null;
 }
 
 export interface NpcEncounterParticipant {
@@ -92,6 +135,7 @@ export interface NpcEncounterResponse {
   memory: string;
   used_ai: boolean;
   cooldown_seconds: number;
+  suggested_actions: NpcSuggestedAction[];
 }
 
 export interface GithubSyncResponse {
