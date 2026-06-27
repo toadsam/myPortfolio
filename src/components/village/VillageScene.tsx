@@ -241,6 +241,7 @@ export function VillageScene({
               key={npc.id}
               npc={npc}
               npcState={displayNpcState(npc.id, npcRuntimeStates[npc.id], getNpcState(villageState, npc.id))}
+              currentAction={npcRuntimeStates[npc.id]?.currentAction}
               onPositionChange={onNpcPositionChange}
               onSelect={onSelectNpc}
             />
