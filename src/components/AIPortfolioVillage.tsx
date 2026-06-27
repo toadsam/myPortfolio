@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import {useEffect, useRef, useState} from "react";
 import {useGLTF} from "@react-three/drei";
 import {DialogueBox} from "@/components/ui/DialogueBox";
-import {EnterConfirmDialog} from "@/components/ui/EnterConfirmDialog";
 import {Header} from "@/components/ui/Header";
 import {InfoPanel} from "@/components/ui/InfoPanel";
 import {IntroOverlay} from "@/components/ui/IntroOverlay";
@@ -66,7 +65,6 @@ export function AIPortfolioVillage() {
   const [showIntro, setShowIntro] = useState(true);
   const [explorationMode, setExplorationMode] = useState<ExplorationMode>("click");
 
-  const [pendingBuildingId, setPendingBuildingId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"village" | "interior" | "project-interior" | "resume">("village");
   const [interiorSectionId, setInteriorSectionId] = useState<SectionId | null>(null);
   const [interiorProjectId, setInteriorProjectId] = useState<string | null>(null);
@@ -298,10 +296,6 @@ export function AIPortfolioVillage() {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
 
-      if (pendingBuildingId) {
-        setPendingBuildingId(null);
-        return;
-      }
       if (selectedNpc) {
         setSelectedNpc(null);
         return;
@@ -317,7 +311,7 @@ export function AIPortfolioVillage() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isPanelOpen, pendingBuildingId, selectedNpc, viewMode]);
+  }, [isPanelOpen, selectedNpc, viewMode]);
 
   function remember(memory: string) {
     if (!memory) return;
@@ -376,6 +370,7 @@ export function AIPortfolioVillage() {
     setIsPanelOpen(true);
   }
 
+  // 클릭하면 확인창 없이 바로 입장
   function handleRequestEnter(buildingId: string) {
     const building = villageBuildings.find((b) => b.id === buildingId);
     if (!building) return;
@@ -384,19 +379,6 @@ export function AIPortfolioVillage() {
       openSection("intro");
       return;
     }
-
-    setPendingBuildingId(buildingId);
-  }
-
-  function handleCancelEnter() {
-    setPendingBuildingId(null);
-  }
-
-  function handleConfirmEnter() {
-    const building = villageBuildings.find((b) => b.id === pendingBuildingId);
-    if (!building) return;
-
-    setPendingBuildingId(null);
 
     const {district, sectionId, contentId} = building;
 
@@ -473,6 +455,23 @@ export function AIPortfolioVillage() {
             />
             {showIntro ? <IntroOverlay onStart={startExploring} onResume={openResume} /> : null}
           </section>
+          {!showIntro ? (
+            <button
+              type="button"
+              onClick={() => {
+                setExplorationMode((m) => (m === "walk" ? "click" : "walk"));
+                setIsPanelOpen(false);
+                setSelectedNpc(null);
+              }}
+              className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 md:bottom-6"
+            >
+              {explorationMode === "walk" ? (
+                <><span>🖱️</span> 클릭 모드로</>
+              ) : (
+                <><span>🚶</span> 직접 이동 (WASD)</>
+              )}
+            </button>
+          ) : null}
           <LiveStatusPanel error={liveError} villageState={villageState} />
           {encounterNotice ? <EncounterNotice text={encounterNotice} /> : null}
           <InfoPanel
@@ -503,11 +502,6 @@ export function AIPortfolioVillage() {
         <ResumeMode onEnterVillage={enterVillageFromResume} />
       ) : null}
 
-      <EnterConfirmDialog
-        buildingId={pendingBuildingId}
-        onCancel={handleCancelEnter}
-        onConfirm={handleConfirmEnter}
-      />
       <SceneTransition active={showTransitionOverlay} />
     </main>
   );

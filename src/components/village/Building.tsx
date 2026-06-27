@@ -55,20 +55,20 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
       >
         <span style={{
           fontFamily: "monospace",
-          fontSize: 7,
+          fontSize: 9,
           fontWeight: 900,
           letterSpacing: "0.2em",
           textTransform: "uppercase",
-          color: highlighted ? color : "#006688",
+          color: highlighted ? color : "#1990b8",
           textShadow: highlighted ? `0 0 10px ${color}` : "none",
         }}>
           {">"} {building.label}
         </span>
         <strong style={{
           fontFamily: "monospace",
-          fontSize: 10,
+          fontSize: 13,
           fontWeight: 900,
-          color: highlighted ? "#ffffff" : "#99bbcc",
+          color: highlighted ? "#ffffff" : "#b8d2e0",
           whiteSpace: "nowrap",
         }}>
           {building.name}

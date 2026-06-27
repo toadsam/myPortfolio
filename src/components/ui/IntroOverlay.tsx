@@ -103,7 +103,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
               variants={textItem}
             >
               {[
-                ["1", "건물 클릭", "확인창을 거쳐 프로젝트 전시실로 입장"],
+                ["1", "건물 클릭", "클릭하면 바로 프로젝트 전시실로 입장"],
                 ["2", "NPC 질문", "프로젝트, 기술, 연락처를 대화로 확인"],
                 ["3", "Admin 기록", "오늘 활동을 마을 상태로 반영"]
               ].map(([index, title, body]) => (
@@ -120,42 +120,38 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
               transition={{duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.82}}
               variants={textItem}
             >
+              {/* 메인 CTA — 마을 탐험 시작 */}
               <button
-                className="group relative overflow-hidden rounded-lg border border-[#00d4ff]/45 bg-[#00d4ff]/10 px-6 py-4 text-left transition hover:border-[#00d4ff] hover:bg-[#00d4ff]/16 hover:shadow-[0_0_22px_rgba(0,212,255,0.22)]"
+                className="group relative flex-1 overflow-hidden rounded-xl border border-[#00d4ff]/60 bg-[#00d4ff]/15 px-6 py-5 text-left transition hover:border-[#00d4ff] hover:bg-[#00d4ff]/22 hover:shadow-[0_0_28px_rgba(0,212,255,0.3)]"
                 onClick={() => handleStart("click")}
                 type="button"
               >
-                <span className="block font-mono text-sm font-black text-white">클릭으로 탐험</span>
-                <span className="mt-1 block text-xs text-[#00d4ff]/65">건물을 클릭하고 드래그로 시점을 돌립니다.</span>
+                <span className="flex items-center gap-2 font-mono text-base font-black text-white">
+                  🏘️ 마을 탐험 시작 <span className="transition-transform group-hover:translate-x-1">→</span>
+                </span>
+                <span className="mt-1 block text-xs text-[#00d4ff]/70">건물을 클릭해 프로젝트·기술·경험을 둘러봅니다.</span>
                 <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#00d4ff]/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
               </button>
 
+              {/* 면접관용 빠른 길 — 동등하게 강조 */}
               <button
-                className="group relative overflow-hidden rounded-lg border border-[#00ff88]/35 bg-[#00ff88]/10 px-6 py-4 text-left transition hover:border-[#00ff88] hover:bg-[#00ff88]/16 hover:shadow-[0_0_22px_rgba(0,255,136,0.16)]"
-                onClick={() => handleStart("walk")}
-                type="button"
-              >
-                <span className="block font-mono text-sm font-black text-white">직접 이동</span>
-                <span className="mt-1 block text-xs text-[#00ff88]/65">WASD로 캐릭터를 움직이며 마을을 둘러봅니다.</span>
-                <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#00ff88]/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-              </button>
-
-              <button
-                className="rounded-lg border border-white/10 bg-white/[0.04] px-6 py-4 text-left transition hover:border-white/25 hover:bg-white/[0.07]"
+                className="group relative flex-1 overflow-hidden rounded-xl border border-white/25 bg-white/[0.06] px-6 py-5 text-left transition hover:border-white/50 hover:bg-white/[0.1]"
                 onClick={handleResume}
                 type="button"
               >
-                <span className="block font-mono text-sm font-black text-white">빠른 이력서 보기</span>
-                <span className="mt-1 block text-xs text-white/45">채용자용 요약 화면으로 바로 이동합니다.</span>
+                <span className="flex items-center gap-2 font-mono text-base font-black text-white">
+                  📄 빠른 이력서 보기 <span className="transition-transform group-hover:translate-x-1">→</span>
+                </span>
+                <span className="mt-1 block text-xs text-white/50">시간이 없다면 — 요약·프로젝트·스킬을 한 페이지로.</span>
               </button>
             </motion.div>
 
             <motion.p
-              className="mt-7 font-mono text-xs text-[#00b4ff4d]"
+              className="mt-6 font-mono text-xs text-white/40"
               transition={{duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.95}}
               variants={textItem}
             >
-              {"// "}drag to rotate / scroll to zoom / ESC closes panels
+              {"// "}마을 안에서 <span className="text-[#00ff88]/70">WASD 직접 이동</span> 모드로 전환할 수 있어요 · <span className="sm:hidden text-[#00d4ff]/70">모바일은 이력서 보기를 추천</span>
             </motion.p>
           </div>
         </motion.div>

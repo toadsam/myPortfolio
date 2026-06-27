@@ -135,7 +135,10 @@ export function NPC({npc, npcState, behavior, bubbleText, buildings, isActive, o
       {bubbleText ? (
         <Billboard position={[0, 2.28, 0]}>
           <Html center distanceFactor={7.4} zIndexRange={[11, 0]}>
-            <div className="max-w-[190px] rounded-xl border border-[#00d4ff]/35 bg-[#050d1a]/90 px-3 py-2 text-center font-mono text-[11px] font-bold leading-5 text-white shadow-2xl backdrop-blur-md">
+            <div
+              className="rounded-xl border border-[#00d4ff]/35 bg-[#050d1a]/92 px-3 py-2 text-center font-mono text-[11px] font-bold leading-5 text-white shadow-2xl"
+              style={{width: 180, whiteSpace: "normal", wordBreak: "keep-all"}}
+            >
               {bubbleText}
             </div>
           </Html>
