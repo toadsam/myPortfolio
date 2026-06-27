@@ -8,7 +8,7 @@ import {SkeletonUtils} from "three-stdlib";
 
 export type NpcMoveState = "idle" | "walk";
 
-const WALK_URL = "/models/warrior/walk.glb";
+const WALK_URL = "/models/characters/warrior-walk.glb";
 
 // 플레이어(1.1)보다 1.5배 작게
 const NPC_SCALE = 0.73;

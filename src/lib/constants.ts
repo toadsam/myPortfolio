@@ -170,7 +170,7 @@ const skillBuildings: BuildingData[] = [
     roofColor: "#0a2a4a",
     accentColor: "#00d4ff",
     techStack: ["React", "Next.js", "TypeScript", "Tailwind"],
-    glbPath: "/models/frontend.glb"
+    glbPath: "/models/buildings/frontend.glb"
   },
   {
     id: "skill-3d",
@@ -187,7 +187,7 @@ const skillBuildings: BuildingData[] = [
     roofColor: "#2a1a4a",
     accentColor: "#aa44ff",
     techStack: ["Three.js", "R3F", "Drei", "Framer Motion"],
-    // glbPath: "/models/skill-3d.glb"
+    // glbPath: "/models/buildings/skill-3d.glb"
   },
   {
     id: "skill-backend",
@@ -204,7 +204,7 @@ const skillBuildings: BuildingData[] = [
     roofColor: "#2a2a1a",
     accentColor: "#fbbf24",
     techStack: ["Spring Boot", "PostgreSQL"],
-    glbPath: "/models/backend.glb"
+    glbPath: "/models/buildings/backend.glb"
   },
   {
     id: "skill-game",
@@ -221,7 +221,7 @@ const skillBuildings: BuildingData[] = [
     roofColor: "#4a1a1a",
     accentColor: "#ff6600",
     techStack: ["Unity", "C#", "XR"],
-    // glbPath: "/models/skill-game.glb"
+    // glbPath: "/models/buildings/skill-game.glb"
   },
   {
     id: "skill-workflow",
@@ -238,7 +238,7 @@ const skillBuildings: BuildingData[] = [
     roofColor: "#2a2a2a",
     accentColor: "#fbbf24",
     techStack: ["GitHub", "CI/CD"],
-    // glbPath: "/models/skill-workflow.glb"
+    // glbPath: "/models/buildings/skill-workflow.glb"
   }
 ];
 
@@ -259,7 +259,7 @@ const experienceBuildings: BuildingData[] = [
     color: "#1a0d2e",
     roofColor: "#3a1a5a",
     accentColor: "#aa44ff",
-    // glbPath: "/models/exp-2025a.glb"
+    // glbPath: "/models/buildings/exp-2025a.glb"
   },
   {
     id: "exp-demo-platform",
@@ -275,7 +275,7 @@ const experienceBuildings: BuildingData[] = [
     color: "#0d1a2e",
     roofColor: "#1a3a5a",
     accentColor: "#00d4ff",
-    // glbPath: "/models/exp-2025b.glb"
+    // glbPath: "/models/buildings/exp-2025b.glb"
   },
   {
     id: "exp-portfolio",
@@ -291,7 +291,7 @@ const experienceBuildings: BuildingData[] = [
     color: "#0d2a1a",
     roofColor: "#1a4a2a",
     accentColor: "#00ff88",
-    // glbPath: "/models/exp-2026.glb"
+    // glbPath: "/models/buildings/exp-2026.glb"
   }
 ];
 
@@ -310,7 +310,7 @@ const contactBuilding: BuildingData = {
   color: "#2a1a0d",
   roofColor: "#e07055",
   accentColor: "#ff6600",
-  // glbPath: "/models/post-office.glb"
+  // glbPath: "/models/buildings/post-office.glb"
 };
 
 export const villageBuildings: BuildingData[] = [

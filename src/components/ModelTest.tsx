@@ -6,7 +6,7 @@ import {Suspense} from "react";
 import {useGLTF} from "@react-three/drei";
 
 function Model() {
-  const {scene} = useGLTF("/models/test-model.glb");
+  const {scene} = useGLTF("/models/dev/test-model.glb");
   return <primitive object={scene} scale={1} />;
 }
 

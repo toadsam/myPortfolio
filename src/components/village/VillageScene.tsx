@@ -35,7 +35,7 @@ interface VillageSceneProps {
 // ─── 중앙 석상 ────────────────────────────────────────────────────────────────
 
 function Statue() {
-  const {scene} = useGLTF("/models/statue.glb");
+  const {scene} = useGLTF("/models/environment/statue.glb");
   return (
     <primitive
       object={scene}
@@ -46,12 +46,12 @@ function Statue() {
   );
 }
 
-useGLTF.preload("/models/statue.glb");
+useGLTF.preload("/models/environment/statue.glb");
 
 // ─── 바닥 ─────────────────────────────────────────────────────────────────────
 
 function Ground() {
-  const {scene} = useGLTF("/models/ground.glb");
+  const {scene} = useGLTF("/models/environment/ground.glb");
   return (
     <group>
       <primitive
@@ -67,7 +67,7 @@ function Ground() {
   );
 }
 
-useGLTF.preload("/models/ground.glb");
+useGLTF.preload("/models/environment/ground.glb");
 
 function DistrictPath({fromX, fromZ, toX, toZ, color}: {
   fromX: number; fromZ: number; toX: number; toZ: number; color: string;

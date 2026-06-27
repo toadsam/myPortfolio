@@ -6,8 +6,8 @@ import type {Group} from "three";
 
 export type MoveState = "idle" | "walk" | "run";
 
-const WALK_URL = "/models/warrior/walk.glb";
-const RUN_URL = "/models/warrior/run.glb";
+const WALK_URL = "/models/characters/warrior-walk.glb";
+const RUN_URL = "/models/characters/warrior-run.glb";
 
 // 모델 기본 자세 보정 — 필요 시 조정
 const MODEL_SCALE = 1.1;
