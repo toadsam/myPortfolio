@@ -12,7 +12,7 @@ import {SectionTabs} from "@/components/ui/SectionTabs";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {villageBuildings} from "@/lib/constants";
-import {fetchVillageState, requestNpcEncounter, requestNpcTick} from "@/lib/liveApi";
+import {fetchVillageState, requestNpcEncounter, requestNpcTick, trackVisitorEvent} from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
 import type {
@@ -97,6 +97,10 @@ export function AIPortfolioVillage() {
   useEffect(() => {
     npcRuntimeStatesRef.current = npcRuntimeStates;
   }, [npcRuntimeStates]);
+
+  useEffect(() => {
+    trackVisitorEvent({event_type: "page_view", target_id: "home", label: "Portfolio Village"});
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -388,6 +392,12 @@ export function AIPortfolioVillage() {
   }
 
   function openSection(sectionId: SectionId, contentId?: string) {
+    trackVisitorEvent({
+      event_type: "section_open",
+      target_id: contentId ?? sectionId,
+      label: sectionId,
+      metadata: {sectionId, contentId: contentId ?? ""}
+    });
     setShowIntro(false);
     setActiveSection(sectionId);
     setActiveContentId(contentId);
@@ -396,6 +406,12 @@ export function AIPortfolioVillage() {
   }
 
   function openNpc(npc: NPCData) {
+    trackVisitorEvent({
+      event_type: "npc_open",
+      target_id: npc.id,
+      label: npc.name,
+      metadata: {sectionId: npc.sectionId, type: npc.type}
+    });
     setShowIntro(false);
     setSelectedNpc(npc);
     setActiveSection(npc.sectionId);
@@ -403,6 +419,7 @@ export function AIPortfolioVillage() {
   }
 
   function startExploring(mode: ExplorationMode) {
+    trackVisitorEvent({event_type: "exploration_start", target_id: mode, label: mode});
     setShowIntro(false);
     setExplorationMode(mode);
     setActiveSection("intro");
@@ -410,6 +427,7 @@ export function AIPortfolioVillage() {
   }
 
   function openResume() {
+    trackVisitorEvent({event_type: "resume_open", target_id: "resume", label: "Resume Mode"});
     setShowIntro(false);
     setViewMode("resume");
   }
@@ -426,6 +444,13 @@ export function AIPortfolioVillage() {
   function handleRequestEnter(buildingId: string) {
     const building = villageBuildings.find((b) => b.id === buildingId);
     if (!building) return;
+
+    trackVisitorEvent({
+      event_type: building.district === "projects" ? "project_open" : "building_enter",
+      target_id: building.id,
+      label: building.name,
+      metadata: {district: building.district, contentId: building.contentId ?? ""}
+    });
 
     if (building.district === "plaza") {
       openSection("intro");

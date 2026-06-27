@@ -7,14 +7,40 @@ from app.database import get_db, init_db
 from app.schemas import (
     ActivityIn,
     ActivityOut,
+    AdminOverview,
+    AnalyticsSummary,
     ChatMessageIn,
     ChatMessageOut,
     GithubSyncOut,
+    ManagedProjectIn,
+    ManagedProjectOut,
     NpcEncounterIn,
     NpcEncounterOut,
+    NpcConversationLogOut,
+    NpcPresetIn,
+    NpcPresetOut,
     NpcTickIn,
     NpcTickOut,
+    VillageBuildingOverrideIn,
+    VillageBuildingOverrideOut,
     VillageState,
+    VisitorEventIn,
+    VisitorEventOut,
+)
+from app.services.admin_service import (
+    admin_overview_payload,
+    analytics_summary,
+    apply_village_overrides,
+    list_npc_logs,
+    list_npc_presets,
+    list_projects,
+    list_village_overrides,
+    log_npc_conversation,
+    record_visitor_event,
+    seed_admin_defaults,
+    update_npc_preset,
+    update_project,
+    update_village_override,
 )
 from app.services.activity_service import get_or_create_today, upsert_activity
 from app.services.chat_service import answer_npc_message
@@ -41,6 +67,13 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup() -> None:
     init_db()
+    from app.database import SessionLocal
+
+    db = SessionLocal()
+    try:
+        seed_admin_defaults(db)
+    finally:
+        db.close()
 
 
 @app.get("/health")
@@ -61,7 +94,7 @@ def save_activity(payload: ActivityIn, db: Session = Depends(get_db)):
 @app.get("/village-state", response_model=VillageState)
 def village_state(db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
-    return derive_village_state(activity)
+    return apply_village_overrides(db, derive_village_state(activity))
 
 
 @app.post("/npc/chat", response_model=ChatMessageOut)
@@ -72,6 +105,14 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
         payload.message,
         activity,
         payload.recent_messages,
+    )
+    log_npc_conversation(
+        db,
+        payload.npc_id,
+        payload.message,
+        reply,
+        used_ai,
+        suggested_action.action_id if suggested_action else "",
     )
     return ChatMessageOut(
         npc_id=payload.npc_id,
@@ -110,10 +151,77 @@ async def github_sync(db: Session = Depends(get_db)):
     payload = ActivityIn(
         date=activity.date,
         github_commits=commits,
+        github_repos=activity.github_repos,
         study_minutes=activity.study_minutes,
+        study_topics=activity.study_topics,
+        studied_tech=activity.studied_tech,
+        coding_minutes=activity.coding_minutes,
+        project_minutes=activity.project_minutes,
         workout_done=activity.workout_done,
+        workout_minutes=activity.workout_minutes,
+        workout_type=activity.workout_type,
+        focus_score=activity.focus_score,
         memo=activity.memo,
         mood=activity.mood,
     )
     updated = upsert_activity(db, payload)
     return GithubSyncOut(username=settings.github_username, commits=commits, updated_activity=updated, warning=warning)
+
+
+@app.post("/analytics/event", response_model=VisitorEventOut)
+def create_visitor_event(payload: VisitorEventIn, db: Session = Depends(get_db)):
+    return record_visitor_event(db, payload)
+
+
+@app.get("/admin/overview", response_model=AdminOverview)
+def admin_overview(db: Session = Depends(get_db)):
+    return admin_overview_payload(db)
+
+
+@app.get("/admin/analytics", response_model=AnalyticsSummary)
+def admin_analytics(db: Session = Depends(get_db)):
+    return analytics_summary(db)
+
+
+@app.get("/admin/projects", response_model=list[ManagedProjectOut])
+def admin_projects(db: Session = Depends(get_db)):
+    return list_projects(db)
+
+
+@app.put("/admin/projects/{project_id}", response_model=ManagedProjectOut)
+def admin_update_project(project_id: str, payload: ManagedProjectIn, db: Session = Depends(get_db)):
+    return update_project(db, project_id, payload)
+
+
+@app.get("/admin/npc/logs", response_model=list[NpcConversationLogOut])
+def admin_npc_logs(db: Session = Depends(get_db)):
+    return list_npc_logs(db)
+
+
+@app.get("/npc/presets", response_model=list[NpcPresetOut])
+def npc_presets(db: Session = Depends(get_db)):
+    return list_npc_presets(db)
+
+
+@app.get("/admin/npc/presets", response_model=list[NpcPresetOut])
+def admin_npc_presets(db: Session = Depends(get_db)):
+    return list_npc_presets(db)
+
+
+@app.put("/admin/npc/presets/{npc_id}", response_model=NpcPresetOut)
+def admin_update_npc_preset(npc_id: str, payload: NpcPresetIn, db: Session = Depends(get_db)):
+    return update_npc_preset(db, npc_id, payload)
+
+
+@app.get("/admin/village/overrides", response_model=list[VillageBuildingOverrideOut])
+def admin_village_overrides(db: Session = Depends(get_db)):
+    return list_village_overrides(db)
+
+
+@app.put("/admin/village/overrides/{building_id}", response_model=VillageBuildingOverrideOut)
+def admin_update_village_override(
+    building_id: str,
+    payload: VillageBuildingOverrideIn,
+    db: Session = Depends(get_db),
+):
+    return update_village_override(db, building_id, payload)

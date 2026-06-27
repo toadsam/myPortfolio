@@ -44,8 +44,16 @@ export interface DailyActivity {
   id: number;
   date: string;
   github_commits: number;
+  github_repos: string[];
   study_minutes: number;
+  study_topics: string[];
+  studied_tech: string[];
+  coding_minutes: number;
+  project_minutes: Record<string, number>;
   workout_done: boolean;
+  workout_minutes: number;
+  workout_type: string;
+  focus_score: number;
   memo: string;
   mood: string;
   created_at: string;
@@ -55,8 +63,16 @@ export interface DailyActivity {
 export interface ActivityInput {
   date?: string;
   github_commits: number;
+  github_repos: string[];
   study_minutes: number;
+  study_topics: string[];
+  studied_tech: string[];
+  coding_minutes: number;
+  project_minutes: Record<string, number>;
   workout_done: boolean;
+  workout_minutes: number;
+  workout_type: string;
+  focus_score: number;
   memo: string;
   mood: string;
 }
@@ -143,4 +159,110 @@ export interface GithubSyncResponse {
   updated_activity: DailyActivity;
   username: string;
   warning?: string | null;
+}
+
+export interface VisitorEventInput {
+  event_type: string;
+  target_id?: string;
+  label?: string;
+  session_id?: string;
+  metadata?: Record<string, string | number | boolean | null>;
+}
+
+export interface VisitorEvent {
+  id: number;
+  event_type: string;
+  target_id: string;
+  label: string;
+  session_id: string;
+  metadata_json: Record<string, unknown>;
+  created_at: string;
+}
+
+export interface AnalyticsMetric {
+  label: string;
+  value: number;
+}
+
+export interface AnalyticsSummary {
+  total_events: number;
+  unique_sessions: number;
+  npc_messages: number;
+  project_views: number;
+  contact_clicks: number;
+  top_events: AnalyticsMetric[];
+  top_projects: AnalyticsMetric[];
+  top_npcs: AnalyticsMetric[];
+  recent_events: VisitorEvent[];
+}
+
+export interface ManagedProject {
+  id: string;
+  title: string;
+  summary: string;
+  role: string;
+  tech: string[];
+  priority: number;
+  featured: boolean;
+  visible: boolean;
+  admin_note: string;
+  updated_at: string;
+}
+
+export interface ManagedProjectInput {
+  title: string;
+  summary: string;
+  role: string;
+  tech: string[];
+  priority: number;
+  featured: boolean;
+  visible: boolean;
+  admin_note: string;
+}
+
+export interface NpcConversationLog {
+  id: number;
+  npc_id: string;
+  visitor_message: string;
+  npc_reply: string;
+  used_ai: boolean;
+  suggested_action_id: string;
+  created_at: string;
+}
+
+export interface NpcPreset {
+  npc_id: string;
+  questions: string[];
+  enabled: boolean;
+  updated_at: string;
+}
+
+export interface NpcPresetInput {
+  questions: string[];
+  enabled: boolean;
+}
+
+export type AdminLightLevel = "auto" | LightLevel;
+
+export interface VillageBuildingOverride {
+  building_id: string;
+  light_level: AdminLightLevel;
+  enabled: boolean;
+  featured: boolean;
+  note: string;
+  updated_at: string;
+}
+
+export interface VillageBuildingOverrideInput {
+  light_level: AdminLightLevel;
+  enabled: boolean;
+  featured: boolean;
+  note: string;
+}
+
+export interface AdminOverview {
+  analytics: AnalyticsSummary;
+  projects: ManagedProject[];
+  npc_presets: NpcPreset[];
+  village_overrides: VillageBuildingOverride[];
 }

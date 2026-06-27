@@ -29,7 +29,7 @@ type Transform = {position: [number, number, number]; rotationY: number; scale: 
 
 // ─── 통합 편집 상태 훅 ────────────────────────────────────────────────────────
 export function usePropsEditor() {
-  const initial = savedLayout as PropsLayout;
+  const initial = savedLayout as unknown as PropsLayout;
   const [editMode, setEditMode] = useState(false);
   const [assets, setAssets] = useState<string[]>([]);
   const [items, setItems] = useState<PropPlacement[]>(initial.props ?? []);

@@ -9,6 +9,7 @@ import type {Group, Mesh} from "three";
 import {ProjectViewer} from "@/components/ui/ProjectViewer";
 import {getProjectTheme} from "@/data/projectThemes";
 import {projects} from "@/data/projects";
+import {trackVisitorEvent} from "@/lib/liveApi";
 import type {ProjectData} from "@/types/portfolio";
 
 interface ProjectInteriorProps {
@@ -227,6 +228,17 @@ export function ProjectInterior({projectId, onBack}: ProjectInteriorProps) {
   const [viewerOpen, setViewerOpen] = useState(false);
 
   if (!project) return null;
+  const activeProject = project;
+
+  function openViewer() {
+    trackVisitorEvent({
+      event_type: "project_view",
+      target_id: `project-${activeProject.id}`,
+      label: activeProject.title,
+      metadata: {projectId: activeProject.id}
+    });
+    setViewerOpen(true);
+  }
 
   return (
     <div className="fixed inset-0 z-40" style={{background: theme.bg}}>
@@ -269,7 +281,7 @@ export function ProjectInterior({projectId, onBack}: ProjectInteriorProps) {
       </motion.div>
 
       <Canvas camera={{fov: 50, position: [0, 3.5, 8]}} dpr={[1, 1.5]} gl={{antialias: true, powerPreference: "high-performance"}}>
-        <ProjectScene project={project} onOpenViewer={() => setViewerOpen(true)} />
+        <ProjectScene project={project} onOpenViewer={openViewer} />
       </Canvas>
 
       <ProjectViewer project={viewerOpen ? project : null} onClose={() => setViewerOpen(false)} />

@@ -117,6 +117,82 @@ canvas {
   white-space: nowrap;
 }
 
+.field-label {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.field {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: #070b12;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  padding: 12px;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.field:focus {
+  border-color: rgba(0, 212, 255, 0.72);
+}
+
+.field:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.sub-button,
+.step-button {
+  border: 1px solid rgba(0, 212, 255, 0.35);
+  border-radius: 8px;
+  background: rgba(0, 212, 255, 0.1);
+  color: #9beaff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  padding: 10px 12px;
+  text-transform: uppercase;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.sub-button:hover,
+.step-button:hover {
+  border-color: rgba(0, 212, 255, 0.7);
+  background: rgba(0, 212, 255, 0.18);
+  color: #d8f6ff;
+}
+
+.sub-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.step-button {
+  min-width: 48px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.project-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.035);
+  padding: 16px;
+  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.project-card.active {
+  border-color: rgba(251, 191, 36, 0.48);
+  background: rgba(251, 191, 36, 0.1);
+  box-shadow: 0 0 28px rgba(251, 191, 36, 0.08);
+}
+
 @media (max-width: 767px) {
   .scene-label {
     min-width: 94px;

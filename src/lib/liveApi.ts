@@ -1,13 +1,24 @@
 import type {
   ActivityInput,
+  AdminOverview,
+  AnalyticsSummary,
   DailyActivity,
   GithubSyncResponse,
+  ManagedProject,
+  ManagedProjectInput,
   NpcChatResponse,
+  NpcConversationLog,
   NpcEncounterParticipant,
   NpcEncounterResponse,
+  NpcPreset,
+  NpcPresetInput,
   NpcTickRequest,
   NpcTickResponse,
-  VillageState
+  VillageBuildingOverride,
+  VillageBuildingOverrideInput,
+  VillageState,
+  VisitorEvent,
+  VisitorEventInput
 } from "@/types/live";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
@@ -94,4 +105,84 @@ export function requestNpcEncounter(
     method: "POST",
     body: JSON.stringify({npc_a: npcA, npc_b: npcB, recent_memory: recentMemory})
   });
+}
+
+export function logVisitorEvent(payload: VisitorEventInput): Promise<VisitorEvent> {
+  return requestJson<VisitorEvent>("/analytics/event", {
+    method: "POST",
+    body: JSON.stringify({
+      event_type: payload.event_type,
+      target_id: payload.target_id ?? "",
+      label: payload.label ?? "",
+      session_id: payload.session_id ?? getVisitorSessionId(),
+      metadata: payload.metadata ?? {}
+    })
+  });
+}
+
+export function trackVisitorEvent(payload: VisitorEventInput): void {
+  void logVisitorEvent(payload).catch(() => undefined);
+}
+
+export function fetchAdminOverview(): Promise<AdminOverview> {
+  return requestJson<AdminOverview>("/admin/overview", {cache: "no-store"});
+}
+
+export function fetchAdminAnalytics(): Promise<AnalyticsSummary> {
+  return requestJson<AnalyticsSummary>("/admin/analytics", {cache: "no-store"});
+}
+
+export function fetchManagedProjects(): Promise<ManagedProject[]> {
+  return requestJson<ManagedProject[]>("/admin/projects", {cache: "no-store"});
+}
+
+export function updateManagedProject(projectId: string, payload: ManagedProjectInput): Promise<ManagedProject> {
+  return requestJson<ManagedProject>(`/admin/projects/${encodeURIComponent(projectId)}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function fetchNpcLogs(): Promise<NpcConversationLog[]> {
+  return requestJson<NpcConversationLog[]>("/admin/npc/logs", {cache: "no-store"});
+}
+
+export function fetchNpcPresets(): Promise<NpcPreset[]> {
+  return requestJson<NpcPreset[]>("/npc/presets", {cache: "no-store"});
+}
+
+export function updateNpcPreset(npcId: string, payload: NpcPresetInput): Promise<NpcPreset> {
+  return requestJson<NpcPreset>(`/admin/npc/presets/${encodeURIComponent(npcId)}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function fetchVillageOverrides(): Promise<VillageBuildingOverride[]> {
+  return requestJson<VillageBuildingOverride[]>("/admin/village/overrides", {cache: "no-store"});
+}
+
+export function updateVillageOverride(
+  buildingId: string,
+  payload: VillageBuildingOverrideInput
+): Promise<VillageBuildingOverride> {
+  return requestJson<VillageBuildingOverride>(`/admin/village/overrides/${encodeURIComponent(buildingId)}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function getVisitorSessionId(): string {
+  if (typeof window === "undefined") return "";
+
+  const key = "portfolio-village-session-id";
+  const existing = window.localStorage.getItem(key);
+  if (existing) return existing;
+
+  const next =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `session-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  window.localStorage.setItem(key, next);
+  return next;
 }

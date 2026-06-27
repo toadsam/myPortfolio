@@ -8,8 +8,16 @@ from pydantic import BaseModel, Field
 class ActivityIn(BaseModel):
     date: dt_date | None = None
     github_commits: int = Field(default=0, ge=0)
+    github_repos: list[str] = Field(default_factory=list)
     study_minutes: int = Field(default=0, ge=0)
+    study_topics: list[str] = Field(default_factory=list)
+    studied_tech: list[str] = Field(default_factory=list)
+    coding_minutes: int = Field(default=0, ge=0)
+    project_minutes: dict[str, int] = Field(default_factory=dict)
     workout_done: bool = False
+    workout_minutes: int = Field(default=0, ge=0)
+    workout_type: str = ""
+    focus_score: int = Field(default=50, ge=0, le=100)
     memo: str = ""
     mood: str = "steady"
 
@@ -18,8 +26,16 @@ class ActivityOut(BaseModel):
     id: int
     date: dt_date
     github_commits: int
+    github_repos: list[str]
     study_minutes: int
+    study_topics: list[str]
+    studied_tech: list[str]
+    coding_minutes: int
+    project_minutes: dict[str, int]
     workout_done: bool
+    workout_minutes: int
+    workout_type: str
+    focus_score: int
     memo: str
     mood: str
     created_at: datetime
@@ -29,6 +45,7 @@ class ActivityOut(BaseModel):
 
 
 LightLevel = Literal["dark", "dim", "normal", "bright"]
+AdminLightLevel = Literal["auto", "dark", "dim", "normal", "bright"]
 NpcMood = Literal["sleepy", "calm", "busy", "proud", "training", "curious", "focused", "worried", "excited"]
 NpcAnimationKey = Literal["wave", "point", "think", "type", "send", "walk-to-building", "open-hologram"]
 NpcActionSource = Literal["chat", "tick", "encounter", "manual"]
@@ -140,3 +157,103 @@ class GithubSyncOut(BaseModel):
     commits: int
     updated_activity: ActivityOut
     warning: str | None = None
+
+
+class VisitorEventIn(BaseModel):
+    event_type: str = Field(min_length=1, max_length=80)
+    target_id: str = Field(default="", max_length=160)
+    label: str = Field(default="", max_length=200)
+    session_id: str = Field(default="", max_length=120)
+    metadata: dict[str, str | int | float | bool | None] = Field(default_factory=dict)
+
+
+class VisitorEventOut(BaseModel):
+    id: int
+    event_type: str
+    target_id: str
+    label: str
+    session_id: str
+    metadata_json: dict
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class AnalyticsMetric(BaseModel):
+    label: str
+    value: int
+
+
+class AnalyticsSummary(BaseModel):
+    total_events: int
+    unique_sessions: int
+    npc_messages: int
+    project_views: int
+    contact_clicks: int
+    top_events: list[AnalyticsMetric]
+    top_projects: list[AnalyticsMetric]
+    top_npcs: list[AnalyticsMetric]
+    recent_events: list[VisitorEventOut]
+
+
+class ManagedProjectIn(BaseModel):
+    title: str = Field(min_length=1, max_length=160)
+    summary: str = ""
+    role: str = ""
+    tech: list[str] = Field(default_factory=list)
+    priority: int = Field(default=50, ge=0, le=100)
+    featured: bool = False
+    visible: bool = True
+    admin_note: str = ""
+
+
+class ManagedProjectOut(ManagedProjectIn):
+    id: str
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class NpcConversationLogOut(BaseModel):
+    id: int
+    npc_id: str
+    visitor_message: str
+    npc_reply: str
+    used_ai: bool
+    suggested_action_id: str
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class NpcPresetIn(BaseModel):
+    questions: list[str] = Field(default_factory=list)
+    enabled: bool = True
+
+
+class NpcPresetOut(NpcPresetIn):
+    npc_id: str
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class VillageBuildingOverrideIn(BaseModel):
+    light_level: AdminLightLevel = "auto"
+    enabled: bool = True
+    featured: bool = False
+    note: str = ""
+
+
+class VillageBuildingOverrideOut(VillageBuildingOverrideIn):
+    building_id: str
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class AdminOverview(BaseModel):
+    analytics: AnalyticsSummary
+    projects: list[ManagedProjectOut]
+    npc_presets: list[NpcPresetOut]
+    village_overrides: list[VillageBuildingOverrideOut]

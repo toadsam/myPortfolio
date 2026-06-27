@@ -6,7 +6,7 @@ import type {FormEvent} from "react";
 import {getNpcActions} from "@/data/npcActions";
 import {npcDefaultPresetQuestions} from "@/data/npcRoster";
 import {sectionMeta} from "@/lib/constants";
-import {sendNpcMessage} from "@/lib/liveApi";
+import {fetchNpcPresets, sendNpcMessage, trackVisitorEvent} from "@/lib/liveApi";
 import {moodLabel} from "@/lib/liveState";
 import type {NpcActionDefinition, NpcRuntimeState, NpcState, NpcSuggestedAction} from "@/types/live";
 import type {NPCData, SectionId} from "@/types/portfolio";
@@ -60,6 +60,7 @@ export function DialogueBox({
   const [message, setMessage] = useState("");
   const [lines, setLines] = useState<ChatLine[]>([]);
   const [isSending, setIsSending] = useState(false);
+  const [remotePresetQuestions, setRemotePresetQuestions] = useState<string[]>([]);
   const agent = npc?.agent;
   const currentAction = npcRuntimeState?.currentAction;
   const recentActions = npcRuntimeState?.recentActions ?? [];
@@ -70,8 +71,8 @@ export function DialogueBox({
 
   const presetQuestions = useMemo(() => {
     const agentQuestions = agent?.presetQuestions ?? [];
-    return uniqueItems([...agentQuestions, ...npcDefaultPresetQuestions]).slice(0, 6);
-  }, [agent]);
+    return uniqueItems([...remotePresetQuestions, ...agentQuestions, ...npcDefaultPresetQuestions]).slice(0, 6);
+  }, [agent, remotePresetQuestions]);
 
   const actionCandidates = useMemo(() => (npc ? getNpcActions(npc.id).slice(0, 3) : []), [npc]);
 
@@ -87,6 +88,7 @@ export function DialogueBox({
     if (!npc) {
       setLines([]);
       setMessage("");
+      setRemotePresetQuestions([]);
       return;
     }
 
@@ -109,6 +111,25 @@ export function DialogueBox({
   }, [npc]);
 
   useEffect(() => {
+    if (!npc) return;
+
+    let ignore = false;
+    fetchNpcPresets()
+      .then((presets) => {
+        if (ignore) return;
+        const preset = presets.find((item) => item.npc_id === npc.id);
+        setRemotePresetQuestions(preset?.enabled ? preset.questions : []);
+      })
+      .catch(() => {
+        if (!ignore) setRemotePresetQuestions([]);
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [npc]);
+
+  useEffect(() => {
     if (!npc || lines.length === 0) return;
     window.localStorage.setItem(storageKey(npc.id), JSON.stringify(lines.slice(-30)));
   }, [lines, npc]);
@@ -117,6 +138,12 @@ export function DialogueBox({
     if (!npc || !text.trim() || isSending) return;
 
     const nextMessage = text.trim();
+    trackVisitorEvent({
+      event_type: "npc_message",
+      target_id: npc.id,
+      label: npc.name,
+      metadata: {sectionId: npc.sectionId, length: nextMessage.length}
+    });
     setLines((current) => current.concat({role: "visitor", text: nextMessage}));
     setMessage("");
     setIsSending(true);
