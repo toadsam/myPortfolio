@@ -1,23 +1,23 @@
-// 프로젝트별 카테고리 + 테마 토큰.
-// category 가 셸(레이아웃·배경·연출)을 결정하고, 색 토큰이 개성을 입힌다.
+// 프로젝트별 카테고리와 테마 토큰.
+// category가 전용 레이아웃과 연출을 결정하고, 색상 토큰이 화면의 개성을 만든다.
 
 export type ProjectCategory = "dashboard" | "realtime" | "platform" | "game";
 export type GameMood = "horror" | "arcade" | "platformer";
 
 export interface ProjectTheme {
   category: ProjectCategory;
-  /** game 카테고리 세부 무드 */
+  /** game 카테고리 안의 분위기 */
   mood?: GameMood;
   primary: string;
   secondary: string;
   /** 베이스 배경색 */
   bg: string;
-  /** 강조 색 (글로우 등) */
+  /** 강조색 */
   accent: string;
 }
 
 export const projectThemes: Record<string, ProjectTheme> = {
-  // ── 대시보드 (핀테크/데이터) ──
+  // 대시보드형 프로젝트
   mywave: {
     category: "dashboard",
     primary: "#34d399",
@@ -33,7 +33,7 @@ export const projectThemes: Record<string, ProjectTheme> = {
     accent: "#7dd3fc",
   },
 
-  // ── 실시간 서비스 ──
+  // 실시간 서비스형 프로젝트
   festflow: {
     category: "realtime",
     primary: "#fbbf24",
@@ -49,7 +49,7 @@ export const projectThemes: Record<string, ProjectTheme> = {
     accent: "#f9a8d4",
   },
 
-  // ── 플랫폼/공공 ──
+  // 플랫폼/공공 서비스형 프로젝트
   aclub: {
     category: "platform",
     primary: "#c084fc",
@@ -72,7 +72,7 @@ export const projectThemes: Record<string, ProjectTheme> = {
     accent: "#bfdbfe",
   },
 
-  // ── 게임 ──
+  // 게임형 프로젝트
   darklab: {
     category: "game",
     mood: "horror",

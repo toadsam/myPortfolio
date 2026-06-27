@@ -5,7 +5,7 @@ import type {SectionId} from "@/types/portfolio";
 
 const LabInterior = dynamic(() => import("./LabInterior").then((m) => m.LabInterior), {
   ssr: false,
-  loading: () => <InteriorLoadingScreen color="#040608" label="프로젝트 연구소" />
+  loading: () => <InteriorLoadingScreen color="#040608" label="프로젝트 연구실" />
 });
 
 const WorkshopInterior = dynamic(() => import("./WorkshopInterior").then((m) => m.WorkshopInterior), {
@@ -20,7 +20,7 @@ const ArchiveInterior = dynamic(() => import("./ArchiveInterior").then((m) => m.
 
 const PostInterior = dynamic(() => import("./PostInterior").then((m) => m.PostInterior), {
   ssr: false,
-  loading: () => <InteriorLoadingScreen color="#f8f5f0" label="우체국" dark={false} />
+  loading: () => <InteriorLoadingScreen color="#f8f5f0" label="연락 우체국" dark={false} />
 });
 
 function InteriorLoadingScreen({
@@ -39,7 +39,7 @@ function InteriorLoadingScreen({
     >
       <div className={`text-center ${dark ? "text-white/60" : "text-black/40"}`}>
         <div className="mb-3 text-xs font-black uppercase tracking-[0.28em]">{label}</div>
-        <div className="text-xs font-bold">Loading…</div>
+        <div className="text-xs font-bold">Loading...</div>
       </div>
     </div>
   );

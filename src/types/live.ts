@@ -93,3 +93,10 @@ export interface NpcEncounterResponse {
   used_ai: boolean;
   cooldown_seconds: number;
 }
+
+export interface GithubSyncResponse {
+  commits: number;
+  updated_activity: DailyActivity;
+  username: string;
+  warning?: string | null;
+}

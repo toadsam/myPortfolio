@@ -116,19 +116,22 @@ export function NPC({npc, npcState, behavior, bubbleText, buildings, isActive, o
           <meshBasicMaterial color={highlighted ? "#7ed957" : "#a9cf8b"} transparent opacity={highlighted ? 0.95 : 0.5} />
         </mesh>
       </group>
-      <Billboard position={[0, 1.72, 0]}>
-        <Html center distanceFactor={8.2} zIndexRange={[10, 0]}>
-          <button
-            aria-label={"Talk to " + npc.name}
-            className={highlighted ? "npc-label npc-label-active" : "npc-label"}
-            onClick={() => onSelect(npc)}
-            type="button"
-          >
-            <span className="block">{npc.name}</span>
-            {npcState ? <span className="block text-[9px] uppercase tracking-[0.12em] opacity-65">{mood}</span> : null}
-          </button>
-        </Html>
-      </Billboard>
+      {/* 이름표는 hover/선택 시에만 렌더 (상시 DOM 라벨이 회전 시 끊김 유발) */}
+      {highlighted ? (
+        <Billboard position={[0, 1.72, 0]}>
+          <Html center distanceFactor={8.2} zIndexRange={[10, 0]}>
+            <button
+              aria-label={"Talk to " + npc.name}
+              className="npc-label npc-label-active"
+              onClick={() => onSelect(npc)}
+              type="button"
+            >
+              <span className="block">{npc.name}</span>
+              {npcState ? <span className="block text-[9px] uppercase tracking-[0.12em] opacity-65">{mood}</span> : null}
+            </button>
+          </Html>
+        </Billboard>
+      ) : null}
       {bubbleText ? (
         <Billboard position={[0, 2.28, 0]}>
           <Html center distanceFactor={7.4} zIndexRange={[11, 0]}>

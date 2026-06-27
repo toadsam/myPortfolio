@@ -56,6 +56,7 @@ class VillageState(BaseModel):
 class ChatMessageIn(BaseModel):
     npc_id: str
     message: str = Field(min_length=1, max_length=1000)
+    recent_messages: list[str] = Field(default_factory=list)
 
 
 class ChatMessageOut(BaseModel):
@@ -69,8 +70,8 @@ class NpcTickIn(BaseModel):
     mood: NpcMood = "calm"
     energy: int = Field(default=50, ge=0, le=100)
     assigned_building_id: str | None = None
-    nearby_npc_ids: list[str] = []
-    recent_memory: list[str] = []
+    nearby_npc_ids: list[str] = Field(default_factory=list)
+    recent_memory: list[str] = Field(default_factory=list)
 
 
 class NpcTickOut(BaseModel):
@@ -89,7 +90,7 @@ class EncounterParticipant(BaseModel):
     mood: NpcMood = "calm"
     energy: int = Field(default=50, ge=0, le=100)
     assigned_building_id: str | None = None
-    recent_memory: list[str] = []
+    recent_memory: list[str] = Field(default_factory=list)
 
 
 class NpcDialogueLine(BaseModel):
@@ -106,7 +107,7 @@ class NpcStateChange(BaseModel):
 class NpcEncounterIn(BaseModel):
     npc_a: EncounterParticipant
     npc_b: EncounterParticipant
-    recent_memory: list[str] = []
+    recent_memory: list[str] = Field(default_factory=list)
 
 
 class NpcEncounterOut(BaseModel):
@@ -121,3 +122,4 @@ class GithubSyncOut(BaseModel):
     username: str
     commits: int
     updated_activity: ActivityOut
+    warning: str | None = None

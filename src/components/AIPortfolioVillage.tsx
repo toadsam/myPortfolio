@@ -23,7 +23,7 @@ const VillageScene = dynamic(
   {
     loading: () => (
       <div className="grid h-[54vh] min-h-[420px] place-items-center bg-[#050d1a] font-mono text-sm font-bold uppercase tracking-[0.18em] text-[#00d4ff]/60 md:h-screen">
-        {">"} Loading Developer's City...
+        {">"} Developer's City를 불러오는 중...
       </div>
     ),
     ssr: false
@@ -42,7 +42,7 @@ const ProjectInterior = dynamic(
     loading: () => (
       <div className="fixed inset-0 z-40 flex items-center justify-center bg-[#020d1a]">
         <span className="font-mono text-xs font-black uppercase tracking-[0.25em] text-[#00d4ff]/50">
-          {">"} Loading Project...
+          {">"} 프로젝트 전시실을 불러오는 중...
         </span>
       </div>
     )
@@ -56,12 +56,10 @@ const ResumeMode = dynamic(
 
 const FADE_DURATION = 480;
 
-// Draco 디코더 경로 설정 (압축된 GLB 로드용)
 useGLTF.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
 
 export function AIPortfolioVillage() {
   const [activeSection, setActiveSection] = useState<SectionId>("intro");
-  /** 패널에서 바로 열어줄 콘텐츠 id (projectId / 스킬그룹명 / 경험제목) */
   const [activeContentId, setActiveContentId] = useState<string | undefined>(undefined);
   const [selectedNpc, setSelectedNpc] = useState<NPCData | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -76,6 +74,7 @@ export function AIPortfolioVillage() {
   const [villageState, setVillageState] = useState<VillageState | null>(null);
   const [liveError, setLiveError] = useState<string | null>(null);
   const [npcRuntimeStates, setNpcRuntimeStates] = useState<Record<string, NpcRuntimeState>>({});
+  const [encounterNotice, setEncounterNotice] = useState<string | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const npcRuntimeStatesRef = useRef<Record<string, NpcRuntimeState>>({});
@@ -123,7 +122,7 @@ export function AIPortfolioVillage() {
         }
       } catch {
         if (!ignore) {
-          setLiveError("FastAPI backend offline");
+          setLiveError("FastAPI 백엔드가 꺼져 있습니다");
         }
       }
     }
@@ -169,7 +168,7 @@ export function AIPortfolioVillage() {
             energy: current?.energy ?? 50,
             assigned_building_id: profile?.assignedBuildingId,
             nearby_npc_ids: nearbyNpcIds(npc.id),
-            recent_memory: npcMemoryRef.current.slice(-6),
+            recent_memory: npcMemoryRef.current.slice(-6)
           });
 
           remember(response.memory);
@@ -181,8 +180,8 @@ export function AIPortfolioVillage() {
               bubbleText: response.bubble_text,
               bubbleExpiresAt: Date.now() + 8500,
               memory: response.memory,
-              nextGoal: response.next_goal,
-            },
+              nextGoal: response.next_goal
+            }
           }));
         } catch {
           setNpcRuntimeStates((states) => ({
@@ -190,10 +189,10 @@ export function AIPortfolioVillage() {
             [npc.id]: {
               mood: current?.mood ?? baseMood,
               energy: current?.energy ?? 45,
-              bubbleText: "잠깐 생각이 끊겼어.",
+              bubbleText: "잠깐 생각을 정리하는 중이에요.",
               bubbleExpiresAt: Date.now() + 4500,
-              memory: "NPC tick request failed.",
-            },
+              memory: "NPC tick request failed."
+            }
           }));
         }
       }));
@@ -241,19 +240,21 @@ export function AIPortfolioVillage() {
                 mood: stateA?.mood ?? (getNpcState(villageState, npcAId)?.mood ?? "calm"),
                 energy: stateA?.energy ?? 50,
                 assigned_building_id: profileA?.assignedBuildingId,
-                recent_memory: stateA?.memory ? [stateA.memory] : [],
+                recent_memory: stateA?.memory ? [stateA.memory] : []
               },
               {
                 npc_id: npcBId,
                 mood: stateB?.mood ?? (getNpcState(villageState, npcBId)?.mood ?? "calm"),
                 energy: stateB?.energy ?? 50,
                 assigned_building_id: profileB?.assignedBuildingId,
-                recent_memory: stateB?.memory ? [stateB.memory] : [],
+                recent_memory: stateB?.memory ? [stateB.memory] : []
               },
-              npcMemoryRef.current.slice(-6),
+              npcMemoryRef.current.slice(-6)
             );
 
             remember(response.memory);
+            setEncounterNotice("NPC들이 서로 이야기를 나눴습니다.");
+            window.setTimeout(() => setEncounterNotice(null), 4500);
             encounterCooldownRef.current[pairKey] = now + response.cooldown_seconds * 1000;
             setNpcRuntimeStates((states) => {
               const next = {...states};
@@ -263,7 +264,7 @@ export function AIPortfolioVillage() {
                   ...(next[change.npc_id] ?? {}),
                   mood: change.mood,
                   energy: change.energy,
-                  memory: response.memory,
+                  memory: response.memory
                 };
               }
 
@@ -272,7 +273,7 @@ export function AIPortfolioVillage() {
                   ...(next[line.npc_id] ?? {mood: "curious" as NpcMood, energy: 55}),
                   bubbleText: line.text,
                   bubbleExpiresAt: Date.now() + 9000,
-                  memory: response.memory,
+                  memory: response.memory
                 };
               }
 
@@ -293,6 +294,31 @@ export function AIPortfolioVillage() {
     return () => clearInterval(interval);
   }, [villageState]);
 
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+
+      if (pendingBuildingId) {
+        setPendingBuildingId(null);
+        return;
+      }
+      if (selectedNpc) {
+        setSelectedNpc(null);
+        return;
+      }
+      if (isPanelOpen) {
+        setIsPanelOpen(false);
+        return;
+      }
+      if (viewMode !== "village") {
+        handleExitInterior();
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isPanelOpen, pendingBuildingId, selectedNpc, viewMode]);
+
   function remember(memory: string) {
     if (!memory) return;
     npcMemoryRef.current = npcMemoryRef.current.concat(memory).slice(-20);
@@ -311,7 +337,7 @@ export function AIPortfolioVillage() {
     return {
       npc_id: npcId,
       mood: runtime?.mood ?? base?.mood ?? "calm",
-      status_text: runtime?.memory ?? base?.status_text ?? "",
+      status_text: runtime?.memory ?? base?.status_text ?? ""
     };
   }
 
@@ -354,13 +380,11 @@ export function AIPortfolioVillage() {
     const building = villageBuildings.find((b) => b.id === buildingId);
     if (!building) return;
 
-    // 광장 클릭 → 인트로 패널만 열기 (입장 확인 없이)
     if (building.district === "plaza") {
       openSection("intro");
       return;
     }
 
-    // 나머지 건물은 확인 다이얼로그 표시
     setPendingBuildingId(buildingId);
   }
 
@@ -376,7 +400,6 @@ export function AIPortfolioVillage() {
 
     const {district, sectionId, contentId} = building;
 
-    // 프로젝트 건물 → 전용 3D 인테리어 씬으로 입장
     if (district === "projects" && contentId) {
       setShowTransitionOverlay(true);
       if (timerRef.current) clearTimeout(timerRef.current);
@@ -400,7 +423,6 @@ export function AIPortfolioVillage() {
       return;
     }
 
-    // 혹시 인테리어가 있는 건물은 씬 전환 (추후 확장용)
     setIsPanelOpen(false);
     setSelectedNpc(null);
     setShowTransitionOverlay(true);
@@ -452,6 +474,7 @@ export function AIPortfolioVillage() {
             {showIntro ? <IntroOverlay onStart={startExploring} onResume={openResume} /> : null}
           </section>
           <LiveStatusPanel error={liveError} villageState={villageState} />
+          {encounterNotice ? <EncounterNotice text={encounterNotice} /> : null}
           <InfoPanel
             activeSection={activeSection}
             activeContentId={activeContentId}
@@ -524,5 +547,13 @@ function LiveStatusPanel({error, villageState}: {error: string | null; villageSt
         </>
       ) : null}
     </aside>
+  );
+}
+
+function EncounterNotice({text}: {text: string}) {
+  return (
+    <div className="fixed left-1/2 top-[78px] z-30 -translate-x-1/2 rounded-lg border border-[#00ff88]/25 bg-[#04140e]/86 px-4 py-2 font-mono text-xs font-black text-[#00ff88] shadow-2xl backdrop-blur-md">
+      {text}
+    </div>
   );
 }

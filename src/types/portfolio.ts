@@ -31,7 +31,6 @@ export interface BuildingData {
   id: string;
   sectionId: SectionId;
   district: District;
-  /** 프로젝트 id, 스킬 그룹명, 경험 제목 등 — 콘텐츠 특정용 */
   contentId?: string;
   kind: BuildingKind;
   name: string;
@@ -42,7 +41,6 @@ export interface BuildingData {
   color: string;
   roofColor: string;
   accentColor: string;
-  /** GLB 에셋 경로 — 설정 시 procedural geometry 대신 모델 렌더 */
   glbPath?: string;
   techStack?: string[];
 }

@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -67,7 +67,7 @@ def village_state(db: Session = Depends(get_db)):
 @app.post("/npc/chat", response_model=ChatMessageOut)
 async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
-    reply, used_ai = await answer_npc_message(payload.npc_id, payload.message, activity)
+    reply, used_ai = await answer_npc_message(payload.npc_id, payload.message, activity, payload.recent_messages)
     return ChatMessageOut(npc_id=payload.npc_id, reply=reply, used_ai=used_ai)
 
 
@@ -86,7 +86,17 @@ async def npc_encounter(payload: NpcEncounterIn, db: Session = Depends(get_db)):
 @app.post("/github/sync", response_model=GithubSyncOut)
 async def github_sync(db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
-    commits = await fetch_today_commit_count()
+    warning: str | None = None
+
+    if not settings.github_token:
+        commits = 0
+        warning = "GITHUB_TOKEN이 없어 GitHub 동기화를 건너뛰었습니다. backend/.env에 토큰을 설정하면 오늘 커밋 수를 가져옵니다."
+    else:
+        try:
+            commits = await fetch_today_commit_count()
+        except Exception as exc:
+            raise HTTPException(status_code=502, detail=f"GitHub API 동기화 실패: {exc}") from exc
+
     payload = ActivityIn(
         date=activity.date,
         github_commits=commits,
@@ -96,4 +106,4 @@ async def github_sync(db: Session = Depends(get_db)):
         mood=activity.mood,
     )
     updated = upsert_activity(db, payload)
-    return GithubSyncOut(username=settings.github_username, commits=commits, updated_activity=updated)
+    return GithubSyncOut(username=settings.github_username, commits=commits, updated_activity=updated, warning=warning)

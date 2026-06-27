@@ -2,6 +2,7 @@
 
 import {AnimatePresence, motion} from "framer-motion";
 import {useState} from "react";
+import type {ReactNode} from "react";
 import {experienceItems} from "@/data/experience";
 import {portfolioLinks} from "@/data/links";
 import {projects} from "@/data/projects";
@@ -13,7 +14,6 @@ import {ProjectDetail} from "./ProjectDetail";
 
 interface InfoPanelProps {
   activeSection: SectionId;
-  /** 건물 클릭 시 바로 열어줄 콘텐츠 id (projectId / 스킬그룹 / 경험제목) */
   activeContentId?: string;
   isOpen: boolean;
   onClose: () => void;
@@ -24,17 +24,17 @@ const SECTION_COLORS: Record<string, string> = {
   projects: "#00d4ff",
   github: "#00ff88",
   experience: "#aa44ff",
-  contact: "#ff6600",
+  contact: "#ff6600"
 };
 
 const stagger = {
   hidden: {},
-  visible: {transition: {staggerChildren: 0.07}},
+  visible: {transition: {staggerChildren: 0.07}}
 };
 
 const fadeUp = {
   hidden: {opacity: 0, y: 14},
-  visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: [0.22, 1, 0.36, 1] as const}},
+  visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: [0.22, 1, 0.36, 1] as const}}
 };
 
 export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: InfoPanelProps) {
@@ -51,7 +51,6 @@ export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: Inf
           initial={{opacity: 0, x: 44}}
           transition={{duration: 0.32, ease: [0.22, 1, 0.36, 1]}}
         >
-          {/* 상단 액센트 라인 */}
           <motion.div
             animate={{scaleX: 1}}
             className="absolute left-0 top-0 h-[2px] w-full origin-left"
@@ -60,10 +59,9 @@ export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: Inf
             transition={{duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1}}
           />
 
-          {/* 헤더 카드 */}
           <motion.div
             animate={{opacity: 1, y: 0}}
-            className="mb-5 rounded-xl border bg-[#0a1525] p-5"
+            className="mb-5 rounded-lg border bg-[#0a1525] p-5"
             initial={{opacity: 0, y: -10}}
             style={{borderColor: `${color}30`}}
             transition={{duration: 0.4, ease: [0.22, 1, 0.36, 1]}}
@@ -76,16 +74,16 @@ export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: Inf
                 <h2 className="mt-2 text-2xl font-black text-white">{section.title}</h2>
               </div>
               <motion.button
-                className="rounded-lg border border-white/10 px-3 py-1.5 font-mono text-xs font-bold text-white/40 transition hover:border-white/25 hover:text-white/70"
+                className="rounded-lg border border-white/10 px-3 py-1.5 font-mono text-xs font-bold text-white/45 transition hover:border-white/25 hover:text-white/75"
                 onClick={onClose}
                 type="button"
                 whileHover={{scale: 1.04}}
                 whileTap={{scale: 0.96}}
               >
-                ✕ Close
+                닫기
               </motion.button>
             </div>
-            <p className="mt-3 text-sm leading-6 text-white/50">{section.description}</p>
+            <p className="mt-3 text-sm leading-6 text-white/55">{section.description}</p>
           </motion.div>
 
           <motion.div animate="visible" initial="hidden" variants={stagger}>
@@ -101,10 +99,10 @@ export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: Inf
   );
 }
 
-function Card({children, color, className = ""}: {children: React.ReactNode; color: string; className?: string}) {
+function Card({children, color, className = ""}: {children: ReactNode; color: string; className?: string}) {
   return (
     <motion.div
-      className={`rounded-xl border bg-[#0a1525] p-5 ${className}`}
+      className={`rounded-lg border bg-[#0a1525] p-5 ${className}`}
       style={{borderColor: `${color}22`}}
       variants={fadeUp}
       whileHover={{borderColor: `${color}55`, boxShadow: `0 0 18px ${color}12`}}
@@ -121,26 +119,20 @@ function IntroPanel({color}: {color: string}) {
       <Card color={color}>
         <h3 className="text-lg font-black text-white">정재훈의 Developer's City</h3>
         <p className="mt-3 text-sm leading-7 text-white/60">
-          코드로 이루어진 도시에서 프로젝트와 경험을 탐험하세요. 각 건물은 포트폴리오 섹션을 의미하고,
-          NPC는 각 공간의 내용을 안내합니다.
+          프로젝트, 기술, 경험, 연락처를 하나의 3D 마을로 구성했습니다. 건물은 콘텐츠를 열고,
+          NPC는 방문자의 질문에 맞춰 포트폴리오를 설명합니다.
         </p>
       </Card>
       <div className="grid grid-cols-2 gap-3">
-        {[
-          {label: "3D Interactive", icon: "◈"},
-          {label: "AI NPC", icon: "◎"},
-          {label: "Real-time Data", icon: "⬡"},
-          {label: "Fullstack", icon: "◆"},
-        ].map((item) => (
+        {["3D Interactive", "AI NPC", "Live Data", "Fullstack"].map((label) => (
           <motion.span
-            className="flex items-center gap-2 rounded-lg border border-white/8 bg-[#0a1525] px-3 py-3 font-mono text-sm font-black text-white/70"
-            key={item.label}
+            className="rounded-lg border border-white/8 bg-[#0a1525] px-3 py-3 font-mono text-sm font-black text-white/70"
+            key={label}
             variants={fadeUp}
-            whileHover={{borderColor: `${color}50`, color: color, x: 2}}
+            whileHover={{borderColor: `${color}50`, color, x: 2}}
             transition={{duration: 0.15}}
           >
-            <span style={{color}}>{item.icon}</span>
-            {item.label}
+            {label}
           </motion.span>
         ))}
       </div>
@@ -149,7 +141,7 @@ function IntroPanel({color}: {color: string}) {
 }
 
 function ProjectsPanel({color, initialProjectId}: {color: string; initialProjectId?: string}) {
-  const initial = initialProjectId ? projects.find((p) => p.id === initialProjectId) ?? null : null;
+  const initial = initialProjectId ? projects.find((project) => project.id === initialProjectId) ?? null : null;
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(initial);
 
   if (selectedProject) {
@@ -161,7 +153,7 @@ function ProjectsPanel({color, initialProjectId}: {color: string; initialProject
       <Card color={color}>
         <h3 className="font-black text-white">대표 프로젝트</h3>
         <p className="mt-2 text-sm leading-6 text-white/55">
-          각 프로젝트 건물을 클릭하면 바로 상세 내용을 볼 수 있습니다.
+          목록에서 프로젝트를 열어 자세한 설명을 보거나, 마을에서 프로젝트 건물 안으로 들어가 3D 전시 화면을 볼 수 있습니다.
         </p>
       </Card>
       {projects.map((project) => (
@@ -183,12 +175,12 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
   return (
     <div className="grid gap-4">
       <Card color={color}>
-        <h3 className="font-black text-white">기술 스택과 코드 기록</h3>
+        <h3 className="font-black text-white">기술 스택과 구현 경험</h3>
         <p className="mt-2 text-sm leading-6 text-white/55">
-          프론트엔드, 3D, 백엔드, 게임/XR 경험을 정리했습니다.
+          프론트엔드, 백엔드, 3D, 게임/XR, 워크플로 경험을 기술 그룹별로 정리했습니다.
         </p>
         <motion.a
-          className="mt-4 inline-flex items-center gap-2 rounded-lg border px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.12em] text-white transition"
+          className="mt-4 inline-flex items-center gap-2 rounded-lg border px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.12em] transition"
           href="https://github.com/toadsam"
           rel="noreferrer"
           style={{borderColor: `${color}50`, background: `${color}18`, color}}
@@ -196,7 +188,7 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
           whileHover={{background: `${color}30`, boxShadow: `0 0 14px ${color}30`}}
           whileTap={{scale: 0.97}}
         >
-          ↗ GitHub
+          GitHub 열기
         </motion.a>
       </Card>
 
@@ -204,7 +196,7 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
         const isOpen = openGroup === group;
         return (
           <motion.section
-            className="overflow-hidden rounded-xl border bg-[#0a1525]"
+            className="overflow-hidden rounded-lg border bg-[#0a1525]"
             key={group}
             style={{borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"}}
             variants={fadeUp}
@@ -218,16 +210,13 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
               <span className="font-black text-white">{group}</span>
               <span className="flex items-center gap-2">
                 <span className="font-mono text-xs text-white/30">{groupSkills.length}개</span>
-                <motion.span
-                  animate={{rotate: isOpen ? 180 : 0}}
-                  className="text-xs"
-                  style={{color}}
-                  transition={{duration: 0.25}}
-                >▼</motion.span>
+                <motion.span animate={{rotate: isOpen ? 180 : 0}} className="text-xs" style={{color}} transition={{duration: 0.25}}>
+                  v
+                </motion.span>
               </span>
             </motion.button>
             <AnimatePresence>
-              {isOpen && (
+              {isOpen ? (
                 <motion.div
                   animate={{height: "auto", opacity: 1}}
                   className="overflow-hidden px-5 pb-5"
@@ -250,13 +239,13 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
                     {groupSkills.map((skill) => (
                       <p className="rounded-lg border border-white/6 bg-[#060e1a] p-3 text-sm leading-6 text-white/55" key={skill.name + "-desc"}>
                         <strong style={{color}}>{skill.name}</strong>
-                        <span className="text-white/30"> · </span>
+                        <span className="text-white/30"> / </span>
                         {skill.description}
                       </p>
                     ))}
                   </div>
                 </motion.div>
-              )}
+              ) : null}
             </AnimatePresence>
           </motion.section>
         );
@@ -268,28 +257,28 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
 function ExperiencePanel({color, highlightTitle}: {color: string; highlightTitle?: string}) {
   return (
     <div className="grid gap-3">
-      {experienceItems.map((item, i) => {
+      {experienceItems.map((item, index) => {
         const isHighlighted = highlightTitle === item.title;
         return (
-        <motion.article
-          className="rounded-xl border bg-[#0a1525] p-5 transition"
-          key={item.title}
-          style={{borderColor: isHighlighted ? `${color}50` : "rgba(255,255,255,0.06)", boxShadow: isHighlighted ? `0 0 18px ${color}15` : "none"}}
-          variants={fadeUp}
-          whileHover={{borderColor: `${color}40`, boxShadow: `0 0 18px ${color}10`, x: 2}}
-        >
-          <div className="flex items-center gap-3">
-            <span
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-xs font-black"
-              style={{background: `${color}18`, color}}
-            >
-              {i + 1}
-            </span>
-            <p className="font-mono text-xs font-black uppercase tracking-[0.2em]" style={{color}}>{item.year}</p>
-          </div>
-          <h3 className="mt-3 font-black text-white">{item.title}</h3>
-          <p className="mt-2 text-sm leading-6 text-white/55">{item.description}</p>
-        </motion.article>
+          <motion.article
+            className="rounded-lg border bg-[#0a1525] p-5 transition"
+            key={item.title}
+            style={{borderColor: isHighlighted ? `${color}50` : "rgba(255,255,255,0.06)", boxShadow: isHighlighted ? `0 0 18px ${color}15` : "none"}}
+            variants={fadeUp}
+            whileHover={{borderColor: `${color}40`, boxShadow: `0 0 18px ${color}10`, x: 2}}
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-xs font-black"
+                style={{background: `${color}18`, color}}
+              >
+                {index + 1}
+              </span>
+              <p className="font-mono text-xs font-black uppercase tracking-[0.2em]" style={{color}}>{item.year}</p>
+            </div>
+            <h3 className="mt-3 font-black text-white">{item.title}</h3>
+            <p className="mt-2 text-sm leading-6 text-white/55">{item.description}</p>
+          </motion.article>
         );
       })}
     </div>
@@ -301,27 +290,27 @@ function ContactPanel({color}: {color: string}) {
     <div className="grid gap-4">
       <Card color={color}>
         <p className="text-sm leading-7 text-white/60">
-          다음 프로젝트, 인턴십, 협업 제안은 아래 링크로 연락할 수 있습니다.
+          협업, 인터뷰, 프로젝트 제안은 아래 링크를 통해 연결할 수 있습니다.
         </p>
       </Card>
       <div className="grid gap-2">
-        {portfolioLinks.map((link, i) => {
+        {portfolioLinks.map((link, index) => {
           const linkColors = ["#00d4ff", "#00ff88", "#ff6600"];
-          const lc = linkColors[i % linkColors.length] ?? color;
+          const linkColor = linkColors[index % linkColors.length] ?? color;
           return (
             <motion.a
-              className="flex items-center justify-between gap-4 rounded-xl border bg-[#0a1525] px-4 py-4 text-sm font-bold text-white transition"
+              className="flex items-center justify-between gap-4 rounded-lg border bg-[#0a1525] px-4 py-4 text-sm font-bold text-white transition"
               href={link.href}
               key={link.label}
               rel="noreferrer"
-              style={{borderColor: "rgba(255,255,255,0.06)", borderLeft: `3px solid ${lc}`}}
+              style={{borderColor: "rgba(255,255,255,0.06)", borderLeft: `3px solid ${linkColor}`}}
               target={link.href.startsWith("mailto:") ? undefined : "_blank"}
               variants={fadeUp}
-              whileHover={{borderColor: `${lc}50`, boxShadow: `0 0 16px ${lc}14`, x: 3}}
+              whileHover={{borderColor: `${linkColor}50`, boxShadow: `0 0 16px ${linkColor}14`, x: 3}}
               whileTap={{scale: 0.98}}
             >
               <span className="font-black text-white">{link.label}</span>
-              <span className="truncate font-mono text-xs" style={{color: lc}}>{link.value} ↗</span>
+              <span className="truncate font-mono text-xs" style={{color: linkColor}}>{link.value} -&gt;</span>
             </motion.a>
           );
         })}

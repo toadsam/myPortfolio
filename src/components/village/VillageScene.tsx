@@ -1,9 +1,8 @@
 "use client";
 
-import {Canvas, useFrame} from "@react-three/fiber";
-import {ContactShadows, Environment, Float, Html, useGLTF} from "@react-three/drei";
-import {Suspense, useRef} from "react";
-import type {Group} from "three";
+import {Canvas} from "@react-three/fiber";
+import {ContactShadows, Html, useGLTF} from "@react-three/drei";
+import {Suspense} from "react";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {rockPositions, treePositions, villageBuildings} from "@/lib/constants";
@@ -13,7 +12,7 @@ import type {ExplorationMode, NPCData, SectionId, Vector3Tuple} from "@/types/po
 import {Building} from "./Building";
 import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
-import {Rock, SignPost} from "./Decorations";
+import {Rock} from "./Decorations";
 import {NPC} from "./NPC";
 import {Tree} from "./Tree";
 
@@ -30,10 +29,6 @@ interface VillageSceneProps {
   villageState: VillageState | null;
 }
 
-// ─── 시그니처 광장 (</ 정재훈 >) ────────────────────────────────────────────────
-
-// ─── 중앙 석상 ────────────────────────────────────────────────────────────────
-
 function Statue() {
   const {scene} = useGLTF("/models/environment/statue.glb");
   return (
@@ -48,8 +43,6 @@ function Statue() {
 
 useGLTF.preload("/models/environment/statue.glb");
 
-// ─── 바닥 ─────────────────────────────────────────────────────────────────────
-
 function Ground() {
   const {scene} = useGLTF("/models/environment/ground.glb");
   return (
@@ -61,39 +54,12 @@ function Ground() {
         rotation={[-Math.PI / 2, 0, 0]}
         receiveShadow
       />
-      {/* 중앙 조명 */}
       <pointLight color="#00d4ff" intensity={2.5} distance={12} decay={2} position={[0, 1.5, 0]} />
     </group>
   );
 }
 
 useGLTF.preload("/models/environment/ground.glb");
-
-function DistrictPath({fromX, fromZ, toX, toZ, color}: {
-  fromX: number; fromZ: number; toX: number; toZ: number; color: string;
-}) {
-  const dx = toX - fromX;
-  const dz = toZ - fromZ;
-  const length = Math.sqrt(dx * dx + dz * dz);
-  const angle = Math.atan2(dz, dx);
-  const mx = (fromX + toX) / 2;
-  const mz = (fromZ + toZ) / 2;
-
-  return (
-    <group>
-      <mesh position={[mx, 0.007, mz]} rotation={[-Math.PI / 2, 0, angle]}>
-        <planeGeometry args={[length, 0.38]} />
-        <meshStandardMaterial color="#071525" roughness={0.9} metalness={0.3} />
-      </mesh>
-      <mesh position={[mx, 0.012, mz]} rotation={[-Math.PI / 2, 0, angle]}>
-        <planeGeometry args={[length, 0.028]} />
-        <meshBasicMaterial color={color} transparent opacity={0.65} />
-      </mesh>
-    </group>
-  );
-}
-
-// ─── 구역 표지판 ──────────────────────────────────────────────────────────────
 
 function DistrictSign({label, position, color}: {label: string; position: [number, number, number]; color: string}) {
   return (
@@ -122,7 +88,7 @@ function DistrictSign({label, position, color}: {label: string; position: [numbe
           textShadow: `0 0 10px ${color}`,
           userSelect: "none",
           pointerEvents: "none",
-          whiteSpace: "nowrap",
+          whiteSpace: "nowrap"
         }}>
           {"</>"} {label}
         </span>
@@ -130,8 +96,6 @@ function DistrictSign({label, position, color}: {label: string; position: [numbe
     </group>
   );
 }
-
-// ─── 활성 라우트 하이라이트 ───────────────────────────────────────────────────
 
 function ActiveRoute({activeSection}: {activeSection: SectionId}) {
   const building = villageBuildings.find((b) => b.sectionId === activeSection && b.district !== "plaza");
@@ -166,8 +130,6 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
     </group>
   );
 }
-
-// ─── 메인 씬 ──────────────────────────────────────────────────────────────────
 
 function LiveDecorations({villageState}: {villageState: VillageState | null}) {
   if (!villageState) return null;
@@ -222,7 +184,7 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
 
 export function VillageScene({
   activeSection, activeNpcId, explorationMode, isIntro = false,
-  onSelectNpc, onSelectSection, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState
+  onSelectNpc, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
 
@@ -240,21 +202,18 @@ export function VillageScene({
         <directionalLight color="#d0e8ff" intensity={2.5} position={[-6, 12, -4]} />
         <hemisphereLight args={["#87ceeb", "#4a7a3a", 3.0]} />
 
-        {/* 구역별 조명 — 포인트라이트 4개로 줄임 */}
         <pointLight color="#00d4ff" intensity={1.8} distance={22} decay={2} position={[-5, 5, 0]} />
         <pointLight color="#aa44ff" intensity={1.5} distance={20} decay={2} position={[3, 5, -5]} />
         <pointLight color="#00ff88" intensity={1.5} distance={20} decay={2} position={[6, 5, 5]} />
         <pointLight color="#ff6600" intensity={1.2} distance={16} decay={2} position={[0, 4, 9]} />
 
         <Suspense fallback={null}>
-          <Environment preset="night" />
           <Ground />
           <Statue />
 
-          {/* 구역 표지판 */}
           <DistrictSign label="Project District" position={[-8.5, 0, -5.5]} color="#00d4ff" />
-          <DistrictSign label="Skills District"  position={[0,   0, -9.0]} color="#aa44ff" />
-          <DistrictSign label="Experience District" position={[9.2, 0, 5]}  color="#00ff88" />
+          <DistrictSign label="Skills District" position={[0, 0, -9.0]} color="#aa44ff" />
+          <DistrictSign label="Experience District" position={[9.2, 0, 5]} color="#00ff88" />
 
           {!isWalkMode && <ActiveRoute activeSection={activeSection} />}
           <LiveDecorations villageState={villageState} />
@@ -300,10 +259,9 @@ export function VillageScene({
         </Suspense>
       </Canvas>
 
-      {/* 조작 힌트 */}
       {isWalkMode ? (
         <div className="pointer-events-none absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-xl border border-[#00d4ff]/30 bg-[#050d1a]/85 px-4 py-2.5 backdrop-blur-md">
-          {[["W", "앞"], ["A", "좌"], ["S", "뒤"], ["D", "우"]].map(([key, label]) => (
+          {[["W", "앞"], ["A", "왼쪽"], ["S", "뒤"], ["D", "오른쪽"]].map(([key, label]) => (
             <span className="flex flex-col items-center gap-0.5" key={key}>
               <kbd className="rounded border border-[#00d4ff]/50 bg-[#0a1a30] px-2 py-0.5 font-mono text-xs font-black text-[#00d4ff]">{key}</kbd>
               <span className="font-mono text-[10px] text-[#0066aa]">{label}</span>
@@ -312,7 +270,7 @@ export function VillageScene({
         </div>
       ) : (
         <div className="pointer-events-none absolute left-4 top-4 rounded-lg border border-[#00d4ff]/25 bg-[#050d1a]/85 px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.18em] text-[#00d4ff]/70 backdrop-blur-md">
-          {">"} click · drag · scroll
+          {">"} click / drag / scroll
         </div>
       )}
     </div>
@@ -330,6 +288,6 @@ function displayNpcState(npcId: string, runtime?: NpcRuntimeState, base?: NpcSta
   return {
     npc_id: npcId,
     mood: runtime?.mood ?? base?.mood ?? "calm",
-    status_text: runtime?.memory ?? base?.status_text ?? "",
+    status_text: runtime?.memory ?? base?.status_text ?? ""
   };
 }

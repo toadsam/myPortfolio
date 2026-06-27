@@ -30,7 +30,7 @@ VALID_MOODS: set[str] = {
 
 async def generate_npc_tick(payload: NpcTickIn, activity: DailyActivity) -> NpcTickOut:
     npc = _npc_profile(payload.npc_id, payload.assigned_building_id)
-    context = build_context(payload.npc_id, activity)
+    context = build_context(payload.npc_id, activity, payload.recent_memory)
 
     if settings.openai_api_key:
         try:
@@ -54,7 +54,7 @@ async def generate_npc_encounter(
 ) -> NpcEncounterOut:
     a_profile = _npc_profile(npc_a.npc_id, npc_a.assigned_building_id)
     b_profile = _npc_profile(npc_b.npc_id, npc_b.assigned_building_id)
-    context = build_context(npc_a.npc_id, activity)
+    context = build_context(npc_a.npc_id, activity, recent_memory)
 
     if settings.openai_api_key:
         try:
@@ -127,7 +127,7 @@ def _npc_profile(npc_id: str, assigned_building_id: str | None = None) -> dict[s
             "name": npc_id,
             "role": f"{building_hint} 건물의 기술 담당 NPC",
             "tone": "기술적이지만 방문자가 이해하기 쉽게 말합니다.",
-            "scope": "담당 기술 건물, 정재훈의 기술 경험, 오늘 활동 상태",
+            "scope": "해당 기술 건물, 정재훈의 기술 경험, 오늘 활동 상태",
         }
     if "exp" in building_hint:
         return {
@@ -147,7 +147,7 @@ def _npc_profile(npc_id: str, assigned_building_id: str | None = None) -> dict[s
         "name": npc_id,
         "role": f"{building_hint} 프로젝트 건물 담당 NPC",
         "tone": "프로젝트 맥락을 구체적으로 말하고 스스로 생각합니다.",
-        "scope": "담당 프로젝트 건물, 주변 NPC 대화, 오늘 마을 활동 상태",
+        "scope": "해당 프로젝트 건물, 주변 NPC 대화, 오늘 마을 활동 상태",
     }
 
 
@@ -167,11 +167,11 @@ def _tick_from_data(npc_id: str, data: dict[str, Any], used_ai: bool) -> NpcTick
     mood = _normalize_mood(data.get("mood"), "calm")
     return NpcTickOut(
         npc_id=npc_id,
-        bubble_text=str(data.get("bubble_text") or "잠깐 생각을 정리하는 중이야."),
+        bubble_text=str(data.get("bubble_text") or "잠깐 생각을 정리하는 중이에요."),
         mood=mood,
         energy=_clamp_int(data.get("energy"), 50),
         next_goal=str(data.get("next_goal") or "wander"),
-        memory=str(data.get("memory") or "짧은 생각을 남겼다."),
+        memory=str(data.get("memory") or "방금 생각을 남겼습니다."),
         used_ai=used_ai,
         cooldown_seconds=_clamp_int(data.get("cooldown_seconds"), 60, 30, 120),
     )
@@ -186,8 +186,8 @@ def _encounter_from_data(npc_a_id: str, npc_b_id: str, data: dict[str, Any], use
     ]
     if not dialogue:
         dialogue = [
-            NpcDialogueLine(npc_id=npc_a_id, text="잠깐, 방금 마을 분위기가 바뀐 것 같아."),
-            NpcDialogueLine(npc_id=npc_b_id, text="응. 오늘 기록이 NPC들한테도 전해졌어."),
+            NpcDialogueLine(npc_id=npc_a_id, text="방금 마을 분위기가 조금 바뀐 것 같아."),
+            NpcDialogueLine(npc_id=npc_b_id, text="오늘 기록이 건물 조명에도 반영됐어."),
         ]
 
     raw_changes = data.get("state_changes") if isinstance(data.get("state_changes"), list) else []
@@ -209,7 +209,7 @@ def _encounter_from_data(npc_a_id: str, npc_b_id: str, data: dict[str, Any], use
     return NpcEncounterOut(
         dialogue=dialogue,
         state_changes=changes,
-        memory=str(data.get("memory") or "두 NPC가 마을 상태에 대해 짧게 대화했다."),
+        memory=str(data.get("memory") or "두 NPC가 마을 상태에 대해 짧게 대화했습니다."),
         used_ai=used_ai,
         cooldown_seconds=_clamp_int(data.get("cooldown_seconds"), 180, 120, 360),
     )
@@ -221,11 +221,11 @@ def _fallback_tick(payload: NpcTickIn, activity: DailyActivity) -> NpcTickOut:
         mood = "training"
     return NpcTickOut(
         npc_id=payload.npc_id,
-        bubble_text="잠깐 생각이 정리되지 않았어. 다시 말을 걸어줘.",
+        bubble_text="오늘 기록을 바탕으로 안내를 준비하고 있어요.",
         mood=mood,
         energy=70 if mood in {"busy", "focused", "training"} else 45,
         next_goal=payload.assigned_building_id or "wander",
-        memory="잠시 생각을 정리하며 마을 상태를 살폈다.",
+        memory="NPC가 마을 상태를 확인했습니다.",
         used_ai=False,
         cooldown_seconds=90,
     )
@@ -239,14 +239,14 @@ def _fallback_encounter(
     mood: NpcMood = "busy" if activity.github_commits >= 5 else "curious"
     return NpcEncounterOut(
         dialogue=[
-            NpcDialogueLine(npc_id=npc_a.npc_id, text="지금은 생각이 조금 흐릿해."),
-            NpcDialogueLine(npc_id=npc_b.npc_id, text="그래도 마을 상태는 계속 변하고 있어."),
+            NpcDialogueLine(npc_id=npc_a.npc_id, text="오늘 활동이 건물 조명에 반영됐어."),
+            NpcDialogueLine(npc_id=npc_b.npc_id, text="방문자가 보면 지금 상태를 바로 알겠네."),
         ],
         state_changes=[
             NpcStateChange(npc_id=npc_a.npc_id, mood=mood, energy=58),
             NpcStateChange(npc_id=npc_b.npc_id, mood="focused", energy=58),
         ],
-        memory="두 NPC가 마을 상태에 대해 짧게 대화했다.",
+        memory="두 NPC가 오늘 활동 상태에 대해 짧게 대화했습니다.",
         used_ai=False,
         cooldown_seconds=240,
     )

@@ -520,32 +520,32 @@ interface Props {
 export function ProjectViewer({project, onClose}: Props) {
   const projectTheme = project ? getProjectTheme(project.id) : null;
   if (project && projectTheme) {
-    const shared = {key: project.id, project, theme: projectTheme, onClose};
+    const shared = {project, theme: projectTheme, onClose};
     if (projectTheme.category === "game") {
       return (
         <AnimatePresence>
-          <GameProjectViewer {...shared} />
+          <GameProjectViewer key={project.id} {...shared} />
         </AnimatePresence>
       );
     }
     if (projectTheme.category === "dashboard") {
       return (
         <AnimatePresence>
-          <DashboardProjectViewer {...shared} />
+          <DashboardProjectViewer key={project.id} {...shared} />
         </AnimatePresence>
       );
     }
     if (projectTheme.category === "realtime") {
       return (
         <AnimatePresence>
-          <RealtimeProjectViewer {...shared} />
+          <RealtimeProjectViewer key={project.id} {...shared} />
         </AnimatePresence>
       );
     }
     if (projectTheme.category === "platform") {
       return (
         <AnimatePresence>
-          <PlatformProjectViewer {...shared} />
+          <PlatformProjectViewer key={project.id} {...shared} />
         </AnimatePresence>
       );
     }

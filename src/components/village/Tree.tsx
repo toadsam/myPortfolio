@@ -32,12 +32,11 @@ export function Tree({position, scale = 1}: TreeProps) {
         <coneGeometry args={[0.32, 0.7, 7]} />
         <meshStandardMaterial color={c.leaf2} roughness={0.5} metalness={0.4} emissive={c.glow} emissiveIntensity={0.18} />
       </mesh>
-      {/* 꼭대기 네온 */}
+      {/* 꼭대기 네온 (조명 대신 emissive 구체로 표현 — 실시간 조명 비용 제거) */}
       <mesh position={[0, 1.78, 0]}>
-        <sphereGeometry args={[0.07, 8, 8]} />
+        <sphereGeometry args={[0.09, 8, 8]} />
         <meshBasicMaterial color={c.glow} />
       </mesh>
-      <pointLight color={c.glow} intensity={0.5} distance={2.5} decay={2} position={[0, 1.2, 0]} />
     </group>
   );
 }

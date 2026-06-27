@@ -1,6 +1,7 @@
 "use client";
 
 import {AnimatePresence, motion} from "framer-motion";
+import type {ReactNode} from "react";
 import {useEffect, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
@@ -12,9 +13,7 @@ const STEPS = [
   {id: "approach", label: "진행", en: "PROCESS"},
   {id: "contribution", label: "기여", en: "WORK"},
   {id: "result", label: "성과", en: "RESULT"},
-];
-
-// ─── 도장 ─────────────────────────────────────────────────────────────────────
+] as const;
 
 function Stamp({color, delay}: {color: string; delay: number}) {
   return (
@@ -25,12 +24,10 @@ function Stamp({color, delay}: {color: string; delay: number}) {
       animate={{scale: 1, opacity: 1, rotate: -8}}
       transition={{type: "spring", stiffness: 320, damping: 14, delay}}
     >
-      ✓
+      OK
     </motion.span>
   );
 }
-
-// ─── 문서 카드 ────────────────────────────────────────────────────────────────
 
 function DocCard({
   label,
@@ -40,7 +37,7 @@ function DocCard({
 }: {
   label?: string;
   theme: ProjectTheme;
-  children: React.ReactNode;
+  children: ReactNode;
   delay?: number;
 }) {
   return (
@@ -50,6 +47,7 @@ function DocCard({
       initial={{opacity: 0, y: 14}}
       animate={{opacity: 1, y: 0}}
       transition={{duration: 0.4, delay}}
+      whileHover={{borderColor: `${theme.primary}50`, background: "rgba(255,255,255,0.045)"}}
     >
       {label ? (
         <div className="mb-3 flex items-center gap-2">
@@ -62,37 +60,37 @@ function DocCard({
   );
 }
 
-// ─── 섹션 ─────────────────────────────────────────────────────────────────────
-
 function Section({step, project, theme}: {step: number; project: ProjectData; theme: ProjectTheme}) {
   if (step === 0) {
     return (
       <div className="flex h-full flex-col justify-center gap-6 py-2">
         <div className="border-l-4 pl-5" style={{borderColor: theme.primary}}>
           <p className="font-mono text-xs font-black uppercase tracking-[0.3em]" style={{color: theme.primary}}>
-            OFFICIAL · PLATFORM
+            OFFICIAL - PLATFORM
           </p>
           <h1 className="mt-2 text-5xl font-black leading-tight text-white md:text-6xl">{project.title}</h1>
           <p className="mt-3 max-w-xl text-base leading-7 text-white/60">{project.description}</p>
         </div>
+
         <DocCard label="담당 역할" theme={theme} delay={0.15}>
           <p className="text-sm leading-7 text-white/75">{project.role}</p>
         </DocCard>
+
         <DocCard label="주요 기능" theme={theme} delay={0.25}>
           <div className="grid gap-2 sm:grid-cols-2">
-            {project.features.map((f, i) => (
+            {project.features.map((feature, index) => (
               <motion.div
-                key={f}
+                key={feature}
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2"
                 style={{background: `${theme.primary}0a`}}
                 initial={{opacity: 0, x: -10}}
                 animate={{opacity: 1, x: 0}}
-                transition={{delay: 0.3 + i * 0.06}}
+                transition={{delay: 0.3 + index * 0.06}}
               >
                 <span className="font-mono text-xs font-black" style={{color: theme.primary}}>
-                  {String(i + 1).padStart(2, "0")}
+                  {String(index + 1).padStart(2, "0")}
                 </span>
-                <span className="text-sm text-white/80">{f}</span>
+                <span className="text-sm text-white/80">{feature}</span>
               </motion.div>
             ))}
           </div>
@@ -104,7 +102,7 @@ function Section({step, project, theme}: {step: number; project: ProjectData; th
   if (step === 1) {
     return (
       <div className="flex h-full flex-col justify-center gap-5 py-2">
-        <DocCard label="배경 · 무엇을 해결했나" theme={theme}>
+        <DocCard label="배경 - 무엇이 문제였나" theme={theme}>
           <p className="text-base leading-8 text-white/85">{project.problem}</p>
         </DocCard>
         <DocCard label="배운 점" theme={theme} delay={0.15}>
@@ -117,16 +115,16 @@ function Section({step, project, theme}: {step: number; project: ProjectData; th
   if (step === 2) {
     return (
       <div className="flex h-full flex-col justify-center gap-3 py-2">
-        {project.approach.map((s, i) => (
-          <DocCard key={i} theme={theme} delay={i * 0.1}>
+        {project.approach.map((item, index) => (
+          <DocCard key={item} theme={theme} delay={index * 0.1}>
             <div className="flex items-start gap-4">
               <span
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg font-mono text-sm font-black"
                 style={{background: `${theme.primary}18`, color: theme.primary}}
               >
-                {i + 1}
+                {index + 1}
               </span>
-              <p className="text-sm leading-7 text-white/80">{s}</p>
+              <p className="text-sm leading-7 text-white/80">{item}</p>
             </div>
           </DocCard>
         ))}
@@ -139,29 +137,30 @@ function Section({step, project, theme}: {step: number; project: ProjectData; th
       <div className="flex h-full flex-col justify-center gap-5 py-2">
         <DocCard label="기여 내역" theme={theme}>
           <div className="flex flex-col gap-3">
-            {project.contribution.map((item, i) => (
+            {project.contribution.map((item, index) => (
               <motion.div
-                key={i}
+                key={item}
                 className="flex items-center gap-3"
                 initial={{opacity: 0}}
                 animate={{opacity: 1}}
-                transition={{delay: 0.1 + i * 0.1}}
+                transition={{delay: 0.1 + index * 0.1}}
               >
-                <Stamp color={theme.primary} delay={0.2 + i * 0.12} />
+                <Stamp color={theme.primary} delay={0.2 + index * 0.12} />
                 <span className="text-sm leading-6 text-white/80">{item}</span>
               </motion.div>
             ))}
           </div>
         </DocCard>
+
         <DocCard label="기술 스택" theme={theme} delay={0.3}>
           <div className="flex flex-wrap gap-2">
-            {project.tech.map((t) => (
+            {project.tech.map((item) => (
               <span
-                key={t}
+                key={item}
                 className="rounded-lg border px-3 py-1.5 font-mono text-sm font-bold"
                 style={{borderColor: `${theme.primary}35`, color: theme.accent, background: `${theme.primary}0d`}}
               >
-                {t}
+                {item}
               </span>
             ))}
           </div>
@@ -170,10 +169,9 @@ function Section({step, project, theme}: {step: number; project: ProjectData; th
     );
   }
 
-  // step 4
   return (
     <div className="flex h-full flex-col justify-center gap-5 py-2">
-      <DocCard label="성과 · 결과" theme={theme}>
+      <DocCard label="성과 - 결과" theme={theme}>
         <p className="text-base leading-8 text-white/85">{project.result}</p>
       </DocCard>
       <DocCard label="다음 단계" theme={theme} delay={0.15}>
@@ -191,15 +189,13 @@ function Section({step, project, theme}: {step: number; project: ProjectData; th
             whileHover={{scale: 1.04, boxShadow: `0 0 24px ${theme.primary}55`}}
             whileTap={{scale: 0.97}}
           >
-            {link.label} ↗
+            {link.label} -&gt;
           </motion.a>
         ))}
       </div>
     </div>
   );
 }
-
-// ─── 메인 ─────────────────────────────────────────────────────────────────────
 
 interface Props {
   project: ProjectData;
@@ -209,15 +205,17 @@ interface Props {
 
 export function PlatformProjectViewer({project, theme, onClose}: Props) {
   const [step, setStep] = useState(0);
+  const richRender = RICH_RENDERERS[project.id];
 
   useEffect(() => setStep(0), [project.id]);
 
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "ArrowRight") setStep((s) => Math.min(s + 1, STEPS.length - 1));
-      if (e.key === "ArrowLeft") setStep((s) => Math.max(s - 1, 0));
-      if (e.key === "Escape") onClose();
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "ArrowRight") setStep((value) => Math.min(value + 1, STEPS.length - 1));
+      if (event.key === "ArrowLeft") setStep((value) => Math.max(value - 1, 0));
+      if (event.key === "Escape") onClose();
     }
+
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
@@ -231,7 +229,6 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
       exit={{opacity: 0}}
       transition={{duration: 0.3}}
     >
-      {/* 상단 탭 바 (사이트 헤더 느낌) */}
       <div className="relative z-10 shrink-0 border-b" style={{borderColor: `${theme.primary}20`}}>
         <div className="flex items-center justify-between px-8 py-4">
           <span className="font-mono text-sm font-black text-white">{project.title}</span>
@@ -241,20 +238,20 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
             onClick={onClose}
             type="button"
           >
-            ESC ✕
+            ESC 닫기
           </button>
         </div>
         <div className="flex gap-1 px-6">
-          {STEPS.map((s, i) => (
+          {STEPS.map((item, index) => (
             <button
-              key={s.id}
+              key={item.id}
               className="relative px-4 py-2.5 font-mono text-xs font-black transition"
-              onClick={() => setStep(i)}
-              style={{color: i === step ? theme.primary : "rgba(255,255,255,0.35)"}}
+              onClick={() => setStep(index)}
+              style={{color: index === step ? theme.primary : "rgba(255,255,255,0.35)"}}
               type="button"
             >
-              {s.label}
-              {i === step ? (
+              {item.label}
+              {index === step ? (
                 <motion.span
                   layoutId="platform-tab"
                   className="absolute inset-x-2 -bottom-px h-0.5 rounded-full"
@@ -266,7 +263,6 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
         </div>
       </div>
 
-      {/* 본문 */}
       <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-1 flex-col overflow-hidden px-8">
         <div className="relative flex-1 overflow-hidden py-6">
           <AnimatePresence mode="wait">
@@ -278,14 +274,11 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
               exit={{opacity: 0, y: -12}}
               transition={{duration: 0.3}}
             >
-              {RICH_RENDERERS[project.id]
-                ? RICH_RENDERERS[project.id]!({step, project, theme})
-                : <Section step={step} project={project} theme={theme} />}
+              {richRender ? richRender({step, project, theme}) : <Section step={step} project={project} theme={theme} />}
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* 하단 네비 */}
         <div className="flex shrink-0 items-center justify-between gap-2 border-t py-4" style={{borderColor: `${theme.primary}20`}}>
           <div className="flex items-center gap-2 font-mono text-xs text-white/40">
             <span style={{color: theme.primary}}>{String(step + 1).padStart(2, "0")}</span>
@@ -296,10 +289,10 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
               className="rounded-lg border px-4 py-2 font-mono text-xs font-black disabled:opacity-20"
               style={{borderColor: `${theme.primary}40`, color: theme.accent}}
               disabled={step === 0}
-              onClick={() => setStep((s) => Math.max(s - 1, 0))}
+              onClick={() => setStep((value) => Math.max(value - 1, 0))}
               type="button"
             >
-              ◀ 이전
+              이전
             </button>
             <button
               className="rounded-lg px-5 py-2 font-mono text-xs font-black disabled:opacity-20"
@@ -309,10 +302,10 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
                   : {border: `1px solid ${theme.primary}30`, color: "rgba(255,255,255,0.3)"}
               }
               disabled={step === STEPS.length - 1}
-              onClick={() => setStep((s) => Math.min(s + 1, STEPS.length - 1))}
+              onClick={() => setStep((value) => Math.min(value + 1, STEPS.length - 1))}
               type="button"
             >
-              다음 ▶
+              다음 -&gt;
             </button>
           </div>
         </div>

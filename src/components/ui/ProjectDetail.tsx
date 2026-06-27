@@ -8,9 +8,13 @@ interface ProjectDetailProps {
 
 export function ProjectDetail({onBack, project}: ProjectDetailProps) {
   return (
-    <article className="rounded-xl border border-[#d9c58a] bg-[#fffdf6] p-5 shadow-[0_10px_34px_rgba(79,72,49,0.08)]">
-      <button className="mb-4 rounded-lg border border-[#d0bd81] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#68715e] hover:bg-[#f4e9c7]" onClick={onBack} type="button">
-        Back to Projects
+    <article className="rounded-lg border border-[#d9c58a] bg-[#fffdf6] p-5 shadow-[0_10px_34px_rgba(79,72,49,0.08)]">
+      <button
+        className="mb-4 rounded-lg border border-[#d0bd81] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#68715e] hover:bg-[#f4e9c7]"
+        onClick={onBack}
+        type="button"
+      >
+        프로젝트 목록으로
       </button>
 
       <p className="text-xs font-black uppercase tracking-[0.2em] text-[#5e9b5b]">Project Detail</p>
@@ -34,16 +38,16 @@ export function ProjectDetail({onBack, project}: ProjectDetailProps) {
           <BulletList items={project.approach} />
         </DetailBlock>
 
-        <DetailBlock title="내 기여">
+        <DetailBlock title="나의 기여">
           <BulletList items={project.contribution} />
         </DetailBlock>
 
-        <DetailBlock title="결과 및 배운 점">
+        <DetailBlock title="결과와 배운 점">
           <p>{project.result}</p>
           <p className="mt-2 text-[#5f6a5b]">{project.learning}</p>
         </DetailBlock>
 
-        <DetailBlock title="다음 보완점">
+        <DetailBlock title="다음 보완">
           <p>{project.nextStep}</p>
         </DetailBlock>
       </div>

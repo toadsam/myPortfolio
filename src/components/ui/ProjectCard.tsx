@@ -16,7 +16,7 @@ export function ProjectCard({onOpen, project}: ProjectCardProps) {
 
       <dl className="grid gap-4 text-sm">
         <div>
-          <dt className="font-black text-[#356e43]">내가 맡은 역할</dt>
+          <dt className="font-black text-[#356e43]">담당 역할</dt>
           <dd className="mt-1 leading-6 text-[#374238]">{project.role}</dd>
         </div>
 
@@ -57,7 +57,7 @@ export function ProjectCard({onOpen, project}: ProjectCardProps) {
           onClick={() => onOpen(project)}
           type="button"
         >
-          View Details
+          자세히 보기
         </button>
         {project.links.map((link) => (
           <a

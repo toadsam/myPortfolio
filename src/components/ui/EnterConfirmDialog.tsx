@@ -1,6 +1,7 @@
 "use client";
 
 import {AnimatePresence, motion} from "framer-motion";
+import {useEffect} from "react";
 import {villageBuildings} from "@/lib/constants";
 
 interface Props {
@@ -9,109 +10,84 @@ interface Props {
   onCancel: () => void;
 }
 
-const DISTRICT_ICONS: Record<string, string> = {
-  plaza:      "🏛",
-  projects:   "🔬",
-  skills:     "⚙️",
-  experience: "📚",
-  contact:    "📮"
+const DISTRICT_LABELS: Record<string, string> = {
+  plaza: "시작 지점",
+  projects: "프로젝트 전시",
+  skills: "기술 스택",
+  experience: "경험 기록",
+  contact: "연락처"
 };
 
 export function EnterConfirmDialog({buildingId, onConfirm, onCancel}: Props) {
   const building = buildingId ? villageBuildings.find((b) => b.id === buildingId) ?? null : null;
   const accent = building?.accentColor ?? "#00d4ff";
-  const icon = building ? (DISTRICT_ICONS[building.district] ?? "🏠") : "🏠";
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (!building) return;
+      if (event.key === "Escape") onCancel();
+      if (event.key === "Enter") onConfirm();
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [building, onCancel, onConfirm]);
 
   return (
     <AnimatePresence>
       {building ? (
         <motion.div
           animate={{opacity: 1}}
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
           exit={{opacity: 0}}
           initial={{opacity: 0}}
           transition={{duration: 0.2}}
         >
-          {/* 배경 블러 */}
           <motion.div
             animate={{opacity: 1}}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/62 backdrop-blur-sm"
             exit={{opacity: 0}}
             initial={{opacity: 0}}
             onClick={onCancel}
             transition={{duration: 0.2}}
           />
 
-          {/* 다이얼로그 */}
           <motion.div
             animate={{opacity: 1, scale: 1, y: 0}}
-            className="relative z-10 w-[360px] overflow-hidden rounded-2xl border bg-[#06101e] shadow-2xl"
-            exit={{opacity: 0, scale: 0.88, y: 16}}
-            initial={{opacity: 0, scale: 0.88, y: 16}}
-            onClick={(e) => e.stopPropagation()}
-            style={{borderColor: `${accent}35`}}
-            transition={{type: "spring", stiffness: 420, damping: 28}}
+            className="relative z-10 w-full max-w-[390px] overflow-hidden rounded-lg border bg-[#06101e] shadow-2xl"
+            exit={{opacity: 0, scale: 0.92, y: 16}}
+            initial={{opacity: 0, scale: 0.92, y: 16}}
+            onClick={(event) => event.stopPropagation()}
+            style={{borderColor: `${accent}40`}}
+            transition={{type: "spring", stiffness: 420, damping: 30}}
           >
-            {/* 상단 액센트 라인 */}
             <motion.div
               animate={{scaleX: 1}}
               className="h-[2px] w-full origin-left"
               initial={{scaleX: 0}}
               style={{background: `linear-gradient(to right, ${accent}, transparent)`}}
-              transition={{duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1]}}
+              transition={{duration: 0.45, delay: 0.1, ease: [0.22, 1, 0.36, 1]}}
             />
 
-            <div className="p-7">
-              {/* 아이콘 + 레이블 */}
-              <div className="flex items-center gap-3">
-                <motion.div
-                  animate={{scale: 1, rotate: 0}}
-                  className="flex h-12 w-12 items-center justify-center rounded-xl border bg-[#0a1525] text-2xl"
-                  initial={{scale: 0.5, rotate: -15}}
-                  style={{borderColor: `${accent}40`}}
-                  transition={{type: "spring", stiffness: 380, damping: 22, delay: 0.1}}
+            <div className="p-6">
+              <div className="flex items-start gap-3">
+                <div
+                  className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border bg-[#0a1525] font-mono text-xs font-black"
+                  style={{borderColor: `${accent}40`, color: accent}}
                 >
-                  {icon}
-                </motion.div>
-                <div>
-                  <motion.p
-                    animate={{opacity: 1, x: 0}}
-                    className="font-mono text-xs font-black uppercase tracking-[0.22em]"
-                    initial={{opacity: 0, x: -8}}
-                    style={{color: accent}}
-                    transition={{duration: 0.4, delay: 0.18}}
-                  >
-                    {">"} {building.label}
-                  </motion.p>
-                  <motion.h2
-                    animate={{opacity: 1, x: 0}}
-                    className="mt-0.5 text-lg font-black text-white"
-                    initial={{opacity: 0, x: -8}}
-                    transition={{duration: 0.4, delay: 0.24}}
-                  >
-                    {building.name}
-                  </motion.h2>
+                  IN
+                </div>
+                <div className="min-w-0">
+                  <p className="font-mono text-xs font-black uppercase tracking-[0.2em]" style={{color: accent}}>
+                    {DISTRICT_LABELS[building.district] ?? building.label}
+                  </p>
+                  <h2 className="mt-1 text-xl font-black text-white">{building.name}</h2>
+                  <p className="mt-2 text-sm leading-6 text-white/58">{building.description}</p>
                 </div>
               </div>
 
-              {/* 설명 */}
-              <motion.p
-                animate={{opacity: 1, y: 0}}
-                className="mt-4 text-sm leading-6 text-white/55"
-                initial={{opacity: 0, y: 6}}
-                transition={{duration: 0.4, delay: 0.3}}
-              >
-                {building.description}
-              </motion.p>
-
-              {/* 기술 스택 뱃지 */}
-              {building.techStack && building.techStack.length > 0 && (
-                <motion.div
-                  animate={{opacity: 1, y: 0}}
-                  className="mt-3 flex flex-wrap gap-1.5"
-                  initial={{opacity: 0, y: 6}}
-                  transition={{duration: 0.4, delay: 0.35}}
-                >
+              {building.techStack && building.techStack.length > 0 ? (
+                <div className="mt-4 flex flex-wrap gap-1.5">
                   {building.techStack.map((tech) => (
                     <span
                       className="rounded-full border px-2.5 py-0.5 font-mono text-[10px] font-black"
@@ -121,52 +97,40 @@ export function EnterConfirmDialog({buildingId, onConfirm, onCancel}: Props) {
                       {tech}
                     </span>
                   ))}
-                </motion.div>
-              )}
+                </div>
+              ) : null}
 
-              {/* 입장 여부 */}
-              <motion.div
-                animate={{opacity: 1, y: 0}}
-                className="mt-5 flex items-center gap-3 rounded-xl border bg-[#0a1525] px-4 py-3.5"
-                initial={{opacity: 0, y: 8}}
-                style={{borderColor: `${accent}30`}}
-                transition={{duration: 0.4, delay: 0.38}}
+              <div
+                className="mt-5 rounded-lg border bg-[#0a1525] px-4 py-3"
+                style={{borderColor: `${accent}28`}}
               >
-                <motion.span
-                  animate={{rotate: [0, -8, 8, -5, 5, 0]}}
-                  className="text-xl"
-                  transition={{duration: 0.6, delay: 0.55}}
-                >
-                  🚪
-                </motion.span>
-                <p className="font-mono text-sm font-bold text-white/80">여기로 들어가시겠습니까?</p>
-              </motion.div>
+                <p className="font-mono text-xs font-black uppercase tracking-[0.16em]" style={{color: accent}}>
+                  Enter
+                </p>
+                <p className="mt-1 text-sm leading-6 text-white/72">
+                  이 건물로 들어가면 관련 콘텐츠가 열립니다. Enter로 입장하고 ESC로 취소할 수 있습니다.
+                </p>
+              </div>
 
-              {/* 버튼 */}
-              <motion.div
-                animate={{opacity: 1, y: 0}}
-                className="mt-5 flex gap-3"
-                initial={{opacity: 0, y: 8}}
-                transition={{duration: 0.4, delay: 0.44}}
-              >
+              <div className="mt-5 flex gap-3">
                 <button
-                  className="flex-1 rounded-xl border border-white/10 py-2.5 font-mono text-sm font-bold text-white/50 transition hover:border-white/25 hover:text-white/70 active:scale-95"
+                  className="flex-1 rounded-lg border border-white/10 py-2.5 font-mono text-sm font-bold text-white/55 transition hover:border-white/25 hover:text-white"
                   onClick={onCancel}
                   type="button"
                 >
                   취소
                 </button>
                 <motion.button
-                  className="flex-1 rounded-xl py-2.5 font-mono text-sm font-black text-white active:scale-95"
+                  className="flex-1 rounded-lg py-2.5 font-mono text-sm font-black text-[#04101e]"
                   onClick={onConfirm}
-                  style={{background: `${accent}cc`, boxShadow: `0 0 18px ${accent}40`}}
+                  style={{background: accent, boxShadow: `0 0 18px ${accent}40`}}
                   type="button"
-                  whileHover={{scale: 1.03, filter: "brightness(1.15)"}}
+                  whileHover={{scale: 1.03, filter: "brightness(1.12)"}}
                   whileTap={{scale: 0.97}}
                 >
-                  입장하기 →
+                  입장하기
                 </motion.button>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         </motion.div>

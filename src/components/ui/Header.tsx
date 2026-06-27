@@ -15,7 +15,7 @@ const NAV_COLORS: Record<string, string> = {
   projects: "#00d4ff",
   github: "#00ff88",
   experience: "#aa44ff",
-  contact: "#ff6600",
+  contact: "#ff6600"
 };
 
 export function Header({activeSection, onSelectSection}: HeaderProps) {
@@ -27,7 +27,6 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
       transition={{duration: 0.5, ease: [0.22, 1, 0.36, 1]}}
     >
       <div className="mx-auto flex max-w-[1540px] items-center justify-between gap-4 px-4 py-3 md:px-6">
-        {/* 로고 */}
         <motion.button
           className="flex min-w-0 items-center gap-3 text-left"
           onClick={() => onSelectSection("intro")}
@@ -48,7 +47,6 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
           </span>
         </motion.button>
 
-        {/* 네비게이션 */}
         <nav className="hidden items-center gap-2 md:flex" aria-label="Portfolio sections">
           {visibleNav.map((sectionId) => {
             const section = sectionMeta.find((item) => item.id === sectionId);
@@ -65,26 +63,26 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
                   color: isActive ? color : "rgba(255,255,255,0.45)",
                   background: isActive ? `${color}14` : "transparent",
                   border: isActive ? `1px solid ${color}50` : "1px solid transparent",
-                  boxShadow: isActive ? `0 0 14px ${color}22` : "none",
+                  boxShadow: isActive ? `0 0 14px ${color}22` : "none"
                 }}
                 type="button"
                 whileHover={{
-                  color: color,
+                  color,
                   background: `${color}0e`,
                   border: `1px solid ${color}40`,
-                  y: -1,
+                  y: -1
                 }}
                 whileTap={{scale: 0.96}}
               >
                 {section.navLabel}
-                {isActive && (
+                {isActive ? (
                   <motion.div
                     className="absolute -bottom-[13px] left-0 right-0 h-[2px] rounded-full"
                     layoutId="nav-underline"
                     style={{background: color, boxShadow: `0 0 8px ${color}`}}
                     transition={{type: "spring", stiffness: 380, damping: 30}}
                   />
-                )}
+                ) : null}
               </motion.button>
             );
           })}
