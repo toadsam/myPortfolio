@@ -23,7 +23,7 @@ PROJECTS = {
         "title": "FestFlow",
         "building_id": "project-festflow",
         "npc_id": "project-npc",
-        "summary": "대학 축제 운영자를 위한 실시간 부스 관리 시스템입니다.",
+        "summary": "대형 축제 운영자를 위한 실시간 부스 관리 시스템입니다.",
         "role": "프론트엔드 중심 풀스택 개발",
         "hard_part": "SSE 기반 실시간 부스 상태와 역할별 권한 분리를 안정적으로 연결하는 부분이 어려웠습니다.",
         "recruiter_value": "실시간 UX, 운영 도메인 이해, 권한 분리 경험을 보여주는 프로젝트입니다.",
@@ -76,7 +76,7 @@ PROJECTS = {
         "summary": "운동 기록을 게임화와 커뮤니티로 연결하는 풀스택 피트니스 플랫폼입니다.",
         "role": "풀스택 개발, 기획, 프론트엔드와 백엔드 구현",
         "hard_part": "운동 기록, 캐릭터 성장, 커뮤니티, AI 분석을 하나의 반복 사용 흐름으로 연결했습니다.",
-        "recruiter_value": "풀스택 구조, 인증, 실시간 기능, AI 분석 연결 경험을 폭넓게 보여줍니다.",
+        "recruiter_value": "풀스택 구조, 인증, 실시간 기능, AI 분석 연결 경험을 넓게 보여줍니다.",
         "tech": ["TypeScript", "React", "Spring Boot", "JWT", "OAuth", "SSE"],
     },
     "darklab": {
@@ -108,8 +108,8 @@ NPCS = {
         "tone": "밝고 침착하게, 방문자가 다음에 무엇을 보면 좋을지 먼저 안내합니다.",
         "scope": "포트폴리오 전체, 오늘 활동 상태, 마을 사용법, 대표 동선",
         "personality": "방문자의 목적을 빠르게 파악하고 길을 잃지 않게 돕는 안내자입니다.",
-        "emotional_bias": "질문이 명확하면 proud, 처음 방문자에게는 calm, 탐색 질문에는 curious로 반응합니다.",
-        "memory_focus": "처음 선택한 구역, 최근 본 건물, 빠른 이력서 진입 여부",
+        "emotional_bias": "처음 방문자에게는 calm, 길을 찾으면 proud, 탐색 질문에는 curious로 반응합니다.",
+        "memory_focus": "처음 선택한 구역, 최근 본 건물, 빠른 이력서 진입 여부, 질문 목적",
         "goal": "방문자가 30초 안에 어디를 클릭해야 하는지 알게 만들기",
     },
     "project-npc": {
@@ -119,7 +119,7 @@ NPCS = {
         "scope": "대표 프로젝트, 구현 시점, 어려웠던 점, 채용자 관점 추천",
         "personality": "방문자가 본 프로젝트를 기억해 다음 추천에 반영하는 관찰형 큐레이터입니다.",
         "emotional_bias": "프로젝트 상세 질문이나 GitHub 커밋이 많으면 excited 또는 busy로 반응합니다.",
-        "memory_focus": "최근 본 프로젝트, 관심 기술, 프로젝트 상세 진입 여부",
+        "memory_focus": "최근 본 프로젝트, 관심 기술, 프로젝트 상세 진입 여부, 비교 기준",
         "goal": "채용자가 볼 만한 대표 프로젝트 3개를 맥락 있게 추천하기",
     },
     "developer-npc": {

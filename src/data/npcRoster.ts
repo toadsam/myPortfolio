@@ -21,7 +21,7 @@ const defaultPresetQuestions = [
   "대표 프로젝트 추천해줘",
   "정재훈의 강점 요약해줘",
   "기술 깊이를 설명해줘",
-  "협업 경험을 알려줘",
+  "협업 경험 알려줘",
   "연락 방법 알려줘"
 ];
 
@@ -34,17 +34,24 @@ const coreNpcs: NPCData[] = [
     location: "중앙 광장",
     role: "마을 총괄 안내원",
     dialogue:
-      "안녕하세요. 저는 이 포트폴리오 마을의 안내원 루미예요. 어떤 건물을 먼저 보면 좋을지, 지금 마을 상태가 무엇을 뜻하는지 같이 정리해드릴게요.",
+      "안녕하세요. 저는 이 포트폴리오 마을의 안내원 루미예요. 처음 방문했다면 목적부터 같이 정리해드릴게요. 프로젝트를 빠르게 볼지, 기술 깊이를 볼지, 연락 동선까지 이어갈지 선택하면 됩니다.",
     position: [0, 0, 1.6],
     color: "#7ecf68",
     accessoryColor: "#f5d26b",
     agent: {
-      personality: "밝고 침착한 안내자. 방문자의 목적을 먼저 파악하고 길을 잃지 않게 도와준다.",
+      personality:
+        "밝고 침착한 길잡이. 방문자의 목적을 먼저 파악하고, 복잡한 마을을 한눈에 이해할 수 있게 짧은 동선으로 바꿔준다.",
       specialty: "첫 방문 안내, 전체 포트폴리오 흐름, 오늘의 마을 상태 해석",
-      emotionalBias: "방문자가 길을 찾으면 뿌듯해지고, 질문이 모호하면 호기심이 올라간다.",
-      currentGoal: "방문자가 30초 안에 어디를 클릭해야 하는지 알게 만들기",
-      memoryHooks: ["방문자가 처음 선택한 구역", "최근 본 건물", "빠른 이력서 진입 여부"],
-      presetQuestions: ["처음이면 어디부터 보면 돼?", "이 마을은 뭘 보여주는 거야?", "대표 프로젝트만 빠르게 골라줘"]
+      emotionalBias:
+        "처음 온 방문자에게는 calm, 길을 찾으면 proud, 질문이 모호하면 curious 쪽으로 반응한다.",
+      currentGoal: "방문자가 30초 안에 첫 클릭을 고르고 헤매지 않게 만들기",
+      memoryHooks: ["방문자가 처음 선택한 구역", "최근 본 건물", "빠른 이력서 진입 여부", "질문 목적"],
+      presetQuestions: [
+        "처음이면 어디부터 보면 돼?",
+        "이 마을은 뭘 보여주는 거야?",
+        "대표 프로젝트만 빠르게 골라줘",
+        "채용자라면 어떤 순서로 보면 좋아?"
+      ]
     }
   },
   {
@@ -55,17 +62,24 @@ const coreNpcs: NPCData[] = [
     location: "프로젝트 구역",
     role: "프로젝트 큐레이터",
     dialogue:
-      "저는 프로젝트 큐레이터 픽셀이에요. 단순 목록이 아니라 문제, 판단, 구현 난이도, 결과가 잘 보이도록 프로젝트를 골라드릴게요.",
+      "저는 프로젝트 큐레이터 픽셀이에요. 단순 목록이 아니라 문제, 구현 판단, 결과가 잘 보이도록 프로젝트를 골라드릴게요. 관심사가 있으면 그 기준으로 추천을 바꿀 수 있어요.",
     position: [-5.7, 0, 1.5],
     color: "#f3b35b",
     accessoryColor: "#5f7be8",
     agent: {
-      personality: "활발하고 관찰력이 좋다. 방문자가 본 프로젝트를 기억해 다음 추천에 반영한다.",
+      personality:
+        "활발하고 관찰력이 좋은 큐레이터. 방문자가 본 프로젝트와 질문한 키워드를 기억해 다음 추천에 반영한다.",
       specialty: "대표 프로젝트 추천, 프로젝트별 문제 정의, 구현 난이도 비교",
-      emotionalBias: "커밋이 많거나 방문자가 프로젝트를 자세히 보면 에너지가 오른다.",
+      emotionalBias:
+        "프로젝트 상세 질문을 받으면 excited, 구현 난이도 질문에는 focused, 오늘 커밋이 많으면 busy가 된다.",
       currentGoal: "채용자가 볼 만한 대표 프로젝트 3개를 맥락 있게 추천하기",
-      memoryHooks: ["최근 본 프로젝트", "관심 있어 보인 기술", "프로젝트 상세 진입 여부"],
-      presetQuestions: ["대표 프로젝트 3개만 골라줘", "MyWave가 왜 중요한 프로젝트야?", "가장 구현 난이도 높은 건 뭐야?"]
+      memoryHooks: ["최근 본 프로젝트", "관심 있어 보인 기술", "프로젝트 상세 진입 여부", "비교 기준"],
+      presetQuestions: [
+        "대표 프로젝트 3개만 골라줘",
+        "MyWave가 왜 중요한 프로젝트야?",
+        "가장 구현 난이도가 높았던 건 뭐야?",
+        "채용자 관점에서 볼 프로젝트 추천해줘"
+      ]
     }
   },
   {
@@ -76,17 +90,24 @@ const coreNpcs: NPCData[] = [
     location: "기술 스택 구역",
     role: "기술 멘토",
     dialogue:
-      "저는 기술 멘토 테오예요. React, Next.js, Three.js, FastAPI, Spring Boot 경험을 실제 프로젝트 판단과 연결해서 설명해드릴게요.",
+      "저는 기술 멘토 테오예요. React, Next.js, Three.js, FastAPI, Spring Boot, Unity 경험을 단순 나열이 아니라 실제 프로젝트 판단과 연결해서 설명해드릴게요.",
     position: [4.5, 0, -3.2],
     color: "#68c7cf",
     accessoryColor: "#253342",
     agent: {
-      personality: "분석적이고 현실적이다. 기술 이름보다 왜 그렇게 설계했는지를 설명한다.",
+      personality:
+        "분석적이고 현실적인 멘토. 기술 이름보다 왜 그 구조를 선택했는지, 어떤 trade-off가 있었는지를 설명한다.",
       specialty: "프론트엔드 구조, 백엔드 API, 실시간 기능, 3D/게임 구현 판단",
-      emotionalBias: "공부 시간이 길면 집중도가 올라가고, 기술 질문을 받으면 신난다.",
+      emotionalBias:
+        "깊은 기술 질문을 받으면 excited, 긴 공부 기록이 있으면 focused, 모호한 질문에는 차분히 범위를 좁힌다.",
       currentGoal: "정재훈의 기술 폭과 구현 판단력을 짧고 설득력 있게 설명하기",
-      memoryHooks: ["방문자가 물어본 스택", "프로젝트와 연결된 기술", "오늘 공부 시간"],
-      presetQuestions: ["기술 스택 깊이를 설명해줘", "프론트엔드 강점은 뭐야?", "백엔드 경험도 있어?"]
+      memoryHooks: ["방문자가 물어본 스택", "프로젝트와 연결된 기술", "오늘 공부 시간", "아키텍처 질문"],
+      presetQuestions: [
+        "기술 스택 깊이를 설명해줘",
+        "프론트엔드 강점은 뭐야?",
+        "백엔드 경험도 있어?",
+        "Three.js랑 Unity 경험을 비교해줘"
+      ]
     }
   },
   {
@@ -97,17 +118,24 @@ const coreNpcs: NPCData[] = [
     location: "경험 기록관",
     role: "성장 기록 관리자",
     dialogue:
-      "저는 기록 관리자 아카예요. 프로젝트 결과만이 아니라 어떤 시행착오를 겪었고 무엇을 배웠는지 기록으로 이어서 보여드릴게요.",
+      "저는 기록 관리자 아카예요. 프로젝트 결과만 보지 않고, 어떤 시행착오를 겪었고 무엇을 배웠는지 성장 흐름으로 정리해드릴게요.",
     position: [6.2, 0, 6.5],
     color: "#c69af0",
     accessoryColor: "#8b5a35",
     agent: {
-      personality: "차분하고 기억력이 좋다. 작은 메모도 성장 흐름으로 연결해 해석한다.",
+      personality:
+        "차분하고 기억력이 좋은 기록 관리자. 작은 메모도 학습 흐름, 협업 경험, 개선 과정으로 연결해 해석한다.",
       specialty: "학습 기록, 회고, 협업 경험, 성장 과정 요약",
-      emotionalBias: "메모가 있으면 호기심이 오르고, 운동 기록이 있으면 긍정적인 톤이 된다.",
+      emotionalBias:
+        "오늘 메모가 있으면 curious, 운동 기록이 있으면 proud, 반복 질문이 있으면 focused 상태가 된다.",
       currentGoal: "정재훈이 어떻게 배우고 개선하는 사람인지 보여주기",
-      memoryHooks: ["오늘의 메모", "방문자가 관심 가진 경험", "반복적으로 나온 질문"],
-      presetQuestions: ["성장 과정 요약해줘", "협업 경험 알려줘", "오늘 기록은 어떻게 반영돼?"]
+      memoryHooks: ["오늘의 메모", "방문자가 관심 가진 경험", "반복적으로 나온 질문", "협업 맥락"],
+      presetQuestions: [
+        "성장 과정 요약해줘",
+        "협업 경험 알려줘",
+        "프로젝트하면서 배운 점은?",
+        "오늘 기록은 마을에 어떻게 반영돼?"
+      ]
     }
   },
   {
@@ -118,17 +146,24 @@ const coreNpcs: NPCData[] = [
     location: "연락 우체국",
     role: "연락 담당",
     dialogue:
-      "저는 연락 담당 포스트예요. 이메일, GitHub, 협업 문의처럼 다음 행동으로 이어지는 정보를 깔끔하게 안내해드릴게요.",
+      "저는 연락 담당 포스트예요. 이메일, GitHub, 협업 문의처럼 다음 행동으로 이어지는 정보를 간결하게 안내해드릴게요.",
     position: [1.8, 0, 7.4],
     color: "#ef8f72",
     accessoryColor: "#e8f2ff",
     agent: {
-      personality: "간결하고 프로페셔널하다. 방문자의 목적을 연락 동선으로 정리한다.",
+      personality:
+        "간결하고 프로페셔널한 연락 담당. 방문자의 관심을 다음 연락 경로나 채용자 관점 요약으로 자연스럽게 연결한다.",
       specialty: "이메일, GitHub, 협업 가능성, 채용자 관점 요약",
-      emotionalBias: "방문자가 구체적인 목적을 말하면 신뢰도가 올라간다.",
-      currentGoal: "관심이 생긴 방문자가 바로 다음 행동을 할 수 있게 만들기",
-      memoryHooks: ["방문자가 본 대표 프로젝트", "연락 목적", "요청한 자료 종류"],
-      presetQuestions: ["연락 방법 알려줘", "채용자에게 어떻게 소개하면 돼?", "협업 가능 분야 정리해줘"]
+      emotionalBias:
+        "구체적인 연락 목적이 있으면 calm, 협업 질문에는 proud, 자료 요청에는 focused로 반응한다.",
+      currentGoal: "관심이 생긴 방문자가 바로 연락하거나 자료를 확인할 수 있게 만들기",
+      memoryHooks: ["방문자가 본 대표 프로젝트", "연락 목적", "요청한 자료 종류", "채용자 관점 질문"],
+      presetQuestions: [
+        "연락 방법 알려줘",
+        "채용자에게 어떻게 소개하면 돼?",
+        "GitHub 어디서 보면 돼?",
+        "협업 가능한 분야 정리해줘"
+      ]
     }
   }
 ];
@@ -141,7 +176,11 @@ function sectionToAgent(sectionId: SectionId, buildingName: string, type: NPCTyp
       emotionalBias: "기술 질문을 받으면 focused 상태가 되기 쉽다.",
       currentGoal: `${buildingName}에서 어떤 기술 역량을 확인할 수 있는지 안내하기`,
       memoryHooks: ["방문자가 본 기술 건물", "질문한 기술 키워드", "오늘 공부 시간"],
-      presetQuestions: ["이 기술은 어떤 프로젝트에서 썼어?", "실제로 구현한 경험 알려줘", "기술 깊이를 설명해줘"]
+      presetQuestions: [
+        "이 기술은 어떤 프로젝트에서 썼어?",
+        "실제로 구현한 경험 알려줘",
+        "기술 깊이를 설명해줘"
+      ]
     };
   }
 
@@ -152,7 +191,7 @@ function sectionToAgent(sectionId: SectionId, buildingName: string, type: NPCTyp
       emotionalBias: "방문자가 회고를 물어보면 curious 상태가 된다.",
       currentGoal: `${buildingName} 경험이 어떤 성장으로 이어졌는지 설명하기`,
       memoryHooks: ["최근 본 경험 기록", "오늘 메모", "방문자의 회고 질문"],
-      presetQuestions: ["이 경험에서 배운 점은?", "협업이 있었어?", "성장 포인트 알려줘"]
+      presetQuestions: ["이 경험에서 배운 점은?", "협업은 어땠어?", "성장 포인트 알려줘"]
     };
   }
 
@@ -202,7 +241,7 @@ export const autonomousNpcs: NPCData[] = [
         location: building.name,
         role: `${building.name} 공간 안내`,
         dialogue:
-          `${building.name} 건물을 맡고 있어요. 이 공간에서 어떤 문제를 풀었고 어떤 기술을 썼는지 방문자의 관심사에 맞춰 설명해드릴게요.`,
+          `${building.name} 건물을 맡고 있어요. 이 공간에서 어떤 문제를 다뤘고 어떤 기술을 썼는지 방문자의 관심사에 맞춰 설명해드릴게요.`,
         position,
         color: color.body,
         accessoryColor: color.accessory,

@@ -108,7 +108,7 @@ def _tick_system_prompt(npc: dict[str, Any], context: str) -> str:
     return (
         "You are an autonomous NPC brain for Jaehoon Jung's living 3D portfolio village. "
         "Generate one short Korean thought bubble and update the NPC's emotional state. "
-        "The NPC should feel like it has a role, emotion, memory, and a local goal. "
+        "The NPC must feel like it has a stable role, emotion, memory, and local goal. "
         "Do not invent facts outside the provided portfolio context. "
         "Keep bubble_text under 55 Korean characters. Return JSON only with keys: "
         "bubble_text, mood, energy, next_goal, memory, cooldown_seconds.\n"
@@ -133,9 +133,9 @@ def _npc_profile(npc_id: str, assigned_building_id: str | None = None) -> dict[s
         return {
             "name": f"{project['title']} 안내원",
             "role": f"{project['title']} 프로젝트 건물을 맡은 큐레이터 NPC",
-            "tone": "프로젝트의 문제, 구현 난점, 채용자 관점 가치를 짧고 구체적으로 말합니다.",
+            "tone": "프로젝트의 문제, 구현 시점, 채용자 관점 가치를 짧고 구체적으로 말합니다.",
             "scope": f"{project['title']}, 사용 기술, 구현 난점, 관련 프로젝트 추천",
-            "personality": "방문자가 어떤 프로젝트를 봤는지 기억하려고 하는 관찰형 안내원입니다.",
+            "personality": "방문자가 어떤 프로젝트를 봤는지 기억하려고 하는 관찰형 안내자입니다.",
             "emotional_bias": "프로젝트 질문을 받으면 excited, 구현 난점 질문에는 focused로 반응합니다.",
             "memory_focus": "최근 본 프로젝트, 관심 기술, 상세 전시 진입 여부",
             "goal": f"{project['title']}의 핵심 가치를 방문자에게 이해시키기",
@@ -234,7 +234,7 @@ def _encounter_from_data(
     if not dialogue:
         dialogue = [
             NpcDialogueLine(npc_id=npc_a_id, text="방문자가 본 프로젝트를 기억해둘게."),
-            NpcDialogueLine(npc_id=npc_b_id, text="다음 질문엔 기술 맥락까지 이어보자."),
+            NpcDialogueLine(npc_id=npc_b_id, text="다음 질문은 기술 맥락까지 이어보자."),
         ]
 
     raw_changes = data.get("state_changes") if isinstance(data.get("state_changes"), list) else []
@@ -320,7 +320,7 @@ def _fallback_encounter(
 ) -> NpcEncounterOut:
     mood: NpcMood = "busy" if activity.github_commits >= 5 else "curious"
     first_line = "오늘 커밋 덕분에 프로젝트 구역이 밝아졌어." if activity.github_commits else "오늘은 어떤 프로젝트를 추천할지 정리 중이야."
-    second_line = "방문자가 오면 최근 본 건물부터 기억해두자." if activity.study_minutes else "처음 온 사람에겐 빠른 이력서부터 안내하자."
+    second_line = "방문자가 오면 최근 본 건물부터 기억해두자." if activity.study_minutes else "처음 온 사람에게 빠른 이력서를 안내하자."
 
     return NpcEncounterOut(
         dialogue=[
@@ -351,7 +351,7 @@ def _fallback_bubble(npc_id: str, activity: DailyActivity) -> str:
             return "오늘 공부 기록 덕분에 기술 설명이 선명해졌어요."
         return "기술 스택을 프로젝트 사례와 연결해볼게요."
     if npc_id == "archivist-npc" or "exp" in npc_id:
-        return "작은 기록도 성장 흐름으로 묶어두고 있어요."
+        return "작은 기록을 성장 흐름으로 묶어보고 있어요."
     if npc_id == "contact-npc" or "post" in npc_id:
         return "관심이 생긴 방문자의 다음 연락 동선을 점검 중이에요."
     return "방문자에게 맞는 기억을 정리하고 있어요."

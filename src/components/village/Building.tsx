@@ -1,11 +1,63 @@
 "use client";
 
 import {Html, useCursor, useGLTF} from "@react-three/drei";
-import {useState} from "react";
-import type {ThreeEvent} from "@react-three/fiber";
+import {useRef, useState} from "react";
+import {useFrame, type ThreeEvent} from "@react-three/fiber";
+import {AdditiveBlending, type Mesh} from "three";
 import {lightIntensity} from "@/lib/liveState";
 import type {BuildingState} from "@/types/live";
 import type {BuildingData} from "@/types/portfolio";
+
+// ─── 호버 연출: 빛기둥 + 회전 베이스 링 2겹 (Developer City 이식) ──────────────
+
+function HighlightFX({color, height, radius, active}: {color: string; height: number; radius: number; active: boolean}) {
+  const beamRef = useRef<Mesh>(null);
+  const ring1Ref = useRef<Mesh>(null);
+  const ring2Ref = useRef<Mesh>(null);
+  const intensity = useRef(0);
+
+  useFrame((_, delta) => {
+    // 부드러운 등장/퇴장 보간
+    const target = active ? 1 : 0;
+    intensity.current += (target - intensity.current) * Math.min(1, delta * 8);
+    const k = intensity.current;
+
+    if (ring1Ref.current) {
+      ring1Ref.current.rotation.z += delta * 0.6;
+      ring1Ref.current.scale.setScalar(0.9 + k * 0.2);
+      (ring1Ref.current.material as {opacity: number}).opacity = k * 0.7;
+    }
+    if (ring2Ref.current) {
+      ring2Ref.current.rotation.z -= delta * 0.42;
+      ring2Ref.current.scale.setScalar(1.05 + k * 0.25);
+      (ring2Ref.current.material as {opacity: number}).opacity = k * 0.45;
+    }
+    if (beamRef.current) {
+      const pulse = 0.5 + 0.5 * Math.sin(performance.now() * 0.003);
+      (beamRef.current.material as {opacity: number}).opacity = k * (0.12 + pulse * 0.1);
+      beamRef.current.visible = k > 0.01;
+    }
+  });
+
+  return (
+    <group>
+      {/* 빛기둥 — 지붕 위로 솟는 additive 컬럼 */}
+      <mesh ref={beamRef} position={[0, height + 1.4, 0]}>
+        <cylinderGeometry args={[radius * 0.18, radius * 0.42, 3, 12, 1, true]} />
+        <meshBasicMaterial color={color} transparent opacity={0} blending={AdditiveBlending} depthWrite={false} side={2} />
+      </mesh>
+      {/* 회전 베이스 링 2겹 */}
+      <mesh ref={ring1Ref} position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[radius * 0.85, radius * 0.95, 48, 1, 0, Math.PI * 1.6]} />
+        <meshBasicMaterial color={color} transparent opacity={0} blending={AdditiveBlending} depthWrite={false} side={2} />
+      </mesh>
+      <mesh ref={ring2Ref} position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[radius * 1.05, radius * 1.12, 48, 1, 0, Math.PI * 1.2]} />
+        <meshBasicMaterial color={color} transparent opacity={0} blending={AdditiveBlending} depthWrite={false} side={2} />
+      </mesh>
+    </group>
+  );
+}
 
 // ─── GLB 에셋 렌더러 ──────────────────────────────────────────────────────────
 
@@ -466,6 +518,12 @@ export function Building({building, buildingState, isActive, onRequestEnter}: Bu
       >
         <BuildingGeometry b={building} hl={isHighlighted} />
         <GroundRing color={building.accentColor} highlighted={isHighlighted} radius={Math.max(building.size[0], building.size[2])} />
+        <HighlightFX
+          active={isHighlighted}
+          color={building.accentColor}
+          height={building.kind === "plaza" ? 1.0 : h}
+          radius={Math.max(building.size[0], building.size[2])}
+        />
         {liveGlow > 0 ? (
           <pointLight
             color={building.accentColor}

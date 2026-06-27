@@ -14,6 +14,7 @@ import {autonomousNpcs} from "@/data/npcRoster";
 import {villageBuildings} from "@/lib/constants";
 import {fetchVillageState, requestNpcEncounter, requestNpcTick} from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
+import {sfx} from "@/lib/sfx";
 import type {
   NpcActionDefinition,
   NpcActionState,
@@ -73,6 +74,7 @@ export function AIPortfolioVillage() {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const [explorationMode, setExplorationMode] = useState<ExplorationMode>("click");
+  const [soundOn, setSoundOn] = useState(true);
 
   const [viewMode, setViewMode] = useState<"village" | "interior" | "project-interior" | "resume">("village");
   const [interiorSectionId, setInteriorSectionId] = useState<SectionId | null>(null);
@@ -521,6 +523,23 @@ export function AIPortfolioVillage() {
               ) : (
                 <><span>🚶</span> 직접 이동 (WASD)</>
               )}
+            </button>
+          ) : null}
+          {!showIntro ? (
+            <button
+              type="button"
+              aria-label={soundOn ? "사운드 끄기" : "사운드 켜기"}
+              onClick={() => {
+                setSoundOn((on) => {
+                  const next = !on;
+                  sfx.setMuted(!next);
+                  if (next) sfx.startAmbient();
+                  return next;
+                });
+              }}
+              className="fixed bottom-40 left-4 z-30 flex h-10 w-10 items-center justify-center rounded-xl border border-[#5b8fd6]/40 bg-[#050d1a]/85 text-base shadow-2xl backdrop-blur-md transition hover:border-[#86b0e6] hover:bg-[#5b8fd6]/12 md:bottom-[4.75rem]"
+            >
+              {soundOn ? "🔊" : "🔇"}
             </button>
           ) : null}
           {!showIntro ? <LiveStatusPanel error={liveError} villageState={villageState} /> : null}

@@ -10,6 +10,7 @@ import {getBuildingState, getNpcState} from "@/lib/liveState";
 import type {NpcRuntimeState, NpcState, VillageState} from "@/types/live";
 import type {ExplorationMode, NPCData, SectionId, Vector3Tuple} from "@/types/portfolio";
 import {Building} from "./Building";
+import {BuildingNetwork} from "./BuildingNetwork";
 import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
 import {Rock} from "./Decorations";
@@ -28,6 +29,9 @@ interface VillageSceneProps {
   onNpcPositionChange: (npcId: string, position: Vector3Tuple) => void;
   villageState: VillageState | null;
 }
+
+// 네트워크 펄스로 연결할 프로젝트 건물들 (한 번만 계산)
+const projectNetworkBuildings = villageBuildings.filter((b) => b.district === "projects");
 
 function Statue() {
   const {scene} = useGLTF("/models/environment/statue.glb");
@@ -220,6 +224,7 @@ export function VillageScene({
           <DistrictSign label="Experience District" position={[9.2, 0, 5]} color="#00ff88" />
 
           {!isWalkMode && <ActiveRoute activeSection={activeSection} />}
+          <BuildingNetwork buildings={projectNetworkBuildings} />
           <LiveDecorations villageState={villageState} />
 
           {villageBuildings.map((building) => (

@@ -32,7 +32,7 @@ const MOOD_LABELS: Record<string, string> = {
   calm: "차분함",
   busy: "바쁨",
   proud: "뿌듯함",
-  training: "활기",
+  training: "훈련중",
   curious: "호기심",
   focused: "집중",
   worried: "걱정",
@@ -134,7 +134,7 @@ export function DialogueBox({
         current.concat({
           role: "npc",
           text:
-            "지금은 백엔드와 연결되지 않아 실시간 기억을 가져오지 못했어요. 그래도 이 NPC의 기본 포트폴리오 기억으로 안내를 이어갈 수 있어요."
+            "지금은 백엔드와 연결되지 않아 실시간 기억을 가져오지 못했어요. 대신 기본 포트폴리오 기억으로 안내를 이어갈게요."
         })
       );
     } finally {
