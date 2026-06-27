@@ -1,10 +1,11 @@
 "use client";
 
 import {useFrame, useThree} from "@react-three/fiber";
-import {useEffect, useRef} from "react";
+import {Suspense, useEffect, useRef} from "react";
 import {Group, Vector3} from "three";
 import {villageBuildings} from "@/lib/constants";
 import {isWalkablePosition} from "@/lib/worldCollision";
+import {WarriorCharacter, type MoveState} from "./WarriorCharacter";
 
 const SPEED = 4.5;
 const TURN_SPEED = 2.4;
@@ -19,6 +20,7 @@ export function CharacterController() {
   const rotRef = useRef(0);
   const keysRef = useRef<Set<string>>(new Set());
   const camPosRef = useRef(new Vector3());
+  const moveStateRef = useRef<MoveState>("idle");
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -61,10 +63,21 @@ export function CharacterController() {
     nextX = Math.max(-X_BOUND, Math.min(X_BOUND, nextX));
     nextZ = Math.max(Z_BOUND_MIN, Math.min(Z_BOUND_MAX, nextZ));
 
+    const movingForward = keys.has("KeyW") || keys.has("ArrowUp");
+    const movingBack = keys.has("KeyS") || keys.has("ArrowDown");
+    const running = keys.has("ShiftLeft") || keys.has("ShiftRight");
+
+    let moved = false;
     if (isWalkablePosition({x: nextX, z: nextZ}, villageBuildings, {padding: 0.42})) {
+      moved = nextX !== posRef.current.x || nextZ !== posRef.current.z;
       posRef.current.x = nextX;
       posRef.current.z = nextZ;
     }
+
+    // 애니메이션 상태: 이동 중이면 걷기/달리기, 아니면 정지
+    moveStateRef.current = (movingForward || movingBack) && moved
+      ? (running && movingForward ? "run" : "walk")
+      : "idle";
 
     if (groupRef.current) {
       groupRef.current.position.set(posRef.current.x, 0, posRef.current.z);
@@ -83,16 +96,10 @@ export function CharacterController() {
 
   return (
     <group ref={groupRef} position={[0, 0, 3.5]}>
-      {/* 몸 */}
-      <mesh castShadow position={[0, 0.52, 0]}>
-        <capsuleGeometry args={[0.2, 0.42, 6, 12]} />
-        <meshStandardMaterial color="#5f9f4f" roughness={0.58} />
-      </mesh>
-      {/* 머리 */}
-      <mesh castShadow position={[0, 1.02, 0]}>
-        <sphereGeometry args={[0.23, 18, 18]} />
-        <meshStandardMaterial color="#fff3d2" roughness={0.5} />
-      </mesh>
+      {/* 애니메이션 캐릭터 */}
+      <Suspense fallback={null}>
+        <WarriorCharacter stateRef={moveStateRef} />
+      </Suspense>
       {/* 방향 링 */}
       <mesh position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.3, 0.38, 24]} />
