@@ -4,6 +4,7 @@ import {AnimatePresence, motion} from "framer-motion";
 import {useEffect, useRef, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
+import {RICH_RENDERERS} from "./richContent";
 
 const STEPS = [
   {id: "overview", label: "OVERVIEW", ko: "개요"},
@@ -379,7 +380,9 @@ export function DashboardProjectViewer({project, theme, onClose}: Props) {
               exit={{opacity: 0, x: -30}}
               transition={{duration: 0.32, ease: [0.22, 1, 0.36, 1]}}
             >
-              <Section step={step} project={project} theme={theme} />
+              {RICH_RENDERERS[project.id]
+                ? RICH_RENDERERS[project.id]!({step, project, theme})
+                : <Section step={step} project={project} theme={theme} />}
             </motion.div>
           </AnimatePresence>
         </div>

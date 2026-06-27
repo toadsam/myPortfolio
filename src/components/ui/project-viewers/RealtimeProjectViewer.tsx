@@ -4,6 +4,7 @@ import {AnimatePresence, motion} from "framer-motion";
 import {useEffect, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
+import {RICH_RENDERERS} from "./richContent";
 
 const STEPS = [
   {id: "overview", label: "CONTROL", ko: "개요"},
@@ -310,7 +311,9 @@ export function RealtimeProjectViewer({project, theme, onClose}: Props) {
               exit={{opacity: 0, y: -16}}
               transition={{duration: 0.32}}
             >
-              <Section step={step} project={project} theme={theme} />
+              {RICH_RENDERERS[project.id]
+                ? RICH_RENDERERS[project.id]!({step, project, theme})
+                : <Section step={step} project={project} theme={theme} />}
             </motion.div>
           </AnimatePresence>
         </div>

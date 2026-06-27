@@ -11,6 +11,7 @@ import {
 import {useEffect, useRef, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
+import {RICH_RENDERERS} from "./richContent";
 
 // ─── 디코딩(스크램블) 텍스트 ──────────────────────────────────────────────────
 
@@ -484,6 +485,8 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
   }, [onClose]);
 
   const labels = MOOD_LABEL[mood] ?? MOOD_LABEL.horror!;
+  const hasRich = project.id in RICH_RENDERERS;
+  const richRender = RICH_RENDERERS[project.id];
 
   return (
     <motion.div
@@ -593,7 +596,7 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
       <div className="relative z-[5] mx-auto flex h-full max-w-3xl flex-col px-8 pt-16">
         <motion.div
           className="relative flex-1 overflow-hidden"
-          style={{rotateX: tiltX, rotateY: tiltY, transformPerspective: 1400}}
+          style={hasRich ? undefined : {rotateX: tiltX, rotateY: tiltY, transformPerspective: 1400}}
         >
           <AnimatePresence mode="wait">
             <motion.div
@@ -604,7 +607,9 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
               exit={{opacity: 0, y: -12, filter: "blur(6px)"}}
               transition={{duration: 0.4}}
             >
-              <GameSection step={step} project={project} theme={theme} />
+              {hasRich
+                ? richRender({step, project, theme})
+                : <GameSection step={step} project={project} theme={theme} />}
             </motion.div>
           </AnimatePresence>
         </motion.div>
