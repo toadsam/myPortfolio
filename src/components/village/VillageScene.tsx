@@ -327,8 +327,8 @@ export function VillageScene({
           ))}
         </div>
       ) : (
-        <div className="pointer-events-none absolute left-4 top-4 rounded-lg border border-[#00d4ff]/25 bg-[#050d1a]/85 px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.18em] text-[#00d4ff]/70 backdrop-blur-md">
-          {sky.label === "밤" ? "🌙" : sky.label === "새벽" ? "🌅" : sky.label === "노을" ? "🌇" : "☀️"} {sky.label} · click / drag / scroll
+        <div className="pointer-events-none absolute right-4 top-4 rounded-full border border-[#00d4ff]/25 bg-[#050d1a]/85 px-3 py-1.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/70 backdrop-blur-md">
+          {sky.label === "밤" ? "🌙" : sky.label === "새벽" ? "🌅" : sky.label === "노을" ? "🌇" : "☀️"} {sky.label}
         </div>
       )}
 

@@ -733,18 +733,27 @@ function applyActionStateToRuntime(state: NpcRuntimeState | undefined, action: N
 }
 
 function LiveStatusPanel({error, villageState}: {error: string | null; villageState: VillageState | null}) {
+  const [collapsed, setCollapsed] = useState(false);
   if (!villageState && !error) return null;
 
   return (
-    <aside className="fixed left-4 top-[132px] z-20 hidden max-w-[300px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-4 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md md:block">
-      <p className="flex items-center gap-2 font-black uppercase tracking-[0.2em] text-[#00d4ff]">
-        <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00d4ff] opacity-60" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00d4ff]" />
+    <aside className="fixed left-4 top-[132px] z-20 hidden w-[260px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-3.5 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md md:block">
+      <button
+        type="button"
+        onClick={() => setCollapsed((c) => !c)}
+        className="flex w-full items-center justify-between gap-2 transition active:scale-[0.98]"
+        title={collapsed ? "펼치기" : "접기"}
+      >
+        <span className="flex items-center gap-2 font-black uppercase tracking-[0.2em] text-[#00d4ff]">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00d4ff] opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00d4ff]" />
+          </span>
+          Live Village
         </span>
-        Live Village
-      </p>
-      {error ? (
+        <span className="text-sm text-white/40" style={{transform: collapsed ? "rotate(-90deg)" : "none", transition: "transform 0.2s"}}>▾</span>
+      </button>
+      {!collapsed ? (error ? (
         <p className="mt-2 leading-5 text-[#ff9a6c]">{error}. 기본 마을 화면으로 표시 중입니다.</p>
       ) : villageState ? (
         <>
@@ -765,19 +774,37 @@ function LiveStatusPanel({error, villageState}: {error: string | null; villageSt
           </div>
           <p className="mt-2 text-[10px] leading-4 text-white/35">오늘의 실시간 활동 · 1분마다 갱신</p>
         </>
-      ) : null}
+      ) : null) : null}
     </aside>
   );
 }
 
 function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onSelect: (npc: NPCData) => void}) {
   const coreNpcs = autonomousNpcs.filter((npc) => CORE_NPC_IDS.has(npc.id));
+  const [collapsed, setCollapsed] = useState(false);
+
+  if (collapsed) {
+    return (
+      <button
+        type="button"
+        onClick={() => setCollapsed(false)}
+        className="fixed bottom-40 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:bottom-20"
+      >
+        <span className="text-sm">🤖</span> AI NPC <span className="text-white/40">▸</span>
+      </button>
+    );
+  }
 
   return (
-    <aside className="fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:bottom-20 md:right-auto md:w-auto md:max-w-[520px]">
-      <span className="shrink-0 px-2 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75">
-        AI NPC
-      </span>
+    <aside className="fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]">
+      <button
+        type="button"
+        onClick={() => setCollapsed(true)}
+        title="접기"
+        className="flex shrink-0 items-center gap-1 px-2 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75 transition hover:text-[#00d4ff] active:scale-95"
+      >
+        AI NPC <span className="text-white/40">▾</span>
+      </button>
       {coreNpcs.map((npc) => (
         <button
           className={
