@@ -13,7 +13,7 @@ import {SectionTabs} from "@/components/ui/SectionTabs";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {sound as projectSound} from "@/components/ui/project-viewers/sound";
-import {villageBuildings} from "@/lib/constants";
+import {cameraTargets, villageBuildings} from "@/lib/constants";
 import {fetchVillageState, requestNpcEncounter, requestNpcTick, trackVisitorEvent} from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
@@ -91,6 +91,33 @@ const ResumeMode = dynamic(
 const FADE_DURATION = 480;
 const CORE_NPC_IDS = new Set(["guide-npc", "project-npc", "developer-npc", "archivist-npc", "contact-npc"]);
 const GUIDE_ID = "guide-npc";
+
+// 빠른 이동 / 미니맵에서 쓰는 구역 정의 (key = cameraTargets 키)
+interface TravelPoint {
+  key: string;
+  sectionId: SectionId | null;
+  label: string;
+  color: string;
+}
+const TRAVEL_POINTS: TravelPoint[] = [
+  {key: "intro", sectionId: "intro", label: "중앙 광장", color: "#00d4ff"},
+  {key: "projects", sectionId: "projects", label: "프로젝트", color: "#00d4ff"},
+  {key: "github", sectionId: "github", label: "기술 스택", color: "#00ff88"},
+  {key: "study", sectionId: "study", label: "학습", color: "#38bdf8"},
+  {key: "experience", sectionId: "experience", label: "경험", color: "#aa44ff"},
+  {key: "life", sectionId: null, label: "인생·일상", color: "#fbbf24"},
+  {key: "contact", sectionId: "contact", label: "연락", color: "#ff6600"}
+];
+// 건물 district → 빠른 이동 key
+const DISTRICT_TO_TRAVEL_KEY: Record<string, string> = {
+  plaza: "intro",
+  projects: "projects",
+  skills: "github",
+  experience: "experience",
+  life: "life",
+  study: "study",
+  contact: "contact"
+};
 const WELCOME_SPOT: Vector3Tuple = [-4, 0, 10]; // 건물 없는 앞쪽-왼쪽 빈 곳 (중앙 타워 회피)
 // 컨시어지 시네마틱 — 앞쪽 빈 레인을 정면 저시점에서 바라봄 (멀리서 달려옴)
 const CONCIERGE_CAM: {position: Vector3Tuple; lookAt: Vector3Tuple} = {
@@ -134,6 +161,7 @@ export function AIPortfolioVillage() {
   const [konami, setKonami] = useState(false);
   const [conciergeStage, setConciergeStage] = useState<"idle" | "running" | "panel" | "closed">("idle");
   const [talkCam, setTalkCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
+  const [travelCam, setTravelCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
   const [conciergeCam, setConciergeCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
   const [eavesdrop, setEavesdrop] = useState<{aName: string; bName: string; lines: {name: string; text: string}[]} | null>(null);
   const [eavesOpen, setEavesOpen] = useState(false);
@@ -605,11 +633,26 @@ export function AIPortfolioVillage() {
       label: sectionId,
       metadata: {sectionId, contentId: contentId ?? ""}
     });
+    setTravelCam(null);
     setShowIntro(false);
     setActiveSection(sectionId);
     setActiveContentId(contentId);
     setSelectedNpc(null);
     setIsPanelOpen(true);
+  }
+
+  // 빠른 이동 / 미니맵 — 카메라만 그 구역으로 이동 (패널·대화는 열지 않음)
+  function travelTo(point: TravelPoint) {
+    const target = cameraTargets[point.key];
+    if (!target) return;
+    trackVisitorEvent({event_type: "quick_travel", target_id: point.key, label: point.label});
+    setShowIntro(false);
+    setSelectedNpc(null);
+    setIsPanelOpen(false);
+    setConciergeStage("closed");
+    if (point.sectionId) setActiveSection(point.sectionId);
+    // 매번 새 객체로 만들어 카메라 전환을 다시 트리거
+    setTravelCam({position: [...target.position] as Vector3Tuple, lookAt: [...target.lookAt] as Vector3Tuple});
   }
 
   function openNpcDialogue(npc: NPCData) {
@@ -621,6 +664,7 @@ export function AIPortfolioVillage() {
     });
     // 대화 시작 시점의 NPC 위치를 스냅샷 → 상반신 클로즈업 카메라
     const pos = npcPositionsRef.current[npc.id] ?? npc.position;
+    setTravelCam(null);
     setTalkCam(closeUp(pos));
     setShowIntro(false);
     setSelectedNpc(npc);
@@ -780,7 +824,7 @@ export function AIPortfolioVillage() {
                     ? CONCIERGE_CAM
                     : conciergeStage === "panel"
                       ? conciergeCam
-                      : talkCam
+                      : talkCam ?? travelCam
               }
             />
             {showIntro ? <IntroOverlay onStart={startExploring} onResume={openResume} /> : null}
@@ -827,6 +871,8 @@ export function AIPortfolioVillage() {
               onSelect={openNpc}
             />
           ) : null}
+          {!showIntro && !isPanelOpen ? <QuickTravelDock activeKey={activeSection} onTravel={travelTo} /> : null}
+          {!showIntro && !isPanelOpen ? <Minimap activeKey={activeSection} onTravel={travelTo} /> : null}
           {encounterNotice ? <EncounterNotice text={encounterNotice} /> : null}
           {conciergeStage === "panel" ? (
             <ConciergePanel
@@ -1027,6 +1073,136 @@ function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onSelect: 
           </span>
         </button>
       ))}
+    </aside>
+  );
+}
+
+function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTravel: (point: TravelPoint) => void}) {
+  const [collapsed, setCollapsed] = useState(false);
+
+  if (collapsed) {
+    return (
+      <button
+        type="button"
+        onClick={() => setCollapsed(false)}
+        className="fixed right-4 top-[80px] z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
+      >
+        <span className="text-sm">🧭</span> 이동 <span className="text-white/40">◂</span>
+      </button>
+    );
+  }
+
+  return (
+    <aside className="fixed right-4 top-[80px] z-30 hidden w-[152px] flex-col gap-1 rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:flex">
+      <button
+        type="button"
+        onClick={() => setCollapsed(true)}
+        className="mb-0.5 flex items-center justify-between px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75 transition hover:text-[#00d4ff]"
+      >
+        🧭 빠른 이동 <span className="text-white/40">▴</span>
+      </button>
+      {TRAVEL_POINTS.map((point) => {
+        const active = activeKey === point.key;
+        return (
+          <button
+            key={point.key}
+            type="button"
+            onClick={() => onTravel(point)}
+            className={
+              active
+                ? "flex items-center gap-2.5 rounded-lg border border-white/15 bg-white/[0.08] px-3 py-2 text-left text-xs font-black text-white"
+                : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
+            }
+          >
+            <span
+              className="h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{background: point.color, boxShadow: active ? `0 0 8px ${point.color}` : "none"}}
+            />
+            {point.label}
+          </button>
+        );
+      })}
+    </aside>
+  );
+}
+
+function Minimap({activeKey, onTravel}: {activeKey: string; onTravel: (point: TravelPoint) => void}) {
+  const [collapsed, setCollapsed] = useState(false);
+
+  const W = 172;
+  const H = 156;
+  const pad = 16;
+  const xs = villageBuildings.map((b) => b.position[0]);
+  const zs = villageBuildings.map((b) => b.position[2]);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minZ = Math.min(...zs);
+  const maxZ = Math.max(...zs);
+  const sx = (x: number) => pad + ((x - minX) / (maxX - minX || 1)) * (W - 2 * pad);
+  const sy = (z: number) => pad + ((z - minZ) / (maxZ - minZ || 1)) * (H - 2 * pad);
+  const colorOf = (key: string) => TRAVEL_POINTS.find((p) => p.key === key)?.color ?? "#9aa";
+
+  // 구역별 중심점 (클릭 히트 영역 + 강조용)
+  const centroids = TRAVEL_POINTS.map((point) => {
+    const members = villageBuildings.filter((b) => (DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro") === point.key);
+    if (members.length === 0) return null;
+    const cx = members.reduce((sum, b) => sum + b.position[0], 0) / members.length;
+    const cz = members.reduce((sum, b) => sum + b.position[2], 0) / members.length;
+    return {point, x: sx(cx), y: sy(cz)};
+  }).filter(Boolean) as {point: TravelPoint; x: number; y: number}[];
+
+  if (collapsed) {
+    return (
+      <button
+        type="button"
+        onClick={() => setCollapsed(false)}
+        className="fixed bottom-6 right-4 z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
+      >
+        🗺️ 지도
+      </button>
+    );
+  }
+
+  return (
+    <aside className="fixed bottom-6 right-4 z-30 hidden rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2.5 shadow-2xl backdrop-blur-md md:block">
+      <div className="mb-1.5 flex items-center justify-between px-1">
+        <span className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75">🗺️ 미니맵</span>
+        <button
+          type="button"
+          onClick={() => setCollapsed(true)}
+          className="font-mono text-[10px] font-black text-white/40 transition hover:text-white"
+        >
+          ▾
+        </button>
+      </div>
+      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="rounded-lg bg-white/[0.03]">
+        {villageBuildings.map((b) => {
+          const key = DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro";
+          const active = activeKey === key;
+          return (
+            <circle
+              key={b.id}
+              cx={sx(b.position[0])}
+              cy={sy(b.position[2])}
+              r={active ? 3 : 2.2}
+              fill={colorOf(key)}
+              fillOpacity={active ? 1 : 0.65}
+            />
+          );
+        })}
+        {centroids.map(({point, x, y}) => {
+          const active = activeKey === point.key;
+          return (
+            <g key={point.key} style={{cursor: "pointer"}} onClick={() => onTravel(point)}>
+              {active ? <circle cx={x} cy={y} r={12} fill="none" stroke={point.color} strokeWidth={1.4} strokeOpacity={0.9} /> : null}
+              <circle cx={x} cy={y} r={13} fill={point.color} fillOpacity={0.001} style={{pointerEvents: "all"}}>
+                <title>{point.label}</title>
+              </circle>
+            </g>
+          );
+        })}
+      </svg>
+      <p className="mt-1.5 px-1 font-mono text-[9px] leading-tight text-white/35">구역을 누르면 그쪽으로 이동</p>
     </aside>
   );
 }

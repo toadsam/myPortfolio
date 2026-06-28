@@ -510,6 +510,33 @@ export function spread(p: number[]): Vector3Tuple {
   return [Math.round((p[0] ?? 0) * SPREAD * 100) / 100, p[1] ?? 0, Math.round((p[2] ?? 0) * SPREAD * 100) / 100];
 }
 
+// 구역별 이동 오프셋 — 구역 내부 간격은 그대로, 구역 덩어리만 광장에서 바깥으로 살짝 밀어 분리감을 준다.
+const districtOffset: Record<string, [number, number]> = {
+  plaza: [0, 0],
+  projects: [-3, 0],      // 서쪽
+  skills: [0, -3],        // 북쪽(안쪽)
+  experience: [1.5, 2],   // 남동쪽
+  life: [3, 0],           // 동쪽
+  study: [0, 3],          // 남쪽(앞쪽)
+  contact: [0, 1]         // 앞쪽 살짝
+};
+
+function applyDistrictOffset(position: Vector3Tuple, district: string): Vector3Tuple {
+  const [ox, oz] = districtOffset[district] ?? [0, 0];
+  return [position[0] + ox, position[1], position[2] + oz];
+}
+
+// 카메라/미니맵이 구역을 가리킬 때 쓰는 view-key → district 매핑
+const viewKeyDistrict: Record<string, string> = {
+  intro: "plaza",
+  projects: "projects",
+  github: "skills",
+  experience: "experience",
+  contact: "contact",
+  life: "life",
+  study: "study"
+};
+
 export const villageBuildings: BuildingData[] = [
   plazaBuilding,
   ...projectBuildings,
@@ -518,7 +545,7 @@ export const villageBuildings: BuildingData[] = [
   ...lifeBuildings,
   ...studyBuildings,
   contactBuilding
-].map((b) => ({...b, position: spread(b.position)}));
+].map((b) => ({...b, position: spread(applyDistrictOffset(b.position, b.district))}));
 
 export const treePositions: Vector3Tuple[] = [
   [-8.2, 0, -5.2],
@@ -552,7 +579,7 @@ export const rockPositions: Vector3Tuple[] = [
 ].map(spread);
 
 const rawCameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3Tuple}> = {
-  intro: {position: [2, 16, 15], lookAt: [0, 0, 2]},
+  intro: {position: [2, 18, 17], lookAt: [0, 0, 2]},
   projects: {position: [-10, 7, 3], lookAt: [-6.5, 1, 1]},
   github: {position: [3, 8, 0], lookAt: [2, 1, -4.5]},
   experience: {position: [10, 6, 6], lookAt: [7, 1, 5.5]},
@@ -561,6 +588,16 @@ const rawCameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3T
   study: {position: [0, 8, 17], lookAt: [0, 1, 11.5]}
 };
 
+// 카메라 타깃도 같은 구역 오프셋만큼 이동시켜, 분리된 구역 덩어리를 정확히 비추게 한다.
 export const cameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3Tuple}> = Object.fromEntries(
-  Object.entries(rawCameraTargets).map(([key, value]) => [key, {position: spread(value.position), lookAt: spread(value.lookAt)}])
+  Object.entries(rawCameraTargets).map(([key, value]) => {
+    const district = viewKeyDistrict[key] ?? "plaza";
+    return [
+      key,
+      {
+        position: spread(applyDistrictOffset(value.position, district)),
+        lookAt: spread(applyDistrictOffset(value.lookAt, district))
+      }
+    ];
+  })
 );
