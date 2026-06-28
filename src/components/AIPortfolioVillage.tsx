@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import {useEffect, useRef, useState} from "react";
 import {useGLTF} from "@react-three/drei";
+import {ConciergePanel, type ConciergeIntent} from "@/components/ui/ConciergePanel";
 import {DialogueBox} from "@/components/ui/DialogueBox";
 import {Header} from "@/components/ui/Header";
 import {InfoPanel} from "@/components/ui/InfoPanel";
@@ -89,6 +90,18 @@ const ResumeMode = dynamic(
 
 const FADE_DURATION = 480;
 const CORE_NPC_IDS = new Set(["guide-npc", "project-npc", "developer-npc", "archivist-npc", "contact-npc"]);
+const GUIDE_ID = "guide-npc";
+const WELCOME_SPOT: Vector3Tuple = [-4, 0, 10]; // 건물 없는 앞쪽-왼쪽 빈 곳 (중앙 타워 회피)
+// 컨시어지 시네마틱 — 앞쪽 빈 레인을 정면 저시점에서 바라봄 (멀리서 달려옴)
+const CONCIERGE_CAM: {position: Vector3Tuple; lookAt: Vector3Tuple} = {
+  position: [-3.5, 2.4, 16.5],
+  lookAt: [-4, 1.1, 10]
+};
+
+// NPC 위치 기준 상반신 클로즈업 카메라
+function closeUp(pos: Vector3Tuple): {position: Vector3Tuple; lookAt: Vector3Tuple} {
+  return {position: [pos[0], 1.4, pos[2] + 3], lookAt: [pos[0], 1.35, pos[2]]};
+}
 
 useGLTF.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
 
@@ -101,6 +114,9 @@ export function AIPortfolioVillage() {
   const [explorationMode, setExplorationMode] = useState<ExplorationMode>("click");
   const [soundOn, setSoundOn] = useState(true);
   const [konami, setKonami] = useState(false);
+  const [conciergeStage, setConciergeStage] = useState<"idle" | "running" | "panel" | "closed">("idle");
+  const [talkCam, setTalkCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
+  const [conciergeCam, setConciergeCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
 
   const [viewMode, setViewMode] = useState<"village" | "interior" | "project-interior" | "resume">("village");
   const [interiorSectionId, setInteriorSectionId] = useState<SectionId | null>(null);
@@ -414,6 +430,61 @@ export function AIPortfolioVillage() {
     }
   }, [viewMode, soundOn, showIntro]);
 
+  // 컨시어지: 마을 진입 시 루미가 달려오게 트리거 (접속할 때마다 1회)
+  useEffect(() => {
+    if (showIntro || conciergeStage !== "idle") return;
+    setConciergeStage("running");
+  }, [showIntro, conciergeStage]);
+
+  // 루미가 안 도착해도 패널이 뜨도록 안전망
+  useEffect(() => {
+    if (conciergeStage !== "running") return;
+    const t = setTimeout(() => setConciergeStage((s) => (s === "running" ? "panel" : s)), 6500);
+    return () => clearTimeout(t);
+  }, [conciergeStage]);
+
+  // 대화 닫히면 클로즈업 카메라 해제
+  useEffect(() => {
+    if (!selectedNpc) setTalkCam(null);
+  }, [selectedNpc]);
+
+  function markConciergeSeen() {
+    try {
+      window.localStorage.setItem("concierge-seen-v1", "1");
+    } catch {
+      /* noop */
+    }
+  }
+
+  function focusDistrict(sectionId: SectionId) {
+    setShowIntro(false);
+    setSelectedNpc(null);
+    setIsPanelOpen(false);
+    setActiveSection(sectionId);
+  }
+
+  function handleConciergePick(intent: ConciergeIntent) {
+    markConciergeSeen();
+    setConciergeStage("closed");
+    if (intent === "recruit") {
+      openResume();
+    } else if (intent === "projects") {
+      focusDistrict("projects");
+    } else if (intent === "skills") {
+      focusDistrict("github");
+    } else if (intent === "experience") {
+      focusDistrict("experience");
+    }
+    // browse → 그냥 닫고 자유 탐험
+  }
+
+  function handleConciergeAsk() {
+    markConciergeSeen();
+    setConciergeStage("closed");
+    const guide = autonomousNpcs.find((n) => n.id === GUIDE_ID);
+    if (guide) openNpcDialogue(guide);
+  }
+
   function remember(memory: string) {
     if (!memory) return;
     npcMemoryRef.current = npcMemoryRef.current.concat(memory).slice(-20);
@@ -470,17 +541,40 @@ export function AIPortfolioVillage() {
     setIsPanelOpen(true);
   }
 
-  function openNpc(npc: NPCData) {
+  function openNpcDialogue(npc: NPCData) {
     trackVisitorEvent({
       event_type: "npc_open",
       target_id: npc.id,
       label: npc.name,
       metadata: {sectionId: npc.sectionId, type: npc.type}
     });
+    // 대화 시작 시점의 NPC 위치를 스냅샷 → 상반신 클로즈업 카메라
+    const pos = npcPositionsRef.current[npc.id] ?? npc.position;
+    setTalkCam(closeUp(pos));
     setShowIntro(false);
     setSelectedNpc(npc);
     setActiveSection(npc.sectionId);
     setIsPanelOpen(false);
+  }
+
+  // 루미가 도착하면 멈춘 자리로 카메라 클로즈업 + 패널
+  function handleGuideArrive() {
+    const pos = npcPositionsRef.current[GUIDE_ID] ?? WELCOME_SPOT;
+    setConciergeCam(closeUp(pos));
+    setConciergeStage((s) => (s === "running" ? "panel" : s));
+  }
+
+  // 루미(가이드)는 컨시어지 패널로, 나머지는 일반 대화로
+  function openNpc(npc: NPCData) {
+    if (npc.id === GUIDE_ID) {
+      setShowIntro(false);
+      setSelectedNpc(null);
+      const pos = npcPositionsRef.current[GUIDE_ID] ?? WELCOME_SPOT;
+      setConciergeCam(closeUp(pos));
+      setConciergeStage("panel");
+      return;
+    }
+    openNpcDialogue(npc);
   }
 
   function startExploring(mode: ExplorationMode) {
@@ -601,6 +695,12 @@ export function AIPortfolioVillage() {
               npcRuntimeStates={npcRuntimeStates}
               onNpcPositionChange={handleNpcPositionChange}
               villageState={villageState}
+              guideScriptedTarget={conciergeStage === "running" ? WELCOME_SPOT : null}
+              onGuideArrive={handleGuideArrive}
+              guideForceHold={conciergeStage === "panel"}
+              cinematic={
+                conciergeStage === "running" ? CONCIERGE_CAM : conciergeStage === "panel" ? conciergeCam : talkCam
+              }
             />
             {showIntro ? <IntroOverlay onStart={startExploring} onResume={openResume} /> : null}
           </section>
@@ -647,6 +747,16 @@ export function AIPortfolioVillage() {
             />
           ) : null}
           {encounterNotice ? <EncounterNotice text={encounterNotice} /> : null}
+          {conciergeStage === "panel" ? (
+            <ConciergePanel
+              onPick={handleConciergePick}
+              onAskAI={handleConciergeAsk}
+              onClose={() => {
+                markConciergeSeen();
+                setConciergeStage("closed");
+              }}
+            />
+          ) : null}
           <InfoPanel
             activeSection={activeSection}
             activeContentId={activeContentId}

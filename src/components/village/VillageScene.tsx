@@ -30,6 +30,10 @@ interface VillageSceneProps {
   npcRuntimeStates: Record<string, NpcRuntimeState>;
   onNpcPositionChange: (npcId: string, position: Vector3Tuple) => void;
   villageState: VillageState | null;
+  guideScriptedTarget?: Vector3Tuple | null;
+  onGuideArrive?: () => void;
+  guideForceHold?: boolean;
+  cinematic?: {position: [number, number, number]; lookAt: [number, number, number]} | null;
 }
 
 // 네트워크 펄스로 연결할 프로젝트 건물들 (한 번만 계산)
@@ -204,7 +208,8 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
 
 export function VillageScene({
   activeSection, activeNpcId, explorationMode, isIntro = false,
-  onSelectNpc, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState
+  onSelectNpc, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState,
+  guideScriptedTarget, onGuideArrive, guideForceHold, cinematic
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
   const propsApi = usePropsEditor();
@@ -295,6 +300,10 @@ export function VillageScene({
               currentAction={npcRuntimeStates[npc.id]?.currentAction}
               onPositionChange={onNpcPositionChange}
               onSelect={onSelectNpc}
+              scriptedTarget={npc.id === "guide-npc" ? guideScriptedTarget : undefined}
+              scriptedStart={npc.id === "guide-npc" ? [-4, 0, 1] : undefined}
+              onScriptedArrive={npc.id === "guide-npc" ? onGuideArrive : undefined}
+              forceHold={npc.id === "guide-npc" ? guideForceHold : undefined}
             />
           ))}
 
@@ -312,7 +321,7 @@ export function VillageScene({
 
           {isWalkMode
             ? <CharacterController />
-            : <CameraController activeSection={activeSection} isIntro={isIntro} lockRotate={editing} />
+            : <CameraController activeSection={activeSection} isIntro={isIntro} lockRotate={editing} cinematic={cinematic} />
           }
          </Selection>
         </Suspense>

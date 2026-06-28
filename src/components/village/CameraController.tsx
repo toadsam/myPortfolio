@@ -17,6 +17,8 @@ interface CameraControllerProps {
   activeSection: SectionId;
   isIntro?: boolean;
   lockRotate?: boolean;
+  /** 연출용 카메라 override (컨시어지 등). 있으면 섹션 타깃 대신 이걸로 이동 */
+  cinematic?: {position: [number, number, number]; lookAt: [number, number, number]} | null;
 }
 
 // 방향키 → WASD 별칭
@@ -35,11 +37,12 @@ function isTyping() {
   return tag === "INPUT" || tag === "TEXTAREA" || (el as HTMLElement).isContentEditable;
 }
 
-export function CameraController({activeSection, isIntro = false, lockRotate = false}: CameraControllerProps) {
+export function CameraController({activeSection, isIntro = false, lockRotate = false, cinematic = null}: CameraControllerProps) {
   const controlsRef = useRef<OrbitController | null>(null);
   const {camera, gl} = useThree();
   const regress = useThree((s) => s.performance.regress);
-  const target = cameraTargets[activeSection] || cameraTargets.intro;
+  const sectionTarget = cameraTargets[activeSection] || cameraTargets.intro;
+  const target = cinematic ?? sectionTarget;
 
   const desiredCamera = useMemo(() => new Vector3(...target.position), [target.position]);
   const desiredLookAt = useMemo(() => new Vector3(...target.lookAt), [target.lookAt]);
@@ -180,6 +183,11 @@ export function CameraController({activeSection, isIntro = false, lockRotate = f
       prevSection.current = activeSection;
     }
   }, [activeSection]);
+
+  // 시네마틱 카메라가 켜지거나 꺼지면 새 목표로 이동
+  useEffect(() => {
+    isTransitioning.current = true;
+  }, [cinematic]);
 
   useFrame((_, delta) => {
     // ── 자유 카메라 ──

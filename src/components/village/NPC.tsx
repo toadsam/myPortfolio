@@ -22,6 +22,13 @@ interface NPCProps {
   isActive: boolean;
   onPositionChange?: (npcId: string, position: Vector3Tuple) => void;
   onSelect: (npc: NPCData) => void;
+  /** 연출용: 지정 지점으로 빠르게 달려간다 (컨시어지 인트로) */
+  scriptedTarget?: Vector3Tuple | null;
+  /** 연출 시작 시 순간이동할 출발 지점 (멀리서 달려오게) */
+  scriptedStart?: Vector3Tuple;
+  onScriptedArrive?: () => void;
+  /** 대화/컨시어지 동안 제자리 고정 + 카메라 응시 */
+  forceHold?: boolean;
 }
 
 export function NPC({
@@ -33,13 +40,19 @@ export function NPC({
   buildings,
   isActive,
   onPositionChange,
-  onSelect
+  onSelect,
+  scriptedTarget,
+  scriptedStart,
+  onScriptedArrive,
+  forceHold
 }: NPCProps) {
   const groupRef = useRef<Group | null>(null);
   const elapsedRef = useRef(0);
   const targetRef = useRef<Vector3Tuple>(behavior?.home ?? npc.position);
   const retargetAtRef = useRef(0);
   const reportAtRef = useRef(0);
+  const arrivedRef = useRef(false);
+  const scriptStartedRef = useRef(false);
   const moveStateRef = useRef<NpcMoveState>("idle");
   const [hovered, setHovered] = useState(false);
   const highlighted = hovered || isActive;
@@ -57,6 +70,50 @@ export function NPC({
     elapsedRef.current += delta;
 
     if (!groupRef.current) {
+      return;
+    }
+
+    // ── 연출: 환영 지점으로 달려가기 (컨시어지 인트로) ──
+    if (scriptedTarget) {
+      const g = groupRef.current;
+      if (!scriptStartedRef.current) {
+        scriptStartedRef.current = true;
+        if (scriptedStart) {
+          g.position.x = scriptedStart[0];
+          g.position.z = scriptedStart[2];
+        }
+      }
+      const sx = scriptedTarget[0] - g.position.x;
+      const sz = scriptedTarget[2] - g.position.z;
+      const sdist = Math.sqrt(sx * sx + sz * sz);
+      if (sdist > 0.25) {
+        const step = Math.min(3.6 * delta, sdist); // 달려오기 (적당한 속도)
+        g.position.x += (sx / sdist) * step;
+        g.position.z += (sz / sdist) * step;
+        g.rotation.y = Math.atan2(sx, sz);
+        moveStateRef.current = "run";
+      } else {
+        g.rotation.y = Math.atan2(0.3, 1); // 도착 — 카메라(+z 쪽) 바라보기
+        moveStateRef.current = "idle";
+        if (!arrivedRef.current) {
+          arrivedRef.current = true;
+          onScriptedArrive?.();
+        }
+      }
+      g.position.y = Math.sin(elapsedRef.current * 5) * 0.07;
+      if (onPositionChange) onPositionChange(npc.id, [g.position.x, 0, g.position.z]);
+      return;
+    } else {
+      if (arrivedRef.current) arrivedRef.current = false;
+      if (scriptStartedRef.current) scriptStartedRef.current = false;
+    }
+
+    // ── 대화 중: 제자리 고정 + 카메라(+z) 바라보기 (진짜 대화하는 느낌) ──
+    if ((isActive || forceHold) && !currentAction) {
+      const g = groupRef.current;
+      g.rotation.y += (0 - g.rotation.y) * Math.min(1, delta * 6);
+      g.position.y = Math.sin(elapsedRef.current * 2.2) * 0.03; // 잔잔한 호흡
+      moveStateRef.current = "idle";
       return;
     }
 
