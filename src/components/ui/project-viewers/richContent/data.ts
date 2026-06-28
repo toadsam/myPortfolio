@@ -5,7 +5,6 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ MyStock-Desk (dashboard) ════════════════════
   mystock: {
     tagline: "INVESTMENT PORTFOLIO · WEB APP",
-    heroImage: {label: "MyStock-Desk 포트폴리오 분석 대시보드", ratio: "16/9", caption: "메인 대시보드 — 실제 스크린샷으로 교체 예정"},
     problemShot: {label: "엑셀로 수익률을 직접 관리하던 기존 방식", ratio: "4/3"},
     gallery: [
       {label: "보유 종목 수익률 화면", ratio: "16/10"},
@@ -168,7 +167,6 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ MuscleUp (realtime) ═════════════════════════
   muscleup: {
     tagline: "GAMIFIED FITNESS · COMMUNITY",
-    heroImage: {label: "MuscleUp 레벨·스트릭 홈 화면", ratio: "16/9", caption: "메인 홈 — 실제 스크린샷으로 교체 예정"},
     problemShot: {label: "작심삼일로 끊기던 기존 운동 기록", ratio: "4/3"},
     gallery: [
       {label: "레벨·경험치 대시보드", ratio: "16/10"},
@@ -248,7 +246,6 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ ACLUB (platform) ════════════════════════════
   aclub: {
     tagline: "CLUB DISCOVERY · PLATFORM FE",
-    heroImage: {label: "A-Club 동아리 탐색 메인 화면", ratio: "16/9", caption: "탐색 화면 — 실제 스크린샷으로 교체 예정"},
     problemShot: {label: "여기저기 흩어져 있던 동아리 모집 공고", ratio: "4/3"},
     gallery: [
       {label: "동아리 카드 리스트", ratio: "16/10"},
@@ -325,7 +322,6 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ 아주총총 (platform) ══════════════════════════
   ajouchong: {
     tagline: "STUDENT COUNCIL · OFFICIAL SPA",
-    heroImage: {label: "아주대 총학생회 공식 사이트 메인", ratio: "16/9", caption: "메인 페이지 — 실제 스크린샷으로 교체 예정"},
     problemShot: {label: "여러 채널에 흩어져 있던 학생회 공지", ratio: "4/3"},
     gallery: [
       {label: "공지·Q&A 게시판", ratio: "16/10"},
@@ -403,7 +399,6 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ 수어지교 (platform) ══════════════════════════
   "sign-language": {
     tagline: "SIGN LANGUAGE · LEARNING SERVICE",
-    heroImage: {label: "수어 아바타 학습 메인 화면", ratio: "16/9", caption: "학습 화면 — 실제 스크린샷으로 교체 예정"},
     problemShot: {label: "영상만 보며 따라하던 기존 학습 방식", ratio: "4/3"},
     gallery: [
       {label: "단어 학습 목록", ratio: "16/10"},
@@ -479,7 +474,6 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ DarkLab (game · horror) ═════════════════════
   darklab: {
     tagline: "FIRST-PERSON HORROR · UNITY",
-    heroImage: {label: "DARKLAB 인게임 분위기 컷", ratio: "16/9", caption: "메인 장면 — 실제 게임 스크린샷으로 교체 예정"},
     problemShot: {label: "초기 그레이박스 프로토타입", ratio: "4/3"},
     gallery: [
       {label: "1인칭 탐색 플레이 화면", ratio: "16/9"},
@@ -557,7 +551,6 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ 아주분투 (game · arcade) ═════════════════════
   "ajou-adventure": {
     tagline: "2D CASUAL RUNNER · PHASER 3",
-    heroImage: {label: "아주분투 타이틀 화면", ratio: "16/9", caption: "타이틀 — 실제 게임 스크린샷으로 교체 예정"},
     problemShot: {label: "초기 프로토타입 화면", ratio: "4/3"},
     gallery: [
       {label: "인게임 러닝 플레이", ratio: "16/9"},
@@ -635,7 +628,6 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ TSEROF (game · platformer) ══════════════════
   tserof: {
     tagline: "3D PLATFORMER · UNITY (TEAM OF 5)",
-    heroImage: {label: "TSEROF 타이틀·메인 장면", ratio: "16/9", caption: "타이틀 — 실제 게임 스크린샷으로 교체 예정"},
     problemShot: {label: "그레이박스 레벨 프로토타입", ratio: "4/3"},
     gallery: [
       {label: "스테이지 플레이 화면", ratio: "16/9"},

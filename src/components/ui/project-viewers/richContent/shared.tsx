@@ -710,6 +710,52 @@ export function Magnetic({children, strength = 0.3, className}: {children: React
   );
 }
 
+// ── 시그니처 데모 공통 프레임 ─────────────────────────────────────────────────
+// 프로젝트별 인터랙티브 데모가 공유하는 패널 틀(헤더 + 본문 + 푸터).
+export function DemoFrame({
+  theme,
+  label,
+  tag,
+  controls,
+  footer,
+  children,
+}: {
+  theme: ProjectTheme;
+  label: string;
+  tag?: string;
+  controls?: React.ReactNode;
+  footer?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <motion.div
+      className="overflow-hidden rounded-2xl border"
+      style={{borderColor: `${theme.primary}33`, background: `${theme.primary}06`}}
+      initial={{opacity: 0, y: 16}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.5}}
+    >
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3" style={{borderColor: `${theme.primary}22`}}>
+        <div className="flex items-center gap-2.5">
+          <span className="relative flex h-2.5 w-2.5">
+            <motion.span className="absolute inline-flex h-full w-full rounded-full" style={{background: theme.primary}} animate={{scale: [1, 2.4], opacity: [0.6, 0]}} transition={{duration: 1.6, repeat: Infinity, ease: "easeOut"}} />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full" style={{background: theme.primary}} />
+          </span>
+          <span className="font-mono text-sm font-black text-white">{label}</span>
+          {tag ? <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em]" style={{color: theme.primary}}>{tag}</span> : null}
+        </div>
+        {controls ? <div className="flex items-center gap-2">{controls}</div> : null}
+      </div>
+      <div className="p-5">{children}</div>
+      {footer ? (
+        <div className="border-t px-5 py-2.5" style={{borderColor: `${theme.primary}18`, background: "rgba(0,0,0,0.15)"}}>
+          {footer}
+        </div>
+      ) : null}
+    </motion.div>
+  );
+}
+
 // ════════════════════════════════════════════════════════════════════════════
 //  데이터 기반 5단계 렌더러
 // ════════════════════════════════════════════════════════════════════════════
