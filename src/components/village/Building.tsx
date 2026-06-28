@@ -104,6 +104,8 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
           transition: "all 0.2s",
           minWidth: 78,
           textAlign: "center",
+          opacity: highlighted ? 1 : 0.58,
+          transform: highlighted ? "scale(1.06)" : "scale(0.92)",
         }}
       >
         <span style={{

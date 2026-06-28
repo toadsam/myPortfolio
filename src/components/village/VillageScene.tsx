@@ -3,7 +3,7 @@
 import {Canvas} from "@react-three/fiber";
 import {AdaptiveDpr, AdaptiveEvents, ContactShadows, Html, useGLTF} from "@react-three/drei";
 import {Selection} from "@react-three/postprocessing";
-import {Suspense} from "react";
+import {Suspense, useMemo} from "react";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {rockPositions, treePositions, villageBuildings} from "@/lib/constants";
@@ -34,6 +34,20 @@ interface VillageSceneProps {
 
 // 네트워크 펄스로 연결할 프로젝트 건물들 (한 번만 계산)
 const projectNetworkBuildings = villageBuildings.filter((b) => b.district === "projects");
+
+// 접속 시각에 따른 마을 분위기 — 새벽/낮/노을/밤. (낮은 기존과 동일)
+function timePalette(hour: number) {
+  if (hour >= 20 || hour < 5) {
+    return {sky: "#0b1430", fog: "#0a1830", near: 24, far: 60, amb: 2.4, sun: "#5566a0", sunI: 1.6, fill: "#33457f", fillI: 1.2, hSky: "#16264a", hGround: "#0a1a2a", hI: 1.4, label: "밤"};
+  }
+  if (hour < 8) {
+    return {sky: "#e6b896", fog: "#e8c6a4", near: 30, far: 66, amb: 3.4, sun: "#ffd6a6", sunI: 4.0, fill: "#ffc2d2", fillI: 1.9, hSky: "#f0c8a4", hGround: "#566a3a", hI: 2.4, label: "새벽"};
+  }
+  if (hour < 17) {
+    return {sky: "#a8c8e8", fog: "#b8d4ee", near: 35, far: 70, amb: 4.5, sun: "#fff8e8", sunI: 5.0, fill: "#d0e8ff", fillI: 2.5, hSky: "#87ceeb", hGround: "#4a7a3a", hI: 3.0, label: "낮"};
+  }
+  return {sky: "#e09a64", fog: "#e6ad7e", near: 28, far: 62, amb: 3.1, sun: "#ff945a", sunI: 3.8, fill: "#ffb184", fillI: 1.9, hSky: "#e8a070", hGround: "#5a5a2a", hI: 2.1, label: "노을"};
+}
 
 function Statue() {
   const {scene} = useGLTF("/models/environment/statue.glb");
@@ -195,6 +209,7 @@ export function VillageScene({
   const isWalkMode = explorationMode === "walk";
   const propsApi = usePropsEditor();
   const editing = propsApi.enabled && propsApi.editMode;
+  const sky = useMemo(() => timePalette(new Date().getHours()), []);
 
   return (
     <div
@@ -217,12 +232,12 @@ export function VillageScene({
         {/* 움직일 땐 해상도/이벤트 자동 저하 → 멈추면 선명하게 */}
         <AdaptiveDpr pixelated={false} />
         <AdaptiveEvents />
-        <color args={["#a8c8e8"]} attach="background" />
-        <fog args={["#b8d4ee", 35, 70]} attach="fog" />
-        <ambientLight color="#ffffff" intensity={4.5} />
-        <directionalLight color="#fff8e8" intensity={5.0} position={[8, 20, 8]} />
-        <directionalLight color="#d0e8ff" intensity={2.5} position={[-6, 12, -4]} />
-        <hemisphereLight args={["#87ceeb", "#4a7a3a", 3.0]} />
+        <color args={[sky.sky]} attach="background" />
+        <fog args={[sky.fog, sky.near, sky.far]} attach="fog" />
+        <ambientLight color="#ffffff" intensity={sky.amb} />
+        <directionalLight color={sky.sun} intensity={sky.sunI} position={[8, 20, 8]} />
+        <directionalLight color={sky.fill} intensity={sky.fillI} position={[-6, 12, -4]} />
+        <hemisphereLight args={[sky.hSky, sky.hGround, sky.hI]} />
 
         <pointLight color="#00d4ff" intensity={1.8} distance={22} decay={2} position={[-5, 5, 0]} />
         <pointLight color="#aa44ff" intensity={1.5} distance={20} decay={2} position={[3, 5, -5]} />
@@ -313,7 +328,7 @@ export function VillageScene({
         </div>
       ) : (
         <div className="pointer-events-none absolute left-4 top-4 rounded-lg border border-[#00d4ff]/25 bg-[#050d1a]/85 px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.18em] text-[#00d4ff]/70 backdrop-blur-md">
-          {">"} click / drag / scroll
+          {sky.label === "밤" ? "🌙" : sky.label === "새벽" ? "🌅" : sky.label === "노을" ? "🌇" : "☀️"} {sky.label} · click / drag / scroll
         </div>
       )}
 

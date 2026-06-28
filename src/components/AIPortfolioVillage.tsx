@@ -562,12 +562,13 @@ export function AIPortfolioVillage() {
                   return next;
                 });
               }}
-              className="fixed bottom-40 left-4 z-30 flex h-10 w-10 items-center justify-center rounded-xl border border-[#5b8fd6]/40 bg-[#050d1a]/85 text-base shadow-2xl backdrop-blur-md transition hover:border-[#86b0e6] hover:bg-[#5b8fd6]/12 md:bottom-[4.75rem]"
+              className="fixed bottom-[14.5rem] left-4 z-30 flex h-10 w-10 items-center justify-center rounded-xl border border-[#5b8fd6]/40 bg-[#050d1a]/85 text-base shadow-2xl backdrop-blur-md transition hover:border-[#86b0e6] hover:bg-[#5b8fd6]/12 md:bottom-[8.75rem]"
             >
               {soundOn ? "🔊" : "🔇"}
             </button>
           ) : null}
           {!showIntro ? <LiveStatusPanel error={liveError} villageState={villageState} /> : null}
+          {!showIntro ? <ControlsHint /> : null}
           {!showIntro ? (
             <NpcQuickDock
               activeNpcId={selectedNpc?.id}
@@ -668,8 +669,14 @@ function LiveStatusPanel({error, villageState}: {error: string | null; villageSt
   if (!villageState && !error) return null;
 
   return (
-    <aside className="fixed left-4 top-[78px] z-30 hidden max-w-[310px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-4 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md md:block">
-      <p className="font-black uppercase tracking-[0.2em] text-[#00d4ff]">{">"} Live Village</p>
+    <aside className="fixed left-4 top-[132px] z-20 hidden max-w-[300px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-4 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md md:block">
+      <p className="flex items-center gap-2 font-black uppercase tracking-[0.2em] text-[#00d4ff]">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00d4ff] opacity-60" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00d4ff]" />
+        </span>
+        Live Village
+      </p>
       {error ? (
         <p className="mt-2 leading-5 text-[#ff9a6c]">{error}. 기본 마을 화면으로 표시 중입니다.</p>
       ) : villageState ? (
@@ -678,17 +685,18 @@ function LiveStatusPanel({error, villageState}: {error: string | null; villageSt
           <div className="mt-3 grid grid-cols-3 gap-2 text-center">
             <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
               <strong className="block text-[#00d4ff]">{villageState.activity.github_commits}</strong>
-              commits
+              <span className="text-[9px] text-white/40">커밋</span>
             </span>
             <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
               <strong className="block text-[#00ff88]">{villageState.activity.study_minutes}</strong>
-              study
+              <span className="text-[9px] text-white/40">학습·분</span>
             </span>
             <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
-              <strong className="block text-[#ff9a6c]">{villageState.activity.workout_done ? "yes" : "no"}</strong>
-              workout
+              <strong className="block text-[#ff9a6c]">{villageState.activity.workout_done ? "✅" : "💤"}</strong>
+              <span className="text-[9px] text-white/40">운동</span>
             </span>
           </div>
+          <p className="mt-2 text-[10px] leading-4 text-white/35">오늘의 실시간 활동 · 1분마다 갱신</p>
         </>
       ) : null}
     </aside>
@@ -722,6 +730,27 @@ function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onSelect: 
         </button>
       ))}
     </aside>
+  );
+}
+
+function ControlsHint() {
+  const [show, setShow] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShow(false), 7000);
+    return () => clearTimeout(t);
+  }, []);
+
+  if (!show) return null;
+
+  return (
+    <div className="pointer-events-none fixed left-1/2 top-[80px] z-30 flex -translate-x-1/2 animate-[fadeIn_0.4s_ease] items-center gap-3 rounded-full border border-[#00d4ff]/30 bg-[#050d1a]/90 px-4 py-2 font-mono text-[11px] font-bold text-white/75 shadow-2xl backdrop-blur-md">
+      <span className="flex items-center gap-1.5"><span className="text-sm">🖱️</span> 건물 클릭해 입장</span>
+      <span className="text-white/20">·</span>
+      <span className="flex items-center gap-1.5"><span className="text-sm">🔄</span> 드래그·스크롤로 둘러보기</span>
+      <span className="text-white/20">·</span>
+      <span className="flex items-center gap-1.5"><span className="text-sm">🚶</span> 직접 이동은 좌하단 버튼</span>
+    </div>
   );
 }
 
