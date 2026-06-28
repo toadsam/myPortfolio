@@ -703,6 +703,10 @@ export function AIPortfolioVillage() {
       openSection("github", contentId);
       return;
     }
+    if (district === "study") {
+      openSection("study", contentId);
+      return;
+    }
     if (district === "experience") {
       openSection("experience", contentId);
       return;

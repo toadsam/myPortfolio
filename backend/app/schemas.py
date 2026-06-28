@@ -257,3 +257,51 @@ class AdminOverview(BaseModel):
     projects: list[ManagedProjectOut]
     npc_presets: list[NpcPresetOut]
     village_overrides: list[VillageBuildingOverrideOut]
+
+
+class CodingTestIn(BaseModel):
+    solved_date: dt_date | None = None
+    platform: str = Field(default="", max_length=60)
+    problem_no: str = Field(default="", max_length=60)
+    title: str = Field(min_length=1, max_length=200)
+    difficulty: str = Field(default="", max_length=60)
+    language: str = Field(default="", max_length=60)
+    url: str = Field(default="", max_length=400)
+    code: str = ""
+    approach: str = ""
+
+
+class CodingTestOut(BaseModel):
+    id: int
+    solved_date: dt_date
+    platform: str
+    problem_no: str
+    title: str
+    difficulty: str
+    language: str
+    url: str
+    code: str
+    approach: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class CsNoteIn(BaseModel):
+    study_date: dt_date | None = None
+    category: str = Field(default="", max_length=60)
+    title: str = Field(min_length=1, max_length=200)
+    content: str = ""
+
+
+class CsNoteOut(BaseModel):
+    id: int
+    study_date: dt_date
+    category: str
+    title: str
+    content: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}

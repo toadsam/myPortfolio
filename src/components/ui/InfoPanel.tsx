@@ -1,13 +1,15 @@
 "use client";
 
 import {AnimatePresence, motion} from "framer-motion";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import type {ReactNode} from "react";
 import {experienceItems} from "@/data/experience";
 import {portfolioLinks} from "@/data/links";
 import {projects} from "@/data/projects";
 import {skills} from "@/data/skills";
 import {sectionMeta} from "@/lib/constants";
+import {fetchCodingTests, fetchCsNotes} from "@/lib/liveApi";
+import type {CodingTestLog, CsNote} from "@/types/live";
 import type {ProjectData, SectionId} from "@/types/portfolio";
 import {ProjectCard} from "./ProjectCard";
 import {ProjectDetail} from "./ProjectDetail";
@@ -23,6 +25,7 @@ const SECTION_COLORS: Record<string, string> = {
   intro: "#00d4ff",
   projects: "#00d4ff",
   github: "#00ff88",
+  study: "#38bdf8",
   experience: "#aa44ff",
   contact: "#ff6600"
 };
@@ -90,6 +93,7 @@ export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: Inf
             {activeSection === "intro" && <IntroPanel color={color} />}
             {activeSection === "projects" && <ProjectsPanel color={color} initialProjectId={activeContentId} />}
             {activeSection === "github" && <SkillsPanel color={color} initialGroup={activeContentId} />}
+            {activeSection === "study" && <StudyPanel color={color} initialTab={activeContentId} />}
             {activeSection === "experience" && <ExperiencePanel color={color} highlightTitle={activeContentId} />}
             {activeSection === "contact" && <ContactPanel color={color} />}
           </motion.div>
@@ -282,6 +286,207 @@ function ExperiencePanel({color, highlightTitle}: {color: string; highlightTitle
         );
       })}
     </div>
+  );
+}
+
+function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
+  const [tab, setTab] = useState<"codingtest" | "cs">(initialTab === "cs" ? "cs" : "codingtest");
+  const [codingTests, setCodingTests] = useState<CodingTestLog[] | null>(null);
+  const [csNotes, setCsNotes] = useState<CsNote[] | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let ignore = false;
+    setError(false);
+    Promise.all([fetchCodingTests(), fetchCsNotes()])
+      .then(([tests, notes]) => {
+        if (ignore) return;
+        setCodingTests(tests);
+        setCsNotes(notes);
+      })
+      .catch(() => {
+        if (!ignore) setError(true);
+      });
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const loading = !error && codingTests === null && csNotes === null;
+
+  return (
+    <div className="grid gap-4">
+      <Card color={color}>
+        <h3 className="font-black text-white">학습 기록</h3>
+        <p className="mt-2 text-sm leading-6 text-white/55">
+          매일 푼 코딩테스트 풀이와 공부한 CS 전공지식을 기록합니다. 알고리즘 도장의 알고, 지식 서고의 노바에게 물어보면 이 기록을 바탕으로 답해줍니다.
+        </p>
+        <div className="mt-4 flex gap-2">
+          {([
+            {id: "codingtest", label: `코딩테스트${codingTests ? ` ${codingTests.length}` : ""}`},
+            {id: "cs", label: `CS 전공지식${csNotes ? ` ${csNotes.length}` : ""}`}
+          ] as const).map((item) => {
+            const active = tab === item.id;
+            return (
+              <button
+                className="rounded-lg border px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.1em] transition"
+                key={item.id}
+                onClick={() => {
+                  setTab(item.id);
+                  setOpenId(null);
+                }}
+                style={{
+                  borderColor: active ? `${color}55` : "rgba(255,255,255,0.08)",
+                  background: active ? `${color}18` : "transparent",
+                  color: active ? color : "rgba(255,255,255,0.45)"
+                }}
+                type="button"
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      </Card>
+
+      {error ? (
+        <Card color={color}>
+          <p className="text-sm leading-6 text-white/55">
+            학습 기록 서버(FastAPI)에 연결하지 못했습니다. 백엔드를 실행한 뒤 다시 시도해 주세요.
+          </p>
+        </Card>
+      ) : loading ? (
+        <Card color={color}>
+          <p className="text-sm text-white/45">기록을 불러오는 중...</p>
+        </Card>
+      ) : tab === "codingtest" ? (
+        (codingTests ?? []).length === 0 ? (
+          <EmptyStudy color={color} text="아직 기록된 코딩테스트 풀이가 없습니다. /admin에서 푼 문제를 기록하면 여기에 표시됩니다." />
+        ) : (
+          (codingTests ?? []).map((test) => {
+            const key = `ct-${test.id}`;
+            const isOpen = openId === key;
+            return (
+              <motion.article
+                className="overflow-hidden rounded-lg border bg-[#0a1525]"
+                key={key}
+                style={{borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"}}
+                variants={fadeUp}
+              >
+                <button
+                  className="flex w-full items-start justify-between gap-3 px-5 py-4 text-left"
+                  onClick={() => setOpenId(isOpen ? null : key)}
+                  type="button"
+                >
+                  <span className="min-w-0">
+                    <span className="block font-black text-white">{test.title}</span>
+                    <span className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-white/45">
+                      {[test.platform, test.difficulty, test.language, test.solved_date]
+                        .filter(Boolean)
+                        .map((meta) => (
+                          <span className="rounded border border-white/10 px-1.5 py-0.5" key={meta}>
+                            {meta}
+                          </span>
+                        ))}
+                    </span>
+                  </span>
+                  <span className="text-xs" style={{color}}>{isOpen ? "−" : "+"}</span>
+                </button>
+                <AnimatePresence>
+                  {isOpen ? (
+                    <motion.div
+                      animate={{height: "auto", opacity: 1}}
+                      className="overflow-hidden px-5 pb-5"
+                      exit={{height: 0, opacity: 0}}
+                      initial={{height: 0, opacity: 0}}
+                      transition={{duration: 0.25}}
+                    >
+                      {test.approach ? (
+                        <div className="mb-3">
+                          <p className="font-mono text-[10px] font-black uppercase tracking-[0.14em]" style={{color}}>풀이 방법</p>
+                          <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-white/65">{test.approach}</p>
+                        </div>
+                      ) : null}
+                      {test.code ? (
+                        <pre className="max-h-72 overflow-auto rounded-lg border border-white/8 bg-[#060e1a] p-3 font-mono text-xs leading-5 text-white/70">
+                          {test.code}
+                        </pre>
+                      ) : null}
+                      {test.url ? (
+                        <a
+                          className="mt-3 inline-block font-mono text-xs font-bold"
+                          href={test.url}
+                          rel="noreferrer"
+                          style={{color}}
+                          target="_blank"
+                        >
+                          문제 링크 열기 →
+                        </a>
+                      ) : null}
+                    </motion.div>
+                  ) : null}
+                </AnimatePresence>
+              </motion.article>
+            );
+          })
+        )
+      ) : (csNotes ?? []).length === 0 ? (
+        <EmptyStudy color={color} text="아직 기록된 CS 전공지식 노트가 없습니다. /admin에서 공부한 내용을 기록하면 여기에 표시됩니다." />
+      ) : (
+        (csNotes ?? []).map((note) => {
+          const key = `cs-${note.id}`;
+          const isOpen = openId === key;
+          return (
+            <motion.article
+              className="overflow-hidden rounded-lg border bg-[#0a1525]"
+              key={key}
+              style={{borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"}}
+              variants={fadeUp}
+            >
+              <button
+                className="flex w-full items-start justify-between gap-3 px-5 py-4 text-left"
+                onClick={() => setOpenId(isOpen ? null : key)}
+                type="button"
+              >
+                <span className="min-w-0">
+                  <span className="block font-black text-white">{note.title}</span>
+                  <span className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-white/45">
+                    {[note.category, note.study_date].filter(Boolean).map((meta) => (
+                      <span className="rounded border border-white/10 px-1.5 py-0.5" key={meta}>
+                        {meta}
+                      </span>
+                    ))}
+                  </span>
+                </span>
+                <span className="text-xs" style={{color}}>{isOpen ? "−" : "+"}</span>
+              </button>
+              <AnimatePresence>
+                {isOpen ? (
+                  <motion.div
+                    animate={{height: "auto", opacity: 1}}
+                    className="overflow-hidden px-5 pb-5"
+                    exit={{height: 0, opacity: 0}}
+                    initial={{height: 0, opacity: 0}}
+                    transition={{duration: 0.25}}
+                  >
+                    <p className="whitespace-pre-wrap text-sm leading-6 text-white/65">{note.content}</p>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </motion.article>
+          );
+        })
+      )}
+    </div>
+  );
+}
+
+function EmptyStudy({color, text}: {color: string; text: string}) {
+  return (
+    <Card color={color}>
+      <p className="text-sm leading-6 text-white/55">{text}</p>
+    </Card>
   );
 }
 

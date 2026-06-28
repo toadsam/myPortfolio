@@ -11,6 +11,10 @@ from app.schemas import (
     AnalyticsSummary,
     ChatMessageIn,
     ChatMessageOut,
+    CodingTestIn,
+    CodingTestOut,
+    CsNoteIn,
+    CsNoteOut,
     GithubSyncOut,
     ManagedProjectIn,
     ManagedProjectOut,
@@ -45,6 +49,18 @@ from app.services.admin_service import (
 from app.services.activity_service import get_or_create_today, upsert_activity
 from app.services.chat_service import answer_npc_message
 from app.services.github_service import fetch_today_commit_count
+from app.services.learning_service import (
+    count_coding_tests,
+    count_coding_tests_today,
+    count_cs_notes,
+    count_cs_notes_today,
+    create_coding_test,
+    create_cs_note,
+    delete_coding_test,
+    delete_cs_note,
+    list_coding_tests,
+    list_cs_notes,
+)
 from app.services.npc_brain_service import generate_npc_encounter, generate_npc_tick
 from app.services.village_service import derive_village_state
 
@@ -94,7 +110,14 @@ def save_activity(payload: ActivityIn, db: Session = Depends(get_db)):
 @app.get("/village-state", response_model=VillageState)
 def village_state(db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
-    return apply_village_overrides(db, derive_village_state(activity))
+    state = derive_village_state(
+        activity,
+        coding_today=count_coding_tests_today(db),
+        coding_total=count_coding_tests(db),
+        cs_today=count_cs_notes_today(db),
+        cs_total=count_cs_notes(db),
+    )
+    return apply_village_overrides(db, state)
 
 
 @app.post("/npc/chat", response_model=ChatMessageOut)
@@ -105,6 +128,8 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
         payload.message,
         activity,
         payload.recent_messages,
+        coding_tests=list_coding_tests(db, limit=12),
+        cs_notes=list_cs_notes(db, limit=12),
     )
     log_npc_conversation(
         db,
@@ -225,3 +250,41 @@ def admin_update_village_override(
     db: Session = Depends(get_db),
 ):
     return update_village_override(db, building_id, payload)
+
+
+# ─────────────────────────── 코딩테스트 풀이 기록 ───────────────────────────
+
+@app.get("/coding-tests", response_model=list[CodingTestOut])
+def coding_tests(db: Session = Depends(get_db)):
+    return list_coding_tests(db)
+
+
+@app.post("/admin/coding-tests", response_model=CodingTestOut)
+def admin_create_coding_test(payload: CodingTestIn, db: Session = Depends(get_db)):
+    return create_coding_test(db, payload)
+
+
+@app.delete("/admin/coding-tests/{log_id}")
+def admin_delete_coding_test(log_id: int, db: Session = Depends(get_db)):
+    if not delete_coding_test(db, log_id):
+        raise HTTPException(status_code=404, detail="해당 코딩테스트 기록을 찾을 수 없습니다.")
+    return {"ok": True}
+
+
+# ─────────────────────────── CS 전공지식 노트 ───────────────────────────
+
+@app.get("/cs-notes", response_model=list[CsNoteOut])
+def cs_notes(db: Session = Depends(get_db)):
+    return list_cs_notes(db)
+
+
+@app.post("/admin/cs-notes", response_model=CsNoteOut)
+def admin_create_cs_note(payload: CsNoteIn, db: Session = Depends(get_db)):
+    return create_cs_note(db, payload)
+
+
+@app.delete("/admin/cs-notes/{note_id}")
+def admin_delete_cs_note(note_id: int, db: Session = Depends(get_db)):
+    if not delete_cs_note(db, note_id):
+        raise HTTPException(status_code=404, detail="해당 CS 노트를 찾을 수 없습니다.")
+    return {"ok": True}

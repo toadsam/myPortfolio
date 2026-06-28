@@ -48,7 +48,13 @@ def _light_for_score(score: int) -> str:
     return "bright"
 
 
-def derive_village_state(activity: DailyActivity) -> VillageState:
+def derive_village_state(
+    activity: DailyActivity,
+    coding_today: int = 0,
+    coding_total: int = 0,
+    cs_today: int = 0,
+    cs_total: int = 0,
+) -> VillageState:
     commit_score = min(activity.github_commits * 18, 100)
     study_score = min(activity.study_minutes // 2 + len(activity.study_topics or []) * 8, 100)
     coding_score = min(activity.coding_minutes // 3 + sum((activity.project_minutes or {}).values()) // 4, 100)
@@ -110,6 +116,35 @@ def derive_village_state(activity: DailyActivity) -> VillageState:
                 reason="오늘 메모와 학습 시간이 경험 기록관의 분위기를 만듭니다.",
             )
         )
+
+    # 학습 구역 — 오늘 기록이 있으면 밝게, 없으면 누적 기록으로 은은하게 유지
+    coding_score = min(60 + coding_today * 20, 100) if coding_today > 0 else min(coding_total * 6, 45)
+    buildings.append(
+        BuildingState(
+            building_id="study-codingtest",
+            light_level=_light_for_score(coding_score),
+            activity_score=coding_score,
+            reason=(
+                f"오늘 코딩테스트 {coding_today}문제 풀이 기록이 알고리즘 도장을 밝혔습니다."
+                if coding_today > 0
+                else f"누적 코딩테스트 풀이 {coding_total}개가 은은한 기본 에너지로 남아 있습니다."
+            ),
+        )
+    )
+
+    cs_score = min(60 + cs_today * 20, 100) if cs_today > 0 else min(cs_total * 6, 45)
+    buildings.append(
+        BuildingState(
+            building_id="study-cs",
+            light_level=_light_for_score(cs_score),
+            activity_score=cs_score,
+            reason=(
+                f"오늘 CS 전공지식 노트 {cs_today}개가 지식 서고를 밝혔습니다."
+                if cs_today > 0
+                else f"누적 CS 전공지식 노트 {cs_total}개가 은은한 기본 에너지로 남아 있습니다."
+            ),
+        )
+    )
 
     contact_score = max(overall_score // 2, memo_score)
     buildings.append(

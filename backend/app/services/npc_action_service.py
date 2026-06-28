@@ -234,6 +234,8 @@ def _to_action_out(npc_id: str, action: dict[str, Any], source: ActionSource) ->
 def _canonical_npc_id(npc_id: str) -> str:
     if npc_id in ACTION_DEFINITIONS:
         return npc_id
+    if "codingtest" in npc_id or "study-cs" in npc_id or npc_id.endswith("-cs"):
+        return "developer-npc"
     if "skill" in npc_id or "backend" in npc_id or "frontend" in npc_id:
         return "developer-npc"
     if "exp" in npc_id:

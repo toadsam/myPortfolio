@@ -85,3 +85,32 @@ class VillageBuildingOverride(Base):
     featured: Mapped[bool] = mapped_column(Boolean, default=False)
     note: Mapped[str] = mapped_column(Text, default="")
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class CodingTestLog(Base):
+    __tablename__ = "coding_test_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    solved_date: Mapped[date] = mapped_column(Date, index=True)
+    platform: Mapped[str] = mapped_column(String(60), default="")          # 백준 / 프로그래머스 / 리트코드 등
+    problem_no: Mapped[str] = mapped_column(String(60), default="")        # 문제 번호/식별자 (선택)
+    title: Mapped[str] = mapped_column(String(200), default="")            # 문제 제목
+    difficulty: Mapped[str] = mapped_column(String(60), default="")        # 실버3, Lv.2 등
+    language: Mapped[str] = mapped_column(String(60), default="")          # 풀이 언어
+    url: Mapped[str] = mapped_column(String(400), default="")             # 문제 링크 (선택)
+    code: Mapped[str] = mapped_column(Text, default="")                   # 제출 코드
+    approach: Mapped[str] = mapped_column(Text, default="")               # 풀이 방법/접근
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class CsNoteLog(Base):
+    __tablename__ = "cs_note_log"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    study_date: Mapped[date] = mapped_column(Date, index=True)
+    category: Mapped[str] = mapped_column(String(60), default="")          # 운영체제 / 네트워크 / DB / 자료구조 등
+    title: Mapped[str] = mapped_column(String(200), default="")            # 제목
+    content: Mapped[str] = mapped_column(Text, default="")                # 공부한 내용
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

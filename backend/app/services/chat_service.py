@@ -3,8 +3,14 @@ from typing import Any
 
 from app.catalog import NPCS, PROJECTS
 from app.config import settings
-from app.models import DailyActivity
+from app.models import CodingTestLog, CsNoteLog, DailyActivity
 from app.schemas import NpcActionOut
+from app.services.learning_service import (
+    coding_test_brief_lines,
+    coding_test_detail_lines,
+    cs_note_brief_lines,
+    cs_note_detail_lines,
+)
 from app.services.npc_action_service import choose_npc_action
 
 
@@ -13,22 +19,40 @@ async def answer_npc_message(
     message: str,
     activity: DailyActivity,
     recent_messages: list[str] | None = None,
+    coding_tests: list[CodingTestLog] | None = None,
+    cs_notes: list[CsNoteLog] | None = None,
 ) -> tuple[str, bool, NpcActionOut]:
     npc = NPCS.get(npc_id, _npc_profile_for_dynamic_id(npc_id))
-    context = build_context(npc_id, activity, recent_messages or [])
+    context = build_context(npc_id, activity, recent_messages or [], coding_tests or [], cs_notes or [])
     suggested_action = choose_npc_action(npc_id, message=message, activity=activity, source="chat")
 
     if settings.openai_api_key:
         try:
             return await answer_with_openai(npc, context, message), True, suggested_action
         except Exception:
-            return answer_without_ai(npc_id, message, activity), False, suggested_action
+            return answer_without_ai(npc_id, message, activity, coding_tests or [], cs_notes or []), False, suggested_action
 
-    return answer_without_ai(npc_id, message, activity), False, suggested_action
+    return answer_without_ai(npc_id, message, activity, coding_tests or [], cs_notes or []), False, suggested_action
 
 
-def build_context(npc_id: str, activity: DailyActivity, recent_messages: list[str] | None = None) -> str:
+def _is_coding_npc(npc_id: str) -> bool:
+    return "codingtest" in npc_id or npc_id == "coding-test-npc"
+
+
+def _is_cs_npc(npc_id: str) -> bool:
+    return npc_id == "cs-npc" or "study-cs" in npc_id or npc_id.endswith("-cs")
+
+
+def build_context(
+    npc_id: str,
+    activity: DailyActivity,
+    recent_messages: list[str] | None = None,
+    coding_tests: list[CodingTestLog] | None = None,
+    cs_notes: list[CsNoteLog] | None = None,
+) -> str:
     npc = NPCS.get(npc_id, _npc_profile_for_dynamic_id(npc_id))
+    coding_tests = coding_tests or []
+    cs_notes = cs_notes or []
     project_lines = [
         (
             f"- {project['title']}: {project['summary']} "
@@ -42,25 +66,44 @@ def build_context(npc_id: str, activity: DailyActivity, recent_messages: list[st
     recent = "\n".join(f"- {item}" for item in (recent_messages or [])[-8:]) or "- 없음"
     workout = "완료" if activity.workout_done else "미완료"
 
-    return "\n".join(
-        [
-            f"NPC ID: {npc_id}",
-            f"NPC 이름: {_profile_text(npc, 'name', 'NPC')}",
-            f"NPC 역할: {_profile_text(npc, 'role', '')}",
-            f"성격: {_profile_text(npc, 'personality', '')}",
-            f"감정 경향: {_profile_text(npc, 'emotional_bias', '')}",
-            f"기억 초점: {_profile_text(npc, 'memory_focus', '')}",
-            f"현재 목표: {_profile_text(npc, 'goal', '')}",
-            f"오늘 GitHub 커밋: {activity.github_commits}개",
-            f"오늘 공부 시간: {activity.study_minutes}분",
-            f"운동 기록: {workout}",
-            f"오늘 메모: {activity.memo or '없음'}",
-            "최근 대화:",
-            recent,
-            "프로젝트 지식 베이스:",
-            *project_lines,
-        ]
-    )
+    # 모든 NPC가 평소 대화에서 가볍게 언급할 수 있는 최근 학습 활동 요약
+    coding_brief = coding_test_brief_lines(coding_tests[:5]) or ["- 아직 기록된 코딩테스트 풀이가 없습니다."]
+    cs_brief = cs_note_brief_lines(cs_notes[:5]) or ["- 아직 기록된 CS 전공지식 노트가 없습니다."]
+
+    lines = [
+        f"NPC ID: {npc_id}",
+        f"NPC 이름: {_profile_text(npc, 'name', 'NPC')}",
+        f"NPC 역할: {_profile_text(npc, 'role', '')}",
+        f"성격: {_profile_text(npc, 'personality', '')}",
+        f"감정 경향: {_profile_text(npc, 'emotional_bias', '')}",
+        f"기억 초점: {_profile_text(npc, 'memory_focus', '')}",
+        f"현재 목표: {_profile_text(npc, 'goal', '')}",
+        f"오늘 GitHub 커밋: {activity.github_commits}개",
+        f"오늘 공부 시간: {activity.study_minutes}분",
+        f"운동 기록: {workout}",
+        f"오늘 메모: {activity.memo or '없음'}",
+        "최근 대화:",
+        recent,
+        "최근 푼 코딩테스트(요약):",
+        *coding_brief,
+        "최근 공부한 CS 전공지식(요약):",
+        *cs_brief,
+    ]
+
+    # 전담 NPC에게는 코드/풀이/내용 상세까지 제공
+    if _is_coding_npc(npc_id):
+        detail = coding_test_detail_lines(coding_tests[:6])
+        lines.append("코딩테스트 풀이 상세(전담 지식 베이스):")
+        lines.extend(detail or ["- 아직 상세 풀이 기록이 없습니다."])
+    if _is_cs_npc(npc_id):
+        detail = cs_note_detail_lines(cs_notes[:6])
+        lines.append("CS 전공지식 노트 상세(전담 지식 베이스):")
+        lines.extend(detail or ["- 아직 상세 노트 기록이 없습니다."])
+
+    lines.append("프로젝트 지식 베이스:")
+    lines.extend(project_lines)
+
+    return "\n".join(lines)
 
 
 async def answer_with_openai(npc: dict[str, Any], context: str, message: str) -> str:
@@ -102,7 +145,39 @@ async def answer_with_openai(npc: dict[str, Any], context: str, message: str) ->
         return _clean_response_text(data["choices"][0]["message"]["content"])
 
 
-def answer_without_ai(npc_id: str, message: str, activity: DailyActivity) -> str:
+def answer_without_ai(
+    npc_id: str,
+    message: str,
+    activity: DailyActivity,
+    coding_tests: list[CodingTestLog] | None = None,
+    cs_notes: list[CsNoteLog] | None = None,
+) -> str:
+    coding_tests = coding_tests or []
+    cs_notes = cs_notes or []
+
+    if _is_coding_npc(npc_id):
+        if not coding_tests:
+            return "아직 기록된 코딩테스트 풀이가 없어요. /admin에서 푼 문제를 기록하면 어떤 문제를 어떻게 풀었는지 설명해드릴게요."
+        latest = coding_tests[0]
+        platform = latest.platform or "코딩테스트"
+        diff = f" {latest.difficulty}" if latest.difficulty else ""
+        lang = f" {latest.language}로" if latest.language else ""
+        approach = f" 풀이 접근은 '{latest.approach.strip()}'였어요." if latest.approach.strip() else ""
+        return (
+            f"가장 최근에는 {latest.solved_date}에 {platform}{diff} '{latest.title}' 문제를{lang} 풀었어요.{approach} "
+            f"지금까지 기록된 풀이는 총 {len(coding_tests)}개예요. 특정 문제나 언어를 말해주면 풀이를 더 자세히 설명할게요."
+        )
+
+    if _is_cs_npc(npc_id):
+        if not cs_notes:
+            return "아직 기록된 CS 전공지식 노트가 없어요. /admin에서 공부한 내용을 기록하면 그 개념을 정리해서 설명해드릴게요."
+        latest = cs_notes[0]
+        category = f"[{latest.category}] " if latest.category else ""
+        return (
+            f"최근에는 {latest.study_date}에 {category}'{latest.title}'를 공부했어요. "
+            f"지금까지 정리된 노트는 총 {len(cs_notes)}개예요. 궁금한 전공 주제를 말해주면 공부한 내용을 바탕으로 설명할게요."
+        )
+
     project = _project_for_npc_or_message(npc_id, message)
 
     if _contains(message, ["대표", "추천", "best", "main", "채용자"]):
@@ -215,6 +290,10 @@ def _clean_response_text(text: str) -> str:
 
 
 def _npc_profile_for_dynamic_id(npc_id: str) -> dict[str, Any]:
+    if _is_coding_npc(npc_id):
+        return NPCS["coding-test-npc"]
+    if _is_cs_npc(npc_id):
+        return NPCS["cs-npc"]
     if "skill" in npc_id or "backend" in npc_id or "frontend" in npc_id:
         return NPCS["developer-npc"]
     if "exp" in npc_id:

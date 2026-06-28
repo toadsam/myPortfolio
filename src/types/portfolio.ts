@@ -1,6 +1,6 @@
-export type SectionId = "intro" | "projects" | "github" | "experience" | "contact";
+export type SectionId = "intro" | "projects" | "github" | "experience" | "contact" | "study";
 export type ExplorationMode = "click" | "walk";
-export type District = "plaza" | "projects" | "skills" | "experience" | "contact" | "life";
+export type District = "plaza" | "projects" | "skills" | "experience" | "contact" | "life" | "study";
 
 export type BuildingKind =
   | "plaza"

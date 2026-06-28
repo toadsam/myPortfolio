@@ -34,12 +34,55 @@ export const sectionMeta: SectionMeta[] = [
       "프로젝트를 만들며 쌓은 구현 경험, 협업 경험, 성장 과정을 시간순으로 정리합니다."
   },
   {
+    id: "study",
+    label: "Study District",
+    navLabel: "Study",
+    title: "학습 구역",
+    description:
+      "매일 푼 코딩테스트 풀이와 공부한 CS 전공지식을 기록하는 구역입니다. 알고리즘 도장과 지식 서고에서 최근 학습 기록을 확인할 수 있습니다."
+  },
+  {
     id: "contact",
     label: "Contact Post",
     navLabel: "Contact",
     title: "연락 우체국",
     description:
       "이메일, GitHub, 블로그 링크를 통해 다음 협업으로 이어지는 동선을 제공합니다."
+  }
+];
+
+const studyBuildings: BuildingData[] = [
+  {
+    id: "study-codingtest",
+    sectionId: "study",
+    district: "study",
+    contentId: "codingtest",
+    kind: "server-tower",
+    name: "알고리즘 도장",
+    label: "Coding Test",
+    description: "백준·프로그래머스에서 푼 문제와 풀이를 기록하는 코딩테스트 공간",
+    position: [-2.2, 0, 11.5],
+    size: [1.9, 2.4, 1.9],
+    color: "#0d1a2e",
+    roofColor: "#13314f",
+    accentColor: "#38bdf8",
+    techStack: ["백준", "프로그래머스", "알고리즘"]
+  },
+  {
+    id: "study-cs",
+    sectionId: "study",
+    district: "study",
+    contentId: "cs",
+    kind: "office-rounded",
+    name: "지식 서고",
+    label: "CS Notes",
+    description: "운영체제·네트워크·DB 등 전공 지식을 정리하는 학습 서고",
+    position: [2.2, 0, 11.5],
+    size: [2.0, 1.9, 2.0],
+    color: "#16102a",
+    roofColor: "#2c1f4a",
+    accentColor: "#a78bfa",
+    techStack: ["OS", "네트워크", "DB", "자료구조"]
   }
 ];
 
@@ -473,6 +516,7 @@ export const villageBuildings: BuildingData[] = [
   ...skillBuildings,
   ...experienceBuildings,
   ...lifeBuildings,
+  ...studyBuildings,
   contactBuilding
 ].map((b) => ({...b, position: spread(b.position)}));
 
@@ -513,7 +557,8 @@ const rawCameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3T
   github: {position: [3, 8, 0], lookAt: [2, 1, -4.5]},
   experience: {position: [10, 6, 6], lookAt: [7, 1, 5.5]},
   contact: {position: [2, 6, 13], lookAt: [0, 1, 8.5]},
-  life: {position: [14, 8, 4], lookAt: [10, 1, 2]}
+  life: {position: [14, 8, 4], lookAt: [10, 1, 2]},
+  study: {position: [0, 8, 17], lookAt: [0, 1, 11.5]}
 };
 
 export const cameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3Tuple}> = Object.fromEntries(

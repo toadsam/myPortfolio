@@ -270,3 +270,47 @@ export interface AdminOverview {
   npc_presets: NpcPreset[];
   village_overrides: VillageBuildingOverride[];
 }
+
+export interface CodingTestLog {
+  id: number;
+  solved_date: string;
+  platform: string;
+  problem_no: string;
+  title: string;
+  difficulty: string;
+  language: string;
+  url: string;
+  code: string;
+  approach: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CodingTestInput {
+  solved_date?: string;
+  platform: string;
+  problem_no: string;
+  title: string;
+  difficulty: string;
+  language: string;
+  url: string;
+  code: string;
+  approach: string;
+}
+
+export interface CsNote {
+  id: number;
+  study_date: string;
+  category: string;
+  title: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CsNoteInput {
+  study_date?: string;
+  category: string;
+  title: string;
+  content: string;
+}

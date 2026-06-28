@@ -6,7 +6,8 @@ const districtNpcType: Record<string, NPCType> = {
   projects: "project",
   skills: "developer",
   experience: "archivist",
-  contact: "contact"
+  contact: "contact",
+  study: "developer"
 };
 
 const districtColor: Record<string, {body: string; accessory: string}> = {
@@ -14,7 +15,50 @@ const districtColor: Record<string, {body: string; accessory: string}> = {
   skills: {body: "#68c7cf", accessory: "#253342"},
   experience: {body: "#c69af0", accessory: "#8b5a35"},
   contact: {body: "#ef8f72", accessory: "#e8f2ff"},
-  plaza: {body: "#7ecf68", accessory: "#f5d26b"}
+  plaza: {body: "#7ecf68", accessory: "#f5d26b"},
+  study: {body: "#5aa9e6", accessory: "#1f2a44"}
+};
+
+// 학습 구역 건물별 전담 NPC 프로필 (알고리즘 도장·지식 서고)
+const studyNpcConfig: Record<string, {name: string; role: string; dialogue: string; agent: NPCAgentProfile}> = {
+  "study-codingtest": {
+    name: "알고",
+    role: "알고리즘 도장 코치",
+    dialogue:
+      "저는 알고리즘 도장을 지키는 알고예요. 정재훈님이 백준·프로그래머스에서 푼 문제와 풀이를 기억하고 있어요. 어떤 문제를 어떤 접근으로 풀었는지, 언어는 뭘 썼는지 물어보세요.",
+    agent: {
+      personality: "정재훈이 푼 코딩테스트 풀이를 기억해 알고리즘 사고 과정을 보여주는 담백한 코치.",
+      specialty: "백준/프로그래머스 풀이, 난이도, 사용 언어, 접근 방법과 코드 설명",
+      emotionalBias: "어려운 문제를 풀었으면 proud, 풀이 질문을 받으면 focused 상태가 된다.",
+      currentGoal: "정재훈의 알고리즘 문제 해결력과 꾸준함을 풀이 사례로 보여주기",
+      memoryHooks: ["최근 푼 문제", "난이도", "자주 쓰는 언어", "막혔던 지점"],
+      presetQuestions: [
+        "최근에 어떤 문제 푸셨어?",
+        "가장 어려웠던 문제는 뭐야?",
+        "주로 어떤 언어로 풀어?",
+        "이 문제 풀이 방법 알려줘"
+      ]
+    }
+  },
+  "study-cs": {
+    name: "노바",
+    role: "지식 서고 사서",
+    dialogue:
+      "저는 지식 서고를 정리하는 노바예요. 정재훈님이 공부한 운영체제, 네트워크, DB 같은 CS 전공지식 노트를 기억하고 있어요. 궁금한 전공 개념을 물어보면 공부한 내용으로 설명해드릴게요.",
+    agent: {
+      personality: "정재훈이 공부한 CS 노트를 기억해 개념을 연결해 설명하는 차분한 사서.",
+      specialty: "운영체제, 네트워크, 데이터베이스, 자료구조 등 전공 지식 노트 정리",
+      emotionalBias: "최근 공부 노트가 있으면 curious, 개념 질문을 받으면 focused 상태가 된다.",
+      currentGoal: "정재훈이 CS 기본기를 어떻게 쌓아가는지 노트 기록으로 보여주기",
+      memoryHooks: ["최근 공부한 전공 분야", "노트 제목", "반복적으로 나온 개념"],
+      presetQuestions: [
+        "최근에 뭐 공부하셨어?",
+        "운영체제 정리한 내용 알려줘",
+        "어떤 전공 분야를 자주 봐?",
+        "이 개념 설명해줄 수 있어?"
+      ]
+    }
+  }
 };
 
 const defaultPresetQuestions = [
@@ -232,6 +276,23 @@ export const autonomousNpcs: NPCData[] = [
         0,
         z + Math.sin(angle) * distance
       ];
+
+      const study = studyNpcConfig[building.id];
+      if (study) {
+        return {
+          id: `npc-${building.id}`,
+          sectionId: building.sectionId,
+          type,
+          name: study.name,
+          location: building.name,
+          role: study.role,
+          dialogue: study.dialogue,
+          position,
+          color: color.body,
+          accessoryColor: color.accessory,
+          agent: study.agent
+        };
+      }
 
       return {
         id: `npc-${building.id}`,

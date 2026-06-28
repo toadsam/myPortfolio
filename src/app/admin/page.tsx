@@ -4,8 +4,19 @@ import {useEffect, useMemo, useState} from "react";
 import type * as React from "react";
 import {projects} from "@/data/projects";
 import {skills} from "@/data/skills";
-import {fetchTodayActivity, fetchVillageState, saveActivity, syncGithubActivity} from "@/lib/liveApi";
-import type {ActivityInput, VillageState} from "@/types/live";
+import {
+  createCodingTest,
+  createCsNote,
+  deleteCodingTest,
+  deleteCsNote,
+  fetchCodingTests,
+  fetchCsNotes,
+  fetchTodayActivity,
+  fetchVillageState,
+  saveActivity,
+  syncGithubActivity
+} from "@/lib/liveApi";
+import type {ActivityInput, CodingTestLog, CsNote, VillageState} from "@/types/live";
 
 const initialForm: ActivityInput = {
   github_commits: 0,
@@ -485,8 +496,257 @@ export default function AdminPage() {
           </aside>
         </div>
       </form>
+
+      <div className="mx-auto grid max-w-7xl gap-5 px-5 pb-10">
+        <CodingTestAdmin />
+        <CsNoteAdmin />
+      </div>
     </main>
   );
+}
+
+function CodingTestAdmin() {
+  const empty = {
+    solved_date: today(),
+    platform: "백준",
+    problem_no: "",
+    title: "",
+    difficulty: "",
+    language: "Python",
+    url: "",
+    code: "",
+    approach: ""
+  };
+  const [form, setForm] = useState(empty);
+  const [logs, setLogs] = useState<CodingTestLog[]>([]);
+  const [status, setStatus] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  async function load() {
+    try {
+      setLogs(await fetchCodingTests());
+    } catch {
+      setStatus("코딩테스트 기록을 불러오지 못했습니다. 백엔드를 확인하세요.");
+    }
+  }
+
+  async function handleSave(event: React.FormEvent) {
+    event.preventDefault();
+    if (!form.title.trim()) {
+      setStatus("문제 제목을 입력하세요.");
+      return;
+    }
+    setBusy(true);
+    setStatus("저장 중...");
+    try {
+      await createCodingTest(form);
+      setForm({...empty, platform: form.platform, language: form.language});
+      await load();
+      setStatus("코딩테스트 풀이가 저장됐습니다. 알고리즘 도장이 밝아지고 알고가 이 풀이를 기억합니다.");
+    } catch {
+      setStatus("저장에 실패했습니다. 백엔드 상태를 확인하세요.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleDelete(id: number) {
+    try {
+      await deleteCodingTest(id);
+      await load();
+    } catch {
+      setStatus("삭제에 실패했습니다.");
+    }
+  }
+
+  return (
+    <Panel title="코딩테스트 풀이 기록" kicker="Algorithm Dojo">
+      <form className="grid gap-4" onSubmit={handleSave}>
+        <div className="grid gap-3 md:grid-cols-4">
+          <LabeledField label="날짜">
+            <input className="field" type="date" value={form.solved_date} onChange={(e) => setForm({...form, solved_date: e.target.value})} />
+          </LabeledField>
+          <LabeledField label="플랫폼">
+            <select className="field" value={form.platform} onChange={(e) => setForm({...form, platform: e.target.value})}>
+              {["백준", "프로그래머스", "리트코드", "SWEA", "기타"].map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
+          </LabeledField>
+          <LabeledField label="문제 번호 (선택)">
+            <input className="field" value={form.problem_no} onChange={(e) => setForm({...form, problem_no: e.target.value})} placeholder="예: 1463" />
+          </LabeledField>
+          <LabeledField label="난이도">
+            <input className="field" value={form.difficulty} onChange={(e) => setForm({...form, difficulty: e.target.value})} placeholder="예: 실버3, Lv.2" />
+          </LabeledField>
+        </div>
+        <div className="grid gap-3 md:grid-cols-[2fr_1fr]">
+          <LabeledField label="문제 제목">
+            <input className="field" value={form.title} onChange={(e) => setForm({...form, title: e.target.value})} placeholder="예: 1로 만들기" />
+          </LabeledField>
+          <LabeledField label="언어">
+            <select className="field" value={form.language} onChange={(e) => setForm({...form, language: e.target.value})}>
+              {["Python", "Java", "C++", "JavaScript", "C", "Kotlin", "기타"].map((l) => (
+                <option key={l} value={l}>{l}</option>
+              ))}
+            </select>
+          </LabeledField>
+        </div>
+        <LabeledField label="문제 링크 (선택)">
+          <input className="field" value={form.url} onChange={(e) => setForm({...form, url: e.target.value})} placeholder="https://www.acmicpc.net/problem/1463" />
+        </LabeledField>
+        <LabeledField label="풀이 방법 / 접근">
+          <textarea className="field min-h-[90px]" value={form.approach} onChange={(e) => setForm({...form, approach: e.target.value})} placeholder="어떤 접근으로 풀었는지, 막혔던 부분, 시간복잡도 등" />
+        </LabeledField>
+        <LabeledField label="코드">
+          <textarea className="field min-h-[160px] font-mono text-xs" value={form.code} onChange={(e) => setForm({...form, code: e.target.value})} placeholder="제출한 코드를 붙여넣으세요" spellCheck={false} />
+        </LabeledField>
+        <div className="flex items-center gap-3">
+          <button className="rounded-lg bg-[#38bdf8] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#7dd3fc] disabled:opacity-45" disabled={busy} type="submit">
+            코딩테스트 기록 저장
+          </button>
+          {status ? <span className="text-xs text-white/55">{status}</span> : null}
+        </div>
+      </form>
+
+      <div className="mt-5 grid gap-2">
+        {logs.length === 0 ? (
+          <p className="text-sm text-white/40">아직 기록이 없습니다.</p>
+        ) : (
+          logs.map((log) => (
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-white/8 bg-[#070b12] p-3" key={log.id}>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-white">{log.title}</p>
+                <p className="mt-0.5 font-mono text-[11px] text-white/40">
+                  {[log.platform, log.difficulty, log.language, log.solved_date].filter(Boolean).join(" · ")}
+                </p>
+              </div>
+              <button className="shrink-0 rounded-md border border-white/12 px-2 py-1 text-xs text-white/50 transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]" onClick={() => handleDelete(log.id)} type="button">
+                삭제
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </Panel>
+  );
+}
+
+function CsNoteAdmin() {
+  const empty = {study_date: today(), category: "운영체제", title: "", content: ""};
+  const [form, setForm] = useState(empty);
+  const [notes, setNotes] = useState<CsNote[]>([]);
+  const [status, setStatus] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  async function load() {
+    try {
+      setNotes(await fetchCsNotes());
+    } catch {
+      setStatus("CS 노트를 불러오지 못했습니다. 백엔드를 확인하세요.");
+    }
+  }
+
+  async function handleSave(event: React.FormEvent) {
+    event.preventDefault();
+    if (!form.title.trim()) {
+      setStatus("노트 제목을 입력하세요.");
+      return;
+    }
+    setBusy(true);
+    setStatus("저장 중...");
+    try {
+      await createCsNote(form);
+      setForm({...empty, category: form.category});
+      await load();
+      setStatus("CS 전공지식 노트가 저장됐습니다. 지식 서고가 밝아지고 노바가 이 내용을 기억합니다.");
+    } catch {
+      setStatus("저장에 실패했습니다. 백엔드 상태를 확인하세요.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleDelete(id: number) {
+    try {
+      await deleteCsNote(id);
+      await load();
+    } catch {
+      setStatus("삭제에 실패했습니다.");
+    }
+  }
+
+  return (
+    <Panel title="CS 전공지식 노트" kicker="Knowledge Archive">
+      <form className="grid gap-4" onSubmit={handleSave}>
+        <div className="grid gap-3 md:grid-cols-[1fr_1fr_2fr]">
+          <LabeledField label="날짜">
+            <input className="field" type="date" value={form.study_date} onChange={(e) => setForm({...form, study_date: e.target.value})} />
+          </LabeledField>
+          <LabeledField label="분야">
+            <select className="field" value={form.category} onChange={(e) => setForm({...form, category: e.target.value})}>
+              {["운영체제", "네트워크", "데이터베이스", "자료구조", "알고리즘", "컴퓨터구조", "기타"].map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </LabeledField>
+          <LabeledField label="제목">
+            <input className="field" value={form.title} onChange={(e) => setForm({...form, title: e.target.value})} placeholder="예: 프로세스와 스레드의 차이" />
+          </LabeledField>
+        </div>
+        <LabeledField label="공부한 내용">
+          <textarea className="field min-h-[180px]" value={form.content} onChange={(e) => setForm({...form, content: e.target.value})} placeholder="공부한 내용을 정리해 적으세요. 마크다운 없이 자유롭게 작성해도 됩니다." />
+        </LabeledField>
+        <div className="flex items-center gap-3">
+          <button className="rounded-lg bg-[#a78bfa] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#0b0820] transition hover:bg-[#c4b5fd] disabled:opacity-45" disabled={busy} type="submit">
+            CS 노트 저장
+          </button>
+          {status ? <span className="text-xs text-white/55">{status}</span> : null}
+        </div>
+      </form>
+
+      <div className="mt-5 grid gap-2">
+        {notes.length === 0 ? (
+          <p className="text-sm text-white/40">아직 노트가 없습니다.</p>
+        ) : (
+          notes.map((note) => (
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-white/8 bg-[#070b12] p-3" key={note.id}>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-white">{note.title}</p>
+                <p className="mt-0.5 font-mono text-[11px] text-white/40">
+                  {[note.category, note.study_date].filter(Boolean).join(" · ")}
+                </p>
+              </div>
+              <button className="shrink-0 rounded-md border border-white/12 px-2 py-1 text-xs text-white/50 transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]" onClick={() => handleDelete(note.id)} type="button">
+                삭제
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </Panel>
+  );
+}
+
+function LabeledField({label, children}: {label: string; children: React.ReactNode}) {
+  return (
+    <label className="grid gap-2">
+      <span className="field-label">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+function today(): string {
+  return new Date().toISOString().slice(0, 10);
 }
 
 function Panel({children, kicker, title}: {children: React.ReactNode; kicker: string; title: string}) {

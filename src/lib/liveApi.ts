@@ -2,6 +2,10 @@ import type {
   ActivityInput,
   AdminOverview,
   AnalyticsSummary,
+  CodingTestInput,
+  CodingTestLog,
+  CsNote,
+  CsNoteInput,
   DailyActivity,
   GithubSyncResponse,
   ManagedProject,
@@ -170,6 +174,36 @@ export function updateVillageOverride(
     method: "PUT",
     body: JSON.stringify(payload)
   });
+}
+
+export function fetchCodingTests(): Promise<CodingTestLog[]> {
+  return requestJson<CodingTestLog[]>("/coding-tests", {cache: "no-store"});
+}
+
+export function createCodingTest(payload: CodingTestInput): Promise<CodingTestLog> {
+  return requestJson<CodingTestLog>("/admin/coding-tests", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function deleteCodingTest(logId: number): Promise<{ok: boolean}> {
+  return requestJson<{ok: boolean}>(`/admin/coding-tests/${logId}`, {method: "DELETE"});
+}
+
+export function fetchCsNotes(): Promise<CsNote[]> {
+  return requestJson<CsNote[]>("/cs-notes", {cache: "no-store"});
+}
+
+export function createCsNote(payload: CsNoteInput): Promise<CsNote> {
+  return requestJson<CsNote>("/admin/cs-notes", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function deleteCsNote(noteId: number): Promise<{ok: boolean}> {
+  return requestJson<{ok: boolean}>(`/admin/cs-notes/${noteId}`, {method: "DELETE"});
 }
 
 export function getVisitorSessionId(): string {
