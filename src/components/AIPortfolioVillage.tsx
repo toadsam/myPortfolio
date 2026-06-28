@@ -588,7 +588,7 @@ export function AIPortfolioVillage() {
                 setIsPanelOpen(false);
                 setSelectedNpc(null);
               }}
-              className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 md:bottom-6"
+              className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 active:scale-95 md:bottom-6"
             >
               {explorationMode === "walk" ? (
                 <><span>🖱️</span> 클릭 모드로</>
@@ -609,7 +609,7 @@ export function AIPortfolioVillage() {
                   return next;
                 });
               }}
-              className="fixed bottom-[14.5rem] left-4 z-30 flex h-10 w-10 items-center justify-center rounded-xl border border-[#5b8fd6]/40 bg-[#050d1a]/85 text-base shadow-2xl backdrop-blur-md transition hover:border-[#86b0e6] hover:bg-[#5b8fd6]/12 md:bottom-[8.75rem]"
+              className="fixed bottom-[14.5rem] left-4 z-30 flex h-10 w-10 items-center justify-center rounded-xl border border-[#5b8fd6]/40 bg-[#050d1a]/85 text-base shadow-2xl backdrop-blur-md transition hover:border-[#86b0e6] hover:bg-[#5b8fd6]/12 active:scale-90 md:bottom-[8.75rem]"
             >
               {soundOn ? "🔊" : "🔇"}
             </button>
@@ -764,8 +764,8 @@ function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onSelect: 
         <button
           className={
             activeNpcId === npc.id
-              ? "shrink-0 rounded-lg border border-[#00ff88]/50 bg-[#00ff88]/18 px-3 py-2 text-left text-xs font-black text-white"
-              : "shrink-0 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2 text-left text-xs font-black text-white/68 transition hover:border-[#00d4ff]/45 hover:text-white"
+              ? "shrink-0 rounded-lg border border-[#00ff88]/50 bg-[#00ff88]/18 px-3 py-2 text-left text-xs font-black text-white transition active:scale-95"
+              : "shrink-0 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2 text-left text-xs font-black text-white/68 transition hover:border-[#00d4ff]/45 hover:text-white active:scale-95"
           }
           key={npc.id}
           onClick={() => onSelect(npc)}
