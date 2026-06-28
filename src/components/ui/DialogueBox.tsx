@@ -18,6 +18,8 @@ interface DialogueBoxProps {
   onOpenSection: (sectionId: SectionId) => void;
   onRunAction: (npc: NPCData, action: NpcActionDefinition) => void;
   onSuggestedAction: (action: NpcSuggestedAction | null | undefined) => void;
+  /** 백엔드/AI 연결 불가 (기본 대사 모드) */
+  aiOffline?: boolean;
 }
 
 interface ChatLine {
@@ -67,13 +69,16 @@ export function DialogueBox({
   npcRuntimeState,
   onClose,
   onOpenSection,
-  onSuggestedAction
+  onSuggestedAction,
+  aiOffline
 }: DialogueBoxProps) {
   const section = npc ? sectionMeta.find((item) => item.id === npc.sectionId) : null;
   const [message, setMessage] = useState("");
   const [lines, setLines] = useState<ChatLine[]>([]);
   const [isSending, setIsSending] = useState(false);
+  const [fallbackMode, setFallbackMode] = useState(false);
   const [remotePresetQuestions, setRemotePresetQuestions] = useState<string[]>([]);
+  const offline = Boolean(aiOffline) || fallbackMode;
   const agent = npc?.agent;
   const mood = moodLabel(npcRuntimeState?.mood ?? npcState?.mood);
   const moodText = MOOD_LABELS[mood] ?? mood;
@@ -136,6 +141,10 @@ export function DialogueBox({
     window.localStorage.setItem(storageKey(npc.id), JSON.stringify(lines.slice(-30)));
   }, [lines, npc]);
 
+  useEffect(() => {
+    setFallbackMode(false);
+  }, [npc]);
+
   async function ask(text: string) {
     if (!npc || !text.trim() || isSending) return;
     const nextMessage = text.trim();
@@ -157,8 +166,10 @@ export function DialogueBox({
     try {
       const response = await sendNpcMessage(npc.id, nextMessage, context);
       onSuggestedAction(response.suggested_action);
+      setFallbackMode(!response.used_ai);
       setLines((current) => current.concat({role: "npc", text: response.reply}));
     } catch {
+      setFallbackMode(true);
       setLines((current) =>
         current.concat({
           role: "npc",
@@ -199,7 +210,14 @@ export function DialogueBox({
                 <span className="absolute -bottom-1 -right-1 text-base" title={moodText}>{moodEmoji}</span>
               </span>
               <div className="min-w-0">
-                <p className="truncate text-base font-black text-white">{npc.name}</p>
+                <div className="flex items-center gap-2">
+                  <p className="truncate text-base font-black text-white">{npc.name}</p>
+                  {offline ? (
+                    <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-[0.1em] text-amber-300">
+                      ⚠ AI 오프라인
+                    </span>
+                  ) : null}
+                </div>
                 <p className="truncate font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-[#00d4ff]/80">
                   {npc.role} · {moodText}
                 </p>

@@ -1,4 +1,5 @@
 import json
+import logging
 from typing import Any
 
 from app.catalog import NPCS, PROJECTS
@@ -15,6 +16,8 @@ from app.schemas import (
 )
 from app.services.chat_service import build_context
 from app.services.npc_action_service import choose_npc_action
+
+logger = logging.getLogger("npc_brain")
 
 VALID_MOODS: set[str] = {
     "sleepy",
@@ -41,8 +44,8 @@ async def generate_npc_tick(payload: NpcTickIn, activity: DailyActivity) -> NpcT
                 max_tokens=260,
             )
             return _tick_from_data(payload.npc_id, data, used_ai=True, activity=activity)
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("NPC tick OpenAI 호출 실패 → 폴백 사용 (model=%s): %r", settings.openai_npc_model, exc)
 
     return _fallback_tick(payload, activity)
 
@@ -69,11 +72,11 @@ async def generate_npc_encounter(
                     },
                     ensure_ascii=False,
                 ),
-                max_tokens=360,
+                max_tokens=440,
             )
             return _encounter_from_data(npc_a.npc_id, npc_b.npc_id, data, used_ai=True, activity=activity)
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.warning("NPC encounter OpenAI 호출 실패 → 폴백 사용 (model=%s): %r", settings.openai_npc_model, exc)
 
     return _fallback_encounter(npc_a, npc_b, activity)
 
@@ -180,9 +183,14 @@ def _npc_profile(npc_id: str, assigned_building_id: str | None = None) -> dict[s
 def _encounter_system_prompt(a_profile: dict[str, Any], b_profile: dict[str, Any], context: str) -> str:
     return (
         "You simulate a brief spontaneous meeting between two autonomous NPCs in a 3D portfolio village. "
-        "They should speak naturally in Korean, react to the village state, and exchange useful portfolio hints. "
-        "Keep each line under 55 Korean characters. Return JSON only with keys: dialogue, state_changes, memory, cooldown_seconds. "
-        "dialogue is an array of {npc_id, text}. state_changes is an array of {npc_id, mood, energy}.\n"
+        "Write a lively back-and-forth conversation in natural Korean where each speaker reacts to what the "
+        "other JUST said (real turn-taking, not two separate monologues). React to the village state and "
+        "exchange useful portfolio hints. "
+        "dialogue MUST be an array of EXACTLY 4 objects {npc_id, text} in strict A, B, A, B order. "
+        "Use the exact npc_id values from the user message for each line. "
+        "Keep each line under 45 Korean characters and make it sound like a real chat. "
+        "Return JSON only with keys: dialogue, state_changes, memory, cooldown_seconds. "
+        "state_changes is an array of {npc_id, mood, energy}.\n"
         f"NPC A role: {_profile_text(a_profile, 'role', '')} / tone: {_profile_text(a_profile, 'tone', '')}\n"
         f"NPC B role: {_profile_text(b_profile, 'role', '')} / tone: {_profile_text(b_profile, 'tone', '')}\n"
         f"Context:\n{context}"
@@ -320,12 +328,16 @@ def _fallback_encounter(
 ) -> NpcEncounterOut:
     mood: NpcMood = "busy" if activity.github_commits >= 5 else "curious"
     first_line = "오늘 커밋 덕분에 프로젝트 구역이 밝아졌어." if activity.github_commits else "오늘은 어떤 프로젝트를 추천할지 정리 중이야."
-    second_line = "방문자가 오면 최근 본 건물부터 기억해두자." if activity.study_minutes else "처음 온 사람에게 빠른 이력서를 안내하자."
+    second_line = "오 그래? 방문자 오면 그 건물부터 안내하자." if activity.github_commits else "음, 그럼 빠른 이력서부터 보여주는 건 어때?"
+    third_line = "좋아. 근데 학습 기록도 같이 보여주면 설득력 있겠지." if activity.study_minutes else "그러자. 처음 온 사람은 길 잃기 쉬우니까."
+    fourth_line = "맞아, 그렇게 안내 동선 맞춰두자!" if activity.study_minutes else "콜. 내가 입구에서 먼저 말 걸어볼게."
 
     return NpcEncounterOut(
         dialogue=[
             NpcDialogueLine(npc_id=npc_a.npc_id, text=first_line),
             NpcDialogueLine(npc_id=npc_b.npc_id, text=second_line),
+            NpcDialogueLine(npc_id=npc_a.npc_id, text=third_line),
+            NpcDialogueLine(npc_id=npc_b.npc_id, text=fourth_line),
         ],
         state_changes=[
             NpcStateChange(npc_id=npc_a.npc_id, mood=mood, energy=62),

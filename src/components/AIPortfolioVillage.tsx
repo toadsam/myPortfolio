@@ -103,6 +103,24 @@ function closeUp(pos: Vector3Tuple): {position: Vector3Tuple; lookAt: Vector3Tup
   return {position: [pos[0], 1.4, pos[2] + 3], lookAt: [pos[0], 1.35, pos[2]]};
 }
 
+const CONVO_STEP = 2600; // NPC 간 대화 한 턴 길이(ms)
+
+// 두 NPC를 옆에서 함께 담는 투샷 카메라 (엿듣기 장면)
+function twoShot(a: Vector3Tuple, b: Vector3Tuple): {position: Vector3Tuple; lookAt: Vector3Tuple} {
+  const mx = (a[0] + b[0]) / 2;
+  const mz = (a[2] + b[2]) / 2;
+  const dx = b[0] - a[0];
+  const dz = b[2] - a[2];
+  const len = Math.hypot(dx, dz) || 1;
+  let px = -dz / len;
+  let pz = dx / len;
+  if (pz < 0) {
+    px = -px;
+    pz = -pz;
+  }
+  return {position: [mx + px * 4.5, 2.3, mz + pz * 4.5], lookAt: [mx, 1.2, mz]};
+}
+
 useGLTF.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
 
 export function AIPortfolioVillage() {
@@ -117,6 +135,9 @@ export function AIPortfolioVillage() {
   const [conciergeStage, setConciergeStage] = useState<"idle" | "running" | "panel" | "closed">("idle");
   const [talkCam, setTalkCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
   const [conciergeCam, setConciergeCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
+  const [eavesdrop, setEavesdrop] = useState<{aName: string; bName: string; lines: {name: string; text: string}[]} | null>(null);
+  const [eavesOpen, setEavesOpen] = useState(false);
+  const [convoCam, setConvoCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
 
   const [viewMode, setViewMode] = useState<"village" | "interior" | "project-interior" | "resume">("village");
   const [interiorSectionId, setInteriorSectionId] = useState<SectionId | null>(null);
@@ -135,6 +156,7 @@ export function AIPortfolioVillage() {
   const npcTickBusyRef = useRef(false);
   const encounterBusyRef = useRef(false);
   const encounterCooldownRef = useRef<Record<string, number>>({});
+  const convoTimersRef = useRef<number[]>([]);
 
   useEffect(() => {
     npcRuntimeStatesRef.current = npcRuntimeStates;
@@ -208,6 +230,7 @@ export function AIPortfolioVillage() {
     }
 
     async function runTickBatch() {
+      if (typeof document !== "undefined" && document.hidden) return; // 탭 숨김 → AI 호출 중단(비용 절감)
       if (npcTickBusyRef.current) return;
       npcTickBusyRef.current = true;
 
@@ -277,6 +300,7 @@ export function AIPortfolioVillage() {
 
   useEffect(() => {
     async function checkEncounter() {
+      if (typeof document !== "undefined" && document.hidden) return; // 탭 숨김 → AI 호출 중단(비용 절감)
       if (encounterBusyRef.current) return;
 
       const entries = Object.entries(npcPositionsRef.current);
@@ -319,9 +343,8 @@ export function AIPortfolioVillage() {
             );
 
             remember(response.memory);
-            setEncounterNotice("NPC들이 서로 이야기를 나눴습니다.");
-            window.setTimeout(() => setEncounterNotice(null), 4500);
             encounterCooldownRef.current[pairKey] = now + response.cooldown_seconds * 1000;
+            const convoMs = response.dialogue.length * CONVO_STEP + 1500;
             setNpcRuntimeStates((states) => {
               const next = {...states};
 
@@ -330,15 +353,6 @@ export function AIPortfolioVillage() {
                   ...(next[change.npc_id] ?? {}),
                   mood: change.mood,
                   energy: change.energy,
-                  memory: response.memory
-                };
-              }
-
-              for (const line of response.dialogue) {
-                next[line.npc_id] = {
-                  ...(next[line.npc_id] ?? {mood: "curious" as NpcMood, energy: 55}),
-                  bubbleText: line.text,
-                  bubbleExpiresAt: Date.now() + 9000,
                   memory: response.memory
                 };
               }
@@ -353,8 +367,25 @@ export function AIPortfolioVillage() {
                 );
               }
 
+              // 서로 멈춰서 마주보게 (NPC 간 대화 연출) — 대화 전체 길이만큼 유지
+              const holdUntil = now + convoMs;
+              next[npcAId] = {
+                ...(next[npcAId] ?? {mood: "curious" as NpcMood, energy: 55}),
+                facePoint: [npcBPosition[0], 0, npcBPosition[2]],
+                holdUntil
+              };
+              next[npcBId] = {
+                ...(next[npcBId] ?? {mood: "curious" as NpcMood, energy: 55}),
+                facePoint: [npcAPosition[0], 0, npcAPosition[2]],
+                holdUntil
+              };
+
               return next;
             });
+
+            // 말풍선을 한 줄씩 순차로 띄워 주고받는 대화처럼 + 엿듣기 기록
+            setConvoCam(twoShot(npcAPosition, npcBPosition));
+            playConversation(npcAId, npcBId, response.dialogue);
           } catch {
             encounterCooldownRef.current[pairKey] = now + 240000;
           } finally {
@@ -489,6 +520,46 @@ export function AIPortfolioVillage() {
     if (!memory) return;
     npcMemoryRef.current = npcMemoryRef.current.concat(memory).slice(-20);
   }
+
+  // NPC 간 대화를 한 줄씩 순차로 말풍선 재생(주고받기) + 엿듣기 기록
+  function playConversation(aId: string, bId: string, dialogue: {npc_id: string; text: string}[]) {
+    convoTimersRef.current.forEach((t) => window.clearTimeout(t));
+    convoTimersRef.current = [];
+    const nameOf = (id: string) => autonomousNpcs.find((n) => n.id === id)?.name ?? id;
+
+    setEavesdrop({
+      aName: nameOf(aId),
+      bName: nameOf(bId),
+      lines: dialogue.map((l) => ({name: nameOf(l.npc_id), text: l.text}))
+    });
+    setEavesOpen(false);
+
+    dialogue.forEach((line, i) => {
+      const t = window.setTimeout(() => {
+        const other = line.npc_id === aId ? bId : aId;
+        setNpcRuntimeStates((states) => {
+          const next = {...states};
+          next[line.npc_id] = {
+            ...(next[line.npc_id] ?? {mood: "curious" as NpcMood, energy: 55}),
+            bubbleText: line.text,
+            bubbleExpiresAt: Date.now() + CONVO_STEP + 800
+          };
+          if (next[other]) next[other] = {...next[other], bubbleText: undefined, bubbleExpiresAt: undefined};
+          return next;
+        });
+      }, i * CONVO_STEP);
+      convoTimersRef.current.push(t);
+    });
+
+    const clearT = window.setTimeout(() => {
+      setEavesdrop(null);
+      setEavesOpen(false);
+      setConvoCam(null);
+    }, dialogue.length * CONVO_STEP + 9000);
+    convoTimersRef.current.push(clearT);
+  }
+
+  useEffect(() => () => convoTimersRef.current.forEach((t) => window.clearTimeout(t)), []);
 
   function handleNpcPositionChange(npcId: string, position: Vector3Tuple) {
     npcPositionsRef.current[npcId] = position;
@@ -699,7 +770,13 @@ export function AIPortfolioVillage() {
               onGuideArrive={handleGuideArrive}
               guideForceHold={conciergeStage === "panel"}
               cinematic={
-                conciergeStage === "running" ? CONCIERGE_CAM : conciergeStage === "panel" ? conciergeCam : talkCam
+                eavesOpen && convoCam
+                  ? convoCam
+                  : conciergeStage === "running"
+                    ? CONCIERGE_CAM
+                    : conciergeStage === "panel"
+                      ? conciergeCam
+                      : talkCam
               }
             />
             {showIntro ? <IntroOverlay onStart={startExploring} onResume={openResume} /> : null}
@@ -757,6 +834,12 @@ export function AIPortfolioVillage() {
               }}
             />
           ) : null}
+          {eavesdrop && !eavesOpen ? (
+            <EavesdropButton aName={eavesdrop.aName} bName={eavesdrop.bName} onOpen={() => setEavesOpen(true)} />
+          ) : null}
+          {eavesdrop && eavesOpen ? (
+            <EavesdropPanel aName={eavesdrop.aName} bName={eavesdrop.bName} lines={eavesdrop.lines} onClose={() => setEavesOpen(false)} />
+          ) : null}
           <InfoPanel
             activeSection={activeSection}
             activeContentId={activeContentId}
@@ -771,6 +854,7 @@ export function AIPortfolioVillage() {
             onOpenSection={openSection}
             onRunAction={runManualNpcAction}
             onSuggestedAction={handleNpcSuggestedAction}
+            aiOffline={!!liveError}
           />
           <SectionTabs activeSection={activeSection} onSelectSection={openSection} />
         </>
@@ -989,6 +1073,72 @@ function ControlsHint() {
       <span className="flex items-center gap-1.5"><span className="text-sm">🔄</span> 드래그·스크롤로 둘러보기</span>
       <span className="text-white/20">·</span>
       <span className="flex items-center gap-1.5"><span className="text-sm">🚶</span> 직접 이동은 좌하단 버튼</span>
+    </div>
+  );
+}
+
+function EavesdropButton({aName, bName, onOpen}: {aName: string; bName: string; onOpen: () => void}) {
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="fixed left-1/2 top-[112px] z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#00ff88]/40 bg-[#050d1a]/90 px-4 py-2 font-mono text-[11px] font-black text-[#9affc4] shadow-2xl backdrop-blur-md transition hover:bg-[#00ff88]/12 active:scale-95"
+    >
+      <span className="relative flex h-2 w-2">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00ff88] opacity-60" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00ff88]" />
+      </span>
+      💬 {aName} ↔ {bName} 대화 · 엿듣기
+    </button>
+  );
+}
+
+function EavesdropPanel({
+  aName,
+  bName,
+  lines,
+  onClose
+}: {
+  aName: string;
+  bName: string;
+  lines: {name: string; text: string}[];
+  onClose: () => void;
+}) {
+  return (
+    <div className="fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 rounded-2xl border border-[#00ff88]/30 bg-[#050d1a]/95 p-4 shadow-2xl backdrop-blur-md">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="font-mono text-[11px] font-black uppercase tracking-[0.16em] text-[#9affc4]">
+          🕵 엿듣는 중 · {aName} ↔ {bName}
+        </p>
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-md border border-white/15 px-2 py-0.5 text-sm font-bold text-white/70 transition hover:text-white active:scale-90"
+        >
+          ✕
+        </button>
+      </div>
+      <div className="space-y-2">
+        {lines.map((line, index) => {
+          const isA = line.name === aName;
+          return (
+            <div key={index} className={isA ? "mr-8" : "ml-8"}>
+              <p className={`font-mono text-[9px] font-black uppercase tracking-[0.1em] ${isA ? "text-[#00d4ff]/70" : "text-[#ff9a6c]/70"} ${isA ? "" : "text-right"}`}>
+                {line.name}
+              </p>
+              <div
+                className={
+                  isA
+                    ? "mt-0.5 rounded-2xl rounded-bl-sm bg-[#00d4ff]/12 px-3 py-2 text-sm leading-6 text-[#dff8ff]"
+                    : "mt-0.5 rounded-2xl rounded-br-sm bg-[#ff9a6c]/12 px-3 py-2 text-sm leading-6 text-[#ffe6d8]"
+                }
+              >
+                {line.text}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

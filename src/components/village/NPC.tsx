@@ -29,6 +29,10 @@ interface NPCProps {
   onScriptedArrive?: () => void;
   /** 대화/컨시어지 동안 제자리 고정 + 카메라 응시 */
   forceHold?: boolean;
+  /** NPC끼리 대화 중 마주볼 상대 위치 */
+  facePoint?: [number, number, number];
+  /** 이 시각까지 멈춰서 마주봄 */
+  holdUntil?: number;
 }
 
 export function NPC({
@@ -44,7 +48,9 @@ export function NPC({
   scriptedTarget,
   scriptedStart,
   onScriptedArrive,
-  forceHold
+  forceHold,
+  facePoint,
+  holdUntil
 }: NPCProps) {
   const groupRef = useRef<Group | null>(null);
   const elapsedRef = useRef(0);
@@ -113,6 +119,22 @@ export function NPC({
       const g = groupRef.current;
       g.rotation.y += (0 - g.rotation.y) * Math.min(1, delta * 6);
       g.position.y = Math.sin(elapsedRef.current * 2.2) * 0.03; // 잔잔한 호흡
+      moveStateRef.current = "idle";
+      return;
+    }
+
+    // ── NPC끼리 대화: 멈춰서 서로 마주보기 ──
+    if (facePoint && holdUntil && Date.now() < holdUntil && !currentAction) {
+      const g = groupRef.current;
+      const fx = facePoint[0] - g.position.x;
+      const fz = facePoint[2] - g.position.z;
+      if (fx * fx + fz * fz > 0.0009) {
+        const targetRot = Math.atan2(fx, fz);
+        let d = targetRot - g.rotation.y;
+        d = Math.atan2(Math.sin(d), Math.cos(d)); // 최단 회전
+        g.rotation.y += d * Math.min(1, delta * 6);
+      }
+      g.position.y = Math.sin(elapsedRef.current * 2.2) * 0.03;
       moveStateRef.current = "idle";
       return;
     }

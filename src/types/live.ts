@@ -99,6 +99,10 @@ export interface NpcRuntimeState {
   nextGoal?: string;
   currentAction?: NpcActionState;
   recentActions?: NpcActionState[];
+  /** NPC끼리 대화 중 마주볼 상대 위치 */
+  facePoint?: [number, number, number];
+  /** 이 시각까지 멈춰서 마주봄 (NPC 간 대화) */
+  holdUntil?: number;
 }
 
 export interface VillageState {

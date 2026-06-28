@@ -300,6 +300,8 @@ export function VillageScene({
               currentAction={npcRuntimeStates[npc.id]?.currentAction}
               onPositionChange={onNpcPositionChange}
               onSelect={onSelectNpc}
+              facePoint={npcRuntimeStates[npc.id]?.facePoint}
+              holdUntil={npcRuntimeStates[npc.id]?.holdUntil}
               scriptedTarget={npc.id === "guide-npc" ? guideScriptedTarget : undefined}
               scriptedStart={npc.id === "guide-npc" ? [-4, 0, 1] : undefined}
               onScriptedArrive={npc.id === "guide-npc" ? onGuideArrive : undefined}
