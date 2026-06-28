@@ -11,6 +11,7 @@ import {SceneTransition} from "@/components/ui/SceneTransition";
 import {SectionTabs} from "@/components/ui/SectionTabs";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
+import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {villageBuildings} from "@/lib/constants";
 import {fetchVillageState, requestNpcEncounter, requestNpcTick, trackVisitorEvent} from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
@@ -395,6 +396,23 @@ export function AIPortfolioVillage() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  // 오디오 지휘 — 마을이면 마을 BGM, 프로젝트면 프로젝트 음악, 그 외엔 무음.
+  // 사운드가 켜져 있을 때만(soundOn) 재생. 화면 전환 시 자동으로 교체된다.
+  useEffect(() => {
+    if (showIntro) return;
+    if (viewMode === "village") {
+      projectSound?.setEnabled(false);
+      if (soundOn) sfx.startAmbient();
+      else sfx.stopAmbient();
+    } else if (viewMode === "project-interior") {
+      sfx.stopAmbient();
+      projectSound?.setEnabled(soundOn);
+    } else {
+      sfx.stopAmbient();
+      projectSound?.setEnabled(false);
+    }
+  }, [viewMode, soundOn, showIntro]);
 
   function remember(memory: string) {
     if (!memory) return;

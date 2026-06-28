@@ -36,6 +36,112 @@ function tone(freq: number, dur: number, type: OscillatorType = "sine", vol = 0.
 // 앰비언트 드론 (Developer City 이식) — 저역 사인 2개 + lowpass
 let drone: {osc1: OscillatorNode; osc2: OscillatorNode; gain: GainNode} | null = null;
 
+// ── 생성형 마을 배경음악 — 코드 패드 + 스파스 벨 아르페지오 + 에코 (에셋 없음) ──
+// 잔잔한 코드 진행을 천천히 순환하며, 위에 벨이 띄엄띄엄 떨어진다.
+const PROGRESSION: number[][] = [
+  [130.81, 196.0, 246.94, 329.63], // Cmaj7 (밝은 보이싱)
+  [123.47, 196.0, 293.66, 369.99], // Gmaj7
+  [130.81, 220.0, 261.63, 329.63], // Am7
+  [174.61, 220.0, 261.63, 329.63], // Fmaj7
+];
+const CHORD_DUR = 6; // 초 (살짝 경쾌하게)
+
+let music: {master: GainNode; lp: BiquadFilterNode; delay: DelayNode} | null = null;
+let musicTimer: ReturnType<typeof setInterval> | null = null;
+let chordIdx = 0;
+
+function playChord() {
+  const c = getCtx();
+  if (!c || !music || muted) return;
+  const chord = PROGRESSION[chordIdx % PROGRESSION.length]!;
+  chordIdx += 1;
+  const t0 = c.currentTime;
+
+  // 패드 (코드 구성음을 부드럽게)
+  for (const f of chord) {
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = "triangle";
+    o.frequency.value = f;
+    o.detune.value = (Math.random() - 0.5) * 6;
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(0.022, t0 + 1.6);
+    g.gain.linearRampToValueAtTime(0.018, t0 + CHORD_DUR - 1.5);
+    g.gain.linearRampToValueAtTime(0.0001, t0 + CHORD_DUR);
+    o.connect(g);
+    g.connect(music.lp);
+    o.start(t0);
+    o.stop(t0 + CHORD_DUR + 0.1);
+  }
+
+  // 벨 아르페지오 (한 옥타브 위에서 띄엄띄엄)
+  const notes = chord.map((f) => f * 2);
+  const hits = 5;
+  for (let i = 0; i < hits; i += 1) {
+    if (Math.random() < 0.18) continue; // 가끔 쉼 (밝게 — 더 자주)
+    const at = 0.4 + i * (CHORD_DUR / hits) + Math.random() * 0.5;
+    const f = notes[Math.floor(Math.random() * notes.length)]!;
+    const o = c.createOscillator();
+    const g = c.createGain();
+    o.type = "triangle";
+    o.frequency.value = f;
+    const ts = t0 + at;
+    g.gain.setValueAtTime(0, ts);
+    g.gain.linearRampToValueAtTime(0.03, ts + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, ts + 1.4);
+    o.connect(g);
+    g.connect(music.delay); // 에코
+    g.connect(music.lp);
+    o.start(ts);
+    o.stop(ts + 1.6);
+  }
+}
+
+function startMusic() {
+  if (muted || music) return;
+  const c = getCtx();
+  if (!c) return;
+  const master = c.createGain();
+  master.gain.setValueAtTime(0, c.currentTime);
+  master.connect(c.destination);
+  const lp = c.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = 3200; // 더 개방적(밝게)
+  lp.connect(master);
+  const delay = c.createDelay(1.0);
+  delay.delayTime.value = 0.38;
+  const fb = c.createGain();
+  fb.gain.value = 0.28;
+  delay.connect(fb);
+  fb.connect(delay);
+  delay.connect(master);
+  music = {master, lp, delay};
+  master.gain.linearRampToValueAtTime(0.5, c.currentTime + 2.2);
+  chordIdx = 0;
+  playChord();
+  musicTimer = setInterval(playChord, CHORD_DUR * 1000);
+}
+
+function stopMusic() {
+  if (musicTimer) {
+    clearInterval(musicTimer);
+    musicTimer = null;
+  }
+  if (!music) return;
+  const c = getCtx();
+  const m = music;
+  music = null;
+  if (!c) return;
+  m.master.gain.linearRampToValueAtTime(0, c.currentTime + 0.8);
+  setTimeout(() => {
+    try {
+      m.master.disconnect();
+    } catch {
+      /* noop */
+    }
+  }, 1000);
+}
+
 export const sfx = {
   setMuted(v: boolean) {
     muted = v;
@@ -67,10 +173,13 @@ export const sfx = {
     o2.connect(lp);
     o1.start();
     o2.start();
-    g.gain.linearRampToValueAtTime(0.045, c.currentTime + 1.4);
+    g.gain.linearRampToValueAtTime(0.04, c.currentTime + 1.4);
     drone = {osc1: o1, osc2: o2, gain: g};
+    // 드론 위에 잔잔한 마을 배경음악을 얹는다
+    startMusic();
   },
   stopAmbient() {
+    stopMusic();
     if (!drone) return;
     const c = getCtx();
     const d = drone;
@@ -87,7 +196,7 @@ export const sfx = {
     }, 600);
   },
   isAmbientOn() {
-    return drone !== null;
+    return drone !== null || music !== null;
   },
   // 짧은 호버 블립
   hover() {
