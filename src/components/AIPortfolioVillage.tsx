@@ -546,6 +546,12 @@ export function AIPortfolioVillage() {
       openSection("contact");
       return;
     }
+    if (district === "life") {
+      // 인생 구역 — 추후 전시실/콘텐츠 연결 예정. 지금은 안내만.
+      setEncounterNotice(`${building.name} · 곧 공개됩니다 🚧`);
+      window.setTimeout(() => setEncounterNotice(null), 2800);
+      return;
+    }
 
     setIsPanelOpen(false);
     setSelectedNpc(null);

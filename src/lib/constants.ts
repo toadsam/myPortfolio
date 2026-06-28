@@ -369,13 +369,112 @@ const contactBuilding: BuildingData = {
   accentColor: "#ff6600"
 };
 
+// 인생/일상 구역 — 운동·투자·학습·음악·연혁·가치관. (지오메트리는 임시, 추후 에셋 교체)
+const lifeBuildings: BuildingData[] = [
+  {
+    id: "life-values",
+    sectionId: "intro",
+    district: "life",
+    kind: "minimal-office",
+    name: "가치관 비석",
+    label: "Values",
+    description: "내가 왜 개발하는가 — 일하는 원칙과 가치관.",
+    position: [7.5, 0, -6.5],
+    size: [1.3, 1.3, 1.3],
+    color: "#1a160d",
+    roofColor: "#3a2f1a",
+    accentColor: "#fbbf24"
+  },
+  {
+    id: "life-gym",
+    sectionId: "intro",
+    district: "life",
+    kind: "flat-hub",
+    name: "헬스장",
+    label: "Fitness",
+    description: "운동 스트릭과 오늘의 운동 기록 — 꾸준함의 공간.",
+    position: [10, 0, -3.5],
+    size: [2.2, 1.5, 2.2],
+    color: "#1a0d0d",
+    roofColor: "#3a1a1a",
+    accentColor: "#ff5a5a",
+    techStack: ["운동", "스트릭"]
+  },
+  {
+    id: "life-invest",
+    sectionId: "intro",
+    district: "life",
+    kind: "tower",
+    name: "투자 타워",
+    label: "Invest",
+    description: "포트폴리오 흐름과 시장 분위기 (금액은 비공개).",
+    position: [11, 0, 1],
+    size: [1.8, 2.8, 1.8],
+    color: "#0d2a1a",
+    roofColor: "#1a4a2a",
+    accentColor: "#34d399",
+    techStack: ["투자", "원칙"]
+  },
+  {
+    id: "life-library",
+    sectionId: "intro",
+    district: "life",
+    kind: "office-rounded",
+    name: "도서관",
+    label: "Library",
+    description: "읽은 책과 학습 기록 — 오늘의 학습 시간 반영.",
+    position: [10, 0, 5],
+    size: [2.2, 1.8, 2.2],
+    color: "#1f160d",
+    roofColor: "#3a2a1a",
+    accentColor: "#d9a45b",
+    techStack: ["독서", "학습"]
+  },
+  {
+    id: "life-music",
+    sectionId: "intro",
+    district: "life",
+    kind: "dome",
+    name: "음악 스튜디오",
+    label: "Music",
+    description: "플레이리스트와 사운드 — MyWave로 이어지는 공간.",
+    position: [11, 0, 8.5],
+    size: [2.0, 1.9, 2.0],
+    color: "#160d2a",
+    roofColor: "#2a1a4a",
+    accentColor: "#c084fc",
+    techStack: ["음악", "오디오"]
+  },
+  {
+    id: "life-timeline",
+    sectionId: "intro",
+    district: "life",
+    kind: "tower",
+    name: "연혁 타임라인",
+    label: "Timeline",
+    description: "입학·전향·첫 커밋·프로젝트 — 내 인생의 순간들.",
+    position: [8.5, 0, 8.5],
+    size: [1.6, 3.0, 1.6],
+    color: "#0d1a2e",
+    roofColor: "#1a3a5a",
+    accentColor: "#7eb8ff"
+  }
+];
+
+// 마을 확장 + 건물 간격 넓힘 — 모든 좌표에 동일 배수 적용
+export const SPREAD = 1.45;
+export function spread(p: number[]): Vector3Tuple {
+  return [Math.round((p[0] ?? 0) * SPREAD * 100) / 100, p[1] ?? 0, Math.round((p[2] ?? 0) * SPREAD * 100) / 100];
+}
+
 export const villageBuildings: BuildingData[] = [
   plazaBuilding,
   ...projectBuildings,
   ...skillBuildings,
   ...experienceBuildings,
+  ...lifeBuildings,
   contactBuilding
-];
+].map((b) => ({...b, position: spread(b.position)}));
 
 export const treePositions: Vector3Tuple[] = [
   [-8.2, 0, -5.2],
@@ -392,8 +491,11 @@ export const treePositions: Vector3Tuple[] = [
   [-3.5, 0, 3.8],
   [1.5, 0, 3.5],
   [-2.5, 0, 9.5],
-  [2.5, 0, 9.5]
-];
+  [2.5, 0, 9.5],
+  [13.5, 0, 2.5],
+  [12.5, 0, -6.5],
+  [13.5, 0, 11.5]
+].map(spread);
 
 export const rockPositions: Vector3Tuple[] = [
   [-4.5, 0, -1.5],
@@ -401,13 +503,19 @@ export const rockPositions: Vector3Tuple[] = [
   [0.5, 0, -4.0],
   [4.0, 0, -1.5],
   [4.0, 0, 2.8],
-  [1.5, 0, 6.5]
-];
+  [1.5, 0, 6.5],
+  [12.5, 0, 6.5]
+].map(spread);
 
-export const cameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3Tuple}> = {
-  intro: {position: [2, 14, 14], lookAt: [0, 0, 2]},
+const rawCameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3Tuple}> = {
+  intro: {position: [2, 16, 15], lookAt: [0, 0, 2]},
   projects: {position: [-10, 7, 3], lookAt: [-6.5, 1, 1]},
   github: {position: [3, 8, 0], lookAt: [2, 1, -4.5]},
   experience: {position: [10, 6, 6], lookAt: [7, 1, 5.5]},
-  contact: {position: [2, 6, 13], lookAt: [0, 1, 8.5]}
+  contact: {position: [2, 6, 13], lookAt: [0, 1, 8.5]},
+  life: {position: [14, 8, 4], lookAt: [10, 1, 2]}
 };
+
+export const cameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3Tuple}> = Object.fromEntries(
+  Object.entries(rawCameraTargets).map(([key, value]) => [key, {position: spread(value.position), lookAt: spread(value.lookAt)}])
+);

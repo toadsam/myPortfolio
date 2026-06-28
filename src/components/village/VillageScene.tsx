@@ -6,7 +6,7 @@ import {Selection} from "@react-three/postprocessing";
 import {Suspense, useMemo} from "react";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
-import {rockPositions, treePositions, villageBuildings} from "@/lib/constants";
+import {rockPositions, spread, treePositions, villageBuildings} from "@/lib/constants";
 import {getBuildingState, getNpcState} from "@/lib/liveState";
 import type {NpcRuntimeState, NpcState, VillageState} from "@/types/live";
 import type {ExplorationMode, NPCData, SectionId, Vector3Tuple} from "@/types/portfolio";
@@ -70,11 +70,11 @@ function Ground() {
       <primitive
         object={scene}
         position={[0, -0.6, 2]}
-        scale={[12, 12, 12]}
+        scale={[17, 17, 17]}
         rotation={[-Math.PI / 2, 0, 0]}
         receiveShadow
       />
-      <pointLight color="#00d4ff" intensity={2.5} distance={12} decay={2} position={[0, 1.5, 0]} />
+      <pointLight color="#00d4ff" intensity={2.5} distance={17} decay={2} position={[0, 1.5, 0]} />
     </group>
   );
 }
@@ -249,9 +249,10 @@ export function VillageScene({
           <Ground />
           <Statue />
 
-          <DistrictSign label="Project District" position={[-8.5, 0, -5.5]} color="#00d4ff" />
-          <DistrictSign label="Skills District" position={[0, 0, -9.0]} color="#aa44ff" />
-          <DistrictSign label="Experience District" position={[9.2, 0, 5]} color="#00ff88" />
+          <DistrictSign label="Project District" position={spread([-8.5, 0, -5.5])} color="#00d4ff" />
+          <DistrictSign label="Skills District" position={spread([0, 0, -9.0])} color="#aa44ff" />
+          <DistrictSign label="Experience District" position={spread([9.2, 0, 5])} color="#00ff88" />
+          <DistrictSign label="Life District" position={spread([11, 0, 2.5])} color="#fbbf24" />
 
           {!isWalkMode && <ActiveRoute activeSection={activeSection} />}
           <BuildingNetwork buildings={projectNetworkBuildings} />
@@ -305,7 +306,7 @@ export function VillageScene({
             <Rock key={position.join("-")} position={position} scale={index % 2 === 0 ? 1 : 0.72} />
           ))}
 
-          <ContactShadows blur={1.5} far={8} frames={1} opacity={0.15} position={[0, 0.02, 2]} scale={18} />
+          <ContactShadows blur={1.5} far={12} frames={1} opacity={0.15} position={[0, 0.02, 2]} scale={26} />
 
           {editing ? <EditorOutline /> : null}
 

@@ -201,9 +201,9 @@ export function CameraController({activeSection, isIntro = false, lockRotate = f
       if (move.lengthSq() > 0) {
         move.normalize().multiplyScalar(speed);
         camera.position.add(move);
-        camera.position.x = Math.max(-30, Math.min(30, camera.position.x));
-        camera.position.z = Math.max(-30, Math.min(30, camera.position.z));
-        camera.position.y = Math.max(2, Math.min(42, camera.position.y));
+        camera.position.x = Math.max(-48, Math.min(48, camera.position.x));
+        camera.position.z = Math.max(-48, Math.min(48, camera.position.z));
+        camera.position.y = Math.max(2, Math.min(50, camera.position.y));
       }
 
       // OrbitControls가 카메라를 되돌리지 않도록 타깃을 시선 앞쪽으로 따라오게 고정
@@ -250,7 +250,7 @@ export function CameraController({activeSection, isIntro = false, lockRotate = f
       enablePan={false}
       enableRotate={!lockRotate}
       enableZoom
-      maxDistance={24}
+      maxDistance={36}
       maxPolarAngle={Math.PI / 2.1}
       minDistance={3}
       minPolarAngle={Math.PI / 9}
