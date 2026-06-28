@@ -30,8 +30,32 @@ const VillageScene = dynamic(
   () => import("@/components/village/VillageScene").then((m) => m.VillageScene),
   {
     loading: () => (
-      <div className="grid h-[54vh] min-h-[420px] place-items-center bg-[#050d1a] font-mono text-sm font-bold uppercase tracking-[0.18em] text-[#00d4ff]/60 md:h-screen">
-        {">"} Developer's City를 불러오는 중...
+      <div className="relative grid h-[54vh] min-h-[420px] place-items-center overflow-hidden bg-[#050d1a] md:h-screen">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-30"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,212,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.08) 1px, transparent 1px)",
+            backgroundSize: "44px 44px"
+          }}
+        />
+        <div className="relative flex flex-col items-center gap-5">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#00d4ff]/50 font-mono text-sm font-black text-[#00d4ff] shadow-[0_0_18px_rgba(0,212,255,0.3)]">
+              AI
+            </span>
+            <span className="font-mono text-base font-black uppercase tracking-[0.3em] text-white/90">Developer&apos;s City</span>
+          </div>
+          <div className="relative h-1 w-56 overflow-hidden rounded-full bg-white/10">
+            <div
+              className="absolute inset-y-0 w-1/3 rounded-full bg-gradient-to-r from-transparent via-[#00d4ff] to-transparent"
+              style={{animation: "cityLoaderShimmer 1.2s ease-in-out infinite"}}
+            />
+          </div>
+          <span className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-[#00d4ff]/55">
+            {">"} 마을을 불러오는 중...
+          </span>
+        </div>
       </div>
     ),
     ssr: false
@@ -75,6 +99,7 @@ export function AIPortfolioVillage() {
   const [showIntro, setShowIntro] = useState(true);
   const [explorationMode, setExplorationMode] = useState<ExplorationMode>("click");
   const [soundOn, setSoundOn] = useState(true);
+  const [konami, setKonami] = useState(false);
 
   const [viewMode, setViewMode] = useState<"village" | "interior" | "project-interior" | "resume">("village");
   const [interiorSectionId, setInteriorSectionId] = useState<SectionId | null>(null);
@@ -349,6 +374,28 @@ export function AIPortfolioVillage() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isPanelOpen, selectedNpc, viewMode]);
 
+  // 코나미 코드 이스터에그 (↑↑↓↓←→←→ B A)
+  useEffect(() => {
+    const seq = ["arrowup", "arrowup", "arrowdown", "arrowdown", "arrowleft", "arrowright", "arrowleft", "arrowright", "b", "a"];
+    let idx = 0;
+    function onKey(event: KeyboardEvent) {
+      const key = event.key.toLowerCase();
+      if (key === seq[idx]) {
+        idx += 1;
+        if (idx === seq.length) {
+          idx = 0;
+          setKonami(true);
+          sfx.enter();
+          window.setTimeout(() => setKonami(false), 6000);
+        }
+      } else {
+        idx = key === seq[0] ? 1 : 0;
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   function remember(memory: string) {
     if (!memory) return;
     npcMemoryRef.current = npcMemoryRef.current.concat(memory).slice(-20);
@@ -607,6 +654,8 @@ export function AIPortfolioVillage() {
         <ResumeMode onEnterVillage={enterVillageFromResume} />
       ) : null}
 
+      {konami ? <KonamiBurst /> : null}
+
       <SceneTransition active={showTransitionOverlay} />
     </main>
   );
@@ -730,6 +779,35 @@ function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onSelect: 
         </button>
       ))}
     </aside>
+  );
+}
+
+function KonamiBurst() {
+  const emojis = ["🎉", "✨", "🏘️", "🤖", "🌟", "💾", "🚀", "🎮", "🛸", "⭐"];
+  const pieces = Array.from({length: 40}, (_, i) => ({
+    left: (i * 53) % 100,
+    delay: (i % 12) * 0.18,
+    dur: 3 + (i % 5) * 0.6,
+    emoji: emojis[i % emojis.length],
+    size: 18 + (i % 4) * 9,
+  }));
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[100] overflow-hidden">
+      {pieces.map((p, i) => (
+        <span
+          key={i}
+          className="absolute top-0 select-none"
+          style={{left: `${p.left}%`, fontSize: p.size, animation: `konamiFall ${p.dur}s linear ${p.delay}s both`}}
+        >
+          {p.emoji}
+        </span>
+      ))}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[#00ff88]/40 bg-[#050d1a]/90 px-7 py-5 text-center shadow-2xl backdrop-blur-md">
+        <p className="font-mono text-xl font-black text-[#00ff88]">🎉 히든 모드 발견!</p>
+        <p className="mt-1.5 font-mono text-xs text-white/60">개발자만 아는 그 코드를 입력했군요 😎</p>
+      </div>
+    </div>
   );
 }
 

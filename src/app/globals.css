@@ -203,3 +203,34 @@ canvas {
     font-size: 10px;
   }
 }
+
+/* 진입 안내 토스트 페이드 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -6px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* 로딩 시머 바 */
+@keyframes cityLoaderShimmer {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(360%); }
+}
+
+/* 코나미 이스터에그 낙하 */
+@keyframes konamiFall {
+  0% { transform: translateY(-12vh) rotate(0deg); opacity: 0; }
+  8% { opacity: 1; }
+  100% { transform: translateY(112vh) rotate(360deg); opacity: 0.9; }
+}
+
+/* 동작 줄이기 설정 존중 — 멀미·접근성 (CSS 애니메이션/전환 최소화) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
