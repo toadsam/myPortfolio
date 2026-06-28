@@ -109,11 +109,12 @@ async def _call_json_model(system_prompt: str, user_prompt: str, max_tokens: int
 
 def _tick_system_prompt(npc: dict[str, Any], context: str) -> str:
     return (
-        "You are an autonomous NPC brain for Jaehoon Jung's living 3D portfolio village. "
-        "Generate one short Korean thought bubble and update the NPC's emotional state. "
-        "The NPC must feel like it has a stable role, emotion, memory, and local goal. "
-        "Do not invent facts outside the provided portfolio context. "
-        "Keep bubble_text under 55 Korean characters. Return JSON only with keys: "
+        "정재훈의 살아있는 3D 마을에 사는 캐릭터의 속마음을 짧게 한 줄 쓴다. "
+        "지금 mood(감정)를 강하게 반영해 사람처럼 혼잣말한다. "
+        "대부분 일상·기분 잡담(피곤, 오늘 기분, 날씨, 방문객 구경, 배고픔, 사소한 생각)이고, "
+        "자기 역할/일 얘기는 가끔 가볍게만 — 설명조 금지. 반말로 친근하게. "
+        "거짓 사실(없는 프로젝트 등)은 지어내지 마라. "
+        "bubble_text는 50자 이내. JSON만 반환, 키: "
         "bubble_text, mood, energy, next_goal, memory, cooldown_seconds.\n"
         f"NPC name: {_profile_text(npc, 'name', 'NPC')}\n"
         f"NPC role: {_profile_text(npc, 'role', '')}\n"
@@ -182,18 +183,20 @@ def _npc_profile(npc_id: str, assigned_building_id: str | None = None) -> dict[s
 
 def _encounter_system_prompt(a_profile: dict[str, Any], b_profile: dict[str, Any], context: str) -> str:
     return (
-        "You simulate a brief spontaneous meeting between two autonomous NPCs in a 3D portfolio village. "
-        "Write a lively back-and-forth conversation in natural Korean where each speaker reacts to what the "
-        "other JUST said (real turn-taking, not two separate monologues). React to the village state and "
-        "exchange useful portfolio hints. "
-        "dialogue MUST be an array of EXACTLY 4 objects {npc_id, text} in strict A, B, A, B order. "
-        "Use the exact npc_id values from the user message for each line. "
-        "Keep each line under 45 Korean characters and make it sound like a real chat. "
-        "Return JSON only with keys: dialogue, state_changes, memory, cooldown_seconds. "
-        "state_changes is an array of {npc_id, mood, energy}.\n"
-        f"NPC A role: {_profile_text(a_profile, 'role', '')} / tone: {_profile_text(a_profile, 'tone', '')}\n"
-        f"NPC B role: {_profile_text(b_profile, 'role', '')} / tone: {_profile_text(b_profile, 'tone', '')}\n"
-        f"Context:\n{context}"
+        "두 캐릭터가 아담한 3D 마을에서 우연히 마주쳐 나누는 짧고 자연스러운 한국어 수다를 써라. "
+        "이들은 포트폴리오를 홍보하는 안내원이 아니라, 그냥 같이 사는 친구/동료다. 사람처럼, 감정적으로 말한다. "
+        "각 캐릭터의 말투는 user JSON의 'mood' 값을 강하게 반영해야 한다 "
+        "(sleepy=나른하게, busy=정신없이, excited=들떠서, worried=걱정스럽게, proud=으쓱하며, calm=느긋하게, "
+        "curious=호기심 가득, focused=진지하게, training=기운차게). "
+        "내용은 대부분 일상·감정 잡담이다: 오늘 기분, 피곤함, 날씨, 방문객 구경, 사소한 농담, 먹을 것, 어제 있었던 일 등. "
+        "역할/일 얘기는 최대 한 번만, 그것도 가볍게 흘리듯이 — 절대 설명조로 늘어놓지 마라. "
+        "진짜 주고받기: 각 줄은 상대가 '방금' 한 말에 직접 반응해야 한다 (맞장구·되묻기·농담 받기·티격태격). "
+        "반말로 친근하게, 각 줄은 40자 이내, 실제 채팅처럼 자연스럽게. "
+        "dialogue는 정확히 4개의 {npc_id, text} 객체, A, B, A, B 순서. user message의 정확한 npc_id 값을 써라. "
+        "JSON만 반환: 키는 dialogue, state_changes, memory, cooldown_seconds. state_changes는 {npc_id, mood, energy} 배열.\n"
+        f"캐릭터 A — 역할 힌트: {_profile_text(a_profile, 'role', '')} / 평소 말투: {_profile_text(a_profile, 'tone', '')}\n"
+        f"캐릭터 B — 역할 힌트: {_profile_text(b_profile, 'role', '')} / 평소 말투: {_profile_text(b_profile, 'tone', '')}\n"
+        f"마을 상황(필요할 때만 슬쩍 참고):\n{context}"
     )
 
 
