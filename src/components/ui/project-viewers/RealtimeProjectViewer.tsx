@@ -4,6 +4,7 @@ import {AnimatePresence, motion} from "framer-motion";
 import {useEffect, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
+import {AmbientBackground} from "./AmbientBackground";
 import {RICH_RENDERERS} from "./richContent";
 
 const STEPS = [
@@ -275,6 +276,7 @@ export function RealtimeProjectViewer({project, theme, onClose}: Props) {
       exit={{opacity: 0}}
       transition={{duration: 0.3}}
     >
+      <AmbientBackground projectId={project.id} theme={theme} />
       <div className="relative z-10 flex shrink-0 items-center justify-between border-b px-8 py-4" style={{borderColor: `${theme.primary}20`}}>
         <div className="flex items-center gap-3">
           <LiveDot color={theme.primary} />

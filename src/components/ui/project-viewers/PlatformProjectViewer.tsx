@@ -5,6 +5,7 @@ import type {ReactNode} from "react";
 import {useEffect, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
+import {AmbientBackground} from "./AmbientBackground";
 import {RICH_RENDERERS} from "./richContent";
 
 const STEPS = [
@@ -229,6 +230,7 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
       exit={{opacity: 0}}
       transition={{duration: 0.3}}
     >
+      <AmbientBackground projectId={project.id} theme={theme} />
       <div className="relative z-10 shrink-0 border-b" style={{borderColor: `${theme.primary}20`}}>
         <div className="flex items-center justify-between px-8 py-4">
           <span className="font-mono text-sm font-black text-white">{project.title}</span>

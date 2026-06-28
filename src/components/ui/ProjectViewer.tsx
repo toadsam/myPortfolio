@@ -1,13 +1,16 @@
 "use client";
 
 import {AnimatePresence, motion, useMotionValue, useSpring} from "framer-motion";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState, type ReactNode} from "react";
 import {getProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
+import {ambientFor} from "./project-viewers/atmosphere";
 import {DashboardProjectViewer} from "./project-viewers/DashboardProjectViewer";
 import {GameProjectViewer} from "./project-viewers/GameProjectViewer";
 import {PlatformProjectViewer} from "./project-viewers/PlatformProjectViewer";
+import {ProjectIntro} from "./project-viewers/ProjectIntro";
 import {RealtimeProjectViewer} from "./project-viewers/RealtimeProjectViewer";
+import {SoundToggle} from "./project-viewers/SoundToggle";
 
 // ─── 상수 ────────────────────────────────────────────────────────────────────
 
@@ -520,35 +523,25 @@ interface Props {
 }
 
 // 카테고리별 셸 라우팅 — 카테고리마다 완전히 다른 연출의 전용 뷰어로.
+// 진입 인트로 + 앰비언트 사운드는 카테고리 무관하게 전 프로젝트에 입힌다.
 export function ProjectViewer({project, onClose}: Props) {
   const projectTheme = project ? getProjectTheme(project.id) : null;
   if (project && projectTheme) {
     const shared = {project, theme: projectTheme, onClose};
-    if (projectTheme.category === "game") {
+    const cat = projectTheme.category;
+    const variant = ambientFor(project.id, projectTheme);
+    let viewer: ReactNode = null;
+    if (cat === "game") viewer = <GameProjectViewer key={project.id} {...shared} />;
+    else if (cat === "dashboard") viewer = <DashboardProjectViewer key={project.id} {...shared} />;
+    else if (cat === "realtime") viewer = <RealtimeProjectViewer key={project.id} {...shared} />;
+    else if (cat === "platform") viewer = <PlatformProjectViewer key={project.id} {...shared} />;
+    if (viewer) {
       return (
         <AnimatePresence>
-          <GameProjectViewer key={project.id} {...shared} />
-        </AnimatePresence>
-      );
-    }
-    if (projectTheme.category === "dashboard") {
-      return (
-        <AnimatePresence>
-          <DashboardProjectViewer key={project.id} {...shared} />
-        </AnimatePresence>
-      );
-    }
-    if (projectTheme.category === "realtime") {
-      return (
-        <AnimatePresence>
-          <RealtimeProjectViewer key={project.id} {...shared} />
-        </AnimatePresence>
-      );
-    }
-    if (projectTheme.category === "platform") {
-      return (
-        <AnimatePresence>
-          <PlatformProjectViewer key={project.id} {...shared} />
+          {viewer}
+          {/* 게임 뷰어는 자체 부팅 인트로가 있어 중복을 피한다 */}
+          {cat !== "game" ? <ProjectIntro key={`${project.id}-intro`} title={project.title} theme={projectTheme} variant={variant} /> : null}
+          <SoundToggle key={`${project.id}-snd`} theme={projectTheme} variant={variant} />
         </AnimatePresence>
       );
     }

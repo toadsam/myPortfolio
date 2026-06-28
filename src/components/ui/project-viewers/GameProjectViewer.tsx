@@ -13,6 +13,7 @@ import {useEffect, useRef, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
 import {RICH_RENDERERS} from "./richContent";
+import {sound} from "./sound";
 
 const SCRAMBLE_CHARS = "!<>-_\\/[]{}=+*^?#01XYZ";
 
@@ -123,6 +124,70 @@ function Overlays({accent, mood}: {accent: string; mood: string}) {
         animate={{opacity: cfg.flicker}}
         transition={{duration: 6, repeat: Infinity, ease: "linear"}}
       />
+    </>
+  );
+}
+
+// DARKLAB 전용 풀 연출 — 정전 깜빡임 + 가로지르는 그림자 + 짙은 비네팅.
+function HorrorLayer({theme}: {theme: ProjectTheme}) {
+  const [blackout, setBlackout] = useState(0);
+  const [shadowKey, setShadowKey] = useState(0);
+
+  useEffect(() => {
+    let alive = true;
+    function flick() {
+      const wait = 4500 + Math.random() * 9000;
+      window.setTimeout(() => {
+        if (!alive) return;
+        setBlackout((b) => b + 1);
+        if (sound) sound.sfx("click");
+        flick();
+      }, wait);
+    }
+    function shadow() {
+      const wait = 9000 + Math.random() * 12000;
+      window.setTimeout(() => {
+        if (!alive) return;
+        setShadowKey((s) => s + 1);
+        shadow();
+      }, wait);
+    }
+    flick();
+    shadow();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  return (
+    <>
+      {/* 짙은 비네팅 — 손전등이 유일한 빛처럼 */}
+      <div className="pointer-events-none absolute inset-0 z-[4]" style={{background: "radial-gradient(ellipse at 50% 45%, transparent 20%, rgba(0,0,0,0.8) 92%)"}} />
+      {/* 정전 깜빡임 */}
+      <AnimatePresence>
+        {blackout ? (
+          <motion.div
+            key={blackout}
+            className="pointer-events-none absolute inset-0 z-[19] bg-black"
+            initial={{opacity: 0}}
+            animate={{opacity: [0, 0.94, 0, 0.7, 0]}}
+            transition={{duration: 0.5, times: [0, 0.08, 0.28, 0.42, 1]}}
+          />
+        ) : null}
+      </AnimatePresence>
+      {/* 가로지르는 그림자 실루엣 */}
+      <AnimatePresence>
+        {shadowKey ? (
+          <motion.div
+            key={shadowKey}
+            className="pointer-events-none absolute z-[5] w-44 blur-2xl"
+            style={{top: "-20%", height: "140%", background: "rgba(0,0,0,0.88)"}}
+            initial={{left: "-18%", opacity: 0, skewX: -8}}
+            animate={{left: "118%", opacity: [0, 0.85, 0]}}
+            transition={{duration: 2.6, ease: "easeInOut"}}
+          />
+        ) : null}
+      </AnimatePresence>
     </>
   );
 }
@@ -398,7 +463,9 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
   const sy = useSpring(my, {stiffness: 140, damping: 22});
   const tiltX = useSpring(useTransform(my, [0, 100], [4, -4]), {stiffness: 120, damping: 18});
   const tiltY = useSpring(useTransform(mx, [0, 100], [-5, 5]), {stiffness: 120, damping: 18});
-  const spotlight = useMotionTemplate`radial-gradient(circle 460px at ${sx}% ${sy}%, ${theme.primary}1f, transparent 70%)`;
+  const flashRadius = mood === "horror" ? 340 : 460;
+  const flashGlow = mood === "horror" ? "33" : "1f";
+  const spotlight = useMotionTemplate`radial-gradient(circle ${flashRadius}px at ${sx}% ${sy}%, ${theme.primary}${flashGlow}, transparent 70%)`;
   const labels = MOOD_LABEL[mood] ?? MOOD_LABEL.horror!;
   const richRender = RICH_RENDERERS[project.id];
 
@@ -444,7 +511,7 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
     <motion.div
       ref={containerRef}
       className="fixed inset-0 z-[60] overflow-hidden font-mono"
-      style={{background: theme.bg}}
+      style={{background: theme.bg, cursor: mood === "horror" ? "crosshair" : undefined}}
       initial={{opacity: 0}}
       animate={{opacity: 1}}
       exit={{opacity: 0}}
@@ -454,6 +521,7 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
     >
       <motion.div className="pointer-events-none absolute inset-0 z-[1]" style={{background: spotlight}} />
       <Overlays accent={theme.accent} mood={mood} />
+      {mood === "horror" ? <HorrorLayer theme={theme} /> : null}
 
       <AnimatePresence>
         {glitch ? (
@@ -536,7 +604,7 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
         </button>
       </div>
 
-      <div className="relative z-[5] mx-auto flex h-full max-w-3xl flex-col px-8 pt-16">
+      <div className="relative z-[5] mx-auto flex h-full max-w-6xl flex-col px-8 pt-16">
         <motion.div className="relative flex-1 overflow-hidden" style={richRender ? undefined : {rotateX: tiltX, rotateY: tiltY, transformPerspective: 1400}}>
           <AnimatePresence mode="wait">
             <motion.div

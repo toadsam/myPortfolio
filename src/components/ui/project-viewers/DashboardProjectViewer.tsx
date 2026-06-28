@@ -5,6 +5,7 @@ import type {ReactNode} from "react";
 import {useEffect, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
+import {AmbientBackground} from "./AmbientBackground";
 import {RICH_RENDERERS} from "./richContent";
 
 const STEPS = [
@@ -322,6 +323,7 @@ export function DashboardProjectViewer({project, theme, onClose}: Props) {
       exit={{opacity: 0}}
       transition={{duration: 0.3}}
     >
+      <AmbientBackground projectId={project.id} theme={theme} />
       <div
         className="pointer-events-none absolute inset-0 opacity-50"
         style={{
