@@ -269,7 +269,7 @@ export function RealtimeProjectViewer({project, theme, onClose}: Props) {
   return (
     <motion.div
       className="fixed inset-0 z-[60] flex flex-col"
-      style={{background: `radial-gradient(ellipse at 80% 0%, ${theme.primary}12, ${theme.bg} 60%)`}}
+      style={{backgroundColor: theme.bg, backgroundImage: `radial-gradient(ellipse at 80% 0%, ${theme.primary}12, ${theme.bg} 60%)`}}
       initial={{opacity: 0}}
       animate={{opacity: 1}}
       exit={{opacity: 0}}
@@ -293,12 +293,12 @@ export function RealtimeProjectViewer({project, theme, onClose}: Props) {
         </button>
       </div>
 
-      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-1 flex-col overflow-hidden px-8">
+      <div className="relative z-10 mx-auto flex w-full flex-1 flex-col overflow-hidden px-8 xl:px-16">
         <div className="relative flex-1 overflow-hidden py-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={`${project.id}-${step}`}
-              className="absolute inset-x-8 inset-y-6 overflow-y-auto"
+              className="absolute inset-x-0 inset-y-6 overflow-y-auto pr-2"
               initial={{opacity: 0, y: 24}}
               animate={{opacity: 1, y: 0}}
               exit={{opacity: 0, y: -16}}

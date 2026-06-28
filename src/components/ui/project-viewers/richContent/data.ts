@@ -5,6 +5,13 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ MyStock-Desk (dashboard) ════════════════════
   mystock: {
     tagline: "INVESTMENT PORTFOLIO · WEB APP",
+    heroImage: {label: "MyStock-Desk 포트폴리오 분석 대시보드", ratio: "16/9", caption: "메인 대시보드 — 실제 스크린샷으로 교체 예정"},
+    problemShot: {label: "엑셀로 수익률을 직접 관리하던 기존 방식", ratio: "4/3"},
+    gallery: [
+      {label: "보유 종목 수익률 화면", ratio: "16/10"},
+      {label: "자산 비중 차트", ratio: "16/10"},
+      {label: "AI 체크포인트 리포트", ratio: "16/10"},
+    ],
     tldr: [
       {k: "무엇을", v: "거래 기록 기반 포트폴리오 분석 + AI 체크포인트 웹앱"},
       {k: "왜", v: "수익률·자산 비중·뉴스 영향을 한 곳에서 보기 어려움"},
@@ -83,6 +90,12 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ FestFlow (realtime) ═════════════════════════
   festflow: {
     tagline: "REALTIME FESTIVAL OPS · WEB APP",
+    problemShot: {label: "기존 수동 운영 방식 (전화·메신저)", ratio: "4/3"},
+    gallery: [
+      {label: "실시간 부스 현황 피드", ratio: "16/10"},
+      {label: "Leaflet 지도 기반 부스 배치", ratio: "16/10"},
+      {label: "관리자 대시보드", ratio: "16/10"},
+    ],
     tldr: [
       {k: "무엇을", v: "대학 축제 부스를 실시간으로 운영·관제하는 웹앱"},
       {k: "왜", v: "수십 개 부스 현황을 실시간으로 공유할 도구가 없었음"},
@@ -155,6 +168,13 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ MuscleUp (realtime) ═════════════════════════
   muscleup: {
     tagline: "GAMIFIED FITNESS · COMMUNITY",
+    heroImage: {label: "MuscleUp 레벨·스트릭 홈 화면", ratio: "16/9", caption: "메인 홈 — 실제 스크린샷으로 교체 예정"},
+    problemShot: {label: "작심삼일로 끊기던 기존 운동 기록", ratio: "4/3"},
+    gallery: [
+      {label: "레벨·경험치 대시보드", ratio: "16/10"},
+      {label: "운동 기록 입력 화면", ratio: "16/10"},
+      {label: "커뮤니티 챌린지", ratio: "16/10"},
+    ],
     tldr: [
       {k: "무엇을", v: "운동 기록을 게임처럼 지속하게 만드는 피트니스 플랫폼"},
       {k: "왜", v: "운동 앱은 기록은 되지만 ‘다시 오게’ 만드는 장치가 약함"},
@@ -228,6 +248,13 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ ACLUB (platform) ════════════════════════════
   aclub: {
     tagline: "CLUB DISCOVERY · PLATFORM FE",
+    heroImage: {label: "A-Club 동아리 탐색 메인 화면", ratio: "16/9", caption: "탐색 화면 — 실제 스크린샷으로 교체 예정"},
+    problemShot: {label: "여기저기 흩어져 있던 동아리 모집 공고", ratio: "4/3"},
+    gallery: [
+      {label: "동아리 카드 리스트", ratio: "16/10"},
+      {label: "동아리 상세·모집 페이지", ratio: "16/10"},
+      {label: "지원 신청 폼", ratio: "16/10"},
+    ],
     tldr: [
       {k: "무엇을", v: "동아리 탐색·모집을 한 곳에서 하는 플랫폼 프론트엔드"},
       {k: "왜", v: "동아리 정보가 흩어져 탐색·지원이 번거로움"},
@@ -298,6 +325,13 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ 아주총총 (platform) ══════════════════════════
   ajouchong: {
     tagline: "STUDENT COUNCIL · OFFICIAL SPA",
+    heroImage: {label: "아주대 총학생회 공식 사이트 메인", ratio: "16/9", caption: "메인 페이지 — 실제 스크린샷으로 교체 예정"},
+    problemShot: {label: "여러 채널에 흩어져 있던 학생회 공지", ratio: "4/3"},
+    gallery: [
+      {label: "공지·Q&A 게시판", ratio: "16/10"},
+      {label: "복지·제휴 안내 페이지", ratio: "16/10"},
+      {label: "회의록 자료실", ratio: "16/10"},
+    ],
     tldr: [
       {k: "무엇을", v: "아주대 총학생회 공식 웹사이트 프론트엔드"},
       {k: "왜", v: "공지·Q&A·복지 정보가 여러 채널에 흩어져 있었음"},
@@ -369,6 +403,13 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ 수어지교 (platform) ══════════════════════════
   "sign-language": {
     tagline: "SIGN LANGUAGE · LEARNING SERVICE",
+    heroImage: {label: "수어 아바타 학습 메인 화면", ratio: "16/9", caption: "학습 화면 — 실제 스크린샷으로 교체 예정"},
+    problemShot: {label: "영상만 보며 따라하던 기존 학습 방식", ratio: "4/3"},
+    gallery: [
+      {label: "단어 학습 목록", ratio: "16/10"},
+      {label: "3D 아바타 수어 표현", ratio: "16/10"},
+      {label: "퀴즈·연습 모드", ratio: "16/10"},
+    ],
     tldr: [
       {k: "무엇을", v: "수어 아바타로 배우고 표현하는 학습 서비스"},
       {k: "왜", v: "수어를 체계적으로 연습할 도구가 부족함"},
@@ -438,6 +479,13 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ DarkLab (game · horror) ═════════════════════
   darklab: {
     tagline: "FIRST-PERSON HORROR · UNITY",
+    heroImage: {label: "DARKLAB 인게임 분위기 컷", ratio: "16/9", caption: "메인 장면 — 실제 게임 스크린샷으로 교체 예정"},
+    problemShot: {label: "초기 그레이박스 프로토타입", ratio: "4/3"},
+    gallery: [
+      {label: "1인칭 탐색 플레이 화면", ratio: "16/9"},
+      {label: "라이팅·분위기 연출", ratio: "16/9"},
+      {label: "인터랙션·퍼즐 구간", ratio: "16/9"},
+    ],
     tldr: [
       {k: "무엇을", v: "1인칭 탐색 기반 3D 공포 어드벤처 프로토타입"},
       {k: "왜", v: "공포의 긴장감은 사운드보다 ‘공간 탐색·상호작용’에서 나옴"},
@@ -509,6 +557,13 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ 아주분투 (game · arcade) ═════════════════════
   "ajou-adventure": {
     tagline: "2D CASUAL RUNNER · PHASER 3",
+    heroImage: {label: "아주분투 타이틀 화면", ratio: "16/9", caption: "타이틀 — 실제 게임 스크린샷으로 교체 예정"},
+    problemShot: {label: "초기 프로토타입 화면", ratio: "4/3"},
+    gallery: [
+      {label: "인게임 러닝 플레이", ratio: "16/9"},
+      {label: "장애물 구간", ratio: "16/9"},
+      {label: "점수·결과 화면", ratio: "16/9"},
+    ],
     tldr: [
       {k: "무엇을", v: "아주대 캠퍼스 배경 2D 캐주얼 러닝 게임"},
       {k: "왜", v: "대학생이 공감할 가벼운 웹 게임을 만들고 싶었음"},
@@ -580,6 +635,13 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ TSEROF (game · platformer) ══════════════════
   tserof: {
     tagline: "3D PLATFORMER · UNITY (TEAM OF 5)",
+    heroImage: {label: "TSEROF 타이틀·메인 장면", ratio: "16/9", caption: "타이틀 — 실제 게임 스크린샷으로 교체 예정"},
+    problemShot: {label: "그레이박스 레벨 프로토타입", ratio: "4/3"},
+    gallery: [
+      {label: "스테이지 플레이 화면", ratio: "16/9"},
+      {label: "숨은 아이템 탐색", ratio: "16/9"},
+      {label: "스테이지 클리어 화면", ratio: "16/9"},
+    ],
     tldr: [
       {k: "무엇을", v: "숨은 아이템을 찾아 스테이지를 클리어하는 3D 플랫포머"},
       {k: "왜", v: "이동 조작감과 스테이지 진행감을 동시에 살리고 싶었음"},
