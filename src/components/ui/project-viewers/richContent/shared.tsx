@@ -1,6 +1,6 @@
 "use client";
 
-import {AnimatePresence, animate, motion, useInView, useMotionValue, useTransform} from "framer-motion";
+import {AnimatePresence, animate, motion, useInView, useMotionValue, useSpring, useTransform} from "framer-motion";
 import {useCallback, useEffect, useRef, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
@@ -622,10 +622,24 @@ export function DecodeText({text, className, style}: {text: string; className?: 
   );
 }
 
-// ── 단어 단위 페이드업 텍스트 ─────────────────────────────────────────────────
+// ── 단어 단위 페이드업 텍스트 (+ 키워드 hover 하이라이트) ──────────────────────
 // 문단이 등장할 때 단어들이 순차적으로 흐릿→선명하게 떠오른다. (글자 단위는 과해서 단어 단위)
-export function RevealText({text, className, style}: {text: string; className?: string; style?: React.CSSProperties}) {
+// highlight에 기술 키워드를 넘기면 본문 속 해당 단어가 강조되고 hover에 반응한다.
+export function RevealText({
+  text,
+  className,
+  style,
+  highlight,
+  theme,
+}: {
+  text: string;
+  className?: string;
+  style?: React.CSSProperties;
+  highlight?: string[];
+  theme?: ProjectTheme;
+}) {
   const words = text.split(" ");
+  const hi = new Set((highlight ?? []).filter((h) => /^[A-Za-z]/.test(h)).map((h) => h.toLowerCase()));
   return (
     <motion.p
       className={className}
@@ -635,19 +649,64 @@ export function RevealText({text, className, style}: {text: string; className?: 
       viewport={{once: true, margin: "-30px"}}
       transition={{staggerChildren: 0.022}}
     >
-      {words.map((w, i) => (
-        <span key={i}>
-          <motion.span
-            className="inline-block"
-            variants={{hidden: {opacity: 0, y: 8, filter: "blur(3px)"}, show: {opacity: 1, y: 0, filter: "blur(0px)"}}}
-            transition={{duration: 0.34}}
-          >
-            {w}
-          </motion.span>
-          {i < words.length - 1 ? " " : ""}
-        </span>
-      ))}
+      {words.map((w, i) => {
+        const token = w.match(/[A-Za-z][A-Za-z]*/)?.[0];
+        const isHi = !!token && theme && hi.has(token.toLowerCase());
+        return (
+          <span key={i}>
+            <motion.span
+              className="inline-block"
+              variants={{hidden: {opacity: 0, y: 8, filter: "blur(3px)"}, show: {opacity: 1, y: 0, filter: "blur(0px)"}}}
+              transition={{duration: 0.34}}
+            >
+              {isHi ? (
+                <motion.span
+                  className="rounded px-1 font-bold"
+                  style={{color: theme!.accent, background: `${theme!.primary}14`, cursor: "help"}}
+                  whileHover={{background: `${theme!.primary}38`, color: "#ffffff"}}
+                  transition={{duration: 0.15}}
+                >
+                  {w}
+                </motion.span>
+              ) : (
+                w
+              )}
+            </motion.span>
+            {i < words.length - 1 ? " " : ""}
+          </span>
+        );
+      })}
     </motion.p>
+  );
+}
+
+// ── 마그네틱 ─────────────────────────────────────────────────────────────────
+// 마우스가 다가오면 요소가 커서 쪽으로 살짝 끌려가고, 벗어나면 스프링으로 복귀.
+export function Magnetic({children, strength = 0.3, className}: {children: React.ReactNode; strength?: number; className?: string}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const sx = useSpring(x, {stiffness: 180, damping: 14, mass: 0.4});
+  const sy = useSpring(y, {stiffness: 180, damping: 14, mass: 0.4});
+
+  return (
+    <motion.span
+      ref={ref}
+      className={className}
+      style={{x: sx, y: sy, display: "inline-block"}}
+      onMouseMove={(e) => {
+        const r = ref.current?.getBoundingClientRect();
+        if (!r) return;
+        x.set((e.clientX - (r.left + r.width / 2)) * strength);
+        y.set((e.clientY - (r.top + r.height / 2)) * strength);
+      }}
+      onMouseLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
+    >
+      {children}
+    </motion.span>
   );
 }
 
@@ -662,7 +721,7 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
       <div className="flex flex-col gap-6 py-2">
         <div>
           <p className="font-mono text-xs font-black uppercase tracking-[0.3em]" style={{color: theme.primary}}>{">"} <DecodeText text={data.tagline} /></p>
-          <h1 className="mt-2 text-5xl font-black leading-tight text-white"><DecodeText text={title} /></h1>
+          <h1 className="mt-2 text-5xl font-black leading-tight text-white"><Magnetic strength={0.35}><DecodeText text={title} /></Magnetic></h1>
         </div>
         {data.heroImage ? <ImageSlot theme={theme} spec={data.heroImage} /> : null}
         <div className="grid items-start gap-6 lg:grid-cols-2">
@@ -709,10 +768,10 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
       <div className="flex flex-col gap-6 py-2">
         <div className="grid items-start gap-6 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
-            <div><SubLabel theme={theme}>PROBLEM · 무엇이 문제였나</SubLabel><RevealText text={data.problem} className="text-base leading-8 text-white/85" /></div>
+            <div><SubLabel theme={theme}>PROBLEM · 무엇이 문제였나</SubLabel><RevealText text={data.problem} className="text-base leading-8 text-white/85" highlight={data.tech} theme={theme} /></div>
             <div>
               <SubLabel theme={theme}>가설</SubLabel>
-              <div className="rounded-xl border-l-2 p-4" style={{borderColor: theme.primary, background: `${theme.primary}08`}}><RevealText text={data.hypothesis} className="text-sm leading-7 text-white/80" /></div>
+              <div className="rounded-xl border-l-2 p-4" style={{borderColor: theme.primary, background: `${theme.primary}08`}}><RevealText text={data.hypothesis} className="text-sm leading-7 text-white/80" highlight={data.tech} theme={theme} /></div>
             </div>
           </div>
           <div>
@@ -783,7 +842,7 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
             ) : null}
             <div>
               <SubLabel theme={theme}>사용 기술</SubLabel>
-              <div className="flex flex-wrap gap-2">{data.tech.map((t) => <span key={t} className="rounded-lg border px-3 py-1.5 font-mono text-sm font-bold" style={{borderColor: `${theme.primary}35`, color: theme.accent}}>{t}</span>)}</div>
+              <div className="flex flex-wrap gap-2">{data.tech.map((t) => <motion.span key={t} className="cursor-default rounded-lg border px-3 py-1.5 font-mono text-sm font-bold" style={{borderColor: `${theme.primary}35`, color: theme.accent}} whileHover={{y: -2, scale: 1.05, borderColor: theme.primary, background: `${theme.primary}1a`, boxShadow: `0 4px 16px ${theme.primary}33`}} whileTap={{scale: 0.96}}>{t}</motion.span>)}</div>
             </div>
           </div>
         </div>
@@ -836,7 +895,7 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
           ) : null}
           <div>
             <SubLabel theme={theme}>배운 점</SubLabel>
-            <div className="rounded-xl border-l-2 p-4" style={{borderColor: `${theme.primary}88`, background: `${theme.primary}08`}}><RevealText text={data.learning} className="text-sm leading-7 text-white/75" /></div>
+            <div className="rounded-xl border-l-2 p-4" style={{borderColor: `${theme.primary}88`, background: `${theme.primary}08`}}><RevealText text={data.learning} className="text-sm leading-7 text-white/75" highlight={data.tech} theme={theme} /></div>
           </div>
         </div>
         <div>
