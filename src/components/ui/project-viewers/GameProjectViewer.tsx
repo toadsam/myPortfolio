@@ -9,7 +9,7 @@ import {
   useTransform,
 } from "framer-motion";
 import type {CSSProperties, ReactNode} from "react";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
 import {RICH_RENDERERS} from "./richContent";
@@ -188,6 +188,101 @@ function HorrorLayer({theme}: {theme: ProjectTheme}) {
           />
         ) : null}
       </AnimatePresence>
+    </>
+  );
+}
+
+// 아주분투 전용 — 레트로 아케이드: 떠오르는 네온 픽셀 + CRT 코너 + RGB 글리치.
+function ArcadeLayer({theme}: {theme: ProjectTheme}) {
+  const pixels = useMemo(
+    () =>
+      Array.from({length: 18}, (_, i) => ({
+        x: ((Math.sin(i * 99) + 1) / 2) * 100,
+        d: 5 + ((Math.cos(i * 7) + 1) / 2) * 6,
+        delay: ((Math.sin(i * 3) + 1) / 2) * 4,
+        s: 4 + (i % 3) * 3,
+      })),
+    [],
+  );
+  const [glitch, setGlitch] = useState(0);
+  useEffect(() => {
+    let alive = true;
+    function g() {
+      const w = 3000 + Math.random() * 6000;
+      window.setTimeout(() => {
+        if (!alive) return;
+        setGlitch((x) => x + 1);
+        g();
+      }, w);
+    }
+    g();
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return (
+    <>
+      {pixels.map((p, i) => (
+        <motion.span
+          key={i}
+          className="absolute"
+          style={{left: `${p.x}%`, bottom: -12, width: p.s, height: p.s, background: i % 2 ? theme.accent : theme.primary, opacity: 0.5, boxShadow: `0 0 8px ${theme.primary}`}}
+          animate={{y: [0, -460], opacity: [0, 0.65, 0]}}
+          transition={{duration: p.d + 4, delay: p.delay, repeat: Infinity, ease: "linear"}}
+        />
+      ))}
+      <div className="pointer-events-none absolute inset-0 z-[4]" style={{boxShadow: "inset 0 0 120px 40px rgba(0,0,0,0.55)"}} />
+      <AnimatePresence>
+        {glitch ? (
+          <motion.div
+            key={glitch}
+            className="pointer-events-none absolute inset-0 z-[6]"
+            style={{background: "linear-gradient(90deg, rgba(255,0,0,0.13), transparent, rgba(0,255,255,0.13))", mixBlendMode: "screen"}}
+            initial={{opacity: 0, x: -6}}
+            animate={{opacity: [0, 0.5, 0], x: [6, -6, 0]}}
+            transition={{duration: 0.18}}
+          />
+        ) : null}
+      </AnimatePresence>
+    </>
+  );
+}
+
+// TSEROF 전용 — 밝은 플랫포머: 따뜻한 광선 + 부유 플랫폼/구름 + 반짝이.
+function PlatformerLayer({theme}: {theme: ProjectTheme}) {
+  const sparks = useMemo(
+    () =>
+      Array.from({length: 16}, (_, i) => ({
+        x: ((Math.sin(i * 51) + 1) / 2) * 100,
+        y: ((Math.cos(i * 23) + 1) / 2) * 100,
+        d: 2 + (i % 4),
+        delay: ((Math.sin(i * 9) + 1) / 2) * 3,
+      })),
+    [],
+  );
+  return (
+    <>
+      <div className="pointer-events-none absolute inset-0 z-[1]" style={{background: `radial-gradient(circle at 70% 8%, ${theme.accent}16, transparent 52%)`}} />
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full blur-xl"
+          style={{width: 120 + i * 40, height: 40 + i * 10, background: `${theme.primary}14`, left: `${14 + i * 28}%`, top: `${20 + i * 22}%`}}
+          animate={{x: [0, 30, 0], y: [0, -14, 0]}}
+          transition={{duration: 10 + i * 4, repeat: Infinity, ease: "easeInOut"}}
+        />
+      ))}
+      {sparks.map((s, i) => (
+        <motion.span
+          key={i}
+          className="absolute"
+          style={{left: `${s.x}%`, top: `${s.y}%`, fontSize: 10, color: theme.accent}}
+          animate={{opacity: [0, 1, 0], scale: [0.6, 1.2, 0.6]}}
+          transition={{duration: s.d, delay: s.delay, repeat: Infinity}}
+        >
+          ✦
+        </motion.span>
+      ))}
     </>
   );
 }
@@ -522,6 +617,8 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
       <motion.div className="pointer-events-none absolute inset-0 z-[1]" style={{background: spotlight}} />
       <Overlays accent={theme.accent} mood={mood} />
       {mood === "horror" ? <HorrorLayer theme={theme} /> : null}
+      {mood === "arcade" ? <ArcadeLayer theme={theme} /> : null}
+      {mood === "platformer" ? <PlatformerLayer theme={theme} /> : null}
 
       <AnimatePresence>
         {glitch ? (
