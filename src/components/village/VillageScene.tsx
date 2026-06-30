@@ -15,7 +15,7 @@ import {BuildingNetwork} from "./BuildingNetwork";
 import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
 import {Rock} from "./Decorations";
-import {NPC} from "./NPC";
+import {NPC, type NpcCommand} from "./NPC";
 import {EditorOutline, PropsEditorTray, PropsLayer, usePropsEditor} from "./PropsEditor";
 import {Tree} from "./Tree";
 
@@ -34,6 +34,8 @@ interface VillageSceneProps {
   onGuideArrive?: () => void;
   guideForceHold?: boolean;
   cinematic?: {position: [number, number, number]; lookAt: [number, number, number]} | null;
+  npcCommand?: NpcCommand | null;
+  npcCommandTargets?: Record<string, Vector3Tuple>;
 }
 
 // 네트워크 펄스로 연결할 프로젝트 건물들 (한 번만 계산)
@@ -209,7 +211,8 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
 export function VillageScene({
   activeSection, activeNpcId, explorationMode, isIntro = false,
   onSelectNpc, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState,
-  guideScriptedTarget, onGuideArrive, guideForceHold, cinematic
+  guideScriptedTarget, onGuideArrive, guideForceHold, cinematic,
+  npcCommand, npcCommandTargets
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
   const propsApi = usePropsEditor();
@@ -288,7 +291,7 @@ export function VillageScene({
             );
           })}
 
-          {autonomousNpcs.map((npc) => (
+          {autonomousNpcs.map((npc, index) => (
             <NPC
               behavior={npcBehaviorProfiles[npc.id]}
               bubbleText={visibleBubble(npcRuntimeStates[npc.id])}
@@ -306,6 +309,10 @@ export function VillageScene({
               scriptedStart={npc.id === "guide-npc" ? [-4, 0, 1] : undefined}
               onScriptedArrive={npc.id === "guide-npc" ? onGuideArrive : undefined}
               forceHold={npc.id === "guide-npc" ? guideForceHold : undefined}
+              command={npcCommand}
+              commandTarget={npcCommandTargets?.[npc.id]}
+              commandSlot={index}
+              commandTotal={autonomousNpcs.length}
             />
           ))}
 

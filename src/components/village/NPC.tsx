@@ -12,6 +12,9 @@ import {isWalkablePosition} from "@/lib/worldCollision";
 import type {NpcActionState, NpcAnimationKey, NpcState} from "@/types/live";
 import type {BuildingData, NPCData, Vector3Tuple} from "@/types/portfolio";
 
+/** 플레이어가 내리는 단체 명령 — gather(집결)/photo(단체사진)/party(파티)/follow(따라오기)/greet(인사) */
+export type NpcCommand = "gather" | "photo" | "party" | "follow" | "greet";
+
 interface NPCProps {
   npc: NPCData;
   npcState?: NpcState;
@@ -33,6 +36,13 @@ interface NPCProps {
   facePoint?: [number, number, number];
   /** 이 시각까지 멈춰서 마주봄 */
   holdUntil?: number;
+  /** 단체 명령 모드 (null이면 평소 배회) */
+  command?: NpcCommand | null;
+  /** gather/photo/party일 때 이 NPC가 갈 목표 지점 */
+  commandTarget?: Vector3Tuple | null;
+  /** follow 링 배치를 위한 슬롯 번호와 전체 수 */
+  commandSlot?: number;
+  commandTotal?: number;
 }
 
 export function NPC({
@@ -50,7 +60,11 @@ export function NPC({
   onScriptedArrive,
   forceHold,
   facePoint,
-  holdUntil
+  holdUntil,
+  command,
+  commandTarget,
+  commandSlot,
+  commandTotal
 }: NPCProps) {
   const groupRef = useRef<Group | null>(null);
   const elapsedRef = useRef(0);
@@ -72,7 +86,7 @@ export function NPC({
 
   useCursor(hovered);
 
-  useFrame(({clock}, delta) => {
+  useFrame(({clock, camera}, delta) => {
     elapsedRef.current += delta;
 
     if (!groupRef.current) {
@@ -120,6 +134,68 @@ export function NPC({
       g.rotation.y += (0 - g.rotation.y) * Math.min(1, delta * 6);
       g.position.y = Math.sin(elapsedRef.current * 2.2) * 0.03; // 잔잔한 호흡
       moveStateRef.current = "idle";
+      return;
+    }
+
+    // ── 단체 명령: 집결 / 단체사진 / 파티 / 따라오기 / 인사 ──
+    if (command) {
+      const g = groupRef.current;
+      let tx = g.position.x;
+      let tz = g.position.z;
+      let faceCamera = false;
+
+      if (command === "follow") {
+        const slot = commandSlot ?? 0;
+        const total = Math.max(1, commandTotal ?? 1);
+        const ang = (slot / total) * Math.PI * 2;
+        const ringR = 1.7 + (slot % 3) * 0.55;
+        tx = camera.position.x + Math.cos(ang) * ringR;
+        tz = camera.position.z + Math.sin(ang) * ringR;
+        faceCamera = true;
+      } else if (commandTarget) {
+        tx = commandTarget[0];
+        tz = commandTarget[2];
+        faceCamera = command === "photo" || command === "party" || command === "greet";
+      } else {
+        faceCamera = command === "photo" || command === "party" || command === "greet";
+      }
+
+      const dx = tx - g.position.x;
+      const dz = tz - g.position.z;
+      const dist = Math.sqrt(dx * dx + dz * dz);
+
+      if (dist > 0.14) {
+        const step = Math.min(3.6 * delta, dist);
+        g.position.x += (dx / dist) * step;
+        g.position.z += (dz / dist) * step;
+        g.rotation.y = Math.atan2(dx, dz);
+        g.position.y = Math.sin(elapsedRef.current * 8) * 0.05;
+        moveStateRef.current = dist > 0.6 ? "run" : "walk";
+      } else {
+        moveStateRef.current = "idle";
+        if (faceCamera) {
+          const fx = camera.position.x - g.position.x;
+          const fz = camera.position.z - g.position.z;
+          const targetRot = Math.atan2(fx, fz);
+          let d = targetRot - g.rotation.y;
+          d = Math.atan2(Math.sin(d), Math.cos(d));
+          g.rotation.y += d * Math.min(1, delta * 7);
+        }
+        if (command === "greet") {
+          g.position.y = Math.abs(Math.sin(elapsedRef.current * 6)) * 0.13;
+        } else if (command === "party") {
+          g.position.y = Math.abs(Math.sin(elapsedRef.current * 7 + home[0])) * 0.32;
+          g.rotation.y += delta * 1.6;
+        } else {
+          g.position.y = Math.sin(elapsedRef.current * 2.2) * 0.03;
+        }
+      }
+
+      const nowT = clock.getElapsedTime();
+      if (onPositionChange && nowT > reportAtRef.current) {
+        onPositionChange(npc.id, [g.position.x, 0, g.position.z]);
+        reportAtRef.current = nowT + 0.4;
+      }
       return;
     }
 
@@ -249,6 +325,15 @@ export function NPC({
               style={{width: 180, whiteSpace: "normal", wordBreak: "keep-all"}}
             >
               {bubbleText}
+            </div>
+          </Html>
+        </Billboard>
+      ) : null}
+      {command === "greet" || command === "party" ? (
+        <Billboard position={[0, 2.46, 0]}>
+          <Html center distanceFactor={7.4} zIndexRange={[12, 0]}>
+            <div style={{fontSize: 22, userSelect: "none", pointerEvents: "none"}}>
+              {command === "greet" ? "👋" : "🎉"}
             </div>
           </Html>
         </Billboard>

@@ -12,9 +12,10 @@ import {SceneTransition} from "@/components/ui/SceneTransition";
 import {SectionTabs} from "@/components/ui/SectionTabs";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
+import type {NpcCommand} from "@/components/village/NPC";
 import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {cameraTargets, villageBuildings} from "@/lib/constants";
-import {fetchVillageState, requestNpcEncounter, requestNpcTick, trackVisitorEvent} from "@/lib/liveApi";
+import {fetchVillageState, requestGroupChat, requestNpcEncounter, requestNpcTick, trackVisitorEvent} from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
 import type {
@@ -118,6 +119,38 @@ const DISTRICT_TO_TRAVEL_KEY: Record<string, string> = {
   study: "study",
   contact: "contact"
 };
+
+// NPC 단체 명령 — 집결 지점(중앙 광장 앞)과 NPC별 목표 배치 (한 번만 계산)
+const RALLY_POINT: Vector3Tuple = [0, 0, 2];
+
+// 모으기/파티: 해바라기(피보나치) 배치로 원반처럼 골고루 채움
+const COMMAND_DISK_TARGETS: Record<string, Vector3Tuple> = (() => {
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  const total = Math.max(1, autonomousNpcs.length - 1);
+  const out: Record<string, Vector3Tuple> = {};
+  autonomousNpcs.forEach((npc, i) => {
+    const r = 0.6 + 2.2 * Math.sqrt(i / total);
+    const a = i * golden;
+    out[npc.id] = [RALLY_POINT[0] + Math.cos(a) * r, 0, RALLY_POINT[2] + Math.sin(a) * r];
+  });
+  return out;
+})();
+
+// 단체사진: 카메라 쪽(+z)을 보고 여러 줄로 정렬
+const COMMAND_PHOTO_TARGETS: Record<string, Vector3Tuple> = (() => {
+  const cols = 8;
+  const total = autonomousNpcs.length;
+  const out: Record<string, Vector3Tuple> = {};
+  autonomousNpcs.forEach((npc, i) => {
+    const row = Math.floor(i / cols);
+    const col = i % cols;
+    const inThisRow = Math.min(cols, total - row * cols);
+    const x = (col - (inThisRow - 1) / 2) * 1.05;
+    const z = RALLY_POINT[2] + 1.3 - row * 1.15;
+    out[npc.id] = [x, 0, z];
+  });
+  return out;
+})();
 const WELCOME_SPOT: Vector3Tuple = [-4, 0, 10]; // 건물 없는 앞쪽-왼쪽 빈 곳 (중앙 타워 회피)
 // 컨시어지 시네마틱 — 앞쪽 빈 레인을 정면 저시점에서 바라봄 (멀리서 달려옴)
 const CONCIERGE_CAM: {position: Vector3Tuple; lookAt: Vector3Tuple} = {
@@ -162,6 +195,10 @@ export function AIPortfolioVillage() {
   const [conciergeStage, setConciergeStage] = useState<"idle" | "running" | "panel" | "closed">("idle");
   const [talkCam, setTalkCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
   const [travelCam, setTravelCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
+  const [npcCommand, setNpcCommand] = useState<NpcCommand | null>(null);
+  const [groupChatBusy, setGroupChatBusy] = useState(false);
+  const [groupChat, setGroupChat] = useState<{lines: {name: string; text: string}[]} | null>(null);
+  const [groupChatOpen, setGroupChatOpen] = useState(false);
   const [conciergeCam, setConciergeCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
   const [eavesdrop, setEavesdrop] = useState<{aName: string; bName: string; lines: {name: string; text: string}[]} | null>(null);
   const [eavesOpen, setEavesOpen] = useState(false);
@@ -177,6 +214,9 @@ export function AIPortfolioVillage() {
   const [encounterNotice, setEncounterNotice] = useState<string | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const npcCommandRef = useRef<NpcCommand | null>(null);
+  const greetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const beforeGreetRef = useRef<NpcCommand | null>(null);
   const npcRuntimeStatesRef = useRef<Record<string, NpcRuntimeState>>({});
   const npcPositionsRef = useRef<Record<string, Vector3Tuple>>({});
   const npcMemoryRef = useRef<string[]>([]);
@@ -189,6 +229,14 @@ export function AIPortfolioVillage() {
   useEffect(() => {
     npcRuntimeStatesRef.current = npcRuntimeStates;
   }, [npcRuntimeStates]);
+
+  useEffect(() => {
+    npcCommandRef.current = npcCommand;
+  }, [npcCommand]);
+
+  useEffect(() => () => {
+    if (greetTimerRef.current) clearTimeout(greetTimerRef.current);
+  }, []);
 
   useEffect(() => {
     trackVisitorEvent({event_type: "page_view", target_id: "home", label: "Portfolio Village"});
@@ -329,6 +377,7 @@ export function AIPortfolioVillage() {
   useEffect(() => {
     async function checkEncounter() {
       if (typeof document !== "undefined" && document.hidden) return; // 탭 숨김 → AI 호출 중단(비용 절감)
+      if (npcCommandRef.current) return; // 단체 명령 중에는 자동 NPC 대화 중단
       if (encounterBusyRef.current) return;
 
       const entries = Object.entries(npcPositionsRef.current);
@@ -655,6 +704,128 @@ export function AIPortfolioVillage() {
     setTravelCam({position: [...target.position] as Vector3Tuple, lookAt: [...target.lookAt] as Vector3Tuple});
   }
 
+  // ── NPC 단체 명령 ──
+  function clearGreetTimer() {
+    if (greetTimerRef.current) {
+      clearTimeout(greetTimerRef.current);
+      greetTimerRef.current = null;
+    }
+    beforeGreetRef.current = null;
+  }
+
+  // gather/photo/party/follow — 같은 버튼 다시 누르면 해제(토글)
+  function issueCommand(mode: NpcCommand) {
+    clearGreetTimer();
+    setShowIntro(false);
+    setSelectedNpc(null);
+    const willActivate = npcCommand !== mode;
+    trackVisitorEvent({event_type: "npc_command", target_id: mode, label: willActivate ? "on" : "off"});
+
+    if (willActivate && mode === "follow") setExplorationMode("walk");
+
+    // 모으기·단체사진·파티는 광장이 보이게 카메라도 같이 이동
+    if (willActivate && (mode === "gather" || mode === "photo" || mode === "party")) {
+      const t = cameraTargets.intro;
+      setActiveSection("intro");
+      setIsPanelOpen(false);
+      setTravelCam({position: [...t.position] as Vector3Tuple, lookAt: [...t.lookAt] as Vector3Tuple});
+    }
+
+    setNpcCommand(willActivate ? mode : null);
+  }
+
+  // 인사 — 잠깐 모두 인사하고 이전 상태로 복귀(일회성)
+  function commandGreet() {
+    trackVisitorEvent({event_type: "npc_command", target_id: "greet", label: "on"});
+    setShowIntro(false);
+    if (npcCommand !== "greet") beforeGreetRef.current = npcCommand;
+    setNpcCommand("greet");
+    if (greetTimerRef.current) clearTimeout(greetTimerRef.current);
+    greetTimerRef.current = setTimeout(() => {
+      setNpcCommand(beforeGreetRef.current);
+      beforeGreetRef.current = null;
+      greetTimerRef.current = null;
+    }, 3800);
+  }
+
+  // 다시 일하기 — 모든 명령 해제, 각자 배회로 복귀
+  function backToWork() {
+    clearGreetTimer();
+    trackVisitorEvent({event_type: "npc_command", target_id: "disperse", label: "off"});
+    setNpcCommand(null);
+  }
+
+  const npcCommandTargets =
+    npcCommand === "photo"
+      ? COMMAND_PHOTO_TARGETS
+      : npcCommand === "gather" || npcCommand === "party"
+        ? COMMAND_DISK_TARGETS
+        : undefined;
+
+  // 다 같이 수다 — 핵심 NPC들을 광장에 모으고 단체 대화를 말풍선으로 재생 (AI 1회 호출)
+  function commandGroupTalk() {
+    if (groupChatBusy) return;
+    clearGreetTimer();
+    setShowIntro(false);
+    setSelectedNpc(null);
+    const t = cameraTargets.intro;
+    setActiveSection("intro");
+    setIsPanelOpen(false);
+    setTravelCam({position: [...t.position] as Vector3Tuple, lookAt: [...t.lookAt] as Vector3Tuple});
+    setNpcCommand("gather");
+    setGroupChatBusy(true);
+    trackVisitorEvent({event_type: "npc_command", target_id: "group-talk", label: "on"});
+
+    const ids = autonomousNpcs.filter((npc) => CORE_NPC_IDS.has(npc.id)).map((npc) => npc.id);
+    requestGroupChat(ids, npcMemoryRef.current.slice(-6))
+      .then((res) => playGroupChat(res.dialogue))
+      .catch(() => {
+        setGroupChatBusy(false);
+        setEncounterNotice("수다 생성에 실패했어요 (백엔드 확인) 🚧");
+        window.setTimeout(() => setEncounterNotice(null), 2600);
+      });
+  }
+
+  function playGroupChat(dialogue: {npc_id: string; text: string}[]) {
+    convoTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+    convoTimersRef.current = [];
+    const nameOf = (id: string) => autonomousNpcs.find((npc) => npc.id === id)?.name ?? id;
+
+    if (!dialogue.length) {
+      setGroupChatBusy(false);
+      return;
+    }
+
+    remember("마을 NPC들이 다 같이 수다를 떨었다.");
+    setGroupChat({lines: dialogue.map((line) => ({name: nameOf(line.npc_id), text: line.text}))});
+    setGroupChatOpen(true);
+
+    dialogue.forEach((line, index) => {
+      const timer = window.setTimeout(() => {
+        setNpcRuntimeStates((states) => {
+          const next = {...states};
+          for (const key of Object.keys(next)) {
+            if (next[key]?.bubbleText) next[key] = {...next[key], bubbleText: undefined, bubbleExpiresAt: undefined};
+          }
+          next[line.npc_id] = {
+            ...(next[line.npc_id] ?? {mood: "curious" as NpcMood, energy: 55}),
+            bubbleText: line.text,
+            bubbleExpiresAt: Date.now() + CONVO_STEP + 900
+          };
+          return next;
+        });
+      }, index * CONVO_STEP);
+      convoTimersRef.current.push(timer);
+    });
+
+    const endTimer = window.setTimeout(() => setGroupChatBusy(false), dialogue.length * CONVO_STEP + 600);
+    const closeTimer = window.setTimeout(() => {
+      setGroupChatOpen(false);
+      setGroupChat(null);
+    }, dialogue.length * CONVO_STEP + 12000);
+    convoTimersRef.current.push(endTimer, closeTimer);
+  }
+
   function openNpcDialogue(npc: NPCData) {
     trackVisitorEvent({
       event_type: "npc_open",
@@ -817,6 +988,8 @@ export function AIPortfolioVillage() {
               guideScriptedTarget={conciergeStage === "running" ? WELCOME_SPOT : null}
               onGuideArrive={handleGuideArrive}
               guideForceHold={conciergeStage === "panel"}
+              npcCommand={npcCommand}
+              npcCommandTargets={npcCommandTargets}
               cinematic={
                 eavesOpen && convoCam
                   ? convoCam
@@ -873,6 +1046,19 @@ export function AIPortfolioVillage() {
           ) : null}
           {!showIntro && !isPanelOpen ? <QuickTravelDock activeKey={activeSection} onTravel={travelTo} /> : null}
           {!showIntro && !isPanelOpen ? <Minimap activeKey={activeSection} onTravel={travelTo} /> : null}
+          {!showIntro ? (
+            <CommandDock
+              command={npcCommand}
+              onCommand={issueCommand}
+              onGreet={commandGreet}
+              onGroupTalk={commandGroupTalk}
+              groupTalkBusy={groupChatBusy}
+              onBackToWork={backToWork}
+            />
+          ) : null}
+          {groupChat && groupChatOpen ? (
+            <GroupChatPanel lines={groupChat.lines} onClose={() => setGroupChatOpen(false)} />
+          ) : null}
           {encounterNotice ? <EncounterNotice text={encounterNotice} /> : null}
           {conciergeStage === "panel" ? (
             <ConciergePanel
@@ -1074,6 +1260,131 @@ function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onSelect: 
         </button>
       ))}
     </aside>
+  );
+}
+
+function CommandDock({
+  command,
+  onCommand,
+  onGreet,
+  onGroupTalk,
+  groupTalkBusy,
+  onBackToWork
+}: {
+  command: NpcCommand | null;
+  onCommand: (mode: NpcCommand) => void;
+  onGreet: () => void;
+  onGroupTalk: () => void;
+  groupTalkBusy: boolean;
+  onBackToWork: () => void;
+}) {
+  const [collapsed, setCollapsed] = useState(false);
+  const modes: {mode: NpcCommand; icon: string; label: string}[] = [
+    {mode: "gather", icon: "🧲", label: "모으기"},
+    {mode: "photo", icon: "📸", label: "단체사진"},
+    {mode: "party", icon: "🎉", label: "파티"},
+    {mode: "follow", icon: "🏃", label: "따라와"}
+  ];
+  const busy = command !== null;
+
+  if (collapsed) {
+    return (
+      <button
+        type="button"
+        onClick={() => setCollapsed(false)}
+        className="fixed left-4 top-[300px] z-30 hidden items-center gap-2 rounded-xl border border-[#7ed957]/30 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#9affc4] shadow-2xl backdrop-blur-md transition hover:border-[#7ed957]/55 active:scale-95 md:flex"
+      >
+        <span className="text-sm">🎮</span> 지휘 <span className="text-white/40">▸</span>
+      </button>
+    );
+  }
+
+  return (
+    <aside className="fixed left-4 top-[300px] z-30 hidden w-[150px] flex-col gap-1 rounded-xl border border-[#7ed957]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:flex">
+      <button
+        type="button"
+        onClick={() => setCollapsed(true)}
+        className="mb-0.5 flex items-center justify-between px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#9affc4]/80 transition hover:text-[#9affc4]"
+      >
+        🎮 NPC 지휘 <span className="text-white/40">◂</span>
+      </button>
+      {modes.map((item) => {
+        const active = command === item.mode;
+        return (
+          <button
+            key={item.mode}
+            type="button"
+            onClick={() => onCommand(item.mode)}
+            className={
+              active
+                ? "flex items-center gap-2.5 rounded-lg border border-[#7ed957]/55 bg-[#7ed957]/16 px-3 py-2 text-left text-xs font-black text-white"
+                : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
+            }
+          >
+            <span className="text-sm">{item.icon}</span>
+            {item.label}
+          </button>
+        );
+      })}
+      <button
+        type="button"
+        onClick={onGreet}
+        className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
+      >
+        <span className="text-sm">👋</span> 인사
+      </button>
+      <button
+        type="button"
+        onClick={onGroupTalk}
+        disabled={groupTalkBusy}
+        className={
+          groupTalkBusy
+            ? "flex items-center gap-2.5 rounded-lg border border-[#7ed957]/40 bg-[#7ed957]/10 px-3 py-2 text-left text-xs font-black text-[#9affc4]"
+            : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
+        }
+      >
+        <span className="text-sm">💬</span> {groupTalkBusy ? "수다 중…" : "다 같이 수다"}
+      </button>
+      <button
+        type="button"
+        onClick={onBackToWork}
+        disabled={!busy}
+        className={
+          busy
+            ? "mt-0.5 flex items-center gap-2.5 rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/12 px-3 py-2 text-left text-xs font-black text-[#9beaff] transition hover:bg-[#00d4ff]/20 active:scale-[0.98]"
+            : "mt-0.5 flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/25"
+        }
+      >
+        <span className="text-sm">🛠️</span> 다시 일하기
+      </button>
+    </aside>
+  );
+}
+
+function GroupChatPanel({lines, onClose}: {lines: {name: string; text: string}[]; onClose: () => void}) {
+  return (
+    <div className="fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 rounded-2xl border border-[#7ed957]/30 bg-[#050d1a]/95 p-4 shadow-2xl backdrop-blur-md">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="font-mono text-[11px] font-black uppercase tracking-[0.16em] text-[#9affc4]">
+          💬 마을 단체 수다
+        </p>
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-md border border-white/15 px-2 py-0.5 text-sm font-bold text-white/70 transition hover:text-white active:scale-90"
+        >
+          ✕
+        </button>
+      </div>
+      <div className="max-h-[40vh] space-y-2 overflow-y-auto">
+        {lines.map((line, index) => (
+          <div key={index} className="rounded-xl bg-white/[0.04] px-3 py-2">
+            <p className="font-mono text-[9px] font-black uppercase tracking-[0.1em] text-[#7ed957]/75">{line.name}</p>
+            <p className="mt-0.5 text-sm leading-6 text-white/85">{line.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 

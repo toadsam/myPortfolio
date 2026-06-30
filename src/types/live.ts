@@ -158,6 +158,12 @@ export interface NpcEncounterResponse {
   suggested_actions: NpcSuggestedAction[];
 }
 
+export interface NpcGroupChatResponse {
+  dialogue: Array<{npc_id: string; text: string}>;
+  used_ai: boolean;
+  cooldown_seconds: number;
+}
+
 export interface GithubSyncResponse {
   commits: number;
   updated_activity: DailyActivity;

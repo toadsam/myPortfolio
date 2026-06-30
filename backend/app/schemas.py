@@ -152,6 +152,17 @@ class NpcEncounterOut(BaseModel):
     suggested_actions: list[NpcActionOut] = Field(default_factory=list)
 
 
+class NpcGroupChatIn(BaseModel):
+    npc_ids: list[str] = Field(default_factory=list)
+    recent_memory: list[str] = Field(default_factory=list)
+
+
+class NpcGroupChatOut(BaseModel):
+    dialogue: list[NpcDialogueLine]
+    used_ai: bool
+    cooldown_seconds: int
+
+
 class GithubSyncOut(BaseModel):
     username: str
     commits: int

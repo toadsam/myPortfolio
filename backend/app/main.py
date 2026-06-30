@@ -20,6 +20,8 @@ from app.schemas import (
     ManagedProjectOut,
     NpcEncounterIn,
     NpcEncounterOut,
+    NpcGroupChatIn,
+    NpcGroupChatOut,
     NpcConversationLogOut,
     NpcPresetIn,
     NpcPresetOut,
@@ -61,7 +63,7 @@ from app.services.learning_service import (
     list_coding_tests,
     list_cs_notes,
 )
-from app.services.npc_brain_service import generate_npc_encounter, generate_npc_tick
+from app.services.npc_brain_service import generate_group_chat, generate_npc_encounter, generate_npc_tick
 from app.services.village_service import derive_village_state
 
 app = FastAPI(title="AI Portfolio Village API", version="0.1.0")
@@ -157,6 +159,18 @@ async def npc_tick(payload: NpcTickIn, db: Session = Depends(get_db)):
 async def npc_encounter(payload: NpcEncounterIn, db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
     return await generate_npc_encounter(payload.npc_a, payload.npc_b, payload.recent_memory, activity)
+
+
+@app.post("/npc/group-chat", response_model=NpcGroupChatOut)
+async def npc_group_chat(payload: NpcGroupChatIn, db: Session = Depends(get_db)):
+    activity = get_or_create_today(db)
+    return await generate_group_chat(
+        payload.npc_ids,
+        activity,
+        payload.recent_memory,
+        coding_tests=list_coding_tests(db, limit=8),
+        cs_notes=list_cs_notes(db, limit=8),
+    )
 
 
 @app.post("/github/sync", response_model=GithubSyncOut)

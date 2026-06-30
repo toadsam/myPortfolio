@@ -14,6 +14,7 @@ import type {
   NpcConversationLog,
   NpcEncounterParticipant,
   NpcEncounterResponse,
+  NpcGroupChatResponse,
   NpcPreset,
   NpcPresetInput,
   NpcTickRequest,
@@ -108,6 +109,13 @@ export function requestNpcEncounter(
   return requestJson<NpcEncounterResponse>("/npc/encounter", {
     method: "POST",
     body: JSON.stringify({npc_a: npcA, npc_b: npcB, recent_memory: recentMemory})
+  });
+}
+
+export function requestGroupChat(npcIds: string[], recentMemory: string[] = []): Promise<NpcGroupChatResponse> {
+  return requestJson<NpcGroupChatResponse>("/npc/group-chat", {
+    method: "POST",
+    body: JSON.stringify({npc_ids: npcIds, recent_memory: recentMemory.slice(-6)})
   });
 }
 

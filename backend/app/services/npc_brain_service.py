@@ -5,10 +5,12 @@ from typing import Any
 from app.catalog import NPCS, PROJECTS
 from app.config import settings
 from app.models import DailyActivity
+from app.models import CodingTestLog, CsNoteLog
 from app.schemas import (
     EncounterParticipant,
     NpcDialogueLine,
     NpcEncounterOut,
+    NpcGroupChatOut,
     NpcMood,
     NpcStateChange,
     NpcTickIn,
@@ -79,6 +81,107 @@ async def generate_npc_encounter(
             logger.warning("NPC encounter OpenAI 호출 실패 → 폴백 사용 (model=%s): %r", settings.openai_npc_model, exc)
 
     return _fallback_encounter(npc_a, npc_b, activity)
+
+
+async def generate_group_chat(
+    npc_ids: list[str],
+    activity: DailyActivity,
+    recent_memory: list[str],
+    coding_tests: list[CodingTestLog] | None = None,
+    cs_notes: list[CsNoteLog] | None = None,
+) -> NpcGroupChatOut:
+    ids = [npc_id for npc_id in npc_ids if npc_id][:6] or [
+        "guide-npc",
+        "project-npc",
+        "developer-npc",
+        "archivist-npc",
+        "contact-npc",
+    ]
+    profiles = {npc_id: _npc_profile(npc_id) for npc_id in ids}
+    context = build_context(ids[0], activity, recent_memory, coding_tests or [], cs_notes or [])
+
+    if settings.openai_api_key:
+        try:
+            data = await _call_json_model(
+                system_prompt=_group_system_prompt(profiles, context),
+                user_prompt=json.dumps(
+                    {"npc_ids": ids, "recent_memory": recent_memory[-5:]},
+                    ensure_ascii=False,
+                ),
+                max_tokens=620,
+            )
+            return _group_from_data(ids, data, used_ai=True)
+        except Exception as exc:
+            logger.warning("NPC group-chat OpenAI 호출 실패 → 폴백 사용 (model=%s): %r", settings.openai_npc_model, exc)
+
+    return _fallback_group(ids, activity)
+
+
+def _group_system_prompt(profiles: dict[str, dict[str, Any]], context: str) -> str:
+    roster = "\n".join(
+        f"- npc_id={npc_id} / 이름={_profile_text(p, 'name', 'NPC')} / 역할={_profile_text(p, 'role', '')} / 말투={_profile_text(p, 'tone', '')}"
+        for npc_id, p in profiles.items()
+    )
+    count = len(profiles)
+    lines = min(max(count + 2, 6), 8)
+    return (
+        "정재훈의 3D 마을 캐릭터들이 광장에 둘러앉아 다 같이 나누는 짧고 자연스러운 한국어 단체 수다를 써라. "
+        "이들은 포트폴리오 홍보원이 아니라 같이 사는 친구/동료다. 사람처럼, 감정적으로, 반말로 친근하게 말한다. "
+        "주제는 대부분 일상·감정 잡담(오늘 기분, 피곤함, 방문객 구경, 사소한 농담, 먹을 것)이고, "
+        "오늘 정재훈의 활동(커밋·공부·푼 코딩테스트·CS 공부)을 가끔 가볍게 언급해도 좋다 — 단 설명조 금지. "
+        "진짜 단체 대화처럼: 각 줄은 바로 앞사람 말에 반응하고, 여러 캐릭터가 번갈아 끼어든다. "
+        f"dialogue는 {lines}개 줄 안팎의 {{npc_id, text}} 객체 배열이고, 등장 캐릭터가 골고루 한 번 이상 말해야 한다. "
+        "각 줄은 40자 이내. 아래 명단의 정확한 npc_id 값만 사용해라. "
+        "JSON만 반환: 키는 dialogue, cooldown_seconds.\n"
+        f"참여 캐릭터 명단:\n{roster}\n"
+        f"마을 상황(필요할 때만 슬쩍 참고):\n{context}"
+    )
+
+
+def _group_from_data(ids: list[str], data: dict[str, Any], used_ai: bool) -> NpcGroupChatOut:
+    id_set = set(ids)
+    raw = data.get("dialogue") if isinstance(data.get("dialogue"), list) else []
+    dialogue: list[NpcDialogueLine] = []
+    for item in raw[:8]:
+        if not isinstance(item, dict):
+            continue
+        npc_id = str(item.get("npc_id") or "")
+        if npc_id not in id_set:
+            npc_id = ids[len(dialogue) % len(ids)]
+        text = str(item.get("text") or "").strip()
+        if text:
+            dialogue.append(NpcDialogueLine(npc_id=npc_id, text=text))
+
+    if not dialogue:
+        return _fallback_group(ids, None)
+
+    return NpcGroupChatOut(
+        dialogue=dialogue,
+        used_ai=used_ai,
+        cooldown_seconds=_clamp_int(data.get("cooldown_seconds"), 180, 90, 360),
+    )
+
+
+def _fallback_group(ids: list[str], activity: DailyActivity | None) -> NpcGroupChatOut:
+    name = {npc_id: _profile_text(_npc_profile(npc_id), "name", "NPC") for npc_id in ids}
+    pool = [
+        "다들 모여라~ 오랜만에 한자리네.",
+        "오늘 방문객 좀 있었어? 난 종일 한산했어.",
+        "재훈님 오늘도 뭔가 만들고 계시던데.",
+        "그러게, 커밋 올라오는 거 보면 바쁘신가 봐.",
+        "난 잠깐 쉬고 싶다… 다리 아파.",
+        "에이, 우리 로봇인데 다리가 어딨어.",
+        "그래도 이렇게 다 같이 노는 거 좋다!",
+        "맞아, 가끔은 이런 시간도 필요하지.",
+    ]
+    dialogue = [
+        NpcDialogueLine(npc_id=ids[i % len(ids)], text=pool[i])
+        for i in range(min(len(pool), max(len(ids) + 2, 6)))
+    ]
+    # 이름 기반 살짝 개인화(첫 줄)
+    if dialogue:
+        dialogue[0] = NpcDialogueLine(npc_id=ids[0], text=f"{name.get(ids[-1], '얘들아')}, 다들 모여라~ 오랜만이네!")
+    return NpcGroupChatOut(dialogue=dialogue, used_ai=False, cooldown_seconds=240)
 
 
 async def _call_json_model(system_prompt: str, user_prompt: str, max_tokens: int) -> dict[str, Any]:
