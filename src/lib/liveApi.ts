@@ -77,6 +77,10 @@ export function saveActivity(payload: ActivityInput): Promise<DailyActivity> {
   });
 }
 
+export function fetchActivityHistory(days = 120): Promise<DailyActivity[]> {
+  return requestJson<DailyActivity[]>(`/activity/history?days=${days}`, {cache: "no-store"});
+}
+
 export function syncGithubActivity(): Promise<GithubSyncResponse> {
   return requestJson<GithubSyncResponse>("/github/sync", {
     method: "POST"
@@ -195,6 +199,13 @@ export function createCodingTest(payload: CodingTestInput): Promise<CodingTestLo
   });
 }
 
+export function updateCodingTest(logId: number, payload: CodingTestInput): Promise<CodingTestLog> {
+  return requestJson<CodingTestLog>(`/admin/coding-tests/${logId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+}
+
 export function deleteCodingTest(logId: number): Promise<{ok: boolean}> {
   return requestJson<{ok: boolean}>(`/admin/coding-tests/${logId}`, {method: "DELETE"});
 }
@@ -206,6 +217,13 @@ export function fetchCsNotes(): Promise<CsNote[]> {
 export function createCsNote(payload: CsNoteInput): Promise<CsNote> {
   return requestJson<CsNote>("/admin/cs-notes", {
     method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function updateCsNote(noteId: number, payload: CsNoteInput): Promise<CsNote> {
+  return requestJson<CsNote>(`/admin/cs-notes/${noteId}`, {
+    method: "PUT",
     body: JSON.stringify(payload)
   });
 }

@@ -1,8 +1,22 @@
+from datetime import timedelta
+
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from app.models import DailyActivity
 from app.schemas import ActivityIn
 from app.time_utils import today_local
+
+
+def list_activity_history(db: Session, days: int = 120) -> list[DailyActivity]:
+    days = max(1, min(days, 730))
+    start = today_local() - timedelta(days=days - 1)
+    return (
+        db.query(DailyActivity)
+        .filter(DailyActivity.date >= start)
+        .order_by(desc(DailyActivity.date))
+        .all()
+    )
 
 
 def get_or_create_today(db: Session) -> DailyActivity:

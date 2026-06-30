@@ -35,6 +35,25 @@ def create_coding_test(db: Session, payload: CodingTestIn) -> CodingTestLog:
     return log
 
 
+def update_coding_test(db: Session, log_id: int, payload: CodingTestIn) -> CodingTestLog | None:
+    log = db.get(CodingTestLog, log_id)
+    if not log:
+        return None
+    if payload.solved_date:
+        log.solved_date = payload.solved_date
+    log.platform = payload.platform.strip()
+    log.problem_no = payload.problem_no.strip()
+    log.title = payload.title.strip()
+    log.difficulty = payload.difficulty.strip()
+    log.language = payload.language.strip()
+    log.url = payload.url.strip()
+    log.code = payload.code
+    log.approach = payload.approach.strip()
+    db.commit()
+    db.refresh(log)
+    return log
+
+
 def delete_coding_test(db: Session, log_id: int) -> bool:
     log = db.get(CodingTestLog, log_id)
     if not log:
@@ -74,6 +93,20 @@ def create_cs_note(db: Session, payload: CsNoteIn) -> CsNoteLog:
         content=payload.content,
     )
     db.add(note)
+    db.commit()
+    db.refresh(note)
+    return note
+
+
+def update_cs_note(db: Session, note_id: int, payload: CsNoteIn) -> CsNoteLog | None:
+    note = db.get(CsNoteLog, note_id)
+    if not note:
+        return None
+    if payload.study_date:
+        note.study_date = payload.study_date
+    note.category = payload.category.strip()
+    note.title = payload.title.strip()
+    note.content = payload.content
     db.commit()
     db.refresh(note)
     return note

@@ -9,14 +9,29 @@ import {
   createCsNote,
   deleteCodingTest,
   deleteCsNote,
+  fetchActivityHistory,
   fetchCodingTests,
   fetchCsNotes,
   fetchTodayActivity,
   fetchVillageState,
   saveActivity,
-  syncGithubActivity
+  syncGithubActivity,
+  updateCodingTest,
+  updateCsNote
 } from "@/lib/liveApi";
-import type {ActivityInput, CodingTestLog, CsNote, VillageState} from "@/types/live";
+import {villageBuildings} from "@/lib/constants";
+import type {ActivityInput, CodingTestLog, CsNote, DailyActivity, VillageState} from "@/types/live";
+
+const BUILDING_NAME: Record<string, string> = Object.fromEntries(
+  villageBuildings.map((building) => [building.id, building.name])
+);
+
+const UNLOCK_LABEL: Record<string, string> = {
+  "training-statue": "🏋️ 운동 동상",
+  "lab-beacon": "🔦 연구소 등대",
+  "study-fountain": "⛲ 학습 분수",
+  "deep-work-terminal": "💻 몰입 터미널"
+};
 
 const initialForm: ActivityInput = {
   github_commits: 0,
@@ -51,9 +66,20 @@ export default function AdminPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [repoInput, setRepoInput] = useState("");
   const [topicInput, setTopicInput] = useState("");
+  const [selectedDate, setSelectedDate] = useState(today());
+  const [history, setHistory] = useState<DailyActivity[]>([]);
+  const [reward, setReward] = useState<{state: VillageState; date: string} | null>(null);
+
+  const isToday = selectedDate === today();
+  const historyByDate = useMemo(() => {
+    const map: Record<string, DailyActivity> = {};
+    for (const item of history) map[item.date] = item;
+    return map;
+  }, [history]);
+  const stats = useMemo(() => computeStats(history), [history]);
 
   useEffect(() => {
-    void loadToday();
+    void loadAll();
   }, []);
 
   const totalProjectMinutes = useMemo(
@@ -72,40 +98,73 @@ export default function AdminPage() {
 
   const predictedChanges = useMemo(() => buildPredictedChanges(form), [form]);
 
-  async function loadToday() {
+  function applyActivity(activity: DailyActivity | null) {
+    if (!activity) {
+      setForm(initialForm);
+      return;
+    }
+    setForm({
+      github_commits: activity.github_commits,
+      github_repos: activity.github_repos ?? [],
+      study_minutes: activity.study_minutes,
+      study_topics: activity.study_topics ?? [],
+      studied_tech: activity.studied_tech ?? [],
+      coding_minutes: activity.coding_minutes ?? 0,
+      project_minutes: activity.project_minutes ?? {},
+      workout_done: activity.workout_done,
+      workout_minutes: activity.workout_minutes ?? 0,
+      workout_type: activity.workout_type ?? "",
+      focus_score: activity.focus_score ?? 50,
+      memo: activity.memo,
+      mood: activity.mood
+    });
+  }
+
+  async function loadAll() {
     try {
-      const [activity, state] = await Promise.all([fetchTodayActivity(), fetchVillageState()]);
-      setForm({
-        github_commits: activity.github_commits,
-        github_repos: activity.github_repos ?? [],
-        study_minutes: activity.study_minutes,
-        study_topics: activity.study_topics ?? [],
-        studied_tech: activity.studied_tech ?? [],
-        coding_minutes: activity.coding_minutes ?? 0,
-        project_minutes: activity.project_minutes ?? {},
-        workout_done: activity.workout_done,
-        workout_minutes: activity.workout_minutes ?? 0,
-        workout_type: activity.workout_type ?? "",
-        focus_score: activity.focus_score ?? 50,
-        memo: activity.memo,
-        mood: activity.mood
-      });
+      const [hist, state] = await Promise.all([fetchActivityHistory(140), fetchVillageState()]);
+      setHistory(hist);
       setVillageState(state);
+      const todayKey = today();
+      setSelectedDate(todayKey);
+      applyActivity(hist.find((item) => item.date === todayKey) ?? null);
       setStatus("오늘의 기록을 불러왔습니다.");
     } catch {
       setStatus("FastAPI 백엔드에 연결하지 못했습니다. 백엔드를 실행한 뒤 새로고침하세요.");
     }
   }
 
+  function selectDate(date: string) {
+    setSelectedDate(date);
+    applyActivity(historyByDate[date] ?? null);
+    setStatus(date === today() ? "오늘 기록을 편집 중입니다." : `${date} 기록을 편집 중입니다.`);
+  }
+
+  function shiftDate(delta: number) {
+    selectDate(addDays(selectedDate, delta));
+  }
+
+  function copyYesterday() {
+    const prev = historyByDate[addDays(selectedDate, -1)];
+    if (!prev) {
+      setStatus("어제 기록이 없어 복사할 내용이 없습니다.");
+      return;
+    }
+    applyActivity(prev);
+    setStatus("어제 기록을 불러왔습니다. 수정 후 저장하세요.");
+  }
+
   async function handleSave(event?: React.FormEvent) {
     event?.preventDefault();
     setIsSaving(true);
-    setStatus("오늘의 기록을 저장하고 마을 상태를 다시 계산하는 중입니다.");
+    setStatus("기록을 저장하고 마을 상태를 다시 계산하는 중입니다.");
 
     try {
-      await saveActivity(normalizeForm(form));
-      const state = await fetchVillageState();
+      await saveActivity({...normalizeForm(form), date: selectedDate});
+      const [hist, state] = await Promise.all([fetchActivityHistory(140), fetchVillageState()]);
+      setHistory(hist);
       setVillageState(state);
+      if (isToday) setReward({state, date: selectedDate});
       setStatus("기록이 저장되었습니다. 3D 마을 조명, NPC 상태, 장식이 갱신됐습니다.");
     } catch {
       setStatus("기록 저장에 실패했습니다. 백엔드 상태를 확인하세요.");
@@ -163,26 +222,26 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#07090d] text-white">
+    <main className="min-h-screen bg-[#f6f8fb] text-[#1e293b]">
       <form onSubmit={handleSave}>
-        <header className="border-b border-white/10 bg-[#0b1018]">
+        <header className="border-b border-[#e3e8ef] bg-[#ffffff]">
           <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="font-mono text-xs font-black uppercase tracking-[0.24em] text-[#00d4ff]">Daily Village Journal</p>
+              <p className="font-mono text-xs font-black uppercase tracking-[0.24em] text-[#0284c7]">Daily Village Journal</p>
               <h1 className="mt-2 text-3xl font-black md:text-5xl">오늘의 기록이 마을을 바꿉니다</h1>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-white/58">
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-[#475569]">
                 운동, 공부, 코딩, 프로젝트 작업, GitHub 활동을 기록하면 포트폴리오 마을의 조명과 NPC 상태가 자동으로 달라집니다.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
               <a
-                className="rounded-lg border border-[#00d4ff]/35 px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#9beaff] transition hover:bg-[#00d4ff]/10"
+                className="rounded-lg border border-[#0284c7]/35 px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#0369a1] transition hover:bg-[#0284c7]/10"
                 href="/"
               >
                 마을 보기
               </a>
               <button
-                className="rounded-lg bg-[#00d4ff] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#79e8ff] disabled:cursor-not-allowed disabled:opacity-45"
+                className="rounded-lg bg-[#0284c7] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#0ea5e9] disabled:cursor-not-allowed disabled:opacity-45"
                 disabled={isSaving}
                 type="submit"
               >
@@ -191,6 +250,35 @@ export default function AdminPage() {
             </div>
           </div>
         </header>
+
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-5 pt-5">
+          <div className="flex items-center gap-1 rounded-lg border border-[#e3e8ef] bg-[#ffffff] p-1">
+            <button className="step-button" onClick={() => shiftDate(-1)} type="button" aria-label="이전 날">◀</button>
+            <input
+              className="field w-[150px] text-center"
+              type="date"
+              max={today()}
+              value={selectedDate}
+              onChange={(event) => selectDate(event.target.value || today())}
+            />
+            <button
+              className="step-button disabled:opacity-30"
+              onClick={() => shiftDate(1)}
+              type="button"
+              aria-label="다음 날"
+              disabled={isToday}
+            >
+              ▶
+            </button>
+          </div>
+          {!isToday ? (
+            <button className="sub-button" onClick={() => selectDate(today())} type="button">오늘로</button>
+          ) : null}
+          <button className="sub-button" onClick={copyYesterday} type="button">어제 기록 복사</button>
+          <span className="rounded-full border border-[#0284c7]/25 px-3 py-1.5 font-mono text-xs text-[#0369a1]">
+            {isToday ? "오늘" : prettyDate(selectedDate)}{historyByDate[selectedDate] ? " · 기록 있음" : " · 빈 날"}
+          </span>
+        </div>
 
         <div className="mx-auto grid max-w-7xl gap-5 px-5 py-6 xl:grid-cols-[1fr_410px]">
           <section className="grid gap-5">
@@ -212,16 +300,16 @@ export default function AdminPage() {
                 </label>
                 <label className="grid gap-2">
                   <span className="field-label">집중도</span>
-                  <div className="rounded-lg border border-white/10 bg-[#070b12] px-3 py-3">
+                  <div className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] px-3 py-3">
                     <input
-                      className="w-full accent-[#00d4ff]"
+                      className="w-full accent-[#0284c7]"
                       max={100}
                       min={0}
                       onChange={(event) => updateForm({focus_score: Number(event.target.value)})}
                       type="range"
                       value={form.focus_score}
                     />
-                    <div className="mt-2 flex justify-between font-mono text-xs text-white/45">
+                    <div className="mt-2 flex justify-between font-mono text-xs text-[#94a3b8]">
                       <span>느슨함</span>
                       <span>{form.focus_score}%</span>
                       <span>몰입</span>
@@ -243,10 +331,10 @@ export default function AdminPage() {
             <div className="grid gap-5 lg:grid-cols-2">
               <Panel title="운동 기록" kicker="Body Energy">
                 <div className="grid gap-4">
-                  <label className="flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-white/[0.035] px-4 py-3">
+                  <label className="flex items-center justify-between gap-4 rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] px-4 py-3">
                     <span>
                       <span className="block text-sm font-black">오늘 운동 완료</span>
-                      <span className="mt-1 block text-xs text-white/45">운동 기록은 중앙 광장과 가이드 NPC 상태에 반영됩니다.</span>
+                      <span className="mt-1 block text-xs text-[#94a3b8]">운동 기록은 중앙 광장과 가이드 NPC 상태에 반영됩니다.</span>
                     </span>
                     <input
                       checked={form.workout_done}
@@ -383,9 +471,9 @@ export default function AdminPage() {
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <h3 className="font-black">{project.title}</h3>
-                          <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/45">{project.description}</p>
+                          <p className="mt-1 line-clamp-2 text-xs leading-5 text-[#94a3b8]">{project.description}</p>
                         </div>
-                        <span className="rounded-full border border-[#00d4ff]/25 px-2 py-0.5 font-mono text-[11px] text-[#9beaff]">
+                        <span className="rounded-full border border-[#0284c7]/25 px-2 py-0.5 font-mono text-[11px] text-[#0369a1]">
                           {minutes}m
                         </span>
                       </div>
@@ -412,6 +500,21 @@ export default function AdminPage() {
           </section>
 
           <aside className="grid content-start gap-5">
+            <Panel title="기록 스트릭" kicker="Keep Going">
+              <div className="grid gap-4">
+                <div className="grid grid-cols-3 gap-3">
+                  <Metric label="연속 기록" value={`${stats.recordStreak}일`} />
+                  <Metric label="운동 연속" value={`${stats.workoutStreak}일`} />
+                  <Metric label="이번 주 코딩" value={`${stats.weekCoding}분`} />
+                </div>
+                <ActivityCalendar
+                  byDate={historyByDate}
+                  selectedDate={selectedDate}
+                  onPick={selectDate}
+                />
+              </div>
+            </Panel>
+
             <Panel title="오늘 기록 요약" kicker="Village Impact">
               <div className="grid gap-3">
                 <div className="grid grid-cols-2 gap-3">
@@ -420,12 +523,12 @@ export default function AdminPage() {
                   <Metric label="코딩" value={`${form.coding_minutes}분`} />
                   <Metric label="프로젝트" value={`${totalProjectMinutes}분`} />
                 </div>
-                <div className="rounded-lg border border-white/10 bg-white/[0.035] p-4">
-                  <p className="font-black text-[#00d4ff]">저장하면 바뀌는 것</p>
-                  <ul className="mt-3 grid gap-2 text-sm leading-6 text-white/60">
+                <div className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-4">
+                  <p className="font-black text-[#0284c7]">저장하면 바뀌는 것</p>
+                  <ul className="mt-3 grid gap-2 text-sm leading-6 text-[#475569]">
                     {predictedChanges.map((change) => (
                       <li className="flex gap-2" key={change}>
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#00d4ff]" />
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#0284c7]" />
                         <span>{change}</span>
                       </li>
                     ))}
@@ -438,17 +541,17 @@ export default function AdminPage() {
               {activeProjects.length > 0 ? (
                 <div className="grid gap-2">
                   {activeProjects.slice(0, 5).map(({project, minutes}) => (
-                    <div className="rounded-lg border border-white/10 bg-[#070b12] p-3" key={project.id}>
+                    <div className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-3" key={project.id}>
                       <div className="flex items-center justify-between gap-3">
                         <span className="font-bold">{project.title}</span>
-                        <span className="font-mono text-xs text-[#00d4ff]">{minutes}분</span>
+                        <span className="font-mono text-xs text-[#0284c7]">{minutes}분</span>
                       </div>
-                      <p className="mt-1 text-xs leading-5 text-white/42">이 프로젝트 건물 조명과 프로젝트 NPC 추천에 반영됩니다.</p>
+                      <p className="mt-1 text-xs leading-5 text-[#94a3b8]">이 프로젝트 건물 조명과 프로젝트 NPC 추천에 반영됩니다.</p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/45">
+                <p className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-4 text-sm leading-6 text-[#94a3b8]">
                   작업한 프로젝트 시간을 입력하면 해당 건물이 밝아집니다.
                 </p>
               )}
@@ -457,36 +560,36 @@ export default function AdminPage() {
             <Panel title="현재 마을 상태" kicker="Live Preview">
               {villageState ? (
                 <div className="grid gap-3">
-                  <p className="text-sm leading-6 text-white/58">{villageState.summary}</p>
+                  <p className="text-sm leading-6 text-[#475569]">{villageState.summary}</p>
                   <div className="grid gap-2">
                     {villageState.buildings
                       .filter((building) => building.activity_score > 0)
                       .sort((a, b) => b.activity_score - a.activity_score)
                       .slice(0, 6)
                       .map((building) => (
-                        <div className="rounded-lg border border-white/10 bg-[#070b12] p-3" key={building.building_id}>
+                        <div className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-3" key={building.building_id}>
                           <div className="flex items-center justify-between gap-3">
-                            <span className="font-mono text-xs font-black text-white/60">{building.building_id}</span>
-                            <span className="rounded-full border border-[#00d4ff]/25 px-2 py-0.5 text-xs text-[#9beaff]">
+                            <span className="font-mono text-xs font-black text-[#475569]">{building.building_id}</span>
+                            <span className="rounded-full border border-[#0284c7]/25 px-2 py-0.5 text-xs text-[#0369a1]">
                               {building.light_level}
                             </span>
                           </div>
-                          <p className="mt-1 line-clamp-2 text-xs leading-5 text-white/42">{building.reason}</p>
+                          <p className="mt-1 line-clamp-2 text-xs leading-5 text-[#94a3b8]">{building.reason}</p>
                         </div>
                       ))}
                   </div>
                 </div>
               ) : (
-                <p className="rounded-lg border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/45">
+                <p className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-4 text-sm leading-6 text-[#94a3b8]">
                   저장 후 마을 상태가 표시됩니다.
                 </p>
               )}
             </Panel>
 
-            <div className="rounded-lg border border-white/10 bg-[#0b1018] p-4">
-              <p className="text-sm leading-6 text-white/58">{status}</p>
+            <div className="rounded-lg border border-[#e3e8ef] bg-[#ffffff] p-4">
+              <p className="text-sm leading-6 text-[#475569]">{status}</p>
               <button
-                className="mt-4 w-full rounded-lg bg-[#00d4ff] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#79e8ff] disabled:cursor-not-allowed disabled:opacity-45"
+                className="mt-4 w-full rounded-lg bg-[#0284c7] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#0ea5e9] disabled:cursor-not-allowed disabled:opacity-45"
                 disabled={isSaving}
                 type="submit"
               >
@@ -498,16 +601,38 @@ export default function AdminPage() {
       </form>
 
       <div className="mx-auto grid max-w-7xl gap-5 px-5 pb-10">
-        <CodingTestAdmin />
-        <CsNoteAdmin />
+        <CodingTestAdmin defaultDate={selectedDate} />
+        <CsNoteAdmin defaultDate={selectedDate} />
       </div>
+
+      {reward ? <RewardCard reward={reward} onClose={() => setReward(null)} /> : null}
     </main>
   );
 }
 
-function CodingTestAdmin() {
-  const empty = {
-    solved_date: today(),
+function groupByDate<T>(items: T[], dateOf: (item: T) => string): [string, T[]][] {
+  const order: string[] = [];
+  const map: Record<string, T[]> = {};
+  for (const item of items) {
+    const key = dateOf(item);
+    if (!map[key]) {
+      map[key] = [];
+      order.push(key);
+    }
+    map[key].push(item);
+  }
+  return order.map((key) => [key, map[key]!]);
+}
+
+function matchesQuery(query: string, fields: (string | undefined)[]): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return fields.some((field) => (field ?? "").toLowerCase().includes(q));
+}
+
+function CodingTestAdmin({defaultDate}: {defaultDate: string}) {
+  const emptyOf = (date: string) => ({
+    solved_date: date,
     platform: "백준",
     problem_no: "",
     title: "",
@@ -516,15 +641,21 @@ function CodingTestAdmin() {
     url: "",
     code: "",
     approach: ""
-  };
-  const [form, setForm] = useState(empty);
+  });
+  const [form, setForm] = useState(emptyOf(defaultDate));
   const [logs, setLogs] = useState<CodingTestLog[]>([]);
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     void load();
   }, []);
+
+  useEffect(() => {
+    if (editingId === null) setForm((f) => ({...f, solved_date: defaultDate}));
+  }, [defaultDate, editingId]);
 
   async function load() {
     try {
@@ -532,6 +663,27 @@ function CodingTestAdmin() {
     } catch {
       setStatus("코딩테스트 기록을 불러오지 못했습니다. 백엔드를 확인하세요.");
     }
+  }
+
+  function resetForm() {
+    setEditingId(null);
+    setForm((f) => ({...emptyOf(defaultDate), platform: f.platform, language: f.language}));
+  }
+
+  function startEdit(log: CodingTestLog) {
+    setEditingId(log.id);
+    setForm({
+      solved_date: log.solved_date,
+      platform: log.platform || "백준",
+      problem_no: log.problem_no,
+      title: log.title,
+      difficulty: log.difficulty,
+      language: log.language || "Python",
+      url: log.url,
+      code: log.code,
+      approach: log.approach
+    });
+    setStatus(`#${log.id} 수정 중`);
   }
 
   async function handleSave(event: React.FormEvent) {
@@ -543,10 +695,15 @@ function CodingTestAdmin() {
     setBusy(true);
     setStatus("저장 중...");
     try {
-      await createCodingTest(form);
-      setForm({...empty, platform: form.platform, language: form.language});
+      if (editingId !== null) {
+        await updateCodingTest(editingId, form);
+        setStatus("코딩테스트 기록을 수정했습니다.");
+      } else {
+        await createCodingTest(form);
+        setStatus("코딩테스트 풀이가 저장됐습니다. 알고리즘 도장이 밝아지고 알고가 이 풀이를 기억합니다.");
+      }
+      resetForm();
       await load();
-      setStatus("코딩테스트 풀이가 저장됐습니다. 알고리즘 도장이 밝아지고 알고가 이 풀이를 기억합니다.");
     } catch {
       setStatus("저장에 실패했습니다. 백엔드 상태를 확인하세요.");
     } finally {
@@ -557,11 +714,15 @@ function CodingTestAdmin() {
   async function handleDelete(id: number) {
     try {
       await deleteCodingTest(id);
+      if (editingId === id) resetForm();
       await load();
     } catch {
       setStatus("삭제에 실패했습니다.");
     }
   }
+
+  const filtered = logs.filter((log) => matchesQuery(query, [log.title, log.platform, log.difficulty, log.language, log.problem_no]));
+  const groups = groupByDate(filtered, (log) => log.solved_date);
 
   return (
     <Panel title="코딩테스트 풀이 기록" kicker="Algorithm Dojo">
@@ -605,29 +766,50 @@ function CodingTestAdmin() {
         <LabeledField label="코드">
           <textarea className="field min-h-[160px] font-mono text-xs" value={form.code} onChange={(e) => setForm({...form, code: e.target.value})} placeholder="제출한 코드를 붙여넣으세요" spellCheck={false} />
         </LabeledField>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button className="rounded-lg bg-[#38bdf8] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#7dd3fc] disabled:opacity-45" disabled={busy} type="submit">
-            코딩테스트 기록 저장
+            {editingId !== null ? "수정 저장" : "코딩테스트 기록 저장"}
           </button>
-          {status ? <span className="text-xs text-white/55">{status}</span> : null}
+          {editingId !== null ? (
+            <button className="sub-button" onClick={resetForm} type="button">새 기록으로</button>
+          ) : null}
+          {status ? <span className="text-xs text-[#64748b]">{status}</span> : null}
         </div>
       </form>
 
-      <div className="mt-5 grid gap-2">
-        {logs.length === 0 ? (
-          <p className="text-sm text-white/40">아직 기록이 없습니다.</p>
+      <div className="mt-6 mb-3 flex items-center justify-between gap-3">
+        <input
+          className="field max-w-[260px]"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="제목·플랫폼·언어 검색"
+        />
+        <span className="shrink-0 font-mono text-[11px] text-[#94a3b8]">{filtered.length}개</span>
+      </div>
+
+      <div className="grid gap-4">
+        {groups.length === 0 ? (
+          <p className="text-sm text-[#94a3b8]">기록이 없습니다.</p>
         ) : (
-          logs.map((log) => (
-            <div className="flex items-center justify-between gap-3 rounded-lg border border-white/8 bg-[#070b12] p-3" key={log.id}>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-white">{log.title}</p>
-                <p className="mt-0.5 font-mono text-[11px] text-white/40">
-                  {[log.platform, log.difficulty, log.language, log.solved_date].filter(Boolean).join(" · ")}
-                </p>
+          groups.map(([date, items]) => (
+            <div key={date}>
+              <p className="mb-1.5 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#0369a1]/70">{prettyDate(date)}</p>
+              <div className="grid gap-2">
+                {items.map((log) => (
+                  <div className="flex items-center justify-between gap-3 rounded-lg border border-[#eef1f5] bg-[#f1f4f9] p-3" key={log.id}>
+                    <button className="min-w-0 text-left" onClick={() => startEdit(log)} type="button">
+                      <p className="truncate text-sm font-bold text-[#1e293b] hover:text-[#0369a1]">{log.title}</p>
+                      <p className="mt-0.5 font-mono text-[11px] text-[#94a3b8]">
+                        {[log.platform, log.difficulty, log.language, log.problem_no && `#${log.problem_no}`].filter(Boolean).join(" · ")}
+                      </p>
+                    </button>
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <button className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#0369a1]/50 hover:text-[#0369a1]" onClick={() => startEdit(log)} type="button">수정</button>
+                      <button className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]" onClick={() => handleDelete(log.id)} type="button">삭제</button>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <button className="shrink-0 rounded-md border border-white/12 px-2 py-1 text-xs text-white/50 transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]" onClick={() => handleDelete(log.id)} type="button">
-                삭제
-              </button>
             </div>
           ))
         )}
@@ -636,16 +818,22 @@ function CodingTestAdmin() {
   );
 }
 
-function CsNoteAdmin() {
-  const empty = {study_date: today(), category: "운영체제", title: "", content: ""};
-  const [form, setForm] = useState(empty);
+function CsNoteAdmin({defaultDate}: {defaultDate: string}) {
+  const emptyOf = (date: string) => ({study_date: date, category: "운영체제", title: "", content: ""});
+  const [form, setForm] = useState(emptyOf(defaultDate));
   const [notes, setNotes] = useState<CsNote[]>([]);
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     void load();
   }, []);
+
+  useEffect(() => {
+    if (editingId === null) setForm((f) => ({...f, study_date: defaultDate}));
+  }, [defaultDate, editingId]);
 
   async function load() {
     try {
@@ -653,6 +841,17 @@ function CsNoteAdmin() {
     } catch {
       setStatus("CS 노트를 불러오지 못했습니다. 백엔드를 확인하세요.");
     }
+  }
+
+  function resetForm() {
+    setEditingId(null);
+    setForm((f) => ({...emptyOf(defaultDate), category: f.category}));
+  }
+
+  function startEdit(note: CsNote) {
+    setEditingId(note.id);
+    setForm({study_date: note.study_date, category: note.category || "운영체제", title: note.title, content: note.content});
+    setStatus(`#${note.id} 수정 중`);
   }
 
   async function handleSave(event: React.FormEvent) {
@@ -664,10 +863,15 @@ function CsNoteAdmin() {
     setBusy(true);
     setStatus("저장 중...");
     try {
-      await createCsNote(form);
-      setForm({...empty, category: form.category});
+      if (editingId !== null) {
+        await updateCsNote(editingId, form);
+        setStatus("CS 노트를 수정했습니다.");
+      } else {
+        await createCsNote(form);
+        setStatus("CS 전공지식 노트가 저장됐습니다. 지식 서고가 밝아지고 노바가 이 내용을 기억합니다.");
+      }
+      resetForm();
       await load();
-      setStatus("CS 전공지식 노트가 저장됐습니다. 지식 서고가 밝아지고 노바가 이 내용을 기억합니다.");
     } catch {
       setStatus("저장에 실패했습니다. 백엔드 상태를 확인하세요.");
     } finally {
@@ -678,11 +882,15 @@ function CsNoteAdmin() {
   async function handleDelete(id: number) {
     try {
       await deleteCsNote(id);
+      if (editingId === id) resetForm();
       await load();
     } catch {
       setStatus("삭제에 실패했습니다.");
     }
   }
+
+  const filtered = notes.filter((note) => matchesQuery(query, [note.title, note.category, note.content]));
+  const groups = groupByDate(filtered, (note) => note.study_date);
 
   return (
     <Panel title="CS 전공지식 노트" kicker="Knowledge Archive">
@@ -705,29 +913,48 @@ function CsNoteAdmin() {
         <LabeledField label="공부한 내용">
           <textarea className="field min-h-[180px]" value={form.content} onChange={(e) => setForm({...form, content: e.target.value})} placeholder="공부한 내용을 정리해 적으세요. 마크다운 없이 자유롭게 작성해도 됩니다." />
         </LabeledField>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <button className="rounded-lg bg-[#a78bfa] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#0b0820] transition hover:bg-[#c4b5fd] disabled:opacity-45" disabled={busy} type="submit">
-            CS 노트 저장
+            {editingId !== null ? "수정 저장" : "CS 노트 저장"}
           </button>
-          {status ? <span className="text-xs text-white/55">{status}</span> : null}
+          {editingId !== null ? (
+            <button className="sub-button" onClick={resetForm} type="button">새 노트로</button>
+          ) : null}
+          {status ? <span className="text-xs text-[#64748b]">{status}</span> : null}
         </div>
       </form>
 
-      <div className="mt-5 grid gap-2">
-        {notes.length === 0 ? (
-          <p className="text-sm text-white/40">아직 노트가 없습니다.</p>
+      <div className="mt-6 mb-3 flex items-center justify-between gap-3">
+        <input
+          className="field max-w-[260px]"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="제목·분야·내용 검색"
+        />
+        <span className="shrink-0 font-mono text-[11px] text-[#94a3b8]">{filtered.length}개</span>
+      </div>
+
+      <div className="grid gap-4">
+        {groups.length === 0 ? (
+          <p className="text-sm text-[#94a3b8]">노트가 없습니다.</p>
         ) : (
-          notes.map((note) => (
-            <div className="flex items-center justify-between gap-3 rounded-lg border border-white/8 bg-[#070b12] p-3" key={note.id}>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-white">{note.title}</p>
-                <p className="mt-0.5 font-mono text-[11px] text-white/40">
-                  {[note.category, note.study_date].filter(Boolean).join(" · ")}
-                </p>
+          groups.map(([date, items]) => (
+            <div key={date}>
+              <p className="mb-1.5 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#7c3aed]/70">{prettyDate(date)}</p>
+              <div className="grid gap-2">
+                {items.map((note) => (
+                  <div className="flex items-center justify-between gap-3 rounded-lg border border-[#eef1f5] bg-[#f1f4f9] p-3" key={note.id}>
+                    <button className="min-w-0 text-left" onClick={() => startEdit(note)} type="button">
+                      <p className="truncate text-sm font-bold text-[#1e293b] hover:text-[#7c3aed]">{note.title}</p>
+                      <p className="mt-0.5 font-mono text-[11px] text-[#94a3b8]">{[note.category].filter(Boolean).join(" · ")}</p>
+                    </button>
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <button className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#c4b5fd]/50 hover:text-[#7c3aed]" onClick={() => startEdit(note)} type="button">수정</button>
+                      <button className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]" onClick={() => handleDelete(note.id)} type="button">삭제</button>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <button className="shrink-0 rounded-md border border-white/12 px-2 py-1 text-xs text-white/50 transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]" onClick={() => handleDelete(note.id)} type="button">
-                삭제
-              </button>
             </div>
           ))
         )}
@@ -749,10 +976,215 @@ function today(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+function addDays(date: string, delta: number): string {
+  const d = new Date(date + "T00:00:00");
+  d.setDate(d.getDate() + delta);
+  return d.toISOString().slice(0, 10);
+}
+
+function prettyDate(date: string): string {
+  const d = new Date(date + "T00:00:00");
+  const week = ["일", "월", "화", "수", "목", "금", "토"][d.getDay()];
+  return `${d.getMonth() + 1}월 ${d.getDate()}일 (${week})`;
+}
+
+function activityRaw(a?: DailyActivity | null): number {
+  if (!a) return 0;
+  const projects = Object.values(a.project_minutes ?? {}).reduce((sum, m) => sum + Number(m || 0), 0);
+  return (
+    (a.study_minutes || 0) / 3 +
+    (a.coding_minutes || 0) / 3 +
+    (a.github_commits || 0) * 8 +
+    (a.workout_done ? 20 : 0) +
+    projects / 5
+  );
+}
+
+function activityLevel(a?: DailyActivity | null): number {
+  const raw = activityRaw(a);
+  if (raw <= 0) return 0;
+  if (raw < 20) return 1;
+  if (raw < 45) return 2;
+  if (raw < 80) return 3;
+  return 4;
+}
+
+const LEVEL_BG = [
+  "#eef1f5",
+  "rgba(2,132,199,0.22)",
+  "rgba(2,132,199,0.42)",
+  "rgba(2,132,199,0.66)",
+  "rgba(2,132,199,0.92)"
+];
+
+interface DailyStats {
+  recordStreak: number;
+  workoutStreak: number;
+  weekCoding: number;
+}
+
+function computeStats(history: DailyActivity[]): DailyStats {
+  const byDate: Record<string, DailyActivity> = {};
+  for (const item of history) byDate[item.date] = item;
+
+  const streak = (predicate: (a: DailyActivity) => boolean) => {
+    let cursor = today();
+    if (!byDate[cursor] || !predicate(byDate[cursor])) cursor = addDays(cursor, -1);
+    let count = 0;
+    while (byDate[cursor] && predicate(byDate[cursor])) {
+      count += 1;
+      cursor = addDays(cursor, -1);
+    }
+    return count;
+  };
+
+  let weekCoding = 0;
+  for (let i = 0; i < 7; i += 1) {
+    const day = byDate[addDays(today(), -i)];
+    if (day) weekCoding += day.coding_minutes || 0;
+  }
+
+  return {
+    recordStreak: streak((a) => activityRaw(a) > 0),
+    workoutStreak: streak((a) => a.workout_done),
+    weekCoding
+  };
+}
+
+function ActivityCalendar({
+  byDate,
+  selectedDate,
+  onPick
+}: {
+  byDate: Record<string, DailyActivity>;
+  selectedDate: string;
+  onPick: (date: string) => void;
+}) {
+  const weeks = 16;
+  const totalDays = weeks * 7;
+  const days: string[] = [];
+  for (let i = totalDays - 1; i >= 0; i -= 1) days.push(addDays(today(), -i));
+
+  const leadPad = new Date(days[0] + "T00:00:00").getDay(); // 첫 날 요일만큼 앞 패딩
+  const cells: (string | null)[] = [...Array(leadPad).fill(null), ...days];
+  const columns: (string | null)[][] = [];
+  for (let i = 0; i < cells.length; i += 7) columns.push(cells.slice(i, i + 7));
+
+  return (
+    <div>
+      <div className="flex gap-[3px] overflow-x-auto pb-1">
+        {columns.map((col, ci) => (
+          <div className="flex flex-col gap-[3px]" key={ci}>
+            {col.map((date, ri) => {
+              if (!date) return <span className="h-3 w-3" key={ri} />;
+              const level = activityLevel(byDate[date]);
+              const selected = date === selectedDate;
+              return (
+                <button
+                  key={date}
+                  type="button"
+                  title={`${date} · ${byDate[date] ? "기록 있음" : "기록 없음"}`}
+                  onClick={() => onPick(date)}
+                  className="h-3 w-3 rounded-[3px] transition hover:scale-125"
+                  style={{
+                    background: LEVEL_BG[level],
+                    outline: selected ? "1.5px solid #0284c7" : "none",
+                    outlineOffset: selected ? "1px" : undefined
+                  }}
+                />
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      <div className="mt-2 flex items-center justify-end gap-1.5 font-mono text-[10px] text-[#94a3b8]">
+        <span>적음</span>
+        {LEVEL_BG.map((bg, i) => (
+          <span className="h-2.5 w-2.5 rounded-[2px]" key={i} style={{background: bg}} />
+        ))}
+        <span>많음</span>
+      </div>
+    </div>
+  );
+}
+
+function RewardCard({reward, onClose}: {reward: {state: VillageState; date: string}; onClose: () => void}) {
+  const {state} = reward;
+  const lit = state.buildings
+    .filter((b) => b.activity_score > 0 && b.building_id !== "central-plaza")
+    .sort((a, b) => b.activity_score - a.activity_score)
+    .slice(0, 6);
+  const unlocked = state.unlocked_items.filter((item) => !item.startsWith("active-"));
+  const npcLine =
+    state.npcs.find((n) => n.npc_id === "guide-npc")?.status_text ?? state.npcs[0]?.status_text ?? "";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#1e293b]/40 p-4" onClick={onClose}>
+      <div
+        className="w-[min(94vw,520px)] rounded-2xl border border-[#0284c7]/30 bg-[#ffffff] p-6 shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#0284c7]">Village Updated</p>
+            <h2 className="mt-1 text-2xl font-black text-[#1e293b]">오늘 마을에 생긴 일 ✨</h2>
+          </div>
+          <button className="text-[#94a3b8] hover:text-[#1e293b]" onClick={onClose} type="button">✕</button>
+        </div>
+
+        <p className="mt-3 text-sm leading-6 text-[#475569]">{state.summary}</p>
+
+        {lit.length > 0 ? (
+          <div className="mt-4">
+            <p className="font-mono text-[11px] font-black uppercase tracking-[0.14em] text-[#0369a1]">밝아진 건물</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {lit.map((b) => (
+                <span
+                  className="rounded-full border border-[#16a34a]/30 bg-[#16a34a]/10 px-3 py-1 text-xs font-bold text-[#15803d]"
+                  key={b.building_id}
+                >
+                  {BUILDING_NAME[b.building_id] ?? b.building_id} · {b.light_level}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {unlocked.length > 0 ? (
+          <div className="mt-4">
+            <p className="font-mono text-[11px] font-black uppercase tracking-[0.14em] text-[#b45309]">새로 해금</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {unlocked.map((item) => (
+                <span className="rounded-full border border-[#fbbf24]/30 bg-[#fbbf24]/10 px-3 py-1 text-xs font-bold text-[#b45309]" key={item}>
+                  {UNLOCK_LABEL[item] ?? item}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {npcLine ? (
+          <div className="mt-4 rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-3">
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#94a3b8]">루미의 한마디</p>
+            <p className="mt-1 text-sm leading-6 text-[#334155]">“{npcLine}”</p>
+          </div>
+        ) : null}
+
+        <a
+          className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-[#0284c7] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#0ea5e9]"
+          href="/"
+        >
+          마을에서 직접 보기 →
+        </a>
+      </div>
+    </div>
+  );
+}
+
 function Panel({children, kicker, title}: {children: React.ReactNode; kicker: string; title: string}) {
   return (
-    <section className="rounded-lg border border-white/10 bg-[#0b1018] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.22)]">
-      <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#00d4ff]">{kicker}</p>
+    <section className="rounded-lg border border-[#e3e8ef] bg-[#ffffff] p-5 shadow-[0_4px_20px_rgba(15,23,42,0.06)]">
+      <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#0284c7]">{kicker}</p>
       <h2 className="mt-2 text-xl font-black">{title}</h2>
       <div className="mt-5">{children}</div>
     </section>
@@ -775,7 +1207,7 @@ function NumberField({
   return (
     <label className="grid gap-2">
       <span className="field-label">{label}</span>
-      <div className="flex rounded-lg border border-white/10 bg-[#070b12] focus-within:border-[#00d4ff]">
+      <div className="flex rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] focus-within:border-[#0284c7]">
         <input
           className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm outline-none disabled:opacity-45"
           disabled={disabled}
@@ -784,7 +1216,7 @@ function NumberField({
           type="number"
           value={value}
         />
-        {suffix ? <span className="px-3 py-3 text-sm text-white/35">{suffix}</span> : null}
+        {suffix ? <span className="px-3 py-3 text-sm text-[#94a3b8]">{suffix}</span> : null}
       </div>
     </label>
   );
@@ -792,9 +1224,9 @@ function NumberField({
 
 function Metric({label, value}: {label: string; value: string | number}) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.035] p-3">
-      <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-white/35">{label}</p>
-      <p className="mt-1 text-xl font-black text-[#00d4ff]">{value}</p>
+    <div className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-3">
+      <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#94a3b8]">{label}</p>
+      <p className="mt-1 text-xl font-black text-[#0284c7]">{value}</p>
     </div>
   );
 }
@@ -816,8 +1248,8 @@ function TagCloud({
           <button
             className={
               active
-                ? "rounded-full border border-[#7ee787]/45 bg-[#7ee787]/12 px-3 py-1.5 text-xs font-bold text-[#baffd2]"
-                : "rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-xs font-bold text-white/50 transition hover:border-white/25 hover:text-white"
+                ? "rounded-full border border-[#22c55e]/45 bg-[#22c55e]/12 px-3 py-1.5 text-xs font-bold text-[#15803d]"
+                : "rounded-full border border-[#e3e8ef] bg-[#f1f4f9] px-3 py-1.5 text-xs font-bold text-[#64748b] transition hover:border-[#cbd5e1] hover:text-[#1e293b]"
             }
             key={item}
             onClick={() => onToggle(item)}
@@ -833,9 +1265,9 @@ function TagCloud({
 
 function Chip({children, onRemove}: {children: React.ReactNode; onRemove: () => void}) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-[#00d4ff]/25 bg-[#00d4ff]/8 px-3 py-1.5 text-xs font-bold text-[#c8efff]">
+    <span className="inline-flex items-center gap-2 rounded-full border border-[#0284c7]/25 bg-[#0284c7]/8 px-3 py-1.5 text-xs font-bold text-[#0369a1]">
       {children}
-      <button className="text-white/38 hover:text-white" onClick={onRemove} type="button">
+      <button className="text-[#94a3b8] hover:text-[#1e293b]" onClick={onRemove} type="button">
         x
       </button>
     </span>

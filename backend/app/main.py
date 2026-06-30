@@ -48,7 +48,7 @@ from app.services.admin_service import (
     update_project,
     update_village_override,
 )
-from app.services.activity_service import get_or_create_today, upsert_activity
+from app.services.activity_service import get_or_create_today, list_activity_history, upsert_activity
 from app.services.chat_service import answer_npc_message
 from app.services.github_service import fetch_today_commit_count
 from app.services.learning_service import (
@@ -62,6 +62,8 @@ from app.services.learning_service import (
     delete_cs_note,
     list_coding_tests,
     list_cs_notes,
+    update_coding_test,
+    update_cs_note,
 )
 from app.services.npc_brain_service import generate_group_chat, generate_npc_encounter, generate_npc_tick
 from app.services.village_service import derive_village_state
@@ -107,6 +109,11 @@ def activity_today(db: Session = Depends(get_db)):
 @app.post("/activity", response_model=ActivityOut)
 def save_activity(payload: ActivityIn, db: Session = Depends(get_db)):
     return upsert_activity(db, payload)
+
+
+@app.get("/activity/history", response_model=list[ActivityOut])
+def activity_history(days: int = 120, db: Session = Depends(get_db)):
+    return list_activity_history(db, days)
 
 
 @app.get("/village-state", response_model=VillageState)
@@ -278,6 +285,14 @@ def admin_create_coding_test(payload: CodingTestIn, db: Session = Depends(get_db
     return create_coding_test(db, payload)
 
 
+@app.put("/admin/coding-tests/{log_id}", response_model=CodingTestOut)
+def admin_update_coding_test(log_id: int, payload: CodingTestIn, db: Session = Depends(get_db)):
+    log = update_coding_test(db, log_id, payload)
+    if not log:
+        raise HTTPException(status_code=404, detail="해당 코딩테스트 기록을 찾을 수 없습니다.")
+    return log
+
+
 @app.delete("/admin/coding-tests/{log_id}")
 def admin_delete_coding_test(log_id: int, db: Session = Depends(get_db)):
     if not delete_coding_test(db, log_id):
@@ -295,6 +310,14 @@ def cs_notes(db: Session = Depends(get_db)):
 @app.post("/admin/cs-notes", response_model=CsNoteOut)
 def admin_create_cs_note(payload: CsNoteIn, db: Session = Depends(get_db)):
     return create_cs_note(db, payload)
+
+
+@app.put("/admin/cs-notes/{note_id}", response_model=CsNoteOut)
+def admin_update_cs_note(note_id: int, payload: CsNoteIn, db: Session = Depends(get_db)):
+    note = update_cs_note(db, note_id, payload)
+    if not note:
+        raise HTTPException(status_code=404, detail="해당 CS 노트를 찾을 수 없습니다.")
+    return note
 
 
 @app.delete("/admin/cs-notes/{note_id}")
