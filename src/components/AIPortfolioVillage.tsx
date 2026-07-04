@@ -1271,6 +1271,18 @@ export function AIPortfolioVillage() {
               onBackToWork={backToWork}
             />
           ) : null}
+          {!showIntro && !isPanelOpen ? (
+            <MobileHud
+              activeKey={activeSection}
+              onTravel={travelTo}
+              command={npcCommand}
+              onCommand={issueCommand}
+              onGreet={commandGreet}
+              onGroupTalk={commandGroupTalk}
+              groupTalkBusy={groupChatBusy}
+              onBackToWork={backToWork}
+            />
+          ) : null}
           {groupChat && groupChatOpen ? (
             <GroupChatPanel lines={groupChat.lines} onClose={() => setGroupChatOpen(false)} />
           ) : null}
@@ -1618,6 +1630,176 @@ function GroupChatPanel({lines, onClose}: {lines: {name: string; text: string}[]
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+// 모바일 전용 — 하단 시트로 빠른이동·지휘·미니맵을 통합
+function MobileHud({
+  activeKey,
+  onTravel,
+  command,
+  onCommand,
+  onGreet,
+  onGroupTalk,
+  groupTalkBusy,
+  onBackToWork
+}: {
+  activeKey: string;
+  onTravel: (point: TravelPoint) => void;
+  command: NpcCommand | null;
+  onCommand: (mode: NpcCommand) => void;
+  onGreet: () => void;
+  onGroupTalk: () => void;
+  groupTalkBusy: boolean;
+  onBackToWork: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState<"travel" | "command" | "map">("travel");
+  const modes: {mode: NpcCommand; icon: string; label: string}[] = [
+    {mode: "gather", icon: "🧲", label: "모으기"},
+    {mode: "photo", icon: "📸", label: "단체사진"},
+    {mode: "party", icon: "🎉", label: "파티"},
+    {mode: "follow", icon: "🏃", label: "따라와"}
+  ];
+  const busy = command !== null;
+
+  const W = 260;
+  const H = 168;
+  const pad = 16;
+  const xs = villageBuildings.map((b) => b.position[0]);
+  const zs = villageBuildings.map((b) => b.position[2]);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minZ = Math.min(...zs);
+  const maxZ = Math.max(...zs);
+  const sx = (x: number) => pad + ((x - minX) / (maxX - minX || 1)) * (W - 2 * pad);
+  const sy = (z: number) => pad + ((z - minZ) / (maxZ - minZ || 1)) * (H - 2 * pad);
+  const colorOf = (key: string) => TRAVEL_POINTS.find((p) => p.key === key)?.color ?? "#9aa";
+  const centroids = TRAVEL_POINTS.map((point) => {
+    const members = villageBuildings.filter((b) => (DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro") === point.key);
+    if (members.length === 0) return null;
+    const cx = members.reduce((sum, b) => sum + b.position[0], 0) / members.length;
+    const cz = members.reduce((sum, b) => sum + b.position[2], 0) / members.length;
+    return {point, x: sx(cx), y: sy(cz)};
+  }).filter(Boolean) as {point: TravelPoint; x: number; y: number}[];
+
+  const chip = (active: boolean) =>
+    active
+      ? "flex items-center gap-2 rounded-lg border border-[#00ff88]/45 bg-[#00ff88]/15 px-3 py-2.5 text-left text-sm font-black text-white"
+      : "flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2.5 text-left text-sm font-bold text-white/75 active:scale-95";
+
+  return (
+    <div className="md:hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-label="이동·지휘·지도 메뉴"
+        className="fixed bottom-[15rem] right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[#00d4ff]/40 bg-[#050d1a]/90 text-xl shadow-2xl backdrop-blur-md active:scale-90"
+      >
+        🎛️
+      </button>
+
+      {open ? (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/45" onClick={() => setOpen(false)} />
+          <div className="fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[#00d4ff]/25 bg-[#050d1a]/97 p-3 pb-8 shadow-2xl backdrop-blur-md">
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/20" />
+            <div className="mb-3 flex items-center gap-1">
+              {([
+                {id: "travel", label: "🧭 이동"},
+                {id: "command", label: "🎮 지휘"},
+                {id: "map", label: "🗺️ 지도"}
+              ] as const).map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setTab(t.id)}
+                  className={
+                    tab === t.id
+                      ? "rounded-lg bg-[#00d4ff]/18 px-3 py-2 font-mono text-xs font-black text-[#9beaff]"
+                      : "rounded-lg px-3 py-2 font-mono text-xs font-bold text-white/50"
+                  }
+                >
+                  {t.label}
+                </button>
+              ))}
+              <button type="button" onClick={() => setOpen(false)} className="ml-auto rounded-lg border border-white/12 px-3 py-2 text-sm text-white/70">
+                ✕
+              </button>
+            </div>
+
+            {tab === "travel" ? (
+              <div className="grid grid-cols-2 gap-2">
+                {TRAVEL_POINTS.map((point) => (
+                  <button
+                    key={point.key}
+                    type="button"
+                    onClick={() => {
+                      onTravel(point);
+                      setOpen(false);
+                    }}
+                    className={chip(activeKey === point.key)}
+                  >
+                    <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{background: point.color}} />
+                    {point.label}
+                  </button>
+                ))}
+              </div>
+            ) : tab === "command" ? (
+              <div className="grid grid-cols-2 gap-2">
+                {modes.map((item) => (
+                  <button key={item.mode} type="button" onClick={() => onCommand(item.mode)} className={chip(command === item.mode)}>
+                    <span>{item.icon}</span> {item.label}
+                  </button>
+                ))}
+                <button type="button" onClick={onGreet} className={chip(false)}>
+                  <span>👋</span> 인사
+                </button>
+                <button type="button" onClick={onGroupTalk} disabled={groupTalkBusy} className={chip(groupTalkBusy)}>
+                  <span>💬</span> {groupTalkBusy ? "수다 중…" : "다 같이 수다"}
+                </button>
+                <button
+                  type="button"
+                  onClick={onBackToWork}
+                  disabled={!busy}
+                  className={
+                    busy
+                      ? "col-span-2 rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/12 px-3 py-2.5 text-sm font-black text-[#9beaff]"
+                      : "col-span-2 rounded-lg border border-white/10 px-3 py-2.5 text-sm font-bold text-white/30"
+                  }
+                >
+                  🛠️ 다시 일하기
+                </button>
+              </div>
+            ) : (
+              <div className="grid place-items-center">
+                <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="rounded-lg bg-white/[0.03]">
+                  {villageBuildings.map((b) => {
+                    const key = DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro";
+                    const active = activeKey === key;
+                    return (
+                      <circle key={b.id} cx={sx(b.position[0])} cy={sy(b.position[2])} r={active ? 4 : 3} fill={colorOf(key)} fillOpacity={active ? 1 : 0.65} />
+                    );
+                  })}
+                  {centroids.map(({point, x, y}) => (
+                    <g key={point.key} onClick={() => {
+                      onTravel(point);
+                      setOpen(false);
+                    }}>
+                      <circle cx={x} cy={y} r={16} fill={point.color} fillOpacity={0.001} style={{pointerEvents: "all"}}>
+                        <title>{point.label}</title>
+                      </circle>
+                      {activeKey === point.key ? <circle cx={x} cy={y} r={14} fill="none" stroke={point.color} strokeWidth={1.6} strokeOpacity={0.9} /> : null}
+                    </g>
+                  ))}
+                </svg>
+                <p className="mt-2 font-mono text-[10px] text-white/40">구역을 누르면 그쪽으로 이동</p>
+              </div>
+            )}
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }

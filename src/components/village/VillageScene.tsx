@@ -219,6 +219,11 @@ export function VillageScene({
   const propsApi = usePropsEditor();
   const editing = propsApi.enabled && propsApi.editMode;
   const sky = useMemo(() => timePalette(new Date().getHours()), []);
+  // 모바일 라이트 모드 — 해상도/안티앨리어싱을 낮춰 성능·배터리 확보
+  const isMobile = useMemo(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches,
+    []
+  );
 
   // 편집 모드일 때 부모가 자동 갱신(순찰·잡담·폴링)을 멈추도록 알린다.
   // (편집 중 잦은 리렌더 + 후처리 아웃라인이 R3F 재조정 루프를 유발하는 문제 방지)
@@ -240,9 +245,9 @@ export function VillageScene({
     >
       <Canvas
         camera={{fov: 40, position: [4, 14, 16]}}
-        dpr={[1, 1.25]}
-        performance={{min: 0.5}}
-        gl={{antialias: true, powerPreference: "high-performance"}}
+        dpr={isMobile ? [1, 1] : [1, 1.25]}
+        performance={{min: isMobile ? 0.4 : 0.5}}
+        gl={{antialias: !isMobile, powerPreference: "high-performance"}}
       >
         {/* 움직일 땐 해상도/이벤트 자동 저하 → 멈추면 선명하게 */}
         <AdaptiveDpr pixelated={false} />
