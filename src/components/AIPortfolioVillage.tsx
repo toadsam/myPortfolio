@@ -16,6 +16,7 @@ import {NPC_EMOTES, NPC_SMALL_TALK, OVERSEER_GREETINGS, pickRandom} from "@/data
 import type {NpcCommand} from "@/components/village/NPC";
 import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {cameraTargets, villageBuildings} from "@/lib/constants";
+import {resetHudLayout, useDraggable} from "@/lib/useDraggable";
 import {fetchVillageState, requestGroupChat, requestNpcEncounter, requestNpcTick, trackVisitorEvent} from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
@@ -1374,15 +1375,17 @@ function applyActionStateToRuntime(state: NpcRuntimeState | undefined, action: N
 
 function LiveStatusPanel({error, villageState}: {error: string | null; villageState: VillageState | null}) {
   const [collapsed, setCollapsed] = useState(false);
+  const drag = useDraggable("live-status");
   if (!villageState && !error) return null;
 
   return (
-    <aside className="fixed left-4 top-[132px] z-20 hidden w-[260px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-3.5 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md md:block">
+    <aside ref={drag.ref} style={drag.style} className="fixed left-4 top-[132px] z-20 hidden w-[260px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-3.5 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md md:block">
       <button
         type="button"
         onClick={() => setCollapsed((c) => !c)}
         className="flex w-full items-center justify-between gap-2 transition active:scale-[0.98]"
         title={collapsed ? "펼치기" : "접기"}
+        {...drag.handleProps}
       >
         <span className="flex items-center gap-2 font-black uppercase tracking-[0.2em] text-[#00d4ff]">
           <span className="relative flex h-2 w-2">
@@ -1413,6 +1416,13 @@ function LiveStatusPanel({error, villageState}: {error: string | null; villageSt
             </span>
           </div>
           <p className="mt-2 text-[10px] leading-4 text-white/35">오늘의 실시간 활동 · 1분마다 갱신</p>
+          <button
+            type="button"
+            onClick={resetHudLayout}
+            className="mt-2 w-full rounded-md border border-white/8 py-1 text-[10px] font-bold text-white/35 transition hover:border-[#00d4ff]/40 hover:text-[#9beaff]"
+          >
+            ⤢ 패널 배치 초기화
+          </button>
         </>
       ) : null) : null}
     </aside>
@@ -1422,11 +1432,15 @@ function LiveStatusPanel({error, villageState}: {error: string | null; villageSt
 function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onSelect: (npc: NPCData) => void}) {
   const coreNpcs = autonomousNpcs.filter((npc) => CORE_NPC_IDS.has(npc.id));
   const [collapsed, setCollapsed] = useState(false);
+  const drag = useDraggable("npc-dock");
 
   if (collapsed) {
     return (
       <button
         type="button"
+        ref={drag.ref}
+        onPointerDown={drag.handleProps.onPointerDown}
+        style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
         className="fixed bottom-40 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:bottom-20"
       >
@@ -1436,12 +1450,13 @@ function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onSelect: 
   }
 
   return (
-    <aside className="fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]">
+    <aside ref={drag.ref} style={drag.style} className="fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]">
       <button
         type="button"
         onClick={() => setCollapsed(true)}
-        title="접기"
+        title="접기 · 드래그로 이동"
         className="flex shrink-0 items-center gap-1 px-2 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75 transition hover:text-[#00d4ff] active:scale-95"
+        {...drag.handleProps}
       >
         AI NPC <span className="text-white/40">▾</span>
       </button>
@@ -1483,6 +1498,7 @@ function CommandDock({
   onBackToWork: () => void;
 }) {
   const [collapsed, setCollapsed] = useState(false);
+  const drag = useDraggable("command-dock");
   const modes: {mode: NpcCommand; icon: string; label: string}[] = [
     {mode: "gather", icon: "🧲", label: "모으기"},
     {mode: "photo", icon: "📸", label: "단체사진"},
@@ -1495,6 +1511,9 @@ function CommandDock({
     return (
       <button
         type="button"
+        ref={drag.ref}
+        onPointerDown={drag.handleProps.onPointerDown}
+        style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
         className="fixed left-4 top-[300px] z-30 hidden items-center gap-2 rounded-xl border border-[#7ed957]/30 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#9affc4] shadow-2xl backdrop-blur-md transition hover:border-[#7ed957]/55 active:scale-95 md:flex"
       >
@@ -1504,11 +1523,12 @@ function CommandDock({
   }
 
   return (
-    <aside className="fixed left-4 top-[300px] z-30 hidden w-[150px] flex-col gap-1 rounded-xl border border-[#7ed957]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:flex">
+    <aside ref={drag.ref} style={drag.style} className="fixed left-4 top-[300px] z-30 hidden w-[150px] flex-col gap-1 rounded-xl border border-[#7ed957]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:flex">
       <button
         type="button"
         onClick={() => setCollapsed(true)}
         className="mb-0.5 flex items-center justify-between px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#9affc4]/80 transition hover:text-[#9affc4]"
+        {...drag.handleProps}
       >
         🎮 NPC 지휘 <span className="text-white/40">◂</span>
       </button>
@@ -1594,11 +1614,15 @@ function GroupChatPanel({lines, onClose}: {lines: {name: string; text: string}[]
 
 function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTravel: (point: TravelPoint) => void}) {
   const [collapsed, setCollapsed] = useState(false);
+  const drag = useDraggable("travel-dock");
 
   if (collapsed) {
     return (
       <button
         type="button"
+        ref={drag.ref}
+        onPointerDown={drag.handleProps.onPointerDown}
+        style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
         className="fixed right-4 top-[80px] z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
       >
@@ -1608,11 +1632,12 @@ function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTravel: (p
   }
 
   return (
-    <aside className="fixed right-4 top-[80px] z-30 hidden w-[152px] flex-col gap-1 rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:flex">
+    <aside ref={drag.ref} style={drag.style} className="fixed right-4 top-[80px] z-30 hidden w-[152px] flex-col gap-1 rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:flex">
       <button
         type="button"
         onClick={() => setCollapsed(true)}
         className="mb-0.5 flex items-center justify-between px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75 transition hover:text-[#00d4ff]"
+        {...drag.handleProps}
       >
         🧭 빠른 이동 <span className="text-white/40">▴</span>
       </button>
@@ -1643,6 +1668,7 @@ function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTravel: (p
 
 function Minimap({activeKey, onTravel}: {activeKey: string; onTravel: (point: TravelPoint) => void}) {
   const [collapsed, setCollapsed] = useState(false);
+  const drag = useDraggable("minimap");
 
   const W = 172;
   const H = 156;
@@ -1670,6 +1696,9 @@ function Minimap({activeKey, onTravel}: {activeKey: string; onTravel: (point: Tr
     return (
       <button
         type="button"
+        ref={drag.ref}
+        onPointerDown={drag.handleProps.onPointerDown}
+        style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
         className="fixed bottom-6 right-4 z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
       >
@@ -1679,8 +1708,8 @@ function Minimap({activeKey, onTravel}: {activeKey: string; onTravel: (point: Tr
   }
 
   return (
-    <aside className="fixed bottom-6 right-4 z-30 hidden rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2.5 shadow-2xl backdrop-blur-md md:block">
-      <div className="mb-1.5 flex items-center justify-between px-1">
+    <aside ref={drag.ref} style={drag.style} className="fixed bottom-6 right-4 z-30 hidden rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2.5 shadow-2xl backdrop-blur-md md:block">
+      <div className="mb-1.5 flex cursor-grab items-center justify-between px-1" {...drag.handleProps}>
         <span className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75">🗺️ 미니맵</span>
         <button
           type="button"

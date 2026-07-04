@@ -43,6 +43,54 @@ canvas {
   box-shadow: 0 24px 80px rgba(31, 42, 36, 0.2);
 }
 
+/* ── 커스텀 네온 커서 (fine 포인터 기기에서만 활성) ── */
+.custom-cursor-active,
+.custom-cursor-active * {
+  cursor: none !important;
+}
+
+.cursor-ring,
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99999;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform;
+}
+
+.cursor-ring {
+  height: 34px;
+  width: 34px;
+  border: 1.5px solid #00d4ff;
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  transition: width 0.18s ease, height 0.18s ease, border-color 0.18s ease, background 0.18s ease, opacity 0.2s ease;
+}
+
+.cursor-ring.hover {
+  height: 52px;
+  width: 52px;
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.08);
+  box-shadow: 0 0 16px rgba(0, 255, 136, 0.5);
+}
+
+.cursor-ring.down {
+  height: 26px;
+  width: 26px;
+}
+
+.cursor-dot {
+  height: 6px;
+  width: 6px;
+  border-radius: 999px;
+  background: #00d4ff;
+  box-shadow: 0 0 6px rgba(0, 212, 255, 0.85);
+  transition: opacity 0.2s ease;
+}
+
 .scene-label {
   min-width: 118px;
   appearance: none;

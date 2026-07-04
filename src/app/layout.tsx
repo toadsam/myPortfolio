@@ -1,5 +1,6 @@
 import type {Metadata, Viewport} from "next";
 import {Providers} from "@/components/Providers";
+import {CustomCursor} from "@/components/ui/CustomCursor";
 import "./globals.css";
 
 const title = "정재훈 | Developer's City — 3D 인터랙티브 포트폴리오";
@@ -42,6 +43,7 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
     <html lang="ko">
       <body>
         <Providers>{children}</Providers>
+        <CustomCursor />
       </body>
     </html>
   );

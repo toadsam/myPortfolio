@@ -10,10 +10,12 @@ import {
   deleteCodingTest,
   deleteCsNote,
   fetchActivityHistory,
+  fetchAdminAuthStatus,
   fetchCodingTests,
   fetchCsNotes,
-  fetchTodayActivity,
   fetchVillageState,
+  hasAdminToken,
+  loginAdmin,
   saveActivity,
   syncGithubActivity,
   updateCodingTest,
@@ -69,6 +71,8 @@ export default function AdminPage() {
   const [selectedDate, setSelectedDate] = useState(today());
   const [history, setHistory] = useState<DailyActivity[]>([]);
   const [reward, setReward] = useState<{state: VillageState; date: string} | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [locked, setLocked] = useState(false);
 
   const isToday = selectedDate === today();
   const historyByDate = useMemo(() => {
@@ -79,8 +83,27 @@ export default function AdminPage() {
   const stats = useMemo(() => computeStats(history), [history]);
 
   useEffect(() => {
-    void loadAll();
+    async function checkAuth() {
+      try {
+        const status = await fetchAdminAuthStatus();
+        if (status.auth_enabled && !hasAdminToken()) {
+          setLocked(true);
+          setAuthChecked(true);
+          return;
+        }
+      } catch {
+        // 백엔드 미응답 시엔 그냥 진행(로컬 개발 편의) — 저장 시점에 오류 표시됨
+      }
+      setAuthChecked(true);
+      void loadAll();
+    }
+    void checkAuth();
   }, []);
+
+  function handleUnlocked() {
+    setLocked(false);
+    void loadAll();
+  }
 
   const totalProjectMinutes = useMemo(
     () => Object.values(form.project_minutes).reduce((sum, minutes) => sum + Number(minutes || 0), 0),
@@ -219,6 +242,18 @@ export default function AdminPage() {
       studied_tech: unique([...form.studied_tech, next])
     });
     setTopicInput("");
+  }
+
+  if (!authChecked) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-[#f6f8fb] text-[#64748b]">
+        <p className="font-mono text-sm">불러오는 중…</p>
+      </main>
+    );
+  }
+
+  if (locked) {
+    return <AdminGate onUnlocked={handleUnlocked} />;
   }
 
   return (
@@ -960,6 +995,59 @@ function CsNoteAdmin({defaultDate}: {defaultDate: string}) {
         )}
       </div>
     </Panel>
+  );
+}
+
+function AdminGate({onUnlocked}: {onUnlocked: () => void}) {
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(event: React.FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    setError("");
+    try {
+      await loginAdmin(password);
+      onUnlocked();
+    } catch {
+      setError("비밀번호가 올바르지 않습니다.");
+      setBusy(false);
+    }
+  }
+
+  return (
+    <main className="grid min-h-screen place-items-center bg-[#f6f8fb] px-5 text-[#1e293b]">
+      <form
+        onSubmit={submit}
+        className="w-[min(92vw,380px)] rounded-2xl border border-[#e3e8ef] bg-white p-7 shadow-[0_4px_20px_rgba(15,23,42,0.06)]"
+      >
+        <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#0284c7]">Admin</p>
+        <h1 className="mt-2 text-2xl font-black">관리자 인증</h1>
+        <p className="mt-2 text-sm leading-6 text-[#64748b]">
+          이 페이지는 정재훈 본인만 기록을 남길 수 있어요. 비밀번호를 입력해 주세요.
+        </p>
+        <input
+          autoFocus
+          className="field mt-5"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="비밀번호"
+        />
+        {error ? <p className="mt-2 text-xs font-bold text-[#dc2626]">{error}</p> : null}
+        <button
+          className="mt-5 w-full rounded-lg bg-[#0284c7] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-white transition hover:bg-[#0ea5e9] disabled:opacity-45"
+          disabled={busy}
+          type="submit"
+        >
+          {busy ? "확인 중…" : "입장"}
+        </button>
+        <a className="mt-4 block text-center font-mono text-xs text-[#94a3b8] transition hover:text-[#0284c7]" href="/">
+          ← 마을로 돌아가기
+        </a>
+      </form>
+    </main>
   );
 }
 

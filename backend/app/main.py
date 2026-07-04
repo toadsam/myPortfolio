@@ -4,9 +4,19 @@ from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database import get_db, init_db
+from app.security import (
+    AdminGuard,
+    AiRateLimit,
+    auth_enabled,
+    create_admin_token,
+    verify_password,
+)
 from app.schemas import (
     ActivityIn,
     ActivityOut,
+    AdminLoginIn,
+    AdminLoginOut,
+    AdminAuthStatus,
     AdminOverview,
     AnalyticsSummary,
     ChatMessageIn,
@@ -101,12 +111,25 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
+@app.get("/admin/auth-status", response_model=AdminAuthStatus)
+def admin_auth_status() -> AdminAuthStatus:
+    return AdminAuthStatus(auth_enabled=auth_enabled())
+
+
+@app.post("/admin/login", response_model=AdminLoginOut)
+def admin_login(payload: AdminLoginIn) -> AdminLoginOut:
+    if not verify_password(payload.password):
+        raise HTTPException(status_code=401, detail="비밀번호가 올바르지 않습니다.")
+    token = create_admin_token() if auth_enabled() else ""
+    return AdminLoginOut(token=token, auth_enabled=auth_enabled())
+
+
 @app.get("/activity/today", response_model=ActivityOut)
 def activity_today(db: Session = Depends(get_db)):
     return get_or_create_today(db)
 
 
-@app.post("/activity", response_model=ActivityOut)
+@app.post("/activity", response_model=ActivityOut, dependencies=[AdminGuard])
 def save_activity(payload: ActivityIn, db: Session = Depends(get_db)):
     return upsert_activity(db, payload)
 
@@ -129,7 +152,7 @@ def village_state(db: Session = Depends(get_db)):
     return apply_village_overrides(db, state)
 
 
-@app.post("/npc/chat", response_model=ChatMessageOut)
+@app.post("/npc/chat", response_model=ChatMessageOut, dependencies=[AiRateLimit])
 async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
     is_overseer = payload.npc_id == "overseer-npc" or "overseer" in payload.npc_id
@@ -176,19 +199,19 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
     )
 
 
-@app.post("/npc/tick", response_model=NpcTickOut)
+@app.post("/npc/tick", response_model=NpcTickOut, dependencies=[AiRateLimit])
 async def npc_tick(payload: NpcTickIn, db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
     return await generate_npc_tick(payload, activity)
 
 
-@app.post("/npc/encounter", response_model=NpcEncounterOut)
+@app.post("/npc/encounter", response_model=NpcEncounterOut, dependencies=[AiRateLimit])
 async def npc_encounter(payload: NpcEncounterIn, db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
     return await generate_npc_encounter(payload.npc_a, payload.npc_b, payload.recent_memory, activity)
 
 
-@app.post("/npc/group-chat", response_model=NpcGroupChatOut)
+@app.post("/npc/group-chat", response_model=NpcGroupChatOut, dependencies=[AiRateLimit])
 async def npc_group_chat(payload: NpcGroupChatIn, db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
     return await generate_group_chat(
@@ -200,7 +223,7 @@ async def npc_group_chat(payload: NpcGroupChatIn, db: Session = Depends(get_db))
     )
 
 
-@app.post("/github/sync", response_model=GithubSyncOut)
+@app.post("/github/sync", response_model=GithubSyncOut, dependencies=[AdminGuard])
 async def github_sync(db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
     warning: str | None = None
@@ -239,27 +262,27 @@ def create_visitor_event(payload: VisitorEventIn, db: Session = Depends(get_db))
     return record_visitor_event(db, payload)
 
 
-@app.get("/admin/overview", response_model=AdminOverview)
+@app.get("/admin/overview", response_model=AdminOverview, dependencies=[AdminGuard])
 def admin_overview(db: Session = Depends(get_db)):
     return admin_overview_payload(db)
 
 
-@app.get("/admin/analytics", response_model=AnalyticsSummary)
+@app.get("/admin/analytics", response_model=AnalyticsSummary, dependencies=[AdminGuard])
 def admin_analytics(db: Session = Depends(get_db)):
     return analytics_summary(db)
 
 
-@app.get("/admin/projects", response_model=list[ManagedProjectOut])
+@app.get("/admin/projects", response_model=list[ManagedProjectOut], dependencies=[AdminGuard])
 def admin_projects(db: Session = Depends(get_db)):
     return list_projects(db)
 
 
-@app.put("/admin/projects/{project_id}", response_model=ManagedProjectOut)
+@app.put("/admin/projects/{project_id}", response_model=ManagedProjectOut, dependencies=[AdminGuard])
 def admin_update_project(project_id: str, payload: ManagedProjectIn, db: Session = Depends(get_db)):
     return update_project(db, project_id, payload)
 
 
-@app.get("/admin/npc/logs", response_model=list[NpcConversationLogOut])
+@app.get("/admin/npc/logs", response_model=list[NpcConversationLogOut], dependencies=[AdminGuard])
 def admin_npc_logs(db: Session = Depends(get_db)):
     return list_npc_logs(db)
 
@@ -269,22 +292,22 @@ def npc_presets(db: Session = Depends(get_db)):
     return list_npc_presets(db)
 
 
-@app.get("/admin/npc/presets", response_model=list[NpcPresetOut])
+@app.get("/admin/npc/presets", response_model=list[NpcPresetOut], dependencies=[AdminGuard])
 def admin_npc_presets(db: Session = Depends(get_db)):
     return list_npc_presets(db)
 
 
-@app.put("/admin/npc/presets/{npc_id}", response_model=NpcPresetOut)
+@app.put("/admin/npc/presets/{npc_id}", response_model=NpcPresetOut, dependencies=[AdminGuard])
 def admin_update_npc_preset(npc_id: str, payload: NpcPresetIn, db: Session = Depends(get_db)):
     return update_npc_preset(db, npc_id, payload)
 
 
-@app.get("/admin/village/overrides", response_model=list[VillageBuildingOverrideOut])
+@app.get("/admin/village/overrides", response_model=list[VillageBuildingOverrideOut], dependencies=[AdminGuard])
 def admin_village_overrides(db: Session = Depends(get_db)):
     return list_village_overrides(db)
 
 
-@app.put("/admin/village/overrides/{building_id}", response_model=VillageBuildingOverrideOut)
+@app.put("/admin/village/overrides/{building_id}", response_model=VillageBuildingOverrideOut, dependencies=[AdminGuard])
 def admin_update_village_override(
     building_id: str,
     payload: VillageBuildingOverrideIn,
@@ -300,12 +323,12 @@ def coding_tests(db: Session = Depends(get_db)):
     return list_coding_tests(db)
 
 
-@app.post("/admin/coding-tests", response_model=CodingTestOut)
+@app.post("/admin/coding-tests", response_model=CodingTestOut, dependencies=[AdminGuard])
 def admin_create_coding_test(payload: CodingTestIn, db: Session = Depends(get_db)):
     return create_coding_test(db, payload)
 
 
-@app.put("/admin/coding-tests/{log_id}", response_model=CodingTestOut)
+@app.put("/admin/coding-tests/{log_id}", response_model=CodingTestOut, dependencies=[AdminGuard])
 def admin_update_coding_test(log_id: int, payload: CodingTestIn, db: Session = Depends(get_db)):
     log = update_coding_test(db, log_id, payload)
     if not log:
@@ -313,7 +336,7 @@ def admin_update_coding_test(log_id: int, payload: CodingTestIn, db: Session = D
     return log
 
 
-@app.delete("/admin/coding-tests/{log_id}")
+@app.delete("/admin/coding-tests/{log_id}", dependencies=[AdminGuard])
 def admin_delete_coding_test(log_id: int, db: Session = Depends(get_db)):
     if not delete_coding_test(db, log_id):
         raise HTTPException(status_code=404, detail="해당 코딩테스트 기록을 찾을 수 없습니다.")
@@ -327,12 +350,12 @@ def cs_notes(db: Session = Depends(get_db)):
     return list_cs_notes(db)
 
 
-@app.post("/admin/cs-notes", response_model=CsNoteOut)
+@app.post("/admin/cs-notes", response_model=CsNoteOut, dependencies=[AdminGuard])
 def admin_create_cs_note(payload: CsNoteIn, db: Session = Depends(get_db)):
     return create_cs_note(db, payload)
 
 
-@app.put("/admin/cs-notes/{note_id}", response_model=CsNoteOut)
+@app.put("/admin/cs-notes/{note_id}", response_model=CsNoteOut, dependencies=[AdminGuard])
 def admin_update_cs_note(note_id: int, payload: CsNoteIn, db: Session = Depends(get_db)):
     note = update_cs_note(db, note_id, payload)
     if not note:
@@ -340,7 +363,7 @@ def admin_update_cs_note(note_id: int, payload: CsNoteIn, db: Session = Depends(
     return note
 
 
-@app.delete("/admin/cs-notes/{note_id}")
+@app.delete("/admin/cs-notes/{note_id}", dependencies=[AdminGuard])
 def admin_delete_cs_note(note_id: int, db: Session = Depends(get_db)):
     if not delete_cs_note(db, note_id):
         raise HTTPException(status_code=404, detail="해당 CS 노트를 찾을 수 없습니다.")

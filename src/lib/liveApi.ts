@@ -28,6 +28,21 @@ import type {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
+const ADMIN_TOKEN_KEY = "portfolio-admin-token";
+let adminToken: string | null =
+  typeof window !== "undefined" ? window.localStorage.getItem(ADMIN_TOKEN_KEY) : null;
+
+export function setAdminToken(token: string | null): void {
+  adminToken = token && token.length > 0 ? token : null;
+  if (typeof window === "undefined") return;
+  if (adminToken) window.localStorage.setItem(ADMIN_TOKEN_KEY, adminToken);
+  else window.localStorage.removeItem(ADMIN_TOKEN_KEY);
+}
+
+export function hasAdminToken(): boolean {
+  return !!adminToken;
+}
+
 export class ApiError extends Error {
   status: number;
   detail?: string;
@@ -44,6 +59,7 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      ...(adminToken ? {"X-Admin-Token": adminToken} : {}),
       ...(init?.headers ?? {})
     }
   });
@@ -75,6 +91,19 @@ export function saveActivity(payload: ActivityInput): Promise<DailyActivity> {
     method: "POST",
     body: JSON.stringify(payload)
   });
+}
+
+export function fetchAdminAuthStatus(): Promise<{auth_enabled: boolean}> {
+  return requestJson<{auth_enabled: boolean}>("/admin/auth-status", {cache: "no-store"});
+}
+
+export async function loginAdmin(password: string): Promise<{token: string; auth_enabled: boolean}> {
+  const res = await requestJson<{token: string; auth_enabled: boolean}>("/admin/login", {
+    method: "POST",
+    body: JSON.stringify({password})
+  });
+  setAdminToken(res.token || null);
+  return res;
 }
 
 export function fetchActivityHistory(days = 120): Promise<DailyActivity[]> {

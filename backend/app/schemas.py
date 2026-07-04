@@ -270,6 +270,19 @@ class AdminOverview(BaseModel):
     village_overrides: list[VillageBuildingOverrideOut]
 
 
+class AdminLoginIn(BaseModel):
+    password: str = ""
+
+
+class AdminLoginOut(BaseModel):
+    token: str
+    auth_enabled: bool
+
+
+class AdminAuthStatus(BaseModel):
+    auth_enabled: bool
+
+
 class CodingTestIn(BaseModel):
     solved_date: dt_date | None = None
     platform: str = Field(default="", max_length=60)
