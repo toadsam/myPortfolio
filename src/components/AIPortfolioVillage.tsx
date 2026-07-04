@@ -12,6 +12,7 @@ import {SceneTransition} from "@/components/ui/SceneTransition";
 import {SectionTabs} from "@/components/ui/SectionTabs";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
+import {NPC_EMOTES, NPC_SMALL_TALK, OVERSEER_GREETINGS, pickRandom} from "@/data/npcChatter";
 import type {NpcCommand} from "@/components/village/NPC";
 import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {cameraTargets, villageBuildings} from "@/lib/constants";
@@ -19,6 +20,7 @@ import {fetchVillageState, requestGroupChat, requestNpcEncounter, requestNpcTick
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
 import type {
+  DailyActivity,
   NpcActionDefinition,
   NpcActionState,
   NpcMood,
@@ -27,6 +29,35 @@ import type {
   NpcSuggestedAction,
   VillageState
 } from "@/types/live";
+
+const OVERSEER_ID = "overseer-npc";
+const OVERSEER_PATROL = [
+  "guide-npc",
+  "project-npc",
+  "developer-npc",
+  "archivist-npc",
+  "contact-npc",
+  "npc-study-codingtest",
+  "npc-study-cs"
+];
+
+function announceDelta(
+  prev: DailyActivity,
+  cur: DailyActivity,
+  unlocked: string[],
+  prevUnlocked: string[]
+): string | null {
+  if (cur.workout_done && !prev.workout_done) return "얘들아, 재훈이 오늘 운동 완료했대! 💪";
+  const dc = cur.github_commits - prev.github_commits;
+  if (dc > 0) return `얘들아, 재훈이 방금 커밋 ${dc}개 올렸대! 🎉`;
+  const ds = cur.study_minutes - prev.study_minutes;
+  if (ds >= 20) return `재훈이 공부 ${ds}분 더 했대, 대단하지? 📚`;
+  const dco = cur.coding_minutes - prev.coding_minutes;
+  if (dco >= 20) return `재훈이 코딩 ${dco}분 더 했더라! ⌨️`;
+  const newUnlocked = unlocked.filter((u) => !prevUnlocked.includes(u) && !u.startsWith("active-"));
+  if (newUnlocked.length > 0) return "마을에 새 장식이 생겼어! 다들 봤어? ✨";
+  return null;
+}
 import type {ExplorationMode, NPCData, SectionId, Vector3Tuple} from "@/types/portfolio";
 
 const VillageScene = dynamic(
@@ -90,7 +121,7 @@ const ResumeMode = dynamic(
 );
 
 const FADE_DURATION = 480;
-const CORE_NPC_IDS = new Set(["guide-npc", "project-npc", "developer-npc", "archivist-npc", "contact-npc"]);
+const CORE_NPC_IDS = new Set(["overseer-npc", "guide-npc", "project-npc", "developer-npc", "archivist-npc", "contact-npc"]);
 const GUIDE_ID = "guide-npc";
 
 // 빠른 이동 / 미니맵에서 쓰는 구역 정의 (key = cameraTargets 키)
@@ -196,6 +227,7 @@ export function AIPortfolioVillage() {
   const [talkCam, setTalkCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
   const [travelCam, setTravelCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
   const [npcCommand, setNpcCommand] = useState<NpcCommand | null>(null);
+  const [overseerTarget, setOverseerTarget] = useState<Vector3Tuple | null>(null);
   const [groupChatBusy, setGroupChatBusy] = useState(false);
   const [groupChat, setGroupChat] = useState<{lines: {name: string; text: string}[]} | null>(null);
   const [groupChatOpen, setGroupChatOpen] = useState(false);
@@ -225,6 +257,12 @@ export function AIPortfolioVillage() {
   const encounterBusyRef = useRef(false);
   const encounterCooldownRef = useRef<Record<string, number>>({});
   const convoTimersRef = useRef<number[]>([]);
+  const patrolBusyRef = useRef(false);
+  const patrolIdxRef = useRef(0);
+  const patrolTargetIdRef = useRef("");
+  const emoteCooldownRef = useRef<Record<string, number>>({});
+  const prevActivityRef = useRef<DailyActivity | null>(null);
+  const prevUnlockedRef = useRef<string[]>([]);
 
   useEffect(() => {
     npcRuntimeStatesRef.current = npcRuntimeStates;
@@ -255,6 +293,11 @@ export function AIPortfolioVillage() {
             changed = true;
           }
 
+          if (state.emoteExpiresAt && state.emoteExpiresAt <= now) {
+            next[npcId] = {...(next[npcId] ?? state), emote: undefined, emoteExpiresAt: undefined};
+            changed = true;
+          }
+
           const actionExpiresAt = state.currentAction ? state.currentAction.startedAt + state.currentAction.durationMs : 0;
           if (actionExpiresAt && actionExpiresAt <= now) {
             next[npcId] = {...(next[npcId] ?? state), currentAction: undefined};
@@ -275,10 +318,29 @@ export function AIPortfolioVillage() {
     async function loadVillageState() {
       try {
         const nextState = await fetchVillageState();
-        if (!ignore) {
-          setVillageState(nextState);
-          setLiveError(null);
+        if (ignore) return;
+        setVillageState(nextState);
+        setLiveError(null);
+
+        // 내 기록 변화 감지 → 분신(총괄 NPC)이 마을에 소문내기 (무료)
+        const prev = prevActivityRef.current;
+        if (prev) {
+          const msg = announceDelta(prev, nextState.activity, nextState.unlocked_items, prevUnlockedRef.current);
+          if (msg && !npcCommandRef.current) {
+            const now = Date.now();
+            setNpcRuntimeStates((states) => ({
+              ...states,
+              [OVERSEER_ID]: {
+                ...(states[OVERSEER_ID] ?? {mood: "excited" as NpcMood, energy: 78}),
+                mood: "excited",
+                bubbleText: msg,
+                bubbleExpiresAt: now + 8000
+              }
+            }));
+          }
         }
+        prevActivityRef.current = nextState.activity;
+        prevUnlockedRef.current = nextState.unlocked_items;
       } catch {
         if (!ignore) {
           setLiveError("FastAPI 백엔드가 꺼져 있습니다");
@@ -287,7 +349,7 @@ export function AIPortfolioVillage() {
     }
 
     loadVillageState();
-    const intervalId = setInterval(loadVillageState, 60000);
+    const intervalId = setInterval(loadVillageState, 30000);
 
     return () => {
       ignore = true;
@@ -387,13 +449,14 @@ export function AIPortfolioVillage() {
         for (let j = i + 1; j < entries.length; j += 1) {
           const [npcAId, npcAPosition] = entries[i]!;
           const [npcBId, npcBPosition] = entries[j]!;
+          if (npcAId === OVERSEER_ID || npcBId === OVERSEER_ID) continue; // 분신은 순찰 시스템이 따로 담당
           const pairKey = [npcAId, npcBId].sort().join(":");
 
           if (now < (encounterCooldownRef.current[pairKey] ?? 0)) continue;
-          if (distance(npcAPosition, npcBPosition) > 1.45) continue;
+          if (distance(npcAPosition, npcBPosition) > 1.7) continue;
 
           encounterBusyRef.current = true;
-          encounterCooldownRef.current[pairKey] = now + 180000;
+          encounterCooldownRef.current[pairKey] = now + 120000;
 
           const stateA = npcRuntimeStatesRef.current[npcAId];
           const stateB = npcRuntimeStatesRef.current[npcBId];
@@ -464,7 +527,7 @@ export function AIPortfolioVillage() {
             setConvoCam(twoShot(npcAPosition, npcBPosition));
             playConversation(npcAId, npcBId, response.dialogue);
           } catch {
-            encounterCooldownRef.current[pairKey] = now + 240000;
+            encounterCooldownRef.current[pairKey] = now + 180000;
           } finally {
             encounterBusyRef.current = false;
           }
@@ -474,9 +537,143 @@ export function AIPortfolioVillage() {
       }
     }
 
-    const interval = setInterval(checkEncounter, 8000);
+    const interval = setInterval(checkEncounter, 6000);
     return () => clearInterval(interval);
   }, [villageState]);
+
+  // 분신(총괄 NPC) 순찰 — 친구들 집을 순회하며 도착하면 안부 대화
+  useEffect(() => {
+    async function patrolTick() {
+      if (typeof document !== "undefined" && document.hidden) return;
+      if (npcCommandRef.current) {
+        setOverseerTarget(null);
+        patrolTargetIdRef.current = "";
+        return;
+      }
+      if (patrolBusyRef.current) return;
+
+      const targetId = OVERSEER_PATROL[patrolIdxRef.current % OVERSEER_PATROL.length]!;
+      const home = npcBehaviorProfiles[targetId]?.home;
+      if (!home) {
+        patrolIdxRef.current += 1;
+        return;
+      }
+
+      if (patrolTargetIdRef.current !== targetId) {
+        patrolTargetIdRef.current = targetId;
+        setOverseerTarget([home[0], 0, home[2]]);
+      }
+
+      const opos = npcPositionsRef.current[OVERSEER_ID];
+      if (!opos) return;
+      if (distance(opos, home) > 2.2) return; // 아직 이동 중
+
+      if (encounterBusyRef.current) return;
+      patrolBusyRef.current = true;
+      encounterBusyRef.current = true;
+      setOverseerTarget(null); // 멈춰서 마주보고 안부
+
+      const tpos = npcPositionsRef.current[targetId] ?? [home[0], 0, home[2]];
+      const stateO = npcRuntimeStatesRef.current[OVERSEER_ID];
+      const stateT = npcRuntimeStatesRef.current[targetId];
+
+      const advance = (delay: number) => {
+        const t = window.setTimeout(() => {
+          patrolBusyRef.current = false;
+          encounterBusyRef.current = false;
+          patrolIdxRef.current += 1;
+        }, delay);
+        convoTimersRef.current.push(t);
+      };
+
+      try {
+        const res = await requestNpcEncounter(
+          {
+            npc_id: OVERSEER_ID,
+            mood: stateO?.mood ?? "excited",
+            energy: stateO?.energy ?? 72,
+            assigned_building_id: "central-plaza",
+            recent_memory: stateO?.memory ? [stateO.memory] : []
+          },
+          {
+            npc_id: targetId,
+            mood: stateT?.mood ?? "calm",
+            energy: stateT?.energy ?? 52,
+            assigned_building_id: npcBehaviorProfiles[targetId]?.assignedBuildingId,
+            recent_memory: stateT?.memory ? [stateT.memory] : []
+          },
+          npcMemoryRef.current.slice(-6)
+        );
+        remember(res.memory);
+        const now = Date.now();
+        const convoMs = res.dialogue.length * CONVO_STEP + 1500;
+        setNpcRuntimeStates((states) => {
+          const next = {...states};
+          for (const change of res.state_changes) {
+            next[change.npc_id] = {...(next[change.npc_id] ?? {}), mood: change.mood, energy: change.energy, memory: res.memory};
+          }
+          const holdUntil = now + convoMs;
+          next[OVERSEER_ID] = {...(next[OVERSEER_ID] ?? {mood: "excited" as NpcMood, energy: 72}), facePoint: [tpos[0], 0, tpos[2]], holdUntil};
+          next[targetId] = {...(next[targetId] ?? {mood: "calm" as NpcMood, energy: 55}), facePoint: [opos[0], 0, opos[2]], holdUntil};
+          return next;
+        });
+        setConvoCam(twoShot(opos, tpos));
+        playConversation(OVERSEER_ID, targetId, res.dialogue);
+        advance(convoMs + 800);
+      } catch {
+        // AI 실패 → 무료 안부 한 줄
+        setNpcRuntimeStates((states) => ({
+          ...states,
+          [OVERSEER_ID]: {...(states[OVERSEER_ID] ?? {mood: "excited" as NpcMood, energy: 72}), bubbleText: pickRandom(OVERSEER_GREETINGS), bubbleExpiresAt: Date.now() + 4000}
+        }));
+        advance(4200);
+      }
+    }
+
+    const id = setInterval(patrolTick, 2500);
+    return () => clearInterval(id);
+  }, []);
+
+  // 무료 상호작용 — 근접 시 이모트/짧은 잡담 (AI 없음, 상시 활기)
+  useEffect(() => {
+    function socialTick() {
+      if (typeof document !== "undefined" && document.hidden) return;
+      if (npcCommandRef.current) return;
+      const entries = Object.entries(npcPositionsRef.current);
+      const now = Date.now();
+      for (let i = 0; i < entries.length; i += 1) {
+        for (let j = i + 1; j < entries.length; j += 1) {
+          const [aId, aPos] = entries[i]!;
+          const [bId, bPos] = entries[j]!;
+          const pair = [aId, bId].sort().join("::");
+          if (now < (emoteCooldownRef.current[pair] ?? 0)) continue;
+          const d = distance(aPos, bPos);
+          if (d > 2.6 || d < 0.3) continue;
+          const ra = npcRuntimeStatesRef.current[aId];
+          const rb = npcRuntimeStatesRef.current[bId];
+          if ((ra?.holdUntil ?? 0) > now || (rb?.holdUntil ?? 0) > now) continue;
+          emoteCooldownRef.current[pair] = now + 16000;
+          const talk = Math.random() < 0.4;
+          setNpcRuntimeStates((states) => {
+            const next = {...states};
+            const baseA = next[aId] ?? {mood: "calm" as NpcMood, energy: 50};
+            const baseB = next[bId] ?? {mood: "calm" as NpcMood, energy: 50};
+            if (talk) {
+              next[aId] = {...baseA, bubbleText: pickRandom(NPC_SMALL_TALK), bubbleExpiresAt: now + 3200};
+              next[bId] = {...baseB, emote: pickRandom(NPC_EMOTES), emoteExpiresAt: now + 2600};
+            } else {
+              next[aId] = {...baseA, emote: pickRandom(NPC_EMOTES), emoteExpiresAt: now + 2600};
+              next[bId] = {...baseB, emote: pickRandom(NPC_EMOTES), emoteExpiresAt: now + 2600};
+            }
+            return next;
+          });
+          return;
+        }
+      }
+    }
+    const id = setInterval(socialTick, 2600);
+    return () => clearInterval(id);
+  }, []);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -716,6 +913,8 @@ export function AIPortfolioVillage() {
   // gather/photo/party/follow — 같은 버튼 다시 누르면 해제(토글)
   function issueCommand(mode: NpcCommand) {
     clearGreetTimer();
+    setOverseerTarget(null);
+    patrolTargetIdRef.current = "";
     setShowIntro(false);
     setSelectedNpc(null);
     const willActivate = npcCommand !== mode;
@@ -737,6 +936,8 @@ export function AIPortfolioVillage() {
   // 인사 — 잠깐 모두 인사하고 이전 상태로 복귀(일회성)
   function commandGreet() {
     trackVisitorEvent({event_type: "npc_command", target_id: "greet", label: "on"});
+    setOverseerTarget(null);
+    patrolTargetIdRef.current = "";
     setShowIntro(false);
     if (npcCommand !== "greet") beforeGreetRef.current = npcCommand;
     setNpcCommand("greet");
@@ -766,6 +967,8 @@ export function AIPortfolioVillage() {
   function commandGroupTalk() {
     if (groupChatBusy) return;
     clearGreetTimer();
+    setOverseerTarget(null);
+    patrolTargetIdRef.current = "";
     setShowIntro(false);
     setSelectedNpc(null);
     const t = cameraTargets.intro;
@@ -990,6 +1193,7 @@ export function AIPortfolioVillage() {
               guideForceHold={conciergeStage === "panel"}
               npcCommand={npcCommand}
               npcCommandTargets={npcCommandTargets}
+              overseerTarget={overseerTarget}
               cinematic={
                 eavesOpen && convoCam
                   ? convoCam

@@ -11,6 +11,13 @@ export interface NpcBehaviorProfile {
 }
 
 const baseProfiles: Record<string, NpcBehaviorProfile> = {
+  "overseer-npc": {
+    npcId: "overseer-npc",
+    assignedBuildingId: "central-plaza",
+    home: [0, 0, 0],
+    roamRadius: 16, // 마을 전역을 자유롭게 돌아다니며 NPC들 안부를 챙긴다
+    roleSummary: "마을 전역을 돌아다니며 모든 NPC를 살피고 챙기는 따뜻한 총괄 관리자입니다."
+  },
   "guide-npc": {
     npcId: "guide-npc",
     assignedBuildingId: "central-plaza",

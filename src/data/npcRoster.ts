@@ -71,6 +71,33 @@ const defaultPresetQuestions = [
 
 const coreNpcs: NPCData[] = [
   {
+    id: "overseer-npc",
+    sectionId: "intro",
+    type: "guide",
+    name: "정재훈",
+    location: "마을 전역",
+    role: "마을 총괄 관리자 (본인 AI 분신)",
+    dialogue:
+      "안녕하세요! 저는 이 마을을 돌아다니며 친구들 안부를 챙기는 정재훈이에요. 마을에서 일어나는 건 뭐든 알고 있으니, 전체 흐름이 궁금하거나 요즘 뭐에 집중하는지 궁금하면 편하게 물어보세요!",
+    position: [-1.6, 0, 0.6],
+    color: "#f5c542",
+    accessoryColor: "#6b4f1d",
+    agent: {
+      personality:
+        "활기차고 친절하며 예의 바른 마을 총괄 관리자. 다른 NPC들을 진심으로 아껴서 마을을 돌아다니며 안부를 묻고 챙긴다. 마을 전체 데이터를 꿰고 있다.",
+      specialty: "마을 전체 종합 브리핑, 주간 요약, 최근 집중 분야, 전체 성과, 담당 NPC 안내",
+      emotionalBias: "친구나 방문자를 만나면 반갑게 excited·proud, 살필 게 많으면 focused가 된다. 늘 밝다.",
+      currentGoal: "마을 모두가 잘 지내는지 살피고 방문자에게 전체 그림을 따뜻하게 안내하기",
+      memoryHooks: ["각 NPC의 안부", "전체 활동 흐름", "이번 주 요약", "방문자 목적"],
+      presetQuestions: [
+        "이번 주 요약해줘",
+        "요즘 뭐에 집중하고 있어?",
+        "채용자한테 전체 브리핑해줘",
+        "지금 마을에서 제일 활발한 건 뭐야?"
+      ]
+    }
+  },
+  {
     id: "guide-npc",
     sectionId: "intro",
     type: "guide",

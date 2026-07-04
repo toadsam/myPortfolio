@@ -1,10 +1,11 @@
 import re
+from datetime import timedelta
 from typing import Any
 
 from app.catalog import NPCS, PROJECTS
 from app.config import settings
 from app.models import CodingTestLog, CsNoteLog, DailyActivity
-from app.schemas import NpcActionOut
+from app.schemas import NpcActionOut, VillageState
 from app.services.learning_service import (
     coding_test_brief_lines,
     coding_test_detail_lines,
@@ -12,6 +13,7 @@ from app.services.learning_service import (
     cs_note_detail_lines,
 )
 from app.services.npc_action_service import choose_npc_action
+from app.time_utils import today_local
 
 
 async def answer_npc_message(
@@ -21,18 +23,22 @@ async def answer_npc_message(
     recent_messages: list[str] | None = None,
     coding_tests: list[CodingTestLog] | None = None,
     cs_notes: list[CsNoteLog] | None = None,
+    activity_history: list[DailyActivity] | None = None,
+    village_state: VillageState | None = None,
 ) -> tuple[str, bool, NpcActionOut]:
     npc = NPCS.get(npc_id, _npc_profile_for_dynamic_id(npc_id))
-    context = build_context(npc_id, activity, recent_messages or [], coding_tests or [], cs_notes or [])
+    context = build_context(
+        npc_id, activity, recent_messages or [], coding_tests or [], cs_notes or [], activity_history, village_state
+    )
     suggested_action = choose_npc_action(npc_id, message=message, activity=activity, source="chat")
 
     if settings.openai_api_key:
         try:
             return await answer_with_openai(npc, context, message), True, suggested_action
         except Exception:
-            return answer_without_ai(npc_id, message, activity, coding_tests or [], cs_notes or []), False, suggested_action
+            return answer_without_ai(npc_id, message, activity, coding_tests or [], cs_notes or [], activity_history, village_state), False, suggested_action
 
-    return answer_without_ai(npc_id, message, activity, coding_tests or [], cs_notes or []), False, suggested_action
+    return answer_without_ai(npc_id, message, activity, coding_tests or [], cs_notes or [], activity_history, village_state), False, suggested_action
 
 
 def _is_coding_npc(npc_id: str) -> bool:
@@ -43,12 +49,84 @@ def _is_cs_npc(npc_id: str) -> bool:
     return npc_id == "cs-npc" or "study-cs" in npc_id or npc_id.endswith("-cs")
 
 
+def _is_overseer(npc_id: str) -> bool:
+    return npc_id == "overseer-npc" or "overseer" in npc_id
+
+
+def _activity_stats(history: list[DailyActivity]) -> dict[str, int]:
+    by_date = {a.date: a for a in history}
+    ref = today_local()
+
+    def raw(a: DailyActivity) -> float:
+        projects = sum((a.project_minutes or {}).values())
+        return (a.study_minutes or 0) / 3 + (a.coding_minutes or 0) / 3 + (a.github_commits or 0) * 8 + (20 if a.workout_done else 0) + projects / 5
+
+    def streak(predicate) -> int:
+        cursor = ref
+        if cursor not in by_date or not predicate(by_date[cursor]):
+            cursor = cursor - timedelta(days=1)
+        count = 0
+        while cursor in by_date and predicate(by_date[cursor]):
+            count += 1
+            cursor = cursor - timedelta(days=1)
+        return count
+
+    week_study = week_coding = week_commits = 0
+    for i in range(7):
+        day = by_date.get(ref - timedelta(days=i))
+        if day:
+            week_study += day.study_minutes or 0
+            week_coding += day.coding_minutes or 0
+            week_commits += day.github_commits or 0
+
+    return {
+        "record_streak": streak(lambda a: raw(a) > 0),
+        "workout_streak": streak(lambda a: a.workout_done),
+        "week_study": week_study,
+        "week_coding": week_coding,
+        "week_commits": week_commits,
+        "recorded_days": len(history),
+    }
+
+
+def _overseer_overview(
+    activity_history: list[DailyActivity] | None,
+    village_state: VillageState | None,
+    coding_tests: list[CodingTestLog],
+    cs_notes: list[CsNoteLog],
+) -> list[str]:
+    lines = ["== 마을 총괄 브리핑 (너는 마을의 아래 전체 데이터를 꿰고 있다) =="]
+
+    if activity_history:
+        s = _activity_stats(activity_history)
+        lines.append(
+            f"- 기록 스트릭: 연속 {s['record_streak']}일 · 운동 연속 {s['workout_streak']}일 · 총 기록일 {s['recorded_days']}일"
+        )
+        lines.append(f"- 이번 주 합계: 공부 {s['week_study']}분 · 코딩 {s['week_coding']}분 · 커밋 {s['week_commits']}개")
+
+    lines.append(f"- 코딩테스트 풀이: 총 {len(coding_tests)}개")
+    lines.append(f"- CS 전공지식 노트: 총 {len(cs_notes)}개")
+
+    if village_state is not None:
+        bright = [b for b in village_state.buildings if b.light_level in ("normal", "bright")]
+        lines.append(f"- 마을 상태: {village_state.summary}")
+        lines.append(f"- 활발한(밝은) 건물 {len(bright)}곳, 해금된 장식 {len(village_state.unlocked_items)}개")
+
+    lines.append(
+        "- 함께 사는 NPC들(안부를 챙길 친구들): 루미(안내), 픽셀(프로젝트), 테오(기술), 아카(경험), 포스트(연락), 알고(코딩테스트), 노바(CS). "
+        "세부 질문은 담당 친구를 다정하게 가리켜줘도 좋다."
+    )
+    return lines
+
+
 def build_context(
     npc_id: str,
     activity: DailyActivity,
     recent_messages: list[str] | None = None,
     coding_tests: list[CodingTestLog] | None = None,
     cs_notes: list[CsNoteLog] | None = None,
+    activity_history: list[DailyActivity] | None = None,
+    village_state: VillageState | None = None,
 ) -> str:
     npc = NPCS.get(npc_id, _npc_profile_for_dynamic_id(npc_id))
     coding_tests = coding_tests or []
@@ -99,6 +177,10 @@ def build_context(
         detail = cs_note_detail_lines(cs_notes[:6])
         lines.append("CS 전공지식 노트 상세(전담 지식 베이스):")
         lines.extend(detail or ["- 아직 상세 노트 기록이 없습니다."])
+
+    # 총괄 NPC에게는 마을 전체를 조망하는 종합 브리핑을 추가로 제공
+    if _is_overseer(npc_id):
+        lines.extend(_overseer_overview(activity_history, village_state, coding_tests, cs_notes))
 
     lines.append("프로젝트 지식 베이스:")
     lines.extend(project_lines)
@@ -151,9 +233,24 @@ def answer_without_ai(
     activity: DailyActivity,
     coding_tests: list[CodingTestLog] | None = None,
     cs_notes: list[CsNoteLog] | None = None,
+    activity_history: list[DailyActivity] | None = None,
+    village_state: VillageState | None = None,
 ) -> str:
     coding_tests = coding_tests or []
     cs_notes = cs_notes or []
+
+    if _is_overseer(npc_id):
+        parts = ["안녕하세요! 마을 곳곳 돌아보고 오는 길이에요. 다들 잘 지내고 있답니다."]
+        if activity_history:
+            s = _activity_stats(activity_history)
+            parts.append(
+                f"요즘 정재훈님은 연속 {s['record_streak']}일 기록 중이고, 이번 주에 공부 {s['week_study']}분·코딩 {s['week_coding']}분을 채웠어요."
+            )
+        parts.append(f"지금까지 코딩테스트 {len(coding_tests)}개, CS 노트 {len(cs_notes)}개가 쌓였어요.")
+        if village_state is not None:
+            parts.append(f"마을은 지금 — {village_state.summary}")
+        parts.append("더 자세한 건 담당 친구(테오·픽셀·알고·노바 등)에게 안내해드릴게요. 무엇이 궁금하세요?")
+        return " ".join(parts)
 
     if _is_coding_npc(npc_id):
         if not coding_tests:

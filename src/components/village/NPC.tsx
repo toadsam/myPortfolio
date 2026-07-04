@@ -43,6 +43,8 @@ interface NPCProps {
   /** follow 링 배치를 위한 슬롯 번호와 전체 수 */
   commandSlot?: number;
   commandTotal?: number;
+  /** 무료 이모트(이모지) — 근접 시 손인사 등 */
+  emote?: string;
 }
 
 export function NPC({
@@ -64,7 +66,8 @@ export function NPC({
   command,
   commandTarget,
   commandSlot,
-  commandTotal
+  commandTotal,
+  emote
 }: NPCProps) {
   const groupRef = useRef<Group | null>(null);
   const elapsedRef = useRef(0);
@@ -334,6 +337,15 @@ export function NPC({
           <Html center distanceFactor={7.4} zIndexRange={[12, 0]}>
             <div style={{fontSize: 22, userSelect: "none", pointerEvents: "none"}}>
               {command === "greet" ? "👋" : "🎉"}
+            </div>
+          </Html>
+        </Billboard>
+      ) : null}
+      {emote && !command && !bubbleText ? (
+        <Billboard position={[0, 2.4, 0]}>
+          <Html center distanceFactor={7.4} zIndexRange={[12, 0]}>
+            <div style={{fontSize: 20, userSelect: "none", pointerEvents: "none", animation: "fadeIn 0.3s ease"}}>
+              {emote}
             </div>
           </Html>
         </Billboard>

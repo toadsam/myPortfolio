@@ -103,6 +103,9 @@ export interface NpcRuntimeState {
   facePoint?: [number, number, number];
   /** 이 시각까지 멈춰서 마주봄 (NPC 간 대화) */
   holdUntil?: number;
+  /** 무료 이모트(이모지) — 근접 시 손인사 등 */
+  emote?: string;
+  emoteExpiresAt?: number;
 }
 
 export interface VillageState {

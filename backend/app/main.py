@@ -132,13 +132,33 @@ def village_state(db: Session = Depends(get_db)):
 @app.post("/npc/chat", response_model=ChatMessageOut)
 async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
+    is_overseer = payload.npc_id == "overseer-npc" or "overseer" in payload.npc_id
+
+    # 총괄 NPC는 마을 전체 데이터를 안다 — 전체 코테/CS + 활동 히스토리 + 마을 상태를 함께 넘긴다.
+    coding_limit = None if is_overseer else 12
+    activity_history = list_activity_history(db, 140) if is_overseer else None
+    village_state_ctx = None
+    if is_overseer:
+        village_state_ctx = apply_village_overrides(
+            db,
+            derive_village_state(
+                activity,
+                coding_today=count_coding_tests_today(db),
+                coding_total=count_coding_tests(db),
+                cs_today=count_cs_notes_today(db),
+                cs_total=count_cs_notes(db),
+            ),
+        )
+
     reply, used_ai, suggested_action = await answer_npc_message(
         payload.npc_id,
         payload.message,
         activity,
         payload.recent_messages,
-        coding_tests=list_coding_tests(db, limit=12),
-        cs_notes=list_cs_notes(db, limit=12),
+        coding_tests=list_coding_tests(db, limit=coding_limit),
+        cs_notes=list_cs_notes(db, limit=coding_limit),
+        activity_history=activity_history,
+        village_state=village_state_ctx,
     )
     log_npc_conversation(
         db,

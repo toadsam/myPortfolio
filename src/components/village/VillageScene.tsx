@@ -36,6 +36,7 @@ interface VillageSceneProps {
   cinematic?: {position: [number, number, number]; lookAt: [number, number, number]} | null;
   npcCommand?: NpcCommand | null;
   npcCommandTargets?: Record<string, Vector3Tuple>;
+  overseerTarget?: Vector3Tuple | null;
 }
 
 // 네트워크 펄스로 연결할 프로젝트 건물들 (한 번만 계산)
@@ -212,7 +213,7 @@ export function VillageScene({
   activeSection, activeNpcId, explorationMode, isIntro = false,
   onSelectNpc, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState,
   guideScriptedTarget, onGuideArrive, guideForceHold, cinematic,
-  npcCommand, npcCommandTargets
+  npcCommand, npcCommandTargets, overseerTarget
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
   const propsApi = usePropsEditor();
@@ -305,7 +306,8 @@ export function VillageScene({
               onSelect={onSelectNpc}
               facePoint={npcRuntimeStates[npc.id]?.facePoint}
               holdUntil={npcRuntimeStates[npc.id]?.holdUntil}
-              scriptedTarget={npc.id === "guide-npc" ? guideScriptedTarget : undefined}
+              emote={visibleEmote(npcRuntimeStates[npc.id])}
+              scriptedTarget={npc.id === "guide-npc" ? guideScriptedTarget : npc.id === "overseer-npc" ? overseerTarget : undefined}
               scriptedStart={npc.id === "guide-npc" ? [-4, 0, 1] : undefined}
               onScriptedArrive={npc.id === "guide-npc" ? onGuideArrive : undefined}
               forceHold={npc.id === "guide-npc" ? guideForceHold : undefined}
@@ -359,6 +361,11 @@ export function VillageScene({
 function visibleBubble(runtime?: NpcRuntimeState) {
   if (!runtime?.bubbleText || !runtime.bubbleExpiresAt) return undefined;
   return runtime.bubbleExpiresAt > Date.now() ? runtime.bubbleText : undefined;
+}
+
+function visibleEmote(runtime?: NpcRuntimeState) {
+  if (!runtime?.emote || !runtime.emoteExpiresAt) return undefined;
+  return runtime.emoteExpiresAt > Date.now() ? runtime.emote : undefined;
 }
 
 function displayNpcState(npcId: string, runtime?: NpcRuntimeState, base?: NpcState): NpcState | undefined {
