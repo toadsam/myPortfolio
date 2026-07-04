@@ -264,6 +264,7 @@ export function AIPortfolioVillage() {
   const emoteCooldownRef = useRef<Record<string, number>>({});
   const prevActivityRef = useRef<DailyActivity | null>(null);
   const prevUnlockedRef = useRef<string[]>([]);
+  const editingRef = useRef(false);
 
   useEffect(() => {
     npcRuntimeStatesRef.current = npcRuntimeStates;
@@ -283,6 +284,7 @@ export function AIPortfolioVillage() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      if (editingRef.current) return;
       const now = Date.now();
       setNpcRuntimeStates((states) => {
         let changed = false;
@@ -317,6 +319,7 @@ export function AIPortfolioVillage() {
     let ignore = false;
 
     async function loadVillageState() {
+      if (editingRef.current) return;
       try {
         const nextState = await fetchVillageState();
         if (ignore) return;
@@ -370,6 +373,7 @@ export function AIPortfolioVillage() {
 
     async function runTickBatch() {
       if (typeof document !== "undefined" && document.hidden) return; // 탭 숨김 → AI 호출 중단(비용 절감)
+      if (editingRef.current) return; // 배치 편집 중엔 씬 갱신 중단
       if (npcTickBusyRef.current) return;
       npcTickBusyRef.current = true;
 
@@ -440,6 +444,7 @@ export function AIPortfolioVillage() {
   useEffect(() => {
     async function checkEncounter() {
       if (typeof document !== "undefined" && document.hidden) return; // 탭 숨김 → AI 호출 중단(비용 절감)
+      if (editingRef.current) return; // 배치 편집 중엔 씬 갱신 중단
       if (npcCommandRef.current) return; // 단체 명령 중에는 자동 NPC 대화 중단
       if (encounterBusyRef.current) return;
 
@@ -546,6 +551,7 @@ export function AIPortfolioVillage() {
   useEffect(() => {
     async function patrolTick() {
       if (typeof document !== "undefined" && document.hidden) return;
+      if (editingRef.current) return; // 배치 편집 중엔 순찰 중단
       if (npcCommandRef.current) {
         setOverseerTarget(null);
         patrolTargetIdRef.current = "";
@@ -639,6 +645,7 @@ export function AIPortfolioVillage() {
   useEffect(() => {
     function socialTick() {
       if (typeof document !== "undefined" && document.hidden) return;
+      if (editingRef.current) return; // 배치 편집 중엔 잡담 중단
       if (npcCommandRef.current) return;
       const entries = Object.entries(npcPositionsRef.current);
       const now = Date.now();
@@ -1195,6 +1202,9 @@ export function AIPortfolioVillage() {
               npcCommand={npcCommand}
               npcCommandTargets={npcCommandTargets}
               overseerTarget={overseerTarget}
+              onEditingChange={(e) => {
+                editingRef.current = e;
+              }}
               cinematic={
                 eavesOpen && convoCam
                   ? convoCam

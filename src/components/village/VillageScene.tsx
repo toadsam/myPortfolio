@@ -2,8 +2,7 @@
 
 import {Canvas} from "@react-three/fiber";
 import {AdaptiveDpr, AdaptiveEvents, ContactShadows, Html, useGLTF} from "@react-three/drei";
-import {Selection} from "@react-three/postprocessing";
-import {Suspense, useMemo} from "react";
+import {Suspense, useEffect, useMemo} from "react";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {rockPositions, spread, treePositions, villageBuildings} from "@/lib/constants";
@@ -16,7 +15,7 @@ import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
 import {Rock} from "./Decorations";
 import {NPC, type NpcCommand} from "./NPC";
-import {EditorOutline, PropsEditorTray, PropsLayer, usePropsEditor} from "./PropsEditor";
+import {PropsEditorTray, PropsLayer, usePropsEditor} from "./PropsEditor";
 import {Tree} from "./Tree";
 
 interface VillageSceneProps {
@@ -37,6 +36,7 @@ interface VillageSceneProps {
   npcCommand?: NpcCommand | null;
   npcCommandTargets?: Record<string, Vector3Tuple>;
   overseerTarget?: Vector3Tuple | null;
+  onEditingChange?: (editing: boolean) => void;
 }
 
 // 네트워크 펄스로 연결할 프로젝트 건물들 (한 번만 계산)
@@ -213,12 +213,18 @@ export function VillageScene({
   activeSection, activeNpcId, explorationMode, isIntro = false,
   onSelectNpc, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState,
   guideScriptedTarget, onGuideArrive, guideForceHold, cinematic,
-  npcCommand, npcCommandTargets, overseerTarget
+  npcCommand, npcCommandTargets, overseerTarget, onEditingChange
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
   const propsApi = usePropsEditor();
   const editing = propsApi.enabled && propsApi.editMode;
   const sky = useMemo(() => timePalette(new Date().getHours()), []);
+
+  // 편집 모드일 때 부모가 자동 갱신(순찰·잡담·폴링)을 멈추도록 알린다.
+  // (편집 중 잦은 리렌더 + 후처리 아웃라인이 R3F 재조정 루프를 유발하는 문제 방지)
+  useEffect(() => {
+    onEditingChange?.(editing);
+  }, [editing]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div
@@ -254,7 +260,6 @@ export function VillageScene({
         <pointLight color="#ff6600" intensity={1.2} distance={16} decay={2} position={[0, 4, 9]} />
 
         <Suspense fallback={null}>
-         <Selection>
           <Ground />
           <Statue />
 
@@ -328,13 +333,10 @@ export function VillageScene({
 
           <ContactShadows blur={1.5} far={12} frames={1} opacity={0.15} position={[0, 0.02, 2]} scale={26} />
 
-          {editing ? <EditorOutline /> : null}
-
           {isWalkMode
             ? <CharacterController />
             : <CameraController activeSection={activeSection} isIntro={isIntro} lockRotate={editing} cinematic={cinematic} />
           }
-         </Selection>
         </Suspense>
       </Canvas>
 

@@ -1,7 +1,6 @@
 "use client";
 
 import {Html, useCursor, useGLTF} from "@react-three/drei";
-import {Select} from "@react-three/postprocessing";
 import {useRef, useState} from "react";
 import {useFrame, type ThreeEvent} from "@react-three/fiber";
 import {AdditiveBlending, type Mesh} from "three";
@@ -536,9 +535,7 @@ export function Building({building, buildingState, isActive, onRequestEnter, edi
             <meshBasicMaterial color="#86b0e6" transparent opacity={0.95} />
           </mesh>
         ) : null}
-        <Select enabled={editing && (edit?.selected ?? false)}>
-          <BuildingGeometry b={building} hl={isHighlighted} />
-        </Select>
+        <BuildingGeometry b={building} hl={isHighlighted} />
         <GroundRing color={building.accentColor} highlighted={isHighlighted} radius={Math.max(building.size[0], building.size[2])} />
         <HighlightFX
           active={isHighlighted}

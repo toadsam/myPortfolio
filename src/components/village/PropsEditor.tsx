@@ -1,7 +1,6 @@
 "use client";
 
 import {Html, useGLTF} from "@react-three/drei";
-import {EffectComposer, Outline, Select} from "@react-three/postprocessing";
 import {useThree, type ThreeEvent} from "@react-three/fiber";
 import {Suspense, useEffect, useMemo, useRef, useState} from "react";
 import {Plane, Raycaster, Vector2, Vector3} from "three";
@@ -151,9 +150,7 @@ export function PropsLayer({api}: {api: PropsEditorApi}) {
       {items.map((p) => (
         <group key={p.id} position={p.position} rotation={[0, p.rotationY, 0]} onPointerDown={(e) => onPropDown(e, p.id)}>
           <Suspense fallback={null}>
-            <Select enabled={editMode && selection?.kind === "prop" && selection.id === p.id}>
-              <PropModel glb={p.glb} scale={p.scale} />
-            </Select>
+            <PropModel glb={p.glb} scale={p.scale} />
           </Suspense>
           {editMode && selection?.kind === "prop" && selection.id === p.id ? <SelectionRing /> : null}
         </group>
@@ -211,14 +208,6 @@ function SelectionCoordLabel({api}: {api: PropsEditorApi}) {
 }
 
 // 선택된 오브젝트에 빛나는 외곽선 (편집 중에만 렌더)
-export function EditorOutline() {
-  return (
-    <EffectComposer autoClear={false} multisampling={4}>
-      <Outline visibleEdgeColor={0x86b0e6} hiddenEdgeColor={0x3a5a8a} edgeStrength={6.5} blur xRay />
-    </EffectComposer>
-  );
-}
-
 export function SelectionRing() {
   return (
     <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
