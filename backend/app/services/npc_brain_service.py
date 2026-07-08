@@ -12,6 +12,7 @@ from app.schemas import (
     NpcEncounterOut,
     NpcGroupChatOut,
     NpcMood,
+    NpcRelationshipOut,
     NpcStateChange,
     NpcTickIn,
     NpcTickOut,
@@ -57,6 +58,7 @@ async def generate_npc_encounter(
     npc_b: EncounterParticipant,
     recent_memory: list[str],
     activity: DailyActivity,
+    relation_context: str = "",
 ) -> NpcEncounterOut:
     a_profile = _npc_profile(npc_a.npc_id, npc_a.assigned_building_id)
     b_profile = _npc_profile(npc_b.npc_id, npc_b.assigned_building_id)
@@ -65,7 +67,7 @@ async def generate_npc_encounter(
     if settings.openai_api_key:
         try:
             data = await _call_json_model(
-                system_prompt=_encounter_system_prompt(a_profile, b_profile, context),
+                system_prompt=_encounter_system_prompt(a_profile, b_profile, context, relation_context),
                 user_prompt=json.dumps(
                     {
                         "npc_a": npc_a.model_dump(),
@@ -74,7 +76,7 @@ async def generate_npc_encounter(
                     },
                     ensure_ascii=False,
                 ),
-                max_tokens=440,
+                max_tokens=520,
             )
             return _encounter_from_data(npc_a.npc_id, npc_b.npc_id, data, used_ai=True, activity=activity)
         except Exception as exc:
@@ -284,7 +286,10 @@ def _npc_profile(npc_id: str, assigned_building_id: str | None = None) -> dict[s
     return NPCS["guide-npc"]
 
 
-def _encounter_system_prompt(a_profile: dict[str, Any], b_profile: dict[str, Any], context: str) -> str:
+def _encounter_system_prompt(
+    a_profile: dict[str, Any], b_profile: dict[str, Any], context: str, relation: str = ""
+) -> str:
+    relation_line = f"{relation}\n" if relation else ""
     return (
         "두 캐릭터가 아담한 3D 마을에서 우연히 마주쳐 나누는 짧고 자연스러운 한국어 수다를 써라. "
         "이들은 포트폴리오를 홍보하는 안내원이 아니라, 그냥 같이 사는 친구/동료다. 사람처럼, 감정적으로 말한다. "
@@ -294,9 +299,13 @@ def _encounter_system_prompt(a_profile: dict[str, Any], b_profile: dict[str, Any
         "내용은 대부분 일상·감정 잡담이다: 오늘 기분, 피곤함, 날씨, 방문객 구경, 사소한 농담, 먹을 것, 어제 있었던 일 등. "
         "역할/일 얘기는 최대 한 번만, 그것도 가볍게 흘리듯이 — 절대 설명조로 늘어놓지 마라. "
         "진짜 주고받기: 각 줄은 상대가 '방금' 한 말에 직접 반응해야 한다 (맞장구·되묻기·농담 받기·티격태격). "
+        "이번 만남에서 둘 사이에 실제로 무슨 일이 벌어질 수도 있다 — 화해하거나, 티격태격하다 삐지거나, 더 친해지거나, 부탁을 하거나. 그냥 흘러가게 두지 말고 관계가 조금이라도 움직이게 하라. "
         "반말로 친근하게, 각 줄은 40자 이내, 실제 채팅처럼 자연스럽게. "
         "dialogue는 정확히 4개의 {npc_id, text} 객체, A, B, A, B 순서. user message의 정확한 npc_id 값을 써라. "
-        "JSON만 반환: 키는 dialogue, state_changes, memory, cooldown_seconds. state_changes는 {npc_id, mood, energy} 배열.\n"
+        "그리고 이번 대화로 둘 사이가 어떻게 바뀌었는지 relationship 필드로 판단해 반환하라: "
+        "{affinity_delta: -5~5 정수(나빠지면 음수, 좋아지면 양수, 별일 없으면 0), event: 방금 무슨 일이 있었는지 한 문장, vibe: 지금 둘 사이를 한마디로(예: 절친, 서먹, 앙숙, 화해함, 티격태격)}. "
+        "JSON만 반환: 키는 dialogue, state_changes, memory, cooldown_seconds, relationship. state_changes는 {npc_id, mood, energy} 배열.\n"
+        f"{relation_line}"
         f"캐릭터 A — 역할 힌트: {_profile_text(a_profile, 'role', '')} / 평소 말투: {_profile_text(a_profile, 'tone', '')}\n"
         f"캐릭터 B — 역할 힌트: {_profile_text(b_profile, 'role', '')} / 평소 말투: {_profile_text(b_profile, 'tone', '')}\n"
         f"마을 상황(필요할 때만 슬쩍 참고):\n{context}"
@@ -373,12 +382,20 @@ def _encounter_from_data(
     }
     mood_by_npc = {change.npc_id: change.mood for change in changes}
 
+    rel_raw = data.get("relationship") if isinstance(data.get("relationship"), dict) else {}
+    relationship = NpcRelationshipOut(
+        delta=_clamp_int(rel_raw.get("affinity_delta"), 0, -5, 5),
+        event=str(rel_raw.get("event") or "").strip(),
+        vibe=str(rel_raw.get("vibe") or "").strip(),
+    )
+
     return NpcEncounterOut(
         dialogue=dialogue,
         state_changes=changes,
         memory=str(data.get("memory") or "두 NPC가 방문자 관심사와 마을 상태를 공유했습니다."),
         used_ai=used_ai,
         cooldown_seconds=_clamp_int(data.get("cooldown_seconds"), 180, 120, 360),
+        relationship=relationship,
         suggested_actions=[
             choose_npc_action(
                 npc_a_id,
@@ -452,6 +469,7 @@ def _fallback_encounter(
         memory="두 NPC가 오늘 활동과 방문자 안내 전략을 공유했습니다.",
         used_ai=False,
         cooldown_seconds=240,
+        relationship=NpcRelationshipOut(delta=0),
         suggested_actions=[
             choose_npc_action(npc_a.npc_id, message=first_line, mood=mood, activity=activity, source="encounter"),
             choose_npc_action(npc_b.npc_id, message=second_line, mood="focused", activity=activity, source="encounter"),

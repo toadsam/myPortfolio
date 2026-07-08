@@ -45,6 +45,8 @@ interface NPCProps {
   commandTotal?: number;
   /** 무료 이모트(이모지) — 근접 시 손인사 등 */
   emote?: string;
+  /** 관계 기반 사회적 목표 — 친한 NPC를 찾아가거나 화해하러 갈 지점 */
+  socialTarget?: Vector3Tuple | null;
 }
 
 export function NPC({
@@ -67,7 +69,8 @@ export function NPC({
   commandTarget,
   commandSlot,
   commandTotal,
-  emote
+  emote,
+  socialTarget
 }: NPCProps) {
   const groupRef = useRef<Group | null>(null);
   const elapsedRef = useRef(0);
@@ -224,12 +227,13 @@ export function NPC({
     const now = clock.getElapsedTime();
     const isActing = Boolean(currentAction);
 
-    if (!isActing && (now > retargetAtRef.current || distanceToTarget(groupRef.current.position, targetRef.current) < 0.25)) {
+    if (!isActing && !socialTarget && (now > retargetAtRef.current || distanceToTarget(groupRef.current.position, targetRef.current) < 0.25)) {
       targetRef.current = pickTarget(home, roamRadius, buildings);
       retargetAtRef.current = now + 4 + Math.random() * 7;
     }
 
-    const target = targetRef.current;
+    // 관계 기반 사회적 목표가 있으면 그쪽으로 향한다 (친구 방문·화해)
+    const target = socialTarget ?? targetRef.current;
     const dx = target[0] - groupRef.current.position.x;
     const dz = target[2] - groupRef.current.position.z;
     const dist = Math.sqrt(dx * dx + dz * dz);

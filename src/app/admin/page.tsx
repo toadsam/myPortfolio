@@ -550,6 +550,14 @@ export default function AdminPage() {
               </div>
             </Panel>
 
+            <Panel title="데일리 목표" kicker="Daily Rings">
+              <GoalRings
+                workout={form.workout_done ? form.workout_minutes : 0}
+                coding={form.coding_minutes}
+                study={form.study_minutes}
+              />
+            </Panel>
+
             <Panel title="오늘 기록 요약" kicker="Village Impact">
               <div className="grid gap-3">
                 <div className="grid grid-cols-2 gap-3">
@@ -1048,6 +1056,56 @@ function AdminGate({onUnlocked}: {onUnlocked: () => void}) {
         </a>
       </form>
     </main>
+  );
+}
+
+const DAILY_GOALS = {workout: 30, coding: 120, study: 60};
+
+function GoalRing({label, value, goal, color}: {label: string; value: number; goal: number; color: string}) {
+  const pct = goal > 0 ? Math.min(1, value / goal) : 0;
+  const R = 26;
+  const C = 2 * Math.PI * R;
+  const done = pct >= 1;
+  return (
+    <div className="grid place-items-center">
+      <svg width="76" height="76" viewBox="0 0 76 76">
+        <circle cx="38" cy="38" r={R} fill="none" stroke="#e9edf3" strokeWidth="7" />
+        <circle
+          cx="38"
+          cy="38"
+          r={R}
+          fill="none"
+          stroke={color}
+          strokeWidth="7"
+          strokeLinecap="round"
+          strokeDasharray={C}
+          strokeDashoffset={C * (1 - pct)}
+          transform="rotate(-90 38 38)"
+          style={{transition: "stroke-dashoffset 0.5s ease"}}
+        />
+        <text x="38" y="43" textAnchor="middle" fontSize="15" fontWeight="800" fill={done ? color : "#1e293b"}>
+          {done ? "✓" : `${Math.round(pct * 100)}%`}
+        </text>
+      </svg>
+      <p className="mt-1 text-xs font-bold text-[#475569]">{label}</p>
+      <p className="font-mono text-[10px] text-[#94a3b8]">{value}/{goal}분</p>
+    </div>
+  );
+}
+
+function GoalRings({workout, coding, study}: {workout: number; coding: number; study: number}) {
+  const allDone = workout >= DAILY_GOALS.workout && coding >= DAILY_GOALS.coding && study >= DAILY_GOALS.study;
+  return (
+    <div>
+      <div className="grid grid-cols-3 gap-2">
+        <GoalRing label="운동" value={workout} goal={DAILY_GOALS.workout} color="#f97316" />
+        <GoalRing label="코딩" value={coding} goal={DAILY_GOALS.coding} color="#0284c7" />
+        <GoalRing label="공부" value={study} goal={DAILY_GOALS.study} color="#16a34a" />
+      </div>
+      <p className={`mt-3 rounded-lg border p-2.5 text-center text-xs font-bold ${allDone ? "border-[#16a34a]/30 bg-[#16a34a]/8 text-[#15803d]" : "border-[#e3e8ef] text-[#94a3b8]"}`}>
+        {allDone ? "🎉 오늘 목표 세 개 다 채웠어요!" : "세 링을 다 채우면 하루 완성!"}
+      </p>
+    </div>
   );
 }
 

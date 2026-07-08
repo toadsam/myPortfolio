@@ -1,9 +1,9 @@
 "use client";
 
 import {Html, useCursor, useGLTF} from "@react-three/drei";
-import {useRef, useState} from "react";
+import {useMemo, useRef, useState} from "react";
 import {useFrame, type ThreeEvent} from "@react-three/fiber";
-import {AdditiveBlending, type Mesh} from "three";
+import {AdditiveBlending, BoxGeometry, EdgesGeometry, type Mesh} from "three";
 import {lightIntensity} from "@/lib/liveState";
 import type {BuildingState} from "@/types/live";
 import type {BuildingData} from "@/types/portfolio";
@@ -530,10 +530,13 @@ export function Building({building, buildingState, isActive, onRequestEnter, edi
         scale={[scale, scale, scale]}
       >
         {editing && edit?.selected ? (
-          <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-            <ringGeometry args={[Math.max(building.size[0], building.size[2]) * 0.9, Math.max(building.size[0], building.size[2]) * 1.02, 44]} />
-            <meshBasicMaterial color="#86b0e6" transparent opacity={0.95} />
-          </mesh>
+          <>
+            <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+              <ringGeometry args={[Math.max(building.size[0], building.size[2]) * 0.9, Math.max(building.size[0], building.size[2]) * 1.02, 44]} />
+              <meshBasicMaterial color="#86b0e6" transparent opacity={0.95} />
+            </mesh>
+            <SelectionBox size={building.size} />
+          </>
         ) : null}
         <BuildingGeometry b={building} hl={isHighlighted} />
         <GroundRing color={building.accentColor} highlighted={isHighlighted} radius={Math.max(building.size[0], building.size[2])} />
@@ -562,5 +565,18 @@ export function Building({building, buildingState, isActive, onRequestEnter, edi
         onEnter={() => onRequestEnter(building.id)}
       />
     </group>
+  );
+}
+
+// 편집 모드 선택 표시 — 후처리 없이 와이어프레임 박스 아웃라인
+function SelectionBox({size}: {size: [number, number, number]}) {
+  const geo = useMemo(
+    () => new EdgesGeometry(new BoxGeometry(size[0] * 1.05, size[1] * 1.05, size[2] * 1.05)),
+    [size]
+  );
+  return (
+    <lineSegments geometry={geo} position={[0, size[1] / 2, 0]}>
+      <lineBasicMaterial color="#86b0e6" transparent opacity={0.9} />
+    </lineSegments>
   );
 }

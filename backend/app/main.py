@@ -32,6 +32,8 @@ from app.schemas import (
     NpcEncounterOut,
     NpcGroupChatIn,
     NpcGroupChatOut,
+    NpcRelationshipOut,
+    NpcRelationshipRow,
     NpcConversationLogOut,
     NpcPresetIn,
     NpcPresetOut,
@@ -76,6 +78,7 @@ from app.services.learning_service import (
     update_cs_note,
 )
 from app.services.npc_brain_service import generate_group_chat, generate_npc_encounter, generate_npc_tick
+from app.services.relationship_service import apply_outcome, list_all as list_relationships, relationship_context
 from app.services.village_service import derive_village_state
 
 app = FastAPI(title="AI Portfolio Village API", version="0.1.0")
@@ -208,7 +211,38 @@ async def npc_tick(payload: NpcTickIn, db: Session = Depends(get_db)):
 @app.post("/npc/encounter", response_model=NpcEncounterOut, dependencies=[AiRateLimit])
 async def npc_encounter(payload: NpcEncounterIn, db: Session = Depends(get_db)):
     activity = get_or_create_today(db)
-    return await generate_npc_encounter(payload.npc_a, payload.npc_b, payload.recent_memory, activity)
+    rel_ctx = relationship_context(db, payload.npc_a.npc_id, payload.npc_b.npc_id)
+    result = await generate_npc_encounter(payload.npc_a, payload.npc_b, payload.recent_memory, activity, rel_ctx)
+
+    # 이번 대화 결과를 관계 상태에 반영 (친밀도·사건 기억)
+    if result.relationship is not None:
+        rel, milestone = apply_outcome(
+            db,
+            payload.npc_a.npc_id,
+            payload.npc_b.npc_id,
+            result.relationship.delta,
+            result.relationship.event,
+            result.relationship.vibe,
+        )
+        result.relationship = (
+            NpcRelationshipOut(
+                npc_a=rel.npc_a,
+                npc_b=rel.npc_b,
+                affinity=rel.affinity,
+                vibe=rel.vibe,
+                delta=result.relationship.delta,
+                event=result.relationship.event,
+                milestone=milestone,
+            )
+            if rel is not None
+            else None
+        )
+    return result
+
+
+@app.get("/npc/relationships", response_model=list[NpcRelationshipRow])
+def npc_relationships(db: Session = Depends(get_db)):
+    return list_relationships(db)
 
 
 @app.post("/npc/group-chat", response_model=NpcGroupChatOut, dependencies=[AiRateLimit])

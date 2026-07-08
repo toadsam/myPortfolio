@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from sqlalchemy import Boolean, Date, DateTime, Integer, JSON, String, Text, func
+from sqlalchemy import Boolean, Date, DateTime, Integer, JSON, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -101,6 +101,21 @@ class CodingTestLog(Base):
     code: Mapped[str] = mapped_column(Text, default="")                   # 제출 코드
     approach: Mapped[str] = mapped_column(Text, default="")               # 풀이 방법/접근
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class NpcRelationship(Base):
+    __tablename__ = "npc_relationship"
+    __table_args__ = (UniqueConstraint("npc_a", "npc_b", name="uq_npc_pair"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    npc_a: Mapped[str] = mapped_column(String(40), index=True)  # 정렬된 대표 종류
+    npc_b: Mapped[str] = mapped_column(String(40), index=True)
+    affinity: Mapped[int] = mapped_column(Integer, default=0)   # 친밀도 -100..100
+    vibe: Mapped[str] = mapped_column(String(60), default="그냥 아는 사이")
+    last_event: Mapped[str] = mapped_column(Text, default="")
+    history: Mapped[list[str]] = mapped_column(JSON, default=list)  # 최근 사건들(롤링)
+    meet_count: Mapped[int] = mapped_column(Integer, default=0)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 

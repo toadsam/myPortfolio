@@ -16,6 +16,7 @@ import type {
   NpcEncounterResponse,
   NpcGroupChatResponse,
   NpcPreset,
+  NpcRelationshipRow,
   NpcPresetInput,
   NpcTickRequest,
   NpcTickResponse,
@@ -143,6 +144,10 @@ export function requestNpcEncounter(
     method: "POST",
     body: JSON.stringify({npc_a: npcA, npc_b: npcB, recent_memory: recentMemory})
   });
+}
+
+export function fetchRelationships(): Promise<NpcRelationshipRow[]> {
+  return requestJson<NpcRelationshipRow[]>("/npc/relationships", {cache: "no-store"});
 }
 
 export function requestGroupChat(npcIds: string[], recentMemory: string[] = []): Promise<NpcGroupChatResponse> {

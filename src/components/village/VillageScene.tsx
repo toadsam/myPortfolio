@@ -15,6 +15,7 @@ import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
 import {Rock} from "./Decorations";
 import {NPC, type NpcCommand} from "./NPC";
+import {SeasonAmbience} from "./SeasonAmbience";
 import {PropsEditorTray, PropsLayer, usePropsEditor} from "./PropsEditor";
 import {Tree} from "./Tree";
 
@@ -37,6 +38,7 @@ interface VillageSceneProps {
   npcCommandTargets?: Record<string, Vector3Tuple>;
   overseerTarget?: Vector3Tuple | null;
   onEditingChange?: (editing: boolean) => void;
+  npcSocialTargets?: Record<string, Vector3Tuple>;
 }
 
 // 네트워크 펄스로 연결할 프로젝트 건물들 (한 번만 계산)
@@ -213,7 +215,7 @@ export function VillageScene({
   activeSection, activeNpcId, explorationMode, isIntro = false,
   onSelectNpc, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState,
   guideScriptedTarget, onGuideArrive, guideForceHold, cinematic,
-  npcCommand, npcCommandTargets, overseerTarget, onEditingChange
+  npcCommand, npcCommandTargets, overseerTarget, onEditingChange, npcSocialTargets
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
   const propsApi = usePropsEditor();
@@ -317,6 +319,7 @@ export function VillageScene({
               facePoint={npcRuntimeStates[npc.id]?.facePoint}
               holdUntil={npcRuntimeStates[npc.id]?.holdUntil}
               emote={visibleEmote(npcRuntimeStates[npc.id])}
+              socialTarget={npcSocialTargets?.[npc.id]}
               scriptedTarget={npc.id === "guide-npc" ? guideScriptedTarget : npc.id === "overseer-npc" ? overseerTarget : undefined}
               scriptedStart={npc.id === "guide-npc" ? [-4, 0, 1] : undefined}
               onScriptedArrive={npc.id === "guide-npc" ? onGuideArrive : undefined}
@@ -337,6 +340,8 @@ export function VillageScene({
           ))}
 
           <ContactShadows blur={1.5} far={12} frames={1} opacity={0.15} position={[0, 0.02, 2]} scale={26} />
+
+          <SeasonAmbience lite={isMobile} />
 
           {isWalkMode
             ? <CharacterController />

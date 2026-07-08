@@ -12,16 +12,17 @@ import {SceneTransition} from "@/components/ui/SceneTransition";
 import {SectionTabs} from "@/components/ui/SectionTabs";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
-import {NPC_EMOTES, NPC_SMALL_TALK, OVERSEER_GREETINGS, pickRandom} from "@/data/npcChatter";
+import {canonKind, NPC_EMOTES, NPC_SMALL_TALK, OVERSEER_GREETINGS, pairGag, pickRandom} from "@/data/npcChatter";
 import type {NpcCommand} from "@/components/village/NPC";
 import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {cameraTargets, villageBuildings} from "@/lib/constants";
 import {resetHudLayout, useDraggable} from "@/lib/useDraggable";
-import {fetchVillageState, requestGroupChat, requestNpcEncounter, requestNpcTick, trackVisitorEvent} from "@/lib/liveApi";
+import {fetchRelationships, fetchVillageState, requestGroupChat, requestNpcEncounter, requestNpcTick, trackVisitorEvent} from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
 import type {
   DailyActivity,
+  NpcRelationshipRow,
   NpcActionDefinition,
   NpcActionState,
   NpcMood,
@@ -32,6 +33,29 @@ import type {
 } from "@/types/live";
 
 const OVERSEER_ID = "overseer-npc";
+
+// 관계 대표 종류 → 실제 NPC id (그 종류의 대표 캐릭터)
+const KIND_REP: Record<string, string> = {
+  guide: "guide-npc",
+  project: "project-npc",
+  developer: "developer-npc",
+  archivist: "archivist-npc",
+  contact: "contact-npc",
+  coding: "npc-study-codingtest",
+  cs: "npc-study-cs",
+  overseer: "overseer-npc"
+};
+// 소셜 디렉터가 움직이는 명명 캐스트 (분신은 별도 순찰이 있어 제외)
+const SOCIAL_CAST = [
+  "guide-npc",
+  "project-npc",
+  "developer-npc",
+  "archivist-npc",
+  "contact-npc",
+  "npc-study-codingtest",
+  "npc-study-cs"
+];
+
 const OVERSEER_PATROL = [
   "guide-npc",
   "project-npc",
@@ -229,6 +253,7 @@ export function AIPortfolioVillage() {
   const [travelCam, setTravelCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
   const [npcCommand, setNpcCommand] = useState<NpcCommand | null>(null);
   const [overseerTarget, setOverseerTarget] = useState<Vector3Tuple | null>(null);
+  const [npcSocialTargets, setNpcSocialTargets] = useState<Record<string, Vector3Tuple>>({});
   const [groupChatBusy, setGroupChatBusy] = useState(false);
   const [groupChat, setGroupChat] = useState<{lines: {name: string; text: string}[]} | null>(null);
   const [groupChatOpen, setGroupChatOpen] = useState(false);
@@ -245,6 +270,8 @@ export function AIPortfolioVillage() {
   const [liveError, setLiveError] = useState<string | null>(null);
   const [npcRuntimeStates, setNpcRuntimeStates] = useState<Record<string, NpcRuntimeState>>({});
   const [encounterNotice, setEncounterNotice] = useState<string | null>(null);
+  const [milestoneEvent, setMilestoneEvent] = useState<string | null>(null);
+  const [relOpen, setRelOpen] = useState(false);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const npcCommandRef = useRef<NpcCommand | null>(null);
@@ -265,6 +292,7 @@ export function AIPortfolioVillage() {
   const prevActivityRef = useRef<DailyActivity | null>(null);
   const prevUnlockedRef = useRef<string[]>([]);
   const editingRef = useRef(false);
+  const relationshipsRef = useRef<NpcRelationshipRow[]>([]);
 
   useEffect(() => {
     npcRuntimeStatesRef.current = npcRuntimeStates;
@@ -489,6 +517,7 @@ export function AIPortfolioVillage() {
             );
 
             remember(response.memory);
+            notifyRelationship(npcAId, npcBId, response.relationship);
             encounterCooldownRef.current[pairKey] = now + response.cooldown_seconds * 1000;
             const convoMs = response.dialogue.length * CONVO_STEP + 1500;
             setNpcRuntimeStates((states) => {
@@ -612,6 +641,7 @@ export function AIPortfolioVillage() {
           npcMemoryRef.current.slice(-6)
         );
         remember(res.memory);
+        notifyRelationship(OVERSEER_ID, targetId, res.relationship);
         const now = Date.now();
         const convoMs = res.dialogue.length * CONVO_STEP + 1500;
         setNpcRuntimeStates((states) => {
@@ -667,7 +697,7 @@ export function AIPortfolioVillage() {
             const baseA = next[aId] ?? {mood: "calm" as NpcMood, energy: 50};
             const baseB = next[bId] ?? {mood: "calm" as NpcMood, energy: 50};
             if (talk) {
-              next[aId] = {...baseA, bubbleText: pickRandom(NPC_SMALL_TALK), bubbleExpiresAt: now + 3200};
+              next[aId] = {...baseA, bubbleText: pairGag(aId, bId) ?? pickRandom(NPC_SMALL_TALK), bubbleExpiresAt: now + 3200};
               next[bId] = {...baseB, emote: pickRandom(NPC_EMOTES), emoteExpiresAt: now + 2600};
             } else {
               next[aId] = {...baseA, emote: pickRandom(NPC_EMOTES), emoteExpiresAt: now + 2600};
@@ -680,6 +710,73 @@ export function AIPortfolioVillage() {
       }
     }
     const id = setInterval(socialTick, 2600);
+    return () => clearInterval(id);
+  }, []);
+
+  // 관계 그래프 주기적 로드 (창발 사회의 현재 지형)
+  useEffect(() => {
+    let ignore = false;
+    async function loadRelationships() {
+      try {
+        const rels = await fetchRelationships();
+        if (!ignore) relationshipsRef.current = rels;
+      } catch {
+        /* 백엔드 오프라인 — 관계 기반 행동만 쉼 */
+      }
+    }
+    loadRelationships();
+    const id = setInterval(loadRelationships, 60000);
+    return () => {
+      ignore = true;
+      clearInterval(id);
+    };
+  }, []);
+
+  // 소셜 디렉터 — 관계에 따라 NPC가 친한 친구를 찾아가거나 화해하러 가게 만든다(창발 루프의 엔진)
+  useEffect(() => {
+    function directorTick() {
+      if (typeof document !== "undefined" && document.hidden) return;
+      if (editingRef.current || npcCommandRef.current) return;
+      const rels = relationshipsRef.current;
+      if (!rels.length) return;
+
+      const actor = SOCIAL_CAST[Math.floor(Math.random() * SOCIAL_CAST.length)]!;
+      if ((npcRuntimeStatesRef.current[actor]?.holdUntil ?? 0) > Date.now()) return; // 대화 중이면 스킵
+
+      const kind = canonKind(actor);
+      const mine = rels
+        .filter((r) => r.npc_a === kind || r.npc_b === kind)
+        .map((r) => ({other: r.npc_a === kind ? r.npc_b : r.npc_a, affinity: r.affinity}))
+        .filter((m) => m.other !== kind);
+      if (!mine.length) return;
+
+      mine.sort((x, y) => y.affinity - x.affinity);
+      const best = mine[0]!;
+      const worst = mine[mine.length - 1]!;
+
+      let targetKind = best.other;
+      if (worst.affinity < -5 && Math.random() < 0.35) {
+        targetKind = worst.other; // 가끔 앙금 있는 상대에게 화해하러
+      } else if (best.affinity < 3 && Math.random() < 0.5) {
+        return; // 딱히 친한 상대 없으면 그냥 각자 배회
+      }
+
+      const repId = KIND_REP[targetKind];
+      if (!repId || repId === actor) return;
+      const pos = npcPositionsRef.current[repId];
+      if (!pos) return;
+
+      setNpcSocialTargets((state) => ({...state, [actor]: [pos[0], 0, pos[2]] as Vector3Tuple}));
+      window.setTimeout(() => {
+        setNpcSocialTargets((state) => {
+          const next = {...state};
+          delete next[actor];
+          return next;
+        });
+      }, 14000);
+    }
+
+    const id = setInterval(directorTick, 9000);
     return () => clearInterval(id);
   }, []);
 
@@ -801,6 +898,26 @@ export function AIPortfolioVillage() {
   function remember(memory: string) {
     if (!memory) return;
     npcMemoryRef.current = npcMemoryRef.current.concat(memory).slice(-20);
+  }
+
+  // 대화로 사이가 바뀌면 알림. 큰 사건(절친/앙숙/화해)은 크게, 작은 변화는 슬쩍.
+  function notifyRelationship(
+    aId: string,
+    bId: string,
+    rel?: {vibe: string; delta: number; affinity: number; milestone?: string} | null
+  ) {
+    if (!rel) return;
+    const nameOf = (id: string) => autonomousNpcs.find((n) => n.id === id)?.name ?? id;
+    if (rel.milestone) {
+      const emoji = rel.milestone.includes("절친") ? "💞" : rel.milestone.includes("화해") ? "🤝" : rel.milestone.includes("앙숙") ? "💔" : "😤";
+      setMilestoneEvent(`${emoji} ${nameOf(aId)} ↔ ${nameOf(bId)} · ${rel.milestone}!`);
+      window.setTimeout(() => setMilestoneEvent(null), 5200);
+      return;
+    }
+    if (Math.abs(rel.delta) < 2) return;
+    const emoji = rel.delta > 0 ? "💚" : "💢";
+    setEncounterNotice(`${nameOf(aId)} ↔ ${nameOf(bId)} · ${rel.vibe} ${emoji}`);
+    window.setTimeout(() => setEncounterNotice(null), 3400);
   }
 
   // NPC 간 대화를 한 줄씩 순차로 말풍선 재생(주고받기) + 엿듣기 기록
@@ -1202,6 +1319,7 @@ export function AIPortfolioVillage() {
               npcCommand={npcCommand}
               npcCommandTargets={npcCommandTargets}
               overseerTarget={overseerTarget}
+              npcSocialTargets={npcSocialTargets}
               onEditingChange={(e) => {
                 editingRef.current = e;
               }}
@@ -1269,6 +1387,7 @@ export function AIPortfolioVillage() {
               onGroupTalk={commandGroupTalk}
               groupTalkBusy={groupChatBusy}
               onBackToWork={backToWork}
+              onOpenRelations={() => setRelOpen(true)}
             />
           ) : null}
           {!showIntro && !isPanelOpen ? (
@@ -1281,12 +1400,15 @@ export function AIPortfolioVillage() {
               onGroupTalk={commandGroupTalk}
               groupTalkBusy={groupChatBusy}
               onBackToWork={backToWork}
+              onOpenRelations={() => setRelOpen(true)}
             />
           ) : null}
+          {relOpen ? <RelationshipViewer onClose={() => setRelOpen(false)} /> : null}
           {groupChat && groupChatOpen ? (
             <GroupChatPanel lines={groupChat.lines} onClose={() => setGroupChatOpen(false)} />
           ) : null}
           {encounterNotice ? <EncounterNotice text={encounterNotice} /> : null}
+          {milestoneEvent ? <MilestoneBanner text={milestoneEvent} /> : null}
           {conciergeStage === "panel" ? (
             <ConciergePanel
               onPick={handleConciergePick}
@@ -1510,7 +1632,8 @@ function CommandDock({
   onGreet,
   onGroupTalk,
   groupTalkBusy,
-  onBackToWork
+  onBackToWork,
+  onOpenRelations
 }: {
   command: NpcCommand | null;
   onCommand: (mode: NpcCommand) => void;
@@ -1518,6 +1641,7 @@ function CommandDock({
   onGroupTalk: () => void;
   groupTalkBusy: boolean;
   onBackToWork: () => void;
+  onOpenRelations: () => void;
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const drag = useDraggable("command-dock");
@@ -1593,6 +1717,13 @@ function CommandDock({
       </button>
       <button
         type="button"
+        onClick={onOpenRelations}
+        className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
+      >
+        <span className="text-sm">💞</span> 관계도
+      </button>
+      <button
+        type="button"
         onClick={onBackToWork}
         disabled={!busy}
         className={
@@ -1643,7 +1774,8 @@ function MobileHud({
   onGreet,
   onGroupTalk,
   groupTalkBusy,
-  onBackToWork
+  onBackToWork,
+  onOpenRelations
 }: {
   activeKey: string;
   onTravel: (point: TravelPoint) => void;
@@ -1653,6 +1785,7 @@ function MobileHud({
   onGroupTalk: () => void;
   groupTalkBusy: boolean;
   onBackToWork: () => void;
+  onOpenRelations: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"travel" | "command" | "map">("travel");
@@ -1758,6 +1891,9 @@ function MobileHud({
                 </button>
                 <button type="button" onClick={onGroupTalk} disabled={groupTalkBusy} className={chip(groupTalkBusy)}>
                   <span>💬</span> {groupTalkBusy ? "수다 중…" : "다 같이 수다"}
+                </button>
+                <button type="button" onClick={() => {onOpenRelations(); setOpen(false);}} className={`col-span-2 ${chip(false)}`}>
+                  <span>💞</span> 관계도 보기
                 </button>
                 <button
                   type="button"
@@ -2063,6 +2199,152 @@ function EncounterNotice({text}: {text: string}) {
   return (
     <div className="fixed left-1/2 top-[78px] z-30 -translate-x-1/2 rounded-lg border border-[#00ff88]/25 bg-[#04140e]/86 px-4 py-2 font-mono text-xs font-black text-[#00ff88] shadow-2xl backdrop-blur-md">
       {text}
+    </div>
+  );
+}
+
+function MilestoneBanner({text}: {text: string}) {
+  return (
+    <div className="pointer-events-none fixed left-1/2 top-1/3 z-[60] -translate-x-1/2 animate-[fadeIn_0.4s_ease] rounded-2xl border border-[#ff6ec7]/45 bg-[#1a0a1f]/92 px-6 py-4 text-center shadow-2xl backdrop-blur-md">
+      <p className="font-mono text-[11px] font-black uppercase tracking-[0.2em] text-[#ff9ad9]">관계 사건</p>
+      <p className="mt-1.5 text-lg font-black text-white">{text}</p>
+    </div>
+  );
+}
+
+const REL_KIND_NAME: Record<string, string> = {
+  overseer: "정재훈",
+  guide: "루미",
+  project: "픽셀",
+  developer: "테오",
+  archivist: "아카",
+  contact: "포스트",
+  coding: "알고",
+  cs: "노바"
+};
+
+function RelRow({r}: {r: NpcRelationshipRow}) {
+  const color = r.affinity >= 6 ? "#7ee787" : r.affinity <= -6 ? "#ff8a8a" : "#94a3b8";
+  return (
+    <div className="flex items-center justify-between rounded-lg border border-white/8 bg-white/[0.04] px-3 py-2">
+      <span className="text-xs font-bold text-white/80">
+        {REL_KIND_NAME[r.npc_a] ?? r.npc_a} ↔ {REL_KIND_NAME[r.npc_b] ?? r.npc_b}
+      </span>
+      <span className="font-mono text-[11px]" style={{color}}>
+        {r.vibe} ({r.affinity >= 0 ? "+" : ""}{r.affinity})
+      </span>
+    </div>
+  );
+}
+
+function RelationshipViewer({onClose}: {onClose: () => void}) {
+  const [rels, setRels] = useState<NpcRelationshipRow[] | null>(null);
+  const [err, setErr] = useState(false);
+
+  useEffect(() => {
+    let ignore = false;
+    fetchRelationships()
+      .then((r) => {
+        if (!ignore) setRels(r);
+      })
+      .catch(() => {
+        if (!ignore) setErr(true);
+      });
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const W = 340;
+  const H = 330;
+  const cx = 170;
+  const cy = 158;
+  const R = 118;
+  const ring = ["guide", "project", "developer", "archivist", "contact", "coding", "cs"];
+  const posOf = (kind: string) => {
+    if (kind === "overseer") return {x: cx, y: cy};
+    const i = ring.indexOf(kind);
+    if (i < 0) return {x: cx, y: cy};
+    const a = (i / ring.length) * Math.PI * 2 - Math.PI / 2;
+    return {x: cx + Math.cos(a) * R, y: cy + Math.sin(a) * R};
+  };
+  const edgeColor = (aff: number) => (aff >= 6 ? "#16a34a" : aff <= -6 ? "#ef4444" : "#64748b");
+  const allKinds = ["overseer", ...ring];
+  const sorted = (rels ?? []).slice().sort((a, b) => b.affinity - a.affinity);
+  const top = sorted.filter((r) => r.affinity >= 6).slice(0, 2);
+  const bottom = sorted.filter((r) => r.affinity <= -6).slice(-2).reverse();
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4" onClick={onClose}>
+      <div
+        className="w-[min(94vw,420px)] rounded-2xl border border-[#00d4ff]/30 bg-[#050d1a]/97 p-5 shadow-2xl backdrop-blur-md"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#00d4ff]">Village Social Graph</p>
+            <h2 className="mt-1 text-xl font-black text-white">마을 관계도 💞</h2>
+          </div>
+          <button type="button" onClick={onClose} className="text-white/50 transition hover:text-white">✕</button>
+        </div>
+
+        {err ? (
+          <p className="mt-4 text-sm leading-6 text-white/55">백엔드에 연결하지 못했어요. 서버를 켜면 관계가 보여요.</p>
+        ) : !rels ? (
+          <p className="mt-4 text-sm text-white/45">불러오는 중…</p>
+        ) : (
+          <>
+            <svg viewBox={`0 0 ${W} ${H}`} className="mt-2 w-full">
+              {rels.map((r, i) => {
+                const a = posOf(r.npc_a);
+                const b = posOf(r.npc_b);
+                return (
+                  <line
+                    key={i}
+                    x1={a.x}
+                    y1={a.y}
+                    x2={b.x}
+                    y2={b.y}
+                    stroke={edgeColor(r.affinity)}
+                    strokeWidth={1 + Math.min(4, Math.abs(r.affinity) / 6)}
+                    strokeOpacity={0.7}
+                    strokeLinecap="round"
+                  />
+                );
+              })}
+              {allKinds.map((kind) => {
+                const p = posOf(kind);
+                const isHub = kind === "overseer";
+                return (
+                  <g key={kind}>
+                    <circle cx={p.x} cy={p.y} r={isHub ? 15 : 12} fill={isHub ? "#f5c542" : "#0b1a2e"} stroke="#00d4ff" strokeWidth={1.2} />
+                    <text x={p.x} y={p.y + (isHub ? 27 : 25)} textAnchor="middle" fontSize="11" fontWeight="800" fill="#cfe6ff">
+                      {REL_KIND_NAME[kind]}
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
+            <div className="flex items-center justify-center gap-3 font-mono text-[10px] text-white/45">
+              <span><span style={{color: "#16a34a"}}>━</span> 친함</span>
+              <span><span style={{color: "#64748b"}}>━</span> 보통</span>
+              <span><span style={{color: "#ef4444"}}>━</span> 나쁨</span>
+            </div>
+            {top.length || bottom.length ? (
+              <div className="mt-3 grid gap-1.5">
+                {top.map((r, i) => (
+                  <RelRow key={`t${i}`} r={r} />
+                ))}
+                {bottom.map((r, i) => (
+                  <RelRow key={`b${i}`} r={r} />
+                ))}
+              </div>
+            ) : (
+              <p className="mt-3 text-center text-xs leading-5 text-white/40">아직 관계가 쌓이지 않았어요. 마을을 조금 지켜보면 사이가 생겨요.</p>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }

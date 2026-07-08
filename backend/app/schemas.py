@@ -143,6 +143,26 @@ class NpcEncounterIn(BaseModel):
     recent_memory: list[str] = Field(default_factory=list)
 
 
+class NpcRelationshipOut(BaseModel):
+    npc_a: str = ""
+    npc_b: str = ""
+    affinity: int = 0
+    vibe: str = ""
+    delta: int = 0
+    event: str = ""
+    milestone: str = ""
+
+
+class NpcRelationshipRow(BaseModel):
+    npc_a: str
+    npc_b: str
+    affinity: int
+    vibe: str
+    meet_count: int
+
+    model_config = {"from_attributes": True}
+
+
 class NpcEncounterOut(BaseModel):
     dialogue: list[NpcDialogueLine]
     state_changes: list[NpcStateChange]
@@ -150,6 +170,7 @@ class NpcEncounterOut(BaseModel):
     used_ai: bool
     cooldown_seconds: int
     suggested_actions: list[NpcActionOut] = Field(default_factory=list)
+    relationship: NpcRelationshipOut | None = None
 
 
 class NpcGroupChatIn(BaseModel):

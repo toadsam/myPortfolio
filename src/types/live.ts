@@ -152,6 +152,24 @@ export interface NpcEncounterParticipant {
   recent_memory?: string[];
 }
 
+export interface NpcRelationshipRow {
+  npc_a: string;
+  npc_b: string;
+  affinity: number;
+  vibe: string;
+  meet_count: number;
+}
+
+export interface NpcRelationshipChange {
+  npc_a: string;
+  npc_b: string;
+  affinity: number;
+  vibe: string;
+  delta: number;
+  event: string;
+  milestone?: string;
+}
+
 export interface NpcEncounterResponse {
   dialogue: Array<{npc_id: string; text: string}>;
   state_changes: Array<{npc_id: string; mood: NpcMood; energy: number}>;
@@ -159,6 +177,7 @@ export interface NpcEncounterResponse {
   used_ai: boolean;
   cooldown_seconds: number;
   suggested_actions: NpcSuggestedAction[];
+  relationship?: NpcRelationshipChange | null;
 }
 
 export interface NpcGroupChatResponse {
