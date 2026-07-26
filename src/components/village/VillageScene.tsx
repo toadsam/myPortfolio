@@ -2,12 +2,13 @@
 
 import {Canvas} from "@react-three/fiber";
 import {AdaptiveDpr, AdaptiveEvents, ContactShadows, Html, useGLTF} from "@react-three/drei";
-import {Suspense, useEffect, useMemo} from "react";
+import {memo, Suspense, useEffect, useMemo} from "react";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
+import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import {rockPositions, spread, treePositions, villageBuildings} from "@/lib/constants";
-import {getBuildingState, getNpcState} from "@/lib/liveState";
-import type {NpcRuntimeState, NpcState, VillageState} from "@/types/live";
+import {buildBuildingStateMap, buildNpcStateMap} from "@/lib/liveState";
+import type {NpcRuntimeState, VillageState} from "@/types/live";
 import type {ExplorationMode, NPCData, SectionId, Vector3Tuple} from "@/types/portfolio";
 import {Building} from "./Building";
 import {BuildingNetwork} from "./BuildingNetwork";
@@ -43,6 +44,12 @@ interface VillageSceneProps {
 
 // 네트워크 펄스로 연결할 프로젝트 건물들 (한 번만 계산)
 const projectNetworkBuildings = villageBuildings.filter((b) => b.district === "projects");
+
+// walk 모드/편집 중엔 건물 클릭 입장을 비활성화 — 매 렌더 새 화살표 함수를 만들지 않도록 고정 참조 사용
+const noopRequestEnter = () => {};
+
+// 가이드 NPC 연출 시작 지점 — 매 렌더 새 배열을 만들지 않도록 모듈 상수로 고정
+const GUIDE_SCRIPTED_START: [number, number, number] = [-4, 0, 1];
 
 // 접속 시각에 따른 마을 분위기 — 새벽/낮/노을/밤. (낮은 기존과 동일)
 function timePalette(hour: number) {
@@ -91,6 +98,7 @@ function Ground() {
 useGLTF.preload("/models/environment/ground.glb");
 
 function DistrictSign({label, position, color}: {label: string; position: [number, number, number]; color: string}) {
+  const calculatePosition = useMemo(() => createThrottledCalculatePosition(LABEL_SYNC_STRIDE), []);
   return (
     <group position={position}>
       <mesh castShadow position={[0, 0.55, 0]}>
@@ -106,7 +114,7 @@ function DistrictSign({label, position, color}: {label: string; position: [numbe
         <meshBasicMaterial color={color} transparent opacity={0.45} />
       </mesh>
       <pointLight color={color} intensity={0.5} distance={2.5} decay={2} position={[0, 1.2, 0.2]} />
-      <Html center distanceFactor={14} position={[0, 1.25, 0.08]} zIndexRange={[5, 0]}>
+      <Html center calculatePosition={calculatePosition} distanceFactor={14} position={[0, 1.25, 0.08]} zIndexRange={[5, 0]}>
         <span style={{
           fontFamily: "monospace",
           fontSize: 9,
@@ -211,7 +219,7 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
   );
 }
 
-export function VillageScene({
+function VillageSceneImpl({
   activeSection, activeNpcId, explorationMode, isIntro = false,
   onSelectNpc, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState,
   guideScriptedTarget, onGuideArrive, guideForceHold, cinematic,
@@ -226,6 +234,10 @@ export function VillageScene({
     () => typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches,
     []
   );
+  // villageState는 30초 주기로만 바뀌므로, npcRuntimeStates가 바뀌는 2~3초마다
+  // 매번 Array.find로 선형 탐색하지 않도록 Map을 villageState가 바뀔 때만 새로 만든다.
+  const buildingStateMap = useMemo(() => buildBuildingStateMap(villageState), [villageState]);
+  const npcStateMap = useMemo(() => buildNpcStateMap(villageState), [villageState]);
 
   // 편집 모드일 때 부모가 자동 갱신(순찰·잡담·폴링)을 멈추도록 알린다.
   // (편집 중 잦은 리렌더 + 후처리 아웃라인이 R3F 재조정 루프를 유발하는 문제 방지)
@@ -287,9 +299,9 @@ export function VillageScene({
               <Building
                 key={building.id}
                 building={merged}
-                buildingState={getBuildingState(villageState, building.id)}
+                buildingState={buildingStateMap.get(building.id)}
                 isActive={activeSection === building.sectionId}
-                onRequestEnter={isWalkMode || editing ? () => {} : onRequestEnter}
+                onRequestEnter={isWalkMode || editing ? noopRequestEnter : onRequestEnter}
                 edit={editing ? {
                   editing: true,
                   selected: propsApi.selection?.kind === "building" && propsApi.selection.id === building.id,
@@ -312,7 +324,9 @@ export function VillageScene({
               isActive={activeNpcId === npc.id}
               key={npc.id}
               npc={npc}
-              npcState={displayNpcState(npc.id, npcRuntimeStates[npc.id], getNpcState(villageState, npc.id))}
+              baseNpcState={npcStateMap.get(npc.id)}
+              runtimeMood={npcRuntimeStates[npc.id]?.mood}
+              runtimeMemory={npcRuntimeStates[npc.id]?.memory}
               currentAction={npcRuntimeStates[npc.id]?.currentAction}
               onPositionChange={onNpcPositionChange}
               onSelect={onSelectNpc}
@@ -321,7 +335,7 @@ export function VillageScene({
               emote={visibleEmote(npcRuntimeStates[npc.id])}
               socialTarget={npcSocialTargets?.[npc.id]}
               scriptedTarget={npc.id === "guide-npc" ? guideScriptedTarget : npc.id === "overseer-npc" ? overseerTarget : undefined}
-              scriptedStart={npc.id === "guide-npc" ? [-4, 0, 1] : undefined}
+              scriptedStart={npc.id === "guide-npc" ? GUIDE_SCRIPTED_START : undefined}
               onScriptedArrive={npc.id === "guide-npc" ? onGuideArrive : undefined}
               forceHold={npc.id === "guide-npc" ? guideForceHold : undefined}
               command={npcCommand}
@@ -370,6 +384,10 @@ export function VillageScene({
   );
 }
 
+// 무관한 부모(AIPortfolioVillage) 리렌더에서 자체 .map() 재구성(건물 28개 + NPC 전체)을 스킵.
+// npcRuntimeStates/villageState 등 실제 입력이 바뀔 때는 평소처럼 다시 렌더된다.
+export const VillageScene = memo(VillageSceneImpl);
+
 function visibleBubble(runtime?: NpcRuntimeState) {
   if (!runtime?.bubbleText || !runtime.bubbleExpiresAt) return undefined;
   return runtime.bubbleExpiresAt > Date.now() ? runtime.bubbleText : undefined;
@@ -378,14 +396,4 @@ function visibleBubble(runtime?: NpcRuntimeState) {
 function visibleEmote(runtime?: NpcRuntimeState) {
   if (!runtime?.emote || !runtime.emoteExpiresAt) return undefined;
   return runtime.emoteExpiresAt > Date.now() ? runtime.emote : undefined;
-}
-
-function displayNpcState(npcId: string, runtime?: NpcRuntimeState, base?: NpcState): NpcState | undefined {
-  if (!runtime && !base) return undefined;
-
-  return {
-    npc_id: npcId,
-    mood: runtime?.mood ?? base?.mood ?? "calm",
-    status_text: runtime?.memory ?? base?.status_text ?? ""
-  };
 }

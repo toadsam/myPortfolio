@@ -1,10 +1,11 @@
 "use client";
 
 import {Html, useCursor, useGLTF} from "@react-three/drei";
-import {useMemo, useRef, useState} from "react";
+import {memo, useMemo, useRef, useState} from "react";
 import {useFrame, type ThreeEvent} from "@react-three/fiber";
 import {AdditiveBlending, BoxGeometry, EdgesGeometry, type Mesh} from "three";
 import {lightIntensity} from "@/lib/liveState";
+import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import type {BuildingState} from "@/types/live";
 import type {BuildingData} from "@/types/portfolio";
 
@@ -84,8 +85,9 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
   buildingState?: BuildingState;
 }) {
   const color = building.accentColor;
+  const calculatePosition = useMemo(() => createThrottledCalculatePosition(LABEL_SYNC_STRIDE), []);
   return (
-    <Html center distanceFactor={11} position={[0, height + 1.1, 0]} zIndexRange={[10, 0]}>
+    <Html center calculatePosition={calculatePosition} distanceFactor={11} position={[0, height + 1.1, 0]} zIndexRange={[10, 0]}>
       <button
         onClick={onEnter}
         type="button"
@@ -497,7 +499,7 @@ function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
   }
 }
 
-export function Building({building, buildingState, isActive, onRequestEnter, edit}: BuildingProps) {
+function BuildingImpl({building, buildingState, isActive, onRequestEnter, edit}: BuildingProps) {
   const [hovered, setHovered] = useState(false);
   const liveGlow = lightIntensity(buildingState?.light_level);
   const editing = edit?.editing ?? false;
@@ -567,6 +569,9 @@ export function Building({building, buildingState, isActive, onRequestEnter, edi
     </group>
   );
 }
+
+// 무관한 부모(VillageScene) 리렌더에서 안 바뀐 건물의 함수 바디 재실행을 스킵.
+export const Building = memo(BuildingImpl);
 
 // 편집 모드 선택 표시 — 후처리 없이 와이어프레임 박스 아웃라인
 function SelectionBox({size}: {size: [number, number, number]}) {

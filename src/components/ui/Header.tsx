@@ -24,7 +24,7 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
   return (
     <motion.header
       animate={{opacity: 1, y: 0}}
-      className="fixed left-0 right-0 top-0 z-40 border-b border-[#00d4ff]/15 bg-[#050d1a]/92 backdrop-blur-xl"
+      className="fixed left-0 right-0 top-0 z-40 border-b border-[#00d4ff]/15 bg-[#050d1a]/92 backdrop-blur-xl transform-gpu will-change-[backdrop-filter,transform]"
       initial={{opacity: 0, y: -12}}
       transition={{duration: 0.5, ease: [0.22, 1, 0.36, 1]}}
     >

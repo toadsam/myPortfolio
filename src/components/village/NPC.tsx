@@ -2,14 +2,14 @@
 
 import {Billboard, Html, useCursor} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
-import {Suspense, useRef, useState} from "react";
+import {memo, Suspense, useMemo, useRef, useState} from "react";
 import {NpcWarrior, type NpcMoveState} from "./NpcWarrior";
 import type {ThreeEvent} from "@react-three/fiber";
 import type {Group, Vector3} from "three";
 import type {NpcBehaviorProfile} from "@/data/npcBehaviors";
 import {moodLabel} from "@/lib/liveState";
 import {isWalkablePosition} from "@/lib/worldCollision";
-import type {NpcActionState, NpcAnimationKey, NpcState} from "@/types/live";
+import type {NpcActionState, NpcAnimationKey, NpcMood, NpcState} from "@/types/live";
 import type {BuildingData, NPCData, Vector3Tuple} from "@/types/portfolio";
 
 /** 플레이어가 내리는 단체 명령 — gather(집결)/photo(단체사진)/party(파티)/follow(따라오기)/greet(인사) */
@@ -17,7 +17,11 @@ export type NpcCommand = "gather" | "photo" | "party" | "follow" | "greet";
 
 interface NPCProps {
   npc: NPCData;
-  npcState?: NpcState;
+  /** villageState 기반 30초 주기 기본 상태 (npcRuntimeStates가 없을 때의 fallback) */
+  baseNpcState?: NpcState;
+  /** npcRuntimeStates[npc.id]에서 뽑은 원시값 — 객체 통째로 넘기지 않고 이 두 값만 비교되도록 함 */
+  runtimeMood?: NpcMood;
+  runtimeMemory?: string;
   currentAction?: NpcActionState;
   behavior?: NpcBehaviorProfile;
   bubbleText?: string;
@@ -49,9 +53,11 @@ interface NPCProps {
   socialTarget?: Vector3Tuple | null;
 }
 
-export function NPC({
+function NPCImpl({
   npc,
-  npcState,
+  baseNpcState,
+  runtimeMood,
+  runtimeMemory,
   currentAction,
   behavior,
   bubbleText,
@@ -82,6 +88,17 @@ export function NPC({
   const moveStateRef = useRef<NpcMoveState>("idle");
   const [hovered, setHovered] = useState(false);
   const highlighted = hovered || isActive;
+  // villageState 기반 값과 실시간 runtime 값을 병합 — 원시값(runtimeMood/runtimeMemory)만
+  // 의존성으로 두어, npcRuntimeStates 전체가 새 객체가 되어도 이 NPC의 실제 값이 그대로면
+  // 재계산하지 않는다 (React.memo가 참조를 비교할 수 있도록).
+  const npcState = useMemo<NpcState | undefined>(() => {
+    if (!runtimeMood && !baseNpcState) return undefined;
+    return {
+      npc_id: npc.id,
+      mood: runtimeMood ?? baseNpcState?.mood ?? "calm",
+      status_text: runtimeMemory ?? baseNpcState?.status_text ?? ""
+    };
+  }, [npc.id, runtimeMood, runtimeMemory, baseNpcState?.mood, baseNpcState?.status_text]);
   const rawMood = npcState?.mood ?? "calm";
   const mood = moodLabel(rawMood);
   const home = behavior?.home ?? npc.position;
@@ -357,6 +374,10 @@ export function NPC({
     </group>
   );
 }
+
+// 부모(VillageScene)가 무관한 이유로 리렌더돼도, props가 실제로 안 바뀐 NPC는
+// 함수 바디 재실행(무브먼트 계산 준비, JSX 재구성)을 스킵한다.
+export const NPC = memo(NPCImpl);
 
 function NpcActionEffect({
   action,

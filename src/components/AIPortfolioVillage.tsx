@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {useGLTF} from "@react-three/drei";
 import {ConciergePanel, type ConciergeIntent} from "@/components/ui/ConciergePanel";
 import {DialogueBox} from "@/components/ui/DialogueBox";
@@ -227,6 +227,18 @@ function twoShot(a: Vector3Tuple, b: Vector3Tuple): {position: Vector3Tuple; loo
 }
 
 useGLTF.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+
+// 매 렌더 재생성되는 핸들러를 항상 최신 클로저는 유지하면서 참조는 고정해서 넘겨준다 —
+// React.memo(VillageScene/NPC/Building)가 무관한 부모 리렌더를 실제로 스킵하려면
+// 콜백 props의 참조가 안정적이어야 하는데, 이 컴포넌트의 핸들러들은 서로 얽혀 있어
+// useCallback 의존성 배열을 손으로 맞추면 오래된 클로저 버그가 생기기 쉽다.
+function useStableCallback<Args extends unknown[], R>(fn: (...args: Args) => R): (...args: Args) => R {
+  const ref = useRef(fn);
+  useEffect(() => {
+    ref.current = fn;
+  });
+  return useCallback((...args: Args) => ref.current(...args), []);
+}
 
 export function AIPortfolioVillage() {
   const [activeSection, setActiveSection] = useState<SectionId>("intro");
@@ -1286,12 +1298,23 @@ export function AIPortfolioVillage() {
     }, FADE_DURATION);
   }
 
+  // VillageScene/Building/NPC를 React.memo로 감쌌을 때 무관한 상태 변화(대화창, 사운드 토글 등)로 인한
+  // 리렌더에서도 함수 prop 참조가 매번 바뀌어 memo가 무력화되지 않도록 안정된 참조로 넘긴다.
+  const stableHandleRequestEnter = useStableCallback(handleRequestEnter);
+  const stableOpenNpc = useStableCallback(openNpc);
+  const stableOpenSection = useStableCallback(openSection);
+  const stableHandleNpcPositionChange = useStableCallback(handleNpcPositionChange);
+  const stableHandleGuideArrive = useStableCallback(handleGuideArrive);
+  const stableSetEditing = useStableCallback((e: boolean) => {
+    editingRef.current = e;
+  });
+
   return (
     <main className="min-h-screen bg-[#050d1a] pb-24 text-white md:pb-0">
       {viewMode === "village" ? (
         <>
           {/* 인트로 중엔 헤더 숨김 — 첫 화면 집중 */}
-          {!showIntro ? <Header activeSection={activeSection} onSelectSection={openSection} /> : null}
+          {!showIntro ? <Header activeSection={activeSection} onSelectSection={stableOpenSection} /> : null}
           <section
             className={
               isPanelOpen
@@ -1304,22 +1327,20 @@ export function AIPortfolioVillage() {
               activeSection={activeSection}
               explorationMode={explorationMode}
               isIntro={showIntro}
-              onRequestEnter={handleRequestEnter}
-              onSelectNpc={openNpc}
-              onSelectSection={openSection}
+              onRequestEnter={stableHandleRequestEnter}
+              onSelectNpc={stableOpenNpc}
+              onSelectSection={stableOpenSection}
               npcRuntimeStates={npcRuntimeStates}
-              onNpcPositionChange={handleNpcPositionChange}
+              onNpcPositionChange={stableHandleNpcPositionChange}
               villageState={villageState}
               guideScriptedTarget={conciergeStage === "running" ? WELCOME_SPOT : null}
-              onGuideArrive={handleGuideArrive}
+              onGuideArrive={stableHandleGuideArrive}
               guideForceHold={conciergeStage === "panel"}
               npcCommand={npcCommand}
               npcCommandTargets={npcCommandTargets}
               overseerTarget={overseerTarget}
               npcSocialTargets={npcSocialTargets}
-              onEditingChange={(e) => {
-                editingRef.current = e;
-              }}
+              onEditingChange={stableSetEditing}
               cinematic={
                 eavesOpen && convoCam
                   ? convoCam

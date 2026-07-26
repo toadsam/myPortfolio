@@ -60,7 +60,7 @@ export function LiveStatusPanel({error, villageState}: {error: string | null; vi
   if (!villageState && !error) return null;
 
   return (
-    <aside ref={drag.ref} style={drag.style} className="fixed left-4 top-[132px] z-20 hidden w-[260px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-3.5 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md md:block">
+    <aside ref={drag.ref} style={drag.style} className="fixed left-4 top-[132px] z-20 hidden w-[260px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-3.5 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:block">
       <button
         type="button"
         onClick={() => setCollapsed((c) => !c)}
@@ -123,7 +123,7 @@ export function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onS
         onPointerDown={drag.handleProps.onPointerDown}
         style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
-        className="fixed bottom-40 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:bottom-20"
+        className="fixed bottom-40 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#00d4ff]/55 active:scale-95 md:bottom-20"
       >
         <span className="text-sm">🤖</span> AI NPC <span className="text-white/40">▸</span>
       </button>
@@ -131,7 +131,7 @@ export function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onS
   }
 
   return (
-    <aside ref={drag.ref} style={drag.style} className="fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]">
+    <aside ref={drag.ref} style={drag.style} className="fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]">
       <button
         type="button"
         onClick={() => setCollapsed(true)}
@@ -198,7 +198,7 @@ export function CommandDock({
         onPointerDown={drag.handleProps.onPointerDown}
         style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
-        className="fixed left-4 top-[300px] z-30 hidden items-center gap-2 rounded-xl border border-[#7ed957]/30 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#9affc4] shadow-2xl backdrop-blur-md transition hover:border-[#7ed957]/55 active:scale-95 md:flex"
+        className="fixed left-4 top-[300px] z-30 hidden items-center gap-2 rounded-xl border border-[#7ed957]/30 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#9affc4] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#7ed957]/55 active:scale-95 md:flex"
       >
         <span className="text-sm">🎮</span> 지휘 <span className="text-white/40">▸</span>
       </button>
@@ -206,7 +206,7 @@ export function CommandDock({
   }
 
   return (
-    <aside ref={drag.ref} style={drag.style} className="fixed left-4 top-[300px] z-30 hidden w-[150px] flex-col gap-1 rounded-xl border border-[#7ed957]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:flex">
+    <aside ref={drag.ref} style={drag.style} className="fixed left-4 top-[300px] z-30 hidden w-[150px] flex-col gap-1 rounded-xl border border-[#7ed957]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:flex">
       <button
         type="button"
         onClick={() => setCollapsed(true)}
@@ -277,7 +277,7 @@ export function CommandDock({
 
 export function GroupChatPanel({lines, onClose}: {lines: {name: string; text: string}[]; onClose: () => void}) {
   return (
-    <div className="fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 rounded-2xl border border-[#7ed957]/30 bg-[#050d1a]/95 p-4 shadow-2xl backdrop-blur-md">
+    <div className="fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 rounded-2xl border border-[#7ed957]/30 bg-[#050d1a]/95 p-4 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
       <div className="mb-3 flex items-center justify-between gap-3">
         <p className="font-mono text-[11px] font-black uppercase tracking-[0.16em] text-[#9affc4]">
           💬 마을 단체 수다
@@ -365,7 +365,7 @@ export function MobileHud({
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label="이동·지휘·지도 메뉴"
-        className="fixed bottom-[15rem] right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[#00d4ff]/40 bg-[#050d1a]/90 text-xl shadow-2xl backdrop-blur-md active:scale-90"
+        className="fixed bottom-[15rem] right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[#00d4ff]/40 bg-[#050d1a]/90 text-xl shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] active:scale-90"
       >
         🎛️
       </button>
@@ -373,7 +373,7 @@ export function MobileHud({
       {open ? (
         <>
           <div className="fixed inset-0 z-40 bg-black/45" onClick={() => setOpen(false)} />
-          <div className="fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[#00d4ff]/25 bg-[#050d1a]/97 p-3 pb-8 shadow-2xl backdrop-blur-md">
+          <div className="fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[#00d4ff]/25 bg-[#050d1a]/97 p-3 pb-8 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
             <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/20" />
             <div className="mb-3 flex items-center gap-1">
               {([
@@ -489,7 +489,7 @@ export function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTra
         onPointerDown={drag.handleProps.onPointerDown}
         style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
-        className="fixed right-4 top-[80px] z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
+        className="fixed right-4 top-[80px] z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
       >
         <span className="text-sm">🧭</span> 이동 <span className="text-white/40">◂</span>
       </button>
@@ -497,7 +497,7 @@ export function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTra
   }
 
   return (
-    <aside ref={drag.ref} style={drag.style} className="fixed right-4 top-[80px] z-30 hidden w-[152px] flex-col gap-1 rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:flex">
+    <aside ref={drag.ref} style={drag.style} className="fixed right-4 top-[80px] z-30 hidden w-[152px] flex-col gap-1 rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:flex">
       <button
         type="button"
         onClick={() => setCollapsed(true)}
@@ -565,7 +565,7 @@ export function Minimap({activeKey, onTravel}: {activeKey: string; onTravel: (po
         onPointerDown={drag.handleProps.onPointerDown}
         style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
-        className="fixed bottom-6 right-4 z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
+        className="fixed bottom-6 right-4 z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
       >
         🗺️ 지도
       </button>
@@ -573,7 +573,7 @@ export function Minimap({activeKey, onTravel}: {activeKey: string; onTravel: (po
   }
 
   return (
-    <aside ref={drag.ref} style={drag.style} className="fixed bottom-6 right-4 z-30 hidden rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2.5 shadow-2xl backdrop-blur-md md:block">
+    <aside ref={drag.ref} style={drag.style} className="fixed bottom-6 right-4 z-30 hidden rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2.5 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:block">
       <div className="mb-1.5 flex cursor-grab items-center justify-between px-1" {...drag.handleProps}>
         <span className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75">🗺️ 미니맵</span>
         <button
@@ -637,7 +637,7 @@ export function KonamiBurst() {
           {p.emoji}
         </span>
       ))}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[#00ff88]/40 bg-[#050d1a]/90 px-7 py-5 text-center shadow-2xl backdrop-blur-md">
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[#00ff88]/40 bg-[#050d1a]/90 px-7 py-5 text-center shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
         <p className="font-mono text-xl font-black text-[#00ff88]">🎉 히든 모드 발견!</p>
         <p className="mt-1.5 font-mono text-xs text-white/60">개발자만 아는 그 코드를 입력했군요 😎</p>
       </div>
@@ -656,7 +656,7 @@ export function ControlsHint() {
   if (!show) return null;
 
   return (
-    <div className="pointer-events-none fixed left-1/2 top-[80px] z-30 flex -translate-x-1/2 animate-[fadeIn_0.4s_ease] items-center gap-3 rounded-full border border-[#00d4ff]/30 bg-[#050d1a]/90 px-4 py-2 font-mono text-[11px] font-bold text-white/75 shadow-2xl backdrop-blur-md">
+    <div className="pointer-events-none fixed left-1/2 top-[80px] z-30 flex -translate-x-1/2 animate-[fadeIn_0.4s_ease] items-center gap-3 rounded-full border border-[#00d4ff]/30 bg-[#050d1a]/90 px-4 py-2 font-mono text-[11px] font-bold text-white/75 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
       <span className="flex items-center gap-1.5"><span className="text-sm">🖱️</span> 건물 클릭해 입장</span>
       <span className="text-white/20">·</span>
       <span className="flex items-center gap-1.5"><span className="text-sm">🔄</span> 드래그·스크롤로 둘러보기</span>
@@ -671,7 +671,7 @@ export function EavesdropButton({aName, bName, onOpen}: {aName: string; bName: s
     <button
       type="button"
       onClick={onOpen}
-      className="fixed left-1/2 top-[112px] z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#00ff88]/40 bg-[#050d1a]/90 px-4 py-2 font-mono text-[11px] font-black text-[#9affc4] shadow-2xl backdrop-blur-md transition hover:bg-[#00ff88]/12 active:scale-95"
+      className="fixed left-1/2 top-[112px] z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#00ff88]/40 bg-[#050d1a]/90 px-4 py-2 font-mono text-[11px] font-black text-[#9affc4] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:bg-[#00ff88]/12 active:scale-95"
     >
       <span className="relative flex h-2 w-2">
         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00ff88] opacity-60" />
@@ -694,7 +694,7 @@ export function EavesdropPanel({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 rounded-2xl border border-[#00ff88]/30 bg-[#050d1a]/95 p-4 shadow-2xl backdrop-blur-md">
+    <div className="fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 rounded-2xl border border-[#00ff88]/30 bg-[#050d1a]/95 p-4 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
       <div className="mb-3 flex items-center justify-between gap-3">
         <p className="font-mono text-[11px] font-black uppercase tracking-[0.16em] text-[#9affc4]">
           🕵 엿듣는 중 · {aName} ↔ {bName}
@@ -734,7 +734,7 @@ export function EavesdropPanel({
 
 export function EncounterNotice({text}: {text: string}) {
   return (
-    <div className="fixed left-1/2 top-[78px] z-30 -translate-x-1/2 rounded-lg border border-[#00ff88]/25 bg-[#04140e]/86 px-4 py-2 font-mono text-xs font-black text-[#00ff88] shadow-2xl backdrop-blur-md">
+    <div className="fixed left-1/2 top-[78px] z-30 -translate-x-1/2 rounded-lg border border-[#00ff88]/25 bg-[#04140e]/86 px-4 py-2 font-mono text-xs font-black text-[#00ff88] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
       {text}
     </div>
   );
@@ -742,7 +742,7 @@ export function EncounterNotice({text}: {text: string}) {
 
 export function MilestoneBanner({text}: {text: string}) {
   return (
-    <div className="pointer-events-none fixed left-1/2 top-1/3 z-[60] -translate-x-1/2 animate-[fadeIn_0.4s_ease] rounded-2xl border border-[#ff6ec7]/45 bg-[#1a0a1f]/92 px-6 py-4 text-center shadow-2xl backdrop-blur-md">
+    <div className="pointer-events-none fixed left-1/2 top-1/3 z-[60] -translate-x-1/2 animate-[fadeIn_0.4s_ease] rounded-2xl border border-[#ff6ec7]/45 bg-[#1a0a1f]/92 px-6 py-4 text-center shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
       <p className="font-mono text-[11px] font-black uppercase tracking-[0.2em] text-[#ff9ad9]">관계 사건</p>
       <p className="mt-1.5 text-lg font-black text-white">{text}</p>
     </div>
@@ -814,7 +814,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4" onClick={onClose}>
       <div
-        className="w-[min(94vw,420px)] rounded-2xl border border-[#00d4ff]/30 bg-[#050d1a]/97 p-5 shadow-2xl backdrop-blur-md"
+        className="w-[min(94vw,420px)] rounded-2xl border border-[#00d4ff]/30 bg-[#050d1a]/97 p-5 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start justify-between">

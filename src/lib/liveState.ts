@@ -8,6 +8,22 @@ export function getNpcState(villageState: VillageState | null, npcId: string): N
   return villageState?.npcs.find((state) => state.npc_id === npcId);
 }
 
+// villageState가 바뀔 때만(30초 주기) 한 번 만들어 재사용하기 위한 Map 빌더 —
+// 렌더 바디의 .map() 안에서 매번 Array.find로 선형 탐색하는 것을 피한다.
+export function buildBuildingStateMap(villageState: VillageState | null): Map<string, BuildingState> {
+  const map = new Map<string, BuildingState>();
+  if (!villageState) return map;
+  for (const state of villageState.buildings) map.set(state.building_id, state);
+  return map;
+}
+
+export function buildNpcStateMap(villageState: VillageState | null): Map<string, NpcState> {
+  const map = new Map<string, NpcState>();
+  if (!villageState) return map;
+  for (const state of villageState.npcs) map.set(state.npc_id, state);
+  return map;
+}
+
 export function lightIntensity(lightLevel: BuildingState["light_level"] | undefined): number {
   if (lightLevel === "bright") return 1;
   if (lightLevel === "normal") return 0.65;

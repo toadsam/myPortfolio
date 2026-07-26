@@ -28,6 +28,13 @@ const KEY_ALIAS: Record<string, string> = {
   arrowleft: "a",
   arrowright: "d",
 };
+
+// 자유비행 useFrame 루프용 스크래치 인스턴스 (매 프레임 재할당 방지, GC 압박 감소)
+const _flyEuler = new Euler();
+const _flyMove = new Vector3();
+const _flyFwd = new Vector3();
+const _flyRight = new Vector3();
+const _flyLookAt = new Vector3();
 const MOVE_KEYS = new Set(["w", "a", "s", "d", "q", "e"]);
 
 function isTyping() {
@@ -193,12 +200,13 @@ export function CameraController({activeSection, isIntro = false, lockRotate = f
     // ── 자유 카메라 ──
     if (flying.current) {
       regress();
-      camera.quaternion.setFromEuler(new Euler(pitch.current, yaw.current, 0, "YXZ"));
+      _flyEuler.set(pitch.current, yaw.current, 0, "YXZ");
+      camera.quaternion.setFromEuler(_flyEuler);
 
       const speed = (shift.current ? 26 : 9) * Math.min(delta, 0.05);
-      const move = new Vector3();
-      const fwd = new Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
-      const right = new Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+      const move = _flyMove.set(0, 0, 0);
+      const fwd = _flyFwd.set(0, 0, -1).applyQuaternion(camera.quaternion);
+      const right = _flyRight.set(1, 0, 0).applyQuaternion(camera.quaternion);
       if (keys.current.has("w")) move.add(fwd);
       if (keys.current.has("s")) move.sub(fwd);
       if (keys.current.has("d")) move.add(right);
@@ -216,7 +224,8 @@ export function CameraController({activeSection, isIntro = false, lockRotate = f
 
       // OrbitControls가 카메라를 되돌리지 않도록 타깃을 시선 앞쪽으로 따라오게 고정
       if (controlsRef.current) {
-        controlsRef.current.target.copy(camera.position).add(fwd.clone().multiplyScalar(10));
+        _flyLookAt.copy(fwd).multiplyScalar(10);
+        controlsRef.current.target.copy(camera.position).add(_flyLookAt);
       }
       return;
     }
