@@ -11,6 +11,7 @@ import {
   deleteCsNote,
   fetchActivityHistory,
   fetchAdminAuthStatus,
+  fetchAdminOverview,
   fetchCodingTests,
   fetchCsNotes,
   fetchVillageState,
@@ -22,7 +23,7 @@ import {
   updateCsNote
 } from "@/lib/liveApi";
 import {villageBuildings} from "@/lib/constants";
-import type {ActivityInput, CodingTestLog, CsNote, DailyActivity, VillageState} from "@/types/live";
+import type {ActivityInput, AiUsage, CodingTestLog, CsNote, DailyActivity, VillageState} from "@/types/live";
 
 const BUILDING_NAME: Record<string, string> = Object.fromEntries(
   villageBuildings.map((building) => [building.id, building.name])
@@ -73,6 +74,7 @@ export default function AdminPage() {
   const [reward, setReward] = useState<{state: VillageState; date: string} | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [locked, setLocked] = useState(false);
+  const [aiUsage, setAiUsage] = useState<AiUsage | null>(null);
 
   const isToday = selectedDate === today();
   const historyByDate = useMemo(() => {
@@ -154,6 +156,13 @@ export default function AdminPage() {
       setStatus("오늘의 기록을 불러왔습니다.");
     } catch {
       setStatus("FastAPI 백엔드에 연결하지 못했습니다. 백엔드를 실행한 뒤 새로고침하세요.");
+    }
+
+    try {
+      const overview = await fetchAdminOverview();
+      setAiUsage(overview.ai_usage);
+    } catch {
+      // AI 사용량은 부가 정보 — 조회 실패해도 기록 화면 자체는 그대로 쓸 수 있게 조용히 무시
     }
   }
 
@@ -542,6 +551,7 @@ export default function AdminPage() {
                   <Metric label="운동 연속" value={`${stats.workoutStreak}일`} />
                   <Metric label="이번 주 코딩" value={`${stats.weekCoding}분`} />
                 </div>
+                {aiUsage ? <AiUsageBar usage={aiUsage} /> : null}
                 <ActivityCalendar
                   byDate={historyByDate}
                   selectedDate={selectedDate}
@@ -1373,6 +1383,27 @@ function Metric({label, value}: {label: string; value: string | number}) {
     <div className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-3">
       <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#94a3b8]">{label}</p>
       <p className="mt-1 text-xl font-black text-[#0284c7]">{value}</p>
+    </div>
+  );
+}
+
+function AiUsageBar({usage}: {usage: AiUsage}) {
+  const ratio = usage.daily_limit > 0 ? usage.today_count / usage.daily_limit : 0;
+  const color = ratio >= 0.9 ? "#dc2626" : ratio >= 0.6 ? "#d97706" : "#0284c7";
+  return (
+    <div className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-3">
+      <div className="flex items-center justify-between">
+        <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#94a3b8]">오늘 AI 호출</p>
+        <p className="font-mono text-xs font-black" style={{color}}>
+          {usage.today_count} / {usage.daily_limit}
+        </p>
+      </div>
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#e3e8ef]">
+        <div
+          className="h-full rounded-full transition-[width]"
+          style={{width: `${Math.min(100, ratio * 100)}%`, background: color}}
+        />
+      </div>
     </div>
   );
 }

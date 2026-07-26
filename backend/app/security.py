@@ -70,15 +70,19 @@ def _client_ip(request: Request) -> str:
     return request.client.host if request.client else "unknown"
 
 
+def _reset_daily_count_if_new_day() -> None:
+    today = time.strftime("%Y-%m-%d")
+    if _daily_count["day"] != today:
+        _daily_count["day"] = today
+        _daily_count["count"] = 0
+
+
 def ai_rate_limit(request: Request) -> None:
     """AI 호출 엔드포인트용 의존성 — IP당 분당 상한 + 전체 하루 상한."""
     now = time.time()
 
     # 전체 하루 상한
-    today = time.strftime("%Y-%m-%d")
-    if _daily_count["day"] != today:
-        _daily_count["day"] = today
-        _daily_count["count"] = 0
+    _reset_daily_count_if_new_day()
     if _daily_count["count"] >= settings.ai_daily_limit:
         raise HTTPException(status_code=429, detail="오늘 AI 사용량 상한에 도달했어요. 잠시 후 다시 시도해 주세요.")
 
@@ -92,6 +96,12 @@ def ai_rate_limit(request: Request) -> None:
 
     hits.append(now)
     _daily_count["count"] += 1
+
+
+def ai_usage_snapshot() -> dict[str, int]:
+    """관리자 페이지용 — 오늘 AI 호출 수 / 하루 상한."""
+    _reset_daily_count_if_new_day()
+    return {"today_count": _daily_count["count"], "daily_limit": settings.ai_daily_limit}
 
 
 # 라우트 데코레이터에 그대로 쓰기 위한 별칭

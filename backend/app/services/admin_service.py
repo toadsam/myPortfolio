@@ -20,6 +20,7 @@ from app.schemas import (
     VillageState,
     VisitorEventIn,
 )
+from app.security import ai_usage_snapshot
 
 
 def seed_admin_defaults(db: Session) -> None:
@@ -233,6 +234,7 @@ def admin_overview_payload(db: Session):
         "projects": list_projects(db),
         "npc_presets": list_npc_presets(db),
         "village_overrides": list_village_overrides(db),
+        "ai_usage": ai_usage_snapshot(),
     }
 
 

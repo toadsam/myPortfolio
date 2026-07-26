@@ -48,6 +48,14 @@ export const sectionMeta: SectionMeta[] = [
     title: "연락 우체국",
     description:
       "이메일, GitHub, 블로그 링크를 통해 다음 협업으로 이어지는 동선을 제공합니다."
+  },
+  {
+    id: "life",
+    label: "Life District",
+    navLabel: "Life",
+    title: "인생·일상 구역",
+    description:
+      "운동, 학습, 가치관, 투자, 음악, 연혁처럼 프로젝트 밖의 일상을 모아둔 구역입니다. 일부 카드는 아직 내용을 채우는 중입니다."
   }
 ];
 
@@ -416,8 +424,9 @@ const contactBuilding: BuildingData = {
 const lifeBuildings: BuildingData[] = [
   {
     id: "life-values",
-    sectionId: "intro",
+    sectionId: "life",
     district: "life",
+    contentId: "values",
     kind: "minimal-office",
     name: "가치관 비석",
     label: "Values",
@@ -430,8 +439,9 @@ const lifeBuildings: BuildingData[] = [
   },
   {
     id: "life-gym",
-    sectionId: "intro",
+    sectionId: "life",
     district: "life",
+    contentId: "gym",
     kind: "flat-hub",
     name: "헬스장",
     label: "Fitness",
@@ -445,8 +455,9 @@ const lifeBuildings: BuildingData[] = [
   },
   {
     id: "life-invest",
-    sectionId: "intro",
+    sectionId: "life",
     district: "life",
+    contentId: "invest",
     kind: "tower",
     name: "투자 타워",
     label: "Invest",
@@ -460,8 +471,9 @@ const lifeBuildings: BuildingData[] = [
   },
   {
     id: "life-library",
-    sectionId: "intro",
+    sectionId: "life",
     district: "life",
+    contentId: "library",
     kind: "office-rounded",
     name: "도서관",
     label: "Library",
@@ -475,8 +487,9 @@ const lifeBuildings: BuildingData[] = [
   },
   {
     id: "life-music",
-    sectionId: "intro",
+    sectionId: "life",
     district: "life",
+    contentId: "music",
     kind: "dome",
     name: "음악 스튜디오",
     label: "Music",
@@ -490,8 +503,9 @@ const lifeBuildings: BuildingData[] = [
   },
   {
     id: "life-timeline",
-    sectionId: "intro",
+    sectionId: "life",
     district: "life",
+    contentId: "timeline",
     kind: "tower",
     name: "연혁 타임라인",
     label: "Timeline",

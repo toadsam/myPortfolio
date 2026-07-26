@@ -14,9 +14,26 @@ import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {canonKind, NPC_EMOTES, NPC_SMALL_TALK, OVERSEER_GREETINGS, pairGag, pickRandom} from "@/data/npcChatter";
 import type {NpcCommand} from "@/components/village/NPC";
+import {
+  CommandDock,
+  CORE_NPC_IDS,
+  ControlsHint,
+  EavesdropButton,
+  EavesdropPanel,
+  EncounterNotice,
+  GroupChatPanel,
+  KonamiBurst,
+  LiveStatusPanel,
+  MilestoneBanner,
+  MobileHud,
+  Minimap,
+  NpcQuickDock,
+  QuickTravelDock,
+  RelationshipViewer,
+  type TravelPoint
+} from "@/components/village/VillageHud";
 import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {cameraTargets, villageBuildings} from "@/lib/constants";
-import {resetHudLayout, useDraggable} from "@/lib/useDraggable";
 import {fetchRelationships, fetchVillageState, requestGroupChat, requestNpcEncounter, requestNpcTick, trackVisitorEvent} from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
@@ -146,35 +163,7 @@ const ResumeMode = dynamic(
 );
 
 const FADE_DURATION = 480;
-const CORE_NPC_IDS = new Set(["overseer-npc", "guide-npc", "project-npc", "developer-npc", "archivist-npc", "contact-npc"]);
 const GUIDE_ID = "guide-npc";
-
-// 빠른 이동 / 미니맵에서 쓰는 구역 정의 (key = cameraTargets 키)
-interface TravelPoint {
-  key: string;
-  sectionId: SectionId | null;
-  label: string;
-  color: string;
-}
-const TRAVEL_POINTS: TravelPoint[] = [
-  {key: "intro", sectionId: "intro", label: "중앙 광장", color: "#00d4ff"},
-  {key: "projects", sectionId: "projects", label: "프로젝트", color: "#00d4ff"},
-  {key: "github", sectionId: "github", label: "기술 스택", color: "#00ff88"},
-  {key: "study", sectionId: "study", label: "학습", color: "#38bdf8"},
-  {key: "experience", sectionId: "experience", label: "경험", color: "#aa44ff"},
-  {key: "life", sectionId: null, label: "인생·일상", color: "#fbbf24"},
-  {key: "contact", sectionId: "contact", label: "연락", color: "#ff6600"}
-];
-// 건물 district → 빠른 이동 key
-const DISTRICT_TO_TRAVEL_KEY: Record<string, string> = {
-  plaza: "intro",
-  projects: "projects",
-  skills: "github",
-  experience: "experience",
-  life: "life",
-  study: "study",
-  contact: "contact"
-};
 
 // NPC 단체 명령 — 집결 지점(중앙 광장 앞)과 NPC별 목표 배치 (한 번만 계산)
 const RALLY_POINT: Vector3Tuple = [0, 0, 2];
@@ -285,6 +274,7 @@ export function AIPortfolioVillage() {
   const encounterBusyRef = useRef(false);
   const encounterCooldownRef = useRef<Record<string, number>>({});
   const convoTimersRef = useRef<number[]>([]);
+  const patrolTimersRef = useRef<number[]>([]);
   const patrolBusyRef = useRef(false);
   const patrolIdxRef = useRef(0);
   const patrolTargetIdRef = useRef("");
@@ -293,10 +283,15 @@ export function AIPortfolioVillage() {
   const prevUnlockedRef = useRef<string[]>([]);
   const editingRef = useRef(false);
   const relationshipsRef = useRef<NpcRelationshipRow[]>([]);
+  const villageStateRef = useRef<VillageState | null>(null);
 
   useEffect(() => {
     npcRuntimeStatesRef.current = npcRuntimeStates;
   }, [npcRuntimeStates]);
+
+  useEffect(() => {
+    villageStateRef.current = villageState;
+  }, [villageState]);
 
   useEffect(() => {
     npcCommandRef.current = npcCommand;
@@ -414,7 +409,7 @@ export function AIPortfolioVillage() {
       await Promise.all(batch.map(async (npc) => {
         const current = npcRuntimeStatesRef.current[npc.id];
         const profile = npcBehaviorProfiles[npc.id];
-        const baseMood = getNpcState(villageState, npc.id)?.mood ?? "calm";
+        const baseMood = getNpcState(villageStateRef.current, npc.id)?.mood ?? "calm";
 
         try {
           const response = await requestNpcTick({
@@ -467,7 +462,7 @@ export function AIPortfolioVillage() {
       clearTimeout(firstTick);
       clearInterval(tickInterval);
     };
-  }, [villageState]);
+  }, []);
 
   useEffect(() => {
     async function checkEncounter() {
@@ -501,14 +496,14 @@ export function AIPortfolioVillage() {
             const response = await requestNpcEncounter(
               {
                 npc_id: npcAId,
-                mood: stateA?.mood ?? (getNpcState(villageState, npcAId)?.mood ?? "calm"),
+                mood: stateA?.mood ?? (getNpcState(villageStateRef.current, npcAId)?.mood ?? "calm"),
                 energy: stateA?.energy ?? 50,
                 assigned_building_id: profileA?.assignedBuildingId,
                 recent_memory: stateA?.memory ? [stateA.memory] : []
               },
               {
                 npc_id: npcBId,
-                mood: stateB?.mood ?? (getNpcState(villageState, npcBId)?.mood ?? "calm"),
+                mood: stateB?.mood ?? (getNpcState(villageStateRef.current, npcBId)?.mood ?? "calm"),
                 energy: stateB?.energy ?? 50,
                 assigned_building_id: profileB?.assignedBuildingId,
                 recent_memory: stateB?.memory ? [stateB.memory] : []
@@ -535,7 +530,7 @@ export function AIPortfolioVillage() {
               for (const action of response.suggested_actions) {
                 next[action.npc_id] = applySuggestedActionToRuntime(
                   next[action.npc_id] ?? {
-                    mood: getNpcState(villageState, action.npc_id)?.mood ?? "curious",
+                    mood: getNpcState(villageStateRef.current, action.npc_id)?.mood ?? "curious",
                     energy: 55
                   },
                   action
@@ -574,7 +569,7 @@ export function AIPortfolioVillage() {
 
     const interval = setInterval(checkEncounter, 6000);
     return () => clearInterval(interval);
-  }, [villageState]);
+  }, []);
 
   // 분신(총괄 NPC) 순찰 — 친구들 집을 순회하며 도착하면 안부 대화
   useEffect(() => {
@@ -619,7 +614,10 @@ export function AIPortfolioVillage() {
           encounterBusyRef.current = false;
           patrolIdxRef.current += 1;
         }, delay);
-        convoTimersRef.current.push(t);
+        // 대화 말풍선 타이머(convoTimersRef)와 분리 — playConversation/playGroupChat이
+        // 그 배열을 통째로 clear할 때 이 busy-flag 리셋 타이머까지 같이 증발해
+        // 순찰이 영구 정지되는 걸 방지한다.
+        patrolTimersRef.current.push(t);
       };
 
       try {
@@ -959,6 +957,7 @@ export function AIPortfolioVillage() {
   }
 
   useEffect(() => () => convoTimersRef.current.forEach((t) => window.clearTimeout(t)), []);
+  useEffect(() => () => patrolTimersRef.current.forEach((t) => window.clearTimeout(t)), []);
 
   function handleNpcPositionChange(npcId: string, position: Vector3Tuple) {
     npcPositionsRef.current[npcId] = position;
@@ -1259,9 +1258,7 @@ export function AIPortfolioVillage() {
       return;
     }
     if (district === "life") {
-      // 인생 구역 — 추후 전시실/콘텐츠 연결 예정. 지금은 안내만.
-      setEncounterNotice(`${building.name} · 곧 공개됩니다 🚧`);
-      window.setTimeout(() => setEncounterNotice(null), 2800);
+      openSection("life", contentId);
       return;
     }
 
@@ -1517,834 +1514,3 @@ function applyActionStateToRuntime(state: NpcRuntimeState | undefined, action: N
   };
 }
 
-function LiveStatusPanel({error, villageState}: {error: string | null; villageState: VillageState | null}) {
-  const [collapsed, setCollapsed] = useState(false);
-  const drag = useDraggable("live-status");
-  if (!villageState && !error) return null;
-
-  return (
-    <aside ref={drag.ref} style={drag.style} className="fixed left-4 top-[132px] z-20 hidden w-[260px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-3.5 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md md:block">
-      <button
-        type="button"
-        onClick={() => setCollapsed((c) => !c)}
-        className="flex w-full items-center justify-between gap-2 transition active:scale-[0.98]"
-        title={collapsed ? "펼치기" : "접기"}
-        {...drag.handleProps}
-      >
-        <span className="flex items-center gap-2 font-black uppercase tracking-[0.2em] text-[#00d4ff]">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00d4ff] opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00d4ff]" />
-          </span>
-          Live Village
-        </span>
-        <span className="text-sm text-white/40" style={{transform: collapsed ? "rotate(-90deg)" : "none", transition: "transform 0.2s"}}>▾</span>
-      </button>
-      {!collapsed ? (error ? (
-        <p className="mt-2 leading-5 text-[#ff9a6c]">{error}. 기본 마을 화면으로 표시 중입니다.</p>
-      ) : villageState ? (
-        <>
-          <p className="mt-2 leading-5 text-white/70">{villageState.summary}</p>
-          <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-            <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
-              <strong className="block text-[#00d4ff]">{villageState.activity.github_commits}</strong>
-              <span className="text-[9px] text-white/40">커밋</span>
-            </span>
-            <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
-              <strong className="block text-[#00ff88]">{villageState.activity.study_minutes}</strong>
-              <span className="text-[9px] text-white/40">학습·분</span>
-            </span>
-            <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
-              <strong className="block text-[#ff9a6c]">{villageState.activity.workout_done ? "✅" : "💤"}</strong>
-              <span className="text-[9px] text-white/40">운동</span>
-            </span>
-          </div>
-          <p className="mt-2 text-[10px] leading-4 text-white/35">오늘의 실시간 활동 · 1분마다 갱신</p>
-          <button
-            type="button"
-            onClick={resetHudLayout}
-            className="mt-2 w-full rounded-md border border-white/8 py-1 text-[10px] font-bold text-white/35 transition hover:border-[#00d4ff]/40 hover:text-[#9beaff]"
-          >
-            ⤢ 패널 배치 초기화
-          </button>
-        </>
-      ) : null) : null}
-    </aside>
-  );
-}
-
-function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onSelect: (npc: NPCData) => void}) {
-  const coreNpcs = autonomousNpcs.filter((npc) => CORE_NPC_IDS.has(npc.id));
-  const [collapsed, setCollapsed] = useState(false);
-  const drag = useDraggable("npc-dock");
-
-  if (collapsed) {
-    return (
-      <button
-        type="button"
-        ref={drag.ref}
-        onPointerDown={drag.handleProps.onPointerDown}
-        style={{...drag.style, ...drag.handleProps.style}}
-        onClick={() => setCollapsed(false)}
-        className="fixed bottom-40 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:bottom-20"
-      >
-        <span className="text-sm">🤖</span> AI NPC <span className="text-white/40">▸</span>
-      </button>
-    );
-  }
-
-  return (
-    <aside ref={drag.ref} style={drag.style} className="fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]">
-      <button
-        type="button"
-        onClick={() => setCollapsed(true)}
-        title="접기 · 드래그로 이동"
-        className="flex shrink-0 items-center gap-1 px-2 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75 transition hover:text-[#00d4ff] active:scale-95"
-        {...drag.handleProps}
-      >
-        AI NPC <span className="text-white/40">▾</span>
-      </button>
-      {coreNpcs.map((npc) => (
-        <button
-          className={
-            activeNpcId === npc.id
-              ? "shrink-0 rounded-lg border border-[#00ff88]/50 bg-[#00ff88]/18 px-3 py-2 text-left text-xs font-black text-white transition active:scale-95"
-              : "shrink-0 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2 text-left text-xs font-black text-white/68 transition hover:border-[#00d4ff]/45 hover:text-white active:scale-95"
-          }
-          key={npc.id}
-          onClick={() => onSelect(npc)}
-          title={npc.agent?.specialty ?? npc.role}
-          type="button"
-        >
-          <span className="block">{npc.name}</span>
-          <span className="mt-0.5 block font-mono text-[9px] font-bold uppercase tracking-[0.1em] text-white/42">
-            {npc.type}
-          </span>
-        </button>
-      ))}
-    </aside>
-  );
-}
-
-function CommandDock({
-  command,
-  onCommand,
-  onGreet,
-  onGroupTalk,
-  groupTalkBusy,
-  onBackToWork,
-  onOpenRelations
-}: {
-  command: NpcCommand | null;
-  onCommand: (mode: NpcCommand) => void;
-  onGreet: () => void;
-  onGroupTalk: () => void;
-  groupTalkBusy: boolean;
-  onBackToWork: () => void;
-  onOpenRelations: () => void;
-}) {
-  const [collapsed, setCollapsed] = useState(false);
-  const drag = useDraggable("command-dock");
-  const modes: {mode: NpcCommand; icon: string; label: string}[] = [
-    {mode: "gather", icon: "🧲", label: "모으기"},
-    {mode: "photo", icon: "📸", label: "단체사진"},
-    {mode: "party", icon: "🎉", label: "파티"},
-    {mode: "follow", icon: "🏃", label: "따라와"}
-  ];
-  const busy = command !== null;
-
-  if (collapsed) {
-    return (
-      <button
-        type="button"
-        ref={drag.ref}
-        onPointerDown={drag.handleProps.onPointerDown}
-        style={{...drag.style, ...drag.handleProps.style}}
-        onClick={() => setCollapsed(false)}
-        className="fixed left-4 top-[300px] z-30 hidden items-center gap-2 rounded-xl border border-[#7ed957]/30 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#9affc4] shadow-2xl backdrop-blur-md transition hover:border-[#7ed957]/55 active:scale-95 md:flex"
-      >
-        <span className="text-sm">🎮</span> 지휘 <span className="text-white/40">▸</span>
-      </button>
-    );
-  }
-
-  return (
-    <aside ref={drag.ref} style={drag.style} className="fixed left-4 top-[300px] z-30 hidden w-[150px] flex-col gap-1 rounded-xl border border-[#7ed957]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:flex">
-      <button
-        type="button"
-        onClick={() => setCollapsed(true)}
-        className="mb-0.5 flex items-center justify-between px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#9affc4]/80 transition hover:text-[#9affc4]"
-        {...drag.handleProps}
-      >
-        🎮 NPC 지휘 <span className="text-white/40">◂</span>
-      </button>
-      {modes.map((item) => {
-        const active = command === item.mode;
-        return (
-          <button
-            key={item.mode}
-            type="button"
-            onClick={() => onCommand(item.mode)}
-            className={
-              active
-                ? "flex items-center gap-2.5 rounded-lg border border-[#7ed957]/55 bg-[#7ed957]/16 px-3 py-2 text-left text-xs font-black text-white"
-                : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
-            }
-          >
-            <span className="text-sm">{item.icon}</span>
-            {item.label}
-          </button>
-        );
-      })}
-      <button
-        type="button"
-        onClick={onGreet}
-        className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
-      >
-        <span className="text-sm">👋</span> 인사
-      </button>
-      <button
-        type="button"
-        onClick={onGroupTalk}
-        disabled={groupTalkBusy}
-        className={
-          groupTalkBusy
-            ? "flex items-center gap-2.5 rounded-lg border border-[#7ed957]/40 bg-[#7ed957]/10 px-3 py-2 text-left text-xs font-black text-[#9affc4]"
-            : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
-        }
-      >
-        <span className="text-sm">💬</span> {groupTalkBusy ? "수다 중…" : "다 같이 수다"}
-      </button>
-      <button
-        type="button"
-        onClick={onOpenRelations}
-        className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
-      >
-        <span className="text-sm">💞</span> 관계도
-      </button>
-      <button
-        type="button"
-        onClick={onBackToWork}
-        disabled={!busy}
-        className={
-          busy
-            ? "mt-0.5 flex items-center gap-2.5 rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/12 px-3 py-2 text-left text-xs font-black text-[#9beaff] transition hover:bg-[#00d4ff]/20 active:scale-[0.98]"
-            : "mt-0.5 flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/25"
-        }
-      >
-        <span className="text-sm">🛠️</span> 다시 일하기
-      </button>
-    </aside>
-  );
-}
-
-function GroupChatPanel({lines, onClose}: {lines: {name: string; text: string}[]; onClose: () => void}) {
-  return (
-    <div className="fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 rounded-2xl border border-[#7ed957]/30 bg-[#050d1a]/95 p-4 shadow-2xl backdrop-blur-md">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="font-mono text-[11px] font-black uppercase tracking-[0.16em] text-[#9affc4]">
-          💬 마을 단체 수다
-        </p>
-        <button
-          type="button"
-          onClick={onClose}
-          className="rounded-md border border-white/15 px-2 py-0.5 text-sm font-bold text-white/70 transition hover:text-white active:scale-90"
-        >
-          ✕
-        </button>
-      </div>
-      <div className="max-h-[40vh] space-y-2 overflow-y-auto">
-        {lines.map((line, index) => (
-          <div key={index} className="rounded-xl bg-white/[0.04] px-3 py-2">
-            <p className="font-mono text-[9px] font-black uppercase tracking-[0.1em] text-[#7ed957]/75">{line.name}</p>
-            <p className="mt-0.5 text-sm leading-6 text-white/85">{line.text}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// 모바일 전용 — 하단 시트로 빠른이동·지휘·미니맵을 통합
-function MobileHud({
-  activeKey,
-  onTravel,
-  command,
-  onCommand,
-  onGreet,
-  onGroupTalk,
-  groupTalkBusy,
-  onBackToWork,
-  onOpenRelations
-}: {
-  activeKey: string;
-  onTravel: (point: TravelPoint) => void;
-  command: NpcCommand | null;
-  onCommand: (mode: NpcCommand) => void;
-  onGreet: () => void;
-  onGroupTalk: () => void;
-  groupTalkBusy: boolean;
-  onBackToWork: () => void;
-  onOpenRelations: () => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<"travel" | "command" | "map">("travel");
-  const modes: {mode: NpcCommand; icon: string; label: string}[] = [
-    {mode: "gather", icon: "🧲", label: "모으기"},
-    {mode: "photo", icon: "📸", label: "단체사진"},
-    {mode: "party", icon: "🎉", label: "파티"},
-    {mode: "follow", icon: "🏃", label: "따라와"}
-  ];
-  const busy = command !== null;
-
-  const W = 260;
-  const H = 168;
-  const pad = 16;
-  const xs = villageBuildings.map((b) => b.position[0]);
-  const zs = villageBuildings.map((b) => b.position[2]);
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minZ = Math.min(...zs);
-  const maxZ = Math.max(...zs);
-  const sx = (x: number) => pad + ((x - minX) / (maxX - minX || 1)) * (W - 2 * pad);
-  const sy = (z: number) => pad + ((z - minZ) / (maxZ - minZ || 1)) * (H - 2 * pad);
-  const colorOf = (key: string) => TRAVEL_POINTS.find((p) => p.key === key)?.color ?? "#9aa";
-  const centroids = TRAVEL_POINTS.map((point) => {
-    const members = villageBuildings.filter((b) => (DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro") === point.key);
-    if (members.length === 0) return null;
-    const cx = members.reduce((sum, b) => sum + b.position[0], 0) / members.length;
-    const cz = members.reduce((sum, b) => sum + b.position[2], 0) / members.length;
-    return {point, x: sx(cx), y: sy(cz)};
-  }).filter(Boolean) as {point: TravelPoint; x: number; y: number}[];
-
-  const chip = (active: boolean) =>
-    active
-      ? "flex items-center gap-2 rounded-lg border border-[#00ff88]/45 bg-[#00ff88]/15 px-3 py-2.5 text-left text-sm font-black text-white"
-      : "flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2.5 text-left text-sm font-bold text-white/75 active:scale-95";
-
-  return (
-    <div className="md:hidden">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        aria-label="이동·지휘·지도 메뉴"
-        className="fixed bottom-[15rem] right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[#00d4ff]/40 bg-[#050d1a]/90 text-xl shadow-2xl backdrop-blur-md active:scale-90"
-      >
-        🎛️
-      </button>
-
-      {open ? (
-        <>
-          <div className="fixed inset-0 z-40 bg-black/45" onClick={() => setOpen(false)} />
-          <div className="fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[#00d4ff]/25 bg-[#050d1a]/97 p-3 pb-8 shadow-2xl backdrop-blur-md">
-            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/20" />
-            <div className="mb-3 flex items-center gap-1">
-              {([
-                {id: "travel", label: "🧭 이동"},
-                {id: "command", label: "🎮 지휘"},
-                {id: "map", label: "🗺️ 지도"}
-              ] as const).map((t) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setTab(t.id)}
-                  className={
-                    tab === t.id
-                      ? "rounded-lg bg-[#00d4ff]/18 px-3 py-2 font-mono text-xs font-black text-[#9beaff]"
-                      : "rounded-lg px-3 py-2 font-mono text-xs font-bold text-white/50"
-                  }
-                >
-                  {t.label}
-                </button>
-              ))}
-              <button type="button" onClick={() => setOpen(false)} className="ml-auto rounded-lg border border-white/12 px-3 py-2 text-sm text-white/70">
-                ✕
-              </button>
-            </div>
-
-            {tab === "travel" ? (
-              <div className="grid grid-cols-2 gap-2">
-                {TRAVEL_POINTS.map((point) => (
-                  <button
-                    key={point.key}
-                    type="button"
-                    onClick={() => {
-                      onTravel(point);
-                      setOpen(false);
-                    }}
-                    className={chip(activeKey === point.key)}
-                  >
-                    <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{background: point.color}} />
-                    {point.label}
-                  </button>
-                ))}
-              </div>
-            ) : tab === "command" ? (
-              <div className="grid grid-cols-2 gap-2">
-                {modes.map((item) => (
-                  <button key={item.mode} type="button" onClick={() => onCommand(item.mode)} className={chip(command === item.mode)}>
-                    <span>{item.icon}</span> {item.label}
-                  </button>
-                ))}
-                <button type="button" onClick={onGreet} className={chip(false)}>
-                  <span>👋</span> 인사
-                </button>
-                <button type="button" onClick={onGroupTalk} disabled={groupTalkBusy} className={chip(groupTalkBusy)}>
-                  <span>💬</span> {groupTalkBusy ? "수다 중…" : "다 같이 수다"}
-                </button>
-                <button type="button" onClick={() => {onOpenRelations(); setOpen(false);}} className={`col-span-2 ${chip(false)}`}>
-                  <span>💞</span> 관계도 보기
-                </button>
-                <button
-                  type="button"
-                  onClick={onBackToWork}
-                  disabled={!busy}
-                  className={
-                    busy
-                      ? "col-span-2 rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/12 px-3 py-2.5 text-sm font-black text-[#9beaff]"
-                      : "col-span-2 rounded-lg border border-white/10 px-3 py-2.5 text-sm font-bold text-white/30"
-                  }
-                >
-                  🛠️ 다시 일하기
-                </button>
-              </div>
-            ) : (
-              <div className="grid place-items-center">
-                <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="rounded-lg bg-white/[0.03]">
-                  {villageBuildings.map((b) => {
-                    const key = DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro";
-                    const active = activeKey === key;
-                    return (
-                      <circle key={b.id} cx={sx(b.position[0])} cy={sy(b.position[2])} r={active ? 4 : 3} fill={colorOf(key)} fillOpacity={active ? 1 : 0.65} />
-                    );
-                  })}
-                  {centroids.map(({point, x, y}) => (
-                    <g key={point.key} onClick={() => {
-                      onTravel(point);
-                      setOpen(false);
-                    }}>
-                      <circle cx={x} cy={y} r={16} fill={point.color} fillOpacity={0.001} style={{pointerEvents: "all"}}>
-                        <title>{point.label}</title>
-                      </circle>
-                      {activeKey === point.key ? <circle cx={x} cy={y} r={14} fill="none" stroke={point.color} strokeWidth={1.6} strokeOpacity={0.9} /> : null}
-                    </g>
-                  ))}
-                </svg>
-                <p className="mt-2 font-mono text-[10px] text-white/40">구역을 누르면 그쪽으로 이동</p>
-              </div>
-            )}
-          </div>
-        </>
-      ) : null}
-    </div>
-  );
-}
-
-function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTravel: (point: TravelPoint) => void}) {
-  const [collapsed, setCollapsed] = useState(false);
-  const drag = useDraggable("travel-dock");
-
-  if (collapsed) {
-    return (
-      <button
-        type="button"
-        ref={drag.ref}
-        onPointerDown={drag.handleProps.onPointerDown}
-        style={{...drag.style, ...drag.handleProps.style}}
-        onClick={() => setCollapsed(false)}
-        className="fixed right-4 top-[80px] z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
-      >
-        <span className="text-sm">🧭</span> 이동 <span className="text-white/40">◂</span>
-      </button>
-    );
-  }
-
-  return (
-    <aside ref={drag.ref} style={drag.style} className="fixed right-4 top-[80px] z-30 hidden w-[152px] flex-col gap-1 rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md md:flex">
-      <button
-        type="button"
-        onClick={() => setCollapsed(true)}
-        className="mb-0.5 flex items-center justify-between px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75 transition hover:text-[#00d4ff]"
-        {...drag.handleProps}
-      >
-        🧭 빠른 이동 <span className="text-white/40">▴</span>
-      </button>
-      {TRAVEL_POINTS.map((point) => {
-        const active = activeKey === point.key;
-        return (
-          <button
-            key={point.key}
-            type="button"
-            onClick={() => onTravel(point)}
-            className={
-              active
-                ? "flex items-center gap-2.5 rounded-lg border border-white/15 bg-white/[0.08] px-3 py-2 text-left text-xs font-black text-white"
-                : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
-            }
-          >
-            <span
-              className="h-2.5 w-2.5 shrink-0 rounded-full"
-              style={{background: point.color, boxShadow: active ? `0 0 8px ${point.color}` : "none"}}
-            />
-            {point.label}
-          </button>
-        );
-      })}
-    </aside>
-  );
-}
-
-function Minimap({activeKey, onTravel}: {activeKey: string; onTravel: (point: TravelPoint) => void}) {
-  const [collapsed, setCollapsed] = useState(false);
-  const drag = useDraggable("minimap");
-
-  const W = 172;
-  const H = 156;
-  const pad = 16;
-  const xs = villageBuildings.map((b) => b.position[0]);
-  const zs = villageBuildings.map((b) => b.position[2]);
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minZ = Math.min(...zs);
-  const maxZ = Math.max(...zs);
-  const sx = (x: number) => pad + ((x - minX) / (maxX - minX || 1)) * (W - 2 * pad);
-  const sy = (z: number) => pad + ((z - minZ) / (maxZ - minZ || 1)) * (H - 2 * pad);
-  const colorOf = (key: string) => TRAVEL_POINTS.find((p) => p.key === key)?.color ?? "#9aa";
-
-  // 구역별 중심점 (클릭 히트 영역 + 강조용)
-  const centroids = TRAVEL_POINTS.map((point) => {
-    const members = villageBuildings.filter((b) => (DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro") === point.key);
-    if (members.length === 0) return null;
-    const cx = members.reduce((sum, b) => sum + b.position[0], 0) / members.length;
-    const cz = members.reduce((sum, b) => sum + b.position[2], 0) / members.length;
-    return {point, x: sx(cx), y: sy(cz)};
-  }).filter(Boolean) as {point: TravelPoint; x: number; y: number}[];
-
-  if (collapsed) {
-    return (
-      <button
-        type="button"
-        ref={drag.ref}
-        onPointerDown={drag.handleProps.onPointerDown}
-        style={{...drag.style, ...drag.handleProps.style}}
-        onClick={() => setCollapsed(false)}
-        className="fixed bottom-6 right-4 z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
-      >
-        🗺️ 지도
-      </button>
-    );
-  }
-
-  return (
-    <aside ref={drag.ref} style={drag.style} className="fixed bottom-6 right-4 z-30 hidden rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2.5 shadow-2xl backdrop-blur-md md:block">
-      <div className="mb-1.5 flex cursor-grab items-center justify-between px-1" {...drag.handleProps}>
-        <span className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75">🗺️ 미니맵</span>
-        <button
-          type="button"
-          onClick={() => setCollapsed(true)}
-          className="font-mono text-[10px] font-black text-white/40 transition hover:text-white"
-        >
-          ▾
-        </button>
-      </div>
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="rounded-lg bg-white/[0.03]">
-        {villageBuildings.map((b) => {
-          const key = DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro";
-          const active = activeKey === key;
-          return (
-            <circle
-              key={b.id}
-              cx={sx(b.position[0])}
-              cy={sy(b.position[2])}
-              r={active ? 3 : 2.2}
-              fill={colorOf(key)}
-              fillOpacity={active ? 1 : 0.65}
-            />
-          );
-        })}
-        {centroids.map(({point, x, y}) => {
-          const active = activeKey === point.key;
-          return (
-            <g key={point.key} style={{cursor: "pointer"}} onClick={() => onTravel(point)}>
-              {active ? <circle cx={x} cy={y} r={12} fill="none" stroke={point.color} strokeWidth={1.4} strokeOpacity={0.9} /> : null}
-              <circle cx={x} cy={y} r={13} fill={point.color} fillOpacity={0.001} style={{pointerEvents: "all"}}>
-                <title>{point.label}</title>
-              </circle>
-            </g>
-          );
-        })}
-      </svg>
-      <p className="mt-1.5 px-1 font-mono text-[9px] leading-tight text-white/35">구역을 누르면 그쪽으로 이동</p>
-    </aside>
-  );
-}
-
-function KonamiBurst() {
-  const emojis = ["🎉", "✨", "🏘️", "🤖", "🌟", "💾", "🚀", "🎮", "🛸", "⭐"];
-  const pieces = Array.from({length: 40}, (_, i) => ({
-    left: (i * 53) % 100,
-    delay: (i % 12) * 0.18,
-    dur: 3 + (i % 5) * 0.6,
-    emoji: emojis[i % emojis.length],
-    size: 18 + (i % 4) * 9,
-  }));
-
-  return (
-    <div className="pointer-events-none fixed inset-0 z-[100] overflow-hidden">
-      {pieces.map((p, i) => (
-        <span
-          key={i}
-          className="absolute top-0 select-none"
-          style={{left: `${p.left}%`, fontSize: p.size, animation: `konamiFall ${p.dur}s linear ${p.delay}s both`}}
-        >
-          {p.emoji}
-        </span>
-      ))}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[#00ff88]/40 bg-[#050d1a]/90 px-7 py-5 text-center shadow-2xl backdrop-blur-md">
-        <p className="font-mono text-xl font-black text-[#00ff88]">🎉 히든 모드 발견!</p>
-        <p className="mt-1.5 font-mono text-xs text-white/60">개발자만 아는 그 코드를 입력했군요 😎</p>
-      </div>
-    </div>
-  );
-}
-
-function ControlsHint() {
-  const [show, setShow] = useState(true);
-
-  useEffect(() => {
-    const t = setTimeout(() => setShow(false), 7000);
-    return () => clearTimeout(t);
-  }, []);
-
-  if (!show) return null;
-
-  return (
-    <div className="pointer-events-none fixed left-1/2 top-[80px] z-30 flex -translate-x-1/2 animate-[fadeIn_0.4s_ease] items-center gap-3 rounded-full border border-[#00d4ff]/30 bg-[#050d1a]/90 px-4 py-2 font-mono text-[11px] font-bold text-white/75 shadow-2xl backdrop-blur-md">
-      <span className="flex items-center gap-1.5"><span className="text-sm">🖱️</span> 건물 클릭해 입장</span>
-      <span className="text-white/20">·</span>
-      <span className="flex items-center gap-1.5"><span className="text-sm">🔄</span> 드래그·스크롤로 둘러보기</span>
-      <span className="text-white/20">·</span>
-      <span className="flex items-center gap-1.5"><span className="text-sm">🚶</span> 직접 이동은 좌하단 버튼</span>
-    </div>
-  );
-}
-
-function EavesdropButton({aName, bName, onOpen}: {aName: string; bName: string; onOpen: () => void}) {
-  return (
-    <button
-      type="button"
-      onClick={onOpen}
-      className="fixed left-1/2 top-[112px] z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#00ff88]/40 bg-[#050d1a]/90 px-4 py-2 font-mono text-[11px] font-black text-[#9affc4] shadow-2xl backdrop-blur-md transition hover:bg-[#00ff88]/12 active:scale-95"
-    >
-      <span className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00ff88] opacity-60" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00ff88]" />
-      </span>
-      💬 {aName} ↔ {bName} 대화 · 엿듣기
-    </button>
-  );
-}
-
-function EavesdropPanel({
-  aName,
-  bName,
-  lines,
-  onClose
-}: {
-  aName: string;
-  bName: string;
-  lines: {name: string; text: string}[];
-  onClose: () => void;
-}) {
-  return (
-    <div className="fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 rounded-2xl border border-[#00ff88]/30 bg-[#050d1a]/95 p-4 shadow-2xl backdrop-blur-md">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="font-mono text-[11px] font-black uppercase tracking-[0.16em] text-[#9affc4]">
-          🕵 엿듣는 중 · {aName} ↔ {bName}
-        </p>
-        <button
-          type="button"
-          onClick={onClose}
-          className="rounded-md border border-white/15 px-2 py-0.5 text-sm font-bold text-white/70 transition hover:text-white active:scale-90"
-        >
-          ✕
-        </button>
-      </div>
-      <div className="space-y-2">
-        {lines.map((line, index) => {
-          const isA = line.name === aName;
-          return (
-            <div key={index} className={isA ? "mr-8" : "ml-8"}>
-              <p className={`font-mono text-[9px] font-black uppercase tracking-[0.1em] ${isA ? "text-[#00d4ff]/70" : "text-[#ff9a6c]/70"} ${isA ? "" : "text-right"}`}>
-                {line.name}
-              </p>
-              <div
-                className={
-                  isA
-                    ? "mt-0.5 rounded-2xl rounded-bl-sm bg-[#00d4ff]/12 px-3 py-2 text-sm leading-6 text-[#dff8ff]"
-                    : "mt-0.5 rounded-2xl rounded-br-sm bg-[#ff9a6c]/12 px-3 py-2 text-sm leading-6 text-[#ffe6d8]"
-                }
-              >
-                {line.text}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function EncounterNotice({text}: {text: string}) {
-  return (
-    <div className="fixed left-1/2 top-[78px] z-30 -translate-x-1/2 rounded-lg border border-[#00ff88]/25 bg-[#04140e]/86 px-4 py-2 font-mono text-xs font-black text-[#00ff88] shadow-2xl backdrop-blur-md">
-      {text}
-    </div>
-  );
-}
-
-function MilestoneBanner({text}: {text: string}) {
-  return (
-    <div className="pointer-events-none fixed left-1/2 top-1/3 z-[60] -translate-x-1/2 animate-[fadeIn_0.4s_ease] rounded-2xl border border-[#ff6ec7]/45 bg-[#1a0a1f]/92 px-6 py-4 text-center shadow-2xl backdrop-blur-md">
-      <p className="font-mono text-[11px] font-black uppercase tracking-[0.2em] text-[#ff9ad9]">관계 사건</p>
-      <p className="mt-1.5 text-lg font-black text-white">{text}</p>
-    </div>
-  );
-}
-
-const REL_KIND_NAME: Record<string, string> = {
-  overseer: "정재훈",
-  guide: "루미",
-  project: "픽셀",
-  developer: "테오",
-  archivist: "아카",
-  contact: "포스트",
-  coding: "알고",
-  cs: "노바"
-};
-
-function RelRow({r}: {r: NpcRelationshipRow}) {
-  const color = r.affinity >= 6 ? "#7ee787" : r.affinity <= -6 ? "#ff8a8a" : "#94a3b8";
-  return (
-    <div className="flex items-center justify-between rounded-lg border border-white/8 bg-white/[0.04] px-3 py-2">
-      <span className="text-xs font-bold text-white/80">
-        {REL_KIND_NAME[r.npc_a] ?? r.npc_a} ↔ {REL_KIND_NAME[r.npc_b] ?? r.npc_b}
-      </span>
-      <span className="font-mono text-[11px]" style={{color}}>
-        {r.vibe} ({r.affinity >= 0 ? "+" : ""}{r.affinity})
-      </span>
-    </div>
-  );
-}
-
-function RelationshipViewer({onClose}: {onClose: () => void}) {
-  const [rels, setRels] = useState<NpcRelationshipRow[] | null>(null);
-  const [err, setErr] = useState(false);
-
-  useEffect(() => {
-    let ignore = false;
-    fetchRelationships()
-      .then((r) => {
-        if (!ignore) setRels(r);
-      })
-      .catch(() => {
-        if (!ignore) setErr(true);
-      });
-    return () => {
-      ignore = true;
-    };
-  }, []);
-
-  const W = 340;
-  const H = 330;
-  const cx = 170;
-  const cy = 158;
-  const R = 118;
-  const ring = ["guide", "project", "developer", "archivist", "contact", "coding", "cs"];
-  const posOf = (kind: string) => {
-    if (kind === "overseer") return {x: cx, y: cy};
-    const i = ring.indexOf(kind);
-    if (i < 0) return {x: cx, y: cy};
-    const a = (i / ring.length) * Math.PI * 2 - Math.PI / 2;
-    return {x: cx + Math.cos(a) * R, y: cy + Math.sin(a) * R};
-  };
-  const edgeColor = (aff: number) => (aff >= 6 ? "#16a34a" : aff <= -6 ? "#ef4444" : "#64748b");
-  const allKinds = ["overseer", ...ring];
-  const sorted = (rels ?? []).slice().sort((a, b) => b.affinity - a.affinity);
-  const top = sorted.filter((r) => r.affinity >= 6).slice(0, 2);
-  const bottom = sorted.filter((r) => r.affinity <= -6).slice(-2).reverse();
-
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4" onClick={onClose}>
-      <div
-        className="w-[min(94vw,420px)] rounded-2xl border border-[#00d4ff]/30 bg-[#050d1a]/97 p-5 shadow-2xl backdrop-blur-md"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#00d4ff]">Village Social Graph</p>
-            <h2 className="mt-1 text-xl font-black text-white">마을 관계도 💞</h2>
-          </div>
-          <button type="button" onClick={onClose} className="text-white/50 transition hover:text-white">✕</button>
-        </div>
-
-        {err ? (
-          <p className="mt-4 text-sm leading-6 text-white/55">백엔드에 연결하지 못했어요. 서버를 켜면 관계가 보여요.</p>
-        ) : !rels ? (
-          <p className="mt-4 text-sm text-white/45">불러오는 중…</p>
-        ) : (
-          <>
-            <svg viewBox={`0 0 ${W} ${H}`} className="mt-2 w-full">
-              {rels.map((r, i) => {
-                const a = posOf(r.npc_a);
-                const b = posOf(r.npc_b);
-                return (
-                  <line
-                    key={i}
-                    x1={a.x}
-                    y1={a.y}
-                    x2={b.x}
-                    y2={b.y}
-                    stroke={edgeColor(r.affinity)}
-                    strokeWidth={1 + Math.min(4, Math.abs(r.affinity) / 6)}
-                    strokeOpacity={0.7}
-                    strokeLinecap="round"
-                  />
-                );
-              })}
-              {allKinds.map((kind) => {
-                const p = posOf(kind);
-                const isHub = kind === "overseer";
-                return (
-                  <g key={kind}>
-                    <circle cx={p.x} cy={p.y} r={isHub ? 15 : 12} fill={isHub ? "#f5c542" : "#0b1a2e"} stroke="#00d4ff" strokeWidth={1.2} />
-                    <text x={p.x} y={p.y + (isHub ? 27 : 25)} textAnchor="middle" fontSize="11" fontWeight="800" fill="#cfe6ff">
-                      {REL_KIND_NAME[kind]}
-                    </text>
-                  </g>
-                );
-              })}
-            </svg>
-            <div className="flex items-center justify-center gap-3 font-mono text-[10px] text-white/45">
-              <span><span style={{color: "#16a34a"}}>━</span> 친함</span>
-              <span><span style={{color: "#64748b"}}>━</span> 보통</span>
-              <span><span style={{color: "#ef4444"}}>━</span> 나쁨</span>
-            </div>
-            {top.length || bottom.length ? (
-              <div className="mt-3 grid gap-1.5">
-                {top.map((r, i) => (
-                  <RelRow key={`t${i}`} r={r} />
-                ))}
-                {bottom.map((r, i) => (
-                  <RelRow key={`b${i}`} r={r} />
-                ))}
-              </div>
-            ) : (
-              <p className="mt-3 text-center text-xs leading-5 text-white/40">아직 관계가 쌓이지 않았어요. 마을을 조금 지켜보면 사이가 생겨요.</p>
-            )}
-          </>
-        )}
-      </div>
-    </div>
-  );
-}

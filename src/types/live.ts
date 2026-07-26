@@ -292,11 +292,17 @@ export interface VillageBuildingOverrideInput {
   note: string;
 }
 
+export interface AiUsage {
+  today_count: number;
+  daily_limit: number;
+}
+
 export interface AdminOverview {
   analytics: AnalyticsSummary;
   projects: ManagedProject[];
   npc_presets: NpcPreset[];
   village_overrides: VillageBuildingOverride[];
+  ai_usage: AiUsage;
 }
 
 export interface CodingTestLog {

@@ -1,4 +1,4 @@
-export type SectionId = "intro" | "projects" | "github" | "experience" | "contact" | "study";
+export type SectionId = "intro" | "projects" | "github" | "experience" | "contact" | "study" | "life";
 export type ExplorationMode = "click" | "walk";
 export type District = "plaza" | "projects" | "skills" | "experience" | "contact" | "life" | "study";
 

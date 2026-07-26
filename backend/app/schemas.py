@@ -284,11 +284,17 @@ class VillageBuildingOverrideOut(VillageBuildingOverrideIn):
     model_config = {"from_attributes": True}
 
 
+class AiUsage(BaseModel):
+    today_count: int
+    daily_limit: int
+
+
 class AdminOverview(BaseModel):
     analytics: AnalyticsSummary
     projects: list[ManagedProjectOut]
     npc_presets: list[NpcPresetOut]
     village_overrides: list[VillageBuildingOverrideOut]
+    ai_usage: AiUsage
 
 
 class AdminLoginIn(BaseModel):

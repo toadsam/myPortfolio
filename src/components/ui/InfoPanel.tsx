@@ -8,8 +8,8 @@ import {portfolioLinks} from "@/data/links";
 import {projects} from "@/data/projects";
 import {skills} from "@/data/skills";
 import {sectionMeta} from "@/lib/constants";
-import {fetchCodingTests, fetchCsNotes} from "@/lib/liveApi";
-import type {CodingTestLog, CsNote} from "@/types/live";
+import {fetchCodingTests, fetchCsNotes, fetchVillageState} from "@/lib/liveApi";
+import type {CodingTestLog, CsNote, VillageState} from "@/types/live";
 import type {ProjectData, SectionId} from "@/types/portfolio";
 import {ProjectCard} from "./ProjectCard";
 import {ProjectDetail} from "./ProjectDetail";
@@ -27,6 +27,7 @@ const SECTION_COLORS: Record<string, string> = {
   github: "#00ff88",
   study: "#38bdf8",
   experience: "#aa44ff",
+  life: "#fbbf24",
   contact: "#ff6600"
 };
 
@@ -95,6 +96,7 @@ export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: Inf
             {activeSection === "github" && <SkillsPanel color={color} initialGroup={activeContentId} />}
             {activeSection === "study" && <StudyPanel color={color} initialTab={activeContentId} />}
             {activeSection === "experience" && <ExperiencePanel color={color} highlightTitle={activeContentId} />}
+            {activeSection === "life" && <LifePanel color={color} highlightId={activeContentId} />}
             {activeSection === "contact" && <ContactPanel color={color} />}
           </motion.div>
         </motion.aside>
@@ -285,6 +287,115 @@ function ExperiencePanel({color, highlightTitle}: {color: string; highlightTitle
           </motion.article>
         );
       })}
+    </div>
+  );
+}
+
+function LifeCard({
+  color,
+  highlighted,
+  title,
+  children
+}: {
+  color: string;
+  highlighted: boolean;
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <motion.article
+      className="rounded-lg border bg-[#0a1525] p-5 transition"
+      style={{
+        borderColor: highlighted ? `${color}55` : "rgba(255,255,255,0.06)",
+        boxShadow: highlighted ? `0 0 18px ${color}18` : "none"
+      }}
+      variants={fadeUp}
+    >
+      <h3 className="font-black text-white">{title}</h3>
+      <div className="mt-2 text-sm leading-6 text-white/55">{children}</div>
+    </motion.article>
+  );
+}
+
+function LifePlaceholder() {
+  return <p>아직 실제 내용을 채우지 못한 카드예요 — 곧 채워질 예정입니다.</p>;
+}
+
+function LifePanel({color, highlightId}: {color: string; highlightId?: string}) {
+  const [villageState, setVillageState] = useState<VillageState | null>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let ignore = false;
+    fetchVillageState()
+      .then((state) => {
+        if (!ignore) setVillageState(state);
+      })
+      .catch(() => {
+        if (!ignore) setError(true);
+      });
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  const activity = villageState?.activity;
+
+  return (
+    <div className="grid gap-4">
+      <Card color={color}>
+        <h3 className="font-black text-white">인생·일상</h3>
+        <p className="mt-2 text-sm leading-6 text-white/55">
+          프로젝트 밖의 일상을 모아둔 구역입니다. 운동·학습 카드는 관리자 기록과 실시간으로 연결되어 있고,
+          나머지 카드는 아직 내용을 채우는 중입니다.
+        </p>
+      </Card>
+
+      <LifeCard color={color} highlighted={highlightId === "gym"} title="🏋️ 헬스장 · 오늘의 운동">
+        {error ? (
+          <p>기록 서버에 연결하지 못했습니다.</p>
+        ) : !activity ? (
+          <p>불러오는 중...</p>
+        ) : activity.workout_done ? (
+          <p>
+            오늘 {activity.workout_type || "운동"} {activity.workout_minutes}분을 기록했어요. 관리자 페이지에 기록한 내용이 그대로 반영됩니다.
+          </p>
+        ) : (
+          <p>오늘은 아직 운동 기록이 없어요. 기록하면 이 카드와 마을 조명에 바로 반영됩니다.</p>
+        )}
+      </LifeCard>
+
+      <LifeCard color={color} highlighted={highlightId === "library"} title="📚 도서관 · 오늘의 학습">
+        {error ? (
+          <p>기록 서버에 연결하지 못했습니다.</p>
+        ) : !activity ? (
+          <p>불러오는 중...</p>
+        ) : activity.study_minutes > 0 ? (
+          <p>
+            오늘 공부 {activity.study_minutes}분
+            {activity.study_topics?.length ? ` · ${activity.study_topics.join(", ")}` : ""}이 기록됐어요.
+          </p>
+        ) : (
+          <p>오늘은 아직 학습 기록이 없어요.</p>
+        )}
+      </LifeCard>
+
+      <LifeCard color={color} highlighted={highlightId === "values"} title="🪨 가치관 비석">
+        <LifePlaceholder />
+      </LifeCard>
+
+      <LifeCard color={color} highlighted={highlightId === "invest"} title="📈 투자 타워">
+        <p>금액은 비공개로 유지할 예정이고, 투자 원칙만 짧게 정리할 계획이에요.</p>
+        <LifePlaceholder />
+      </LifeCard>
+
+      <LifeCard color={color} highlighted={highlightId === "music"} title="🎵 음악 스튜디오">
+        <p>이 프로젝트의 사운드 작업이 MyWave 프로젝트와 이어집니다. 플레이리스트/취향 소개는 준비 중이에요.</p>
+      </LifeCard>
+
+      <LifeCard color={color} highlighted={highlightId === "timeline"} title="🕰️ 연혁 타임라인">
+        <LifePlaceholder />
+      </LifeCard>
     </div>
   );
 }

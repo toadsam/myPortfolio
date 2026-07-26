@@ -9,13 +9,14 @@ interface HeaderProps {
   onSelectSection: (sectionId: SectionId) => void;
 }
 
-const visibleNav: SectionId[] = ["projects", "github", "study", "experience", "contact"];
+const visibleNav: SectionId[] = ["projects", "github", "study", "experience", "life", "contact"];
 
 const NAV_COLORS: Record<string, string> = {
   projects: "#00d4ff",
   github: "#00ff88",
   study: "#38bdf8",
   experience: "#aa44ff",
+  life: "#fbbf24",
   contact: "#ff6600"
 };
 
