@@ -6,8 +6,8 @@ import {experienceItems} from "@/data/experience";
 import {portfolioLinks} from "@/data/links";
 import {projects} from "@/data/projects";
 import {skills} from "@/data/skills";
-import type {ProjectData, SkillData} from "@/types/portfolio";
-import {ProjectViewer} from "./ProjectViewer";
+import type {SkillData} from "@/types/portfolio";
+import {ProjectOnePager} from "./ProjectOnePager";
 
 // ─── 카테고리 매핑 (프로젝트 → 색/라벨) ────────────────────────────────────────
 
@@ -21,7 +21,7 @@ const PROJECT_ACCENT: Record<string, string> = {
   ajouchong: "#fb7185",
   muscleup: "#f472b6",
   darklab: "#ef4444",
-  tserof: "#34d399",
+  tserof: "#34d399"
 };
 
 const SKILL_GROUP_ORDER: SkillData["group"][] = [
@@ -29,23 +29,36 @@ const SKILL_GROUP_ORDER: SkillData["group"][] = [
   "Backend",
   "3D / Motion",
   "Game / XR",
-  "Workflow",
+  "Workflow"
 ];
 
-const SKILL_GROUP_META: Record<SkillData["group"], {icon: string; color: string}> = {
+const SKILL_GROUP_META: Record<
+  SkillData["group"],
+  {icon: string; color: string}
+> = {
   Frontend: {icon: "◈", color: "#00d4ff"},
   Backend: {icon: "⬢", color: "#34d399"},
   "3D / Motion": {icon: "◎", color: "#a78bfa"},
   "Game / XR": {icon: "✦", color: "#fbbf24"},
-  Workflow: {icon: "⬡", color: "#fb7185"},
+  Workflow: {icon: "⬡", color: "#fb7185"}
 };
 
 // ─── 섹션 헤더 ────────────────────────────────────────────────────────────────
 
-function SectionTitle({index, label, en}: {index: string; label: string; en: string}) {
+function SectionTitle({
+  index,
+  label,
+  en
+}: {
+  index: string;
+  label: string;
+  en: string;
+}) {
   return (
     <div className="mb-8 flex items-baseline gap-4">
-      <span className="font-mono text-sm font-black text-[#00d4ff]/50">{index}</span>
+      <span className="font-mono text-sm font-black text-[#00d4ff]/50">
+        {index}
+      </span>
       <div>
         <h2 className="text-2xl font-black text-white md:text-3xl">{label}</h2>
         <p className="mt-0.5 font-mono text-xs font-bold uppercase tracking-[0.3em] text-white/30">
@@ -63,13 +76,13 @@ interface Props {
 }
 
 export function ResumeMode({onEnterVillage}: Props) {
-  const [selected, setSelected] = useState<ProjectData | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const grouped = useMemo(() => {
-    return SKILL_GROUP_ORDER.map((group) => ({
+    return SKILL_GROUP_ORDER.map(group => ({
       group,
-      items: skills.filter((s) => s.group === group),
-    })).filter((g) => g.items.length > 0);
+      items: skills.filter(s => s.group === group)
+    })).filter(g => g.items.length > 0);
   }, []);
 
   return (
@@ -80,7 +93,7 @@ export function ResumeMode({onEnterVillage}: Props) {
         style={{
           backgroundImage:
             "linear-gradient(rgba(0,180,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,180,255,0.04) 1px, transparent 1px)",
-          backgroundSize: "44px 44px",
+          backgroundSize: "44px 44px"
         }}
       />
 
@@ -111,16 +124,19 @@ export function ResumeMode({onEnterVillage}: Props) {
           <p className="font-mono text-xs font-black uppercase tracking-[0.35em] text-[#00d4ff]">
             {">"} Fullstack · 3D · Game / XR Developer
           </p>
-          <h1 className="mt-4 text-6xl font-black leading-none text-white md:text-8xl">정재훈</h1>
+          <h1 className="mt-4 text-6xl font-black leading-none text-white md:text-8xl">
+            정재훈
+          </h1>
           <p className="mt-6 max-w-2xl text-lg leading-8 text-white/60 md:text-xl">
-            웹앱부터 실시간 서비스, 게임까지 직접 기획하고 풀스택으로 구현합니다.
+            웹앱부터 실시간 서비스, 게임까지 직접 기획하고 풀스택으로
+            구현합니다.
             <br className="hidden md:block" />
             아이디어를 빠르게 작동하는 프로토타입으로 만드는 것을 좋아합니다.
           </p>
 
           {/* 연락처 */}
           <div className="mt-8 flex flex-wrap gap-3">
-            {portfolioLinks.map((link) => (
+            {portfolioLinks.map(link => (
               <a
                 key={link.label}
                 href={link.href}
@@ -131,7 +147,9 @@ export function ResumeMode({onEnterVillage}: Props) {
                 <span className="font-mono text-xs font-black uppercase tracking-[0.15em] text-white/35 group-hover:text-[#00d4ff]">
                   {link.label}
                 </span>
-                <span className="font-mono text-sm font-bold text-white/75">{link.value}</span>
+                <span className="font-mono text-sm font-bold text-white/75">
+                  {link.value}
+                </span>
               </a>
             ))}
           </div>
@@ -141,10 +159,12 @@ export function ResumeMode({onEnterVillage}: Props) {
             {[
               {n: projects.length, l: "Projects"},
               {n: skills.length, l: "Skills"},
-              {n: "10+", l: "Tech Stacks"},
-            ].map((s) => (
+              {n: "10+", l: "Tech Stacks"}
+            ].map(s => (
               <div key={s.l}>
-                <p className="font-mono text-4xl font-black text-[#00d4ff]">{s.n}</p>
+                <p className="font-mono text-4xl font-black text-[#00d4ff]">
+                  {s.n}
+                </p>
                 <p className="mt-1 font-mono text-xs font-bold uppercase tracking-[0.2em] text-white/35">
                   {s.l}
                 </p>
@@ -177,14 +197,14 @@ export function ResumeMode({onEnterVillage}: Props) {
                     </h3>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {items.map((s) => (
+                    {items.map(s => (
                       <span
                         key={s.name}
                         className="rounded-lg border px-3 py-1.5 font-mono text-sm font-bold"
                         style={{
                           borderColor: `${meta.color}30`,
                           color: meta.color,
-                          background: `${meta.color}0d`,
+                          background: `${meta.color}0d`
                         }}
                         title={s.description}
                       >
@@ -208,7 +228,7 @@ export function ResumeMode({onEnterVillage}: Props) {
                 <motion.button
                   key={p.id}
                   type="button"
-                  onClick={() => setSelected(p)}
+                  onClick={() => setSelectedIndex(i)}
                   className="group relative overflow-hidden rounded-2xl border border-white/8 bg-white/[0.03] p-5 text-left transition-all hover:border-white/20"
                   initial={{opacity: 0, y: 18}}
                   whileInView={{opacity: 1, y: 0}}
@@ -228,7 +248,9 @@ export function ResumeMode({onEnterVillage}: Props) {
                   />
                   <div className="relative pl-3">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-black text-white">{p.title}</h3>
+                      <h3 className="text-lg font-black text-white">
+                        {p.title}
+                      </h3>
                       <span
                         className="font-mono text-xs font-black opacity-0 transition group-hover:opacity-100"
                         style={{color: accent}}
@@ -236,13 +258,18 @@ export function ResumeMode({onEnterVillage}: Props) {
                         자세히 →
                       </span>
                     </div>
-                    <p className="mt-1.5 text-sm leading-6 text-white/55">{p.description}</p>
+                    <p className="mt-1.5 text-sm leading-6 text-white/55">
+                      {p.description}
+                    </p>
                     <div className="mt-3 flex flex-wrap gap-1.5">
-                      {p.tech.slice(0, 4).map((t) => (
+                      {p.tech.slice(0, 4).map(t => (
                         <span
                           key={t}
                           className="rounded-md border px-2 py-0.5 font-mono text-[11px] font-bold"
-                          style={{borderColor: `${accent}30`, color: `${accent}cc`}}
+                          style={{
+                            borderColor: `${accent}30`,
+                            color: `${accent}cc`
+                          }}
                         >
                           {t}
                         </span>
@@ -279,8 +306,12 @@ export function ResumeMode({onEnterVillage}: Props) {
                 >
                   <span className="relative z-10 mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#00d4ff] shadow-[0_0_10px_#00d4ff]" />
                   <div>
-                    <span className="font-mono text-xs font-black text-[#00d4ff]/70">{exp.year}</span>
-                    <h3 className="mt-0.5 text-lg font-black text-white">{exp.title}</h3>
+                    <span className="font-mono text-xs font-black text-[#00d4ff]/70">
+                      {exp.year}
+                    </span>
+                    <h3 className="mt-0.5 text-lg font-black text-white">
+                      {exp.title}
+                    </h3>
                     <p className="mt-1 max-w-xl text-sm leading-6 text-white/55">
                       {exp.description}
                     </p>
@@ -303,8 +334,23 @@ export function ResumeMode({onEnterVillage}: Props) {
         </section>
       </main>
 
-      {/* 프로젝트 상세 */}
-      <ProjectViewer project={selected} onClose={() => setSelected(null)} />
+      {/* 프로젝트 상세 — 면접관용 단일 스크롤 원페이지 */}
+      <ProjectOnePager
+        project={selectedIndex === null ? null : projects[selectedIndex]}
+        index={selectedIndex ?? undefined}
+        total={projects.length}
+        onClose={() => setSelectedIndex(null)}
+        onPrev={
+          selectedIndex !== null && selectedIndex > 0
+            ? () => setSelectedIndex(selectedIndex - 1)
+            : undefined
+        }
+        onNext={
+          selectedIndex !== null && selectedIndex < projects.length - 1
+            ? () => setSelectedIndex(selectedIndex + 1)
+            : undefined
+        }
+      />
     </div>
   );
 }
