@@ -80,7 +80,7 @@ export interface RichProject {
 //  프레젠테이션 컴포넌트
 // ════════════════════════════════════════════════════════════════════════════
 
-function CodeLine({line, theme}: {line: string; theme: ProjectTheme}) {
+export function CodeLine({line, theme}: {line: string; theme: ProjectTheme}) {
   const segs: {text: string; color?: string}[] = [];
   const re =
     /(\/\/.*|#.*)|(`[^`]*`|"[^"]*"|'[^']*')|\b(const|let|var|function|fun|void|public|private|return|import|from|export|interface|type|class|if|else|async|await|new|map|filter|reduce|useMemo|useState|useEffect|useRef|override|suspend|val)\b|\b(\d+\.?\d*)\b/g;

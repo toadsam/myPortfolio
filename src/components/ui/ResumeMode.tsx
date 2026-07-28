@@ -1,8 +1,16 @@
 "use client";
 
-import {useEffect, useMemo, useRef, useState, type CSSProperties} from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties
+} from "react";
 import * as THREE from "three";
 import {projects} from "@/data/projects";
+import {getTechIcon} from "@/data/techIcons";
 import {
   aboutMe,
   contact,
@@ -38,6 +46,8 @@ export function ResumeMode({onEnterVillage}: Props) {
   const gridRef = useRef(false);
   const dragMovedRef = useRef(0);
   const rotateRef = useRef<(dir: number) => void>(() => {});
+  // 캐러셀 복귀 시 다음 rAF를 기다리지 않고 즉시 카드 배치를 다시 계산하기 위한 통로
+  const updateRef = useRef<() => void>(() => {});
 
   const [gridView, setGridView] = useState(false);
   const [selectedRich, setSelectedRich] = useState<number | null>(null);
@@ -144,7 +154,13 @@ export function ResumeMode({onEnterVillage}: Props) {
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
-          if (entry.isIntersecting) {
+          // 화면에 들어왔거나, 빠르게 스크롤해 이미 위로 지나간 경우에도 등장 처리.
+          // (지나친 요소를 그대로 두면 opacity 0으로 영영 안 보인다 — 스크롤바를
+          //  끌거나 앵커로 점프하면 섹션이 통째로 비어 보이던 원인)
+          const scrolledPast =
+            !!entry.rootBounds &&
+            entry.boundingClientRect.bottom < entry.rootBounds.top;
+          if (entry.isIntersecting || scrolledPast) {
             entry.target.classList.add("active");
             entry.target
               .querySelectorAll(".proficiency-fill")
@@ -212,6 +228,7 @@ export function ResumeMode({onEnterVillage}: Props) {
     };
 
     update();
+    updateRef.current = update;
 
     let raf = 0;
     const animate = () => {
@@ -278,7 +295,11 @@ export function ResumeMode({onEnterVillage}: Props) {
   }, []);
 
   // ── 그리드 뷰 토글 시 인라인 트랜스폼 정리 ──
-  useEffect(() => {
+  // useEffect가 아니라 useLayoutEffect여야 한다. useEffect는 페인트 "이후"라,
+  // 캐러셀이 넣어둔 인라인 transform(rotateY)이 남은 채로 그리드가 한 프레임 그려지고
+  // backface-visibility: hidden 탓에 뒤를 향한 카드가 사라져 보인다.
+  // gridRef도 여기서 먼저 뒤집어야 rAF 루프가 transform을 다시 써넣지 않는다.
+  useLayoutEffect(() => {
     gridRef.current = gridView;
     const root = rootRef.current;
     if (!root) return;
@@ -290,10 +311,14 @@ export function ResumeMode({onEnterVillage}: Props) {
       });
       const track = root.querySelector<HTMLElement>(".carousel-track");
       if (track) track.style.transform = "";
+    } else {
+      // 캐러셀 복귀: 다음 rAF를 기다리면 카드가 한 프레임 가운데 겹쳐 보인다.
+      updateRef.current();
     }
   }, [gridView]);
 
   return (
+    <>
     <div className="resume-terminal" ref={rootRef}>
       {/* ══════════ 히어로 뷰포트 ══════════ */}
       <div className="viewport">
@@ -429,11 +454,34 @@ export function ResumeMode({onEnterVillage}: Props) {
           </header>
 
           <div className="skill-tags reveal reveal-delay-1">
-            {skillChips.map(s => (
-              <span className="tag" key={s}>
-                {s}
-              </span>
-            ))}
+            {skillChips.map(s => {
+              const icon = getTechIcon(s);
+              return (
+                <span
+                  className="tag"
+                  key={s}
+                  style={
+                    icon ? ({"--brand": icon.color} as CSSProperties) : undefined
+                  }
+                >
+                  {icon ? (
+                    <svg
+                      aria-hidden="true"
+                      className="tag-icon"
+                      fill={icon.stroke ? "none" : "currentColor"}
+                      stroke={icon.stroke ? "currentColor" : undefined}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={icon.stroke ? 1.8 : undefined}
+                      viewBox="0 0 24 24"
+                    >
+                      <path d={icon.d} />
+                    </svg>
+                  ) : null}
+                  {s}
+                </span>
+              );
+            })}
           </div>
 
           <div className="skills-table-wrap reveal reveal-delay-2">
@@ -548,10 +596,13 @@ export function ResumeMode({onEnterVillage}: Props) {
             카테고리: Web Service · Data/AI · Game · AR/XR · Ops
           </div>
 
+          {/* 그리드 상태는 class가 아니라 data 속성으로 둔다.
+              className에 gridView를 섞으면 리렌더마다 class 속성이 통째로 새로 쓰이고,
+              IntersectionObserver가 명령형으로 붙여둔 .active가 지워져 opacity:0으로
+              사라진다(토글할 때 프로젝트가 사라졌다 뒤늦게 다시 나타나던 원인). */}
           <div
-            className={`carousel-wrapper reveal reveal-delay-1${
-              gridView ? " grid-view" : ""
-            }`}
+            className="carousel-wrapper reveal reveal-delay-1"
+            data-grid={gridView ? "true" : "false"}
           >
             <div className="carousel-scene">
               <div className="carousel-track">
@@ -754,7 +805,11 @@ export function ResumeMode({onEnterVillage}: Props) {
         </div>
       </section>
 
-      {/* 프로젝트 상세 — 리치 데이터 있는 프로젝트만 원페이지로 */}
+    </div>
+
+      {/* 프로젝트 상세 — 리치 데이터 있는 프로젝트만 원페이지로.
+          .resume-terminal 밖에 둔다: ResumeTerminal.css의 main/nav/section 규칙이
+          엘리먼트 선택자라 Tailwind 유틸리티보다 특정도가 높아 원페이지 레이아웃을 덮어쓴다. */}
       <ProjectOnePager
         project={selectedRich === null ? null : richList[selectedRich]}
         index={selectedRich ?? undefined}
@@ -771,6 +826,6 @@ export function ResumeMode({onEnterVillage}: Props) {
             : undefined
         }
       />
-    </div>
+    </>
   );
 }

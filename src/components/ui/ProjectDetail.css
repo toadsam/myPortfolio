@@ -1,0 +1,321 @@
+/* ════════════════════════════════════════════════════════════════════════════
+   면접관 원페이지 프로젝트 상세 — 터미널 / 관제 시스템 테마
+   목업 디자인을 .op-detail 루트로 스코프해 앱 전역에 누출되지 않게 함.
+   (ResumeTerminal.css와 같은 방식 · keyframes는 op- 프리픽스)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.op-detail {
+  --bg: #050505;
+  --bg-card: #0a0a0a;
+  --accent: #00f5ff;
+  --border: #1a1a1a;
+  --text-muted: #888;
+  --problem: #ef4444;
+  --mono: "JetBrains Mono", monospace;
+  --sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+  background-color: var(--bg);
+  color: #fff;
+  font-family: var(--sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* text-accent / bg-accent / border-accent는 Tailwind 색상 토큰(accent)이 생성한다.
+   여기서는 Tailwind에 없는 것만 정의. */
+.op-detail .mono,
+.op-detail .font-mono {
+  font-family: var(--mono);
+}
+.op-detail .text-muted {
+  color: var(--text-muted);
+}
+
+/* ── 섹션 라벨 (— UPPERCASE) ── */
+.op-detail .section-label {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.op-detail .section-label::before {
+  content: "";
+  width: 1rem;
+  height: 1px;
+  background-color: var(--text-muted);
+}
+
+/* ── 이미지 자리 (점선 플레이스홀더) ── */
+.op-detail .placeholder-box {
+  background-color: #111;
+  border: 1px dashed #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.op-detail .placeholder-box::after {
+  content: attr(data-ratio);
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: #333;
+}
+
+.op-detail .placeholder-box:hover {
+  border-color: #444;
+  background-color: #151515;
+}
+
+/* ── 요약 표 ── */
+.op-detail .cyber-table tr {
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s;
+}
+.op-detail .cyber-table td {
+  padding: 0.75rem 0;
+  vertical-align: top;
+}
+
+/* ── 코드 창 ── */
+.op-detail .code-window {
+  background: #000;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.3s;
+}
+.op-detail .code-window:hover {
+  box-shadow: 0 0 30px -5px rgba(0, 245, 255, 0.08);
+}
+.op-detail .code-header {
+  background: #111;
+  padding: 8px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+.op-detail .code-dots {
+  display: flex;
+  gap: 6px;
+}
+.op-detail .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #333;
+}
+
+/* ── 아키텍처 카드 ── */
+.op-detail .arch-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  border-radius: 8px;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.op-detail .arch-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px -10px rgba(0, 245, 255, 0.15);
+}
+
+/* ── 지표 타일 ── */
+.op-detail .stat-tile {
+  background: var(--bg-card);
+  border-left: 3px solid var(--accent);
+  padding: 1.5rem;
+  transition: transform 0.3s, border-color 0.3s;
+}
+.op-detail .stat-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+
+/* ── 뱃지 ── */
+.op-detail .badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ── 가설 강조 박스 ── */
+.op-detail .highlight-box {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 245, 255, 0.05) 0%,
+    transparent 100%
+  );
+  border-left: 2px solid var(--accent);
+}
+
+/* ── 스크롤바 ── */
+.op-detail::-webkit-scrollbar {
+  width: 6px;
+}
+.op-detail::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+.op-detail::-webkit-scrollbar-thumb {
+  background: #333;
+}
+.op-detail::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* ════════════════ 애니메이션 ════════════════ */
+
+@keyframes op-fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes op-slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes op-slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.op-detail .anim-fade-up {
+  opacity: 0;
+  animation: op-fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.op-detail .anim-slide-left {
+  opacity: 0;
+  animation: op-slideInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.op-detail .anim-slide-right {
+  opacity: 0;
+  animation: op-slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.op-detail .delay-1 {
+  animation-delay: 0.1s;
+}
+.op-detail .delay-2 {
+  animation-delay: 0.2s;
+}
+
+/* ── 스크롤 등장 ── */
+.op-detail .reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.op-detail .reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.op-detail .reveal-left {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.op-detail .reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.op-detail .reveal-right {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.op-detail .reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.op-detail .reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.op-detail .reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── 자식 순차 등장 ── */
+.op-detail .stagger-children > *:nth-child(1) {
+  transition-delay: 0s;
+}
+.op-detail .stagger-children > *:nth-child(2) {
+  transition-delay: 0.1s;
+}
+.op-detail .stagger-children > *:nth-child(3) {
+  transition-delay: 0.2s;
+}
+.op-detail .stagger-children > *:nth-child(4) {
+  transition-delay: 0.3s;
+}
+.op-detail .stagger-children > *:nth-child(5) {
+  transition-delay: 0.4s;
+}
+.op-detail .stagger-children > *:nth-child(6) {
+  transition-delay: 0.5s;
+}
+
+/* 모션 최소화 설정 존중 — 등장 연출을 끄고 바로 보여준다 */
+@media (prefers-reduced-motion: reduce) {
+  .op-detail .anim-fade-up,
+  .op-detail .anim-slide-left,
+  .op-detail .anim-slide-right {
+    opacity: 1;
+    animation: none;
+  }
+  .op-detail .reveal,
+  .op-detail .reveal-left,
+  .op-detail .reveal-right,
+  .op-detail .reveal-scale {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

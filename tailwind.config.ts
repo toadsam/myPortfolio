@@ -5,6 +5,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // 이력서 모드(터미널 테마) 강조색. 색상 토큰으로 등록해야
+        // bg-accent/5 · hover:border-accent 같은 수식어가 생성된다.
+        accent: "#00f5ff",
         village: {
           ink: "#1f2a24",
           moss: "#4f8f5b",

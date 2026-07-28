@@ -26,6 +26,11 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/* 원페이지 등 내부 컴포넌트가 쓰는 font-mono 유틸을 JetBrains Mono로 고정 */
+.resume-terminal .font-mono {
+  font-family: var(--mono);
+}
+
 .resume-terminal *,
 .resume-terminal *::before,
 .resume-terminal *::after {
@@ -442,6 +447,9 @@
 }
 
 .resume-terminal .tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--mono);
   font-size: 12px;
   padding: 8px 16px;
@@ -451,6 +459,19 @@
   background: #0a0a0a;
   transition: all 0.2s;
   animation: rt-glowPulse 3s ease-in-out infinite;
+}
+
+/* 기술 로고 — 평소엔 시안 단색으로 톤을 지키고, hover 시에만 브랜드 원색으로 */
+.resume-terminal .tag-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--accent);
+  transition: color 0.2s;
+}
+
+.resume-terminal .tag:hover .tag-icon {
+  color: var(--brand, var(--accent));
 }
 
 .resume-terminal .tag:nth-child(2n) {
@@ -912,19 +933,19 @@
 }
 
 /* 그리드 뷰 토글 */
-.resume-terminal .carousel-wrapper.grid-view {
+.resume-terminal .carousel-wrapper[data-grid="true"] {
   height: auto;
   min-height: 520px;
   align-items: flex-start;
 }
 
-.resume-terminal .carousel-wrapper.grid-view .carousel-scene {
+.resume-terminal .carousel-wrapper[data-grid="true"] .carousel-scene {
   width: 100%;
   perspective: none;
   height: auto;
 }
 
-.resume-terminal .carousel-wrapper.grid-view .carousel-track {
+.resume-terminal .carousel-wrapper[data-grid="true"] .carousel-track {
   position: relative;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -935,7 +956,7 @@
   cursor: default;
 }
 
-.resume-terminal .carousel-wrapper.grid-view .project-card {
+.resume-terminal .carousel-wrapper[data-grid="true"] .project-card {
   position: relative;
   left: auto;
   top: auto;
@@ -948,7 +969,7 @@
   backface-visibility: visible;
 }
 
-.resume-terminal .carousel-wrapper.grid-view .carousel-controls {
+.resume-terminal .carousel-wrapper[data-grid="true"] .carousel-controls {
   position: relative;
   bottom: auto;
   left: auto;
@@ -958,8 +979,8 @@
   width: 100%;
 }
 
-.resume-terminal .carousel-wrapper.grid-view .carousel-btn,
-.resume-terminal .carousel-wrapper.grid-view .carousel-hint {
+.resume-terminal .carousel-wrapper[data-grid="true"] .carousel-btn,
+.resume-terminal .carousel-wrapper[data-grid="true"] .carousel-hint {
   display: none;
 }
 
@@ -1231,7 +1252,11 @@
   opacity: 0;
   transform: translateY(40px);
   filter: blur(4px);
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  /* `all`이면 height·min-height 같은 레이아웃 속성까지 전환 대상이 되어
+     캐러셀↔그리드 전환이 0.8s 동안 기어간다. 실제 쓰는 3개만 전환한다. */
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .resume-terminal .reveal.active {
@@ -1365,13 +1390,13 @@
   .resume-terminal .values-grid {
     grid-template-columns: 1fr;
   }
-  .resume-terminal .carousel-wrapper.grid-view .carousel-track {
+  .resume-terminal .carousel-wrapper[data-grid="true"] .carousel-track {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 560px) {
-  .resume-terminal .carousel-wrapper.grid-view .carousel-track {
+  .resume-terminal .carousel-wrapper[data-grid="true"] .carousel-track {
     grid-template-columns: 1fr;
   }
   .resume-terminal .side-projects-grid {

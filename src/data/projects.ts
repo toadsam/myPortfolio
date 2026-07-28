@@ -256,7 +256,7 @@ export const projects: ProjectData[] = [
   },
   {
     id: "muscleup",
-    title: "근근 MuscleUp",
+    title: "득근득근 (MuscleUp)",
     description:
       "운동 기록을 게임화와 커뮤니티로 연결하는 풀스택 피트니스 플랫폼입니다.",
     role: "풀스택 개발, 기획, 프론트엔드와 백엔드 구현",
