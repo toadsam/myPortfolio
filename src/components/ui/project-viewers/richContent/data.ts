@@ -488,11 +488,23 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ MuscleUp (realtime) ═════════════════════════
   muscleup: {
     tagline: "GAMIFIED FITNESS · 3-TIER FULL-STACK",
+    heroImage: {
+      src: "/projects/muscleup.png",
+      label: "득근득근 메인 화면",
+      ratio: "16/9"
+    },
     problemShot: {label: "작심삼일로 끊기던 기존 운동 기록", ratio: "4/3"},
     gallery: [
-      {label: "출석·캐릭터 성장 로비", ratio: "16/10"},
-      {label: "실시간 라운지(캐릭터 이동)", ratio: "16/10"},
-      {label: "AI 인바디 분석 리포트", ratio: "16/10"}
+      {
+        src: "/projects/op/muscleup-erd.png",
+        label: "도메인 ERD",
+        ratio: "16/10"
+      },
+      {
+        src: "/projects/op/muscleup-aws.png",
+        label: "AWS 배포 구성",
+        ratio: "16/10"
+      }
     ],
     tldr: [
       {
@@ -718,11 +730,28 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ ACLUB / AjouClub FE (platform · 팀) ══════════
   aclub: {
     tagline: "CLUB DISCOVERY · TEAM FRONTEND",
+    heroImage: {
+      src: "/projects/aclub.jpg",
+      label: "동아리 탐색 홈",
+      ratio: "16/9"
+    },
     problemShot: {label: "에타·인스타·단톡에 흩어진 동아리 모집", ratio: "4/3"},
     gallery: [
-      {label: "동아리 탐색·카드 리스트", ratio: "16/10"},
-      {label: "동아리 상세·모집 페이지", ratio: "16/10"},
-      {label: "마이페이지·지원 현황", ratio: "16/10"}
+      {
+        src: "/projects/op/aclub-analytics.png",
+        label: "동아리 이용 분석",
+        ratio: "16/10"
+      },
+      {
+        src: "/projects/op/aclub-eta.png",
+        label: "기존 모집 채널(에타·카톡)",
+        ratio: "16/10"
+      },
+      {
+        src: "/projects/op/aclub-detail.jpg",
+        label: "동아리 상세·저장",
+        ratio: "16/10"
+      }
     ],
     tldr: [
       {
@@ -929,11 +958,23 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ 아주총학 / ajouchong-web (platform · 팀) ══════
   ajouchong: {
     tagline: "STUDENT COUNCIL · TEAM SPA + DEPLOY",
+    heroImage: {
+      src: "/projects/ajouchong.png",
+      label: "총학생회 메인",
+      ratio: "16/9"
+    },
     problemShot: {label: "인스타 등에 흩어져 있던 학생회 공지", ratio: "4/3"},
     gallery: [
-      {label: "메인·공지 게시판", ratio: "16/10"},
-      {label: "Q&A·복지·제휴 안내", ratio: "16/10"},
-      {label: "회칙·회의록 자료실", ratio: "16/10"}
+      {
+        src: "/projects/op/ajouchong-notice.png",
+        label: "공지 상세 페이지",
+        ratio: "16/10"
+      },
+      {
+        src: "/projects/op/ajouchong-detail.png",
+        label: "세부 안내 페이지",
+        ratio: "16/10"
+      }
     ],
     tldr: [
       {k: "무엇을", v: "아주대 총학생회 공식 웹사이트 프론트엔드"},
@@ -1523,11 +1564,16 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ 아주분투 / Ajou_Mini_Game (game · arcade) ════
   "ajou-adventure": {
     tagline: "2D CASUAL RUNNER · PHASER 3 (SOLO)",
+    heroImage: {
+      src: "/projects/ajou-adventure.png",
+      label: "인게임 플레이",
+      ratio: "16/9"
+    },
     problemShot: {label: "도형 기반 초기 프로토타입", ratio: "4/3"},
     gallery: [
-      {label: "인게임 러닝 플레이", ratio: "16/9"},
-      {label: "낮/노을/밤 배경 전환", ratio: "16/9"},
-      {label: "점수·게임오버 화면", ratio: "16/9"}
+      {src: "/projects/op/aa-title.png", label: "타이틀 화면", ratio: "16/9"},
+      {src: "/projects/op/aa-levelup.png", label: "레벨업 UI", ratio: "16/9"},
+      {src: "/projects/op/aa-cheeto.png", label: "아이템·연출", ratio: "16/9"}
     ],
     tldr: [
       {k: "무엇을", v: "아주대 캠퍼스 테마 2D 캐주얼 러닝 게임 (아주분투)"},
@@ -1719,11 +1765,24 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ TSEROF (game · platformer · 팀 · 비공개) ═════
   tserof: {
     tagline: "3D PLATFORMER · UNITY (TEAM)",
+    heroImage: {
+      src: "/projects/tserof.png",
+      label: "TSEROF 타이틀",
+      ratio: "16/9"
+    },
     problemShot: {label: "그레이박스 레벨 프로토타입", ratio: "4/3"},
     gallery: [
-      {label: "스테이지 플레이 화면", ratio: "16/9"},
-      {label: "숨은 아이템 탐색", ratio: "16/9"},
-      {label: "스테이지 선택·클리어", ratio: "16/9"}
+      {
+        src: "/projects/op/tserof-difficulty.png",
+        label: "난이도 선택",
+        ratio: "16/9"
+      },
+      {src: "/projects/op/tserof-stage.png", label: "스테이지", ratio: "16/9"},
+      {
+        src: "/projects/op/tserof-feedback.png",
+        label: "유저 피드백 반영",
+        ratio: "16/9"
+      }
     ],
     tldr: [
       {
