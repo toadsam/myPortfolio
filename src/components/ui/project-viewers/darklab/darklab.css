@@ -1,0 +1,406 @@
+/* DarkLab 룸 전용 스타일.
+   전역 오염을 막기 위해 모든 셀렉터는 .dl-root 아래로 스코프하고 dl- 접두사를 쓴다. */
+
+.dl-root {
+  --dl-bg-dark: #070405;
+  --dl-bg-lit: #0f0d0e;
+  --dl-primary: #ef4444;
+  --dl-accent: #ff5a4d;
+  --dl-good: #4ade80;
+  --dl-bad: #f87171;
+  --dl-warn: #fbbf24;
+  --dl-text: rgba(255, 255, 255, 0.82);
+  --dl-muted: rgba(255, 255, 255, 0.42);
+  --dl-mx: 50%;
+  --dl-my: 50%;
+  --dl-r: 0px;
+
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  background-color: var(--dl-bg-dark);
+  color: var(--dl-text);
+  font-family: var(--dl-font-sans), "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-root::-webkit-scrollbar {
+  width: 0;
+}
+
+.dl-root.dl-lit {
+  background-color: var(--dl-bg-lit);
+}
+
+/* 시퀀스(카메라 탈취 / 스크롤 잠금) 중 스크롤 봉인 */
+.dl-root.dl-locked {
+  overflow-y: hidden;
+}
+
+.dl-root .font-mono {
+  font-family: var(--dl-font-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+.dl-root ::selection {
+  background: var(--dl-primary);
+  color: #fff;
+}
+
+/* ── 필름 그레인 ─────────────────────────────────────────────── */
+.dl-noise {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  transition: opacity 0.9s ease;
+}
+
+.dl-lit .dl-noise {
+  opacity: 0.035;
+}
+
+/* ── 손전등 ──────────────────────────────────────────────────── */
+.dl-torch {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  background: radial-gradient(
+    circle var(--dl-r) at var(--dl-mx) var(--dl-my),
+    rgba(255, 240, 220, 0.14) 0%,
+    transparent 70%
+  );
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-flashlight {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background-color: var(--dl-bg-dark);
+  -webkit-mask-image: radial-gradient(circle var(--dl-r) at var(--dl-mx) var(--dl-my), transparent 0%, black 70%);
+  mask-image: radial-gradient(circle var(--dl-r) at var(--dl-mx) var(--dl-my), transparent 0%, black 70%);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-lit .dl-flashlight,
+.dl-lit .dl-torch {
+  opacity: 0 !important;
+}
+
+/* ── 도트 내비 ───────────────────────────────────────────────── */
+.dl-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s;
+}
+
+.dl-dot.dl-active {
+  background: var(--dl-accent);
+  transform: scale(1.5);
+}
+
+/* ── 진입 애니메이션 ─────────────────────────────────────────── */
+.dl-fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-word {
+  display: inline-block;
+  white-space: pre-wrap;
+  opacity: 0;
+  filter: blur(4px);
+  transform: translateY(4px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-kpt {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.6s, box-shadow 0.6s, opacity 0.6s;
+}
+
+.dl-fade-up.dl-in,
+.dl-word.dl-in,
+.dl-kpt.dl-in {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+/* ── 레이캐스트 샌드박스 ─────────────────────────────────────── */
+.dl-ray-sweep {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255, 90, 77, 0.1), transparent);
+}
+
+.dl-sweeping .dl-ray-sweep {
+  animation: dl-sweep 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dl-sweep {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
+.dl-code-line {
+  opacity: 0.1;
+  filter: blur(2px);
+  transform: translateX(-4px);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-code-line.dl-revealed {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateX(0);
+}
+
+.dl-object-node {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dl-object-node:hover {
+  border-color: var(--dl-accent);
+  box-shadow: 0 0 20px rgba(255, 90, 77, 0.2);
+}
+
+.dl-object-node.dl-active {
+  border-color: var(--dl-accent);
+  background: rgba(255, 90, 77, 0.05);
+}
+
+/* ── 설계 원칙 ───────────────────────────────────────────────── */
+.dl-echo-line {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-echo-line.dl-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.dl-principle-row {
+  position: relative;
+}
+
+.dl-principle-row::before {
+  content: "";
+  position: absolute;
+  left: -16px;
+  top: 36px;
+  bottom: 36px;
+  width: 2px;
+  background-color: var(--dl-primary);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-principle-row:hover::before {
+  transform: scaleY(1);
+}
+
+.dl-row-number {
+  color: rgba(255, 255, 255, 0.18);
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-principle-row:hover .dl-row-number {
+  color: rgba(255, 90, 77, 0.55);
+}
+
+.dl-ghost-number {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
+  color: transparent;
+  font-weight: 900;
+}
+
+/* ── 코드 하이라이트 ─────────────────────────────────────────── */
+.dl-line-hl {
+  display: inline-block;
+  width: 100%;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* ── Cinemachine 3D 리그 ─────────────────────────────────────── */
+.dl-scene {
+  perspective: 1200px;
+}
+
+.dl-camera-wrapper {
+  transform-style: preserve-3d;
+  transition: transform var(--dl-cam-dur, 0.45s) var(--dl-cam-ease, linear);
+}
+
+.dl-toggle-btn.dl-active {
+  background: rgba(255, 90, 77, 0.14);
+  color: var(--dl-accent);
+  border-color: rgba(255, 90, 77, 0.3);
+}
+
+/* ── 아키텍처 다이어그램 ─────────────────────────────────────── */
+.dl-diag-box {
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-diag-arrow {
+  transition: opacity 0.3s;
+}
+
+/* ── 갤러리 ──────────────────────────────────────────────────── */
+.dl-gallery-card {
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-gallery-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.24);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+}
+
+.dl-hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 90, 77, 0.05) 0,
+    rgba(255, 90, 77, 0.05) 2px,
+    transparent 0,
+    transparent 50%
+  );
+  background-size: 10px 10px;
+}
+
+/* ── 회고 · 퇴장 ─────────────────────────────────────────────── */
+.dl-kpt:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dl-exit-border {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  height: 1px;
+  width: 0;
+  background: rgba(255, 90, 77, 0.45);
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1), left 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dl-exit-btn:hover .dl-exit-border {
+  width: 100%;
+  left: 0;
+}
+
+.dl-exit-beam {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  pointer-events: none;
+  background: radial-gradient(circle var(--dl-beam, 0px) at 50% 50%, rgba(255, 240, 220, 0.14) 0%, transparent 70%);
+  transition: background 0.4s ease;
+}
+
+/* ── 애니메이션 ─────────────────────────────────────────────── */
+@keyframes dl-pulse-slow {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.dl-pulse-slow {
+  animation: dl-pulse-slow 2.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dl-wall-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.dl-wall-pulse {
+  animation: dl-wall-pulse 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dl-pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.2);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+  }
+}
+
+@keyframes dl-lightbox-spring {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dl-lightbox-in {
+  animation: dl-lightbox-spring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* ── 동작 줄이기 ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .dl-root *,
+  .dl-root *::before,
+  .dl-root *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .dl-fade-up,
+  .dl-word,
+  .dl-echo-line,
+  .dl-kpt {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  .dl-code-line {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+}

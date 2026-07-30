@@ -4,7 +4,9 @@ import {AnimatePresence, motion, useMotionValue, useSpring} from "framer-motion"
 import {useEffect, useMemo, useRef, useState, type ReactNode} from "react";
 import {getProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
+import {AClubRoom} from "./project-viewers/aclub/AClubRoom";
 import {ambientFor} from "./project-viewers/atmosphere";
+import {DarkLabRoom} from "./project-viewers/darklab/DarkLabRoom";
 import {DashboardProjectViewer} from "./project-viewers/DashboardProjectViewer";
 import {GameProjectViewer} from "./project-viewers/GameProjectViewer";
 import {PlatformProjectViewer} from "./project-viewers/PlatformProjectViewer";
@@ -530,6 +532,12 @@ export function ProjectViewer({project, onClose}: Props) {
     const shared = {project, theme: projectTheme, onClose};
     const cat = projectTheme.category;
     const variant = ambientFor(project.id, projectTheme);
+
+    // DarkLab은 단계 탭이 아니라 손전등으로 읽는 전용 스크롤 전시실을 쓴다.
+    // 진입 인트로·사운드 토글도 방 안에 자체적으로 들어 있어 겹쳐 그리지 않는다.
+    if (project.id === "darklab") return <DarkLabRoom key={project.id} {...shared} />;
+    if (project.id === "aclub") return <AClubRoom key={project.id} {...shared} />;
+
     let viewer: ReactNode = null;
     if (cat === "game") viewer = <GameProjectViewer key={project.id} {...shared} />;
     else if (cat === "dashboard") viewer = <DashboardProjectViewer key={project.id} {...shared} />;

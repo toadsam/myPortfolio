@@ -1,0 +1,570 @@
+/* ACLUB 룸 전용 스타일.
+   전역 오염을 막기 위해 모든 셀렉터는 .ac-root 아래로 스코프하고 ac- 접두사를 쓴다. */
+
+.ac-root {
+  --ac-bg: #0d0816;
+  --ac-bg-end: #120c1d;
+  --ac-panel: #170f26;
+  --ac-panel-lift: #1c1330;
+  --ac-code-bg: #0f0a1a;
+  --ac-code-border: rgba(192, 132, 252, 0.18);
+  --ac-primary: #c084fc;
+  --ac-accent: #d8b4fe;
+  --ac-ok: #4ade80;
+  --ac-bad: #f87171;
+  --ac-warn: #fbbf24;
+  --ac-text: rgba(255, 255, 255, 0.88);
+  --ac-muted: rgba(255, 255, 255, 0.46);
+  --ac-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+  background-color: var(--ac-bg);
+  color: var(--ac-text);
+  font-family: var(--ac-font-sans), "Pretendard", "Apple SD Gothic Neo", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 1.2s var(--ac-ease);
+}
+
+.ac-root::-webkit-scrollbar {
+  width: 0;
+}
+
+/* 결과 장에 도달하면 페이지 바닥색이 한 단계 밝아진다 */
+.ac-root.ac-lit {
+  background-color: var(--ac-bg-end);
+}
+
+.ac-root.ac-locked {
+  overflow-y: hidden;
+}
+
+.ac-root .font-mono {
+  font-family: var(--ac-font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.ac-root ::selection {
+  background: rgba(192, 132, 252, 0.3);
+  color: #fff;
+}
+
+.ac-root .tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 스크롤바 ─────────────────────────────────────────────────── */
+.ac-scroll-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.ac-scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ac-scroll-thin::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ac-scroll-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.ac-no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.ac-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── 필름 그레인 · 스포트라이트 ───────────────────────────────── */
+.ac-noise {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.ac-spotlight {
+  position: absolute;
+  top: 0;
+  width: 40vw;
+  height: 40vw;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(40px);
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.07) 0%, transparent 70%);
+}
+
+/* ── 포스터 벽 (히어로 배경) ──────────────────────────────────── */
+.ac-wall-mask {
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.55) 65%,
+    rgba(0, 0, 0, 1) 85%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.55) 65%,
+    rgba(0, 0, 0, 1) 85%,
+    rgba(0, 0, 0, 1) 100%
+  );
+}
+
+.ac-poster-hover {
+  transition: transform 0.3s var(--ac-ease), box-shadow 0.3s var(--ac-ease);
+}
+
+.ac-poster-hover:hover,
+.ac-poster-hover:focus-visible {
+  z-index: 30;
+  outline: none;
+  transform: translateY(-6px) rotate(0deg) scale(1.04) !important;
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(192, 132, 252, 0.4);
+}
+
+.ac-poster-hover:hover .ac-cat-bar,
+.ac-poster-hover:focus-visible .ac-cat-bar {
+  box-shadow: 0 0 8px currentColor;
+}
+
+.ac-lined-paper {
+  background-color: var(--ac-panel);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 17px,
+    rgba(255, 255, 255, 0.05) 17px,
+    rgba(255, 255, 255, 0.05) 18px
+  );
+}
+
+/* ── 등장 애니메이션 ──────────────────────────────────────────── */
+.ac-reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s var(--ac-ease), transform 0.6s var(--ac-ease);
+}
+
+.ac-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s var(--ac-ease), transform 0.4s var(--ac-ease), filter 0.4s var(--ac-ease);
+}
+
+.ac-reveal.ac-in,
+.ac-word.ac-in {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+.ac-tape {
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+.ac-tape.ac-in {
+  transform: scaleX(1);
+}
+
+/* ── 코드 하이라이트 스윕 ─────────────────────────────────────── */
+.ac-sweep-target {
+  position: relative;
+  border-radius: 4px;
+}
+
+.ac-sweep-target.ac-sweeping::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  z-index: 10;
+  width: 100%;
+  pointer-events: none;
+  background: rgba(192, 132, 252, 0.14);
+  animation: ac-sweep 1.2s var(--ac-ease) forwards;
+}
+
+@keyframes ac-sweep {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+    opacity: 1;
+  }
+  23% {
+    transform: scaleX(1);
+    transform-origin: left;
+    opacity: 1;
+  }
+  75% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+/* ── 시뮬레이터 플래시 ────────────────────────────────────────── */
+@keyframes ac-flash-error {
+  0%,
+  100% {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    background-color: rgba(248, 113, 113, 0.15);
+  }
+}
+
+@keyframes ac-flash-success {
+  0%,
+  100% {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    background-color: rgba(74, 222, 128, 0.15);
+  }
+}
+
+.ac-flash-error {
+  animation: ac-flash-error 0.6s ease;
+}
+
+.ac-flash-success {
+  animation: ac-flash-success 0.6s ease;
+}
+
+@keyframes ac-flash-text {
+  0%,
+  100% {
+    color: var(--ac-muted);
+  }
+  50% {
+    color: var(--ac-bad);
+  }
+}
+
+.ac-flash-text {
+  animation: ac-flash-text 0.6s ease;
+}
+
+@keyframes ac-row-highlight {
+  0%,
+  40% {
+    background-color: rgba(192, 132, 252, 0.1);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.ac-row-highlight {
+  animation: ac-row-highlight 1.2s var(--ac-ease) forwards;
+}
+
+@keyframes ac-fall-drop {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(40px) rotate(5deg);
+  }
+}
+
+@keyframes ac-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ── 유도용 펄스 ─────────────────────────────────────────────── */
+@keyframes ac-pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.ac-pulse-ring {
+  animation: ac-pulse-ring 0.9s ease-out 2;
+}
+
+@keyframes ac-pulse-purple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(192, 132, 252, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(192, 132, 252, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(192, 132, 252, 0);
+  }
+}
+
+.ac-pulse-purple {
+  animation: ac-pulse-purple 0.9s 2;
+}
+
+@keyframes ac-pulse-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(248, 113, 113, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(248, 113, 113, 0);
+  }
+}
+
+.ac-pulse-red {
+  animation: ac-pulse-red 0.9s 2;
+}
+
+@keyframes ac-bounce-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+.ac-bounce-soft {
+  animation: ac-bounce-soft 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes ac-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.ac-blink {
+  animation: ac-blink 1s infinite;
+}
+
+/* ── 플레이스홀더 격자 ────────────────────────────────────────── */
+.ac-media-grid {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(192, 132, 252, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(192, 132, 252, 0.05) 1px, transparent 1px);
+}
+
+.ac-placeholder-grid {
+  background-color: #0d0816;
+  background-position: center center;
+  background-size: 24px 24px;
+  background-image:
+    linear-gradient(to right, rgba(192, 132, 252, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(192, 132, 252, 0.04) 1px, transparent 1px);
+}
+
+.ac-dot-grid {
+  background-size: 20px 20px;
+  background-image:
+    linear-gradient(rgba(192, 132, 252, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(192, 132, 252, 0.05) 1px, transparent 1px);
+}
+
+/* ── 기기 화면 스택 (사용자 흐름) ─────────────────────────────── */
+.ac-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  visibility: hidden;
+  pointer-events: none;
+  background-color: var(--ac-bg);
+}
+
+.ac-screen.ac-screen-active {
+  z-index: 10;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* ── 컴포넌트 분해도 ─────────────────────────────────────────── */
+.ac-comp-layer {
+  backface-visibility: hidden;
+  will-change: transform, outline, box-shadow;
+  transition: transform 0.5s var(--ac-ease), box-shadow 0.5s var(--ac-ease), outline 0.5s var(--ac-ease),
+    opacity 0.3s ease, filter 0.3s ease;
+}
+
+.ac-comp-annotation {
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* ── 범위 벽 포스터 낙하 ─────────────────────────────────────── */
+@keyframes ac-poster-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-22px) rotate(0deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(2px) rotate(var(--ac-rot-over, 0deg));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotate(var(--ac-rot-final, 0deg));
+  }
+}
+
+.ac-scope-poster {
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.ac-wall-active .ac-scope-poster {
+  animation: ac-poster-drop 0.6s var(--ac-ease) forwards;
+  animation-delay: var(--ac-delay, 0s);
+}
+
+.ac-scope-poster.ac-dropped {
+  opacity: 1;
+  transform: translateY(0) rotate(var(--ac-rot-final, 0deg));
+  transition: transform 0.3s var(--ac-ease), box-shadow 0.3s ease;
+  animation: none;
+}
+
+.ac-scope-poster.ac-dropped:hover {
+  z-index: 20;
+  transform: translateY(-4px) rotate(0deg);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes ac-dust {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(0);
+  }
+  30% {
+    opacity: 0.3;
+    transform: scale(1.5) translateY(2px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.5) translateY(-2px);
+  }
+}
+
+.ac-dust {
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.ac-wall-active .ac-dust {
+  animation: ac-dust 0.6s ease-out forwards;
+  animation-delay: calc(var(--ac-delay, 0s) + 0.3s);
+}
+
+/* ── 퇴장 시퀀스 (포스터가 떨어지며 마을로) ──────────────────── */
+@keyframes ac-exit-fall {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0.2;
+    transform: translateY(120vh) rotate(var(--ac-exit-rot, 8deg));
+  }
+}
+
+.ac-exit-poster {
+  animation: ac-exit-fall 0.5s cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation-delay: var(--ac-exit-delay, 0s);
+}
+
+@keyframes ac-exit-peel {
+  0%,
+  99% {
+    transform: rotate(-2deg) scaleX(1);
+  }
+  100% {
+    transform: rotate(-2deg) scaleX(0);
+  }
+}
+
+.ac-exit-tape {
+  transform-origin: center;
+  animation: ac-exit-peel 0.5s linear forwards;
+  animation-delay: var(--ac-exit-peel, 0s);
+}
+
+@keyframes ac-exit-blackout {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ── 포커스 링 ───────────────────────────────────────────────── */
+.ac-root button:focus-visible,
+.ac-root a:focus-visible,
+.ac-root [tabindex]:focus-visible {
+  outline: 2px solid var(--ac-primary);
+  outline-offset: 2px;
+}
+
+/* ── 동작 줄이기 ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .ac-root *,
+  .ac-root *::before,
+  .ac-root *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .ac-reveal,
+  .ac-word,
+  .ac-scope-poster {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  .ac-tape {
+    transform: scaleX(1) !important;
+  }
+
+  .ac-dust {
+    display: none !important;
+  }
+}
