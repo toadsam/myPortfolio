@@ -1341,11 +1341,12 @@ and a filename, body font-mono 12px with a line-number gutter.
 Margin-top 36px. A row of three stat cells, gap 12px (stacks below 640px).
 Each cell: padding 16px, rounded-md, border 1px rgba(74,222,128,0.22),
 background rgba(74,222,128,0.04).
-  Cell 1  value font-mono 28px font-black #4ade80 VERBATIM "10 / 10"
-          label font-mono 10px rgba(255,255,255,0.45) VERBATIM "절전 복귀 후 자동 재연결"
-  Cell 2  value VERBATIM "3회"    label VERBATIM "재현 시나리오 반복 검증"
-  Cell 3  value VERBATIM "0건"    label VERBATIM "리허설 2일차 재발"
-Values count up when the row enters the viewport.
+  Cell 1  value font-mono 28px font-black #4ade80 VERBATIM "자동 재연결"
+          label font-mono 10px rgba(255,255,255,0.45) VERBATIM "절전 복귀 후 스트림 복구"
+  Cell 2  value VERBATIM "수동 재현"  label VERBATIM "연결을 끊었다 붙이며 확인"
+  Cell 3  value VERBATIM "미측정"    label VERBATIM "실제 현장 네트워크 검증"
+All three cells are intentionally non-numeric - none of this was counted or measured.
+Do NOT turn them back into numbers ("10 / 10", "3회", "0건" 등). Style them identically.
 Below the row, font-mono 10px rgba(255,255,255,0.30),
 VERBATIM: "수동 테스트 결과입니다. 자동화된 회귀 테스트는 붙이지 못했습니다."
 
@@ -1434,8 +1435,8 @@ HEADING (30px font-black):
   VERBATIM: "축제장 한복판에서 제일 안 터지는 건 인터넷이다"
 
 PARAGRAPH (16px leading-9, max-width 740px, margin-top 20px):
-  VERBATIM: "사람이 몰리면 기지국이 먼저 죽는다. 리허설 때는 잘 되던 화면이
-             본 행사 때 안 열리는 게 제일 무서웠다."
+  VERBATIM: "사람이 몰리면 기지국이 먼저 죽는다. 개발용 네트워크에서 잘 되던 화면이
+             정작 현장에서 안 열리는 게 제일 무서웠다."
 
 === BLOCK B: THE OFFLINE TOGGLE + SURVIVAL BOARD (the defining idea) ===
 
@@ -1935,7 +1936,7 @@ COLUMN 1 - header VERBATIM "KEEP", color #4ade80, top border #4ade80. Items VERB
   "현장 제약(네트워크)을 설계 초기에 반영한 것"
 
 COLUMN 2 - header VERBATIM "PROBLEM", color #f87171, top border #f87171. Items VERBATIM:
-  "SSE 연결 유실을 리허설 전날에야 발견했다"
+  "SSE 연결 유실을 늦게 발견했다 — 에러가 안 나는 버그라 눈치채기 어려웠다"
   "실제 축제장 네트워크에서 테스트하지 못했다"
   "재연결 임계값을 근거 없이 감으로 정했다"
 

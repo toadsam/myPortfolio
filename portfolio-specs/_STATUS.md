@@ -170,7 +170,8 @@ QuoteCard · TldrBanner · BeforeAfter · ChallengeCard
 
 ## 6. 데이터 이슈 — 2026-07-31 저장소 대조로 해소
 
-> 전체 판정표는 **`_AUDIT.md`**, 정정 요약은 **`00-OVERVIEW.md` §0**.
+> 전체 판정표는 **`_AUDIT.md`**, 정정 요약은 **`00-OVERVIEW.md` §0**,
+> **아직 모르는 것은 `_UNKNOWNS.md`** (🔴 A급 3건 = 07 P02·P06 / 05 트러블 2건 / 06 트러블 2번째).
 
 - **[FIX-01] muscleup 실시간 스택** ✅ **해소 — Socket.IO 확정.**
   `Ajou_MuscleUp/realtime/src/server.ts` 가 `socket.io` 서버(포트 `4001`), 프론트 `socket.io-client ^4.8.1`.

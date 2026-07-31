@@ -18,12 +18,13 @@ export const RICH_DATA: Record<string, RichProject> = {
     gallery: [
       {label: "보유 종목 · 수익률 화면", ratio: "16/10"},
       {label: "자산 비중 차트", ratio: "16/10"},
-      {label: "AI 체크포인트(리서치) 리포트", ratio: "16/10"}
+      {label: "AI 체크포인트(리서치) 리포트", ratio: "16/10"},
+      {label: "MyWave 자산 흐름 대시보드", ratio: "16/10"}
     ],
     tldr: [
       {
         k: "무엇을",
-        v: "거래 기록 기반 포트폴리오 분석 + AI 체크포인트 웹앱 (StockFlow)"
+        v: "거래 기록 기반 포트폴리오 분석 + AI 체크포인트 웹앱 (StockFlow) · 자산 흐름 대시보드(MyWave) 포함"
       },
       {k: "왜", v: "수익률·자산 비중·뉴스 영향을 한 곳에서 보기 어려움"},
       {
@@ -1152,13 +1153,13 @@ export const RICH_DATA: Record<string, RichProject> = {
     problemShot: {label: "영상만 보며 따라하던 기존 학습 방식", ratio: "4/3"},
     gallery: [
       {label: "수어 단어 학습·퀴즈", ratio: "16/10"},
-      {label: "3D 아바타 수어 표현", ratio: "16/10"},
+      {label: "수어 동작 영상 재생", ratio: "16/10"},
       {label: "정답 피드백·반복 학습", ratio: "16/10"}
     ],
     tldr: [
       {
         k: "무엇을",
-        v: "3D 아바타로 배우고 표현하는 수어 학습 서비스 (파란학기 과제)"
+        v: "수어 동작 영상을 보고 뜻을 맞히며 익히는 학습 앱 (파란학기 과제 · 3D 아바타는 팀원 담당)"
       },
       {
         k: "왜",
@@ -1212,7 +1213,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           who: "팀 문제 정의 (README)"
         },
         {
-          q: "프론트·아바타·백엔드가 얽혀서, 데이터 계약을 한 소스로 통일해야 했다.",
+          q: "영상은 Storage에, 단어 정보는 Firestore에 따로 쌓여서 조회 경로를 하나로 모아야 했다.",
           who: "백엔드 담당(본인) 관점"
         }
       ],
@@ -1224,7 +1225,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {t: "요구분석", d: "학습 흐름"},
       {t: "API 설계", d: "학습·판정·변환"},
       {t: "데이터 구축", d: "단어-동작 매핑"},
-      {t: "연동", d: "FE·아바타"},
+      {t: "연동", d: "FE·아바타 팀원과 API 계약"},
       {t: "발표", d: "파란학기"}
     ],
     architecture: [
@@ -1233,12 +1234,12 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         tag: "Data",
         name: "Firebase/Firestore",
-        desc: "단어·동작 매핑 · Cloud Storage"
+        desc: "단어·영상 매핑 · Firestore + Cloud Storage"
       },
       {
         tag: "Contract",
-        name: "단일 데이터 계약",
-        desc: "단어↔동작 키를 한 소스로 통일"
+        name: "단일 조회 경로",
+        desc: "Storage → Firestore 폴백을 한 곳으로"
       }
     ],
     decisions: [
@@ -1862,10 +1863,10 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     decisions: [
       {
-        area: "점프",
-        pick: "코요테 타임",
-        why: "조작감·관용도 ↑",
-        alt: "엄격 판정(좌절 ↑)"
+        area: "접지 판정",
+        pick: "발 4방향 레이",
+        why: "가장자리에서만 정확히 접지로 잡힘",
+        alt: "코요테 타임(공중 점프 부작용)"
       },
       {
         area: "스테이지",
@@ -1971,11 +1972,11 @@ export const RICH_DATA: Record<string, RichProject> = {
       {n: "Unity", l: "2022.3"}
     ],
     kpt: {
-      keep: ["코요테 타임으로 조작감 개선", "씬 분리로 협업 충돌 최소화"],
+      keep: ["4방향 접지 판정으로 조작감 개선", "씬 분리로 협업 충돌 최소화"],
       problem: ["스테이지 분량 부족", "밸런싱 시간 부족"],
       try: ["보스 패턴 추가", "리플레이/타임어택"]
     },
     learning:
-      "팀 협업에서 ‘기술’만큼 ‘충돌 안 나게 일 나누는 구조’가 중요하다는 걸 배웠다. 조작감은 코요테 타임 한 줄의 디테일에서 갈렸다."
+      "팀 협업에서 ‘기술’만큼 ‘충돌 안 나게 일 나누는 구조’가 중요하다는 걸 배웠다. 그리고 조작감 문제를 시간(코요테 타임)으로 덮으려다 실패하고 나서야, 원인이 판정 위치였다는 걸 알았다."
   }
 };
