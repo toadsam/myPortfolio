@@ -110,22 +110,8 @@ const plazaBuilding: BuildingData = {
 };
 
 const projectBuildings: BuildingData[] = [
-  {
-    id: "project-mywave",
-    sectionId: "projects",
-    district: "projects",
-    contentId: "mywave",
-    kind: "office-rounded",
-    name: "MyWave",
-    label: "Fintech",
-    description: "개인 자산 흐름을 시각화하는 금융 관리 대시보드",
-    position: [-7, 0, -4],
-    size: [2.0, 1.9, 2.0],
-    color: "#0d2a1a",
-    roofColor: "#1a4a2a",
-    accentColor: "#00ff88",
-    techStack: ["React", "TypeScript", "Chart UI"]
-  },
+  // MyWave는 별도 저장소가 없고 MyStock-Desk 저장소 안의 화면(frontend/src/mywave)이라
+  // 건물을 따로 두지 않고 아래 project-mystock 하나로 합쳤습니다. (2026-07-31)
   {
     id: "project-mystock",
     sectionId: "projects",
@@ -134,8 +120,9 @@ const projectBuildings: BuildingData[] = [
     kind: "tower",
     name: "MyStock-Desk",
     label: "Finance AI",
-    description: "거래 기록 기반 포트폴리오 분석과 AI 체크리스트 서비스",
-    position: [-7, 0, -0.5],
+    description:
+      "거래 기록 기반 포트폴리오 분석과 AI 체크리스트, 자산 흐름 대시보드(MyWave)를 담은 서비스",
+    position: [-7, 0, -2],
     size: [1.9, 2.6, 1.9],
     color: "#0d1f3a",
     roofColor: "#1a3a6a",
@@ -166,13 +153,13 @@ const projectBuildings: BuildingData[] = [
     kind: "dome",
     name: "수어지구",
     label: "Social Tech",
-    description: "수어 아바타 기반 학습 및 표현 서비스",
+    description: "수어 동작 영상을 보고 뜻을 익히는 학습 앱",
     position: [-7, 0, 6.5],
     size: [2.0, 1.8, 2.0],
     color: "#0d1a2e",
     roofColor: "#1a2e4a",
     accentColor: "#7eb8ff",
-    techStack: ["Spring Boot", "React", "TypeScript"]
+    techStack: ["Spring Boot", "Firebase", "Expo"]
   },
   {
     id: "project-aclub",
@@ -196,9 +183,9 @@ const projectBuildings: BuildingData[] = [
     district: "projects",
     contentId: "ajou-adventure",
     kind: "arcade",
-    name: "아주대모험",
+    name: "아주분투",
     label: "Web Game",
-    description: "아주대학교 캠퍼스를 배경으로 한 Phaser 2D 캐주얼 게임",
+    description: "아주대학교 캠퍼스를 배경으로 한 Phaser 3 기반 2D 러닝 게임",
     position: [-4, 0, 8.5],
     size: [1.9, 1.7, 1.9],
     color: "#1a2a0d",
@@ -236,7 +223,7 @@ const projectBuildings: BuildingData[] = [
     color: "#1a0d0d",
     roofColor: "#3a1a1a",
     accentColor: "#ff4488",
-    techStack: ["TypeScript", "Spring Boot", "SSE", "OAuth"]
+    techStack: ["TypeScript", "Spring Boot", "Socket.IO", "OAuth"]
   },
   {
     id: "project-darklab",
@@ -493,7 +480,7 @@ const lifeBuildings: BuildingData[] = [
     kind: "dome",
     name: "음악 스튜디오",
     label: "Music",
-    description: "플레이리스트와 사운드 — MyWave로 이어지는 공간.",
+    description: "플레이리스트와 사운드를 모아둔 공간.",
     position: [11, 0, 8.5],
     size: [2.0, 1.9, 2.0],
     color: "#160d2a",

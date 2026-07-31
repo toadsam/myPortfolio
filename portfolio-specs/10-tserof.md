@@ -1,9 +1,24 @@
 # 10. TSEROF — 프롬프트 팩
 
-> 3D 플랫포머 · Unity / C# / Unity 2022.3 · **팀 프로젝트**
+> 3D 플랫포머 · Unity / C# / Unity 2022.3 · **5인 팀 프로젝트** · **Steam 출시**
 > **사용법**: `PAGE 00` ~ `PAGE 10` 의 코드블록을 **하나씩 통째로 복사해서 Variant에 붙여넣으세요.**
 > 각 프롬프트는 **완전히 자립적**입니다 (색상·폰트·무드가 매번 반복 포함).
 > `## A` `## B` `## D` 는 **읽기용**이지 프롬프트가 아닙니다.
+
+> ✅ **[FIX-02] [FIX-03] 해소 (2026-07-31) — 저장소 접근 확인됨.**
+> `KimEoJin24/TSEROF` 는 비공개지만 **협업자 권한으로 열람 가능**합니다. 확정된 사실:
+>
+> | 항목 | 값 |
+> |---|---|
+> | 기간 | **2023.11 – 2024.02** |
+> | 팀 | **5인** (문서 본문에서는 계속 "팀원 A/B/C" 로만 지칭할 것) |
+> | 출시 | **Steam 스토어 출시 완료** |
+> | 씬 | `Stage1Scene` · `Stage2Scene` · `Stage3Scene` · `StageSelect` · `StartScene` |
+> | 실제 코드 근거 | `ForceReceiver.cs`(4방향 접지 레이) · `FileDataHandler.cs`(XOR 세이브) · `ObjectPoolJump.cs`(풀링) · `DataPersistenceManager.cs` |
+>
+> 🔵 **[FIX-05] P02·P04 재설계됨.** 이 방은 원래 **「코요테 타임 유무」** 를 축으로 삼았는데
+> **저장소에 코요테 타임 코드가 없습니다.** 실제 해결은 **접지 레이 1개 → 발 4방향 확장**이고,
+> 코요테 타임은 **넣었다가 뺀 「실패한 시도」** 입니다. 자세한 건 `PAGE 04` 상단 박스를 보세요.
 
 ---
 
@@ -52,7 +67,7 @@ TSEROF에서 내가 맡은 것은 두 가지였다. **조작감**(WASD·2단 점
 |---|---|
 | 스테이지를 전면 개방하지 않고 순차 잠금 해제했다 | **스크롤해야 다음 칸이 열린다.** 목차를 미리 다 보여주지 않는다 |
 | 진행 상황을 저장해 이어하기를 만들었다 | 새로고침해도 **열어둔 칸이 유지된다** (sessionStorage) |
-| 점프에 코요테 타임을 뒀다 | P02에서 관람객이 **코요테 타임 없는 버전**을 먼저 조작한다 |
+| 접지 판정을 발 4방향 레이로 넓혔다 | P02에서 관람객이 **레이 1개짜리 버전**을 먼저 조작한다 |
 | 씬을 분리해 팀 작업을 나눴다 | P06 다이어그램이 **실제로 분리되며 충돌이 사라진다** |
 
 **관람객은 이 프로젝트가 무엇인지를 읽어서 아는 게 아니라, 조작해서 안다.**
@@ -79,7 +94,7 @@ DarkLab이 "조명 %"로 진행을 표현했다면 TSEROF는 **"잠금 해제 n/
 **① PAGE 04 — 씹혔던 점프가 되는 순간** (감정의 클라이맥스)
 관람객은 PAGE 02에서 이미 발판 끝 점프가 씹히는 걸 겪었다. 짜증까지는 아니어도 "어? 왜 안 되지"는 느꼈다.
 PAGE 04에서 그걸 정면으로 꺼낸다: *"방금 발판 끝에서 점프가 씹혔죠. 저도 그랬습니다."*
-→ 8단계 추적 후, **관람객이 직접 `코요테 타임 ON` 토글을 누른다.** 같은 조작이 이번엔 된다.
+→ 8단계 추적 후, **관람객이 직접 `레이 4개` 토글을 누른다.** 같은 조작이 이번엔 된다.
 → 그리고 그 차이를 만든 **C# 세 줄**이 옆에 뜬다. 체험 → 원인 → 코드가 한 화면 안에 있다.
 
 **② PAGE 06 — 커밋들이 한 파일로 수렴하는 애니메이션** (기술의 클라이맥스)
@@ -109,7 +124,9 @@ PAGE 04에서 그걸 정면으로 꺼낸다: *"방금 발판 끝에서 점프가
 - 스페이스/방향키 `preventDefault` 는 **해당 데모 컨테이너가 포커스/호버 상태일 때만.**
   전역 키 캡처는 페이지 스크롤을 죽인다 — **이걸 어기면 배포 금지**
 - 플랫포머 데모의 물리 루프는 **뷰포트 밖 + 탭 숨김 시 반드시 정지** (배터리)
-- 지어낸 수치 0개. 스테이지 개수·플레이 시간·팀 인원 주장 금지. `[확인필요]` 항목은 그대로 표기
+- 지어낸 수치·정황 0개. 플레이 시간·판정 ms 개선치 주장 금지.
+  **확정된 사실은 써도 됩니다**: 팀 5인 · 2023.11–2024.02 · Steam 출시 · 스테이지 3종 + 스테이지 셀렉트.
+  아직 모르는 것(시연 영상 길이, 팀원별 담당 범위)만 `[확인필요]` 로 표기
 - 사운드 최대 볼륨 하드 제한 (0.15). 점프/착지음은 짧고 작게
 - 화면 전체 플래시·스트로브 금지. 1Hz 초과 깜빡임 금지 (광과민성)
 - **비공개 저장소 가능성 고지** — GitHub 링크는 팀원 소유이므로 접근 제한 문구를 반드시 병기
@@ -321,7 +338,7 @@ META GRID (2x2 cells; single column below 640px).
 Each cell: value 24px font-mono font-black rgba(255,255,255,0.86) on top,
 label 11px font-mono rgba(255,255,255,0.46) letter-spacing 0.1em below.
 Border 1px rgba(52,211,153,0.16), rounded-md, padding 16px, background #061a12.
-  Cell 1  value "2단"      label "점프 · 코요테 타임"
+  Cell 1  value "2단"      label "점프 · 4방향 접지 판정"
   Cell 2  value "다단계"    label "스테이지 · 잠금 해제"
   Cell 3  value "팀"       label "협업 · Git 워크플로"
   Cell 4  value "Unity"    label "2022.3 / C#"
@@ -578,7 +595,9 @@ step: reads a movement axis and applies horizontal velocity to a Rigidbody, perf
 grounded check against a ground layer, resets an air-jump counter when grounded, and
 on a jump input either applies a ground jump impulse or, if an air jump remains,
 applies an air jump and decrements the counter.
-Keep the grounded check STRICT here - no coyote time yet. That is deliberate.
+Keep the grounded check NAIVE here: a SINGLE downward ray cast from the character's
+centre point only. That single-point check is the actual bug and it must stay broken
+on this page - it is the setup for PAGE 04.
 Line numbers in a left gutter, rgba(255,255,255,0.20), min-width 20px, right-aligned,
 user-select none. Code font-mono 12px, leading-relaxed.
 
@@ -642,8 +661,11 @@ aria-live on the running numbers.
 Code must be selectable, copyable text - never an image.
 
 === DO NOT ===
-Do not add coyote time or a jump buffer on this page - the strict grounded check is
-the setup for a later section and must stay broken here.
+Do not widen the ground check on this page - the single centre ray is the setup for
+PAGE 04 and must stay broken here.
+Do not add coyote time anywhere in this room. It was tried during development and
+removed (it let the player jump in mid-air); it appears only as a REJECTED attempt
+on PAGE 04, never as the fix.
 Do not show the full code colored from the start.
 Do not use a syntax highlighting library; hand-color tokens with spans.
 Do not run the physics loop off-screen. Do not capture keys globally.
@@ -856,34 +878,50 @@ Do not invent file sizes, save/load timings, or benchmark numbers.
 
 ## PAGE 04 — 트러블슈팅 01 · 발판 끝에서 씹힌 점프
 
-**개발 실체**: 증상 → 재현 → 소거 → 실패한 시도 → 원인 → Before/After → 검증 → **남은 한계**
-**연출 장치**: **PAGE 02에서 관람객이 이미 겪은 그 씹힘**을 정면으로 회수 → 토글로 직접 재조작
+**개발 실체**: 증상 → 재현 → 소거(**실패한 시도 = 코요테 타임**) → 원인 → Before/After → 검증 → **남은 한계**
+**연출 장치**: **PAGE 02에서 관람객이 이미 겪은 그 씹힘**을 정면으로 회수 → `레이 1개 ↔ 4개` 토글로 직접 재조작
+
+> 🔵 **2026-07-31 재설계됨.** 이전 버전은 이 페이지 전체(그리고 P02의 복선까지)를
+> **「코요테 타임 유무」** 위에 세웠는데, **실제 저장소에 코요테 타임 코드가 없습니다.**
+> 실제 해결은 `ForceReceiver.CheckIsGrounded()` 의 **접지 레이를 발 4방향으로 확장**한 것입니다:
+> ```csharp
+> Ray[] rays = new Ray[4] {
+>   new Ray(transform.position + transform.forward * 0.25f + Vector3.up * 0.01f, Vector3.down),
+>   new Ray(transform.position - transform.forward * 0.25f + Vector3.up * 0.01f, Vector3.down),
+>   new Ray(transform.position + transform.right   * 0.25f + Vector3.up * 0.01f, Vector3.down),
+>   new Ray(transform.position - transform.right   * 0.25f + Vector3.up * 0.01f, Vector3.down)
+> };
+> for (int i = 0; i < rays.Length; i++)
+>   if (Physics.Raycast(rays[i], maxDistance, LayerMask.GetMask("Ground")))
+>   { if (!isGrounded) EnterGround(); return; }
+> ```
+> 코요테 타임은 **시도했다가 뺐습니다** — 공중에서도 점프가 나가는 부작용이 있었습니다.
+> 그래서 이 페이지에서 코요테 타임은 **「실패한 시도」 칸에만** 등장합니다.
+> 이 편이 오히려 더 좋은 논증입니다: **시간으로 때우려다 공간 문제인 걸 알아낸 과정**이니까요.
 
 ```text
-Build a TROUBLESHOOTING CASE FILE about an input-timing bug, which the viewer has
-ALREADY physically experienced earlier on this page, for a Unity 3D platformer
-portfolio page.
+Build a TROUBLESHOOTING CASE FILE for a Unity 3D platformer where the viewer replays
+the exact edge-jump failure they already felt earlier on the page, then toggles the
+ground check from ONE centre ray to FOUR foot rays and feels the same input work.
 Stack: React + TypeScript + Tailwind CSS + framer-motion. Self-contained component.
+The mini-platformer must be the SAME hook used earlier on this page, with the ray
+count as its only changed option - otherwise the "same input" claim is not true.
 
-=== SUBSTANCE THIS PAGE MUST DELIVER (all eight stages, none may be dropped) ===
-1. Symptom  2. Reproduction  3. Elimination of suspects  4. A failed attempt
-5. Root cause  6. Before/After code  7. Verification  8. Remaining limitations
-
-=== CONCEPT ===
-Earlier on this page the viewer played a mini platformer whose grounded check was
-deliberately strict, so jumping at the very edge of a platform sometimes did nothing.
-This section opens by naming that exact experience, then walks the real debugging
-process, and ends by letting the viewer TOGGLE the fix on and re-play the same demo.
-The page never takes control away - it gives more of it.
+=== SUBSTANCE THIS PAGE MUST DELIVER ===
+All eight stages, in order:
+symptom -> reproduction -> elimination -> THE FAILED ATTEMPT (coyote time, and the
+concrete reason it was removed) -> root cause -> before/after code -> verification
+-> remaining limits.
+The failed attempt is not optional. It is the most valuable part of this page.
 
 === MOOD ===
-A case file. Calm, methodical, evidence-first. Dark green-black, wireframe grid.
-No drama, no horror. The only tension is a suspect list narrowing down.
+A greybox test level with the debug gizmos switched on. Dark green-black, wireframe,
+developer-facing. Precise rather than dramatic - this is a geometry bug.
 
 === DESIGN TOKENS (use exactly) ===
 background #04120d | primary #34d399 | secondary #059669 | accent #6ee7b7
 text rgba(255,255,255,0.86) | muted rgba(255,255,255,0.46)
-bad #f87171 | warn #fbbf24 | good #34d399
+bad #f87171 | warn #fbbf24 | ray #7dd3fc
 panel bg #061a12, border rgba(52,211,153,0.16)
 syntax: comments #4b7c68, strings #d9a45b, keywords #34d399, numbers #b58cf0
 grid overlay: 48px cells, 1px lines rgba(52,211,153,0.05)
@@ -892,251 +930,225 @@ fonts: headings font-black, body sans leading-8, code + labels font-mono,
 easing cubic-bezier(0.34,1.56,0.64,1) overshoot, 0.25s-0.6s | rounded-md
 
 === LAYOUT ===
-Single centered column, max-width 960px, padding-block 120px.
-  Block A : case header (symptom + reproduction)
-  Block B : THE REPLAY DEMO with a before/after toggle (centerpiece)
-  Block C : elimination table
-  Block D : failed attempt card
-  Block E : root cause + Before/After code pair
-  Block F : verification + remaining limitations
-  Block G : [IMG-04]
+Centered column, max-width 1040px, padding-block 120px.
+  Block A : label + heading + symptom card
+  Block B : THE REPRODUCTION - playable strip + ray-count toggle + gizmo view
+  Block C : elimination table (including the failed attempt row)
+  Block D : THE FAILED ATTEMPT card (coyote time) - full width, its own emphasis
+  Block E : root cause
+  Block F : before/after code
+  Block G : verification + remaining limits
 
 === CONTENT (Korean copy - VERBATIM, never translate) ===
 
-CASE LABEL (font-mono 11px, letter-spacing 0.25em, color #fbbf24):
-  "TROUBLE 01"
+SECTION LABEL (font-mono 11px, letter-spacing 0.25em, color #f87171):
+  "03 · 트러블슈팅 01"
 
-TITLE (26px font-black, margin-top 10px):
-  "발판 끝에서 누른 점프가 씹혔다"
+HEADING (30px font-black):
+  VERBATIM: "발이 발판에 걸쳐 있으면 땅이 아니었다"
 
-OPENING CALLBACK (17px leading-9, margin-top 20px), VERBATIM:
-  "위에서 직접 조작해 봤다면 한 번쯤 겪었을 것이다. 발판 가장자리에서 걸어 나가며
-   스페이스를 눌렀는데 아무 일도 안 일어나는 순간. 저도 그랬고, 처음엔 제 손이
-   느린 줄 알았다."
-  Emphasize "제 손이 느린 줄 알았다" in #fbbf24, font-bold.
+--- SYMPTOM CARD ---
+Margin-top 24px, padding 20px, rounded-md, border 1px rgba(248,113,113,0.28),
+background rgba(248,113,113,0.05), border-left 3px #f87171.
+  Label font-mono 10px letter-spacing 0.18em #f87171, VERBATIM: "증상"
+  Body 16px leading-8, VERBATIM:
+  "발판 가장자리에서 점프하면 아무 일도 안 일어났다.
+   화면에는 분명히 발판을 밟고 서 있었다.
+   플레이 테스트에서 「점프가 씹힌다」는 말이 계속 나왔다."
+  Add a callback line, margin-top 12px, 15px, #6ee7b7, font-bold, VERBATIM:
+  "위에서 직접 겪으셨다면 그게 이 버그입니다."
 
-CASE HEADER PANEL: full width, rounded-md, border 1px rgba(251,191,36,0.28),
-background rgba(251,191,36,0.04), padding 22px.
-  Top row: the case label on the left, and a severity tag on the right, font-mono 10px,
-  background rgba(251,191,36,0.14), color #fbbf24, padding 3px 10px, rounded,
-  VERBATIM: "조작감 · 재현 조건부"
-  Two labelled rows below (label font-mono 10px uppercase rgba(255,255,255,0.35),
-  body 15px leading-8):
-    Label VERBATIM "증상"   body VERBATIM:
-      "발판 끝에서 점프가 가끔 무시된다. 항상은 아니고, 걸어 나가는 속도가 빠를수록 자주."
-    Label VERBATIM "재현"   body VERBATIM:
-      "발판 가장자리를 향해 계속 이동하면서, 발이 떨어졌다고 느낀 직후에 점프를 누른다.
-       천천히 걸어서 멈춘 뒤 누르면 재현되지 않는다."
-  A note under them, font-mono 11px, rgba(255,255,255,0.46), VERBATIM:
-    "// 몇 번 중 몇 번인지는 기록해두지 않았다. 아래 검증도 횟수 기준으로만 확인했다."
-    This note is REQUIRED - do not replace it with an invented failure rate.
+=== BLOCK B: THE REPRODUCTION (the defining idea) ===
+Margin-top 36px. Container, rounded-md, border 1px rgba(52,211,153,0.18),
+background #061a12, padding 20px.
 
-=== BLOCK B: THE REPLAY DEMO (centerpiece) ===
-Container: full width, height 380px, rounded-md, border 1px rgba(52,211,153,0.16),
-background #061a12, overflow hidden.
-Header strip (34px, border-bottom 1px rgba(52,211,153,0.14)):
-  left  font-mono 11px rgba(255,255,255,0.46) VERBATIM: "▸ 같은 조작, 두 가지 판정"
-  right a two-option toggle, font-mono 11px, VERBATIM: "코요테 타임 OFF" | "코요테 타임 ON"
-        Active OFF: background rgba(248,113,113,0.14), color #f87171
-        Active ON : background rgba(52,211,153,0.14), color #34d399
-        It starts on OFF.
+Header strip (32px): left font-mono 10px rgba(255,255,255,0.46),
+VERBATIM: "재현 · 발판 끝에서 점프"
+right a two-option toggle, font-mono 11px, VERBATIM: "레이 1개" | "레이 4개"
+Default: 레이 1개.
 
-Inside, a SINGLE WIDE PLATFORM with an obvious edge, plus a target ledge across a gap
-that can only be reached by jumping right at the edge. Same greybox styling and the
-same fixed-timestep physics loop as the earlier demo (accumulator, fixed dt, never raw
-frame deltas). Same controls (A/D or arrows, Space; touch buttons below 768px).
+PLAYABLE STRIP (height ~260px, canvas or DOM, fixed-timestep physics):
+  A short greybox course: three platforms with clear gaps. The character is a simple
+  capsule. Controls: Left/Right to move, Space or Up to jump.
+  KEY CAPTURE RULE (binding for this whole room): capture Space and arrow keys ONLY
+  while this container is focused or hovered. Never bind them globally - the page
+  must scroll normally everywhere else. Show a focus ring (2px #34d399, offset 2px).
 
-A LIVE STATE READOUT pinned to the container's top-left, font-mono 11px, tabular-nums,
-three lines, updating every simulation step:
-  VERBATIM format "grounded : true"        (true in #34d399, false in #f87171)
-  VERBATIM format "coyote   : 0.00s"       (counts down when airborne, ON mode only)
-  VERBATIM format "점프 시도 0 · 무시 0"
-This readout is the evidence panel. It is what actually taught the developer the cause,
-so it must be visible while the viewer plays.
+  THE GIZMO OVERLAY (always on in this section - this is a debug view):
+    Draw the ground-check rays as short vertical lines beneath the capsule in #7dd3fc,
+    each ending in a small dot.
+      "레이 1개" mode : ONE ray from the capsule's centre.
+      "레이 4개" mode : FOUR rays, offset forward / back / left / right.
+    A ray that HITS ground turns #4ade80 and its dot fills.
+    A ray that MISSES stays #7dd3fc at 40% opacity with a hollow dot.
+    A grounded/not-grounded badge sits above the capsule, font-mono 10px:
+      grounded     VERBATIM "접지" in #4ade80
+      not grounded VERBATIM "공중" in rgba(255,255,255,0.46)
 
-BEHAVIOR:
-  OFF mode - grounded flips to false the instant the player leaves the platform span.
-    A rejected jump flashes a 10px font-mono label above the player in #f87171,
-    VERBATIM "입력 무시됨", and increments the 무시 counter.
-  ON mode  - when grounded turns false, a short timer starts; a jump pressed while that
-    timer is still running is accepted as a ground jump. Show the timer counting down
-    in the readout. An accepted "late" jump flashes a label in #34d399,
-    VERBATIM "코요테 타임 적용".
+  THE WHOLE POINT: standing with the capsule's centre just past the platform edge,
+  the single centre ray misses while the character is visibly still on the platform.
+  The badge reads "공중", so the jump input is rejected. In "레이 4개" mode the rear
+  ray still hits, the badge reads "접지", and the identical input jumps.
 
-When the viewer clears the gap for the first time in ON mode, a line fades in at the
-container's bottom, font-mono 13px, color #34d399, VERBATIM:
-  "방금 그 점프는 발판을 떠난 뒤에 눌린 것입니다"
+  A REJECTED-INPUT INDICATOR: when a jump input is ignored, flash the word
+  VERBATIM "입력 무시" in #f87171, font-mono 10px, above the capsule for 0.5s.
+  This makes the failure legible instead of feeling like lag.
 
-Footer strip (border-top 1px, font-mono 11px, rgba(255,255,255,0.46), padding 8px 14px),
-VERBATIM: "// 실제 게임은 3D입니다. 판정 로직만 그대로 옮긴 2D 재현입니다"
+  A hint beneath the strip, font-mono 10px rgba(255,255,255,0.35), VERBATIM:
+    "발판 끝으로 걸어가서 점프해 보세요. 그 다음 토글을 바꿔서 같은 자리에서 다시."
 
-KEYBOARD SAFETY (critical): key listeners attach ONLY while the pointer is inside this
-container or it has focus; preventDefault on Space/arrows ONLY in that state; remove
-all listeners on cleanup. Never capture keys globally.
-PERFORMANCE: pause the loop off-screen (IntersectionObserver) and when document.hidden.
+  A note at the container's bottom-left, font-mono 9px rgba(255,255,255,0.32),
+  VERBATIM: "재현용 예시입니다"
+
+PERFORMANCE: fixed timestep accumulator so physics does not vary with frame rate.
+The loop must stop when out of viewport or when document.hidden, and resume without
+resetting the character's position.
 
 === BLOCK C: ELIMINATION TABLE ===
-Section label, font-mono 11px letter-spacing 0.25em rgba(255,255,255,0.46),
-VERBATIM: "▸ 의심한 것과 지운 것"
+Margin-top 44px. Label font-mono 10px letter-spacing 0.18em rgba(255,255,255,0.46),
+VERBATIM: "해본 것들"
+A 3-column table, font-mono 12px, row separators 1px rgba(255,255,255,0.08),
+row padding 13px. Headers VERBATIM: "방법" | "해봤더니" | "판단"
+Rows (판단 cells: rejected rgba(255,255,255,0.46) with "✕ ", adopted #4ade80 "● ",
+the coyote row in #fbbf24 with "▲ "):
+  "레이 길이를 늘린다"        | "발판 위 한참 떠 있어도 접지로 인식"      | "✕ 반대로 깨짐"
+  "콜라이더를 키운다"         | "벽에 안 닿았는데 막힘"                  | "✕ 다른 판정이 깨짐"
+  "코요테 타임을 준다"        | "가장자리는 해결 · 그런데 공중에서도 점프됨" | "▲ 넣었다가 뺌"
+  "레이를 발 4방향으로 늘린다" | "가장자리에서만 정확히 접지로 바뀜"        | "● 채택"
+Rows reveal 0.16s apart, sliding in from x -10px. The coyote row gets a 2px #fbbf24
+left bar; the adopted row gets a 2px #4ade80 left bar over 0.5s and lands last.
 
-A real <table>, four rows. Columns: 의심 (38%) | 결과 (16%) | 근거 (46%).
-Header cells font-mono 10px uppercase rgba(255,255,255,0.35).
-Rows 1px bottom border rgba(255,255,255,0.07), padding-block 15px, font-mono 13px.
-결과 renders as a tag chip: "아님" in rgba(255,255,255,0.35) on rgba(255,255,255,0.06);
-"일부" in #fbbf24 on rgba(251,191,36,0.12); "원인" in #f87171 on rgba(248,113,113,0.14).
+=== BLOCK D: THE FAILED ATTEMPT (required, full width) ===
+Margin-top 36px, padding 22px, rounded-md, border 1px rgba(251,191,36,0.30),
+background rgba(251,191,36,0.05), border-left 3px #fbbf24.
+  Label font-mono 10px letter-spacing 0.18em #fbbf24, VERBATIM: "넣었다가 뺀 것 · 코요테 타임"
+  Body 16px leading-8, VERBATIM:
+  "땅에서 떨어진 뒤에도 짧은 시간 동안 점프를 허용하는 방식을 먼저 넣었다.
+   가장자리 문제는 실제로 사라졌다.
+   그런데 발판에서 뛰어내린 직후에도 그 시간이 살아 있어서,
+   공중에서 한 번 더 점프가 나갔다. 2단 점프까지 있으니 3단이 된 셈이었다.
+   시간으로 덮으려 했지만 원래 문제는 시간이 아니라 위치였다."
+  Emphasize "원래 문제는 시간이 아니라 위치였다" in #fbbf24, font-bold.
 
-  Row 1  의심 VERBATIM "입력이 아예 안 들어온다"
-         결과 VERBATIM "아님"
-         근거 VERBATIM "입력 지점에 로그를 찍으니 눌린 순간은 매번 잡혔다"
-  Row 2  의심 VERBATIM "점프 힘이 약해서 안 뜨는 것처럼 보인다"
-         결과 VERBATIM "아님"
-         근거 VERBATIM "점프력을 크게 올려도 같은 순간에 똑같이 아무 일도 안 났다"
-  Row 3  의심 VERBATIM "입력 프레임과 물리 프레임이 어긋난다"
-         결과 VERBATIM "일부"
-         근거 VERBATIM "입력을 물리 스텝으로 넘기게 고쳐 조금 나아졌지만 씹힘은 남았다"
-  Row 4  의심 VERBATIM "누른 시점에 접지 판정이 이미 꺼져 있다"
-         결과 VERBATIM "원인"
-         근거 VERBATIM "접지 상태를 화면에 띄우니 점프를 누르기 몇 프레임 전에 false가 됐다"
+  A small comparison strip beneath, two cells, gap 12px, font-mono 11px:
+    Cell 1 border 1px rgba(251,191,36,0.22), padding 12px:
+      title VERBATIM "시간으로 접근"  body VERBATIM "언제까지 땅으로 쳐줄까"
+    Cell 2 border 1px rgba(74,222,128,0.22), padding 12px:
+      title VERBATIM "위치로 접근"    body VERBATIM "어디를 땅인지 볼까"
 
-Row 4 has a persistent left border 2px #f87171 and a slightly brighter background
-rgba(248,113,113,0.05).
+=== BLOCK E: ROOT CAUSE ===
+Margin-top 36px, padding 22px, rounded-md, border 1px rgba(52,211,153,0.28),
+background rgba(52,211,153,0.05), border-left 3px #34d399.
+  Label font-mono 10px letter-spacing 0.18em #34d399, VERBATIM: "원인"
+  Body 16px leading-8, VERBATIM:
+  "접지 판정을 캐릭터 중심에서 아래로 쏜 레이 하나로만 했다.
+   캐릭터에는 폭이 있는데 판정에는 폭이 없었다.
+   그래서 발이 절반쯤 걸쳐 있으면 중심은 이미 허공이었고, 코드는 정직하게 공중이라고 답했다."
+  Emphasize "캐릭터에는 폭이 있는데 판정에는 폭이 없었다" in #6ee7b7, font-bold.
 
-REVEAL ANIMATION: rows appear one at a time as the section scrolls into view, 0.22s
-apart, each sliding in from the left (x -12px -> 0). The 결과 tag lands 0.18s after its
-row with a scale pop (0.9 -> 1). Row 4's "원인" tag pops with a single red glow pulse.
-Do not reveal all rows at once - the staggered reveal reproduces narrowing down a bug.
+=== BLOCK F: BEFORE / AFTER CODE ===
+Margin-top 40px. Two panels side by side, gap 16px (stack below 1024px).
+Each: background #061a12, border 1px, rounded-md, header with three window dots and
+a filename, body font-mono 12px with a line-number gutter.
 
-=== BLOCK D: THE FAILED ATTEMPT ===
-A card, margin-top 40px, padding 22px, rounded-md,
-border 1px rgba(251,191,36,0.28), background rgba(251,191,36,0.04).
-  Label font-mono 11px letter-spacing 0.2em color #fbbf24, VERBATIM: "✗ 실패한 시도"
-  Body 15px leading-8 margin-top 10px, VERBATIM:
-  "처음엔 접지 판정 범위를 아래로 길게 늘렸다. 씹힘은 줄었는데, 이번엔 한참 떨어지는
-   중에도 점프가 됐다. 발밑 어딘가에 바닥이 걸리기만 하면 땅에 있는 걸로 쳤기 때문이다.
-   판정을 헐겁게 만든 것이지 타이밍 문제를 푼 게 아니었다."
-  Emphasize "판정을 헐겁게 만든 것이지" in #fbbf24, font-bold.
+  LEFT panel - border 1px rgba(248,113,113,0.28),
+    filename VERBATIM: "before — 중심 레이 1개"
+    CONTENT: ~6 lines casting a single downward ray from transform.position and
+    setting isGrounded from that one result.
+    HIGHLIGHT the single-ray line with rgba(248,113,113,0.12) and an inline marker,
+    font-mono 10px #f87171, VERBATIM: "← 폭이 없음"
 
-=== BLOCK E: ROOT CAUSE + BEFORE/AFTER ===
-Section label, font-mono 11px letter-spacing 0.25em rgba(255,255,255,0.46),
-VERBATIM: "▸ 진짜 원인과 해결"
+  RIGHT panel - border 1px rgba(74,222,128,0.28),
+    filename VERBATIM: "ForceReceiver.cs (after)"
+    CONTENT - use these EXACT lines (this is the real source, do not paraphrase):
+      "Ray[] rays = new Ray[4]"
+      "{"
+      "  new Ray(transform.position + transform.forward * 0.25f + Vector3.up * 0.01f, Vector3.down),"
+      "  new Ray(transform.position - transform.forward * 0.25f + Vector3.up * 0.01f, Vector3.down),"
+      "  new Ray(transform.position + transform.right   * 0.25f + Vector3.up * 0.01f, Vector3.down),"
+      "  new Ray(transform.position - transform.right   * 0.25f + Vector3.up * 0.01f, Vector3.down)"
+      "};"
+      ""
+      "for (int i = 0; i < rays.Length; i++)"
+      "{"
+      "    if (Physics.Raycast(rays[i], maxDistance, LayerMask.GetMask(\"Ground\")))"
+      "    {"
+      "        if (!isGrounded) EnterGround();"
+      "        return;"
+      "    }"
+      "}"
+      "if (isGrounded) EnterAir();"
+    HIGHLIGHT the four Ray constructor lines with rgba(125,211,252,0.12) and the
+    LayerMask line with rgba(74,222,128,0.12).
+    Caption bar, font-mono 11px, prefixed "// ", VERBATIM:
+      "네 방향 중 하나라도 닿으면 접지. 첫 히트에서 바로 빠져나온다."
 
-Cause paragraph, 17px leading-9, margin-top 14px, VERBATIM:
-  "사람은 '발판 위에 있었다'를 눈으로 기억하고 손을 움직인다.
-   물리는 이미 발판을 떠난 뒤다. 그 사이의 몇 프레임이 통째로 버려지고 있었다.
-   버그가 아니라, 판정 시점과 체감 시점이 다르다는 걸 코드가 모르고 있었던 것이다."
-  Emphasize "판정 시점과 체감 시점이 다르다" in #6ee7b7, font-bold.
+  A note beneath both panels, font-mono 10px rgba(255,255,255,0.35), VERBATIM:
+    "Ground 레이어만 검사하기 때문에 아이템이나 트리거는 접지로 세지 않습니다."
 
-Solution paragraph, 17px leading-9, margin-top 20px, VERBATIM:
-  "그래서 접지가 꺼진 직후 아주 짧은 시간 동안은 아직 땅에 있는 것으로 쳐주기로 했다.
-   흔히 코요테 타임이라고 부르는 방식이다. 타이머는 땅에 닿을 때마다 다시 채워지고,
-   공중에 있는 동안 줄어든다. 점프 판정은 접지 대신 이 타이머를 본다."
+=== BLOCK G: VERIFICATION + REMAINING LIMITS ===
+Margin-top 40px.
+A verification strip, padding 16px, rounded-md, border 1px rgba(74,222,128,0.22),
+background rgba(74,222,128,0.04).
+  Label font-mono 10px letter-spacing 0.18em #4ade80, VERBATIM: "검증"
+  A 3-row list, 15px leading-8, each prefixed "✓ ", VERBATIM:
+    "발판 가장자리에서 점프 — 정상"
+    "발판에서 뛰어내린 직후 — 3단 점프 안 나감 (코요테 때 났던 문제)"
+    "스테이지 3종 전부에서 같은 조작으로 재확인"
+Below the strip, font-mono 10px rgba(255,255,255,0.32), VERBATIM:
+  "에디터에서 기즈모를 켜두고 직접 반복해서 확인했습니다. 자동화된 테스트는 없습니다."
 
-Then a BEFORE / AFTER code pair, side by side on desktop (gap 16px), stacked below
-1024px. Both use the standard code panel styling (rounded-md, border 1px, background
-#061a12, three window dots, filename in font-mono 11px, line-number gutter,
-caption bar prefixed "// ").
-
-  BEFORE panel: border 1px rgba(248,113,113,0.28)
-    filename VERBATIM: "PlayerController.cs  (before)"
-    C#, roughly 10 lines: a jump method that checks the grounded flag directly and
-    otherwise falls through to the air-jump branch.
-    HIGHLIGHT the direct grounded check line.
-    caption VERBATIM: "발판을 벗어난 그 프레임부터 이 조건은 거짓이다"
-    caption color #f87171
-
-  AFTER panel: border 1px rgba(52,211,153,0.28)
-    filename VERBATIM: "PlayerController.cs  (after)"
-    C#, roughly 14 lines: a coyote timer field refilled on grounding and decremented
-    each step while airborne, and a jump method that treats a positive timer as
-    grounded, consuming it on use.
-    HIGHLIGHT the timer refill line, the decrement line, and the modified jump condition.
-    caption VERBATIM: "접지 대신 타이머를 본다. 세 줄 차이다"
-    caption color #34d399
-
-Under the pair, one line, 14px leading-8, rgba(255,255,255,0.62), VERBATIM:
-  "값은 여러 개를 넣어보며 손으로 정했다. 너무 길면 공중에서 한 번 더 뛰는 것처럼
-   느껴져서, 눈에 안 보일 만큼 짧게 잡았다."
-
-=== BLOCK F: VERIFICATION + REMAINING LIMITATIONS ===
-A verification bar, margin-top 40px, full width, rounded-md,
-border 1px rgba(52,211,153,0.28), background rgba(52,211,153,0.04), padding 20px.
-  Label font-mono 11px letter-spacing 0.2em color #34d399, VERBATIM: "✓ 검증"
-  Body 15px leading-8 margin-top 10px, VERBATIM:
-  "두 가지를 각각 20회씩 반복해서 확인했다.
-   발판 가장자리에서 걸어 나가며 점프하기, 그리고 아무 발판도 없는 높이에서 점프하기.
-   앞은 전부 성공했고, 뒤는 한 번도 허용되지 않았다."
-  Below it, two result chips in a row, font-mono 11px, color #34d399,
-  background rgba(52,211,153,0.12), padding 4px 10px, rounded, VERBATIM:
-    "가장자리 점프 20/20 성공"   "낙하 중 점프 0/20 허용"
-  The second chip matters as much as the first: it proves the fix did not simply
-  loosen the check. Keep both.
-
-A remaining-limitation card below, margin-top 20px, padding 20px, rounded-md,
+Then the limits card, margin-top 28px, padding 20px, rounded-md,
 border 1px rgba(255,255,255,0.12), background rgba(255,255,255,0.02).
-  Label font-mono 11px letter-spacing 0.2em rgba(255,255,255,0.48),
-  VERBATIM: "아직 남은 것"
-  Body 15px leading-8 margin-top 10px, as two bulleted items (4px dot in
-  rgba(255,255,255,0.30)), VERBATIM:
-    "코요테 타임 길이는 팀 내부에서만 만져보고 정했다. 외부 플레이 테스터에게
-     확인받지 못했으므로 '적당하다'는 건 우리 감각일 뿐이다."
-    "반대 방향 문제는 아직 남아 있다. 착지 직전에 미리 누른 점프는 여전히 버려진다.
-     흔히 점프 버퍼라고 부르는 것인데, 이번 프로젝트에서는 넣지 못했다."
-
-  Keep this card. A troubleshooting story that ends with everything perfect is not
-  believable.
-
-=== BLOCK G: [IMG-04] ===
-A 16/9 image slot, margin-top 40px, full column width, rounded-md,
-border 1px rgba(52,211,153,0.16), overflow hidden, with a caption bar below
-(font-mono 11px, rgba(255,255,255,0.46), padding 10px 14px), VERBATIM:
-  "Unity 에디터 — 접지 판정 기즈모와 발판 경계"
-Give it a badge in its top-left corner, font-mono 10px,
-background rgba(52,211,153,0.16), color #34d399, padding 3px 8px, rounded,
-VERBATIM: "에디터 원본"
-Same CSS placeholder rule (greybox rectangles on a grid, caption repeated at 12px,
-ratio hint VERBATIM "16 : 9 · 이미지 자리"). NEVER an empty gray box.
+  Label font-mono 10px letter-spacing 0.18em rgba(255,255,255,0.46),
+  VERBATIM: "남은 한계"
+  A 4-item list, 15px leading-8, each prefixed "· ", VERBATIM:
+    "레이 간격 0.25는 지금 캐릭터 크기에 맞춘 값입니다. 캐릭터가 바뀌면 다시 잡아야 합니다."
+    "레이가 4개라 아주 얇은 발판 위에서는 여전히 전부 빗나갈 수 있습니다."
+    "매 FixedUpdate마다 레이를 4번 쏩니다. 캐릭터가 많아지면 비용을 다시 봐야 합니다."
+    "체감으로만 확인했고, 판정에 대한 자동 테스트는 끝내 만들지 못했습니다."
 
 === ANIMATION TIMELINE (on section enter) ===
-0.00s  Case label and title fade up
-0.25s  Opening callback reveals word by word (stagger 0.02s)
-0.90s  Case header panel fades up (y 16px -> 0); the severity tag pops
-1.30s  Replay demo container fades up; the toggle sits on OFF; the state readout starts
-2.00s  Elimination table header appears; rows stagger in 0.22s apart with their
-       결과 tags landing 0.18s behind
-3.10s  Failed attempt card slides in from the left
-3.50s  Cause and solution paragraphs reveal
-4.20s  Before/After code panels fade up together, After 0.15s behind Before
-4.80s  Verification bar fades in; the two result chips pop in 0.1s apart
-5.10s  Remaining-limitation card fades in
-5.40s  [IMG-04] fades up
+0.00s  Label, heading word by word at 0.15s
+0.60s  Symptom card slides in from the left, callback line at 1.00s
+1.30s  The reproduction container fades up in "레이 1개" mode
+2.10s  The character auto-walks to the platform edge ONCE and attempts a jump that is
+       rejected ("입력 무시" flashes), then control hands over to the viewer with the
+       hint line. This runs once per session only.
+Blocks C through G animate on their own viewport entry.
+
+=== PERFORMANCE ===
+One fixed-timestep loop. Stop out of viewport and on document.hidden.
+Draw gizmo rays in the same pass as the character - no separate loop.
 
 === RESPONSIVE ===
-< 1024px: Before/After code panels stack vertically (Before first).
-< 768px: elimination table becomes stacked cards (의심 / 결과 tag / 근거 in a column);
-the replay demo uses on-screen touch buttons (left / right / jump, 56x56px);
-the state readout moves to the container's bottom-left at 10px;
-code font-size 11px with internal horizontal scroll (the block scrolls, never the page).
+< 1024px: before/after panels stack (before on top).
+< 720px: playable strip height 200px; replace keyboard control with two on-screen
+buttons, VERBATIM "◀" "▶" and VERBATIM "점프"; the failed-attempt comparison cells
+stack.
+< 640px: code font 11px with internal horizontal scroll (blocks scroll, never the
+page).
 
 === ACCESSIBILITY ===
-prefers-reduced-motion: no staggered reveals, no pop - everything renders immediately.
-The demo remains playable and the toggle still works.
-The elimination table must be a real <table> with proper headers.
-The before/after toggle must be a real radio group, keyboard operable, and must not
-rely on color alone - each option keeps its Korean label as text.
-The live state readout must NOT be an aria-live region (it updates every frame).
-Instead expose a visually hidden summary that updates only when the jump/ignore
-counters change.
-All code is selectable, copyable text - never an image.
+prefers-reduced-motion: no auto-walk demo, no row slide-in, no overshoot easing;
+the "입력 무시" indicator appears without a flash.
+The toggle is a real control with aria-pressed and a visible focus ring.
+Announce the toggle change ONCE via aria-live="polite":
+  VERBATIM "접지 판정 레이 1개" / VERBATIM "접지 판정 레이 4개"
+Do NOT put aria-live on the grounded badge - it changes every frame.
+Provide a visually-hidden description of the reproduction, VERBATIM:
+  "캐릭터가 발판 가장자리에 서 있을 때 접지 판정이 어떻게 달라지는지 보여주는 시연입니다."
+Ray hit/miss is never conveyed by color alone - the 접지/공중 text badge carries it.
 
 === DO NOT ===
-Do not lock scroll, freeze input, or take control away anywhere in this section.
-Do not remove the failed attempt, the ruled-out suspects, or the remaining limitations.
-Do not invent a failure rate, a millisecond figure, or a frame count that was not
-actually measured - the note in the case header stays.
-Do not make this look like a horror or a celebration - it is a case file.
+Do NOT present coyote time as the fix. It was removed. It belongs only in Block C's
+table row and Block D's failed-attempt card.
+Do NOT paraphrase the after code - those lines are the real source.
+Do NOT capture Space or arrow keys globally.
+Do NOT invent frame timings, input-latency figures, or a count of playtest reports.
+Do NOT let the viewer skip straight to "레이 4개" - the page must open in the broken
+mode so the failure is felt first.
 ```
-
----
 
 ## PAGE 05 — 핵심 구현 #2 · 스테이지는 상태를 가진다
 
@@ -1958,7 +1970,7 @@ Items: 14px leading-7 rgba(255,255,255,0.72), each prefixed with a 4px dot in th
 column color, 10px gap between items.
 
 COLUMN 1 - header VERBATIM "내가 만든 것", color #34d399. Items VERBATIM:
-  "이동 · 2단 점프 컨트롤러 (코요테 타임 포함)"
+  "이동 · 2단 점프 컨트롤러 (4방향 접지 판정)"
   "스테이지 선택 · 잠금 해제 시스템"
   "진행 상황 저장과 이어하기"
   "씬 분리 작업 규칙 정리"
@@ -2150,7 +2162,7 @@ border 1px rgba(52,211,153,0.20), padding 20px, background #0a2018.
         just fade in; numeric ones count up over 0.8s when scrolled into view).
   Label 12px rgba(255,255,255,0.50), margin-top 8px, leading-5.
 
-  Cell 1  value VERBATIM "팀"          label VERBATIM "협업 프로젝트 — 인원 [확인필요]"
+  Cell 1  value VERBATIM "5인"         label VERBATIM "팀 프로젝트 · 2023.11–2024.02"
   Cell 2  value VERBATIM "이어하기"     label VERBATIM "진행 저장 · 잠금 해제 완성"
   Cell 3  value VERBATIM "프로토타입"   label VERBATIM "완성도 — 후반 스테이지 미완"
 
@@ -2189,7 +2201,8 @@ The all-clear line must be plain text in the DOM, not injected only via animatio
 Do not render empty gray boxes for missing media - always use the CSS placeholder.
 Do not add invented metrics such as player counts, downloads, ratings, or playtime.
 Do not add confetti, fireworks, or a full-screen flash for the all-clear moment.
-Do not remove the [확인필요] marker from the team cell.
+The team facts are CONFIRMED (5 people, 2023.11-2024.02, released on Steam) - do not
+reintroduce a [확인필요] marker on the team cell.
 ```
 
 > ⚠️ **[IMG-11] 캡처 전 확인**: 유저 피드백 화면에 **실명·학번·연락처**가 찍혀 있지 않은지
@@ -2264,7 +2277,7 @@ COLUMN 1 - header VERBATIM "KEEP", color #34d399. Items VERBATIM:
   "불러오기 쪽에 방어 코드를 몰아둔 것"
 
 COLUMN 2 - header VERBATIM "PROBLEM", color #f87171. Items VERBATIM:
-  "코요테 타임 값을 팀 내부 감각만으로 정했다 — 외부 테스트가 없었다"
+  "접지 레이의 간격(0.25)과 길이를 눈으로 맞췄다 — 캐릭터 크기가 바뀌면 다시 잡아야 한다"
   "스테이지 분량과 밸런싱을 끝내지 못했다"
   "성능을 한 번도 재보지 않았다 — 문제가 없었던 게 아니라 안 봤다"
 
@@ -2381,7 +2394,7 @@ Do not leave body scroll locked if the component unmounts during the transition.
 src/components/ui/project-viewers/stages/tserof/
   index.tsx                 ← PAGE 00~10 순서, 스크롤→잠금 해제 매핑
   ⭐ useMiniPlatformer.ts    ← 고정 dt 물리 루프. P02·P04가 공유 (제일 먼저 만들 것)
-       옵션: { coyoteMs, jumpBuffer, onRejectedJump, onLand, paused }
+       옵션: { groundRays: 1 | 4, rayOffset, onRejectedJump, onLand, paused, showGizmos }
   ⭐ StageBoard.tsx          ← 11칸 보드. 헤더(mini) + P01(large) + P05(interactive)
        세 곳이 같은 컴포넌트를 크기만 바꿔 쓴다. layoutId로 P05 줌인 연결
   useUnlockProgress.ts      ← 스크롤 → 잠금 해제 인덱스 + sessionStorage 복원
@@ -2397,7 +2410,9 @@ src/components/ui/project-viewers/stages/tserof/
 ```
 
 > ⭐ **`useMiniPlatformer.ts` 를 안 만들고 P02부터 짜면 P04에서 전부 다시 짭니다.**
-> P02는 `coyoteMs: 0`, P04는 토글로 `0 ↔ 실제값`. 같은 훅이어야 "같은 조작"이라는 주장이 성립합니다.
+> P02는 `groundRays: 1`(기즈모 끔), P04는 토글로 `1 ↔ 4`(기즈모 켬).
+> **접지 판정 방식 말고는 아무것도 다르지 않아야** "같은 조작인데 이번엔 된다"가 성립합니다.
+> 코요테 타임 옵션은 두지 마세요 — 실제로 쓰지 않은 기능입니다.
 
 ## D-3. 기존 코드 재사용 / 선행 작업
 

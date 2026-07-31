@@ -93,7 +93,15 @@ AI는 답하지 않고 이렇게 응답한다:
 ## A-8. 절대 금지 (안전 규칙)
 
 - **투자 권유로 읽힐 여지가 있는 문구 전면 금지.** 종목 추천·목표가·수익 보장·"지금이 기회" 류
-- **실존 종목명 사용 금지.** 전부 가상 종목 (`가나전자`, `한빛바이오` 등)
+- **이 페이지가 직접 그리는 합성 위젯·데모 화면에서는 실존 종목명 금지.** 전부 가상 종목
+  (`가나전자`, `한빛바이오` 등). 관람객이 조작하는 재현 위젯이 실제 종목을 추천하는 것처럼
+  보이면 안 되기 때문입니다.
+  > ⚠️ **단, 이 규칙을 「실제 서비스 스크린샷」에까지 적용하지 마세요.**
+  > 실서비스는 **Yahoo Finance · OpenDART · SEC** 로 **실존 종목 데이터를 다룹니다**
+  > (`YahooFinanceMarketDataProvider` · `OpenDartClient` · `SecDisclosureProvider`).
+  > 스크린샷을 가상 종목으로 바꿔 다시 찍으면 **만들지 않은 것을 만든 것처럼 보이게** 됩니다.
+  > 실제 화면 캡처는 **실제 종목이 보이는 그대로** 쓰고, 대신 "투자 자문 아님" 고지를 붙이세요.
+  > (이전 버전은 "이 방 전체가 실존 종목 0개 원칙 위에 서 있다"고 했는데 **사실과 다릅니다.**)
 - 수익률 숫자는 전부 **검산 가능한 예시**여야 하고, 실제 성과로 오인될 표현 금지
 - "이 서비스는 투자 자문이 아닙니다" 고지가 **P05와 P09에 반드시 상시 노출**
 - 상승/하락을 **색으로만** 구분 금지 — 부호(+/−)와 화살표(▲/▼)를 항상 병기 (색각 접근성)
@@ -827,15 +835,21 @@ SECTION LABEL (font-mono 11px, letter-spacing 0.25em, color #f87171):
   "03 · 트러블슈팅 01"
 
 HEADING (30px font-black):
-  VERBATIM: "수익률 −99.9%가 화면에 떴다"
+  VERBATIM: "전량 매도 후 다시 사면 평단이 말이 안 됐다"
 
 --- SYMPTOM CARD ---
 Margin-top 24px, padding 20px, rounded-md, border 1px rgba(248,113,113,0.28),
 background rgba(248,113,113,0.05), border-left 3px #f87171.
   Label font-mono 10px letter-spacing 0.18em #f87171, VERBATIM: "증상"
   Body 16px leading-8, VERBATIM:
-  "종목을 전부 팔았다가 며칠 뒤에 다시 산 기록을 넣으니 수익률이 −99.9%로 나왔다.
-   실제로는 이익이 난 상태였다. 다른 종목은 전부 정상이었다."
+  "종목을 전부 팔았다가 며칠 뒤에 다시 산 기록을 넣으니 평균 단가와 수익률이
+   실제와 전혀 다른 값으로 나왔다. 계속 보유한 다른 종목은 전부 정상이었다."
+
+NOTE FOR THE BUILDER (do not render): the earlier version of this page claimed a
+specific figure ("수익률 −99.9%"). That number was never measured and has been
+removed. Do NOT reintroduce any concrete percentage, price, or return figure as the
+symptom. The reproduction below may show numbers because the viewer computes them
+live from their own inputs - that is fine. A remembered figure is not.
 
 === BLOCK B: THE REPRODUCTION (the defining idea) ===
 Margin-top 36px. Container, height ~380px, rounded-md,

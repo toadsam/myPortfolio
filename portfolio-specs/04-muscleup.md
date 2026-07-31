@@ -1,18 +1,20 @@
 # 04. 득근득근 (MuscleUp) — 프롬프트 팩
 
-> 운동 기록을 게임화와 커뮤니티로 연결하는 풀스택 피트니스 플랫폼 · TypeScript / React / Spring Boot / JWT / OAuth / 실시간(SSE)
+> 운동 기록을 게임화와 커뮤니티로 연결하는 풀스택 피트니스 플랫폼 · TypeScript / React / Spring Boot / JWT / OAuth / 실시간(**Socket.IO**)
 > **사용법**: `PAGE 00` ~ `PAGE 10` 의 코드블록을 **하나씩 통째로 복사해서 Variant에 붙여넣으세요.**
 > 각 프롬프트는 **완전히 자립적**입니다 (색상·폰트·무드가 매번 반복 포함).
 > `## A` `## B` `## D` 는 **읽기용**이지 프롬프트가 아닙니다.
 
-> 🚨 **[FIX-01] 확인 필요 — 프롬프트 작성 전에 반드시 결론 낼 것**
-> `src/data/projects.ts` 의 muscleup 항목에서 `tech` 배열은 **`Socket.IO`**, 
-> `approach` / `contribution` 문장은 **`SSE 기반 실시간 챌린지`** 라고 적혀 있습니다. 둘 중 하나가 틀렸습니다.
-> 이 문서는 **SSE 기준**으로 작성했습니다 (FestFlow와 같은 스택이라 서사도 일관됨).
-> 실제로 Socket.IO를 썼다면 → `PAGE 05` 프롬프트의 SSE 서술과 `D-6` 코드 목록을 WebSocket 기준으로 교체하고,
-> `projects.ts` 의 `approach[1]` / `contribution[2]` 문장을 고칠 것.
-> 반대로 SSE가 맞다면 → `projects.ts` 의 `tech` 배열에서 `Socket.IO` 를 `SSE` 로 고칠 것.
-> **면접에서 스택을 물었을 때 문서와 다른 답이 나오면 그게 제일 큰 감점입니다.**
+> ✅ **[FIX-01] 해소 (2026-07-31) — 실시간 스택은 `Socket.IO` 입니다.**
+> 저장소 확인 결과: `Ajou_MuscleUp/realtime/src/server.ts` 가 `import { Server } from "socket.io"` 로
+> **REST 백엔드와 분리된 별도 실시간 서버**(기본 포트 `4001`, `ORIGIN` allowlist + CORS 직접 처리)를 띄우고,
+> 프론트는 `socket.io-client ^4.8.1` 로 붙습니다. `projects.ts` 의 SSE 문장 2곳은 **수정 완료**.
+>
+> ✅ `PAGE 05` 는 실제 기능인 **「실시간 라운지」** 로 **전면 재작성 완료**,
+> `D-6` 코드 목록도 실제 파일(`realtime/src/server.ts` · `rooms.ts`)로 교체했습니다.
+> 이 프로젝트의 강점은 "SSE로 단방향 푸시"가 아니라
+> **"위치·채팅처럼 초당 여러 번 바뀌고 양방향인 상태라 실시간 서버를 REST와 물리적으로 분리했다"** 쪽입니다.
+> (FestFlow(03)가 SSE이므로, **두 방이 서로 다른 실시간 방식을 고른 이유**를 대비시키면 좋은 재료가 됩니다.)
 
 ---
 
@@ -45,7 +47,7 @@
 | 게임화 루프를 구현했다 | **관람객이 운동을 직접 기록** → EXP 게이지가 차고 퀘스트가 완료됨 → 즉시 옆에 보상 계산 코드 | 02 |
 | **트러블 01: 보상 계산이 클라이언트에 있었다** | **관람객에게 "EXP 조작하기" 버튼을 준다.** 누르면 999999가 됨 → "이게 실제로 가능했습니다" → 서버 이동 코드 | 03 |
 | JWT + Google OAuth 인증 흐름 | 로그인 시퀀스를 단계별로 분해해 토큰이 어디서 만들어지는지 추적 | 04 |
-| 실시간 챌린지 | 다른 사용자의 기록이 **관람객이 안 만져도 계속 도착한다** → 스트림 코드 | 05 |
+| **실시간 라운지 (Socket.IO)** | **관람객이 캐릭터를 직접 움직인다** → 옆 로그에 `player:move` 가 실제로 찍힘 · 다른 캐릭터는 알아서 움직임 | 05 |
 | **트러블 02: 출석 보상이 두 번 지급됐다** | **"두 번 누르기" 버튼** → 실제로 중복 지급되는 걸 보여줌 → 멱등성 처리 코드 | 06 |
 | AI 인바디 분석 연동 | 이미지 업로드 → 파싱 → 리포트 생성 파이프라인을 단계별로 | 07 |
 | 전체 구조 · 내가 한 범위 | 시스템 다이어그램 (1인 풀스택이므로 전 구간 점등) | 08 |
@@ -356,7 +358,7 @@ SUMMARY (16px leading-9, max-width 560px, margin-top 22px):
 FEATURE CHIPS (margin-top 30px, wrap layout, 7 chips):
   Each: font-mono 11px, padding 6px 12px, rounded-full,
   border 1px rgba(244,114,182,0.24), color rgba(255,255,255,0.75).
-  Labels VERBATIM: "출석 체크" "캐릭터 성장" "운동 기록 루프" "실시간 챌린지"
+  Labels VERBATIM: "출석 체크" "캐릭터 성장" "운동 기록 루프" "실시간 라운지"
   "게시글/댓글" "AI 인바디 분석" "Google OAuth"
   They appear one at a time, 0.06s apart, each with a scale 0.9 -> 1 spring.
   Hover: background rgba(244,114,182,0.12), color #f9a8d4.
@@ -998,34 +1000,41 @@ Do not claim conversion metrics; the honesty sentence in Block E must stay.
 
 ---
 
-## PAGE 05 — 챌린지는 혼자 하는 게 아니다 · 실시간 피드
+## PAGE 05 — 혼자 하는 운동이 아니게 만든 것 · 실시간 라운지
 
-**개발 실체**: 실시간 챌린지 구현 + **스트림 구독/브로드캐스트 코드**
-**연출 장치**: **관람객이 아무것도 안 해도 다른 사용자의 기록이 계속 도착한다**
+**개발 실체**: **REST와 분리된 Socket.IO 실시간 서버** — 라운지 접속자 위치 동기화 · 채팅 · 이모트 · 친구 DM
+**연출 장치**: **관람객이 라운지 안의 캐릭터를 직접 움직인다.** 다른 캐릭터들도 알아서 움직이고 있다
 
-> ⚠️ **[FIX-01]** 이 페이지는 **SSE 기준**으로 작성됨. 실제 구현이 Socket.IO/WebSocket이면
-> 아래 프롬프트의 `EventSource` / `SseEmitter` 서술을 WebSocket 기준으로 교체할 것.
+> 🔵 **2026-07-31 전면 교체됨.** 이전 버전은 「실시간 챌린지 피드」 + `SSE` 기준이었는데,
+> 실제 저장소의 실시간 기능은 **챌린지 피드가 아니라 「라운지」** 이고 **Socket.IO** 입니다.
+> 근거 (`Ajou_MuscleUp/realtime/`):
+> `ROOM_NAME = "lounge"` · `MAP_WIDTH 2000` / `MAP_HEIGHT 1200` ·
+> 이벤트 `lounge:join` `lounge:welcome` `lounge:players` `player:move` `chat:send` `chat:typing`
+> `social:emote` `social:sticker` `party:follow-request` `friend:send` 등 ·
+> 별도 Node 서버(포트 `4001`) · 프론트 `socket.io-client ^4.8.1` (`Lounge.tsx` / `Friends.tsx`)
 
 ```text
-Build a REAL-TIME CHALLENGE section where other users' workout records keep
-arriving in a live feed with no input from the viewer, demonstrating the push-based
-architecture, with the subscription and broadcast code shown alongside.
+Build a REAL-TIME LOUNGE section where the viewer moves their own character around a
+shared 2D floor with arrow keys or drag, while other characters move, chat and emote
+on their own, with the actual socket event names shown live in a log beside it.
 Stack: React + TypeScript + Tailwind CSS + framer-motion. Self-contained component.
-All data is simulated locally - do NOT open a real network connection.
+All peers are simulated locally - do NOT open a real network connection.
 
 === SUBSTANCE THIS PAGE MUST DELIVER ===
-1. Why a challenge feature needs push rather than polling
-2. The real client subscription code and server broadcast code
-3. The scoping decision: who receives which events, and why that mattered
+1. Why this feature could not sit on the REST backend (it is bidirectional and
+   changes many times per second), and why a SEPARATE realtime server was the answer
+2. The actual socket event names and what each one carries
+3. The scoping decision: one shared lounge room vs per-pair friend rooms
 
 === MOOD ===
-A shared gym floor at 9pm. Other people are working out and you can feel it.
+A shared gym floor at 9pm. Other people are here and you can feel it.
 Neon pink, communal, kinetic but not chaotic.
-NO body imagery - avatars are abstract shapes or initials only.
+NO body imagery, NO muscle rendering, NO photos - characters are abstract capsule
+silhouettes with an initial and a tier ring. Nothing anatomical.
 
 === DESIGN TOKENS (use exactly) ===
 background #140510 | panel #1e0a1a | primary pink #f472b6 | accent #f9a8d4
-ok #4ade80 | bad #f87171 | warn #fbbf24
+ok #4ade80 | bad #f87171 | warn #fbbf24 | wire #7dd3fc
 text rgba(255,255,255,0.88) | muted rgba(255,255,255,0.46)
 code bg #12060f, border rgba(244,114,182,0.18)
 syntax: comments #8a5f7a, strings #a3e635, keywords #f472b6, numbers #7dd3fc
@@ -1036,138 +1045,192 @@ easing cubic-bezier(0.34,1.56,0.64,1) | rounded-md | numbers tabular-nums
 Centered column, max-width 1080px, padding-block 120px.
   Block A : label + heading + two paragraphs
   Block B : a two-column split, gap 18px
-              LEFT  (52%) : THE LIVE CHALLENGE BOARD, height 440px
-              RIGHT (48%) : two stacked code panels, total height 440px
-            Below 1024px stacks, board first.
-  Block C : the scoping decision card
+              LEFT  (58%) : THE LOUNGE FLOOR, height 440px
+              RIGHT (42%) : the live socket event log, height 440px
+            Below 1024px stacks, floor first.
+  Block C : the two-server architecture strip
+  Block D : the room-scoping decision card
 
 === CONTENT (Korean copy - VERBATIM, never translate) ===
 
-SECTION LABEL: "04 · 실시간 챌린지"
+SECTION LABEL: "04 · 실시간 라운지"
 
 HEADING (28px font-black):
-  VERBATIM: "옆 사람이 방금 운동을 끝냈다는 사실"
+  VERBATIM: "옆에 누가 있다는 감각"
 
 PARAGRAPH 1 (16px leading-9, margin-top 20px):
   VERBATIM: "혼자 하는 기록은 3일이면 지친다.
-             같은 챌린지에 참가한 사람이 방금 하나 올렸다는 걸 알면 얘기가 달라진다."
+             같은 시간에 누가 접속해 있다는 걸 알면 얘기가 달라진다."
 
 PARAGRAPH 2 (16px leading-9, margin-top 18px):
-  VERBATIM: "그런데 그 「방금」이 5분 뒤에 도착하면 아무 의미가 없다.
-             새로고침해야 보이는 정보는 실시간이 아니다."
-  Emphasize "새로고침해야 보이는 정보는 실시간이 아니다" in #f9a8d4, font-bold.
+  VERBATIM: "그런데 이건 게시글처럼 「요청하면 준다」로는 안 됐다.
+             위치는 초당 여러 번 바뀌고, 방향이 양쪽이다."
+  Emphasize "위치는 초당 여러 번 바뀌고, 방향이 양쪽이다" in #f9a8d4, font-bold.
 
-=== BLOCK B LEFT: THE LIVE CHALLENGE BOARD ===
+=== BLOCK B LEFT: THE LOUNGE FLOOR (the defining idea) ===
 Container: height 440px, rounded-md, border 1px rgba(244,114,182,0.20),
-background #1e0a1a, overflow hidden.
+background #1e0a1a, overflow hidden, position relative.
 
 Header strip (34px, border-bottom 1px rgba(244,114,182,0.12)):
-  left  font-mono 11px rgba(255,255,255,0.72), VERBATIM: "이번 주 챌린지 · 주 3회 운동"
+  left  font-mono 11px rgba(255,255,255,0.72), VERBATIM: "라운지 · 접속 5"
   right a live chip: a 7px #4ade80 dot with a 1.6s pulsing halo plus font-mono 11px
-        rgba(255,255,255,0.46), VERBATIM: "실시간"
+        rgba(255,255,255,0.46), VERBATIM: "연결됨"
 
-PART 1 - THE LEADERBOARD (upper ~200px)
-  Five rows. Each row: a 26px circular avatar (an abstract shape or two initials -
-  NEVER a photo), a display name in font-mono 12px, a progress bar (5px track,
-  pink fill) showing that participant's completion of the weekly goal, and a count
-  in font-mono 11px tabular-nums, format VERBATIM: "2 / 3"
+THE FLOOR (fills the rest):
+  A subtle grid in rgba(244,114,182,0.05), 40px spacing, to make movement readable.
+  A coordinate label in the bottom-right corner, font-mono 9px
+  rgba(255,255,255,0.30), showing the map bounds, VERBATIM: "2000 × 1200"
+  (these are the real MAP_WIDTH / MAP_HEIGHT values - keep them exactly).
+
+  FIVE CHARACTERS, each a 30px capsule silhouette (rounded rect, NOT a human figure):
+    - a 2px ring whose color encodes tier, with a font-mono 8px tier label beneath
+      Tier ring colors: BRONZE #a97142 · SILVER #c0c0c0 · GOLD #fbbf24 ·
+      PLATINUM #7dd3fc · DIAMOND #bfdbfe · MASTER #c084fc ·
+      GRANDMASTER #f472b6 · CHALLENGER #f87171
+    - a single initial centered, font-mono 11px
+    - a nickname beneath, font-mono 10px rgba(255,255,255,0.60)
   Names VERBATIM: "나" / "참가자 B" / "참가자 C" / "참가자 D" / "참가자 E"
-  The "나" row has a pink left border and a slightly brighter background.
-  ROWS REORDER when someone's progress changes: use layout animations so rows
-  physically SLIDE past each other rather than snapping. That reordering is the
-  most legible signal that something live happened.
+  Tiers VERBATIM: "GOLD" / "SILVER" / "PLATINUM" / "BRONZE" / "DIAMOND"
 
-PART 2 - THE EVENT FEED (lower ~200px)
-  A scrolling list, newest entering at the TOP and pushing older entries down
-  (translateY animation, 0.35s), oldest fading out at 30% opacity before removal.
-  Max 5 visible entries.
-  Each entry: font-mono 11px, one line, format VERBATIM pattern:
-    "21:04  참가자 C  스쿼트 4세트 완료  +80 EXP"
-  with the timestamp rgba(255,255,255,0.35), the name rgba(255,255,255,0.80),
-  the action rgba(255,255,255,0.60), and the EXP in #f472b6.
-  A new entry arrives every 2.6-5.2 seconds, randomized, and simultaneously bumps
-  the corresponding leaderboard row.
+  THE VIEWER CONTROLS "나":
+    Arrow keys OR WASD OR dragging the capsule moves it.
+    IMPORTANT: capture these keys ONLY while the floor container has focus or the
+    pointer is inside it. Never bind arrow keys globally - the page must still
+    scroll normally everywhere else.
+    Movement is CLAMPED to the floor bounds (this mirrors the real clamp() in
+    rooms.ts - when the viewer pushes against an edge, show a brief 0.2s pink edge
+    glow on that side, and log a clamped coordinate).
+    Position updates are THROTTLED to ~20/second, and each one emits a
+    "player:move" line into the log panel.
 
-AUTONOMOUS BY DESIGN: this feed runs with NO viewer input. That is the entire
-demonstration. Include a small caption at the container's bottom, font-mono 10px
-rgba(255,255,255,0.32), VERBATIM:
-  "아무것도 누르지 않아도 계속 들어옵니다 · 시연용 데이터"
+  THE OTHER FOUR MOVE ON THEIR OWN: slow wandering with eased direction changes
+  every 1.8-4.0s. Every 4-9s one of them does one of:
+    - a chat bubble above the capsule, max 18 chars, fading after 3s
+      Bubbles VERBATIM (cycle): "오늘 하체 끝" · "3세트 남음" · "같이 하실 분" · "굿"
+    - a typing indicator (three bouncing dots) for 1.2s BEFORE a bubble
+    - an emote: a small symbol popping up and floating 20px over 0.9s
+      Emotes VERBATIM (cycle): "💪" · "🔥" · "👏"
 
-PERFORMANCE (required): the feed loop must stop when the container is out of the
-viewport and when the tab is hidden, and resume on return without resetting.
-Use ONE timer loop for both the leaderboard and the feed.
+AUTONOMOUS BY DESIGN: the other four move whether or not the viewer does anything.
+Caption at the container's bottom-left, font-mono 10px rgba(255,255,255,0.32),
+VERBATIM: "화살표 키로 움직여보세요 · 시연용 데이터"
 
-=== BLOCK B RIGHT: TWO STACKED CODE PANELS ===
-Each panel: background #12060f, border 1px rgba(244,114,182,0.18), rounded-md,
-header with three window dots and a filename in font-mono 11px
-rgba(255,255,255,0.45), body font-mono 12px with a line-number gutter.
+PERFORMANCE (required): the movement loop must stop when the container is out of the
+viewport and when the tab is hidden, and resume on return without resetting
+positions. Use ONE requestAnimationFrame loop for all five characters and the log.
+Move characters with transform only - never animate left/top.
 
-TOP PANEL (~210px) - filename VERBATIM: "useChallengeStream.ts"
-  CONTENT: ~16 lines. A React hook that opens a subscription to the challenge
-  stream for a given challenge id, registers a listener for participant-progress
-  events, merges each event into local leaderboard state keyed by participant id,
-  handles the connection error path, and closes the connection in cleanup.
-  HIGHLIGHT ROWS when a feed entry arrives: the listener line and the merge line
-  (background rgba(244,114,182,0.12), sweeping in over 0.3s, fading after 1.2s).
+=== BLOCK B RIGHT: THE LIVE SOCKET EVENT LOG ===
+Container: height 440px, background #12060f, border 1px rgba(244,114,182,0.18),
+rounded-md, header with three window dots and a filename, font-mono 11px
+rgba(255,255,255,0.45), VERBATIM: "socket events"
 
-BOTTOM PANEL (~210px) - filename VERBATIM: "ChallengeBroadcaster.java"
-  CONTENT: ~16 lines. A server component holding subscribers grouped BY CHALLENGE
-  ID (not globally), a subscribe method that registers a connection under the
-  requested challenge after verifying the authenticated user is a participant, and
-  a broadcast method that sends a progress event only to that challenge's
-  subscribers, removing any connection that fails.
-  HIGHLIGHT ROWS: the participant verification line and the per-challenge lookup
-  line.
-  Caption bar, font-mono 11px, prefixed "// ", VERBATIM:
-    "전체에 뿌리면 안 된다. 참가하지 않은 챌린지 활동까지 보이게 된다."
+Body: a scrolling monospace log, font-mono 11px, newest at the BOTTOM, auto-scrolled,
+max ~22 visible lines, oldest removed. Each line:
+  a timestamp in rgba(255,255,255,0.30),
+  the event name in #f472b6,
+  and a compact payload in rgba(255,255,255,0.55).
 
-=== BLOCK C: THE SCOPING DECISION CARD ===
-Margin-top 36px, padding 22px, rounded-md, border 1px rgba(244,114,182,0.22),
+USE THESE EXACT EVENT NAMES (they are the real ones - do not invent others):
+  "lounge:join"       payload {nickname, level, tier}
+  "lounge:welcome"    payload {mapSize}
+  "lounge:players"    payload {players: 5}
+  "player:move"       payload {x, y}          <- emitted as the viewer moves
+  "chat:typing"       payload {isTyping}
+  "chat:send"         payload {message}
+  "chat:message"      payload {from, message}
+  "social:emote"      payload {emote}
+
+Lines caused by the VIEWER'S OWN movement get a 2px #f472b6 left bar so it is
+obvious which events the viewer is generating. Incoming (peer) events get a 2px
+#7dd3fc left bar.
+A legend strip at the panel's bottom, font-mono 9px, VERBATIM:
+  "분홍 = 내가 보냄 · 파랑 = 받음"
+
+=== BLOCK C: THE TWO-SERVER ARCHITECTURE STRIP ===
+Margin-top 36px. A horizontal diagram, height ~150px, drawn in SVG.
+
+  LEFT box  (rounded rect 200x64): VERBATIM "브라우저"
+  Two SEPARATE lines leave it and go to two SEPARATE right-hand boxes:
+    UPPER line, solid, rgba(244,114,182,0.55), labeled font-mono 10px,
+      VERBATIM: "HTTP · 기록/커뮤니티/인증"
+      to a box VERBATIM: "Spring Boot" with a sub-line font-mono 9px
+      rgba(255,255,255,0.40), VERBATIM: "REST · MySQL"
+    LOWER line, animated dashed (dash offset scrolling both directions to show it is
+      bidirectional), #7dd3fc, labeled font-mono 10px,
+      VERBATIM: "WebSocket · 위치/채팅/이모트"
+      to a box VERBATIM: "Node · Socket.IO" with a sub-line font-mono 9px
+      rgba(255,255,255,0.40), VERBATIM: "포트 4001 · 인메모리 상태"
+
+A caption beneath, 15px leading-8, max-width 780px, VERBATIM:
+  "두 서버는 데이터베이스를 공유하지 않는다.
+   라운지 상태는 서버가 꺼지면 사라져도 되는 정보라서, 아예 메모리에만 뒀다."
+Emphasize "꺼지면 사라져도 되는 정보라서" in #f9a8d4, font-bold.
+
+=== BLOCK D: THE ROOM-SCOPING DECISION CARD ===
+Margin-top 32px, padding 22px, rounded-md, border 1px rgba(244,114,182,0.22),
 background rgba(244,114,182,0.04), border-left 3px #f472b6.
-  Label font-mono 10px letter-spacing 0.18em #f472b6, VERBATIM: "설계에서 바꾼 것"
+  Label font-mono 10px letter-spacing 0.18em #f472b6, VERBATIM: "설계에서 나눈 것"
   Body 15px leading-8, VERBATIM:
-  "처음엔 접속한 모든 사용자에게 모든 활동을 보냈다. 구현이 제일 쉬웠으니까.
-   그런데 참가하지도 않은 챌린지의 남의 운동 기록이 계속 흘러오는 건
-   기능이 아니라 소음이었다. 그리고 필요 없는 사람의 활동까지 보이는 건
-   프라이버시 문제이기도 했다.
-   구독을 챌린지 단위로 쪼개고 나서야 화면이 조용해졌다."
-  Emphasize "기능이 아니라 소음이었다" in #f9a8d4, font-bold.
+  "라운지는 모두가 같은 방에 있어야 의미가 있어서 방을 하나만 뒀다.
+   그런데 친구끼리 주고받는 메시지까지 그 방으로 보내면 전부에게 보인다.
+   그래서 친구 대화는 두 사람의 아이디로 만든 별도의 방으로 분리했다.
+   같은 서버 안에서 방을 나누는 기준이 곧 프라이버시 경계가 됐다."
+  Emphasize "방을 나누는 기준이 곧 프라이버시 경계" in #f9a8d4, font-bold.
+
+  Below the body, a two-cell comparison, gap 12px, font-mono 11px:
+    Cell 1 border 1px rgba(244,114,182,0.20), padding 12px:
+      title VERBATIM "lounge"      body VERBATIM "방 1개 · 전원 브로드캐스트"
+    Cell 2 border 1px rgba(125,211,252,0.20), padding 12px:
+      title VERBATIM "friend room"  body VERBATIM "두 아이디로 방 생성 · 당사자만"
+
+=== LIMITS NOTE (required) ===
+Margin-top 26px, font-mono 11px rgba(255,255,255,0.40), a 3-item list prefixed "· ",
+VERBATIM:
+  "라운지 상태를 메모리에만 두기 때문에 실시간 서버를 여러 대로 늘리면 지금 구조로는 안 됩니다."
+  "동시 접속이 몇 명까지 버티는지는 재보지 않았습니다."
+  "이동 좌표를 그대로 신뢰합니다. 속도 검증은 없습니다."
 
 === ANIMATION TIMELINE (on section enter) ===
 0.00s  Label, heading word by word at 0.15s
 0.60s  Paragraphs 1 and 2, 0.5s apart
-1.40s  Board container fades up (y 18px -> 0, 0.6s)
-1.80s  Leaderboard rows populate top to bottom, 0.08s apart, each bar filling to
-       its value over 0.4s
-2.40s  Code panels fade up together
-2.80s  The live feed begins; the first entry arrives 0.6s later
+1.40s  Floor container fades up (y 18px -> 0, 0.6s)
+1.80s  The four peers fade in one by one, 0.10s apart, then start wandering
+2.30s  "나" fades in last with a 2-pulse pink ring and a hint, font-mono 10px
+       rgba(255,255,255,0.35), VERBATIM: "화살표 키로 움직여보세요"
+       The hint disappears permanently on the first movement.
+2.60s  The log panel starts filling from the join handshake
+       ("lounge:join" -> "lounge:welcome" -> "lounge:players")
+Block C and D animate on their own viewport entry.
 
 === RESPONSIVE ===
-< 1024px: stacked, board first (height 400px), code panels below (each height auto,
-max 240px, internal scroll).
-< 640px: leaderboard shows 4 rows; feed shows 4 entries; entry text 10px;
-code font 11px with internal horizontal scroll (the block scrolls, never the page).
+< 1024px: the split stacks, floor first; the log panel drops to height 260px.
+< 720px: the floor drops to height 320px; replace keyboard control with DRAG on the
+capsule and change the caption to VERBATIM: "캐릭터를 끌어보세요 · 시연용 데이터";
+the architecture diagram stacks vertically.
+< 640px: log font 10px, payloads truncated with an ellipsis, panel scrolls
+internally (never the page).
 
 === ACCESSIBILITY ===
-prefers-reduced-motion: the feed does NOT auto-run. Render a static snapshot of the
-leaderboard and 5 feed entries, plus a caption VERBATIM:
-  "이 영역은 원래 실시간으로 계속 갱신됩니다."
-and a manual control, font-mono 11px, VERBATIM: "[ 한 건 받아보기 ]" that adds one
-entry per click.
-The event feed must NOT be an aria-live region - it would flood a screen reader.
-Mark it aria-hidden and provide an adjacent visually-hidden summary, VERBATIM:
-  "챌린지 참가자들의 운동 기록이 실시간으로 표시되는 영역입니다."
-Leaderboard reordering must not steal focus.
-Avatars need no alt text beyond the participant name already in the row.
+prefers-reduced-motion: peers hold still and only change position on a slow 3s
+interval with no easing; no emote float; no dashed-line animation; no ring pulse.
+The floor is a focusable region (tabindex 0) with a visible focus ring
+(2px #f472b6, offset 2px) and an accessible name, VERBATIM: "라운지 시연 영역".
+The event log is decorative motion - mark it aria-hidden and provide ONE
+visually-hidden summary instead, VERBATIM:
+  "소켓 이벤트 로그입니다. 내 캐릭터가 움직일 때 위치 이벤트가 전송됩니다."
+Do NOT put aria-live on the log - it changes ~20 times per second.
+Tier is never conveyed by ring color alone - the text label under each capsule
+always states it.
 
 === DO NOT ===
-Do not open a real network connection - simulate locally.
-Do not use photographic avatars or any body imagery.
-Do not use real names.
-Do not claim participant counts or engagement metrics.
+Do NOT render bodies, muscles, body-fat levels, weight numbers, or anything
+anatomical. Capsule silhouettes only. This rule outranks any visual ambition here.
+Do NOT bind arrow keys or WASD globally - only while the floor is focused or hovered.
+Do NOT invent socket event names - use only the eight listed above.
+Do NOT claim a concurrent-user capacity - the limits note says it was never measured.
+Do NOT animate left/top for movement - transform only.
 ```
-
----
 
 ## PAGE 06 — 트러블슈팅 02 · 출석이 두 번 찍혔다
 
@@ -1720,7 +1783,7 @@ CARD 2  label VERBATIM: "인증"
   "리프레시 토큰 회전과 폐기 처리"
   "토큰 페이로드 스키마 정의"
 CARD 3  label VERBATIM: "실시간·커뮤니티"
-  "실시간 챌린지 구독/브로드캐스트 구현"
+  "실시간 라운지 서버 분리 · 위치/채팅 동기화 구현"
   "챌린지 단위 구독 범위 분리"
   "게시글·댓글 기능 구현"
 CARD 4  label VERBATIM: "AI 연동"
@@ -1828,7 +1891,7 @@ ITEM 1 (large)  header VERBATIM "01 · 홈 · 캐릭터"
 ITEM 2 (small)  header VERBATIM "02 · 운동 기록"
   [IMG-02] the workout logging screen
   caption VERBATIM: "입력은 최대한 짧게"
-ITEM 3          header VERBATIM "03 · 실시간 챌린지"
+ITEM 3          header VERBATIM "03 · 실시간 라운지"
   [IMG-03] the challenge leaderboard with the live feed
   caption VERBATIM: "참가자 활동이 실시간으로 들어온다"
 ITEM 4          header VERBATIM "04 · 커뮤니티"
@@ -2053,11 +2116,20 @@ No body imagery, no weight or diet framing anywhere in this section.
 
 # D. 구현 메모 (프롬프트 아님 — 내가 볼 것)
 
-## D-0. 🚨 선행 확인 — [FIX-01]
+## D-0. ✅ [FIX-01] 해소 — 실시간 스택은 Socket.IO
 
-`projects.ts` 의 muscleup 실시간 스택 불일치를 **먼저 해결**할 것.
-`tech: [... "Socket.IO"]` vs `approach/contribution: "SSE 기반 실시간 챌린지"`.
-이 문서는 **SSE 기준**. 결론이 나면 P05 프롬프트와 D-6 표, 그리고 `projects.ts` 를 함께 정정.
+저장소 확인 완료(2026-07-31). **`Socket.IO` 가 맞습니다.**
+
+| 근거 | 내용 |
+|---|---|
+| `realtime/src/server.ts` | `import { Server } from "socket.io"` · `PORT = process.env.PORT ?? 4001` · `ALLOWED_ORIGINS` 직접 CORS 처리 |
+| `realtime/src/rooms.ts` | `addPlayer` / `listPlayers` / `updatePlayerPosition` / `getRoomName` — **룸 기반 위치 동기화** |
+| `frontend/package.json` | `"socket.io-client": "^4.8.1"` |
+| `frontend/src/pages/Lounge.tsx`, `Friends.tsx` | 클라이언트 소비 지점 |
+| `data.ts` muscleup `challenges[0]` | "실시간 상태만 담당하는 Socket.IO 서버(:4001)를 REST 백엔드와 분리" — **이미 정확함** |
+
+`projects.ts` 의 SSE 문장 2곳은 **수정 완료**.
+**완료**: `PAGE 05` 는 실제 기능(실시간 라운지)으로 **전면 재작성**, `D-6` 코드 목록도 실제 파일로 교체.
 
 ## D-1. 개발 실체 커버리지 점검
 
@@ -2113,7 +2185,7 @@ src/components/ui/project-viewers/stages/muscleup/
 | `[VIDEO-01]` | 기록 → EXP → 퀘스트 → 레벨업 → 챌린지 반영 (2분 20초) | 16/9 | **최상** |
 | `[IMG-01]` | 홈 · 캐릭터 + EXP + 퀘스트 | 16/10 | **최상** |
 | `[IMG-02]` | 운동 기록 입력 화면 | 16/10 | 높음 |
-| `[IMG-03]` | 실시간 챌린지 리더보드 | 16/10 | 높음 |
+| `[IMG-03]` | 실시간 라운지 (접속자 캐릭터 + 채팅) | 16/10 | 높음 |
 | `[IMG-04]` | 커뮤니티 피드 | 16/10 | 중간 |
 | `[IMG-05]` | AI 리포트 화면 — **수치/차트만, 신체 사진 금지** | 16/10 | 중간 |
 
@@ -2125,8 +2197,8 @@ src/components/ui/project-viewers/stages/muscleup/
 | P03 | `useWorkoutSubmit.ts + WorkoutController.java (after)` | 20 | 토큰에서 사용자 식별 |
 | P04 | JWT payload (decoded) | 10 | provider 필드만 다름 |
 | P04 | `TokenService.java` | 18 | 리프레시 회전 · 폐기 검사 |
-| P05 | `useChallengeStream.ts` | 16 | 리스너 · 병합 |
-| P05 | `ChallengeBroadcaster.java` | 16 | 참가자 검증 · 챌린지 단위 조회 |
+| P05 | `realtime/src/server.ts` | ~20 | **실제 원본** · `socket.on("player:move")` · `io.to(roomName).emit` |
+| P05 | `realtime/src/rooms.ts` | ~15 | **실제 원본** · `ROOM_NAME="lounge"` · `clamp()` 경계 처리 |
 | P06 | `AttendanceService.java (before)` | 12 | 읽고-확인 쌍 |
 | P06 | `AttendanceService.java (after)` | 18 | insert 먼저 · 중복키 catch |
 | P06 | `V12__unique_attendance.sql` | 1줄 칩 | (user_id, date) 유니크 |
@@ -2148,7 +2220,7 @@ src/components/ui/project-viewers/stages/muscleup/
 - [ ] **목표 체중 · 목표 체지방률 · 다이어트 조장 문구가 0개인지**
 - [ ] P07 **"의학적 조언 아님" 카드**가 15px 이상으로 남아 있는지 (축소·삭제 금지)
 - [ ] P07 인바디 수치를 **지어내지 않고 대시(—)로** 뒀는지
-- [ ] **[FIX-01]** SSE / Socket.IO 결론이 문서·코드·`projects.ts` 3곳에서 일치하는지
+- [x] **[FIX-01]** 실시간 스택은 **Socket.IO** 로 확정 · 문서·`projects.ts` 정정 완료 (2026-07-31)
 - [ ] EXP 게이지가 **CSS 변수 + rAF** 로 스크롤에 바인딩됐는지 (React state 금지)
 - [ ] P02 레벨업이 **세션당 1회**, 전체 화면 플래시 0회, 파티클 18개 이하인지
 - [ ] P02 코드 패널을 **하이라이트 단계마다 리렌더하지 않는지** (ref + class 토글)

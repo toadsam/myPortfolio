@@ -390,7 +390,7 @@ function LifePanel({color, highlightId}: {color: string; highlightId?: string}) 
       </LifeCard>
 
       <LifeCard color={color} highlighted={highlightId === "music"} title="🎵 음악 스튜디오">
-        <p>이 프로젝트의 사운드 작업이 MyWave 프로젝트와 이어집니다. 플레이리스트/취향 소개는 준비 중이에요.</p>
+        <p>플레이리스트와 사운드 작업을 모아두는 공간입니다. 취향 소개는 준비 중이에요.</p>
       </LifeCard>
 
       <LifeCard color={color} highlighted={highlightId === "timeline"} title="🕰️ 연혁 타임라인">

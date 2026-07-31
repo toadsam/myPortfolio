@@ -1,6 +1,11 @@
-# 08. 아주대모험 — 프롬프트 팩
+# 08. 아주분투 — 프롬프트 팩
 
-> 아주대학교 캠퍼스를 배경으로 한 Phaser 3 기반 2D 캐주얼 게임 · TypeScript / Phaser 3 / Vite
+> 아주대학교 캠퍼스를 청색/남색 네온 톤으로 재해석한 Phaser 3 기반 2D 러닝 게임 · TypeScript / Phaser 3 / Vite
+>
+> ⚠️ **이름 주의 (2026-07-31 확정).** 이 방의 실제 프로젝트명은 **「아주분투」**(`toadsam/Ajou_Mini_Game`)입니다.
+> 문서 곳곳에 남아 있는 「아주대모험」은 예전 임시 명칭이고, **「아주대탐험」은 아예 다른 프로젝트**
+> (`toadsam/Ajou_IndiGame` — Unity 3D 액션 어드벤처)이니 **절대 섞지 마세요.**
+> 화면에 노출되는 타이틀 문자열은 아래 `VERBATIM` 값을 그대로 쓰면 됩니다.
 > **사용법**: `PAGE 00` ~ `PAGE 10` 의 코드블록을 **하나씩 통째로 복사해서 Variant에 붙여넣으세요.**
 > 각 프롬프트는 **완전히 자립적**입니다 (색상·폰트·무드가 매번 반복 포함).
 > `## A` `## B` `## D` 는 **읽기용**이지 프롬프트가 아닙니다.
@@ -36,7 +41,7 @@
 | **게임이 실제로 돌아간다** | **관람객이 직접 플레이하는 미니 러너** (실제 캔버스, 실제 조작) | 02 |
 | 게임 루프 구현 (`update`) | **플레이하는 동안 옆 코드 패널의 `update()` 가 실시간 프레임 카운터와 함께 하이라이트됨** | 02 |
 | 조작감은 튜닝의 결과다 | **점프 방식 A/B 토글** — 코요테 타임 있는 쪽/없는 쪽을 직접 플레이해 비교 | 03 |
-| **트러블 01: 오브젝트를 안 지워서 느려진다** | **"제거 끄기" 토글** → 관람객 눈앞에서 활성 오브젝트 수가 폭증하고 FPS가 떨어짐 → 풀링 코드 | 04 |
+| **트러블 01: 그림 크기와 판정 크기가 달랐다** | **"충돌 박스 보기" 토글** → 그림 경계와 실제 판정 박스가 어긋난 게 눈에 보임 → `sourceRect` 크롭 + 충돌 박스 분리 | 04 |
 | 자동 발판 생성 알고리즘 | 스크롤에 맞춰 발판이 규칙대로 생성되는 과정을 분해해서 보여줌 | 05 |
 | 낮/밤 전환 = 진행감 장치 | **스크롤을 내리면 페이지 자체가 낮에서 밤으로 바뀐다** | 06 |
 | localStorage 최고 점수 | **관람객이 방금 낸 점수가 실제로 저장되고, 다시 오면 남아 있다** → 코드 | 07 |
@@ -79,13 +84,13 @@
 점프하면 점프 처리 줄이 번쩍인다. 관람객은 자기 손가락과 코드를 동시에 본다.
 
 **② PAGE 04 — 오브젝트를 안 지우면** (기술의 클라이맥스)
-"제거 끄기" 토글을 누른 채 플레이하면 화면 밖 발판이 안 사라진다.
-`활성 오브젝트 12 → 340` 으로 치솟고 FPS 그래프가 꺾인다.
-그 상태로 10초만 버티면 관람객이 **직접 렉을 느낀다.** 그 다음에 풀링 코드가 나온다.
+"충돌 박스 보기" 토글을 켜면 발판마다 **그림 경계와 판정 박스가 서로 다른 크기로** 드러난다.
+여백이 얼마나 붙어 있었는지가 6종 전부에서 제각각이라는 게 한눈에 보인다.
+그 다음에 `sourceRect` 로 자르고 `bodyWidth/bodyOffset` 을 따로 잡는 설정이 나온다.
 
 ## A-7. 다른 9개 방과의 차별점
 
-| 축 | 아주대모험 | 나머지 |
+| 축 | 아주분투 | 나머지 |
 |---|---|---|
 | 증거 방식 | **직접 플레이** | 영상 · 스크린샷 |
 | 코드 표시 | **실행 중인 줄이 실시간으로 빛남** | 정적 하이라이트 |
@@ -175,7 +180,7 @@ t=0.00s  The screen shows a looping attract demo: a tiny pixel character
          over one obstacle, looping every 4s. Rendered in CSS with steps() timing
          so it looks like sprite animation, not smooth interpolation.
 t=0.30s  The TITLE fades in over the demo, centered, pixel font:
-           Line 1, VERBATIM: "아주대모험"
+           Line 1, VERBATIM: "아주분투"
              48px, color #a3e635, text-shadow 0 0 22px rgba(163,230,53,0.45)
            Line 2, VERBATIM: "AJOU ADVENTURE"
              16px, color rgba(255,255,255,0.46), letter-spacing 0.28em,
@@ -271,7 +276,7 @@ easing cubic-bezier(0.2,0.8,0.2,1) | rounded-md | numbers tabular-nums
 Height 54px, background rgba(20,26,10,0.85), backdrop-blur(10px),
 bottom border 1px rgba(163,230,53,0.18).
   LEFT   "← 마을로"  13px font-mono rgba(255,255,255,0.46)
-  CENTER "아주대모험"  14px pixel font #a3e635
+  CENTER "아주분투"  14px pixel font #a3e635
   RIGHT  an in-game clock that advances with scroll progress, format VERBATIM:
          "☀ 14:20"
          13px font-mono, tabular-nums. The icon and time change as the viewer
@@ -292,7 +297,7 @@ slight three-quarter perspective (a subtle skewY/rotateY, no more than 6deg) so
 that a SIDE PANEL is visible on the left edge.
 Parts:
   - MARQUEE (top, 64px): a lit strip, background rgba(163,230,53,0.10),
-    containing the title in pixel font 22px #a3e635, VERBATIM: "아주대모험"
+    containing the title in pixel font 22px #a3e635, VERBATIM: "아주분투"
   - SCREEN (center, aspect 4/3): background #0c1105, inset phosphor bloom,
     STATIC scanlines (1px rgba(0,0,0,0.22) every 3px). Inside it, a looping
     silhouette of the game: a pixel character auto-running past campus building
@@ -795,35 +800,44 @@ Do not remove the honesty note about how 0.1s was chosen.
 
 ---
 
-## PAGE 04 — 트러블슈팅 01 · 안 지운 오브젝트가 쌓인다
+## PAGE 04 — 트러블슈팅 01 · 닿지도 않았는데 죽었다
 
-**개발 실체**: 오브젝트 생성/제거 최적화의 **전체 과정** (증상 → 측정 → 원인 → 풀링 → 검증 → 한계)
-**연출 장치**: **"제거 끄기" 토글** — 관람객이 직접 켜고 플레이하면 눈앞에서 오브젝트 수가 폭증하고 프레임이 무너진다
+**개발 실체**: 발판·장애물 스프라이트의 **그림 크기와 충돌 박스가 달라서** 생긴 판정 오류 → `sourceRect` 크롭 + 충돌 박스 분리
+**연출 장치**: **"충돌 박스 보기" 토글** — 켜는 순간 그림 경계와 실제 판정 영역이 어긋나 있는 게 눈에 보인다
+
+> 🔴 **2026-07-31 전면 교체됨.** 이전 버전은 「제거 안 한 오브젝트가 쌓여 `12 → 340` 으로
+> 프레임이 무너진다」였는데, **그 수치도 그 트러블도 저장소에 근거가 없습니다.**
+> 실제로 겪은 문제는 `data.ts` 에 이렇게 적혀 있고 저장소가 뒷받침합니다:
+> **"큰 스프라이트가 실제보다 크게 부딪혔다."**
+> 근거 — `README.md`: *"원본 이미지가 큰 캔버스 형태라 `BootScene.ts` 에서 `platformConfig.ts` 의
+> `sourceRect` 기준으로 실제 발판 영역만 잘라 텍스처로 등록한다"* ·
+> `platformConfig.ts` 의 조정 값 `scale` / `bodyWidth` / `bodyHeight` / `bodyOffsetX` / `bodyOffsetY` / `sourceRect`
 
 ```text
-Build a PERFORMANCE TROUBLESHOOTING section where the viewer can switch OFF object
-cleanup in a live mini-game and watch the active-object count explode and the frame
-rate collapse in front of them, then walks the full diagnosis and the fix.
+Build a COLLISION-BOX TROUBLESHOOTING section where the viewer toggles a debug
+overlay on a live mini-runner and sees that each platform's drawn image and its
+actual collision box do not match, then walks the full diagnosis and the fix.
 Stack: React + TypeScript + Tailwind CSS. Plain <canvas> + requestAnimationFrame.
 Do NOT load any game engine.
 
 === SUBSTANCE THIS PAGE MUST DELIVER ===
-The complete process for the object-lifecycle performance problem:
-symptom -> measurement -> root cause -> the fix (object pooling / destroy on exit)
--> verification -> what was NOT measured. All six parts are required.
+The complete process for the sprite/collision mismatch:
+symptom -> reproduction with a debug overlay -> root cause (the source PNG is a big
+canvas with transparent padding, so the sprite's bounds are not the platform's
+bounds) -> the fix (crop the texture by sourceRect, then define the body separately)
+-> verification -> what was NOT measured. All six parts required.
 
-=== SAFETY ===
-The degraded mode is opt-in (the viewer flips the toggle) and hard-capped: the
-object count stops growing at 400 and the demo auto-recovers after 15 seconds with
-a notice. It must never freeze the page.
+=== SAFETY (photosensitivity - binding for this whole room) ===
+Scanlines are STATIC. No flashing above 1Hz. No full-screen flashes.
+Nothing in this page may strobe when the overlay toggles.
 
 === MOOD ===
-The cabinet's back panel is open and something is smoking. Lime turns to amber then
-red as the numbers climb. Diagnostic, a bit alarming, ultimately reassuring.
+The cabinet's back panel is open and someone is holding a ruler up to the screen.
+Lime and diagnostic. Precise, not alarming - this is a measurement bug, not a crash.
 
 === DESIGN TOKENS (use exactly) ===
 background #141a0a | panel #151d09 | primary lime #a3e635 | accent #bef264
-ok #4ade80 | bad #f87171 | warn #fbbf24
+ok #4ade80 | bad #f87171 | warn #fbbf24 | box #7dd3fc
 text rgba(255,255,255,0.88) | muted rgba(255,255,255,0.46)
 code bg #0c1105, border rgba(163,230,53,0.18)
 syntax: comments #6b8a3f, strings #fcd34d, keywords #a3e635, numbers #7dd3fc
@@ -833,11 +847,11 @@ easing cubic-bezier(0.2,0.8,0.2,1) | rounded-md | numbers tabular-nums
 === LAYOUT ===
 Centered column, max-width 1060px, padding-block 120px.
   Block A : label + heading + symptom card
-  Block B : THE DEMO - canvas + live gauges + the cleanup toggle
-  Block C : the measurement table
-  Block D : the fix (before/after code)
-  Block E : verification
-  Block F : "what I could not measure" card
+  Block B : THE DEMO - canvas + the debug overlay toggle + a sprite anatomy panel
+  Block C : the elimination table
+  Block D : root cause
+  Block E : the fix (before/after config + the crop step)
+  Block F : verification + what was NOT measured
 
 === CONTENT (Korean copy - VERBATIM, never translate) ===
 
@@ -845,164 +859,181 @@ SECTION LABEL (font-mono 11px, letter-spacing 0.25em, color #f87171):
   "03 · 트러블슈팅 01"
 
 HEADING (30px font-black):
-  VERBATIM: "화면 밖으로 나간 발판은 어디로 갔을까"
+  VERBATIM: "닿지도 않았는데 죽었다"
 
 --- SYMPTOM CARD ---
 Margin-top 24px, padding 20px, rounded-md, border 1px rgba(248,113,113,0.28),
 background rgba(248,113,113,0.05), border-left 3px #f87171.
   Label font-mono 10px letter-spacing 0.18em #f87171, VERBATIM: "증상"
   Body 16px leading-8, VERBATIM:
-  "1분쯤 플레이하면 점점 버벅였다. 처음 30초는 멀쩡하고, 그 뒤로 느려진다.
-   폰에서는 더 심했다. 게임 로직은 아무것도 안 바뀌었는데."
+  "발판 위에 올라선 것처럼 보이는데 캐릭터가 공중에 떠 있었다.
+   반대로 장애물 옆을 지나가기만 해도 부딪힌 판정이 났다.
+   발판 종류를 바꾸면 어긋나는 정도가 달라졌다."
 
-=== BLOCK B: THE DEMO (the defining idea of this page) ===
-Margin-top 36px. A container, height 420px, rounded-md,
-border 1px rgba(163,230,53,0.18), background #0c1105, overflow hidden.
-STATIC scanlines overlay.
+=== BLOCK B: THE DEMO (the defining idea) ===
+Margin-top 36px. Container, rounded-md, border 1px rgba(163,230,53,0.20),
+background #151d09, padding 20px.
 
-TOP BAR (44px, border-bottom 1px rgba(163,230,53,0.12)), containing THE TOGGLE and
-three live gauges:
+Header strip (32px): left font-mono 10px rgba(255,255,255,0.46),
+VERBATIM: "재현 · 발판 6종"
+right: a TOGGLE, font-mono 11px, VERBATIM: "충돌 박스 보기"
+Default: OFF.
 
-  THE TOGGLE (left): a switch, font-mono 11px, width 168px, height 30px,
-  background rgba(255,255,255,0.04), border 1px rgba(163,230,53,0.22), rounded,
-  with two halves:
-    LEFT  VERBATIM "제거 켬"   (active: color #4ade80)
-    RIGHT VERBATIM "제거 끔"   (active: color #f87171)
-  Default: 제거 켬.
+CANVAS (full width, height ~300px, image-rendering: pixelated):
+  A side-scrolling runner strip. A capsule character auto-runs left to right at a
+  fixed pace, hopping between platforms. Six platform types cycle through, each
+  drawn as a distinct colored block with a LABEL beneath in font-mono 9px.
+  Types VERBATIM: "옥상" "계단" "버스정류장" "축제부스" "책장" "돌다리"
+  (these are the real six: rooftop / stairs / busStop / festivalBooth /
+   libraryShelf / stoneBridge)
 
-  GAUGE 1 (center-left): font-mono 11px label VERBATIM "활성 오브젝트"
-    and a big value in pixel font 24px, tabular-nums.
-    Color rules: under 40 -> #4ade80; 40-120 -> #fbbf24; over 120 -> #f87171.
-  GAUGE 2 (center-right): label VERBATIM "FPS", value pixel font 24px,
-    same three-tier coloring reversed (over 50 -> #4ade80, 30-50 -> #fbbf24,
-    under 30 -> #f87171).
-  GAUGE 3 (right): a live FPS sparkline, 120x28px, SVG polyline holding 60 points,
-    stroke color matching the current FPS tier, appended once per second.
+  EACH PLATFORM IS DRAWN AS TWO RECTANGLES:
+    1. the SPRITE rect - the full source image including its transparent padding,
+       drawn at 22% opacity in rgba(255,255,255,0.30) when the overlay is ON
+    2. the BODY rect - the actual collision box, a 1px #7dd3fc outline when ON
+  With the overlay OFF, only the visible platform art shows and everything looks
+  fine. With the overlay ON, the gap between the two rectangles becomes obvious -
+  and it is a DIFFERENT gap for each of the six types.
 
-THE GAME AREA (canvas, fills the remaining height):
-  The same one-button runner as earlier: auto-scrolling ground, obstacles spawning
-  every 900-1700ms, jump on Space / tap.
-  IN "제거 켬" MODE: obstacles that scroll past the left edge are removed from the
-  active array. The active-object count hovers around 8-14.
-  IN "제거 끔" MODE: obstacles that scroll past the left edge are KEPT in the array
-  and are still updated and collision-checked every frame (they are simply drawn
-  off-screen). The count grows continuously.
-  To make the frame cost real rather than faked, each retained object performs a
-  small but genuine per-frame workload (position update + a collision distance
-  check against the player). The FPS drop must be an ACTUAL measured drop from the
-  rAF timestamps, not a scripted number.
+  A running readout in the canvas's top-right, font-mono 10px, showing the currently
+  hovered/nearest platform, format VERBATIM:
+    "스프라이트 512×512 · 실제 발판 384×64"
+  (the numbers change per platform type; keep them plausible powers-of-two source
+   sizes with a much smaller real area)
 
-  SAFETY CAP: the count stops growing at 400. At that point a chip appears at the
-  top-center, font-mono 10px #f87171, VERBATIM: "상한 400개 · 안전을 위해 고정"
-  AUTO-RECOVERY: 15 seconds after "제거 끔" is enabled, the demo automatically
-  switches back to "제거 켬", purges the retained objects, and shows a line for 3s,
-  font-mono 11px #4ade80, VERBATIM: "자동 복구됨 · 오브젝트 정리 완료"
+  CRITICAL: do NOT animate the overlay's appearance with a flash. Cross-fade the
+  outlines in over 0.25s. Photosensitivity rule outranks the reveal.
 
-  WHEN THE COUNT CROSSES 120, a message fades in over the canvas, max-width 420px,
-  centered, 17px leading-9, rgba(255,255,255,0.88), VERBATIM:
-    "지금 느껴지시나요? 게임 로직은 하나도 안 바뀌었습니다."
-  It fades out when the count returns under 40.
+SPRITE ANATOMY PANEL (right of or beneath the canvas, ~220px):
+  A single enlarged platform sprite shown as a diagram:
+    - the outer box labeled font-mono 9px, VERBATIM: "원본 PNG"
+    - a large transparent-padding area, hatched at 8% opacity,
+      labeled VERBATIM: "빈 여백"
+    - the inner cropped area with a #a3e635 1px border,
+      labeled VERBATIM: "sourceRect"
+    - inside it, a #7dd3fc 1px box, labeled VERBATIM: "bodyWidth / bodyHeight"
+    - a small offset arrow from the sprite's top-left to the body's top-left,
+      labeled VERBATIM: "bodyOffsetX / bodyOffsetY"
+  This diagram is the page's explanatory core - it must be legible before the code.
 
-KEYBOARD SAFETY: Space captured only when the container is hovered or focused.
-PERFORMANCE: the rAF loop stops when the container is off-screen or the tab is
-hidden, and any retained objects are purged on stop.
+A note at the container's bottom-left, font-mono 9px rgba(255,255,255,0.32),
+VERBATIM: "재현용 예시입니다"
 
-=== BLOCK C: THE MEASUREMENT TABLE ===
-Margin-top 40px. Label font-mono 10px letter-spacing 0.18em rgba(255,255,255,0.46),
-VERBATIM: "실제 게임에서 확인한 것"
+=== BLOCK C: ELIMINATION TABLE ===
+Margin-top 44px. Label font-mono 10px letter-spacing 0.18em rgba(255,255,255,0.46),
+VERBATIM: "먼저 떠올린 해결책들"
 A 3-column table, font-mono 12px, row separators 1px rgba(255,255,255,0.08),
-row padding 13px. Headers VERBATIM: "플레이 시간" | "활성 오브젝트" | "체감"
-Rows:
-  "30초"  | "약 12개"   | "정상"
-  "1분"   | "약 90개"   | "가끔 끊김"
-  "2분"   | "약 200개"  | "확실히 느려짐"
-The 체감 cells are colored #4ade80 / #fbbf24 / #f87171 top to bottom.
-Rows reveal 0.14s apart on entry.
-Below the table, font-mono 10px rgba(255,255,255,0.32), VERBATIM:
-  "브라우저 개발자 도구로 오브젝트 수만 세어본 수치입니다.
-   프로파일러로 프레임 시간을 정식 측정하지는 않았습니다."
+row padding 13px. Headers VERBATIM: "방법" | "해봤더니" | "판단"
+Rows (판단 cells: rejected in rgba(255,255,255,0.46) with "✕ ", adopted in #4ade80
+with "● "):
+  "스케일을 줄여본다"        | "그림도 같이 작아짐 · 여백 비율은 그대로"   | "✕ 원인이 아님"
+  "충돌 박스를 일괄로 줄인다" | "어떤 발판은 맞고 어떤 발판은 더 어긋남"    | "✕ 종류마다 다름"
+  "이미지를 다시 그린다"     | "6종을 전부 다시 만들어야 함"             | "✕ 비용이 큼"
+  "여백을 잘라 쓰고 박스를 따로 정의" | "발판마다 값 하나씩만 잡으면 끝"    | "● 채택"
+Rows reveal 0.16s apart, sliding in from x -10px. The adopted row lands last and
+grows a 2px #4ade80 left bar over 0.5s.
 
-=== BLOCK D: THE FIX (before / after code) ===
-Margin-top 40px. Two code panels, side by side above 1024px, stacked below, gap 16px.
-Each: background #0c1105, border 1px, rounded-md, header with three window dots and
-a filename, body font-mono 12px with a line-number gutter.
+Below the table, one line, 15px leading-8, VERBATIM:
+  "그림이 큰 게 문제가 아니었다.
+   그림의 크기를 그대로 판정 크기로 쓴 게 문제였다."
+Emphasize "그림의 크기를 그대로 판정 크기로 쓴 게" in #fbbf24, font-bold.
 
-  BEFORE panel - border 1px rgba(248,113,113,0.28),
-    filename VERBATIM: "ObstacleSpawner.ts (before)"
-    CONTENT: ~12 lines. A spawner that creates a new obstacle on a timer, pushes it
-    into an array, and updates every element of that array each frame - with no
-    removal path at all.
-    HIGHLIGHT the push row with rgba(248,113,113,0.12) and add an inline marker at
-    its right edge, font-mono 10px #f87171, VERBATIM: "← 넣기만 한다"
+=== BLOCK D: ROOT CAUSE ===
+Margin-top 40px, padding 22px, rounded-md, border 1px rgba(251,191,36,0.30),
+background rgba(251,191,36,0.05), border-left 3px #fbbf24.
+  Label font-mono 10px letter-spacing 0.18em #fbbf24, VERBATIM: "원인"
+  Body 16px leading-8, VERBATIM:
+  "발판 이미지는 큰 정사각 캔버스 안에 그려져 있었다.
+   실제 발판은 그 안의 일부고 나머지는 투명한 여백이었다.
+   엔진은 그림 전체를 하나의 덩어리로 보기 때문에, 여백까지 발판으로 쳤다.
+   발판마다 여백의 크기와 위치가 달라서 어긋나는 정도도 제각각이었다."
+  Emphasize "여백까지 발판으로 쳤다" in #fbbf24, font-bold.
 
-  AFTER panel - border 1px rgba(74,222,128,0.28),
-    filename VERBATIM: "ObstacleSpawner.ts (after)"
-    CONTENT: ~20 lines. A pooled spawner: a pool array of inactive obstacles;
-    an acquire function that reuses an inactive object if one exists and only
-    allocates when the pool is empty; a release path that deactivates an obstacle
-    once it passes the left boundary and returns it to the pool; and an update loop
-    that iterates only the ACTIVE list.
-    HIGHLIGHT the boundary check + release row and the pool reuse row with
-    rgba(74,222,128,0.12).
+=== BLOCK E: THE FIX ===
+Margin-top 40px. Two steps shown in order (not before/after side by side - this fix
+has two distinct stages). Each: background #0c1105,
+border 1px rgba(163,230,53,0.18), rounded-md, header with a step number and title.
+
+  STEP 1 panel - header VERBATIM: "1 · 텍스처를 잘라서 등록한다 (BootScene.ts)"
+    CONTENT: ~8 lines. Reading each platform's sourceRect from config and
+    registering a cropped texture under that platform's asset key, so that every
+    later use of the key already refers to the trimmed image.
     Caption bar, font-mono 11px, prefixed "// ", VERBATIM:
-      "만들고 버리는 대신, 껐다 켠다. GC도 덜 돈다."
+      "여기서 한 번 자르면 이후 코드는 여백을 모른다."
 
-=== BLOCK E: VERIFICATION ===
-Margin-top 36px. Three stat cells in a row, gap 12px (stacks below 640px).
-Each: padding 16px, rounded-md, border 1px rgba(74,222,128,0.22),
+  STEP 2 panel - header VERBATIM: "2 · 충돌 박스를 따로 정의한다 (platformConfig.ts)"
+    CONTENT: ~14 lines of config for ONE platform type showing the real field names
+    exactly - use these identifiers verbatim:
+      scale, bodyWidth, bodyHeight, bodyOffsetX, bodyOffsetY,
+      spawnWeight, lateSpawnWeight, minScore, minGap, maxGap, sourceRect
+    HIGHLIGHT bodyWidth / bodyHeight / bodyOffsetX / bodyOffsetY with
+    rgba(125,211,252,0.12) and sourceRect with rgba(163,230,53,0.12).
+    Caption bar, font-mono 11px, prefixed "// ", VERBATIM:
+      "발판을 하나 추가할 때 손댈 곳이 이 파일 한 군데가 됐다."
+
+=== BLOCK F: VERIFICATION + WHAT WAS NOT MEASURED ===
+Margin-top 40px.
+A verification strip, padding 16px, rounded-md, border 1px rgba(74,222,128,0.22),
 background rgba(74,222,128,0.04).
-  Cell 1  value pixel font 26px #4ade80 VERBATIM "12개"
-          label font-mono 10px rgba(255,255,255,0.46) VERBATIM "2분 플레이 후 활성 오브젝트"
-  Cell 2  value VERBATIM "일정"   label VERBATIM "플레이 시간에 따른 증가"
-  Cell 3  value VERBATIM "0회"   label VERBATIM "이후 체감 끊김 보고"
-Values count up / fade in on entry.
+  Label font-mono 10px letter-spacing 0.18em #4ade80, VERBATIM: "검증"
+  A 3-row list, 15px leading-8, each prefixed "✓ ", VERBATIM:
+    "6종 발판 전부에서 그림 경계와 판정 경계가 일치"
+    "디버그 오버레이를 켜둔 채로 한 판을 끝까지 플레이"
+    "발판을 새로 추가해도 설정 값만 잡으면 동작"
+Below the strip, font-mono 10px rgba(255,255,255,0.32), VERBATIM:
+  "눈으로 오버레이를 보며 확인했습니다. 판정에 대한 자동화 테스트는 없습니다."
 
-=== BLOCK F: WHAT I COULD NOT MEASURE (required - do not remove) ===
-Margin-top 30px, padding 20px, rounded-md, border 1px rgba(255,255,255,0.12),
-background rgba(255,255,255,0.02).
+Then the limits card, margin-top 28px, padding 20px, rounded-md,
+border 1px rgba(255,255,255,0.12), background rgba(255,255,255,0.02).
   Label font-mono 10px letter-spacing 0.18em rgba(255,255,255,0.46),
-  VERBATIM: "재보지 못한 것"
-  A 3-item list, 15px leading-8, each prefixed "· ", VERBATIM:
-    "프레임 시간이 몇 밀리초에서 몇 밀리초로 줄었는지는 측정하지 않았다."
-    "메모리 사용량 변화도 확인하지 않았다. 체감과 오브젝트 수만 봤다."
-    "저사양 기기에서의 실제 개선 폭은 모른다. 내 폰 한 대에서만 확인했다."
+  VERBATIM: "재보지 못한 것 · 남은 것"
+  A 4-item list, 15px leading-8, each prefixed "· ", VERBATIM:
+    "프레임 저하가 실제로 얼마였는지는 재지 않았습니다. 체감으로만 판단했습니다."
+    "충돌 박스 값은 눈으로 맞춘 숫자입니다. 계산해서 뽑은 게 아닙니다."
+    "발판은 사각형 하나로만 판정합니다. 계단처럼 생긴 발판도 실제로는 네모입니다."
+    "원본 PNG의 여백을 애초에 없애는 게 더 근본적인데, 이미지를 다시 만들지는 않았습니다."
 
 === ANIMATION TIMELINE (on section enter) ===
-0.00s  Label, heading at 0.15s
-0.60s  Symptom card slides in from the left (x -12px -> 0)
-1.10s  Demo container fades up; the game starts in "제거 켬" mode
-1.80s  The gauges begin updating
-2.40s  A one-time hint pulses on the toggle (a soft lime ring, 2 pulses, 0.9s each),
-       font-mono 10px rgba(255,255,255,0.35) beside it,
-       VERBATIM: "「제거 끔」으로 바꿔보세요"
-       The hint disappears permanently once the toggle is used.
-Table, code, verification and the limits card animate on their own entry.
+0.00s  Label, heading word by word at 0.15s
+0.60s  Symptom card slides in from the left
+1.10s  The demo container fades up; the runner starts with the overlay OFF
+2.20s  A one-time pulse on the "충돌 박스 보기" toggle (a soft lime ring, 2 pulses of
+       0.9s - NOT a flash) with a hint, font-mono 10px rgba(255,255,255,0.35),
+       VERBATIM: "켜보세요"
+       Both disappear permanently once the toggle is used.
+All later blocks animate on their own viewport entry.
+
+=== PERFORMANCE ===
+The canvas loop must stop when the container leaves the viewport and when
+document.hidden is true, and resume without resetting the run.
+One requestAnimationFrame loop only. Draw the overlay in the same pass.
 
 === RESPONSIVE ===
-< 1024px: code panels stack (before on top).
-< 640px: demo height 340px, gauges wrap to two rows, sparkline hidden;
-game is tap-controlled; table becomes a stacked card list; code font 11px with
-internal horizontal scroll (the block scrolls, never the page).
+< 1024px: the sprite anatomy panel moves beneath the canvas, full width.
+< 720px: canvas height 220px; platform labels drop to 8px; the anatomy diagram keeps
+its proportions and scrolls horizontally inside itself if needed.
+< 640px: code font 11px with internal horizontal scroll (blocks scroll, never the
+page).
 
 === ACCESSIBILITY ===
-prefers-reduced-motion: the demo still runs and is still playable, but the
-over-canvas message appears without animation and the toggle hint does not pulse.
-The toggle is a real switch (role="switch", aria-checked) with a visible focus ring
+prefers-reduced-motion: the runner holds a static posed frame, the overlay toggles
+with no cross-fade, table rows do not slide, the toggle does not pulse.
+The toggle is a real button with aria-pressed and a visible focus ring
 (2px #a3e635, offset 2px).
-Announce crossing the 120-object threshold ONCE via aria-live="polite", VERBATIM:
-  "활성 오브젝트가 급증해 프레임 속도가 떨어지고 있습니다."
-Do not announce every gauge tick.
-Numbers are tabular-nums so the gauges do not jitter.
+The canvas is aria-hidden; provide ONE visually-hidden description instead,
+VERBATIM: "발판의 그림 경계와 충돌 판정 경계가 서로 다르다는 것을 보여주는 시연입니다."
+Do not put aria-live on the canvas readout - it changes every frame.
+The mismatch is never conveyed by color alone - the anatomy diagram's text labels
+carry the same information.
 
 === DO NOT ===
-Do not fake the FPS drop - measure real rAF frame deltas.
-Do not let the object count grow without the 400 cap and the 15-second auto-recovery.
-Do not claim millisecond improvements that were never measured - the
-"재보지 못한 것" card must stay.
-No strobing as the numbers turn red - color transitions only, 0.3s.
+Do NOT flash, strobe, or invert the screen when the overlay turns on (photosensitivity).
+Do NOT claim a frame-rate number, an object count, or a before/after ms figure -
+none of that was measured, and the limits card says so explicitly.
+Do NOT invent config field names - use only the eleven listed in STEP 2.
+Do NOT reduce this to "I turned on debug mode" - the two-stage fix (crop, then define
+the body) is the actual content.
 ```
-
----
 
 ## PAGE 05 — 맵은 손으로 그리지 않았다 · 자동 생성 규칙
 
@@ -2001,7 +2032,7 @@ Do not add confetti or "thanks for playing" celebration copy.
 | **데모 영상** | P01 스티커 B | 캐비닛 옆면 스티커 |
 | **GitHub** | P01 스티커 A · P10 버튼 | 스티커 + 마무리 버튼 |
 | **실제 플레이** | **P02 · P03 · P04 · P05 · P08** | **관람객이 직접 조작하는 캔버스 5곳** |
-| **코드** | P02(update 루프) · P03(점프 A/B) · P04(Before/After 풀링) · P05(생성기) · P06(보간) · P07(scoreStore) · P08(gameConfig) | **총 9개** |
+| **코드** | P02(update 루프) · P03(점프 A/B) · **P04(BootScene `sourceRect` 크롭 + `platformConfig` 충돌 박스)** · P05(생성기) · P06(보간) · P07(scoreStore) · P08(gameConfig) | **총 9개** |
 | **트러블슈팅** | P04 (오브젝트 누적) · P08 (모바일) | **전체 프로세스 2건** |
 | **기술 의사결정 + 포기한 것** | P03 (조작감 튜닝값 근거) · P07 (서버 저장 안 한 이유) | 3안 비교 + 정직한 카드 |
 | **알고리즘 설계** | P05 | 도달 가능성 보장 규칙 |

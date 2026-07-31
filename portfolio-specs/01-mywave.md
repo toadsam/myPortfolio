@@ -1,6 +1,31 @@
-# 01. MyWave — 프롬프트 팩
+# 01. MyWave — 프롬프트 팩 · ⛔ 단독 방으로는 폐기 (02에 통합)
 
-> 개인 자산 흐름을 한눈에 이해하도록 돕는 금융 관리 대시보드 · React / TypeScript / Chart UI / Tailwind CSS
+> # 🛑 이 문서를 그대로 쓰지 마세요 (2026-07-31)
+>
+> **MyWave에는 독립 저장소가 없습니다.** `toadsam/MyWave` 는 존재하지 않고,
+> MyWave는 `toadsam/MyStock-Desk` 저장소 안의 화면입니다:
+> - 프론트 `frontend/src/mywave/MyWaveApp.tsx` · `myWaveApi.ts` · `myWaveData.ts`
+> - 백엔드 `backend/.../dashboard/MyWaveDashboardController.java` · `MyWaveDashboardService.java`
+> - 게다가 현재 `frontend/src/App.tsx` 는 **`<MyWaveApp />` 만 렌더**합니다
+>
+> 방을 두 개로 두면 **두 방의 GitHub 링크가 같은 저장소로 갑니다.**
+> 링크를 눌러본 면접관에게 바로 드러나므로, **02 MyStock 한 방으로 통합**했습니다.
+>
+> ### 코드 쪽은 반영 완료
+> `constants.ts` 에서 `project-mywave` 건물 제거 · NPC 참조를 `project-mystock` 으로 이관 ·
+> `projects.ts` / `resume.ts` 는 **"MyStock-Desk / MyWave"** 한 항목으로 병합.
+> `richContent/mywave.tsx`(350줄)와 `mywaveBrief.ts` 는 **지우지 않고 남겨뒀습니다** —
+> 02 방의 한 단계로 재배치할 때 그대로 씁니다.
+>
+> ### 이 문서를 어떻게 쓰나
+> 폐기가 아니라 **부품 창고**로 쓰세요. 아래 페이지 중 **자산 흐름 화면에만 해당하는 연출**
+> (물결/유체 표현, 12개월 타임라인, 목표 관리 화면)은 **02 MyStock 문서의 한 페이지로 옮겨서**
+> "같은 서비스의 다른 화면"으로 소개하면 됩니다.
+> `[FIX-04] 색 충돌`(01 ↔ 10이 둘 다 `#34d399`)도 **통합으로 자동 해소**됐습니다.
+>
+> ⚠️ 아래 본문에는 "독립 프로젝트" 전제의 서술이 그대로 남아 있습니다. 옮길 때 걷어내세요.
+
+> 개인 자산 흐름을 한눈에 이해하도록 돕는 금융 관리 대시보드 (MyStock-Desk 저장소 내 화면) · React / TypeScript / Chart UI / Tailwind CSS
 > **사용법**: `PAGE 00` ~ `PAGE 10` 의 코드블록을 **하나씩 통째로 복사해서 Variant에 붙여넣으세요.**
 > 각 프롬프트는 **완전히 자립적**입니다 (색상·폰트·무드가 매번 반복 포함).
 > `## A` `## B` `## D` 는 **읽기용**이지 프롬프트가 아닙니다.

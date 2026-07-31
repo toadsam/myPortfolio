@@ -1253,8 +1253,8 @@ A card: padding 20px, rounded-md, border 1px rgba(248,113,113,0.28),
 background rgba(248,113,113,0.05), border-left 3px #f87171.
   Label font-mono 10px letter-spacing 0.18em #f87171, VERBATIM: "증상"
   Body 16px leading-8, VERBATIM:
-  "리허설 날, 운영진 화면 하나가 20분 넘게 옛날 데이터를 띄우고 있었다.
-   본인은 몰랐다. 화면에는 아무 문제도 표시되지 않았으니까.
+  "네트워크가 불안정한 환경에서 운영진 화면이 옛날 데이터를 그대로 띄우고 있었다.
+   화면에는 아무 문제도 표시되지 않아서 보는 사람은 알 수가 없었다.
    새로고침하니 정상으로 돌아왔다."
 
 --- 2-2. REPRODUCTION ---

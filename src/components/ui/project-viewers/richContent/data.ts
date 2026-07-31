@@ -1178,7 +1178,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         label: "스택",
         value:
-          "Spring Boot(Gradle) · Firebase/Firestore · Cloud Storage · React · Vite"
+          "Spring Boot(Gradle) · Firebase Firestore · Firebase Storage · Expo · React Native"
       },
       {label: "배포", value: "GitHub Pages (프론트) · /api/health 상태 체크"}
     ],
@@ -1198,10 +1198,10 @@ export const RICH_DATA: Record<string, RichProject> = {
       {n: "30+", l: "학습 단어"}
     ],
     features: [
-      {t: "수어 퀴즈 학습", d: "아바타 동작을 보고 의미를 입력·판정"},
-      {t: "텍스트→수어 변환", d: "입력 텍스트를 아바타 동작으로 표현"},
-      {t: "반복 학습 흐름", d: "동일 단어 반복 출제로 감각 형성"},
-      {t: "정답 피드백", d: "표기 차이를 흡수한 정오 판정"}
+      {t: "수어 퀴즈 학습", d: "수어 영상을 보고 보기 4개 중 뜻을 고름"},
+      {t: "텍스트→수어 변환", d: "입력 텍스트를 수어 표현으로 보여줌"},
+      {t: "오답노트·반복 학습", d: "틀린 단어를 누적해 다시 출제"},
+      {t: "학습 피드백", d: "정답률·최대 연속 정답·최다 오답 단어 집계"}
     ],
     problem:
       "기존 수어 플랫폼은 대부분 ‘문장을 넣으면 아바타가 수어로 보여주는’ 구조라, 이미 수어를 아는 사람을 전제한다. 수어를 처음 접하는 사람이 동작을 보고 의미를 익히는 ‘읽기 학습’ 도구가 부족했다.",
@@ -1219,7 +1219,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       stat: {n: "30+", l: "시제품 목표 학습 단어 수 (README 기준)"}
     },
     hypothesis:
-      "“아바타가 동작을 먼저 보여주고 사용자가 의미를 입력하는 양방향 구조 + 단어-동작 매핑을 단일 데이터 소스로 두면 — 처음 배우는 사람도 반복으로 수어를 ‘읽는’ 감각을 기를 수 있다.”",
+      "“동작을 먼저 보여주고 뜻을 고르게 하는 구조 + 단어-영상 조회 경로를 단일 소스로 두면 — 처음 배우는 사람도 반복으로 수어를 ‘읽는’ 감각을 기를 수 있다.”",
     process: [
       {t: "요구분석", d: "학습 흐름"},
       {t: "API 설계", d: "학습·판정·변환"},
@@ -1228,7 +1228,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {t: "발표", d: "파란학기"}
     ],
     architecture: [
-      {tag: "View", name: "React + 3D Avatar", desc: "퀴즈·변환 화면 (Vite)"},
+      {tag: "View", name: "Expo (React Native)", desc: "퀴즈·변환 화면 · expo-video"},
       {tag: "API", name: "Spring Boot", desc: "학습·정답판정·변환 API (담당)"},
       {
         tag: "Data",
@@ -1269,48 +1269,57 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     coreCode: [
       {
-        filename: "QuizController.java",
-        caption: "정답을 정규화해 표기 차이를 흡수",
-        highlightLines: [3],
+        filename: "QuizService.java",
+        caption: "선택지 ID를 양쪽 다 정규화한 뒤 비교",
+        highlightLines: [1, 2, 4],
         lines: [
-          "public Result check(Long id, String answer) {",
-          "  var word = repo.findById(id);",
-          "  boolean ok = normalize(word.getMeaning())",
-          "             .equals(normalize(answer)); // 공백·표기 정규화",
-          "  return new Result(ok, word.getMeaning());",
+          "String correctChoiceId = normalizeChoiceId(doc.getString(\"correctChoiceId\"));",
+          "String selectedChoiceId = normalizeChoiceId(request.selectedChoiceId());",
+          "",
+          "boolean isCorrect = correctChoiceId.equals(selectedChoiceId);",
+          "",
+          "private String normalizeChoiceId(String value) {",
+          "  return value == null ? \"\" : value.trim().toUpperCase(Locale.ROOT);",
           "}"
         ]
       },
       {
-        filename: "word-contract",
-        caption: "단어↔동작 키를 한 소스로 정의 → FE·아바타가 그대로 사용",
+        filename: "StorageVideoCache.java",
+        caption: "Storage에 없으면 Firestore URL로 폴백 — 조회 경로를 하나로",
+        highlightLines: [2, 6],
         lines: [
-          "// 단어 데이터가 동작(animation) 키를 그대로 보유",
-          "{ id, meaning, signKey } // signKey = 아바타 애니메이션 키",
-          "// API가 signKey를 내려주면 아바타가 해당 동작 재생"
+          "public String findUrlOrFallback(String word, String fallbackUrl) {",
+          "  String storageUrl = findUrl(word);",
+          "  if (storageUrl != null && !storageUrl.isBlank()) {",
+          "    return storageUrl;",
+          "  }",
+          "  return fallbackUrl == null ? \"\" : fallbackUrl.trim();",
+          "}"
         ]
       }
     ],
     work: [
       {g: "서버", items: ["Spring Boot 서버 구축", "학습·변환 API 설계"]},
-      {g: "데이터", items: ["단어-동작 매핑 처리", "Firestore/Storage 연동"]},
-      {g: "로직", items: ["퀴즈 출제·정답 정규화", "반복 학습 흐름"]}
+      {g: "데이터", items: ["단어-영상 매핑 처리", "Firestore/Storage 연동"]},
+      {g: "로직", items: ["퀴즈 출제·선택지 정규화", "오답노트·반복 학습 흐름"]}
     ],
     challenges: [
       {
-        title: "같은 의미를 다르게 입력하면 오답이 됐다",
-        problem: "‘감사합니다’와 ‘감사 합니다’가 다른 답으로 처리됐다.",
-        solution: "공백·표기를 정규화한 뒤 비교해 의미가 같으면 정답 처리했다."
+        title: "선택지 값이 조금만 달라도 오답 처리됐다",
+        problem:
+          "클라이언트가 보낸 선택지 ID의 대소문자·공백이 저장된 정답과 달라 맞은 답이 오답이 됐다.",
+        solution:
+          "채점 전에 양쪽 선택지 ID를 trim + 대문자로 정규화한 뒤 비교하도록 통일했다."
       },
       {
-        title: "단어 데이터와 아바타 동작이 어긋났다",
+        title: "단어에 맞는 수어 영상이 안 나오는 경우가 있었다",
         problem:
-          "백엔드 단어와 아바타 애니메이션 키가 따로 관리돼 동작이 안 나오는 경우가 있었다.",
+          "영상은 Firebase Storage에, 메타데이터는 Firestore에 따로 있어 한쪽에만 있는 단어는 재생이 비었다.",
         solution:
-          "단어-동작 매핑을 단일 소스로 두고 API가 그 키를 그대로 내려주도록 계약을 통일했다."
+          "Storage를 단어로 먼저 조회하고 없으면 Firestore의 영상 URL로 폴백하는 단일 조회 경로를 만들었다."
       }
     ],
-    tech: ["Spring Boot", "Firebase/Firestore", "React", "Vite", "3D Avatar"],
+    tech: ["Spring Boot", "Firebase Firestore", "Firebase Storage", "Expo", "React Native"],
     resultScreens: [
       {
         title: "sign/quiz",
@@ -1795,10 +1804,11 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     demo: {repo: "https://github.com/KimEoJin24/TSEROF"},
     meta: [
-      {label: "기간", value: "[확인필요] 팀 프로젝트 (Unity)"},
-      {label: "팀", value: "[확인필요] 팀 프로젝트 (인원 확인 예정)"},
-      {label: "역할", value: "플레이어 제어 · 스테이지 시스템"},
+      {label: "기간", value: "2023.11 – 2024.02"},
+      {label: "팀", value: "5인 팀 프로젝트"},
+      {label: "역할", value: "게임 시스템 · 플레이 로직 구현"},
       {label: "스택", value: "Unity 2022.3 · C#"},
+      {label: "출시", value: "Steam 스토어 출시"},
       {
         label: "비고",
         value: "비공개 저장소 (팀원 소유) · 링크는 접근 제한될 수 있음"
@@ -1878,32 +1888,41 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     coreCode: [
       {
-        filename: "PlayerController.cs",
-        caption: "코요테 타임을 둔 2단 점프",
-        highlightLines: [3, 4],
+        filename: "ForceReceiver.cs",
+        caption: "접지를 한 점이 아니라 발 4방향으로 검사 — 가장자리 점프 씹힘 해결",
+        highlightLines: [2, 3, 4, 5, 9],
         lines: [
-          "void Jump() {",
-          "  bool canGround = grounded || coyote > 0;",
-          "  if (canGround) { Leap(); jumps = 1; }",
-          "  else if (jumps > 0) { Leap(); jumps--; } // 2단",
-          "}"
+          "Ray[] rays = new Ray[4]",
+          "{",
+          "  new Ray(transform.position + transform.forward * 0.25f + Vector3.up * 0.01f, Vector3.down),",
+          "  new Ray(transform.position - transform.forward * 0.25f + Vector3.up * 0.01f, Vector3.down),",
+          "  new Ray(transform.position + transform.right   * 0.25f + Vector3.up * 0.01f, Vector3.down),",
+          "  new Ray(transform.position - transform.right   * 0.25f + Vector3.up * 0.01f, Vector3.down)",
+          "};",
+          "",
+          "for (int i = 0; i < rays.Length; i++)",
+          "  if (Physics.Raycast(rays[i], maxDistance, LayerMask.GetMask(\"Ground\")))",
+          "  { if (!isGrounded) EnterGround(); return; }"
         ]
       },
       {
-        filename: "StageManager.cs",
-        caption: "클리어 시 다음 스테이지 잠금 해제 + 저장",
+        filename: "FileDataHandler.cs",
+        caption: "세이브 파일을 XOR로 난독화 — 메모장으로 열어 고치는 것만 막는 수준",
+        highlightLines: [4],
         lines: [
-          "public void Clear(int stage) {",
-          "  progress.unlocked = Mathf.Max(progress.unlocked, stage + 1);",
-          "  Save.Write(progress); // 이어하기",
+          "private string EncryptDecrypt(string data) {",
+          "  string modifiedData = \"\";",
+          "  for (int i = 0; i < data.Length; i++)",
+          "    modifiedData += (char)(data[i] ^ _encryptionCodeWord[i % _encryptionCodeWord.Length]);",
+          "  return modifiedData;",
           "}"
         ]
       }
     ],
     work: [
-      {g: "제어", items: ["이동·2단 점프 컨트롤러", "코요테 타임 판정"]},
+      {g: "제어", items: ["이동·2단 점프 컨트롤러", "4방향 레이 접지 판정"]},
       {g: "스테이지", items: ["선택·잠금 해제 시스템"]},
-      {g: "저장", items: ["진행상황 직렬화·이어하기"]},
+      {g: "저장", items: ["진행상황 직렬화·이어하기", "XOR 저장 데이터 난독화"]},
       {g: "협업", items: ["씬 분리 작업 구조"]}
     ],
     challenges: [
@@ -1915,10 +1934,11 @@ export const RICH_DATA: Record<string, RichProject> = {
           "스테이지를 씬/프리팹 단위로 분리하고 담당을 나눠, 한 파일을 동시에 만지지 않는 작업 규칙을 세웠다."
       },
       {
-        title: "점프가 ‘떨어지는 순간’ 안 먹혔다",
-        problem: "발판 끝에서 점프하면 무시되는 경우가 있어 답답했다.",
+        title: "발판 가장자리에서 점프가 씹혔다",
+        problem:
+          "접지 판정을 발밑 한 점으로만 봐서, 발이 발판 끝에 걸친 상태에서는 땅으로 인식되지 않아 점프가 무시됐다.",
         solution:
-          "착지 직후 짧은 코요테 타임을 둬, 막 떨어진 순간에도 점프를 허용해 조작감을 높였다."
+          "코요테 타임을 먼저 시도했지만 공중에서도 점프가 나가는 부작용이 있어 뺐다. 최종적으로는 접지 레이를 앞·뒤·좌·우 4방향(±0.25)으로 늘리고 Ground 레이어만 검사해, 한 방향이라도 닿으면 접지로 처리했다."
       }
     ],
     tech: ["Unity 2022.3", "C#"],

@@ -235,9 +235,9 @@ export const mainProjects: MainProjectCard[] = [
   },
   {
     id: "mystock",
-    title: "MyStock-Desk",
+    title: "MyStock-Desk / MyWave",
     subtitle:
-      "거래 기록 기반 포트폴리오 분석과 AI 체크리스트를 제공하는 투자 기록 서비스",
+      "거래 기록 기반 포트폴리오 분석·AI 체크리스트와 자산 흐름 대시보드(MyWave)를 담은 투자 기록 서비스",
     category: "data",
     status: "완료",
     tags: ["React", "Spring Boot", "AI", "Recharts"],
@@ -261,21 +261,12 @@ export const mainProjects: MainProjectCard[] = [
   {
     id: "sign-language",
     title: "수어지구",
-    subtitle: "수어 아바타를 활용한 학습 및 표현 서비스",
+    subtitle:
+      "수어 동작 영상을 보고 뜻을 익히는 학습 앱 (3D 아바타 제작은 팀원 담당)",
     category: "web",
     status: "완료",
-    tags: ["Spring Boot", "Firebase", "3D Avatar"],
+    tags: ["Spring Boot", "Firebase", "Expo", "React Native"],
     richId: "sign-language",
-    links: []
-  },
-  {
-    id: "mywave",
-    title: "MyWave",
-    subtitle: "개인 자산 흐름을 한눈에 보는 금융 관리 대시보드 (컨셉/설계)",
-    category: "data",
-    status: "완료",
-    tags: ["React", "TypeScript", "Recharts"],
-    richId: "mywave",
     links: []
   },
   {
@@ -291,11 +282,12 @@ export const mainProjects: MainProjectCard[] = [
   },
   {
     id: "ajou-adventure",
-    title: "아주대탐험",
-    subtitle: "스킬·AI·이벤트 시스템을 통합 구현한 캐주얼 액션 어드벤처 게임",
+    title: "아주분투",
+    subtitle:
+      "캠퍼스를 네온 톤으로 재해석한 Phaser 3 기반 2D 러닝 게임 (발판 6종·낮/밤 전환)",
     category: "game",
     status: "완료",
-    tags: ["Unity", "AI", "GameSystem"],
+    tags: ["TypeScript", "Phaser 3", "Vite"],
     richId: "ajou-adventure",
     image: "/projects/ajou-adventure.png",
     links: []

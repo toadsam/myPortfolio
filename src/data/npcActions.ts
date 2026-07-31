@@ -20,7 +20,7 @@ export const npcActions: NpcActionDefinition[] = [
     triggerKeywords: ["추천", "동선", "다음", "빠르게", "순서"],
     preferredMoods: ["curious", "focused"],
     animationKey: "point",
-    targetId: "project-mywave",
+    targetId: "project-mystock",
     durationMs: 4400
   },
   {
@@ -42,7 +42,7 @@ export const npcActions: NpcActionDefinition[] = [
     triggerKeywords: ["대표", "추천", "프로젝트", "best", "채용자"],
     preferredMoods: ["excited", "focused", "busy"],
     animationKey: "point",
-    targetId: "project-mywave",
+    targetId: "project-mystock",
     durationMs: 4600
   },
   {
@@ -53,7 +53,7 @@ export const npcActions: NpcActionDefinition[] = [
     triggerKeywords: ["mywave", "festflow", "건물", "상세", "클릭"],
     preferredMoods: ["curious", "excited"],
     animationKey: "point",
-    targetId: "project-mywave",
+    targetId: "project-mystock",
     durationMs: 4300
   },
   {

@@ -1,6 +1,10 @@
 # 07. 수어지구 — 프롬프트 팩
 
-> 수어 아바타를 활용한 학습 및 표현 서비스 · Spring Boot / Firebase / React / TypeScript / 3D Avatar
+> 수어 동작 영상을 보고 뜻을 익히는 학습 앱 · Spring Boot / Firebase Firestore·Storage / Expo(React Native)
+>
+> ⚠️ **스택 정정 (2026-07-31).** 프론트는 **Expo(React Native) + `expo-video`** 이고 재생되는 건 **수어 영상**입니다.
+> **3D 아바타는 실재하지만 4인 팀 중 다른 팀원의 작업이고 이 저장소에 없습니다** — 언급할 때 반드시 담당을 밝히세요.
+> 퀴즈는 **4지선다**입니다(주관식 입력 없음). 자세한 건 `_AUDIT.md` 와 `PAGE 04` 상단 박스.
 > **사용법**: `PAGE 00` ~ `PAGE 10` 의 코드블록을 **하나씩 통째로 복사해서 Variant에 붙여넣으세요.**
 > 각 프롬프트는 **완전히 자립적**입니다 (색상·폰트·무드가 매번 반복 포함).
 > `## A` `## B` `## D` 는 **읽기용**이지 프롬프트가 아닙니다.
@@ -45,7 +49,7 @@
 | 데모 영상 · GitHub | **갤러리 벽에 걸린 액자 3점** | 01 |
 | **동작을 데이터로 어떻게 표현했나** | **관람객이 SVG 손 플레이어를 직접 재생·일시정지·프레임 이동** → 그 순간 재생 중인 키프레임이 JSON에서 빛남 | 02 |
 | **수어는 한국어 어순이 아니다** | **같은 문장을 「한국어 순서」와 「수어 순서」로 나란히 재생** → 순서가 다르다는 게 눈에 보임 | 03 |
-| **트러블 01: 「감사합니다」와 「고맙습니다」를 다르게 판정했다** | 관람객이 직접 정답을 입력해보고 **틀렸다고 나온다** → 동의어 판정 설계 | 04 |
+| **트러블 01: 문제는 떴는데 영상 자리만 비었다** | 관람객이 단어를 골라보면 그 단어가 **Storage / Firestore 어느 쪽에 있는지** 보이고, 「수정 전」에선 한쪽만 봐서 **조용히 빈 화면** → 조회 경로 단일화 + 폴백 (`findUrlOrFallback`) | 04 |
 | 반복 학습 루프 설계 | 관람객이 퀴즈 3문제를 실제로 풀고, **틀린 게 다시 나온다** | 05 |
 | **트러블 02: 동작이 뚝뚝 끊겨 보였다** | 관람객이 「전환 프레임 없음」 토글을 켜면 **손이 실제로 끊겨 움직인다** → 응답 구조 수정 | 06 |
 | 백엔드 구조 · **내 담당과 팀원 담당** | 요청 경로를 따라가며 아바타 렌더링 구간만 다른 색으로 표시 | 07 |
@@ -879,30 +883,41 @@ Do not claim grammatical correctness. The limitation card must stay in full.
 
 ---
 
-## PAGE 04 — 트러블슈팅 01 · 맞는 답을 틀렸다고 했다
+## PAGE 04 — 트러블슈팅 01 · 문제는 떴는데 영상이 안 나왔다
 
-**개발 실체**: 퀴즈 정답 판정에서 동의 표현을 오답 처리한 문제 → **판정 로직 전체 재설계**
-**연출 장치**: **관람객이 직접 정답을 입력해본다. 맞는 답인데 빨간 X가 뜬다.**
+**개발 실체**: 수어 영상이 Firebase Storage와 Firestore 두 곳에 나뉘어 있어 생긴 조회 실패 → **조회 경로 단일화 + 폴백**
+**연출 장치**: **관람객이 단어를 직접 골라본다. 어떤 단어는 문제만 뜨고 영상 자리가 비어 있다.**
+
+> 🔴 **2026-07-31 전면 교체됨.** 이전 버전은 "「고맙습니다」라고 썼더니 틀렸다" 라는
+> **주관식 답 입력 + 동의어 판정** 트러블이었는데, 실제 저장소에는 **주관식 입력 자체가 없습니다.**
+> 퀴즈는 4지선다(`correctChoiceId.equals(selectedChoiceId)`, 보기 `A`/`B`/`C`/`D`)이고,
+> 동의어 세트나 편집 거리 판정 코드도 존재하지 않습니다. 그 페이지는 통째로 창작이었습니다.
+> 이 페이지는 **`StorageVideoCache.findUrlOrFallback()` 이라는 실제 코드** 위에 다시 세운 것입니다.
 
 ```text
-Build a TROUBLESHOOTING CASE FILE where the viewer answers a sign quiz with a
-correct-but-differently-worded answer and is marked wrong - reproducing the bug -
-then follows the full diagnosis and the answer-matching redesign.
+Build a TROUBLESHOOTING CASE FILE about a quiz where the question appears but the
+sign video is missing for certain words, and the viewer can pick words themselves to
+see which storage each word actually lives in, then follows the full diagnosis and
+the single-lookup-path fix.
 Stack: React + TypeScript + Tailwind CSS + framer-motion. SVG hands only.
+All data is local and simulated - do NOT open a real network connection.
 
 === SUBSTANCE THIS PAGE MUST DELIVER ===
-The complete process for the answer-judging bug:
-symptom -> reproduction -> elimination of naive fixes -> root cause -> the redesign
-(a synonym set per sign, plus normalization) -> verification -> remaining limits.
+The complete process for the missing-video bug:
+symptom -> reproduction -> elimination of naive fixes -> root cause (the word lived
+in one store but not the other) -> the fix (one lookup entry point with a fallback)
+-> verification -> remaining limits.
 All seven parts required.
 
 === MOOD ===
-The specific unfairness of being told you are wrong when you are right.
-Cool blue turning red, then corrected and calm.
+Not drama - the quiet confusion of a bug that throws no error. The screen is simply
+empty where something should be. Cool blue, then a warm amber when the cause lands.
 
 === ETHICS (binding) ===
 No disability simulation, no pity framing. Sign language is a language.
 Every pose labeled. Hands never decorative. Neutral silhouette.
+The word being demonstrated is ALWAYS shown here - this page is not a quiz, so there
+is no reason to hide a meaning.
 
 === DESIGN TOKENS (use exactly) ===
 background #060d18 | panel #0d1a2b | primary #7eb8ff | accent #bfdbfe
@@ -916,10 +931,10 @@ easing cubic-bezier(0.4,0,0.2,1) | rounded-md | ALL numbers tabular-nums
 === LAYOUT ===
 Centered column, max-width 1020px, padding-block 120px.
   Block A : label + heading + symptom card
-  Block B : THE QUIZ REPRODUCTION - full width, height ~420px
+  Block B : THE TWO-STORE REPRODUCTION - full width, height ~440px
   Block C : elimination table
   Block D : root cause
-  Block E : the fix (before/after code + the synonym data)
+  Block E : the fix (before/after code)
   Block F : verification + remaining limits
 
 === CONTENT (Korean copy - VERBATIM, never translate) ===
@@ -928,78 +943,92 @@ SECTION LABEL (font-mono 11px, letter-spacing 0.25em, color #f87171):
   "03 · 트러블슈팅 01"
 
 HEADING (30px font-black):
-  VERBATIM: "「고맙습니다」라고 썼더니 틀렸다고 나왔다"
+  VERBATIM: "에러는 없는데 영상 자리만 비어 있었다"
 
 --- SYMPTOM CARD ---
 Margin-top 24px, padding 20px, rounded-md, border 1px rgba(248,113,113,0.28),
 background rgba(248,113,113,0.05), border-left 3px #f87171.
   Label font-mono 10px letter-spacing 0.18em #f87171, VERBATIM: "증상"
   Body 16px leading-8, VERBATIM:
-  "테스트해준 친구가 계속 틀렸다고 했다. 로그를 보니 답을 맞게 쓰고 있었다.
-   정답은 「감사합니다」로 저장돼 있었고, 친구는 「고맙습니다」라고 썼다.
-   같은 동작을 보고 같은 뜻을 말했는데 오답이었다."
+  "어떤 단어는 문제와 보기 네 개가 정상으로 떴다. 그런데 동작 영상만 나오지 않았다.
+   서버는 200을 돌려줬고 에러 로그도 없었다. 응답을 열어보니 영상 URL이 빈 문자열이었다.
+   같은 단어를 다른 화면에서 열면 잘 나오는 경우도 있었다."
 
-=== BLOCK B: THE QUIZ REPRODUCTION (the defining idea) ===
-Margin-top 36px. Container, height ~420px, rounded-md,
+=== BLOCK B: THE TWO-STORE REPRODUCTION (the defining idea) ===
+Margin-top 36px. Container, height ~440px, rounded-md,
 border 1px rgba(126,184,255,0.18), background #0d1a2b, padding 22px.
 
-A MODE TOGGLE at the top-right, font-mono 11px, two options:
-  VERBATIM "수정 전"  |  VERBATIM "수정 후"
-Default: 수정 전.
+Header strip (30px, border-bottom 1px rgba(126,184,255,0.10)):
+  left  font-mono 10px rgba(255,255,255,0.46), VERBATIM: "재현 · 단어를 골라보세요"
+  right a MODE TOGGLE, font-mono 11px, two options:
+        VERBATIM "수정 전"  |  VERBATIM "수정 후"
+        Default: 수정 전.
 
-LEFT SIDE (~46%) - THE QUESTION
-  A small stage with a spot-lit SVG hand that plays a sign on loop (with a play/
-  replay button beneath, font-mono 11px, VERBATIM: "↻ 다시 보기").
-  The sign shown is the one meaning "thank you".
-  A question line above the stage, font-mono 12px rgba(255,255,255,0.72),
-  VERBATIM: "이 동작의 뜻은 무엇일까요?"
-  IMPORTANT: the meaning label is HIDDEN here (this is a quiz) but a
-  visually-hidden description is still provided for screen readers, and the answer
-  is revealed after submission - the "no unlabeled hand" rule is satisfied by the
-  reveal plus the hidden description.
+WORD CHIPS row beneath the header, font-mono 12px, padding 7px 15px, rounded-full,
+border 1px rgba(126,184,255,0.24), gap 8px, wrapping. Six words, VERBATIM:
+  "안녕하세요"  "감사합니다"  "이름"  "도와주세요"  "학교"  "괜찮아요"
+Selected chip: background rgba(126,184,255,0.14), color #7eb8ff, border #7eb8ff.
+Default selected: "안녕하세요".
 
-RIGHT SIDE (~54%) - THE ANSWER
-  An input, background rgba(255,255,255,0.04),
-  border 1px rgba(126,184,255,0.22), rounded-md, padding 11px 14px, font-mono 13px,
-  placeholder VERBATIM: "뜻을 입력하세요"
-  and a submit button, background #7eb8ff, color #060d18, font-mono 12px font-black,
-  padding 10px 20px, rounded-md, VERBATIM: "제출"
-  Below the input, four quick-answer chips, font-mono 11px, padding 6px 13px,
-  rounded-full, border 1px rgba(126,184,255,0.24), VERBATIM:
-    "감사합니다" "고맙습니다" "감사 합니다" "고마워요"
-  These four are the whole experiment - they are all correct meanings of the same
-  sign, and in 수정 전 mode only the first is accepted.
+Each word carries a fixed, hardcoded fact about WHERE it exists:
+  "안녕하세요"   -> Storage ✓ , Firestore ✓
+  "감사합니다"   -> Storage ✓ , Firestore ✓
+  "이름"        -> Storage ✕ , Firestore ✓      <- the bug case
+  "도와주세요"   -> Storage ✓ , Firestore ✕
+  "학교"        -> Storage ✕ , Firestore ✓      <- the bug case
+  "괜찮아요"     -> Storage ✕ , Firestore ✕      <- unrecoverable, needed for the limits
 
-  ON SUBMIT IN "수정 전" MODE:
-    If the answer is exactly VERBATIM "감사합니다" -> correct.
-    Anything else -> WRONG:
-      t=0.00s  The input's border flashes #f87171 and shakes horizontally
-               (±5px, 3 oscillations, 0.35s total - a short shake, not a violent one)
-      t=0.20s  A red result panel slides in: a ✕ mark, font-mono 22px #f87171, and
-               a line, font-mono 13px, VERBATIM: "오답입니다"
-               and beneath it, the stored answer, font-mono 11px
-               rgba(255,255,255,0.60), format VERBATIM: "정답: 감사합니다"
-      t=0.60s  A message appears, 16px leading-8, max-width 420px:
-                 Line 1, rgba(255,255,255,0.88), VERBATIM:
-                   "같은 뜻인데 오답 처리됐습니다."
-                 Line 2, #f87171, font-bold, margin-top 8px, VERBATIM:
-                   "저장된 정답과 글자가 달랐을 뿐입니다."
-      A comparison strip appears beneath, showing the two strings character-aligned
-      with the differing characters highlighted in #f87171, font-mono 12px.
+BODY splits into two columns, gap 18px (stacks below 900px, player first).
 
-  ON SUBMIT IN "수정 후" MODE:
-    All four chips (and reasonable free-text variants) are accepted:
-      A green result panel with a ✓, font-mono 13px #4ade80, VERBATIM: "정답입니다"
-      and beneath it, an accepted-forms line, font-mono 11px
-      rgba(255,255,255,0.60), VERBATIM:
-        "인정된 표현: 감사합니다 · 고맙습니다 · 고마워요"
-      plus a note, font-mono 10px #4ade80, VERBATIM: "띄어쓰기와 어미 차이는 무시합니다"
-    The sign's meaning label is revealed on the stage after any submission.
+  LEFT (~46%) - THE PLAYER
+    A stage, height ~240px, background #081220, rounded-md,
+    border 1px rgba(126,184,255,0.14), grid-placed.
+    The selected word's LABEL is always visible above the stage, 15px font-bold
+    #bfdbfe (never hide it - see ETHICS).
+    If a video URL resolves: a spot-lit SVG hand plays that word's sign on loop,
+    with a replay control beneath, font-mono 11px, VERBATIM: "↻ 다시 보기".
+    If it does NOT resolve: the stage shows an EMPTY STATE - a 1px dashed
+    rgba(255,255,255,0.14) rectangle at the hand's exact size and position, with a
+    centered line, font-mono 11px rgba(255,255,255,0.32), VERBATIM: "영상 없음".
+    CRITICAL: there is NO error styling here - no red, no warning icon. The emptiness
+    must feel like nothing went wrong. That is the entire point of this bug.
 
-A reset control at the container's bottom-right, font-mono 11px,
-rgba(255,255,255,0.46), VERBATIM: "↻ 다시 풀기"
-A note at the bottom-left, font-mono 9px rgba(255,255,255,0.32), VERBATIM:
-  "재현용 예시입니다"
+  RIGHT (~54%) - THE TWO STORES
+    Two stacked store panels, gap 12px, each padding 14px, rounded-md,
+    background #081220, border 1px rgba(126,184,255,0.16).
+      Panel 1 header font-mono 11px #7eb8ff, VERBATIM: "Firebase Storage"
+              subtitle font-mono 9px rgba(255,255,255,0.35),
+              VERBATIM: "실제 영상 파일"
+      Panel 2 header font-mono 11px #7eb8ff, VERBATIM: "Firestore"
+              subtitle font-mono 9px rgba(255,255,255,0.35),
+              VERBATIM: "단어 메타데이터 + videoUrl 필드"
+    In each panel, a hit/miss row for the selected word, font-mono 12px:
+      hit  -> "✓ 찾음"  in #4ade80, with the resolved path in
+              rgba(255,255,255,0.46), 10px
+      miss -> "✕ 없음"  in rgba(255,255,255,0.32)
+
+    Beneath the two panels, a RESULT strip, padding 12px, rounded-md, font-mono 12px:
+      In "수정 전" mode - the code only ever reads Storage:
+        If Storage hit  -> background rgba(74,222,128,0.06), border-left 3px #4ade80,
+                           VERBATIM: "영상 URL 반환"
+        If Storage miss -> background rgba(255,255,255,0.03),
+                           border-left 3px rgba(255,255,255,0.14),
+                           VERBATIM: "빈 문자열 반환 · 에러 아님"
+                           Add a second line, font-mono 10px rgba(255,255,255,0.35),
+                           VERBATIM: "Firestore에는 있는데 보지 않았습니다"
+                           (only when Firestore has it)
+      In "수정 후" mode - Storage first, then Firestore:
+        Draw the fallback as an ANIMATED ARROW from Panel 1 down to Panel 2
+        (0.4s, only when Storage missed), then:
+        If either hit -> VERBATIM: "영상 URL 반환"
+                         plus a source tag, font-mono 10px #4ade80,
+                         VERBATIM: "출처: Storage" or VERBATIM: "출처: Firestore"
+        If both miss  -> VERBATIM: "영상 없음 · 여전히 빈 값"
+                         in rgba(255,255,255,0.46) - this case is NOT fixed and the
+                         page must admit it.
+
+A note at the container's bottom-left, font-mono 9px rgba(255,255,255,0.32),
+VERBATIM: "재현용 예시입니다"
 
 === BLOCK C: ELIMINATION TABLE ===
 Margin-top 44px. Label font-mono 10px letter-spacing 0.18em rgba(255,255,255,0.46),
@@ -1008,28 +1037,28 @@ A 3-column table, font-mono 12px, row separators 1px rgba(255,255,255,0.08),
 row padding 13px. Headers VERBATIM: "방법" | "해봤더니" | "판단"
 Rows (판단 cells: rejected in rgba(255,255,255,0.46) with "✕ ", adopted in #4ade80
 with "● "):
-  "공백만 제거"           | "「고맙습니다」는 여전히 오답"      | "✕ 부족"
-  "부분 문자열 포함 검사"  | "「감사」만 써도 정답 처리됨"       | "✕ 너무 헐렁함"
-  "편집 거리로 유사도 판정" | "「감사합니다」와 「감사했습니다」를 구분 못 함" | "✕ 뜻과 무관한 기준"
-  "단어마다 인정 표현 목록" | "관리는 늘지만 판정이 명확해짐"     | "● 채택"
+  "영상 파일을 다시 업로드"   | "그 단어만 되고 다음 단어에서 또 남"     | "✕ 원인이 아님"
+  "빈 URL이면 에러를 던지기"  | "퀴즈 전체가 멈춤 · 영상 없어도 풀 수 있음" | "✕ 과한 처리"
+  "화면마다 Firestore도 조회" | "같은 코드가 세 군데로 늘어남"          | "✕ 흩어짐"
+  "조회를 한 곳으로 모으고 폴백" | "호출부는 한 줄로 끝남"               | "● 채택"
 Rows reveal 0.16s apart, sliding in from x -10px. The adopted row lands last and
 grows a 2px #4ade80 left bar over 0.5s.
 
 Below the table, one line, 15px leading-8, VERBATIM:
-  "문자열을 얼마나 비슷하게 볼지를 조정하는 문제가 아니었다.
-   애초에 「무엇이 정답인가」를 하나로 정해둔 게 문제였다."
-Emphasize "「무엇이 정답인가」를 하나로 정해둔 게 문제였다" in #fbbf24, font-bold.
+  "영상이 없는 게 문제가 아니었다.
+   어디를 봐야 하는지가 코드마다 달랐던 게 문제였다."
+Emphasize "어디를 봐야 하는지가 코드마다 달랐던 게 문제였다" in #fbbf24, font-bold.
 
 === BLOCK D: ROOT CAUSE ===
 Margin-top 40px, padding 22px, rounded-md, border 1px rgba(251,191,36,0.30),
 background rgba(251,191,36,0.05), border-left 3px #fbbf24.
   Label font-mono 10px letter-spacing 0.18em #fbbf24, VERBATIM: "원인"
   Body 16px leading-8, VERBATIM:
-  "수어 단어 하나에 한국어 단어 하나가 대응한다고 가정하고 데이터를 만들었다.
-   그런데 실제로는 하나의 수어 표현이 여러 한국어 단어에 걸쳐 있다.
-   「감사합니다」와 「고맙습니다」는 다른 단어지만 같은 수어다.
-   데이터 구조가 언어의 실제 모습과 안 맞았던 것이다."
-  Emphasize "데이터 구조가 언어의 실제 모습과 안 맞았던 것" in #fbbf24, font-bold.
+  "영상 파일은 Storage에 올리고, 단어 정보는 Firestore에 넣었다.
+   두 작업을 다른 시점에 따로 했기 때문에 한쪽에만 있는 단어가 생겼다.
+   그런데 화면마다 둘 중 아무 쪽이나 조회하고 있었다.
+   그래서 같은 단어가 어떤 화면에서는 나오고 어떤 화면에서는 안 나왔다."
+  Emphasize "화면마다 둘 중 아무 쪽이나 조회하고 있었다" in #fbbf24, font-bold.
 
 === BLOCK E: THE FIX ===
 Margin-top 40px. Two panels side by side, gap 16px (stack below 1024px).
@@ -1037,91 +1066,101 @@ Each: background #081220, border 1px, rounded-md, header with three window dots 
 a filename, body font-mono 12px with a line-number gutter.
 
   LEFT panel - border 1px rgba(248,113,113,0.28),
-    filename VERBATIM: "QuizService.java (before)"
-    CONTENT: ~10 lines. Compares the submitted answer to a single stored answer
-    string with an exact equality check.
-    HIGHLIGHT the equality line with rgba(248,113,113,0.12) and an inline marker,
-    font-mono 10px #f87171, VERBATIM: "← 정답이 하나뿐"
+    filename VERBATIM: "before — 호출부마다 제각각"
+    CONTENT: ~8 lines showing two different call sites, one reading only the Storage
+    URL and another reading only the Firestore videoUrl field, with no shared path.
+    HIGHLIGHT both lookup lines with rgba(248,113,113,0.12) and an inline marker,
+    font-mono 10px #f87171, VERBATIM: "← 서로 다른 곳을 봄"
 
   RIGHT panel - border 1px rgba(74,222,128,0.28),
-    filename VERBATIM: "QuizService.java (after)"
-    CONTENT: ~20 lines. Normalizes the submitted answer (trimming, collapsing
-    whitespace, unifying a small set of polite endings) and then checks membership
-    in the sign's ACCEPTED-MEANINGS set rather than against a single string; returns
-    a result object carrying which accepted form matched, so the UI can show it;
-    and logs any near-miss submission that was rejected, so unknown-but-plausible
-    answers can be reviewed and added later.
-    HIGHLIGHT: the set-membership line and the near-miss logging line with
-    rgba(74,222,128,0.12).
+    filename VERBATIM: "StorageVideoCache.java (after)"
+    CONTENT - use these EXACT lines (this is the real code, do not paraphrase):
+      "public String findUrlOrFallback(String word, String fallbackUrl) {"
+      "  String storageUrl = findUrl(word);"
+      "  if (storageUrl != null && !storageUrl.isBlank()) {"
+      "    return storageUrl;"
+      "  }"
+      "  return fallbackUrl == null ? \"\" : fallbackUrl.trim();"
+      "}"
+    HIGHLIGHT line 2 and line 6 with rgba(74,222,128,0.12).
     Caption bar, font-mono 11px, prefixed "// ", VERBATIM:
-      "오답으로 처리한 답도 남겨둔다. 사전에 빠진 표현일 수 있으니까."
+      "호출부는 이 한 줄만 부른다. 어디에 있는지는 이 안에서만 안다."
 
-BELOW BOTH PANELS, a small DATA panel showing the changed schema, background #081220,
+BELOW BOTH PANELS, a small CALL-SITE panel, background #081220,
 border 1px rgba(126,184,255,0.18), rounded-md, header filename font-mono 11px,
-VERBATIM: "signs 컬렉션 (Firebase)"
-Body: ~12 lines of JSON for one sign entry showing an id, a primary label, and an
-"acceptedMeanings" array containing several Korean expressions, plus a "reviewQueue"
-note field.
-HIGHLIGHT the acceptedMeanings array with rgba(126,184,255,0.12).
+VERBATIM: "QuizService.java (호출부)"
+Body - use this EXACT line:
+  "String videoUrl = storageVideoCache.findUrlOrFallback(correctChoiceText, firestoreVideoUrl);"
+HIGHLIGHT it with rgba(126,184,255,0.12).
 A caption beneath, font-mono 10px rgba(255,255,255,0.35), VERBATIM:
-  "데이터를 고치는 게 코드를 고치는 것보다 오래 걸렸습니다. 단어마다 다시 채워야 했으니까요."
+  "조회 순서를 바꾸고 싶으면 이제 한 파일만 고치면 됩니다."
 
 === BLOCK F: VERIFICATION + REMAINING LIMITS ===
 Margin-top 40px.
-Three stat cells in a row, gap 12px (stacks below 640px). Each: padding 16px,
-rounded-md, border 1px rgba(74,222,128,0.22), background rgba(74,222,128,0.04).
-  Cell 1  value font-mono 26px font-black #4ade80 VERBATIM "12개"
-          label font-mono 10px rgba(255,255,255,0.46) VERBATIM "인정 표현을 채운 단어"
-  Cell 2  value VERBATIM "2~4개"  label VERBATIM "단어당 인정 표현 수"
-  Cell 3  value VERBATIM "0건"   label VERBATIM "이후 같은 유형 오답 신고"
-Values fade in on entry.
-Below the row, font-mono 10px rgba(255,255,255,0.32), VERBATIM:
-  "테스트해준 사람 3명이 다시 풀어보는 방식으로 확인했습니다. 자동화된 테스트는 없습니다."
+A verification strip, padding 16px, rounded-md, border 1px rgba(74,222,128,0.22),
+background rgba(74,222,128,0.04), font-mono 12px.
+  Label font-mono 10px letter-spacing 0.18em #4ade80, VERBATIM: "검증"
+  A 3-row check list, 15px leading-8, each prefixed "✓ ", VERBATIM:
+    "Storage에만 있는 단어 — 정상 재생"
+    "Firestore에만 있는 단어 — 폴백으로 정상 재생"
+    "둘 다 있는 단어 — Storage 우선, 동작 동일"
+Below the strip, font-mono 10px rgba(255,255,255,0.32), VERBATIM:
+  "단어를 하나씩 직접 열어보는 방식으로 확인했습니다. 자동화된 테스트는 없습니다."
+
+DO NOT put a number of words, a percentage, or a before/after count here.
+That was never measured.
 
 Then the limits card, margin-top 28px, padding 20px, rounded-md,
 border 1px rgba(255,255,255,0.12), background rgba(255,255,255,0.02).
   Label font-mono 10px letter-spacing 0.18em rgba(255,255,255,0.46),
   VERBATIM: "아직 남은 것"
   A 4-item list, 15px leading-8, each prefixed "· ", VERBATIM:
-    "인정 표현 목록은 제가 판단해서 넣었습니다. 수어 전문가가 검토한 게 아닙니다."
-    "단어가 12개뿐입니다. 늘어나면 이 방식의 관리 비용도 같이 늘어납니다."
-    "지역이나 세대에 따라 다른 표현은 전혀 반영하지 못했습니다."
-    "오답으로 기록된 답을 실제로 검토해서 사전에 반영하는 절차는 아직 없습니다."
-  The first item is essential - it points forward to the ethics page.
+    "두 저장소 모두에 없는 단어는 여전히 빈 값이 나갑니다. 화면에서 조용히 비어 보이는 건 똑같습니다."
+    "조회 결과를 캐시에 담아두는데, 영상을 새로 올려도 캐시를 지우는 절차가 없습니다."
+    "애초에 두 저장소의 단어 표기를 맞추는 일은 코드가 아니라 데이터 정리로 해결해야 합니다. 아직 안 했습니다."
+    "빈 영상이 나갔을 때 그걸 기록해두고 나중에 채우는 절차가 없습니다."
 
 === ANIMATION TIMELINE (on section enter) ===
 0.00s  Label, heading word by word at 0.15s
 0.60s  Symptom card slides in from the left
-1.10s  The quiz container fades up; the hand plays its sign once automatically
-1.90s  A one-time pulse on the "고맙습니다" chip (a soft blue ring, 2 pulses of 0.9s)
+1.10s  The reproduction container fades up with "안녕하세요" selected (both stores hit,
+       so the hand plays - the viewer sees the normal case first)
+1.90s  A one-time pulse on the "이름" chip (a soft blue ring, 2 pulses of 0.9s)
        with a hint, font-mono 10px rgba(255,255,255,0.35),
-       VERBATIM: "「고맙습니다」로 답해보세요"
-       Both disappear permanently once a submission is made.
+       VERBATIM: "「이름」을 눌러보세요"
+       Both disappear permanently once any chip is clicked.
 All later blocks animate on their own viewport entry.
+
+=== PERFORMANCE ===
+The hand loop must stop when the container leaves the viewport or document.hidden
+is true. Chip switching must not remount the SVG - swap the animation data only.
 
 === RESPONSIVE ===
 < 1024px: fix panels stack (before on top).
-< 720px: the quiz's two sides stack (question first); the character-comparison strip
-scrolls horizontally inside itself.
+< 900px: the reproduction's two columns stack, player first; the two store panels
+sit side by side instead of stacked.
 < 640px: code font 11px with internal horizontal scroll (blocks scroll, never the
-page).
+page). Word chips scroll horizontally in their own row.
 
 === ACCESSIBILITY ===
-prefers-reduced-motion: no input shake (use a static border color change), no button
-pulse, no result panel slide.
-The input, submit, chips and mode toggle are real controls with visible focus rings
-(2px #7eb8ff, offset 2px).
-Announce the result ONCE via aria-live="polite":
-  wrong VERBATIM: "오답으로 처리되었습니다. 정답은 감사합니다입니다."
-  right VERBATIM: "정답입니다. 인정된 표현입니다."
-The quiz hand needs a visually-hidden movement description even while its meaning
-is hidden, describing the motion without naming the answer.
+prefers-reduced-motion: no chip pulse, no fallback arrow animation (show the arrow
+statically), no row slide-in.
+Chips and the mode toggle are real buttons with visible focus rings
+(2px #7eb8ff, offset 2px) and aria-pressed reflecting selection.
+The empty state is not conveyed by emptiness alone - it carries a
+visually-hidden line, VERBATIM: "이 단어는 재생할 영상이 없습니다."
+Announce the lookup result ONCE via aria-live="polite" on chip change:
+  resolved   VERBATIM: "영상을 찾았습니다."
+  unresolved VERBATIM: "영상을 찾지 못했습니다."
+The playing hand needs a visually-hidden movement description alongside its label.
 
 === DO NOT ===
-Do not shake the input violently - three small oscillations over 0.35s maximum.
-Do not claim the accepted-meanings list is authoritative - the first limits item
-must stay.
-Do not remove the near-miss logging from the after code - it is the thoughtful part.
+Do not style the missing-video state as an error - no red, no warning icon, no toast.
+The bug's whole character is that nothing looked wrong.
+Do not invent a count of affected words or a fix rate - none was measured.
+Do not remove the "괜찮아요" chip - the both-stores-missing case is what makes the
+limits card honest.
+Do not paraphrase findUrlOrFallback - those seven lines are the real source.
 ```
 
 ---
@@ -2308,7 +2347,7 @@ src/components/ui/project-viewers/stages/sign-language/
 | P03 | `SignSentenceService.java` | 26 | 어순 재배열 규칙 · 지문자 폴백 |
 | P04 | `QuizService.java (before)` | 10 | 단일 문자열 비교 |
 | P04 | `QuizService.java (after)` | 20 | 집합 판정 · 근접 오답 로깅 |
-| P04 | `signs` 컬렉션 (Firebase) | 12 | acceptedMeanings 배열 |
+| P04 | `StorageVideoCache.java` · `QuizService.java` 호출부 | 7 + 1 | **실제 원본 그대로** — `findUrlOrFallback` 7줄 + 호출부 1줄 |
 | P05 | `QuizScheduler.java` | 22 | 같은 세션 재삽입 · 세션 분리 조건 |
 | P06 | `GET /api/sentence (before)` | 14 | 단어 배열만 |
 | P06 | `GET /api/sentence (after)` | 22 | 평탄화 frames · source 필드 |

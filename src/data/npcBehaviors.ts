@@ -27,7 +27,7 @@ const baseProfiles: Record<string, NpcBehaviorProfile> = {
   },
   "project-npc": {
     npcId: "project-npc",
-    assignedBuildingId: "project-mywave",
+    assignedBuildingId: "project-mystock",
     home: [-5.7, 0, 1.5],
     roamRadius: 5.2,
     roleSummary: "대표 프로젝트와 구현 난이도를 추천합니다."
