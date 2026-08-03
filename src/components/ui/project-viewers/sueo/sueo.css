@@ -244,6 +244,45 @@
   animation: sd-hint-pulse 0.9s var(--sd-ease) 2;
 }
 
+/* 단어 칩 유도 — 파란 링 2회. 오답이 아니라 안내이므로 경고색을 쓰지 않는다. */
+@keyframes sd-chip-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(126, 184, 255, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(126, 184, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(126, 184, 255, 0);
+  }
+}
+
+.sd-chip-pulse {
+  animation: sd-chip-pulse 0.9s var(--sd-ease) 2;
+}
+
+/* 재생 중인 손 — 컨테이너가 화면을 벗어나면 클래스를 떼서 멈춘다. */
+.sd-hand-loop {
+  animation: sd-sign-hello 1.4s var(--sd-ease) infinite;
+}
+
+/* 폴백 화살표: Storage가 비었을 때만 Firestore 쪽으로 내려긋는다. */
+@keyframes sd-arrow-draw {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scaleY(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+.sd-arrow-draw {
+  transform-origin: top center;
+  animation: sd-arrow-draw 0.4s var(--sd-ease) forwards;
+}
+
 /* ── 오답 입력 흔들기 ──────────────────────────────────────────── */
 @keyframes sd-shake {
   0%,
