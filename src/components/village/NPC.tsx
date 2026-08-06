@@ -3,7 +3,7 @@
 import {Billboard, Html, useCursor} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
 import {memo, Suspense, useMemo, useRef, useState} from "react";
-import {NpcWarrior, type NpcMoveState} from "./NpcWarrior";
+import {NpcCharacter, type NpcMoveState} from "./NpcCharacter";
 import type {ThreeEvent} from "@react-three/fiber";
 import type {Group, Vector3} from "three";
 import type {NpcBehaviorProfile} from "@/data/npcBehaviors";
@@ -307,7 +307,7 @@ function NPCImpl({
         scale={highlighted ? 1.08 : 1}
       >
         <Suspense fallback={null}>
-          <NpcWarrior stateRef={moveStateRef} />
+          <NpcCharacter stateRef={moveStateRef} modelId={npc.model} />
         </Suspense>
         {currentAction ? (
           <NpcActionEffect

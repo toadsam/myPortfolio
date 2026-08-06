@@ -16,6 +16,7 @@ import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
 import {Rock} from "./Decorations";
 import {NPC, type NpcCommand} from "./NPC";
+import {PerfHudPanel, PerfProbe} from "./PerfHud";
 import {SeasonAmbience} from "./SeasonAmbience";
 import {PropsEditorTray, PropsLayer, usePropsEditor} from "./PropsEditor";
 import {Tree} from "./Tree";
@@ -266,6 +267,8 @@ function VillageSceneImpl({
         {/* 움직일 땐 해상도/이벤트 자동 저하 → 멈추면 선명하게 */}
         <AdaptiveDpr pixelated={false} />
         <AdaptiveEvents />
+        {/* 개발 모드 계기판 — Suspense 밖이라 로딩 중에도 계측된다 */}
+        <PerfProbe />
         <color args={[sky.sky]} attach="background" />
         <fog args={[sky.fog, sky.near, sky.far]} attach="fog" />
         <ambientLight color="#ffffff" intensity={sky.amb} />
@@ -380,6 +383,7 @@ function VillageSceneImpl({
       )}
 
       <PropsEditorTray api={propsApi} />
+      <PerfHudPanel />
     </div>
   );
 }

@@ -176,7 +176,8 @@ const projectBuildings: BuildingData[] = [
     color: "#1a0d2e",
     roofColor: "#3a1a5a",
     accentColor: "#cc88ff",
-    techStack: ["React", "TypeScript", "Vite"]
+    techStack: ["React", "TypeScript", "Vite"],
+    glbPath: "/models/buildings/aclub.glb"
   },
   {
     id: "project-ajou-adventure",

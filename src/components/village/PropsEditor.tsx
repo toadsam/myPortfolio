@@ -1,12 +1,13 @@
 "use client";
 
-import {Html, useGLTF} from "@react-three/drei";
+import {Html} from "@react-three/drei";
 import {useThree, type ThreeEvent} from "@react-three/fiber";
-import {Suspense, useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {Plane, Raycaster, Vector2, Vector3} from "three";
 import {villageBuildings} from "@/lib/constants";
 import savedLayout from "@/data/propsLayout.json";
 import type {BuildingOverride, PropPlacement, PropsLayout} from "@/types/props";
+import {InstancedProps} from "./InstancedProps";
 
 const isDev = process.env.NODE_ENV === "development";
 
@@ -124,37 +125,37 @@ export function usePropsEditor() {
 
 export type PropsEditorApi = ReturnType<typeof usePropsEditor>;
 
-// ─── 단일 prop 모델 (같은 GLB 여러 개 위해 clone) ─────────────────────────────
-function PropModel({glb, scale}: {glb: string; scale: number}) {
-  const {scene} = useGLTF(glb);
-  const cloned = useMemo(() => scene.clone(true), [scene]);
-  return <primitive object={cloned} scale={scale} />;
-}
-
 // ─── 씬 안: prop 렌더 + 드래그 평면 + 트레이 드롭 처리 ─────────────────────────
+// prop 본체는 InstancedProps가 GLB별로 묶어서 그린다 (draw call = GLB 종류 수).
+// 여기서는 편집용 상호작용(선택/드래그/드롭)만 담당한다.
 export function PropsLayer({api}: {api: PropsEditorApi}) {
   const {items, editMode, selection, dragging, setSelection, setDragging} = api;
 
-  function onPropDown(e: ThreeEvent<PointerEvent>, id: string) {
-    if (!editMode) return;
-    e.stopPropagation();
-    setSelection({kind: "prop", id});
-    setDragging(true);
-  }
+  // InstancedProps에 넘기는 콜백 — 참조가 매번 바뀌면 인스턴스 메시가 재생성되므로 고정한다
+  const onPropDown = useCallback(
+    (e: ThreeEvent<PointerEvent>, id: string) => {
+      e.stopPropagation();
+      setSelection({kind: "prop", id});
+      setDragging(true);
+    },
+    [setSelection, setDragging]
+  );
+
+  // 선택 표시는 인스턴싱 밖에서 하나만 그린다 (기존엔 prop마다 조건부 렌더였다)
+  const selected = editMode && selection?.kind === "prop" ? items.find((p) => p.id === selection.id) : undefined;
 
   return (
     <group>
       {/* 드래그 처리 — 메시 대신 수학 평면 레이캐스트라 다른 오브젝트에 안 가림 */}
       {editMode && dragging ? <DragController api={api} /> : null}
 
-      {items.map((p) => (
-        <group key={p.id} position={p.position} rotation={[0, p.rotationY, 0]} onPointerDown={(e) => onPropDown(e, p.id)}>
-          <Suspense fallback={null}>
-            <PropModel glb={p.glb} scale={p.scale} />
-          </Suspense>
-          {editMode && selection?.kind === "prop" && selection.id === p.id ? <SelectionRing /> : null}
+      <InstancedProps items={items} onPropDown={editMode ? onPropDown : undefined} />
+
+      {selected ? (
+        <group position={selected.position} rotation={[0, selected.rotationY, 0]}>
+          <SelectionRing />
         </group>
-      ))}
+      ) : null}
 
       {editMode ? <SelectionCoordLabel api={api} /> : null}
       <DropHandler api={api} />

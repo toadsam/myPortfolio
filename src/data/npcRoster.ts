@@ -102,6 +102,7 @@ const coreNpcs: NPCData[] = [
     sectionId: "intro",
     type: "guide",
     name: "루미",
+    model: "lumi",
     location: "중앙 광장",
     role: "마을 총괄 안내원",
     dialogue:

@@ -8,9 +8,13 @@
 ① 이미지 생성 AI (Midjourney / GPT-4o / nano banana 등)
    → 아래 프롬프트로 건물 컨셉 이미지 1장 생성
 ② Meshy → Image to 3D 에 그 이미지 업로드
-③ GLB 다운로드 → public/models/buildings/<파일명>
-④ constants.ts 에 glbPath 연결
+③ GLB 다운로드 → public/models/buildings/raw/<파일명>   ← raw 에 넣습니다
+④ npm run optimize                                    → public/models/buildings/<파일명>
+⑤ constants.ts 에 glbPath 연결
 ```
+
+`raw/`는 원본 보관소이고, 마을이 실제로 읽는 건 최적화된 쪽입니다. 원본을 남겨두는 이유는
+예산 규격이 바뀌었을 때 `npm run optimize -- --force`로 다시 구울 수 있어야 하기 때문입니다.
 
 ## 이미지 생성 공통 프리픽스 (모든 건물에 앞에 붙임)
 
@@ -62,8 +66,26 @@ glass skyscraper, modern corporate, blurry, motion blur
 
 - 포맷 **.glb**, Y-up, **원점(0,0,0) = 건물 바닥 중심**
 - 대략 **1×1×1 유닛** 기준 (코드가 `size[1] × 0.62`로 자동 스케일 — `src/components/village/Building.tsx:65`)
-- `public/models/buildings/<파일명>` 저장 → `constants.ts`에 `glbPath: "/models/buildings/<파일명>"` 추가
-- 용량 크면 `npm run optimize`
+- `public/models/buildings/raw/<파일명>` 저장 → `npm run optimize` → `constants.ts`에 `glbPath: "/models/buildings/<파일명>"` 추가
+- Meshy 원본을 그대로 쓰면 안 됩니다. 건물 하나가 텍스처만 **22~90MB VRAM**을 먹어서 27개면 GPU가 죽습니다
+
+### `npm run optimize` 가 하는 일
+
+```
+npm run optimize              모든 그룹
+npm run optimize -- buildings 건물만
+npm run optimize -- --force   이미 최신인 것도 다시 굽기
+```
+
+1. **아무 일도 안 하는 맵 삭제** — Meshy는 발광 부위가 없어도 emissive 맵을 붙여서 내보냅니다.
+   완전 검정이면 지우고 `emissiveFactor: 0`으로 대체합니다. 균일한 metallicRoughness도
+   스칼라 값으로 바꿔 지웁니다. (실측: aclub은 이것만으로 85MB 절감)
+2. **예산 해상도로 축소** — 건물은 baseColor 1024 / normal·roughness 512.
+   장식물은 그 절반. 예산은 `scripts/optimize_textures.py`의 `BUDGETS`에 있습니다.
+3. **Draco 지오메트리 압축** + 고아 리소스 정리
+
+건물 하나가 **VRAM 8~10MB, 파일 0.5~0.8MB**로 나오면 정상입니다.
+결과는 마을에서 **F8 계기판**으로 확인하세요.
 
 ---
 

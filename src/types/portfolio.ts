@@ -45,6 +45,10 @@ export interface BuildingData {
   techStack?: string[];
 }
 
+// 3D 캐릭터 모델 식별자. 실제 경로/설정은 data/characterModels.ts에 있다.
+// 여기에 추가하면 레지스트리도 채우라고 컴파일러가 강제한다.
+export type CharacterModelId = "robot" | "lumi";
+
 export interface NPCData {
   id: string;
   sectionId: SectionId;
@@ -57,6 +61,8 @@ export interface NPCData {
   color: string;
   accessoryColor: string;
   agent?: NPCAgentProfile;
+  /** 생략하면 DEFAULT_NPC_MODEL */
+  model?: CharacterModelId;
 }
 
 export interface NPCAgentProfile {
