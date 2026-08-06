@@ -143,7 +143,8 @@ const projectBuildings: BuildingData[] = [
     color: "#1a1a0d",
     roofColor: "#3a3a1a",
     accentColor: "#ffcc00",
-    techStack: ["React", "Spring Boot", "SSE", "PWA"]
+    techStack: ["React", "Spring Boot", "SSE", "PWA"],
+    glbPath: "/models/buildings/festflow.glb"
   },
   {
     id: "project-sign-language",

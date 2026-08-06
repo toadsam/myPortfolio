@@ -3,7 +3,7 @@
 import {Html, useCursor, useGLTF} from "@react-three/drei";
 import {memo, useMemo, useRef, useState} from "react";
 import {useFrame, type ThreeEvent} from "@react-three/fiber";
-import {AdditiveBlending, BoxGeometry, EdgesGeometry, type Mesh} from "three";
+import {AdditiveBlending, Box3, BoxGeometry, EdgesGeometry, type Mesh} from "three";
 import {lightIntensity} from "@/lib/liveState";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import type {BuildingState} from "@/types/live";
@@ -66,13 +66,23 @@ function GlbModel({glbPath, size}: {glbPath: string; size: [number, number, numb
   const {scene} = useGLTF(glbPath);
   // size[1]을 목표 높이로 삼아 자동 스케일
   const targetHeight = size[1];
-  return (
-    <primitive
-      object={scene}
-      scale={targetHeight * 0.62}
-      position={[0, 0, 0]}
-    />
-  );
+  const scale = targetHeight * 0.62;
+  // Meshy GLB는 원점 중심으로 나와서 그대로 놓으면 아래 절반이 지면에 묻힌다.
+  // 바닥(min.y)을 y=0으로 끌어올린다. primitive가 scene에 직접 transform을 쓰므로
+  // 측정할 때는 항등 변환으로 되돌렸다가 복원한다.
+  const baseMinY = useMemo(() => {
+    const scale0 = scene.scale.clone();
+    const pos0 = scene.position.clone();
+    scene.scale.set(1, 1, 1);
+    scene.position.set(0, 0, 0);
+    scene.updateWorldMatrix(false, true);
+    const {min} = new Box3().setFromObject(scene);
+    scene.scale.copy(scale0);
+    scene.position.copy(pos0);
+    scene.updateWorldMatrix(false, true);
+    return min.y;
+  }, [scene]);
+  return <primitive object={scene} scale={scale} position={[0, -baseMinY * scale, 0]} />;
 }
 
 // ─── 공통 라벨 ────────────────────────────────────────────────────────────────
