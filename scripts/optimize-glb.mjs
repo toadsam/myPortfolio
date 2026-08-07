@@ -90,7 +90,19 @@ const gltf = (args) => execSync(`npx --yes @gltf-transform/cli ${args}`, {stdio:
 // simplify는 정점을 지우면서 뼈 가중치를 뭉개고, join/flatten은 스킨이 기대하는
 // 노드 계층을 접어버린다. 캐릭터는 텍스처 축소 + Draco만 태운다.
 const SKIN_SAFE = "--simplify false --join false --flatten false";
-const passesFor = (group) => (group === "characters" ? SKIN_SAFE : "");
+
+// 바닥 타일은 평평한 슬래브다. 자갈 요철의 실제 높이는 타일 폭의 1~3%뿐이고
+// 눈에 보이는 질감은 전부 노멀맵이 낸다. 그런데 Meshy는 13k tris로 뽑아주고,
+// 기본 심플리파이 오차(0.0001)로는 UV 심에 막혀 한 장도 못 줄인다.
+// 길 한 줄에 수십 장이 깔리므로 여기만 오차 예산을 크게 준다.
+const GROUND_SIMPLIFY = "--simplify-error 0.02 --simplify-ratio 0.05";
+const isGroundTile = (inPath) => /[\\/]ground[\\/]/.test(inPath);
+
+function passesFor(group, inPath) {
+  if (group === "characters") return SKIN_SAFE;
+  if (group === "props" && isGroundTile(inPath)) return GROUND_SIMPLIFY;
+  return "";
+}
 
 let totalBefore = 0;
 let totalAfter = 0;
@@ -128,7 +140,7 @@ for (const {group, inPath, outPath} of jobs) {
 
     // ③ Draco + prune(고아 텍스처 정리) → GLB
     //    --texture-compress false: 텍스처는 ②에서 이미 끝냈다 (sharp를 안 타야 함)
-    gltf(`optimize "${work}" "${outPath}" --compress draco --texture-compress false ${passesFor(group)}`);
+    gltf(`optimize "${work}" "${outPath}" --compress draco --texture-compress false ${passesFor(group, inPath)}`);
 
     const after = mb(outPath);
     totalAfter += after;

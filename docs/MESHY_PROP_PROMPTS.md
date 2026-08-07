@@ -147,7 +147,7 @@ blurry, misspelled text, garbled letters, watermark
 
 ---
 
-## 6. 카테고리별 프롬프트 (총 43종)
+## 6. 카테고리별 프롬프트 (총 44종)
 
 ★ = 1차 필수 세트. 이것만 먼저 뽑아도 마을 톤이 바뀝니다.
 
@@ -210,9 +210,9 @@ surfaces, very low to the ground, ankle height to a person
 
 ---
 
-### `ground/` — 바닥·길 (5종) · **프리픽스 B**
+### `ground/` — 바닥·길 (6종) · **프리픽스 B**
 
-> 이 5종만 프리픽스 B를 씁니다. 나머지 전부 A입니다.
+> 이 6종만 프리픽스 B를 씁니다. 나머지 전부 A입니다.
 
 #### ★ 8. `path-straight.glb` — 직선 돌길
 ```
@@ -238,7 +238,16 @@ edges, soft green grass with tiny flowers filling the four corner areas,
 a flat slab with slight visible thickness at the edges
 ```
 
-#### ★ 11. `plaza-tile.glb` — 광장 원형 바닥
+#### ★ 11. `path-t.glb` — T자 분기로
+```
+a square fairytale village path tile made of warm sandy beige cobblestones,
+three walking paths meeting at the center forming a T shape reaching three
+edges, soft green grass with tiny flowers filling the remaining edge and the
+two adjoining corner areas, a flat slab with slight visible thickness at the
+edges
+```
+
+#### ★ 12. `plaza-tile.glb` — 광장 원형 바닥
 ```
 a round fairytale village plaza floor made of warm cream and terracotta paving
 stones arranged in concentric rings, a simple decorative sunburst pattern at the
@@ -246,7 +255,7 @@ center, a low stone rim around the outer edge, a flat circular slab with slight
 visible thickness at the edges
 ```
 
-#### 12. `grass-patch.glb` — 잔디 패치
+#### 13. `grass-patch.glb` — 잔디 패치
 ```
 a square fairytale village grass tile, soft rounded green turf with gentle
 mounded bumps, a few tiny white and yellow flowers and small leaf tufts scattered
@@ -258,14 +267,14 @@ edges
 
 ### `fence/` — 경계·입구 (3종) · 프리픽스 A
 
-#### ★ 13. `fence-wood.glb` — 나무 울타리
+#### ★ 14. `fence-wood.glb` — 나무 울타리
 ```
 a short fairytale village wooden fence section, three chunky rounded vertical
 posts connected by two horizontal rails, warm honey-brown painted wood with
 visible soft grain, slightly worn rounded edges, about waist height to a person
 ```
 
-#### 14. `fence-gate.glb` — 울타리 문
+#### 15. `fence-gate.glb` — 울타리 문
 ```
 a small fairytale village wooden gate, two thicker posts with a simple swinging
 door panel of vertical planks between them, a rounded arched top rail, warm
@@ -273,7 +282,7 @@ honey-brown painted wood with a small iron ring handle, about chest height to
 a person
 ```
 
-#### ★ 15. `village-arch.glb` — 마을 입구 아치
+#### ★ 16. `village-arch.glb` — 마을 입구 아치
 ```
 a fairytale village entrance archway, two chunky rounded stone pillars supporting
 a curved wooden beam across the top, a small pointed shingle roof over the beam,
@@ -287,7 +296,7 @@ sides, tall enough for several people to walk under
 
 > 발광부는 재질만 밝게 나옵니다. 실제 빛은 배치 후 코드에서 `pointLight`로 추가합니다.
 
-#### ★ 16. `lamp-post.glb` — 가로등
+#### ★ 17. `lamp-post.glb` — 가로등
 ```
 a fairytale village lamp post, a slender tapered wooden pole with a small
 four-sided lantern box on top under a tiny pointed copper roof, warm glowing
@@ -295,14 +304,14 @@ amber emissive glass panels, a simple curved bracket, soft cream and brown paint
 about twice a person's height
 ```
 
-#### 17. `lantern-hanging.glb` — 걸이 랜턴
+#### 18. `lantern-hanging.glb` — 걸이 랜턴
 ```
 a small fairytale hanging lantern, a rounded paper-lantern body with warm glowing
 amber emissive light inside, a tiny domed cap and a short hanging ring on top,
 soft cream and warm orange, small enough to be held in one hand
 ```
 
-#### 18. `campfire.glb` — 모닥불
+#### 19. `campfire.glb` — 모닥불
 ```
 a small fairytale village campfire, a ring of rounded grey stones enclosing a few
 stacked logs with simple stylized flame shapes above them, warm glowing orange
@@ -318,7 +327,7 @@ a person
 >
 > 한글은 이미지 AI가 자주 뭉개므로 전부 영문입니다. 글자가 깨지면 문구를 짧게 줄이거나(`Projects` 등) 재생성하세요.
 
-#### ★ 19. `sign-plaza.glb`
+#### ★ 20. `sign-plaza.glb`
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Central Plaza" in clean
@@ -326,7 +335,7 @@ bold hand-painted letters, warm honey-brown wood with a soft cream painted
 surface, a tiny pointed roof cap on the post, about shoulder height to a person
 ```
 
-#### ★ 20. `sign-projects.glb`
+#### ★ 21. `sign-projects.glb`
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Project District" in
@@ -335,7 +344,7 @@ surface and warm amber trim, a tiny pointed roof cap on the post, about shoulder
 height to a person
 ```
 
-#### ★ 21. `sign-skills.glb`
+#### ★ 22. `sign-skills.glb`
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Skills District" in
@@ -344,7 +353,7 @@ surface and teal trim, a tiny pointed roof cap on the post, about shoulder heigh
 to a person
 ```
 
-#### ★ 22. `sign-experience.glb`
+#### ★ 23. `sign-experience.glb`
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Experience Archive" in
@@ -353,7 +362,7 @@ surface and soft lavender trim, a tiny pointed roof cap on the post, about
 shoulder height to a person
 ```
 
-#### ★ 23. `sign-study.glb`
+#### ★ 24. `sign-study.glb`
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Study District" in clean
@@ -362,7 +371,7 @@ surface and deep blue trim, a tiny pointed roof cap on the post, about shoulder
 height to a person
 ```
 
-#### ★ 24. `sign-contact.glb`
+#### ★ 25. `sign-contact.glb`
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Contact Post" in clean
@@ -371,7 +380,7 @@ surface and warm coral trim, a tiny pointed roof cap on the post, about shoulder
 height to a person
 ```
 
-#### ★ 25. `sign-life.glb`
+#### ★ 26. `sign-life.glb`
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Life District" in clean
@@ -380,7 +389,7 @@ surface and warm golden trim, a tiny pointed roof cap on the post, about shoulde
 height to a person
 ```
 
-#### 26. `signpost-arrow.glb` — 방향 이정표
+#### 27. `signpost-arrow.glb` — 방향 이정표
 ```
 a fairytale village direction signpost, a tall rounded wooden post with three
 pointed arrow-shaped planks attached at different heights facing different
@@ -389,7 +398,7 @@ hand-painted letters, warm honey-brown wood with cream painted plank faces,
 about a person's height
 ```
 
-#### 27. `notice-board.glb` — 게시판
+#### 28. `notice-board.glb` — 게시판
 ```
 a fairytale village notice board, a wide wooden board on two sturdy legs under a
 small pointed shingle roof, a few small blank paper notes pinned to the cork
@@ -402,7 +411,7 @@ a person
 
 ### `plaza/` — 광장 중심물 (3종) · 프리픽스 A
 
-#### ★ 28. `fountain.glb` — 분수
+#### ★ 29. `fountain.glb` — 분수
 ```
 a small fairytale village fountain, a round tiered stone basin with a slender
 center column and a smaller upper bowl, gentle stylized water arcs and a soft
@@ -410,7 +419,7 @@ pale blue pool inside, warm cream stone with soft teal water and a few rounded
 decorative carvings, wide and low, slightly under a person's height
 ```
 
-#### 29. `statue.glb` — 마을 동상
+#### 30. `statue.glb` — 마을 동상
 ```
 a small fairytale village monument statue, a chunky rounded stone figure of a
 cloaked traveler holding a lantern, standing on a square tiered pedestal with a
@@ -418,7 +427,7 @@ simple carved border, warm cream and sandy beige stone with soft moss patches at
 the base, about three times a person's height including the pedestal
 ```
 
-#### 30. `banner-pole.glb` — 깃대
+#### 31. `banner-pole.glb` — 깃대
 ```
 a tall fairytale village banner pole, a slender rounded wooden mast with a long
 vertical fabric banner hanging from a short crossbar, the banner in warm amber
@@ -430,28 +439,28 @@ tapering, notably taller than a lamp post
 
 ### `furniture/` — 생활 소품 (6종) · 프리픽스 A
 
-#### ★ 31. `bench.glb` — 벤치
+#### ★ 32. `bench.glb` — 벤치
 ```
 a small fairytale village bench, a chunky rounded wooden seat plank on two thick
 curved legs with a simple slatted backrest, warm honey-brown painted wood with
 soft worn edges, low and wide, about knee height at the seat
 ```
 
-#### ★ 32. `barrel.glb` — 나무통
+#### ★ 33. `barrel.glb` — 나무통
 ```
 a single fairytale village wooden barrel standing upright, a rounded bulging body
 of vertical staves bound by two darker iron hoops, a flat lid on top, warm
 honey-brown wood with soft worn edges, about waist height to a person
 ```
 
-#### 33. `crate.glb` — 나무 상자
+#### 34. `crate.glb` — 나무 상자
 ```
 a single fairytale village wooden crate, a chunky cube box made of thick planks
 with rounded corners and simple cross-braced side panels, warm honey-brown wood
 with soft worn edges, about knee height to a person
 ```
 
-#### ★ 34. `well.glb` — 우물
+#### ★ 35. `well.glb` — 우물
 ```
 a small fairytale village stone well, a round low stone rim with two side posts
 supporting a small pointed shingle roof, a tiny wooden bucket hanging from a rope
@@ -459,7 +468,7 @@ and a simple crank handle, warm cream stone and honey-brown timber, about chest
 height to a person
 ```
 
-#### 35. `market-stall.glb` — 노점
+#### 36. `market-stall.glb` — 노점
 ```
 a small fairytale village market stall, a simple wooden counter table under a
 striped fabric awning held up by four slender posts, the awning in warm cream and
@@ -467,7 +476,7 @@ soft coral stripes with a scalloped edge, a few rounded crates and fruit baskets
 on the counter, taller than a person
 ```
 
-#### 36. `flag-banner.glb` — 삼각 깃발 줄
+#### 37. `flag-banner.glb` — 삼각 깃발 줄
 ```
 a fairytale village bunting garland, a gently sagging rope strung with a row of
 small triangular fabric flags in warm cream, amber and soft coral, each flag
@@ -480,7 +489,7 @@ softly rounded at the corners, forming one connected piece, wide and light
 
 각 구역 앞에 놓아 구역 성격을 한눈에 드러내는 소품입니다.
 
-#### 37. `theme-project-easel.glb` — 프로젝트 구역
+#### 38. `theme-project-easel.glb` — 프로젝트 구역
 ```
 a fairytale village display easel, a wooden tripod stand holding a framed board
 showing a simple painted landscape, a small shelf with two paint pots at the
@@ -488,7 +497,7 @@ base, warm honey-brown wood with soft amber accents, about chest height to
 a person
 ```
 
-#### 38. `theme-skill-anvil.glb` — 스킬 구역
+#### 39. `theme-skill-anvil.glb` — 스킬 구역
 ```
 a fairytale village blacksmith anvil on a chunky round wooden stump, a rounded
 hammer resting on top and a small pair of tongs leaning against the side, warm
@@ -496,7 +505,7 @@ dark grey iron with soft highlights and honey-brown wood, about waist height to
 a person
 ```
 
-#### 39. `theme-study-bookstack.glb` — 학습 구역
+#### 40. `theme-study-bookstack.glb` — 학습 구역
 ```
 a small fairytale stack of four chunky closed books piled slightly askew, warm
 cream and deep blue covers with soft golden trim on the spines, a short lit candle
@@ -504,7 +513,7 @@ in a tiny holder resting on top with a warm glowing emissive flame, about knee
 height to a person
 ```
 
-#### 40. `theme-experience-scroll.glb` — 경력 구역
+#### 41. `theme-experience-scroll.glb` — 경력 구역
 ```
 a fairytale village scroll holder, a round wooden barrel-shaped container packed
 with several rolled parchment scrolls fanning out from the top, a small brass
@@ -512,7 +521,7 @@ plate on the front, warm honey-brown wood and soft cream parchment, about waist
 height to a person
 ```
 
-#### 41. `theme-life-picnic.glb` — Life 구역
+#### 42. `theme-life-picnic.glb` — Life 구역
 ```
 a small fairytale village picnic setup, a folded checkered blanket in warm cream
 and soft coral spread on the ground with a rounded wicker basket and a simple
@@ -523,7 +532,7 @@ wooden lute resting on it, forming one connected group, very low to the ground
 
 ### `misc/` — 분위기 소품 (2종) · 프리픽스 A
 
-#### 42. `mailbox.glb` — 우편함
+#### 43. `mailbox.glb` — 우편함
 ```
 a fairytale village mailbox, a small rounded box with a curved lid and a narrow
 letter slot mounted on a short sturdy post, a tiny raised flag on the side and a
@@ -531,7 +540,7 @@ few letter corners peeking out, warm coral painted metal with cream trim, about
 chest height to a person
 ```
 
-#### 43. `potted-plant.glb` — 화분
+#### 44. `potted-plant.glb` — 화분
 ```
 a small fairytale village potted plant, a rounded terracotta pot with a slightly
 flared rim holding a compact bushy plant with a few chunky rounded leaves and two
@@ -567,7 +576,7 @@ GLB가 들어오면 이 코드들이 정리 대상이 됩니다.
 ## 8. 권장 순서
 
 1. **`ground/path-straight.glb` 하나만 먼저** 이미지 → Meshy → `npm run optimize` → 배치까지 끝까지 돌려보세요. 평면물은 두께 인식 실패가 가장 흔한 실패 지점이라 여기서 프리픽스 B가 통하는지부터 검증해야 합니다.
-2. 통과하면 **★ 1차 필수 세트 16종**을 뽑습니다. 나무 2 · 덤불 · 바위 · 길 3 · 광장 바닥 · 울타리 · 아치 · 가로등 · 표지판 7 중 주요 · 분수 · 벤치 · 나무통 · 우물.
+2. 통과하면 **★ 1차 필수 세트 17종**을 뽑습니다. 나무 2 · 덤불 · 바위 · 길 4(직선·곡선·T자·광장 바닥) · 울타리 · 아치 · 가로등 · 표지판 7 중 주요 · 분수 · 벤치 · 나무통 · 우물.
 3. 이 상태로 한번 배치해보고 빈 곳이 보이면 나머지를 추가합니다.
 
-> 데코는 건물과 달리 **부분 교체가 가능합니다.** 나무만 바꿔도 즉시 톤이 달라지므로, 43종을 다 뽑고 나서 한꺼번에 넣을 필요가 없습니다.
+> 데코는 건물과 달리 **부분 교체가 가능합니다.** 나무만 바꿔도 즉시 톤이 달라지므로, 44종을 다 뽑고 나서 한꺼번에 넣을 필요가 없습니다.

@@ -1,8 +1,9 @@
 "use client";
 
 import {Canvas} from "@react-three/fiber";
-import {AdaptiveDpr, AdaptiveEvents, ContactShadows, Html, useGLTF} from "@react-three/drei";
+import {AdaptiveDpr, AdaptiveEvents, ContactShadows, Html, useGLTF, useTexture} from "@react-three/drei";
 import {memo, Suspense, useEffect, useMemo} from "react";
+import {RepeatWrapping, SRGBColorSpace} from "three";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
@@ -80,23 +81,49 @@ function Statue() {
 
 useGLTF.preload("/models/environment/statue.glb");
 
+// 마을 바닥.
+//
+// 예전엔 environment/ground.glb(사이버펑크 원반 + 청록 pointLight)를 깔았는데
+// 두 가지가 걸렸다. ① 반지름이 x ±16.2 / z −14.2~18.2 라서, 구역을 바깥으로
+// 밀어놓은 지금의 마을(x −19.8~21.3 / z −14.9~22.0)에선 가장자리 건물이 바닥
+// 밖에 떠 있었다. ② 안쪽 바닥이 y = −0.3인데 건물은 y = 0에 서 있어 0.3만큼 떴다.
+//
+// 그래서 잔디 텍스처를 반복해 까는 평면 하나로 바꿨다. 삼각형 2개라 공짜에 가깝고,
+// 크기를 마을보다 넉넉히 잡아 가장자리는 fog가 먹는다. 길·광장은 이 위에
+// propsLayout.json의 ground 프롭(GLB 타일)이 얹힌다.
+const GROUND_SIZE = 90;
+/** 잔디 텍스처 1장이 덮는 월드 크기(유닛). 작을수록 잔디결이 촘촘해진다. */
+const GRASS_TILE_WORLD = 4;
+
 function Ground() {
-  const {scene} = useGLTF("/models/environment/ground.glb");
+  const map = useTexture("/textures/grass.jpg");
+  useEffect(() => {
+    map.wrapS = RepeatWrapping;
+    map.wrapT = RepeatWrapping;
+    map.repeat.set(GROUND_SIZE / GRASS_TILE_WORLD, GROUND_SIZE / GRASS_TILE_WORLD);
+    map.anisotropy = 8;
+    map.colorSpace = SRGBColorSpace;
+    map.needsUpdate = true;
+  }, [map]);
+
+  // polygonOffset — 길 타일이 잔디에 파묻히는 걸 막는다.
+  // 타일 윗면은 잔디보다 겨우 몇 cm 위인데, 90유닛짜리 이 거대한 평면과 깊이값이
+  // 사실상 같아서 조금만 멀어지면 잔디가 이겨버려 길이 통째로 사라졌다.
+  // 잔디만 깊이 방향으로 뒤로 밀어두면 여유가 얼마든 항상 타일이 이긴다.
   return (
-    <group>
-      <primitive
-        object={scene}
-        position={[0, -0.6, 2]}
-        scale={[17, 17, 17]}
-        rotation={[-Math.PI / 2, 0, 0]}
-        receiveShadow
+    <mesh position={[0, 0, 3]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <planeGeometry args={[GROUND_SIZE, GROUND_SIZE]} />
+      <meshStandardMaterial
+        map={map}
+        roughness={0.95}
+        metalness={0}
+        polygonOffset
+        polygonOffsetFactor={2}
+        polygonOffsetUnits={4}
       />
-      <pointLight color="#00d4ff" intensity={2.5} distance={17} decay={2} position={[0, 1.5, 0]} />
-    </group>
+    </mesh>
   );
 }
-
-useGLTF.preload("/models/environment/ground.glb");
 
 function DistrictSign({label, position, color}: {label: string; position: [number, number, number]; color: string}) {
   const calculatePosition = useMemo(() => createThrottledCalculatePosition(LABEL_SYNC_STRIDE), []);
@@ -156,11 +183,12 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
 
   return (
     <group>
-      <mesh position={[x / 2, 0.014, z / 2]} rotation={[-Math.PI / 2, 0, angle]}>
+      {/* 길 타일 윗면이 y=0.02라, 예전 높이(0.014/0.015)에 그리면 길 밑에 깔려 안 보인다 */}
+      <mesh position={[x / 2, 0.05, z / 2]} rotation={[-Math.PI / 2, 0, angle]}>
         <planeGeometry args={[dist, 0.07]} />
         <meshBasicMaterial color={building.accentColor} transparent opacity={0.8} />
       </mesh>
-      <mesh position={[x, 0.015, z]} rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh position={[x, 0.05, z]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[1.18, 1.3, 48]} />
         <meshBasicMaterial color={building.accentColor} transparent opacity={0.7} />
       </mesh>
@@ -276,10 +304,12 @@ function VillageSceneImpl({
         <directionalLight color={sky.fill} intensity={sky.fillI} position={[-6, 12, -4]} />
         <hemisphereLight args={[sky.hSky, sky.hGround, sky.hI]} />
 
-        <pointLight color="#00d4ff" intensity={1.8} distance={22} decay={2} position={[-5, 5, 0]} />
-        <pointLight color="#aa44ff" intensity={1.5} distance={20} decay={2} position={[3, 5, -5]} />
-        <pointLight color="#00ff88" intensity={1.5} distance={20} decay={2} position={[6, 5, 5]} />
-        <pointLight color="#ff6600" intensity={1.2} distance={16} decay={2} position={[0, 4, 9]} />
+        {/* 구역마다 살짝 다른 색감을 주는 보조광. 원래는 네온(청록/보라/연두/주황)이라
+            잔디 위에서 색이 튀어서, 노을 톤 안에서 온도만 다른 따뜻한 색으로 낮췄다. */}
+        <pointLight color="#ffd9a8" intensity={1.2} distance={22} decay={2} position={[-5, 5, 0]} />
+        <pointLight color="#e8c4ff" intensity={0.9} distance={20} decay={2} position={[3, 5, -5]} />
+        <pointLight color="#d8f0b0" intensity={0.9} distance={20} decay={2} position={[6, 5, 5]} />
+        <pointLight color="#ffbe86" intensity={0.9} distance={16} decay={2} position={[0, 4, 9]} />
 
         <Suspense fallback={null}>
           <Ground />
@@ -356,7 +386,8 @@ function VillageSceneImpl({
             <Rock key={position.join("-")} position={position} scale={index % 2 === 0 ? 1 : 0.72} />
           ))}
 
-          <ContactShadows blur={1.5} far={12} frames={1} opacity={0.15} position={[0, 0.02, 2]} scale={26} />
+          {/* 길 타일 윗면(y=0.02)과 같은 높이면 z-파이팅이 나므로 살짝 위로 */}
+          <ContactShadows blur={1.5} far={12} frames={1} opacity={0.15} position={[0, 0.035, 2]} scale={26} />
 
           <SeasonAmbience lite={isMobile} />
 

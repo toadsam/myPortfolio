@@ -1,5 +1,1403 @@
 {
-  "props": [],
+  "props": [
+    {
+      "id": "ground-plaza-center",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        0,
+        -0.222,
+        0
+      ],
+      "rotationY": 0,
+      "scale": 3.4
+    },
+    {
+      "id": "ground-yard-project-mystock",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        -14.5,
+        -0.071,
+        -2.9
+      ],
+      "rotationY": 0,
+      "scale": 1.579
+    },
+    {
+      "id": "ground-yard-project-festflow",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        -14.5,
+        -0.084,
+        4.35
+      ],
+      "rotationY": 0,
+      "scale": 1.737
+    },
+    {
+      "id": "ground-yard-project-sign-language",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        -14.5,
+        -0.075,
+        9.42
+      ],
+      "rotationY": 0,
+      "scale": 1.632
+    },
+    {
+      "id": "ground-yard-project-aclub",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        -10.15,
+        -0.067,
+        -8.7
+      ],
+      "rotationY": 0,
+      "scale": 1.526
+    },
+    {
+      "id": "ground-yard-project-ajou-adventure",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        -10.15,
+        -0.071,
+        12.33
+      ],
+      "rotationY": 0,
+      "scale": 1.579
+    },
+    {
+      "id": "ground-yard-project-ajouchong",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        -10.15,
+        -0.067,
+        15.95
+      ],
+      "rotationY": 0,
+      "scale": 1.526
+    },
+    {
+      "id": "ground-yard-project-muscleup",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        -14.5,
+        -0.067,
+        13.78
+      ],
+      "rotationY": 0,
+      "scale": 1.526
+    },
+    {
+      "id": "ground-yard-project-darklab",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        -18.85,
+        -0.071,
+        2.9
+      ],
+      "rotationY": 0,
+      "scale": 1.579
+    },
+    {
+      "id": "ground-yard-project-tserof",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        -18.85,
+        -0.062,
+        8.7
+      ],
+      "rotationY": 0,
+      "scale": 1.474
+    },
+    {
+      "id": "ground-yard-skill-frontend",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        -3.62,
+        -0.102,
+        -13.77
+      ],
+      "rotationY": 0,
+      "scale": 1.947
+    },
+    {
+      "id": "ground-yard-skill-3d",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        3.63,
+        -0.088,
+        -13.77
+      ],
+      "rotationY": 0,
+      "scale": 1.789
+    },
+    {
+      "id": "ground-yard-skill-backend",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        8.7,
+        -0.067,
+        -10.15
+      ],
+      "rotationY": 0,
+      "scale": 1.526
+    },
+    {
+      "id": "ground-yard-skill-game",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        8.7,
+        -0.08,
+        -3.62
+      ],
+      "rotationY": 0,
+      "scale": 1.684
+    },
+    {
+      "id": "ground-yard-skill-workflow",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        3.63,
+        -0.067,
+        -8.7
+      ],
+      "rotationY": 0,
+      "scale": 1.526
+    },
+    {
+      "id": "ground-yard-exp-unity-ui",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        12.61,
+        -0.062,
+        7.25
+      ],
+      "rotationY": 0,
+      "scale": 1.474
+    },
+    {
+      "id": "ground-yard-exp-demo-platform",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        12.61,
+        -0.071,
+        11.6
+      ],
+      "rotationY": 0,
+      "scale": 1.579
+    },
+    {
+      "id": "ground-yard-exp-portfolio",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        8.7,
+        -0.08,
+        14.21
+      ],
+      "rotationY": 0,
+      "scale": 1.684
+    },
+    {
+      "id": "ground-yard-life-values",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        15.23,
+        -0.045,
+        -9.42
+      ],
+      "rotationY": 0,
+      "scale": 1.263
+    },
+    {
+      "id": "ground-yard-life-gym",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        18.85,
+        -0.084,
+        -5.07
+      ],
+      "rotationY": 0,
+      "scale": 1.737
+    },
+    {
+      "id": "ground-yard-life-invest",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        20.3,
+        -0.067,
+        1.45
+      ],
+      "rotationY": 0,
+      "scale": 1.526
+    },
+    {
+      "id": "ground-yard-life-library",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        18.85,
+        -0.084,
+        7.25
+      ],
+      "rotationY": 0,
+      "scale": 1.737
+    },
+    {
+      "id": "ground-yard-life-music",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        20.3,
+        -0.075,
+        12.33
+      ],
+      "rotationY": 0,
+      "scale": 1.632
+    },
+    {
+      "id": "ground-yard-life-timeline",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        16.68,
+        -0.058,
+        12.33
+      ],
+      "rotationY": 0,
+      "scale": 1.421
+    },
+    {
+      "id": "ground-yard-study-codingtest",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        -3.19,
+        -0.071,
+        21.03
+      ],
+      "rotationY": 0,
+      "scale": 1.579
+    },
+    {
+      "id": "ground-yard-study-cs",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        3.19,
+        -0.075,
+        21.03
+      ],
+      "rotationY": 0,
+      "scale": 1.632
+    },
+    {
+      "id": "ground-yard-post-office",
+      "glb": "/models/props/ground/plaza-tile.glb",
+      "position": [
+        0,
+        -0.08,
+        13.78
+      ],
+      "rotationY": 0,
+      "scale": 1.684
+    },
+    {
+      "id": "ground--1_-6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -1.88,
+        -0.06,
+        -11.28
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground--10_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -18.8,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground--2_-6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -3.76,
+        -0.06,
+        -11.28
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground--3_-1",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -5.64,
+        -0.06,
+        -1.88
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--3_-2",
+      "glb": "/models/props/ground/path-t.glb",
+      "position": [
+        -5.64,
+        -0.052,
+        -3.76
+      ],
+      "rotationY": 4.7124,
+      "scale": 1
+    },
+    {
+      "id": "ground--3_-3",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -5.64,
+        -0.06,
+        -5.64
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--3_-4",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -5.64,
+        -0.06,
+        -7.52
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--3_-5",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -5.64,
+        -0.06,
+        -9.4
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--3_-6",
+      "glb": "/models/props/ground/path-curve.glb",
+      "position": [
+        -5.64,
+        -0.034,
+        -11.28
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground--3_0",
+      "glb": "/models/props/ground/path-t.glb",
+      "position": [
+        -5.64,
+        -0.052,
+        0
+      ],
+      "rotationY": 4.7124,
+      "scale": 1
+    },
+    {
+      "id": "ground--3_1",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -5.64,
+        -0.06,
+        1.88
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--3_10",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -5.64,
+        -0.06,
+        18.8
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--3_11",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -5.64,
+        -0.06,
+        20.68
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--3_12",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -5.64,
+        -0.06,
+        22.56
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--4_-2",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -7.52,
+        -0.06,
+        -3.76
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground--4_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -7.52,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground--4_6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -7.52,
+        -0.06,
+        11.28
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--4_7",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -7.52,
+        -0.06,
+        13.16
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--5_-2",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -9.4,
+        -0.06,
+        -3.76
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground--5_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -9.4,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground--6_-2",
+      "glb": "/models/props/ground/path-curve.glb",
+      "position": [
+        -11.28,
+        -0.034,
+        -3.76
+      ],
+      "rotationY": 3.1416,
+      "scale": 1
+    },
+    {
+      "id": "ground--6_-3",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -11.28,
+        -0.06,
+        -5.64
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--6_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -11.28,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground--7_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -13.16,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground--8_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -15.04,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground--9_-1",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -16.92,
+        -0.06,
+        -1.88
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--9_-2",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -16.92,
+        -0.06,
+        -3.76
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--9_0",
+      "glb": "/models/props/ground/path-cross.glb",
+      "position": [
+        -16.92,
+        -0.032,
+        0
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--9_1",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -16.92,
+        -0.06,
+        1.88
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--9_2",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -16.92,
+        -0.06,
+        3.76
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--9_3",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -16.92,
+        -0.06,
+        5.64
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--9_4",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -16.92,
+        -0.06,
+        7.52
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--9_5",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -16.92,
+        -0.06,
+        9.4
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--9_6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -16.92,
+        -0.06,
+        11.28
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground--9_7",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        -16.92,
+        -0.06,
+        13.16
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_-3",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        -5.64
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_-4",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        -7.52
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_-5",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        -9.4
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_-6",
+      "glb": "/models/props/ground/path-cross.glb",
+      "position": [
+        0,
+        -0.032,
+        -11.28
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_-7",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        -13.16
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_-8",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        -15.04
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_10",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        18.8
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_11",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        20.68
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_12",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        22.56
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_3",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        5.64
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_4",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        7.52
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_5",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        9.4
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        11.28
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-0_9",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        0,
+        -0.06,
+        16.92
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-1_-6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        1.88,
+        -0.06,
+        -11.28
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-2_-6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        3.76,
+        -0.06,
+        -11.28
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-3_-3",
+      "glb": "/models/props/ground/path-curve.glb",
+      "position": [
+        5.64,
+        -0.034,
+        -5.64
+      ],
+      "rotationY": 3.1416,
+      "scale": 1
+    },
+    {
+      "id": "ground-3_-4",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        5.64,
+        -0.06,
+        -7.52
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-3_-5",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        5.64,
+        -0.06,
+        -9.4
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-3_-6",
+      "glb": "/models/props/ground/path-curve.glb",
+      "position": [
+        5.64,
+        -0.034,
+        -11.28
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-3_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        5.64,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-4_-3",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        7.52,
+        -0.06,
+        -5.64
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-4_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        7.52,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-4_6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        7.52,
+        -0.06,
+        11.28
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-5_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        9.4,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-5_6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        9.4,
+        -0.06,
+        11.28
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-6_-6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        11.28,
+        -0.06,
+        -11.28
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-6_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        11.28,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-7_-6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        13.16,
+        -0.06,
+        -11.28
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-7_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        13.16,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-8_-6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        15.04,
+        -0.06,
+        -11.28
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-8_0",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        15.04,
+        -0.06,
+        0
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-8_5",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        15.04,
+        -0.06,
+        9.4
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-9_-1",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        16.92,
+        -0.06,
+        -1.88
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-9_-6",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        16.92,
+        -0.06,
+        -11.28
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-9_0",
+      "glb": "/models/props/ground/path-t.glb",
+      "position": [
+        16.92,
+        -0.052,
+        0
+      ],
+      "rotationY": 4.7124,
+      "scale": 1
+    },
+    {
+      "id": "ground-9_1",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        16.92,
+        -0.06,
+        1.88
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-9_2",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        16.92,
+        -0.06,
+        3.76
+      ],
+      "rotationY": 0,
+      "scale": 1
+    },
+    {
+      "id": "ground-9_5",
+      "glb": "/models/props/ground/path-straight.glb",
+      "position": [
+        16.92,
+        -0.06,
+        9.4
+      ],
+      "rotationY": 1.5708,
+      "scale": 1
+    },
+    {
+      "id": "ground-grass--8_-3",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -15.04,
+        -0.04,
+        -5.64
+      ],
+      "rotationY": 4.712,
+      "scale": 0.959
+    },
+    {
+      "id": "ground-grass--6_1",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -11.28,
+        -0.04,
+        1.88
+      ],
+      "rotationY": 0,
+      "scale": 0.865
+    },
+    {
+      "id": "ground-grass--6_5",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -11.28,
+        -0.04,
+        9.4
+      ],
+      "rotationY": 1.571,
+      "scale": 1.163
+    },
+    {
+      "id": "ground-grass--4_-6",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -7.52,
+        -0.04,
+        -11.28
+      ],
+      "rotationY": 4.712,
+      "scale": 1.095
+    },
+    {
+      "id": "ground-grass--5_5",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -9.4,
+        -0.04,
+        9.4
+      ],
+      "rotationY": 3.142,
+      "scale": 1.161
+    },
+    {
+      "id": "ground-grass--6_10",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -11.28,
+        -0.04,
+        18.8
+      ],
+      "rotationY": 1.571,
+      "scale": 1.008
+    },
+    {
+      "id": "ground-grass--7_9",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -13.16,
+        -0.04,
+        16.92
+      ],
+      "rotationY": 0,
+      "scale": 0.903
+    },
+    {
+      "id": "ground-grass--11_0",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -20.68,
+        -0.04,
+        0
+      ],
+      "rotationY": 3.142,
+      "scale": 1.12
+    },
+    {
+      "id": "ground-grass--12_5",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -22.56,
+        -0.04,
+        9.4
+      ],
+      "rotationY": 4.712,
+      "scale": 0.995
+    },
+    {
+      "id": "ground-grass--2_-9",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -3.76,
+        -0.04,
+        -16.92
+      ],
+      "rotationY": 0,
+      "scale": 0.902
+    },
+    {
+      "id": "ground-grass-4_-8",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        7.52,
+        -0.04,
+        -15.04
+      ],
+      "rotationY": 4.712,
+      "scale": 0.884
+    },
+    {
+      "id": "ground-grass-5_-7",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        9.4,
+        -0.04,
+        -13.16
+      ],
+      "rotationY": 1.571,
+      "scale": 1.129
+    },
+    {
+      "id": "ground-grass-5_-4",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        9.4,
+        -0.04,
+        -7.52
+      ],
+      "rotationY": 3.142,
+      "scale": 1.145
+    },
+    {
+      "id": "ground-grass-1_-3",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        1.88,
+        -0.04,
+        -5.64
+      ],
+      "rotationY": 4.712,
+      "scale": 1.087
+    },
+    {
+      "id": "ground-grass-6_5",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        11.28,
+        -0.04,
+        9.4
+      ],
+      "rotationY": 3.142,
+      "scale": 0.959
+    },
+    {
+      "id": "ground-grass-7_8",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        13.16,
+        -0.04,
+        15.04
+      ],
+      "rotationY": 3.142,
+      "scale": 1.145
+    },
+    {
+      "id": "ground-grass-3_8",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        5.64,
+        -0.04,
+        15.04
+      ],
+      "rotationY": 3.142,
+      "scale": 1.145
+    },
+    {
+      "id": "ground-grass-10_-5",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        18.8,
+        -0.04,
+        -9.4
+      ],
+      "rotationY": 0,
+      "scale": 0.876
+    },
+    {
+      "id": "ground-grass-10_-1",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        18.8,
+        -0.04,
+        -1.88
+      ],
+      "rotationY": 3.142,
+      "scale": 0.912
+    },
+    {
+      "id": "ground-grass-12_0",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        22.56,
+        -0.04,
+        0
+      ],
+      "rotationY": 4.712,
+      "scale": 0.987
+    },
+    {
+      "id": "ground-grass-11_2",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        20.68,
+        -0.04,
+        3.76
+      ],
+      "rotationY": 4.712,
+      "scale": 1.092
+    },
+    {
+      "id": "ground-grass-12_8",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        22.56,
+        -0.04,
+        15.04
+      ],
+      "rotationY": 0,
+      "scale": 0.998
+    },
+    {
+      "id": "ground-grass-8_8",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        15.04,
+        -0.04,
+        15.04
+      ],
+      "rotationY": 1.571,
+      "scale": 1.066
+    },
+    {
+      "id": "ground-grass--1_13",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -1.88,
+        -0.04,
+        24.44
+      ],
+      "rotationY": 4.712,
+      "scale": 1.092
+    },
+    {
+      "id": "ground-grass-1_13",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        1.88,
+        -0.04,
+        24.44
+      ],
+      "rotationY": 1.571,
+      "scale": 1.072
+    },
+    {
+      "id": "ground-grass--1_6",
+      "glb": "/models/props/ground/grass-patch.glb",
+      "position": [
+        -1.88,
+        -0.04,
+        11.28
+      ],
+      "rotationY": 4.712,
+      "scale": 1.117
+    }
+  ],
   "buildings": {
     "project-festflow": {
       "position": [
