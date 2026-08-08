@@ -20,7 +20,7 @@ import {NPC, type NpcCommand} from "./NPC";
 import {PerfHudPanel, PerfProbe} from "./PerfHud";
 import {SeasonAmbience} from "./SeasonAmbience";
 import {PropsEditorTray, PropsLayer, usePropsEditor} from "./PropsEditor";
-import {Tree} from "./Tree";
+import {Tree, treeScaleFor} from "./Tree";
 
 interface VillageSceneProps {
   activeSection: SectionId;
@@ -98,8 +98,13 @@ const GROUND_SIZE = 90;
 /** 잔디 텍스처 1장이 덮는 월드 크기(유닛). 작을수록 잔디결이 촘촘해진다. */
 // 512px 텍스처를 4유닛에 펴 바르면 카메라를 붙였을 때 결이 뭉개져 초록 죽처럼 보인다.
 const GRASS_TILE_WORLD = 2.6;
-/** 잔디 평면 색 보정 — 텍스처가 이미 알맞은 초록이라 아주 살짝만 눌러 준다. */
-const GRASS_TINT = "#e6e6e6";
+// 잔디 평면 색 보정.
+//
+// 평면 텍스처는 풀숲 슬래브에서 뽑았는데, 길 타일에 붙은 잔디 갓길은 그보다
+// 노랗고 진하다(평면 rgb 128,177,59 vs 갓길 114,164,33). 그대로 두면 길이 지나갈
+// 때마다 잔디 색이 한 단 달라져 타일 경계가 드러난다.
+// 갓길 평균색이 나오도록 선형 공간에서 역산한 값 — 곱하면 정확히 겹친다.
+const GRASS_TINT = "#e4ed9f";
 
 // 바닥 잔디는 길 타일 세트(ground/v2)의 풀숲 윗면을 그대로 구워 이음매를 없앤 것이다.
 // 예전 grass.jpg는 연노랑 초록이라, 길 타일에 붙은 진한 초록 갓길과 색이 달라
@@ -389,7 +394,7 @@ function VillageSceneImpl({
           ))}
 
           {treePositions.map((position, index) => (
-            <Tree key={position.join("-")} position={position} scale={index % 3 === 0 ? 1.1 : 0.88 + (index % 2) * 0.16} />
+            <Tree key={position.join("-")} position={position} scale={treeScaleFor(index)} />
           ))}
 
           {rockPositions.map((position, index) => (

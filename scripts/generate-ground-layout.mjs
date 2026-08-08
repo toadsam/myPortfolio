@@ -120,54 +120,60 @@ const SETS = {
   }
 };
 
-// ─── 건물 (constants.ts 와 같은 계산으로 월드 좌표를 복원) ────────────────────
-const SPREAD = 1.45;
-const OFFSET = {
-  plaza: [0, 0],
-  projects: [-3, 0],
-  skills: [0, -3],
-  experience: [1.5, 2],
-  life: [3, 0],
-  study: [0, 3],
-  contact: [0, 1]
+// ─── 건물 ─────────────────────────────────────────────────────────────────────
+// 좌표와 크기를 여기에 베껴 두면 constants.ts 를 고칠 때마다 두 곳이 어긋난다
+// (실제로 건물 크기를 정리하다 앞마당 원반이 통째로 틀어졌다). 원본에서 읽는다.
+//
+// constants.ts 는 TypeScript라 node에서 그냥 import할 수 없어, 필요한 값만 훑는다.
+// 형식이 바뀌면 조용히 빈 배열이 되지 않도록 개수를 확인하고 멈춘다.
+const CONSTANTS = "src/lib/constants.ts";
+const source = readFileSync(CONSTANTS, "utf8");
+
+const num = re => {
+  const m = source.match(re);
+  if (!m) throw new Error(`${CONSTANTS} 에서 ${re} 를 못 찾았습니다`);
+  return Number(m[1]);
 };
-const RAW_BUILDINGS = [
-  ["central-plaza", "plaza", 0, 0, 2.6, 2.6],
-  ["project-mystock", "projects", -7, -2, 1.9, 1.9],
-  ["project-festflow", "projects", -7, 3, 2.2, 2.2],
-  ["project-sign-language", "projects", -7, 6.5, 2.0, 2.0],
-  ["project-aclub", "projects", -4, -6, 1.8, 1.8],
-  ["project-ajou-adventure", "projects", -4, 8.5, 1.9, 1.9],
-  ["project-ajouchong", "projects", -4, 11, 1.8, 1.8],
-  ["project-muscleup", "projects", -7, 9.5, 1.8, 1.8],
-  ["project-darklab", "projects", -10, 2, 1.9, 1.9],
-  ["project-tserof", "projects", -10, 6, 1.7, 1.7],
-  ["skill-frontend", "skills", -2.5, -6.5, 2.6, 2.2],
-  ["skill-3d", "skills", 2.5, -6.5, 2.3, 2.3],
-  ["skill-backend", "skills", 6, -4, 1.8, 1.8],
-  ["skill-game", "skills", 6, 0.5, 2.1, 2.1],
-  ["skill-workflow", "skills", 2.5, -3, 1.8, 1.6],
-  ["exp-unity-ui", "experience", 7.2, 3, 1.7, 1.5],
-  ["exp-demo-platform", "experience", 7.2, 6, 1.9, 1.7],
-  ["exp-portfolio", "experience", 4.5, 7.8, 2.1, 1.9],
-  ["life-values", "life", 7.5, -6.5, 1.3, 1.3],
-  ["life-gym", "life", 10, -3.5, 2.2, 2.2],
-  ["life-invest", "life", 11, 1, 1.8, 1.8],
-  ["life-library", "life", 10, 5, 2.2, 2.2],
-  ["life-music", "life", 11, 8.5, 2.0, 2.0],
-  ["life-timeline", "life", 8.5, 8.5, 1.6, 1.6],
-  ["study-codingtest", "study", -2.2, 11.5, 1.9, 1.9],
-  ["study-cs", "study", 2.2, 11.5, 2.0, 2.0],
-  ["post-office", "contact", 0, 8.5, 2.1, 1.9]
-];
-const buildings = RAW_BUILDINGS.map(([id, district, x, z, w, d]) => ({
-  id,
-  district,
-  x: Math.round((x + OFFSET[district][0]) * SPREAD * 100) / 100,
-  z: Math.round((z + OFFSET[district][1]) * SPREAD * 100) / 100,
-  w,
-  d
-}));
+const SPREAD = num(/export const SPREAD\s*=\s*([\d.]+)/);
+
+const OFFSET = {};
+{
+  const block = source.match(/districtOffset[^=]*=\s*\{([\s\S]*?)\};/);
+  if (!block) throw new Error(`${CONSTANTS} 에서 districtOffset 을 못 찾았습니다`);
+  for (const line of block[1].split("\n")) {
+    const m = line.match(/(\w[\w-]*)\s*:\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/);
+    if (m) OFFSET[m[1]] = [Number(m[2]), Number(m[3])];
+  }
+}
+
+// id 하나가 곧 건물 하나는 아니다(sectionMeta 에도 id가 있다). 다음 id 직전까지만
+// 훑어서 size·position·district 가 모두 있는 것만 건물로 친다.
+const buildings = [];
+{
+  const ids = [...source.matchAll(/id:\s*"([^"]+)"/g)];
+  for (let n = 0; n < ids.length; n++) {
+    const start = ids[n].index;
+    const end = n + 1 < ids.length ? ids[n + 1].index : source.length;
+    const chunk = source.slice(start, end);
+    const size = chunk.match(/size:\s*\[([^\]]+)\]/);
+    const position = chunk.match(/position:\s*\[([^\]]+)\]/);
+    const district = chunk.match(/district:\s*"([^"]+)"/);
+    if (!size || !position || !district) continue;
+    const [w, , d] = size[1].split(",").map(v => Number(v.trim()));
+    const [px, , pz] = position[1].split(",").map(v => Number(v.trim()));
+    const [ox, oz] = OFFSET[district[1]] ?? [0, 0];
+    buildings.push({
+      id: ids[n][1],
+      district: district[1],
+      x: Math.round((px + ox) * SPREAD * 100) / 100,
+      z: Math.round((pz + oz) * SPREAD * 100) / 100,
+      w,
+      d
+    });
+  }
+}
+if (buildings.length < 20)
+  throw new Error(`${CONSTANTS} 에서 건물을 ${buildings.length}개밖에 못 읽었습니다 — 형식이 바뀐 듯합니다`);
 // 중앙 광장은 앞마당 대신 큰 광장 한 장을 따로 깐다
 const HUB = buildings.find(b => b.id === "central-plaza");
 const OUTER = buildings.filter(b => b.id !== "central-plaza");

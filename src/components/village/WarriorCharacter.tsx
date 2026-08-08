@@ -3,6 +3,7 @@
 import {useAnimations, useGLTF} from "@react-three/drei";
 import {useEffect, useMemo, useRef} from "react";
 import type {Group} from "three";
+import {MESHY_HEIGHT, NPC_HEIGHT} from "@/data/characterModels";
 
 export type MoveState = "idle" | "walk" | "run";
 
@@ -10,7 +11,10 @@ const WALK_URL = "/models/characters/warrior-walk.glb";
 const RUN_URL = "/models/characters/warrior-run.glb";
 
 // 모델 기본 자세 보정 — 필요 시 조정
-const MODEL_SCALE = 1.1;
+//
+// 예전엔 1.1 고정이라 조종 캐릭터 키가 1.87유닛이었다. 표준 건물(1.9)과 맞먹어
+// 마을을 걸으면 사람이 집만 했다. NPC와 같은 키를 쓰도록 레지스트리에 묶는다.
+const MODEL_SCALE = NPC_HEIGHT / MESHY_HEIGHT;
 const MODEL_Y = 0;
 const MODEL_FACING = Math.PI; // 모델이 +Z를 보면 180도 돌려 -Z(전방)로
 

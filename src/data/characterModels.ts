@@ -22,9 +22,16 @@ export interface CharacterModel {
   clipOverrides?: Partial<Record<CharacterState, string[]>>;
 }
 
-// Meshy 캐릭터는 전부 높이 1.7 유닛으로 나온다(실측: 로봇/전사/루미 모두 1.7000).
-// 기존 NPC가 scale 0.73으로 렌더되던 크기를 그대로 유지하는 값.
-export const NPC_HEIGHT = 1.7 * 0.73;
+/** Meshy가 캐릭터를 내보내는 기준 높이 (실측: 로봇·전사·루미 모두 1.7000) */
+export const MESHY_HEIGHT = 1.7;
+
+// 캐릭터 키는 건물 크기 사다리(constants.ts)에 맞춘다.
+//
+// 건물을 "1층 상가 3m"로 보고 계산하면 1.05가 나오는데, 실제로 세워 보니
+// 사람이 커 보였다. 이 마을 건물은 표준 M(1.9)조차 창이 여러 층 나 있는
+// 3~4층짜리로 읽히기 때문이다. 랜드마크(3.1)를 4층으로 잡으면 유닛당 2.5m 쯤이라
+// 사람 1.7m는 0.8유닛이다.
+export const NPC_HEIGHT = 0.8;
 
 export const characterModels: Record<CharacterModelId, CharacterModel> = {
   robot: {

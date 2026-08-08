@@ -64,25 +64,31 @@ function HighlightFX({color, height, radius, active}: {color: string; height: nu
 
 function GlbModel({glbPath, size}: {glbPath: string; size: [number, number, number]}) {
   const {scene} = useGLTF(glbPath);
-  // size[1]을 목표 높이로 삼아 자동 스케일
-  const targetHeight = size[1];
-  const scale = targetHeight * 0.62;
   // Meshy GLB는 원점 중심으로 나와서 그대로 놓으면 아래 절반이 지면에 묻힌다.
   // 바닥(min.y)을 y=0으로 끌어올린다. primitive가 scene에 직접 transform을 쓰므로
   // 측정할 때는 항등 변환으로 되돌렸다가 복원한다.
-  const baseMinY = useMemo(() => {
+  const natural = useMemo(() => {
     const scale0 = scene.scale.clone();
     const pos0 = scene.position.clone();
     scene.scale.set(1, 1, 1);
     scene.position.set(0, 0, 0);
     scene.updateWorldMatrix(false, true);
-    const {min} = new Box3().setFromObject(scene);
+    const {min, max} = new Box3().setFromObject(scene);
     scene.scale.copy(scale0);
     scene.position.copy(pos0);
     scene.updateWorldMatrix(false, true);
-    return min.y;
+    return {minY: min.y, height: Math.max(1e-4, max.y - min.y)};
   }, [scene]);
-  return <primitive object={scene} scale={scale} position={[0, -baseMinY * scale, 0]} />;
+
+  // size[1]은 "월드에서의 실제 높이"다.
+  //
+  // 예전엔 size[1] × 0.62 를 그냥 배율로 썼는데, GLB마다 원본 높이가 1.13~1.91로
+  // 제각각이라 같은 size[1]이 전혀 다른 크기를 만들었다(backend는 선언 2.6인데
+  // 실제 3.07, festflow는 선언 1.5인데 실제 1.05). 게다가 바닥 링·앞마당 원반·
+  // 라벨 높이는 전부 size를 곧이곧대로 읽어서, GLB 건물만 죄다 어긋나 있었다.
+  // 원본 높이로 나누면 size가 화면과 일치한다 — 절차적 건물과 같은 의미가 된다.
+  const scale = size[1] / natural.height;
+  return <primitive object={scene} scale={scale} position={[0, -natural.minY * scale, 0]} />;
 }
 
 // ─── 공통 라벨 ────────────────────────────────────────────────────────────────
