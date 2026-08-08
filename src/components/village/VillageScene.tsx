@@ -62,7 +62,10 @@ function timePalette(hour: number) {
     return {sky: "#e6b896", fog: "#e8c6a4", near: 30, far: 66, amb: 3.4, sun: "#ffd6a6", sunI: 4.0, fill: "#ffc2d2", fillI: 1.9, hSky: "#f0c8a4", hGround: "#566a3a", hI: 2.4, label: "새벽"};
   }
   if (hour < 17) {
-    return {sky: "#a8c8e8", fog: "#b8d4ee", near: 35, far: 70, amb: 4.5, sun: "#fff8e8", sunI: 5.0, fill: "#d0e8ff", fillI: 2.5, hSky: "#87ceeb", hGround: "#4a7a3a", hI: 3.0, label: "낮"};
+    // 낮은 예전 바닥(어두운 사이버펑크 원반)에 맞춰 amb 4.5 / sun 5.0 / hemi 3.0 이었다.
+    // 잔디 바닥으로 바꾸고 나니 밝은 알베도가 통째로 하얗게 날아가 자갈길이 안 보였다.
+    // 채워 넣는 빛(ambient·hemi)을 절반 가까이 줄여 태양이 형태를 만들게 한다.
+    return {sky: "#a8c8e8", fog: "#b8d4ee", near: 35, far: 70, amb: 1.6, sun: "#fff8e8", sunI: 3.2, fill: "#d0e8ff", fillI: 1.1, hSky: "#87ceeb", hGround: "#4a7a3a", hI: 1.0, label: "낮"};
   }
   return {sky: "#e09a64", fog: "#e6ad7e", near: 28, far: 62, amb: 3.1, sun: "#ff945a", sunI: 3.8, fill: "#ffb184", fillI: 1.9, hSky: "#e8a070", hGround: "#5a5a2a", hI: 2.1, label: "노을"};
 }
@@ -93,10 +96,16 @@ useGLTF.preload("/models/environment/statue.glb");
 // propsLayout.json의 ground 프롭(GLB 타일)이 얹힌다.
 const GROUND_SIZE = 90;
 /** 잔디 텍스처 1장이 덮는 월드 크기(유닛). 작을수록 잔디결이 촘촘해진다. */
-const GRASS_TILE_WORLD = 4;
+// 512px 텍스처를 4유닛에 펴 바르면 카메라를 붙였을 때 결이 뭉개져 초록 죽처럼 보인다.
+const GRASS_TILE_WORLD = 2.6;
+/** 잔디 평면 색 보정 — 텍스처가 이미 알맞은 초록이라 아주 살짝만 눌러 준다. */
+const GRASS_TINT = "#e6e6e6";
 
+// 바닥 잔디는 길 타일 세트(ground/v2)의 풀숲 윗면을 그대로 구워 이음매를 없앤 것이다.
+// 예전 grass.jpg는 연노랑 초록이라, 길 타일에 붙은 진한 초록 갓길과 색이 달라
+// 길이 잔디 위에 얹힌 초록 리본처럼 떠 보였다. 같은 원본에서 뽑아야 색이 맞는다.
 function Ground() {
-  const map = useTexture("/textures/grass.jpg");
+  const map = useTexture("/textures/grass-village.png");
   useEffect(() => {
     map.wrapS = RepeatWrapping;
     map.wrapT = RepeatWrapping;
@@ -115,6 +124,7 @@ function Ground() {
       <planeGeometry args={[GROUND_SIZE, GROUND_SIZE]} />
       <meshStandardMaterial
         map={map}
+        color={GRASS_TINT}
         roughness={0.95}
         metalness={0}
         polygonOffset

@@ -1,6 +1,10 @@
 // 마을 바닥(길·광장·앞마당·잔디)을 만들어 src/data/propsLayout.json 의 ground 프롭을 갱신한다.
 //
-// 사용법: node scripts/generate-ground-layout.mjs [--dry]
+// 사용법: node scripts/generate-ground-layout.mjs [--dry] [--v1] [--v2=i0,j0,i1,j1]
+//
+//   기본       길 전체를 새 타일 세트(ground/v2)로 깐다.
+//   --v1       예전 세트(ground/*)로 되돌린다.
+//   --v2=사각형 그 격자 사각형 안만 새 것으로 — 두 세트를 나란히 놓고 비교할 때.
 //
 // ─── 왜 손으로 안 찍고 생성하나 ──────────────────────────────────────────────
 // 길 타일은 "어느 방향으로 이어지는가"에 따라 직선/곡선/T/교차를 골라야 하고,
@@ -26,6 +30,20 @@ import {readFileSync, writeFileSync} from "node:fs";
 
 const LAYOUT = "src/data/propsLayout.json";
 const dry = process.argv.includes("--dry");
+
+// 새 타일이 덮을 격자 사각형. null이면 전부 예전 타일, 범위를 안 주면 마을 전체.
+const v2Arg = process.argv.find(a => a.startsWith("--v2="));
+const V2_RECT = (() => {
+  if (process.argv.includes("--v1")) return null;
+  if (!v2Arg) return {i0: -Infinity, i1: Infinity, j0: -Infinity, j1: Infinity};
+  const raw = v2Arg.split("=")[1];
+  const [a, b, c, d] = raw.split(",").map(Number);
+  if ([a, b, c, d].some(v => !Number.isFinite(v)))
+    throw new Error(`--v2 값은 i0,j0,i1,j1 형식이어야 합니다: ${raw}`);
+  return {i0: Math.min(a, c), i1: Math.max(a, c), j0: Math.min(b, d), j1: Math.max(b, d)};
+})();
+const inV2 = (i, j) =>
+  V2_RECT !== null && i >= V2_RECT.i0 && i <= V2_RECT.i1 && j >= V2_RECT.j0 && j <= V2_RECT.j1;
 
 // ─── 타일 사양 ────────────────────────────────────────────────────────────────
 // PITCH: 타일 실측 폭이 1.895~1.899라 1.88 간격으로 깔면 미세하게 겹쳐 틈이 안 생긴다.
@@ -53,6 +71,26 @@ const TILE = {
   grass: {glb: "/models/props/ground/grass-patch.glb", top: 0.1, tris: 4418}
 };
 
+// ─── 새 타일 세트 (--v2) ──────────────────────────────────────────────────────
+// 기존 세트는 길 폭이 종류마다 제각각이라(직선 0.96 / 교차 0.62 / T 0.47~0.67)
+// 이어붙이면 폭이 확 꺾여 길이 끊겨 보였다. 새 세트는 전부 0.55~0.69로 고르다.
+//
+// top 은 여기서 의미가 다르다. 기존 표의 값은 bbox 꼭대기(=잔디 잎 끝)라
+// 그걸 맞추면 정작 포장면은 타일마다 다른 높이에 놓인다. 새 세트는 **포장면**
+// 높이를 적어 두고 그걸 TOP_Y에 맞춘다 — 눈이 따라가는 건 길이지 잔디가 아니다.
+//
+// 교차로가 두 장(cross / cross-b) 들어왔다. 무늬가 조금 다른 cross-b 는
+// 지금은 안 쓰고 예비로 둔다.
+const V2_DIR = "/models/props/ground/v2";
+const V2_TILE = {
+  straight: {glb: `${V2_DIR}/path-straight.glb`, top: 0.076, tris: 4867},
+  curve: {glb: `${V2_DIR}/path-curve.glb`, top: 0.079, tris: 1191},
+  t: {glb: `${V2_DIR}/path-t.glb`, top: 0.068, tris: 3000},
+  cross: {glb: `${V2_DIR}/path-cross.glb`, top: 0.079, tris: 4630},
+  plaza: {glb: "/models/props/ground/plaza-tile.glb", top: 0.083, tris: 6151},
+  grass: {glb: `${V2_DIR}/grass-patch.glb`, top: 0.052, tris: 4895}
+};
+
 // plaza-tile 은 정사각 슬래브가 아니라 실제 원반이다 (정점의 0%만 내접원 밖).
 // scale 1 일 때 반지름이 이만큼이라, 앞마당 크기를 반지름으로 계산할 수 있다.
 const PLAZA_RADIUS_AT_1 = 0.95;
@@ -62,8 +100,25 @@ const PLAZA_RADIUS_AT_1 = 0.95;
 // t        : 로컬 −Z가 막힌 면, 나머지 3면이 열림 → 회전 0이면 북쪽이 막힘
 // curve    : 로컬 −X 와 +Z 를 잇는 1/4 원호       → 회전 0이면 서–남
 // cross/plaza : 회전 대칭
-const T_ROT = {N: 0, W: Math.PI / 2, S: Math.PI, E: (3 * Math.PI) / 2};
-const CURVE_ROT = {WS: 0, SE: Math.PI / 2, EN: Math.PI, NW: (3 * Math.PI) / 2};
+//
+// 새 세트는 통째로 −90° 돌아가 있다: 직선이 회전 0에서 동–서, 곡선이 남–동.
+// 그래서 v2 의 회전표는 v1 에서 90°씩 당긴 값이다.
+const QUARTER = Math.PI / 2;
+const SETS = {
+  v1: {
+    tiles: TILE,
+    straight: {NS: 0, WE: QUARTER},
+    curve: {WS: 0, SE: QUARTER, EN: 2 * QUARTER, NW: 3 * QUARTER},
+    t: {N: 0, W: QUARTER, S: 2 * QUARTER, E: 3 * QUARTER}
+  },
+  v2: {
+    tiles: V2_TILE,
+    straight: {WE: 0, NS: QUARTER},
+    curve: {SE: 0, EN: QUARTER, NW: 2 * QUARTER, WS: 3 * QUARTER},
+    // T만은 기존과 같다 — 새 것도 회전 0에서 북쪽이 막혀 있다
+    t: {N: 0, W: QUARTER, S: 2 * QUARTER, E: 3 * QUARTER}
+  }
+};
 
 // ─── 건물 (constants.ts 와 같은 계산으로 월드 좌표를 복원) ────────────────────
 const SPREAD = 1.45;
@@ -298,8 +353,13 @@ for (const k of [...road]) {
     swallowed++;
   }
 }
-// 중앙 광장도 마찬가지
-const HUB_SCALE = 3.4;
+// 중앙 광장도 마찬가지.
+//
+// 반지름을 3.23에서 4.6까지 키웠다. 예전 크기로는 원반이 삼킨 칸 바깥의
+// 첫 길 칸이 x=±5.64에 있어서, 원반 가장자리와 길 끝 사이에 1.5유닛짜리
+// 맨잔디가 남았다 — 대로가 광장에 닿지 못하고 허공에서 끊겼다.
+// 이제 원반이 그 길 끝(안쪽 모서리 4.70)까지 차오른다.
+const HUB_SCALE = 4.84;
 const HUB_RADIUS = HUB_SCALE * PLAZA_RADIUS_AT_1;
 for (const k of [...road]) {
   const [i, j] = parse(k);
@@ -351,6 +411,8 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
 }
 
 // ─── ④ 이웃 연결로 길 타일 종류·회전 결정 ────────────────────────────────────
+// 이웃만 보고 "무슨 갈래인지"를 정한다. 어느 GLB를 몇 도 돌려 놓을지는
+// 타일 세트마다 다르므로 place() 에서 따로 푼다.
 function pick(i, j) {
   const N = road.has(key(i, j - 1));
   const S = road.has(key(i, j + 1));
@@ -358,28 +420,41 @@ function pick(i, j) {
   const E = road.has(key(i + 1, j));
   const n = [N, S, W, E].filter(Boolean).length;
 
-  if (n === 4) return {kind: "cross", rot: 0};
-  if (n === 3) {
-    const blockedSide = !N ? "N" : !S ? "S" : !W ? "W" : "E";
-    return {kind: "t", rot: T_ROT[blockedSide]};
-  }
+  if (n === 4) return {kind: "cross"};
+  if (n === 3) return {kind: "t", blocked: !N ? "N" : !S ? "S" : !W ? "W" : "E"};
   if (n === 2) {
-    if (N && S) return {kind: "straight", rot: 0};
-    if (W && E) return {kind: "straight", rot: Math.PI / 2};
-    if (W && S) return {kind: "curve", rot: CURVE_ROT.WS};
-    if (S && E) return {kind: "curve", rot: CURVE_ROT.SE};
-    if (E && N) return {kind: "curve", rot: CURVE_ROT.EN};
-    return {kind: "curve", rot: CURVE_ROT.NW}; // N && W
+    if (N && S) return {kind: "straight", axis: "NS"};
+    if (W && E) return {kind: "straight", axis: "WE"};
+    if (W && S) return {kind: "curve", pair: "WS"};
+    if (S && E) return {kind: "curve", pair: "SE"};
+    if (E && N) return {kind: "curve", pair: "EN"};
+    return {kind: "curve", pair: "NW"}; // N && W
   }
   // 막다른 길 — 이어지는 쪽을 향해 직선을 놓는다. 이웃이 아예 없으면 버린다.
-  if (n === 1) return {kind: "straight", rot: N || S ? 0 : Math.PI / 2};
+  if (n === 1) return {kind: "straight", axis: N || S ? "NS" : "WE"};
   return null;
 }
 
-// ─── ⑤ 꽃밭 ──────────────────────────────────────────────────────────────────
-// grass-patch 는 꽃이 섞인 잔디 슬래브다. 길 타일에는 이미 꽃 낀 잔디 갓길이
-// 붙어 있어서 길가에 두면 겹쳐 보인다. 그래서 앞마당 원반 바로 바깥 고리에 깔아
-// 건물을 두르는 화단으로 쓴다. 나중에 벤치·가로등을 놓을 자리이기도 하다.
+/** 갈래 + 타일 세트 → 어떤 GLB를 몇 도 돌려 놓을지 */
+function place(chosen, set) {
+  const spec = set.tiles[chosen.kind];
+  let rot = 0;
+  if (chosen.kind === "straight") rot = set.straight[chosen.axis];
+  else if (chosen.kind === "curve") rot = set.curve[chosen.pair];
+  else if (chosen.kind === "t") rot = set.t[chosen.blocked];
+  return {spec, rot};
+}
+
+// ─── ⑤ 풀숲 ──────────────────────────────────────────────────────────────────
+// grass-patch 는 둔덕과 들꽃이 있는 잔디 슬래브다. 길 타일에는 이미 꽃 낀 갓길이
+// 붙어 있어서 길가에 두면 겹쳐 보이므로, 앞마당 원반 바깥 고리에 둘러 심는다.
+//
+// 한 칸에 딱 한 장씩 격자에 맞춰 놓으면 정사각형 슬래브 윤곽이 그대로 드러나
+// "바닥에 타일 깔았네"로 읽힌다. 그래서 한 자리에 2~3장을 서로 겹치게 두고
+// 위치를 격자에서 흩뜨리고 회전을 임의 각도로 준다 — 겹친 가장자리가 서로를
+// 가려 덤불 덩어리로 보인다.
+//
+// 앞마당 원반 위와 길은 비워 둔다. 벤치·가로등·나무가 들어갈 자리다.
 // 매번 같은 그림이 나와야 diff가 안 튀므로 시드 난수를 쓴다.
 function mulberry32(seed) {
   return function () {
@@ -391,39 +466,74 @@ function mulberry32(seed) {
 }
 const rand = mulberry32(20260808);
 
-// 건물 하나당 최대 몇 칸까지 화단을 두를지 — 다 두르면 원을 그려 인위적으로 보인다
-const BEDS_PER_BUILDING = 1;
-const grassCells = [];
-{
-  const taken = new Set();
-  for (const f of forecourts) {
-    const ring = [];
-    const ci = Math.round(f.b.x / PITCH);
-    const cj = Math.round(f.b.z / PITCH);
-    for (let i = ci - 2; i <= ci + 2; i++) {
-      for (let j = cj - 2; j <= cj + 2; j++) {
-        const k = key(i, j);
-        if (!inBounds(i, j) || road.has(k) || blocked.has(k) || taken.has(k))
-          continue;
-        const dist = Math.hypot(worldX(i) - f.b.x, worldZ(j) - f.b.z);
-        // 원반 바깥이되 너무 멀지 않은 고리
-        if (dist < f.radius + HALF || dist > f.radius + PITCH * 1.3) continue;
-        // 다른 건물 원반이나 중앙 광장을 침범하면 안 된다
-        const x = worldX(i);
-        const z = worldZ(j);
-        if (discs.some(d => Math.hypot(d.x - x, d.z - z) < d.r + HALF * 0.9))
-          continue;
-        ring.push(k);
-      }
-    }
-    // 건물마다 고리에서 무작위로 골라, 화단이 한쪽으로 몰리지 않게 한다
-    for (let n = ring.length - 1; n > 0; n--) {
-      const m = Math.floor(rand() * (n + 1));
-      [ring[n], ring[m]] = [ring[m], ring[n]];
-    }
-    for (const k of ring.slice(0, BEDS_PER_BUILDING)) {
-      taken.add(k);
-      grassCells.push(parse(k));
+// 건물 하나당 풀숲을 몇 자리에 둘지. 고리를 다 채우면 원을 그려 인위적으로 보인다.
+//
+// 장당 4.8k 삼각형이라 개수가 그대로 예산이 된다. 건물마다 두 자리씩 놓으면
+// 113장 = 545k로 마을 전체 예산 1M의 절반을 풀숲이 먹어 계기판이 빨개졌다.
+// 한 자리로 줄이고 대신 한 자리에 더 겹쳐 덩어리감을 살린다.
+const CLUMPS_PER_BUILDING = 1;
+/** 한 자리에 겹쳐 심는 장수 */
+const PATCHES_PER_CLUMP = [2, 3];
+/** 풀숲이 길 타일을 침범하지 않도록 둘 최소 거리 */
+const ROAD_CLEARANCE = HALF + 0.55;
+
+const roadCenters = [...road].map(k => {
+  const [i, j] = parse(k);
+  return {x: worldX(i), z: worldZ(j)};
+});
+const nearRoad = (x, z) =>
+  roadCenters.some(c => Math.abs(c.x - x) < ROAD_CLEARANCE && Math.abs(c.z - z) < ROAD_CLEARANCE);
+const onDisc = (x, z, slack = 0) =>
+  discs.some(d => Math.hypot(d.x - x, d.z - z) < d.r + slack);
+
+/** 심어도 되는 자리인가 — 길·건물·원반을 피한다 */
+function plantable(x, z) {
+  if (nearRoad(x, z)) return false;
+  if (onDisc(x, z, 0.35)) return false;
+  return !buildings.some(
+    b => Math.abs(b.x - x) < b.w / 2 + 0.7 && Math.abs(b.z - z) < b.d / 2 + 0.7
+  );
+}
+
+// {x, z, scale, rot} 목록 — 격자가 아니라 실좌표로 흩뿌린다
+const clumps = [];
+const placed = [];
+for (const f of forecourts) {
+  // 원반 바깥 고리를 12방향으로 훑어 심을 수 있는 각도를 모은다
+  const spots = [];
+  for (let a = 0; a < 12; a++) {
+    const angle = (a / 12) * Math.PI * 2 + rand() * 0.2;
+    const dist = f.radius + 0.75 + rand() * 0.7;
+    const x = f.b.x + Math.cos(angle) * dist;
+    const z = f.b.z + Math.sin(angle) * dist;
+    if (!inBounds(Math.round(x / PITCH), Math.round(z / PITCH))) continue;
+    if (!plantable(x, z)) continue;
+    // 이미 심은 덤불과 너무 가까우면 뭉쳐 보인다
+    if (placed.some(p => Math.hypot(p.x - x, p.z - z) < 1.7)) continue;
+    spots.push({x, z});
+  }
+  for (let n = spots.length - 1; n > 0; n--) {
+    const m = Math.floor(rand() * (n + 1));
+    [spots[n], spots[m]] = [spots[m], spots[n]];
+  }
+
+  for (const spot of spots.slice(0, CLUMPS_PER_BUILDING)) {
+    placed.push(spot);
+    const [lo, hi] = PATCHES_PER_CLUMP;
+    const count = lo + Math.floor(rand() * (hi - lo + 1));
+    for (let n = 0; n < count; n++) {
+      // 서로 반쯤 겹치게 흩뜨려야 정사각 윤곽이 묻힌다
+      const off = n === 0 ? 0 : 0.45 + rand() * 0.5;
+      const dir = rand() * Math.PI * 2;
+      const x = spot.x + Math.cos(dir) * off;
+      const z = spot.z + Math.sin(dir) * off;
+      if (!plantable(x, z)) continue;
+      clumps.push({
+        x,
+        z,
+        scale: 0.62 + rand() * 0.5,
+        rot: rand() * Math.PI * 2
+      });
     }
   }
 }
@@ -432,8 +542,9 @@ const grassCells = [];
 const round3 = v => Math.round(v * 1000) / 1000;
 const props = [];
 const counts = {};
-const bump = k => {
-  counts[k] = (counts[k] ?? 0) + 1;
+const bump = (k, v2 = false) => {
+  const at = `${v2 ? "v2" : "v1"}:${k}`;
+  counts[at] = (counts[at] ?? 0) + 1;
 };
 
 // 중앙 광장
@@ -459,55 +570,64 @@ for (const f of forecourts) {
 }
 
 // 길
+let v2Count = 0;
 for (const k of [...road].sort()) {
   const [i, j] = parse(k);
   const chosen = pick(i, j);
   if (!chosen) continue;
-  const spec = TILE[chosen.kind];
-  bump(chosen.kind);
+  const v2 = inV2(i, j);
+  if (v2) v2Count++;
+  const {spec, rot} = place(chosen, v2 ? SETS.v2 : SETS.v1);
+  bump(chosen.kind, v2);
   props.push({
     id: `ground-${i}_${j}`,
     glb: spec.glb,
     position: [round3(worldX(i)), round3(TOP_Y - spec.top), round3(worldZ(j))],
-    rotationY: Math.round(chosen.rot * 10000) / 10000,
+    rotationY: Math.round(rot * 10000) / 10000,
     scale: 1
   });
 }
 
-// 잔디 덤불 — 크기·각도를 흩어야 복제 티가 안 난다
-for (const [i, j] of grassCells) {
-  bump("grass");
+// 풀숲 — 크기·각도를 흩어야 복제 티가 안 난다
+clumps.forEach((c, n) => {
+  const v2 = inV2(Math.round(c.x / PITCH), Math.round(c.z / PITCH));
+  const spec = (v2 ? SETS.v2 : SETS.v1).tiles.grass;
+  bump("grass", v2);
   props.push({
-    id: `ground-grass-${i}_${j}`,
-    glb: TILE.grass.glb,
-    position: [
-      round3(worldX(i)),
-      round3(TOP_Y - TILE.grass.top),
-      round3(worldZ(j))
-    ],
-    rotationY: round3(Math.floor(rand() * 4) * (Math.PI / 2)),
-    scale: round3(0.85 + rand() * 0.35)
+    // 좌표가 격자에 안 맞으므로 순번으로 id를 만든다 (재생성마다 같은 순서)
+    id: `ground-grass-${n}`,
+    glb: spec.glb,
+    position: [round3(c.x), round3(TOP_Y - spec.top * c.scale), round3(c.z)],
+    rotationY: round3(c.rot),
+    scale: round3(c.scale)
   });
-}
+});
 
 // ─── 기존 레이아웃에 병합 ─────────────────────────────────────────────────────
 const layout = JSON.parse(readFileSync(LAYOUT, "utf8"));
 const kept = (layout.props ?? []).filter(p => !p.id.startsWith("ground-"));
 layout.props = [...kept, ...props];
 
-const tris = Object.entries(counts).reduce(
-  (sum, [k, v]) => sum + TILE[k].tris * v,
-  0
-);
+const tris = Object.entries(counts).reduce((sum, [k, v]) => {
+  const [set, kind] = k.split(":");
+  return sum + SETS[set].tiles[kind].tris * v;
+}, 0);
 console.log(
   `격자 간격 ${PITCH}  ·  윗면 높이 ${TOP_Y}  ·  바닥 프롭 ${props.length}장`
 );
-console.log(
-  "  종류별:",
+const bySet = set =>
   Object.entries(counts)
-    .map(([k, v]) => `${k} ${v}`)
-    .join(", ")
-);
+    .filter(([k]) => k.startsWith(`${set}:`))
+    .map(([k, v]) => `${k.slice(3)} ${v}`)
+    .join(", ") || "없음";
+const partial = V2_RECT !== null && Number.isFinite(V2_RECT.i0);
+if (!V2_RECT || partial) console.log(`  예전 타일: ${bySet("v1")}`);
+if (V2_RECT) {
+  const where = partial
+    ? `   (구역 i ${V2_RECT.i0}~${V2_RECT.i1} / j ${V2_RECT.j0}~${V2_RECT.j1}, 길 ${v2Count}칸)`
+    : "";
+  console.log(`  새 타일  : ${bySet("v2")}${where}`);
+}
 console.log(
   `  앞마당에 먹혀 뺀 길 칸: ${swallowed}개  ·  막다른 길로 깎은 칸: ${pruned}개`
 );

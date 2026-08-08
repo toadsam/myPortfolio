@@ -98,6 +98,9 @@ const SKIN_SAFE = "--simplify false --join false --flatten false";
 const GROUND_SIMPLIFY = "--simplify-error 0.02 --simplify-ratio 0.05";
 const isGroundTile = (inPath) => /[\\/]ground[\\/]/.test(inPath);
 
+// 오차 예산을 더 키워도(0.08) 삼각형이 4895→4819 밖에 안 준다 — UV 심이 많아
+// meshoptimizer가 정점을 못 합친다. 풀숲을 100장 넘게 깔아도 InstancedProps가
+// 인스턴싱 + 청크 프러스텀 컬링으로 그리므로 그대로 둔다.
 function passesFor(group, inPath) {
   if (group === "characters") return SKIN_SAFE;
   if (group === "props" && isGroundTile(inPath)) return GROUND_SIMPLIFY;
