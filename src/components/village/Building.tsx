@@ -602,6 +602,9 @@ function BuildingImpl({building, buildingState, isActive, onRequestEnter, edit}:
   const liveGlow = lightIntensity(buildingState?.light_level);
   const editing = edit?.editing ?? false;
   const isHighlighted = !editing && (hovered || isActive || liveGlow >= 0.65);
+  // 예전엔 라벨·연출 높이를 `kind === "plaza" ? 1.0 : h` 로 잡았다. 광장이 원기둥 몇 개짜리
+  // 작은 조형물이던 시절의 값인데, central-plaza.glb(4.35유닛 기념비)가 들어오면서
+  // 간판이 기념비 안에 파묻혔다. 이제 광장도 다른 건물과 같은 규칙을 쓴다.
   const [, h] = building.size;
 
   useCursor(hovered || (editing && (edit?.selected ?? false)));
@@ -643,7 +646,7 @@ function BuildingImpl({building, buildingState, isActive, onRequestEnter, edit}:
         <HighlightFX
           active={isHighlighted}
           color={building.accentColor}
-          height={building.kind === "plaza" ? 1.0 : h}
+          height={h}
           radius={Math.max(building.size[0], building.size[2])}
         />
         {liveGlow > 0 ? (
@@ -660,7 +663,7 @@ function BuildingImpl({building, buildingState, isActive, onRequestEnter, edit}:
       <BuildingLabel
         building={building}
         buildingState={buildingState}
-        height={building.kind === "plaza" ? 1.0 : h}
+        height={h}
         highlighted={isHighlighted}
         onEnter={() => onRequestEnter(building.id)}
       />
