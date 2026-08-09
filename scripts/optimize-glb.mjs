@@ -116,8 +116,16 @@ const isDecor = (inPath) => /[\\/](signs|decor|nature)[\\/]/.test(inPath);
 // 예산이 다시 넉넉해지면 여기만 되돌리면 된다.
 const textureGroupFor = (group) => group;
 
+// 건물도 simplify가 잘 먹는다. 오차 0.012면 평균 40%가 빠지는데 간판 글자와 창틀은
+// 그대로다 — 아주총학 14,593 → 8,764 를 나란히 구워 대조했다. 0.03까지 올려도
+// 8,595에서 멈추므로(정점을 더 못 합침) 0.012가 실질 상한이다.
+// 건물 27채를 다 넣으면 원본 그대로는 31만 삼각형이라 예산(1M)을 넘긴다.
+const BUILDING_SIMPLIFY = "--simplify-error 0.012 --simplify-ratio 0.3";
+
 function passesFor(group, inPath) {
   if (group === "characters") return SKIN_SAFE;
+  // 석상은 environment인데 3번 배치돼 4만 삼각형을 먹는다 — 건물과 같이 취급한다.
+  if (group === "buildings" || group === "environment") return BUILDING_SIMPLIFY;
   if (group !== "props") return "";
   if (isGroundTile(inPath)) return GROUND_SIMPLIFY;
   if (isDecor(inPath)) return DECOR_SIMPLIFY;

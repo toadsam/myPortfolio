@@ -1,6 +1,19 @@
 {
+  "exp-demo-platform": "/models/buildings/exp-demo-platform.glb",
+  "exp-portfolio": "/models/buildings/exp-portfolio.glb",
+  "exp-unity-ui": "/models/buildings/exp-unity-ui.glb",
+  "life-gym": "/models/buildings/life-gym.glb",
+  "life-music": "/models/buildings/life-music.glb",
   "project-aclub": "/models/buildings/project-aclub.glb",
+  "project-ajouchong": "/models/buildings/project-ajouchong.glb",
+  "project-darklab": "/models/buildings/project-darklab.glb",
   "project-festflow": "/models/buildings/project-festflow.glb",
+  "project-muscleup": "/models/buildings/project-muscleup.glb",
+  "project-mystock": "/models/buildings/project-mystock.glb",
+  "project-tserof": "/models/buildings/project-tserof.glb",
+  "skill-3d": "/models/buildings/skill-3d.glb",
   "skill-backend": "/models/buildings/skill-backend.glb",
-  "skill-frontend": "/models/buildings/skill-frontend.glb"
+  "skill-frontend": "/models/buildings/skill-frontend.glb",
+  "skill-game": "/models/buildings/skill-game.glb",
+  "skill-workflow": "/models/buildings/skill-workflow.glb"
 }

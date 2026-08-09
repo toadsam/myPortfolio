@@ -83,17 +83,33 @@ function GlbModel({glbPath, size}: {glbPath: string; size: [number, number, numb
     scene.scale.copy(scale0);
     scene.position.copy(pos0);
     scene.updateWorldMatrix(false, true);
-    return {minY: min.y, height: Math.max(1e-4, max.y - min.y)};
+    return {
+      minY: min.y,
+      width: Math.max(1e-4, max.x - min.x),
+      height: Math.max(1e-4, max.y - min.y),
+      depth: Math.max(1e-4, max.z - min.z)
+    };
   }, [scene]);
 
-  // size[1]은 "월드에서의 실제 높이"다.
+  // 배율 잡기 — 두 번 틀리고 세 번째다. 기록을 남긴다.
   //
-  // 예전엔 size[1] × 0.62 를 그냥 배율로 썼는데, GLB마다 원본 높이가 1.13~1.91로
-  // 제각각이라 같은 size[1]이 전혀 다른 크기를 만들었다(backend는 선언 2.6인데
-  // 실제 3.07, festflow는 선언 1.5인데 실제 1.05). 게다가 바닥 링·앞마당 원반·
-  // 라벨 높이는 전부 size를 곧이곧대로 읽어서, GLB 건물만 죄다 어긋나 있었다.
-  // 원본 높이로 나누면 size가 화면과 일치한다 — 절차적 건물과 같은 의미가 된다.
-  const scale = size[1] / natural.height;
+  // ① size[1] × 0.62 를 그냥 배율로: GLB마다 원본 높이가 1.13~1.91로 제각각이라
+  //    같은 size[1]이 전혀 다른 크기를 만들었다.
+  // ② 높이로만 나누기(size[1] / 모델높이): Meshy는 **가장 긴 변**을 1.9로 정규화하므로
+  //    납작한 건물일수록 높이가 작고, 그러면 배율이 커져 가로가 터진다.
+  //    실측으로 헬스장이 앞마당의 187%, ACLUB이 204%가 되어 길과 소품을 깔고 앉았다.
+  // ③ 선언 상자(size)에 세 축 다 맞추기: 안 넘치긴 하는데 너무 작아졌다.
+  //    나무(4.5~6.6m)보다 낮은 건물이 속출했다.
+  //
+  // 진짜 제약은 선언 상자가 아니라 **앞마당 원반**이다. 반지름이
+  // max(w,d)/2 + 0.55 이므로(generate-ground-layout.mjs), 지름은 선언 폭 + 1.1 까지
+  // 쓸 수 있다. 거기에 바닥을 맞추고, 높이만 선언값의 1.25배로 묶는다 —
+  // 안 묶으면 홀쭉한 탑(backend)이 5.8유닛짜리 마천루가 된다.
+  // 원반은 원이고 건물은 사각이라, 폭·깊이를 지름에 맞추면 **모서리**가 삐져나온다
+  // (실측: exp-portfolio 가 반지름의 132%). 대각선을 지름에 맞춰야 네 귀가 다 들어간다.
+  const radius = Math.max(size[0], size[2]) / 2 + 0.55;
+  const footprint = Math.hypot(natural.width, natural.depth);
+  const scale = Math.min((radius * 2) / footprint, (size[1] * 1.25) / natural.height);
   return <primitive object={scene} scale={scale} position={[0, -natural.minY * scale, 0]} />;
 }
 
