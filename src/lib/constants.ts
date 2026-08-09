@@ -338,7 +338,7 @@ const skillBuildings: BuildingData[] = [
     color: "#1a1a1a",
     roofColor: "#2a2a2a",
     accentColor: "#fbbf24",
-    techStack: ["GitHub", "Docker", "CI/CD"]
+    techStack: ["GitHub", "Notion", "Docker", "CI/CD"]
   }
 ];
 
@@ -356,7 +356,8 @@ const experienceBuildings: BuildingData[] = [
     size: [1.38, 1.3, 1.22],
     color: "#1a0d2e",
     roofColor: "#3a1a5a",
-    accentColor: "#aa44ff"
+    accentColor: "#aa44ff",
+    techStack: ["Unity", "C#", "게임 UI"]
   },
   {
     id: "exp-demo-platform",
@@ -386,7 +387,8 @@ const experienceBuildings: BuildingData[] = [
     size: [2.63, 2.5, 2.38],
     color: "#0d2a1a",
     roofColor: "#1a4a2a",
-    accentColor: "#00ff88"
+    accentColor: "#00ff88",
+    techStack: ["React", "Three.js", "TypeScript", "FastAPI"]
   }
 ];
 
@@ -420,7 +422,8 @@ const lifeBuildings: BuildingData[] = [
     size: [1.3, 1.3, 1.3],
     color: "#1a160d",
     roofColor: "#3a2f1a",
-    accentColor: "#fbbf24"
+    accentColor: "#fbbf24",
+    techStack: ["GitHub", "Email", "Blog"]
   },
   {
     id: "life-gym",

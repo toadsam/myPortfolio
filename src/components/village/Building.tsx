@@ -9,6 +9,7 @@ import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLab
 import type {BuildingState} from "@/types/live";
 import type {BuildingData} from "@/types/portfolio";
 import buildingModelsJson from "@/data/buildingModels.json";
+import {techIcons} from "@/data/techIcons";
 
 // 생성된 JSON이라 키가 그때그때 달라진다 — 지금 있는 4채로 타입이 굳으면
 // 다음 건물을 넣을 때마다 컴파일이 깨진다.
@@ -96,7 +97,31 @@ function GlbModel({glbPath, size}: {glbPath: string; size: [number, number, numb
   return <primitive object={scene} scale={scale} position={[0, -natural.minY * scale, 0]} />;
 }
 
-// ─── 공통 라벨 ────────────────────────────────────────────────────────────────
+// ─── 공통 라벨 = 건물 간판 ────────────────────────────────────────────────────
+//
+// 예전엔 남색 배경에 시안 네온 테두리, 9~13px 모노스페이스, opacity 0.58 짜리
+// "HUD 칩"이었다. 마을이 따뜻한 톤으로 바뀐 뒤에도 라벨만 사이버펑크로 남아
+// 겉돌았고, 무엇보다 흐리고 작아서 "저기가 무슨 건물인지"가 안 읽혔다.
+//
+// 이제 나무 간판처럼 그린다. 3D로 안 만들고 DOM으로 두는 이유:
+//   · draw call 0 — 계기판이 이미 예산(200)을 넘겨 있어 27개를 더 못 얹는다
+//   · 자리 잡을 필요가 없다 — 건물 높이 위에 자동으로 뜬다. GLB 간판에 판을
+//     맞추려면 건물 23채를 손으로 정렬해야 한다
+//   · 텍스처가 아니라 벡터라 아무리 가까이 가도 안 뭉개진다
+//
+// 로고는 techStack 첫 항목에서 자동으로 찾는다 — 건물마다 아이콘을 따로
+// 지정하지 않아도 된다. 브랜드 마크는 어두운 배지 위에 올린다: GitHub·Notion처럼
+// 흰색이 본색인 로고가 나무판 위에서 사라지기 때문이다.
+
+/** techStack 에서 아이콘이 있는 첫 기술을 찾는다 */
+function leadIcon(techStack?: string[]) {
+  if (!techStack) return null;
+  for (const tech of techStack) {
+    const icon = techIcons[tech];
+    if (icon) return {tech, icon};
+  }
+  return null;
+}
 
 function BuildingLabel({building, buildingState, height, highlighted, onEnter}: {
   building: BuildingData;
@@ -107,74 +132,106 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
 }) {
   const color = building.accentColor;
   const calculatePosition = useMemo(() => createThrottledCalculatePosition(LABEL_SYNC_STRIDE), []);
+  const lead = useMemo(() => leadIcon(building.techStack), [building.techStack]);
+  const live = buildingState && buildingState.light_level !== "dark";
+
   return (
-    <Html center calculatePosition={calculatePosition} distanceFactor={11} position={[0, height + 1.1, 0]} zIndexRange={[10, 0]}>
+    <Html center calculatePosition={calculatePosition} distanceFactor={11} position={[0, height + 1.15, 0]} zIndexRange={[10, 0]}>
       <button
         onClick={onEnter}
         type="button"
         style={{
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
-          gap: 2,
-          background: highlighted ? "rgba(0,15,35,0.97)" : "rgba(4,10,22,0.94)",
-          border: `1px solid ${highlighted ? color : "rgba(0,150,200,0.25)"}`,
-          borderRadius: 8,
-          padding: "5px 11px",
+          gap: 9,
+          // 나무 테두리 + 크림색 판. 위아래로 살짝 어둡게 해 판이 두꺼워 보이게 한다.
+          background: "linear-gradient(#fdf3df 0%, #f6e7c8 55%, #e8d3ac 100%)",
+          border: `3px solid ${highlighted ? color : "#8a5a33"}`,
+          borderRadius: 10,
+          padding: "7px 13px 7px 8px",
           cursor: "pointer",
-          boxShadow: highlighted ? `0 0 20px ${color}55` : "0 0 6px rgba(0,150,200,0.1)",
-          transition: "all 0.2s",
-          minWidth: 78,
-          textAlign: "center",
-          opacity: highlighted ? 1 : 0.58,
-          transform: highlighted ? "scale(1.06)" : "scale(0.92)",
+          boxShadow: highlighted
+            ? `0 0 0 2px ${color}66, 0 6px 14px rgba(40,24,10,0.45)`
+            : "0 4px 10px rgba(40,24,10,0.35)",
+          transition: "transform 0.18s, box-shadow 0.18s, border-color 0.18s",
+          textAlign: "left",
+          opacity: 1,
+          transform: highlighted ? "scale(1.08)" : "scale(1)",
         }}
       >
-        <span style={{
-          fontFamily: "monospace",
-          fontSize: 9,
-          fontWeight: 900,
-          letterSpacing: "0.2em",
-          textTransform: "uppercase",
-          color: highlighted ? color : "#1990b8",
-          textShadow: highlighted ? `0 0 10px ${color}` : "none",
-        }}>
-          {">"} {building.label}
-        </span>
-        <strong style={{
-          fontFamily: "monospace",
-          fontSize: 13,
-          fontWeight: 900,
-          color: highlighted ? "#ffffff" : "#b8d2e0",
-          whiteSpace: "nowrap",
-        }}>
-          {building.name}
-        </strong>
-        {buildingState && buildingState.light_level !== "dark" ? (
-          <span style={{
-            marginTop: 2,
-            borderTop: `1px solid ${color}33`,
-            color: `${color}cc`,
-            fontFamily: "monospace",
-            fontSize: 7,
-            fontWeight: 900,
-            paddingTop: 2,
-            textTransform: "uppercase",
-          }}>
-            live {buildingState.light_level}
+        {lead ? (
+          // 로고 배지 — 어두운 원판이라 흰 로고도 컬러 로고도 같이 산다
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 30,
+              height: 30,
+              borderRadius: 8,
+              background: "#2b2118",
+              boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.12)",
+              flexShrink: 0,
+            }}
+            title={lead.tech}
+          >
+            <svg viewBox="0 0 24 24" width={19} height={19} aria-hidden="true">
+              <path
+                d={lead.icon.d}
+                {...(lead.icon.stroke
+                  ? {fill: "none", stroke: lead.icon.color, strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const}
+                  : {fill: lead.icon.color})}
+              />
+            </svg>
           </span>
         ) : null}
-        {building.techStack && highlighted && (
-          <span style={{
-            fontFamily: "monospace",
-            fontSize: 7,
-            color: `${color}aa`,
-            whiteSpace: "nowrap",
-            marginTop: 1,
-          }}>
-            {building.techStack.slice(0, 2).join(" · ")}
+
+        <span style={{display: "flex", flexDirection: "column", gap: 1, minWidth: 0}}>
+          <span
+            style={{
+              fontFamily: "system-ui, sans-serif",
+              fontSize: 8,
+              fontWeight: 800,
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: "#9a6a3c",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {building.label}
           </span>
-        )}
+          <strong
+            style={{
+              fontFamily: "system-ui, sans-serif",
+              fontSize: 17,
+              fontWeight: 900,
+              lineHeight: 1.05,
+              color: "#3d2a17",
+              whiteSpace: "nowrap",
+              // 크림색 판 위 갈색 글씨 — 얇은 밝은 그림자로 각인된 느낌을 준다
+              textShadow: "0 1px 0 rgba(255,255,255,0.6)",
+            }}
+          >
+            {building.name}
+          </strong>
+        </span>
+
+        {live ? (
+          // 오늘 활동이 있으면 켜지는 등불. 예전엔 "live bright" 글자였는데
+          // 간판에 영어 상태값이 붙으면 다시 HUD로 보인다 — 점 하나로 줄였다.
+          <span
+            style={{
+              width: 9,
+              height: 9,
+              borderRadius: "50%",
+              background: color,
+              boxShadow: `0 0 7px ${color}`,
+              flexShrink: 0,
+              marginLeft: 1,
+            }}
+            title={`오늘 활동 ${buildingState?.light_level}`}
+          />
+        ) : null}
       </button>
     </Html>
   );

@@ -65,5 +65,10 @@ export const skills: SkillData[] = [
     name: "GitHub",
     group: "Workflow",
     description: "코드 기록, 협업, 배포 산출물 관리를 개발 흐름에 연결합니다."
+  },
+  {
+    name: "Notion",
+    group: "Workflow",
+    description: "기획 문서, 작업 로그, 회고를 한곳에 모아 프로젝트 진행을 관리합니다."
   }
 ];
