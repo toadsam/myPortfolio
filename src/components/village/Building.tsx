@@ -300,6 +300,16 @@ function GroundRing({color, highlighted, radius}: {color: string; highlighted: b
 }
 
 // ─── 건물 형태들 ──────────────────────────────────────────────────────────────
+//
+// GLB가 아직 안 들어온 건물의 절차적 대역이다. 지금은 9채가 여기로 그려진다.
+//
+// ─── metalness 를 전부 0.1 로 내린 이유 ──────────────────────────────────────
+// 이 셸들은 사이버펑크 시절 것이라 metalness 가 0.35~0.9 였다. 금속은 확산광을
+// 거의 안 내고 **주변 환경을 비추는 것**으로 보이는데, 이 씬에는 환경맵이 없다.
+// 반사할 게 없으니 metalness 가 높을수록 그냥 검게 렌더된다. 밝은 잔디 위에서
+// 그건 "렌더링 버그처럼 보이는 검은 구멍"이었다 — 실제로 마을 동쪽에 검은
+// 상자 네 개가 한 화면에 잡혔다. 만화 톤 마을에 금속 반사는 필요 없다.
+// (색 자체도 #0d1a2e 같은 남색이라 constants.ts 쪽에서 회반죽 톤으로 같이 바꿨다.)
 
 /** 타워 — Demotion (Spring Boot 느낌, 유리 고층빌딩) */
 function TowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
@@ -309,7 +319,7 @@ function TowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 본체 */}
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.12 : 0} roughness={0.25} metalness={0.7} />
+        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.12 : 0} roughness={0.25} metalness={0.1} />
       </mesh>
       {/* 수평 줄 (유리 패널 느낌) */}
       {[0.25, 0.5, 0.75].map((t) => (
@@ -321,7 +331,7 @@ function TowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 안테나 */}
       <mesh castShadow position={[0, h + 0.5, 0]}>
         <cylinderGeometry args={[0.025, 0.035, 1.0, 6]} />
-        <meshStandardMaterial color="#0a1a2e" metalness={0.9} roughness={0.2} />
+        <meshStandardMaterial color="#0a1a2e" metalness={0.1} roughness={0.2} />
       </mesh>
       <mesh position={[0, h + 1.05, 0]}>
         <sphereGeometry args={[0.055, 8, 8]} />
@@ -340,7 +350,7 @@ function OfficeRoundedBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 메인 원통형 */}
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <cylinderGeometry args={[w * 0.5, w * 0.52, h, 20]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} roughness={0.3} metalness={0.55} />
+        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} roughness={0.3} metalness={0.1} />
       </mesh>
       {/* 글래스 링 */}
       {[0.3, 0.65].map((t) => (
@@ -352,7 +362,7 @@ function OfficeRoundedBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 위쪽 돔 */}
       <mesh castShadow position={[0, h + 0.22, 0]}>
         <sphereGeometry args={[w * 0.5, 16, 8, 0, Math.PI * 2, 0, Math.PI * 0.5]} />
-        <meshStandardMaterial color={b.roofColor} roughness={0.4} metalness={0.4} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.08 : 0} />
+        <meshStandardMaterial color={b.roofColor} roughness={0.4} metalness={0.1} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.08 : 0} />
       </mesh>
       {hl && <pointLight color={b.accentColor} intensity={1.0} distance={3.5} decay={2} position={[0, h * 0.5, 0]} />}
     </group>
@@ -366,7 +376,7 @@ function CompactStudioBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.13 : 0} roughness={0.6} metalness={0.35} />
+        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.13 : 0} roughness={0.6} metalness={0.1} />
       </mesh>
       {/* 피라미드 지붕 */}
       <mesh castShadow position={[0, h + 0.52, 0]} rotation={[0, Math.PI / 4, 0]}>
@@ -390,7 +400,7 @@ function FlatHubBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} roughness={0.2} metalness={0.75} />
+        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} roughness={0.2} metalness={0.1} />
       </mesh>
       {/* 유리 파사드 */}
       <mesh position={[0, h * 0.55, d / 2 + 0.03]}>
@@ -416,12 +426,12 @@ function DomeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 원형 기단 */}
       <mesh castShadow receiveShadow position={[0, h * 0.3, 0]}>
         <cylinderGeometry args={[r, r * 1.08, h * 0.6, 20]} />
-        <meshStandardMaterial color={b.color} roughness={0.45} metalness={0.6} />
+        <meshStandardMaterial color={b.color} roughness={0.45} metalness={0.1} />
       </mesh>
       {/* 돔 */}
       <mesh castShadow position={[0, h * 0.6 + r * 0.5, 0]}>
         <sphereGeometry args={[r, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.62]} />
-        <meshStandardMaterial color={b.roofColor} roughness={0.2} metalness={0.5} emissive={b.accentColor} emissiveIntensity={hl ? 0.18 : 0.05} transparent opacity={0.85} />
+        <meshStandardMaterial color={b.roofColor} roughness={0.2} metalness={0.1} emissive={b.accentColor} emissiveIntensity={hl ? 0.18 : 0.05} transparent opacity={0.85} />
       </mesh>
       {/* 돔 내부 글로우 구체 */}
       <mesh position={[0, h * 0.6 + 0.1, 0]}>
@@ -440,7 +450,7 @@ function ServerTowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} roughness={0.3} metalness={0.8} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.08 : 0} />
+        <meshStandardMaterial color={b.color} roughness={0.3} metalness={0.1} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.08 : 0} />
       </mesh>
       {/* 서버 랙 줄 */}
       {[0.18, 0.36, 0.54, 0.72, 0.88].map((t) => (
@@ -453,7 +463,7 @@ function ServerTowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {[-w * 0.38, w * 0.38].map((x) => (
         <mesh key={x} castShadow position={[x, h + 0.35, 0]}>
           <cylinderGeometry args={[0.055, 0.065, 0.7, 8]} />
-          <meshStandardMaterial color="#0a1a2e" metalness={0.85} roughness={0.2} />
+          <meshStandardMaterial color="#0a1a2e" metalness={0.1} roughness={0.2} />
         </mesh>
       ))}
       {hl && <pointLight color={b.accentColor} intensity={1.0} distance={3.5} decay={2} position={[0, h * 0.7, d * 0.6]} />}
@@ -468,7 +478,7 @@ function ArcadeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} roughness={0.55} metalness={0.4} />
+        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} roughness={0.55} metalness={0.1} />
       </mesh>
       {/* 아치형 입구 */}
       <mesh position={[0, h * 0.35, d / 2 + 0.04]}>
@@ -492,18 +502,18 @@ function MinimalOfficeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} roughness={0.35} metalness={0.65} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} />
+        <meshStandardMaterial color={b.color} roughness={0.35} metalness={0.1} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} />
       </mesh>
       {/* 평지붕 + 파라펫 */}
       <mesh position={[0, h + 0.07, 0]}>
         <boxGeometry args={[w + 0.15, 0.14, d + 0.15]} />
-        <meshStandardMaterial color="#111111" roughness={0.4} metalness={0.8} />
+        <meshStandardMaterial color="#111111" roughness={0.4} metalness={0.1} />
       </mesh>
       {/* 옥상 안테나 그룹 */}
       {[-0.3, 0.3].map((x) => (
         <mesh key={x} castShadow position={[x * w, h + 0.45, 0]}>
           <cylinderGeometry args={[0.02, 0.025, 0.6, 6]} />
-          <meshStandardMaterial color="#0a1a0a" metalness={0.9} roughness={0.1} />
+          <meshStandardMaterial color="#0a1a0a" metalness={0.1} roughness={0.1} />
         </mesh>
       ))}
       {hl && <pointLight color={b.accentColor} intensity={0.8} distance={3} decay={2} position={[0, h, 0]} />}
@@ -518,7 +528,7 @@ function TownhouseBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.12 : 0} roughness={0.65} metalness={0.3} />
+        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.12 : 0} roughness={0.65} metalness={0.1} />
       </mesh>
       {/* 삼각 지붕 */}
       <mesh castShadow position={[0, h + 0.42, 0]} rotation={[0, Math.PI / 4, 0]}>

@@ -71,8 +71,8 @@ const studyBuildings: BuildingData[] = [
     description: "백준·프로그래머스에서 푼 문제와 풀이를 기록하는 코딩테스트 공간",
     position: [-2.2, 0, 11.5],
     size: [2.64, 3.3, 2.64],
-    color: "#0d1a2e",
-    roofColor: "#13314f",
+    color: "#cfd8e3",
+    roofColor: "#3f6fa8",
     accentColor: "#38bdf8",
     techStack: ["백준", "프로그래머스", "알고리즘"]
   },
@@ -87,8 +87,8 @@ const studyBuildings: BuildingData[] = [
     description: "운영체제·네트워크·DB 등 전공 지식을 정리하는 학습 서고",
     position: [2.2, 0, 11.5],
     size: [2.76, 2.51, 2.76],
-    color: "#16102a",
-    roofColor: "#2c1f4a",
+    color: "#ddd4ea",
+    roofColor: "#6d4fa0",
     accentColor: "#a78bfa",
     techStack: ["OS", "네트워크", "DB", "자료구조"]
   }
@@ -156,8 +156,8 @@ const projectBuildings: BuildingData[] = [
     description: "수어 동작 영상을 보고 뜻을 익히는 학습 앱",
     position: [-7, 0, 6.5],
     size: [2.88, 2.51, 2.88],
-    color: "#0d1a2e",
-    roofColor: "#1a2e4a",
+    color: "#dee7f2",
+    roofColor: "#4a7fbf",
     accentColor: "#7eb8ff",
     techStack: ["Spring Boot", "Firebase", "Expo"]
   },
@@ -188,8 +188,8 @@ const projectBuildings: BuildingData[] = [
     description: "아주대학교 캠퍼스를 배경으로 한 Phaser 3 기반 2D 러닝 게임",
     position: [-4, 0, 8.5],
     size: [2.64, 2.51, 2.64],
-    color: "#1a2a0d",
-    roofColor: "#2a4a1a",
+    color: "#dbe7c8",
+    roofColor: "#5f8c33",
     accentColor: "#88ff44",
     techStack: ["TypeScript", "Phaser 3", "Vite"]
   },
@@ -402,8 +402,8 @@ const contactBuilding: BuildingData = {
   description: "이메일, GitHub, 블로그 링크가 모인 연락 공간",
   position: [0, 0, 8.5],
   size: [2.77, 2.51, 2.51],
-  color: "#2a1a0d",
-  roofColor: "#e07055",
+  color: "#f0e2cc",
+  roofColor: "#c2502e",
   accentColor: "#ff6600"
 };
 
@@ -420,8 +420,8 @@ const lifeBuildings: BuildingData[] = [
     description: "내가 왜 개발하는가 — 일하는 원칙과 가치관.",
     position: [7.5, 0, -6.5],
     size: [1.72, 1.72, 1.72],
-    color: "#1a160d",
-    roofColor: "#3a2f1a",
+    color: "#efe4c6",
+    roofColor: "#b8862f",
     accentColor: "#fbbf24",
     techStack: ["GitHub", "Email", "Blog"]
   },
@@ -452,8 +452,8 @@ const lifeBuildings: BuildingData[] = [
     description: "포트폴리오 흐름과 시장 분위기 (금액은 비공개).",
     position: [11, 0, 1],
     size: [2.05, 3.3, 2.05],
-    color: "#0d2a1a",
-    roofColor: "#1a4a2a",
+    color: "#d6ead9",
+    roofColor: "#2f8a63",
     accentColor: "#34d399",
     techStack: ["투자", "원칙"]
   },
@@ -468,8 +468,8 @@ const lifeBuildings: BuildingData[] = [
     description: "읽은 책과 학습 기록 — 오늘의 학습 시간 반영.",
     position: [10, 0, 5],
     size: [2.76, 2.51, 2.76],
-    color: "#1f160d",
-    roofColor: "#3a2a1a",
+    color: "#ecdcc2",
+    roofColor: "#8a5a2f",
     accentColor: "#d9a45b",
     techStack: ["독서", "학습"]
   },
@@ -500,8 +500,8 @@ const lifeBuildings: BuildingData[] = [
     description: "입학·전향·첫 커밋·프로젝트 — 내 인생의 순간들.",
     position: [8.5, 0, 8.5],
     size: [2.53, 4.09, 2.53],
-    color: "#0d1a2e",
-    roofColor: "#1a3a5a",
+    color: "#dde6f0",
+    roofColor: "#3f6a96",
     accentColor: "#7eb8ff"
   }
 ];

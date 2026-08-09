@@ -9396,245 +9396,278 @@
     },
     {
       "id": "decor-glade-15",
-      "glb": "/models/props/nature/rock-three-stones.glb",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
         -2.807,
-        0.177,
+        0.304,
         6.642
       ],
-      "rotationY": 3.221,
-      "scale": 0.452
+      "rotationY": 3.495,
+      "scale": 0.474
     },
     {
       "id": "decor-glade-16",
-      "glb": "/models/props/decor/flower-pot.glb",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        -5.596,
-        0.166,
-        7.454
+        -4.299,
+        0.403,
+        5.274
       ],
       "rotationY": 4.036,
-      "scale": 0.175
+      "scale": 0.629
     },
     {
       "id": "decor-glade-17",
       "glb": "/models/props/impostor/tree-golden-canopy.glb",
       "position": [
         13.591,
-        1.165,
+        1.127,
         -4.04
       ],
-      "rotationY": 1.288,
-      "scale": 1.334
+      "rotationY": 0.222,
+      "scale": 1.291
     },
     {
       "id": "decor-glade-18",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        13.779,
-        0.348,
-        -2.568
+        14.301,
+        0.184,
+        -6.398
       ],
-      "rotationY": 3.87,
-      "scale": 0.612
+      "rotationY": 4.503,
+      "scale": 0.468
     },
     {
       "id": "decor-glade-19",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        13.13,
-        0.128,
-        -5.602
+        13.262,
+        0.17,
+        -6.3
       ],
-      "rotationY": 3.092,
-      "scale": 0.327
+      "rotationY": 2.782,
+      "scale": 0.434
     },
     {
-      "id": "decor-glade-21",
+      "id": "decor-glade-20",
       "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
         12.736,
-        1.2,
+        1.179,
         17.305
       ],
-      "rotationY": 2.557,
-      "scale": 1.266
+      "rotationY": 0.648,
+      "scale": 1.243
+    },
+    {
+      "id": "decor-glade-21",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        12.623,
+        0.288,
+        15.757
+      ],
+      "rotationY": 0.739,
+      "scale": 0.506
     },
     {
       "id": "decor-glade-22",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        11.99,
-        0.333,
-        15.752
+        13.578,
+        0.164,
+        15.857
       ],
-      "rotationY": 4.301,
-      "scale": 0.586
+      "rotationY": 4.264,
+      "scale": 0.419
     },
     {
       "id": "decor-glade-23",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        11.37,
-        0.35,
-        16.814
+        13.514,
+        0.26,
+        15.317
       ],
-      "rotationY": 1.474,
-      "scale": 0.616
+      "rotationY": 3.486,
+      "scale": 0.458
     },
     {
       "id": "decor-glade-24",
-      "glb": "/models/props/nature/tree-golden-canopy.glb",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        11.221,
-        0.737,
-        3.548
+        14.122,
+        0.331,
+        17.217
       ],
       "rotationY": 5.381,
-      "scale": 0.846
+      "scale": 0.582
     },
     {
       "id": "decor-glade-25",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "glb": "/models/props/nature/tree-golden-canopy.glb",
       "position": [
-        13.685,
-        0.338,
-        3.835
+        11.221,
+        0.581,
+        3.548
       ],
-      "rotationY": 1.923,
-      "scale": 0.594
+      "rotationY": 5.847,
+      "scale": 0.666
     },
     {
       "id": "decor-glade-26",
-      "glb": "/models/props/nature/rock-three-stones.glb",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        10.719,
-        0.191,
-        4.465
+        9.764,
+        0.355,
+        3.497
       ],
-      "rotationY": 3.735,
-      "scale": 0.486
+      "rotationY": 1.031,
+      "scale": 0.554
     },
     {
       "id": "decor-glade-28",
-      "glb": "/models/props/impostor/tree-emerald-crown.glb",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        4.709,
-        1.432,
-        16.887
+        10.954,
+        0.424,
+        2.029
       ],
-      "rotationY": 6.245,
-      "scale": 1.51
+      "rotationY": 5.989,
+      "scale": 0.662
     },
     {
       "id": "decor-glade-29",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
+      "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
-        4.589,
-        0.416,
-        17.924
+        4.709,
+        1.07,
+        16.887
       ],
-      "rotationY": 4.492,
-      "scale": 0.65
+      "rotationY": 1.686,
+      "scale": 1.128
     },
     {
       "id": "decor-glade-30",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
+      "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
-        3.137,
-        0.324,
-        16.954
+        8.166,
+        1.284,
+        18.792
       ],
-      "rotationY": 5.452,
-      "scale": 0.506
+      "rotationY": 3.672,
+      "scale": 1.354
     },
     {
       "id": "decor-glade-31",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        5.805,
-        0.369,
-        17.533
+        10.041,
+        0.224,
+        18.944
       ],
-      "rotationY": 3.456,
-      "scale": 0.649
+      "rotationY": 3.164,
+      "scale": 0.395
     },
     {
       "id": "decor-glade-32",
-      "glb": "/models/props/impostor/tree-emerald-crown.glb",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        8.166,
-        1.071,
-        18.792
+        8.892,
+        0.228,
+        20.408
       ],
       "rotationY": 4.877,
-      "scale": 1.13
+      "scale": 0.356
     },
     {
       "id": "decor-glade-33",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        7.689,
-        0.172,
-        20.066
+        7.256,
+        0.141,
+        19.895
       ],
-      "rotationY": 1.408,
-      "scale": 0.44
+      "rotationY": 1.992,
+      "scale": 0.36
     },
     {
       "id": "decor-glade-34",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        6.028,
-        0.352,
-        18.362
-      ],
-      "rotationY": 2.311,
-      "scale": 0.619
-    },
-    {
-      "id": "decor-glade-35",
-      "glb": "/models/props/nature/rock-three-stones.glb",
-      "position": [
-        7.26,
-        0.129,
-        19.787
-      ],
-      "rotationY": 3.273,
-      "scale": 0.33
-    },
-    {
-      "id": "decor-glade-36",
       "glb": "/models/props/nature/tree-golden-canopy.glb",
       "position": [
         -2.869,
-        0.803,
+        0.71,
         -7.838
       ],
-      "rotationY": 1.495,
-      "scale": 0.921
+      "rotationY": 3.223,
+      "scale": 0.814
+    },
+    {
+      "id": "decor-glade-35",
+      "glb": "/models/props/decor/flower-pot.glb",
+      "position": [
+        -3.828,
+        0.112,
+        -8.964
+      ],
+      "rotationY": 2.309,
+      "scale": 0.118
+    },
+    {
+      "id": "decor-glade-36",
+      "glb": "/models/props/decor/flower-pot.glb",
+      "position": [
+        -2.705,
+        0.11,
+        -5.672
+      ],
+      "rotationY": 5.871,
+      "scale": 0.116
     },
     {
       "id": "decor-glade-37",
-      "glb": "/models/props/nature/rock-three-stones.glb",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        -1.689,
-        0.19,
-        -8.354
+        -3.459,
+        0.286,
+        -9.045
       ],
-      "rotationY": 5.386,
-      "scale": 0.485
+      "rotationY": 5.587,
+      "scale": 0.446
     },
     {
-      "id": "decor-glade-39",
+      "id": "decor-glade-38",
       "glb": "/models/props/nature/tree-emerald-crown.glb",
       "position": [
         3.595,
-        0.878,
+        0.888,
         11.814
       ],
+      "rotationY": 0.928,
+      "scale": 0.936
+    },
+    {
+      "id": "decor-glade-39",
+      "glb": "/models/props/decor/flower-pot.glb",
+      "position": [
+        3.193,
+        0.162,
+        12.866
+      ],
       "rotationY": 2.934,
-      "scale": 0.925
+      "scale": 0.172
+    },
+    {
+      "id": "decor-glade-40",
+      "glb": "/models/props/decor/flower-pot.glb",
+      "position": [
+        2.512,
+        0.112,
+        11.178
+      ],
+      "rotationY": 3.884,
+      "scale": 0.118
     },
     {
       "id": "decor-glade-41",
@@ -9649,75 +9682,119 @@
     },
     {
       "id": "decor-glade-42",
-      "glb": "/models/props/decor/bench.glb",
+      "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
         12.701,
-        0.172,
+        0.134,
         -8.173
       ],
-      "rotationY": 1.477,
-      "scale": 0.307
+      "rotationY": 3.198,
+      "scale": 0.342
     },
     {
       "id": "decor-glade-43",
       "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
         -2.8,
-        1.34,
+        1.189,
         16.579
       ],
-      "rotationY": 1.805,
-      "scale": 1.413
+      "rotationY": 4.441,
+      "scale": 1.254
     },
     {
       "id": "decor-glade-44",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -3.363,
-        0.213,
-        17.704
+        -2.439,
+        0.249,
+        17.858
       ],
-      "rotationY": 1.841,
-      "scale": 0.375
+      "rotationY": 2.035,
+      "scale": 0.438
     },
     {
       "id": "decor-glade-45",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
+      "position": [
+        -3.401,
+        0.278,
+        17.794
+      ],
+      "rotationY": 4.079,
+      "scale": 0.434
+    },
+    {
+      "id": "decor-glade-46",
       "glb": "/models/props/nature/tree-emerald-crown.glb",
       "position": [
         -9.199,
-        0.822,
+        0.761,
         2.471
       ],
-      "rotationY": 6.175,
-      "scale": 0.866
+      "rotationY": 3.902,
+      "scale": 0.801
+    },
+    {
+      "id": "decor-glade-47",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
+      "position": [
+        -9.195,
+        0.277,
+        4.53
+      ],
+      "rotationY": 2.353,
+      "scale": 0.433
+    },
+    {
+      "id": "decor-verge-0",
+      "glb": "/models/props/nature/rock-three-stones.glb",
+      "position": [
+        -1.88,
+        0.134,
+        -9.73
+      ],
+      "rotationY": 1.073,
+      "scale": 0.341
+    },
+    {
+      "id": "decor-verge-1",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
+      "position": [
+        -6.977,
+        0.259,
+        -9.4
+      ],
+      "rotationY": 2.046,
+      "scale": 0.404
     },
     {
       "id": "decor-verge-2",
-      "glb": "/models/props/nature/rock-three-stones.glb",
+      "glb": "/models/props/decor/flower-pot.glb",
       "position": [
-        -4.459,
-        0.164,
+        -4.323,
+        0.109,
         -7.52
       ],
-      "rotationY": 4.465,
-      "scale": 0.417
+      "rotationY": 4.569,
+      "scale": 0.115
     },
     {
       "id": "decor-verge-3",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        -12.48,
-        0.151,
-        -5.64
+        -1.273,
+        0.165,
+        -7.52
       ],
-      "rotationY": 2.133,
-      "scale": 0.385
+      "rotationY": 1.934,
+      "scale": 0.421
     },
     {
       "id": "decor-verge-4",
       "glb": "/models/props/decor/barrel-iron.glb",
       "position": [
-        -4.418,
+        -10.058,
         0.192,
         -5.64
       ],
@@ -9728,100 +9805,111 @@
       "id": "decor-verge-5",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        -18.294,
-        0.337,
-        -3.76
+        -7.006,
+        0.324,
+        -5.64
       ],
-      "rotationY": 5.286,
-      "scale": 0.526
+      "rotationY": 5.72,
+      "scale": 0.507
     },
     {
       "id": "decor-verge-6",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        18.451,
-        0.335,
-        -1.88
+        -9.4,
+        0.146,
+        -2.416
       ],
-      "rotationY": 4.503,
-      "scale": 0.59
+      "rotationY": 0.331,
+      "scale": 0.372
+    },
+    {
+      "id": "decor-verge-7",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
+      "position": [
+        -7.52,
+        0.363,
+        -1.251
+      ],
+      "rotationY": 0.249,
+      "scale": 0.566
     },
     {
       "id": "decor-verge-8",
-      "glb": "/models/props/nature/rock-three-stones.glb",
+      "glb": "/models/props/decor/flower-pot.glb",
       "position": [
         7.52,
-        0.131,
+        0.102,
         1.309
       ],
       "rotationY": 5.585,
-      "scale": 0.334
+      "scale": 0.108
     },
     {
       "id": "decor-verge-9",
-      "glb": "/models/props/decor/barrel-iron.glb",
+      "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
         9.4,
         0.204,
         -1.466
       ],
       "rotationY": 1.011,
-      "scale": 0.215
+      "scale": 0.519
     },
     {
       "id": "decor-verge-10",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
         15.04,
-        0.361,
-        1.261
+        0.269,
+        1.543
       ],
-      "rotationY": 4.907,
-      "scale": 0.635
+      "rotationY": 5.501,
+      "scale": 0.473
     },
     {
       "id": "decor-verge-11",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        -7.191,
-        0.322,
+        -7.188,
+        0.385,
         1.88
       ],
-      "rotationY": 2.171,
-      "scale": 0.502
+      "rotationY": 3.237,
+      "scale": 0.601
     },
     {
       "id": "decor-verge-12",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
+      "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
         -5.64,
-        0.316,
-        12.602
+        0.162,
+        12.466
       ],
-      "rotationY": 0.025,
-      "scale": 0.493
+      "rotationY": 2.937,
+      "scale": 0.414
     },
     {
       "id": "decor-verge-13",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        -6.89,
-        0.363,
+        -6.88,
+        0.314,
         18.8
       ],
-      "rotationY": 2.758,
-      "scale": 0.638
+      "rotationY": 0.61,
+      "scale": 0.491
     },
     {
       "id": "decor-verge-14",
-      "glb": "/models/props/nature/rock-three-stones.glb",
+      "glb": "/models/props/decor/flower-pot.glb",
       "position": [
-        1.547,
-        0.16,
+        1.429,
+        0.126,
         18.8
       ],
-      "rotationY": 1.635,
-      "scale": 0.409
+      "rotationY": 1.814,
+      "scale": 0.133
     }
   ],
   "buildings": {
