@@ -179,4 +179,14 @@ console.log(`\n${"─".repeat(52)}`);
 console.log(`  ${done}/${jobs.length}개 처리 · ${totalBefore.toFixed(1)} MB → ${totalAfter.toFixed(1)} MB`);
 if (skipped) console.log(`  이미 최신이라 건너뜀: ${skipped}개  (다시 굽기: --force)`);
 if (failed.length) console.log(`  실패: ${failed.join(", ")}`);
-console.log(`  다음: constants.ts의 glbPath 연결 → 마을에서 F8 계기판으로 확인\n`);
+
+// 건물은 파일명(=건물 id)만 맞으면 자동으로 붙는다. 예전엔 여기서 "constants.ts에
+// glbPath를 연결하세요"라고 안내했는데, 남은 23채를 하나씩 넣을 때마다 손으로 할
+// 일이라 매니페스트 생성으로 대체했다.
+console.log();
+try {
+  execFileSync(process.execPath, [join("scripts", "generate-building-manifest.mjs")], {stdio: "inherit"});
+} catch {
+  console.log("  ! 건물 매니페스트 생성 실패 — node scripts/generate-building-manifest.mjs 를 직접 돌려보세요");
+}
+console.log(`\n  다음: 마을을 새로고침하고 F8 계기판으로 확인\n`);

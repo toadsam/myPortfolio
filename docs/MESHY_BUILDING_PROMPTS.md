@@ -10,11 +10,35 @@
 ② Meshy → Image to 3D 에 그 이미지 업로드
 ③ GLB 다운로드 → public/models/buildings/raw/<파일명>   ← raw 에 넣습니다
 ④ npm run optimize                                    → public/models/buildings/<파일명>
-⑤ constants.ts 에 glbPath 연결
+⑤ 브라우저 새로고침 — 끝
+```
+
+**파일명이 곧 연결입니다.** 파일명을 건물 id와 똑같이 지으면
+(`skill-3d.glb` → 건물 `skill-3d`) `npm run optimize` 끝에
+`scripts/generate-building-manifest.mjs`가 자동으로 돌아
+`src/data/buildingModels.json`에 물려 줍니다. 코드는 한 줄도 안 고쳐도 됩니다.
+아래 프롬프트 제목의 파일명이 이미 그 id입니다 — 그대로 쓰세요.
+
+id와 안 맞는 파일이 있으면 optimize 로그가 이렇게 알려줍니다:
+
+```
+! 건물 id와 이름이 안 맞아 안 붙은 파일 1개: 3d.glb
+  파일명을 건물 id와 똑같이 바꾸세요 (예: 3d.glb → skill-3d.glb)
 ```
 
 `raw/`는 원본 보관소이고, 마을이 실제로 읽는 건 최적화된 쪽입니다. 원본을 남겨두는 이유는
 예산 규격이 바뀌었을 때 `npm run optimize -- --force`로 다시 구울 수 있어야 하기 때문입니다.
+(`raw/`는 `.gitignore`에 있어 커밋되지 않습니다 — 장당 20~40MB라 리포가 감당 못 합니다.)
+
+## 지금 상태 (2026-08-09)
+
+27채 중 **4채 완료** — `project-aclub` · `project-festflow` · `skill-backend` · `skill-frontend`.
+나머지 23채는 `Building.tsx`가 절차적 상자로 그리고 있고, 그 상자들이 마을에서
+유일하게 사이버펑크 톤으로 남은 부분입니다(metalness 0.55~0.9 + 네온 띠).
+전경 draw call의 대부분도 여기서 나옵니다 — 상자 한 채가 메시 8개쯤 됩니다.
+
+**우선순위**: 광장 → 눈에 크게 잡히는 순. `central-plaza`(파란 네온 탑이라 가장 튐)
+→ `post-office`·`exp-portfolio`·`skill-3d`(큰 건물) → 나머지.
 
 ## 이미지 생성 공통 프리픽스 (모든 건물에 앞에 붙임)
 
@@ -64,9 +88,15 @@ glass skyscraper, modern corporate, blurry, motion blur
 
 ## 제작 규격
 
-- 포맷 **.glb**, Y-up, **원점(0,0,0) = 건물 바닥 중심**
-- 대략 **1×1×1 유닛** 기준 (코드가 `size[1] × 0.62`로 자동 스케일 — `src/components/village/Building.tsx:65`)
-- `public/models/buildings/raw/<파일명>` 저장 → `npm run optimize` → `constants.ts`에 `glbPath: "/models/buildings/<파일명>"` 추가
+- 포맷 **.glb**, Y-up
+- **크기와 원점은 안 맞춰도 됩니다.** `Building.tsx`의 `GlbModel`이 바운딩 박스를 실측해
+  `constants.ts`의 `size[1]`(월드 높이)에 맞춰 배율을 잡고, 바닥(min.y)을 y=0으로 끌어올립니다.
+  Meshy가 뭘 뽑든 앞마당 원반·라벨 높이와 어긋나지 않습니다.
+  (예전엔 `size[1] × 0.62`를 그냥 배율로 써서 GLB마다 원본 높이가 1.13~1.91로 달라
+  같은 size가 전혀 다른 크기를 만들었습니다. 지금은 그 문제가 없습니다.)
+- **비율은 맞춰 주세요.** 높이만 정규화하므로, 원본이 가로로 퍼져 있으면 마을에서도 퍼집니다.
+  각 프롬프트에 적힌 형태(탑/납작한 상점/뾰족지붕)를 지키면 됩니다.
+- `public/models/buildings/raw/<건물id>.glb` 저장 → `npm run optimize` → 끝
 - Meshy 원본을 그대로 쓰면 안 됩니다. 건물 하나가 텍스처만 **22~90MB VRAM**을 먹어서 27개면 GPU가 죽습니다
 
 ### `npm run optimize` 가 하는 일
@@ -91,7 +121,7 @@ npm run optimize -- --force   이미 최신인 것도 다시 굽기
 
 ## 1) 프로젝트 구역 (9개) — 마을 서쪽
 
-### 1. `mystock.glb` — MyStock-Desk · 금융/AI 대시보드
+### 1. `project-mystock.glb` — MyStock-Desk · 금융/AI 대시보드
 비율: 세로로 높음 (1.9 / **2.6** / 1.9) · 포인트 색: 청록
 
 ```
@@ -102,7 +132,7 @@ reading "MyStock" in clean bold letters, teal and aqua accents,
 notably taller than it is wide
 ```
 
-### 2. `festflow.glb` — FestFlow · 대학 축제 운영
+### 2. `project-festflow.glb` — FestFlow · 대학 축제 운영
 비율: 낮고 넓음 (2.2 / 1.5 / 2.2) · 포인트 색: 노랑
 
 ```
@@ -113,7 +143,7 @@ across the top reading "FestFlow" in cheerful bold letters, golden yellow
 accents, clearly wider than tall
 ```
 
-### 3. `sign-language.glb` — 수어지구 · 수어 학습 앱
+### 3. `project-sign-language.glb` — 수어지구 · 수어 학습 앱
 비율: 둥근 돔 (2.0 / 1.8 / 2.0) · 포인트 색: 하늘색
 
 ```
@@ -124,7 +154,7 @@ windows, teal roof trim, a rounded wooden signboard above the door reading
 ```
 > 영문 대체: `reading "Sign Village"`
 
-### 4. `aclub.glb` — ACLUB · 동아리 플랫폼
+### 4. `project-aclub.glb` — ACLUB · 동아리 플랫폼
 비율: 단정한 중형 (1.8 / 1.6 / 1.8) · 포인트 색: 보라
 
 ```
@@ -135,7 +165,7 @@ reading "ACLUB" in crisp letters, soft lavender purple accents, orderly
 compact shape
 ```
 
-### 5. `ajou-adventure.glb` — 아주분투 · 2D 러닝 게임
+### 5. `project-ajou-adventure.glb` — 아주분투 · 2D 러닝 게임
 비율: 아케이드형 (1.9 / 1.7 / 1.9) · 포인트 색: 연두
 
 ```
@@ -146,7 +176,7 @@ striped awning, a glowing marquee sign board above the entrance reading
 ```
 > 영문 대체: `reading "AJOU RUN"`
 
-### 6. `ajouchong.glb` — 아주총학 · 총학생회 웹사이트
+### 6. `project-ajouchong.glb` — 아주총학 · 총학생회 웹사이트
 비율: 작고 낮음 (1.8 / 1.4 / 1.8) · 포인트 색: 주홍
 
 ```
@@ -157,7 +187,7 @@ warm orange red accents, compact and low
 ```
 > 영문 대체: `reading "AJOU COUNCIL"`
 
-### 7. `muscleup.glb` — 근근 MuscleUp · 피트니스 플랫폼
+### 7. `project-muscleup.glb` — 근근 MuscleUp · 피트니스 플랫폼
 비율: 세로로 높음 (1.8 / **2.2** / 1.8) · 포인트 색: 핑크
 
 ```
@@ -167,7 +197,7 @@ frame on one side, a bold signboard mounted above the entrance reading
 "MuscleUp", warm pink and coral accents, taller than wide
 ```
 
-### 8. `darklab.glb` — DarkLab · 3D 공포 게임
+### 8. `project-darklab.glb` — DarkLab · 3D 공포 게임
 비율: 중형 (1.9 / 1.8 / 1.9) · 포인트 색: 어두운 적갈
 
 ```
@@ -178,7 +208,7 @@ boarded-up door, a weathered crooked hanging sign reading "DarkLab", dark rust
 red accents, still cute and stylized, not scary or gory
 ```
 
-### 9. `tserof.glb` — TSEROF · 3D 플랫포머
+### 9. `project-tserof.glb` — TSEROF · 3D 플랫포머
 비율: 작고 둥금 (1.7 / 1.5 / 1.7) · 포인트 색: 숲 초록
 
 ```
@@ -192,9 +222,9 @@ green accents, small and rounded
 
 ## 2) 스킬 구역 (5개) — 마을 북쪽
 
-> `frontend.glb` / `backend.glb`는 기존 파일이 있으나, 판타지 톤이 아니면 아래로 재제작.
+> `skill-frontend.glb` / `skill-backend.glb`는 기존 파일이 있으나, 판타지 톤이 아니면 아래로 재제작.
 
-### 10. `frontend.glb` — Frontend
+### 10. `skill-frontend.glb` — Frontend
 비율: 넓고 낮음 (2.6 / 1.6 / 2.2) · 포인트 색: 시안
 
 ```
@@ -204,7 +234,7 @@ and paint palette decorations beside the door, a painted shop sign above the
 window reading "Frontend", cheerful cyan blue accents, wide and welcoming
 ```
 
-### 11. `backend.glb` — Backend
+### 11. `skill-backend.glb` — Backend
 비율: 세로로 높음 (1.8 / **2.6** / 1.8) · 포인트 색: 앰버
 
 ```
@@ -214,7 +244,7 @@ sign bolted above the heavy door reading "Backend", warm amber golden accents,
 solid and tall
 ```
 
-### 12. `3d.glb` — 3D / Motion
+### 12. `skill-3d.glb` — 3D / Motion
 비율: 돔형 (2.3 / 2.2 / 2.3) · 포인트 색: 바이올렛
 
 ```
@@ -224,7 +254,7 @@ above it, a spiral outer staircase, an engraved arch sign over the entrance
 reading "3D Lab", violet purple accents
 ```
 
-### 13. `game.glb` — Game / XR
+### 13. `skill-game.glb` — Game / XR
 비율: 아케이드형 (2.1 / 1.9 / 2.1) · 포인트 색: 오렌지
 
 ```
@@ -234,7 +264,7 @@ framing the facade, a big glowing marquee sign reading "GAME XR", bright
 orange accents, chunky and fun
 ```
 
-### 14. `workflow.glb` — Workflow
+### 14. `skill-workflow.glb` — Workflow
 비율: 낮고 넓음 (1.8 / 1.4 / 1.6) · 포인트 색: 앰버
 
 ```

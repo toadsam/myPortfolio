@@ -143,8 +143,7 @@ const projectBuildings: BuildingData[] = [
     color: "#1a1a0d",
     roofColor: "#3a3a1a",
     accentColor: "#ffcc00",
-    techStack: ["React", "Spring Boot", "SSE", "PWA"],
-    glbPath: "/models/buildings/festflow.glb"
+    techStack: ["React", "Spring Boot", "SSE", "PWA"]
   },
   {
     id: "project-sign-language",
@@ -176,8 +175,7 @@ const projectBuildings: BuildingData[] = [
     color: "#1a0d2e",
     roofColor: "#3a1a5a",
     accentColor: "#cc88ff",
-    techStack: ["React", "TypeScript", "Vite"],
-    glbPath: "/models/buildings/aclub.glb"
+    techStack: ["React", "TypeScript", "Vite"]
   },
   {
     id: "project-ajou-adventure",
@@ -276,8 +274,7 @@ const skillBuildings: BuildingData[] = [
     color: "#0d1a2e",
     roofColor: "#0a2a4a",
     accentColor: "#00d4ff",
-    techStack: ["React", "Next.js", "TypeScript", "Tailwind"],
-    glbPath: "/models/buildings/frontend.glb"
+    techStack: ["React", "Next.js", "TypeScript", "Tailwind"]
   },
   {
     id: "skill-3d",
@@ -309,8 +306,7 @@ const skillBuildings: BuildingData[] = [
     color: "#1a1a0d",
     roofColor: "#2a2a1a",
     accentColor: "#fbbf24",
-    techStack: ["Spring Boot", "FastAPI", "PostgreSQL"],
-    glbPath: "/models/buildings/backend.glb"
+    techStack: ["Spring Boot", "FastAPI", "PostgreSQL"]
   },
   {
     id: "skill-game",

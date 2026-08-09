@@ -8,6 +8,11 @@ import {lightIntensity} from "@/lib/liveState";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import type {BuildingState} from "@/types/live";
 import type {BuildingData} from "@/types/portfolio";
+import buildingModelsJson from "@/data/buildingModels.json";
+
+// 생성된 JSON이라 키가 그때그때 달라진다 — 지금 있는 4채로 타입이 굳으면
+// 다음 건물을 넣을 때마다 컴파일이 깨진다.
+const buildingModels: Record<string, string> = buildingModelsJson;
 
 // ─── 호버 연출: 빛기둥 + 회전 베이스 링 2겹 (Developer City 이식) ──────────────
 
@@ -497,7 +502,11 @@ interface BuildingProps {
 }
 
 function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
-  if (b.glbPath) return <GlbModel glbPath={b.glbPath} size={b.size} />;
+  // 모델이 있으면 상자 대신 그걸 그린다. 경로는 scripts/generate-building-manifest.mjs 가
+  // public/models/buildings/<건물id>.glb 를 훑어 만든다 — 건물을 하나 뽑아 넣을 때마다
+  // constants.ts 를 손대지 않아도 되도록. glbPath 를 직접 적으면 그쪽이 이긴다.
+  const glbPath = b.glbPath ?? buildingModels[b.id];
+  if (glbPath) return <GlbModel glbPath={glbPath} size={b.size} />;
 
   switch (b.kind) {
     case "tower":          return <TowerBuilding b={b} hl={hl} />;
