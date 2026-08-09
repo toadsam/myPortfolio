@@ -174,7 +174,10 @@ const centers = districtCenters(OUTER);
 // 앞마당 원반 — generate-ground-layout.mjs 와 같은 식이어야 한다.
 // 어긋나면 장식물이 원반 위에 올라타므로, 실제로 깔린 타일과 대조해 검산한다.
 const PLAZA_RADIUS_AT_1 = 0.95;
-const discs = OUTER.map((b) => ({x: b.x, z: b.z, r: Math.max(b.w, b.d) / 2 + 0.55}));
+// generate-ground-layout.mjs 의 FORECOURT_DRAW 와 같은 값이어야 한다.
+// 바로 아래 가드가 어긋나면 잡아 준다 — 실제로 원반을 줄일 때 여기서 걸렸다.
+const FORECOURT_DRAW = 0.77;
+const discs = OUTER.map((b) => ({x: b.x, z: b.z, r: (Math.max(b.w, b.d) / 2 + 0.55) * FORECOURT_DRAW}));
 {
   const yards = new Map(
     layout.props
@@ -183,7 +186,7 @@ const discs = OUTER.map((b) => ({x: b.x, z: b.z, r: Math.max(b.w, b.d) / 2 + 0.5
   );
   for (const b of OUTER) {
     const actual = yards.get(b.id);
-    const mine = Math.max(b.w, b.d) / 2 + 0.55;
+    const mine = (Math.max(b.w, b.d) / 2 + 0.55) * FORECOURT_DRAW;
     if (actual !== undefined && Math.abs(actual - mine) > 0.02)
       throw new Error(
         `앞마당 반지름이 바닥 레이아웃과 어긋납니다 (${b.id}: 여기 ${mine.toFixed(2)} vs 타일 ${actual.toFixed(2)}).\n` +
@@ -429,7 +432,12 @@ const gates = [];
 
 // ─── ④ 길 따라 가로등 ─────────────────────────────────────────────────────────
 // 길 칸을 일정 간격으로 건너뛰며 좌우 번갈아 세운다.
-const LANTERN_EVERY = 3;
+//
+// 3칸(5.6유닛)마다 세웠더니 마을 전체에 10개뿐이었다. 컨셉 아트는 길마다
+// 가로등·깃대·배너가 촘촘히 서서 화면에 **수직 리듬**을 준다 — 우리는 전부
+// 납작해서 시선이 미끄러졌다. 2칸(3.8유닛)이면 걷는 눈높이에서 하나가 지나가면
+// 다음 게 들어온다. 가로등 하나가 1,780 삼각형이고 인스턴싱이라 draw call 은 그대로다.
+const LANTERN_EVERY = 2;
 {
   const sorted = roads
     .slice()

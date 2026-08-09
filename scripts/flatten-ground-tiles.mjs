@@ -235,6 +235,31 @@ function bakeTop(path) {
 }
 
 // ─── 평면/원반 GLB 쓰기 ───────────────────────────────────────────────────────
+// ─── 색 보정 ─────────────────────────────────────────────────────────────────
+// Meshy 바닥 타일은 채도가 아주 높다 — 돌이 탠(#cf9f6b), 잔디 갓길이 쨍한
+// 연두(#76a92a)다. 컨셉 아트와 나란히 놓고 보니 이게 가장 큰 차이였다.
+// 컨셉 아트의 땅은 **채도가 낮은 세이지 + 회색빛 석재**라서, 그 위에 놓인
+// 건물과 간판의 색이 살아난다. 우리는 면적이 제일 넓은 바닥이 제일 쨍해서
+// 잔디와 길이 주인공이 돼 있었다.
+//
+// 게다가 노을 태양(#ff945a)이 탠을 곱하면 길이 **연어살색**으로 보인다.
+//
+// 회색 쪽으로 당기기만 한다 — 색상은 안 건드린다. 색상을 돌리면 원본의
+// 자갈·이끼 디테일이 서로 다른 방향으로 밀려 지저분해진다.
+const SATURATION = 0.55;
+
+function grade(img) {
+  const out = Buffer.alloc(img.length);
+  for (let i = 0; i < img.length; i += 3) {
+    const r = img[i], g = img[i + 1], b = img[i + 2];
+    const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+    out[i] = Math.max(0, Math.min(255, Math.round(gray + (r - gray) * SATURATION)));
+    out[i + 1] = Math.max(0, Math.min(255, Math.round(gray + (g - gray) * SATURATION)));
+    out[i + 2] = Math.max(0, Math.min(255, Math.round(gray + (b - gray) * SATURATION)));
+  }
+  return out;
+}
+
 function buildGlb({img, minX, maxX, minZ, maxZ, y, disc}) {
   const positions = [];
   const uvs = [];
@@ -267,7 +292,7 @@ function buildGlb({img, minX, maxX, minZ, maxZ, y, disc}) {
   for (let n = 0; n < positions.length / 3; n++) normals.push(0, 1, 0);
   const nrmBuf = Buffer.from(new Float32Array(normals).buffer);
   const idxBuf = Buffer.from(new Uint16Array(indices).buffer);
-  const png = encodePng(PX, PX, img);
+  const png = encodePng(PX, PX, grade(img));
 
   // 청크는 4바이트 배수로 채워야 한다. BIN은 0으로, JSON은 반드시 공백으로 —
   // 0으로 채우면 JSON.parse가 "Unexpected non-whitespace character" 로 죽는다.

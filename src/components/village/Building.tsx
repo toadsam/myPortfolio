@@ -3,13 +3,14 @@
 import {Html, useCursor, useGLTF} from "@react-three/drei";
 import {memo, useMemo, useRef, useState} from "react";
 import {useFrame, type ThreeEvent} from "@react-three/fiber";
-import {AdditiveBlending, Box3, BoxGeometry, EdgesGeometry, type Group, type Mesh} from "three";
+import {AdditiveBlending, Box3, BoxGeometry, EdgesGeometry, type Group, type Mesh, type MeshStandardMaterial} from "three";
 import {lightIntensity} from "@/lib/liveState";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import type {BuildingState} from "@/types/live";
 import type {BuildingData} from "@/types/portfolio";
 import buildingModelsJson from "@/data/buildingModels.json";
 import {techIcons} from "@/data/techIcons";
+import {VILLAGE_PALETTE} from "@/lib/villagePalette";
 
 // 생성된 JSON이라 키가 그때그때 달라진다 — 지금 있는 4채로 타입이 굳으면
 // 다음 건물을 넣을 때마다 컴파일이 깨진다.
@@ -42,12 +43,12 @@ function HighlightFX({color, height, radius, active}: {color: string; height: nu
     if (ring1Ref.current) {
       ring1Ref.current.rotation.z += delta * 0.6;
       ring1Ref.current.scale.setScalar(0.9 + k * 0.2);
-      (ring1Ref.current.material as {opacity: number}).opacity = k * 0.7;
+      (ring1Ref.current.material as {opacity: number}).opacity = k * 0.26;
     }
     if (ring2Ref.current) {
       ring2Ref.current.rotation.z -= delta * 0.42;
       ring2Ref.current.scale.setScalar(1.05 + k * 0.25);
-      (ring2Ref.current.material as {opacity: number}).opacity = k * 0.45;
+      (ring2Ref.current.material as {opacity: number}).opacity = k * 0.16;
     }
     if (beamRef.current) {
       const pulse = 0.5 + 0.5 * Math.sin(performance.now() * 0.003);
@@ -84,12 +85,35 @@ function GlbModel({glbPath, size}: {glbPath: string; size: [number, number, numb
   // <primitive castShadow /> 는 루트 Object3D 한 개에만 플래그를 세운다. GLB는
   // 안에 메시가 수십 개 들어 있는 계층이라, 루트만 켜면 그림자가 하나도 안 진다.
   // useGLTF는 같은 경로를 캐시해 돌려주므로 한 번만 훑으면 된다.
+  //
+  // ─── 저녁에 창문 켜기 ──────────────────────────────────────────────────────
+  // 컨셉 아트가 해 진 뒤에도 따뜻해 보이는 건 건물마다 창문이 주황으로 빛나서다.
+  // 우리 건물은 노을·밤에 그냥 검은 덩어리로 남았다.
+  //
+  // 창문만 골라내는 건 불가능하다 — Meshy 모델은 벽·창·지붕이 텍스처 한 장에
+  // 다 그려진 아틀라스 하나다. 대신 그 텍스처를 **자기 발광 맵으로 재사용**한다.
+  // 그러면 텍스처에서 밝은 픽셀(=창문·간판)이 어두운 픽셀(=벽)보다 훨씬 세게
+  // 빛나서, 결과적으로 창문만 켜진 것처럼 보인다. 공짜에 가깝다.
+  //
+  // 건물 27채마다 pointLight 를 하나씩 두는 방법도 있었지만, three 는 광원마다
+  // 셰이더 유니폼을 잡아서 27개면 컴파일이 터진다.
   useMemo(() => {
     scene.traverse((obj) => {
       const mesh = obj as Mesh;
       if (!mesh.isMesh) return;
       mesh.castShadow = true;
       mesh.receiveShadow = true;
+      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+      for (const material of mats) {
+        const std = material as MeshStandardMaterial;
+        if (!std || !("emissiveIntensity" in std)) continue;
+        std.emissiveIntensity = VILLAGE_PALETTE.windowGlow;
+        if (VILLAGE_PALETTE.windowGlow > 0) {
+          std.emissive.set("#ffb968");
+          if (std.map) std.emissiveMap = std.map;
+        }
+        std.needsUpdate = true;
+      }
     });
   }, [scene]);
   // Meshy GLB는 원점 중심으로 나와서 그대로 놓으면 아래 절반이 지면에 묻힌다.
@@ -331,7 +355,7 @@ function TowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 안테나 */}
       <mesh castShadow position={[0, h + 0.5, 0]}>
         <cylinderGeometry args={[0.025, 0.035, 1.0, 6]} />
-        <meshStandardMaterial color="#0a1a2e" metalness={0.1} roughness={0.2} />
+        <meshStandardMaterial color="#5b6b7d" metalness={0.1} roughness={0.2} />
       </mesh>
       <mesh position={[0, h + 1.05, 0]}>
         <sphereGeometry args={[0.055, 8, 8]} />
@@ -386,7 +410,7 @@ function CompactStudioBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 간판 */}
       <mesh position={[0, h * 0.7, d / 2 + 0.06]}>
         <boxGeometry args={[w * 0.7, h * 0.22, 0.06]} />
-        <meshStandardMaterial color="#050d1a" emissive={b.accentColor} emissiveIntensity={hl ? 0.35 : 0.12} roughness={0.2} />
+        <meshStandardMaterial color="#6b4f35" emissive={b.accentColor} emissiveIntensity={hl ? 0.35 : 0.12} roughness={0.2} />
       </mesh>
       {hl && <pointLight color={b.accentColor} intensity={0.9} distance={3} decay={2} position={[0, h * 0.6, d * 0.6]} />}
     </group>
@@ -463,7 +487,7 @@ function ServerTowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {[-w * 0.38, w * 0.38].map((x) => (
         <mesh key={x} castShadow position={[x, h + 0.35, 0]}>
           <cylinderGeometry args={[0.055, 0.065, 0.7, 8]} />
-          <meshStandardMaterial color="#0a1a2e" metalness={0.1} roughness={0.2} />
+          <meshStandardMaterial color="#5b6b7d" metalness={0.1} roughness={0.2} />
         </mesh>
       ))}
       {hl && <pointLight color={b.accentColor} intensity={1.0} distance={3.5} decay={2} position={[0, h * 0.7, d * 0.6]} />}
@@ -488,7 +512,7 @@ function ArcadeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 간판 박스 */}
       <mesh castShadow position={[0, h + 0.3, 0]}>
         <boxGeometry args={[w + 0.3, 0.55, d * 0.4]} />
-        <meshStandardMaterial color="#1a0800" emissive={b.accentColor} emissiveIntensity={hl ? 0.45 : 0.15} roughness={0.2} />
+        <meshStandardMaterial color="#7a4a2a" emissive={b.accentColor} emissiveIntensity={hl ? 0.45 : 0.15} roughness={0.2} />
       </mesh>
       {hl && <pointLight color={b.accentColor} intensity={1.3} distance={4} decay={2} position={[0, h * 0.7, d * 0.6]} />}
     </group>
@@ -507,13 +531,13 @@ function MinimalOfficeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 평지붕 + 파라펫 */}
       <mesh position={[0, h + 0.07, 0]}>
         <boxGeometry args={[w + 0.15, 0.14, d + 0.15]} />
-        <meshStandardMaterial color="#111111" roughness={0.4} metalness={0.1} />
+        <meshStandardMaterial color="#8a8f96" roughness={0.4} metalness={0.1} />
       </mesh>
       {/* 옥상 안테나 그룹 */}
       {[-0.3, 0.3].map((x) => (
         <mesh key={x} castShadow position={[x * w, h + 0.45, 0]}>
           <cylinderGeometry args={[0.02, 0.025, 0.6, 6]} />
-          <meshStandardMaterial color="#0a1a0a" metalness={0.1} roughness={0.1} />
+          <meshStandardMaterial color="#6f7a5e" metalness={0.1} roughness={0.1} />
         </mesh>
       ))}
       {hl && <pointLight color={b.accentColor} intensity={0.8} distance={3} decay={2} position={[0, h, 0]} />}
@@ -562,11 +586,11 @@ function PlazaBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       </mesh>
       <mesh castShadow position={[0, 0.28, 0]}>
         <cylinderGeometry args={[0.56, 0.66, 0.22, 28]} />
-        <meshStandardMaterial color="#0a2040" roughness={0.65} />
+        <meshStandardMaterial color="#7f8ea0" roughness={0.65} />
       </mesh>
       <mesh castShadow position={[0, 0.55, 0]}>
         <cylinderGeometry args={[0.2, 0.26, 0.35, 24]} />
-        <meshStandardMaterial color="#0d1a30" roughness={0.45} />
+        <meshStandardMaterial color="#5f6d80" roughness={0.45} />
       </mesh>
       <mesh position={[0, 0.82, 0]}>
         <sphereGeometry args={[0.24, 18, 18]} />

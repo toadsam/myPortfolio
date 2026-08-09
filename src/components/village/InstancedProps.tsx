@@ -95,6 +95,17 @@ function chunkPlacements(placements: PropPlacement[]): PropPlacement[][] {
 //   · 임포스터는 교차 빌보드다. 그림자를 켜면 나무 실루엣이 아니라 판때기 두 장이
 //     바닥에 X자로 찍힌다. 게다가 숲 띠는 마을 밖이라 그림자 카메라 범위 밖이다.
 //   · 나머지(나무·바위·간판·가로등)만 드리운다.
+// ─── 잎사귀 색 보정 ──────────────────────────────────────────────────────────
+// Meshy 나무는 잎이 아주 밝은 연두다. 잔디(#7f9c56)와 명도가 거의 같아서, 위에서
+// 내려다보면 나무와 잔디가 한 덩어리로 뭉갠다 — 컨셉 아트는 나무가 진한 침엽수
+// 색이라 밝은 땅 위에서 또렷하게 떨어진다.
+//
+// 머티리얼 color 는 텍스처에 **곱해지는** 값이라 어둡게만 만들 수 있다. 다행히
+// 여기서 필요한 게 정확히 그거다: 빨강·파랑을 더 많이 깎아 초록만 남기면
+// 어두워지면서 채도가 오른다.
+const FOLIAGE_TINT = {r: 0.68, g: 0.84, b: 0.6};
+const isFoliage = (glb: string) => /(tree|bush)-/.test(glb);
+
 function shadowRole(glb: string) {
   if (glb.includes("impostor/")) return {cast: false, receive: false};
   // 폴더 이름이 ground/ 와 ground-flat/ 두 갈래다 — 둘 다 잡는다
@@ -179,6 +190,19 @@ function GlbInstances({
   const parts = useMemo(() => extractParts(scene), [scene]);
   const chunks = useMemo(() => chunkPlacements(placements), [placements]);
   const {cast, receive} = useMemo(() => shadowRole(glb), [glb]);
+
+  // useGLTF 는 같은 경로를 캐시해 돌려주므로 머티리얼도 하나뿐이다 —
+  // 여기서 한 번 물들이면 그 GLB 를 쓰는 모든 인스턴스에 적용된다.
+  useMemo(() => {
+    if (!isFoliage(glb)) return;
+    for (const part of parts) {
+      const mats = Array.isArray(part.material) ? part.material : [part.material];
+      for (const m of mats) {
+        const tinted = m as unknown as {color?: {setRGB: (r: number, g: number, b: number) => void}};
+        tinted.color?.setRGB(FOLIAGE_TINT.r, FOLIAGE_TINT.g, FOLIAGE_TINT.b);
+      }
+    }
+  }, [glb, parts]);
 
   return (
     <>

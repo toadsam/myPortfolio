@@ -1,13 +1,14 @@
 "use client";
 
 import {Canvas} from "@react-three/fiber";
-import {AdaptiveDpr, AdaptiveEvents, ContactShadows, Html, useGLTF, useTexture} from "@react-three/drei";
+import {AdaptiveDpr, AdaptiveEvents, Billboard, ContactShadows, Html, useGLTF, useTexture} from "@react-three/drei";
 import {memo, Suspense, useEffect, useMemo} from "react";
-import {BufferGeometry, Color, Float32BufferAttribute, RepeatWrapping, SRGBColorSpace} from "three";
+import {AdditiveBlending, BackSide, BufferGeometry, Color, Float32BufferAttribute, RepeatWrapping, SphereGeometry, SRGBColorSpace, Vector3} from "three";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import {spread, villageBuildings} from "@/lib/constants";
+import {VILLAGE_PALETTE} from "@/lib/villagePalette";
 import buildingModels from "@/data/buildingModels.json";
 import {buildBuildingStateMap, buildNpcStateMap} from "@/lib/liveState";
 import type {NpcRuntimeState, VillageState} from "@/types/live";
@@ -51,64 +52,6 @@ const noopRequestEnter = () => {};
 
 // 가이드 NPC 연출 시작 지점 — 매 렌더 새 배열을 만들지 않도록 모듈 상수로 고정
 const GUIDE_SCRIPTED_START: [number, number, number] = [-4, 0, 1];
-
-// 접속 시각에 따른 마을 분위기 — 새벽/낮/노을/밤.
-//
-// ─── 왜 낮 말고 세 개를 다시 잡았나 ──────────────────────────────────────────
-// 바닥이 어두운 사이버펑크 원반이던 시절엔 채워 넣는 빛(ambient·hemi)이 세야
-// 형체가 보였다. 잔디로 바꾸면서 **낮만** 4.5 → 1.6 으로 내렸고, 나머지 셋은
-// 그대로 2.4~3.4 로 남았다. 그 결과가 밤에 제일 심하게 드러났다 —
-// 하늘은 #0b1430(거의 검정)인데 ambient 2.4가 잔디를 대낮처럼 밝혀서,
-// "검은 우주에 떠 있는 초록 카펫"이 됐다. 밤답지도 낮답지도 않았다.
-//
-// 이제 넷 다 같은 기준을 쓴다: **태양이 형태를 만들고 ambient는 그림자 속을
-// 채우기만 한다.**
-//
-// ─── 왜 광량이 통째로 절반 이하로 내려갔나 (그림자와 직결) ───────────────────
-// 그림자를 켰는데 잔디에 아무것도 안 찍혔다. 배선 문제가 아니었다 — 태양만 켜고
-// 나머지를 0으로 두면 그림자가 아주 선명하게 나왔으니까. **노출이 문제였다.**
-//
-// 렌더러는 ACES 필믹 톤매핑을 쓴다. 옛 값으로는 잔디 위에서 빛이 합쳐
-// ambient 1.6 + hemi 1.0 + fill 0.95 + sun 2.3 ≈ 5.9 였는데, 잔디 알베도가
-// 밝아서 초록 채널이 ACES의 어깨 구간(포화 직전)까지 올라간다. 거기서는
-// 5.9든 3.6이든 출력이 거의 같은 값으로 눌린다 — **그림자가 눌려 사라졌다.**
-//
-// 그래서 둘을 같이 했다:
-//   ① Canvas의 toneMappingExposure 0.68 — 전체를 어깨 구간 아래로 내린다
-//   ② 채움광(ambient+hemi+fill) 합을 태양의 절반 이하로 — 태양이 형태를 만든다
-// 전체가 밝거나 어둡다고 느껴지면 개별 intensity 말고 **노출 한 곳만** 만질 것.
-//
-// ─── lamp ────────────────────────────────────────────────────────────────────
-// 마을에 깔린 따뜻한 보조 pointLight 4개의 배율. 낮엔 거의 안 보이게 죽이고
-// (햇빛에 묻히는 게 정상이다) 밤·노을엔 올린다. 어두운 마을에서 창문과
-// 가로등 주변만 주황으로 뜨는 게 밤 연출의 전부다.
-//
-// ─── fog ─────────────────────────────────────────────────────────────────────
-// far가 60~70이던 시절엔 fog가 "바닥 평면 끄트머리를 가리는 커튼"이었다.
-// 이제 마을 밖에 먼 언덕(DistantHills)이 있어 끄트머리를 가려 주므로, fog는
-// 원래 역할인 **공기 원근**으로 돌아간다 — 가까운 건 또렷하고 언덕은 뿌옇게.
-// 접속 시각 대신 원하는 시간대를 보고 싶을 때: /?hour=13
-// 네 팔레트를 나란히 맞춰 보려면 실제로 그 시각까지 기다리는 수밖에 없었다.
-function paletteHour() {
-  if (typeof window !== "undefined") {
-    const forced = Number(new URLSearchParams(window.location.search).get("hour"));
-    if (Number.isInteger(forced) && forced >= 0 && forced <= 23) return forced;
-  }
-  return new Date().getHours();
-}
-
-function timePalette(hour: number) {
-  if (hour >= 20 || hour < 5) {
-    return {sky: "#16233f", fog: "#1d2f52", near: 48, far: 140, amb: 0.2, sun: "#9fb4e8", sunI: 0.95, fill: "#3a4f8c", fillI: 0.14, hSky: "#22345e", hGround: "#141f26", hI: 0.24, lamp: 2.6, label: "밤"};
-  }
-  if (hour < 8) {
-    return {sky: "#e8bda0", fog: "#e3c3ae", near: 54, far: 160, amb: 0.42, sun: "#ffd6a6", sunI: 2.5, fill: "#ffc2d2", fillI: 0.35, hSky: "#f0c8a4", hGround: "#566a3a", hI: 0.5, lamp: 1.2, label: "새벽"};
-  }
-  if (hour < 17) {
-    return {sky: "#a8c8e8", fog: "#bcd8ef", near: 58, far: 170, amb: 0.5, sun: "#fff8e8", sunI: 3.0, fill: "#d0e8ff", fillI: 0.4, hSky: "#87ceeb", hGround: "#4a7a3a", hI: 0.6, lamp: 0.25, label: "낮"};
-  }
-  return {sky: "#e09a64", fog: "#e0a880", near: 52, far: 155, amb: 0.45, sun: "#ff945a", sunI: 2.8, fill: "#ffb184", fillI: 0.38, hSky: "#e8a070", hGround: "#5a5a2a", hI: 0.55, lamp: 1.6, label: "노을"};
-}
 
 // 광장 한복판의 임시 조형물. 사이버펑크 시절의 파란 결정체라 지금 마을 톤에서
 // 혼자 튀는데, 화면 정중앙에 가장 크게 잡히는 물건이라 비워 둘 수도 없었다.
@@ -371,6 +314,74 @@ function DistantHills() {
   );
 }
 
+// ─── 하늘 ────────────────────────────────────────────────────────────────────
+// 예전엔 `<color attach="background">` 단색 한 장이었다. 컨셉 아트와 나란히 놓고
+// 보니 위쪽 3분의 1이 통째로 빈 공간이었다 — 노을 그림에서 하늘은 주인공인데
+// 우리 하늘엔 아무것도 없었다.
+//
+// 안쪽을 칠한 큰 구 하나. 정점 색으로 지평선 → 꼭대기 그라데이션을 굽고,
+// 지평선 색은 fog 와 같게 맞춘다 — 그래야 먼 산이 하늘로 자연스럽게 녹아든다.
+// fog 를 끄는 게 중요하다(켜면 돔 전체가 fog 색으로 덮여 그라데이션이 사라진다).
+// depthWrite 를 끄고 렌더 순서를 뒤로 밀어 모든 것 뒤에 그린다.
+const SKY_RADIUS = 420;
+
+function SkyDome({horizon, top}: {horizon: string; top: string}) {
+  const geometry = useMemo(() => {
+    const geo = new SphereGeometry(SKY_RADIUS, 32, 20);
+    const lo = new Color(horizon);
+    const hi = new Color(top);
+    const mixed = new Color();
+    const pos = geo.attributes.position;
+    const colors = new Float32Array(pos.count * 3);
+    for (let i = 0; i < pos.count; i++) {
+      // 지평선(y=0) 바로 위에서 빠르게 밝아지고 위로 갈수록 천천히 — 실제 하늘의 느낌
+      const t = Math.max(0, pos.getY(i) / SKY_RADIUS);
+      mixed.copy(lo).lerp(hi, Math.pow(t, 0.55));
+      colors[i * 3] = mixed.r;
+      colors[i * 3 + 1] = mixed.g;
+      colors[i * 3 + 2] = mixed.b;
+    }
+    geo.setAttribute("color", new Float32BufferAttribute(colors, 3));
+    return geo;
+  }, [horizon, top]);
+
+  return (
+    <mesh geometry={geometry} renderOrder={-1} frustumCulled={false}>
+      <meshBasicMaterial vertexColors side={BackSide} depthWrite={false} fog={false} toneMapped={false} />
+    </mesh>
+  );
+}
+
+// 해(밤엔 달). 하늘 돔 바로 안쪽, 태양광과 **같은 방향**에 둔다 —
+// 빛은 오른쪽에서 오는데 해가 왼쪽에 떠 있으면 바로 눈에 걸린다.
+function SunDisc({direction, radius, color}: {direction: [number, number, number]; radius: number; color: string}) {
+  const position = useMemo(() => {
+    const v = new Vector3(...direction).normalize().multiplyScalar(SKY_RADIUS * 0.94);
+    return v;
+  }, [direction]);
+  return (
+    <Billboard position={position} renderOrder={-1}>
+      <mesh>
+        <circleGeometry args={[radius, 32]} />
+        <meshBasicMaterial color={color} depthWrite={false} fog={false} toneMapped={false} />
+      </mesh>
+      {/* 번짐 — 원반만 있으면 스티커처럼 보인다 */}
+      <mesh position={[0, 0, -0.5]}>
+        <circleGeometry args={[radius * 3.4, 32]} />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0.18}
+          depthWrite={false}
+          fog={false}
+          toneMapped={false}
+          blending={AdditiveBlending}
+        />
+      </mesh>
+    </Billboard>
+  );
+}
+
 function DistrictSign({label, position, color}: {label: string; position: [number, number, number]; color: string}) {
   const calculatePosition = useMemo(() => createThrottledCalculatePosition(LABEL_SYNC_STRIDE), []);
   return (
@@ -416,9 +427,9 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
       <group>
         <mesh position={[0, 0.045, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[1.55, 1.66, 64]} />
-          <meshBasicMaterial color="#00d4ff" transparent opacity={0.65} />
+          <meshBasicMaterial color="#00d4ff" transparent opacity={0.22} />
         </mesh>
-        <pointLight color="#00d4ff" intensity={1.2} distance={4} decay={2} position={[0, 0.4, 0]} />
+        <pointLight color="#00d4ff" intensity={0.5} distance={4} decay={2} position={[0, 0.4, 0]} />
       </group>
     );
   }
@@ -432,13 +443,13 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
       {/* 길 타일 윗면이 y=0.02라, 예전 높이(0.014/0.015)에 그리면 길 밑에 깔려 안 보인다 */}
       <mesh position={[x / 2, 0.05, z / 2]} rotation={[-Math.PI / 2, 0, angle]}>
         <planeGeometry args={[dist, 0.07]} />
-        <meshBasicMaterial color={building.accentColor} transparent opacity={0.8} />
+        <meshBasicMaterial color={building.accentColor} transparent opacity={0.3} />
       </mesh>
       <mesh position={[x, 0.05, z]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[1.18, 1.3, 48]} />
-        <meshBasicMaterial color={building.accentColor} transparent opacity={0.7} />
+        <meshBasicMaterial color={building.accentColor} transparent opacity={0.28} />
       </mesh>
-      <pointLight color={building.accentColor} intensity={1.5} distance={4} decay={2} position={[x, 0.6, z]} />
+      <pointLight color={building.accentColor} intensity={0.6} distance={4} decay={2} position={[x, 0.6, z]} />
     </group>
   );
 }
@@ -503,7 +514,7 @@ function VillageSceneImpl({
   const isWalkMode = explorationMode === "walk";
   const propsApi = usePropsEditor();
   const editing = propsApi.enabled && propsApi.editMode;
-  const sky = useMemo(() => timePalette(paletteHour()), []);
+  const sky = VILLAGE_PALETTE;
   // 모바일 라이트 모드 — 해상도/안티앨리어싱을 낮춰 성능·배터리 확보
   const isMobile = useMemo(
     () => typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches,
@@ -552,7 +563,7 @@ function VillageSceneImpl({
         <AdaptiveEvents />
         {/* 개발 모드 계기판 — Suspense 밖이라 로딩 중에도 계측된다 */}
         <PerfProbe />
-        <color args={[sky.sky]} attach="background" />
+        <color args={[sky.skyHorizon]} attach="background" />
         <fog args={[sky.fog, sky.near, sky.far]} attach="fog" />
         <ambientLight color="#ffffff" intensity={sky.amb} />
 
@@ -575,17 +586,17 @@ function VillageSceneImpl({
         <directionalLight
           color={sky.sun}
           intensity={sky.sunI}
-          position={[26, 34, 20]}
+          position={sky.sunPos}
           castShadow
           shadow-mapSize={[2048, 2048]}
-          shadow-camera-near={8}
-          shadow-camera-far={96}
-          shadow-camera-left={-34}
-          shadow-camera-right={34}
-          shadow-camera-top={34}
-          shadow-camera-bottom={-34}
+          shadow-camera-near={12}
+          shadow-camera-far={170}
+          shadow-camera-left={-48}
+          shadow-camera-right={48}
+          shadow-camera-top={48}
+          shadow-camera-bottom={-48}
           shadow-bias={-0.0006}
-          shadow-normalBias={0.035}
+          shadow-normalBias={0.05}
         />
         <directionalLight color={sky.fill} intensity={sky.fillI} position={[-6, 12, -4]} />
         <hemisphereLight args={[sky.hSky, sky.hGround, sky.hI]} />
@@ -600,6 +611,8 @@ function VillageSceneImpl({
         <pointLight color="#ffbe86" intensity={0.9 * sky.lamp} distance={16} decay={2} position={[0, 4, 9]} />
 
         <Suspense fallback={null}>
+          <SkyDome horizon={sky.skyHorizon} top={sky.skyTop} />
+          <SunDisc direction={sky.sunPos} radius={sky.discRadius} color={sky.discColor} />
           <Ground />
           <IslandCliff />
           <Water />

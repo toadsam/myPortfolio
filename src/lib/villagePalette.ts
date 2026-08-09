@@ -1,0 +1,124 @@
+// 접속 시각에 따른 마을 분위기 — 새벽/낮/노을/밤.
+//
+// VillageScene 안에 있던 걸 꺼냈다. Building 도 같은 값이 필요하기 때문이다
+// (저녁에 창문을 밝히려면 지금이 몇 시대인지 알아야 한다). React context 로
+// 내려보내지 않고 모듈 상수로 둔다 — 한 번 정해지면 새로고침 전까지 안 바뀌는
+// 값이라, 렌더 트리에 얹으면 리렌더 경로만 늘어난다.
+//
+// ─── 왜 낮 말고 세 개를 다시 잡았나 ──────────────────────────────────────────
+// 바닥이 어두운 사이버펑크 원반이던 시절엔 채워 넣는 빛(ambient·hemi)이 세야
+// 형체가 보였다. 잔디로 바꾸면서 **낮만** 4.5 → 1.6 으로 내렸고, 나머지 셋은
+// 그대로 2.4~3.4 로 남았다. 그 결과가 밤에 제일 심하게 드러났다 —
+// 하늘은 #0b1430(거의 검정)인데 ambient 2.4가 잔디를 대낮처럼 밝혀서,
+// "검은 우주에 떠 있는 초록 카펫"이 됐다. 밤답지도 낮답지도 않았다.
+//
+// 이제 넷 다 같은 기준을 쓴다: **태양이 형태를 만들고 ambient는 그림자 속을
+// 채우기만 한다.**
+//
+// ─── 왜 광량이 통째로 절반 이하로 내려갔나 (그림자와 직결) ───────────────────
+// 그림자를 켰는데 잔디에 아무것도 안 찍혔다. 배선 문제가 아니었다 — 태양만 켜고
+// 나머지를 0으로 두면 그림자가 아주 선명하게 나왔으니까. **노출이 문제였다.**
+//
+// 렌더러는 ACES 필믹 톤매핑을 쓴다. 옛 값으로는 잔디 위에서 빛이 합쳐
+// ambient 1.6 + hemi 1.0 + fill 0.95 + sun 2.3 ≈ 5.9 였는데, 잔디 알베도가
+// 밝아서 초록 채널이 ACES의 어깨 구간(포화 직전)까지 올라간다. 거기서는
+// 5.9든 3.6이든 출력이 거의 같은 값으로 눌린다 — **그림자가 눌려 사라졌다.**
+//
+// 그래서 둘을 같이 했다:
+//   ① Canvas의 toneMappingExposure 0.68 — 전체를 어깨 구간 아래로 내린다
+//   ② 채움광(ambient+hemi+fill) 합을 태양의 절반 이하로 — 태양이 형태를 만든다
+// 전체가 밝거나 어둡다고 느껴지면 개별 intensity 말고 **노출 한 곳만** 만질 것.
+
+export interface VillagePalette {
+  /** 하늘 밑동(지평선) — fog 와 같은 색이라 먼 것이 하늘로 녹아든다 */
+  skyHorizon: string;
+  /** 하늘 꼭대기 */
+  skyTop: string;
+  fog: string;
+  near: number;
+  far: number;
+  amb: number;
+  sun: string;
+  sunI: number;
+  /** 태양(밤엔 달)의 위치. 고도가 곧 그림자 길이다 */
+  sunPos: [number, number, number];
+  /** 하늘에 그리는 해/달 원반의 반지름·색 */
+  discRadius: number;
+  discColor: string;
+  fill: string;
+  fillI: number;
+  hSky: string;
+  hGround: string;
+  hI: number;
+  /** 마을에 깔린 따뜻한 보조 pointLight 4개의 배율 */
+  lamp: number;
+  /** 건물 텍스처를 자기 발광으로 얼마나 되돌릴지 — 저녁에 창문이 켜지는 효과 */
+  windowGlow: number;
+  label: string;
+}
+
+// ─── fog 범위 ─────────────────────────────────────────────────────────────────
+// far 가 140~170 이던 시절엔 물 건너 산(r 62~130)이 통째로 안개에 지워졌다.
+// 하늘 지평선 색과 fog 색이 같아서 산이 하늘에 완전히 녹아 **지평선이 그냥 선
+// 하나**가 됐다 — 마을·절벽·물·산 네 겹을 쌓아 놓고 뒤의 두 겹을 안개로 지운 꼴.
+// near 를 마을 바깥까지 밀어 마을은 또렷하게 두고, far 를 산 너머로 보내
+// 산이 옅게라도 형태를 남기게 한다.
+
+// ─── 태양 고도 ────────────────────────────────────────────────────────────────
+// 예전엔 [26, 34, 20] 고정이었다. 고도로 환산하면 46° — 한낮 각도다. 그래서
+// 노을 색을 칠해 놓고 그림자는 정오처럼 짧은, 앞뒤가 안 맞는 그림이 나왔다.
+// 컨셉 아트의 극적인 느낌은 태양이 낮아서 그림자가 길게 눕는 데서 온다.
+// 새벽·노을은 15~17°로 내리고 방위를 반대편에 둬 아침/저녁이 구분되게 한다.
+
+export function timePalette(hour: number): VillagePalette {
+  if (hour >= 20 || hour < 5) {
+    return {
+      skyHorizon: "#24365e", skyTop: "#0b1430", fog: "#24365e", near: 62, far: 230,
+      amb: 0.2, sun: "#9fb4e8", sunI: 0.95, sunPos: [-30, 44, -26],
+      discRadius: 9, discColor: "#e8eeff",
+      fill: "#3a4f8c", fillI: 0.14, hSky: "#22345e", hGround: "#141f26", hI: 0.24,
+      lamp: 2.6, windowGlow: 0.5, label: "밤"
+    };
+  }
+  if (hour < 8) {
+    return {
+      skyHorizon: "#f2cfad", skyTop: "#4d5f9c", fog: "#eccdb2", near: 72, far: 260,
+      amb: 0.42, sun: "#ffd6a6", sunI: 2.5, sunPos: [-58, 17, 34],
+      discRadius: 15, discColor: "#fff0d2",
+      fill: "#ffc2d2", fillI: 0.35, hSky: "#f0c8a4", hGround: "#566a3a", hI: 0.5,
+      lamp: 1.2, windowGlow: 0.22, label: "새벽"
+    };
+  }
+  if (hour < 17) {
+    return {
+      skyHorizon: "#c3dcf2", skyTop: "#4d8cca", fog: "#c3dcf2", near: 78, far: 280,
+      amb: 0.5, sun: "#fff8e8", sunI: 3.0, sunPos: [30, 52, 24],
+      discRadius: 8, discColor: "#fffbe8",
+      fill: "#d0e8ff", fillI: 0.4, hSky: "#87ceeb", hGround: "#4a7a3a", hI: 0.6,
+      lamp: 0.25, windowGlow: 0, label: "낮"
+    };
+  }
+  return {
+    skyHorizon: "#f3ac72", skyTop: "#3f3b78", fog: "#e8b58a", near: 72, far: 255,
+    amb: 0.45, sun: "#ffb277", sunI: 2.8, sunPos: [56, 15, 28],
+    discRadius: 17, discColor: "#fff0c4",
+    fill: "#ffb184", fillI: 0.38, hSky: "#e8a070", hGround: "#5a5a2a", hI: 0.55,
+    lamp: 1.6, windowGlow: 0.38, label: "노을"
+  };
+}
+
+/** 접속 시각 대신 원하는 시간대를 보고 싶을 때: /?hour=13 */
+function paletteHour() {
+  if (typeof window !== "undefined") {
+    const forced = Number(new URLSearchParams(window.location.search).get("hour"));
+    if (Number.isInteger(forced) && forced >= 0 && forced <= 23) return forced;
+  }
+  return new Date().getHours();
+}
+
+/**
+ * 이번 방문의 팔레트. 모듈이 처음 로드될 때 한 번만 정해진다.
+ * VillageScene 은 `ssr: false` 로 동적 로드되므로 이 모듈은 브라우저에서만
+ * 평가된다 — 서버와 클라이언트가 다른 시각을 읽어 하이드레이션이 깨질 일이 없다.
+ */
+export const VILLAGE_PALETTE = timePalette(paletteHour());
