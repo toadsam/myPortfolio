@@ -3,7 +3,7 @@
 import {Html, useCursor, useGLTF} from "@react-three/drei";
 import {memo, useMemo, useRef, useState} from "react";
 import {useFrame, type ThreeEvent} from "@react-three/fiber";
-import {AdditiveBlending, Box3, BoxGeometry, EdgesGeometry, type Mesh} from "three";
+import {AdditiveBlending, Box3, BoxGeometry, EdgesGeometry, type Group, type Mesh} from "three";
 import {lightIntensity} from "@/lib/liveState";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import type {BuildingState} from "@/types/live";
@@ -18,6 +18,7 @@ const buildingModels: Record<string, string> = buildingModelsJson;
 // ─── 호버 연출: 빛기둥 + 회전 베이스 링 2겹 (Developer City 이식) ──────────────
 
 function HighlightFX({color, height, radius, active}: {color: string; height: number; radius: number; active: boolean}) {
+  const groupRef = useRef<Group>(null);
   const beamRef = useRef<Mesh>(null);
   const ring1Ref = useRef<Mesh>(null);
   const ring2Ref = useRef<Mesh>(null);
@@ -28,6 +29,15 @@ function HighlightFX({color, height, radius, active}: {color: string; height: nu
     const target = active ? 1 : 0;
     intensity.current += (target - intensity.current) * Math.min(1, delta * 8);
     const k = intensity.current;
+
+    // 꺼져 있을 때 통째로 숨긴다.
+    // 예전엔 opacity만 0으로 낮췄는데, 투명해도 렌더러는 그린다 —
+    // 건물 27채 × 메시 3개 = 상시 draw call 81회를 안 보이는 것에 쓰고 있었다.
+    if (groupRef.current) {
+      const on = k > 0.01;
+      if (groupRef.current.visible !== on) groupRef.current.visible = on;
+      if (!on) return;
+    }
 
     if (ring1Ref.current) {
       ring1Ref.current.rotation.z += delta * 0.6;
@@ -47,7 +57,7 @@ function HighlightFX({color, height, radius, active}: {color: string; height: nu
   });
 
   return (
-    <group>
+    <group ref={groupRef} visible={false}>
       {/* 빛기둥 — 지붕 위로 솟는 additive 컬럼 */}
       <mesh ref={beamRef} position={[0, height + 1.4, 0]}>
         <cylinderGeometry args={[radius * 0.18, radius * 0.42, 3, 12, 1, true]} />
@@ -70,6 +80,18 @@ function HighlightFX({color, height, radius, active}: {color: string; height: nu
 
 function GlbModel({glbPath, size}: {glbPath: string; size: [number, number, number]}) {
   const {scene} = useGLTF(glbPath);
+
+  // <primitive castShadow /> 는 루트 Object3D 한 개에만 플래그를 세운다. GLB는
+  // 안에 메시가 수십 개 들어 있는 계층이라, 루트만 켜면 그림자가 하나도 안 진다.
+  // useGLTF는 같은 경로를 캐시해 돌려주므로 한 번만 훑으면 된다.
+  useMemo(() => {
+    scene.traverse((obj) => {
+      const mesh = obj as Mesh;
+      if (!mesh.isMesh) return;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+    });
+  }, [scene]);
   // Meshy GLB는 원점 중심으로 나와서 그대로 놓으면 아래 절반이 지면에 묻힌다.
   // 바닥(min.y)을 y=0으로 끌어올린다. primitive가 scene에 직접 transform을 쓰므로
   // 측정할 때는 항등 변환으로 되돌렸다가 복원한다.
@@ -103,13 +125,18 @@ function GlbModel({glbPath, size}: {glbPath: string; size: [number, number, numb
   //
   // 진짜 제약은 선언 상자가 아니라 **앞마당 원반**이다. 반지름이
   // max(w,d)/2 + 0.55 이므로(generate-ground-layout.mjs), 지름은 선언 폭 + 1.1 까지
-  // 쓸 수 있다. 거기에 바닥을 맞추고, 높이만 선언값의 1.25배로 묶는다 —
-  // 안 묶으면 홀쭉한 탑(backend)이 5.8유닛짜리 마천루가 된다.
+  // 쓸 수 있다. 거기에 바닥을 맞춘다.
   // 원반은 원이고 건물은 사각이라, 폭·깊이를 지름에 맞추면 **모서리**가 삐져나온다
   // (실측: exp-portfolio 가 반지름의 132%). 대각선을 지름에 맞춰야 네 귀가 다 들어간다.
+  //
+  // 높이 상한은 1.25 → 1.6. 원래 목적은 홀쭉한 탑(backend)이 마천루가 되는 걸
+  // 막는 것이었는데, 실측해 보니 18채 중 8채가 여기서 잘리고 있었다. 건물 높이
+  // 중앙값이 2.14유닛 — 옆에 선 나무(4.5~5.0)의 절반도 안 돼서 마을이 모형처럼
+  // 보이는 원인이었다. 1.6이면 원반이 유일한 제약이 되고(18채 중 17채), 상한은
+  // 극단적인 비율만 잡아 주는 안전장치로 남는다.
   const radius = Math.max(size[0], size[2]) / 2 + 0.55;
   const footprint = Math.hypot(natural.width, natural.depth);
-  const scale = Math.min((radius * 2) / footprint, (size[1] * 1.25) / natural.height);
+  const scale = Math.min((radius * 2) / footprint, (size[1] * 1.6) / natural.height);
   return <primitive object={scene} scale={scale} position={[0, -natural.minY * scale, 0]} />;
 }
 
@@ -255,11 +282,19 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
 
 // ─── 바닥 링 ──────────────────────────────────────────────────────────────────
 
+// 평상시엔 안 그린다.
+//
+// 예전엔 꺼진 상태에서도 회청색(#224466) 링을 opacity 0.22로 깔았다. 사이버펑크
+// 바닥에선 은은한 홀로그램이었는데, 잔디 위에서는 창백한 흰 고리로 보여서
+// 마을 여기저기에 크롭 서클이 27개 떠 있는 꼴이 됐다. 건물이 클릭 가능하다는
+// 표시는 앞마당 원반 타일과 커서 변화가 이미 하고 있고, 이제 그림자까지 있어
+// 건물이 땅에 붙어 보이므로 이 링은 역할이 없다.
 function GroundRing({color, highlighted, radius}: {color: string; highlighted: boolean; radius: number}) {
+  if (!highlighted) return null;
   return (
     <mesh position={[0, 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]}>
       <ringGeometry args={[radius * 0.7, radius * 0.76, 48]} />
-      <meshBasicMaterial color={highlighted ? color : "#224466"} transparent opacity={highlighted ? 0.75 : 0.22} />
+      <meshBasicMaterial color={color} transparent opacity={0.75} />
     </mesh>
   );
 }

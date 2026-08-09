@@ -88,14 +88,32 @@ function chunkPlacements(placements: PropPlacement[]): PropPlacement[][] {
 }
 
 // ─── 파트 하나 × 청크 하나 = InstancedMesh 하나 ───────────────────────────────
+// ─── 그림자 역할 ─────────────────────────────────────────────────────────────
+// InstancedMesh는 인스턴스 수와 무관하게 그림자 패스에서도 draw call 1회다.
+// 그래도 종류별로 나눠 준다:
+//   · 길·광장 타일은 납작한 슬래브라 자기 그림자를 드리울 게 없다 — 받기만.
+//   · 임포스터는 교차 빌보드다. 그림자를 켜면 나무 실루엣이 아니라 판때기 두 장이
+//     바닥에 X자로 찍힌다. 게다가 숲 띠는 마을 밖이라 그림자 카메라 범위 밖이다.
+//   · 나머지(나무·바위·간판·가로등)만 드리운다.
+function shadowRole(glb: string) {
+  if (glb.includes("impostor/")) return {cast: false, receive: false};
+  // 폴더 이름이 ground/ 와 ground-flat/ 두 갈래다 — 둘 다 잡는다
+  if (/ground[-/]/.test(glb)) return {cast: false, receive: true};
+  return {cast: true, receive: true};
+}
+
 function InstancedPart({
   part,
   placements,
   onPropDown,
+  cast,
+  receive,
 }: {
   part: Part;
   placements: PropPlacement[];
   onPropDown?: (event: ThreeEvent<PointerEvent>, propId: string) => void;
+  cast: boolean;
+  receive: boolean;
 }) {
   const ref = useRef<InstancedMesh>(null);
 
@@ -140,6 +158,8 @@ function InstancedPart({
       ref={ref}
       // args의 count는 최대치. 배치가 늘면 React가 새로 만들도록 key로 강제한다.
       args={[part.geometry, part.material as Material, placements.length]}
+      castShadow={cast}
+      receiveShadow={receive}
       onPointerDown={onPropDown ? handleDown : undefined}
     />
   );
@@ -158,6 +178,7 @@ function GlbInstances({
   const {scene} = useGLTF(glb);
   const parts = useMemo(() => extractParts(scene), [scene]);
   const chunks = useMemo(() => chunkPlacements(placements), [placements]);
+  const {cast, receive} = useMemo(() => shadowRole(glb), [glb]);
 
   return (
     <>
@@ -169,6 +190,8 @@ function GlbInstances({
             part={part}
             placements={chunk}
             onPropDown={onPropDown}
+            cast={cast}
+            receive={receive}
           />
         ))
       )}

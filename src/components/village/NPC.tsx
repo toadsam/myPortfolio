@@ -320,10 +320,15 @@ function NPCImpl({
         <mesh position={[0, 0.7, 0]} visible={false}>
           <capsuleGeometry args={[0.3, 0.9, 4, 8]} />
         </mesh>
-        <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[0.3, 0.4, 24]} />
-          <meshBasicMaterial color={highlighted ? "#7ed957" : "#a9cf8b"} transparent opacity={highlighted ? 0.95 : 0.5} />
-        </mesh>
+        {/* 발밑 링은 지목했을 때만. 예전엔 상시로 연두 링(opacity 0.5)을 깔았는데,
+            NPC가 땅에 붙어 보이게 하려던 목적은 이제 진짜 그림자가 대신한다.
+            27명분이 항상 그려지면서 잔디에 초록 고리가 흩뿌려져 있었다. */}
+        {highlighted ? (
+          <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[0.3, 0.4, 24]} />
+            <meshBasicMaterial color="#7ed957" transparent opacity={0.95} />
+          </mesh>
+        ) : null}
       </group>
       {/* 이름표는 hover/선택 시에만 렌더 (상시 DOM 라벨이 회전 시 끊김 유발) */}
       {highlighted ? (

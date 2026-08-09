@@ -50,12 +50,22 @@ const ALPHA_CUTOFF = 0.4;
 // 눌리는데, 나무는 원래 크니까 버티지만 덤불(1.6m)은 눌리고 나면 십자의 옆날이
 // 잔디에 꽂힌 나뭇잎처럼 삐죽 튀어나온다 — 실제로 그렇게 보였다.
 // 위에서 볼 땐 위에서 본 그림이 필요하다. 수평 한 장이면 6삼각형에 해결된다.
-const CAPPED = new Set(["bush-emerald-berry.glb"]);
-// 뚜껑을 모델 높이의 몇 %에 놓을지. 처음엔 0.62였는데 눈높이에서 보면 덤불 옆구리로
-// 초록 선반이 툭 튀어나왔다. 덤불이 가장 굵어지는 높이에 맞추면 실루엣 안에 숨는다.
-const CAP_AT = 0.42;
-/** 뚜껑을 구울 때 이 높이 아래 삼각형은 뺀다 — 밑동의 흙·돌이 공중에 뜬다 */
-const CAP_FLOOR = 0.34;
+//
+// ─── 나무에도 뚜껑을 달았다 (2차) ────────────────────────────────────────────
+// 처음엔 덤불에만 달았다. 마을 카메라를 36유닛까지만 당길 수 있어서, 나무를
+// 진짜 위에서 내려다볼 일이 없었기 때문이다. 마을이 섬이 되면서 카메라 상한을
+// 78로 열었더니 컨셉 아트 같은 부감이 가능해졌는데 — 그 각도에서 숲 700그루가
+// 전부 **검은 X자**로 드러났다. 십자 빌보드를 정수리에서 보면 그게 전부다.
+// 나무는 뚜껑을 캐노피 한복판(0.68)에 둔다. 눈높이(1.6)보다 한참 위라
+// 덤불 때처럼 옆구리로 선반이 튀어나올 일이 없다.
+const CAP = {
+  "bush-emerald-berry.glb": {at: 0.42, floor: 0.34},
+  // 처음엔 0.62였는데 눈높이에서 보면 덤불 옆구리로 초록 선반이 툭 튀어나왔다.
+  // 덤불이 가장 굵어지는 높이에 맞추면 실루엣 안에 숨는다.
+  "tree-golden-canopy.glb": {at: 0.68, floor: 0.45},
+  "tree-emerald-crown.glb": {at: 0.62, floor: 0.4},
+  "tree-sakura.glb": {at: 0.68, floor: 0.45}
+};
 
 // ─── GLB 읽기 ─────────────────────────────────────────────────────────────────
 function parseGlb(buf) {
@@ -501,10 +511,11 @@ for (const name of TARGETS) {
   // 두 시점이 같은 크기여야 십자가 안 찌그러진다. 가장 긴 변에 맞추고 여유를 조금.
   const span = Math.max(hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]) * 1.04;
   const height = hi[1] - lo[1];
-  const capped = CAPPED.has(name);
+  const cap = CAP[name];
+  const capped = Boolean(cap);
   const cells = VIEWS.map((v) => render(geo, v, center, span));
-  if (capped) cells.push(render(geo, TOP_VIEW, center, span, lo[1] + height * CAP_FLOOR));
-  const capY = capped ? lo[1] + height * CAP_AT : null;
+  if (cap) cells.push(render(geo, TOP_VIEW, center, span, lo[1] + height * cap.floor));
+  const capY = cap ? lo[1] + height * cap.at : null;
   const {glb, pngBytes} = buildGlb(cells, center, span, capY);
   writeFileSync(join(OUT, name), glb);
   before += tris;

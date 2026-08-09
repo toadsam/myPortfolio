@@ -36,7 +36,14 @@ export function NpcCharacter({
   const model = characterModels[modelId] ?? characterModels[DEFAULT_NPC_MODEL];
   const {scene, animations} = useGLTF(model.url);
 
-  // 인스턴스마다 골격 복제 + 그림자 비활성화 (스킨드 그림자는 비용 2배)
+  // 인스턴스마다 골격 복제.
+  //
+  // castShadow는 예전엔 꺼 뒀다("스킨드 그림자는 비용 2배") — 그땐 Canvas에
+  // shadows 자체가 없어서 어차피 무의미했고, 대신 발밑에 연두 링을 상시로 깔았다.
+  // 이제 진짜 그림자가 있으니 링을 걷고 이쪽을 켠다. 27명이 그림자 패스에서
+  // 27번 더 스키닝되지만, 링 27개를 상시로 그리던 것과 draw call은 같고
+  // "땅에 서 있다"는 느낌은 비교가 안 된다. receiveShadow는 계속 끈다 —
+  // 캐릭터가 자기 그림자를 받으면 저해상도 섀도맵에서 얼굴에 얼룩이 진다.
   //
   // 크기 정규화를 여기서 같이 한다. 반드시 "복제 직후, 씬에 붙기 전에" 재야 한다.
   // Box3.setFromObject는 자식들의 matrixWorld를 쓰는데, 이미 부모 <group>에 붙은 뒤라면
@@ -47,7 +54,7 @@ export function NpcCharacter({
     const copy = SkeletonUtils.clone(scene);
     copy.traverse((o) => {
       if (o instanceof Mesh) {
-        o.castShadow = false;
+        o.castShadow = true;
         o.receiveShadow = false;
         o.frustumCulled = true;
       }

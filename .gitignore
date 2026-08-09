@@ -39,3 +39,6 @@ public/blogs.json
 # 원본은 바탕화면 "정재훈의 포트폴리오 모음집/3d 포트폴리오 마을에 대한 정보"에 보관.
 # 다시 구우려면 원본을 raw/ 에 되돌려 놓고 `npm run optimize props`.
 public/models/*/raw/
+
+# 세션 작업용 임시 클론 (프로젝트 리포를 통째로 받아둔 것)
+.tmp/interview-docs-analysis/

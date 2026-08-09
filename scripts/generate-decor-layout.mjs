@@ -58,9 +58,13 @@ const KIT = {
   // 나무·바위. 예전엔 VillageScene 이 절차적으로 그린 네온 콘과 검은 다면체였는데,
   // 마을이 따뜻한 스타일로 바뀌면서 혼자 사이버펑크로 남아 겉돌았다.
   // 자리(treePositions / rockPositions)는 오래 다듬은 값이라 그대로 쓴다.
-  "tree-golden-canopy": {glb: "nature/tree-golden-canopy.glb", h: 1.743, m: 4.5},
-  "tree-emerald-crown": {glb: "nature/tree-emerald-crown.glb", h: 1.897, m: 5.0},
-  "tree-sakura": {glb: "nature/tree-sakura.glb", h: 1.809, m: 4.5},
+  // 마을 **안쪽** 나무는 4.5~5.0 에서 3.6~4.0 으로 낮췄다. 건물 중앙값이 2.14유닛
+  // 이던 시절엔 나무가 건물의 2.3배라 마을이 "숲에 놓인 모형"으로 보였다.
+  // 건물을 키우고(constants.ts size ×1.32) 나무를 낮춰 1.4배쯤으로 맞춘다.
+  // 테두리 숲(far-*)은 그대로 둔다 — 그쪽은 마을을 가리는 벽이라 클수록 좋다.
+  "tree-golden-canopy": {glb: "nature/tree-golden-canopy.glb", h: 1.743, m: 3.6},
+  "tree-emerald-crown": {glb: "nature/tree-emerald-crown.glb", h: 1.897, m: 4.0},
+  "tree-sakura": {glb: "nature/tree-sakura.glb", h: 1.809, m: 3.6},
   "flower-bed": {glb: "nature/tree-petal-parade.glb", h: 0.877, m: 0.8},
   "berry-bush": {glb: "nature/bush-emerald-berry.glb", h: 1.137, m: 1.3},
   boulder: {glb: "nature/rock-verdant-boulder.glb", h: 1.281, m: 1.7},
@@ -238,16 +242,19 @@ const REAL_OF = {
   "far-sakura": "tree-sakura",
   "far-bush": null
 };
-/** 덤불 자리를 대신 채울 것 — 원본이라도 2~3천이라 부담이 없고 입체감이 산다 */
-const BUSH_STANDIN = ["boulder", "stones", "flower-pot"];
+/** 덤불 자리를 대신 채울 것 — 원본이라도 2~3천이라 부담이 없고 입체감이 산다.
+ *  걸어 다니는 구역은 카메라가 가장 오래 머무는 데라, 종류를 늘려 같은 물건이
+ *  반복되는 티를 지운다. 전부 decor/ 폴더라 simplify가 잘 먹은 것들이다. */
+const BUSH_STANDIN = ["boulder", "stones", "flower-pot", "bench", "barrel-iron", "stones", "flower-pot"];
 let promoted = 0;
 let dropped = 0;
 function kindFor(kind, x, z) {
   if (!(kind in REAL_OF) || !inWalkZone(x, z)) return kind;
   if (REAL_OF[kind] === null) {
-    // 전부 빼 버리면 광장 앞 잔디가 다시 휑해진다. 셋에 하나쯤은 작은 돌·화분으로
-    // 바꿔 심어 눈이 걸릴 데를 남긴다.
-    if (rand() < 0.36) {
+    // 전부 빼 버리면 광장 앞 잔디가 휑해진다. 처음엔 셋에 하나(0.36)만 남겼는데,
+    // 실측해 보니 장식물 901개 중 걸어 다니는 구역 안에 있는 건 163개뿐이었다 —
+    // 바깥 숲은 빽빽한데 정작 카메라가 사는 안쪽이 비어 있었다. 대부분 바꿔 심는다.
+    if (rand() < 0.78) {
       promoted += 1;
       return BUSH_STANDIN[Math.floor(rand() * BUSH_STANDIN.length)];
     }

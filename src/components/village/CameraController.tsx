@@ -267,7 +267,11 @@ export function CameraController({activeSection, isIntro = false, lockRotate = f
       enablePan={false}
       enableRotate={!lockRotate}
       enableZoom
-      maxDistance={36}
+      // 36이던 시절엔 카메라가 마을 안에 갇혀 있었다. 그때는 그 밖에 볼 게 없었기
+      // 때문이다 — 잔디 평면이 지평선까지 이어질 뿐이었으니까. 지금은 마을이 호수
+      // 위의 섬이고 물 건너에 산이 있어서, 끝까지 당기면 컨셉 아트처럼 섬 전체가
+      // 한 장에 들어온다. 섬 반지름이 40이라 그보다 넉넉하게.
+      maxDistance={78}
       maxPolarAngle={Math.PI / 2.1}
       minDistance={3}
       minPolarAngle={Math.PI / 9}
