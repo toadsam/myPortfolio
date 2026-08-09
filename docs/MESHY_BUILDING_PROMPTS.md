@@ -559,21 +559,41 @@ legible, warm orange accents, cozy and welcoming
 ```
 > 영문 대체: `reading "POST OFFICE"`
 
-### 27. `central-plaza.glb` — 중앙 광장
-비율: 극단적으로 납작하고 넓음 (2.6 / **0.4** / 2.6) · 포인트 색: 청록
-**건물 아님 — 바닥 플랫폼**
+### 27. `central-plaza.glb` — 중앙 광장 기념비 ★ 마을의 얼굴
+비율: 크고 높음 (3.6 / **4.2** / 3.6) · 포인트 색: 청록·금
+**바닥이 아니라 기념비입니다** — 원형 포석은 이미 `ground-flat/plaza-tile.glb`로 깔려 있습니다.
+
+마을에서 **가장 큰 오브젝트**입니다. 백엔드 탑(3.88유닛)보다 높게 나오도록
+`size`를 4.2로 올려 뒀으니, 프롬프트에서도 "가장 크고 높다"를 분명히 하세요.
+방문자가 처음 보는 게 이거라 마을의 첫인상을 통째로 결정합니다.
 
 ```
-a circular fantasy village plaza ground platform, radial cobblestone paving,
-a small central stone fountain, a wooden signpost standing at the rim with a
-very large directional arrow board, reading "중앙 광장" in big bold
-high-contrast Korean letters, clearly legible, flower beds and low benches
-around the rim, warm teal accents, this is a flat ground piece NOT a building,
-no walls, no roof, extremely flat and wide open
+a grand central monument in a fairytale village plaza, the tallest landmark
+in the whole village, a wide three-tiered circular stone fountain base with
+water spilling between the tiers, a tall carved stone pillar rising from the
+center, crowned at the very top with a large glowing emblem shaped like the
+code brackets "</>" made of warm golden light, a very large polished bronze
+plaque mounted on the front of the pillar facing the viewer, reading "정재훈"
+in big bold high-contrast Korean letters, the plaque is a dominant feature and
+clearly legible, a smaller banner ribbon below it reading "Developer's City",
+four short stone posts standing around the fountain rim each topped with a
+small lantern, flower beds and low benches around the base, teal water and
+warm golden accents, majestic and welcoming, clearly the biggest and tallest
+structure, taller than it is wide
 ```
-> 영문 대체: `reading "CENTRAL PLAZA"`
-> **가장 먼저 만드세요.** 지금 자리에 파란 네온 홀로그램 탑이 서 있는데,
-> 화면 한복판에 가장 크게 잡혀서 이거 하나만 바꿔도 첫인상이 제일 크게 달라집니다.
+> 영문 대체: `reading "JAEHUN JEONG"`
+> 이름을 앞면에, `Developer's City`를 아래 리본에 — 두 줄을 다른 크기로 두면
+> 이미지 AI가 덜 헷갈립니다. 건물 이름(`중앙 광장`)은 코드 간판이 위에 띄웁니다.
+
+**모티프를 왜 이렇게 잡았나**: `</>` 코드 태그는 이미 재훈님 상징입니다 — 지금 그
+자리에 서 있는 임시 조형물에도 `</정재훈 항상 파이팅>`이 걸려 있고, 앱 헤드라인도
+`Fullstack / 3D / Game / XR`입니다. 분수·비석은 마을 톤이고, 태그 엠블럼이 "개발자의
+마을"이라는 정체성을 한 방에 말합니다. 다른 방향(예: 작업실 느낌, 등대, 거대한 책)을
+원하시면 말씀해 주세요 — 형태만 바꾸면 됩니다.
+
+> **넣으면 자동으로 교체됩니다.** 지금 그 자리의 파란 네온 조형물은
+> `environment/statue.glb`를 `VillageScene`이 하드코딩으로 세운 것인데,
+> `central-plaza.glb`가 들어오면 자동으로 빠지도록 해 뒀습니다.
 
 ---
 

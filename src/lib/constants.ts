@@ -103,7 +103,7 @@ const plazaBuilding: BuildingData = {
   label: "Start",
   description: "마을 전체의 허브입니다. 처음 방문했다면 여기에서 안내를 확인하세요.",
   position: [0, 0, 0],
-  size: [2.6, 0.4, 2.6],
+  size: [3.6, 4.2, 3.6],
   color: "#0a1a2e",
   roofColor: "#00d4ff",
   accentColor: "#00d4ff"

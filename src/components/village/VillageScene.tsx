@@ -8,6 +8,7 @@ import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import {spread, villageBuildings} from "@/lib/constants";
+import buildingModels from "@/data/buildingModels.json";
 import {buildBuildingStateMap, buildNpcStateMap} from "@/lib/liveState";
 import type {NpcRuntimeState, VillageState} from "@/types/live";
 import type {ExplorationMode, NPCData, SectionId, Vector3Tuple} from "@/types/portfolio";
@@ -67,6 +68,14 @@ function timePalette(hour: number) {
   }
   return {sky: "#e09a64", fog: "#e6ad7e", near: 28, far: 62, amb: 3.1, sun: "#ff945a", sunI: 3.8, fill: "#ffb184", fillI: 1.9, hSky: "#e8a070", hGround: "#5a5a2a", hI: 2.1, label: "노을"};
 }
+
+// 광장 한복판의 임시 조형물. 사이버펑크 시절의 파란 결정체라 지금 마을 톤에서
+// 혼자 튀는데, 화면 정중앙에 가장 크게 잡히는 물건이라 비워 둘 수도 없었다.
+//
+// central-plaza.glb 가 들어오면 Building 이 같은 자리에 진짜 기념비를 그리므로
+// 이건 자동으로 빠진다 — 모델을 넣고 나서 이 컴포넌트를 지우는 걸 잊어도
+// 조형물 두 개가 겹치는 사고가 안 난다.
+const PLAZA_LANDMARK_READY = "central-plaza" in buildingModels;
 
 function Statue() {
   const {scene} = useGLTF("/models/environment/statue.glb");
@@ -332,7 +341,7 @@ function VillageSceneImpl({
 
         <Suspense fallback={null}>
           <Ground />
-          <Statue />
+          {PLAZA_LANDMARK_READY ? null : <Statue />}
 
           <DistrictSign label="Project District" position={spread([-8.5, 0, -5.5])} color="#00d4ff" />
           <DistrictSign label="Skills District" position={spread([0, 0, -9.0])} color="#aa44ff" />
