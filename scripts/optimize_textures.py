@@ -17,7 +17,7 @@ import os
 import sys
 
 try:
-    from PIL import Image, ImageStat
+    from PIL import Image, ImageFile, ImageStat
 except ImportError:
     print("  ! Pillow가 없습니다 — pip install Pillow", file=sys.stderr)
     sys.exit(2)
@@ -242,6 +242,11 @@ def main():
             else:
                 out_uri = os.path.splitext(uri)[0] + ".jpg"
                 quality = min(QUALITY.get(k, 85) for k in kinds)
+                # optimize=True 는 JPEG 전체를 한 블록에 담아야 하는데, Pillow의 기본
+                # 버퍼는 64KB뿐이라 넘치면 "broken data stream when writing image file"
+                # 로 죽는다. 노멀맵은 화질 92 + 4:4:4 라 256×256 만 돼도 64KB를 넘긴다
+                # (우물·노점·게시판·입구아치가 여기서 걸렸다). 픽셀당 4바이트면 충분하다.
+                ImageFile.MAXBLOCK = max(ImageFile.MAXBLOCK, im.size[0] * im.size[1] * 4)
                 # subsampling=0 (4:4:4) — 노멀맵/거칠기맵은 색 뭉개짐이 곧 오차다
                 im.convert("RGB").save(
                     os.path.join(base_dir, out_uri), "JPEG",

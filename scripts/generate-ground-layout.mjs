@@ -27,6 +27,7 @@
 // 프롭만 지우고 다시 쓴다. 다른 프롭은 그대로 둔다.
 
 import {readFileSync, writeFileSync} from "node:fs";
+import {readVillage} from "./lib/read-village.mjs";
 
 const LAYOUT = "src/data/propsLayout.json";
 const dry = process.argv.includes("--dry");
@@ -81,14 +82,22 @@ const TILE = {
 //
 // 교차로가 두 장(cross / cross-b) 들어왔다. 무늬가 조금 다른 cross-b 는
 // 지금은 안 쓰고 예비로 둔다.
-const V2_DIR = "/models/props/ground/v2";
+//
+// 2026-08-09: 타일을 평면으로 구워 바꿨다 (scripts/flatten-ground-tiles.mjs).
+// Meshy 타일은 장당 1만 삼각형인데 요철 높이가 타일 폭의 1~3%뿐이라 마을
+// 카메라에서는 안 보이고, simplify는 UV 심에 막혀 4,853에서 바닥을 친다
+// (오차를 0.02→0.15로 올려도 그대로). 그래서 위에서 구운 그림을 평면에 입혔다.
+// 길 68 + 앞마당 27 + 풀숲 29 장에서 634k가 사라진다.
+//
+// 평면이라 top 은 전부 0이다 — 맞출 요철이 없으니 이음매가 완벽히 붙는다.
+const V2_DIR = "/models/props/ground-flat/v2";
 const V2_TILE = {
-  straight: {glb: `${V2_DIR}/path-straight.glb`, top: 0.076, tris: 4867},
-  curve: {glb: `${V2_DIR}/path-curve.glb`, top: 0.079, tris: 1191},
-  t: {glb: `${V2_DIR}/path-t.glb`, top: 0.068, tris: 3000},
-  cross: {glb: `${V2_DIR}/path-cross.glb`, top: 0.079, tris: 4630},
-  plaza: {glb: "/models/props/ground/plaza-tile.glb", top: 0.083, tris: 6151},
-  grass: {glb: `${V2_DIR}/grass-patch.glb`, top: 0.052, tris: 4895}
+  straight: {glb: `${V2_DIR}/path-straight.glb`, top: 0, tris: 2},
+  curve: {glb: `${V2_DIR}/path-curve.glb`, top: 0, tris: 2},
+  t: {glb: `${V2_DIR}/path-t.glb`, top: 0, tris: 2},
+  cross: {glb: `${V2_DIR}/path-cross.glb`, top: 0, tris: 2},
+  plaza: {glb: "/models/props/ground-flat/plaza-tile.glb", top: 0, tris: 32},
+  grass: {glb: `${V2_DIR}/grass-patch.glb`, top: 0, tris: 2}
 };
 
 // plaza-tile 은 정사각 슬래브가 아니라 실제 원반이다 (정점의 0%만 내접원 밖).
@@ -123,57 +132,8 @@ const SETS = {
 // ─── 건물 ─────────────────────────────────────────────────────────────────────
 // 좌표와 크기를 여기에 베껴 두면 constants.ts 를 고칠 때마다 두 곳이 어긋난다
 // (실제로 건물 크기를 정리하다 앞마당 원반이 통째로 틀어졌다). 원본에서 읽는다.
-//
-// constants.ts 는 TypeScript라 node에서 그냥 import할 수 없어, 필요한 값만 훑는다.
-// 형식이 바뀌면 조용히 빈 배열이 되지 않도록 개수를 확인하고 멈춘다.
-const CONSTANTS = "src/lib/constants.ts";
-const source = readFileSync(CONSTANTS, "utf8");
+const {buildings} = readVillage();
 
-const num = re => {
-  const m = source.match(re);
-  if (!m) throw new Error(`${CONSTANTS} 에서 ${re} 를 못 찾았습니다`);
-  return Number(m[1]);
-};
-const SPREAD = num(/export const SPREAD\s*=\s*([\d.]+)/);
-
-const OFFSET = {};
-{
-  const block = source.match(/districtOffset[^=]*=\s*\{([\s\S]*?)\};/);
-  if (!block) throw new Error(`${CONSTANTS} 에서 districtOffset 을 못 찾았습니다`);
-  for (const line of block[1].split("\n")) {
-    const m = line.match(/(\w[\w-]*)\s*:\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/);
-    if (m) OFFSET[m[1]] = [Number(m[2]), Number(m[3])];
-  }
-}
-
-// id 하나가 곧 건물 하나는 아니다(sectionMeta 에도 id가 있다). 다음 id 직전까지만
-// 훑어서 size·position·district 가 모두 있는 것만 건물로 친다.
-const buildings = [];
-{
-  const ids = [...source.matchAll(/id:\s*"([^"]+)"/g)];
-  for (let n = 0; n < ids.length; n++) {
-    const start = ids[n].index;
-    const end = n + 1 < ids.length ? ids[n + 1].index : source.length;
-    const chunk = source.slice(start, end);
-    const size = chunk.match(/size:\s*\[([^\]]+)\]/);
-    const position = chunk.match(/position:\s*\[([^\]]+)\]/);
-    const district = chunk.match(/district:\s*"([^"]+)"/);
-    if (!size || !position || !district) continue;
-    const [w, , d] = size[1].split(",").map(v => Number(v.trim()));
-    const [px, , pz] = position[1].split(",").map(v => Number(v.trim()));
-    const [ox, oz] = OFFSET[district[1]] ?? [0, 0];
-    buildings.push({
-      id: ids[n][1],
-      district: district[1],
-      x: Math.round((px + ox) * SPREAD * 100) / 100,
-      z: Math.round((pz + oz) * SPREAD * 100) / 100,
-      w,
-      d
-    });
-  }
-}
-if (buildings.length < 20)
-  throw new Error(`${CONSTANTS} 에서 건물을 ${buildings.length}개밖에 못 읽었습니다 — 형식이 바뀐 듯합니다`);
 // 중앙 광장은 앞마당 대신 큰 광장 한 장을 따로 깐다
 const HUB = buildings.find(b => b.id === "central-plaza");
 const OUTER = buildings.filter(b => b.id !== "central-plaza");
@@ -480,6 +440,12 @@ const rand = mulberry32(20260808);
 const CLUMPS_PER_BUILDING = 1;
 /** 한 자리에 겹쳐 심는 장수 */
 const PATCHES_PER_CLUMP = [2, 3];
+
+// 그마저도 건물마다 놓으면 57장 = 279k 로 마을 최대 삼각형 소비자가 된다.
+// 장식물(간판·벤치·화분·우물…)이 들어오면서 "건물 옆 빈 잔디를 채운다"는 역할이
+// 통째로 겹치므로, 풀숲은 한 채 걸러 한 채만 두고 예산을 장식물에 넘긴다.
+// 듬성듬성 한 장씩 까느니 절반만 심고 덩어리감을 남기는 쪽이 보기에도 낫다.
+const CLUMP_EVERY_NTH_BUILDING = 2;
 /** 풀숲이 길 타일을 침범하지 않도록 둘 최소 거리 */
 const ROAD_CLEARANCE = HALF + 0.55;
 
@@ -504,7 +470,8 @@ function plantable(x, z) {
 // {x, z, scale, rot} 목록 — 격자가 아니라 실좌표로 흩뿌린다
 const clumps = [];
 const placed = [];
-for (const f of forecourts) {
+for (const [index, f] of forecourts.entries()) {
+  if (index % CLUMP_EVERY_NTH_BUILDING !== 0) continue;
   // 원반 바깥 고리를 12방향으로 훑어 심을 수 있는 각도를 모은다
   const spots = [];
   for (let a = 0; a < 12; a++) {
@@ -553,26 +520,30 @@ const bump = (k, v2 = false) => {
   counts[at] = (counts[at] ?? 0) + 1;
 };
 
+// 광장·앞마당은 길과 달리 칸 단위로 세트를 섞지 않는다 — 원반 한 장이 통째로
+// 하나이므로 기본 세트(--v1 이면 예전 것)를 그대로 쓴다.
+const PLAZA = (process.argv.includes("--v1") ? SETS.v1 : SETS.v2).tiles.plaza;
+
 // 중앙 광장
 props.push({
   id: "ground-plaza-center",
-  glb: TILE.plaza.glb,
-  position: [HUB.x, round3(TOP_Y - TILE.plaza.top * HUB_SCALE), HUB.z],
+  glb: PLAZA.glb,
+  position: [HUB.x, round3(TOP_Y - PLAZA.top * HUB_SCALE), HUB.z],
   rotationY: 0,
   scale: HUB_SCALE
 });
-bump("plaza");
+bump("plaza", PLAZA === SETS.v2.tiles.plaza);
 
 // 건물 앞마당
 for (const f of forecourts) {
   props.push({
     id: `ground-yard-${f.b.id}`,
-    glb: TILE.plaza.glb,
-    position: [f.b.x, round3(TOP_Y - TILE.plaza.top * f.scale), f.b.z],
+    glb: PLAZA.glb,
+    position: [f.b.x, round3(TOP_Y - PLAZA.top * f.scale), f.b.z],
     rotationY: 0,
     scale: f.scale
   });
-  bump("plaza");
+  bump("plaza", PLAZA === SETS.v2.tiles.plaza);
 }
 
 // 길

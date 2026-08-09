@@ -32,21 +32,6 @@ export function PathSegment({length, position, rotationZ = 0, width = 0.48}: Pat
   );
 }
 
-export function Rock({position, scale = 1}: {position: Vector3Tuple; scale?: number}) {
-  const colors = ["#0a2040", "#0a1830", "#071525"];
-  const color = colors[Math.floor(scale * 10) % colors.length] ?? "#0a2040";
-  return (
-    <group position={[position[0], 0, position[2]]}>
-      <mesh castShadow position={[0, 0.08 * scale, 0]} scale={[0.28 * scale, 0.16 * scale, 0.22 * scale]} rotation={[0.1, 0.45, 0.02]}>
-        <dodecahedronGeometry args={[1, 0]} />
-        <meshStandardMaterial color={color} roughness={0.5} metalness={0.6} emissive="#002244" emissiveIntensity={0.2} />
-      </mesh>
-      {/* 크랙 네온 글로우 */}
-      <pointLight color="#00aaff" intensity={0.3} distance={1.2} decay={2} position={[0, 0.2 * scale, 0]} />
-    </group>
-  );
-}
-
 export function Fence({position, rotation = 0}: {position: Vector3Tuple; rotation?: number}) {
   return (
     <group position={position} rotation={[0, rotation, 0]}>

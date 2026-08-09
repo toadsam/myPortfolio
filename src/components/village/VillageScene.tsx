@@ -7,7 +7,7 @@ import {RepeatWrapping, SRGBColorSpace} from "three";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
-import {rockPositions, spread, treePositions, villageBuildings} from "@/lib/constants";
+import {spread, villageBuildings} from "@/lib/constants";
 import {buildBuildingStateMap, buildNpcStateMap} from "@/lib/liveState";
 import type {NpcRuntimeState, VillageState} from "@/types/live";
 import type {ExplorationMode, NPCData, SectionId, Vector3Tuple} from "@/types/portfolio";
@@ -15,12 +15,10 @@ import {Building} from "./Building";
 import {BuildingNetwork} from "./BuildingNetwork";
 import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
-import {Rock} from "./Decorations";
 import {NPC, type NpcCommand} from "./NPC";
 import {PerfHudPanel, PerfProbe} from "./PerfHud";
 import {SeasonAmbience} from "./SeasonAmbience";
 import {PropsEditorTray, PropsLayer, usePropsEditor} from "./PropsEditor";
-import {Tree, treeScaleFor} from "./Tree";
 
 interface VillageSceneProps {
   activeSection: SectionId;
@@ -97,18 +95,24 @@ useGLTF.preload("/models/environment/statue.glb");
 const GROUND_SIZE = 90;
 /** 잔디 텍스처 1장이 덮는 월드 크기(유닛). 작을수록 잔디결이 촘촘해진다. */
 // 512px 텍스처를 4유닛에 펴 바르면 카메라를 붙였을 때 결이 뭉개져 초록 죽처럼 보인다.
-const GRASS_TILE_WORLD = 2.6;
-// 잔디 평면 색 보정.
 //
-// 평면 텍스처는 풀숲 슬래브에서 뽑았는데, 길 타일에 붙은 잔디 갓길은 그보다
-// 노랗고 진하다(평면 rgb 128,177,59 vs 갓길 114,164,33). 그대로 두면 길이 지나갈
-// 때마다 잔디 색이 한 단 달라져 타일 경계가 드러난다.
-// 갓길 평균색이 나오도록 선형 공간에서 역산한 값 — 곱하면 정확히 겹친다.
-const GRASS_TINT = "#e4ed9f";
+// 길 타일은 512px 텍스처가 1.88유닛(타일 한 칸)을 덮는다. 평면이 2.6유닛이면
+// 같은 화면 안에서 평면만 결이 성겨 밉맵에 뭉개지고, 타일의 잔디 갓길만 또렷해서
+// 길가에 밝은 사각형이 줄지어 보였다. 타일과 비슷한 밀도로 맞춘다.
+// 정확히 1.88로 두면 타일 격자와 주기가 겹쳐 물결무늬가 생기므로 조금 어긋낸다.
+const GRASS_TILE_WORLD = 2.0;
+// 색 보정은 이제 텍스처에 구워져 있다.
+//
+// 예전엔 풀숲 슬래브에서 뽑은 그림을 쓰면서, 길 타일 갓길과 색을 맞추려고 선형
+// 공간에서 역산한 tint(#e4ed9f)를 곱했다. 그런데 그 그림에는 둔덕 같은 큰 덩어리가
+// 있어 2.6유닛마다 격자로 되풀이돼 이불 누빔처럼 보였다.
+// 지금은 scripts/make-grass-texture.mjs 가 큰 구조 없는 잔디를 갓길 색 그대로
+// 만들어 낸다 — 곱할 게 없으니 흰색이다. 색을 바꾸려면 그 스크립트를 고칠 것.
+const GRASS_TINT = "#ffffff";
 
-// 바닥 잔디는 길 타일 세트(ground/v2)의 풀숲 윗면을 그대로 구워 이음매를 없앤 것이다.
-// 예전 grass.jpg는 연노랑 초록이라, 길 타일에 붙은 진한 초록 갓길과 색이 달라
-// 길이 잔디 위에 얹힌 초록 리본처럼 떠 보였다. 같은 원본에서 뽑아야 색이 맞는다.
+// 잔디 텍스처는 scripts/make-grass-texture.mjs 가 만든다. 색은 길 타일 갓길에서
+// 실측한 값이라, 길이 지나가도 경계가 안 드러난다. 예전 grass.jpg는 연노랑 초록이라
+// 길이 잔디 위에 얹힌 초록 리본처럼 떠 보였다.
 function Ground() {
   const map = useTexture("/textures/grass-village.png");
   useEffect(() => {
@@ -393,13 +397,10 @@ function VillageSceneImpl({
             />
           ))}
 
-          {treePositions.map((position, index) => (
-            <Tree key={position.join("-")} position={position} scale={treeScaleFor(index)} />
-          ))}
-
-          {rockPositions.map((position, index) => (
-            <Rock key={position.join("-")} position={position} scale={index % 2 === 0 ? 1 : 0.72} />
-          ))}
+          {/* 나무·바위는 propsLayout.json 의 decor 프롭으로 옮겼다 (scripts/generate-decor-layout.mjs).
+              예전엔 여기서 네온 콘과 검은 다면체를 절차적으로 그렸는데, 마을이 따뜻한
+              스타일로 바뀌면서 혼자 사이버펑크로 남아 겉돌았다. 자리는 constants.ts 의
+              treePositions / rockPositions 를 그대로 쓴다. */}
 
           {/* 길 타일 윗면(y=0.02)과 같은 높이면 z-파이팅이 나므로 살짝 위로 */}
           <ContactShadows blur={1.5} far={12} frames={1} opacity={0.15} position={[0, 0.035, 2]} scale={26} />

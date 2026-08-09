@@ -33,3 +33,9 @@ yarn-error.log*
 #user generated content
 public/profile.json
 public/blogs.json
+
+# Meshy 원본 GLB — 장당 20~40MB라 리포에 넣으면 안 된다.
+# 최적화 결과물(public/models/<그룹>/**.glb, 장당 0.1~0.5MB)만 커밋한다.
+# 원본은 바탕화면 "정재훈의 포트폴리오 모음집/3d 포트폴리오 마을에 대한 정보"에 보관.
+# 다시 구우려면 원본을 raw/ 에 되돌려 놓고 `npm run optimize props`.
+public/models/*/raw/

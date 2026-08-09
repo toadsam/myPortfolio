@@ -101,9 +101,26 @@ const isGroundTile = (inPath) => /[\\/]ground[\\/]/.test(inPath);
 // 오차 예산을 더 키워도(0.08) 삼각형이 4895→4819 밖에 안 준다 — UV 심이 많아
 // meshoptimizer가 정점을 못 합친다. 풀숲을 100장 넘게 깔아도 InstancedProps가
 // 인스턴싱 + 청크 프러스텀 컬링으로 그리므로 그대로 둔다.
+
+// 장식물(간판·가로등·벤치…)은 바닥 타일과 정반대로 simplify가 아주 잘 먹는다.
+// 나무·돌·금속 덩어리라 UV 심이 적어서, 오차 0.005만 줘도 28종 합계
+// 276k → 124k (−55%)이고 구운 그림으로 대조해도 차이가 안 보인다.
+// 0.02까지 올리면 간판 판때기 외곽선이 각져 보이므로 0.005가 상한.
+const DECOR_SIMPLIFY = "--simplify-error 0.005 --simplify-ratio 0.1";
+const isDecor = (inPath) => /[\\/](signs|decor|nature)[\\/]/.test(inPath);
+
+// 간판에 건물 예산(baseColor 1024)을 빌려준 적이 있다. 글자가 존재 이유니까.
+// 그런데 장식물이 35종으로 늘자 텍스처 VRAM이 252MB로 예산(250)을 넘겼고,
+// 간판 7장이 그중 37MB를 먹고 있었다 — 마을 카메라에서 간판은 높이 1유닛이라
+// 화면에 수십 px밖에 안 잡히고, 가장 가까이 붙어도 512로 글자가 또렷하다.
+// 예산이 다시 넉넉해지면 여기만 되돌리면 된다.
+const textureGroupFor = (group) => group;
+
 function passesFor(group, inPath) {
   if (group === "characters") return SKIN_SAFE;
-  if (group === "props" && isGroundTile(inPath)) return GROUND_SIMPLIFY;
+  if (group !== "props") return "";
+  if (isGroundTile(inPath)) return GROUND_SIMPLIFY;
+  if (isDecor(inPath)) return DECOR_SIMPLIFY;
   return "";
 }
 
@@ -135,7 +152,7 @@ for (const {group, inPath, outPath} of jobs) {
     // ② 쓸모없는 맵 삭제 + 축소 + JPEG
     if (pillowOk) {
       // PYTHONIOENCODING — 없으면 Windows에서 파이썬이 cp949로 뱉어 한글이 깨진다
-      execFileSync(python, [join("scripts", "optimize_textures.py"), work, group], {
+      execFileSync(python, [join("scripts", "optimize_textures.py"), work, textureGroupFor(group)], {
         stdio: "inherit",
         env: {...process.env, PYTHONIOENCODING: "utf-8"}
       });
