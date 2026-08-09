@@ -650,20 +650,20 @@ function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
   const glbPath = b.glbPath ?? buildingModels[b.id];
   if (glbPath) return <GlbModel glbPath={glbPath} size={b.size} />;
 
-  switch (b.kind) {
-    case "tower":          return <TowerBuilding b={b} hl={hl} />;
-    case "office-rounded": return <OfficeRoundedBuilding b={b} hl={hl} />;
-    case "compact-studio": return <CompactStudioBuilding b={b} hl={hl} />;
-    case "flat-hub":       return <FlatHubBuilding b={b} hl={hl} />;
-    case "dome":           return <DomeBuilding b={b} hl={hl} />;
-    case "server-tower":   return <ServerTowerBuilding b={b} hl={hl} />;
-    case "arcade":         return <ArcadeBuilding b={b} hl={hl} />;
-    case "minimal-office": return <MinimalOfficeBuilding b={b} hl={hl} />;
-    case "townhouse":      return <TownhouseBuilding b={b} hl={hl} />;
-    case "post":           return <PostBuilding b={b} hl={hl} />;
-    case "plaza":          return <PlazaBuilding b={b} hl={hl} />;
-    default:               return <TownhouseBuilding b={b} hl={hl} />;
-  }
+  // ─── 모델이 아직 없는 건물은 전부 민가 한 종류로 ─────────────────────────────
+  // kind 별로 돔·원통·탑 같은 형태를 그리던 것을 접었다. 구역별로 건물을 모으고
+  // 나니 아직 모델이 없는 9채가 한 구역에 뭉쳐서 **보라색 구슬과 회색 상자의 벽**이
+  // 됐다 — 흩어져 있을 땐 그럭저럭 넘어가던 게 뭉치니 통째로 눈에 걸린다.
+  //
+  // 소박한 민가(벽 + 박공지붕 + 문 + 창) 하나로 통일하면, 색만 다른 집들이 줄지어
+  // 선 모습이라 "아직 안 지은 자리"가 아니라 "평범한 집"으로 읽힌다.
+  // GLB 가 들어오면 위에서 바로 갈라지므로 이 분기는 저절로 사라진다.
+  //
+  // 이 분기 때문에 kind 별 셸(Tower/Dome/Arcade…)은 지금 아무 데서도 안 불린다.
+  // 지우지 않고 남겨 뒀지만 **되살릴 계획이 있어서가 아니라** 이 커밋의 diff 를
+  // 더 키우지 않으려는 것뿐이다 — 정리할 때 통째로 지워도 된다(git 에 남아 있다).
+  if (b.kind === "plaza") return <PlazaBuilding b={b} hl={hl} />;
+  return <TownhouseBuilding b={b} hl={hl} />;
 }
 
 function BuildingImpl({building, buildingState, isActive, onRequestEnter, edit}: BuildingProps) {
