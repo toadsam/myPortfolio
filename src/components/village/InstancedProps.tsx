@@ -22,8 +22,10 @@ import type {PropPlacement} from "@/types/props";
 
 /** 이 개수를 넘는 GLB만 격자 청크로 쪼갠다. 그 이하는 통째로 하나. */
 const CHUNK_THRESHOLD = 80;
-/** 청크 격자 한 칸의 크기(월드 유닛). 마을이 대략 40유닛이므로 15면 3~4칸. */
-const CHUNK_SIZE = 15;
+/** 청크 하나가 대략 몇 개를 담게 할지 */
+const CHUNK_TARGET = 120;
+/** GLB 하나가 만들 수 있는 청크 수 상한 */
+const MAX_CHUNKS = 9;
 
 // ─── GLB → 인스턴싱 가능한 파트 목록 ──────────────────────────────────────────
 // GLB 하나에 메시가 여러 개(지붕/벽/창문...) 들어있을 수 있다. 각각 지오메트리와
@@ -58,10 +60,25 @@ function extractParts(root: Object3D): Part[] {
 // ─── 배치 목록 → 격자 청크 ────────────────────────────────────────────────────
 function chunkPlacements(placements: PropPlacement[]): PropPlacement[][] {
   if (placements.length <= CHUNK_THRESHOLD) return [placements];
+
+  // 칸 크기를 고정하면(예전엔 15유닛) 넓게 흩어진 GLB일수록 청크가 폭발한다.
+  // 마을을 두르는 숲 띠는 지름 80유닛에 걸쳐 있어 15유닛 격자로는 30칸 —
+  // 즉 draw call 30회다. 컬링으로 아끼는 것보다 나누느라 쓰는 게 많아진다.
+  // 배치가 퍼진 넓이에서 거꾸로 칸 크기를 구해 청크 수를 MAX_CHUNKS 안에 묶는다.
+  let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+  for (const p of placements) {
+    x0 = Math.min(x0, p.position[0]);
+    x1 = Math.max(x1, p.position[0]);
+    z0 = Math.min(z0, p.position[2]);
+    z1 = Math.max(z1, p.position[2]);
+  }
+  const want = Math.min(MAX_CHUNKS, Math.max(1, Math.round(placements.length / CHUNK_TARGET)));
+  const size = Math.max(8, Math.sqrt(Math.max(1, (x1 - x0) * (z1 - z0)) / want));
+
   const cells = new Map<string, PropPlacement[]>();
   for (const p of placements) {
-    const cx = Math.floor(p.position[0] / CHUNK_SIZE);
-    const cz = Math.floor(p.position[2] / CHUNK_SIZE);
+    const cx = Math.floor(p.position[0] / size);
+    const cz = Math.floor(p.position[2] / size);
     const key = `${cx}:${cz}`;
     const bucket = cells.get(key);
     if (bucket) bucket.push(p);

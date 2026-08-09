@@ -82,7 +82,18 @@ function estimateTextureBytes(renderer: WebGLRenderer, scene: {traverse: (fn: (o
 
 // ─── Canvas 안에서 도는 계측기 ───────────────────────────────────────────────
 export function PerfProbe() {
-  const {gl, scene} = useThree();
+  const {gl, scene, camera} = useThree();
+
+  // 계기판은 합계만 알려준다. "그래서 어느 GLB가 draw call을 먹고 있나"를 캐려면
+  // 씬 그래프를 직접 세어봐야 하는데, r3f 스토어는 밖에서 잡을 방법이 없다.
+  // 개발 모드에서만 창에 걸어 둔다 — 콘솔에서 __village.scene.traverse(...) 로 센다.
+  // camera 도 같이 건다: 마을 전경을 확인하려면 OrbitControls의 maxDistance(36)
+  // 밖으로 카메라를 잠깐 빼야 하는데, CameraController가 매 프레임 되돌린다.
+  useEffect(() => {
+    if (!isDev) return;
+    (window as unknown as {__village?: unknown}).__village = {gl, scene, camera};
+  }, [gl, scene, camera]);
+
   const frames = useRef(0);
   const windowStart = useRef(performance.now());
   const lastTextureScan = useRef(0);
