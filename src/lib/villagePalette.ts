@@ -54,6 +54,10 @@ export interface VillagePalette {
   lamp: number;
   /** 건물 텍스처를 자기 발광으로 얼마나 되돌릴지 — 저녁에 창문이 켜지는 효과 */
   windowGlow: number;
+  /** 구름 — 볕 받는 윗면 / 그늘진 밑면 / 덮는 정도(0이면 맑음) */
+  cloudLight: string;
+  cloudDark: string;
+  cloudCover: number;
   label: string;
 }
 
@@ -76,14 +80,25 @@ export interface VillagePalette {
 // 컨셉 아트의 극적인 느낌은 태양이 낮아서 그림자가 길게 눕는 데서 온다.
 // 새벽·노을은 15~17°로 내리고 방위를 반대편에 둬 아침/저녁이 구분되게 한다.
 
+// ─── 왜 노을이 기본이 됐나 ────────────────────────────────────────────────────
+// 컨셉 아트를 우리 렌더와 나란히 놓고 가장 크게 달랐던 게 빛이다. 컨셉의 인상은
+// 구름이나 소품이 아니라 **낮게 깔린 노을 + 금색으로 타는 창문·등불**에서 온다.
+// 우리는 8~17시가 전부 푸른 한낮이라, 방문자 대부분이 물 빠진 화면을 봤다.
+//
+// 시간대 기능 자체는 살린다(백엔드 마을 상태·NPC 기분이 여기 물려 있다).
+// 대신 두 가지를 했다:
+//   ① 노을 구간을 15~20시로 넓혀 저녁 접속이 전부 노을에 걸리게 한다
+//   ② **한낮도 따뜻하게 내린다** — 태양 고도 52°→32°, 색을 미색에서 금색으로,
+//      지평선을 주황빛 아지랑이로. 정오에 들어와도 컨셉 톤이 유지된다.
 export function timePalette(hour: number): VillagePalette {
-  if (hour >= 20 || hour < 5) {
+  if (hour >= 21 || hour < 5) {
     return {
       skyHorizon: "#24365e", skyTop: "#0b1430", fog: "#24365e", near: 62, far: 230,
       amb: 0.2, sun: "#9fb4e8", sunI: 0.95, sunPos: [-30, 44, -26],
       discRadius: 9, discColor: "#e8eeff",
       fill: "#3a4f8c", fillI: 0.14, hSky: "#22345e", hGround: "#141f26", hI: 0.24,
-      lamp: 2.6, windowGlow: 1.15, label: "밤"
+      lamp: 2.6, windowGlow: 1.15,
+      cloudLight: "#6b7ba6", cloudDark: "#1b2440", cloudCover: 0.6, label: "밤"
     };
   }
   if (hour < 8) {
@@ -92,24 +107,32 @@ export function timePalette(hour: number): VillagePalette {
       amb: 0.42, sun: "#ffd6a6", sunI: 2.5, sunPos: [-58, 17, 34],
       discRadius: 15, discColor: "#fff0d2",
       fill: "#ffc2d2", fillI: 0.35, hSky: "#f0c8a4", hGround: "#566a3a", hI: 0.5,
-      lamp: 1.2, windowGlow: 0.5, label: "새벽"
+      lamp: 1.2, windowGlow: 0.55,
+      cloudLight: "#fff0ee", cloudDark: "#c79bb2", cloudCover: 0.75, label: "새벽"
     };
   }
-  if (hour < 17) {
+  if (hour < 15) {
     return {
-      skyHorizon: "#c3dcf2", skyTop: "#4d8cca", fog: "#c3dcf2", near: 78, far: 280,
-      amb: 0.5, sun: "#fff8e8", sunI: 3.0, sunPos: [30, 52, 24],
-      discRadius: 8, discColor: "#fffbe8",
-      fill: "#d0e8ff", fillI: 0.4, hSky: "#87ceeb", hGround: "#4a7a3a", hI: 0.6,
-      lamp: 0.25, windowGlow: 0.14, label: "낮"
+      // 지평선을 푸른 회색(#c3dcf2)에서 금빛 아지랑이로 바꿨다. 하늘 밑동은
+      // fog 와 같은 색이라, 이 한 값이 먼 산·물·숲의 공기색까지 같이 따뜻하게 만든다.
+      skyHorizon: "#f7d7a6", skyTop: "#3f7fc4", fog: "#f2d3ac", near: 78, far: 280,
+      amb: 0.44, sun: "#ffe6b8", sunI: 3.0, sunPos: [34, 32, 26],
+      discRadius: 11, discColor: "#fff8dc",
+      fill: "#ffd9b0", fillI: 0.36, hSky: "#a8cfee", hGround: "#5a7a34", hI: 0.5,
+      // 컨셉은 한낮 그림에서도 창문마다 불이 들어와 있다. 0.14 는 Bloom 문턱(0.72)에
+      // 걸리지도 않아 켜 놓으나 마나였다.
+      lamp: 0.7, windowGlow: 0.4,
+      cloudLight: "#ffffff", cloudDark: "#c2cfe0", cloudCover: 0.66, label: "낮"
     };
   }
   return {
-    skyHorizon: "#f3ac72", skyTop: "#3f3b78", fog: "#e8b58a", near: 72, far: 255,
-    amb: 0.45, sun: "#ffb277", sunI: 2.8, sunPos: [56, 15, 28],
-    discRadius: 17, discColor: "#fff0c4",
-    fill: "#ffb184", fillI: 0.38, hSky: "#e8a070", hGround: "#5a5a2a", hI: 0.55,
-    lamp: 1.6, windowGlow: 0.85, label: "노을"
+    // 태양 고도 15°→11°. 그림자가 더 길게 눕는다.
+    skyHorizon: "#ffae63", skyTop: "#2e2f6b", fog: "#f0b483", near: 72, far: 255,
+    amb: 0.4, sun: "#ffa062", sunI: 3.1, sunPos: [58, 11, 26],
+    discRadius: 19, discColor: "#fff2c8",
+    fill: "#ffa878", fillI: 0.42, hSky: "#f0a068", hGround: "#4a4626", hI: 0.5,
+    lamp: 2.1, windowGlow: 1.05,
+    cloudLight: "#ffe3bd", cloudDark: "#8a6a86", cloudCover: 0.85, label: "노을"
   };
 }
 

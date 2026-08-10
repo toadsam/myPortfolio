@@ -177,6 +177,9 @@ const MARGIN = 3;
 // 남쪽 정문 대계단의 짝. 마을 밖 벌판까지 일부러 뻗으므로 격자도 여기까지 넓힌다.
 // z = -26.3. 개울이 j −11(z −20.7)에서 이 길을 가로지르고 그 위에 돌다리가 선다.
 const NORTH_END = -14;
+// 남쪽 참배로. 해자(VillageScene 의 MOAT)를 건너는 남쪽 돌다리까지 길을 이어야
+// 다리가 잔디 위에 뚝 떨어져 있지 않다. 북쪽 참배로와 대칭이다.
+const SOUTH_END = 12;
 const [I_MIN, I_MAX, J_MIN, J_MAX] = (() => {
   let i0 = 0, i1 = 0, j0 = 0, j1 = 0;
   for (const b of buildings) {
@@ -185,7 +188,7 @@ const [I_MIN, I_MAX, J_MIN, J_MAX] = (() => {
     j0 = Math.min(j0, Math.floor((b.z - b.d / 2) / PITCH));
     j1 = Math.max(j1, Math.ceil((b.z + b.d / 2) / PITCH));
   }
-  return [i0 - MARGIN, i1 + MARGIN, Math.min(j0 - MARGIN, NORTH_END - 1), j1 + MARGIN];
+  return [i0 - MARGIN, i1 + MARGIN, Math.min(j0 - MARGIN, NORTH_END - 1), Math.max(j1 + MARGIN, SOUTH_END + 1)];
 })();
 const inBounds = (i, j) => i >= I_MIN && i <= I_MAX && j >= J_MIN && j <= J_MAX;
 
@@ -223,13 +226,35 @@ const TRUNKS = [
   [0, J_MIN + 1, 0, J_MAX - 1]
 ];
 
+// ─── 광장 둘레 링 도로 ────────────────────────────────────────────────────────
+// 컨셉 아트의 길은 격자가 아니라 **광장에서 뻗는 방사선 + 그걸 두르는 고리**다.
+// 우리는 축 둘 + L자 진입로뿐이라 완전한 맨해튼 격자로 보였다.
+//
+// 격자 타일이라 진짜 원은 못 그린다. 대신 정사각 고리를 놓으면 네 모서리에
+// **커브 타일**이 자동으로 들어가고(모서리 칸은 이웃이 직각 두 방향뿐이다),
+// 축과 만나는 네 곳에 T 가 선다 — 부감에서는 그게 방사형 고리로 읽힌다.
+// 커브 타일이 5장밖에 안 쓰이던 것도 이걸로 같이 풀린다.
+//
+// 하나만 놓는 것보다 **두 겹**이 확실히 낫다. 실측: 고리 하나(r 6)면
+// 직선 63·T 21·커브 12·교차 4 인데, 두 겹(4·8)이면 80·30·15·6 이 된다 —
+// 길 종류가 고르게 섞이면서 격자가 아니라 동심원으로 읽힌다.
+const RINGS = [4, 8];
+for (const r of RINGS) {
+  TRUNKS.push(
+    [-r, -r, r, -r], // 북
+    [-r, r, r, r],   // 남
+    [-r, -r, -r, r], // 서
+    [r, -r, r, r]    // 동
+  );
+}
+
 // 남쪽 정문 진입 축. 컨셉 아트에서 마을로 들어오는 길은 남쪽 대계단 하나뿐이고,
 // 광장까지 일직선으로 뻗는다. 그런데 이 축의 끝은 정의상 막다른 길이라
 // 아래 정리 단계가 두 칸씩 갉아먹어 마을 어귀가 사라진다(실제로 j 8·9 가 잘렸다).
 // 여기 담긴 칸은 "일부러 벌판으로 뻗은 길"이라 정리에서 뺀다.
 // 북쪽 참배로도 같은 이유로 지킨다 — 마을을 지나 개울을 건너 파고다 섬까지 간다.
 const CEREMONIAL = new Set();
-for (let j = 1; j <= J_MAX - 1; j++) CEREMONIAL.add(key(0, j));
+for (let j = 1; j <= SOUTH_END; j++) CEREMONIAL.add(key(0, j));
 for (let j = NORTH_END; j <= -1; j++) CEREMONIAL.add(key(0, j));
 
 // 구역별 블록 상자 (격자 단위, 건물이 실제로 먹는 칸 기준)
@@ -426,7 +451,9 @@ for (const k of [...road]) {
 // 첫 길 칸이 x=±5.64에 있어서, 원반 가장자리와 길 끝 사이에 1.5유닛짜리
 // 맨잔디가 남았다 — 대로가 광장에 닿지 못하고 허공에서 끊겼다.
 // 이제 원반이 그 길 끝(안쪽 모서리 4.70)까지 차오른다.
-const HUB_SCALE = 4.84;
+// 기념비를 키우면서(constants.ts 의 central-plaza size) 광장 바닥도 같이 넓혔다.
+// 컨셉 아트의 광장은 원반 하나가 아니라 사방으로 퍼지는 큰 돌마당이다.
+const HUB_SCALE = 5.4;
 const HUB_RADIUS = HUB_SCALE * PLAZA_RADIUS_AT_1;
 for (const k of [...road]) {
   const [i, j] = parse(k);
@@ -777,10 +804,110 @@ clumps.forEach((c, n) => {
       z1: round3(worldZ(j1) + HALF)
     });
   }
+  // ─── 구역 사이 골짜기를 따라 흐르는 물길 ────────────────────────────────────
+  // 컨셉 아트에서 물은 마을 **안**을, 구역 덩어리 사이를 지난다. 처음엔 마을을
+  // 두르는 해자만 놨는데 반지름이 27이라 숲에 완전히 가려, 기본 카메라에서 물이
+  // 아예 안 보였다 — "물이 있는 느낌이 하나도 안 든다"는 게 그래서였다.
+  //
+  // 구역을 바깥으로 밀어(DISTRICT_PUSH) 사이에 바닥 높이 골짜기가 생겼으므로
+  // 이제 그 틈으로 흘린다. 단이 양옆에 서 있어서 물이 **파인 것처럼** 보인다.
+  //
+  // 좌표를 여기서 계산해 terraces.json 에 같이 내보낸다 — 씬(Waterways)과
+  // 장식물 생성기(다리·숲 제외)가 반드시 같은 값을 읽어야 한다.
+  const channels = [];
+  {
+    // 이미 깔린 길 타일 — 물길이 길 위로 지나면 안 된다
+    const roadAt = props
+      .filter((q) => q.glb.includes("/path-"))
+      .map((q) => ({x: q.position[0], z: q.position[2]}));
+    const roadGap = (x, z) => {
+      let best = Infinity;
+      for (const r of roadAt) best = Math.min(best, Math.hypot(r.x - x, r.z - z));
+      return best;
+    };
+
+    const angles = blocks
+      .map((b) => Math.atan2((b.z0 + b.z1) / 2, (b.x0 + b.x1) / 2))
+      .sort((x, y) => x - y);
+
+    const onPlateau = (x, z) =>
+      blocks.some((b) => x >= b.x0 - HALF && x <= b.x1 + HALF && z >= b.z0 - HALF && z <= b.z1 + HALF);
+    const clearOf = (x, z) => {
+      let best = Infinity;
+      for (const b of blocks) {
+        const dx = Math.max(b.x0 - HALF - x, 0, x - (b.x1 + HALF));
+        const dz = Math.max(b.z0 - HALF - z, 0, z - (b.z1 + HALF));
+        best = Math.min(best, Math.hypot(dx, dz));
+      }
+      return best;
+    };
+
+    const NEED = 0.9;       // 물 반폭 + 여유
+    const ROAD_KEEP = 1.5;  // 길 타일 중심에서 이만큼 안쪽은 "길 위"
+    const CROSS_MAX = 2.8;  // 이보다 짧게 스치면 **건너는 것** — 다리를 놓는다
+    const R_IN = HUB_RADIUS + 2.6;
+    const R_OUT = 27;       // 해자와 만나는 데까지
+    const STEP_R = 0.6;
+
+    for (let k = 0; k < angles.length; k++) {
+      let a0 = angles[k];
+      let a1 = angles[(k + 1) % angles.length];
+      if (a1 <= a0) a1 += Math.PI * 2;
+
+      // 각도를 훑으며 광장 밖 ~ 해자까지 **끝까지 이어지는** 방향을 찾는다.
+      //
+      // 처음엔 길에서 1.5 떨어지기를 요구했는데, 광장 둘레 링 도로(RINGS)가
+      // r 7.5 와 15 에 있어서 물길이 그걸 못 넘고 전부 r 17 바깥에서만 시작했다.
+      // 마을 안쪽에 물이 하나도 안 들어와 아무 데서도 안 보였다.
+      // 길은 **건너면 된다** — 짧게 스치는 건 허용하고 거기에 다리를 놓는다.
+      // 길을 따라 나란히 달리는 것(긴 구간)만 막는다.
+      let best = null;
+      for (let t = 0.12; t <= 0.88; t += 0.015) {
+        const ang = a0 + (a1 - a0) * t;
+        let ok = true;
+        let worst = Infinity;
+        let onRoadRun = 0;
+        let crossings = 0;
+        for (let r = R_IN; r <= R_OUT; r += STEP_R) {
+          const x = Math.cos(ang) * r;
+          const z = Math.sin(ang) * r;
+          if (onPlateau(x, z) || clearOf(x, z) < NEED) { ok = false; break; }
+          if (roadGap(x, z) < ROAD_KEEP) {
+            onRoadRun += STEP_R;
+            if (onRoadRun > CROSS_MAX) { ok = false; break; } // 길을 따라 달린다
+          } else {
+            if (onRoadRun > 0) crossings += 1;
+            onRoadRun = 0;
+          }
+          worst = Math.min(worst, clearOf(x, z));
+        }
+        if (!ok) continue;
+        const score = worst - crossings * 0.15; // 덜 건너는 쪽을 조금 선호
+        if (!best || score > best.score) best = {ang, score, crossings};
+      }
+      if (!best) continue;
+
+      const pts = [];
+      const STEPS = 22;
+      for (let n = 0; n <= STEPS; n++) {
+        const t = n / STEPS;
+        const r = R_IN + (R_OUT - R_IN) * t;
+        // 자로 그은 직선이면 수로지 개울이 아니다. 각도를 조금 흔든다.
+        const wobble = (Math.sin(t * Math.PI * 2.3) * 0.5 + Math.sin(t * Math.PI * 5.1) * 0.18) / r;
+        pts.push({
+          x: round3(Math.cos(best.ang + wobble) * r),
+          z: round3(Math.sin(best.ang + wobble) * r)
+        });
+      }
+      channels.push(pts);
+    }
+  }
+  console.log(`  구역 사이 물길 ${channels.length}줄기`);
+
   if (!dry) {
     writeFileSync(
       "src/data/villageTerraces.json",
-      JSON.stringify({pitch: PITCH, blocks}, null, 2) + "\n"
+      JSON.stringify({pitch: PITCH, blocks, channels}, null, 2) + "\n"
     );
   }
   console.log(`  구역 단차 사각형 ${blocks.length}개 → src/data/villageTerraces.json`);

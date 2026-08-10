@@ -83,7 +83,7 @@ function HighlightFX({color, height, radius, active}: {color: string; height: nu
 
 // ─── GLB 에셋 렌더러 ──────────────────────────────────────────────────────────
 
-function GlbModel({glbPath, size}: {glbPath: string; size: [number, number, number]}) {
+function GlbModel({glbPath, size, boost = 1}: {glbPath: string; size: [number, number, number]; boost?: number}) {
   const {scene} = useGLTF(glbPath);
 
   // <primitive castShadow /> 는 루트 Object3D 한 개에만 플래그를 세운다. GLB는
@@ -162,9 +162,15 @@ function GlbModel({glbPath, size}: {glbPath: string; size: [number, number, numb
   // 중앙값이 2.14유닛 — 옆에 선 나무(4.5~5.0)의 절반도 안 돼서 마을이 모형처럼
   // 보이는 원인이었다. 1.6이면 원반이 유일한 제약이 되고(18채 중 17채), 상한은
   // 극단적인 비율만 잡아 주는 안전장치로 남는다.
+  //
+  // boost — 앞마당 원반 규칙에서 **일부러 벗어나는** 배율. 지금은 중앙 기념비
+  // 하나만 쓴다. 컨셉 아트의 중심 첨탑은 마을에서 압도적으로 높은데, 원반에
+  // 묶이면 연혁 타워와 키가 비슷해진다. size 를 키워 해결하려다 길 생성기가
+  // 그 상자를 피하면서 광장 둘레 도로가 무너졌다 — size 는 길·충돌·앞마당이
+  // 같이 읽는 값이라 건드리면 안 된다.
   const radius = Math.max(size[0], size[2]) / 2 + 0.55;
   const footprint = Math.hypot(natural.width, natural.depth);
-  const scale = Math.min((radius * 2) / footprint, (size[1] * 1.6) / natural.height);
+  const scale = Math.min((radius * 2) / footprint, (size[1] * 1.6) / natural.height) * boost;
   return <primitive object={scene} scale={scale} position={[0, -natural.minY * scale, 0]} />;
 }
 
@@ -668,7 +674,7 @@ function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
   // public/models/buildings/<건물id>.glb 를 훑어 만든다 — 건물을 하나 뽑아 넣을 때마다
   // constants.ts 를 손대지 않아도 되도록. glbPath 를 직접 적으면 그쪽이 이긴다.
   const glbPath = b.glbPath ?? buildingModels[b.id];
-  if (glbPath) return <GlbModel glbPath={glbPath} size={b.size} />;
+  if (glbPath) return <GlbModel glbPath={glbPath} size={b.size} boost={b.id === "central-plaza" ? 1.45 : 1} />;
 
   if (b.kind === "plaza") return <PlazaBuilding b={b} hl={hl} />;
 

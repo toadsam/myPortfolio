@@ -77,14 +77,33 @@ const KIT = {
   // 같은 이름으로 넣고 optimize 만 돌리면 그대로 갈린다.
   // 배율이 1이 되도록 h·m 을 맞춰 놨다 — 생성 스크립트가 이미 월드 크기로 만든다.
   "wall-low": {glb: "decor/wall-low.glb", h: 0.6, m: 1.5},
-
+  // 길가에 길게 까는 가벼운 울타리 (make-fence-rail.mjs, 36삼각형).
+  // 받은 fence.glb 는 1,473 이라 200개를 못 깐다 — 가까이 보이는 자리에만 쓴다.
+  "fence-rail": {glb: "decor/fence-rail.glb", h: 0.72, m: 1.8},
   // ─── 석축 ───────────────────────────────────────────────────────────────────
   // 축대(擁壁) — 흙이 무너지지 않게 받치는 돌벽. 컨셉 아트는 구역마다 이 벽으로
   // 단을 만들어 올려놨고, 그래서 마을이 "깎아 만든 땅" 위에 선 것처럼 보인다.
-  // 우리 땅은 평평하므로 지금은 **문기둥**으로 쓴다 — 아치 양옆을 받치는 석축.
-  // 한 덩이가 1만 삼각형이라 두르는 데는 못 쓰고 요소요소에만 놓는다.
+  // 받은 terrace-wall 은 **ㄱ자 모서리** 조각이라 직선 구간엔 못 깐다(늘어놓으면
+  // ㄱ자만 되풀이된다). 직선 축대는 VillageScene 의 TerraceBanks 가 그리고,
+  // 이건 아치 양옆을 받치는 **문기둥**으로 쓴다.
   "terrace-wall": {glb: "decor/terrace-wall.glb", h: 1.21, m: 3.4},
-  "terrace-stair": {glb: "decor/terrace-stair.glb", h: 1.038, m: 3.0},
+
+  // 단을 오르는 돌계단. 양옆에 석주가 서 있고 **−Z 쪽으로 오른다**(옆에서 구워
+  // 확인) — 회전은 낮은 쪽(+Z)이 구역 바깥을 보게 잡는다.
+  //
+  // **높이를 bbox 로 맞추면 안 된다.** 모델 꼭대기는 양옆 석주고, 정작 밟는
+  // 맨 윗 단은 bbox 높이의 **66%** 지점이다(XZ 높이 지도로 실측: 채널 바닥 0 →
+  // 윗단 6/9 단계). m=2.75 로 전체를 1.1 에 맞췄더니 윗 단이 0.73 이라 다 올라가서
+  // 0.37 짜리 턱을 한 번 더 밟아야 했다.
+  // m=3.85 → 배율 1.484 → 윗 단 1.02(단 1.1 과 0.08 차) · 석주는 0.44 솟는다.
+  // 그러면 폭 2.54(길 1.88), 안길이 2.82 라 아래 OUT 도 같이 커져야 한다.
+  //
+  // 한동안 이 자리에 직접 구운 40삼각형짜리 쐐기(make-terrace-steps.mjs)를 썼다.
+  // 원본이 1만 삼각형이라 스무 곳에 못 놓는다고 판단한 건데, 담쟁이 UV 심 때문에
+  // 기본 오차로 안 줄었을 뿐이고 오차를 0.03 으로 올리니 8,236 이다.
+  // 28곳 × 8천 = 23만이고 예산(180만)에 46만이 남아 있었다 — 회색 쐐기를 깔
+  // 이유가 처음부터 없었다. (optimize-glb.mjs 의 TERRACE_SIMPLIFY 참고)
+  "terrace-stair": {glb: "decor/terrace-stair.glb", h: 1.038, m: 3.85},
 
   "lantern-post": {glb: "decor/lantern-post.glb", h: 1.894, m: 3.0},
   "lantern-archway": {glb: "decor/lantern-archway.glb", h: 1.741, m: 3.0},
@@ -521,7 +540,10 @@ const blockRect = new Map();
   // 3·2·2·2·2·1(12채)로는 담장 안이 텅 비어 보였다. 삼각형 상한을 180만으로
   // 올렸으니(PerfHud) 집 한 채 8~12천은 감당된다 — 블록이 차 보이는 데 이만한
   // 수단이 없다. 컨셉 아트의 블록은 이름표 붙은 건물 서넛 + 이름 없는 집 대여섯이다.
-  const PER_DISTRICT = {projects: 7, skills: 6, life: 6, experience: 6, study: 6, contact: 5};
+  // 컨셉 아트의 블록은 이름표 붙은 건물 서넛 뒤로 이름 없는 집이 대여섯 겹으로
+  // 들어차 있다. 7/6/6/6/6/5 로 요청해 25채가 섰는데 아직 성겼다 — 요청을 올린다
+  // (자리를 못 찾으면 알아서 덜 선다).
+  const PER_DISTRICT = {projects: 11, skills: 10, life: 10, experience: 9, study: 9, contact: 8};
   // 두 종으로 12채를 돌려쓰니 위에서 보면 같은 집이 여섯 번씩 나왔다. 세 종이면
   // 한 구역 안에서는 같은 집이 두 번 안 나온다(구역당 최대 3채).
   const KINDS = ["house-a", "house-b", "house-c"];
@@ -632,9 +654,20 @@ const blockRect = new Map();
   // 정확히 경계에 세우면 부동소수 때문에 몇 토막이 한 단 아래로 판정된다.
   // 손톱만큼 안쪽으로 들여 세운다.
   const PLATEAU_PAD = terr.pitch / 2 - 0.06;
+
+  /**
+   * 그 자리가 **단 위인가 골짜기 바닥인가.** `villageTerrain.ts` 의
+   * `terrainHeightAt` 과 같은 규칙이어야 한다 — 여기만 0.06 을 들이면
+   * 계단이 뜨거나 묻힌다. 그래서 담장선(위)과 달리 여백을 그대로 쓴다.
+   */
+  const TRUE_PAD = terr.pitch / 2;
+  const onPlateau = (x, z) =>
+    terr.blocks.some((b) => x >= b.x0 - TRUE_PAD && x <= b.x1 + TRUE_PAD && z >= b.z0 - TRUE_PAD && z <= b.z1 + TRUE_PAD);
   const terraceOf = new Map(terr.blocks.map((b) => [b.district, b]));
   let n = 0;
   let openings = 0;
+  /** 길이 단을 넘는 자리 — 아래에서 계단으로 채운다 */
+  const gateSteps = [];
 
   for (const [district, fallback] of blockRect) {
     const t = terraceOf.get(district);
@@ -646,10 +679,10 @@ const blockRect = new Map();
 
     // 네 변. along 은 변이 뻗는 방향, rot 은 담장 긴 축(모델 +X)을 거기 맞추는 각.
     const edges = [
-      {from: [x0, z0], to: [x1, z0], rot: 0},           // 북
-      {from: [x0, z1], to: [x1, z1], rot: 0},           // 남
-      {from: [x0, z0], to: [x0, z1], rot: Math.PI / 2}, // 서
-      {from: [x1, z0], to: [x1, z1], rot: Math.PI / 2}  // 동
+      {from: [x0, z0], to: [x1, z0], rot: 0, nx: 0, nz: -1},           // 북
+      {from: [x0, z1], to: [x1, z1], rot: 0, nx: 0, nz: 1},            // 남
+      {from: [x0, z0], to: [x0, z1], rot: Math.PI / 2, nx: -1, nz: 0}, // 서
+      {from: [x1, z0], to: [x1, z1], rot: Math.PI / 2, nx: 1, nz: 0}   // 동
     ];
 
     for (const e of edges) {
@@ -662,7 +695,13 @@ const blockRect = new Map();
         const x = e.from[0] + (e.to[0] - e.from[0]) * t;
         const z = e.from[1] + (e.to[1] - e.from[1]) * t;
         // 길이 지나는 자리는 비운다 = 구역 대문. 여유를 넉넉히 줘야 통행이 막히지 않는다.
-        if (onRoad(x, z, 0.75)) { openings += 1; continue; }
+        // 길이 지나는 자리는 비운다 = 구역 대문. 그 자리에 **계단**을 놓는다 —
+        // 단이 1.1 이라 그냥 두면 길이 턱을 뛰어오른다.
+        if (onRoad(x, z, 0.75)) {
+          openings += 1;
+          gateSteps.push({x, z, nx: e.nx, nz: e.nz});
+          continue;
+        }
         if (onBuilding(x, z, 0.15) || onDisc(x, z, 0.05)) continue;
         // 채움 민가·랜드마크가 이미 선 자리면 비켜 준다
         if (!free(x, z, 1.15)) continue;
@@ -677,6 +716,48 @@ const blockRect = new Map();
     }
   }
   console.log(`  담장 ${n}토막 · 길이 지나가 비운 자리 ${openings}곳`);
+
+  // ─── 구역 대문 계단 ─────────────────────────────────────────────────────────
+  // 위에서 비워 둔 자리마다 계단을 놓는다. 길 타일이 1.88 간격이라 한 대문에
+  // 후보가 서넛씩 몰리므로, 3유닛 안에 이미 놓았으면 건너뛴다.
+  {
+    let put = 0;
+    const here = [];
+    for (const g of gateSteps) {
+      if (here.some((q) => Math.hypot(q.x - g.x, q.z - g.z) < 3.6)) continue;
+      if (onBuilding(g.x, g.z, 0.2) || onDisc(g.x, g.z, 0.05)) continue;
+      // 담장을 비운 이유가 "길이 스쳤다" 정도면 계단이 잔디 위에 혼자 선다.
+      // 길 **한복판**일 때만 놓는다 — 30곳에서 대문다운 자리만 남는다.
+      if (!onRoad(g.x, g.z, 0.35)) continue;
+      // terrace-stair 는 **−Z 쪽으로 오른다**(bake-prop 옆면으로 확인 — 왼쪽이
+      // −Z 이고 거기가 높다). 그러니 낮은 쪽 +Z 가 **구역 바깥**을 봐야 한다.
+      // 직접 구웠던 쐐기는 반대로 올라가서 여기 부호가 뒤집혀 있었다.
+      const facingOut = Math.atan2(g.nx, g.nz);
+      // **경계선 위에 그대로 놓으면 안 된다.** 그 점은 단 안쪽으로 판정돼서
+      // terrainHeightAt 이 1.1 을 얹어 버린다 — 계단이 단 위에 통째로 떠 있었다.
+      // 안길이 절반만큼 바깥으로 빼면 밑동이 골짜기 바닥에서 시작해, 높은 쪽
+      // 끝이 딱 단 모서리에 닿는다. 안길이 1.902 × 배율 1.484 = 2.82 → 절반 1.41.
+      // 여기 g 는 담장선(PLATEAU_PAD −0.06)이고 진짜 단 경계는 0.06 더 밖이므로
+      // 그만큼 더 민다: 1.41 + 0.06 = 1.47.
+      //
+      // **바깥 방향은 반드시 그 변의 법선이어야 한다.** 처음엔 사각형 중심에서
+      // 밀어냈는데(방사 방향), 긴 변의 끝 쪽 대문에서는 그게 거의 **변을 따라
+      // 가는 방향**이라 계단이 단 안에 그대로 남았다 — 29개 중 8개가 단 위에
+      // 1.1 만큼 떠 있었다. 격자로 검산해서야 찾았다.
+      const OUT = 1.47;
+      const sx = round3(g.x + g.nx * OUT);
+      const sz = round3(g.z + g.nz * OUT);
+      // **밀어낸 자리가 또 단 위면 놓지 않는다.** 이웃한 두 구역의 단이 맞닿은
+      // 변(예: SKILLS 남쪽 = LIFE 북쪽)에서는 밖으로 나가 봐야 옆 구역 단이라
+      // 오를 턱 자체가 없다 — 그런데도 놓았더니 30개 중 9개가 평지 위에 선
+      // 계단이 됐다(밑동 지면 1.1, 윗끝 지면 1.1). 격자로 검산해서야 찾았다.
+      if (onPlateau(sx, sz)) continue;
+      place(`gatestep-${put}`, "terrace-stair", sx, sz, round3(facingOut), {gap: 1.4});
+      here.push({x: sx, z: sz});
+      put += 1;
+    }
+    console.log(`  구역 대문 계단 ${put}곳`);
+  }
 }
 
 // ─── ②-c 남쪽 정문 ────────────────────────────────────────────────────────────
@@ -687,7 +768,10 @@ const southGate = roads
   .filter((r) => Math.abs(r.x) < HALF_TILE && r.z > 0)
   .sort((a, b) => b.z - a.z)[0];
 if (southGate) {
-  // 계단은 길 위에 얹는다 — 옆으로 비키면 아무 데도 안 가는 돌더미가 된다
+  // 계단은 길 위에 얹는다 — 옆으로 비키면 아무 데도 안 가는 돌더미가 된다.
+  // 구역 대문과 **같은 크기**로 둔다. 여긴 양쪽이 다 평지라 계단이 순전히 연출인데,
+  // grow 로 더 키우면 대로를 가로막은 돌덩이로 보인다. KIT 기본(높이 1.54)만으로도
+  // 예전(1.2)보다 크다.
   place("gate-stair", "terrace-stair", southGate.x, southGate.z, faceTo(0, 1), {gap: 0.1});
   // 계단 양옆 석축 — 진입로에 폭과 격을 준다
   for (const side of [-1, 1]) {
@@ -862,17 +946,15 @@ const clearance = (x, z) => {
   }
 }
 
-// ─── ③-e 구역 안 살림 ─────────────────────────────────────────────────────────
-// 담장을 두르고 부감으로 보니 여섯 블록이 다 "담 안에 건물 몇 채, 나머지는 빈
-// 돌마당"이었다. 컨셉 아트의 구역 안은 벤치·이젤·화분·노점·책더미가 건물 사이를
-// 빽빽하게 메우고 있고, 그 잡동사니가 "사람이 사는 동네"를 만든다.
+// ─── ③-e 건물 앞뜰 세트 ───────────────────────────────────────────────────────
+// 예전엔 구역당 6개를 블록 전체에 **흩어** 놓았다. 컨셉 아트와 나란히 놓고 보니
+// 그게 결정적으로 달랐다 — 컨셉의 소품은 흩어져 있지 않고 **건물 입구마다 서넛이
+// 뭉쳐** 있다. 벤치 옆에 화분, 그 옆에 등불. 그 덩어리가 "가게 앞"으로 읽힌다.
+// 흩어 놓으면 같은 개수라도 그냥 바닥에 물건이 떨어져 있는 것처럼 보인다.
 //
-// ② 의 LANDMARKS 는 구역당 1~3개를 **중심 근처**에만 놓는다. 여기서는 블록
-// 전체에 흩는다. 구역 성격에 맞는 물건만 골라 써서, 학습 구역엔 책과 두루마리가
-// 프로젝트 구역엔 노점과 게시판이 서게 한다.
+// 그래서 기준을 구역이 아니라 **건물**로 바꿨다. 건물마다 광장 쪽 앞자리를 찾아
+// 거기 바짝 붙여 3개를 놓는다. 구역 성격에 맞는 물건만 골라 쓰는 건 그대로다.
 {
-  // 값싼 것 위주로 섞는다. 괄호는 삼각형 수 — 게시판(7,276)·노점(7,334)처럼
-  // 비싼 건 구역당 한 번만 돌아오게 회전표 앞쪽에 한 번씩만 넣었다.
   const KIT_OF = {
     projects: ["market-stall", "notice-board", "barrel-iron", "lantern-post", "orb-lantern", "barrel-iron"],
     skills: ["stump-forge", "barrel-iron", "orb-lantern", "lantern-post", "barrel-iron"],
@@ -881,41 +963,53 @@ const clearance = (x, z) => {
     life: ["campfire", "bench", "flower-pot", "orb-lantern", "lute-picnic", "lantern-post"],
     contact: ["mailbox", "notice-board", "orb-lantern", "bench", "lantern-post"]
   };
-  /** 구역당 몇 개까지. 이 이상은 물건이 굴러다니는 것처럼 보인다. */
-  const PER_DISTRICT = 6;
-  /** 서로 이만큼은 떨어뜨린다 */
-  const APART = 2.6;
-  /** 사방이 이만큼은 비어야 놓는다 — 소품이 작아 나무·화단보다 덜 까다롭다 */
-  const NEED = 0.95;
+  /** 건물 한 채 앞에 몇 개까지 */
+  const PER_BUILDING = 4;
+  /** 세트 안에서는 바짝 붙인다 — 이 값이 "흩뿌림"과 "뭉치"를 가른다 */
+  const APART = 1;
+  /** 사방이 이만큼은 비어야 놓는다 */
+  const NEED = 0.65;
+  /** 앞뜰로 볼 반경. 3 으로는 26채 중 16채에만 붙었다 — 건물 뒤쪽이 잘려 후보가 모자란다 */
+  const YARD = 4.2;
 
   let n = 0;
-  for (const [district, rect] of blockRect) {
-    const kinds = KIT_OF[district];
+  let placed = 0;
+  for (const b of OUTER) {
+    const kinds = KIT_OF[b.district];
     if (!kinds) continue;
-    // 이 구역 담장 안쪽 포장 칸만
-    const inside = paved.filter(
-      (c) => c.x > rect.x0 - 1 && c.x < rect.x1 + 1 && c.z > rect.z0 - 1 && c.z < rect.z1 + 1
-    );
-    const cand = inside
-      .map((c) => ({...c, open: clearance(c.x, c.z)}))
-      .filter((c) => c.open >= NEED)
-      .sort((a, b) => b.open - a.open);
+    // 광장 쪽이 앞이다 — 건물 정면도 그쪽을 보고 서 있다
+    const len = Math.hypot(b.x, b.z) || 1;
+    const toPlaza = {x: -b.x / len, z: -b.z / len};
+    const fx = b.x + toPlaza.x * (Math.max(b.w, b.d) / 2 + 1.3);
+    const fz = b.z + toPlaza.z * (Math.max(b.w, b.d) / 2 + 1.3);
 
-    let put = 0;
+    // **clearance() 를 쓰면 안 된다.** 그건 앞마당 원반까지 장애물로 세는데,
+    // 원반이 바로 여기서 찾는 앞뜰이다 — 처음엔 그렇게 했다가 26채 중 8채에만,
+    // 그것도 10개밖에 안 놓였다. 길·건물·담장·이미 놓은 것만 피하면 된다.
+    const cand = paved
+      .map((c) => ({...c, near: Math.hypot(c.x - fx, c.z - fz)}))
+      .filter((c) => c.near < YARD)
+      .filter((c) => !onRoad(c.x, c.z, 0.15) && !onBuilding(c.x, c.z, 0.25))
+      .filter((c) => Math.hypot(HUB.x - c.x, HUB.z - c.z) > HUB_RADIUS + 0.4)
+      .filter((c) => !onWall(c.x, c.z, 0.1) && free(c.x, c.z, NEED))
+      // 앞뜰 한복판부터 채운다 — 멀리부터 채우면 세트가 흩어진다
+      .sort((x, y) => x.near - y.near);
+
     const here = [];
+    let put = 0;
     for (const c of cand) {
-      if (put >= PER_DISTRICT) break;
+      if (put >= PER_BUILDING) break;
       if (here.some((q) => Math.hypot(q.x - c.x, q.z - c.z) < APART)) continue;
-      // 칸 한복판에 딱 맞추면 격자로 늘어선 게 보인다
-      const jx = (rand() - 0.5) * 0.7, jz = (rand() - 0.5) * 0.7;
-      // 정면은 광장 쪽 — 마을이 한 방향으로 정돈돼 보인다
-      const len = Math.hypot(c.x, c.z) || 1;
-      place(`yardkit-${n++}`, kinds[put % kinds.length], c.x + jx, c.z + jz,
-        faceTo(-c.x / len, -c.z / len), {gap: NEED, grow: 0.85 + rand() * 0.3});
+      const jx = (rand() - 0.5) * 0.5, jz = (rand() - 0.5) * 0.5;
+      place(`yardset-${n}`, kinds[n % kinds.length], c.x + jx, c.z + jz,
+        faceTo(toPlaza.x, toPlaza.z), {gap: NEED, grow: 0.85 + rand() * 0.3});
       here.push(c);
       put += 1;
+      n += 1;
     }
+    if (put > 0) placed += 1;
   }
+  console.log(`  건물 앞뜰 세트 ${n}개 (${placed}채)`);
 }
 
 // ─── ③-d 마을 밖 랜드마크 ─────────────────────────────────────────────────────
@@ -931,17 +1025,68 @@ const landmarks = [];
 
 // 방위: 컨셉 아트를 남쪽에서 본 그림으로 읽었다 — −Z 가 북, +X 가 동, +Z 가 남.
 // generate-ground-layout.mjs 의 NORTH_END 와 VillageScene 의 CREEK_Z 에 맞춘 값들이다.
-const CREEK_Z = -20.7;
+// 해자 — VillageScene 의 MOAT 와 **같은 값이어야 한다.** 물 위에 나무가 자라면
+// 안 되므로 여기서 그 궤적을 따라 숲 금지 구역을 깐다.
+// 북쪽 꼭짓점이 정확히 z −20.7 (예전 개울 자리, 격자 j −11)에 온다.
+const MOAT = {cx: 0, cz: 1, a: 27, b: 21.7};
+const CREEK_Z = round3(MOAT.cz - MOAT.b);
+const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
 {
-  // ─── 북쪽 참배로: 개울 → 돌다리 → 파고다 섬 ────────────────────────────────
-  // 남쪽 정문 대계단의 짝이 되는 축이다. 광장에 서서 북쪽을 보면 길 끝에 다리가
-  // 있고 그 너머 언덕 위에 파고다가 선다.
+  // ─── 남북 참배로: 해자 → 돌다리 → (북) 파고다 섬 / (남) 마을 밖 ───────────
+  // 광장에 서서 북쪽을 보면 길 끝에 다리가 있고 그 너머 언덕 위에 파고다가 선다.
+  // 남쪽은 대계단을 내려와 같은 물을 건넌다 — 축이 대칭이라야 조감도가 정돈된다.
   //
-  // 다리는 개울(동서)을 가로질러야 하므로 90° 돌린다 — 모델의 긴 축이 +X 다.
+  // 다리는 물(동서)을 가로질러야 하므로 90° 돌린다 — 모델의 긴 축이 +X 다.
   place("bridge-north", "bridge-stone", 0, CREEK_Z, round3(Math.PI / 2), {gap: 0.1});
   landmarks.push({x: 0, z: CREEK_Z, r: 4.5});
-  // 개울 자체도 숲이 피해야 한다. 물 위에 나무가 자라면 안 된다.
-  for (let x = -30; x <= 30; x += 2.5) landmarks.push({x, z: CREEK_Z, r: 2.6});
+  place("bridge-south", "bridge-stone", 0, MOAT_SOUTH_Z, round3(Math.PI / 2), {gap: 0.1});
+  landmarks.push({x: 0, z: MOAT_SOUTH_Z, r: 4.5});
+
+  // ─── 구역 사이 물길: 다리 + 숲 제외 ────────────────────────────────────────
+  // 물길 좌표는 바닥 생성기가 계산해 villageTerraces.json 에 넣어 둔다. 씬과
+  // 여기가 같은 값을 읽어야 다리가 정확히 물 위에 선다.
+  {
+    // 담장 절의 terr 는 그 블록 안에 갇혀 있다 — 여기서 다시 읽는다
+    const channels = JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8")).channels ?? [];
+    let bridges = 0;
+    for (let c = 0; c < channels.length; c++) {
+      const pts = channels[c];
+      // 물 위에는 아무것도 안 심는다
+      for (const q of pts) landmarks.push({x: q.x, z: q.z, r: 2.2});
+
+      // 길과 만나는 곳에 돌다리. 한 번 놓으면 다음 몇 마디는 건너뛴다 —
+      // 길 타일이 1.88 간격이라 안 그러면 한 교차로에 다리가 서너 개 겹친다.
+      let skip = 0;
+      for (let n = 1; n < pts.length - 1; n++) {
+        if (skip > 0) { skip -= 1; continue; }
+        const q = pts[n];
+        if (!onRoad(q.x, q.z, 0.6)) continue;
+        // 다리는 물을 **가로질러야** 한다 — 모델의 긴 축(+X)을 물 진행 방향의 법선에 맞춘다
+        const dx = pts[n + 1].x - pts[n - 1].x;
+        const dz = pts[n + 1].z - pts[n - 1].z;
+        place(`bridge-ch${c}-${n}`, "bridge-stone", q.x, q.z, round3(Math.atan2(dz, dx)), {gap: 0.1});
+        landmarks.push({x: q.x, z: q.z, r: 3.4});
+        bridges += 1;
+        skip = 3;
+      }
+    }
+    if (channels.length) console.log(`  구역 사이 물길 ${channels.length}줄기 · 돌다리 ${bridges}개`);
+  }
+
+  // 해자를 따라 숲을 비운다. 타원 한 바퀴를 촘촘히 훑는다 —
+  // 성기게 찍으면 물줄기 사이사이에 나무가 박힌다.
+  //
+  // 반경은 물 반폭(1.5)보다 조금만 크면 된다. 2.8 로 뒀더니 숲이 360→205,
+  // 덤불이 151→81 로 깎여 섬 테두리가 휑해졌다 — 해자가 숲 띠 한가운데를
+  // 지나가기 때문이다. 2.0 이면 물가에 나무가 바짝 서서 오히려 개울다워진다.
+  for (let k = 0; k < 140; k++) {
+    const angle = (k / 140) * Math.PI * 2 - Math.PI / 2;
+    landmarks.push({
+      x: round3(MOAT.cx + Math.cos(angle) * MOAT.a),
+      z: round3(MOAT.cz + Math.sin(angle) * MOAT.b),
+      r: 2
+    });
+  }
 
   // 섬 — 원본은 밑동이 뾰족한 부유섬이라 그대로 세우면 원뿔이 드러난다.
   // 아래쪽을 땅에 묻어 **윗면이 평평한 바위 언덕**으로 쓴다.
@@ -1381,6 +1526,51 @@ const BELT_DEPTH = 12;
     const kind = KINDS[n % KINDS.length];
     place(`verge-${n++}`, kind, x, z, round3(rand() * Math.PI * 2), {grow: 0.7 + rand() * 0.45});
   }
+}
+
+// ─── ⑬ 길가 울타리 (맨 마지막) ────────────────────────────────────────────────
+// 컨셉 아트에서 길이 "길"로 보이는 이유는 포장색이 아니라 **양옆을 따라가는
+// 나무 울타리**다. 그 선 두 줄이 있어야 길과 마당이 갈린다. 우리는 포장을 넓게
+// 깔아 놔서 어디까지가 길인지가 아예 안 읽혔다.
+//
+// 받은 fence.glb 로는 못 깐다(1,473 삼각형 × 200 = 29만). make-fence-rail.mjs 로
+// 구운 36삼각형짜리를 쓴다 — 200토막이 7천이다.
+//
+// 교차로는 건너뛴다. 사거리까지 막으면 길이 끊긴 것처럼 보인다.
+//
+// **맨 마지막에 놓는다.** 처음엔 ③-b 깃대 바로 뒤에 뒀는데, 길가 자리를 울타리가
+// 먼저 차지해 버려서 화단이 34→15, 가로등이 13→4, 앞마당 소품이 25→5 로 줄었다
+// (삼각형이 1,305k → 1,036k 로 떨어진 게 그 신호였다). 울타리는 한 토막 빠져도
+// 대문처럼 보이지만, 화단·가로등은 빠지면 그냥 허전하다 — 그래서 울타리가 양보한다.
+{
+  const key = (x, z) => `${Math.round(x / PITCH)}_${Math.round(z / PITCH)}`;
+  const roadAt = new Set(roads.map((r) => key(r.x, r.z)));
+  const has = (x, z) => roadAt.has(key(x, z));
+
+  let n = 0;
+  let skippedJunction = 0;
+  for (const r of roads) {
+    const ew = has(r.x - PITCH, r.z) || has(r.x + PITCH, r.z);
+    const ns = has(r.x, r.z - PITCH) || has(r.x, r.z + PITCH);
+    // 사거리·T 자 — 어느 쪽으로도 울타리를 세울 수 없다
+    if (ew && ns) { skippedJunction += 1; continue; }
+    if (!ew && !ns) continue;
+
+    const perp = ew ? {x: 0, z: 1} : {x: 1, z: 0};
+    const rot = ew ? 0 : round3(Math.PI / 2);
+    for (const side of [-1, 1]) {
+      const x = round3(r.x + perp.x * (ROAD_SIDE + 0.3) * side);
+      const z = round3(r.z + perp.z * (ROAD_SIDE + 0.3) * side);
+      // 울타리는 두께 0.13 짜리 얇은 판이라 다른 소품에 바짝 붙어도 안 겹친다.
+      // 여유를 0.8 로 뒀더니 63토막밖에 안 서서 길을 못 그렸다.
+      if (onRoad(x, z, 0.02) || onDisc(x, z, 0.1) || onBuilding(x, z, 0.2)) continue;
+      if (onWall(x, z, 0.05) || !free(x, z, 0.5)) continue;
+      place(`fence-${n++}`, "fence-rail", x, z, rot, {gap: 0.5});
+      // 담장과 같은 선분 판정에 태운다 — 뒤에 오는 절들이 여기 겹쳐 심지 않게
+      walls.push({x, z, ax: ew ? 1 : 0, az: ew ? 0 : 1});
+    }
+  }
+  console.log(`  길가 울타리 ${n}토막 · 교차로라 건너뛴 칸 ${skippedJunction}곳`);
 }
 
 // ─── 쓰기 ─────────────────────────────────────────────────────────────────────

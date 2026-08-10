@@ -10,17 +10,22 @@ import terraces from "@/data/villageTerraces.json";
 // **그릴 때** 이 함수로 y 를 더한다. STEP 을 0 으로 두면 예전 평지로 정확히
 // 복귀한다 — 단 한 줄이 되돌리기 스위치다.
 //
-// ── 왜 매끄러운 경사가 아니라 두 단 계단인가 ────────────────────────────────
+// ── 왜 경사가 아니라 한 단으로 뚝 끊는가 ────────────────────────────────────
 // 바닥 판석은 두께 없는 평면 한 장이다. 경사로 만들면 타일마다 중심 높이만
-// 달라져서 이음매마다 틈이 벌어지고 그 사이로 아래가 비친다. 격자 한 칸(PITCH)
-// 마다 정확히 한 단씩 끊으면 **모든 타일이 평평한 단 위에 딱 눕는다.**
-// 그래서 폭이 PITCH 인 중간 단을 하나 두고 0 → STEP/2 → STEP 으로 오른다.
+// 달라져서 이음매마다 틈이 벌어지고 그 사이로 아래가 비친다. 단으로 끊으면
+// **모든 타일이 평평한 단 위에 딱 눕는다** — 타일 중심이 사각형 안이면 위, 밖이면 아래.
+//
+// 처음엔 폭 PITCH 짜리 중간 단을 하나 끼워 0 → STEP/2 → STEP 으로 올렸다. 그런데
+// 구역을 떼어 놓고 보니 그 중간 단이 **구역 사이 골짜기를 통째로 덮어** 버렸다
+// (골짜기 폭이 2~3칸인데 중간 단이 양쪽에서 한 칸씩 먹는다). 골짜기가 바닥까지
+// 안 내려가면 물을 흘릴 수도, 단이 옆에서 보이지도 않는다. 그래서 한 단으로 돌아왔다.
 
 // 알려진 한계: 개발용 프롭 편집기(PropsEditor)의 드래그는 y=0 평면에 레이캐스트하므로,
 // 단 위에 놓을 때 커서와 프롭이 단 높이만큼 어긋난다. 놓고 나면 자리는 맞다.
 
 /** 단 높이. **0 으로 두면 예전 평지 그대로다.** */
-export const TERRACE_STEP: number = 0.7;
+// 0.7 로는 마을 안에서 층이 거의 안 느껴졌다. 캐릭터 키가 0.8 이니 1.1 은 눈높이 아래다.
+export const TERRACE_STEP: number = 1.1;
 
 const PITCH: number = terraces.pitch;
 const HALF = PITCH / 2;
@@ -30,10 +35,17 @@ export type TerraceRect = {district: string; x0: number; x1: number; z0: number;
 /** 생성기가 내보낸 구역 사각형 (칸 중심 기준). 바닥 판석을 깐 범위와 같다. */
 export const TERRACE_RECTS: TerraceRect[] = terraces.blocks;
 
-/** 윗단(플래토)의 실제 경계 — 칸 중심 사각형을 반 칸 넓힌 것 */
+/**
+ * 구역 사이 골짜기를 흐르는 물길. 생성기(generate-ground-layout.mjs)가 계산해
+ * 같은 파일에 내보낸다 — 씬과 장식물 생성기가 **같은 좌표**를 봐야 다리가 물 위에 선다.
+ */
+export const WATER_CHANNELS: {x: number; z: number}[][] = terraces.channels ?? [];
+
+/**
+ * 윗단(플래토)의 실제 경계 — 칸 중심 사각형을 반 칸 넓힌 것.
+ * 이 값이 곧 **가장 바깥 판석의 바깥 모서리**라 축대가 타일과 딱 맞물린다.
+ */
 export const PLATEAU_PAD = HALF;
-/** 중간단 바깥 경계 */
-export const BANK_PAD = HALF + PITCH;
 
 function within(r: TerraceRect, x: number, z: number, pad: number) {
   return x >= r.x0 - pad && x <= r.x1 + pad && z >= r.z0 - pad && z <= r.z1 + pad;
@@ -46,14 +58,11 @@ function within(r: TerraceRect, x: number, z: number, pad: number) {
 export function terrainHeightAt(x: number, z: number): number {
   if (TERRACE_STEP === 0) return 0;
   for (const r of TERRACE_RECTS) if (within(r, x, z, PLATEAU_PAD)) return TERRACE_STEP;
-  for (const r of TERRACE_RECTS) if (within(r, x, z, BANK_PAD)) return TERRACE_STEP / 2;
   return 0;
 }
 
-/** 어느 단인지 (0·1·2). 담장처럼 "한 구역은 한 단" 이어야 하는 것에 쓴다. */
-export function terrainLevelAt(x: number, z: number): 0 | 1 | 2 {
-  if (TERRACE_STEP === 0) return 0;
-  for (const r of TERRACE_RECTS) if (within(r, x, z, PLATEAU_PAD)) return 2;
-  for (const r of TERRACE_RECTS) if (within(r, x, z, BANK_PAD)) return 1;
-  return 0;
+/** 구역 단 위인가. 물길·계단처럼 "위냐 아래냐"만 필요한 데 쓴다. */
+export function onTerrace(x: number, z: number): boolean {
+  if (TERRACE_STEP === 0) return false;
+  return TERRACE_RECTS.some((r) => within(r, x, z, PLATEAU_PAD));
 }

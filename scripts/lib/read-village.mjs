@@ -19,19 +19,14 @@ export function readVillage() {
   };
   const SPREAD = num(/export const SPREAD\s*=\s*([\d.]+)/);
 
-  const OFFSET = {};
-  {
-    const block = source.match(/districtOffset[^=]*=\s*\{([\s\S]*?)\};/);
-    if (!block) throw new Error(`${CONSTANTS} 에서 districtOffset 을 못 찾았습니다`);
-    for (const line of block[1].split("\n")) {
-      const m = line.match(/(\w[\w-]*)\s*:\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/);
-      if (m) OFFSET[m[1]] = [Number(m[2]), Number(m[3])];
-    }
-  }
+  // 구역 밀어내기 — constants.ts 의 applyDistrictOffset 과 **같은 계산**이어야 한다.
+  // 예전엔 손으로 적은 districtOffset 표를 읽었는데, 그게 구역별 라디얼 푸시로
+  // 바뀌면서 여기도 같이 바꿨다. 방향은 **밀기 전 좌표의 구역 무게중심**에서 얻는다.
+  const PUSH = num(/const DISTRICT_PUSH\s*=\s*([\d.]+)/);
 
   // id 하나가 곧 건물 하나는 아니다(sectionMeta 에도 id가 있다). 다음 id 직전까지만
   // 훑어서 size·position·district 가 모두 있는 것만 건물로 친다.
-  const buildings = [];
+  const raw = [];
   const ids = [...source.matchAll(/id:\s*"([^"]+)"/g)];
   for (let n = 0; n < ids.length; n++) {
     const start = ids[n].index;
@@ -43,17 +38,39 @@ export function readVillage() {
     if (!size || !position || !district) continue;
     const [w, h, d] = size[1].split(",").map((v) => Number(v.trim()));
     const [px, , pz] = position[1].split(",").map((v) => Number(v.trim()));
-    const [ox, oz] = OFFSET[district[1]] ?? [0, 0];
-    buildings.push({
-      id: ids[n][1],
-      district: district[1],
-      x: Math.round((px + ox) * SPREAD * 100) / 100,
-      z: Math.round((pz + oz) * SPREAD * 100) / 100,
-      w,
-      h,
-      d
-    });
+    raw.push({id: ids[n][1], district: district[1], px, pz, w, h, d});
   }
+
+  // 밀기 전 무게중심 (plaza 는 제외 — 중심이 원점이라 밀 방향이 없다)
+  const center = {};
+  for (const b of raw) {
+    if (b.district === "plaza") continue;
+    const at = (center[b.district] ??= {x: 0, z: 0, n: 0});
+    at.x += b.px;
+    at.z += b.pz;
+    at.n += 1;
+  }
+  const OFFSET = {};
+  for (const [district, v] of Object.entries(center)) {
+    const cx = v.x / v.n;
+    const cz = v.z / v.n;
+    const len = Math.hypot(cx, cz) || 1;
+    OFFSET[district] = [(cx / len) * PUSH, (cz / len) * PUSH];
+  }
+
+  const buildings = raw.map((b) => {
+    const [ox, oz] = OFFSET[b.district] ?? [0, 0];
+    return {
+      id: b.id,
+      district: b.district,
+      x: Math.round((b.px + ox) * SPREAD * 100) / 100,
+      z: Math.round((b.pz + oz) * SPREAD * 100) / 100,
+      w: b.w,
+      h: b.h,
+      d: b.d
+    };
+  });
+
   if (buildings.length < 20)
     throw new Error(`${CONSTANTS} 에서 건물을 ${buildings.length}개밖에 못 읽었습니다 — 형식이 바뀐 듯합니다`);
 

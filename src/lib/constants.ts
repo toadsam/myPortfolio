@@ -103,6 +103,9 @@ const plazaBuilding: BuildingData = {
   label: "Start",
   description: "마을 전체의 허브입니다. 처음 방문했다면 여기에서 안내를 확인하세요.",
   position: [0, 0, 0],
+  // size 는 **길·충돌·앞마당이 같이 읽는 값**이라 함부로 못 키운다. 기념비를
+  // 키우려고 6.6 으로 올렸더니 길 생성기가 이 상자를 피하면서 광장 둘레 도로가
+  // 무너졌다(T 20→6, 교차 4→1). 키우는 건 Building.tsx 의 boost 로 따로 한다.
   size: [4.75, 5.54, 4.75],
   color: "#0a1a2e",
   roofColor: "#00d4ff",
@@ -507,25 +510,56 @@ const lifeBuildings: BuildingData[] = [
 ];
 
 // 마을 확장 + 건물 간격 넓힘 — 모든 좌표에 동일 배수 적용
-export const SPREAD = 1.45;
+// 컨셉 아트의 건물은 처마가 서로 겹칠 만큼 붙어 있다. 1.45 는 그에 비해
+// 성겼다 — 1.32 로 6% 좁혔다. 더 줄여도 상자는 안 겹치고(1.28 까지 확인) 길도
+// 다 닿지만, 앞마당 원반이 서로 먹기 시작해 길 칸이 깎인다.
+export const SPREAD = 1.32;
 export function spread(p: number[]): Vector3Tuple {
   return [Math.round((p[0] ?? 0) * SPREAD * 100) / 100, p[1] ?? 0, Math.round((p[2] ?? 0) * SPREAD * 100) / 100];
 }
 
-// 구역별 이동 오프셋 — 구역 내부 간격은 그대로, 구역 덩어리만 광장에서 바깥으로 살짝 밀어 분리감을 준다.
-const districtOffset: Record<string, [number, number]> = {
-  plaza: [0, 0],
-  projects: [-3, 0],      // 서쪽
-  skills: [0, -3],        // 북쪽(안쪽)
-  experience: [1.5, 2],   // 남동쪽
-  life: [3, 0],           // 동쪽
-  study: [0, 3],          // 남쪽(앞쪽)
-  contact: [0, 1]         // 앞쪽 살짝
-};
+// ─── 구역 덩어리를 광장에서 바깥으로 민다 ────────────────────────────────────
+// 손으로 적어 둔 오프셋(projects [-3,0], skills [0,-3] …)을 쓰다가, 구역을
+// 컨셉 아트 방위로 재배치한 뒤로 **방향이 실제 구역 위치와 어긋나** 있었다
+// (skills 는 북동인데 오프셋은 북쪽, experience 는 서쪽인데 오프셋은 남동쪽).
+//
+// 무엇보다 밀어내는 양이 모자랐다. 구역 사각형 사이 간격이 딱 1.88(격자 한 칸)로
+// 남았는데 단 가장자리 여유가 양쪽 0.94 라, 여섯 구역의 단이 **정확히 맞닿아
+// 하나의 큰 단**이 됐다. 그래서 마을 안에서는 볼 수 있는 턱이 하나도 없었고,
+// 구역 사이에 물길을 낼 틈도 없었다(그래서 해자를 마을 밖으로 돌렸다 — 실수였다).
+//
+// 이제 각 구역의 **실제 무게중심 방향**으로 일정량을 민다. 사이가 벌어지면
+// 그 골짜기가 레벨 0 으로 남아 단이 옆에서 보이고, 거기에 물이 흐른다.
+const DISTRICT_PUSH = 4.6;
+
+/** 밀기 전 좌표 기준 구역 무게중심 — 미는 방향을 여기서 얻는다 */
+const rawDistrictCenter: Record<string, {x: number; z: number}> = (() => {
+  const acc: Record<string, {x: number; z: number; n: number}> = {};
+  for (const b of [
+    ...projectBuildings,
+    ...skillBuildings,
+    ...experienceBuildings,
+    ...lifeBuildings,
+    ...studyBuildings,
+    contactBuilding
+  ]) {
+    const at = (acc[b.district] ??= {x: 0, z: 0, n: 0});
+    at.x += b.position[0];
+    at.z += b.position[2];
+    at.n += 1;
+  }
+  return Object.fromEntries(Object.entries(acc).map(([k, v]) => [k, {x: v.x / v.n, z: v.z / v.n}]));
+})();
 
 function applyDistrictOffset(position: Vector3Tuple, district: string): Vector3Tuple {
-  const [ox, oz] = districtOffset[district] ?? [0, 0];
-  return [position[0] + ox, position[1], position[2] + oz];
+  const c = rawDistrictCenter[district];
+  if (!c) return position; // plaza
+  const len = Math.hypot(c.x, c.z) || 1;
+  return [
+    position[0] + (c.x / len) * DISTRICT_PUSH,
+    position[1],
+    position[2] + (c.z / len) * DISTRICT_PUSH
+  ];
 }
 
 // 카메라/미니맵이 구역을 가리킬 때 쓰는 view-key → district 매핑

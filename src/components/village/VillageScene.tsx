@@ -5,13 +5,15 @@ import {AdaptiveDpr, AdaptiveEvents, Billboard, ContactShadows, Html, useGLTF, u
 import {Bloom, EffectComposer, ToneMapping} from "@react-three/postprocessing";
 import {ToneMappingMode} from "postprocessing";
 import {memo, Suspense, useEffect, useMemo, useRef} from "react";
-import {AdditiveBlending, BackSide, BufferGeometry, Color, Float32BufferAttribute, RepeatWrapping, SphereGeometry, SRGBColorSpace, Vector3} from "three";
+import {AdditiveBlending, BackSide, BufferGeometry, Color, Float32BufferAttribute, type Mesh, RepeatWrapping, SphereGeometry, SRGBColorSpace, Vector3} from "three";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import {spread, villageBuildings} from "@/lib/constants";
 import {VILLAGE_PALETTE} from "@/lib/villagePalette";
-import {BANK_PAD, PLATEAU_PAD, TERRACE_RECTS, TERRACE_STEP, terrainHeightAt} from "@/lib/villageTerrain";
+import {makeCloudTexture} from "@/lib/skyClouds";
+import {makeBankTexture} from "@/lib/terraceBank";
+import {PLATEAU_PAD, TERRACE_RECTS, TERRACE_STEP, terrainHeightAt, WATER_CHANNELS} from "@/lib/villageTerrain";
 import buildingModels from "@/data/buildingModels.json";
 import {buildBuildingStateMap, buildNpcStateMap} from "@/lib/liveState";
 import type {NpcRuntimeState, VillageState} from "@/types/live";
@@ -241,46 +243,92 @@ function Water() {
 // 땅을 파는 대신 **잔디 위에 물 리본을 얹는다.** 부감에서 보면 얕은 개울로
 // 읽히고, 지오메트리는 삼각형 60개짜리 띠 하나다. 잔디가 polygonOffset 으로
 // 깊이 방향 뒤에 밀려 있어서 y 를 조금만 올려도 확실히 위에 그려진다.
-const CREEK_Z = -20.7;   // 참배로가 건너는 자리 (격자 j −11)
-const CREEK_HALF = 1.5;  // 반폭. 다리(5유닛 span)가 넉넉히 걸친다.
-const CREEK_SPAN = 30;   // 좌우로 뻗는 길이. 끝은 숲에 가려 사라진다.
+// ─── 마을을 두르는 해자 ──────────────────────────────────────────────────────
+// 처음엔 북쪽에 개울 한 줄만 뒀다(참배로가 건널 물이 필요했다). 컨셉 아트와
+// 나란히 놓고 보니 물이 마을 **둘레를 감싸고** 있고, 그 물이 절벽에서 폭포로
+// 떨어지는 게 조감도의 큰 인상이었다.
+//
+// 구역 **사이**로 흘리려고 했지만 자리가 없다 — 격자를 찍어 보니 마을이 통째로
+// 한 단(윗단)이고 광장만 3×2칸 파여 있다. 그래서 구역 사이가 아니라 마을 둘레다.
+//
+// 북쪽 꼭짓점이 예전 개울 자리(z −20.7)에 정확히 오도록 중심과 반지름을 잡았다 —
+// 돌다리와 참배로를 그대로 쓴다. generate-decor-layout.mjs 에 같은 값이 있다.
+const MOAT = {cx: 0, cz: 1, a: 27, b: 21.7};
+const MOAT_HALF = 1.1;   // 반폭. 다리(5유닛 span)가 넉넉히 걸친다.
+// 1.5 로 뒀더니 마을 안 물길과 겹치는 데서 두 리본이 화살표처럼 뭉쳐 보였다.
+const MOAT_STEPS = 132;  // 한 바퀴를 몇 조각으로
 
-function Creek() {
+function Waterways() {
   const geometry = useMemo(() => {
     const positions: number[] = [];
     const colors: number[] = [];
     const indices: number[] = [];
-    const STEPS = 30;
 
     const shallow = new Color("#63c7c4"); // 가장자리 — 자갈이 비치는 여울
     const deep = new Color("#2f8fa6");    // 한가운데
 
-    for (let s = 0; s <= STEPS; s++) {
-      const t = s / STEPS;
-      const x = -CREEK_SPAN + t * CREEK_SPAN * 2;
-      // 자로 그은 듯 곧으면 수로지 개울이 아니다. 완만하게 굽이치게 한다.
-      const drift = Math.sin(t * Math.PI * 2.4 + 0.7) * 1.6 + Math.sin(t * Math.PI * 5.1) * 0.5;
-      // 폭도 조금씩 달라져야 자연스럽다
-      const half = CREEK_HALF * (0.82 + 0.3 * Math.sin(t * Math.PI * 3.3 + 1.9));
-      // 양 끝은 숲으로 들어가며 가늘어진다 — 지평선에서 뚝 끊기면 판때기로 보인다
-      const taper = Math.min(1, Math.min(t, 1 - t) * 6);
-      for (const side of [-1, 1]) {
-        positions.push(x, 0, CREEK_Z + drift + half * taper * side);
-        const c = side < 0 ? shallow : shallow;
-        colors.push(c.r, c.g, c.b);
+    /**
+     * 폴리라인 하나를 물 리본으로 만든다. 한 마디마다 정점 셋(왼·오른·가운데)이라
+     * 가운데 줄에 짙은 색을 넣어 물에 두께가 있는 것처럼 보인다.
+     * @param taper 끝을 가늘게 할지 — 해자는 닫힌 고리라 안 하고, 물길은 한다
+     */
+    const ribbon = (
+      pts: {x: number; z: number}[],
+      halfAt: (t: number) => number,
+      taper: boolean
+    ) => {
+      const base = positions.length / 3;
+      for (let i = 0; i < pts.length; i++) {
+        const t = i / (pts.length - 1);
+        const prev = pts[Math.max(0, i - 1)];
+        const next = pts[Math.min(pts.length - 1, i + 1)];
+        const tx = next.x - prev.x;
+        const tz = next.z - prev.z;
+        const tl = Math.hypot(tx, tz) || 1;
+        // 진행 방향의 법선
+        const ux = -tz / tl;
+        const uz = tx / tl;
+        const fade = taper ? Math.min(1, Math.min(t, 1 - t) * 8) : 1;
+        const half = halfAt(t) * fade;
+        for (const side of [-1, 1]) {
+          positions.push(pts[i].x + ux * half * side, 0, pts[i].z + uz * half * side);
+          colors.push(shallow.r, shallow.g, shallow.b);
+        }
+        positions.push(pts[i].x, 0, pts[i].z);
+        colors.push(deep.r, deep.g, deep.b);
       }
-      // 가운데 줄 — 깊은 색을 넣어 물이 두께를 갖게
-      positions.push(x, 0, CREEK_Z + drift);
-      colors.push(deep.r, deep.g, deep.b);
-    }
+      for (let i = 0; i < pts.length - 1; i++) {
+        const a = base + i * 3;
+        const b = base + (i + 1) * 3;
+        indices.push(a, a + 2, b, b, a + 2, b + 2);
+        indices.push(a + 2, a + 1, b + 2, b + 2, a + 1, b + 1);
+      }
+    };
 
-    // 한 단계마다 정점 셋(왼쪽·오른쪽·가운데)이라 stride 3
-    for (let s = 0; s < STEPS; s++) {
-      const a = s * 3, b = (s + 1) * 3;
-      // 왼쪽 절반
-      indices.push(a, a + 2, b, b, a + 2, b + 2);
-      // 오른쪽 절반
-      indices.push(a + 2, a + 1, b + 2, b + 2, a + 1, b + 1);
+    // ① 마을을 두르는 해자 (닫힌 타원)
+    const moat: {x: number; z: number}[] = [];
+    for (let s = 0; s <= MOAT_STEPS; s++) {
+      const t = s / MOAT_STEPS;
+      const angle = t * Math.PI * 2 - Math.PI / 2; // −90° 에서 시작 = 북쪽 꼭짓점
+      const drift = Math.sin(angle * 3 + 0.7) * 1.4 + Math.sin(angle * 7) * 0.5;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const nx = cos / MOAT.a;
+      const nz = sin / MOAT.b;
+      const nl = Math.hypot(nx, nz) || 1;
+      moat.push({
+        x: MOAT.cx + cos * MOAT.a + (nx / nl) * drift,
+        z: MOAT.cz + sin * MOAT.b + (nz / nl) * drift
+      });
+    }
+    ribbon(moat, (t) => MOAT_HALF * (0.82 + 0.3 * Math.sin(t * Math.PI * 10 + 1.9)), false);
+
+    // ② 구역 사이 골짜기를 흐르는 물길 — 단이 양옆에 서 있어 파인 것처럼 보인다.
+    //    광장 쪽 끝은 가늘게, 해자에 닿는 바깥쪽은 넓게.
+    for (const channel of WATER_CHANNELS) {
+      // 안쪽은 가늘고 바깥으로 갈수록 넓어진다 — 물이 흘러 내려가는 방향이 읽힌다.
+      // 0.55~1.3 은 너무 굵어 잔디 위에 붙인 색종이처럼 보였다.
+      ribbon(channel, (t) => 0.5 + t * 0.45, true);
     }
 
     const geo = new BufferGeometry();
@@ -294,69 +342,110 @@ function Creek() {
   return (
     <mesh geometry={geometry} position={[0, 0.05, 0]}>
       {/* 호수(Water)와 같은 재질감 — 하늘빛을 받아야 물로 보인다.
-          다만 개울은 얕으므로 조금 밝고 덜 반사한다. */}
+          다만 해자·개울은 얕으므로 조금 밝고 덜 반사한다. */}
       <meshStandardMaterial vertexColors roughness={0.3} metalness={0.2} />
     </mesh>
   );
 }
 
-// ─── 구역 단차의 옆면 (둔덕) ──────────────────────────────────────────────────
-// `villageTerrain.ts` 가 구역 판석을 두 계단 올려 놓는데, 판석은 **두께 없는
+// ─── 구역 단차의 옆면 (축대) ──────────────────────────────────────────────────
+// `villageTerrain.ts` 가 구역 판석을 한 계단 올려 놓는데, 판석은 **두께 없는
 // 평면 한 장**이라 옆에서 보면 공중에 뜬 판이다. 그 옆구리를 메우는 축대다.
 //
-// 사각형 하나마다 띠 두 개: 바깥 띠가 0 → STEP/2, 안쪽 띠가 STEP/2 → STEP.
-// 각 띠는 네 면짜리 상자 옆면이라 8삼각형 — 여섯 구역 다 합쳐 96삼각형이다.
-// 위·아래 뚜껑은 안 만든다. 윗면은 판석이 덮고, 아랫면은 볼 일이 없다.
+// ── 처음엔 세로 띠 한 장이었다 ─────────────────────────────────────────────
+// 사각형마다 8삼각형짜리 상자 옆면에 정점 색만 얹었는데, 손그림 판석 옆에서
+// **회색 콘크리트 턱**으로 보였다. 층이 안 느껴진 게 아니라 층의 옆면이
+// 재료로 안 읽힌 것이다. 그래서 두 가지를 더한다:
+//
+//   ① 돌쌓기 텍스처 (terraceBank.ts, 런타임 canvas) — 줄눈·이끼·돌마다 다른 색
+//   ② 세 마디 단면 — 지대석(발치에서 튀어나온 받침) / 벽면 / 갓돌(위에서 덮는 챙)
+//      벽면 하나만 있으면 어디까지가 축대인지 경계가 안 생긴다. 갓돌 챙이
+//      드리우는 그림자 한 줄이 부감에서 "여기가 단의 끝"을 만든다.
+//
+// ── 왜 받은 terrace-wall.glb 를 안 까나 ────────────────────────────────────
+// 그건 **ㄱ자 모서리** 조각이라 직선 구간에 늘어놓으면 ㄱ자만 되풀이된다.
+// 게다가 여섯 구역 둘레가 280유닛이 넘어 1.88마다 놓으면 150개 × 8천 삼각형이다.
+// 직선은 여기(삼각형 288개)가 맡고, 모서리에만 그 조각을 놓는다.
+const PLINTH_OUT = 0.1;
+const PLINTH_H = 0.2;
+const CAP_OUT = 0.12;
+const CAP_H = 0.15;
+
 function TerraceBanks() {
+  const texture = useMemo(() => makeBankTexture(), []);
+
   const geometry = useMemo(() => {
     if (TERRACE_STEP === 0) return null;
     const positions: number[] = [];
-    const colors: number[] = [];
+    const uvs: number[] = [];
     const indices: number[] = [];
-    const half = TERRACE_STEP / 2;
 
-    // 단색으로 두면 손그림 판석 옆에서 회색 콘크리트 턱으로 보인다.
-    // 아래를 어둡게, 윗머리를 밝게 — 그것만으로 돌을 쌓아 올린 축대로 읽힌다.
-    const foot = new Color("#6d6656");
-    const crown = new Color("#a29a84");
-
-    /** 사각형 옆면 한 바퀴 — 아래 y0, 위 y1 */
-    const ring = (x0: number, x1: number, z0: number, z1: number, y0: number, y1: number) => {
-      const corners: [number, number][] = [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
-      for (const [cx, cz] of corners) {
-        positions.push(cx, y0, cz);
-        colors.push(foot.r, foot.g, foot.b);
-        positions.push(cx, y1, cz);
-        colors.push(crown.r, crown.g, crown.b);
-      }
-      const base = positions.length / 3 - 8;
-      for (let k = 0; k < 4; k++) {
-        const a = base + k * 2;
-        const b = base + ((k + 1) % 4) * 2;
-        // 바깥에서 보이는 면이라 시계 방향(모서리 순서가 시계 방향이므로 그대로)
-        indices.push(a, a + 1, b, b, a + 1, b + 1);
-      }
-    };
+    // 단면을 (바깥으로 튀어나온 거리, 높이) 목록으로 적는다. 아래에서 위로.
+    // 마디를 따라간 실제 거리(호 길이)를 v 로 쓰므로 지대석·갓돌 위에도
+    // 돌 무늬가 이어진다 — 수평면만 단색으로 남으면 거기가 플라스틱처럼 보인다.
+    const profile: [number, number][] = [
+      [PLINTH_OUT, 0],
+      [PLINTH_OUT, PLINTH_H],
+      [0, PLINTH_H],
+      [0, TERRACE_STEP - CAP_H],
+      [CAP_OUT, TERRACE_STEP - CAP_H],
+      [CAP_OUT, TERRACE_STEP],
+      [0, TERRACE_STEP]
+    ];
+    const vAt: number[] = [0];
+    for (let i = 1; i < profile.length; i++) {
+      const d = Math.hypot(profile[i][0] - profile[i - 1][0], profile[i][1] - profile[i - 1][1]);
+      vAt.push(vAt[i - 1] + d / TERRACE_STEP);
+    }
 
     for (const r of TERRACE_RECTS) {
-      ring(r.x0 - BANK_PAD, r.x1 + BANK_PAD, r.z0 - BANK_PAD, r.z1 + BANK_PAD, 0, half);
-      ring(r.x0 - PLATEAU_PAD, r.x1 + PLATEAU_PAD, r.z0 - PLATEAU_PAD, r.z1 + PLATEAU_PAD, half, TERRACE_STEP);
+      const x0 = r.x0 - PLATEAU_PAD, x1 = r.x1 + PLATEAU_PAD;
+      const z0 = r.z0 - PLATEAU_PAD, z1 = r.z1 + PLATEAU_PAD;
+
+      /** 바깥으로 o 만큼 물린 네 귀퉁이. 모서리는 두 변의 법선을 더한 대각선이라
+          변끼리 어긋나지 않고 맞물린다. */
+      const corners = (o: number): [number, number][] => [
+        [x0 - o, z0 - o], [x1 + o, z0 - o], [x1 + o, z1 + o], [x0 - o, z1 + o]
+      ];
+
+      // u 는 둘레를 따라간 거리 / 격자 한 칸 — 어느 벽에서나 돌 한 장 크기가 같다.
+      // 물린 거리를 빼고 원래 변 길이로 재야 마디마다 줄눈이 세로로 딱 맞는다.
+      const sideLen = [x1 - x0, z1 - z0, x1 - x0, z1 - z0];
+
+      for (let i = 0; i + 1 < profile.length; i++) {
+        const A = corners(profile[i][0]);
+        const B = corners(profile[i + 1][0]);
+        const yA = profile[i][1], yB = profile[i + 1][1];
+        const vA = vAt[i], vB = vAt[i + 1];
+
+        for (let s = 0; s < 4; s++) {
+          const e = (s + 1) % 4;
+          const u1 = sideLen[s] / 1.88;
+          const base = positions.length / 3;
+          // 시작 귀퉁이의 A·B, 끝 귀퉁이의 A·B 순. 이 순서가 곧 면의 앞뒤다 —
+          // 수직 마디는 A 가 아래라 바깥을 보고, 수평 마디는 A 가 바깥이면
+          // 위를, 안쪽이면 아래를 본다. profile 을 그 규칙에 맞춰 적어 뒀다.
+          positions.push(A[s][0], yA, A[s][1]); uvs.push(0, vA);
+          positions.push(B[s][0], yB, B[s][1]); uvs.push(0, vB);
+          positions.push(A[e][0], yA, A[e][1]); uvs.push(u1, vA);
+          positions.push(B[e][0], yB, B[e][1]); uvs.push(u1, vB);
+          indices.push(base, base + 1, base + 2, base + 2, base + 1, base + 3);
+        }
+      }
     }
 
     const geo = new BufferGeometry();
     geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
-    geo.setAttribute("color", new Float32BufferAttribute(colors, 3));
+    geo.setAttribute("uv", new Float32BufferAttribute(uvs, 2));
     geo.setIndex(indices);
     geo.computeVertexNormals();
     return geo;
   }, []);
 
   if (!geometry) return null;
-  // 판석(182,164,131)보다 어둡게 — 밝게 하면 부감에서 흰 테두리로 뜬다.
-  // 담장 갓돌과 같은 계열이라 축대 → 담장으로 이어져 보인다.
   return (
     <mesh geometry={geometry} receiveShadow castShadow>
-      <meshStandardMaterial vertexColors roughness={0.95} metalness={0} />
+      <meshStandardMaterial map={texture} roughness={0.95} metalness={0} />
     </mesh>
   );
 }
@@ -479,6 +568,37 @@ function SkyDome({horizon, top}: {horizon: string; top: string}) {
   return (
     <mesh geometry={geometry} renderOrder={-1} frustumCulled={false}>
       <meshBasicMaterial vertexColors side={BackSide} depthWrite={false} fog={false} toneMapped={false} />
+    </mesh>
+  );
+}
+
+// 하늘 돔 안쪽에 도는 구름 껍질.
+//
+// 그라데이션 돔 하나만 있으면 하늘이 "색칠한 배경판"으로 보인다. 컨셉 아트의
+// 하늘에는 지평선 위로 낮게 깔린 구름 덩어리가 있고, 그게 노을을 실제 하늘로
+// 만든다. 텍스처는 파일이 아니라 코드로 만든다 — 이유는 lib/skyClouds.ts 머리말.
+//
+// 아주 느리게 돈다(약 26분에 한 바퀴). 멈춰 있으면 스티커처럼 보이고,
+// 눈에 띄게 돌면 시선을 뺏는다.
+function CloudLayer({light, dark, cover}: {light: string; dark: string; cover: number}) {
+  const ref = useRef<Mesh>(null);
+  const texture = useMemo(() => (cover > 0 ? makeCloudTexture(light, dark, cover) : null), [light, dark, cover]);
+  useEffect(() => () => texture?.dispose(), [texture]);
+  useFrame((_, delta) => {
+    if (ref.current) ref.current.rotation.y += delta * 0.004;
+  });
+  if (!texture) return null;
+  return (
+    <mesh ref={ref} renderOrder={-1} frustumCulled={false}>
+      <sphereGeometry args={[SKY_RADIUS * 0.96, 48, 24]} />
+      <meshBasicMaterial
+        map={texture}
+        side={BackSide}
+        transparent
+        depthWrite={false}
+        fog={false}
+        toneMapped={false}
+      />
     </mesh>
   );
 }
@@ -807,11 +927,12 @@ function VillageSceneImpl({
 
         <Suspense fallback={null}>
           <SkyDome horizon={sky.skyHorizon} top={sky.skyTop} />
+          <CloudLayer light={sky.cloudLight} dark={sky.cloudDark} cover={sky.cloudCover} />
           <SunDisc direction={sky.sunPos} radius={sky.discRadius} color={sky.discColor} />
           <Ground />
           <IslandCliff />
           <Water />
-          <Creek />
+          <Waterways />
           <TerraceBanks />
           <DistantHills />
           {PLAZA_LANDMARK_READY ? null : <Statue />}

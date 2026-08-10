@@ -109,6 +109,17 @@ const isGroundTile = (inPath) => /[\\/]ground[\\/]/.test(inPath);
 const DECOR_SIMPLIFY = "--simplify-error 0.005 --simplify-ratio 0.1";
 const isDecor = (inPath) => /[\\/](signs|decor|nature)[\\/]/.test(inPath);
 
+// 단차 조각(축대 모서리·돌계단·단 한 칸)만 오차를 키운다.
+//
+// 이 셋은 표면이 담쟁이로 덮여 있어 잎마다 UV 섬이 생기고, meshoptimizer 가
+// 심에 걸린 정점을 못 합친다 — weld 를 먼저 돌려도 12,717 → 12,717 로 한 개도
+// 안 준다. 기본 오차 0.005 로는 10,612 에서 멈추는데, 구역마다 모서리 넷 +
+// 대문 계단이 붙으면 50개가 넘어서 그 차이가 20만 삼각형이다.
+// 0.03 이면 8,373 이고, 통짜 돌덩이라 실루엣이 안 무너진다(간판과 달리 글자·
+// 얇은 판때기가 없다). 0.08 까지 올려도 8,373 에서 더 안 준다 — 여기가 바닥이다.
+const TERRACE_SIMPLIFY = "--simplify-error 0.03 --simplify-ratio 0.05";
+const isTerracePiece = (inPath) => /terrace-(wall|stair|slab)\.glb$/i.test(inPath);
+
 // 간판에 건물 예산(baseColor 1024)을 빌려준 적이 있다. 글자가 존재 이유니까.
 // 그런데 장식물이 35종으로 늘자 텍스처 VRAM이 252MB로 예산(250)을 넘겼고,
 // 간판 7장이 그중 37MB를 먹고 있었다 — 마을 카메라에서 간판은 높이 1유닛이라
@@ -128,6 +139,7 @@ function passesFor(group, inPath) {
   if (group === "buildings" || group === "environment") return BUILDING_SIMPLIFY;
   if (group !== "props") return "";
   if (isGroundTile(inPath)) return GROUND_SIMPLIFY;
+  if (isTerracePiece(inPath)) return TERRACE_SIMPLIFY;
   if (isDecor(inPath)) return DECOR_SIMPLIFY;
   return "";
 }
