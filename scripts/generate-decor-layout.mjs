@@ -46,6 +46,35 @@ const KIT = {
   // 우리는 구역당 1~9채(대개 3채)라 블록이 비어 보였다. 진짜 건물과 키를 맞춘다.
   "house-a": {glb: "decor/house-a.glb", h: 1.826, m: 6.0},
   "house-b": {glb: "decor/house-b.glb", h: 1.742, m: 6.0},
+  "house-c": {glb: "decor/house-c.glb", h: 1.632, m: 6.0},
+
+  // ─── 세로 깃발 깃대 ─────────────────────────────────────────────────────────
+  // 컨셉 아트에서 화면에 가장 많이 찍혀 있는 물건. 파랑·금빛 깃발이 광장 둘레와
+  // 대로변에 줄줄이 서서, 부감에서도 "여기가 큰 길"이 읽힌다.
+  // 가로등(1.2유닛)보다 확실히 높아야 리듬이 생긴다.
+  "flagpole-banner": {glb: "decor/flagpole-banner.glb", h: 1.903, m: 4.6},
+
+  // 포장 위 원형 화단. 바닥을 돌로 덮고 나니 블록 사이가 **아무것도 없는 돌마당**이
+  // 됐다. 컨셉 아트는 그 자리를 화단과 나무로 채운다.
+  "flowerbed-round": {glb: "decor/flowerbed-round.glb", h: 0.462, m: 0.6},
+
+  // ─── 마을 밖 랜드마크 ───────────────────────────────────────────────────────
+  // 섬 테두리에 세우는 큰 것들. 한두 개씩만 놓으므로 삼각형을 아끼지 않는다.
+  // 지평선에 수직선을 세워 주는 게 이것들의 일이다 — 마을 안이 아무리 차도
+  // 실루엣이 납작하면 조감에서 밋밋하다.
+  windmill: {glb: "decor/windmill.glb", h: 1.899, m: 14},
+  waterfall: {glb: "decor/waterfall.glb", h: 1.737, m: 20},
+  "island-north": {glb: "decor/island-north.glb", h: 1.811, m: 24},
+  "pagoda-portfolio": {glb: "decor/pagoda-portfolio.glb", h: 1.904, m: 15},
+  "bridge-stone": {glb: "decor/bridge-stone.glb", h: 0.74, m: 5.0},
+
+  // ─── 낮은 돌담 ──────────────────────────────────────────────────────────────
+  // scripts/make-low-wall.mjs 가 굽는다(상자 둘, 24 삼각형). 컨셉 아트에서 구역이
+  // "구역"으로 읽히는 건 이 선 하나 덕이다 — 담 안은 마당, 담 밖은 길.
+  // 마을 전체에 80토막쯤 깔리므로 값이 싸야 한다. 손그림이 오면 raw/decor 에
+  // 같은 이름으로 넣고 optimize 만 돌리면 그대로 갈린다.
+  // 배율이 1이 되도록 h·m 을 맞춰 놨다 — 생성 스크립트가 이미 월드 크기로 만든다.
+  "wall-low": {glb: "decor/wall-low.glb", h: 0.6, m: 1.5},
 
   // ─── 석축 ───────────────────────────────────────────────────────────────────
   // 축대(擁壁) — 흙이 무너지지 않게 받치는 돌벽. 컨셉 아트는 구역마다 이 벽으로
@@ -252,6 +281,21 @@ const taken = [];
 /** 이미 놓은 장식물과 겹치지 않는가 */
 const free = (x, z, gap) => !taken.some((t) => Math.hypot(t.x - x, t.z - z) < gap);
 
+// ─── 담장 선분 ────────────────────────────────────────────────────────────────
+// ②-d 가 채운다. 길이 1.94 · 두께 0.4 짜리 **선분**이라 taken 의 점 하나로는
+// 표현이 안 된다. 길이 방향과 두께 방향을 따로 재야 담장 옆에 가로등을 붙여
+// 세울 수 있다 (원으로 막으면 블록 둘레가 통째로 죽는다).
+const walls = [];
+const WALL_HALF_LEN = 0.97;
+const WALL_HALF_THICK = 0.2;
+const onWall = (x, z, slack = 0) =>
+  walls.some((w) => {
+    const dx = x - w.x, dz = z - w.z;
+    const along = Math.abs(dx * w.ax + dz * w.az);
+    const perp = Math.abs(dx * -w.az + dz * w.ax);
+    return along < WALL_HALF_LEN + slack && perp < WALL_HALF_THICK + slack;
+  });
+
 // ─── 걸어 다니는 구역 ─────────────────────────────────────────────────────────
 // CharacterController 는 캐릭터를 x ±11.5 / z −8.8~12.5 안에 가둔다. 3인칭 카메라는
 // 그 뒤 5.5·높이 3.8 이라, 이 안에서는 눈높이에서 물건을 코앞에 두고 본다.
@@ -324,6 +368,7 @@ function findSpot(x, z, {gap = 0.9, radius = 2.4, avoidRoad = true} = {}) {
       if (avoidRoad && onRoad(px, pz, 0.35)) continue;
       if (onDisc(px, pz, 0.15)) continue;
       if (onBuilding(px, pz, 0.7)) continue;
+      if (onWall(px, pz, 0.25)) continue;
       if (!free(px, pz, gap)) continue;
       return {x: px, z: pz};
     }
@@ -462,10 +507,19 @@ for (const {kind, angle} of PLAZA_RING) {
 // npc-${id} 를 자동 생성한다).
 //
 // 광장에서 **먼** 자리부터 채운다. 앞줄에 끼워 넣으면 진짜 건물을 가린다.
+//
+// ②-d 담장이 이 결과를 받아 블록을 두르므로, 여기서 구역별 블록 상자를 남긴다.
+/** district → 그 구역이 실제로 차지한 사각형 (채움 민가까지 포함) */
+const blockRect = new Map();
 {
   // 블록이 클수록 뒤에 붙는 집도 많다. 한 채가 8~12천 삼각형이라 헤프게 못 쓴다.
-  const PER_DISTRICT = {projects: 3, skills: 2, life: 2, experience: 2, study: 2, contact: 1};
-  const KINDS = ["house-a", "house-b"];
+  // 3·2·2·2·2·1(12채)로는 담장 안이 텅 비어 보였다. 삼각형 상한을 180만으로
+  // 올렸으니(PerfHud) 집 한 채 8~12천은 감당된다 — 블록이 차 보이는 데 이만한
+  // 수단이 없다. 컨셉 아트의 블록은 이름표 붙은 건물 서넛 + 이름 없는 집 대여섯이다.
+  const PER_DISTRICT = {projects: 7, skills: 6, life: 6, experience: 6, study: 6, contact: 5};
+  // 두 종으로 12채를 돌려쓰니 위에서 보면 같은 집이 여섯 번씩 나왔다. 세 종이면
+  // 한 구역 안에서는 같은 집이 두 번 안 나온다(구역당 최대 3채).
+  const KINDS = ["house-a", "house-b", "house-c"];
   let n = 0;
   for (const [district, count] of Object.entries(PER_DISTRICT)) {
     const group = OUTER.filter((b) => b.district === district);
@@ -497,27 +551,113 @@ for (const {kind, angle} of PLAZA_RING) {
         const behind = dx * out.x + dz * out.z;
         const lateral = Math.abs(dx * -out.z + dz * out.x);
         if (lateral > halfWide) continue;
-        cand.push({x, z, score: -Math.abs(behind - target) - lateral * 0.35});
+        cand.push({x, z, behind, lateral});
       }
     }
     // 처음엔 "광장에서 먼 순", 다음엔 "블록 뒤쪽일수록 좋음"으로 골랐다. 둘 다
     // 집을 블록 **대각 모서리 바깥**으로 밀어냈다 — 후보 영역이 사각형이라
     // 어느 방향이든 "가장 뒤"는 꼭짓점이기 때문이다(실제로 12채가 다 그렇게 섰다).
     // 최댓값이 아니라 **목표 거리**를 잡는다: 뒷줄 바로 뒤, 블록 폭 안쪽.
-    cand.sort((a, b) => b.score - a.score);
+    //
+    // 그리고 띠 하나로는 블록이 안 찬다. 담장을 두르고 나서 부감으로 보니
+    // 여섯 블록이 다 "담 안에 건물 서넛, 나머지는 빈 돌마당"이었다 — 컨셉 아트의
+    // 블록은 이름표 붙은 건물 뒤로 집이 두세 줄 더 들어차 있다.
+    // 뒷줄 바로 뒤 → 그 뒤 한 줄 더 → 앞줄 옆구리 순으로 세 띠를 채운다.
+    const BANDS = [target, target + 2.6, backEdge - 1.4];
+
+    // 블록 상자 — 진짜 건물의 외곽에서 시작해 세운 집만큼 넓힌다
+    const rect = {
+      x0: Math.min(...group.map((b) => b.x - b.w / 2)),
+      x1: Math.max(...group.map((b) => b.x + b.w / 2)),
+      z0: Math.min(...group.map((b) => b.z - b.d / 2)),
+      z1: Math.max(...group.map((b) => b.z + b.d / 2))
+    };
 
     let put = 0;
-    for (const c of cand) {
+    for (const band of BANDS) {
       if (put >= count) break;
-      // 집끼리, 그리고 다른 장식물과 3유닛은 떨어뜨린다 (집 폭이 2.2~2.5다)
-      if (!free(c.x, c.z, 3.0)) continue;
-      // 정면은 광장 쪽 — 뒷줄이라도 앞을 보고 서야 마을이 한 방향으로 정돈된다
-      place(`house-${n}`, KINDS[n % KINDS.length], c.x, c.z,
-        faceTo(-out.x, -out.z), {gap: 3.0});
-      put += 1;
-      n += 1;
+      const ranked = cand
+        .map((c) => ({...c, score: -Math.abs(c.behind - band) - c.lateral * 0.35}))
+        .sort((a, b) => b.score - a.score);
+      // 한 띠에 몰아넣지 않는다 — 앞 띠가 다 차 버리면 뒷줄이 안 생긴다
+      const quota = Math.ceil(count / BANDS.length);
+      let inBand = 0;
+      for (const c of ranked) {
+        if (put >= count || inBand >= quota) break;
+        // 집끼리, 그리고 다른 장식물과 2.9유닛은 떨어뜨린다 (집 폭이 2.2~2.5다)
+        if (!free(c.x, c.z, 2.9)) continue;
+        // 정면은 광장 쪽 — 뒷줄이라도 앞을 보고 서야 마을이 한 방향으로 정돈된다
+        place(`house-${n}`, KINDS[n % KINDS.length], c.x, c.z,
+          faceTo(-out.x, -out.z), {gap: 2.9});
+        // 집 한 채가 대략 2.4유닛 폭이다 — 그 절반만큼 상자를 넓힌다
+        const HALF_HOUSE = 1.2;
+        rect.x0 = Math.min(rect.x0, c.x - HALF_HOUSE);
+        rect.x1 = Math.max(rect.x1, c.x + HALF_HOUSE);
+        rect.z0 = Math.min(rect.z0, c.z - HALF_HOUSE);
+        rect.z1 = Math.max(rect.z1, c.z + HALF_HOUSE);
+        put += 1;
+        inBand += 1;
+        n += 1;
+      }
+    }
+    blockRect.set(district, rect);
+  }
+}
+
+// ─── ②-d 블록을 두르는 낮은 돌담 ──────────────────────────────────────────────
+// 컨셉 아트를 우리 조감도와 나란히 놓고 가장 크게 다른 게 이것이었다. 컨셉의
+// 여섯 구역은 각각 허리 높이 돌담에 둘러싸여 있어서, 이름표를 안 읽어도 덩어리가
+// 여섯 개로 보인다. 우리는 포장 위에 건물이 흩어져 있을 뿐이라 어디서 어디까지가
+// PROJECTS 인지 알 수가 없었다.
+//
+// 담을 두르되 **길이 지나는 칸은 비운다** — 그 틈이 곧 구역 대문이 되고,
+// ① 에서 세운 현판 아치가 그 자리에 서 있다. 담이 끊긴 데로 걸어 들어가면
+// 머리 위에 PROJECTS 현판이 지나가는 그림이 된다.
+{
+  /** 담을 건물에서 얼마나 밀어낼까 — 포장이 블록 상자 바깥 한 칸까지 깔려 있다 */
+  const MARGIN = 1.45;
+  /** 한 토막 길이 (make-low-wall.mjs 의 LENGTH). 살짝 겹치게 놓아 틈을 막는다 */
+  const STEP = 1.9;
+  let n = 0;
+  let openings = 0;
+
+  for (const [district, r] of blockRect) {
+    const x0 = r.x0 - MARGIN, x1 = r.x1 + MARGIN;
+    const z0 = r.z0 - MARGIN, z1 = r.z1 + MARGIN;
+
+    // 네 변. along 은 변이 뻗는 방향, rot 은 담장 긴 축(모델 +X)을 거기 맞추는 각.
+    const edges = [
+      {from: [x0, z0], to: [x1, z0], rot: 0},           // 북
+      {from: [x0, z1], to: [x1, z1], rot: 0},           // 남
+      {from: [x0, z0], to: [x0, z1], rot: Math.PI / 2}, // 서
+      {from: [x1, z0], to: [x1, z1], rot: Math.PI / 2}  // 동
+    ];
+
+    for (const e of edges) {
+      const len = Math.hypot(e.to[0] - e.from[0], e.to[1] - e.from[1]);
+      // 변 길이를 토막 수로 나눠 **딱 맞게** 편다. 고정 간격으로 깔면 마지막
+      // 토막이 모서리를 넘어가거나 모자란다.
+      const count = Math.max(1, Math.round(len / STEP));
+      for (let k = 0; k < count; k++) {
+        const t = (k + 0.5) / count;
+        const x = e.from[0] + (e.to[0] - e.from[0]) * t;
+        const z = e.from[1] + (e.to[1] - e.from[1]) * t;
+        // 길이 지나는 자리는 비운다 = 구역 대문. 여유를 넉넉히 줘야 통행이 막히지 않는다.
+        if (onRoad(x, z, 0.75)) { openings += 1; continue; }
+        if (onBuilding(x, z, 0.15) || onDisc(x, z, 0.05)) continue;
+        // 채움 민가·랜드마크가 이미 선 자리면 비켜 준다
+        if (!free(x, z, 1.15)) continue;
+        place(`wall-${district}-${n++}`, "wall-low", x, z, round3(e.rot), {gap: 1.15});
+        // 담장은 점이 아니라 1.9짜리 선분이라 taken 의 한 점으로는 못 막는다.
+        // 그렇다고 양 끝을 taken 에 더 넣었더니(처음엔 그렇게 했다) 블록 둘레
+        // 1.5유닛이 통째로 죽어서 가로등·깃대·화단이 마을에서 절반 넘게 사라졌다 —
+        // 담장 두께는 0.4밖에 안 되는데 taken 은 방향을 모르니 원으로 막는다.
+        // 실제 선분으로 따로 재는 쪽이 맞다 (onWall).
+        walls.push({x, z, ax: e.rot === 0 ? 1 : 0, az: e.rot === 0 ? 0 : 1});
+      }
     }
   }
+  console.log(`  담장 ${n}토막 · 길이 지나가 비운 자리 ${openings}곳`);
 }
 
 // ─── ②-c 남쪽 정문 ────────────────────────────────────────────────────────────
@@ -575,11 +715,14 @@ const gates = [];
 // 파랑·금빛 세로 깃발이 광장 둘레와 대로변에 줄줄이 서서, 위에서 내려다봐도
 // "길"과 "그냥 포장된 땅"이 구분된다. 우리 마을엔 다섯 개뿐이었다.
 //
-// 마을 전체 길에 깔면 값도 값이지만(하나 2,953 삼각형) 어디가 대로인지가 흐려진다.
+// 마을 전체 길에 깔면 값도 값이지만(하나 3,483 삼각형) 어디가 대로인지가 흐려진다.
 // 광장에서 뻗는 두 대로 — 남쪽 정문 진입 축과 동서 대로 — 에만 세운다.
+//
+// 예전엔 황금잎 깃대(leaf-banner)를 대신 썼다. 그건 잎사귀 장식이지 깃발이 아니라,
+// 컨셉 아트의 "파랑 바탕에 금색 문장" 세로기와 모양이 아예 달랐다.
 {
   const EVERY = 3;      // 몇 칸마다
-  const REACH = 15;     // 광장에서 이 거리까지만
+  const REACH = 18;     // 광장에서 이 거리까지만 (깃대가 제대로 생겼으니 조금 더 멀리)
   const onAxis = roads
     .filter((r) => Math.abs(r.x) < HALF_TILE || Math.abs(r.z) < HALF_TILE)
     .filter((r) => Math.hypot(r.x, r.z) < REACH)
@@ -594,12 +737,188 @@ const gates = [];
     for (const side of [-1, 1]) {
       const x = r.x + perp.x * (ROAD_SIDE + 0.45) * side;
       const z = r.z + perp.z * (ROAD_SIDE + 0.45) * side;
-      if (onDisc(x, z, 0.1) || onBuilding(x, z, 0.4) || !free(x, z, 1.2)) continue;
+      if (onDisc(x, z, 0.1) || onBuilding(x, z, 0.4) || onWall(x, z, 0.25) || !free(x, z, 1.2)) continue;
       // 깃발 면이 길을 향하도록 — 걸어가는 사람에게 옆면이 아니라 앞면이 보인다
-      place(`flagpole-${n++}`, "leaf-banner", x, z, faceTo(-perp.x * side, -perp.z * side), {gap: 1.2});
+      place(`flagpole-${n++}`, "flagpole-banner", x, z, faceTo(-perp.x * side, -perp.z * side), {gap: 1.2});
     }
   }
+
+  // 광장 둘레에도 한 바퀴. 컨셉 아트의 광장은 깃발이 원을 그리며 둘러선 자리다.
+  const RING = 10;
+  for (let k = 0; k < RING; k++) {
+    const angle = (k / RING) * Math.PI * 2 + Math.PI / RING;
+    const dist = HUB_RADIUS + 2.6;
+    const x = HUB.x + Math.cos(angle) * dist;
+    const z = HUB.z + Math.sin(angle) * dist;
+    if (onRoad(x, z, 0.3) || onBuilding(x, z, 0.5) || onWall(x, z, 0.25) || !free(x, z, 1.6)) continue;
+    // 광장 안쪽을 본다
+    place(`flagring-${k}`, "flagpole-banner", x, z, faceTo(HUB.x - x, HUB.z - z), {gap: 1.6});
+  }
 }
+
+// ─── ③-c 포장 위 화단 ─────────────────────────────────────────────────────────
+// 구역 바닥을 판석으로 덮고 나서 생긴 문제다. 포장 전에는 블록 사이 빈 곳이
+// 잔디라 아무것도 안 놔도 "정원"으로 보였는데, 돌로 덮고 나니 같은 자리가
+// **아무것도 없는 돌마당**이 됐다. 컨셉 아트의 포장 위에는 둥근 돌 화단이
+// 여기저기 놓여 그 삭막함을 막는다.
+//
+// 한 개가 9,898 삼각형이라 헤프게 못 쓴다. **정말로 비어 있는 포장 칸**에만 놓는다.
+//
+// 처음엔 "광장 앞치마 네 귀퉁이 + 구역 입구 양옆" 처럼 좌표를 계산해서 넣었는데
+// 12자리 중 한 곳도 안 섰다. 마을이 생각보다 빡빡해서다 — 광장 원반이 반지름
+// 4.6인데 가장 가까운 건물이 7.5 에 있어 그 사이 3유닛은 길 넷이 다 쓰고 있었다.
+// 자리를 **깔린 포장 타일에서 직접 고르면** 이런 추측이 필요 없다.
+{
+  const paved = layout.props
+    .filter((p) => p.id.startsWith("ground-pave-"))
+    .map((p) => ({x: p.position[0], z: p.position[2]}));
+
+  // 각 포장 칸이 얼마나 트여 있나 — 가장 가까운 길·건물·원반·담장·기존 장식물까지
+  const clearance = (x, z) => {
+    let best = Infinity;
+    for (const r of roads) best = Math.min(best, Math.hypot(r.x - x, r.z - z) - ROAD_SIDE);
+    for (const b of buildings) {
+      const dx = Math.max(0, Math.abs(b.x - x) - b.w / 2);
+      const dz = Math.max(0, Math.abs(b.z - z) - b.d / 2);
+      best = Math.min(best, Math.hypot(dx, dz));
+    }
+    for (const d of discs) best = Math.min(best, Math.hypot(d.x - x, d.z - z) - d.r);
+    best = Math.min(best, Math.hypot(HUB.x - x, HUB.z - z) - HUB_RADIUS);
+    for (const w of walls) {
+      const dx = x - w.x, dz = z - w.z;
+      best = Math.min(best, Math.hypot(
+        Math.max(0, Math.abs(dx * w.ax + dz * w.az) - WALL_HALF_LEN),
+        Math.max(0, Math.abs(dx * -w.az + dz * w.ax) - WALL_HALF_THICK)
+      ));
+    }
+    for (const t of taken) best = Math.min(best, Math.hypot(t.x - x, t.z - z));
+    return best;
+  };
+
+  /** 화단 지름이 0.9유닛이니 사방 1.1은 비어야 한다 */
+  const NEED = 1.1;
+  /** 심은 것끼리 이만큼은 떨어뜨린다 — 몰아 놓으면 화단밭이 된다 */
+  const APART = 3.6;
+  const MAX = 34;
+
+  // ─── 화단만으로는 부족했다 ─────────────────────────────────────────────────
+  // 길 갓길까지 돌색으로 바꾸고 나니 구역 안쪽이 통째로 베이지 한 색이 됐다.
+  // 컨셉 아트의 포장 위에는 **나무가 촘촘히 심겨** 있고, 그 초록이 돌바닥을
+  // 삭막하지 않게 만든다. 원래 그 일을 하던 ⑪ 빈터는 잔디 공터를 찾는 규칙이라
+  // 포장을 깔고 나서는 후보가 네 곳밖에 안 남았다.
+  //
+  // 여기는 카메라가 가장 오래 머무는 자리라 전부 원본 GLB 다 — 빌보드를 쓰면
+  // 부감에서 판때기 두 장인 게 그대로 드러난다.
+  // 침엽수(5,652)를 주로 쓰고 값비싼 활엽수(8,932)·벚나무(8,789)는 드물게 섞는다.
+  const ROTATION = [
+    "tree-emerald-crown",
+    "flowerbed-round",
+    "tree-emerald-crown",
+    "tree-golden-canopy",
+    "flowerbed-round",
+    "tree-emerald-crown",
+    "tree-sakura",
+    "flowerbed-round"
+  ];
+
+  const cand = paved
+    .map((c) => ({...c, open: clearance(c.x, c.z)}))
+    .filter((c) => c.open >= NEED)
+    // 트인 곳부터 — 좁은 틈부터 채우면 정작 넓은 돌마당이 빈 채로 남는다
+    .sort((a, b) => b.open - a.open);
+
+  let n = 0;
+  const put = [];
+  for (const c of cand) {
+    if (n >= MAX) break;
+    if (put.some((q) => Math.hypot(q.x - c.x, q.z - c.z) < APART)) continue;
+    const kind = ROTATION[n % ROTATION.length];
+    // 나무는 칸 한복판에서 조금씩 흩어야 가로수처럼 줄 서 보이지 않는다
+    const jitter = kind === "flowerbed-round" ? 0 : (rand() - 0.5) * 0.5;
+    place(`planting-${n++}`, kind, c.x + jitter, c.z - jitter,
+      round3(rand() * Math.PI * 2), {gap: NEED, grow: kind === "flowerbed-round" ? 1 : 0.82 + rand() * 0.3});
+    put.push(c);
+  }
+}
+
+// ─── ③-d 마을 밖 랜드마크 ─────────────────────────────────────────────────────
+// 컨셉 아트의 조감도가 웅장해 보이는 건 마을 안이 빽빽해서가 아니라 **바깥에 큰
+// 것들이 서 있어서**다: 위쪽에 다리로 건너가는 파고다 섬, 오른쪽 언덕의 풍차,
+// 좌·우·우하단 절벽의 폭포 셋. 우리 섬은 테두리가 통째로 숲이라, 어느 방향을 봐도
+// 나무 벽 하나로 끝났다.
+//
+// 여기 놓는 것들은 한두 개씩이라 삼각형을 아끼지 않는다. 대신 **숲이 이 자리를
+// 비켜 가야** 한다 — 아래 ⑩·⑪ 이 landmarks 를 읽어 그 반경 안에는 안 심는다.
+/** 숲·빈터가 피해야 할 큰 물건 {x, z, r} */
+const landmarks = [];
+
+// 방위: 컨셉 아트를 남쪽에서 본 그림으로 읽었다 — −Z 가 북, +X 가 동, +Z 가 남.
+// generate-ground-layout.mjs 의 NORTH_END 와 VillageScene 의 CREEK_Z 에 맞춘 값들이다.
+const CREEK_Z = -20.7;
+{
+  // ─── 북쪽 참배로: 개울 → 돌다리 → 파고다 섬 ────────────────────────────────
+  // 남쪽 정문 대계단의 짝이 되는 축이다. 광장에 서서 북쪽을 보면 길 끝에 다리가
+  // 있고 그 너머 언덕 위에 파고다가 선다.
+  //
+  // 다리는 개울(동서)을 가로질러야 하므로 90° 돌린다 — 모델의 긴 축이 +X 다.
+  place("bridge-north", "bridge-stone", 0, CREEK_Z, round3(Math.PI / 2), {gap: 0.1});
+  landmarks.push({x: 0, z: CREEK_Z, r: 4.5});
+  // 개울 자체도 숲이 피해야 한다. 물 위에 나무가 자라면 안 된다.
+  for (let x = -30; x <= 30; x += 2.5) landmarks.push({x, z: CREEK_Z, r: 2.6});
+
+  // 섬 — 원본은 밑동이 뾰족한 부유섬이라 그대로 세우면 원뿔이 드러난다.
+  // 아래쪽을 땅에 묻어 **윗면이 평평한 바위 언덕**으로 쓴다.
+  const ISLAND_Z = -29.5;
+  const ISLAND_TOP = 3.9; // 이 높이에 파고다가 선다
+  {
+    const scale = scaleOf("island-north");
+    const half = round3((KIT["island-north"].h / 2) * scale);
+    props.push({
+      id: "decor-island-north",
+      glb: `/models/props/${KIT["island-north"].glb}`,
+      // 윗면이 ISLAND_TOP 에 오도록 — liftOf 를 안 쓰고 직접 잡는다
+      position: [0, round3(ISLAND_TOP - half), ISLAND_Z],
+      rotationY: 0,
+      scale
+    });
+    taken.push({x: 0, z: ISLAND_Z});
+    landmarks.push({x: 0, z: ISLAND_Z, r: round3(1.893 * scale * 0.6 + 2)});
+  }
+  // 파고다 — 섬 윗면 위에. 여기가 컨셉 아트의 "AI Portfolio" 자리다.
+  {
+    const scale = scaleOf("pagoda-portfolio");
+    props.push({
+      id: "decor-pagoda-portfolio",
+      glb: `/models/props/${KIT["pagoda-portfolio"].glb}`,
+      // 정면(+Z)이 마을(남쪽)을 보게 — 참배로에서 걸어오면 현관이 보인다
+      position: [0, round3(ISLAND_TOP + (KIT["pagoda-portfolio"].h / 2) * scale), ISLAND_Z],
+      rotationY: 0,
+      scale
+    });
+  }
+
+  // ─── 풍차 — 북동 언덕 ──────────────────────────────────────────────────────
+  // 컨셉 아트 우상단. 마을 바깥 실루엣에 큰 수직선을 하나 세워 준다.
+  place("windmill", "windmill", 24, -21, faceTo(-24, 21), {gap: 0.1});
+  landmarks.push({x: 24, z: -21, r: 5.5});
+
+  // ─── 폭포 셋 — 섬 테두리 ───────────────────────────────────────────────────
+  // 섬(중심 0,3 · 반지름 40)의 가장자리에 세워 물이 절벽 바깥으로 떨어지게 한다.
+  // 정면(+Z)이 바깥을 봐야 조감에서 물줄기가 보인다 — 안쪽을 보게 두면 마을에서는
+  // 바위 뒷면만 보이고 정작 물은 숲에 가린다.
+  const FALLS = [
+    [-35.5, 5],
+    [35, 0],
+    [25, 28]
+  ];
+  FALLS.forEach(([x, z], n) => {
+    place(`waterfall-${n}`, "waterfall", x, z, faceTo(x - 0, z - 3), {gap: 0.1});
+    landmarks.push({x, z, r: 6.5});
+  });
+}
+
+/** 랜드마크 반경 안인가 — 숲·빈터가 여기를 침범하면 안 된다 */
+const nearLandmark = (x, z) => landmarks.some((l) => Math.hypot(l.x - x, l.z - z) < l.r);
 
 // ─── ④ 길 따라 가로등 ─────────────────────────────────────────────────────────
 // 길 칸을 일정 간격으로 건너뛰며 좌우 번갈아 세운다.
@@ -626,7 +945,7 @@ const LANTERN_EVERY = 2;
     // 간격을 2.2 로 잡았더니 길가 후보 60곳 중 12곳에만 섰다 — 앞마당 원반이
     // 길을 따라 늘어서 있어 남는 틈이 좁다. 가로등은 컨셉 아트에서 길마다
     // 촘촘히 서는 물건이고 하나 1,780 삼각형으로 싼 편이라 간격을 좁힌다.
-    if (onDisc(x, z, 0.1) || onBuilding(x, z, 0.5) || !free(x, z, 1.5)) continue;
+    if (onDisc(x, z, 0.1) || onBuilding(x, z, 0.5) || onWall(x, z, 0.2) || !free(x, z, 1.5)) continue;
     place(`lantern-${n}`, "lantern-post", x, z, 0, {gap: 1.5});
     n += 1;
   }
@@ -661,7 +980,7 @@ const LANTERN_EVERY = 2;
       const dist = disc.r + 0.5;
       const x = b.x + Math.cos(angle) * dist;
       const z = b.z + Math.sin(angle) * dist;
-      if (onRoad(x, z, 0.3) || onBuilding(x, z, 0.4) || !free(x, z, 1.1)) continue;
+      if (onRoad(x, z, 0.3) || onBuilding(x, z, 0.4) || onWall(x, z, 0.25) || !free(x, z, 1.1)) continue;
       // 자리를 셋에서 둘로 줄였으니 보폭도 셋 → 둘. 3 을 그대로 두면
       // index*3 mod 6 이 0,3,0,3 만 돌아 회전표 여섯 중 넷만 쓰인다.
       const kind = ROTATION[(index * 2 + slot) % ROTATION.length];
@@ -713,7 +1032,7 @@ const LANTERN_EVERY = 2;
         const dist = HALF_TILE * 0.6 + k * width;
         const x = gate.at.x + along.x * dist + perp.x * (ROAD_SIDE + 0.42) * side;
         const z = gate.at.z + along.z * dist + perp.z * (ROAD_SIDE + 0.42) * side;
-        if (onRoad(x, z, 0.1) || onDisc(x, z, 0.2) || onBuilding(x, z, 0.4) || !free(x, z, 0.7)) break;
+        if (onRoad(x, z, 0.1) || onDisc(x, z, 0.2) || onBuilding(x, z, 0.4) || onWall(x, z, 0.2) || !free(x, z, 0.7)) break;
         // 판이 길 쪽을 보게 — 울타리 결이 길과 나란해진다
         place(`fence-${n++}`, "fence", x, z, faceTo(perp.x * -side, perp.z * -side), {gap: 0.7});
       }
@@ -825,6 +1144,8 @@ const BELT_DEPTH = 12;
       // 흔들다 보면 경계가 껍질 안으로도 들어간다(BELT_IN이 음수일 때). 껍질 안엔
       // 길과 건물이 있으므로 여기서 막아야 대로 한복판에 나무가 선다.
       if (onRoad(px, pz, 1.2) || onDisc(px, pz, 0.6) || onBuilding(px, pz, 1.2)) continue;
+      // 폭포·풍차·파고다 섬·개울은 껍질 바깥이라 여기 그대로 두면 숲이 덮어 버린다
+      if (nearLandmark(px, pz) || onWall(px, pz, 0.6)) continue;
       const t = (d - inHere) / BELT_DEPTH;
       if (t > 1) continue;
 
@@ -854,6 +1175,7 @@ const BELT_DEPTH = 12;
     const x = t.position[0] + Math.cos(a) * r;
     const z = t.position[2] + Math.sin(a) * r;
     if (x < GROUND.x0 || x > GROUND.x1 || z < GROUND.z0 || z > GROUND.z1) continue;
+    if (nearLandmark(x, z)) continue;
     place(`thicket-${b++}`, "far-bush", x, z, round3(rand() * Math.PI * 2), {grow: 0.7 + rand() * 0.7});
   }
 }
@@ -905,6 +1227,7 @@ const BELT_DEPTH = 12;
       if (Math.hypot(px - HUB.x, pz - HUB.z) < HUB_RADIUS + 3.5) continue;
       const open = openness(px, pz);
       if (open < MIN_OPEN) continue;
+      if (nearLandmark(px, pz) || onWall(px, pz, 0.6)) continue;
       candidates.push({x: px, z: pz, open});
     }
   }
@@ -914,11 +1237,16 @@ const BELT_DEPTH = 12;
   const glades = [];
   for (const c of candidates) {
     // 트인 만큼 무리 사이를 띄운다. 좁은 틈엔 하나만, 넓은 벌판엔 여러 무리.
-    const spacing = Math.min(5.2, 2.6 + c.open * 0.5);
+    //
+    // 구역 바닥을 판석으로 깔고 나서 좁혔다. 포장이 깔리기 전에는 블록 사이
+    // 빈 곳이 잔디라 나무가 없어도 "정원"으로 보였는데, 돌로 덮고 나니 같은
+    // 자리가 **아무것도 없는 돌마당**이 됐다. 컨셉 아트의 포장 위에는 나무와
+    // 화단이 촘촘히 서 있고, 그게 돌바닥을 삭막하지 않게 만든다.
+    const spacing = Math.min(3.4, 1.7 + c.open * 0.4);
     // free() 에 spacing 을 그대로 넘겼더니 후보 84곳이 전부 걸렸다 — 마을 안쪽은
     // 5유닛 안에 가로등이든 화분이든 반드시 하나는 있다. 겹치지만 않으면 되므로
     // 프롭 간 최소 간격과 무리 간 간격은 따로 잡는다.
-    if (!free(c.x, c.z, 1.8)) continue;
+    if (!free(c.x, c.z, 1.5)) continue;
     if (glades.some((g) => Math.hypot(g.x - c.x, g.z - c.z) < spacing)) continue;
     glades.push(c);
   }
@@ -938,7 +1266,7 @@ const BELT_DEPTH = 12;
       const r = 1.0 + rand() * Math.min(2.2, g.open * 0.6);
       const x = g.x + Math.cos(a) * r;
       const z = g.z + Math.sin(a) * r;
-      if (openness(x, z) < 1.2) continue;
+      if (openness(x, z) < 1.2 || onWall(x, z, 0.4)) continue;
       // 돌은 원본을 써도 2~3천 삼각형이라 부담이 없고, 빌보드가 아니라 진짜 입체라
       // 어느 각도에서도 버틴다. 예전엔 다섯에 하나만 섞었는데(0.2), 부감이 열리면서
       // 덤불 임포스터의 수평 뚜껑이 잔디에 붙은 잎사귀로 보이는 게 드러나 뒤집었다.
@@ -969,7 +1297,7 @@ const BELT_DEPTH = 12;
     const side = ROAD_SIDE + 0.5 + rand() * 0.45;
     const x = r.x + perp.x * side * sign;
     const z = r.z + perp.z * side * sign;
-    if (onDisc(x, z, 0.15) || onBuilding(x, z, 0.5) || onRoad(x, z, 0.05)) continue;
+    if (onDisc(x, z, 0.15) || onBuilding(x, z, 0.5) || onRoad(x, z, 0.05) || onWall(x, z, 0.25)) continue;
     // 가로등(2.2 간격)과 겹치지 않게. 여기서 걸리는 칸이 많아야 정상이다 —
     // 남는 자리에만 들어가야 길가가 물건으로 꽉 차 보이지 않는다.
     if (!free(x, z, 1.35)) continue;

@@ -230,6 +230,73 @@ function Water() {
   );
 }
 
+// ─── 북쪽 개울 ───────────────────────────────────────────────────────────────
+// 컨셉 아트 위쪽에는 마을 뒤를 가로지르는 작은 물길이 있고, 참배로가 돌다리로
+// 그 위를 건너 "AI Portfolio" 섬으로 간다. 우리한테는 다리 모델만 있고 건널 게
+// 없어서, 다리를 놓으면 잔디밭 한복판에 아치가 서 있는 꼴이 됐다.
+//
+// 땅을 파는 대신 **잔디 위에 물 리본을 얹는다.** 부감에서 보면 얕은 개울로
+// 읽히고, 지오메트리는 삼각형 60개짜리 띠 하나다. 잔디가 polygonOffset 으로
+// 깊이 방향 뒤에 밀려 있어서 y 를 조금만 올려도 확실히 위에 그려진다.
+const CREEK_Z = -20.7;   // 참배로가 건너는 자리 (격자 j −11)
+const CREEK_HALF = 1.5;  // 반폭. 다리(5유닛 span)가 넉넉히 걸친다.
+const CREEK_SPAN = 30;   // 좌우로 뻗는 길이. 끝은 숲에 가려 사라진다.
+
+function Creek() {
+  const geometry = useMemo(() => {
+    const positions: number[] = [];
+    const colors: number[] = [];
+    const indices: number[] = [];
+    const STEPS = 30;
+
+    const shallow = new Color("#63c7c4"); // 가장자리 — 자갈이 비치는 여울
+    const deep = new Color("#2f8fa6");    // 한가운데
+
+    for (let s = 0; s <= STEPS; s++) {
+      const t = s / STEPS;
+      const x = -CREEK_SPAN + t * CREEK_SPAN * 2;
+      // 자로 그은 듯 곧으면 수로지 개울이 아니다. 완만하게 굽이치게 한다.
+      const drift = Math.sin(t * Math.PI * 2.4 + 0.7) * 1.6 + Math.sin(t * Math.PI * 5.1) * 0.5;
+      // 폭도 조금씩 달라져야 자연스럽다
+      const half = CREEK_HALF * (0.82 + 0.3 * Math.sin(t * Math.PI * 3.3 + 1.9));
+      // 양 끝은 숲으로 들어가며 가늘어진다 — 지평선에서 뚝 끊기면 판때기로 보인다
+      const taper = Math.min(1, Math.min(t, 1 - t) * 6);
+      for (const side of [-1, 1]) {
+        positions.push(x, 0, CREEK_Z + drift + half * taper * side);
+        const c = side < 0 ? shallow : shallow;
+        colors.push(c.r, c.g, c.b);
+      }
+      // 가운데 줄 — 깊은 색을 넣어 물이 두께를 갖게
+      positions.push(x, 0, CREEK_Z + drift);
+      colors.push(deep.r, deep.g, deep.b);
+    }
+
+    // 한 단계마다 정점 셋(왼쪽·오른쪽·가운데)이라 stride 3
+    for (let s = 0; s < STEPS; s++) {
+      const a = s * 3, b = (s + 1) * 3;
+      // 왼쪽 절반
+      indices.push(a, a + 2, b, b, a + 2, b + 2);
+      // 오른쪽 절반
+      indices.push(a + 2, a + 1, b + 2, b + 2, a + 1, b + 1);
+    }
+
+    const geo = new BufferGeometry();
+    geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
+    geo.setAttribute("color", new Float32BufferAttribute(colors, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    return geo;
+  }, []);
+
+  return (
+    <mesh geometry={geometry} position={[0, 0.05, 0]}>
+      {/* 호수(Water)와 같은 재질감 — 하늘빛을 받아야 물로 보인다.
+          다만 개울은 얕으므로 조금 밝고 덜 반사한다. */}
+      <meshStandardMaterial vertexColors roughness={0.3} metalness={0.2} />
+    </mesh>
+  );
+}
+
 // 마을을 두르는 먼 언덕.
 //
 // 마을이 웅장해 보이지 않던 가장 큰 이유는 소품 수가 아니라 **지평선이 없다**는
@@ -616,6 +683,7 @@ function VillageSceneImpl({
           <Ground />
           <IslandCliff />
           <Water />
+          <Creek />
           <DistantHills />
           {PLAZA_LANDMARK_READY ? null : <Statue />}
 

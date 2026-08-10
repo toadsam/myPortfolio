@@ -100,6 +100,21 @@ const V2_TILE = {
   grass: {glb: `${V2_DIR}/grass-patch.glb`, top: 0, tris: 2}
 };
 
+// ─── 포장 위에 까는 길 타일 ──────────────────────────────────────────────────
+// 위 타일들은 "잔디밭 위의 흙길"이라 양옆에 밝은 초록 갓길이 붙어 있다. 구역
+// 바닥을 판석으로 덮고 나서 그대로 얹었더니 돌마당 위에 **초록 격자**가 떠올랐다 —
+// 부감으로 보면 잔디밭에 길을 낸 꼴이라, 포장을 깐 의미가 절반쯤 사라졌다.
+// scripts/make_paved_road_tiles.py 가 그 갓길만 판석 색으로 바꿔 구운 변종이다.
+// 지오메트리·회전은 v2 와 똑같고 텍스처만 다르다.
+const PAVED_DIR = "/models/props/ground-flat/paved";
+const PAVED_TILE = {
+  ...V2_TILE,
+  straight: {glb: `${PAVED_DIR}/path-straight.glb`, top: 0, tris: 2},
+  curve: {glb: `${PAVED_DIR}/path-curve.glb`, top: 0, tris: 2},
+  t: {glb: `${PAVED_DIR}/path-t.glb`, top: 0, tris: 2},
+  cross: {glb: `${PAVED_DIR}/path-cross.glb`, top: 0, tris: 2}
+};
+
 // plaza-tile 은 정사각 슬래브가 아니라 실제 원반이다 (정점의 0%만 내접원 밖).
 // scale 1 일 때 반지름이 이만큼이라, 앞마당 크기를 반지름으로 계산할 수 있다.
 const PLAZA_RADIUS_AT_1 = 0.95;
@@ -126,6 +141,13 @@ const SETS = {
     curve: {SE: 0, EN: QUARTER, NW: 2 * QUARTER, WS: 3 * QUARTER},
     // T만은 기존과 같다 — 새 것도 회전 0에서 북쪽이 막혀 있다
     t: {N: 0, W: QUARTER, S: 2 * QUARTER, E: 3 * QUARTER}
+  },
+  // 포장 위 전용. 텍스처만 다른 v2 라 회전표를 그대로 쓴다.
+  paved: {
+    tiles: PAVED_TILE,
+    straight: {WE: 0, NS: QUARTER},
+    curve: {SE: 0, EN: QUARTER, NW: 2 * QUARTER, WS: 3 * QUARTER},
+    t: {N: 0, W: QUARTER, S: 2 * QUARTER, E: 3 * QUARTER}
   }
 };
 
@@ -151,6 +173,10 @@ const worldZ = j => j * PITCH;
 // 길이 아예 안 깔려 뒷줄 세 채가 도로망에서 떨어져 나갔다.
 // 배치는 앞으로도 계속 움직일 값이므로 건물에서 직접 잰다.
 const MARGIN = 3;
+// 북쪽 참배로가 닿는 칸. 컨셉 아트 맨 위의 "AI Portfolio" 섬으로 가는 길이다 —
+// 남쪽 정문 대계단의 짝. 마을 밖 벌판까지 일부러 뻗으므로 격자도 여기까지 넓힌다.
+// z = -26.3. 개울이 j −11(z −20.7)에서 이 길을 가로지르고 그 위에 돌다리가 선다.
+const NORTH_END = -14;
 const [I_MIN, I_MAX, J_MIN, J_MAX] = (() => {
   let i0 = 0, i1 = 0, j0 = 0, j1 = 0;
   for (const b of buildings) {
@@ -159,7 +185,7 @@ const [I_MIN, I_MAX, J_MIN, J_MAX] = (() => {
     j0 = Math.min(j0, Math.floor((b.z - b.d / 2) / PITCH));
     j1 = Math.max(j1, Math.ceil((b.z + b.d / 2) / PITCH));
   }
-  return [i0 - MARGIN, i1 + MARGIN, j0 - MARGIN, j1 + MARGIN];
+  return [i0 - MARGIN, i1 + MARGIN, Math.min(j0 - MARGIN, NORTH_END - 1), j1 + MARGIN];
 })();
 const inBounds = (i, j) => i >= I_MIN && i <= I_MAX && j >= J_MIN && j <= J_MAX;
 
@@ -201,8 +227,10 @@ const TRUNKS = [
 // 광장까지 일직선으로 뻗는다. 그런데 이 축의 끝은 정의상 막다른 길이라
 // 아래 정리 단계가 두 칸씩 갉아먹어 마을 어귀가 사라진다(실제로 j 8·9 가 잘렸다).
 // 여기 담긴 칸은 "일부러 벌판으로 뻗은 길"이라 정리에서 뺀다.
+// 북쪽 참배로도 같은 이유로 지킨다 — 마을을 지나 개울을 건너 파고다 섬까지 간다.
 const CEREMONIAL = new Set();
 for (let j = 1; j <= J_MAX - 1; j++) CEREMONIAL.add(key(0, j));
+for (let j = NORTH_END; j <= -1; j++) CEREMONIAL.add(key(0, j));
 
 // 구역별 블록 상자 (격자 단위, 건물이 실제로 먹는 칸 기준)
 const BLOCK_BOX = new Map();
@@ -597,6 +625,60 @@ const bump = (k, v2 = false) => {
 // 하나이므로 기본 세트(--v1 이면 예전 것)를 그대로 쓴다.
 const PLAZA = (process.argv.includes("--v1") ? SETS.v1 : SETS.v2).tiles.plaza;
 
+// ─── 구역 바닥 포장 ───────────────────────────────────────────────────────────
+// 컨셉 아트에서 마을이 "지어진 동네"로 보이는 가장 큰 이유는 **바닥이 돌**이라는
+// 것이다. 구역 안쪽이 통째로 포장이고 잔디는 그 바깥 숲에만 있다. 우리는 정반대로
+// 초록 벌판에 폭 1.88짜리 길만 실처럼 그어져 있어서, 건물을 아무리 정연하게
+// 세워도 "풀밭에 놓인 모형"이었다 — 배치를 다시 짜도 이 인상이 안 바뀌었다.
+//
+// 판석 한 장이 삼각형 **2개**다(scripts/make-paving-tile.mjs). 300장을 깔아도
+// 600삼각형이라, 이 마을에서 가장 값싸게 그림이 바뀌는 수단이다.
+//
+// 길·앞마당 원반을 피해 가며 깔지 않고 **그 밑에 통째로** 깐다. 원반은 둥글어서
+// "중심이 원 안인 칸"만 빼면 가장자리에 반달 모양 잔디가 남는다. 15mm 밑에
+// 깔면 겹쳐도 z-파이팅이 없고 길이 그대로 위에 올라온다.
+const PAVING = {glb: "/models/props/ground-flat/paving-square.glb", top: 0};
+const PAVE_Y = round3(TOP_Y - 0.015);
+let pavedCount = 0;
+/** 판석을 깐 칸 — 길 타일도 여기서는 갓길이 돌인 변종을 쓴다 */
+const pavedCells = new Set();
+{
+  const cells = pavedCells;
+  // ① 구역 블록 — 상자 바깥으로 한 칸 넓혀 건물 뒤 채움 민가까지 딛고 서게 한다
+  for (const box of BLOCK_BOX.values())
+    for (let i = box.i0 - 1; i <= box.i1 + 1; i++)
+      for (let j = box.j0 - 1; j <= box.j1 + 1; j++)
+        if (inBounds(i, j)) cells.add(key(i, j));
+
+  // ② 광장 앞치마 — 중앙 원반에서 블록까지 이어지는 넓은 돌마당.
+  //    컨셉 아트의 광장은 원반 하나가 아니라 사방으로 퍼지는 포장 면이다.
+  const APRON = HUB_RADIUS + 4.2;
+  for (let i = I_MIN; i <= I_MAX; i++)
+    for (let j = J_MIN; j <= J_MAX; j++)
+      if (Math.hypot(worldX(i) - HUB.x, worldZ(j) - HUB.z) < APRON) cells.add(key(i, j));
+
+  // 판석 그림은 이어붙게 구웠지만 **같은 그림**이라, 그냥 깔면 1.88 격자가
+  // 부감에서 무늬로 읽힌다(예전 절차 생성 판에서 붉은 악센트 하나 때문에 빨간
+  // 바둑판이 떠오른 것과 같은 문제다). 칸마다 90°씩 돌려 준다 — 텍스처는 한 장
+  // 그대로, 삼각형도 그대로인데 주기가 네 배로 길어진다. 정사각형에 이음매가
+  // 이어붙으므로 어느 각도로 돌려도 옆 칸과 계속 맞물린다.
+  const QUARTER = Math.PI / 2;
+  for (const k of [...cells].sort()) {
+    const [i, j] = parse(k);
+    // 좌표 해시 — 같은 칸은 늘 같은 각도라야 다시 돌려도 diff 가 안 튄다
+    let h = Math.imul(i, 374761393) ^ Math.imul(j, 668265263);
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    props.push({
+      id: `ground-pave-${i}_${j}`,
+      glb: PAVING.glb,
+      position: [round3(worldX(i)), PAVE_Y, round3(worldZ(j))],
+      rotationY: round3(((h >>> 16) & 3) * QUARTER),
+      scale: 1
+    });
+    pavedCount += 1;
+  }
+}
+
 // 중앙 광장
 props.push({
   id: "ground-plaza-center",
@@ -608,10 +690,20 @@ props.push({
 bump("plaza", PLAZA === SETS.v2.tiles.plaza);
 
 // 건물 앞마당
+//
+// 예전엔 여기도 plaza-tile 을 썼다. 그런데 그 타일은 **해 무늬가 박힌 원형
+// 메달리온**이다 — 광장 한복판에 한 장 놓으라고 만든 것이라, 건물 26채 밑에
+// 깔아 놓으니 같은 해 무늬가 마을 곳곳에 26번 되풀이됐다. 조감에서 제일 먼저
+// 눈에 걸리는 반복이었다.
+//
+// 구역 바닥을 판석으로 깔고 나서는 앞마당을 따로 보일 이유도 없어졌다 —
+// 컨셉 아트에서도 건물은 그냥 포장 위에 서 있다. 같은 판석으로 바꿔
+// 주변 포장에 녹인다. id·scale 은 그대로 둔다: generate-decor-layout 의
+// 앞마당 반지름 검산 가드가 이 값을 읽는다.
 for (const f of forecourts) {
   props.push({
     id: `ground-yard-${f.b.id}`,
-    glb: PLAZA.glb,
+    glb: PAVING.glb,
     position: [f.b.x, round3(TOP_Y - PLAZA.top * f.scale), f.b.z],
     rotationY: 0,
     scale: f.scale
@@ -627,7 +719,10 @@ for (const k of [...road].sort()) {
   if (!chosen) continue;
   const v2 = inV2(i, j);
   if (v2) v2Count++;
-  const {spec, rot} = place(chosen, v2 ? SETS.v2 : SETS.v1);
+  // 판석 위를 지나는 길은 갓길이 돌인 변종. 포장 밖(남쪽 진입로·북쪽 참배로)은
+  // 잔디를 밟고 가므로 원본 그대로가 맞다.
+  const paved = pavedCells.has(k);
+  const {spec, rot} = place(chosen, paved ? SETS.paved : v2 ? SETS.v2 : SETS.v1);
   bump(chosen.kind, v2);
   props.push({
     id: `ground-${i}_${j}`,
@@ -639,8 +734,12 @@ for (const k of [...road].sort()) {
 }
 
 // 풀숲 — 크기·각도를 흩어야 복제 티가 안 난다
+let grassOnPaving = 0;
 clumps.forEach((c, n) => {
-  const v2 = inV2(Math.round(c.x / PITCH), Math.round(c.z / PITCH));
+  const gi = Math.round(c.x / PITCH), gj = Math.round(c.z / PITCH);
+  // 돌바닥 한복판에 풀숲 한 덩이가 놓이면 잡초로 보인다. 포장 칸은 건너뛴다.
+  if (pavedCells.has(key(gi, gj))) { grassOnPaving += 1; return; }
+  const v2 = inV2(gi, gj);
   const spec = (v2 ? SETS.v2 : SETS.v1).tiles.grass;
   bump("grass", v2);
   props.push({
@@ -684,6 +783,7 @@ console.log(
 console.log(
   `  길이 안 닿은 건물: ${unreachable.length ? unreachable.join(", ") : "없음"}`
 );
+console.log(`  구역 포장  : ${pavedCount}장 (판석, 장당 2삼각형 = ${pavedCount * 2}삼각형)`);
 console.log(`  ground 외 프롭 ${kept.length}개는 그대로 유지`);
 console.log(`  예상 삼각형 합계 약 ${(tris / 1000).toFixed(0)}k`);
 

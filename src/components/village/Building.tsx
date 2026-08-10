@@ -59,9 +59,12 @@ function HighlightFX({color, height, radius, active}: {color: string; height: nu
 
   return (
     <group ref={groupRef} visible={false}>
-      {/* 빛기둥 — 지붕 위로 솟는 additive 컬럼 */}
+      {/* 빛기둥 — 지붕 위로 솟는 additive 컬럼.
+          반지름을 건물 크기에 그대로 비례시켰더니 중앙 광장(폭 4.75)에서
+          윗지름 4유닛짜리 원뿔이 돼, 노을 하늘 앞에서 숲을 하얗게 지우는
+          **커다란 청록 쐐기**로 보였다. 큰 건물일수록 상한을 둔다. */}
       <mesh ref={beamRef} position={[0, height + 1.4, 0]}>
-        <cylinderGeometry args={[radius * 0.18, radius * 0.42, 3, 12, 1, true]} />
+        <cylinderGeometry args={[Math.min(radius, 2.4) * 0.18, Math.min(radius, 2.4) * 0.42, 3, 12, 1, true]} />
         <meshBasicMaterial color={color} transparent opacity={0} blending={AdditiveBlending} depthWrite={false} side={2} />
       </mesh>
       {/* 회전 베이스 링 2겹 */}
@@ -643,6 +646,22 @@ interface BuildingProps {
   };
 }
 
+/**
+ * 아직 전용 모델이 없는 건물이 빌려 쓸 민가. 장식물로 받은 세 채를 돌려 쓴다.
+ * id 로 고르므로 새로고침해도 같은 건물엔 늘 같은 집이 선다 — 난수로 고르면
+ * 들어갔다 나올 때마다 집이 바뀐다.
+ */
+const FALLBACK_HOUSES = [
+  "/models/props/decor/house-a.glb",
+  "/models/props/decor/house-b.glb",
+  "/models/props/decor/house-c.glb"
+];
+function fallbackHouse(id: string) {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
+  return FALLBACK_HOUSES[Math.abs(h) % FALLBACK_HOUSES.length];
+}
+
 function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
   // 모델이 있으면 상자 대신 그걸 그린다. 경로는 scripts/generate-building-manifest.mjs 가
   // public/models/buildings/<건물id>.glb 를 훑어 만든다 — 건물을 하나 뽑아 넣을 때마다
@@ -650,20 +669,22 @@ function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
   const glbPath = b.glbPath ?? buildingModels[b.id];
   if (glbPath) return <GlbModel glbPath={glbPath} size={b.size} />;
 
-  // ─── 모델이 아직 없는 건물은 전부 민가 한 종류로 ─────────────────────────────
-  // kind 별로 돔·원통·탑 같은 형태를 그리던 것을 접었다. 구역별로 건물을 모으고
-  // 나니 아직 모델이 없는 9채가 한 구역에 뭉쳐서 **보라색 구슬과 회색 상자의 벽**이
-  // 됐다 — 흩어져 있을 땐 그럭저럭 넘어가던 게 뭉치니 통째로 눈에 걸린다.
-  //
-  // 소박한 민가(벽 + 박공지붕 + 문 + 창) 하나로 통일하면, 색만 다른 집들이 줄지어
-  // 선 모습이라 "아직 안 지은 자리"가 아니라 "평범한 집"으로 읽힌다.
-  // GLB 가 들어오면 위에서 바로 갈라지므로 이 분기는 저절로 사라진다.
-  //
-  // 이 분기 때문에 kind 별 셸(Tower/Dome/Arcade…)은 지금 아무 데서도 안 불린다.
-  // 지우지 않고 남겨 뒀지만 **되살릴 계획이 있어서가 아니라** 이 커밋의 diff 를
-  // 더 키우지 않으려는 것뿐이다 — 정리할 때 통째로 지워도 된다(git 에 남아 있다).
   if (b.kind === "plaza") return <PlazaBuilding b={b} hl={hl} />;
-  return <TownhouseBuilding b={b} hl={hl} />;
+
+  // ─── 모델이 아직 없는 건물은 **진짜 민가 GLB**를 빌려 쓴다 ───────────────────
+  // 처음엔 절차적 민가(상자 + 박공지붕 + 문 + 창)를 그렸다. 흩어져 있을 땐
+  // 그럭저럭 넘어갔는데, 구역별로 모으고 주변을 Meshy 건물로 채우고 나니
+  // **파스텔 상자 아홉 개**가 정교한 이웃들 사이에서 혼자 튀었다. 조감으로 보면
+  // 딱 그 자리만 "안 지은 데"로 읽힌다.
+  //
+  // 장식용으로 받은 민가 두 채가 이미 있다. 이걸 폴백으로 돌려쓰면 같은 집이
+  // 몇 번 나오긴 해도, 적어도 **마을에 속한 집**으로 보인다.
+  // 실제 건물 GLB 가 들어오면 위 분기에서 갈라지므로 여기는 저절로 비게 된다.
+  //
+  // 이 분기 때문에 kind 별 셸(Tower/Dome/Arcade…)과 TownhouseBuilding 은 지금
+  // 아무 데서도 안 불린다. 되살릴 계획이 있어서가 아니라 diff 를 키우지 않으려고
+  // 남겨 뒀을 뿐이다 — 정리할 때 통째로 지워도 된다(git 에 남아 있다).
+  return <GlbModel glbPath={fallbackHouse(b.id)} size={b.size} />;
 }
 
 function BuildingImpl({building, buildingState, isActive, onRequestEnter, edit}: BuildingProps) {

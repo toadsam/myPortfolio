@@ -138,7 +138,13 @@ export function PerfProbe() {
 // ─── DOM 계기판 ──────────────────────────────────────────────────────────────
 
 // 예산 — 초과하면 색으로 경고. 중급 노트북 60fps 기준.
-const BUDGET = {calls: 200, triangles: 1_000_000, textureBytes: 250 * 1024 * 1024, fps: 55};
+//
+// 삼각형 100만 / 텍스처 250MB 로 잡았던 건 마을에 건물 18채와 소품 몇 개뿐이던
+// 시절의 보수적인 값이다. 그 뒤로 폭포·풍차·북쪽 섬·구역 담장까지 들어오면서
+// 실측 130만 언저리가 됐는데, 정작 fps 는 안 떨어졌다 — 전부 인스턴싱이라
+// draw call 이 안 늘고, 요즘 GPU 에서 130만 삼각형은 부담이 아니다.
+// 경고선을 실제로 위험해지는 지점으로 올린다. fps 와 draw call 이 진짜 지표다.
+const BUDGET = {calls: 200, triangles: 1_800_000, textureBytes: 340 * 1024 * 1024, fps: 55};
 
 function tone(ok: boolean, warn: boolean) {
   if (warn) return "#ff6b6b";
@@ -223,8 +229,8 @@ export function PerfHudPanel() {
       <div className="flex flex-col gap-1">
         <Row label="fps" value={String(sample.fps)} color={tone(!fpsLow, sample.fps > 0 && sample.fps < 30)} />
         <Row label="draw calls" value={String(sample.calls)} color={tone(!callsWarn, callsWarn)} hint={`/${BUDGET.calls}`} />
-        <Row label="triangles" value={formatCount(sample.triangles)} color={tone(!triWarn, triWarn)} hint="/1M" />
-        <Row label="texture" value={formatMB(sample.textureBytes)} color={tone(!texWarn, texWarn)} hint="/250MB" />
+        <Row label="triangles" value={formatCount(sample.triangles)} color={tone(!triWarn, triWarn)} hint={`/${formatCount(BUDGET.triangles)}`} />
+        <Row label="texture" value={formatMB(sample.textureBytes)} color={tone(!texWarn, texWarn)} hint={`/${formatMB(BUDGET.textureBytes)}`} />
       </div>
 
       <div className="mt-2 flex flex-col gap-1 border-t border-[#5b8fd6]/15 pt-2">
