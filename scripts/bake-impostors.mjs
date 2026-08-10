@@ -25,6 +25,12 @@ import {inflateSync, deflateSync} from "node:zlib";
 const SRC = "public/models/props/raw/nature";
 const OUT = "public/models/props/impostor";
 
+// ─── 숲 색 ────────────────────────────────────────────────────────────────────
+// 채도를 먼저 죽이고 배수로 색을 돌린다. 빨강을 가장 많이 깎아 잎이 청록으로
+// 가라앉는다. 이 값을 1,1,1 / 1 로 두면 예전(쨍한 연두)으로 돌아간다.
+const FOREST_TINT = [0.62, 0.78, 0.72];
+const FOREST_SAT = 0.72;
+
 const pxArg = process.argv.indexOf("--px");
 /** 한 시점당 해상도. 나무가 화면에서 커야 100px 남짓이라 384면 충분히 촘촘하다 */
 const PX = pxArg >= 0 ? Number(process.argv[pxArg + 1]) : 384;
@@ -353,9 +359,18 @@ function render(geo, view, center, span, minY = -Infinity) {
         } else if (base) {
           r = base[0] * 255; g = base[1] * 255; b = base[2] * 255;
         }
-        rgba[at * 4] = Math.min(255, r * shade);
-        rgba[at * 4 + 1] = Math.min(255, g * shade);
-        rgba[at * 4 + 2] = Math.min(255, b * shade);
+        // ─── 숲 색 낮추기 ──────────────────────────────────────────────
+        // Meshy 나무는 흰 배경에 렌더한 거라 잎이 쨍한 연두다. 마을을 두르는
+        // 띠로 300그루를 심으니 **초록 벽**이 마을보다 밝아서, 정작 봐야 할
+        // 건물이 그 안에 파묻혔다. 컨셉 아트의 바깥 숲은 짙은 청록 침엽수다.
+        // 밝기를 낮추고 초록을 파랑 쪽으로 조금 돌려 마을이 도드라지게 한다.
+        const gy = 0.299 * r + 0.587 * g + 0.114 * b;
+        r = gy + (r - gy) * FOREST_SAT;
+        g = gy + (g - gy) * FOREST_SAT;
+        b = gy + (b - gy) * FOREST_SAT;
+        rgba[at * 4] = Math.min(255, r * shade * FOREST_TINT[0]);
+        rgba[at * 4 + 1] = Math.min(255, g * shade * FOREST_TINT[1]);
+        rgba[at * 4 + 2] = Math.min(255, b * shade * FOREST_TINT[2]);
         rgba[at * 4 + 3] = a;
       }
     }

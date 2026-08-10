@@ -64,6 +64,12 @@ export interface VillagePalette {
 // near 를 마을 바깥까지 밀어 마을은 또렷하게 두고, far 를 산 너머로 보내
 // 산이 옅게라도 형태를 남기게 한다.
 
+// ─── 창문 발광 (windowGlow) ───────────────────────────────────────────────────
+// Bloom 을 켜면서 전부 두 배 넘게 올렸다. 문턱이 0.72 라 0.38 짜리 창문은
+// 번지기는커녕 밝은 점으로도 안 걸렸다 — 켜 놓고도 아무 변화가 없었다.
+// 낮에도 0 이 아니라 0.14 를 준다. 컨셉 아트는 한낮 그림에서도 창문마다 불이
+// 들어와 있고, 그 작은 점들이 마을을 "사람이 사는 곳"으로 만든다.
+
 // ─── 태양 고도 ────────────────────────────────────────────────────────────────
 // 예전엔 [26, 34, 20] 고정이었다. 고도로 환산하면 46° — 한낮 각도다. 그래서
 // 노을 색을 칠해 놓고 그림자는 정오처럼 짧은, 앞뒤가 안 맞는 그림이 나왔다.
@@ -77,7 +83,7 @@ export function timePalette(hour: number): VillagePalette {
       amb: 0.2, sun: "#9fb4e8", sunI: 0.95, sunPos: [-30, 44, -26],
       discRadius: 9, discColor: "#e8eeff",
       fill: "#3a4f8c", fillI: 0.14, hSky: "#22345e", hGround: "#141f26", hI: 0.24,
-      lamp: 2.6, windowGlow: 0.5, label: "밤"
+      lamp: 2.6, windowGlow: 1.15, label: "밤"
     };
   }
   if (hour < 8) {
@@ -86,7 +92,7 @@ export function timePalette(hour: number): VillagePalette {
       amb: 0.42, sun: "#ffd6a6", sunI: 2.5, sunPos: [-58, 17, 34],
       discRadius: 15, discColor: "#fff0d2",
       fill: "#ffc2d2", fillI: 0.35, hSky: "#f0c8a4", hGround: "#566a3a", hI: 0.5,
-      lamp: 1.2, windowGlow: 0.22, label: "새벽"
+      lamp: 1.2, windowGlow: 0.5, label: "새벽"
     };
   }
   if (hour < 17) {
@@ -95,7 +101,7 @@ export function timePalette(hour: number): VillagePalette {
       amb: 0.5, sun: "#fff8e8", sunI: 3.0, sunPos: [30, 52, 24],
       discRadius: 8, discColor: "#fffbe8",
       fill: "#d0e8ff", fillI: 0.4, hSky: "#87ceeb", hGround: "#4a7a3a", hI: 0.6,
-      lamp: 0.25, windowGlow: 0, label: "낮"
+      lamp: 0.25, windowGlow: 0.14, label: "낮"
     };
   }
   return {
@@ -103,7 +109,7 @@ export function timePalette(hour: number): VillagePalette {
     amb: 0.45, sun: "#ffb277", sunI: 2.8, sunPos: [56, 15, 28],
     discRadius: 17, discColor: "#fff0c4",
     fill: "#ffb184", fillI: 0.38, hSky: "#e8a070", hGround: "#5a5a2a", hI: 0.55,
-    lamp: 1.6, windowGlow: 0.38, label: "노을"
+    lamp: 1.6, windowGlow: 0.85, label: "노을"
   };
 }
 

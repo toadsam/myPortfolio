@@ -40,6 +40,8 @@ const KIT = {
   "arch-study": {glb: "decor/arch-study.glb", h: 1.529, m: 7.5},
   "arch-experience": {glb: "decor/arch-experience.glb", h: 1.436, m: 7.5},
   "arch-life": {glb: "decor/arch-life.glb", h: 1.669, m: 7.5},
+  "arch-skills": {glb: "decor/arch-skills.glb", h: 1.553, m: 7.5},
+  "arch-contact": {glb: "decor/arch-contact.glb", h: 1.86, m: 7.5},
 
   // ─── 채움 민가 ──────────────────────────────────────────────────────────────
   // 클릭도 안 되고 NPC도 없는 배경 집. 컨셉 아트의 블록은 5~8채가 들어차 있는데
@@ -392,13 +394,16 @@ function tryPlace(id, kind, x, z, rotationY = 0, opts = {}) {
 // 그래서 광장에서 보면 "저기부터 PROJECTS 구역"이 한눈에 읽힌다.
 // 우리는 높이 1유닛짜리 팻말 하나를 길가에 비켜 세워 놨을 뿐이었다.
 //
-// 아치가 있는 구역은 아치를 길 위에 세우고, 아직 에셋이 없는 구역
-// (SKILLS·CONTACT — docs/MESHY_VILLAGE_ASSETS.md 참고)은 예전 팻말을 그대로 쓴다.
+// 이제 여섯 구역 모두 아치가 있다. 팻말(SIGN_OF)은 아치가 없는 구역용
+// 대역이었는데, 남은 구역이 없어서 실제로는 아무 데도 안 붙는다 —
+// 아치 에셋이 깨져서 되돌려야 할 때를 대비해 표만 남겨 둔다.
 const ARCH_OF = {
   projects: "arch-projects",
   study: "arch-study",
   experience: "arch-experience",
-  life: "arch-life"
+  life: "arch-life",
+  skills: "arch-skills",
+  contact: "arch-contact"
 };
 const SIGN_OF = {
   study: "sign-study",
@@ -768,33 +773,35 @@ const gates = [];
 // 12자리 중 한 곳도 안 섰다. 마을이 생각보다 빡빡해서다 — 광장 원반이 반지름
 // 4.6인데 가장 가까운 건물이 7.5 에 있어 그 사이 3유닛은 길 넷이 다 쓰고 있었다.
 // 자리를 **깔린 포장 타일에서 직접 고르면** 이런 추측이 필요 없다.
+// 깔린 포장 칸 — ③-c 나무·화단과 ③-e 구역 살림이 여기서 자리를 고른다
+const paved = layout.props
+  .filter((p) => p.id.startsWith("ground-pave-"))
+  .map((p) => ({x: p.position[0], z: p.position[2]}));
+
+// 각 포장 칸이 얼마나 트여 있나 — 가장 가까운 길·건물·원반·담장·기존 장식물까지.
+// taken 을 그때그때 읽으므로, 먼저 놓은 것이 뒤에 놓는 것의 후보를 자동으로 줄인다.
+const clearance = (x, z) => {
+  let best = Infinity;
+  for (const r of roads) best = Math.min(best, Math.hypot(r.x - x, r.z - z) - ROAD_SIDE);
+  for (const b of buildings) {
+    const dx = Math.max(0, Math.abs(b.x - x) - b.w / 2);
+    const dz = Math.max(0, Math.abs(b.z - z) - b.d / 2);
+    best = Math.min(best, Math.hypot(dx, dz));
+  }
+  for (const d of discs) best = Math.min(best, Math.hypot(d.x - x, d.z - z) - d.r);
+  best = Math.min(best, Math.hypot(HUB.x - x, HUB.z - z) - HUB_RADIUS);
+  for (const w of walls) {
+    const dx = x - w.x, dz = z - w.z;
+    best = Math.min(best, Math.hypot(
+      Math.max(0, Math.abs(dx * w.ax + dz * w.az) - WALL_HALF_LEN),
+      Math.max(0, Math.abs(dx * -w.az + dz * w.ax) - WALL_HALF_THICK)
+    ));
+  }
+  for (const t of taken) best = Math.min(best, Math.hypot(t.x - x, t.z - z));
+  return best;
+};
+
 {
-  const paved = layout.props
-    .filter((p) => p.id.startsWith("ground-pave-"))
-    .map((p) => ({x: p.position[0], z: p.position[2]}));
-
-  // 각 포장 칸이 얼마나 트여 있나 — 가장 가까운 길·건물·원반·담장·기존 장식물까지
-  const clearance = (x, z) => {
-    let best = Infinity;
-    for (const r of roads) best = Math.min(best, Math.hypot(r.x - x, r.z - z) - ROAD_SIDE);
-    for (const b of buildings) {
-      const dx = Math.max(0, Math.abs(b.x - x) - b.w / 2);
-      const dz = Math.max(0, Math.abs(b.z - z) - b.d / 2);
-      best = Math.min(best, Math.hypot(dx, dz));
-    }
-    for (const d of discs) best = Math.min(best, Math.hypot(d.x - x, d.z - z) - d.r);
-    best = Math.min(best, Math.hypot(HUB.x - x, HUB.z - z) - HUB_RADIUS);
-    for (const w of walls) {
-      const dx = x - w.x, dz = z - w.z;
-      best = Math.min(best, Math.hypot(
-        Math.max(0, Math.abs(dx * w.ax + dz * w.az) - WALL_HALF_LEN),
-        Math.max(0, Math.abs(dx * -w.az + dz * w.ax) - WALL_HALF_THICK)
-      ));
-    }
-    for (const t of taken) best = Math.min(best, Math.hypot(t.x - x, t.z - z));
-    return best;
-  };
-
   /** 화단 지름이 0.9유닛이니 사방 1.1은 비어야 한다 */
   const NEED = 1.1;
   /** 심은 것끼리 이만큼은 떨어뜨린다 — 몰아 놓으면 화단밭이 된다 */
@@ -838,6 +845,62 @@ const gates = [];
     place(`planting-${n++}`, kind, c.x + jitter, c.z - jitter,
       round3(rand() * Math.PI * 2), {gap: NEED, grow: kind === "flowerbed-round" ? 1 : 0.82 + rand() * 0.3});
     put.push(c);
+  }
+}
+
+// ─── ③-e 구역 안 살림 ─────────────────────────────────────────────────────────
+// 담장을 두르고 부감으로 보니 여섯 블록이 다 "담 안에 건물 몇 채, 나머지는 빈
+// 돌마당"이었다. 컨셉 아트의 구역 안은 벤치·이젤·화분·노점·책더미가 건물 사이를
+// 빽빽하게 메우고 있고, 그 잡동사니가 "사람이 사는 동네"를 만든다.
+//
+// ② 의 LANDMARKS 는 구역당 1~3개를 **중심 근처**에만 놓는다. 여기서는 블록
+// 전체에 흩는다. 구역 성격에 맞는 물건만 골라 써서, 학습 구역엔 책과 두루마리가
+// 프로젝트 구역엔 노점과 게시판이 서게 한다.
+{
+  // 값싼 것 위주로 섞는다. 괄호는 삼각형 수 — 게시판(7,276)·노점(7,334)처럼
+  // 비싼 건 구역당 한 번만 돌아오게 회전표 앞쪽에 한 번씩만 넣었다.
+  const KIT_OF = {
+    projects: ["market-stall", "notice-board", "barrel-iron", "lantern-post", "orb-lantern", "barrel-iron"],
+    skills: ["stump-forge", "barrel-iron", "orb-lantern", "lantern-post", "barrel-iron"],
+    experience: ["scroll-barrel", "candle-tome", "barrel-iron", "orb-lantern", "lantern-post"],
+    study: ["candle-tome", "notice-board", "scroll-barrel", "orb-lantern", "candle-tome", "lantern-post"],
+    life: ["campfire", "bench", "flower-pot", "orb-lantern", "lute-picnic", "lantern-post"],
+    contact: ["mailbox", "notice-board", "orb-lantern", "bench", "lantern-post"]
+  };
+  /** 구역당 몇 개까지. 이 이상은 물건이 굴러다니는 것처럼 보인다. */
+  const PER_DISTRICT = 6;
+  /** 서로 이만큼은 떨어뜨린다 */
+  const APART = 2.6;
+  /** 사방이 이만큼은 비어야 놓는다 — 소품이 작아 나무·화단보다 덜 까다롭다 */
+  const NEED = 0.95;
+
+  let n = 0;
+  for (const [district, rect] of blockRect) {
+    const kinds = KIT_OF[district];
+    if (!kinds) continue;
+    // 이 구역 담장 안쪽 포장 칸만
+    const inside = paved.filter(
+      (c) => c.x > rect.x0 - 1 && c.x < rect.x1 + 1 && c.z > rect.z0 - 1 && c.z < rect.z1 + 1
+    );
+    const cand = inside
+      .map((c) => ({...c, open: clearance(c.x, c.z)}))
+      .filter((c) => c.open >= NEED)
+      .sort((a, b) => b.open - a.open);
+
+    let put = 0;
+    const here = [];
+    for (const c of cand) {
+      if (put >= PER_DISTRICT) break;
+      if (here.some((q) => Math.hypot(q.x - c.x, q.z - c.z) < APART)) continue;
+      // 칸 한복판에 딱 맞추면 격자로 늘어선 게 보인다
+      const jx = (rand() - 0.5) * 0.7, jz = (rand() - 0.5) * 0.7;
+      // 정면은 광장 쪽 — 마을이 한 방향으로 정돈돼 보인다
+      const len = Math.hypot(c.x, c.z) || 1;
+      place(`yardkit-${n++}`, kinds[put % kinds.length], c.x + jx, c.z + jz,
+        faceTo(-c.x / len, -c.z / len), {gap: NEED, grow: 0.85 + rand() * 0.3});
+      here.push(c);
+      put += 1;
+    }
   }
 }
 

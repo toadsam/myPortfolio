@@ -1,8 +1,10 @@
 "use client";
 
-import {Canvas} from "@react-three/fiber";
+import {Canvas, useFrame} from "@react-three/fiber";
 import {AdaptiveDpr, AdaptiveEvents, Billboard, ContactShadows, Html, useGLTF, useTexture} from "@react-three/drei";
-import {memo, Suspense, useEffect, useMemo} from "react";
+import {Bloom, EffectComposer, ToneMapping} from "@react-three/postprocessing";
+import {ToneMappingMode} from "postprocessing";
+import {memo, Suspense, useEffect, useMemo, useRef} from "react";
 import {AdditiveBlending, BackSide, BufferGeometry, Color, Float32BufferAttribute, RepeatWrapping, SphereGeometry, SRGBColorSpace, Vector3} from "three";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
@@ -449,41 +451,105 @@ function SunDisc({direction, radius, color}: {direction: [number, number, number
   );
 }
 
-function DistrictSign({label, position, color}: {label: string; position: [number, number, number]; color: string}) {
-  const calculatePosition = useMemo(() => createThrottledCalculatePosition(LABEL_SYNC_STRIDE), []);
-  return (
-    <group position={position}>
-      <mesh castShadow position={[0, 0.55, 0]}>
-        <cylinderGeometry args={[0.03, 0.04, 1.1, 8]} />
-        <meshStandardMaterial color="#0a1a2e" metalness={0.9} roughness={0.2} />
-      </mesh>
-      <mesh position={[0, 1.22, 0]}>
-        <boxGeometry args={[1.8, 0.36, 0.06]} />
-        <meshStandardMaterial color="#050d1a" emissive={color} emissiveIntensity={0.18} roughness={0.2} metalness={0.5} />
-      </mesh>
-      <mesh position={[0, 1.22, 0.04]}>
-        <boxGeometry args={[1.82, 0.38, 0.01]} />
-        <meshBasicMaterial color={color} transparent opacity={0.45} />
-      </mesh>
-      <pointLight color={color} intensity={0.5} distance={2.5} decay={2} position={[0, 1.2, 0.2]} />
-      <Html center calculatePosition={calculatePosition} distanceFactor={14} position={[0, 1.25, 0.08]} zIndexRange={[5, 0]}>
-        <span style={{
-          fontFamily: "monospace",
-          fontSize: 9,
-          fontWeight: 900,
-          letterSpacing: "0.22em",
-          textTransform: "uppercase",
-          color,
-          textShadow: `0 0 10px ${color}`,
-          userSelect: "none",
-          pointerEvents: "none",
-          whiteSpace: "nowrap"
-        }}>
-          {"</>"} {label}
-        </span>
-      </Html>
-    </group>
+// ─── 구역 이름 현판 ──────────────────────────────────────────────────────────
+// 컨셉 아트에서 조감도를 펼쳤을 때 제일 먼저 읽히는 건 건물이 아니라 구역 위에
+// 큼직하게 떠 있는 **리본 현판**이다 — PROJECTS · SKILLS · LIFE …
+// 그게 있어서 여섯 덩어리가 각각 무슨 구역인지 한눈에 들어온다.
+//
+// 우리한테도 입구 현판 아치가 있지만 그건 길 위 사람 눈높이(7.5m)에 서 있어서,
+// 카메라를 부감으로 빼면 점처럼 보인다. 아치는 "문"으로 두고, 위에서 읽히는
+// **이름표는 따로** 띄운다.
+//
+// 3D 글자(troika Text)를 안 쓴 이유: 기본 폰트를 CDN에서 받아 오는데 이 앱은
+// 폰트를 로컬에 안 들고 있다. Html 은 이 씬이 이미 쓰고 있고(NPC 말풍선),
+// 시스템 폰트라 한글도 안 깨진다.
+const DISTRICT_BANNERS: {district: string; label: string; ribbon: string; ink: string}[] = [
+  {district: "projects", label: "PROJECTS", ribbon: "#8a4a2e", ink: "#ffe2a8"},
+  {district: "skills", label: "SKILLS", ribbon: "#2f5d4a", ink: "#ffe2a8"},
+  {district: "experience", label: "EXPERIENCE", ribbon: "#4a3b6b", ink: "#ffe2a8"},
+  {district: "study", label: "STUDY", ribbon: "#2c4a6b", ink: "#ffe2a8"},
+  {district: "life", label: "LIFE", ribbon: "#6b5423", ink: "#ffe2a8"},
+  {district: "contact", label: "CONTACT", ribbon: "#7a2f2f", ink: "#ffe2a8"}
+];
+
+/** 구역별 건물 무게중심 — 현판을 그 위에 띄운다 */
+const DISTRICT_CENTERS: Record<string, {x: number; z: number; top: number}> = (() => {
+  const acc: Record<string, {x: number; z: number; n: number; top: number}> = {};
+  for (const b of villageBuildings) {
+    if (b.district === "plaza") continue;
+    const at = (acc[b.district] ??= {x: 0, z: 0, n: 0, top: 0});
+    at.x += b.position[0];
+    at.z += b.position[2];
+    at.n += 1;
+    // 가장 높은 건물보다 위로 띄워야 지붕에 안 걸린다
+    at.top = Math.max(at.top, b.size[1]);
+  }
+  return Object.fromEntries(
+    Object.entries(acc).map(([k, v]) => [k, {x: v.x / v.n, z: v.z / v.n, top: v.top}])
   );
+})();
+
+function DistrictBanner({label, ribbon, ink, at}: {
+  label: string;
+  ribbon: string;
+  ink: string;
+  at: {x: number; z: number; top: number};
+}) {
+  const calculatePosition = useMemo(() => createThrottledCalculatePosition(LABEL_SYNC_STRIDE), []);
+  const plate = useRef<HTMLDivElement>(null);
+  const here = useMemo(() => new Vector3(at.x, at.top + 1.8, at.z), [at]);
+  // 화면 고정 크기라 코앞에서도 안 줄어든다 — 걸어 다닐 때 눈앞을 가리지 않게
+  // 가까우면 지운다. 멀리 있는 다른 구역 현판은 그대로 남아 길잡이가 된다.
+  const tick = useRef(0);
+  useFrame(({camera}) => {
+    if (!plate.current || (tick.current = (tick.current + 1) % 6) !== 0) return;
+    const d = camera.position.distanceTo(here);
+    plate.current.style.opacity = String(Math.min(1, Math.max(0, (d - 14) / 10)));
+  });
+  return (
+    <Html
+      center
+      calculatePosition={calculatePosition}
+      // distanceFactor 를 쓰면 원근을 타서 "마을 위에 걸린 물건"처럼 보이는데,
+      // 정작 이 현판이 필요한 건 섬 전체를 담는 부감이다. 14 로 잡았을 때
+      // 거리 63 에서 배율 0.22 → 57×14px 로 찍혀 아예 안 읽혔다.
+      // 그래서 지도 라벨처럼 **화면 고정 크기**로 간다. 대신 가까이 가면
+      // 눈앞을 가리므로 아래 opacity 로 걷어낸다.
+      position={[at.x, at.top + 1.8, at.z]}
+      zIndexRange={[6, 0]}
+      style={{pointerEvents: "none", userSelect: "none"}}
+    >
+      <div ref={plate} style={{
+        // 나무 현판 — 가운데가 밝고 위아래가 어두운 원통형 음영
+        background: `linear-gradient(180deg, ${ribbon} 0%, ${shade(ribbon, 1.35)} 45%, ${ribbon} 78%, ${shade(ribbon, 0.7)} 100%)`,
+        border: "2px solid #c79a4e",
+        borderRadius: 6,
+        boxShadow: "0 4px 10px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(0,0,0,0.22)",
+        padding: "3px 12px",
+        whiteSpace: "nowrap"
+      }}>
+        <span style={{
+          fontFamily: "Georgia, 'Times New Roman', serif",
+          fontSize: 15,
+          fontWeight: 900,
+          letterSpacing: "0.12em",
+          color: ink,
+          textShadow: "0 1px 0 rgba(0,0,0,0.6)"
+        }}>
+          {label}
+        </span>
+      </div>
+    </Html>
+  );
+}
+
+/** #rrggbb 를 배수만큼 밝게/어둡게 */
+function shade(hex: string, factor: number) {
+  const n = parseInt(hex.slice(1), 16);
+  const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((c) =>
+    Math.max(0, Math.min(255, Math.round(c * factor)))
+  );
+  return `rgb(${ch.join(",")})`;
 }
 
 function ActiveRoute({activeSection}: {activeSection: SectionId}) {
@@ -687,10 +753,14 @@ function VillageSceneImpl({
           <DistantHills />
           {PLAZA_LANDMARK_READY ? null : <Statue />}
 
-          <DistrictSign label="Project District" position={spread([-8.5, 0, -5.5])} color="#00d4ff" />
-          <DistrictSign label="Skills District" position={spread([0, 0, -9.0])} color="#aa44ff" />
-          <DistrictSign label="Experience District" position={spread([9.2, 0, 5])} color="#00ff88" />
-          <DistrictSign label="Life District" position={spread([11, 0, 2.5])} color="#fbbf24" />
+          {/* 예전엔 네온 팻말 넷을 좌표로 박아 뒀는데, 구역을 컨셉 아트 방위로
+              다시 배치하면서 넷 다 엉뚱한 자리에 남아 허공에 뜬 색판이 됐다.
+              이제 건물 무게중심에서 계산하므로 배치를 옮겨도 따라온다. */}
+          {DISTRICT_BANNERS.map((b) =>
+            DISTRICT_CENTERS[b.district] ? (
+              <DistrictBanner key={b.district} label={b.label} ribbon={b.ribbon} ink={b.ink} at={DISTRICT_CENTERS[b.district]} />
+            ) : null
+          )}
 
           {!isWalkMode && <ActiveRoute activeSection={activeSection} />}
           <BuildingNetwork buildings={projectNetworkBuildings} />
@@ -765,6 +835,34 @@ function VillageSceneImpl({
           ) : null}
 
           <SeasonAmbience lite={isMobile} />
+
+          {/* ─── 빛 번짐 ────────────────────────────────────────────────────
+              컨셉 아트에서 눈을 잡아끄는 건 형태가 아니라 **빛이 번지는 것**이다.
+              창문·랜턴·간판 하나하나가 뽀얗게 퍼지면서 노을 하늘과 섞인다.
+              @react-three/postprocessing 은 진작 package.json 에 있었는데
+              마을 씬에서는 한 번도 안 쓰고 있었다(옛 habitat 씬에만 걸려 있었다).
+
+              문턱을 0.72 로 잡은 이유: 낮에 잔디·판석이 0.6~0.7 언저리라
+              그보다 낮추면 마을 전체가 뿌옇게 날아간다. 실제로 빛나는 것
+              (창문 emissive · 태양 원반 · 물 반사)만 걸리게 한다.
+              모바일은 끈다 — 풀스크린 패스가 두 번 더 도는 비용이 크다. */}
+          {isMobile ? null : (
+            <EffectComposer enableNormalPass={false}>
+              <Bloom
+                mipmapBlur
+                intensity={0.55 + sky.lamp * 0.5}
+                luminanceThreshold={0.72}
+                luminanceSmoothing={0.22}
+                radius={0.72}
+              />
+              {/* 이게 없으면 마을이 통째로 칙칙해진다. EffectComposer 가 끼면
+                  WebGLRenderer 의 톤매핑 단계를 건너뛰고 컴포저가 직접 화면에
+                  내보내기 때문 — 처음엔 이걸 빼먹어서 노을 하늘이 흙빛
+                  판때기가 됐다. 렌더러에 걸어 둔 ACES + 노출 0.68 을 여기서
+                  똑같이 재현한다. */}
+              <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+            </EffectComposer>
+          )}
 
           {isWalkMode
             ? <CharacterController />

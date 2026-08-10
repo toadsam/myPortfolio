@@ -30,24 +30,23 @@ id와 안 맞는 파일이 있으면 optimize 로그가 이렇게 알려줍니�
 예산 규격이 바뀌었을 때 `npm run optimize -- --force`로 다시 구울 수 있어야 하기 때문입니다.
 (`raw/`는 `.gitignore`에 있어 커밋되지 않습니다 — 장당 20~40MB라 리포가 감당 못 합니다.)
 
-## 지금 상태 (2026-08-09 밤)
+## 지금 상태 (2026-08-10 저녁)
 
-27채 중 **18채 완료** — 중앙 광장 기념비까지 들어갔습니다. 남은 9채:
+27채 중 **26채 완료.** 남은 건 한 채뿐입니다:
 
 ```
-post-office              연락 우체국
-study-codingtest         알고리즘 도장
 study-cs                 지식 서고
-project-sign-language    수어지구
-project-ajou-adventure   아주분투
-life-values              가치관 비석
-life-invest              투자 타워
-life-library             도서관
-life-timeline            연혁 타임라인
 ```
 
-남은 9채는 아직 `Building.tsx`가 절차적 상자로 그립니다 — 마을에서 유일하게
-사이버펑크 톤으로 남은 부분입니다(metalness 0.55~0.9 + 네온 띠).
+> 2026-08-10 저녁에 8채(`post-office` `study-codingtest` `project-sign-language`
+> `project-ajou-adventure` `life-values` `life-invest` `life-library` `life-timeline`)가
+> 한 번에 들어왔습니다. 받은 파일과 넣은 이름의 대조표는
+> `VILLAGE_ASSET_WISHLIST.md` 의 **5차 입고** 표에 있습니다.
+> `study-cs` 만 컨셉 이미지도 GLB도 없습니다 — 아래 프롬프트로 그림부터 그려야 합니다.
+
+`study-cs` 는 절차적 상자가 아니라 **채움 민가 GLB(`house-a`~`c`)를 빌려 씁니다**
+(`Building.tsx` 의 `fallbackHouse`). 마을에 속한 집으로는 보이지만, 이름표가 붙은
+"지식 서고"와 이름 없는 배경 집이 똑같이 생깁니다.
 
 ### 18채를 넣으면서 배운 것
 
