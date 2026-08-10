@@ -19,6 +19,7 @@ import type {ThreeEvent} from "@react-three/fiber";
 import {Suspense, useLayoutEffect, useMemo, useRef} from "react";
 import {Euler, InstancedMesh, Matrix4, Mesh, Quaternion, Vector3, type BufferGeometry, type Material, type Object3D} from "three";
 import type {PropPlacement} from "@/types/props";
+import {terrainHeightAt} from "@/lib/villageTerrain";
 
 /** 이 개수를 넘는 GLB만 격자 청크로 쪼갠다. 그 이하는 통째로 하나. */
 const CHUNK_THRESHOLD = 80;
@@ -141,7 +142,13 @@ function InstancedPart({
 
     for (let i = 0; i < placements.length; i++) {
       const p = placements[i];
-      position.set(p.position[0], p.position[1], p.position[2]);
+      // 구역 단차는 좌표 데이터에 안 굽고 여기서 더한다 — 자세한 이유는
+      // src/lib/villageTerrain.ts 머리말. 판석·담장·나무가 전부 이 한 줄로 같이 오른다.
+      position.set(
+        p.position[0],
+        p.position[1] + terrainHeightAt(p.position[0], p.position[2]),
+        p.position[2]
+      );
       euler.set(0, p.rotationY, 0);
       quaternion.setFromEuler(euler);
       scale.setScalar(p.scale);

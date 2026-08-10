@@ -618,17 +618,31 @@ const blockRect = new Map();
 // 담을 두르되 **길이 지나는 칸은 비운다** — 그 틈이 곧 구역 대문이 되고,
 // ① 에서 세운 현판 아치가 그 자리에 서 있다. 담이 끊긴 데로 걸어 들어가면
 // 머리 위에 PROJECTS 현판이 지나가는 그림이 된다.
+//
+// **담장 선은 구역 단차의 윗단 테두리다.** 예전엔 블록 상자에서 1.45 밀어낸
+// 자리였는데, 단차를 넣고 보니 그 선이 윗단·중간단·바닥을 가로질러서 담이
+// 한 변 안에서 오르내리는 지그재그가 됐다(72/25/31토막이 서로 다른 단에 섰다).
+// 윗단 테두리에 세우면 한 구역의 담이 전부 같은 높이에 서고, 두 단짜리 둔덕이
+// 담 **바깥**에 드러나 밖에서 보면 축대 위 난간처럼 읽힌다.
 {
-  /** 담을 건물에서 얼마나 밀어낼까 — 포장이 블록 상자 바깥 한 칸까지 깔려 있다 */
-  const MARGIN = 1.45;
   /** 한 토막 길이 (make-low-wall.mjs 의 LENGTH). 살짝 겹치게 놓아 틈을 막는다 */
   const STEP = 1.9;
+  /** 단차 사각형 — 바닥 생성기(generate-ground-layout.mjs)가 내보낸 것 */
+  const terr = JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"));
+  // 정확히 경계에 세우면 부동소수 때문에 몇 토막이 한 단 아래로 판정된다.
+  // 손톱만큼 안쪽으로 들여 세운다.
+  const PLATEAU_PAD = terr.pitch / 2 - 0.06;
+  const terraceOf = new Map(terr.blocks.map((b) => [b.district, b]));
   let n = 0;
   let openings = 0;
 
-  for (const [district, r] of blockRect) {
-    const x0 = r.x0 - MARGIN, x1 = r.x1 + MARGIN;
-    const z0 = r.z0 - MARGIN, z1 = r.z1 + MARGIN;
+  for (const [district, fallback] of blockRect) {
+    const t = terraceOf.get(district);
+    const r = t
+      ? {x0: t.x0 - PLATEAU_PAD, x1: t.x1 + PLATEAU_PAD, z0: t.z0 - PLATEAU_PAD, z1: t.z1 + PLATEAU_PAD}
+      : {x0: fallback.x0 - 1.45, x1: fallback.x1 + 1.45, z0: fallback.z0 - 1.45, z1: fallback.z1 + 1.45};
+    const x0 = r.x0, x1 = r.x1;
+    const z0 = r.z0, z1 = r.z1;
 
     // 네 변. along 은 변이 뻗는 방향, rot 은 담장 긴 축(모델 +X)을 거기 맞추는 각.
     const edges = [

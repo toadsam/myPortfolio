@@ -9,6 +9,7 @@ import type {Group, Vector3} from "three";
 import type {NpcBehaviorProfile} from "@/data/npcBehaviors";
 import {moodLabel} from "@/lib/liveState";
 import {isWalkablePosition} from "@/lib/worldCollision";
+import {terrainHeightAt} from "@/lib/villageTerrain";
 import type {NpcActionState, NpcAnimationKey, NpcMood, NpcState} from "@/types/live";
 import type {BuildingData, NPCData, Vector3Tuple} from "@/types/portfolio";
 
@@ -80,6 +81,8 @@ function NPCImpl({
 }: NPCProps) {
   const groupRef = useRef<Group | null>(null);
   const elapsedRef = useRef(0);
+  /** 구역 단차에서 현재 밟고 있는 단 높이 (한 단 오를 때 순간이동 안 하게 감쇠) */
+  const groundYRef = useRef(0);
   const targetRef = useRef<Vector3Tuple>(behavior?.home ?? npc.position);
   const retargetAtRef = useRef(0);
   const reportAtRef = useRef(0);
@@ -108,6 +111,17 @@ function NPCImpl({
     : undefined;
 
   useCursor(hovered);
+
+  /**
+   * 구역 단차 위에서 지금 밟고 있는 단 높이. NPC 는 상하로 통통 뛰므로
+   * 그 진폭에 **더할** 바닥값이 필요하다. 단이 바뀌는 순간 순간이동하지 않게
+   * 감쇠시킨다 (한 단 0.21, delta*6 이면 반 초쯤 걸려 오른다).
+   */
+  const settleGround = (g: Group, delta: number) => {
+    const target = terrainHeightAt(g.position.x, g.position.z);
+    groundYRef.current += (target - groundYRef.current) * Math.min(1, delta * 6);
+    return groundYRef.current;
+  };
 
   useFrame(({clock, camera}, delta) => {
     elapsedRef.current += delta;
@@ -143,7 +157,7 @@ function NPCImpl({
           onScriptedArrive?.();
         }
       }
-      g.position.y = Math.sin(elapsedRef.current * 5) * 0.07;
+      g.position.y = settleGround(g, delta) + Math.sin(elapsedRef.current * 5) * 0.07;
       if (onPositionChange) onPositionChange(npc.id, [g.position.x, 0, g.position.z]);
       return;
     } else {
@@ -155,7 +169,7 @@ function NPCImpl({
     if ((isActive || forceHold) && !currentAction) {
       const g = groupRef.current;
       g.rotation.y += (0 - g.rotation.y) * Math.min(1, delta * 6);
-      g.position.y = Math.sin(elapsedRef.current * 2.2) * 0.03; // 잔잔한 호흡
+      g.position.y = settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03; // 잔잔한 호흡
       moveStateRef.current = "idle";
       return;
     }
@@ -192,7 +206,7 @@ function NPCImpl({
         g.position.x += (dx / dist) * step;
         g.position.z += (dz / dist) * step;
         g.rotation.y = Math.atan2(dx, dz);
-        g.position.y = Math.sin(elapsedRef.current * 8) * 0.05;
+        g.position.y = settleGround(g, delta) + Math.sin(elapsedRef.current * 8) * 0.05;
         moveStateRef.current = dist > 0.6 ? "run" : "walk";
       } else {
         moveStateRef.current = "idle";
@@ -205,12 +219,12 @@ function NPCImpl({
           g.rotation.y += d * Math.min(1, delta * 7);
         }
         if (command === "greet") {
-          g.position.y = Math.abs(Math.sin(elapsedRef.current * 6)) * 0.13;
+          g.position.y = settleGround(g, delta) + Math.abs(Math.sin(elapsedRef.current * 6)) * 0.13;
         } else if (command === "party") {
-          g.position.y = Math.abs(Math.sin(elapsedRef.current * 7 + home[0])) * 0.32;
+          g.position.y = settleGround(g, delta) + Math.abs(Math.sin(elapsedRef.current * 7 + home[0])) * 0.32;
           g.rotation.y += delta * 1.6;
         } else {
-          g.position.y = Math.sin(elapsedRef.current * 2.2) * 0.03;
+          g.position.y = settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03;
         }
       }
 
@@ -233,7 +247,7 @@ function NPCImpl({
         d = Math.atan2(Math.sin(d), Math.cos(d)); // 최단 회전
         g.rotation.y += d * Math.min(1, delta * 6);
       }
-      g.position.y = Math.sin(elapsedRef.current * 2.2) * 0.03;
+      g.position.y = settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03;
       moveStateRef.current = "idle";
       return;
     }
@@ -280,7 +294,8 @@ function NPCImpl({
     }
     moveStateRef.current = walking ? (rawMood === "busy" || rawMood === "excited" ? "run" : "walk") : "idle";
 
-    groupRef.current.position.y = Math.sin(elapsedRef.current * speed + home[0]) * height;
+    groupRef.current.position.y =
+      settleGround(groupRef.current, delta) + Math.sin(elapsedRef.current * speed + home[0]) * height;
 
     if (onPositionChange && now > reportAtRef.current) {
       onPositionChange(npc.id, [groupRef.current.position.x, 0, groupRef.current.position.z]);

@@ -752,6 +752,40 @@ clumps.forEach((c, n) => {
   });
 });
 
+// ─── 구역 단차(테라스) 데이터 ─────────────────────────────────────────────────
+// 컨셉 아트의 마을은 평지가 아니라 계단식이다 — 광장이 제일 낮고 구역마다 한 단
+// 올라앉아 있어서, 부감에서 여섯 덩어리가 그림자로도 갈린다.
+//
+// **높이를 propsLayout.json 에 굽지 않는다.** 여기서는 "어디가 한 단 높은가"만
+// 사각형으로 내보내고, 실제 y 는 앱이 `src/lib/villageTerrain.ts` 로 렌더할 때
+// 더한다. 그래야 STEP 하나만 0 으로 바꾸면 예전 평지로 정확히 되돌아간다.
+//
+// 범위는 **블록 상자 그대로**다. 판석은 여기서 한 칸 더 넓게(±1) 깔리므로
+// 단 위가 전부 포장이고, 단 둘레에도 지면 높이 판석이 한 줄 남는다 —
+// 잔디 위에 판이 떠 있는 그림이 안 나오게 하는 게 이 한 칸이다.
+// ±1 로 잡았더니 여섯 구역이 서로 맞붙어 광장만 우물처럼 파인 도넛이 됐다.
+{
+  const blocks = [];
+  for (const [district, box] of BLOCK_BOX) {
+    const i0 = box.i0, i1 = box.i1, j0 = box.j0, j1 = box.j1;
+    blocks.push({
+      district,
+      // 칸 중심 격자이므로 바깥 테두리는 반 칸 더 나간다
+      x0: round3(worldX(i0) - HALF),
+      x1: round3(worldX(i1) + HALF),
+      z0: round3(worldZ(j0) - HALF),
+      z1: round3(worldZ(j1) + HALF)
+    });
+  }
+  if (!dry) {
+    writeFileSync(
+      "src/data/villageTerraces.json",
+      JSON.stringify({pitch: PITCH, blocks}, null, 2) + "\n"
+    );
+  }
+  console.log(`  구역 단차 사각형 ${blocks.length}개 → src/data/villageTerraces.json`);
+}
+
 // ─── 기존 레이아웃에 병합 ─────────────────────────────────────────────────────
 const layout = JSON.parse(readFileSync(LAYOUT, "utf8"));
 const kept = (layout.props ?? []).filter(p => !p.id.startsWith("ground-"));

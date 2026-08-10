@@ -11,6 +11,7 @@ import type {BuildingData} from "@/types/portfolio";
 import buildingModelsJson from "@/data/buildingModels.json";
 import {techIcons} from "@/data/techIcons";
 import {VILLAGE_PALETTE} from "@/lib/villagePalette";
+import {terrainHeightAt} from "@/lib/villageTerrain";
 
 // 생성된 JSON이라 키가 그때그때 달라진다 — 지금 있는 4채로 타입이 굳으면
 // 다음 건물을 넣을 때마다 컴파일이 깨진다.
@@ -713,8 +714,13 @@ function BuildingImpl({building, buildingState, isActive, onRequestEnter, edit}:
   const extraScale = edit?.scale ?? 1;
   const scale = (isHighlighted ? 1.04 : 1) * extraScale;
 
+  // 구역 단차 — 좌표는 constants.ts 그대로 두고 그릴 때만 올린다.
+  // **뿌리 group 에서** 올려야 이름표·빛기둥·바닥 링이 통째로 따라온다.
+  const [bx, by, bz] = building.position;
+  const lift = terrainHeightAt(bx, bz);
+
   return (
-    <group position={building.position} rotation={[0, rotY, 0]}>
+    <group position={[bx, by + lift, bz]} rotation={[0, rotY, 0]}>
       <group
         onClick={editing ? undefined : handleClick}
         onPointerDown={editing ? (e) => {e.stopPropagation(); edit?.onSelectDown();} : undefined}

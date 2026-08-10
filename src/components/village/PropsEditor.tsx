@@ -7,6 +7,7 @@ import {Plane, Raycaster, Vector2, Vector3} from "three";
 import {villageBuildings} from "@/lib/constants";
 import savedLayout from "@/data/propsLayout.json";
 import type {BuildingOverride, PropPlacement, PropsLayout} from "@/types/props";
+import {terrainHeightAt} from "@/lib/villageTerrain";
 import {InstancedProps} from "./InstancedProps";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -152,7 +153,15 @@ export function PropsLayer({api}: {api: PropsEditorApi}) {
       <InstancedProps items={items} onPropDown={editMode ? onPropDown : undefined} />
 
       {selected ? (
-        <group position={selected.position} rotation={[0, selected.rotationY, 0]}>
+        // 선택 링도 단차만큼 올려야 프롭 발밑에 붙는다 (InstancedProps 와 같은 규칙)
+        <group
+          position={[
+            selected.position[0],
+            selected.position[1] + terrainHeightAt(selected.position[0], selected.position[2]),
+            selected.position[2]
+          ]}
+          rotation={[0, selected.rotationY, 0]}
+        >
           <SelectionRing />
         </group>
       ) : null}

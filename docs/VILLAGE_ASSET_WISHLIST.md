@@ -414,6 +414,7 @@ soft painterly textures, muted natural colors, front-facing
 | 판석 포장 | `scripts/make-paving-tile.mjs` — 받은 손그림(Mossy Cobblestone)에서 윗면을 오려 **삼각형 2개**짜리 평면에 입힌다. 원본 GLB는 8,476 삼각형이라 386장이면 327만이다. 오릴 때 가장자리를 이웃 화소와 섞어 이어붙게 만들고, 칸마다 90°씩 돌려 반복 주기를 네 배로 늘린다 |
 | 길 갓길 | `scripts/make_paved_road_tiles.py` — 길 타일의 **초록 잔디 갓길**을 판석 색으로 바꾼 변종. 포장 위를 지나는 길에만 쓴다. 안 바꿨을 땐 돌마당에 초록 격자가 떠올랐다 |
 | 낮은 담장 | `scripts/make-low-wall.mjs` — 상자 둘, **24 삼각형**. 130토막으로 여섯 블록을 두르고 길이 지나는 자리는 비워 구역 대문이 된다. B6 이 오면 교체 |
+| **구역 단차** | `src/lib/villageTerrain.ts` + `VillageScene.tsx` 의 `TerraceBanks` — 여섯 구역을 두 계단(0 → 0.35 → 0.7) 올려 컨셉 아트의 계단식 마을을 만든다. 옆구리 축대가 **96 삼각형**. 아래 「구역 단차는 어떻게 도나」 참고 |
 | 북쪽 개울 | `VillageScene.tsx` 의 `Creek` — 잔디 위에 얹는 물 리본. 돌다리가 건널 물이 필요했다. C1 이 오면 교체 |
 | 잔디 텍스처 | `scripts/make-grass-texture.mjs` |
 | 먼 숲 | `scripts/bake-impostors.mjs` — 나무 한 그루를 4~6삼각형 빌보드로 |
@@ -504,9 +505,66 @@ soft painterly textures, muted natural colors, front-facing
     `h` 를 눈대중으로 넣으면 물건이 땅에 묻히거나 공중에 뜬다
   - 절 구성: ① 구역 입구 아치 · ②-b 채움 민가 · ②-c 남쪽 정문 · ②-d 블록 담장 ·
     ③-b 깃대 · ③-c 포장 위 나무·화단 · ③-d 마을 밖 랜드마크
-- **바닥** — `scripts/generate-ground-layout.mjs` (길·포장·앞마당)
+- **바닥** — `scripts/generate-ground-layout.mjs` (길·포장·앞마당·구역 단차 사각형)
+- **구역 단차** — 아래 절 참고
 - 둘 다 고치고 나면:
 
 ```bash
 node scripts/generate-ground-layout.mjs && node scripts/generate-decor-layout.mjs
 ```
+
+
+---
+
+# 구역 단차는 어떻게 도나
+
+컨셉 아트의 마을은 평지가 아니라 계단식이다 — 광장이 제일 낮고 여섯 구역이
+한 단씩 올라앉아 있어서, 이름표를 안 읽어도 부감에서 그림자로 덩어리가 갈린다.
+
+**높이를 `propsLayout.json` 에 굽지 않았다.** 프롭 1,275개의 y 를 데이터에 써 넣으면
+되돌릴 방법이 사실상 없다. 대신 좌표는 그대로 두고 **그릴 때** 함수 하나로 더한다.
+
+```
+scripts/generate-ground-layout.mjs
+  → src/data/villageTerraces.json      구역 사각형 6개 (판석 깐 범위와 같다)
+      → src/lib/villageTerrain.ts      terrainHeightAt(x, z) · TERRACE_STEP
+          ├ InstancedProps.tsx         바닥 판석·담장·나무 등 프롭 전부
+          ├ Building.tsx               건물 뿌리 group (이름표·빛기둥이 따라온다)
+          ├ NPC.tsx                    settleGround() — 통통 뛰는 진폭에 더한다
+          ├ CharacterController.tsx    걷기 모드 발 높이 + 3인칭 카메라
+          ├ BuildingNetwork.tsx        건물끼리 잇는 호
+          └ VillageScene.tsx           TerraceBanks (단의 옆면) · ActiveRoute
+```
+
+**되돌리기 스위치는 한 줄이다.** `villageTerrain.ts` 의
+
+```ts
+export const TERRACE_STEP: number = 0.7;   // 0 이면 예전 평지 그대로
+```
+
+## 왜 매끄러운 경사가 아니라 두 단 계단인가
+
+바닥 판석은 두께 없는 평면 한 장이다. 경사로 만들면 타일마다 중심 높이만 달라져
+이음매마다 틈이 벌어지고 그 사이로 아래가 비친다. 격자 한 칸(1.88)마다 정확히 한 단씩
+끊으면 **모든 타일이 평평한 단 위에 딱 눕는다.** 그래서 폭이 한 칸인 중간 단을 두고
+0 → 0.35 → 0.7 로 오른다. 캐릭터·NPC 만 그 값을 감쇠시켜 부드럽게 오른다.
+
+## 사각형을 블록 상자 ±1칸으로 잡으면 안 된다
+
+판석은 블록 상자 ±1칸에 깔리는데, 단차 사각형까지 ±1로 잡았더니 **여섯 구역이 서로
+맞붙어 광장만 우물처럼 파인 도넛**이 됐다. 단차는 블록 상자 그대로 쓴다 — 그러면
+단 위가 전부 포장이고, 단 둘레에도 지면 높이 판석이 한 줄 남아 잔디 위에 판이 뜨지 않는다.
+
+## 담장은 단 위 테두리에 선다
+
+예전엔 블록 상자에서 1.45 밀어낸 자리였는데, 그 선이 윗단·중간단·바닥을 가로질러서
+담이 한 변 안에서 오르내리는 지그재그가 됐다(72/25/31토막이 서로 다른 단에 섰다).
+지금은 `generate-decor-layout.mjs` 가 `villageTerraces.json` 을 읽어 윗단 테두리에
+세운다 — 한 구역의 담이 전부 같은 높이에 서고, 두 단짜리 둔덕이 담 **바깥**에 드러나
+밖에서 보면 축대 위 난간처럼 읽힌다.
+
+## 아직 안 한 것
+
+길이 구역으로 들어가는 자리에 **계단이 없다.** 0.35짜리 턱 두 개를 그냥 오른다.
+`decor/terrace-stair.glb`(10,052삼각형)를 47곳에 놓으면 47만 삼각형이라 못 쓴다 —
+`make-low-wall.mjs` 처럼 쐐기를 코드로 구워야 한다.

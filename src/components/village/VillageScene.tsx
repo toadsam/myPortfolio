@@ -11,6 +11,7 @@ import {autonomousNpcs} from "@/data/npcRoster";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import {spread, villageBuildings} from "@/lib/constants";
 import {VILLAGE_PALETTE} from "@/lib/villagePalette";
+import {BANK_PAD, PLATEAU_PAD, TERRACE_RECTS, TERRACE_STEP, terrainHeightAt} from "@/lib/villageTerrain";
 import buildingModels from "@/data/buildingModels.json";
 import {buildBuildingStateMap, buildNpcStateMap} from "@/lib/liveState";
 import type {NpcRuntimeState, VillageState} from "@/types/live";
@@ -299,6 +300,67 @@ function Creek() {
   );
 }
 
+// ─── 구역 단차의 옆면 (둔덕) ──────────────────────────────────────────────────
+// `villageTerrain.ts` 가 구역 판석을 두 계단 올려 놓는데, 판석은 **두께 없는
+// 평면 한 장**이라 옆에서 보면 공중에 뜬 판이다. 그 옆구리를 메우는 축대다.
+//
+// 사각형 하나마다 띠 두 개: 바깥 띠가 0 → STEP/2, 안쪽 띠가 STEP/2 → STEP.
+// 각 띠는 네 면짜리 상자 옆면이라 8삼각형 — 여섯 구역 다 합쳐 96삼각형이다.
+// 위·아래 뚜껑은 안 만든다. 윗면은 판석이 덮고, 아랫면은 볼 일이 없다.
+function TerraceBanks() {
+  const geometry = useMemo(() => {
+    if (TERRACE_STEP === 0) return null;
+    const positions: number[] = [];
+    const colors: number[] = [];
+    const indices: number[] = [];
+    const half = TERRACE_STEP / 2;
+
+    // 단색으로 두면 손그림 판석 옆에서 회색 콘크리트 턱으로 보인다.
+    // 아래를 어둡게, 윗머리를 밝게 — 그것만으로 돌을 쌓아 올린 축대로 읽힌다.
+    const foot = new Color("#6d6656");
+    const crown = new Color("#a29a84");
+
+    /** 사각형 옆면 한 바퀴 — 아래 y0, 위 y1 */
+    const ring = (x0: number, x1: number, z0: number, z1: number, y0: number, y1: number) => {
+      const corners: [number, number][] = [[x0, z0], [x1, z0], [x1, z1], [x0, z1]];
+      for (const [cx, cz] of corners) {
+        positions.push(cx, y0, cz);
+        colors.push(foot.r, foot.g, foot.b);
+        positions.push(cx, y1, cz);
+        colors.push(crown.r, crown.g, crown.b);
+      }
+      const base = positions.length / 3 - 8;
+      for (let k = 0; k < 4; k++) {
+        const a = base + k * 2;
+        const b = base + ((k + 1) % 4) * 2;
+        // 바깥에서 보이는 면이라 시계 방향(모서리 순서가 시계 방향이므로 그대로)
+        indices.push(a, a + 1, b, b, a + 1, b + 1);
+      }
+    };
+
+    for (const r of TERRACE_RECTS) {
+      ring(r.x0 - BANK_PAD, r.x1 + BANK_PAD, r.z0 - BANK_PAD, r.z1 + BANK_PAD, 0, half);
+      ring(r.x0 - PLATEAU_PAD, r.x1 + PLATEAU_PAD, r.z0 - PLATEAU_PAD, r.z1 + PLATEAU_PAD, half, TERRACE_STEP);
+    }
+
+    const geo = new BufferGeometry();
+    geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
+    geo.setAttribute("color", new Float32BufferAttribute(colors, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    return geo;
+  }, []);
+
+  if (!geometry) return null;
+  // 판석(182,164,131)보다 어둡게 — 밝게 하면 부감에서 흰 테두리로 뜬다.
+  // 담장 갓돌과 같은 계열이라 축대 → 담장으로 이어져 보인다.
+  return (
+    <mesh geometry={geometry} receiveShadow castShadow>
+      <meshStandardMaterial vertexColors roughness={0.95} metalness={0} />
+    </mesh>
+  );
+}
+
 // 마을을 두르는 먼 언덕.
 //
 // 마을이 웅장해 보이지 않던 가장 큰 이유는 소품 수가 아니라 **지평선이 없다**는
@@ -574,7 +636,7 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
   return (
     <group>
       {/* 길 타일 윗면이 y=0.02라, 예전 높이(0.014/0.015)에 그리면 길 밑에 깔려 안 보인다 */}
-      <mesh position={[x / 2, 0.05, z / 2]} rotation={[-Math.PI / 2, 0, angle]}>
+      <mesh position={[x / 2, 0.05 + terrainHeightAt(x / 2, z / 2), z / 2]} rotation={[-Math.PI / 2, 0, angle]}>
         <planeGeometry args={[dist, 0.07]} />
         <meshBasicMaterial color={building.accentColor} transparent opacity={0.3} />
       </mesh>
@@ -750,6 +812,7 @@ function VillageSceneImpl({
           <IslandCliff />
           <Water />
           <Creek />
+          <TerraceBanks />
           <DistantHills />
           {PLAZA_LANDMARK_READY ? null : <Statue />}
 

@@ -9,6 +9,8 @@ import type {BuildingData} from "@/types/portfolio";
 // Developer City 이식: 건물 사이를 잇는 네트워크 + 흐르는 펄스 점.
 // 각 건물을 가장 가까운 이웃들과 연결하고, 그 선 위로 빛점이 흐른다.
 
+import {terrainHeightAt} from "@/lib/villageTerrain";
+
 const EDGE_Y = 0.18; // 바닥에서 살짝 띄움
 const EDGE_COLOR = "#5b8fd6"; // 스틸블루
 const MAX_NEIGHBORS = 2;
@@ -21,7 +23,10 @@ interface Edge {
 }
 
 function buildEdges(buildings: BuildingData[]): Edge[] {
-  const points = buildings.map((b) => new Vector3(b.position[0], EDGE_Y, b.position[2]));
+  // 건물이 구역 단차 위에 서 있으므로 호도 같이 올려야 지붕 아래에서 시작한다
+  const points = buildings.map(
+    (b) => new Vector3(b.position[0], EDGE_Y + terrainHeightAt(b.position[0], b.position[2]), b.position[2])
+  );
   const seen = new Set<string>();
   const edges: Edge[] = [];
 

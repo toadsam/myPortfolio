@@ -5,6 +5,7 @@ import {Suspense, useEffect, useRef} from "react";
 import {Group, Vector3} from "three";
 import {villageBuildings} from "@/lib/constants";
 import {isWalkablePosition} from "@/lib/worldCollision";
+import {terrainHeightAt} from "@/lib/villageTerrain";
 import {WarriorCharacter, type MoveState} from "./WarriorCharacter";
 
 const SPEED = 4.5;
@@ -22,6 +23,8 @@ export function CharacterController() {
   const keysRef = useRef<Set<string>>(new Set());
   const camPosRef = useRef(new Vector3());
   const moveStateRef = useRef<MoveState>("idle");
+  /** 구역 단차에서 지금 밟고 있는 단 높이 (감쇠 중인 값) */
+  const groundYRef = useRef(0);
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -84,19 +87,26 @@ export function CharacterController() {
       regress(); // 이동/회전 중 해상도 저하
     }
 
+    // 구역 단차 — 걷기 범위(x ±11.5 / z −8.8~12.5)는 여섯 구역의 광장 쪽
+    // 가장자리와 겹친다. 한 단이 0.21이라 그냥 대입하면 경계에서 툭 튄다.
+    // 목표 높이로 감쇠시켜 두 계단을 걸어 오르는 것처럼 보이게 한다.
+    const groundTarget = terrainHeightAt(posRef.current.x, posRef.current.z);
+    groundYRef.current += (groundTarget - groundYRef.current) * Math.min(1, delta * 7);
+    const groundY = groundYRef.current;
+
     if (groupRef.current) {
-      groupRef.current.position.set(posRef.current.x, 0, posRef.current.z);
+      groupRef.current.position.set(posRef.current.x, groundY, posRef.current.z);
       groupRef.current.rotation.y = rotRef.current;
     }
 
     // 캐릭터 뒤 + 위에서 따라오는 3인칭 카메라
     camPosRef.current.set(
       posRef.current.x + Math.sin(rotRef.current) * 5.5,
-      3.8,
+      3.8 + groundY,
       posRef.current.z + Math.cos(rotRef.current) * 5.5
     );
     camera.position.lerp(camPosRef.current, 0.1);
-    camera.lookAt(posRef.current.x, 0.8, posRef.current.z);
+    camera.lookAt(posRef.current.x, groundY + 0.8, posRef.current.z);
   });
 
   return (
