@@ -144,11 +144,23 @@ const parse = k => k.split(",").map(Number);
 const worldX = i => i * PITCH;
 const worldZ = j => j * PITCH;
 
-// 격자 범위 — 마을 전체를 여유 있게 덮는다
-const I_MIN = -12;
-const I_MAX = 12;
-const J_MIN = -9;
-const J_MAX = 13;
+// 격자 범위 — 마을 전체를 여유 있게 덮는다.
+//
+// 예전엔 -12~12 / -9~13 으로 박아 뒀다. 구역을 컨셉 아트 방위로 옮기면서
+// projects 블록이 j −13 까지 올라가자 **블록 하나가 통째로 격자 밖**이 됐고,
+// 길이 아예 안 깔려 뒷줄 세 채가 도로망에서 떨어져 나갔다.
+// 배치는 앞으로도 계속 움직일 값이므로 건물에서 직접 잰다.
+const MARGIN = 3;
+const [I_MIN, I_MAX, J_MIN, J_MAX] = (() => {
+  let i0 = 0, i1 = 0, j0 = 0, j1 = 0;
+  for (const b of buildings) {
+    i0 = Math.min(i0, Math.floor((b.x - b.w / 2) / PITCH));
+    i1 = Math.max(i1, Math.ceil((b.x + b.w / 2) / PITCH));
+    j0 = Math.min(j0, Math.floor((b.z - b.d / 2) / PITCH));
+    j1 = Math.max(j1, Math.ceil((b.z + b.d / 2) / PITCH));
+  }
+  return [i0 - MARGIN, i1 + MARGIN, j0 - MARGIN, j1 + MARGIN];
+})();
 const inBounds = (i, j) => i >= I_MIN && i <= I_MAX && j >= J_MIN && j <= J_MAX;
 
 // 건물이 깔고 앉은 칸 — 길이 지나갈 수 없다
@@ -166,37 +178,85 @@ for (let i = I_MIN; i <= I_MAX; i++) {
 }
 
 // ─── ① 간선 ───────────────────────────────────────────────────────────────────
-// 광장에서 네 방향. 나머지 길은 여기에 붙는다.
-// [시작i, 시작j, 끝i, 끝j] 로 읽는 축 정렬 구간.
-// 건물 열 사이의 빈 통로를 골라 남북 대로 / 동서 도로를 깐다. 건물에 걸리는 칸은
-// addSegment가 알아서 건너뛰고, 그 자리는 앞마당 원반이 메우므로 길이 끊겨 보이지 않는다.
+// [시작i, 시작j, 끝i, 끝j] 로 읽는 축 정렬 구간. 건물에 걸리는 칸은 addSegment 가
+// 알아서 건너뛰고, 그 자리는 앞마당 원반이 메우므로 길이 끊겨 보이지 않는다.
+//
+// ─── 왜 손으로 안 적나 ───────────────────────────────────────────────────────
+// 예전엔 14개 구간을 좌표로 박아 뒀다. 그런데 그 좌표는 **그때의 건물 배치**에만
+// 맞는 값이라, 구역을 옮길 때마다 길이 건물을 관통하거나 허공에 깔렸다.
+// 컨셉 아트 방위로 다시 배치하자 14개 중 쓸모 있는 게 두 개도 안 남았다.
+//
+// 길의 뼈대는 사실 배치에서 그대로 따라 나온다:
+//   · 광장에서 사방으로 뻗는 대로 두 개 (남쪽은 정문 진입로)
+//   · 구역 블록마다 광장에서 오는 L자 진입로
+//   · 블록 안에서 **건물 줄과 줄 사이 빈 칸**을 잇는 골목
+// 이 셋을 배치에서 계산하면 건물을 어떻게 옮겨도 길이 따라온다.
 const TRUNKS = [
-  // 광장에서 뻗는 두 축 — 마을의 등뼈
-  [-10, 0, 10, 0], // 동서 대로 (프로젝트 ↔ Life)
-  [0, -8, 0, 12], // 남북 대로 (스킬 ↔ 우체국 ↔ Study)
-
-  // 프로젝트 구역 — 건물이 세 줄이라 그 사이 두 통로
-  [-9, -2, -9, 7],
-  [-3, -8, -3, 3],
-  [-9, 6, -3, 6],
-  [-9, -2, -3, -2],
-
-  // 스킬 구역 — 북쪽 가로 바 + 동쪽 지선
-  [-3, -6, 3, -6],
-  [3, -8, 3, -3],
-  [3, -3, 6, -3],
-
-  // Life 구역 — 동쪽 세로 척추와 광장 연결
-  [9, -6, 9, 8],
-  [6, -6, 9, -6],
-
-  // Experience 구역 — Life 척추에서 서쪽으로
-  [4, 6, 9, 6],
-
-  // Study 구역 — 남쪽 가로 바
-  [-3, 12, 3, 12],
-  [-3, 9, -3, 12]
+  // 광장에서 뻗는 두 축 — 마을의 등뼈.
+  [I_MIN + 1, 0, I_MAX - 1, 0],
+  [0, J_MIN + 1, 0, J_MAX - 1]
 ];
+
+// 남쪽 정문 진입 축. 컨셉 아트에서 마을로 들어오는 길은 남쪽 대계단 하나뿐이고,
+// 광장까지 일직선으로 뻗는다. 그런데 이 축의 끝은 정의상 막다른 길이라
+// 아래 정리 단계가 두 칸씩 갉아먹어 마을 어귀가 사라진다(실제로 j 8·9 가 잘렸다).
+// 여기 담긴 칸은 "일부러 벌판으로 뻗은 길"이라 정리에서 뺀다.
+const CEREMONIAL = new Set();
+for (let j = 1; j <= J_MAX - 1; j++) CEREMONIAL.add(key(0, j));
+
+// 구역별 블록 상자 (격자 단위, 건물이 실제로 먹는 칸 기준)
+const BLOCK_BOX = new Map();
+for (const b of OUTER) {
+  const box = BLOCK_BOX.get(b.district) ?? {i0: Infinity, i1: -Infinity, j0: Infinity, j1: -Infinity};
+  box.i0 = Math.min(box.i0, Math.floor((b.x - b.w / 2) / PITCH));
+  box.i1 = Math.max(box.i1, Math.ceil((b.x + b.w / 2) / PITCH));
+  box.j0 = Math.min(box.j0, Math.floor((b.z - b.d / 2) / PITCH));
+  box.j1 = Math.max(box.j1, Math.ceil((b.z + b.d / 2) / PITCH));
+  BLOCK_BOX.set(b.district, box);
+}
+
+for (const box of BLOCK_BOX.values()) {
+  const ci = Math.round((box.i0 + box.i1) / 2);
+  const cj = Math.round((box.j0 + box.j1) / 2);
+
+  // ⓐ 광장 → 블록 L자 진입로. 먼 축을 먼저 달리고 꺾어야 길이 광장 앞에서
+  //    부챗살처럼 퍼지지 않고, 대로에 한 번 붙었다가 갈라진다.
+  if (Math.abs(ci) >= Math.abs(cj)) {
+    TRUNKS.push([0, 0, ci, 0], [ci, 0, ci, cj]);
+  } else {
+    TRUNKS.push([0, 0, 0, cj], [0, cj, ci, cj]);
+  }
+
+  // ⓑ 줄과 줄 사이 골목 — 블록 폭 전체가 비어 있는 줄만 고른다.
+  //    한 칸이라도 건물이 걸리면 안 깐다(길이 건물을 뚫고 지나가는 걸 막는다).
+  const [ei0, ei1, ej0, ej1] = [box.i0 - 1, box.i1 + 1, box.j0 - 1, box.j1 + 1];
+
+  // 건물 줄이 늘어선 축으로만 깐다. 처음엔 가로·세로 양쪽을 다 깔았더니
+  // 길 타일이 123 → 303장으로 늘면서 T자 169개짜리 **격자**가 됐다 —
+  // 골목이 난 마을이 아니라 잔디에 그은 바둑판이었다.
+  // 블록이 가로로 넓으면 줄도 가로이고, 골목은 줄 사이(같은 j)에 난다.
+  const wide = box.i1 - box.i0 >= box.j1 - box.j0;
+  const spanFree = (fixed) => {
+    if (wide) {
+      for (let i = ei0; i <= ei1; i++) if (blocked.has(key(i, fixed))) return false;
+    } else {
+      for (let j = ej0; j <= ej1; j++) if (blocked.has(key(fixed, j))) return false;
+    }
+    return true;
+  };
+  // 광장 반대쪽 바깥 변은 뺀다 — 블록 뒤편은 아무 데도 안 가는 길이다
+  const far = wide ? (cj < 0 ? ej0 : ej1) : ci < 0 ? ei0 : ei1;
+  const [lo, hi] = wide ? [ej0, ej1] : [ei0, ei1];
+  // 빈 줄을 전부 깔면 골목 두 개가 나란히 붙어 **두 칸 폭 대로**가 된다.
+  // 실제로 블록 가장자리 줄과 그 바로 옆 줄이 함께 깔려, 위에서 보면 길이
+  // 아니라 포장된 벌판이었다. 한 칸 건너뛴다 — 골목과 골목 사이엔 집이 선다.
+  let lastLaid = -Infinity;
+  for (let n = lo; n <= hi; n++) {
+    if (n === far || !spanFree(n) || n - lastLaid < 2) continue;
+    TRUNKS.push(wide ? [ei0, n, ei1, n] : [n, ej0, n, ej1]);
+    lastLaid = n;
+  }
+}
 
 const road = new Set();
 function addSegment(i0, j0, i1, j1) {
@@ -378,7 +438,7 @@ let pruned = 0;
 for (let pass = 0; pass < PRUNE_PASSES; pass++) {
   const dead = [...road].filter(k => {
     const [i, j] = parse(k);
-    if (touchesDisc(i, j)) return false;
+    if (CEREMONIAL.has(k) || touchesDisc(i, j)) return false;
     const n = NEIGHBORS.filter(([di, dj]) =>
       road.has(key(i + di, j + dj))
     ).length;

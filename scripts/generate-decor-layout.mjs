@@ -31,6 +31,30 @@ const KIT = {
   "sign-contact": {glb: "signs/sign-contact.glb", h: 1.897, m: 2.6},
   "sign-theme-project": {glb: "signs/sign-theme-project.glb", h: 1.899, m: 1.9},
 
+  // ─── 구역 현판 아치 ─────────────────────────────────────────────────────────
+  // 컨셉 아트에서 구역을 "구역"으로 읽히게 하는 건 건물이 아니라 입구에 걸린
+  // 커다란 나무 현판이다. 우리는 높이 1유닛짜리 팻말을 길가에 비켜 세워 놨을
+  // 뿐이라, 멀리서 보면 구역 경계가 아예 안 보였다.
+  // 길(1.88폭)을 가로질러 서야 하므로 실물 7.5m — 건물(2.5유닛≈6m)보다 높다.
+  "arch-projects": {glb: "decor/arch-projects.glb", h: 1.67, m: 7.5},
+  "arch-study": {glb: "decor/arch-study.glb", h: 1.529, m: 7.5},
+  "arch-experience": {glb: "decor/arch-experience.glb", h: 1.436, m: 7.5},
+  "arch-life": {glb: "decor/arch-life.glb", h: 1.669, m: 7.5},
+
+  // ─── 채움 민가 ──────────────────────────────────────────────────────────────
+  // 클릭도 안 되고 NPC도 없는 배경 집. 컨셉 아트의 블록은 5~8채가 들어차 있는데
+  // 우리는 구역당 1~9채(대개 3채)라 블록이 비어 보였다. 진짜 건물과 키를 맞춘다.
+  "house-a": {glb: "decor/house-a.glb", h: 1.826, m: 6.0},
+  "house-b": {glb: "decor/house-b.glb", h: 1.742, m: 6.0},
+
+  // ─── 석축 ───────────────────────────────────────────────────────────────────
+  // 축대(擁壁) — 흙이 무너지지 않게 받치는 돌벽. 컨셉 아트는 구역마다 이 벽으로
+  // 단을 만들어 올려놨고, 그래서 마을이 "깎아 만든 땅" 위에 선 것처럼 보인다.
+  // 우리 땅은 평평하므로 지금은 **문기둥**으로 쓴다 — 아치 양옆을 받치는 석축.
+  // 한 덩이가 1만 삼각형이라 두르는 데는 못 쓰고 요소요소에만 놓는다.
+  "terrace-wall": {glb: "decor/terrace-wall.glb", h: 1.21, m: 3.4},
+  "terrace-stair": {glb: "decor/terrace-stair.glb", h: 1.038, m: 3.0},
+
   "lantern-post": {glb: "decor/lantern-post.glb", h: 1.894, m: 3.0},
   "lantern-archway": {glb: "decor/lantern-archway.glb", h: 1.741, m: 3.0},
   "gate-arch": {glb: "decor/gate-arch.glb", h: 1.38, m: 2.4},
@@ -248,7 +272,11 @@ const REAL_OF = {
 /** 덤불 자리를 대신 채울 것 — 원본이라도 2~3천이라 부담이 없고 입체감이 산다.
  *  걸어 다니는 구역은 카메라가 가장 오래 머무는 데라, 종류를 늘려 같은 물건이
  *  반복되는 티를 지운다. 전부 decor/ 폴더라 simplify가 잘 먹은 것들이다. */
-const BUSH_STANDIN = ["boulder", "stones", "flower-pot", "bench", "barrel-iron", "stones", "flower-pot"];
+//
+//  화분(5,156)·벤치(5,831)를 섞어 썼다가 뺐다. 여기 심기는 자리가 서른 곳 가까이
+//  되는데, 비싼 둘이 절반을 차지하면서 그것만 8만 삼각형이었다. 바위 계열은
+//  2,058~3,291 이라 셋을 놓아도 화분 하나 값이다.
+const BUSH_STANDIN = ["boulder", "stones", "boulder", "barrel-iron", "stones", "boulder", "stones"];
 let promoted = 0;
 let dropped = 0;
 function kindFor(kind, x, z) {
@@ -313,9 +341,20 @@ function tryPlace(id, kind, x, z, rotationY = 0, opts = {}) {
   return place(id, kind, spot.x, spot.z, rotationY, opts);
 }
 
-// ─── ① 지구 간판 ──────────────────────────────────────────────────────────────
-// 마을 중앙에서 지구로 들어가는 길목에 세운다. 광장에서 걸어 나오는 사람이
-// 정면으로 읽도록 판을 중앙 쪽으로 돌린다.
+// ─── ① 지구 입구 ──────────────────────────────────────────────────────────────
+// 컨셉 아트의 구역 입구는 세 가지가 한 벌이다:
+//   길을 가로지르는 커다란 현판 아치 + 양옆을 받치는 석축 + 좌우 깃대.
+// 그래서 광장에서 보면 "저기부터 PROJECTS 구역"이 한눈에 읽힌다.
+// 우리는 높이 1유닛짜리 팻말 하나를 길가에 비켜 세워 놨을 뿐이었다.
+//
+// 아치가 있는 구역은 아치를 길 위에 세우고, 아직 에셋이 없는 구역
+// (SKILLS·CONTACT — docs/MESHY_VILLAGE_ASSETS.md 참고)은 예전 팻말을 그대로 쓴다.
+const ARCH_OF = {
+  projects: "arch-projects",
+  study: "arch-study",
+  experience: "arch-experience",
+  life: "arch-life"
+};
 const SIGN_OF = {
   study: "sign-study",
   projects: "sign-projects",
@@ -324,7 +363,10 @@ const SIGN_OF = {
   contact: "sign-contact"
 };
 
-for (const [district, kind] of Object.entries(SIGN_OF)) {
+/** 구역별 입구 지점 — ⑬ 깃대 행렬이 이 자리를 다시 쓴다 */
+const gateways = [];
+
+for (const district of Object.keys(centers)) {
   const c = centers[district];
   if (!c) continue;
   const len = Math.hypot(c.x, c.z) || 1;
@@ -339,23 +381,34 @@ for (const [district, kind] of Object.entries(SIGN_OF)) {
     )[0];
   if (!approach) continue;
 
-  // 길 옆으로 비켜 세운다
   const perp = {x: -dir.z, z: dir.x};
-  const side = ROAD_SIDE + 0.55;
-  const x = approach.x + perp.x * side;
-  const z = approach.z + perp.z * side;
-  // 판이 광장 쪽(-dir)을 보게
-  place(`sign-${district}`, kind, x, z, faceTo(-dir.x, -dir.z), {gap: 1.2});
+  const facing = faceTo(-dir.x, -dir.z); // 광장 쪽을 본다
+  const arch = ARCH_OF[district];
+  gateways.push({district, at: approach, dir, perp, facing, arch: Boolean(arch)});
 
-  // 간판 좌우로 황금잎 깃대 한 쌍 — 지구 입구가 의식을 갖춘 문처럼 보인다.
-  // 깃대는 폭이 0.45라 길과 간판 사이 좁은 틈에도 들어간다.
-  for (const along of [-1, 1]) {
-    const bx = x + dir.x * along * 1.35;
-    const bz = z + dir.z * along * 1.35;
-    if (onRoad(bx, bz, 0.2) || onBuilding(bx, bz, 0.4)) continue;
-    place(`banner-${district}-${along > 0 ? "far" : "near"}`, "leaf-banner", bx, bz,
-      faceTo(-dir.x, -dir.z), {gap: 0.6});
+  if (arch) {
+    // 아치는 길을 **가로질러** 선다 — 비켜 세우면 그냥 큰 간판이 된다.
+    // 다리 사이로 길이 지나가야 문으로 읽힌다.
+    place(`arch-${district}`, arch, approach.x, approach.z, facing, {gap: 0.1});
+
+    // 아치 양옆을 받치는 석축. 길 폭 밖으로 밀어 세워야 통행을 안 막는다.
+    for (const side of [-1, 1]) {
+      const px = approach.x + perp.x * (ROAD_SIDE + 1.15) * side;
+      const pz = approach.z + perp.z * (ROAD_SIDE + 1.15) * side;
+      if (onBuilding(px, pz, 0.4) || onDisc(px, pz, 0.1)) continue;
+      place(`pier-${district}-${side > 0 ? "r" : "l"}`, "terrace-wall", px, pz, facing, {gap: 0.4});
+    }
+  } else {
+    // 아치가 없는 구역 — 예전처럼 길가 팻말
+    const x = approach.x + perp.x * (ROAD_SIDE + 0.55);
+    const z = approach.z + perp.z * (ROAD_SIDE + 0.55);
+    place(`sign-${district}`, SIGN_OF[district], x, z, facing, {gap: 1.2});
   }
+
+  // 입구 좌우 깃대는 ⑬ 이 길 축을 따라 세운다. 여기서 구역 방향(dir)으로
+  // 재 보려다 실패했다 — dir 이 사선인 구역에서는 좌우 오프셋이 x·z 양쪽에
+  // 나뉘어 걸리는 바람에 여섯 쌍 중 두 개만 살아남았다.
+  // 길은 축 정렬 격자라, 길 칸의 이웃을 보고 방향을 잡는 쪽이 맞다.
 }
 
 // 중앙 광장 간판은 원반 남쪽 가장자리에서 바깥(남)을 본다
@@ -399,6 +452,91 @@ for (const {kind, angle} of PLAZA_RING) {
   tryPlace(`plaza-${kind}`, kind, x, z, faceTo(HUB.x - x, HUB.z - z), {gap: 1.6, radius: 2.0});
 }
 
+// ─── ②-b 채움 민가 ────────────────────────────────────────────────────────────
+// 컨셉 아트의 블록에는 이름표가 붙은 건물 3~4채 뒤로 이름 없는 집이 잔뜩 서 있다.
+// 그 집들이 "구역"을 "동네"로 만든다. 우리 블록은 3채가 덩그러니 있어서, 배치를
+// 아무리 정연하게 잡아도 모형 전시대처럼 보였다.
+//
+// 클릭도 NPC도 없는 순수 배경이므로 constants.ts 가 아니라 장식물로 넣는다 —
+// 건물로 넣으면 NPC 로스터와 섹션 패널까지 딸려 온다(npcRoster 가 건물마다
+// npc-${id} 를 자동 생성한다).
+//
+// 광장에서 **먼** 자리부터 채운다. 앞줄에 끼워 넣으면 진짜 건물을 가린다.
+{
+  // 블록이 클수록 뒤에 붙는 집도 많다. 한 채가 8~12천 삼각형이라 헤프게 못 쓴다.
+  const PER_DISTRICT = {projects: 3, skills: 2, life: 2, experience: 2, study: 2, contact: 1};
+  const KINDS = ["house-a", "house-b"];
+  let n = 0;
+  for (const [district, count] of Object.entries(PER_DISTRICT)) {
+    const group = OUTER.filter((b) => b.district === district);
+    if (group.length === 0) continue;
+    // 블록 상자를 집 한 채 폭만큼 바깥으로 넓힌 범위가 후보 영역
+    const PAD = 3.4;
+    const x0 = Math.min(...group.map((b) => b.x - b.w / 2)) - PAD;
+    const x1 = Math.max(...group.map((b) => b.x + b.w / 2)) + PAD;
+    const z0 = Math.min(...group.map((b) => b.z - b.d / 2)) - PAD;
+    const z1 = Math.max(...group.map((b) => b.z + b.d / 2)) + PAD;
+
+    // 블록이 광장에서 뻗어 나가는 방향 — 집은 이 방향 **뒤쪽**에 붙인다
+    const cx = group.reduce((s, b) => s + b.x, 0) / group.length;
+    const cz = group.reduce((s, b) => s + b.z, 0) / group.length;
+    const clen = Math.hypot(cx, cz) || 1;
+    const out = {x: cx / clen, z: cz / clen};
+
+    // 뒷줄이 어디까지 나가 있나 — 집은 그 바로 뒤 한 채 폭 띠에 붙인다
+    const backEdge = Math.max(...group.map((b) => (b.x - cx) * out.x + (b.z - cz) * out.z + Math.max(b.w, b.d) / 2));
+    const halfWide = Math.max(...group.map((b) => Math.abs((b.x - cx) * -out.z + (b.z - cz) * out.x))) + 1.4;
+    const target = backEdge + 1.9;
+
+    const cand = [];
+    for (let x = x0; x <= x1; x += 0.7) {
+      for (let z = z0; z <= z1; z += 0.7) {
+        if (onRoad(x, z, 0.8) || onDisc(x, z, 0.5) || onBuilding(x, z, 1.2)) continue;
+        // 블록 중심 기준으로 "얼마나 뒤쪽인가"와 "얼마나 옆으로 벗어났나"
+        const dx = x - cx, dz = z - cz;
+        const behind = dx * out.x + dz * out.z;
+        const lateral = Math.abs(dx * -out.z + dz * out.x);
+        if (lateral > halfWide) continue;
+        cand.push({x, z, score: -Math.abs(behind - target) - lateral * 0.35});
+      }
+    }
+    // 처음엔 "광장에서 먼 순", 다음엔 "블록 뒤쪽일수록 좋음"으로 골랐다. 둘 다
+    // 집을 블록 **대각 모서리 바깥**으로 밀어냈다 — 후보 영역이 사각형이라
+    // 어느 방향이든 "가장 뒤"는 꼭짓점이기 때문이다(실제로 12채가 다 그렇게 섰다).
+    // 최댓값이 아니라 **목표 거리**를 잡는다: 뒷줄 바로 뒤, 블록 폭 안쪽.
+    cand.sort((a, b) => b.score - a.score);
+
+    let put = 0;
+    for (const c of cand) {
+      if (put >= count) break;
+      // 집끼리, 그리고 다른 장식물과 3유닛은 떨어뜨린다 (집 폭이 2.2~2.5다)
+      if (!free(c.x, c.z, 3.0)) continue;
+      // 정면은 광장 쪽 — 뒷줄이라도 앞을 보고 서야 마을이 한 방향으로 정돈된다
+      place(`house-${n}`, KINDS[n % KINDS.length], c.x, c.z,
+        faceTo(-out.x, -out.z), {gap: 3.0});
+      put += 1;
+      n += 1;
+    }
+  }
+}
+
+// ─── ②-c 남쪽 정문 ────────────────────────────────────────────────────────────
+// 컨셉 아트에서 마을로 들어오는 길은 남쪽 하나뿐이고, 광장까지 곧게 뻗은 그 길의
+// 초입에 **큰 돌계단**이 있다. 마을의 첫 화면이자 유일한 정문이다.
+// generate-ground-layout 의 CEREMONIAL 축(i=0)이 여기까지 이어져 있다.
+const southGate = roads
+  .filter((r) => Math.abs(r.x) < HALF_TILE && r.z > 0)
+  .sort((a, b) => b.z - a.z)[0];
+if (southGate) {
+  // 계단은 길 위에 얹는다 — 옆으로 비키면 아무 데도 안 가는 돌더미가 된다
+  place("gate-stair", "terrace-stair", southGate.x, southGate.z, faceTo(0, 1), {gap: 0.1});
+  // 계단 양옆 석축 — 진입로에 폭과 격을 준다
+  for (const side of [-1, 1]) {
+    place(`gate-pier-${side > 0 ? "r" : "l"}`, "terrace-wall",
+      southGate.x + (ROAD_SIDE + 1.15) * side, southGate.z, faceTo(0, 1), {gap: 0.4});
+  }
+}
+
 // ─── ③ 마을 어귀 ──────────────────────────────────────────────────────────────
 // 길의 끝은 지금 풀밭에서 그냥 뚝 끊긴다. 끝마다 문을 세우면 "여기서 마을이
 // 끝난다"가 읽혀서 마을에 테두리가 생긴다.
@@ -416,6 +554,8 @@ const gates = [];
       return {r, around};
     })
     .filter((e) => e.around.length === 1)
+    // 남쪽 정문은 ②-c 가 대계단으로 이미 꾸몄다 — 그 위에 또 문을 세우면 겹친다
+    .filter((e) => !southGate || Math.hypot(e.r.x - southGate.x, e.r.z - southGate.z) > PITCH * 1.5)
     .sort((a, b) => Math.hypot(b.r.x, b.r.z) - Math.hypot(a.r.x, a.r.z));
 
   ends.slice(0, 5).forEach((e, n) => {
@@ -428,6 +568,37 @@ const gates = [];
       faceTo(inward.x, inward.z), {gap: 0.1});
     gates.push({at: e.r, inward});
   });
+}
+
+// ─── ③-b 대로변 깃대 행렬 ─────────────────────────────────────────────────────
+// 컨셉 아트에서 화면에 가장 많이 찍혀 있는 물건은 건물도 나무도 아니라 **깃대**다.
+// 파랑·금빛 세로 깃발이 광장 둘레와 대로변에 줄줄이 서서, 위에서 내려다봐도
+// "길"과 "그냥 포장된 땅"이 구분된다. 우리 마을엔 다섯 개뿐이었다.
+//
+// 마을 전체 길에 깔면 값도 값이지만(하나 2,953 삼각형) 어디가 대로인지가 흐려진다.
+// 광장에서 뻗는 두 대로 — 남쪽 정문 진입 축과 동서 대로 — 에만 세운다.
+{
+  const EVERY = 3;      // 몇 칸마다
+  const REACH = 15;     // 광장에서 이 거리까지만
+  const onAxis = roads
+    .filter((r) => Math.abs(r.x) < HALF_TILE || Math.abs(r.z) < HALF_TILE)
+    .filter((r) => Math.hypot(r.x, r.z) < REACH)
+    .sort((a, b) => Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z));
+
+  let n = 0;
+  for (let i = 0; i < onAxis.length; i += EVERY) {
+    const r = onAxis[i];
+    // 남북 축 칸이면 좌우(=x)로, 동서 축 칸이면 앞뒤(=z)로 비켜 세운다
+    const northSouth = Math.abs(r.x) < HALF_TILE;
+    const perp = northSouth ? {x: 1, z: 0} : {x: 0, z: 1};
+    for (const side of [-1, 1]) {
+      const x = r.x + perp.x * (ROAD_SIDE + 0.45) * side;
+      const z = r.z + perp.z * (ROAD_SIDE + 0.45) * side;
+      if (onDisc(x, z, 0.1) || onBuilding(x, z, 0.4) || !free(x, z, 1.2)) continue;
+      // 깃발 면이 길을 향하도록 — 걸어가는 사람에게 옆면이 아니라 앞면이 보인다
+      place(`flagpole-${n++}`, "leaf-banner", x, z, faceTo(-perp.x * side, -perp.z * side), {gap: 1.2});
+    }
+  }
 }
 
 // ─── ④ 길 따라 가로등 ─────────────────────────────────────────────────────────
@@ -452,8 +623,11 @@ const LANTERN_EVERY = 2;
     const side = ROAD_SIDE + 0.42;
     const x = r.x + perp.x * side * sign;
     const z = r.z + perp.z * side * sign;
-    if (onDisc(x, z, 0.1) || onBuilding(x, z, 0.5) || !free(x, z, 2.2)) continue;
-    place(`lantern-${n}`, "lantern-post", x, z, 0, {gap: 2.2});
+    // 간격을 2.2 로 잡았더니 길가 후보 60곳 중 12곳에만 섰다 — 앞마당 원반이
+    // 길을 따라 늘어서 있어 남는 틈이 좁다. 가로등은 컨셉 아트에서 길마다
+    // 촘촘히 서는 물건이고 하나 1,780 삼각형으로 싼 편이라 간격을 좁힌다.
+    if (onDisc(x, z, 0.1) || onBuilding(x, z, 0.5) || !free(x, z, 1.5)) continue;
+    place(`lantern-${n}`, "lantern-post", x, z, 0, {gap: 1.5});
     n += 1;
   }
 }
@@ -466,24 +640,31 @@ const LANTERN_EVERY = 2;
 // 여긴 캐릭터가 다가서는 자리라 전부 원본 GLB다 — 빌보드는 숲 몫이다.
 {
   let n = 0;
-  // 자리를 넷으로 늘렸다가 되돌렸다. 앞마당 소품은 캐릭터가 코앞에서 보는
-  // 자리라 원본 GLB를 써야 하는데, 화분 하나가 5,156 삼각형이다. 건물 26채에
-  // 넷씩이면 화분만 33개 = 17만으로 마을 예산의 6분의 1을 앞마당이 먹었다.
-  // 셋이면 원반이 충분히 차면서 값은 4분의 1이 준다.
-  const ROTATION = ["bench", "flower-pot", "orb-lantern", "barrel-iron", "orb-lantern", "flower-pot"];
+  // 앞마당 소품은 캐릭터가 코앞에서 보는 자리라 원본 GLB를 써야 하는데,
+  // 화분 하나가 5,156 삼각형이다. 자리를 넷 → 셋 → 둘로 줄여 왔다.
+  //
+  // ─── 셋에서 둘로, 그리고 싼 것 위주로 ──────────────────────────────────────
+  // 앞마당 소품 42개가 18만 삼각형을 먹고 있었다 — 마을 장식물 예산의 4분의 1을
+  // 원반 가장자리의 화분과 벤치가 쓴 셈이다. 그 값으로 채움 민가 12채를 살 수
+  // 있고, 블록이 차 보이는 데는 민가 쪽이 비교가 안 되게 낫다.
+  // 화분 5,156 · 벤치 5,831 에 견줘 구슬등 2,827 · 철통 3,223 이라
+  // 회전표도 싼 쪽으로 기울인다. 구슬등은 저녁에 빛나기까지 한다.
+  const ROTATION = ["orb-lantern", "barrel-iron", "orb-lantern", "flower-pot", "orb-lantern", "bench"];
   for (const [index, b] of OUTER.entries()) {
     const disc = discs[index];
     // 광장 반대편(건물 뒤)이 아니라, 광장을 향한 쪽에 둔다
     const len = Math.hypot(b.x, b.z) || 1;
     const inward = {x: -b.x / len, z: -b.z / len};
     const base = Math.atan2(inward.z, inward.x);
-    for (const [slot, swing] of [0.6, -0.6, 1.45].entries()) {
+    for (const [slot, swing] of [0.6, -0.6].entries()) {
       const angle = base + swing;
       const dist = disc.r + 0.5;
       const x = b.x + Math.cos(angle) * dist;
       const z = b.z + Math.sin(angle) * dist;
       if (onRoad(x, z, 0.3) || onBuilding(x, z, 0.4) || !free(x, z, 1.1)) continue;
-      const kind = ROTATION[(index * 3 + slot) % ROTATION.length];
+      // 자리를 셋에서 둘로 줄였으니 보폭도 셋 → 둘. 3 을 그대로 두면
+      // index*3 mod 6 이 0,3,0,3 만 돌아 회전표 여섯 중 넷만 쓰인다.
+      const kind = ROTATION[(index * 2 + slot) % ROTATION.length];
       place(`yard-${n}`, kind, x, z, faceTo(b.x - x, b.z - z), {grow: 0.92 + rand() * 0.2});
       n += 1;
     }
@@ -565,8 +746,11 @@ const LANTERN_EVERY = 2;
 // 빌보드로 훨씬 싸게 하므로, 여기는 광장에서 가장 가까운 몇 채에만 남긴다 —
 // 카메라가 오래 머무는 자리에는 진짜 입체가 서 있어야 한다.
 {
-  const FLOWERS = 2;
-  const BUSHES = 2;
+  // 꽃밭 10,096 · 덤불 13,514 — 넷이서 4만 7천을 먹었다. 채움 민가 12채가
+  // 들어오면서 "빈 구석"이 원래 별로 안 남는데, 이 넷은 그중에서도 가장 비싼
+  // 방법으로 구석을 채우고 있었다. 광장에서 가장 가까운 한 자리만 남긴다.
+  const FLOWERS = 1;
+  const BUSHES = 0;
   let n = 0;
   // 광장에서 가까운 순으로 — 눈길이 가장 오래 머무는 데부터 채운다
   const spots = OUTER.slice()
@@ -594,13 +778,18 @@ const LANTERN_EVERY = 2;
 // 띠에만 심으므로 구역 사이 오목한 골짜기는 숲이 안 먹는다(거긴 ⑪ 몫).
 //
 // 전부 빌보드다. 130그루를 심어도 520 삼각형 — 원본이었으면 100만이다.
-const hull = convexHull([
-  ...buildings.flatMap((b) => [
+//
+// ─── 길을 껍질에 넣지 않는다 ─────────────────────────────────────────────────
+// 예전엔 길 칸도 껍질 점으로 썼다. 그런데 남쪽 정문 진입 축은 일부러 마을 밖
+// 벌판까지 뻗어 나가는 길이라, 껍질이 그걸 따라 남쪽으로 길게 늘어졌다.
+// 그 결과 정문 양옆 벌판이 통째로 "마을 안"으로 분류돼 숲이 한 그루도 안 심겼고,
+// 마을 남쪽 절반이 맨 잔디였다. 마을의 경계는 건물이 정한다.
+const hull = convexHull(
+  buildings.flatMap((b) => [
     [b.x - b.w / 2, b.z - b.d / 2], [b.x + b.w / 2, b.z - b.d / 2],
     [b.x + b.w / 2, b.z + b.d / 2], [b.x - b.w / 2, b.z + b.d / 2]
-  ]),
-  ...roads.map((r) => [r.x, r.z])
-]);
+  ])
+);
 
 // 잔디 평면은 90×90 이고 z로 3 밀려 있다 (VillageScene 의 Ground).
 // 이 밖에 심으면 나무가 허공에 뜬다.
@@ -612,7 +801,11 @@ const BELT_IN = -1.2;
 const BELT_DEPTH = 12;
 
 {
-  const STEP = 1.5;
+  // 껍질에서 길을 뺀 뒤로 숲이 덮을 면적이 크게 늘었는데, 예전 밀도(STEP 1.5,
+  // 기본 확률 0.38)를 그대로 쓰니 320그루가 넓은 데 흩뿌려져 "듬성한 잡목"이 됐다.
+  // 컨셉 아트의 숲은 블록 사이를 빈틈없이 메운 침엽수 덩어리다.
+  // 빌보드 한 그루가 6삼각형이라 두 배로 심어도 값이 안 든다.
+  const STEP = 1.25;
   const TREES = ["far-pine", "far-oak", "far-pine", "far-sakura", "far-oak", "far-pine"];
   let n = 0;
   for (let x = GROUND.x0; x <= GROUND.x1; x += STEP) {
@@ -637,9 +830,9 @@ const BELT_DEPTH = 12;
 
       // 안쪽은 성기게, 깊이 들어갈수록 빽빽하게 — 숲 가장자리가 흐릿해진다.
       // 잡음을 곱해 빈 공터와 덤불 덩어리를 만든다. 균일 확률이면 나무밭이 된다.
-      let p = Math.min(1, 0.38 + t * 1.8) * (0.25 + 1.15 * noise2(px * 0.11, pz * 0.11));
+      let p = Math.min(1, 0.6 + t * 1.8) * (0.35 + 1.2 * noise2(px * 0.11, pz * 0.11));
       if (rand() > p) continue;
-      if (!free(px, pz, 1.4)) continue;
+      if (!free(px, pz, 1.15)) continue;
 
       // 벚나무는 캐노피가 납작한 원반이라 십자 빌보드로 구우면 위에서 봤을 때
       // 판때기 두 장인 게 드러난다. 마을에서 먼 띠 안쪽(t>0.35)에만 둔다.
@@ -766,7 +959,7 @@ const BELT_DEPTH = 12;
   // 십자의 옆날이 드러나는 걸 막으려고 단 건데, 부감에서는 그게 정체를 드러낸다.
   // 길가는 마을 안쪽이라 부감에 그대로 들어오므로 진짜 입체를 주로 쓴다.
   // 돌은 2~3천이라 부담이 없다. 덤불은 여섯에 하나만 남겨 실루엣만 섞는다.
-  const KINDS = ["stones", "boulder", "flower-pot", "stones", "far-bush", "boulder"];
+  const KINDS = ["stones", "boulder", "boulder", "stones", "far-bush", "boulder"];
   const sorted = roads.slice().sort((a, b) => a.z - b.z || a.x - b.x);
   let n = 0;
   for (const r of sorted) {
