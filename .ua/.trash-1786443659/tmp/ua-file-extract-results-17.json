@@ -1,0 +1,2258 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 15,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 15,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 0,
+      "failed": 0,
+      "skipped": 15
+    }
+  },
+  "results": [
+    {
+      "path": "portfolio-specs/00-OVERVIEW.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 356,
+      "nonEmptyLines": 274,
+      "sections": [
+        {
+          "heading": "00. 전체 개요 — 이 폴더는 무엇이고 어떻게 쓰는가",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "⛔ 0. 2026-07-31 사실 정정 (이 절이 아래 모든 내용에 우선합니다)",
+          "level": 2,
+          "line": 13
+        },
+        {
+          "heading": "지어낸 정황 — 전부 삭제 대상",
+          "level": 3,
+          "line": 31
+        },
+        {
+          "heading": "1. 이 폴더의 정체 — 코드가 아니라 **프롬프트 팩**입니다",
+          "level": 2,
+          "line": 43
+        },
+        {
+          "heading": "사용법",
+          "level": 3,
+          "line": 49
+        },
+        {
+          "heading": "왜 갈아엎는가 (한 문단 요약)",
+          "level": 3,
+          "line": 65
+        },
+        {
+          "heading": "2. 10개 방 컨셉 대비표",
+          "level": 2,
+          "line": 78
+        },
+        {
+          "heading": "명장면 (각 방의 클라이맥스)",
+          "level": 3,
+          "line": 95
+        },
+        {
+          "heading": "✅ 색 충돌 — 해소됨 (01 통합으로 소멸)",
+          "level": 3,
+          "line": 112
+        },
+        {
+          "heading": "3. 전 문서 관통 규칙 (절대 어기지 말 것)",
+          "level": 2,
+          "line": 134
+        },
+        {
+          "heading": "프로젝트별 추가 금지",
+          "level": 3,
+          "line": 152
+        },
+        {
+          "heading": "페이지 11장의 고정 역할",
+          "level": 3,
+          "line": 166
+        },
+        {
+          "heading": "4. 구현 순서 권장",
+          "level": 2,
+          "line": 184
+        },
+        {
+          "heading": "0단계 — 선행 작업 (이거 안 하면 전부 다시 짭니다)",
+          "level": 3,
+          "line": 188
+        },
+        {
+          "heading": "1단계 — 방 구현 순서",
+          "level": 3,
+          "line": 206
+        },
+        {
+          "heading": "각 방의 ⭐ 선행 자산 (페이지부터 짜면 전부 다시 짭니다)",
+          "level": 3,
+          "line": 219
+        },
+        {
+          "heading": "공통 성능 가드",
+          "level": 3,
+          "line": 234
+        },
+        {
+          "heading": "5. 미디어 확보 통합표 — **총 영상 10편 + 이미지 69장**",
+          "level": 2,
+          "line": 243
+        },
+        {
+          "heading": "5-1. 영상 (10편 · 확정 길이 합계 16분 13초)",
+          "level": 3,
+          "line": 247
+        },
+        {
+          "heading": "5-2. 이미지 (69장 · 그중 **최상 우선도 26장**)",
+          "level": 3,
+          "line": 262
+        },
+        {
+          "heading": "5-3. 작업 묶음 — 이 순서로 몰아서 캡처하세요",
+          "level": 3,
+          "line": 284
+        },
+        {
+          "heading": "5-4. 플레이스홀더 원칙 (전 문서 공통)",
+          "level": 3,
+          "line": 300
+        },
+        {
+          "heading": "6. 캡처 전 개인정보 · 저작권 체크리스트",
+          "level": 2,
+          "line": 310
+        },
+        {
+          "heading": "🔴 최고 위험 — 실제 사람의 데이터가 찍힐 수 있는 방",
+          "level": 3,
+          "line": 314
+        },
+        {
+          "heading": "⚠️ 중간 위험 — 도메인 규칙 위반",
+          "level": 3,
+          "line": 323
+        },
+        {
+          "heading": "공통",
+          "level": 3,
+          "line": 331
+        },
+        {
+          "heading": "7. 개별 문서",
+          "level": 2,
+          "line": 339
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 27
+      }
+    },
+    {
+      "path": "portfolio-specs/01-mywave.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 2142,
+      "nonEmptyLines": 1809,
+      "sections": [
+        {
+          "heading": "01. MyWave — 프롬프트 팩 · ⛔ 단독 방으로는 폐기 (02에 통합)",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "A. 컨셉 브리프 (읽기용)",
+          "level": 1,
+          "line": 41
+        },
+        {
+          "heading": "A-1. 이 방의 한 문장",
+          "level": 2,
+          "line": 43
+        },
+        {
+          "heading": "A-2. 왜 이 메타포인가",
+          "level": 2,
+          "line": 47
+        },
+        {
+          "heading": "A-3. ⭐ 가장 중요한 원칙 — 연출은 개발 내용의 운반 수단이다",
+          "level": 2,
+          "line": 58
+        },
+        {
+          "heading": "A-4. 설계 결정 ↔ 웹 재현 대응",
+          "level": 2,
+          "line": 76
+        },
+        {
+          "heading": "A-5. 관람 곡선 (감정 + 정보 밀도)",
+          "level": 2,
+          "line": 85
+        },
+        {
+          "heading": "A-6. 명장면 2개",
+          "level": 2,
+          "line": 101
+        },
+        {
+          "heading": "A-7. 다른 9개 방과의 차별점",
+          "level": 2,
+          "line": 113
+        },
+        {
+          "heading": "A-8. 절대 금지 (안전 규칙)",
+          "level": 2,
+          "line": 123
+        },
+        {
+          "heading": "B. 공통 디자인 토큰 (참고용 — 각 프롬프트에 이미 포함됨)",
+          "level": 1,
+          "line": 134
+        },
+        {
+          "heading": "C. 페이지별 프롬프트",
+          "level": 1,
+          "line": 154
+        },
+        {
+          "heading": "PAGE 00 — 수면 아래 (진입 시퀀스)",
+          "level": 2,
+          "line": 158
+        },
+        {
+          "heading": "PAGE 01 — 히어로 · 수면 위의 부표",
+          "level": 2,
+          "line": 262
+        },
+        {
+          "heading": "PAGE 02 — 같은 데이터, 두 가지 배치",
+          "level": 2,
+          "line": 434
+        },
+        {
+          "heading": "PAGE 03 — 스크롤이 시간축이다 · 자산 흐름 시각화",
+          "level": 2,
+          "line": 615
+        },
+        {
+          "heading": "PAGE 04 — 트러블슈팅 01 · 카드와 차트가 다른 숫자를 말했다",
+          "level": 2,
+          "line": 804
+        },
+        {
+          "heading": "PAGE 05 — 현재 상태와 다음 행동을 떼어놓는다",
+          "level": 2,
+          "line": 1035
+        },
+        {
+          "heading": "PAGE 06 — 트러블슈팅 02 · 같은 금액이 네 가지로 적혀 있었다",
+          "level": 2,
+          "line": 1208
+        },
+        {
+          "heading": "PAGE 07 — 하나의 화면이 컴포넌트로 나뉘는 과정",
+          "level": 2,
+          "line": 1408
+        },
+        {
+          "heading": "PAGE 08 — 이 프로젝트의 범위 (정직하게)",
+          "level": 2,
+          "line": 1587
+        },
+        {
+          "heading": "PAGE 09 — 결과 · 화면 갤러리",
+          "level": 2,
+          "line": 1765
+        },
+        {
+          "heading": "PAGE 10 — 회고 · 다음 단계 · 퇴장",
+          "level": 2,
+          "line": 1899
+        },
+        {
+          "heading": "D. 구현 메모 (프롬프트 아님 — 내가 볼 것)",
+          "level": 1,
+          "line": 2034
+        },
+        {
+          "heading": "D-1. 개발 실체 커버리지 점검",
+          "level": 2,
+          "line": 2036
+        },
+        {
+          "heading": "D-2. 새로 만들 파일",
+          "level": 2,
+          "line": 2052
+        },
+        {
+          "heading": "D-3. 기존 코드 재사용 / 선행 작업",
+          "level": 2,
+          "line": 2075
+        },
+        {
+          "heading": "D-4. 버릴 것",
+          "level": 2,
+          "line": 2084
+        },
+        {
+          "heading": "D-5. 미디어 확보 목록",
+          "level": 2,
+          "line": 2088
+        },
+        {
+          "heading": "D-6. 코드 스니펫 확보 목록 (전부 실제 저장소에서)",
+          "level": 2,
+          "line": 2100
+        },
+        {
+          "heading": "D-7. 안전장치 대조표",
+          "level": 2,
+          "line": 2110
+        },
+        {
+          "heading": "D-8. 최종 체크리스트",
+          "level": 2,
+          "line": 2122
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 32
+      }
+    },
+    {
+      "path": "portfolio-specs/02-mystock.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 2231,
+      "nonEmptyLines": 1893,
+      "sections": [
+        {
+          "heading": "02. MyStock-Desk — 프롬프트 팩",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "A. 컨셉 브리프 (읽기용)",
+          "level": 1,
+          "line": 10
+        },
+        {
+          "heading": "A-1. 이 방의 한 문장",
+          "level": 2,
+          "line": 12
+        },
+        {
+          "heading": "A-2. 왜 이 메타포인가",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "A-3. ⭐ 가장 중요한 원칙 — 연출은 개발 내용의 운반 수단이다",
+          "level": 2,
+          "line": 28
+        },
+        {
+          "heading": "A-4. 서비스 설계 결정 ↔ 웹 재현 대응",
+          "level": 2,
+          "line": 46
+        },
+        {
+          "heading": "A-5. 관람 곡선 (감정 + 정보 밀도)",
+          "level": 2,
+          "line": 55
+        },
+        {
+          "heading": "A-6. 명장면 2개",
+          "level": 2,
+          "line": 70
+        },
+        {
+          "heading": "A-7. 다른 9개 방과의 차별점",
+          "level": 2,
+          "line": 83
+        },
+        {
+          "heading": "A-8. 절대 금지 (안전 규칙)",
+          "level": 2,
+          "line": 93
+        },
+        {
+          "heading": "B. 공통 디자인 토큰 (참고용 — 각 프롬프트에 이미 포함됨)",
+          "level": 1,
+          "line": 112
+        },
+        {
+          "heading": "C. 페이지별 프롬프트",
+          "level": 1,
+          "line": 132
+        },
+        {
+          "heading": "PAGE 00 — 개장 전 (진입 시퀀스)",
+          "level": 2,
+          "line": 136
+        },
+        {
+          "heading": "PAGE 01 — 히어로 · 데스크 위의 물건들",
+          "level": 2,
+          "line": 238
+        },
+        {
+          "heading": "PAGE 02 — 거래 하나가 화면 전체를 바꾼다 · 계산 로직",
+          "level": 2,
+          "line": 416
+        },
+        {
+          "heading": "PAGE 03 — 평단은 하나가 아니다 · 이동평균 vs 선입선출",
+          "level": 2,
+          "line": 617
+        },
+        {
+          "heading": "PAGE 04 — 트러블슈팅 01 · 평단이 말이 안 되는 값이 됐다",
+          "level": 2,
+          "line": 789
+        },
+        {
+          "heading": "PAGE 05 — AI는 추천하지 않는다 · 직접 시켜보세요",
+          "level": 2,
+          "line": 1038
+        },
+        {
+          "heading": "PAGE 06 — 뉴스와 보유 종목을 잇는다 (조심스럽게)",
+          "level": 2,
+          "line": 1271
+        },
+        {
+          "heading": "PAGE 07 — 트러블슈팅 02 · API가 죽으면 화면도 죽었다",
+          "level": 2,
+          "line": 1456
+        },
+        {
+          "heading": "PAGE 08 — 백엔드 구조 · 거래에서 평가까지",
+          "level": 2,
+          "line": 1663
+        },
+        {
+          "heading": "PAGE 09 — 결과 · 화면 갤러리",
+          "level": 2,
+          "line": 1836
+        },
+        {
+          "heading": "PAGE 10 — 회고 · 다음 단계 · 퇴장",
+          "level": 2,
+          "line": 1975
+        },
+        {
+          "heading": "D. 구현 메모 (프롬프트 아님 — 내가 볼 것)",
+          "level": 1,
+          "line": 2121
+        },
+        {
+          "heading": "D-1. 개발 실체 커버리지 점검",
+          "level": 2,
+          "line": 2123
+        },
+        {
+          "heading": "D-2. 새로 만들 파일",
+          "level": 2,
+          "line": 2140
+        },
+        {
+          "heading": "D-3. 기존 코드 재사용 / 선행 작업",
+          "level": 2,
+          "line": 2163
+        },
+        {
+          "heading": "D-4. 버릴 것",
+          "level": 2,
+          "line": 2172
+        },
+        {
+          "heading": "D-5. 미디어 확보 목록",
+          "level": 2,
+          "line": 2176
+        },
+        {
+          "heading": "D-6. 코드 스니펫 확보 목록 (전부 실제 저장소에서)",
+          "level": 2,
+          "line": 2189
+        },
+        {
+          "heading": "D-7. 안전장치 대조표",
+          "level": 2,
+          "line": 2200
+        },
+        {
+          "heading": "D-8. 최종 체크리스트 (컴플라이언스 항목 최우선)",
+          "level": 2,
+          "line": 2212
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 32
+      }
+    },
+    {
+      "path": "portfolio-specs/03-festflow.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 2116,
+      "nonEmptyLines": 1781,
+      "sections": [
+        {
+          "heading": "03. FestFlow — 프롬프트 팩",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "A. 컨셉 브리프 (읽기용)",
+          "level": 1,
+          "line": 13
+        },
+        {
+          "heading": "A-1. 이 방의 한 문장",
+          "level": 2,
+          "line": 15
+        },
+        {
+          "heading": "A-2. 왜 이 메타포인가",
+          "level": 2,
+          "line": 19
+        },
+        {
+          "heading": "A-3. ⭐ 가장 중요한 원칙 — 연출은 개발 내용의 운반 수단이다",
+          "level": 2,
+          "line": 29
+        },
+        {
+          "heading": "A-4. 서비스 설계 결정 ↔ 웹 재현 대응",
+          "level": 2,
+          "line": 47
+        },
+        {
+          "heading": "A-5. 관람 곡선 (감정 + 정보 밀도)",
+          "level": 2,
+          "line": 58
+        },
+        {
+          "heading": "A-6. 명장면 2개",
+          "level": 2,
+          "line": 74
+        },
+        {
+          "heading": "A-7. 다른 9개 방과의 차별점",
+          "level": 2,
+          "line": 85
+        },
+        {
+          "heading": "A-8. 절대 금지 (안전 규칙)",
+          "level": 2,
+          "line": 95
+        },
+        {
+          "heading": "B. 공통 디자인 토큰 (참고용 — 각 프롬프트에 이미 포함됨)",
+          "level": 1,
+          "line": 105
+        },
+        {
+          "heading": "C. 페이지별 프롬프트",
+          "level": 1,
+          "line": 125
+        },
+        {
+          "heading": "PAGE 00 — 부팅 시퀀스 (관제 시스템 기동)",
+          "level": 2,
+          "line": 129
+        },
+        {
+          "heading": "PAGE 01 — 히어로 · 관제 벽 (모니터 6대)",
+          "level": 2,
+          "line": 236
+        },
+        {
+          "heading": "PAGE 02 — SSE는 어떻게 동작하나 · 패킷이 도착한다",
+          "level": 2,
+          "line": 411
+        },
+        {
+          "heading": "PAGE 03 — 왜 폴링이 아니라 SSE인가 · 나란히 돌려보기",
+          "level": 2,
+          "line": 604
+        },
+        {
+          "heading": "PAGE 04 — 지도 위에 부스를 놓는다 · React Leaflet",
+          "level": 2,
+          "line": 771
+        },
+        {
+          "heading": "PAGE 05 — 같은 화면, 다른 권한 · JWT 역할 분리",
+          "level": 2,
+          "line": 951
+        },
+        {
+          "heading": "PAGE 06 — 트러블슈팅 01 · 조용히 죽는 연결",
+          "level": 2,
+          "line": 1144
+        },
+        {
+          "heading": "PAGE 07 — 트러블슈팅 02 · 축제장에서 인터넷이 안 터진다",
+          "level": 2,
+          "line": 1391
+        },
+        {
+          "heading": "PAGE 08 — 전체 구조와 내가 한 범위",
+          "level": 2,
+          "line": 1582
+        },
+        {
+          "heading": "PAGE 09 — 결과 · 화면 갤러리",
+          "level": 2,
+          "line": 1749
+        },
+        {
+          "heading": "PAGE 10 — 회고 · 다음 단계 · 퇴장",
+          "level": 2,
+          "line": 1879
+        },
+        {
+          "heading": "D. 구현 메모 (프롬프트 아님 — 내가 볼 것)",
+          "level": 1,
+          "line": 2015
+        },
+        {
+          "heading": "D-1. 개발 실체 커버리지 점검",
+          "level": 2,
+          "line": 2017
+        },
+        {
+          "heading": "D-2. 새로 만들 파일",
+          "level": 2,
+          "line": 2032
+        },
+        {
+          "heading": "D-3. 기존 코드 재사용 / 선행 작업",
+          "level": 2,
+          "line": 2050
+        },
+        {
+          "heading": "D-4. 버릴 것",
+          "level": 2,
+          "line": 2058
+        },
+        {
+          "heading": "D-5. 미디어 확보 목록",
+          "level": 2,
+          "line": 2062
+        },
+        {
+          "heading": "D-6. 코드 스니펫 확보 목록 (전부 실제 저장소에서)",
+          "level": 2,
+          "line": 2071
+        },
+        {
+          "heading": "D-7. 제어권 개입 1회 — 안전장치",
+          "level": 2,
+          "line": 2084
+        },
+        {
+          "heading": "D-8. 최종 체크리스트",
+          "level": 2,
+          "line": 2098
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 32
+      }
+    },
+    {
+      "path": "portfolio-specs/04-muscleup.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 2237,
+      "nonEmptyLines": 1891,
+      "sections": [
+        {
+          "heading": "04. 득근득근 (MuscleUp) — 프롬프트 팩",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "A. 컨셉 브리프 (읽기용)",
+          "level": 1,
+          "line": 21
+        },
+        {
+          "heading": "A-1. 이 방의 한 문장",
+          "level": 2,
+          "line": 23
+        },
+        {
+          "heading": "A-2. 왜 이 메타포인가",
+          "level": 2,
+          "line": 27
+        },
+        {
+          "heading": "A-3. ⭐ 가장 중요한 원칙 — 연출은 개발 내용의 운반 수단이다",
+          "level": 2,
+          "line": 39
+        },
+        {
+          "heading": "A-4. 서비스 설계 결정 ↔ 웹 재현 대응",
+          "level": 2,
+          "line": 57
+        },
+        {
+          "heading": "A-5. 관람 곡선 (감정 + 정보 밀도)",
+          "level": 2,
+          "line": 68
+        },
+        {
+          "heading": "A-6. 명장면 2개",
+          "level": 2,
+          "line": 84
+        },
+        {
+          "heading": "A-7. 다른 9개 방과의 차별점",
+          "level": 2,
+          "line": 96
+        },
+        {
+          "heading": "A-8. 절대 금지 (안전 규칙)",
+          "level": 2,
+          "line": 106
+        },
+        {
+          "heading": "B. 공통 디자인 토큰 (참고용 — 각 프롬프트에 이미 포함됨)",
+          "level": 1,
+          "line": 118
+        },
+        {
+          "heading": "C. 페이지별 프롬프트",
+          "level": 1,
+          "line": 137
+        },
+        {
+          "heading": "PAGE 00 — 캐릭터 생성 (진입 시퀀스)",
+          "level": 2,
+          "line": 141
+        },
+        {
+          "heading": "PAGE 01 — 히어로 · 장비 슬롯",
+          "level": 2,
+          "line": 238
+        },
+        {
+          "heading": "PAGE 02 — 기록하면 뭔가 일어난다 · 게임화 루프",
+          "level": 2,
+          "line": 397
+        },
+        {
+          "heading": "PAGE 03 — 트러블슈팅 01 · 직접 치트를 쳐보세요",
+          "level": 2,
+          "line": 608
+        },
+        {
+          "heading": "PAGE 04 — 로그인은 두 갈래로 들어온다 · JWT + Google OAuth",
+          "level": 2,
+          "line": 817
+        },
+        {
+          "heading": "PAGE 05 — 혼자 하는 운동이 아니게 만든 것 · 실시간 라운지",
+          "level": 2,
+          "line": 1003
+        },
+        {
+          "heading": "PAGE 06 — 트러블슈팅 02 · 출석이 두 번 찍혔다",
+          "level": 2,
+          "line": 1235
+        },
+        {
+          "heading": "PAGE 07 — AI 인바디 분석 · 사진 한 장에서 리포트까지",
+          "level": 2,
+          "line": 1483
+        },
+        {
+          "heading": "PAGE 08 — 전체 구조와 1인 풀스택의 실제",
+          "level": 2,
+          "line": 1671
+        },
+        {
+          "heading": "PAGE 09 — 결과 · 화면 갤러리",
+          "level": 2,
+          "line": 1829
+        },
+        {
+          "heading": "PAGE 10 — 회고 · 다음 단계 · 퇴장",
+          "level": 2,
+          "line": 1957
+        },
+        {
+          "heading": "D. 구현 메모 (프롬프트 아님 — 내가 볼 것)",
+          "level": 1,
+          "line": 2117
+        },
+        {
+          "heading": "D-0. ✅ [FIX-01] 해소 — 실시간 스택은 Socket.IO",
+          "level": 2,
+          "line": 2119
+        },
+        {
+          "heading": "D-1. 개발 실체 커버리지 점검",
+          "level": 2,
+          "line": 2134
+        },
+        {
+          "heading": "D-2. 새로 만들 파일",
+          "level": 2,
+          "line": 2151
+        },
+        {
+          "heading": "D-3. 기존 코드 재사용 / 선행 작업",
+          "level": 2,
+          "line": 2170
+        },
+        {
+          "heading": "D-4. 버릴 것",
+          "level": 2,
+          "line": 2178
+        },
+        {
+          "heading": "D-5. 미디어 확보 목록",
+          "level": 2,
+          "line": 2182
+        },
+        {
+          "heading": "D-6. 코드 스니펫 확보 목록 (전부 실제 저장소에서)",
+          "level": 2,
+          "line": 2192
+        },
+        {
+          "heading": "D-7. 안전장치 대조표",
+          "level": 2,
+          "line": 2207
+        },
+        {
+          "heading": "D-8. 최종 체크리스트 (윤리 항목 최우선)",
+          "level": 2,
+          "line": 2218
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 33
+      }
+    },
+    {
+      "path": "portfolio-specs/05-aclub.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 2407,
+      "nonEmptyLines": 2050,
+      "sections": [
+        {
+          "heading": "05. ACLUB — 프롬프트 팩",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "A. 컨셉 브리프 (읽기용)",
+          "level": 1,
+          "line": 10
+        },
+        {
+          "heading": "A-1. 이 방의 한 문장",
+          "level": 2,
+          "line": 12
+        },
+        {
+          "heading": "A-2. 왜 이 메타포인가",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "A-3. ⭐ 가장 중요한 원칙 — 연출은 개발 내용의 운반 수단이다",
+          "level": 2,
+          "line": 29
+        },
+        {
+          "heading": "A-4. 설계 결정 ↔ 웹 재현 대응",
+          "level": 2,
+          "line": 47
+        },
+        {
+          "heading": "A-5. 관람 곡선 (감정 + 정보 밀도)",
+          "level": 2,
+          "line": 58
+        },
+        {
+          "heading": "A-6. 명장면 3개",
+          "level": 2,
+          "line": 74
+        },
+        {
+          "heading": "A-7. 다른 9개 방과의 차별점",
+          "level": 2,
+          "line": 91
+        },
+        {
+          "heading": "A-8. 절대 금지 (안전 규칙)",
+          "level": 2,
+          "line": 101
+        },
+        {
+          "heading": "B. 공통 디자인 토큰 (참고용 — 각 프롬프트에 이미 포함됨)",
+          "level": 1,
+          "line": 112
+        },
+        {
+          "heading": "C. 페이지별 프롬프트",
+          "level": 1,
+          "line": 132
+        },
+        {
+          "heading": "PAGE 00 — 박람회장 입장 (진입 시퀀스)",
+          "level": 2,
+          "line": 136
+        },
+        {
+          "heading": "PAGE 01 — 히어로 · 포스터 월",
+          "level": 2,
+          "line": 243
+        },
+        {
+          "heading": "PAGE 02 — 벽이 스스로 다시 붙는다 · 필터와 재배치",
+          "level": 2,
+          "line": 433
+        },
+        {
+          "heading": "PAGE 03 — 트러블슈팅 01 · 뒤로가기를 눌러보세요",
+          "level": 2,
+          "line": 685
+        },
+        {
+          "heading": "PAGE 04 — 탐색에서 지원까지 · 사용자 흐름과 라우팅",
+          "level": 2,
+          "line": 967
+        },
+        {
+          "heading": "PAGE 05 — 트러블슈팅 02 · 목록으로 돌아오면 맨 위였다",
+          "level": 2,
+          "line": 1187
+        },
+        {
+          "heading": "PAGE 06 — 같은 카드, 다른 사람 · 일반과 관리자",
+          "level": 2,
+          "line": 1436
+        },
+        {
+          "heading": "PAGE 07 — 포스터 한 장이 분해된다 · 공통 컴포넌트",
+          "level": 2,
+          "line": 1632
+        },
+        {
+          "heading": "PAGE 08 — 이 프로젝트의 범위 (벽의 빈 자리)",
+          "level": 2,
+          "line": 1819
+        },
+        {
+          "heading": "PAGE 09 — 결과 · 화면 갤러리",
+          "level": 2,
+          "line": 1992
+        },
+        {
+          "heading": "PAGE 10 — 회고 · 다음 단계 · 퇴장",
+          "level": 2,
+          "line": 2141
+        },
+        {
+          "heading": "D. 구현 메모 (프롬프트 아님 — 내가 볼 것)",
+          "level": 1,
+          "line": 2281
+        },
+        {
+          "heading": "D-1. 개발 실체 커버리지 점검",
+          "level": 2,
+          "line": 2283
+        },
+        {
+          "heading": "D-2. 새로 만들 파일",
+          "level": 2,
+          "line": 2299
+        },
+        {
+          "heading": "D-3. 기존 코드 재사용 / 선행 작업",
+          "level": 2,
+          "line": 2324
+        },
+        {
+          "heading": "D-4. 버릴 것",
+          "level": 2,
+          "line": 2333
+        },
+        {
+          "heading": "D-5. 미디어 확보 목록 (총 12슬롯 — 10개 방 중 최다)",
+          "level": 2,
+          "line": 2337
+        },
+        {
+          "heading": "D-6. 코드 스니펫 확보 목록 (전부 실제 저장소에서)",
+          "level": 2,
+          "line": 2360
+        },
+        {
+          "heading": "D-7. 안전장치 대조표",
+          "level": 2,
+          "line": 2370
+        },
+        {
+          "heading": "D-8. 최종 체크리스트",
+          "level": 2,
+          "line": 2383
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 32
+      }
+    },
+    {
+      "path": "portfolio-specs/06-ajouchong.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 2438,
+      "nonEmptyLines": 2079,
+      "sections": [
+        {
+          "heading": "06. 아주총학 — 프롬프트 팩",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "A. 컨셉 브리프 (읽기용)",
+          "level": 1,
+          "line": 14
+        },
+        {
+          "heading": "A-1. 이 방의 한 문장",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "A-2. 왜 이 메타포인가",
+          "level": 2,
+          "line": 20
+        },
+        {
+          "heading": "A-3. ⭐ 가장 중요한 원칙 — 연출은 개발 내용의 운반 수단이다",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "A-4. 설계·운영 결정 ↔ 웹 재현 대응",
+          "level": 2,
+          "line": 51
+        },
+        {
+          "heading": "A-5. 관람 곡선 (감정 + 정보 밀도)",
+          "level": 2,
+          "line": 60
+        },
+        {
+          "heading": "A-6. 명장면 3개",
+          "level": 2,
+          "line": 76
+        },
+        {
+          "heading": "A-7. 다른 9개 방과의 차별점",
+          "level": 2,
+          "line": 92
+        },
+        {
+          "heading": "A-8. 절대 금지 (안전 규칙)",
+          "level": 2,
+          "line": 103
+        },
+        {
+          "heading": "B. 공통 디자인 토큰 (참고용 — 각 프롬프트에 이미 포함됨)",
+          "level": 1,
+          "line": 114
+        },
+        {
+          "heading": "C. 페이지별 프롬프트",
+          "level": 1,
+          "line": 136
+        },
+        {
+          "heading": "PAGE 00 — 게시판에 불이 켜진다 (진입 시퀀스)",
+          "level": 2,
+          "line": 140
+        },
+        {
+          "heading": "PAGE 01 — 히어로 · 게시판 (지금 운영 중)",
+          "level": 2,
+          "line": 250
+        },
+        {
+          "heading": "PAGE 02 — 흩어진 것을 한곳으로 · 정보 구조와 라우팅",
+          "level": 2,
+          "line": 429
+        },
+        {
+          "heading": "PAGE 03 — 트러블슈팅 01 · 새로고침하면 404",
+          "level": 2,
+          "line": 646
+        },
+        {
+          "heading": "PAGE 04 — 게시판이 뒤집힌다 · Docker와 Nginx 배포",
+          "level": 2,
+          "line": 915
+        },
+        {
+          "heading": "PAGE 05 — 로그인해야 쓸 수 있다 · AuthContext와 보호 라우트",
+          "level": 2,
+          "line": 1153
+        },
+        {
+          "heading": "PAGE 06 — 트러블슈팅 02 · 배포는 성공했는데 화면이 안 바뀐다",
+          "level": 2,
+          "line": 1360
+        },
+        {
+          "heading": "PAGE 07 — 배포하고 나서 배운 것 · 실서비스 운영",
+          "level": 2,
+          "line": 1631
+        },
+        {
+          "heading": "PAGE 08 — 요청 하나가 지나가는 길 · 전체 구조와 내 범위",
+          "level": 2,
+          "line": 1819
+        },
+        {
+          "heading": "PAGE 09 — 결과 · 화면 갤러리",
+          "level": 2,
+          "line": 1984
+        },
+        {
+          "heading": "PAGE 10 — 회고 · 다음 단계 · 퇴장",
+          "level": 2,
+          "line": 2148
+        },
+        {
+          "heading": "D. 구현 메모 (프롬프트 아님 — 내가 볼 것)",
+          "level": 1,
+          "line": 2299
+        },
+        {
+          "heading": "D-1. 개발 실체 커버리지 점검",
+          "level": 2,
+          "line": 2301
+        },
+        {
+          "heading": "D-2. 새로 만들 파일",
+          "level": 2,
+          "line": 2319
+        },
+        {
+          "heading": "D-3. 기존 코드 재사용 / 선행 작업",
+          "level": 2,
+          "line": 2346
+        },
+        {
+          "heading": "D-4. 버릴 것",
+          "level": 2,
+          "line": 2355
+        },
+        {
+          "heading": "D-5. 미디어 확보 목록 (총 12슬롯)",
+          "level": 2,
+          "line": 2359
+        },
+        {
+          "heading": "D-6. 코드 스니펫 확보 목록 (전부 실제 저장소에서)",
+          "level": 2,
+          "line": 2383
+        },
+        {
+          "heading": "D-7. 안전장치 대조표",
+          "level": 2,
+          "line": 2396
+        },
+        {
+          "heading": "D-8. 최종 체크리스트",
+          "level": 2,
+          "line": 2410
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 32
+      }
+    },
+    {
+      "path": "portfolio-specs/07-sign-language.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 2404,
+      "nonEmptyLines": 2047,
+      "sections": [
+        {
+          "heading": "07. 수어지구 — 프롬프트 팩",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "A. 컨셉 브리프 (읽기용)",
+          "level": 1,
+          "line": 23
+        },
+        {
+          "heading": "A-1. 이 방의 한 문장",
+          "level": 2,
+          "line": 25
+        },
+        {
+          "heading": "A-2. 왜 이 메타포인가",
+          "level": 2,
+          "line": 29
+        },
+        {
+          "heading": "A-3. ⭐ 가장 중요한 원칙 — 연출은 개발 내용의 운반 수단이다",
+          "level": 2,
+          "line": 42
+        },
+        {
+          "heading": "A-4. 설계 결정 ↔ 웹 재현 대응",
+          "level": 2,
+          "line": 60
+        },
+        {
+          "heading": "A-5. 관람 곡선 (감정 + 정보 밀도)",
+          "level": 2,
+          "line": 69
+        },
+        {
+          "heading": "A-6. 명장면 3개",
+          "level": 2,
+          "line": 85
+        },
+        {
+          "heading": "A-7. 다른 9개 방과의 차별점",
+          "level": 2,
+          "line": 102
+        },
+        {
+          "heading": "A-8. 절대 금지 (안전 규칙) — 이 방에서 가장 중요한 항목",
+          "level": 2,
+          "line": 112
+        },
+        {
+          "heading": "B. 공통 디자인 토큰 (참고용 — 각 프롬프트에 이미 포함됨)",
+          "level": 1,
+          "line": 127
+        },
+        {
+          "heading": "C. 페이지별 프롬프트",
+          "level": 1,
+          "line": 147
+        },
+        {
+          "heading": "PAGE 00 — 갤러리에 불이 켜진다 (진입 시퀀스)",
+          "level": 2,
+          "line": 151
+        },
+        {
+          "heading": "PAGE 01 — 히어로 · 갤러리 벽",
+          "level": 2,
+          "line": 272
+        },
+        {
+          "heading": "PAGE 02 — 동작을 데이터로 · 손 플레이어",
+          "level": 2,
+          "line": 444
+        },
+        {
+          "heading": "PAGE 03 — 수어는 한국어가 아니다 · 어순",
+          "level": 2,
+          "line": 666
+        },
+        {
+          "heading": "PAGE 04 — 트러블슈팅 01 · 문제는 떴는데 영상이 안 나왔다",
+          "level": 2,
+          "line": 886
+        },
+        {
+          "heading": "PAGE 05 — 틀린 건 다시 나온다 · 반복 학습 루프",
+          "level": 2,
+          "line": 1168
+        },
+        {
+          "heading": "PAGE 06 — 트러블슈팅 02 · 손이 뚝뚝 끊겼다",
+          "level": 2,
+          "line": 1369
+        },
+        {
+          "heading": "PAGE 07 — 백엔드 구조와 팀 안에서의 내 자리",
+          "level": 2,
+          "line": 1626
+        },
+        {
+          "heading": "PAGE 08 — 감수받지 못했습니다 · 이 프로젝트의 한계",
+          "level": 2,
+          "line": 1793
+        },
+        {
+          "heading": "PAGE 09 — 결과 · 화면 갤러리",
+          "level": 2,
+          "line": 1969
+        },
+        {
+          "heading": "PAGE 10 — 회고 · 다음 단계 · 퇴장",
+          "level": 2,
+          "line": 2117
+        },
+        {
+          "heading": "D. 구현 메모 (프롬프트 아님 — 내가 볼 것)",
+          "level": 1,
+          "line": 2264
+        },
+        {
+          "heading": "D-1. 개발 실체 커버리지 점검",
+          "level": 2,
+          "line": 2266
+        },
+        {
+          "heading": "D-2. 새로 만들 파일",
+          "level": 2,
+          "line": 2282
+        },
+        {
+          "heading": "D-3. 기존 코드 재사용 / 선행 작업",
+          "level": 2,
+          "line": 2309
+        },
+        {
+          "heading": "D-4. 버릴 것",
+          "level": 2,
+          "line": 2318
+        },
+        {
+          "heading": "D-5. 미디어 확보 목록",
+          "level": 2,
+          "line": 2322
+        },
+        {
+          "heading": "D-6. 코드 스니펫 확보 목록 (전부 실제 저장소에서)",
+          "level": 2,
+          "line": 2343
+        },
+        {
+          "heading": "D-7. 안전장치 대조표",
+          "level": 2,
+          "line": 2356
+        },
+        {
+          "heading": "D-8. 최종 체크리스트 (윤리 항목 최우선)",
+          "level": 2,
+          "line": 2369
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 32
+      }
+    },
+    {
+      "path": "portfolio-specs/08-ajou-adventure.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 2135,
+      "nonEmptyLines": 1801,
+      "sections": [
+        {
+          "heading": "08. 아주분투 — 프롬프트 팩",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "A. 컨셉 브리프 (읽기용)",
+          "level": 1,
+          "line": 15
+        },
+        {
+          "heading": "A-1. 이 방의 한 문장",
+          "level": 2,
+          "line": 17
+        },
+        {
+          "heading": "A-2. 왜 이 메타포인가",
+          "level": 2,
+          "line": 21
+        },
+        {
+          "heading": "A-3. ⭐ 가장 중요한 원칙 — 연출은 개발 내용의 운반 수단이다",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "A-4. 게임 설계 결정 ↔ 웹 재현 대응",
+          "level": 2,
+          "line": 52
+        },
+        {
+          "heading": "A-5. 관람 곡선 (감정 + 정보 밀도)",
+          "level": 2,
+          "line": 63
+        },
+        {
+          "heading": "A-6. 명장면 2개",
+          "level": 2,
+          "line": 79
+        },
+        {
+          "heading": "A-7. 다른 9개 방과의 차별점",
+          "level": 2,
+          "line": 91
+        },
+        {
+          "heading": "A-8. 절대 금지 (안전 규칙)",
+          "level": 2,
+          "line": 101
+        },
+        {
+          "heading": "B. 공통 디자인 토큰 (참고용 — 각 프롬프트에 이미 포함됨)",
+          "level": 1,
+          "line": 112
+        },
+        {
+          "heading": "C. 페이지별 프롬프트",
+          "level": 1,
+          "line": 133
+        },
+        {
+          "heading": "PAGE 00 — 어트랙트 모드 (코인 투입)",
+          "level": 2,
+          "line": 137
+        },
+        {
+          "heading": "PAGE 01 — 히어로 · 캐비닛 옆면 스티커",
+          "level": 2,
+          "line": 244
+        },
+        {
+          "heading": "PAGE 02 — 직접 해보세요 · 게임 루프가 지금 돌고 있다",
+          "level": 2,
+          "line": 416
+        },
+        {
+          "heading": "PAGE 03 — 조작감은 튜닝의 결과다 · A/B로 직접 비교",
+          "level": 2,
+          "line": 611
+        },
+        {
+          "heading": "PAGE 04 — 트러블슈팅 01 · 닿지도 않았는데 죽었다",
+          "level": 2,
+          "line": 803
+        },
+        {
+          "heading": "PAGE 05 — 맵은 손으로 그리지 않았다 · 자동 생성 규칙",
+          "level": 2,
+          "line": 1038
+        },
+        {
+          "heading": "PAGE 06 — 낮과 밤 · 진행감을 시각으로 만든다",
+          "level": 2,
+          "line": 1210
+        },
+        {
+          "heading": "PAGE 07 — 최고 점수는 남는다 · localStorage",
+          "level": 2,
+          "line": 1380
+        },
+        {
+          "heading": "PAGE 08 — 트러블슈팅 02 · 폰에서는 다른 게임이었다",
+          "level": 2,
+          "line": 1549
+        },
+        {
+          "heading": "PAGE 09 — 결과 · 화면 갤러리",
+          "level": 2,
+          "line": 1760
+        },
+        {
+          "heading": "PAGE 10 — 회고 · 다음 단계 · 퇴장",
+          "level": 2,
+          "line": 1882
+        },
+        {
+          "heading": "D. 구현 메모 (프롬프트 아님 — 내가 볼 것)",
+          "level": 1,
+          "line": 2025
+        },
+        {
+          "heading": "D-1. 개발 실체 커버리지 점검",
+          "level": 2,
+          "line": 2027
+        },
+        {
+          "heading": "D-2. 새로 만들 파일",
+          "level": 2,
+          "line": 2043
+        },
+        {
+          "heading": "D-3. 기존 코드 재사용 / 선행 작업",
+          "level": 2,
+          "line": 2067
+        },
+        {
+          "heading": "D-4. 버릴 것",
+          "level": 2,
+          "line": 2075
+        },
+        {
+          "heading": "D-5. 미디어 확보 목록",
+          "level": 2,
+          "line": 2080
+        },
+        {
+          "heading": "D-6. 코드 스니펫 확보 목록 (전부 실제 저장소에서)",
+          "level": 2,
+          "line": 2092
+        },
+        {
+          "heading": "D-7. 제어권 개입 0회 — 대신 관람객이 능동적으로 여는 것",
+          "level": 2,
+          "line": 2105
+        },
+        {
+          "heading": "D-8. 최종 체크리스트 (광과민성 항목 최우선)",
+          "level": 2,
+          "line": 2115
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 32
+      }
+    },
+    {
+      "path": "portfolio-specs/09-darklab.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 2075,
+      "nonEmptyLines": 1727,
+      "sections": [
+        {
+          "heading": "09. DarkLab — 프롬프트 팩",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "A. 컨셉 브리프 (읽기용)",
+          "level": 1,
+          "line": 10
+        },
+        {
+          "heading": "A-1. 이 방의 한 문장",
+          "level": 2,
+          "line": 12
+        },
+        {
+          "heading": "A-2. 왜 이 메타포인가",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "A-3. ⭐ 가장 중요한 원칙 — 연출은 개발 내용의 운반 수단이다",
+          "level": 2,
+          "line": 24
+        },
+        {
+          "heading": "A-4. 게임 설계 결정 ↔ 웹 재현 대응",
+          "level": 2,
+          "line": 43
+        },
+        {
+          "heading": "A-5. 관람 곡선 (감정 + 정보 밀도)",
+          "level": 2,
+          "line": 55
+        },
+        {
+          "heading": "A-6. 명장면 2개",
+          "level": 2,
+          "line": 72
+        },
+        {
+          "heading": "A-7. 다른 9개 방과의 차별점",
+          "level": 2,
+          "line": 83
+        },
+        {
+          "heading": "A-8. 절대 금지 (안전 규칙)",
+          "level": 2,
+          "line": 93
+        },
+        {
+          "heading": "B. 공통 디자인 토큰 (참고용 — 각 프롬프트에 이미 포함됨)",
+          "level": 1,
+          "line": 103
+        },
+        {
+          "heading": "C. 페이지별 프롬프트",
+          "level": 1,
+          "line": 122
+        },
+        {
+          "heading": "PAGE 00 — 진입 시퀀스 (Cold Open)",
+          "level": 2,
+          "line": 126
+        },
+        {
+          "heading": "PAGE 01 — 히어로 · 어둠 속에서 발견하는 것들",
+          "level": 2,
+          "line": 230
+        },
+        {
+          "heading": "PAGE 02 — 무엇을 만들었나 · 레이캐스트 상호작용",
+          "level": 2,
+          "line": 387
+        },
+        {
+          "heading": "PAGE 03 — 공포는 어디서 오는가 · 설계 원칙 3",
+          "level": 2,
+          "line": 562
+        },
+        {
+          "heading": "PAGE 04 — THE MOMENT · 카메라를 뺏긴 3초 → 그 코드",
+          "level": 2,
+          "line": 713
+        },
+        {
+          "heading": "PAGE 05 — 왜 Cinemachine이었나 · 직접 구현과의 비교",
+          "level": 2,
+          "line": 859
+        },
+        {
+          "heading": "PAGE 06 — 트러블슈팅 01 · 제어권이 잠긴 채 남는다 ⭐",
+          "level": 2,
+          "line": 1048
+        },
+        {
+          "heading": "PAGE 07 — 트러블슈팅 02 · 매 프레임 레이캐스트",
+          "level": 2,
+          "line": 1304
+        },
+        {
+          "heading": "PAGE 08 — 구조 · ScriptableObject 리팩터링",
+          "level": 2,
+          "line": 1519
+        },
+        {
+          "heading": "PAGE 09 — 결과 · 불이 켜진다",
+          "level": 2,
+          "line": 1684
+        },
+        {
+          "heading": "PAGE 10 — 회고 · 다음 단계 · 퇴장",
+          "level": 2,
+          "line": 1834
+        },
+        {
+          "heading": "D. 구현 메모 (프롬프트 아님 — 내가 볼 것)",
+          "level": 1,
+          "line": 1979
+        },
+        {
+          "heading": "D-1. 개발 실체 커버리지 점검",
+          "level": 2,
+          "line": 1981
+        },
+        {
+          "heading": "D-2. 새로 만들 파일",
+          "level": 2,
+          "line": 1996
+        },
+        {
+          "heading": "D-3. 기존 코드 재사용 / 선행 작업",
+          "level": 2,
+          "line": 2015
+        },
+        {
+          "heading": "D-4. 버릴 것",
+          "level": 2,
+          "line": 2023
+        },
+        {
+          "heading": "D-5. 미디어 확보 목록",
+          "level": 2,
+          "line": 2027
+        },
+        {
+          "heading": "D-6. 코드 스니펫 확보 목록 (전부 실제 저장소에서)",
+          "level": 2,
+          "line": 2036
+        },
+        {
+          "heading": "D-7. 제어권 박탈 2회 — 안전장치 대조표",
+          "level": 2,
+          "line": 2049
+        },
+        {
+          "heading": "D-8. 최종 체크리스트",
+          "level": 2,
+          "line": 2061
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 32
+      }
+    },
+    {
+      "path": "portfolio-specs/10-tserof.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 2506,
+      "nonEmptyLines": 2124,
+      "sections": [
+        {
+          "heading": "10. TSEROF — 프롬프트 팩",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "A. 컨셉 브리프 (읽기용)",
+          "level": 1,
+          "line": 25
+        },
+        {
+          "heading": "A-1. 이 방의 한 문장",
+          "level": 2,
+          "line": 27
+        },
+        {
+          "heading": "A-2. 왜 이 메타포인가",
+          "level": 2,
+          "line": 31
+        },
+        {
+          "heading": "A-3. ⭐ 가장 중요한 원칙 — 연출은 개발 내용의 운반 수단이다",
+          "level": 2,
+          "line": 45
+        },
+        {
+          "heading": "A-4. 게임 설계 결정 ↔ 웹 재현 대응",
+          "level": 2,
+          "line": 64
+        },
+        {
+          "heading": "A-5. 관람 곡선 (감정 + 정보 밀도 + 진행 지표)",
+          "level": 2,
+          "line": 76
+        },
+        {
+          "heading": "A-6. 명장면 2개",
+          "level": 2,
+          "line": 92
+        },
+        {
+          "heading": "A-7. 다른 9개 방과의 차별점",
+          "level": 2,
+          "line": 106
+        },
+        {
+          "heading": "A-8. 절대 금지 (안전 규칙)",
+          "level": 2,
+          "line": 121
+        },
+        {
+          "heading": "B. 공통 디자인 토큰 (참고용 — 각 프롬프트에 이미 포함됨)",
+          "level": 1,
+          "line": 136
+        },
+        {
+          "heading": "C. 페이지별 프롬프트",
+          "level": 1,
+          "line": 155
+        },
+        {
+          "heading": "PAGE 00 — 진입 시퀀스 (부팅 화면)",
+          "level": 2,
+          "line": 159
+        },
+        {
+          "heading": "PAGE 01 — 히어로 · 스테이지 셀렉트 보드",
+          "level": 2,
+          "line": 268
+        },
+        {
+          "heading": "PAGE 02 — 핵심 구현 #1 · 직접 점프해 보기",
+          "level": 2,
+          "line": 454
+        },
+        {
+          "heading": "PAGE 03 — 기술 의사결정 · 진행 상황을 어디에 저장할 것인가",
+          "level": 2,
+          "line": 676
+        },
+        {
+          "heading": "PAGE 04 — 트러블슈팅 01 · 발판 끝에서 씹힌 점프",
+          "level": 2,
+          "line": 879
+        },
+        {
+          "heading": "PAGE 05 — 핵심 구현 #2 · 스테이지는 상태를 가진다",
+          "level": 2,
+          "line": 1153
+        },
+        {
+          "heading": "PAGE 06 — 트러블슈팅 02 · 같은 씬 파일을 여럿이 건드렸다",
+          "level": 2,
+          "line": 1358
+        },
+        {
+          "heading": "PAGE 07 — 핵심 구현 #3 · 이어하기",
+          "level": 2,
+          "line": 1648
+        },
+        {
+          "heading": "PAGE 08 — 구조 · 씬을 어떻게 나눴고, 내가 어디를 맡았나",
+          "level": 2,
+          "line": 1860
+        },
+        {
+          "heading": "PAGE 09 — 결과 · 전 스테이지 잠금 해제",
+          "level": 2,
+          "line": 2051
+        },
+        {
+          "heading": "PAGE 10 — 회고 · 다음 단계 · 퇴장",
+          "level": 2,
+          "line": 2213
+        },
+        {
+          "heading": "D. 구현 메모 (프롬프트 아님 — 내가 볼 것)",
+          "level": 1,
+          "line": 2374
+        },
+        {
+          "heading": "D-1. 개발 실체 커버리지 점검",
+          "level": 2,
+          "line": 2376
+        },
+        {
+          "heading": "D-2. 새로 만들 파일",
+          "level": 2,
+          "line": 2391
+        },
+        {
+          "heading": "D-3. 기존 코드 재사용 / 선행 작업",
+          "level": 2,
+          "line": 2417
+        },
+        {
+          "heading": "D-4. 버릴 것",
+          "level": 2,
+          "line": 2427
+        },
+        {
+          "heading": "D-5. 미디어 확보 목록",
+          "level": 2,
+          "line": 2433
+        },
+        {
+          "heading": "D-6. 코드 스니펫 확보 목록 (전부 실제 저장소에서)",
+          "level": 2,
+          "line": 2453
+        },
+        {
+          "heading": "D-7. 안전장치 대조표 — **제어권 박탈 0회, 대신 입력 캡처가 위험 지점**",
+          "level": 2,
+          "line": 2468
+        },
+        {
+          "heading": "D-8. 최종 체크리스트",
+          "level": 2,
+          "line": 2485
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 32
+      }
+    },
+    {
+      "path": "portfolio-specs/_AUDIT.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 93,
+      "nonEmptyLines": 74,
+      "sections": [
+        {
+          "heading": "사실 대조표 — 저장소 원본 vs 3D 마을(data.ts) vs 프롬프트 팩(specs)",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "0. 저장소 확정 매핑",
+          "level": 2,
+          "line": 8
+        },
+        {
+          "heading": "🔴 구조적 문제 1 — MyWave/MyStock이 저장소 1개",
+          "level": 3,
+          "line": 23
+        },
+        {
+          "heading": "🔴 구조적 문제 2 — 「유일한 실배포 서비스」는 거짓",
+          "level": 3,
+          "line": 27
+        },
+        {
+          "heading": "1. data.ts 트러블슈팅 20건 판정",
+          "level": 2,
+          "line": 34
+        },
+        {
+          "heading": "2. specs 문서가 data.ts보다 더 나간 부분 (지어낸 정황)",
+          "level": 2,
+          "line": 61
+        },
+        {
+          "heading": "3. 저장소에는 있는데 specs가 안 쓰고 있는 진짜 재료",
+          "level": 2,
+          "line": 74
+        },
+        {
+          "heading": "4. 추가로 어긋나는 원칙",
+          "level": 2,
+          "line": 88
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 8
+      }
+    },
+    {
+      "path": "portfolio-specs/_IMPLEMENTATION.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 231,
+      "nonEmptyLines": 177,
+      "sections": [
+        {
+          "heading": "구현 가이드 — Variant HTML → 마을 방(Room) 코드",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "1. 방이 이미 있는지부터 확인",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "2. 새 방 만들기 — 파일 6개 + 한 줄 배선",
+          "level": 2,
+          "line": 29
+        },
+        {
+          "heading": "3. 색 토큰 — 전역 Tailwind에 넣지 말 것 🔴",
+          "level": 2,
+          "line": 57
+        },
+        {
+          "heading": "4. 서체",
+          "level": 2,
+          "line": 84
+        },
+        {
+          "heading": "5. 바닐라 JS → React 변환 대응표",
+          "level": 2,
+          "line": 105
+        },
+        {
+          "heading": "6. 🔴 반드시 밟는 함정 4개 (실제로 다 겪음)",
+          "level": 2,
+          "line": 127
+        },
+        {
+          "heading": "7. 검증",
+          "level": 2,
+          "line": 154
+        },
+        {
+          "heading": "8. 방 공통 규칙 (Variant HTML이 매 페이지 반복하는 것들)",
+          "level": 2,
+          "line": 178
+        },
+        {
+          "heading": "9. 🔴 구현 전 대조 — HTML이 낡았을 수 있다",
+          "level": 2,
+          "line": 192
+        },
+        {
+          "heading": "실제로 걸린 사례 — 07 수어지구 PAGE 04 (해결됨)",
+          "level": 3,
+          "line": 203
+        },
+        {
+          "heading": "스펙 PAGE ↔ 구현 파일 대응 (07 수어지구)",
+          "level": 3,
+          "line": 215
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 12
+      }
+    },
+    {
+      "path": "portfolio-specs/_STATUS.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 329,
+      "nonEmptyLines": 259,
+      "sections": [
+        {
+          "heading": "작업 상태 · 이어서 하기용",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "0. ▶ 다음에 여기부터 (2026-07-31 기준)",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "1. 진행 현황",
+          "level": 2,
+          "line": 34
+        },
+        {
+          "heading": "코드 구현 현황 (방)",
+          "level": 3,
+          "line": 52
+        },
+        {
+          "heading": "2. 문서 포맷 (모든 파일 공통)",
+          "level": 2,
+          "line": 66
+        },
+        {
+          "heading": "PAGE 프롬프트 내부 고정 헤딩 (순서 고정)",
+          "level": 3,
+          "line": 99
+        },
+        {
+          "heading": "언어 규칙",
+          "level": 3,
+          "line": 116
+        },
+        {
+          "heading": "3. 페이지 11장의 고정 역할",
+          "level": 2,
+          "line": 122
+        },
+        {
+          "heading": "4. 전 문서 관통 규칙 (절대 어기지 말 것)",
+          "level": 2,
+          "line": 142
+        },
+        {
+          "heading": "프로젝트별 추가 금지",
+          "level": 3,
+          "line": 155
+        },
+        {
+          "heading": "5. 코드베이스 선행 작업 (10개 프로젝트 공통, 아직 안 함)",
+          "level": 2,
+          "line": 167
+        },
+        {
+          "heading": "6. 데이터 이슈 — 2026-07-31 저장소 대조로 해소",
+          "level": 2,
+          "line": 183
+        },
+        {
+          "heading": "[FIX-05] 저장소 대조로 발견된 사실 오류 — **전부 수정 완료**",
+          "level": 3,
+          "line": 205
+        },
+        {
+          "heading": "10. MyWave → MyStock 통합 (결정됨, 미실행)",
+          "level": 2,
+          "line": 226
+        },
+        {
+          "heading": "7. ~~남은 문서~~ — 전부 완료 (2026-07-30)",
+          "level": 2,
+          "line": 261
+        },
+        {
+          "heading": "`10-tserof.md` ✅",
+          "level": 3,
+          "line": 263
+        },
+        {
+          "heading": "`00-OVERVIEW.md` ✅ 재작성 완료",
+          "level": 3,
+          "line": 271
+        },
+        {
+          "heading": "8. 각 방의 「⭐ 선행 자산」 총정리 (구현 시 제일 먼저 만들 것)",
+          "level": 2,
+          "line": 284
+        },
+        {
+          "heading": "9. 다음 세션 시작 프롬프트 예시",
+          "level": 2,
+          "line": 308
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 19
+      }
+    },
+    {
+      "path": "portfolio-specs/_UNKNOWNS.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 120,
+      "nonEmptyLines": 91,
+      "sections": [
+        {
+          "heading": "확인 필요 목록 — 형님만 답할 수 있는 것들",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "🔴 A급 — 이걸 모르면 페이지를 못 씁니다",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "A-1. 07 수어지구 P02·P06 — 프레임 데이터가 없습니다",
+          "level": 3,
+          "line": 18
+        },
+        {
+          "heading": "A-2. 05 ACLUB 트러블 2건 — 코드로 확인 못 했습니다",
+          "level": 3,
+          "line": 43
+        },
+        {
+          "heading": "A-3. 06 아주총학 트러블 2건 — 절반만 확인됨",
+          "level": 3,
+          "line": 59
+        },
+        {
+          "heading": "🟡 B급 — 페이지는 쓰지만 되물으면 막힙니다",
+          "level": 2,
+          "line": 72
+        },
+        {
+          "heading": "B-1. 02 MyStock — 평단 버그를 실제로 겪었나",
+          "level": 3,
+          "line": 74
+        },
+        {
+          "heading": "B-2. 09 DarkLab — README만 보고 판단했습니다",
+          "level": 3,
+          "line": 80
+        },
+        {
+          "heading": "B-3. 10 TSEROF — 팀원별 담당 범위",
+          "level": 3,
+          "line": 87
+        },
+        {
+          "heading": "B-4. 04 득근득근 P06 「출석이 두 번 찍혔다」",
+          "level": 3,
+          "line": 95
+        },
+        {
+          "heading": "B-5. 03 FestFlow 재연결 임계값",
+          "level": 3,
+          "line": 99
+        },
+        {
+          "heading": "⚪ C급 — 캡처하면 채워집니다",
+          "level": 2,
+          "line": 105
+        },
+        {
+          "heading": "📌 답하실 때",
+          "level": 2,
+          "line": 114
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 13
+      }
+    }
+  ]
+}

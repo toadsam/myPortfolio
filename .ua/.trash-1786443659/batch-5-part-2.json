@@ -1,0 +1,1168 @@
+{
+ "nodes": [
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "type": "file",
+   "name": "MotionDataSection.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "summary": "수어 동작을 정지 이미지가 아닌 키프레임 시계열로 저장한 설계를 보여주는 섹션. signData의 키프레임을 선형 보간해 손 SVG를 재생하면서 대응하는 JSON 행을 실시간으로 하이라이트한다.",
+   "tags": [
+    "section",
+    "data-visualization",
+    "interpolation",
+    "animation",
+    "sueo"
+   ],
+   "complexity": "complex",
+   "languageNotes": "재생 프레임(실수)을 기준으로 앞뒤 키프레임을 lerp 보간해 위치·손목 회전·손가락 굽힘을 동시에 계산하고, 같은 값으로 JSON 뷰를 구동한다."
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "type": "file",
+   "name": "ResultSection.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "summary": "완성 화면 스크린샷 5장과 카운트업 지표로 결과물을 정리하는 섹션. 검증되지 않은 부분에 대한 경고 문구도 함께 노출한다.",
+   "tags": [
+    "section",
+    "results",
+    "animation",
+    "presentational",
+    "sueo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+   "type": "file",
+   "name": "RetroSection.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+   "summary": "Keep·Problem·Try 3열 회고와 저장소 링크를 보여주고, 퇴장 버튼으로 룸 셸의 작별 시퀀스를 트리거하는 마지막 섹션.",
+   "tags": [
+    "section",
+    "retrospective",
+    "exit",
+    "presentational",
+    "sueo"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "type": "file",
+   "name": "ReviewLoopSection.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "summary": "틀린 단어가 복습 큐에 다시 들어가는 학습 루프를 실제로 풀어 볼 수 있는 퀴즈로 재현하는 섹션. 손 SVG 동작을 보고 뜻을 고르면 큐 상태(new/review)가 갱신된다.",
+   "tags": [
+    "section",
+    "interactive",
+    "quiz",
+    "state-machine",
+    "sueo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "type": "file",
+   "name": "SentenceSection.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "summary": "한국어 문장을 수어 어순으로 바꾸는 파이프라인(형태소 분석 → 조사·어미 제거 → 어순 재배열 → 시퀀스 조립)을 입력 가능한 데모로 보여주는 섹션. 단계별로 코드 줄을 점등한다.",
+   "tags": [
+    "section",
+    "interactive",
+    "nlp-demo",
+    "pipeline",
+    "sueo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "type": "file",
+   "name": "Trouble01Section.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "summary": "영상 파일(Storage)과 단어 메타데이터(Firestore)를 다른 시점에 넣어 한쪽에만 존재하는 단어가 생긴 데이터 정합성 트러블을 증상·재현·해결 순서로 풀어내는 섹션.",
+   "tags": [
+    "section",
+    "troubleshooting",
+    "data-integrity",
+    "animation",
+    "sueo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "type": "file",
+   "name": "Trouble02Section.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "summary": "단어와 단어 사이 전환 구간에서 손이 끊겨 보이던 문제를 160프레임 타임라인 위에서 재생·비교하며 설명하는 섹션. 배치의 최대 규모 섹션이다.",
+   "tags": [
+    "section",
+    "troubleshooting",
+    "animation",
+    "timeline",
+    "sueo"
+   ],
+   "complexity": "complex",
+   "languageNotes": "단어 구간과 전환 구간을 별도 타입(WordSeg/TransSeg)으로 나누고 posAt으로 프레임당 좌표를 계산해, 보정 전/후를 같은 타임라인에서 대조한다."
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "type": "file",
+   "name": "sentenceData.ts",
+   "filePath": "src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "summary": "문장 → 수어 어순 변환 시연용 사전과 프리셋 데이터. 실제 형태소 분석기 대신 조사·어미를 떼고 시간 표현을 앞으로 보내는 재현용 폴백 규칙을 제공한다.",
+   "tags": [
+    "data-model",
+    "fixture",
+    "text-processing",
+    "sueo"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/signData.ts",
+   "type": "file",
+   "name": "signData.ts",
+   "filePath": "src/components/ui/project-viewers/sueo/signData.ts",
+   "summary": "수어 동작 12종의 키프레임(위치·손목 회전·손가락 굽힘) 시연 데이터와 단어 순서, 그리고 편집 가능한 깊은 복사본을 만드는 헬퍼를 담고 있다.",
+   "tags": [
+    "data-model",
+    "fixture",
+    "keyframe",
+    "sueo"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "file",
+   "name": "useTimeline.ts",
+   "filePath": "src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "summary": "원안 스크립트의 setTimeout 나열 연출을 그대로 옮기기 위한 훅 모음. useTimeline은 지연 시각별 boolean 배열을, useInView는 섹션이 뷰포트에 들어왔는지를 돌려준다.",
+   "tags": [
+    "hook",
+    "animation",
+    "timeline",
+    "intersection-observer",
+    "sueo"
+   ],
+   "complexity": "moderate",
+   "languageNotes": "delays 배열이 매 렌더 새로 생성돼도 이펙트가 재실행되지 않도록 join(',') 문자열을 의존성 키로 쓴다."
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:interpolate",
+   "type": "function",
+   "name": "interpolate",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "lineRange": [
+    56,
+    76
+   ],
+   "summary": "재생 프레임(실수)을 받아 앞뒤 키프레임 사이를 선형 보간해 손 위치·손목 회전·손가락 굽힘을 계산한다. linear가 false면 이징을 적용한다.",
+   "tags": [
+    "utility",
+    "interpolation",
+    "animation"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:Line",
+   "type": "function",
+   "name": "Line",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "lineRange": [
+    79,
+    96
+   ],
+   "summary": "JSON 뷰의 한 줄을 그리며 현재 재생 중인 키프레임이면 강조 표시하는 컴포넌트.",
+   "tags": [
+    "component",
+    "presentational",
+    "code-display"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:JsonRows",
+   "type": "function",
+   "name": "JsonRows",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "lineRange": [
+    98,
+    201
+   ],
+   "summary": "SignData 객체를 키프레임 배열까지 펼쳐 JSON 텍스트 형태의 줄 목록으로 렌더한다.",
+   "tags": [
+    "component",
+    "presentational",
+    "serialization"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:MotionDataSection",
+   "type": "function",
+   "name": "MotionDataSection",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "lineRange": [
+    203,
+    961
+   ],
+   "summary": "키프레임 재생 루프와 JSON 뷰를 동기화하고, 저장/미저장 항목 결정 표와 함께 동작 데이터 설계를 설명하는 섹션.",
+   "tags": [
+    "component",
+    "section",
+    "data-visualization",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx:CountUp",
+   "type": "function",
+   "name": "CountUp",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "lineRange": [
+    61,
+    91
+   ],
+   "summary": "run이 켜지면 0에서 목표 값까지 숫자를 증가시켜 보여주는 카운트업 컴포넌트. instant면 즉시 최종값을 그린다.",
+   "tags": [
+    "component",
+    "animation",
+    "stats"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx:ResultSection",
+   "type": "function",
+   "name": "ResultSection",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "lineRange": [
+    93,
+    293
+   ],
+   "summary": "완성 화면 5장과 카운트업 지표, 미검증 항목 경고를 순차 노출하는 결과 정리 섹션.",
+   "tags": [
+    "component",
+    "section",
+    "results",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx:RetroSection",
+   "type": "function",
+   "name": "RetroSection",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+   "lineRange": [
+    41,
+    170
+   ],
+   "summary": "Keep·Problem·Try 회고와 저장소 링크를 보여주고 퇴장 버튼으로 룸의 작별 시퀀스를 호출하는 마지막 섹션.",
+   "tags": [
+    "component",
+    "section",
+    "retrospective",
+    "exit"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx:QuizHand",
+   "type": "function",
+   "name": "QuizHand",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "lineRange": [
+    41,
+    81
+   ],
+   "summary": "퀴즈 문제로 제시되는 인사 손동작 SVG. playKey가 바뀔 때마다 다시 재생한다.",
+   "tags": [
+    "component",
+    "svg",
+    "animation",
+    "presentational"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx:ReviewLoopSection",
+   "type": "function",
+   "name": "ReviewLoopSection",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "lineRange": [
+    83,
+    628
+   ],
+   "summary": "손동작을 보고 뜻을 고르는 퀴즈를 실제로 풀게 하고, 오답 단어를 복습 큐에 되돌리는 학습 루프를 상태로 재현하는 섹션.",
+   "tags": [
+    "component",
+    "section",
+    "interactive",
+    "quiz",
+    "state-machine"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:CellHand",
+   "type": "function",
+   "name": "CellHand",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "lineRange": [
+    168,
+    195
+   ],
+   "summary": "문장 셀에서 재생되는 손동작 SVG 컴포넌트.",
+   "tags": [
+    "component",
+    "svg",
+    "animation",
+    "presentational"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:SignCell",
+   "type": "function",
+   "name": "SignCell",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "lineRange": [
+    197,
+    236
+   ],
+   "summary": "변환된 토큰 하나를 셀로 그린다. 삭제된 조사·어미는 취소선, 앞으로 당겨진 단어는 화살표로 구분한다.",
+   "tags": [
+    "component",
+    "presentational",
+    "token"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:SentenceSection",
+   "type": "function",
+   "name": "SentenceSection",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "lineRange": [
+    238,
+    764
+   ],
+   "summary": "사용자가 입력하거나 프리셋으로 고른 문장을 수어 어순으로 변환해 재생하고, 파이프라인 단계에 맞춰 코드 줄을 점등하는 섹션.",
+   "tags": [
+    "component",
+    "section",
+    "interactive",
+    "nlp-demo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx:SignHand",
+   "type": "function",
+   "name": "SignHand",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "lineRange": [
+    93,
+    122
+   ],
+   "summary": "Trouble01 섹션에서 재현용으로 재생되는 손동작 SVG 컴포넌트.",
+   "tags": [
+    "component",
+    "svg",
+    "animation",
+    "presentational"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx:StorePanel",
+   "type": "function",
+   "name": "StorePanel",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "lineRange": [
+    125,
+    158
+   ],
+   "summary": "Storage/Firestore 각각의 저장 상태를 경로와 함께 보여주고, 한쪽에만 있는 항목을 표시하는 패널.",
+   "tags": [
+    "component",
+    "presentational",
+    "data-integrity"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx:Trouble01Section",
+   "type": "function",
+   "name": "Trouble01Section",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "lineRange": [
+    160,
+    715
+   ],
+   "summary": "두 저장소에 단어를 따로 넣어 생긴 데이터 정합성 문제를 증상·재현·원인·해결 순서로 시각화하는 트러블슈팅 섹션.",
+   "tags": [
+    "component",
+    "section",
+    "troubleshooting",
+    "data-integrity"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx:posAt",
+   "type": "function",
+   "name": "posAt",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "lineRange": [
+    72,
+    116
+   ],
+   "summary": "160프레임 타임라인 위 임의 프레임의 손 좌표를 계산한다. 단어 구간과 전환 구간을 구분하며 smooth 여부로 보정 전/후를 나눈다.",
+   "tags": [
+    "utility",
+    "interpolation",
+    "animation"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx:BreakMarker",
+   "type": "function",
+   "name": "BreakMarker",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "lineRange": [
+    120,
+    144
+   ],
+   "summary": "동작이 끊기는 지점을 타임라인 위에 표시하는 마커 컴포넌트.",
+   "tags": [
+    "component",
+    "presentational",
+    "annotation"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx:Trouble02Section",
+   "type": "function",
+   "name": "Trouble02Section",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "lineRange": [
+    146,
+    1165
+   ],
+   "summary": "단어 사이 전환 구간에서 손이 끊겨 보이던 문제를 프레임 타임라인 재생으로 보정 전/후 비교하며 설명하는 최대 규모 섹션.",
+   "tags": [
+    "component",
+    "section",
+    "troubleshooting",
+    "animation",
+    "timeline"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sentenceData.ts:parseFreeText",
+   "type": "function",
+   "name": "parseFreeText",
+   "filePath": "src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "lineRange": [
+    95,
+    142
+   ],
+   "summary": "프리셋에 없는 문장을 공백으로 쪼개 사전 조회·조사/어미 제거·미등록어 지문자 처리를 거친 뒤, 시간 표현을 맨 앞으로 옮겨 수어 어순 토큰 배열을 만든다.",
+   "tags": [
+    "utility",
+    "text-processing",
+    "parsing",
+    "fallback"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sentenceData.ts:convert",
+   "type": "function",
+   "name": "convert",
+   "filePath": "src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "lineRange": [
+    144,
+    146
+   ],
+   "summary": "입력 문장이 프리셋에 있으면 그대로, 없으면 parseFreeText 폴백으로 변환 결과를 돌려주는 진입 함수.",
+   "tags": [
+    "utility",
+    "text-processing",
+    "facade"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sentenceData.ts:cellDuration",
+   "type": "function",
+   "name": "cellDuration",
+   "filePath": "src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "lineRange": [
+    148,
+    151
+   ],
+   "summary": "토큰 하나가 화면에서 유지될 시간(ms)을 사전 값 또는 기본값으로 결정한다.",
+   "tags": [
+    "utility",
+    "timing",
+    "text-processing"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/signData.ts:cloneSigns",
+   "type": "function",
+   "name": "cloneSigns",
+   "filePath": "src/components/ui/project-viewers/sueo/signData.ts",
+   "lineRange": [
+    143,
+    145
+   ],
+   "summary": "SIGNS 상수의 깊은 복사본을 만들어 섹션이 키프레임을 편집해도 원본이 오염되지 않게 한다.",
+   "tags": [
+    "utility",
+    "data-model",
+    "immutability"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "function",
+   "name": "useTimeline",
+   "filePath": "src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "lineRange": [
+    13,
+    49
+   ],
+   "summary": "delays(ms) 배열을 받아 각 단계가 켜졌는지를 나타내는 boolean 배열을 돌려주는 연출 훅. start로 지연 시작을, instant로 즉시 완료를 제어한다.",
+   "tags": [
+    "hook",
+    "animation",
+    "timeline",
+    "accessibility"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "function",
+   "name": "useInView",
+   "filePath": "src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "lineRange": [
+    52,
+    81
+   ],
+   "summary": "IntersectionObserver로 요소가 뷰포트에 처음 들어온 시점을 감지해 타임라인 시작 트리거로 쓰는 훅. 관측 후 즉시 연결을 끊는다.",
+   "tags": [
+    "hook",
+    "intersection-observer",
+    "scroll",
+    "performance"
+   ],
+   "complexity": "moderate"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:interpolate",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:Line",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:JsonRows",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:MotionDataSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:MotionDataSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx:CountUp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx:ResultSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx:ResultSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx:RetroSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx:RetroSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx:QuizHand",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx:ReviewLoopSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx:ReviewLoopSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:CellHand",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:SignCell",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:SentenceSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:SentenceSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx:SignHand",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx:StorePanel",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx:Trouble01Section",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx:Trouble01Section",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx:posAt",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx:BreakMarker",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx:Trouble02Section",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx:Trouble02Section",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/sentenceData.ts:parseFreeText",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/sentenceData.ts:parseFreeText",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/sentenceData.ts:convert",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/sentenceData.ts:convert",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/sentenceData.ts:cellDuration",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/sentenceData.ts:cellDuration",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/signData.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/signData.ts:cloneSigns",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/signData.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/signData.ts:cloneSigns",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/signData.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:MotionDataSection",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:MotionDataSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:MotionDataSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx:ResultSection",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx:ResultSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx:ResultSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx:RetroSection",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx:RetroSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx:RetroSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx:ReviewLoopSection",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx:ReviewLoopSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx:ReviewLoopSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:SentenceSection",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:SentenceSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:SentenceSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx:Trouble01Section",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx:Trouble01Section",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx:Trouble01Section",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx:Trouble02Section",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx:Trouble02Section",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx:Trouble02Section",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:SentenceSection",
+   "target": "function:src/components/ui/project-viewers/sueo/sentenceData.ts:convert",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx:SentenceSection",
+   "target": "function:src/components/ui/project-viewers/sueo/sentenceData.ts:cellDuration",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx:MotionDataSection",
+   "target": "function:src/components/ui/project-viewers/sueo/signData.ts:cloneSigns",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  }
+ ]
+}

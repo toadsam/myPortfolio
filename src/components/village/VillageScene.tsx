@@ -12,6 +12,7 @@ import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLab
 import {spread, villageBuildings} from "@/lib/constants";
 import {VILLAGE_PALETTE} from "@/lib/villagePalette";
 import {makeCloudTexture} from "@/lib/skyClouds";
+import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
 import {makeBankTexture} from "@/lib/terraceBank";
 import {PLATEAU_PAD, TERRACE_RECTS, TERRACE_STEP, terrainHeightAt, WATER_CHANNELS} from "@/lib/villageTerrain";
 import buildingModels from "@/data/buildingModels.json";
@@ -127,6 +128,8 @@ const GRASS_TINT = "#ffffff";
 // 길이 잔디 위에 얹힌 초록 리본처럼 떠 보였다.
 function Ground() {
   const map = useTexture("/textures/grass-village.png");
+  // 대지 얼룩(아래층). 잔디 결과 곱해져서 큰 덩어리를 만든다 — src/lib/groundMacro.ts
+  const macro = useMemo(() => makeMacroTexture(), []);
   useEffect(() => {
     map.wrapS = RepeatWrapping;
     map.wrapT = RepeatWrapping;
@@ -150,6 +153,7 @@ function Ground() {
     <mesh position={ISLAND_CENTER} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
       <circleGeometry args={[ISLAND_RADIUS, 128]} />
       <meshStandardMaterial
+        ref={(m) => m && applyGroundMacro(m, macro)}
         map={map}
         color={GRASS_TINT}
         roughness={0.95}
@@ -444,8 +448,80 @@ function TerraceBanks() {
 
   if (!geometry) return null;
   return (
-    <mesh geometry={geometry} receiveShadow castShadow>
-      <meshStandardMaterial map={texture} roughness={0.95} metalness={0} />
+    <>
+      <mesh geometry={geometry} receiveShadow castShadow>
+        <meshStandardMaterial map={texture} roughness={0.95} metalness={0} />
+      </mesh>
+      <TerraceTops />
+    </>
+  );
+}
+
+// ─── 구역 단의 윗면 ───────────────────────────────────────────────────────────
+// 단 위(y = TERRACE_STEP)를 덮는 잔디 뚜껑. 사각형마다 2삼각형, 여섯 구역 합쳐 12개다.
+//
+// 왜 필요한가: `Ground` 의 잔디 원반은 y ≈ 0 에 있고 지형을 따라 올라오지 않는다.
+// 한동안 단 위는 판석 454장이 덮고 있어서 이게 없어도 됐는데, 그 판석을 걷어내
+// 잔디로 되돌리면서 단 위가 뻥 뚫려 1.1 아래가 보이게 됐다.
+//
+// 텍스처는 `Ground` 와 **같은 그림에 같은 배율**(2유닛에 한 장)이라, 단 위 잔디와
+// 아래 잔디가 같은 결로 보인다. 다만 repeat 를 건드리면 원반 쪽이 같이 망가지므로
+// 복제해서 쓰고, 반복은 uv 에 직접 굽는다.
+function TerraceTops() {
+  const base = useTexture("/textures/grass-village.png");
+  // 단 위도 같은 얼룩을 탄다. 안 걸면 단 위만 민무늬로 남아 층이 색으로 갈린다.
+  const macro = useMemo(() => makeMacroTexture(), []);
+  const map = useMemo(() => {
+    const t = base.clone();
+    t.wrapS = RepeatWrapping;
+    t.wrapT = RepeatWrapping;
+    t.repeat.set(1, 1);
+    t.anisotropy = 8;
+    t.colorSpace = SRGBColorSpace;
+    t.needsUpdate = true;
+    return t;
+  }, [base]);
+
+  const geometry = useMemo(() => {
+    if (TERRACE_STEP === 0) return null;
+    const positions: number[] = [];
+    const uvs: number[] = [];
+    const indices: number[] = [];
+    for (const r of TERRACE_RECTS) {
+      const x0 = r.x0 - PLATEAU_PAD, x1 = r.x1 + PLATEAU_PAD;
+      const z0 = r.z0 - PLATEAU_PAD, z1 = r.z1 + PLATEAU_PAD;
+      const base4 = positions.length / 3;
+      // uv 를 **월드 좌표**로 잡는다 — 구역마다 잔디 결이 이어지고, 단 크기가
+      // 달라도 늘어나지 않는다.
+      for (const [x, z] of [[x0, z0], [x1, z0], [x0, z1], [x1, z1]] as [number, number][]) {
+        positions.push(x, TERRACE_STEP, z);
+        uvs.push(x / GRASS_TILE_WORLD, z / GRASS_TILE_WORLD);
+      }
+      // 위를 보게 — (x0,z0)→(x1,z0)→(x0,z1) 의 법선이 +Y 다
+      indices.push(base4, base4 + 2, base4 + 1, base4 + 1, base4 + 2, base4 + 3);
+    }
+    const geo = new BufferGeometry();
+    geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
+    geo.setAttribute("uv", new Float32BufferAttribute(uvs, 2));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    return geo;
+  }, []);
+
+  if (!geometry) return null;
+  // polygonOffset 은 `Ground` 와 같은 이유다 — 길 타일·앞마당 원반이 이 면보다
+  // 겨우 몇 cm 위라, 안 밀면 멀어질수록 잔디가 이겨 길이 사라진다.
+  return (
+    <mesh geometry={geometry} receiveShadow>
+      <meshStandardMaterial
+        ref={(m) => m && applyGroundMacro(m, macro)}
+        map={map}
+        roughness={0.95}
+        metalness={0}
+        polygonOffset
+        polygonOffsetFactor={2}
+        polygonOffsetUnits={4}
+      />
     </mesh>
   );
 }

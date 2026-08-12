@@ -1,0 +1,142 @@
+[
+  {
+    "order": 1,
+    "title": "프로젝트 개요와 지도",
+    "description": "이 저장소는 정재훈의 프로젝트·기술·경험·연락처를 3D 마을로 탐색하게 만든 Next.js 포트폴리오이고, FastAPI 백엔드가 '오늘의 활동 로그'를 건물 조명과 NPC 감정으로 바꿔 마을을 매일 다르게 만듭니다. README는 프론트엔드 단독 실행과 백엔드 동반 실행, 환경 변수(NEXT_PUBLIC_API_BASE_URL, OPENAI_API_KEY 등)를 알려 주고, CLAUDE.md는 이 투어가 따라갈 아키텍처 골격을 요약해 둔 문서입니다. 낯선 서브시스템을 만나면 3,900줄짜리 PROJECT_DOCUMENTATION.md에 파일 단위 해설이 이미 있으니 구조를 처음부터 다시 추론하지 마세요.",
+    "nodeIds": [
+      "document:README.md",
+      "document:CLAUDE.md",
+      "document:docs/PROJECT_DOCUMENTATION.md"
+    ]
+  },
+  {
+    "order": 2,
+    "title": "진입점과 뷰 상태 머신",
+    "description": "App Router의 루트 레이아웃이 메타데이터·Providers·전역 커서를 깔고, page.tsx는 AIPortfolioVillage 하나만 렌더링하는 얇은 진입점입니다. 실질적인 앱의 심장은 AIPortfolioVillage.tsx로, viewMode(village · interior · project-interior · resume)라는 단일 state가 화면 전체를 결정하고 인트로·정보 패널·NPC 선택과 대화·사운드·NPC 자율 tick과 조우 루프·마을 라이브 상태 폴링까지 전부 여기서 지휘합니다. 앞으로 나올 모든 파일은 결국 이 상태 머신이 켜고 끄는 가지들이라고 보면 됩니다.",
+    "nodeIds": [
+      "file:src/app/layout.tsx",
+      "file:src/app/page.tsx",
+      "file:src/components/AIPortfolioVillage.tsx"
+    ],
+    "languageLesson": "Next.js App Router에서 파일은 기본적으로 서버 컴포넌트입니다. useState·Three.js·window·클릭 핸들러를 쓰는 파일은 맨 위에 \"use client\"를 선언해야 하며, 이 저장소에서는 사실상 src/components/village/* 와 src/components/ui/* 전부가 여기에 해당합니다."
+  },
+  {
+    "order": 3,
+    "title": "도메인 타입과 마을의 단일 원본",
+    "description": "types/portfolio.ts는 그래프에서 가장 많이 참조되는 파일(fan-in 45)로, SectionId · District · BuildingKind 유니온과 건물·NPC·프로젝트·스킬의 데이터 형태를 정의해 프론트엔드 전체의 공통 어휘가 됩니다. constants.ts는 마을 레이아웃의 단일 진실 원본이라, 섹션 메타·건물(위치·크기·색·GLB 경로)·나무와 바위 배치·카메라 타깃이 모두 여기 한 곳에 선언돼 있습니다. 좌표는 작게 적어 두고 모듈 로드 시점에 spread()로 확대하므로, 마을을 넓히고 싶다면 개별 좌표가 아니라 SPREAD 상수를 건드리는 것이 정석입니다.",
+    "nodeIds": [
+      "file:src/types/portfolio.ts",
+      "file:src/lib/constants.ts",
+      "file:src/data/projects.ts"
+    ],
+    "languageLesson": "TypeScript의 유니온 리터럴 타입(예: SectionId = \"projects\" | \"skills\" | ...)은 문자열을 열거형처럼 쓰면서 오타를 컴파일 타임에 잡아 줍니다. 새 구역을 추가할 때 이 유니온부터 넓히면, 아직 처리하지 않은 switch 분기를 타입 체커가 대신 찾아 줍니다."
+  },
+  {
+    "order": 4,
+    "title": "열거하지 않고 파생시킨다: NPC 로스터",
+    "description": "이 저장소를 이해하는 열쇠가 되는 규약입니다. npcRoster.ts는 NPC를 손으로 나열하지 않고, 3단계에서 본 villageBuildings 목록을 순회하며 건물마다 `npc-${building.id}` 형태로 전담 NPC를 자동 파생하고 구역별 타입·색상·AI 프로필·추천 질문을 붙입니다. npcBehaviors.ts가 담당 건물·홈 좌표·배회 반경 같은 기본 행동 프로필을 채워 주므로, 건물을 하나 추가하면 안내 NPC와 그 NPC의 자율 이동까지 공짜로 따라옵니다. 다만 백엔드는 이 id의 부분 문자열로 전담 프로필을 찾으니(예: study-codingtest → \"codingtest\"), 새 건물 id는 매칭이 모호해지지 않게 지어야 합니다.",
+    "nodeIds": [
+      "file:src/data/npcRoster.ts",
+      "file:src/data/npcBehaviors.ts",
+      "file:src/data/npcChatter.ts"
+    ]
+  },
+  {
+    "order": 5,
+    "title": "3D 마을 씬 조립",
+    "description": "VillageScene.tsx는 R3F Canvas 안에 지면·섬 절벽·물길·구역 단차·하늘 돔·구름·해와 달·먼 산 같은 환경과 건물·NPC·캐릭터 컨트롤러·카메라를 한데 얹는 최상위 렌더러이며, Three.js가 브라우저를 필요로 하기 때문에 상위에서 ssr:false로 dynamic import 됩니다. Building.tsx는 buildingModels.json에 등록된 GLB가 있으면 그것을, 없으면 kind별 절차적 형태를 세우는 이중 전략을 쓰고 백엔드가 준 조명 세기를 그대로 반영합니다. NPC.tsx는 4단계에서 파생된 NPC를 실제로 걷게 만들고, SeasonAmbience는 백엔드와 무관하게 접속 시각의 Date만 보고 눈·꽃잎·낙엽·반딧불을 뿌립니다.",
+    "nodeIds": [
+      "file:src/components/village/VillageScene.tsx",
+      "file:src/components/village/Building.tsx",
+      "file:src/components/village/NPC.tsx",
+      "file:src/components/village/SeasonAmbience.tsx"
+    ],
+    "languageLesson": "React Three Fiber는 Three.js 객체를 JSX 태그로 선언하고, 매 프레임 로직은 useFrame 훅 안에 둡니다. 프레임 루프 안에서는 setState를 부르지 말고 ref로 직접 오브젝트를 변형해야 리렌더 폭주를 피할 수 있습니다."
+  },
+  {
+    "order": 6,
+    "title": "오프라인 저작과 런타임 렌더링의 분리",
+    "description": "마을의 배치 데이터는 사람이 손으로 쓰지 않습니다. generate-ground-layout.mjs가 광장·앞마당 원반·길 타일을 격자 위에서 BFS로 계산하고 generate-decor-layout.mjs가 간판·아치·가로등 같은 장식을 충돌 없이 앉혀 propsLayout.json(프롭 약 1,038개)을 통째로 다시 쓰며, 개발 모드 전용 PropsEditor는 브라우저에서 드래그한 결과를 /api/props 라우트를 통해 같은 JSON에 덮어씁니다. 씬은 이 JSON을 읽기만 하고, InstancedProps가 같은 GLB끼리 묶어 draw call을 줄입니다. 특히 중요한 규칙은 구역 단차 높이를 데이터에 굽지 않는다는 것입니다 — 좌표는 평지 그대로 두고 렌더 시점에 villageTerrain.ts의 terrainHeightAt으로 y를 더하므로, TERRACE_STEP을 0으로 두면 예전 평지로 정확히 되돌아갑니다.",
+    "nodeIds": [
+      "file:scripts/generate-ground-layout.mjs",
+      "file:src/components/village/PropsEditor.tsx",
+      "file:src/app/api/props/route.ts",
+      "config:src/data/propsLayout.json",
+      "file:src/lib/villageTerrain.ts"
+    ],
+    "languageLesson": "Next.js Route Handler(app/api/*/route.ts)는 서버에서 실행되므로 fs로 저장소 파일을 직접 쓸 수 있습니다. 이 API가 NODE_ENV === \"development\" 게이트 뒤에 있는 이유가 그것으로, 프로덕션에 열려 있으면 임의 파일 쓰기 통로가 됩니다."
+  },
+  {
+    "order": 7,
+    "title": "프론트엔드와 백엔드의 이음매",
+    "description": "프론트엔드가 백엔드에 말을 거는 통로는 liveApi.ts 하나뿐입니다. NEXT_PUBLIC_API_BASE_URL을 읽는 유일한 파일이자 마을 상태·일일 활동·NPC 대화/틱/조우/관계·방문자 로그·관리자 CRUD를 타입 안전한 함수로 노출하는 단일 HTTP 클라이언트이므로, 새 엔드포인트는 컴포넌트에서 직접 fetch하지 말고 반드시 여기에 추가합니다. types/live.ts는 백엔드 스키마를 프론트엔드 타입으로 옮겨 둔 계약 파일이고, liveState.ts는 받아 온 villageState를 건물/NPC 조회 Map과 조명 세기·감정 라벨로 정규화하는 순수 헬퍼입니다. 그리고 이 파이프에 데이터를 밀어 넣는 사람 쪽 입구가 /admin 페이지입니다.",
+    "nodeIds": [
+      "file:src/lib/liveApi.ts",
+      "file:src/types/live.ts",
+      "file:src/lib/liveState.ts",
+      "file:src/app/admin/page.tsx"
+    ]
+  },
+  {
+    "order": 8,
+    "title": "백엔드 라우팅과 데이터 모델",
+    "description": "backend/app/main.py는 HTTP 라우트가 선언되는 유일한 장소이며, 각 라우트는 로직을 갖지 않고 services/*_service.py에 위임합니다 — 그래서 '이 기능이 어디 있나'는 항상 main.py에서 한 번 튕겨 찾아가면 됩니다. models.py는 일일 활동·방문자 이벤트·NPC 대화 로그와 프리셋·건물 오버라이드·코딩테스트/CS 노트·NPC 관계 등 9개 SQLAlchemy 테이블을 정의하고, schemas.py가 In/Out Pydantic 스키마로 경계를 지킵니다. database.py는 요청당 세션 의존성 get_db와 기동 시 init_db를 제공하며, SQLite에서 누락된 컬럼을 자동 패치해 마이그레이션 도구 없이도 스키마가 앞으로 나아가게 합니다.",
+    "nodeIds": [
+      "file:backend/app/main.py",
+      "file:backend/app/models.py",
+      "file:backend/app/schemas.py",
+      "file:backend/app/database.py",
+      "file:backend/app/config.py"
+    ],
+    "languageLesson": "FastAPI의 Depends(get_db)는 의존성 주입으로 요청마다 DB 세션을 열고 응답 후 닫아 줍니다. 설정은 pydantic-settings가 backend/.env를 읽어 타입 검증된 Settings 객체로 만들어 주므로, 코드에서 os.environ을 직접 뒤지지 않습니다."
+  },
+  {
+    "order": 9,
+    "title": "이 프로젝트의 심장: 마을 상태 파생",
+    "description": "관리자가 /admin에서 넣은 오늘의 운동·커밋·공부·코딩 시간은 activity_service가 DailyActivity 한 행으로 업서트하고, village_service.derive_village_state가 그 수치를 건물별 조명 점수·NPC 감정 상태·해금 아이템·요약 문구로 변환합니다. 즉 5단계에서 본 Building이 밝게 빛나는 이유가 전부 이 한 함수 안에 있으므로, '어떤 지표가 마을을 어떻게 바꾸는가'를 손대려면 여기부터 읽어야 합니다. 새로운 '활동이 마을을 바꾸는' 기능을 추가할 때의 표준 경로는 models → schemas → services → main.py → derive_village_state → catalog.NPCS → chat_service.build_context 순서입니다.",
+    "nodeIds": [
+      "file:backend/app/services/village_service.py",
+      "file:backend/app/services/activity_service.py",
+      "file:backend/app/services/learning_service.py"
+    ]
+  },
+  {
+    "order": 10,
+    "title": "NPC의 두뇌와 관계망",
+    "description": "chat_service는 활동·학습 기록·마을 상태를 프롬프트 컨텍스트로 조립해 OpenAI 답변을 만들고, 키가 없거나 호출이 실패하면 규칙 기반 답변으로 조용히 대체해 절대 실패하지 않습니다. npc_brain_service는 자율 tick과 NPC끼리의 조우·그룹 대화를 담당하며 response_format을 JSON으로 강제해 구조화된 결과를 받습니다. 여기에 연속성을 부여하는 층이 relations.py와 relationship_service.py로, 4단계의 동적 id를 guide/developer/project 같은 정규 종류로 환원한 뒤 그 쌍마다 호감도(−100~100)·분위기 라벨·최근 이벤트를 저장하고 한 번의 상호작용마다 최대 ±5씩만 움직여 관계가 서서히 변하게 만듭니다.",
+    "nodeIds": [
+      "file:backend/app/services/chat_service.py",
+      "file:backend/app/services/npc_brain_service.py",
+      "file:backend/app/relations.py",
+      "file:backend/app/services/relationship_service.py",
+      "file:backend/app/catalog.py"
+    ],
+    "languageLesson": "외부 LLM 호출은 항상 실패할 수 있는 I/O로 다뤄야 합니다. 이 저장소는 try/except로 감싼 뒤 결정적인 규칙 기반 경로로 폴백하는 패턴을 일관되게 쓰는데, 덕분에 OPENAI_API_KEY 없이도 전체 기능이 데모 가능합니다."
+  },
+  {
+    "order": 11,
+    "title": "프로젝트 전시 뷰어",
+    "description": "건물 안으로 들어가면 2단계의 viewMode가 project-interior로 바뀌고 ProjectViewer.tsx가 화면을 넘겨받습니다. 이 컴포넌트는 projectThemes.ts가 프로젝트 id별로 선언한 ProjectCategory(dashboard/realtime/platform/game)를 보고 4개의 카테고리 뷰어 중 하나로 디스패치하며, 그 위에 richContent의 SIGNATURE 맵이 프로젝트별 전용 인터랙티브 데모를 0단계 콘텐츠로 덧씌웁니다. 파일 수로는 가장 큰 레이어지만 구조는 '테마로 고르고, 시그니처로 덮는다'는 두 줄로 요약되며, 같은 ProjectViewer를 3D 실내 씬과 평면 ResumeMode가 그대로 재사용하므로 호출자별로 포크하지 마세요.",
+    "nodeIds": [
+      "file:src/components/ui/ProjectViewer.tsx",
+      "file:src/data/projectThemes.ts",
+      "file:src/components/ui/project-viewers/richContent/index.tsx",
+      "file:src/components/ui/project-viewers/atmosphere.ts",
+      "file:src/components/ui/InfoPanel.tsx"
+    ],
+    "languageLesson": "id를 컴포넌트에 매핑하는 레지스트리 객체(SIGNATURE 맵)는 긴 switch문보다 확장에 유리합니다. 새 프로젝트를 추가할 때 기존 분기를 건드리지 않고 항목 하나만 등록하면 되고, 매핑이 없으면 자연스럽게 기본 뷰어로 떨어집니다."
+  },
+  {
+    "order": 12,
+    "title": "테스트와 배포, 그리고 첫 변경",
+    "description": "이 저장소에는 JS/TS 테스트 러너가 없고 backend/tests의 pytest만 순수 로직(마을 상태 파생, NPC 정규화·관계)을 인메모리 SQLite로 검증하므로, 9단계의 규칙을 바꿀 때 안전망이 되는 곳이 정확히 여기입니다. Dockerfile은 node:20-alpine 위에 프론트엔드를 올려 3000 포트로 띄우는 단일 스테이지 구성이고, pages.yml 워크플로가 main push 때 npm ci → npm run build 후 GitHub Pages로 배포합니다. 이제 투어를 마무리하며 전형적인 변경을 그려 보세요: constants.ts에 건물을 하나 추가하면 NPC가 자동 파생되고(4단계), 백엔드에 조명 규칙을 더한 뒤(9단계) test_village_service에 케이스를 추가하면 됩니다.",
+    "nodeIds": [
+      "file:backend/tests/test_village_service.py",
+      "config:backend/pytest.ini",
+      "service:Dockerfile",
+      "pipeline:.github/workflows/pages.yml",
+      "config:package.json"
+    ],
+    "languageLesson": "GitHub Actions 워크플로는 on(트리거) · jobs(병렬 단위) · steps(순차 실행)로 구성되며, 여기서는 build 잡이 산출물을 Pages 아티팩트로 올리고 deploy 잡이 그것을 받아 배포하는 2단 구조를 씁니다. npm ci는 package-lock.json을 그대로 재현해 CI 빌드를 결정적으로 만들어 줍니다."
+  }
+]

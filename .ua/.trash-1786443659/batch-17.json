@@ -1,0 +1,395 @@
+{
+  "nodes": [
+    {
+      "id": "document:portfolio-specs/00-OVERVIEW.md",
+      "type": "document",
+      "name": "00-OVERVIEW.md",
+      "filePath": "portfolio-specs/00-OVERVIEW.md",
+      "summary": "portfolio-specs 폴더 전체의 사용 설명서로, 이 폴더가 코드가 아니라 프로젝트 방(Room) 구현용 '프롬프트 팩'임을 규정하고 10개 방 컨셉 대비표·전 문서 공통 규칙·구현 순서·미디어 확보 통합표(영상 10편 + 이미지 69장)·개인정보 체크리스트를 한곳에 모읍니다. 개별 스펙 문서를 읽기 전에 먼저 봐야 하는 진입점 문서입니다.",
+      "tags": ["documentation", "entry-point", "overview", "spec", "prompt-pack"],
+      "complexity": "moderate",
+      "languageNotes": "머리말에 '사실 정정' 절을 두어 이후 모든 내용보다 우선한다고 선언하는 방식 — 문서를 덮어쓰지 않고 정정 레이어를 얹는 패턴입니다."
+    },
+    {
+      "id": "document:portfolio-specs/01-mywave.md",
+      "type": "document",
+      "name": "01-mywave.md",
+      "filePath": "portfolio-specs/01-mywave.md",
+      "summary": "MyWave 자산 대시보드 방의 프롬프트 팩으로, '수면 위 부표' 메타포와 PAGE 00~10 전체 연출 프롬프트, 트러블슈팅 2건(카드/차트 숫자 불일치, 금액 표기 4종), 구현 메모를 담습니다. 문서 서두에서 단독 방으로는 폐기되고 02-mystock에 통합됨이 명시돼 있습니다.",
+      "tags": ["documentation", "spec", "project-mywave", "deprecated", "prompt-pack"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:portfolio-specs/02-mystock.md",
+      "type": "document",
+      "name": "02-mystock.md",
+      "filePath": "portfolio-specs/02-mystock.md",
+      "summary": "MyStock-Desk 방의 프롬프트 팩으로, '개장 전 데스크' 메타포 아래 이동평균 vs 선입선출 평단 계산, 'AI는 추천하지 않는다' 컴플라이언스 원칙, 외부 API 장애 대응 등을 PAGE 00~10 연출 프롬프트로 풀어냅니다. 01-mywave가 이 문서로 통합됐습니다.",
+      "tags": ["documentation", "spec", "project-mystock", "fintech", "prompt-pack"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:portfolio-specs/03-festflow.md",
+      "type": "document",
+      "name": "03-festflow.md",
+      "filePath": "portfolio-specs/03-festflow.md",
+      "summary": "FestFlow 축제 관제 시스템 방의 프롬프트 팩으로, '모니터 6대 관제 벽' 메타포와 함께 SSE 동작 원리·폴링 대비 비교, React Leaflet 부스 배치, JWT 역할 분리, 조용히 끊기는 연결 트러블슈팅을 PAGE 00~10으로 설계합니다.",
+      "tags": ["documentation", "spec", "project-festflow", "realtime", "prompt-pack"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:portfolio-specs/04-muscleup.md",
+      "type": "document",
+      "name": "04-muscleup.md",
+      "filePath": "portfolio-specs/04-muscleup.md",
+      "summary": "득근득근(MuscleUp) 방의 프롬프트 팩으로, '캐릭터 생성 · 장비 슬롯' 게임화 메타포 아래 JWT + Google OAuth 이중 로그인, Socket.IO 실시간 라운지, AI 인바디 분석, 출석 중복 기록 트러블슈팅을 PAGE 00~10 연출로 정리합니다.",
+      "tags": ["documentation", "spec", "project-muscleup", "gamification", "prompt-pack"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:portfolio-specs/05-aclub.md",
+      "type": "document",
+      "name": "05-aclub.md",
+      "filePath": "portfolio-specs/05-aclub.md",
+      "summary": "ACLUB 동아리 박람회 서비스 방의 프롬프트 팩으로, '포스터 월'이 필터에 따라 스스로 재배치되는 명장면 3개와 뒤로가기·스크롤 복원 트러블슈팅, 일반/관리자 권한 분기를 PAGE 00~10으로 설계합니다. 미디어 슬롯 12개로 10개 방 중 최다입니다.",
+      "tags": ["documentation", "spec", "project-aclub", "ui-design", "prompt-pack"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:portfolio-specs/06-ajouchong.md",
+      "type": "document",
+      "name": "06-ajouchong.md",
+      "filePath": "portfolio-specs/06-ajouchong.md",
+      "summary": "아주대 총학생회 웹 방의 프롬프트 팩으로, '불이 켜지는 게시판' 메타포와 Docker + Nginx 배포, 새로고침 404 및 배포 후 화면 미갱신 트러블슈팅, AuthContext 보호 라우트를 PAGE 00~10으로 다룹니다. 실서비스 운영 경험이 이 방의 핵심 축입니다.",
+      "tags": ["documentation", "spec", "project-ajouchong", "deployment", "prompt-pack"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:portfolio-specs/07-sign-language.md",
+      "type": "document",
+      "name": "07-sign-language.md",
+      "filePath": "portfolio-specs/07-sign-language.md",
+      "summary": "수어지구 방의 프롬프트 팩으로, '갤러리 벽' 메타포 아래 손 동작 데이터 플레이어, 수어 어순이 한국어와 다르다는 점, 반복 학습 루프, 프레임 끊김 트러블슈팅을 PAGE 00~10으로 설계합니다. '감수받지 못했다'는 한계를 명시하는 안전 규칙이 이 방에서 가장 중요한 항목입니다.",
+      "tags": ["documentation", "spec", "project-sign-language", "accessibility", "prompt-pack"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:portfolio-specs/08-ajou-adventure.md",
+      "type": "document",
+      "name": "08-ajou-adventure.md",
+      "filePath": "portfolio-specs/08-ajou-adventure.md",
+      "summary": "아주분투(Phaser 3 웹게임) 방의 프롬프트 팩으로, '아케이드 캐비닛 · 코인 투입' 메타포와 함께 관람객이 직접 플레이하는 게임 루프, 조작감 A/B 비교, 판정 박스 트러블슈팅, 자동 맵 생성 규칙, localStorage 최고 점수를 PAGE 00~10으로 정리합니다.",
+      "tags": ["documentation", "spec", "project-ajou-adventure", "game", "prompt-pack"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:portfolio-specs/09-darklab.md",
+      "type": "document",
+      "name": "09-darklab.md",
+      "filePath": "portfolio-specs/09-darklab.md",
+      "summary": "DarkLab(Unity 공포 게임) 방의 프롬프트 팩으로, '어둠 속 발견' 콜드 오픈부터 카메라를 3초간 뺏기는 명장면, Cinemachine 선택 근거, 제어권이 잠긴 채 남는 버그와 매 프레임 레이캐스트 트러블슈팅, ScriptableObject 리팩터링을 PAGE 00~10으로 설계합니다.",
+      "tags": ["documentation", "spec", "project-darklab", "game", "unity"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:portfolio-specs/10-tserof.md",
+      "type": "document",
+      "name": "10-tserof.md",
+      "filePath": "portfolio-specs/10-tserof.md",
+      "summary": "TSEROF(Steam 출시 플랫포머) 방의 프롬프트 팩으로, '스테이지 셀렉트 보드' 메타포와 직접 점프해 보는 인터랙션, 진행 상황 저장 위치 결정, 발판 끝 점프 씹힘·씬 파일 충돌 트러블슈팅, 이어하기 구현을 PAGE 00~10으로 정리합니다. 제어권 박탈 0회 대신 입력 캡처가 위험 지점입니다.",
+      "tags": ["documentation", "spec", "project-tserof", "game", "prompt-pack"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:portfolio-specs/_AUDIT.md",
+      "type": "document",
+      "name": "_AUDIT.md",
+      "filePath": "portfolio-specs/_AUDIT.md",
+      "summary": "실제 GitHub 저장소 코드를 근거로 3D 마을 데이터(projects.ts)와 specs 문서의 주장을 대조한 사실 검증표입니다. 10개 프로젝트의 저장소 확정 매핑, 트러블슈팅 20건 판정(검증됨/부분 불일치/사실과 다름), specs가 지어낸 정황을 표로 정리합니다.",
+      "tags": ["documentation", "audit", "fact-check", "spec", "quality"],
+      "complexity": "moderate",
+      "languageNotes": "판정 기호(✅⚠️❌❓)를 문서 상단에 정의하고 표 전체에서 일관되게 쓰는 방식으로, 근거 유무를 스캔만으로 구분할 수 있게 했습니다."
+    },
+    {
+      "id": "document:portfolio-specs/_IMPLEMENTATION.md",
+      "type": "document",
+      "name": "_IMPLEMENTATION.md",
+      "filePath": "portfolio-specs/_IMPLEMENTATION.md",
+      "summary": "Variant HTML 시안을 실제 마을 방(Room) React 코드로 옮기는 구현 가이드입니다. 새 방 하나에 필요한 파일 6개 + 배선 한 줄, 색 토큰을 전역 Tailwind에 넣지 말라는 금지 규칙, 바닐라 JS → React 변환 대응표, 실제로 겪은 함정 4개를 담습니다.",
+      "tags": ["documentation", "development", "implementation-guide", "react", "conventions"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:portfolio-specs/_STATUS.md",
+      "type": "document",
+      "name": "_STATUS.md",
+      "filePath": "portfolio-specs/_STATUS.md",
+      "summary": "세션을 이어서 작업하기 위한 진행 상태 문서로, '다음에 여기부터' 지점, 문서 10종의 완료 현황, 페이지 11장의 고정 역할, 아직 안 한 코드베이스 선행 작업, MyWave→MyStock 통합 결정을 기록합니다. 다음 세션 시작 프롬프트 예시까지 포함합니다.",
+      "tags": ["documentation", "project-status", "roadmap", "spec", "handoff"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:portfolio-specs/_UNKNOWNS.md",
+      "type": "document",
+      "name": "_UNKNOWNS.md",
+      "filePath": "portfolio-specs/_UNKNOWNS.md",
+      "summary": "문서 작성자가 스스로 답할 수 없어 프로젝트 당사자에게 확인해야 하는 항목 목록으로, 페이지 작성 자체가 막히는 A급부터 캡처하면 채워지는 C급까지 3단계로 우선순위를 나눕니다.",
+      "tags": ["documentation", "open-questions", "spec", "backlog", "triage"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:portfolio-specs/00-OVERVIEW.md",
+      "target": "file:src/data/projects.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/00-OVERVIEW.md",
+      "target": "file:src/data/projectThemes.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/00-OVERVIEW.md",
+      "target": "file:src/components/ui/project-viewers/richContent/index.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/00-OVERVIEW.md",
+      "target": "document:portfolio-specs/_STATUS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/00-OVERVIEW.md",
+      "target": "document:portfolio-specs/_AUDIT.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/00-OVERVIEW.md",
+      "target": "document:portfolio-specs/_UNKNOWNS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/00-OVERVIEW.md",
+      "target": "document:portfolio-specs/_IMPLEMENTATION.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/01-mywave.md",
+      "target": "file:src/components/ui/project-viewers/richContent/mywave.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/01-mywave.md",
+      "target": "file:src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/01-mywave.md",
+      "target": "document:portfolio-specs/02-mystock.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/02-mystock.md",
+      "target": "file:src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/02-mystock.md",
+      "target": "file:src/data/projects.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/03-festflow.md",
+      "target": "file:src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/03-festflow.md",
+      "target": "file:src/data/projects.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/04-muscleup.md",
+      "target": "file:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/04-muscleup.md",
+      "target": "file:src/data/projects.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/05-aclub.md",
+      "target": "file:src/components/ui/project-viewers/richContent/AClubDemo.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/05-aclub.md",
+      "target": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/06-ajouchong.md",
+      "target": "file:src/components/ui/project-viewers/richContent/AjouchongDemo.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/06-ajouchong.md",
+      "target": "file:src/data/projects.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/07-sign-language.md",
+      "target": "file:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/07-sign-language.md",
+      "target": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/08-ajou-adventure.md",
+      "target": "file:src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/08-ajou-adventure.md",
+      "target": "file:src/components/ui/project-viewers/GameProjectViewer.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/09-darklab.md",
+      "target": "file:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/09-darklab.md",
+      "target": "file:src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/10-tserof.md",
+      "target": "file:src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/10-tserof.md",
+      "target": "file:src/components/ui/project-viewers/GameProjectViewer.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/_AUDIT.md",
+      "target": "file:src/data/projects.ts",
+      "type": "validates",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:portfolio-specs/_AUDIT.md",
+      "target": "document:portfolio-specs/00-OVERVIEW.md",
+      "type": "validates",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:portfolio-specs/_AUDIT.md",
+      "target": "document:portfolio-specs/_STATUS.md",
+      "type": "validates",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:portfolio-specs/_IMPLEMENTATION.md",
+      "target": "file:src/components/ui/ProjectViewer.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/_IMPLEMENTATION.md",
+      "target": "file:src/data/projectThemes.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/_IMPLEMENTATION.md",
+      "target": "file:src/components/ui/project-viewers/richContent/index.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/_STATUS.md",
+      "target": "document:portfolio-specs/_UNKNOWNS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:portfolio-specs/_UNKNOWNS.md",
+      "target": "file:src/data/projects.ts",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

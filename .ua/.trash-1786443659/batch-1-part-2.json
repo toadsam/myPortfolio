@@ -1,0 +1,480 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+      "type": "file",
+      "name": "DarkLabReveal.tsx",
+      "filePath": "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+      "summary": "darklab 프로젝트의 시그니처 연출. 어둠 속에서 단서를 드러내는 호러 톤의 리빌 인터랙션을 상세 뷰어 0단계에 노출한다.",
+      "tags": ["component", "interactive-demo", "rich-content", "horror"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx:DarkLabReveal",
+      "type": "function",
+      "name": "DarkLabReveal",
+      "filePath": "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+      "lineRange": [9, 85],
+      "summary": "마우스/타이머에 반응해 가려진 영역을 밝히며 프로젝트 분위기를 전달하는 darklab 리빌 컴포넌트.",
+      "tags": ["component", "interactive-demo", "animation", "horror"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+      "type": "file",
+      "name": "FestFlowLiveDemo.tsx",
+      "filePath": "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+      "summary": "festflow 프로젝트의 시그니처 라이브 데모. 축제 혼잡도 실시간 흐름을 모의 데이터로 재현해 서비스 핵심 가치를 즉시 체감시킨다.",
+      "tags": ["component", "interactive-demo", "rich-content", "realtime", "simulation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx:FestFlowLiveDemo",
+      "type": "function",
+      "name": "FestFlowLiveDemo",
+      "filePath": "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+      "lineRange": [67, 303],
+      "summary": "타이머로 혼잡도 수치를 갱신하며 지도·게이지·알림을 함께 움직이는 festflow 라이브 시뮬레이션 컴포넌트.",
+      "tags": ["component", "interactive-demo", "realtime", "simulation", "state"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+      "type": "file",
+      "name": "MuscleUpDemo.tsx",
+      "filePath": "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+      "summary": "muscleup 프로젝트의 시그니처 데모. 운동 기록·루틴 추천 흐름을 축약 재현해 상세 뷰어 0단계에 노출한다.",
+      "tags": ["component", "interactive-demo", "rich-content", "project-detail"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx:MuscleUpDemo",
+      "type": "function",
+      "name": "MuscleUpDemo",
+      "filePath": "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+      "lineRange": [18, 163],
+      "summary": "세트/횟수 입력에 반응해 진척도와 추천 루틴을 갱신하는 muscleup 시그니처 데모 컴포넌트.",
+      "tags": ["component", "interactive-demo", "state", "rich-content"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+      "type": "file",
+      "name": "MyStockDemo.tsx",
+      "filePath": "src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+      "summary": "mystock 프로젝트의 시그니처 데모. 모의 시세 차트와 포트폴리오 변동을 애니메이션으로 보여주는 인터랙티브 미니 화면.",
+      "tags": ["component", "interactive-demo", "rich-content", "data-visualization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/MyStockDemo.tsx:MyStockDemo",
+      "type": "function",
+      "name": "MyStockDemo",
+      "filePath": "src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+      "lineRange": [30, 143],
+      "summary": "모의 시세 배열을 주기적으로 갱신하며 차트와 손익 표시를 함께 움직이는 mystock 데모 컴포넌트.",
+      "tags": ["component", "interactive-demo", "data-visualization", "simulation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+      "type": "file",
+      "name": "SignLanguageDemo.tsx",
+      "filePath": "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+      "summary": "수어 인식 프로젝트의 시그니처 데모. 손동작 프레임이 문자로 변환되는 인식 파이프라인을 시각적으로 재현한다.",
+      "tags": ["component", "interactive-demo", "rich-content", "ml-visualization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx:SignLanguageDemo",
+      "type": "function",
+      "name": "SignLanguageDemo",
+      "filePath": "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+      "lineRange": [24, 121],
+      "summary": "프레임 시퀀스를 순환시키며 예측 결과와 신뢰도를 갱신하는 수어 인식 데모 컴포넌트.",
+      "tags": ["component", "interactive-demo", "animation", "ml-visualization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+      "type": "file",
+      "name": "TserofDemo.tsx",
+      "filePath": "src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+      "summary": "tserof 프로젝트의 시그니처 데모. 프로젝트 핵심 인터랙션을 축약 재현해 상세 뷰어 0단계에 노출한다.",
+      "tags": ["component", "interactive-demo", "rich-content", "project-detail"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/TserofDemo.tsx:TserofDemo",
+      "type": "function",
+      "name": "TserofDemo",
+      "filePath": "src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+      "lineRange": [17, 120],
+      "summary": "선택/진행 상태에 따라 화면을 전환하며 서비스 흐름을 보여주는 tserof 시그니처 데모 컴포넌트.",
+      "tags": ["component", "interactive-demo", "state", "rich-content"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/richContent/data.ts",
+      "type": "file",
+      "name": "data.ts",
+      "filePath": "src/components/ui/project-viewers/richContent/data.ts",
+      "summary": "모든 프로젝트의 상세 리치 콘텐츠(섹션 문구, 코드 스니펫, 목업 스펙, 지표 등)를 프로젝트 id별로 담아 두는 대형 데이터 모듈. 뷰어와 원페이지가 공통으로 참조하는 단일 콘텐츠 소스다.",
+      "tags": ["data-model", "content", "rich-content", "configuration"],
+      "complexity": "complex",
+      "languageNotes": "약 2000줄의 순수 데이터 선언으로, 렌더링 로직 없이 shared.tsx의 표현 컴포넌트가 소비할 구조만 정의한다."
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/richContent/index.tsx",
+      "type": "file",
+      "name": "index.tsx",
+      "filePath": "src/components/ui/project-viewers/richContent/index.tsx",
+      "summary": "프로젝트 id를 전용 시그니처 데모 컴포넌트에 연결하는 SIGNATURE/RICH_RENDERERS 매핑 배럴. 카테고리 뷰어들이 0단계 콘텐츠를 고를 때 참조한다.",
+      "tags": ["barrel", "entry-point", "registry", "rich-content"],
+      "complexity": "simple",
+      "languageNotes": "새 프로젝트 데모를 추가할 때 이 매핑에만 등록하면 4종 카테고리 뷰어 모두에서 자동으로 잡힌다."
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/richContent/mywave.tsx",
+      "type": "file",
+      "name": "mywave.tsx",
+      "filePath": "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "summary": "MyWave 프로젝트만을 위한 대형 전용 리치 섹션. 코드 블록, 목업 화면, 아키텍처 다이어그램, 의사결정 표, 비교 차트 등을 자체 구현해 심층 케이스 스터디처럼 보여준다.",
+      "tags": ["component", "rich-content", "case-study", "data-visualization"],
+      "complexity": "complex",
+      "languageNotes": "shared.tsx와 이름이 겹치는 표현 컴포넌트를 MyWave 전용으로 다시 구현해 두어, 공용 컴포넌트를 건드리지 않고 이 프로젝트만 커스터마이즈할 수 있다."
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/mywave.tsx:MyWaveRichSection",
+      "type": "function",
+      "name": "MyWaveRichSection",
+      "filePath": "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "lineRange": [935, 1520],
+      "summary": "MyWave 전용 리치 콘텐츠 전체를 단계별로 조립해 렌더하는 최상위 섹션 컴포넌트.",
+      "tags": ["component", "rich-content", "case-study", "entry-point"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/mywave.tsx:MockScreen",
+      "type": "function",
+      "name": "MockScreen",
+      "filePath": "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "lineRange": [194, 379],
+      "summary": "MyWave 앱 화면을 실제 UI처럼 흉내 내어 그리는 목업 스크린 컴포넌트.",
+      "tags": ["component", "mockup", "rich-content", "presentation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/mywave.tsx:ArchDiagram",
+      "type": "function",
+      "name": "ArchDiagram",
+      "filePath": "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "lineRange": [383, 437],
+      "summary": "MyWave 시스템 구성 요소와 연결을 도식으로 그리는 아키텍처 다이어그램 컴포넌트.",
+      "tags": ["component", "diagram", "architecture", "presentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/mywave.tsx:DecisionTable",
+      "type": "function",
+      "name": "DecisionTable",
+      "filePath": "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "lineRange": [441, 510],
+      "summary": "기술 선택지와 채택 사유를 비교 표 형태로 정리해 보여주는 의사결정 테이블 컴포넌트.",
+      "tags": ["component", "table", "rich-content", "presentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/mywave.tsx:ChallengeCard",
+      "type": "function",
+      "name": "ChallengeCard",
+      "filePath": "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "lineRange": [514, 577],
+      "summary": "겪은 문제와 해결 방법을 한 쌍으로 묶어 카드로 제시하는 컴포넌트.",
+      "tags": ["component", "card", "rich-content", "presentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/mywave.tsx:CompareBars",
+      "type": "function",
+      "name": "CompareBars",
+      "filePath": "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "lineRange": [816, 885],
+      "summary": "개선 전후 수치를 막대 길이로 대조해 보여주는 비교 차트 컴포넌트.",
+      "tags": ["component", "data-visualization", "metrics", "presentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/mywave.tsx:ProcessTimeline",
+      "type": "function",
+      "name": "ProcessTimeline",
+      "filePath": "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "lineRange": [889, 929],
+      "summary": "프로젝트 진행 과정을 시간 순 단계로 늘어놓는 타임라인 컴포넌트.",
+      "tags": ["component", "timeline", "rich-content", "presentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/mywave.tsx:DemoCTA",
+      "type": "function",
+      "name": "DemoCTA",
+      "filePath": "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "lineRange": [700, 765],
+      "summary": "실제 서비스/저장소로 이동시키는 강조형 콜투액션 배너 컴포넌트.",
+      "tags": ["component", "cta", "rich-content", "presentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+      "type": "file",
+      "name": "mywaveBrief.ts",
+      "filePath": "src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+      "summary": "MyWave 프로젝트의 요약본 데이터. 원페이지 뷰가 대형 mywave.tsx 대신 참조하는 축약 콘텐츠 정의다.",
+      "tags": ["data-model", "content", "rich-content", "one-pager"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/richContent/shared.tsx",
+      "type": "file",
+      "name": "shared.tsx",
+      "filePath": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "summary": "리치 콘텐츠 공용 표현 컴포넌트 라이브러리. 코드 블록·목업 화면·이미지 슬롯·카운트업·디코드 텍스트·데모 프레임 등을 제공하고 RichSection이 data.ts 항목을 실제 화면으로 조립한다.",
+      "tags": ["component-library", "rich-content", "presentation", "utility", "barrel"],
+      "complexity": "complex",
+      "languageNotes": "데이터(data.ts)와 표현(shared.tsx)을 분리해, 새 프로젝트 콘텐츠는 데이터만 추가하면 렌더링이 따라오도록 설계돼 있다."
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/shared.tsx:RichSection",
+      "type": "function",
+      "name": "RichSection",
+      "filePath": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "lineRange": [763, 966],
+      "summary": "RICH_DATA의 섹션 정의를 종류별로 해석해 해당 표현 컴포넌트로 렌더링하는 리치 콘텐츠 디스패처.",
+      "tags": ["component", "dispatcher", "rich-content", "layout"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/shared.tsx:CodeLine",
+      "type": "function",
+      "name": "CodeLine",
+      "filePath": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "lineRange": [83, 109],
+      "summary": "코드 한 줄을 토큰 색상과 줄 번호와 함께 렌더링하는 컴포넌트.",
+      "tags": ["component", "code-display", "presentation", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/shared.tsx:CodeBlock",
+      "type": "function",
+      "name": "CodeBlock",
+      "filePath": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "lineRange": [111, 144],
+      "summary": "여러 CodeLine을 창 프레임에 담아 타이핑 연출과 함께 보여주는 코드 블록 컴포넌트.",
+      "tags": ["component", "code-display", "animation", "presentation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/shared.tsx:MockScreen",
+      "type": "function",
+      "name": "MockScreen",
+      "filePath": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "lineRange": [167, 258],
+      "summary": "데이터 스펙만으로 앱/웹 화면 목업을 생성해 그리는 범용 목업 스크린 컴포넌트.",
+      "tags": ["component", "mockup", "rich-content", "presentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/shared.tsx:ImageSlot",
+      "type": "function",
+      "name": "ImageSlot",
+      "filePath": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "lineRange": [467, 554],
+      "summary": "실제 스크린샷이 있으면 표시하고 없으면 플레이스홀더로 대체하는 이미지 슬롯 컴포넌트.",
+      "tags": ["component", "image", "fallback", "presentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/shared.tsx:CountUp",
+      "type": "function",
+      "name": "CountUp",
+      "filePath": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "lineRange": [558, 577],
+      "summary": "목표 수치까지 프레임 단위로 증가시키며 표시하는 공용 숫자 카운터 컴포넌트.",
+      "tags": ["component", "animation", "metrics", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/shared.tsx:DecodeText",
+      "type": "function",
+      "name": "DecodeText",
+      "filePath": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "lineRange": [585, 623],
+      "summary": "무작위 문자에서 목표 문자열로 수렴하는 디코딩 텍스트 연출 컴포넌트.",
+      "tags": ["component", "animation", "text-effect", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/shared.tsx:RevealText",
+      "type": "function",
+      "name": "RevealText",
+      "filePath": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "lineRange": [628, 681],
+      "summary": "스크롤 진입 시 문장을 단어 단위로 순차 노출하는 텍스트 리빌 컴포넌트.",
+      "tags": ["component", "animation", "text-effect", "scroll"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/shared.tsx:Magnetic",
+      "type": "function",
+      "name": "Magnetic",
+      "filePath": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "lineRange": [685, 711],
+      "summary": "마우스 위치를 따라 자식 요소를 살짝 끌어당기는 자석 효과 래퍼 컴포넌트.",
+      "tags": ["component", "animation", "interaction", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/ui/project-viewers/richContent/shared.tsx:DemoFrame",
+      "type": "function",
+      "name": "DemoFrame",
+      "filePath": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "lineRange": [715, 757],
+      "summary": "시그니처 데모를 감싸 라벨과 테두리를 붙여 주는 공용 데모 프레임 컴포넌트.",
+      "tags": ["component", "layout", "rich-content", "presentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/sound.ts",
+      "type": "file",
+      "name": "sound.ts",
+      "filePath": "src/components/ui/project-viewers/sound.ts",
+      "summary": "오디오 파일 없이 WebAudio 오실레이터로 앰비언트 패드와 효과음을 합성하는 사운드 싱글턴 모듈. variant/mood에 따라 음색을 바꾼다.",
+      "tags": ["audio", "singleton", "service", "webaudio"],
+      "complexity": "moderate",
+      "languageNotes": "에셋 파일 없이 런타임 합성으로만 소리를 내므로 번들 크기 부담 없이 프로젝트별 분위기를 바꿀 수 있다."
+    },
+    {
+      "id": "class:src/components/ui/project-viewers/sound.ts:SoundManager",
+      "type": "class",
+      "name": "SoundManager",
+      "filePath": "src/components/ui/project-viewers/sound.ts",
+      "lineRange": [15, 147],
+      "summary": "AudioContext를 지연 생성해 앰비언트 패드 재생/정지, 활성화 토글, mood 전환, 단발 효과음 재생을 담당하는 사운드 관리 클래스. 모듈 하단에서 sound 싱글턴으로 노출된다.",
+      "tags": ["singleton", "audio", "service", "webaudio", "state"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/data/projectThemes.ts",
+      "type": "file",
+      "name": "projectThemes.ts",
+      "filePath": "src/data/projectThemes.ts",
+      "summary": "프로젝트 id별 테마(카테고리·색상·mood 등)를 선언하고 기본 테마와 조회 함수를 제공하는 설정 모듈. 뷰어 디스패치, 분위기 결정, 사운드 mood의 기준점이 된다.",
+      "tags": ["data-model", "configuration", "theme", "project-detail"],
+      "complexity": "moderate",
+      "languageNotes": "ProjectCategory가 여기서 정해지고, 이 값 하나로 ProjectViewer가 어떤 카테고리 뷰어를 띄울지 결정된다."
+    },
+    {
+      "id": "function:src/data/projectThemes.ts:getProjectTheme",
+      "type": "function",
+      "name": "getProjectTheme",
+      "filePath": "src/data/projectThemes.ts",
+      "lineRange": [110, 112],
+      "summary": "프로젝트 id로 테마를 조회하고 없으면 DEFAULT_THEME을 반환하는 안전 조회 함수.",
+      "tags": ["utility", "lookup", "theme", "pure-function"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    { "source": "file:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx", "target": "file:src/components/ui/project-viewers/richContent/shared.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx", "target": "file:src/data/projectThemes.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx", "target": "function:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx:DarkLabReveal", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx", "target": "function:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx:DarkLabReveal", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx", "target": "file:src/data/projectThemes.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx", "target": "function:src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx:FestFlowLiveDemo", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx", "target": "function:src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx:FestFlowLiveDemo", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx", "target": "file:src/components/ui/project-viewers/richContent/shared.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx", "target": "file:src/data/projectThemes.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx", "target": "function:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx:MuscleUpDemo", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx", "target": "function:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx:MuscleUpDemo", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:src/components/ui/project-viewers/richContent/MyStockDemo.tsx", "target": "file:src/components/ui/project-viewers/richContent/shared.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/MyStockDemo.tsx", "target": "file:src/data/projectThemes.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/MyStockDemo.tsx", "target": "function:src/components/ui/project-viewers/richContent/MyStockDemo.tsx:MyStockDemo", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/MyStockDemo.tsx", "target": "function:src/components/ui/project-viewers/richContent/MyStockDemo.tsx:MyStockDemo", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx", "target": "file:src/components/ui/project-viewers/richContent/shared.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx", "target": "file:src/data/projectThemes.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx", "target": "function:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx:SignLanguageDemo", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx", "target": "function:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx:SignLanguageDemo", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:src/components/ui/project-viewers/richContent/TserofDemo.tsx", "target": "file:src/components/ui/project-viewers/richContent/shared.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/TserofDemo.tsx", "target": "file:src/data/projectThemes.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/TserofDemo.tsx", "target": "function:src/components/ui/project-viewers/richContent/TserofDemo.tsx:TserofDemo", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/TserofDemo.tsx", "target": "function:src/components/ui/project-viewers/richContent/TserofDemo.tsx:TserofDemo", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:src/components/ui/project-viewers/richContent/data.ts", "target": "file:src/components/ui/project-viewers/richContent/shared.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/AClubDemo.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/AjouchongDemo.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/MyStockDemo.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/TserofDemo.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/data.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/components/ui/project-viewers/richContent/shared.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/data/projectThemes.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/index.tsx", "target": "file:src/types/portfolio.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+
+    { "source": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "target": "file:src/data/projectThemes.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "target": "file:src/types/portfolio.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "target": "function:src/components/ui/project-viewers/richContent/mywave.tsx:MyWaveRichSection", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "target": "function:src/components/ui/project-viewers/richContent/mywave.tsx:MockScreen", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "target": "function:src/components/ui/project-viewers/richContent/mywave.tsx:ArchDiagram", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "target": "function:src/components/ui/project-viewers/richContent/mywave.tsx:DecisionTable", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "target": "function:src/components/ui/project-viewers/richContent/mywave.tsx:ChallengeCard", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "target": "function:src/components/ui/project-viewers/richContent/mywave.tsx:CompareBars", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "target": "function:src/components/ui/project-viewers/richContent/mywave.tsx:ProcessTimeline", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "target": "function:src/components/ui/project-viewers/richContent/mywave.tsx:DemoCTA", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "target": "function:src/components/ui/project-viewers/richContent/mywave.tsx:MyWaveRichSection", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:src/components/ui/project-viewers/richContent/mywaveBrief.ts", "target": "file:src/components/ui/project-viewers/richContent/shared.tsx", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/mywaveBrief.ts", "target": "file:src/components/ui/project-viewers/richContent/mywave.tsx", "type": "related", "direction": "forward", "weight": 0.5 },
+
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "file:src/data/projectThemes.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "file:src/types/portfolio.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:RichSection", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:CodeLine", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:CodeBlock", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:MockScreen", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:ImageSlot", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:CountUp", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:DecodeText", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:RevealText", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:Magnetic", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:DemoFrame", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:RichSection", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:CodeLine", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:CodeBlock", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:MockScreen", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:ImageSlot", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:CountUp", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:DecodeText", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:RevealText", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:Magnetic", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "file:src/components/ui/project-viewers/richContent/shared.tsx", "target": "function:src/components/ui/project-viewers/richContent/shared.tsx:DemoFrame", "type": "exports", "direction": "forward", "weight": 0.8 },
+    { "source": "function:src/components/ui/project-viewers/richContent/shared.tsx:RichSection", "target": "file:src/components/ui/project-viewers/richContent/data.ts", "type": "depends_on", "direction": "forward", "weight": 0.6 },
+
+    { "source": "file:src/components/ui/project-viewers/sound.ts", "target": "file:src/components/ui/project-viewers/atmosphere.ts", "type": "imports", "direction": "forward", "weight": 0.7 },
+    { "source": "file:src/components/ui/project-viewers/sound.ts", "target": "class:src/components/ui/project-viewers/sound.ts:SoundManager", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/components/ui/project-viewers/sound.ts", "target": "class:src/components/ui/project-viewers/sound.ts:SoundManager", "type": "exports", "direction": "forward", "weight": 0.8 },
+
+    { "source": "file:src/data/projectThemes.ts", "target": "function:src/data/projectThemes.ts:getProjectTheme", "type": "contains", "direction": "forward", "weight": 1.0 },
+    { "source": "file:src/data/projectThemes.ts", "target": "function:src/data/projectThemes.ts:getProjectTheme", "type": "exports", "direction": "forward", "weight": 0.8 }
+  ]
+}

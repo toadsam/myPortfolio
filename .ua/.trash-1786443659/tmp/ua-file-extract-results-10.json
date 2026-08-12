@@ -1,0 +1,1696 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 3,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 3,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "scripts/generate-decor-layout.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 1727,
+      "nonEmptyLines": 1612,
+      "functions": [
+        {
+          "name": "mulberry32",
+          "startLine": 163,
+          "endLine": 170,
+          "params": [
+            "seed"
+          ]
+        },
+        {
+          "name": "hash2",
+          "startLine": 175,
+          "endLine": 179,
+          "params": [
+            "i",
+            "j"
+          ]
+        },
+        {
+          "name": "smooth",
+          "startLine": 180,
+          "endLine": 180,
+          "params": [
+            "t"
+          ]
+        },
+        {
+          "name": "noise2",
+          "startLine": 181,
+          "endLine": 186,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "convexHull",
+          "startLine": 191,
+          "endLine": 204,
+          "params": [
+            "points"
+          ]
+        },
+        {
+          "name": "inPolygon",
+          "startLine": 207,
+          "endLine": 214,
+          "params": [
+            "poly",
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "polygonDistance",
+          "startLine": 217,
+          "endLine": 227,
+          "params": [
+            "poly",
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "round3",
+          "startLine": 229,
+          "endLine": 229,
+          "params": [
+            "v"
+          ]
+        },
+        {
+          "name": "scaleOf",
+          "startLine": 230,
+          "endLine": 230,
+          "params": [
+            "kind"
+          ]
+        },
+        {
+          "name": "liftOf",
+          "startLine": 235,
+          "endLine": 235,
+          "params": [
+            "kind"
+          ]
+        },
+        {
+          "name": "faceTo",
+          "startLine": 238,
+          "endLine": 238,
+          "params": [
+            "dx",
+            "dz"
+          ]
+        },
+        {
+          "name": "onRoad",
+          "startLine": 292,
+          "endLine": 293,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "onDisc",
+          "startLine": 294,
+          "endLine": 296,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "onBuilding",
+          "startLine": 297,
+          "endLine": 298,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "free",
+          "startLine": 303,
+          "endLine": 303,
+          "params": [
+            "x",
+            "z",
+            "gap"
+          ]
+        },
+        {
+          "name": "onWall",
+          "startLine": 312,
+          "endLine": 318,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "inWalkZone",
+          "startLine": 326,
+          "endLine": 326,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "kindFor",
+          "startLine": 347,
+          "endLine": 362,
+          "params": [
+            "kind",
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "place",
+          "startLine": 366,
+          "endLine": 378,
+          "params": [
+            "id",
+            "rawKind",
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "findSpot",
+          "startLine": 381,
+          "endLine": 398,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "tryPlace",
+          "startLine": 401,
+          "endLine": 408,
+          "params": [
+            "id",
+            "kind",
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "clearance",
+          "startLine": 912,
+          "endLine": 931,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "nearLandmark",
+          "startLine": 1184,
+          "endLine": 1184,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "trianglesOf",
+          "startLine": 1659,
+          "endLine": 1675,
+          "params": [
+            "glb"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 166
+        },
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 167
+        },
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 176
+        },
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 176
+        },
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 177
+        },
+        {
+          "caller": "noise2",
+          "callee": "Math.floor",
+          "lineNumber": 182
+        },
+        {
+          "caller": "noise2",
+          "callee": "Math.floor",
+          "lineNumber": 182
+        },
+        {
+          "caller": "noise2",
+          "callee": "smooth",
+          "lineNumber": 183
+        },
+        {
+          "caller": "noise2",
+          "callee": "smooth",
+          "lineNumber": 183
+        },
+        {
+          "caller": "noise2",
+          "callee": "hash2",
+          "lineNumber": 184
+        },
+        {
+          "caller": "noise2",
+          "callee": "hash2",
+          "lineNumber": 184
+        },
+        {
+          "caller": "noise2",
+          "callee": "hash2",
+          "lineNumber": 184
+        },
+        {
+          "caller": "noise2",
+          "callee": "hash2",
+          "lineNumber": 184
+        },
+        {
+          "caller": "convexHull",
+          "callee": "[...points].sort",
+          "lineNumber": 192
+        },
+        {
+          "caller": "half",
+          "callee": "cross",
+          "lineNumber": 197
+        },
+        {
+          "caller": "half",
+          "callee": "out.pop",
+          "lineNumber": 197
+        },
+        {
+          "caller": "half",
+          "callee": "out.push",
+          "lineNumber": 198
+        },
+        {
+          "caller": "half",
+          "callee": "out.pop",
+          "lineNumber": 200
+        },
+        {
+          "caller": "convexHull",
+          "callee": "half",
+          "lineNumber": 203
+        },
+        {
+          "caller": "convexHull",
+          "callee": "half",
+          "lineNumber": 203
+        },
+        {
+          "caller": "convexHull",
+          "callee": "pts.reverse",
+          "lineNumber": 203
+        },
+        {
+          "caller": "polygonDistance",
+          "callee": "Math.max",
+          "lineNumber": 223
+        },
+        {
+          "caller": "polygonDistance",
+          "callee": "Math.min",
+          "lineNumber": 223
+        },
+        {
+          "caller": "polygonDistance",
+          "callee": "Math.min",
+          "lineNumber": 224
+        },
+        {
+          "caller": "polygonDistance",
+          "callee": "Math.hypot",
+          "lineNumber": 224
+        },
+        {
+          "caller": "polygonDistance",
+          "callee": "inPolygon",
+          "lineNumber": 226
+        },
+        {
+          "caller": "round3",
+          "callee": "Math.round",
+          "lineNumber": 229
+        },
+        {
+          "caller": "scaleOf",
+          "callee": "round3",
+          "lineNumber": 230
+        },
+        {
+          "caller": "liftOf",
+          "callee": "round3",
+          "lineNumber": 235
+        },
+        {
+          "caller": "liftOf",
+          "callee": "scaleOf",
+          "lineNumber": 235
+        },
+        {
+          "caller": "faceTo",
+          "callee": "round3",
+          "lineNumber": 238
+        },
+        {
+          "caller": "faceTo",
+          "callee": "Math.atan2",
+          "lineNumber": 238
+        },
+        {
+          "caller": "onRoad",
+          "callee": "roads.some",
+          "lineNumber": 293
+        },
+        {
+          "caller": "onRoad",
+          "callee": "Math.abs",
+          "lineNumber": 293
+        },
+        {
+          "caller": "onRoad",
+          "callee": "Math.abs",
+          "lineNumber": 293
+        },
+        {
+          "caller": "onDisc",
+          "callee": "discs.some",
+          "lineNumber": 295
+        },
+        {
+          "caller": "onDisc",
+          "callee": "Math.hypot",
+          "lineNumber": 295
+        },
+        {
+          "caller": "onDisc",
+          "callee": "Math.hypot",
+          "lineNumber": 296
+        },
+        {
+          "caller": "onBuilding",
+          "callee": "buildings.some",
+          "lineNumber": 298
+        },
+        {
+          "caller": "onBuilding",
+          "callee": "Math.abs",
+          "lineNumber": 298
+        },
+        {
+          "caller": "onBuilding",
+          "callee": "Math.abs",
+          "lineNumber": 298
+        },
+        {
+          "caller": "free",
+          "callee": "taken.some",
+          "lineNumber": 303
+        },
+        {
+          "caller": "free",
+          "callee": "Math.hypot",
+          "lineNumber": 303
+        },
+        {
+          "caller": "onWall",
+          "callee": "walls.some",
+          "lineNumber": 313
+        },
+        {
+          "caller": "onWall",
+          "callee": "Math.abs",
+          "lineNumber": 315
+        },
+        {
+          "caller": "onWall",
+          "callee": "Math.abs",
+          "lineNumber": 316
+        },
+        {
+          "caller": "inWalkZone",
+          "callee": "Math.abs",
+          "lineNumber": 326
+        },
+        {
+          "caller": "kindFor",
+          "callee": "inWalkZone",
+          "lineNumber": 348
+        },
+        {
+          "caller": "kindFor",
+          "callee": "rand",
+          "lineNumber": 353
+        },
+        {
+          "caller": "kindFor",
+          "callee": "Math.floor",
+          "lineNumber": 355
+        },
+        {
+          "caller": "kindFor",
+          "callee": "rand",
+          "lineNumber": 355
+        },
+        {
+          "caller": "place",
+          "callee": "kindFor",
+          "lineNumber": 367
+        },
+        {
+          "caller": "place",
+          "callee": "props.push",
+          "lineNumber": 369
+        },
+        {
+          "caller": "place",
+          "callee": "round3",
+          "lineNumber": 372
+        },
+        {
+          "caller": "place",
+          "callee": "round3",
+          "lineNumber": 372
+        },
+        {
+          "caller": "place",
+          "callee": "liftOf",
+          "lineNumber": 372
+        },
+        {
+          "caller": "place",
+          "callee": "round3",
+          "lineNumber": 372
+        },
+        {
+          "caller": "place",
+          "callee": "round3",
+          "lineNumber": 374
+        },
+        {
+          "caller": "place",
+          "callee": "scaleOf",
+          "lineNumber": 374
+        },
+        {
+          "caller": "place",
+          "callee": "taken.push",
+          "lineNumber": 376
+        },
+        {
+          "caller": "findSpot",
+          "callee": "Math.cos",
+          "lineNumber": 387
+        },
+        {
+          "caller": "findSpot",
+          "callee": "Math.sin",
+          "lineNumber": 388
+        },
+        {
+          "caller": "findSpot",
+          "callee": "onRoad",
+          "lineNumber": 389
+        },
+        {
+          "caller": "findSpot",
+          "callee": "onDisc",
+          "lineNumber": 390
+        },
+        {
+          "caller": "findSpot",
+          "callee": "onBuilding",
+          "lineNumber": 391
+        },
+        {
+          "caller": "findSpot",
+          "callee": "onWall",
+          "lineNumber": 392
+        },
+        {
+          "caller": "findSpot",
+          "callee": "free",
+          "lineNumber": 393
+        },
+        {
+          "caller": "tryPlace",
+          "callee": "findSpot",
+          "lineNumber": 402
+        },
+        {
+          "caller": "tryPlace",
+          "callee": "skipped.push",
+          "lineNumber": 404
+        },
+        {
+          "caller": "tryPlace",
+          "callee": "place",
+          "lineNumber": 407
+        },
+        {
+          "caller": "onPlateau",
+          "callee": "terr.blocks.some",
+          "lineNumber": 672
+        },
+        {
+          "caller": "isRoad",
+          "callee": "roads.some",
+          "lineNumber": 798
+        },
+        {
+          "caller": "isRoad",
+          "callee": "Math.abs",
+          "lineNumber": 798
+        },
+        {
+          "caller": "isRoad",
+          "callee": "Math.abs",
+          "lineNumber": 798
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.min",
+          "lineNumber": 914
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.hypot",
+          "lineNumber": 914
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.max",
+          "lineNumber": 916
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.abs",
+          "lineNumber": 916
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.max",
+          "lineNumber": 917
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.abs",
+          "lineNumber": 917
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.min",
+          "lineNumber": 918
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.hypot",
+          "lineNumber": 918
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.min",
+          "lineNumber": 920
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.hypot",
+          "lineNumber": 920
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.min",
+          "lineNumber": 921
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.hypot",
+          "lineNumber": 921
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.min",
+          "lineNumber": 924
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.hypot",
+          "lineNumber": 924
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.max",
+          "lineNumber": 925
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.abs",
+          "lineNumber": 925
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.max",
+          "lineNumber": 926
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.abs",
+          "lineNumber": 926
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.min",
+          "lineNumber": 929
+        },
+        {
+          "caller": "clearance",
+          "callee": "Math.hypot",
+          "lineNumber": 929
+        },
+        {
+          "caller": "nearLandmark",
+          "callee": "landmarks.some",
+          "lineNumber": 1184
+        },
+        {
+          "caller": "nearLandmark",
+          "callee": "Math.hypot",
+          "lineNumber": 1184
+        },
+        {
+          "caller": "distRoad",
+          "callee": "Math.min",
+          "lineNumber": 1464
+        },
+        {
+          "caller": "distRoad",
+          "callee": "Math.hypot",
+          "lineNumber": 1464
+        },
+        {
+          "caller": "distBuilding",
+          "callee": "Math.max",
+          "lineNumber": 1470
+        },
+        {
+          "caller": "distBuilding",
+          "callee": "Math.abs",
+          "lineNumber": 1470
+        },
+        {
+          "caller": "distBuilding",
+          "callee": "Math.max",
+          "lineNumber": 1471
+        },
+        {
+          "caller": "distBuilding",
+          "callee": "Math.abs",
+          "lineNumber": 1471
+        },
+        {
+          "caller": "distBuilding",
+          "callee": "Math.min",
+          "lineNumber": 1472
+        },
+        {
+          "caller": "distBuilding",
+          "callee": "Math.hypot",
+          "lineNumber": 1472
+        },
+        {
+          "caller": "distDisc",
+          "callee": "Math.hypot",
+          "lineNumber": 1477
+        },
+        {
+          "caller": "distDisc",
+          "callee": "Math.min",
+          "lineNumber": 1478
+        },
+        {
+          "caller": "distDisc",
+          "callee": "Math.hypot",
+          "lineNumber": 1478
+        },
+        {
+          "caller": "openness",
+          "callee": "Math.min",
+          "lineNumber": 1481
+        },
+        {
+          "caller": "openness",
+          "callee": "distRoad",
+          "lineNumber": 1481
+        },
+        {
+          "caller": "openness",
+          "callee": "distBuilding",
+          "lineNumber": 1481
+        },
+        {
+          "caller": "openness",
+          "callee": "distDisc",
+          "lineNumber": 1481
+        },
+        {
+          "caller": "inTerrace",
+          "callee": "terraceBlocks.some",
+          "lineNumber": 1507
+        },
+        {
+          "caller": "key",
+          "callee": "Math.round",
+          "lineNumber": 1620
+        },
+        {
+          "caller": "key",
+          "callee": "Math.round",
+          "lineNumber": 1620
+        },
+        {
+          "caller": "has",
+          "callee": "roadAt.has",
+          "lineNumber": 1622
+        },
+        {
+          "caller": "has",
+          "callee": "key",
+          "lineNumber": 1622
+        },
+        {
+          "caller": "onAxis",
+          "callee": "Math.abs",
+          "lineNumber": 1624
+        },
+        {
+          "caller": "trianglesOf",
+          "callee": "existsSync",
+          "lineNumber": 1661
+        },
+        {
+          "caller": "trianglesOf",
+          "callee": "readFileSync",
+          "lineNumber": 1662
+        },
+        {
+          "caller": "trianglesOf",
+          "callee": "buf.readUInt32LE",
+          "lineNumber": 1665
+        },
+        {
+          "caller": "trianglesOf",
+          "callee": "buf.readUInt32LE",
+          "lineNumber": 1666
+        },
+        {
+          "caller": "trianglesOf",
+          "callee": "JSON.parse",
+          "lineNumber": 1666
+        },
+        {
+          "caller": "trianglesOf",
+          "callee": "buf.slice(off + 8, off + 8 + len).toString",
+          "lineNumber": 1666
+        },
+        {
+          "caller": "trianglesOf",
+          "callee": "buf.slice",
+          "lineNumber": 1666
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 24,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/generate-ground-layout.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 977,
+      "nonEmptyLines": 912,
+      "functions": [
+        {
+          "name": "inV2",
+          "startLine": 46,
+          "endLine": 47,
+          "params": [
+            "i",
+            "j"
+          ]
+        },
+        {
+          "name": "key",
+          "startLine": 164,
+          "endLine": 164,
+          "params": [
+            "i",
+            "j"
+          ]
+        },
+        {
+          "name": "parse",
+          "startLine": 165,
+          "endLine": 165,
+          "params": []
+        },
+        {
+          "name": "worldX",
+          "startLine": 166,
+          "endLine": 166,
+          "params": []
+        },
+        {
+          "name": "worldZ",
+          "startLine": 167,
+          "endLine": 167,
+          "params": []
+        },
+        {
+          "name": "inBounds",
+          "startLine": 193,
+          "endLine": 193,
+          "params": [
+            "i",
+            "j"
+          ]
+        },
+        {
+          "name": "addSegment",
+          "startLine": 341,
+          "endLine": 354,
+          "params": [
+            "i0",
+            "j0",
+            "i1",
+            "j1"
+          ]
+        },
+        {
+          "name": "connect",
+          "startLine": 367,
+          "endLine": 422,
+          "params": [
+            "building"
+          ]
+        },
+        {
+          "name": "touchesDisc",
+          "startLine": 506,
+          "endLine": 510,
+          "params": [
+            "i",
+            "j"
+          ]
+        },
+        {
+          "name": "pick",
+          "startLine": 536,
+          "endLine": 556,
+          "params": [
+            "i",
+            "j"
+          ]
+        },
+        {
+          "name": "place",
+          "startLine": 559,
+          "endLine": 566,
+          "params": [
+            "chosen",
+            "set"
+          ]
+        },
+        {
+          "name": "mulberry32",
+          "startLine": 579,
+          "endLine": 586,
+          "params": [
+            "seed"
+          ]
+        },
+        {
+          "name": "nearRoad",
+          "startLine": 610,
+          "endLine": 611,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "onDisc",
+          "startLine": 612,
+          "endLine": 613,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "plantable",
+          "startLine": 616,
+          "endLine": 622,
+          "params": [
+            "x",
+            "z"
+          ]
+        },
+        {
+          "name": "round3",
+          "startLine": 669,
+          "endLine": 669,
+          "params": []
+        },
+        {
+          "name": "bump",
+          "startLine": 672,
+          "endLine": 675,
+          "params": [
+            "k"
+          ]
+        },
+        {
+          "name": "bySet",
+          "startLine": 949,
+          "endLine": 953,
+          "params": []
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "parse",
+          "callee": "k.split(\",\").map",
+          "lineNumber": 165
+        },
+        {
+          "caller": "parse",
+          "callee": "k.split",
+          "lineNumber": 165
+        },
+        {
+          "caller": "spanFree",
+          "callee": "blocked.has",
+          "lineNumber": 294
+        },
+        {
+          "caller": "spanFree",
+          "callee": "key",
+          "lineNumber": 294
+        },
+        {
+          "caller": "spanFree",
+          "callee": "blocked.has",
+          "lineNumber": 296
+        },
+        {
+          "caller": "spanFree",
+          "callee": "key",
+          "lineNumber": 296
+        },
+        {
+          "caller": "addSegment",
+          "callee": "Math.max",
+          "lineNumber": 346
+        },
+        {
+          "caller": "addSegment",
+          "callee": "Math.abs",
+          "lineNumber": 346
+        },
+        {
+          "caller": "addSegment",
+          "callee": "Math.abs",
+          "lineNumber": 346
+        },
+        {
+          "caller": "addSegment",
+          "callee": "Math.sign",
+          "lineNumber": 347
+        },
+        {
+          "caller": "addSegment",
+          "callee": "Math.sign",
+          "lineNumber": 348
+        },
+        {
+          "caller": "addSegment",
+          "callee": "inBounds",
+          "lineNumber": 352
+        },
+        {
+          "caller": "addSegment",
+          "callee": "blocked.has",
+          "lineNumber": 352
+        },
+        {
+          "caller": "addSegment",
+          "callee": "key",
+          "lineNumber": 352
+        },
+        {
+          "caller": "addSegment",
+          "callee": "road.add",
+          "lineNumber": 352
+        },
+        {
+          "caller": "addSegment",
+          "callee": "key",
+          "lineNumber": 352
+        },
+        {
+          "caller": "connect",
+          "callee": "Math.round",
+          "lineNumber": 370
+        },
+        {
+          "caller": "connect",
+          "callee": "Math.round",
+          "lineNumber": 371
+        },
+        {
+          "caller": "connect",
+          "callee": "inBounds",
+          "lineNumber": 374
+        },
+        {
+          "caller": "connect",
+          "callee": "blocked.has",
+          "lineNumber": 374
+        },
+        {
+          "caller": "connect",
+          "callee": "key",
+          "lineNumber": 374
+        },
+        {
+          "caller": "connect",
+          "callee": "worldX",
+          "lineNumber": 375
+        },
+        {
+          "caller": "connect",
+          "callee": "worldZ",
+          "lineNumber": 376
+        },
+        {
+          "caller": "connect",
+          "callee": "Math.hypot",
+          "lineNumber": 379
+        },
+        {
+          "caller": "connect",
+          "callee": "Math.max",
+          "lineNumber": 380
+        },
+        {
+          "caller": "connect",
+          "callee": "starts.push",
+          "lineNumber": 383
+        },
+        {
+          "caller": "connect",
+          "callee": "key",
+          "lineNumber": 383
+        },
+        {
+          "caller": "connect",
+          "callee": "starts.some",
+          "lineNumber": 388
+        },
+        {
+          "caller": "connect",
+          "callee": "road.has",
+          "lineNumber": 388
+        },
+        {
+          "caller": "connect",
+          "callee": "prev.set",
+          "lineNumber": 394
+        },
+        {
+          "caller": "connect",
+          "callee": "queue.push",
+          "lineNumber": 395
+        },
+        {
+          "caller": "connect",
+          "callee": "parse",
+          "lineNumber": 400
+        },
+        {
+          "caller": "connect",
+          "callee": "key",
+          "lineNumber": 404
+        },
+        {
+          "caller": "connect",
+          "callee": "inBounds",
+          "lineNumber": 405
+        },
+        {
+          "caller": "connect",
+          "callee": "blocked.has",
+          "lineNumber": 405
+        },
+        {
+          "caller": "connect",
+          "callee": "prev.has",
+          "lineNumber": 405
+        },
+        {
+          "caller": "connect",
+          "callee": "prev.set",
+          "lineNumber": 406
+        },
+        {
+          "caller": "connect",
+          "callee": "road.has",
+          "lineNumber": 407
+        },
+        {
+          "caller": "connect",
+          "callee": "queue.push",
+          "lineNumber": 411
+        },
+        {
+          "caller": "connect",
+          "callee": "prev.get",
+          "lineNumber": 417
+        },
+        {
+          "caller": "connect",
+          "callee": "road.has",
+          "lineNumber": 418
+        },
+        {
+          "caller": "connect",
+          "callee": "road.add",
+          "lineNumber": 419
+        },
+        {
+          "caller": "touchesDisc",
+          "callee": "worldX",
+          "lineNumber": 507
+        },
+        {
+          "caller": "touchesDisc",
+          "callee": "worldZ",
+          "lineNumber": 508
+        },
+        {
+          "caller": "touchesDisc",
+          "callee": "discs.some",
+          "lineNumber": 509
+        },
+        {
+          "caller": "touchesDisc",
+          "callee": "Math.hypot",
+          "lineNumber": 509
+        },
+        {
+          "caller": "pick",
+          "callee": "road.has",
+          "lineNumber": 537
+        },
+        {
+          "caller": "pick",
+          "callee": "key",
+          "lineNumber": 537
+        },
+        {
+          "caller": "pick",
+          "callee": "road.has",
+          "lineNumber": 538
+        },
+        {
+          "caller": "pick",
+          "callee": "key",
+          "lineNumber": 538
+        },
+        {
+          "caller": "pick",
+          "callee": "road.has",
+          "lineNumber": 539
+        },
+        {
+          "caller": "pick",
+          "callee": "key",
+          "lineNumber": 539
+        },
+        {
+          "caller": "pick",
+          "callee": "road.has",
+          "lineNumber": 540
+        },
+        {
+          "caller": "pick",
+          "callee": "key",
+          "lineNumber": 540
+        },
+        {
+          "caller": "pick",
+          "callee": "[N, S, W, E].filter",
+          "lineNumber": 541
+        },
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 582
+        },
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 583
+        },
+        {
+          "caller": "nearRoad",
+          "callee": "roadCenters.some",
+          "lineNumber": 611
+        },
+        {
+          "caller": "nearRoad",
+          "callee": "Math.abs",
+          "lineNumber": 611
+        },
+        {
+          "caller": "nearRoad",
+          "callee": "Math.abs",
+          "lineNumber": 611
+        },
+        {
+          "caller": "onDisc",
+          "callee": "discs.some",
+          "lineNumber": 613
+        },
+        {
+          "caller": "onDisc",
+          "callee": "Math.hypot",
+          "lineNumber": 613
+        },
+        {
+          "caller": "plantable",
+          "callee": "nearRoad",
+          "lineNumber": 617
+        },
+        {
+          "caller": "plantable",
+          "callee": "onDisc",
+          "lineNumber": 618
+        },
+        {
+          "caller": "plantable",
+          "callee": "buildings.some",
+          "lineNumber": 619
+        },
+        {
+          "caller": "plantable",
+          "callee": "Math.abs",
+          "lineNumber": 620
+        },
+        {
+          "caller": "plantable",
+          "callee": "Math.abs",
+          "lineNumber": 620
+        },
+        {
+          "caller": "round3",
+          "callee": "Math.round",
+          "lineNumber": 669
+        },
+        {
+          "caller": "roadGap",
+          "callee": "Math.min",
+          "lineNumber": 846
+        },
+        {
+          "caller": "roadGap",
+          "callee": "Math.hypot",
+          "lineNumber": 846
+        },
+        {
+          "caller": "onPlateau",
+          "callee": "blocks.some",
+          "lineNumber": 855
+        },
+        {
+          "caller": "clearOf",
+          "callee": "Math.max",
+          "lineNumber": 859
+        },
+        {
+          "caller": "clearOf",
+          "callee": "Math.max",
+          "lineNumber": 860
+        },
+        {
+          "caller": "clearOf",
+          "callee": "Math.min",
+          "lineNumber": 861
+        },
+        {
+          "caller": "clearOf",
+          "callee": "Math.hypot",
+          "lineNumber": 861
+        },
+        {
+          "caller": "bySet",
+          "callee": "Object.entries(counts)\r\n    .filter(([k]) => k.startsWith(`${set}:`))\r\n    .map(([k, v]) => `${k.slice(3)} ${v}`)\r\n    .join",
+          "lineNumber": 950
+        },
+        {
+          "caller": "bySet",
+          "callee": "Object.entries(counts)\r\n    .filter(([k]) => k.startsWith(`${set}:`))\r\n    .map",
+          "lineNumber": 950
+        },
+        {
+          "caller": "bySet",
+          "callee": "Object.entries(counts)\r\n    .filter",
+          "lineNumber": 950
+        },
+        {
+          "caller": "bySet",
+          "callee": "Object.entries",
+          "lineNumber": 950
+        },
+        {
+          "caller": "bySet",
+          "callee": "k.startsWith",
+          "lineNumber": 951
+        },
+        {
+          "caller": "bySet",
+          "callee": "k.slice",
+          "lineNumber": 952
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 18,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/lib/read-village.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 117,
+      "nonEmptyLines": 105,
+      "functions": [
+        {
+          "name": "readVillage",
+          "startLine": 12,
+          "endLine": 78,
+          "params": []
+        },
+        {
+          "name": "readPositions",
+          "startLine": 87,
+          "endLine": 102,
+          "params": [
+            "name"
+          ]
+        },
+        {
+          "name": "districtCenters",
+          "startLine": 105,
+          "endLine": 117,
+          "params": [
+            "buildings"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "readVillage",
+          "line": 12,
+          "isDefault": false
+        },
+        {
+          "name": "readPositions",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "districtCenters",
+          "line": 105,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "readVillage",
+          "callee": "readFileSync",
+          "lineNumber": 13
+        },
+        {
+          "caller": "num",
+          "callee": "source.match",
+          "lineNumber": 16
+        },
+        {
+          "caller": "num",
+          "callee": "Number",
+          "lineNumber": 18
+        },
+        {
+          "caller": "readVillage",
+          "callee": "num",
+          "lineNumber": 20
+        },
+        {
+          "caller": "readVillage",
+          "callee": "num",
+          "lineNumber": 25
+        },
+        {
+          "caller": "readVillage",
+          "callee": "source.matchAll",
+          "lineNumber": 30
+        },
+        {
+          "caller": "readVillage",
+          "callee": "source.slice",
+          "lineNumber": 34
+        },
+        {
+          "caller": "readVillage",
+          "callee": "chunk.match",
+          "lineNumber": 35
+        },
+        {
+          "caller": "readVillage",
+          "callee": "chunk.match",
+          "lineNumber": 36
+        },
+        {
+          "caller": "readVillage",
+          "callee": "chunk.match",
+          "lineNumber": 37
+        },
+        {
+          "caller": "readVillage",
+          "callee": "size[1].split(\",\").map",
+          "lineNumber": 39
+        },
+        {
+          "caller": "readVillage",
+          "callee": "size[1].split",
+          "lineNumber": 39
+        },
+        {
+          "caller": "readVillage",
+          "callee": "Number",
+          "lineNumber": 39
+        },
+        {
+          "caller": "readVillage",
+          "callee": "v.trim",
+          "lineNumber": 39
+        },
+        {
+          "caller": "readVillage",
+          "callee": "position[1].split(\",\").map",
+          "lineNumber": 40
+        },
+        {
+          "caller": "readVillage",
+          "callee": "position[1].split",
+          "lineNumber": 40
+        },
+        {
+          "caller": "readVillage",
+          "callee": "Number",
+          "lineNumber": 40
+        },
+        {
+          "caller": "readVillage",
+          "callee": "v.trim",
+          "lineNumber": 40
+        },
+        {
+          "caller": "readVillage",
+          "callee": "raw.push",
+          "lineNumber": 41
+        },
+        {
+          "caller": "readVillage",
+          "callee": "Object.entries",
+          "lineNumber": 54
+        },
+        {
+          "caller": "readVillage",
+          "callee": "Math.hypot",
+          "lineNumber": 57
+        },
+        {
+          "caller": "readVillage",
+          "callee": "raw.map",
+          "lineNumber": 61
+        },
+        {
+          "caller": "readVillage",
+          "callee": "Math.round",
+          "lineNumber": 66
+        },
+        {
+          "caller": "readVillage",
+          "callee": "Math.round",
+          "lineNumber": 67
+        },
+        {
+          "caller": "readPositions",
+          "callee": "readFileSync",
+          "lineNumber": 88
+        },
+        {
+          "caller": "readPositions",
+          "callee": "Number",
+          "lineNumber": 89
+        },
+        {
+          "caller": "readPositions",
+          "callee": "source.match",
+          "lineNumber": 89
+        },
+        {
+          "caller": "readPositions",
+          "callee": "Number.isFinite",
+          "lineNumber": 90
+        },
+        {
+          "caller": "readPositions",
+          "callee": "source.match",
+          "lineNumber": 91
+        },
+        {
+          "caller": "readPositions",
+          "callee": "block[1].matchAll",
+          "lineNumber": 94
+        },
+        {
+          "caller": "readPositions",
+          "callee": "out.push",
+          "lineNumber": 95
+        },
+        {
+          "caller": "readPositions",
+          "callee": "Math.round",
+          "lineNumber": 96
+        },
+        {
+          "caller": "readPositions",
+          "callee": "Number",
+          "lineNumber": 96
+        },
+        {
+          "caller": "readPositions",
+          "callee": "Number",
+          "lineNumber": 97
+        },
+        {
+          "caller": "readPositions",
+          "callee": "Math.round",
+          "lineNumber": 98
+        },
+        {
+          "caller": "readPositions",
+          "callee": "Number",
+          "lineNumber": 98
+        },
+        {
+          "caller": "districtCenters",
+          "callee": "(groups[b.district] ??= []).push",
+          "lineNumber": 107
+        },
+        {
+          "caller": "districtCenters",
+          "callee": "Object.entries",
+          "lineNumber": 109
+        },
+        {
+          "caller": "districtCenters",
+          "callee": "list.reduce",
+          "lineNumber": 111
+        },
+        {
+          "caller": "districtCenters",
+          "callee": "list.reduce",
+          "lineNumber": 112
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    }
+  ]
+}

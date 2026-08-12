@@ -1,0 +1,30 @@
+{
+  "nodes": [
+    {
+      "id": "pipeline:.github/workflows/pages.yml",
+      "type": "pipeline",
+      "name": "pages.yml",
+      "filePath": ".github/workflows/pages.yml",
+      "summary": "main 브랜치 push 또는 수동 실행(workflow_dispatch) 시 프론트엔드를 빌드해 GitHub Pages로 배포하는 워크플로. build 잡이 npm ci → npm run build 후 산출물을 Pages 아티팩트로 업로드하고, deploy 잡이 actions/deploy-pages@v4로 github-pages 환경에 게시한다.",
+      "tags": ["ci-cd", "deployment", "infrastructure", "github-actions", "static-hosting"],
+      "complexity": "simple",
+      "languageNotes": "실제 저장소 상태와 어긋나는 지점이 세 군데 있다. (1) 아티팩트 경로가 `path: build`인데 next.config.mjs에 output:'export'도 distDir도 없어 `next build`는 `.next/`를 만든다 — CRA 시절 경로가 그대로 남은 것이라 업로드 단계에서 깨진다. (2) 트리거 브랜치가 `main`이지만 이 저장소의 기본 브랜치는 `master`다. (3) GitHub Pages는 정적 호스팅이므로 이 파이프라인은 FastAPI 백엔드(backend/, uvicorn)를 전혀 배포하지 않는다. concurrency group \"pages\" + cancel-in-progress로 중복 배포는 잘 막아두었다."
+    }
+  ],
+  "edges": [
+    {
+      "source": "pipeline:.github/workflows/pages.yml",
+      "target": "file:src/app/page.tsx",
+      "type": "deploys",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "pipeline:.github/workflows/pages.yml",
+      "target": "config:package.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    }
+  ]
+}

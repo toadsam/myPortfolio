@@ -1,0 +1,214 @@
+{
+ "projectRoot": "C:/Users/jk636/OneDrive/문서/GitHub/Whims-of-Wonder/Whims-of-Wonder/MetaverseProgramming/My project/Assets/myPortfolio",
+ "batchFiles": [
+  {
+   "path": "src/app/sueo-preview/SueoPreview.tsx",
+   "language": "typescript",
+   "sizeLines": 18,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/app/sueo-preview/page.tsx",
+   "language": "typescript",
+   "sizeLines": 10,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "language": "typescript",
+   "sizeLines": 209,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/context.ts",
+   "language": "typescript",
+   "sizeLines": 34,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/fonts.ts",
+   "language": "typescript",
+   "sizeLines": 18,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "language": "typescript",
+   "sizeLines": 267,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+   "language": "typescript",
+   "sizeLines": 466,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "language": "typescript",
+   "sizeLines": 249,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "language": "typescript",
+   "sizeLines": 481,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+   "language": "typescript",
+   "sizeLines": 298,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "language": "typescript",
+   "sizeLines": 961,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "language": "typescript",
+   "sizeLines": 293,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+   "language": "typescript",
+   "sizeLines": 170,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "language": "typescript",
+   "sizeLines": 628,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "language": "typescript",
+   "sizeLines": 764,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "language": "typescript",
+   "sizeLines": 715,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "language": "typescript",
+   "sizeLines": 1165,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "language": "typescript",
+   "sizeLines": 151,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/signData.ts",
+   "language": "typescript",
+   "sizeLines": 147,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "language": "typescript",
+   "sizeLines": 81,
+   "fileCategory": "code"
+  }
+ ],
+ "batchImportData": {
+  "src/app/sueo-preview/SueoPreview.tsx": [
+   "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "src/data/projectThemes.ts",
+   "src/data/projects.ts"
+  ],
+  "src/app/sueo-preview/page.tsx": [
+   "src/app/sueo-preview/SueoPreview.tsx"
+  ],
+  "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/fonts.ts",
+   "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+   "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+   "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+   "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "src/components/ui/project-viewers/sueo/sueo.css",
+   "src/data/projectThemes.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/context.ts": [],
+  "src/components/ui/project-viewers/sueo/fonts.ts": [],
+  "src/components/ui/project-viewers/sueo/parts.tsx": [],
+  "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/parts.tsx",
+   "src/components/ui/project-viewers/sueo/useTimeline.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/useTimeline.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/useTimeline.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/parts.tsx",
+   "src/components/ui/project-viewers/sueo/useTimeline.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/parts.tsx",
+   "src/components/ui/project-viewers/sueo/signData.ts",
+   "src/components/ui/project-viewers/sueo/useTimeline.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/parts.tsx",
+   "src/components/ui/project-viewers/sueo/useTimeline.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/parts.tsx",
+   "src/components/ui/project-viewers/sueo/useTimeline.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/parts.tsx",
+   "src/components/ui/project-viewers/sueo/useTimeline.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/parts.tsx",
+   "src/components/ui/project-viewers/sueo/sentenceData.ts",
+   "src/components/ui/project-viewers/sueo/useTimeline.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/parts.tsx",
+   "src/components/ui/project-viewers/sueo/useTimeline.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx": [
+   "src/components/ui/project-viewers/sueo/context.ts",
+   "src/components/ui/project-viewers/sueo/parts.tsx",
+   "src/components/ui/project-viewers/sueo/useTimeline.ts"
+  ],
+  "src/components/ui/project-viewers/sueo/sentenceData.ts": [],
+  "src/components/ui/project-viewers/sueo/signData.ts": [],
+  "src/components/ui/project-viewers/sueo/useTimeline.ts": []
+ }
+}

@@ -613,9 +613,16 @@ const blockRect = new Map();
         if (put >= count || inBand >= quota) break;
         // 집끼리, 그리고 다른 장식물과 2.9유닛은 떨어뜨린다 (집 폭이 2.2~2.5다)
         if (!free(c.x, c.z, 2.9)) continue;
-        // 정면은 광장 쪽 — 뒷줄이라도 앞을 보고 서야 마을이 한 방향으로 정돈된다
+        // 정면은 광장 쪽 — 뒷줄이라도 앞을 보고 서야 마을이 한 방향으로 정돈된다.
+        //
+        // 다만 **정확히** 같은 각으로 세우면 안 된다. 구역마다 회전이 딱 하나뿐이라
+        // 34채가 고유 회전 6개를 돌려쓰고 있었고(실측), 3종을 번갈아 써도 위에서 보면
+        // 같은 집이 같은 각도로 찍힌 게 그대로 읽혔다. 배율도 1.31~1.47 로 사실상
+        // 균일했다. ±17° 와 ±13% 를 흔들면 "광장을 보고 선 줄"은 살아 있으면서
+        // 복제 티만 사라진다 — 컨셉 아트의 민가도 줄은 맞되 각도가 제각각이다.
         place(`house-${n}`, KINDS[n % KINDS.length], c.x, c.z,
-          faceTo(-out.x, -out.z), {gap: 2.9});
+          round3(faceTo(-out.x, -out.z) + (rand() - 0.5) * 0.6),
+          {gap: 2.9, grow: round3(0.88 + rand() * 0.26)});
         // 집 한 채가 대략 2.4유닛 폭이다 — 그 절반만큼 상자를 넓힌다
         const HALF_HOUSE = 1.2;
         rect.x0 = Math.min(rect.x0, c.x - HALF_HOUSE);
@@ -871,10 +878,34 @@ const gates = [];
 // 12자리 중 한 곳도 안 섰다. 마을이 생각보다 빡빡해서다 — 광장 원반이 반지름
 // 4.6인데 가장 가까운 건물이 7.5 에 있어 그 사이 3유닛은 길 넷이 다 쓰고 있었다.
 // 자리를 **깔린 포장 타일에서 직접 고르면** 이런 추측이 필요 없다.
-// 깔린 포장 칸 — ③-c 나무·화단과 ③-e 구역 살림이 여기서 자리를 고른다
-const paved = layout.props
-  .filter((p) => p.id.startsWith("ground-pave-"))
-  .map((p) => ({x: p.position[0], z: p.position[2]}));
+// 심을 자리 후보 — ③-c 나무·화단과 ③-e 구역 살림이 여기서 고른다.
+//
+// 예전엔 **깔린 판석에서만** 골랐다. 그때는 구역 안쪽이 통째로 포장이라 그게 곧
+// "마을 안 평평한 땅"이었기 때문이다. 그런데 블록 포장을 걷어 잔디로 되돌리자
+// 판석이 613→69장(광장뿐)으로 줄어, 나무가 15→7 그루가 되고 화단은 0 이 됐다 —
+// **잔디로 바꿨더니 초록이 오히려 줄어드는** 어처구니없는 결과였다.
+//
+// 그래서 후보를 "포장 칸"이 아니라 **광장 포장 + 구역 단 위 칸** 으로 바꾼다.
+// 단 사각형은 바닥 생성기가 villageTerraces.json 으로 내보낸 것을 그대로 쓴다.
+const plots = (() => {
+  const out = layout.props
+    .filter((p) => p.id.startsWith("ground-pave-"))
+    .map((p) => ({x: p.position[0], z: p.position[2]}));
+  const terr = JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"));
+  const pitch = terr.pitch;
+  const seen = new Set(out.map((c) => `${Math.round(c.x / pitch)},${Math.round(c.z / pitch)}`));
+  for (const b of terr.blocks) {
+    for (let i = Math.round(b.x0 / pitch); i <= Math.round(b.x1 / pitch); i++) {
+      for (let j = Math.round(b.z0 / pitch); j <= Math.round(b.z1 / pitch); j++) {
+        const k = `${i},${j}`;
+        if (seen.has(k)) continue;
+        seen.add(k);
+        out.push({x: round3(i * pitch), z: round3(j * pitch)});
+      }
+    }
+  }
+  return out;
+})();
 
 // 각 포장 칸이 얼마나 트여 있나 — 가장 가까운 길·건물·원반·담장·기존 장식물까지.
 // taken 을 그때그때 읽으므로, 먼저 놓은 것이 뒤에 놓는 것의 후보를 자동으로 줄인다.
@@ -903,8 +934,13 @@ const clearance = (x, z) => {
   /** 화단 지름이 0.9유닛이니 사방 1.1은 비어야 한다 */
   const NEED = 1.1;
   /** 심은 것끼리 이만큼은 떨어뜨린다 — 몰아 놓으면 화단밭이 된다 */
-  const APART = 3.6;
-  const MAX = 34;
+  //
+  // 3.6 → 2.6. 부감 캡처를 컨셉과 나란히 놓고 세어 보니 마을 **안쪽** 초록이
+  // 나무 18 + 여기 32 뿐이었다. 바깥 테두리 숲은 276그루로 빽빽한데, 정작
+  // 카메라가 사는 안쪽이 휑해서 "초록 접시 위에 건물을 얹은" 꼴로 보였다.
+  // 컨셉 아트는 건물 사이사이가 나무로 메워져 있다.
+  const APART = 2.6;
+  const MAX = 64;
 
   // ─── 화단만으로는 부족했다 ─────────────────────────────────────────────────
   // 길 갓길까지 돌색으로 바꾸고 나니 구역 안쪽이 통째로 베이지 한 색이 됐다.
@@ -915,18 +951,23 @@ const clearance = (x, z) => {
   // 여기는 카메라가 가장 오래 머무는 자리라 전부 원본 GLB 다 — 빌보드를 쓰면
   // 부감에서 판때기 두 장인 게 그대로 드러난다.
   // 침엽수(5,652)를 주로 쓰고 값비싼 활엽수(8,932)·벚나무(8,789)는 드물게 섞는다.
+  //
+  // 개수를 34 → 64 로 올리면서 **비율을 침엽수 쪽으로 몰았다.** 예전 비율(화단
+  // 3/8)을 그대로 두 배로 늘리면 화단만 24개 = 24만 삼각형이라 예산이 안 맞는다.
+  // 침엽수 5,652 · 활엽수 8,932 · 벚나무 8,789 · 화단 9,898 이라, 가장 싼 것을
+  // 골격으로 깔고 비싼 셋을 점처럼 섞는 게 같은 값에 가장 빽빽해진다.
   const ROTATION = [
     "tree-emerald-crown",
-    "flowerbed-round",
     "tree-emerald-crown",
     "tree-golden-canopy",
+    "tree-emerald-crown",
     "flowerbed-round",
     "tree-emerald-crown",
     "tree-sakura",
-    "flowerbed-round"
+    "tree-emerald-crown"
   ];
 
-  const cand = paved
+  const cand = plots
     .map((c) => ({...c, open: clearance(c.x, c.z)}))
     .filter((c) => c.open >= NEED)
     // 트인 곳부터 — 좁은 틈부터 채우면 정작 넓은 돌마당이 빈 채로 남는다
@@ -986,7 +1027,7 @@ const clearance = (x, z) => {
     // **clearance() 를 쓰면 안 된다.** 그건 앞마당 원반까지 장애물로 세는데,
     // 원반이 바로 여기서 찾는 앞뜰이다 — 처음엔 그렇게 했다가 26채 중 8채에만,
     // 그것도 10개밖에 안 놓였다. 길·건물·담장·이미 놓은 것만 피하면 된다.
-    const cand = paved
+    const cand = plots
       .map((c) => ({...c, near: Math.hypot(c.x - fx, c.z - fz)}))
       .filter((c) => c.near < YARD)
       .filter((c) => !onRoad(c.x, c.z, 0.15) && !onBuilding(c.x, c.z, 0.25))
@@ -1269,8 +1310,12 @@ const LANTERN_EVERY = 2;
   const TREES = ["tree-golden-canopy", "tree-emerald-crown", "tree-golden-canopy", "tree-sakura", "tree-emerald-crown"];
   readPositions("treePositions").forEach((p, n) => {
     const kind = TREES[n % TREES.length];
-    // 회전을 그루마다 흩뜨려야 같은 GLB를 19번 쓴 티가 안 난다
-    place(`tree-${n}`, kind, p[0], p[2], round3(((n * 137) % 360) * (Math.PI / 180)), {gap: 0.1});
+    // 회전을 그루마다 흩뜨려야 같은 GLB를 19번 쓴 티가 안 난다.
+    // 회전만으로는 부족했다 — 배율이 0.80~0.84 로 사실상 균일해서 나무가 전부
+    // 같은 키였고, 그게 부감에서 "심어 놓은 가로수"로 보였다. 바깥 숲(0.95~1.78)이
+    // 자연스러운 이유가 배율 폭이다. 안쪽도 같은 폭으로 흔든다.
+    place(`tree-${n}`, kind, p[0], p[2], round3(((n * 137) % 360) * (Math.PI / 180)),
+      {gap: 0.1, grow: round3(0.85 + rand() * 0.5)});
   });
 
   readPositions("rockPositions").forEach((p, n) => {
@@ -1436,20 +1481,42 @@ const BELT_DEPTH = 12;
   const openness = (x, z) => Math.min(distRoad(x, z), distBuilding(x, z), distDisc(x, z));
 
   /** 이보다 좁으면 동선이라 비워 둔다 */
-  const MIN_OPEN = 1.7;
+  //
+  // 1.7 → 1.3. 구역 단 위를 0.5 격자로 재 보니 길에서 3유닛 이상 떨어진 땅이
+  // 36% 나 되는데도 무리가 1개밖에 안 섰다. openness 는 길·건물·앞마당 원반 중
+  // **가장 가까운 것**이라, 길이 멀어도 앞마당 원반이 커서 값이 눌린다.
+  const MIN_OPEN = 1.3;
   const STEP = 1.2;
   const candidates = [];
+  // 이 절이 몇 개를 심었는지 아무도 안 보고 있었다. 실측해 보니 **2개**였다 —
+  // 마을 안쪽을 채우라고 만든 규칙이 사실상 안 돌고 있었고, 그게 "바깥 숲은
+  // 빽빽한데 안은 휑하다"의 진짜 원인이었다. 어디서 걸러지는지 세어서 찍는다.
+  const cut = {hull: 0, hub: 0, open: 0, landmark: 0};
+
+  // ─── 껍질만으로는 정작 빈 데를 못 고른다 ───────────────────────────────────
+  // 껍질은 **진짜 건물**의 볼록 껍질이다. 그런데 구역 단(terrace)은 건물 상자보다
+  // 넓고, 담장은 그 단 테두리에 선다 — 그래서 담 안쪽인데 껍질 밖인 땅이 생긴다.
+  // 부감으로 보면 STUDY·EXPERIENCE 블록 안에 담으로 둘러싸인 **텅 빈 잔디 사각형**이
+  // 그대로 보이는데, 여기가 정확히 그 땅이라 규칙이 한 그루도 안 심고 있었다.
+  // (실측: 후보 3477곳 중 2768곳이 이 컷에 걸렸고, 살아남은 30곳 중 29곳은
+  //  이미 프롭이 있어서 결국 무리 1개만 섰다.)
+  //
+  // 담 안은 마을이다. 껍질 **또는** 구역 단 안이면 후보로 친다.
+  const terraceBlocks = JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8")).blocks;
+  const inTerrace = (x, z) =>
+    terraceBlocks.some((b) => x >= b.x0 && x <= b.x1 && z >= b.z0 && z <= b.z1);
+
   for (let x = -34; x <= 38; x += STEP) {
     for (let z = -30; z <= 38; z += STEP) {
       const px = x + (rand() - 0.5) * STEP;
       const pz = z + (rand() - 0.5) * STEP;
-      // 껍질 안쪽만 — 바깥은 ⑩ 숲이 맡는다
-      if (polygonDistance(hull, px, pz) > -0.5) continue;
+      // 껍질 안 또는 구역 단 위만 — 그 바깥은 ⑩ 숲이 맡는다
+      if (polygonDistance(hull, px, pz) > -0.5 && !inTerrace(px, pz)) { cut.hull += 1; continue; }
       // 광장 앞은 트여 있어야 한다 — 마을의 첫인상이자 카메라가 늘 보는 자리
-      if (Math.hypot(px - HUB.x, pz - HUB.z) < HUB_RADIUS + 3.5) continue;
+      if (Math.hypot(px - HUB.x, pz - HUB.z) < HUB_RADIUS + 3.5) { cut.hub += 1; continue; }
       const open = openness(px, pz);
-      if (open < MIN_OPEN) continue;
-      if (nearLandmark(px, pz) || onWall(px, pz, 0.6)) continue;
+      if (open < MIN_OPEN) { cut.open += 1; continue; }
+      if (nearLandmark(px, pz) || onWall(px, pz, 0.6)) { cut.landmark += 1; continue; }
       candidates.push({x: px, z: pz, open});
     }
   }
@@ -1457,6 +1524,7 @@ const BELT_DEPTH = 12;
   candidates.sort((a, b) => b.open - a.open);
 
   const glades = [];
+  const cut2 = {free: 0, spacing: 0};
   for (const c of candidates) {
     // 트인 만큼 무리 사이를 띄운다. 좁은 틈엔 하나만, 넓은 벌판엔 여러 무리.
     //
@@ -1468,10 +1536,15 @@ const BELT_DEPTH = 12;
     // free() 에 spacing 을 그대로 넘겼더니 후보 84곳이 전부 걸렸다 — 마을 안쪽은
     // 5유닛 안에 가로등이든 화분이든 반드시 하나는 있다. 겹치지만 않으면 되므로
     // 프롭 간 최소 간격과 무리 간 간격은 따로 잡는다.
-    if (!free(c.x, c.z, 1.5)) continue;
-    if (glades.some((g) => Math.hypot(g.x - c.x, g.z - c.z) < spacing)) continue;
+    // 1.5 → 1.1. 살아남은 후보의 대부분이 여기서 죽고 있었다(97곳 중 80곳).
+    // 마을 안은 어디를 짚어도 1.5유닛 안에 가로등이든 담장이든 하나는 있다.
+    if (!free(c.x, c.z, 1.1)) { cut2.free += 1; continue; }
+    if (glades.some((g) => Math.hypot(g.x - c.x, g.z - c.z) < spacing)) { cut2.spacing += 1; continue; }
     glades.push(c);
   }
+  console.log(`  빈터 후보: 격자에서 ${candidates.length}곳 남음 ` +
+    `(껍질밖 ${cut.hull} · 광장앞 ${cut.hub} · 안트임 ${cut.open} · 랜드마크/담장 ${cut.landmark} 컷)` +
+    `\n         → 무리 ${glades.length}개 (기존프롭겹침 ${cut2.free} · 무리간격 ${cut2.spacing} 컷)`);
 
   // 빈터는 마을 안이라 카메라가 가까이 붙는다. 벚나무 빌보드는 여기서 바로
   // 들통나므로 빼고, 어느 각도에서나 버티는 침엽수를 주로 쓴다.
@@ -1528,28 +1601,32 @@ const BELT_DEPTH = 12;
   }
 }
 
-// ─── ⑬ 길가 울타리 (맨 마지막) ────────────────────────────────────────────────
-// 컨셉 아트에서 길이 "길"로 보이는 이유는 포장색이 아니라 **양옆을 따라가는
-// 나무 울타리**다. 그 선 두 줄이 있어야 길과 마당이 갈린다. 우리는 포장을 넓게
-// 깔아 놔서 어디까지가 길인지가 아예 안 읽혔다.
+// ─── ⑬ 참배로 울타리 (맨 마지막) ──────────────────────────────────────────────
+// **한때 마을의 모든 길 양옆에 세웠다. 되돌렸다.**
 //
-// 받은 fence.glb 로는 못 깐다(1,473 삼각형 × 200 = 29만). make-fence-rail.mjs 로
-// 구운 36삼각형짜리를 쓴다 — 200토막이 7천이다.
+// 그때 이유는 "포장을 넓게 깔아 놔서 어디까지가 길인지 안 읽힌다"였다. 구역
+// 안쪽이 통째로 판석이던 시절엔 맞는 말이었다. 그런데 블록을 잔디로 되돌리자
+// **돌길이 초록 위에서 저절로 읽히고**, 남은 건 울타리 133토막이 부감에서 그리는
+// 갈색 격자뿐이었다 — 길 사이 잔디 띠마다 울타리가 두 줄씩 서서 마을이 아니라
+// **축사 우리**처럼 보였다(캡처로 확인).
 //
-// 교차로는 건너뛴다. 사거리까지 막으면 길이 끊긴 것처럼 보인다.
+// 울타리는 "뭔가를 둘러쌀 때"만 값을 한다. 그래서 남쪽 참배로에만 남긴다 —
+// 마을에 들어서는 첫 길 양옆에 늘어서면 격식이 생기고, 그 한 줄뿐이라 눈에 걸리지
+// 않는다. 구역 테두리는 담장(wall-low)이 이미 맡고 있다.
 //
 // **맨 마지막에 놓는다.** 처음엔 ③-b 깃대 바로 뒤에 뒀는데, 길가 자리를 울타리가
-// 먼저 차지해 버려서 화단이 34→15, 가로등이 13→4, 앞마당 소품이 25→5 로 줄었다
-// (삼각형이 1,305k → 1,036k 로 떨어진 게 그 신호였다). 울타리는 한 토막 빠져도
-// 대문처럼 보이지만, 화단·가로등은 빠지면 그냥 허전하다 — 그래서 울타리가 양보한다.
+// 먼저 차지해 버려서 화단이 34→15, 가로등이 13→4, 앞마당 소품이 25→5 로 줄었다.
 {
   const key = (x, z) => `${Math.round(x / PITCH)}_${Math.round(z / PITCH)}`;
   const roadAt = new Set(roads.map((r) => key(r.x, r.z)));
   const has = (x, z) => roadAt.has(key(x, z));
+  /** 참배로 = 바닥 생성기의 i=0 축(남쪽 진입로 + 북쪽 파고다 길) */
+  const onAxis = (r) => Math.abs(r.x) < PITCH * 0.6;
 
   let n = 0;
   let skippedJunction = 0;
   for (const r of roads) {
+    if (!onAxis(r)) continue;
     const ew = has(r.x - PITCH, r.z) || has(r.x + PITCH, r.z);
     const ns = has(r.x, r.z - PITCH) || has(r.x, r.z + PITCH);
     // 사거리·T 자 — 어느 쪽으로도 울타리를 세울 수 없다
@@ -1570,7 +1647,7 @@ const BELT_DEPTH = 12;
       walls.push({x, z, ax: ew ? 1 : 0, az: ew ? 0 : 1});
     }
   }
-  console.log(`  길가 울타리 ${n}토막 · 교차로라 건너뛴 칸 ${skippedJunction}곳`);
+  console.log(`  참배로 울타리 ${n}토막 · 교차로라 건너뛴 칸 ${skippedJunction}곳`);
 }
 
 // ─── 쓰기 ─────────────────────────────────────────────────────────────────────

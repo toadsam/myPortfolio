@@ -1,0 +1,1341 @@
+{
+  "scriptCompleted": true,
+  "commonPrefix": "",
+  "directoryGroups": {
+    "src/components/ui": [
+      "file:src/components/ui/ProjectOnePager.tsx",
+      "file:src/components/ui/ProjectViewer.tsx",
+      "file:src/components/ui/project-viewers/AmbientBackground.tsx",
+      "file:src/components/ui/project-viewers/DashboardProjectViewer.tsx",
+      "file:src/components/ui/project-viewers/GameProjectViewer.tsx",
+      "file:src/components/ui/project-viewers/PlatformProjectViewer.tsx",
+      "file:src/components/ui/project-viewers/ProjectIntro.tsx",
+      "file:src/components/ui/project-viewers/RealtimeProjectViewer.tsx",
+      "file:src/components/ui/project-viewers/SoundToggle.tsx",
+      "file:src/components/ui/project-viewers/atmosphere.ts",
+      "file:src/components/ui/project-viewers/richContent/AClubDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/AjouchongDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+      "file:src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/data.ts",
+      "file:src/components/ui/project-viewers/richContent/index.tsx",
+      "file:src/components/ui/project-viewers/richContent/mywave.tsx",
+      "file:src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+      "file:src/components/ui/project-viewers/richContent/shared.tsx",
+      "file:src/components/ui/project-viewers/sound.ts",
+      "file:src/components/ui/ConciergePanel.tsx",
+      "file:src/components/ui/DialogueBox.tsx",
+      "file:src/components/ui/EnterConfirmDialog.tsx",
+      "file:src/components/ui/Header.tsx",
+      "file:src/components/ui/InfoPanel.tsx",
+      "file:src/components/ui/IntroOverlay.tsx",
+      "file:src/components/ui/ProjectCard.tsx",
+      "file:src/components/ui/ProjectDetail.tsx",
+      "file:src/components/ui/SceneTransition.tsx",
+      "file:src/components/ui/SectionTabs.tsx",
+      "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+      "file:src/components/ui/project-viewers/sueo/context.ts",
+      "file:src/components/ui/project-viewers/sueo/fonts.ts",
+      "file:src/components/ui/project-viewers/sueo/parts.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+      "file:src/components/ui/project-viewers/sueo/sentenceData.ts",
+      "file:src/components/ui/project-viewers/sueo/signData.ts",
+      "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+      "file:src/components/ui/ResumeMode.tsx",
+      "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+      "file:src/components/ui/project-viewers/aclub/context.ts",
+      "file:src/components/ui/project-viewers/aclub/data.ts",
+      "file:src/components/ui/project-viewers/aclub/fonts.ts",
+      "file:src/components/ui/project-viewers/aclub/parts.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+      "file:src/components/ui/project-viewers/darklab/context.ts",
+      "file:src/components/ui/project-viewers/darklab/fonts.ts",
+      "file:src/components/ui/project-viewers/darklab/parts.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/ArchitectureSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/CinemachineSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/EntrySection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/HeroSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/HonestCostSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/PrinciplesSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/RaycastSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/ResultSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/RetroSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/TakeoverSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/Trouble01Section.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/Trouble02Section.tsx",
+      "file:src/components/ui/CustomCursor.tsx",
+      "file:src/components/ui/ProjectDetail.css",
+      "file:src/components/ui/ResumeTerminal.css",
+      "file:src/components/ui/project-viewers/aclub/aclub.css",
+      "file:src/components/ui/project-viewers/darklab/darklab.css",
+      "file:src/components/ui/project-viewers/sueo/sueo.css"
+    ],
+    "src/data": [
+      "file:src/data/projectThemes.ts",
+      "file:src/data/characterModels.ts",
+      "file:src/data/experience.ts",
+      "file:src/data/links.ts",
+      "file:src/data/npcActions.ts",
+      "file:src/data/npcBehaviors.ts",
+      "file:src/data/npcChatter.ts",
+      "file:src/data/npcRoster.ts",
+      "file:src/data/projects.ts",
+      "file:src/data/skills.ts",
+      "file:src/data/resume.ts",
+      "file:src/data/techIcons.ts",
+      "config:src/data/buildingModels.json",
+      "config:src/data/propsLayout.json",
+      "config:src/data/villageTerraces.json",
+      "file:src/data/npcs.ts"
+    ],
+    "backend/app": [
+      "file:backend/app/__init__.py",
+      "file:backend/app/catalog.py",
+      "file:backend/app/config.py",
+      "file:backend/app/database.py",
+      "file:backend/app/main.py",
+      "file:backend/app/models.py",
+      "file:backend/app/relations.py",
+      "file:backend/app/schemas.py",
+      "file:backend/app/security.py",
+      "file:backend/app/time_utils.py"
+    ],
+    "backend/app/services": [
+      "file:backend/app/services/__init__.py",
+      "file:backend/app/services/activity_service.py",
+      "file:backend/app/services/admin_service.py",
+      "file:backend/app/services/chat_service.py",
+      "file:backend/app/services/github_service.py",
+      "file:backend/app/services/learning_service.py",
+      "file:backend/app/services/npc_action_service.py",
+      "file:backend/app/services/npc_brain_service.py",
+      "file:backend/app/services/relationship_service.py",
+      "file:backend/app/services/village_service.py"
+    ],
+    "backend/tests": [
+      "file:backend/tests/conftest.py",
+      "file:backend/tests/test_relations.py",
+      "file:backend/tests/test_relationship_service.py",
+      "file:backend/tests/test_village_service.py"
+    ],
+    "src/app": [
+      "file:src/app/admin/page.tsx",
+      "file:src/app/page.tsx",
+      "file:src/app/sueo-preview/SueoPreview.tsx",
+      "file:src/app/sueo-preview/page.tsx",
+      "file:src/app/api/props/route.ts",
+      "file:src/app/layout.tsx",
+      "file:src/app/globals.css",
+      "file:src/app/test-model/page.tsx"
+    ],
+    "src/components": [
+      "file:src/components/AIPortfolioVillage.tsx",
+      "file:src/components/Providers.tsx",
+      "file:src/components/InteractionLayer.tsx",
+      "file:src/components/ModelTest.tsx"
+    ],
+    "src/components/interior": [
+      "file:src/components/interior/ArchiveInterior.tsx",
+      "file:src/components/interior/InteriorScene.tsx",
+      "file:src/components/interior/LabInterior.tsx",
+      "file:src/components/interior/PostInterior.tsx",
+      "file:src/components/interior/ProjectInterior.tsx",
+      "file:src/components/interior/WorkshopInterior.tsx",
+      "file:src/components/interior/InteriorCharacterController.tsx"
+    ],
+    "src/components/village": [
+      "file:src/components/village/CharacterController.tsx",
+      "file:src/components/village/Decorations.tsx",
+      "file:src/components/village/NPC.tsx",
+      "file:src/components/village/NpcCharacter.tsx",
+      "file:src/components/village/VillageHud.tsx",
+      "file:src/components/village/WarriorCharacter.tsx",
+      "file:src/components/village/Building.tsx",
+      "file:src/components/village/BuildingNetwork.tsx",
+      "file:src/components/village/CameraController.tsx",
+      "file:src/components/village/InstancedProps.tsx",
+      "file:src/components/village/PerfHud.tsx",
+      "file:src/components/village/PropsEditor.tsx",
+      "file:src/components/village/SeasonAmbience.tsx",
+      "file:src/components/village/VillageScene.tsx"
+    ],
+    "src/lib": [
+      "file:src/lib/constants.ts",
+      "file:src/lib/liveApi.ts",
+      "file:src/lib/liveState.ts",
+      "file:src/lib/sfx.ts",
+      "file:src/lib/useDraggable.ts",
+      "file:src/lib/worldCollision.ts",
+      "file:src/lib/groundMacro.ts",
+      "file:src/lib/htmlLabelThrottle.ts",
+      "file:src/lib/skyClouds.ts",
+      "file:src/lib/terraceBank.ts",
+      "file:src/lib/villagePalette.ts",
+      "file:src/lib/villageTerrain.ts"
+    ],
+    "src/types": [
+      "file:src/types/live.ts",
+      "file:src/types/portfolio.ts",
+      "file:src/types/props.ts"
+    ],
+    "scripts": [
+      "file:scripts/generate-decor-layout.mjs",
+      "file:scripts/generate-ground-layout.mjs",
+      "file:scripts/lib/read-village.mjs",
+      "file:scripts/backend-dev.mjs",
+      "file:scripts/bake-impostors.mjs",
+      "file:scripts/flatten-ground-tiles.mjs",
+      "file:scripts/generate-building-manifest.mjs",
+      "file:scripts/make-fence-rail.mjs",
+      "file:scripts/make-grass-texture.mjs",
+      "file:scripts/make-low-wall.mjs",
+      "file:scripts/make-paving-tile.mjs",
+      "file:scripts/make-terrace-steps.mjs",
+      "file:scripts/make_paved_road_tiles.py",
+      "file:scripts/merge-character.mjs",
+      "file:scripts/optimize-glb.mjs",
+      "file:scripts/optimize_textures.py"
+    ],
+    "(root)": [
+      "service:Dockerfile",
+      "config:.pre-commit-config.yaml",
+      "document:CLAUDE.md",
+      "document:README.md",
+      "document:copy-admin.md",
+      "document:copy.md",
+      "config:package.json",
+      "config:skills-lock.json",
+      "config:tsconfig.json",
+      "file:.gitattributes",
+      "file:.prettierignore",
+      "file:env.example",
+      "file:next-env.d.ts",
+      "file:next.config.mjs",
+      "file:postcss.config.mjs",
+      "file:tailwind.config.ts"
+    ],
+    ".github": [
+      "pipeline:.github/workflows/pages.yml",
+      "config:.github/ISSUE_TEMPLATE/bug.yml",
+      "config:.github/ISSUE_TEMPLATE/config.yml",
+      "config:.github/ISSUE_TEMPLATE/feature_request.yml",
+      "document:.github/pull_request_template.md"
+    ],
+    "backend": [
+      "config:backend/.env.example",
+      "document:backend/README.md",
+      "config:backend/pytest.ini",
+      "config:backend/requirements-dev.txt",
+      "config:backend/requirements.txt"
+    ],
+    "docs": [
+      "document:docs/MESHY_BUILDING_PROMPTS.md",
+      "document:docs/MESHY_CHARACTER_PROMPTS.md",
+      "document:docs/MESHY_PROP_PROMPTS.md",
+      "document:docs/MESHY_VILLAGE_ASSETS.md",
+      "document:docs/PROJECT_DOCUMENTATION.md",
+      "document:docs/VILLAGE_ASSET_WISHLIST.md"
+    ],
+    "portfolio-specs": [
+      "document:portfolio-specs/00-OVERVIEW.md",
+      "document:portfolio-specs/01-mywave.md",
+      "document:portfolio-specs/02-mystock.md",
+      "document:portfolio-specs/03-festflow.md",
+      "document:portfolio-specs/04-muscleup.md",
+      "document:portfolio-specs/05-aclub.md",
+      "document:portfolio-specs/06-ajouchong.md",
+      "document:portfolio-specs/07-sign-language.md",
+      "document:portfolio-specs/08-ajou-adventure.md",
+      "document:portfolio-specs/09-darklab.md",
+      "document:portfolio-specs/10-tserof.md",
+      "document:portfolio-specs/_AUDIT.md",
+      "document:portfolio-specs/_IMPLEMENTATION.md",
+      "document:portfolio-specs/_STATUS.md",
+      "document:portfolio-specs/_UNKNOWNS.md"
+    ],
+    "public": [
+      "config:public/browserconfig.xml",
+      "file:public/index.html",
+      "config:public/manifest.json",
+      "document:public/robots.txt",
+      "document:public/models/ASSETS.md",
+      "file:public/models/props/.gitkeep"
+    ],
+    "resume": [
+      "file:resume/jaehoon-jeong-resume.html",
+      "document:resume/jaehoon-jeong-resume.md"
+    ],
+    "src": [
+      "document:src/LEGACY_CRA.md"
+    ]
+  },
+  "nodeTypeGroups": {
+    "file": [
+      "file:src/components/ui/ProjectOnePager.tsx",
+      "file:src/components/ui/ProjectViewer.tsx",
+      "file:src/components/ui/project-viewers/AmbientBackground.tsx",
+      "file:src/components/ui/project-viewers/DashboardProjectViewer.tsx",
+      "file:src/components/ui/project-viewers/GameProjectViewer.tsx",
+      "file:src/components/ui/project-viewers/PlatformProjectViewer.tsx",
+      "file:src/components/ui/project-viewers/ProjectIntro.tsx",
+      "file:src/components/ui/project-viewers/RealtimeProjectViewer.tsx",
+      "file:src/components/ui/project-viewers/SoundToggle.tsx",
+      "file:src/components/ui/project-viewers/atmosphere.ts",
+      "file:src/components/ui/project-viewers/richContent/AClubDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/AjouchongDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+      "file:src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+      "file:src/components/ui/project-viewers/richContent/data.ts",
+      "file:src/components/ui/project-viewers/richContent/index.tsx",
+      "file:src/components/ui/project-viewers/richContent/mywave.tsx",
+      "file:src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+      "file:src/components/ui/project-viewers/richContent/shared.tsx",
+      "file:src/components/ui/project-viewers/sound.ts",
+      "file:src/data/projectThemes.ts",
+      "file:backend/app/__init__.py",
+      "file:backend/app/catalog.py",
+      "file:backend/app/config.py",
+      "file:backend/app/database.py",
+      "file:backend/app/main.py",
+      "file:backend/app/models.py",
+      "file:backend/app/relations.py",
+      "file:backend/app/schemas.py",
+      "file:backend/app/security.py",
+      "file:backend/app/services/__init__.py",
+      "file:backend/app/services/activity_service.py",
+      "file:backend/app/services/admin_service.py",
+      "file:backend/app/services/chat_service.py",
+      "file:backend/app/services/github_service.py",
+      "file:backend/app/services/learning_service.py",
+      "file:backend/app/services/npc_action_service.py",
+      "file:backend/app/services/npc_brain_service.py",
+      "file:backend/app/services/relationship_service.py",
+      "file:backend/app/services/village_service.py",
+      "file:backend/app/time_utils.py",
+      "file:backend/tests/conftest.py",
+      "file:backend/tests/test_relations.py",
+      "file:backend/tests/test_relationship_service.py",
+      "file:backend/tests/test_village_service.py",
+      "file:src/app/admin/page.tsx",
+      "file:src/app/page.tsx",
+      "file:src/components/AIPortfolioVillage.tsx",
+      "file:src/components/interior/ArchiveInterior.tsx",
+      "file:src/components/interior/InteriorScene.tsx",
+      "file:src/components/interior/LabInterior.tsx",
+      "file:src/components/interior/PostInterior.tsx",
+      "file:src/components/interior/ProjectInterior.tsx",
+      "file:src/components/interior/WorkshopInterior.tsx",
+      "file:src/components/ui/ConciergePanel.tsx",
+      "file:src/components/ui/DialogueBox.tsx",
+      "file:src/components/ui/EnterConfirmDialog.tsx",
+      "file:src/components/ui/Header.tsx",
+      "file:src/components/ui/InfoPanel.tsx",
+      "file:src/components/ui/IntroOverlay.tsx",
+      "file:src/components/ui/ProjectCard.tsx",
+      "file:src/components/ui/ProjectDetail.tsx",
+      "file:src/components/ui/SceneTransition.tsx",
+      "file:src/components/ui/SectionTabs.tsx",
+      "file:src/components/village/CharacterController.tsx",
+      "file:src/components/village/Decorations.tsx",
+      "file:src/components/village/NPC.tsx",
+      "file:src/components/village/NpcCharacter.tsx",
+      "file:src/components/village/VillageHud.tsx",
+      "file:src/components/village/WarriorCharacter.tsx",
+      "file:src/data/characterModels.ts",
+      "file:src/data/experience.ts",
+      "file:src/data/links.ts",
+      "file:src/data/npcActions.ts",
+      "file:src/data/npcBehaviors.ts",
+      "file:src/data/npcChatter.ts",
+      "file:src/data/npcRoster.ts",
+      "file:src/data/projects.ts",
+      "file:src/data/skills.ts",
+      "file:src/lib/constants.ts",
+      "file:src/lib/liveApi.ts",
+      "file:src/lib/liveState.ts",
+      "file:src/lib/sfx.ts",
+      "file:src/lib/useDraggable.ts",
+      "file:src/lib/worldCollision.ts",
+      "file:src/types/live.ts",
+      "file:src/types/portfolio.ts",
+      "file:src/app/sueo-preview/SueoPreview.tsx",
+      "file:src/app/sueo-preview/page.tsx",
+      "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+      "file:src/components/ui/project-viewers/sueo/context.ts",
+      "file:src/components/ui/project-viewers/sueo/fonts.ts",
+      "file:src/components/ui/project-viewers/sueo/parts.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+      "file:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+      "file:src/components/ui/project-viewers/sueo/sentenceData.ts",
+      "file:src/components/ui/project-viewers/sueo/signData.ts",
+      "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+      "file:src/app/api/props/route.ts",
+      "file:src/components/ui/ResumeMode.tsx",
+      "file:src/components/village/Building.tsx",
+      "file:src/components/village/BuildingNetwork.tsx",
+      "file:src/components/village/CameraController.tsx",
+      "file:src/components/village/InstancedProps.tsx",
+      "file:src/components/village/PerfHud.tsx",
+      "file:src/components/village/PropsEditor.tsx",
+      "file:src/components/village/SeasonAmbience.tsx",
+      "file:src/components/village/VillageScene.tsx",
+      "file:src/data/resume.ts",
+      "file:src/data/techIcons.ts",
+      "file:src/lib/groundMacro.ts",
+      "file:src/lib/htmlLabelThrottle.ts",
+      "file:src/lib/skyClouds.ts",
+      "file:src/lib/terraceBank.ts",
+      "file:src/lib/villagePalette.ts",
+      "file:src/lib/villageTerrain.ts",
+      "file:src/types/props.ts",
+      "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+      "file:src/components/ui/project-viewers/aclub/context.ts",
+      "file:src/components/ui/project-viewers/aclub/data.ts",
+      "file:src/components/ui/project-viewers/aclub/fonts.ts",
+      "file:src/components/ui/project-viewers/aclub/parts.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+      "file:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+      "file:src/components/ui/project-viewers/darklab/context.ts",
+      "file:src/components/ui/project-viewers/darklab/fonts.ts",
+      "file:src/components/ui/project-viewers/darklab/parts.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/ArchitectureSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/CinemachineSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/EntrySection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/HeroSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/HonestCostSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/PrinciplesSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/RaycastSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/ResultSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/RetroSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/TakeoverSection.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/Trouble01Section.tsx",
+      "file:src/components/ui/project-viewers/darklab/sections/Trouble02Section.tsx",
+      "file:src/app/layout.tsx",
+      "file:src/components/Providers.tsx",
+      "file:src/components/InteractionLayer.tsx",
+      "file:src/components/ui/CustomCursor.tsx",
+      "file:scripts/generate-decor-layout.mjs",
+      "file:scripts/generate-ground-layout.mjs",
+      "file:scripts/lib/read-village.mjs",
+      "file:public/index.html",
+      "file:.gitattributes",
+      "file:.prettierignore",
+      "file:env.example",
+      "file:next-env.d.ts",
+      "file:next.config.mjs",
+      "file:postcss.config.mjs",
+      "file:public/models/props/.gitkeep",
+      "file:resume/jaehoon-jeong-resume.html",
+      "file:scripts/backend-dev.mjs",
+      "file:scripts/bake-impostors.mjs",
+      "file:scripts/flatten-ground-tiles.mjs",
+      "file:scripts/generate-building-manifest.mjs",
+      "file:scripts/make-fence-rail.mjs",
+      "file:scripts/make-grass-texture.mjs",
+      "file:scripts/make-low-wall.mjs",
+      "file:scripts/make-paving-tile.mjs",
+      "file:scripts/make-terrace-steps.mjs",
+      "file:scripts/make_paved_road_tiles.py",
+      "file:scripts/merge-character.mjs",
+      "file:scripts/optimize-glb.mjs",
+      "file:scripts/optimize_textures.py",
+      "file:src/app/globals.css",
+      "file:src/app/test-model/page.tsx",
+      "file:src/components/ModelTest.tsx",
+      "file:src/components/interior/InteriorCharacterController.tsx",
+      "file:src/components/ui/ProjectDetail.css",
+      "file:src/components/ui/ResumeTerminal.css",
+      "file:src/components/ui/project-viewers/aclub/aclub.css",
+      "file:src/components/ui/project-viewers/darklab/darklab.css",
+      "file:src/components/ui/project-viewers/sueo/sueo.css",
+      "file:src/data/npcs.ts",
+      "file:tailwind.config.ts"
+    ],
+    "service": [
+      "service:Dockerfile"
+    ],
+    "pipeline": [
+      "pipeline:.github/workflows/pages.yml"
+    ],
+    "config": [
+      "config:.github/ISSUE_TEMPLATE/bug.yml",
+      "config:.github/ISSUE_TEMPLATE/config.yml",
+      "config:.github/ISSUE_TEMPLATE/feature_request.yml",
+      "config:.pre-commit-config.yaml",
+      "config:package.json",
+      "config:skills-lock.json",
+      "config:tsconfig.json",
+      "config:backend/.env.example",
+      "config:backend/pytest.ini",
+      "config:backend/requirements-dev.txt",
+      "config:backend/requirements.txt",
+      "config:public/browserconfig.xml",
+      "config:public/manifest.json",
+      "config:src/data/buildingModels.json",
+      "config:src/data/propsLayout.json",
+      "config:src/data/villageTerraces.json"
+    ],
+    "document": [
+      "document:CLAUDE.md",
+      "document:README.md",
+      "document:copy-admin.md",
+      "document:copy.md",
+      "document:backend/README.md",
+      "document:docs/MESHY_BUILDING_PROMPTS.md",
+      "document:docs/MESHY_CHARACTER_PROMPTS.md",
+      "document:docs/MESHY_PROP_PROMPTS.md",
+      "document:docs/MESHY_VILLAGE_ASSETS.md",
+      "document:docs/PROJECT_DOCUMENTATION.md",
+      "document:docs/VILLAGE_ASSET_WISHLIST.md",
+      "document:portfolio-specs/00-OVERVIEW.md",
+      "document:portfolio-specs/01-mywave.md",
+      "document:portfolio-specs/02-mystock.md",
+      "document:portfolio-specs/03-festflow.md",
+      "document:portfolio-specs/04-muscleup.md",
+      "document:portfolio-specs/05-aclub.md",
+      "document:portfolio-specs/06-ajouchong.md",
+      "document:portfolio-specs/07-sign-language.md",
+      "document:portfolio-specs/08-ajou-adventure.md",
+      "document:portfolio-specs/09-darklab.md",
+      "document:portfolio-specs/10-tserof.md",
+      "document:portfolio-specs/_AUDIT.md",
+      "document:portfolio-specs/_IMPLEMENTATION.md",
+      "document:portfolio-specs/_STATUS.md",
+      "document:portfolio-specs/_UNKNOWNS.md",
+      "document:public/robots.txt",
+      "document:.github/pull_request_template.md",
+      "document:public/models/ASSETS.md",
+      "document:resume/jaehoon-jeong-resume.md",
+      "document:src/LEGACY_CRA.md"
+    ]
+  },
+  "crossCategoryEdges": [
+    {
+      "fromType": "file",
+      "toType": "file",
+      "edgeType": "imports",
+      "count": 423
+    },
+    {
+      "fromType": "document",
+      "toType": "file",
+      "edgeType": "documents",
+      "count": 79
+    },
+    {
+      "fromType": "file",
+      "toType": "file",
+      "edgeType": "depends_on",
+      "count": 17
+    },
+    {
+      "fromType": "config",
+      "toType": "file",
+      "edgeType": "configures",
+      "count": 17
+    },
+    {
+      "fromType": "file",
+      "toType": "file",
+      "edgeType": "related",
+      "count": 14
+    },
+    {
+      "fromType": "file",
+      "toType": "file",
+      "edgeType": "configures",
+      "count": 11
+    },
+    {
+      "fromType": "document",
+      "toType": "document",
+      "edgeType": "related",
+      "count": 9
+    },
+    {
+      "fromType": "document",
+      "toType": "config",
+      "edgeType": "documents",
+      "count": 8
+    },
+    {
+      "fromType": "config",
+      "toType": "config",
+      "edgeType": "related",
+      "count": 5
+    },
+    {
+      "fromType": "file",
+      "toType": "config",
+      "edgeType": "writes_to",
+      "count": 5
+    },
+    {
+      "fromType": "file",
+      "toType": "config",
+      "edgeType": "reads_from",
+      "count": 5
+    },
+    {
+      "fromType": "file",
+      "toType": "config",
+      "edgeType": "depends_on",
+      "count": 4
+    },
+    {
+      "fromType": "document",
+      "toType": "file",
+      "edgeType": "related",
+      "count": 4
+    },
+    {
+      "fromType": "file",
+      "toType": "file",
+      "edgeType": "tested_by",
+      "count": 3
+    },
+    {
+      "fromType": "config",
+      "toType": "file",
+      "edgeType": "depends_on",
+      "count": 3
+    },
+    {
+      "fromType": "config",
+      "toType": "config",
+      "edgeType": "configures",
+      "count": 2
+    },
+    {
+      "fromType": "document",
+      "toType": "document",
+      "edgeType": "validates",
+      "count": 2
+    },
+    {
+      "fromType": "service",
+      "toType": "file",
+      "edgeType": "deploys",
+      "count": 1
+    },
+    {
+      "fromType": "service",
+      "toType": "config",
+      "edgeType": "depends_on",
+      "count": 1
+    },
+    {
+      "fromType": "pipeline",
+      "toType": "file",
+      "edgeType": "deploys",
+      "count": 1
+    },
+    {
+      "fromType": "pipeline",
+      "toType": "config",
+      "edgeType": "depends_on",
+      "count": 1
+    },
+    {
+      "fromType": "config",
+      "toType": "config",
+      "edgeType": "depends_on",
+      "count": 1
+    },
+    {
+      "fromType": "document",
+      "toType": "file",
+      "edgeType": "validates",
+      "count": 1
+    },
+    {
+      "fromType": "file",
+      "toType": "file",
+      "edgeType": "reads_from",
+      "count": 1
+    },
+    {
+      "fromType": "file",
+      "toType": "file",
+      "edgeType": "calls",
+      "count": 1
+    }
+  ],
+  "interGroupImports": [
+    {
+      "from": "src/components/ui",
+      "to": "src/data",
+      "count": 33
+    },
+    {
+      "from": "backend/app/services",
+      "to": "backend/app",
+      "count": 28
+    },
+    {
+      "from": "src/components/village",
+      "to": "src/lib",
+      "count": 27
+    },
+    {
+      "from": "src/components/ui",
+      "to": "src/types",
+      "count": 22
+    },
+    {
+      "from": "src/components/village",
+      "to": "src/types",
+      "count": 14
+    },
+    {
+      "from": "src/components",
+      "to": "src/components/ui",
+      "count": 9
+    },
+    {
+      "from": "src/components/ui",
+      "to": "src/lib",
+      "count": 9
+    },
+    {
+      "from": "backend/app",
+      "to": "backend/app/services",
+      "count": 8
+    },
+    {
+      "from": "src/data",
+      "to": "src/types",
+      "count": 8
+    },
+    {
+      "from": "src/components/village",
+      "to": "src/data",
+      "count": 7
+    },
+    {
+      "from": "src/components/interior",
+      "to": "src/data",
+      "count": 6
+    },
+    {
+      "from": "src/components/interior",
+      "to": "src/types",
+      "count": 6
+    },
+    {
+      "from": "backend/tests",
+      "to": "backend/app",
+      "count": 4
+    },
+    {
+      "from": "src/app",
+      "to": "src/data",
+      "count": 4
+    },
+    {
+      "from": "src/components",
+      "to": "src/lib",
+      "count": 4
+    },
+    {
+      "from": "src/lib",
+      "to": "src/types",
+      "count": 4
+    },
+    {
+      "from": "backend/tests",
+      "to": "backend/app/services",
+      "count": 3
+    },
+    {
+      "from": "src/components",
+      "to": "src/data",
+      "count": 3
+    },
+    {
+      "from": "src/app",
+      "to": "src/lib",
+      "count": 2
+    },
+    {
+      "from": "src/app",
+      "to": "src/types",
+      "count": 2
+    },
+    {
+      "from": "src/app",
+      "to": "src/components",
+      "count": 2
+    },
+    {
+      "from": "src/components",
+      "to": "src/components/village",
+      "count": 2
+    },
+    {
+      "from": "src/components",
+      "to": "src/types",
+      "count": 2
+    },
+    {
+      "from": "src/components/interior",
+      "to": "src/components/ui",
+      "count": 2
+    },
+    {
+      "from": "src/data",
+      "to": "src/lib",
+      "count": 2
+    },
+    {
+      "from": "src/app",
+      "to": "src/components/ui",
+      "count": 2
+    },
+    {
+      "from": "src/components/interior",
+      "to": "src/lib",
+      "count": 1
+    }
+  ],
+  "intraGroupDensity": {
+    "src/components/ui": {
+      "internalEdges": 177,
+      "totalEdges": 254,
+      "density": 0.697
+    },
+    "src/data": {
+      "internalEdges": 1,
+      "totalEdges": 64,
+      "density": 0.016
+    },
+    "backend/app": {
+      "internalEdges": 8,
+      "totalEdges": 48,
+      "density": 0.167
+    },
+    "backend/app/services": {
+      "internalEdges": 4,
+      "totalEdges": 43,
+      "density": 0.093
+    },
+    "backend/tests": {
+      "internalEdges": 0,
+      "totalEdges": 7,
+      "density": 0
+    },
+    "src/app": {
+      "internalEdges": 2,
+      "totalEdges": 14,
+      "density": 0.143
+    },
+    "src/components": {
+      "internalEdges": 1,
+      "totalEdges": 23,
+      "density": 0.043
+    },
+    "src/components/interior": {
+      "internalEdges": 0,
+      "totalEdges": 15,
+      "density": 0
+    },
+    "src/components/village": {
+      "internalEdges": 12,
+      "totalEdges": 62,
+      "density": 0.194
+    },
+    "src/lib": {
+      "internalEdges": 0,
+      "totalEdges": 49,
+      "density": 0
+    },
+    "src/types": {
+      "internalEdges": 0,
+      "totalEdges": 58,
+      "density": 0
+    },
+    "scripts": {
+      "internalEdges": 2,
+      "totalEdges": 2,
+      "density": 1
+    },
+    "(root)": {
+      "internalEdges": 0,
+      "totalEdges": 0,
+      "density": 0
+    },
+    ".github": {
+      "internalEdges": 0,
+      "totalEdges": 0,
+      "density": 0
+    },
+    "backend": {
+      "internalEdges": 0,
+      "totalEdges": 0,
+      "density": 0
+    },
+    "docs": {
+      "internalEdges": 0,
+      "totalEdges": 0,
+      "density": 0
+    },
+    "portfolio-specs": {
+      "internalEdges": 0,
+      "totalEdges": 0,
+      "density": 0
+    },
+    "public": {
+      "internalEdges": 0,
+      "totalEdges": 0,
+      "density": 0
+    },
+    "resume": {
+      "internalEdges": 0,
+      "totalEdges": 0,
+      "density": 0
+    },
+    "src": {
+      "internalEdges": 0,
+      "totalEdges": 0,
+      "density": 0
+    }
+  },
+  "patternMatches": {
+    "src/components/ui": "ui",
+    "src/data": "data",
+    "backend/app": "unknown",
+    "backend/app/services": "service",
+    "backend/tests": "test",
+    "src/app": "unknown",
+    "src/components": "ui",
+    "src/components/interior": "unknown",
+    "src/components/village": "unknown",
+    "src/lib": "service",
+    "src/types": "types",
+    "scripts": "build-tooling",
+    "(root)": "unknown",
+    ".github": "ci-cd",
+    "backend": "unknown",
+    "docs": "documentation",
+    "portfolio-specs": "unknown",
+    "public": "assets",
+    "resume": "unknown",
+    "src": "unknown"
+  },
+  "filePatterns": {
+    "file:src/components/ui/project-viewers/richContent/index.tsx": "entry",
+    "file:backend/app/__init__.py": "entry",
+    "file:backend/app/services/__init__.py": "entry",
+    "file:backend/tests/test_relations.py": "test",
+    "file:backend/tests/test_relationship_service.py": "test",
+    "file:backend/tests/test_village_service.py": "test",
+    "service:Dockerfile": "infrastructure",
+    "pipeline:.github/workflows/pages.yml": "ci-cd",
+    "document:CLAUDE.md": "documentation",
+    "document:README.md": "documentation",
+    "document:copy-admin.md": "documentation",
+    "document:copy.md": "documentation",
+    "config:package.json": "config",
+    "config:tsconfig.json": "config",
+    "document:backend/README.md": "documentation",
+    "config:backend/requirements-dev.txt": "config",
+    "config:backend/requirements.txt": "config",
+    "document:docs/MESHY_BUILDING_PROMPTS.md": "documentation",
+    "document:docs/MESHY_CHARACTER_PROMPTS.md": "documentation",
+    "document:docs/MESHY_PROP_PROMPTS.md": "documentation",
+    "document:docs/MESHY_VILLAGE_ASSETS.md": "documentation",
+    "document:docs/PROJECT_DOCUMENTATION.md": "documentation",
+    "document:docs/VILLAGE_ASSET_WISHLIST.md": "documentation",
+    "document:portfolio-specs/00-OVERVIEW.md": "documentation",
+    "document:portfolio-specs/01-mywave.md": "documentation",
+    "document:portfolio-specs/02-mystock.md": "documentation",
+    "document:portfolio-specs/03-festflow.md": "documentation",
+    "document:portfolio-specs/04-muscleup.md": "documentation",
+    "document:portfolio-specs/05-aclub.md": "documentation",
+    "document:portfolio-specs/06-ajouchong.md": "documentation",
+    "document:portfolio-specs/07-sign-language.md": "documentation",
+    "document:portfolio-specs/08-ajou-adventure.md": "documentation",
+    "document:portfolio-specs/09-darklab.md": "documentation",
+    "document:portfolio-specs/10-tserof.md": "documentation",
+    "document:portfolio-specs/_AUDIT.md": "documentation",
+    "document:portfolio-specs/_IMPLEMENTATION.md": "documentation",
+    "document:portfolio-specs/_STATUS.md": "documentation",
+    "document:portfolio-specs/_UNKNOWNS.md": "documentation",
+    "document:.github/pull_request_template.md": "documentation",
+    "file:next-env.d.ts": "types",
+    "document:public/models/ASSETS.md": "documentation",
+    "document:resume/jaehoon-jeong-resume.md": "documentation",
+    "document:src/LEGACY_CRA.md": "documentation"
+  },
+  "deploymentTopology": {
+    "hasDockerfile": true,
+    "hasCompose": false,
+    "hasK8s": false,
+    "hasTerraform": false,
+    "hasCI": true,
+    "infraFiles": [
+      "Dockerfile",
+      ".github/workflows/pages.yml"
+    ]
+  },
+  "dataPipeline": {
+    "schemaFiles": [
+      "backend/app/schemas.py"
+    ],
+    "migrationFiles": [],
+    "dataModelFiles": [
+      "backend/app/models.py",
+      "public/models/ASSETS.md",
+      "public/models/props/.gitkeep"
+    ],
+    "apiHandlerFiles": [
+      "backend/app/main.py",
+      "src/lib/liveApi.ts",
+      "src/app/api/props/route.ts"
+    ],
+    "generatedDataFiles": [
+      "src/data/buildingModels.json",
+      "src/data/propsLayout.json",
+      "src/data/villageTerraces.json"
+    ]
+  },
+  "docCoverage": {
+    "groupsWithDocs": 8,
+    "totalGroups": 20,
+    "coverageRatio": 0.4,
+    "undocumentedGroups": [
+      "src/components/ui",
+      "src/data",
+      "backend/app",
+      "backend/app/services",
+      "backend/tests",
+      "src/app",
+      "src/components",
+      "src/components/interior",
+      "src/components/village",
+      "src/lib",
+      "src/types",
+      "scripts"
+    ]
+  },
+  "dependencyDirection": [
+    {
+      "dependent": "src/components/ui",
+      "dependsOn": "src/data",
+      "net": 33,
+      "forward": 33,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components/village",
+      "dependsOn": "src/lib",
+      "net": 27,
+      "forward": 27,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components/ui",
+      "dependsOn": "src/types",
+      "net": 22,
+      "forward": 22,
+      "reverse": 0
+    },
+    {
+      "dependent": "backend/app/services",
+      "dependsOn": "backend/app",
+      "net": 20,
+      "forward": 28,
+      "reverse": 8
+    },
+    {
+      "dependent": "src/components/village",
+      "dependsOn": "src/types",
+      "net": 14,
+      "forward": 14,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components",
+      "dependsOn": "src/components/ui",
+      "net": 9,
+      "forward": 9,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components/ui",
+      "dependsOn": "src/lib",
+      "net": 9,
+      "forward": 9,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/data",
+      "dependsOn": "src/types",
+      "net": 8,
+      "forward": 8,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components/village",
+      "dependsOn": "src/data",
+      "net": 7,
+      "forward": 7,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components/interior",
+      "dependsOn": "src/data",
+      "net": 6,
+      "forward": 6,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components/interior",
+      "dependsOn": "src/types",
+      "net": 6,
+      "forward": 6,
+      "reverse": 0
+    },
+    {
+      "dependent": "backend/tests",
+      "dependsOn": "backend/app",
+      "net": 4,
+      "forward": 4,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/app",
+      "dependsOn": "src/data",
+      "net": 4,
+      "forward": 4,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components",
+      "dependsOn": "src/lib",
+      "net": 4,
+      "forward": 4,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/lib",
+      "dependsOn": "src/types",
+      "net": 4,
+      "forward": 4,
+      "reverse": 0
+    },
+    {
+      "dependent": "backend/tests",
+      "dependsOn": "backend/app/services",
+      "net": 3,
+      "forward": 3,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components",
+      "dependsOn": "src/data",
+      "net": 3,
+      "forward": 3,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/app",
+      "dependsOn": "src/lib",
+      "net": 2,
+      "forward": 2,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/app",
+      "dependsOn": "src/types",
+      "net": 2,
+      "forward": 2,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/app",
+      "dependsOn": "src/components",
+      "net": 2,
+      "forward": 2,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components",
+      "dependsOn": "src/components/village",
+      "net": 2,
+      "forward": 2,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components",
+      "dependsOn": "src/types",
+      "net": 2,
+      "forward": 2,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components/interior",
+      "dependsOn": "src/components/ui",
+      "net": 2,
+      "forward": 2,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/data",
+      "dependsOn": "src/lib",
+      "net": 2,
+      "forward": 2,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/app",
+      "dependsOn": "src/components/ui",
+      "net": 2,
+      "forward": 2,
+      "reverse": 0
+    },
+    {
+      "dependent": "src/components/interior",
+      "dependsOn": "src/lib",
+      "net": 1,
+      "forward": 1,
+      "reverse": 0
+    }
+  ],
+  "fileStats": {
+    "totalFileNodes": 252,
+    "filesPerGroup": {
+      "src/components/ui": 92,
+      "src/data": 16,
+      "backend/app": 10,
+      "backend/app/services": 10,
+      "backend/tests": 4,
+      "src/app": 8,
+      "src/components": 4,
+      "src/components/interior": 7,
+      "src/components/village": 14,
+      "src/lib": 12,
+      "src/types": 3,
+      "scripts": 16,
+      "(root)": 16,
+      ".github": 5,
+      "backend": 5,
+      "docs": 6,
+      "portfolio-specs": 15,
+      "public": 6,
+      "resume": 2,
+      "src": 1
+    },
+    "nodeTypeCounts": {
+      "file": 203,
+      "service": 1,
+      "pipeline": 1,
+      "config": 16,
+      "document": 31
+    }
+  },
+  "fileFanIn": {
+    "file:src/types/portfolio.ts": 44,
+    "file:src/data/projectThemes.ts": 27,
+    "file:src/lib/constants.ts": 14,
+    "file:src/components/ui/project-viewers/richContent/shared.tsx": 12,
+    "file:src/components/ui/project-viewers/sueo/context.ts": 12,
+    "file:src/components/ui/project-viewers/aclub/context.ts": 12,
+    "file:src/types/live.ts": 11,
+    "file:src/components/ui/project-viewers/sueo/useTimeline.ts": 11,
+    "file:src/components/ui/project-viewers/darklab/parts.tsx": 11,
+    "file:backend/app/models.py": 9,
+    "file:src/components/ui/project-viewers/sueo/parts.tsx": 9,
+    "file:src/components/ui/project-viewers/aclub/parts.tsx": 9,
+    "file:backend/app/schemas.py": 8,
+    "file:src/components/ui/project-viewers/darklab/context.ts": 8,
+    "file:src/components/ui/project-viewers/sound.ts": 7,
+    "file:backend/app/config.py": 7,
+    "file:src/lib/villageTerrain.ts": 7,
+    "file:src/data/projects.ts": 6,
+    "file:src/lib/liveApi.ts": 6,
+    "file:src/components/ui/project-viewers/aclub/data.ts": 6,
+    "file:src/components/ui/project-viewers/atmosphere.ts": 5,
+    "file:src/data/npcRoster.ts": 5,
+    "file:src/lib/liveState.ts": 5,
+    "file:src/components/ui/project-viewers/richContent/index.tsx": 4,
+    "file:backend/app/time_utils.py": 4
+  },
+  "fileFanOut": {
+    "file:src/components/AIPortfolioVillage.tsx": 20,
+    "file:src/components/village/VillageScene.tsx": 20,
+    "file:src/components/ui/project-viewers/darklab/DarkLabRoom.tsx": 19,
+    "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx": 17,
+    "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx": 16,
+    "file:src/components/ui/project-viewers/richContent/index.tsx": 14,
+    "file:src/components/ui/ProjectViewer.tsx": 12,
+    "file:backend/app/main.py": 12,
+    "file:src/components/ui/InfoPanel.tsx": 10,
+    "file:backend/app/services/chat_service.py": 7,
+    "file:src/components/village/NPC.tsx": 7,
+    "file:src/components/village/VillageHud.tsx": 7,
+    "file:src/components/village/Building.tsx": 7,
+    "file:src/components/ui/ProjectOnePager.tsx": 6,
+    "file:backend/app/services/npc_brain_service.py": 6,
+    "file:src/components/ui/DialogueBox.tsx": 6,
+    "file:src/components/ui/ResumeMode.tsx": 6,
+    "file:src/app/admin/page.tsx": 5,
+    "file:src/components/interior/ProjectInterior.tsx": 5,
+    "file:src/components/ui/project-viewers/DashboardProjectViewer.tsx": 4,
+    "file:src/components/ui/project-viewers/GameProjectViewer.tsx": 4,
+    "file:src/components/ui/project-viewers/PlatformProjectViewer.tsx": 4,
+    "file:src/components/ui/project-viewers/RealtimeProjectViewer.tsx": 4,
+    "file:backend/app/services/admin_service.py": 4,
+    "file:src/components/village/CharacterController.tsx": 4
+  }
+}

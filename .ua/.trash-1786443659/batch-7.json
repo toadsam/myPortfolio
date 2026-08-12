@@ -1,0 +1,1551 @@
+{
+ "nodes": [
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "type": "file",
+   "name": "AClubRoom.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "summary": "ACLUB 프로젝트 전용 전시실의 셸 컴포넌트. 10개 섹션을 스크롤 순서대로 조립하고 reducedMotion·스크롤 잠금·헤더 판독값·스크린리더 알림을 담은 room API를 AClubProvider로 하위에 내려준다.",
+   "tags": [
+    "project-viewer",
+    "shell",
+    "context-provider",
+    "scroll-driven",
+    "accessibility"
+   ],
+   "complexity": "moderate",
+   "languageNotes": "인트로가 끝날 때까지 ac-locked 클래스로 스크롤을 봉인하고, lockScroll을 ref 카운터로 중첩 관리해 여러 오버레이가 동시에 잠금을 걸어도 안전하게 풀리도록 했다."
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "file",
+   "name": "context.ts",
+   "filePath": "src/components/ui/project-viewers/aclub/context.ts",
+   "summary": "ACLUB 룸이 하위 섹션에 공유하는 React Context와 useAClub 훅을 정의한다. 스크롤 루트 ref, 모션 감소 여부, 스크롤 잠금, 헤더 판독값·스크린리더 알림, 조명 토글, 닫기 콜백을 한 타입으로 묶는다.",
+   "tags": [
+    "context",
+    "hook",
+    "type-definition",
+    "shared-state"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/data.ts",
+   "type": "file",
+   "name": "data.ts",
+   "filePath": "src/components/ui/project-viewers/aclub/data.ts",
+   "summary": "ACLUB 전시실이 쓰는 가상 동아리 고정 데이터. 카테고리 색상·이름, 24개 동아리 목록(CLUBS), 정렬 라벨, 그리고 트러블슈팅 시뮬레이터용 축약 목록(SIM_CLUBS·SCROLL_CLUBS)을 제공한다.",
+   "tags": [
+    "fixture-data",
+    "static-data",
+    "data-model",
+    "seeded-random"
+   ],
+   "complexity": "moderate",
+   "languageNotes": "Math.random 대신 sin 기반 시드 난수를 써서 서버 렌더와 클라이언트 렌더가 같은 값을 내도록 했다 — Next.js hydration mismatch를 피하는 전형적인 패턴."
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/fonts.ts",
+   "type": "file",
+   "name": "fonts.ts",
+   "filePath": "src/components/ui/project-viewers/aclub/fonts.ts",
+   "summary": "ACLUB 룸 전용 서체 로더. next/font/google로 Noto Sans KR와 JetBrains Mono를 불러와 --ac-font-sans / --ac-font-mono CSS 변수로만 노출한다.",
+   "tags": [
+    "fonts",
+    "styling",
+    "configuration",
+    "next-font"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "type": "file",
+   "name": "parts.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/parts.tsx",
+   "summary": "ACLUB 섹션들이 공유하는 프레젠테이션 프리미티브 모음. 뷰포트 진입 감지 훅(useInViewOnce)과 등장 애니메이션(Reveal·RevealWords), 코드 창(CodeWindow·구문 강조 태그), 메모 박스, 지표 셀을 제공한다.",
+   "tags": [
+    "ui-primitives",
+    "hook",
+    "barrel",
+    "animation",
+    "intersection-observer"
+   ],
+   "complexity": "complex",
+   "languageNotes": "IntersectionObserver의 root를 룸 스크롤 컨테이너로 지정하고, reducedMotion이면 관찰 없이 즉시 inView로 처리해 접근성 설정을 우선한다."
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+   "type": "file",
+   "name": "ComponentSection.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+   "summary": "공통 컴포넌트 설계를 다루는 장. 카드 하나를 조립/분해(exploded) 뷰로 전환해 5종 레이어가 화면별로 어떻게 조합되는지 보여주고, 각 컴포넌트가 받는 값과 받지 않는 값을 표로 정리한다.",
+   "tags": [
+    "case-study-section",
+    "interactive-demo",
+    "component-design",
+    "scroll-driven"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "type": "file",
+   "name": "FilterSection.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "summary": "조건 필터와 목록 재배치를 시연하는 장. 카테고리·모집중·신입생 환영·주말 없음 토글과 정렬을 실제로 걸면 framer-motion 레이아웃 애니메이션으로 포스터가 재배치되고 헤더 판독값이 실시간 갱신된다.",
+   "tags": [
+    "case-study-section",
+    "interactive-demo",
+    "filtering",
+    "framer-motion",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+   "type": "file",
+   "name": "HeroSection.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+   "summary": "전시실의 첫 장. 포스터 벽 배경 위로 헤드라인을 단어 단위로 띄우고 기술 스택·핵심 화면·담당 범위·백엔드 미연동 같은 메타 지표와 GitHub 링크, 영상 모달을 노출한다.",
+   "tags": [
+    "case-study-section",
+    "hero",
+    "animation",
+    "timeline",
+    "entry-point"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+   "type": "file",
+   "name": "IntroOverlay.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+   "summary": "룸 진입 시퀀스 오버레이. 빈 벽에 포스터 24장(모바일 12장)이 사방에서 날아와 붙는 타임라인과 함께 프로젝트를 만든 동기 문장을 단어 단위로 읽히고, 끝나면 onDismiss로 룸 스크롤을 푼다.",
+   "tags": [
+    "case-study-section",
+    "intro",
+    "animation",
+    "timeline",
+    "overlay"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "type": "file",
+   "name": "ResultSection.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "summary": "결과 갤러리 장. 6개 핵심 화면 스크린샷 슬롯을 그리드로 배치하고, 화면 수·공통 컴포넌트·재사용 횟수·복구한 브라우저 동작을 카운트업 애니메이션 지표로 보여준다.",
+   "tags": [
+    "case-study-section",
+    "gallery",
+    "metrics",
+    "count-up",
+    "framer-motion"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+   "type": "file",
+   "name": "RetroSection.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+   "summary": "회고 장이자 룸의 마지막 화면. KEEP·PROBLEM·TRY 3열 KPT 회고와 GitHub 링크를 보여주고, 나가기를 누르면 포스터가 무작위 순서로 떨어지는 연출 뒤 룸을 닫는다.",
+   "tags": [
+    "case-study-section",
+    "retrospective",
+    "exit-transition",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+   "type": "file",
+   "name": "RoleSection.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+   "summary": "학생/운영진 역할 분기를 다루는 장. 같은 데이터가 역할에 따라 어떤 화면으로 갈라지는지 토글로 시연하고, 항목별 권한 비교표와 지원자 목록 예시를 함께 제시한다.",
+   "tags": [
+    "case-study-section",
+    "interactive-demo",
+    "role-based-ui",
+    "accessibility"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+   "type": "file",
+   "name": "ScopeSection.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+   "summary": "작업 범위를 정리하는 장. 완료한 6개 화면을 포스터 카드로 흩뿌려 배치하고 하지 못한 범위(백엔드 연동·배포 등)를 대비시켜 프로젝트 경계를 명확히 드러낸다.",
+   "tags": [
+    "case-study-section",
+    "scope",
+    "layout",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+   "type": "file",
+   "name": "ScrollRestoreSection.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+   "summary": "스크롤 복원 트러블슈팅 장. before/after 모드를 전환하며 목록에서 상세로 갔다 돌아올 때 위치가 날아가는 문제와 저장·복원 후의 동작을 실제로 스크롤되는 24행 목록으로 재현한다.",
+   "tags": [
+    "case-study-section",
+    "troubleshooting",
+    "scroll-restoration",
+    "interactive-demo"
+   ],
+   "complexity": "complex",
+   "languageNotes": "스크롤 핸들러를 requestAnimationFrame 티킹으로 스로틀해 판독값 갱신이 프레임당 한 번만 일어나게 한다."
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "type": "file",
+   "name": "UrlStateSection.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "summary": "필터 상태를 주소로 옮긴 트러블슈팅 장. 필터를 쿼리스트링으로 직렬화(toQuery)하고 주소에서 되읽는(fromQuery) 시뮬레이터로 공유·뒤로가기·새로고침 세 가지 실패 사례와 수정 결과를 대비시킨다.",
+   "tags": [
+    "case-study-section",
+    "troubleshooting",
+    "url-state",
+    "serialization",
+    "interactive-demo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "type": "file",
+   "name": "UserFlowSection.tsx",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "summary": "사용자 흐름과 라우팅 구조를 보여주는 장. 탐색→상세→모집 공고→지원 4단계와 보호 라우트(로그인) 분기를 화면 노드 다이어그램으로 그리고, 대응하는 Routes 코드 블록을 줄 단위로 강조한다.",
+   "tags": [
+    "case-study-section",
+    "user-flow",
+    "routing",
+    "diagram",
+    "interactive-demo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/AClubRoom.tsx:AClubRoom",
+   "type": "function",
+   "name": "AClubRoom",
+   "filePath": "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "lineRange": [
+    30,
+    137
+   ],
+   "summary": "ACLUB 전시실 루트 컴포넌트. 모션 감소 감지·인트로 완료·조명 상태를 소유하고 스크롤 잠금 카운터와 Esc 닫기를 관리하며, 10개 섹션과 고정 헤더를 조립해 AClubProvider로 감싼다.",
+   "tags": [
+    "shell",
+    "component",
+    "state-machine",
+    "context-provider"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "function",
+   "name": "useAClub",
+   "filePath": "src/components/ui/project-viewers/aclub/context.ts",
+   "lineRange": [
+    24,
+    28
+   ],
+   "summary": "ACLUB 룸 컨텍스트를 읽는 훅. 룸 바깥에서 호출하면 명시적 에러를 던져 Provider 밖 사용을 막는다.",
+   "tags": [
+    "hook",
+    "context",
+    "guard"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "function",
+   "name": "useInViewOnce",
+   "filePath": "src/components/ui/project-viewers/aclub/parts.tsx",
+   "lineRange": [
+    9,
+    38
+   ],
+   "summary": "룸 스크롤 컨테이너를 IntersectionObserver root로 삼아 요소가 처음 뷰포트에 들어올 때 한 번만 발화하는 훅. reducedMotion이면 관찰 없이 즉시 true를 반환한다.",
+   "tags": [
+    "hook",
+    "intersection-observer",
+    "animation",
+    "accessibility"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/parts.tsx:Reveal",
+   "type": "function",
+   "name": "Reveal",
+   "filePath": "src/components/ui/project-viewers/aclub/parts.tsx",
+   "lineRange": [
+    43,
+    65
+   ],
+   "summary": "뷰포트에 들어오면 아래에서 위로 떠오르는 등장 래퍼. 렌더 태그와 지연 시간을 props로 받는다.",
+   "tags": [
+    "component",
+    "animation",
+    "wrapper"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/parts.tsx:RevealWords",
+   "type": "function",
+   "name": "RevealWords",
+   "filePath": "src/components/ui/project-viewers/aclub/parts.tsx",
+   "lineRange": [
+    68,
+    100
+   ],
+   "summary": "제목 텍스트를 단어 단위로 쪼개 순차적으로 등장시키는 컴포넌트. 단어당 지연과 시작 색상을 조절할 수 있다.",
+   "tags": [
+    "component",
+    "animation",
+    "typography"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/parts.tsx:Kicker",
+   "type": "function",
+   "name": "Kicker",
+   "filePath": "src/components/ui/project-viewers/aclub/parts.tsx",
+   "lineRange": [
+    104,
+    118
+   ],
+   "summary": "섹션 상단의 작은 라벨(키커)을 톤별 색상으로 렌더한다.",
+   "tags": [
+    "component",
+    "label",
+    "presentational"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/parts.tsx:CodeWindow",
+   "type": "function",
+   "name": "CodeWindow",
+   "filePath": "src/components/ui/project-viewers/aclub/parts.tsx",
+   "lineRange": [
+    121,
+    168
+   ],
+   "summary": "코드 스니펫을 감싸는 의사 에디터 창. 파일명 헤더·서브헤더·푸터와 톤 색상을 받아 트러블슈팅 장의 코드 블록을 통일된 모습으로 보여준다.",
+   "tags": [
+    "component",
+    "code-display",
+    "presentational"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/parts.tsx:HlLine",
+   "type": "function",
+   "name": "HlLine",
+   "filePath": "src/components/ui/project-viewers/aclub/parts.tsx",
+   "lineRange": [
+    171,
+    179
+   ],
+   "summary": "코드 창 안에서 강조 배경을 깔아주는 한 줄 래퍼.",
+   "tags": [
+    "component",
+    "code-display",
+    "presentational"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/parts.tsx:NoteBox",
+   "type": "function",
+   "name": "NoteBox",
+   "filePath": "src/components/ui/project-viewers/aclub/parts.tsx",
+   "lineRange": [
+    206,
+    239
+   ],
+   "summary": "라벨과 톤을 받아 트러블슈팅 결론·주의사항을 담는 메모 상자를 렌더한다.",
+   "tags": [
+    "component",
+    "presentational",
+    "annotation"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/parts.tsx:MetricCell",
+   "type": "function",
+   "name": "MetricCell",
+   "filePath": "src/components/ui/project-viewers/aclub/parts.tsx",
+   "lineRange": [
+    242,
+    249
+   ],
+   "summary": "값과 라벨 한 쌍을 보여주는 지표 셀.",
+   "tags": [
+    "component",
+    "metrics",
+    "presentational"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx:ComponentSection",
+   "type": "function",
+   "name": "ComponentSection",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+   "lineRange": [
+    32,
+    474
+   ],
+   "summary": "공통 컴포넌트 장 본체. 조립/분해 뷰 상태와 레이어 주석 진행도를 관리하고, 사용자가 먼저 조작하지 않으면 자동 시연을 돌린 뒤 컴포넌트 계약 표를 노출한다.",
+   "tags": [
+    "section",
+    "interactive-demo",
+    "component-design",
+    "auto-demo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx:Motif",
+   "type": "function",
+   "name": "Motif",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "lineRange": [
+    38,
+    73
+   ],
+   "summary": "카테고리(예술·학술·운동·봉사·취미)별 SVG 모티프 아이콘을 색상과 함께 그린다.",
+   "tags": [
+    "component",
+    "svg",
+    "icon",
+    "presentational"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx:Toggle",
+   "type": "function",
+   "name": "Toggle",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "lineRange": [
+    77,
+    100
+   ],
+   "summary": "필터 조건용 스위치 컴포넌트. 라벨·체크 상태·변경 핸들러를 받아 접근 가능한 토글을 렌더한다.",
+   "tags": [
+    "component",
+    "form-control",
+    "filtering"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx:LiveCount",
+   "type": "function",
+   "name": "LiveCount",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "lineRange": [
+    104,
+    127
+   ],
+   "summary": "필터 결과 개수를 실시간으로 보여주는 카운터. reducedMotion일 때는 애니메이션 없이 값만 바꾼다.",
+   "tags": [
+    "component",
+    "metrics",
+    "animation",
+    "accessibility"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx:FilterSection",
+   "type": "function",
+   "name": "FilterSection",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "lineRange": [
+    261,
+    706
+   ],
+   "summary": "필터 장 본체. 카테고리·모집중·신입생·주말 조건과 정렬 키를 상태로 들고 CLUBS를 걸러 재배치하며, 탈락 카드의 퇴장 연출과 헤더 판독값 갱신을 함께 처리한다.",
+   "tags": [
+    "section",
+    "filtering",
+    "sorting",
+    "framer-motion",
+    "interactive-demo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx:HeroSection",
+   "type": "function",
+   "name": "HeroSection",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+   "lineRange": [
+    46,
+    387
+   ],
+   "summary": "히어로 장 본체. 인트로 종료 신호(start)를 받으면 포스터 유입·헤드라인 단어·메타 셀 순으로 타이머 기반 타임라인을 진행하고 영상 모달 동안 룸 스크롤을 잠근다.",
+   "tags": [
+    "section",
+    "hero",
+    "timeline",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx:IntroOverlay",
+   "type": "function",
+   "name": "IntroOverlay",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+   "lineRange": [
+    24,
+    218
+   ],
+   "summary": "진입 오버레이 본체. 시드 난수로 사방에서 날아오는 포스터 배치를 계산하고 정착·문구 노출 단계를 타이머로 진행하며, 완료 또는 사용자 조작 시 한 번만 onDismiss를 호출한다.",
+   "tags": [
+    "section",
+    "intro",
+    "timeline",
+    "seeded-random"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx:useCountUp",
+   "type": "function",
+   "name": "useCountUp",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "lineRange": [
+    26,
+    49
+   ],
+   "summary": "트리거가 켜지면 0에서 목표값까지 ease-out 곡선으로 800ms 동안 세는 rAF 기반 카운트업 훅. reducedMotion이면 즉시 최종값을 반환한다.",
+   "tags": [
+    "hook",
+    "animation",
+    "requestAnimationFrame",
+    "accessibility"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx:StatCell",
+   "type": "function",
+   "name": "StatCell",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "lineRange": [
+    51,
+    68
+   ],
+   "summary": "카운트업 값과 접미사·라벨을 묶어 하나의 성과 지표 셀로 렌더한다.",
+   "tags": [
+    "component",
+    "metrics",
+    "presentational"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx:ResultSection",
+   "type": "function",
+   "name": "ResultSection",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "lineRange": [
+    70,
+    299
+   ],
+   "summary": "결과 장 본체. 6개 화면 갤러리를 반응형 그리드로 배치하고 지표를 카운트업으로 노출하며, 이 장에 닿으면 룸 배경 조명을 한 단계 올린다.",
+   "tags": [
+    "section",
+    "gallery",
+    "metrics",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx:RetroSection",
+   "type": "function",
+   "name": "RetroSection",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+   "lineRange": [
+    44,
+    293
+   ],
+   "summary": "회고 장 본체. KPT 3열을 노출하고, 나가기 시 셔플된 순서로 포스터가 떨어지는 퇴장 연출 동안 스크롤을 잠근 뒤 onExit으로 룸을 닫는다.",
+   "tags": [
+    "section",
+    "retrospective",
+    "exit-transition",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx:RoleSection",
+   "type": "function",
+   "name": "RoleSection",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+   "lineRange": [
+    30,
+    437
+   ],
+   "summary": "역할 분기 장 본체. 학생/운영진 라디오 선택을 관리하고 화면과 권한 비교표를 갈아끼우며, 사용자가 먼저 만지기 전까지 자동 시연을 돌리고 변경 시 스크린리더에 알린다.",
+   "tags": [
+    "section",
+    "role-based-ui",
+    "auto-demo",
+    "accessibility"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx:ScopeSection",
+   "type": "function",
+   "name": "ScopeSection",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+   "lineRange": [
+    99,
+    343
+   ],
+   "summary": "범위 장 본체. 완료한 화면 카드를 각기 다른 회전·지연 값으로 흩뿌려 등장시키고 미완 범위와 대비시켜 프로젝트 경계를 보여준다.",
+   "tags": [
+    "section",
+    "scope",
+    "layout",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx:ScrollRestoreSection",
+   "type": "function",
+   "name": "ScrollRestoreSection",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+   "lineRange": [
+    10,
+    481
+   ],
+   "summary": "스크롤 복원 장 본체. 실제 스크롤되는 24행 목록에서 위치를 저장/복원하고, before 모드에서는 위치 유실 버그를, after 모드에서는 복원 성공을 마커와 판독값으로 대비시킨다.",
+   "tags": [
+    "section",
+    "troubleshooting",
+    "scroll-restoration",
+    "interactive-demo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx:toQuery",
+   "type": "function",
+   "name": "toQuery",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "lineRange": [
+    22,
+    29
+   ],
+   "summary": "시뮬레이터 필터 객체를 cat/recruiting/fresh 쿼리스트링으로 직렬화한다.",
+   "tags": [
+    "serialization",
+    "url-state",
+    "utility"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx:fromQuery",
+   "type": "function",
+   "name": "fromQuery",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "lineRange": [
+    31,
+    42
+   ],
+   "summary": "URL의 쿼리스트링을 URLSearchParams로 파싱해 시뮬레이터 필터 객체로 되돌린다.",
+   "tags": [
+    "deserialization",
+    "url-state",
+    "utility"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx:UrlStateSection",
+   "type": "function",
+   "name": "UrlStateSection",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "lineRange": [
+    64,
+    715
+   ],
+   "summary": "주소 상태 장 본체. before/after 모드와 가상 히스토리 스택을 관리해 공유·뒤로가기·새로고침 세 실패 사례를 재현하고, 필터를 주소에서 파생시킨 수정 결과를 코드 창과 함께 보여준다.",
+   "tags": [
+    "section",
+    "troubleshooting",
+    "url-state",
+    "history",
+    "interactive-demo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx:UserFlowSection",
+   "type": "function",
+   "name": "UserFlowSection",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "lineRange": [
+    94,
+    650
+   ],
+   "summary": "사용자 흐름 장 본체. 4단계 화면 노드와 보호 라우트 분기를 연결선으로 그리고, 선택된 화면에 맞춰 Routes 코드 블록의 해당 줄을 강조한다.",
+   "tags": [
+    "section",
+    "user-flow",
+    "routing",
+    "diagram"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx:ScreenBox",
+   "type": "function",
+   "name": "ScreenBox",
+   "filePath": "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "lineRange": [
+    652,
+    679
+   ],
+   "summary": "흐름 다이어그램의 화면 노드 하나를 그리는 박스 컴포넌트. 위치 스타일과 내용을 받아 렌더한다.",
+   "tags": [
+    "component",
+    "diagram",
+    "presentational"
+   ],
+   "complexity": "simple"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/aclub.css",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/fonts.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sound.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/data/projectThemes.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "file:src/types/portfolio.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/data.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/data.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/data.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/data.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/data.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/data.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/AClubRoom.tsx:AClubRoom",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/AClubRoom.tsx:AClubRoom",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/context.ts",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:Reveal",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:Reveal",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:RevealWords",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:RevealWords",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:Kicker",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:Kicker",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:CodeWindow",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:CodeWindow",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:HlLine",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:HlLine",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:NoteBox",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:NoteBox",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:MetricCell",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:MetricCell",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx:ComponentSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx:ComponentSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx:Motif",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx:Toggle",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx:LiveCount",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx:FilterSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx:FilterSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx:HeroSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx:HeroSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx:IntroOverlay",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx:IntroOverlay",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx:useCountUp",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx:StatCell",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx:ResultSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx:ResultSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx:RetroSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx:RetroSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx:RoleSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx:RoleSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx:ScopeSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx:ScopeSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx:ScrollRestoreSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx:ScrollRestoreSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx:toQuery",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx:fromQuery",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx:UrlStateSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx:UrlStateSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx:UserFlowSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx:UserFlowSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "target": "function:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx:ScreenBox",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx:ComponentSection",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx:FilterSection",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/HeroSection.tsx:HeroSection",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx:ResultSection",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx:RetroSection",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx:RoleSection",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx:ScopeSection",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx:ScrollRestoreSection",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx:UrlStateSection",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx:UserFlowSection",
+   "target": "function:src/components/ui/project-viewers/aclub/context.ts:useAClub",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx:ComponentSection",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/FilterSection.tsx:FilterSection",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/ResultSection.tsx:ResultSection",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/RetroSection.tsx:RetroSection",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/RoleSection.tsx:RoleSection",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx:ScopeSection",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx:ScrollRestoreSection",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx:UrlStateSection",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx:UserFlowSection",
+   "target": "function:src/components/ui/project-viewers/aclub/parts.tsx:useInViewOnce",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/ProjectViewer.tsx",
+   "target": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "type": "depends_on",
+   "direction": "forward",
+   "weight": 0.6
+  }
+ ]
+}

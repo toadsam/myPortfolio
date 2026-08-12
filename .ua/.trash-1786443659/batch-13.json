@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {
+      "id": "config:.github/ISSUE_TEMPLATE/bug.yml",
+      "type": "config",
+      "name": "bug.yml",
+      "filePath": ".github/ISSUE_TEMPLATE/bug.yml",
+      "summary": "버그 리포트용 GitHub 이슈 폼. 재현 절차·기대 동작·반응형 여부를 필수 입력으로, 스크린샷과 데스크톱/스마트폰 환경 정보를 선택 입력으로 받고 \"bug\" 라벨을 자동으로 붙인다.",
+      "tags": ["configuration", "issue-template", "github", "repo-process", "documentation"],
+      "complexity": "moderate",
+      "languageNotes": "안내 문구의 기존 이슈 검색 링크가 아직 상위 템플릿 저장소(saadpasta/developerFolio)를 가리킨다 — 이 포트폴리오가 developerFolio에서 갈라져 나왔다는 흔적으로, 제보자를 남의 저장소로 보내게 되니 이 저장소 주소로 바꾸는 편이 낫다."
+    },
+    {
+      "id": "config:.github/ISSUE_TEMPLATE/config.yml",
+      "type": "config",
+      "name": "config.yml",
+      "filePath": ".github/ISSUE_TEMPLATE/config.yml",
+      "summary": "이슈 템플릿 선택 화면의 동작을 정하는 한 줄짜리 설정. `blank_issues_enabled: true`로 두어 제보자가 템플릿을 건너뛰고 빈 이슈를 열 수 있게 허용한다.",
+      "tags": ["configuration", "issue-template", "github", "repo-process"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.github/ISSUE_TEMPLATE/feature_request.yml",
+      "type": "config",
+      "name": "feature_request.yml",
+      "filePath": ".github/ISSUE_TEMPLATE/feature_request.yml",
+      "summary": "기능 제안용 GitHub 이슈 폼. 요약·새로 추가되는 내용·동기를 필수로, 추가 맥락을 선택으로 받고 \"enhancement\" 라벨을 자동으로 붙인다.",
+      "tags": ["configuration", "issue-template", "github", "repo-process"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:.github/ISSUE_TEMPLATE/config.yml",
+      "target": "config:.github/ISSUE_TEMPLATE/bug.yml",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:.github/ISSUE_TEMPLATE/config.yml",
+      "target": "config:.github/ISSUE_TEMPLATE/feature_request.yml",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

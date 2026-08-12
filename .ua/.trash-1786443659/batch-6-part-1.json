@@ -1,0 +1,380 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/app/api/props/route.ts",
+      "type": "file",
+      "name": "route.ts",
+      "filePath": "src/app/api/props/route.ts",
+      "summary": "개발 전용 프롭 편집기의 서버 측 API 라우트로, GET은 public/models/props 아래의 GLB 목록과 현재 배치 JSON을 돌려주고 POST는 편집 결과를 src/data/propsLayout.json 파일에 그대로 덮어쓴다.",
+      "tags": ["api-handler", "dev-tool", "filesystem", "next-route-handler"],
+      "complexity": "simple",
+      "languageNotes": "Next.js App Router의 Route Handler로, node:fs를 직접 써서 저장소 안의 JSON 파일을 수정한다 — 결과가 git에 커밋 가능한 형태로 남는 설계."
+    },
+    {
+      "id": "function:src/app/api/props/route.ts:listAssets",
+      "type": "function",
+      "name": "listAssets",
+      "filePath": "src/app/api/props/route.ts",
+      "lineRange": [13, 28],
+      "summary": "public/models/props 디렉터리를 재귀로 훑어 .glb 파일의 public 기준 경로 목록을 정렬해 반환한다. 최상위의 raw/ 폴더(원본 보관소)는 건너뛴다.",
+      "tags": ["utility", "filesystem", "asset-discovery"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/app/api/props/route.ts:GET",
+      "type": "function",
+      "name": "GET",
+      "filePath": "src/app/api/props/route.ts",
+      "lineRange": [38, 40],
+      "summary": "사용 가능한 GLB 에셋 목록과 저장된 배치 레이아웃을 한 번에 JSON으로 응답한다.",
+      "tags": ["api-handler", "next-route-handler", "read"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/app/api/props/route.ts:POST",
+      "type": "function",
+      "name": "POST",
+      "filePath": "src/app/api/props/route.ts",
+      "lineRange": [42, 59],
+      "summary": "요청 본문의 PropsLayout을 검증한 뒤 src/data/propsLayout.json에 디스크로 기록한다. 잘못된 JSON이나 props 배열 누락은 400, 쓰기 실패는 500으로 응답한다.",
+      "tags": ["api-handler", "validation", "filesystem", "write"],
+      "complexity": "simple"
+    },
+
+    {
+      "id": "file:src/components/ui/ResumeMode.tsx",
+      "type": "file",
+      "name": "ResumeMode.tsx",
+      "filePath": "src/components/ui/ResumeMode.tsx",
+      "summary": "3D 마을을 쓰지 않는 평면 이력서 화면으로, hero·스킬·학력·프로젝트·연락처 섹션을 터미널풍 UI로 렌더하고 프로젝트 카드에서 ProjectOnePager로 이어진다. 마을 진입이 부담스러운 면접관용 대체 경로다.",
+      "tags": ["component", "resume", "fallback-view", "portfolio-ui"],
+      "complexity": "complex",
+      "languageNotes": "\"use client\" 컴포넌트 하나가 800줄 가까이 되는 단일 화면 구조. three를 직접 import해 배경 캔버스만 따로 굴린다."
+    },
+    {
+      "id": "function:src/components/ui/ResumeMode.tsx:ResumeMode",
+      "type": "function",
+      "name": "ResumeMode",
+      "filePath": "src/components/ui/ResumeMode.tsx",
+      "lineRange": [43, 831],
+      "summary": "resume.ts의 콘텐츠 데이터를 받아 이력서 전체 화면을 조립하는 최상위 클라이언트 컴포넌트. 기술 칩에는 getTechIcon으로 브랜드 아이콘을 붙이고, 프로젝트 선택 시 ProjectOnePager를 띄우며 onEnterVillage로 마을 모드에 넘긴다.",
+      "tags": ["component", "resume", "data-driven", "entry-point"],
+      "complexity": "complex"
+    },
+
+    {
+      "id": "file:src/components/village/Building.tsx",
+      "type": "file",
+      "name": "Building.tsx",
+      "filePath": "src/components/village/Building.tsx",
+      "summary": "마을의 건물 한 채를 그리는 컴포넌트로, buildingModels.json에 등록된 GLB가 있으면 그것을, 없으면 kind별 절차적 형태(타워/돔/아케이드/타운하우스 등)를 대신 세운다. 호버 하이라이트, 기술 아이콘이 붙은 drei Html 간판, 백엔드 조명 세기 반영, 지형 단차 보정까지 한 파일에서 담당한다.",
+      "tags": ["component", "3d-rendering", "glb-loader", "building", "village"],
+      "complexity": "complex",
+      "languageNotes": "buildingModels.json은 생성물이라 Record<string, string>으로 느슨하게 타입을 눌러 건물이 늘어도 컴파일이 깨지지 않게 했다."
+    },
+    {
+      "id": "function:src/components/village/Building.tsx:HighlightFX",
+      "type": "function",
+      "name": "HighlightFX",
+      "filePath": "src/components/village/Building.tsx",
+      "lineRange": [22, 82],
+      "summary": "호버 시 건물 위로 빛기둥과 회전하는 베이스 링 2겹을 띄우는 연출. 꺼진 상태에서는 group.visible을 아예 false로 내려 보이지 않는 메시에 draw call을 쓰지 않게 했다.",
+      "tags": ["component", "3d-effect", "performance", "hover"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/Building.tsx:GlbModel",
+      "type": "function",
+      "name": "GlbModel",
+      "filePath": "src/components/village/Building.tsx",
+      "lineRange": [86, 175],
+      "summary": "건물 GLB를 로드해 바운딩 박스로 실제 크기를 재고 목표 크기에 맞게 자동 스케일·정렬한다. 시간대 팔레트의 windowGlow 값에 따라 창문 머티리얼의 emissive를 켜 저녁 이후 불이 들어온 느낌을 만든다.",
+      "tags": ["component", "glb-loader", "3d-rendering", "material"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/Building.tsx:BuildingLabel",
+      "type": "function",
+      "name": "BuildingLabel",
+      "filePath": "src/components/village/Building.tsx",
+      "lineRange": [203, 315],
+      "summary": "건물 위에 뜨는 drei Html 간판으로, 섹션 이름과 대표 기술 아이콘을 표시한다. 위치 재계산은 createThrottledCalculatePosition으로 프레임을 솎아 매 프레임 투영 비용을 줄인다.",
+      "tags": ["component", "html-overlay", "performance", "label"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/Building.tsx:BuildingGeometry",
+      "type": "function",
+      "name": "BuildingGeometry",
+      "filePath": "src/components/village/Building.tsx",
+      "lineRange": [672, 695],
+      "summary": "건물의 kind 값을 받아 타워·돔·서버타워·아케이드·타운하우스·광장 등 절차적 형태 컴포넌트 중 하나로 분기하는 디스패처. GLB가 없는 건물의 폴백 외형을 담당한다.",
+      "tags": ["factory", "3d-rendering", "dispatcher", "fallback"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/Building.tsx:BuildingImpl",
+      "type": "function",
+      "name": "BuildingImpl",
+      "filePath": "src/components/village/Building.tsx",
+      "lineRange": [697, 774],
+      "summary": "건물 컴포넌트의 실제 구현부. 백엔드 light_level을 lightIntensity로 발광 세기로 바꾸고, terrainHeightAt으로 구역 단차만큼 y를 올린 뒤 GLB 또는 절차적 형태, 간판, 하이라이트, 선택 박스를 묶어 배치한다.",
+      "tags": ["component", "3d-rendering", "live-state", "terrain"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:src/components/village/Building.tsx:Building",
+      "type": "function",
+      "name": "Building",
+      "filePath": "src/components/village/Building.tsx",
+      "lineRange": [777, 777],
+      "summary": "BuildingImpl을 memo로 감싼 공개 export. 건물 27채가 매 상태 변화마다 재조정되지 않도록 리렌더를 막는다.",
+      "tags": ["component", "memoization", "export"],
+      "complexity": "simple"
+    },
+
+    {
+      "id": "file:src/components/village/BuildingNetwork.tsx",
+      "type": "file",
+      "name": "BuildingNetwork.tsx",
+      "filePath": "src/components/village/BuildingNetwork.tsx",
+      "summary": "건물들을 가까운 이웃끼리 선으로 잇고 그 선 위로 빛점이 흐르게 하는 장식 레이어. 선 높이는 terrainHeightAt으로 구역 단차를 따라 올린다.",
+      "tags": ["component", "3d-effect", "village", "decoration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/BuildingNetwork.tsx:buildEdges",
+      "type": "function",
+      "name": "buildEdges",
+      "filePath": "src/components/village/BuildingNetwork.tsx",
+      "lineRange": [25, 50],
+      "summary": "건물 좌표를 받아 MAX_DISTANCE 안의 가장 가까운 이웃 최대 2개와 잇는 간선 목록을 만든다. 좌우 중복 간선은 정규화된 키로 걸러낸다.",
+      "tags": ["utility", "graph", "geometry"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/BuildingNetwork.tsx:Pulse",
+      "type": "function",
+      "name": "Pulse",
+      "filePath": "src/components/village/BuildingNetwork.tsx",
+      "lineRange": [52, 70],
+      "summary": "한 간선 위를 phase 오프셋만큼 어긋나게 왕복하는 빛점 메시. useFrame에서 위치만 갱신한다.",
+      "tags": ["component", "animation", "3d-effect"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/village/BuildingNetwork.tsx:BuildingNetwork",
+      "type": "function",
+      "name": "BuildingNetwork",
+      "filePath": "src/components/village/BuildingNetwork.tsx",
+      "lineRange": [72, 93],
+      "summary": "buildEdges 결과를 drei Line과 Pulse로 렌더하는 공개 컴포넌트. 건물 목록이 바뀔 때만 간선을 다시 계산한다.",
+      "tags": ["component", "3d-rendering", "village"],
+      "complexity": "simple"
+    },
+
+    {
+      "id": "file:src/components/village/CameraController.tsx",
+      "type": "file",
+      "name": "CameraController.tsx",
+      "filePath": "src/components/village/CameraController.tsx",
+      "summary": "마을 카메라를 담당하는 컴포넌트로, 활성 섹션의 cameraTargets 위치로 부드럽게 이동하고 WASD/방향키 자유비행과 연출용 cinematic override를 지원한다.",
+      "tags": ["component", "camera", "input-handling", "3d-rendering"],
+      "complexity": "complex",
+      "languageNotes": "useFrame 루프 안에서 Vector3/Euler를 새로 만들지 않도록 모듈 레벨 스크래치 인스턴스를 재사용해 GC 압박을 줄인다."
+    },
+    {
+      "id": "function:src/components/village/CameraController.tsx:CameraController",
+      "type": "function",
+      "name": "CameraController",
+      "filePath": "src/components/village/CameraController.tsx",
+      "lineRange": [47, 286],
+      "summary": "OrbitControls를 감싸 섹션 전환 시 목표 지점으로 카메라를 보간하고, 입력창에 타이핑 중이 아닐 때만 키보드 자유비행을 활성화한다. cinematic prop이 오면 섹션 타깃보다 우선한다.",
+      "tags": ["component", "camera", "event-handler", "animation"],
+      "complexity": "complex"
+    },
+
+    {
+      "id": "file:src/components/village/InstancedProps.tsx",
+      "type": "file",
+      "name": "InstancedProps.tsx",
+      "filePath": "src/components/village/InstancedProps.tsx",
+      "summary": "마을 장식물(prop)을 같은 GLB끼리 묶어 InstancedMesh 한 개로 그리는 렌더러. 꽃 500송이를 draw call 1회로 줄이고, 개수가 임계치를 넘으면 격자 청크로 쪼개 프러스텀 컬링이 먹히게 한다.",
+      "tags": ["component", "instancing", "performance", "3d-rendering", "village"],
+      "complexity": "complex",
+      "languageNotes": "three의 프러스텀 컬링이 오브젝트 단위라는 점을 역이용해 \"통합 vs 분할\"의 균형을 CHUNK_THRESHOLD/CHUNK_TARGET/MAX_CHUNKS 세 상수로 조절한다."
+    },
+    {
+      "id": "function:src/components/village/InstancedProps.tsx:extractParts",
+      "type": "function",
+      "name": "extractParts",
+      "filePath": "src/components/village/InstancedProps.tsx",
+      "lineRange": [44, 60],
+      "summary": "GLB 루트를 순회해 메시마다 지오메트리·머티리얼·루트 기준 로컬 행렬을 뽑아낸다. 파트마다 InstancedMesh가 하나씩 필요하므로 GLB 내부 노드 변환을 미리 구워 넣는다.",
+      "tags": ["utility", "glb-loader", "3d-rendering"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/InstancedProps.tsx:chunkPlacements",
+      "type": "function",
+      "name": "chunkPlacements",
+      "filePath": "src/components/village/InstancedProps.tsx",
+      "lineRange": [63, 90],
+      "summary": "배치 좌표를 격자 셀로 나눠 청크 목록을 만든다. 개수가 CHUNK_THRESHOLD 이하면 쪼개지 않고, MAX_CHUNKS를 넘지 않도록 셀 크기를 조정한다.",
+      "tags": ["utility", "spatial-partitioning", "performance"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/InstancedProps.tsx:InstancedPart",
+      "type": "function",
+      "name": "InstancedPart",
+      "filePath": "src/components/village/InstancedProps.tsx",
+      "lineRange": [123, 190],
+      "summary": "한 파트·한 청크의 InstancedMesh를 만들고 배치별 행렬을 채운다. 각 인스턴스의 y는 terrainHeightAt으로 구역 단차만큼 올리고, foliage/ground 여부에 따라 그림자 역할을 다르게 준다.",
+      "tags": ["component", "instancing", "terrain", "shadow"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/InstancedProps.tsx:GlbInstances",
+      "type": "function",
+      "name": "GlbInstances",
+      "filePath": "src/components/village/InstancedProps.tsx",
+      "lineRange": [193, 251],
+      "summary": "GLB 하나에 속한 모든 배치를 파트×청크로 펼쳐 InstancedPart들을 렌더한다. 바닥 타일 계열 머티리얼에는 applyGroundMacro로 대지 얼룩 텍스처를 곱해 격자 반복감을 지운다.",
+      "tags": ["component", "instancing", "material", "3d-rendering"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/InstancedProps.tsx:InstancedProps",
+      "type": "function",
+      "name": "InstancedProps",
+      "filePath": "src/components/village/InstancedProps.tsx",
+      "lineRange": [254, 282],
+      "summary": "PropPlacement 배열을 glb 경로별로 묶어 GlbInstances들을 Suspense 아래에 렌더하는 공개 진입점.",
+      "tags": ["component", "instancing", "entry-point"],
+      "complexity": "simple"
+    },
+
+    {
+      "id": "file:src/components/village/PerfHud.tsx",
+      "type": "file",
+      "name": "PerfHud.tsx",
+      "filePath": "src/components/village/PerfHud.tsx",
+      "summary": "개발 모드 전용 성능 계기판으로 FPS·draw call·삼각형·텍스처 VRAM 추정치를 보여준다. Canvas 안의 PerfProbe가 모듈 스토어에 값만 쌓고 DOM 쪽 PerfHudPanel이 2Hz로 읽어가 계기판 자체가 렉을 만들지 않게 분리했다.",
+      "tags": ["component", "profiling", "dev-tool", "hud"],
+      "complexity": "complex",
+      "languageNotes": "매 프레임 React state를 갱신하지 않고 모듈 레벨 스토어 + 구독 리스너로 단방향 전달하는, R3F에서 흔한 계측 패턴."
+    },
+    {
+      "id": "function:src/components/village/PerfHud.tsx:estimateTextureBytes",
+      "type": "function",
+      "name": "estimateTextureBytes",
+      "filePath": "src/components/village/PerfHud.tsx",
+      "lineRange": [50, 81],
+      "summary": "씬 그래프를 훑어 중복 없이 텍스처를 모으고 해상도·밉맵을 감안한 VRAM 사용량을 추정한다. 비용이 커서 2초에 한 번만 호출된다.",
+      "tags": ["utility", "profiling", "memory"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/PerfHud.tsx:PerfProbe",
+      "type": "function",
+      "name": "PerfProbe",
+      "filePath": "src/components/village/PerfHud.tsx",
+      "lineRange": [84, 136],
+      "summary": "Canvas 내부에서 useFrame으로 렌더러 통계를 수집해 모듈 스토어에 publish하는 계측 컴포넌트. 렌더 결과는 내지 않는다.",
+      "tags": ["component", "profiling", "instrumentation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/village/PerfHud.tsx:PerfHudPanel",
+      "type": "function",
+      "name": "PerfHudPanel",
+      "filePath": "src/components/village/PerfHud.tsx",
+      "lineRange": [176, 255],
+      "summary": "수집된 PerfSample을 2Hz로 구독해 DOM 오버레이로 표시하는 패널. draw call 등 임계치를 넘는 항목은 색으로 경고한다.",
+      "tags": ["component", "hud", "dev-tool", "ui"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {"source": "file:src/app/api/props/route.ts", "target": "file:src/types/props.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/ui/ResumeMode.tsx", "target": "file:src/components/ui/ProjectOnePager.tsx", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/ui/ResumeMode.tsx", "target": "file:src/components/ui/ResumeTerminal.css", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/ui/ResumeMode.tsx", "target": "file:src/data/projects.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/ui/ResumeMode.tsx", "target": "file:src/data/resume.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/ui/ResumeMode.tsx", "target": "file:src/data/techIcons.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/ui/ResumeMode.tsx", "target": "file:src/types/portfolio.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/Building.tsx", "target": "file:src/data/buildingModels.json", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/Building.tsx", "target": "file:src/data/techIcons.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/Building.tsx", "target": "file:src/lib/htmlLabelThrottle.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/Building.tsx", "target": "file:src/lib/liveState.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/Building.tsx", "target": "file:src/lib/villagePalette.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/Building.tsx", "target": "file:src/lib/villageTerrain.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/Building.tsx", "target": "file:src/types/live.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/Building.tsx", "target": "file:src/types/portfolio.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/BuildingNetwork.tsx", "target": "file:src/lib/villageTerrain.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/BuildingNetwork.tsx", "target": "file:src/types/portfolio.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/CameraController.tsx", "target": "file:src/lib/constants.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/CameraController.tsx", "target": "file:src/types/portfolio.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/InstancedProps.tsx", "target": "file:src/lib/groundMacro.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/InstancedProps.tsx", "target": "file:src/lib/villageTerrain.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/village/InstancedProps.tsx", "target": "file:src/types/props.ts", "type": "imports", "direction": "forward", "weight": 0.7},
+
+    {"source": "file:src/app/api/props/route.ts", "target": "function:src/app/api/props/route.ts:listAssets", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/app/api/props/route.ts", "target": "function:src/app/api/props/route.ts:GET", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/app/api/props/route.ts", "target": "function:src/app/api/props/route.ts:POST", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/app/api/props/route.ts", "target": "function:src/app/api/props/route.ts:GET", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:src/app/api/props/route.ts", "target": "function:src/app/api/props/route.ts:POST", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/app/api/props/route.ts:GET", "target": "function:src/app/api/props/route.ts:listAssets", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/components/ui/ResumeMode.tsx", "target": "function:src/components/ui/ResumeMode.tsx:ResumeMode", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/ui/ResumeMode.tsx", "target": "function:src/components/ui/ResumeMode.tsx:ResumeMode", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/ui/ResumeMode.tsx:ResumeMode", "target": "function:src/data/techIcons.ts:getTechIcon", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/ui/ResumeMode.tsx:ResumeMode", "target": "function:src/components/ui/ProjectOnePager.tsx:ProjectOnePager", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/components/village/Building.tsx", "target": "function:src/components/village/Building.tsx:HighlightFX", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/Building.tsx", "target": "function:src/components/village/Building.tsx:GlbModel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/Building.tsx", "target": "function:src/components/village/Building.tsx:BuildingLabel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/Building.tsx", "target": "function:src/components/village/Building.tsx:BuildingGeometry", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/Building.tsx", "target": "function:src/components/village/Building.tsx:BuildingImpl", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/Building.tsx", "target": "function:src/components/village/Building.tsx:Building", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/Building.tsx", "target": "function:src/components/village/Building.tsx:Building", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/Building.tsx:BuildingImpl", "target": "function:src/components/village/Building.tsx:BuildingGeometry", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/Building.tsx:BuildingImpl", "target": "function:src/components/village/Building.tsx:GlbModel", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/Building.tsx:BuildingImpl", "target": "function:src/components/village/Building.tsx:BuildingLabel", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/Building.tsx:BuildingImpl", "target": "function:src/components/village/Building.tsx:HighlightFX", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/Building.tsx:BuildingImpl", "target": "function:src/lib/villageTerrain.ts:terrainHeightAt", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/Building.tsx:BuildingImpl", "target": "function:src/lib/liveState.ts:lightIntensity", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/Building.tsx:BuildingLabel", "target": "function:src/lib/htmlLabelThrottle.ts:createThrottledCalculatePosition", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/components/village/BuildingNetwork.tsx", "target": "function:src/components/village/BuildingNetwork.tsx:buildEdges", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/BuildingNetwork.tsx", "target": "function:src/components/village/BuildingNetwork.tsx:Pulse", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/BuildingNetwork.tsx", "target": "function:src/components/village/BuildingNetwork.tsx:BuildingNetwork", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/BuildingNetwork.tsx", "target": "function:src/components/village/BuildingNetwork.tsx:BuildingNetwork", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/BuildingNetwork.tsx:BuildingNetwork", "target": "function:src/components/village/BuildingNetwork.tsx:buildEdges", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/BuildingNetwork.tsx:buildEdges", "target": "function:src/lib/villageTerrain.ts:terrainHeightAt", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/components/village/CameraController.tsx", "target": "function:src/components/village/CameraController.tsx:CameraController", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/CameraController.tsx", "target": "function:src/components/village/CameraController.tsx:CameraController", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/components/village/InstancedProps.tsx", "target": "function:src/components/village/InstancedProps.tsx:extractParts", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/InstancedProps.tsx", "target": "function:src/components/village/InstancedProps.tsx:chunkPlacements", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/InstancedProps.tsx", "target": "function:src/components/village/InstancedProps.tsx:InstancedPart", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/InstancedProps.tsx", "target": "function:src/components/village/InstancedProps.tsx:GlbInstances", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/InstancedProps.tsx", "target": "function:src/components/village/InstancedProps.tsx:InstancedProps", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/InstancedProps.tsx", "target": "function:src/components/village/InstancedProps.tsx:InstancedProps", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/InstancedProps.tsx:InstancedProps", "target": "function:src/components/village/InstancedProps.tsx:GlbInstances", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/InstancedProps.tsx:GlbInstances", "target": "function:src/components/village/InstancedProps.tsx:extractParts", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/InstancedProps.tsx:GlbInstances", "target": "function:src/components/village/InstancedProps.tsx:chunkPlacements", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/InstancedProps.tsx:GlbInstances", "target": "function:src/lib/groundMacro.ts:makeMacroTexture", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/InstancedProps.tsx:GlbInstances", "target": "function:src/lib/groundMacro.ts:applyGroundMacro", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/InstancedProps.tsx:InstancedPart", "target": "function:src/lib/villageTerrain.ts:terrainHeightAt", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/components/village/PerfHud.tsx", "target": "function:src/components/village/PerfHud.tsx:estimateTextureBytes", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/PerfHud.tsx", "target": "function:src/components/village/PerfHud.tsx:PerfProbe", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/PerfHud.tsx", "target": "function:src/components/village/PerfHud.tsx:PerfHudPanel", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/village/PerfHud.tsx", "target": "function:src/components/village/PerfHud.tsx:PerfProbe", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:src/components/village/PerfHud.tsx", "target": "function:src/components/village/PerfHud.tsx:PerfHudPanel", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/village/PerfHud.tsx:PerfProbe", "target": "function:src/components/village/PerfHud.tsx:estimateTextureBytes", "type": "calls", "direction": "forward", "weight": 0.8}
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "nodes": [
+    {
+      "id": "config:public/browserconfig.xml",
+      "type": "config",
+      "name": "browserconfig.xml",
+      "filePath": "public/browserconfig.xml",
+      "summary": "Windows 타일(msapplication) 설정 파일로, 시작 화면에 고정했을 때 쓸 150x150 타일 이미지와 타일 배경색(#603cba)을 지정합니다. 구 Create React App 포트폴리오에서 넘어온 정적 메타데이터로, 현재 Next.js 앱에서는 브라우저가 알아서 참조할 뿐 코드가 읽지 않습니다.",
+      "tags": ["configuration", "pwa", "browser-metadata", "legacy", "static-asset"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:public/index.html",
+      "type": "file",
+      "name": "index.html",
+      "filePath": "public/index.html",
+      "summary": "구 Create React App 포트폴리오의 HTML 템플릿으로, SEO/Open Graph/Twitter 메타 태그, 파비콘·매니페스트 링크, 폰트 preload, Google Analytics(gtag) 스니펫, Font Awesome CDN을 담고 `<div id=\"root\">`에 마운트합니다. 현재 Next.js 앱의 진입점이 아니며(실제 진입점은 src/app/page.tsx, 문서 셸은 src/app/layout.tsx), `%PUBLIC_URL%` 치환도 더 이상 일어나지 않는 잔존 파일입니다.",
+      "tags": ["markup", "legacy", "seo", "entry-point", "analytics"],
+      "complexity": "simple",
+      "languageNotes": "`%PUBLIC_URL%` 플레이스홀더는 CRA 빌드 단계에서만 치환되는 토큰이라, Next.js로 옮겨온 지금은 문자 그대로 남아 이 파일이 죽은 템플릿임을 보여주는 표식이 됩니다."
+    },
+    {
+      "id": "config:public/manifest.json",
+      "type": "config",
+      "name": "manifest.json",
+      "filePath": "public/manifest.json",
+      "summary": "PWA 웹 앱 매니페스트로, 앱 이름(DeveloperFolio 템플릿 기본값 그대로), 파비콘·안드로이드 아이콘 3종, standalone 표시 모드, 테마색(#6c63ff)과 배경색을 정의합니다. 프로젝트가 Next.js로 이관되면서 이름/색상이 실제 포트폴리오와 어긋난 채 남아 있는 레거시 설정입니다.",
+      "tags": ["configuration", "pwa", "manifest", "legacy", "browser-metadata"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:public/robots.txt",
+      "type": "document",
+      "name": "robots.txt",
+      "filePath": "public/robots.txt",
+      "summary": "크롤러 규칙 파일이지만 `User-agent: *` 한 줄만 있고 Disallow 지시가 없어 실질적으로 전체 크롤링을 허용합니다. Create React App 기본 템플릿에서 그대로 남은 파일입니다.",
+      "tags": ["documentation", "seo", "crawler", "static-asset", "legacy"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:public/manifest.json",
+      "target": "file:public/index.html",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:public/browserconfig.xml",
+      "target": "file:public/index.html",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:public/browserconfig.xml",
+      "target": "config:public/manifest.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:public/robots.txt",
+      "target": "file:public/index.html",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:public/index.html",
+      "target": "file:src/index.js",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:public/index.html",
+      "target": "file:src/App.js",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

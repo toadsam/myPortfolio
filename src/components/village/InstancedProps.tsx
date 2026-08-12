@@ -20,6 +20,7 @@ import {Suspense, useLayoutEffect, useMemo, useRef} from "react";
 import {Euler, InstancedMesh, Matrix4, Mesh, Quaternion, Vector3, type BufferGeometry, type Material, type Object3D} from "three";
 import type {PropPlacement} from "@/types/props";
 import {terrainHeightAt} from "@/lib/villageTerrain";
+import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
 
 /** 이 개수를 넘는 GLB만 격자 청크로 쪼갠다. 그 이하는 통째로 하나. */
 const CHUNK_THRESHOLD = 80;
@@ -106,6 +107,11 @@ function chunkPlacements(placements: PropPlacement[]): PropPlacement[][] {
 // 어두워지면서 채도가 오른다.
 const FOLIAGE_TINT = {r: 0.68, g: 0.84, b: 0.6};
 const isFoliage = (glb: string) => /(tree|bush)-/.test(glb);
+
+// 대지 얼룩을 탈 것 = 땅으로 읽히는 타일. shadowRole 과 같은 판정이다
+// (ground/ 와 ground-flat/ 두 갈래). 담장·나무처럼 땅 위에 **서 있는** 것은
+// 걸면 안 된다 — 얼룩은 지면의 성질이지 물건의 성질이 아니다.
+const isGroundTile = (glb: string) => /ground[-/]/.test(glb);
 
 function shadowRole(glb: string) {
   if (glb.includes("impostor/")) return {cast: false, receive: false};
@@ -208,6 +214,20 @@ function GlbInstances({
         const tinted = m as unknown as {color?: {setRGB: (r: number, g: number, b: number) => void}};
         tinted.color?.setRGB(FOLIAGE_TINT.r, FOLIAGE_TINT.g, FOLIAGE_TINT.b);
       }
+    }
+  }, [glb, parts]);
+
+  // 바닥 타일도 대지 얼룩을 탄다.
+  //
+  // 잔디 평면에만 걸었더니 **오히려 경계가 더 드러났다** — 평면은 얼룩지고 그 위의
+  // 잔디 패치·길 타일만 균일해서, 타일 사각형이 전보다 또렷하게 떠올랐다.
+  // 얼룩이 바닥 전체를 하나로 묶으려면 같은 대지를 밟는 것끼리 다 걸려야 한다.
+  useMemo(() => {
+    if (!isGroundTile(glb)) return;
+    const macro = makeMacroTexture();
+    for (const part of parts) {
+      const mats = Array.isArray(part.material) ? part.material : [part.material];
+      for (const m of mats) applyGroundMacro(m, macro);
     }
   }, [glb, parts]);
 

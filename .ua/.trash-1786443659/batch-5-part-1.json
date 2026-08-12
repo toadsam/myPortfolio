@@ -1,0 +1,1111 @@
+{
+ "nodes": [
+  {
+   "id": "file:src/app/sueo-preview/SueoPreview.tsx",
+   "type": "file",
+   "name": "SueoPreview.tsx",
+   "filePath": "src/app/sueo-preview/SueoPreview.tsx",
+   "summary": "projects에서 sign-language 프로젝트를 찾아 해당 테마와 함께 SueoDistrictRoom을 단독으로 띄우는 미리보기 래퍼. 닫기 동작은 마을 복귀 대신 페이지 리로드로 대체한다.",
+   "tags": [
+    "preview",
+    "wrapper",
+    "client-component",
+    "project-viewer",
+    "sueo"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:src/app/sueo-preview/page.tsx",
+   "type": "file",
+   "name": "page.tsx",
+   "filePath": "src/app/sueo-preview/page.tsx",
+   "summary": "수어지구 룸을 3D 마을 밖에서 단독 개발·확인하기 위한 개발 전용 라우트. 프로덕션 빌드에서는 notFound()로 404를 낸다.",
+   "tags": [
+    "entry-point",
+    "route",
+    "dev-only",
+    "next-app-router"
+   ],
+   "complexity": "simple",
+   "languageNotes": "PropsEditor와 동일한 관례로 process.env.NODE_ENV 게이트를 서버 컴포넌트에서 걸어 프로덕션 노출을 막는다."
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "type": "file",
+   "name": "SueoDistrictRoom.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "summary": "수어지구 전시실의 셸 컴포넌트. 11개 섹션을 위에서 아래로 조립하고 헤더의 「손동작 n / 12」 카운터·스크롤 잠금·reduced-motion·퇴장 시퀀스를 SueoProvider로 하위 섹션에 내려준다.",
+   "tags": [
+    "project-viewer",
+    "room-shell",
+    "context-provider",
+    "client-component",
+    "sueo"
+   ],
+   "complexity": "complex",
+   "languageNotes": "IntersectionObserver로 엔트리 섹션 통과 여부를 감지해 고정 헤더를 노출하고, lockCount ref로 중첩 스크롤 잠금을 카운팅한다."
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "file",
+   "name": "context.ts",
+   "filePath": "src/components/ui/project-viewers/sueo/context.ts",
+   "summary": "룸 셸과 섹션들이 공유하는 SueoRoomApi(손동작 카운터·스크롤 잠금·aria-live 안내·reducedMotion) 컨텍스트 정의와 SIGN_TOTAL 상수를 제공한다.",
+   "tags": [
+    "context-definition",
+    "hook",
+    "state-sharing",
+    "type-definition",
+    "sueo"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/fonts.ts",
+   "type": "file",
+   "name": "fonts.ts",
+   "filePath": "src/components/ui/project-viewers/sueo/fonts.ts",
+   "summary": "수어지구 룸 전용 서체(Noto Sans KR · JetBrains Mono)를 next/font로 로드해 CSS 변수로만 노출한다. 앱 전역 서체를 건드리지 않기 위한 스코프 장치다.",
+   "tags": [
+    "configuration",
+    "font",
+    "next-font",
+    "scoped-style"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "type": "file",
+   "name": "parts.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "summary": "섹션들이 반복해서 쓰는 표현 조각 모음 — 등장 스타일 헬퍼(rise/fade)와 Kicker·WordHeading·CodePanel·NoteBox·StatCard 등 프레젠테이션 컴포넌트를 한곳에 모았다.",
+   "tags": [
+    "utility",
+    "component",
+    "presentational",
+    "shared",
+    "design-system"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+   "type": "file",
+   "name": "ArchitectureSection.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+   "summary": "React 화면부터 3D 아바타 렌더링까지의 노드·엣지 그래프를 그리고, 단어/문장 흐름을 따라 경로를 순차 점등하며 담당 범위(본인·팀원·공동)를 색으로 구분해 보여주는 섹션.",
+   "tags": [
+    "section",
+    "architecture-diagram",
+    "animation",
+    "presentational",
+    "sueo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "type": "file",
+   "name": "EntrySection.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "summary": "룸에 들어서면 가장 먼저 재생되는 엔트리 시퀀스. 「안녕하세요」 수어 손동작 SVG와 제작 동기 문장을 정해진 타임라인(램프→손→제목→카운터)으로 4초 안에 읽히도록 연출한다.",
+   "tags": [
+    "section",
+    "entry-point",
+    "animation",
+    "svg",
+    "sueo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "type": "file",
+   "name": "GallerySection.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "summary": "「수어는 손 모양이 아니라 움직임이다」라는 명제를 액자 조명·라벨이 순차 점등되는 갤러리 연출과 지표 카드로 제시하는 도입 섹션.",
+   "tags": [
+    "section",
+    "gallery",
+    "animation",
+    "presentational",
+    "sueo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "file:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+   "type": "file",
+   "name": "LimitsSection.tsx",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+   "summary": "동작 정확성 미감수·표정 미지원 등 프로젝트가 다루지 못한 범위를 빈 액자 은유로 명시하는 한계 고백 섹션.",
+   "tags": [
+    "section",
+    "limitations",
+    "animation",
+    "presentational",
+    "sueo"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/app/sueo-preview/SueoPreview.tsx:SueoPreview",
+   "type": "function",
+   "name": "SueoPreview",
+   "filePath": "src/app/sueo-preview/SueoPreview.tsx",
+   "lineRange": [
+    7,
+    18
+   ],
+   "summary": "sign-language 프로젝트 데이터와 테마를 조회해 SueoDistrictRoom에 주입하는 미리보기 컴포넌트. 프로젝트를 못 찾으면 안내 문구만 렌더한다.",
+   "tags": [
+    "component",
+    "preview",
+    "wrapper"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/app/sueo-preview/page.tsx:SueoPreviewPage",
+   "type": "function",
+   "name": "SueoPreviewPage",
+   "filePath": "src/app/sueo-preview/page.tsx",
+   "lineRange": [
+    7,
+    10
+   ],
+   "summary": "개발 환경에서만 SueoPreview를 렌더하고 그 외에는 notFound()를 호출하는 라우트 페이지 컴포넌트.",
+   "tags": [
+    "component",
+    "route",
+    "dev-only"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx:SueoDistrictRoom",
+   "type": "function",
+   "name": "SueoDistrictRoom",
+   "filePath": "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "lineRange": [
+    30,
+    209
+   ],
+   "summary": "룸 전체 상태(손동작 카운터·스크롤 잠금·reduced-motion·퇴장 연출)를 관리하고 11개 섹션과 고정 헤더를 SueoProvider 아래에 조립하는 루트 컴포넌트.",
+   "tags": [
+    "component",
+    "room-shell",
+    "context-provider",
+    "orchestration"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "function",
+   "name": "useSueo",
+   "filePath": "src/components/ui/project-viewers/sueo/context.ts",
+   "lineRange": [
+    27,
+    34
+   ],
+   "summary": "SueoContext 값을 꺼내는 훅. 룸 밖에서 호출하면 명시적 에러를 던져 잘못된 사용을 즉시 드러낸다.",
+   "tags": [
+    "hook",
+    "context",
+    "validation"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/parts.tsx:rise",
+   "type": "function",
+   "name": "rise",
+   "filePath": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "lineRange": [
+    9,
+    22
+   ],
+   "summary": "요소가 아래에서 떠오르며 나타나는 CSSProperties를 만든다. instant면 트랜지션을 제거해 동작 줄이기에 대응한다.",
+   "tags": [
+    "utility",
+    "animation",
+    "style-helper"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/parts.tsx:fade",
+   "type": "function",
+   "name": "fade",
+   "filePath": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "lineRange": [
+    24,
+    35
+   ],
+   "summary": "투명도만 바꾸는 등장 스타일 객체를 만드는 헬퍼.",
+   "tags": [
+    "utility",
+    "animation",
+    "style-helper"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/parts.tsx:Kicker",
+   "type": "function",
+   "name": "Kicker",
+   "filePath": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "lineRange": [
+    38,
+    59
+   ],
+   "summary": "「01 · 동작 데이터」 형태의 섹션 번호 라벨 컴포넌트.",
+   "tags": [
+    "component",
+    "presentational",
+    "label"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/parts.tsx:WordHeading",
+   "type": "function",
+   "name": "WordHeading",
+   "filePath": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "lineRange": [
+    62,
+    93
+   ],
+   "summary": "제목 문자열을 단어 단위로 쪼개 stepMs 간격으로 하나씩 떠오르게 하는 헤딩 컴포넌트.",
+   "tags": [
+    "component",
+    "presentational",
+    "animation",
+    "typography"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/parts.tsx:CodePanel",
+   "type": "function",
+   "name": "CodePanel",
+   "filePath": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "lineRange": [
+    96,
+    140
+   ],
+   "summary": "파일명 헤더와 푸터 주석이 달린 코드 패널 프레임. 섹션마다 반복되던 코드 블록 마크업을 통일한다.",
+   "tags": [
+    "component",
+    "presentational",
+    "code-display"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/parts.tsx:NoteBox",
+   "type": "function",
+   "name": "NoteBox",
+   "filePath": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "lineRange": [
+    143,
+    172
+   ],
+   "summary": "강조색 테두리와 라벨이 붙은 주석 상자 컴포넌트.",
+   "tags": [
+    "component",
+    "presentational",
+    "annotation"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/parts.tsx:StatCard",
+   "type": "function",
+   "name": "StatCard",
+   "filePath": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "lineRange": [
+    175,
+    208
+   ],
+   "summary": "숫자와 설명 라벨을 강조해 보여주는 지표 카드 컴포넌트.",
+   "tags": [
+    "component",
+    "presentational",
+    "stats"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/parts.tsx:LimitList",
+   "type": "function",
+   "name": "LimitList",
+   "filePath": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "lineRange": [
+    211,
+    237
+   ],
+   "summary": "다루지 못한 범위나 제약 항목을 라벨과 함께 나열하는 목록 블록.",
+   "tags": [
+    "component",
+    "presentational",
+    "list"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/parts.tsx:Caveat",
+   "type": "function",
+   "name": "Caveat",
+   "filePath": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "lineRange": [
+    240,
+    246
+   ],
+   "summary": "한계·주의 문구를 작은 캡션으로 다는 컴포넌트.",
+   "tags": [
+    "component",
+    "presentational",
+    "caption"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/parts.tsx:SectionShell",
+   "type": "function",
+   "name": "SectionShell",
+   "filePath": "src/components/ui/project-viewers/sueo/parts.tsx",
+   "lineRange": [
+    249,
+    267
+   ],
+   "summary": "섹션 공통의 최대 폭과 여백을 잡아 주는 레이아웃 래퍼.",
+   "tags": [
+    "component",
+    "layout",
+    "wrapper"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx:ArchitectureSection",
+   "type": "function",
+   "name": "ArchitectureSection",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+   "lineRange": [
+    105,
+    466
+   ],
+   "summary": "시스템 구성 노드·엣지를 그리고 단어/문장 흐름 경로를 순차 재생하며 담당 범위를 색으로 구분해 보여주는 섹션 컴포넌트.",
+   "tags": [
+    "component",
+    "section",
+    "architecture-diagram",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx:SignHand",
+   "type": "function",
+   "name": "SignHand",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "lineRange": [
+    36,
+    65
+   ],
+   "summary": "「안녕하세요」 수어를 표현하는 손 SVG. 손목(60,140)을 축으로 회전하며 동작을 재생한다.",
+   "tags": [
+    "component",
+    "svg",
+    "animation",
+    "presentational"
+   ],
+   "complexity": "moderate"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx:EntrySection",
+   "type": "function",
+   "name": "EntrySection",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "lineRange": [
+    67,
+    249
+   ],
+   "summary": "램프·손동작·제목·동기 문장·카운터를 정해진 ms 타임라인으로 순차 노출하는 룸 첫 화면. 재생 중 스크롤을 잠그고 건너뛰기를 제공한다.",
+   "tags": [
+    "component",
+    "section",
+    "entry-point",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:FrameLight",
+   "type": "function",
+   "name": "FrameLight",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "lineRange": [
+    84,
+    105
+   ],
+   "summary": "액자 위 조명이 켜지는 연출을 담당하는 표현 컴포넌트.",
+   "tags": [
+    "component",
+    "presentational",
+    "animation"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:Plate",
+   "type": "function",
+   "name": "Plate",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "lineRange": [
+    108,
+    132
+   ],
+   "summary": "액자 아래 제목·부제 명판을 그리는 표현 컴포넌트.",
+   "tags": [
+    "component",
+    "presentational",
+    "label"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:Piece",
+   "type": "function",
+   "name": "Piece",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "lineRange": [
+    134,
+    146
+   ],
+   "summary": "갤러리 액자 하나를 감싸는 프레임 래퍼 컴포넌트.",
+   "tags": [
+    "component",
+    "presentational",
+    "layout"
+   ],
+   "complexity": "simple"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:GallerySection",
+   "type": "function",
+   "name": "GallerySection",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "lineRange": [
+    151,
+    481
+   ],
+   "summary": "헤드라인 단어·지표 카드·액자 조명을 타임라인에 맞춰 점등하며 「수어는 움직임이다」라는 전제를 세우는 섹션.",
+   "tags": [
+    "component",
+    "section",
+    "gallery",
+    "animation"
+   ],
+   "complexity": "complex"
+  },
+  {
+   "id": "function:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx:LimitsSection",
+   "type": "function",
+   "name": "LimitsSection",
+   "filePath": "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+   "lineRange": [
+    114,
+    298
+   ],
+   "summary": "감수 부재·표정 미지원 등 다루지 못한 항목을 빈 액자와 명판으로 나열해 한계를 명시하는 섹션.",
+   "tags": [
+    "component",
+    "section",
+    "limitations",
+    "animation"
+   ],
+   "complexity": "complex"
+  }
+ ],
+ "edges": [
+  {
+   "source": "file:src/app/sueo-preview/SueoPreview.tsx",
+   "target": "function:src/app/sueo-preview/SueoPreview.tsx:SueoPreview",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/app/sueo-preview/SueoPreview.tsx",
+   "target": "function:src/app/sueo-preview/SueoPreview.tsx:SueoPreview",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/app/sueo-preview/page.tsx",
+   "target": "function:src/app/sueo-preview/page.tsx:SueoPreviewPage",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/app/sueo-preview/page.tsx",
+   "target": "function:src/app/sueo-preview/page.tsx:SueoPreviewPage",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx:SueoDistrictRoom",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx:SueoDistrictRoom",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:rise",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:rise",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:fade",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:fade",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:Kicker",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:Kicker",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:WordHeading",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:WordHeading",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:CodePanel",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:CodePanel",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:NoteBox",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:NoteBox",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:StatCard",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:StatCard",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:LimitList",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:LimitList",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:Caveat",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:Caveat",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:SectionShell",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/parts.tsx:SectionShell",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx:ArchitectureSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx:ArchitectureSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx:SignHand",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx:EntrySection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx:EntrySection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:FrameLight",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:Plate",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:Piece",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:GallerySection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:GallerySection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx:LimitsSection",
+   "type": "contains",
+   "direction": "forward",
+   "weight": 1
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+   "target": "function:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx:LimitsSection",
+   "type": "exports",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "file:src/app/sueo-preview/SueoPreview.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/app/sueo-preview/SueoPreview.tsx",
+   "target": "file:src/data/projectThemes.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/app/sueo-preview/SueoPreview.tsx",
+   "target": "file:src/data/projects.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/app/sueo-preview/page.tsx",
+   "target": "file:src/app/sueo-preview/SueoPreview.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/fonts.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/sueo.css",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/data/projectThemes.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "target": "file:src/types/portfolio.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/context.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/parts.tsx",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "file:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+   "target": "file:src/components/ui/project-viewers/sueo/useTimeline.ts",
+   "type": "imports",
+   "direction": "forward",
+   "weight": 0.7
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx:ArchitectureSection",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx:ArchitectureSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx:ArchitectureSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx:EntrySection",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/EntrySection.tsx:EntrySection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:GallerySection",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:GallerySection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/GallerySection.tsx:GallerySection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx:LimitsSection",
+   "target": "function:src/components/ui/project-viewers/sueo/context.ts:useSueo",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx:LimitsSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useTimeline",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx:LimitsSection",
+   "target": "function:src/components/ui/project-viewers/sueo/useTimeline.ts:useInView",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  },
+  {
+   "source": "function:src/app/sueo-preview/SueoPreview.tsx:SueoPreview",
+   "target": "function:src/data/projectThemes.ts:getProjectTheme",
+   "type": "calls",
+   "direction": "forward",
+   "weight": 0.8
+  }
+ ]
+}

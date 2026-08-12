@@ -1,0 +1,156 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/app/globals.css",
+      "type": "file",
+      "name": "globals.css",
+      "filePath": "src/app/globals.css",
+      "summary": "Tailwind v4 진입 스타일시트로 @import \"tailwindcss\"와 @config로 tailwind.config.ts를 연결하고, 마을 톤의 크림색 배경·라이트 컬러 스킴·박스사이징 리셋 등 앱 전역 기본값을 정의합니다.",
+      "tags": ["global-styles", "tailwind", "css-entry", "design-tokens"],
+      "complexity": "moderate",
+      "languageNotes": "Tailwind v4는 JS 설정 파일을 자동으로 읽지 않아 CSS에서 @config로 명시적으로 가리켜야 tailwind.config.ts의 커스텀 토큰이 살아납니다."
+    },
+    {
+      "id": "file:src/app/test-model/page.tsx",
+      "type": "file",
+      "name": "page.tsx",
+      "filePath": "src/app/test-model/page.tsx",
+      "summary": "/test-model 라우트로, GLB 점검용 뷰어 ModelTest를 ssr:false로 동적 로드해 렌더하는 개발 전용 페이지입니다. 배포 화면과는 무관합니다.",
+      "tags": ["route", "dev-tooling", "dynamic-import", "3d-viewer"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/app/test-model/page.tsx:TestModelPage",
+      "type": "function",
+      "name": "TestModelPage",
+      "filePath": "src/app/test-model/page.tsx",
+      "lineRange": [10, 12],
+      "summary": "동적 로드한 ModelTest를 그대로 반환하는 /test-model 라우트의 기본 export 페이지 컴포넌트입니다.",
+      "tags": ["component", "route", "entry-point"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/ModelTest.tsx",
+      "type": "file",
+      "name": "ModelTest.tsx",
+      "filePath": "src/components/ModelTest.tsx",
+      "summary": "public/models/dev/test-model.glb를 조명 3종과 OrbitControls 자동 회전이 걸린 R3F Canvas에 띄워 새 3D 모델을 눈으로 검수하는 개발용 뷰어 컴포넌트입니다.",
+      "tags": ["component", "dev-tooling", "react-three-fiber", "3d-viewer"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/ModelTest.tsx:ModelTest",
+      "type": "function",
+      "name": "ModelTest",
+      "filePath": "src/components/ModelTest.tsx",
+      "lineRange": [12, 29],
+      "summary": "전체 화면 Canvas에 ambient·directional·point 조명과 Suspense로 감싼 모델, 자동 회전 OrbitControls, 조작 안내 오버레이를 구성합니다.",
+      "tags": ["component", "3d-scene", "lighting", "orbit-controls"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/interior/InteriorCharacterController.tsx",
+      "type": "file",
+      "name": "InteriorCharacterController.tsx",
+      "filePath": "src/components/interior/InteriorCharacterController.tsx",
+      "summary": "건물 내부 씬에서 키보드 입력으로 캐릭터를 이동·회전시키고 방 경계(bounds) 안에 가두며 카메라를 따라붙게 하는 R3F 컨트롤러입니다.",
+      "tags": ["component", "character-controller", "react-three-fiber", "interior", "input-handling"],
+      "complexity": "moderate",
+      "languageNotes": "위치·회전·눌린 키를 모두 useRef에 두고 useFrame에서만 갱신해, 매 프레임 리렌더 없이 Three.js 객체를 직접 조작하는 R3F의 표준 패턴입니다."
+    },
+    {
+      "id": "function:src/components/interior/InteriorCharacterController.tsx:InteriorCharacterController",
+      "type": "function",
+      "name": "InteriorCharacterController",
+      "filePath": "src/components/interior/InteriorCharacterController.tsx",
+      "lineRange": [22, 105],
+      "summary": "bounds와 시작 위치를 props로 받아 keydown/keyup 구독, 프레임별 이동·회전 적분, 경계 클램프, 카메라 추적을 수행하는 실내 캐릭터 컨트롤러입니다.",
+      "tags": ["component", "event-handler", "game-loop", "movement"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/components/ui/ProjectDetail.css",
+      "type": "file",
+      "name": "ProjectDetail.css",
+      "filePath": "src/components/ui/ProjectDetail.css",
+      "summary": "면접관용 원페이지 프로젝트 상세의 터미널·관제 시스템 테마 스타일로, 모든 셀렉터를 .op-detail 루트 아래로 스코프하고 keyframes에 op- 접두사를 붙여 전역 오염을 막습니다.",
+      "tags": ["styles", "scoped-css", "terminal-theme", "project-viewer"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/components/ui/ResumeTerminal.css",
+      "type": "file",
+      "name": "ResumeTerminal.css",
+      "filePath": "src/components/ui/ResumeTerminal.css",
+      "summary": "이력서 모드 전체 화면을 덮는 터미널 테마 스타일시트로, .resume-terminal 루트에 스코프한 CSS 변수 팔레트(검정 배경 + #00f5ff 강조)와 Pretendard·JetBrains Mono 웹폰트 import를 담습니다.",
+      "tags": ["styles", "scoped-css", "terminal-theme", "resume-mode", "typography"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/aclub/aclub.css",
+      "type": "file",
+      "name": "aclub.css",
+      "filePath": "src/components/ui/project-viewers/aclub/aclub.css",
+      "summary": "aClub 프로젝트 전용 룸의 보라색 계열(#c084fc) 테마 스타일로, 모든 셀렉터를 .ac-root 아래로 스코프하고 ac- 접두사를 붙여 다른 뷰어와 격리합니다.",
+      "tags": ["styles", "scoped-css", "project-viewer", "theme", "aclub"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/darklab/darklab.css",
+      "type": "file",
+      "name": "darklab.css",
+      "filePath": "src/components/ui/project-viewers/darklab/darklab.css",
+      "summary": "DarkLab 프로젝트 룸의 붉은 호러 계열(#ef4444) 테마 스타일로, .dl-root에 스코프하며 --dl-mx/--dl-my/--dl-r 변수로 손전등 같은 마우스 추적 조명 효과를 구동합니다.",
+      "tags": ["styles", "scoped-css", "project-viewer", "horror-theme", "darklab"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/components/ui/project-viewers/sueo/sueo.css",
+      "type": "file",
+      "name": "sueo.css",
+      "filePath": "src/components/ui/project-viewers/sueo/sueo.css",
+      "summary": "수어지구 프로젝트 룸의 푸른 계열(#7eb8ff) 테마 스타일로, .sd-root에 스코프하고 색을 전부 CSS 변수로만 두어 tailwind.config.ts의 전역 accent 토큰과 충돌하지 않게 합니다.",
+      "tags": ["styles", "scoped-css", "project-viewer", "theme", "sign-language"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:src/data/npcs.ts",
+      "type": "file",
+      "name": "npcs.ts",
+      "filePath": "src/data/npcs.ts",
+      "summary": "npcRoster의 autonomousNpcs를 npcs라는 이름으로 다시 내보내기만 하는 한 줄짜리 barrel 모듈로, 기존 import 경로 호환을 유지합니다.",
+      "tags": ["barrel", "re-export", "npc-data", "compatibility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:tailwind.config.ts",
+      "type": "file",
+      "name": "tailwind.config.ts",
+      "filePath": "tailwind.config.ts",
+      "summary": "Tailwind 테마 설정으로 이력서 모드 강조색 accent(#00f5ff)와 마을 팔레트(ink·moss·leaf·mint·cream·sand·clay·sky), panel/glow 그림자, Inter 변수 폰트를 커스텀 토큰으로 등록합니다.",
+      "tags": ["configuration", "tailwind", "design-tokens", "theme", "build-system"],
+      "complexity": "simple",
+      "languageNotes": "색을 토큰으로 등록해야 bg-accent/5, hover:border-accent 같은 수식어 조합이 실제 클래스로 생성됩니다."
+    }
+  ],
+  "edges": [
+    {"source": "file:src/app/test-model/page.tsx", "target": "function:src/app/test-model/page.tsx:TestModelPage", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/app/test-model/page.tsx", "target": "function:src/app/test-model/page.tsx:TestModelPage", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:src/components/ModelTest.tsx", "target": "function:src/components/ModelTest.tsx:ModelTest", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/ModelTest.tsx", "target": "function:src/components/ModelTest.tsx:ModelTest", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:src/components/interior/InteriorCharacterController.tsx", "target": "function:src/components/interior/InteriorCharacterController.tsx:InteriorCharacterController", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/interior/InteriorCharacterController.tsx", "target": "function:src/components/interior/InteriorCharacterController.tsx:InteriorCharacterController", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/app/test-model/page.tsx", "target": "file:src/components/ModelTest.tsx", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:src/data/npcs.ts", "target": "file:src/data/npcRoster.ts", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "file:tailwind.config.ts", "target": "file:src/app/globals.css", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "file:src/app/globals.css", "target": "file:src/app/layout.tsx", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "file:src/components/ui/ProjectDetail.css", "target": "file:src/components/ui/ProjectOnePager.tsx", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "file:src/components/ui/ResumeTerminal.css", "target": "file:src/components/ui/ResumeMode.tsx", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "file:src/components/ui/project-viewers/aclub/aclub.css", "target": "file:src/components/ui/project-viewers/aclub/AClubRoom.tsx", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "file:src/components/ui/project-viewers/darklab/darklab.css", "target": "file:src/components/ui/project-viewers/darklab/DarkLabRoom.tsx", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "file:src/components/ui/project-viewers/sueo/sueo.css", "target": "file:src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "file:src/components/ui/project-viewers/sueo/sueo.css", "target": "file:tailwind.config.ts", "type": "related", "direction": "forward", "weight": 0.5}
+  ]
+}

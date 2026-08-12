@@ -1,0 +1,145 @@
+# .understandignore — patterns for files/dirs to exclude from analysis
+# Syntax: same as .gitignore (globs, # comments, ! negation, trailing / for dirs)
+# Lines below are suggestions — uncomment to activate.
+# Use ! prefix to force-include something excluded by defaults.
+#
+# Built-in defaults (always excluded unless negated):
+#   node_modules/, .git/, dist/, build/, obj/, *.lock, *.min.js, etc.
+#
+
+# --- Agent tooling / scratch, not part of the portfolio ---
+.agents/**
+.claude/**
+.tmp/**
+.all-contributorsrc
+src/assets/lottie/**
+src/assets/images/**
+
+# --- Binary assets (no source to analyze) ---
+*.glb
+*.gltf
+*.bin
+*.hdr
+*.webp
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.docx
+*.mp3
+*.wav
+*.ogg
+*.woff
+*.woff2
+*.ttf
+
+# --- Legacy CRA styles (paired with the excluded .js/.jsx below) ---
+src/**/*.scss
+src/index.css
+src/components/livingTree/**
+src/components/motionPortfolio/**
+src/components/portfolio/**
+
+# --- Legacy CRA portfolio (CLAUDE.md: "kept for reference only", not the build target) ---
+src/**/*.js
+src/**/*.jsx
+src/containers/**
+src/components/digitalHabitat/**
+src/components/portfolioWorld/**
+.tmp_*.js
+fetch.js
+
+# --- From .gitignore (uncomment to exclude) ---
+
+/.next
+/out
+/coverage
+/build
+backend/.venv/
+public/models/*/raw/
+.tmp/interview-docs-analysis/
+
+# /node_modules
+# /.pnp
+# .pnp.js
+# /coverage
+# /build
+# /.next
+# /out
+# tsconfig.tsbuildinfo
+# backend/.venv/
+# backend/*.db
+# /portfolio_village.db
+# *.py[cod]
+# .DS_Store
+# .env
+# .env.local
+# .env.development.local
+# .env.test.local
+# .env.production.local
+# npm-debug.log*
+# yarn-debug.log*
+# yarn-error.log*
+# public/profile.json
+# public/blogs.json
+# public/models/*/raw/
+# .tmp/interview-docs-analysis/
+
+# --- Detected directories (uncomment to exclude) ---
+
+# docs/
+# portfolio-specs/
+# scripts/
+
+# --- Test file patterns (uncomment to exclude) ---
+
+# JS / TS
+# *.test.*
+# *.spec.*
+# *.snap
+# C# / .NET
+# **/*Tests.cs
+# **/*Test.cs
+# **/*Fixture.cs
+# **/*.Tests.csproj
+# Java / Kotlin
+# **/src/test/**
+# **/*Test.java
+# **/*IT.java
+# **/*Spec.kt
+# Go
+# **/*_test.go
+# C++
+# **/*_test.cc
+# **/*_test.cpp
+# **/*_test.cxx
+# **/*Test.cc
+# **/*Test.cpp
+# **/*_unittest.cc
+# **/*_unittest.cpp
+# **/*_browsertest.cc
+# **/*_benchmark.cc
+# **/*Benchmark.cpp
+# Python
+# **/test_*.py
+# **/*_test.py
+# **/tests.py
+# **/conftest.py
+# Rust
+# **/tests.rs
+# **/test_*.rs
+# **/*_test.rs
+# **/bench_*.rs
+# **/*_bench.rs
+# Ruby
+# **/*_spec.rb
+# **/*_test.rb
+# **/test_*.rb
+# **/spec_helper.rb
+# **/test_helper.rb
+# **/rails_helper.rb
+# Swift
+# **/Tests/**/*.swift
+# **/Specs/**/*.swift

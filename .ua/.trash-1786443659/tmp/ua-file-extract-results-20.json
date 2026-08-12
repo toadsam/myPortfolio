@@ -1,0 +1,4536 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 20,
+  "filesSkipped": [
+    ".gitattributes",
+    ".prettierignore",
+    "env.example",
+    "public/models/props/.gitkeep",
+    "resume/jaehoon-jeong-resume.html"
+  ],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 20,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 16,
+      "failed": 0,
+      "skipped": 4
+    }
+  },
+  "results": [
+    {
+      "path": ".github/pull_request_template.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 15,
+      "nonEmptyLines": 9,
+      "sections": [
+        {
+          "heading": "Description",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Type of change",
+          "level": 2,
+          "line": 7
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 2
+      }
+    },
+    {
+      "path": "next-env.d.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 6,
+      "nonEmptyLines": 5,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "next.config.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 14,
+      "nonEmptyLines": 11,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "postcss.config.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 7,
+      "nonEmptyLines": 6,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "public/models/ASSETS.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 88,
+      "nonEmptyLines": 66,
+      "sections": [
+        {
+          "heading": "3D 에셋 매니페스트",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "폴더 구조",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "에셋 목록",
+          "level": 2,
+          "line": 15
+        },
+        {
+          "heading": "압축 파이프라인",
+          "level": 2,
+          "line": 28
+        },
+        {
+          "heading": "캐릭터 애니메이션 합치기",
+          "level": 3,
+          "line": 50
+        },
+        {
+          "heading": "메모",
+          "level": 2,
+          "line": 63
+        },
+        {
+          "heading": "NPC별 모델 지정",
+          "level": 2,
+          "line": 74
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "resume/jaehoon-jeong-resume.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 144,
+      "nonEmptyLines": 99,
+      "sections": [
+        {
+          "heading": "정재훈",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Summary",
+          "level": 2,
+          "line": 10
+        },
+        {
+          "heading": "Technical Skills",
+          "level": 2,
+          "line": 19
+        },
+        {
+          "heading": "GitHub Evidence",
+          "level": 2,
+          "line": 26
+        },
+        {
+          "heading": "Project Links",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "Hiring Signals",
+          "level": 2,
+          "line": 42
+        },
+        {
+          "heading": "Core Projects",
+          "level": 2,
+          "line": 49
+        },
+        {
+          "heading": "FestFlow",
+          "level": 3,
+          "line": 51
+        },
+        {
+          "heading": "득근득근 MuscleUp",
+          "level": 3,
+          "line": 65
+        },
+        {
+          "heading": "Sign-Language",
+          "level": 3,
+          "line": 79
+        },
+        {
+          "heading": "운영형 웹사이트 개선: aClub / 아주대학교 총학생회",
+          "level": 3,
+          "line": 93
+        },
+        {
+          "heading": "Additional Technical Projects",
+          "level": 2,
+          "line": 107
+        },
+        {
+          "heading": "Ajou Campus Foodmap",
+          "level": 3,
+          "line": 109
+        },
+        {
+          "heading": "Algorithm",
+          "level": 3,
+          "line": 114
+        },
+        {
+          "heading": "TSEROF · INTO MONSTER POINT · 아주대탐험",
+          "level": 3,
+          "line": 119
+        },
+        {
+          "heading": "Education",
+          "level": 2,
+          "line": 124
+        },
+        {
+          "heading": "Collaboration",
+          "level": 2,
+          "line": 138
+        },
+        {
+          "heading": "Positioning",
+          "level": 2,
+          "line": 142
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 18
+      }
+    },
+    {
+      "path": "scripts/backend-dev.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 32,
+      "nonEmptyLines": 26,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/bake-impostors.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 547,
+      "nonEmptyLines": 509,
+      "functions": [
+        {
+          "name": "parseGlb",
+          "startLine": 77,
+          "endLine": 91,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "readAccessor",
+          "startLine": 96,
+          "endLine": 112,
+          "params": [
+            "gltf",
+            "bin",
+            "index"
+          ]
+        },
+        {
+          "name": "ident",
+          "startLine": 117,
+          "endLine": 117,
+          "params": []
+        },
+        {
+          "name": "mul",
+          "startLine": 118,
+          "endLine": 123,
+          "params": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "name": "trs",
+          "startLine": 124,
+          "endLine": 139,
+          "params": [
+            "node"
+          ]
+        },
+        {
+          "name": "apply",
+          "startLine": 140,
+          "endLine": 144,
+          "params": [
+            "m",
+            "x",
+            "y",
+            "z"
+          ]
+        },
+        {
+          "name": "flatten",
+          "startLine": 146,
+          "endLine": 157,
+          "params": [
+            "gltf"
+          ]
+        },
+        {
+          "name": "decodePng",
+          "startLine": 160,
+          "endLine": 201,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "crc32",
+          "startLine": 204,
+          "endLine": 216,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "encodePngRgba",
+          "startLine": 218,
+          "endLine": 242,
+          "params": [
+            "w",
+            "h",
+            "rgba"
+          ]
+        },
+        {
+          "name": "load",
+          "startLine": 253,
+          "endLine": 302,
+          "params": [
+            "path"
+          ]
+        },
+        {
+          "name": "render",
+          "startLine": 305,
+          "endLine": 403,
+          "params": [
+            "geo",
+            "view",
+            "center",
+            "span"
+          ]
+        },
+        {
+          "name": "buildGlb",
+          "startLine": 406,
+          "endLine": 516,
+          "params": [
+            "cells",
+            "center",
+            "span"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "parseGlb",
+          "callee": "dv.getUint32",
+          "lineNumber": 79
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "dv.getUint32",
+          "lineNumber": 82
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "dv.getUint32",
+          "lineNumber": 83
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "JSON.parse",
+          "lineNumber": 85
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "buf.slice(start, start + len).toString",
+          "lineNumber": 85
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "buf.slice",
+          "lineNumber": 85
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "buf.slice",
+          "lineNumber": 86
+        },
+        {
+          "caller": "readAccessor",
+          "callee": "Buffer.from",
+          "lineNumber": 104
+        },
+        {
+          "caller": "readAccessor",
+          "callee": "src.subarray",
+          "lineNumber": 107
+        },
+        {
+          "caller": "readAccessor",
+          "callee": "slice.buffer.slice",
+          "lineNumber": 108
+        },
+        {
+          "caller": "mul",
+          "callee": "new Array(16).fill",
+          "lineNumber": 119
+        },
+        {
+          "caller": "trs",
+          "callee": "node.matrix.slice",
+          "lineNumber": 125
+        },
+        {
+          "caller": "trs",
+          "callee": "ident",
+          "lineNumber": 126
+        },
+        {
+          "caller": "walk",
+          "callee": "mul",
+          "lineNumber": 150
+        },
+        {
+          "caller": "walk",
+          "callee": "trs",
+          "lineNumber": 150
+        },
+        {
+          "caller": "walk",
+          "callee": "out.push",
+          "lineNumber": 152
+        },
+        {
+          "caller": "walk",
+          "callee": "walk",
+          "lineNumber": 153
+        },
+        {
+          "caller": "flatten",
+          "callee": "walk",
+          "lineNumber": 155
+        },
+        {
+          "caller": "flatten",
+          "callee": "ident",
+          "lineNumber": 155
+        },
+        {
+          "caller": "decodePng",
+          "callee": "buf.readUInt32BE",
+          "lineNumber": 164
+        },
+        {
+          "caller": "decodePng",
+          "callee": "buf.toString",
+          "lineNumber": 165
+        },
+        {
+          "caller": "decodePng",
+          "callee": "buf.subarray",
+          "lineNumber": 166
+        },
+        {
+          "caller": "decodePng",
+          "callee": "data.readUInt32BE",
+          "lineNumber": 168
+        },
+        {
+          "caller": "decodePng",
+          "callee": "data.readUInt32BE",
+          "lineNumber": 168
+        },
+        {
+          "caller": "decodePng",
+          "callee": "idat.push",
+          "lineNumber": 170
+        },
+        {
+          "caller": "decodePng",
+          "callee": "(() => {throw new Error(`colorType ${colorType}`);})",
+          "lineNumber": 174
+        },
+        {
+          "caller": "decodePng",
+          "callee": "inflateSync",
+          "lineNumber": 175
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Buffer.concat",
+          "lineNumber": 175
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 176
+        },
+        {
+          "caller": "decodePng",
+          "callee": "raw.subarray",
+          "lineNumber": 181
+        },
+        {
+          "caller": "decodePng",
+          "callee": "out.subarray",
+          "lineNumber": 183
+        },
+        {
+          "caller": "decodePng",
+          "callee": "out.subarray",
+          "lineNumber": 184
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Math.abs",
+          "lineNumber": 194
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Math.abs",
+          "lineNumber": 194
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Math.abs",
+          "lineNumber": 194
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "Buffer.alloc",
+          "lineNumber": 220
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "rgba.copy",
+          "lineNumber": 223
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 226
+        },
+        {
+          "caller": "chunk",
+          "callee": "len.writeUInt32BE",
+          "lineNumber": 227
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 228
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.from",
+          "lineNumber": 228
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 229
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc.writeUInt32BE",
+          "lineNumber": 230
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc32",
+          "lineNumber": 230
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 231
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "Buffer.alloc",
+          "lineNumber": 233
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 234
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 234
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "Buffer.concat",
+          "lineNumber": 236
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "Buffer.from",
+          "lineNumber": 237
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "chunk",
+          "lineNumber": 238
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "chunk",
+          "lineNumber": 239
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "deflateSync",
+          "lineNumber": 239
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "chunk",
+          "lineNumber": 240
+        },
+        {
+          "caller": "encodePngRgba",
+          "callee": "Buffer.alloc",
+          "lineNumber": 240
+        },
+        {
+          "caller": "load",
+          "callee": "parseGlb",
+          "lineNumber": 254
+        },
+        {
+          "caller": "load",
+          "callee": "readFileSync",
+          "lineNumber": 254
+        },
+        {
+          "caller": "load",
+          "callee": "flatten",
+          "lineNumber": 255
+        },
+        {
+          "caller": "texFor",
+          "callee": "texCache.has",
+          "lineNumber": 260
+        },
+        {
+          "caller": "texFor",
+          "callee": "texCache.get",
+          "lineNumber": 260
+        },
+        {
+          "caller": "texFor",
+          "callee": "Buffer.from",
+          "lineNumber": 266
+        },
+        {
+          "caller": "texFor",
+          "callee": "decodePng",
+          "lineNumber": 267
+        },
+        {
+          "caller": "texFor",
+          "callee": "basename",
+          "lineNumber": 268
+        },
+        {
+          "caller": "texFor",
+          "callee": "texCache.set",
+          "lineNumber": 270
+        },
+        {
+          "caller": "load",
+          "callee": "parts.map",
+          "lineNumber": 274
+        },
+        {
+          "caller": "load",
+          "callee": "readAccessor",
+          "lineNumber": 275
+        },
+        {
+          "caller": "load",
+          "callee": "readAccessor",
+          "lineNumber": 276
+        },
+        {
+          "caller": "load",
+          "callee": "readAccessor",
+          "lineNumber": 278
+        },
+        {
+          "caller": "load",
+          "callee": "Float64Array.from",
+          "lineNumber": 279
+        },
+        {
+          "caller": "load",
+          "callee": "apply",
+          "lineNumber": 282
+        },
+        {
+          "caller": "load",
+          "callee": "texFor",
+          "lineNumber": 287
+        },
+        {
+          "caller": "render",
+          "callee": "Buffer.alloc",
+          "lineNumber": 307
+        },
+        {
+          "caller": "render",
+          "callee": "new Float64Array(PX * PX).fill",
+          "lineNumber": 308
+        },
+        {
+          "caller": "render",
+          "callee": "Math.max",
+          "lineNumber": 313
+        },
+        {
+          "caller": "render",
+          "callee": "o.map",
+          "lineNumber": 314
+        },
+        {
+          "caller": "render",
+          "callee": "o.map",
+          "lineNumber": 317
+        },
+        {
+          "caller": "render",
+          "callee": "o.map",
+          "lineNumber": 318
+        },
+        {
+          "caller": "render",
+          "callee": "o.map",
+          "lineNumber": 319
+        },
+        {
+          "caller": "render",
+          "callee": "Math.hypot",
+          "lineNumber": 324
+        },
+        {
+          "caller": "render",
+          "callee": "Math.abs",
+          "lineNumber": 328
+        },
+        {
+          "caller": "render",
+          "callee": "Math.max",
+          "lineNumber": 328
+        },
+        {
+          "caller": "render",
+          "callee": "Math.max",
+          "lineNumber": 330
+        },
+        {
+          "caller": "render",
+          "callee": "Math.floor",
+          "lineNumber": 330
+        },
+        {
+          "caller": "render",
+          "callee": "Math.min",
+          "lineNumber": 330
+        },
+        {
+          "caller": "render",
+          "callee": "Math.min",
+          "lineNumber": 330
+        },
+        {
+          "caller": "render",
+          "callee": "Math.ceil",
+          "lineNumber": 330
+        },
+        {
+          "caller": "render",
+          "callee": "Math.max",
+          "lineNumber": 330
+        },
+        {
+          "caller": "render",
+          "callee": "Math.max",
+          "lineNumber": 331
+        },
+        {
+          "caller": "render",
+          "callee": "Math.floor",
+          "lineNumber": 331
+        },
+        {
+          "caller": "render",
+          "callee": "Math.min",
+          "lineNumber": 331
+        },
+        {
+          "caller": "render",
+          "callee": "Math.min",
+          "lineNumber": 331
+        },
+        {
+          "caller": "render",
+          "callee": "Math.ceil",
+          "lineNumber": 331
+        },
+        {
+          "caller": "render",
+          "callee": "Math.max",
+          "lineNumber": 331
+        },
+        {
+          "caller": "render",
+          "callee": "Math.abs",
+          "lineNumber": 333
+        },
+        {
+          "caller": "render",
+          "callee": "Math.floor",
+          "lineNumber": 350
+        },
+        {
+          "caller": "render",
+          "callee": "Math.floor",
+          "lineNumber": 350
+        },
+        {
+          "caller": "render",
+          "callee": "Math.min",
+          "lineNumber": 351
+        },
+        {
+          "caller": "render",
+          "callee": "Math.floor",
+          "lineNumber": 351
+        },
+        {
+          "caller": "render",
+          "callee": "Math.min",
+          "lineNumber": 353
+        },
+        {
+          "caller": "render",
+          "callee": "Math.floor",
+          "lineNumber": 353
+        },
+        {
+          "caller": "render",
+          "callee": "Math.min",
+          "lineNumber": 371
+        },
+        {
+          "caller": "render",
+          "callee": "Math.min",
+          "lineNumber": 372
+        },
+        {
+          "caller": "render",
+          "callee": "Math.min",
+          "lineNumber": 373
+        },
+        {
+          "caller": "render",
+          "callee": "Buffer.from",
+          "lineNumber": 382
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "quads.push",
+          "lineNumber": 422
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "quads.forEach",
+          "lineNumber": 427
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "quad.forEach",
+          "lineNumber": 432
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "positions.push",
+          "lineNumber": 433
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "uvs.push",
+          "lineNumber": 434
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "normals.push",
+          "lineNumber": 437
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "indices.push",
+          "lineNumber": 439
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.alloc",
+          "lineNumber": 444
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "cells.forEach",
+          "lineNumber": 445
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "rgba.copy",
+          "lineNumber": 447
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "encodePngRgba",
+          "lineNumber": 449
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.from",
+          "lineNumber": 451
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.from",
+          "lineNumber": 452
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.from",
+          "lineNumber": 453
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.from",
+          "lineNumber": 454
+        },
+        {
+          "caller": "pad",
+          "callee": "Buffer.concat",
+          "lineNumber": 458
+        },
+        {
+          "caller": "pad",
+          "callee": "Buffer.alloc",
+          "lineNumber": 458
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "[posBuf, nrmBuf, uvBuf, idxBuf, png].map",
+          "lineNumber": 459
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "pad",
+          "lineNumber": 459
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "offsets.push",
+          "lineNumber": 462
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.concat",
+          "lineNumber": 463
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Math.min",
+          "lineNumber": 467
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Math.max",
+          "lineNumber": 468
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "pad",
+          "lineNumber": 504
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.from",
+          "lineNumber": 504
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "JSON.stringify",
+          "lineNumber": 504
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.alloc",
+          "lineNumber": 505
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "header.writeUInt32LE",
+          "lineNumber": 506
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "header.writeUInt32LE",
+          "lineNumber": 507
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "header.writeUInt32LE",
+          "lineNumber": 508
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 510
+        },
+        {
+          "caller": "chunk",
+          "callee": "h.writeUInt32LE",
+          "lineNumber": 511
+        },
+        {
+          "caller": "chunk",
+          "callee": "h.writeUInt32LE",
+          "lineNumber": 512
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 513
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.concat",
+          "lineNumber": 515
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "chunk",
+          "lineNumber": 515
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "chunk",
+          "lineNumber": 515
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 13,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/flatten-ground-tiles.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 393,
+      "nonEmptyLines": 364,
+      "functions": [
+        {
+          "name": "parseGlb",
+          "startLine": 32,
+          "endLine": 46,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "readAccessor",
+          "startLine": 51,
+          "endLine": 67,
+          "params": [
+            "gltf",
+            "bin",
+            "index"
+          ]
+        },
+        {
+          "name": "decodePng",
+          "startLine": 70,
+          "endLine": 111,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "crc32",
+          "startLine": 114,
+          "endLine": 126,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "encodePng",
+          "startLine": 127,
+          "endLine": 146,
+          "params": [
+            "w",
+            "h",
+            "rgb"
+          ]
+        },
+        {
+          "name": "bakeTop",
+          "startLine": 151,
+          "endLine": 235,
+          "params": [
+            "path"
+          ]
+        },
+        {
+          "name": "grade",
+          "startLine": 251,
+          "endLine": 261,
+          "params": [
+            "img"
+          ]
+        },
+        {
+          "name": "buildGlb",
+          "startLine": 263,
+          "endLine": 357,
+          "params": []
+        },
+        {
+          "name": "walk",
+          "startLine": 360,
+          "endLine": 368,
+          "params": [
+            "dir"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "parseGlb",
+          "callee": "dv.getUint32",
+          "lineNumber": 34
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "dv.getUint32",
+          "lineNumber": 37
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "dv.getUint32",
+          "lineNumber": 38
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "JSON.parse",
+          "lineNumber": 40
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "buf.slice(start, start + len).toString",
+          "lineNumber": 40
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "buf.slice",
+          "lineNumber": 40
+        },
+        {
+          "caller": "parseGlb",
+          "callee": "buf.slice",
+          "lineNumber": 41
+        },
+        {
+          "caller": "readAccessor",
+          "callee": "Buffer.from",
+          "lineNumber": 59
+        },
+        {
+          "caller": "readAccessor",
+          "callee": "src.subarray",
+          "lineNumber": 62
+        },
+        {
+          "caller": "readAccessor",
+          "callee": "slice.buffer.slice",
+          "lineNumber": 63
+        },
+        {
+          "caller": "decodePng",
+          "callee": "buf.readUInt32BE",
+          "lineNumber": 74
+        },
+        {
+          "caller": "decodePng",
+          "callee": "buf.toString",
+          "lineNumber": 75
+        },
+        {
+          "caller": "decodePng",
+          "callee": "buf.subarray",
+          "lineNumber": 76
+        },
+        {
+          "caller": "decodePng",
+          "callee": "data.readUInt32BE",
+          "lineNumber": 78
+        },
+        {
+          "caller": "decodePng",
+          "callee": "data.readUInt32BE",
+          "lineNumber": 78
+        },
+        {
+          "caller": "decodePng",
+          "callee": "idat.push",
+          "lineNumber": 80
+        },
+        {
+          "caller": "decodePng",
+          "callee": "(() => {throw new Error(`colorType ${colorType}`);})",
+          "lineNumber": 84
+        },
+        {
+          "caller": "decodePng",
+          "callee": "inflateSync",
+          "lineNumber": 85
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Buffer.concat",
+          "lineNumber": 85
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 86
+        },
+        {
+          "caller": "decodePng",
+          "callee": "raw.subarray",
+          "lineNumber": 91
+        },
+        {
+          "caller": "decodePng",
+          "callee": "out.subarray",
+          "lineNumber": 93
+        },
+        {
+          "caller": "decodePng",
+          "callee": "out.subarray",
+          "lineNumber": 94
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Math.abs",
+          "lineNumber": 104
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Math.abs",
+          "lineNumber": 104
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Math.abs",
+          "lineNumber": 104
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 129
+        },
+        {
+          "caller": "encodePng",
+          "callee": "rgb.copy",
+          "lineNumber": 132
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 135
+        },
+        {
+          "caller": "chunk",
+          "callee": "len.writeUInt32BE",
+          "lineNumber": 136
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 137
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.from",
+          "lineNumber": 137
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 138
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc.writeUInt32BE",
+          "lineNumber": 139
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc32",
+          "lineNumber": 139
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 140
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 142
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 143
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 143
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.concat",
+          "lineNumber": 145
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.from",
+          "lineNumber": 145
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 145
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 145
+        },
+        {
+          "caller": "encodePng",
+          "callee": "deflateSync",
+          "lineNumber": 145
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 145
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 145
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "parseGlb",
+          "lineNumber": 152
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "readFileSync",
+          "lineNumber": 152
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "decodePng",
+          "lineNumber": 157
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Buffer.from",
+          "lineNumber": 157
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "readAccessor",
+          "lineNumber": 159
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "readAccessor",
+          "lineNumber": 160
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "readAccessor",
+          "lineNumber": 161
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.min",
+          "lineNumber": 165
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.max",
+          "lineNumber": 165
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.min",
+          "lineNumber": 166
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.max",
+          "lineNumber": 166
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.max",
+          "lineNumber": 167
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Buffer.alloc",
+          "lineNumber": 171
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "new Float64Array(PX * PX).fill",
+          "lineNumber": 172
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.max",
+          "lineNumber": 183
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.floor",
+          "lineNumber": 183
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.min",
+          "lineNumber": 183
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.min",
+          "lineNumber": 183
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.ceil",
+          "lineNumber": 183
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.max",
+          "lineNumber": 183
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.max",
+          "lineNumber": 184
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.floor",
+          "lineNumber": 184
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.min",
+          "lineNumber": 184
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.min",
+          "lineNumber": 184
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.ceil",
+          "lineNumber": 184
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.max",
+          "lineNumber": 184
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.abs",
+          "lineNumber": 186
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.floor",
+          "lineNumber": 201
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.floor",
+          "lineNumber": 201
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.min",
+          "lineNumber": 202
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.floor",
+          "lineNumber": 202
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.min",
+          "lineNumber": 204
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Math.floor",
+          "lineNumber": 204
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Buffer.from",
+          "lineNumber": 215
+        },
+        {
+          "caller": "bakeTop",
+          "callee": "Uint8Array.from",
+          "lineNumber": 216
+        },
+        {
+          "caller": "grade",
+          "callee": "Buffer.alloc",
+          "lineNumber": 252
+        },
+        {
+          "caller": "grade",
+          "callee": "Math.max",
+          "lineNumber": 256
+        },
+        {
+          "caller": "grade",
+          "callee": "Math.min",
+          "lineNumber": 256
+        },
+        {
+          "caller": "grade",
+          "callee": "Math.round",
+          "lineNumber": 256
+        },
+        {
+          "caller": "grade",
+          "callee": "Math.max",
+          "lineNumber": 257
+        },
+        {
+          "caller": "grade",
+          "callee": "Math.min",
+          "lineNumber": 257
+        },
+        {
+          "caller": "grade",
+          "callee": "Math.round",
+          "lineNumber": 257
+        },
+        {
+          "caller": "grade",
+          "callee": "Math.max",
+          "lineNumber": 258
+        },
+        {
+          "caller": "grade",
+          "callee": "Math.min",
+          "lineNumber": 258
+        },
+        {
+          "caller": "grade",
+          "callee": "Math.round",
+          "lineNumber": 258
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "positions.push",
+          "lineNumber": 273
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "uvs.push",
+          "lineNumber": 274
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "u",
+          "lineNumber": 274
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "v",
+          "lineNumber": 274
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Math.cos",
+          "lineNumber": 277
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Math.sin",
+          "lineNumber": 277
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "positions.push",
+          "lineNumber": 278
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "uvs.push",
+          "lineNumber": 279
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "u",
+          "lineNumber": 279
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "v",
+          "lineNumber": 279
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "indices.push",
+          "lineNumber": 281
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "positions.push",
+          "lineNumber": 284
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "uvs.push",
+          "lineNumber": 285
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "indices.push",
+          "lineNumber": 286
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.from",
+          "lineNumber": 289
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.from",
+          "lineNumber": 290
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "normals.push",
+          "lineNumber": 292
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.from",
+          "lineNumber": 293
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.from",
+          "lineNumber": 294
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "encodePng",
+          "lineNumber": 295
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "grade",
+          "lineNumber": 295
+        },
+        {
+          "caller": "pad",
+          "callee": "Buffer.concat",
+          "lineNumber": 299
+        },
+        {
+          "caller": "pad",
+          "callee": "Buffer.alloc",
+          "lineNumber": 299
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "[posBuf, nrmBuf, uvBuf, idxBuf, png].map",
+          "lineNumber": 300
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "offsets.push",
+          "lineNumber": 304
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.concat",
+          "lineNumber": 307
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Math.min",
+          "lineNumber": 312
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Math.max",
+          "lineNumber": 313
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "pad",
+          "lineNumber": 345
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.from",
+          "lineNumber": 345
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "JSON.stringify",
+          "lineNumber": 345
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.alloc",
+          "lineNumber": 346
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "header.writeUInt32LE",
+          "lineNumber": 347
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "header.writeUInt32LE",
+          "lineNumber": 348
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "header.writeUInt32LE",
+          "lineNumber": 349
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 351
+        },
+        {
+          "caller": "chunk",
+          "callee": "h.writeUInt32LE",
+          "lineNumber": 352
+        },
+        {
+          "caller": "chunk",
+          "callee": "h.writeUInt32LE",
+          "lineNumber": 353
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 354
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "Buffer.concat",
+          "lineNumber": 356
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "chunk",
+          "lineNumber": 356
+        },
+        {
+          "caller": "buildGlb",
+          "callee": "chunk",
+          "lineNumber": 356
+        },
+        {
+          "caller": "walk",
+          "callee": "readdirSync",
+          "lineNumber": 362
+        },
+        {
+          "caller": "walk",
+          "callee": "join",
+          "lineNumber": 363
+        },
+        {
+          "caller": "walk",
+          "callee": "e.isDirectory",
+          "lineNumber": 364
+        },
+        {
+          "caller": "walk",
+          "callee": "out.push",
+          "lineNumber": 364
+        },
+        {
+          "caller": "walk",
+          "callee": "walk",
+          "lineNumber": 364
+        },
+        {
+          "caller": "walk",
+          "callee": "e.name.toLowerCase().endsWith",
+          "lineNumber": 365
+        },
+        {
+          "caller": "walk",
+          "callee": "e.name.toLowerCase",
+          "lineNumber": 365
+        },
+        {
+          "caller": "walk",
+          "callee": "out.push",
+          "lineNumber": 365
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/generate-building-manifest.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 75,
+      "nonEmptyLines": 67,
+      "functions": [
+        {
+          "name": "buildingIds",
+          "startLine": 32,
+          "endLine": 43,
+          "params": []
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "buildingIds",
+          "callee": "readFileSync",
+          "lineNumber": 33
+        },
+        {
+          "caller": "buildingIds",
+          "callee": "source.matchAll",
+          "lineNumber": 34
+        },
+        {
+          "caller": "buildingIds",
+          "callee": "source.slice",
+          "lineNumber": 37
+        },
+        {
+          "caller": "buildingIds",
+          "callee": "/size:\\s*\\[/.test",
+          "lineNumber": 38
+        },
+        {
+          "caller": "buildingIds",
+          "callee": "/district:\\s*\"/.test",
+          "lineNumber": 38
+        },
+        {
+          "caller": "buildingIds",
+          "callee": "out.push",
+          "lineNumber": 39
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/make-fence-rail.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 270,
+      "nonEmptyLines": 251,
+      "functions": [
+        {
+          "name": "smooth",
+          "startLine": 47,
+          "endLine": 47,
+          "params": [
+            "t"
+          ]
+        },
+        {
+          "name": "hash2",
+          "startLine": 48,
+          "endLine": 52,
+          "params": [
+            "i",
+            "j"
+          ]
+        },
+        {
+          "name": "mulberry32",
+          "startLine": 53,
+          "endLine": 60,
+          "params": [
+            "seed"
+          ]
+        },
+        {
+          "name": "crc32",
+          "startLine": 100,
+          "endLine": 112,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "encodePng",
+          "startLine": 113,
+          "endLine": 139,
+          "params": [
+            "w",
+            "h",
+            "data"
+          ]
+        },
+        {
+          "name": "box",
+          "startLine": 149,
+          "endLine": 176,
+          "params": [
+            "cx",
+            "cy",
+            "cz",
+            "hw",
+            "hh",
+            "hd",
+            "withTop"
+          ]
+        },
+        {
+          "name": "pad4",
+          "startLine": 194,
+          "endLine": 194,
+          "params": [
+            "n"
+          ]
+        },
+        {
+          "name": "chunkHeader",
+          "startLine": 254,
+          "endLine": 259,
+          "params": [
+            "len",
+            "type"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 49
+        },
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 49
+        },
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 50
+        },
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 56
+        },
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 57
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 115
+        },
+        {
+          "caller": "encodePng",
+          "callee": "data.copy",
+          "lineNumber": 118
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 121
+        },
+        {
+          "caller": "chunk",
+          "callee": "len.writeUInt32BE",
+          "lineNumber": 122
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 123
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.from",
+          "lineNumber": 123
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 124
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc.writeUInt32BE",
+          "lineNumber": 125
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc32",
+          "lineNumber": 125
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 126
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 128
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 129
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 130
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.concat",
+          "lineNumber": 133
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.from",
+          "lineNumber": 134
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 135
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 136
+        },
+        {
+          "caller": "encodePng",
+          "callee": "deflateSync",
+          "lineNumber": 136
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 137
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 137
+        },
+        {
+          "caller": "box",
+          "callee": "faces.push",
+          "lineNumber": 157
+        },
+        {
+          "caller": "reach",
+          "callee": "Math.abs",
+          "lineNumber": 160
+        },
+        {
+          "caller": "reach",
+          "callee": "Math.abs",
+          "lineNumber": 160
+        },
+        {
+          "caller": "reach",
+          "callee": "Math.abs",
+          "lineNumber": 160
+        },
+        {
+          "caller": "box",
+          "callee": "reach",
+          "lineNumber": 164
+        },
+        {
+          "caller": "box",
+          "callee": "reach",
+          "lineNumber": 165
+        },
+        {
+          "caller": "box",
+          "callee": "positions.push",
+          "lineNumber": 168
+        },
+        {
+          "caller": "box",
+          "callee": "normals.push",
+          "lineNumber": 169
+        },
+        {
+          "caller": "box",
+          "callee": "uvs.push",
+          "lineNumber": 172
+        },
+        {
+          "caller": "box",
+          "callee": "indices.push",
+          "lineNumber": 174
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "Buffer.alloc",
+          "lineNumber": 255
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "b.writeUInt32LE",
+          "lineNumber": 256
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "b.writeUInt32LE",
+          "lineNumber": 257
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 8,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/make-grass-texture.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 184,
+      "nonEmptyLines": 170,
+      "functions": [
+        {
+          "name": "mulberry32",
+          "startLine": 42,
+          "endLine": 49,
+          "params": [
+            "seed"
+          ]
+        },
+        {
+          "name": "tileableNoise",
+          "startLine": 54,
+          "endLine": 69,
+          "params": [
+            "period",
+            "rand"
+          ]
+        },
+        {
+          "name": "crc32",
+          "startLine": 136,
+          "endLine": 148,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "encodePng",
+          "startLine": 149,
+          "endLine": 175,
+          "params": [
+            "w",
+            "h",
+            "data"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 45
+        },
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 46
+        },
+        {
+          "caller": "tileableNoise",
+          "callee": "rand",
+          "lineNumber": 57
+        },
+        {
+          "caller": "tileableNoise",
+          "callee": "Math.floor",
+          "lineNumber": 62
+        },
+        {
+          "caller": "tileableNoise",
+          "callee": "Math.floor",
+          "lineNumber": 62
+        },
+        {
+          "caller": "tileableNoise",
+          "callee": "smooth",
+          "lineNumber": 64
+        },
+        {
+          "caller": "tileableNoise",
+          "callee": "smooth",
+          "lineNumber": 64
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 151
+        },
+        {
+          "caller": "encodePng",
+          "callee": "data.copy",
+          "lineNumber": 154
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 157
+        },
+        {
+          "caller": "chunk",
+          "callee": "len.writeUInt32BE",
+          "lineNumber": 158
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 159
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.from",
+          "lineNumber": 159
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 160
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc.writeUInt32BE",
+          "lineNumber": 161
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc32",
+          "lineNumber": 161
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 162
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 164
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 165
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 166
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.concat",
+          "lineNumber": 169
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.from",
+          "lineNumber": 170
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 171
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 172
+        },
+        {
+          "caller": "encodePng",
+          "callee": "deflateSync",
+          "lineNumber": 172
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 173
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 173
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/make-low-wall.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 347,
+      "nonEmptyLines": 320,
+      "functions": [
+        {
+          "name": "mulberry32",
+          "startLine": 68,
+          "endLine": 75,
+          "params": [
+            "seed"
+          ]
+        },
+        {
+          "name": "smooth",
+          "startLine": 77,
+          "endLine": 77,
+          "params": [
+            "t"
+          ]
+        },
+        {
+          "name": "hash2",
+          "startLine": 78,
+          "endLine": 82,
+          "params": [
+            "i",
+            "j"
+          ]
+        },
+        {
+          "name": "crc32",
+          "startLine": 176,
+          "endLine": 188,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "encodePng",
+          "startLine": 189,
+          "endLine": 215,
+          "params": [
+            "w",
+            "h",
+            "data"
+          ]
+        },
+        {
+          "name": "box",
+          "startLine": 227,
+          "endLine": 259,
+          "params": [
+            "cx",
+            "cy",
+            "cz",
+            "hw",
+            "hh",
+            "hd",
+            "v0",
+            "v1",
+            "uRepeat"
+          ]
+        },
+        {
+          "name": "pad4",
+          "startLine": 273,
+          "endLine": 273,
+          "params": [
+            "n"
+          ]
+        },
+        {
+          "name": "chunkHeader",
+          "startLine": 331,
+          "endLine": 336,
+          "params": [
+            "len",
+            "type"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 71
+        },
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 72
+        },
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 79
+        },
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 79
+        },
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 80
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 191
+        },
+        {
+          "caller": "encodePng",
+          "callee": "data.copy",
+          "lineNumber": 194
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 197
+        },
+        {
+          "caller": "chunk",
+          "callee": "len.writeUInt32BE",
+          "lineNumber": 198
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 199
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.from",
+          "lineNumber": 199
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 200
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc.writeUInt32BE",
+          "lineNumber": 201
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc32",
+          "lineNumber": 201
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 202
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 204
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 205
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 206
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.concat",
+          "lineNumber": 209
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.from",
+          "lineNumber": 210
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 211
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 212
+        },
+        {
+          "caller": "encodePng",
+          "callee": "deflateSync",
+          "lineNumber": 212
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 213
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 213
+        },
+        {
+          "caller": "reach",
+          "callee": "Math.abs",
+          "lineNumber": 242
+        },
+        {
+          "caller": "reach",
+          "callee": "Math.abs",
+          "lineNumber": 242
+        },
+        {
+          "caller": "reach",
+          "callee": "Math.abs",
+          "lineNumber": 242
+        },
+        {
+          "caller": "box",
+          "callee": "reach",
+          "lineNumber": 246
+        },
+        {
+          "caller": "box",
+          "callee": "reach",
+          "lineNumber": 247
+        },
+        {
+          "caller": "box",
+          "callee": "positions.push",
+          "lineNumber": 250
+        },
+        {
+          "caller": "box",
+          "callee": "normals.push",
+          "lineNumber": 251
+        },
+        {
+          "caller": "box",
+          "callee": "uvs.push",
+          "lineNumber": 255
+        },
+        {
+          "caller": "box",
+          "callee": "indices.push",
+          "lineNumber": 257
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "Buffer.alloc",
+          "lineNumber": 332
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "b.writeUInt32LE",
+          "lineNumber": 333
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "b.writeUInt32LE",
+          "lineNumber": 334
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 8,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/make-paving-tile.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 345,
+      "nonEmptyLines": 321,
+      "functions": [
+        {
+          "name": "decodePng",
+          "startLine": 56,
+          "endLine": 96,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "at",
+          "startLine": 108,
+          "endLine": 108,
+          "params": [
+            "x",
+            "y",
+            "c"
+          ]
+        },
+        {
+          "name": "s",
+          "startLine": 145,
+          "endLine": 145,
+          "params": [
+            "u",
+            "v",
+            "c"
+          ]
+        },
+        {
+          "name": "fold",
+          "startLine": 154,
+          "endLine": 158,
+          "params": [
+            "u"
+          ]
+        },
+        {
+          "name": "crc32",
+          "startLine": 219,
+          "endLine": 231,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "encodePng",
+          "startLine": 232,
+          "endLine": 258,
+          "params": [
+            "w",
+            "h",
+            "data"
+          ]
+        },
+        {
+          "name": "pad4",
+          "startLine": 271,
+          "endLine": 271,
+          "params": [
+            "n"
+          ]
+        },
+        {
+          "name": "chunkHeader",
+          "startLine": 327,
+          "endLine": 332,
+          "params": [
+            "len",
+            "type"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "decodePng",
+          "callee": "buf.readUInt32BE",
+          "lineNumber": 57
+        },
+        {
+          "caller": "decodePng",
+          "callee": "buf.readUInt32BE",
+          "lineNumber": 61
+        },
+        {
+          "caller": "decodePng",
+          "callee": "buf.slice(off + 4, off + 8).toString",
+          "lineNumber": 62
+        },
+        {
+          "caller": "decodePng",
+          "callee": "buf.slice",
+          "lineNumber": 62
+        },
+        {
+          "caller": "decodePng",
+          "callee": "buf.slice",
+          "lineNumber": 63
+        },
+        {
+          "caller": "decodePng",
+          "callee": "body.readUInt32BE",
+          "lineNumber": 65
+        },
+        {
+          "caller": "decodePng",
+          "callee": "body.readUInt32BE",
+          "lineNumber": 66
+        },
+        {
+          "caller": "decodePng",
+          "callee": "idat.push",
+          "lineNumber": 69
+        },
+        {
+          "caller": "decodePng",
+          "callee": "inflateSync",
+          "lineNumber": 73
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Buffer.concat",
+          "lineNumber": 73
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 75
+        },
+        {
+          "caller": "decodePng",
+          "callee": "raw.slice",
+          "lineNumber": 78
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Math.abs",
+          "lineNumber": 89
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Math.abs",
+          "lineNumber": 89
+        },
+        {
+          "caller": "decodePng",
+          "callee": "Math.abs",
+          "lineNumber": 89
+        },
+        {
+          "caller": "s",
+          "callee": "at",
+          "lineNumber": 145
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 234
+        },
+        {
+          "caller": "encodePng",
+          "callee": "data.copy",
+          "lineNumber": 237
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 240
+        },
+        {
+          "caller": "chunk",
+          "callee": "len.writeUInt32BE",
+          "lineNumber": 241
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 242
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.from",
+          "lineNumber": 242
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 243
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc.writeUInt32BE",
+          "lineNumber": 244
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc32",
+          "lineNumber": 244
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 245
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 247
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 248
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 249
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.concat",
+          "lineNumber": 252
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.from",
+          "lineNumber": 253
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 254
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 255
+        },
+        {
+          "caller": "encodePng",
+          "callee": "deflateSync",
+          "lineNumber": 255
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 256
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 256
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "Buffer.alloc",
+          "lineNumber": 328
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "b.writeUInt32LE",
+          "lineNumber": 329
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "b.writeUInt32LE",
+          "lineNumber": 330
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 8,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/make-terrace-steps.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 276,
+      "nonEmptyLines": 258,
+      "functions": [
+        {
+          "name": "arg",
+          "startLine": 19,
+          "endLine": 22,
+          "params": [
+            "name",
+            "fallback"
+          ]
+        },
+        {
+          "name": "smooth",
+          "startLine": 42,
+          "endLine": 42,
+          "params": [
+            "t"
+          ]
+        },
+        {
+          "name": "hash2",
+          "startLine": 43,
+          "endLine": 47,
+          "params": [
+            "i",
+            "j"
+          ]
+        },
+        {
+          "name": "mulberry32",
+          "startLine": 48,
+          "endLine": 55,
+          "params": [
+            "seed"
+          ]
+        },
+        {
+          "name": "crc32",
+          "startLine": 104,
+          "endLine": 116,
+          "params": [
+            "buf"
+          ]
+        },
+        {
+          "name": "encodePng",
+          "startLine": 117,
+          "endLine": 143,
+          "params": [
+            "w",
+            "h",
+            "data"
+          ]
+        },
+        {
+          "name": "box",
+          "startLine": 154,
+          "endLine": 178,
+          "params": [
+            "cx",
+            "cy",
+            "cz",
+            "hw",
+            "hh",
+            "hd"
+          ]
+        },
+        {
+          "name": "pad4",
+          "startLine": 202,
+          "endLine": 202,
+          "params": [
+            "n"
+          ]
+        },
+        {
+          "name": "chunkHeader",
+          "startLine": 260,
+          "endLine": 265,
+          "params": [
+            "len",
+            "type"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "arg",
+          "callee": "process.argv.indexOf",
+          "lineNumber": 20
+        },
+        {
+          "caller": "arg",
+          "callee": "Number",
+          "lineNumber": 21
+        },
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 44
+        },
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 44
+        },
+        {
+          "caller": "hash2",
+          "callee": "Math.imul",
+          "lineNumber": 45
+        },
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 51
+        },
+        {
+          "caller": "mulberry32",
+          "callee": "Math.imul",
+          "lineNumber": 52
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 119
+        },
+        {
+          "caller": "encodePng",
+          "callee": "data.copy",
+          "lineNumber": 122
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 125
+        },
+        {
+          "caller": "chunk",
+          "callee": "len.writeUInt32BE",
+          "lineNumber": 126
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 127
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.from",
+          "lineNumber": 127
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.alloc",
+          "lineNumber": 128
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc.writeUInt32BE",
+          "lineNumber": 129
+        },
+        {
+          "caller": "chunk",
+          "callee": "crc32",
+          "lineNumber": 129
+        },
+        {
+          "caller": "chunk",
+          "callee": "Buffer.concat",
+          "lineNumber": 130
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 132
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 133
+        },
+        {
+          "caller": "encodePng",
+          "callee": "ihdr.writeUInt32BE",
+          "lineNumber": 134
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.concat",
+          "lineNumber": 137
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.from",
+          "lineNumber": 138
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 139
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 140
+        },
+        {
+          "caller": "encodePng",
+          "callee": "deflateSync",
+          "lineNumber": 140
+        },
+        {
+          "caller": "encodePng",
+          "callee": "chunk",
+          "lineNumber": 141
+        },
+        {
+          "caller": "encodePng",
+          "callee": "Buffer.alloc",
+          "lineNumber": 141
+        },
+        {
+          "caller": "reach",
+          "callee": "Math.abs",
+          "lineNumber": 165
+        },
+        {
+          "caller": "reach",
+          "callee": "Math.abs",
+          "lineNumber": 165
+        },
+        {
+          "caller": "reach",
+          "callee": "Math.abs",
+          "lineNumber": 165
+        },
+        {
+          "caller": "box",
+          "callee": "reach",
+          "lineNumber": 168
+        },
+        {
+          "caller": "box",
+          "callee": "reach",
+          "lineNumber": 169
+        },
+        {
+          "caller": "box",
+          "callee": "positions.push",
+          "lineNumber": 172
+        },
+        {
+          "caller": "box",
+          "callee": "normals.push",
+          "lineNumber": 173
+        },
+        {
+          "caller": "box",
+          "callee": "uvs.push",
+          "lineNumber": 174
+        },
+        {
+          "caller": "box",
+          "callee": "indices.push",
+          "lineNumber": 176
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "Buffer.alloc",
+          "lineNumber": 261
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "b.writeUInt32LE",
+          "lineNumber": 262
+        },
+        {
+          "caller": "chunkHeader",
+          "callee": "b.writeUInt32LE",
+          "lineNumber": 263
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/make_paved_road_tiles.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 149,
+      "nonEmptyLines": 123,
+      "functions": [
+        {
+          "name": "parse_glb",
+          "startLine": 42,
+          "endLine": 52,
+          "params": [
+            "raw"
+          ]
+        },
+        {
+          "name": "build_glb",
+          "startLine": 55,
+          "endLine": 67,
+          "params": [
+            "gltf",
+            "binary"
+          ]
+        },
+        {
+          "name": "destone",
+          "startLine": 70,
+          "endLine": 95,
+          "params": [
+            "image"
+          ]
+        },
+        {
+          "name": "convert",
+          "startLine": 98,
+          "endLine": 134,
+          "params": [
+            "path"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 137,
+          "endLine": 145,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "parse_glb",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "build_glb",
+          "line": 55,
+          "isDefault": false
+        },
+        {
+          "name": "destone",
+          "line": 70,
+          "isDefault": false
+        },
+        {
+          "name": "convert",
+          "line": 98,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 137,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "parse_glb",
+          "callee": "len",
+          "lineNumber": 44
+        },
+        {
+          "caller": "parse_glb",
+          "callee": "struct.unpack_from",
+          "lineNumber": 45
+        },
+        {
+          "caller": "parse_glb",
+          "callee": "json.loads",
+          "lineNumber": 48
+        },
+        {
+          "caller": "parse_glb",
+          "callee": "bytearray",
+          "lineNumber": 52
+        },
+        {
+          "caller": "build_glb",
+          "callee": "json.dumps(gltf, separators=(\",\", \":\")).encode",
+          "lineNumber": 56
+        },
+        {
+          "caller": "build_glb",
+          "callee": "json.dumps",
+          "lineNumber": 56
+        },
+        {
+          "caller": "build_glb",
+          "callee": "len",
+          "lineNumber": 57
+        },
+        {
+          "caller": "build_glb",
+          "callee": "bytes",
+          "lineNumber": 58
+        },
+        {
+          "caller": "build_glb",
+          "callee": "len",
+          "lineNumber": 59
+        },
+        {
+          "caller": "build_glb",
+          "callee": "struct.pack",
+          "lineNumber": 60
+        },
+        {
+          "caller": "build_glb",
+          "callee": "len",
+          "lineNumber": 60
+        },
+        {
+          "caller": "build_glb",
+          "callee": "len",
+          "lineNumber": 60
+        },
+        {
+          "caller": "build_glb",
+          "callee": "struct.pack",
+          "lineNumber": 63
+        },
+        {
+          "caller": "build_glb",
+          "callee": "len",
+          "lineNumber": 63
+        },
+        {
+          "caller": "build_glb",
+          "callee": "struct.pack",
+          "lineNumber": 65
+        },
+        {
+          "caller": "build_glb",
+          "callee": "len",
+          "lineNumber": 65
+        },
+        {
+          "caller": "destone",
+          "callee": "image.convert",
+          "lineNumber": 72
+        },
+        {
+          "caller": "destone",
+          "callee": "list",
+          "lineNumber": 73
+        },
+        {
+          "caller": "destone",
+          "callee": "image.getdata",
+          "lineNumber": 73
+        },
+        {
+          "caller": "destone",
+          "callee": "max",
+          "lineNumber": 79
+        },
+        {
+          "caller": "destone",
+          "callee": "out.append",
+          "lineNumber": 81
+        },
+        {
+          "caller": "destone",
+          "callee": "min",
+          "lineNumber": 84
+        },
+        {
+          "caller": "destone",
+          "callee": "tuple",
+          "lineNumber": 88
+        },
+        {
+          "caller": "destone",
+          "callee": "min",
+          "lineNumber": 88
+        },
+        {
+          "caller": "destone",
+          "callee": "int",
+          "lineNumber": 88
+        },
+        {
+          "caller": "destone",
+          "callee": "out.append",
+          "lineNumber": 89
+        },
+        {
+          "caller": "destone",
+          "callee": "tuple",
+          "lineNumber": 90
+        },
+        {
+          "caller": "destone",
+          "callee": "int",
+          "lineNumber": 90
+        },
+        {
+          "caller": "destone",
+          "callee": "zip",
+          "lineNumber": 90
+        },
+        {
+          "caller": "destone",
+          "callee": "Image.new",
+          "lineNumber": 93
+        },
+        {
+          "caller": "destone",
+          "callee": "result.putdata",
+          "lineNumber": 94
+        },
+        {
+          "caller": "destone",
+          "callee": "len",
+          "lineNumber": 95
+        },
+        {
+          "caller": "convert",
+          "callee": "parse_glb",
+          "lineNumber": 99
+        },
+        {
+          "caller": "convert",
+          "callee": "path.read_bytes",
+          "lineNumber": 99
+        },
+        {
+          "caller": "convert",
+          "callee": "gltf.get",
+          "lineNumber": 100
+        },
+        {
+          "caller": "convert",
+          "callee": "SystemExit",
+          "lineNumber": 102
+        },
+        {
+          "caller": "convert",
+          "callee": "view.get",
+          "lineNumber": 110
+        },
+        {
+          "caller": "convert",
+          "callee": "bytes",
+          "lineNumber": 111
+        },
+        {
+          "caller": "convert",
+          "callee": "destone",
+          "lineNumber": 112
+        },
+        {
+          "caller": "convert",
+          "callee": "Image.open",
+          "lineNumber": 112
+        },
+        {
+          "caller": "convert",
+          "callee": "io.BytesIO",
+          "lineNumber": 112
+        },
+        {
+          "caller": "convert",
+          "callee": "ratios.append",
+          "lineNumber": 113
+        },
+        {
+          "caller": "convert",
+          "callee": "io.BytesIO",
+          "lineNumber": 115
+        },
+        {
+          "caller": "convert",
+          "callee": "recolored.save",
+          "lineNumber": 118
+        },
+        {
+          "caller": "convert",
+          "callee": "buf.getvalue",
+          "lineNumber": 119
+        },
+        {
+          "caller": "convert",
+          "callee": "len",
+          "lineNumber": 121
+        },
+        {
+          "caller": "convert",
+          "callee": "len",
+          "lineNumber": 122
+        },
+        {
+          "caller": "convert",
+          "callee": "gltf[\"bufferViews\"].append",
+          "lineNumber": 124
+        },
+        {
+          "caller": "convert",
+          "callee": "len",
+          "lineNumber": 124
+        },
+        {
+          "caller": "convert",
+          "callee": "len",
+          "lineNumber": 125
+        },
+        {
+          "caller": "convert",
+          "callee": "image.pop",
+          "lineNumber": 127
+        },
+        {
+          "caller": "convert",
+          "callee": "len",
+          "lineNumber": 129
+        },
+        {
+          "caller": "convert",
+          "callee": "len",
+          "lineNumber": 130
+        },
+        {
+          "caller": "convert",
+          "callee": "OUT.mkdir",
+          "lineNumber": 132
+        },
+        {
+          "caller": "convert",
+          "callee": "(OUT / path.name).write_bytes",
+          "lineNumber": 133
+        },
+        {
+          "caller": "convert",
+          "callee": "build_glb",
+          "lineNumber": 133
+        },
+        {
+          "caller": "convert",
+          "callee": "\" · \".join",
+          "lineNumber": 134
+        },
+        {
+          "caller": "main",
+          "callee": "SRC.is_dir",
+          "lineNumber": 138
+        },
+        {
+          "caller": "main",
+          "callee": "SystemExit",
+          "lineNumber": 139
+        },
+        {
+          "caller": "main",
+          "callee": "sorted",
+          "lineNumber": 140
+        },
+        {
+          "caller": "main",
+          "callee": "SRC.glob",
+          "lineNumber": 140
+        },
+        {
+          "caller": "main",
+          "callee": "convert",
+          "lineNumber": 142
+        },
+        {
+          "caller": "main",
+          "callee": "(OUT / path.name).stat",
+          "lineNumber": 143
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 144
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 145
+        },
+        {
+          "caller": "main",
+          "callee": "len",
+          "lineNumber": 145
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 5,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/merge-character.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 160,
+      "nonEmptyLines": 136,
+      "functions": [
+        {
+          "name": "clipNameFrom",
+          "startLine": 42,
+          "endLine": 49,
+          "params": [
+            "file"
+          ]
+        },
+        {
+          "name": "gltf",
+          "startLine": 51,
+          "endLine": 51,
+          "params": [
+            "args"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "clipNameFrom",
+          "callee": "basename",
+          "lineNumber": 43
+        },
+        {
+          "caller": "clipNameFrom",
+          "callee": "name.indexOf",
+          "lineNumber": 45
+        },
+        {
+          "caller": "clipNameFrom",
+          "callee": "name.slice",
+          "lineNumber": 46
+        },
+        {
+          "caller": "clipNameFrom",
+          "callee": "name.replace",
+          "lineNumber": 47
+        },
+        {
+          "caller": "clipNameFrom",
+          "callee": "name.toLowerCase",
+          "lineNumber": 48
+        },
+        {
+          "caller": "gltf",
+          "callee": "execSync",
+          "lineNumber": 51
+        },
+        {
+          "caller": "addBufferView",
+          "callee": "bufferViewMap.has",
+          "lineNumber": 98
+        },
+        {
+          "caller": "addBufferView",
+          "callee": "bufferViewMap.get",
+          "lineNumber": 98
+        },
+        {
+          "caller": "addBufferView",
+          "callee": "base.bufferViews.push",
+          "lineNumber": 100
+        },
+        {
+          "caller": "addBufferView",
+          "callee": "bufferViewMap.set",
+          "lineNumber": 102
+        },
+        {
+          "caller": "addAccessor",
+          "callee": "accessorMap.has",
+          "lineNumber": 106
+        },
+        {
+          "caller": "addAccessor",
+          "callee": "accessorMap.get",
+          "lineNumber": 106
+        },
+        {
+          "caller": "addAccessor",
+          "callee": "addBufferView",
+          "lineNumber": 108
+        },
+        {
+          "caller": "addAccessor",
+          "callee": "base.accessors.push",
+          "lineNumber": 109
+        },
+        {
+          "caller": "addAccessor",
+          "callee": "accessorMap.set",
+          "lineNumber": 111
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/optimize-glb.mjs",
+      "language": "javascript",
+      "fileCategory": "code",
+      "totalLines": 212,
+      "nonEmptyLines": 184,
+      "functions": [
+        {
+          "name": "findPython",
+          "startLine": 37,
+          "endLine": 48,
+          "params": []
+        },
+        {
+          "name": "walk",
+          "startLine": 57,
+          "endLine": 65,
+          "params": [
+            "dir"
+          ]
+        },
+        {
+          "name": "mb",
+          "startLine": 86,
+          "endLine": 86,
+          "params": [
+            "p"
+          ]
+        },
+        {
+          "name": "gltf",
+          "startLine": 87,
+          "endLine": 87,
+          "params": [
+            "args"
+          ]
+        },
+        {
+          "name": "isGroundTile",
+          "startLine": 99,
+          "endLine": 99,
+          "params": [
+            "inPath"
+          ]
+        },
+        {
+          "name": "isDecor",
+          "startLine": 110,
+          "endLine": 110,
+          "params": [
+            "inPath"
+          ]
+        },
+        {
+          "name": "isTerracePiece",
+          "startLine": 121,
+          "endLine": 121,
+          "params": [
+            "inPath"
+          ]
+        },
+        {
+          "name": "textureGroupFor",
+          "startLine": 128,
+          "endLine": 128,
+          "params": [
+            "group"
+          ]
+        },
+        {
+          "name": "passesFor",
+          "startLine": 136,
+          "endLine": 145,
+          "params": [
+            "group",
+            "inPath"
+          ]
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "findPython",
+          "callee": "[existsSync(venvPython) ? venvPython : null, \"python\", \"python3\"].filter",
+          "lineNumber": 38
+        },
+        {
+          "caller": "findPython",
+          "callee": "existsSync",
+          "lineNumber": 38
+        },
+        {
+          "caller": "findPython",
+          "callee": "execFileSync",
+          "lineNumber": 41
+        },
+        {
+          "caller": "walk",
+          "callee": "readdirSync",
+          "lineNumber": 59
+        },
+        {
+          "caller": "walk",
+          "callee": "join",
+          "lineNumber": 60
+        },
+        {
+          "caller": "walk",
+          "callee": "entry.isDirectory",
+          "lineNumber": 61
+        },
+        {
+          "caller": "walk",
+          "callee": "out.push",
+          "lineNumber": 61
+        },
+        {
+          "caller": "walk",
+          "callee": "walk",
+          "lineNumber": 61
+        },
+        {
+          "caller": "walk",
+          "callee": "entry.name.toLowerCase().endsWith",
+          "lineNumber": 62
+        },
+        {
+          "caller": "walk",
+          "callee": "entry.name.toLowerCase",
+          "lineNumber": 62
+        },
+        {
+          "caller": "walk",
+          "callee": "out.push",
+          "lineNumber": 62
+        },
+        {
+          "caller": "mb",
+          "callee": "statSync",
+          "lineNumber": 86
+        },
+        {
+          "caller": "gltf",
+          "callee": "execSync",
+          "lineNumber": 87
+        },
+        {
+          "caller": "isGroundTile",
+          "callee": "/[\\\\/]ground[\\\\/]/.test",
+          "lineNumber": 99
+        },
+        {
+          "caller": "isDecor",
+          "callee": "/[\\\\/](signs|decor|nature)[\\\\/]/.test",
+          "lineNumber": 110
+        },
+        {
+          "caller": "isTerracePiece",
+          "callee": "/terrace-(wall|stair|slab)\\.glb$/i.test",
+          "lineNumber": 121
+        },
+        {
+          "caller": "passesFor",
+          "callee": "isGroundTile",
+          "lineNumber": 141
+        },
+        {
+          "caller": "passesFor",
+          "callee": "isTerracePiece",
+          "lineNumber": 142
+        },
+        {
+          "caller": "passesFor",
+          "callee": "isDecor",
+          "lineNumber": 143
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 9,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "scripts/optimize_textures.py",
+      "language": "python",
+      "fileCategory": "code",
+      "totalLines": 270,
+      "nonEmptyLines": 217,
+      "functions": [
+        {
+          "name": "vram_bytes",
+          "startLine": 41,
+          "endLine": 42,
+          "params": [
+            "w",
+            "h"
+          ]
+        },
+        {
+          "name": "srgb_to_linear",
+          "startLine": 45,
+          "endLine": 47,
+          "params": [
+            "v"
+          ]
+        },
+        {
+          "name": "collect_slots",
+          "startLine": 60,
+          "endLine": 86,
+          "params": [
+            "gltf"
+          ]
+        },
+        {
+          "name": "analyze",
+          "startLine": 95,
+          "endLine": 112,
+          "params": [
+            "image"
+          ]
+        },
+        {
+          "name": "decide_drop",
+          "startLine": 115,
+          "endLine": 160,
+          "params": [
+            "kind",
+            "stats",
+            "slots"
+          ]
+        },
+        {
+          "name": "slot_keeps_alpha",
+          "startLine": 163,
+          "endLine": 170,
+          "params": [
+            "slots",
+            "gltf"
+          ]
+        },
+        {
+          "name": "main",
+          "startLine": 173,
+          "endLine": 266,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "Slot",
+          "startLine": 50,
+          "endLine": 57,
+          "methods": [
+            "__init__"
+          ],
+          "properties": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "vram_bytes",
+          "line": 41,
+          "isDefault": false
+        },
+        {
+          "name": "srgb_to_linear",
+          "line": 45,
+          "isDefault": false
+        },
+        {
+          "name": "Slot",
+          "line": 50,
+          "isDefault": false
+        },
+        {
+          "name": "collect_slots",
+          "line": 60,
+          "isDefault": false
+        },
+        {
+          "name": "analyze",
+          "line": 95,
+          "isDefault": false
+        },
+        {
+          "name": "decide_drop",
+          "line": 115,
+          "isDefault": false
+        },
+        {
+          "name": "slot_keeps_alpha",
+          "line": 163,
+          "isDefault": false
+        },
+        {
+          "name": "main",
+          "line": 173,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "collect_slots",
+          "callee": "gltf.get",
+          "lineNumber": 62
+        },
+        {
+          "caller": "add",
+          "callee": "container.get",
+          "lineNumber": 66
+        },
+        {
+          "caller": "add",
+          "callee": "isinstance",
+          "lineNumber": 67
+        },
+        {
+          "caller": "add",
+          "callee": "ref.get",
+          "lineNumber": 69
+        },
+        {
+          "caller": "add",
+          "callee": "len",
+          "lineNumber": 70
+        },
+        {
+          "caller": "add",
+          "callee": "textures[tex_index].get",
+          "lineNumber": 72
+        },
+        {
+          "caller": "add",
+          "callee": "by_image.setdefault(source, []).append",
+          "lineNumber": 75
+        },
+        {
+          "caller": "add",
+          "callee": "by_image.setdefault",
+          "lineNumber": 75
+        },
+        {
+          "caller": "add",
+          "callee": "Slot",
+          "lineNumber": 75
+        },
+        {
+          "caller": "collect_slots",
+          "callee": "gltf.get",
+          "lineNumber": 77
+        },
+        {
+          "caller": "collect_slots",
+          "callee": "material.get",
+          "lineNumber": 78
+        },
+        {
+          "caller": "collect_slots",
+          "callee": "isinstance",
+          "lineNumber": 79
+        },
+        {
+          "caller": "collect_slots",
+          "callee": "add",
+          "lineNumber": 80
+        },
+        {
+          "caller": "collect_slots",
+          "callee": "add",
+          "lineNumber": 81
+        },
+        {
+          "caller": "collect_slots",
+          "callee": "add",
+          "lineNumber": 82
+        },
+        {
+          "caller": "collect_slots",
+          "callee": "add",
+          "lineNumber": 83
+        },
+        {
+          "caller": "collect_slots",
+          "callee": "add",
+          "lineNumber": 84
+        },
+        {
+          "caller": "analyze",
+          "callee": "image.convert",
+          "lineNumber": 103
+        },
+        {
+          "caller": "analyze",
+          "callee": "ImageStat.Stat",
+          "lineNumber": 104
+        },
+        {
+          "caller": "analyze",
+          "callee": "rgb.convert(\"L\").histogram",
+          "lineNumber": 105
+        },
+        {
+          "caller": "analyze",
+          "callee": "rgb.convert",
+          "lineNumber": 105
+        },
+        {
+          "caller": "analyze",
+          "callee": "rgb.getextrema",
+          "lineNumber": 110
+        },
+        {
+          "caller": "analyze",
+          "callee": "sum",
+          "lineNumber": 111
+        },
+        {
+          "caller": "decide_drop",
+          "callee": "max",
+          "lineNumber": 118
+        },
+        {
+          "caller": "apply",
+          "callee": "s.material.get",
+          "lineNumber": 134
+        },
+        {
+          "caller": "apply",
+          "callee": "round",
+          "lineNumber": 135
+        },
+        {
+          "caller": "apply",
+          "callee": "round",
+          "lineNumber": 136
+        },
+        {
+          "caller": "decide_drop",
+          "callee": "abs",
+          "lineNumber": 142
+        },
+        {
+          "caller": "decide_drop",
+          "callee": "abs",
+          "lineNumber": 142
+        },
+        {
+          "caller": "decide_drop",
+          "callee": "max",
+          "lineNumber": 151
+        },
+        {
+          "caller": "apply",
+          "callee": "s.material.get",
+          "lineNumber": 154
+        },
+        {
+          "caller": "apply",
+          "callee": "pbr.get",
+          "lineNumber": 155
+        },
+        {
+          "caller": "apply",
+          "callee": "round",
+          "lineNumber": 156
+        },
+        {
+          "caller": "apply",
+          "callee": "srgb_to_linear",
+          "lineNumber": 156
+        },
+        {
+          "caller": "decide_drop",
+          "callee": "int",
+          "lineNumber": 158
+        },
+        {
+          "caller": "decide_drop",
+          "callee": "int",
+          "lineNumber": 158
+        },
+        {
+          "caller": "decide_drop",
+          "callee": "int",
+          "lineNumber": 158
+        },
+        {
+          "caller": "slot_keeps_alpha",
+          "callee": "s.material.get",
+          "lineNumber": 168
+        },
+        {
+          "caller": "main",
+          "callee": "len",
+          "lineNumber": 174
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 175
+        },
+        {
+          "caller": "main",
+          "callee": "BUDGETS.get",
+          "lineNumber": 179
+        },
+        {
+          "caller": "main",
+          "callee": "os.path.dirname",
+          "lineNumber": 180
+        },
+        {
+          "caller": "main",
+          "callee": "os.path.abspath",
+          "lineNumber": 180
+        },
+        {
+          "caller": "main",
+          "callee": "open",
+          "lineNumber": 182
+        },
+        {
+          "caller": "main",
+          "callee": "json.load",
+          "lineNumber": 183
+        },
+        {
+          "caller": "main",
+          "callee": "gltf.get",
+          "lineNumber": 185
+        },
+        {
+          "caller": "main",
+          "callee": "collect_slots",
+          "lineNumber": 189
+        },
+        {
+          "caller": "main",
+          "callee": "enumerate",
+          "lineNumber": 192
+        },
+        {
+          "caller": "main",
+          "callee": "image_entry.get",
+          "lineNumber": 193
+        },
+        {
+          "caller": "main",
+          "callee": "os.path.join",
+          "lineNumber": 196
+        },
+        {
+          "caller": "main",
+          "callee": "os.path.exists",
+          "lineNumber": 197
+        },
+        {
+          "caller": "main",
+          "callee": "by_image.get",
+          "lineNumber": 200
+        },
+        {
+          "caller": "main",
+          "callee": "Image.open",
+          "lineNumber": 206
+        },
+        {
+          "caller": "main",
+          "callee": "analyze",
+          "lineNumber": 208
+        },
+        {
+          "caller": "main",
+          "callee": "len",
+          "lineNumber": 211
+        },
+        {
+          "caller": "main",
+          "callee": "decide_drop",
+          "lineNumber": 212
+        },
+        {
+          "caller": "main",
+          "callee": "apply",
+          "lineNumber": 215
+        },
+        {
+          "caller": "main",
+          "callee": "s.container.pop",
+          "lineNumber": 217
+        },
+        {
+          "caller": "main",
+          "callee": "vram_bytes",
+          "lineNumber": 218
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 220
+        },
+        {
+          "caller": "main",
+          "callee": "max",
+          "lineNumber": 224
+        },
+        {
+          "caller": "main",
+          "callee": "budget.get",
+          "lineNumber": 224
+        },
+        {
+          "caller": "main",
+          "callee": "min",
+          "lineNumber": 225
+        },
+        {
+          "caller": "main",
+          "callee": "max",
+          "lineNumber": 225
+        },
+        {
+          "caller": "main",
+          "callee": "slot_keeps_alpha",
+          "lineNumber": 226
+        },
+        {
+          "caller": "main",
+          "callee": "Image.open",
+          "lineNumber": 228
+        },
+        {
+          "caller": "main",
+          "callee": "max",
+          "lineNumber": 230
+        },
+        {
+          "caller": "main",
+          "callee": "im.resize",
+          "lineNumber": 231
+        },
+        {
+          "caller": "main",
+          "callee": "vram_bytes",
+          "lineNumber": 234
+        },
+        {
+          "caller": "main",
+          "callee": "vram_bytes",
+          "lineNumber": 235
+        },
+        {
+          "caller": "main",
+          "callee": "im.convert(\"RGBA\").save",
+          "lineNumber": 240
+        },
+        {
+          "caller": "main",
+          "callee": "im.convert",
+          "lineNumber": 240
+        },
+        {
+          "caller": "main",
+          "callee": "os.path.splitext",
+          "lineNumber": 243
+        },
+        {
+          "caller": "main",
+          "callee": "min",
+          "lineNumber": 244
+        },
+        {
+          "caller": "main",
+          "callee": "QUALITY.get",
+          "lineNumber": 244
+        },
+        {
+          "caller": "main",
+          "callee": "max",
+          "lineNumber": 249
+        },
+        {
+          "caller": "main",
+          "callee": "im.convert(\"RGB\").save",
+          "lineNumber": 251
+        },
+        {
+          "caller": "main",
+          "callee": "im.convert",
+          "lineNumber": 251
+        },
+        {
+          "caller": "main",
+          "callee": "os.path.join",
+          "lineNumber": 252
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 259
+        },
+        {
+          "caller": "main",
+          "callee": "open",
+          "lineNumber": 261
+        },
+        {
+          "caller": "main",
+          "callee": "json.dump",
+          "lineNumber": 262
+        },
+        {
+          "caller": "main",
+          "callee": "print",
+          "lineNumber": 265
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 8,
+        "functionCount": 7,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/LEGACY_CRA.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 7,
+      "nonEmptyLines": 4,
+      "sections": [
+        {
+          "heading": "Legacy CRA Source",
+          "level": 1,
+          "line": 1
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 1
+      }
+    }
+  ]
+}

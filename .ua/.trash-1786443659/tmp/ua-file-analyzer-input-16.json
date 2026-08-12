@@ -1,0 +1,49 @@
+{
+ "projectRoot": "C:/Users/jk636/OneDrive/문서/GitHub/Whims-of-Wonder/Whims-of-Wonder/MetaverseProgramming/My project/Assets/myPortfolio",
+ "batchFiles": [
+  {
+   "path": "docs/MESHY_BUILDING_PROMPTS.md",
+   "language": "markdown",
+   "sizeLines": 608,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "docs/MESHY_CHARACTER_PROMPTS.md",
+   "language": "markdown",
+   "sizeLines": 266,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "docs/MESHY_PROP_PROMPTS.md",
+   "language": "markdown",
+   "sizeLines": 582,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "docs/MESHY_VILLAGE_ASSETS.md",
+   "language": "markdown",
+   "sizeLines": 296,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "docs/PROJECT_DOCUMENTATION.md",
+   "language": "markdown",
+   "sizeLines": 3944,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "docs/VILLAGE_ASSET_WISHLIST.md",
+   "language": "markdown",
+   "sizeLines": 744,
+   "fileCategory": "docs"
+  }
+ ],
+ "batchImportData": {
+  "docs/MESHY_BUILDING_PROMPTS.md": [],
+  "docs/MESHY_CHARACTER_PROMPTS.md": [],
+  "docs/MESHY_PROP_PROMPTS.md": [],
+  "docs/MESHY_VILLAGE_ASSETS.md": [],
+  "docs/PROJECT_DOCUMENTATION.md": [],
+  "docs/VILLAGE_ASSET_WISHLIST.md": []
+ }
+}

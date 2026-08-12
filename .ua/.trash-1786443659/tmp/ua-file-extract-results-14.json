@@ -1,0 +1,546 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 8,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 8,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 0,
+      "failed": 0,
+      "skipped": 8
+    }
+  },
+  "results": [
+    {
+      "path": ".pre-commit-config.yaml",
+      "language": "yaml",
+      "fileCategory": "config",
+      "totalLines": 8,
+      "nonEmptyLines": 6,
+      "sections": [
+        {
+          "heading": "repos",
+          "level": 1,
+          "line": 1
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 1
+      }
+    },
+    {
+      "path": "CLAUDE.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 84,
+      "nonEmptyLines": 61,
+      "sections": [
+        {
+          "heading": "CLAUDE.md",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "What this is",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "Commands",
+          "level": 2,
+          "line": 9
+        },
+        {
+          "heading": "Env vars",
+          "level": 3,
+          "line": 36
+        },
+        {
+          "heading": "Architecture",
+          "level": 2,
+          "line": 40
+        },
+        {
+          "heading": "Frontend entry and data flow",
+          "level": 3,
+          "line": 42
+        },
+        {
+          "heading": "Data-district pattern (admin → village → NPC)",
+          "level": 3,
+          "line": 49
+        },
+        {
+          "heading": "NPC relationship system",
+          "level": 3,
+          "line": 67
+        },
+        {
+          "heading": "Project detail viewer routing",
+          "level": 3,
+          "line": 70
+        },
+        {
+          "heading": "Backend service layout",
+          "level": 3,
+          "line": 77
+        },
+        {
+          "heading": "Dev-only 3D prop editor",
+          "level": 3,
+          "line": 80
+        },
+        {
+          "heading": "Legacy code, not the active app",
+          "level": 3,
+          "line": 83
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 12
+      }
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 92,
+      "nonEmptyLines": 69,
+      "sections": [
+        {
+          "heading": "AI Portfolio Village",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "실행 방법",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "환경 변수",
+          "level": 2,
+          "line": 36
+        },
+        {
+          "heading": "주요 기능",
+          "level": 2,
+          "line": 59
+        },
+        {
+          "heading": "프로젝트 구조",
+          "level": 2,
+          "line": 69
+        },
+        {
+          "heading": "Legacy CRA 파일",
+          "level": 2,
+          "line": 80
+        },
+        {
+          "heading": "스크립트",
+          "level": 2,
+          "line": 84
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "copy-admin.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 249,
+      "nonEmptyLines": 186,
+      "sections": [
+        {
+          "heading": "관리자 페이지 (`/admin`) — Daily Village Journal",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "00. 접근 · 인증 (Admin Gate)",
+          "level": 2,
+          "line": 14
+        },
+        {
+          "heading": "01. 화면 구조",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "날짜 네비게이션",
+          "level": 3,
+          "line": 51
+        },
+        {
+          "heading": "02. 입력 패널",
+          "level": 2,
+          "line": 60
+        },
+        {
+          "heading": "오늘 컨디션 (Daily Check-in)",
+          "level": 3,
+          "line": 62
+        },
+        {
+          "heading": "운동 기록 (Body Energy)",
+          "level": 3,
+          "line": 70
+        },
+        {
+          "heading": "공부 기록 (Study Energy)",
+          "level": 3,
+          "line": 78
+        },
+        {
+          "heading": "코딩 기록 (Development Log)",
+          "level": 3,
+          "line": 88
+        },
+        {
+          "heading": "프로젝트별 작업 시간 (Project Work)",
+          "level": 3,
+          "line": 97
+        },
+        {
+          "heading": "03. 사이드바 (실시간 피드백)",
+          "level": 2,
+          "line": 105
+        },
+        {
+          "heading": "기록 스트릭 (Keep Going)",
+          "level": 3,
+          "line": 107
+        },
+        {
+          "heading": "데일리 목표 (Daily Rings)",
+          "level": 3,
+          "line": 126
+        },
+        {
+          "heading": "오늘 기록 요약 (Village Impact)",
+          "level": 3,
+          "line": 137
+        },
+        {
+          "heading": "활성 프로젝트 / 현재 마을 상태",
+          "level": 3,
+          "line": 151
+        },
+        {
+          "heading": "04. 저장 흐름과 마을 반영",
+          "level": 2,
+          "line": 158
+        },
+        {
+          "heading": "장식 해금 조건 (`village_service.py`)",
+          "level": 3,
+          "line": 179
+        },
+        {
+          "heading": "리워드 모달 — \"오늘 마을에 생긴 일 ✨\"",
+          "level": 3,
+          "line": 189
+        },
+        {
+          "heading": "05. 코딩테스트 풀이 기록 (Algorithm Dojo)",
+          "level": 2,
+          "line": 195
+        },
+        {
+          "heading": "06. CS 전공지식 노트 (Knowledge Archive)",
+          "level": 2,
+          "line": 214
+        },
+        {
+          "heading": "07. 사용하는 API 한눈에",
+          "level": 2,
+          "line": 228
+        },
+        {
+          "heading": "08. 이 페이지의 설계 의도 (포트폴리오 서술용)",
+          "level": 2,
+          "line": 244
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 22
+      }
+    },
+    {
+      "path": "copy.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 967,
+      "nonEmptyLines": 721,
+      "sections": [
+        {
+          "heading": "정재훈 | Full-Stack (Web) · Unity XR Developer",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "01. 기술 스택 (Skills)",
+          "level": 2,
+          "line": 13
+        },
+        {
+          "heading": "02. 학력 · 경력 (Education)",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "아주대학교 — 디지털미디어학과 (전공)",
+          "level": 3,
+          "line": 35
+        },
+        {
+          "heading": "아주대학교 — 인공지능 융합학과 (복수전공)",
+          "level": 3,
+          "line": 43
+        },
+        {
+          "heading": "아주대학교 — 메타버스기획 마이크로전공 (부전공)",
+          "level": 3,
+          "line": 50
+        },
+        {
+          "heading": "스파르타 내일배움캠프 — Unity 게임개발자 양성과정",
+          "level": 3,
+          "line": 57
+        },
+        {
+          "heading": "구름(goorm) — 군장병 AI/SW 역량강화",
+          "level": 3,
+          "line": 64
+        },
+        {
+          "heading": "코드잇 — 대학생 코딩캠프",
+          "level": 3,
+          "line": 71
+        },
+        {
+          "heading": "03. 주요 프로젝트 (Main Projects)",
+          "level": 2,
+          "line": 80
+        },
+        {
+          "heading": "04. 사이드 프로젝트 (Sub Projects)",
+          "level": 2,
+          "line": 118
+        },
+        {
+          "heading": "05. 개발 기록 (Development Records)",
+          "level": 2,
+          "line": 136
+        },
+        {
+          "heading": "06. 일하는 태도 (Values I Believe In)",
+          "level": 2,
+          "line": 144
+        },
+        {
+          "heading": "07. About Me",
+          "level": 2,
+          "line": 153
+        },
+        {
+          "heading": "08. 연락처 (Contact)",
+          "level": 2,
+          "line": 162
+        },
+        {
+          "heading": "주요 프로젝트 상세 (Project Deep Dives)",
+          "level": 1,
+          "line": 172
+        },
+        {
+          "heading": "🏋️ 득근득근 (MuscleUp)",
+          "level": 2,
+          "line": 178
+        },
+        {
+          "heading": "🎪 FestFlow",
+          "level": 2,
+          "line": 259
+        },
+        {
+          "heading": "📈 MyStock-Desk",
+          "level": 2,
+          "line": 335
+        },
+        {
+          "heading": "🌊 MyWave",
+          "level": 2,
+          "line": 414
+        },
+        {
+          "heading": "🎓 aClub (ACLUB)",
+          "level": 2,
+          "line": 503
+        },
+        {
+          "heading": "🏫 아주대학교 총학생회 (ajouchong)",
+          "level": 2,
+          "line": 581
+        },
+        {
+          "heading": "🤟 수어지구 (Sign-Language)",
+          "level": 2,
+          "line": 657
+        },
+        {
+          "heading": "🏃 아주대탐험 (Ajou_Mini_Game)",
+          "level": 2,
+          "line": 734
+        },
+        {
+          "heading": "🔦 DarkLab",
+          "level": 2,
+          "line": 810
+        },
+        {
+          "heading": "🎮 TSEROF",
+          "level": 2,
+          "line": 889
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 26
+      }
+    },
+    {
+      "path": "package.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 40,
+      "nonEmptyLines": 40,
+      "sections": [
+        {
+          "heading": "homepage",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "name",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "version",
+          "level": 1,
+          "line": 4
+        },
+        {
+          "heading": "private",
+          "level": 1,
+          "line": 5
+        },
+        {
+          "heading": "scripts",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "dependencies",
+          "level": 1,
+          "line": 17
+        },
+        {
+          "heading": "devDependencies",
+          "level": 1,
+          "line": 28
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 7
+      }
+    },
+    {
+      "path": "skills-lock.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 29,
+      "nonEmptyLines": 29,
+      "sections": [
+        {
+          "heading": "version",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "skills",
+          "level": 1,
+          "line": 3
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 2
+      }
+    },
+    {
+      "path": "tsconfig.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 41,
+      "nonEmptyLines": 41,
+      "sections": [
+        {
+          "heading": "compilerOptions",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "include",
+          "level": 1,
+          "line": 31
+        },
+        {
+          "heading": "exclude",
+          "level": 1,
+          "line": 38
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 3
+      }
+    }
+  ]
+}

@@ -1,0 +1,5089 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 16,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 16,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 16,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 137,
+      "nonEmptyLines": 120,
+      "functions": [
+        {
+          "name": "AClubRoom",
+          "startLine": 30,
+          "endLine": 137,
+          "params": [
+            "{onClose}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AClubRoom",
+          "line": 30,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AClubRoom",
+          "callee": "useRef",
+          "lineNumber": 31
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useRef",
+          "lineNumber": 32
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useRef",
+          "lineNumber": 33
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useRef",
+          "lineNumber": 34
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useState",
+          "lineNumber": 36
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useState",
+          "lineNumber": 37
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useState",
+          "lineNumber": 38
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useEffect",
+          "lineNumber": 40
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "window.matchMedia",
+          "lineNumber": 41
+        },
+        {
+          "caller": "apply",
+          "callee": "setReducedMotion",
+          "lineNumber": 42
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "apply",
+          "lineNumber": 43
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "mq.addEventListener",
+          "lineNumber": 44
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "mq.removeEventListener",
+          "lineNumber": 45
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useEffect",
+          "lineNumber": 48
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "sound?.setMood",
+          "lineNumber": 49
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useEffect",
+          "lineNumber": 53
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "rootRef.current?.classList.toggle",
+          "lineNumber": 54
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useCallback",
+          "lineNumber": 57
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "Math.max",
+          "lineNumber": 58
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "rootRef.current?.classList.toggle",
+          "lineNumber": 59
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useCallback",
+          "lineNumber": 62
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useCallback",
+          "lineNumber": 66
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useEffect",
+          "lineNumber": 71
+        },
+        {
+          "caller": "onKey",
+          "callee": "onClose",
+          "lineNumber": 73
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "window.addEventListener",
+          "lineNumber": 75
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "window.removeEventListener",
+          "lineNumber": 76
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useCallback",
+          "lineNumber": 79
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "setIntroDone",
+          "lineNumber": 80
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "sound?.sfx",
+          "lineNumber": 81
+        },
+        {
+          "caller": "AClubRoom",
+          "callee": "useMemo",
+          "lineNumber": 84
+        }
+      ],
+      "metrics": {
+        "importCount": 17,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/context.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 28,
+      "nonEmptyLines": 23,
+      "functions": [
+        {
+          "name": "useAClub",
+          "startLine": 24,
+          "endLine": 28,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "AClubProvider",
+          "line": 22,
+          "isDefault": false
+        },
+        {
+          "name": "useAClub",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "useAClub",
+          "callee": "useContext",
+          "lineNumber": 25
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/data.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 128,
+      "nonEmptyLines": 117,
+      "functions": [
+        {
+          "name": "seeded",
+          "startLine": 44,
+          "endLine": 47,
+          "params": [
+            "seed"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CATEGORY_COLORS",
+          "line": 4,
+          "isDefault": false
+        },
+        {
+          "name": "CATEGORY_NAMES",
+          "line": 14,
+          "isDefault": false
+        },
+        {
+          "name": "CLUBS",
+          "line": 63,
+          "isDefault": false
+        },
+        {
+          "name": "SORT_LABELS",
+          "line": 80,
+          "isDefault": false
+        },
+        {
+          "name": "SIM_CLUBS",
+          "line": 87,
+          "isDefault": false
+        },
+        {
+          "name": "SCROLL_CLUBS",
+          "line": 103,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "seeded",
+          "callee": "Math.sin",
+          "lineNumber": 45
+        },
+        {
+          "caller": "seeded",
+          "callee": "Math.floor",
+          "lineNumber": 46
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/fonts.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 17,
+      "nonEmptyLines": 15,
+      "exports": [
+        {
+          "name": "aClubSans",
+          "line": 5,
+          "isDefault": false
+        },
+        {
+          "name": "aClubMono",
+          "line": 12,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/parts.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 249,
+      "nonEmptyLines": 228,
+      "functions": [
+        {
+          "name": "useInViewOnce",
+          "startLine": 9,
+          "endLine": 38,
+          "params": [
+            "options"
+          ]
+        },
+        {
+          "name": "Reveal",
+          "startLine": 43,
+          "endLine": 65,
+          "params": [
+            "{\n  children,\n  className = \"\",\n  delay = 0,\n  as: Tag = \"div\",\n}"
+          ]
+        },
+        {
+          "name": "RevealWords",
+          "startLine": 68,
+          "endLine": 100,
+          "params": [
+            "{\n  text,\n  className = \"\",\n  step = 0.15,\n  start = 0,\n  colorFrom,\n}"
+          ]
+        },
+        {
+          "name": "Kicker",
+          "startLine": 104,
+          "endLine": 118,
+          "params": [
+            "{children, tone = \"primary\"}"
+          ]
+        },
+        {
+          "name": "CodeWindow",
+          "startLine": 121,
+          "endLine": 168,
+          "params": [
+            "{\n  file,\n  children,\n  footer,\n  subHeader,\n  tone = \"neutral\",\n  className = \"\",\n}"
+          ]
+        },
+        {
+          "name": "HlLine",
+          "startLine": 171,
+          "endLine": 179,
+          "params": [
+            "{children, tone = \"primary\"}"
+          ]
+        },
+        {
+          "name": "Kw",
+          "startLine": 190,
+          "endLine": 192,
+          "params": [
+            "{children}"
+          ]
+        },
+        {
+          "name": "Str",
+          "startLine": 193,
+          "endLine": 195,
+          "params": [
+            "{children}"
+          ]
+        },
+        {
+          "name": "Num",
+          "startLine": 196,
+          "endLine": 198,
+          "params": [
+            "{children}"
+          ]
+        },
+        {
+          "name": "Cmt",
+          "startLine": 199,
+          "endLine": 201,
+          "params": [
+            "{children}"
+          ]
+        },
+        {
+          "name": "NoteBox",
+          "startLine": 206,
+          "endLine": 239,
+          "params": [
+            "{\n  label,\n  tone,\n  children,\n  className = \"\",\n}"
+          ]
+        },
+        {
+          "name": "MetricCell",
+          "startLine": 242,
+          "endLine": 249,
+          "params": [
+            "{value, label}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "useInViewOnce",
+          "line": 9,
+          "isDefault": false
+        },
+        {
+          "name": "Reveal",
+          "line": 43,
+          "isDefault": false
+        },
+        {
+          "name": "RevealWords",
+          "line": 68,
+          "isDefault": false
+        },
+        {
+          "name": "Kicker",
+          "line": 104,
+          "isDefault": false
+        },
+        {
+          "name": "CodeWindow",
+          "line": 121,
+          "isDefault": false
+        },
+        {
+          "name": "HlLine",
+          "line": 171,
+          "isDefault": false
+        },
+        {
+          "name": "SYNTAX",
+          "line": 183,
+          "isDefault": false
+        },
+        {
+          "name": "Kw",
+          "line": 190,
+          "isDefault": false
+        },
+        {
+          "name": "Str",
+          "line": 193,
+          "isDefault": false
+        },
+        {
+          "name": "Num",
+          "line": 196,
+          "isDefault": false
+        },
+        {
+          "name": "Cmt",
+          "line": 199,
+          "isDefault": false
+        },
+        {
+          "name": "NoteBox",
+          "line": 206,
+          "isDefault": false
+        },
+        {
+          "name": "MetricCell",
+          "line": 242,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "useInViewOnce",
+          "callee": "useAClub",
+          "lineNumber": 10
+        },
+        {
+          "caller": "useInViewOnce",
+          "callee": "useRef",
+          "lineNumber": 11
+        },
+        {
+          "caller": "useInViewOnce",
+          "callee": "useState",
+          "lineNumber": 12
+        },
+        {
+          "caller": "useInViewOnce",
+          "callee": "useEffect",
+          "lineNumber": 14
+        },
+        {
+          "caller": "useInViewOnce",
+          "callee": "setInView",
+          "lineNumber": 16
+        },
+        {
+          "caller": "useInViewOnce",
+          "callee": "setInView",
+          "lineNumber": 26
+        },
+        {
+          "caller": "useInViewOnce",
+          "callee": "io.disconnect",
+          "lineNumber": 27
+        },
+        {
+          "caller": "useInViewOnce",
+          "callee": "io.observe",
+          "lineNumber": 32
+        },
+        {
+          "caller": "useInViewOnce",
+          "callee": "io.disconnect",
+          "lineNumber": 33
+        },
+        {
+          "caller": "Reveal",
+          "callee": "useInViewOnce",
+          "lineNumber": 55
+        },
+        {
+          "caller": "RevealWords",
+          "callee": "useInViewOnce",
+          "lineNumber": 83
+        },
+        {
+          "caller": "RevealWords",
+          "callee": "text.split(\" \").map",
+          "lineNumber": 86
+        },
+        {
+          "caller": "RevealWords",
+          "callee": "text.split",
+          "lineNumber": 86
+        },
+        {
+          "caller": "CodeWindow",
+          "callee": "[\"#ff5f56\", \"#ffbd2e\", \"#27c93f\"].map",
+          "lineNumber": 151
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 13,
+        "functionCount": 12,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 474,
+      "nonEmptyLines": 439,
+      "functions": [
+        {
+          "name": "ComponentSection",
+          "startLine": 32,
+          "endLine": 474,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ComponentSection",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ComponentSection",
+          "callee": "useAClub",
+          "lineNumber": 33
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useInViewOnce",
+          "lineNumber": 34
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useInViewOnce",
+          "lineNumber": 35
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useState",
+          "lineNumber": 37
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useState",
+          "lineNumber": 38
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useState",
+          "lineNumber": 39
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useState",
+          "lineNumber": 40
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useState",
+          "lineNumber": 41
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useState",
+          "lineNumber": 42
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useState",
+          "lineNumber": 43
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useState",
+          "lineNumber": 44
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useRef",
+          "lineNumber": 45
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useRef",
+          "lineNumber": 46
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useEffect",
+          "lineNumber": 48
+        },
+        {
+          "caller": "read",
+          "callee": "setSize",
+          "lineNumber": 51
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "read",
+          "lineNumber": 53
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "window.addEventListener",
+          "lineNumber": 54
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "window.removeEventListener",
+          "lineNumber": 55
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useEffect",
+          "lineNumber": 58
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "window.setTimeout",
+          "lineNumber": 60
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setStripVisible",
+          "lineNumber": 60
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 61
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useEffect",
+          "lineNumber": 64
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "timers.current.forEach",
+          "lineNumber": 66
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 66
+        },
+        {
+          "caller": "setState",
+          "callee": "setInteracted",
+          "lineNumber": 72
+        },
+        {
+          "caller": "setState",
+          "callee": "setView",
+          "lineNumber": 74
+        },
+        {
+          "caller": "setState",
+          "callee": "setAutoHint",
+          "lineNumber": 75
+        },
+        {
+          "caller": "setState",
+          "callee": "timers.current.forEach",
+          "lineNumber": 76
+        },
+        {
+          "caller": "setState",
+          "callee": "window.clearTimeout",
+          "lineNumber": 76
+        },
+        {
+          "caller": "setState",
+          "callee": "announce",
+          "lineNumber": 79
+        },
+        {
+          "caller": "setState",
+          "callee": "setAnnotations",
+          "lineNumber": 85
+        },
+        {
+          "caller": "setState",
+          "callee": "setChipVisible",
+          "lineNumber": 86
+        },
+        {
+          "caller": "setState",
+          "callee": "LAYERS.forEach",
+          "lineNumber": 89
+        },
+        {
+          "caller": "setState",
+          "callee": "timers.current.push",
+          "lineNumber": 90
+        },
+        {
+          "caller": "setState",
+          "callee": "window.setTimeout",
+          "lineNumber": 90
+        },
+        {
+          "caller": "setState",
+          "callee": "setAnnotations",
+          "lineNumber": 90
+        },
+        {
+          "caller": "setState",
+          "callee": "Math.max",
+          "lineNumber": 90
+        },
+        {
+          "caller": "setState",
+          "callee": "timers.current.push",
+          "lineNumber": 92
+        },
+        {
+          "caller": "setState",
+          "callee": "window.setTimeout",
+          "lineNumber": 92
+        },
+        {
+          "caller": "setState",
+          "callee": "setChipVisible",
+          "lineNumber": 92
+        },
+        {
+          "caller": "setState",
+          "callee": "setAnnotations",
+          "lineNumber": 94
+        },
+        {
+          "caller": "setState",
+          "callee": "setChipVisible",
+          "lineNumber": 95
+        },
+        {
+          "caller": "setState",
+          "callee": "setHighlight",
+          "lineNumber": 96
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "useEffect",
+          "lineNumber": 101
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "window.setTimeout",
+          "lineNumber": 103
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setAutoHint",
+          "lineNumber": 105
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setState",
+          "lineNumber": 106
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "window.setTimeout",
+          "lineNumber": 107
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setState",
+          "lineNumber": 109
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "timers.current.push",
+          "lineNumber": 111
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 113
+        },
+        {
+          "caller": "layerVisual",
+          "callee": "highlight.includes",
+          "lineNumber": 135
+        },
+        {
+          "caller": "layerVisual",
+          "callee": "highlight?.includes",
+          "lineNumber": 138
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "([\"assembled\", \"exploded\"] as View[]).map",
+          "lineNumber": 182
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setState",
+          "lineNumber": 190
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "[\"ArrowRight\", \"ArrowLeft\", \"ArrowUp\", \"ArrowDown\"].includes",
+          "lineNumber": 192
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "e.preventDefault",
+          "lineNumber": 193
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setState",
+          "lineNumber": 195
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "radios.current[other]?.focus",
+          "lineNumber": 196
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "LAYERS.map",
+          "lineNumber": 217
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "LAYERS.map",
+          "lineNumber": 234
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "layerVisual",
+          "lineNumber": 235
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "layerTransform",
+          "lineNumber": 241
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setHighlight",
+          "lineNumber": 242
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setHighlight",
+          "lineNumber": 243
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "[\"신입생 환영\", \"주말 활동 없음\"].map",
+          "lineNumber": 267
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "VARIANTS.map",
+          "lineNumber": 326
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setHighlight",
+          "lineNumber": 330
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setHighlight",
+          "lineNumber": 331
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setHighlight",
+          "lineNumber": 332
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "setHighlight",
+          "lineNumber": 333
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "[\"컴포넌트\", \"받는 것\", \"안 받는 것\", \"사용처\"].map",
+          "lineNumber": 368
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "TABLE.map",
+          "lineNumber": 378
+        },
+        {
+          "caller": "ComponentSection",
+          "callee": "TABLE.map",
+          "lineNumber": 402
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 706,
+      "nonEmptyLines": 648,
+      "functions": [
+        {
+          "name": "Motif",
+          "startLine": 38,
+          "endLine": 73,
+          "params": [
+            "{cat, color}"
+          ]
+        },
+        {
+          "name": "Toggle",
+          "startLine": 77,
+          "endLine": 100,
+          "params": [
+            "{label, checked, onChange}"
+          ]
+        },
+        {
+          "name": "LiveCount",
+          "startLine": 104,
+          "endLine": 127,
+          "params": [
+            "{count, reducedMotion}"
+          ]
+        },
+        {
+          "name": "FilterSection",
+          "startLine": 261,
+          "endLine": 706,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "FilterSection",
+          "line": 261,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "LiveCount",
+          "callee": "useState",
+          "lineNumber": 105
+        },
+        {
+          "caller": "LiveCount",
+          "callee": "useRef",
+          "lineNumber": 106
+        },
+        {
+          "caller": "LiveCount",
+          "callee": "useEffect",
+          "lineNumber": 108
+        },
+        {
+          "caller": "LiveCount",
+          "callee": "setDisplay",
+          "lineNumber": 110
+        },
+        {
+          "caller": "LiveCount",
+          "callee": "performance.now",
+          "lineNumber": 115
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.min",
+          "lineNumber": 117
+        },
+        {
+          "caller": "tick",
+          "callee": "setDisplay",
+          "lineNumber": 118
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.round",
+          "lineNumber": 118
+        },
+        {
+          "caller": "tick",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 119
+        },
+        {
+          "caller": "LiveCount",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 121
+        },
+        {
+          "caller": "LiveCount",
+          "callee": "cancelAnimationFrame",
+          "lineNumber": 122
+        },
+        {
+          "caller": "playHighlight",
+          "callee": "timers.current.forEach",
+          "lineNumber": 149
+        },
+        {
+          "caller": "playHighlight",
+          "callee": "window.clearTimeout",
+          "lineNumber": 149
+        },
+        {
+          "caller": "playHighlight",
+          "callee": "blocks.current.forEach",
+          "lineNumber": 151
+        },
+        {
+          "caller": "playHighlight",
+          "callee": "el?.classList.remove",
+          "lineNumber": 151
+        },
+        {
+          "caller": "step",
+          "callee": "timers.current.push",
+          "lineNumber": 155
+        },
+        {
+          "caller": "step",
+          "callee": "window.setTimeout",
+          "lineNumber": 156
+        },
+        {
+          "caller": "step",
+          "callee": "blocks.current[i]?.classList.add",
+          "lineNumber": 157
+        },
+        {
+          "caller": "step",
+          "callee": "setCaption",
+          "lineNumber": 158
+        },
+        {
+          "caller": "playHighlight",
+          "callee": "step",
+          "lineNumber": 163
+        },
+        {
+          "caller": "playHighlight",
+          "callee": "step",
+          "lineNumber": 164
+        },
+        {
+          "caller": "playHighlight",
+          "callee": "step",
+          "lineNumber": 165
+        },
+        {
+          "caller": "playHighlight",
+          "callee": "step",
+          "lineNumber": 166
+        },
+        {
+          "caller": "playHighlight",
+          "callee": "timers.current.push",
+          "lineNumber": 167
+        },
+        {
+          "caller": "playHighlight",
+          "callee": "window.setTimeout",
+          "lineNumber": 167
+        },
+        {
+          "caller": "playHighlight",
+          "callee": "setCaption",
+          "lineNumber": 167
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useAClub",
+          "lineNumber": 262
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useInViewOnce",
+          "lineNumber": 263
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useState",
+          "lineNumber": 264
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useState",
+          "lineNumber": 265
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useState",
+          "lineNumber": 266
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useState",
+          "lineNumber": 267
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useState",
+          "lineNumber": 268
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useState",
+          "lineNumber": 269
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useRef",
+          "lineNumber": 270
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useRef",
+          "lineNumber": 271
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useRef",
+          "lineNumber": 272
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useRef",
+          "lineNumber": 273
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useEffect",
+          "lineNumber": 276
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setPhase",
+          "lineNumber": 279
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setInitialMount",
+          "lineNumber": 280
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setPhase",
+          "lineNumber": 283
+        },
+        {
+          "caller": "push",
+          "callee": "timers.current.push",
+          "lineNumber": 284
+        },
+        {
+          "caller": "push",
+          "callee": "window.setTimeout",
+          "lineNumber": 284
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "push",
+          "lineNumber": 285
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setPhase",
+          "lineNumber": 285
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "push",
+          "lineNumber": 286
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setPhase",
+          "lineNumber": 286
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "push",
+          "lineNumber": 287
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setPhase",
+          "lineNumber": 287
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "push",
+          "lineNumber": 288
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setPhase",
+          "lineNumber": 289
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "push",
+          "lineNumber": 290
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setInitialMount",
+          "lineNumber": 290
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "push",
+          "lineNumber": 292
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setPhase",
+          "lineNumber": 292
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "push",
+          "lineNumber": 293
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setPhase",
+          "lineNumber": 293
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "timers.current.forEach",
+          "lineNumber": 295
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 295
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useEffect",
+          "lineNumber": 301
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setWallInView",
+          "lineNumber": 304
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "Boolean",
+          "lineNumber": 304
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "io.observe",
+          "lineNumber": 308
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "io.disconnect",
+          "lineNumber": 309
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useMemo",
+          "lineNumber": 312
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "CLUBS.filter",
+          "lineNumber": 313
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "filters.categories.includes",
+          "lineNumber": 314
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "filters.categories.includes",
+          "lineNumber": 314
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "list.sort",
+          "lineNumber": 321
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "a.name.localeCompare",
+          "lineNumber": 326
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "a.id.localeCompare",
+          "lineNumber": 332
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useMemo",
+          "lineNumber": 338
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "filters.categories.includes",
+          "lineNumber": 343
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "useEffect",
+          "lineNumber": 347
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "setReadout",
+          "lineNumber": 348
+        },
+        {
+          "caller": "update",
+          "callee": "setFilters",
+          "lineNumber": 352
+        },
+        {
+          "caller": "update",
+          "callee": "partial",
+          "lineNumber": 353
+        },
+        {
+          "caller": "update",
+          "callee": "setHistory",
+          "lineNumber": 354
+        },
+        {
+          "caller": "update",
+          "callee": "setHasInteracted",
+          "lineNumber": 355
+        },
+        {
+          "caller": "update",
+          "callee": "codeRef.current?.playHighlight",
+          "lineNumber": 358
+        },
+        {
+          "caller": "toggleCategory",
+          "callee": "update",
+          "lineNumber": 364
+        },
+        {
+          "caller": "toggleCategory",
+          "callee": "update",
+          "lineNumber": 367
+        },
+        {
+          "caller": "toggleCategory",
+          "callee": "prev.categories.filter",
+          "lineNumber": 368
+        },
+        {
+          "caller": "toggleCategory",
+          "callee": "next.includes",
+          "lineNumber": 369
+        },
+        {
+          "caller": "toggleCategory",
+          "callee": "next.filter",
+          "lineNumber": 369
+        },
+        {
+          "caller": "resetAll",
+          "callee": "update",
+          "lineNumber": 375
+        },
+        {
+          "caller": "resetAll",
+          "callee": "setHistory",
+          "lineNumber": 376
+        },
+        {
+          "caller": "releaseLast",
+          "callee": "resetAll",
+          "lineNumber": 381
+        },
+        {
+          "caller": "releaseLast",
+          "callee": "setFilters",
+          "lineNumber": 384
+        },
+        {
+          "caller": "releaseLast",
+          "callee": "setHistory",
+          "lineNumber": 385
+        },
+        {
+          "caller": "releaseLast",
+          "callee": "h.slice",
+          "lineNumber": 385
+        },
+        {
+          "caller": "releaseLast",
+          "callee": "codeRef.current?.playHighlight",
+          "lineNumber": 386
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "\"검색창에 뭘 쳐야 할지 모르는 사람을 위한 화면\".split(\" \").map",
+          "lineNumber": 407
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "\"검색창에 뭘 쳐야 할지 모르는 사람을 위한 화면\".split",
+          "lineNumber": 407
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "chips.map",
+          "lineNumber": 457
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "filters.categories.includes",
+          "lineNumber": 458
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "toggleCategory",
+          "lineNumber": 467
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "update",
+          "lineNumber": 495
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "update",
+          "lineNumber": 496
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "update",
+          "lineNumber": 497
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "SORT_LABELS.map",
+          "lineNumber": 507
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "update",
+          "lineNumber": 513
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "update",
+          "lineNumber": 527
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "SORT_LABELS.map",
+          "lineNumber": 530
+        },
+        {
+          "caller": "FilterSection",
+          "callee": "filtered.map",
+          "lineNumber": 558
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 387,
+      "nonEmptyLines": 358,
+      "functions": [
+        {
+          "name": "seeded",
+          "startLine": 18,
+          "endLine": 21,
+          "params": [
+            "seed"
+          ]
+        },
+        {
+          "name": "HeroSection",
+          "startLine": 46,
+          "endLine": 387,
+          "params": [
+            "{start}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "HeroSection",
+          "line": 46,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "seeded",
+          "callee": "Math.sin",
+          "lineNumber": 19
+        },
+        {
+          "caller": "seeded",
+          "callee": "Math.floor",
+          "lineNumber": 20
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useAClub",
+          "lineNumber": 47
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useState",
+          "lineNumber": 48
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useState",
+          "lineNumber": 49
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useState",
+          "lineNumber": 50
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useState",
+          "lineNumber": 51
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useState",
+          "lineNumber": 52
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useState",
+          "lineNumber": 53
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useState",
+          "lineNumber": 54
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useRef",
+          "lineNumber": 55
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useMemo",
+          "lineNumber": 57
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "CLUBS.slice(0, 24).map",
+          "lineNumber": 59
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "CLUBS.slice",
+          "lineNumber": 59
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "Math.floor",
+          "lineNumber": 61
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "seeded",
+          "lineNumber": 61
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "Math.floor",
+          "lineNumber": 62
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "seeded",
+          "lineNumber": 62
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "(seeded(i + 31) * 6 - 3).toFixed",
+          "lineNumber": 63
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "seeded",
+          "lineNumber": 63
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "(seeded(i + 41) * 8 - 4).toFixed",
+          "lineNumber": 64
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "seeded",
+          "lineNumber": 64
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "(seeded(i + 53) * 8 - 4).toFixed",
+          "lineNumber": 65
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "seeded",
+          "lineNumber": 65
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useMemo",
+          "lineNumber": 70
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "HEADLINE_1.split",
+          "lineNumber": 70
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useEffect",
+          "lineNumber": 72
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setPostersIn",
+          "lineNumber": 76
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setPhase",
+          "lineNumber": 77
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setWords1",
+          "lineNumber": 78
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setCellsIn",
+          "lineNumber": 79
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setTrioIn",
+          "lineNumber": 80
+        },
+        {
+          "caller": "push",
+          "callee": "timers.current.push",
+          "lineNumber": 85
+        },
+        {
+          "caller": "push",
+          "callee": "window.setTimeout",
+          "lineNumber": 85
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "bgPosters.forEach",
+          "lineNumber": 88
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "push",
+          "lineNumber": 88
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setPostersIn",
+          "lineNumber": 88
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "Math.max",
+          "lineNumber": 88
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "push",
+          "lineNumber": 89
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setPhase",
+          "lineNumber": 89
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "headWords.forEach",
+          "lineNumber": 90
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "push",
+          "lineNumber": 90
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setWords1",
+          "lineNumber": 90
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "Math.max",
+          "lineNumber": 90
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "push",
+          "lineNumber": 91
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setPhase",
+          "lineNumber": 91
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "push",
+          "lineNumber": 92
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setPhase",
+          "lineNumber": 92
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "push",
+          "lineNumber": 93
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setCellsIn",
+          "lineNumber": 93
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "Math.max",
+          "lineNumber": 93
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "push",
+          "lineNumber": 94
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setTrioIn",
+          "lineNumber": 94
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "Math.max",
+          "lineNumber": 94
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "push",
+          "lineNumber": 95
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setPhase",
+          "lineNumber": 95
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "timers.current.forEach",
+          "lineNumber": 98
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 98
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "useEffect",
+          "lineNumber": 103
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "lockScroll",
+          "lineNumber": 105
+        },
+        {
+          "caller": "onKey",
+          "callee": "e.stopPropagation",
+          "lineNumber": 108
+        },
+        {
+          "caller": "onKey",
+          "callee": "setVideoOpen",
+          "lineNumber": 109
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "window.addEventListener",
+          "lineNumber": 112
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "lockScroll",
+          "lineNumber": 114
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "window.removeEventListener",
+          "lineNumber": 115
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "bgPosters.map",
+          "lineNumber": 149
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "headWords.map",
+          "lineNumber": 197
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "META.map",
+          "lineNumber": 229
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setVideoOpen",
+          "lineNumber": 266
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setHintOut",
+          "lineNumber": 267
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setHintOut",
+          "lineNumber": 268
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setHintOut",
+          "lineNumber": 296
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setHintOut",
+          "lineNumber": 297
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setHintOut",
+          "lineNumber": 333
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setHintOut",
+          "lineNumber": 334
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setVideoOpen",
+          "lineNumber": 364
+        },
+        {
+          "caller": "HeroSection",
+          "callee": "setVideoOpen",
+          "lineNumber": 372
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 218,
+      "nonEmptyLines": 195,
+      "functions": [
+        {
+          "name": "seeded",
+          "startLine": 13,
+          "endLine": 16,
+          "params": [
+            "seed"
+          ]
+        },
+        {
+          "name": "IntroOverlay",
+          "startLine": 24,
+          "endLine": 218,
+          "params": [
+            "{onDismiss, reducedMotion}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "IntroOverlay",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "seeded",
+          "callee": "Math.sin",
+          "lineNumber": 14
+        },
+        {
+          "caller": "seeded",
+          "callee": "Math.floor",
+          "lineNumber": 15
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "useState",
+          "lineNumber": 25
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "useState",
+          "lineNumber": 26
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "useState",
+          "lineNumber": 27
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "useState",
+          "lineNumber": 28
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "useRef",
+          "lineNumber": 29
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "useRef",
+          "lineNumber": 30
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "useEffect",
+          "lineNumber": 32
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "setTotal",
+          "lineNumber": 33
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "useMemo",
+          "lineNumber": 36
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "Array.from",
+          "lineNumber": 38
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "seeded",
+          "lineNumber": 39
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "Math.floor",
+          "lineNumber": 42
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "seeded",
+          "lineNumber": 42
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "(seeded(i + 2) * 8 - 4).toFixed",
+          "lineNumber": 43
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "seeded",
+          "lineNumber": 43
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "(seeded(i + 3) * 8 - 4).toFixed",
+          "lineNumber": 44
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "seeded",
+          "lineNumber": 44
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "(seeded(i + 4) * 6 - 3).toFixed",
+          "lineNumber": 45
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "seeded",
+          "lineNumber": 45
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "(Math.cos(angle) * distance).toFixed",
+          "lineNumber": 46
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "Math.cos",
+          "lineNumber": 46
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "(Math.sin(angle) * distance).toFixed",
+          "lineNumber": 47
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "Math.sin",
+          "lineNumber": 47
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "seeded",
+          "lineNumber": 48
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "seeded",
+          "lineNumber": 48
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "useMemo",
+          "lineNumber": 54
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "MOTIVATION.split",
+          "lineNumber": 54
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "useEffect",
+          "lineNumber": 57
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "setSettled",
+          "lineNumber": 59
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "Array.from",
+          "lineNumber": 59
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "setPhase",
+          "lineNumber": 60
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "setWordsIn",
+          "lineNumber": 61
+        },
+        {
+          "caller": "push",
+          "callee": "timers.current.push",
+          "lineNumber": 66
+        },
+        {
+          "caller": "push",
+          "callee": "window.setTimeout",
+          "lineNumber": 66
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "Math.min",
+          "lineNumber": 70
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "push",
+          "lineNumber": 71
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "setSettled",
+          "lineNumber": 71
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "new Set(s).add",
+          "lineNumber": 71
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "push",
+          "lineNumber": 73
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "setPhase",
+          "lineNumber": 73
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "push",
+          "lineNumber": 75
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "setSettled",
+          "lineNumber": 75
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "new Set(s).add",
+          "lineNumber": 75
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "push",
+          "lineNumber": 77
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "setPhase",
+          "lineNumber": 77
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "push",
+          "lineNumber": 78
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "setPhase",
+          "lineNumber": 78
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "words.forEach",
+          "lineNumber": 79
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "push",
+          "lineNumber": 79
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "setWordsIn",
+          "lineNumber": 79
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "Math.max",
+          "lineNumber": 79
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "push",
+          "lineNumber": 80
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "setPhase",
+          "lineNumber": 80
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "timers.current.forEach",
+          "lineNumber": 83
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "window.clearTimeout",
+          "lineNumber": 83
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "useEffect",
+          "lineNumber": 89
+        },
+        {
+          "caller": "finish",
+          "callee": "onDismiss",
+          "lineNumber": 93
+        },
+        {
+          "caller": "onKey",
+          "callee": "[\"Escape\", \"Space\", \"Enter\"].includes",
+          "lineNumber": 97
+        },
+        {
+          "caller": "onKey",
+          "callee": "finish",
+          "lineNumber": 97
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "window.addEventListener",
+          "lineNumber": 100
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "window.addEventListener",
+          "lineNumber": 101
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "window.addEventListener",
+          "lineNumber": 102
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "window.addEventListener",
+          "lineNumber": 103
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "window.removeEventListener",
+          "lineNumber": 105
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "window.removeEventListener",
+          "lineNumber": 106
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "window.removeEventListener",
+          "lineNumber": 107
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "window.removeEventListener",
+          "lineNumber": 108
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "posters.map",
+          "lineNumber": 132
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "settled.has",
+          "lineNumber": 133
+        },
+        {
+          "caller": "IntroOverlay",
+          "callee": "words.map",
+          "lineNumber": 172
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 299,
+      "nonEmptyLines": 274,
+      "functions": [
+        {
+          "name": "useCountUp",
+          "startLine": 26,
+          "endLine": 49,
+          "params": [
+            "end",
+            "trigger",
+            "reducedMotion"
+          ]
+        },
+        {
+          "name": "StatCell",
+          "startLine": 51,
+          "endLine": 68,
+          "params": [
+            "{stat, index, trigger}"
+          ]
+        },
+        {
+          "name": "ResultSection",
+          "startLine": 70,
+          "endLine": 299,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ResultSection",
+          "line": 70,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "useCountUp",
+          "callee": "useState",
+          "lineNumber": 27
+        },
+        {
+          "caller": "useCountUp",
+          "callee": "useRef",
+          "lineNumber": 28
+        },
+        {
+          "caller": "useCountUp",
+          "callee": "useEffect",
+          "lineNumber": 30
+        },
+        {
+          "caller": "useCountUp",
+          "callee": "setValue",
+          "lineNumber": 33
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.min",
+          "lineNumber": 39
+        },
+        {
+          "caller": "tick",
+          "callee": "setValue",
+          "lineNumber": 40
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.floor",
+          "lineNumber": 40
+        },
+        {
+          "caller": "tick",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 41
+        },
+        {
+          "caller": "tick",
+          "callee": "setValue",
+          "lineNumber": 42
+        },
+        {
+          "caller": "useCountUp",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 44
+        },
+        {
+          "caller": "useCountUp",
+          "callee": "cancelAnimationFrame",
+          "lineNumber": 45
+        },
+        {
+          "caller": "StatCell",
+          "callee": "useAClub",
+          "lineNumber": 52
+        },
+        {
+          "caller": "StatCell",
+          "callee": "useCountUp",
+          "lineNumber": 53
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useAClub",
+          "lineNumber": 71
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useInViewOnce",
+          "lineNumber": 72
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useState",
+          "lineNumber": 73
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useEffect",
+          "lineNumber": 76
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "setLit",
+          "lineNumber": 77
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useEffect",
+          "lineNumber": 80
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "lockScroll",
+          "lineNumber": 82
+        },
+        {
+          "caller": "onKey",
+          "callee": "e.stopPropagation",
+          "lineNumber": 85
+        },
+        {
+          "caller": "onKey",
+          "callee": "setLightbox",
+          "lineNumber": 86
+        },
+        {
+          "caller": "onKey",
+          "callee": "setLightbox",
+          "lineNumber": 88
+        },
+        {
+          "caller": "onKey",
+          "callee": "setLightbox",
+          "lineNumber": 90
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "window.addEventListener",
+          "lineNumber": 93
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "lockScroll",
+          "lineNumber": 95
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "window.removeEventListener",
+          "lineNumber": 96
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "\"탐색부터 지원까지 한 서비스에서 끝난다\".split",
+          "lineNumber": 101
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "headWords.map",
+          "lineNumber": 141
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "GALLERY.map",
+          "lineNumber": 167
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "setLightbox",
+          "lineNumber": 174
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "STATS.map",
+          "lineNumber": 205
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "setLightbox",
+          "lineNumber": 244
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "setLightbox",
+          "lineNumber": 250
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "setLightbox",
+          "lineNumber": 271
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "item.header.split(\"·\")[0]!.trim",
+          "lineNumber": 280
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "item.header.split",
+          "lineNumber": 280
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "String(GALLERY.length).padStart",
+          "lineNumber": 280
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "String",
+          "lineNumber": 280
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "setLightbox",
+          "lineNumber": 285
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 293,
+      "nonEmptyLines": 273,
+      "functions": [
+        {
+          "name": "seeded",
+          "startLine": 35,
+          "endLine": 38,
+          "params": [
+            "seed"
+          ]
+        },
+        {
+          "name": "RetroSection",
+          "startLine": 44,
+          "endLine": 293,
+          "params": [
+            "{onExit}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "RetroSection",
+          "line": 44,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "seeded",
+          "callee": "Math.sin",
+          "lineNumber": 36
+        },
+        {
+          "caller": "seeded",
+          "callee": "Math.floor",
+          "lineNumber": 37
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useAClub",
+          "lineNumber": 45
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useInViewOnce",
+          "lineNumber": 46
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useState",
+          "lineNumber": 47
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useState",
+          "lineNumber": 48
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useState",
+          "lineNumber": 49
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useRef",
+          "lineNumber": 50
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useEffect",
+          "lineNumber": 52
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "setMobile",
+          "lineNumber": 53
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useMemo",
+          "lineNumber": 61
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "Array.from",
+          "lineNumber": 62
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "Math.floor",
+          "lineNumber": 64
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "seeded",
+          "lineNumber": 64
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "order.map",
+          "lineNumber": 68
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "seeded",
+          "lineNumber": 70
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "seeded",
+          "lineNumber": 70
+        },
+        {
+          "caller": "handleExit",
+          "callee": "setExiting",
+          "lineNumber": 76
+        },
+        {
+          "caller": "handleExit",
+          "callee": "lockScroll",
+          "lineNumber": 77
+        },
+        {
+          "caller": "handleExit",
+          "callee": "window.setTimeout",
+          "lineNumber": 78
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useEffect",
+          "lineNumber": 81
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 83
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "\"기능을 만드는 것보다 브라우저를 되찾는 데 시간을 더 썼다\".split(\" \").map",
+          "lineNumber": 103
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "\"기능을 만드는 것보다 브라우저를 되찾는 데 시간을 더 썼다\".split",
+          "lineNumber": 103
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "KPT.map",
+          "lineNumber": 138
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "setHovered",
+          "lineNumber": 144
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "setHovered",
+          "lineNumber": 145
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "col.items.map",
+          "lineNumber": 162
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "(\n            [\n              {cls: \"top-0 left-1/2 -translate-x-1/2 h-[1px]\", grow: \"width\"},\n              {cls: \"bottom-0 left-1/2 -translate-x-1/2 h-[1px]\", grow: \"width\"},\n              {cls: \"top-1/2 left-0 -translate-y-1/2 w-[1px]\", grow: \"height\"},\n              {cls: \"top-1/2 right-0 -translate-y-1/2 w-[1px]\", grow: \"height\"},\n            ] as const\n          ).map",
+          "lineNumber": 208
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "posters.map",
+          "lineNumber": 261
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "Math.max",
+          "lineNumber": 274
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 437,
+      "nonEmptyLines": 412,
+      "functions": [
+        {
+          "name": "RoleSection",
+          "startLine": 30,
+          "endLine": 437,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "RoleSection",
+          "line": 30,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "RoleSection",
+          "callee": "useAClub",
+          "lineNumber": 31
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "useInViewOnce",
+          "lineNumber": 32
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "useInViewOnce",
+          "lineNumber": 33
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "useState",
+          "lineNumber": 35
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "useState",
+          "lineNumber": 36
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "useState",
+          "lineNumber": 37
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "useRef",
+          "lineNumber": 38
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "useRef",
+          "lineNumber": 39
+        },
+        {
+          "caller": "pick",
+          "callee": "setInteracted",
+          "lineNumber": 42
+        },
+        {
+          "caller": "pick",
+          "callee": "setRole",
+          "lineNumber": 44
+        },
+        {
+          "caller": "pick",
+          "callee": "announce",
+          "lineNumber": 45
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "useEffect",
+          "lineNumber": 49
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "window.setTimeout",
+          "lineNumber": 51
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "setAutoCaption",
+          "lineNumber": 53
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "pick",
+          "lineNumber": 54
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "window.setTimeout",
+          "lineNumber": 55
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "pick",
+          "lineNumber": 57
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "setAutoCaption",
+          "lineNumber": 58
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "timers.current.push",
+          "lineNumber": 60
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "timers.current.push",
+          "lineNumber": 62
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "timers.current.forEach",
+          "lineNumber": 64
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 64
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "([\"student\", \"admin\"] as Role[]).map",
+          "lineNumber": 107
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "pick",
+          "lineNumber": 115
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "[\"ArrowRight\", \"ArrowLeft\", \"ArrowUp\", \"ArrowDown\"].includes",
+          "lineNumber": 117
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "e.preventDefault",
+          "lineNumber": 118
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "pick",
+          "lineNumber": 120
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "radios.current[other]?.focus",
+          "lineNumber": 121
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "[\"신입생 환영\", \"주말 활동 없음\"].map",
+          "lineNumber": 173
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "[\n                      {v: \"12\", l: \"지원자\", c: \"rgba(255,255,255,0.88)\"},\n                      {v: \"5\", l: \"미확인\", c: \"rgba(255,255,255,0.88)\"},\n                      {v: \"4\", l: \"합격\", c: \"#4ade80\"},\n                      {v: \"20\", l: \"정원\", c: \"rgba(255,255,255,0.88)\"},\n                    ].map",
+          "lineNumber": 212
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "APPLICANTS.map",
+          "lineNumber": 232
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "Array.from",
+          "lineNumber": 293
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "[0, 1, 2].map",
+          "lineNumber": 319
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "[0, 1, 2, 3].map",
+          "lineNumber": 325
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "[0, 1, 2, 3].map",
+          "lineNumber": 331
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "[\"항목\", \"학생\", \"운영진\"].map",
+          "lineNumber": 350
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "COMPARISON.map",
+          "lineNumber": 360
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "COMPARISON.map",
+          "lineNumber": 390
+        },
+        {
+          "caller": "RoleSection",
+          "callee": "[\"[IMG-05] · 16:10\", \"[IMG-06] · 16:10\"].map",
+          "lineNumber": 419
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 343,
+      "nonEmptyLines": 321,
+      "functions": [
+        {
+          "name": "ScopeSection",
+          "startLine": 99,
+          "endLine": 343,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ScopeSection",
+          "line": 99,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ScopeSection",
+          "callee": "useAClub",
+          "lineNumber": 100
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "useInViewOnce",
+          "lineNumber": 101
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "useState",
+          "lineNumber": 103
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "useState",
+          "lineNumber": 104
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "useState",
+          "lineNumber": 105
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "useState",
+          "lineNumber": 106
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "useState",
+          "lineNumber": 107
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "useState",
+          "lineNumber": 108
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "useState",
+          "lineNumber": 109
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "useRef",
+          "lineNumber": 110
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "useEffect",
+          "lineNumber": 112
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setPhase",
+          "lineNumber": 116
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setWallActive",
+          "lineNumber": 117
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setDropped",
+          "lineNumber": 118
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "DONE.map",
+          "lineNumber": 118
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setDividerOn",
+          "lineNumber": 119
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setTagOn",
+          "lineNumber": 120
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setEmptyIn",
+          "lineNumber": 121
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setCountOn",
+          "lineNumber": 122
+        },
+        {
+          "caller": "push",
+          "callee": "timers.current.push",
+          "lineNumber": 126
+        },
+        {
+          "caller": "push",
+          "callee": "window.setTimeout",
+          "lineNumber": 126
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setPhase",
+          "lineNumber": 128
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "push",
+          "lineNumber": 129
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setPhase",
+          "lineNumber": 129
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "push",
+          "lineNumber": 130
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setPhase",
+          "lineNumber": 130
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "push",
+          "lineNumber": 131
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setWallActive",
+          "lineNumber": 132
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "DONE.forEach",
+          "lineNumber": 133
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "push",
+          "lineNumber": 134
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setDropped",
+          "lineNumber": 134
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "new Set(s).add",
+          "lineNumber": 134
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "parseFloat",
+          "lineNumber": 134
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "push",
+          "lineNumber": 137
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setDividerOn",
+          "lineNumber": 138
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "push",
+          "lineNumber": 139
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setTagOn",
+          "lineNumber": 139
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "push",
+          "lineNumber": 141
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "NOT_DONE.forEach",
+          "lineNumber": 142
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "push",
+          "lineNumber": 142
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setEmptyIn",
+          "lineNumber": 142
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "Math.max",
+          "lineNumber": 142
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "push",
+          "lineNumber": 144
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "setCountOn",
+          "lineNumber": 144
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "timers.current.forEach",
+          "lineNumber": 147
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 147
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "\"벽의 절반은 아직 비어 있습니다\".split(\" \").map",
+          "lineNumber": 168
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "\"벽의 절반은 아직 비어 있습니다\".split",
+          "lineNumber": 168
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "DONE.map((d) => d.label).join",
+          "lineNumber": 202
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "DONE.map",
+          "lineNumber": 202
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "NOT_DONE.map((d) => d.label).join",
+          "lineNumber": 202
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "NOT_DONE.map",
+          "lineNumber": 202
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "DONE.map",
+          "lineNumber": 206
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "dropped.has",
+          "lineNumber": 210
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "NOT_DONE.map",
+          "lineNumber": 232
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "[\n                  \"left-1 top-1\",\n                  \"right-1 top-1\",\n                  \"bottom-1 left-1\",\n                  \"bottom-1 right-1\",\n                ].map",
+          "lineNumber": 239
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "[\n                \"동아리 탐색, 필터, 상세 페이지 구현\",\n                \"모집 공고 조회와 지원 화면 구현\",\n                \"마이페이지와 관리자 화면 구조 설계\",\n                \"공통 컴포넌트와 라우팅 구조 정리\",\n              ].map",
+          "lineNumber": 301
+        },
+        {
+          "caller": "ScopeSection",
+          "callee": "[\n                {mark: \"○\", text: \"긴 사용자 흐름을 화면 단위로 설계할 수 있다\", dim: false},\n                {mark: \"○\", text: \"브라우저 기본 동작(주소·뒤로가기·스크롤)을 다룰 수 있다\", dim: false},\n                {mark: \"✕\", text: \"서버 구현과 실제 권한 처리는 이 프로젝트로 보여지지 않는다\", dim: true},\n                {mark: \"✕\", text: \"실사용자 규모에서의 동작은 확인된 바 없다\", dim: true},\n              ].map",
+          "lineNumber": 320
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 481,
+      "nonEmptyLines": 447,
+      "functions": [
+        {
+          "name": "ScrollRestoreSection",
+          "startLine": 10,
+          "endLine": 481,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ScrollRestoreSection",
+          "line": 10,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useAClub",
+          "lineNumber": 11
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useInViewOnce",
+          "lineNumber": 12
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useState",
+          "lineNumber": 14
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useState",
+          "lineNumber": 15
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useState",
+          "lineNumber": 16
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useState",
+          "lineNumber": 17
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useState",
+          "lineNumber": 18
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useState",
+          "lineNumber": 19
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useState",
+          "lineNumber": 20
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useState",
+          "lineNumber": 21
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useState",
+          "lineNumber": 22
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useState",
+          "lineNumber": 23
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useRef",
+          "lineNumber": 25
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useRef",
+          "lineNumber": 26
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useRef",
+          "lineNumber": 27
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useRef",
+          "lineNumber": 28
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useRef",
+          "lineNumber": 29
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useRef",
+          "lineNumber": 30
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useRef",
+          "lineNumber": 31
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useEffect",
+          "lineNumber": 33
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useEffect",
+          "lineNumber": 37
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "timers.current.forEach",
+          "lineNumber": 39
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 39
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useCallback",
+          "lineNumber": 44
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "Math.max",
+          "lineNumber": 45
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "Math.min",
+          "lineNumber": 45
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "Math.floor",
+          "lineNumber": 45
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "setReadout",
+          "lineNumber": 46
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "Math.floor",
+          "lineNumber": 46
+        },
+        {
+          "caller": "onScroll",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 53
+        },
+        {
+          "caller": "onScroll",
+          "callee": "updateReadout",
+          "lineNumber": 54
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "useEffect",
+          "lineNumber": 60
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "window.setTimeout",
+          "lineNumber": 62
+        },
+        {
+          "caller": "down",
+          "callee": "Math.min",
+          "lineNumber": 70
+        },
+        {
+          "caller": "down",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 73
+        },
+        {
+          "caller": "down",
+          "callee": "timers.current.push",
+          "lineNumber": 75
+        },
+        {
+          "caller": "down",
+          "callee": "window.setTimeout",
+          "lineNumber": 76
+        },
+        {
+          "caller": "back",
+          "callee": "Math.min",
+          "lineNumber": 81
+        },
+        {
+          "caller": "back",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 84
+        },
+        {
+          "caller": "down",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 86
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 91
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 93
+        },
+        {
+          "caller": "switchMode",
+          "callee": "setMode",
+          "lineNumber": 98
+        },
+        {
+          "caller": "switchMode",
+          "callee": "setOpenIndex",
+          "lineNumber": 102
+        },
+        {
+          "caller": "switchMode",
+          "callee": "setBugVisible",
+          "lineNumber": 103
+        },
+        {
+          "caller": "switchMode",
+          "callee": "setMarker",
+          "lineNumber": 104
+        },
+        {
+          "caller": "switchMode",
+          "callee": "setGhost",
+          "lineNumber": 105
+        },
+        {
+          "caller": "switchMode",
+          "callee": "updateReadout",
+          "lineNumber": 106
+        },
+        {
+          "caller": "openDetail",
+          "callee": "setHintOn",
+          "lineNumber": 110
+        },
+        {
+          "caller": "openDetail",
+          "callee": "setOpenIndex",
+          "lineNumber": 113
+        },
+        {
+          "caller": "openDetail",
+          "callee": "setGhost",
+          "lineNumber": 114
+        },
+        {
+          "caller": "openDetail",
+          "callee": "Math.round",
+          "lineNumber": 115
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setOpenIndex",
+          "lineNumber": 121
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "updateReadout",
+          "lineNumber": 127
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setFlash",
+          "lineNumber": 128
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "timers.current.push",
+          "lineNumber": 129
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "window.setTimeout",
+          "lineNumber": 129
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setFlash",
+          "lineNumber": 129
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setMarker",
+          "lineNumber": 130
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setBugMessage",
+          "lineNumber": 131
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "timers.current.push",
+          "lineNumber": 132
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "window.setTimeout",
+          "lineNumber": 132
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setBugVisible",
+          "lineNumber": 132
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "timers.current.push",
+          "lineNumber": 133
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "window.setTimeout",
+          "lineNumber": 133
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setBugVisible",
+          "lineNumber": 133
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "timers.current.push",
+          "lineNumber": 134
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "window.setTimeout",
+          "lineNumber": 134
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setMarker",
+          "lineNumber": 134
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "announce",
+          "lineNumber": 135
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "updateReadout",
+          "lineNumber": 140
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setGhost",
+          "lineNumber": 141
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "timers.current.push",
+          "lineNumber": 142
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "window.setTimeout",
+          "lineNumber": 142
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setGhost",
+          "lineNumber": 142
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setMarker",
+          "lineNumber": 143
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "timers.current.push",
+          "lineNumber": 144
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "window.setTimeout",
+          "lineNumber": 144
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setMarker",
+          "lineNumber": 144
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setHighlight",
+          "lineNumber": 146
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "timers.current.push",
+          "lineNumber": 147
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "window.setTimeout",
+          "lineNumber": 147
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "setHighlight",
+          "lineNumber": 147
+        },
+        {
+          "caller": "closeDetail",
+          "callee": "announce",
+          "lineNumber": 148
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "([\"before\", \"after\"] as Mode[]).map",
+          "lineNumber": 183
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "switchMode",
+          "lineNumber": 187
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "SCROLL_CLUBS.map",
+          "lineNumber": 234
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "openDetail",
+          "lineNumber": 238
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "String(i + 1).padStart",
+          "lineNumber": 264
+        },
+        {
+          "caller": "ScrollRestoreSection",
+          "callee": "String",
+          "lineNumber": 264
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 715,
+      "nonEmptyLines": 659,
+      "functions": [
+        {
+          "name": "toQuery",
+          "startLine": 22,
+          "endLine": 29,
+          "params": [
+            "f"
+          ]
+        },
+        {
+          "name": "fromQuery",
+          "startLine": 31,
+          "endLine": 42,
+          "params": [
+            "url"
+          ]
+        },
+        {
+          "name": "UrlStateSection",
+          "startLine": 64,
+          "endLine": 715,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "UrlStateSection",
+          "line": 64,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "toQuery",
+          "callee": "[f.art ? \"art\" : null, f.acad ? \"acad\" : null].filter",
+          "lineNumber": 24
+        },
+        {
+          "caller": "toQuery",
+          "callee": "params.push",
+          "lineNumber": 25
+        },
+        {
+          "caller": "toQuery",
+          "callee": "cats.join",
+          "lineNumber": 25
+        },
+        {
+          "caller": "toQuery",
+          "callee": "params.push",
+          "lineNumber": 26
+        },
+        {
+          "caller": "toQuery",
+          "callee": "params.push",
+          "lineNumber": 27
+        },
+        {
+          "caller": "toQuery",
+          "callee": "params.join",
+          "lineNumber": 28
+        },
+        {
+          "caller": "fromQuery",
+          "callee": "url.split",
+          "lineNumber": 33
+        },
+        {
+          "caller": "fromQuery",
+          "callee": "sp.get",
+          "lineNumber": 36
+        },
+        {
+          "caller": "fromQuery",
+          "callee": "cat.includes",
+          "lineNumber": 37
+        },
+        {
+          "caller": "fromQuery",
+          "callee": "cat.includes",
+          "lineNumber": 38
+        },
+        {
+          "caller": "fromQuery",
+          "callee": "sp.get",
+          "lineNumber": 39
+        },
+        {
+          "caller": "fromQuery",
+          "callee": "sp.get",
+          "lineNumber": 40
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useAClub",
+          "lineNumber": 65
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useInViewOnce",
+          "lineNumber": 66
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 68
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 69
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 70
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 71
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 72
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 73
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 74
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 75
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 76
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 77
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 78
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 79
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 80
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useState",
+          "lineNumber": 81
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useRef",
+          "lineNumber": 83
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useRef",
+          "lineNumber": 84
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useRef",
+          "lineNumber": 85
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useCallback",
+          "lineNumber": 87
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "timers.current.forEach",
+          "lineNumber": 88
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 88
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 90
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useEffect",
+          "lineNumber": 93
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useEffect",
+          "lineNumber": 96
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "window.setTimeout",
+          "lineNumber": 98
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "setHintOn",
+          "lineNumber": 99
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "setPulse",
+          "lineNumber": 100
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "window.setTimeout",
+          "lineNumber": 102
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "setPulse",
+          "lineNumber": 102
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 104
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 105
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useMemo",
+          "lineNumber": 109
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "SIM_CLUBS.filter",
+          "lineNumber": 111
+        },
+        {
+          "caller": "resetSim",
+          "callee": "clearTimers",
+          "lineNumber": 122
+        },
+        {
+          "caller": "resetSim",
+          "callee": "setMode",
+          "lineNumber": 123
+        },
+        {
+          "caller": "resetSim",
+          "callee": "setHistory",
+          "lineNumber": 124
+        },
+        {
+          "caller": "resetSim",
+          "callee": "setIndex",
+          "lineNumber": 125
+        },
+        {
+          "caller": "resetSim",
+          "callee": "setFilters",
+          "lineNumber": 126
+        },
+        {
+          "caller": "resetSim",
+          "callee": "setAddress",
+          "lineNumber": 127
+        },
+        {
+          "caller": "resetSim",
+          "callee": "setDetail",
+          "lineNumber": 128
+        },
+        {
+          "caller": "resetSim",
+          "callee": "setBugVisible",
+          "lineNumber": 129
+        },
+        {
+          "caller": "resetSim",
+          "callee": "setMarker",
+          "lineNumber": 130
+        },
+        {
+          "caller": "resetSim",
+          "callee": "setToast",
+          "lineNumber": 131
+        },
+        {
+          "caller": "resetSim",
+          "callee": "setCardAnim",
+          "lineNumber": 132
+        },
+        {
+          "caller": "flash",
+          "callee": "setAddressFlash",
+          "lineNumber": 136
+        },
+        {
+          "caller": "flash",
+          "callee": "window.setTimeout",
+          "lineNumber": 137
+        },
+        {
+          "caller": "flash",
+          "callee": "setAddressFlash",
+          "lineNumber": 137
+        },
+        {
+          "caller": "flash",
+          "callee": "timers.current.push",
+          "lineNumber": 138
+        },
+        {
+          "caller": "flash",
+          "callee": "window.setTimeout",
+          "lineNumber": 138
+        },
+        {
+          "caller": "flash",
+          "callee": "setAddressFlash",
+          "lineNumber": 138
+        },
+        {
+          "caller": "showMarker",
+          "callee": "setMarker",
+          "lineNumber": 142
+        },
+        {
+          "caller": "showMarker",
+          "callee": "timers.current.push",
+          "lineNumber": 143
+        },
+        {
+          "caller": "showMarker",
+          "callee": "window.setTimeout",
+          "lineNumber": 143
+        },
+        {
+          "caller": "showMarker",
+          "callee": "setMarker",
+          "lineNumber": 143
+        },
+        {
+          "caller": "typeAddress",
+          "callee": "setAddress",
+          "lineNumber": 148
+        },
+        {
+          "caller": "typeAddress",
+          "callee": "setAddress",
+          "lineNumber": 153
+        },
+        {
+          "caller": "step",
+          "callee": "setAddress",
+          "lineNumber": 156
+        },
+        {
+          "caller": "step",
+          "callee": "url.slice",
+          "lineNumber": 156
+        },
+        {
+          "caller": "step",
+          "callee": "window.setTimeout",
+          "lineNumber": 158
+        },
+        {
+          "caller": "typeAddress",
+          "callee": "step",
+          "lineNumber": 160
+        },
+        {
+          "caller": "dismissHint",
+          "callee": "setHintDismissed",
+          "lineNumber": 165
+        },
+        {
+          "caller": "dismissHint",
+          "callee": "setHintOn",
+          "lineNumber": 166
+        },
+        {
+          "caller": "dismissHint",
+          "callee": "setPulse",
+          "lineNumber": 167
+        },
+        {
+          "caller": "onFilterClick",
+          "callee": "setFilters",
+          "lineNumber": 172
+        },
+        {
+          "caller": "onFilterClick",
+          "callee": "flash",
+          "lineNumber": 176
+        },
+        {
+          "caller": "onFilterClick",
+          "callee": "showMarker",
+          "lineNumber": 177
+        },
+        {
+          "caller": "onFilterClick",
+          "callee": "toQuery",
+          "lineNumber": 181
+        },
+        {
+          "caller": "onFilterClick",
+          "callee": "setHistory",
+          "lineNumber": 183
+        },
+        {
+          "caller": "onFilterClick",
+          "callee": "h.slice",
+          "lineNumber": 183
+        },
+        {
+          "caller": "onFilterClick",
+          "callee": "setIndex",
+          "lineNumber": 184
+        },
+        {
+          "caller": "onFilterClick",
+          "callee": "flash",
+          "lineNumber": 185
+        },
+        {
+          "caller": "onFilterClick",
+          "callee": "typeAddress",
+          "lineNumber": 186
+        },
+        {
+          "caller": "openDetail",
+          "callee": "dismissHint",
+          "lineNumber": 190
+        },
+        {
+          "caller": "openDetail",
+          "callee": "window.clearTimeout",
+          "lineNumber": 192
+        },
+        {
+          "caller": "openDetail",
+          "callee": "setHistory",
+          "lineNumber": 193
+        },
+        {
+          "caller": "openDetail",
+          "callee": "h.slice",
+          "lineNumber": 193
+        },
+        {
+          "caller": "openDetail",
+          "callee": "setIndex",
+          "lineNumber": 194
+        },
+        {
+          "caller": "openDetail",
+          "callee": "setAddress",
+          "lineNumber": 195
+        },
+        {
+          "caller": "openDetail",
+          "callee": "setDetail",
+          "lineNumber": 196
+        },
+        {
+          "caller": "goBack",
+          "callee": "dismissHint",
+          "lineNumber": 201
+        },
+        {
+          "caller": "goBack",
+          "callee": "setIndex",
+          "lineNumber": 204
+        },
+        {
+          "caller": "goBack",
+          "callee": "window.clearTimeout",
+          "lineNumber": 205
+        },
+        {
+          "caller": "goBack",
+          "callee": "setAddress",
+          "lineNumber": 206
+        },
+        {
+          "caller": "goBack",
+          "callee": "setDetail",
+          "lineNumber": 207
+        },
+        {
+          "caller": "goBack",
+          "callee": "replayBug",
+          "lineNumber": 210
+        },
+        {
+          "caller": "goBack",
+          "callee": "fromQuery",
+          "lineNumber": 214
+        },
+        {
+          "caller": "goBack",
+          "callee": "setFilters",
+          "lineNumber": 215
+        },
+        {
+          "caller": "goBack",
+          "callee": "showMarker",
+          "lineNumber": 217
+        },
+        {
+          "caller": "goBack",
+          "callee": "announce",
+          "lineNumber": 218
+        },
+        {
+          "caller": "goBack",
+          "callee": "setCardAnim",
+          "lineNumber": 220
+        },
+        {
+          "caller": "goBack",
+          "callee": "timers.current.push",
+          "lineNumber": 221
+        },
+        {
+          "caller": "goBack",
+          "callee": "window.setTimeout",
+          "lineNumber": 221
+        },
+        {
+          "caller": "goBack",
+          "callee": "setCardAnim",
+          "lineNumber": 221
+        },
+        {
+          "caller": "goBack",
+          "callee": "showMarker",
+          "lineNumber": 224
+        },
+        {
+          "caller": "replayBug",
+          "callee": "announce",
+          "lineNumber": 230
+        },
+        {
+          "caller": "replayBug",
+          "callee": "setFilters",
+          "lineNumber": 233
+        },
+        {
+          "caller": "replayBug",
+          "callee": "setBugVisible",
+          "lineNumber": 234
+        },
+        {
+          "caller": "replayBug",
+          "callee": "timers.current.push",
+          "lineNumber": 235
+        },
+        {
+          "caller": "replayBug",
+          "callee": "window.setTimeout",
+          "lineNumber": 235
+        },
+        {
+          "caller": "replayBug",
+          "callee": "setBugVisible",
+          "lineNumber": 235
+        },
+        {
+          "caller": "wait",
+          "callee": "timers.current.push",
+          "lineNumber": 239
+        },
+        {
+          "caller": "wait",
+          "callee": "window.setTimeout",
+          "lineNumber": 239
+        },
+        {
+          "caller": "replayBug",
+          "callee": "(Object.keys(filters) as (keyof SimFilters)[]).filter",
+          "lineNumber": 240
+        },
+        {
+          "caller": "replayBug",
+          "callee": "Object.keys",
+          "lineNumber": 240
+        },
+        {
+          "caller": "replayBug",
+          "callee": "setFilters",
+          "lineNumber": 242
+        },
+        {
+          "caller": "replayBug",
+          "callee": "wait",
+          "lineNumber": 243
+        },
+        {
+          "caller": "replayBug",
+          "callee": "setFilters",
+          "lineNumber": 245
+        },
+        {
+          "caller": "replayBug",
+          "callee": "setCardAnim",
+          "lineNumber": 246
+        },
+        {
+          "caller": "replayBug",
+          "callee": "wait",
+          "lineNumber": 247
+        },
+        {
+          "caller": "replayBug",
+          "callee": "setCardAnim",
+          "lineNumber": 248
+        },
+        {
+          "caller": "replayBug",
+          "callee": "setBugVisible",
+          "lineNumber": 249
+        },
+        {
+          "caller": "replayBug",
+          "callee": "timers.current.push",
+          "lineNumber": 250
+        },
+        {
+          "caller": "replayBug",
+          "callee": "window.setTimeout",
+          "lineNumber": 250
+        },
+        {
+          "caller": "replayBug",
+          "callee": "setCardAnim",
+          "lineNumber": 250
+        },
+        {
+          "caller": "replayBug",
+          "callee": "timers.current.push",
+          "lineNumber": 251
+        },
+        {
+          "caller": "replayBug",
+          "callee": "window.setTimeout",
+          "lineNumber": 251
+        },
+        {
+          "caller": "replayBug",
+          "callee": "setBugVisible",
+          "lineNumber": 251
+        },
+        {
+          "caller": "share",
+          "callee": "setToast",
+          "lineNumber": 256
+        },
+        {
+          "caller": "share",
+          "callee": "timers.current.push",
+          "lineNumber": 260
+        },
+        {
+          "caller": "share",
+          "callee": "window.setTimeout",
+          "lineNumber": 260
+        },
+        {
+          "caller": "share",
+          "callee": "setToast",
+          "lineNumber": 260
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "useEffect",
+          "lineNumber": 263
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "HEAD_WORDS.map",
+          "lineNumber": 280
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "([\"before\", \"after\"] as Mode[]).map",
+          "lineNumber": 316
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "resetSim",
+          "lineNumber": 320
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "[\"#ff5f56\", \"#ffbd2e\", \"#27c93f\"].map",
+          "lineNumber": 337
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "resetSim",
+          "lineNumber": 361
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "FILTER_CHIPS.map",
+          "lineNumber": 446
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "onFilterClick",
+          "lineNumber": 452
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "visible.map",
+          "lineNumber": 466
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "openDetail",
+          "lineNumber": 478
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "history.map",
+          "lineNumber": 550
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "s.url.includes",
+          "lineNumber": 551
+        },
+        {
+          "caller": "UrlStateSection",
+          "callee": "TRANSITIONS.map",
+          "lineNumber": 577
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 679,
+      "nonEmptyLines": 641,
+      "functions": [
+        {
+          "name": "Kwd",
+          "startLine": 87,
+          "endLine": 89,
+          "params": [
+            "{children}"
+          ]
+        },
+        {
+          "name": "Strn",
+          "startLine": 90,
+          "endLine": 92,
+          "params": [
+            "{children}"
+          ]
+        },
+        {
+          "name": "UserFlowSection",
+          "startLine": 94,
+          "endLine": 650,
+          "params": []
+        },
+        {
+          "name": "ScreenBox",
+          "startLine": 652,
+          "endLine": 679,
+          "params": [
+            "{\n  id,\n  style,\n  className = \"\",\n  children,\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "UserFlowSection",
+          "line": 94,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "UserFlowSection",
+          "callee": "useAClub",
+          "lineNumber": 95
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "useInViewOnce",
+          "lineNumber": 96
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "useState",
+          "lineNumber": 98
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "useState",
+          "lineNumber": 99
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "useState",
+          "lineNumber": 100
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "useState",
+          "lineNumber": 101
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "useState",
+          "lineNumber": 102
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "useState",
+          "lineNumber": 103
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "useState",
+          "lineNumber": 104
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "useRef",
+          "lineNumber": 105
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "useEffect",
+          "lineNumber": 110
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "setPhase",
+          "lineNumber": 113
+        },
+        {
+          "caller": "push",
+          "callee": "timers.current.push",
+          "lineNumber": 116
+        },
+        {
+          "caller": "push",
+          "callee": "window.setTimeout",
+          "lineNumber": 116
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "push",
+          "lineNumber": 117
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "setPhase",
+          "lineNumber": 117
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "push",
+          "lineNumber": 118
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "setPhase",
+          "lineNumber": 118
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "push",
+          "lineNumber": 119
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "setPhase",
+          "lineNumber": 119
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "push",
+          "lineNumber": 120
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "setPhase",
+          "lineNumber": 120
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "timers.current.forEach",
+          "lineNumber": 122
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 122
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "useEffect",
+          "lineNumber": 127
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "timers.current.forEach",
+          "lineNumber": 129
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 129
+        },
+        {
+          "caller": "showToast",
+          "callee": "setToast",
+          "lineNumber": 135
+        },
+        {
+          "caller": "showToast",
+          "callee": "timers.current.push",
+          "lineNumber": 136
+        },
+        {
+          "caller": "showToast",
+          "callee": "window.setTimeout",
+          "lineNumber": 136
+        },
+        {
+          "caller": "showToast",
+          "callee": "setToast",
+          "lineNumber": 136
+        },
+        {
+          "caller": "navigate",
+          "callee": "setInteracted",
+          "lineNumber": 140
+        },
+        {
+          "caller": "navigate",
+          "callee": "setIntended",
+          "lineNumber": 143
+        },
+        {
+          "caller": "navigate",
+          "callee": "setStack",
+          "lineNumber": 144
+        },
+        {
+          "caller": "navigate",
+          "callee": "setVisited",
+          "lineNumber": 145
+        },
+        {
+          "caller": "navigate",
+          "callee": "new Set(v).add",
+          "lineNumber": 145
+        },
+        {
+          "caller": "navigate",
+          "callee": "setStack",
+          "lineNumber": 148
+        },
+        {
+          "caller": "navigate",
+          "callee": "setVisited",
+          "lineNumber": 149
+        },
+        {
+          "caller": "navigate",
+          "callee": "new Set(v).add",
+          "lineNumber": 149
+        },
+        {
+          "caller": "goBack",
+          "callee": "setIntended",
+          "lineNumber": 154
+        },
+        {
+          "caller": "goBack",
+          "callee": "setStack",
+          "lineNumber": 155
+        },
+        {
+          "caller": "goBack",
+          "callee": "s.slice",
+          "lineNumber": 155
+        },
+        {
+          "caller": "handleLogin",
+          "callee": "setAuth",
+          "lineNumber": 159
+        },
+        {
+          "caller": "handleLogin",
+          "callee": "setIntended",
+          "lineNumber": 161
+        },
+        {
+          "caller": "handleLogin",
+          "callee": "setStack",
+          "lineNumber": 162
+        },
+        {
+          "caller": "handleLogin",
+          "callee": "s.slice",
+          "lineNumber": 162
+        },
+        {
+          "caller": "handleLogin",
+          "callee": "setVisited",
+          "lineNumber": 163
+        },
+        {
+          "caller": "handleLogin",
+          "callee": "new Set(v).add",
+          "lineNumber": 163
+        },
+        {
+          "caller": "handleLogin",
+          "callee": "showToast",
+          "lineNumber": 164
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "showToast",
+          "lineNumber": 168
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "timers.current.push",
+          "lineNumber": 169
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "window.setTimeout",
+          "lineNumber": 169
+        },
+        {
+          "caller": "handleSubmit",
+          "callee": "setStack",
+          "lineNumber": 169
+        },
+        {
+          "caller": "screenStyle",
+          "callee": "stack.indexOf",
+          "lineNumber": 176
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "([\"loggedOut\", \"loggedIn\"] as const).map",
+          "lineNumber": 213
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "setAuth",
+          "lineNumber": 218
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "screenStyle",
+          "lineNumber": 256
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "[\"전체\", \"예술\", \"학술\", \"운동\"].map",
+          "lineNumber": 258
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "MOCK_CLUBS.map",
+          "lineNumber": 272
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "navigate",
+          "lineNumber": 279
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "screenStyle",
+          "lineNumber": 301
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "[\n                        [\"활동 요일\", \"매주 목요일 19시\"],\n                        [\"모집 인원\", \"10명\"],\n                        [\"회비\", \"학기당 30,000원\"],\n                      ].map",
+          "lineNumber": 317
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "navigate",
+          "lineNumber": 333
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "screenStyle",
+          "lineNumber": 342
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "navigate",
+          "lineNumber": 377
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "screenStyle",
+          "lineNumber": 386
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "e.preventDefault",
+          "lineNumber": 390
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "handleSubmit",
+          "lineNumber": 391
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "screenStyle",
+          "lineNumber": 431
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "e.preventDefault",
+          "lineNumber": 449
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "handleLogin",
+          "lineNumber": 450
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "(Object.keys(NODES) as ScreenId[]).map",
+          "lineNumber": 534
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "Object.keys",
+          "lineNumber": 534
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "visited.has",
+          "lineNumber": 537
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "[0, 1, 2].map",
+          "lineNumber": 587
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "ROUTE_LINES.map",
+          "lineNumber": 594
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "data.lines.includes",
+          "lineNumber": 595
+        },
+        {
+          "caller": "UserFlowSection",
+          "callee": "[\n            {slot: \"[IMG-02] · 9:16\", caption: \"실제 상세 화면\"},\n            {slot: \"[IMG-03] · 9:16\", caption: \"실제 모집 공고 화면\"},\n          ].map",
+          "lineNumber": 635
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,4045 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 21,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 21,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 21,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/components/village/NPC.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 618,
+      "nonEmptyLines": 573,
+      "functions": [
+        {
+          "name": "NPCImpl",
+          "startLine": 57,
+          "endLine": 396,
+          "params": [
+            "{\r\n  npc,\r\n  baseNpcState,\r\n  runtimeMood,\r\n  runtimeMemory,\r\n  currentAction,\r\n  behavior,\r\n  bubbleText,\r\n  buildings,\r\n  isActive,\r\n  onPositionChange,\r\n  onSelect,\r\n  scriptedTarget,\r\n  scriptedStart,\r\n  onScriptedArrive,\r\n  forceHold,\r\n  facePoint,\r\n  holdUntil,\r\n  command,\r\n  commandTarget,\r\n  commandSlot,\r\n  commandTotal,\r\n  emote,\r\n  socialTarget\r\n}"
+          ]
+        },
+        {
+          "name": "NpcActionEffect",
+          "startLine": 402,
+          "endLine": 463,
+          "params": [
+            "{\r\n  action,\r\n  color,\r\n  targetName\r\n}"
+          ]
+        },
+        {
+          "name": "renderActionCue",
+          "startLine": 465,
+          "endLine": 576,
+          "params": [
+            "animationKey",
+            "color"
+          ]
+        },
+        {
+          "name": "actionColor",
+          "startLine": 578,
+          "endLine": 590,
+          "params": [
+            "animationKey"
+          ]
+        },
+        {
+          "name": "distanceToTarget",
+          "startLine": 592,
+          "endLine": 596,
+          "params": [
+            "position",
+            "target"
+          ]
+        },
+        {
+          "name": "pickTarget",
+          "startLine": 598,
+          "endLine": 618,
+          "params": [
+            "home",
+            "radius",
+            "buildings"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "NPC",
+          "line": 400,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "NPCImpl",
+          "callee": "useRef",
+          "lineNumber": 82
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useRef",
+          "lineNumber": 83
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useRef",
+          "lineNumber": 85
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useRef",
+          "lineNumber": 86
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useRef",
+          "lineNumber": 87
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useRef",
+          "lineNumber": 88
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useRef",
+          "lineNumber": 89
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useRef",
+          "lineNumber": 90
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useRef",
+          "lineNumber": 91
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useState",
+          "lineNumber": 92
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useMemo",
+          "lineNumber": 97
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "moodLabel",
+          "lineNumber": 106
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "buildings.find",
+          "lineNumber": 110
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useCursor",
+          "lineNumber": 113
+        },
+        {
+          "caller": "settleGround",
+          "callee": "terrainHeightAt",
+          "lineNumber": 121
+        },
+        {
+          "caller": "settleGround",
+          "callee": "Math.min",
+          "lineNumber": 122
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "useFrame",
+          "lineNumber": 126
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sqrt",
+          "lineNumber": 145
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.min",
+          "lineNumber": 147
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.atan2",
+          "lineNumber": 150
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.atan2",
+          "lineNumber": 153
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "onScriptedArrive",
+          "lineNumber": 157
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "settleGround",
+          "lineNumber": 160
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sin",
+          "lineNumber": 160
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "onPositionChange",
+          "lineNumber": 161
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.min",
+          "lineNumber": 171
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "settleGround",
+          "lineNumber": 172
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sin",
+          "lineNumber": 172
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.max",
+          "lineNumber": 186
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.cos",
+          "lineNumber": 189
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sin",
+          "lineNumber": 190
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sqrt",
+          "lineNumber": 202
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.min",
+          "lineNumber": 205
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.atan2",
+          "lineNumber": 208
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "settleGround",
+          "lineNumber": 209
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sin",
+          "lineNumber": 209
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.atan2",
+          "lineNumber": 216
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.atan2",
+          "lineNumber": 218
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sin",
+          "lineNumber": 218
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.cos",
+          "lineNumber": 218
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.min",
+          "lineNumber": 219
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "settleGround",
+          "lineNumber": 222
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.abs",
+          "lineNumber": 222
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sin",
+          "lineNumber": 222
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "settleGround",
+          "lineNumber": 224
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.abs",
+          "lineNumber": 224
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sin",
+          "lineNumber": 224
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "settleGround",
+          "lineNumber": 227
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sin",
+          "lineNumber": 227
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "clock.getElapsedTime",
+          "lineNumber": 231
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "onPositionChange",
+          "lineNumber": 233
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Date.now",
+          "lineNumber": 240
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.atan2",
+          "lineNumber": 245
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.atan2",
+          "lineNumber": 247
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sin",
+          "lineNumber": 247
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.cos",
+          "lineNumber": 247
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.min",
+          "lineNumber": 248
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "settleGround",
+          "lineNumber": 250
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sin",
+          "lineNumber": 250
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "clock.getElapsedTime",
+          "lineNumber": 258
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Boolean",
+          "lineNumber": 259
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "distanceToTarget",
+          "lineNumber": 261
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "pickTarget",
+          "lineNumber": 262
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.random",
+          "lineNumber": 263
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sqrt",
+          "lineNumber": 270
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sqrt",
+          "lineNumber": 277
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.atan2",
+          "lineNumber": 278
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.min",
+          "lineNumber": 282
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "isWalkablePosition",
+          "lineNumber": 286
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.atan2",
+          "lineNumber": 289
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "settleGround",
+          "lineNumber": 298
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "Math.sin",
+          "lineNumber": 298
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "onPositionChange",
+          "lineNumber": 301
+        },
+        {
+          "caller": "handlePointer",
+          "callee": "event.stopPropagation",
+          "lineNumber": 307
+        },
+        {
+          "caller": "handlePointer",
+          "callee": "setHovered",
+          "lineNumber": 308
+        },
+        {
+          "caller": "handleClick",
+          "callee": "event.stopPropagation",
+          "lineNumber": 312
+        },
+        {
+          "caller": "handleClick",
+          "callee": "onSelect",
+          "lineNumber": 313
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "handlePointer",
+          "lineNumber": 320
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "handlePointer",
+          "lineNumber": 321
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "actionColor",
+          "lineNumber": 330
+        },
+        {
+          "caller": "NPCImpl",
+          "callee": "onSelect",
+          "lineNumber": 355
+        },
+        {
+          "caller": "NpcActionEffect",
+          "callee": "useRef",
+          "lineNumber": 411
+        },
+        {
+          "caller": "NpcActionEffect",
+          "callee": "useRef",
+          "lineNumber": 412
+        },
+        {
+          "caller": "NpcActionEffect",
+          "callee": "useFrame",
+          "lineNumber": 414
+        },
+        {
+          "caller": "NpcActionEffect",
+          "callee": "clock.getElapsedTime",
+          "lineNumber": 415
+        },
+        {
+          "caller": "NpcActionEffect",
+          "callee": "Math.sin",
+          "lineNumber": 417
+        },
+        {
+          "caller": "NpcActionEffect",
+          "callee": "pulseRef.current.scale.setScalar",
+          "lineNumber": 418
+        },
+        {
+          "caller": "NpcActionEffect",
+          "callee": "Math.sin",
+          "lineNumber": 422
+        },
+        {
+          "caller": "NpcActionEffect",
+          "callee": "renderActionCue",
+          "lineNumber": 440
+        },
+        {
+          "caller": "renderActionCue",
+          "callee": "[\r\n          [-0.18, 0.02, 0],\r\n          [0.04, 0.16, 0.02],\r\n          [0.22, 0.02, -0.01]\r\n        ].map",
+          "lineNumber": 484
+        },
+        {
+          "caller": "renderActionCue",
+          "callee": "[0.1, 0, -0.1].map",
+          "lineNumber": 505
+        },
+        {
+          "caller": "renderActionCue",
+          "callee": "[-0.28, 0.28].map",
+          "lineNumber": 541
+        },
+        {
+          "caller": "renderActionCue",
+          "callee": "[0.28, 0.44, 0.6].map",
+          "lineNumber": 568
+        },
+        {
+          "caller": "distanceToTarget",
+          "callee": "Math.sqrt",
+          "lineNumber": 595
+        },
+        {
+          "caller": "pickTarget",
+          "callee": "Math.random",
+          "lineNumber": 604
+        },
+        {
+          "caller": "pickTarget",
+          "callee": "Math.random",
+          "lineNumber": 605
+        },
+        {
+          "caller": "pickTarget",
+          "callee": "Math.cos",
+          "lineNumber": 607
+        },
+        {
+          "caller": "pickTarget",
+          "callee": "Math.sin",
+          "lineNumber": 609
+        },
+        {
+          "caller": "pickTarget",
+          "callee": "isWalkablePosition",
+          "lineNumber": 612
+        }
+      ],
+      "metrics": {
+        "importCount": 7,
+        "exportCount": 1,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/village/NpcCharacter.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 161,
+      "nonEmptyLines": 141,
+      "functions": [
+        {
+          "name": "NpcCharacter",
+          "startLine": 27,
+          "endLine": 158,
+          "params": [
+            "{\n  stateRef,\n  modelId = DEFAULT_NPC_MODEL\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "NpcCharacter",
+          "line": 27,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "NpcCharacter",
+          "callee": "useRef",
+          "lineNumber": 34
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "useThree",
+          "lineNumber": 35
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "useGLTF",
+          "lineNumber": 37
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "useMemo",
+          "lineNumber": 53
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "SkeletonUtils.clone",
+          "lineNumber": 54
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "copy.traverse",
+          "lineNumber": 55
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "copy.updateWorldMatrix",
+          "lineNumber": 62
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "new Box3().setFromObject(copy).getSize",
+          "lineNumber": 63
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "new Box3().setFromObject",
+          "lineNumber": 63
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "Number.isFinite",
+          "lineNumber": 68
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "console.warn",
+          "lineNumber": 69
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "height.toFixed",
+          "lineNumber": 69
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "useMemo",
+          "lineNumber": 76
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "used.has",
+          "lineNumber": 83
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "used.add",
+          "lineNumber": 84
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "list.push",
+          "lineNumber": 85
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "classifyClip",
+          "lineNumber": 86
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "buckets[state].push",
+          "lineNumber": 87
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "useAnimations",
+          "lineNumber": 92
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "useRef",
+          "lineNumber": 93
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "useRef",
+          "lineNumber": 94
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "useRef",
+          "lineNumber": 95
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "useRef",
+          "lineNumber": 96
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "useEffect",
+          "lineNumber": 98
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "Object.values",
+          "lineNumber": 100
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "Math.random",
+          "lineNumber": 101
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "Math.random",
+          "lineNumber": 103
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "Math.floor",
+          "lineNumber": 104
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "Math.random",
+          "lineNumber": 104
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "useFrame",
+          "lineNumber": 107
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "innerRef.current.getWorldPosition",
+          "lineNumber": 111
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "_tmp.distanceTo",
+          "lineNumber": 112
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "pool.includes",
+          "lineNumber": 125
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "Math.random",
+          "lineNumber": 132
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "actions[playingRef.current]?.fadeOut",
+          "lineNumber": 142
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "actions[want]\n        ?.reset()\n        .setEffectiveTimeScale(target === \"run\" ? 1.08 : 1)\n        .fadeIn(0.25)\n        .play",
+          "lineNumber": 144
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "actions[want]\n        ?.reset()\n        .setEffectiveTimeScale(target === \"run\" ? 1.08 : 1)\n        .fadeIn",
+          "lineNumber": 144
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "actions[want]\n        ?.reset()\n        .setEffectiveTimeScale",
+          "lineNumber": 144
+        },
+        {
+          "caller": "NpcCharacter",
+          "callee": "actions[want]\n        ?.reset",
+          "lineNumber": 144
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/village/VillageHud.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 887,
+      "nonEmptyLines": 841,
+      "functions": [
+        {
+          "name": "LiveStatusPanel",
+          "startLine": 57,
+          "endLine": 111,
+          "params": [
+            "{error, villageState}"
+          ]
+        },
+        {
+          "name": "NpcQuickDock",
+          "startLine": 113,
+          "endLine": 164,
+          "params": [
+            "{activeNpcId, onSelect}"
+          ]
+        },
+        {
+          "name": "CommandDock",
+          "startLine": 166,
+          "endLine": 276,
+          "params": [
+            "{\n  command,\n  onCommand,\n  onGreet,\n  onGroupTalk,\n  groupTalkBusy,\n  onBackToWork,\n  onOpenRelations\n}"
+          ]
+        },
+        {
+          "name": "GroupChatPanel",
+          "startLine": 278,
+          "endLine": 303,
+          "params": [
+            "{lines, onClose}"
+          ]
+        },
+        {
+          "name": "MobileHud",
+          "startLine": 306,
+          "endLine": 478,
+          "params": [
+            "{\n  activeKey,\n  onTravel,\n  command,\n  onCommand,\n  onGreet,\n  onGroupTalk,\n  groupTalkBusy,\n  onBackToWork,\n  onOpenRelations\n}"
+          ]
+        },
+        {
+          "name": "QuickTravelDock",
+          "startLine": 480,
+          "endLine": 532,
+          "params": [
+            "{activeKey, onTravel}"
+          ]
+        },
+        {
+          "name": "Minimap",
+          "startLine": 534,
+          "endLine": 617,
+          "params": [
+            "{activeKey, onTravel}"
+          ]
+        },
+        {
+          "name": "KonamiBurst",
+          "startLine": 619,
+          "endLine": 646,
+          "params": []
+        },
+        {
+          "name": "ControlsHint",
+          "startLine": 648,
+          "endLine": 667,
+          "params": []
+        },
+        {
+          "name": "EavesdropButton",
+          "startLine": 669,
+          "endLine": 683,
+          "params": [
+            "{aName, bName, onOpen}"
+          ]
+        },
+        {
+          "name": "EavesdropPanel",
+          "startLine": 685,
+          "endLine": 733,
+          "params": [
+            "{\n  aName,\n  bName,\n  lines,\n  onClose\n}"
+          ]
+        },
+        {
+          "name": "EncounterNotice",
+          "startLine": 735,
+          "endLine": 741,
+          "params": [
+            "{text}"
+          ]
+        },
+        {
+          "name": "MilestoneBanner",
+          "startLine": 743,
+          "endLine": 750,
+          "params": [
+            "{text}"
+          ]
+        },
+        {
+          "name": "RelRow",
+          "startLine": 763,
+          "endLine": 775,
+          "params": [
+            "{r}"
+          ]
+        },
+        {
+          "name": "RelationshipViewer",
+          "startLine": 777,
+          "endLine": 887,
+          "params": [
+            "{onClose}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CORE_NPC_IDS",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "TRAVEL_POINTS",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "DISTRICT_TO_TRAVEL_KEY",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "LiveStatusPanel",
+          "line": 57,
+          "isDefault": false
+        },
+        {
+          "name": "NpcQuickDock",
+          "line": 113,
+          "isDefault": false
+        },
+        {
+          "name": "CommandDock",
+          "line": 166,
+          "isDefault": false
+        },
+        {
+          "name": "GroupChatPanel",
+          "line": 278,
+          "isDefault": false
+        },
+        {
+          "name": "MobileHud",
+          "line": 306,
+          "isDefault": false
+        },
+        {
+          "name": "QuickTravelDock",
+          "line": 480,
+          "isDefault": false
+        },
+        {
+          "name": "Minimap",
+          "line": 534,
+          "isDefault": false
+        },
+        {
+          "name": "KonamiBurst",
+          "line": 619,
+          "isDefault": false
+        },
+        {
+          "name": "ControlsHint",
+          "line": 648,
+          "isDefault": false
+        },
+        {
+          "name": "EavesdropButton",
+          "line": 669,
+          "isDefault": false
+        },
+        {
+          "name": "EavesdropPanel",
+          "line": 685,
+          "isDefault": false
+        },
+        {
+          "name": "EncounterNotice",
+          "line": 735,
+          "isDefault": false
+        },
+        {
+          "name": "MilestoneBanner",
+          "line": 743,
+          "isDefault": false
+        },
+        {
+          "name": "RelationshipViewer",
+          "line": 777,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "LiveStatusPanel",
+          "callee": "useState",
+          "lineNumber": 58
+        },
+        {
+          "caller": "LiveStatusPanel",
+          "callee": "useDraggable",
+          "lineNumber": 59
+        },
+        {
+          "caller": "LiveStatusPanel",
+          "callee": "setCollapsed",
+          "lineNumber": 66
+        },
+        {
+          "caller": "NpcQuickDock",
+          "callee": "autonomousNpcs.filter",
+          "lineNumber": 114
+        },
+        {
+          "caller": "NpcQuickDock",
+          "callee": "CORE_NPC_IDS.has",
+          "lineNumber": 114
+        },
+        {
+          "caller": "NpcQuickDock",
+          "callee": "useState",
+          "lineNumber": 115
+        },
+        {
+          "caller": "NpcQuickDock",
+          "callee": "useDraggable",
+          "lineNumber": 116
+        },
+        {
+          "caller": "NpcQuickDock",
+          "callee": "setCollapsed",
+          "lineNumber": 125
+        },
+        {
+          "caller": "NpcQuickDock",
+          "callee": "setCollapsed",
+          "lineNumber": 137
+        },
+        {
+          "caller": "NpcQuickDock",
+          "callee": "coreNpcs.map",
+          "lineNumber": 144
+        },
+        {
+          "caller": "NpcQuickDock",
+          "callee": "onSelect",
+          "lineNumber": 152
+        },
+        {
+          "caller": "CommandDock",
+          "callee": "useState",
+          "lineNumber": 183
+        },
+        {
+          "caller": "CommandDock",
+          "callee": "useDraggable",
+          "lineNumber": 184
+        },
+        {
+          "caller": "CommandDock",
+          "callee": "setCollapsed",
+          "lineNumber": 200
+        },
+        {
+          "caller": "CommandDock",
+          "callee": "setCollapsed",
+          "lineNumber": 212
+        },
+        {
+          "caller": "CommandDock",
+          "callee": "modes.map",
+          "lineNumber": 218
+        },
+        {
+          "caller": "CommandDock",
+          "callee": "onCommand",
+          "lineNumber": 224
+        },
+        {
+          "caller": "GroupChatPanel",
+          "callee": "lines.map",
+          "lineNumber": 294
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "useState",
+          "lineNumber": 327
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "useState",
+          "lineNumber": 328
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "villageBuildings.map",
+          "lineNumber": 340
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "villageBuildings.map",
+          "lineNumber": 341
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "Math.min",
+          "lineNumber": 342
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "Math.max",
+          "lineNumber": 343
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "Math.min",
+          "lineNumber": 344
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "Math.max",
+          "lineNumber": 345
+        },
+        {
+          "caller": "colorOf",
+          "callee": "TRAVEL_POINTS.find",
+          "lineNumber": 348
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "TRAVEL_POINTS.map((point) => {\n    const members = villageBuildings.filter((b) => (DISTRICT_TO_TRAVEL_KEY[b.district] ?? \"intro\") === point.key);\n    if (members.length === 0) return null;\n    const cx = members.reduce((sum, b) => sum + b.position[0], 0) / members.length;\n    const cz = members.reduce((sum, b) => sum + b.position[2], 0) / members.length;\n    return {point, x: sx(cx), y: sy(cz)};\n  }).filter",
+          "lineNumber": 349
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "TRAVEL_POINTS.map",
+          "lineNumber": 349
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "villageBuildings.filter",
+          "lineNumber": 350
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "members.reduce",
+          "lineNumber": 352
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "members.reduce",
+          "lineNumber": 353
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "sx",
+          "lineNumber": 354
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "sy",
+          "lineNumber": 354
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "setOpen",
+          "lineNumber": 366
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "setOpen",
+          "lineNumber": 375
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "([\n                {id: \"travel\", label: \"🧭 이동\"},\n                {id: \"command\", label: \"🎮 지휘\"},\n                {id: \"map\", label: \"🗺️ 지도\"}\n              ] as const).map",
+          "lineNumber": 379
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "setTab",
+          "lineNumber": 387
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "setOpen",
+          "lineNumber": 397
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "TRAVEL_POINTS.map",
+          "lineNumber": 404
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "onTravel",
+          "lineNumber": 409
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "setOpen",
+          "lineNumber": 410
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "chip",
+          "lineNumber": 412
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "modes.map",
+          "lineNumber": 421
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "onCommand",
+          "lineNumber": 422
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "chip",
+          "lineNumber": 422
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "chip",
+          "lineNumber": 426
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "chip",
+          "lineNumber": 429
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "onOpenRelations",
+          "lineNumber": 432
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "setOpen",
+          "lineNumber": 432
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "chip",
+          "lineNumber": 432
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "villageBuildings.map",
+          "lineNumber": 451
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "sx",
+          "lineNumber": 455
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "sy",
+          "lineNumber": 455
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "colorOf",
+          "lineNumber": 455
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "centroids.map",
+          "lineNumber": 458
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "onTravel",
+          "lineNumber": 460
+        },
+        {
+          "caller": "MobileHud",
+          "callee": "setOpen",
+          "lineNumber": 461
+        },
+        {
+          "caller": "QuickTravelDock",
+          "callee": "useState",
+          "lineNumber": 481
+        },
+        {
+          "caller": "QuickTravelDock",
+          "callee": "useDraggable",
+          "lineNumber": 482
+        },
+        {
+          "caller": "QuickTravelDock",
+          "callee": "setCollapsed",
+          "lineNumber": 491
+        },
+        {
+          "caller": "QuickTravelDock",
+          "callee": "setCollapsed",
+          "lineNumber": 503
+        },
+        {
+          "caller": "QuickTravelDock",
+          "callee": "TRAVEL_POINTS.map",
+          "lineNumber": 509
+        },
+        {
+          "caller": "QuickTravelDock",
+          "callee": "onTravel",
+          "lineNumber": 515
+        },
+        {
+          "caller": "Minimap",
+          "callee": "useState",
+          "lineNumber": 535
+        },
+        {
+          "caller": "Minimap",
+          "callee": "useDraggable",
+          "lineNumber": 536
+        },
+        {
+          "caller": "Minimap",
+          "callee": "villageBuildings.map",
+          "lineNumber": 541
+        },
+        {
+          "caller": "Minimap",
+          "callee": "villageBuildings.map",
+          "lineNumber": 542
+        },
+        {
+          "caller": "Minimap",
+          "callee": "Math.min",
+          "lineNumber": 543
+        },
+        {
+          "caller": "Minimap",
+          "callee": "Math.max",
+          "lineNumber": 544
+        },
+        {
+          "caller": "Minimap",
+          "callee": "Math.min",
+          "lineNumber": 545
+        },
+        {
+          "caller": "Minimap",
+          "callee": "Math.max",
+          "lineNumber": 546
+        },
+        {
+          "caller": "colorOf",
+          "callee": "TRAVEL_POINTS.find",
+          "lineNumber": 549
+        },
+        {
+          "caller": "Minimap",
+          "callee": "TRAVEL_POINTS.map((point) => {\n    const members = villageBuildings.filter((b) => (DISTRICT_TO_TRAVEL_KEY[b.district] ?? \"intro\") === point.key);\n    if (members.length === 0) return null;\n    const cx = members.reduce((sum, b) => sum + b.position[0], 0) / members.length;\n    const cz = members.reduce((sum, b) => sum + b.position[2], 0) / members.length;\n    return {point, x: sx(cx), y: sy(cz)};\n  }).filter",
+          "lineNumber": 552
+        },
+        {
+          "caller": "Minimap",
+          "callee": "TRAVEL_POINTS.map",
+          "lineNumber": 552
+        },
+        {
+          "caller": "Minimap",
+          "callee": "villageBuildings.filter",
+          "lineNumber": 553
+        },
+        {
+          "caller": "Minimap",
+          "callee": "members.reduce",
+          "lineNumber": 555
+        },
+        {
+          "caller": "Minimap",
+          "callee": "members.reduce",
+          "lineNumber": 556
+        },
+        {
+          "caller": "Minimap",
+          "callee": "sx",
+          "lineNumber": 557
+        },
+        {
+          "caller": "Minimap",
+          "callee": "sy",
+          "lineNumber": 557
+        },
+        {
+          "caller": "Minimap",
+          "callee": "setCollapsed",
+          "lineNumber": 567
+        },
+        {
+          "caller": "Minimap",
+          "callee": "setCollapsed",
+          "lineNumber": 581
+        },
+        {
+          "caller": "Minimap",
+          "callee": "villageBuildings.map",
+          "lineNumber": 588
+        },
+        {
+          "caller": "Minimap",
+          "callee": "sx",
+          "lineNumber": 594
+        },
+        {
+          "caller": "Minimap",
+          "callee": "sy",
+          "lineNumber": 595
+        },
+        {
+          "caller": "Minimap",
+          "callee": "colorOf",
+          "lineNumber": 597
+        },
+        {
+          "caller": "Minimap",
+          "callee": "centroids.map",
+          "lineNumber": 602
+        },
+        {
+          "caller": "Minimap",
+          "callee": "onTravel",
+          "lineNumber": 605
+        },
+        {
+          "caller": "KonamiBurst",
+          "callee": "Array.from",
+          "lineNumber": 621
+        },
+        {
+          "caller": "KonamiBurst",
+          "callee": "pieces.map",
+          "lineNumber": 631
+        },
+        {
+          "caller": "ControlsHint",
+          "callee": "useState",
+          "lineNumber": 649
+        },
+        {
+          "caller": "ControlsHint",
+          "callee": "useEffect",
+          "lineNumber": 651
+        },
+        {
+          "caller": "ControlsHint",
+          "callee": "setTimeout",
+          "lineNumber": 652
+        },
+        {
+          "caller": "ControlsHint",
+          "callee": "setShow",
+          "lineNumber": 652
+        },
+        {
+          "caller": "ControlsHint",
+          "callee": "clearTimeout",
+          "lineNumber": 653
+        },
+        {
+          "caller": "EavesdropPanel",
+          "callee": "lines.map",
+          "lineNumber": 711
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "useState",
+          "lineNumber": 778
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "useState",
+          "lineNumber": 779
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "useEffect",
+          "lineNumber": 781
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "fetchRelationships()\n      .then((r) => {\n        if (!ignore) setRels(r);\n      })\n      .catch",
+          "lineNumber": 783
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "fetchRelationships()\n      .then",
+          "lineNumber": 783
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "fetchRelationships",
+          "lineNumber": 783
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "setRels",
+          "lineNumber": 785
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "setErr",
+          "lineNumber": 788
+        },
+        {
+          "caller": "posOf",
+          "callee": "ring.indexOf",
+          "lineNumber": 803
+        },
+        {
+          "caller": "posOf",
+          "callee": "Math.cos",
+          "lineNumber": 806
+        },
+        {
+          "caller": "posOf",
+          "callee": "Math.sin",
+          "lineNumber": 806
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "(rels ?? []).slice().sort",
+          "lineNumber": 810
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "(rels ?? []).slice",
+          "lineNumber": 810
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "sorted.filter((r) => r.affinity >= 6).slice",
+          "lineNumber": 811
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "sorted.filter",
+          "lineNumber": 811
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "sorted.filter((r) => r.affinity <= -6).slice(-2).reverse",
+          "lineNumber": 812
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "sorted.filter((r) => r.affinity <= -6).slice",
+          "lineNumber": 812
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "sorted.filter",
+          "lineNumber": 812
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "e.stopPropagation",
+          "lineNumber": 818
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "rels.map",
+          "lineNumber": 835
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "posOf",
+          "lineNumber": 836
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "posOf",
+          "lineNumber": 837
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "edgeColor",
+          "lineNumber": 845
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "Math.min",
+          "lineNumber": 846
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "Math.abs",
+          "lineNumber": 846
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "allKinds.map",
+          "lineNumber": 852
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "posOf",
+          "lineNumber": 853
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "top.map",
+          "lineNumber": 872
+        },
+        {
+          "caller": "RelationshipViewer",
+          "callee": "bottom.map",
+          "lineNumber": 875
+        }
+      ],
+      "metrics": {
+        "importCount": 7,
+        "exportCount": 17,
+        "functionCount": 15,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/village/WarriorCharacter.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 73,
+      "nonEmptyLines": 63,
+      "functions": [
+        {
+          "name": "WarriorCharacter",
+          "startLine": 21,
+          "endLine": 70,
+          "params": [
+            "{stateRef}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "WarriorCharacter",
+          "line": 21,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "WarriorCharacter",
+          "callee": "useRef",
+          "lineNumber": 22
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "useGLTF",
+          "lineNumber": 23
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "useGLTF",
+          "lineNumber": 24
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "useMemo",
+          "lineNumber": 27
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "walkAnims[0].clone",
+          "lineNumber": 30
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "out.push",
+          "lineNumber": 32
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "runAnims[0].clone",
+          "lineNumber": 35
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "out.push",
+          "lineNumber": 37
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "useAnimations",
+          "lineNumber": 42
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "useRef",
+          "lineNumber": 43
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "useEffect",
+          "lineNumber": 45
+        },
+        {
+          "caller": "tick",
+          "callee": "actions[prev]?.fadeOut",
+          "lineNumber": 52
+        },
+        {
+          "caller": "tick",
+          "callee": "act.reset().setEffectiveTimeScale(target === \"run\" ? 1.1 : 1).fadeIn(0.18).play",
+          "lineNumber": 55
+        },
+        {
+          "caller": "tick",
+          "callee": "act.reset().setEffectiveTimeScale(target === \"run\" ? 1.1 : 1).fadeIn",
+          "lineNumber": 55
+        },
+        {
+          "caller": "tick",
+          "callee": "act.reset().setEffectiveTimeScale",
+          "lineNumber": 55
+        },
+        {
+          "caller": "tick",
+          "callee": "act.reset",
+          "lineNumber": 55
+        },
+        {
+          "caller": "tick",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 59
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 61
+        },
+        {
+          "caller": "WarriorCharacter",
+          "callee": "cancelAnimationFrame",
+          "lineNumber": 62
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/data/characterModels.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 70,
+      "nonEmptyLines": 60,
+      "functions": [
+        {
+          "name": "classifyClip",
+          "startLine": 57,
+          "endLine": 70,
+          "params": [
+            "name",
+            "overrides"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "MESHY_HEIGHT",
+          "line": 26,
+          "isDefault": false
+        },
+        {
+          "name": "NPC_HEIGHT",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "characterModels",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "DEFAULT_NPC_MODEL",
+          "line": 49,
+          "isDefault": false
+        },
+        {
+          "name": "classifyClip",
+          "line": 57,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "classifyClip",
+          "callee": "name.toLowerCase",
+          "lineNumber": 58
+        },
+        {
+          "caller": "classifyClip",
+          "callee": "overrides[state]?.some",
+          "lineNumber": 62
+        },
+        {
+          "caller": "classifyClip",
+          "callee": "lower.includes",
+          "lineNumber": 62
+        },
+        {
+          "caller": "classifyClip",
+          "callee": "pattern.toLowerCase",
+          "lineNumber": 62
+        },
+        {
+          "caller": "classifyClip",
+          "callee": "lower.includes",
+          "lineNumber": 66
+        },
+        {
+          "caller": "classifyClip",
+          "callee": "lower.includes",
+          "lineNumber": 67
+        },
+        {
+          "caller": "classifyClip",
+          "callee": "lower.includes",
+          "lineNumber": 68
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 5,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/data/experience.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 24,
+      "nonEmptyLines": 23,
+      "exports": [
+        {
+          "name": "experienceItems",
+          "line": 5,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/data/links.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 19,
+      "nonEmptyLines": 18,
+      "exports": [
+        {
+          "name": "portfolioLinks",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/data/npcActions.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 187,
+      "nonEmptyLines": 182,
+      "functions": [
+        {
+          "name": "getNpcActions",
+          "startLine": 178,
+          "endLine": 187,
+          "params": [
+            "npcId"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "npcActions",
+          "line": 3,
+          "isDefault": false
+        },
+        {
+          "name": "getNpcActions",
+          "line": 178,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getNpcActions",
+          "callee": "npcActions.filter",
+          "lineNumber": 179
+        },
+        {
+          "caller": "getNpcActions",
+          "callee": "Object.entries(dynamicNpcFallback).find",
+          "lineNumber": 182
+        },
+        {
+          "caller": "getNpcActions",
+          "callee": "Object.entries",
+          "lineNumber": 182
+        },
+        {
+          "caller": "getNpcActions",
+          "callee": "npcId.includes",
+          "lineNumber": 182
+        },
+        {
+          "caller": "getNpcActions",
+          "callee": "npcActions.filter",
+          "lineNumber": 183
+        },
+        {
+          "caller": "getNpcActions",
+          "callee": "npcActions.find",
+          "lineNumber": 185
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/data/npcBehaviors.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 81,
+      "nonEmptyLines": 76,
+      "exports": [
+        {
+          "name": "npcBehaviorProfiles",
+          "line": 78,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/data/npcChatter.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 61,
+      "nonEmptyLines": 54,
+      "functions": [
+        {
+          "name": "pickRandom",
+          "startLine": 32,
+          "endLine": 34,
+          "params": [
+            "list"
+          ]
+        },
+        {
+          "name": "canonKind",
+          "startLine": 37,
+          "endLine": 46,
+          "params": [
+            "npcId"
+          ]
+        },
+        {
+          "name": "pairGag",
+          "startLine": 57,
+          "endLine": 61,
+          "params": [
+            "aId",
+            "bId"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "NPC_EMOTES",
+          "line": 4,
+          "isDefault": false
+        },
+        {
+          "name": "NPC_SMALL_TALK",
+          "line": 7,
+          "isDefault": false
+        },
+        {
+          "name": "OVERSEER_GREETINGS",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "pickRandom",
+          "line": 32,
+          "isDefault": false
+        },
+        {
+          "name": "canonKind",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "pairGag",
+          "line": 57,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "pickRandom",
+          "callee": "Math.floor",
+          "lineNumber": 33
+        },
+        {
+          "caller": "pickRandom",
+          "callee": "Math.random",
+          "lineNumber": 33
+        },
+        {
+          "caller": "canonKind",
+          "callee": "npcId.includes",
+          "lineNumber": 38
+        },
+        {
+          "caller": "canonKind",
+          "callee": "npcId.includes",
+          "lineNumber": 39
+        },
+        {
+          "caller": "canonKind",
+          "callee": "npcId.includes",
+          "lineNumber": 40
+        },
+        {
+          "caller": "canonKind",
+          "callee": "npcId.endsWith",
+          "lineNumber": 40
+        },
+        {
+          "caller": "canonKind",
+          "callee": "npcId.includes",
+          "lineNumber": 42
+        },
+        {
+          "caller": "canonKind",
+          "callee": "npcId.includes",
+          "lineNumber": 43
+        },
+        {
+          "caller": "canonKind",
+          "callee": "npcId.includes",
+          "lineNumber": 44
+        },
+        {
+          "caller": "canonKind",
+          "callee": "npcId.includes",
+          "lineNumber": 44
+        },
+        {
+          "caller": "pairGag",
+          "callee": "[canonKind(aId), canonKind(bId)].sort().join",
+          "lineNumber": 58
+        },
+        {
+          "caller": "pairGag",
+          "callee": "[canonKind(aId), canonKind(bId)].sort",
+          "lineNumber": 58
+        },
+        {
+          "caller": "pairGag",
+          "callee": "canonKind",
+          "lineNumber": 58
+        },
+        {
+          "caller": "pairGag",
+          "callee": "canonKind",
+          "lineNumber": 58
+        },
+        {
+          "caller": "pairGag",
+          "callee": "Math.floor",
+          "lineNumber": 60
+        },
+        {
+          "caller": "pairGag",
+          "callee": "Math.random",
+          "lineNumber": 60
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/data/npcRoster.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 342,
+      "nonEmptyLines": 329,
+      "functions": [
+        {
+          "name": "sectionToAgent",
+          "startLine": 243,
+          "endLine": 289,
+          "params": [
+            "sectionId",
+            "buildingName",
+            "type"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "autonomousNpcs",
+          "line": 291,
+          "isDefault": false
+        },
+        {
+          "name": "npcDefaultPresetQuestions",
+          "line": 342,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/data/projects.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 337,
+      "nonEmptyLines": 336,
+      "exports": [
+        {
+          "name": "projects",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/data/skills.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 74,
+      "nonEmptyLines": 73,
+      "exports": [
+        {
+          "name": "skills",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/lib/constants.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 639,
+      "nonEmptyLines": 621,
+      "functions": [
+        {
+          "name": "spread",
+          "startLine": 517,
+          "endLine": 519,
+          "params": [
+            "p"
+          ]
+        },
+        {
+          "name": "applyDistrictOffset",
+          "startLine": 554,
+          "endLine": 563,
+          "params": [
+            "position",
+            "district"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "sectionMeta",
+          "line": 3,
+          "isDefault": false
+        },
+        {
+          "name": "SPREAD",
+          "line": 516,
+          "isDefault": false
+        },
+        {
+          "name": "spread",
+          "line": 517,
+          "isDefault": false
+        },
+        {
+          "name": "villageBuildings",
+          "line": 576,
+          "isDefault": false
+        },
+        {
+          "name": "treePositions",
+          "line": 586,
+          "isDefault": false
+        },
+        {
+          "name": "rockPositions",
+          "line": 607,
+          "isDefault": false
+        },
+        {
+          "name": "cameraTargets",
+          "line": 628,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "spread",
+          "callee": "Math.round",
+          "lineNumber": 518
+        },
+        {
+          "caller": "spread",
+          "callee": "Math.round",
+          "lineNumber": 518
+        },
+        {
+          "caller": "applyDistrictOffset",
+          "callee": "Math.hypot",
+          "lineNumber": 557
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 7,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/lib/liveApi.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 282,
+      "nonEmptyLines": 239,
+      "functions": [
+        {
+          "name": "setAdminToken",
+          "startLine": 36,
+          "endLine": 41,
+          "params": [
+            "token"
+          ]
+        },
+        {
+          "name": "hasAdminToken",
+          "startLine": 43,
+          "endLine": 45,
+          "params": []
+        },
+        {
+          "name": "requestJson",
+          "startLine": 58,
+          "endLine": 80,
+          "params": [
+            "path",
+            "init"
+          ]
+        },
+        {
+          "name": "fetchVillageState",
+          "startLine": 82,
+          "endLine": 84,
+          "params": []
+        },
+        {
+          "name": "fetchTodayActivity",
+          "startLine": 86,
+          "endLine": 88,
+          "params": []
+        },
+        {
+          "name": "saveActivity",
+          "startLine": 90,
+          "endLine": 95,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "fetchAdminAuthStatus",
+          "startLine": 97,
+          "endLine": 99,
+          "params": []
+        },
+        {
+          "name": "loginAdmin",
+          "startLine": 101,
+          "endLine": 108,
+          "params": [
+            "password"
+          ]
+        },
+        {
+          "name": "fetchActivityHistory",
+          "startLine": 110,
+          "endLine": 112,
+          "params": [
+            "days"
+          ]
+        },
+        {
+          "name": "syncGithubActivity",
+          "startLine": 114,
+          "endLine": 118,
+          "params": []
+        },
+        {
+          "name": "sendNpcMessage",
+          "startLine": 120,
+          "endLine": 129,
+          "params": [
+            "npcId",
+            "message",
+            "recentMessages"
+          ]
+        },
+        {
+          "name": "requestNpcTick",
+          "startLine": 131,
+          "endLine": 136,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "requestNpcEncounter",
+          "startLine": 138,
+          "endLine": 147,
+          "params": [
+            "npcA",
+            "npcB",
+            "recentMemory"
+          ]
+        },
+        {
+          "name": "fetchRelationships",
+          "startLine": 149,
+          "endLine": 151,
+          "params": []
+        },
+        {
+          "name": "requestGroupChat",
+          "startLine": 153,
+          "endLine": 158,
+          "params": [
+            "npcIds",
+            "recentMemory"
+          ]
+        },
+        {
+          "name": "logVisitorEvent",
+          "startLine": 160,
+          "endLine": 171,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "trackVisitorEvent",
+          "startLine": 173,
+          "endLine": 175,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "fetchAdminOverview",
+          "startLine": 177,
+          "endLine": 179,
+          "params": []
+        },
+        {
+          "name": "fetchAdminAnalytics",
+          "startLine": 181,
+          "endLine": 183,
+          "params": []
+        },
+        {
+          "name": "fetchManagedProjects",
+          "startLine": 185,
+          "endLine": 187,
+          "params": []
+        },
+        {
+          "name": "updateManagedProject",
+          "startLine": 189,
+          "endLine": 194,
+          "params": [
+            "projectId",
+            "payload"
+          ]
+        },
+        {
+          "name": "fetchNpcLogs",
+          "startLine": 196,
+          "endLine": 198,
+          "params": []
+        },
+        {
+          "name": "fetchNpcPresets",
+          "startLine": 200,
+          "endLine": 202,
+          "params": []
+        },
+        {
+          "name": "updateNpcPreset",
+          "startLine": 204,
+          "endLine": 209,
+          "params": [
+            "npcId",
+            "payload"
+          ]
+        },
+        {
+          "name": "fetchVillageOverrides",
+          "startLine": 211,
+          "endLine": 213,
+          "params": []
+        },
+        {
+          "name": "updateVillageOverride",
+          "startLine": 215,
+          "endLine": 223,
+          "params": [
+            "buildingId",
+            "payload"
+          ]
+        },
+        {
+          "name": "fetchCodingTests",
+          "startLine": 225,
+          "endLine": 227,
+          "params": []
+        },
+        {
+          "name": "createCodingTest",
+          "startLine": 229,
+          "endLine": 234,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "updateCodingTest",
+          "startLine": 236,
+          "endLine": 241,
+          "params": [
+            "logId",
+            "payload"
+          ]
+        },
+        {
+          "name": "deleteCodingTest",
+          "startLine": 243,
+          "endLine": 245,
+          "params": [
+            "logId"
+          ]
+        },
+        {
+          "name": "fetchCsNotes",
+          "startLine": 247,
+          "endLine": 249,
+          "params": []
+        },
+        {
+          "name": "createCsNote",
+          "startLine": 251,
+          "endLine": 256,
+          "params": [
+            "payload"
+          ]
+        },
+        {
+          "name": "updateCsNote",
+          "startLine": 258,
+          "endLine": 263,
+          "params": [
+            "noteId",
+            "payload"
+          ]
+        },
+        {
+          "name": "deleteCsNote",
+          "startLine": 265,
+          "endLine": 267,
+          "params": [
+            "noteId"
+          ]
+        },
+        {
+          "name": "getVisitorSessionId",
+          "startLine": 269,
+          "endLine": 282,
+          "params": []
+        }
+      ],
+      "classes": [
+        {
+          "name": "ApiError",
+          "startLine": 47,
+          "endLine": 56,
+          "methods": [
+            "constructor"
+          ],
+          "properties": [
+            "status",
+            "detail"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "setAdminToken",
+          "line": 36,
+          "isDefault": false
+        },
+        {
+          "name": "hasAdminToken",
+          "line": 43,
+          "isDefault": false
+        },
+        {
+          "name": "ApiError",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "fetchVillageState",
+          "line": 82,
+          "isDefault": false
+        },
+        {
+          "name": "fetchTodayActivity",
+          "line": 86,
+          "isDefault": false
+        },
+        {
+          "name": "saveActivity",
+          "line": 90,
+          "isDefault": false
+        },
+        {
+          "name": "fetchAdminAuthStatus",
+          "line": 97,
+          "isDefault": false
+        },
+        {
+          "name": "loginAdmin",
+          "line": 101,
+          "isDefault": false
+        },
+        {
+          "name": "fetchActivityHistory",
+          "line": 110,
+          "isDefault": false
+        },
+        {
+          "name": "syncGithubActivity",
+          "line": 114,
+          "isDefault": false
+        },
+        {
+          "name": "sendNpcMessage",
+          "line": 120,
+          "isDefault": false
+        },
+        {
+          "name": "requestNpcTick",
+          "line": 131,
+          "isDefault": false
+        },
+        {
+          "name": "requestNpcEncounter",
+          "line": 138,
+          "isDefault": false
+        },
+        {
+          "name": "fetchRelationships",
+          "line": 149,
+          "isDefault": false
+        },
+        {
+          "name": "requestGroupChat",
+          "line": 153,
+          "isDefault": false
+        },
+        {
+          "name": "logVisitorEvent",
+          "line": 160,
+          "isDefault": false
+        },
+        {
+          "name": "trackVisitorEvent",
+          "line": 173,
+          "isDefault": false
+        },
+        {
+          "name": "fetchAdminOverview",
+          "line": 177,
+          "isDefault": false
+        },
+        {
+          "name": "fetchAdminAnalytics",
+          "line": 181,
+          "isDefault": false
+        },
+        {
+          "name": "fetchManagedProjects",
+          "line": 185,
+          "isDefault": false
+        },
+        {
+          "name": "updateManagedProject",
+          "line": 189,
+          "isDefault": false
+        },
+        {
+          "name": "fetchNpcLogs",
+          "line": 196,
+          "isDefault": false
+        },
+        {
+          "name": "fetchNpcPresets",
+          "line": 200,
+          "isDefault": false
+        },
+        {
+          "name": "updateNpcPreset",
+          "line": 204,
+          "isDefault": false
+        },
+        {
+          "name": "fetchVillageOverrides",
+          "line": 211,
+          "isDefault": false
+        },
+        {
+          "name": "updateVillageOverride",
+          "line": 215,
+          "isDefault": false
+        },
+        {
+          "name": "fetchCodingTests",
+          "line": 225,
+          "isDefault": false
+        },
+        {
+          "name": "createCodingTest",
+          "line": 229,
+          "isDefault": false
+        },
+        {
+          "name": "updateCodingTest",
+          "line": 236,
+          "isDefault": false
+        },
+        {
+          "name": "deleteCodingTest",
+          "line": 243,
+          "isDefault": false
+        },
+        {
+          "name": "fetchCsNotes",
+          "line": 247,
+          "isDefault": false
+        },
+        {
+          "name": "createCsNote",
+          "line": 251,
+          "isDefault": false
+        },
+        {
+          "name": "updateCsNote",
+          "line": 258,
+          "isDefault": false
+        },
+        {
+          "name": "deleteCsNote",
+          "line": 265,
+          "isDefault": false
+        },
+        {
+          "name": "getVisitorSessionId",
+          "line": 269,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "setAdminToken",
+          "callee": "window.localStorage.setItem",
+          "lineNumber": 39
+        },
+        {
+          "caller": "setAdminToken",
+          "callee": "window.localStorage.removeItem",
+          "lineNumber": 40
+        },
+        {
+          "caller": "constructor",
+          "callee": "super",
+          "lineNumber": 52
+        },
+        {
+          "caller": "requestJson",
+          "callee": "fetch",
+          "lineNumber": 59
+        },
+        {
+          "caller": "requestJson",
+          "callee": "response.json",
+          "lineNumber": 71
+        },
+        {
+          "caller": "requestJson",
+          "callee": "response.json",
+          "lineNumber": 79
+        },
+        {
+          "caller": "fetchVillageState",
+          "callee": "requestJson",
+          "lineNumber": 83
+        },
+        {
+          "caller": "fetchTodayActivity",
+          "callee": "requestJson",
+          "lineNumber": 87
+        },
+        {
+          "caller": "saveActivity",
+          "callee": "requestJson",
+          "lineNumber": 91
+        },
+        {
+          "caller": "saveActivity",
+          "callee": "JSON.stringify",
+          "lineNumber": 93
+        },
+        {
+          "caller": "fetchAdminAuthStatus",
+          "callee": "requestJson",
+          "lineNumber": 98
+        },
+        {
+          "caller": "loginAdmin",
+          "callee": "await requestJson",
+          "lineNumber": 102
+        },
+        {
+          "caller": "loginAdmin",
+          "callee": "JSON.stringify",
+          "lineNumber": 104
+        },
+        {
+          "caller": "loginAdmin",
+          "callee": "setAdminToken",
+          "lineNumber": 106
+        },
+        {
+          "caller": "fetchActivityHistory",
+          "callee": "requestJson",
+          "lineNumber": 111
+        },
+        {
+          "caller": "syncGithubActivity",
+          "callee": "requestJson",
+          "lineNumber": 115
+        },
+        {
+          "caller": "sendNpcMessage",
+          "callee": "requestJson",
+          "lineNumber": 125
+        },
+        {
+          "caller": "sendNpcMessage",
+          "callee": "JSON.stringify",
+          "lineNumber": 127
+        },
+        {
+          "caller": "sendNpcMessage",
+          "callee": "recentMessages.slice",
+          "lineNumber": 127
+        },
+        {
+          "caller": "requestNpcTick",
+          "callee": "requestJson",
+          "lineNumber": 132
+        },
+        {
+          "caller": "requestNpcTick",
+          "callee": "JSON.stringify",
+          "lineNumber": 134
+        },
+        {
+          "caller": "requestNpcEncounter",
+          "callee": "requestJson",
+          "lineNumber": 143
+        },
+        {
+          "caller": "requestNpcEncounter",
+          "callee": "JSON.stringify",
+          "lineNumber": 145
+        },
+        {
+          "caller": "fetchRelationships",
+          "callee": "requestJson",
+          "lineNumber": 150
+        },
+        {
+          "caller": "requestGroupChat",
+          "callee": "requestJson",
+          "lineNumber": 154
+        },
+        {
+          "caller": "requestGroupChat",
+          "callee": "JSON.stringify",
+          "lineNumber": 156
+        },
+        {
+          "caller": "requestGroupChat",
+          "callee": "recentMemory.slice",
+          "lineNumber": 156
+        },
+        {
+          "caller": "logVisitorEvent",
+          "callee": "requestJson",
+          "lineNumber": 161
+        },
+        {
+          "caller": "logVisitorEvent",
+          "callee": "JSON.stringify",
+          "lineNumber": 163
+        },
+        {
+          "caller": "logVisitorEvent",
+          "callee": "getVisitorSessionId",
+          "lineNumber": 167
+        },
+        {
+          "caller": "trackVisitorEvent",
+          "callee": "logVisitorEvent(payload).catch",
+          "lineNumber": 174
+        },
+        {
+          "caller": "trackVisitorEvent",
+          "callee": "logVisitorEvent",
+          "lineNumber": 174
+        },
+        {
+          "caller": "fetchAdminOverview",
+          "callee": "requestJson",
+          "lineNumber": 178
+        },
+        {
+          "caller": "fetchAdminAnalytics",
+          "callee": "requestJson",
+          "lineNumber": 182
+        },
+        {
+          "caller": "fetchManagedProjects",
+          "callee": "requestJson",
+          "lineNumber": 186
+        },
+        {
+          "caller": "updateManagedProject",
+          "callee": "requestJson",
+          "lineNumber": 190
+        },
+        {
+          "caller": "updateManagedProject",
+          "callee": "encodeURIComponent",
+          "lineNumber": 190
+        },
+        {
+          "caller": "updateManagedProject",
+          "callee": "JSON.stringify",
+          "lineNumber": 192
+        },
+        {
+          "caller": "fetchNpcLogs",
+          "callee": "requestJson",
+          "lineNumber": 197
+        },
+        {
+          "caller": "fetchNpcPresets",
+          "callee": "requestJson",
+          "lineNumber": 201
+        },
+        {
+          "caller": "updateNpcPreset",
+          "callee": "requestJson",
+          "lineNumber": 205
+        },
+        {
+          "caller": "updateNpcPreset",
+          "callee": "encodeURIComponent",
+          "lineNumber": 205
+        },
+        {
+          "caller": "updateNpcPreset",
+          "callee": "JSON.stringify",
+          "lineNumber": 207
+        },
+        {
+          "caller": "fetchVillageOverrides",
+          "callee": "requestJson",
+          "lineNumber": 212
+        },
+        {
+          "caller": "updateVillageOverride",
+          "callee": "requestJson",
+          "lineNumber": 219
+        },
+        {
+          "caller": "updateVillageOverride",
+          "callee": "encodeURIComponent",
+          "lineNumber": 219
+        },
+        {
+          "caller": "updateVillageOverride",
+          "callee": "JSON.stringify",
+          "lineNumber": 221
+        },
+        {
+          "caller": "fetchCodingTests",
+          "callee": "requestJson",
+          "lineNumber": 226
+        },
+        {
+          "caller": "createCodingTest",
+          "callee": "requestJson",
+          "lineNumber": 230
+        },
+        {
+          "caller": "createCodingTest",
+          "callee": "JSON.stringify",
+          "lineNumber": 232
+        },
+        {
+          "caller": "updateCodingTest",
+          "callee": "requestJson",
+          "lineNumber": 237
+        },
+        {
+          "caller": "updateCodingTest",
+          "callee": "JSON.stringify",
+          "lineNumber": 239
+        },
+        {
+          "caller": "deleteCodingTest",
+          "callee": "requestJson",
+          "lineNumber": 244
+        },
+        {
+          "caller": "fetchCsNotes",
+          "callee": "requestJson",
+          "lineNumber": 248
+        },
+        {
+          "caller": "createCsNote",
+          "callee": "requestJson",
+          "lineNumber": 252
+        },
+        {
+          "caller": "createCsNote",
+          "callee": "JSON.stringify",
+          "lineNumber": 254
+        },
+        {
+          "caller": "updateCsNote",
+          "callee": "requestJson",
+          "lineNumber": 259
+        },
+        {
+          "caller": "updateCsNote",
+          "callee": "JSON.stringify",
+          "lineNumber": 261
+        },
+        {
+          "caller": "deleteCsNote",
+          "callee": "requestJson",
+          "lineNumber": 266
+        },
+        {
+          "caller": "getVisitorSessionId",
+          "callee": "window.localStorage.getItem",
+          "lineNumber": 273
+        },
+        {
+          "caller": "getVisitorSessionId",
+          "callee": "crypto.randomUUID",
+          "lineNumber": 278
+        },
+        {
+          "caller": "getVisitorSessionId",
+          "callee": "Date.now",
+          "lineNumber": 279
+        },
+        {
+          "caller": "getVisitorSessionId",
+          "callee": "Math.random().toString(16).slice",
+          "lineNumber": 279
+        },
+        {
+          "caller": "getVisitorSessionId",
+          "callee": "Math.random().toString",
+          "lineNumber": 279
+        },
+        {
+          "caller": "getVisitorSessionId",
+          "callee": "Math.random",
+          "lineNumber": 279
+        },
+        {
+          "caller": "getVisitorSessionId",
+          "callee": "window.localStorage.setItem",
+          "lineNumber": 280
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 35,
+        "functionCount": 35,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/lib/liveState.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 44,
+      "nonEmptyLines": 38,
+      "functions": [
+        {
+          "name": "getBuildingState",
+          "startLine": 3,
+          "endLine": 5,
+          "params": [
+            "villageState",
+            "buildingId"
+          ]
+        },
+        {
+          "name": "getNpcState",
+          "startLine": 7,
+          "endLine": 9,
+          "params": [
+            "villageState",
+            "npcId"
+          ]
+        },
+        {
+          "name": "buildBuildingStateMap",
+          "startLine": 13,
+          "endLine": 18,
+          "params": [
+            "villageState"
+          ]
+        },
+        {
+          "name": "buildNpcStateMap",
+          "startLine": 20,
+          "endLine": 25,
+          "params": [
+            "villageState"
+          ]
+        },
+        {
+          "name": "lightIntensity",
+          "startLine": 27,
+          "endLine": 32,
+          "params": [
+            "lightLevel"
+          ]
+        },
+        {
+          "name": "moodLabel",
+          "startLine": 34,
+          "endLine": 44,
+          "params": [
+            "mood"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "getBuildingState",
+          "line": 3,
+          "isDefault": false
+        },
+        {
+          "name": "getNpcState",
+          "line": 7,
+          "isDefault": false
+        },
+        {
+          "name": "buildBuildingStateMap",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "buildNpcStateMap",
+          "line": 20,
+          "isDefault": false
+        },
+        {
+          "name": "lightIntensity",
+          "line": 27,
+          "isDefault": false
+        },
+        {
+          "name": "moodLabel",
+          "line": 34,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getBuildingState",
+          "callee": "villageState?.buildings.find",
+          "lineNumber": 4
+        },
+        {
+          "caller": "getNpcState",
+          "callee": "villageState?.npcs.find",
+          "lineNumber": 8
+        },
+        {
+          "caller": "buildBuildingStateMap",
+          "callee": "map.set",
+          "lineNumber": 16
+        },
+        {
+          "caller": "buildNpcStateMap",
+          "callee": "map.set",
+          "lineNumber": 23
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 6,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/lib/sfx.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 221,
+      "nonEmptyLines": 209,
+      "functions": [
+        {
+          "name": "getCtx",
+          "startLine": 7,
+          "endLine": 16,
+          "params": []
+        },
+        {
+          "name": "tone",
+          "startLine": 18,
+          "endLine": 34,
+          "params": [
+            "freq",
+            "dur",
+            "type",
+            "vol",
+            "at"
+          ]
+        },
+        {
+          "name": "playChord",
+          "startLine": 53,
+          "endLine": 98,
+          "params": []
+        },
+        {
+          "name": "startMusic",
+          "startLine": 100,
+          "endLine": 123,
+          "params": []
+        },
+        {
+          "name": "stopMusic",
+          "startLine": 125,
+          "endLine": 143,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "sfx",
+          "line": 145,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "getCtx",
+          "callee": "ctx.resume",
+          "lineNumber": 14
+        },
+        {
+          "caller": "tone",
+          "callee": "getCtx",
+          "lineNumber": 20
+        },
+        {
+          "caller": "tone",
+          "callee": "c.createOscillator",
+          "lineNumber": 23
+        },
+        {
+          "caller": "tone",
+          "callee": "c.createGain",
+          "lineNumber": 24
+        },
+        {
+          "caller": "tone",
+          "callee": "o.frequency.setValueAtTime",
+          "lineNumber": 26
+        },
+        {
+          "caller": "tone",
+          "callee": "g.gain.setValueAtTime",
+          "lineNumber": 27
+        },
+        {
+          "caller": "tone",
+          "callee": "g.gain.linearRampToValueAtTime",
+          "lineNumber": 28
+        },
+        {
+          "caller": "tone",
+          "callee": "g.gain.exponentialRampToValueAtTime",
+          "lineNumber": 29
+        },
+        {
+          "caller": "tone",
+          "callee": "o.connect",
+          "lineNumber": 30
+        },
+        {
+          "caller": "tone",
+          "callee": "g.connect",
+          "lineNumber": 31
+        },
+        {
+          "caller": "tone",
+          "callee": "o.start",
+          "lineNumber": 32
+        },
+        {
+          "caller": "tone",
+          "callee": "o.stop",
+          "lineNumber": 33
+        },
+        {
+          "caller": "playChord",
+          "callee": "getCtx",
+          "lineNumber": 54
+        },
+        {
+          "caller": "playChord",
+          "callee": "c.createOscillator",
+          "lineNumber": 62
+        },
+        {
+          "caller": "playChord",
+          "callee": "c.createGain",
+          "lineNumber": 63
+        },
+        {
+          "caller": "playChord",
+          "callee": "Math.random",
+          "lineNumber": 66
+        },
+        {
+          "caller": "playChord",
+          "callee": "g.gain.setValueAtTime",
+          "lineNumber": 67
+        },
+        {
+          "caller": "playChord",
+          "callee": "g.gain.linearRampToValueAtTime",
+          "lineNumber": 68
+        },
+        {
+          "caller": "playChord",
+          "callee": "g.gain.linearRampToValueAtTime",
+          "lineNumber": 69
+        },
+        {
+          "caller": "playChord",
+          "callee": "g.gain.linearRampToValueAtTime",
+          "lineNumber": 70
+        },
+        {
+          "caller": "playChord",
+          "callee": "o.connect",
+          "lineNumber": 71
+        },
+        {
+          "caller": "playChord",
+          "callee": "g.connect",
+          "lineNumber": 72
+        },
+        {
+          "caller": "playChord",
+          "callee": "o.start",
+          "lineNumber": 73
+        },
+        {
+          "caller": "playChord",
+          "callee": "o.stop",
+          "lineNumber": 74
+        },
+        {
+          "caller": "playChord",
+          "callee": "chord.map",
+          "lineNumber": 78
+        },
+        {
+          "caller": "playChord",
+          "callee": "Math.random",
+          "lineNumber": 81
+        },
+        {
+          "caller": "playChord",
+          "callee": "Math.random",
+          "lineNumber": 82
+        },
+        {
+          "caller": "playChord",
+          "callee": "Math.floor",
+          "lineNumber": 83
+        },
+        {
+          "caller": "playChord",
+          "callee": "Math.random",
+          "lineNumber": 83
+        },
+        {
+          "caller": "playChord",
+          "callee": "c.createOscillator",
+          "lineNumber": 84
+        },
+        {
+          "caller": "playChord",
+          "callee": "c.createGain",
+          "lineNumber": 85
+        },
+        {
+          "caller": "playChord",
+          "callee": "g.gain.setValueAtTime",
+          "lineNumber": 89
+        },
+        {
+          "caller": "playChord",
+          "callee": "g.gain.linearRampToValueAtTime",
+          "lineNumber": 90
+        },
+        {
+          "caller": "playChord",
+          "callee": "g.gain.exponentialRampToValueAtTime",
+          "lineNumber": 91
+        },
+        {
+          "caller": "playChord",
+          "callee": "o.connect",
+          "lineNumber": 92
+        },
+        {
+          "caller": "playChord",
+          "callee": "g.connect",
+          "lineNumber": 93
+        },
+        {
+          "caller": "playChord",
+          "callee": "g.connect",
+          "lineNumber": 94
+        },
+        {
+          "caller": "playChord",
+          "callee": "o.start",
+          "lineNumber": 95
+        },
+        {
+          "caller": "playChord",
+          "callee": "o.stop",
+          "lineNumber": 96
+        },
+        {
+          "caller": "startMusic",
+          "callee": "getCtx",
+          "lineNumber": 102
+        },
+        {
+          "caller": "startMusic",
+          "callee": "c.createGain",
+          "lineNumber": 104
+        },
+        {
+          "caller": "startMusic",
+          "callee": "master.gain.setValueAtTime",
+          "lineNumber": 105
+        },
+        {
+          "caller": "startMusic",
+          "callee": "master.connect",
+          "lineNumber": 106
+        },
+        {
+          "caller": "startMusic",
+          "callee": "c.createBiquadFilter",
+          "lineNumber": 107
+        },
+        {
+          "caller": "startMusic",
+          "callee": "lp.connect",
+          "lineNumber": 110
+        },
+        {
+          "caller": "startMusic",
+          "callee": "c.createDelay",
+          "lineNumber": 111
+        },
+        {
+          "caller": "startMusic",
+          "callee": "c.createGain",
+          "lineNumber": 113
+        },
+        {
+          "caller": "startMusic",
+          "callee": "delay.connect",
+          "lineNumber": 115
+        },
+        {
+          "caller": "startMusic",
+          "callee": "fb.connect",
+          "lineNumber": 116
+        },
+        {
+          "caller": "startMusic",
+          "callee": "delay.connect",
+          "lineNumber": 117
+        },
+        {
+          "caller": "startMusic",
+          "callee": "master.gain.linearRampToValueAtTime",
+          "lineNumber": 119
+        },
+        {
+          "caller": "startMusic",
+          "callee": "playChord",
+          "lineNumber": 121
+        },
+        {
+          "caller": "startMusic",
+          "callee": "setInterval",
+          "lineNumber": 122
+        },
+        {
+          "caller": "stopMusic",
+          "callee": "clearInterval",
+          "lineNumber": 127
+        },
+        {
+          "caller": "stopMusic",
+          "callee": "getCtx",
+          "lineNumber": 131
+        },
+        {
+          "caller": "stopMusic",
+          "callee": "m.master.gain.linearRampToValueAtTime",
+          "lineNumber": 135
+        },
+        {
+          "caller": "stopMusic",
+          "callee": "setTimeout",
+          "lineNumber": 136
+        },
+        {
+          "caller": "stopMusic",
+          "callee": "m.master.disconnect",
+          "lineNumber": 138
+        },
+        {
+          "caller": "setMuted",
+          "callee": "sfx.stopAmbient",
+          "lineNumber": 148
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "getCtx",
+          "lineNumber": 156
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "c.createGain",
+          "lineNumber": 158
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "g.gain.setValueAtTime",
+          "lineNumber": 159
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "g.connect",
+          "lineNumber": 160
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "c.createBiquadFilter",
+          "lineNumber": 161
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "lp.connect",
+          "lineNumber": 164
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "c.createOscillator",
+          "lineNumber": 165
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "c.createOscillator",
+          "lineNumber": 168
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "o1.connect",
+          "lineNumber": 172
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "o2.connect",
+          "lineNumber": 173
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "o1.start",
+          "lineNumber": 174
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "o2.start",
+          "lineNumber": 175
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "g.gain.linearRampToValueAtTime",
+          "lineNumber": 176
+        },
+        {
+          "caller": "startAmbient",
+          "callee": "startMusic",
+          "lineNumber": 179
+        },
+        {
+          "caller": "stopAmbient",
+          "callee": "stopMusic",
+          "lineNumber": 182
+        },
+        {
+          "caller": "stopAmbient",
+          "callee": "getCtx",
+          "lineNumber": 184
+        },
+        {
+          "caller": "stopAmbient",
+          "callee": "d.gain.gain.linearRampToValueAtTime",
+          "lineNumber": 188
+        },
+        {
+          "caller": "stopAmbient",
+          "callee": "setTimeout",
+          "lineNumber": 189
+        },
+        {
+          "caller": "stopAmbient",
+          "callee": "d.osc1.stop",
+          "lineNumber": 191
+        },
+        {
+          "caller": "stopAmbient",
+          "callee": "d.osc2.stop",
+          "lineNumber": 192
+        },
+        {
+          "caller": "hover",
+          "callee": "tone",
+          "lineNumber": 203
+        },
+        {
+          "caller": "click",
+          "callee": "tone",
+          "lineNumber": 207
+        },
+        {
+          "caller": "click",
+          "callee": "tone",
+          "lineNumber": 208
+        },
+        {
+          "caller": "enter",
+          "callee": "tone",
+          "lineNumber": 212
+        },
+        {
+          "caller": "enter",
+          "callee": "tone",
+          "lineNumber": 213
+        },
+        {
+          "caller": "enter",
+          "callee": "tone",
+          "lineNumber": 214
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.random",
+          "lineNumber": 218
+        },
+        {
+          "caller": "tick",
+          "callee": "tone",
+          "lineNumber": 219
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/lib/useDraggable.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 112,
+      "nonEmptyLines": 99,
+      "functions": [
+        {
+          "name": "resetHudLayout",
+          "startLine": 14,
+          "endLine": 17,
+          "params": []
+        },
+        {
+          "name": "useDraggable",
+          "startLine": 23,
+          "endLine": 112,
+          "params": [
+            "id"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "resetHudLayout",
+          "line": 14,
+          "isDefault": false
+        },
+        {
+          "name": "useDraggable",
+          "line": 23,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "resetHudLayout",
+          "callee": "window.dispatchEvent",
+          "lineNumber": 16
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "useRef",
+          "lineNumber": 25
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "useRef",
+          "lineNumber": 26
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "useState",
+          "lineNumber": 27
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "useState",
+          "lineNumber": 28
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "useCallback",
+          "lineNumber": 30
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "useCallback",
+          "lineNumber": 34
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "setPos",
+          "lineNumber": 37
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "useEffect",
+          "lineNumber": 42
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "window.matchMedia",
+          "lineNumber": 44
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "setEnabled",
+          "lineNumber": 45
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "window.localStorage.getItem",
+          "lineNumber": 47
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "apply",
+          "lineNumber": 48
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "JSON.parse",
+          "lineNumber": 48
+        },
+        {
+          "caller": "onReset",
+          "callee": "apply",
+          "lineNumber": 54
+        },
+        {
+          "caller": "onReset",
+          "callee": "window.localStorage.removeItem",
+          "lineNumber": 56
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "window.addEventListener",
+          "lineNumber": 61
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "window.removeEventListener",
+          "lineNumber": 62
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "useCallback",
+          "lineNumber": 65
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "el.getBoundingClientRect",
+          "lineNumber": 70
+        },
+        {
+          "caller": "move",
+          "callee": "Math.hypot",
+          "lineNumber": 78
+        },
+        {
+          "caller": "move",
+          "callee": "ev.preventDefault",
+          "lineNumber": 80
+        },
+        {
+          "caller": "move",
+          "callee": "Math.max",
+          "lineNumber": 84
+        },
+        {
+          "caller": "move",
+          "callee": "Math.min",
+          "lineNumber": 84
+        },
+        {
+          "caller": "move",
+          "callee": "Math.max",
+          "lineNumber": 85
+        },
+        {
+          "caller": "move",
+          "callee": "Math.min",
+          "lineNumber": 85
+        },
+        {
+          "caller": "move",
+          "callee": "apply",
+          "lineNumber": 86
+        },
+        {
+          "caller": "up",
+          "callee": "window.removeEventListener",
+          "lineNumber": 89
+        },
+        {
+          "caller": "up",
+          "callee": "window.removeEventListener",
+          "lineNumber": 90
+        },
+        {
+          "caller": "up",
+          "callee": "window.localStorage.setItem",
+          "lineNumber": 93
+        },
+        {
+          "caller": "up",
+          "callee": "JSON.stringify",
+          "lineNumber": 93
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "window.addEventListener",
+          "lineNumber": 99
+        },
+        {
+          "caller": "useDraggable",
+          "callee": "window.addEventListener",
+          "lineNumber": 100
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/lib/worldCollision.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 39,
+      "nonEmptyLines": 34,
+      "functions": [
+        {
+          "name": "isInsideBuildingFootprint",
+          "startLine": 8,
+          "endLine": 22,
+          "params": [
+            "point",
+            "building",
+            "padding"
+          ]
+        },
+        {
+          "name": "isWalkablePosition",
+          "startLine": 24,
+          "endLine": 33,
+          "params": [
+            "point",
+            "buildings",
+            "options"
+          ]
+        },
+        {
+          "name": "distanceXZ",
+          "startLine": 35,
+          "endLine": 39,
+          "params": [
+            "a",
+            "b"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "isInsideBuildingFootprint",
+          "line": 8,
+          "isDefault": false
+        },
+        {
+          "name": "isWalkablePosition",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "distanceXZ",
+          "line": 35,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "isWalkablePosition",
+          "callee": "buildings.some",
+          "lineNumber": 29
+        },
+        {
+          "caller": "isWalkablePosition",
+          "callee": "isInsideBuildingFootprint",
+          "lineNumber": 31
+        },
+        {
+          "caller": "distanceXZ",
+          "callee": "Math.sqrt",
+          "lineNumber": 38
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 3,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/types/live.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 350,
+      "nonEmptyLines": 314,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/types/portfolio.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 114,
+      "nonEmptyLines": 101,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

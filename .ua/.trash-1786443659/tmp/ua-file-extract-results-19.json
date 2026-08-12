@@ -1,0 +1,221 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 3,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 3,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 0,
+      "failed": 0,
+      "skipped": 3
+    }
+  },
+  "results": [
+    {
+      "path": "src/data/buildingModels.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 28,
+      "nonEmptyLines": 28,
+      "sections": [
+        {
+          "heading": "central-plaza",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "exp-demo-platform",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "exp-portfolio",
+          "level": 1,
+          "line": 4
+        },
+        {
+          "heading": "exp-unity-ui",
+          "level": 1,
+          "line": 5
+        },
+        {
+          "heading": "life-gym",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "life-invest",
+          "level": 1,
+          "line": 7
+        },
+        {
+          "heading": "life-library",
+          "level": 1,
+          "line": 8
+        },
+        {
+          "heading": "life-music",
+          "level": 1,
+          "line": 9
+        },
+        {
+          "heading": "life-timeline",
+          "level": 1,
+          "line": 10
+        },
+        {
+          "heading": "life-values",
+          "level": 1,
+          "line": 11
+        },
+        {
+          "heading": "post-office",
+          "level": 1,
+          "line": 12
+        },
+        {
+          "heading": "project-aclub",
+          "level": 1,
+          "line": 13
+        },
+        {
+          "heading": "project-ajou-adventure",
+          "level": 1,
+          "line": 14
+        },
+        {
+          "heading": "project-ajouchong",
+          "level": 1,
+          "line": 15
+        },
+        {
+          "heading": "project-darklab",
+          "level": 1,
+          "line": 16
+        },
+        {
+          "heading": "project-festflow",
+          "level": 1,
+          "line": 17
+        },
+        {
+          "heading": "project-muscleup",
+          "level": 1,
+          "line": 18
+        },
+        {
+          "heading": "project-mystock",
+          "level": 1,
+          "line": 19
+        },
+        {
+          "heading": "project-sign-language",
+          "level": 1,
+          "line": 20
+        },
+        {
+          "heading": "project-tserof",
+          "level": 1,
+          "line": 21
+        },
+        {
+          "heading": "skill-3d",
+          "level": 1,
+          "line": 22
+        },
+        {
+          "heading": "skill-backend",
+          "level": 1,
+          "line": 23
+        },
+        {
+          "heading": "skill-frontend",
+          "level": 1,
+          "line": 24
+        },
+        {
+          "heading": "skill-game",
+          "level": 1,
+          "line": 25
+        },
+        {
+          "heading": "skill-workflow",
+          "level": 1,
+          "line": 26
+        },
+        {
+          "heading": "study-codingtest",
+          "level": 1,
+          "line": 27
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 26
+      }
+    },
+    {
+      "path": "src/data/propsLayout.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 11431,
+      "nonEmptyLines": 11431,
+      "sections": [
+        {
+          "heading": "props",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "buildings",
+          "level": 1,
+          "line": 11422
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 2
+      }
+    },
+    {
+      "path": "src/data/villageTerraces.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 237,
+      "nonEmptyLines": 237,
+      "sections": [
+        {
+          "heading": "pitch",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "blocks",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "channels",
+          "level": 1,
+          "line": 47
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 3
+      }
+    }
+  ]
+}

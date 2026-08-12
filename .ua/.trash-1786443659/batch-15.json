@@ -1,0 +1,174 @@
+{
+  "nodes": [
+    {
+      "id": "config:backend/.env.example",
+      "type": "config",
+      "name": ".env.example",
+      "filePath": "backend/.env.example",
+      "summary": "FastAPI 백엔드의 환경 변수 템플릿으로 DB 접속, CORS 허용 오리진, OpenAI 모델, GitHub 동기화, 관리자 인증, AI 레이트리밋까지 13개 키를 정의합니다. 각 키의 생략 시 동작(폴백)이 주석으로 명시돼 있어 설정이 곧 기능 게이트 역할을 합니다.",
+      "tags": ["configuration", "environment", "security", "feature-flag"],
+      "complexity": "simple",
+      "languageNotes": "선택 키의 부재가 실패가 아니라 우아한 강등으로 이어지는 설계입니다. OPENAI_API_KEY가 비면 NPC는 포트폴리오 데이터 기반 규칙 응답으로 폴백하고, GITHUB_TOKEN이 비면 /github/sync가 경고만 남기고 0커밋을 저장하며, ADMIN_PASSWORD가 비면 /admin 인증 자체가 비활성화됩니다(로컬 편의용이자 배포 시 최대 위험 지점)."
+    },
+    {
+      "id": "document:backend/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "backend/README.md",
+      "summary": "백엔드 전용 한국어 안내 문서로, venv 생성부터 uvicorn 실행까지의 로컬 구동 절차와 주요 엔드포인트 8종(/health, /activity, /village-state, /npc/chat·tick·encounter, /github/sync), 환경 변수 예시를 정리합니다.",
+      "tags": ["documentation", "backend", "setup", "api-reference"],
+      "complexity": "simple",
+      "languageNotes": "DATABASE_URL 기본값이 로컬 SQLite이고 운영에서는 PostgreSQL URL로 교체 가능하다고 안내하며, requirements.txt의 psycopg 의존성이 그 전환을 뒷받침합니다."
+    },
+    {
+      "id": "config:backend/pytest.ini",
+      "type": "config",
+      "name": "pytest.ini",
+      "filePath": "backend/pytest.ini",
+      "summary": "pytest 최소 설정으로 testpaths를 tests 디렉터리로 한정합니다. backend를 루트로 잡고 순수 로직 단위 테스트만 수집하도록 범위를 좁히는 역할입니다.",
+      "tags": ["configuration", "testing", "backend", "build-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:backend/requirements-dev.txt",
+      "type": "config",
+      "name": "requirements-dev.txt",
+      "filePath": "backend/requirements-dev.txt",
+      "summary": "개발용 의존성 목록으로 requirements.txt를 그대로 포함한 뒤 pytest 8.3.4만 추가합니다. 테스트를 돌리려면 이 파일을 설치해야 합니다.",
+      "tags": ["configuration", "dependencies", "testing", "development"],
+      "complexity": "simple",
+      "languageNotes": "-r requirements.txt 구문으로 운영 의존성을 상속해, 런타임 목록과 개발 목록이 갈라지지 않도록 유지합니다."
+    },
+    {
+      "id": "config:backend/requirements.txt",
+      "type": "config",
+      "name": "requirements.txt",
+      "filePath": "backend/requirements.txt",
+      "summary": "백엔드 런타임 의존성을 정확한 버전으로 고정한 목록입니다. FastAPI·uvicorn(웹), SQLAlchemy 2.0·psycopg(영속화), pydantic-settings·python-dotenv(설정), httpx(OpenAI/GitHub 외부 호출)로 구성됩니다.",
+      "tags": ["configuration", "dependencies", "backend", "build-system"],
+      "complexity": "simple",
+      "languageNotes": "openai SDK 대신 httpx만 들어 있어, OpenAI 호출을 공식 클라이언트가 아니라 직접 HTTP 요청으로 처리한다는 사실이 의존성만 봐도 드러납니다."
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:backend/.env.example",
+      "target": "file:backend/app/config.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/.env.example",
+      "target": "file:backend/app/database.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/.env.example",
+      "target": "file:backend/app/services/chat_service.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/.env.example",
+      "target": "file:backend/app/services/npc_brain_service.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/.env.example",
+      "target": "file:backend/app/services/github_service.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/.env.example",
+      "target": "file:backend/app/main.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/pytest.ini",
+      "target": "file:backend/tests/conftest.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/pytest.ini",
+      "target": "file:backend/tests/test_village_service.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/pytest.ini",
+      "target": "file:backend/tests/test_relations.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/pytest.ini",
+      "target": "file:backend/tests/test_relationship_service.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/requirements-dev.txt",
+      "target": "config:backend/requirements.txt",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:backend/requirements.txt",
+      "target": "file:backend/app/main.py",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:backend/README.md",
+      "target": "file:backend/app/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:backend/README.md",
+      "target": "config:backend/.env.example",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:backend/README.md",
+      "target": "file:backend/app/config.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:backend/README.md",
+      "target": "file:backend/app/services/village_service.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:backend/README.md",
+      "target": "file:backend/app/services/github_service.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

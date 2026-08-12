@@ -1,0 +1,118 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/app/layout.tsx",
+      "type": "file",
+      "name": "layout.tsx",
+      "filePath": "src/app/layout.tsx",
+      "summary": "Next.js App Router의 루트 레이아웃(서버 컴포넌트)으로, 한국어 SEO/OpenGraph 메타데이터와 viewport 테마 색을 선언하고 전체 페이지 트리를 Providers로 감싼 뒤 전역 CustomCursor를 얹는다.",
+      "tags": ["entry-point", "layout", "metadata", "seo", "next-app-router"],
+      "complexity": "simple",
+      "languageNotes": "\"use client\" 지시어가 없는 서버 컴포넌트 — metadata/viewport export는 서버 컴포넌트에서만 허용되므로, 브라우저 API가 필요한 부분은 Providers·CustomCursor 같은 클라이언트 자식으로 분리되어 있다."
+    },
+    {
+      "id": "file:src/components/Providers.tsx",
+      "type": "file",
+      "name": "Providers.tsx",
+      "filePath": "src/components/Providers.tsx",
+      "summary": "앱 전역 클라이언트 프로바이더 셸로, framer-motion의 MotionConfig(reducedMotion=\"user\")로 사용자의 '동작 줄이기' 설정을 존중하게 하고 전역 InteractionLayer를 children 옆에 마운트한다.",
+      "tags": ["provider", "client-component", "animation", "accessibility", "wrapper"],
+      "complexity": "simple",
+      "languageNotes": "서버 컴포넌트인 layout.tsx와 클라이언트 트리 사이의 경계 파일 — 여기서 \"use client\"가 시작된다."
+    },
+    {
+      "id": "file:src/components/InteractionLayer.tsx",
+      "type": "file",
+      "name": "InteractionLayer.tsx",
+      "filePath": "src/components/InteractionLayer.tsx",
+      "summary": "사이트 어디를 클릭하든 그 좌표에 입자 버스트와 확산 링을 띄우는 전역 인터랙션 '주스' 오버레이. 클릭 대상이 버튼/링크면 이펙트를 키우고 지원 기기에서는 햅틱 진동을 준다.",
+      "tags": ["client-component", "event-handler", "animation", "overlay", "accessibility"],
+      "complexity": "moderate",
+      "languageNotes": "window의 pointerdown을 useEffect에서 직접 구독하고, prefers-reduced-motion이면 아예 리스너를 붙이지 않는다. AnimatePresence로 버스트 제거 애니메이션을 처리한다."
+    },
+    {
+      "id": "file:src/components/ui/CustomCursor.tsx",
+      "type": "file",
+      "name": "CustomCursor.tsx",
+      "filePath": "src/components/ui/CustomCursor.tsx",
+      "summary": "사이트 전역 네온 링/닷 커스텀 커서. requestAnimationFrame 루프로 링을 관성 있게 따라오게 하고, 인터랙티브 요소 위에서는 hover 클래스를 토글한다.",
+      "tags": ["client-component", "cursor", "animation", "ui", "accessibility"],
+      "complexity": "moderate",
+      "languageNotes": "리렌더 없이 ref + DOM 스타일 직접 조작 + rAF로 커서를 움직여 React 상태 갱신 비용을 피한다. (pointer: fine)가 아니면(터치 기기) 전체를 스킵, reduced-motion이면 트레일 관성을 끈다."
+    },
+    {
+      "id": "function:src/app/layout.tsx:RootLayout",
+      "type": "function",
+      "name": "RootLayout",
+      "filePath": "src/app/layout.tsx",
+      "lineRange": [41, 50],
+      "summary": "lang=\"ko\" html/body 골격을 렌더링하며 children을 Providers로 감싸고 body 끝에 CustomCursor를 배치하는 루트 레이아웃 컴포넌트.",
+      "tags": ["entry-point", "layout", "component", "server-component"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/Providers.tsx:Providers",
+      "type": "function",
+      "name": "Providers",
+      "filePath": "src/components/Providers.tsx",
+      "lineRange": [8, 15],
+      "summary": "MotionConfig로 전역 애니메이션 정책을 설정하고 InteractionLayer를 함께 마운트하는 클라이언트 프로바이더 컴포넌트.",
+      "tags": ["provider", "component", "animation", "wrapper"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/InteractionLayer.tsx:InteractionLayer",
+      "type": "function",
+      "name": "InteractionLayer",
+      "filePath": "src/components/InteractionLayer.tsx",
+      "lineRange": [15, 55],
+      "summary": "window pointerdown을 구독해 클릭 좌표별 burst 상태를 쌓고 일정 시간 뒤 정리하며, 각 burst를 BurstFx로 렌더링한다. reduced-motion 환경에서는 아무 것도 하지 않는다.",
+      "tags": ["event-handler", "component", "state-management", "accessibility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/InteractionLayer.tsx:BurstFx",
+      "type": "function",
+      "name": "BurstFx",
+      "filePath": "src/components/InteractionLayer.tsx",
+      "lineRange": [57, 91],
+      "summary": "하나의 클릭 지점에 대해 삼각함수로 방사형 입자 좌표를 계산하고 framer-motion으로 입자와 확산 링 애니메이션을 그리는 프레젠테이션 컴포넌트.",
+      "tags": ["component", "animation", "rendering", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/ui/CustomCursor.tsx:CustomCursor",
+      "type": "function",
+      "name": "CustomCursor",
+      "filePath": "src/components/ui/CustomCursor.tsx",
+      "lineRange": [9, 90],
+      "summary": "포인터 이동·클릭 이벤트와 rAF 루프를 등록해 링/닷 DOM 요소를 직접 이동시키는 커스텀 커서 컴포넌트. 언마운트 시 리스너와 애니메이션 프레임, 루트 클래스를 모두 정리한다.",
+      "tags": ["component", "event-handler", "animation", "cursor", "cleanup"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {"source": "file:src/app/layout.tsx", "target": "file:src/app/globals.css", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/app/layout.tsx", "target": "file:src/components/Providers.tsx", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/app/layout.tsx", "target": "file:src/components/ui/CustomCursor.tsx", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:src/components/Providers.tsx", "target": "file:src/components/InteractionLayer.tsx", "type": "imports", "direction": "forward", "weight": 0.7},
+
+    {"source": "file:src/app/layout.tsx", "target": "function:src/app/layout.tsx:RootLayout", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/Providers.tsx", "target": "function:src/components/Providers.tsx:Providers", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/InteractionLayer.tsx", "target": "function:src/components/InteractionLayer.tsx:InteractionLayer", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/InteractionLayer.tsx", "target": "function:src/components/InteractionLayer.tsx:BurstFx", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/components/ui/CustomCursor.tsx", "target": "function:src/components/ui/CustomCursor.tsx:CustomCursor", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:src/app/layout.tsx", "target": "function:src/app/layout.tsx:RootLayout", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:src/components/Providers.tsx", "target": "function:src/components/Providers.tsx:Providers", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:src/components/InteractionLayer.tsx", "target": "function:src/components/InteractionLayer.tsx:InteractionLayer", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:src/components/ui/CustomCursor.tsx", "target": "function:src/components/ui/CustomCursor.tsx:CustomCursor", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "function:src/app/layout.tsx:RootLayout", "target": "function:src/components/Providers.tsx:Providers", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/app/layout.tsx:RootLayout", "target": "function:src/components/ui/CustomCursor.tsx:CustomCursor", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/Providers.tsx:Providers", "target": "function:src/components/InteractionLayer.tsx:InteractionLayer", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "function:src/components/InteractionLayer.tsx:InteractionLayer", "target": "function:src/components/InteractionLayer.tsx:BurstFx", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/app/layout.tsx", "target": "file:src/app/page.tsx", "type": "depends_on", "direction": "forward", "weight": 0.6}
+  ]
+}

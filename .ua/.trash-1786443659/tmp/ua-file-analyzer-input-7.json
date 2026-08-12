@@ -1,0 +1,175 @@
+{
+ "projectRoot": "C:/Users/jk636/OneDrive/문서/GitHub/Whims-of-Wonder/Whims-of-Wonder/MetaverseProgramming/My project/Assets/myPortfolio",
+ "batchFiles": [
+  {
+   "path": "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "language": "typescript",
+   "sizeLines": 137,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/context.ts",
+   "language": "typescript",
+   "sizeLines": 28,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/data.ts",
+   "language": "typescript",
+   "sizeLines": 128,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/fonts.ts",
+   "language": "typescript",
+   "sizeLines": 17,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/parts.tsx",
+   "language": "typescript",
+   "sizeLines": 249,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+   "language": "typescript",
+   "sizeLines": 474,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "language": "typescript",
+   "sizeLines": 706,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+   "language": "typescript",
+   "sizeLines": 387,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+   "language": "typescript",
+   "sizeLines": 218,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "language": "typescript",
+   "sizeLines": 299,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+   "language": "typescript",
+   "sizeLines": 293,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+   "language": "typescript",
+   "sizeLines": 437,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+   "language": "typescript",
+   "sizeLines": 343,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+   "language": "typescript",
+   "sizeLines": 481,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "language": "typescript",
+   "sizeLines": 715,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "language": "typescript",
+   "sizeLines": 679,
+   "fileCategory": "code"
+  }
+ ],
+ "batchImportData": {
+  "src/components/ui/project-viewers/aclub/AClubRoom.tsx": [
+   "src/components/ui/project-viewers/aclub/aclub.css",
+   "src/components/ui/project-viewers/aclub/context.ts",
+   "src/components/ui/project-viewers/aclub/fonts.ts",
+   "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+   "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+   "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+   "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+   "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+   "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+   "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+   "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+   "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+   "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+   "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+   "src/components/ui/project-viewers/sound.ts",
+   "src/data/projectThemes.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/project-viewers/aclub/context.ts": [],
+  "src/components/ui/project-viewers/aclub/data.ts": [],
+  "src/components/ui/project-viewers/aclub/fonts.ts": [],
+  "src/components/ui/project-viewers/aclub/parts.tsx": [
+   "src/components/ui/project-viewers/aclub/context.ts"
+  ],
+  "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx": [
+   "src/components/ui/project-viewers/aclub/context.ts",
+   "src/components/ui/project-viewers/aclub/parts.tsx"
+  ],
+  "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx": [
+   "src/components/ui/project-viewers/aclub/context.ts",
+   "src/components/ui/project-viewers/aclub/data.ts",
+   "src/components/ui/project-viewers/aclub/parts.tsx"
+  ],
+  "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx": [
+   "src/components/ui/project-viewers/aclub/context.ts",
+   "src/components/ui/project-viewers/aclub/data.ts"
+  ],
+  "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx": [
+   "src/components/ui/project-viewers/aclub/data.ts"
+  ],
+  "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx": [
+   "src/components/ui/project-viewers/aclub/context.ts",
+   "src/components/ui/project-viewers/aclub/parts.tsx"
+  ],
+  "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx": [
+   "src/components/ui/project-viewers/aclub/context.ts",
+   "src/components/ui/project-viewers/aclub/parts.tsx"
+  ],
+  "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx": [
+   "src/components/ui/project-viewers/aclub/context.ts",
+   "src/components/ui/project-viewers/aclub/parts.tsx"
+  ],
+  "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx": [
+   "src/components/ui/project-viewers/aclub/context.ts",
+   "src/components/ui/project-viewers/aclub/parts.tsx"
+  ],
+  "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx": [
+   "src/components/ui/project-viewers/aclub/context.ts",
+   "src/components/ui/project-viewers/aclub/data.ts",
+   "src/components/ui/project-viewers/aclub/parts.tsx"
+  ],
+  "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx": [
+   "src/components/ui/project-viewers/aclub/context.ts",
+   "src/components/ui/project-viewers/aclub/data.ts",
+   "src/components/ui/project-viewers/aclub/parts.tsx"
+  ],
+  "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx": [
+   "src/components/ui/project-viewers/aclub/context.ts",
+   "src/components/ui/project-viewers/aclub/data.ts",
+   "src/components/ui/project-viewers/aclub/parts.tsx"
+  ]
+ }
+}

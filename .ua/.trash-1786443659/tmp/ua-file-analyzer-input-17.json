@@ -1,0 +1,112 @@
+{
+ "projectRoot": "C:/Users/jk636/OneDrive/문서/GitHub/Whims-of-Wonder/Whims-of-Wonder/MetaverseProgramming/My project/Assets/myPortfolio",
+ "batchFiles": [
+  {
+   "path": "portfolio-specs/00-OVERVIEW.md",
+   "language": "markdown",
+   "sizeLines": 356,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/01-mywave.md",
+   "language": "markdown",
+   "sizeLines": 2142,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/02-mystock.md",
+   "language": "markdown",
+   "sizeLines": 2231,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/03-festflow.md",
+   "language": "markdown",
+   "sizeLines": 2116,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/04-muscleup.md",
+   "language": "markdown",
+   "sizeLines": 2237,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/05-aclub.md",
+   "language": "markdown",
+   "sizeLines": 2407,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/06-ajouchong.md",
+   "language": "markdown",
+   "sizeLines": 2438,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/07-sign-language.md",
+   "language": "markdown",
+   "sizeLines": 2404,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/08-ajou-adventure.md",
+   "language": "markdown",
+   "sizeLines": 2135,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/09-darklab.md",
+   "language": "markdown",
+   "sizeLines": 2075,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/10-tserof.md",
+   "language": "markdown",
+   "sizeLines": 2506,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/_AUDIT.md",
+   "language": "markdown",
+   "sizeLines": 93,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/_IMPLEMENTATION.md",
+   "language": "markdown",
+   "sizeLines": 231,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/_STATUS.md",
+   "language": "markdown",
+   "sizeLines": 329,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "portfolio-specs/_UNKNOWNS.md",
+   "language": "markdown",
+   "sizeLines": 120,
+   "fileCategory": "docs"
+  }
+ ],
+ "batchImportData": {
+  "portfolio-specs/00-OVERVIEW.md": [],
+  "portfolio-specs/01-mywave.md": [],
+  "portfolio-specs/02-mystock.md": [],
+  "portfolio-specs/03-festflow.md": [],
+  "portfolio-specs/04-muscleup.md": [],
+  "portfolio-specs/05-aclub.md": [],
+  "portfolio-specs/06-ajouchong.md": [],
+  "portfolio-specs/07-sign-language.md": [],
+  "portfolio-specs/08-ajou-adventure.md": [],
+  "portfolio-specs/09-darklab.md": [],
+  "portfolio-specs/10-tserof.md": [],
+  "portfolio-specs/_AUDIT.md": [],
+  "portfolio-specs/_IMPLEMENTATION.md": [],
+  "portfolio-specs/_STATUS.md": [],
+  "portfolio-specs/_UNKNOWNS.md": []
+ }
+}

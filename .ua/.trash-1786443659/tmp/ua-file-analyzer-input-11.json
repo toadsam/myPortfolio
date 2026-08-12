@@ -1,0 +1,7 @@
+{
+  "projectRoot": "C:/Users/jk636/OneDrive/문서/GitHub/Whims-of-Wonder/Whims-of-Wonder/MetaverseProgramming/My project/Assets/myPortfolio",
+  "batchFiles": [
+    {"path": "Dockerfile", "language": "dockerfile", "sizeLines": 29, "fileCategory": "infra"}
+  ],
+  "batchImportData": {"Dockerfile": []}
+}

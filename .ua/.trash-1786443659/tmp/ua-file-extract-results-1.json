@@ -1,0 +1,5199 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 26,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 26,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 26,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/components/ui/ProjectOnePager.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 788,
+      "nonEmptyLines": 742,
+      "functions": [
+        {
+          "name": "getBrief",
+          "startLine": 28,
+          "endLine": 32,
+          "params": [
+            "id"
+          ]
+        },
+        {
+          "name": "terminalTheme",
+          "startLine": 46,
+          "endLine": 54,
+          "params": [
+            "base"
+          ]
+        },
+        {
+          "name": "Icon",
+          "startLine": 58,
+          "endLine": 146,
+          "params": [
+            "{name, className}"
+          ]
+        },
+        {
+          "name": "Shot",
+          "startLine": 153,
+          "endLine": 186,
+          "params": [
+            "{\n  spec,\n  ratio,\n  theme,\n  className = \"\",\n  iconName = \"image\",\n  big = false\n}"
+          ]
+        },
+        {
+          "name": "CodeWindow",
+          "startLine": 190,
+          "endLine": 226,
+          "params": [
+            "{spec, theme}"
+          ]
+        },
+        {
+          "name": "ProjectOnePager",
+          "startLine": 241,
+          "endLine": 788,
+          "params": [
+            "{\n  project,\n  onClose,\n  onPrev,\n  onNext,\n  index,\n  total\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectOnePager",
+          "line": 241,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Shot",
+          "callee": "ratio.replace",
+          "lineNumber": 174
+        },
+        {
+          "caller": "Shot",
+          "callee": "ratio.replace",
+          "lineNumber": 175
+        },
+        {
+          "caller": "CodeWindow",
+          "callee": "spec.lines.map",
+          "lineNumber": 203
+        },
+        {
+          "caller": "CodeWindow",
+          "callee": "hl.includes",
+          "lineNumber": 207
+        },
+        {
+          "caller": "CodeWindow",
+          "callee": "line.trim",
+          "lineNumber": 216
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "useRef",
+          "lineNumber": 249
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "getProjectTheme",
+          "lineNumber": 250
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "terminalTheme",
+          "lineNumber": 251
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "getBrief",
+          "lineNumber": 252
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "useEffect",
+          "lineNumber": 255
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "scrollRef.current?.scrollTo",
+          "lineNumber": 256
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "useEffect",
+          "lineNumber": 261
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "root.querySelectorAll",
+          "lineNumber": 264
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "entries.forEach",
+          "lineNumber": 269
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "entry.target.classList.add",
+          "lineNumber": 276
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "io.unobserve",
+          "lineNumber": 277
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "targets.forEach",
+          "lineNumber": 283
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "io.observe",
+          "lineNumber": 283
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "io.disconnect",
+          "lineNumber": 284
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "useEffect",
+          "lineNumber": 287
+        },
+        {
+          "caller": "onKey",
+          "callee": "onClose",
+          "lineNumber": 290
+        },
+        {
+          "caller": "onKey",
+          "callee": "onNext",
+          "lineNumber": 291
+        },
+        {
+          "caller": "onKey",
+          "callee": "onPrev",
+          "lineNumber": 292
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "window.addEventListener",
+          "lineNumber": 294
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "window.removeEventListener",
+          "lineNumber": 295
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "project.title.match",
+          "lineNumber": 303
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "data.meta.find",
+          "lineNumber": 305
+        },
+        {
+          "caller": "roleRow",
+          "callee": "k.includes",
+          "lineNumber": 306
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "data.architecture.findIndex",
+          "lineNumber": 308
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "/realtime|실시간|socket/i.test",
+          "lineNumber": 309
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "project.id.toUpperCase",
+          "lineNumber": 342
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "data.tldr.map",
+          "lineNumber": 412
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "roleRow",
+          "lineNumber": 416
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "data.tech.map",
+          "lineNumber": 431
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "project.links.map",
+          "lineNumber": 443
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "data.research.quotes.map",
+          "lineNumber": 488
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "data.architecture.map",
+          "lineNumber": 529
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "data.decisions.map",
+          "lineNumber": 588
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "data.coreCode.map",
+          "lineNumber": 611
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "data.challenges.map",
+          "lineNumber": 633
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "data.metrics.map",
+          "lineNumber": 680
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "data.gallery.map",
+          "lineNumber": 696
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "(\n                [\n                  [\"Keep\", \"text-green-500\", \"check\", data.kpt.keep],\n                  [\"Problem\", \"text-red-500\", \"x\", data.kpt.problem],\n                  [\"Try\", \"text-blue-500\", \"rocket\", data.kpt.try]\n                ] as const\n              ).map",
+          "lineNumber": 711
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "items.map",
+          "lineNumber": 728
+        },
+        {
+          "caller": "ProjectOnePager",
+          "callee": "scrollRef.current?.scrollTo",
+          "lineNumber": 776
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/ProjectViewer.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 1103,
+      "nonEmptyLines": 1043,
+      "functions": [
+        {
+          "name": "TypedText",
+          "startLine": 37,
+          "endLine": 68,
+          "params": [
+            "{\n  text,\n  delay = 0,\n  className = \"\",\n  style = {}\n}"
+          ]
+        },
+        {
+          "name": "AnimatedCheck",
+          "startLine": 72,
+          "endLine": 94,
+          "params": [
+            "{color, delay}"
+          ]
+        },
+        {
+          "name": "Particles",
+          "startLine": 98,
+          "endLine": 155,
+          "params": [
+            "{color}"
+          ]
+        },
+        {
+          "name": "SectionOverview",
+          "startLine": 159,
+          "endLine": 246,
+          "params": [
+            "{\n  project,\n  color\n}"
+          ]
+        },
+        {
+          "name": "SectionProblem",
+          "startLine": 250,
+          "endLine": 346,
+          "params": [
+            "{\n  project,\n  color\n}"
+          ]
+        },
+        {
+          "name": "SectionApproach",
+          "startLine": 350,
+          "endLine": 435,
+          "params": [
+            "{\n  project,\n  color\n}"
+          ]
+        },
+        {
+          "name": "SectionContribution",
+          "startLine": 439,
+          "endLine": 540,
+          "params": [
+            "{\n  project,\n  color\n}"
+          ]
+        },
+        {
+          "name": "RippleButton",
+          "startLine": 544,
+          "endLine": 604,
+          "params": [
+            "{\n  href,\n  label,\n  color,\n  primary\n}"
+          ]
+        },
+        {
+          "name": "SectionResult",
+          "startLine": 606,
+          "endLine": 696,
+          "params": [
+            "{\n  project,\n  color\n}"
+          ]
+        },
+        {
+          "name": "ProgressBar",
+          "startLine": 700,
+          "endLine": 719,
+          "params": [
+            "{\n  current,\n  total,\n  color\n}"
+          ]
+        },
+        {
+          "name": "ProjectViewer",
+          "startLine": 730,
+          "endLine": 779,
+          "params": [
+            "{project, onClose}"
+          ]
+        },
+        {
+          "name": "DefaultProjectViewer",
+          "startLine": 781,
+          "endLine": 1103,
+          "params": [
+            "{project, onClose}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectViewer",
+          "line": 730,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "TypedText",
+          "callee": "useState",
+          "lineNumber": 48
+        },
+        {
+          "caller": "TypedText",
+          "callee": "useEffect",
+          "lineNumber": 49
+        },
+        {
+          "caller": "TypedText",
+          "callee": "setDisplayed",
+          "lineNumber": 50
+        },
+        {
+          "caller": "TypedText",
+          "callee": "setTimeout",
+          "lineNumber": 52
+        },
+        {
+          "caller": "TypedText",
+          "callee": "setInterval",
+          "lineNumber": 53
+        },
+        {
+          "caller": "TypedText",
+          "callee": "setDisplayed",
+          "lineNumber": 55
+        },
+        {
+          "caller": "TypedText",
+          "callee": "text.slice",
+          "lineNumber": 55
+        },
+        {
+          "caller": "TypedText",
+          "callee": "clearInterval",
+          "lineNumber": 56
+        },
+        {
+          "caller": "TypedText",
+          "callee": "clearInterval",
+          "lineNumber": 58
+        },
+        {
+          "caller": "TypedText",
+          "callee": "clearTimeout",
+          "lineNumber": 60
+        },
+        {
+          "caller": "Particles",
+          "callee": "useState",
+          "lineNumber": 99
+        },
+        {
+          "caller": "Particles",
+          "callee": "useEffect",
+          "lineNumber": 109
+        },
+        {
+          "caller": "Particles",
+          "callee": "setDots",
+          "lineNumber": 110
+        },
+        {
+          "caller": "Particles",
+          "callee": "Array.from",
+          "lineNumber": 111
+        },
+        {
+          "caller": "Particles",
+          "callee": "Math.random",
+          "lineNumber": 113
+        },
+        {
+          "caller": "Particles",
+          "callee": "Math.random",
+          "lineNumber": 114
+        },
+        {
+          "caller": "Particles",
+          "callee": "Math.random",
+          "lineNumber": 115
+        },
+        {
+          "caller": "Particles",
+          "callee": "Math.random",
+          "lineNumber": 116
+        },
+        {
+          "caller": "Particles",
+          "callee": "Math.random",
+          "lineNumber": 117
+        },
+        {
+          "caller": "Particles",
+          "callee": "dots.map",
+          "lineNumber": 123
+        },
+        {
+          "caller": "SectionOverview",
+          "callee": "project.features.map",
+          "lineNumber": 220
+        },
+        {
+          "caller": "SectionProblem",
+          "callee": "project.problem.match",
+          "lineNumber": 257
+        },
+        {
+          "caller": "SectionProblem",
+          "callee": "lines.map",
+          "lineNumber": 299
+        },
+        {
+          "caller": "SectionApproach",
+          "callee": "project.approach.map",
+          "lineNumber": 393
+        },
+        {
+          "caller": "SectionContribution",
+          "callee": "project.contribution.map",
+          "lineNumber": 478
+        },
+        {
+          "caller": "SectionContribution",
+          "callee": "project.tech.map",
+          "lineNumber": 509
+        },
+        {
+          "caller": "RippleButton",
+          "callee": "useState",
+          "lineNumber": 555
+        },
+        {
+          "caller": "RippleButton",
+          "callee": "useRef",
+          "lineNumber": 558
+        },
+        {
+          "caller": "handleClick",
+          "callee": "ref.current.getBoundingClientRect",
+          "lineNumber": 562
+        },
+        {
+          "caller": "handleClick",
+          "callee": "Date.now",
+          "lineNumber": 563
+        },
+        {
+          "caller": "handleClick",
+          "callee": "setRipples",
+          "lineNumber": 564
+        },
+        {
+          "caller": "handleClick",
+          "callee": "setTimeout",
+          "lineNumber": 568
+        },
+        {
+          "caller": "handleClick",
+          "callee": "setRipples",
+          "lineNumber": 568
+        },
+        {
+          "caller": "handleClick",
+          "callee": "r.filter",
+          "lineNumber": 568
+        },
+        {
+          "caller": "RippleButton",
+          "callee": "ripples.map",
+          "lineNumber": 591
+        },
+        {
+          "caller": "SectionResult",
+          "callee": "project.links.map",
+          "lineNumber": 684
+        },
+        {
+          "caller": "ProjectViewer",
+          "callee": "getProjectTheme",
+          "lineNumber": 731
+        },
+        {
+          "caller": "ProjectViewer",
+          "callee": "ambientFor",
+          "lineNumber": 735
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "useState",
+          "lineNumber": 782
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "useState",
+          "lineNumber": 783
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "useEffect",
+          "lineNumber": 786
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "setCurrentStep",
+          "lineNumber": 787
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "useEffect",
+          "lineNumber": 790
+        },
+        {
+          "caller": "onKey",
+          "callee": "goNext",
+          "lineNumber": 793
+        },
+        {
+          "caller": "onKey",
+          "callee": "goPrev",
+          "lineNumber": 794
+        },
+        {
+          "caller": "onKey",
+          "callee": "onClose",
+          "lineNumber": 795
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "window.addEventListener",
+          "lineNumber": 797
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "window.removeEventListener",
+          "lineNumber": 798
+        },
+        {
+          "caller": "goTo",
+          "callee": "setDirection",
+          "lineNumber": 802
+        },
+        {
+          "caller": "goTo",
+          "callee": "setCurrentStep",
+          "lineNumber": 803
+        },
+        {
+          "caller": "goNext",
+          "callee": "goTo",
+          "lineNumber": 806
+        },
+        {
+          "caller": "goPrev",
+          "callee": "goTo",
+          "lineNumber": 809
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "e.stopPropagation",
+          "lineNumber": 857
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "project.tech.map",
+          "lineNumber": 889
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "STEPS.map",
+          "lineNumber": 909
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "goTo",
+          "lineNumber": 916
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "project.links.map",
+          "lineNumber": 943
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "e.stopPropagation",
+          "lineNumber": 961
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "STEPS.map",
+          "lineNumber": 974
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "goTo",
+          "lineNumber": 978
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "STEPS.map",
+          "lineNumber": 1048
+        },
+        {
+          "caller": "DefaultProjectViewer",
+          "callee": "goTo",
+          "lineNumber": 1052
+        }
+      ],
+      "metrics": {
+        "importCount": 12,
+        "exportCount": 1,
+        "functionCount": 12,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/AmbientBackground.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 181,
+      "nonEmptyLines": 169,
+      "functions": [
+        {
+          "name": "AmbientBackground",
+          "startLine": 10,
+          "endLine": 19,
+          "params": [
+            "{projectId, theme}"
+          ]
+        },
+        {
+          "name": "Vignette",
+          "startLine": 21,
+          "endLine": 23,
+          "params": []
+        },
+        {
+          "name": "HudFrame",
+          "startLine": 26,
+          "endLine": 39,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "positionStyle",
+          "startLine": 41,
+          "endLine": 47,
+          "params": [
+            "pos"
+          ]
+        },
+        {
+          "name": "borderStyle",
+          "startLine": 48,
+          "endLine": 53,
+          "params": [
+            "b"
+          ]
+        },
+        {
+          "name": "Layer",
+          "startLine": 55,
+          "endLine": 61,
+          "params": [
+            "{variant, theme}"
+          ]
+        },
+        {
+          "name": "useDots",
+          "startLine": 63,
+          "endLine": 74,
+          "params": [
+            "n",
+            "seed"
+          ]
+        },
+        {
+          "name": "Horror",
+          "startLine": 77,
+          "endLine": 93,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "Energy",
+          "startLine": 96,
+          "endLine": 120,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "Data",
+          "startLine": 123,
+          "endLine": 153,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "Arcade",
+          "startLine": 156,
+          "endLine": 166,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "Calm",
+          "startLine": 169,
+          "endLine": 181,
+          "params": [
+            "{theme}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AmbientBackground",
+          "line": 10,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AmbientBackground",
+          "callee": "ambientFor",
+          "lineNumber": 11
+        },
+        {
+          "caller": "corner",
+          "callee": "positionStyle",
+          "lineNumber": 29
+        },
+        {
+          "caller": "corner",
+          "callee": "borderStyle",
+          "lineNumber": 29
+        },
+        {
+          "caller": "HudFrame",
+          "callee": "corner",
+          "lineNumber": 33
+        },
+        {
+          "caller": "HudFrame",
+          "callee": "corner",
+          "lineNumber": 34
+        },
+        {
+          "caller": "HudFrame",
+          "callee": "corner",
+          "lineNumber": 35
+        },
+        {
+          "caller": "HudFrame",
+          "callee": "corner",
+          "lineNumber": 36
+        },
+        {
+          "caller": "useDots",
+          "callee": "useMemo",
+          "lineNumber": 64
+        },
+        {
+          "caller": "useDots",
+          "callee": "Array.from",
+          "lineNumber": 66
+        },
+        {
+          "caller": "useDots",
+          "callee": "Math.sin",
+          "lineNumber": 67
+        },
+        {
+          "caller": "useDots",
+          "callee": "Math.cos",
+          "lineNumber": 68
+        },
+        {
+          "caller": "useDots",
+          "callee": "Math.sin",
+          "lineNumber": 69
+        },
+        {
+          "caller": "Horror",
+          "callee": "useDots",
+          "lineNumber": 78
+        },
+        {
+          "caller": "Horror",
+          "callee": "dust.map",
+          "lineNumber": 88
+        },
+        {
+          "caller": "Energy",
+          "callee": "useDots",
+          "lineNumber": 97
+        },
+        {
+          "caller": "Energy",
+          "callee": "[0, 1, 2].map",
+          "lineNumber": 106
+        },
+        {
+          "caller": "Energy",
+          "callee": "rise.map",
+          "lineNumber": 115
+        },
+        {
+          "caller": "Data",
+          "callee": "useDots",
+          "lineNumber": 124
+        },
+        {
+          "caller": "Data",
+          "callee": "bits.map",
+          "lineNumber": 146
+        },
+        {
+          "caller": "Arcade",
+          "callee": "useDots",
+          "lineNumber": 157
+        },
+        {
+          "caller": "Arcade",
+          "callee": "stars.map",
+          "lineNumber": 160
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 12,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/DashboardProjectViewer.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 424,
+      "nonEmptyLines": 393,
+      "functions": [
+        {
+          "name": "CountUp",
+          "startLine": 19,
+          "endLine": 43,
+          "params": [
+            "{to, suffix = \"\", duration = 900}"
+          ]
+        },
+        {
+          "name": "Sparkline",
+          "startLine": 45,
+          "endLine": 71,
+          "params": [
+            "{color, seed = 1, up = true}"
+          ]
+        },
+        {
+          "name": "Ticker",
+          "startLine": 73,
+          "endLine": 98,
+          "params": [
+            "{tech, theme}"
+          ]
+        },
+        {
+          "name": "Panel",
+          "startLine": 100,
+          "endLine": 136,
+          "params": [
+            "{\n  title,\n  theme,\n  children,\n  className = \"\",\n  delay = 0,\n}"
+          ]
+        },
+        {
+          "name": "Section",
+          "startLine": 138,
+          "endLine": 292,
+          "params": [
+            "{step, project, theme}"
+          ]
+        },
+        {
+          "name": "DashboardProjectViewer",
+          "startLine": 300,
+          "endLine": 424,
+          "params": [
+            "{project, theme, onClose}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DashboardProjectViewer",
+          "line": 300,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "CountUp",
+          "callee": "useState",
+          "lineNumber": 20
+        },
+        {
+          "caller": "CountUp",
+          "callee": "useEffect",
+          "lineNumber": 22
+        },
+        {
+          "caller": "CountUp",
+          "callee": "performance.now",
+          "lineNumber": 24
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.min",
+          "lineNumber": 27
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.pow",
+          "lineNumber": 28
+        },
+        {
+          "caller": "tick",
+          "callee": "setVal",
+          "lineNumber": 29
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.round",
+          "lineNumber": 29
+        },
+        {
+          "caller": "tick",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 30
+        },
+        {
+          "caller": "CountUp",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 33
+        },
+        {
+          "caller": "CountUp",
+          "callee": "cancelAnimationFrame",
+          "lineNumber": 34
+        },
+        {
+          "caller": "Sparkline",
+          "callee": "Array.from",
+          "lineNumber": 46
+        },
+        {
+          "caller": "Sparkline",
+          "callee": "Math.sin",
+          "lineNumber": 48
+        },
+        {
+          "caller": "Sparkline",
+          "callee": "Math.sin",
+          "lineNumber": 48
+        },
+        {
+          "caller": "Sparkline",
+          "callee": "Math.min",
+          "lineNumber": 51
+        },
+        {
+          "caller": "Sparkline",
+          "callee": "Math.max",
+          "lineNumber": 52
+        },
+        {
+          "caller": "Sparkline",
+          "callee": "points.map",
+          "lineNumber": 53
+        },
+        {
+          "caller": "Sparkline",
+          "callee": "normalized.map((p, i) => `${(i / 23) * 100},${34 - p * 30}`).join",
+          "lineNumber": 54
+        },
+        {
+          "caller": "Sparkline",
+          "callee": "normalized.map",
+          "lineNumber": 54
+        },
+        {
+          "caller": "Ticker",
+          "callee": "useState",
+          "lineNumber": 74
+        },
+        {
+          "caller": "Ticker",
+          "callee": "useEffect",
+          "lineNumber": 76
+        },
+        {
+          "caller": "Ticker",
+          "callee": "setInterval",
+          "lineNumber": 77
+        },
+        {
+          "caller": "Ticker",
+          "callee": "setTick",
+          "lineNumber": 77
+        },
+        {
+          "caller": "Ticker",
+          "callee": "clearInterval",
+          "lineNumber": 78
+        },
+        {
+          "caller": "Ticker",
+          "callee": "[...tech, ...tech].map",
+          "lineNumber": 83
+        },
+        {
+          "caller": "Ticker",
+          "callee": "(((index * 37 + tick * 13) % 90) / 10 + 0.4).toFixed",
+          "lineNumber": 85
+        },
+        {
+          "caller": "Section",
+          "callee": "[\n            {n: project.features.length, l: \"Features\"},\n            {n: project.tech.length, l: \"Tech Stack\"},\n            {n: project.contribution.length, l: \"Contributions\"},\n          ].map",
+          "lineNumber": 151
+        },
+        {
+          "caller": "Section",
+          "callee": "project.features.map",
+          "lineNumber": 171
+        },
+        {
+          "caller": "Section",
+          "callee": "project.approach.map",
+          "lineNumber": 202
+        },
+        {
+          "caller": "Section",
+          "callee": "project.contribution.map",
+          "lineNumber": 224
+        },
+        {
+          "caller": "Section",
+          "callee": "project.tech.map",
+          "lineNumber": 248
+        },
+        {
+          "caller": "Section",
+          "callee": "project.links.map",
+          "lineNumber": 275
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "useState",
+          "lineNumber": 301
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "useEffect",
+          "lineNumber": 304
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 304
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "useEffect",
+          "lineNumber": 306
+        },
+        {
+          "caller": "onKey",
+          "callee": "setStep",
+          "lineNumber": 308
+        },
+        {
+          "caller": "onKey",
+          "callee": "Math.min",
+          "lineNumber": 308
+        },
+        {
+          "caller": "onKey",
+          "callee": "setStep",
+          "lineNumber": 309
+        },
+        {
+          "caller": "onKey",
+          "callee": "Math.max",
+          "lineNumber": 309
+        },
+        {
+          "caller": "onKey",
+          "callee": "onClose",
+          "lineNumber": 310
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "window.addEventListener",
+          "lineNumber": 313
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "window.removeEventListener",
+          "lineNumber": 314
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "richRender",
+          "lineNumber": 374
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "STEPS.map",
+          "lineNumber": 381
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 385
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 401
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "Math.max",
+          "lineNumber": 401
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 414
+        },
+        {
+          "caller": "DashboardProjectViewer",
+          "callee": "Math.min",
+          "lineNumber": 414
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/GameProjectViewer.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 767,
+      "nonEmptyLines": 717,
+      "functions": [
+        {
+          "name": "ScrambleText",
+          "startLine": 34,
+          "endLine": 85,
+          "params": [
+            "{\n  text,\n  className,\n  style,\n  speed = 32,\n  delay = 0,\n}"
+          ]
+        },
+        {
+          "name": "Overlays",
+          "startLine": 87,
+          "endLine": 129,
+          "params": [
+            "{accent, mood}"
+          ]
+        },
+        {
+          "name": "HorrorLayer",
+          "startLine": 132,
+          "endLine": 193,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "ArcadeLayer",
+          "startLine": 196,
+          "endLine": 249,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "PlatformerLayer",
+          "startLine": 252,
+          "endLine": 288,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "TitleScreen",
+          "startLine": 290,
+          "endLine": 375,
+          "params": [
+            "{project, theme}"
+          ]
+        },
+        {
+          "name": "LogWindow",
+          "startLine": 377,
+          "endLine": 395,
+          "params": [
+            "{title, theme, children}"
+          ]
+        },
+        {
+          "name": "StepHeader",
+          "startLine": 397,
+          "endLine": 405,
+          "params": [
+            "{step, theme}"
+          ]
+        },
+        {
+          "name": "GameSection",
+          "startLine": 407,
+          "endLine": 540,
+          "params": [
+            "{step, project, theme}"
+          ]
+        },
+        {
+          "name": "GameProjectViewer",
+          "startLine": 548,
+          "endLine": 767,
+          "params": [
+            "{project, theme, onClose}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "GameProjectViewer",
+          "line": 548,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ScrambleText",
+          "callee": "useState",
+          "lineNumber": 47
+        },
+        {
+          "caller": "ScrambleText",
+          "callee": "useEffect",
+          "lineNumber": 49
+        },
+        {
+          "caller": "ScrambleText",
+          "callee": "performance.now",
+          "lineNumber": 52
+        },
+        {
+          "caller": "tick",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 57
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.min",
+          "lineNumber": 61
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.floor",
+          "lineNumber": 68
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.random",
+          "lineNumber": 68
+        },
+        {
+          "caller": "tick",
+          "callee": "setOut",
+          "lineNumber": 71
+        },
+        {
+          "caller": "tick",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 72
+        },
+        {
+          "caller": "tick",
+          "callee": "setOut",
+          "lineNumber": 73
+        },
+        {
+          "caller": "ScrambleText",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 76
+        },
+        {
+          "caller": "ScrambleText",
+          "callee": "cancelAnimationFrame",
+          "lineNumber": 77
+        },
+        {
+          "caller": "HorrorLayer",
+          "callee": "useState",
+          "lineNumber": 133
+        },
+        {
+          "caller": "HorrorLayer",
+          "callee": "useState",
+          "lineNumber": 134
+        },
+        {
+          "caller": "HorrorLayer",
+          "callee": "useEffect",
+          "lineNumber": 136
+        },
+        {
+          "caller": "flick",
+          "callee": "Math.random",
+          "lineNumber": 139
+        },
+        {
+          "caller": "flick",
+          "callee": "window.setTimeout",
+          "lineNumber": 140
+        },
+        {
+          "caller": "flick",
+          "callee": "setBlackout",
+          "lineNumber": 142
+        },
+        {
+          "caller": "flick",
+          "callee": "sound.sfx",
+          "lineNumber": 143
+        },
+        {
+          "caller": "flick",
+          "callee": "flick",
+          "lineNumber": 144
+        },
+        {
+          "caller": "shadow",
+          "callee": "Math.random",
+          "lineNumber": 148
+        },
+        {
+          "caller": "shadow",
+          "callee": "window.setTimeout",
+          "lineNumber": 149
+        },
+        {
+          "caller": "shadow",
+          "callee": "setShadowKey",
+          "lineNumber": 151
+        },
+        {
+          "caller": "shadow",
+          "callee": "shadow",
+          "lineNumber": 152
+        },
+        {
+          "caller": "HorrorLayer",
+          "callee": "flick",
+          "lineNumber": 155
+        },
+        {
+          "caller": "HorrorLayer",
+          "callee": "shadow",
+          "lineNumber": 156
+        },
+        {
+          "caller": "ArcadeLayer",
+          "callee": "useMemo",
+          "lineNumber": 197
+        },
+        {
+          "caller": "ArcadeLayer",
+          "callee": "Array.from",
+          "lineNumber": 199
+        },
+        {
+          "caller": "ArcadeLayer",
+          "callee": "Math.sin",
+          "lineNumber": 200
+        },
+        {
+          "caller": "ArcadeLayer",
+          "callee": "Math.cos",
+          "lineNumber": 201
+        },
+        {
+          "caller": "ArcadeLayer",
+          "callee": "Math.sin",
+          "lineNumber": 202
+        },
+        {
+          "caller": "ArcadeLayer",
+          "callee": "useState",
+          "lineNumber": 207
+        },
+        {
+          "caller": "ArcadeLayer",
+          "callee": "useEffect",
+          "lineNumber": 208
+        },
+        {
+          "caller": "g",
+          "callee": "Math.random",
+          "lineNumber": 211
+        },
+        {
+          "caller": "g",
+          "callee": "window.setTimeout",
+          "lineNumber": 212
+        },
+        {
+          "caller": "g",
+          "callee": "setGlitch",
+          "lineNumber": 214
+        },
+        {
+          "caller": "g",
+          "callee": "g",
+          "lineNumber": 215
+        },
+        {
+          "caller": "ArcadeLayer",
+          "callee": "g",
+          "lineNumber": 218
+        },
+        {
+          "caller": "ArcadeLayer",
+          "callee": "pixels.map",
+          "lineNumber": 225
+        },
+        {
+          "caller": "PlatformerLayer",
+          "callee": "useMemo",
+          "lineNumber": 253
+        },
+        {
+          "caller": "PlatformerLayer",
+          "callee": "Array.from",
+          "lineNumber": 255
+        },
+        {
+          "caller": "PlatformerLayer",
+          "callee": "Math.sin",
+          "lineNumber": 256
+        },
+        {
+          "caller": "PlatformerLayer",
+          "callee": "Math.cos",
+          "lineNumber": 257
+        },
+        {
+          "caller": "PlatformerLayer",
+          "callee": "Math.sin",
+          "lineNumber": 259
+        },
+        {
+          "caller": "PlatformerLayer",
+          "callee": "[0, 1, 2].map",
+          "lineNumber": 266
+        },
+        {
+          "caller": "PlatformerLayer",
+          "callee": "sparks.map",
+          "lineNumber": 275
+        },
+        {
+          "caller": "TitleScreen",
+          "callee": "project.features.map",
+          "lineNumber": 350
+        },
+        {
+          "caller": "GameSection",
+          "callee": "project.approach.map",
+          "lineNumber": 438
+        },
+        {
+          "caller": "GameSection",
+          "callee": "String(index + 1).padStart",
+          "lineNumber": 452
+        },
+        {
+          "caller": "GameSection",
+          "callee": "String",
+          "lineNumber": 452
+        },
+        {
+          "caller": "GameSection",
+          "callee": "project.contribution.map",
+          "lineNumber": 467
+        },
+        {
+          "caller": "GameSection",
+          "callee": "project.tech.map",
+          "lineNumber": 489
+        },
+        {
+          "caller": "GameSection",
+          "callee": "project.links.map",
+          "lineNumber": 523
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useState",
+          "lineNumber": 549
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useState",
+          "lineNumber": 550
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useState",
+          "lineNumber": 551
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useState",
+          "lineNumber": 552
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useRef",
+          "lineNumber": 554
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useMotionValue",
+          "lineNumber": 555
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useMotionValue",
+          "lineNumber": 556
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useSpring",
+          "lineNumber": 557
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useSpring",
+          "lineNumber": 558
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useSpring",
+          "lineNumber": 559
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useTransform",
+          "lineNumber": 559
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useSpring",
+          "lineNumber": 560
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useTransform",
+          "lineNumber": 560
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useMotionTemplate",
+          "lineNumber": 563
+        },
+        {
+          "caller": "handleMove",
+          "callee": "containerRef.current.getBoundingClientRect",
+          "lineNumber": 569
+        },
+        {
+          "caller": "handleMove",
+          "callee": "mx.set",
+          "lineNumber": 570
+        },
+        {
+          "caller": "handleMove",
+          "callee": "my.set",
+          "lineNumber": 571
+        },
+        {
+          "caller": "handleClick",
+          "callee": "Date.now",
+          "lineNumber": 575
+        },
+        {
+          "caller": "handleClick",
+          "callee": "setBursts",
+          "lineNumber": 576
+        },
+        {
+          "caller": "handleClick",
+          "callee": "setTimeout",
+          "lineNumber": 577
+        },
+        {
+          "caller": "handleClick",
+          "callee": "setBursts",
+          "lineNumber": 577
+        },
+        {
+          "caller": "handleClick",
+          "callee": "items.filter",
+          "lineNumber": 577
+        },
+        {
+          "caller": "changeStep",
+          "callee": "setGlitch",
+          "lineNumber": 581
+        },
+        {
+          "caller": "changeStep",
+          "callee": "setStep",
+          "lineNumber": 582
+        },
+        {
+          "caller": "changeStep",
+          "callee": "setTimeout",
+          "lineNumber": 583
+        },
+        {
+          "caller": "changeStep",
+          "callee": "setGlitch",
+          "lineNumber": 583
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useEffect",
+          "lineNumber": 586
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "setBooting",
+          "lineNumber": 587
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "setTimeout",
+          "lineNumber": 588
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "setBooting",
+          "lineNumber": 588
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "clearTimeout",
+          "lineNumber": 589
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useEffect",
+          "lineNumber": 592
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 592
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "useEffect",
+          "lineNumber": 594
+        },
+        {
+          "caller": "onKey",
+          "callee": "setStep",
+          "lineNumber": 596
+        },
+        {
+          "caller": "onKey",
+          "callee": "Math.min",
+          "lineNumber": 596
+        },
+        {
+          "caller": "onKey",
+          "callee": "setStep",
+          "lineNumber": 597
+        },
+        {
+          "caller": "onKey",
+          "callee": "Math.max",
+          "lineNumber": 597
+        },
+        {
+          "caller": "onKey",
+          "callee": "onClose",
+          "lineNumber": 598
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "window.addEventListener",
+          "lineNumber": 601
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "window.removeEventListener",
+          "lineNumber": 602
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "bursts.map",
+          "lineNumber": 645
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "richRender",
+          "lineNumber": 715
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "STEPS.map",
+          "lineNumber": 722
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "changeStep",
+          "lineNumber": 726
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "changeStep",
+          "lineNumber": 744
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "Math.max",
+          "lineNumber": 744
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "changeStep",
+          "lineNumber": 757
+        },
+        {
+          "caller": "GameProjectViewer",
+          "callee": "Math.min",
+          "lineNumber": 757
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 10,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/PlatformProjectViewer.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 317,
+      "nonEmptyLines": 297,
+      "functions": [
+        {
+          "name": "Stamp",
+          "startLine": 19,
+          "endLine": 31,
+          "params": [
+            "{color, delay}"
+          ]
+        },
+        {
+          "name": "DocCard",
+          "startLine": 33,
+          "endLine": 62,
+          "params": [
+            "{\n  label,\n  theme,\n  children,\n  delay = 0,\n}"
+          ]
+        },
+        {
+          "name": "Section",
+          "startLine": 64,
+          "endLine": 199,
+          "params": [
+            "{step, project, theme}"
+          ]
+        },
+        {
+          "name": "PlatformProjectViewer",
+          "startLine": 207,
+          "endLine": 317,
+          "params": [
+            "{project, theme, onClose}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "PlatformProjectViewer",
+          "line": 207,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Section",
+          "callee": "project.features.map",
+          "lineNumber": 82
+        },
+        {
+          "caller": "Section",
+          "callee": "String(index + 1).padStart",
+          "lineNumber": 92
+        },
+        {
+          "caller": "Section",
+          "callee": "String",
+          "lineNumber": 92
+        },
+        {
+          "caller": "Section",
+          "callee": "project.approach.map",
+          "lineNumber": 119
+        },
+        {
+          "caller": "Section",
+          "callee": "project.contribution.map",
+          "lineNumber": 141
+        },
+        {
+          "caller": "Section",
+          "callee": "project.tech.map",
+          "lineNumber": 158
+        },
+        {
+          "caller": "Section",
+          "callee": "project.links.map",
+          "lineNumber": 182
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "useState",
+          "lineNumber": 208
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "useEffect",
+          "lineNumber": 211
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 211
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "useEffect",
+          "lineNumber": 213
+        },
+        {
+          "caller": "onKey",
+          "callee": "setStep",
+          "lineNumber": 215
+        },
+        {
+          "caller": "onKey",
+          "callee": "Math.min",
+          "lineNumber": 215
+        },
+        {
+          "caller": "onKey",
+          "callee": "setStep",
+          "lineNumber": 216
+        },
+        {
+          "caller": "onKey",
+          "callee": "Math.max",
+          "lineNumber": 216
+        },
+        {
+          "caller": "onKey",
+          "callee": "onClose",
+          "lineNumber": 217
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "window.addEventListener",
+          "lineNumber": 220
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "window.removeEventListener",
+          "lineNumber": 221
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "STEPS.map",
+          "lineNumber": 247
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 251
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "richRender",
+          "lineNumber": 279
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "String(step + 1).padStart",
+          "lineNumber": 286
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "String",
+          "lineNumber": 286
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "String(STEPS.length).padStart",
+          "lineNumber": 287
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "String",
+          "lineNumber": 287
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 294
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "Math.max",
+          "lineNumber": 294
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 307
+        },
+        {
+          "caller": "PlatformProjectViewer",
+          "callee": "Math.min",
+          "lineNumber": 307
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/ProjectIntro.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 97,
+      "nonEmptyLines": 87,
+      "functions": [
+        {
+          "name": "ProjectIntro",
+          "startLine": 10,
+          "endLine": 97,
+          "params": [
+            "{title, theme, variant}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ProjectIntro",
+          "line": 10,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ProjectIntro",
+          "callee": "useState",
+          "lineNumber": 11
+        },
+        {
+          "caller": "ProjectIntro",
+          "callee": "useEffect",
+          "lineNumber": 14
+        },
+        {
+          "caller": "ProjectIntro",
+          "callee": "sound.sfx",
+          "lineNumber": 15
+        },
+        {
+          "caller": "ProjectIntro",
+          "callee": "setTimeout",
+          "lineNumber": 16
+        },
+        {
+          "caller": "ProjectIntro",
+          "callee": "setShow",
+          "lineNumber": 16
+        },
+        {
+          "caller": "skip",
+          "callee": "setShow",
+          "lineNumber": 17
+        },
+        {
+          "caller": "ProjectIntro",
+          "callee": "window.addEventListener",
+          "lineNumber": 18
+        },
+        {
+          "caller": "ProjectIntro",
+          "callee": "clearTimeout",
+          "lineNumber": 20
+        },
+        {
+          "caller": "ProjectIntro",
+          "callee": "window.removeEventListener",
+          "lineNumber": 21
+        },
+        {
+          "caller": "ProjectIntro",
+          "callee": "setShow",
+          "lineNumber": 37
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/RealtimeProjectViewer.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 359,
+      "nonEmptyLines": 335,
+      "functions": [
+        {
+          "name": "LiveDot",
+          "startLine": 18,
+          "endLine": 30,
+          "params": [
+            "{color}"
+          ]
+        },
+        {
+          "name": "Gauge",
+          "startLine": 32,
+          "endLine": 62,
+          "params": [
+            "{value, label, color, delay = 0}"
+          ]
+        },
+        {
+          "name": "LiveFeed",
+          "startLine": 64,
+          "endLine": 98,
+          "params": [
+            "{items, theme}"
+          ]
+        },
+        {
+          "name": "Section",
+          "startLine": 100,
+          "endLine": 245,
+          "params": [
+            "{step, project, theme}"
+          ]
+        },
+        {
+          "name": "RealtimeProjectViewer",
+          "startLine": 253,
+          "endLine": 359,
+          "params": [
+            "{project, theme, onClose}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "RealtimeProjectViewer",
+          "line": 253,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "LiveFeed",
+          "callee": "useState",
+          "lineNumber": 65
+        },
+        {
+          "caller": "LiveFeed",
+          "callee": "useEffect",
+          "lineNumber": 67
+        },
+        {
+          "caller": "LiveFeed",
+          "callee": "setVisible",
+          "lineNumber": 68
+        },
+        {
+          "caller": "LiveFeed",
+          "callee": "setInterval",
+          "lineNumber": 69
+        },
+        {
+          "caller": "LiveFeed",
+          "callee": "setVisible",
+          "lineNumber": 70
+        },
+        {
+          "caller": "LiveFeed",
+          "callee": "clearInterval",
+          "lineNumber": 73
+        },
+        {
+          "caller": "LiveFeed",
+          "callee": "items.slice(0, visible).map",
+          "lineNumber": 79
+        },
+        {
+          "caller": "LiveFeed",
+          "callee": "items.slice",
+          "lineNumber": 79
+        },
+        {
+          "caller": "LiveFeed",
+          "callee": "String(10 + index).padStart",
+          "lineNumber": 90
+        },
+        {
+          "caller": "LiveFeed",
+          "callee": "String",
+          "lineNumber": 90
+        },
+        {
+          "caller": "LiveFeed",
+          "callee": "String((index * 17) % 60).padStart",
+          "lineNumber": 90
+        },
+        {
+          "caller": "LiveFeed",
+          "callee": "String",
+          "lineNumber": 90
+        },
+        {
+          "caller": "Section",
+          "callee": "Math.min",
+          "lineNumber": 117
+        },
+        {
+          "caller": "Section",
+          "callee": "project.features.map",
+          "lineNumber": 126
+        },
+        {
+          "caller": "Section",
+          "callee": "project.approach.map",
+          "lineNumber": 161
+        },
+        {
+          "caller": "Section",
+          "callee": "project.tech.map",
+          "lineNumber": 195
+        },
+        {
+          "caller": "Section",
+          "callee": "project.links.map",
+          "lineNumber": 228
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "useState",
+          "lineNumber": 254
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "useEffect",
+          "lineNumber": 257
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 257
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "useEffect",
+          "lineNumber": 259
+        },
+        {
+          "caller": "onKey",
+          "callee": "setStep",
+          "lineNumber": 261
+        },
+        {
+          "caller": "onKey",
+          "callee": "Math.min",
+          "lineNumber": 261
+        },
+        {
+          "caller": "onKey",
+          "callee": "setStep",
+          "lineNumber": 262
+        },
+        {
+          "caller": "onKey",
+          "callee": "Math.max",
+          "lineNumber": 262
+        },
+        {
+          "caller": "onKey",
+          "callee": "onClose",
+          "lineNumber": 263
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "window.addEventListener",
+          "lineNumber": 266
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "window.removeEventListener",
+          "lineNumber": 267
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "richRender",
+          "lineNumber": 309
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "STEPS.map",
+          "lineNumber": 316
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 320
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 336
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "Math.max",
+          "lineNumber": 336
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "setStep",
+          "lineNumber": 349
+        },
+        {
+          "caller": "RealtimeProjectViewer",
+          "callee": "Math.min",
+          "lineNumber": 349
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/SoundToggle.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 54,
+      "nonEmptyLines": 49,
+      "functions": [
+        {
+          "name": "SoundToggle",
+          "startLine": 10,
+          "endLine": 54,
+          "params": [
+            "{theme, variant}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "SoundToggle",
+          "line": 10,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SoundToggle",
+          "callee": "useState",
+          "lineNumber": 11
+        },
+        {
+          "caller": "SoundToggle",
+          "callee": "useEffect",
+          "lineNumber": 13
+        },
+        {
+          "caller": "SoundToggle",
+          "callee": "sound.setMood",
+          "lineNumber": 15
+        },
+        {
+          "caller": "SoundToggle",
+          "callee": "setOn",
+          "lineNumber": 16
+        },
+        {
+          "caller": "SoundToggle",
+          "callee": "sound.setEnabled",
+          "lineNumber": 17
+        },
+        {
+          "caller": "toggle",
+          "callee": "sound.setEnabled",
+          "lineNumber": 24
+        },
+        {
+          "caller": "toggle",
+          "callee": "setOn",
+          "lineNumber": 25
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/atmosphere.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 33,
+      "nonEmptyLines": 29,
+      "functions": [
+        {
+          "name": "ambientFor",
+          "startLine": 19,
+          "endLine": 24,
+          "params": [
+            "id",
+            "theme"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ambientFor",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "INTRO_COPY",
+          "line": 27,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 2,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/AClubDemo.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 102,
+      "nonEmptyLines": 95,
+      "functions": [
+        {
+          "name": "AClubDemo",
+          "startLine": 30,
+          "endLine": 102,
+          "params": [
+            "{theme}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AClubDemo",
+          "line": 30,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AClubDemo",
+          "callee": "useState",
+          "lineNumber": 31
+        },
+        {
+          "caller": "AClubDemo",
+          "callee": "CLUBS.filter",
+          "lineNumber": 32
+        },
+        {
+          "caller": "AClubDemo",
+          "callee": "CATS.map",
+          "lineNumber": 47
+        },
+        {
+          "caller": "AClubDemo",
+          "callee": "setCat",
+          "lineNumber": 53
+        },
+        {
+          "caller": "AClubDemo",
+          "callee": "list.map",
+          "lineNumber": 71
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 116,
+      "nonEmptyLines": 108,
+      "functions": [
+        {
+          "name": "Strip",
+          "startLine": 9,
+          "endLine": 21,
+          "params": [
+            "{speed, children, opacity = 1, bottom}"
+          ]
+        },
+        {
+          "name": "Buildings",
+          "startLine": 23,
+          "endLine": 31,
+          "params": [
+            "{color, heights}"
+          ]
+        },
+        {
+          "name": "AjouAdventureDemo",
+          "startLine": 33,
+          "endLine": 116,
+          "params": [
+            "{theme}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AjouAdventureDemo",
+          "line": 33,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Buildings",
+          "callee": "heights.map",
+          "lineNumber": 26
+        },
+        {
+          "caller": "AjouAdventureDemo",
+          "callee": "useState",
+          "lineNumber": 34
+        },
+        {
+          "caller": "AjouAdventureDemo",
+          "callee": "useState",
+          "lineNumber": 35
+        },
+        {
+          "caller": "AjouAdventureDemo",
+          "callee": "useState",
+          "lineNumber": 36
+        },
+        {
+          "caller": "AjouAdventureDemo",
+          "callee": "useEffect",
+          "lineNumber": 38
+        },
+        {
+          "caller": "AjouAdventureDemo",
+          "callee": "setInterval",
+          "lineNumber": 40
+        },
+        {
+          "caller": "AjouAdventureDemo",
+          "callee": "setScore",
+          "lineNumber": 40
+        },
+        {
+          "caller": "AjouAdventureDemo",
+          "callee": "clearInterval",
+          "lineNumber": 41
+        },
+        {
+          "caller": "AjouAdventureDemo",
+          "callee": "score.toLocaleString",
+          "lineNumber": 51
+        },
+        {
+          "caller": "AjouAdventureDemo",
+          "callee": "setRunning",
+          "lineNumber": 54
+        },
+        {
+          "caller": "AjouAdventureDemo",
+          "callee": "setJump",
+          "lineNumber": 71
+        },
+        {
+          "caller": "AjouAdventureDemo",
+          "callee": "[0, 1, 2, 3, 4, 5, 6, 7].map",
+          "lineNumber": 87
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/AjouchongDemo.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 107,
+      "nonEmptyLines": 99,
+      "functions": [
+        {
+          "name": "AjouchongDemo",
+          "startLine": 36,
+          "endLine": 107,
+          "params": [
+            "{theme}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "AjouchongDemo",
+          "line": 36,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "AjouchongDemo",
+          "callee": "useState",
+          "lineNumber": 37
+        },
+        {
+          "caller": "AjouchongDemo",
+          "callee": "[...TICKER, ...TICKER].map",
+          "lineNumber": 55
+        },
+        {
+          "caller": "AjouchongDemo",
+          "callee": "TABS.map",
+          "lineNumber": 64
+        },
+        {
+          "caller": "AjouchongDemo",
+          "callee": "setTab",
+          "lineNumber": 70
+        },
+        {
+          "caller": "AjouchongDemo",
+          "callee": "BOARDS[tab].map",
+          "lineNumber": 91
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 85,
+      "nonEmptyLines": 79,
+      "functions": [
+        {
+          "name": "DarkLabReveal",
+          "startLine": 9,
+          "endLine": 85,
+          "params": [
+            "{theme}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DarkLabReveal",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "DarkLabReveal",
+          "callee": "useRef",
+          "lineNumber": 10
+        },
+        {
+          "caller": "DarkLabReveal",
+          "callee": "useSpring",
+          "lineNumber": 11
+        },
+        {
+          "caller": "DarkLabReveal",
+          "callee": "useMotionValue",
+          "lineNumber": 11
+        },
+        {
+          "caller": "DarkLabReveal",
+          "callee": "useSpring",
+          "lineNumber": 12
+        },
+        {
+          "caller": "DarkLabReveal",
+          "callee": "useMotionValue",
+          "lineNumber": 12
+        },
+        {
+          "caller": "DarkLabReveal",
+          "callee": "useState",
+          "lineNumber": 13
+        },
+        {
+          "caller": "DarkLabReveal",
+          "callee": "useMotionTemplate",
+          "lineNumber": 15
+        },
+        {
+          "caller": "DarkLabReveal",
+          "callee": "ref.current?.getBoundingClientRect",
+          "lineNumber": 33
+        },
+        {
+          "caller": "DarkLabReveal",
+          "callee": "mx.set",
+          "lineNumber": 35
+        },
+        {
+          "caller": "DarkLabReveal",
+          "callee": "my.set",
+          "lineNumber": 36
+        },
+        {
+          "caller": "DarkLabReveal",
+          "callee": "setLit",
+          "lineNumber": 37
+        },
+        {
+          "caller": "DarkLabReveal",
+          "callee": "setLit",
+          "lineNumber": 39
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 303,
+      "nonEmptyLines": 281,
+      "functions": [
+        {
+          "name": "statusColor",
+          "startLine": 52,
+          "endLine": 56,
+          "params": [
+            "status",
+            "theme"
+          ]
+        },
+        {
+          "name": "pad",
+          "startLine": 58,
+          "endLine": 60,
+          "params": [
+            "n"
+          ]
+        },
+        {
+          "name": "nowStr",
+          "startLine": 62,
+          "endLine": 65,
+          "params": []
+        },
+        {
+          "name": "FestFlowLiveDemo",
+          "startLine": 67,
+          "endLine": 303,
+          "params": [
+            "{theme}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "FestFlowLiveDemo",
+          "line": 67,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "pad",
+          "callee": "String(n).padStart",
+          "lineNumber": 59
+        },
+        {
+          "caller": "pad",
+          "callee": "String",
+          "lineNumber": 59
+        },
+        {
+          "caller": "nowStr",
+          "callee": "pad",
+          "lineNumber": 64
+        },
+        {
+          "caller": "nowStr",
+          "callee": "d.getHours",
+          "lineNumber": 64
+        },
+        {
+          "caller": "nowStr",
+          "callee": "pad",
+          "lineNumber": 64
+        },
+        {
+          "caller": "nowStr",
+          "callee": "d.getMinutes",
+          "lineNumber": 64
+        },
+        {
+          "caller": "nowStr",
+          "callee": "pad",
+          "lineNumber": 64
+        },
+        {
+          "caller": "nowStr",
+          "callee": "d.getSeconds",
+          "lineNumber": 64
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "useState",
+          "lineNumber": 68
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "useState",
+          "lineNumber": 69
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "useState",
+          "lineNumber": 70
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "useRef",
+          "lineNumber": 72
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "useRef",
+          "lineNumber": 73
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "useEffect",
+          "lineNumber": 74
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "useCallback",
+          "lineNumber": 78
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "BOOTHS.find",
+          "lineNumber": 79
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "setStatuses",
+          "lineNumber": 81
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "setFeed",
+          "lineNumber": 82
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "[{key: idRef.current++, name: booth.name, zone: booth.zone, status: next, who, time: nowStr()}, ...prev].slice",
+          "lineNumber": 82
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "nowStr",
+          "lineNumber": 82
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "useCallback",
+          "lineNumber": 85
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "ORDER.indexOf",
+          "lineNumber": 88
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "apply",
+          "lineNumber": 89
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "useEffect",
+          "lineNumber": 95
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "setInterval",
+          "lineNumber": 97
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "Math.floor",
+          "lineNumber": 98
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "Math.random",
+          "lineNumber": 98
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "ORDER.filter",
+          "lineNumber": 100
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "Math.floor",
+          "lineNumber": 101
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "Math.random",
+          "lineNumber": 101
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "apply",
+          "lineNumber": 102
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "clearInterval",
+          "lineNumber": 104
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "useCallback",
+          "lineNumber": 107
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "setStatuses",
+          "lineNumber": 108
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "setFeed",
+          "lineNumber": 109
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "ORDER.map",
+          "lineNumber": 112
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "BOOTHS.filter",
+          "lineNumber": 112
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "setPaused",
+          "lineNumber": 136
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "BOOTHS.map",
+          "lineNumber": 161
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "statusColor",
+          "lineNumber": 163
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "cycle",
+          "lineNumber": 168
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "feed.map",
+          "lineNumber": 217
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "statusColor",
+          "lineNumber": 218
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "BOOTHS.map",
+          "lineNumber": 254
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "statusColor",
+          "lineNumber": 255
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "counts.map",
+          "lineNumber": 270
+        },
+        {
+          "caller": "FestFlowLiveDemo",
+          "callee": "statusColor",
+          "lineNumber": 271
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 163,
+      "nonEmptyLines": 152,
+      "functions": [
+        {
+          "name": "MuscleUpDemo",
+          "startLine": 18,
+          "endLine": 163,
+          "params": [
+            "{theme}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "MuscleUpDemo",
+          "line": 18,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "MuscleUpDemo",
+          "callee": "useState",
+          "lineNumber": 19
+        },
+        {
+          "caller": "MuscleUpDemo",
+          "callee": "useState",
+          "lineNumber": 20
+        },
+        {
+          "caller": "MuscleUpDemo",
+          "callee": "useState",
+          "lineNumber": 21
+        },
+        {
+          "caller": "MuscleUpDemo",
+          "callee": "useState",
+          "lineNumber": 22
+        },
+        {
+          "caller": "MuscleUpDemo",
+          "callee": "Math.floor",
+          "lineNumber": 24
+        },
+        {
+          "caller": "addWorkout",
+          "callee": "setXp",
+          "lineNumber": 29
+        },
+        {
+          "caller": "addWorkout",
+          "callee": "Math.floor",
+          "lineNumber": 30
+        },
+        {
+          "caller": "addWorkout",
+          "callee": "Math.floor",
+          "lineNumber": 32
+        },
+        {
+          "caller": "addWorkout",
+          "callee": "setBurst",
+          "lineNumber": 32
+        },
+        {
+          "caller": "addWorkout",
+          "callee": "setStreak",
+          "lineNumber": 35
+        },
+        {
+          "caller": "addWorkout",
+          "callee": "Math.random",
+          "lineNumber": 35
+        },
+        {
+          "caller": "addWorkout",
+          "callee": "setFloat",
+          "lineNumber": 36
+        },
+        {
+          "caller": "addWorkout",
+          "callee": "Date.now",
+          "lineNumber": 36
+        },
+        {
+          "caller": "MuscleUpDemo",
+          "callee": "setXp",
+          "lineNumber": 48
+        },
+        {
+          "caller": "MuscleUpDemo",
+          "callee": "setStreak",
+          "lineNumber": 49
+        },
+        {
+          "caller": "MuscleUpDemo",
+          "callee": "setFloat",
+          "lineNumber": 112
+        },
+        {
+          "caller": "MuscleUpDemo",
+          "callee": "WORKOUTS.map",
+          "lineNumber": 143
+        },
+        {
+          "caller": "MuscleUpDemo",
+          "callee": "addWorkout",
+          "lineNumber": 147
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 143,
+      "nonEmptyLines": 132,
+      "functions": [
+        {
+          "name": "won",
+          "startLine": 26,
+          "endLine": 28,
+          "params": [
+            "n"
+          ]
+        },
+        {
+          "name": "MyStockDemo",
+          "startLine": 30,
+          "endLine": 143,
+          "params": [
+            "{theme}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "MyStockDemo",
+          "line": 30,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "won",
+          "callee": "Math.round(n).toLocaleString",
+          "lineNumber": 27
+        },
+        {
+          "caller": "won",
+          "callee": "Math.round",
+          "lineNumber": 27
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "useState",
+          "lineNumber": 31
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "useMemo",
+          "lineNumber": 33
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "HOLDINGS.map",
+          "lineNumber": 35
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "rows.reduce",
+          "lineNumber": 43
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "rows.reduce",
+          "lineNumber": 44
+        },
+        {
+          "caller": "trade",
+          "callee": "setQty",
+          "lineNumber": 50
+        },
+        {
+          "caller": "trade",
+          "callee": "Math.max",
+          "lineNumber": 50
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "setQty",
+          "lineNumber": 60
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "Math.round",
+          "lineNumber": 80
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "won",
+          "lineNumber": 87
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "won",
+          "lineNumber": 91
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "Math.abs",
+          "lineNumber": 91
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "returnPct.toFixed",
+          "lineNumber": 91
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "rows.map",
+          "lineNumber": 95
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "rows.map",
+          "lineNumber": 106
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "Math.round",
+          "lineNumber": 109
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "rows.map",
+          "lineNumber": 121
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "(r.day * 100).toFixed",
+          "lineNumber": 128
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "won",
+          "lineNumber": 131
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "won",
+          "lineNumber": 131
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "trade",
+          "lineNumber": 134
+        },
+        {
+          "caller": "MyStockDemo",
+          "callee": "trade",
+          "lineNumber": 135
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 121,
+      "nonEmptyLines": 114,
+      "functions": [
+        {
+          "name": "SignLanguageDemo",
+          "startLine": 24,
+          "endLine": 121,
+          "params": [
+            "{theme}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "SignLanguageDemo",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SignLanguageDemo",
+          "callee": "useState",
+          "lineNumber": 25
+        },
+        {
+          "caller": "SignLanguageDemo",
+          "callee": "useState",
+          "lineNumber": 26
+        },
+        {
+          "caller": "play",
+          "callee": "setActive",
+          "lineNumber": 29
+        },
+        {
+          "caller": "play",
+          "callee": "setPlayKey",
+          "lineNumber": 30
+        },
+        {
+          "caller": "SignLanguageDemo",
+          "callee": "SIGNS.map",
+          "lineNumber": 96
+        },
+        {
+          "caller": "SignLanguageDemo",
+          "callee": "play",
+          "lineNumber": 102
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 120,
+      "nonEmptyLines": 111,
+      "functions": [
+        {
+          "name": "TserofDemo",
+          "startLine": 17,
+          "endLine": 120,
+          "params": [
+            "{theme}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "TserofDemo",
+          "line": 17,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "TserofDemo",
+          "callee": "useRef",
+          "lineNumber": 18
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "useMotionValue",
+          "lineNumber": 19
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "useMotionValue",
+          "lineNumber": 20
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "useSpring",
+          "lineNumber": 21
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "useTransform",
+          "lineNumber": 21
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "useSpring",
+          "lineNumber": 22
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "useTransform",
+          "lineNumber": 22
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "useState",
+          "lineNumber": 23
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "ITEMS.filter",
+          "lineNumber": 25
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "collected.includes",
+          "lineNumber": 25
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "setCollected",
+          "lineNumber": 39
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "ref.current?.getBoundingClientRect",
+          "lineNumber": 66
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "px.set",
+          "lineNumber": 68
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "py.set",
+          "lineNumber": 69
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "px.set",
+          "lineNumber": 72
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "py.set",
+          "lineNumber": 73
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "remaining.map",
+          "lineNumber": 85
+        },
+        {
+          "caller": "TserofDemo",
+          "callee": "setCollected",
+          "lineNumber": 96
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/data.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 1982,
+      "nonEmptyLines": 1973,
+      "exports": [
+        {
+          "name": "RICH_DATA",
+          "line": 10,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/index.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 55,
+      "nonEmptyLines": 51,
+      "exports": [
+        {
+          "name": "RICH_RENDERERS",
+          "line": 52,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 14,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 1520,
+      "nonEmptyLines": 1461,
+      "functions": [
+        {
+          "name": "CodeLine",
+          "startLine": 13,
+          "endLine": 39,
+          "params": [
+            "{line, theme}"
+          ]
+        },
+        {
+          "name": "CodeBlock",
+          "startLine": 41,
+          "endLine": 113,
+          "params": [
+            "{\n  filename,\n  lines,\n  theme,\n  caption,\n  highlightLines = []\n}"
+          ]
+        },
+        {
+          "name": "ScreenFrame",
+          "startLine": 117,
+          "endLine": 148,
+          "params": [
+            "{\n  title,\n  theme,\n  children\n}"
+          ]
+        },
+        {
+          "name": "AreaSvg",
+          "startLine": 150,
+          "endLine": 192,
+          "params": [
+            "{theme, pts}"
+          ]
+        },
+        {
+          "name": "MockScreen",
+          "startLine": 194,
+          "endLine": 379,
+          "params": [
+            "{\n  variant,\n  theme\n}"
+          ]
+        },
+        {
+          "name": "ArchDiagram",
+          "startLine": 383,
+          "endLine": 437,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "DecisionTable",
+          "startLine": 441,
+          "endLine": 510,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "ChallengeCard",
+          "startLine": 514,
+          "endLine": 577,
+          "params": [
+            "{\n  theme,\n  index,\n  title,\n  problem,\n  solution,\n  code\n}"
+          ]
+        },
+        {
+          "name": "MetaRow",
+          "startLine": 581,
+          "endLine": 601,
+          "params": [
+            "{\n  label,\n  value,\n  theme\n}"
+          ]
+        },
+        {
+          "name": "SubLabel",
+          "startLine": 603,
+          "endLine": 618,
+          "params": [
+            "{\n  children,\n  theme\n}"
+          ]
+        },
+        {
+          "name": "QuoteCard",
+          "startLine": 620,
+          "endLine": 638,
+          "params": [
+            "{\n  theme,\n  quote,\n  who\n}"
+          ]
+        },
+        {
+          "name": "Divider",
+          "startLine": 640,
+          "endLine": 642,
+          "params": []
+        },
+        {
+          "name": "TldrBanner",
+          "startLine": 646,
+          "endLine": 696,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "DemoCTA",
+          "startLine": 700,
+          "endLine": 765,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "BeforeAfter",
+          "startLine": 769,
+          "endLine": 812,
+          "params": [
+            "{\n  theme,\n  before,\n  after\n}"
+          ]
+        },
+        {
+          "name": "CompareBars",
+          "startLine": 816,
+          "endLine": 885,
+          "params": [
+            "{\n  theme,\n  rows,\n  lowerBetter\n}"
+          ]
+        },
+        {
+          "name": "ProcessTimeline",
+          "startLine": 889,
+          "endLine": 929,
+          "params": [
+            "{theme}"
+          ]
+        },
+        {
+          "name": "MyWaveRichSection",
+          "startLine": 935,
+          "endLine": 1520,
+          "params": [
+            "{\n  step,\n  project,\n  theme\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "MyWaveRichSection",
+          "line": 935,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "CodeLine",
+          "callee": "re.exec",
+          "lineNumber": 19
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "segs.push",
+          "lineNumber": 20
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "line.slice",
+          "lineNumber": 20
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "segs.push",
+          "lineNumber": 26
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "segs.push",
+          "lineNumber": 29
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "line.slice",
+          "lineNumber": 29
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "segs.map",
+          "lineNumber": 32
+        },
+        {
+          "caller": "CodeBlock",
+          "callee": "lines.map",
+          "lineNumber": 75
+        },
+        {
+          "caller": "CodeBlock",
+          "callee": "highlightLines.includes",
+          "lineNumber": 80
+        },
+        {
+          "caller": "AreaSvg",
+          "callee": "Math.max",
+          "lineNumber": 151
+        },
+        {
+          "caller": "AreaSvg",
+          "callee": "pts\n    .map((p, i) => `${(i / (pts.length - 1)) * w},${h - (p / max) * h}`)\n    .join",
+          "lineNumber": 154
+        },
+        {
+          "caller": "AreaSvg",
+          "callee": "pts\n    .map",
+          "lineNumber": 154
+        },
+        {
+          "caller": "AreaSvg",
+          "callee": "theme.primary.replace",
+          "lineNumber": 158
+        },
+        {
+          "caller": "MockScreen",
+          "callee": "[\"대시보드\", \"흐름\", \"목표\", \"리포트\"].map",
+          "lineNumber": 215
+        },
+        {
+          "caller": "MockScreen",
+          "callee": "[\n                {l: \"총 자산\", v: \"₩12.4M\"},\n                {l: \"이번 달\", v: \"+8.2%\"},\n                {l: \"목표\", v: \"64%\"}\n              ].map",
+          "lineNumber": 231
+        },
+        {
+          "caller": "MockScreen",
+          "callee": "[\n            {l: \"고정지출\", p: 72, v: \"₩1.8M\"},\n            {l: \"식비\", p: 48, v: \"₩620K\"},\n            {l: \"여가\", p: 30, v: \"₩340K\"},\n            {l: \"투자\", p: 90, v: \"₩2.1M\"}\n          ].map",
+          "lineNumber": 274
+        },
+        {
+          "caller": "MockScreen",
+          "callee": "[\n            {l: \"비상금\", p: 80, t: \"₩5M\"},\n            {l: \"여행\", p: 45, t: \"₩3M\"},\n            {l: \"노트북\", p: 100, t: \"₩2M\"},\n            {l: \"투자 시드\", p: 62, t: \"₩10M\"}\n          ].map",
+          "lineNumber": 304
+        },
+        {
+          "caller": "MockScreen",
+          "callee": "[\n            \"저축률 28% ↑\",\n            \"충동소비 31% ↓\",\n            \"투자 비중 42%\",\n            \"목표 3개 달성\"\n          ].map",
+          "lineNumber": 361
+        },
+        {
+          "caller": "ArchDiagram",
+          "callee": "layers.map",
+          "lineNumber": 400
+        },
+        {
+          "caller": "DecisionTable",
+          "callee": "rows.map",
+          "lineNumber": 484
+        },
+        {
+          "caller": "ChallengeCard",
+          "callee": "String(index).padStart",
+          "lineNumber": 547
+        },
+        {
+          "caller": "ChallengeCard",
+          "callee": "String",
+          "lineNumber": 547
+        },
+        {
+          "caller": "TldrBanner",
+          "callee": "rows.map",
+          "lineNumber": 682
+        },
+        {
+          "caller": "DemoCTA",
+          "callee": "e.preventDefault",
+          "lineNumber": 742
+        },
+        {
+          "caller": "DemoCTA",
+          "callee": "e.preventDefault",
+          "lineNumber": 750
+        },
+        {
+          "caller": "DemoCTA",
+          "callee": "e.preventDefault",
+          "lineNumber": 758
+        },
+        {
+          "caller": "CompareBars",
+          "callee": "rows.map",
+          "lineNumber": 827
+        },
+        {
+          "caller": "CompareBars",
+          "callee": "Math.max",
+          "lineNumber": 828
+        },
+        {
+          "caller": "CompareBars",
+          "callee": "Math.round",
+          "lineNumber": 832
+        },
+        {
+          "caller": "CompareBars",
+          "callee": "Math.round",
+          "lineNumber": 833
+        },
+        {
+          "caller": "ProcessTimeline",
+          "callee": "steps.map",
+          "lineNumber": 900
+        },
+        {
+          "caller": "MyWaveRichSection",
+          "callee": "[\n              {n: \"4\", l: \"핵심 화면(대시보드·흐름·목표·리포트)\"},\n              {n: \"1인\", l: \"기획·UX·프론트\"},\n              {n: \"흐름+목표선\", l: \"핵심 UX 컨셉\"}\n            ].map",
+          "lineNumber": 1010
+        },
+        {
+          "caller": "MyWaveRichSection",
+          "callee": "[\n              {\n                t: \"자산 흐름 시각화\",\n                d: \"거래를 누적 area 차트로 — 흐름과 목표선을 한 화면에\"\n              },\n              {t: \"목표 기반 저축\", d: \"목표별 진행률·남은 금액 자동 계산\"},\n              {t: \"소비 패턴 분석\", d: \"카테고리별 비중과 변화 추이\"},\n              {t: \"월간 리포트\", d: \"저축률·투자 비중을 월 단위로 요약\"}\n            ].map",
+          "lineNumber": 1037
+        },
+        {
+          "caller": "MyWaveRichSection",
+          "callee": "[\n                    \"06.21  스타벅스   -5,800\",\n                    \"06.20  급여     +2,400,000\",\n                    \"06.19  쿠팡     -32,100\"\n                  ].map",
+          "lineNumber": 1133
+        },
+        {
+          "caller": "MyWaveRichSection",
+          "callee": "[\n              {\n                g: \"기획·UX\",\n                items: [\n                  \"문제 정의와 핵심 UX 컨셉 도출\",\n                  \"정보 구조(IA)와 화면 흐름 설계\"\n                ]\n              },\n              {\n                g: \"프론트엔드\",\n                items: [\"흐름 차트·목표·리포트 화면 구현\", \"반응형 + PWA 대응\"]\n              },\n              {\n                g: \"데이터\",\n                items: [\"거래→흐름 변환 로직\", \"Zustand 전역 상태 설계\"]\n              },\n              {\n                g: \"성능\",\n                items: [\"차트 리렌더 최적화\", \"수천 건 거래 집계 처리\"]\n              }\n            ].map",
+          "lineNumber": 1270
+        },
+        {
+          "caller": "MyWaveRichSection",
+          "callee": "group.items.map",
+          "lineNumber": 1302
+        },
+        {
+          "caller": "MyWaveRichSection",
+          "callee": "[\n              \"React\",\n              \"TypeScript\",\n              \"Recharts\",\n              \"Zustand\",\n              \"TailwindCSS\",\n              \"Vite\",\n              \"PWA\"\n            ].map",
+          "lineNumber": 1367
+        },
+        {
+          "caller": "MyWaveRichSection",
+          "callee": "[\n            {n: \"4\", l: \"핵심 화면\"},\n            {n: \"흐름+목표선\", l: \"핵심 UX 컨셉\"},\n            {n: \"1인\", l: \"기획·UX·프론트\"},\n            {n: \"React·Recharts\", l: \"구현 스택\"}\n          ].map",
+          "lineNumber": 1406
+        },
+        {
+          "caller": "MyWaveRichSection",
+          "callee": "[\n            {\n              k: \"Keep\",\n              c: theme.primary,\n              items: [\n                \"문제→가설→UX 컨셉으로 이어지는 설계 흐름\",\n                \"데이터를 ‘흐름·목표’ 맥락으로 재구성한 관점\"\n              ]\n            },\n            {\n              k: \"Problem\",\n              c: \"#f87171\",\n              items: [\n                \"초기 데이터 모델을 너무 일찍 고정\",\n                \"테스트 커버리지 부족\"\n              ]\n            },\n            {\n              k: \"Try\",\n              c: \"#fbbf24\",\n              items: [\"백엔드 연동해 실데이터 검증\", \"온보딩 A/B 테스트\"]\n            }\n          ].map",
+          "lineNumber": 1434
+        },
+        {
+          "caller": "MyWaveRichSection",
+          "callee": "col.items.map",
+          "lineNumber": 1468
+        },
+        {
+          "caller": "MyWaveRichSection",
+          "callee": "project.links.map",
+          "lineNumber": 1503
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 18,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 235,
+      "nonEmptyLines": 234,
+      "exports": [
+        {
+          "name": "MYWAVE_BRIEF",
+          "line": 6,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 966,
+      "nonEmptyLines": 913,
+      "functions": [
+        {
+          "name": "CodeLine",
+          "startLine": 83,
+          "endLine": 109,
+          "params": [
+            "{line, theme}"
+          ]
+        },
+        {
+          "name": "CodeBlock",
+          "startLine": 111,
+          "endLine": 144,
+          "params": [
+            "{theme, spec}"
+          ]
+        },
+        {
+          "name": "AreaSvg",
+          "startLine": 146,
+          "endLine": 165,
+          "params": [
+            "{theme, pts}"
+          ]
+        },
+        {
+          "name": "MockScreen",
+          "startLine": 167,
+          "endLine": 258,
+          "params": [
+            "{theme, spec}"
+          ]
+        },
+        {
+          "name": "ArchDiagram",
+          "startLine": 260,
+          "endLine": 277,
+          "params": [
+            "{theme, layers}"
+          ]
+        },
+        {
+          "name": "DecisionTable",
+          "startLine": 279,
+          "endLine": 294,
+          "params": [
+            "{theme, rows}"
+          ]
+        },
+        {
+          "name": "ChallengeCard",
+          "startLine": 296,
+          "endLine": 308,
+          "params": [
+            "{theme, index, c}"
+          ]
+        },
+        {
+          "name": "CompareBars",
+          "startLine": 310,
+          "endLine": 335,
+          "params": [
+            "{theme, rows, lowerBetter}"
+          ]
+        },
+        {
+          "name": "ProcessTimeline",
+          "startLine": 337,
+          "endLine": 351,
+          "params": [
+            "{theme, steps}"
+          ]
+        },
+        {
+          "name": "TldrBanner",
+          "startLine": 353,
+          "endLine": 369,
+          "params": [
+            "{theme, rows}"
+          ]
+        },
+        {
+          "name": "DemoCTA",
+          "startLine": 371,
+          "endLine": 395,
+          "params": [
+            "{theme, demo}"
+          ]
+        },
+        {
+          "name": "BeforeAfter",
+          "startLine": 397,
+          "endLine": 411,
+          "params": [
+            "{theme, ba}"
+          ]
+        },
+        {
+          "name": "MetaRow",
+          "startLine": 413,
+          "endLine": 420,
+          "params": [
+            "{label, value, theme}"
+          ]
+        },
+        {
+          "name": "SubLabel",
+          "startLine": 422,
+          "endLine": 428,
+          "params": [
+            "{children, theme}"
+          ]
+        },
+        {
+          "name": "QuoteCard",
+          "startLine": 430,
+          "endLine": 442,
+          "params": [
+            "{theme, quote, who}"
+          ]
+        },
+        {
+          "name": "Divider",
+          "startLine": 444,
+          "endLine": 446,
+          "params": []
+        },
+        {
+          "name": "ImgPlaceholder",
+          "startLine": 451,
+          "endLine": 465,
+          "params": [
+            "{theme, spec, large}"
+          ]
+        },
+        {
+          "name": "ImageSlot",
+          "startLine": 467,
+          "endLine": 554,
+          "params": [
+            "{theme, spec, className}"
+          ]
+        },
+        {
+          "name": "CountUp",
+          "startLine": 558,
+          "endLine": 577,
+          "params": [
+            "{value, className, style}"
+          ]
+        },
+        {
+          "name": "scrambleable",
+          "startLine": 583,
+          "endLine": 583,
+          "params": [
+            "c"
+          ]
+        },
+        {
+          "name": "DecodeText",
+          "startLine": 585,
+          "endLine": 623,
+          "params": [
+            "{text, className, style}"
+          ]
+        },
+        {
+          "name": "RevealText",
+          "startLine": 628,
+          "endLine": 681,
+          "params": [
+            "{\n  text,\n  className,\n  style,\n  highlight,\n  theme,\n}"
+          ]
+        },
+        {
+          "name": "Magnetic",
+          "startLine": 685,
+          "endLine": 711,
+          "params": [
+            "{children, strength = 0.3, className}"
+          ]
+        },
+        {
+          "name": "DemoFrame",
+          "startLine": 715,
+          "endLine": 757,
+          "params": [
+            "{\n  theme,\n  label,\n  tag,\n  controls,\n  footer,\n  children,\n}"
+          ]
+        },
+        {
+          "name": "RichSection",
+          "startLine": 763,
+          "endLine": 966,
+          "params": [
+            "{step, data, theme, links, title}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CodeLine",
+          "line": 83,
+          "isDefault": false
+        },
+        {
+          "name": "CodeBlock",
+          "line": 111,
+          "isDefault": false
+        },
+        {
+          "name": "MockScreen",
+          "line": 167,
+          "isDefault": false
+        },
+        {
+          "name": "ImageSlot",
+          "line": 467,
+          "isDefault": false
+        },
+        {
+          "name": "CountUp",
+          "line": 558,
+          "isDefault": false
+        },
+        {
+          "name": "DecodeText",
+          "line": 585,
+          "isDefault": false
+        },
+        {
+          "name": "RevealText",
+          "line": 628,
+          "isDefault": false
+        },
+        {
+          "name": "Magnetic",
+          "line": 685,
+          "isDefault": false
+        },
+        {
+          "name": "DemoFrame",
+          "line": 715,
+          "isDefault": false
+        },
+        {
+          "name": "RichSection",
+          "line": 763,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "CodeLine",
+          "callee": "re.exec",
+          "lineNumber": 89
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "segs.push",
+          "lineNumber": 90
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "line.slice",
+          "lineNumber": 90
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "segs.push",
+          "lineNumber": 96
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "segs.push",
+          "lineNumber": 99
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "line.slice",
+          "lineNumber": 99
+        },
+        {
+          "caller": "CodeLine",
+          "callee": "segs.map",
+          "lineNumber": 102
+        },
+        {
+          "caller": "CodeBlock",
+          "callee": "spec.lines.map",
+          "lineNumber": 131
+        },
+        {
+          "caller": "CodeBlock",
+          "callee": "hl.includes",
+          "lineNumber": 132
+        },
+        {
+          "caller": "AreaSvg",
+          "callee": "Math.max",
+          "lineNumber": 147
+        },
+        {
+          "caller": "AreaSvg",
+          "callee": "pts.map((p, i) => `${(i / (pts.length - 1)) * w},${h - (p / max) * h}`).join",
+          "lineNumber": 150
+        },
+        {
+          "caller": "AreaSvg",
+          "callee": "pts.map",
+          "lineNumber": 150
+        },
+        {
+          "caller": "AreaSvg",
+          "callee": "theme.primary.replace",
+          "lineNumber": 152
+        },
+        {
+          "caller": "AreaSvg",
+          "callee": "Math.round",
+          "lineNumber": 152
+        },
+        {
+          "caller": "MockScreen",
+          "callee": "spec.kpi.map",
+          "lineNumber": 196
+        },
+        {
+          "caller": "MockScreen",
+          "callee": "(spec.bars ?? []).map",
+          "lineNumber": 212
+        },
+        {
+          "caller": "MockScreen",
+          "callee": "(spec.cards ?? []).map",
+          "lineNumber": 225
+        },
+        {
+          "caller": "MockScreen",
+          "callee": "(spec.feed ?? []).map",
+          "lineNumber": 236
+        },
+        {
+          "caller": "MockScreen",
+          "callee": "(spec.stats ?? []).map",
+          "lineNumber": 247
+        },
+        {
+          "caller": "ArchDiagram",
+          "callee": "layers.map",
+          "lineNumber": 263
+        },
+        {
+          "caller": "DecisionTable",
+          "callee": "rows.map",
+          "lineNumber": 285
+        },
+        {
+          "caller": "ChallengeCard",
+          "callee": "String(index).padStart",
+          "lineNumber": 300
+        },
+        {
+          "caller": "ChallengeCard",
+          "callee": "String",
+          "lineNumber": 300
+        },
+        {
+          "caller": "CompareBars",
+          "callee": "rows.map",
+          "lineNumber": 313
+        },
+        {
+          "caller": "CompareBars",
+          "callee": "Math.max",
+          "lineNumber": 314
+        },
+        {
+          "caller": "CompareBars",
+          "callee": "Math.round",
+          "lineNumber": 315
+        },
+        {
+          "caller": "CompareBars",
+          "callee": "Math.round",
+          "lineNumber": 315
+        },
+        {
+          "caller": "ProcessTimeline",
+          "callee": "steps.map",
+          "lineNumber": 340
+        },
+        {
+          "caller": "TldrBanner",
+          "callee": "rows.map",
+          "lineNumber": 360
+        },
+        {
+          "caller": "DemoCTA",
+          "callee": "[\n    demo.live ? {icon: \"🔗\", label: \"라이브 데모\", href: demo.live} : null,\n    demo.video ? {icon: \"▶\", label: \"풀 영상\", href: demo.video} : null,\n    demo.repo ? {icon: \"⌥\", label: \"GitHub 저장소\", href: demo.repo} : null,\n  ].filter",
+          "lineNumber": 372
+        },
+        {
+          "caller": "DemoCTA",
+          "callee": "links.map",
+          "lineNumber": 387
+        },
+        {
+          "caller": "DemoCTA",
+          "callee": "l.href.startsWith",
+          "lineNumber": 388
+        },
+        {
+          "caller": "DemoCTA",
+          "callee": "e.preventDefault",
+          "lineNumber": 388
+        },
+        {
+          "caller": "SubLabel",
+          "callee": "String",
+          "lineNumber": 425
+        },
+        {
+          "caller": "ImgPlaceholder",
+          "callee": "ratio.replace",
+          "lineNumber": 462
+        },
+        {
+          "caller": "ImageSlot",
+          "callee": "useState",
+          "lineNumber": 468
+        },
+        {
+          "caller": "ImageSlot",
+          "callee": "useEffect",
+          "lineNumber": 471
+        },
+        {
+          "caller": "onKey",
+          "callee": "setOpen",
+          "lineNumber": 474
+        },
+        {
+          "caller": "ImageSlot",
+          "callee": "window.addEventListener",
+          "lineNumber": 476
+        },
+        {
+          "caller": "ImageSlot",
+          "callee": "window.removeEventListener",
+          "lineNumber": 477
+        },
+        {
+          "caller": "ImageSlot",
+          "callee": "setOpen",
+          "lineNumber": 490
+        },
+        {
+          "caller": "ImageSlot",
+          "callee": "setOpen",
+          "lineNumber": 525
+        },
+        {
+          "caller": "ImageSlot",
+          "callee": "e.stopPropagation",
+          "lineNumber": 534
+        },
+        {
+          "caller": "CountUp",
+          "callee": "useRef",
+          "lineNumber": 559
+        },
+        {
+          "caller": "CountUp",
+          "callee": "useInView",
+          "lineNumber": 560
+        },
+        {
+          "caller": "CountUp",
+          "callee": "useMotionValue",
+          "lineNumber": 561
+        },
+        {
+          "caller": "CountUp",
+          "callee": "value.match",
+          "lineNumber": 562
+        },
+        {
+          "caller": "CountUp",
+          "callee": "parseFloat",
+          "lineNumber": 563
+        },
+        {
+          "caller": "CountUp",
+          "callee": "match[0].split",
+          "lineNumber": 564
+        },
+        {
+          "caller": "CountUp",
+          "callee": "value.slice",
+          "lineNumber": 565
+        },
+        {
+          "caller": "CountUp",
+          "callee": "value.slice",
+          "lineNumber": 566
+        },
+        {
+          "caller": "CountUp",
+          "callee": "useTransform",
+          "lineNumber": 567
+        },
+        {
+          "caller": "CountUp",
+          "callee": "v.toFixed",
+          "lineNumber": 567
+        },
+        {
+          "caller": "CountUp",
+          "callee": "useEffect",
+          "lineNumber": 569
+        },
+        {
+          "caller": "CountUp",
+          "callee": "animate",
+          "lineNumber": 571
+        },
+        {
+          "caller": "CountUp",
+          "callee": "controls.stop",
+          "lineNumber": 572
+        },
+        {
+          "caller": "scrambleable",
+          "callee": "/[A-Za-z0-9]/.test",
+          "lineNumber": 583
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "useRef",
+          "lineNumber": 586
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "useInView",
+          "lineNumber": 587
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "useState",
+          "lineNumber": 588
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "useRef",
+          "lineNumber": 589
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "useRef",
+          "lineNumber": 590
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "useCallback",
+          "lineNumber": 592
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "clearInterval",
+          "lineNumber": 593
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "Array.from",
+          "lineNumber": 594
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "setInterval",
+          "lineNumber": 596
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "Math.floor",
+          "lineNumber": 598
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "setDisplay",
+          "lineNumber": 599
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "chars.map((c, i) => (!scrambleable(c) || i < p ? c : SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)])).join",
+          "lineNumber": 599
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "chars.map",
+          "lineNumber": 599
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "scrambleable",
+          "lineNumber": 599
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "Math.floor",
+          "lineNumber": 599
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "Math.random",
+          "lineNumber": 599
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "clearInterval",
+          "lineNumber": 601
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "setDisplay",
+          "lineNumber": 602
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "useEffect",
+          "lineNumber": 607
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "run",
+          "lineNumber": 610
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "useEffect",
+          "lineNumber": 614
+        },
+        {
+          "caller": "DecodeText",
+          "callee": "clearInterval",
+          "lineNumber": 615
+        },
+        {
+          "caller": "RevealText",
+          "callee": "text.split",
+          "lineNumber": 641
+        },
+        {
+          "caller": "RevealText",
+          "callee": "(highlight ?? []).filter((h) => /^[A-Za-z]/.test(h)).map",
+          "lineNumber": 642
+        },
+        {
+          "caller": "RevealText",
+          "callee": "(highlight ?? []).filter",
+          "lineNumber": 642
+        },
+        {
+          "caller": "RevealText",
+          "callee": "/^[A-Za-z]/.test",
+          "lineNumber": 642
+        },
+        {
+          "caller": "RevealText",
+          "callee": "h.toLowerCase",
+          "lineNumber": 642
+        },
+        {
+          "caller": "RevealText",
+          "callee": "words.map",
+          "lineNumber": 652
+        },
+        {
+          "caller": "RevealText",
+          "callee": "w.match",
+          "lineNumber": 653
+        },
+        {
+          "caller": "RevealText",
+          "callee": "hi.has",
+          "lineNumber": 654
+        },
+        {
+          "caller": "RevealText",
+          "callee": "token.toLowerCase",
+          "lineNumber": 654
+        },
+        {
+          "caller": "Magnetic",
+          "callee": "useRef",
+          "lineNumber": 686
+        },
+        {
+          "caller": "Magnetic",
+          "callee": "useMotionValue",
+          "lineNumber": 687
+        },
+        {
+          "caller": "Magnetic",
+          "callee": "useMotionValue",
+          "lineNumber": 688
+        },
+        {
+          "caller": "Magnetic",
+          "callee": "useSpring",
+          "lineNumber": 689
+        },
+        {
+          "caller": "Magnetic",
+          "callee": "useSpring",
+          "lineNumber": 690
+        },
+        {
+          "caller": "Magnetic",
+          "callee": "ref.current?.getBoundingClientRect",
+          "lineNumber": 698
+        },
+        {
+          "caller": "Magnetic",
+          "callee": "x.set",
+          "lineNumber": 700
+        },
+        {
+          "caller": "Magnetic",
+          "callee": "y.set",
+          "lineNumber": 701
+        },
+        {
+          "caller": "Magnetic",
+          "callee": "x.set",
+          "lineNumber": 704
+        },
+        {
+          "caller": "Magnetic",
+          "callee": "y.set",
+          "lineNumber": 705
+        },
+        {
+          "caller": "RichSection",
+          "callee": "data.meta.map",
+          "lineNumber": 779
+        },
+        {
+          "caller": "RichSection",
+          "callee": "data.impact.map",
+          "lineNumber": 787
+        },
+        {
+          "caller": "RichSection",
+          "callee": "data.features.map",
+          "lineNumber": 798
+        },
+        {
+          "caller": "RichSection",
+          "callee": "data.research.quotes.map",
+          "lineNumber": 826
+        },
+        {
+          "caller": "RichSection",
+          "callee": "data.coreCode.map",
+          "lineNumber": 855
+        },
+        {
+          "caller": "RichSection",
+          "callee": "data.work.map",
+          "lineNumber": 869
+        },
+        {
+          "caller": "RichSection",
+          "callee": "group.items.map",
+          "lineNumber": 872
+        },
+        {
+          "caller": "RichSection",
+          "callee": "data.tech.map",
+          "lineNumber": 891
+        },
+        {
+          "caller": "RichSection",
+          "callee": "data.challenges.map",
+          "lineNumber": 898
+        },
+        {
+          "caller": "RichSection",
+          "callee": "data.resultScreens.map",
+          "lineNumber": 909
+        },
+        {
+          "caller": "RichSection",
+          "callee": "data.gallery.map",
+          "lineNumber": 915
+        },
+        {
+          "caller": "RichSection",
+          "callee": "data.metrics.map",
+          "lineNumber": 922
+        },
+        {
+          "caller": "RichSection",
+          "callee": "([[\"Keep\", theme.primary, data.kpt.keep], [\"Problem\", \"#f87171\", data.kpt.problem], [\"Try\", \"#fbbf24\", data.kpt.try]] as const).map",
+          "lineNumber": 950
+        },
+        {
+          "caller": "RichSection",
+          "callee": "items.map",
+          "lineNumber": 953
+        },
+        {
+          "caller": "RichSection",
+          "callee": "links.map",
+          "lineNumber": 960
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 10,
+        "functionCount": 25,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sound.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 149,
+      "nonEmptyLines": 135,
+      "classes": [
+        {
+          "name": "SoundManager",
+          "startLine": 15,
+          "endLine": 147,
+          "methods": [
+            "constructor",
+            "ensure",
+            "startPad",
+            "stopPad",
+            "setEnabled",
+            "setMood",
+            "sfx"
+          ],
+          "properties": [
+            "ctx",
+            "master",
+            "padGain",
+            "oscs",
+            "mood",
+            "enabled"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "sound",
+          "line": 149,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "constructor",
+          "callee": "window.localStorage.getItem",
+          "lineNumber": 25
+        },
+        {
+          "caller": "ensure",
+          "callee": "this.ctx.createGain",
+          "lineNumber": 34
+        },
+        {
+          "caller": "ensure",
+          "callee": "this.master.connect",
+          "lineNumber": 36
+        },
+        {
+          "caller": "startPad",
+          "callee": "this.ctx.createBiquadFilter",
+          "lineNumber": 45
+        },
+        {
+          "caller": "startPad",
+          "callee": "this.ctx.createGain",
+          "lineNumber": 48
+        },
+        {
+          "caller": "startPad",
+          "callee": "filter.connect",
+          "lineNumber": 50
+        },
+        {
+          "caller": "startPad",
+          "callee": "this.padGain.connect",
+          "lineNumber": 51
+        },
+        {
+          "caller": "startPad",
+          "callee": "[base, fifth, base * 2].forEach",
+          "lineNumber": 53
+        },
+        {
+          "caller": "startPad",
+          "callee": "this.ctx!.createOscillator",
+          "lineNumber": 54
+        },
+        {
+          "caller": "startPad",
+          "callee": "o.connect",
+          "lineNumber": 58
+        },
+        {
+          "caller": "startPad",
+          "callee": "o.start",
+          "lineNumber": 59
+        },
+        {
+          "caller": "startPad",
+          "callee": "this.oscs.push",
+          "lineNumber": 60
+        },
+        {
+          "caller": "startPad",
+          "callee": "this.ctx.createOscillator",
+          "lineNumber": 64
+        },
+        {
+          "caller": "startPad",
+          "callee": "this.ctx.createGain",
+          "lineNumber": 65
+        },
+        {
+          "caller": "startPad",
+          "callee": "lfo.connect",
+          "lineNumber": 68
+        },
+        {
+          "caller": "startPad",
+          "callee": "lfoGain.connect",
+          "lineNumber": 69
+        },
+        {
+          "caller": "startPad",
+          "callee": "lfo.start",
+          "lineNumber": 70
+        },
+        {
+          "caller": "startPad",
+          "callee": "this.oscs.push",
+          "lineNumber": 71
+        },
+        {
+          "caller": "startPad",
+          "callee": "this.padGain.gain.linearRampToValueAtTime",
+          "lineNumber": 73
+        },
+        {
+          "caller": "stopPad",
+          "callee": "this.padGain.gain.linearRampToValueAtTime",
+          "lineNumber": 78
+        },
+        {
+          "caller": "stopPad",
+          "callee": "setTimeout",
+          "lineNumber": 82
+        },
+        {
+          "caller": "stopPad",
+          "callee": "oscs.forEach",
+          "lineNumber": 82
+        },
+        {
+          "caller": "stopPad",
+          "callee": "o.stop",
+          "lineNumber": 84
+        },
+        {
+          "caller": "setEnabled",
+          "callee": "window.localStorage.setItem",
+          "lineNumber": 94
+        },
+        {
+          "caller": "setEnabled",
+          "callee": "this.ensure",
+          "lineNumber": 96
+        },
+        {
+          "caller": "setEnabled",
+          "callee": "this.ctx?.resume",
+          "lineNumber": 97
+        },
+        {
+          "caller": "setEnabled",
+          "callee": "this.startPad",
+          "lineNumber": 98
+        },
+        {
+          "caller": "setEnabled",
+          "callee": "this.stopPad",
+          "lineNumber": 100
+        },
+        {
+          "caller": "setMood",
+          "callee": "this.stopPad",
+          "lineNumber": 108
+        },
+        {
+          "caller": "setMood",
+          "callee": "this.ensure",
+          "lineNumber": 109
+        },
+        {
+          "caller": "setMood",
+          "callee": "this.ctx?.resume",
+          "lineNumber": 110
+        },
+        {
+          "caller": "setMood",
+          "callee": "this.startPad",
+          "lineNumber": 111
+        },
+        {
+          "caller": "sfx",
+          "callee": "this.ensure",
+          "lineNumber": 118
+        },
+        {
+          "caller": "sfx",
+          "callee": "this.ctx.resume",
+          "lineNumber": 120
+        },
+        {
+          "caller": "sfx",
+          "callee": "this.ctx.createGain",
+          "lineNumber": 122
+        },
+        {
+          "caller": "sfx",
+          "callee": "g.connect",
+          "lineNumber": 123
+        },
+        {
+          "caller": "sfx",
+          "callee": "this.ctx.createOscillator",
+          "lineNumber": 124
+        },
+        {
+          "caller": "sfx",
+          "callee": "o.connect",
+          "lineNumber": 125
+        },
+        {
+          "caller": "sfx",
+          "callee": "o.frequency.setValueAtTime",
+          "lineNumber": 129
+        },
+        {
+          "caller": "sfx",
+          "callee": "g.gain.setValueAtTime",
+          "lineNumber": 130
+        },
+        {
+          "caller": "sfx",
+          "callee": "g.gain.linearRampToValueAtTime",
+          "lineNumber": 131
+        },
+        {
+          "caller": "sfx",
+          "callee": "g.gain.exponentialRampToValueAtTime",
+          "lineNumber": 132
+        },
+        {
+          "caller": "sfx",
+          "callee": "o.start",
+          "lineNumber": 133
+        },
+        {
+          "caller": "sfx",
+          "callee": "o.stop",
+          "lineNumber": 134
+        },
+        {
+          "caller": "sfx",
+          "callee": "o.frequency.setValueAtTime",
+          "lineNumber": 138
+        },
+        {
+          "caller": "sfx",
+          "callee": "o.frequency.exponentialRampToValueAtTime",
+          "lineNumber": 139
+        },
+        {
+          "caller": "sfx",
+          "callee": "g.gain.setValueAtTime",
+          "lineNumber": 140
+        },
+        {
+          "caller": "sfx",
+          "callee": "g.gain.linearRampToValueAtTime",
+          "lineNumber": 141
+        },
+        {
+          "caller": "sfx",
+          "callee": "g.gain.exponentialRampToValueAtTime",
+          "lineNumber": 142
+        },
+        {
+          "caller": "sfx",
+          "callee": "o.start",
+          "lineNumber": 143
+        },
+        {
+          "caller": "sfx",
+          "callee": "o.stop",
+          "lineNumber": 144
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 1
+      }
+    },
+    {
+      "path": "src/data/projectThemes.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 112,
+      "nonEmptyLines": 104,
+      "functions": [
+        {
+          "name": "getProjectTheme",
+          "startLine": 110,
+          "endLine": 112,
+          "params": [
+            "id"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "projectThemes",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "DEFAULT_THEME",
+          "line": 102,
+          "isDefault": false
+        },
+        {
+          "name": "getProjectTheme",
+          "line": 110,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    }
+  ]
+}

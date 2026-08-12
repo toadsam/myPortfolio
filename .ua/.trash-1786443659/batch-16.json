@@ -1,0 +1,276 @@
+{
+  "nodes": [
+    {
+      "id": "document:docs/MESHY_BUILDING_PROMPTS.md",
+      "type": "document",
+      "name": "MESHY_BUILDING_PROMPTS.md",
+      "filePath": "docs/MESHY_BUILDING_PROMPTS.md",
+      "summary": "마을 건물 27채의 GLB를 만들기 위한 이미지 생성 → Meshy Image-to-3D 프롬프트 원본으로, 공통 프리픽스·네거티브 프롬프트·Meshy 설정·제작 규격(원점·크기·삼각형 예산)과 함께 프로젝트/스킬/경력/Life 구역별 건물 프롬프트를 파일명 단위로 나열합니다. 파일명이 곧 건물 id이므로 에셋 파이프라인의 단일 진실 공급원입니다.",
+      "tags": ["documentation", "asset-pipeline", "3d-assets", "prompt-spec"],
+      "complexity": "complex",
+      "languageNotes": "간판 규칙 절이 핵심입니다. 간판은 크게, 글자는 한글 이름 그대로 넣되 \"글자가 뭉개져도 괜찮다\"는 전제(코드 쪽 텍스트 오버레이 보험)와, 기술 건물은 글자 없이 형태만으로 의미를 전달한다는 원칙이 함께 서술돼 있습니다."
+    },
+    {
+      "id": "document:docs/MESHY_CHARACTER_PROMPTS.md",
+      "type": "document",
+      "name": "MESHY_CHARACTER_PROMPTS.md",
+      "filePath": "docs/MESHY_CHARACTER_PROMPTS.md",
+      "summary": "NPC·플레이어 캐릭터 14종의 GLB 제작 프롬프트 문서로, 개별 캐릭터 8종(재훈·루미·픽셀·테오·아카·포스트·알고·노바), 안내원 24명이 공유하는 구역 아키타입 5종, 방문자 아바타 1종을 다룹니다. Meshy Auto-Rig를 통과시키기 위한 자세·실루엣 규칙을 앞부분에 못 박아 둡니다.",
+      "tags": ["documentation", "asset-pipeline", "character", "prompt-spec"],
+      "complexity": "complex",
+      "languageNotes": "건물과 달리 캐릭터는 리깅이 걸려 있어 A-포즈·팔다리 분리 같은 \"리깅 성공을 위한 절대 규칙\"이 화풍보다 먼저 나옵니다. 안내원 24명을 아키타입 5종으로 공유해 에셋 수와 draw call을 동시에 줄이는 설계입니다."
+    },
+    {
+      "id": "document:docs/MESHY_PROP_PROMPTS.md",
+      "type": "document",
+      "name": "MESHY_PROP_PROMPTS.md",
+      "filePath": "docs/MESHY_PROP_PROMPTS.md",
+      "summary": "마을 데코·바닥·장식물 44종의 이미지 프롬프트 문서로, nature/ground/fence/light/sign 등 카테고리별 파일명 규격과 스케일 기준표, 입체물용 프리픽스 A·평면물용 프리픽스 B를 구분해 제공합니다. 수십 번 인스턴싱되는 프롭 특성상 건물보다 훨씬 엄격한 폴리곤·메시·텍스처 예산을 명시합니다.",
+      "tags": ["documentation", "asset-pipeline", "3d-assets", "performance"],
+      "complexity": "complex",
+      "languageNotes": "프롭 고유 제약 4가지가 잘 정리돼 있습니다. 다중 배치 → 낮은 폴리곤, 메시 분리 → draw call 증가, 텍스처 예산은 건물의 절반, 조명 프롭에는 실제 광원이 안 들어감(발광은 머티리얼로 표현). 표지판만 text·letters를 네거티브에서 빼는 예외를 둡니다."
+    },
+    {
+      "id": "document:docs/MESHY_VILLAGE_ASSETS.md",
+      "type": "document",
+      "name": "MESHY_VILLAGE_ASSETS.md",
+      "filePath": "docs/MESHY_VILLAGE_ASSETS.md",
+      "summary": "컨셉 아트 수준의 마을 완성을 위해 추가 발주할 에셋을 우선순위 1~3순위로 정리한 구버전 요청서입니다. 현판 아치·낮은 담장·석재 포장 타일·채움 민가·폭포·돌다리 등을 다루며, 현재는 VILLAGE_ASSET_WISHLIST.md로 대체되었습니다.",
+      "tags": ["documentation", "asset-pipeline", "deprecated", "backlog"],
+      "complexity": "moderate",
+      "languageNotes": "문서 제목 자체가 대체되었음을 밝히고 있어, 최신 발주 상태를 확인할 때는 VILLAGE_ASSET_WISHLIST.md를 봐야 합니다."
+    },
+    {
+      "id": "document:docs/PROJECT_DOCUMENTATION.md",
+      "type": "document",
+      "name": "PROJECT_DOCUMENTATION.md",
+      "filePath": "docs/PROJECT_DOCUMENTATION.md",
+      "summary": "약 3,900줄 151개 절에 걸쳐 프로젝트 거의 모든 파일을 초보자 눈높이로 해설하는 한국어 종합 설명서입니다. 프론트/백엔드·API·DB 기본 개념부터 폴더 구조, 실행법, package.json·tsconfig 해설, Next.js 진입점, \"use client\" 의미, 메인 컴포넌트의 상태와 NPC tick·인카운터 루프, 데이터 구조, liveApi, 3D 렌더링까지 순서대로 다룹니다.",
+      "tags": ["documentation", "architecture", "onboarding", "reference"],
+      "complexity": "complex",
+      "languageNotes": "낯선 서브시스템에 들어가기 전 아키텍처를 재유도하지 말고 먼저 읽으라고 CLAUDE.md가 지목하는 문서입니다. 코드 인용과 개념 설명이 섞여 있어 코드가 바뀌면 함께 낡는 유형의 문서입니다."
+    },
+    {
+      "id": "document:docs/VILLAGE_ASSET_WISHLIST.md",
+      "type": "document",
+      "name": "VILLAGE_ASSET_WISHLIST.md",
+      "filePath": "docs/VILLAGE_ASSET_WISHLIST.md",
+      "summary": "마을에 아직 필요한 에셋을 추적하는 현행 위시리스트로, 이미지가 있는 항목(A)·그림부터 그려야 하는 항목(B)·있으면 좋은 항목(C)으로 나누고 1~5차 입고 내역과 남은 3건을 상단에 요약합니다. 공통 규격·삼각형 예산·화풍 꼬리말, 배치 코드 위치와 구역 단차 처리 방식까지 함께 기록합니다.",
+      "tags": ["documentation", "asset-pipeline", "backlog", "3d-assets"],
+      "complexity": "complex",
+      "languageNotes": "\"코드로 해결한 것 — 에셋 안 받아도 됨\" 절이 있어, 발주 대신 코드로 대체한 결정이 기록으로 남습니다. 구역 단차를 매끄러운 경사가 아니라 한 단으로 끊는 이유도 설계 근거와 함께 서술돼 있습니다."
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:docs/MESHY_BUILDING_PROMPTS.md",
+      "target": "file:src/lib/constants.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_BUILDING_PROMPTS.md",
+      "target": "file:scripts/generate-building-manifest.mjs",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_BUILDING_PROMPTS.md",
+      "target": "file:src/data/buildingModels.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_BUILDING_PROMPTS.md",
+      "target": "file:scripts/optimize-glb.mjs",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_CHARACTER_PROMPTS.md",
+      "target": "file:src/data/characterModels.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_CHARACTER_PROMPTS.md",
+      "target": "file:src/data/npcRoster.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_CHARACTER_PROMPTS.md",
+      "target": "file:scripts/merge-character.mjs",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_PROP_PROMPTS.md",
+      "target": "file:src/data/propsLayout.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_PROP_PROMPTS.md",
+      "target": "file:scripts/generate-decor-layout.mjs",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_PROP_PROMPTS.md",
+      "target": "file:scripts/generate-ground-layout.mjs",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_PROP_PROMPTS.md",
+      "target": "file:scripts/optimize-glb.mjs",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_VILLAGE_ASSETS.md",
+      "target": "document:docs/VILLAGE_ASSET_WISHLIST.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/MESHY_VILLAGE_ASSETS.md",
+      "target": "document:docs/MESHY_BUILDING_PROMPTS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/VILLAGE_ASSET_WISHLIST.md",
+      "target": "file:src/components/village/VillageScene.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/VILLAGE_ASSET_WISHLIST.md",
+      "target": "file:src/data/villageTerraces.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/VILLAGE_ASSET_WISHLIST.md",
+      "target": "file:scripts/generate-decor-layout.mjs",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/VILLAGE_ASSET_WISHLIST.md",
+      "target": "file:src/data/propsLayout.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/VILLAGE_ASSET_WISHLIST.md",
+      "target": "document:docs/MESHY_PROP_PROMPTS.md",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "file:src/app/page.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "file:src/app/layout.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "file:src/components/AIPortfolioVillage.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "file:src/components/village/VillageScene.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "file:src/lib/constants.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "file:src/lib/liveApi.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "file:src/types/portfolio.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "file:src/data/npcRoster.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "file:src/data/projects.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "file:backend/app/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "config:package.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:docs/PROJECT_DOCUMENTATION.md",
+      "target": "config:tsconfig.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

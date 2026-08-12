@@ -1,0 +1,315 @@
+{
+  "nodes": [
+    {
+      "id": "config:.pre-commit-config.yaml",
+      "type": "config",
+      "name": ".pre-commit-config.yaml",
+      "filePath": ".pre-commit-config.yaml",
+      "summary": "커밋 전에 Prettier를 자동 실행하는 pre-commit 훅 설정으로, json·js·css 파일만 포맷 대상으로 지정합니다. 이 저장소의 유일한 자동 포맷 게이트입니다.",
+      "tags": ["configuration", "formatting", "git-hook", "build-system"],
+      "complexity": "simple",
+      "languageNotes": "mirrors-prettier 훅을 alpha 태그(v3.0.0-alpha.4)로 고정하고 있어, package.json의 prettier ^2.3.1과 메이저 버전이 어긋납니다."
+    },
+    {
+      "id": "document:CLAUDE.md",
+      "type": "document",
+      "name": "CLAUDE.md",
+      "filePath": "CLAUDE.md",
+      "summary": "이 저장소의 권위 있는 아키텍처 안내서로, Claude Code가 작업할 때 따라야 할 명령어·환경 변수·프론트/백엔드 구조·데이터 구역 패턴·NPC 관계 시스템·레거시 CRA 코드 경계를 12개 절로 정리합니다. 새 기능을 붙일 때 복제해야 할 흐름(admin → village → NPC)의 기준 문서입니다.",
+      "tags": ["documentation", "architecture", "entry-point", "conventions"],
+      "complexity": "moderate",
+      "languageNotes": "\"자동 생성되는 NPC id는 npc-${building.id}이며 백엔드가 부분 문자열로 전담 프로필을 매칭한다\"는 규약이 명시돼 있어, 건물 id 작명이 백엔드 라우팅에 직접 영향을 줍니다."
+    },
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "프로젝트 소개와 실행 가이드를 담은 한국어 최상위 문서로, 프론트엔드 단독 실행과 백엔드 동반 실행 절차, 루트/백엔드 환경 변수, 주요 기능, 폴더 구조, 레거시 CRA 파일 안내, npm 스크립트 목록을 7개 절로 제공합니다.",
+      "tags": ["documentation", "entry-point", "overview", "setup"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "document:copy-admin.md",
+      "type": "document",
+      "name": "copy-admin.md",
+      "filePath": "copy-admin.md",
+      "summary": "관리자 페이지(/admin) \"Daily Village Journal\"의 전체 UX 사양서로, 인증 게이트·입력 패널(컨디션/운동/공부/코딩/프로젝트 작업 시간)·실시간 사이드바(스트릭, 데일리 링, 마을 영향)·저장 후 마을 반영 흐름·장식 해금 조건·코딩테스트/CS 기록 탭·사용 API 목록을 22개 절로 기술합니다.",
+      "tags": ["documentation", "admin", "ux-spec", "data-pipeline"],
+      "complexity": "complex",
+      "languageNotes": "장식 해금 조건이 village_service.py에 있다고 못 박아 두어, 문서가 특정 백엔드 서비스의 규칙 원본을 가리키는 형태입니다."
+    },
+    {
+      "id": "document:copy.md",
+      "type": "document",
+      "name": "copy.md",
+      "filePath": "copy.md",
+      "summary": "포트폴리오에 노출되는 모든 원문 카피를 모아 둔 마스터 문서로, 기술 스택·학력/경력·주요 프로젝트·사이드 프로젝트·개발 기록·가치관·About·연락처와 함께 10개 프로젝트(MuscleUp, FestFlow, MyStock-Desk, MyWave, aClub, ajouchong, 수어지구, 아주대탐험, DarkLab, TSEROF)의 상세 딥다이브를 담습니다.",
+      "tags": ["documentation", "content-source", "portfolio", "overview"],
+      "complexity": "complex",
+      "languageNotes": "src/data 아래 타입이 붙은 데이터 파일들(projects.ts·skills.ts·experience.ts·resume.ts)의 텍스트 원본 역할을 하는 문서라, 카피 수정은 여기서 시작해 데이터 파일로 옮겨집니다."
+    },
+    {
+      "id": "config:package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "package.json",
+      "summary": "프론트엔드 매니페스트로 프로젝트명(ai-portfolio-village)과 npm 스크립트(dev·build·start·typecheck·format·backend:dev·optimize·merge-character)를 정의하고, Next 16 / React 19 / three 0.183 + React Three Fiber·drei·postprocessing·framer-motion 의존성을 고정합니다.",
+      "tags": ["configuration", "build-system", "dependencies", "entry-point"],
+      "complexity": "simple",
+      "languageNotes": "테스트 러너가 아예 선언돼 있지 않아 npm test가 존재하지 않으며, 3D 관련 패키지는 캐럿 없이 정확한 버전으로 핀되어 three와 @types/three의 버전 드리프트를 막고 있습니다."
+    },
+    {
+      "id": "config:skills-lock.json",
+      "type": "config",
+      "name": "skills-lock.json",
+      "filePath": "skills-lock.json",
+      "summary": "이 저장소에 설치된 에이전트 스킬(find-skills, level-design, procedural-gen, threejs-materials-lighting)의 출처 저장소·경로·내용 해시를 고정하는 락 파일입니다. 애플리케이션 런타임과는 무관한 개발 도구 설정입니다.",
+      "tags": ["configuration", "tooling", "lockfile", "development"],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "tsconfig.json",
+      "summary": "TypeScript 컴파일러 설정으로 strict 모드와 noEmit(타입 검사 전용)을 켜고, bundler 모듈 해석·react-jsx·next 플러그인·@/* → ./src/* 경로 별칭을 지정합니다. 컴파일 대상은 src 하위 ts/tsx와 Next가 생성한 타입 파일로 한정됩니다.",
+      "tags": ["configuration", "typescript", "build-system", "path-alias"],
+      "complexity": "simple",
+      "languageNotes": "allowJs: false라서 src/App.js 등 레거시 CRA 자바스크립트 파일은 애초에 타입 검사·빌드 대상에서 제외됩니다."
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:package.json",
+      "target": "file:src/app/page.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:package.json",
+      "target": "file:scripts/backend-dev.mjs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:package.json",
+      "target": "file:scripts/optimize-glb.mjs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:package.json",
+      "target": "file:scripts/merge-character.mjs",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:src/app/page.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:src/app/layout.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:tsconfig.json",
+      "target": "file:src/components/AIPortfolioVillage.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:.pre-commit-config.yaml",
+      "target": "config:package.json",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:.pre-commit-config.yaml",
+      "target": "file:src/data/propsLayout.json",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/app/page.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:backend/app/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:src/app/admin/page.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "config:package.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:src/app/page.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:src/components/AIPortfolioVillage.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:src/lib/constants.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:src/data/npcRoster.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:src/components/village/VillageScene.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:src/components/village/PropsEditor.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:src/data/projectThemes.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:backend/app/main.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:backend/app/services/village_service.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:backend/app/relations.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:backend/app/services/relationship_service.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:CLAUDE.md",
+      "target": "file:backend/app/config.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:copy-admin.md",
+      "target": "file:src/app/admin/page.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:copy-admin.md",
+      "target": "file:backend/app/services/village_service.py",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:copy-admin.md",
+      "target": "file:src/lib/liveApi.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:copy.md",
+      "target": "file:src/data/projects.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:copy.md",
+      "target": "file:src/data/skills.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:copy.md",
+      "target": "file:src/data/experience.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:copy.md",
+      "target": "file:src/data/resume.ts",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:copy.md",
+      "target": "file:src/components/ui/InfoPanel.tsx",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

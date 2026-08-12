@@ -1,0 +1,2762 @@
+{
+  "scriptCompleted": true,
+  "contentDigest": "db0cf0d90826d423ed84af6c6a6e623807c9be21b82cb7db4ac87c518338d243",
+  "files": [
+    {
+      "path": ".agents/skills/find-skills/SKILL.md",
+      "language": "markdown",
+      "sizeLines": 141,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".agents/skills/level-design/SKILL.md",
+      "language": "markdown",
+      "sizeLines": 138,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".agents/skills/level-design/references/pacing-and-flow.md",
+      "language": "markdown",
+      "sizeLines": 94,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".agents/skills/procedural-gen/SKILL.md",
+      "language": "markdown",
+      "sizeLines": 152,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".agents/skills/procedural-gen/references/dungeon-generation.md",
+      "language": "markdown",
+      "sizeLines": 114,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".agents/skills/procedural-gen/references/noise.md",
+      "language": "markdown",
+      "sizeLines": 106,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".agents/skills/threejs-materials-lighting/SKILL.md",
+      "language": "markdown",
+      "sizeLines": 170,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".agents/skills/threejs-materials-lighting/references/materials-lights-table.md",
+      "language": "markdown",
+      "sizeLines": 93,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".all-contributorsrc",
+      "language": "unknown",
+      "sizeLines": 603,
+      "fileCategory": "code"
+    },
+    {
+      "path": ".claude/launch.json",
+      "language": "json",
+      "sizeLines": 12,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".claude/skills/find-skills/SKILL.md",
+      "language": "markdown",
+      "sizeLines": 141,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".claude/skills/level-design/SKILL.md",
+      "language": "markdown",
+      "sizeLines": 138,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".claude/skills/level-design/references/pacing-and-flow.md",
+      "language": "markdown",
+      "sizeLines": 94,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".claude/skills/procedural-gen/SKILL.md",
+      "language": "markdown",
+      "sizeLines": 152,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".claude/skills/procedural-gen/references/dungeon-generation.md",
+      "language": "markdown",
+      "sizeLines": 114,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".claude/skills/procedural-gen/references/noise.md",
+      "language": "markdown",
+      "sizeLines": 106,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".claude/skills/threejs-materials-lighting/SKILL.md",
+      "language": "markdown",
+      "sizeLines": 170,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".claude/skills/threejs-materials-lighting/references/materials-lights-table.md",
+      "language": "markdown",
+      "sizeLines": 93,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".gitattributes",
+      "language": "unknown",
+      "sizeLines": 9,
+      "fileCategory": "code"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug.yml",
+      "language": "yaml",
+      "sizeLines": 82,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/config.yml",
+      "language": "yaml",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/feature_request.yml",
+      "language": "yaml",
+      "sizeLines": 36,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".github/pull_request_template.md",
+      "language": "markdown",
+      "sizeLines": 15,
+      "fileCategory": "docs"
+    },
+    {
+      "path": ".github/workflows/pages.yml",
+      "language": "yaml",
+      "sizeLines": 43,
+      "fileCategory": "infra"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "language": "yaml",
+      "sizeLines": 8,
+      "fileCategory": "config"
+    },
+    {
+      "path": ".prettierignore",
+      "language": "unknown",
+      "sizeLines": 7,
+      "fileCategory": "code"
+    },
+    {
+      "path": ".tmp/build_interview_docs.py",
+      "language": "python",
+      "sizeLines": 1506,
+      "fileCategory": "code"
+    },
+    {
+      "path": ".ua/.understandignore",
+      "language": "unknown",
+      "sizeLines": 110,
+      "fileCategory": "code"
+    },
+    {
+      "path": ".ua/config.json",
+      "language": "json",
+      "sizeLines": 3,
+      "fileCategory": "config"
+    },
+    {
+      "path": "CLAUDE.md",
+      "language": "markdown",
+      "sizeLines": 84,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "Dockerfile",
+      "language": "dockerfile",
+      "sizeLines": 29,
+      "fileCategory": "infra"
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "sizeLines": 92,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "backend/.env.example",
+      "language": "config",
+      "sizeLines": 24,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/README.md",
+      "language": "markdown",
+      "sizeLines": 42,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "backend/app/__init__.py",
+      "language": "python",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/catalog.py",
+      "language": "python",
+      "sizeLines": 185,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/config.py",
+      "language": "python",
+      "sizeLines": 31,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/database.py",
+      "language": "python",
+      "sizeLines": 55,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/main.py",
+      "language": "python",
+      "sizeLines": 404,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/models.py",
+      "language": "python",
+      "sizeLines": 131,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/relations.py",
+      "language": "python",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/schemas.py",
+      "language": "python",
+      "sizeLines": 358,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/security.py",
+      "language": "python",
+      "sizeLines": 109,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/services/__init__.py",
+      "language": "python",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/services/activity_service.py",
+      "language": "python",
+      "sizeLines": 66,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/services/admin_service.py",
+      "language": "python",
+      "sizeLines": 262,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/services/chat_service.py",
+      "language": "python",
+      "sizeLines": 402,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/services/github_service.py",
+      "language": "python",
+      "sizeLines": 36,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/services/learning_service.py",
+      "language": "python",
+      "sizeLines": 187,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/services/npc_action_service.py",
+      "language": "python",
+      "sizeLines": 259,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/services/npc_brain_service.py",
+      "language": "python",
+      "sizeLines": 545,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/services/relationship_service.py",
+      "language": "python",
+      "sizeLines": 121,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/services/village_service.py",
+      "language": "python",
+      "sizeLines": 260,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/app/time_utils.py",
+      "language": "python",
+      "sizeLines": 8,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/pytest.ini",
+      "language": "config",
+      "sizeLines": 2,
+      "fileCategory": "config"
+    },
+    {
+      "path": "backend/requirements-dev.txt",
+      "language": "txt",
+      "sizeLines": 2,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "backend/requirements.txt",
+      "language": "txt",
+      "sizeLines": 7,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "backend/tests/conftest.py",
+      "language": "python",
+      "sizeLines": 21,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/tests/test_relations.py",
+      "language": "python",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/tests/test_relationship_service.py",
+      "language": "python",
+      "sizeLines": 76,
+      "fileCategory": "code"
+    },
+    {
+      "path": "backend/tests/test_village_service.py",
+      "language": "python",
+      "sizeLines": 90,
+      "fileCategory": "code"
+    },
+    {
+      "path": "copy-admin.md",
+      "language": "markdown",
+      "sizeLines": 249,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "copy.md",
+      "language": "markdown",
+      "sizeLines": 967,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/AI_Portfolio_Village_Project_Documentation.docx",
+      "language": "docx",
+      "sizeLines": 303,
+      "fileCategory": "code"
+    },
+    {
+      "path": "docs/MESHY_BUILDING_PROMPTS.md",
+      "language": "markdown",
+      "sizeLines": 608,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/MESHY_CHARACTER_PROMPTS.md",
+      "language": "markdown",
+      "sizeLines": 266,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/MESHY_PROP_PROMPTS.md",
+      "language": "markdown",
+      "sizeLines": 582,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/MESHY_VILLAGE_ASSETS.md",
+      "language": "markdown",
+      "sizeLines": 296,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/PROJECT_DOCUMENTATION.md",
+      "language": "markdown",
+      "sizeLines": 3944,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "docs/VILLAGE_ASSET_WISHLIST.md",
+      "language": "markdown",
+      "sizeLines": 744,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "env.example",
+      "language": "example",
+      "sizeLines": 6,
+      "fileCategory": "code"
+    },
+    {
+      "path": "interview-docs/AjouCampusFoodmap_면접대비_기술문서.docx",
+      "language": "docx",
+      "sizeLines": 185,
+      "fileCategory": "code"
+    },
+    {
+      "path": "interview-docs/FestFlow_면접대비_기술문서.docx",
+      "language": "docx",
+      "sizeLines": 178,
+      "fileCategory": "code"
+    },
+    {
+      "path": "interview-docs/MuscleUp_면접대비_기술문서.docx",
+      "language": "docx",
+      "sizeLines": 194,
+      "fileCategory": "code"
+    },
+    {
+      "path": "interview-docs/MyStockDesk_면접대비_기술문서.docx",
+      "language": "docx",
+      "sizeLines": 189,
+      "fileCategory": "code"
+    },
+    {
+      "path": "interview-docs/SignLanguage_면접대비_기술문서.docx",
+      "language": "docx",
+      "sizeLines": 185,
+      "fileCategory": "code"
+    },
+    {
+      "path": "next-env.d.ts",
+      "language": "typescript",
+      "sizeLines": 6,
+      "fileCategory": "code"
+    },
+    {
+      "path": "next.config.mjs",
+      "language": "javascript",
+      "sizeLines": 14,
+      "fileCategory": "code"
+    },
+    {
+      "path": "package.json",
+      "language": "json",
+      "sizeLines": 40,
+      "fileCategory": "config"
+    },
+    {
+      "path": "portfolio-specs/00-OVERVIEW.md",
+      "language": "markdown",
+      "sizeLines": 356,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/01-mywave.md",
+      "language": "markdown",
+      "sizeLines": 2142,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/02-mystock.md",
+      "language": "markdown",
+      "sizeLines": 2231,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/03-festflow.md",
+      "language": "markdown",
+      "sizeLines": 2116,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/04-muscleup.md",
+      "language": "markdown",
+      "sizeLines": 2237,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/05-aclub.md",
+      "language": "markdown",
+      "sizeLines": 2407,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/06-ajouchong.md",
+      "language": "markdown",
+      "sizeLines": 2438,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/07-sign-language.md",
+      "language": "markdown",
+      "sizeLines": 2404,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/08-ajou-adventure.md",
+      "language": "markdown",
+      "sizeLines": 2135,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/09-darklab.md",
+      "language": "markdown",
+      "sizeLines": 2075,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/10-tserof.md",
+      "language": "markdown",
+      "sizeLines": 2506,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/_AUDIT.md",
+      "language": "markdown",
+      "sizeLines": 93,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/_IMPLEMENTATION.md",
+      "language": "markdown",
+      "sizeLines": 231,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/_STATUS.md",
+      "language": "markdown",
+      "sizeLines": 329,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "portfolio-specs/_UNKNOWNS.md",
+      "language": "markdown",
+      "sizeLines": 120,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "postcss.config.mjs",
+      "language": "javascript",
+      "sizeLines": 7,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/browserconfig.xml",
+      "language": "xml",
+      "sizeLines": 9,
+      "fileCategory": "config"
+    },
+    {
+      "path": "public/index.html",
+      "language": "html",
+      "sizeLines": 83,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "public/manifest.json",
+      "language": "json",
+      "sizeLines": 25,
+      "fileCategory": "config"
+    },
+    {
+      "path": "public/models/ASSETS.md",
+      "language": "markdown",
+      "sizeLines": 88,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "public/models/buildings/central-plaza.glb",
+      "language": "glb",
+      "sizeLines": 4015,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/exp-demo-platform.glb",
+      "language": "glb",
+      "sizeLines": 3584,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/exp-portfolio.glb",
+      "language": "glb",
+      "sizeLines": 3612,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/exp-unity-ui.glb",
+      "language": "glb",
+      "sizeLines": 3256,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/life-gym.glb",
+      "language": "glb",
+      "sizeLines": 3197,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/life-invest.glb",
+      "language": "glb",
+      "sizeLines": 3516,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/life-library.glb",
+      "language": "glb",
+      "sizeLines": 3623,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/life-music.glb",
+      "language": "glb",
+      "sizeLines": 3527,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/life-timeline.glb",
+      "language": "glb",
+      "sizeLines": 3924,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/life-values.glb",
+      "language": "glb",
+      "sizeLines": 2803,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/post-office.glb",
+      "language": "glb",
+      "sizeLines": 3365,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/project-aclub.glb",
+      "language": "glb",
+      "sizeLines": 3808,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/project-ajou-adventure.glb",
+      "language": "glb",
+      "sizeLines": 2965,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/project-ajouchong.glb",
+      "language": "glb",
+      "sizeLines": 3324,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/project-darklab.glb",
+      "language": "glb",
+      "sizeLines": 2927,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/project-festflow.glb",
+      "language": "glb",
+      "sizeLines": 3520,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/project-muscleup.glb",
+      "language": "glb",
+      "sizeLines": 3440,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/project-mystock.glb",
+      "language": "glb",
+      "sizeLines": 3718,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/project-sign-language.glb",
+      "language": "glb",
+      "sizeLines": 3348,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/project-tserof.glb",
+      "language": "glb",
+      "sizeLines": 3374,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/skill-3d.glb",
+      "language": "glb",
+      "sizeLines": 3599,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/skill-backend.glb",
+      "language": "glb",
+      "sizeLines": 3480,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/skill-frontend.glb",
+      "language": "glb",
+      "sizeLines": 3250,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/skill-game.glb",
+      "language": "glb",
+      "sizeLines": 3067,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/skill-workflow.glb",
+      "language": "glb",
+      "sizeLines": 3277,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/buildings/study-codingtest.glb",
+      "language": "glb",
+      "sizeLines": 3615,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/characters/lumi.glb",
+      "language": "glb",
+      "sizeLines": 1606,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/characters/neon-robot-npc.glb",
+      "language": "glb",
+      "sizeLines": 837,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/characters/warrior-run.glb",
+      "language": "glb",
+      "sizeLines": 1112,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/characters/warrior-walk-lite.glb",
+      "language": "glb",
+      "sizeLines": 473,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/characters/warrior-walk.glb",
+      "language": "glb",
+      "sizeLines": 1123,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/dev/test-model.glb",
+      "language": "glb",
+      "sizeLines": 5118,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/environment/ground.glb",
+      "language": "glb",
+      "sizeLines": 4048,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/environment/statue.glb",
+      "language": "glb",
+      "sizeLines": 2698,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/environment/바닥.glb",
+      "language": "glb",
+      "sizeLines": 26797,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/.gitkeep",
+      "language": "unknown",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/arch-alt.glb",
+      "language": "glb",
+      "sizeLines": 1331,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/arch-contact.glb",
+      "language": "glb",
+      "sizeLines": 1346,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/arch-experience.glb",
+      "language": "glb",
+      "sizeLines": 1203,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/arch-life.glb",
+      "language": "glb",
+      "sizeLines": 1302,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/arch-projects.glb",
+      "language": "glb",
+      "sizeLines": 1208,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/arch-skills.glb",
+      "language": "glb",
+      "sizeLines": 1146,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/arch-study.glb",
+      "language": "glb",
+      "sizeLines": 1325,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/barrel-iron.glb",
+      "language": "glb",
+      "sizeLines": 783,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/bench.glb",
+      "language": "glb",
+      "sizeLines": 1083,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/bridge-stone.glb",
+      "language": "glb",
+      "sizeLines": 1118,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/bunting.glb",
+      "language": "glb",
+      "sizeLines": 741,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/campfire.glb",
+      "language": "glb",
+      "sizeLines": 1032,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/candle-tome.glb",
+      "language": "glb",
+      "sizeLines": 800,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/fence-rail.glb",
+      "language": "glb",
+      "sizeLines": 296,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/fence.glb",
+      "language": "glb",
+      "sizeLines": 523,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/flagpole-banner.glb",
+      "language": "glb",
+      "sizeLines": 921,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/flower-pot.glb",
+      "language": "glb",
+      "sizeLines": 857,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/flowerbed-round.glb",
+      "language": "glb",
+      "sizeLines": 1487,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/fountain.glb",
+      "language": "glb",
+      "sizeLines": 1300,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/gate-arch.glb",
+      "language": "glb",
+      "sizeLines": 830,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/house-a.glb",
+      "language": "glb",
+      "sizeLines": 1309,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/house-b.glb",
+      "language": "glb",
+      "sizeLines": 1428,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/house-c.glb",
+      "language": "glb",
+      "sizeLines": 1225,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/island-north.glb",
+      "language": "glb",
+      "sizeLines": 1504,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/lantern-archway.glb",
+      "language": "glb",
+      "sizeLines": 1136,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/lantern-bearer.glb",
+      "language": "glb",
+      "sizeLines": 1052,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/lantern-post.glb",
+      "language": "glb",
+      "sizeLines": 863,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/leaf-banner.glb",
+      "language": "glb",
+      "sizeLines": 950,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/lute-picnic.glb",
+      "language": "glb",
+      "sizeLines": 1132,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/mailbox.glb",
+      "language": "glb",
+      "sizeLines": 948,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/market-stall.glb",
+      "language": "glb",
+      "sizeLines": 1122,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/notice-board.glb",
+      "language": "glb",
+      "sizeLines": 1307,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/orb-lantern.glb",
+      "language": "glb",
+      "sizeLines": 959,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/pagoda-portfolio.glb",
+      "language": "glb",
+      "sizeLines": 1195,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/scroll-barrel.glb",
+      "language": "glb",
+      "sizeLines": 967,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/stump-forge.glb",
+      "language": "glb",
+      "sizeLines": 816,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/terrace-slab.glb",
+      "language": "glb",
+      "sizeLines": 1274,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/terrace-stair.glb",
+      "language": "glb",
+      "sizeLines": 1264,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/terrace-steps.glb",
+      "language": "glb",
+      "sizeLines": 400,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/terrace-wall.glb",
+      "language": "glb",
+      "sizeLines": 1233,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/wall-low.glb",
+      "language": "glb",
+      "sizeLines": 365,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/waterfall.glb",
+      "language": "glb",
+      "sizeLines": 1461,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/well.glb",
+      "language": "glb",
+      "sizeLines": 1272,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/decor/windmill.glb",
+      "language": "glb",
+      "sizeLines": 1333,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/grass-patch.glb",
+      "language": "glb",
+      "sizeLines": 217,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/path-cross.glb",
+      "language": "glb",
+      "sizeLines": 255,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/path-curve.glb",
+      "language": "glb",
+      "sizeLines": 262,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/path-straight.glb",
+      "language": "glb",
+      "sizeLines": 223,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/path-t.glb",
+      "language": "glb",
+      "sizeLines": 263,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/paved/grass-patch.glb",
+      "language": "glb",
+      "sizeLines": 233,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/paved/path-cross-b.glb",
+      "language": "glb",
+      "sizeLines": 256,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/paved/path-cross.glb",
+      "language": "glb",
+      "sizeLines": 290,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/paved/path-curve.glb",
+      "language": "glb",
+      "sizeLines": 340,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/paved/path-straight.glb",
+      "language": "glb",
+      "sizeLines": 343,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/paved/path-t.glb",
+      "language": "glb",
+      "sizeLines": 301,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/paving-square.glb",
+      "language": "glb",
+      "sizeLines": 2266,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/plaza-tile.glb",
+      "language": "glb",
+      "sizeLines": 247,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/v2/grass-patch.glb",
+      "language": "glb",
+      "sizeLines": 108,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/v2/path-cross-b.glb",
+      "language": "glb",
+      "sizeLines": 131,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/v2/path-cross.glb",
+      "language": "glb",
+      "sizeLines": 158,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/v2/path-curve.glb",
+      "language": "glb",
+      "sizeLines": 205,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/v2/path-straight.glb",
+      "language": "glb",
+      "sizeLines": 191,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground-flat/v2/path-t.glb",
+      "language": "glb",
+      "sizeLines": 154,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/grass-patch.glb",
+      "language": "glb",
+      "sizeLines": 578,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/path-cross.glb",
+      "language": "glb",
+      "sizeLines": 1070,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/path-curve.glb",
+      "language": "glb",
+      "sizeLines": 863,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/path-straight.glb",
+      "language": "glb",
+      "sizeLines": 900,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/path-t.glb",
+      "language": "glb",
+      "sizeLines": 940,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/plaza-tile.glb",
+      "language": "glb",
+      "sizeLines": 1145,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/v2/grass-patch.glb",
+      "language": "glb",
+      "sizeLines": 780,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/v2/path-cross-b.glb",
+      "language": "glb",
+      "sizeLines": 744,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/v2/path-cross.glb",
+      "language": "glb",
+      "sizeLines": 935,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/v2/path-curve.glb",
+      "language": "glb",
+      "sizeLines": 299,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/v2/path-straight.glb",
+      "language": "glb",
+      "sizeLines": 937,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/ground/v2/path-t.glb",
+      "language": "glb",
+      "sizeLines": 675,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/impostor/bush-emerald-berry.glb",
+      "language": "glb",
+      "sizeLines": 2208,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/impostor/tree-emerald-crown.glb",
+      "language": "glb",
+      "sizeLines": 657,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/impostor/tree-golden-canopy.glb",
+      "language": "glb",
+      "sizeLines": 2575,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/impostor/tree-sakura.glb",
+      "language": "glb",
+      "sizeLines": 2020,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/nature/bush-emerald-berry.glb",
+      "language": "glb",
+      "sizeLines": 1929,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/nature/rock-three-stones.glb",
+      "language": "glb",
+      "sizeLines": 672,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/nature/rock-verdant-boulder.glb",
+      "language": "glb",
+      "sizeLines": 579,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/nature/tree-emerald-crown.glb",
+      "language": "glb",
+      "sizeLines": 989,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/nature/tree-golden-canopy.glb",
+      "language": "glb",
+      "sizeLines": 1269,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/nature/tree-petal-parade.glb",
+      "language": "glb",
+      "sizeLines": 1320,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/nature/tree-sakura.glb",
+      "language": "glb",
+      "sizeLines": 1393,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/signs/sign-contact.glb",
+      "language": "glb",
+      "sizeLines": 900,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/signs/sign-experience.glb",
+      "language": "glb",
+      "sizeLines": 838,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/signs/sign-plaza.glb",
+      "language": "glb",
+      "sizeLines": 865,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/signs/sign-projects.glb",
+      "language": "glb",
+      "sizeLines": 922,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/signs/sign-skills.glb",
+      "language": "glb",
+      "sizeLines": 884,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/signs/sign-study.glb",
+      "language": "glb",
+      "sizeLines": 862,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/signs/sign-theme-project.glb",
+      "language": "glb",
+      "sizeLines": 680,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/models/props/바닥.glb",
+      "language": "glb",
+      "sizeLines": 514,
+      "fileCategory": "code"
+    },
+    {
+      "path": "public/robots.txt",
+      "language": "txt",
+      "sizeLines": 2,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "resume/jaehoon-jeong-resume.html",
+      "language": "html",
+      "sizeLines": 1097,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "resume/jaehoon-jeong-resume.md",
+      "language": "markdown",
+      "sizeLines": 144,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "scripts/backend-dev.mjs",
+      "language": "javascript",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/bake-impostors.mjs",
+      "language": "javascript",
+      "sizeLines": 547,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/flatten-ground-tiles.mjs",
+      "language": "javascript",
+      "sizeLines": 393,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/generate-building-manifest.mjs",
+      "language": "javascript",
+      "sizeLines": 75,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/generate-decor-layout.mjs",
+      "language": "javascript",
+      "sizeLines": 1727,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/generate-ground-layout.mjs",
+      "language": "javascript",
+      "sizeLines": 977,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/lib/read-village.mjs",
+      "language": "javascript",
+      "sizeLines": 117,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/make-fence-rail.mjs",
+      "language": "javascript",
+      "sizeLines": 270,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/make-grass-texture.mjs",
+      "language": "javascript",
+      "sizeLines": 184,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/make-low-wall.mjs",
+      "language": "javascript",
+      "sizeLines": 347,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/make-paving-tile.mjs",
+      "language": "javascript",
+      "sizeLines": 345,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/make-terrace-steps.mjs",
+      "language": "javascript",
+      "sizeLines": 276,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/make_paved_road_tiles.py",
+      "language": "python",
+      "sizeLines": 149,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/merge-character.mjs",
+      "language": "javascript",
+      "sizeLines": 160,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/optimize-glb.mjs",
+      "language": "javascript",
+      "sizeLines": 212,
+      "fileCategory": "code"
+    },
+    {
+      "path": "scripts/optimize_textures.py",
+      "language": "python",
+      "sizeLines": 270,
+      "fileCategory": "code"
+    },
+    {
+      "path": "skills-lock.json",
+      "language": "json",
+      "sizeLines": 29,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/App.scss",
+      "language": "css",
+      "sizeLines": 30,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/LEGACY_CRA.md",
+      "language": "markdown",
+      "sizeLines": 7,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "src/_globalColor.scss",
+      "language": "css",
+      "sizeLines": 90,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/app/admin/page.tsx",
+      "language": "typescript",
+      "sizeLines": 1503,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/app/api/props/route.ts",
+      "language": "typescript",
+      "sizeLines": 59,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/app/globals.css",
+      "language": "css",
+      "sizeLines": 286,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "language": "typescript",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/app/page.tsx",
+      "language": "typescript",
+      "sizeLines": 5,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/app/sueo-preview/SueoPreview.tsx",
+      "language": "typescript",
+      "sizeLines": 18,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/app/sueo-preview/page.tsx",
+      "language": "typescript",
+      "sizeLines": 10,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/app/test-model/page.tsx",
+      "language": "typescript",
+      "sizeLines": 12,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/aclub_analytics.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/aclub_copy.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/aclub_cta.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/aclub_flow.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/aclub_ga4.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/aclub_main.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/ajouchong_analytics.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/ajouchong_feedback.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/ajouchong_flow.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/ajouchong_ga4gsc.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/ajouchong_main.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/ajouchong_ux.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/codeInLogo.webp",
+      "language": "webp",
+      "sizeLines": 37,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/contactMail.webp",
+      "language": "webp",
+      "sizeLines": 169,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/googleAssistantLogo.webp",
+      "language": "webp",
+      "sizeLines": 76,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/nextuLogo.webp",
+      "language": "webp",
+      "sizeLines": 18,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/pwa.webp",
+      "language": "webp",
+      "sizeLines": 35,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/pwaLogo.webp",
+      "language": "webp",
+      "sizeLines": 19,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/saayaHealthLogo.webp",
+      "language": "webp",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/assets/images/아주대학교로고.htm",
+      "language": "html",
+      "sizeLines": 29,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/assets/lottie/Faiz Creations Developer.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/assets/lottie/Software development.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/assets/lottie/build.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/assets/lottie/codingPerson.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/assets/lottie/email.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/assets/lottie/landingPerson.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/assets/lottie/splashAnimation.json",
+      "language": "json",
+      "sizeLines": 0,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/components/AIPortfolioVillage.tsx",
+      "language": "typescript",
+      "sizeLines": 1537,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/InteractionLayer.tsx",
+      "language": "typescript",
+      "sizeLines": 91,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ModelTest.tsx",
+      "language": "typescript",
+      "sizeLines": 29,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/Providers.tsx",
+      "language": "typescript",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ToggleSwitch/ToggleSwitch.scss",
+      "language": "css",
+      "sizeLines": 109,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/achievementCard/AchievementCard.scss",
+      "language": "css",
+      "sizeLines": 79,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/blogCard/BlogCard.scss",
+      "language": "css",
+      "sizeLines": 149,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/button/Button.scss",
+      "language": "css",
+      "sizeLines": 47,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/educationCard/EducationCard.scss",
+      "language": "css",
+      "sizeLines": 134,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/experienceCard/ExperienceCard.scss",
+      "language": "css",
+      "sizeLines": 165,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/footer/Footer.scss",
+      "language": "css",
+      "sizeLines": 15,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/githubProfileCard/GithubProfileCard.scss",
+      "language": "css",
+      "sizeLines": 105,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/githubRepoCard/GithubRepoCard.scss",
+      "language": "css",
+      "sizeLines": 95,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/header/Header.scss",
+      "language": "css",
+      "sizeLines": 182,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/interior/ArchiveInterior.tsx",
+      "language": "typescript",
+      "sizeLines": 211,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/interior/InteriorCharacterController.tsx",
+      "language": "typescript",
+      "sizeLines": 105,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/interior/InteriorScene.tsx",
+      "language": "typescript",
+      "sizeLines": 59,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/interior/LabInterior.tsx",
+      "language": "typescript",
+      "sizeLines": 273,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/interior/PostInterior.tsx",
+      "language": "typescript",
+      "sizeLines": 229,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/interior/ProjectInterior.tsx",
+      "language": "typescript",
+      "sizeLines": 290,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/interior/WorkshopInterior.tsx",
+      "language": "typescript",
+      "sizeLines": 220,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/livingTree/livingTree.css",
+      "language": "css",
+      "sizeLines": 1284,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/motionPortfolio/motionPortfolio.css",
+      "language": "css",
+      "sizeLines": 1807,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/portfolio/portfolio.css",
+      "language": "css",
+      "sizeLines": 5056,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/socialMedia/SocialMedia.scss",
+      "language": "css",
+      "sizeLines": 90,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/softwareSkills/SoftwareSkill.scss",
+      "language": "css",
+      "sizeLines": 31,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/talkCard/TalkCard.scss",
+      "language": "css",
+      "sizeLines": 88,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/ui/ConciergePanel.tsx",
+      "language": "typescript",
+      "sizeLines": 78,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/CustomCursor.tsx",
+      "language": "typescript",
+      "sizeLines": 90,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/DialogueBox.tsx",
+      "language": "typescript",
+      "sizeLines": 322,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/EnterConfirmDialog.tsx",
+      "language": "typescript",
+      "sizeLines": 140,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/Header.tsx",
+      "language": "typescript",
+      "sizeLines": 95,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/InfoPanel.tsx",
+      "language": "typescript",
+      "sizeLines": 636,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/IntroOverlay.tsx",
+      "language": "typescript",
+      "sizeLines": 609,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/ProjectCard.tsx",
+      "language": "typescript",
+      "sizeLines": 76,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/ProjectDetail.css",
+      "language": "css",
+      "sizeLines": 321,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/ui/ProjectDetail.tsx",
+      "language": "typescript",
+      "sizeLines": 96,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/ProjectOnePager.tsx",
+      "language": "typescript",
+      "sizeLines": 788,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/ProjectViewer.tsx",
+      "language": "typescript",
+      "sizeLines": 1103,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/ResumeMode.tsx",
+      "language": "typescript",
+      "sizeLines": 831,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/ResumeTerminal.css",
+      "language": "css",
+      "sizeLines": 1405,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/ui/SceneTransition.tsx",
+      "language": "typescript",
+      "sizeLines": 64,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/SectionTabs.tsx",
+      "language": "typescript",
+      "sizeLines": 30,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/AmbientBackground.tsx",
+      "language": "typescript",
+      "sizeLines": 181,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/DashboardProjectViewer.tsx",
+      "language": "typescript",
+      "sizeLines": 424,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/GameProjectViewer.tsx",
+      "language": "typescript",
+      "sizeLines": 767,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/PlatformProjectViewer.tsx",
+      "language": "typescript",
+      "sizeLines": 317,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/ProjectIntro.tsx",
+      "language": "typescript",
+      "sizeLines": 97,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/RealtimeProjectViewer.tsx",
+      "language": "typescript",
+      "sizeLines": 359,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/SoundToggle.tsx",
+      "language": "typescript",
+      "sizeLines": 54,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+      "language": "typescript",
+      "sizeLines": 137,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/aclub.css",
+      "language": "css",
+      "sizeLines": 570,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/context.ts",
+      "language": "typescript",
+      "sizeLines": 28,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/data.ts",
+      "language": "typescript",
+      "sizeLines": 128,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/fonts.ts",
+      "language": "typescript",
+      "sizeLines": 17,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/parts.tsx",
+      "language": "typescript",
+      "sizeLines": 249,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+      "language": "typescript",
+      "sizeLines": 474,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+      "language": "typescript",
+      "sizeLines": 706,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+      "language": "typescript",
+      "sizeLines": 387,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+      "language": "typescript",
+      "sizeLines": 218,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+      "language": "typescript",
+      "sizeLines": 299,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+      "language": "typescript",
+      "sizeLines": 293,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+      "language": "typescript",
+      "sizeLines": 437,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+      "language": "typescript",
+      "sizeLines": 343,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+      "language": "typescript",
+      "sizeLines": 481,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+      "language": "typescript",
+      "sizeLines": 715,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+      "language": "typescript",
+      "sizeLines": 679,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/atmosphere.ts",
+      "language": "typescript",
+      "sizeLines": 33,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+      "language": "typescript",
+      "sizeLines": 391,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/context.ts",
+      "language": "typescript",
+      "sizeLines": 40,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/darklab.css",
+      "language": "css",
+      "sizeLines": 406,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/fonts.ts",
+      "language": "typescript",
+      "sizeLines": 17,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/parts.tsx",
+      "language": "typescript",
+      "sizeLines": 147,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/ArchitectureSection.tsx",
+      "language": "typescript",
+      "sizeLines": 118,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/CinemachineSection.tsx",
+      "language": "typescript",
+      "sizeLines": 197,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/EntrySection.tsx",
+      "language": "typescript",
+      "sizeLines": 84,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/HeroSection.tsx",
+      "language": "typescript",
+      "sizeLines": 144,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/HonestCostSection.tsx",
+      "language": "typescript",
+      "sizeLines": 55,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/PrinciplesSection.tsx",
+      "language": "typescript",
+      "sizeLines": 100,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/RaycastSection.tsx",
+      "language": "typescript",
+      "sizeLines": 149,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/ResultSection.tsx",
+      "language": "typescript",
+      "sizeLines": 179,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/RetroSection.tsx",
+      "language": "typescript",
+      "sizeLines": 86,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/TakeoverSection.tsx",
+      "language": "typescript",
+      "sizeLines": 209,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/Trouble01Section.tsx",
+      "language": "typescript",
+      "sizeLines": 227,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/darklab/sections/Trouble02Section.tsx",
+      "language": "typescript",
+      "sizeLines": 185,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/AClubDemo.tsx",
+      "language": "typescript",
+      "sizeLines": 102,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx",
+      "language": "typescript",
+      "sizeLines": 116,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/AjouchongDemo.tsx",
+      "language": "typescript",
+      "sizeLines": 107,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+      "language": "typescript",
+      "sizeLines": 85,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+      "language": "typescript",
+      "sizeLines": 303,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+      "language": "typescript",
+      "sizeLines": 163,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+      "language": "typescript",
+      "sizeLines": 143,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+      "language": "typescript",
+      "sizeLines": 121,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+      "language": "typescript",
+      "sizeLines": 120,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/data.ts",
+      "language": "typescript",
+      "sizeLines": 1982,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/index.tsx",
+      "language": "typescript",
+      "sizeLines": 55,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "language": "typescript",
+      "sizeLines": 1520,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+      "language": "typescript",
+      "sizeLines": 235,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/richContent/shared.tsx",
+      "language": "typescript",
+      "sizeLines": 966,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sound.ts",
+      "language": "typescript",
+      "sizeLines": 149,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+      "language": "typescript",
+      "sizeLines": 209,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/context.ts",
+      "language": "typescript",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/fonts.ts",
+      "language": "typescript",
+      "sizeLines": 18,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/parts.tsx",
+      "language": "typescript",
+      "sizeLines": 267,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+      "language": "typescript",
+      "sizeLines": 466,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+      "language": "typescript",
+      "sizeLines": 249,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+      "language": "typescript",
+      "sizeLines": 481,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+      "language": "typescript",
+      "sizeLines": 298,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+      "language": "typescript",
+      "sizeLines": 961,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+      "language": "typescript",
+      "sizeLines": 293,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+      "language": "typescript",
+      "sizeLines": 170,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+      "language": "typescript",
+      "sizeLines": 628,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+      "language": "typescript",
+      "sizeLines": 764,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+      "language": "typescript",
+      "sizeLines": 715,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+      "language": "typescript",
+      "sizeLines": 1165,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sentenceData.ts",
+      "language": "typescript",
+      "sizeLines": 151,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/signData.ts",
+      "language": "typescript",
+      "sizeLines": 147,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sueo.css",
+      "language": "css",
+      "sizeLines": 633,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/useTimeline.ts",
+      "language": "typescript",
+      "sizeLines": 81,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/Building.tsx",
+      "language": "typescript",
+      "sizeLines": 790,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/BuildingNetwork.tsx",
+      "language": "typescript",
+      "sizeLines": 93,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/CameraController.tsx",
+      "language": "typescript",
+      "sizeLines": 286,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/CharacterController.tsx",
+      "language": "typescript",
+      "sizeLines": 130,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/Decorations.tsx",
+      "language": "typescript",
+      "sizeLines": 95,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/InstancedProps.tsx",
+      "language": "typescript",
+      "sizeLines": 282,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/NPC.tsx",
+      "language": "typescript",
+      "sizeLines": 618,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/NpcCharacter.tsx",
+      "language": "typescript",
+      "sizeLines": 161,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/PerfHud.tsx",
+      "language": "typescript",
+      "sizeLines": 255,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/PropsEditor.tsx",
+      "language": "typescript",
+      "sizeLines": 390,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/SeasonAmbience.tsx",
+      "language": "typescript",
+      "sizeLines": 101,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/VillageHud.tsx",
+      "language": "typescript",
+      "sizeLines": 887,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/VillageScene.tsx",
+      "language": "typescript",
+      "sizeLines": 1167,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/components/village/WarriorCharacter.tsx",
+      "language": "typescript",
+      "sizeLines": 73,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/buildingModels.json",
+      "language": "json",
+      "sizeLines": 28,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/data/characterModels.ts",
+      "language": "typescript",
+      "sizeLines": 70,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/experience.ts",
+      "language": "typescript",
+      "sizeLines": 24,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/links.ts",
+      "language": "typescript",
+      "sizeLines": 19,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/npcActions.ts",
+      "language": "typescript",
+      "sizeLines": 187,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/npcBehaviors.ts",
+      "language": "typescript",
+      "sizeLines": 81,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/npcChatter.ts",
+      "language": "typescript",
+      "sizeLines": 61,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/npcRoster.ts",
+      "language": "typescript",
+      "sizeLines": 342,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/npcs.ts",
+      "language": "typescript",
+      "sizeLines": 1,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/projectThemes.ts",
+      "language": "typescript",
+      "sizeLines": 112,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/projects.ts",
+      "language": "typescript",
+      "sizeLines": 337,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/propsLayout.json",
+      "language": "json",
+      "sizeLines": 11431,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/data/resume.ts",
+      "language": "typescript",
+      "sizeLines": 473,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/skills.ts",
+      "language": "typescript",
+      "sizeLines": 74,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/techIcons.ts",
+      "language": "typescript",
+      "sizeLines": 46,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/data/villageTerraces.json",
+      "language": "json",
+      "sizeLines": 237,
+      "fileCategory": "config"
+    },
+    {
+      "path": "src/index.css",
+      "language": "css",
+      "sizeLines": 17,
+      "fileCategory": "markup"
+    },
+    {
+      "path": "src/lib/constants.ts",
+      "language": "typescript",
+      "sizeLines": 639,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/lib/groundMacro.ts",
+      "language": "typescript",
+      "sizeLines": 200,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/lib/htmlLabelThrottle.ts",
+      "language": "typescript",
+      "sizeLines": 32,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/lib/liveApi.ts",
+      "language": "typescript",
+      "sizeLines": 282,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/lib/liveState.ts",
+      "language": "typescript",
+      "sizeLines": 44,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/lib/sfx.ts",
+      "language": "typescript",
+      "sizeLines": 221,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/lib/skyClouds.ts",
+      "language": "typescript",
+      "sizeLines": 128,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/lib/terraceBank.ts",
+      "language": "typescript",
+      "sizeLines": 184,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/lib/useDraggable.ts",
+      "language": "typescript",
+      "sizeLines": 112,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/lib/villagePalette.ts",
+      "language": "typescript",
+      "sizeLines": 153,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/lib/villageTerrain.ts",
+      "language": "typescript",
+      "sizeLines": 68,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/lib/worldCollision.ts",
+      "language": "typescript",
+      "sizeLines": 39,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/types/live.ts",
+      "language": "typescript",
+      "sizeLines": 350,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/types/portfolio.ts",
+      "language": "typescript",
+      "sizeLines": 114,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/types/props.ts",
+      "language": "typescript",
+      "sizeLines": 20,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tailwind.config.ts",
+      "language": "typescript",
+      "sizeLines": 34,
+      "fileCategory": "code"
+    },
+    {
+      "path": "tsconfig.json",
+      "language": "json",
+      "sizeLines": 41,
+      "fileCategory": "config"
+    }
+  ],
+  "totalFiles": 454,
+  "filteredByIgnore": 98,
+  "estimatedComplexity": "large",
+  "stats": {
+    "filesScanned": 454,
+    "byCategory": {
+      "docs": 49,
+      "code": 352,
+      "config": 23,
+      "infra": 2,
+      "markup": 28
+    },
+    "byLanguage": {
+      "markdown": 46,
+      "unknown": 5,
+      "json": 16,
+      "yaml": 5,
+      "python": 27,
+      "dockerfile": 1,
+      "config": 2,
+      "txt": 3,
+      "docx": 6,
+      "example": 1,
+      "typescript": 149,
+      "javascript": 16,
+      "xml": 1,
+      "html": 3,
+      "glb": 129,
+      "css": 25,
+      "webp": 19
+    }
+  }
+}

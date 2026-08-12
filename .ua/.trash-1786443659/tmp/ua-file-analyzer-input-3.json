@@ -1,0 +1,243 @@
+{
+ "projectRoot": "C:/Users/jk636/OneDrive/문서/GitHub/Whims-of-Wonder/Whims-of-Wonder/MetaverseProgramming/My project/Assets/myPortfolio",
+ "batchFiles": [
+  {
+   "path": "src/app/admin/page.tsx",
+   "language": "typescript",
+   "sizeLines": 1503,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/app/page.tsx",
+   "language": "typescript",
+   "sizeLines": 5,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/AIPortfolioVillage.tsx",
+   "language": "typescript",
+   "sizeLines": 1537,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/interior/ArchiveInterior.tsx",
+   "language": "typescript",
+   "sizeLines": 211,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/interior/InteriorScene.tsx",
+   "language": "typescript",
+   "sizeLines": 59,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/interior/LabInterior.tsx",
+   "language": "typescript",
+   "sizeLines": 273,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/interior/PostInterior.tsx",
+   "language": "typescript",
+   "sizeLines": 229,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/interior/ProjectInterior.tsx",
+   "language": "typescript",
+   "sizeLines": 290,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/interior/WorkshopInterior.tsx",
+   "language": "typescript",
+   "sizeLines": 220,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/ConciergePanel.tsx",
+   "language": "typescript",
+   "sizeLines": 78,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/DialogueBox.tsx",
+   "language": "typescript",
+   "sizeLines": 322,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/EnterConfirmDialog.tsx",
+   "language": "typescript",
+   "sizeLines": 140,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/Header.tsx",
+   "language": "typescript",
+   "sizeLines": 95,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/InfoPanel.tsx",
+   "language": "typescript",
+   "sizeLines": 636,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/IntroOverlay.tsx",
+   "language": "typescript",
+   "sizeLines": 609,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/ProjectCard.tsx",
+   "language": "typescript",
+   "sizeLines": 76,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/ProjectDetail.tsx",
+   "language": "typescript",
+   "sizeLines": 96,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/SceneTransition.tsx",
+   "language": "typescript",
+   "sizeLines": 64,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/SectionTabs.tsx",
+   "language": "typescript",
+   "sizeLines": 30,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/village/CharacterController.tsx",
+   "language": "typescript",
+   "sizeLines": 130,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/village/Decorations.tsx",
+   "language": "typescript",
+   "sizeLines": 95,
+   "fileCategory": "code"
+  }
+ ],
+ "batchImportData": {
+  "src/app/admin/page.tsx": [
+   "src/data/projects.ts",
+   "src/data/skills.ts",
+   "src/lib/constants.ts",
+   "src/lib/liveApi.ts",
+   "src/types/live.ts"
+  ],
+  "src/app/page.tsx": [
+   "src/components/AIPortfolioVillage.tsx"
+  ],
+  "src/components/AIPortfolioVillage.tsx": [
+   "src/components/ui/ConciergePanel.tsx",
+   "src/components/ui/DialogueBox.tsx",
+   "src/components/ui/Header.tsx",
+   "src/components/ui/InfoPanel.tsx",
+   "src/components/ui/IntroOverlay.tsx",
+   "src/components/ui/SceneTransition.tsx",
+   "src/components/ui/SectionTabs.tsx",
+   "src/components/ui/project-viewers/sound.ts",
+   "src/components/village/NPC.tsx",
+   "src/components/village/VillageHud.tsx",
+   "src/data/npcBehaviors.ts",
+   "src/data/npcChatter.ts",
+   "src/data/npcRoster.ts",
+   "src/lib/constants.ts",
+   "src/lib/liveApi.ts",
+   "src/lib/liveState.ts",
+   "src/lib/sfx.ts",
+   "src/types/live.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/interior/ArchiveInterior.tsx": [
+   "src/data/experience.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/interior/InteriorScene.tsx": [
+   "src/types/portfolio.ts"
+  ],
+  "src/components/interior/LabInterior.tsx": [
+   "src/components/ui/ProjectViewer.tsx",
+   "src/data/projects.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/interior/PostInterior.tsx": [
+   "src/data/links.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/interior/ProjectInterior.tsx": [
+   "src/components/ui/ProjectViewer.tsx",
+   "src/data/projectThemes.ts",
+   "src/data/projects.ts",
+   "src/lib/liveApi.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/interior/WorkshopInterior.tsx": [
+   "src/data/skills.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/ConciergePanel.tsx": [],
+  "src/components/ui/DialogueBox.tsx": [
+   "src/data/npcRoster.ts",
+   "src/lib/constants.ts",
+   "src/lib/liveApi.ts",
+   "src/lib/liveState.ts",
+   "src/types/live.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/EnterConfirmDialog.tsx": [
+   "src/lib/constants.ts"
+  ],
+  "src/components/ui/Header.tsx": [
+   "src/lib/constants.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/InfoPanel.tsx": [
+   "src/components/ui/ProjectCard.tsx",
+   "src/components/ui/ProjectDetail.tsx",
+   "src/data/experience.ts",
+   "src/data/links.ts",
+   "src/data/projects.ts",
+   "src/data/skills.ts",
+   "src/lib/constants.ts",
+   "src/lib/liveApi.ts",
+   "src/types/live.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/IntroOverlay.tsx": [
+   "src/lib/sfx.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/ProjectCard.tsx": [
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/ProjectDetail.tsx": [
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/SceneTransition.tsx": [],
+  "src/components/ui/SectionTabs.tsx": [
+   "src/lib/constants.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/village/CharacterController.tsx": [
+   "src/components/village/WarriorCharacter.tsx",
+   "src/lib/constants.ts",
+   "src/lib/villageTerrain.ts",
+   "src/lib/worldCollision.ts"
+  ],
+  "src/components/village/Decorations.tsx": [
+   "src/types/portfolio.ts"
+  ]
+ }
+}

@@ -1,0 +1,1919 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 6,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 6,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 0,
+      "failed": 0,
+      "skipped": 6
+    }
+  },
+  "results": [
+    {
+      "path": "docs/MESHY_BUILDING_PROMPTS.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 608,
+      "nonEmptyLines": 489,
+      "sections": [
+        {
+          "heading": "건물 에셋 제작 프롬프트 (27개) — 이미지 생성 → Meshy Image-to-3D",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "워크플로우",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "지금 상태 (2026-08-10 저녁)",
+          "level": 2,
+          "line": 33
+        },
+        {
+          "heading": "18채를 넣으면서 배운 것",
+          "level": 3,
+          "line": 51
+        },
+        {
+          "heading": "간판 규칙 ★",
+          "level": 2,
+          "line": 63
+        },
+        {
+          "heading": "1) 간판은 크게",
+          "level": 3,
+          "line": 68
+        },
+        {
+          "heading": "2) 글자는 이름 그대로 — 한글 이름은 한글로",
+          "level": 3,
+          "line": 82
+        },
+        {
+          "heading": "3) 글자가 뭉개져도 괜찮습니다 (보험이 있음)",
+          "level": 3,
+          "line": 91
+        },
+        {
+          "heading": "4) 기술 건물은 형태로도 말합니다",
+          "level": 3,
+          "line": 98
+        },
+        {
+          "heading": "이미지 생성 공통 프리픽스 (모든 건물에 앞에 붙임)",
+          "level": 2,
+          "line": 106
+        },
+        {
+          "heading": "구도가 가장 중요합니다",
+          "level": 3,
+          "line": 118
+        },
+        {
+          "heading": "공통 네거티브 프롬프트",
+          "level": 2,
+          "line": 131
+        },
+        {
+          "heading": "Meshy Image-to-3D 설정",
+          "level": 2,
+          "line": 141
+        },
+        {
+          "heading": "제작 규격",
+          "level": 2,
+          "line": 148
+        },
+        {
+          "heading": "`npm run optimize` 가 하는 일",
+          "level": 3,
+          "line": 164
+        },
+        {
+          "heading": "1) 프로젝트 구역 (9개) — 마을 서쪽",
+          "level": 2,
+          "line": 184
+        },
+        {
+          "heading": "1. `project-mystock.glb` — MyStock-Desk · 금융/AI 대시보드",
+          "level": 3,
+          "line": 186
+        },
+        {
+          "heading": "2. `project-festflow.glb` — FestFlow · 대학 축제 운영",
+          "level": 3,
+          "line": 199
+        },
+        {
+          "heading": "3. `project-sign-language.glb` — 수어지구 · 수어 학습 앱",
+          "level": 3,
+          "line": 211
+        },
+        {
+          "heading": "4. `project-aclub.glb` — ACLUB · 동아리 플랫폼",
+          "level": 3,
+          "line": 224
+        },
+        {
+          "heading": "5. `project-ajou-adventure.glb` — 아주분투 · 2D 러닝 게임",
+          "level": 3,
+          "line": 236
+        },
+        {
+          "heading": "6. `project-ajouchong.glb` — 아주총학 · 총학생회 웹사이트",
+          "level": 3,
+          "line": 249
+        },
+        {
+          "heading": "7. `project-muscleup.glb` — 근근 MuscleUp · 피트니스 플랫폼",
+          "level": 3,
+          "line": 262
+        },
+        {
+          "heading": "8. `project-darklab.glb` — DarkLab · 3D 공포 게임",
+          "level": 3,
+          "line": 275
+        },
+        {
+          "heading": "9. `project-tserof.glb` — TSEROF · 3D 플랫포머",
+          "level": 3,
+          "line": 288
+        },
+        {
+          "heading": "2) 스킬 구역 (5개) — 마을 북쪽",
+          "level": 2,
+          "line": 302
+        },
+        {
+          "heading": "10. `skill-frontend.glb` — Frontend",
+          "level": 3,
+          "line": 308
+        },
+        {
+          "heading": "11. `skill-backend.glb` — Backend",
+          "level": 3,
+          "line": 323
+        },
+        {
+          "heading": "12. `skill-3d.glb` — 3D / Motion",
+          "level": 3,
+          "line": 338
+        },
+        {
+          "heading": "13. `skill-game.glb` — Game / XR",
+          "level": 3,
+          "line": 354
+        },
+        {
+          "heading": "14. `skill-workflow.glb` — Workflow",
+          "level": 3,
+          "line": 369
+        },
+        {
+          "heading": "3) 경력 구역 (3개) — 마을 남동쪽",
+          "level": 2,
+          "line": 386
+        },
+        {
+          "heading": "15. `exp-unity-ui.glb` — 2025 Unity UI",
+          "level": 3,
+          "line": 388
+        },
+        {
+          "heading": "16. `exp-demo-platform.glb` — 2025 Demo Platform",
+          "level": 3,
+          "line": 402
+        },
+        {
+          "heading": "17. `exp-portfolio.glb` — 2026 AI Portfolio",
+          "level": 3,
+          "line": 414
+        },
+        {
+          "heading": "4) Life 구역 (6개) — 마을 동쪽",
+          "level": 2,
+          "line": 428
+        },
+        {
+          "heading": "18. `life-values.glb` — 가치관 비석",
+          "level": 3,
+          "line": 430
+        },
+        {
+          "heading": "19. `life-gym.glb` — 헬스장",
+          "level": 3,
+          "line": 446
+        },
+        {
+          "heading": "20. `life-invest.glb` — 투자 타워",
+          "level": 3,
+          "line": 459
+        },
+        {
+          "heading": "21. `life-library.glb` — 도서관",
+          "level": 3,
+          "line": 472
+        },
+        {
+          "heading": "22. `life-music.glb` — 음악 스튜디오",
+          "level": 3,
+          "line": 485
+        },
+        {
+          "heading": "23. `life-timeline.glb` — 연혁 타임라인",
+          "level": 3,
+          "line": 498
+        },
+        {
+          "heading": "5) 학습 구역 (2개) — 마을 남쪽",
+          "level": 2,
+          "line": 514
+        },
+        {
+          "heading": "24. `study-codingtest.glb` — 알고리즘 도장",
+          "level": 3,
+          "line": 516
+        },
+        {
+          "heading": "25. `study-cs.glb` — 지식 서고",
+          "level": 3,
+          "line": 530
+        },
+        {
+          "heading": "6) 단독 오브젝트 (2개)",
+          "level": 2,
+          "line": 545
+        },
+        {
+          "heading": "26. `post-office.glb` — 연락 우체국",
+          "level": 3,
+          "line": 547
+        },
+        {
+          "heading": "27. `central-plaza.glb` — 중앙 광장 기념비 ★ 마을의 얼굴",
+          "level": 3,
+          "line": 560
+        },
+        {
+          "heading": "마을 톤 정합성 (코드 측 후속 작업)",
+          "level": 2,
+          "line": 598
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 49
+      }
+    },
+    {
+      "path": "docs/MESHY_CHARACTER_PROMPTS.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 266,
+      "nonEmptyLines": 204,
+      "sections": [
+        {
+          "heading": "캐릭터 에셋 제작 프롬프트 (14종) — 이미지 생성 → Meshy Image-to-3D → Auto-Rig",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "먼저: 왜 캐릭터는 건물보다 까다로운가",
+          "level": 2,
+          "line": 6
+        },
+        {
+          "heading": "Meshy 파이프라인",
+          "level": 3,
+          "line": 17
+        },
+        {
+          "heading": "리깅 성공을 위한 절대 규칙",
+          "level": 3,
+          "line": 27
+        },
+        {
+          "heading": "이미지 생성 공통 프리픽스 (모든 캐릭터에 앞에 붙임)",
+          "level": 2,
+          "line": 41
+        },
+        {
+          "heading": "공통 네거티브 프롬프트",
+          "level": 2,
+          "line": 54
+        },
+        {
+          "heading": "Meshy 설정",
+          "level": 2,
+          "line": 65
+        },
+        {
+          "heading": "제작 규격",
+          "level": 2,
+          "line": 71
+        },
+        {
+          "heading": "캐릭터 구성 (총 14종)",
+          "level": 2,
+          "line": 81
+        },
+        {
+          "heading": "A. 개별 캐릭터 (8종)",
+          "level": 1,
+          "line": 94
+        },
+        {
+          "heading": "1. `npc-jaehoon.glb` — 정재훈 · 마을 총괄 관리자 (본인 AI 분신)",
+          "level": 3,
+          "line": 96
+        },
+        {
+          "heading": "2. `npc-lumi.glb` — 루미 · 마을 총괄 안내원",
+          "level": 3,
+          "line": 107
+        },
+        {
+          "heading": "3. `npc-pixel.glb` — 픽셀 · 프로젝트 큐레이터",
+          "level": 3,
+          "line": 117
+        },
+        {
+          "heading": "4. `npc-theo.glb` — 테오 · 기술 멘토",
+          "level": 3,
+          "line": 127
+        },
+        {
+          "heading": "5. `npc-aka.glb` — 아카 · 성장 기록 관리자",
+          "level": 3,
+          "line": 137
+        },
+        {
+          "heading": "6. `npc-post.glb` — 포스트 · 연락 담당",
+          "level": 3,
+          "line": 147
+        },
+        {
+          "heading": "7. `npc-algo.glb` — 알고 · 알고리즘 도장 코치",
+          "level": 3,
+          "line": 157
+        },
+        {
+          "heading": "8. `npc-nova.glb` — 노바 · 지식 서고 사서",
+          "level": 3,
+          "line": 168
+        },
+        {
+          "heading": "B. 구역 아키타입 (5종) — 건물 안내원 24명 공유",
+          "level": 1,
+          "line": 180
+        },
+        {
+          "heading": "9. `npc-arch-project.glb` — 프로젝트 구역 안내원 (9명 공유)",
+          "level": 3,
+          "line": 185
+        },
+        {
+          "heading": "10. `npc-arch-developer.glb` — 스킬 구역 안내원 (5명 공유)",
+          "level": 3,
+          "line": 195
+        },
+        {
+          "heading": "11. `npc-arch-archivist.glb` — 경력 구역 안내원 (3명 공유)",
+          "level": 3,
+          "line": 205
+        },
+        {
+          "heading": "12. `npc-arch-guide.glb` — Life 구역 안내원 (6명 공유)",
+          "level": 3,
+          "line": 215
+        },
+        {
+          "heading": "13. `npc-arch-contact.glb` — 우체국 안내원 (1명)",
+          "level": 3,
+          "line": 227
+        },
+        {
+          "heading": "C. 플레이어 캐릭터 (1종)",
+          "level": 1,
+          "line": 239
+        },
+        {
+          "heading": "14. `player-walk.glb` / `player-run.glb` — 방문자 아바타",
+          "level": 3,
+          "line": 241
+        },
+        {
+          "heading": "코드 측 후속 작업",
+          "level": 2,
+          "line": 256
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 27
+      }
+    },
+    {
+      "path": "docs/MESHY_PROP_PROMPTS.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 582,
+      "nonEmptyLines": 461,
+      "sections": [
+        {
+          "heading": "마을 데코·바닥·장식물 이미지 프롬프트 (Meshy Image-to-3D)",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "0. 왜 데코를 반드시 바꿔야 하는가",
+          "level": 2,
+          "line": 7
+        },
+        {
+          "heading": "1. 파이프라인",
+          "level": 2,
+          "line": 24
+        },
+        {
+          "heading": "2. 데코가 건물·캐릭터와 다른 3가지 제약",
+          "level": 2,
+          "line": 39
+        },
+        {
+          "heading": "① 하나를 수십 번 배치한다 → 폴리곤을 훨씬 낮게",
+          "level": 3,
+          "line": 41
+        },
+        {
+          "heading": "② 메시가 여러 개면 draw call이 그만큼 늘어난다",
+          "level": 3,
+          "line": 45
+        },
+        {
+          "heading": "③ 텍스처 예산이 건물의 절반",
+          "level": 3,
+          "line": 49
+        },
+        {
+          "heading": "④ 조명 프롭에는 실제 광원이 안 들어간다",
+          "level": 3,
+          "line": 60
+        },
+        {
+          "heading": "3. 공통 프롬프트 규칙",
+          "level": 2,
+          "line": 66
+        },
+        {
+          "heading": "프리픽스 A — 입체물용 (나무·벤치·가로등·표지판 등, 대부분)",
+          "level": 3,
+          "line": 70
+        },
+        {
+          "heading": "프리픽스 B — 평면물용 (바닥 타일·길 세그먼트)",
+          "level": 3,
+          "line": 82
+        },
+        {
+          "heading": "공통 네거티브 (표지판 제외 전 항목)",
+          "level": 3,
+          "line": 95
+        },
+        {
+          "heading": "표지판 전용 네거티브 (`text, letters` 제외)",
+          "level": 3,
+          "line": 104
+        },
+        {
+          "heading": "4. 스케일 기준표",
+          "level": 2,
+          "line": 115
+        },
+        {
+          "heading": "5. Meshy 설정",
+          "level": 2,
+          "line": 137
+        },
+        {
+          "heading": "6. 카테고리별 프롬프트 (총 44종)",
+          "level": 2,
+          "line": 150
+        },
+        {
+          "heading": "`nature/` — 자연물 (7종) · 프리픽스 A",
+          "level": 3,
+          "line": 158
+        },
+        {
+          "heading": "★ 1. `tree-oak.glb` — 둥근 활엽수",
+          "level": 4,
+          "line": 160
+        },
+        {
+          "heading": "★ 2. `tree-pine.glb` — 침엽수",
+          "level": 4,
+          "line": 168
+        },
+        {
+          "heading": "3. `tree-blossom.glb` — 꽃나무 (포인트)",
+          "level": 4,
+          "line": 176
+        },
+        {
+          "heading": "★ 4. `bush.glb` — 덤불",
+          "level": 4,
+          "line": 183
+        },
+        {
+          "heading": "5. `flower-patch.glb` — 꽃무리",
+          "level": 4,
+          "line": 190
+        },
+        {
+          "heading": "★ 6. `rock.glb` — 바위",
+          "level": 4,
+          "line": 197
+        },
+        {
+          "heading": "7. `rock-small.glb` — 작은 돌무더기",
+          "level": 4,
+          "line": 204
+        },
+        {
+          "heading": "`ground/` — 바닥·길 (6종) · **프리픽스 B**",
+          "level": 3,
+          "line": 213
+        },
+        {
+          "heading": "★ 8. `path-straight.glb` — 직선 돌길",
+          "level": 4,
+          "line": 217
+        },
+        {
+          "heading": "★ 9. `path-curve.glb` — 곡선 돌길",
+          "level": 4,
+          "line": 225
+        },
+        {
+          "heading": "10. `path-cross.glb` — 교차로",
+          "level": 4,
+          "line": 233
+        },
+        {
+          "heading": "★ 11. `path-t.glb` — T자 분기로",
+          "level": 4,
+          "line": 241
+        },
+        {
+          "heading": "★ 12. `plaza-tile.glb` — 광장 원형 바닥",
+          "level": 4,
+          "line": 250
+        },
+        {
+          "heading": "13. `grass-patch.glb` — 잔디 패치",
+          "level": 4,
+          "line": 258
+        },
+        {
+          "heading": "`fence/` — 경계·입구 (3종) · 프리픽스 A",
+          "level": 3,
+          "line": 268
+        },
+        {
+          "heading": "★ 14. `fence-wood.glb` — 나무 울타리",
+          "level": 4,
+          "line": 270
+        },
+        {
+          "heading": "15. `fence-gate.glb` — 울타리 문",
+          "level": 4,
+          "line": 277
+        },
+        {
+          "heading": "★ 16. `village-arch.glb` — 마을 입구 아치",
+          "level": 4,
+          "line": 285
+        },
+        {
+          "heading": "`light/` — 조명 (3종) · 프리픽스 A",
+          "level": 3,
+          "line": 295
+        },
+        {
+          "heading": "★ 17. `lamp-post.glb` — 가로등",
+          "level": 4,
+          "line": 299
+        },
+        {
+          "heading": "18. `lantern-hanging.glb` — 걸이 랜턴",
+          "level": 4,
+          "line": 307
+        },
+        {
+          "heading": "19. `campfire.glb` — 모닥불",
+          "level": 4,
+          "line": 314
+        },
+        {
+          "heading": "`sign/` — 표지판 (9종) · 프리픽스 A · **표지판 전용 네거티브 사용**",
+          "level": 3,
+          "line": 324
+        },
+        {
+          "heading": "★ 20. `sign-plaza.glb`",
+          "level": 4,
+          "line": 330
+        },
+        {
+          "heading": "★ 21. `sign-projects.glb`",
+          "level": 4,
+          "line": 338
+        },
+        {
+          "heading": "★ 22. `sign-skills.glb`",
+          "level": 4,
+          "line": 347
+        },
+        {
+          "heading": "★ 23. `sign-experience.glb`",
+          "level": 4,
+          "line": 356
+        },
+        {
+          "heading": "★ 24. `sign-study.glb`",
+          "level": 4,
+          "line": 365
+        },
+        {
+          "heading": "★ 25. `sign-contact.glb`",
+          "level": 4,
+          "line": 374
+        },
+        {
+          "heading": "★ 26. `sign-life.glb`",
+          "level": 4,
+          "line": 383
+        },
+        {
+          "heading": "27. `signpost-arrow.glb` — 방향 이정표",
+          "level": 4,
+          "line": 392
+        },
+        {
+          "heading": "28. `notice-board.glb` — 게시판",
+          "level": 4,
+          "line": 401
+        },
+        {
+          "heading": "`plaza/` — 광장 중심물 (3종) · 프리픽스 A",
+          "level": 3,
+          "line": 412
+        },
+        {
+          "heading": "★ 29. `fountain.glb` — 분수",
+          "level": 4,
+          "line": 414
+        },
+        {
+          "heading": "30. `statue.glb` — 마을 동상",
+          "level": 4,
+          "line": 422
+        },
+        {
+          "heading": "31. `banner-pole.glb` — 깃대",
+          "level": 4,
+          "line": 430
+        },
+        {
+          "heading": "`furniture/` — 생활 소품 (6종) · 프리픽스 A",
+          "level": 3,
+          "line": 440
+        },
+        {
+          "heading": "★ 32. `bench.glb` — 벤치",
+          "level": 4,
+          "line": 442
+        },
+        {
+          "heading": "★ 33. `barrel.glb` — 나무통",
+          "level": 4,
+          "line": 449
+        },
+        {
+          "heading": "34. `crate.glb` — 나무 상자",
+          "level": 4,
+          "line": 456
+        },
+        {
+          "heading": "★ 35. `well.glb` — 우물",
+          "level": 4,
+          "line": 463
+        },
+        {
+          "heading": "36. `market-stall.glb` — 노점",
+          "level": 4,
+          "line": 471
+        },
+        {
+          "heading": "37. `flag-banner.glb` — 삼각 깃발 줄",
+          "level": 4,
+          "line": 479
+        },
+        {
+          "heading": "`theme/` — 구역별 성격 소품 (5종) · 프리픽스 A",
+          "level": 3,
+          "line": 488
+        },
+        {
+          "heading": "38. `theme-project-easel.glb` — 프로젝트 구역",
+          "level": 4,
+          "line": 492
+        },
+        {
+          "heading": "39. `theme-skill-anvil.glb` — 스킬 구역",
+          "level": 4,
+          "line": 500
+        },
+        {
+          "heading": "40. `theme-study-bookstack.glb` — 학습 구역",
+          "level": 4,
+          "line": 508
+        },
+        {
+          "heading": "41. `theme-experience-scroll.glb` — 경력 구역",
+          "level": 4,
+          "line": 516
+        },
+        {
+          "heading": "42. `theme-life-picnic.glb` — Life 구역",
+          "level": 4,
+          "line": 524
+        },
+        {
+          "heading": "`misc/` — 분위기 소품 (2종) · 프리픽스 A",
+          "level": 3,
+          "line": 533
+        },
+        {
+          "heading": "43. `mailbox.glb` — 우편함",
+          "level": 4,
+          "line": 535
+        },
+        {
+          "heading": "44. `potted-plant.glb` — 화분",
+          "level": 4,
+          "line": 543
+        },
+        {
+          "heading": "7. 교체 대상 매핑",
+          "level": 2,
+          "line": 553
+        },
+        {
+          "heading": "8. 권장 순서",
+          "level": 2,
+          "line": 576
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 71
+      }
+    },
+    {
+      "path": "docs/MESHY_VILLAGE_ASSETS.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 296,
+      "nonEmptyLines": 225,
+      "sections": [
+        {
+          "heading": "마을 완성용 추가 에셋 요청 (구버전 — `VILLAGE_ASSET_WISHLIST.md` 로 대체됨)",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "규격 (전부 공통)",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "삼각형 예산 — 이게 지금 제일 빡빡하다",
+          "level": 3,
+          "line": 45
+        },
+        {
+          "heading": "1순위 — 이게 없으면 컨셉 아트처럼 안 보인다",
+          "level": 2,
+          "line": 61
+        },
+        {
+          "heading": "① 구역 현판 아치 2종 (SKILLS · CONTACT)",
+          "level": 3,
+          "line": 63
+        },
+        {
+          "heading": "② 낮은 담장 / 블록 테두리 — **가장 중요**",
+          "level": 3,
+          "line": 93
+        },
+        {
+          "heading": "③ 넓은 석재 포장 타일",
+          "level": 3,
+          "line": 126
+        },
+        {
+          "heading": "④ 채움 민가 4종 추가",
+          "level": 3,
+          "line": 150
+        },
+        {
+          "heading": "2순위 — 있으면 \"우와\" 소리가 나는 것",
+          "level": 2,
+          "line": 176
+        },
+        {
+          "heading": "⑤ 폭포 (섬 절벽에서 떨어지는 물)",
+          "level": 3,
+          "line": 178
+        },
+        {
+          "heading": "⑥ 아치형 돌다리",
+          "level": 3,
+          "line": 196
+        },
+        {
+          "heading": "⑦ 세로 깃발 깃대 (전용)",
+          "level": 3,
+          "line": 211
+        },
+        {
+          "heading": "⑧ 북쪽 AI Portfolio 섬 한 벌",
+          "level": 3,
+          "line": 227
+        },
+        {
+          "heading": "3순위 — 마무리 소품",
+          "level": 2,
+          "line": 253
+        },
+        {
+          "heading": "입고 완료 (2026-08-10)",
+          "level": 2,
+          "line": 278
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 15
+      }
+    },
+    {
+      "path": "docs/PROJECT_DOCUMENTATION.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 3944,
+      "nonEmptyLines": 2955,
+      "sections": [
+        {
+          "heading": "AI Portfolio Village 전체 구현 설명서",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "1. 프로젝트 한 줄 요약",
+          "level": 2,
+          "line": 16
+        },
+        {
+          "heading": "2. 초보자를 위한 기본 개념",
+          "level": 2,
+          "line": 44
+        },
+        {
+          "heading": "2.1 프론트엔드란?",
+          "level": 3,
+          "line": 46
+        },
+        {
+          "heading": "2.2 백엔드란?",
+          "level": 3,
+          "line": 68
+        },
+        {
+          "heading": "2.3 API란?",
+          "level": 3,
+          "line": 94
+        },
+        {
+          "heading": "2.4 데이터베이스란?",
+          "level": 3,
+          "line": 117
+        },
+        {
+          "heading": "3. 전체 폴더 구조",
+          "level": 2,
+          "line": 131
+        },
+        {
+          "heading": "4. 실행 방법",
+          "level": 2,
+          "line": 187
+        },
+        {
+          "heading": "4.1 프론트엔드만 실행",
+          "level": 3,
+          "line": 189
+        },
+        {
+          "heading": "4.2 백엔드까지 실행",
+          "level": 3,
+          "line": 208
+        },
+        {
+          "heading": "4.3 환경 변수",
+          "level": 3,
+          "line": 242
+        },
+        {
+          "heading": "5. package.json 설명",
+          "level": 2,
+          "line": 273
+        },
+        {
+          "heading": "6. TypeScript 설정",
+          "level": 2,
+          "line": 328
+        },
+        {
+          "heading": "7. Next.js 앱 진입점",
+          "level": 2,
+          "line": 366
+        },
+        {
+          "heading": "7.1 첫 페이지",
+          "level": 3,
+          "line": 368
+        },
+        {
+          "heading": "7.2 전체 레이아웃",
+          "level": 3,
+          "line": 399
+        },
+        {
+          "heading": "7.3 Providers",
+          "level": 3,
+          "line": 434
+        },
+        {
+          "heading": "8. \"use client\"의 의미",
+          "level": 2,
+          "line": 468
+        },
+        {
+          "heading": "9. 메인 프론트엔드 컴포넌트",
+          "level": 2,
+          "line": 511
+        },
+        {
+          "heading": "9.1 동적 import",
+          "level": 3,
+          "line": 535
+        },
+        {
+          "heading": "9.2 상태 변수",
+          "level": 3,
+          "line": 572
+        },
+        {
+          "heading": "9.3 useRef",
+          "level": 3,
+          "line": 625
+        },
+        {
+          "heading": "9.4 페이지 방문 로그",
+          "level": 3,
+          "line": 648
+        },
+        {
+          "heading": "9.5 마을 상태 불러오기",
+          "level": 3,
+          "line": 664
+        },
+        {
+          "heading": "9.6 NPC 자동 tick",
+          "level": 3,
+          "line": 719
+        },
+        {
+          "heading": "9.7 NPC끼리 만났을 때 대화",
+          "level": 3,
+          "line": 753
+        },
+        {
+          "heading": "9.8 건물 클릭 흐름",
+          "level": 3,
+          "line": 783
+        },
+        {
+          "heading": "10. 프론트엔드 데이터 구조",
+          "level": 2,
+          "line": 848
+        },
+        {
+          "heading": "10.1 포트폴리오 타입",
+          "level": 3,
+          "line": 850
+        },
+        {
+          "heading": "10.2 건물 데이터",
+          "level": 3,
+          "line": 915
+        },
+        {
+          "heading": "10.3 좌표 확대",
+          "level": 3,
+          "line": 963
+        },
+        {
+          "heading": "10.4 프로젝트 데이터",
+          "level": 3,
+          "line": 992
+        },
+        {
+          "heading": "10.5 스킬 데이터",
+          "level": 3,
+          "line": 1031
+        },
+        {
+          "heading": "10.6 NPC 데이터",
+          "level": 3,
+          "line": 1058
+        },
+        {
+          "heading": "11. 백엔드와 연결하는 프론트 API 함수",
+          "level": 2,
+          "line": 1129
+        },
+        {
+          "heading": "11.1 API 기본 주소",
+          "level": 3,
+          "line": 1139
+        },
+        {
+          "heading": "11.2 공통 요청 함수",
+          "level": 3,
+          "line": 1149
+        },
+        {
+          "heading": "11.3 API 함수 목록",
+          "level": 3,
+          "line": 1201
+        },
+        {
+          "heading": "12. 3D 마을 렌더링",
+          "level": 2,
+          "line": 1240
+        },
+        {
+          "heading": "12.1 VillageScene",
+          "level": 3,
+          "line": 1242
+        },
+        {
+          "heading": "12.2 시간대별 하늘색",
+          "level": 3,
+          "line": 1290
+        },
+        {
+          "heading": "12.3 Canvas 내부 구성",
+          "level": 3,
+          "line": 1318
+        },
+        {
+          "heading": "13. 건물 컴포넌트",
+          "level": 2,
+          "line": 1373
+        },
+        {
+          "heading": "13.1 건물 클릭",
+          "level": 3,
+          "line": 1383
+        },
+        {
+          "heading": "13.2 건물 모양 선택",
+          "level": 3,
+          "line": 1434
+        },
+        {
+          "heading": "13.3 라이브 조명",
+          "level": 3,
+          "line": 1472
+        },
+        {
+          "heading": "14. NPC 컴포넌트",
+          "level": 2,
+          "line": 1522
+        },
+        {
+          "heading": "14.1 NPC 이동",
+          "level": 3,
+          "line": 1532
+        },
+        {
+          "heading": "14.2 NPC 클릭",
+          "level": 3,
+          "line": 1573
+        },
+        {
+          "heading": "14.3 NPC 말풍선",
+          "level": 3,
+          "line": 1588
+        },
+        {
+          "heading": "14.4 NPC 행동 이펙트",
+          "level": 3,
+          "line": 1610
+        },
+        {
+          "heading": "15. 카메라와 이동",
+          "level": 2,
+          "line": 1636
+        },
+        {
+          "heading": "15.1 클릭 탐색 모드 카메라",
+          "level": 3,
+          "line": 1638
+        },
+        {
+          "heading": "15.2 직접 이동 모드",
+          "level": 3,
+          "line": 1681
+        },
+        {
+          "heading": "16. 정보 패널",
+          "level": 2,
+          "line": 1722
+        },
+        {
+          "heading": "17. NPC 대화창",
+          "level": 2,
+          "line": 1773
+        },
+        {
+          "heading": "17.1 대화 기록 저장",
+          "level": 3,
+          "line": 1783
+        },
+        {
+          "heading": "17.2 메시지 보내기",
+          "level": 3,
+          "line": 1802
+        },
+        {
+          "heading": "17.3 AI 오프라인 표시",
+          "level": 3,
+          "line": 1857
+        },
+        {
+          "heading": "18. 프로젝트 내부 전시실",
+          "level": 2,
+          "line": 1875
+        },
+        {
+          "heading": "18.1 프로젝트 찾기",
+          "level": 3,
+          "line": 1885
+        },
+        {
+          "heading": "18.2 3D 전시실 구성",
+          "level": 3,
+          "line": 1903
+        },
+        {
+          "heading": "18.3 프로젝트 상세 열기 로그",
+          "level": 3,
+          "line": 1920
+        },
+        {
+          "heading": "19. 프로젝트 상세 뷰어",
+          "level": 2,
+          "line": 1940
+        },
+        {
+          "heading": "19.1 카테고리별 뷰어 라우팅",
+          "level": 3,
+          "line": 1950
+        },
+        {
+          "heading": "19.2 프로젝트 테마",
+          "level": 3,
+          "line": 1991
+        },
+        {
+          "heading": "19.3 richContent",
+          "level": 3,
+          "line": 2032
+        },
+        {
+          "heading": "20. 이력서 모드",
+          "level": 2,
+          "line": 2068
+        },
+        {
+          "heading": "21. 관리자 페이지",
+          "level": 2,
+          "line": 2111
+        },
+        {
+          "heading": "21.1 초기 form",
+          "level": 3,
+          "line": 2135
+        },
+        {
+          "heading": "21.2 오늘 기록 불러오기",
+          "level": 3,
+          "line": 2159
+        },
+        {
+          "heading": "21.3 저장하기",
+          "level": 3,
+          "line": 2183
+        },
+        {
+          "heading": "21.4 GitHub 커밋 동기화",
+          "level": 3,
+          "line": 2218
+        },
+        {
+          "heading": "22. 개발용 3D 소품 편집 기능",
+          "level": 2,
+          "line": 2245
+        },
+        {
+          "heading": "22.1 개발 환경에서만 활성화",
+          "level": 3,
+          "line": 2257
+        },
+        {
+          "heading": "22.2 소품 목록 불러오기",
+          "level": 3,
+          "line": 2267
+        },
+        {
+          "heading": "22.3 배치 저장",
+          "level": 3,
+          "line": 2288
+        },
+        {
+          "heading": "23. 백엔드 전체 구조",
+          "level": 2,
+          "line": 2318
+        },
+        {
+          "heading": "24. 백엔드 설정",
+          "level": 2,
+          "line": 2361
+        },
+        {
+          "heading": "25. DB 연결",
+          "level": 2,
+          "line": 2412
+        },
+        {
+          "heading": "25.1 요청마다 DB 세션 만들기",
+          "level": 3,
+          "line": 2442
+        },
+        {
+          "heading": "25.2 테이블 생성",
+          "level": 3,
+          "line": 2457
+        },
+        {
+          "heading": "26. DB 모델",
+          "level": 2,
+          "line": 2475
+        },
+        {
+          "heading": "26.1 DailyActivity",
+          "level": 3,
+          "line": 2485
+        },
+        {
+          "heading": "26.2 VisitorEvent",
+          "level": 3,
+          "line": 2530
+        },
+        {
+          "heading": "26.3 NpcConversationLog",
+          "level": 3,
+          "line": 2556
+        },
+        {
+          "heading": "26.4 ManagedProject, NpcPresetSetting, VillageBuildingOverride",
+          "level": 3,
+          "line": 2577
+        },
+        {
+          "heading": "27. API 스키마",
+          "level": 2,
+          "line": 2589
+        },
+        {
+          "heading": "27.1 ActivityIn",
+          "level": 3,
+          "line": 2609
+        },
+        {
+          "heading": "27.2 VillageState",
+          "level": 3,
+          "line": 2639
+        },
+        {
+          "heading": "27.3 NPC 관련 스키마",
+          "level": 3,
+          "line": 2662
+        },
+        {
+          "heading": "28. FastAPI main.py",
+          "level": 2,
+          "line": 2685
+        },
+        {
+          "heading": "28.1 FastAPI 앱 생성",
+          "level": 3,
+          "line": 2695
+        },
+        {
+          "heading": "28.2 CORS 설정",
+          "level": 3,
+          "line": 2705
+        },
+        {
+          "heading": "28.3 서버 시작 시 DB 초기화",
+          "level": 3,
+          "line": 2732
+        },
+        {
+          "heading": "28.4 주요 API 목록",
+          "level": 3,
+          "line": 2757
+        },
+        {
+          "heading": "29. 오늘 활동 저장 로직",
+          "level": 2,
+          "line": 2784
+        },
+        {
+          "heading": "29.1 오늘 기록 가져오기 또는 생성",
+          "level": 3,
+          "line": 2792
+        },
+        {
+          "heading": "29.2 upsert",
+          "level": 3,
+          "line": 2812
+        },
+        {
+          "heading": "30. 마을 상태 계산 로직",
+          "level": 2,
+          "line": 2851
+        },
+        {
+          "heading": "30.1 점수 계산",
+          "level": 3,
+          "line": 2861
+        },
+        {
+          "heading": "30.2 점수를 조명 단계로 변환",
+          "level": 3,
+          "line": 2886
+        },
+        {
+          "heading": "30.3 프로젝트 건물 상태",
+          "level": 3,
+          "line": 2910
+        },
+        {
+          "heading": "30.4 NPC 상태 계산",
+          "level": 3,
+          "line": 2932
+        },
+        {
+          "heading": "31. NPC 채팅 로직",
+          "level": 2,
+          "line": 2963
+        },
+        {
+          "heading": "31.1 채팅 엔트리 함수",
+          "level": 3,
+          "line": 2971
+        },
+        {
+          "heading": "31.2 AI 답변",
+          "level": 3,
+          "line": 3014
+        },
+        {
+          "heading": "31.3 fallback 답변",
+          "level": 3,
+          "line": 3058
+        },
+        {
+          "heading": "32. NPC 자동 행동과 만남",
+          "level": 2,
+          "line": 3082
+        },
+        {
+          "heading": "32.1 NPC tick",
+          "level": 3,
+          "line": 3090
+        },
+        {
+          "heading": "32.2 JSON 응답 요구",
+          "level": 3,
+          "line": 3124
+        },
+        {
+          "heading": "32.3 NPC encounter",
+          "level": 3,
+          "line": 3142
+        },
+        {
+          "heading": "33. NPC 행동 추천",
+          "level": 2,
+          "line": 3170
+        },
+        {
+          "heading": "33.1 행동 정의",
+          "level": 3,
+          "line": 3180
+        },
+        {
+          "heading": "33.2 행동 선택",
+          "level": 3,
+          "line": 3214
+        },
+        {
+          "heading": "34. 관리자 서비스",
+          "level": 2,
+          "line": 3258
+        },
+        {
+          "heading": "34.1 기본 데이터 seed",
+          "level": 3,
+          "line": 3266
+        },
+        {
+          "heading": "34.2 방문자 이벤트 저장",
+          "level": 3,
+          "line": 3292
+        },
+        {
+          "heading": "34.3 분석 요약",
+          "level": 3,
+          "line": 3313
+        },
+        {
+          "heading": "35. GitHub 동기화",
+          "level": 2,
+          "line": 3333
+        },
+        {
+          "heading": "36. 전체 데이터 흐름",
+          "level": 2,
+          "line": 3373
+        },
+        {
+          "heading": "36.1 페이지 처음 로드",
+          "level": 3,
+          "line": 3375
+        },
+        {
+          "heading": "36.2 관리자에서 오늘 기록 저장",
+          "level": 3,
+          "line": 3392
+        },
+        {
+          "heading": "36.3 건물 클릭",
+          "level": 3,
+          "line": 3409
+        },
+        {
+          "heading": "36.4 NPC 채팅",
+          "level": 3,
+          "line": 3423
+        },
+        {
+          "heading": "36.5 NPC 자동 말풍선",
+          "level": 3,
+          "line": 3440
+        },
+        {
+          "heading": "36.6 NPC 만남 대화",
+          "level": 3,
+          "line": 3453
+        },
+        {
+          "heading": "37. 새 프로젝트 추가 방법",
+          "level": 2,
+          "line": 3468
+        },
+        {
+          "heading": "37.1 프로젝트 데이터 추가",
+          "level": 3,
+          "line": 3472
+        },
+        {
+          "heading": "37.2 건물 추가",
+          "level": 3,
+          "line": 3500
+        },
+        {
+          "heading": "37.3 테마 추가",
+          "level": 3,
+          "line": 3538
+        },
+        {
+          "heading": "37.4 백엔드 마을 상태 매핑 추가",
+          "level": 3,
+          "line": 3558
+        },
+        {
+          "heading": "37.5 백엔드 지식 베이스 추가",
+          "level": 3,
+          "line": 3576
+        },
+        {
+          "heading": "38. 새 기술 스택 추가 방법",
+          "level": 2,
+          "line": 3588
+        },
+        {
+          "heading": "39. 새 NPC 행동 추가 방법",
+          "level": 2,
+          "line": 3620
+        },
+        {
+          "heading": "40. 새 백엔드 API 추가 방법",
+          "level": 2,
+          "line": 3666
+        },
+        {
+          "heading": "40.1 schema 추가",
+          "level": 3,
+          "line": 3670
+        },
+        {
+          "heading": "40.2 main.py에 endpoint 추가",
+          "level": 3,
+          "line": 3684
+        },
+        {
+          "heading": "40.3 프론트 API 함수 추가",
+          "level": 3,
+          "line": 3698
+        },
+        {
+          "heading": "40.4 컴포넌트에서 호출",
+          "level": 3,
+          "line": 3717
+        },
+        {
+          "heading": "41. 자주 생길 수 있는 문제",
+          "level": 2,
+          "line": 3727
+        },
+        {
+          "heading": "41.1 백엔드가 꺼져 있을 때",
+          "level": 3,
+          "line": 3729
+        },
+        {
+          "heading": "41.2 프론트에서 API 호출 실패",
+          "level": 3,
+          "line": 3745
+        },
+        {
+          "heading": "41.3 OpenAI 답변이 안 나올 때",
+          "level": 3,
+          "line": 3761
+        },
+        {
+          "heading": "41.4 GitHub 동기화가 안 될 때",
+          "level": 3,
+          "line": 3773
+        },
+        {
+          "heading": "41.5 3D 모델이 안 보일 때",
+          "level": 3,
+          "line": 3788
+        },
+        {
+          "heading": "41.6 TypeScript 경로 alias가 안 먹을 때",
+          "level": 3,
+          "line": 3810
+        },
+        {
+          "heading": "42. 현재 프로젝트에서 레거시 파일",
+          "level": 2,
+          "line": 3828
+        },
+        {
+          "heading": "43. 초보자용 추천 읽는 순서",
+          "level": 2,
+          "line": 3858
+        },
+        {
+          "heading": "44. 핵심 요약",
+          "level": 2,
+          "line": 3897
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 151
+      }
+    },
+    {
+      "path": "docs/VILLAGE_ASSET_WISHLIST.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 744,
+      "nonEmptyLines": 583,
+      "sections": [
+        {
+          "heading": "마을에 아직 필요한 에셋 — 전부",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "한눈에 — 남은 건 3개",
+          "level": 2,
+          "line": 14
+        },
+        {
+          "heading": "들어온 것 (아래 A·B 항목 본문은 재발주용으로 남겨 둔다)",
+          "level": 3,
+          "line": 36
+        },
+        {
+          "heading": "지금 마을 상태 (2026-08-10 저녁)",
+          "level": 2,
+          "line": 45
+        },
+        {
+          "heading": "A. 이미지가 이미 있는 것 (8)",
+          "level": 1,
+          "line": 59
+        },
+        {
+          "heading": "그래도 프롬프트가 필요하면 (다시 뽑거나 마음에 안 들 때)",
+          "level": 3,
+          "line": 79
+        },
+        {
+          "heading": "A1. `project-sign-language.glb` — 수어지구  ✅ 입고 완료 (5차)",
+          "level": 4,
+          "line": 103
+        },
+        {
+          "heading": "A2. `project-ajou-adventure.glb` — 아주분투  ✅ 입고 완료 (5차)",
+          "level": 4,
+          "line": 116
+        },
+        {
+          "heading": "A3. `life-values.glb` — 가치관 비석  ✅ 입고 완료 (5차)",
+          "level": 4,
+          "line": 131
+        },
+        {
+          "heading": "A4. `life-invest.glb` — 투자 타워  ✅ 입고 완료 (5차)",
+          "level": 4,
+          "line": 144
+        },
+        {
+          "heading": "A5. `life-library.glb` — 도서관  ✅ 입고 완료 (5차)",
+          "level": 4,
+          "line": 157
+        },
+        {
+          "heading": "A6. `arch-skills.glb` — SKILLS 현판 아치  ✅ 입고 완료 (5차)",
+          "level": 4,
+          "line": 170
+        },
+        {
+          "heading": "A7 · A8. `house-d.glb` · `house-e.glb` — 채움 민가",
+          "level": 4,
+          "line": 185
+        },
+        {
+          "heading": "B. 그림부터 그려야 하는 것 (6)",
+          "level": 1,
+          "line": 204
+        },
+        {
+          "heading": "B1. `study-codingtest.glb` — 알고리즘 도장  ✅ 입고 완료 (5차)",
+          "level": 2,
+          "line": 206
+        },
+        {
+          "heading": "B2. `study-cs.glb` — 지식 서고  ← **★ 지금 필요한 건 이거 하나뿐**",
+          "level": 2,
+          "line": 219
+        },
+        {
+          "heading": "B3. `life-timeline.glb` — 연혁 타임라인  ✅ 입고 완료 (5차)",
+          "level": 2,
+          "line": 236
+        },
+        {
+          "heading": "B4. `post-office.glb` — 연락 우체국  ✅ 입고 완료 (5차)",
+          "level": 2,
+          "line": 249
+        },
+        {
+          "heading": "B5. `arch-contact.glb` — CONTACT 현판 아치  ✅ 입고 완료 (5차)",
+          "level": 2,
+          "line": 262
+        },
+        {
+          "heading": "B6. `wall-low.glb` · `wall-low-corner.glb` — 가벼운 낮은 담장",
+          "level": 2,
+          "line": 266
+        },
+        {
+          "heading": "B7. `terrace-bank.glb` · `terrace-bank-corner.glb` — 구역 단 옆면(축대) ← **★ 지금 필요**",
+          "level": 2,
+          "line": 296
+        },
+        {
+          "heading": "왜 또 축대인가 — 이미 세 개를 받았는데",
+          "level": 3,
+          "line": 298
+        },
+        {
+          "heading": "필요한 것",
+          "level": 3,
+          "line": 313
+        },
+        {
+          "heading": "C. 있으면 더 좋은 것 (급하지 않음)",
+          "level": 1,
+          "line": 347
+        },
+        {
+          "heading": "C1. 개울 타일 2종 — `props/raw/ground/stream-straight.glb` · `stream-curve.glb`",
+          "level": 3,
+          "line": 351
+        },
+        {
+          "heading": "C2. 노점 2종 — `props/raw/decor/stall-awning.glb` · `stall-fruit.glb`",
+          "level": 3,
+          "line": 372
+        },
+        {
+          "heading": "C3. 마무리 소품 10종",
+          "level": 3,
+          "line": 384
+        },
+        {
+          "heading": "규격 (전부 공통)",
+          "level": 1,
+          "line": 411
+        },
+        {
+          "heading": "삼각형 예산 — 프롬프트 꼬리에 반드시 넣을 말",
+          "level": 2,
+          "line": 440
+        },
+        {
+          "heading": "공통 화풍 꼬리말 (장식물용)",
+          "level": 2,
+          "line": 456
+        },
+        {
+          "heading": "코드로 해결한 것 — 에셋 안 받아도 됨",
+          "level": 1,
+          "line": 467
+        },
+        {
+          "heading": "입고 완료",
+          "level": 1,
+          "line": 486
+        },
+        {
+          "heading": "1차 (2026-08-08) — 장식물 28종",
+          "level": 2,
+          "line": 488
+        },
+        {
+          "heading": "2차 (2026-08-09) — 건물 18채 + 나무·바위 7종",
+          "level": 2,
+          "line": 494
+        },
+        {
+          "heading": "3차 (2026-08-10 새벽) — 아치·민가·석축",
+          "level": 2,
+          "line": 499
+        },
+        {
+          "heading": "4차 (2026-08-10 오후) — 바닥·랜드마크",
+          "level": 2,
+          "line": 514
+        },
+        {
+          "heading": "5차 (2026-08-10 저녁) — 건물 8채 + 아치 2개",
+          "level": 2,
+          "line": 530
+        },
+        {
+          "heading": "배치 코드는 어디에 있나",
+          "level": 1,
+          "line": 558
+        },
+        {
+          "heading": "구역 단차는 어떻게 도나",
+          "level": 1,
+          "line": 579
+        },
+        {
+          "heading": "왜 매끄러운 경사가 아니라 뚝 끊는 한 단인가",
+          "level": 2,
+          "line": 605
+        },
+        {
+          "heading": "단 옆면(축대)은 코드가 그린다",
+          "level": 2,
+          "line": 616
+        },
+        {
+          "heading": "사각형을 블록 상자 ±1칸으로 잡으면 안 된다",
+          "level": 2,
+          "line": 625
+        },
+        {
+          "heading": "담장은 단 위 테두리에 선다",
+          "level": 2,
+          "line": 631
+        },
+        {
+          "heading": "구역 대문 계단 — 받은 `terrace-stair` 를 그대로 쓴다",
+          "level": 2,
+          "line": 639
+        },
+        {
+          "heading": "컨셉 아트에 맞추려고 한 것 (2026-08-11)",
+          "level": 1,
+          "line": 670
+        },
+        {
+          "heading": "그 뒤로 (같은 날) 다시 손본 것",
+          "level": 3,
+          "line": 688
+        },
+        {
+          "heading": "그리고 바닥을 **잔디로 되돌렸다** (2026-08-11 오후)",
+          "level": 3,
+          "line": 697
+        },
+        {
+          "heading": "아직 남은 차이",
+          "level": 2,
+          "line": 723
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 48
+      }
+    }
+  ]
+}

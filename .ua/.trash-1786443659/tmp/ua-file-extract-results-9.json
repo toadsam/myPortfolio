@@ -1,0 +1,371 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 4,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 4,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 4,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/app/layout.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 50,
+      "nonEmptyLines": 46,
+      "functions": [
+        {
+          "name": "RootLayout",
+          "startLine": 41,
+          "endLine": 50,
+          "params": [
+            "{children}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "metadata",
+          "line": 10,
+          "isDefault": false
+        },
+        {
+          "name": "viewport",
+          "line": 37,
+          "isDefault": false
+        },
+        {
+          "name": "RootLayout",
+          "line": 41,
+          "isDefault": true
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 3,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/InteractionLayer.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 91,
+      "nonEmptyLines": 79,
+      "functions": [
+        {
+          "name": "InteractionLayer",
+          "startLine": 15,
+          "endLine": 55,
+          "params": []
+        },
+        {
+          "name": "BurstFx",
+          "startLine": 57,
+          "endLine": 91,
+          "params": [
+            "{burst}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "InteractionLayer",
+          "line": 15,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "InteractionLayer",
+          "callee": "useState",
+          "lineNumber": 16
+        },
+        {
+          "caller": "InteractionLayer",
+          "callee": "useRef",
+          "lineNumber": 17
+        },
+        {
+          "caller": "InteractionLayer",
+          "callee": "useEffect",
+          "lineNumber": 19
+        },
+        {
+          "caller": "InteractionLayer",
+          "callee": "window.matchMedia",
+          "lineNumber": 20
+        },
+        {
+          "caller": "onDown",
+          "callee": "target?.closest",
+          "lineNumber": 26
+        },
+        {
+          "caller": "onDown",
+          "callee": "navigator.vibrate",
+          "lineNumber": 31
+        },
+        {
+          "caller": "onDown",
+          "callee": "setBursts",
+          "lineNumber": 38
+        },
+        {
+          "caller": "onDown",
+          "callee": "list.slice",
+          "lineNumber": 38
+        },
+        {
+          "caller": "onDown",
+          "callee": "window.setTimeout",
+          "lineNumber": 39
+        },
+        {
+          "caller": "onDown",
+          "callee": "setBursts",
+          "lineNumber": 39
+        },
+        {
+          "caller": "onDown",
+          "callee": "list.filter",
+          "lineNumber": 39
+        },
+        {
+          "caller": "InteractionLayer",
+          "callee": "window.addEventListener",
+          "lineNumber": 42
+        },
+        {
+          "caller": "InteractionLayer",
+          "callee": "window.removeEventListener",
+          "lineNumber": 43
+        },
+        {
+          "caller": "InteractionLayer",
+          "callee": "bursts.map",
+          "lineNumber": 49
+        },
+        {
+          "caller": "BurstFx",
+          "callee": "Array.from",
+          "lineNumber": 63
+        },
+        {
+          "caller": "BurstFx",
+          "callee": "Math.cos",
+          "lineNumber": 65
+        },
+        {
+          "caller": "BurstFx",
+          "callee": "Math.sin",
+          "lineNumber": 65
+        },
+        {
+          "caller": "BurstFx",
+          "callee": "particles.map",
+          "lineNumber": 78
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/Providers.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 15,
+      "nonEmptyLines": 13,
+      "functions": [
+        {
+          "name": "Providers",
+          "startLine": 8,
+          "endLine": 15,
+          "params": [
+            "{children}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Providers",
+          "line": 8,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/CustomCursor.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 90,
+      "nonEmptyLines": 77,
+      "functions": [
+        {
+          "name": "CustomCursor",
+          "startLine": 9,
+          "endLine": 90,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "CustomCursor",
+          "line": 9,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "CustomCursor",
+          "callee": "useRef",
+          "lineNumber": 10
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "useRef",
+          "lineNumber": 11
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "useEffect",
+          "lineNumber": 13
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "window.matchMedia",
+          "lineNumber": 15
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "window.matchMedia",
+          "lineNumber": 21
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "root.classList.add",
+          "lineNumber": 23
+        },
+        {
+          "caller": "onMove",
+          "callee": "ring.classList.toggle",
+          "lineNumber": 45
+        },
+        {
+          "caller": "onMove",
+          "callee": "target?.closest",
+          "lineNumber": 45
+        },
+        {
+          "caller": "onMove",
+          "callee": "place",
+          "lineNumber": 46
+        },
+        {
+          "caller": "onMove",
+          "callee": "place",
+          "lineNumber": 50
+        },
+        {
+          "caller": "onDown",
+          "callee": "ring.classList.add",
+          "lineNumber": 53
+        },
+        {
+          "caller": "onUp",
+          "callee": "ring.classList.remove",
+          "lineNumber": 54
+        },
+        {
+          "caller": "loop",
+          "callee": "place",
+          "lineNumber": 64
+        },
+        {
+          "caller": "loop",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 65
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "window.addEventListener",
+          "lineNumber": 68
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "window.addEventListener",
+          "lineNumber": 69
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "window.addEventListener",
+          "lineNumber": 70
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "document.addEventListener",
+          "lineNumber": 71
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 72
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "root.classList.remove",
+          "lineNumber": 75
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "window.removeEventListener",
+          "lineNumber": 76
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "window.removeEventListener",
+          "lineNumber": 77
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "window.removeEventListener",
+          "lineNumber": 78
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "document.removeEventListener",
+          "lineNumber": 79
+        },
+        {
+          "caller": "CustomCursor",
+          "callee": "cancelAnimationFrame",
+          "lineNumber": 80
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    }
+  ]
+}

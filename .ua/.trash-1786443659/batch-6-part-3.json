@@ -1,0 +1,138 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/lib/skyClouds.ts",
+      "type": "file",
+      "name": "skyClouds.ts",
+      "filePath": "src/lib/skyClouds.ts",
+      "summary": "하늘 돔에 얹을 구름 텍스처를 런타임에 굽는 모듈. 텍스처 예산이 꽉 차 새 PNG를 넣기 어렵고 구름 색을 시간대 팔레트에서 받아야 해서, 값 노이즈로 한 장 그린 뒤 팔레트 색 두 개를 섞는 방식을 택했다.",
+      "tags": ["utility", "texture", "procedural", "sky", "rendering"],
+      "complexity": "moderate",
+      "languageNotes": "가로(u)는 주기 노이즈라 돔을 한 바퀴 감아도 이음매가 없고, 세로는 마스크로 지평선 근처 띠에만 구름이 앉게 했다."
+    },
+    {
+      "id": "function:src/lib/skyClouds.ts:makeCloudTexture",
+      "type": "function",
+      "name": "makeCloudTexture",
+      "filePath": "src/lib/skyClouds.ts",
+      "lineRange": [53, 128],
+      "summary": "볕 받는 면 색·그늘 색·구름량을 받아 1024x512 RGBA CanvasTexture를 생성한다. fBm 값으로 밀도를 만들고 지평선 마스크로 알파를 깎는다.",
+      "tags": ["factory", "texture", "procedural", "canvas"],
+      "complexity": "complex"
+    },
+
+    {
+      "id": "file:src/lib/terraceBank.ts",
+      "type": "file",
+      "name": "terraceBank.ts",
+      "filePath": "src/lib/terraceBank.ts",
+      "summary": "구역 단(축대) 옆면에 씌울 돌쌓기 텍스처를 런타임에 굽는 모듈. 받은 terrace-wall.glb가 ㄱ자 모서리 조각이라 280유닛이 넘는 직선 구간을 못 채우고 삼각형 예산도 터져서, 삼각형 0으로 같은 재료감을 내는 텍스처 방식으로 대체했다.",
+      "tags": ["utility", "texture", "procedural", "terrain", "rendering"],
+      "complexity": "moderate",
+      "languageNotes": "가로(u)로만 되풀이되고 씬에서 u = 둘레거리 / PITCH로 감으므로 어느 벽에서나 돌 한 장 크기가 같다. skyClouds.ts와 같은 \"코드로 굽는 텍스처\" 전략."
+    },
+    {
+      "id": "function:src/lib/terraceBank.ts:jitteredEdges",
+      "type": "function",
+      "name": "jitteredEdges",
+      "filePath": "src/lib/terraceBank.ts",
+      "lineRange": [48, 63],
+      "summary": "0..total 구간을 n칸으로 나누되 칸마다 폭을 흔든다. 마지막 경계가 정확히 total이 되도록 정규화해야 텍스처 좌우 줄눈이 어긋나지 않는다.",
+      "tags": ["utility", "procedural", "math", "tiling"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/lib/terraceBank.ts:makeBankTexture",
+      "type": "function",
+      "name": "makeBankTexture",
+      "filePath": "src/lib/terraceBank.ts",
+      "lineRange": [65, 184],
+      "summary": "256x256 캔버스에 켜 높이와 돌 폭을 흔든 5켜 돌쌓기를 그리고 발치에서 기어오르는 담쟁이 줄기까지 얹어 CanvasTexture로 반환한다. 전체 색은 판석 색 쪽으로 당겨 손그림 바닥과 붙였을 때 콘크리트로 안 보이게 했다.",
+      "tags": ["factory", "texture", "procedural", "canvas"],
+      "complexity": "complex"
+    },
+
+    {
+      "id": "file:src/lib/villagePalette.ts",
+      "type": "file",
+      "name": "villagePalette.ts",
+      "filePath": "src/lib/villagePalette.ts",
+      "summary": "접속 시각에 따른 마을 분위기(새벽/낮/노을/밤)의 하늘색·fog·광량·태양 위치·창문 발광 값을 한곳에 정의한 팔레트 모듈. VillageScene과 Building이 같은 값을 봐야 하므로 React context 대신 모듈 상수로 노출한다.",
+      "tags": ["configuration", "lighting", "color-palette", "rendering"],
+      "complexity": "moderate",
+      "languageNotes": "ACES 필믹 톤매핑의 어깨 구간에서 그림자가 눌려 사라지던 문제를 겪은 뒤, \"태양이 형태를 만들고 ambient는 그림자 속만 채운다\"는 기준으로 네 시간대 광량을 다시 잡았다. 전체 밝기 조정은 개별 intensity가 아니라 toneMappingExposure 한 곳만 만지도록 못 박아 두었다."
+    },
+    {
+      "id": "function:src/lib/villagePalette.ts:timePalette",
+      "type": "function",
+      "name": "timePalette",
+      "filePath": "src/lib/villagePalette.ts",
+      "lineRange": [93, 137],
+      "summary": "시각(시)을 받아 해당 시간대의 VillagePalette 값을 돌려준다. 모듈 로드 시 한 번 평가돼 VILLAGE_PALETTE 상수로 굳는다.",
+      "tags": ["factory", "lighting", "configuration"],
+      "complexity": "moderate"
+    },
+
+    {
+      "id": "file:src/lib/villageTerrain.ts",
+      "type": "file",
+      "name": "villageTerrain.ts",
+      "filePath": "src/lib/villageTerrain.ts",
+      "summary": "구역 단차(계단식 지형)의 단일 진실 공급원. 높이를 propsLayout.json 같은 데이터에 굽지 않고 좌표는 그대로 둔 채 그릴 때 terrainHeightAt으로 y를 더하는 방식이라, TERRACE_STEP을 0으로 두면 예전 평지로 정확히 되돌아간다.",
+      "tags": ["utility", "terrain", "geometry", "single-source-of-truth"],
+      "complexity": "simple",
+      "languageNotes": "경사 대신 한 단으로 뚝 끊는 이유는 두께 없는 바닥 판석이 경사에서는 이음매마다 틈이 벌어지기 때문 — 단으로 끊으면 모든 타일이 평평한 단 위에 딱 눕는다. 바닥·장식물·건물·NPC·캐릭터가 전부 이 함수를 써야 하나만 공중에 뜨는 일이 없다."
+    },
+    {
+      "id": "function:src/lib/villageTerrain.ts:terrainHeightAt",
+      "type": "function",
+      "name": "terrainHeightAt",
+      "filePath": "src/lib/villageTerrain.ts",
+      "lineRange": [58, 62],
+      "summary": "해당 (x, z) 지점의 지면 높이를 돌려준다. TERRACE_RECTS 중 하나에 (반 칸 패딩 포함) 들어가면 TERRACE_STEP, 아니면 0이다.",
+      "tags": ["utility", "terrain", "geometry", "lookup"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/lib/villageTerrain.ts:onTerrace",
+      "type": "function",
+      "name": "onTerrace",
+      "filePath": "src/lib/villageTerrain.ts",
+      "lineRange": [65, 68],
+      "summary": "그 자리가 구역 단 위인지만 판별한다. 물길·계단처럼 높이 값이 아니라 위/아래 여부만 필요한 곳에서 쓴다.",
+      "tags": ["utility", "terrain", "predicate"],
+      "complexity": "simple"
+    },
+
+    {
+      "id": "file:src/types/props.ts",
+      "type": "file",
+      "name": "props.ts",
+      "filePath": "src/types/props.ts",
+      "summary": "프롭 편집기가 다루는 데이터의 타입 정의. 개별 배치(PropPlacement), 기존 건물의 위치/회전/크기 덮어쓰기(BuildingOverride), 그리고 둘을 담는 저장 포맷(PropsLayout)을 선언한다.",
+      "tags": ["type-definition", "data-model", "props", "editor"],
+      "complexity": "simple",
+      "languageNotes": "이 파일 하나가 브라우저 편집기(PropsEditor)·인스턴싱 렌더러(InstancedProps)·서버 라우트(api/props) 셋이 공유하는 계약이다."
+    }
+  ],
+  "edges": [
+    {"source": "file:src/lib/villageTerrain.ts", "target": "file:src/data/villageTerraces.json", "type": "imports", "direction": "forward", "weight": 0.7},
+
+    {"source": "file:src/lib/skyClouds.ts", "target": "function:src/lib/skyClouds.ts:makeCloudTexture", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/lib/skyClouds.ts", "target": "function:src/lib/skyClouds.ts:makeCloudTexture", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/lib/terraceBank.ts", "target": "function:src/lib/terraceBank.ts:jitteredEdges", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/lib/terraceBank.ts", "target": "function:src/lib/terraceBank.ts:makeBankTexture", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/lib/terraceBank.ts", "target": "function:src/lib/terraceBank.ts:makeBankTexture", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/lib/villagePalette.ts", "target": "function:src/lib/villagePalette.ts:timePalette", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/lib/villagePalette.ts", "target": "function:src/lib/villagePalette.ts:timePalette", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/lib/villageTerrain.ts", "target": "function:src/lib/villageTerrain.ts:terrainHeightAt", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/lib/villageTerrain.ts", "target": "function:src/lib/villageTerrain.ts:onTerrace", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:src/lib/villageTerrain.ts", "target": "function:src/lib/villageTerrain.ts:terrainHeightAt", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:src/lib/villageTerrain.ts", "target": "function:src/lib/villageTerrain.ts:onTerrace", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:src/lib/villageTerrain.ts", "target": "file:src/lib/terraceBank.ts", "type": "related", "direction": "forward", "weight": 0.5}
+  ]
+}

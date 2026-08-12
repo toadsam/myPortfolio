@@ -1,0 +1,295 @@
+{
+ "projectRoot": "C:\\Users\\jk636\\OneDrive\\문서\\GitHub\\Whims-of-Wonder\\Whims-of-Wonder\\MetaverseProgramming\\My project\\Assets\\myPortfolio",
+ "batchFiles": [
+  {
+   "path": "src/components/ui/ProjectOnePager.tsx",
+   "language": "typescript",
+   "sizeLines": 788,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/ProjectViewer.tsx",
+   "language": "typescript",
+   "sizeLines": 1103,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/AmbientBackground.tsx",
+   "language": "typescript",
+   "sizeLines": 181,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/DashboardProjectViewer.tsx",
+   "language": "typescript",
+   "sizeLines": 424,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/GameProjectViewer.tsx",
+   "language": "typescript",
+   "sizeLines": 767,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/PlatformProjectViewer.tsx",
+   "language": "typescript",
+   "sizeLines": 317,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/ProjectIntro.tsx",
+   "language": "typescript",
+   "sizeLines": 97,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/RealtimeProjectViewer.tsx",
+   "language": "typescript",
+   "sizeLines": 359,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/SoundToggle.tsx",
+   "language": "typescript",
+   "sizeLines": 54,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/atmosphere.ts",
+   "language": "typescript",
+   "sizeLines": 33,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/AClubDemo.tsx",
+   "language": "typescript",
+   "sizeLines": 102,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx",
+   "language": "typescript",
+   "sizeLines": 116,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/AjouchongDemo.tsx",
+   "language": "typescript",
+   "sizeLines": 107,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+   "language": "typescript",
+   "sizeLines": 85,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+   "language": "typescript",
+   "sizeLines": 303,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+   "language": "typescript",
+   "sizeLines": 163,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+   "language": "typescript",
+   "sizeLines": 143,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+   "language": "typescript",
+   "sizeLines": 121,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+   "language": "typescript",
+   "sizeLines": 120,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/data.ts",
+   "language": "typescript",
+   "sizeLines": 1982,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/index.tsx",
+   "language": "typescript",
+   "sizeLines": 55,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/mywave.tsx",
+   "language": "typescript",
+   "sizeLines": 1520,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+   "language": "typescript",
+   "sizeLines": 235,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/richContent/shared.tsx",
+   "language": "typescript",
+   "sizeLines": 966,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/project-viewers/sound.ts",
+   "language": "typescript",
+   "sizeLines": 149,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/data/projectThemes.ts",
+   "language": "typescript",
+   "sizeLines": 112,
+   "fileCategory": "code"
+  }
+ ],
+ "batchImportData": {
+  "src/components/ui/ProjectOnePager.tsx": [
+   "src/components/ui/ProjectDetail.css",
+   "src/components/ui/project-viewers/richContent/data.ts",
+   "src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+   "src/components/ui/project-viewers/richContent/shared.tsx",
+   "src/data/projectThemes.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/ProjectViewer.tsx": [
+   "src/components/ui/project-viewers/DashboardProjectViewer.tsx",
+   "src/components/ui/project-viewers/GameProjectViewer.tsx",
+   "src/components/ui/project-viewers/PlatformProjectViewer.tsx",
+   "src/components/ui/project-viewers/ProjectIntro.tsx",
+   "src/components/ui/project-viewers/RealtimeProjectViewer.tsx",
+   "src/components/ui/project-viewers/SoundToggle.tsx",
+   "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+   "src/components/ui/project-viewers/atmosphere.ts",
+   "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+   "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+   "src/data/projectThemes.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/project-viewers/AmbientBackground.tsx": [
+   "src/components/ui/project-viewers/atmosphere.ts",
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/DashboardProjectViewer.tsx": [
+   "src/components/ui/project-viewers/AmbientBackground.tsx",
+   "src/components/ui/project-viewers/richContent/index.tsx",
+   "src/data/projectThemes.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/project-viewers/GameProjectViewer.tsx": [
+   "src/components/ui/project-viewers/richContent/index.tsx",
+   "src/components/ui/project-viewers/sound.ts",
+   "src/data/projectThemes.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/project-viewers/PlatformProjectViewer.tsx": [
+   "src/components/ui/project-viewers/AmbientBackground.tsx",
+   "src/components/ui/project-viewers/richContent/index.tsx",
+   "src/data/projectThemes.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/project-viewers/ProjectIntro.tsx": [
+   "src/components/ui/project-viewers/atmosphere.ts",
+   "src/components/ui/project-viewers/sound.ts",
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/RealtimeProjectViewer.tsx": [
+   "src/components/ui/project-viewers/AmbientBackground.tsx",
+   "src/components/ui/project-viewers/richContent/index.tsx",
+   "src/data/projectThemes.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/project-viewers/SoundToggle.tsx": [
+   "src/components/ui/project-viewers/atmosphere.ts",
+   "src/components/ui/project-viewers/sound.ts",
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/atmosphere.ts": [
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/AClubDemo.tsx": [
+   "src/components/ui/project-viewers/richContent/shared.tsx",
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx": [
+   "src/components/ui/project-viewers/richContent/shared.tsx",
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/AjouchongDemo.tsx": [
+   "src/components/ui/project-viewers/richContent/shared.tsx",
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx": [
+   "src/components/ui/project-viewers/richContent/shared.tsx",
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx": [
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx": [
+   "src/components/ui/project-viewers/richContent/shared.tsx",
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/MyStockDemo.tsx": [
+   "src/components/ui/project-viewers/richContent/shared.tsx",
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx": [
+   "src/components/ui/project-viewers/richContent/shared.tsx",
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/TserofDemo.tsx": [
+   "src/components/ui/project-viewers/richContent/shared.tsx",
+   "src/data/projectThemes.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/data.ts": [
+   "src/components/ui/project-viewers/richContent/shared.tsx"
+  ],
+  "src/components/ui/project-viewers/richContent/index.tsx": [
+   "src/components/ui/project-viewers/richContent/AClubDemo.tsx",
+   "src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx",
+   "src/components/ui/project-viewers/richContent/AjouchongDemo.tsx",
+   "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+   "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+   "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+   "src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+   "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+   "src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+   "src/components/ui/project-viewers/richContent/data.ts",
+   "src/components/ui/project-viewers/richContent/mywave.tsx",
+   "src/components/ui/project-viewers/richContent/shared.tsx",
+   "src/data/projectThemes.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/mywave.tsx": [
+   "src/data/projectThemes.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/project-viewers/richContent/mywaveBrief.ts": [
+   "src/components/ui/project-viewers/richContent/shared.tsx"
+  ],
+  "src/components/ui/project-viewers/richContent/shared.tsx": [
+   "src/data/projectThemes.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/ui/project-viewers/sound.ts": [
+   "src/components/ui/project-viewers/atmosphere.ts"
+  ],
+  "src/data/projectThemes.ts": []
+ }
+}

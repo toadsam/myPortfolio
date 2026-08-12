@@ -1,0 +1,1020 @@
+{
+  "scriptCompleted": true,
+  "stats": {
+    "filesScanned": 454,
+    "filesWithImports": 130,
+    "totalEdges": 426
+  },
+  "importMap": {
+    ".agents/skills/find-skills/SKILL.md": [],
+    ".agents/skills/level-design/SKILL.md": [],
+    ".agents/skills/level-design/references/pacing-and-flow.md": [],
+    ".agents/skills/procedural-gen/SKILL.md": [],
+    ".agents/skills/procedural-gen/references/dungeon-generation.md": [],
+    ".agents/skills/procedural-gen/references/noise.md": [],
+    ".agents/skills/threejs-materials-lighting/SKILL.md": [],
+    ".agents/skills/threejs-materials-lighting/references/materials-lights-table.md": [],
+    ".all-contributorsrc": [],
+    ".claude/launch.json": [],
+    ".claude/skills/find-skills/SKILL.md": [],
+    ".claude/skills/level-design/SKILL.md": [],
+    ".claude/skills/level-design/references/pacing-and-flow.md": [],
+    ".claude/skills/procedural-gen/SKILL.md": [],
+    ".claude/skills/procedural-gen/references/dungeon-generation.md": [],
+    ".claude/skills/procedural-gen/references/noise.md": [],
+    ".claude/skills/threejs-materials-lighting/SKILL.md": [],
+    ".claude/skills/threejs-materials-lighting/references/materials-lights-table.md": [],
+    ".gitattributes": [],
+    ".github/ISSUE_TEMPLATE/bug.yml": [],
+    ".github/ISSUE_TEMPLATE/config.yml": [],
+    ".github/ISSUE_TEMPLATE/feature_request.yml": [],
+    ".github/pull_request_template.md": [],
+    ".github/workflows/pages.yml": [],
+    ".pre-commit-config.yaml": [],
+    ".prettierignore": [],
+    ".tmp/build_interview_docs.py": [],
+    ".ua/.understandignore": [],
+    ".ua/config.json": [],
+    "CLAUDE.md": [],
+    "Dockerfile": [],
+    "README.md": [],
+    "backend/.env.example": [],
+    "backend/README.md": [],
+    "backend/app/__init__.py": [],
+    "backend/app/catalog.py": [],
+    "backend/app/config.py": [],
+    "backend/app/database.py": [
+      "backend/app/config.py"
+    ],
+    "backend/app/main.py": [
+      "backend/app/config.py",
+      "backend/app/database.py",
+      "backend/app/schemas.py",
+      "backend/app/security.py",
+      "backend/app/services/activity_service.py",
+      "backend/app/services/admin_service.py",
+      "backend/app/services/chat_service.py",
+      "backend/app/services/github_service.py",
+      "backend/app/services/learning_service.py",
+      "backend/app/services/npc_brain_service.py",
+      "backend/app/services/relationship_service.py",
+      "backend/app/services/village_service.py"
+    ],
+    "backend/app/models.py": [
+      "backend/app/database.py"
+    ],
+    "backend/app/relations.py": [],
+    "backend/app/schemas.py": [],
+    "backend/app/security.py": [
+      "backend/app/config.py"
+    ],
+    "backend/app/services/__init__.py": [],
+    "backend/app/services/activity_service.py": [
+      "backend/app/models.py",
+      "backend/app/schemas.py",
+      "backend/app/time_utils.py"
+    ],
+    "backend/app/services/admin_service.py": [
+      "backend/app/catalog.py",
+      "backend/app/models.py",
+      "backend/app/schemas.py",
+      "backend/app/security.py"
+    ],
+    "backend/app/services/chat_service.py": [
+      "backend/app/catalog.py",
+      "backend/app/config.py",
+      "backend/app/models.py",
+      "backend/app/schemas.py",
+      "backend/app/services/learning_service.py",
+      "backend/app/services/npc_action_service.py",
+      "backend/app/time_utils.py"
+    ],
+    "backend/app/services/github_service.py": [
+      "backend/app/config.py",
+      "backend/app/time_utils.py"
+    ],
+    "backend/app/services/learning_service.py": [
+      "backend/app/models.py",
+      "backend/app/schemas.py",
+      "backend/app/time_utils.py"
+    ],
+    "backend/app/services/npc_action_service.py": [
+      "backend/app/catalog.py",
+      "backend/app/models.py",
+      "backend/app/schemas.py"
+    ],
+    "backend/app/services/npc_brain_service.py": [
+      "backend/app/catalog.py",
+      "backend/app/config.py",
+      "backend/app/models.py",
+      "backend/app/schemas.py",
+      "backend/app/services/chat_service.py",
+      "backend/app/services/npc_action_service.py"
+    ],
+    "backend/app/services/relationship_service.py": [
+      "backend/app/models.py",
+      "backend/app/relations.py"
+    ],
+    "backend/app/services/village_service.py": [
+      "backend/app/models.py",
+      "backend/app/schemas.py"
+    ],
+    "backend/app/time_utils.py": [
+      "backend/app/config.py"
+    ],
+    "backend/pytest.ini": [],
+    "backend/requirements-dev.txt": [],
+    "backend/requirements.txt": [],
+    "backend/tests/conftest.py": [
+      "backend/app/database.py"
+    ],
+    "backend/tests/test_relations.py": [
+      "backend/app/__init__.py",
+      "backend/app/relations.py"
+    ],
+    "backend/tests/test_relationship_service.py": [
+      "backend/app/services/__init__.py",
+      "backend/app/services/relationship_service.py"
+    ],
+    "backend/tests/test_village_service.py": [
+      "backend/app/models.py",
+      "backend/app/services/village_service.py"
+    ],
+    "copy-admin.md": [],
+    "copy.md": [],
+    "docs/AI_Portfolio_Village_Project_Documentation.docx": [],
+    "docs/MESHY_BUILDING_PROMPTS.md": [],
+    "docs/MESHY_CHARACTER_PROMPTS.md": [],
+    "docs/MESHY_PROP_PROMPTS.md": [],
+    "docs/MESHY_VILLAGE_ASSETS.md": [],
+    "docs/PROJECT_DOCUMENTATION.md": [],
+    "docs/VILLAGE_ASSET_WISHLIST.md": [],
+    "env.example": [],
+    "interview-docs/AjouCampusFoodmap_면접대비_기술문서.docx": [],
+    "interview-docs/FestFlow_면접대비_기술문서.docx": [],
+    "interview-docs/MuscleUp_면접대비_기술문서.docx": [],
+    "interview-docs/MyStockDesk_면접대비_기술문서.docx": [],
+    "interview-docs/SignLanguage_면접대비_기술문서.docx": [],
+    "next-env.d.ts": [],
+    "next.config.mjs": [],
+    "package.json": [],
+    "portfolio-specs/00-OVERVIEW.md": [],
+    "portfolio-specs/01-mywave.md": [],
+    "portfolio-specs/02-mystock.md": [],
+    "portfolio-specs/03-festflow.md": [],
+    "portfolio-specs/04-muscleup.md": [],
+    "portfolio-specs/05-aclub.md": [],
+    "portfolio-specs/06-ajouchong.md": [],
+    "portfolio-specs/07-sign-language.md": [],
+    "portfolio-specs/08-ajou-adventure.md": [],
+    "portfolio-specs/09-darklab.md": [],
+    "portfolio-specs/10-tserof.md": [],
+    "portfolio-specs/_AUDIT.md": [],
+    "portfolio-specs/_IMPLEMENTATION.md": [],
+    "portfolio-specs/_STATUS.md": [],
+    "portfolio-specs/_UNKNOWNS.md": [],
+    "postcss.config.mjs": [],
+    "public/browserconfig.xml": [],
+    "public/index.html": [],
+    "public/manifest.json": [],
+    "public/models/ASSETS.md": [],
+    "public/models/buildings/central-plaza.glb": [],
+    "public/models/buildings/exp-demo-platform.glb": [],
+    "public/models/buildings/exp-portfolio.glb": [],
+    "public/models/buildings/exp-unity-ui.glb": [],
+    "public/models/buildings/life-gym.glb": [],
+    "public/models/buildings/life-invest.glb": [],
+    "public/models/buildings/life-library.glb": [],
+    "public/models/buildings/life-music.glb": [],
+    "public/models/buildings/life-timeline.glb": [],
+    "public/models/buildings/life-values.glb": [],
+    "public/models/buildings/post-office.glb": [],
+    "public/models/buildings/project-aclub.glb": [],
+    "public/models/buildings/project-ajou-adventure.glb": [],
+    "public/models/buildings/project-ajouchong.glb": [],
+    "public/models/buildings/project-darklab.glb": [],
+    "public/models/buildings/project-festflow.glb": [],
+    "public/models/buildings/project-muscleup.glb": [],
+    "public/models/buildings/project-mystock.glb": [],
+    "public/models/buildings/project-sign-language.glb": [],
+    "public/models/buildings/project-tserof.glb": [],
+    "public/models/buildings/skill-3d.glb": [],
+    "public/models/buildings/skill-backend.glb": [],
+    "public/models/buildings/skill-frontend.glb": [],
+    "public/models/buildings/skill-game.glb": [],
+    "public/models/buildings/skill-workflow.glb": [],
+    "public/models/buildings/study-codingtest.glb": [],
+    "public/models/characters/lumi.glb": [],
+    "public/models/characters/neon-robot-npc.glb": [],
+    "public/models/characters/warrior-run.glb": [],
+    "public/models/characters/warrior-walk-lite.glb": [],
+    "public/models/characters/warrior-walk.glb": [],
+    "public/models/dev/test-model.glb": [],
+    "public/models/environment/ground.glb": [],
+    "public/models/environment/statue.glb": [],
+    "public/models/environment/바닥.glb": [],
+    "public/models/props/.gitkeep": [],
+    "public/models/props/decor/arch-alt.glb": [],
+    "public/models/props/decor/arch-contact.glb": [],
+    "public/models/props/decor/arch-experience.glb": [],
+    "public/models/props/decor/arch-life.glb": [],
+    "public/models/props/decor/arch-projects.glb": [],
+    "public/models/props/decor/arch-skills.glb": [],
+    "public/models/props/decor/arch-study.glb": [],
+    "public/models/props/decor/barrel-iron.glb": [],
+    "public/models/props/decor/bench.glb": [],
+    "public/models/props/decor/bridge-stone.glb": [],
+    "public/models/props/decor/bunting.glb": [],
+    "public/models/props/decor/campfire.glb": [],
+    "public/models/props/decor/candle-tome.glb": [],
+    "public/models/props/decor/fence-rail.glb": [],
+    "public/models/props/decor/fence.glb": [],
+    "public/models/props/decor/flagpole-banner.glb": [],
+    "public/models/props/decor/flower-pot.glb": [],
+    "public/models/props/decor/flowerbed-round.glb": [],
+    "public/models/props/decor/fountain.glb": [],
+    "public/models/props/decor/gate-arch.glb": [],
+    "public/models/props/decor/house-a.glb": [],
+    "public/models/props/decor/house-b.glb": [],
+    "public/models/props/decor/house-c.glb": [],
+    "public/models/props/decor/island-north.glb": [],
+    "public/models/props/decor/lantern-archway.glb": [],
+    "public/models/props/decor/lantern-bearer.glb": [],
+    "public/models/props/decor/lantern-post.glb": [],
+    "public/models/props/decor/leaf-banner.glb": [],
+    "public/models/props/decor/lute-picnic.glb": [],
+    "public/models/props/decor/mailbox.glb": [],
+    "public/models/props/decor/market-stall.glb": [],
+    "public/models/props/decor/notice-board.glb": [],
+    "public/models/props/decor/orb-lantern.glb": [],
+    "public/models/props/decor/pagoda-portfolio.glb": [],
+    "public/models/props/decor/scroll-barrel.glb": [],
+    "public/models/props/decor/stump-forge.glb": [],
+    "public/models/props/decor/terrace-slab.glb": [],
+    "public/models/props/decor/terrace-stair.glb": [],
+    "public/models/props/decor/terrace-steps.glb": [],
+    "public/models/props/decor/terrace-wall.glb": [],
+    "public/models/props/decor/wall-low.glb": [],
+    "public/models/props/decor/waterfall.glb": [],
+    "public/models/props/decor/well.glb": [],
+    "public/models/props/decor/windmill.glb": [],
+    "public/models/props/ground-flat/grass-patch.glb": [],
+    "public/models/props/ground-flat/path-cross.glb": [],
+    "public/models/props/ground-flat/path-curve.glb": [],
+    "public/models/props/ground-flat/path-straight.glb": [],
+    "public/models/props/ground-flat/path-t.glb": [],
+    "public/models/props/ground-flat/paved/grass-patch.glb": [],
+    "public/models/props/ground-flat/paved/path-cross-b.glb": [],
+    "public/models/props/ground-flat/paved/path-cross.glb": [],
+    "public/models/props/ground-flat/paved/path-curve.glb": [],
+    "public/models/props/ground-flat/paved/path-straight.glb": [],
+    "public/models/props/ground-flat/paved/path-t.glb": [],
+    "public/models/props/ground-flat/paving-square.glb": [],
+    "public/models/props/ground-flat/plaza-tile.glb": [],
+    "public/models/props/ground-flat/v2/grass-patch.glb": [],
+    "public/models/props/ground-flat/v2/path-cross-b.glb": [],
+    "public/models/props/ground-flat/v2/path-cross.glb": [],
+    "public/models/props/ground-flat/v2/path-curve.glb": [],
+    "public/models/props/ground-flat/v2/path-straight.glb": [],
+    "public/models/props/ground-flat/v2/path-t.glb": [],
+    "public/models/props/ground/grass-patch.glb": [],
+    "public/models/props/ground/path-cross.glb": [],
+    "public/models/props/ground/path-curve.glb": [],
+    "public/models/props/ground/path-straight.glb": [],
+    "public/models/props/ground/path-t.glb": [],
+    "public/models/props/ground/plaza-tile.glb": [],
+    "public/models/props/ground/v2/grass-patch.glb": [],
+    "public/models/props/ground/v2/path-cross-b.glb": [],
+    "public/models/props/ground/v2/path-cross.glb": [],
+    "public/models/props/ground/v2/path-curve.glb": [],
+    "public/models/props/ground/v2/path-straight.glb": [],
+    "public/models/props/ground/v2/path-t.glb": [],
+    "public/models/props/impostor/bush-emerald-berry.glb": [],
+    "public/models/props/impostor/tree-emerald-crown.glb": [],
+    "public/models/props/impostor/tree-golden-canopy.glb": [],
+    "public/models/props/impostor/tree-sakura.glb": [],
+    "public/models/props/nature/bush-emerald-berry.glb": [],
+    "public/models/props/nature/rock-three-stones.glb": [],
+    "public/models/props/nature/rock-verdant-boulder.glb": [],
+    "public/models/props/nature/tree-emerald-crown.glb": [],
+    "public/models/props/nature/tree-golden-canopy.glb": [],
+    "public/models/props/nature/tree-petal-parade.glb": [],
+    "public/models/props/nature/tree-sakura.glb": [],
+    "public/models/props/signs/sign-contact.glb": [],
+    "public/models/props/signs/sign-experience.glb": [],
+    "public/models/props/signs/sign-plaza.glb": [],
+    "public/models/props/signs/sign-projects.glb": [],
+    "public/models/props/signs/sign-skills.glb": [],
+    "public/models/props/signs/sign-study.glb": [],
+    "public/models/props/signs/sign-theme-project.glb": [],
+    "public/models/props/바닥.glb": [],
+    "public/robots.txt": [],
+    "resume/jaehoon-jeong-resume.html": [],
+    "resume/jaehoon-jeong-resume.md": [],
+    "scripts/backend-dev.mjs": [],
+    "scripts/bake-impostors.mjs": [],
+    "scripts/flatten-ground-tiles.mjs": [],
+    "scripts/generate-building-manifest.mjs": [],
+    "scripts/generate-decor-layout.mjs": [
+      "scripts/lib/read-village.mjs"
+    ],
+    "scripts/generate-ground-layout.mjs": [
+      "scripts/lib/read-village.mjs"
+    ],
+    "scripts/lib/read-village.mjs": [],
+    "scripts/make-fence-rail.mjs": [],
+    "scripts/make-grass-texture.mjs": [],
+    "scripts/make-low-wall.mjs": [],
+    "scripts/make-paving-tile.mjs": [],
+    "scripts/make-terrace-steps.mjs": [],
+    "scripts/make_paved_road_tiles.py": [],
+    "scripts/merge-character.mjs": [],
+    "scripts/optimize-glb.mjs": [],
+    "scripts/optimize_textures.py": [],
+    "skills-lock.json": [],
+    "src/App.scss": [],
+    "src/LEGACY_CRA.md": [],
+    "src/_globalColor.scss": [],
+    "src/app/admin/page.tsx": [
+      "src/data/projects.ts",
+      "src/data/skills.ts",
+      "src/lib/constants.ts",
+      "src/lib/liveApi.ts",
+      "src/types/live.ts"
+    ],
+    "src/app/api/props/route.ts": [
+      "src/types/props.ts"
+    ],
+    "src/app/globals.css": [],
+    "src/app/layout.tsx": [
+      "src/app/globals.css",
+      "src/components/Providers.tsx",
+      "src/components/ui/CustomCursor.tsx"
+    ],
+    "src/app/page.tsx": [
+      "src/components/AIPortfolioVillage.tsx"
+    ],
+    "src/app/sueo-preview/SueoPreview.tsx": [
+      "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+      "src/data/projectThemes.ts",
+      "src/data/projects.ts"
+    ],
+    "src/app/sueo-preview/page.tsx": [
+      "src/app/sueo-preview/SueoPreview.tsx"
+    ],
+    "src/app/test-model/page.tsx": [],
+    "src/assets/images/aclub_analytics.webp": [],
+    "src/assets/images/aclub_copy.webp": [],
+    "src/assets/images/aclub_cta.webp": [],
+    "src/assets/images/aclub_flow.webp": [],
+    "src/assets/images/aclub_ga4.webp": [],
+    "src/assets/images/aclub_main.webp": [],
+    "src/assets/images/ajouchong_analytics.webp": [],
+    "src/assets/images/ajouchong_feedback.webp": [],
+    "src/assets/images/ajouchong_flow.webp": [],
+    "src/assets/images/ajouchong_ga4gsc.webp": [],
+    "src/assets/images/ajouchong_main.webp": [],
+    "src/assets/images/ajouchong_ux.webp": [],
+    "src/assets/images/codeInLogo.webp": [],
+    "src/assets/images/contactMail.webp": [],
+    "src/assets/images/googleAssistantLogo.webp": [],
+    "src/assets/images/nextuLogo.webp": [],
+    "src/assets/images/pwa.webp": [],
+    "src/assets/images/pwaLogo.webp": [],
+    "src/assets/images/saayaHealthLogo.webp": [],
+    "src/assets/images/아주대학교로고.htm": [],
+    "src/assets/lottie/Faiz Creations Developer.json": [],
+    "src/assets/lottie/Software development.json": [],
+    "src/assets/lottie/build.json": [],
+    "src/assets/lottie/codingPerson.json": [],
+    "src/assets/lottie/email.json": [],
+    "src/assets/lottie/landingPerson.json": [],
+    "src/assets/lottie/splashAnimation.json": [],
+    "src/components/AIPortfolioVillage.tsx": [
+      "src/components/ui/ConciergePanel.tsx",
+      "src/components/ui/DialogueBox.tsx",
+      "src/components/ui/Header.tsx",
+      "src/components/ui/InfoPanel.tsx",
+      "src/components/ui/IntroOverlay.tsx",
+      "src/components/ui/SceneTransition.tsx",
+      "src/components/ui/SectionTabs.tsx",
+      "src/components/ui/project-viewers/sound.ts",
+      "src/components/village/NPC.tsx",
+      "src/components/village/VillageHud.tsx",
+      "src/data/npcBehaviors.ts",
+      "src/data/npcChatter.ts",
+      "src/data/npcRoster.ts",
+      "src/lib/constants.ts",
+      "src/lib/liveApi.ts",
+      "src/lib/liveState.ts",
+      "src/lib/sfx.ts",
+      "src/types/live.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/InteractionLayer.tsx": [],
+    "src/components/ModelTest.tsx": [],
+    "src/components/Providers.tsx": [
+      "src/components/InteractionLayer.tsx"
+    ],
+    "src/components/ToggleSwitch/ToggleSwitch.scss": [],
+    "src/components/achievementCard/AchievementCard.scss": [],
+    "src/components/blogCard/BlogCard.scss": [],
+    "src/components/button/Button.scss": [],
+    "src/components/educationCard/EducationCard.scss": [],
+    "src/components/experienceCard/ExperienceCard.scss": [],
+    "src/components/footer/Footer.scss": [],
+    "src/components/githubProfileCard/GithubProfileCard.scss": [],
+    "src/components/githubRepoCard/GithubRepoCard.scss": [],
+    "src/components/header/Header.scss": [],
+    "src/components/interior/ArchiveInterior.tsx": [
+      "src/data/experience.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/interior/InteriorCharacterController.tsx": [],
+    "src/components/interior/InteriorScene.tsx": [
+      "src/types/portfolio.ts"
+    ],
+    "src/components/interior/LabInterior.tsx": [
+      "src/components/ui/ProjectViewer.tsx",
+      "src/data/projects.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/interior/PostInterior.tsx": [
+      "src/data/links.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/interior/ProjectInterior.tsx": [
+      "src/components/ui/ProjectViewer.tsx",
+      "src/data/projectThemes.ts",
+      "src/data/projects.ts",
+      "src/lib/liveApi.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/interior/WorkshopInterior.tsx": [
+      "src/data/skills.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/livingTree/livingTree.css": [],
+    "src/components/motionPortfolio/motionPortfolio.css": [],
+    "src/components/portfolio/portfolio.css": [],
+    "src/components/socialMedia/SocialMedia.scss": [],
+    "src/components/softwareSkills/SoftwareSkill.scss": [],
+    "src/components/talkCard/TalkCard.scss": [],
+    "src/components/ui/ConciergePanel.tsx": [],
+    "src/components/ui/CustomCursor.tsx": [],
+    "src/components/ui/DialogueBox.tsx": [
+      "src/data/npcRoster.ts",
+      "src/lib/constants.ts",
+      "src/lib/liveApi.ts",
+      "src/lib/liveState.ts",
+      "src/types/live.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/EnterConfirmDialog.tsx": [
+      "src/lib/constants.ts"
+    ],
+    "src/components/ui/Header.tsx": [
+      "src/lib/constants.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/InfoPanel.tsx": [
+      "src/components/ui/ProjectCard.tsx",
+      "src/components/ui/ProjectDetail.tsx",
+      "src/data/experience.ts",
+      "src/data/links.ts",
+      "src/data/projects.ts",
+      "src/data/skills.ts",
+      "src/lib/constants.ts",
+      "src/lib/liveApi.ts",
+      "src/types/live.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/IntroOverlay.tsx": [
+      "src/lib/sfx.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/ProjectCard.tsx": [
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/ProjectDetail.css": [],
+    "src/components/ui/ProjectDetail.tsx": [
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/ProjectOnePager.tsx": [
+      "src/components/ui/ProjectDetail.css",
+      "src/components/ui/project-viewers/richContent/data.ts",
+      "src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+      "src/components/ui/project-viewers/richContent/shared.tsx",
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/ProjectViewer.tsx": [
+      "src/components/ui/project-viewers/DashboardProjectViewer.tsx",
+      "src/components/ui/project-viewers/GameProjectViewer.tsx",
+      "src/components/ui/project-viewers/PlatformProjectViewer.tsx",
+      "src/components/ui/project-viewers/ProjectIntro.tsx",
+      "src/components/ui/project-viewers/RealtimeProjectViewer.tsx",
+      "src/components/ui/project-viewers/SoundToggle.tsx",
+      "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+      "src/components/ui/project-viewers/atmosphere.ts",
+      "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+      "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/ResumeMode.tsx": [
+      "src/components/ui/ProjectOnePager.tsx",
+      "src/components/ui/ResumeTerminal.css",
+      "src/data/projects.ts",
+      "src/data/resume.ts",
+      "src/data/techIcons.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/ResumeTerminal.css": [],
+    "src/components/ui/SceneTransition.tsx": [],
+    "src/components/ui/SectionTabs.tsx": [
+      "src/lib/constants.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/project-viewers/AmbientBackground.tsx": [
+      "src/components/ui/project-viewers/atmosphere.ts",
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/DashboardProjectViewer.tsx": [
+      "src/components/ui/project-viewers/AmbientBackground.tsx",
+      "src/components/ui/project-viewers/richContent/index.tsx",
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/project-viewers/GameProjectViewer.tsx": [
+      "src/components/ui/project-viewers/richContent/index.tsx",
+      "src/components/ui/project-viewers/sound.ts",
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/project-viewers/PlatformProjectViewer.tsx": [
+      "src/components/ui/project-viewers/AmbientBackground.tsx",
+      "src/components/ui/project-viewers/richContent/index.tsx",
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/project-viewers/ProjectIntro.tsx": [
+      "src/components/ui/project-viewers/atmosphere.ts",
+      "src/components/ui/project-viewers/sound.ts",
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/RealtimeProjectViewer.tsx": [
+      "src/components/ui/project-viewers/AmbientBackground.tsx",
+      "src/components/ui/project-viewers/richContent/index.tsx",
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/project-viewers/SoundToggle.tsx": [
+      "src/components/ui/project-viewers/atmosphere.ts",
+      "src/components/ui/project-viewers/sound.ts",
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/aclub/AClubRoom.tsx": [
+      "src/components/ui/project-viewers/aclub/aclub.css",
+      "src/components/ui/project-viewers/aclub/context.ts",
+      "src/components/ui/project-viewers/aclub/fonts.ts",
+      "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+      "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+      "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+      "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+      "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+      "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+      "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+      "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+      "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+      "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+      "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+      "src/components/ui/project-viewers/sound.ts",
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/project-viewers/aclub/aclub.css": [],
+    "src/components/ui/project-viewers/aclub/context.ts": [],
+    "src/components/ui/project-viewers/aclub/data.ts": [],
+    "src/components/ui/project-viewers/aclub/fonts.ts": [],
+    "src/components/ui/project-viewers/aclub/parts.tsx": [
+      "src/components/ui/project-viewers/aclub/context.ts"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx": [
+      "src/components/ui/project-viewers/aclub/context.ts",
+      "src/components/ui/project-viewers/aclub/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx": [
+      "src/components/ui/project-viewers/aclub/context.ts",
+      "src/components/ui/project-viewers/aclub/data.ts",
+      "src/components/ui/project-viewers/aclub/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx": [
+      "src/components/ui/project-viewers/aclub/context.ts",
+      "src/components/ui/project-viewers/aclub/data.ts"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx": [
+      "src/components/ui/project-viewers/aclub/data.ts"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx": [
+      "src/components/ui/project-viewers/aclub/context.ts",
+      "src/components/ui/project-viewers/aclub/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx": [
+      "src/components/ui/project-viewers/aclub/context.ts",
+      "src/components/ui/project-viewers/aclub/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx": [
+      "src/components/ui/project-viewers/aclub/context.ts",
+      "src/components/ui/project-viewers/aclub/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx": [
+      "src/components/ui/project-viewers/aclub/context.ts",
+      "src/components/ui/project-viewers/aclub/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx": [
+      "src/components/ui/project-viewers/aclub/context.ts",
+      "src/components/ui/project-viewers/aclub/data.ts",
+      "src/components/ui/project-viewers/aclub/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx": [
+      "src/components/ui/project-viewers/aclub/context.ts",
+      "src/components/ui/project-viewers/aclub/data.ts",
+      "src/components/ui/project-viewers/aclub/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx": [
+      "src/components/ui/project-viewers/aclub/context.ts",
+      "src/components/ui/project-viewers/aclub/data.ts",
+      "src/components/ui/project-viewers/aclub/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/atmosphere.ts": [
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx": [
+      "src/components/ui/project-viewers/darklab/context.ts",
+      "src/components/ui/project-viewers/darklab/darklab.css",
+      "src/components/ui/project-viewers/darklab/fonts.ts",
+      "src/components/ui/project-viewers/darklab/parts.tsx",
+      "src/components/ui/project-viewers/darklab/sections/ArchitectureSection.tsx",
+      "src/components/ui/project-viewers/darklab/sections/CinemachineSection.tsx",
+      "src/components/ui/project-viewers/darklab/sections/EntrySection.tsx",
+      "src/components/ui/project-viewers/darklab/sections/HeroSection.tsx",
+      "src/components/ui/project-viewers/darklab/sections/HonestCostSection.tsx",
+      "src/components/ui/project-viewers/darklab/sections/PrinciplesSection.tsx",
+      "src/components/ui/project-viewers/darklab/sections/RaycastSection.tsx",
+      "src/components/ui/project-viewers/darklab/sections/ResultSection.tsx",
+      "src/components/ui/project-viewers/darklab/sections/RetroSection.tsx",
+      "src/components/ui/project-viewers/darklab/sections/TakeoverSection.tsx",
+      "src/components/ui/project-viewers/darklab/sections/Trouble01Section.tsx",
+      "src/components/ui/project-viewers/darklab/sections/Trouble02Section.tsx",
+      "src/components/ui/project-viewers/sound.ts",
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/project-viewers/darklab/context.ts": [],
+    "src/components/ui/project-viewers/darklab/darklab.css": [],
+    "src/components/ui/project-viewers/darklab/fonts.ts": [],
+    "src/components/ui/project-viewers/darklab/parts.tsx": [],
+    "src/components/ui/project-viewers/darklab/sections/ArchitectureSection.tsx": [
+      "src/components/ui/project-viewers/darklab/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/CinemachineSection.tsx": [
+      "src/components/ui/project-viewers/darklab/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/EntrySection.tsx": [
+      "src/components/ui/project-viewers/darklab/context.ts"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/HeroSection.tsx": [
+      "src/components/ui/project-viewers/darklab/context.ts",
+      "src/components/ui/project-viewers/darklab/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/HonestCostSection.tsx": [
+      "src/components/ui/project-viewers/darklab/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/PrinciplesSection.tsx": [
+      "src/components/ui/project-viewers/darklab/context.ts",
+      "src/components/ui/project-viewers/darklab/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/RaycastSection.tsx": [
+      "src/components/ui/project-viewers/darklab/parts.tsx",
+      "src/components/ui/project-viewers/sound.ts"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/ResultSection.tsx": [
+      "src/components/ui/project-viewers/darklab/context.ts",
+      "src/components/ui/project-viewers/darklab/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/RetroSection.tsx": [],
+    "src/components/ui/project-viewers/darklab/sections/TakeoverSection.tsx": [
+      "src/components/ui/project-viewers/darklab/context.ts",
+      "src/components/ui/project-viewers/darklab/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/Trouble01Section.tsx": [
+      "src/components/ui/project-viewers/darklab/context.ts",
+      "src/components/ui/project-viewers/darklab/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/Trouble02Section.tsx": [
+      "src/components/ui/project-viewers/darklab/context.ts",
+      "src/components/ui/project-viewers/darklab/parts.tsx"
+    ],
+    "src/components/ui/project-viewers/richContent/AClubDemo.tsx": [
+      "src/components/ui/project-viewers/richContent/shared.tsx",
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx": [
+      "src/components/ui/project-viewers/richContent/shared.tsx",
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/richContent/AjouchongDemo.tsx": [
+      "src/components/ui/project-viewers/richContent/shared.tsx",
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx": [
+      "src/components/ui/project-viewers/richContent/shared.tsx",
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx": [
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx": [
+      "src/components/ui/project-viewers/richContent/shared.tsx",
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/richContent/MyStockDemo.tsx": [
+      "src/components/ui/project-viewers/richContent/shared.tsx",
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx": [
+      "src/components/ui/project-viewers/richContent/shared.tsx",
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/richContent/TserofDemo.tsx": [
+      "src/components/ui/project-viewers/richContent/shared.tsx",
+      "src/data/projectThemes.ts"
+    ],
+    "src/components/ui/project-viewers/richContent/data.ts": [
+      "src/components/ui/project-viewers/richContent/shared.tsx"
+    ],
+    "src/components/ui/project-viewers/richContent/index.tsx": [
+      "src/components/ui/project-viewers/richContent/AClubDemo.tsx",
+      "src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx",
+      "src/components/ui/project-viewers/richContent/AjouchongDemo.tsx",
+      "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+      "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+      "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+      "src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+      "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+      "src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+      "src/components/ui/project-viewers/richContent/data.ts",
+      "src/components/ui/project-viewers/richContent/mywave.tsx",
+      "src/components/ui/project-viewers/richContent/shared.tsx",
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/project-viewers/richContent/mywave.tsx": [
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/project-viewers/richContent/mywaveBrief.ts": [
+      "src/components/ui/project-viewers/richContent/shared.tsx"
+    ],
+    "src/components/ui/project-viewers/richContent/shared.tsx": [
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/project-viewers/sound.ts": [
+      "src/components/ui/project-viewers/atmosphere.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/fonts.ts",
+      "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+      "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+      "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+      "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+      "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+      "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+      "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+      "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+      "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+      "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+      "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+      "src/components/ui/project-viewers/sueo/sueo.css",
+      "src/data/projectThemes.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/context.ts": [],
+    "src/components/ui/project-viewers/sueo/fonts.ts": [],
+    "src/components/ui/project-viewers/sueo/parts.tsx": [],
+    "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/parts.tsx",
+      "src/components/ui/project-viewers/sueo/useTimeline.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/useTimeline.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/useTimeline.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/parts.tsx",
+      "src/components/ui/project-viewers/sueo/useTimeline.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/parts.tsx",
+      "src/components/ui/project-viewers/sueo/signData.ts",
+      "src/components/ui/project-viewers/sueo/useTimeline.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/parts.tsx",
+      "src/components/ui/project-viewers/sueo/useTimeline.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/parts.tsx",
+      "src/components/ui/project-viewers/sueo/useTimeline.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/parts.tsx",
+      "src/components/ui/project-viewers/sueo/useTimeline.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/parts.tsx",
+      "src/components/ui/project-viewers/sueo/sentenceData.ts",
+      "src/components/ui/project-viewers/sueo/useTimeline.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/parts.tsx",
+      "src/components/ui/project-viewers/sueo/useTimeline.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx": [
+      "src/components/ui/project-viewers/sueo/context.ts",
+      "src/components/ui/project-viewers/sueo/parts.tsx",
+      "src/components/ui/project-viewers/sueo/useTimeline.ts"
+    ],
+    "src/components/ui/project-viewers/sueo/sentenceData.ts": [],
+    "src/components/ui/project-viewers/sueo/signData.ts": [],
+    "src/components/ui/project-viewers/sueo/sueo.css": [],
+    "src/components/ui/project-viewers/sueo/useTimeline.ts": [],
+    "src/components/village/Building.tsx": [
+      "src/data/buildingModels.json",
+      "src/data/techIcons.ts",
+      "src/lib/htmlLabelThrottle.ts",
+      "src/lib/liveState.ts",
+      "src/lib/villagePalette.ts",
+      "src/lib/villageTerrain.ts",
+      "src/types/live.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/village/BuildingNetwork.tsx": [
+      "src/lib/villageTerrain.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/village/CameraController.tsx": [
+      "src/lib/constants.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/village/CharacterController.tsx": [
+      "src/components/village/WarriorCharacter.tsx",
+      "src/lib/constants.ts",
+      "src/lib/villageTerrain.ts",
+      "src/lib/worldCollision.ts"
+    ],
+    "src/components/village/Decorations.tsx": [
+      "src/types/portfolio.ts"
+    ],
+    "src/components/village/InstancedProps.tsx": [
+      "src/lib/groundMacro.ts",
+      "src/lib/villageTerrain.ts",
+      "src/types/props.ts"
+    ],
+    "src/components/village/NPC.tsx": [
+      "src/components/village/NpcCharacter.tsx",
+      "src/data/npcBehaviors.ts",
+      "src/lib/liveState.ts",
+      "src/lib/villageTerrain.ts",
+      "src/lib/worldCollision.ts",
+      "src/types/live.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/village/NpcCharacter.tsx": [
+      "src/data/characterModels.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/village/PerfHud.tsx": [],
+    "src/components/village/PropsEditor.tsx": [
+      "src/components/village/InstancedProps.tsx",
+      "src/data/propsLayout.json",
+      "src/lib/constants.ts",
+      "src/lib/villageTerrain.ts",
+      "src/types/props.ts"
+    ],
+    "src/components/village/SeasonAmbience.tsx": [],
+    "src/components/village/VillageHud.tsx": [
+      "src/components/village/NPC.tsx",
+      "src/data/npcRoster.ts",
+      "src/lib/constants.ts",
+      "src/lib/liveApi.ts",
+      "src/lib/useDraggable.ts",
+      "src/types/live.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/village/VillageScene.tsx": [
+      "src/components/village/Building.tsx",
+      "src/components/village/BuildingNetwork.tsx",
+      "src/components/village/CameraController.tsx",
+      "src/components/village/CharacterController.tsx",
+      "src/components/village/NPC.tsx",
+      "src/components/village/PerfHud.tsx",
+      "src/components/village/PropsEditor.tsx",
+      "src/components/village/SeasonAmbience.tsx",
+      "src/data/buildingModels.json",
+      "src/data/npcBehaviors.ts",
+      "src/data/npcRoster.ts",
+      "src/lib/constants.ts",
+      "src/lib/groundMacro.ts",
+      "src/lib/htmlLabelThrottle.ts",
+      "src/lib/liveState.ts",
+      "src/lib/skyClouds.ts",
+      "src/lib/terraceBank.ts",
+      "src/lib/villagePalette.ts",
+      "src/lib/villageTerrain.ts",
+      "src/types/live.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/components/village/WarriorCharacter.tsx": [
+      "src/data/characterModels.ts"
+    ],
+    "src/data/buildingModels.json": [],
+    "src/data/characterModels.ts": [
+      "src/types/portfolio.ts"
+    ],
+    "src/data/experience.ts": [
+      "src/types/portfolio.ts"
+    ],
+    "src/data/links.ts": [
+      "src/types/portfolio.ts"
+    ],
+    "src/data/npcActions.ts": [
+      "src/types/live.ts"
+    ],
+    "src/data/npcBehaviors.ts": [
+      "src/data/npcRoster.ts",
+      "src/lib/constants.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/data/npcChatter.ts": [],
+    "src/data/npcRoster.ts": [
+      "src/lib/constants.ts",
+      "src/types/portfolio.ts"
+    ],
+    "src/data/npcs.ts": [],
+    "src/data/projectThemes.ts": [],
+    "src/data/projects.ts": [
+      "src/types/portfolio.ts"
+    ],
+    "src/data/propsLayout.json": [],
+    "src/data/resume.ts": [],
+    "src/data/skills.ts": [
+      "src/types/portfolio.ts"
+    ],
+    "src/data/techIcons.ts": [],
+    "src/data/villageTerraces.json": [],
+    "src/index.css": [],
+    "src/lib/constants.ts": [
+      "src/types/portfolio.ts"
+    ],
+    "src/lib/groundMacro.ts": [],
+    "src/lib/htmlLabelThrottle.ts": [],
+    "src/lib/liveApi.ts": [
+      "src/types/live.ts"
+    ],
+    "src/lib/liveState.ts": [
+      "src/types/live.ts"
+    ],
+    "src/lib/sfx.ts": [],
+    "src/lib/skyClouds.ts": [],
+    "src/lib/terraceBank.ts": [],
+    "src/lib/useDraggable.ts": [],
+    "src/lib/villagePalette.ts": [],
+    "src/lib/villageTerrain.ts": [
+      "src/data/villageTerraces.json"
+    ],
+    "src/lib/worldCollision.ts": [
+      "src/types/portfolio.ts"
+    ],
+    "src/types/live.ts": [],
+    "src/types/portfolio.ts": [],
+    "src/types/props.ts": [],
+    "tailwind.config.ts": [],
+    "tsconfig.json": []
+  }
+}

@@ -1,0 +1,5044 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 20,
+  "filesSkipped": [],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 20,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 20,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/app/sueo-preview/SueoPreview.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 18,
+      "nonEmptyLines": 15,
+      "functions": [
+        {
+          "name": "SueoPreview",
+          "startLine": 7,
+          "endLine": 18,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "SueoPreview",
+          "line": 7,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SueoPreview",
+          "callee": "projects.find",
+          "lineNumber": 8
+        },
+        {
+          "caller": "SueoPreview",
+          "callee": "getProjectTheme",
+          "lineNumber": 14
+        },
+        {
+          "caller": "SueoPreview",
+          "callee": "window.location.reload",
+          "lineNumber": 15
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/app/sueo-preview/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 10,
+      "nonEmptyLines": 9,
+      "functions": [
+        {
+          "name": "SueoPreviewPage",
+          "startLine": 7,
+          "endLine": 10,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "SueoPreviewPage",
+          "line": 7,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SueoPreviewPage",
+          "callee": "notFound",
+          "lineNumber": 8
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 209,
+      "nonEmptyLines": 191,
+      "functions": [
+        {
+          "name": "SueoDistrictRoom",
+          "startLine": 30,
+          "endLine": 209,
+          "params": [
+            "{onClose}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "SueoDistrictRoom",
+          "line": 30,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useRef",
+          "lineNumber": 31
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useRef",
+          "lineNumber": 32
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useState",
+          "lineNumber": 34
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useState",
+          "lineNumber": 35
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useState",
+          "lineNumber": 36
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useState",
+          "lineNumber": 37
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useState",
+          "lineNumber": 38
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useEffect",
+          "lineNumber": 40
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "window.matchMedia",
+          "lineNumber": 41
+        },
+        {
+          "caller": "apply",
+          "callee": "setReducedMotion",
+          "lineNumber": 42
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "apply",
+          "lineNumber": 43
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "mq.addEventListener",
+          "lineNumber": 44
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "mq.removeEventListener",
+          "lineNumber": 45
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useEffect",
+          "lineNumber": 49
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "root.querySelector",
+          "lineNumber": 52
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "setHeaderVisible",
+          "lineNumber": 57
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "observer.observe",
+          "lineNumber": 61
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "observer.disconnect",
+          "lineNumber": 62
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useEffect",
+          "lineNumber": 65
+        },
+        {
+          "caller": "onKey",
+          "callee": "onClose",
+          "lineNumber": 67
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "window.addEventListener",
+          "lineNumber": 69
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "window.removeEventListener",
+          "lineNumber": 70
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useCallback",
+          "lineNumber": 73
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "Math.max",
+          "lineNumber": 74
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "rootRef.current?.classList.toggle",
+          "lineNumber": 75
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useCallback",
+          "lineNumber": 78
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "setSignCount",
+          "lineNumber": 79
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "Math.min",
+          "lineNumber": 79
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useCallback",
+          "lineNumber": 82
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "setSignCount",
+          "lineNumber": 83
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "Math.min",
+          "lineNumber": 83
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useCallback",
+          "lineNumber": 86
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "setLiveMessage",
+          "lineNumber": 87
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useCallback",
+          "lineNumber": 92
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "onClose",
+          "lineNumber": 95
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "setExiting",
+          "lineNumber": 98
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "window.setTimeout",
+          "lineNumber": 99
+        },
+        {
+          "caller": "SueoDistrictRoom",
+          "callee": "useMemo",
+          "lineNumber": 102
+        }
+      ],
+      "metrics": {
+        "importCount": 16,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/context.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 28,
+      "functions": [
+        {
+          "name": "useSueo",
+          "startLine": 27,
+          "endLine": 34,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "SIGN_TOTAL",
+          "line": 21,
+          "isDefault": false
+        },
+        {
+          "name": "SueoProvider",
+          "line": 25,
+          "isDefault": false
+        },
+        {
+          "name": "useSueo",
+          "line": 27,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "useSueo",
+          "callee": "useContext",
+          "lineNumber": 28
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/fonts.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 18,
+      "nonEmptyLines": 16,
+      "exports": [
+        {
+          "name": "sueoSans",
+          "line": 6,
+          "isDefault": false
+        },
+        {
+          "name": "sueoMono",
+          "line": 13,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/parts.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 267,
+      "nonEmptyLines": 255,
+      "functions": [
+        {
+          "name": "rise",
+          "startLine": 9,
+          "endLine": 22,
+          "params": [
+            "on",
+            "instant",
+            "duration",
+            "offset"
+          ]
+        },
+        {
+          "name": "fade",
+          "startLine": 24,
+          "endLine": 35,
+          "params": [
+            "on",
+            "instant",
+            "duration"
+          ]
+        },
+        {
+          "name": "Kicker",
+          "startLine": 38,
+          "endLine": 59,
+          "params": [
+            "{\n  children,\n  on,\n  instant,\n  color = \"var(--sd-muted)\",\n  className = \"\"\n}"
+          ]
+        },
+        {
+          "name": "WordHeading",
+          "startLine": 62,
+          "endLine": 93,
+          "params": [
+            "{\n  text,\n  on,\n  instant,\n  stepMs = 150,\n  className = \"text-[28px] font-black leading-tight\"\n}"
+          ]
+        },
+        {
+          "name": "CodePanel",
+          "startLine": 96,
+          "endLine": 140,
+          "params": [
+            "{\n  filename,\n  children,\n  footer,\n  headerNote,\n  borderColor = \"rgba(126,184,255,0.18)\",\n  className = \"\"\n}"
+          ]
+        },
+        {
+          "name": "NoteBox",
+          "startLine": 143,
+          "endLine": 172,
+          "params": [
+            "{\n  label,\n  accent,\n  children,\n  className = \"\"\n}"
+          ]
+        },
+        {
+          "name": "StatCard",
+          "startLine": 175,
+          "endLine": 208,
+          "params": [
+            "{\n  n,\n  l,\n  accent = \"var(--sd-ok)\",\n  numberColor,\n  style\n}"
+          ]
+        },
+        {
+          "name": "LimitList",
+          "startLine": 211,
+          "endLine": 237,
+          "params": [
+            "{\n  label,\n  items,\n  className = \"\"\n}"
+          ]
+        },
+        {
+          "name": "Caveat",
+          "startLine": 240,
+          "endLine": 246,
+          "params": [
+            "{children}"
+          ]
+        },
+        {
+          "name": "SectionShell",
+          "startLine": 249,
+          "endLine": 267,
+          "params": [
+            "{\n  children,\n  maxWidth = \"1040px\",\n  className = \"\"\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "rise",
+          "line": 9,
+          "isDefault": false
+        },
+        {
+          "name": "fade",
+          "line": 24,
+          "isDefault": false
+        },
+        {
+          "name": "Kicker",
+          "line": 38,
+          "isDefault": false
+        },
+        {
+          "name": "WordHeading",
+          "line": 62,
+          "isDefault": false
+        },
+        {
+          "name": "CodePanel",
+          "line": 96,
+          "isDefault": false
+        },
+        {
+          "name": "NoteBox",
+          "line": 143,
+          "isDefault": false
+        },
+        {
+          "name": "StatCard",
+          "line": 175,
+          "isDefault": false
+        },
+        {
+          "name": "LimitList",
+          "line": 211,
+          "isDefault": false
+        },
+        {
+          "name": "Caveat",
+          "line": 240,
+          "isDefault": false
+        },
+        {
+          "name": "SectionShell",
+          "line": 249,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Kicker",
+          "callee": "fade",
+          "lineNumber": 54
+        },
+        {
+          "caller": "WordHeading",
+          "callee": "text.split(\" \").map",
+          "lineNumber": 77
+        },
+        {
+          "caller": "WordHeading",
+          "callee": "text.split",
+          "lineNumber": 77
+        },
+        {
+          "caller": "LimitList",
+          "callee": "items.map",
+          "lineNumber": 228
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 10,
+        "functionCount": 10,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 466,
+      "nonEmptyLines": 430,
+      "functions": [
+        {
+          "name": "ownerColor",
+          "startLine": 98,
+          "endLine": 103,
+          "params": [
+            "id"
+          ]
+        },
+        {
+          "name": "ArchitectureSection",
+          "startLine": 105,
+          "endLine": 466,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ArchitectureSection",
+          "line": 105,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useSueo",
+          "lineNumber": 106
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useRef",
+          "lineNumber": 107
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useInView",
+          "lineNumber": 108
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useTimeline",
+          "lineNumber": 109
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useState",
+          "lineNumber": 111
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useState",
+          "lineNumber": 112
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useState",
+          "lineNumber": 113
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useState",
+          "lineNumber": 114
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useState",
+          "lineNumber": 115
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useState",
+          "lineNumber": 121
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useRef",
+          "lineNumber": 123
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useRef",
+          "lineNumber": 124
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useRef",
+          "lineNumber": 125
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useRef",
+          "lineNumber": 126
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useState",
+          "lineNumber": 127
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useCallback",
+          "lineNumber": 131
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "el.getBoundingClientRect",
+          "lineNumber": 135
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "box.getBoundingClientRect",
+          "lineNumber": 136
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useCallback",
+          "lineNumber": 140
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "setLines",
+          "lineNumber": 141
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "EDGES.map",
+          "lineNumber": 142
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "center",
+          "lineNumber": 143
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "center",
+          "lineNumber": 144
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useEffect",
+          "lineNumber": 150
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "drawRails",
+          "lineNumber": 151
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "window.addEventListener",
+          "lineNumber": 152
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "window.removeEventListener",
+          "lineNumber": 153
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "useEffect",
+          "lineNumber": 156
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "drawRails",
+          "lineNumber": 157
+        },
+        {
+          "caller": "reset",
+          "callee": "setLit",
+          "lineNumber": 161
+        },
+        {
+          "caller": "reset",
+          "callee": "setLitEdges",
+          "lineNumber": 162
+        },
+        {
+          "caller": "reset",
+          "callee": "setChip",
+          "lineNumber": 163
+        },
+        {
+          "caller": "reset",
+          "callee": "setShowMateCaption",
+          "lineNumber": 164
+        },
+        {
+          "caller": "send",
+          "callee": "setRunning",
+          "lineNumber": 170
+        },
+        {
+          "caller": "send",
+          "callee": "reset",
+          "lineNumber": 171
+        },
+        {
+          "caller": "send",
+          "callee": "setLit",
+          "lineNumber": 176
+        },
+        {
+          "caller": "send",
+          "callee": "setLitEdges",
+          "lineNumber": 177
+        },
+        {
+          "caller": "send",
+          "callee": "setShowMateCaption",
+          "lineNumber": 178
+        },
+        {
+          "caller": "send",
+          "callee": "setRunning",
+          "lineNumber": 179
+        },
+        {
+          "caller": "sleep",
+          "callee": "window.setTimeout",
+          "lineNumber": 183
+        },
+        {
+          "caller": "send",
+          "callee": "center",
+          "lineNumber": 187
+        },
+        {
+          "caller": "send",
+          "callee": "center",
+          "lineNumber": 197
+        },
+        {
+          "caller": "send",
+          "callee": "sleep",
+          "lineNumber": 199
+        },
+        {
+          "caller": "send",
+          "callee": "setShowMateCaption",
+          "lineNumber": 202
+        },
+        {
+          "caller": "send",
+          "callee": "setLitEdges",
+          "lineNumber": 203
+        },
+        {
+          "caller": "send",
+          "callee": "setLitEdges",
+          "lineNumber": 209
+        },
+        {
+          "caller": "send",
+          "callee": "setLit",
+          "lineNumber": 211
+        },
+        {
+          "caller": "send",
+          "callee": "l.includes",
+          "lineNumber": 211
+        },
+        {
+          "caller": "send",
+          "callee": "setChip",
+          "lineNumber": 212
+        },
+        {
+          "caller": "send",
+          "callee": "ownerColor",
+          "lineNumber": 212
+        },
+        {
+          "caller": "send",
+          "callee": "sleep",
+          "lineNumber": 213
+        },
+        {
+          "caller": "send",
+          "callee": "setChip",
+          "lineNumber": 214
+        },
+        {
+          "caller": "send",
+          "callee": "sleep",
+          "lineNumber": 217
+        },
+        {
+          "caller": "send",
+          "callee": "setRunning",
+          "lineNumber": 223
+        },
+        {
+          "caller": "send",
+          "callee": "announce",
+          "lineNumber": 224
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "on",
+          "lineNumber": 241
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "rise",
+          "lineNumber": 250
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "on",
+          "lineNumber": 250
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "rise",
+          "lineNumber": 256
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "on",
+          "lineNumber": 256
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "([\"word\", \"sentence\"] as const).map",
+          "lineNumber": 282
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "setType",
+          "lineNumber": 289
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "reset",
+          "lineNumber": 290
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "lines.map",
+          "lineNumber": 326
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "litEdges.includes",
+          "lineNumber": 336
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "NODES.map",
+          "lineNumber": 364
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "lit.includes",
+          "lineNumber": 376
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "SCOPE.map",
+          "lineNumber": 428
+        },
+        {
+          "caller": "ArchitectureSection",
+          "callee": "box.items.map",
+          "lineNumber": 437
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 249,
+      "nonEmptyLines": 227,
+      "functions": [
+        {
+          "name": "SignHand",
+          "startLine": 36,
+          "endLine": 65,
+          "params": [
+            "{animate}"
+          ]
+        },
+        {
+          "name": "EntrySection",
+          "startLine": 67,
+          "endLine": 249,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "EntrySection",
+          "line": 67,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "EntrySection",
+          "callee": "useSueo",
+          "lineNumber": 68
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "useRef",
+          "lineNumber": 69
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "useState",
+          "lineNumber": 72
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "useTimeline",
+          "lineNumber": 75
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "useCallback",
+          "lineNumber": 79
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "setSkipped",
+          "lineNumber": 80
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "useEffect",
+          "lineNumber": 84
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "lockScroll",
+          "lineNumber": 86
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "lockScroll",
+          "lineNumber": 87
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "useEffect",
+          "lineNumber": 91
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "events.forEach",
+          "lineNumber": 94
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "document.addEventListener",
+          "lineNumber": 95
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "events.forEach",
+          "lineNumber": 98
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "document.removeEventListener",
+          "lineNumber": 98
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "useEffect",
+          "lineNumber": 101
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "raiseSignCount",
+          "lineNumber": 102
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 128
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 129
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 138
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 138
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 143
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 149
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 167
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 168
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 182
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "MOTIVATION.split(\" \").map",
+          "lineNumber": 185
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "MOTIVATION.split",
+          "lineNumber": 185
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 202
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 241
+        },
+        {
+          "caller": "EntrySection",
+          "callee": "on",
+          "lineNumber": 242
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 481,
+      "nonEmptyLines": 452,
+      "functions": [
+        {
+          "name": "rise",
+          "startLine": 65,
+          "endLine": 73,
+          "params": [
+            "on",
+            "instant",
+            "duration"
+          ]
+        },
+        {
+          "name": "slide",
+          "startLine": 75,
+          "endLine": 81,
+          "params": [
+            "on",
+            "instant"
+          ]
+        },
+        {
+          "name": "FrameLight",
+          "startLine": 84,
+          "endLine": 105,
+          "params": [
+            "{\n  on,\n  instant,\n  className\n}"
+          ]
+        },
+        {
+          "name": "Plate",
+          "startLine": 108,
+          "endLine": 132,
+          "params": [
+            "{\n  on,\n  instant,\n  title,\n  sub\n}"
+          ]
+        },
+        {
+          "name": "Piece",
+          "startLine": 134,
+          "endLine": 146,
+          "params": [
+            "{\n  children,\n  className\n}"
+          ]
+        },
+        {
+          "name": "GallerySection",
+          "startLine": 151,
+          "endLine": 481,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "GallerySection",
+          "line": 151,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Plate",
+          "callee": "slide",
+          "lineNumber": 122
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "useSueo",
+          "lineNumber": 152
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "useRef",
+          "lineNumber": 153
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "useInView",
+          "lineNumber": 154
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "useTimeline",
+          "lineNumber": 155
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "useState",
+          "lineNumber": 157
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "useState",
+          "lineNumber": 158
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "useState",
+          "lineNumber": 159
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "useRef",
+          "lineNumber": 160
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "useEffect",
+          "lineNumber": 163
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "raiseSignCount",
+          "lineNumber": 164
+        },
+        {
+          "caller": "openDemo",
+          "callee": "setLightboxOpen",
+          "lineNumber": 168
+        },
+        {
+          "caller": "openDemo",
+          "callee": "bumpSignCount",
+          "lineNumber": 170
+        },
+        {
+          "caller": "openDemo",
+          "callee": "setDemoPlayed",
+          "lineNumber": 171
+        },
+        {
+          "caller": "openDemo",
+          "callee": "announce",
+          "lineNumber": 173
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "useEffect",
+          "lineNumber": 177
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "closeRef.current?.focus",
+          "lineNumber": 179
+        },
+        {
+          "caller": "onKey",
+          "callee": "e.preventDefault",
+          "lineNumber": 182
+        },
+        {
+          "caller": "onKey",
+          "callee": "setLightboxOpen",
+          "lineNumber": 183
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "window.addEventListener",
+          "lineNumber": 186
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "window.removeEventListener",
+          "lineNumber": 187
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "rise",
+          "lineNumber": 220
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "HEADLINE.map",
+          "lineNumber": 227
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "rise",
+          "lineNumber": 231
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "rise",
+          "lineNumber": 239
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "rise",
+          "lineNumber": 247
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "STATS.map",
+          "lineNumber": 259
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "rise",
+          "lineNumber": 267
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "setHintHidden",
+          "lineNumber": 300
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "setHintHidden",
+          "lineNumber": 301
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "rise",
+          "lineNumber": 316
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "rise",
+          "lineNumber": 345
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "rise",
+          "lineNumber": 411
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "setLightboxOpen",
+          "lineNumber": 455
+        },
+        {
+          "caller": "GallerySection",
+          "callee": "setLightboxOpen",
+          "lineNumber": 465
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 6,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 298,
+      "nonEmptyLines": 281,
+      "functions": [
+        {
+          "name": "LimitsSection",
+          "startLine": 114,
+          "endLine": 298,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "LimitsSection",
+          "line": 114,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "LimitsSection",
+          "callee": "useSueo",
+          "lineNumber": 115
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "useRef",
+          "lineNumber": 116
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "useInView",
+          "lineNumber": 117
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "useTimeline",
+          "lineNumber": 118
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "on",
+          "lineNumber": 127
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "on",
+          "lineNumber": 132
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "fade",
+          "lineNumber": 138
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "on",
+          "lineNumber": 138
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "fade",
+          "lineNumber": 152
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "on",
+          "lineNumber": 152
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "PLATES.map",
+          "lineNumber": 157
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "fade",
+          "lineNumber": 166
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "on",
+          "lineNumber": 166
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "fade",
+          "lineNumber": 186
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "on",
+          "lineNumber": 186
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "fade",
+          "lineNumber": 212
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "on",
+          "lineNumber": 212
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "fade",
+          "lineNumber": 218
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "on",
+          "lineNumber": 218
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "CLAIMS.map",
+          "lineNumber": 237
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "on",
+          "lineNumber": 242
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "on",
+          "lineNumber": 243
+        },
+        {
+          "caller": "LimitsSection",
+          "callee": "NEXT_TIME.map",
+          "lineNumber": 279
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 961,
+      "nonEmptyLines": 899,
+      "functions": [
+        {
+          "name": "lerp",
+          "startLine": 53,
+          "endLine": 53,
+          "params": [
+            "a",
+            "b",
+            "t"
+          ]
+        },
+        {
+          "name": "interpolate",
+          "startLine": 56,
+          "endLine": 76,
+          "params": [
+            "sign",
+            "frameFloat",
+            "linear"
+          ]
+        },
+        {
+          "name": "Line",
+          "startLine": 79,
+          "endLine": 96,
+          "params": [
+            "{\n  n,\n  idx,\n  children\n}"
+          ]
+        },
+        {
+          "name": "JsonRows",
+          "startLine": 98,
+          "endLine": 201,
+          "params": [
+            "{sign}"
+          ]
+        },
+        {
+          "name": "MotionDataSection",
+          "startLine": 203,
+          "endLine": 961,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MotionDataSection",
+          "line": 203,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "interpolate",
+          "callee": "Math.floor",
+          "lineNumber": 57
+        },
+        {
+          "caller": "interpolate",
+          "callee": "Math.min",
+          "lineNumber": 58
+        },
+        {
+          "caller": "interpolate",
+          "callee": "Math.ceil",
+          "lineNumber": 58
+        },
+        {
+          "caller": "interpolate",
+          "callee": "lerp",
+          "lineNumber": 70
+        },
+        {
+          "caller": "interpolate",
+          "callee": "lerp",
+          "lineNumber": 71
+        },
+        {
+          "caller": "interpolate",
+          "callee": "lerp",
+          "lineNumber": 73
+        },
+        {
+          "caller": "interpolate",
+          "callee": "kf1.fingerFlex.map",
+          "lineNumber": 74
+        },
+        {
+          "caller": "interpolate",
+          "callee": "lerp",
+          "lineNumber": 74
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "rows.push",
+          "lineNumber": 102
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "head.forEach",
+          "lineNumber": 117
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "rows.push",
+          "lineNumber": 118
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "rows.push",
+          "lineNumber": 125
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "sign.keyframes.forEach",
+          "lineNumber": 133
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "rows.push",
+          "lineNumber": 135
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "kf.timeOffset.toFixed",
+          "lineNumber": 143
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "Math.round",
+          "lineNumber": 150
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "Math.round",
+          "lineNumber": 154
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "Math.round",
+          "lineNumber": 161
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "kf.fingerFlex.map(f => f.toFixed(1)).join",
+          "lineNumber": 167
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "kf.fingerFlex.map",
+          "lineNumber": 167
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "f.toFixed",
+          "lineNumber": 167
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "rows.push",
+          "lineNumber": 173
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "rows.push",
+          "lineNumber": 181
+        },
+        {
+          "caller": "JsonRows",
+          "callee": "rows.push",
+          "lineNumber": 190
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useSueo",
+          "lineNumber": 204
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 205
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useInView",
+          "lineNumber": 206
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useTimeline",
+          "lineNumber": 207
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 210
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "cloneSigns",
+          "lineNumber": 210
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useState",
+          "lineNumber": 211
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useState",
+          "lineNumber": 212
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useState",
+          "lineNumber": 213
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useState",
+          "lineNumber": 214
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useState",
+          "lineNumber": 215
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useState",
+          "lineNumber": 216
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 218
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 219
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 220
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 221
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 222
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 224
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 225
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 226
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 227
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 228
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 229
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 230
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 231
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 232
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 233
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useCallback",
+          "lineNumber": 240
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "trailRef.current?.setAttribute",
+          "lineNumber": 242
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useEffect",
+          "lineNumber": 246
+        },
+        {
+          "caller": "draw",
+          "callee": "setPlaying",
+          "lineNumber": 260
+        },
+        {
+          "caller": "draw",
+          "callee": "clearTrail",
+          "lineNumber": 262
+        },
+        {
+          "caller": "draw",
+          "callee": "bumpSignCount",
+          "lineNumber": 263
+        },
+        {
+          "caller": "draw",
+          "callee": "interpolate",
+          "lineNumber": 268
+        },
+        {
+          "caller": "draw",
+          "callee": "handRef.current?.setAttribute",
+          "lineNumber": 270
+        },
+        {
+          "caller": "draw",
+          "callee": "fingersRef.current.forEach",
+          "lineNumber": 274
+        },
+        {
+          "caller": "draw",
+          "callee": "trailBuf.current.push",
+          "lineNumber": 280
+        },
+        {
+          "caller": "draw",
+          "callee": "next.push",
+          "lineNumber": 286
+        },
+        {
+          "caller": "draw",
+          "callee": "trailRef.current?.setAttribute",
+          "lineNumber": 291
+        },
+        {
+          "caller": "draw",
+          "callee": "highlight",
+          "lineNumber": 294
+        },
+        {
+          "caller": "draw",
+          "callee": "Math.round",
+          "lineNumber": 296
+        },
+        {
+          "caller": "draw",
+          "callee": "((f / TOTAL_FRAMES) * (s.durationMs / 1000)).toFixed",
+          "lineNumber": 297
+        },
+        {
+          "caller": "draw",
+          "callee": "readoutRef.current.forEach",
+          "lineNumber": 298
+        },
+        {
+          "caller": "draw",
+          "callee": "String",
+          "lineNumber": 299
+        },
+        {
+          "caller": "draw",
+          "callee": "timeRef.current.forEach",
+          "lineNumber": 301
+        },
+        {
+          "caller": "draw",
+          "callee": "String",
+          "lineNumber": 303
+        },
+        {
+          "caller": "draw",
+          "callee": "scrubRef.current.setAttribute",
+          "lineNumber": 304
+        },
+        {
+          "caller": "draw",
+          "callee": "String",
+          "lineNumber": 304
+        },
+        {
+          "caller": "draw",
+          "callee": "scrubRef.current.setAttribute",
+          "lineNumber": 305
+        },
+        {
+          "caller": "draw",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 308
+        },
+        {
+          "caller": "highlight",
+          "callee": "box.querySelectorAll<HTMLElement>(\".sd-code-td\").forEach",
+          "lineNumber": 314
+        },
+        {
+          "caller": "highlight",
+          "callee": "box.querySelectorAll",
+          "lineNumber": 314
+        },
+        {
+          "caller": "highlight",
+          "callee": "Math.floor",
+          "lineNumber": 320
+        },
+        {
+          "caller": "highlight",
+          "callee": "Math.ceil",
+          "lineNumber": 321
+        },
+        {
+          "caller": "paint",
+          "callee": "box\n          .querySelectorAll<HTMLElement>(`tr[data-kf=\"${idx}\"] .sd-code-td`)\n          .forEach",
+          "lineNumber": 326
+        },
+        {
+          "caller": "paint",
+          "callee": "box\n          .querySelectorAll",
+          "lineNumber": 326
+        },
+        {
+          "caller": "highlight",
+          "callee": "Math.round",
+          "lineNumber": 334
+        },
+        {
+          "caller": "highlight",
+          "callee": "paint",
+          "lineNumber": 335
+        },
+        {
+          "caller": "highlight",
+          "callee": "box.querySelector",
+          "lineNumber": 337
+        },
+        {
+          "caller": "highlight",
+          "callee": "box.scrollTo",
+          "lineNumber": 339
+        },
+        {
+          "caller": "highlight",
+          "callee": "paint",
+          "lineNumber": 346
+        },
+        {
+          "caller": "highlight",
+          "callee": "paint",
+          "lineNumber": 347
+        },
+        {
+          "caller": "highlight",
+          "callee": "box.querySelector",
+          "lineNumber": 348
+        },
+        {
+          "caller": "highlight",
+          "callee": "box.scrollTo",
+          "lineNumber": 353
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 362
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "cancelAnimationFrame",
+          "lineNumber": 363
+        },
+        {
+          "caller": "togglePlay",
+          "callee": "setInteracted",
+          "lineNumber": 368
+        },
+        {
+          "caller": "togglePlay",
+          "callee": "setPlaying",
+          "lineNumber": 370
+        },
+        {
+          "caller": "togglePlay",
+          "callee": "clearTrail",
+          "lineNumber": 371
+        },
+        {
+          "caller": "togglePlay",
+          "callee": "setPlaying",
+          "lineNumber": 374
+        },
+        {
+          "caller": "step",
+          "callee": "setInteracted",
+          "lineNumber": 379
+        },
+        {
+          "caller": "step",
+          "callee": "setPlaying",
+          "lineNumber": 380
+        },
+        {
+          "caller": "step",
+          "callee": "Math.max",
+          "lineNumber": 381
+        },
+        {
+          "caller": "step",
+          "callee": "Math.min",
+          "lineNumber": 383
+        },
+        {
+          "caller": "step",
+          "callee": "Math.round",
+          "lineNumber": 383
+        },
+        {
+          "caller": "step",
+          "callee": "clearTrail",
+          "lineNumber": 386
+        },
+        {
+          "caller": "step",
+          "callee": "announce",
+          "lineNumber": 387
+        },
+        {
+          "caller": "pickWord",
+          "callee": "setWordId",
+          "lineNumber": 392
+        },
+        {
+          "caller": "pickWord",
+          "callee": "setPlaying",
+          "lineNumber": 393
+        },
+        {
+          "caller": "pickWord",
+          "callee": "clearTrail",
+          "lineNumber": 395
+        },
+        {
+          "caller": "pickWord",
+          "callee": "setEdited",
+          "lineNumber": 396
+        },
+        {
+          "caller": "pickWord",
+          "callee": "announce",
+          "lineNumber": 397
+        },
+        {
+          "caller": "onPointerDown",
+          "callee": "Math.round",
+          "lineNumber": 405
+        },
+        {
+          "caller": "onPointerDown",
+          "callee": "(e.target as Element).setPointerCapture",
+          "lineNumber": 408
+        },
+        {
+          "caller": "onPointerDown",
+          "callee": "handRef.current?.classList.add",
+          "lineNumber": 409
+        },
+        {
+          "caller": "onPointerDown",
+          "callee": "toSvg",
+          "lineNumber": 410
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "useRef",
+          "lineNumber": 413
+        },
+        {
+          "caller": "toSvg",
+          "callee": "svg.createSVGPoint",
+          "lineNumber": 418
+        },
+        {
+          "caller": "toSvg",
+          "callee": "svg.getScreenCTM",
+          "lineNumber": 421
+        },
+        {
+          "caller": "toSvg",
+          "callee": "pt.matrixTransform",
+          "lineNumber": 423
+        },
+        {
+          "caller": "toSvg",
+          "callee": "ctm.inverse",
+          "lineNumber": 423
+        },
+        {
+          "caller": "onPointerMove",
+          "callee": "toSvg",
+          "lineNumber": 429
+        },
+        {
+          "caller": "onPointerMove",
+          "callee": "codeRef.current?.querySelector",
+          "lineNumber": 439
+        },
+        {
+          "caller": "onPointerMove",
+          "callee": "codeRef.current?.querySelector",
+          "lineNumber": 442
+        },
+        {
+          "caller": "onPointerMove",
+          "callee": "String",
+          "lineNumber": 446
+        },
+        {
+          "caller": "onPointerMove",
+          "callee": "Math.round",
+          "lineNumber": 446
+        },
+        {
+          "caller": "onPointerMove",
+          "callee": "String",
+          "lineNumber": 450
+        },
+        {
+          "caller": "onPointerMove",
+          "callee": "Math.round",
+          "lineNumber": 450
+        },
+        {
+          "caller": "onPointerUp",
+          "callee": "handRef.current?.classList.remove",
+          "lineNumber": 458
+        },
+        {
+          "caller": "onPointerUp",
+          "callee": "setEdited",
+          "lineNumber": 459
+        },
+        {
+          "caller": "revert",
+          "callee": "setEdited",
+          "lineNumber": 466
+        },
+        {
+          "caller": "revert",
+          "callee": "forceRender",
+          "lineNumber": 467
+        },
+        {
+          "caller": "revert",
+          "callee": "announce",
+          "lineNumber": 468
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "on",
+          "lineNumber": 481
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "on",
+          "lineNumber": 486
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "fade",
+          "lineNumber": 494
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "on",
+          "lineNumber": 494
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "fade",
+          "lineNumber": 502
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "on",
+          "lineNumber": 502
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "rise",
+          "lineNumber": 519
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "on",
+          "lineNumber": 519
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "WORD_ORDER.map",
+          "lineNumber": 530
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "pickWord",
+          "lineNumber": 538
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "fade",
+          "lineNumber": 662
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "on",
+          "lineNumber": 662
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "on",
+          "lineNumber": 694
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "step",
+          "lineNumber": 712
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "step",
+          "lineNumber": 721
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "[0.5, 1, 2].map",
+          "lineNumber": 758
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "setSpeed",
+          "lineNumber": 764
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "[0, 1, 2, 3, 4].map",
+          "lineNumber": 806
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "setPlaying",
+          "lineNumber": 826
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "setInteracted",
+          "lineNumber": 827
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "announce",
+          "lineNumber": 831
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "Math.round",
+          "lineNumber": 831
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "parseFloat",
+          "lineNumber": 834
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "Math.round",
+          "lineNumber": 836
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "Math.abs",
+          "lineNumber": 837
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "e.preventDefault",
+          "lineNumber": 842
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "step",
+          "lineNumber": 843
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "e.preventDefault",
+          "lineNumber": 845
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "step",
+          "lineNumber": 846
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "rise",
+          "lineNumber": 866
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "on",
+          "lineNumber": 866
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "DECISIONS.map",
+          "lineNumber": 913
+        },
+        {
+          "caller": "MotionDataSection",
+          "callee": "on",
+          "lineNumber": 918
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 293,
+      "nonEmptyLines": 276,
+      "functions": [
+        {
+          "name": "CountUp",
+          "startLine": 61,
+          "endLine": 91,
+          "params": [
+            "{\n  to,\n  run,\n  instant\n}"
+          ]
+        },
+        {
+          "name": "ResultSection",
+          "startLine": 93,
+          "endLine": 293,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ResultSection",
+          "line": 93,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "CountUp",
+          "callee": "useState",
+          "lineNumber": 70
+        },
+        {
+          "caller": "CountUp",
+          "callee": "useEffect",
+          "lineNumber": 72
+        },
+        {
+          "caller": "CountUp",
+          "callee": "setN",
+          "lineNumber": 75
+        },
+        {
+          "caller": "CountUp",
+          "callee": "performance.now",
+          "lineNumber": 79
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.min",
+          "lineNumber": 81
+        },
+        {
+          "caller": "tick",
+          "callee": "setN",
+          "lineNumber": 82
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.floor",
+          "lineNumber": 82
+        },
+        {
+          "caller": "tick",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 83
+        },
+        {
+          "caller": "tick",
+          "callee": "setN",
+          "lineNumber": 84
+        },
+        {
+          "caller": "CountUp",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 86
+        },
+        {
+          "caller": "CountUp",
+          "callee": "cancelAnimationFrame",
+          "lineNumber": 87
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useSueo",
+          "lineNumber": 94
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useRef",
+          "lineNumber": 95
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useInView",
+          "lineNumber": 96
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useTimeline",
+          "lineNumber": 97
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useState",
+          "lineNumber": 99
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useRef",
+          "lineNumber": 100
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "useEffect",
+          "lineNumber": 102
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "closeRef.current?.focus",
+          "lineNumber": 104
+        },
+        {
+          "caller": "onKey",
+          "callee": "setLightbox",
+          "lineNumber": 106
+        },
+        {
+          "caller": "onKey",
+          "callee": "setLightbox",
+          "lineNumber": 108
+        },
+        {
+          "caller": "onKey",
+          "callee": "setLightbox",
+          "lineNumber": 110
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "window.addEventListener",
+          "lineNumber": 112
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "window.removeEventListener",
+          "lineNumber": 113
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "on",
+          "lineNumber": 128
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "on",
+          "lineNumber": 136
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "rise",
+          "lineNumber": 143
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "on",
+          "lineNumber": 143
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "SHOTS.map",
+          "lineNumber": 153
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "setLightbox",
+          "lineNumber": 157
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "rise",
+          "lineNumber": 161
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "on",
+          "lineNumber": 161
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "s.ratio.replace",
+          "lineNumber": 175
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "COUNTERS.map",
+          "lineNumber": 190
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "rise",
+          "lineNumber": 199
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "on",
+          "lineNumber": 199
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "on",
+          "lineNumber": 207
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "rise",
+          "lineNumber": 218
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "on",
+          "lineNumber": 218
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "rise",
+          "lineNumber": 227
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "on",
+          "lineNumber": 227
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "setLightbox",
+          "lineNumber": 243
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "setLightbox",
+          "lineNumber": 250
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "shot.ratio.replace",
+          "lineNumber": 262
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "setLightbox",
+          "lineNumber": 272
+        },
+        {
+          "caller": "ResultSection",
+          "callee": "setLightbox",
+          "lineNumber": 281
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 170,
+      "nonEmptyLines": 161,
+      "functions": [
+        {
+          "name": "RetroSection",
+          "startLine": 41,
+          "endLine": 170,
+          "params": [
+            "{onExit}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "RetroSection",
+          "line": 41,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "RetroSection",
+          "callee": "useSueo",
+          "lineNumber": 42
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useRef",
+          "lineNumber": 43
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useInView",
+          "lineNumber": 44
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "useTimeline",
+          "lineNumber": 45
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "on",
+          "lineNumber": 56
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "on",
+          "lineNumber": 64
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "rise",
+          "lineNumber": 70
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "on",
+          "lineNumber": 70
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "KPT.map",
+          "lineNumber": 84
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "rise",
+          "lineNumber": 89
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "on",
+          "lineNumber": 89
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "col.items.map",
+          "lineNumber": 104
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "fade",
+          "lineNumber": 109
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "on",
+          "lineNumber": 109
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "on",
+          "lineNumber": 125
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "on",
+          "lineNumber": 126
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "fade",
+          "lineNumber": 143
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "on",
+          "lineNumber": 143
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "fade",
+          "lineNumber": 156
+        },
+        {
+          "caller": "RetroSection",
+          "callee": "on",
+          "lineNumber": 156
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 628,
+      "nonEmptyLines": 592,
+      "functions": [
+        {
+          "name": "shuffle",
+          "startLine": 36,
+          "endLine": 38,
+          "params": [
+            "arr"
+          ]
+        },
+        {
+          "name": "QuizHand",
+          "startLine": 41,
+          "endLine": 81,
+          "params": [
+            "{playKey, rm}"
+          ]
+        },
+        {
+          "name": "ReviewLoopSection",
+          "startLine": 83,
+          "endLine": 628,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ReviewLoopSection",
+          "line": 83,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "shuffle",
+          "callee": "[...arr].sort",
+          "lineNumber": 37
+        },
+        {
+          "caller": "shuffle",
+          "callee": "Math.random",
+          "lineNumber": 37
+        },
+        {
+          "caller": "QuizHand",
+          "callee": "useRef",
+          "lineNumber": 42
+        },
+        {
+          "caller": "QuizHand",
+          "callee": "useEffect",
+          "lineNumber": 44
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.cos",
+          "lineNumber": 55
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.sin",
+          "lineNumber": 56
+        },
+        {
+          "caller": "tick",
+          "callee": "Math.sin",
+          "lineNumber": 57
+        },
+        {
+          "caller": "tick",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 58
+        },
+        {
+          "caller": "QuizHand",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 62
+        },
+        {
+          "caller": "QuizHand",
+          "callee": "cancelAnimationFrame",
+          "lineNumber": 63
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useSueo",
+          "lineNumber": 84
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useRef",
+          "lineNumber": 85
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useInView",
+          "lineNumber": 86
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useTimeline",
+          "lineNumber": 87
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useState",
+          "lineNumber": 89
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useState",
+          "lineNumber": 90
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useState",
+          "lineNumber": 91
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useState",
+          "lineNumber": 92
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useState",
+          "lineNumber": 96
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useState",
+          "lineNumber": 97
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useState",
+          "lineNumber": 98
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useState",
+          "lineNumber": 99
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useState",
+          "lineNumber": 100
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useState",
+          "lineNumber": 101
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useRef",
+          "lineNumber": 102
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useCallback",
+          "lineNumber": 106
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "shuffle(POOL.filter(s => s.id !== answer.id)).slice",
+          "lineNumber": 107
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "shuffle",
+          "lineNumber": 107
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "POOL.filter",
+          "lineNumber": 107
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "setOptions",
+          "lineNumber": 108
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "shuffle",
+          "lineNumber": 108
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useCallback",
+          "lineNumber": 111
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "shuffle(POOL)\n      .slice(0, 5)\n      .map",
+          "lineNumber": 112
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "shuffle(POOL)\n      .slice",
+          "lineNumber": 112
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "shuffle",
+          "lineNumber": 112
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "setQueue",
+          "lineNumber": 115
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "setIndex",
+          "lineNumber": 116
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "setAnswered",
+          "lineNumber": 117
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "setHistory",
+          "lineNumber": 118
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "setStats",
+          "lineNumber": 119
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "setDone",
+          "lineNumber": 120
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "setInsertedIdx",
+          "lineNumber": 121
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "buildOptions",
+          "lineNumber": 122
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "setPlayKey",
+          "lineNumber": 123
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useEffect",
+          "lineNumber": 126
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "startSession",
+          "lineNumber": 127
+        },
+        {
+          "caller": "answer",
+          "callee": "setTouched",
+          "lineNumber": 132
+        },
+        {
+          "caller": "answer",
+          "callee": "setAnswered",
+          "lineNumber": 134
+        },
+        {
+          "caller": "answer",
+          "callee": "setHistory",
+          "lineNumber": 135
+        },
+        {
+          "caller": "answer",
+          "callee": "bumpSignCount",
+          "lineNumber": 136
+        },
+        {
+          "caller": "answer",
+          "callee": "setStats",
+          "lineNumber": 139
+        },
+        {
+          "caller": "answer",
+          "callee": "announce",
+          "lineNumber": 140
+        },
+        {
+          "caller": "answer",
+          "callee": "setStats",
+          "lineNumber": 142
+        },
+        {
+          "caller": "answer",
+          "callee": "setQueue",
+          "lineNumber": 145
+        },
+        {
+          "caller": "answer",
+          "callee": "next.splice",
+          "lineNumber": 147
+        },
+        {
+          "caller": "answer",
+          "callee": "setInsertedIdx",
+          "lineNumber": 150
+        },
+        {
+          "caller": "answer",
+          "callee": "announce",
+          "lineNumber": 151
+        },
+        {
+          "caller": "next",
+          "callee": "setDone",
+          "lineNumber": 160
+        },
+        {
+          "caller": "next",
+          "callee": "announce",
+          "lineNumber": 161
+        },
+        {
+          "caller": "next",
+          "callee": "setIndex",
+          "lineNumber": 166
+        },
+        {
+          "caller": "next",
+          "callee": "setAnswered",
+          "lineNumber": 167
+        },
+        {
+          "caller": "next",
+          "callee": "setInsertedIdx",
+          "lineNumber": 168
+        },
+        {
+          "caller": "next",
+          "callee": "buildOptions",
+          "lineNumber": 169
+        },
+        {
+          "caller": "next",
+          "callee": "setPlayKey",
+          "lineNumber": 170
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useEffect",
+          "lineNumber": 173
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "window.setTimeout",
+          "lineNumber": 175
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "nextBtnRef.current?.focus",
+          "lineNumber": 175
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "window.clearTimeout",
+          "lineNumber": 176
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "useEffect",
+          "lineNumber": 180
+        },
+        {
+          "caller": "onKey",
+          "callee": "e.preventDefault",
+          "lineNumber": 185
+        },
+        {
+          "caller": "onKey",
+          "callee": "next",
+          "lineNumber": 186
+        },
+        {
+          "caller": "onKey",
+          "callee": "parseInt",
+          "lineNumber": 190
+        },
+        {
+          "caller": "onKey",
+          "callee": "e.preventDefault",
+          "lineNumber": 192
+        },
+        {
+          "caller": "onKey",
+          "callee": "answer",
+          "lineNumber": 193
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "window.addEventListener",
+          "lineNumber": 196
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "window.removeEventListener",
+          "lineNumber": 197
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "queue.filter",
+          "lineNumber": 200
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "queue.filter",
+          "lineNumber": 203
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "on",
+          "lineNumber": 217
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "on",
+          "lineNumber": 226
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "rise",
+          "lineNumber": 232
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "on",
+          "lineNumber": 232
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "rise",
+          "lineNumber": 248
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "on",
+          "lineNumber": 248
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "history.map",
+          "lineNumber": 254
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "setPlayKey",
+          "lineNumber": 317
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "options.map",
+          "lineNumber": 361
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "answer",
+          "lineNumber": 371
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "on",
+          "lineNumber": 416
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "fade",
+          "lineNumber": 429
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "on",
+          "lineNumber": 429
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "queue.map",
+          "lineNumber": 437
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "rise",
+          "lineNumber": 485
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "on",
+          "lineNumber": 485
+        },
+        {
+          "caller": "ReviewLoopSection",
+          "callee": "[\n          {id: \"IMG-01\", cap: \"실제 퀴즈 화면\"},\n          {id: \"IMG-02\", cap: \"오답 직후 화면 · 정답을 바로 보여준다\"}\n        ].map",
+          "lineNumber": 607
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 764,
+      "nonEmptyLines": 722,
+      "functions": [
+        {
+          "name": "CellHand",
+          "startLine": 168,
+          "endLine": 195,
+          "params": []
+        },
+        {
+          "name": "SignCell",
+          "startLine": 197,
+          "endLine": 236,
+          "params": [
+            "{item, dimmed}"
+          ]
+        },
+        {
+          "name": "SentenceSection",
+          "startLine": 238,
+          "endLine": 764,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "SentenceSection",
+          "line": 238,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "SignCell",
+          "callee": "cellDuration",
+          "lineNumber": 203
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useSueo",
+          "lineNumber": 239
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useRef",
+          "lineNumber": 240
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useInView",
+          "lineNumber": 241
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useTimeline",
+          "lineNumber": 242
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useState",
+          "lineNumber": 244
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useState",
+          "lineNumber": 245
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "convert",
+          "lineNumber": 246
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useState",
+          "lineNumber": 248
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useState",
+          "lineNumber": 249
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useState",
+          "lineNumber": 250
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useRef",
+          "lineNumber": 252
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useRef",
+          "lineNumber": 253
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useRef",
+          "lineNumber": 254
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useRef",
+          "lineNumber": 255
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useRef",
+          "lineNumber": 256
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useRef",
+          "lineNumber": 257
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useRef",
+          "lineNumber": 266
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "data.kor.reduce",
+          "lineNumber": 268
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "cellDuration",
+          "lineNumber": 268
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "data.sign.reduce",
+          "lineNumber": 269
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "cellDuration",
+          "lineNumber": 269
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "[...data.kor, ...data.sign].some",
+          "lineNumber": 270
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "data.sign.findIndex",
+          "lineNumber": 271
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useCallback",
+          "lineNumber": 273
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "el.classList.remove",
+          "lineNumber": 275
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "el.querySelector",
+          "lineNumber": 276
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "el.querySelector",
+          "lineNumber": 277
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "el.querySelector",
+          "lineNumber": 278
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useCallback",
+          "lineNumber": 284
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "cleanCell",
+          "lineNumber": 293
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "anims.current.splice",
+          "lineNumber": 294
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "a.seq.findIndex",
+          "lineNumber": 299
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "cleanCell",
+          "lineNumber": 303
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "el.classList.add",
+          "lineNumber": 307
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "el.querySelector",
+          "lineNumber": 308
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "cur.el.querySelector",
+          "lineNumber": 316
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "cur.el.classList.contains",
+          "lineNumber": 318
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "cur.el.querySelector",
+          "lineNumber": 319
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "Math.sin",
+          "lineNumber": 321
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "Math.sin",
+          "lineNumber": 322
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 330
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "setPlayedOnce",
+          "lineNumber": 334
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "bumpSignCount",
+          "lineNumber": 335
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "useEffect",
+          "lineNumber": 342
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "cancelAnimationFrame",
+          "lineNumber": 342
+        },
+        {
+          "caller": "playRow",
+          "callee": "anims.current.some",
+          "lineNumber": 345
+        },
+        {
+          "caller": "playRow",
+          "callee": "Array.from",
+          "lineNumber": 349
+        },
+        {
+          "caller": "playRow",
+          "callee": "strip.querySelectorAll",
+          "lineNumber": 350
+        },
+        {
+          "caller": "playRow",
+          "callee": "cells.map",
+          "lineNumber": 353
+        },
+        {
+          "caller": "playRow",
+          "callee": "parseInt",
+          "lineNumber": 354
+        },
+        {
+          "caller": "playRow",
+          "callee": "anims.current.push",
+          "lineNumber": 361
+        },
+        {
+          "caller": "playRow",
+          "callee": "performance.now",
+          "lineNumber": 364
+        },
+        {
+          "caller": "playRow",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 368
+        },
+        {
+          "caller": "playBoth",
+          "callee": "playRow",
+          "lineNumber": 373
+        },
+        {
+          "caller": "playBoth",
+          "callee": "playRow",
+          "lineNumber": 374
+        },
+        {
+          "caller": "runConvert",
+          "callee": "[strip1, strip2].forEach",
+          "lineNumber": 381
+        },
+        {
+          "caller": "runConvert",
+          "callee": "r.current\n        ?.querySelectorAll<HTMLElement>(\".sd-sign-cell\")\n        .forEach",
+          "lineNumber": 382
+        },
+        {
+          "caller": "runConvert",
+          "callee": "r.current\n        ?.querySelectorAll",
+          "lineNumber": 382
+        },
+        {
+          "caller": "runConvert",
+          "callee": "setData",
+          "lineNumber": 388
+        },
+        {
+          "caller": "runConvert",
+          "callee": "convert",
+          "lineNumber": 388
+        },
+        {
+          "caller": "runConvert",
+          "callee": "setConverting",
+          "lineNumber": 392
+        },
+        {
+          "caller": "tick",
+          "callee": "setStage",
+          "lineNumber": 396
+        },
+        {
+          "caller": "tick",
+          "callee": "setConverting",
+          "lineNumber": 397
+        },
+        {
+          "caller": "tick",
+          "callee": "convert",
+          "lineNumber": 398
+        },
+        {
+          "caller": "tick",
+          "callee": "setData",
+          "lineNumber": 399
+        },
+        {
+          "caller": "tick",
+          "callee": "announce",
+          "lineNumber": 400
+        },
+        {
+          "caller": "tick",
+          "callee": "next.kor.filter",
+          "lineNumber": 402
+        },
+        {
+          "caller": "tick",
+          "callee": "node.getBoundingClientRect",
+          "lineNumber": 412
+        },
+        {
+          "caller": "tick",
+          "callee": "box.getBoundingClientRect",
+          "lineNumber": 413
+        },
+        {
+          "caller": "tick",
+          "callee": "setStage",
+          "lineNumber": 419
+        },
+        {
+          "caller": "tick",
+          "callee": "window.setTimeout",
+          "lineNumber": 421
+        },
+        {
+          "caller": "runConvert",
+          "callee": "tick",
+          "lineNumber": 423
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 436
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 441
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "rise",
+          "lineNumber": 448
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 448
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "rise",
+          "lineNumber": 455
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 455
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "rise",
+          "lineNumber": 470
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 470
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "setText",
+          "lineNumber": 476
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "runConvert",
+          "lineNumber": 478
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "runConvert",
+          "lineNumber": 486
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "PRESET_KEYS.map",
+          "lineNumber": 494
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "setText",
+          "lineNumber": 499
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "runConvert",
+          "lineNumber": 500
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 518
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 521
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 522
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 530
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "rise",
+          "lineNumber": 539
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 539
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "playRow",
+          "lineNumber": 557
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "(dur1 / 1000).toFixed",
+          "lineNumber": 564
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "data.kor.map",
+          "lineNumber": 573
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "rise",
+          "lineNumber": 586
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 586
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "playRow",
+          "lineNumber": 604
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "(dur2 / 1000).toFixed",
+          "lineNumber": 611
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "data.sign.map",
+          "lineNumber": 643
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "PIPELINE.map",
+          "lineNumber": 680
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "rise",
+          "lineNumber": 708
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "on",
+          "lineNumber": 708
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "CODE.map",
+          "lineNumber": 716
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "STAGE_LINES[stage]?.includes",
+          "lineNumber": 718
+        },
+        {
+          "caller": "SentenceSection",
+          "callee": "STATIC_LINES.includes",
+          "lineNumber": 719
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 3,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 715,
+      "nonEmptyLines": 683,
+      "functions": [
+        {
+          "name": "storagePath",
+          "startLine": 89,
+          "endLine": 89,
+          "params": [
+            "w"
+          ]
+        },
+        {
+          "name": "firestorePath",
+          "startLine": 90,
+          "endLine": 90,
+          "params": [
+            "w"
+          ]
+        },
+        {
+          "name": "SignHand",
+          "startLine": 93,
+          "endLine": 122,
+          "params": [
+            "{playing}"
+          ]
+        },
+        {
+          "name": "StorePanel",
+          "startLine": 125,
+          "endLine": 158,
+          "params": [
+            "{\n  title,\n  subtitle,\n  hit,\n  path\n}"
+          ]
+        },
+        {
+          "name": "Trouble01Section",
+          "startLine": 160,
+          "endLine": 715,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Trouble01Section",
+          "line": 160,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Trouble01Section",
+          "callee": "useSueo",
+          "lineNumber": 161
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "useRef",
+          "lineNumber": 162
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "useRef",
+          "lineNumber": 163
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "useInView",
+          "lineNumber": 164
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "useTimeline",
+          "lineNumber": 165
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "useState",
+          "lineNumber": 167
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "useState",
+          "lineNumber": 168
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "useState",
+          "lineNumber": 169
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "useState",
+          "lineNumber": 170
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "useState",
+          "lineNumber": 171
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "useEffect",
+          "lineNumber": 179
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "setHandVisible",
+          "lineNumber": 183
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "io.observe",
+          "lineNumber": 186
+        },
+        {
+          "caller": "onVis",
+          "callee": "setHandVisible",
+          "lineNumber": 187
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "document.addEventListener",
+          "lineNumber": 188
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "io.disconnect",
+          "lineNumber": 190
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "document.removeEventListener",
+          "lineNumber": 191
+        },
+        {
+          "caller": "pick",
+          "callee": "setTouched",
+          "lineNumber": 196
+        },
+        {
+          "caller": "pick",
+          "callee": "setWordIdx",
+          "lineNumber": 197
+        },
+        {
+          "caller": "pick",
+          "callee": "announce",
+          "lineNumber": 200
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "on",
+          "lineNumber": 214
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "on",
+          "lineNumber": 219
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "on",
+          "lineNumber": 227
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "on",
+          "lineNumber": 228
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "on",
+          "lineNumber": 248
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "on",
+          "lineNumber": 249
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "[false, true].map",
+          "lineNumber": 258
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "String",
+          "lineNumber": 260
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "setFixed",
+          "lineNumber": 263
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "WORDS.map",
+          "lineNumber": 282
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "pick",
+          "lineNumber": 290
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "setReplayKey",
+          "lineNumber": 346
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "storagePath",
+          "lineNumber": 362
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "firestorePath",
+          "lineNumber": 392
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "ATTEMPTS.map",
+          "lineNumber": 461
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "on",
+          "lineNumber": 469
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "on",
+          "lineNumber": 470
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "[\n                  {\n                    n: 1,\n                    c: (\n                      <span className=\"sd-com\">\n                        {\"// QuizService — 문제를 만들 때\"}\n                      </span>\n                    )\n                  },\n                  {\n                    n: 2,\n                    lit: true,\n                    c: (\n                      <>\n                        {\"String url = storageVideoCache.findUrl(word);\"}\n                        <span className=\"ml-4 text-[10px] text-[var(--sd-bad)]\">\n                          ← 서로 다른 곳을 봄\n                        </span>\n                      </>\n                    )\n                  },\n                  {n: 3, c: \"quiz.setVideoUrl(url);\"},\n                  {n: 4, c: \" \"},\n                  {\n                    n: 5,\n                    c: (\n                      <span className=\"sd-com\">\n                        {\"// SignDetailService — 단어 상세를 열 때\"}\n                      </span>\n                    )\n                  },\n                  {n: 6, c: \"SignDoc doc = firestore.findByWord(word);\"},\n                  {\n                    n: 7,\n                    lit: true,\n                    c: (\n                      <>\n                        {\"String url = doc.getVideoUrl();\"}\n                        <span className=\"ml-4 text-[10px] text-[var(--sd-bad)]\">\n                          ← 서로 다른 곳을 봄\n                        </span>\n                      </>\n                    )\n                  },\n                  {n: 8, c: \"detail.setVideoUrl(url);\"}\n                ].map",
+          "lineNumber": 528
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "[\n                  {\n                    n: 1,\n                    c: (\n                      <>\n                        <span className=\"sd-key\">public</span>\n                        {\n                          \" String findUrlOrFallback(String word, String fallbackUrl) {\"\n                        }\n                      </>\n                    )\n                  },\n                  {n: 2, lit: true, c: \"  String storageUrl = findUrl(word);\"},\n                  {\n                    n: 3,\n                    c: (\n                      <>\n                        {\"  \"}\n                        <span className=\"sd-key\">if</span>\n                        {\" (storageUrl != \"}\n                        <span className=\"sd-key\">null</span>\n                        {\" && !storageUrl.isBlank()) {\"}\n                      </>\n                    )\n                  },\n                  {\n                    n: 4,\n                    c: (\n                      <>\n                        {\"    \"}\n                        <span className=\"sd-key\">return</span>\n                        {\" storageUrl;\"}\n                      </>\n                    )\n                  },\n                  {n: 5, c: \"  }\"},\n                  {\n                    n: 6,\n                    lit: true,\n                    c: (\n                      <>\n                        {\"  \"}\n                        <span className=\"sd-key\">return</span>\n                        {\" fallbackUrl == \"}\n                        <span className=\"sd-key\">null</span>\n                        {\" ? \"}\n                        <span className=\"sd-str\">&quot;&quot;</span>\n                        {\" : fallbackUrl.trim();\"}\n                      </>\n                    )\n                  },\n                  {n: 7, c: \"}\"}\n                ].map",
+          "lineNumber": 598
+        },
+        {
+          "caller": "Trouble01Section",
+          "callee": "[\n            \"Storage에만 있는 단어 — 정상 재생\",\n            \"Firestore에만 있는 단어 — 폴백으로 정상 재생\",\n            \"둘 다 있는 단어 — Storage 우선, 동작 동일\"\n          ].map",
+          "lineNumber": 689
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 5,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 1165,
+      "nonEmptyLines": 1118,
+      "functions": [
+        {
+          "name": "lerp",
+          "startLine": 69,
+          "endLine": 69,
+          "params": [
+            "a",
+            "b",
+            "t"
+          ]
+        },
+        {
+          "name": "posAt",
+          "startLine": 72,
+          "endLine": 116,
+          "params": [
+            "frame",
+            "smooth"
+          ]
+        },
+        {
+          "name": "BreakMarker",
+          "startLine": 120,
+          "endLine": 144,
+          "params": [
+            "{x, y}"
+          ]
+        },
+        {
+          "name": "Trouble02Section",
+          "startLine": 146,
+          "endLine": 1165,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "Trouble02Section",
+          "line": 146,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "posAt",
+          "callee": "lerp",
+          "lineNumber": 76
+        },
+        {
+          "caller": "posAt",
+          "callee": "lerp",
+          "lineNumber": 77
+        },
+        {
+          "caller": "posAt",
+          "callee": "lerp",
+          "lineNumber": 85
+        },
+        {
+          "caller": "posAt",
+          "callee": "lerp",
+          "lineNumber": 86
+        },
+        {
+          "caller": "posAt",
+          "callee": "lerp",
+          "lineNumber": 93
+        },
+        {
+          "caller": "posAt",
+          "callee": "lerp",
+          "lineNumber": 94
+        },
+        {
+          "caller": "posAt",
+          "callee": "lerp",
+          "lineNumber": 102
+        },
+        {
+          "caller": "posAt",
+          "callee": "lerp",
+          "lineNumber": 103
+        },
+        {
+          "caller": "posAt",
+          "callee": "lerp",
+          "lineNumber": 110
+        },
+        {
+          "caller": "posAt",
+          "callee": "lerp",
+          "lineNumber": 111
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useSueo",
+          "lineNumber": 147
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useRef",
+          "lineNumber": 148
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useInView",
+          "lineNumber": 149
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useTimeline",
+          "lineNumber": 150
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useState",
+          "lineNumber": 152
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useState",
+          "lineNumber": 153
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useState",
+          "lineNumber": 154
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useState",
+          "lineNumber": 155
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useState",
+          "lineNumber": 156
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useRef",
+          "lineNumber": 158
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useRef",
+          "lineNumber": 159
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useRef",
+          "lineNumber": 160
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useRef",
+          "lineNumber": 161
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useRef",
+          "lineNumber": 162
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useRef",
+          "lineNumber": 163
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useRef",
+          "lineNumber": 164
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useRef",
+          "lineNumber": 165
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useRef",
+          "lineNumber": 166
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useCallback",
+          "lineNumber": 170
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "posAt",
+          "lineNumber": 171
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "handRef.current?.setAttribute",
+          "lineNumber": 172
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "spotRef.current?.setAttribute",
+          "lineNumber": 173
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "String",
+          "lineNumber": 173
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "spotRef.current?.setAttribute",
+          "lineNumber": 174
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "String",
+          "lineNumber": 174
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "svg.getBoundingClientRect",
+          "lineNumber": 179
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useEffect",
+          "lineNumber": 190
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "drawFrame",
+          "lineNumber": 191
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useCallback",
+          "lineNumber": 194
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "setPlaying",
+          "lineNumber": 196
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "setShowError",
+          "lineNumber": 197
+        },
+        {
+          "caller": "loop",
+          "callee": "setPlaying",
+          "lineNumber": 202
+        },
+        {
+          "caller": "loop",
+          "callee": "drawFrame",
+          "lineNumber": 208
+        },
+        {
+          "caller": "loop",
+          "callee": "setPlaying",
+          "lineNumber": 209
+        },
+        {
+          "caller": "loop",
+          "callee": "window.setTimeout",
+          "lineNumber": 212
+        },
+        {
+          "caller": "loop",
+          "callee": "setShowError",
+          "lineNumber": 212
+        },
+        {
+          "caller": "loop",
+          "callee": "setCounted",
+          "lineNumber": 215
+        },
+        {
+          "caller": "loop",
+          "callee": "bumpSignCount",
+          "lineNumber": 216
+        },
+        {
+          "caller": "loop",
+          "callee": "drawFrame",
+          "lineNumber": 220
+        },
+        {
+          "caller": "loop",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 221
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "requestAnimationFrame",
+          "lineNumber": 223
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useEffect",
+          "lineNumber": 226
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "cancelAnimationFrame",
+          "lineNumber": 226
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "useEffect",
+          "lineNumber": 229
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "play",
+          "lineNumber": 230
+        },
+        {
+          "caller": "setMode",
+          "callee": "setSmooth",
+          "lineNumber": 237
+        },
+        {
+          "caller": "setMode",
+          "callee": "setToggled",
+          "lineNumber": 238
+        },
+        {
+          "caller": "setMode",
+          "callee": "announce",
+          "lineNumber": 239
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "on",
+          "lineNumber": 258
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "on",
+          "lineNumber": 267
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "on",
+          "lineNumber": 275
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "on",
+          "lineNumber": 276
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "rise",
+          "lineNumber": 297
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "on",
+          "lineNumber": 297
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "setMode",
+          "lineNumber": 312
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "setMode",
+          "lineNumber": 322
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "WORDS.map",
+          "lineNumber": 373
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "SEQ.map",
+          "lineNumber": 456
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "on",
+          "lineNumber": 478
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "SEQ.filter(s => s.type === \"word\").map",
+          "lineNumber": 486
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "SEQ.filter",
+          "lineNumber": 486
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "fade",
+          "lineNumber": 559
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "on",
+          "lineNumber": 559
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "[80, 320, 560].map",
+          "lineNumber": 560
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "[\n                  [240, 320],\n                  [480, 560]\n                ].map",
+          "lineNumber": 584
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "fade",
+          "lineNumber": 632
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "on",
+          "lineNumber": 632
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "[80, 320, 560].map",
+          "lineNumber": 633
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "[240, 480].map",
+          "lineNumber": 657
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "[\n                  {n: 1, c: \"{\"},\n                  {\n                    n: 2,\n                    c: (\n                      <>\n                        {\"  \"}\n                        <span className=\"sd-key\">&quot;signs&quot;</span>: [\n                      </>\n                    )\n                  },\n                  {n: 3, c: \"    {\"},\n                  {\n                    n: 4,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;word&quot;</span>:{\" \"}\n                        <span className=\"sd-str\">&quot;내일&quot;</span>,\n                      </>\n                    )\n                  },\n                  {\n                    n: 5,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;keyframes&quot;</span>: [\n                      </>\n                    )\n                  },\n                  {\n                    n: 6,\n                    c: (\n                      <>\n                        {\"        { \"}\n                        <span className=\"sd-key\">&quot;t&quot;</span>:{\" \"}\n                        <span className=\"sd-num\">0</span>,{\" \"}\n                        <span className=\"sd-key\">&quot;pose&quot;</span>\n                        {\": { ... } },\"}\n                      </>\n                    )\n                  },\n                  {\n                    n: 7,\n                    c: (\n                      <>\n                        {\"        { \"}\n                        <span className=\"sd-key\">&quot;t&quot;</span>:{\" \"}\n                        <span className=\"sd-num\">0.5</span>,{\" \"}\n                        <span className=\"sd-key\">&quot;pose&quot;</span>\n                        {\": { ... } }\"}\n                      </>\n                    )\n                  },\n                  {n: 8, c: \"      ]\"},\n                  {\n                    n: 9,\n                    lit: true,\n                    c: (\n                      <>\n                        {\"    }, \"}\n                        <span className=\"ml-4 font-mono text-[10px] text-[var(--sd-bad)]\">\n                          ← 여기가 비어 있다\n                        </span>\n                      </>\n                    )\n                  },\n                  {n: 10, c: \"    {\"},\n                  {\n                    n: 11,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;word&quot;</span>:{\" \"}\n                        <span className=\"sd-str\">&quot;학교&quot;</span>,\n                      </>\n                    )\n                  },\n                  {\n                    n: 12,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;keyframes&quot;</span>\n                        {\": [ ... ]\"}\n                      </>\n                    )\n                  },\n                  {n: 13, c: \"    }\"},\n                  {n: 14, c: \"  ]\"},\n                  {n: 15, c: \"}\"}\n                ].map",
+          "lineNumber": 708
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "[\n                  {n: 1, c: \"{\"},\n                  {\n                    n: 2,\n                    c: (\n                      <>\n                        {\"  \"}\n                        <span className=\"sd-key\">\n                          &quot;totalMs&quot;\n                        </span>: <span className=\"sd-num\">1700</span>,\n                      </>\n                    )\n                  },\n                  {\n                    n: 3,\n                    c: (\n                      <>\n                        {\"  \"}\n                        <span className=\"sd-key\">&quot;transitionMs&quot;</span>\n                        : <span className=\"sd-num\">200</span>,\n                      </>\n                    )\n                  },\n                  {\n                    n: 4,\n                    c: (\n                      <>\n                        {\"  \"}\n                        <span className=\"sd-key\">&quot;frames&quot;</span>: [\n                      </>\n                    )\n                  },\n                  {n: 5, c: \"    {\"},\n                  {\n                    n: 6,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;t&quot;</span>:{\" \"}\n                        <span className=\"sd-num\">0</span>,\n                      </>\n                    )\n                  },\n                  {\n                    n: 7,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;source&quot;</span>:{\" \"}\n                        <span className=\"sd-str\">&quot;WORD:내일&quot;</span>,\n                      </>\n                    )\n                  },\n                  {\n                    n: 8,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;pose&quot;</span>\n                        {\": { ... }\"}\n                      </>\n                    )\n                  },\n                  {n: 9, c: \"    },\"},\n                  {n: 10, c: \"    ...\"},\n                  {n: 11, lit: true, c: \"    {\"},\n                  {\n                    n: 12,\n                    lit: true,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;t&quot;</span>:{\" \"}\n                        <span className=\"sd-num\">500</span>,\n                      </>\n                    )\n                  },\n                  {\n                    n: 13,\n                    lit: true,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;source&quot;</span>:{\" \"}\n                        <span className=\"sd-str\">\n                          &quot;TRANSITION:GENERATED&quot;\n                        </span>\n                        ,\n                      </>\n                    )\n                  },\n                  {\n                    n: 14,\n                    lit: true,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;pose&quot;</span>\n                        {\": { ... }\"}\n                      </>\n                    )\n                  },\n                  {n: 15, lit: true, c: \"    },\"},\n                  {n: 16, c: \"    {\"},\n                  {\n                    n: 17,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;t&quot;</span>:{\" \"}\n                        <span className=\"sd-num\">700</span>,\n                      </>\n                    )\n                  },\n                  {\n                    n: 18,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;source&quot;</span>:{\" \"}\n                        <span className=\"sd-str\">&quot;WORD:학교&quot;</span>,\n                      </>\n                    )\n                  },\n                  {\n                    n: 19,\n                    c: (\n                      <>\n                        {\"      \"}\n                        <span className=\"sd-key\">&quot;pose&quot;</span>\n                        {\": { ... }\"}\n                      </>\n                    )\n                  },\n                  {n: 20, c: \"    }\"},\n                  {n: 21, c: \"  ]\"},\n                  {n: 22, c: \"}\"}\n                ].map",
+          "lineNumber": 829
+        },
+        {
+          "caller": "Trouble02Section",
+          "callee": "[\n                {\n                  n: 1,\n                  c: (\n                    <>\n                      <span className=\"sd-key\">public class</span>\n                      {\" SignSequenceAssembler {\"}\n                    </>\n                  )\n                },\n                {\n                  n: 2,\n                  c: (\n                    <>\n                      {\"    \"}\n                      <span className=\"sd-key\">\n                        private static final double\n                      </span>\n                      {\" TRANSITION_DURATION_MS = \"}\n                      <span className=\"sd-num\">200.0</span>;\n                    </>\n                  )\n                },\n                {\n                  n: 3,\n                  c: (\n                    <>\n                      {\"    \"}\n                      <span className=\"sd-key\">\n                        private static final double\n                      </span>\n                      {\" CLOSENESS_THRESHOLD = \"}\n                      <span className=\"sd-num\">0.05</span>;\n                    </>\n                  )\n                },\n                {n: 4, c: \" \"},\n                {\n                  n: 5,\n                  c: (\n                    <>\n                      {\"    \"}\n                      <span className=\"sd-key\">public</span>\n                      {\" SentenceResponse assemble(List<SignWord> words) {\"}\n                    </>\n                  )\n                },\n                {\n                  n: 6,\n                  c: (\n                    <>\n                      {\"        List timeline = \"}\n                      <span className=\"sd-key\">new</span>\n                      {\" ArrayList<>();\"}\n                    </>\n                  )\n                },\n                {\n                  n: 7,\n                  c: (\n                    <>\n                      {\"        Pose lastPose = \"}\n                      <span className=\"sd-key\">null</span>;\n                    </>\n                  )\n                },\n                {n: 8, c: \" \"},\n                {\n                  n: 9,\n                  c: (\n                    <>\n                      {\"        \"}\n                      <span className=\"sd-key\">for</span>\n                      {\" (SignWord word : words) {\"}\n                    </>\n                  )\n                },\n                {\n                  n: 10,\n                  lit: true,\n                  c: (\n                    <>\n                      {\"            \"}\n                      <span className=\"sd-key\">if</span>\n                      {\" (lastPose != \"}\n                      <span className=\"sd-key\">null</span>\n                      {\" && !isCloseEnough(lastPose, word.getFirstPose())) {\"}\n                    </>\n                  )\n                },\n                {\n                  n: 11,\n                  lit: true,\n                  c: \"                List transition = interpolator.generate(\"\n                },\n                {\n                  n: 12,\n                  lit: true,\n                  c: \"                    lastPose, word.getFirstPose(), TRANSITION_DURATION_MS);\"\n                },\n                {\n                  n: 13,\n                  lit: true,\n                  c: (\n                    <>\n                      {\"                transition.forEach(f -> f.setSource(\"}\n                      <span className=\"sd-str\">\n                        &quot;TRANSITION:GENERATED&quot;\n                      </span>\n                      {\"));\"}\n                    </>\n                  )\n                },\n                {\n                  n: 14,\n                  lit: true,\n                  c: \"                timeline.addAll(transition);\"\n                },\n                {n: 15, lit: true, c: \"            }\"},\n                {n: 16, c: \"            timeline.addAll(word.getFrames());\"},\n                {n: 17, c: \"            lastPose = word.getLastPose();\"},\n                {n: 18, c: \"        }\"},\n                {\n                  n: 19,\n                  c: (\n                    <>\n                      {\"        \"}\n                      <span className=\"sd-key\">return new</span>\n                      {\" SentenceResponse(timeline);\"}\n                    </>\n                  )\n                },\n                {n: 20, c: \"    }\"},\n                {n: 21, c: \"}\"}\n              ].map",
+          "lineNumber": 988
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/sentenceData.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 151,
+      "nonEmptyLines": 134,
+      "functions": [
+        {
+          "name": "D",
+          "startLine": 25,
+          "endLine": 29,
+          "params": [
+            "type",
+            "word",
+            "duration"
+          ]
+        },
+        {
+          "name": "parseFreeText",
+          "startLine": 95,
+          "endLine": 142,
+          "params": [
+            "text"
+          ]
+        },
+        {
+          "name": "convert",
+          "startLine": 144,
+          "endLine": 146,
+          "params": [
+            "text"
+          ]
+        },
+        {
+          "name": "cellDuration",
+          "startLine": 148,
+          "endLine": 151,
+          "params": [
+            "item"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "DICTIONARY",
+          "line": 31,
+          "isDefault": false
+        },
+        {
+          "name": "PRESETS",
+          "line": 47,
+          "isDefault": false
+        },
+        {
+          "name": "PRESET_KEYS",
+          "line": 89,
+          "isDefault": false
+        },
+        {
+          "name": "parseFreeText",
+          "line": 95,
+          "isDefault": false
+        },
+        {
+          "name": "convert",
+          "line": 144,
+          "isDefault": false
+        },
+        {
+          "name": "cellDuration",
+          "line": 148,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "parseFreeText",
+          "callee": "text\n    .split(\" \")\n    .filter(Boolean)\n    .forEach",
+          "lineNumber": 99
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "text\n    .split(\" \")\n    .filter",
+          "lineNumber": 99
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "text\n    .split",
+          "lineNumber": 99
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "kor.push",
+          "lineNumber": 105
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "entry.word.endsWith",
+          "lineNumber": 108
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "entry.word.endsWith",
+          "lineNumber": 109
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "sign.push",
+          "lineNumber": 110
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "ENDINGS.find",
+          "lineNumber": 114
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "w.endsWith",
+          "lineNumber": 114
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "w.slice",
+          "lineNumber": 116
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "kor.push",
+          "lineNumber": 117
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "sign.push",
+          "lineNumber": 118
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "PARTICLES.find",
+          "lineNumber": 122
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "w.endsWith",
+          "lineNumber": 122
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "w.slice",
+          "lineNumber": 124
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "kor.push",
+          "lineNumber": 125
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "sign.push",
+          "lineNumber": 126
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "kor.push",
+          "lineNumber": 130
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "sign.push",
+          "lineNumber": 131
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "sign.findIndex",
+          "lineNumber": 135
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "sign.splice",
+          "lineNumber": 137
+        },
+        {
+          "caller": "parseFreeText",
+          "callee": "sign.unshift",
+          "lineNumber": 138
+        },
+        {
+          "caller": "convert",
+          "callee": "text.trim",
+          "lineNumber": 145
+        },
+        {
+          "caller": "convert",
+          "callee": "parseFreeText",
+          "lineNumber": 145
+        },
+        {
+          "caller": "convert",
+          "callee": "text.trim",
+          "lineNumber": 145
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 6,
+        "functionCount": 4,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/signData.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 147,
+      "nonEmptyLines": 142,
+      "functions": [
+        {
+          "name": "cloneSigns",
+          "startLine": 143,
+          "endLine": 145,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "SIGNS",
+          "line": 20,
+          "isDefault": false
+        },
+        {
+          "name": "cloneSigns",
+          "line": 143,
+          "isDefault": false
+        },
+        {
+          "name": "WORD_ORDER",
+          "line": 147,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "cloneSigns",
+          "callee": "JSON.parse",
+          "lineNumber": 144
+        },
+        {
+          "caller": "cloneSigns",
+          "callee": "JSON.stringify",
+          "lineNumber": 144
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ui/project-viewers/sueo/useTimeline.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 81,
+      "nonEmptyLines": 69,
+      "functions": [
+        {
+          "name": "useTimeline",
+          "startLine": 13,
+          "endLine": 49,
+          "params": [
+            "delays",
+            "start",
+            "instant"
+          ]
+        },
+        {
+          "name": "useInView",
+          "startLine": 52,
+          "endLine": 81,
+          "params": [
+            "ref",
+            "options"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "useTimeline",
+          "line": 13,
+          "isDefault": false
+        },
+        {
+          "name": "useInView",
+          "line": 52,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "useTimeline",
+          "callee": "useState",
+          "lineNumber": 18
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "delays.map",
+          "lineNumber": 18
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "delays.join",
+          "lineNumber": 20
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "useRef",
+          "lineNumber": 21
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "useEffect",
+          "lineNumber": 23
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "key.split(\",\").map",
+          "lineNumber": 24
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "key.split",
+          "lineNumber": 24
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "setDone",
+          "lineNumber": 28
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "steps.map",
+          "lineNumber": 28
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "setDone",
+          "lineNumber": 33
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "steps.map",
+          "lineNumber": 33
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "steps.map",
+          "lineNumber": 34
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "window.setTimeout",
+          "lineNumber": 35
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "setDone",
+          "lineNumber": 36
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "timers.forEach",
+          "lineNumber": 45
+        },
+        {
+          "caller": "useTimeline",
+          "callee": "window.clearTimeout",
+          "lineNumber": 45
+        },
+        {
+          "caller": "useInView",
+          "callee": "useState",
+          "lineNumber": 56
+        },
+        {
+          "caller": "useInView",
+          "callee": "useEffect",
+          "lineNumber": 58
+        },
+        {
+          "caller": "useInView",
+          "callee": "setInView",
+          "lineNumber": 62
+        },
+        {
+          "caller": "useInView",
+          "callee": "setInView",
+          "lineNumber": 69
+        },
+        {
+          "caller": "useInView",
+          "callee": "observer.disconnect",
+          "lineNumber": 70
+        },
+        {
+          "caller": "useInView",
+          "callee": "observer.observe",
+          "lineNumber": 74
+        },
+        {
+          "caller": "useInView",
+          "callee": "observer.disconnect",
+          "lineNumber": 75
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    }
+  ]
+}

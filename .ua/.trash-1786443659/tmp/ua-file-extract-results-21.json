@@ -1,0 +1,329 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 5,
+  "filesSkipped": [
+    "src/app/globals.css",
+    "src/components/ui/ProjectDetail.css",
+    "src/components/ui/ResumeTerminal.css",
+    "src/components/ui/project-viewers/aclub/aclub.css",
+    "src/components/ui/project-viewers/darklab/darklab.css",
+    "src/components/ui/project-viewers/sueo/sueo.css"
+  ],
+  "analysisOutcomes": {
+    "structure": {
+      "succeeded": 5,
+      "failed": 0
+    },
+    "callGraph": {
+      "succeeded": 5,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "results": [
+    {
+      "path": "src/app/test-model/page.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 12,
+      "nonEmptyLines": 9,
+      "functions": [
+        {
+          "name": "TestModelPage",
+          "startLine": 10,
+          "endLine": 12,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "TestModelPage",
+          "line": 10,
+          "isDefault": true
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ModelTest.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 29,
+      "nonEmptyLines": 26,
+      "functions": [
+        {
+          "name": "Model",
+          "startLine": 7,
+          "endLine": 10,
+          "params": []
+        },
+        {
+          "name": "ModelTest",
+          "startLine": 12,
+          "endLine": 29,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "ModelTest",
+          "line": 12,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "Model",
+          "callee": "useGLTF",
+          "lineNumber": 8
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/interior/InteriorCharacterController.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 105,
+      "nonEmptyLines": 91,
+      "functions": [
+        {
+          "name": "InteriorCharacterController",
+          "startLine": 22,
+          "endLine": 105,
+          "params": [
+            "{\n  bounds = {xMin: -5.5, xMax: 5.5, zMin: -4.5, zMax: 4.5},\n  startPosition = [0, 0, 3.5]\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "InteriorCharacterController",
+          "line": 22,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "useThree",
+          "lineNumber": 26
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "useRef",
+          "lineNumber": 27
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "useRef",
+          "lineNumber": 28
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "useRef",
+          "lineNumber": 29
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "useRef",
+          "lineNumber": 30
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "useRef",
+          "lineNumber": 31
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "useEffect",
+          "lineNumber": 33
+        },
+        {
+          "caller": "onKeyDown",
+          "callee": "keysRef.current.add",
+          "lineNumber": 35
+        },
+        {
+          "caller": "onKeyUp",
+          "callee": "keysRef.current.delete",
+          "lineNumber": 38
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "window.addEventListener",
+          "lineNumber": 40
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "window.addEventListener",
+          "lineNumber": 41
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "window.removeEventListener",
+          "lineNumber": 43
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "window.removeEventListener",
+          "lineNumber": 44
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "useFrame",
+          "lineNumber": 48
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "keys.has",
+          "lineNumber": 53
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "keys.has",
+          "lineNumber": 53
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "keys.has",
+          "lineNumber": 54
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "keys.has",
+          "lineNumber": 54
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "Math.sin",
+          "lineNumber": 56
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "Math.cos",
+          "lineNumber": 57
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "keys.has",
+          "lineNumber": 59
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "keys.has",
+          "lineNumber": 59
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "keys.has",
+          "lineNumber": 63
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "keys.has",
+          "lineNumber": 63
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "Math.max",
+          "lineNumber": 68
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "Math.min",
+          "lineNumber": 68
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "Math.max",
+          "lineNumber": 69
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "Math.min",
+          "lineNumber": 69
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "groupRef.current.position.set",
+          "lineNumber": 72
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "camPosRef.current.set",
+          "lineNumber": 76
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "Math.sin",
+          "lineNumber": 77
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "Math.cos",
+          "lineNumber": 79
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "camera.position.lerp",
+          "lineNumber": 81
+        },
+        {
+          "caller": "InteriorCharacterController",
+          "callee": "camera.lookAt",
+          "lineNumber": 82
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/data/npcs.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 1,
+      "nonEmptyLines": 1,
+      "exports": [
+        {
+          "name": "npcs",
+          "line": 1,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "tailwind.config.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 34,
+      "nonEmptyLines": 32,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

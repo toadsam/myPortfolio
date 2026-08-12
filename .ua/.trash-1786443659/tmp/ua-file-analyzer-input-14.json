@@ -1,0 +1,63 @@
+{
+ "projectRoot": "C:/Users/jk636/OneDrive/문서/GitHub/Whims-of-Wonder/Whims-of-Wonder/MetaverseProgramming/My project/Assets/myPortfolio",
+ "batchFiles": [
+  {
+   "path": ".pre-commit-config.yaml",
+   "language": "yaml",
+   "sizeLines": 8,
+   "fileCategory": "config"
+  },
+  {
+   "path": "CLAUDE.md",
+   "language": "markdown",
+   "sizeLines": 84,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "README.md",
+   "language": "markdown",
+   "sizeLines": 92,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "copy-admin.md",
+   "language": "markdown",
+   "sizeLines": 249,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "copy.md",
+   "language": "markdown",
+   "sizeLines": 967,
+   "fileCategory": "docs"
+  },
+  {
+   "path": "package.json",
+   "language": "json",
+   "sizeLines": 40,
+   "fileCategory": "config"
+  },
+  {
+   "path": "skills-lock.json",
+   "language": "json",
+   "sizeLines": 29,
+   "fileCategory": "config"
+  },
+  {
+   "path": "tsconfig.json",
+   "language": "json",
+   "sizeLines": 41,
+   "fileCategory": "config"
+  }
+ ],
+ "batchImportData": {
+  ".pre-commit-config.yaml": [],
+  "CLAUDE.md": [],
+  "README.md": [],
+  "copy-admin.md": [],
+  "copy.md": [],
+  "package.json": [],
+  "skills-lock.json": [],
+  "tsconfig.json": []
+ }
+}

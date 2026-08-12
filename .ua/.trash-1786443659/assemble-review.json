@@ -1,0 +1,54 @@
+{
+  "fixedSectionOk": true,
+  "nodesRecovered": 0,
+  "edgesRestored": 0,
+  "crossBatchEdgesAdded": 2,
+  "typesRemapped": 0,
+  "complexityRemapped": 0,
+  "finalCounts": {
+    "nodes": 735,
+    "edges": 1542,
+    "danglingEdges": 0,
+    "connectedComponents": 10,
+    "largestComponent": 713
+  },
+  "edgesAdded": [
+    {
+      "source": "file:src/lib/liveApi.ts",
+      "target": "file:backend/app/main.py",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.9,
+      "reason": "프론트엔드↔백엔드 축이 그래프에 전혀 없었음. liveApi.ts의 모든 요청 경로(/activity, /village-state, /npc/chat, /npc/tick, /npc/encounter, /npc/group-chat, /npc/relationships, /npc/presets, /github/sync, /analytics/event, /admin/*, /coding-tests, /cs-notes)가 backend/app/main.py에 선언된 라우트와 1:1로 일치함을 확인. HTTP 런타임 결합이라 정적 import 분석으로는 잡히지 않음."
+    },
+    {
+      "source": "file:src/components/AIPortfolioVillage.tsx",
+      "target": "file:src/components/ui/ResumeMode.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7,
+      "reason": "AIPortfolioVillage.tsx:161의 dynamic() import 4건 중 ResumeMode만 엣지가 누락되어 있었음(VillageScene/InteriorScene/ProjectInterior는 존재)."
+    }
+  ],
+  "verifiedNoGap": [
+    "scan-result.json의 252개 파일 전부가 그래프에 노드를 가짐 (누락 0건)",
+    "그래프의 모든 노드 filePath가 스캔 인벤토리에 존재 (환각 파일 0건)",
+    "dynamic() import 9건 중 8건은 이미 엣지 존재 (InteriorScene의 Lab/Workshop/Archive/Post 4건, test-model→ModelTest, AIPortfolioVillage의 VillageScene/InteriorScene/ProjectInterior)",
+    "PropsEditor.tsx --fetch(/api/props)--> src/app/api/props/route.ts 엣지 이미 존재",
+    "scripts/backend-dev.mjs --depends_on--> backend/app/main.py 엣지 이미 존재 (uvicorn app.main:app)",
+    "NEXT_PUBLIC_API_BASE_URL을 읽는 소스는 src/lib/liveApi.ts 한 곳뿐 — 백엔드를 직접 호출하는 다른 프론트엔드 파일 없음",
+    "liveApi.ts를 import하는 6개 파일 전부 imports 엣지 존재",
+    "documents 엣지 87건 전부 document→code 방향 (역방향 0건)",
+    "tested_by 엣지 3건 전부 production→test 방향 (relations.py, relationship_service.py, village_service.py)",
+    "dangling 엣지 0건"
+  ],
+  "notes": [
+    "가장 중요한 결함이었던 프론트엔드↔백엔드 단절을 해소함. 수정 전 src/** 노드와 backend/** 노드 사이 엣지가 정확히 0건이었고, 백엔드는 오직 scripts/backend-dev.mjs를 통해서만 메인 컴포넌트에 매달려 있었음. 이제 liveApi.ts→main.py 엣지로 실제 아키텍처 축이 표현됨.",
+    "연결 컴포넌트 10개 중 메인이 713개 노드. 나머지 9개 고립 클러스터는 전부 검증 결과 '실제로 고립된 것이 맞음'이며 그래프 결함이 아님 — 투기적 엣지를 추가하지 않았음.",
+    "고립 클러스터(8): scripts/make-paving-tile.mjs + scripts/make_paved_road_tiles.py. package.json scripts에 등록되어 있지 않은 수동 실행용 일회성 에셋 생성 스크립트라 코드베이스와 정적 결합이 없음.",
+    "고립 클러스터(4): public/index.html + manifest.json + browserconfig.xml + robots.txt. 레거시 CRA 정적 셸이며, src/App.js·src/index.js가 .understandignore로 제외되어 연결 대상이 사라진 것 — 의도된 상태.",
+    "고립 클러스터(2): src/components/interior/InteriorCharacterController.tsx. 코드베이스 전체에서 이 컴포넌트를 import하는 곳이 단 한 군데도 없음 (선언부 외 참조 0건). 그래프 오류가 아니라 실제 dead code로 보이며, 코드 정리 후보로 보고함.",
+    "데이터 품질 우려: src/lib/liveApi.ts는 export가 약 35개인데 batch analyzer가 function 노드로 만든 것은 12개뿐(약 34%). fetchVillageState/fetchNpcPresets/fetchCodingTests/fetchCsNotes 등이 노드 없이 누락되어 dangling calls 엣지의 원인이 되었음. 다른 대형 파일에서도 같은 방식으로 함수 단위 커버리지가 누락되었을 가능성이 있음 — 상위 파이프라인(파일당 심볼 추출 상한)의 개선 여지.",
+    "merge 스크립트 'Fixed' 섹션 검토: func:→function: 170건은 LLM 출력의 계통적 패턴으로 정상 범주. ID 보정 비율이 전체 노드의 30%를 넘지 않아 업스트림 이슈로 격상할 수준은 아님. unknown node type / unknown complexity 항목은 보고서에 0건이었고 실제 그래프에서도 type은 7종(function/file/document/class/config/service/pipeline), complexity는 유효값만 확인됨."
+  ]
+}

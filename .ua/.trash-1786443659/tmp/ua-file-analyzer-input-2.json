@@ -1,0 +1,248 @@
+{
+ "projectRoot": "C:/Users/jk636/OneDrive/문서/GitHub/Whims-of-Wonder/Whims-of-Wonder/MetaverseProgramming/My project/Assets/myPortfolio",
+ "batchFiles": [
+  {
+   "path": "backend/app/__init__.py",
+   "language": "python",
+   "sizeLines": 1,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/catalog.py",
+   "language": "python",
+   "sizeLines": 185,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/config.py",
+   "language": "python",
+   "sizeLines": 31,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/database.py",
+   "language": "python",
+   "sizeLines": 55,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/main.py",
+   "language": "python",
+   "sizeLines": 404,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/models.py",
+   "language": "python",
+   "sizeLines": 131,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/relations.py",
+   "language": "python",
+   "sizeLines": 44,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/schemas.py",
+   "language": "python",
+   "sizeLines": 358,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/security.py",
+   "language": "python",
+   "sizeLines": 109,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/services/__init__.py",
+   "language": "python",
+   "sizeLines": 1,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/services/activity_service.py",
+   "language": "python",
+   "sizeLines": 66,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/services/admin_service.py",
+   "language": "python",
+   "sizeLines": 262,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/services/chat_service.py",
+   "language": "python",
+   "sizeLines": 402,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/services/github_service.py",
+   "language": "python",
+   "sizeLines": 36,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/services/learning_service.py",
+   "language": "python",
+   "sizeLines": 187,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/services/npc_action_service.py",
+   "language": "python",
+   "sizeLines": 259,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/services/npc_brain_service.py",
+   "language": "python",
+   "sizeLines": 545,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/services/relationship_service.py",
+   "language": "python",
+   "sizeLines": 121,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/services/village_service.py",
+   "language": "python",
+   "sizeLines": 260,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/app/time_utils.py",
+   "language": "python",
+   "sizeLines": 8,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/tests/conftest.py",
+   "language": "python",
+   "sizeLines": 21,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/tests/test_relations.py",
+   "language": "python",
+   "sizeLines": 40,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/tests/test_relationship_service.py",
+   "language": "python",
+   "sizeLines": 76,
+   "fileCategory": "code"
+  },
+  {
+   "path": "backend/tests/test_village_service.py",
+   "language": "python",
+   "sizeLines": 90,
+   "fileCategory": "code"
+  }
+ ],
+ "batchImportData": {
+  "backend/app/__init__.py": [],
+  "backend/app/catalog.py": [],
+  "backend/app/config.py": [],
+  "backend/app/database.py": [
+   "backend/app/config.py"
+  ],
+  "backend/app/main.py": [
+   "backend/app/config.py",
+   "backend/app/database.py",
+   "backend/app/schemas.py",
+   "backend/app/security.py",
+   "backend/app/services/activity_service.py",
+   "backend/app/services/admin_service.py",
+   "backend/app/services/chat_service.py",
+   "backend/app/services/github_service.py",
+   "backend/app/services/learning_service.py",
+   "backend/app/services/npc_brain_service.py",
+   "backend/app/services/relationship_service.py",
+   "backend/app/services/village_service.py"
+  ],
+  "backend/app/models.py": [
+   "backend/app/database.py"
+  ],
+  "backend/app/relations.py": [],
+  "backend/app/schemas.py": [],
+  "backend/app/security.py": [
+   "backend/app/config.py"
+  ],
+  "backend/app/services/__init__.py": [],
+  "backend/app/services/activity_service.py": [
+   "backend/app/models.py",
+   "backend/app/schemas.py",
+   "backend/app/time_utils.py"
+  ],
+  "backend/app/services/admin_service.py": [
+   "backend/app/catalog.py",
+   "backend/app/models.py",
+   "backend/app/schemas.py",
+   "backend/app/security.py"
+  ],
+  "backend/app/services/chat_service.py": [
+   "backend/app/catalog.py",
+   "backend/app/config.py",
+   "backend/app/models.py",
+   "backend/app/schemas.py",
+   "backend/app/services/learning_service.py",
+   "backend/app/services/npc_action_service.py",
+   "backend/app/time_utils.py"
+  ],
+  "backend/app/services/github_service.py": [
+   "backend/app/config.py",
+   "backend/app/time_utils.py"
+  ],
+  "backend/app/services/learning_service.py": [
+   "backend/app/models.py",
+   "backend/app/schemas.py",
+   "backend/app/time_utils.py"
+  ],
+  "backend/app/services/npc_action_service.py": [
+   "backend/app/catalog.py",
+   "backend/app/models.py",
+   "backend/app/schemas.py"
+  ],
+  "backend/app/services/npc_brain_service.py": [
+   "backend/app/catalog.py",
+   "backend/app/config.py",
+   "backend/app/models.py",
+   "backend/app/schemas.py",
+   "backend/app/services/chat_service.py",
+   "backend/app/services/npc_action_service.py"
+  ],
+  "backend/app/services/relationship_service.py": [
+   "backend/app/models.py",
+   "backend/app/relations.py"
+  ],
+  "backend/app/services/village_service.py": [
+   "backend/app/models.py",
+   "backend/app/schemas.py"
+  ],
+  "backend/app/time_utils.py": [
+   "backend/app/config.py"
+  ],
+  "backend/tests/conftest.py": [
+   "backend/app/database.py"
+  ],
+  "backend/tests/test_relations.py": [
+   "backend/app/__init__.py",
+   "backend/app/relations.py"
+  ],
+  "backend/tests/test_relationship_service.py": [
+   "backend/app/services/__init__.py",
+   "backend/app/services/relationship_service.py"
+  ],
+  "backend/tests/test_village_service.py": [
+   "backend/app/models.py",
+   "backend/app/services/village_service.py"
+  ]
+ }
+}

@@ -1,0 +1,579 @@
+{
+  "nodes": [
+    {
+      "id": "file:.gitattributes",
+      "type": "file",
+      "name": ".gitattributes",
+      "filePath": ".gitattributes",
+      "summary": "모든 텍스트 파일의 줄바꿈을 LF로 고정하고 폰트·이미지·GLB 등 실제 바이너리 파일을 Git이 변조하지 않도록 binary로 표시합니다.",
+      "tags": ["configuration", "git", "line-endings", "binary-assets"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.github/pull_request_template.md",
+      "type": "document",
+      "name": "pull_request_template.md",
+      "filePath": ".github/pull_request_template.md",
+      "summary": "GitHub PR 작성 시 자동으로 채워지는 템플릿으로, 변경 요약과 변경 유형(버그 수정·기능 추가·breaking change 등) 체크리스트를 요구합니다.",
+      "tags": ["documentation", "github", "pull-request", "template"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.prettierignore",
+      "type": "file",
+      "name": ".prettierignore",
+      "filePath": ".prettierignore",
+      "summary": "Prettier 포매팅 대상에서 제외할 경로 목록으로, CRA 잔재(serviceWorker·lottie)와 빌드 산출물(.next·node_modules), 파이썬 backend 디렉터리를 제외합니다.",
+      "tags": ["configuration", "prettier", "formatting", "build-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:env.example",
+      "type": "file",
+      "name": "env.example",
+      "filePath": "env.example",
+      "summary": "프론트엔드 환경변수 템플릿으로 백엔드 API 주소(NEXT_PUBLIC_API_BASE_URL)만 담고 있으며, 백엔드 변수는 backend/.env에 따로 있음을 안내합니다.",
+      "tags": ["configuration", "environment", "template", "api-config"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:next-env.d.ts",
+      "type": "file",
+      "name": "next-env.d.ts",
+      "filePath": "next-env.d.ts",
+      "summary": "Next.js가 자동 생성하는 타입 참조 선언 파일로, next와 next/image의 전역 타입 및 개발용 라우트 타입을 TypeScript에 연결합니다. 직접 편집하지 않습니다.",
+      "tags": ["type-definition", "nextjs", "generated", "typescript"],
+      "complexity": "simple",
+      "languageNotes": "`/// <reference types=\"...\" />` 트리플 슬래시 지시문은 import 없이 앰비언트 타입을 컴파일 대상에 끌어오는 TypeScript 전용 문법입니다."
+    },
+    {
+      "id": "file:next.config.mjs",
+      "type": "file",
+      "name": "next.config.mjs",
+      "filePath": "next.config.mjs",
+      "summary": "Next.js 빌드 설정으로 React strict mode를 켜고, Turbopack이 상위 폴더를 워크스페이스 루트로 오인하지 않도록 root를 이 파일 위치로 명시합니다.",
+      "tags": ["configuration", "nextjs", "build-system", "turbopack"],
+      "complexity": "simple",
+      "languageNotes": "ESM 설정 파일이라 __dirname이 없어 fileURLToPath(import.meta.url)로 프로젝트 루트를 계산합니다."
+    },
+    {
+      "id": "file:postcss.config.mjs",
+      "type": "file",
+      "name": "postcss.config.mjs",
+      "filePath": "postcss.config.mjs",
+      "summary": "PostCSS 플러그인 설정으로 Tailwind v4의 @tailwindcss/postcss 하나만 등록해 globals.css의 @import \"tailwindcss\"를 처리합니다.",
+      "tags": ["configuration", "postcss", "tailwind", "build-system"],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:public/models/ASSETS.md",
+      "type": "document",
+      "name": "ASSETS.md",
+      "filePath": "public/models/ASSETS.md",
+      "summary": "public/models의 모든 GLB를 파일·분류·용량·출처·사용 코드·적용 설정 표로 정리한 3D 에셋 매니페스트이며, raw/ 폴더 기반 압축 파이프라인과 캐릭터 애니메이션 병합 절차, NPC별 모델 지정 규칙을 함께 설명합니다.",
+      "tags": ["documentation", "3d-assets", "asset-pipeline", "manifest"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:public/models/props/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "public/models/props/.gitkeep",
+      "summary": "장식물 GLB가 커밋되지 않은 상태에서도 public/models/props 디렉터리 구조가 Git에 유지되도록 두는 빈 플레이스홀더 파일입니다.",
+      "tags": ["placeholder", "git", "directory-structure", "3d-assets"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:resume/jaehoon-jeong-resume.html",
+      "type": "file",
+      "name": "jaehoon-jeong-resume.html",
+      "filePath": "resume/jaehoon-jeong-resume.html",
+      "summary": "정재훈의 이력서를 인쇄·공유용 단일 HTML 문서로 만든 산출물로, 외부 의존 없이 <style>에 CSS 변수 기반 문서 테마를 모두 인라인해 파일 하나만으로 열립니다.",
+      "tags": ["resume", "standalone-html", "print-layout", "portfolio-output"],
+      "complexity": "complex",
+      "languageNotes": "빌드 없이 배포하는 단일 파일이라 폰트 폴백(Pretendard → Apple SD Gothic Neo → Malgun Gothic)으로 한글 렌더링을 OS별로 보정합니다."
+    },
+    {
+      "id": "document:resume/jaehoon-jeong-resume.md",
+      "type": "document",
+      "name": "jaehoon-jeong-resume.md",
+      "filePath": "resume/jaehoon-jeong-resume.md",
+      "summary": "정재훈의 이력서 원본 마크다운으로 요약·기술 스택·GitHub 근거·프로젝트 링크·채용 시그널·핵심 프로젝트(FestFlow, 득근득근, Sign-Language, aClub) 등 18개 섹션을 담고 있으며 HTML 이력서의 소스 역할을 합니다.",
+      "tags": ["documentation", "resume", "portfolio-content", "source-of-truth"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/backend-dev.mjs",
+      "type": "file",
+      "name": "backend-dev.mjs",
+      "filePath": "scripts/backend-dev.mjs",
+      "summary": "npm run backend:dev의 실행기로, backend/.venv의 python이 있으면 그것을, 없으면 시스템 python을 골라 uvicorn app.main:app을 8000 포트 리로드 모드로 띄우고 SIGINT/SIGTERM을 자식 프로세스에 전달합니다.",
+      "tags": ["script", "dev-tooling", "backend", "process-launcher"],
+      "complexity": "simple",
+      "languageNotes": "win32와 POSIX의 venv 경로(Scripts/python.exe vs bin/python)가 달라 platform 분기로 흡수합니다."
+    },
+    {
+      "id": "file:scripts/bake-impostors.mjs",
+      "type": "file",
+      "name": "bake-impostors.mjs",
+      "filePath": "scripts/bake-impostors.mjs",
+      "summary": "나무·덤불 GLB를 정투영으로 앞·옆 두 장 구워 십자로 세운 교차 빌보드(삼각형 4개)로 대체하는 임포스터 베이커로, 그루당 8,900 삼각형을 4개로 줄여 마을 테두리 숲과 빈 잔디를 채웁니다.",
+      "tags": ["asset-pipeline", "3d-optimization", "impostor", "glb", "texture-baking"],
+      "complexity": "complex",
+      "languageNotes": "GLB 파싱·PNG 디코딩·래스터화를 외부 의존 없이 node:zlib과 DataView만으로 직접 구현했고, 알파를 보존해야 하므로 JPEG로 바꾸는 최적화 파이프라인을 일부러 건너뜁니다."
+    },
+    {
+      "id": "function:scripts/bake-impostors.mjs:parseGlb",
+      "type": "function",
+      "name": "parseGlb",
+      "filePath": "scripts/bake-impostors.mjs",
+      "lineRange": [77, 91],
+      "summary": "GLB 바이너리 버퍼를 청크 단위로 훑어 JSON 부분과 BIN 부분을 분리해 반환합니다.",
+      "tags": ["glb", "binary-parsing", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/bake-impostors.mjs:decodePng",
+      "type": "function",
+      "name": "decodePng",
+      "filePath": "scripts/bake-impostors.mjs",
+      "lineRange": [160, 201],
+      "summary": "PNG 청크를 읽어 zlib로 풀고 필터 타입별 역필터를 적용해 원시 픽셀 배열로 복원합니다.",
+      "tags": ["png", "decoding", "image-processing"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/bake-impostors.mjs:load",
+      "type": "function",
+      "name": "load",
+      "filePath": "scripts/bake-impostors.mjs",
+      "lineRange": [253, 302],
+      "summary": "나무 GLB를 열어 노드 변환을 평탄화하고 정점·UV·인덱스와 baseColor 텍스처를 한 덩어리 지오메트리로 모읍니다.",
+      "tags": ["glb", "geometry", "asset-loading"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/bake-impostors.mjs:render",
+      "type": "function",
+      "name": "render",
+      "filePath": "scripts/bake-impostors.mjs",
+      "lineRange": [305, 403],
+      "summary": "지오메트리를 지정한 시점에서 정투영으로 소프트웨어 래스터화하고 깊이 테스트·숲 색 보정을 적용해 알파가 살아 있는 RGBA 이미지를 만듭니다.",
+      "tags": ["rasterization", "orthographic", "texture-baking", "rendering"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/bake-impostors.mjs:buildGlb",
+      "type": "function",
+      "name": "buildGlb",
+      "filePath": "scripts/bake-impostors.mjs",
+      "lineRange": [406, 516],
+      "summary": "구운 이미지를 텍스처로 물린 교차 사각형 두 장을 정점·인덱스·머티리얼과 함께 GLB 바이너리로 직접 조립합니다.",
+      "tags": ["glb", "mesh-generation", "billboard", "serialization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:scripts/flatten-ground-tiles.mjs",
+      "type": "file",
+      "name": "flatten-ground-tiles.mjs",
+      "filePath": "scripts/flatten-ground-tiles.mjs",
+      "summary": "바닥 타일 GLB를 위에서 정투영으로 구운 그림 한 장을 붙인 평면(또는 원반)으로 다시 만들어 장당 4,853 삼각형을 2개로 줄이는 스크립트로, raw/ground를 raw/ground-flat으로 변환합니다.",
+      "tags": ["asset-pipeline", "3d-optimization", "ground-tiles", "texture-baking", "glb"],
+      "complexity": "complex",
+      "languageNotes": "plaza-tile처럼 모서리가 빈 타일은 사각 평면 대신 32분할 원반으로 구워 배경이 딸려 나오는 것을 막습니다."
+    },
+    {
+      "id": "function:scripts/flatten-ground-tiles.mjs:bakeTop",
+      "type": "function",
+      "name": "bakeTop",
+      "filePath": "scripts/flatten-ground-tiles.mjs",
+      "lineRange": [151, 235],
+      "summary": "타일 GLB를 진짜 위에서 내려다본 정투영으로 래스터화해 윗면 그림 한 장을 굽습니다.",
+      "tags": ["texture-baking", "orthographic", "rasterization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/flatten-ground-tiles.mjs:grade",
+      "type": "function",
+      "name": "grade",
+      "filePath": "scripts/flatten-ground-tiles.mjs",
+      "lineRange": [251, 261],
+      "summary": "구운 타일 이미지의 채도를 잔디 텍스처와 같은 계수로 낮춰 길과 잔디 평면의 색이 어긋나지 않게 보정합니다.",
+      "tags": ["color-grading", "image-processing", "consistency"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/flatten-ground-tiles.mjs:buildGlb",
+      "type": "function",
+      "name": "buildGlb",
+      "filePath": "scripts/flatten-ground-tiles.mjs",
+      "lineRange": [263, 357],
+      "summary": "구운 그림을 입힌 평면 또는 원반 메시를 정점·인덱스·텍스처와 함께 GLB로 조립해 출력합니다.",
+      "tags": ["glb", "mesh-generation", "serialization"],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:scripts/generate-building-manifest.mjs",
+      "type": "file",
+      "name": "generate-building-manifest.mjs",
+      "filePath": "scripts/generate-building-manifest.mjs",
+      "summary": "public/models/buildings의 GLB를 \"파일명 = 건물 id\" 규칙만으로 건물에 자동 연결해 buildingModels.json 매니페스트를 생성하며, constants.ts에 glbPath를 손으로 추가하던 27채 분량의 반복 작업을 없앱니다.",
+      "tags": ["asset-pipeline", "code-generation", "manifest", "buildings", "convention-over-configuration"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/generate-building-manifest.mjs:buildingIds",
+      "type": "function",
+      "name": "buildingIds",
+      "filePath": "scripts/generate-building-manifest.mjs",
+      "lineRange": [32, 43],
+      "summary": "TS라서 import할 수 없는 constants.ts를 정규식으로 훑어, size·district가 함께 있는 항목만 실제 건물 id로 추려 반환합니다.",
+      "tags": ["parsing", "regex", "buildings", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/make-fence-rail.mjs",
+      "type": "file",
+      "name": "make-fence-rail.mjs",
+      "filePath": "scripts/make-fence-rail.mjs",
+      "summary": "길가를 따라 길게 이어 까는 나무 울타리 한 토막(기둥 2 + 가로대 2, 30 삼각형)을 상자 조합으로 절차 생성해 fence-rail.glb와 텍스처를 굽습니다. Meshy 울타리는 토막당 1,473 삼각형이라 300토막을 감당하지 못합니다.",
+      "tags": ["asset-pipeline", "procedural-mesh", "decor", "glb", "triangle-budget"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/make-fence-rail.mjs:box",
+      "type": "function",
+      "name": "box",
+      "filePath": "scripts/make-fence-rail.mjs",
+      "lineRange": [149, 176],
+      "summary": "중심과 반치수를 받아 필요한 면만 가진 상자의 정점·법선·UV·인덱스를 누적 버퍼에 추가하는 울타리 조립 프리미티브입니다.",
+      "tags": ["procedural-mesh", "geometry", "primitive"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/make-grass-texture.mjs",
+      "type": "file",
+      "name": "make-grass-texture.mjs",
+      "filePath": "scripts/make-grass-texture.mjs",
+      "summary": "마을 바닥 잔디 평면용 타일러블 텍스처(grass-village.png)를 절차 생성하며, 반복이 눈에 띄지 않도록 타일의 1/8보다 긴 파장과 꽃 같은 큰 구조를 의도적으로 배제합니다.",
+      "tags": ["asset-pipeline", "procedural-texture", "tileable-noise", "ground", "png"],
+      "complexity": "moderate",
+      "languageNotes": "길 타일 베이킹(flatten-ground-tiles.mjs)과 같은 채도 계수(0.55)를 손으로 적용해 두 곳의 잔디 색을 맞춥니다 — 한쪽만 바꾸면 길가에 밝은 사각형이 줄지어 보입니다."
+    },
+    {
+      "id": "function:scripts/make-grass-texture.mjs:tileableNoise",
+      "type": "function",
+      "name": "tileableNoise",
+      "filePath": "scripts/make-grass-texture.mjs",
+      "lineRange": [54, 69],
+      "summary": "주기를 강제해 좌우·상하 끝이 이어지는 타일러블 값 노이즈 격자를 생성합니다.",
+      "tags": ["procedural-generation", "noise", "tileable"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/make-low-wall.mjs",
+      "type": "file",
+      "name": "make-low-wall.mjs",
+      "filePath": "scripts/make-low-wall.mjs",
+      "summary": "구역 블록을 두르는 낮은 돌담 한 토막(몸통 + 갓돌, 24 삼각형)을 상자 두 개로 절차 생성해 wall-low.glb와 벽돌 텍스처를 굽습니다. 마을 전체에 80개를 깔아야 하므로 10,612 삼각형짜리 Meshy 축대벽을 대체합니다.",
+      "tags": ["asset-pipeline", "procedural-mesh", "decor", "district-boundary", "glb"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/make-low-wall.mjs:box",
+      "type": "function",
+      "name": "box",
+      "filePath": "scripts/make-low-wall.mjs",
+      "lineRange": [227, 259],
+      "summary": "UV 반복 계수와 V 범위를 받아 돌담 몸통·갓돌 상자를 만들어 정점 버퍼에 누적합니다.",
+      "tags": ["procedural-mesh", "geometry", "uv-mapping"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/make-paving-tile.mjs",
+      "type": "file",
+      "name": "make-paving-tile.mjs",
+      "filePath": "scripts/make-paving-tile.mjs",
+      "summary": "손그림 판석 이미지에서 윗면을 오려 삼각형 2개짜리 평면에 입힌 정사각 판석 타일(paving-square.glb)을 굽습니다. 구역 바닥 전체를 덮어야 하는 386장을 8,476 삼각형짜리 원본으로는 감당할 수 없어 만든 대체품입니다.",
+      "tags": ["asset-pipeline", "procedural-mesh", "paving", "seamless-tiling", "glb"],
+      "complexity": "complex",
+      "languageNotes": "이음매 제거는 오릴 때 여유분을 더 떠서 왼쪽 띠를 \"오른쪽 이웃이 될 화소\"와 경계에서 정확히 50:50으로 섞는 방식이라, 좌우 끝 값이 같아져 무한히 이어 붙습니다."
+    },
+    {
+      "id": "function:scripts/make-paving-tile.mjs:decodePng",
+      "type": "function",
+      "name": "decodePng",
+      "filePath": "scripts/make-paving-tile.mjs",
+      "lineRange": [56, 96],
+      "summary": "손그림 판석 원본 PNG를 청크 단위로 풀어 역필터를 적용하고 픽셀 배열로 복원합니다.",
+      "tags": ["png", "decoding", "image-processing"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/make-terrace-steps.mjs",
+      "type": "file",
+      "name": "make-terrace-steps.mjs",
+      "filePath": "scripts/make-terrace-steps.mjs",
+      "summary": "구역 단차(1.1유닛)를 오르는 돌계단 한 벌을 상자 4개(44 삼각형)로 절차 생성해 terrace-steps.glb를 굽습니다. 가려지는 밑면·뒷면은 생략하고 계단 폭이 좁아 드러나는 옆면만 남깁니다.",
+      "tags": ["asset-pipeline", "procedural-mesh", "terrace", "decor", "glb"],
+      "complexity": "complex",
+      "languageNotes": "오를 높이 기본값(--h 1.1)은 src/lib/villageTerrain.ts의 TERRACE_STEP과 반드시 같아야 계단이 단차에 정확히 붙습니다."
+    },
+    {
+      "id": "function:scripts/make-terrace-steps.mjs:box",
+      "type": "function",
+      "name": "box",
+      "filePath": "scripts/make-terrace-steps.mjs",
+      "lineRange": [154, 178],
+      "summary": "계단 한 단에 해당하는 상자의 윗면·앞면·옆면 정점과 인덱스를 만들어 버퍼에 누적합니다.",
+      "tags": ["procedural-mesh", "geometry", "primitive"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/make_paved_road_tiles.py",
+      "type": "file",
+      "name": "make_paved_road_tiles.py",
+      "filePath": "scripts/make_paved_road_tiles.py",
+      "summary": "길 타일의 밝은 초록 잔디 갓길을 판석 색으로 칠한 변종 GLB를 ground-flat/paved에 만들어, 포장된 구역 안쪽에 길을 깔 때 마을 한복판에 초록 격자가 떠오르는 문제를 없앱니다. 지오메트리는 그대로 두고 baseColor 텍스처만 바꿉니다.",
+      "tags": ["asset-pipeline", "texture-processing", "ground-tiles", "python", "color-correction"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/make_paved_road_tiles.py:parse_glb",
+      "type": "function",
+      "name": "parse_glb",
+      "filePath": "scripts/make_paved_road_tiles.py",
+      "lineRange": [42, 52],
+      "summary": "GLB 바이트열을 struct로 언팩해 JSON 청크와 BIN 청크로 나눕니다.",
+      "tags": ["glb", "binary-parsing", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/make_paved_road_tiles.py:build_glb",
+      "type": "function",
+      "name": "build_glb",
+      "filePath": "scripts/make_paved_road_tiles.py",
+      "lineRange": [55, 67],
+      "summary": "수정한 glTF JSON과 바이너리 버퍼를 4바이트 정렬 패딩과 함께 GLB 컨테이너로 다시 묶습니다.",
+      "tags": ["glb", "serialization", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/make_paved_road_tiles.py:destone",
+      "type": "function",
+      "name": "destone",
+      "filePath": "scripts/make_paved_road_tiles.py",
+      "lineRange": [70, 95],
+      "summary": "타일 텍스처에서 초록 잔디 화소를 찾아 실측한 판석 평균색 계열로 치환해 갓길을 돌바닥처럼 만듭니다.",
+      "tags": ["image-processing", "color-replacement", "texture"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/make_paved_road_tiles.py:convert",
+      "type": "function",
+      "name": "convert",
+      "filePath": "scripts/make_paved_road_tiles.py",
+      "lineRange": [98, 134],
+      "summary": "GLB 한 장을 열어 baseColor 이미지를 추출·변환하고 다시 심어 paved 폴더에 새 GLB로 저장합니다.",
+      "tags": ["asset-pipeline", "glb", "transformation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/make_paved_road_tiles.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/make_paved_road_tiles.py",
+      "lineRange": [137, 145],
+      "summary": "v2 길 타일 세트를 순회하며 convert를 호출하는 스크립트 진입점입니다.",
+      "tags": ["entry-point", "cli", "batch-processing"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/merge-character.mjs",
+      "type": "file",
+      "name": "merge-character.mjs",
+      "filePath": "scripts/merge-character.mjs",
+      "summary": "Meshy가 애니메이션마다 따로 내주는 캐릭터 GLB들을 첫 파일을 본체로 삼아 하나로 합치고, 나머지에서 클립만 뽑아 뼈대 노드를 인덱스가 아닌 이름으로 재연결합니다. 35MB·112MB VRAM짜리 중복을 제거합니다.",
+      "tags": ["asset-pipeline", "animation", "glb", "deduplication", "characters"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:scripts/optimize-glb.mjs",
+      "type": "file",
+      "name": "optimize-glb.mjs",
+      "filePath": "scripts/optimize-glb.mjs",
+      "summary": "npm run optimize의 본체로, public/models/<그룹>/raw의 GLB를 ①gltf-transform copy로 풀기 ②optimize_textures.py로 텍스처 축소·JPEG화 ③Draco 지오메트리 압축 후 재포장의 3단계로 처리해 하위 폴더 구조를 유지한 채 출력합니다.",
+      "tags": ["asset-pipeline", "3d-optimization", "build-system", "entry-point", "glb"],
+      "complexity": "moderate",
+      "languageNotes": "이 환경의 sharp/libvips가 깨져 gltf-transform의 --texture-compress가 죽기 때문에 텍스처 단계만 Pillow(python)로 분리한 우회 구조입니다."
+    },
+    {
+      "id": "function:scripts/optimize-glb.mjs:findPython",
+      "type": "function",
+      "name": "findPython",
+      "filePath": "scripts/optimize-glb.mjs",
+      "lineRange": [37, 48],
+      "summary": "backend/.venv를 우선하지 않고 실제로 PIL(Pillow)을 import할 수 있는 python 실행 파일을 골라 반환합니다.",
+      "tags": ["utility", "environment-detection", "python"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/optimize-glb.mjs:passesFor",
+      "type": "function",
+      "name": "passesFor",
+      "filePath": "scripts/optimize-glb.mjs",
+      "lineRange": [136, 145],
+      "summary": "에셋 그룹과 경로(바닥 타일·장식물·단차 조각 여부)에 따라 적용할 최적화 패스와 simplify 강도를 결정합니다.",
+      "tags": ["asset-pipeline", "policy", "optimization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:scripts/optimize_textures.py",
+      "type": "file",
+      "name": "optimize_textures.py",
+      "filePath": "scripts/optimize_textures.py",
+      "summary": "optimize-glb.mjs가 중간 단계로 호출하는 텍스처 최적화기로, 아무 일도 안 하는 맵을 factor 값으로 대체해 삭제하고 남은 맵을 그룹별 예산 해상도(건물 1024 / 장식물 512 등)로 줄인 뒤 JPEG로 다시 굽습니다.",
+      "tags": ["asset-pipeline", "texture-optimization", "python", "pillow", "vram-budget"],
+      "complexity": "complex",
+      "languageNotes": "깨진 sharp/libvips를 대신하려고 Pillow로 같은 일을 구현했으며, Pillow가 없으면 exit code 2로 명시적으로 실패해 호출자가 상황을 구분할 수 있게 합니다."
+    },
+    {
+      "id": "class:scripts/optimize_textures.py:Slot",
+      "type": "class",
+      "name": "Slot",
+      "filePath": "scripts/optimize_textures.py",
+      "lineRange": [50, 57],
+      "summary": "머티리얼에서 텍스처가 꽂히는 자리(baseColor·normal·emissive 등) 하나를 나타내는 값 객체로, 종류와 소유 머티리얼 정보를 담습니다.",
+      "tags": ["data-model", "texture", "value-object"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/optimize_textures.py:collect_slots",
+      "type": "function",
+      "name": "collect_slots",
+      "filePath": "scripts/optimize_textures.py",
+      "lineRange": [60, 86],
+      "summary": "glTF의 모든 머티리얼을 훑어 각 이미지가 어떤 텍스처 슬롯으로 쓰이는지 역인덱스를 만듭니다.",
+      "tags": ["gltf", "analysis", "indexing"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/optimize_textures.py:analyze",
+      "type": "function",
+      "name": "analyze",
+      "filePath": "scripts/optimize_textures.py",
+      "lineRange": [95, 112],
+      "summary": "이미지의 채널별 통계를 내어 사실상 단색인지, 알파가 실제로 쓰이는지 등 삭제 판정에 필요한 지표를 계산합니다.",
+      "tags": ["image-analysis", "statistics", "texture"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/optimize_textures.py:decide_drop",
+      "type": "function",
+      "name": "decide_drop",
+      "filePath": "scripts/optimize_textures.py",
+      "lineRange": [115, 160],
+      "summary": "맵 종류와 통계를 근거로 해당 텍스처를 삭제하고 스칼라 factor로 대체해도 결과가 같은지 판정하는 핵심 규칙입니다.",
+      "tags": ["optimization", "decision-logic", "texture", "validation"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/optimize_textures.py:slot_keeps_alpha",
+      "type": "function",
+      "name": "slot_keeps_alpha",
+      "filePath": "scripts/optimize_textures.py",
+      "lineRange": [163, 170],
+      "summary": "해당 이미지가 알파를 실제로 필요로 하는 슬롯에 쓰이는지 확인해 JPEG 변환 가능 여부를 가릅니다.",
+      "tags": ["texture", "alpha", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/optimize_textures.py:main",
+      "type": "function",
+      "name": "main",
+      "filePath": "scripts/optimize_textures.py",
+      "lineRange": [173, 266],
+      "summary": "gltf 경로와 그룹명을 받아 슬롯 수집·분석·삭제 판정·리사이즈·JPEG 재인코딩을 순서대로 수행하고 절감량을 보고하는 스크립트 진입점입니다.",
+      "tags": ["entry-point", "cli", "asset-pipeline", "orchestration"],
+      "complexity": "complex"
+    },
+    {
+      "id": "document:src/LEGACY_CRA.md",
+      "type": "document",
+      "name": "LEGACY_CRA.md",
+      "filePath": "src/LEGACY_CRA.md",
+      "summary": "src/App.js·src/index.js·src/containers 등 이전 Create React App 포트폴리오 소스가 참고용으로만 남아 있으며, 현재 앱인 src/app/page.tsx에서 import되지 않고 TypeScript 빌드에도 포함되지 않음을 명시합니다.",
+      "tags": ["documentation", "legacy", "deprecation-notice", "build-scope"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {"source": "file:scripts/bake-impostors.mjs", "target": "function:scripts/bake-impostors.mjs:parseGlb", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/bake-impostors.mjs", "target": "function:scripts/bake-impostors.mjs:decodePng", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/bake-impostors.mjs", "target": "function:scripts/bake-impostors.mjs:load", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/bake-impostors.mjs", "target": "function:scripts/bake-impostors.mjs:render", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/bake-impostors.mjs", "target": "function:scripts/bake-impostors.mjs:buildGlb", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/flatten-ground-tiles.mjs", "target": "function:scripts/flatten-ground-tiles.mjs:bakeTop", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/flatten-ground-tiles.mjs", "target": "function:scripts/flatten-ground-tiles.mjs:grade", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/flatten-ground-tiles.mjs", "target": "function:scripts/flatten-ground-tiles.mjs:buildGlb", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/generate-building-manifest.mjs", "target": "function:scripts/generate-building-manifest.mjs:buildingIds", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/make-fence-rail.mjs", "target": "function:scripts/make-fence-rail.mjs:box", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/make-grass-texture.mjs", "target": "function:scripts/make-grass-texture.mjs:tileableNoise", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/make-low-wall.mjs", "target": "function:scripts/make-low-wall.mjs:box", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/make-paving-tile.mjs", "target": "function:scripts/make-paving-tile.mjs:decodePng", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/make-terrace-steps.mjs", "target": "function:scripts/make-terrace-steps.mjs:box", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/make_paved_road_tiles.py", "target": "function:scripts/make_paved_road_tiles.py:parse_glb", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/make_paved_road_tiles.py", "target": "function:scripts/make_paved_road_tiles.py:build_glb", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/make_paved_road_tiles.py", "target": "function:scripts/make_paved_road_tiles.py:destone", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/make_paved_road_tiles.py", "target": "function:scripts/make_paved_road_tiles.py:convert", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/make_paved_road_tiles.py", "target": "function:scripts/make_paved_road_tiles.py:main", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/optimize-glb.mjs", "target": "function:scripts/optimize-glb.mjs:findPython", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/optimize-glb.mjs", "target": "function:scripts/optimize-glb.mjs:passesFor", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/optimize_textures.py", "target": "class:scripts/optimize_textures.py:Slot", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/optimize_textures.py", "target": "function:scripts/optimize_textures.py:collect_slots", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/optimize_textures.py", "target": "function:scripts/optimize_textures.py:analyze", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/optimize_textures.py", "target": "function:scripts/optimize_textures.py:decide_drop", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/optimize_textures.py", "target": "function:scripts/optimize_textures.py:slot_keeps_alpha", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/optimize_textures.py", "target": "function:scripts/optimize_textures.py:main", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:scripts/make_paved_road_tiles.py", "target": "function:scripts/make_paved_road_tiles.py:parse_glb", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/make_paved_road_tiles.py", "target": "function:scripts/make_paved_road_tiles.py:build_glb", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/make_paved_road_tiles.py", "target": "function:scripts/make_paved_road_tiles.py:destone", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/make_paved_road_tiles.py", "target": "function:scripts/make_paved_road_tiles.py:convert", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/make_paved_road_tiles.py", "target": "function:scripts/make_paved_road_tiles.py:main", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/optimize_textures.py", "target": "class:scripts/optimize_textures.py:Slot", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/optimize_textures.py", "target": "function:scripts/optimize_textures.py:collect_slots", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/optimize_textures.py", "target": "function:scripts/optimize_textures.py:analyze", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/optimize_textures.py", "target": "function:scripts/optimize_textures.py:decide_drop", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/optimize_textures.py", "target": "function:scripts/optimize_textures.py:slot_keeps_alpha", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/optimize_textures.py", "target": "function:scripts/optimize_textures.py:main", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:scripts/optimize-glb.mjs", "target": "file:scripts/optimize_textures.py", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:scripts/optimize-glb.mjs", "target": "file:scripts/generate-building-manifest.mjs", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:scripts/merge-character.mjs", "target": "file:scripts/optimize-glb.mjs", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:scripts/bake-impostors.mjs", "target": "file:scripts/optimize_textures.py", "type": "related", "direction": "forward", "weight": 0.5},
+    {"source": "file:scripts/flatten-ground-tiles.mjs", "target": "file:scripts/make-grass-texture.mjs", "type": "related", "direction": "forward", "weight": 0.5},
+    {"source": "file:scripts/make-paving-tile.mjs", "target": "file:scripts/make_paved_road_tiles.py", "type": "related", "direction": "forward", "weight": 0.5},
+    {"source": "file:scripts/generate-building-manifest.mjs", "target": "file:src/lib/constants.ts", "type": "reads_from", "direction": "forward", "weight": 0.6},
+    {"source": "file:scripts/make-terrace-steps.mjs", "target": "file:src/lib/villageTerrain.ts", "type": "related", "direction": "forward", "weight": 0.5},
+    {"source": "file:scripts/flatten-ground-tiles.mjs", "target": "file:scripts/generate-ground-layout.mjs", "type": "related", "direction": "forward", "weight": 0.5},
+    {"source": "file:scripts/make-fence-rail.mjs", "target": "file:scripts/generate-decor-layout.mjs", "type": "related", "direction": "forward", "weight": 0.5},
+    {"source": "file:scripts/make-low-wall.mjs", "target": "file:scripts/generate-decor-layout.mjs", "type": "related", "direction": "forward", "weight": 0.5},
+    {"source": "file:scripts/make-terrace-steps.mjs", "target": "file:scripts/generate-decor-layout.mjs", "type": "related", "direction": "forward", "weight": 0.5},
+    {"source": "file:scripts/bake-impostors.mjs", "target": "file:src/components/village/VillageScene.tsx", "type": "related", "direction": "forward", "weight": 0.5},
+    {"source": "file:scripts/backend-dev.mjs", "target": "file:backend/app/main.py", "type": "depends_on", "direction": "forward", "weight": 0.6},
+
+    {"source": "document:public/models/ASSETS.md", "target": "file:scripts/optimize-glb.mjs", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:public/models/ASSETS.md", "target": "file:scripts/merge-character.mjs", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:public/models/ASSETS.md", "target": "file:src/components/ModelTest.tsx", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:public/models/ASSETS.md", "target": "file:src/lib/constants.ts", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:src/LEGACY_CRA.md", "target": "file:src/app/page.tsx", "type": "documents", "direction": "forward", "weight": 0.5},
+    {"source": "document:resume/jaehoon-jeong-resume.md", "target": "file:resume/jaehoon-jeong-resume.html", "type": "related", "direction": "forward", "weight": 0.5},
+    {"source": "document:resume/jaehoon-jeong-resume.md", "target": "file:src/components/ui/ResumeMode.tsx", "type": "related", "direction": "forward", "weight": 0.5},
+
+    {"source": "file:next.config.mjs", "target": "file:src/app/page.tsx", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "file:postcss.config.mjs", "target": "file:src/app/globals.css", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "file:env.example", "target": "file:src/lib/liveApi.ts", "type": "configures", "direction": "forward", "weight": 0.6},
+    {"source": "file:next-env.d.ts", "target": "file:next.config.mjs", "type": "related", "direction": "forward", "weight": 0.5}
+  ]
+}

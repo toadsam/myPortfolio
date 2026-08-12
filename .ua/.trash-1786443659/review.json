@@ -1,0 +1,40 @@
+{
+  "issues": [],
+  "warnings": [
+    "Node 'config:skills-lock.json' has no edges (orphan)",
+    "Node 'file:.gitattributes' has no edges (orphan)",
+    "Node 'document:.github/pull_request_template.md' has no edges (orphan)",
+    "Node 'file:.prettierignore' has no edges (orphan)",
+    "Node 'file:public/models/props/.gitkeep' has no edges (orphan)"
+  ],
+  "stats": {
+    "totalNodes": 735,
+    "totalEdges": 1542,
+    "totalLayers": 10,
+    "tourSteps": 12,
+    "nodeTypes": {
+      "file": 203,
+      "function": 462,
+      "class": 21,
+      "service": 1,
+      "pipeline": 1,
+      "config": 16,
+      "document": 31
+    },
+    "edgeTypes": {
+      "imports": 423,
+      "contains": 484,
+      "exports": 238,
+      "calls": 201,
+      "related": 32,
+      "depends_on": 28,
+      "tested_by": 3,
+      "configures": 30,
+      "deploys": 2,
+      "documents": 87,
+      "validates": 3,
+      "writes_to": 5,
+      "reads_from": 6
+    }
+  }
+}

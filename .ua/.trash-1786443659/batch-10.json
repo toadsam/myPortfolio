@@ -1,0 +1,202 @@
+{
+  "nodes": [
+    {
+      "id": "file:scripts/generate-decor-layout.mjs",
+      "type": "file",
+      "name": "generate-decor-layout.mjs",
+      "filePath": "scripts/generate-decor-layout.mjs",
+      "summary": "간판·현판 아치·가로등·분수·담장·채움 민가 같은 마을 장식물을 절차적으로 배치해 src/data/propsLayout.json 의 `decor-*` 프롭만 통째로 다시 쓰는 빌드타임 Node 스크립트다. 건물 표(constants.ts)와 이미 깔린 길·앞마당을 읽어 충돌을 피한 자리를 고르며, '레이아웃은 오프라인에서 만들고 런타임에는 JSON을 렌더만 한다'는 이 프로젝트의 방식을 구현한다.",
+      "tags": ["build-script", "procedural-generation", "layout-generator", "village", "codegen"],
+      "complexity": "complex",
+      "languageNotes": "GLB 원본 높이(h)와 실물 기준 미터(m)를 KIT 표에 적어 두고 UNITS_PER_METER 로 환산하는 방식이라, 모델을 다시 뽑으면 표의 h 값도 함께 고쳐야 한다. mulberry32 시드 PRNG + value noise 로 매번 같은 결과가 나오도록 결정론을 보장한다."
+    },
+    {
+      "id": "file:scripts/generate-ground-layout.mjs",
+      "type": "file",
+      "name": "generate-ground-layout.mjs",
+      "filePath": "scripts/generate-ground-layout.mjs",
+      "summary": "마을 바닥(중앙 광장·건물 앞마당 원반·길 타일·화단)을 격자 위에서 계산해 propsLayout.json 의 `ground-*` 프롭을 갱신하는 생성 스크립트다. 간선(TRUNKS)만 정해 두고 건물마다 BFS로 최단 지선을 이어 붙인 뒤 끊긴 토막을 깎아내며, 이어지는 방향에 맞춰 straight/curve/t/cross 타일을 자동으로 고르고 구역 단차 사각형을 villageTerraces.json 으로 함께 내보낸다.",
+      "tags": ["build-script", "procedural-generation", "pathfinding", "tilemap", "village"],
+      "complexity": "complex",
+      "languageNotes": "CLI 플래그(--dry / --v1 / --v2=i0,j0,i1,j1)로 타일 세트를 통째로 되돌리거나 특정 격자 사각형만 새 세트로 깔아 나란히 비교할 수 있다. id 접두사(`ground-`)로 자기 결과만 지우고 다시 쓰기 때문에 프롭 편집기로 손수 옮긴 프롭과 섞이지 않는다."
+    },
+    {
+      "id": "file:scripts/lib/read-village.mjs",
+      "type": "file",
+      "name": "read-village.mjs",
+      "filePath": "scripts/lib/read-village.mjs",
+      "summary": "두 레이아웃 생성기가 공유하는 마을 정의 리더로, TypeScript라 직접 import 할 수 없는 src/lib/constants.ts 를 정규식으로 훑어 건물 좌표·크기·구역과 SPREAD·구역 밀어내기를 월드 좌표로 환산해 돌려준다. 예전에 생성기마다 건물 표를 베껴 두다 좌표가 어긋나던 문제를 한 곳으로 모아 없앤 모듈이다.",
+      "tags": ["utility", "parser", "shared-lib", "build-script", "village"],
+      "complexity": "moderate",
+      "languageNotes": "ESM(.mjs)에서 TS 소스를 파싱 없이 정규식으로 읽는 실용적 우회다. 그래서 constants.ts 의 표기 형식(id/size/position/district 리터럴, `[...].map(spread)` 꼴)이 바뀌면 여기서 예외를 던지도록 방어 코드가 곳곳에 들어가 있다."
+    },
+
+    {
+      "id": "function:scripts/lib/read-village.mjs:readVillage",
+      "type": "function",
+      "name": "readVillage",
+      "filePath": "scripts/lib/read-village.mjs",
+      "lineRange": [12, 78],
+      "summary": "constants.ts 소스를 문자열로 읽어 SPREAD·DISTRICT_PUSH 상수와 건물 목록(id·구역·좌표·크기)을 추출하고, 구역별 무게중심 방향으로 라디얼 푸시를 적용해 최종 월드 좌표의 건물 배열을 반환한다.",
+      "tags": ["parser", "regex", "coordinate-transform", "village"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/lib/read-village.mjs:readPositions",
+      "type": "function",
+      "name": "readPositions",
+      "filePath": "scripts/lib/read-village.mjs",
+      "lineRange": [87, 102],
+      "summary": "constants.ts 에 손으로 찍어 둔 좌표 배열(treePositions·rockPositions 등)을 이름으로 찾아 파싱하고, 배율 적용 전 값에 SPREAD를 곱해 월드 좌표로 돌려준다.",
+      "tags": ["parser", "regex", "coordinate-transform", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/lib/read-village.mjs:districtCenters",
+      "type": "function",
+      "name": "districtCenters",
+      "filePath": "scripts/lib/read-village.mjs",
+      "lineRange": [105, 117],
+      "summary": "건물 배열을 구역별로 묶어 각 구역의 건물 무게중심 좌표와 소속 건물 목록을 계산한다. 구역 간판·현판 아치를 어디에 세울지의 기준점으로 쓰인다.",
+      "tags": ["utility", "aggregation", "village", "geometry"],
+      "complexity": "simple"
+    },
+
+    {
+      "id": "function:scripts/generate-decor-layout.mjs:convexHull",
+      "type": "function",
+      "name": "convexHull",
+      "filePath": "scripts/generate-decor-layout.mjs",
+      "lineRange": [191, 204],
+      "summary": "점 집합의 볼록 껍질을 모노톤 체인 방식으로 구한다. 구역에 속한 건물들을 감싸는 경계 다각형을 만들어 담장·현판 아치 배치의 바깥선으로 쓴다.",
+      "tags": ["geometry", "algorithm", "convex-hull", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/generate-decor-layout.mjs:polygonDistance",
+      "type": "function",
+      "name": "polygonDistance",
+      "filePath": "scripts/generate-decor-layout.mjs",
+      "lineRange": [217, 227],
+      "summary": "임의의 점에서 다각형 변까지의 최단 거리를 계산한다. 장식물을 구역 경계에서 얼마나 안쪽/바깥쪽에 둘지 판단하는 데 쓰인다.",
+      "tags": ["geometry", "distance", "utility", "algorithm"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/generate-decor-layout.mjs:kindFor",
+      "type": "function",
+      "name": "kindFor",
+      "filePath": "scripts/generate-decor-layout.mjs",
+      "lineRange": [347, 362],
+      "summary": "좌표와 요청된 종류를 받아 실제로 심을 프롭 종류를 결정한다. 플레이어가 걸어 다니는 구역인지에 따라 임포스터 대신 원본 GLB로 승격하거나 아예 빼버리는 규칙을 적용한다.",
+      "tags": ["placement", "rule-engine", "lod", "village"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/generate-decor-layout.mjs:place",
+      "type": "function",
+      "name": "place",
+      "filePath": "scripts/generate-decor-layout.mjs",
+      "lineRange": [366, 378],
+      "summary": "결정된 종류·좌표로 프롭 한 개를 레이아웃 항목(모델 경로·위치·회전·크기 배율·띄움 높이)으로 만들어 결과 목록에 추가한다. KIT 규격의 실물 미터값을 마을 축척으로 환산하는 지점이다.",
+      "tags": ["placement", "factory", "scaling", "village"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/generate-decor-layout.mjs:findSpot",
+      "type": "function",
+      "name": "findSpot",
+      "filePath": "scripts/generate-decor-layout.mjs",
+      "lineRange": [381, 398],
+      "summary": "원하는 좌표가 길·앞마당 원반·건물과 겹치면 주변을 나선형으로 훑어 비어 있는 대체 자리를 찾는다. 끝내 못 찾으면 null을 돌려 해당 프롭을 건너뛰게 한다.",
+      "tags": ["placement", "collision-avoidance", "search", "algorithm"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/generate-decor-layout.mjs:clearance",
+      "type": "function",
+      "name": "clearance",
+      "filePath": "scripts/generate-decor-layout.mjs",
+      "lineRange": [912, 931],
+      "summary": "한 좌표 주변에 장애물이 없는 여유 반경을 재어, 큰 장식물(분수·아치·민가)을 놓아도 되는지 판단하는 척도를 제공한다.",
+      "tags": ["placement", "collision-avoidance", "geometry", "utility"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:scripts/generate-decor-layout.mjs:trianglesOf",
+      "type": "function",
+      "name": "trianglesOf",
+      "filePath": "scripts/generate-decor-layout.mjs",
+      "lineRange": [1659, 1675],
+      "summary": "GLB 바이너리를 직접 파싱해 메시의 삼각형 수를 센다. 배치가 끝난 뒤 종류별 폴리곤 예산 표를 콘솔에 출력해 마을 전체 렌더 부하를 가늠하게 해준다.",
+      "tags": ["glb", "binary-parsing", "profiling", "asset-pipeline"],
+      "complexity": "moderate"
+    },
+
+    {
+      "id": "function:scripts/generate-ground-layout.mjs:addSegment",
+      "type": "function",
+      "name": "addSegment",
+      "filePath": "scripts/generate-ground-layout.mjs",
+      "lineRange": [341, 354],
+      "summary": "격자 위 두 점을 잇는 직선 구간의 모든 칸을 도로 집합에 기록한다. 간선(TRUNKS)과 건물 지선을 격자 셀 단위로 펼치는 기본 연산이다.",
+      "tags": ["grid", "road-network", "utility", "village"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:scripts/generate-ground-layout.mjs:connect",
+      "type": "function",
+      "name": "connect",
+      "filePath": "scripts/generate-ground-layout.mjs",
+      "lineRange": [367, 422],
+      "summary": "건물 한 채에서 시작해 기존 도로망에 닿는 최단 지선을 BFS로 찾아 이어 붙인다. 건물이 늘거나 좌표가 바뀌어도 길이 끊기지 않게 해주는 핵심 로직이다.",
+      "tags": ["bfs", "pathfinding", "road-network", "algorithm", "village"],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:scripts/generate-ground-layout.mjs:pick",
+      "type": "function",
+      "name": "pick",
+      "filePath": "scripts/generate-ground-layout.mjs",
+      "lineRange": [536, 556],
+      "summary": "한 격자 칸의 상하좌우 연결 상태를 보고 straight/curve/t/cross 중 맞는 길 타일과 회전 각도를 고른다. 방향이 하나만 틀려도 길이 끊겨 보이므로 손 배치 대신 계산으로 결정한다.",
+      "tags": ["tilemap", "autotile", "grid", "village"],
+      "complexity": "moderate"
+    }
+  ],
+  "edges": [
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "file:scripts/lib/read-village.mjs", "type": "imports", "direction": "forward", "weight": 0.7},
+    {"source": "file:scripts/generate-ground-layout.mjs", "target": "file:scripts/lib/read-village.mjs", "type": "imports", "direction": "forward", "weight": 0.7},
+
+    {"source": "file:scripts/lib/read-village.mjs", "target": "function:scripts/lib/read-village.mjs:readVillage", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/lib/read-village.mjs", "target": "function:scripts/lib/read-village.mjs:readPositions", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/lib/read-village.mjs", "target": "function:scripts/lib/read-village.mjs:districtCenters", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/lib/read-village.mjs", "target": "function:scripts/lib/read-village.mjs:readVillage", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/lib/read-village.mjs", "target": "function:scripts/lib/read-village.mjs:readPositions", "type": "exports", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/lib/read-village.mjs", "target": "function:scripts/lib/read-village.mjs:districtCenters", "type": "exports", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "function:scripts/generate-decor-layout.mjs:convexHull", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "function:scripts/generate-decor-layout.mjs:polygonDistance", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "function:scripts/generate-decor-layout.mjs:kindFor", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "function:scripts/generate-decor-layout.mjs:place", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "function:scripts/generate-decor-layout.mjs:findSpot", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "function:scripts/generate-decor-layout.mjs:clearance", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "function:scripts/generate-decor-layout.mjs:trianglesOf", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:scripts/generate-ground-layout.mjs", "target": "function:scripts/generate-ground-layout.mjs:addSegment", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/generate-ground-layout.mjs", "target": "function:scripts/generate-ground-layout.mjs:connect", "type": "contains", "direction": "forward", "weight": 1.0},
+    {"source": "file:scripts/generate-ground-layout.mjs", "target": "function:scripts/generate-ground-layout.mjs:pick", "type": "contains", "direction": "forward", "weight": 1.0},
+
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "function:scripts/lib/read-village.mjs:readVillage", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "function:scripts/lib/read-village.mjs:readPositions", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "function:scripts/lib/read-village.mjs:districtCenters", "type": "calls", "direction": "forward", "weight": 0.8},
+    {"source": "file:scripts/generate-ground-layout.mjs", "target": "function:scripts/lib/read-village.mjs:readVillage", "type": "calls", "direction": "forward", "weight": 0.8},
+
+    {"source": "file:scripts/lib/read-village.mjs", "target": "file:src/lib/constants.ts", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "config:src/data/propsLayout.json", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "config:src/data/villageTerraces.json", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:scripts/generate-ground-layout.mjs", "target": "config:src/data/propsLayout.json", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:scripts/generate-ground-layout.mjs", "target": "config:src/data/villageTerraces.json", "type": "depends_on", "direction": "forward", "weight": 0.6},
+    {"source": "file:scripts/generate-decor-layout.mjs", "target": "file:scripts/generate-ground-layout.mjs", "type": "related", "direction": "forward", "weight": 0.5}
+  ]
+}

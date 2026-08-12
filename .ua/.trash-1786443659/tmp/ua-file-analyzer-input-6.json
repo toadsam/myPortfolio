@@ -1,0 +1,198 @@
+{
+ "projectRoot": "C:/Users/jk636/OneDrive/문서/GitHub/Whims-of-Wonder/Whims-of-Wonder/MetaverseProgramming/My project/Assets/myPortfolio",
+ "batchFiles": [
+  {
+   "path": "src/app/api/props/route.ts",
+   "language": "typescript",
+   "sizeLines": 59,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/ui/ResumeMode.tsx",
+   "language": "typescript",
+   "sizeLines": 831,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/village/Building.tsx",
+   "language": "typescript",
+   "sizeLines": 790,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/village/BuildingNetwork.tsx",
+   "language": "typescript",
+   "sizeLines": 93,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/village/CameraController.tsx",
+   "language": "typescript",
+   "sizeLines": 286,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/village/InstancedProps.tsx",
+   "language": "typescript",
+   "sizeLines": 282,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/village/PerfHud.tsx",
+   "language": "typescript",
+   "sizeLines": 255,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/village/PropsEditor.tsx",
+   "language": "typescript",
+   "sizeLines": 390,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/village/SeasonAmbience.tsx",
+   "language": "typescript",
+   "sizeLines": 101,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/components/village/VillageScene.tsx",
+   "language": "typescript",
+   "sizeLines": 1167,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/data/resume.ts",
+   "language": "typescript",
+   "sizeLines": 473,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/data/techIcons.ts",
+   "language": "typescript",
+   "sizeLines": 46,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/lib/groundMacro.ts",
+   "language": "typescript",
+   "sizeLines": 200,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/lib/htmlLabelThrottle.ts",
+   "language": "typescript",
+   "sizeLines": 32,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/lib/skyClouds.ts",
+   "language": "typescript",
+   "sizeLines": 128,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/lib/terraceBank.ts",
+   "language": "typescript",
+   "sizeLines": 184,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/lib/villagePalette.ts",
+   "language": "typescript",
+   "sizeLines": 153,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/lib/villageTerrain.ts",
+   "language": "typescript",
+   "sizeLines": 68,
+   "fileCategory": "code"
+  },
+  {
+   "path": "src/types/props.ts",
+   "language": "typescript",
+   "sizeLines": 20,
+   "fileCategory": "code"
+  }
+ ],
+ "batchImportData": {
+  "src/app/api/props/route.ts": [
+   "src/types/props.ts"
+  ],
+  "src/components/ui/ResumeMode.tsx": [
+   "src/components/ui/ProjectOnePager.tsx",
+   "src/components/ui/ResumeTerminal.css",
+   "src/data/projects.ts",
+   "src/data/resume.ts",
+   "src/data/techIcons.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/village/Building.tsx": [
+   "src/data/buildingModels.json",
+   "src/data/techIcons.ts",
+   "src/lib/htmlLabelThrottle.ts",
+   "src/lib/liveState.ts",
+   "src/lib/villagePalette.ts",
+   "src/lib/villageTerrain.ts",
+   "src/types/live.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/village/BuildingNetwork.tsx": [
+   "src/lib/villageTerrain.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/village/CameraController.tsx": [
+   "src/lib/constants.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/components/village/InstancedProps.tsx": [
+   "src/lib/groundMacro.ts",
+   "src/lib/villageTerrain.ts",
+   "src/types/props.ts"
+  ],
+  "src/components/village/PerfHud.tsx": [],
+  "src/components/village/PropsEditor.tsx": [
+   "src/components/village/InstancedProps.tsx",
+   "src/data/propsLayout.json",
+   "src/lib/constants.ts",
+   "src/lib/villageTerrain.ts",
+   "src/types/props.ts"
+  ],
+  "src/components/village/SeasonAmbience.tsx": [],
+  "src/components/village/VillageScene.tsx": [
+   "src/components/village/Building.tsx",
+   "src/components/village/BuildingNetwork.tsx",
+   "src/components/village/CameraController.tsx",
+   "src/components/village/CharacterController.tsx",
+   "src/components/village/NPC.tsx",
+   "src/components/village/PerfHud.tsx",
+   "src/components/village/PropsEditor.tsx",
+   "src/components/village/SeasonAmbience.tsx",
+   "src/data/buildingModels.json",
+   "src/data/npcBehaviors.ts",
+   "src/data/npcRoster.ts",
+   "src/lib/constants.ts",
+   "src/lib/groundMacro.ts",
+   "src/lib/htmlLabelThrottle.ts",
+   "src/lib/liveState.ts",
+   "src/lib/skyClouds.ts",
+   "src/lib/terraceBank.ts",
+   "src/lib/villagePalette.ts",
+   "src/lib/villageTerrain.ts",
+   "src/types/live.ts",
+   "src/types/portfolio.ts"
+  ],
+  "src/data/resume.ts": [],
+  "src/data/techIcons.ts": [],
+  "src/lib/groundMacro.ts": [],
+  "src/lib/htmlLabelThrottle.ts": [],
+  "src/lib/skyClouds.ts": [],
+  "src/lib/terraceBank.ts": [],
+  "src/lib/villagePalette.ts": [],
+  "src/lib/villageTerrain.ts": [
+   "src/data/villageTerraces.json"
+  ],
+  "src/types/props.ts": []
+ }
+}

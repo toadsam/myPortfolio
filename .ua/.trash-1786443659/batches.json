@@ -1,0 +1,5354 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "louvain",
+  "totalFiles": 252,
+  "totalBatches": 21,
+  "exportsByPath": {
+    ".gitattributes": [],
+    ".prettierignore": [],
+    "backend/app/__init__.py": [],
+    "backend/app/catalog.py": [],
+    "backend/app/config.py": [
+      "Settings"
+    ],
+    "backend/app/database.py": [
+      "Base",
+      "get_db",
+      "init_db",
+      "_ensure_daily_activity_columns"
+    ],
+    "backend/app/main.py": [
+      "on_startup",
+      "health",
+      "admin_auth_status",
+      "admin_login",
+      "activity_today",
+      "save_activity",
+      "activity_history",
+      "village_state",
+      "npc_chat",
+      "npc_tick",
+      "npc_encounter",
+      "npc_relationships",
+      "npc_group_chat",
+      "github_sync",
+      "create_visitor_event",
+      "admin_overview",
+      "admin_analytics",
+      "admin_projects",
+      "admin_update_project",
+      "admin_npc_logs",
+      "npc_presets",
+      "admin_npc_presets",
+      "admin_update_npc_preset",
+      "admin_village_overrides",
+      "admin_update_village_override",
+      "coding_tests",
+      "admin_create_coding_test",
+      "admin_update_coding_test",
+      "admin_delete_coding_test",
+      "cs_notes",
+      "admin_create_cs_note",
+      "admin_update_cs_note",
+      "admin_delete_cs_note"
+    ],
+    "backend/app/models.py": [
+      "DailyActivity",
+      "VisitorEvent",
+      "ManagedProject",
+      "NpcConversationLog",
+      "NpcPresetSetting",
+      "VillageBuildingOverride",
+      "CodingTestLog",
+      "NpcRelationship",
+      "CsNoteLog"
+    ],
+    "backend/app/relations.py": [
+      "canon",
+      "relation_for"
+    ],
+    "backend/app/schemas.py": [
+      "ActivityIn",
+      "ActivityOut",
+      "NpcActionOut",
+      "BuildingState",
+      "NpcState",
+      "VillageState",
+      "ChatMessageIn",
+      "ChatMessageOut",
+      "NpcTickIn",
+      "NpcTickOut",
+      "EncounterParticipant",
+      "NpcDialogueLine",
+      "NpcStateChange",
+      "NpcEncounterIn",
+      "NpcRelationshipOut",
+      "NpcRelationshipRow",
+      "NpcEncounterOut",
+      "NpcGroupChatIn",
+      "NpcGroupChatOut",
+      "GithubSyncOut",
+      "VisitorEventIn",
+      "VisitorEventOut",
+      "AnalyticsMetric",
+      "AnalyticsSummary",
+      "ManagedProjectIn",
+      "ManagedProjectOut",
+      "NpcConversationLogOut",
+      "NpcPresetIn",
+      "NpcPresetOut",
+      "VillageBuildingOverrideIn",
+      "VillageBuildingOverrideOut",
+      "AiUsage",
+      "AdminOverview",
+      "AdminLoginIn",
+      "AdminLoginOut",
+      "AdminAuthStatus",
+      "CodingTestIn",
+      "CodingTestOut",
+      "CsNoteIn",
+      "CsNoteOut"
+    ],
+    "backend/app/security.py": [
+      "auth_enabled",
+      "_sign",
+      "create_admin_token",
+      "verify_admin_token",
+      "verify_password",
+      "require_admin",
+      "_client_ip",
+      "_reset_daily_count_if_new_day",
+      "ai_rate_limit",
+      "ai_usage_snapshot"
+    ],
+    "backend/app/services/__init__.py": [],
+    "backend/app/services/activity_service.py": [
+      "list_activity_history",
+      "get_or_create_today",
+      "upsert_activity",
+      "_clean_list"
+    ],
+    "backend/app/services/admin_service.py": [
+      "seed_admin_defaults",
+      "record_visitor_event",
+      "analytics_summary",
+      "list_projects",
+      "update_project",
+      "log_npc_conversation",
+      "list_npc_logs",
+      "list_npc_presets",
+      "update_npc_preset",
+      "list_village_overrides",
+      "update_village_override",
+      "apply_village_overrides",
+      "admin_overview_payload",
+      "question_frequency",
+      "_default_questions_for_npc"
+    ],
+    "backend/app/services/chat_service.py": [
+      "answer_npc_message",
+      "_is_coding_npc",
+      "_is_cs_npc",
+      "_is_overseer",
+      "_activity_stats",
+      "_overseer_overview",
+      "build_context",
+      "answer_with_openai",
+      "answer_without_ai",
+      "_project_answer",
+      "_project_for_npc_or_message",
+      "_contains",
+      "_profile_text",
+      "_clean_response_text",
+      "_npc_profile_for_dynamic_id"
+    ],
+    "backend/app/services/github_service.py": [
+      "fetch_today_commit_count"
+    ],
+    "backend/app/services/learning_service.py": [
+      "list_coding_tests",
+      "create_coding_test",
+      "update_coding_test",
+      "delete_coding_test",
+      "count_coding_tests",
+      "count_coding_tests_today",
+      "list_cs_notes",
+      "create_cs_note",
+      "update_cs_note",
+      "delete_cs_note",
+      "count_cs_notes",
+      "count_cs_notes_today",
+      "coding_test_brief_lines",
+      "coding_test_detail_lines",
+      "cs_note_brief_lines",
+      "cs_note_detail_lines"
+    ],
+    "backend/app/services/npc_action_service.py": [
+      "choose_npc_action",
+      "_action_from_activity",
+      "_find_action",
+      "_to_action_out",
+      "_canonical_npc_id",
+      "_fallback_npc_name"
+    ],
+    "backend/app/services/npc_brain_service.py": [
+      "generate_npc_tick",
+      "generate_npc_encounter",
+      "generate_group_chat",
+      "_group_system_prompt",
+      "_group_from_data",
+      "_fallback_group",
+      "_call_json_model",
+      "_tick_system_prompt",
+      "_npc_profile",
+      "_encounter_system_prompt",
+      "_tick_from_data",
+      "_encounter_from_data",
+      "_fallback_tick",
+      "_fallback_encounter",
+      "_fallback_bubble",
+      "_fallback_goal",
+      "_fallback_memory",
+      "_project_for_building",
+      "_normalize_mood",
+      "_clamp_int",
+      "_profile_text"
+    ],
+    "backend/app/services/relationship_service.py": [
+      "_pair",
+      "_vibe_label",
+      "list_all",
+      "get_or_create",
+      "relationship_context",
+      "_milestone",
+      "apply_outcome"
+    ],
+    "backend/app/services/village_service.py": [
+      "_light_for_score",
+      "derive_village_state",
+      "_guide_status",
+      "_summary",
+      "_repo_matches_project",
+      "_project_reason",
+      "_tech_bonus",
+      "_project_status"
+    ],
+    "backend/app/time_utils.py": [
+      "today_local"
+    ],
+    "backend/tests/conftest.py": [
+      "db_session"
+    ],
+    "backend/tests/test_relations.py": [
+      "test_canon_matches_building_id_naming_convention",
+      "test_relation_for_is_symmetric",
+      "test_relation_for_overseer_pair_always_special",
+      "test_relation_for_unknown_pair_falls_back"
+    ],
+    "backend/tests/test_relationship_service.py": [
+      "test_same_kind_pair_has_no_relationship",
+      "test_seeded_pair_starts_with_seed_affinity",
+      "test_unseeded_pair_starts_neutral",
+      "test_apply_outcome_caps_delta_at_five_per_interaction",
+      "test_apply_outcome_clamps_affinity_to_upper_bound",
+      "test_apply_outcome_records_event_history_capped_at_six",
+      "test_apply_outcome_crossing_thirty_triggers_best_friend_milestone",
+      "test_apply_outcome_crossing_zero_downward_triggers_falling_out_milestone",
+      "test_apply_outcome_crossing_zero_upward_triggers_reconciled_milestone"
+    ],
+    "backend/tests/test_village_service.py": [
+      "make_activity",
+      "building",
+      "test_empty_day_is_quiet_and_nothing_unlocked",
+      "test_workout_unlocks_training_statue_and_lifts_guide_mood",
+      "test_five_commits_unlocks_lab_beacon_and_busies_project_npc",
+      "test_long_study_unlocks_fountain",
+      "test_long_coding_unlocks_deep_work_terminal",
+      "test_project_minutes_lights_up_matching_building_and_unlocks_active_flag",
+      "test_coding_test_today_brightens_study_codingtest_building",
+      "test_coding_test_history_only_keeps_dim_baseline"
+    ],
+    "env.example": [],
+    "next-env.d.ts": [],
+    "next.config.mjs": [],
+    "postcss.config.mjs": [],
+    "public/models/props/.gitkeep": [],
+    "scripts/backend-dev.mjs": [],
+    "scripts/bake-impostors.mjs": [],
+    "scripts/flatten-ground-tiles.mjs": [],
+    "scripts/generate-building-manifest.mjs": [],
+    "scripts/generate-decor-layout.mjs": [],
+    "scripts/generate-ground-layout.mjs": [],
+    "scripts/lib/read-village.mjs": [
+      "readVillage",
+      "readPositions",
+      "districtCenters"
+    ],
+    "scripts/make-fence-rail.mjs": [],
+    "scripts/make-grass-texture.mjs": [],
+    "scripts/make-low-wall.mjs": [],
+    "scripts/make-paving-tile.mjs": [],
+    "scripts/make-terrace-steps.mjs": [],
+    "scripts/make_paved_road_tiles.py": [
+      "parse_glb",
+      "build_glb",
+      "destone",
+      "convert",
+      "main"
+    ],
+    "scripts/merge-character.mjs": [],
+    "scripts/optimize-glb.mjs": [],
+    "scripts/optimize_textures.py": [
+      "vram_bytes",
+      "srgb_to_linear",
+      "Slot",
+      "collect_slots",
+      "analyze",
+      "decide_drop",
+      "slot_keeps_alpha",
+      "main"
+    ],
+    "src/app/admin/page.tsx": [
+      "AdminPage"
+    ],
+    "src/app/api/props/route.ts": [
+      "GET",
+      "POST"
+    ],
+    "src/app/layout.tsx": [
+      "metadata",
+      "viewport",
+      "RootLayout"
+    ],
+    "src/app/page.tsx": [
+      "Home"
+    ],
+    "src/app/sueo-preview/SueoPreview.tsx": [
+      "SueoPreview"
+    ],
+    "src/app/sueo-preview/page.tsx": [
+      "SueoPreviewPage"
+    ],
+    "src/app/test-model/page.tsx": [
+      "TestModelPage"
+    ],
+    "src/components/AIPortfolioVillage.tsx": [
+      "AIPortfolioVillage"
+    ],
+    "src/components/InteractionLayer.tsx": [
+      "InteractionLayer"
+    ],
+    "src/components/ModelTest.tsx": [
+      "ModelTest"
+    ],
+    "src/components/Providers.tsx": [
+      "Providers"
+    ],
+    "src/components/interior/ArchiveInterior.tsx": [
+      "ArchiveInterior"
+    ],
+    "src/components/interior/InteriorCharacterController.tsx": [
+      "InteriorCharacterController"
+    ],
+    "src/components/interior/InteriorScene.tsx": [
+      "InteriorScene"
+    ],
+    "src/components/interior/LabInterior.tsx": [
+      "LabInterior"
+    ],
+    "src/components/interior/PostInterior.tsx": [
+      "PostInterior"
+    ],
+    "src/components/interior/ProjectInterior.tsx": [
+      "ProjectInterior"
+    ],
+    "src/components/interior/WorkshopInterior.tsx": [
+      "WorkshopInterior"
+    ],
+    "src/components/ui/ConciergePanel.tsx": [
+      "ConciergePanel"
+    ],
+    "src/components/ui/CustomCursor.tsx": [
+      "CustomCursor"
+    ],
+    "src/components/ui/DialogueBox.tsx": [
+      "DialogueBox"
+    ],
+    "src/components/ui/EnterConfirmDialog.tsx": [
+      "EnterConfirmDialog"
+    ],
+    "src/components/ui/Header.tsx": [
+      "Header"
+    ],
+    "src/components/ui/InfoPanel.tsx": [
+      "InfoPanel"
+    ],
+    "src/components/ui/IntroOverlay.tsx": [
+      "IntroOverlay"
+    ],
+    "src/components/ui/ProjectCard.tsx": [
+      "ProjectCard"
+    ],
+    "src/components/ui/ProjectDetail.tsx": [
+      "ProjectDetail"
+    ],
+    "src/components/ui/ProjectOnePager.tsx": [
+      "ProjectOnePager"
+    ],
+    "src/components/ui/ProjectViewer.tsx": [
+      "ProjectViewer"
+    ],
+    "src/components/ui/ResumeMode.tsx": [
+      "ResumeMode"
+    ],
+    "src/components/ui/SceneTransition.tsx": [
+      "SceneTransition"
+    ],
+    "src/components/ui/SectionTabs.tsx": [
+      "SectionTabs"
+    ],
+    "src/components/ui/project-viewers/AmbientBackground.tsx": [
+      "AmbientBackground"
+    ],
+    "src/components/ui/project-viewers/DashboardProjectViewer.tsx": [
+      "DashboardProjectViewer"
+    ],
+    "src/components/ui/project-viewers/GameProjectViewer.tsx": [
+      "GameProjectViewer"
+    ],
+    "src/components/ui/project-viewers/PlatformProjectViewer.tsx": [
+      "PlatformProjectViewer"
+    ],
+    "src/components/ui/project-viewers/ProjectIntro.tsx": [
+      "ProjectIntro"
+    ],
+    "src/components/ui/project-viewers/RealtimeProjectViewer.tsx": [
+      "RealtimeProjectViewer"
+    ],
+    "src/components/ui/project-viewers/SoundToggle.tsx": [
+      "SoundToggle"
+    ],
+    "src/components/ui/project-viewers/aclub/AClubRoom.tsx": [
+      "AClubRoom"
+    ],
+    "src/components/ui/project-viewers/aclub/context.ts": [
+      "AClubProvider",
+      "useAClub"
+    ],
+    "src/components/ui/project-viewers/aclub/data.ts": [
+      "CATEGORY_COLORS",
+      "CATEGORY_NAMES",
+      "CLUBS",
+      "SORT_LABELS",
+      "SIM_CLUBS",
+      "SCROLL_CLUBS"
+    ],
+    "src/components/ui/project-viewers/aclub/fonts.ts": [
+      "aClubSans",
+      "aClubMono"
+    ],
+    "src/components/ui/project-viewers/aclub/parts.tsx": [
+      "useInViewOnce",
+      "Reveal",
+      "RevealWords",
+      "Kicker",
+      "CodeWindow",
+      "HlLine",
+      "SYNTAX",
+      "Kw",
+      "Str",
+      "Num",
+      "Cmt",
+      "NoteBox",
+      "MetricCell"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx": [
+      "ComponentSection"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx": [
+      "FilterSection"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx": [
+      "HeroSection"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx": [
+      "IntroOverlay"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx": [
+      "ResultSection"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx": [
+      "RetroSection"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx": [
+      "RoleSection"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx": [
+      "ScopeSection"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx": [
+      "ScrollRestoreSection"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx": [
+      "UrlStateSection"
+    ],
+    "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx": [
+      "UserFlowSection"
+    ],
+    "src/components/ui/project-viewers/atmosphere.ts": [
+      "ambientFor",
+      "INTRO_COPY"
+    ],
+    "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx": [
+      "DarkLabRoom"
+    ],
+    "src/components/ui/project-viewers/darklab/context.ts": [
+      "DarkLabProvider",
+      "useDarkLab"
+    ],
+    "src/components/ui/project-viewers/darklab/fonts.ts": [
+      "darkLabSans",
+      "darkLabMono"
+    ],
+    "src/components/ui/project-viewers/darklab/parts.tsx": [
+      "IconPlay",
+      "IconPlayCircle",
+      "IconVolume",
+      "CodeWindow",
+      "Kicker",
+      "SYNTAX",
+      "Kw",
+      "Str",
+      "Num",
+      "Ty",
+      "Fn",
+      "Cmt"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/ArchitectureSection.tsx": [
+      "ArchitectureSection"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/CinemachineSection.tsx": [
+      "CinemachineSection"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/EntrySection.tsx": [
+      "EntrySection"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/HeroSection.tsx": [
+      "HeroSection"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/HonestCostSection.tsx": [
+      "HonestCostSection"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/PrinciplesSection.tsx": [
+      "PrinciplesSection"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/RaycastSection.tsx": [
+      "RaycastSection"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/ResultSection.tsx": [
+      "ResultSection"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/RetroSection.tsx": [
+      "RetroSection"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/TakeoverSection.tsx": [
+      "TakeoverSection"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/Trouble01Section.tsx": [
+      "Trouble01Section"
+    ],
+    "src/components/ui/project-viewers/darklab/sections/Trouble02Section.tsx": [
+      "Trouble02Section"
+    ],
+    "src/components/ui/project-viewers/richContent/AClubDemo.tsx": [
+      "AClubDemo"
+    ],
+    "src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx": [
+      "AjouAdventureDemo"
+    ],
+    "src/components/ui/project-viewers/richContent/AjouchongDemo.tsx": [
+      "AjouchongDemo"
+    ],
+    "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx": [
+      "DarkLabReveal"
+    ],
+    "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx": [
+      "FestFlowLiveDemo"
+    ],
+    "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx": [
+      "MuscleUpDemo"
+    ],
+    "src/components/ui/project-viewers/richContent/MyStockDemo.tsx": [
+      "MyStockDemo"
+    ],
+    "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx": [
+      "SignLanguageDemo"
+    ],
+    "src/components/ui/project-viewers/richContent/TserofDemo.tsx": [
+      "TserofDemo"
+    ],
+    "src/components/ui/project-viewers/richContent/data.ts": [
+      "RICH_DATA"
+    ],
+    "src/components/ui/project-viewers/richContent/index.tsx": [
+      "RICH_RENDERERS"
+    ],
+    "src/components/ui/project-viewers/richContent/mywave.tsx": [
+      "MyWaveRichSection"
+    ],
+    "src/components/ui/project-viewers/richContent/mywaveBrief.ts": [
+      "MYWAVE_BRIEF"
+    ],
+    "src/components/ui/project-viewers/richContent/shared.tsx": [
+      "CodeLine",
+      "CodeBlock",
+      "MockScreen",
+      "ImageSlot",
+      "CountUp",
+      "DecodeText",
+      "RevealText",
+      "Magnetic",
+      "DemoFrame",
+      "RichSection"
+    ],
+    "src/components/ui/project-viewers/sound.ts": [
+      "sound"
+    ],
+    "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx": [
+      "SueoDistrictRoom"
+    ],
+    "src/components/ui/project-viewers/sueo/context.ts": [
+      "SIGN_TOTAL",
+      "SueoProvider",
+      "useSueo"
+    ],
+    "src/components/ui/project-viewers/sueo/fonts.ts": [
+      "sueoSans",
+      "sueoMono"
+    ],
+    "src/components/ui/project-viewers/sueo/parts.tsx": [
+      "rise",
+      "fade",
+      "Kicker",
+      "WordHeading",
+      "CodePanel",
+      "NoteBox",
+      "StatCard",
+      "LimitList",
+      "Caveat",
+      "SectionShell"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx": [
+      "ArchitectureSection"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx": [
+      "EntrySection"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx": [
+      "GallerySection"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx": [
+      "LimitsSection"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx": [
+      "MotionDataSection"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx": [
+      "ResultSection"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx": [
+      "RetroSection"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx": [
+      "ReviewLoopSection"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx": [
+      "SentenceSection"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx": [
+      "Trouble01Section"
+    ],
+    "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx": [
+      "Trouble02Section"
+    ],
+    "src/components/ui/project-viewers/sueo/sentenceData.ts": [
+      "DICTIONARY",
+      "PRESETS",
+      "PRESET_KEYS",
+      "parseFreeText",
+      "convert",
+      "cellDuration"
+    ],
+    "src/components/ui/project-viewers/sueo/signData.ts": [
+      "SIGNS",
+      "cloneSigns",
+      "WORD_ORDER"
+    ],
+    "src/components/ui/project-viewers/sueo/useTimeline.ts": [
+      "useTimeline",
+      "useInView"
+    ],
+    "src/components/village/Building.tsx": [
+      "Building"
+    ],
+    "src/components/village/BuildingNetwork.tsx": [
+      "BuildingNetwork"
+    ],
+    "src/components/village/CameraController.tsx": [
+      "CameraController"
+    ],
+    "src/components/village/CharacterController.tsx": [
+      "CharacterController"
+    ],
+    "src/components/village/Decorations.tsx": [
+      "PathSegment",
+      "Fence",
+      "SignPost"
+    ],
+    "src/components/village/InstancedProps.tsx": [
+      "InstancedProps"
+    ],
+    "src/components/village/NPC.tsx": [
+      "NPC"
+    ],
+    "src/components/village/NpcCharacter.tsx": [
+      "NpcCharacter"
+    ],
+    "src/components/village/PerfHud.tsx": [
+      "PerfProbe",
+      "PerfHudPanel"
+    ],
+    "src/components/village/PropsEditor.tsx": [
+      "usePropsEditor",
+      "PropsLayer",
+      "SelectionRing",
+      "PropsEditorTray"
+    ],
+    "src/components/village/SeasonAmbience.tsx": [
+      "SeasonAmbience"
+    ],
+    "src/components/village/VillageHud.tsx": [
+      "CORE_NPC_IDS",
+      "TRAVEL_POINTS",
+      "DISTRICT_TO_TRAVEL_KEY",
+      "LiveStatusPanel",
+      "NpcQuickDock",
+      "CommandDock",
+      "GroupChatPanel",
+      "MobileHud",
+      "QuickTravelDock",
+      "Minimap",
+      "KonamiBurst",
+      "ControlsHint",
+      "EavesdropButton",
+      "EavesdropPanel",
+      "EncounterNotice",
+      "MilestoneBanner",
+      "RelationshipViewer"
+    ],
+    "src/components/village/VillageScene.tsx": [
+      "VillageScene"
+    ],
+    "src/components/village/WarriorCharacter.tsx": [
+      "WarriorCharacter"
+    ],
+    "src/data/characterModels.ts": [
+      "MESHY_HEIGHT",
+      "NPC_HEIGHT",
+      "characterModels",
+      "DEFAULT_NPC_MODEL",
+      "classifyClip"
+    ],
+    "src/data/experience.ts": [
+      "experienceItems"
+    ],
+    "src/data/links.ts": [
+      "portfolioLinks"
+    ],
+    "src/data/npcActions.ts": [
+      "npcActions",
+      "getNpcActions"
+    ],
+    "src/data/npcBehaviors.ts": [
+      "npcBehaviorProfiles"
+    ],
+    "src/data/npcChatter.ts": [
+      "NPC_EMOTES",
+      "NPC_SMALL_TALK",
+      "OVERSEER_GREETINGS",
+      "pickRandom",
+      "canonKind",
+      "pairGag"
+    ],
+    "src/data/npcRoster.ts": [
+      "autonomousNpcs",
+      "npcDefaultPresetQuestions"
+    ],
+    "src/data/npcs.ts": [
+      "npcs"
+    ],
+    "src/data/projectThemes.ts": [
+      "projectThemes",
+      "DEFAULT_THEME",
+      "getProjectTheme"
+    ],
+    "src/data/projects.ts": [
+      "projects"
+    ],
+    "src/data/resume.ts": [
+      "CATEGORY_META",
+      "hero",
+      "heroSummary",
+      "skillChips",
+      "skillDetails",
+      "proficiency",
+      "education",
+      "mainProjects",
+      "subProjects",
+      "devRecords",
+      "values",
+      "aboutMe",
+      "contact"
+    ],
+    "src/data/skills.ts": [
+      "skills"
+    ],
+    "src/data/techIcons.ts": [
+      "techIcons",
+      "getTechIcon"
+    ],
+    "src/lib/constants.ts": [
+      "sectionMeta",
+      "SPREAD",
+      "spread",
+      "villageBuildings",
+      "treePositions",
+      "rockPositions",
+      "cameraTargets"
+    ],
+    "src/lib/groundMacro.ts": [
+      "MACRO_ENABLED",
+      "MACRO_WORLD",
+      "MACRO_STRENGTH",
+      "makeMacroTexture",
+      "applyGroundMacro"
+    ],
+    "src/lib/htmlLabelThrottle.ts": [
+      "createThrottledCalculatePosition",
+      "LABEL_SYNC_STRIDE"
+    ],
+    "src/lib/liveApi.ts": [
+      "setAdminToken",
+      "hasAdminToken",
+      "ApiError",
+      "fetchVillageState",
+      "fetchTodayActivity",
+      "saveActivity",
+      "fetchAdminAuthStatus",
+      "loginAdmin",
+      "fetchActivityHistory",
+      "syncGithubActivity",
+      "sendNpcMessage",
+      "requestNpcTick",
+      "requestNpcEncounter",
+      "fetchRelationships",
+      "requestGroupChat",
+      "logVisitorEvent",
+      "trackVisitorEvent",
+      "fetchAdminOverview",
+      "fetchAdminAnalytics",
+      "fetchManagedProjects",
+      "updateManagedProject",
+      "fetchNpcLogs",
+      "fetchNpcPresets",
+      "updateNpcPreset",
+      "fetchVillageOverrides",
+      "updateVillageOverride",
+      "fetchCodingTests",
+      "createCodingTest",
+      "updateCodingTest",
+      "deleteCodingTest",
+      "fetchCsNotes",
+      "createCsNote",
+      "updateCsNote",
+      "deleteCsNote",
+      "getVisitorSessionId"
+    ],
+    "src/lib/liveState.ts": [
+      "getBuildingState",
+      "getNpcState",
+      "buildBuildingStateMap",
+      "buildNpcStateMap",
+      "lightIntensity",
+      "moodLabel"
+    ],
+    "src/lib/sfx.ts": [
+      "sfx"
+    ],
+    "src/lib/skyClouds.ts": [
+      "makeCloudTexture"
+    ],
+    "src/lib/terraceBank.ts": [
+      "makeBankTexture"
+    ],
+    "src/lib/useDraggable.ts": [
+      "resetHudLayout",
+      "useDraggable"
+    ],
+    "src/lib/villagePalette.ts": [
+      "timePalette",
+      "VILLAGE_PALETTE"
+    ],
+    "src/lib/villageTerrain.ts": [
+      "TERRACE_STEP",
+      "TERRACE_RECTS",
+      "WATER_CHANNELS",
+      "PLATEAU_PAD",
+      "terrainHeightAt",
+      "onTerrace"
+    ],
+    "src/lib/worldCollision.ts": [
+      "isInsideBuildingFootprint",
+      "isWalkablePosition",
+      "distanceXZ"
+    ],
+    "src/types/live.ts": [],
+    "src/types/portfolio.ts": [],
+    "src/types/props.ts": [],
+    "tailwind.config.ts": []
+  },
+  "batches": [
+    {
+      "batchIndex": 1,
+      "files": [
+        {
+          "path": "src/components/ui/ProjectOnePager.tsx",
+          "language": "typescript",
+          "sizeLines": 788,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/ProjectViewer.tsx",
+          "language": "typescript",
+          "sizeLines": 1103,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/AmbientBackground.tsx",
+          "language": "typescript",
+          "sizeLines": 181,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/DashboardProjectViewer.tsx",
+          "language": "typescript",
+          "sizeLines": 424,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/GameProjectViewer.tsx",
+          "language": "typescript",
+          "sizeLines": 767,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/PlatformProjectViewer.tsx",
+          "language": "typescript",
+          "sizeLines": 317,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/ProjectIntro.tsx",
+          "language": "typescript",
+          "sizeLines": 97,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/RealtimeProjectViewer.tsx",
+          "language": "typescript",
+          "sizeLines": 359,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/SoundToggle.tsx",
+          "language": "typescript",
+          "sizeLines": 54,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/atmosphere.ts",
+          "language": "typescript",
+          "sizeLines": 33,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/AClubDemo.tsx",
+          "language": "typescript",
+          "sizeLines": 102,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx",
+          "language": "typescript",
+          "sizeLines": 116,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/AjouchongDemo.tsx",
+          "language": "typescript",
+          "sizeLines": 107,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+          "language": "typescript",
+          "sizeLines": 85,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+          "language": "typescript",
+          "sizeLines": 303,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+          "language": "typescript",
+          "sizeLines": 163,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+          "language": "typescript",
+          "sizeLines": 143,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+          "language": "typescript",
+          "sizeLines": 121,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+          "language": "typescript",
+          "sizeLines": 120,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/data.ts",
+          "language": "typescript",
+          "sizeLines": 1982,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/index.tsx",
+          "language": "typescript",
+          "sizeLines": 55,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/mywave.tsx",
+          "language": "typescript",
+          "sizeLines": 1520,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+          "language": "typescript",
+          "sizeLines": 235,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/richContent/shared.tsx",
+          "language": "typescript",
+          "sizeLines": 966,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sound.ts",
+          "language": "typescript",
+          "sizeLines": 149,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/projectThemes.ts",
+          "language": "typescript",
+          "sizeLines": 112,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "src/components/ui/ProjectOnePager.tsx": [
+          "src/components/ui/ProjectDetail.css",
+          "src/components/ui/project-viewers/richContent/data.ts",
+          "src/components/ui/project-viewers/richContent/mywaveBrief.ts",
+          "src/components/ui/project-viewers/richContent/shared.tsx",
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/ProjectViewer.tsx": [
+          "src/components/ui/project-viewers/DashboardProjectViewer.tsx",
+          "src/components/ui/project-viewers/GameProjectViewer.tsx",
+          "src/components/ui/project-viewers/PlatformProjectViewer.tsx",
+          "src/components/ui/project-viewers/ProjectIntro.tsx",
+          "src/components/ui/project-viewers/RealtimeProjectViewer.tsx",
+          "src/components/ui/project-viewers/SoundToggle.tsx",
+          "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+          "src/components/ui/project-viewers/atmosphere.ts",
+          "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+          "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/project-viewers/AmbientBackground.tsx": [
+          "src/components/ui/project-viewers/atmosphere.ts",
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/DashboardProjectViewer.tsx": [
+          "src/components/ui/project-viewers/AmbientBackground.tsx",
+          "src/components/ui/project-viewers/richContent/index.tsx",
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/project-viewers/GameProjectViewer.tsx": [
+          "src/components/ui/project-viewers/richContent/index.tsx",
+          "src/components/ui/project-viewers/sound.ts",
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/project-viewers/PlatformProjectViewer.tsx": [
+          "src/components/ui/project-viewers/AmbientBackground.tsx",
+          "src/components/ui/project-viewers/richContent/index.tsx",
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/project-viewers/ProjectIntro.tsx": [
+          "src/components/ui/project-viewers/atmosphere.ts",
+          "src/components/ui/project-viewers/sound.ts",
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/RealtimeProjectViewer.tsx": [
+          "src/components/ui/project-viewers/AmbientBackground.tsx",
+          "src/components/ui/project-viewers/richContent/index.tsx",
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/project-viewers/SoundToggle.tsx": [
+          "src/components/ui/project-viewers/atmosphere.ts",
+          "src/components/ui/project-viewers/sound.ts",
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/atmosphere.ts": [
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/AClubDemo.tsx": [
+          "src/components/ui/project-viewers/richContent/shared.tsx",
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx": [
+          "src/components/ui/project-viewers/richContent/shared.tsx",
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/AjouchongDemo.tsx": [
+          "src/components/ui/project-viewers/richContent/shared.tsx",
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx": [
+          "src/components/ui/project-viewers/richContent/shared.tsx",
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx": [
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx": [
+          "src/components/ui/project-viewers/richContent/shared.tsx",
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/MyStockDemo.tsx": [
+          "src/components/ui/project-viewers/richContent/shared.tsx",
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx": [
+          "src/components/ui/project-viewers/richContent/shared.tsx",
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/TserofDemo.tsx": [
+          "src/components/ui/project-viewers/richContent/shared.tsx",
+          "src/data/projectThemes.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/data.ts": [
+          "src/components/ui/project-viewers/richContent/shared.tsx"
+        ],
+        "src/components/ui/project-viewers/richContent/index.tsx": [
+          "src/components/ui/project-viewers/richContent/AClubDemo.tsx",
+          "src/components/ui/project-viewers/richContent/AjouAdventureDemo.tsx",
+          "src/components/ui/project-viewers/richContent/AjouchongDemo.tsx",
+          "src/components/ui/project-viewers/richContent/DarkLabReveal.tsx",
+          "src/components/ui/project-viewers/richContent/FestFlowLiveDemo.tsx",
+          "src/components/ui/project-viewers/richContent/MuscleUpDemo.tsx",
+          "src/components/ui/project-viewers/richContent/MyStockDemo.tsx",
+          "src/components/ui/project-viewers/richContent/SignLanguageDemo.tsx",
+          "src/components/ui/project-viewers/richContent/TserofDemo.tsx",
+          "src/components/ui/project-viewers/richContent/data.ts",
+          "src/components/ui/project-viewers/richContent/mywave.tsx",
+          "src/components/ui/project-viewers/richContent/shared.tsx",
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/mywave.tsx": [
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/project-viewers/richContent/mywaveBrief.ts": [
+          "src/components/ui/project-viewers/richContent/shared.tsx"
+        ],
+        "src/components/ui/project-viewers/richContent/shared.tsx": [
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/project-viewers/sound.ts": [
+          "src/components/ui/project-viewers/atmosphere.ts"
+        ],
+        "src/data/projectThemes.ts": []
+      },
+      "neighborMap": {
+        "src/components/ui/ProjectOnePager.tsx": [
+          {
+            "path": "src/components/ui/ProjectDetail.css",
+            "batchIndex": 21,
+            "symbols": []
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "src/components/ui/ResumeMode.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "ResumeMode"
+            ]
+          }
+        ],
+        "src/components/ui/ProjectViewer.tsx": [
+          {
+            "path": "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+            "batchIndex": 7,
+            "symbols": [
+              "AClubRoom"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+            "batchIndex": 8,
+            "symbols": [
+              "DarkLabRoom"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+            "batchIndex": 5,
+            "symbols": [
+              "SueoDistrictRoom"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "src/components/interior/LabInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "LabInterior"
+            ]
+          },
+          {
+            "path": "src/components/interior/ProjectInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "ProjectInterior"
+            ]
+          }
+        ],
+        "src/components/ui/project-viewers/DashboardProjectViewer.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/project-viewers/GameProjectViewer.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/project-viewers/PlatformProjectViewer.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/project-viewers/RealtimeProjectViewer.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/project-viewers/richContent/index.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/project-viewers/richContent/mywave.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/project-viewers/richContent/shared.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/project-viewers/sound.ts": [
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+            "batchIndex": 7,
+            "symbols": [
+              "AClubRoom"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+            "batchIndex": 8,
+            "symbols": [
+              "DarkLabRoom"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/darklab/sections/RaycastSection.tsx",
+            "batchIndex": 8,
+            "symbols": [
+              "RaycastSection"
+            ]
+          }
+        ],
+        "src/data/projectThemes.ts": [
+          {
+            "path": "src/app/sueo-preview/SueoPreview.tsx",
+            "batchIndex": 5,
+            "symbols": [
+              "SueoPreview"
+            ]
+          },
+          {
+            "path": "src/components/interior/ProjectInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "ProjectInterior"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+            "batchIndex": 7,
+            "symbols": [
+              "AClubRoom"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+            "batchIndex": 8,
+            "symbols": [
+              "DarkLabRoom"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+            "batchIndex": 5,
+            "symbols": [
+              "SueoDistrictRoom"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 2,
+      "files": [
+        {
+          "path": "backend/app/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/catalog.py",
+          "language": "python",
+          "sizeLines": 185,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/config.py",
+          "language": "python",
+          "sizeLines": 31,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/database.py",
+          "language": "python",
+          "sizeLines": 55,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/main.py",
+          "language": "python",
+          "sizeLines": 404,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/models.py",
+          "language": "python",
+          "sizeLines": 131,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/relations.py",
+          "language": "python",
+          "sizeLines": 44,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/schemas.py",
+          "language": "python",
+          "sizeLines": 358,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/security.py",
+          "language": "python",
+          "sizeLines": 109,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/services/__init__.py",
+          "language": "python",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/services/activity_service.py",
+          "language": "python",
+          "sizeLines": 66,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/services/admin_service.py",
+          "language": "python",
+          "sizeLines": 262,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/services/chat_service.py",
+          "language": "python",
+          "sizeLines": 402,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/services/github_service.py",
+          "language": "python",
+          "sizeLines": 36,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/services/learning_service.py",
+          "language": "python",
+          "sizeLines": 187,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/services/npc_action_service.py",
+          "language": "python",
+          "sizeLines": 259,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/services/npc_brain_service.py",
+          "language": "python",
+          "sizeLines": 545,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/services/relationship_service.py",
+          "language": "python",
+          "sizeLines": 121,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/services/village_service.py",
+          "language": "python",
+          "sizeLines": 260,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/app/time_utils.py",
+          "language": "python",
+          "sizeLines": 8,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/tests/conftest.py",
+          "language": "python",
+          "sizeLines": 21,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/tests/test_relations.py",
+          "language": "python",
+          "sizeLines": 40,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/tests/test_relationship_service.py",
+          "language": "python",
+          "sizeLines": 76,
+          "fileCategory": "code"
+        },
+        {
+          "path": "backend/tests/test_village_service.py",
+          "language": "python",
+          "sizeLines": 90,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "backend/app/__init__.py": [],
+        "backend/app/catalog.py": [],
+        "backend/app/config.py": [],
+        "backend/app/database.py": [
+          "backend/app/config.py"
+        ],
+        "backend/app/main.py": [
+          "backend/app/config.py",
+          "backend/app/database.py",
+          "backend/app/schemas.py",
+          "backend/app/security.py",
+          "backend/app/services/activity_service.py",
+          "backend/app/services/admin_service.py",
+          "backend/app/services/chat_service.py",
+          "backend/app/services/github_service.py",
+          "backend/app/services/learning_service.py",
+          "backend/app/services/npc_brain_service.py",
+          "backend/app/services/relationship_service.py",
+          "backend/app/services/village_service.py"
+        ],
+        "backend/app/models.py": [
+          "backend/app/database.py"
+        ],
+        "backend/app/relations.py": [],
+        "backend/app/schemas.py": [],
+        "backend/app/security.py": [
+          "backend/app/config.py"
+        ],
+        "backend/app/services/__init__.py": [],
+        "backend/app/services/activity_service.py": [
+          "backend/app/models.py",
+          "backend/app/schemas.py",
+          "backend/app/time_utils.py"
+        ],
+        "backend/app/services/admin_service.py": [
+          "backend/app/catalog.py",
+          "backend/app/models.py",
+          "backend/app/schemas.py",
+          "backend/app/security.py"
+        ],
+        "backend/app/services/chat_service.py": [
+          "backend/app/catalog.py",
+          "backend/app/config.py",
+          "backend/app/models.py",
+          "backend/app/schemas.py",
+          "backend/app/services/learning_service.py",
+          "backend/app/services/npc_action_service.py",
+          "backend/app/time_utils.py"
+        ],
+        "backend/app/services/github_service.py": [
+          "backend/app/config.py",
+          "backend/app/time_utils.py"
+        ],
+        "backend/app/services/learning_service.py": [
+          "backend/app/models.py",
+          "backend/app/schemas.py",
+          "backend/app/time_utils.py"
+        ],
+        "backend/app/services/npc_action_service.py": [
+          "backend/app/catalog.py",
+          "backend/app/models.py",
+          "backend/app/schemas.py"
+        ],
+        "backend/app/services/npc_brain_service.py": [
+          "backend/app/catalog.py",
+          "backend/app/config.py",
+          "backend/app/models.py",
+          "backend/app/schemas.py",
+          "backend/app/services/chat_service.py",
+          "backend/app/services/npc_action_service.py"
+        ],
+        "backend/app/services/relationship_service.py": [
+          "backend/app/models.py",
+          "backend/app/relations.py"
+        ],
+        "backend/app/services/village_service.py": [
+          "backend/app/models.py",
+          "backend/app/schemas.py"
+        ],
+        "backend/app/time_utils.py": [
+          "backend/app/config.py"
+        ],
+        "backend/tests/conftest.py": [
+          "backend/app/database.py"
+        ],
+        "backend/tests/test_relations.py": [
+          "backend/app/__init__.py",
+          "backend/app/relations.py"
+        ],
+        "backend/tests/test_relationship_service.py": [
+          "backend/app/services/__init__.py",
+          "backend/app/services/relationship_service.py"
+        ],
+        "backend/tests/test_village_service.py": [
+          "backend/app/models.py",
+          "backend/app/services/village_service.py"
+        ]
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 3,
+      "files": [
+        {
+          "path": "src/app/admin/page.tsx",
+          "language": "typescript",
+          "sizeLines": 1503,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/app/page.tsx",
+          "language": "typescript",
+          "sizeLines": 5,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/AIPortfolioVillage.tsx",
+          "language": "typescript",
+          "sizeLines": 1537,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/interior/ArchiveInterior.tsx",
+          "language": "typescript",
+          "sizeLines": 211,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/interior/InteriorScene.tsx",
+          "language": "typescript",
+          "sizeLines": 59,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/interior/LabInterior.tsx",
+          "language": "typescript",
+          "sizeLines": 273,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/interior/PostInterior.tsx",
+          "language": "typescript",
+          "sizeLines": 229,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/interior/ProjectInterior.tsx",
+          "language": "typescript",
+          "sizeLines": 290,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/interior/WorkshopInterior.tsx",
+          "language": "typescript",
+          "sizeLines": 220,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/ConciergePanel.tsx",
+          "language": "typescript",
+          "sizeLines": 78,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/DialogueBox.tsx",
+          "language": "typescript",
+          "sizeLines": 322,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/EnterConfirmDialog.tsx",
+          "language": "typescript",
+          "sizeLines": 140,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/Header.tsx",
+          "language": "typescript",
+          "sizeLines": 95,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/InfoPanel.tsx",
+          "language": "typescript",
+          "sizeLines": 636,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/IntroOverlay.tsx",
+          "language": "typescript",
+          "sizeLines": 609,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/ProjectCard.tsx",
+          "language": "typescript",
+          "sizeLines": 76,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/ProjectDetail.tsx",
+          "language": "typescript",
+          "sizeLines": 96,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/SceneTransition.tsx",
+          "language": "typescript",
+          "sizeLines": 64,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/SectionTabs.tsx",
+          "language": "typescript",
+          "sizeLines": 30,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/CharacterController.tsx",
+          "language": "typescript",
+          "sizeLines": 130,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/Decorations.tsx",
+          "language": "typescript",
+          "sizeLines": 95,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "src/app/admin/page.tsx": [
+          "src/data/projects.ts",
+          "src/data/skills.ts",
+          "src/lib/constants.ts",
+          "src/lib/liveApi.ts",
+          "src/types/live.ts"
+        ],
+        "src/app/page.tsx": [
+          "src/components/AIPortfolioVillage.tsx"
+        ],
+        "src/components/AIPortfolioVillage.tsx": [
+          "src/components/ui/ConciergePanel.tsx",
+          "src/components/ui/DialogueBox.tsx",
+          "src/components/ui/Header.tsx",
+          "src/components/ui/InfoPanel.tsx",
+          "src/components/ui/IntroOverlay.tsx",
+          "src/components/ui/SceneTransition.tsx",
+          "src/components/ui/SectionTabs.tsx",
+          "src/components/ui/project-viewers/sound.ts",
+          "src/components/village/NPC.tsx",
+          "src/components/village/VillageHud.tsx",
+          "src/data/npcBehaviors.ts",
+          "src/data/npcChatter.ts",
+          "src/data/npcRoster.ts",
+          "src/lib/constants.ts",
+          "src/lib/liveApi.ts",
+          "src/lib/liveState.ts",
+          "src/lib/sfx.ts",
+          "src/types/live.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/interior/ArchiveInterior.tsx": [
+          "src/data/experience.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/interior/InteriorScene.tsx": [
+          "src/types/portfolio.ts"
+        ],
+        "src/components/interior/LabInterior.tsx": [
+          "src/components/ui/ProjectViewer.tsx",
+          "src/data/projects.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/interior/PostInterior.tsx": [
+          "src/data/links.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/interior/ProjectInterior.tsx": [
+          "src/components/ui/ProjectViewer.tsx",
+          "src/data/projectThemes.ts",
+          "src/data/projects.ts",
+          "src/lib/liveApi.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/interior/WorkshopInterior.tsx": [
+          "src/data/skills.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/ConciergePanel.tsx": [],
+        "src/components/ui/DialogueBox.tsx": [
+          "src/data/npcRoster.ts",
+          "src/lib/constants.ts",
+          "src/lib/liveApi.ts",
+          "src/lib/liveState.ts",
+          "src/types/live.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/EnterConfirmDialog.tsx": [
+          "src/lib/constants.ts"
+        ],
+        "src/components/ui/Header.tsx": [
+          "src/lib/constants.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/InfoPanel.tsx": [
+          "src/components/ui/ProjectCard.tsx",
+          "src/components/ui/ProjectDetail.tsx",
+          "src/data/experience.ts",
+          "src/data/links.ts",
+          "src/data/projects.ts",
+          "src/data/skills.ts",
+          "src/lib/constants.ts",
+          "src/lib/liveApi.ts",
+          "src/types/live.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/IntroOverlay.tsx": [
+          "src/lib/sfx.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/ProjectCard.tsx": [
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/ProjectDetail.tsx": [
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/SceneTransition.tsx": [],
+        "src/components/ui/SectionTabs.tsx": [
+          "src/lib/constants.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/village/CharacterController.tsx": [
+          "src/components/village/WarriorCharacter.tsx",
+          "src/lib/constants.ts",
+          "src/lib/villageTerrain.ts",
+          "src/lib/worldCollision.ts"
+        ],
+        "src/components/village/Decorations.tsx": [
+          "src/types/portfolio.ts"
+        ]
+      },
+      "neighborMap": {
+        "src/app/admin/page.tsx": [
+          {
+            "path": "src/data/projects.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "projects"
+            ]
+          },
+          {
+            "path": "src/data/skills.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "skills"
+            ]
+          },
+          {
+            "path": "src/lib/constants.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sectionMeta",
+              "SPREAD",
+              "spread",
+              "villageBuildings",
+              "treePositions",
+              "rockPositions",
+              "cameraTargets"
+            ]
+          },
+          {
+            "path": "src/lib/liveApi.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "setAdminToken",
+              "hasAdminToken",
+              "ApiError",
+              "fetchVillageState",
+              "fetchTodayActivity",
+              "saveActivity",
+              "fetchAdminAuthStatus",
+              "loginAdmin",
+              "fetchActivityHistory",
+              "syncGithubActivity",
+              "sendNpcMessage",
+              "requestNpcTick",
+              "requestNpcEncounter",
+              "fetchRelationships",
+              "requestGroupChat",
+              "logVisitorEvent",
+              "trackVisitorEvent",
+              "fetchAdminOverview",
+              "fetchAdminAnalytics",
+              "fetchManagedProjects",
+              "updateManagedProject",
+              "fetchNpcLogs",
+              "fetchNpcPresets",
+              "updateNpcPreset",
+              "fetchVillageOverrides",
+              "updateVillageOverride",
+              "fetchCodingTests",
+              "createCodingTest",
+              "updateCodingTest",
+              "deleteCodingTest",
+              "fetchCsNotes",
+              "createCsNote",
+              "updateCsNote",
+              "deleteCsNote",
+              "getVisitorSessionId"
+            ]
+          },
+          {
+            "path": "src/types/live.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/AIPortfolioVillage.tsx": [
+          {
+            "path": "src/components/ui/project-viewers/sound.ts",
+            "batchIndex": 1,
+            "symbols": [
+              "sound"
+            ]
+          },
+          {
+            "path": "src/components/village/NPC.tsx",
+            "batchIndex": 4,
+            "symbols": [
+              "NPC"
+            ]
+          },
+          {
+            "path": "src/components/village/VillageHud.tsx",
+            "batchIndex": 4,
+            "symbols": [
+              "CORE_NPC_IDS",
+              "TRAVEL_POINTS",
+              "DISTRICT_TO_TRAVEL_KEY",
+              "LiveStatusPanel",
+              "NpcQuickDock",
+              "CommandDock",
+              "GroupChatPanel",
+              "MobileHud",
+              "QuickTravelDock",
+              "Minimap",
+              "KonamiBurst",
+              "ControlsHint",
+              "EavesdropButton",
+              "EavesdropPanel",
+              "EncounterNotice",
+              "MilestoneBanner",
+              "RelationshipViewer"
+            ]
+          },
+          {
+            "path": "src/data/npcBehaviors.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "npcBehaviorProfiles"
+            ]
+          },
+          {
+            "path": "src/data/npcChatter.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "NPC_EMOTES",
+              "NPC_SMALL_TALK",
+              "OVERSEER_GREETINGS",
+              "pickRandom",
+              "canonKind",
+              "pairGag"
+            ]
+          },
+          {
+            "path": "src/data/npcRoster.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "autonomousNpcs",
+              "npcDefaultPresetQuestions"
+            ]
+          },
+          {
+            "path": "src/lib/constants.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sectionMeta",
+              "SPREAD",
+              "spread",
+              "villageBuildings",
+              "treePositions",
+              "rockPositions",
+              "cameraTargets"
+            ]
+          },
+          {
+            "path": "src/lib/liveApi.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "setAdminToken",
+              "hasAdminToken",
+              "ApiError",
+              "fetchVillageState",
+              "fetchTodayActivity",
+              "saveActivity",
+              "fetchAdminAuthStatus",
+              "loginAdmin",
+              "fetchActivityHistory",
+              "syncGithubActivity",
+              "sendNpcMessage",
+              "requestNpcTick",
+              "requestNpcEncounter",
+              "fetchRelationships",
+              "requestGroupChat",
+              "logVisitorEvent",
+              "trackVisitorEvent",
+              "fetchAdminOverview",
+              "fetchAdminAnalytics",
+              "fetchManagedProjects",
+              "updateManagedProject",
+              "fetchNpcLogs",
+              "fetchNpcPresets",
+              "updateNpcPreset",
+              "fetchVillageOverrides",
+              "updateVillageOverride",
+              "fetchCodingTests",
+              "createCodingTest",
+              "updateCodingTest",
+              "deleteCodingTest",
+              "fetchCsNotes",
+              "createCsNote",
+              "updateCsNote",
+              "deleteCsNote",
+              "getVisitorSessionId"
+            ]
+          },
+          {
+            "path": "src/lib/liveState.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "getBuildingState",
+              "getNpcState",
+              "buildBuildingStateMap",
+              "buildNpcStateMap",
+              "lightIntensity",
+              "moodLabel"
+            ]
+          },
+          {
+            "path": "src/lib/sfx.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sfx"
+            ]
+          },
+          {
+            "path": "src/types/live.ts",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/interior/ArchiveInterior.tsx": [
+          {
+            "path": "src/data/experience.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "experienceItems"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/interior/InteriorScene.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/interior/LabInterior.tsx": [
+          {
+            "path": "src/components/ui/ProjectViewer.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "ProjectViewer"
+            ]
+          },
+          {
+            "path": "src/data/projects.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "projects"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/interior/PostInterior.tsx": [
+          {
+            "path": "src/data/links.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "portfolioLinks"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/interior/ProjectInterior.tsx": [
+          {
+            "path": "src/components/ui/ProjectViewer.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "ProjectViewer"
+            ]
+          },
+          {
+            "path": "src/data/projectThemes.ts",
+            "batchIndex": 1,
+            "symbols": [
+              "projectThemes",
+              "DEFAULT_THEME",
+              "getProjectTheme"
+            ]
+          },
+          {
+            "path": "src/data/projects.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "projects"
+            ]
+          },
+          {
+            "path": "src/lib/liveApi.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "setAdminToken",
+              "hasAdminToken",
+              "ApiError",
+              "fetchVillageState",
+              "fetchTodayActivity",
+              "saveActivity",
+              "fetchAdminAuthStatus",
+              "loginAdmin",
+              "fetchActivityHistory",
+              "syncGithubActivity",
+              "sendNpcMessage",
+              "requestNpcTick",
+              "requestNpcEncounter",
+              "fetchRelationships",
+              "requestGroupChat",
+              "logVisitorEvent",
+              "trackVisitorEvent",
+              "fetchAdminOverview",
+              "fetchAdminAnalytics",
+              "fetchManagedProjects",
+              "updateManagedProject",
+              "fetchNpcLogs",
+              "fetchNpcPresets",
+              "updateNpcPreset",
+              "fetchVillageOverrides",
+              "updateVillageOverride",
+              "fetchCodingTests",
+              "createCodingTest",
+              "updateCodingTest",
+              "deleteCodingTest",
+              "fetchCsNotes",
+              "createCsNote",
+              "updateCsNote",
+              "deleteCsNote",
+              "getVisitorSessionId"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/interior/WorkshopInterior.tsx": [
+          {
+            "path": "src/data/skills.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "skills"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/DialogueBox.tsx": [
+          {
+            "path": "src/data/npcRoster.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "autonomousNpcs",
+              "npcDefaultPresetQuestions"
+            ]
+          },
+          {
+            "path": "src/lib/constants.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sectionMeta",
+              "SPREAD",
+              "spread",
+              "villageBuildings",
+              "treePositions",
+              "rockPositions",
+              "cameraTargets"
+            ]
+          },
+          {
+            "path": "src/lib/liveApi.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "setAdminToken",
+              "hasAdminToken",
+              "ApiError",
+              "fetchVillageState",
+              "fetchTodayActivity",
+              "saveActivity",
+              "fetchAdminAuthStatus",
+              "loginAdmin",
+              "fetchActivityHistory",
+              "syncGithubActivity",
+              "sendNpcMessage",
+              "requestNpcTick",
+              "requestNpcEncounter",
+              "fetchRelationships",
+              "requestGroupChat",
+              "logVisitorEvent",
+              "trackVisitorEvent",
+              "fetchAdminOverview",
+              "fetchAdminAnalytics",
+              "fetchManagedProjects",
+              "updateManagedProject",
+              "fetchNpcLogs",
+              "fetchNpcPresets",
+              "updateNpcPreset",
+              "fetchVillageOverrides",
+              "updateVillageOverride",
+              "fetchCodingTests",
+              "createCodingTest",
+              "updateCodingTest",
+              "deleteCodingTest",
+              "fetchCsNotes",
+              "createCsNote",
+              "updateCsNote",
+              "deleteCsNote",
+              "getVisitorSessionId"
+            ]
+          },
+          {
+            "path": "src/lib/liveState.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "getBuildingState",
+              "getNpcState",
+              "buildBuildingStateMap",
+              "buildNpcStateMap",
+              "lightIntensity",
+              "moodLabel"
+            ]
+          },
+          {
+            "path": "src/types/live.ts",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/EnterConfirmDialog.tsx": [
+          {
+            "path": "src/lib/constants.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sectionMeta",
+              "SPREAD",
+              "spread",
+              "villageBuildings",
+              "treePositions",
+              "rockPositions",
+              "cameraTargets"
+            ]
+          }
+        ],
+        "src/components/ui/Header.tsx": [
+          {
+            "path": "src/lib/constants.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sectionMeta",
+              "SPREAD",
+              "spread",
+              "villageBuildings",
+              "treePositions",
+              "rockPositions",
+              "cameraTargets"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/InfoPanel.tsx": [
+          {
+            "path": "src/data/experience.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "experienceItems"
+            ]
+          },
+          {
+            "path": "src/data/links.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "portfolioLinks"
+            ]
+          },
+          {
+            "path": "src/data/projects.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "projects"
+            ]
+          },
+          {
+            "path": "src/data/skills.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "skills"
+            ]
+          },
+          {
+            "path": "src/lib/constants.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sectionMeta",
+              "SPREAD",
+              "spread",
+              "villageBuildings",
+              "treePositions",
+              "rockPositions",
+              "cameraTargets"
+            ]
+          },
+          {
+            "path": "src/lib/liveApi.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "setAdminToken",
+              "hasAdminToken",
+              "ApiError",
+              "fetchVillageState",
+              "fetchTodayActivity",
+              "saveActivity",
+              "fetchAdminAuthStatus",
+              "loginAdmin",
+              "fetchActivityHistory",
+              "syncGithubActivity",
+              "sendNpcMessage",
+              "requestNpcTick",
+              "requestNpcEncounter",
+              "fetchRelationships",
+              "requestGroupChat",
+              "logVisitorEvent",
+              "trackVisitorEvent",
+              "fetchAdminOverview",
+              "fetchAdminAnalytics",
+              "fetchManagedProjects",
+              "updateManagedProject",
+              "fetchNpcLogs",
+              "fetchNpcPresets",
+              "updateNpcPreset",
+              "fetchVillageOverrides",
+              "updateVillageOverride",
+              "fetchCodingTests",
+              "createCodingTest",
+              "updateCodingTest",
+              "deleteCodingTest",
+              "fetchCsNotes",
+              "createCsNote",
+              "updateCsNote",
+              "deleteCsNote",
+              "getVisitorSessionId"
+            ]
+          },
+          {
+            "path": "src/types/live.ts",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/IntroOverlay.tsx": [
+          {
+            "path": "src/lib/sfx.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sfx"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/ProjectCard.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/ProjectDetail.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/ui/SectionTabs.tsx": [
+          {
+            "path": "src/lib/constants.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sectionMeta",
+              "SPREAD",
+              "spread",
+              "villageBuildings",
+              "treePositions",
+              "rockPositions",
+              "cameraTargets"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/village/CharacterController.tsx": [
+          {
+            "path": "src/components/village/WarriorCharacter.tsx",
+            "batchIndex": 4,
+            "symbols": [
+              "WarriorCharacter"
+            ]
+          },
+          {
+            "path": "src/lib/constants.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sectionMeta",
+              "SPREAD",
+              "spread",
+              "villageBuildings",
+              "treePositions",
+              "rockPositions",
+              "cameraTargets"
+            ]
+          },
+          {
+            "path": "src/lib/villageTerrain.ts",
+            "batchIndex": 6,
+            "symbols": [
+              "TERRACE_STEP",
+              "TERRACE_RECTS",
+              "WATER_CHANNELS",
+              "PLATEAU_PAD",
+              "terrainHeightAt",
+              "onTerrace"
+            ]
+          },
+          {
+            "path": "src/lib/worldCollision.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "isInsideBuildingFootprint",
+              "isWalkablePosition",
+              "distanceXZ"
+            ]
+          },
+          {
+            "path": "src/components/village/VillageScene.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "VillageScene"
+            ]
+          }
+        ],
+        "src/components/village/Decorations.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 4,
+      "files": [
+        {
+          "path": "src/components/village/NPC.tsx",
+          "language": "typescript",
+          "sizeLines": 618,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/NpcCharacter.tsx",
+          "language": "typescript",
+          "sizeLines": 161,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/VillageHud.tsx",
+          "language": "typescript",
+          "sizeLines": 887,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/WarriorCharacter.tsx",
+          "language": "typescript",
+          "sizeLines": 73,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/characterModels.ts",
+          "language": "typescript",
+          "sizeLines": 70,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/experience.ts",
+          "language": "typescript",
+          "sizeLines": 24,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/links.ts",
+          "language": "typescript",
+          "sizeLines": 19,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/npcActions.ts",
+          "language": "typescript",
+          "sizeLines": 187,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/npcBehaviors.ts",
+          "language": "typescript",
+          "sizeLines": 81,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/npcChatter.ts",
+          "language": "typescript",
+          "sizeLines": 61,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/npcRoster.ts",
+          "language": "typescript",
+          "sizeLines": 342,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/projects.ts",
+          "language": "typescript",
+          "sizeLines": 337,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/skills.ts",
+          "language": "typescript",
+          "sizeLines": 74,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/constants.ts",
+          "language": "typescript",
+          "sizeLines": 639,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/liveApi.ts",
+          "language": "typescript",
+          "sizeLines": 282,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/liveState.ts",
+          "language": "typescript",
+          "sizeLines": 44,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/sfx.ts",
+          "language": "typescript",
+          "sizeLines": 221,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/useDraggable.ts",
+          "language": "typescript",
+          "sizeLines": 112,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/worldCollision.ts",
+          "language": "typescript",
+          "sizeLines": 39,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/types/live.ts",
+          "language": "typescript",
+          "sizeLines": 350,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/types/portfolio.ts",
+          "language": "typescript",
+          "sizeLines": 114,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "src/components/village/NPC.tsx": [
+          "src/components/village/NpcCharacter.tsx",
+          "src/data/npcBehaviors.ts",
+          "src/lib/liveState.ts",
+          "src/lib/villageTerrain.ts",
+          "src/lib/worldCollision.ts",
+          "src/types/live.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/village/NpcCharacter.tsx": [
+          "src/data/characterModels.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/village/VillageHud.tsx": [
+          "src/components/village/NPC.tsx",
+          "src/data/npcRoster.ts",
+          "src/lib/constants.ts",
+          "src/lib/liveApi.ts",
+          "src/lib/useDraggable.ts",
+          "src/types/live.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/village/WarriorCharacter.tsx": [
+          "src/data/characterModels.ts"
+        ],
+        "src/data/characterModels.ts": [
+          "src/types/portfolio.ts"
+        ],
+        "src/data/experience.ts": [
+          "src/types/portfolio.ts"
+        ],
+        "src/data/links.ts": [
+          "src/types/portfolio.ts"
+        ],
+        "src/data/npcActions.ts": [
+          "src/types/live.ts"
+        ],
+        "src/data/npcBehaviors.ts": [
+          "src/data/npcRoster.ts",
+          "src/lib/constants.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/data/npcChatter.ts": [],
+        "src/data/npcRoster.ts": [
+          "src/lib/constants.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/data/projects.ts": [
+          "src/types/portfolio.ts"
+        ],
+        "src/data/skills.ts": [
+          "src/types/portfolio.ts"
+        ],
+        "src/lib/constants.ts": [
+          "src/types/portfolio.ts"
+        ],
+        "src/lib/liveApi.ts": [
+          "src/types/live.ts"
+        ],
+        "src/lib/liveState.ts": [
+          "src/types/live.ts"
+        ],
+        "src/lib/sfx.ts": [],
+        "src/lib/useDraggable.ts": [],
+        "src/lib/worldCollision.ts": [
+          "src/types/portfolio.ts"
+        ],
+        "src/types/live.ts": [],
+        "src/types/portfolio.ts": []
+      },
+      "neighborMap": {
+        "src/components/village/NPC.tsx": [
+          {
+            "path": "src/lib/villageTerrain.ts",
+            "batchIndex": 6,
+            "symbols": [
+              "TERRACE_STEP",
+              "TERRACE_RECTS",
+              "WATER_CHANNELS",
+              "PLATEAU_PAD",
+              "terrainHeightAt",
+              "onTerrace"
+            ]
+          },
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          },
+          {
+            "path": "src/components/village/VillageScene.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "VillageScene"
+            ]
+          }
+        ],
+        "src/components/village/VillageHud.tsx": [
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          }
+        ],
+        "src/components/village/WarriorCharacter.tsx": [
+          {
+            "path": "src/components/village/CharacterController.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "CharacterController"
+            ]
+          }
+        ],
+        "src/data/experience.ts": [
+          {
+            "path": "src/components/interior/ArchiveInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "ArchiveInterior"
+            ]
+          },
+          {
+            "path": "src/components/ui/InfoPanel.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "InfoPanel"
+            ]
+          }
+        ],
+        "src/data/links.ts": [
+          {
+            "path": "src/components/interior/PostInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "PostInterior"
+            ]
+          },
+          {
+            "path": "src/components/ui/InfoPanel.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "InfoPanel"
+            ]
+          }
+        ],
+        "src/data/npcBehaviors.ts": [
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          },
+          {
+            "path": "src/components/village/VillageScene.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "VillageScene"
+            ]
+          }
+        ],
+        "src/data/npcChatter.ts": [
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          }
+        ],
+        "src/data/npcRoster.ts": [
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          },
+          {
+            "path": "src/components/ui/DialogueBox.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "DialogueBox"
+            ]
+          },
+          {
+            "path": "src/components/village/VillageScene.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "VillageScene"
+            ]
+          }
+        ],
+        "src/data/projects.ts": [
+          {
+            "path": "src/app/admin/page.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AdminPage"
+            ]
+          },
+          {
+            "path": "src/app/sueo-preview/SueoPreview.tsx",
+            "batchIndex": 5,
+            "symbols": [
+              "SueoPreview"
+            ]
+          },
+          {
+            "path": "src/components/interior/LabInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "LabInterior"
+            ]
+          },
+          {
+            "path": "src/components/interior/ProjectInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "ProjectInterior"
+            ]
+          },
+          {
+            "path": "src/components/ui/InfoPanel.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "InfoPanel"
+            ]
+          },
+          {
+            "path": "src/components/ui/ResumeMode.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "ResumeMode"
+            ]
+          }
+        ],
+        "src/data/skills.ts": [
+          {
+            "path": "src/app/admin/page.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AdminPage"
+            ]
+          },
+          {
+            "path": "src/components/interior/WorkshopInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "WorkshopInterior"
+            ]
+          },
+          {
+            "path": "src/components/ui/InfoPanel.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "InfoPanel"
+            ]
+          }
+        ],
+        "src/lib/constants.ts": [
+          {
+            "path": "src/app/admin/page.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AdminPage"
+            ]
+          },
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          },
+          {
+            "path": "src/components/ui/DialogueBox.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "DialogueBox"
+            ]
+          },
+          {
+            "path": "src/components/ui/EnterConfirmDialog.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "EnterConfirmDialog"
+            ]
+          },
+          {
+            "path": "src/components/ui/Header.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "Header"
+            ]
+          },
+          {
+            "path": "src/components/ui/InfoPanel.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "InfoPanel"
+            ]
+          },
+          {
+            "path": "src/components/ui/SectionTabs.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "SectionTabs"
+            ]
+          },
+          {
+            "path": "src/components/village/CameraController.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "CameraController"
+            ]
+          },
+          {
+            "path": "src/components/village/CharacterController.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "CharacterController"
+            ]
+          },
+          {
+            "path": "src/components/village/PropsEditor.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "usePropsEditor",
+              "PropsLayer",
+              "SelectionRing",
+              "PropsEditorTray"
+            ]
+          },
+          {
+            "path": "src/components/village/VillageScene.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "VillageScene"
+            ]
+          }
+        ],
+        "src/lib/liveApi.ts": [
+          {
+            "path": "src/app/admin/page.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AdminPage"
+            ]
+          },
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          },
+          {
+            "path": "src/components/interior/ProjectInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "ProjectInterior"
+            ]
+          },
+          {
+            "path": "src/components/ui/DialogueBox.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "DialogueBox"
+            ]
+          },
+          {
+            "path": "src/components/ui/InfoPanel.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "InfoPanel"
+            ]
+          }
+        ],
+        "src/lib/liveState.ts": [
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          },
+          {
+            "path": "src/components/ui/DialogueBox.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "DialogueBox"
+            ]
+          },
+          {
+            "path": "src/components/village/Building.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "Building"
+            ]
+          },
+          {
+            "path": "src/components/village/VillageScene.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "VillageScene"
+            ]
+          }
+        ],
+        "src/lib/sfx.ts": [
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          },
+          {
+            "path": "src/components/ui/IntroOverlay.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "IntroOverlay"
+            ]
+          }
+        ],
+        "src/lib/worldCollision.ts": [
+          {
+            "path": "src/components/village/CharacterController.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "CharacterController"
+            ]
+          }
+        ],
+        "src/types/live.ts": [
+          {
+            "path": "src/app/admin/page.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AdminPage"
+            ]
+          },
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          },
+          {
+            "path": "src/components/ui/DialogueBox.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "DialogueBox"
+            ]
+          },
+          {
+            "path": "src/components/ui/InfoPanel.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "InfoPanel"
+            ]
+          },
+          {
+            "path": "src/components/village/Building.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "Building"
+            ]
+          },
+          {
+            "path": "src/components/village/VillageScene.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "VillageScene"
+            ]
+          }
+        ],
+        "src/types/portfolio.ts": [
+          {
+            "path": "src/components/AIPortfolioVillage.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "AIPortfolioVillage"
+            ]
+          },
+          {
+            "path": "src/components/interior/ArchiveInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "ArchiveInterior"
+            ]
+          },
+          {
+            "path": "src/components/interior/InteriorScene.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "InteriorScene"
+            ]
+          },
+          {
+            "path": "src/components/interior/LabInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "LabInterior"
+            ]
+          },
+          {
+            "path": "src/components/interior/PostInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "PostInterior"
+            ]
+          },
+          {
+            "path": "src/components/interior/ProjectInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "ProjectInterior"
+            ]
+          },
+          {
+            "path": "src/components/interior/WorkshopInterior.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "WorkshopInterior"
+            ]
+          },
+          {
+            "path": "src/components/ui/DialogueBox.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "DialogueBox"
+            ]
+          },
+          {
+            "path": "src/components/ui/Header.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "Header"
+            ]
+          },
+          {
+            "path": "src/components/ui/InfoPanel.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "InfoPanel"
+            ]
+          },
+          {
+            "path": "src/components/ui/IntroOverlay.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "IntroOverlay"
+            ]
+          },
+          {
+            "path": "src/components/ui/ProjectCard.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "ProjectCard"
+            ]
+          },
+          {
+            "path": "src/components/ui/ProjectDetail.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "ProjectDetail"
+            ]
+          },
+          {
+            "path": "src/components/ui/ProjectOnePager.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "ProjectOnePager"
+            ]
+          },
+          {
+            "path": "src/components/ui/ProjectViewer.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "ProjectViewer"
+            ]
+          },
+          {
+            "path": "src/components/ui/ResumeMode.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "ResumeMode"
+            ]
+          },
+          {
+            "path": "src/components/ui/SectionTabs.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "SectionTabs"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/DashboardProjectViewer.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "DashboardProjectViewer"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/GameProjectViewer.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "GameProjectViewer"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/PlatformProjectViewer.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "PlatformProjectViewer"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/RealtimeProjectViewer.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "RealtimeProjectViewer"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+            "batchIndex": 7,
+            "symbols": [
+              "AClubRoom"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+            "batchIndex": 8,
+            "symbols": [
+              "DarkLabRoom"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/richContent/index.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "RICH_RENDERERS"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/richContent/mywave.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "MyWaveRichSection"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/richContent/shared.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "CodeLine",
+              "CodeBlock",
+              "MockScreen",
+              "ImageSlot",
+              "CountUp",
+              "DecodeText",
+              "RevealText",
+              "Magnetic",
+              "DemoFrame",
+              "RichSection"
+            ]
+          },
+          {
+            "path": "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+            "batchIndex": 5,
+            "symbols": [
+              "SueoDistrictRoom"
+            ]
+          },
+          {
+            "path": "src/components/village/Building.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "Building"
+            ]
+          },
+          {
+            "path": "src/components/village/BuildingNetwork.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "BuildingNetwork"
+            ]
+          },
+          {
+            "path": "src/components/village/CameraController.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "CameraController"
+            ]
+          },
+          {
+            "path": "src/components/village/Decorations.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "PathSegment",
+              "Fence",
+              "SignPost"
+            ]
+          },
+          {
+            "path": "src/components/village/VillageScene.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "VillageScene"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 5,
+      "files": [
+        {
+          "path": "src/app/sueo-preview/SueoPreview.tsx",
+          "language": "typescript",
+          "sizeLines": 18,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/app/sueo-preview/page.tsx",
+          "language": "typescript",
+          "sizeLines": 10,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+          "language": "typescript",
+          "sizeLines": 209,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/context.ts",
+          "language": "typescript",
+          "sizeLines": 34,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/fonts.ts",
+          "language": "typescript",
+          "sizeLines": 18,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/parts.tsx",
+          "language": "typescript",
+          "sizeLines": 267,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+          "language": "typescript",
+          "sizeLines": 466,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+          "language": "typescript",
+          "sizeLines": 249,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+          "language": "typescript",
+          "sizeLines": 481,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+          "language": "typescript",
+          "sizeLines": 298,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+          "language": "typescript",
+          "sizeLines": 961,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+          "language": "typescript",
+          "sizeLines": 293,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+          "language": "typescript",
+          "sizeLines": 170,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+          "language": "typescript",
+          "sizeLines": 628,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+          "language": "typescript",
+          "sizeLines": 764,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+          "language": "typescript",
+          "sizeLines": 715,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+          "language": "typescript",
+          "sizeLines": 1165,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sentenceData.ts",
+          "language": "typescript",
+          "sizeLines": 151,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/signData.ts",
+          "language": "typescript",
+          "sizeLines": 147,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/useTimeline.ts",
+          "language": "typescript",
+          "sizeLines": 81,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "src/app/sueo-preview/SueoPreview.tsx": [
+          "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+          "src/data/projectThemes.ts",
+          "src/data/projects.ts"
+        ],
+        "src/app/sueo-preview/page.tsx": [
+          "src/app/sueo-preview/SueoPreview.tsx"
+        ],
+        "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/fonts.ts",
+          "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx",
+          "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx",
+          "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx",
+          "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx",
+          "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx",
+          "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx",
+          "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx",
+          "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx",
+          "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx",
+          "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx",
+          "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx",
+          "src/components/ui/project-viewers/sueo/sueo.css",
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/context.ts": [],
+        "src/components/ui/project-viewers/sueo/fonts.ts": [],
+        "src/components/ui/project-viewers/sueo/parts.tsx": [],
+        "src/components/ui/project-viewers/sueo/sections/ArchitectureSection.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/parts.tsx",
+          "src/components/ui/project-viewers/sueo/useTimeline.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/sections/EntrySection.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/useTimeline.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/sections/GallerySection.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/useTimeline.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/sections/LimitsSection.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/parts.tsx",
+          "src/components/ui/project-viewers/sueo/useTimeline.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/sections/MotionDataSection.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/parts.tsx",
+          "src/components/ui/project-viewers/sueo/signData.ts",
+          "src/components/ui/project-viewers/sueo/useTimeline.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/sections/ResultSection.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/parts.tsx",
+          "src/components/ui/project-viewers/sueo/useTimeline.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/sections/RetroSection.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/parts.tsx",
+          "src/components/ui/project-viewers/sueo/useTimeline.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/sections/ReviewLoopSection.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/parts.tsx",
+          "src/components/ui/project-viewers/sueo/useTimeline.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/sections/SentenceSection.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/parts.tsx",
+          "src/components/ui/project-viewers/sueo/sentenceData.ts",
+          "src/components/ui/project-viewers/sueo/useTimeline.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/sections/Trouble01Section.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/parts.tsx",
+          "src/components/ui/project-viewers/sueo/useTimeline.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/sections/Trouble02Section.tsx": [
+          "src/components/ui/project-viewers/sueo/context.ts",
+          "src/components/ui/project-viewers/sueo/parts.tsx",
+          "src/components/ui/project-viewers/sueo/useTimeline.ts"
+        ],
+        "src/components/ui/project-viewers/sueo/sentenceData.ts": [],
+        "src/components/ui/project-viewers/sueo/signData.ts": [],
+        "src/components/ui/project-viewers/sueo/useTimeline.ts": []
+      },
+      "neighborMap": {
+        "src/app/sueo-preview/SueoPreview.tsx": [
+          {
+            "path": "src/data/projectThemes.ts",
+            "batchIndex": 1,
+            "symbols": [
+              "projectThemes",
+              "DEFAULT_THEME",
+              "getProjectTheme"
+            ]
+          },
+          {
+            "path": "src/data/projects.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "projects"
+            ]
+          }
+        ],
+        "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx": [
+          {
+            "path": "src/components/ui/project-viewers/sueo/sueo.css",
+            "batchIndex": 21,
+            "symbols": []
+          },
+          {
+            "path": "src/data/projectThemes.ts",
+            "batchIndex": 1,
+            "symbols": [
+              "projectThemes",
+              "DEFAULT_THEME",
+              "getProjectTheme"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "src/components/ui/ProjectViewer.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "ProjectViewer"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 6,
+      "files": [
+        {
+          "path": "src/app/api/props/route.ts",
+          "language": "typescript",
+          "sizeLines": 59,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/ResumeMode.tsx",
+          "language": "typescript",
+          "sizeLines": 831,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/Building.tsx",
+          "language": "typescript",
+          "sizeLines": 790,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/BuildingNetwork.tsx",
+          "language": "typescript",
+          "sizeLines": 93,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/CameraController.tsx",
+          "language": "typescript",
+          "sizeLines": 286,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/InstancedProps.tsx",
+          "language": "typescript",
+          "sizeLines": 282,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/PerfHud.tsx",
+          "language": "typescript",
+          "sizeLines": 255,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/PropsEditor.tsx",
+          "language": "typescript",
+          "sizeLines": 390,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/SeasonAmbience.tsx",
+          "language": "typescript",
+          "sizeLines": 101,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/village/VillageScene.tsx",
+          "language": "typescript",
+          "sizeLines": 1167,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/resume.ts",
+          "language": "typescript",
+          "sizeLines": 473,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/data/techIcons.ts",
+          "language": "typescript",
+          "sizeLines": 46,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/groundMacro.ts",
+          "language": "typescript",
+          "sizeLines": 200,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/htmlLabelThrottle.ts",
+          "language": "typescript",
+          "sizeLines": 32,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/skyClouds.ts",
+          "language": "typescript",
+          "sizeLines": 128,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/terraceBank.ts",
+          "language": "typescript",
+          "sizeLines": 184,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/villagePalette.ts",
+          "language": "typescript",
+          "sizeLines": 153,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/lib/villageTerrain.ts",
+          "language": "typescript",
+          "sizeLines": 68,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/types/props.ts",
+          "language": "typescript",
+          "sizeLines": 20,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "src/app/api/props/route.ts": [
+          "src/types/props.ts"
+        ],
+        "src/components/ui/ResumeMode.tsx": [
+          "src/components/ui/ProjectOnePager.tsx",
+          "src/components/ui/ResumeTerminal.css",
+          "src/data/projects.ts",
+          "src/data/resume.ts",
+          "src/data/techIcons.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/village/Building.tsx": [
+          "src/data/buildingModels.json",
+          "src/data/techIcons.ts",
+          "src/lib/htmlLabelThrottle.ts",
+          "src/lib/liveState.ts",
+          "src/lib/villagePalette.ts",
+          "src/lib/villageTerrain.ts",
+          "src/types/live.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/village/BuildingNetwork.tsx": [
+          "src/lib/villageTerrain.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/village/CameraController.tsx": [
+          "src/lib/constants.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/village/InstancedProps.tsx": [
+          "src/lib/groundMacro.ts",
+          "src/lib/villageTerrain.ts",
+          "src/types/props.ts"
+        ],
+        "src/components/village/PerfHud.tsx": [],
+        "src/components/village/PropsEditor.tsx": [
+          "src/components/village/InstancedProps.tsx",
+          "src/data/propsLayout.json",
+          "src/lib/constants.ts",
+          "src/lib/villageTerrain.ts",
+          "src/types/props.ts"
+        ],
+        "src/components/village/SeasonAmbience.tsx": [],
+        "src/components/village/VillageScene.tsx": [
+          "src/components/village/Building.tsx",
+          "src/components/village/BuildingNetwork.tsx",
+          "src/components/village/CameraController.tsx",
+          "src/components/village/CharacterController.tsx",
+          "src/components/village/NPC.tsx",
+          "src/components/village/PerfHud.tsx",
+          "src/components/village/PropsEditor.tsx",
+          "src/components/village/SeasonAmbience.tsx",
+          "src/data/buildingModels.json",
+          "src/data/npcBehaviors.ts",
+          "src/data/npcRoster.ts",
+          "src/lib/constants.ts",
+          "src/lib/groundMacro.ts",
+          "src/lib/htmlLabelThrottle.ts",
+          "src/lib/liveState.ts",
+          "src/lib/skyClouds.ts",
+          "src/lib/terraceBank.ts",
+          "src/lib/villagePalette.ts",
+          "src/lib/villageTerrain.ts",
+          "src/types/live.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/data/resume.ts": [],
+        "src/data/techIcons.ts": [],
+        "src/lib/groundMacro.ts": [],
+        "src/lib/htmlLabelThrottle.ts": [],
+        "src/lib/skyClouds.ts": [],
+        "src/lib/terraceBank.ts": [],
+        "src/lib/villagePalette.ts": [],
+        "src/lib/villageTerrain.ts": [
+          "src/data/villageTerraces.json"
+        ],
+        "src/types/props.ts": []
+      },
+      "neighborMap": {
+        "src/components/ui/ResumeMode.tsx": [
+          {
+            "path": "src/components/ui/ProjectOnePager.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "ProjectOnePager"
+            ]
+          },
+          {
+            "path": "src/components/ui/ResumeTerminal.css",
+            "batchIndex": 21,
+            "symbols": []
+          },
+          {
+            "path": "src/data/projects.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "projects"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/village/Building.tsx": [
+          {
+            "path": "src/data/buildingModels.json",
+            "batchIndex": 19,
+            "symbols": []
+          },
+          {
+            "path": "src/lib/liveState.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "getBuildingState",
+              "getNpcState",
+              "buildBuildingStateMap",
+              "buildNpcStateMap",
+              "lightIntensity",
+              "moodLabel"
+            ]
+          },
+          {
+            "path": "src/types/live.ts",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/village/BuildingNetwork.tsx": [
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/village/CameraController.tsx": [
+          {
+            "path": "src/lib/constants.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sectionMeta",
+              "SPREAD",
+              "spread",
+              "villageBuildings",
+              "treePositions",
+              "rockPositions",
+              "cameraTargets"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/components/village/PropsEditor.tsx": [
+          {
+            "path": "src/data/propsLayout.json",
+            "batchIndex": 19,
+            "symbols": []
+          },
+          {
+            "path": "src/lib/constants.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sectionMeta",
+              "SPREAD",
+              "spread",
+              "villageBuildings",
+              "treePositions",
+              "rockPositions",
+              "cameraTargets"
+            ]
+          }
+        ],
+        "src/components/village/VillageScene.tsx": [
+          {
+            "path": "src/components/village/CharacterController.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "CharacterController"
+            ]
+          },
+          {
+            "path": "src/components/village/NPC.tsx",
+            "batchIndex": 4,
+            "symbols": [
+              "NPC"
+            ]
+          },
+          {
+            "path": "src/data/buildingModels.json",
+            "batchIndex": 19,
+            "symbols": []
+          },
+          {
+            "path": "src/data/npcBehaviors.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "npcBehaviorProfiles"
+            ]
+          },
+          {
+            "path": "src/data/npcRoster.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "autonomousNpcs",
+              "npcDefaultPresetQuestions"
+            ]
+          },
+          {
+            "path": "src/lib/constants.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "sectionMeta",
+              "SPREAD",
+              "spread",
+              "villageBuildings",
+              "treePositions",
+              "rockPositions",
+              "cameraTargets"
+            ]
+          },
+          {
+            "path": "src/lib/liveState.ts",
+            "batchIndex": 4,
+            "symbols": [
+              "getBuildingState",
+              "getNpcState",
+              "buildBuildingStateMap",
+              "buildNpcStateMap",
+              "lightIntensity",
+              "moodLabel"
+            ]
+          },
+          {
+            "path": "src/types/live.ts",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          }
+        ],
+        "src/lib/villageTerrain.ts": [
+          {
+            "path": "src/data/villageTerraces.json",
+            "batchIndex": 19,
+            "symbols": []
+          },
+          {
+            "path": "src/components/village/CharacterController.tsx",
+            "batchIndex": 3,
+            "symbols": [
+              "CharacterController"
+            ]
+          },
+          {
+            "path": "src/components/village/NPC.tsx",
+            "batchIndex": 4,
+            "symbols": [
+              "NPC"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 7,
+      "files": [
+        {
+          "path": "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+          "language": "typescript",
+          "sizeLines": 137,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/context.ts",
+          "language": "typescript",
+          "sizeLines": 28,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/data.ts",
+          "language": "typescript",
+          "sizeLines": 128,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/fonts.ts",
+          "language": "typescript",
+          "sizeLines": 17,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/parts.tsx",
+          "language": "typescript",
+          "sizeLines": 249,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+          "language": "typescript",
+          "sizeLines": 474,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+          "language": "typescript",
+          "sizeLines": 706,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+          "language": "typescript",
+          "sizeLines": 387,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+          "language": "typescript",
+          "sizeLines": 218,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+          "language": "typescript",
+          "sizeLines": 299,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+          "language": "typescript",
+          "sizeLines": 293,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+          "language": "typescript",
+          "sizeLines": 437,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+          "language": "typescript",
+          "sizeLines": 343,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+          "language": "typescript",
+          "sizeLines": 481,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+          "language": "typescript",
+          "sizeLines": 715,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+          "language": "typescript",
+          "sizeLines": 679,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "src/components/ui/project-viewers/aclub/AClubRoom.tsx": [
+          "src/components/ui/project-viewers/aclub/aclub.css",
+          "src/components/ui/project-viewers/aclub/context.ts",
+          "src/components/ui/project-viewers/aclub/fonts.ts",
+          "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx",
+          "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx",
+          "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx",
+          "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx",
+          "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx",
+          "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx",
+          "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx",
+          "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx",
+          "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx",
+          "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx",
+          "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx",
+          "src/components/ui/project-viewers/sound.ts",
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/project-viewers/aclub/context.ts": [],
+        "src/components/ui/project-viewers/aclub/data.ts": [],
+        "src/components/ui/project-viewers/aclub/fonts.ts": [],
+        "src/components/ui/project-viewers/aclub/parts.tsx": [
+          "src/components/ui/project-viewers/aclub/context.ts"
+        ],
+        "src/components/ui/project-viewers/aclub/sections/ComponentSection.tsx": [
+          "src/components/ui/project-viewers/aclub/context.ts",
+          "src/components/ui/project-viewers/aclub/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/aclub/sections/FilterSection.tsx": [
+          "src/components/ui/project-viewers/aclub/context.ts",
+          "src/components/ui/project-viewers/aclub/data.ts",
+          "src/components/ui/project-viewers/aclub/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/aclub/sections/HeroSection.tsx": [
+          "src/components/ui/project-viewers/aclub/context.ts",
+          "src/components/ui/project-viewers/aclub/data.ts"
+        ],
+        "src/components/ui/project-viewers/aclub/sections/IntroOverlay.tsx": [
+          "src/components/ui/project-viewers/aclub/data.ts"
+        ],
+        "src/components/ui/project-viewers/aclub/sections/ResultSection.tsx": [
+          "src/components/ui/project-viewers/aclub/context.ts",
+          "src/components/ui/project-viewers/aclub/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/aclub/sections/RetroSection.tsx": [
+          "src/components/ui/project-viewers/aclub/context.ts",
+          "src/components/ui/project-viewers/aclub/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/aclub/sections/RoleSection.tsx": [
+          "src/components/ui/project-viewers/aclub/context.ts",
+          "src/components/ui/project-viewers/aclub/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/aclub/sections/ScopeSection.tsx": [
+          "src/components/ui/project-viewers/aclub/context.ts",
+          "src/components/ui/project-viewers/aclub/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/aclub/sections/ScrollRestoreSection.tsx": [
+          "src/components/ui/project-viewers/aclub/context.ts",
+          "src/components/ui/project-viewers/aclub/data.ts",
+          "src/components/ui/project-viewers/aclub/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/aclub/sections/UrlStateSection.tsx": [
+          "src/components/ui/project-viewers/aclub/context.ts",
+          "src/components/ui/project-viewers/aclub/data.ts",
+          "src/components/ui/project-viewers/aclub/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/aclub/sections/UserFlowSection.tsx": [
+          "src/components/ui/project-viewers/aclub/context.ts",
+          "src/components/ui/project-viewers/aclub/data.ts",
+          "src/components/ui/project-viewers/aclub/parts.tsx"
+        ]
+      },
+      "neighborMap": {
+        "src/components/ui/project-viewers/aclub/AClubRoom.tsx": [
+          {
+            "path": "src/components/ui/project-viewers/aclub/aclub.css",
+            "batchIndex": 21,
+            "symbols": []
+          },
+          {
+            "path": "src/components/ui/project-viewers/sound.ts",
+            "batchIndex": 1,
+            "symbols": [
+              "sound"
+            ]
+          },
+          {
+            "path": "src/data/projectThemes.ts",
+            "batchIndex": 1,
+            "symbols": [
+              "projectThemes",
+              "DEFAULT_THEME",
+              "getProjectTheme"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "src/components/ui/ProjectViewer.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "ProjectViewer"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 8,
+      "files": [
+        {
+          "path": "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+          "language": "typescript",
+          "sizeLines": 391,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/context.ts",
+          "language": "typescript",
+          "sizeLines": 40,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/fonts.ts",
+          "language": "typescript",
+          "sizeLines": 17,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/parts.tsx",
+          "language": "typescript",
+          "sizeLines": 147,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/ArchitectureSection.tsx",
+          "language": "typescript",
+          "sizeLines": 118,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/CinemachineSection.tsx",
+          "language": "typescript",
+          "sizeLines": 197,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/EntrySection.tsx",
+          "language": "typescript",
+          "sizeLines": 84,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/HeroSection.tsx",
+          "language": "typescript",
+          "sizeLines": 144,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/HonestCostSection.tsx",
+          "language": "typescript",
+          "sizeLines": 55,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/PrinciplesSection.tsx",
+          "language": "typescript",
+          "sizeLines": 100,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/RaycastSection.tsx",
+          "language": "typescript",
+          "sizeLines": 149,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/ResultSection.tsx",
+          "language": "typescript",
+          "sizeLines": 179,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/RetroSection.tsx",
+          "language": "typescript",
+          "sizeLines": 86,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/TakeoverSection.tsx",
+          "language": "typescript",
+          "sizeLines": 209,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/Trouble01Section.tsx",
+          "language": "typescript",
+          "sizeLines": 227,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/sections/Trouble02Section.tsx",
+          "language": "typescript",
+          "sizeLines": 185,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx": [
+          "src/components/ui/project-viewers/darklab/context.ts",
+          "src/components/ui/project-viewers/darklab/darklab.css",
+          "src/components/ui/project-viewers/darklab/fonts.ts",
+          "src/components/ui/project-viewers/darklab/parts.tsx",
+          "src/components/ui/project-viewers/darklab/sections/ArchitectureSection.tsx",
+          "src/components/ui/project-viewers/darklab/sections/CinemachineSection.tsx",
+          "src/components/ui/project-viewers/darklab/sections/EntrySection.tsx",
+          "src/components/ui/project-viewers/darklab/sections/HeroSection.tsx",
+          "src/components/ui/project-viewers/darklab/sections/HonestCostSection.tsx",
+          "src/components/ui/project-viewers/darklab/sections/PrinciplesSection.tsx",
+          "src/components/ui/project-viewers/darklab/sections/RaycastSection.tsx",
+          "src/components/ui/project-viewers/darklab/sections/ResultSection.tsx",
+          "src/components/ui/project-viewers/darklab/sections/RetroSection.tsx",
+          "src/components/ui/project-viewers/darklab/sections/TakeoverSection.tsx",
+          "src/components/ui/project-viewers/darklab/sections/Trouble01Section.tsx",
+          "src/components/ui/project-viewers/darklab/sections/Trouble02Section.tsx",
+          "src/components/ui/project-viewers/sound.ts",
+          "src/data/projectThemes.ts",
+          "src/types/portfolio.ts"
+        ],
+        "src/components/ui/project-viewers/darklab/context.ts": [],
+        "src/components/ui/project-viewers/darklab/fonts.ts": [],
+        "src/components/ui/project-viewers/darklab/parts.tsx": [],
+        "src/components/ui/project-viewers/darklab/sections/ArchitectureSection.tsx": [
+          "src/components/ui/project-viewers/darklab/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/darklab/sections/CinemachineSection.tsx": [
+          "src/components/ui/project-viewers/darklab/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/darklab/sections/EntrySection.tsx": [
+          "src/components/ui/project-viewers/darklab/context.ts"
+        ],
+        "src/components/ui/project-viewers/darklab/sections/HeroSection.tsx": [
+          "src/components/ui/project-viewers/darklab/context.ts",
+          "src/components/ui/project-viewers/darklab/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/darklab/sections/HonestCostSection.tsx": [
+          "src/components/ui/project-viewers/darklab/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/darklab/sections/PrinciplesSection.tsx": [
+          "src/components/ui/project-viewers/darklab/context.ts",
+          "src/components/ui/project-viewers/darklab/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/darklab/sections/RaycastSection.tsx": [
+          "src/components/ui/project-viewers/darklab/parts.tsx",
+          "src/components/ui/project-viewers/sound.ts"
+        ],
+        "src/components/ui/project-viewers/darklab/sections/ResultSection.tsx": [
+          "src/components/ui/project-viewers/darklab/context.ts",
+          "src/components/ui/project-viewers/darklab/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/darklab/sections/RetroSection.tsx": [],
+        "src/components/ui/project-viewers/darklab/sections/TakeoverSection.tsx": [
+          "src/components/ui/project-viewers/darklab/context.ts",
+          "src/components/ui/project-viewers/darklab/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/darklab/sections/Trouble01Section.tsx": [
+          "src/components/ui/project-viewers/darklab/context.ts",
+          "src/components/ui/project-viewers/darklab/parts.tsx"
+        ],
+        "src/components/ui/project-viewers/darklab/sections/Trouble02Section.tsx": [
+          "src/components/ui/project-viewers/darklab/context.ts",
+          "src/components/ui/project-viewers/darklab/parts.tsx"
+        ]
+      },
+      "neighborMap": {
+        "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx": [
+          {
+            "path": "src/components/ui/project-viewers/darklab/darklab.css",
+            "batchIndex": 21,
+            "symbols": []
+          },
+          {
+            "path": "src/components/ui/project-viewers/sound.ts",
+            "batchIndex": 1,
+            "symbols": [
+              "sound"
+            ]
+          },
+          {
+            "path": "src/data/projectThemes.ts",
+            "batchIndex": 1,
+            "symbols": [
+              "projectThemes",
+              "DEFAULT_THEME",
+              "getProjectTheme"
+            ]
+          },
+          {
+            "path": "src/types/portfolio.ts",
+            "batchIndex": 4,
+            "symbols": []
+          },
+          {
+            "path": "src/components/ui/ProjectViewer.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "ProjectViewer"
+            ]
+          }
+        ],
+        "src/components/ui/project-viewers/darklab/sections/RaycastSection.tsx": [
+          {
+            "path": "src/components/ui/project-viewers/sound.ts",
+            "batchIndex": 1,
+            "symbols": [
+              "sound"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 9,
+      "files": [
+        {
+          "path": "src/app/layout.tsx",
+          "language": "typescript",
+          "sizeLines": 50,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/InteractionLayer.tsx",
+          "language": "typescript",
+          "sizeLines": 91,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/Providers.tsx",
+          "language": "typescript",
+          "sizeLines": 15,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/CustomCursor.tsx",
+          "language": "typescript",
+          "sizeLines": 90,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "src/app/layout.tsx": [
+          "src/app/globals.css",
+          "src/components/Providers.tsx",
+          "src/components/ui/CustomCursor.tsx"
+        ],
+        "src/components/InteractionLayer.tsx": [],
+        "src/components/Providers.tsx": [
+          "src/components/InteractionLayer.tsx"
+        ],
+        "src/components/ui/CustomCursor.tsx": []
+      },
+      "neighborMap": {
+        "src/app/layout.tsx": [
+          {
+            "path": "src/app/globals.css",
+            "batchIndex": 21,
+            "symbols": []
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 10,
+      "files": [
+        {
+          "path": "scripts/generate-decor-layout.mjs",
+          "language": "javascript",
+          "sizeLines": 1727,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/generate-ground-layout.mjs",
+          "language": "javascript",
+          "sizeLines": 977,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/lib/read-village.mjs",
+          "language": "javascript",
+          "sizeLines": 117,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "scripts/generate-decor-layout.mjs": [
+          "scripts/lib/read-village.mjs"
+        ],
+        "scripts/generate-ground-layout.mjs": [
+          "scripts/lib/read-village.mjs"
+        ],
+        "scripts/lib/read-village.mjs": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 11,
+      "files": [
+        {
+          "path": "Dockerfile",
+          "language": "dockerfile",
+          "sizeLines": 29,
+          "fileCategory": "infra"
+        }
+      ],
+      "batchImportData": {
+        "Dockerfile": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 12,
+      "files": [
+        {
+          "path": ".github/workflows/pages.yml",
+          "language": "yaml",
+          "sizeLines": 43,
+          "fileCategory": "infra"
+        }
+      ],
+      "batchImportData": {
+        ".github/workflows/pages.yml": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 13,
+      "files": [
+        {
+          "path": ".github/ISSUE_TEMPLATE/bug.yml",
+          "language": "yaml",
+          "sizeLines": 82,
+          "fileCategory": "config"
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE/config.yml",
+          "language": "yaml",
+          "sizeLines": 0,
+          "fileCategory": "config"
+        },
+        {
+          "path": ".github/ISSUE_TEMPLATE/feature_request.yml",
+          "language": "yaml",
+          "sizeLines": 36,
+          "fileCategory": "config"
+        }
+      ],
+      "batchImportData": {
+        ".github/ISSUE_TEMPLATE/bug.yml": [],
+        ".github/ISSUE_TEMPLATE/config.yml": [],
+        ".github/ISSUE_TEMPLATE/feature_request.yml": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 14,
+      "files": [
+        {
+          "path": ".pre-commit-config.yaml",
+          "language": "yaml",
+          "sizeLines": 8,
+          "fileCategory": "config"
+        },
+        {
+          "path": "CLAUDE.md",
+          "language": "markdown",
+          "sizeLines": 84,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "README.md",
+          "language": "markdown",
+          "sizeLines": 92,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "copy-admin.md",
+          "language": "markdown",
+          "sizeLines": 249,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "copy.md",
+          "language": "markdown",
+          "sizeLines": 967,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "package.json",
+          "language": "json",
+          "sizeLines": 40,
+          "fileCategory": "config"
+        },
+        {
+          "path": "skills-lock.json",
+          "language": "json",
+          "sizeLines": 29,
+          "fileCategory": "config"
+        },
+        {
+          "path": "tsconfig.json",
+          "language": "json",
+          "sizeLines": 41,
+          "fileCategory": "config"
+        }
+      ],
+      "batchImportData": {
+        ".pre-commit-config.yaml": [],
+        "CLAUDE.md": [],
+        "README.md": [],
+        "copy-admin.md": [],
+        "copy.md": [],
+        "package.json": [],
+        "skills-lock.json": [],
+        "tsconfig.json": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 15,
+      "files": [
+        {
+          "path": "backend/.env.example",
+          "language": "config",
+          "sizeLines": 24,
+          "fileCategory": "config"
+        },
+        {
+          "path": "backend/README.md",
+          "language": "markdown",
+          "sizeLines": 42,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "backend/pytest.ini",
+          "language": "config",
+          "sizeLines": 2,
+          "fileCategory": "config"
+        },
+        {
+          "path": "backend/requirements-dev.txt",
+          "language": "txt",
+          "sizeLines": 2,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "backend/requirements.txt",
+          "language": "txt",
+          "sizeLines": 7,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "backend/.env.example": [],
+        "backend/README.md": [],
+        "backend/pytest.ini": [],
+        "backend/requirements-dev.txt": [],
+        "backend/requirements.txt": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 16,
+      "files": [
+        {
+          "path": "docs/MESHY_BUILDING_PROMPTS.md",
+          "language": "markdown",
+          "sizeLines": 608,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/MESHY_CHARACTER_PROMPTS.md",
+          "language": "markdown",
+          "sizeLines": 266,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/MESHY_PROP_PROMPTS.md",
+          "language": "markdown",
+          "sizeLines": 582,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/MESHY_VILLAGE_ASSETS.md",
+          "language": "markdown",
+          "sizeLines": 296,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/PROJECT_DOCUMENTATION.md",
+          "language": "markdown",
+          "sizeLines": 3944,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "docs/VILLAGE_ASSET_WISHLIST.md",
+          "language": "markdown",
+          "sizeLines": 744,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "docs/MESHY_BUILDING_PROMPTS.md": [],
+        "docs/MESHY_CHARACTER_PROMPTS.md": [],
+        "docs/MESHY_PROP_PROMPTS.md": [],
+        "docs/MESHY_VILLAGE_ASSETS.md": [],
+        "docs/PROJECT_DOCUMENTATION.md": [],
+        "docs/VILLAGE_ASSET_WISHLIST.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 17,
+      "files": [
+        {
+          "path": "portfolio-specs/00-OVERVIEW.md",
+          "language": "markdown",
+          "sizeLines": 356,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/01-mywave.md",
+          "language": "markdown",
+          "sizeLines": 2142,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/02-mystock.md",
+          "language": "markdown",
+          "sizeLines": 2231,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/03-festflow.md",
+          "language": "markdown",
+          "sizeLines": 2116,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/04-muscleup.md",
+          "language": "markdown",
+          "sizeLines": 2237,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/05-aclub.md",
+          "language": "markdown",
+          "sizeLines": 2407,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/06-ajouchong.md",
+          "language": "markdown",
+          "sizeLines": 2438,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/07-sign-language.md",
+          "language": "markdown",
+          "sizeLines": 2404,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/08-ajou-adventure.md",
+          "language": "markdown",
+          "sizeLines": 2135,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/09-darklab.md",
+          "language": "markdown",
+          "sizeLines": 2075,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/10-tserof.md",
+          "language": "markdown",
+          "sizeLines": 2506,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/_AUDIT.md",
+          "language": "markdown",
+          "sizeLines": 93,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/_IMPLEMENTATION.md",
+          "language": "markdown",
+          "sizeLines": 231,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/_STATUS.md",
+          "language": "markdown",
+          "sizeLines": 329,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "portfolio-specs/_UNKNOWNS.md",
+          "language": "markdown",
+          "sizeLines": 120,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "portfolio-specs/00-OVERVIEW.md": [],
+        "portfolio-specs/01-mywave.md": [],
+        "portfolio-specs/02-mystock.md": [],
+        "portfolio-specs/03-festflow.md": [],
+        "portfolio-specs/04-muscleup.md": [],
+        "portfolio-specs/05-aclub.md": [],
+        "portfolio-specs/06-ajouchong.md": [],
+        "portfolio-specs/07-sign-language.md": [],
+        "portfolio-specs/08-ajou-adventure.md": [],
+        "portfolio-specs/09-darklab.md": [],
+        "portfolio-specs/10-tserof.md": [],
+        "portfolio-specs/_AUDIT.md": [],
+        "portfolio-specs/_IMPLEMENTATION.md": [],
+        "portfolio-specs/_STATUS.md": [],
+        "portfolio-specs/_UNKNOWNS.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 18,
+      "files": [
+        {
+          "path": "public/browserconfig.xml",
+          "language": "xml",
+          "sizeLines": 9,
+          "fileCategory": "config"
+        },
+        {
+          "path": "public/index.html",
+          "language": "html",
+          "sizeLines": 83,
+          "fileCategory": "markup"
+        },
+        {
+          "path": "public/manifest.json",
+          "language": "json",
+          "sizeLines": 25,
+          "fileCategory": "config"
+        },
+        {
+          "path": "public/robots.txt",
+          "language": "txt",
+          "sizeLines": 2,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        "public/browserconfig.xml": [],
+        "public/index.html": [],
+        "public/manifest.json": [],
+        "public/robots.txt": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 19,
+      "files": [
+        {
+          "path": "src/data/buildingModels.json",
+          "language": "json",
+          "sizeLines": 28,
+          "fileCategory": "config"
+        },
+        {
+          "path": "src/data/propsLayout.json",
+          "language": "json",
+          "sizeLines": 11431,
+          "fileCategory": "config"
+        },
+        {
+          "path": "src/data/villageTerraces.json",
+          "language": "json",
+          "sizeLines": 237,
+          "fileCategory": "config"
+        }
+      ],
+      "batchImportData": {
+        "src/data/buildingModels.json": [],
+        "src/data/propsLayout.json": [],
+        "src/data/villageTerraces.json": []
+      },
+      "neighborMap": {
+        "src/data/buildingModels.json": [
+          {
+            "path": "src/components/village/Building.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "Building"
+            ]
+          },
+          {
+            "path": "src/components/village/VillageScene.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "VillageScene"
+            ]
+          }
+        ],
+        "src/data/propsLayout.json": [
+          {
+            "path": "src/components/village/PropsEditor.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "usePropsEditor",
+              "PropsLayer",
+              "SelectionRing",
+              "PropsEditorTray"
+            ]
+          }
+        ],
+        "src/data/villageTerraces.json": [
+          {
+            "path": "src/lib/villageTerrain.ts",
+            "batchIndex": 6,
+            "symbols": [
+              "TERRACE_STEP",
+              "TERRACE_RECTS",
+              "WATER_CHANNELS",
+              "PLATEAU_PAD",
+              "terrainHeightAt",
+              "onTerrace"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "batchIndex": 20,
+      "files": [
+        {
+          "path": ".gitattributes",
+          "language": "unknown",
+          "sizeLines": 9,
+          "fileCategory": "code"
+        },
+        {
+          "path": ".github/pull_request_template.md",
+          "language": "markdown",
+          "sizeLines": 15,
+          "fileCategory": "docs"
+        },
+        {
+          "path": ".prettierignore",
+          "language": "unknown",
+          "sizeLines": 7,
+          "fileCategory": "code"
+        },
+        {
+          "path": "env.example",
+          "language": "example",
+          "sizeLines": 6,
+          "fileCategory": "code"
+        },
+        {
+          "path": "next-env.d.ts",
+          "language": "typescript",
+          "sizeLines": 6,
+          "fileCategory": "code"
+        },
+        {
+          "path": "next.config.mjs",
+          "language": "javascript",
+          "sizeLines": 14,
+          "fileCategory": "code"
+        },
+        {
+          "path": "postcss.config.mjs",
+          "language": "javascript",
+          "sizeLines": 7,
+          "fileCategory": "code"
+        },
+        {
+          "path": "public/models/ASSETS.md",
+          "language": "markdown",
+          "sizeLines": 88,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "public/models/props/.gitkeep",
+          "language": "unknown",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "resume/jaehoon-jeong-resume.html",
+          "language": "html",
+          "sizeLines": 1097,
+          "fileCategory": "markup"
+        },
+        {
+          "path": "resume/jaehoon-jeong-resume.md",
+          "language": "markdown",
+          "sizeLines": 144,
+          "fileCategory": "docs"
+        },
+        {
+          "path": "scripts/backend-dev.mjs",
+          "language": "javascript",
+          "sizeLines": 32,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/bake-impostors.mjs",
+          "language": "javascript",
+          "sizeLines": 547,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/flatten-ground-tiles.mjs",
+          "language": "javascript",
+          "sizeLines": 393,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/generate-building-manifest.mjs",
+          "language": "javascript",
+          "sizeLines": 75,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/make-fence-rail.mjs",
+          "language": "javascript",
+          "sizeLines": 270,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/make-grass-texture.mjs",
+          "language": "javascript",
+          "sizeLines": 184,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/make-low-wall.mjs",
+          "language": "javascript",
+          "sizeLines": 347,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/make-paving-tile.mjs",
+          "language": "javascript",
+          "sizeLines": 345,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/make-terrace-steps.mjs",
+          "language": "javascript",
+          "sizeLines": 276,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/make_paved_road_tiles.py",
+          "language": "python",
+          "sizeLines": 149,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/merge-character.mjs",
+          "language": "javascript",
+          "sizeLines": 160,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/optimize-glb.mjs",
+          "language": "javascript",
+          "sizeLines": 212,
+          "fileCategory": "code"
+        },
+        {
+          "path": "scripts/optimize_textures.py",
+          "language": "python",
+          "sizeLines": 270,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/LEGACY_CRA.md",
+          "language": "markdown",
+          "sizeLines": 7,
+          "fileCategory": "docs"
+        }
+      ],
+      "batchImportData": {
+        ".gitattributes": [],
+        ".github/pull_request_template.md": [],
+        ".prettierignore": [],
+        "env.example": [],
+        "next-env.d.ts": [],
+        "next.config.mjs": [],
+        "postcss.config.mjs": [],
+        "public/models/ASSETS.md": [],
+        "public/models/props/.gitkeep": [],
+        "resume/jaehoon-jeong-resume.html": [],
+        "resume/jaehoon-jeong-resume.md": [],
+        "scripts/backend-dev.mjs": [],
+        "scripts/bake-impostors.mjs": [],
+        "scripts/flatten-ground-tiles.mjs": [],
+        "scripts/generate-building-manifest.mjs": [],
+        "scripts/make-fence-rail.mjs": [],
+        "scripts/make-grass-texture.mjs": [],
+        "scripts/make-low-wall.mjs": [],
+        "scripts/make-paving-tile.mjs": [],
+        "scripts/make-terrace-steps.mjs": [],
+        "scripts/make_paved_road_tiles.py": [],
+        "scripts/merge-character.mjs": [],
+        "scripts/optimize-glb.mjs": [],
+        "scripts/optimize_textures.py": [],
+        "src/LEGACY_CRA.md": []
+      },
+      "neighborMap": {}
+    },
+    {
+      "batchIndex": 21,
+      "files": [
+        {
+          "path": "src/app/globals.css",
+          "language": "css",
+          "sizeLines": 286,
+          "fileCategory": "markup"
+        },
+        {
+          "path": "src/app/test-model/page.tsx",
+          "language": "typescript",
+          "sizeLines": 12,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ModelTest.tsx",
+          "language": "typescript",
+          "sizeLines": 29,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/interior/InteriorCharacterController.tsx",
+          "language": "typescript",
+          "sizeLines": 105,
+          "fileCategory": "code"
+        },
+        {
+          "path": "src/components/ui/ProjectDetail.css",
+          "language": "css",
+          "sizeLines": 321,
+          "fileCategory": "markup"
+        },
+        {
+          "path": "src/components/ui/ResumeTerminal.css",
+          "language": "css",
+          "sizeLines": 1405,
+          "fileCategory": "markup"
+        },
+        {
+          "path": "src/components/ui/project-viewers/aclub/aclub.css",
+          "language": "css",
+          "sizeLines": 570,
+          "fileCategory": "markup"
+        },
+        {
+          "path": "src/components/ui/project-viewers/darklab/darklab.css",
+          "language": "css",
+          "sizeLines": 406,
+          "fileCategory": "markup"
+        },
+        {
+          "path": "src/components/ui/project-viewers/sueo/sueo.css",
+          "language": "css",
+          "sizeLines": 633,
+          "fileCategory": "markup"
+        },
+        {
+          "path": "src/data/npcs.ts",
+          "language": "typescript",
+          "sizeLines": 1,
+          "fileCategory": "code"
+        },
+        {
+          "path": "tailwind.config.ts",
+          "language": "typescript",
+          "sizeLines": 34,
+          "fileCategory": "code"
+        }
+      ],
+      "batchImportData": {
+        "src/app/globals.css": [],
+        "src/app/test-model/page.tsx": [],
+        "src/components/ModelTest.tsx": [],
+        "src/components/interior/InteriorCharacterController.tsx": [],
+        "src/components/ui/ProjectDetail.css": [],
+        "src/components/ui/ResumeTerminal.css": [],
+        "src/components/ui/project-viewers/aclub/aclub.css": [],
+        "src/components/ui/project-viewers/darklab/darklab.css": [],
+        "src/components/ui/project-viewers/sueo/sueo.css": [],
+        "src/data/npcs.ts": [],
+        "tailwind.config.ts": []
+      },
+      "neighborMap": {
+        "src/app/globals.css": [
+          {
+            "path": "src/app/layout.tsx",
+            "batchIndex": 9,
+            "symbols": [
+              "metadata",
+              "viewport",
+              "RootLayout"
+            ]
+          }
+        ],
+        "src/components/ui/ProjectDetail.css": [
+          {
+            "path": "src/components/ui/ProjectOnePager.tsx",
+            "batchIndex": 1,
+            "symbols": [
+              "ProjectOnePager"
+            ]
+          }
+        ],
+        "src/components/ui/ResumeTerminal.css": [
+          {
+            "path": "src/components/ui/ResumeMode.tsx",
+            "batchIndex": 6,
+            "symbols": [
+              "ResumeMode"
+            ]
+          }
+        ],
+        "src/components/ui/project-viewers/aclub/aclub.css": [
+          {
+            "path": "src/components/ui/project-viewers/aclub/AClubRoom.tsx",
+            "batchIndex": 7,
+            "symbols": [
+              "AClubRoom"
+            ]
+          }
+        ],
+        "src/components/ui/project-viewers/darklab/darklab.css": [
+          {
+            "path": "src/components/ui/project-viewers/darklab/DarkLabRoom.tsx",
+            "batchIndex": 8,
+            "symbols": [
+              "DarkLabRoom"
+            ]
+          }
+        ],
+        "src/components/ui/project-viewers/sueo/sueo.css": [
+          {
+            "path": "src/components/ui/project-viewers/sueo/SueoDistrictRoom.tsx",
+            "batchIndex": 5,
+            "symbols": [
+              "SueoDistrictRoom"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

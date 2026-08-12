@@ -1,0 +1,120 @@
+{
+  "nodes": [
+    {
+      "id": "config:src/data/buildingModels.json",
+      "type": "config",
+      "name": "buildingModels.json",
+      "filePath": "src/data/buildingModels.json",
+      "summary": "건물 id → GLB 모델 경로를 1:1로 잇는 매니페스트로, 26채(central-plaza, project-*, skill-*, life-*, exp-*, study-codingtest, post-office)의 `/models/buildings/<id>.glb` 경로를 담습니다. scripts/generate-building-manifest.mjs가 public/models/buildings 폴더를 훑어 자동 생성하고, Building.tsx가 `b.glbPath ?? buildingModels[b.id]`로 조회해 렌더에 씁니다.",
+      "tags": ["configuration", "generated", "asset-manifest", "village-data", "3d-model"],
+      "complexity": "simple",
+      "languageNotes": "파일명 = 건물 id 규칙 덕분에 GLB를 폴더에 넣고 생성기만 돌리면 배선 코드를 건드리지 않고 건물이 붙습니다 — convention over configuration 패턴입니다."
+    },
+    {
+      "id": "config:src/data/propsLayout.json",
+      "type": "config",
+      "name": "propsLayout.json",
+      "filePath": "src/data/propsLayout.json",
+      "summary": "마을 3D 씬의 배치 결과물로, 프롭 1038개(`id`/`glb`/`position`/`rotationY`/`scale`)와 건물 위치 오버라이드를 담은 11k줄짜리 대형 데이터입니다. 손으로 쓰는 파일이 아니라 scripts/generate-ground-layout.mjs(바닥·길 타일)와 generate-decor-layout.mjs(나무·바위 등 장식)가 생성하고, 개발 모드 전용 PropsEditor가 /api/props를 통해 드래그 편집 결과를 이 파일에 되써 넣습니다.",
+      "tags": ["configuration", "generated", "village-data", "scene-layout", "large-dataset"],
+      "complexity": "complex",
+      "languageNotes": "지형 높이를 이 파일에 굽지 않는 것이 이 데이터의 핵심 규칙입니다 — y좌표는 평지 기준으로만 저장하고, 구역 단차는 렌더 시점에 villageTerrain의 terrainHeightAt로 더합니다."
+    },
+    {
+      "id": "config:src/data/villageTerraces.json",
+      "type": "config",
+      "name": "villageTerraces.json",
+      "filePath": "src/data/villageTerraces.json",
+      "summary": "마을 구역 단차 정의 파일로, 단 높이 pitch(1.88)와 6개 구역(study/projects/skills/experience/contact/life)의 사각형 경계, 그리고 물길(channels) 좌표 폴리라인을 담습니다. generate-ground-layout.mjs가 계산해 내보내고, src/lib/villageTerrain.ts가 읽어 terrainHeightAt/onTerrace로 렌더 때 높이를 얹습니다.",
+      "tags": ["configuration", "generated", "village-data", "terrain", "district-layout"],
+      "complexity": "moderate",
+      "languageNotes": "지형을 '높이가 구워진 메시'가 아니라 '사각형 + pitch' 규칙 데이터로 두면, 단차를 바꿀 때 프롭 좌표 1038개를 다시 생성할 필요가 없습니다."
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:scripts/generate-building-manifest.mjs",
+      "target": "config:src/data/buildingModels.json",
+      "type": "writes_to",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/village/Building.tsx",
+      "target": "config:src/data/buildingModels.json",
+      "type": "reads_from",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/village/VillageScene.tsx",
+      "target": "config:src/data/buildingModels.json",
+      "type": "reads_from",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/generate-ground-layout.mjs",
+      "target": "config:src/data/propsLayout.json",
+      "type": "writes_to",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/generate-decor-layout.mjs",
+      "target": "config:src/data/propsLayout.json",
+      "type": "writes_to",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/app/api/props/route.ts",
+      "target": "config:src/data/propsLayout.json",
+      "type": "writes_to",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/village/PropsEditor.tsx",
+      "target": "config:src/data/propsLayout.json",
+      "type": "reads_from",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/generate-ground-layout.mjs",
+      "target": "config:src/data/villageTerraces.json",
+      "type": "writes_to",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:scripts/generate-decor-layout.mjs",
+      "target": "config:src/data/villageTerraces.json",
+      "type": "reads_from",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/lib/villageTerrain.ts",
+      "target": "config:src/data/villageTerraces.json",
+      "type": "reads_from",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "config:src/data/villageTerraces.json",
+      "target": "config:src/data/propsLayout.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:src/data/buildingModels.json",
+      "target": "config:src/data/propsLayout.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}
