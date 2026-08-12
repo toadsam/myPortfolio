@@ -17,10 +17,11 @@
 import {useGLTF} from "@react-three/drei";
 import type {ThreeEvent} from "@react-three/fiber";
 import {Suspense, useLayoutEffect, useMemo, useRef} from "react";
-import {Euler, InstancedMesh, Matrix4, Mesh, Quaternion, Vector3, type BufferGeometry, type Material, type Object3D} from "three";
+import {Euler, InstancedMesh, Matrix4, Mesh, type MeshDepthMaterial, Quaternion, Vector3, type BufferGeometry, type Material, type Object3D} from "three";
 import type {PropPlacement} from "@/types/props";
 import {terrainHeightAt} from "@/lib/villageTerrain";
 import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
+import {applyFoliageWind, makeFoliageDepthMaterial, type FoliageWindOptions} from "@/lib/foliageWind";
 
 /** 이 개수를 넘는 GLB만 격자 청크로 쪼갠다. 그 이하는 통째로 하나. */
 const CHUNK_THRESHOLD = 80;
@@ -108,6 +109,14 @@ function chunkPlacements(placements: PropPlacement[]): PropPlacement[][] {
 const FOLIAGE_TINT = {r: 0.68, g: 0.84, b: 0.6};
 const isFoliage = (glb: string) => /(tree|bush)-/.test(glb);
 
+// ─── 바람 ────────────────────────────────────────────────────────────────────
+// 마을 전체가 한 방향으로 분다. 방위는 컨셉의 노을(서쪽)을 등지는 쪽으로 잡았다.
+const WIND_DIRECTION: [number, number] = [0.82, 0.57];
+/** 꼭대기가 제 키의 몇 배만큼 눕는지. 나무는 낭창하고 덤불은 뻣뻣하다. */
+const WIND_SWAY = {tree: 0.045, bush: 0.022};
+/** 흔들리는 속도. 작은 것일수록 빠르게 떤다. */
+const WIND_SPEED = {tree: 1.0, bush: 1.6};
+
 // 대지 얼룩을 탈 것 = 땅으로 읽히는 타일. shadowRole 과 같은 판정이다
 // (ground/ 와 ground-flat/ 두 갈래). 담장·나무처럼 땅 위에 **서 있는** 것은
 // 걸면 안 된다 — 얼룩은 지면의 성질이지 물건의 성질이 아니다.
@@ -126,12 +135,15 @@ function InstancedPart({
   onPropDown,
   cast,
   receive,
+  depthMaterial,
 }: {
   part: Part;
   placements: PropPlacement[];
   onPropDown?: (event: ThreeEvent<PointerEvent>, propId: string) => void;
   cast: boolean;
   receive: boolean;
+  /** 바람에 흔들리는 식생용. 없으면 three 의 공용 깊이 재질을 쓴다. */
+  depthMaterial?: MeshDepthMaterial;
 }) {
   const ref = useRef<InstancedMesh>(null);
 
@@ -184,6 +196,8 @@ function InstancedPart({
       args={[part.geometry, part.material as Material, placements.length]}
       castShadow={cast}
       receiveShadow={receive}
+      // 그림자도 같이 흔들리게 한다. undefined 면 three 가 공용 깊이 재질을 쓴다.
+      customDepthMaterial={depthMaterial}
       onPointerDown={onPropDown ? handleDown : undefined}
     />
   );
@@ -217,6 +231,37 @@ function GlbInstances({
     }
   }, [glb, parts]);
 
+  // ─── 바람 ──────────────────────────────────────────────────────────────────
+  // 흔들림 가중치는 **그 파트 지오메트리 자신의 y 범위**로 잰다. 셰이더의
+  // position 이 바로 그 공간이라, GLB 안에 메시가 여럿이어도 각자 제 밑동이
+  // 0 이 되고 제 꼭대기가 1 이 된다.
+  //
+  // 깊이 재질을 파트마다 따로 만드는 이유는 흔들림 파라미터가 파트마다 다르기
+  // 때문이다 — 하나를 돌려쓰면 줄기와 잎의 그림자가 서로 다르게 눕는다.
+  const depthByPart = useMemo(() => {
+    const map = new Map<string, MeshDepthMaterial | undefined>();
+    if (!isFoliage(glb)) return map;
+    const bush = /bush-/.test(glb);
+
+    for (const part of parts) {
+      part.geometry.computeBoundingBox();
+      const box = part.geometry.boundingBox;
+      if (!box) continue;
+      const height = Math.max(0.001, box.max.y - box.min.y);
+      const options: FoliageWindOptions = {
+        minY: box.min.y,
+        height,
+        amplitude: height * (bush ? WIND_SWAY.bush : WIND_SWAY.tree),
+        speed: bush ? WIND_SPEED.bush : WIND_SPEED.tree,
+        direction: WIND_DIRECTION,
+      };
+      const mats = Array.isArray(part.material) ? part.material : [part.material];
+      for (const m of mats) applyFoliageWind(m, options);
+      map.set(part.key, makeFoliageDepthMaterial(options, mats[0]));
+    }
+    return map;
+  }, [glb, parts]);
+
   // 바닥 타일도 대지 얼룩을 탄다.
   //
   // 잔디 평면에만 걸었더니 **오히려 경계가 더 드러났다** — 평면은 얼룩지고 그 위의
@@ -243,6 +288,7 @@ function GlbInstances({
             onPropDown={onPropDown}
             cast={cast}
             receive={receive}
+            depthMaterial={cast ? depthByPart.get(part.key) : undefined}
           />
         ))
       )}

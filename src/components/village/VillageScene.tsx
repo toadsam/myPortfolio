@@ -1,17 +1,19 @@
 "use client";
 
-import {Canvas, useFrame} from "@react-three/fiber";
+import {Canvas, useFrame, useThree} from "@react-three/fiber";
 import {AdaptiveDpr, AdaptiveEvents, Billboard, ContactShadows, Html, useGLTF, useTexture} from "@react-three/drei";
-import {Bloom, EffectComposer, ToneMapping} from "@react-three/postprocessing";
+import {Bloom, EffectComposer, N8AO, ToneMapping} from "@react-three/postprocessing";
 import {ToneMappingMode} from "postprocessing";
 import {memo, Suspense, useEffect, useMemo, useRef} from "react";
-import {AdditiveBlending, BackSide, BufferGeometry, Color, Float32BufferAttribute, type Mesh, RepeatWrapping, SphereGeometry, SRGBColorSpace, Vector3} from "three";
+import {AdditiveBlending, BackSide, BufferGeometry, Color, Float32BufferAttribute, type Mesh, MeshStandardMaterial, RepeatWrapping, SphereGeometry, SRGBColorSpace, Vector3} from "three";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import {spread, villageBuildings} from "@/lib/constants";
-import {VILLAGE_PALETTE} from "@/lib/villagePalette";
+import {AO_ENABLED, VILLAGE_PALETTE} from "@/lib/villagePalette";
 import {makeCloudTexture} from "@/lib/skyClouds";
+import {advanceWaterFlow, applyWaterFlow, makeWaterNormal} from "@/lib/waterFlow";
+import {advanceFoliageWind} from "@/lib/foliageWind";
 import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
 import {makeBankTexture} from "@/lib/terraceBank";
 import {PLATEAU_PAD, TERRACE_RECTS, TERRACE_STEP, terrainHeightAt, WATER_CHANNELS} from "@/lib/villageTerrain";
@@ -231,12 +233,54 @@ function IslandCliff() {
 // 보인다 — 그 각도에선 잔물결이 거의 안 읽히고 fog가 대부분 먹는다.
 // roughness 를 낮춰 하늘빛을 받는 것만으로 충분히 물처럼 보인다.
 function Water() {
+  const material = useMemo(() => {
+    const m = new MeshStandardMaterial({color: "#2d6a86", roughness: 0.22, metalness: 0.25});
+    // 호수는 **흐르지 않는다.** 두 층을 거의 마주보는 방향으로 흘려 무늬가 한쪽으로
+    // 미끄러지는 대신 서로 간섭하게 둔다 — 제자리에서 반짝이는 게 고인 물이다.
+    // 속도도 개울의 1/20 이다. 여기서 빠르면 호수가 강처럼 보인다.
+    applyWaterFlow(m, makeWaterNormal(), {
+      scaleA: 96,
+      scaleB: 61,
+      dirA: [1, 0.16],
+      dirB: [-0.86, 0.42],
+      speed: 0.02,
+      normalScale: 0.6,
+    });
+    return m;
+  }, []);
+
   return (
-    <mesh position={[ISLAND_CENTER[0], WATER_Y, ISLAND_CENTER[2]]} rotation={[-Math.PI / 2, 0, 0]}>
+    <mesh material={material} position={[ISLAND_CENTER[0], WATER_Y, ISLAND_CENTER[2]]} rotation={[-Math.PI / 2, 0, 0]}>
       <circleGeometry args={[240, 64]} />
-      <meshStandardMaterial color="#2d6a86" roughness={0.22} metalness={0.25} />
     </mesh>
   );
+}
+
+// 물·바람이 쓰는 시계를 한 곳에서 돌린다. 재질마다 useFrame 을 걸면 해자와
+// 개울이 서로 다른 위상으로 흘러 만나는 지점에서 어긋나고, 나무도 그루마다
+// 다른 순간에 같은 돌풍을 맞는다.
+function AnimationClock() {
+  const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
+  const camera = useThree((s) => s.camera);
+
+  useFrame((state) => {
+    const t = state.clock.elapsedTime;
+    advanceWaterFlow(t);
+    advanceFoliageWind(t);
+  });
+
+  // ─── 개발용 콘솔 훅 ────────────────────────────────────────────────────────
+  // 셰이더 패치는 "소스는 바뀌었는데 화면은 그대로"인 실패가 흔하다(three 가
+  // 캐시된 프로그램을 재사용하는 경우 — foliageWind 의 customProgramCacheKey
+  // 주석 참고). 그때 __three.gl.info.programs 의 cacheKey 를 보면 우리 프로그램이
+  // 실제로 만들어졌는지 바로 확인된다. 화면만 보고는 절대 못 잡는다.
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "development") return;
+    (window as unknown as {__three?: unknown}).__three = {gl, scene, camera};
+  }, [gl, scene, camera]);
+
+  return null;
 }
 
 // ─── 북쪽 개울 ───────────────────────────────────────────────────────────────
@@ -261,11 +305,16 @@ const MOAT = {cx: 0, cz: 1, a: 27, b: 21.7};
 const MOAT_HALF = 1.1;   // 반폭. 다리(5유닛 span)가 넉넉히 걸친다.
 // 1.5 로 뒀더니 마을 안 물길과 겹치는 데서 두 리본이 화살표처럼 뭉쳐 보였다.
 const MOAT_STEPS = 132;  // 한 바퀴를 몇 조각으로
+// 물결 UV 한 칸이 덮는 월드 거리의 역수. 0.5 = 2유닛마다 물결 무늬가 한 번 반복.
+// 리본 폭이 1~2.2유닛이라 이 값이면 u·v 밀도가 대략 정사각형이 된다 — 어긋나면
+// 물결이 한쪽으로 늘어나 물살이 아니라 빗살무늬로 보인다.
+const UV_PER_UNIT = 0.5;
 
 function Waterways() {
   const geometry = useMemo(() => {
     const positions: number[] = [];
     const colors: number[] = [];
+    const uvs: number[] = [];
     const indices: number[] = [];
 
     const shallow = new Color("#63c7c4"); // 가장자리 — 자갈이 비치는 여울
@@ -279,11 +328,35 @@ function Waterways() {
     const ribbon = (
       pts: {x: number; z: number}[],
       halfAt: (t: number) => number,
-      taper: boolean
+      taper: boolean,
+      /** 시작점과 끝점이 만나는 닫힌 고리인지 — 해자만 그렇다. UV 이음매 처리가 다르다. */
+      closed: boolean
     ) => {
       const base = positions.length / 3;
+
+      // ─── 물결 UV 의 v 축 ─────────────────────────────────────────────────
+      // v 는 **경로를 따라 잰 실제 거리**다. i/pts.length 로 잡으면 해자(둘레
+      // 155유닛)와 짧은 개울에서 물결 크기가 딴판이 된다.
+      //
+      // ─── 닫힌 고리의 이음매 ──────────────────────────────────────────────
+      // 해자는 한 바퀴 돌아 제자리로 온다. 그런데 총 거리 × UV_PER_UNIT 이
+      // 정수가 아니면 시작점의 v(=0)와 끝점의 v(=77.5 → 소수부 0.5)가 안 맞아
+      // 북쪽 꼭짓점에 물결이 뚝 끊기는 선이 생긴다.
+      // 그래서 닫힌 고리는 총 v 가 정수가 되도록 배율을 아주 살짝 조정한다.
+      // (waterFlow 의 scaleA·scaleB 를 정수로 잡아 둔 것도 같은 이유다 —
+      //  정수 v 에 정수 배율을 곱해야 이음매가 끝까지 안 생긴다.)
+      const arcs: number[] = [0];
+      for (let i = 1; i < pts.length; i++) {
+        arcs.push(arcs[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z));
+      }
+      const total = arcs[arcs.length - 1] || 1;
+      const vScale = closed
+        ? Math.max(1, Math.round(total * UV_PER_UNIT)) / total
+        : UV_PER_UNIT;
+
       for (let i = 0; i < pts.length; i++) {
         const t = i / (pts.length - 1);
+        const uvV = arcs[i] * vScale;
         const prev = pts[Math.max(0, i - 1)];
         const next = pts[Math.min(pts.length - 1, i + 1)];
         const tx = next.x - prev.x;
@@ -297,9 +370,18 @@ function Waterways() {
         for (const side of [-1, 1]) {
           positions.push(pts[i].x + ux * half * side, 0, pts[i].z + uz * half * side);
           colors.push(shallow.r, shallow.g, shallow.b);
+          // u 는 리본을 가로지르고 v 는 물길을 따라간다. 흐름을 +v 로만 주면
+          // 물이 굽은 해자를 따라 돈다.
+          //
+          // u 도 **v 와 같은 월드 거리 축척**이어야 한다. 여기를 0~1 정규화로
+          // 두면(처음에 그렇게 했다) 폭 1유닛짜리 개울에서 u 가 v 보다 두 배
+          // 촘촘해져 물결이 경로 방향으로 늘어난다 — 화면에서 물살이 아니라
+          // 지그재그 빗살무늬로 보인다. 폭이 좁을수록 심해진다.
+          uvs.push(0.5 + side * half * UV_PER_UNIT, uvV);
         }
         positions.push(pts[i].x, 0, pts[i].z);
         colors.push(deep.r, deep.g, deep.b);
+        uvs.push(0.5, uvV);
       }
       for (let i = 0; i < pts.length - 1; i++) {
         const a = base + i * 3;
@@ -325,31 +407,59 @@ function Waterways() {
         z: MOAT.cz + sin * MOAT.b + (nz / nl) * drift
       });
     }
-    ribbon(moat, (t) => MOAT_HALF * (0.82 + 0.3 * Math.sin(t * Math.PI * 10 + 1.9)), false);
+    ribbon(moat, (t) => MOAT_HALF * (0.82 + 0.3 * Math.sin(t * Math.PI * 10 + 1.9)), false, true);
 
     // ② 구역 사이 골짜기를 흐르는 물길 — 단이 양옆에 서 있어 파인 것처럼 보인다.
     //    광장 쪽 끝은 가늘게, 해자에 닿는 바깥쪽은 넓게.
     for (const channel of WATER_CHANNELS) {
       // 안쪽은 가늘고 바깥으로 갈수록 넓어진다 — 물이 흘러 내려가는 방향이 읽힌다.
       // 0.55~1.3 은 너무 굵어 잔디 위에 붙인 색종이처럼 보였다.
-      ribbon(channel, (t) => 0.5 + t * 0.45, true);
+      ribbon(channel, (t) => 0.5 + t * 0.45, true, false);
     }
 
     const geo = new BufferGeometry();
     geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
     geo.setAttribute("color", new Float32BufferAttribute(colors, 3));
+    geo.setAttribute("uv", new Float32BufferAttribute(uvs, 2));
     geo.setIndex(indices);
     geo.computeVertexNormals();
     return geo;
   }, []);
 
-  return (
-    <mesh geometry={geometry} position={[0, 0.05, 0]}>
-      {/* 호수(Water)와 같은 재질감 — 하늘빛을 받아야 물로 보인다.
-          다만 해자·개울은 얕으므로 조금 밝고 덜 반사한다. */}
-      <meshStandardMaterial vertexColors roughness={0.3} metalness={0.2} />
-    </mesh>
-  );
+  const material = useMemo(() => {
+    // 호수(Water)와 같은 재질감 — 하늘빛을 받아야 물로 보인다.
+    // 다만 해자·개울은 얕으므로 조금 밝고 덜 반사한다.
+    const m = new MeshStandardMaterial({vertexColors: true, roughness: 0.3, metalness: 0.2});
+    // 여기는 **흐르는** 물이다. 두 층 모두 +v(물길 방향)로 흘리되 속도를 달리해
+    // 무늬가 서로 어긋나게 한다. u 에 살짝 준 값은 물살이 벽에 부딪혀 비스듬히
+    // 밀리는 느낌 — 0 으로 두면 물살이 자로 잰 듯 곧게 흘러 인공적으로 보인다.
+    // 배율이 **정수**인 건 취향이 아니라 이음매 때문이다. 해자는 닫힌 고리라
+    // 총 v 를 정수로 맞춰 놨는데(ribbon 의 vScale), 여기에 소수 배율을 곱하면
+    // 정수성이 깨져 북쪽 꼭짓점에 물결이 끊기는 선이 되살아난다.
+    // 8:5 는 서로 배수가 아니라 두 층이 겹쳐 고정 무늬를 만들지도 않는다.
+    //
+    // ─── 왜 8 인가 (3 에서 올렸다) ────────────────────────────────────────
+    // 물결 한 칸의 월드 크기는 1/(UV_PER_UNIT × scale) 이다. 3 이면 0.67유닛인데,
+    // 개울 폭이 1~1.9유닛이라 **물결이 폭을 가로질러 한 개 반**밖에 안 들어갔다.
+    // 그 크기에서는 물살이 아니라 비늘·빗살무늬로 읽힌다. 8 이면 0.25유닛이라
+    // 개울에 네 줄, 해자(2.2유닛)에 아홉 줄이 들어간다.
+    // 더 올리면 멀리서 모아레가 생기므로 여기가 상한 근처다.
+    applyWaterFlow(m, makeWaterNormal(), {
+      scaleA: 8,
+      scaleB: 5,
+      dirA: [0.05, 1],
+      dirB: [-0.04, 0.62],
+      // 오프셋 1.0 = 물결 한 칸(0.25유닛). 1.6 이면 초당 0.4유닛으로 흐른다 —
+      // 걷는 속도의 1/5 쯤이라 개울다운 느린 물살이다.
+      speed: 1.6,
+      // 맵의 최대 기울기가 이미 0.35 로 묶여 있다(waterFlow 의 STEEPNESS).
+      // 여기서 더 줄이면 물결이 아예 안 보인다 — 세기 조절은 STEEPNESS 쪽에서.
+      normalScale: 0.9,
+    });
+    return m;
+  }, []);
+
+  return <mesh geometry={geometry} material={material} position={[0, 0.05, 0]} />;
 }
 
 // ─── 구역 단차의 옆면 (축대) ──────────────────────────────────────────────────
@@ -1007,6 +1117,7 @@ function VillageSceneImpl({
           <SunDisc direction={sky.sunPos} radius={sky.discRadius} color={sky.discColor} />
           <Ground />
           <IslandCliff />
+          <AnimationClock />
           <Water />
           <Waterways />
           <TerraceBanks />
@@ -1107,20 +1218,63 @@ function VillageSceneImpl({
               (창문 emissive · 태양 원반 · 물 반사)만 걸리게 한다.
               모바일은 끈다 — 풀스크린 패스가 두 번 더 도는 비용이 크다. */}
           {isMobile ? null : (
+            // EffectComposer 의 children 타입은 Element | Element[] 라 null 도 주석
+            // 슬롯(undefined)도 못 낀다. 그래서 조건부 패스는 JSX 안에서 삼항으로
+            // 넣지 말고 여기처럼 배열로 만들어 넘긴다.
             <EffectComposer enableNormalPass={false}>
-              <Bloom
-                mipmapBlur
-                intensity={0.55 + sky.lamp * 0.5}
-                luminanceThreshold={0.72}
-                luminanceSmoothing={0.22}
-                radius={0.72}
-              />
-              {/* 이게 없으면 마을이 통째로 칙칙해진다. EffectComposer 가 끼면
-                  WebGLRenderer 의 톤매핑 단계를 건너뛰고 컴포저가 직접 화면에
-                  내보내기 때문 — 처음엔 이걸 빼먹어서 노을 하늘이 흙빛
-                  판때기가 됐다. 렌더러에 걸어 둔 ACES + 노출 0.68 을 여기서
-                  똑같이 재현한다. */}
-              <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+              {[
+                // ─── 접촉면 그늘 (앰비언트 오클루전) ──────────────────────────
+                // 그림자를 드리우는 광원이 태양 하나뿐이라, 태양이 안 닿는 곳은
+                // 전부 채움광으로 균일하게 밝았다. 담장 안쪽 구석·나무 밑동·
+                // 건물이 지면과 만나는 자리에 그늘이 없으니, 소품이 땅에 **놓인**
+                // 게 아니라 얹혀 보였다.
+                //
+                // N8AO 는 깊이 버퍼에서 법선을 복원하므로 노멀 패스가 필요 없다
+                // (enableNormalPass 는 false 그대로 둔다).
+                //
+                // ─── 순서 ─────────────────────────────────────────────────
+                // Bloom 보다 **앞**이다. AO 로 먼저 어둡게 깎은 뒤에 남은 밝은
+                // 것만 번져야 한다. 뒤에 두면 이미 번진 빛을 도로 깎아
+                // 창문·랜턴 주변이 지저분해진다.
+                //
+                // ─── halfRes ──────────────────────────────────────────────
+                // AO 는 저주파(넓고 부드러운) 성분이라 절반 해상도로 만들어
+                // 깊이 기준으로 늘려도 눈에 거의 티가 안 난다. 성능이 부족하면
+                // quality 를 내리기 전에 이걸 먼저 확인할 것.
+                //
+                // ─── aoRadius ─────────────────────────────────────────────
+                // 월드 단위다. 마을이 40유닛 폭이고 배럴·랜턴 같은 소품이
+                // 0.5~1유닛이라 1.2 가 접촉면만 먹는 크기다. 키우면 그늘이
+                // 넓게 퍼져 지면이 얼룩덜룩 때 탄 것처럼 보인다.
+                ...(AO_ENABLED
+                  ? [
+                      <N8AO
+                        key="ao"
+                        color={sky.aoColor}
+                        intensity={sky.aoI}
+                        aoRadius={1.2}
+                        distanceFalloff={1}
+                        quality="medium"
+                        halfRes
+                        depthAwareUpsampling
+                      />,
+                    ]
+                  : []),
+                <Bloom
+                  key="bloom"
+                  mipmapBlur
+                  intensity={0.55 + sky.lamp * 0.5}
+                  luminanceThreshold={0.72}
+                  luminanceSmoothing={0.22}
+                  radius={0.72}
+                />,
+                // 이게 없으면 마을이 통째로 칙칙해진다. EffectComposer 가 끼면
+                // WebGLRenderer 의 톤매핑 단계를 건너뛰고 컴포저가 직접 화면에
+                // 내보내기 때문 — 처음엔 이걸 빼먹어서 노을 하늘이 흙빛
+                // 판때기가 됐다. 렌더러에 걸어 둔 ACES + 노출 0.68 을 여기서
+                // 똑같이 재현한다.
+                <ToneMapping key="tone" mode={ToneMappingMode.ACES_FILMIC} />,
+              ]}
             </EffectComposer>
           )}
 

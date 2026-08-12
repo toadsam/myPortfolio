@@ -50,6 +50,10 @@ export interface VillagePalette {
   hSky: string;
   hGround: string;
   hI: number;
+  /** 앰비언트 오클루전 — 접촉면 그늘의 색 */
+  aoColor: string;
+  /** 앰비언트 오클루전 세기 */
+  aoI: number;
   /** 마을에 깔린 따뜻한 보조 pointLight 4개의 배율 */
   lamp: number;
   /** 건물 텍스처를 자기 발광으로 얼마나 되돌릴지 — 저녁에 창문이 켜지는 효과 */
@@ -97,6 +101,8 @@ export function timePalette(hour: number): VillagePalette {
       amb: 0.2, sun: "#9fb4e8", sunI: 0.95, sunPos: [-30, 44, -26],
       discRadius: 9, discColor: "#e8eeff",
       fill: "#3a4f8c", fillI: 0.14, hSky: "#22345e", hGround: "#141f26", hI: 0.24,
+      // 밤은 태양(달)이 약해 형태를 거의 못 만든다. AO가 그 몫을 대신 지므로 제일 세다.
+      aoColor: "#080d1e", aoI: 2.2,
       lamp: 2.6, windowGlow: 1.15,
       cloudLight: "#6b7ba6", cloudDark: "#1b2440", cloudCover: 0.6, label: "밤"
     };
@@ -107,6 +113,7 @@ export function timePalette(hour: number): VillagePalette {
       amb: 0.42, sun: "#ffd6a6", sunI: 2.5, sunPos: [-58, 17, 34],
       discRadius: 15, discColor: "#fff0d2",
       fill: "#ffc2d2", fillI: 0.35, hSky: "#f0c8a4", hGround: "#566a3a", hI: 0.5,
+      aoColor: "#3b2c3a", aoI: 1.6,
       lamp: 1.2, windowGlow: 0.55,
       cloudLight: "#fff0ee", cloudDark: "#c79bb2", cloudCover: 0.75, label: "새벽"
     };
@@ -119,6 +126,9 @@ export function timePalette(hour: number): VillagePalette {
       amb: 0.44, sun: "#ffe6b8", sunI: 3.0, sunPos: [34, 32, 26],
       discRadius: 11, discColor: "#fff8dc",
       fill: "#ffd9b0", fillI: 0.36, hSky: "#a8cfee", hGround: "#5a7a34", hI: 0.5,
+      // 순수 검정으로 어둡게 하면 잔디 그늘이 때 탄 것처럼 보인다. 따뜻한 흙빛으로
+      // 내려야 햇빛 아래 그늘로 읽힌다 — fog·지평선을 금빛으로 맞춘 것과 같은 이유.
+      aoColor: "#2f2a1f", aoI: 1.5,
       // 컨셉은 한낮 그림에서도 창문마다 불이 들어와 있다. 0.14 는 Bloom 문턱(0.72)에
       // 걸리지도 않아 켜 놓으나 마나였다.
       lamp: 0.7, windowGlow: 0.4,
@@ -131,10 +141,21 @@ export function timePalette(hour: number): VillagePalette {
     amb: 0.4, sun: "#ffa062", sunI: 3.1, sunPos: [58, 11, 26],
     discRadius: 19, discColor: "#fff2c8",
     fill: "#ffa878", fillI: 0.42, hSky: "#f0a068", hGround: "#4a4626", hI: 0.5,
+    // 노을은 하늘이 보라(#2e2f6b)라 그늘에 그 색이 돈다.
+    aoColor: "#33203a", aoI: 1.6,
     lamp: 2.1, windowGlow: 1.05,
     cloudLight: "#ffe3bd", cloudDark: "#8a6a86", cloudCover: 0.85, label: "노을"
   };
 }
+
+/**
+ * AO 를 끄고 비교해 보고 싶을 때: /?ao=0
+ *
+ * AO 는 "켜면 좋아진다"가 아니라 세기·색·반경을 눈으로 맞춰야 하는 값이라,
+ * 같은 각도에서 껐다 켰다 할 수 있어야 판단이 선다.
+ */
+export const AO_ENABLED =
+  typeof window === "undefined" || new URLSearchParams(window.location.search).get("ao") !== "0";
 
 /** 접속 시각 대신 원하는 시간대를 보고 싶을 때: /?hour=13 */
 function paletteHour() {
