@@ -38,6 +38,76 @@ DEFAULT_BUDGET = BUDGETS["props"]
 QUALITY = {"normal": 92, "baseColor": 88, "metallicRoughness": 85, "emissive": 85, "occlusion": 85}
 
 # 1024×1024 RGBA + 밉맵이 VRAM에서 차지하는 바이트 (계기판과 같은 계산식)
+# ─── 디라이팅 ────────────────────────────────────────────────────────────────
+# Meshy는 알베도에 **자기가 쓴 조명**을 구워서 내보낸다. 물건마다 그 조명 방향과
+# 세기가 다르니, 한 장면에 모아 놓으면 저마다 다른 태양을 달고 있는 꼴이 된다.
+# 실측(26채 + 장식물): 저주파 밝기 편차가 4.5~29.2 로 5배 넘게 벌어져 있었다.
+# project-sign-language 24.6 · lute-picnic 29.2 · orb-lantern 28.2 가 최악이고
+# project-darklab 은 4.5 다. 이 편차가 "따로 노는 에셋" 느낌의 큰 축이다.
+#
+# ── 왜 0 으로 밀지 않고 한 수준으로만 맞추나 ────────────────────────────────
+# 저주파 밝기를 전부 없애면 의도한 명암(어두운 지붕 ↔ 밝은 벽)까지 같이 날아가
+# 물건이 판판한 스티커가 된다. 목표는 "그림자를 지우는 것"이 아니라 **모두가
+# 같은 양의 그림자를 갖게 하는 것**이다 — 팔레트 잠금이 색을 하나로 만들지 않고
+# 같은 계열로 당기기만 하는 것과 같은 생각이다.
+#
+# 그래서 이미 조용한 텍스처(목표 이하)는 아예 건드리지 않고, 시끄러운 것만
+# 목표까지 눌러 준다. 눌리는 건 큰 얼룩(저주파)뿐이고 무늬·모서리 같은 잔주름
+# (고주파)은 나눗셈이 그대로 통과시키므로 디테일은 남는다.
+DELIGHT_TARGET = 12.0  # 저주파 밝기 표준편차 (0~255). 실측 중앙값 근처.
+
+# 픽셀 하나를 얼마나 밝히거나 어둡게 할 수 있는지의 한계.
+#
+# 처음엔 3.0 까지 열어 뒀는데, 그러면 **거의 검은 자리가 갈색으로 되살아난다** —
+# 실제로 간판 텍스처의 검은 원반이 갈색 고리로 바뀌었다. 구워진 그림자인지
+# 원래 검은 재질(또는 뚫린 구멍)인지는 픽셀만 봐서 구분할 수 없으므로,
+# 되살리는 쪽을 보수적으로 막는다. 1.5 면 넓은 명암 기울기는 충분히 눕히면서
+# 검은 자리는 검게 남는다.
+DELIGHT_MAX_LIFT = 1.5
+DELIGHT_MAX_DARKEN = 0.6
+
+
+def delight(im):
+    """알베도에 구워진 조명을 줄여, 에셋마다 다른 명암 세기를 한 수준으로 맞춘다."""
+    from PIL import ImageFilter
+
+    rgb = im.convert("RGB")
+    w, h = rgb.size
+    radius = max(2, min(w, h) // 8)
+    lo = rgb.convert("L").filter(ImageFilter.GaussianBlur(radius=radius))
+    px = list(lo.getdata())
+    n = len(px)
+    mean = sum(px) / n
+    if mean < 1:
+        return im, ""
+    sigma = (sum((v - mean) ** 2 for v in px) / n) ** 0.5
+    if sigma <= DELIGHT_TARGET:
+        return im, f"  구운조명 {sigma:.0f} (그대로)"
+
+    # 저주파 편차를 목표까지 줄이는 배율을 픽셀마다 구한다.
+    #   원하는 밝기 = mean + (lo - mean) * k    (k = 목표/실측)
+    #   보정 배율   = 원하는 밝기 / lo
+    k = DELIGHT_TARGET / sigma
+    gain = [
+        max(DELIGHT_MAX_DARKEN, min(DELIGHT_MAX_LIFT, (mean + (v - mean) * k) / v))
+        if v > 4
+        else 1.0
+        for v in px
+    ]
+
+    # 채널마다 같은 배율을 곱한다 — 밝기만 건드리고 색상은 그대로 둔다.
+    chans = []
+    for ch in rgb.split():
+        chans.append(
+            Image.frombytes(
+                "L",
+                (w, h),
+                bytes(min(255, max(0, round(v * g))) for v, g in zip(ch.getdata(), gain)),
+            )
+        )
+    return Image.merge("RGB", chans), f"  구운조명 {sigma:.0f}→{DELIGHT_TARGET:.0f}"
+
+
 def vram_bytes(w, h):
     return w * h * 4 * 1.333
 
@@ -231,6 +301,10 @@ def main():
                 im = im.resize((target, target), Image.LANCZOS)
                 resized = True
 
+            delit = ""
+            if "baseColor" in kinds:
+                im, delit = delight(im)
+
             before_vram = vram_bytes(width, height)
             after_vram = vram_bytes(im.size[0], im.size[1])
             saved_vram += before_vram - after_vram
@@ -256,7 +330,7 @@ def main():
                 image_entry["mimeType"] = "image/jpeg"
 
         note = f"{width}→{target}" if resized else f"{width} 유지"
-        print(f"    · {kind:17} {note:12} {'PNG(알파)' if keep_alpha else 'JPEG'}")
+        print(f"    · {kind:17} {note:12} {'PNG(알파)' if keep_alpha else 'JPEG'}{delit}")
 
     with open(gltf_path, "w", encoding="utf-8") as f:
         json.dump(gltf, f)

@@ -1,4 +1,10 @@
-import {Vector2, type Material, type MeshStandardMaterial, type Object3D, type Mesh} from "three";
+import {
+  Vector2,
+  type Material,
+  type MeshStandardMaterial,
+  type Object3D,
+  type Mesh
+} from "three";
 import villageColors from "@/data/villageColors.json";
 
 // 마을 GLB 전부에 **같은 빛 반응**을 강제한다.
@@ -26,7 +32,8 @@ import villageColors from "@/data/villageColors.json";
 
 /** **false 로 두면 GLB 원본 재질 그대로다.** 되돌리기 스위치: /?mat=0 */
 export const MATERIAL_LOCK =
-  typeof window === "undefined" || new URLSearchParams(window.location.search).get("mat") !== "0";
+  typeof window === "undefined" ||
+  new URLSearchParams(window.location.search).get("mat") !== "0";
 
 /**
  * 마을 전체가 공유하는 거칠기. 0.85 는 "칠한 나무·회벽·기와" 대역이다.
@@ -60,7 +67,7 @@ const NORMAL_SCALE = 0.8;
 // 필요하다. 셰이더에서 하면 원본을 안 건드리니 되돌리기가 공짜고, 세기를 URL 로
 // 바로 바꿔 볼 수 있고, 새 에셋도 자동으로 같은 규칙을 탄다.
 
-const HUES = villageColors.hues.map((h) => h.dir as [number, number]);
+const HUES = villageColors.hues.map(h => h.dir as [number, number]);
 
 /**
  * 채도 상한 — 컨셉 아트가 실제로 쓰는 채도의 90퍼센타일.
@@ -72,7 +79,9 @@ const HUES = villageColors.hues.map((h) => h.dir as [number, number]);
  * 감으로 정하면 취향 싸움이 되므로 팔레트에서 실측해 쓴다.
  */
 const CHROMA_CEIL = (() => {
-  const cs = villageColors.colors.map((c) => Math.hypot(c.a, c.b)).sort((x, y) => x - y);
+  const cs = villageColors.colors
+    .map(c => Math.hypot(c.a, c.b))
+    .sort((x, y) => x - y);
   return cs[Math.floor(cs.length * 0.9)] ?? 0.107;
 })();
 
@@ -94,8 +103,50 @@ export const PALETTE_STRENGTH = (() => {
  */
 const STRENGTH = {value: PALETTE_STRENGTH};
 
+/**
+ * 마을 색에서 너무 벗어난 에셋만 **더 세게** 당긴다.
+ *
+ * 전체 세기를 올리면 이미 잘 어울리는 25채까지 같이 눌려 마을이 통째로 누렇게
+ * 된다. 튀는 놈만 따로 당기는 편이 낫다.
+ *
+ * 값은 눈대중이 아니라 알베도 실측에서 나왔다(26채의 평균 색조를 Oklab 으로 잼):
+ * 마을 중앙값이 78° 인데 skill-3d 는 **−7°** 로 혼자 반대편(분홍)에 있고,
+ * exp-unity-ui 가 24° 로 그다음이다. 나머지 24채는 50~128° 안에 모여 있다.
+ * 다시 재려면: 알베도의 채도 0.02 이상 픽셀들의 평균 색조 방향.
+ */
+const EXTRA_PULL: Record<string, number> = {
+  "skill-3d": 0.85,
+  "exp-unity-ui": 0.7
+};
+
+/** 에셋별 세기 유니폼 — 없으면 마을 공통값을 그대로 쓴다 */
+const perAsset = new Map<string, {value: number}>();
+
+function strengthFor(assetPath?: string): {value: number} {
+  if (!assetPath) return STRENGTH;
+  const name =
+    assetPath
+      .split("/")
+      .pop()
+      ?.replace(/\.glb$/i, "") ?? "";
+  const extra = EXTRA_PULL[name];
+  if (extra === undefined) return STRENGTH;
+  let u = perAsset.get(name);
+  if (!u) {
+    u = {value: Math.max(STRENGTH.value, extra)};
+    perAsset.set(name, u);
+  }
+  return u;
+}
+
 export function setPaletteStrength(v: number): void {
   STRENGTH.value = Math.max(0, Math.min(1, v));
+  // 개발 중 `window.__palette(0)` 로 전부 끌 수 있어야 하므로 예외들도 같이 따라간다
+  for (const [name, u] of perAsset)
+    u.value = Math.max(
+      STRENGTH.value,
+      STRENGTH.value === 0 ? 0 : EXTRA_PULL[name] ?? 0
+    );
 }
 
 // Oklab — 거리 1 이 어디서나 비슷하게 달라 보이는 공간. RGB 에서 색조를 돌리면
@@ -149,18 +200,24 @@ const PALETTE_BODY = `
 }
 `;
 
-function patchPalette(std: MeshStandardMaterial): void {
+function patchPalette(
+  std: MeshStandardMaterial,
+  strength: {value: number}
+): void {
   // 0 으로 시작해도 패치는 걸어 둔다 — 안 그러면 실행 중에 세기를 올릴 수 없다
   if (HUES.length === 0) return;
   if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
-    (window as unknown as {__palette?: (v: number) => void}).__palette = setPaletteStrength;
+    (window as unknown as {__palette?: (v: number) => void}).__palette =
+      setPaletteStrength;
   }
 
   const previous = std.onBeforeCompile;
   std.onBeforeCompile = (shader, renderer) => {
     previous?.call(std, shader, renderer);
-    shader.uniforms.uPaletteHues = {value: HUES.map(([a, b]) => new Vector2(a, b))};
-    shader.uniforms.uPaletteStrength = STRENGTH;
+    shader.uniforms.uPaletteHues = {
+      value: HUES.map(([a, b]) => new Vector2(a, b))
+    };
+    shader.uniforms.uPaletteStrength = strength;
     shader.uniforms.uPaletteChromaCeil = {value: CHROMA_CEIL};
     shader.fragmentShader = shader.fragmentShader
       .replace(
@@ -174,7 +231,10 @@ ${OKLAB_GLSL}`
       )
       // map_fragment 가 텍스처와 color 를 곱해 diffuseColor 를 완성한 **직후**.
       // 조명은 아직 안 붙었으므로 여기서 바꾸면 재질 고유색만 바뀐다.
-      .replace("#include <map_fragment>", `#include <map_fragment>${PALETTE_BODY}`);
+      .replace(
+        "#include <map_fragment>",
+        `#include <map_fragment>${PALETTE_BODY}`
+      );
   };
 
   // three 의 getProgramCacheKey 는 onBeforeCompile 을 키에 안 넣는다. 안 갈라 두면
@@ -186,7 +246,7 @@ ${OKLAB_GLSL}`
   std.needsUpdate = true;
 }
 
-function lockOne(material: Material): void {
+function lockOne(material: Material, strength: {value: number}): void {
   const std = material as MeshStandardMaterial;
   // MeshBasicMaterial 등 PBR 이 아닌 재질은 건너뛴다
   if (!std || !("roughness" in std)) return;
@@ -204,7 +264,7 @@ function lockOne(material: Material): void {
   }
 
   // 2층 — 색조를 팔레트로. 반응(1층)과 색(2층)을 같이 잠가야 "하나의 손"이 된다.
-  patchPalette(std);
+  patchPalette(std, strength);
 
   std.needsUpdate = true;
 }
@@ -216,19 +276,24 @@ function lockOne(material: Material): void {
  * 플래그로 한 번만 건드린다(안 그러면 인스턴스마다 needsUpdate 가 걸려
  * 셰이더를 계속 다시 만든다).
  */
-export function lockSceneMaterials(root: Object3D): void {
+export function lockSceneMaterials(root: Object3D, assetPath?: string): void {
   if (!MATERIAL_LOCK) return;
-  root.traverse((obj) => {
+  const strength = strengthFor(assetPath);
+  root.traverse(obj => {
     const mesh = obj as Mesh;
     if (!mesh.isMesh) return;
     const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-    for (const m of mats) if (m) lockOne(m);
+    for (const m of mats) if (m) lockOne(m, strength);
   });
 }
 
 /** 재질 하나만 잠근다 — 인스턴싱처럼 트리를 안 거치는 경로용 */
-export function lockMaterial(material: Material | Material[]): void {
+export function lockMaterial(
+  material: Material | Material[],
+  assetPath?: string
+): void {
   if (!MATERIAL_LOCK) return;
+  const strength = strengthFor(assetPath);
   const mats = Array.isArray(material) ? material : [material];
-  for (const m of mats) if (m) lockOne(m);
+  for (const m of mats) if (m) lockOne(m, strength);
 }

@@ -3,10 +3,21 @@
 import {Html, useCursor, useGLTF} from "@react-three/drei";
 import {memo, useMemo, useRef, useState} from "react";
 import {useFrame, type ThreeEvent} from "@react-three/fiber";
-import {AdditiveBlending, Box3, BoxGeometry, EdgesGeometry, type Group, type Mesh, type MeshStandardMaterial} from "three";
+import {
+  AdditiveBlending,
+  Box3,
+  BoxGeometry,
+  EdgesGeometry,
+  type Group,
+  type Mesh,
+  type MeshStandardMaterial
+} from "three";
 import {lightIntensity} from "@/lib/liveState";
 import {lockSceneMaterials} from "@/lib/villageMaterial";
-import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
+import {
+  createThrottledCalculatePosition,
+  LABEL_SYNC_STRIDE
+} from "@/lib/htmlLabelThrottle";
 import type {BuildingState} from "@/types/live";
 import type {BuildingData} from "@/types/portfolio";
 import buildingModelsJson from "@/data/buildingModels.json";
@@ -20,7 +31,17 @@ const buildingModels: Record<string, string> = buildingModelsJson;
 
 // ─── 호버 연출: 빛기둥 + 회전 베이스 링 2겹 (Developer City 이식) ──────────────
 
-function HighlightFX({color, height, radius, active}: {color: string; height: number; radius: number; active: boolean}) {
+function HighlightFX({
+  color,
+  height,
+  radius,
+  active
+}: {
+  color: string;
+  height: number;
+  radius: number;
+  active: boolean;
+}) {
   const groupRef = useRef<Group>(null);
   const beamRef = useRef<Mesh>(null);
   const ring1Ref = useRef<Mesh>(null);
@@ -54,7 +75,8 @@ function HighlightFX({color, height, radius, active}: {color: string; height: nu
     }
     if (beamRef.current) {
       const pulse = 0.5 + 0.5 * Math.sin(performance.now() * 0.003);
-      (beamRef.current.material as {opacity: number}).opacity = k * (0.12 + pulse * 0.1);
+      (beamRef.current.material as {opacity: number}).opacity =
+        k * (0.12 + pulse * 0.1);
       beamRef.current.visible = k > 0.01;
     }
   });
@@ -66,17 +88,59 @@ function HighlightFX({color, height, radius, active}: {color: string; height: nu
           윗지름 4유닛짜리 원뿔이 돼, 노을 하늘 앞에서 숲을 하얗게 지우는
           **커다란 청록 쐐기**로 보였다. 큰 건물일수록 상한을 둔다. */}
       <mesh ref={beamRef} position={[0, height + 1.4, 0]}>
-        <cylinderGeometry args={[Math.min(radius, 2.4) * 0.18, Math.min(radius, 2.4) * 0.42, 3, 12, 1, true]} />
-        <meshBasicMaterial color={color} transparent opacity={0} blending={AdditiveBlending} depthWrite={false} side={2} />
+        <cylinderGeometry
+          args={[
+            Math.min(radius, 2.4) * 0.18,
+            Math.min(radius, 2.4) * 0.42,
+            3,
+            12,
+            1,
+            true
+          ]}
+        />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0}
+          blending={AdditiveBlending}
+          depthWrite={false}
+          side={2}
+        />
       </mesh>
       {/* 회전 베이스 링 2겹 */}
-      <mesh ref={ring1Ref} position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[radius * 0.85, radius * 0.95, 48, 1, 0, Math.PI * 1.6]} />
-        <meshBasicMaterial color={color} transparent opacity={0} blending={AdditiveBlending} depthWrite={false} side={2} />
+      <mesh
+        ref={ring1Ref}
+        position={[0, 0.05, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      >
+        <ringGeometry
+          args={[radius * 0.85, radius * 0.95, 48, 1, 0, Math.PI * 1.6]}
+        />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0}
+          blending={AdditiveBlending}
+          depthWrite={false}
+          side={2}
+        />
       </mesh>
-      <mesh ref={ring2Ref} position={[0, 0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[radius * 1.05, radius * 1.12, 48, 1, 0, Math.PI * 1.2]} />
-        <meshBasicMaterial color={color} transparent opacity={0} blending={AdditiveBlending} depthWrite={false} side={2} />
+      <mesh
+        ref={ring2Ref}
+        position={[0, 0.04, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      >
+        <ringGeometry
+          args={[radius * 1.05, radius * 1.12, 48, 1, 0, Math.PI * 1.2]}
+        />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0}
+          blending={AdditiveBlending}
+          depthWrite={false}
+          side={2}
+        />
       </mesh>
     </group>
   );
@@ -84,7 +148,15 @@ function HighlightFX({color, height, radius, active}: {color: string; height: nu
 
 // ─── GLB 에셋 렌더러 ──────────────────────────────────────────────────────────
 
-function GlbModel({glbPath, size, boost = 1}: {glbPath: string; size: [number, number, number]; boost?: number}) {
+function GlbModel({
+  glbPath,
+  size,
+  boost = 1
+}: {
+  glbPath: string;
+  size: [number, number, number];
+  boost?: number;
+}) {
   const {scene} = useGLTF(glbPath);
 
   // <primitive castShadow /> 는 루트 Object3D 한 개에만 플래그를 세운다. GLB는
@@ -105,13 +177,15 @@ function GlbModel({glbPath, size, boost = 1}: {glbPath: string; size: [number, n
   useMemo(() => {
     // 빛 반응부터 통일한다 — Meshy 가 에셋마다 다르게 내보낸 metalness·roughness 를
     // 마을 공통값으로 잠근다. 색은 LUT 가, 반응은 여기가 묶는다.
-    lockSceneMaterials(scene);
-    scene.traverse((obj) => {
+    lockSceneMaterials(scene, glbPath);
+    scene.traverse(obj => {
       const mesh = obj as Mesh;
       if (!mesh.isMesh) return;
       mesh.castShadow = true;
       mesh.receiveShadow = true;
-      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+      const mats = Array.isArray(mesh.material)
+        ? mesh.material
+        : [mesh.material];
       for (const material of mats) {
         const std = material as MeshStandardMaterial;
         if (!std || !("emissiveIntensity" in std)) continue;
@@ -174,8 +248,16 @@ function GlbModel({glbPath, size, boost = 1}: {glbPath: string; size: [number, n
   // 같이 읽는 값이라 건드리면 안 된다.
   const radius = Math.max(size[0], size[2]) / 2 + 0.55;
   const footprint = Math.hypot(natural.width, natural.depth);
-  const scale = Math.min((radius * 2) / footprint, (size[1] * 1.6) / natural.height) * boost;
-  return <primitive object={scene} scale={scale} position={[0, -natural.minY * scale, 0]} />;
+  const scale =
+    Math.min((radius * 2) / footprint, (size[1] * 1.6) / natural.height) *
+    boost;
+  return (
+    <primitive
+      object={scene}
+      scale={scale}
+      position={[0, -natural.minY * scale, 0]}
+    />
+  );
 }
 
 // ─── 공통 라벨 = 건물 간판 ────────────────────────────────────────────────────
@@ -204,7 +286,13 @@ function leadIcon(techStack?: string[]) {
   return null;
 }
 
-function BuildingLabel({building, buildingState, height, highlighted, onEnter}: {
+function BuildingLabel({
+  building,
+  buildingState,
+  height,
+  highlighted,
+  onEnter
+}: {
   building: BuildingData;
   height: number;
   highlighted: boolean;
@@ -212,12 +300,24 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
   buildingState?: BuildingState;
 }) {
   const color = building.accentColor;
-  const calculatePosition = useMemo(() => createThrottledCalculatePosition(LABEL_SYNC_STRIDE), []);
-  const lead = useMemo(() => leadIcon(building.techStack), [building.techStack]);
+  const calculatePosition = useMemo(
+    () => createThrottledCalculatePosition(LABEL_SYNC_STRIDE),
+    []
+  );
+  const lead = useMemo(
+    () => leadIcon(building.techStack),
+    [building.techStack]
+  );
   const live = buildingState && buildingState.light_level !== "dark";
 
   return (
-    <Html center calculatePosition={calculatePosition} distanceFactor={11} position={[0, height + 1.15, 0]} zIndexRange={[10, 0]}>
+    <Html
+      center
+      calculatePosition={calculatePosition}
+      distanceFactor={11}
+      position={[0, height + 1.15, 0]}
+      zIndexRange={[10, 0]}
+    >
       <button
         onClick={onEnter}
         type="button"
@@ -237,7 +337,7 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
           transition: "transform 0.18s, box-shadow 0.18s, border-color 0.18s",
           textAlign: "left",
           opacity: 1,
-          transform: highlighted ? "scale(1.08)" : "scale(1)",
+          transform: highlighted ? "scale(1.08)" : "scale(1)"
         }}
       >
         {lead ? (
@@ -252,7 +352,7 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
               borderRadius: 8,
               background: "#2b2118",
               boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.12)",
-              flexShrink: 0,
+              flexShrink: 0
             }}
             title={lead.tech}
           >
@@ -260,14 +360,27 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
               <path
                 d={lead.icon.d}
                 {...(lead.icon.stroke
-                  ? {fill: "none", stroke: lead.icon.color, strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const}
+                  ? {
+                      fill: "none",
+                      stroke: lead.icon.color,
+                      strokeWidth: 1.8,
+                      strokeLinecap: "round" as const,
+                      strokeLinejoin: "round" as const
+                    }
                   : {fill: lead.icon.color})}
               />
             </svg>
           </span>
         ) : null}
 
-        <span style={{display: "flex", flexDirection: "column", gap: 1, minWidth: 0}}>
+        <span
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+            minWidth: 0
+          }}
+        >
           <span
             style={{
               fontFamily: "system-ui, sans-serif",
@@ -276,7 +389,7 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
               letterSpacing: "0.16em",
               textTransform: "uppercase",
               color: "#9a6a3c",
-              whiteSpace: "nowrap",
+              whiteSpace: "nowrap"
             }}
           >
             {building.label}
@@ -290,7 +403,7 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
               color: "#3d2a17",
               whiteSpace: "nowrap",
               // 크림색 판 위 갈색 글씨 — 얇은 밝은 그림자로 각인된 느낌을 준다
-              textShadow: "0 1px 0 rgba(255,255,255,0.6)",
+              textShadow: "0 1px 0 rgba(255,255,255,0.6)"
             }}
           >
             {building.name}
@@ -308,7 +421,7 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
               background: color,
               boxShadow: `0 0 7px ${color}`,
               flexShrink: 0,
-              marginLeft: 1,
+              marginLeft: 1
             }}
             title={`오늘 활동 ${buildingState?.light_level}`}
           />
@@ -327,7 +440,15 @@ function BuildingLabel({building, buildingState, height, highlighted, onEnter}: 
 // 마을 여기저기에 크롭 서클이 27개 떠 있는 꼴이 됐다. 건물이 클릭 가능하다는
 // 표시는 앞마당 원반 타일과 커서 변화가 이미 하고 있고, 이제 그림자까지 있어
 // 건물이 땅에 붙어 보이므로 이 링은 역할이 없다.
-function GroundRing({color, highlighted, radius}: {color: string; highlighted: boolean; radius: number}) {
+function GroundRing({
+  color,
+  highlighted,
+  radius
+}: {
+  color: string;
+  highlighted: boolean;
+  radius: number;
+}) {
   if (!highlighted) return null;
   return (
     <mesh position={[0, 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -357,13 +478,23 @@ function TowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 본체 */}
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.12 : 0} roughness={0.25} metalness={0.1} />
+        <meshStandardMaterial
+          color={b.color}
+          emissive={hl ? b.accentColor : "#000"}
+          emissiveIntensity={hl ? 0.12 : 0}
+          roughness={0.25}
+          metalness={0.1}
+        />
       </mesh>
       {/* 수평 줄 (유리 패널 느낌) */}
-      {[0.25, 0.5, 0.75].map((t) => (
+      {[0.25, 0.5, 0.75].map(t => (
         <mesh key={t} position={[0, h * t, 0]}>
           <boxGeometry args={[w + 0.06, 0.05, d + 0.06]} />
-          <meshBasicMaterial color={hl ? b.accentColor : "#0a3a6e"} transparent opacity={0.6} />
+          <meshBasicMaterial
+            color={hl ? b.accentColor : "#0a3a6e"}
+            transparent
+            opacity={0.6}
+          />
         </mesh>
       ))}
       {/* 안테나 */}
@@ -375,7 +506,15 @@ function TowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
         <sphereGeometry args={[0.055, 8, 8]} />
         <meshBasicMaterial color={b.accentColor} />
       </mesh>
-      {hl && <pointLight color={b.accentColor} intensity={1.2} distance={4} decay={2} position={[0, h * 0.5, 0]} />}
+      {hl && (
+        <pointLight
+          color={b.accentColor}
+          intensity={1.2}
+          distance={4}
+          decay={2}
+          position={[0, h * 0.5, 0]}
+        />
+      )}
     </group>
   );
 }
@@ -388,21 +527,47 @@ function OfficeRoundedBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 메인 원통형 */}
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <cylinderGeometry args={[w * 0.5, w * 0.52, h, 20]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} roughness={0.3} metalness={0.1} />
+        <meshStandardMaterial
+          color={b.color}
+          emissive={hl ? b.accentColor : "#000"}
+          emissiveIntensity={hl ? 0.1 : 0}
+          roughness={0.3}
+          metalness={0.1}
+        />
       </mesh>
       {/* 글래스 링 */}
-      {[0.3, 0.65].map((t) => (
+      {[0.3, 0.65].map(t => (
         <mesh key={t} position={[0, h * t, 0]}>
           <torusGeometry args={[w * 0.51, 0.04, 8, 32]} />
-          <meshBasicMaterial color={hl ? b.accentColor : "#004433"} transparent opacity={0.7} />
+          <meshBasicMaterial
+            color={hl ? b.accentColor : "#004433"}
+            transparent
+            opacity={0.7}
+          />
         </mesh>
       ))}
       {/* 위쪽 돔 */}
       <mesh castShadow position={[0, h + 0.22, 0]}>
-        <sphereGeometry args={[w * 0.5, 16, 8, 0, Math.PI * 2, 0, Math.PI * 0.5]} />
-        <meshStandardMaterial color={b.roofColor} roughness={0.4} metalness={0.1} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.08 : 0} />
+        <sphereGeometry
+          args={[w * 0.5, 16, 8, 0, Math.PI * 2, 0, Math.PI * 0.5]}
+        />
+        <meshStandardMaterial
+          color={b.roofColor}
+          roughness={0.4}
+          metalness={0.1}
+          emissive={hl ? b.accentColor : "#000"}
+          emissiveIntensity={hl ? 0.08 : 0}
+        />
       </mesh>
-      {hl && <pointLight color={b.accentColor} intensity={1.0} distance={3.5} decay={2} position={[0, h * 0.5, 0]} />}
+      {hl && (
+        <pointLight
+          color={b.accentColor}
+          intensity={1.0}
+          distance={3.5}
+          decay={2}
+          position={[0, h * 0.5, 0]}
+        />
+      )}
     </group>
   );
 }
@@ -414,19 +579,47 @@ function CompactStudioBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.13 : 0} roughness={0.6} metalness={0.1} />
+        <meshStandardMaterial
+          color={b.color}
+          emissive={hl ? b.accentColor : "#000"}
+          emissiveIntensity={hl ? 0.13 : 0}
+          roughness={0.6}
+          metalness={0.1}
+        />
       </mesh>
       {/* 피라미드 지붕 */}
-      <mesh castShadow position={[0, h + 0.52, 0]} rotation={[0, Math.PI / 4, 0]}>
+      <mesh
+        castShadow
+        position={[0, h + 0.52, 0]}
+        rotation={[0, Math.PI / 4, 0]}
+      >
         <coneGeometry args={[Math.max(w, d) * 0.78, 1.06, 4]} />
-        <meshStandardMaterial color={b.roofColor} roughness={0.55} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.08 : 0} />
+        <meshStandardMaterial
+          color={b.roofColor}
+          roughness={0.55}
+          emissive={hl ? b.accentColor : "#000"}
+          emissiveIntensity={hl ? 0.08 : 0}
+        />
       </mesh>
       {/* 간판 */}
       <mesh position={[0, h * 0.7, d / 2 + 0.06]}>
         <boxGeometry args={[w * 0.7, h * 0.22, 0.06]} />
-        <meshStandardMaterial color="#6b4f35" emissive={b.accentColor} emissiveIntensity={hl ? 0.35 : 0.12} roughness={0.2} />
+        <meshStandardMaterial
+          color="#6b4f35"
+          emissive={b.accentColor}
+          emissiveIntensity={hl ? 0.35 : 0.12}
+          roughness={0.2}
+        />
       </mesh>
-      {hl && <pointLight color={b.accentColor} intensity={0.9} distance={3} decay={2} position={[0, h * 0.6, d * 0.6]} />}
+      {hl && (
+        <pointLight
+          color={b.accentColor}
+          intensity={0.9}
+          distance={3}
+          decay={2}
+          position={[0, h * 0.6, d * 0.6]}
+        />
+      )}
     </group>
   );
 }
@@ -438,19 +631,44 @@ function FlatHubBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} roughness={0.2} metalness={0.1} />
+        <meshStandardMaterial
+          color={b.color}
+          emissive={hl ? b.accentColor : "#000"}
+          emissiveIntensity={hl ? 0.1 : 0}
+          roughness={0.2}
+          metalness={0.1}
+        />
       </mesh>
       {/* 유리 파사드 */}
       <mesh position={[0, h * 0.55, d / 2 + 0.03]}>
         <boxGeometry args={[w * 0.85, h * 0.6, 0.04]} />
-        <meshStandardMaterial color={b.accentColor} emissive={b.accentColor} emissiveIntensity={hl ? 0.22 : 0.07} roughness={0.1} transparent opacity={0.45} />
+        <meshStandardMaterial
+          color={b.accentColor}
+          emissive={b.accentColor}
+          emissiveIntensity={hl ? 0.22 : 0.07}
+          roughness={0.1}
+          transparent
+          opacity={0.45}
+        />
       </mesh>
       {/* 평지붕 테두리 */}
       <mesh position={[0, h + 0.04, 0]}>
         <boxGeometry args={[w + 0.12, 0.08, d + 0.12]} />
-        <meshBasicMaterial color={hl ? b.accentColor : "#0a3a6e"} transparent opacity={0.6} />
+        <meshBasicMaterial
+          color={hl ? b.accentColor : "#0a3a6e"}
+          transparent
+          opacity={0.6}
+        />
       </mesh>
-      {hl && <pointLight color={b.accentColor} intensity={1.1} distance={4} decay={2} position={[0, h, d * 0.5]} />}
+      {hl && (
+        <pointLight
+          color={b.accentColor}
+          intensity={1.1}
+          distance={4}
+          decay={2}
+          position={[0, h, d * 0.5]}
+        />
+      )}
     </group>
   );
 }
@@ -464,19 +682,43 @@ function DomeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       {/* 원형 기단 */}
       <mesh castShadow receiveShadow position={[0, h * 0.3, 0]}>
         <cylinderGeometry args={[r, r * 1.08, h * 0.6, 20]} />
-        <meshStandardMaterial color={b.color} roughness={0.45} metalness={0.1} />
+        <meshStandardMaterial
+          color={b.color}
+          roughness={0.45}
+          metalness={0.1}
+        />
       </mesh>
       {/* 돔 */}
       <mesh castShadow position={[0, h * 0.6 + r * 0.5, 0]}>
         <sphereGeometry args={[r, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.62]} />
-        <meshStandardMaterial color={b.roofColor} roughness={0.2} metalness={0.1} emissive={b.accentColor} emissiveIntensity={hl ? 0.18 : 0.05} transparent opacity={0.85} />
+        <meshStandardMaterial
+          color={b.roofColor}
+          roughness={0.2}
+          metalness={0.1}
+          emissive={b.accentColor}
+          emissiveIntensity={hl ? 0.18 : 0.05}
+          transparent
+          opacity={0.85}
+        />
       </mesh>
       {/* 돔 내부 글로우 구체 */}
       <mesh position={[0, h * 0.6 + 0.1, 0]}>
         <sphereGeometry args={[r * 0.3, 12, 12]} />
-        <meshBasicMaterial color={b.accentColor} transparent opacity={hl ? 0.7 : 0.25} />
+        <meshBasicMaterial
+          color={b.accentColor}
+          transparent
+          opacity={hl ? 0.7 : 0.25}
+        />
       </mesh>
-      {hl && <pointLight color={b.accentColor} intensity={1.5} distance={4.5} decay={2} position={[0, h * 0.8, 0]} />}
+      {hl && (
+        <pointLight
+          color={b.accentColor}
+          intensity={1.5}
+          distance={4.5}
+          decay={2}
+          position={[0, h * 0.8, 0]}
+        />
+      )}
     </group>
   );
 }
@@ -488,23 +730,45 @@ function ServerTowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} roughness={0.3} metalness={0.1} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.08 : 0} />
+        <meshStandardMaterial
+          color={b.color}
+          roughness={0.3}
+          metalness={0.1}
+          emissive={hl ? b.accentColor : "#000"}
+          emissiveIntensity={hl ? 0.08 : 0}
+        />
       </mesh>
       {/* 서버 랙 줄 */}
-      {[0.18, 0.36, 0.54, 0.72, 0.88].map((t) => (
+      {[0.18, 0.36, 0.54, 0.72, 0.88].map(t => (
         <mesh key={t} position={[0, h * t, d / 2 + 0.03]}>
           <boxGeometry args={[w * 0.76, h * 0.06, 0.04]} />
-          <meshBasicMaterial color={hl && t > 0.5 ? b.accentColor : "#003322"} transparent opacity={0.7} />
+          <meshBasicMaterial
+            color={hl && t > 0.5 ? b.accentColor : "#003322"}
+            transparent
+            opacity={0.7}
+          />
         </mesh>
       ))}
       {/* 냉각 파이프 */}
-      {[-w * 0.38, w * 0.38].map((x) => (
+      {[-w * 0.38, w * 0.38].map(x => (
         <mesh key={x} castShadow position={[x, h + 0.35, 0]}>
           <cylinderGeometry args={[0.055, 0.065, 0.7, 8]} />
-          <meshStandardMaterial color="#5b6b7d" metalness={0.1} roughness={0.2} />
+          <meshStandardMaterial
+            color="#5b6b7d"
+            metalness={0.1}
+            roughness={0.2}
+          />
         </mesh>
       ))}
-      {hl && <pointLight color={b.accentColor} intensity={1.0} distance={3.5} decay={2} position={[0, h * 0.7, d * 0.6]} />}
+      {hl && (
+        <pointLight
+          color={b.accentColor}
+          intensity={1.0}
+          distance={3.5}
+          decay={2}
+          position={[0, h * 0.7, d * 0.6]}
+        />
+      )}
     </group>
   );
 }
@@ -516,19 +780,45 @@ function ArcadeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} roughness={0.55} metalness={0.1} />
+        <meshStandardMaterial
+          color={b.color}
+          emissive={hl ? b.accentColor : "#000"}
+          emissiveIntensity={hl ? 0.1 : 0}
+          roughness={0.55}
+          metalness={0.1}
+        />
       </mesh>
       {/* 아치형 입구 */}
       <mesh position={[0, h * 0.35, d / 2 + 0.04]}>
-        <cylinderGeometry args={[w * 0.28, w * 0.28, h * 0.55, 12, 1, false, 0, Math.PI]} />
-        <meshStandardMaterial color={b.roofColor} roughness={0.4} emissive={b.accentColor} emissiveIntensity={hl ? 0.3 : 0.1} />
+        <cylinderGeometry
+          args={[w * 0.28, w * 0.28, h * 0.55, 12, 1, false, 0, Math.PI]}
+        />
+        <meshStandardMaterial
+          color={b.roofColor}
+          roughness={0.4}
+          emissive={b.accentColor}
+          emissiveIntensity={hl ? 0.3 : 0.1}
+        />
       </mesh>
       {/* 간판 박스 */}
       <mesh castShadow position={[0, h + 0.3, 0]}>
         <boxGeometry args={[w + 0.3, 0.55, d * 0.4]} />
-        <meshStandardMaterial color="#7a4a2a" emissive={b.accentColor} emissiveIntensity={hl ? 0.45 : 0.15} roughness={0.2} />
+        <meshStandardMaterial
+          color="#7a4a2a"
+          emissive={b.accentColor}
+          emissiveIntensity={hl ? 0.45 : 0.15}
+          roughness={0.2}
+        />
       </mesh>
-      {hl && <pointLight color={b.accentColor} intensity={1.3} distance={4} decay={2} position={[0, h * 0.7, d * 0.6]} />}
+      {hl && (
+        <pointLight
+          color={b.accentColor}
+          intensity={1.3}
+          distance={4}
+          decay={2}
+          position={[0, h * 0.7, d * 0.6]}
+        />
+      )}
     </group>
   );
 }
@@ -540,7 +830,13 @@ function MinimalOfficeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} roughness={0.35} metalness={0.1} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.1 : 0} />
+        <meshStandardMaterial
+          color={b.color}
+          roughness={0.35}
+          metalness={0.1}
+          emissive={hl ? b.accentColor : "#000"}
+          emissiveIntensity={hl ? 0.1 : 0}
+        />
       </mesh>
       {/* 평지붕 + 파라펫 */}
       <mesh position={[0, h + 0.07, 0]}>
@@ -548,13 +844,25 @@ function MinimalOfficeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
         <meshStandardMaterial color="#8a8f96" roughness={0.4} metalness={0.1} />
       </mesh>
       {/* 옥상 안테나 그룹 */}
-      {[-0.3, 0.3].map((x) => (
+      {[-0.3, 0.3].map(x => (
         <mesh key={x} castShadow position={[x * w, h + 0.45, 0]}>
           <cylinderGeometry args={[0.02, 0.025, 0.6, 6]} />
-          <meshStandardMaterial color="#6f7a5e" metalness={0.1} roughness={0.1} />
+          <meshStandardMaterial
+            color="#6f7a5e"
+            metalness={0.1}
+            roughness={0.1}
+          />
         </mesh>
       ))}
-      {hl && <pointLight color={b.accentColor} intensity={0.8} distance={3} decay={2} position={[0, h, 0]} />}
+      {hl && (
+        <pointLight
+          color={b.accentColor}
+          intensity={0.8}
+          distance={3}
+          decay={2}
+          position={[0, h, 0]}
+        />
+      )}
     </group>
   );
 }
@@ -566,26 +874,52 @@ function TownhouseBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.12 : 0} roughness={0.65} metalness={0.1} />
+        <meshStandardMaterial
+          color={b.color}
+          emissive={hl ? b.accentColor : "#000"}
+          emissiveIntensity={hl ? 0.12 : 0}
+          roughness={0.65}
+          metalness={0.1}
+        />
       </mesh>
       {/* 삼각 지붕 */}
-      <mesh castShadow position={[0, h + 0.42, 0]} rotation={[0, Math.PI / 4, 0]}>
+      <mesh
+        castShadow
+        position={[0, h + 0.42, 0]}
+        rotation={[0, Math.PI / 4, 0]}
+      >
         <coneGeometry args={[Math.max(w, d) * 0.72, 0.85, 4]} />
         <meshStandardMaterial color={b.roofColor} roughness={0.6} />
       </mesh>
       {/* 문 */}
       <mesh position={[0, h * 0.28, d / 2 + 0.012]}>
         <boxGeometry args={[w * 0.3, h * 0.44, 0.04]} />
-        <meshStandardMaterial color={hl ? "#eef7c6" : b.accentColor} roughness={0.55} />
+        <meshStandardMaterial
+          color={hl ? "#eef7c6" : b.accentColor}
+          roughness={0.55}
+        />
       </mesh>
       {/* 창문 */}
-      {[-0.28, 0.28].map((x) => (
+      {[-0.28, 0.28].map(x => (
         <mesh key={x} position={[x * w, h * 0.62, d / 2 + 0.02]}>
           <boxGeometry args={[w * 0.2, h * 0.2, 0.04]} />
-          <meshStandardMaterial color={b.accentColor} emissive={b.accentColor} emissiveIntensity={hl ? 0.3 : 0.08} roughness={0.3} />
+          <meshStandardMaterial
+            color={b.accentColor}
+            emissive={b.accentColor}
+            emissiveIntensity={hl ? 0.3 : 0.08}
+            roughness={0.3}
+          />
         </mesh>
       ))}
-      {hl && <pointLight color={b.accentColor} intensity={0.8} distance={3} decay={2} position={[0, h * 0.5, 0]} />}
+      {hl && (
+        <pointLight
+          color={b.accentColor}
+          intensity={0.8}
+          distance={3}
+          decay={2}
+          position={[0, h * 0.5, 0]}
+        />
+      )}
     </group>
   );
 }
@@ -608,9 +942,20 @@ function PlazaBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
       </mesh>
       <mesh position={[0, 0.82, 0]}>
         <sphereGeometry args={[0.24, 18, 18]} />
-        <meshStandardMaterial color={hl ? "#bdf6ff" : "#aaddee"} emissive="#00d4ff" emissiveIntensity={hl ? 0.5 : 0.18} roughness={0.2} />
+        <meshStandardMaterial
+          color={hl ? "#bdf6ff" : "#aaddee"}
+          emissive="#00d4ff"
+          emissiveIntensity={hl ? 0.5 : 0.18}
+          roughness={0.2}
+        />
       </mesh>
-      <pointLight color="#00d4ff" intensity={hl ? 2.0 : 1.0} distance={6} decay={2} position={[0, 1.2, 0]} />
+      <pointLight
+        color="#00d4ff"
+        intensity={hl ? 2.0 : 1.0}
+        distance={6}
+        decay={2}
+        position={[0, 1.2, 0]}
+      />
     </group>
   );
 }
@@ -622,9 +967,18 @@ function PostBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
     <group>
       <mesh castShadow receiveShadow position={[0, h / 2, 0]}>
         <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={b.color} emissive={hl ? b.accentColor : "#000"} emissiveIntensity={hl ? 0.12 : 0} roughness={0.6} />
+        <meshStandardMaterial
+          color={b.color}
+          emissive={hl ? b.accentColor : "#000"}
+          emissiveIntensity={hl ? 0.12 : 0}
+          roughness={0.6}
+        />
       </mesh>
-      <mesh castShadow position={[0, h + 0.44, 0]} rotation={[0, Math.PI / 4, 0]}>
+      <mesh
+        castShadow
+        position={[0, h + 0.44, 0]}
+        rotation={[0, Math.PI / 4, 0]}
+      >
         <coneGeometry args={[Math.max(w, d) * 0.72, 0.9, 4]} />
         <meshStandardMaterial color={b.roofColor} roughness={0.55} />
       </mesh>
@@ -636,7 +990,15 @@ function PostBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
         <boxGeometry args={[0.44, 0.24, 0.035]} />
         <meshStandardMaterial color="#f4f0df" roughness={0.5} />
       </mesh>
-      {hl && <pointLight color={b.accentColor} intensity={0.9} distance={3.5} decay={2} position={[0, h * 0.6, 0]} />}
+      {hl && (
+        <pointLight
+          color={b.accentColor}
+          intensity={0.9}
+          distance={3.5}
+          decay={2}
+          position={[0, h * 0.6, 0]}
+        />
+      )}
     </group>
   );
 }
@@ -678,7 +1040,14 @@ function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
   // public/models/buildings/<건물id>.glb 를 훑어 만든다 — 건물을 하나 뽑아 넣을 때마다
   // constants.ts 를 손대지 않아도 되도록. glbPath 를 직접 적으면 그쪽이 이긴다.
   const glbPath = b.glbPath ?? buildingModels[b.id];
-  if (glbPath) return <GlbModel glbPath={glbPath} size={b.size} boost={b.id === "central-plaza" ? 1.45 : 1} />;
+  if (glbPath)
+    return (
+      <GlbModel
+        glbPath={glbPath}
+        size={b.size}
+        boost={b.id === "central-plaza" ? 1.45 : 1}
+      />
+    );
 
   if (b.kind === "plaza") return <PlazaBuilding b={b} hl={hl} />;
 
@@ -698,7 +1067,13 @@ function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
   return <GlbModel glbPath={fallbackHouse(b.id)} size={b.size} />;
 }
 
-function BuildingImpl({building, buildingState, isActive, onRequestEnter, edit}: BuildingProps) {
+function BuildingImpl({
+  building,
+  buildingState,
+  isActive,
+  onRequestEnter,
+  edit
+}: BuildingProps) {
   const [hovered, setHovered] = useState(false);
   const liveGlow = lightIntensity(buildingState?.light_level);
   const editing = edit?.editing ?? false;
@@ -733,22 +1108,39 @@ function BuildingImpl({building, buildingState, isActive, onRequestEnter, edit}:
     <group position={[bx, by + lift, bz]} rotation={[0, rotY, 0]}>
       <group
         onClick={editing ? undefined : handleClick}
-        onPointerDown={editing ? (e) => {e.stopPropagation(); edit?.onSelectDown();} : undefined}
-        onPointerEnter={editing ? undefined : (e) => handlePointer(e, true)}
-        onPointerLeave={editing ? undefined : (e) => handlePointer(e, false)}
+        onPointerDown={
+          editing
+            ? e => {
+                e.stopPropagation();
+                edit?.onSelectDown();
+              }
+            : undefined
+        }
+        onPointerEnter={editing ? undefined : e => handlePointer(e, true)}
+        onPointerLeave={editing ? undefined : e => handlePointer(e, false)}
         scale={[scale, scale, scale]}
       >
         {editing && edit?.selected ? (
           <>
             <mesh position={[0, 0.06, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-              <ringGeometry args={[Math.max(building.size[0], building.size[2]) * 0.9, Math.max(building.size[0], building.size[2]) * 1.02, 44]} />
+              <ringGeometry
+                args={[
+                  Math.max(building.size[0], building.size[2]) * 0.9,
+                  Math.max(building.size[0], building.size[2]) * 1.02,
+                  44
+                ]}
+              />
               <meshBasicMaterial color="#86b0e6" transparent opacity={0.95} />
             </mesh>
             <SelectionBox size={building.size} />
           </>
         ) : null}
         <BuildingGeometry b={building} hl={isHighlighted} />
-        <GroundRing color={building.accentColor} highlighted={isHighlighted} radius={Math.max(building.size[0], building.size[2])} />
+        <GroundRing
+          color={building.accentColor}
+          highlighted={isHighlighted}
+          radius={Math.max(building.size[0], building.size[2])}
+        />
         <HighlightFX
           active={isHighlighted}
           color={building.accentColor}
@@ -783,7 +1175,10 @@ export const Building = memo(BuildingImpl);
 // 편집 모드 선택 표시 — 후처리 없이 와이어프레임 박스 아웃라인
 function SelectionBox({size}: {size: [number, number, number]}) {
   const geo = useMemo(
-    () => new EdgesGeometry(new BoxGeometry(size[0] * 1.05, size[1] * 1.05, size[2] * 1.05)),
+    () =>
+      new EdgesGeometry(
+        new BoxGeometry(size[0] * 1.05, size[1] * 1.05, size[2] * 1.05)
+      ),
     [size]
   );
   return (
