@@ -71,7 +71,7 @@ const EDGE_FADE_END = 52;
 //
 // 건물이 해자 밖으로 나갔는지 확인:
 //   node scripts/check-building-clearance.mjs --moat
-export const MOAT = {cx: 0, cz: 1, a: 40, b: 33};
+export const MOAT = {cx: 0, cz: 1, a: 42, b: 35};
 /** 해자 리본 반폭 1.23 + 흔들림(drift) 1.9 + 여유 0.3 → 이 안은 전부 평평하게 */
 const MOAT_FLAT_HALF = 3.4;
 

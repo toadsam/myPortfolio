@@ -27,7 +27,7 @@
 // 프롭만 지우고 다시 쓴다. 다른 프롭은 그대로 둔다.
 
 import {readFileSync, writeFileSync} from "node:fs";
-import {readVillage} from "./lib/read-village.mjs";
+import {readVillage, readMoat} from "./lib/read-village.mjs";
 
 const LAYOUT = "src/data/propsLayout.json";
 const dry = process.argv.includes("--dry");
@@ -867,8 +867,29 @@ clumps.forEach((c, n) => {
     const ROAD_KEEP = 1.5;  // 길 타일 중심에서 이만큼 안쪽은 "길 위"
     const CROSS_MAX = 2.8;  // 이보다 짧게 스치면 **건너는 것** — 다리를 놓는다
     const R_IN = HUB_RADIUS + 2.6;
-    const R_OUT = 27;       // 해자와 만나는 데까지
     const STEP_R = 0.6;
+
+    // ─── 물길은 **해자까지 가야 한다** ────────────────────────────────────────
+    // 예전엔 끝 반지름이 27 로 박혀 있었다. 마을을 키우면서 구역 단이 r≈31 까지
+    // 뻗고 해자는 a=40/b=33 으로 나갔는데 여기만 27 로 남아, 물이 해자에
+    // 닿기는커녕 **구역 한가운데 벌판에서 뚝 끊겼다**. 6개 골짜기 중 1개만
+    // 통과한 것도 이 때문 — 27 까지 가는 길목이 죄다 구역 단에 막혀 있었다.
+    //
+    // "물이 어디서 와서 어디로 가는지 안 읽힌다"는 게 정확히 이 증상이다.
+    // 물은 높은 데(광장)에서 낮은 데(해자)로 흘러 **어딘가로 모여야** 한다.
+    // 그래서 끝점을 해자 타원에서 그 각도의 반지름으로 구한다.
+    const MOAT = readMoat();
+    /** 중심에서 각 ang 방향으로 해자 타원과 만나는 거리 */
+    const moatRadiusAt = (ang) => {
+      // (r·cos−cx)²/a² + (r·sin−cz)²/b² = 1 을 r 에 대해 푼다
+      const c = Math.cos(ang), s = Math.sin(ang);
+      const A = (c * c) / (MOAT.a * MOAT.a) + (s * s) / (MOAT.b * MOAT.b);
+      const B = (-2 * MOAT.cx * c) / (MOAT.a * MOAT.a) + (-2 * MOAT.cz * s) / (MOAT.b * MOAT.b);
+      const C =
+        (MOAT.cx * MOAT.cx) / (MOAT.a * MOAT.a) + (MOAT.cz * MOAT.cz) / (MOAT.b * MOAT.b) - 1;
+      const disc = Math.max(0, B * B - 4 * A * C);
+      return (-B + Math.sqrt(disc)) / (2 * A);
+    };
 
     for (let k = 0; k < angles.length; k++) {
       let a0 = angles[k];
@@ -882,44 +903,83 @@ clumps.forEach((c, n) => {
       // 마을 안쪽에 물이 하나도 안 들어와 아무 데서도 안 보였다.
       // 길은 **건너면 된다** — 짧게 스치는 건 허용하고 거기에 다리를 놓는다.
       // 길을 따라 나란히 달리는 것(긴 구간)만 막는다.
-      let best = null;
-      for (let t = 0.12; t <= 0.88; t += 0.015) {
-        const ang = a0 + (a1 - a0) * t;
-        let ok = true;
-        let worst = Infinity;
+      // ── 직선이 아니라 **비켜 가며** 뻗는다 ────────────────────────────────
+      // 예전엔 중심에서 뻗은 곧은 직선 하나로만 시도했다. 마을이 커지며 구역 단이
+      // 넓어지자 6개 골짜기 중 5개가 r≈7.7 에서 바로 막혀 물길이 하나만 남았다 —
+      // 그마저 벌판 한가운데서 끊겨 "어디서 와서 어디로 가는지" 안 읽혔다.
+      //
+      // 실제 개울은 막히면 돌아간다. 반지름을 한 칸씩 늘려 가며 각도를 조금씩
+      // 틀어, 그 자리에서 가장 트인 쪽을 고른다. 곧은 수로가 아니라 굽이치는
+      // 개울이 되고, 좁은 틈도 비집고 나간다.
+      const ANG_STEP = 0.035;     // 한 칸에서 틀 수 있는 최대 각도(rad) ≈ 2°
+      const ANG_TRY = [0, 1, -1, 2, -2, 3, -3];
+
+      const why = {막힘: 0, 길나란히: 0, 짧음: 0, 최원: 0};
+      /** 한 각도에서 출발해 해자까지 굽이쳐 나가 본다. 실패하면 null. */
+      const trace = (startAng) => {
+        let ang = startAng;
+        const out = [];
         let onRoadRun = 0;
         let crossings = 0;
-        for (let r = R_IN; r <= R_OUT; r += STEP_R) {
-          const x = Math.cos(ang) * r;
-          const z = Math.sin(ang) * r;
-          if (onPlateau(x, z) || clearOf(x, z) < NEED) { ok = false; break; }
-          if (roadGap(x, z) < ROAD_KEEP) {
+        let worst = Infinity;
+        const rEnd = () => moatRadiusAt(ang) - 0.6;
+        for (let r = R_IN; r <= rEnd(); r += STEP_R) {
+          let pick = null;
+          for (const k of ANG_TRY) {
+            const a = ang + k * ANG_STEP;
+            // 골짜기 밖으로 새어 나가지 않게 원래 부채꼴 안에 묶는다
+            if (a < a0 + (a1 - a0) * 0.05 || a > a0 + (a1 - a0) * 0.95) continue;
+            const x = Math.cos(a) * r, z = Math.sin(a) * r;
+            if (onPlateau(x, z)) continue;
+            const clear = clearOf(x, z);
+            if (clear < NEED) continue;
+            // **길도 같이 피해야 한다.** 예전엔 구역 단 여유만 보고 골랐더니,
+            // 골짜기 한가운데로 길도 같이 지나가는 바람에 물길이 길 위를 따라
+            // 나란히 달려 실패했다(6곳 중 5곳이 이 이유였다). 둘 중 더 가까운
+            // 쪽을 점수로 삼으면 길과 단 사이의 틈을 알아서 찾아간다.
+            const score = Math.min(clear, roadGap(x, z));
+            if (!pick || score > pick.score) pick = {a, clear, score, x, z};
+          }
+          if (!pick) { why.막힘++; why.최원 = Math.max(why.최원, r); return null; }
+          ang = pick.a;
+          if (roadGap(pick.x, pick.z) < ROAD_KEEP) {
             onRoadRun += STEP_R;
-            if (onRoadRun > CROSS_MAX) { ok = false; break; } // 길을 따라 달린다
+            if (onRoadRun > CROSS_MAX) { why.길나란히++; why.최원 = Math.max(why.최원, r); return null; } // 길을 따라 나란히 달린다
           } else {
             if (onRoadRun > 0) crossings += 1;
             onRoadRun = 0;
           }
-          worst = Math.min(worst, clearOf(x, z));
+          worst = Math.min(worst, pick.clear);
+          out.push({x: pick.x, z: pick.z});
         }
-        if (!ok) continue;
-        const score = worst - crossings * 0.15; // 덜 건너는 쪽을 조금 선호
-        if (!best || score > best.score) best = {ang, score, crossings};
-      }
-      if (!best) continue;
+        if (out.length <= 8) { why.짧음++; return null; }
+        return {pts: out, worst, crossings};
+      };
 
-      const pts = [];
-      const STEPS = 22;
-      for (let n = 0; n <= STEPS; n++) {
-        const t = n / STEPS;
-        const r = R_IN + (R_OUT - R_IN) * t;
-        // 자로 그은 직선이면 수로지 개울이 아니다. 각도를 조금 흔든다.
-        const wobble = (Math.sin(t * Math.PI * 2.3) * 0.5 + Math.sin(t * Math.PI * 5.1) * 0.18) / r;
-        pts.push({
-          x: round3(Math.cos(best.ang + wobble) * r),
-          z: round3(Math.sin(best.ang + wobble) * r)
-        });
+      let best = null;
+      let tried = 0;
+      for (let t = 0.12; t <= 0.88; t += 0.02) {
+        tried++;
+        const got = trace(a0 + (a1 - a0) * t);
+        if (!got) continue;
+        const score = got.worst - got.crossings * 0.15; // 덜 건너는 쪽을 조금 선호
+        if (!best || score > best.score) best = {...got, score};
       }
+      if (!best) {
+        const deg = ((((a0 + a1) / 2) * 180) / Math.PI).toFixed(0);
+        console.log(`    골짜기 ${deg}° 물길 실패 — 출발각 ${tried}개 · 막힘 ${why.막힘} · 길나란히 ${why.길나란히} · 너무짧음 ${why.짧음} (최원 r=${why.최원.toFixed(1)})`);
+        continue;
+      }
+
+      // 자로 그은 듯한 곡선이면 수로지 개울이 아니다. 진행 방향의 법선으로 흔든다.
+      const pts = best.pts.map((p, n, arr) => {
+        const t = n / Math.max(1, arr.length - 1);
+        const prev = arr[Math.max(0, n - 1)], next = arr[Math.min(arr.length - 1, n + 1)];
+        const tx = next.x - prev.x, tz = next.z - prev.z;
+        const tl = Math.hypot(tx, tz) || 1;
+        const w = Math.sin(t * Math.PI * 2.3) * 0.45 + Math.sin(t * Math.PI * 5.1) * 0.16;
+        return {x: round3(p.x + (-tz / tl) * w), z: round3(p.z + (tx / tl) * w)};
+      });
       channels.push(pts);
     }
   }
