@@ -3,22 +3,18 @@
 import {useFrame, useThree} from "@react-three/fiber";
 import {Suspense, useEffect, useRef} from "react";
 import {Group, Vector3} from "three";
-import {villageBuildings} from "@/lib/constants";
-import {isWalkablePosition} from "@/lib/worldCollision";
+import {slideTo, SPAWN} from "@/lib/villageWalk";
 import {terrainHeightAt} from "@/lib/villageTerrain";
 import {WarriorCharacter, type MoveState} from "./WarriorCharacter";
 
 const SPEED = 4.5;
 const TURN_SPEED = 2.4;
-const X_BOUND = 11.5;
-const Z_BOUND_MIN = -8.8;
-const Z_BOUND_MAX = 12.5;
 
 export function CharacterController() {
   const {camera} = useThree();
-  const regress = useThree((s) => s.performance.regress);
+  const regress = useThree(s => s.performance.regress);
   const groupRef = useRef<Group>(null);
-  const posRef = useRef(new Vector3(0, 0, 3.5));
+  const posRef = useRef(new Vector3(SPAWN[0], 0, SPAWN[1]));
   const rotRef = useRef(0);
   const keysRef = useRef<Set<string>>(new Set());
   const camPosRef = useRef(new Vector3());
@@ -64,26 +60,32 @@ export function CharacterController() {
       nextZ -= dz * speed * 0.6;
     }
 
-    nextX = Math.max(-X_BOUND, Math.min(X_BOUND, nextX));
-    nextZ = Math.max(Z_BOUND_MIN, Math.min(Z_BOUND_MAX, nextZ));
-
     const movingForward = keys.has("KeyW") || keys.has("ArrowUp");
     const movingBack = keys.has("KeyS") || keys.has("ArrowDown");
     const running = keys.has("ShiftLeft") || keys.has("ShiftRight");
 
-    let moved = false;
-    if (isWalkablePosition({x: nextX, z: nextZ}, villageBuildings, {padding: 0.42})) {
-      moved = nextX !== posRef.current.x || nextZ !== posRef.current.z;
-      posRef.current.x = nextX;
-      posRef.current.z = nextZ;
-    }
+    // 범위 제한도 막힘 판정도 villageWalk 이 한다 — 광장 중심의 원반이라
+    // 사각형으로 자르면 모서리에서 갈 수 있는 데와 없는 데가 어긋난다.
+    const at = slideTo(posRef.current.x, posRef.current.z, nextX, nextZ);
+    const moved = at.x !== posRef.current.x || at.z !== posRef.current.z;
+    posRef.current.x = at.x;
+    posRef.current.z = at.z;
 
     // 애니메이션 상태: 이동 중이면 걷기/달리기, 아니면 정지
-    moveStateRef.current = (movingForward || movingBack) && moved
-      ? (running && movingForward ? "run" : "walk")
-      : "idle";
+    moveStateRef.current =
+      (movingForward || movingBack) && moved
+        ? running && movingForward
+          ? "run"
+          : "walk"
+        : "idle";
 
-    if (moved || keys.has("KeyA") || keys.has("KeyD") || keys.has("ArrowLeft") || keys.has("ArrowRight")) {
+    if (
+      moved ||
+      keys.has("KeyA") ||
+      keys.has("KeyD") ||
+      keys.has("ArrowLeft") ||
+      keys.has("ArrowRight")
+    ) {
       regress(); // 이동/회전 중 해상도 저하
     }
 
@@ -91,11 +93,16 @@ export function CharacterController() {
     // 가장자리와 겹친다. 한 단이 0.21이라 그냥 대입하면 경계에서 툭 튄다.
     // 목표 높이로 감쇠시켜 두 계단을 걸어 오르는 것처럼 보이게 한다.
     const groundTarget = terrainHeightAt(posRef.current.x, posRef.current.z);
-    groundYRef.current += (groundTarget - groundYRef.current) * Math.min(1, delta * 7);
+    groundYRef.current +=
+      (groundTarget - groundYRef.current) * Math.min(1, delta * 7);
     const groundY = groundYRef.current;
 
     if (groupRef.current) {
-      groupRef.current.position.set(posRef.current.x, groundY, posRef.current.z);
+      groupRef.current.position.set(
+        posRef.current.x,
+        groundY,
+        posRef.current.z
+      );
       groupRef.current.rotation.y = rotRef.current;
     }
 
@@ -110,7 +117,7 @@ export function CharacterController() {
   });
 
   return (
-    <group ref={groupRef} position={[0, 0, 3.5]}>
+    <group ref={groupRef} position={[SPAWN[0], 0, SPAWN[1]]}>
       {/* 애니메이션 캐릭터 */}
       <Suspense fallback={null}>
         <WarriorCharacter stateRef={moveStateRef} />

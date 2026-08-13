@@ -15501,14 +15501,14 @@
     },
     {
       "id": "decor-glade-40",
-      "glb": "/models/props/impostor/tree-emerald-crown.glb",
+      "glb": "/models/props/nature/tree-emerald-crown.glb",
       "position": [
         2.991,
-        1.224,
+        0.742,
         -11.901
       ],
       "rotationY": 3.309,
-      "scale": 1.291
+      "scale": 0.782
     },
     {
       "id": "decor-glade-41",
@@ -15523,314 +15523,292 @@
     },
     {
       "id": "decor-glade-42",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "glb": "/models/props/decor/barrel-iron.glb",
       "position": [
         4.454,
-        0.38,
+        0.214,
         -12.841
       ],
       "rotationY": 5.048,
-      "scale": 0.669
+      "scale": 0.226
     },
     {
       "id": "decor-glade-43",
       "glb": "/models/props/nature/tree-golden-canopy.glb",
       "position": [
         -2.96,
-        0.691,
+        0.685,
         12.56
       ],
-      "rotationY": 2.064,
-      "scale": 0.792
+      "rotationY": 0.471,
+      "scale": 0.786
     },
     {
       "id": "decor-glade-44",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
+      "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        -3.91,
-        0.308,
-        12.975
+        -4.811,
+        0.149,
+        12.059
       ],
-      "rotationY": 2.274,
-      "scale": 0.481
-    },
-    {
-      "id": "decor-glade-45",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        -3.123,
-        0.36,
-        11.214
-      ],
-      "rotationY": 5.683,
-      "scale": 0.562
+      "rotationY": 4.592,
+      "scale": 0.38
     },
     {
       "id": "decor-glade-46",
       "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
         19.627,
-        1.515,
+        1.069,
         -14.026
       ],
-      "rotationY": 3.094,
-      "scale": 1.598
+      "rotationY": 5.533,
+      "scale": 1.127
     },
     {
       "id": "decor-glade-47",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        21.597,
-        0.272,
-        -13.682
+        21.114,
+        0.16,
+        -14.29
       ],
-      "rotationY": 2.76,
-      "scale": 0.478
+      "rotationY": 5.891,
+      "scale": 0.409
     },
     {
       "id": "decor-glade-48",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        18.163,
-        0.239,
-        -12.969
+        19.206,
+        0.228,
+        -12.916
       ],
-      "rotationY": 1.934,
-      "scale": 0.42
+      "rotationY": 1.978,
+      "scale": 0.402
     },
     {
       "id": "decor-glade-49",
-      "glb": "/models/props/impostor/tree-golden-canopy.glb",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        26.494,
-        1.023,
-        -3.953
+        18.442,
+        0.375,
+        -13.37
       ],
-      "rotationY": 0.667,
-      "scale": 1.171
+      "rotationY": 4.769,
+      "scale": 0.659
     },
     {
       "id": "decor-glade-50",
-      "glb": "/models/props/impostor/tree-emerald-crown.glb",
+      "glb": "/models/props/impostor/tree-golden-canopy.glb",
       "position": [
-        20.143,
-        1.345,
-        19.549
+        26.494,
+        1.126,
+        -3.953
       ],
-      "rotationY": 4.36,
-      "scale": 1.418
+      "rotationY": 1.094,
+      "scale": 1.29
     },
     {
       "id": "decor-glade-51",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        21.322,
-        0.153,
-        18.927
+        24.744,
+        0.193,
+        -2.886
       ],
-      "rotationY": 4.403,
-      "scale": 0.39
+      "rotationY": 2.159,
+      "scale": 0.491
     },
     {
       "id": "decor-glade-52",
-      "glb": "/models/props/impostor/tree-emerald-crown.glb",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        10.673,
-        1.307,
-        -20.436
+        25.835,
+        0.366,
+        -2.807
       ],
-      "rotationY": 4.481,
-      "scale": 1.379
+      "rotationY": 5.145,
+      "scale": 0.572
     },
     {
       "id": "decor-glade-53",
-      "glb": "/models/props/nature/rock-three-stones.glb",
+      "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
-        10.713,
-        0.19,
-        -21.534
+        20.143,
+        1.504,
+        19.549
       ],
-      "rotationY": 5.815,
-      "scale": 0.484
+      "rotationY": 3.419,
+      "scale": 1.586
     },
     {
       "id": "decor-glade-54",
-      "glb": "/models/props/impostor/tree-golden-canopy.glb",
+      "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        -21.348,
-        0.932,
-        -18.96
+        18.341,
+        0.217,
+        19.996
       ],
-      "rotationY": 2.549,
-      "scale": 1.068
+      "rotationY": 2.146,
+      "scale": 0.553
     },
     {
       "id": "decor-glade-55",
-      "glb": "/models/props/nature/rock-three-stones.glb",
+      "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
-        -19.928,
-        0.161,
-        -18.737
+        10.673,
+        1.243,
+        -20.436
       ],
-      "rotationY": 3.982,
-      "scale": 0.41
+      "rotationY": 4.621,
+      "scale": 1.311
     },
     {
       "id": "decor-glade-56",
-      "glb": "/models/props/impostor/tree-emerald-crown.glb",
+      "glb": "/models/props/impostor/tree-golden-canopy.glb",
       "position": [
-        25.285,
-        1.416,
-        10.381
+        -21.348,
+        1.065,
+        -18.96
       ],
-      "rotationY": 4.887,
-      "scale": 1.493
+      "rotationY": 2.462,
+      "scale": 1.219
     },
     {
       "id": "decor-glade-57",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        24.197,
-        0.319,
-        10.383
+        -22.318,
+        0.38,
+        -20.042
       ],
-      "rotationY": 1.447,
-      "scale": 0.499
+      "rotationY": 4.887,
+      "scale": 0.593
     },
     {
       "id": "decor-glade-58",
-      "glb": "/models/props/impostor/tree-golden-canopy.glb",
+      "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
-        24.204,
-        0.977,
-        -12.829
+        25.285,
+        1.067,
+        10.381
       ],
-      "rotationY": 2.144,
-      "scale": 1.119
+      "rotationY": 0.526,
+      "scale": 1.125
     },
     {
       "id": "decor-glade-59",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        23.621,
-        0.357,
-        -14.467
+        25.472,
+        0.274,
+        11.876
       ],
-      "rotationY": 4.052,
-      "scale": 0.628
+      "rotationY": 1.148,
+      "scale": 0.481
     },
     {
       "id": "decor-glade-60",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        25.465,
-        0.288,
-        -11.723
+        24.793,
+        0.374,
+        11.949
       ],
-      "rotationY": 1.348,
-      "scale": 0.45
+      "rotationY": 4.37,
+      "scale": 0.584
     },
     {
       "id": "decor-glade-61",
-      "glb": "/models/props/impostor/tree-emerald-crown.glb",
+      "glb": "/models/props/impostor/tree-golden-canopy.glb",
       "position": [
-        28.545,
-        1.319,
-        9.788
+        24.204,
+        0.907,
+        -12.829
       ],
-      "rotationY": 3.923,
-      "scale": 1.391
+      "rotationY": 4.881,
+      "scale": 1.039
     },
     {
       "id": "decor-glade-62",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        24.497,
+        0.28,
+        -11.538
+      ],
+      "rotationY": 3.577,
+      "scale": 0.492
+    },
+    {
+      "id": "decor-glade-63",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        29.579,
+        25.249,
         0.217,
-        11.188
+        -11.414
       ],
       "rotationY": 5.218,
       "scale": 0.555
     },
     {
-      "id": "decor-glade-63",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        27.941,
-        0.231,
-        10.59
-      ],
-      "rotationY": 2.617,
-      "scale": 0.406
-    },
-    {
       "id": "decor-glade-64",
       "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
-        29.422,
-        1.337,
-        -4.751
+        28.545,
+        1.248,
+        9.788
       ],
-      "rotationY": 2.383,
-      "scale": 1.41
+      "rotationY": 5.398,
+      "scale": 1.317
     },
     {
       "id": "decor-glade-65",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        29.578,
-        0.305,
-        -6.654
+        27.395,
+        0.363,
+        10.877
       ],
-      "rotationY": 1.579,
-      "scale": 0.536
+      "rotationY": 5.953,
+      "scale": 0.567
     },
     {
       "id": "decor-glade-66",
+      "glb": "/models/props/impostor/tree-emerald-crown.glb",
+      "position": [
+        29.422,
+        1.289,
+        -4.751
+      ],
+      "rotationY": 1.579,
+      "scale": 1.359
+    },
+    {
+      "id": "decor-glade-67",
       "glb": "/models/props/impostor/tree-golden-canopy.glb",
       "position": [
         -19.298,
         1.139,
         11.568
       ],
-      "rotationY": 4.196,
+      "rotationY": 1.842,
       "scale": 1.304
-    },
-    {
-      "id": "decor-glade-67",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        -19.749,
-        0.21,
-        13.19
-      ],
-      "rotationY": 4.788,
-      "scale": 0.369
     },
     {
       "id": "decor-glade-68",
       "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
         -26.963,
-        1.309,
+        1.191,
         -15.884
       ],
-      "rotationY": 4.953,
-      "scale": 1.38
+      "rotationY": 2.3,
+      "scale": 1.256
     },
     {
       "id": "decor-glade-69",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        -27.458,
-        0.38,
-        -14.078
-      ],
-      "rotationY": 0.033,
-      "scale": 0.594
-    },
-    {
-      "id": "decor-glade-70",
       "glb": "/models/props/impostor/tree-golden-canopy.glb",
       "position": [
         6.497,
@@ -15841,7 +15819,7 @@
       "scale": 1.132
     },
     {
-      "id": "decor-glade-71",
+      "id": "decor-glade-70",
       "glb": "/models/props/nature/tree-emerald-crown.glb",
       "position": [
         -5.8,
@@ -15852,7 +15830,7 @@
       "scale": 0.937
     },
     {
-      "id": "decor-glade-72",
+      "id": "decor-glade-71",
       "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
         -18.575,
@@ -15863,7 +15841,7 @@
       "scale": 1.587
     },
     {
-      "id": "decor-glade-73",
+      "id": "decor-glade-72",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
         -17.588,
@@ -15874,7 +15852,7 @@
       "scale": 0.68
     },
     {
-      "id": "decor-glade-74",
+      "id": "decor-glade-73",
       "glb": "/models/props/impostor/tree-golden-canopy.glb",
       "position": [
         26.269,
@@ -15885,7 +15863,7 @@
       "scale": 1.176
     },
     {
-      "id": "decor-glade-75",
+      "id": "decor-glade-74",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
         26.784,
@@ -15896,7 +15874,7 @@
       "scale": 0.57
     },
     {
-      "id": "decor-glade-76",
+      "id": "decor-glade-75",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
         25.117,
@@ -15907,7 +15885,7 @@
       "scale": 0.645
     },
     {
-      "id": "decor-glade-77",
+      "id": "decor-glade-76",
       "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
         -26.818,
@@ -15918,7 +15896,7 @@
       "scale": 1.478
     },
     {
-      "id": "decor-glade-78",
+      "id": "decor-glade-77",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
         -25.989,
@@ -15929,7 +15907,7 @@
       "scale": 0.377
     },
     {
-      "id": "decor-glade-79",
+      "id": "decor-glade-78",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
         -27.35,
@@ -15940,7 +15918,7 @@
       "scale": 0.431
     },
     {
-      "id": "decor-glade-80",
+      "id": "decor-glade-79",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
         -26.576,
@@ -15951,7 +15929,7 @@
       "scale": 0.415
     },
     {
-      "id": "decor-glade-81",
+      "id": "decor-glade-80",
       "glb": "/models/props/impostor/tree-golden-canopy.glb",
       "position": [
         16.85,
@@ -15962,7 +15940,7 @@
       "scale": 1.217
     },
     {
-      "id": "decor-glade-82",
+      "id": "decor-glade-81",
       "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
         26.285,
@@ -15973,7 +15951,7 @@
       "scale": 1.214
     },
     {
-      "id": "decor-glade-83",
+      "id": "decor-glade-82",
       "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
         1.848,
@@ -15984,7 +15962,7 @@
       "scale": 1.541
     },
     {
-      "id": "decor-glade-84",
+      "id": "decor-glade-83",
       "glb": "/models/props/nature/tree-golden-canopy.glb",
       "position": [
         5.6,
@@ -15995,7 +15973,7 @@
       "scale": 0.678
     },
     {
-      "id": "decor-glade-85",
+      "id": "decor-glade-84",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
         7.204,
@@ -16006,18 +15984,18 @@
       "scale": 0.418
     },
     {
-      "id": "decor-glade-86",
-      "glb": "/models/props/impostor/tree-emerald-crown.glb",
+      "id": "decor-glade-85",
+      "glb": "/models/props/nature/tree-emerald-crown.glb",
       "position": [
         -1.774,
-        1.1,
+        0.666,
         -12.247
       ],
       "rotationY": 3.189,
-      "scale": 1.16
+      "scale": 0.702
     },
     {
-      "id": "decor-glade-87",
+      "id": "decor-glade-86",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
         -2.966,
@@ -16028,7 +16006,7 @@
       "scale": 0.415
     },
     {
-      "id": "decor-glade-88",
+      "id": "decor-glade-87",
       "glb": "/models/props/impostor/tree-golden-canopy.glb",
       "position": [
         -17.388,
@@ -16039,7 +16017,7 @@
       "scale": 1.005
     },
     {
-      "id": "decor-glade-89",
+      "id": "decor-glade-88",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
         -16.133,
@@ -16050,7 +16028,7 @@
       "scale": 0.351
     },
     {
-      "id": "decor-glade-90",
+      "id": "decor-glade-89",
       "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
         -24.926,
@@ -16061,7 +16039,7 @@
       "scale": 1.43
     },
     {
-      "id": "decor-glade-91",
+      "id": "decor-glade-90",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
         -24.907,
@@ -16072,7 +16050,7 @@
       "scale": 0.433
     },
     {
-      "id": "decor-glade-92",
+      "id": "decor-glade-91",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
         -24.152,
@@ -16083,7 +16061,7 @@
       "scale": 0.608
     },
     {
-      "id": "decor-glade-93",
+      "id": "decor-glade-92",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
         -23.987,
@@ -16094,7 +16072,7 @@
       "scale": 0.645
     },
     {
-      "id": "decor-glade-94",
+      "id": "decor-glade-93",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
         -25.704,
@@ -16216,58 +16194,36 @@
     },
     {
       "id": "decor-verge-10",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
         -3.76,
-        0.351,
+        0.197,
         16.404
       ],
       "rotationY": 5.162,
-      "scale": 0.617
+      "scale": 0.503
     },
     {
       "id": "decor-verge-11",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
         -1.88,
-        0.257,
-        13.768
+        0.378,
+        13.865
       ],
-      "rotationY": 1.329,
-      "scale": 0.401
+      "rotationY": 4.181,
+      "scale": 0.59
     },
     {
       "id": "decor-verge-12",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
         9.4,
-        0.178,
-        16.583
+        0.198,
+        16.447
       ],
-      "rotationY": 4.457,
-      "scale": 0.453
-    },
-    {
-      "id": "decor-verge-13",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        11.28,
-        0.238,
-        13.593
-      ],
-      "rotationY": 5.606,
-      "scale": 0.372
-    },
-    {
-      "id": "decor-verge-14",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        1.321,
-        0.291,
-        20.68
-      ],
-      "rotationY": 0.877,
-      "scale": 0.455
+      "rotationY": 4.57,
+      "scale": 0.506
     },
     {
       "id": "decor-fence-0",
@@ -16418,7 +16374,7 @@
       "position": [
         0.92,
         0.36,
-        22.56
+        20.68
       ],
       "rotationY": 1.571,
       "scale": 1
@@ -16427,9 +16383,9 @@
       "id": "decor-fence-14",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
-        -0.92,
+        0.92,
         0.36,
-        7.52
+        22.56
       ],
       "rotationY": 1.571,
       "scale": 1
@@ -16438,7 +16394,7 @@
       "id": "decor-fence-15",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
-        0.92,
+        -0.92,
         0.36,
         7.52
       ],
@@ -16449,6 +16405,17 @@
       "id": "decor-fence-16",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
+        0.92,
+        0.36,
+        7.52
+      ],
+      "rotationY": 1.571,
+      "scale": 1
+    },
+    {
+      "id": "decor-fence-17",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
         -0.92,
         0.36,
         11.28
@@ -16457,7 +16424,7 @@
       "scale": 1
     },
     {
-      "id": "decor-fence-17",
+      "id": "decor-fence-18",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         0.92,

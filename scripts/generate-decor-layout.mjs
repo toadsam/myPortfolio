@@ -13,7 +13,8 @@ import {
   readPositions,
   districtCenters,
   readMoat,
-  readIsland
+  readIsland,
+  readWalkRadius
 } from "./lib/read-village.mjs";
 
 const LAYOUT = "src/data/propsLayout.json";
@@ -413,12 +414,14 @@ const onWall = (x, z, slack = 0) =>
   });
 
 // ─── 걸어 다니는 구역 ─────────────────────────────────────────────────────────
-// CharacterController 는 캐릭터를 x ±11.5 / z −8.8~12.5 안에 가둔다. 3인칭 카메라는
+// CharacterController 는 캐릭터를 광장 중심의 원반 안에 가둔다. 3인칭 카메라는
 // 그 뒤 5.5·높이 3.8 이라, 이 안에서는 눈높이에서 물건을 코앞에 두고 본다.
 // 빌보드는 그 각도에서 바로 들통난다 — 십자의 옆날이 판때기로 보인다(실제로 봤다).
 // 그래서 이 안에서는 대역 모델을 쓰지 않고 원본으로 바꿔 심는다.
-const WALK = {x: 13.5, z0: -11, z1: 15};
-const inWalkZone = (x, z) => Math.abs(x) < WALK.x && z > WALK.z0 && z < WALK.z1;
+// 범위는 **원본(src/lib/villageWalk.ts)에서 읽는다.** 예전엔 여기 사각형을 손으로
+// 적고 주석에 컨트롤러 값을 옮겨 놨는데, 애초에 둘이 다른 값이었다.
+const WALK_RADIUS = readWalkRadius();
+const inWalkZone = (x, z) => Math.hypot(x, z) < WALK_RADIUS;
 // 대역 모델 → 원본 대응표. null 이면 아예 심지 않는다.
 // 덤불만 null 인 이유: 원본이 13,514 삼각형이라(잎마다 UV 섬이라 simplify가 안 먹는다)
 // 걸어 다니는 구역 안 30그루를 원본으로 바꿨더니 그것만 40만이 됐다. 게다가 이

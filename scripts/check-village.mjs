@@ -5,8 +5,13 @@
 // 잠겼고, 물길 끝 반지름이 27 로 박혀 있어 개울이 벌판에서 끊겼다.
 // 화면으로 찾으면 오래 걸리고 놓치기 쉬우니, 계산으로 끝나는 것은 전부 여기서 본다.
 //
-// 사용법: node scripts/check-village.mjs
+// 사용법: npm run check:village
 // 실패가 있으면 종료 코드 1 — 생성기를 돌린 뒤 습관처럼 같이 돌리면 된다.
+//
+// 그냥 `node scripts/check-village.mjs` 로는 안 된다. 마지막 검사가 앱의
+// villageWalk.ts 를 **그대로 불러** 쓰기 때문에 타입 제거와 별칭 해석이 필요하다
+// (scripts/lib/ts-loader.mjs). 규칙을 베껴 적는 대신 진짜 코드를 부르는 쪽이,
+// 검사기가 앱과 다른 마을을 보면서 "통과"라고 말하는 사고를 막는다.
 
 import {readFileSync} from "node:fs";
 import {readVillage, readMoat, readIsland} from "./lib/read-village.mjs";
@@ -259,6 +264,95 @@ console.log("── 마을 정합성 검사 ────────────
             ", "
           )} (목표 ${DISTRICT_INNER}) — node scripts/solve-district-ring.mjs --write`
       : `${edges.length}구역 모두 ${DISTRICT_INNER}`
+  );
+}
+
+// ⑨ 걸어서 어디까지 갈 수 있나 — **앱의 진짜 충돌 함수를 그대로 불러** 쓴다
+//
+// 충돌을 넣을 때의 실패는 두 방향이다: 안 막혀서 뚫고 지나가거나, 너무 막혀서
+// 광장에 갇히거나. 뒤쪽이 훨씬 나쁘고 눈으로는 "왜 안 가지" 하다 마는 정도라
+// 놓치기 쉽다. 그래서 출발점에서 물을 붓듯 퍼뜨려 갈 수 있는 땅을 세고,
+// 구역까지 실제로 닿는지 본다.
+//
+// 여기서 villageWalk.ts 를 **다시 구현하지 않고 import 한다** — scripts/lib/ts-loader.mjs
+// 가 앱 모듈을 그대로 읽게 해 준다. 베껴 적으면 반드시 어긋난다(오늘만 세 번).
+{
+  const {
+    isWalkable,
+    WALK_RADIUS,
+    CHARACTER_RADIUS,
+    SPAWN: START
+  } = await import("@/lib/villageWalk.ts");
+  const SPAWN = {x: START[0], z: START[1]};
+  const STEP = 0.35; // 캐릭터 반지름보다 작아야 틈으로 새지 않는다
+
+  const k = (i, j) => `${i}_${j}`;
+  const seen = new Set();
+  const start = {i: Math.round(SPAWN.x / STEP), j: Math.round(SPAWN.z / STEP)};
+  const queue = [start];
+  seen.add(k(start.i, start.j));
+  let reach = 0;
+  while (queue.length) {
+    const c = queue.pop();
+    const x = c.i * STEP;
+    const z = c.j * STEP;
+    if (!isWalkable(x, z)) continue;
+    reach++;
+    for (const [di, dj] of [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1]
+    ]) {
+      const n = {i: c.i + di, j: c.j + dj};
+      const key = k(n.i, n.j);
+      if (seen.has(key)) continue;
+      if (Math.hypot(n.i * STEP, n.j * STEP) > WALK_RADIUS) continue;
+      seen.add(key);
+      queue.push(n);
+    }
+  }
+
+  // 출발점이 막혀 있으면 첫 칸부터 못 퍼진다
+  check(
+    "출발점에 설 수 있음",
+    isWalkable(SPAWN.x, SPAWN.z),
+    `(${SPAWN.x}, ${SPAWN.z})`
+  );
+
+  // 원반 넓이 대비 얼마나 돌아다닐 수 있나. 건물·담장이 자리를 먹으므로 100%는
+  // 될 수 없다 — 절반 밑으로 떨어지면 어딘가에 갇힌 것이다.
+  const discCells = (Math.PI * WALK_RADIUS * WALK_RADIUS) / (STEP * STEP);
+  const pct = (reach / discCells) * 100;
+  check(
+    "갇히지 않음",
+    pct > 45,
+    `반경 ${WALK_RADIUS} 원반의 ${pct.toFixed(0)}% 를 걸어 다닐 수 있음`
+  );
+
+  // 걸어서 구역 건물 앞까지 갈 수 있나
+  const nearBuilding = buildings.filter(b => {
+    if (b.district === "plaza") return false;
+    const pad = CHARACTER_RADIUS + 0.8;
+    for (const key of seen) {
+      const [i, j] = key.split("_").map(Number);
+      const x = i * STEP;
+      const z = j * STEP;
+      if (!isWalkable(x, z)) continue;
+      if (
+        Math.abs(x - b.x) < b.w / 2 + pad &&
+        Math.abs(z - b.z) < b.d / 2 + pad
+      )
+        return true;
+    }
+    return false;
+  });
+  check(
+    "걸어서 건물 앞까지",
+    nearBuilding.length >= 5,
+    `${nearBuilding.length}채: ${
+      nearBuilding.map(b => b.id).join(", ") || "없음"
+    }`
   );
 }
 

@@ -83,6 +83,22 @@ export function readDistrictShift(source = readFileSync(CONSTANTS, "utf8")) {
   return out;
 }
 
+/**
+ * 걸어 다닐 수 있는 반경을 원본(villageWalk.ts)에서 읽는다.
+ *
+ * 장식물 생성기는 이 안의 빌보드를 원본 모델로 바꿔 심어야 한다 — 가까이서 보면
+ * 십자 빌보드는 옆날이 판때기로 보인다. 예전엔 생성기가 `WALK = {x: 13.5, ...}`
+ * 라는 **사각형을 손으로** 적어 두고 주석에 "컨트롤러는 x ±11.5 로 가둔다"고
+ * 써 놨었다. 처음부터 값이 서로 달랐고 구역을 옮긴 뒤로는 둘 다 낡았다.
+ */
+export function readWalkRadius() {
+  const source = readFileSync("src/lib/villageWalk.ts", "utf8");
+  const m = source.match(/export const WALK_RADIUS\s*=\s*([\d.]+)/);
+  if (!m)
+    throw new Error("src/lib/villageWalk.ts 에서 WALK_RADIUS 를 못 찾았습니다");
+  return Number(m[1]);
+}
+
 /** 구역이 광장에서 시작해야 하는 거리 — 솔버의 목표값이자 검사 기준 */
 export function readDistrictInner(source = readFileSync(CONSTANTS, "utf8")) {
   const m = source.match(/export const DISTRICT_INNER\s*=\s*([\d.]+)/);
