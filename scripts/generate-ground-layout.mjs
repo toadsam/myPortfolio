@@ -41,10 +41,19 @@ const V2_RECT = (() => {
   const [a, b, c, d] = raw.split(",").map(Number);
   if ([a, b, c, d].some(v => !Number.isFinite(v)))
     throw new Error(`--v2 값은 i0,j0,i1,j1 형식이어야 합니다: ${raw}`);
-  return {i0: Math.min(a, c), i1: Math.max(a, c), j0: Math.min(b, d), j1: Math.max(b, d)};
+  return {
+    i0: Math.min(a, c),
+    i1: Math.max(a, c),
+    j0: Math.min(b, d),
+    j1: Math.max(b, d)
+  };
 })();
 const inV2 = (i, j) =>
-  V2_RECT !== null && i >= V2_RECT.i0 && i <= V2_RECT.i1 && j >= V2_RECT.j0 && j <= V2_RECT.j1;
+  V2_RECT !== null &&
+  i >= V2_RECT.i0 &&
+  i <= V2_RECT.i1 &&
+  j >= V2_RECT.j0 &&
+  j <= V2_RECT.j1;
 
 // ─── 타일 사양 ────────────────────────────────────────────────────────────────
 // PITCH: 타일 실측 폭이 1.895~1.899라 1.88 간격으로 깔면 미세하게 겹쳐 틈이 안 생긴다.
@@ -181,14 +190,22 @@ const NORTH_END = -14;
 // 다리가 잔디 위에 뚝 떨어져 있지 않다. 북쪽 참배로와 대칭이다.
 const SOUTH_END = 12;
 const [I_MIN, I_MAX, J_MIN, J_MAX] = (() => {
-  let i0 = 0, i1 = 0, j0 = 0, j1 = 0;
+  let i0 = 0,
+    i1 = 0,
+    j0 = 0,
+    j1 = 0;
   for (const b of buildings) {
     i0 = Math.min(i0, Math.floor((b.x - b.w / 2) / PITCH));
     i1 = Math.max(i1, Math.ceil((b.x + b.w / 2) / PITCH));
     j0 = Math.min(j0, Math.floor((b.z - b.d / 2) / PITCH));
     j1 = Math.max(j1, Math.ceil((b.z + b.d / 2) / PITCH));
   }
-  return [i0 - MARGIN, i1 + MARGIN, Math.min(j0 - MARGIN, NORTH_END - 1), Math.max(j1 + MARGIN, SOUTH_END + 1)];
+  return [
+    i0 - MARGIN,
+    i1 + MARGIN,
+    Math.min(j0 - MARGIN, NORTH_END - 1),
+    Math.max(j1 + MARGIN, SOUTH_END + 1)
+  ];
 })();
 const inBounds = (i, j) => i >= I_MIN && i <= I_MAX && j >= J_MIN && j <= J_MAX;
 
@@ -230,23 +247,58 @@ const TRUNKS = [
 // 컨셉 아트의 길은 격자가 아니라 **광장에서 뻗는 방사선 + 그걸 두르는 고리**다.
 // 우리는 축 둘 + L자 진입로뿐이라 완전한 맨해튼 격자로 보였다.
 //
-// 격자 타일이라 진짜 원은 못 그린다. 대신 정사각 고리를 놓으면 네 모서리에
-// **커브 타일**이 자동으로 들어가고(모서리 칸은 이웃이 직각 두 방향뿐이다),
-// 축과 만나는 네 곳에 T 가 선다 — 부감에서는 그게 방사형 고리로 읽힌다.
-// 커브 타일이 5장밖에 안 쓰이던 것도 이걸로 같이 풀린다.
+// 한동안 정사각 고리(r 4·8)를 놓았다. 네 모서리에 커브가, 축과 만나는 곳에 T 가
+// 자동으로 들어가 부감에서 그럭저럭 고리로 읽혔다. 그런데 **정사각형은 모서리가
+// 반지름의 1.41배**라, 구역을 같은 고리(DISTRICT_INNER)에 올린 뒤로는 모서리가
+// 구역 단 위로 올라타 바깥 고리가 64칸 중 37칸만 남았다 — 반쪽짜리 고리다.
 //
-// 하나만 놓는 것보다 **두 겹**이 확실히 낫다. 실측: 고리 하나(r 6)면
-// 직선 63·T 21·커브 12·교차 4 인데, 두 겹(4·8)이면 80·30·15·6 이 된다 —
-// 길 종류가 고르게 섞이면서 격자가 아니라 동심원으로 읽힌다.
-const RINGS = [4, 8];
+// 그래서 원을 격자에 **래스터화**한다. 칸마다 이웃이 직각 두 방향이면 커브가
+// 들어가므로, 계단처럼 꺾이는 자리마다 커브가 박히고 나머지는 직선이 된다.
+// 모든 칸이 반지름 ±0.5 안에 있어 정사각형과 달리 띠를 벗어나지 않는다.
+const RINGS = [8]; // 구역 안을 지나는 옛 정사각 고리 — 살아남은 조각이 구역 내 골목이 된다
 for (const r of RINGS) {
   TRUNKS.push(
     [-r, -r, r, -r], // 북
-    [-r, r, r, r],   // 남
+    [-r, r, r, r], // 남
     [-r, -r, -r, r], // 서
-    [r, -r, r, r]    // 동
+    [r, -r, r, r] // 동
   );
 }
+
+/**
+ * 반지름 R(격자 칸) 짜리 원을 4방향으로 이어지는 칸 고리로 만든다.
+ *
+ * 각도를 잘게 돌며 가장 가까운 칸을 줍는데, 그것만으로는 칸이 대각선으로
+ * 건너뛰는 자리가 생긴다. 대각선은 길 타일이 서로 안 닿아 고리가 끊긴 것처럼
+ * 보이므로, 사이에 한 칸을 끼워 넣는다 — 반지름에 더 가까운 쪽으로.
+ */
+function circleRing(R) {
+  const cells = [];
+  const push = (i, j) => {
+    const last = cells[cells.length - 1];
+    if (last && last[0] === i && last[1] === j) return;
+    if (last && last[0] !== i && last[1] !== j) {
+      const a = [i, last[1]];
+      const b = [last[0], j];
+      cells.push(
+        Math.abs(Math.hypot(...a) - R) <= Math.abs(Math.hypot(...b) - R) ? a : b
+      );
+    }
+    cells.push([i, j]);
+  };
+  const steps = Math.max(64, Math.round(R * 24));
+  for (let s = 0; s < steps; s++) {
+    const a = (s / steps) * Math.PI * 2;
+    push(Math.round(Math.cos(a) * R), Math.round(Math.sin(a) * R));
+  }
+  push(...cells[0]); // 시작점으로 되돌아와 고리를 닫는다
+  return cells.slice(0, -1);
+}
+
+// 광장 둘레 고리. 반지름은 "광장 포장 바깥 ~ 구역 단이 내려오는 한계" 사이에서
+// 고른다 — 지금은 포장이 r 4.7 까지, 단이 10.7 부터라 칸 5(월드 9.4)가 한가운데다.
+const PLAZA_RING = 5;
+const RING_CELLS = circleRing(PLAZA_RING);
 
 // 남쪽 정문 진입 축. 컨셉 아트에서 마을로 들어오는 길은 남쪽 대계단 하나뿐이고,
 // 광장까지 일직선으로 뻗는다. 그런데 이 축의 끝은 정의상 막다른 길이라
@@ -260,7 +312,12 @@ for (let j = NORTH_END; j <= -1; j++) CEREMONIAL.add(key(0, j));
 // 구역별 블록 상자 (격자 단위, 건물이 실제로 먹는 칸 기준)
 const BLOCK_BOX = new Map();
 for (const b of OUTER) {
-  const box = BLOCK_BOX.get(b.district) ?? {i0: Infinity, i1: -Infinity, j0: Infinity, j1: -Infinity};
+  const box = BLOCK_BOX.get(b.district) ?? {
+    i0: Infinity,
+    i1: -Infinity,
+    j0: Infinity,
+    j1: -Infinity
+  };
   box.i0 = Math.min(box.i0, Math.floor((b.x - b.w / 2) / PITCH));
   box.i1 = Math.max(box.i1, Math.ceil((b.x + b.w / 2) / PITCH));
   box.j0 = Math.min(box.j0, Math.floor((b.z - b.d / 2) / PITCH));
@@ -289,11 +346,13 @@ for (const box of BLOCK_BOX.values()) {
   // 골목이 난 마을이 아니라 잔디에 그은 바둑판이었다.
   // 블록이 가로로 넓으면 줄도 가로이고, 골목은 줄 사이(같은 j)에 난다.
   const wide = box.i1 - box.i0 >= box.j1 - box.j0;
-  const spanFree = (fixed) => {
+  const spanFree = fixed => {
     if (wide) {
-      for (let i = ei0; i <= ei1; i++) if (blocked.has(key(i, fixed))) return false;
+      for (let i = ei0; i <= ei1; i++)
+        if (blocked.has(key(i, fixed))) return false;
     } else {
-      for (let j = ej0; j <= ej1; j++) if (blocked.has(key(fixed, j))) return false;
+      for (let j = ej0; j <= ej1; j++)
+        if (blocked.has(key(fixed, j))) return false;
     }
     return true;
   };
@@ -331,7 +390,7 @@ for (const box of BLOCK_BOX.values()) {
   let lastLaid = -Infinity;
   for (let n = lo; n <= hi; n++) {
     if (n === far || !spanFree(n) || n - lastLaid < ALLEY_GAP) continue;
-    if (blockers.some((t) => Math.abs(t - n) < ALLEY_GAP)) continue;
+    if (blockers.some(t => Math.abs(t - n) < ALLEY_GAP)) continue;
     TRUNKS.push(wide ? [ei0, n, ei1, n] : [n, ej0, n, ej1]);
     lastLaid = n;
   }
@@ -353,6 +412,10 @@ function addSegment(i0, j0, i1, j1) {
   }
 }
 for (const [i0, j0, i1, j1] of TRUNKS) addSegment(i0, j0, i1, j1);
+
+// 광장 둘레 고리는 직선 구간이 아니라 칸 목록이라 따로 깐다
+for (const [i, j] of RING_CELLS)
+  if (inBounds(i, j) && !blocked.has(key(i, j))) road.add(key(i, j));
 
 // ─── ② 건물마다 도로망까지 최단 지선을 잇는다 ────────────────────────────────
 // 손으로 노선을 다 그리면 건물 하나가 늘 때마다 길이 끊긴다. 대신 건물에서
@@ -541,7 +604,8 @@ function pick(i, j) {
   const n = [N, S, W, E].filter(Boolean).length;
 
   if (n === 4) return {kind: "cross"};
-  if (n === 3) return {kind: "t", blocked: !N ? "N" : !S ? "S" : !W ? "W" : "E"};
+  if (n === 3)
+    return {kind: "t", blocked: !N ? "N" : !S ? "S" : !W ? "W" : "E"};
   if (n === 2) {
     if (N && S) return {kind: "straight", axis: "NS"};
     if (W && E) return {kind: "straight", axis: "WE"};
@@ -608,7 +672,10 @@ const roadCenters = [...road].map(k => {
   return {x: worldX(i), z: worldZ(j)};
 });
 const nearRoad = (x, z) =>
-  roadCenters.some(c => Math.abs(c.x - x) < ROAD_CLEARANCE && Math.abs(c.z - z) < ROAD_CLEARANCE);
+  roadCenters.some(
+    c =>
+      Math.abs(c.x - x) < ROAD_CLEARANCE && Math.abs(c.z - z) < ROAD_CLEARANCE
+  );
 const onDisc = (x, z, slack = 0) =>
   discs.some(d => Math.hypot(d.x - x, d.z - z) < d.r + slack);
 
@@ -703,7 +770,8 @@ const pavedCells = new Set();
   const APRON = HUB_RADIUS + 4.2;
   for (let i = I_MIN; i <= I_MAX; i++)
     for (let j = J_MIN; j <= J_MAX; j++)
-      if (Math.hypot(worldX(i) - HUB.x, worldZ(j) - HUB.z) < APRON) cells.add(key(i, j));
+      if (Math.hypot(worldX(i) - HUB.x, worldZ(j) - HUB.z) < APRON)
+        cells.add(key(i, j));
 
   // 판석 그림은 이어붙게 구웠지만 **같은 그림**이라, 그냥 깔면 1.88 격자가
   // 부감에서 무늬로 읽힌다(예전 절차 생성 판에서 붉은 악센트 하나 때문에 빨간
@@ -770,7 +838,10 @@ for (const k of [...road].sort()) {
   // 판석 위를 지나는 길은 갓길이 돌인 변종. 포장 밖(남쪽 진입로·북쪽 참배로)은
   // 잔디를 밟고 가므로 원본 그대로가 맞다.
   const paved = pavedCells.has(k);
-  const {spec, rot} = place(chosen, paved ? SETS.paved : v2 ? SETS.v2 : SETS.v1);
+  const {spec, rot} = place(
+    chosen,
+    paved ? SETS.paved : v2 ? SETS.v2 : SETS.v1
+  );
   bump(chosen.kind, v2);
   props.push({
     id: `ground-${i}_${j}`,
@@ -784,9 +855,13 @@ for (const k of [...road].sort()) {
 // 풀숲 — 크기·각도를 흩어야 복제 티가 안 난다
 let grassOnPaving = 0;
 clumps.forEach((c, n) => {
-  const gi = Math.round(c.x / PITCH), gj = Math.round(c.z / PITCH);
+  const gi = Math.round(c.x / PITCH),
+    gj = Math.round(c.z / PITCH);
   // 돌바닥 한복판에 풀숲 한 덩이가 놓이면 잡초로 보인다. 포장 칸은 건너뛴다.
-  if (pavedCells.has(key(gi, gj))) { grassOnPaving += 1; return; }
+  if (pavedCells.has(key(gi, gj))) {
+    grassOnPaving += 1;
+    return;
+  }
   const v2 = inV2(gi, gj);
   const spec = (v2 ? SETS.v2 : SETS.v1).tiles.grass;
   bump("grass", v2);
@@ -815,7 +890,10 @@ clumps.forEach((c, n) => {
 {
   const blocks = [];
   for (const [district, box] of BLOCK_BOX) {
-    const i0 = box.i0, i1 = box.i1, j0 = box.j0, j1 = box.j1;
+    const i0 = box.i0,
+      i1 = box.i1,
+      j0 = box.j0,
+      j1 = box.j1;
     blocks.push({
       district,
       // 칸 중심 격자이므로 바깥 테두리는 반 칸 더 나간다
@@ -839,20 +917,27 @@ clumps.forEach((c, n) => {
   {
     // 이미 깔린 길 타일 — 물길이 길 위로 지나면 안 된다
     const roadAt = props
-      .filter((q) => q.glb.includes("/path-"))
-      .map((q) => ({x: q.position[0], z: q.position[2]}));
+      .filter(q => q.glb.includes("/path-"))
+      .map(q => ({x: q.position[0], z: q.position[2]}));
     const roadGap = (x, z) => {
       let best = Infinity;
-      for (const r of roadAt) best = Math.min(best, Math.hypot(r.x - x, r.z - z));
+      for (const r of roadAt)
+        best = Math.min(best, Math.hypot(r.x - x, r.z - z));
       return best;
     };
 
     const angles = blocks
-      .map((b) => Math.atan2((b.z0 + b.z1) / 2, (b.x0 + b.x1) / 2))
+      .map(b => Math.atan2((b.z0 + b.z1) / 2, (b.x0 + b.x1) / 2))
       .sort((x, y) => x - y);
 
     const onPlateau = (x, z) =>
-      blocks.some((b) => x >= b.x0 - HALF && x <= b.x1 + HALF && z >= b.z0 - HALF && z <= b.z1 + HALF);
+      blocks.some(
+        b =>
+          x >= b.x0 - HALF &&
+          x <= b.x1 + HALF &&
+          z >= b.z0 - HALF &&
+          z <= b.z1 + HALF
+      );
     const clearOf = (x, z) => {
       let best = Infinity;
       for (const b of blocks) {
@@ -863,9 +948,9 @@ clumps.forEach((c, n) => {
       return best;
     };
 
-    const NEED = 0.9;       // 물 반폭 + 여유
-    const ROAD_KEEP = 1.5;  // 길 타일 중심에서 이만큼 안쪽은 "길 위"
-    const CROSS_MAX = 2.8;  // 이보다 짧게 스치면 **건너는 것** — 다리를 놓는다
+    const NEED = 0.9; // 물 반폭 + 여유
+    const ROAD_KEEP = 1.5; // 길 타일 중심에서 이만큼 안쪽은 "길 위"
+    const CROSS_MAX = 2.8; // 이보다 짧게 스치면 **건너는 것** — 다리를 놓는다
     const R_IN = HUB_RADIUS + 2.6;
     const STEP_R = 0.6;
 
@@ -880,13 +965,18 @@ clumps.forEach((c, n) => {
     // 그래서 끝점을 해자 타원에서 그 각도의 반지름으로 구한다.
     const MOAT = readMoat();
     /** 중심에서 각 ang 방향으로 해자 타원과 만나는 거리 */
-    const moatRadiusAt = (ang) => {
+    const moatRadiusAt = ang => {
       // (r·cos−cx)²/a² + (r·sin−cz)²/b² = 1 을 r 에 대해 푼다
-      const c = Math.cos(ang), s = Math.sin(ang);
+      const c = Math.cos(ang),
+        s = Math.sin(ang);
       const A = (c * c) / (MOAT.a * MOAT.a) + (s * s) / (MOAT.b * MOAT.b);
-      const B = (-2 * MOAT.cx * c) / (MOAT.a * MOAT.a) + (-2 * MOAT.cz * s) / (MOAT.b * MOAT.b);
+      const B =
+        (-2 * MOAT.cx * c) / (MOAT.a * MOAT.a) +
+        (-2 * MOAT.cz * s) / (MOAT.b * MOAT.b);
       const C =
-        (MOAT.cx * MOAT.cx) / (MOAT.a * MOAT.a) + (MOAT.cz * MOAT.cz) / (MOAT.b * MOAT.b) - 1;
+        (MOAT.cx * MOAT.cx) / (MOAT.a * MOAT.a) +
+        (MOAT.cz * MOAT.cz) / (MOAT.b * MOAT.b) -
+        1;
       const disc = Math.max(0, B * B - 4 * A * C);
       return (-B + Math.sqrt(disc)) / (2 * A);
     };
@@ -911,12 +1001,12 @@ clumps.forEach((c, n) => {
       // 실제 개울은 막히면 돌아간다. 반지름을 한 칸씩 늘려 가며 각도를 조금씩
       // 틀어, 그 자리에서 가장 트인 쪽을 고른다. 곧은 수로가 아니라 굽이치는
       // 개울이 되고, 좁은 틈도 비집고 나간다.
-      const ANG_STEP = 0.035;     // 한 칸에서 틀 수 있는 최대 각도(rad) ≈ 2°
+      const ANG_STEP = 0.035; // 한 칸에서 틀 수 있는 최대 각도(rad) ≈ 2°
       const ANG_TRY = [0, 1, -1, 2, -2, 3, -3];
 
       const why = {막힘: 0, 길나란히: 0, 짧음: 0, 최원: 0};
       /** 한 각도에서 출발해 해자까지 굽이쳐 나가 본다. 실패하면 null. */
-      const trace = (startAng) => {
+      const trace = startAng => {
         let ang = startAng;
         const out = [];
         let onRoadRun = 0;
@@ -928,8 +1018,10 @@ clumps.forEach((c, n) => {
           for (const k of ANG_TRY) {
             const a = ang + k * ANG_STEP;
             // 골짜기 밖으로 새어 나가지 않게 원래 부채꼴 안에 묶는다
-            if (a < a0 + (a1 - a0) * 0.05 || a > a0 + (a1 - a0) * 0.95) continue;
-            const x = Math.cos(a) * r, z = Math.sin(a) * r;
+            if (a < a0 + (a1 - a0) * 0.05 || a > a0 + (a1 - a0) * 0.95)
+              continue;
+            const x = Math.cos(a) * r,
+              z = Math.sin(a) * r;
             if (onPlateau(x, z)) continue;
             const clear = clearOf(x, z);
             if (clear < NEED) continue;
@@ -940,11 +1032,19 @@ clumps.forEach((c, n) => {
             const score = Math.min(clear, roadGap(x, z));
             if (!pick || score > pick.score) pick = {a, clear, score, x, z};
           }
-          if (!pick) { why.막힘++; why.최원 = Math.max(why.최원, r); return null; }
+          if (!pick) {
+            why.막힘++;
+            why.최원 = Math.max(why.최원, r);
+            return null;
+          }
           ang = pick.a;
           if (roadGap(pick.x, pick.z) < ROAD_KEEP) {
             onRoadRun += STEP_R;
-            if (onRoadRun > CROSS_MAX) { why.길나란히++; why.최원 = Math.max(why.최원, r); return null; } // 길을 따라 나란히 달린다
+            if (onRoadRun > CROSS_MAX) {
+              why.길나란히++;
+              why.최원 = Math.max(why.최원, r);
+              return null;
+            } // 길을 따라 나란히 달린다
           } else {
             if (onRoadRun > 0) crossings += 1;
             onRoadRun = 0;
@@ -952,7 +1052,10 @@ clumps.forEach((c, n) => {
           worst = Math.min(worst, pick.clear);
           out.push({x: pick.x, z: pick.z});
         }
-        if (out.length <= 8) { why.짧음++; return null; }
+        if (out.length <= 8) {
+          why.짧음++;
+          return null;
+        }
         return {pts: out, worst, crossings};
       };
 
@@ -967,18 +1070,31 @@ clumps.forEach((c, n) => {
       }
       if (!best) {
         const deg = ((((a0 + a1) / 2) * 180) / Math.PI).toFixed(0);
-        console.log(`    골짜기 ${deg}° 물길 실패 — 출발각 ${tried}개 · 막힘 ${why.막힘} · 길나란히 ${why.길나란히} · 너무짧음 ${why.짧음} (최원 r=${why.최원.toFixed(1)})`);
+        console.log(
+          `    골짜기 ${deg}° 물길 실패 — 출발각 ${tried}개 · 막힘 ${
+            why.막힘
+          } · 길나란히 ${why.길나란히} · 너무짧음 ${
+            why.짧음
+          } (최원 r=${why.최원.toFixed(1)})`
+        );
         continue;
       }
 
       // 자로 그은 듯한 곡선이면 수로지 개울이 아니다. 진행 방향의 법선으로 흔든다.
       const pts = best.pts.map((p, n, arr) => {
         const t = n / Math.max(1, arr.length - 1);
-        const prev = arr[Math.max(0, n - 1)], next = arr[Math.min(arr.length - 1, n + 1)];
-        const tx = next.x - prev.x, tz = next.z - prev.z;
+        const prev = arr[Math.max(0, n - 1)],
+          next = arr[Math.min(arr.length - 1, n + 1)];
+        const tx = next.x - prev.x,
+          tz = next.z - prev.z;
         const tl = Math.hypot(tx, tz) || 1;
-        const w = Math.sin(t * Math.PI * 2.3) * 0.45 + Math.sin(t * Math.PI * 5.1) * 0.16;
-        return {x: round3(p.x + (-tz / tl) * w), z: round3(p.z + (tx / tl) * w)};
+        const w =
+          Math.sin(t * Math.PI * 2.3) * 0.45 +
+          Math.sin(t * Math.PI * 5.1) * 0.16;
+        return {
+          x: round3(p.x + (-tz / tl) * w),
+          z: round3(p.z + (tx / tl) * w)
+        };
       });
       channels.push(pts);
     }
@@ -991,7 +1107,9 @@ clumps.forEach((c, n) => {
       JSON.stringify({pitch: PITCH, blocks, channels}, null, 2) + "\n"
     );
   }
-  console.log(`  구역 단차 사각형 ${blocks.length}개 → src/data/villageTerraces.json`);
+  console.log(
+    `  구역 단차 사각형 ${blocks.length}개 → src/data/villageTerraces.json`
+  );
 }
 
 // ─── 기존 레이아웃에 병합 ─────────────────────────────────────────────────────
@@ -1025,7 +1143,11 @@ console.log(
 console.log(
   `  길이 안 닿은 건물: ${unreachable.length ? unreachable.join(", ") : "없음"}`
 );
-console.log(`  구역 포장  : ${pavedCount}장 (판석, 장당 2삼각형 = ${pavedCount * 2}삼각형)`);
+console.log(
+  `  구역 포장  : ${pavedCount}장 (판석, 장당 2삼각형 = ${
+    pavedCount * 2
+  }삼각형)`
+);
 console.log(`  ground 외 프롭 ${kept.length}개는 그대로 유지`);
 console.log(`  예상 삼각형 합계 약 ${(tris / 1000).toFixed(0)}k`);
 

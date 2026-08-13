@@ -8,10 +8,59 @@
 // 사용법: node scripts/generate-decor-layout.mjs [--dry]
 
 import {readFileSync, writeFileSync, existsSync} from "node:fs";
-import {readVillage, readPositions, districtCenters, readMoat, readIsland} from "./lib/read-village.mjs";
+import {
+  readVillage,
+  readPositions,
+  districtCenters,
+  readMoat,
+  readIsland
+} from "./lib/read-village.mjs";
 
 const LAYOUT = "src/data/propsLayout.json";
 const DRY = process.argv.includes("--dry");
+
+// ─── 해자 물줄기 ──────────────────────────────────────────────────────────────
+// 값은 원본(villageRelief.ts)에서 읽는다 — 예전에 손으로 베낀 사본을 두었다가
+// 마을을 키우며 해자를 넓혔을 때 여기만 옛 값으로 남아 나무 55그루가 잠겼다.
+//
+// **순수 타원이 아니라 실제로 그려지는 물줄기**를 따라야 한다. VillageScene 은
+// 타원에 drift(±1.9)를 얹어 물을 굽이치게 그리므로, 타원만 피하면 물줄기가
+// 바깥으로 벗어나는 구간마다 프롭이 물에 선다. 아래는 Waterways 의 폴리라인 식이다.
+const MOAT = readMoat();
+const MOAT_LINE = (() => {
+  const STEPS = 132,
+    pts = [];
+  for (let s = 0; s <= STEPS; s++) {
+    const t = s / STEPS;
+    const ang = t * Math.PI * 2 - Math.PI / 2;
+    const drift = Math.sin(ang * 3 + 0.7) * 1.4 + Math.sin(ang * 7) * 0.5;
+    const c = Math.cos(ang),
+      si = Math.sin(ang);
+    const nx = c / MOAT.a,
+      nz = si / MOAT.b,
+      nl = Math.hypot(nx, nz) || 1;
+    pts.push({
+      x: MOAT.cx + c * MOAT.a + (nx / nl) * drift,
+      z: MOAT.cz + si * MOAT.b + (nz / nl) * drift,
+      half: 1.1 * (0.82 + 0.3 * Math.sin(t * Math.PI * 10 + 1.9))
+    });
+  }
+  return pts;
+})();
+
+/** (x,z) 가 해자 물 안인가 — check-village.mjs 의 inMoat 와 같은 판정 */
+function inMoatWater(x, z) {
+  let best = Infinity,
+    half = 1;
+  for (const q of MOAT_LINE) {
+    const d = Math.hypot(x - q.x, z - q.z);
+    if (d < best) {
+      best = d;
+      half = q.half;
+    }
+  }
+  return best < half + 0.5; // 물가에 발이 걸치지 않도록 여유를 조금 준다
+}
 
 // ─── 규격 ─────────────────────────────────────────────────────────────────────
 // Meshy는 뭘 뽑든 높이 1.9 유닛으로 정규화해서 내보낸다. 그대로 놓으면 우편함이
@@ -136,8 +185,16 @@ const KIT = {
   // 이던 시절엔 나무가 건물의 2.3배라 마을이 "숲에 놓인 모형"으로 보였다.
   // 건물을 키우고(constants.ts size ×1.32) 나무를 낮춰 1.4배쯤으로 맞춘다.
   // 테두리 숲(far-*)은 그대로 둔다 — 그쪽은 마을을 가리는 벽이라 클수록 좋다.
-  "tree-golden-canopy": {glb: "nature/tree-golden-canopy.glb", h: 1.743, m: 3.6},
-  "tree-emerald-crown": {glb: "nature/tree-emerald-crown.glb", h: 1.897, m: 4.0},
+  "tree-golden-canopy": {
+    glb: "nature/tree-golden-canopy.glb",
+    h: 1.743,
+    m: 3.6
+  },
+  "tree-emerald-crown": {
+    glb: "nature/tree-emerald-crown.glb",
+    h: 1.897,
+    m: 4.0
+  },
   "tree-sakura": {glb: "nature/tree-sakura.glb", h: 1.809, m: 3.6},
   "flower-bed": {glb: "nature/tree-petal-parade.glb", h: 0.877, m: 0.8},
   "berry-bush": {glb: "nature/bush-emerald-berry.glb", h: 1.137, m: 1.3},
@@ -177,11 +234,16 @@ function hash2(i, j) {
   h = Math.imul(h ^ (h >>> 13), 1274126177);
   return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
 }
-const smooth = (t) => t * t * (3 - 2 * t);
+const smooth = t => t * t * (3 - 2 * t);
 function noise2(x, z) {
-  const i = Math.floor(x), j = Math.floor(z);
-  const fx = smooth(x - i), fz = smooth(z - j);
-  const a = hash2(i, j), b = hash2(i + 1, j), c = hash2(i, j + 1), d = hash2(i + 1, j + 1);
+  const i = Math.floor(x),
+    j = Math.floor(z);
+  const fx = smooth(x - i),
+    fz = smooth(z - j);
+  const a = hash2(i, j),
+    b = hash2(i + 1, j),
+    c = hash2(i, j + 1),
+    d = hash2(i + 1, j + 1);
   return (a * (1 - fx) + b * fx) * (1 - fz) + (c * (1 - fx) + d * fx) * fz;
 }
 
@@ -190,11 +252,16 @@ function noise2(x, z) {
 // 바깥은 숲으로 두른다. 둘을 안 가르면 마을 한복판에 숲이 들어선다.
 function convexHull(points) {
   const pts = [...points].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
-  const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
-  const half = (list) => {
+  const cross = (o, a, b) =>
+    (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const half = list => {
     const out = [];
     for (const p of list) {
-      while (out.length >= 2 && cross(out[out.length - 2], out[out.length - 1], p) <= 0) out.pop();
+      while (
+        out.length >= 2 &&
+        cross(out[out.length - 2], out[out.length - 1], p) <= 0
+      )
+        out.pop();
       out.push(p);
     }
     out.pop();
@@ -207,8 +274,10 @@ function convexHull(points) {
 function inPolygon(poly, x, z) {
   let inside = false;
   for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const [xi, zi] = poly[i], [xj, zj] = poly[j];
-    if (zi > z !== zj > z && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi) inside = !inside;
+    const [xi, zi] = poly[i],
+      [xj, zj] = poly[j];
+    if (zi > z !== zj > z && x < ((xj - xi) * (z - zi)) / (zj - zi) + xi)
+      inside = !inside;
   }
   return inside;
 }
@@ -217,8 +286,10 @@ function inPolygon(poly, x, z) {
 function polygonDistance(poly, x, z) {
   let best = Infinity;
   for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const [xi, zi] = poly[i], [xj, zj] = poly[j];
-    const dx = xj - xi, dz = zj - zi;
+    const [xi, zi] = poly[i],
+      [xj, zj] = poly[j];
+    const dx = xj - xi,
+      dz = zj - zi;
     const len2 = dx * dx + dz * dz || 1;
     const t = Math.max(0, Math.min(1, ((x - xi) * dx + (z - zi) * dz) / len2));
     best = Math.min(best, Math.hypot(x - (xi + dx * t), z - (zi + dz * t)));
@@ -226,13 +297,13 @@ function polygonDistance(poly, x, z) {
   return inPolygon(poly, x, z) ? -best : best;
 }
 
-const round3 = (v) => Math.round(v * 1000) / 1000;
-const scaleOf = (kind) => round3((KIT[kind].m * UNITS_PER_METER) / KIT[kind].h);
+const round3 = v => Math.round(v * 1000) / 1000;
+const scaleOf = kind => round3((KIT[kind].m * UNITS_PER_METER) / KIT[kind].h);
 
 // Meshy 모델은 원점이 bbox 한가운데다(바닥 y ≈ −0.95). InstancedProps 는 position 에
 // GLB 원점을 그대로 놓으므로, 바닥 오프셋만큼 올려야 땅에 선다. 안 올리면 절반이 묻힌다.
 // 원본 높이의 절반이 곧 바닥까지의 거리다(모든 모델이 y 대칭으로 나온다).
-const liftOf = (kind) => round3((KIT[kind].h / 2) * scaleOf(kind));
+const liftOf = kind => round3((KIT[kind].h / 2) * scaleOf(kind));
 
 /** 정면(+Z 기준)이 (dx,dz) 방향을 보도록 하는 회전각 */
 const faceTo = (dx, dz) => round3(Math.atan2(dx, dz));
@@ -241,8 +312,8 @@ const faceTo = (dx, dz) => round3(Math.atan2(dx, dz));
 const {buildings} = readVillage();
 const layout = JSON.parse(readFileSync(LAYOUT, "utf8"));
 
-const HUB = buildings.find((b) => b.id === "central-plaza");
-const OUTER = buildings.filter((b) => b.id !== "central-plaza");
+const HUB = buildings.find(b => b.id === "central-plaza");
+const OUTER = buildings.filter(b => b.id !== "central-plaza");
 const centers = districtCenters(OUTER);
 
 // 앞마당 원반 — generate-ground-layout.mjs 와 같은 식이어야 한다.
@@ -251,37 +322,52 @@ const PLAZA_RADIUS_AT_1 = 0.95;
 // generate-ground-layout.mjs 의 FORECOURT_DRAW 와 같은 값이어야 한다.
 // 바로 아래 가드가 어긋나면 잡아 준다 — 실제로 원반을 줄일 때 여기서 걸렸다.
 const FORECOURT_DRAW = 0.77;
-const discs = OUTER.map((b) => ({x: b.x, z: b.z, r: (Math.max(b.w, b.d) / 2 + 0.55) * FORECOURT_DRAW}));
+const discs = OUTER.map(b => ({
+  x: b.x,
+  z: b.z,
+  r: (Math.max(b.w, b.d) / 2 + 0.55) * FORECOURT_DRAW
+}));
 {
   const yards = new Map(
     layout.props
-      .filter((p) => p.id.startsWith("ground-yard-"))
-      .map((p) => [p.id.slice("ground-yard-".length), p.scale * PLAZA_RADIUS_AT_1])
+      .filter(p => p.id.startsWith("ground-yard-"))
+      .map(p => [
+        p.id.slice("ground-yard-".length),
+        p.scale * PLAZA_RADIUS_AT_1
+      ])
   );
   for (const b of OUTER) {
     const actual = yards.get(b.id);
     const mine = (Math.max(b.w, b.d) / 2 + 0.55) * FORECOURT_DRAW;
     if (actual !== undefined && Math.abs(actual - mine) > 0.02)
       throw new Error(
-        `앞마당 반지름이 바닥 레이아웃과 어긋납니다 (${b.id}: 여기 ${mine.toFixed(2)} vs 타일 ${actual.toFixed(2)}).\n` +
+        `앞마당 반지름이 바닥 레이아웃과 어긋납니다 (${
+          b.id
+        }: 여기 ${mine.toFixed(2)} vs 타일 ${actual.toFixed(2)}).\n` +
           `  generate-ground-layout.mjs 의 식이 바뀌었다면 이 파일의 discs 계산도 맞춰주세요.`
       );
   }
 }
-const HUB_DISC = layout.props.find((p) => p.id === "ground-plaza-center");
+const HUB_DISC = layout.props.find(p => p.id === "ground-plaza-center");
 const HUB_RADIUS = (HUB_DISC?.scale ?? 4.84) * PLAZA_RADIUS_AT_1;
 
 // 길 — 바닥 레이아웃에 깔린 길 타일이 곧 길이다
 const roads = layout.props
-  .filter((p) => p.glb.includes("/path-"))
-  .map((p) => ({x: p.position[0], z: p.position[2]}));
-if (roads.length < 20) throw new Error(`길 타일을 ${roads.length}장밖에 못 찾았습니다 — 먼저 바닥을 생성하세요`);
+  .filter(p => p.glb.includes("/path-"))
+  .map(p => ({x: p.position[0], z: p.position[2]}));
+if (roads.length < 20)
+  throw new Error(
+    `길 타일을 ${roads.length}장밖에 못 찾았습니다 — 먼저 바닥을 생성하세요`
+  );
 
 // 타일 간격 — 가장 가까운 두 타일 사이 거리
 const PITCH = round3(
   Math.min(
     ...roads.slice(0, 40).flatMap((a, i) =>
-      roads.slice(0, 40).filter((_, j) => j !== i).map((b) => Math.hypot(a.x - b.x, a.z - b.z))
+      roads
+        .slice(0, 40)
+        .filter((_, j) => j !== i)
+        .map(b => Math.hypot(a.x - b.x, a.z - b.z))
     )
   )
 );
@@ -290,17 +376,25 @@ const ROAD_SIDE = round3(PITCH * 0.33);
 const HALF_TILE = round3(PITCH / 2);
 
 const onRoad = (x, z, slack = 0) =>
-  roads.some((r) => Math.abs(r.x - x) < ROAD_SIDE + slack && Math.abs(r.z - z) < ROAD_SIDE + slack);
+  roads.some(
+    r =>
+      Math.abs(r.x - x) < ROAD_SIDE + slack &&
+      Math.abs(r.z - z) < ROAD_SIDE + slack
+  );
 const onDisc = (x, z, slack = 0) =>
-  discs.some((d) => Math.hypot(d.x - x, d.z - z) < d.r + slack) ||
+  discs.some(d => Math.hypot(d.x - x, d.z - z) < d.r + slack) ||
   Math.hypot(HUB.x - x, HUB.z - z) < HUB_RADIUS + slack;
 const onBuilding = (x, z, slack = 0) =>
-  buildings.some((b) => Math.abs(b.x - x) < b.w / 2 + slack && Math.abs(b.z - z) < b.d / 2 + slack);
+  buildings.some(
+    b =>
+      Math.abs(b.x - x) < b.w / 2 + slack && Math.abs(b.z - z) < b.d / 2 + slack
+  );
 
 const props = [];
 const taken = [];
 /** 이미 놓은 장식물과 겹치지 않는가 */
-const free = (x, z, gap) => !taken.some((t) => Math.hypot(t.x - x, t.z - z) < gap);
+const free = (x, z, gap) =>
+  !taken.some(t => Math.hypot(t.x - x, t.z - z) < gap);
 
 // ─── 담장 선분 ────────────────────────────────────────────────────────────────
 // ②-d 가 채운다. 길이 1.94 · 두께 0.4 짜리 **선분**이라 taken 의 점 하나로는
@@ -310,8 +404,9 @@ const walls = [];
 const WALL_HALF_LEN = 0.97;
 const WALL_HALF_THICK = 0.2;
 const onWall = (x, z, slack = 0) =>
-  walls.some((w) => {
-    const dx = x - w.x, dz = z - w.z;
+  walls.some(w => {
+    const dx = x - w.x,
+      dz = z - w.z;
     const along = Math.abs(dx * w.ax + dz * w.az);
     const perp = Math.abs(dx * -w.az + dz * w.ax);
     return along < WALL_HALF_LEN + slack && perp < WALL_HALF_THICK + slack;
@@ -341,7 +436,15 @@ const REAL_OF = {
 //  화분(5,156)·벤치(5,831)를 섞어 썼다가 뺐다. 여기 심기는 자리가 서른 곳 가까이
 //  되는데, 비싼 둘이 절반을 차지하면서 그것만 8만 삼각형이었다. 바위 계열은
 //  2,058~3,291 이라 셋을 놓아도 화분 하나 값이다.
-const BUSH_STANDIN = ["boulder", "stones", "boulder", "barrel-iron", "stones", "boulder", "stones"];
+const BUSH_STANDIN = [
+  "boulder",
+  "stones",
+  "boulder",
+  "barrel-iron",
+  "stones",
+  "boulder",
+  "stones"
+];
 let promoted = 0;
 let dropped = 0;
 function kindFor(kind, x, z) {
@@ -363,9 +466,23 @@ function kindFor(kind, x, z) {
 
 // grow: 크기 배수. 같은 GLB를 수십 그루 심을 땐 이걸 흔들어야 복제 티가 안 난다.
 // 띄우는 높이도 같은 배수로 커져야 발밑이 땅에 붙는다.
-function place(id, rawKind, x, z, rotationY = 0, {grow = 1} = {}) {
+function place(
+  id,
+  rawKind,
+  x,
+  z,
+  rotationY = 0,
+  {grow = 1, onWater = false} = {}
+) {
   const kind = kindFor(rawKind, x, z);
   if (kind === null) return false;
+  // 물 위 금지 — 여기가 모든 장식물이 지나는 유일한 길목이라 여기서 한 번만 막는다.
+  //
+  // 해자를 피하는 코드는 원래 숲 쪽(landmarks 금지 원)에만 있었다. 구역을 고리로
+  // 재배치하며 민가·담장 띠가 바깥으로 밀리자, 숲이 아닌 그 둘이 물 위에 섰다.
+  // 프롭 종류마다 회피를 따로 붙이면 새 종류가 생길 때마다 같은 사고가 난다.
+  // 물 위에 서야 하는 것(다리·폭포)만 onWater 로 빠져나간다.
+  if (!onWater && inMoatWater(x, z)) return false;
   props.push({
     id: `decor-${id}`,
     glb: `/models/props/${KIT[kind].glb}`,
@@ -377,8 +494,20 @@ function place(id, rawKind, x, z, rotationY = 0, {grow = 1} = {}) {
   return true;
 }
 
-/** 길·건물·원반·기존 장식물을 피해 (x,z) 근처에서 빈자리를 찾는다 */
-function findSpot(x, z, {gap = 0.9, radius = 2.4, avoidRoad = true} = {}) {
+/**
+ * 길·건물·원반·기존 장식물을 피해 (x,z) 근처에서 빈자리를 찾는다.
+ *
+ * `allowDisc` 는 앞마당 원반 **안**에도 놓게 해 준다. 원반은 캐릭터가 걸어
+ * 다니는 바닥이라 기본값으로 통째로 막아 두는데, 그 탓에 중앙 광장은 기념비
+ * 발치 반경 5유닛이 언제나 맨바닥이었다 — 장식이 전부 원반 밖 r 5.8~10.8 에만
+ * 깔려 도넛처럼 보였다. 기념비를 두르는 화단처럼 **일부러 안쪽에 놓는 것**만
+ * 이걸 켠다.
+ */
+function findSpot(
+  x,
+  z,
+  {gap = 0.9, radius = 2.4, avoidRoad = true, allowDisc = false} = {}
+) {
   for (let ring = 0; ring <= 6; ring++) {
     const dist = (ring / 6) * radius;
     const steps = ring === 0 ? 1 : 8 + ring * 4;
@@ -387,7 +516,7 @@ function findSpot(x, z, {gap = 0.9, radius = 2.4, avoidRoad = true} = {}) {
       const px = x + Math.cos(angle) * dist;
       const pz = z + Math.sin(angle) * dist;
       if (avoidRoad && onRoad(px, pz, 0.35)) continue;
-      if (onDisc(px, pz, 0.15)) continue;
+      if (!allowDisc && onDisc(px, pz, 0.15)) continue;
       if (onBuilding(px, pz, 0.7)) continue;
       if (onWall(px, pz, 0.25)) continue;
       if (!free(px, pz, gap)) continue;
@@ -443,7 +572,7 @@ for (const district of Object.keys(centers)) {
 
   // 지구로 가는 길 중 광장 쪽에 있는 칸을 고른다
   const approach = roads
-    .filter((r) => Math.hypot(r.x, r.z) < len - PITCH)
+    .filter(r => Math.hypot(r.x, r.z) < len - PITCH)
     .sort(
       (a, b) =>
         Math.hypot(a.x - c.x, a.z - c.z) - Math.hypot(b.x - c.x, b.z - c.z)
@@ -453,7 +582,14 @@ for (const district of Object.keys(centers)) {
   const perp = {x: -dir.z, z: dir.x};
   const facing = faceTo(-dir.x, -dir.z); // 광장 쪽을 본다
   const arch = ARCH_OF[district];
-  gateways.push({district, at: approach, dir, perp, facing, arch: Boolean(arch)});
+  gateways.push({
+    district,
+    at: approach,
+    dir,
+    perp,
+    facing,
+    arch: Boolean(arch)
+  });
 
   if (arch) {
     // 아치는 길을 **가로질러** 선다 — 비켜 세우면 그냥 큰 간판이 된다.
@@ -465,7 +601,14 @@ for (const district of Object.keys(centers)) {
       const px = approach.x + perp.x * (ROAD_SIDE + 1.15) * side;
       const pz = approach.z + perp.z * (ROAD_SIDE + 1.15) * side;
       if (onBuilding(px, pz, 0.4) || onDisc(px, pz, 0.1)) continue;
-      place(`pier-${district}-${side > 0 ? "r" : "l"}`, "terrace-wall", px, pz, facing, {gap: 0.4});
+      place(
+        `pier-${district}-${side > 0 ? "r" : "l"}`,
+        "terrace-wall",
+        px,
+        pz,
+        facing,
+        {gap: 0.4}
+      );
     }
   } else {
     // 아치가 없는 구역 — 예전처럼 길가 팻말
@@ -481,7 +624,14 @@ for (const district of Object.keys(centers)) {
 }
 
 // 중앙 광장 간판은 원반 남쪽 가장자리에서 바깥(남)을 본다
-place("sign-plaza", "sign-plaza", HUB.x, HUB.z + HUB_RADIUS + 0.7, faceTo(0, 1), {gap: 1.2});
+place(
+  "sign-plaza",
+  "sign-plaza",
+  HUB.x,
+  HUB.z + HUB_RADIUS + 0.7,
+  faceTo(0, 1),
+  {gap: 1.2}
+);
 
 // ─── ② 지구별 랜드마크 ────────────────────────────────────────────────────────
 // 지구 성격에 맞는 물건을 지구 중심 근처 빈자리에 놓는다.
@@ -500,10 +650,17 @@ for (const [district, kinds] of Object.entries(LANDMARKS)) {
   for (const kind of kinds) {
     // 지구 안쪽을 보도록 — 광장에서 온 사람 쪽으로 정면을 돌린다
     const len = Math.hypot(c.x, c.z) || 1;
-    tryPlace(`${district}-${kind}`, kind, c.x, c.z, faceTo(-c.x / len, -c.z / len), {
-      gap: 1.4,
-      radius: 4.5
-    });
+    tryPlace(
+      `${district}-${kind}`,
+      kind,
+      c.x,
+      c.z,
+      faceTo(-c.x / len, -c.z / len),
+      {
+        gap: 1.4,
+        radius: 4.5
+      }
+    );
   }
 }
 
@@ -518,7 +675,68 @@ for (const {kind, angle} of PLAZA_RING) {
   const x = HUB.x + Math.cos(angle) * dist;
   const z = HUB.z + Math.sin(angle) * dist;
   // 광장 안쪽을 본다
-  tryPlace(`plaza-${kind}`, kind, x, z, faceTo(HUB.x - x, HUB.z - z), {gap: 1.6, radius: 2.0});
+  tryPlace(`plaza-${kind}`, kind, x, z, faceTo(HUB.x - x, HUB.z - z), {
+    gap: 1.6,
+    radius: 2.0
+  });
+}
+
+// ─── ②-a2 광장 안뜰 ──────────────────────────────────────────────────────────
+// 컨셉 아트의 광장은 기념비를 중심으로 **동심원**이다: 기념비 → 발치를 두른
+// 화단과 등불 → 트인 보행 공간 → 가장자리의 벤치와 깃대.
+//
+// 여기는 그 안쪽 두 겹이 통째로 없었다. findSpot 이 앞마당 원반(r 5.0) 안을
+// 전부 막아 놔서, 장식이 원반 **밖에만** 깔렸기 때문이다 — 반경 11 안 장식물
+// 128개가 전부 r 5.8~10.8 에 있었고 기념비 둘레는 맨 판석이었다.
+//
+// 두 겹을 넣는다:
+//   ⓐ 발치 고리 — 기념비 상자(반폭 2.4) 바로 바깥. 화단과 등불을 번갈아.
+//   ⓑ 벤치 — 원반 가장자리에서 기념비를 바라보게. 앉는 자리라 등을 밖으로 둔다.
+//
+// **대각선에만 놓는다.** 광장을 남북·동서로 가로지르는 대로가 축 위에 있어,
+// 축 방향에 물건을 두면 마을의 등뼈를 막는다. findSpot 도 길을 피하지만,
+// 애초에 안 겹치게 각을 고르는 편이 자리를 밀리지 않아 배열이 정연하다.
+{
+  const HALF_MONUMENT = Math.max(HUB.w, HUB.d) / 2; // 4.75 × 1.4 → 반폭 3.33
+  const FOOT_R = HALF_MONUMENT + 1.15; // 발치 고리 — 원반(5.0) 안쪽에 들어간다
+
+  // 축을 비켜선 각도 n개 — 0°/90°/180°/270° 로는 대로가 지나간다.
+  // 반 칸(π/n) 밀어서 시작해야 축을 피한다. 그냥 2π/n 로 돌리면 n 이 짝수일 때
+  // 반드시 축 위에 얹힌다(45°씩 여덟이면 90°·180°·270° 가 그대로 걸린다).
+  const offAxis = n =>
+    Array.from({length: n}, (_, k) => Math.PI / n + (k * 2 * Math.PI) / n);
+
+  // ⓐ 발치 고리: 화단 4 + 등불 4 를 45° 간격으로 번갈아
+  offAxis(8).forEach((angle, n) => {
+    const kind = n % 2 === 0 ? "flowerbed-round" : "orb-lantern";
+    const x = HUB.x + Math.cos(angle) * FOOT_R;
+    const z = HUB.z + Math.sin(angle) * FOOT_R;
+    // 반지름을 좁게 준다 — 넓으면 자리를 못 찾은 것이 바깥으로 밀려나 고리가 흐트러진다
+    tryPlace(`plaza-foot-${n}`, kind, x, z, faceTo(HUB.x - x, HUB.z - z), {
+      gap: 1.0,
+      radius: 0.55,
+      allowDisc: true
+    });
+  });
+
+  // ⓑ 벤치는 분수·우물·석상과 **같은 고리**에, 그 셋 사이 빈 각도로 넣는다.
+  //
+  // 처음엔 원반 안쪽 가장자리에 뒀는데 발치 고리와 반지름이 4.5 로 겹쳤다 —
+  // 기념비 반폭이 3.33 이라 원반(5.0) 안에는 고리를 한 겹밖에 못 넣는다.
+  // 셋뿐이던 랜드마크 고리에 셋을 더해 60° 간격 여섯으로 만드는 편이,
+  // 부감에서 광장이 동심원으로 읽히는 데 훨씬 낫다.
+  PLAZA_RING.forEach(({angle}, n) => {
+    const next = PLAZA_RING[(n + 1) % PLAZA_RING.length].angle;
+    const span = (next - angle + Math.PI * 2) % (Math.PI * 2);
+    const mid = angle + span / 2;
+    const x = HUB.x + Math.cos(mid) * (HUB_RADIUS + 1.5);
+    const z = HUB.z + Math.sin(mid) * (HUB_RADIUS + 1.5);
+    // 앉으면 기념비가 보이도록 정면을 광장 안쪽으로
+    tryPlace(`plaza-bench-${n}`, "bench", x, z, faceTo(HUB.x - x, HUB.z - z), {
+      gap: 1.4,
+      radius: 1.6
+    });
+  });
 }
 
 // ─── ②-b 채움 민가 ────────────────────────────────────────────────────────────
@@ -543,20 +761,27 @@ const blockRect = new Map();
   // 컨셉 아트의 블록은 이름표 붙은 건물 서넛 뒤로 이름 없는 집이 대여섯 겹으로
   // 들어차 있다. 7/6/6/6/6/5 로 요청해 25채가 섰는데 아직 성겼다 — 요청을 올린다
   // (자리를 못 찾으면 알아서 덜 선다).
-  const PER_DISTRICT = {projects: 11, skills: 10, life: 10, experience: 9, study: 9, contact: 8};
+  const PER_DISTRICT = {
+    projects: 11,
+    skills: 10,
+    life: 10,
+    experience: 9,
+    study: 9,
+    contact: 8
+  };
   // 두 종으로 12채를 돌려쓰니 위에서 보면 같은 집이 여섯 번씩 나왔다. 세 종이면
   // 한 구역 안에서는 같은 집이 두 번 안 나온다(구역당 최대 3채).
   const KINDS = ["house-a", "house-b", "house-c"];
   let n = 0;
   for (const [district, count] of Object.entries(PER_DISTRICT)) {
-    const group = OUTER.filter((b) => b.district === district);
+    const group = OUTER.filter(b => b.district === district);
     if (group.length === 0) continue;
     // 블록 상자를 집 한 채 폭만큼 바깥으로 넓힌 범위가 후보 영역
     const PAD = 3.4;
-    const x0 = Math.min(...group.map((b) => b.x - b.w / 2)) - PAD;
-    const x1 = Math.max(...group.map((b) => b.x + b.w / 2)) + PAD;
-    const z0 = Math.min(...group.map((b) => b.z - b.d / 2)) - PAD;
-    const z1 = Math.max(...group.map((b) => b.z + b.d / 2)) + PAD;
+    const x0 = Math.min(...group.map(b => b.x - b.w / 2)) - PAD;
+    const x1 = Math.max(...group.map(b => b.x + b.w / 2)) + PAD;
+    const z0 = Math.min(...group.map(b => b.z - b.d / 2)) - PAD;
+    const z1 = Math.max(...group.map(b => b.z + b.d / 2)) + PAD;
 
     // 블록이 광장에서 뻗어 나가는 방향 — 집은 이 방향 **뒤쪽**에 붙인다
     const cx = group.reduce((s, b) => s + b.x, 0) / group.length;
@@ -565,16 +790,25 @@ const blockRect = new Map();
     const out = {x: cx / clen, z: cz / clen};
 
     // 뒷줄이 어디까지 나가 있나 — 집은 그 바로 뒤 한 채 폭 띠에 붙인다
-    const backEdge = Math.max(...group.map((b) => (b.x - cx) * out.x + (b.z - cz) * out.z + Math.max(b.w, b.d) / 2));
-    const halfWide = Math.max(...group.map((b) => Math.abs((b.x - cx) * -out.z + (b.z - cz) * out.x))) + 1.4;
+    const backEdge = Math.max(
+      ...group.map(
+        b => (b.x - cx) * out.x + (b.z - cz) * out.z + Math.max(b.w, b.d) / 2
+      )
+    );
+    const halfWide =
+      Math.max(
+        ...group.map(b => Math.abs((b.x - cx) * -out.z + (b.z - cz) * out.x))
+      ) + 1.4;
     const target = backEdge + 1.9;
 
     const cand = [];
     for (let x = x0; x <= x1; x += 0.7) {
       for (let z = z0; z <= z1; z += 0.7) {
-        if (onRoad(x, z, 0.8) || onDisc(x, z, 0.5) || onBuilding(x, z, 1.2)) continue;
+        if (onRoad(x, z, 0.8) || onDisc(x, z, 0.5) || onBuilding(x, z, 1.2))
+          continue;
         // 블록 중심 기준으로 "얼마나 뒤쪽인가"와 "얼마나 옆으로 벗어났나"
-        const dx = x - cx, dz = z - cz;
+        const dx = x - cx,
+          dz = z - cz;
         const behind = dx * out.x + dz * out.z;
         const lateral = Math.abs(dx * -out.z + dz * out.x);
         if (lateral > halfWide) continue;
@@ -594,17 +828,20 @@ const blockRect = new Map();
 
     // 블록 상자 — 진짜 건물의 외곽에서 시작해 세운 집만큼 넓힌다
     const rect = {
-      x0: Math.min(...group.map((b) => b.x - b.w / 2)),
-      x1: Math.max(...group.map((b) => b.x + b.w / 2)),
-      z0: Math.min(...group.map((b) => b.z - b.d / 2)),
-      z1: Math.max(...group.map((b) => b.z + b.d / 2))
+      x0: Math.min(...group.map(b => b.x - b.w / 2)),
+      x1: Math.max(...group.map(b => b.x + b.w / 2)),
+      z0: Math.min(...group.map(b => b.z - b.d / 2)),
+      z1: Math.max(...group.map(b => b.z + b.d / 2))
     };
 
     let put = 0;
     for (const band of BANDS) {
       if (put >= count) break;
       const ranked = cand
-        .map((c) => ({...c, score: -Math.abs(c.behind - band) - c.lateral * 0.35}))
+        .map(c => ({
+          ...c,
+          score: -Math.abs(c.behind - band) - c.lateral * 0.35
+        }))
         .sort((a, b) => b.score - a.score);
       // 한 띠에 몰아넣지 않는다 — 앞 띠가 다 차 버리면 뒷줄이 안 생긴다
       const quota = Math.ceil(count / BANDS.length);
@@ -620,9 +857,14 @@ const blockRect = new Map();
         // 같은 집이 같은 각도로 찍힌 게 그대로 읽혔다. 배율도 1.31~1.47 로 사실상
         // 균일했다. ±17° 와 ±13% 를 흔들면 "광장을 보고 선 줄"은 살아 있으면서
         // 복제 티만 사라진다 — 컨셉 아트의 민가도 줄은 맞되 각도가 제각각이다.
-        place(`house-${n}`, KINDS[n % KINDS.length], c.x, c.z,
+        place(
+          `house-${n}`,
+          KINDS[n % KINDS.length],
+          c.x,
+          c.z,
           round3(faceTo(-out.x, -out.z) + (rand() - 0.5) * 0.6),
-          {gap: 2.9, grow: round3(0.88 + rand() * 0.26)});
+          {gap: 2.9, grow: round3(0.88 + rand() * 0.26)}
+        );
         // 집 한 채가 대략 2.4유닛 폭이다 — 그 절반만큼 상자를 넓힌다
         const HALF_HOUSE = 1.2;
         rect.x0 = Math.min(rect.x0, c.x - HALF_HOUSE);
@@ -657,7 +899,9 @@ const blockRect = new Map();
   /** 한 토막 길이 (make-low-wall.mjs 의 LENGTH). 살짝 겹치게 놓아 틈을 막는다 */
   const STEP = 1.9;
   /** 단차 사각형 — 바닥 생성기(generate-ground-layout.mjs)가 내보낸 것 */
-  const terr = JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"));
+  const terr = JSON.parse(
+    readFileSync("src/data/villageTerraces.json", "utf8")
+  );
   // 정확히 경계에 세우면 부동소수 때문에 몇 토막이 한 단 아래로 판정된다.
   // 손톱만큼 안쪽으로 들여 세운다.
   const PLATEAU_PAD = terr.pitch / 2 - 0.06;
@@ -669,8 +913,14 @@ const blockRect = new Map();
    */
   const TRUE_PAD = terr.pitch / 2;
   const onPlateau = (x, z) =>
-    terr.blocks.some((b) => x >= b.x0 - TRUE_PAD && x <= b.x1 + TRUE_PAD && z >= b.z0 - TRUE_PAD && z <= b.z1 + TRUE_PAD);
-  const terraceOf = new Map(terr.blocks.map((b) => [b.district, b]));
+    terr.blocks.some(
+      b =>
+        x >= b.x0 - TRUE_PAD &&
+        x <= b.x1 + TRUE_PAD &&
+        z >= b.z0 - TRUE_PAD &&
+        z <= b.z1 + TRUE_PAD
+    );
+  const terraceOf = new Map(terr.blocks.map(b => [b.district, b]));
   let n = 0;
   let openings = 0;
   /** 길이 단을 넘는 자리 — 아래에서 계단으로 채운다 */
@@ -679,17 +929,29 @@ const blockRect = new Map();
   for (const [district, fallback] of blockRect) {
     const t = terraceOf.get(district);
     const r = t
-      ? {x0: t.x0 - PLATEAU_PAD, x1: t.x1 + PLATEAU_PAD, z0: t.z0 - PLATEAU_PAD, z1: t.z1 + PLATEAU_PAD}
-      : {x0: fallback.x0 - 1.45, x1: fallback.x1 + 1.45, z0: fallback.z0 - 1.45, z1: fallback.z1 + 1.45};
-    const x0 = r.x0, x1 = r.x1;
-    const z0 = r.z0, z1 = r.z1;
+      ? {
+          x0: t.x0 - PLATEAU_PAD,
+          x1: t.x1 + PLATEAU_PAD,
+          z0: t.z0 - PLATEAU_PAD,
+          z1: t.z1 + PLATEAU_PAD
+        }
+      : {
+          x0: fallback.x0 - 1.45,
+          x1: fallback.x1 + 1.45,
+          z0: fallback.z0 - 1.45,
+          z1: fallback.z1 + 1.45
+        };
+    const x0 = r.x0,
+      x1 = r.x1;
+    const z0 = r.z0,
+      z1 = r.z1;
 
     // 네 변. along 은 변이 뻗는 방향, rot 은 담장 긴 축(모델 +X)을 거기 맞추는 각.
     const edges = [
-      {from: [x0, z0], to: [x1, z0], rot: 0, nx: 0, nz: -1},           // 북
-      {from: [x0, z1], to: [x1, z1], rot: 0, nx: 0, nz: 1},            // 남
+      {from: [x0, z0], to: [x1, z0], rot: 0, nx: 0, nz: -1}, // 북
+      {from: [x0, z1], to: [x1, z1], rot: 0, nx: 0, nz: 1}, // 남
       {from: [x0, z0], to: [x0, z1], rot: Math.PI / 2, nx: -1, nz: 0}, // 서
-      {from: [x1, z0], to: [x1, z1], rot: Math.PI / 2, nx: 1, nz: 0}   // 동
+      {from: [x1, z0], to: [x1, z1], rot: Math.PI / 2, nx: 1, nz: 0} // 동
     ];
 
     for (const e of edges) {
@@ -712,7 +974,9 @@ const blockRect = new Map();
         if (onBuilding(x, z, 0.15) || onDisc(x, z, 0.05)) continue;
         // 채움 민가·랜드마크가 이미 선 자리면 비켜 준다
         if (!free(x, z, 1.15)) continue;
-        place(`wall-${district}-${n++}`, "wall-low", x, z, round3(e.rot), {gap: 1.15});
+        place(`wall-${district}-${n++}`, "wall-low", x, z, round3(e.rot), {
+          gap: 1.15
+        });
         // 담장은 점이 아니라 1.9짜리 선분이라 taken 의 한 점으로는 못 막는다.
         // 그렇다고 양 끝을 taken 에 더 넣었더니(처음엔 그렇게 했다) 블록 둘레
         // 1.5유닛이 통째로 죽어서 가로등·깃대·화단이 마을에서 절반 넘게 사라졌다 —
@@ -731,7 +995,7 @@ const blockRect = new Map();
     let put = 0;
     const here = [];
     for (const g of gateSteps) {
-      if (here.some((q) => Math.hypot(q.x - g.x, q.z - g.z) < 3.6)) continue;
+      if (here.some(q => Math.hypot(q.x - g.x, q.z - g.z) < 3.6)) continue;
       if (onBuilding(g.x, g.z, 0.2) || onDisc(g.x, g.z, 0.05)) continue;
       // 담장을 비운 이유가 "길이 스쳤다" 정도면 계단이 잔디 위에 혼자 선다.
       // 길 **한복판**일 때만 놓는다 — 30곳에서 대문다운 자리만 남는다.
@@ -759,7 +1023,9 @@ const blockRect = new Map();
       // 오를 턱 자체가 없다 — 그런데도 놓았더니 30개 중 9개가 평지 위에 선
       // 계단이 됐다(밑동 지면 1.1, 윗끝 지면 1.1). 격자로 검산해서야 찾았다.
       if (onPlateau(sx, sz)) continue;
-      place(`gatestep-${put}`, "terrace-stair", sx, sz, round3(facingOut), {gap: 1.4});
+      place(`gatestep-${put}`, "terrace-stair", sx, sz, round3(facingOut), {
+        gap: 1.4
+      });
       here.push({x: sx, z: sz});
       put += 1;
     }
@@ -772,18 +1038,26 @@ const blockRect = new Map();
 // 초입에 **큰 돌계단**이 있다. 마을의 첫 화면이자 유일한 정문이다.
 // generate-ground-layout 의 CEREMONIAL 축(i=0)이 여기까지 이어져 있다.
 const southGate = roads
-  .filter((r) => Math.abs(r.x) < HALF_TILE && r.z > 0)
+  .filter(r => Math.abs(r.x) < HALF_TILE && r.z > 0)
   .sort((a, b) => b.z - a.z)[0];
 if (southGate) {
   // 계단은 길 위에 얹는다 — 옆으로 비키면 아무 데도 안 가는 돌더미가 된다.
   // 구역 대문과 **같은 크기**로 둔다. 여긴 양쪽이 다 평지라 계단이 순전히 연출인데,
   // grow 로 더 키우면 대로를 가로막은 돌덩이로 보인다. KIT 기본(높이 1.54)만으로도
   // 예전(1.2)보다 크다.
-  place("gate-stair", "terrace-stair", southGate.x, southGate.z, faceTo(0, 1), {gap: 0.1});
+  place("gate-stair", "terrace-stair", southGate.x, southGate.z, faceTo(0, 1), {
+    gap: 0.1
+  });
   // 계단 양옆 석축 — 진입로에 폭과 격을 준다
   for (const side of [-1, 1]) {
-    place(`gate-pier-${side > 0 ? "r" : "l"}`, "terrace-wall",
-      southGate.x + (ROAD_SIDE + 1.15) * side, southGate.z, faceTo(0, 1), {gap: 0.4});
+    place(
+      `gate-pier-${side > 0 ? "r" : "l"}`,
+      "terrace-wall",
+      southGate.x + (ROAD_SIDE + 1.15) * side,
+      southGate.z,
+      faceTo(0, 1),
+      {gap: 0.4}
+    );
   }
 }
 
@@ -795,17 +1069,25 @@ if (southGate) {
 /** 어귀 위치 — 울타리를 여기 길가에 세운다 */
 const gates = [];
 {
-  const isRoad = (x, z) => roads.some((r) => Math.abs(r.x - x) < 0.05 && Math.abs(r.z - z) < 0.05);
+  const isRoad = (x, z) =>
+    roads.some(r => Math.abs(r.x - x) < 0.05 && Math.abs(r.z - z) < 0.05);
   const ends = roads
-    .map((r) => {
-      const around = [[PITCH, 0], [-PITCH, 0], [0, PITCH], [0, -PITCH]].filter(([dx, dz]) =>
-        isRoad(r.x + dx, r.z + dz)
-      );
+    .map(r => {
+      const around = [
+        [PITCH, 0],
+        [-PITCH, 0],
+        [0, PITCH],
+        [0, -PITCH]
+      ].filter(([dx, dz]) => isRoad(r.x + dx, r.z + dz));
       return {r, around};
     })
-    .filter((e) => e.around.length === 1)
+    .filter(e => e.around.length === 1)
     // 남쪽 정문은 ②-c 가 대계단으로 이미 꾸몄다 — 그 위에 또 문을 세우면 겹친다
-    .filter((e) => !southGate || Math.hypot(e.r.x - southGate.x, e.r.z - southGate.z) > PITCH * 1.5)
+    .filter(
+      e =>
+        !southGate ||
+        Math.hypot(e.r.x - southGate.x, e.r.z - southGate.z) > PITCH * 1.5
+    )
     .sort((a, b) => Math.hypot(b.r.x, b.r.z) - Math.hypot(a.r.x, a.r.z));
 
   ends.slice(0, 5).forEach((e, n) => {
@@ -814,8 +1096,14 @@ const gates = [];
     const inward = {x: ix / PITCH, z: iz / PITCH};
     // 가장 먼 끝은 랜턴 아치(정문), 나머지는 나무 대문. 다섯을 넘기면 감옥처럼 보인다.
     const kind = n === 0 ? "lantern-archway" : "gate-arch";
-    place(`gate-${n}`, kind, e.r.x - inward.x * HALF_TILE, e.r.z - inward.z * HALF_TILE,
-      faceTo(inward.x, inward.z), {gap: 0.1});
+    place(
+      `gate-${n}`,
+      kind,
+      e.r.x - inward.x * HALF_TILE,
+      e.r.z - inward.z * HALF_TILE,
+      faceTo(inward.x, inward.z),
+      {gap: 0.1}
+    );
     gates.push({at: e.r, inward});
   });
 }
@@ -831,11 +1119,11 @@ const gates = [];
 // 예전엔 황금잎 깃대(leaf-banner)를 대신 썼다. 그건 잎사귀 장식이지 깃발이 아니라,
 // 컨셉 아트의 "파랑 바탕에 금색 문장" 세로기와 모양이 아예 달랐다.
 {
-  const EVERY = 3;      // 몇 칸마다
-  const REACH = 18;     // 광장에서 이 거리까지만 (깃대가 제대로 생겼으니 조금 더 멀리)
+  const EVERY = 3; // 몇 칸마다
+  const REACH = 18; // 광장에서 이 거리까지만 (깃대가 제대로 생겼으니 조금 더 멀리)
   const onAxis = roads
-    .filter((r) => Math.abs(r.x) < HALF_TILE || Math.abs(r.z) < HALF_TILE)
-    .filter((r) => Math.hypot(r.x, r.z) < REACH)
+    .filter(r => Math.abs(r.x) < HALF_TILE || Math.abs(r.z) < HALF_TILE)
+    .filter(r => Math.hypot(r.x, r.z) < REACH)
     .sort((a, b) => Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z));
 
   let n = 0;
@@ -847,9 +1135,22 @@ const gates = [];
     for (const side of [-1, 1]) {
       const x = r.x + perp.x * (ROAD_SIDE + 0.45) * side;
       const z = r.z + perp.z * (ROAD_SIDE + 0.45) * side;
-      if (onDisc(x, z, 0.1) || onBuilding(x, z, 0.4) || onWall(x, z, 0.25) || !free(x, z, 1.2)) continue;
+      if (
+        onDisc(x, z, 0.1) ||
+        onBuilding(x, z, 0.4) ||
+        onWall(x, z, 0.25) ||
+        !free(x, z, 1.2)
+      )
+        continue;
       // 깃발 면이 길을 향하도록 — 걸어가는 사람에게 옆면이 아니라 앞면이 보인다
-      place(`flagpole-${n++}`, "flagpole-banner", x, z, faceTo(-perp.x * side, -perp.z * side), {gap: 1.2});
+      place(
+        `flagpole-${n++}`,
+        "flagpole-banner",
+        x,
+        z,
+        faceTo(-perp.x * side, -perp.z * side),
+        {gap: 1.2}
+      );
     }
   }
 
@@ -860,9 +1161,22 @@ const gates = [];
     const dist = HUB_RADIUS + 2.6;
     const x = HUB.x + Math.cos(angle) * dist;
     const z = HUB.z + Math.sin(angle) * dist;
-    if (onRoad(x, z, 0.3) || onBuilding(x, z, 0.5) || onWall(x, z, 0.25) || !free(x, z, 1.6)) continue;
+    if (
+      onRoad(x, z, 0.3) ||
+      onBuilding(x, z, 0.5) ||
+      onWall(x, z, 0.25) ||
+      !free(x, z, 1.6)
+    )
+      continue;
     // 광장 안쪽을 본다
-    place(`flagring-${k}`, "flagpole-banner", x, z, faceTo(HUB.x - x, HUB.z - z), {gap: 1.6});
+    place(
+      `flagring-${k}`,
+      "flagpole-banner",
+      x,
+      z,
+      faceTo(HUB.x - x, HUB.z - z),
+      {gap: 1.6}
+    );
   }
 }
 
@@ -889,14 +1203,22 @@ const gates = [];
 // 단 사각형은 바닥 생성기가 villageTerraces.json 으로 내보낸 것을 그대로 쓴다.
 const plots = (() => {
   const out = layout.props
-    .filter((p) => p.id.startsWith("ground-pave-"))
-    .map((p) => ({x: p.position[0], z: p.position[2]}));
-  const terr = JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"));
+    .filter(p => p.id.startsWith("ground-pave-"))
+    .map(p => ({x: p.position[0], z: p.position[2]}));
+  const terr = JSON.parse(
+    readFileSync("src/data/villageTerraces.json", "utf8")
+  );
   const pitch = terr.pitch;
-  const seen = new Set(out.map((c) => `${Math.round(c.x / pitch)},${Math.round(c.z / pitch)}`));
+  const seen = new Set(
+    out.map(c => `${Math.round(c.x / pitch)},${Math.round(c.z / pitch)}`)
+  );
   for (const b of terr.blocks) {
     for (let i = Math.round(b.x0 / pitch); i <= Math.round(b.x1 / pitch); i++) {
-      for (let j = Math.round(b.z0 / pitch); j <= Math.round(b.z1 / pitch); j++) {
+      for (
+        let j = Math.round(b.z0 / pitch);
+        j <= Math.round(b.z1 / pitch);
+        j++
+      ) {
         const k = `${i},${j}`;
         if (seen.has(k)) continue;
         seen.add(k);
@@ -911,20 +1233,26 @@ const plots = (() => {
 // taken 을 그때그때 읽으므로, 먼저 놓은 것이 뒤에 놓는 것의 후보를 자동으로 줄인다.
 const clearance = (x, z) => {
   let best = Infinity;
-  for (const r of roads) best = Math.min(best, Math.hypot(r.x - x, r.z - z) - ROAD_SIDE);
+  for (const r of roads)
+    best = Math.min(best, Math.hypot(r.x - x, r.z - z) - ROAD_SIDE);
   for (const b of buildings) {
     const dx = Math.max(0, Math.abs(b.x - x) - b.w / 2);
     const dz = Math.max(0, Math.abs(b.z - z) - b.d / 2);
     best = Math.min(best, Math.hypot(dx, dz));
   }
-  for (const d of discs) best = Math.min(best, Math.hypot(d.x - x, d.z - z) - d.r);
+  for (const d of discs)
+    best = Math.min(best, Math.hypot(d.x - x, d.z - z) - d.r);
   best = Math.min(best, Math.hypot(HUB.x - x, HUB.z - z) - HUB_RADIUS);
   for (const w of walls) {
-    const dx = x - w.x, dz = z - w.z;
-    best = Math.min(best, Math.hypot(
-      Math.max(0, Math.abs(dx * w.ax + dz * w.az) - WALL_HALF_LEN),
-      Math.max(0, Math.abs(dx * -w.az + dz * w.ax) - WALL_HALF_THICK)
-    ));
+    const dx = x - w.x,
+      dz = z - w.z;
+    best = Math.min(
+      best,
+      Math.hypot(
+        Math.max(0, Math.abs(dx * w.ax + dz * w.az) - WALL_HALF_LEN),
+        Math.max(0, Math.abs(dx * -w.az + dz * w.ax) - WALL_HALF_THICK)
+      )
+    );
   }
   for (const t of taken) best = Math.min(best, Math.hypot(t.x - x, t.z - z));
   return best;
@@ -968,8 +1296,8 @@ const clearance = (x, z) => {
   ];
 
   const cand = plots
-    .map((c) => ({...c, open: clearance(c.x, c.z)}))
-    .filter((c) => c.open >= NEED)
+    .map(c => ({...c, open: clearance(c.x, c.z)}))
+    .filter(c => c.open >= NEED)
     // 트인 곳부터 — 좁은 틈부터 채우면 정작 넓은 돌마당이 빈 채로 남는다
     .sort((a, b) => b.open - a.open);
 
@@ -977,12 +1305,18 @@ const clearance = (x, z) => {
   const put = [];
   for (const c of cand) {
     if (n >= MAX) break;
-    if (put.some((q) => Math.hypot(q.x - c.x, q.z - c.z) < APART)) continue;
+    if (put.some(q => Math.hypot(q.x - c.x, q.z - c.z) < APART)) continue;
     const kind = ROTATION[n % ROTATION.length];
     // 나무는 칸 한복판에서 조금씩 흩어야 가로수처럼 줄 서 보이지 않는다
     const jitter = kind === "flowerbed-round" ? 0 : (rand() - 0.5) * 0.5;
-    place(`planting-${n++}`, kind, c.x + jitter, c.z - jitter,
-      round3(rand() * Math.PI * 2), {gap: NEED, grow: kind === "flowerbed-round" ? 1 : 0.82 + rand() * 0.3});
+    place(
+      `planting-${n++}`,
+      kind,
+      c.x + jitter,
+      c.z - jitter,
+      round3(rand() * Math.PI * 2),
+      {gap: NEED, grow: kind === "flowerbed-round" ? 1 : 0.82 + rand() * 0.3}
+    );
     put.push(c);
   }
 }
@@ -997,11 +1331,49 @@ const clearance = (x, z) => {
 // 거기 바짝 붙여 3개를 놓는다. 구역 성격에 맞는 물건만 골라 쓰는 건 그대로다.
 {
   const KIT_OF = {
-    projects: ["market-stall", "notice-board", "barrel-iron", "lantern-post", "orb-lantern", "barrel-iron"],
-    skills: ["stump-forge", "barrel-iron", "orb-lantern", "lantern-post", "barrel-iron"],
-    experience: ["scroll-barrel", "candle-tome", "barrel-iron", "orb-lantern", "lantern-post"],
-    study: ["candle-tome", "notice-board", "scroll-barrel", "orb-lantern", "candle-tome", "lantern-post"],
-    life: ["campfire", "bench", "flower-pot", "orb-lantern", "lute-picnic", "lantern-post"],
+    projects: [
+      "market-stall",
+      "notice-board",
+      "barrel-iron",
+      "lantern-post",
+      "orb-lantern",
+      "barrel-iron"
+    ],
+    skills: [
+      "stump-forge",
+      "barrel-iron",
+      "orb-lantern",
+      "lantern-post",
+      "barrel-iron"
+    ],
+    experience: [
+      "scroll-barrel",
+      "candle-tome",
+      "barrel-iron",
+      "orb-lantern",
+      "lantern-post"
+    ],
+    study: [
+      "candle-tome",
+      "notice-board",
+      "scroll-barrel",
+      "orb-lantern",
+      "candle-tome",
+      "lantern-post"
+    ],
+    // 컨셉 아트의 장터(줄지어 선 줄무늬 천막)는 생활 구역 쪽에 있다. 별도의
+    // 장터 광장을 내려면 자리가 필요한데 마을에 반경 4 이상 빈 땅이 일곱 곳뿐이고
+    // 그마저 다 가장자리다 — 그래서 광장을 따로 내는 대신 앞뜰 세트에 천막을 섞는다.
+    // 건물마다 4개씩 도는 목록이라, 여섯 중 하나면 생활 구역에 천막이 두엇 선다.
+    life: [
+      "campfire",
+      "market-stall",
+      "bench",
+      "flower-pot",
+      "orb-lantern",
+      "lute-picnic",
+      "lantern-post"
+    ],
     contact: ["mailbox", "notice-board", "orb-lantern", "bench", "lantern-post"]
   };
   /** 건물 한 채 앞에 몇 개까지 */
@@ -1028,11 +1400,11 @@ const clearance = (x, z) => {
     // 원반이 바로 여기서 찾는 앞뜰이다 — 처음엔 그렇게 했다가 26채 중 8채에만,
     // 그것도 10개밖에 안 놓였다. 길·건물·담장·이미 놓은 것만 피하면 된다.
     const cand = plots
-      .map((c) => ({...c, near: Math.hypot(c.x - fx, c.z - fz)}))
-      .filter((c) => c.near < YARD)
-      .filter((c) => !onRoad(c.x, c.z, 0.15) && !onBuilding(c.x, c.z, 0.25))
-      .filter((c) => Math.hypot(HUB.x - c.x, HUB.z - c.z) > HUB_RADIUS + 0.4)
-      .filter((c) => !onWall(c.x, c.z, 0.1) && free(c.x, c.z, NEED))
+      .map(c => ({...c, near: Math.hypot(c.x - fx, c.z - fz)}))
+      .filter(c => c.near < YARD)
+      .filter(c => !onRoad(c.x, c.z, 0.15) && !onBuilding(c.x, c.z, 0.25))
+      .filter(c => Math.hypot(HUB.x - c.x, HUB.z - c.z) > HUB_RADIUS + 0.4)
+      .filter(c => !onWall(c.x, c.z, 0.1) && free(c.x, c.z, NEED))
       // 앞뜰 한복판부터 채운다 — 멀리부터 채우면 세트가 흩어진다
       .sort((x, y) => x.near - y.near);
 
@@ -1040,10 +1412,17 @@ const clearance = (x, z) => {
     let put = 0;
     for (const c of cand) {
       if (put >= PER_BUILDING) break;
-      if (here.some((q) => Math.hypot(q.x - c.x, q.z - c.z) < APART)) continue;
-      const jx = (rand() - 0.5) * 0.5, jz = (rand() - 0.5) * 0.5;
-      place(`yardset-${n}`, kinds[n % kinds.length], c.x + jx, c.z + jz,
-        faceTo(toPlaza.x, toPlaza.z), {gap: NEED, grow: 0.85 + rand() * 0.3});
+      if (here.some(q => Math.hypot(q.x - c.x, q.z - c.z) < APART)) continue;
+      const jx = (rand() - 0.5) * 0.5,
+        jz = (rand() - 0.5) * 0.5;
+      place(
+        `yardset-${n}`,
+        kinds[n % kinds.length],
+        c.x + jx,
+        c.z + jz,
+        faceTo(toPlaza.x, toPlaza.z),
+        {gap: NEED, grow: 0.85 + rand() * 0.3}
+      );
       here.push(c);
       put += 1;
       n += 1;
@@ -1066,13 +1445,8 @@ const landmarks = [];
 
 // 방위: 컨셉 아트를 남쪽에서 본 그림으로 읽었다 — −Z 가 북, +X 가 동, +Z 가 남.
 // generate-ground-layout.mjs 의 NORTH_END 와 VillageScene 의 CREEK_Z 에 맞춘 값들이다.
-// 해자 — 물 위에 나무가 자라면 안 되므로 그 궤적을 따라 숲 금지 구역을 깐다.
-//
-// **원본(villageRelief.ts)에서 읽는다.** 예전엔 "같은 값이어야 한다"는 주석과
-// 함께 손으로 베낀 사본이 있었는데, 마을을 키우며 해자를 넓혔을 때 여기만
-// 옛 값으로 남아 숲 55그루와 덤불 18개가 물에 잠겼다. 주석은 규칙을 지켜 주지
-// 않는다 — 값이 한 곳에서 나와야 지켜진다. (SPREAD·BUILDING_SCALE 과 같은 이유)
-const MOAT = readMoat();
+// 해자 물줄기(MOAT · MOAT_LINE · inMoatWater)는 파일 맨 위에서 한 번 만든다 —
+// place() 가 물 위 배치를 거기서 막으므로 그보다 먼저 있어야 한다.
 const CREEK_Z = round3(MOAT.cz - MOAT.b);
 const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
 {
@@ -1081,9 +1455,15 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
   // 남쪽은 대계단을 내려와 같은 물을 건넌다 — 축이 대칭이라야 조감도가 정돈된다.
   //
   // 다리는 물(동서)을 가로질러야 하므로 90° 돌린다 — 모델의 긴 축이 +X 다.
-  place("bridge-north", "bridge-stone", 0, CREEK_Z, round3(Math.PI / 2), {gap: 0.1});
+  place("bridge-north", "bridge-stone", 0, CREEK_Z, round3(Math.PI / 2), {
+    gap: 0.1,
+    onWater: true
+  });
   landmarks.push({x: 0, z: CREEK_Z, r: 4.5});
-  place("bridge-south", "bridge-stone", 0, MOAT_SOUTH_Z, round3(Math.PI / 2), {gap: 0.1});
+  place("bridge-south", "bridge-stone", 0, MOAT_SOUTH_Z, round3(Math.PI / 2), {
+    gap: 0.1,
+    onWater: true
+  });
   landmarks.push({x: 0, z: MOAT_SOUTH_Z, r: 4.5});
 
   // ─── 구역 사이 물길: 다리 + 숲 제외 ────────────────────────────────────────
@@ -1091,7 +1471,9 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
   // 여기가 같은 값을 읽어야 다리가 정확히 물 위에 선다.
   {
     // 담장 절의 terr 는 그 블록 안에 갇혀 있다 — 여기서 다시 읽는다
-    const channels = JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8")).channels ?? [];
+    const channels =
+      JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"))
+        .channels ?? [];
     let bridges = 0;
     for (let c = 0; c < channels.length; c++) {
       const pts = channels[c];
@@ -1102,19 +1484,32 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
       // 길 타일이 1.88 간격이라 안 그러면 한 교차로에 다리가 서너 개 겹친다.
       let skip = 0;
       for (let n = 1; n < pts.length - 1; n++) {
-        if (skip > 0) { skip -= 1; continue; }
+        if (skip > 0) {
+          skip -= 1;
+          continue;
+        }
         const q = pts[n];
         if (!onRoad(q.x, q.z, 0.6)) continue;
         // 다리는 물을 **가로질러야** 한다 — 모델의 긴 축(+X)을 물 진행 방향의 법선에 맞춘다
         const dx = pts[n + 1].x - pts[n - 1].x;
         const dz = pts[n + 1].z - pts[n - 1].z;
-        place(`bridge-ch${c}-${n}`, "bridge-stone", q.x, q.z, round3(Math.atan2(dz, dx)), {gap: 0.1});
+        place(
+          `bridge-ch${c}-${n}`,
+          "bridge-stone",
+          q.x,
+          q.z,
+          round3(Math.atan2(dz, dx)),
+          {gap: 0.1, onWater: true}
+        );
         landmarks.push({x: q.x, z: q.z, r: 3.4});
         bridges += 1;
         skip = 3;
       }
     }
-    if (channels.length) console.log(`  구역 사이 물길 ${channels.length}줄기 · 돌다리 ${bridges}개`);
+    if (channels.length)
+      console.log(
+        `  구역 사이 물길 ${channels.length}줄기 · 돌다리 ${bridges}개`
+      );
   }
 
   // 해자를 따라 숲을 비운다.
@@ -1129,7 +1524,10 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
   // 휑해지므로(2.8 에서 숲 360→205) 물가에 나무가 바짝 서는 선까지만 준다.
   {
     // 타원이 커지면 한 바퀴도 길어진다 — 간격을 일정하게 유지하려고 둘레에 맞춘다
-    const steps = Math.max(140, Math.round(Math.PI * (MOAT.a + MOAT.b) / 1.2));
+    const steps = Math.max(
+      140,
+      Math.round((Math.PI * (MOAT.a + MOAT.b)) / 1.2)
+    );
     for (let k = 0; k < steps; k++) {
       const t = k / steps;
       const angle = t * Math.PI * 2 - Math.PI / 2;
@@ -1177,7 +1575,11 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
       id: "decor-pagoda-portfolio",
       glb: `/models/props/${KIT["pagoda-portfolio"].glb}`,
       // 정면(+Z)이 마을(남쪽)을 보게 — 참배로에서 걸어오면 현관이 보인다
-      position: [0, round3(ISLAND_TOP + (KIT["pagoda-portfolio"].h / 2) * scale), ISLAND_Z],
+      position: [
+        0,
+        round3(ISLAND_TOP + (KIT["pagoda-portfolio"].h / 2) * scale),
+        ISLAND_Z
+      ],
       rotationY: 0,
       scale
     });
@@ -1198,13 +1600,17 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
     [25, 28]
   ];
   FALLS.forEach(([x, z], n) => {
-    place(`waterfall-${n}`, "waterfall", x, z, faceTo(x - 0, z - 3), {gap: 0.1});
+    place(`waterfall-${n}`, "waterfall", x, z, faceTo(x - 0, z - 3), {
+      gap: 0.1,
+      onWater: true
+    });
     landmarks.push({x, z, r: 6.5});
   });
 }
 
 /** 랜드마크 반경 안인가 — 숲·빈터가 여기를 침범하면 안 된다 */
-const nearLandmark = (x, z) => landmarks.some((l) => Math.hypot(l.x - x, l.z - z) < l.r);
+const nearLandmark = (x, z) =>
+  landmarks.some(l => Math.hypot(l.x - x, l.z - z) < l.r);
 
 // ─── ④ 길 따라 가로등 ─────────────────────────────────────────────────────────
 // 길 칸을 일정 간격으로 건너뛰며 좌우 번갈아 세운다.
@@ -1213,28 +1619,63 @@ const nearLandmark = (x, z) => landmarks.some((l) => Math.hypot(l.x - x, l.z - z
 // 가로등·깃대·배너가 촘촘히 서서 화면에 **수직 리듬**을 준다 — 우리는 전부
 // 납작해서 시선이 미끄러졌다. 2칸(3.8유닛)이면 걷는 눈높이에서 하나가 지나가면
 // 다음 게 들어온다. 가로등 하나가 1,780 삼각형이고 인스턴싱이라 draw call 은 그대로다.
+// 가로등은 가는 기둥이라(밑동 지름 0.3 남짓) 다른 장식물과 1.5 를 띄울 이유가 없다.
+// 1.5 로 두었을 때 후보 자리 중 86곳이 "너무 붙음"으로 탈락했다 — 길가는 화단·
+// 깃대·연석이 늘어선 자리라 그 정도 여유가 잘 안 난다.
+const LANTERN_GAP = 1.1;
 const LANTERN_EVERY = 2;
 {
-  const sorted = roads
-    .slice()
-    .sort((a, b) => a.z - b.z || a.x - b.x);
+  const sorted = roads.slice().sort((a, b) => a.z - b.z || a.x - b.x);
   let n = 0;
+  const why = {원반: 0, 건물: 0, 담장: 0, 자리없음: 0};
   for (let i = 0; i < sorted.length; i += LANTERN_EVERY) {
     const r = sorted[i];
     // 이 칸의 길 방향 — 이웃 칸이 어느 쪽에 있는지로 판단
-    const hasWE = sorted.some((o) => Math.abs(o.z - r.z) < 0.1 && Math.abs(Math.abs(o.x - r.x) - PITCH) < 0.1);
+    const hasWE = sorted.some(
+      o =>
+        Math.abs(o.z - r.z) < 0.1 && Math.abs(Math.abs(o.x - r.x) - PITCH) < 0.1
+    );
     const perp = hasWE ? {x: 0, z: 1} : {x: 1, z: 0};
-    const sign = n % 2 === 0 ? 1 : -1;
     const side = ROAD_SIDE + 0.42;
-    const x = r.x + perp.x * side * sign;
-    const z = r.z + perp.z * side * sign;
-    // 간격을 2.2 로 잡았더니 길가 후보 60곳 중 12곳에만 섰다 — 앞마당 원반이
-    // 길을 따라 늘어서 있어 남는 틈이 좁다. 가로등은 컨셉 아트에서 길마다
-    // 촘촘히 서는 물건이고 하나 1,780 삼각형으로 싼 편이라 간격을 좁힌다.
-    if (onDisc(x, z, 0.1) || onBuilding(x, z, 0.5) || onWall(x, z, 0.2) || !free(x, z, 1.5)) continue;
-    place(`lantern-${n}`, "lantern-post", x, z, 0, {gap: 1.5});
-    n += 1;
+
+    // ── 한쪽이 막히면 **반대쪽도 본다** ────────────────────────────────────
+    // 예전엔 좌우를 번갈아 정해 놓고 그 자리가 막히면 그냥 넘어갔다. 길가는
+    // 앞마당 원반과 담장이 늘어선 자리라 한쪽이 막히는 일이 흔해서, 2칸마다
+    // 세우려던 것이 길 153장에 21개(7.3장당 하나)까지 줄어 있었다.
+    // 번갈아 시작하는 것은 그대로 두되(그래야 좌우로 지그재그가 생긴다),
+    // 막히면 반대쪽에 세운다.
+    const first = n % 2 === 0 ? 1 : -1;
+    let put = false;
+    for (const sign of [first, -first]) {
+      const x = r.x + perp.x * side * sign;
+      const z = r.z + perp.z * side * sign;
+      if (onDisc(x, z, 0.1)) {
+        why.원반++;
+        continue;
+      }
+      if (onBuilding(x, z, 0.5)) {
+        why.건물++;
+        continue;
+      }
+      if (onWall(x, z, 0.2)) {
+        why.담장++;
+        continue;
+      }
+      if (!free(x, z, LANTERN_GAP)) {
+        why.자리없음++;
+        continue;
+      }
+      place(`lantern-${n}`, "lantern-post", x, z, 0, {gap: LANTERN_GAP});
+      n += 1;
+      put = true;
+      break;
+    }
+    void put;
   }
+  console.log(
+    `  가로등 ${n}개 (길 ${roads.length}장 · ${LANTERN_EVERY}장마다 시도) — ` +
+      `막힌 자리: 원반 ${why.원반} · 건물 ${why.건물} · 담장 ${why.담장} · 너무붙음 ${why.자리없음}`
+  );
 }
 
 // ─── ⑤ 앞마당 화분·벤치 ───────────────────────────────────────────────────────
@@ -1254,7 +1695,14 @@ const LANTERN_EVERY = 2;
   // 있고, 블록이 차 보이는 데는 민가 쪽이 비교가 안 되게 낫다.
   // 화분 5,156 · 벤치 5,831 에 견줘 구슬등 2,827 · 철통 3,223 이라
   // 회전표도 싼 쪽으로 기울인다. 구슬등은 저녁에 빛나기까지 한다.
-  const ROTATION = ["orb-lantern", "barrel-iron", "orb-lantern", "flower-pot", "orb-lantern", "bench"];
+  const ROTATION = [
+    "orb-lantern",
+    "barrel-iron",
+    "orb-lantern",
+    "flower-pot",
+    "orb-lantern",
+    "bench"
+  ];
   for (const [index, b] of OUTER.entries()) {
     const disc = discs[index];
     // 광장 반대편(건물 뒤)이 아니라, 광장을 향한 쪽에 둔다
@@ -1266,11 +1714,19 @@ const LANTERN_EVERY = 2;
       const dist = disc.r + 0.5;
       const x = b.x + Math.cos(angle) * dist;
       const z = b.z + Math.sin(angle) * dist;
-      if (onRoad(x, z, 0.3) || onBuilding(x, z, 0.4) || onWall(x, z, 0.25) || !free(x, z, 1.1)) continue;
+      if (
+        onRoad(x, z, 0.3) ||
+        onBuilding(x, z, 0.4) ||
+        onWall(x, z, 0.25) ||
+        !free(x, z, 1.1)
+      )
+        continue;
       // 자리를 셋에서 둘로 줄였으니 보폭도 셋 → 둘. 3 을 그대로 두면
       // index*3 mod 6 이 0,3,0,3 만 돌아 회전표 여섯 중 넷만 쓰인다.
       const kind = ROTATION[(index * 2 + slot) % ROTATION.length];
-      place(`yard-${n}`, kind, x, z, faceTo(b.x - x, b.z - z), {grow: 0.92 + rand() * 0.2});
+      place(`yard-${n}`, kind, x, z, faceTo(b.x - x, b.z - z), {
+        grow: 0.92 + rand() * 0.2
+      });
       n += 1;
     }
   }
@@ -1316,11 +1772,27 @@ const LANTERN_EVERY = 2;
       for (let k = 0; k < PER_SIDE; k++) {
         // 문 바로 옆(k=0)부터 안쪽으로. 길 폭 밖으로 비켜 세운다.
         const dist = HALF_TILE * 0.6 + k * width;
-        const x = gate.at.x + along.x * dist + perp.x * (ROAD_SIDE + 0.42) * side;
-        const z = gate.at.z + along.z * dist + perp.z * (ROAD_SIDE + 0.42) * side;
-        if (onRoad(x, z, 0.1) || onDisc(x, z, 0.2) || onBuilding(x, z, 0.4) || onWall(x, z, 0.2) || !free(x, z, 0.7)) break;
+        const x =
+          gate.at.x + along.x * dist + perp.x * (ROAD_SIDE + 0.42) * side;
+        const z =
+          gate.at.z + along.z * dist + perp.z * (ROAD_SIDE + 0.42) * side;
+        if (
+          onRoad(x, z, 0.1) ||
+          onDisc(x, z, 0.2) ||
+          onBuilding(x, z, 0.4) ||
+          onWall(x, z, 0.2) ||
+          !free(x, z, 0.7)
+        )
+          break;
         // 판이 길 쪽을 보게 — 울타리 결이 길과 나란해진다
-        place(`fence-${n++}`, "fence", x, z, faceTo(perp.x * -side, perp.z * -side), {gap: 0.7});
+        place(
+          `fence-${n++}`,
+          "fence",
+          x,
+          z,
+          faceTo(perp.x * -side, perp.z * -side),
+          {gap: 0.7}
+        );
       }
     }
   }
@@ -1330,20 +1802,38 @@ const LANTERN_EVERY = 2;
 // constants.ts 의 좌표를 그대로 쓰되, 종류는 좌표에서 결정해 같은 자리엔 늘 같은
 // 나무가 서게 한다. 벚나무는 드물어야 눈에 띄므로 다섯 그루에 하나 꼴로만 둔다.
 {
-  const TREES = ["tree-golden-canopy", "tree-emerald-crown", "tree-golden-canopy", "tree-sakura", "tree-emerald-crown"];
+  const TREES = [
+    "tree-golden-canopy",
+    "tree-emerald-crown",
+    "tree-golden-canopy",
+    "tree-sakura",
+    "tree-emerald-crown"
+  ];
   readPositions("treePositions").forEach((p, n) => {
     const kind = TREES[n % TREES.length];
     // 회전을 그루마다 흩뜨려야 같은 GLB를 19번 쓴 티가 안 난다.
     // 회전만으로는 부족했다 — 배율이 0.80~0.84 로 사실상 균일해서 나무가 전부
     // 같은 키였고, 그게 부감에서 "심어 놓은 가로수"로 보였다. 바깥 숲(0.95~1.78)이
     // 자연스러운 이유가 배율 폭이다. 안쪽도 같은 폭으로 흔든다.
-    place(`tree-${n}`, kind, p[0], p[2], round3(((n * 137) % 360) * (Math.PI / 180)),
-      {gap: 0.1, grow: round3(0.85 + rand() * 0.5)});
+    place(
+      `tree-${n}`,
+      kind,
+      p[0],
+      p[2],
+      round3(((n * 137) % 360) * (Math.PI / 180)),
+      {gap: 0.1, grow: round3(0.85 + rand() * 0.5)}
+    );
   });
 
   readPositions("rockPositions").forEach((p, n) => {
-    place(`rock-${n}`, n % 2 === 0 ? "boulder" : "stones", p[0], p[2],
-      round3(((n * 97) % 360) * (Math.PI / 180)), {gap: 0.1});
+    place(
+      `rock-${n}`,
+      n % 2 === 0 ? "boulder" : "stones",
+      p[0],
+      p[2],
+      round3(((n * 97) % 360) * (Math.PI / 180)),
+      {gap: 0.1}
+    );
   });
 }
 
@@ -1373,8 +1863,17 @@ const LANTERN_EVERY = 2;
     const len = Math.hypot(b.x, b.z) || 1;
     const away = {x: b.x / len, z: b.z / len};
     const dist = discs[OUTER.indexOf(b)].r + 0.9;
-    if (tryPlace(`green-${n}`, kind, b.x + away.x * dist, b.z + away.z * dist,
-      round3(((i * 61) % 360) * (Math.PI / 180)), {gap: 1.5, radius: 2.6})) n += 1;
+    if (
+      tryPlace(
+        `green-${n}`,
+        kind,
+        b.x + away.x * dist,
+        b.z + away.z * dist,
+        round3(((i * 61) % 360) * (Math.PI / 180)),
+        {gap: 1.5, radius: 2.6}
+      )
+    )
+      n += 1;
   }
 }
 
@@ -1394,9 +1893,11 @@ const LANTERN_EVERY = 2;
 // 그 결과 정문 양옆 벌판이 통째로 "마을 안"으로 분류돼 숲이 한 그루도 안 심겼고,
 // 마을 남쪽 절반이 맨 잔디였다. 마을의 경계는 건물이 정한다.
 const hull = convexHull(
-  buildings.flatMap((b) => [
-    [b.x - b.w / 2, b.z - b.d / 2], [b.x + b.w / 2, b.z - b.d / 2],
-    [b.x + b.w / 2, b.z + b.d / 2], [b.x - b.w / 2, b.z + b.d / 2]
+  buildings.flatMap(b => [
+    [b.x - b.w / 2, b.z - b.d / 2],
+    [b.x + b.w / 2, b.z - b.d / 2],
+    [b.x + b.w / 2, b.z + b.d / 2],
+    [b.x - b.w / 2, b.z + b.d / 2]
   ])
 );
 
@@ -1428,7 +1929,14 @@ const BELT_DEPTH = 12;
   // 컨셉 아트의 숲은 블록 사이를 빈틈없이 메운 침엽수 덩어리다.
   // 빌보드 한 그루가 6삼각형이라 두 배로 심어도 값이 안 든다.
   const STEP = 1.25;
-  const TREES = ["far-pine", "far-oak", "far-pine", "far-sakura", "far-oak", "far-pine"];
+  const TREES = [
+    "far-pine",
+    "far-oak",
+    "far-pine",
+    "far-sakura",
+    "far-oak",
+    "far-pine"
+  ];
   let n = 0;
   for (let x = GROUND.x0; x <= GROUND.x1; x += STEP) {
     for (let z = GROUND.z0; z <= GROUND.z1; z += STEP) {
@@ -1446,7 +1954,8 @@ const BELT_DEPTH = 12;
       if (d < inHere) continue;
       // 흔들다 보면 경계가 껍질 안으로도 들어간다(BELT_IN이 음수일 때). 껍질 안엔
       // 길과 건물이 있으므로 여기서 막아야 대로 한복판에 나무가 선다.
-      if (onRoad(px, pz, 1.2) || onDisc(px, pz, 0.6) || onBuilding(px, pz, 1.2)) continue;
+      if (onRoad(px, pz, 1.2) || onDisc(px, pz, 0.6) || onBuilding(px, pz, 1.2))
+        continue;
       // 폭포·풍차·파고다 섬·개울은 껍질 바깥이라 여기 그대로 두면 숲이 덮어 버린다
       if (nearLandmark(px, pz) || onWall(px, pz, 0.6)) continue;
       const t = (d - inHere) / BELT_DEPTH;
@@ -1454,7 +1963,9 @@ const BELT_DEPTH = 12;
 
       // 안쪽은 성기게, 깊이 들어갈수록 빽빽하게 — 숲 가장자리가 흐릿해진다.
       // 잡음을 곱해 빈 공터와 덤불 덩어리를 만든다. 균일 확률이면 나무밭이 된다.
-      let p = Math.min(1, 0.6 + t * 1.8) * (0.35 + 1.2 * noise2(px * 0.11, pz * 0.11));
+      let p =
+        Math.min(1, 0.6 + t * 1.8) *
+        (0.35 + 1.2 * noise2(px * 0.11, pz * 0.11));
       if (rand() > p) continue;
       if (!free(px, pz, 1.15)) continue;
 
@@ -1465,11 +1976,13 @@ const BELT_DEPTH = 12;
       let kind = TREES[Math.floor(rand() * TREES.length)];
       if (kind === "far-sakura" && t < 0.35) kind = "far-oak";
       const grow = (kind === "far-sakura" ? 0.85 : 0.78) + rand() * 0.5;
-      place(`forest-${n++}`, kind, px, pz, round3(rand() * Math.PI * 2), {grow});
+      place(`forest-${n++}`, kind, px, pz, round3(rand() * Math.PI * 2), {
+        grow
+      });
     }
   }
   // 숲 바닥에 덤불을 조금 — 나무 줄기 사이가 훤히 비면 세워 놓은 판때기가 드러난다
-  const trunks = props.filter((p) => p.id.startsWith("decor-forest-"));
+  const trunks = props.filter(p => p.id.startsWith("decor-forest-"));
   let b = 0;
   for (const t of trunks) {
     if (rand() > 0.45) continue;
@@ -1477,9 +1990,12 @@ const BELT_DEPTH = 12;
     const r = 0.9 + rand() * 1.1;
     const x = t.position[0] + Math.cos(a) * r;
     const z = t.position[2] + Math.sin(a) * r;
-    if (x < GROUND.x0 || x > GROUND.x1 || z < GROUND.z0 || z > GROUND.z1) continue;
+    if (x < GROUND.x0 || x > GROUND.x1 || z < GROUND.z0 || z > GROUND.z1)
+      continue;
     if (nearLandmark(x, z)) continue;
-    place(`thicket-${b++}`, "far-bush", x, z, round3(rand() * Math.PI * 2), {grow: 0.7 + rand() * 0.7});
+    place(`thicket-${b++}`, "far-bush", x, z, round3(rand() * Math.PI * 2), {
+      grow: 0.7 + rand() * 0.7
+    });
   }
 }
 
@@ -1511,10 +2027,12 @@ const BELT_DEPTH = 12;
   };
   const distDisc = (x, z) => {
     let best = Math.hypot(HUB.x - x, HUB.z - z) - HUB_RADIUS;
-    for (const d of discs) best = Math.min(best, Math.hypot(d.x - x, d.z - z) - d.r);
+    for (const d of discs)
+      best = Math.min(best, Math.hypot(d.x - x, d.z - z) - d.r);
     return best;
   };
-  const openness = (x, z) => Math.min(distRoad(x, z), distBuilding(x, z), distDisc(x, z));
+  const openness = (x, z) =>
+    Math.min(distRoad(x, z), distBuilding(x, z), distDisc(x, z));
 
   /** 이보다 좁으면 동선이라 비워 둔다 */
   //
@@ -1538,21 +2056,35 @@ const BELT_DEPTH = 12;
   //  이미 프롭이 있어서 결국 무리 1개만 섰다.)
   //
   // 담 안은 마을이다. 껍질 **또는** 구역 단 안이면 후보로 친다.
-  const terraceBlocks = JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8")).blocks;
+  const terraceBlocks = JSON.parse(
+    readFileSync("src/data/villageTerraces.json", "utf8")
+  ).blocks;
   const inTerrace = (x, z) =>
-    terraceBlocks.some((b) => x >= b.x0 && x <= b.x1 && z >= b.z0 && z <= b.z1);
+    terraceBlocks.some(b => x >= b.x0 && x <= b.x1 && z >= b.z0 && z <= b.z1);
 
   for (let x = -34; x <= 38; x += STEP) {
     for (let z = -30; z <= 38; z += STEP) {
       const px = x + (rand() - 0.5) * STEP;
       const pz = z + (rand() - 0.5) * STEP;
       // 껍질 안 또는 구역 단 위만 — 그 바깥은 ⑩ 숲이 맡는다
-      if (polygonDistance(hull, px, pz) > -0.5 && !inTerrace(px, pz)) { cut.hull += 1; continue; }
+      if (polygonDistance(hull, px, pz) > -0.5 && !inTerrace(px, pz)) {
+        cut.hull += 1;
+        continue;
+      }
       // 광장 앞은 트여 있어야 한다 — 마을의 첫인상이자 카메라가 늘 보는 자리
-      if (Math.hypot(px - HUB.x, pz - HUB.z) < HUB_RADIUS + 3.5) { cut.hub += 1; continue; }
+      if (Math.hypot(px - HUB.x, pz - HUB.z) < HUB_RADIUS + 3.5) {
+        cut.hub += 1;
+        continue;
+      }
       const open = openness(px, pz);
-      if (open < MIN_OPEN) { cut.open += 1; continue; }
-      if (nearLandmark(px, pz) || onWall(px, pz, 0.6)) { cut.landmark += 1; continue; }
+      if (open < MIN_OPEN) {
+        cut.open += 1;
+        continue;
+      }
+      if (nearLandmark(px, pz) || onWall(px, pz, 0.6)) {
+        cut.landmark += 1;
+        continue;
+      }
       candidates.push({x: px, z: pz, open});
     }
   }
@@ -1574,22 +2106,37 @@ const BELT_DEPTH = 12;
     // 프롭 간 최소 간격과 무리 간 간격은 따로 잡는다.
     // 1.5 → 1.1. 살아남은 후보의 대부분이 여기서 죽고 있었다(97곳 중 80곳).
     // 마을 안은 어디를 짚어도 1.5유닛 안에 가로등이든 담장이든 하나는 있다.
-    if (!free(c.x, c.z, 1.1)) { cut2.free += 1; continue; }
-    if (glades.some((g) => Math.hypot(g.x - c.x, g.z - c.z) < spacing)) { cut2.spacing += 1; continue; }
+    if (!free(c.x, c.z, 1.1)) {
+      cut2.free += 1;
+      continue;
+    }
+    if (glades.some(g => Math.hypot(g.x - c.x, g.z - c.z) < spacing)) {
+      cut2.spacing += 1;
+      continue;
+    }
     glades.push(c);
   }
-  console.log(`  빈터 후보: 격자에서 ${candidates.length}곳 남음 ` +
-    `(껍질밖 ${cut.hull} · 광장앞 ${cut.hub} · 안트임 ${cut.open} · 랜드마크/담장 ${cut.landmark} 컷)` +
-    `\n         → 무리 ${glades.length}개 (기존프롭겹침 ${cut2.free} · 무리간격 ${cut2.spacing} 컷)`);
+  console.log(
+    `  빈터 후보: 격자에서 ${candidates.length}곳 남음 ` +
+      `(껍질밖 ${cut.hull} · 광장앞 ${cut.hub} · 안트임 ${cut.open} · 랜드마크/담장 ${cut.landmark} 컷)` +
+      `\n         → 무리 ${glades.length}개 (기존프롭겹침 ${cut2.free} · 무리간격 ${cut2.spacing} 컷)`
+  );
 
   // 빈터는 마을 안이라 카메라가 가까이 붙는다. 벚나무 빌보드는 여기서 바로
   // 들통나므로 빼고, 어느 각도에서나 버티는 침엽수를 주로 쓴다.
   const TREES = ["far-pine", "far-oak", "far-pine", "far-pine", "far-oak"];
   let n = 0;
   glades.forEach((g, i) => {
-    place(`glade-${n++}`, TREES[i % TREES.length], g.x, g.z, round3(rand() * Math.PI * 2), {
-      grow: 0.8 + rand() * 0.35
-    });
+    place(
+      `glade-${n++}`,
+      TREES[i % TREES.length],
+      g.x,
+      g.z,
+      round3(rand() * Math.PI * 2),
+      {
+        grow: 0.8 + rand() * 0.35
+      }
+    );
     // 나무 밑에 덤불·돌 두어 개. 한 그루만 서 있으면 심어 놓은 가로수처럼 보인다.
     const around = 2 + Math.floor(rand() * 3);
     for (let k = 0; k < around; k++) {
@@ -1602,8 +2149,11 @@ const BELT_DEPTH = 12;
       // 어느 각도에서도 버틴다. 예전엔 다섯에 하나만 섞었는데(0.2), 부감이 열리면서
       // 덤불 임포스터의 수평 뚜껑이 잔디에 붙은 잎사귀로 보이는 게 드러나 뒤집었다.
       // 빈터는 마을 안이라 부감에 그대로 들어온다.
-      const kind = rand() < 0.6 ? (rand() < 0.5 ? "stones" : "boulder") : "far-bush";
-      place(`glade-${n++}`, kind, x, z, round3(rand() * Math.PI * 2), {grow: 0.65 + rand() * 0.6});
+      const kind =
+        rand() < 0.6 ? (rand() < 0.5 ? "stones" : "boulder") : "far-bush";
+      place(`glade-${n++}`, kind, x, z, round3(rand() * Math.PI * 2), {
+        grow: 0.65 + rand() * 0.6
+      });
     }
   });
 }
@@ -1618,22 +2168,40 @@ const BELT_DEPTH = 12;
   // 십자의 옆날이 드러나는 걸 막으려고 단 건데, 부감에서는 그게 정체를 드러낸다.
   // 길가는 마을 안쪽이라 부감에 그대로 들어오므로 진짜 입체를 주로 쓴다.
   // 돌은 2~3천이라 부담이 없다. 덤불은 여섯에 하나만 남겨 실루엣만 섞는다.
-  const KINDS = ["stones", "boulder", "boulder", "stones", "far-bush", "boulder"];
+  const KINDS = [
+    "stones",
+    "boulder",
+    "boulder",
+    "stones",
+    "far-bush",
+    "boulder"
+  ];
   const sorted = roads.slice().sort((a, b) => a.z - b.z || a.x - b.x);
   let n = 0;
   for (const r of sorted) {
-    const hasWE = sorted.some((o) => Math.abs(o.z - r.z) < 0.1 && Math.abs(Math.abs(o.x - r.x) - PITCH) < 0.1);
+    const hasWE = sorted.some(
+      o =>
+        Math.abs(o.z - r.z) < 0.1 && Math.abs(Math.abs(o.x - r.x) - PITCH) < 0.1
+    );
     const perp = hasWE ? {x: 0, z: 1} : {x: 1, z: 0};
     const sign = n % 2 === 0 ? 1 : -1;
     const side = ROAD_SIDE + 0.5 + rand() * 0.45;
     const x = r.x + perp.x * side * sign;
     const z = r.z + perp.z * side * sign;
-    if (onDisc(x, z, 0.15) || onBuilding(x, z, 0.5) || onRoad(x, z, 0.05) || onWall(x, z, 0.25)) continue;
+    if (
+      onDisc(x, z, 0.15) ||
+      onBuilding(x, z, 0.5) ||
+      onRoad(x, z, 0.05) ||
+      onWall(x, z, 0.25)
+    )
+      continue;
     // 가로등(2.2 간격)과 겹치지 않게. 여기서 걸리는 칸이 많아야 정상이다 —
     // 남는 자리에만 들어가야 길가가 물건으로 꽉 차 보이지 않는다.
     if (!free(x, z, 1.35)) continue;
     const kind = KINDS[n % KINDS.length];
-    place(`verge-${n++}`, kind, x, z, round3(rand() * Math.PI * 2), {grow: 0.7 + rand() * 0.45});
+    place(`verge-${n++}`, kind, x, z, round3(rand() * Math.PI * 2), {
+      grow: 0.7 + rand() * 0.45
+    });
   }
 }
 
@@ -1654,10 +2222,10 @@ const BELT_DEPTH = 12;
 // 먼저 차지해 버려서 화단이 34→15, 가로등이 13→4, 앞마당 소품이 25→5 로 줄었다.
 {
   const key = (x, z) => `${Math.round(x / PITCH)}_${Math.round(z / PITCH)}`;
-  const roadAt = new Set(roads.map((r) => key(r.x, r.z)));
+  const roadAt = new Set(roads.map(r => key(r.x, r.z)));
   const has = (x, z) => roadAt.has(key(x, z));
   /** 참배로 = 바닥 생성기의 i=0 축(남쪽 진입로 + 북쪽 파고다 길) */
-  const onAxis = (r) => Math.abs(r.x) < PITCH * 0.6;
+  const onAxis = r => Math.abs(r.x) < PITCH * 0.6;
 
   let n = 0;
   let skippedJunction = 0;
@@ -1666,7 +2234,10 @@ const BELT_DEPTH = 12;
     const ew = has(r.x - PITCH, r.z) || has(r.x + PITCH, r.z);
     const ns = has(r.x, r.z - PITCH) || has(r.x, r.z + PITCH);
     // 사거리·T 자 — 어느 쪽으로도 울타리를 세울 수 없다
-    if (ew && ns) { skippedJunction += 1; continue; }
+    if (ew && ns) {
+      skippedJunction += 1;
+      continue;
+    }
     if (!ew && !ns) continue;
 
     const perp = ew ? {x: 0, z: 1} : {x: 1, z: 0};
@@ -1676,18 +2247,21 @@ const BELT_DEPTH = 12;
       const z = round3(r.z + perp.z * (ROAD_SIDE + 0.3) * side);
       // 울타리는 두께 0.13 짜리 얇은 판이라 다른 소품에 바짝 붙어도 안 겹친다.
       // 여유를 0.8 로 뒀더니 63토막밖에 안 서서 길을 못 그렸다.
-      if (onRoad(x, z, 0.02) || onDisc(x, z, 0.1) || onBuilding(x, z, 0.2)) continue;
+      if (onRoad(x, z, 0.02) || onDisc(x, z, 0.1) || onBuilding(x, z, 0.2))
+        continue;
       if (onWall(x, z, 0.05) || !free(x, z, 0.5)) continue;
       place(`fence-${n++}`, "fence-rail", x, z, rot, {gap: 0.5});
       // 담장과 같은 선분 판정에 태운다 — 뒤에 오는 절들이 여기 겹쳐 심지 않게
       walls.push({x, z, ax: ew ? 1 : 0, az: ew ? 0 : 1});
     }
   }
-  console.log(`  참배로 울타리 ${n}토막 · 교차로라 건너뛴 칸 ${skippedJunction}곳`);
+  console.log(
+    `  참배로 울타리 ${n}토막 · 교차로라 건너뛴 칸 ${skippedJunction}곳`
+  );
 }
 
 // ─── 쓰기 ─────────────────────────────────────────────────────────────────────
-const kept = layout.props.filter((p) => !p.id.startsWith("decor-"));
+const kept = layout.props.filter(p => !p.id.startsWith("decor-"));
 const next = {...layout, props: [...kept, ...props]};
 
 // 삼각형 청구서. 개수만 세면 "빌보드 300개"와 "원본 나무 300그루"가 같아 보인다.
@@ -1696,17 +2270,22 @@ function trianglesOf(glb) {
   const file = `public${glb}`;
   if (!existsSync(file)) return null;
   const buf = readFileSync(file);
-  let off = 12, gltf = null;
+  let off = 12,
+    gltf = null;
   while (off < buf.length && !gltf) {
     const len = buf.readUInt32LE(off);
-    if (buf.readUInt32LE(off + 4) === 0x4e4f534a) gltf = JSON.parse(buf.slice(off + 8, off + 8 + len).toString("utf8"));
+    if (buf.readUInt32LE(off + 4) === 0x4e4f534a)
+      gltf = JSON.parse(buf.slice(off + 8, off + 8 + len).toString("utf8"));
     off += 8 + len;
     while (off % 4) off++;
   }
   let t = 0;
   for (const mesh of gltf?.meshes ?? [])
     for (const prim of mesh.primitives)
-      t += (prim.indices != null ? gltf.accessors[prim.indices].count : gltf.accessors[prim.attributes.POSITION].count) / 3;
+      t +=
+        (prim.indices != null
+          ? gltf.accessors[prim.indices].count
+          : gltf.accessors[prim.attributes.POSITION].count) / 3;
   return t;
 }
 
@@ -1720,7 +2299,7 @@ const triCache = new Map();
 let totalTris = 0;
 const missing = [];
 const billed = Object.entries(tally).map(([kind, count]) => {
-  const glb = props.find((p) => p.glb.includes(`${kind}.glb`)).glb;
+  const glb = props.find(p => p.glb.includes(`${kind}.glb`)).glb;
   if (!triCache.has(glb)) triCache.set(glb, trianglesOf(glb));
   const each = triCache.get(glb);
   if (each === null) missing.push(glb);
@@ -1736,7 +2315,9 @@ for (const p of props) {
   bySection[section] = (bySection[section] ?? 0) + 1;
 }
 
-console.log(`장식물 ${props.length}개  (decor 외 프롭 ${kept.length}개는 그대로)`);
+console.log(
+  `장식물 ${props.length}개  (decor 외 프롭 ${kept.length}개는 그대로)`
+);
 console.log(
   "  층별: " +
     Object.entries(bySection)
@@ -1750,10 +2331,18 @@ for (const {kind, count, each, sum} of billed.sort((a, b) => b.sum - a.sum))
       ` × ${each === null ? "  ?  " : String(Math.round(each)).padStart(5)}` +
       ` = ${String(Math.round(sum / 1000)).padStart(4)}k`
   );
-console.log(`  ${"합계".padEnd(34)} ${String(props.length).padStart(4)}개              ${(totalTris / 1000).toFixed(0)}k 삼각형`);
-if (missing.length) console.log(`  ! 파일을 못 찾아 못 센 것: ${missing.join(", ")}`);
-console.log(`  걸어 다니는 구역: 원본으로 바꿔 심음 ${promoted}개 · 빼버림 ${dropped}개`);
-if (skipped.length) console.log(`  자리를 못 찾아 뺀 것: ${skipped.join(", ")}`);
+console.log(
+  `  ${"합계".padEnd(34)} ${String(props.length).padStart(4)}개              ${(
+    totalTris / 1000
+  ).toFixed(0)}k 삼각형`
+);
+if (missing.length)
+  console.log(`  ! 파일을 못 찾아 못 센 것: ${missing.join(", ")}`);
+console.log(
+  `  걸어 다니는 구역: 원본으로 바꿔 심음 ${promoted}개 · 빼버림 ${dropped}개`
+);
+if (skipped.length)
+  console.log(`  자리를 못 찾아 뺀 것: ${skipped.join(", ")}`);
 
 if (DRY) {
   console.log("\n--dry — 파일은 안 건드렸습니다");

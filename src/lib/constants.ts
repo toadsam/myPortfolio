@@ -68,7 +68,8 @@ const studyBuildings: BuildingData[] = [
     kind: "server-tower",
     name: "알고리즘 도장",
     label: "Coding Test",
-    description: "백준·프로그래머스에서 푼 문제와 풀이를 기록하는 코딩테스트 공간",
+    description:
+      "백준·프로그래머스에서 푼 문제와 풀이를 기록하는 코딩테스트 공간",
     position: [-2.66, 0, 3.51],
     size: [2.64, 3.3, 2.64],
     color: "#cfd8e3",
@@ -101,7 +102,8 @@ const plazaBuilding: BuildingData = {
   kind: "plaza",
   name: "중앙 광장",
   label: "Start",
-  description: "마을 전체의 허브입니다. 처음 방문했다면 여기에서 안내를 확인하세요.",
+  description:
+    "마을 전체의 허브입니다. 처음 방문했다면 여기에서 안내를 확인하세요.",
   position: [0, 0, 0],
   // size 는 **길·충돌·앞마당이 같이 읽는 값**이라 함부로 못 키운다. 기념비를
   // 키우려고 6.6 으로 올렸더니 길 생성기가 이 상자를 피하면서 광장 둘레 도로가
@@ -287,7 +289,8 @@ const skillBuildings: BuildingData[] = [
     kind: "dome",
     name: "3D / Motion",
     label: "3D Lab",
-    description: "Three.js, React Three Fiber, Drei, Framer Motion 기반 인터랙션",
+    description:
+      "Three.js, React Three Fiber, Drei, Framer Motion 기반 인터랙션",
     position: [3.74, 0, -1.63],
     size: [3.8, 3.3, 3.8],
     color: "#1a0d2e",
@@ -540,7 +543,11 @@ const lifeBuildings: BuildingData[] = [
 // 다 닿지만, 앞마당 원반이 서로 먹기 시작해 길 칸이 깎인다.
 export const SPREAD = 1.86;
 export function spread(p: number[]): Vector3Tuple {
-  return [Math.round((p[0] ?? 0) * SPREAD * 100) / 100, p[1] ?? 0, Math.round((p[2] ?? 0) * SPREAD * 100) / 100];
+  return [
+    Math.round((p[0] ?? 0) * SPREAD * 100) / 100,
+    p[1] ?? 0,
+    Math.round((p[2] ?? 0) * SPREAD * 100) / 100
+  ];
 }
 
 /**
@@ -562,60 +569,63 @@ function scaleSize(s: Vector3Tuple): Vector3Tuple {
   ];
 }
 
-// ─── 구역 덩어리를 광장에서 바깥으로 민다 ────────────────────────────────────
-// 손으로 적어 둔 오프셋(projects [-3,0], skills [0,-3] …)을 쓰다가, 구역을
-// 컨셉 아트 방위로 재배치한 뒤로 **방향이 실제 구역 위치와 어긋나** 있었다
-// (skills 는 북동인데 오프셋은 북쪽, experience 는 서쪽인데 오프셋은 남동쪽).
+// ─── 구역을 광장 둘레의 같은 고리 위에 올린다 ────────────────────────────────
+// 컨셉 아트의 마을은 여섯 구역이 광장을 한 고리로 두른다. 여기는 구역이
+// 광장에서 시작하는 거리가 제각각이었다 — LIFE 9.2, SKILLS 11.9,
+// EXPERIENCE 18.7, CONTACT 26.5. 광장과 EXPERIENCE 사이에 아홉 칸짜리 빈
+// 잔디가 있으니 "광장을 두른다"로 안 읽히고, 구역들을 잇는 순환 도로가
+// 지나갈 일정한 띠도 없었다.
 //
-// 무엇보다 밀어내는 양이 모자랐다. 구역 사각형 사이 간격이 딱 1.88(격자 한 칸)로
-// 남았는데 단 가장자리 여유가 양쪽 0.94 라, 여섯 구역의 단이 **정확히 맞닿아
-// 하나의 큰 단**이 됐다. 그래서 마을 안에서는 볼 수 있는 턱이 하나도 없었고,
-// 구역 사이에 물길을 낼 틈도 없었다(그래서 해자를 마을 밖으로 돌렸다 — 실수였다).
+// 맞추는 기준은 무게중심이 아니라 **안쪽 가장자리**다. 건물이 아홉 채인
+// PROJECTS 와 한 채인 CONTACT 는 덩어리 크기가 달라 무게중심을 맞출 수 없다.
+// 고리로 읽히게 하는 건 광장에서 보이는 앞줄이고, 바깥 끝은 구역이 큰 만큼
+// 뻗어도 자연스럽다 — 컨셉 아트도 그렇다.
 //
-// 이제 각 구역의 **실제 무게중심 방향**으로 일정량을 민다. 사이가 벌어지면
-// 그 골짜기가 레벨 0 으로 남아 단이 옆에서 보이고, 거기에 물이 흐른다.
+// ── 왜 규칙이 아니라 표인가 ─────────────────────────────────────────────────
+// 전에는 배치 규칙(구역 무게중심 방향으로 DISTRICT_PUSH 만큼 밀기)이 여기와
+// scripts/lib/read-village.mjs 에 **각각 구현**돼 있었다. 규칙을 손볼 때마다
+// 두 곳을 같이 고쳐야 하고, 한 번이라도 빠뜨리면 앱과 배치 생성기가 서로 다른
+// 마을을 본다. 계산은 scripts/solve-district-ring.mjs 한 곳에 두고 결과만
+// 여기에 적는다 — 씬도 생성기도 이 표를 **읽기만** 한다.
 //
-// ── 이 값은 SPREAD **와 건물 크기** 둘 다와 짝이다 ────────────────────────
-// 최종 밀어내기 거리는 DISTRICT_PUSH × SPREAD 다. SPREAD 를 1.32 → 1.86 으로
-// 키우면서 3.22 로 낮춰 월드 거리 5.99 를 맞췄다(예전 4.6 × 1.32 = 6.07).
-// **그런데 그것만으론 부족했다.** 건물이 1.4배가 되면서 구역 덩어리 자체가
-// 골짜기 쪽으로 자라, skills↔life 와 contact↔life 의 단이 **간격 0 으로 맞닿았다.**
-//
-// 골짜기는 장식이 아니라 구조다 — 물길이 흐르고, 축대가 옆에서 보이고,
-// 구역이 덩어리로 갈려 보이는 게 전부 거기서 나온다. 맞닿으면 여섯 구역이
-// 하나의 큰 단이 되고 물길은 아예 생성되지 않는다(6곳 중 5곳 실패).
-//
-// 그래서 밀어내기를 건물 크기에 맞춰 같이 올린다. 4.2 × 1.86 = 7.81 —
-// 마주보는 구역 사이가 3.6 더 벌어져 폭 2.2~2.6 짜리 개울이 지나갈 수 있다.
-const DISTRICT_PUSH = 4.2;
+// **표를 손으로 고치지 마세요.** 건물 크기·SPREAD·구역 구성을 바꿨다면:
+//   node scripts/solve-district-ring.mjs --write
+// (check-village.mjs 가 표가 낡았는지 매번 검사한다)
 
-/** 밀기 전 좌표 기준 구역 무게중심 — 미는 방향을 여기서 얻는다 */
-const rawDistrictCenter: Record<string, {x: number; z: number}> = (() => {
-  const acc: Record<string, {x: number; z: number; n: number}> = {};
-  for (const b of [
-    ...projectBuildings,
-    ...skillBuildings,
-    ...experienceBuildings,
-    ...lifeBuildings,
-    ...studyBuildings,
-    contactBuilding
-  ]) {
-    const at = (acc[b.district] ??= {x: 0, z: 0, n: 0});
-    at.x += b.position[0];
-    at.z += b.position[2];
-    at.n += 1;
-  }
-  return Object.fromEntries(Object.entries(acc).map(([k, v]) => [k, {x: v.x / v.n, z: v.z / v.n}]));
-})();
+/**
+ * 구역이 광장에서 시작하는 거리(월드). 순환 도로가 이 안쪽 띠를 지난다.
+ *
+ * 14 인 이유는 **건물이 아니라 단차 블록** 때문이다. 블록은 구역 건물을 감싼
+ * 사각형을 격자(1.88)에 스냅해서 만드는데, 그러느라 건물보다 최대 2.82 더
+ * 안쪽까지 내려온다. 12.5 로 뒀을 때 블록이 r 9.3 까지 내려와 광장 둘레를
+ * 거의 닫아 버렸고, 골짜기로 낼 물길이 6곳 중 4곳에서 r≈10 에 막혔다.
+ * 14 면 블록이 10.7 에서 멈춰 광장(7.7)과의 사이에 띠가 남고, 골짜기도
+ * 3.76 → 5.64 로 넓어진다. 14.5 부터는 건물이 해자를 넘는다.
+ */
+export const DISTRICT_INNER = 14;
 
-function applyDistrictOffset(position: Vector3Tuple, district: string): Vector3Tuple {
-  const c = rawDistrictCenter[district];
-  if (!c) return position; // plaza
-  const len = Math.hypot(c.x, c.z) || 1;
+/** 구역별 이동 벡터(월드). solve-district-ring.mjs 가 적는다. */
+const districtShift: Record<string, [number, number]> = {
+  experience: [-3.09, -0.1],
+  projects: [-5.28, -7.34],
+  skills: [8.66, -4.92],
+  life: [11.34, 4.95],
+  contact: [-3.85, -4.16],
+  study: [-6.3, 5.69]
+};
+
+const round2 = (v: number) => Math.round(v * 100) / 100;
+
+/** 원본 좌표 → 월드 좌표. read-village.mjs 의 readVillage 와 같은 식이다. */
+function placeInDistrict(
+  position: Vector3Tuple,
+  district: string
+): Vector3Tuple {
+  const [sx, sz] = districtShift[district] ?? [0, 0]; // plaza 는 안 움직인다
   return [
-    position[0] + (c.x / len) * DISTRICT_PUSH,
-    position[1],
-    position[2] + (c.z / len) * DISTRICT_PUSH
+    round2((position[0] ?? 0) * SPREAD + sx),
+    position[1] ?? 0,
+    round2((position[2] ?? 0) * SPREAD + sz)
   ];
 }
 
@@ -638,9 +648,9 @@ export const villageBuildings: BuildingData[] = [
   ...lifeBuildings,
   ...studyBuildings,
   contactBuilding
-].map((b) => ({
+].map(b => ({
   ...b,
-  position: spread(applyDistrictOffset(b.position, b.district)),
+  position: placeInDistrict(b.position, b.district),
   size: scaleSize(b.size)
 }));
 
@@ -675,7 +685,10 @@ export const rockPositions: Vector3Tuple[] = [
   [12.5, 0, 6.5]
 ].map(spread);
 
-const rawCameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3Tuple}> = {
+const rawCameraTargets: Record<
+  string,
+  {position: Vector3Tuple; lookAt: Vector3Tuple}
+> = {
   intro: {position: [2, 18, 17], lookAt: [0, 0, 2]},
   projects: {position: [-10, 7, 3], lookAt: [-6.5, 1, 1]},
   github: {position: [3, 8, 0], lookAt: [2, 1, -4.5]},
@@ -685,15 +698,18 @@ const rawCameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3T
   study: {position: [0, 8, 17], lookAt: [0, 1, 11.5]}
 };
 
-// 카메라 타깃도 같은 구역 오프셋만큼 이동시켜, 분리된 구역 덩어리를 정확히 비추게 한다.
-export const cameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3Tuple}> = Object.fromEntries(
+// 카메라 타깃도 건물과 **같은 변환**을 태워, 옮겨진 구역 덩어리를 정확히 비추게 한다.
+export const cameraTargets: Record<
+  string,
+  {position: Vector3Tuple; lookAt: Vector3Tuple}
+> = Object.fromEntries(
   Object.entries(rawCameraTargets).map(([key, value]) => {
     const district = viewKeyDistrict[key] ?? "plaza";
     return [
       key,
       {
-        position: spread(applyDistrictOffset(value.position, district)),
-        lookAt: spread(applyDistrictOffset(value.lookAt, district))
+        position: placeInDistrict(value.position, district),
+        lookAt: placeInDistrict(value.lookAt, district)
       }
     ];
   })

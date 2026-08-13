@@ -9,20 +9,22 @@ import {readFileSync} from "node:fs";
 
 const CONSTANTS = "src/lib/constants.ts";
 
-export function readVillage() {
-  const source = readFileSync(CONSTANTS, "utf8");
+const round2 = v => Math.round(v * 100) / 100;
 
-  const num = (re) => {
+/**
+ * constants.ts 의 건물 표를 **아무 배치 보정도 하지 않은 상태**로 읽는다.
+ *
+ * `readVillage()` 는 여기에 구역 이동을 얹어 월드 좌표를 만들고,
+ * `solve-district-ring.mjs` 는 그 이동량을 구하려고 원본이 필요하다.
+ * 파서는 여기 하나뿐이어야 한다 — 두 벌이 되면 형식이 바뀔 때 한쪽만 낡는다.
+ */
+export function readRaw(source = readFileSync(CONSTANTS, "utf8")) {
+  const num = re => {
     const m = source.match(re);
     if (!m) throw new Error(`${CONSTANTS} 에서 ${re} 를 못 찾았습니다`);
     return Number(m[1]);
   };
   const SPREAD = num(/export const SPREAD\s*=\s*([\d.]+)/);
-
-  // 구역 밀어내기 — constants.ts 의 applyDistrictOffset 과 **같은 계산**이어야 한다.
-  // 예전엔 손으로 적은 districtOffset 표를 읽었는데, 그게 구역별 라디얼 푸시로
-  // 바뀌면서 여기도 같이 바꿨다. 방향은 **밀기 전 좌표의 구역 무게중심**에서 얻는다.
-  const PUSH = num(/const DISTRICT_PUSH\s*=\s*([\d.]+)/);
 
   // 건물 치수 배율 — constants.ts 가 export 할 때 size 에 곱하는 값.
   // **여기서 안 읽으면 생성기만 옛 크기를 본다**: 건물은 커졌는데 앞마당 원반과
@@ -42,45 +44,79 @@ export function readVillage() {
     const position = chunk.match(/position:\s*\[([^\]]+)\]/);
     const district = chunk.match(/district:\s*"([^"]+)"/);
     if (!size || !position || !district) continue;
-    const [w, h, d] = size[1].split(",").map((v) => Number(v.trim()));
-    const [px, , pz] = position[1].split(",").map((v) => Number(v.trim()));
+    const [w, h, d] = size[1].split(",").map(v => Number(v.trim()));
+    const [px, , pz] = position[1].split(",").map(v => Number(v.trim()));
     raw.push({id: ids[n][1], district: district[1], px, pz, w, h, d});
   }
+  if (raw.length < 20)
+    throw new Error(
+      `${CONSTANTS} 에서 건물을 ${raw.length}개밖에 못 읽었습니다 — 형식이 바뀐 듯합니다`
+    );
 
-  // 밀기 전 무게중심 (plaza 는 제외 — 중심이 원점이라 밀 방향이 없다)
-  const center = {};
-  for (const b of raw) {
-    if (b.district === "plaza") continue;
-    const at = (center[b.district] ??= {x: 0, z: 0, n: 0});
-    at.x += b.px;
-    at.z += b.pz;
-    at.n += 1;
-  }
-  const OFFSET = {};
-  for (const [district, v] of Object.entries(center)) {
-    const cx = v.x / v.n;
-    const cz = v.z / v.n;
-    const len = Math.hypot(cx, cz) || 1;
-    OFFSET[district] = [(cx / len) * PUSH, (cz / len) * PUSH];
-  }
+  return {source, SPREAD, BUILDING_SCALE, raw};
+}
 
-  const buildings = raw.map((b) => {
-    const [ox, oz] = OFFSET[b.district] ?? [0, 0];
+/**
+ * 구역 이동 벡터 표(월드 단위)를 읽는다.
+ *
+ * 예전엔 여기서 constants.ts 의 `applyDistrictOffset` **알고리즘을 통째로 베껴**
+ * 다시 구현했다(주석에도 "같은 계산이어야 한다"고 적혀 있었다). 그 방식은
+ * 규칙이 바뀔 때마다 두 곳을 같이 고쳐야 해서 반드시 어긋난다 — 이 마을에서만
+ * 해자·섬·물길 끝 반지름이 같은 이유로 세 번 낡았다.
+ *
+ * 그래서 계산은 `scripts/solve-district-ring.mjs` 한 곳에만 두고, 결과 벡터만
+ * constants.ts 에 표로 적는다. 여기도 씬도 그 표를 **읽기만** 한다.
+ */
+export function readDistrictShift(source = readFileSync(CONSTANTS, "utf8")) {
+  const block = source.match(/districtShift[^=]*=\s*\{([\s\S]*?)\n\};/);
+  if (!block)
+    throw new Error(
+      `${CONSTANTS} 에서 districtShift 표를 못 찾았습니다 — \`node scripts/solve-district-ring.mjs --write\` 로 만드세요`
+    );
+  const out = {};
+  for (const m of block[1].matchAll(
+    /([\w-]+):\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/g
+  ))
+    out[m[1]] = [Number(m[2]), Number(m[3])];
+  if (!Object.keys(out).length)
+    throw new Error(`${CONSTANTS} 의 districtShift 가 비었습니다`);
+  return out;
+}
+
+/** 구역이 광장에서 시작해야 하는 거리 — 솔버의 목표값이자 검사 기준 */
+export function readDistrictInner(source = readFileSync(CONSTANTS, "utf8")) {
+  const m = source.match(/export const DISTRICT_INNER\s*=\s*([\d.]+)/);
+  if (!m) throw new Error(`${CONSTANTS} 에서 DISTRICT_INNER 를 못 찾았습니다`);
+  return Number(m[1]);
+}
+
+export function readVillage() {
+  const {source, SPREAD, BUILDING_SCALE, raw} = readRaw();
+  const SHIFT = readDistrictShift(source);
+
+  // constants.ts 의 `placeInDistrict` 와 **한 줄까지 같은 식**이어야 한다.
+  // (알고리즘이 아니라 표를 더하는 것뿐이라 어긋날 여지가 거의 없다)
+  const buildings = raw.map(b => {
+    const [sx, sz] = SHIFT[b.district] ?? [0, 0];
     return {
       id: b.id,
       district: b.district,
-      x: Math.round((b.px + ox) * SPREAD * 100) / 100,
-      z: Math.round((b.pz + oz) * SPREAD * 100) / 100,
-      w: Math.round(b.w * BUILDING_SCALE * 100) / 100,
-      h: Math.round(b.h * BUILDING_SCALE * 100) / 100,
-      d: Math.round(b.d * BUILDING_SCALE * 100) / 100
+      x: round2(b.px * SPREAD + sx),
+      z: round2(b.pz * SPREAD + sz),
+      w: round2(b.w * BUILDING_SCALE),
+      h: round2(b.h * BUILDING_SCALE),
+      d: round2(b.d * BUILDING_SCALE)
     };
   });
 
-  if (buildings.length < 20)
-    throw new Error(`${CONSTANTS} 에서 건물을 ${buildings.length}개밖에 못 읽었습니다 — 형식이 바뀐 듯합니다`);
-
-  return {SPREAD, BUILDING_SCALE, OFFSET, buildings};
+  return {
+    SPREAD,
+    BUILDING_SCALE,
+    SHIFT,
+    DISTRICT_INNER: readDistrictInner(source),
+    raw,
+    buildings
+  };
 }
 
 /**
@@ -95,7 +131,10 @@ export function readMoat() {
   const m = source.match(
     /MOAT\s*=\s*\{\s*cx:\s*(-?[\d.]+),\s*cz:\s*(-?[\d.]+),\s*a:\s*(-?[\d.]+),\s*b:\s*(-?[\d.]+)\s*\}/
   );
-  if (!m) throw new Error("src/lib/villageRelief.ts 에서 MOAT 를 못 찾았습니다 — 형식이 바뀐 듯합니다");
+  if (!m)
+    throw new Error(
+      "src/lib/villageRelief.ts 에서 MOAT 를 못 찾았습니다 — 형식이 바뀐 듯합니다"
+    );
   return {cx: +m[1], cz: +m[2], a: +m[3], b: +m[4]};
 }
 
@@ -107,12 +146,18 @@ export function readMoat() {
  * 원반으로 바뀐 뒤였다(반지름 40 → 53). 값을 베끼면 반드시 이렇게 낡는다.
  */
 export function readIsland() {
-  const source = readFileSync("src/components/village/VillageScene.tsx", "utf8");
+  const source = readFileSync(
+    "src/components/village/VillageScene.tsx",
+    "utf8"
+  );
   const c = source.match(
     /ISLAND_CENTER[^=]*=\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/
   );
   const r = source.match(/const ISLAND_RADIUS\s*=\s*([\d.]+)/);
-  if (!c || !r) throw new Error("VillageScene.tsx 에서 ISLAND_CENTER/RADIUS 를 못 찾았습니다");
+  if (!c || !r)
+    throw new Error(
+      "VillageScene.tsx 에서 ISLAND_CENTER/RADIUS 를 못 찾았습니다"
+    );
   return {cx: +c[1], cz: +c[3], r: +r[1]};
 }
 
@@ -125,18 +170,28 @@ export function readIsland() {
  */
 export function readPositions(name) {
   const source = readFileSync(CONSTANTS, "utf8");
-  const spread = Number(source.match(/export const SPREAD\s*=\s*([\d.]+)/)?.[1]);
-  if (!Number.isFinite(spread)) throw new Error(`${CONSTANTS} 에서 SPREAD 를 못 찾았습니다`);
-  const block = source.match(new RegExp(`${name}[^=]*=\\s*\\[([\\s\\S]*?)\\n\\]`));
+  const spread = Number(
+    source.match(/export const SPREAD\s*=\s*([\d.]+)/)?.[1]
+  );
+  if (!Number.isFinite(spread))
+    throw new Error(`${CONSTANTS} 에서 SPREAD 를 못 찾았습니다`);
+  const block = source.match(
+    new RegExp(`${name}[^=]*=\\s*\\[([\\s\\S]*?)\\n\\]`)
+  );
   if (!block) throw new Error(`${CONSTANTS} 에서 ${name} 을 못 찾았습니다`);
   const out = [];
-  for (const m of block[1].matchAll(/\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/g))
+  for (const m of block[1].matchAll(
+    /\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/g
+  ))
     out.push([
       Math.round(Number(m[1]) * spread * 100) / 100,
       Number(m[2]),
       Math.round(Number(m[3]) * spread * 100) / 100
     ]);
-  if (!out.length) throw new Error(`${CONSTANTS} 의 ${name} 이 비었습니다 — 형식이 바뀐 듯합니다`);
+  if (!out.length)
+    throw new Error(
+      `${CONSTANTS} 의 ${name} 이 비었습니다 — 형식이 바뀐 듯합니다`
+    );
   return out;
 }
 
