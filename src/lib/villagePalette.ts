@@ -29,6 +29,8 @@
 //   ② 채움광(ambient+hemi+fill) 합을 태양의 절반 이하로 — 태양이 형태를 만든다
 // 전체가 밝거나 어둡다고 느껴지면 개별 intensity 말고 **노출 한 곳만** 만질 것.
 
+import type {VillageGrade} from "./villageGrade";
+
 export interface VillagePalette {
   /** 하늘 밑동(지평선) — fog 와 같은 색이라 먼 것이 하늘로 녹아든다 */
   skyHorizon: string;
@@ -62,6 +64,8 @@ export interface VillagePalette {
   cloudLight: string;
   cloudDark: string;
   cloudCover: number;
+  /** 화면 전체 색보정. 출처가 제각각인 에셋들을 한 톤으로 묶는다 */
+  grade: VillageGrade;
   label: string;
 }
 
@@ -84,6 +88,21 @@ export interface VillagePalette {
 // 컨셉 아트의 극적인 느낌은 태양이 낮아서 그림자가 길게 눕는 데서 온다.
 // 새벽·노을은 15~17°로 내리고 방위를 반대편에 둬 아침/저녁이 구분되게 한다.
 
+// ─── 색보정(grade) 고르는 법 ──────────────────────────────────────────────────
+// 그림자 색조는 **그 시간대 하늘 꼭대기(skyTop)** 에서, 밝은 쪽 색조는 **태양
+// 색(sun)** 에서 가져온다. 현실에서 그늘은 태양이 아니라 하늘빛으로 채워지기
+// 때문이다 — 낮 그늘이 푸른 건 그래서고, 노을 그늘이 보라인 것도 그래서다.
+// 이 규칙을 지키면 색보정이 조명과 따로 놀지 않는다.
+//
+// lift(그림자 바닥)·gain(볕 색조)은 밤으로 갈수록 올린다. 밤은 태양이 형태를
+// 거의 못 만들어서 물체를 묶어 주는 게 색밖에 없다. 반대로 contrast 는 밤에
+// 내린다 — 이미 어두운 화면에 S커브를 세게 주면 그림자가 검정으로 뭉개진다.
+// (밤의 lift 0.05 는 겸사겸사 그 뭉개짐도 막아 준다.)
+//
+// saturation 은 넷 다 1 아래다. 에셋이 개별적으로 쨍한 게 문제였지 화면이
+// 심심한 게 문제가 아니었다. 여기서 눌러 놓고, 정말 튀어야 하는 것(창문 불빛·
+// 간판)은 Bloom 이 살려 준다.
+
 // ─── 왜 노을이 기본이 됐나 ────────────────────────────────────────────────────
 // 컨셉 아트를 우리 렌더와 나란히 놓고 가장 크게 달랐던 게 빛이다. 컨셉의 인상은
 // 구름이나 소품이 아니라 **낮게 깔린 노을 + 금색으로 타는 창문·등불**에서 온다.
@@ -97,54 +116,166 @@ export interface VillagePalette {
 export function timePalette(hour: number): VillagePalette {
   if (hour >= 21 || hour < 5) {
     return {
-      skyHorizon: "#24365e", skyTop: "#0b1430", fog: "#24365e", near: 62, far: 230,
-      amb: 0.2, sun: "#9fb4e8", sunI: 0.95, sunPos: [-30, 44, -26],
-      discRadius: 9, discColor: "#e8eeff",
-      fill: "#3a4f8c", fillI: 0.14, hSky: "#22345e", hGround: "#141f26", hI: 0.24,
+      skyHorizon: "#24365e",
+      skyTop: "#0b1430",
+      fog: "#24365e",
+      near: 62,
+      far: 230,
+      amb: 0.2,
+      sun: "#9fb4e8",
+      sunI: 0.95,
+      sunPos: [-30, 44, -26],
+      discRadius: 9,
+      discColor: "#e8eeff",
+      fill: "#3a4f8c",
+      fillI: 0.14,
+      hSky: "#22345e",
+      hGround: "#141f26",
+      hI: 0.24,
       // 밤은 태양(달)이 약해 형태를 거의 못 만든다. AO가 그 몫을 대신 지므로 제일 세다.
-      aoColor: "#080d1e", aoI: 2.2,
-      lamp: 2.6, windowGlow: 1.15,
-      cloudLight: "#6b7ba6", cloudDark: "#1b2440", cloudCover: 0.6, label: "밤"
+      aoColor: "#080d1e",
+      aoI: 2.2,
+      lamp: 2.6,
+      windowGlow: 1.15,
+      // 달빛만으로는 형태가 안 잡히니 색으로 묶는다 — 넷 중 lift 가 제일 세다.
+      // 대신 대비는 제일 약하게: 어두운 화면에 S커브를 세게 주면 검정 덩어리가 된다.
+      grade: {
+        shadowTint: "#2f4a8c",
+        highlightTint: "#d8e6ff",
+        lift: 0.05,
+        gain: 0.24,
+        contrast: 0.12,
+        saturation: 0.82,
+        highlightDesat: 0.18
+      },
+      cloudLight: "#6b7ba6",
+      cloudDark: "#1b2440",
+      cloudCover: 0.6,
+      label: "밤"
     };
   }
   if (hour < 8) {
     return {
-      skyHorizon: "#f2cfad", skyTop: "#4d5f9c", fog: "#eccdb2", near: 72, far: 260,
-      amb: 0.42, sun: "#ffd6a6", sunI: 2.5, sunPos: [-58, 17, 34],
-      discRadius: 15, discColor: "#fff0d2",
-      fill: "#ffc2d2", fillI: 0.35, hSky: "#f0c8a4", hGround: "#566a3a", hI: 0.5,
-      aoColor: "#3b2c3a", aoI: 1.6,
-      lamp: 1.2, windowGlow: 0.55,
-      cloudLight: "#fff0ee", cloudDark: "#c79bb2", cloudCover: 0.75, label: "새벽"
+      skyHorizon: "#f2cfad",
+      skyTop: "#4d5f9c",
+      fog: "#eccdb2",
+      near: 72,
+      far: 260,
+      amb: 0.42,
+      sun: "#ffd6a6",
+      sunI: 2.5,
+      sunPos: [-58, 17, 34],
+      discRadius: 15,
+      discColor: "#fff0d2",
+      fill: "#ffc2d2",
+      fillI: 0.35,
+      hSky: "#f0c8a4",
+      hGround: "#566a3a",
+      hI: 0.5,
+      aoColor: "#3b2c3a",
+      aoI: 1.6,
+      lamp: 1.2,
+      windowGlow: 0.55,
+      // 그림자는 아직 밤이 덜 걷힌 청보라, 볕은 갓 뜬 해의 살구빛.
+      grade: {
+        shadowTint: "#6f74b4",
+        highlightTint: "#ffd9b0",
+        lift: 0.036,
+        gain: 0.22,
+        contrast: 0.16,
+        saturation: 0.9,
+        highlightDesat: 0.26
+      },
+      cloudLight: "#fff0ee",
+      cloudDark: "#c79bb2",
+      cloudCover: 0.75,
+      label: "새벽"
     };
   }
   if (hour < 15) {
     return {
       // 지평선을 푸른 회색(#c3dcf2)에서 금빛 아지랑이로 바꿨다. 하늘 밑동은
       // fog 와 같은 색이라, 이 한 값이 먼 산·물·숲의 공기색까지 같이 따뜻하게 만든다.
-      skyHorizon: "#f7d7a6", skyTop: "#3f7fc4", fog: "#f2d3ac", near: 78, far: 280,
-      amb: 0.44, sun: "#ffe6b8", sunI: 3.0, sunPos: [34, 32, 26],
-      discRadius: 11, discColor: "#fff8dc",
-      fill: "#ffd9b0", fillI: 0.36, hSky: "#a8cfee", hGround: "#5a7a34", hI: 0.5,
+      skyHorizon: "#f7d7a6",
+      skyTop: "#3f7fc4",
+      fog: "#f2d3ac",
+      near: 78,
+      far: 280,
+      amb: 0.44,
+      sun: "#ffe6b8",
+      sunI: 3.0,
+      sunPos: [34, 32, 26],
+      discRadius: 11,
+      discColor: "#fff8dc",
+      fill: "#ffd9b0",
+      fillI: 0.36,
+      hSky: "#a8cfee",
+      hGround: "#5a7a34",
+      hI: 0.5,
       // 순수 검정으로 어둡게 하면 잔디 그늘이 때 탄 것처럼 보인다. 따뜻한 흙빛으로
       // 내려야 햇빛 아래 그늘로 읽힌다 — fog·지평선을 금빛으로 맞춘 것과 같은 이유.
-      aoColor: "#2f2a1f", aoI: 1.5,
+      aoColor: "#2f2a1f",
+      aoI: 1.5,
       // 컨셉은 한낮 그림에서도 창문마다 불이 들어와 있다. 0.14 는 Bloom 문턱(0.72)에
       // 걸리지도 않아 켜 놓으나 마나였다.
-      lamp: 0.7, windowGlow: 0.4,
-      cloudLight: "#ffffff", cloudDark: "#c2cfe0", cloudCover: 0.66, label: "낮"
+      lamp: 0.7,
+      windowGlow: 0.4,
+      // 한낮은 태양이 형태를 다 만들어 주므로 색조를 제일 약하게 — 여기서 세게
+      // 주면 조명이 만든 그림자 위에 색필터를 덧씌운 것처럼 보인다.
+      // 대신 대비는 올린다. 볕이 강한 시간대라 명암이 벌어져야 자연스럽다.
+      grade: {
+        shadowTint: "#7ea8d6",
+        highlightTint: "#ffe4b4",
+        lift: 0.032,
+        gain: 0.2,
+        contrast: 0.18,
+        saturation: 0.88,
+        highlightDesat: 0.28
+      },
+      cloudLight: "#ffffff",
+      cloudDark: "#c2cfe0",
+      cloudCover: 0.66,
+      label: "낮"
     };
   }
   return {
     // 태양 고도 15°→11°. 그림자가 더 길게 눕는다.
-    skyHorizon: "#ffae63", skyTop: "#2e2f6b", fog: "#f0b483", near: 72, far: 255,
-    amb: 0.4, sun: "#ffa062", sunI: 3.1, sunPos: [58, 11, 26],
-    discRadius: 19, discColor: "#fff2c8",
-    fill: "#ffa878", fillI: 0.42, hSky: "#f0a068", hGround: "#4a4626", hI: 0.5,
+    skyHorizon: "#ffae63",
+    skyTop: "#2e2f6b",
+    fog: "#f0b483",
+    near: 72,
+    far: 255,
+    amb: 0.4,
+    sun: "#ffa062",
+    sunI: 3.1,
+    sunPos: [58, 11, 26],
+    discRadius: 19,
+    discColor: "#fff2c8",
+    fill: "#ffa878",
+    fillI: 0.42,
+    hSky: "#f0a068",
+    hGround: "#4a4626",
+    hI: 0.5,
     // 노을은 하늘이 보라(#2e2f6b)라 그늘에 그 색이 돈다.
-    aoColor: "#33203a", aoI: 1.6,
-    lamp: 2.1, windowGlow: 1.05,
-    cloudLight: "#ffe3bd", cloudDark: "#8a6a86", cloudCover: 0.85, label: "노을"
+    aoColor: "#33203a",
+    aoI: 1.6,
+    lamp: 2.1,
+    windowGlow: 1.05,
+    // 하늘 꼭대기가 보라(#2e2f6b)라 그림자도 보라, 볕은 낮게 깔린 주황.
+    // 두 색이 보색에 가까워 스플릿 토닝이 가장 극적으로 먹는 시간대다.
+    grade: {
+      shadowTint: "#6a5ba0",
+      highlightTint: "#ffc47e",
+      lift: 0.042,
+      gain: 0.26,
+      contrast: 0.2,
+      saturation: 0.9,
+      highlightDesat: 0.3
+    },
+    cloudLight: "#ffe3bd",
+    cloudDark: "#8a6a86",
+    cloudCover: 0.85,
+    label: "노을"
   };
 }
 
@@ -155,12 +286,25 @@ export function timePalette(hour: number): VillagePalette {
  * 같은 각도에서 껐다 켰다 할 수 있어야 판단이 선다.
  */
 export const AO_ENABLED =
-  typeof window === "undefined" || new URLSearchParams(window.location.search).get("ao") !== "0";
+  typeof window === "undefined" ||
+  new URLSearchParams(window.location.search).get("ao") !== "0";
+
+/**
+ * 색보정을 끄고 비교해 보고 싶을 때: /?lut=0
+ *
+ * 색보정은 켠 상태만 보면 "원래 이런 색인가 보다" 하고 넘어가게 된다. 껐다 켰다
+ * 해 봐야 무엇이 얼마나 바뀌었는지, 과한지 모자란지 판단이 선다.
+ */
+export const LUT_ENABLED =
+  typeof window === "undefined" ||
+  new URLSearchParams(window.location.search).get("lut") !== "0";
 
 /** 접속 시각 대신 원하는 시간대를 보고 싶을 때: /?hour=13 */
 function paletteHour() {
   if (typeof window !== "undefined") {
-    const forced = Number(new URLSearchParams(window.location.search).get("hour"));
+    const forced = Number(
+      new URLSearchParams(window.location.search).get("hour")
+    );
     if (Number.isInteger(forced) && forced >= 0 && forced <= 23) return forced;
   }
   return new Date().getHours();

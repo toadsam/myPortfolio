@@ -1,4 +1,5 @@
 import terraces from "@/data/villageTerraces.json";
+import {reliefAt} from "./villageRelief";
 
 // 구역 단차 — 컨셉 아트의 마을은 평지가 아니라 계단식이다. 광장이 제일 낮고
 // 여섯 구역이 각각 한 단 올라앉아 있어서, 이름표를 안 읽어도 부감에서 그림자로
@@ -54,11 +55,16 @@ function within(r: TerraceRect, x: number, z: number, pad: number) {
 /**
  * 그 자리의 지면 높이. 바닥 타일·장식물·건물·NPC·캐릭터가 **전부 이걸 쓴다** —
  * 하나라도 다른 규칙을 쓰면 그것만 공중에 뜨거나 땅에 묻힌다.
+ *
+ * 구역 단(계단)과 들판 굽이(villageRelief)의 합이다. 굽이는 타일·건물·물길·단
+ * 둘레에서 정확히 0 이 되도록 마스크돼 있어, 더해도 지은 곳은 평평하다.
  */
 export function terrainHeightAt(x: number, z: number): number {
-  if (TERRACE_STEP === 0) return 0;
-  for (const r of TERRACE_RECTS) if (within(r, x, z, PLATEAU_PAD)) return TERRACE_STEP;
-  return 0;
+  const step =
+    TERRACE_STEP !== 0 && TERRACE_RECTS.some((r) => within(r, x, z, PLATEAU_PAD))
+      ? TERRACE_STEP
+      : 0;
+  return step + reliefAt(x, z);
 }
 
 /** 구역 단 위인가. 물길·계단처럼 "위냐 아래냐"만 필요한 데 쓴다. */

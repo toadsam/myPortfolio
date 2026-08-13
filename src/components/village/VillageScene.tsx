@@ -1,26 +1,72 @@
 "use client";
 
 import {Canvas, useFrame, useThree} from "@react-three/fiber";
-import {AdaptiveDpr, AdaptiveEvents, Billboard, ContactShadows, Html, useGLTF, useTexture} from "@react-three/drei";
-import {Bloom, EffectComposer, N8AO, ToneMapping} from "@react-three/postprocessing";
+import {
+  AdaptiveDpr,
+  AdaptiveEvents,
+  Billboard,
+  ContactShadows,
+  Html,
+  useGLTF,
+  useTexture
+} from "@react-three/drei";
+import {
+  Bloom,
+  EffectComposer,
+  LUT,
+  N8AO,
+  ToneMapping
+} from "@react-three/postprocessing";
 import {ToneMappingMode} from "postprocessing";
 import {memo, Suspense, useEffect, useMemo, useRef} from "react";
-import {AdditiveBlending, BackSide, BufferGeometry, Color, Float32BufferAttribute, type Mesh, MeshStandardMaterial, RepeatWrapping, SphereGeometry, SRGBColorSpace, Vector3} from "three";
+import {
+  AdditiveBlending,
+  BackSide,
+  BufferGeometry,
+  Color,
+  Float32BufferAttribute,
+  type Mesh,
+  MeshStandardMaterial,
+  RepeatWrapping,
+  SphereGeometry,
+  SRGBColorSpace,
+  Vector3
+} from "three";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
-import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
+import {
+  createThrottledCalculatePosition,
+  LABEL_SYNC_STRIDE
+} from "@/lib/htmlLabelThrottle";
 import {spread, villageBuildings} from "@/lib/constants";
-import {AO_ENABLED, VILLAGE_PALETTE} from "@/lib/villagePalette";
+import {AO_ENABLED, LUT_ENABLED, VILLAGE_PALETTE} from "@/lib/villagePalette";
+import {makeGradeLut} from "@/lib/villageGrade";
+import {MOAT, RELIEF_ENABLED, reliefAt} from "@/lib/villageRelief";
 import {makeCloudTexture} from "@/lib/skyClouds";
-import {advanceWaterFlow, applyWaterFlow, makeWaterNormal} from "@/lib/waterFlow";
+import {
+  advanceWaterFlow,
+  applyWaterFlow,
+  makeWaterNormal
+} from "@/lib/waterFlow";
 import {advanceFoliageWind} from "@/lib/foliageWind";
 import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
 import {makeBankTexture} from "@/lib/terraceBank";
-import {PLATEAU_PAD, TERRACE_RECTS, TERRACE_STEP, terrainHeightAt, WATER_CHANNELS} from "@/lib/villageTerrain";
+import {
+  PLATEAU_PAD,
+  TERRACE_RECTS,
+  TERRACE_STEP,
+  terrainHeightAt,
+  WATER_CHANNELS
+} from "@/lib/villageTerrain";
 import buildingModels from "@/data/buildingModels.json";
 import {buildBuildingStateMap, buildNpcStateMap} from "@/lib/liveState";
 import type {NpcRuntimeState, VillageState} from "@/types/live";
-import type {ExplorationMode, NPCData, SectionId, Vector3Tuple} from "@/types/portfolio";
+import type {
+  ExplorationMode,
+  NPCData,
+  SectionId,
+  Vector3Tuple
+} from "@/types/portfolio";
 import {Building} from "./Building";
 import {BuildingNetwork} from "./BuildingNetwork";
 import {CameraController} from "./CameraController";
@@ -44,7 +90,10 @@ interface VillageSceneProps {
   guideScriptedTarget?: Vector3Tuple | null;
   onGuideArrive?: () => void;
   guideForceHold?: boolean;
-  cinematic?: {position: [number, number, number]; lookAt: [number, number, number]} | null;
+  cinematic?: {
+    position: [number, number, number];
+    lookAt: [number, number, number];
+  } | null;
   npcCommand?: NpcCommand | null;
   npcCommandTargets?: Record<string, Vector3Tuple>;
   overseerTarget?: Vector3Tuple | null;
@@ -53,7 +102,9 @@ interface VillageSceneProps {
 }
 
 // 네트워크 펄스로 연결할 프로젝트 건물들 (한 번만 계산)
-const projectNetworkBuildings = villageBuildings.filter((b) => b.district === "projects");
+const projectNetworkBuildings = villageBuildings.filter(
+  b => b.district === "projects"
+);
 
 // walk 모드/편집 중엔 건물 클릭 입장을 비활성화 — 매 렌더 새 화살표 함수를 만들지 않도록 고정 참조 사용
 const noopRequestEnter = () => {};
@@ -144,6 +195,58 @@ function Ground() {
     map.needsUpdate = true;
   }, [map]);
 
+  // ─── 들판 굽이 (villageRelief) ─────────────────────────────────────────────
+  // circleGeometry 는 부채꼴 한 장이라 **내부 정점이 없다** — 굽힐 점 자체가
+  // 없으므로, 링×세그먼트 격자를 직접 짜고 정점마다 reliefAt 를 넣는다.
+  // terrainHeightAt(단+굽이)이 아니라 reliefAt(굽이만)인 이유: 이 원반은 구역 단
+  // **밑을 그대로 지나가고**, 단 위는 TerraceTops 가 따로 덮는다.
+  //
+  // 가장 바깥 링은 반지름 40 — reliefAt 는 39 에서 0 이 되므로 절벽(IslandCliff)
+  // 안쪽 링과 정확히 y=0 에서 만난다.
+  const geometry = useMemo(() => {
+    if (!RELIEF_ENABLED) return null;
+    const SEG = 128;
+    const RINGS = 44; // 링 간격 ≈ 0.9유닛 — 가장 짧은 파장(7유닛)을 넉넉히 담는다
+    const [cx, , cz] = ISLAND_CENTER;
+    const positions: number[] = [];
+    const gUvs: number[] = [];
+    const indices: number[] = [];
+
+    positions.push(cx, reliefAt(cx, cz), cz);
+    gUvs.push(0.5, 0.5);
+    for (let r = 1; r <= RINGS; r++) {
+      const radius = (r / RINGS) * ISLAND_RADIUS;
+      for (let s = 0; s < SEG; s++) {
+        const a = (s / SEG) * Math.PI * 2;
+        const x = cx + Math.cos(a) * radius;
+        const z = cz + Math.sin(a) * radius;
+        positions.push(x, reliefAt(x, z), z);
+        // circleGeometry 의 uv 와 같은 규칙(외접 정사각형 0~1) — 위의
+        // map.repeat 계산이 그대로 맞는다.
+        gUvs.push((x - cx) / (ISLAND_RADIUS * 2) + 0.5, (z - cz) / (ISLAND_RADIUS * 2) + 0.5);
+      }
+    }
+    for (let s = 0; s < SEG; s++) {
+      // 위(+Y)를 보는 감김 순서 — 뒤집으면 잔디가 밑에서만 보인다
+      indices.push(0, 1 + ((s + 1) % SEG), 1 + s);
+    }
+    for (let r = 1; r < RINGS; r++) {
+      const ringA = 1 + (r - 1) * SEG;
+      const ringB = 1 + r * SEG;
+      for (let s = 0; s < SEG; s++) {
+        const sn = (s + 1) % SEG;
+        indices.push(ringA + s, ringB + sn, ringB + s);
+        indices.push(ringA + s, ringA + sn, ringB + sn);
+      }
+    }
+    const geo = new BufferGeometry();
+    geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
+    geo.setAttribute("uv", new Float32BufferAttribute(gUvs, 2));
+    geo.setIndex(indices);
+    geo.computeVertexNormals(); // 굽이가 빛을 받는 건 전부 이 법선 덕이다
+    return geo;
+  }, []);
+
   // polygonOffset — 길 타일이 잔디에 파묻히는 걸 막는다.
   // 타일 윗면은 잔디보다 겨우 몇 cm 위인데, 이 거대한 바닥과 깊이값이 사실상 같아서
   // 조금만 멀어지면 잔디가 이겨버려 길이 통째로 사라졌다.
@@ -151,19 +254,35 @@ function Ground() {
   //
   // 사각 평면이 아니라 원반이다 — 섬의 윗면이니까. 절벽(IslandCliff)이 정확히
   // 같은 반지름에서 시작해 이어받는다.
+  const material = (
+    <meshStandardMaterial
+      ref={m => m && applyGroundMacro(m, macro)}
+      map={map}
+      color={GRASS_TINT}
+      roughness={0.95}
+      metalness={0}
+      polygonOffset
+      polygonOffsetFactor={2}
+      polygonOffsetUnits={4}
+    />
+  );
+
+  // 굽이 격자는 월드 좌표로 지었으므로 이동·회전 없이 그대로 놓는다.
+  if (geometry) {
+    return (
+      <mesh geometry={geometry} receiveShadow>
+        {material}
+      </mesh>
+    );
+  }
   return (
-    <mesh position={ISLAND_CENTER} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+    <mesh
+      position={ISLAND_CENTER}
+      rotation={[-Math.PI / 2, 0, 0]}
+      receiveShadow
+    >
       <circleGeometry args={[ISLAND_RADIUS, 128]} />
-      <meshStandardMaterial
-        ref={(m) => m && applyGroundMacro(m, macro)}
-        map={map}
-        color={GRASS_TINT}
-        roughness={0.95}
-        metalness={0}
-        polygonOffset
-        polygonOffsetFactor={2}
-        polygonOffsetUnits={4}
-      />
+      {material}
     </mesh>
   );
 }
@@ -183,9 +302,9 @@ function IslandCliff() {
     const colors: number[] = [];
     const indices: number[] = [];
 
-    const rim = new Color("#5f8a3f");   // 잔디와 만나는 윗단
-    const rock = new Color("#8a7a63");  // 볕 드는 바위
-    const deep = new Color("#43382f");  // 물에 잠기는 아래쪽
+    const rim = new Color("#5f8a3f"); // 잔디와 만나는 윗단
+    const rock = new Color("#8a7a63"); // 볕 드는 바위
+    const deep = new Color("#43382f"); // 물에 잠기는 아래쪽
     const mixed = new Color();
 
     for (let ri = 0; ri <= CLIFF_RINGS; ri++) {
@@ -193,12 +312,17 @@ function IslandCliff() {
       for (let ai = 0; ai <= CLIFF_SEGMENTS; ai++) {
         const angle = (Math.PI * 2 * ai) / CLIFF_SEGMENTS;
         // 바깥으로 나갈수록 튀어나온 곶과 들어간 만이 생긴다
-        const jut = 3.2 + 2.6 * Math.sin(angle * 3 + 0.9) + 1.6 * Math.sin(angle * 7 + 2.1);
+        const jut =
+          3.2 +
+          2.6 * Math.sin(angle * 3 + 0.9) +
+          1.6 * Math.sin(angle * 7 + 2.1);
         const radius = ISLAND_RADIUS + t * Math.max(1.2, jut);
         // t^1.5 — 위쪽은 완만하게 시작해 아래로 갈수록 가팔라진다(벼랑 느낌)
         const y = -CLIFF_DROP * Math.pow(t, 1.5);
         positions.push(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
-        mixed.copy(t < 0.18 ? rim : rock).lerp(deep, Math.min(1, Math.max(0, (t - 0.18) / 0.82)));
+        mixed
+          .copy(t < 0.18 ? rim : rock)
+          .lerp(deep, Math.min(1, Math.max(0, (t - 0.18) / 0.82)));
         if (t < 0.18) mixed.copy(rim).lerp(rock, t / 0.18);
         colors.push(mixed.r, mixed.g, mixed.b);
       }
@@ -234,7 +358,11 @@ function IslandCliff() {
 // roughness 를 낮춰 하늘빛을 받는 것만으로 충분히 물처럼 보인다.
 function Water() {
   const material = useMemo(() => {
-    const m = new MeshStandardMaterial({color: "#2d6a86", roughness: 0.22, metalness: 0.25});
+    const m = new MeshStandardMaterial({
+      color: "#2d6a86",
+      roughness: 0.22,
+      metalness: 0.25
+    });
     // 호수는 **흐르지 않는다.** 두 층을 거의 마주보는 방향으로 흘려 무늬가 한쪽으로
     // 미끄러지는 대신 서로 간섭하게 둔다 — 제자리에서 반짝이는 게 고인 물이다.
     // 속도도 개울의 1/20 이다. 여기서 빠르면 호수가 강처럼 보인다.
@@ -244,13 +372,17 @@ function Water() {
       dirA: [1, 0.16],
       dirB: [-0.86, 0.42],
       speed: 0.02,
-      normalScale: 0.6,
+      normalScale: 0.6
     });
     return m;
   }, []);
 
   return (
-    <mesh material={material} position={[ISLAND_CENTER[0], WATER_Y, ISLAND_CENTER[2]]} rotation={[-Math.PI / 2, 0, 0]}>
+    <mesh
+      material={material}
+      position={[ISLAND_CENTER[0], WATER_Y, ISLAND_CENTER[2]]}
+      rotation={[-Math.PI / 2, 0, 0]}
+    >
       <circleGeometry args={[240, 64]} />
     </mesh>
   );
@@ -260,11 +392,11 @@ function Water() {
 // 개울이 서로 다른 위상으로 흘러 만나는 지점에서 어긋나고, 나무도 그루마다
 // 다른 순간에 같은 돌풍을 맞는다.
 function AnimationClock() {
-  const gl = useThree((s) => s.gl);
-  const scene = useThree((s) => s.scene);
-  const camera = useThree((s) => s.camera);
+  const gl = useThree(s => s.gl);
+  const scene = useThree(s => s.scene);
+  const camera = useThree(s => s.camera);
 
-  useFrame((state) => {
+  useFrame(state => {
     const t = state.clock.elapsedTime;
     advanceWaterFlow(t);
     advanceFoliageWind(t);
@@ -301,10 +433,12 @@ function AnimationClock() {
 //
 // 북쪽 꼭짓점이 예전 개울 자리(z −20.7)에 정확히 오도록 중심과 반지름을 잡았다 —
 // 돌다리와 참배로를 그대로 쓴다. generate-decor-layout.mjs 에 같은 값이 있다.
-const MOAT = {cx: 0, cz: 1, a: 27, b: 21.7};
-const MOAT_HALF = 1.1;   // 반폭. 다리(5유닛 span)가 넉넉히 걸친다.
+// 해자 타원(MOAT)은 villageRelief 가 소유한다 — 들판 굽이가 물길 밑에서 땅을
+// 평평하게 잠글 때 같은 타원을 봐야 하기 때문. 여기서 따로 적으면 물은 이쪽에서
+// 흐르는데 땅은 저쪽에서 평평해진다.
+const MOAT_HALF = 1.1; // 반폭. 다리(5유닛 span)가 넉넉히 걸친다.
 // 1.5 로 뒀더니 마을 안 물길과 겹치는 데서 두 리본이 화살표처럼 뭉쳐 보였다.
-const MOAT_STEPS = 132;  // 한 바퀴를 몇 조각으로
+const MOAT_STEPS = 132; // 한 바퀴를 몇 조각으로
 // 물결 UV 한 칸이 덮는 월드 거리의 역수. 0.5 = 2유닛마다 물결 무늬가 한 번 반복.
 // 리본 폭이 1~2.2유닛이라 이 값이면 u·v 밀도가 대략 정사각형이 된다 — 어긋나면
 // 물결이 한쪽으로 늘어나 물살이 아니라 빗살무늬로 보인다.
@@ -318,7 +452,7 @@ function Waterways() {
     const indices: number[] = [];
 
     const shallow = new Color("#63c7c4"); // 가장자리 — 자갈이 비치는 여울
-    const deep = new Color("#2f8fa6");    // 한가운데
+    const deep = new Color("#2f8fa6"); // 한가운데
 
     /**
      * 폴리라인 하나를 물 리본으로 만든다. 한 마디마다 정점 셋(왼·오른·가운데)이라
@@ -347,7 +481,10 @@ function Waterways() {
       //  정수 v 에 정수 배율을 곱해야 이음매가 끝까지 안 생긴다.)
       const arcs: number[] = [0];
       for (let i = 1; i < pts.length; i++) {
-        arcs.push(arcs[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z));
+        arcs.push(
+          arcs[i - 1] +
+            Math.hypot(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z)
+        );
       }
       const total = arcs[arcs.length - 1] || 1;
       const vScale = closed
@@ -368,7 +505,11 @@ function Waterways() {
         const fade = taper ? Math.min(1, Math.min(t, 1 - t) * 8) : 1;
         const half = halfAt(t) * fade;
         for (const side of [-1, 1]) {
-          positions.push(pts[i].x + ux * half * side, 0, pts[i].z + uz * half * side);
+          positions.push(
+            pts[i].x + ux * half * side,
+            0,
+            pts[i].z + uz * half * side
+          );
           colors.push(shallow.r, shallow.g, shallow.b);
           // u 는 리본을 가로지르고 v 는 물길을 따라간다. 흐름을 +v 로만 주면
           // 물이 굽은 해자를 따라 돈다.
@@ -407,14 +548,19 @@ function Waterways() {
         z: MOAT.cz + sin * MOAT.b + (nz / nl) * drift
       });
     }
-    ribbon(moat, (t) => MOAT_HALF * (0.82 + 0.3 * Math.sin(t * Math.PI * 10 + 1.9)), false, true);
+    ribbon(
+      moat,
+      t => MOAT_HALF * (0.82 + 0.3 * Math.sin(t * Math.PI * 10 + 1.9)),
+      false,
+      true
+    );
 
     // ② 구역 사이 골짜기를 흐르는 물길 — 단이 양옆에 서 있어 파인 것처럼 보인다.
     //    광장 쪽 끝은 가늘게, 해자에 닿는 바깥쪽은 넓게.
     for (const channel of WATER_CHANNELS) {
       // 안쪽은 가늘고 바깥으로 갈수록 넓어진다 — 물이 흘러 내려가는 방향이 읽힌다.
       // 0.55~1.3 은 너무 굵어 잔디 위에 붙인 색종이처럼 보였다.
-      ribbon(channel, (t) => 0.5 + t * 0.45, true, false);
+      ribbon(channel, t => 0.5 + t * 0.45, true, false);
     }
 
     const geo = new BufferGeometry();
@@ -429,7 +575,11 @@ function Waterways() {
   const material = useMemo(() => {
     // 호수(Water)와 같은 재질감 — 하늘빛을 받아야 물로 보인다.
     // 다만 해자·개울은 얕으므로 조금 밝고 덜 반사한다.
-    const m = new MeshStandardMaterial({vertexColors: true, roughness: 0.3, metalness: 0.2});
+    const m = new MeshStandardMaterial({
+      vertexColors: true,
+      roughness: 0.3,
+      metalness: 0.2
+    });
     // 여기는 **흐르는** 물이다. 두 층 모두 +v(물길 방향)로 흘리되 속도를 달리해
     // 무늬가 서로 어긋나게 한다. u 에 살짝 준 값은 물살이 벽에 부딪혀 비스듬히
     // 밀리는 느낌 — 0 으로 두면 물살이 자로 잰 듯 곧게 흘러 인공적으로 보인다.
@@ -454,12 +604,14 @@ function Waterways() {
       speed: 1.6,
       // 맵의 최대 기울기가 이미 0.35 로 묶여 있다(waterFlow 의 STEEPNESS).
       // 여기서 더 줄이면 물결이 아예 안 보인다 — 세기 조절은 STEEPNESS 쪽에서.
-      normalScale: 0.9,
+      normalScale: 0.9
     });
     return m;
   }, []);
 
-  return <mesh geometry={geometry} material={material} position={[0, 0.05, 0]} />;
+  return (
+    <mesh geometry={geometry} material={material} position={[0, 0.05, 0]} />
+  );
 }
 
 // ─── 구역 단차의 옆면 (축대) ──────────────────────────────────────────────────
@@ -508,18 +660,26 @@ function TerraceBanks() {
     ];
     const vAt: number[] = [0];
     for (let i = 1; i < profile.length; i++) {
-      const d = Math.hypot(profile[i][0] - profile[i - 1][0], profile[i][1] - profile[i - 1][1]);
+      const d = Math.hypot(
+        profile[i][0] - profile[i - 1][0],
+        profile[i][1] - profile[i - 1][1]
+      );
       vAt.push(vAt[i - 1] + d / TERRACE_STEP);
     }
 
     for (const r of TERRACE_RECTS) {
-      const x0 = r.x0 - PLATEAU_PAD, x1 = r.x1 + PLATEAU_PAD;
-      const z0 = r.z0 - PLATEAU_PAD, z1 = r.z1 + PLATEAU_PAD;
+      const x0 = r.x0 - PLATEAU_PAD,
+        x1 = r.x1 + PLATEAU_PAD;
+      const z0 = r.z0 - PLATEAU_PAD,
+        z1 = r.z1 + PLATEAU_PAD;
 
       /** 바깥으로 o 만큼 물린 네 귀퉁이. 모서리는 두 변의 법선을 더한 대각선이라
           변끼리 어긋나지 않고 맞물린다. */
       const corners = (o: number): [number, number][] => [
-        [x0 - o, z0 - o], [x1 + o, z0 - o], [x1 + o, z1 + o], [x0 - o, z1 + o]
+        [x0 - o, z0 - o],
+        [x1 + o, z0 - o],
+        [x1 + o, z1 + o],
+        [x0 - o, z1 + o]
       ];
 
       // u 는 둘레를 따라간 거리 / 격자 한 칸 — 어느 벽에서나 돌 한 장 크기가 같다.
@@ -529,8 +689,10 @@ function TerraceBanks() {
       for (let i = 0; i + 1 < profile.length; i++) {
         const A = corners(profile[i][0]);
         const B = corners(profile[i + 1][0]);
-        const yA = profile[i][1], yB = profile[i + 1][1];
-        const vA = vAt[i], vB = vAt[i + 1];
+        const yA = profile[i][1],
+          yB = profile[i + 1][1];
+        const vA = vAt[i],
+          vB = vAt[i + 1];
 
         for (let s = 0; s < 4; s++) {
           const e = (s + 1) % 4;
@@ -539,10 +701,14 @@ function TerraceBanks() {
           // 시작 귀퉁이의 A·B, 끝 귀퉁이의 A·B 순. 이 순서가 곧 면의 앞뒤다 —
           // 수직 마디는 A 가 아래라 바깥을 보고, 수평 마디는 A 가 바깥이면
           // 위를, 안쪽이면 아래를 본다. profile 을 그 규칙에 맞춰 적어 뒀다.
-          positions.push(A[s][0], yA, A[s][1]); uvs.push(0, vA);
-          positions.push(B[s][0], yB, B[s][1]); uvs.push(0, vB);
-          positions.push(A[e][0], yA, A[e][1]); uvs.push(u1, vA);
-          positions.push(B[e][0], yB, B[e][1]); uvs.push(u1, vB);
+          positions.push(A[s][0], yA, A[s][1]);
+          uvs.push(0, vA);
+          positions.push(B[s][0], yB, B[s][1]);
+          uvs.push(0, vB);
+          positions.push(A[e][0], yA, A[e][1]);
+          uvs.push(u1, vA);
+          positions.push(B[e][0], yB, B[e][1]);
+          uvs.push(u1, vB);
           indices.push(base, base + 1, base + 2, base + 2, base + 1, base + 3);
         }
       }
@@ -598,17 +764,31 @@ function TerraceTops() {
     const uvs: number[] = [];
     const indices: number[] = [];
     for (const r of TERRACE_RECTS) {
-      const x0 = r.x0 - PLATEAU_PAD, x1 = r.x1 + PLATEAU_PAD;
-      const z0 = r.z0 - PLATEAU_PAD, z1 = r.z1 + PLATEAU_PAD;
+      const x0 = r.x0 - PLATEAU_PAD,
+        x1 = r.x1 + PLATEAU_PAD;
+      const z0 = r.z0 - PLATEAU_PAD,
+        z1 = r.z1 + PLATEAU_PAD;
       const base4 = positions.length / 3;
       // uv 를 **월드 좌표**로 잡는다 — 구역마다 잔디 결이 이어지고, 단 크기가
       // 달라도 늘어나지 않는다.
-      for (const [x, z] of [[x0, z0], [x1, z0], [x0, z1], [x1, z1]] as [number, number][]) {
+      for (const [x, z] of [
+        [x0, z0],
+        [x1, z0],
+        [x0, z1],
+        [x1, z1]
+      ] as [number, number][]) {
         positions.push(x, TERRACE_STEP, z);
         uvs.push(x / GRASS_TILE_WORLD, z / GRASS_TILE_WORLD);
       }
       // 위를 보게 — (x0,z0)→(x1,z0)→(x0,z1) 의 법선이 +Y 다
-      indices.push(base4, base4 + 2, base4 + 1, base4 + 1, base4 + 2, base4 + 3);
+      indices.push(
+        base4,
+        base4 + 2,
+        base4 + 1,
+        base4 + 1,
+        base4 + 2,
+        base4 + 3
+      );
     }
     const geo = new BufferGeometry();
     geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
@@ -624,7 +804,7 @@ function TerraceTops() {
   return (
     <mesh geometry={geometry} receiveShadow>
       <meshStandardMaterial
-        ref={(m) => m && applyGroundMacro(m, macro)}
+        ref={m => m && applyGroundMacro(m, macro)}
         map={map}
         roughness={0.95}
         metalness={0}
@@ -669,7 +849,11 @@ function hillHeight(radius: number, angle: number) {
   const t = Math.min(1, (radius - HILL_INNER) / 30);
   const ramp = t * t * (3 - 2 * t);
   // 바깥으로 갈수록 한 겹 더 높은 능선 — 산줄기가 겹쳐 보이게
-  const layer = 1 + 0.6 * Math.max(0, (radius - HILL_INNER - 34) / 40) * (1.4 + Math.sin(angle * 4 + 1.1));
+  const layer =
+    1 +
+    0.6 *
+      Math.max(0, (radius - HILL_INNER - 34) / 40) *
+      (1.4 + Math.sin(angle * 4 + 1.1));
   return WATER_Y - 4 + ramp * Math.max(2, ridge) * layer;
 }
 
@@ -690,7 +874,9 @@ function DistantHills() {
         const angle = (Math.PI * 2 * ai) / HILL_SEGMENTS;
         const y = hillHeight(radius, angle);
         positions.push(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
-        mixed.copy(low).lerp(high, Math.min(1, Math.max(0, (y - WATER_Y) / 22)));
+        mixed
+          .copy(low)
+          .lerp(high, Math.min(1, Math.max(0, (y - WATER_Y) / 22)));
         colors.push(mixed.r, mixed.g, mixed.b);
       }
     }
@@ -753,7 +939,13 @@ function SkyDome({horizon, top}: {horizon: string; top: string}) {
 
   return (
     <mesh geometry={geometry} renderOrder={-1} frustumCulled={false}>
-      <meshBasicMaterial vertexColors side={BackSide} depthWrite={false} fog={false} toneMapped={false} />
+      <meshBasicMaterial
+        vertexColors
+        side={BackSide}
+        depthWrite={false}
+        fog={false}
+        toneMapped={false}
+      />
     </mesh>
   );
 }
@@ -766,9 +958,20 @@ function SkyDome({horizon, top}: {horizon: string; top: string}) {
 //
 // 아주 느리게 돈다(약 26분에 한 바퀴). 멈춰 있으면 스티커처럼 보이고,
 // 눈에 띄게 돌면 시선을 뺏는다.
-function CloudLayer({light, dark, cover}: {light: string; dark: string; cover: number}) {
+function CloudLayer({
+  light,
+  dark,
+  cover
+}: {
+  light: string;
+  dark: string;
+  cover: number;
+}) {
   const ref = useRef<Mesh>(null);
-  const texture = useMemo(() => (cover > 0 ? makeCloudTexture(light, dark, cover) : null), [light, dark, cover]);
+  const texture = useMemo(
+    () => (cover > 0 ? makeCloudTexture(light, dark, cover) : null),
+    [light, dark, cover]
+  );
   useEffect(() => () => texture?.dispose(), [texture]);
   useFrame((_, delta) => {
     if (ref.current) ref.current.rotation.y += delta * 0.004;
@@ -791,16 +994,31 @@ function CloudLayer({light, dark, cover}: {light: string; dark: string; cover: n
 
 // 해(밤엔 달). 하늘 돔 바로 안쪽, 태양광과 **같은 방향**에 둔다 —
 // 빛은 오른쪽에서 오는데 해가 왼쪽에 떠 있으면 바로 눈에 걸린다.
-function SunDisc({direction, radius, color}: {direction: [number, number, number]; radius: number; color: string}) {
+function SunDisc({
+  direction,
+  radius,
+  color
+}: {
+  direction: [number, number, number];
+  radius: number;
+  color: string;
+}) {
   const position = useMemo(() => {
-    const v = new Vector3(...direction).normalize().multiplyScalar(SKY_RADIUS * 0.94);
+    const v = new Vector3(...direction)
+      .normalize()
+      .multiplyScalar(SKY_RADIUS * 0.94);
     return v;
   }, [direction]);
   return (
     <Billboard position={position} renderOrder={-1}>
       <mesh>
         <circleGeometry args={[radius, 32]} />
-        <meshBasicMaterial color={color} depthWrite={false} fog={false} toneMapped={false} />
+        <meshBasicMaterial
+          color={color}
+          depthWrite={false}
+          fog={false}
+          toneMapped={false}
+        />
       </mesh>
       {/* 번짐 — 원반만 있으면 스티커처럼 보인다 */}
       <mesh position={[0, 0, -0.5]}>
@@ -831,39 +1049,62 @@ function SunDisc({direction, radius, color}: {direction: [number, number, number
 // 3D 글자(troika Text)를 안 쓴 이유: 기본 폰트를 CDN에서 받아 오는데 이 앱은
 // 폰트를 로컬에 안 들고 있다. Html 은 이 씬이 이미 쓰고 있고(NPC 말풍선),
 // 시스템 폰트라 한글도 안 깨진다.
-const DISTRICT_BANNERS: {district: string; label: string; ribbon: string; ink: string}[] = [
+const DISTRICT_BANNERS: {
+  district: string;
+  label: string;
+  ribbon: string;
+  ink: string;
+}[] = [
   {district: "projects", label: "PROJECTS", ribbon: "#8a4a2e", ink: "#ffe2a8"},
   {district: "skills", label: "SKILLS", ribbon: "#2f5d4a", ink: "#ffe2a8"},
-  {district: "experience", label: "EXPERIENCE", ribbon: "#4a3b6b", ink: "#ffe2a8"},
+  {
+    district: "experience",
+    label: "EXPERIENCE",
+    ribbon: "#4a3b6b",
+    ink: "#ffe2a8"
+  },
   {district: "study", label: "STUDY", ribbon: "#2c4a6b", ink: "#ffe2a8"},
   {district: "life", label: "LIFE", ribbon: "#6b5423", ink: "#ffe2a8"},
   {district: "contact", label: "CONTACT", ribbon: "#7a2f2f", ink: "#ffe2a8"}
 ];
 
 /** 구역별 건물 무게중심 — 현판을 그 위에 띄운다 */
-const DISTRICT_CENTERS: Record<string, {x: number; z: number; top: number}> = (() => {
-  const acc: Record<string, {x: number; z: number; n: number; top: number}> = {};
-  for (const b of villageBuildings) {
-    if (b.district === "plaza") continue;
-    const at = (acc[b.district] ??= {x: 0, z: 0, n: 0, top: 0});
-    at.x += b.position[0];
-    at.z += b.position[2];
-    at.n += 1;
-    // 가장 높은 건물보다 위로 띄워야 지붕에 안 걸린다
-    at.top = Math.max(at.top, b.size[1]);
-  }
-  return Object.fromEntries(
-    Object.entries(acc).map(([k, v]) => [k, {x: v.x / v.n, z: v.z / v.n, top: v.top}])
-  );
-})();
+const DISTRICT_CENTERS: Record<string, {x: number; z: number; top: number}> =
+  (() => {
+    const acc: Record<string, {x: number; z: number; n: number; top: number}> =
+      {};
+    for (const b of villageBuildings) {
+      if (b.district === "plaza") continue;
+      const at = (acc[b.district] ??= {x: 0, z: 0, n: 0, top: 0});
+      at.x += b.position[0];
+      at.z += b.position[2];
+      at.n += 1;
+      // 가장 높은 건물보다 위로 띄워야 지붕에 안 걸린다
+      at.top = Math.max(at.top, b.size[1]);
+    }
+    return Object.fromEntries(
+      Object.entries(acc).map(([k, v]) => [
+        k,
+        {x: v.x / v.n, z: v.z / v.n, top: v.top}
+      ])
+    );
+  })();
 
-function DistrictBanner({label, ribbon, ink, at}: {
+function DistrictBanner({
+  label,
+  ribbon,
+  ink,
+  at
+}: {
   label: string;
   ribbon: string;
   ink: string;
   at: {x: number; z: number; top: number};
 }) {
-  const calculatePosition = useMemo(() => createThrottledCalculatePosition(LABEL_SYNC_STRIDE), []);
+  const calculatePosition = useMemo(
+    () => createThrottledCalculatePosition(LABEL_SYNC_STRIDE),
+    []
+  );
   const plate = useRef<HTMLDivElement>(null);
   const here = useMemo(() => new Vector3(at.x, at.top + 1.8, at.z), [at]);
   // 화면 고정 크기라 코앞에서도 안 줄어든다 — 걸어 다닐 때 눈앞을 가리지 않게
@@ -872,7 +1113,9 @@ function DistrictBanner({label, ribbon, ink, at}: {
   useFrame(({camera}) => {
     if (!plate.current || (tick.current = (tick.current + 1) % 6) !== 0) return;
     const d = camera.position.distanceTo(here);
-    plate.current.style.opacity = String(Math.min(1, Math.max(0, (d - 14) / 10)));
+    plate.current.style.opacity = String(
+      Math.min(1, Math.max(0, (d - 14) / 10))
+    );
   });
   return (
     <Html
@@ -887,23 +1130,32 @@ function DistrictBanner({label, ribbon, ink, at}: {
       zIndexRange={[6, 0]}
       style={{pointerEvents: "none", userSelect: "none"}}
     >
-      <div ref={plate} style={{
-        // 나무 현판 — 가운데가 밝고 위아래가 어두운 원통형 음영
-        background: `linear-gradient(180deg, ${ribbon} 0%, ${shade(ribbon, 1.35)} 45%, ${ribbon} 78%, ${shade(ribbon, 0.7)} 100%)`,
-        border: "2px solid #c79a4e",
-        borderRadius: 6,
-        boxShadow: "0 4px 10px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(0,0,0,0.22)",
-        padding: "3px 12px",
-        whiteSpace: "nowrap"
-      }}>
-        <span style={{
-          fontFamily: "Georgia, 'Times New Roman', serif",
-          fontSize: 15,
-          fontWeight: 900,
-          letterSpacing: "0.12em",
-          color: ink,
-          textShadow: "0 1px 0 rgba(0,0,0,0.6)"
-        }}>
+      <div
+        ref={plate}
+        style={{
+          // 나무 현판 — 가운데가 밝고 위아래가 어두운 원통형 음영
+          background: `linear-gradient(180deg, ${ribbon} 0%, ${shade(
+            ribbon,
+            1.35
+          )} 45%, ${ribbon} 78%, ${shade(ribbon, 0.7)} 100%)`,
+          border: "2px solid #c79a4e",
+          borderRadius: 6,
+          boxShadow:
+            "0 4px 10px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(0,0,0,0.22)",
+          padding: "3px 12px",
+          whiteSpace: "nowrap"
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontSize: 15,
+            fontWeight: 900,
+            letterSpacing: "0.12em",
+            color: ink,
+            textShadow: "0 1px 0 rgba(0,0,0,0.6)"
+          }}
+        >
           {label}
         </span>
       </div>
@@ -914,14 +1166,16 @@ function DistrictBanner({label, ribbon, ink, at}: {
 /** #rrggbb 를 배수만큼 밝게/어둡게 */
 function shade(hex: string, factor: number) {
   const n = parseInt(hex.slice(1), 16);
-  const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((c) =>
+  const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(c =>
     Math.max(0, Math.min(255, Math.round(c * factor)))
   );
   return `rgb(${ch.join(",")})`;
 }
 
 function ActiveRoute({activeSection}: {activeSection: SectionId}) {
-  const building = villageBuildings.find((b) => b.sectionId === activeSection && b.district !== "plaza");
+  const building = villageBuildings.find(
+    b => b.sectionId === activeSection && b.district !== "plaza"
+  );
 
   if (!building || activeSection === "intro") {
     return (
@@ -930,7 +1184,13 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
           <ringGeometry args={[1.55, 1.66, 64]} />
           <meshBasicMaterial color="#00d4ff" transparent opacity={0.22} />
         </mesh>
-        <pointLight color="#00d4ff" intensity={0.5} distance={4} decay={2} position={[0, 0.4, 0]} />
+        <pointLight
+          color="#00d4ff"
+          intensity={0.5}
+          distance={4}
+          decay={2}
+          position={[0, 0.4, 0]}
+        />
       </group>
     );
   }
@@ -942,15 +1202,32 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
   return (
     <group>
       {/* 길 타일 윗면이 y=0.02라, 예전 높이(0.014/0.015)에 그리면 길 밑에 깔려 안 보인다 */}
-      <mesh position={[x / 2, 0.05 + terrainHeightAt(x / 2, z / 2), z / 2]} rotation={[-Math.PI / 2, 0, angle]}>
+      <mesh
+        position={[x / 2, 0.05 + terrainHeightAt(x / 2, z / 2), z / 2]}
+        rotation={[-Math.PI / 2, 0, angle]}
+      >
         <planeGeometry args={[dist, 0.07]} />
-        <meshBasicMaterial color={building.accentColor} transparent opacity={0.3} />
+        <meshBasicMaterial
+          color={building.accentColor}
+          transparent
+          opacity={0.3}
+        />
       </mesh>
       <mesh position={[x, 0.05, z]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[1.18, 1.3, 48]} />
-        <meshBasicMaterial color={building.accentColor} transparent opacity={0.28} />
+        <meshBasicMaterial
+          color={building.accentColor}
+          transparent
+          opacity={0.28}
+        />
       </mesh>
-      <pointLight color={building.accentColor} intensity={0.6} distance={4} decay={2} position={[x, 0.6, z]} />
+      <pointLight
+        color={building.accentColor}
+        intensity={0.6}
+        distance={4}
+        decay={2}
+        position={[x, 0.6, z]}
+      />
     </group>
   );
 }
@@ -966,13 +1243,27 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
         <group position={[1.7, 0, 1.8]}>
           <mesh castShadow position={[0, 0.18, 0]}>
             <cylinderGeometry args={[0.35, 0.42, 0.36, 18]} />
-            <meshStandardMaterial color="#26364a" metalness={0.5} roughness={0.35} />
+            <meshStandardMaterial
+              color="#26364a"
+              metalness={0.5}
+              roughness={0.35}
+            />
           </mesh>
           <mesh castShadow position={[0, 0.72, 0]}>
             <boxGeometry args={[0.28, 0.72, 0.18]} />
-            <meshStandardMaterial color="#7ed957" emissive="#7ed957" emissiveIntensity={0.18} />
+            <meshStandardMaterial
+              color="#7ed957"
+              emissive="#7ed957"
+              emissiveIntensity={0.18}
+            />
           </mesh>
-          <pointLight color="#7ed957" intensity={0.8} distance={3} decay={2} position={[0, 1.1, 0]} />
+          <pointLight
+            color="#7ed957"
+            intensity={0.8}
+            distance={3}
+            decay={2}
+            position={[0, 1.1, 0]}
+          />
         </group>
       ) : null}
 
@@ -980,13 +1271,23 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
         <group position={[-4.2, 0, -3.4]}>
           <mesh castShadow position={[0, 0.5, 0]}>
             <cylinderGeometry args={[0.08, 0.12, 1, 12]} />
-            <meshStandardMaterial color="#0a1a2e" metalness={0.8} roughness={0.2} />
+            <meshStandardMaterial
+              color="#0a1a2e"
+              metalness={0.8}
+              roughness={0.2}
+            />
           </mesh>
           <mesh position={[0, 1.1, 0]}>
             <sphereGeometry args={[0.16, 18, 18]} />
             <meshBasicMaterial color="#00d4ff" />
           </mesh>
-          <pointLight color="#00d4ff" intensity={1.5} distance={5} decay={2} position={[0, 1.2, 0]} />
+          <pointLight
+            color="#00d4ff"
+            intensity={1.5}
+            distance={5}
+            decay={2}
+            position={[0, 1.2, 0]}
+          />
         </group>
       ) : null}
 
@@ -998,7 +1299,11 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
           </mesh>
           <mesh position={[0, 0.42, 0]}>
             <sphereGeometry args={[0.12, 16, 16]} />
-            <meshStandardMaterial color="#00ff88" emissive="#00ff88" emissiveIntensity={0.4} />
+            <meshStandardMaterial
+              color="#00ff88"
+              emissive="#00ff88"
+              emissiveIntensity={0.4}
+            />
           </mesh>
         </group>
       ) : null}
@@ -1007,10 +1312,24 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
 }
 
 function VillageSceneImpl({
-  activeSection, activeNpcId, explorationMode, isIntro = false,
-  onSelectNpc, onRequestEnter, npcRuntimeStates, onNpcPositionChange, villageState,
-  guideScriptedTarget, onGuideArrive, guideForceHold, cinematic,
-  npcCommand, npcCommandTargets, overseerTarget, onEditingChange, npcSocialTargets
+  activeSection,
+  activeNpcId,
+  explorationMode,
+  isIntro = false,
+  onSelectNpc,
+  onRequestEnter,
+  npcRuntimeStates,
+  onNpcPositionChange,
+  villageState,
+  guideScriptedTarget,
+  onGuideArrive,
+  guideForceHold,
+  cinematic,
+  npcCommand,
+  npcCommandTargets,
+  overseerTarget,
+  onEditingChange,
+  npcSocialTargets
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
   const propsApi = usePropsEditor();
@@ -1018,13 +1337,28 @@ function VillageSceneImpl({
   const sky = VILLAGE_PALETTE;
   // 모바일 라이트 모드 — 해상도/안티앨리어싱을 낮춰 성능·배터리 확보
   const isMobile = useMemo(
-    () => typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches,
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 767px)").matches,
     []
   );
   // villageState는 30초 주기로만 바뀌므로, npcRuntimeStates가 바뀌는 2~3초마다
   // 매번 Array.find로 선형 탐색하지 않도록 Map을 villageState가 바뀔 때만 새로 만든다.
-  const buildingStateMap = useMemo(() => buildBuildingStateMap(villageState), [villageState]);
-  const npcStateMap = useMemo(() => buildNpcStateMap(villageState), [villageState]);
+  // 색보정표. 팔레트가 새로고침 전까지 안 바뀌므로 딱 한 번 굽는다.
+  // 모바일은 후처리 자체를 안 돌리니 굽지도 않는다.
+  const gradeLut = useMemo(
+    () => (isMobile || !LUT_ENABLED ? null : makeGradeLut(sky.grade)),
+    [isMobile, sky.grade]
+  );
+
+  const buildingStateMap = useMemo(
+    () => buildBuildingStateMap(villageState),
+    [villageState]
+  );
+  const npcStateMap = useMemo(
+    () => buildNpcStateMap(villageState),
+    [villageState]
+  );
 
   // 편집 모드일 때 부모가 자동 갱신(순찰·잡담·폴링)을 멈추도록 알린다.
   // (편집 중 잦은 리렌더 + 후처리 아웃라인이 R3F 재조정 루프를 유발하는 문제 방지)
@@ -1035,14 +1369,22 @@ function VillageSceneImpl({
   return (
     <div
       className="relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#00d4ff]/15 bg-[#050d1a] shadow-[inset_0_-30px_70px_rgba(0,100,255,0.1)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r"
-      onDragOver={editing ? (e) => e.preventDefault() : undefined}
-      onDrop={editing ? (e) => {
-        const glb = e.dataTransfer.getData("application/x-prop-glb");
-        if (glb) {
-          e.preventDefault();
-          propsApi.setPendingDrop({glb, clientX: e.clientX, clientY: e.clientY});
-        }
-      } : undefined}
+      onDragOver={editing ? e => e.preventDefault() : undefined}
+      onDrop={
+        editing
+          ? e => {
+              const glb = e.dataTransfer.getData("application/x-prop-glb");
+              if (glb) {
+                e.preventDefault();
+                propsApi.setPendingDrop({
+                  glb,
+                  clientX: e.clientX,
+                  clientY: e.clientY
+                });
+              }
+            }
+          : undefined
+      }
     >
       <Canvas
         camera={{fov: 40, position: [4, 14, 16]}}
@@ -1050,7 +1392,11 @@ function VillageSceneImpl({
         performance={{min: isMobile ? 0.4 : 0.5}}
         // toneMappingExposure — 마을 전체 밝기의 유일한 손잡이. 자세한 이유는
         // timePalette 주석 참고(요약: 1.0에서는 잔디가 ACES 어깨에 붙어 그림자가 눌린다).
-        gl={{antialias: !isMobile, powerPreference: "high-performance", toneMappingExposure: 0.68}}
+        gl={{
+          antialias: !isMobile,
+          powerPreference: "high-performance",
+          toneMappingExposure: 0.68
+        }}
         // 모바일은 끈다 — 섀도맵 패스가 통째로 한 번 더 도는 비용이 크다.
         //
         // 데스크톱은 기본값(PCF). 처음엔 "soft"(PCFSoftShadowMap)로 뒀는데 이 three
@@ -1099,22 +1445,58 @@ function VillageSceneImpl({
           shadow-bias={-0.0006}
           shadow-normalBias={0.05}
         />
-        <directionalLight color={sky.fill} intensity={sky.fillI} position={[-6, 12, -4]} />
+        <directionalLight
+          color={sky.fill}
+          intensity={sky.fillI}
+          position={[-6, 12, -4]}
+        />
         <hemisphereLight args={[sky.hSky, sky.hGround, sky.hI]} />
 
         {/* 구역마다 살짝 다른 색감을 주는 보조광. 원래는 네온(청록/보라/연두/주황)이라
             잔디 위에서 색이 튀어서, 노을 톤 안에서 온도만 다른 따뜻한 색으로 낮췄다.
             sky.lamp 로 시간대에 따라 세기를 바꾼다 — 낮엔 햇빛에 묻히도록 죽이고
             밤엔 이것만 남아 창문·가로등 주변이 주황으로 뜬다. */}
-        <pointLight color="#ffd9a8" intensity={1.2 * sky.lamp} distance={22} decay={2} position={[-5, 5, 0]} />
-        <pointLight color="#e8c4ff" intensity={0.9 * sky.lamp} distance={20} decay={2} position={[3, 5, -5]} />
-        <pointLight color="#d8f0b0" intensity={0.9 * sky.lamp} distance={20} decay={2} position={[6, 5, 5]} />
-        <pointLight color="#ffbe86" intensity={0.9 * sky.lamp} distance={16} decay={2} position={[0, 4, 9]} />
+        <pointLight
+          color="#ffd9a8"
+          intensity={1.2 * sky.lamp}
+          distance={22}
+          decay={2}
+          position={[-5, 5, 0]}
+        />
+        <pointLight
+          color="#e8c4ff"
+          intensity={0.9 * sky.lamp}
+          distance={20}
+          decay={2}
+          position={[3, 5, -5]}
+        />
+        <pointLight
+          color="#d8f0b0"
+          intensity={0.9 * sky.lamp}
+          distance={20}
+          decay={2}
+          position={[6, 5, 5]}
+        />
+        <pointLight
+          color="#ffbe86"
+          intensity={0.9 * sky.lamp}
+          distance={16}
+          decay={2}
+          position={[0, 4, 9]}
+        />
 
         <Suspense fallback={null}>
           <SkyDome horizon={sky.skyHorizon} top={sky.skyTop} />
-          <CloudLayer light={sky.cloudLight} dark={sky.cloudDark} cover={sky.cloudCover} />
-          <SunDisc direction={sky.sunPos} radius={sky.discRadius} color={sky.discColor} />
+          <CloudLayer
+            light={sky.cloudLight}
+            dark={sky.cloudDark}
+            cover={sky.cloudCover}
+          />
+          <SunDisc
+            direction={sky.sunPos}
+            radius={sky.discRadius}
+            color={sky.discColor}
+          />
           <Ground />
           <IslandCliff />
           <AnimationClock />
@@ -1127,9 +1509,15 @@ function VillageSceneImpl({
           {/* 예전엔 네온 팻말 넷을 좌표로 박아 뒀는데, 구역을 컨셉 아트 방위로
               다시 배치하면서 넷 다 엉뚱한 자리에 남아 허공에 뜬 색판이 됐다.
               이제 건물 무게중심에서 계산하므로 배치를 옮겨도 따라온다. */}
-          {DISTRICT_BANNERS.map((b) =>
+          {DISTRICT_BANNERS.map(b =>
             DISTRICT_CENTERS[b.district] ? (
-              <DistrictBanner key={b.district} label={b.label} ribbon={b.ribbon} ink={b.ink} at={DISTRICT_CENTERS[b.district]} />
+              <DistrictBanner
+                key={b.district}
+                label={b.label}
+                ribbon={b.ribbon}
+                ink={b.ink}
+                at={DISTRICT_CENTERS[b.district]}
+              />
             ) : null
           )}
 
@@ -1138,26 +1526,39 @@ function VillageSceneImpl({
           <LiveDecorations villageState={villageState} />
           <PropsLayer api={propsApi} />
 
-          {villageBuildings.map((building) => {
+          {villageBuildings.map(building => {
             const ov = propsApi.buildingOverrides[building.id];
-            const merged = ov?.position ? {...building, position: ov.position} : building;
+            const merged = ov?.position
+              ? {...building, position: ov.position}
+              : building;
             return (
               <Building
                 key={building.id}
                 building={merged}
                 buildingState={buildingStateMap.get(building.id)}
                 isActive={activeSection === building.sectionId}
-                onRequestEnter={isWalkMode || editing ? noopRequestEnter : onRequestEnter}
-                edit={editing ? {
-                  editing: true,
-                  selected: propsApi.selection?.kind === "building" && propsApi.selection.id === building.id,
-                  rotationY: ov?.rotationY ?? 0,
-                  scale: ov?.scale ?? 1,
-                  onSelectDown: () => {
-                    propsApi.setSelection({kind: "building", id: building.id});
-                    propsApi.setDragging(true);
-                  },
-                } : undefined}
+                onRequestEnter={
+                  isWalkMode || editing ? noopRequestEnter : onRequestEnter
+                }
+                edit={
+                  editing
+                    ? {
+                        editing: true,
+                        selected:
+                          propsApi.selection?.kind === "building" &&
+                          propsApi.selection.id === building.id,
+                        rotationY: ov?.rotationY ?? 0,
+                        scale: ov?.scale ?? 1,
+                        onSelectDown: () => {
+                          propsApi.setSelection({
+                            kind: "building",
+                            id: building.id
+                          });
+                          propsApi.setDragging(true);
+                        }
+                      }
+                    : undefined
+                }
               />
             );
           })}
@@ -1180,9 +1581,19 @@ function VillageSceneImpl({
               holdUntil={npcRuntimeStates[npc.id]?.holdUntil}
               emote={visibleEmote(npcRuntimeStates[npc.id])}
               socialTarget={npcSocialTargets?.[npc.id]}
-              scriptedTarget={npc.id === "guide-npc" ? guideScriptedTarget : npc.id === "overseer-npc" ? overseerTarget : undefined}
-              scriptedStart={npc.id === "guide-npc" ? GUIDE_SCRIPTED_START : undefined}
-              onScriptedArrive={npc.id === "guide-npc" ? onGuideArrive : undefined}
+              scriptedTarget={
+                npc.id === "guide-npc"
+                  ? guideScriptedTarget
+                  : npc.id === "overseer-npc"
+                  ? overseerTarget
+                  : undefined
+              }
+              scriptedStart={
+                npc.id === "guide-npc" ? GUIDE_SCRIPTED_START : undefined
+              }
+              onScriptedArrive={
+                npc.id === "guide-npc" ? onGuideArrive : undefined
+              }
               forceHold={npc.id === "guide-npc" ? guideForceHold : undefined}
               command={npcCommand}
               commandTarget={npcCommandTargets?.[npc.id]}
@@ -1202,7 +1613,14 @@ function VillageSceneImpl({
               건물이 잔디에 붙어 보인다.
               길 타일 윗면(y=0.02)과 같은 높이면 z-파이팅이 나므로 살짝 위로. */}
           {isMobile ? (
-            <ContactShadows blur={1.5} far={12} frames={1} opacity={0.15} position={[0, 0.035, 2]} scale={26} />
+            <ContactShadows
+              blur={1.5}
+              far={12}
+              frames={1}
+              opacity={0.15}
+              position={[0, 0.035, 2]}
+              scale={26}
+            />
           ) : null}
 
           <SeasonAmbience lite={isMobile} />
@@ -1257,7 +1675,7 @@ function VillageSceneImpl({
                         quality="medium"
                         halfRes
                         depthAwareUpsampling
-                      />,
+                      />
                     ]
                   : []),
                 <Bloom
@@ -1274,29 +1692,61 @@ function VillageSceneImpl({
                 // 판때기가 됐다. 렌더러에 걸어 둔 ACES + 노출 0.68 을 여기서
                 // 똑같이 재현한다.
                 <ToneMapping key="tone" mode={ToneMappingMode.ACES_FILMIC} />,
+                // ─── 색보정 ────────────────────────────────────────────────
+                // **반드시 톤매핑 뒤다.** 앞에 두면 아직 1을 넘는 HDR 값이라
+                // 표 범위를 벗어난 밝은 부분이 통째로 잘려 하늘이 판때기가 된다.
+                //
+                // tetrahedralInterpolation: 32칸짜리 표를 부드럽게 잇는다.
+                // 안 켜면 밤하늘처럼 완만한 그라데이션에서 칸 경계가 띠로
+                // 보인다(밴딩). 표를 64로 키우는 것보다 이게 싸다.
+                ...(gradeLut
+                  ? [<LUT key="lut" lut={gradeLut} tetrahedralInterpolation />]
+                  : [])
               ]}
             </EffectComposer>
           )}
 
-          {isWalkMode
-            ? <CharacterController />
-            : <CameraController activeSection={activeSection} isIntro={isIntro} lockRotate={editing} cinematic={cinematic} />
-          }
+          {isWalkMode ? (
+            <CharacterController />
+          ) : (
+            <CameraController
+              activeSection={activeSection}
+              isIntro={isIntro}
+              lockRotate={editing}
+              cinematic={cinematic}
+            />
+          )}
         </Suspense>
       </Canvas>
 
       {isWalkMode ? (
         <div className="pointer-events-none absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-xl border border-[#00d4ff]/30 bg-[#050d1a]/85 px-4 py-2.5 backdrop-blur-md">
-          {[["W", "앞"], ["A", "왼쪽"], ["S", "뒤"], ["D", "오른쪽"]].map(([key, label]) => (
+          {[
+            ["W", "앞"],
+            ["A", "왼쪽"],
+            ["S", "뒤"],
+            ["D", "오른쪽"]
+          ].map(([key, label]) => (
             <span className="flex flex-col items-center gap-0.5" key={key}>
-              <kbd className="rounded border border-[#00d4ff]/50 bg-[#0a1a30] px-2 py-0.5 font-mono text-xs font-black text-[#00d4ff]">{key}</kbd>
-              <span className="font-mono text-[10px] text-[#0066aa]">{label}</span>
+              <kbd className="rounded border border-[#00d4ff]/50 bg-[#0a1a30] px-2 py-0.5 font-mono text-xs font-black text-[#00d4ff]">
+                {key}
+              </kbd>
+              <span className="font-mono text-[10px] text-[#0066aa]">
+                {label}
+              </span>
             </span>
           ))}
         </div>
       ) : (
         <div className="pointer-events-none absolute right-4 top-4 rounded-full border border-[#00d4ff]/25 bg-[#050d1a]/85 px-3 py-1.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/70 backdrop-blur-md">
-          {sky.label === "밤" ? "🌙" : sky.label === "새벽" ? "🌅" : sky.label === "노을" ? "🌇" : "☀️"} {sky.label}
+          {sky.label === "밤"
+            ? "🌙"
+            : sky.label === "새벽"
+            ? "🌅"
+            : sky.label === "노을"
+            ? "🌇"
+            : "☀️"}{" "}
+          {sky.label}
         </div>
       )}
 
