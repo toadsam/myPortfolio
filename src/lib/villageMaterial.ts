@@ -62,6 +62,20 @@ const NORMAL_SCALE = 0.8;
 
 const HUES = villageColors.hues.map((h) => h.dir as [number, number]);
 
+/**
+ * 채도 상한 — 컨셉 아트가 실제로 쓰는 채도의 90퍼센타일.
+ *
+ * 색조만 맞춰서는 부족했다. Meshy 에셋과 잔디는 컨셉 아트보다 훨씬 쨍해서
+ * (잔디 채도 0.162 vs 컨셉 상한 0.107), 색조가 같아져도 "물감으로 칠한 것"과
+ * "그림"이 나란히 있는 느낌이 남는다. **컨셉에 없는 채도는 마을에도 없어야 한다.**
+ *
+ * 감으로 정하면 취향 싸움이 되므로 팔레트에서 실측해 쓴다.
+ */
+const CHROMA_CEIL = (() => {
+  const cs = villageColors.colors.map((c) => Math.hypot(c.a, c.b)).sort((x, y) => x - y);
+  return cs[Math.floor(cs.length * 0.9)] ?? 0.107;
+})();
+
 /** 색조를 얼마나 끌어당길지 0~1. **0 이면 원본 색 그대로.** /?palette=0.3 으로 조절 */
 export const PALETTE_STRENGTH = (() => {
   if (typeof window === "undefined") return 0.55;
@@ -125,7 +139,11 @@ const PALETTE_BODY = `
     // 억지로 끌면 무채색 벽이 엉뚱한 색으로 물든다.
     float vmW = uPaletteStrength * smoothstep( 0.0, 0.045, vmC );
     vec2 vmNew = normalize( mix( vmDir, vmBest, vmW ) );
-    vmLab.yz = vmNew * vmC;
+    // 채도 상한 — 컨셉에 없는 쨍함을 깎는다. 색조만 맞추면 "같은 색인데
+    // 하나만 물감처럼 진한" 상태가 남는다. 세기에 비례해 눌러야 palette=0 일 때
+    // 원본으로 정확히 돌아온다.
+    float vmC2 = mix( vmC, min( vmC, uPaletteChromaCeil ), uPaletteStrength );
+    vmLab.yz = vmNew * vmC2;
     diffuseColor.rgb = max( vmOklabToLinear( vmLab ), 0.0 );
   }
 }
@@ -143,6 +161,7 @@ function patchPalette(std: MeshStandardMaterial): void {
     previous?.call(std, shader, renderer);
     shader.uniforms.uPaletteHues = {value: HUES.map(([a, b]) => new Vector2(a, b))};
     shader.uniforms.uPaletteStrength = STRENGTH;
+    shader.uniforms.uPaletteChromaCeil = {value: CHROMA_CEIL};
     shader.fragmentShader = shader.fragmentShader
       .replace(
         "#include <common>",
@@ -150,6 +169,7 @@ function patchPalette(std: MeshStandardMaterial): void {
 #define VM_HUES ${HUES.length}
 uniform vec2 uPaletteHues[ VM_HUES ];
 uniform float uPaletteStrength;
+uniform float uPaletteChromaCeil;
 ${OKLAB_GLSL}`
       )
       // map_fragment 가 텍스처와 color 를 곱해 diffuseColor 를 완성한 **직후**.

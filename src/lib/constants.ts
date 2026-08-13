@@ -73,7 +73,7 @@ const studyBuildings: BuildingData[] = [
     size: [2.64, 3.3, 2.64],
     color: "#cfd8e3",
     roofColor: "#3f6fa8",
-    accentColor: "#38bdf8",
+    accentColor: "#929cf5",
     techStack: ["백준", "프로그래머스", "알고리즘"]
   },
   {
@@ -89,7 +89,7 @@ const studyBuildings: BuildingData[] = [
     size: [2.76, 2.51, 2.76],
     color: "#ddd4ea",
     roofColor: "#6d4fa0",
-    accentColor: "#a78bfa",
+    accentColor: "#929cf5",
     techStack: ["OS", "네트워크", "DB", "자료구조"]
   }
 ];
@@ -109,7 +109,7 @@ const plazaBuilding: BuildingData = {
   size: [4.75, 5.54, 4.75],
   color: "#0a1a2e",
   roofColor: "#00d4ff",
-  accentColor: "#00d4ff"
+  accentColor: "#3fb1ea"
 };
 
 const projectBuildings: BuildingData[] = [
@@ -129,7 +129,7 @@ const projectBuildings: BuildingData[] = [
     size: [2.05, 3.3, 2.05],
     color: "#0d1f3a",
     roofColor: "#1a3a6a",
-    accentColor: "#00d4ff",
+    accentColor: "#e88762",
     techStack: ["React", "TypeScript", "Spring Boot"]
   },
   {
@@ -145,7 +145,7 @@ const projectBuildings: BuildingData[] = [
     size: [3.1, 1.85, 2.28],
     color: "#1a1a0d",
     roofColor: "#3a3a1a",
-    accentColor: "#ffcc00",
+    accentColor: "#e88762",
     techStack: ["React", "Spring Boot", "SSE", "PWA"]
   },
   {
@@ -161,7 +161,7 @@ const projectBuildings: BuildingData[] = [
     size: [2.88, 2.51, 2.88],
     color: "#dee7f2",
     roofColor: "#4a7fbf",
-    accentColor: "#7eb8ff",
+    accentColor: "#e88762",
     techStack: ["Spring Boot", "Firebase", "Expo"]
   },
   {
@@ -177,7 +177,7 @@ const projectBuildings: BuildingData[] = [
     size: [1.5, 2.51, 0.92],
     color: "#1a0d2e",
     roofColor: "#3a1a5a",
-    accentColor: "#cc88ff",
+    accentColor: "#e88762",
     techStack: ["React", "TypeScript", "Vite"]
   },
   {
@@ -193,7 +193,7 @@ const projectBuildings: BuildingData[] = [
     size: [2.64, 2.51, 2.64],
     color: "#dbe7c8",
     roofColor: "#5f8c33",
-    accentColor: "#88ff44",
+    accentColor: "#e88762",
     techStack: ["TypeScript", "Phaser 3", "Vite"]
   },
   {
@@ -209,7 +209,7 @@ const projectBuildings: BuildingData[] = [
     size: [2.51, 2.51, 2.51],
     color: "#1f0d0d",
     roofColor: "#3a1a1a",
-    accentColor: "#ff6644",
+    accentColor: "#e88762",
     techStack: ["React", "Docker", "Nginx"]
   },
   {
@@ -225,7 +225,7 @@ const projectBuildings: BuildingData[] = [
     size: [2.01, 2.51, 2.01],
     color: "#1a0d0d",
     roofColor: "#3a1a1a",
-    accentColor: "#ff4488",
+    accentColor: "#e88762",
     techStack: ["TypeScript", "Spring Boot", "Socket.IO", "OAuth"]
   },
   {
@@ -241,7 +241,7 @@ const projectBuildings: BuildingData[] = [
     size: [2.51, 2.51, 2.51],
     color: "#0d0d0d",
     roofColor: "#1a1a1a",
-    accentColor: "#882200",
+    accentColor: "#e88762",
     techStack: ["Unity", "C#", "Cinemachine", "URP"]
   },
   {
@@ -257,7 +257,7 @@ const projectBuildings: BuildingData[] = [
     size: [1.72, 1.72, 1.72],
     color: "#0d1a0d",
     roofColor: "#1a2e1a",
-    accentColor: "#44aa66",
+    accentColor: "#e88762",
     techStack: ["Unity", "C#"]
   }
 ];
@@ -276,7 +276,7 @@ const skillBuildings: BuildingData[] = [
     size: [3, 2.51, 3],
     color: "#0d1a2e",
     roofColor: "#0a2a4a",
-    accentColor: "#00d4ff",
+    accentColor: "#b8a636",
     techStack: ["React", "Next.js", "TypeScript", "Tailwind"]
   },
   {
@@ -292,7 +292,7 @@ const skillBuildings: BuildingData[] = [
     size: [3.8, 3.3, 3.8],
     color: "#1a0d2e",
     roofColor: "#2a1a4a",
-    accentColor: "#aa44ff",
+    accentColor: "#b8a636",
     techStack: ["Three.js", "R3F", "Drei", "Framer Motion"]
   },
   {
@@ -308,7 +308,7 @@ const skillBuildings: BuildingData[] = [
     size: [2.68, 4.09, 3.12],
     color: "#1a1a0d",
     roofColor: "#2a2a1a",
-    accentColor: "#fbbf24",
+    accentColor: "#b8a636",
     techStack: ["Spring Boot", "FastAPI", "PostgreSQL"]
   },
   {
@@ -324,7 +324,7 @@ const skillBuildings: BuildingData[] = [
     size: [2.64, 2.51, 2.64],
     color: "#2a0d0d",
     roofColor: "#4a1a1a",
-    accentColor: "#ff6600",
+    accentColor: "#b8a636",
     techStack: ["Unity", "C#", "XR"]
   },
   {
@@ -340,7 +340,7 @@ const skillBuildings: BuildingData[] = [
     size: [1.82, 1.72, 1.62],
     color: "#1a1a1a",
     roofColor: "#2a2a2a",
-    accentColor: "#fbbf24",
+    accentColor: "#b8a636",
     techStack: ["GitHub", "Notion", "Docker", "CI/CD"]
   }
 ];
@@ -359,7 +359,7 @@ const experienceBuildings: BuildingData[] = [
     size: [1.82, 1.72, 1.61],
     color: "#1a0d2e",
     roofColor: "#3a1a5a",
-    accentColor: "#aa44ff",
+    accentColor: "#c889d7",
     techStack: ["Unity", "C#", "게임 UI"]
   },
   {
@@ -375,7 +375,7 @@ const experienceBuildings: BuildingData[] = [
     size: [2.65, 2.51, 2.38],
     color: "#0d1a2e",
     roofColor: "#1a3a5a",
-    accentColor: "#00d4ff"
+    accentColor: "#c889d7"
   },
   {
     id: "exp-portfolio",
@@ -390,7 +390,7 @@ const experienceBuildings: BuildingData[] = [
     size: [3.47, 3.3, 3.14],
     color: "#0d2a1a",
     roofColor: "#1a4a2a",
-    accentColor: "#00ff88",
+    accentColor: "#c889d7",
     techStack: ["React", "Three.js", "TypeScript", "FastAPI"]
   }
 ];
@@ -407,7 +407,7 @@ const contactBuilding: BuildingData = {
   size: [2.77, 2.51, 2.51],
   color: "#f0e2cc",
   roofColor: "#c2502e",
-  accentColor: "#ff6600"
+  accentColor: "#e9808f"
 };
 
 // 인생/일상 구역 — 운동·투자·학습·음악·연혁·가치관. (지오메트리는 임시, 추후 에셋 교체)
@@ -425,7 +425,7 @@ const lifeBuildings: BuildingData[] = [
     size: [1.72, 1.72, 1.72],
     color: "#efe4c6",
     roofColor: "#b8862f",
-    accentColor: "#fbbf24",
+    accentColor: "#dc9243",
     techStack: ["GitHub", "Email", "Blog"]
   },
   {
@@ -441,7 +441,7 @@ const lifeBuildings: BuildingData[] = [
     size: [3.39, 2.51, 3.39],
     color: "#1a0d0d",
     roofColor: "#3a1a1a",
-    accentColor: "#ff5a5a",
+    accentColor: "#dc9243",
     techStack: ["운동", "스트릭"]
   },
   {
@@ -457,7 +457,7 @@ const lifeBuildings: BuildingData[] = [
     size: [2.05, 3.3, 2.05],
     color: "#d6ead9",
     roofColor: "#2f8a63",
-    accentColor: "#34d399",
+    accentColor: "#dc9243",
     techStack: ["투자", "원칙"]
   },
   {
@@ -473,7 +473,7 @@ const lifeBuildings: BuildingData[] = [
     size: [2.76, 2.51, 2.76],
     color: "#ecdcc2",
     roofColor: "#8a5a2f",
-    accentColor: "#d9a45b",
+    accentColor: "#dc9243",
     techStack: ["독서", "학습"]
   },
   {
@@ -489,7 +489,7 @@ const lifeBuildings: BuildingData[] = [
     size: [2.88, 2.51, 2.88],
     color: "#160d2a",
     roofColor: "#2a1a4a",
-    accentColor: "#c084fc",
+    accentColor: "#dc9243",
     techStack: ["음악", "오디오"]
   },
   {
@@ -505,7 +505,7 @@ const lifeBuildings: BuildingData[] = [
     size: [2.53, 4.09, 2.53],
     color: "#dde6f0",
     roofColor: "#3f6a96",
-    accentColor: "#7eb8ff"
+    accentColor: "#dc9243"
   }
 ];
 

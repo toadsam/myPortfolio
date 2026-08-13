@@ -310,7 +310,7 @@ function IslandCliff() {
     const colors: number[] = [];
     const indices: number[] = [];
 
-    const rim = new Color("#5f8a3f"); // 잔디와 만나는 윗단
+    const rim = new Color("#6a8557"); // 잔디와 만나는 윗단
     const rock = new Color("#8a7a63"); // 볕 드는 바위
     const deep = new Color("#43382f"); // 물에 잠기는 아래쪽
     const mixed = new Color();
@@ -459,8 +459,8 @@ function Waterways() {
     const uvs: number[] = [];
     const indices: number[] = [];
 
-    const shallow = new Color("#63c7c4"); // 가장자리 — 자갈이 비치는 여울
-    const deep = new Color("#2f8fa6"); // 한가운데
+    const shallow = new Color("#6dc5c3"); // 가장자리 — 자갈이 비치는 여울
+    const deep = new Color("#3a8ea3"); // 한가운데
 
     /**
      * 폴리라인 하나를 물 리본으로 만든다. 한 마디마다 정점 셋(왼·오른·가운데)이라
@@ -872,8 +872,8 @@ function DistantHills() {
     const indices: number[] = [];
 
     // 능선이 높을수록 밝은 녹색, 골짜기는 어두운 침엽수 색. 정점 색이라 공짜다.
-    const low = new Color("#3f6b39");
-    const high = new Color("#7fa958");
+    const low = new Color("#466941");
+    const high = new Color("#89a473");
     const mixed = new Color();
 
     for (let ri = 0; ri <= HILL_RINGS; ri++) {
@@ -1190,10 +1190,10 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
       <group>
         <mesh position={[0, 0.045, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[1.55, 1.66, 64]} />
-          <meshBasicMaterial color="#00d4ff" transparent opacity={0.22} />
+          <meshBasicMaterial color="#53cdff" transparent opacity={0.22} />
         </mesh>
         <pointLight
-          color="#00d4ff"
+          color="#53cdff"
           intensity={0.5}
           distance={4}
           decay={2}
@@ -1260,13 +1260,13 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
           <mesh castShadow position={[0, 0.72, 0]}>
             <boxGeometry args={[0.28, 0.72, 0.18]} />
             <meshStandardMaterial
-              color="#7ed957"
-              emissive="#7ed957"
+              color="#d4bf47"
+              emissive="#d4bf47"
               emissiveIntensity={0.18}
             />
           </mesh>
           <pointLight
-            color="#7ed957"
+            color="#d4bf47"
             intensity={0.8}
             distance={3}
             decay={2}
@@ -1287,10 +1287,10 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
           </mesh>
           <mesh position={[0, 1.1, 0]}>
             <sphereGeometry args={[0.16, 18, 18]} />
-            <meshBasicMaterial color="#00d4ff" />
+            <meshBasicMaterial color="#53cdff" />
           </mesh>
           <pointLight
-            color="#00d4ff"
+            color="#53cdff"
             intensity={1.5}
             distance={5}
             decay={2}
@@ -1303,13 +1303,13 @@ function LiveDecorations({villageState}: {villageState: VillageState | null}) {
         <group position={[2.2, 0, -2.1]}>
           <mesh position={[0, 0.08, 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <ringGeometry args={[0.35, 0.48, 32]} />
-            <meshBasicMaterial color="#00ff88" transparent opacity={0.65} />
+            <meshBasicMaterial color="#ecd862" transparent opacity={0.65} />
           </mesh>
           <mesh position={[0, 0.42, 0]}>
             <sphereGeometry args={[0.12, 16, 16]} />
             <meshStandardMaterial
-              color="#00ff88"
-              emissive="#00ff88"
+              color="#ecd862"
+              emissive="#ecd862"
               emissiveIntensity={0.4}
             />
           </mesh>
