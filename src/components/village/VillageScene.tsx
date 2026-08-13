@@ -41,6 +41,7 @@ import {
 import {spread, villageBuildings} from "@/lib/constants";
 import {AO_ENABLED, LUT_ENABLED, VILLAGE_PALETTE} from "@/lib/villagePalette";
 import {makeGradeLut} from "@/lib/villageGrade";
+import {lockSceneMaterials} from "@/lib/villageMaterial";
 import {MOAT, RELIEF_ENABLED, reliefAt} from "@/lib/villageRelief";
 import {makeCloudTexture} from "@/lib/skyClouds";
 import {
@@ -122,6 +123,7 @@ const PLAZA_LANDMARK_READY = "central-plaza" in buildingModels;
 
 function Statue() {
   const {scene} = useGLTF("/models/environment/statue.glb");
+  useMemo(() => lockSceneMaterials(scene), [scene]);
   return (
     <primitive
       object={scene}
@@ -152,9 +154,15 @@ useGLTF.preload("/models/environment/statue.glb");
 // 물 건너에는 먼 산(DistantHills)이 선다. 마을 → 절벽 → 물 → 산, 네 겹이 겹치면서
 // 깊이가 생긴다.
 //
-// ISLAND_RADIUS 는 마을 밖 프롭까지 다 품어야 한다 — 숲 띠 끝이 중심에서 37.4다.
+// ISLAND_RADIUS 는 마을 밖 프롭까지 다 품어야 한다.
+//
+// **해자보다 반드시 커야 한다.** 건물을 1.4배로 키우며 해자를 a=40 까지 넓혔는데,
+// 해자는 굽이(drift ±1.9)와 리본 반폭(1.23)까지 더해 43.2 까지 나간다. 40 으로
+// 두면 물이 잔디 원반을 넘어 절벽 위 허공에 흐른다.
+// 그 바깥에 숲 띠가 설 자리(예전 기준 약 10유닛)까지 남겨 53 으로 잡는다.
+// 숲은 교차 빌보드라 그루당 6삼각형뿐이므로, 원반을 넓혀도 삼각형 비용은 거의 없다.
 const ISLAND_CENTER: [number, number, number] = [0, 0, 3];
-const ISLAND_RADIUS = 40;
+const ISLAND_RADIUS = 53;
 /** 절벽이 물까지 떨어지는 깊이 */
 const CLIFF_DROP = 9;
 /** 수면 높이 — 절벽 중턱쯤에 둬야 벼랑이 물에 잠긴 것처럼 보인다 */

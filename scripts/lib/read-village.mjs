@@ -24,6 +24,12 @@ export function readVillage() {
   // 바뀌면서 여기도 같이 바꿨다. 방향은 **밀기 전 좌표의 구역 무게중심**에서 얻는다.
   const PUSH = num(/const DISTRICT_PUSH\s*=\s*([\d.]+)/);
 
+  // 건물 치수 배율 — constants.ts 가 export 할 때 size 에 곱하는 값.
+  // **여기서 안 읽으면 생성기만 옛 크기를 본다**: 건물은 커졌는데 앞마당 원반과
+  // 길 폭은 그대로라 건물이 제 앞마당을 삐져나온다. size 는 좌표와 달리
+  // SPREAD 를 안 타므로 별도 상수다.
+  const BUILDING_SCALE = num(/export const BUILDING_SCALE\s*=\s*([\d.]+)/);
+
   // id 하나가 곧 건물 하나는 아니다(sectionMeta 에도 id가 있다). 다음 id 직전까지만
   // 훑어서 size·position·district 가 모두 있는 것만 건물로 친다.
   const raw = [];
@@ -65,16 +71,49 @@ export function readVillage() {
       district: b.district,
       x: Math.round((b.px + ox) * SPREAD * 100) / 100,
       z: Math.round((b.pz + oz) * SPREAD * 100) / 100,
-      w: b.w,
-      h: b.h,
-      d: b.d
+      w: Math.round(b.w * BUILDING_SCALE * 100) / 100,
+      h: Math.round(b.h * BUILDING_SCALE * 100) / 100,
+      d: Math.round(b.d * BUILDING_SCALE * 100) / 100
     };
   });
 
   if (buildings.length < 20)
     throw new Error(`${CONSTANTS} 에서 건물을 ${buildings.length}개밖에 못 읽었습니다 — 형식이 바뀐 듯합니다`);
 
-  return {SPREAD, OFFSET, buildings};
+  return {SPREAD, BUILDING_SCALE, OFFSET, buildings};
+}
+
+/**
+ * 마을을 두르는 해자 타원을 원본(villageRelief.ts)에서 읽는다.
+ *
+ * 씬은 이 타원으로 물을 그리고, 생성기는 같은 타원을 따라 숲 금지 구역을 깐다.
+ * 값을 양쪽에 적어 두면 반드시 어긋난다 — 실제로 마을을 키우며 해자를 넓혔을 때
+ * 생성기 쪽만 옛 값으로 남아 나무 55그루가 물에 잠겼다.
+ */
+export function readMoat() {
+  const source = readFileSync("src/lib/villageRelief.ts", "utf8");
+  const m = source.match(
+    /MOAT\s*=\s*\{\s*cx:\s*(-?[\d.]+),\s*cz:\s*(-?[\d.]+),\s*a:\s*(-?[\d.]+),\s*b:\s*(-?[\d.]+)\s*\}/
+  );
+  if (!m) throw new Error("src/lib/villageRelief.ts 에서 MOAT 를 못 찾았습니다 — 형식이 바뀐 듯합니다");
+  return {cx: +m[1], cz: +m[2], a: +m[3], b: +m[4]};
+}
+
+/**
+ * 섬(잔디 원반)의 중심과 반지름을 VillageScene 에서 읽는다.
+ *
+ * 프롭을 이 밖에 심으면 나무가 절벽 너머 허공에 뜬다. 예전엔 생성기가
+ * "잔디 평면은 90×90" 이라는 **사각형**을 손으로 적어 뒀는데, 씬은 진작
+ * 원반으로 바뀐 뒤였다(반지름 40 → 53). 값을 베끼면 반드시 이렇게 낡는다.
+ */
+export function readIsland() {
+  const source = readFileSync("src/components/village/VillageScene.tsx", "utf8");
+  const c = source.match(
+    /ISLAND_CENTER[^=]*=\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/
+  );
+  const r = source.match(/const ISLAND_RADIUS\s*=\s*([\d.]+)/);
+  if (!c || !r) throw new Error("VillageScene.tsx 에서 ISLAND_CENTER/RADIUS 를 못 찾았습니다");
+  return {cx: +c[1], cz: +c[3], r: +r[1]};
 }
 
 /**

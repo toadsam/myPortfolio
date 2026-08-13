@@ -5,6 +5,7 @@ import {memo, useMemo, useRef, useState} from "react";
 import {useFrame, type ThreeEvent} from "@react-three/fiber";
 import {AdditiveBlending, Box3, BoxGeometry, EdgesGeometry, type Group, type Mesh, type MeshStandardMaterial} from "three";
 import {lightIntensity} from "@/lib/liveState";
+import {lockSceneMaterials} from "@/lib/villageMaterial";
 import {createThrottledCalculatePosition, LABEL_SYNC_STRIDE} from "@/lib/htmlLabelThrottle";
 import type {BuildingState} from "@/types/live";
 import type {BuildingData} from "@/types/portfolio";
@@ -102,6 +103,9 @@ function GlbModel({glbPath, size, boost = 1}: {glbPath: string; size: [number, n
   // 건물 27채마다 pointLight 를 하나씩 두는 방법도 있었지만, three 는 광원마다
   // 셰이더 유니폼을 잡아서 27개면 컴파일이 터진다.
   useMemo(() => {
+    // 빛 반응부터 통일한다 — Meshy 가 에셋마다 다르게 내보낸 metalness·roughness 를
+    // 마을 공통값으로 잠근다. 색은 LUT 가, 반응은 여기가 묶는다.
+    lockSceneMaterials(scene);
     scene.traverse((obj) => {
       const mesh = obj as Mesh;
       if (!mesh.isMesh) return;

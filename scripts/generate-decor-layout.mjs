@@ -8,7 +8,7 @@
 // 사용법: node scripts/generate-decor-layout.mjs [--dry]
 
 import {readFileSync, writeFileSync, existsSync} from "node:fs";
-import {readVillage, readPositions, districtCenters} from "./lib/read-village.mjs";
+import {readVillage, readPositions, districtCenters, readMoat, readIsland} from "./lib/read-village.mjs";
 
 const LAYOUT = "src/data/propsLayout.json";
 const DRY = process.argv.includes("--dry");
@@ -1066,10 +1066,13 @@ const landmarks = [];
 
 // 방위: 컨셉 아트를 남쪽에서 본 그림으로 읽었다 — −Z 가 북, +X 가 동, +Z 가 남.
 // generate-ground-layout.mjs 의 NORTH_END 와 VillageScene 의 CREEK_Z 에 맞춘 값들이다.
-// 해자 — VillageScene 의 MOAT 와 **같은 값이어야 한다.** 물 위에 나무가 자라면
-// 안 되므로 여기서 그 궤적을 따라 숲 금지 구역을 깐다.
-// 북쪽 꼭짓점이 정확히 z −20.7 (예전 개울 자리, 격자 j −11)에 온다.
-const MOAT = {cx: 0, cz: 1, a: 27, b: 21.7};
+// 해자 — 물 위에 나무가 자라면 안 되므로 그 궤적을 따라 숲 금지 구역을 깐다.
+//
+// **원본(villageRelief.ts)에서 읽는다.** 예전엔 "같은 값이어야 한다"는 주석과
+// 함께 손으로 베낀 사본이 있었는데, 마을을 키우며 해자를 넓혔을 때 여기만
+// 옛 값으로 남아 숲 55그루와 덤불 18개가 물에 잠겼다. 주석은 규칙을 지켜 주지
+// 않는다 — 값이 한 곳에서 나와야 지켜진다. (SPREAD·BUILDING_SCALE 과 같은 이유)
+const MOAT = readMoat();
 const CREEK_Z = round3(MOAT.cz - MOAT.b);
 const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
 {
@@ -1114,24 +1117,44 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
     if (channels.length) console.log(`  구역 사이 물길 ${channels.length}줄기 · 돌다리 ${bridges}개`);
   }
 
-  // 해자를 따라 숲을 비운다. 타원 한 바퀴를 촘촘히 훑는다 —
-  // 성기게 찍으면 물줄기 사이사이에 나무가 박힌다.
+  // 해자를 따라 숲을 비운다.
   //
-  // 반경은 물 반폭(1.5)보다 조금만 크면 된다. 2.8 로 뒀더니 숲이 360→205,
-  // 덤불이 151→81 로 깎여 섬 테두리가 휑해졌다 — 해자가 숲 띠 한가운데를
-  // 지나가기 때문이다. 2.0 이면 물가에 나무가 바짝 서서 오히려 개울다워진다.
-  for (let k = 0; k < 140; k++) {
-    const angle = (k / 140) * Math.PI * 2 - Math.PI / 2;
-    landmarks.push({
-      x: round3(MOAT.cx + Math.cos(angle) * MOAT.a),
-      z: round3(MOAT.cz + Math.sin(angle) * MOAT.b),
-      r: 2
-    });
+  // ── 순수 타원이 아니라 **실제로 그려지는 물줄기**를 따라가야 한다 ──────────
+  // 예전엔 타원 위의 점에만 금지 원을 깔았는데, VillageScene 은 거기에 drift
+  // (±1.9유닛)를 얹어 물을 굽이치게 그린다. 그래서 물줄기가 금지 구역 밖으로
+  // 벗어나는 구간마다 나무가 물 속에 섰다 — 반경을 2.0 으로 잡아도 drift 가
+  // 그보다 크니 소용이 없었다. 아래는 Waterways 의 폴리라인 식을 그대로 옮긴 것이다.
+  //
+  // 반경은 물 반폭(최대 1.23)에 물가 여유를 더한 값. 크게 잡으면 섬 테두리가
+  // 휑해지므로(2.8 에서 숲 360→205) 물가에 나무가 바짝 서는 선까지만 준다.
+  {
+    // 타원이 커지면 한 바퀴도 길어진다 — 간격을 일정하게 유지하려고 둘레에 맞춘다
+    const steps = Math.max(140, Math.round(Math.PI * (MOAT.a + MOAT.b) / 1.2));
+    for (let k = 0; k < steps; k++) {
+      const t = k / steps;
+      const angle = t * Math.PI * 2 - Math.PI / 2;
+      const drift = Math.sin(angle * 3 + 0.7) * 1.4 + Math.sin(angle * 7) * 0.5;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const nx = cos / MOAT.a;
+      const nz = sin / MOAT.b;
+      const nl = Math.hypot(nx, nz) || 1;
+      landmarks.push({
+        x: round3(MOAT.cx + cos * MOAT.a + (nx / nl) * drift),
+        z: round3(MOAT.cz + sin * MOAT.b + (nz / nl) * drift),
+        r: 2
+      });
+    }
   }
 
   // 섬 — 원본은 밑동이 뾰족한 부유섬이라 그대로 세우면 원뿔이 드러난다.
   // 아래쪽을 땅에 묻어 **윗면이 평평한 바위 언덕**으로 쓴다.
-  const ISLAND_Z = -29.5;
+  // 파고다 섬은 **북쪽 다리 건너**에 서야 한다 — 광장에서 북쪽을 보면 길 끝에
+  // 다리가 있고 그 너머 언덕 위에 파고다가 보이는 구도다.
+  // 예전엔 z −29.5 로 박아 뒀는데, 해자를 넓히자 다리(z −32)보다 **앞**으로
+  // 와서 구도가 뒤집혔다. 다리에서 일정 거리 뒤로 두어 자동으로 따라오게 한다.
+  const ISLAND_GAP = 8.8; // 해자 b=21.7 시절의 다리–섬 간격. 그때 구도가 좋았다.
+  const ISLAND_Z = round3(CREEK_Z - ISLAND_GAP);
   const ISLAND_TOP = 3.9; // 이 높이에 파고다가 선다
   {
     const scale = scaleOf("island-north");
@@ -1377,9 +1400,22 @@ const hull = convexHull(
   ])
 );
 
-// 잔디 평면은 90×90 이고 z로 3 밀려 있다 (VillageScene 의 Ground).
-// 이 밖에 심으면 나무가 허공에 뜬다.
-const GROUND = {x0: -45 + 3, x1: 45 - 3, z0: -42 + 3, z1: 48 - 3};
+// 잔디는 **원반**이다 (VillageScene 의 Ground). 이 밖에 심으면 나무가 절벽
+// 너머 허공에 뜬다. 예전엔 "90×90 평면"이라는 사각형을 손으로 적어 뒀는데,
+// 씬은 진작 원반으로 바뀐 뒤라 모서리 쪽 나무가 허공에 서 있었다.
+// 이제 원본에서 읽고, 아래에서 원형으로 판정한다.
+const ISLAND = readIsland();
+/** 원반 가장자리 여유 — 딱 붙여 심으면 절벽 경사면에 반쯤 걸친다 */
+const ISLAND_INSET = 3;
+const GROUND = {
+  x0: ISLAND.cx - ISLAND.r + ISLAND_INSET,
+  x1: ISLAND.cx + ISLAND.r - ISLAND_INSET,
+  z0: ISLAND.cz - ISLAND.r + ISLAND_INSET,
+  z1: ISLAND.cz + ISLAND.r - ISLAND_INSET
+};
+/** 원반 안인가 — 사각형 격자를 훑되 원 밖은 버린다 */
+const onIsland = (x, z) =>
+  Math.hypot(x - ISLAND.cx, z - ISLAND.cz) <= ISLAND.r - ISLAND_INSET;
 
 /** 껍질 바깥으로 얼마부터 숲인가 — 이보다 가까우면 마을 앞마당이다 */
 const BELT_IN = -1.2;
@@ -1398,7 +1434,7 @@ const BELT_DEPTH = 12;
     for (let z = GROUND.z0; z <= GROUND.z1; z += STEP) {
       const px = x + (rand() - 0.5) * STEP * 0.9;
       const pz = z + (rand() - 0.5) * STEP * 0.9;
-      if (px < GROUND.x0 || px > GROUND.x1 || pz < GROUND.z0 || pz > GROUND.z1) continue;
+      if (!onIsland(px, pz)) continue;
 
       // 껍질에서 일정 거리를 띄우면 마을 둘레에 도넛이 그려진다 — 위에서 보면
       // 미스터리 서클이다. 큰 파장의 잡음으로 안쪽 경계를 들쭉날쭉하게 흔들어,

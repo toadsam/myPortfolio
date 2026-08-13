@@ -10,6 +10,7 @@ import type {MutableRefObject} from "react";
 import {Box3, Mesh, Vector3, type AnimationClip, type Group} from "three";
 import {SkeletonUtils} from "three-stdlib";
 import {characterModels, classifyClip, DEFAULT_NPC_MODEL, type CharacterState} from "@/data/characterModels";
+import {lockSceneMaterials} from "@/lib/villageMaterial";
 import type {CharacterModelId} from "@/types/portfolio";
 
 export type NpcMoveState = CharacterState;
@@ -52,6 +53,10 @@ export function NpcCharacter({
   // 여기서는 copy.parent가 확실히 null이라 순수 원본 크기가 나온다.
   const {cloned, scale} = useMemo(() => {
     const copy = SkeletonUtils.clone(scene);
+    // 캐릭터야말로 이게 제일 급했다 — 실측하니 캐릭터 GLB 6개는 MR 텍스처도
+    // 없이 metalness 팩터가 1.0 이었다. 환경맵이 없는 씬에서 순수 금속은
+    // 확산광을 잃고 검게만 남는다.
+    lockSceneMaterials(copy);
     copy.traverse((o) => {
       if (o instanceof Mesh) {
         o.castShadow = true;

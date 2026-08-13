@@ -4,6 +4,7 @@ import {useAnimations, useGLTF} from "@react-three/drei";
 import {useEffect, useMemo, useRef} from "react";
 import type {Group} from "three";
 import {MESHY_HEIGHT, NPC_HEIGHT} from "@/data/characterModels";
+import {lockSceneMaterials} from "@/lib/villageMaterial";
 
 export type MoveState = "idle" | "walk" | "run";
 
@@ -22,6 +23,10 @@ export function WarriorCharacter({stateRef}: {stateRef: React.MutableRefObject<M
   const innerRef = useRef<Group>(null);
   const {scene, animations: walkAnims} = useGLTF(WALK_URL);
   const {animations: runAnims} = useGLTF(RUN_URL);
+
+  // 조종 캐릭터도 NPC·건물과 같은 빛 반응을 탄다 (villageMaterial 참고 —
+  // 이 GLB 들은 metalness 팩터가 1.0 이라 환경맵 없는 씬에서 검게 남는다)
+  useMemo(() => lockSceneMaterials(scene), [scene]);
 
   // 두 파일의 클립을 같은 골격에 합쳐 재생
   const clips = useMemo(() => {

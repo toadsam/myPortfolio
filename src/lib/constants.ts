@@ -509,13 +509,53 @@ const lifeBuildings: BuildingData[] = [
   }
 ];
 
+// ─── 건물 크기와 간격은 **짝으로 움직인다** ──────────────────────────────────
+// "건물이 전반적으로 작아 보인다"는 진단으로 크기를 키우려 했는데, 재 보니
+// 건물 평균 높이는 이미 캐릭터의 2.61배로 정상 비율이었다. 진짜 문제는
+// **이웃 간 여유가 0.5유닛뿐**이라는 것 — 어깨 폭도 안 되는 틈에 집이 붙어
+// 있으면 덩어리 하나로 읽혀 개별 건물이 작아 보인다.
+//
+// 그래서 크기만 올리면 바로 겹치고(1.3배에서 14쌍), 간격만 벌리면 건물은
+// 그대로인 채 잔디만 넓어진다. 둘을 같이 올려야 한다.
+// 조합은 `node scripts/check-building-clearance.mjs --solve` 로 구한다.
+//
+// 지금 값: 크기 1.4배 ↔ SPREAD 1.86 ↔ 구역 밀어내기 0.7배.
+// 이웃 간 최악 여유 0.72유닛(사람이 지나갈 폭), 캐릭터 대비 3.66배.
+//
+// ── 왜 밀어내기를 0.7 로 줄이면서 SPREAD 를 키우나 ─────────────────────────
+// 벌려야 하는 건 **한 구역 안 건물끼리**의 간격이지 구역과 구역 사이가 아니다.
+// SPREAD 만 키우면 구역 사이 골짜기까지 같이 벌어져 마을이 통째로 퍼지고,
+// 그러면 해자·잔디원반·파고다 섬까지 줄줄이 밀어야 한다.
+// 밀어내기를 같이 줄이면 골짜기 폭은 원래대로 유지된다 —
+// 월드 기준 밀어내기 = DISTRICT_PUSH × 0.7 × 1.86 = 5.99 로, 예전 6.07 과 거의 같다.
+// (골짜기는 물길이 흐르고 축대가 옆에서 보이는 자리라 좁아지면 안 된다)
+
 // 마을 확장 + 건물 간격 넓힘 — 모든 좌표에 동일 배수 적용
 // 컨셉 아트의 건물은 처마가 서로 겹칠 만큼 붙어 있다. 1.45 는 그에 비해
 // 성겼다 — 1.32 로 6% 좁혔다. 더 줄여도 상자는 안 겹치고(1.28 까지 확인) 길도
 // 다 닿지만, 앞마당 원반이 서로 먹기 시작해 길 칸이 깎인다.
-export const SPREAD = 1.32;
+export const SPREAD = 1.86;
 export function spread(p: number[]): Vector3Tuple {
   return [Math.round((p[0] ?? 0) * SPREAD * 100) / 100, p[1] ?? 0, Math.round((p[2] ?? 0) * SPREAD * 100) / 100];
+}
+
+/**
+ * 건물 치수 배율. **1 로 되돌리면 예전 크기 그대로다.**
+ *
+ * 27채의 size 리터럴을 하나하나 고치지 않고 여기서 한 번에 곱한다 — 값을
+ * 되돌리거나 다시 시험할 때 숫자 하나만 만지면 되도록. `spread` 와 같은 방식이다.
+ *
+ * **바닥·장식물 생성기도 이 값을 읽는다**(scripts/lib/read-village.mjs).
+ * 여기만 바꾸고 생성기를 안 돌리면 건물만 커지고 앞마당·길 폭은 옛날 크기로
+ * 남는다 — 건물이 제 앞마당을 삐져나온다.
+ */
+export const BUILDING_SCALE = 1.4;
+function scaleSize(s: Vector3Tuple): Vector3Tuple {
+  return [
+    Math.round(s[0] * BUILDING_SCALE * 100) / 100,
+    Math.round(s[1] * BUILDING_SCALE * 100) / 100,
+    Math.round(s[2] * BUILDING_SCALE * 100) / 100
+  ];
 }
 
 // ─── 구역 덩어리를 광장에서 바깥으로 민다 ────────────────────────────────────
@@ -530,7 +570,13 @@ export function spread(p: number[]): Vector3Tuple {
 //
 // 이제 각 구역의 **실제 무게중심 방향**으로 일정량을 민다. 사이가 벌어지면
 // 그 골짜기가 레벨 0 으로 남아 단이 옆에서 보이고, 거기에 물이 흐른다.
-const DISTRICT_PUSH = 4.6;
+//
+// ── 이 값은 SPREAD 와 짝이다 ──────────────────────────────────────────────
+// 최종 밀어내기 거리는 DISTRICT_PUSH × SPREAD 다. 건물 간격을 벌리려고
+// SPREAD 를 1.32 → 1.86 으로 키우면서 여기를 그대로 두면 골짜기까지 40% 벌어져
+// 마을이 통째로 퍼지고, 해자·잔디원반·파고다 섬을 줄줄이 밀어야 한다.
+// 3.22 × 1.86 = 5.99 로 예전(4.6 × 1.32 = 6.07)과 같은 골짜기 폭을 유지한다.
+const DISTRICT_PUSH = 3.22;
 
 /** 밀기 전 좌표 기준 구역 무게중심 — 미는 방향을 여기서 얻는다 */
 const rawDistrictCenter: Record<string, {x: number; z: number}> = (() => {
@@ -581,7 +627,11 @@ export const villageBuildings: BuildingData[] = [
   ...lifeBuildings,
   ...studyBuildings,
   contactBuilding
-].map((b) => ({...b, position: spread(applyDistrictOffset(b.position, b.district))}));
+].map((b) => ({
+  ...b,
+  position: spread(applyDistrictOffset(b.position, b.district)),
+  size: scaleSize(b.size)
+}));
 
 export const treePositions: Vector3Tuple[] = [
   [-8.2, 0, -5.2],

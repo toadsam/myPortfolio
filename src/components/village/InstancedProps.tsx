@@ -22,6 +22,7 @@ import type {PropPlacement} from "@/types/props";
 import {terrainHeightAt} from "@/lib/villageTerrain";
 import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
 import {applyFoliageWind, makeFoliageDepthMaterial, type FoliageWindOptions} from "@/lib/foliageWind";
+import {lockSceneMaterials} from "@/lib/villageMaterial";
 
 /** 이 개수를 넘는 GLB만 격자 청크로 쪼갠다. 그 이하는 통째로 하나. */
 const CHUNK_THRESHOLD = 80;
@@ -43,6 +44,9 @@ interface Part {
 }
 
 function extractParts(root: Object3D): Part[] {
+  // 장식물도 건물과 같은 빛 반응을 타야 한다 — 여기만 빼면 나무·울타리·등롱만
+  // 다른 광택으로 남아서, 정작 마을 바닥에 깔린 것들이 튄다.
+  lockSceneMaterials(root);
   root.updateMatrixWorld(true);
   const rootInverse = new Matrix4().copy(root.matrixWorld).invert();
   const parts: Part[] = [];
