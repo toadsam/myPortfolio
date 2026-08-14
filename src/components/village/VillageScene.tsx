@@ -740,6 +740,9 @@ function waterLines(): WaterLine[] {
 
   // ② 마을 속 물(석호)의 **물가**. 면 자체는 아래 Lagoon 이 한 장으로 깔고,
   //    여기서는 껍질을 따라 리본 하나를 둘러 물가 자갈·둔덕을 만든다.
+  // 이 리본의 수면은 **끄면 안 된다** — 석호 스킨은 젖은 칸 경계(물가선 안쪽)
+  // 까지만 깔리고, 물가선 도랑의 바깥 절반은 이 리본이 메운다. 꺼 봤더니 석호
+  // 둘레에 마른 도랑이 검은 띠로 드러나고 개울 어귀가 고립된 조각이 됐다.
   if (LAGOON.length > 2) {
     lines.push({
       pts: [...LAGOON, LAGOON[0]],
@@ -782,6 +785,9 @@ function waterLines(): WaterLine[] {
         }))
       );
     const insideOther = (x: number, z: number) => {
+      // 주의: "석호 껍질 다각형 안 = 물"로 판정하면 안 된다 — 껍질 안에는
+      // 잔디 들판과 구역 섬도 있어서, 물길이 잔디 한복판에서 잘려 고립된
+      // 물 조각이 남는다(실제로 겪었다). 물가 고리 **선**까지의 거리만 본다.
       for (const s of others)
         for (let i = 0; i + 1 < s.length; i++) {
           const dx = s[i + 1].x - s[i].x;
@@ -810,21 +816,69 @@ function waterLines(): WaterLine[] {
           )
       );
     const total = arcs[arcs.length - 1] || 1;
+    // 끝 REACH 유닛 구간을 **안쪽에서 끝 쪽으로** 훑어, 처음 만나는 "다른 물 속"
+    // 지점에서 자른다 — 경계에 가장 가까운 물속 마디가 새 끝이 되므로, 다른 물과
+    // 겹침은 한 마디(≤0.8유닛)만 남는다. 석호 깊숙이 들어간 머리도, 해자를
+    // 뚫고 나간 꼬리도 같은 규칙으로 잘린다.
     const REACH = 4;
     let head = 0;
-    for (let i = 0; i < line.pts.length && arcs[i] <= REACH; i++)
-      if (insideOther(line.pts[i].x, line.pts[i].z)) {
-        head = i;
-        break;
-      }
+    {
+      let iStart = 0;
+      while (iStart + 1 < line.pts.length && arcs[iStart + 1] <= REACH)
+        iStart++;
+      for (let i = iStart; i >= 0; i--)
+        if (insideOther(line.pts[i].x, line.pts[i].z)) {
+          head = i;
+          break;
+        }
+    }
     let tail = line.pts.length - 1;
-    for (let i = line.pts.length - 1; i >= 0 && total - arcs[i] <= REACH; i--)
-      if (insideOther(line.pts[i].x, line.pts[i].z)) {
-        tail = i;
-        break;
-      }
+    {
+      let iStart = line.pts.length - 1;
+      while (iStart - 1 >= 0 && total - arcs[iStart - 1] <= REACH) iStart--;
+      for (let i = iStart; i < line.pts.length; i++)
+        if (insideOther(line.pts[i].x, line.pts[i].z)) {
+          tail = i;
+          break;
+        }
+    }
     if ((head > 0 || tail < line.pts.length - 1) && tail - head >= 2)
       line.pts = line.pts.slice(head, tail + 1);
+
+    // ── 끝 마디를 경계에 딱 붙인다 ──────────────────────────────────────────
+    // 잘린 끝은 여전히 다른 물 속으로 최대 한 마디(0.8유닛)까지 들어가 있어,
+    // 재질이 다른 물 위에 밝은 마름모 조각으로 걸쳐 보인다. 경계를 이분 탐색해
+    // 끝을 "경계에서 0.3 물 쪽"으로 옮기면 이음은 남고 조각은 사라진다.
+    const settle = (inP: {x: number; z: number}, outP: {x: number; z: number}) => {
+      let lo = 0;
+      let hi = 1;
+      for (let it = 0; it < 8; it++) {
+        const mid = (lo + hi) / 2;
+        if (
+          insideOther(inP.x + (outP.x - inP.x) * mid, inP.z + (outP.z - inP.z) * mid)
+        )
+          lo = mid;
+        else hi = mid;
+      }
+      const len = Math.hypot(outP.x - inP.x, outP.z - inP.z) || 1;
+      const t = Math.max(0, lo - 0.3 / len);
+      return {x: inP.x + (outP.x - inP.x) * t, z: inP.z + (outP.z - inP.z) * t};
+    };
+    const p = line.pts;
+    if (
+      p.length >= 2 &&
+      insideOther(p[0].x, p[0].z) &&
+      !insideOther(p[1].x, p[1].z)
+    )
+      line.pts = [settle(p[0], p[1]), ...p.slice(1)];
+    const q = line.pts;
+    const last = q.length - 1;
+    if (
+      q.length >= 2 &&
+      insideOther(q[last].x, q[last].z) &&
+      !insideOther(q[last - 1].x, q[last - 1].z)
+    )
+      line.pts = [...q.slice(0, last), settle(q[last], q[last - 1])];
   }
 
   return lines;
@@ -943,8 +997,12 @@ function Waterways() {
       vertexColors: true,
       roughness: 0.45,
       metalness: 0.12,
-      emissive: new Color("#124f66"),
-      emissiveIntensity: 0.3
+      // 석호(lagoonMaterial)와 **같은 발광**으로 맞춘다. #124f66 × 0.3 으로
+      // 더 밝게 뒀더니 밤에 개울만 네온으로 떠서, 석호와 겹치는 어귀에서
+      // 겹친 조각이 그대로 드러났다("물이 다 다르다"). 낮에는 햇빛에 묻혀
+      // 이 차이가 안 보이므로 밤 통일이 우선이다.
+      emissive: new Color("#0f3f57"),
+      emissiveIntensity: 0.25
     });
     // 여기는 **흐르는** 물이다. 두 층 모두 +v(물길 방향)로 흘리되 속도를 달리해
     // 무늬가 서로 어긋나게 한다. u 에 살짝 준 값은 물살이 벽에 부딪혀 비스듬히
@@ -970,13 +1028,15 @@ function Waterways() {
       speed: 1.6,
       // 맵의 최대 기울기가 이미 0.35 로 묶여 있다(waterFlow 의 STEEPNESS).
       // 여기서 더 줄이면 물결이 아예 안 보인다 — 세기 조절은 STEEPNESS 쪽에서.
-      // 0.9 → 0.75: 큰 너울 층이 들어오면서 잔결까지 세게 두면 격자가 남는다.
-      normalScale: 0.75,
+      // 0.9 → 0.75 → 0.55: 잔결(0.25유닛 타일)은 밤 달빛 스페큘러에서 자수
+      // 벽지처럼 도드라진다 — 근접 스크린샷에서 석호와 "다른 물"로 보이던 주범.
+      // 형태는 큰 너울이 만들고 잔결은 거들기만 한다(waterFlow 의 원칙 그대로).
+      normalScale: 0.55,
       // 부감용 큰 너울 — 잔결 타일이 0.25유닛이라 부감에서 수십 번 반복되며
       // **뜨개질 격자**로 읽혔다(석호·바다에서 잡은 그 문제의 리본판).
       // 0.9 면 타일 2.2유닛 — 리본 폭(1~2.2)에 딱 한 번 들어간다.
       scaleC: 0.9,
-      bigWeight: 1.35
+      bigWeight: 1.5
     });
     return m;
   }, []);
@@ -1455,7 +1515,14 @@ function WaterBanks() {
           // 그것이었다. 같이 접으면 눕힌 단면이 수면 폭 안에 들어가 3cm 아래로
           // 숨는다.
           const d = n === 0 ? 0 : Math.max(0.05, h + p.out * k) * side;
-          positions.push(pts[i].x + ux * d, p.y * k, pts[i].z + uz * d);
+          // 눕힌 단면(k→0)은 그냥 y=0 에 두면 안 된다 — 석호는 **반투명**이라
+          // 수면 3cm 아래의 팬케이크가 검은 다각형으로 비쳐 보인다. 눕는 만큼
+          // 하상(−0.34)보다 아래로 가라앉혀 물 밑에서도 안 보이게 한다.
+          positions.push(
+            pts[i].x + ux * d,
+            p.y * k - (1 - k) * 0.5,
+            pts[i].z + uz * d
+          );
           colors.push(rgb[n].r, rgb[n].g, rgb[n].b);
         };
         for (let n = WATER_PROFILE.length - 1; n >= 1; n--) put(n, -1);
@@ -2613,11 +2680,15 @@ function VillageSceneImpl({
             텍셀이 3cm라 잔디처럼 거의 수평인 면에서 섀도 애크니(줄무늬)가 뜬다.
             normalBias 로 표면 법선 방향으로 밀어내는 쪽이 bias 만 키우는 것보다
             피터패닝(그림자가 물체에서 떨어져 보임)이 덜하다. */}
+        {/* 밤(달빛)에는 그림자를 끈다 — 섬 테두리 울타리 수십 토막의 그림자가
+            달빛 저각에서 합쳐져, 석호 위에 가장자리가 직선인 **검은 다각형
+            덩어리**로 떴다(하나씩 꺼 보면 티가 안 나는데 다 끄면 사라지는,
+            "합쳐진 그림자" 버그). 밤 형태감은 팔레트 설계대로 AO(2.2)가 진다. */}
         <directionalLight
           color={sky.sun}
           intensity={sky.sunI}
           position={sky.sunPos}
-          castShadow
+          castShadow={GLINT_STRENGTH < 0.95}
           shadow-mapSize={[2048, 2048]}
           shadow-camera-near={12}
           shadow-camera-far={170}
