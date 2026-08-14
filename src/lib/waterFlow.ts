@@ -175,6 +175,15 @@ export interface WaterFlowOptions {
   scaleC?: number;
   /** 큰 너울의 섞임 세기 (잔물결 xy 에 더해지는 배수) */
   bigWeight?: number;
+  /**
+   * 정점을 실제로 오르내리게 하는 너울 높이(유닛). 생략하면 0 — 판은 평평하고
+   * 법선만 흔들린다. 리본(개울·해자)은 "출렁이는 느낌"이 없다는 지적에 넣었다.
+   * 파장·시계를 석호(applyWaterSurface)와 똑같이 쓰므로, 어귀에서 두 물이
+   * 겹쳐도 **같이** 출렁여 틈이 안 벌어진다.
+   */
+  swellAmp?: number;
+  /** 너울이 지나가는 빠르기 — 석호와 같은 값을 줄 것 (기본 0.6) */
+  swellSpeed?: number;
 }
 
 /**
@@ -214,9 +223,34 @@ export function applyWaterFlow(
     shader.uniforms.uFlowSpeed = {value: options.speed};
     shader.uniforms.uFlowScaleC = {value: options.scaleC ?? 0};
     shader.uniforms.uBigWeight = {value: options.bigWeight ?? 0};
+    shader.uniforms.uSwellAmp = {value: options.swellAmp ?? 0};
+    shader.uniforms.uSwellSpeed = {value: options.swellSpeed ?? 0.6};
     // groundMacro 와 같은 이유로 남긴다 — onBeforeCompile 은 재질을 만들 때가 아니라
     // 처음 그려질 때 불리므로, 패치를 걸었다는 것만으로 컴파일까지 됐는지 알 수 없다.
     material.userData.__flowCompiled = true;
+
+    // 리본도 실제로 오르내린다 — 파장 셋(0.42·0.35·0.24)과 시계는 석호의
+    // 너울과 **완전히 같다.** 다른 값을 쓰면 어귀에서 두 물이 어긋나 틈이 된다.
+    // (리본 좌표는 월드로 구워져 있고 메시는 y 이동만 있으므로 local xz = world xz)
+    shader.vertexShader = shader.vertexShader
+      .replace(
+        "#include <common>",
+        `#include <common>
+uniform float uFlowTime;
+uniform float uSwellAmp;
+uniform float uSwellSpeed;`
+      )
+      .replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+if ( uSwellAmp > 0.0 ) {
+  float swellPhase = uFlowTime * uSwellSpeed;
+  float swell = sin( transformed.x * 0.42 + swellPhase ) * 0.55
+              + sin( transformed.z * 0.35 - swellPhase * 0.86 ) * 0.45
+              + sin( ( transformed.x + transformed.z ) * 0.24 + swellPhase * 1.27 ) * 0.35;
+  transformed.y += swell * uSwellAmp;
+}`
+      );
 
     shader.fragmentShader = shader.fragmentShader
       .replace(
