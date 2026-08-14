@@ -1075,12 +1075,16 @@ const blockRect = new Map();
       // 담장 긴 축(모델 +X)을 접선에 맞춘다. rotationY=r 은 +X 를
       // (cos r, -sin r) 로 돌리므로 접선 t=(-nz, nx) 에는 r = atan2(-nx, -nz).
       const rot = round3(Math.atan2(-nx, -nz));
-      // 담장은 점이 아니라 1.9짜리 선분이라 taken 의 한 점으로는 못 막는다.
+      // 울타리는 점이 아니라 1.9짜리 선분이라 taken 의 한 점으로는 못 막는다.
       // 실제 선분으로 따로 재야 옆에 가로등을 붙여 세울 수 있다 (onWall).
-      // **place 가 성공했을 때만** 등록한다 — 거부된 담장을 등록하면 "유령
-      // 담장"이 되어, 틈을 메우는 울타리(⑭-a)가 빈 자리를 이미 찼다고 보고
+      // **place 가 성공했을 때만** 등록한다 — 거부된 것을 등록하면 "유령
+      // 담장"이 되어, 틈을 메우는 절(⑭-a)이 빈 자리를 이미 찼다고 보고
       // 건너뛴다(실제로 물가 호 전체가 그렇게 뚫린 채 남았다).
-      if (place(`wall-${district}-${n++}`, "wall-low", x, z, rot, {gap: 1.15}))
+      //
+      // 종류는 **나무 울타리**다. 돌담(wall-low)으로 둘렀더니 섬이 성벽에
+      // 갇힌 요새로 읽혔다 — 컨셉의 섬 테두리는 나무 난간이고, 사용자도
+      // 나무를 원했다. 돌은 마을 바깥 테두리(rimwall)에만 남는다.
+      if (place(`wall-${district}-${n++}`, "fence-rail", x, z, rot, {gap: 1.15}))
         walls.push({x, z, ax: Math.cos(rot), az: Math.sin(rot)});
     }
   }

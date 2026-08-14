@@ -2312,10 +2312,10 @@
     },
     {
       "id": "decor-wall-study-0",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -10.74,
-        0.3,
+        0.36,
         10.51
       ],
       "rotationY": -1.571,
@@ -2323,10 +2323,10 @@
     },
     {
       "id": "decor-wall-study-1",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -10.974,
-        0.3,
+        0.36,
         12.365
       ],
       "rotationY": -1.822,
@@ -2334,10 +2334,10 @@
     },
     {
       "id": "decor-wall-study-2",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -12.762,
-        0.3,
+        0.36,
         15.617
       ],
       "rotationY": -2.325,
@@ -2345,10 +2345,10 @@
     },
     {
       "id": "decor-wall-study-3",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -14.203,
-        0.3,
+        0.36,
         16.809
       ],
       "rotationY": -2.576,
@@ -2356,10 +2356,10 @@
     },
     {
       "id": "decor-wall-study-4",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -15.895,
-        0.3,
+        0.36,
         17.605
       ],
       "rotationY": -2.827,
@@ -2367,10 +2367,10 @@
     },
     {
       "id": "decor-wall-study-5",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -17.732,
-        0.3,
+        0.36,
         17.955
       ],
       "rotationY": -3.079,
@@ -2378,10 +2378,10 @@
     },
     {
       "id": "decor-wall-study-6",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -19.598,
-        0.3,
+        0.36,
         17.838
       ],
       "rotationY": 2.953,
@@ -2389,10 +2389,10 @@
     },
     {
       "id": "decor-wall-study-7",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -21.376,
-        0.3,
+        0.36,
         17.26
       ],
       "rotationY": 2.702,
@@ -2400,10 +2400,10 @@
     },
     {
       "id": "decor-wall-study-8",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -22.955,
-        0.3,
+        0.36,
         16.258
       ],
       "rotationY": 2.45,
@@ -2411,10 +2411,10 @@
     },
     {
       "id": "decor-wall-study-9",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -24.235,
-        0.3,
+        0.36,
         14.895
       ],
       "rotationY": 2.199,
@@ -2422,10 +2422,10 @@
     },
     {
       "id": "decor-wall-study-10",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -25.136,
-        0.3,
+        0.36,
         13.256
       ],
       "rotationY": 1.948,
@@ -2433,10 +2433,10 @@
     },
     {
       "id": "decor-wall-study-11",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -25.601,
-        0.3,
+        0.36,
         11.445
       ],
       "rotationY": 1.696,
@@ -2444,10 +2444,10 @@
     },
     {
       "id": "decor-wall-study-12",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -25.601,
-        0.3,
+        0.36,
         9.575
       ],
       "rotationY": 1.445,
@@ -2455,10 +2455,10 @@
     },
     {
       "id": "decor-wall-study-13",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -25.136,
-        0.3,
+        0.36,
         7.764
       ],
       "rotationY": 1.194,
@@ -2466,10 +2466,10 @@
     },
     {
       "id": "decor-wall-study-14",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -24.235,
-        0.3,
+        0.36,
         6.125
       ],
       "rotationY": 0.942,
@@ -2477,10 +2477,10 @@
     },
     {
       "id": "decor-wall-study-15",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -22.955,
-        0.3,
+        0.36,
         4.762
       ],
       "rotationY": 0.691,
@@ -2488,10 +2488,10 @@
     },
     {
       "id": "decor-wall-study-16",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -21.376,
-        0.3,
+        0.36,
         3.76
       ],
       "rotationY": 0.44,
@@ -2499,10 +2499,10 @@
     },
     {
       "id": "decor-wall-study-17",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -15.895,
-        0.3,
+        0.36,
         3.415
       ],
       "rotationY": -0.314,
@@ -2510,10 +2510,10 @@
     },
     {
       "id": "decor-wall-study-18",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -14.203,
-        0.3,
+        0.36,
         4.211
       ],
       "rotationY": -0.565,
@@ -2521,10 +2521,10 @@
     },
     {
       "id": "decor-wall-projects-19",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         11.23,
-        0.3,
+        0.36,
         -24.78
       ],
       "rotationY": -1.571,
@@ -2532,10 +2532,10 @@
     },
     {
       "id": "decor-wall-projects-20",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         11.068,
-        0.3,
+        0.36,
         -22.882
       ],
       "rotationY": -1.741,
@@ -2543,10 +2543,10 @@
     },
     {
       "id": "decor-wall-projects-21",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         10.589,
-        0.3,
+        0.36,
         -21.039
       ],
       "rotationY": -1.91,
@@ -2554,10 +2554,10 @@
     },
     {
       "id": "decor-wall-projects-22",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         8.737,
-        0.3,
+        0.36,
         -17.725
       ],
       "rotationY": -2.25,
@@ -2565,10 +2565,10 @@
     },
     {
       "id": "decor-wall-projects-23",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         7.419,
-        0.3,
+        0.36,
         -16.35
       ],
       "rotationY": -2.42,
@@ -2576,10 +2576,10 @@
     },
     {
       "id": "decor-wall-projects-24",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         5.888,
-        0.3,
+        0.36,
         -15.217
       ],
       "rotationY": -2.59,
@@ -2587,10 +2587,10 @@
     },
     {
       "id": "decor-wall-projects-25",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         4.187,
-        0.3,
+        0.36,
         -14.36
       ],
       "rotationY": -2.76,
@@ -2598,10 +2598,10 @@
     },
     {
       "id": "decor-wall-projects-26",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -3.288,
-        0.3,
+        0.36,
         -14.042
       ],
       "rotationY": 2.844,
@@ -2609,10 +2609,10 @@
     },
     {
       "id": "decor-wall-projects-27",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -5.056,
-        0.3,
+        0.36,
         -14.752
       ],
       "rotationY": 2.675,
@@ -2620,10 +2620,10 @@
     },
     {
       "id": "decor-wall-projects-28",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -6.678,
-        0.3,
+        0.36,
         -15.751
       ],
       "rotationY": 2.505,
@@ -2631,10 +2631,10 @@
     },
     {
       "id": "decor-wall-projects-29",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -8.108,
-        0.3,
+        0.36,
         -17.01
       ],
       "rotationY": 2.335,
@@ -2642,10 +2642,10 @@
     },
     {
       "id": "decor-wall-projects-30",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -10.233,
-        0.3,
+        0.36,
         -20.154
       ],
       "rotationY": 1.995,
@@ -2653,10 +2653,10 @@
     },
     {
       "id": "decor-wall-projects-31",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -10.868,
-        0.3,
+        0.36,
         -21.95
       ],
       "rotationY": 1.826,
@@ -2664,10 +2664,10 @@
     },
     {
       "id": "decor-wall-projects-32",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -11.19,
-        0.3,
+        0.36,
         -23.828
       ],
       "rotationY": 1.656,
@@ -2675,10 +2675,10 @@
     },
     {
       "id": "decor-wall-projects-33",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -11.19,
-        0.3,
+        0.36,
         -25.732
       ],
       "rotationY": 1.486,
@@ -2686,10 +2686,10 @@
     },
     {
       "id": "decor-wall-projects-34",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -10.868,
-        0.3,
+        0.36,
         -27.61
       ],
       "rotationY": 1.316,
@@ -2697,10 +2697,10 @@
     },
     {
       "id": "decor-wall-projects-35",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -10.233,
-        0.3,
+        0.36,
         -29.406
       ],
       "rotationY": 1.146,
@@ -2708,10 +2708,10 @@
     },
     {
       "id": "decor-wall-projects-36",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -9.304,
-        0.3,
+        0.36,
         -31.069
       ],
       "rotationY": 0.976,
@@ -2719,10 +2719,10 @@
     },
     {
       "id": "decor-wall-projects-37",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -8.108,
-        0.3,
+        0.36,
         -32.55
       ],
       "rotationY": 0.807,
@@ -2730,10 +2730,10 @@
     },
     {
       "id": "decor-wall-projects-38",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -6.678,
-        0.3,
+        0.36,
         -33.809
       ],
       "rotationY": 0.637,
@@ -2741,10 +2741,10 @@
     },
     {
       "id": "decor-wall-projects-39",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -5.056,
-        0.3,
+        0.36,
         -34.808
       ],
       "rotationY": 0.467,
@@ -2752,10 +2752,10 @@
     },
     {
       "id": "decor-wall-projects-40",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -1.426,
-        0.3,
+        0.36,
         -35.919
       ],
       "rotationY": 0.127,
@@ -2763,10 +2763,10 @@
     },
     {
       "id": "decor-wall-projects-41",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         0.477,
-        0.3,
+        0.36,
         -36
       ],
       "rotationY": -0.042,
@@ -2774,10 +2774,10 @@
     },
     {
       "id": "decor-wall-projects-42",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         2.366,
-        0.3,
+        0.36,
         -35.758
       ],
       "rotationY": -0.212,
@@ -2785,10 +2785,10 @@
     },
     {
       "id": "decor-wall-projects-43",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         4.187,
-        0.3,
+        0.36,
         -35.2
       ],
       "rotationY": -0.382,
@@ -2796,10 +2796,10 @@
     },
     {
       "id": "decor-wall-projects-44",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         5.888,
-        0.3,
+        0.36,
         -34.343
       ],
       "rotationY": -0.552,
@@ -2807,10 +2807,10 @@
     },
     {
       "id": "decor-wall-projects-45",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         7.419,
-        0.3,
+        0.36,
         -33.21
       ],
       "rotationY": -0.722,
@@ -2818,10 +2818,10 @@
     },
     {
       "id": "decor-wall-projects-46",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         8.737,
-        0.3,
+        0.36,
         -31.835
       ],
       "rotationY": -0.892,
@@ -2829,10 +2829,10 @@
     },
     {
       "id": "decor-wall-projects-47",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         9.804,
-        0.3,
+        0.36,
         -30.257
       ],
       "rotationY": -1.061,
@@ -2840,10 +2840,10 @@
     },
     {
       "id": "decor-wall-projects-48",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         10.589,
-        0.3,
+        0.36,
         -28.521
       ],
       "rotationY": -1.231,
@@ -2851,10 +2851,10 @@
     },
     {
       "id": "decor-wall-projects-49",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         11.068,
-        0.3,
+        0.36,
         -26.678
       ],
       "rotationY": -1.401,
@@ -2862,10 +2862,10 @@
     },
     {
       "id": "decor-wall-skills-50",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         31.52,
-        0.3,
+        0.36,
         -12.07
       ],
       "rotationY": -1.571,
@@ -2873,10 +2873,10 @@
     },
     {
       "id": "decor-wall-skills-51",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         31.349,
-        0.3,
+        0.36,
         -10.176
       ],
       "rotationY": -1.75,
@@ -2884,10 +2884,10 @@
     },
     {
       "id": "decor-wall-skills-52",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         30.843,
-        0.3,
+        0.36,
         -8.342
       ],
       "rotationY": -1.93,
@@ -2895,10 +2895,10 @@
     },
     {
       "id": "decor-wall-skills-53",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         30.018,
-        0.3,
+        0.36,
         -6.628
       ],
       "rotationY": -2.109,
@@ -2906,10 +2906,10 @@
     },
     {
       "id": "decor-wall-skills-54",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         28.9,
-        0.3,
+        0.36,
         -5.089
       ],
       "rotationY": -2.289,
@@ -2917,10 +2917,10 @@
     },
     {
       "id": "decor-wall-skills-55",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         27.525,
-        0.3,
+        0.36,
         -3.775
       ],
       "rotationY": -2.468,
@@ -2928,10 +2928,10 @@
     },
     {
       "id": "decor-wall-skills-56",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         25.938,
-        0.3,
+        0.36,
         -2.727
       ],
       "rotationY": -2.648,
@@ -2939,10 +2939,10 @@
     },
     {
       "id": "decor-wall-skills-57",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         24.189,
-        0.3,
+        0.36,
         -1.979
       ],
       "rotationY": -2.827,
@@ -2950,10 +2950,10 @@
     },
     {
       "id": "decor-wall-skills-58",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         22.334,
-        0.3,
+        0.36,
         -1.556
       ],
       "rotationY": -3.007,
@@ -2961,10 +2961,10 @@
     },
     {
       "id": "decor-wall-skills-59",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         18.549,
-        0.3,
+        0.36,
         -1.726
       ],
       "rotationY": 2.917,
@@ -2972,10 +2972,10 @@
     },
     {
       "id": "decor-wall-skills-60",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         16.74,
-        0.3,
+        0.36,
         -2.314
       ],
       "rotationY": 2.738,
@@ -2983,10 +2983,10 @@
     },
     {
       "id": "decor-wall-skills-61",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         15.065,
-        0.3,
+        0.36,
         -3.215
       ],
       "rotationY": 2.558,
@@ -2994,10 +2994,10 @@
     },
     {
       "id": "decor-wall-skills-62",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         13.578,
-        0.3,
+        0.36,
         -4.401
       ],
       "rotationY": 2.379,
@@ -3005,10 +3005,10 @@
     },
     {
       "id": "decor-wall-skills-63",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         10.343,
-        0.3,
+        0.36,
         -11.119
       ],
       "rotationY": 1.661,
@@ -3016,10 +3016,10 @@
     },
     {
       "id": "decor-wall-skills-64",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         10.343,
-        0.3,
+        0.36,
         -13.021
       ],
       "rotationY": 1.481,
@@ -3027,10 +3027,10 @@
     },
     {
       "id": "decor-wall-skills-65",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         10.682,
-        0.3,
+        0.36,
         -14.893
       ],
       "rotationY": 1.302,
@@ -3038,10 +3038,10 @@
     },
     {
       "id": "decor-wall-skills-66",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         13.578,
-        0.3,
+        0.36,
         -19.739
       ],
       "rotationY": 0.763,
@@ -3049,10 +3049,10 @@
     },
     {
       "id": "decor-wall-skills-67",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         15.065,
-        0.3,
+        0.36,
         -20.925
       ],
       "rotationY": 0.583,
@@ -3060,10 +3060,10 @@
     },
     {
       "id": "decor-wall-skills-68",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         16.74,
-        0.3,
+        0.36,
         -21.826
       ],
       "rotationY": 0.404,
@@ -3071,10 +3071,10 @@
     },
     {
       "id": "decor-wall-skills-69",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         18.549,
-        0.3,
+        0.36,
         -22.414
       ],
       "rotationY": 0.224,
@@ -3082,10 +3082,10 @@
     },
     {
       "id": "decor-wall-skills-70",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         20.434,
-        0.3,
+        0.36,
         -22.669
       ],
       "rotationY": 0.045,
@@ -3093,10 +3093,10 @@
     },
     {
       "id": "decor-wall-skills-71",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         22.334,
-        0.3,
+        0.36,
         -22.584
       ],
       "rotationY": -0.135,
@@ -3104,10 +3104,10 @@
     },
     {
       "id": "decor-wall-skills-72",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         24.189,
-        0.3,
+        0.36,
         -22.161
       ],
       "rotationY": -0.314,
@@ -3115,10 +3115,10 @@
     },
     {
       "id": "decor-wall-skills-73",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         25.938,
-        0.3,
+        0.36,
         -21.413
       ],
       "rotationY": -0.494,
@@ -3126,10 +3126,10 @@
     },
     {
       "id": "decor-wall-skills-74",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         27.525,
-        0.3,
+        0.36,
         -20.365
       ],
       "rotationY": -0.673,
@@ -3137,10 +3137,10 @@
     },
     {
       "id": "decor-wall-skills-75",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         28.9,
-        0.3,
+        0.36,
         -19.051
       ],
       "rotationY": -0.853,
@@ -3148,10 +3148,10 @@
     },
     {
       "id": "decor-wall-skills-76",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         30.018,
-        0.3,
+        0.36,
         -17.512
       ],
       "rotationY": -1.032,
@@ -3159,10 +3159,10 @@
     },
     {
       "id": "decor-wall-skills-77",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         31.349,
-        0.3,
+        0.36,
         -13.964
       ],
       "rotationY": -1.391,
@@ -3170,10 +3170,10 @@
     },
     {
       "id": "decor-wall-experience-78",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -10.65,
-        0.3,
+        0.36,
         -10.85
       ],
       "rotationY": -1.571,
@@ -3181,10 +3181,10 @@
     },
     {
       "id": "decor-wall-experience-79",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -13.925,
-        0.3,
+        0.36,
         -4.329
       ],
       "rotationY": -2.502,
@@ -3192,10 +3192,10 @@
     },
     {
       "id": "decor-wall-experience-80",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -15.56,
-        0.3,
+        0.36,
         -3.385
       ],
       "rotationY": -2.734,
@@ -3203,10 +3203,10 @@
     },
     {
       "id": "decor-wall-experience-81",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -21.112,
-        0.3,
+        0.36,
         -3.062
       ],
       "rotationY": 2.851,
@@ -3214,10 +3214,10 @@
     },
     {
       "id": "decor-wall-experience-82",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -22.845,
-        0.3,
+        0.36,
         -3.809
       ],
       "rotationY": 2.618,
@@ -3225,10 +3225,10 @@
     },
     {
       "id": "decor-wall-experience-83",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -24.359,
-        0.3,
+        0.36,
         -4.936
       ],
       "rotationY": 2.385,
@@ -3236,10 +3236,10 @@
     },
     {
       "id": "decor-wall-experience-84",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -25.573,
-        0.3,
+        0.36,
         -6.382
       ],
       "rotationY": 2.153,
@@ -3247,10 +3247,10 @@
     },
     {
       "id": "decor-wall-experience-85",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -26.42,
-        0.3,
+        0.36,
         -8.069
       ],
       "rotationY": 1.92,
@@ -3258,10 +3258,10 @@
     },
     {
       "id": "decor-wall-experience-86",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -26.855,
-        0.3,
+        0.36,
         -9.906
       ],
       "rotationY": 1.687,
@@ -3269,10 +3269,10 @@
     },
     {
       "id": "decor-wall-experience-87",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -26.855,
-        0.3,
+        0.36,
         -11.794
       ],
       "rotationY": 1.454,
@@ -3280,10 +3280,10 @@
     },
     {
       "id": "decor-wall-experience-88",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -26.42,
-        0.3,
+        0.36,
         -13.631
       ],
       "rotationY": 1.222,
@@ -3291,10 +3291,10 @@
     },
     {
       "id": "decor-wall-experience-89",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -25.573,
-        0.3,
+        0.36,
         -15.318
       ],
       "rotationY": 0.989,
@@ -3302,10 +3302,10 @@
     },
     {
       "id": "decor-wall-experience-90",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -24.359,
-        0.3,
+        0.36,
         -16.764
       ],
       "rotationY": 0.756,
@@ -3313,10 +3313,10 @@
     },
     {
       "id": "decor-wall-experience-91",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -22.845,
-        0.3,
+        0.36,
         -17.891
       ],
       "rotationY": 0.524,
@@ -3324,10 +3324,10 @@
     },
     {
       "id": "decor-wall-experience-92",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -21.112,
-        0.3,
+        0.36,
         -18.638
       ],
       "rotationY": 0.291,
@@ -3335,10 +3335,10 @@
     },
     {
       "id": "decor-wall-experience-93",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -19.253,
-        0.3,
+        0.36,
         -18.966
       ],
       "rotationY": 0.058,
@@ -3346,10 +3346,10 @@
     },
     {
       "id": "decor-wall-experience-94",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -17.368,
-        0.3,
+        0.36,
         -18.856
       ],
       "rotationY": -0.175,
@@ -3357,10 +3357,10 @@
     },
     {
       "id": "decor-wall-experience-95",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -15.56,
-        0.3,
+        0.36,
         -18.315
       ],
       "rotationY": -0.407,
@@ -3368,10 +3368,10 @@
     },
     {
       "id": "decor-wall-experience-96",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -13.925,
-        0.3,
+        0.36,
         -17.371
       ],
       "rotationY": -0.64,
@@ -3379,10 +3379,10 @@
     },
     {
       "id": "decor-wall-experience-97",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -11.515,
-        0.3,
+        0.36,
         -14.499
       ],
       "rotationY": -1.105,
@@ -3390,10 +3390,10 @@
     },
     {
       "id": "decor-wall-experience-98",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -10.869,
-        0.3,
+        0.36,
         -12.725
       ],
       "rotationY": -1.338,
@@ -3401,10 +3401,10 @@
     },
     {
       "id": "decor-wall-contact-99",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         7.28,
-        0.3,
+        0.36,
         20.83
       ],
       "rotationY": -1.571,
@@ -3412,10 +3412,10 @@
     },
     {
       "id": "decor-wall-contact-100",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         7.032,
-        0.3,
+        0.36,
         22.714
       ],
       "rotationY": -1.833,
@@ -3423,10 +3423,10 @@
     },
     {
       "id": "decor-wall-contact-101",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         6.305,
-        0.3,
+        0.36,
         24.47
       ],
       "rotationY": -2.094,
@@ -3434,10 +3434,10 @@
     },
     {
       "id": "decor-wall-contact-102",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         5.148,
-        0.3,
+        0.36,
         25.978
       ],
       "rotationY": -2.356,
@@ -3445,10 +3445,10 @@
     },
     {
       "id": "decor-wall-contact-103",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         3.64,
-        0.3,
+        0.36,
         27.135
       ],
       "rotationY": -2.618,
@@ -3456,10 +3456,10 @@
     },
     {
       "id": "decor-wall-contact-104",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         1.884,
-        0.3,
+        0.36,
         27.862
       ],
       "rotationY": -2.88,
@@ -3467,10 +3467,10 @@
     },
     {
       "id": "decor-wall-contact-105",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         0,
-        0.3,
+        0.36,
         28.11
       ],
       "rotationY": -3.142,
@@ -3478,10 +3478,10 @@
     },
     {
       "id": "decor-wall-contact-106",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -1.884,
-        0.3,
+        0.36,
         27.862
       ],
       "rotationY": 2.88,
@@ -3489,10 +3489,10 @@
     },
     {
       "id": "decor-wall-contact-107",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -3.64,
-        0.3,
+        0.36,
         27.135
       ],
       "rotationY": 2.618,
@@ -3500,10 +3500,10 @@
     },
     {
       "id": "decor-wall-contact-108",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -5.148,
-        0.3,
+        0.36,
         25.978
       ],
       "rotationY": 2.356,
@@ -3511,10 +3511,10 @@
     },
     {
       "id": "decor-wall-contact-109",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -6.305,
-        0.3,
+        0.36,
         24.47
       ],
       "rotationY": 2.094,
@@ -3522,10 +3522,10 @@
     },
     {
       "id": "decor-wall-contact-110",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -7.032,
-        0.3,
+        0.36,
         22.714
       ],
       "rotationY": 1.833,
@@ -3533,10 +3533,10 @@
     },
     {
       "id": "decor-wall-contact-111",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -7.28,
-        0.3,
+        0.36,
         20.83
       ],
       "rotationY": 1.571,
@@ -3544,10 +3544,10 @@
     },
     {
       "id": "decor-wall-contact-112",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -7.032,
-        0.3,
+        0.36,
         18.946
       ],
       "rotationY": 1.309,
@@ -3555,10 +3555,10 @@
     },
     {
       "id": "decor-wall-contact-113",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -5.148,
-        0.3,
+        0.36,
         15.682
       ],
       "rotationY": 0.785,
@@ -3566,10 +3566,10 @@
     },
     {
       "id": "decor-wall-contact-114",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -3.64,
-        0.3,
+        0.36,
         14.525
       ],
       "rotationY": 0.524,
@@ -3577,10 +3577,10 @@
     },
     {
       "id": "decor-wall-contact-115",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         3.64,
-        0.3,
+        0.36,
         14.525
       ],
       "rotationY": -0.524,
@@ -3588,10 +3588,10 @@
     },
     {
       "id": "decor-wall-contact-116",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         5.148,
-        0.3,
+        0.36,
         15.682
       ],
       "rotationY": -0.785,
@@ -3599,10 +3599,10 @@
     },
     {
       "id": "decor-wall-life-117",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         30.973,
-        0.3,
+        0.36,
         13.893
       ],
       "rotationY": -1.756,
@@ -3610,10 +3610,10 @@
     },
     {
       "id": "decor-wall-life-118",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         30.447,
-        0.3,
+        0.36,
         15.741
       ],
       "rotationY": -1.94,
@@ -3621,10 +3621,10 @@
     },
     {
       "id": "decor-wall-life-119",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         29.591,
-        0.3,
+        0.36,
         17.46
       ],
       "rotationY": -2.125,
@@ -3632,10 +3632,10 @@
     },
     {
       "id": "decor-wall-life-120",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         28.433,
-        0.3,
+        0.36,
         18.993
       ],
       "rotationY": -2.31,
@@ -3643,10 +3643,10 @@
     },
     {
       "id": "decor-wall-life-121",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         25.38,
-        0.3,
+        0.36,
         21.299
       ],
       "rotationY": -2.68,
@@ -3654,10 +3654,10 @@
     },
     {
       "id": "decor-wall-life-122",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         23.589,
-        0.3,
+        0.36,
         21.993
       ],
       "rotationY": -2.864,
@@ -3665,10 +3665,10 @@
     },
     {
       "id": "decor-wall-life-123",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         21.701,
-        0.3,
+        0.36,
         22.346
       ],
       "rotationY": -3.049,
@@ -3676,10 +3676,10 @@
     },
     {
       "id": "decor-wall-life-124",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         19.779,
-        0.3,
+        0.36,
         22.346
       ],
       "rotationY": 3.049,
@@ -3687,10 +3687,10 @@
     },
     {
       "id": "decor-wall-life-125",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         17.891,
-        0.3,
+        0.36,
         21.993
       ],
       "rotationY": 2.864,
@@ -3698,10 +3698,10 @@
     },
     {
       "id": "decor-wall-life-126",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         16.1,
-        0.3,
+        0.36,
         21.299
       ],
       "rotationY": 2.68,
@@ -3709,10 +3709,10 @@
     },
     {
       "id": "decor-wall-life-127",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         14.467,
-        0.3,
+        0.36,
         20.287
       ],
       "rotationY": 2.495,
@@ -3720,10 +3720,10 @@
     },
     {
       "id": "decor-wall-life-128",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         13.047,
-        0.3,
+        0.36,
         18.993
       ],
       "rotationY": 2.31,
@@ -3731,10 +3731,10 @@
     },
     {
       "id": "decor-wall-life-129",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         11.889,
-        0.3,
+        0.36,
         17.46
       ],
       "rotationY": 2.125,
@@ -3742,10 +3742,10 @@
     },
     {
       "id": "decor-wall-life-130",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         10.507,
-        0.3,
+        0.36,
         13.893
       ],
       "rotationY": 1.756,
@@ -3753,10 +3753,10 @@
     },
     {
       "id": "decor-wall-life-131",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         10.33,
-        0.3,
+        0.36,
         11.98
       ],
       "rotationY": 1.571,
@@ -3764,10 +3764,10 @@
     },
     {
       "id": "decor-wall-life-132",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         10.507,
-        0.3,
+        0.36,
         10.067
       ],
       "rotationY": 1.386,
@@ -3775,10 +3775,10 @@
     },
     {
       "id": "decor-wall-life-133",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         14.467,
-        0.3,
+        0.36,
         3.673
       ],
       "rotationY": 0.647,
@@ -3786,10 +3786,10 @@
     },
     {
       "id": "decor-wall-life-134",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         16.1,
-        0.3,
+        0.36,
         2.661
       ],
       "rotationY": 0.462,
@@ -3797,10 +3797,10 @@
     },
     {
       "id": "decor-wall-life-135",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         17.891,
-        0.3,
+        0.36,
         1.967
       ],
       "rotationY": 0.277,
@@ -3808,10 +3808,10 @@
     },
     {
       "id": "decor-wall-life-136",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         23.589,
-        0.3,
+        0.36,
         1.967
       ],
       "rotationY": -0.277,
@@ -3819,10 +3819,10 @@
     },
     {
       "id": "decor-wall-life-137",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         25.38,
-        0.3,
+        0.36,
         2.661
       ],
       "rotationY": -0.462,
@@ -3830,10 +3830,10 @@
     },
     {
       "id": "decor-wall-life-138",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         27.013,
-        0.3,
+        0.36,
         3.673
       ],
       "rotationY": -0.647,
@@ -3841,10 +3841,10 @@
     },
     {
       "id": "decor-wall-life-139",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         28.433,
-        0.3,
+        0.36,
         4.967
       ],
       "rotationY": -0.832,
@@ -3852,10 +3852,10 @@
     },
     {
       "id": "decor-wall-life-140",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         29.591,
-        0.3,
+        0.36,
         6.5
       ],
       "rotationY": -1.016,
@@ -3863,10 +3863,10 @@
     },
     {
       "id": "decor-wall-life-141",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         30.447,
-        0.3,
+        0.36,
         8.219
       ],
       "rotationY": -1.201,
@@ -3874,10 +3874,10 @@
     },
     {
       "id": "decor-wall-life-142",
-      "glb": "/models/props/decor/wall-low.glb",
+      "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         30.973,
-        0.3,
+        0.36,
         10.067
       ],
       "rotationY": -1.386,
