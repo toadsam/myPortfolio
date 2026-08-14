@@ -54,10 +54,15 @@ import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
 import {makeBankTexture} from "@/lib/terraceBank";
 import {
   PLATEAU_PAD,
+  PLAZA_DAIS,
+  PLAZA_STEP,
+  PLAZA_WATER_RING,
   TERRACE_RECTS,
   TERRACE_STEP,
   terrainHeightAt,
-  WATER_CHANNELS
+  WATER_BANK_OUT,
+  WATER_CHANNELS,
+  waterHalfAt
 } from "@/lib/villageTerrain";
 import buildingModels from "@/data/buildingModels.json";
 import {buildBuildingStateMap, buildNpcStateMap} from "@/lib/liveState";
@@ -452,6 +457,107 @@ const MOAT_STEPS = 132; // 한 바퀴를 몇 조각으로
 // 물결이 한쪽으로 늘어나 물살이 아니라 빗살무늬로 보인다.
 const UV_PER_UNIT = 0.5;
 
+// ─── 물길 단면 — 물은 **파인 곳에 고여** 있어야 한다 ─────────────────────────
+// 한동안 물은 잔디 위에 얹은 평평한 리본 한 장이었다. 수면이 y=0.05, 그 밑 땅이
+// y≈0 이라 **깊이가 5cm** 였다. 위에서 보면 물이 아니라 잔디에 칠한 파란 띠고,
+// 다리는 건널 게 없는 자리에 서 있었다.
+//
+// 땅(잔디 원반)을 실제로 파지는 않는다. 그 원반은 반지름 53 짜리 극좌표 격자라
+// 링 간격이 1.2 유닛인데, 물길 폭이 1.2 라 단면에 정점이 두 개도 안 들어간다 —
+// 파 봐야 각진 홈이 된다. 대신 **물길을 따라 도랑 리본을 잔디 위에 덮는다**
+// (구역 축대 `TerraceBanks` 와 같은 방식). 바깥 입술이 잔디보다 3cm 위라
+// 잔디를 확실히 가리고, 거기서 하상까지 내려간다.
+/** 하상이 얼마나 파여 있는가 (수면 기준) */
+const WATER_DEPTH = 0.32;
+/**
+ * 수면 높이.
+ *
+ * ─── 수면을 지면 **아래**로 내리면 안 된다 ─────────────────────────────────
+ * "물이 파인 곳에 고여 있어야 한다"가 맞는 말이라 −0.18, −0.10 으로 내려 봤다.
+ * 부감에서는 잘 보이는데, **카메라를 낮추면 물이 통째로 사라진다** — 시선이
+ * 수평에 가까우면 10cm 위에 있는 잔디가 그대로 앞을 막기 때문이다.
+ * "어떨 때는 보이고 어떨 때는 안 보여"의 정체가 이것이었다.
+ *
+ * 그래서 수면은 잔디보다 **살짝 위**에 둔다(예전 평평한 리본과 같은 높이).
+ * 깊이는 파서 만드는 게 아니라 ① 가운데 짙은 물빛 ② 물가의 젖은 자갈 띠
+ * ③ 그 바깥 이끼 둔덕이 만드는 3~7cm 짜리 턱, 이 셋이 만든다.
+ * 하상(−0.32)은 불투명한 수면에 가려 안 보이지만, 물가에서 한 줄 드러나
+ * "여기가 파여 있다"는 단서가 된다.
+ */
+const WATER_SURFACE_Y = 0.03;
+
+/**
+ * 마을의 물줄기 전부 — 수면(`Waterways`)과 도랑(`WaterBanks`)이 **같은 목록**을 본다.
+ *
+ * 예전엔 리본 세 종류가 `Waterways` 안에 흩어져 있었다. 도랑을 따로 그리려면
+ * 그 셋을 또 한 벌 적어야 하는데, 이 리포에서 좌표를 두 벌 둔 것은 예외 없이
+ * 낡았다(해자·섬·물길 끝 반지름이 같은 이유로 세 번 어긋났다).
+ */
+type WaterLine = {
+  pts: {x: number; z: number}[];
+  /** 리본 반폭. t 는 경로를 따라 0~1 */
+  half: (t: number) => number;
+  /** 시작점과 끝점이 만나는 닫힌 고리인지 — 해자와 광장 물 고리가 그렇다 */
+  closed: boolean;
+  /** 수면 y 미세 조정. 물끼리 겹치는 자리에서 같은 높이면 지글거린다 */
+  lift: number;
+};
+
+function waterLines(): WaterLine[] {
+  const lines: WaterLine[] = [];
+
+  // ① 마을을 두르는 해자 (닫힌 타원)
+  const moat: {x: number; z: number}[] = [];
+  for (let s = 0; s <= MOAT_STEPS; s++) {
+    const t = s / MOAT_STEPS;
+    const angle = t * Math.PI * 2 - Math.PI / 2; // −90° 에서 시작 = 북쪽 꼭짓점
+    const drift = Math.sin(angle * 3 + 0.7) * 1.4 + Math.sin(angle * 7) * 0.5;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const nx = cos / MOAT.a;
+    const nz = sin / MOAT.b;
+    const nl = Math.hypot(nx, nz) || 1;
+    moat.push({
+      x: MOAT.cx + cos * MOAT.a + (nx / nl) * drift,
+      z: MOAT.cz + sin * MOAT.b + (nz / nl) * drift
+    });
+  }
+  lines.push({
+    pts: moat,
+    half: t => MOAT_HALF * (0.82 + 0.3 * Math.sin(t * Math.PI * 10 + 1.9)),
+    closed: true,
+    lift: 0
+  });
+
+  // ② 광장을 두르는 물 고리 — 물의 본류. 골짜기로 빠지는 게 지류다.
+  if (PLAZA_WATER_RING.length > 2) {
+    lines.push({
+      pts: [...PLAZA_WATER_RING, PLAZA_WATER_RING[0]],
+      half: t => waterHalfAt("ring", t),
+      closed: true,
+      lift: 0
+    });
+  }
+
+  // ③ 구역 사이 골짜기로 빠지는 물길. 안쪽은 가늘고 바깥으로 갈수록 넓어진다 —
+  //    물이 흘러 내려가는 방향이 읽힌다.
+  //
+  //    양 끝은 **가늘게 하지 않는다.** 예전엔 taper 로 폭을 0 까지 줄여 끝을
+  //    감췄는데, 그러면 고리에서 갈라져 나오는 자리가 바늘 끝이 되어 물길이
+  //    안 이어진 것처럼 보였다. 지금은 생성기가 양 끝을 다른 물 속으로 밀어
+  //    넣어 두므로 그냥 겹쳐 놓으면 된다. 다만 **같은 높이로 겹치면 지글거려서**
+  //    아주 살짝(2mm) 아래로 내린다 — 흐르는 물이 고인 물로 들어가는 쪽이다.
+  for (const channel of WATER_CHANNELS)
+    lines.push({
+      pts: channel,
+      half: t => waterHalfAt("channel", t),
+      closed: false,
+      lift: -0.002
+    });
+
+  return lines;
+}
+
 function Waterways() {
   const geometry = useMemo(() => {
     const positions: number[] = [];
@@ -459,20 +565,22 @@ function Waterways() {
     const uvs: number[] = [];
     const indices: number[] = [];
 
-    const shallow = new Color("#6dc5c3"); // 가장자리 — 자갈이 비치는 여울
-    const deep = new Color("#3a8ea3"); // 한가운데
+    // 마을 전체에 LUT 색보정과 안개가 걸려 있어, 원색으로 넣어도 화면에서는
+    // 한 단계 바래 나온다. 개울은 폭이 1유닛대라 조금만 바래도 회색 선이 된다.
+    const shallow = new Color("#86dedb"); // 가장자리 — 자갈이 비치는 여울
+    const deep = new Color("#2f9dc0"); // 한가운데
 
     /**
      * 폴리라인 하나를 물 리본으로 만든다. 한 마디마다 정점 셋(왼·오른·가운데)이라
      * 가운데 줄에 짙은 색을 넣어 물에 두께가 있는 것처럼 보인다.
-     * @param taper 끝을 가늘게 할지 — 해자는 닫힌 고리라 안 하고, 물길은 한다
      */
     const ribbon = (
       pts: {x: number; z: number}[],
       halfAt: (t: number) => number,
-      taper: boolean,
-      /** 시작점과 끝점이 만나는 닫힌 고리인지 — 해자만 그렇다. UV 이음매 처리가 다르다. */
-      closed: boolean
+      /** 시작점과 끝점이 만나는 닫힌 고리인지 — UV 이음매 처리가 다르다. */
+      closed: boolean,
+      /** 수면 y 미세 조정 (물끼리 겹치는 자리의 지글거림 방지) */
+      lift: number
     ) => {
       const base = positions.length / 3;
 
@@ -510,12 +618,11 @@ function Waterways() {
         // 진행 방향의 법선
         const ux = -tz / tl;
         const uz = tx / tl;
-        const fade = taper ? Math.min(1, Math.min(t, 1 - t) * 8) : 1;
-        const half = halfAt(t) * fade;
+        const half = halfAt(t);
         for (const side of [-1, 1]) {
           positions.push(
             pts[i].x + ux * half * side,
-            0,
+            lift,
             pts[i].z + uz * half * side
           );
           colors.push(shallow.r, shallow.g, shallow.b);
@@ -528,7 +635,7 @@ function Waterways() {
           // 지그재그 빗살무늬로 보인다. 폭이 좁을수록 심해진다.
           uvs.push(0.5 + side * half * UV_PER_UNIT, uvV);
         }
-        positions.push(pts[i].x, 0, pts[i].z);
+        positions.push(pts[i].x, lift, pts[i].z);
         colors.push(deep.r, deep.g, deep.b);
         uvs.push(0.5, uvV);
       }
@@ -540,36 +647,8 @@ function Waterways() {
       }
     };
 
-    // ① 마을을 두르는 해자 (닫힌 타원)
-    const moat: {x: number; z: number}[] = [];
-    for (let s = 0; s <= MOAT_STEPS; s++) {
-      const t = s / MOAT_STEPS;
-      const angle = t * Math.PI * 2 - Math.PI / 2; // −90° 에서 시작 = 북쪽 꼭짓점
-      const drift = Math.sin(angle * 3 + 0.7) * 1.4 + Math.sin(angle * 7) * 0.5;
-      const cos = Math.cos(angle);
-      const sin = Math.sin(angle);
-      const nx = cos / MOAT.a;
-      const nz = sin / MOAT.b;
-      const nl = Math.hypot(nx, nz) || 1;
-      moat.push({
-        x: MOAT.cx + cos * MOAT.a + (nx / nl) * drift,
-        z: MOAT.cz + sin * MOAT.b + (nz / nl) * drift
-      });
-    }
-    ribbon(
-      moat,
-      t => MOAT_HALF * (0.82 + 0.3 * Math.sin(t * Math.PI * 10 + 1.9)),
-      false,
-      true
-    );
-
-    // ② 구역 사이 골짜기를 흐르는 물길 — 단이 양옆에 서 있어 파인 것처럼 보인다.
-    //    광장 쪽 끝은 가늘게, 해자에 닿는 바깥쪽은 넓게.
-    for (const channel of WATER_CHANNELS) {
-      // 안쪽은 가늘고 바깥으로 갈수록 넓어진다 — 물이 흘러 내려가는 방향이 읽힌다.
-      // 0.55~1.3 은 너무 굵어 잔디 위에 붙인 색종이처럼 보였다.
-      ribbon(channel, t => 0.5 + t * 0.45, true, false);
-    }
+    for (const line of waterLines())
+      ribbon(line.pts, line.half, line.closed, line.lift);
 
     const geo = new BufferGeometry();
     geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
@@ -583,10 +662,17 @@ function Waterways() {
   const material = useMemo(() => {
     // 호수(Water)와 같은 재질감 — 하늘빛을 받아야 물로 보인다.
     // 다만 해자·개울은 얕으므로 조금 밝고 덜 반사한다.
+    // roughness 0.3 · metalness 0.2 로 뒀더니 태양이 넓은 흰 반사를 깔아 물빛이
+    // 통째로 **회백색**이 됐다. 폭이 1유닛대라 그 반사가 수면을 다 덮는다.
+    // 조금 거칠게 하면 반사가 좁아져 알베도(청록)가 드러난다. emissive 는
+    // 도랑 밑이라 그늘·AO 가 겹쳐도 물이 검게 죽지 않게 바닥을 깔아 주는 값이다 —
+    // 빛나 보이라는 게 아니라 회색으로 안 죽으라는 것.
     const m = new MeshStandardMaterial({
       vertexColors: true,
-      roughness: 0.3,
-      metalness: 0.2
+      roughness: 0.45,
+      metalness: 0.12,
+      emissive: new Color("#124f66"),
+      emissiveIntensity: 0.3
     });
     // 여기는 **흐르는** 물이다. 두 층 모두 +v(물길 방향)로 흘리되 속도를 달리해
     // 무늬가 서로 어긋나게 한다. u 에 살짝 준 값은 물살이 벽에 부딪혀 비스듬히
@@ -618,7 +704,273 @@ function Waterways() {
   }, []);
 
   return (
-    <mesh geometry={geometry} material={material} position={[0, 0.05, 0]} />
+    <>
+      <WaterBanks />
+      <mesh
+        geometry={geometry}
+        material={material}
+        position={[0, WATER_SURFACE_Y, 0]}
+      />
+    </>
+  );
+}
+
+// ─── 물길 도랑 (하상 + 둔치) ─────────────────────────────────────────────────
+// 물이 깊어 보이게 하는 건 물 자체가 아니라 **물가**다. 수면만 내려도 잔디가
+// 그 위에 남아 있으면 물은 잔디 밑에 깔린 파란 판이 된다. 그래서 물줄기마다
+// 도랑 단면을 두르고, 그 안에 수면을 넣는다 — `TerraceBanks` 와 같은 방식이다.
+//
+// 왜 잔디 원반을 안 파나: 그 원반은 반지름 53 짜리 극좌표 격자라 링 간격이
+// 1.2 유닛인데 물길 폭이 1.2 다. 단면에 정점이 두 개도 안 들어가므로 파 봐야
+// 각진 홈이 된다. 도랑을 **덮는** 쪽이 정확하고, 잔디는 그 밑에 그냥 둔다.
+//
+// 단면은 **수면 가장자리 기준**으로 적는다: 실제 거리 = 리본 반폭 + out.
+// 리본 폭이 물길마다(그리고 해자는 마디마다) 다르므로, 배수로 적으면 좁은
+// 개울에서는 둔치가 붙고 넓은 해자에서는 벌어진다. 더하기로 적으면 어디서나
+// 물가 모양이 같다. 0번은 하상 한가운데라 out 을 안 본다.
+//
+// 색은 **밝게** 잡는다. 처음에 하상을 #3b3e36 까지 어둡게 뒀더니, 물이 띠의
+// 3분의 1뿐이던 때와 겹쳐 부감에서 개울이 아니라 **검은 고랑**으로 보였다.
+// 물속은 수면이 덮으므로 어차피 어두워진다 — 재료는 젖은 자갈색이면 충분하다.
+//
+// ─── 어깨를 흙색으로 두면 안 된다 ────────────────────────────────────────────
+// 처음엔 물 밖 어깨를 마른 흙(#8b7a5c)으로 칠했다. 그 색이 광장 판석과 거의 같아서
+// 부감에서 도랑 전체가 **포장된 길**로 보였고, 그 한가운데 가는 파란 줄이 그어진
+// 꼴이 됐다. 컨셉의 개울은 잔디밭을 지난다 — 젖은 자갈은 수면 바로 옆 한 줄뿐이고
+// 나머지는 풀이다.
+//
+// 높이는 **수면 기준**으로 적는다. 수면을 올리고 내릴 때 y 를 손으로 다시 맞추면
+// 반드시 어긋난다 — 실제로 물가(n2)가 그 바깥 둔덕(n3)보다 높아져 단면이 뒤집힌 적이 있다.
+const WATER_PROFILE: {out: number; y: number; color: string}[] = [
+  // 한가운데가 가장 깊다 — 바닥이 평평하면 물이 얕은 접시로 보인다
+  {out: 0, y: WATER_SURFACE_Y - WATER_DEPTH - 0.05, color: "#4e5646"},
+  // 하상 가장자리 (아직 물속)
+  {out: -0.22, y: WATER_SURFACE_Y - WATER_DEPTH, color: "#5d6352"},
+  // 수면 바로 아래 — 여기가 물가 선이다. 젖은 자갈 한 줄
+  {out: 0.05, y: WATER_SURFACE_Y - 0.02, color: "#7b7365"},
+  // 이끼 낀 둔덕 — 물보다 4cm 높은 턱. 이 턱이 깊이를 만든다
+  {out: 0.24, y: WATER_SURFACE_Y + 0.04, color: "#5f6f3c"},
+  // 잔디로 되돌아오는 입술. 잔디(y≈0)보다 위라 잔디를 확실히 덮는다
+  {out: WATER_BANK_OUT, y: WATER_SURFACE_Y + 0.02, color: "#6b8748"}
+];
+
+function WaterBanks() {
+  const geometry = useMemo(() => {
+    const positions: number[] = [];
+    const colors: number[] = [];
+    const indices: number[] = [];
+    const rgb = WATER_PROFILE.map(p => new Color(p.color));
+
+    for (const line of waterLines()) {
+      const {pts, half, closed} = line;
+      const base = positions.length / 3;
+      // 열린 물길은 양 끝이 다른 물(광장 고리·해자) 속으로 들어간다. 거기까지
+      // 도랑을 파면 **물 한가운데를 가로지르는 둑**이 생기므로, 끝에서는 깊이를
+      // 0 으로 눕혀 상대 도랑에 녹아들게 한다.
+      const arcs: number[] = [0];
+      for (let i = 1; i < pts.length; i++)
+        arcs.push(
+          arcs[i - 1] +
+            Math.hypot(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z)
+        );
+      const total = arcs[arcs.length - 1] || 1;
+      const MOUTH = 2.2; // 이 거리 안에서 깊이가 0 → 1 로 살아난다
+      const depthAt = (i: number) => {
+        if (closed) return 1;
+        const d = Math.min(arcs[i], total - arcs[i]);
+        return Math.min(1, Math.max(0, d / MOUTH));
+      };
+
+      // 한 마디마다 단면 정점을 왼쪽 바깥 → 가운데 → 오른쪽 바깥 순으로 깐다
+      const CROSS = WATER_PROFILE.length * 2 - 1;
+      for (let i = 0; i < pts.length; i++) {
+        const t = i / (pts.length - 1);
+        const prev = pts[Math.max(0, i - 1)];
+        const next = pts[Math.min(pts.length - 1, i + 1)];
+        const tx = next.x - prev.x;
+        const tz = next.z - prev.z;
+        const tl = Math.hypot(tx, tz) || 1;
+        const ux = -tz / tl;
+        const uz = tx / tl;
+        const h = half(t);
+        const k = depthAt(i);
+        const put = (n: number, side: number) => {
+          const p = WATER_PROFILE[n];
+          // 0번은 한가운데. 나머지는 수면 가장자리에서 out 만큼 — 하상 가장자리는
+          // out 이 음수라 안쪽으로 들어오는데, 중심을 넘어가면 단면이 뒤집히므로 접는다.
+          const d = n === 0 ? 0 : Math.max(0.05, h + p.out) * side;
+          positions.push(pts[i].x + ux * d, p.y * k, pts[i].z + uz * d);
+          colors.push(rgb[n].r, rgb[n].g, rgb[n].b);
+        };
+        for (let n = WATER_PROFILE.length - 1; n >= 1; n--) put(n, -1);
+        put(0, 1); // 가운데 (out 이 음수라 부호는 의미 없다)
+        for (let n = 1; n < WATER_PROFILE.length; n++) put(n, 1);
+      }
+      // ─── 감기 방향 ───────────────────────────────────────────────────────
+      // 진행 방향 T 와 단면 방향 C 의 외적 T×C 는 **−Y** 다(C 가 −90° 법선이라).
+      // 그래서 (마디i,단면n) → (마디i+1,단면n) → (마디i,단면n+1) 순으로 감으면
+      // 면이 통째로 **아래를 본다**. 앞면만 그리는 재질이라 위에서 보면 도랑이
+      // 사라지고, 잔디가 그 자리에 그대로 남아 **0.18 아래 수면을 덮는다** —
+      // "물이 아예 없는데"의 정체가 이것이었다. 단면 방향을 먼저 감는다.
+      for (let i = 0; i + 1 < pts.length; i++) {
+        const a = base + i * CROSS;
+        const b = base + (i + 1) * CROSS;
+        for (let n = 0; n + 1 < CROSS; n++)
+          indices.push(a + n, a + n + 1, b + n, a + n + 1, b + n + 1, b + n);
+      }
+    }
+
+    const geo = new BufferGeometry();
+    geo.setAttribute("position", new Float32BufferAttribute(positions, 3));
+    geo.setAttribute("color", new Float32BufferAttribute(colors, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    return geo;
+  }, []);
+
+  return (
+    <mesh geometry={geometry} receiveShadow>
+      <meshStandardMaterial vertexColors roughness={0.95} metalness={0} />
+    </mesh>
+  );
+}
+
+// ─── 광장 단상 ────────────────────────────────────────────────────────────────
+// 구역 단(`TerraceBanks`)과 같은 일을 하지만 **사각형이 아니다.** 광장 포장은
+// 대로 넷이 축 방향 칸을 먹고 SKILLS 단 모서리가 한쪽을 파고들어 둥글둥글한
+// 덩어리라, 사각형 단을 깔면 네 모서리가 잔디로 튀어나온다. 그래서 각도별
+// 반지름(`PLAZA_DAIS`)을 따라 축대를 두르고 그 안을 뚜껑 한 장으로 덮는다.
+//
+// 축대는 **테두리에서 바깥으로** 내려간다. 발치가 물에 잠기면 안 되므로
+// 생성기가 테두리 자리를 "물가 − 축대 길이 − 여유"로 잡아 뒀다.
+const DAIS_WALL_RUN = 0.5;
+
+// ─── 계단은 축대에 **새겨 넣는다** ───────────────────────────────────────────
+// 처음엔 구역 대문처럼 대로 넷에 `terrace-stair` 를 세우려 했다. 그런데 단상
+// 테두리와 물가 사이가 0.7 밖에 없다 — 계단 모델은 안길이가 2.8 이라 놓는 족족
+// 물 위에 섰고, 절반 크기로 줄여도 안 들어간다.
+//
+// 그리고 컨셉 아트를 다시 보면 광장은 **둘레 전체가 동심원 계단**이지 네 군데
+// 계단참이 아니다. 그러니 축대 단면 자체를 계단으로 깎는 게 맞다 — 어느 방향에서
+// 올라가도 계단이고, 프롭이 하나도 안 늘고, 물가와 다툴 일도 없다.
+/** (바깥으로 물린 거리, 높이) — 발치에서 꼭대기 순. 두 단 + 갓돌. */
+const DAIS_PROFILE: [number, number][] = [
+  [DAIS_WALL_RUN, 0],
+  [DAIS_WALL_RUN, 0.24],
+  [0.28, 0.24],
+  [0.28, 0.48],
+  [0.1, 0.48],
+  [0.1, 0.55],
+  [0, 0.55]
+];
+
+function PlazaDais() {
+  const texture = useMemo(() => makeBankTexture(), []);
+  const grass = useTexture("/textures/grass-village.png");
+  const macro = useMemo(() => makeMacroTexture(), []);
+  const grassMap = useMemo(() => {
+    const t = grass.clone();
+    t.wrapS = RepeatWrapping;
+    t.wrapT = RepeatWrapping;
+    t.anisotropy = 8;
+    t.colorSpace = SRGBColorSpace;
+    t.needsUpdate = true;
+    return t;
+  }, [grass]);
+
+  const {wall, top} = useMemo(() => {
+    if (PLAZA_STEP === 0 || PLAZA_DAIS.length < 8)
+      return {wall: null, top: null};
+    const pts = [...PLAZA_DAIS, PLAZA_DAIS[0]];
+
+    // ── 옆면: 계단 단면을 한 바퀴 두른다. 높이는 PLAZA_STEP 에 맞춰 늘인다 —
+    //    표는 0.55 기준으로 적혀 있으므로 단 높이를 바꿔도 비율이 유지된다.
+    const k = PLAZA_STEP / 0.55;
+    const profile: [number, number][] = DAIS_PROFILE.map(([o, y]) => [o, y * k]);
+    const wp: number[] = [];
+    const wuv: number[] = [];
+    const widx: number[] = [];
+    // v 는 단면을 따라간 거리 / 단 높이 — 어느 단에서나 돌 한 장 크기가 같다
+    const vAt = [0];
+    for (let i = 1; i < profile.length; i++)
+      vAt.push(
+        vAt[i - 1] +
+          Math.hypot(
+            profile[i][0] - profile[i - 1][0],
+            profile[i][1] - profile[i - 1][1]
+          ) /
+            PLAZA_STEP
+      );
+
+    let arc = 0;
+    for (let i = 0; i < pts.length; i++) {
+      if (i > 0)
+        arc += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z);
+      const r = Math.hypot(pts[i].x, pts[i].z) || 1;
+      const nx = pts[i].x / r; // 바깥 방향 = 중심에서 나가는 방향
+      const nz = pts[i].z / r;
+      for (let n = 0; n < profile.length; n++) {
+        const [out, y] = profile[n];
+        wp.push(pts[i].x + nx * out, y, pts[i].z + nz * out);
+        wuv.push(arc / 1.88, vAt[n]);
+      }
+    }
+    const CROSS = profile.length;
+    for (let i = 0; i + 1 < pts.length; i++) {
+      const a = i * CROSS;
+      const b = (i + 1) * CROSS;
+      for (let n = 0; n + 1 < CROSS; n++)
+        widx.push(a + n, b + n, a + n + 1, a + n + 1, b + n, b + n + 1);
+    }
+    const wallGeo = new BufferGeometry();
+    wallGeo.setAttribute("position", new Float32BufferAttribute(wp, 3));
+    wallGeo.setAttribute("uv", new Float32BufferAttribute(wuv, 2));
+    wallGeo.setIndex(widx);
+    wallGeo.computeVertexNormals();
+
+    // ── 뚜껑: 중심에서 부챗살로. 판석이 그 위를 거의 덮지만, 포장이 못 닿는
+    //    테두리 한 줄(타일 반대각만큼)이 잔디로 남아야 단 위가 안 뚫린다.
+    const tp: number[] = [0, PLAZA_STEP, 0];
+    const tuv: number[] = [0, 0];
+    const tidx: number[] = [];
+    for (let i = 0; i < PLAZA_DAIS.length; i++) {
+      const p = PLAZA_DAIS[i];
+      tp.push(p.x, PLAZA_STEP, p.z);
+      tuv.push(p.x / GRASS_TILE_WORLD, p.z / GRASS_TILE_WORLD);
+    }
+    for (let i = 0; i < PLAZA_DAIS.length; i++) {
+      const a = 1 + i;
+      const b = 1 + ((i + 1) % PLAZA_DAIS.length);
+      tidx.push(0, b, a); // 위를 보게
+    }
+    const topGeo = new BufferGeometry();
+    topGeo.setAttribute("position", new Float32BufferAttribute(tp, 3));
+    topGeo.setAttribute("uv", new Float32BufferAttribute(tuv, 2));
+    topGeo.setIndex(tidx);
+    topGeo.computeVertexNormals();
+
+    return {wall: wallGeo, top: topGeo};
+  }, []);
+
+  if (!wall || !top) return null;
+  return (
+    <>
+      <mesh geometry={wall} receiveShadow castShadow>
+        <meshStandardMaterial map={texture} roughness={0.95} metalness={0} />
+      </mesh>
+      {/* 판석이 이 면보다 몇 cm 위라, 안 밀면 멀어질수록 잔디가 이겨 포장이 사라진다 */}
+      <mesh geometry={top} receiveShadow>
+        <meshStandardMaterial
+          ref={m => m && applyGroundMacro(m, macro)}
+          map={grassMap}
+          roughness={0.95}
+          metalness={0}
+          polygonOffset
+          polygonOffsetFactor={1}
+          polygonOffsetUnits={1}
+        />
+      </mesh>
+    </>
   );
 }
 
@@ -1511,6 +1863,7 @@ function VillageSceneImpl({
           <Water />
           <Waterways />
           <TerraceBanks />
+          <PlazaDais />
           <DistantHills />
           {PLAZA_LANDMARK_READY ? null : <Statue />}
 

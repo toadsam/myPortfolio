@@ -14,7 +14,8 @@ import {
   districtCenters,
   readMoat,
   readIsland,
-  readWalkRadius
+  readWalkRadius,
+  readWaterHalf
 } from "./lib/read-village.mjs";
 
 const LAYOUT = "src/data/propsLayout.json";
@@ -28,6 +29,10 @@ const DRY = process.argv.includes("--dry");
 // 타원에 drift(±1.9)를 얹어 물을 굽이치게 그리므로, 타원만 피하면 물줄기가
 // 바깥으로 벗어나는 구간마다 프롭이 물에 선다. 아래는 Waterways 의 폴리라인 식이다.
 const MOAT = readMoat();
+// 물 치수는 앱(villageTerrain.ts)이 가진다. 프롭은 수면뿐 아니라 **도랑 비탈**
+// 밖에 서야 한다 — 비탈 위에 놓으면 평평한 발이 허공에 뜬다.
+const WATER = readWaterHalf();
+const WATER_BANK_KEEP = WATER.bankOut;
 const MOAT_LINE = (() => {
   const STEPS = 132,
     pts = [];
@@ -60,7 +65,76 @@ function inMoatWater(x, z) {
       half = q.half;
     }
   }
-  return best < half + 0.5; // 물가에 발이 걸치지 않도록 여유를 조금 준다
+  // 물가에 발이 걸치지 않도록 여유를 준다. 이 값은 씬이 그리는 **도랑 폭**이다
+  // (VillageScene 의 WATER_BANK_OUT) — 물길이 파이면서 수면 바깥으로도 비탈이
+  // 생겼으므로, 예전 0.5 로는 프롭이 비탈 위에 발끝만 걸치고 떠 있게 된다.
+  return best < half + WATER_BANK_KEEP;
+}
+
+// ─── 마을 안 물길 (광장 물 고리 + 골짜기 개울) ────────────────────────────────
+// 해자와 같은 이유로 여기도 물 위·물가에는 아무것도 못 놓는다. 다만 이쪽이
+// 훨씬 중요하다 — 광장 둘레 잔디 띠(r 10~14)에 심는 초목·벤치가 전부 고리를
+// 스친다. 좌표는 바닥 생성기가 계산해 둔 것을 그대로 읽는다.
+const INNER_WATER = (() => {
+  try {
+    const t = JSON.parse(
+      readFileSync("src/data/villageTerraces.json", "utf8")
+    );
+    const ring = t.plazaRing ?? [];
+    const out = [];
+    // {점, 그 자리 리본 반폭}
+    if (ring.length > 2)
+      for (const q of ring) out.push({x: q.x, z: q.z, half: WATER.ring});
+    for (const ch of t.channels ?? [])
+      ch.forEach((q, i) =>
+        out.push({
+          x: q.x,
+          z: q.z,
+          half:
+            WATER.channelIn +
+            (i / (ch.length - 1)) * (WATER.channelOut - WATER.channelIn)
+        })
+      );
+    return out;
+  } catch {
+    return [];
+  }
+})();
+
+function inInnerWater(x, z) {
+  for (const q of INNER_WATER)
+    if (Math.hypot(x - q.x, z - q.z) < q.half + WATER_BANK_KEEP) return true;
+  return false;
+}
+
+// ─── 광장 단상 테두리 ─────────────────────────────────────────────────────────
+// 단상이 0.55 올라앉으면서 테두리에 축대가 생겼다. 그 선 위에 걸친 프롭은
+// `terrainHeightAt` 이 "안이냐 밖이냐"로만 답하므로 **반쯤 벽에 박히거나 허공에
+// 뜬다**(벤치·깃대·나무 등 7개가 그랬다). 물가와 같은 방식으로 여기서 한 번 막는다.
+const PLAZA_DAIS_LINE = (() => {
+  try {
+    return (
+      JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"))
+        .plazaDais ?? []
+    );
+  } catch {
+    return [];
+  }
+})();
+/** 축대 두께(0.5) + 프롭이 걸치지 않을 여유 */
+const DAIS_EDGE_KEEP = 0.9;
+
+function onDaisEdge(x, z) {
+  if (PLAZA_DAIS_LINE.length < 8) return false;
+  const r = Math.hypot(x, z);
+  if (r > 9.5) return false;
+  const a = Math.atan2(z, x);
+  const t = ((a / (Math.PI * 2)) % 1 + 1) % 1;
+  const p =
+    PLAZA_DAIS_LINE[
+      Math.floor(t * PLAZA_DAIS_LINE.length) % PLAZA_DAIS_LINE.length
+    ];
+  return Math.abs(r - Math.hypot(p.x, p.z)) < DAIS_EDGE_KEEP;
 }
 
 // ─── 규격 ─────────────────────────────────────────────────────────────────────
@@ -352,10 +426,20 @@ const discs = OUTER.map(b => ({
 const HUB_DISC = layout.props.find(p => p.id === "ground-plaza-center");
 const HUB_RADIUS = (HUB_DISC?.scale ?? 4.84) * PLAZA_RADIUS_AT_1;
 
-// 길 — 바닥 레이아웃에 깔린 길 타일이 곧 길이다
-const roads = layout.props
-  .filter(p => p.glb.includes("/path-"))
-  .map(p => ({x: p.position[0], z: p.position[2]}));
+// 길 — 바닥 레이아웃에 깔린 길 타일이 곧 길이다.
+//
+// **다리로 건너는 칸도 길이다.** 바닥 생성기가 물이 지나는 길 타일을 걷어내는데
+// (안 그러면 길이 물보다 1cm 높아 물을 덮는다), 그 칸을 길에서 빼면 여기 규칙이
+// 줄줄이 어긋난다: 담장이 그 자리를 "길이 아니다"로 보고 **구역 대문을 막아
+// 버리고**(문 49곳 → 40곳), 가로등·나무가 다리 앞에 선다.
+// 걷어낸 칸 목록은 생성기가 bridgeCells 로 같이 내보낸다.
+const roads = [
+  ...layout.props
+    .filter(p => p.glb.includes("/path-"))
+    .map(p => ({x: p.position[0], z: p.position[2]})),
+  ...(JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"))
+    .bridgeCells ?? [])
+];
 if (roads.length < 20)
   throw new Error(
     `길 타일을 ${roads.length}장밖에 못 찾았습니다 — 먼저 바닥을 생성하세요`
@@ -485,7 +569,10 @@ function place(
   // 재배치하며 민가·담장 띠가 바깥으로 밀리자, 숲이 아닌 그 둘이 물 위에 섰다.
   // 프롭 종류마다 회피를 따로 붙이면 새 종류가 생길 때마다 같은 사고가 난다.
   // 물 위에 서야 하는 것(다리·폭포)만 onWater 로 빠져나간다.
-  if (!onWater && inMoatWater(x, z)) return false;
+  if (!onWater && (inMoatWater(x, z) || inInnerWater(x, z))) return false;
+  // 광장 단상 테두리에 걸치면 반은 축대에 박히고 반은 뜬다. 계단만 예외다 —
+  // 계단은 그 턱을 오르라고 있는 물건이라 일부러 테두리에 붙여 놓는다.
+  if (kind !== "terrace-stair" && onDaisEdge(x, z)) return false;
   props.push({
     id: `decor-${id}`,
     glb: `/models/props/${KIT[kind].glb}`,
@@ -668,12 +755,12 @@ for (const [district, kinds] of Object.entries(LANDMARKS)) {
 }
 
 // 광장 랜드마크 — 원반 바로 바깥에 분수·우물·석상을 삼각형으로
-const PLAZA_RING = [
+const PLAZA_LANDMARK_RING = [
   {kind: "fountain", angle: -Math.PI / 2},
   {kind: "well", angle: Math.PI / 6},
   {kind: "lantern-bearer", angle: (Math.PI * 5) / 6}
 ];
-for (const {kind, angle} of PLAZA_RING) {
+for (const {kind, angle} of PLAZA_LANDMARK_RING) {
   const dist = HUB_RADIUS + 1.5;
   const x = HUB.x + Math.cos(angle) * dist;
   const z = HUB.z + Math.sin(angle) * dist;
@@ -728,8 +815,8 @@ for (const {kind, angle} of PLAZA_RING) {
   // 기념비 반폭이 3.33 이라 원반(5.0) 안에는 고리를 한 겹밖에 못 넣는다.
   // 셋뿐이던 랜드마크 고리에 셋을 더해 60° 간격 여섯으로 만드는 편이,
   // 부감에서 광장이 동심원으로 읽히는 데 훨씬 낫다.
-  PLAZA_RING.forEach(({angle}, n) => {
-    const next = PLAZA_RING[(n + 1) % PLAZA_RING.length].angle;
+  PLAZA_LANDMARK_RING.forEach(({angle}, n) => {
+    const next = PLAZA_LANDMARK_RING[(n + 1) % PLAZA_LANDMARK_RING.length].angle;
     const span = (next - angle + Math.PI * 2) % (Math.PI * 2);
     const mid = angle + span / 2;
     const x = HUB.x + Math.cos(mid) * (HUB_RADIUS + 1.5);
@@ -1034,6 +1121,11 @@ const blockRect = new Map();
     }
     console.log(`  구역 대문 계단 ${put}곳`);
   }
+
+  // ─── 광장 단상에는 계단 프롭을 안 놓는다 ────────────────────────────────────
+  // 한때 대로 넷에 `terrace-stair` 를 세웠다. 단상 테두리와 물가 사이가 0.7 인데
+  // 계단 모델 안길이가 2.8 이라 넣는 족족 물 위에 섰다(place 가 전부 되돌렸다).
+  // 지금은 축대 단면 자체가 두 단짜리 계단이다 — VillageScene 의 DAIS_PROFILE.
 }
 
 // ─── ②-c 남쪽 정문 ────────────────────────────────────────────────────────────
@@ -1474,45 +1566,38 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
   // 여기가 같은 값을 읽어야 다리가 정확히 물 위에 선다.
   {
     // 담장 절의 terr 는 그 블록 안에 갇혀 있다 — 여기서 다시 읽는다
-    const channels =
-      JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"))
-        .channels ?? [];
-    let bridges = 0;
-    for (let c = 0; c < channels.length; c++) {
-      const pts = channels[c];
-      // 물 위에는 아무것도 안 심는다
+    const terr = JSON.parse(
+      readFileSync("src/data/villageTerraces.json", "utf8")
+    );
+    // 광장을 두르는 물 고리도 같은 취급이다: 물 위엔 아무것도 안 심는다.
+    const ring = terr.plazaRing ?? [];
+    const waterLines = [
+      ...(terr.channels ?? []),
+      ...(ring.length > 2 ? [[...ring, ring[0]]] : [])
+    ];
+    for (const pts of waterLines)
       for (const q of pts) landmarks.push({x: q.x, z: q.z, r: 2.2});
 
-      // 길과 만나는 곳에 돌다리. 한 번 놓으면 다음 몇 마디는 건너뛴다 —
-      // 길 타일이 1.88 간격이라 안 그러면 한 교차로에 다리가 서너 개 겹친다.
-      let skip = 0;
-      for (let n = 1; n < pts.length - 1; n++) {
-        if (skip > 0) {
-          skip -= 1;
-          continue;
-        }
-        const q = pts[n];
-        if (!onRoad(q.x, q.z, 0.6)) continue;
-        // 다리는 물을 **가로질러야** 한다 — 모델의 긴 축(+X)을 물 진행 방향의 법선에 맞춘다
-        const dx = pts[n + 1].x - pts[n - 1].x;
-        const dz = pts[n + 1].z - pts[n - 1].z;
-        place(
-          `bridge-ch${c}-${n}`,
-          "bridge-stone",
-          q.x,
-          q.z,
-          round3(Math.atan2(dz, dx)),
-          {gap: 0.1, onWater: true}
-        );
-        landmarks.push({x: q.x, z: q.z, r: 3.4});
-        bridges += 1;
-        skip = 3;
-      }
-    }
-    if (channels.length)
-      console.log(
-        `  구역 사이 물길 ${channels.length}줄기 · 돌다리 ${bridges}개`
-      );
+    // ─── 돌다리는 **바닥 생성기가 정한 건널목**에 놓는다 ────────────────────────
+    // 예전엔 여기서 "물길 마디가 길 타일 위에 있으면 다리"로 직접 찾았다.
+    // 그런데 바닥 생성기가 물이 지나는 길 타일을 걷어내기 시작하면서(안 그러면
+    // 길이 물보다 1cm 높아 물을 덮어 버린다) 그 규칙으로는 다리가 **한 개도**
+    // 안 섰다(15 → 1). 건널목을 아는 건 타일을 걷어낸 그쪽뿐이므로,
+    // 좌표와 각도를 받아 놓기만 한다.
+    const crossings = terr.crossings ?? [];
+    crossings.forEach((cr, n) => {
+      place(`bridge-cross-${n}`, "bridge-stone", cr.x, cr.z, cr.angle, {
+        gap: 0.1,
+        onWater: true
+      });
+      landmarks.push({x: cr.x, z: cr.z, r: 3.4});
+    });
+
+    console.log(
+      `  물길 ${terr.channels?.length ?? 0}줄기 + 광장 물 고리 ${
+        ring.length > 2 ? 1 : 0
+      }개 · 건널목 돌다리 ${crossings.length}개`
+    );
   }
 
   // 해자를 따라 숲을 비운다.
@@ -1546,6 +1631,63 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
         r: 2
       });
     }
+  }
+
+  // ─── 마을 테두리 담장 ───────────────────────────────────────────────────────
+  // 컨셉 아트에서 마을을 "성읍"으로 읽히게 하는 건 **바깥을 한 바퀴 두른 돌담**이다.
+  // 담장이 있어야 그 안이 마을이고 밖이 들판으로 갈린다. 지금까지는 구역마다
+  // 블록을 두르는 담장(wall-low)만 있고 마을 전체를 두르는 선이 없었다 —
+  // 실측하면 담장 134토막 중 테두리(r>34)에 선 것이 11토막뿐이었다.
+  //
+  // 자리는 **해자 안쪽 기슭에서 조금 들어온 곳**이다. 담장 다음에 물이 오는 게
+  // 성읍의 순서고, 각도별로 재 보면 마을 바깥끝과 물 기슭 사이가 가장 좁은 데도
+  // 5.7 남아 담장 한 줄이 넉넉히 들어간다.
+  //
+  // 해자와 **같은 폴리라인**을 쓴다 — 타원만 따라가면 물이 드리프트로 굽이칠 때
+  // 담장이 물에 들어간다(나무가 그렇게 잠긴 적이 있다).
+  {
+    const INSET = 2.6; // 물 기슭에서 담장까지
+    const SEG = 1.94; // wall-low 한 토막 길이
+    const perim = Math.PI * (MOAT.a + MOAT.b); // 타원 둘레 근사
+    const steps = Math.max(80, Math.round(perim / SEG));
+    let put = 0;
+    let skipped = 0;
+    for (let k = 0; k < steps; k++) {
+      const angle = (k / steps) * Math.PI * 2 - Math.PI / 2;
+      const drift = Math.sin(angle * 3 + 0.7) * 1.4 + Math.sin(angle * 7) * 0.5;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      const nx = cos / MOAT.a;
+      const nz = sin / MOAT.b;
+      const nl = Math.hypot(nx, nz) || 1;
+      // 물줄기 중심 → 안쪽 법선으로 (반폭 + INSET) 만큼 들어온다
+      const inward = 1.23 + INSET;
+      const x = round3(MOAT.cx + cos * MOAT.a + (nx / nl) * (drift - inward));
+      const z = round3(MOAT.cz + sin * MOAT.b + (nz / nl) * (drift - inward));
+
+      // 남쪽 대계단과 북쪽 참배로는 **문**이다 — 거기서 담장을 끊어야 길이 나간다
+      if (Math.abs(x) < 2.6) {
+        skipped++;
+        continue;
+      }
+      if (onRoad(x, z, 0.6) || onBuilding(x, z, 0.6) || onDisc(x, z, 0.2)) {
+        skipped++;
+        continue;
+      }
+      if (!free(x, z, 0.9)) {
+        skipped++;
+        continue;
+      }
+      // 담장은 둘레 방향(접선)으로 눕는다
+      const rot = round3(Math.atan2(-(nx / nl), nz / nl));
+      if (place(`rimwall-${put}`, "wall-low", x, z, rot, {gap: 0.9})) {
+        walls.push({x, z, ax: Math.cos(rot), az: Math.sin(rot)});
+        put++;
+      }
+    }
+    console.log(
+      `  마을 테두리 담장 ${put}토막 (자리 ${steps}곳 중 ${skipped}곳은 문·길·건물로 비움)`
+    );
   }
 
   // 섬 — 원본은 밑동이 뾰족한 부유섬이라 그대로 세우면 원뿔이 드러난다.

@@ -1,4 +1,6 @@
 import propsLayout from "@/data/propsLayout.json";
+import terraces from "@/data/villageTerraces.json";
+import {waterHalfAt} from "./villageTerrain";
 import {villageBuildings} from "./constants";
 
 // 걸어 다니는 범위와, 몸으로 막히는 것들.
@@ -140,6 +142,94 @@ for (const p of propsLayout.props as Array<{
   if (r > 0) addBlocker({x, z, r});
 }
 
+// ─── 물 ───────────────────────────────────────────────────────────────────────
+// 물길이 골짜기에만 있을 때는 걸어 들어갈 일이 없어 안 막았다. 광장을 두르는
+// 물 고리가 생기면서 사정이 달라졌다 — 안 막으면 다리를 놔두고 물을 가로질러
+// 걷게 되고, 그러면 "구역에 가려면 다리를 건넌다"는 배치가 통째로 무의미해진다.
+//
+// **다리 자리에는 구멍을 낸다.** 돌다리 프롭 좌표를 그대로 쓰므로 다리가 옮겨
+// 가면 구멍도 따라간다. 구멍을 빠뜨리면 광장에 갇히는데, `check-village.mjs` 의
+// 「갇히지 않음」·「걸어서 건물 앞까지」 두 검사가 그걸 잡는다.
+/**
+ * 다리 중심에서 이만큼 안의 물 마디는 없는 셈 친다.
+ *
+ * **물 반폭에 비례해야 한다.** 고정값 2.0 으로 뒀더니, 물길을 넓히자마자
+ * (반폭 0.95 → 1.2) 구멍 양옆에 남은 마디가 각자 반폭만큼 부풀어 실제로 뚫린 틈이
+ * 0.76 로 줄었다 — 몸 지름 0.84 보다 좁아 **다리가 있는데 못 건넜다**(걸어서 갈 수
+ * 있는 건물이 13채 → 3채). 다리 상판 폭(약 1.9)이 통째로 열리도록 여유를 더한다.
+ */
+const bridgeOpenFor = (half: number) => half + 1.3;
+
+const bridgeAt = (propsLayout.props as Array<{glb: string; position: number[]}>)
+  .filter(p => /bridge-/.test(p.glb))
+  .map(p => ({x: p.position[0], z: p.position[2]}));
+
+interface WaterSeg {
+  x0: number;
+  z0: number;
+  x1: number;
+  z1: number;
+  /** 그 자리 리본 반폭 + 몸 반지름 — 한 값으로 뭉뚱그리면 안 된다 */
+  keep: number;
+}
+const waterSegs: WaterSeg[] = [];
+{
+  const ring = (terraces.plazaRing ?? []) as Array<{x: number; z: number}>;
+  // 반폭은 villageTerrain 의 waterHalfAt — 씬이 그리는 폭과 같은 함수다.
+  // 한동안 여기만 "가장 넓은 값 하나"로 뭉뚱그렸는데, 그러면 좁은 고리가 실제보다
+  // 60% 넓게 막혀 걸어 다닐 땅이 눈에 띄게 줄었다.
+  const lines: Array<{
+    pts: Array<{x: number; z: number}>;
+    half: (t: number) => number;
+  }> = [
+    ...((terraces.channels ?? []) as Array<Array<{x: number; z: number}>>).map(
+      pts => ({pts, half: (t: number) => waterHalfAt("channel", t)})
+    ),
+    ...(ring.length > 2
+      ? [{pts: [...ring, ring[0]], half: (t: number) => waterHalfAt("ring", t)}]
+      : [])
+  ];
+  for (const line of lines)
+    for (let i = 0; i + 1 < line.pts.length; i++) {
+      const a = line.pts[i];
+      const b = line.pts[i + 1];
+      // 걷는 범위 밖은 어차피 못 간다
+      if (Math.hypot(a.x, a.z) > WALK_RADIUS + 2) continue;
+      const half = line.half(i / (line.pts.length - 1));
+      // 다리 밑은 뚫어 둔다
+      if (
+        bridgeAt.some(
+          p => Math.hypot(p.x - a.x, p.z - a.z) < bridgeOpenFor(half)
+        )
+      )
+        continue;
+      waterSegs.push({
+        x0: a.x,
+        z0: a.z,
+        x1: b.x,
+        z1: b.z,
+        keep: half + CHARACTER_RADIUS
+      });
+    }
+}
+
+function inWater(x: number, z: number): boolean {
+  for (const s of waterSegs) {
+    if (Math.abs(x - s.x0) > s.keep + 1 || Math.abs(z - s.z0) > s.keep + 1)
+      continue;
+    const dx = s.x1 - s.x0;
+    const dz = s.z1 - s.z0;
+    const l2 = dx * dx + dz * dz;
+    const t = l2
+      ? Math.max(0, Math.min(1, ((x - s.x0) * dx + (z - s.z0) * dz) / l2))
+      : 0;
+    const px = x - (s.x0 + dx * t);
+    const pz = z - (s.z0 + dz * t);
+    if (px * px + pz * pz < s.keep * s.keep) return true;
+  }
+  return false;
+}
+
 /** 건물은 상자로 막는다 — 원으로 근사하면 모서리가 뭉개져 벽을 뚫는다 */
 const boxes = villageBuildings
   .filter(b => Math.hypot(b.position[0], b.position[2]) < WALK_RADIUS + 8)
@@ -159,6 +249,7 @@ const boxes = villageBuildings
  */
 export function isWalkable(x: number, z: number): boolean {
   if (Math.hypot(x, z) > WALK_RADIUS) return false;
+  if (inWater(x, z)) return false;
 
   for (const b of boxes) {
     if (

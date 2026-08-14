@@ -43,6 +43,92 @@ export const TERRACE_RECTS: TerraceRect[] = terraces.blocks;
 export const WATER_CHANNELS: {x: number; z: number}[][] = terraces.channels ?? [];
 
 /**
+ * 광장을 두르는 물 고리 (닫힌 고리).
+ *
+ * 컨셉 아트에서 물은 광장에서 뻗는 바큇살이 아니라 광장을 **감싸고** 있고,
+ * 거기서 넘친 물이 구역 사이 골짜기(WATER_CHANNELS)로 빠진다. 그래서 어느
+ * 구역에 가든 다리를 하나 건너게 된다 — 다리가 곧 구역의 정문이다.
+ * 완전한 원은 아니다: SKILLS 단 모서리가 광장 쪽으로 파고든 방향에서는
+ * 고리도 같이 안으로 물러난다(생성기가 단 발치를 재서 정한다).
+ */
+export const PLAZA_WATER_RING: {x: number; z: number}[] = terraces.plazaRing ?? [];
+
+/** 길이 물을 건너는 곳 — 여기에 돌다리가 서고, 걷기 판정도 여기만 뚫는다 */
+export const WATER_CROSSINGS: {x: number; z: number; angle: number}[] =
+  terraces.crossings ?? [];
+
+// ─── 물의 치수 — **여기 하나뿐이다** ─────────────────────────────────────────
+// 이 값을 보는 곳이 넷이다: 수면 리본(VillageScene) · 도랑 단면(WaterBanks) ·
+// 걷기 판정(villageWalk) · 배치 생성기 둘(길 타일을 걷어낼 폭, 프롭 금지 반경).
+// 예전엔 0.62 니 0.95 니 하는 숫자가 그 넷에 따로 적혀 있었고 이미 서로 달랐다 —
+// 걷기 판정만 가장 넓은 값으로 다 막아서 걸어 다닐 땅이 실제보다 훨씬 좁았다.
+// 생성기는 `scripts/lib/read-village.mjs` 의 readWaterHalf() 로 여기서 읽어 간다.
+//
+// ─── 폭을 넓히지 말 것 ───────────────────────────────────────────────────────
+// 물이 얇아 보인다고 고리를 0.95, 개울을 0.7~1.2 로 넓혀 봤다. 그림은 나아졌지만
+// **걸어 다닐 땅이 반으로 줄었다**(설 수 있는 땅의 82% → 45%, 걸어서 닿는 건물
+// 13채 → 3채). 물가 금지 반경이 구역 단 발치·담장과 맞붙어 고리 바깥 띠가
+// 통째로 막혔기 때문이다. 물을 두껍게 보이게 하는 건 폭이 아니라 **도랑**이다 —
+// WATER_BANK_OUT 을 줄이고 하상 색을 밝히는 쪽으로 해결했다.
+export const WATER_HALF = {
+  /** 광장을 두르는 물 고리 */
+  ring: 1.05,
+  /** 골짜기 물길 — 안쪽(고리에서 갈라질 때) */
+  channelIn: 0.75,
+  /** 〃 바깥(해자에 닿을 때). 넓어지면서 흐르는 방향이 읽힌다 */
+  channelOut: 1.3
+};
+
+/**
+ * 수면 가장자리에서 이만큼 밖이면 다시 지면 높이 — 도랑 비탈이 차지하는 폭.
+ *
+ * 1.2 로 뒀더니 폭 3.6 짜리 띠 안에서 물이 1.2 뿐이라, 부감에서 개울이 아니라
+ * **어두운 고랑**으로 읽혔다. 0.75 면 띠의 절반 가까이가 물이고, 도랑이
+ * 먹는 땅도 줄어 걸어 다닐 자리가 남는다.
+ */
+export const WATER_BANK_OUT = 0.45;
+
+/** 리본 반폭 — t 는 경로를 따라 0~1 */
+export function waterHalfAt(kind: "ring" | "channel", t: number): number {
+  if (kind === "ring") return WATER_HALF.ring;
+  return WATER_HALF.channelIn + (WATER_HALF.channelOut - WATER_HALF.channelIn) * t;
+}
+
+// ─── 광장 단상 ────────────────────────────────────────────────────────────────
+// 컨셉 아트의 광장은 계단 몇 단 올라선 단상이다. 구역 여섯만 단(+1.1) 위에 있고
+// 광장은 잔디·물과 같은 평면이라, 단면으로 보면 마을이 **가운데가 파인 그릇**이고
+// 기념비가 그 바닥에 서 있었다.
+//
+// **구역과 같은 높이로 올리지 않는다.** 그러면 물길 골짜기 말고는 마을 전체가
+// 다시 한 평면이 되어, 구역을 떼어 놓기 전의 "층이 하나도 안 느껴진다"로 돌아간다.
+// 컨셉은 세 단이다: 물·잔디(0) → 광장(0.55) → 구역(1.1).
+export const PLAZA_STEP: number = TERRACE_STEP === 0 ? 0 : 0.55;
+
+/**
+ * 단상 꼭대기 테두리 (닫힌 폴리라인 240마디).
+ *
+ * **사각형이 아닌 이유**: 광장 포장은 사각형이 아니다. 대로 넷이 축 방향 칸을
+ * 먹고, SKILLS 단 모서리가 한쪽을 파고든다. 사각형 단을 깔면 네 모서리가 잔디로
+ * 튀어나오고 대로가 계단 대신 벽을 만난다. 그래서 각도별 반지름으로 정의하고,
+ * 생성기가 물 고리에서 축대 길이만큼 안쪽으로 물려 계산해 둔다.
+ */
+export const PLAZA_DAIS: {x: number; z: number}[] = terraces.plazaDais ?? [];
+
+/** 각도별 단상 반지름 — 미리 풀어 두고 조회만 한다(매 프레임 캐릭터가 부른다) */
+const DAIS_R: number[] = PLAZA_DAIS.map((p) => Math.hypot(p.x, p.z));
+
+/** 그 자리가 광장 단상 위인가 */
+export function onPlazaDais(x: number, z: number): boolean {
+  if (PLAZA_STEP === 0 || DAIS_R.length === 0) return false;
+  const r = Math.hypot(x, z);
+  // 가장 먼 테두리보다 밖이면 각도를 볼 것도 없다 — 프롭 수천 개가 이 분기로 빠진다
+  if (r > 8.6) return false;
+  const a = Math.atan2(z, x);
+  const t = ((a / (Math.PI * 2)) % 1 + 1) % 1;
+  return r <= DAIS_R[Math.floor(t * DAIS_R.length) % DAIS_R.length];
+}
+
+/**
  * 윗단(플래토)의 실제 경계 — 칸 중심 사각형을 반 칸 넓힌 것.
  * 이 값이 곧 **가장 바깥 판석의 바깥 모서리**라 축대가 타일과 딱 맞물린다.
  */
@@ -63,7 +149,9 @@ export function terrainHeightAt(x: number, z: number): number {
   const step =
     TERRACE_STEP !== 0 && TERRACE_RECTS.some((r) => within(r, x, z, PLATEAU_PAD))
       ? TERRACE_STEP
-      : 0;
+      : onPlazaDais(x, z)
+        ? PLAZA_STEP
+        : 0;
   return step + reliefAt(x, z);
 }
 

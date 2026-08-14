@@ -602,16 +602,16 @@ function scaleSize(s: Vector3Tuple): Vector3Tuple {
  * 14 면 블록이 10.7 에서 멈춰 광장(7.7)과의 사이에 띠가 남고, 골짜기도
  * 3.76 → 5.64 로 넓어진다. 14.5 부터는 건물이 해자를 넘는다.
  */
-export const DISTRICT_INNER = 14;
+export const DISTRICT_INNER = 15;
 
 /** 구역별 이동 벡터(월드). solve-district-ring.mjs 가 적는다. */
 const districtShift: Record<string, [number, number]> = {
-  projects: [-3.3, -5.05],
-  skills: [4.42, -2.91],
-  life: [8.05, 6.86],
-  contact: [-3.85, -4.16],
-  study: [-6.46, 5.78],
-  experience: [-3.97, 0.04]
+  projects: [-3.87, -5.91],
+  skills: [7.84, 0.59],
+  life: [8.82, 7.51],
+  contact: [-3.54, -3.17],
+  study: [-7.21, 6.45],
+  experience: [-4.97, 0.05]
 };
 
 const round2 = (v: number) => Math.round(v * 100) / 100;

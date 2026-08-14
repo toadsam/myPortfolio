@@ -1,7 +1,6 @@
 # 마을에 아직 필요한 에셋 — 전부
 
-> 2026-08-10 전면 재작성 → **같은 날 저녁 갱신.**
-> 여기 적혀 있던 14개 중 **13개가 들어왔다. 남은 건 `study-cs` 하나뿐이다.**
+> 2026-08-10 전면 재작성 → **2026-08-14 갱신 (광장 물 고리 작업 뒤).**
 >
 > 사용자 에셋 폴더 `바탕 화면/정재훈의 포트폴리오 모음집/3d 포트폴리오 마을에 대한 정보/`
 > 하위를 GLB 72개·PNG 90여 장까지 전부 대조한 결과이고, 그 뒤로 받은 것까지 반영했다.
@@ -11,15 +10,24 @@
 
 ---
 
-## 한눈에 — 남은 건 3개
+## 한눈에 — 지금 필요한 것
 
-| # | 무엇 | 컨셉 이미지 | 파일명 | 상태 |
-|---|---|---|---|---|
-| B2 | **지식 서고** | ✗ | `buildings/raw/study-cs.glb` | 아직 없음 (건물 27채 중 마지막) |
-| B7 | **구역 축대 직선 한 토막** | ✗ | `props/raw/decor/terrace-bank.glb` | 아직 없음 — 지금은 코드로 그린다 |
-| B7 | 〃 바깥 모서리 | ✗ | `props/raw/decor/terrace-bank-corner.glb` | 〃 |
+급한 순서. **① 은 지금 마을에서 눈에 걸리는 문제를 바로 고치는 것들이다.**
 
-> B7 은 2026-08-11 에 새로 생겼다. 받은 축대 에셋 세 개(`terrace-wall`·
+| # | 무엇 | 파일명 | 왜 지금 |
+|---|---|---|---|
+| **B8** | **광장 문 아치 돌다리** | `props/raw/decor/bridge-arch.glb` | 광장 물 고리에 문이 넷 생겼다. 지금은 골짜기 개울 다리와 **똑같은 모델**이라 정문으로 안 읽힌다 |
+| **B9** | **물길 둔치 한 토막** | `props/raw/decor/water-bank.glb` | 물이 잔디에 칠한 파란 띠로 보인다. 물가에 자갈·둔덕이 있어야 깊이가 생긴다 |
+| **B2** | 지식 서고 | `buildings/raw/study-cs.glb` | 건물 27채 중 마지막. 지금은 배경 민가가 대신 서 있다 |
+| **B7** | 구역 축대 직선 한 토막 | `props/raw/decor/terrace-bank.glb` | 코드로 그린 돌쌓기라 줄눈이 반듯한 격자다 |
+| B7 | 〃 바깥 모서리 | `props/raw/decor/terrace-bank-corner.glb` | 〃 |
+| **C4** | 물가 소품 5종 | `props/raw/nature/reed-clump.glb` 외 | 물가 65유닛이 새로 생겼는데 심을 게 일반 덤불뿐이다 |
+| **X1** | **`raw/` 원본 3개** | `wall-low` · `fence-rail` · `terrace-steps` | 원본이 없어 **디라이팅에서 빠졌다.** 담장 218토막이 아직 옛 구운 조명을 달고 있다 |
+
+> B8·B9·C4 는 2026-08-14 에 생겼다 — 광장을 두르는 물 고리를 넣으면서 물가가
+> 마을 한복판으로 들어왔기 때문이다. 자세한 건 각 항목.
+>
+> B7 은 2026-08-11 에 생겼다. 받은 축대 에셋 세 개(`terrace-wall`·
 > `terrace-slab`·`terrace-stair`) 중 **계단만 쓸 수 있었다** — 나머지 둘은
 > 자기 잔디를 이고 있는 지형 덩어리라 사각형 단에 못 붙는다. 자세한 건 B7.
 
@@ -344,6 +352,89 @@ under 1200 triangles, front-facing
 
 ---
 
+## B8. `bridge-arch.glb` — 광장 문 아치 돌다리 ← **★ 지금 필요**
+
+### 왜
+
+2026-08-14 에 **광장을 두르는 물 고리**(반지름 7.2~10.3)를 넣었다. 컨셉 아트에서
+물은 광장에서 뻗는 바큇살이 아니라 광장을 **감싸고** 있고, 그래서 어느 구역에 가든
+다리를 하나 건넌다 — 그 다리가 구역의 정문이다.
+
+지금 마을에 다리가 16개인데 **전부 같은 `bridge-stone`** 이다:
+
+| 어디 | 개수 | 성격 |
+|---|---|---|
+| 광장 물 고리 (동·서·남·북 문) | **4** | 마을의 정문. 사람이 반드시 지난다 |
+| 구역 사이 골짜기 물길 | 10 | 들판을 건너는 시골 개울 다리 |
+| 해자 남북 참배로 | 2 | 마을 밖으로 나가는 큰 다리 |
+
+넷이 열여섯 중 하나로 보이면 문이 문으로 안 읽힌다.
+
+### 필요한 것
+
+- **폭이 길 타일과 같아야 한다 (1.9).** 이어 붙이지는 않으므로 끝면은 평평할 필요 없다
+- **길이 3.5 이상.** 물 고리 폭이 1.24 인데 양 둔치를 물고 앉아야 한다
+- **난간이 있어야 한다.** 지금 `bridge-stone` 은 난간이 낮아 부감에서 그냥 판석 조각이다
+- 아치가 **아래로 뚫려** 있어야 한다 — 물이 밑으로 지나가는 게 보여야 다리다
+- 길 축이 **+X** (지금 `bridge-stone` 과 같은 규칙. 코드가 물 진행 방향의 법선에 맞춰 돌린다)
+
+```
+Single stylized fantasy stone arch bridge spanning a small canal, one wide
+semicircular arch opening underneath so water passes through and the opening
+is clearly visible from the side, low stone parapet railings running along
+both sides with small carved posts at the four corners, pale warm grey cut
+stone with mossy joints, a hanging lantern on one corner post, gentle hump in
+the deck, standing alone with no ground or water attached,
+warm sunset lighting, Ghibli-like storybook game art, soft painterly textures,
+muted natural colors, low poly game asset, under 6000 triangles, side view
+```
+
+> 파일명을 `bridge-arch.glb` 로 넣으면 `generate-decor-layout.mjs` 의 `KIT` 에
+> 한 줄 추가하고 광장 고리 다리만 이걸로 바꾼다. 골짜기 개울은 `bridge-stone` 유지.
+
+---
+
+## B9. `water-bank.glb` — 물길 둔치 한 토막 ← **★ 지금 필요**
+
+### 왜 — "물에 깊이감이 전혀 안 느껴진다"
+
+정확한 지적이다. 지금 물은 **잔디 위에 얹은 평평한 리본 한 장**이다:
+
+- 수면이 `y = 0.05` 한 장, 그 밑 땅도 `y ≈ 0` — **깊이가 5cm** 다
+- `villageRelief` 가 물 밑을 **일부러 평평하게** 만든다. 굽이가 수면 위로 올라오면
+  물이 통째로 사라지기 때문인데, 그 결과 파인 자리 자체가 없다
+- 물가에 자갈도 둔덕도 없어서 잔디와 만나는 선이 **칼로 자른 듯 딱** 떨어진다
+
+땅을 파는 건 코드로 할 일이지만(아래 「물에 깊이를 주려면」), **물가의 재료**는
+에셋이라야 한다. 축대(`TerraceBanks`)와 똑같은 구조로 물길 양옆에 늘어놓는다.
+
+### 필요한 것
+
+여섯 물길 + 고리 둘레가 **약 320유닛(양옆 합쳐 340토막)** 이다. 담장·축대와 같은
+이유로 **1,000 이하가 절대 조건**이다.
+
+- 폭 1.9, 높이 0.5 (물길 깊이). 좌우 끝면이 평평해야 이어 붙는다
+- **위쪽 절반은 잔디 둔덕, 아래쪽 절반은 젖은 자갈·돌**. 그 경계가 수면선이 된다
+- **물을 붙이지 말 것.** 물은 우리 리본이 그린다
+- **바닥(하상)도 붙이지 말 것.** 한 면만 — 물길 양옆에 마주보게 세운다
+
+```
+Single straight segment of a shallow stream bank, one module of a long
+repeating riverbank edge, flat square ends on both left and right so segments
+tile seamlessly with no gap, viewed from the water side: wet rounded pebbles
+and small mossy rocks along the bottom half, a low grassy earth lip with a few
+reeds along the top half, NO water and NO riverbed attached, only the bank
+face, much wider than tall,
+warm sunset lighting, Ghibli-like storybook game art, soft painterly textures,
+muted natural colors, VERY LOW POLY, flat shaded, minimal geometric detail,
+no separate small props, under 1000 triangles, front-facing
+```
+
+모서리는 필요 없다 — 물길이 굽이치므로 토막을 **각도로 돌려** 잇는다
+(축대와 다른 점. 축대는 직각 사각형이라 모서리 조각이 필요했다).
+
+---
+
 # C. 있으면 더 좋은 것 (급하지 않음)
 
 지금도 돌아간다. 마을이 안 비어 보이는 데 필요하진 않다.
@@ -405,6 +496,47 @@ low poly game asset, under 4000 triangles, front-facing
 Ghibli-like storybook game art, soft painterly textures, muted natural colors,
 VERY LOW POLY, flat shaded, under 1500 triangles, front-facing
 ```
+
+### C4. 물가 소품 5종 — 광장 물 고리가 생기면서 필요해졌다
+
+물 고리(둘레 약 60유닛)와 물길 여섯 줄기의 물가가 **마을에서 사람이 제일 가까이
+가는 물**인데, 지금 그 띠에 심는 게 일반 덤불·꽃뿐이다. 물가로 안 읽힌다.
+
+| 파일명 | 폴더 | 프롬프트 앞부분 |
+|---|---|---|
+| `reed-clump.glb` | `nature/` | `Clump of tall slender water reeds and cattails growing from wet mud, a few bent stems` |
+| `lily-pads.glb` | `nature/` | `Small cluster of flat round lily pads with two white water lilies, floating flat` |
+| `stepping-stones.glb` | `decor/` | `Row of five flat weathered stepping stones of different sizes, wet mossy tops, arranged in a gentle line` |
+| `water-mill-small.glb` | `decor/` | `Small wooden water wheel on a stone footing, half of the wheel below the axle, mossy paddles` |
+| `dock-small.glb` | `decor/` | `Very small wooden jetty of weathered planks on short posts, a coil of rope and a lantern at the end` |
+
+`lily-pads` 만 꼬리말에서 `standing alone on flat ground` 를 빼고
+`floating flat on water, no water attached` 로 바꾼다.
+
+---
+
+# X. 코드가 막혀 있는 것 — 에셋이 아니라 **원본 파일**이 필요하다
+
+## X1. `wall-low` · `fence-rail` · `terrace-steps` 의 `raw/` 원본
+
+2026-08-13 에 **디라이팅**(에셋마다 다른 구운 조명을 한 수준으로 맞추는 것)을 넣었다.
+`scripts/optimize_textures.py` 가 `raw/` 에 있는 원본 텍스처를 읽어 저주파 밝기 편차를
+줄인 뒤 다시 굽는 방식이라, **`raw/` 가 없는 것은 통째로 건너뛴다.**
+
+이 셋이 그렇다:
+
+| 파일 | 왜 raw 가 없나 | 지금 상태 |
+|---|---|---|
+| `decor/wall-low.glb` | `scripts/make-low-wall.mjs` 가 **코드로 굽는다** | 담장 218토막이 옛 조명 그대로 |
+| `decor/fence-rail.glb` | `scripts/make-fence-rail.mjs` 가 코드로 굽는다 | 울타리 11토막 |
+| `decor/terrace-steps.glb` | 〃 (지금은 받은 `terrace-stair` 를 쓰지만 폴백이 남아 있다) | — |
+
+**두 갈래 중 하나면 된다:**
+
+1. **B6·B7 을 받는다** — 진짜 손그림 GLB 가 들어오면 `raw/` 가 생기므로 저절로 풀린다.
+   이쪽이 낫다. 어차피 코드로 구운 담장은 무늬가 단조롭다는 문제도 같이 있다.
+2. 아니면 굽는 스크립트가 만드는 텍스처를 `raw/` 에도 같이 써 두게 고친다.
+   무늬 문제는 안 풀리고 톤만 맞는다.
 
 ---
 
@@ -473,9 +605,9 @@ soft painterly textures, muted natural colors, front-facing
 | 낮은 담장 | `scripts/make-low-wall.mjs` — 상자 둘, **24 삼각형**. 130토막으로 여섯 블록을 두르고 길이 지나는 자리는 비워 구역 대문이 된다. B6 이 오면 교체 |
 | **구역 단차** | `src/lib/villageTerrain.ts` + `VillageScene.tsx` 의 `TerraceBanks` — 여섯 구역을 두 계단(0 → 0.35 → 0.7) 올려 컨셉 아트의 계단식 마을을 만든다. 옆구리 축대가 **96 삼각형**. 아래 「구역 단차는 어떻게 도나」 참고 |
 | 길가 울타리 | `scripts/make-fence-rail.mjs` — 기둥 둘 + 가로대 둘, **36 삼각형**. 받은 `fence.glb` 는 1,473 이라 130토막을 못 깐다(19만). 컨셉에서 길이 "길"로 보이는 건 포장색이 아니라 양옆을 따라가는 이 선 두 줄이다 |
-| 마을을 두르는 해자 | `VillageScene.tsx` 의 `Waterways` — 타원 한 바퀴 리본. 구역 **사이**로 흘리려 했지만 격자를 찍어 보니 마을이 통째로 한 단이라 자리가 없었다(광장만 3×2칸). 북쪽 꼭짓점이 예전 개울 자리(z −20.7)에 정확히 와서 돌다리·참배로를 그대로 쓴다 |
+| 마을을 두르는 해자 | `VillageScene.tsx` 의 `Waterways` — 타원 한 바퀴 리본. 북쪽 꼭짓점이 예전 개울 자리(z −20.7)에 정확히 와서 돌다리·참배로를 그대로 쓴다 |
+| **광장을 두르는 물 고리** | `generate-ground-layout.mjs` 가 구역 단 발치까지 남은 실거리를 재서 반지름을 정하고(7.2~10.3), `villageTerraces.json` 의 `plazaRing` 으로 내보낸다. 씬·장식물 생성기가 같은 값을 읽어 다리를 놓는다. **길 고리는 걷어냈다** — 같은 띠를 물과 다퉜다 |
 | 구름 하늘 | `src/lib/skyClouds.ts` — 값 노이즈로 1024×512 캔버스 텍스처를 **런타임에** 굽는다. 색을 시간대 팔레트에서 받아야 해서 파일로 못 둔다 |
-| 동심원 링 도로 | `generate-ground-layout.mjs` 의 `RINGS = [4, 8]` — 정사각 고리 두 겹. 모서리에 커브 타일이 자동으로 들어가 격자가 아니라 방사형으로 읽힌다 |
 | 잔디 텍스처 | `scripts/make-grass-texture.mjs` |
 | 먼 숲 | `scripts/bake-impostors.mjs` — 나무 한 그루를 4~6삼각형 빌보드로 |
 | 하늘·해·물·절벽·먼 산 | `VillageScene.tsx` 에서 절차적으로 |
@@ -734,8 +866,27 @@ export const TERRACE_STEP: number = 1.1;   // 0 이면 예전 평지 그대로
 - **길에 진짜 곡선이 없다.** 고리는 정사각형이고 모서리만 커브 타일이다. 진짜
   곡선은 타일을 버리고 스플라인 리본을 깔아야 하는데, `onRoad(x,z)` 가 격자 조회라
   소품·담장·건물 배치 로직을 전부 갈아야 한다.
-- **물이 평평한 리본이다.** 물가 처리(자갈·둔덕)가 없어서 잔디와 만나는 선이
-  칼로 자른 듯 딱 떨어진다.
+- **물에 깊이가 없다 — 그리고 길 타일이 물을 잘라 먹는다.** (2026-08-14 실측)
+
+  | 무엇 | y | |
+  |---|---|---|
+  | 길 타일 (`path-*`) | **0.060** | 물보다 **1cm 위** → 물이 그 밑으로 사라진다 |
+  | 물 수면 (`Waterways`) | 0.050 | |
+  | 광장 판석 (`paving-square`) | 0.045 | 물보다 5mm 아래 → z-파이팅 직전 |
+
+  물 고리 241마디 중 **29마디(12%)가 길 타일 밑**이다. 문 넷마다 2유닛씩 물이 뚝
+  끊긴 것처럼 보이고, 그 위에 선 돌다리는 **마른 길 위에 놓인 다리**가 된다.
+  물길 여섯 줄기도 합쳐 17마디가 같은 이유로 잘린다.
+
+  깊이가 없는 것도 같은 뿌리다. `villageRelief.buildMask` 가 물 밑을 **일부러
+  평평하게** 만든다(굽이가 수면 위로 올라오면 물이 사라지므로). 그래서 물은
+  파인 곳에 고인 게 아니라 **잔디에 칠한 파란 띠**다. 물가 자갈·둔덕도 없다 → **B9**.
+
+- **중앙 광장이 단이 아니다.** 컨셉 아트의 광장은 계단으로 한 단 올라선 돌마당이고,
+  물은 그 **아래** 골에서 흐른다. 우리는 구역 여섯만 단(`TERRACE_RECTS`, +1.1)이고
+  광장·물·잔디가 전부 y=0 한 평면이라, 옆에서 보면 층이 하나도 없다.
+  고치려면 광장도 단으로 올리는 게 아니라 **물길을 파 내려가야** 한다 — 그래야
+  다리가 "골을 건너는 것"이 되고, 구역 단과 광장이 같은 보행면으로 이어진다.
 - **해자에 물이 드나드는 곳이 없다.** 닫힌 타원이라 절벽의 폭포 셋과 이어지지 않는다
   (셋 다 해자 바깥 1.3~1.55배 거리에 있다). 짧은 지류 리본 셋을 절벽까지 뻗으면
   "해자가 여기로 쏟아진다"가 되는데, 그만큼 숲을 더 비워야 한다.

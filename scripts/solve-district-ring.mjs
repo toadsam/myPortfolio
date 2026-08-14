@@ -24,7 +24,12 @@
 //   node scripts/solve-district-ring.mjs --inner=12  목표 거리를 바꿔서
 
 import {readFileSync, writeFileSync} from "node:fs";
-import {readRaw, readDistrictInner, readMoat} from "./lib/read-village.mjs";
+import {
+  readRaw,
+  readDistrictInner,
+  readMoat,
+  blockOf
+} from "./lib/read-village.mjs";
 
 const MOAT = readMoat();
 
@@ -111,32 +116,10 @@ function solveT(arr, target, u) {
 // ─── 평가: 이 배치가 마을을 깨뜨리지 않는지 ─────────────────────────────────
 //
 // 판정 기준은 건물 상자가 아니라 **단차 블록**이다. 블록은 구역 건물들을 감싼
-// 축정렬 사각형을 격자(PITCH)에 스냅해서 만드는데, 스냅이 양옆으로 각각 최대
-// 한 칸씩 불려 놓는다. 건물 사이가 4.7 남아도 블록끼리는 0 으로 맞닿을 수 있다 —
-// 실제로 그렇게 됐고, 맞닿으면 골짜기가 사라져 물길이 아예 생성되지 않는다.
-// 그래서 generate-ground-layout.mjs 의 BLOCK_BOX 와 같은 식으로 잰다.
-const PITCH = 1.88;
-const HALF = PITCH / 2;
-
-/** 구역 하나의 단차 블록 — generate-ground-layout.mjs 의 BLOCK_BOX 와 같은 계산 */
-function blockOf(arr) {
-  let i0 = Infinity,
-    i1 = -Infinity,
-    j0 = Infinity,
-    j1 = -Infinity;
-  for (const b of arr) {
-    i0 = Math.min(i0, Math.floor((b.x - b.w / 2) / PITCH));
-    i1 = Math.max(i1, Math.ceil((b.x + b.w / 2) / PITCH));
-    j0 = Math.min(j0, Math.floor((b.z - b.d / 2) / PITCH));
-    j1 = Math.max(j1, Math.ceil((b.z + b.d / 2) / PITCH));
-  }
-  return {
-    x0: i0 * PITCH - HALF,
-    x1: i1 * PITCH + HALF,
-    z0: j0 * PITCH - HALF,
-    z1: j1 * PITCH + HALF
-  };
-}
+// 축정렬 사각형을 격자(PITCH)에 스냅해서 만드는데, 스냅이 양옆으로 조금씩 불려
+// 놓는다. 건물 사이가 4.7 남아도 블록끼리는 훨씬 좁게 맞닿을 수 있다 — 실제로
+// 그렇게 됐고, 맞닿으면 골짜기가 사라져 물길이 아예 생성되지 않는다.
+// 계산은 read-village.mjs 의 blockOf 하나뿐이다 — 바닥 생성기도 같은 걸 쓴다.
 
 /** 마주보는(한 축에서 겹치는) 블록 쌍만 골짜기를 공유한다 — check-village.mjs 와 같은 판정 */
 function blockGap(A, B) {
@@ -222,6 +205,20 @@ const planFrom = (target, us) =>
  * 축정렬 사각형이라 서로 맞닿기 쉽다(CONTACT 와 LIFE 는 37° 밖에 안 떨어져 있다).
  * 좌표 하나씩 훑어 내려가며 "가장 좁은 골짜기"를 넓히는 쪽으로 조금씩 민다.
  */
+// ─── 골짜기만 넓히면 광장이 좁아진다 ────────────────────────────────────────
+// 오래 목표가 "가장 좁은 골짜기를 넓히는 것" 하나였다. 그런데 골짜기를 벌리려고
+// 구역을 접선으로 밀면 **축정렬 사각형의 모서리가 광장 쪽으로 돌아 나온다.**
+// SKILLS(−35°)가 그랬다: 골짜기는 7.5 로 넓은데 블록 모서리가 광장에서 9.7 까지
+// 내려와, 물 고리가 그 방향에서만 9.2 → 6.8 로 파이고 광장 단상도 같이 잘렸다.
+//
+// 골짜기는 물길이 지나갈 만큼만 있으면 되고(2.2), 그 위로 더 넓혀 봐야 얻는 게
+// 없다. 그래서 **골짜기를 충분한 선까지만 벌리고, 남는 자유도는 광장 쪽 여유
+// (blockInner)를 넓히는 데 쓴다.**
+const GAP_ENOUGH = 4.0;
+/** 이 배치가 얼마나 좋은가 — 클수록 좋다 */
+const scoreOf = e =>
+  Math.min(e.gap, GAP_ENOUGH) * 2 + e.blockInner;
+
 function optimise(target) {
   const us = Object.fromEntries(names.map(d => [d, 0]));
   let best = evaluate(planFrom(target, us));
@@ -232,8 +229,12 @@ function optimise(target) {
         for (const dir of [1, -1]) {
           const trial = {...us, [d]: us[d] + dir * step};
           const e = evaluate(planFrom(target, trial));
-          // 겹침이 생기면 무효. 그 외엔 최소 골짜기가 넓어지는 쪽으로.
-          if (e.overlap === 0 && e.gap > best.gap + 1e-4) {
+          // 겹침이 생기면 무효. 골짜기가 물길 최소치 아래로 내려가도 무효.
+          if (
+            e.overlap === 0 &&
+            e.gap >= 2.2 &&
+            scoreOf(e) > scoreOf(best) + 1e-4
+          ) {
             us[d] = trial[d];
             best = e;
             improved = true;

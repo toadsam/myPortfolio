@@ -99,6 +99,36 @@ export function readWalkRadius() {
   return Number(m[1]);
 }
 
+/**
+ * 물의 치수를 원본(villageTerrain.ts)에서 읽는다.
+ *
+ * 씬이 그리는 폭과 생성기가 비워 두는 폭이 다르면, 프롭이 물에 발을 담그거나
+ * 길 타일이 물을 덮는다. 실제로 그랬다 — 길 타일이 물보다 1cm 높아 문마다
+ * 물이 2유닛씩 끊겨 보였고, 그 위에 선 다리는 건널 게 없는 다리였다.
+ */
+export function readWaterHalf() {
+  const source = readFileSync("src/lib/villageTerrain.ts", "utf8");
+  const num = name => {
+    const m = source.match(new RegExp(`${name}:\\s*([\\d.]+)`));
+    if (!m)
+      throw new Error(
+        `src/lib/villageTerrain.ts 의 WATER_HALF 에서 ${name} 을 못 찾았습니다`
+      );
+    return Number(m[1]);
+  };
+  const bank = source.match(/export const WATER_BANK_OUT\s*=\s*([\d.]+)/);
+  if (!bank)
+    throw new Error(
+      "src/lib/villageTerrain.ts 에서 WATER_BANK_OUT 을 못 찾았습니다"
+    );
+  return {
+    ring: num("ring"),
+    channelIn: num("channelIn"),
+    channelOut: num("channelOut"),
+    bankOut: Number(bank[1])
+  };
+}
+
 /** 구역이 광장에서 시작해야 하는 거리 — 솔버의 목표값이자 검사 기준 */
 export function readDistrictInner(source = readFileSync(CONSTANTS, "utf8")) {
   const m = source.match(/export const DISTRICT_INNER\s*=\s*([\d.]+)/);
@@ -208,6 +238,59 @@ export function readPositions(name) {
     throw new Error(
       `${CONSTANTS} 의 ${name} 이 비었습니다 — 형식이 바뀐 듯합니다`
     );
+  return out;
+}
+
+// ─── 구역 단차 블록 ──────────────────────────────────────────────────────────
+// 바닥 타일 격자 간격. 블록 테두리는 이 격자에 맞춰야 한다 — 안 그러면 단 경계가
+// 타일 한가운데를 지나 타일이 통째로 들리면서 축대 밖으로 반 칸 삐져나온다.
+export const PITCH = 1.88;
+const HALF = PITCH / 2;
+
+/**
+ * 건물 한 무리를 감싸는 **가장 작은** 격자 정렬 사각형.
+ *
+ * ─── 왜 floor/ceil 이 아니라 이 식인가 ──────────────────────────────────────
+ * 예전엔 `floor(x0 / PITCH)` 로 칸 번호를 구하고 거기서 다시 반 칸을 뺐다.
+ * 두 번 바깥으로 나가는 셈이라 한 변마다 최대 PITCH+HALF(2.82) 가 덧붙었다.
+ * 건물이 대각선 방향에 늘어선 구역(SKILLS 는 −35°)은 축정렬 사각형의 모서리가
+ * 원래도 광장 쪽으로 튀어나오는데, 거기에 2.82 가 더 붙어 **단이 광장 포장
+ * 한복판(r 7.2)까지 내려왔다**. 광장을 두르는 물 고리가 들어갈 자리가 없었다.
+ *
+ * 여기 식은 "건물을 다 담는 칸 중 가장 안쪽"을 고른다: 테두리 x0 = i0·PITCH − HALF
+ * 가 건물 왼쪽 끝보다 안쪽으로 오면 안 되므로 i0 = floor((x0 + HALF) / PITCH).
+ * 격자 정렬은 그대로 지키면서 군더더기만 사라진다 — 단이 내려오는 한계가
+ * 7.2 → 9.8, 구역 사이 골짜기가 3.76 → 5.64 로 넓어진다.
+ */
+export function blockOf(list) {
+  let i0 = Infinity,
+    i1 = -Infinity,
+    j0 = Infinity,
+    j1 = -Infinity;
+  for (const b of list) {
+    i0 = Math.min(i0, Math.floor((b.x - b.w / 2 + HALF) / PITCH));
+    i1 = Math.max(i1, Math.ceil((b.x + b.w / 2 - HALF) / PITCH));
+    j0 = Math.min(j0, Math.floor((b.z - b.d / 2 + HALF) / PITCH));
+    j1 = Math.max(j1, Math.ceil((b.z + b.d / 2 - HALF) / PITCH));
+  }
+  return {
+    x0: i0 * PITCH - HALF,
+    x1: i1 * PITCH + HALF,
+    z0: j0 * PITCH - HALF,
+    z1: j1 * PITCH + HALF
+  };
+}
+
+/** 구역 이름 → 단차 블록. plaza(기념비)는 단을 안 만든다. */
+export function districtBlocks(buildings) {
+  const groups = new Map();
+  for (const b of buildings) {
+    if (b.district === "plaza") continue;
+    if (!groups.has(b.district)) groups.set(b.district, []);
+    groups.get(b.district).push(b);
+  }
+  const out = new Map();
+  for (const [district, list] of groups) out.set(district, blockOf(list));
   return out;
 }
 
