@@ -9,7 +9,7 @@ import type {Group, Vector3} from "three";
 import type {NpcBehaviorProfile} from "@/data/npcBehaviors";
 import {moodLabel} from "@/lib/liveState";
 import {isWalkablePosition} from "@/lib/worldCollision";
-import {terrainHeightAt} from "@/lib/villageTerrain";
+import {walkHeightAt} from "@/lib/villageWalk";
 import type {NpcActionState, NpcAnimationKey, NpcMood, NpcState} from "@/types/live";
 import type {BuildingData, NPCData, Vector3Tuple} from "@/types/portfolio";
 
@@ -118,7 +118,9 @@ function NPCImpl({
    * 감쇠시킨다 (한 단 0.21, delta*6 이면 반 초쯤 걸려 오른다).
    */
   const settleGround = (g: Group, delta: number) => {
-    const target = terrainHeightAt(g.position.x, g.position.z);
+    // walkHeightAt: 단 위 +1.1, **물속은 음수** — 배회 경로가 물을 지나면
+    // NPC 도 캐릭터처럼 잠긴다. 일부러 그대로 둔다(물에 든 NPC 가 마을을 살린다).
+    const target = walkHeightAt(g.position.x, g.position.z);
     groundYRef.current += (target - groundYRef.current) * Math.min(1, delta * 6);
     return groundYRef.current;
   };

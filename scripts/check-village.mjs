@@ -127,10 +127,19 @@ console.log("── 마을 정합성 검사 ────────────
 // 예전엔 임계값이 "3개 이하"였다. 폭포 3개가 해자 위에 서 있는 게 정상인데
 // 그걸 잠긴 것으로 세면서 숫자로 눈감아 준 것이라, 진짜로 빠진 프롭이
 // 세 개까지는 조용히 통과했다. 예외는 개수가 아니라 이름으로 적는다.
+//
+// **해자만 보면 안 된다.** 골짜기를 물로 채운 뒤로 마을 안쪽에도 물이 생겼는데
+// 이 검사는 해자만 봤다 — 석호에 프롭이 빠져도 조용히 통과했다. 앱의 판정을
+// 그대로 부른다(규칙을 베껴 적으면 언젠가 갈라진다).
 {
-  const EXEMPT = /^decor-(island-north|pagoda-portfolio|waterfall-|bridge-)/;
+  const EXEMPT =
+    /^decor-(island-north|pagoda-portfolio|waterfall-|bridge-|quay-rock-)/;
+  const {isWater} = await import("../src/lib/villageTerrain.ts");
   const sunk = layout.props.filter(
-    p => !EXEMPT.test(p.id) && inMoat(p.position[0], p.position[2])
+    p =>
+      !EXEMPT.test(p.id) &&
+      (inMoat(p.position[0], p.position[2]) ||
+        isWater(p.position[0], p.position[2]))
   );
   check(
     "물에 안 잠긴 프롭",
@@ -222,6 +231,47 @@ console.log("── 마을 정합성 검사 ────────────
     bridges.length >= 6 && quads.size >= 4,
     `${bridges.length}개 · 사방 ${quads.size}/4`
   );
+
+  // ─── 이웃 구역마다 직통 다리 ────────────────────────────────────────────────
+  // 고리에서 이웃한 여섯 쌍 각각에, 두 단의 가장 가까운 점을 잇는 선 근처(2.6)
+  // 건널목이 있어야 한다. 광장을 거치지 않는 순환 동선의 보증이다.
+  {
+    const ring = (terraces.islands ?? [])
+      .map(isl => ({isl, ang: Math.atan2(isl.z, isl.x)}))
+      .sort((p, q) => p.ang - q.ang);
+    const missing = [];
+    for (let i = 0; i < ring.length; i++) {
+      const A = ring[i].isl;
+      const B = ring[(i + 1) % ring.length].isl;
+      // 원끼리 가장 가까운 점 쌍 — 중심을 잇는 선 위
+      const cx = B.x - A.x;
+      const cz = B.z - A.z;
+      const cd = Math.hypot(cx, cz) || 1;
+      const ux = cx / cd;
+      const uz = cz / cd;
+      const pA = {x: A.x + ux * A.r, z: A.z + uz * A.r};
+      const pB = {x: B.x - ux * B.r, z: B.z - uz * B.r};
+      const dx = pB.x - pA.x;
+      const dz = pB.z - pA.z;
+      const l2 = dx * dx + dz * dz;
+      if (l2 < 0.25) continue; // 맞닿아 있다 — 다리 불필요
+      const near = (terraces.crossings ?? []).some(c => {
+        const t = Math.max(
+          0,
+          Math.min(1, ((c.x - pA.x) * dx + (c.z - pA.z) * dz) / l2)
+        );
+        return (
+          Math.hypot(c.x - (pA.x + dx * t), c.z - (pA.z + dz * t)) < 2.6
+        );
+      });
+      if (!near) missing.push(`${A.district}↔${B.district}`);
+    }
+    check(
+      "이웃 구역마다 다리",
+      missing.length === 0,
+      missing.length ? `빠진 곳: ${missing.join(", ")}` : `${ring.length}쌍 모두`
+    );
+  }
 }
 
 // ⑦ 구역 단 사이에 골짜기가 남아 있나 — 맞닿으면 물길도 축대도 안 보인다
@@ -230,29 +280,16 @@ console.log("── 마을 정합성 검사 ────────────
   // 0.01 로 재면 0.02 짜리 실틈도 통과라고 나오는데, 그건 화면에서 그냥
   // 맞닿은 것과 똑같이 보인다. 눈에 보이는 폭을 기준으로 삼는다.
   const NEED_VALLEY = 1.0;
-  const HALF = terraces.pitch / 2;
-  const b = terraces.blocks;
+  const b = terraces.islands ?? [];
   const tight = [];
   for (let i = 0; i < b.length; i++)
     for (let j = i + 1; j < b.length; j++) {
       const A = b[i],
         B = b[j];
-      // 서로 마주보는(한 축에서 겹치는) 쌍만 본다 — 대각선으로 떨어진 구역은
-      // 애초에 골짜기를 공유하지 않는다
-      const overlapX = Math.min(A.x1, B.x1) - Math.max(A.x0, B.x0) > 0;
-      const overlapZ = Math.min(A.z1, B.z1) - Math.max(A.z0, B.z0) > 0;
-      if (!overlapX && !overlapZ) continue;
-      const dx = Math.max(
-        B.x0 - HALF - (A.x1 + HALF),
-        A.x0 - HALF - (B.x1 + HALF),
-        0
-      );
-      const dz = Math.max(
-        B.z0 - HALF - (A.z1 + HALF),
-        A.z0 - HALF - (B.z1 + HALF),
-        0
-      );
-      const gap = Math.max(dx, dz);
+      // 원반이라 골짜기 폭 = 중심 거리 − 두 반지름. 멀리 떨어진 쌍(폭 8 이상)은
+      // 골짜기를 공유하지 않으니 안 본다.
+      const gap = Math.hypot(A.x - B.x, A.z - B.z) - A.r - B.r;
+      if (gap > 8) continue;
       if (gap < NEED_VALLEY)
         tight.push(`${A.district}↔${B.district}(${gap.toFixed(2)})`);
     }
@@ -354,6 +391,26 @@ console.log("── 마을 정합성 검사 ────────────
     isWalkable(SPAWN.x, SPAWN.z),
     `(${SPAWN.x}, ${SPAWN.z})`
   );
+
+  // ─── 섬 밖 탈출 불가 ────────────────────────────────────────────────────────
+  // 물에 들어갈 수 있게 되면서 경계는 석호 껍질 하나다. 껍질 밖 표본이 하나라도
+  // 걸을 수 있으면 경계가 새는 것이다 — 누가 경계를 원반으로 되돌리면 여기서 잡힌다.
+  {
+    const {inLagoon} = await import("@/lib/villageTerrain.ts");
+    let leaks = 0;
+    let outside = 0;
+    for (let x = -40; x <= 40; x += 0.8)
+      for (let z = -40; z <= 40; z += 0.8) {
+        if (inLagoon(x, z)) continue;
+        outside++;
+        if (isWalkable(x, z)) leaks++;
+      }
+    check(
+      "섬 밖 탈출 불가",
+      leaks === 0,
+      leaks ? `${leaks}곳이 걸을 수 있음` : `껍질 밖 표본 ${outside}점 전부 막힘`
+    );
+  }
 
   // ─── "갇혔나"는 **설 수 있는 땅 대비**로 재야 한다 ──────────────────────────
   // 예전엔 원반 넓이 대비 45% 를 기준으로 삼았다. 그 값은 물이 몸을 안 막던

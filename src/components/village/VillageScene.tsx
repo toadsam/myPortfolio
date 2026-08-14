@@ -56,16 +56,17 @@ import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
 import {makeBankTexture} from "@/lib/terraceBank";
 import {
   DAIS_RADII,
+  ISLANDS,
   isWater,
-  PLATEAU_PAD,
   PLAZA_DAIS,
   PLAZA_STEP,
   LAGOON,
-  TERRACE_RECTS,
+  shoreDistAt,
   TERRACE_STEP,
   terrainHeightAt,
   WATER_BANK_OUT,
   WATER_CHANNELS,
+  WATER_FULL_DEPTH,
   waterHalfAt
 } from "@/lib/villageTerrain";
 import buildingModels from "@/data/buildingModels.json";
@@ -726,37 +727,9 @@ function Waterways() {
   const {bed, surface} = useMemo(() => {
     if (LAGOON.length < 3) return {bed: null, surface: null};
 
-    // 물가까지의 거리 — 구역 단, 광장 섬, 껍질 테두리 중 가장 가까운 것
-    const shoreDist = (x: number, z: number) => {
-      let best = Infinity;
-      for (const r of TERRACE_RECTS) {
-        const dx = Math.max(r.x0 - PLATEAU_PAD - x, 0, x - (r.x1 + PLATEAU_PAD));
-        const dz = Math.max(r.z0 - PLATEAU_PAD - z, 0, z - (r.z1 + PLATEAU_PAD));
-        best = Math.min(best, Math.hypot(dx, dz));
-      }
-      const rr = Math.hypot(x, z);
-      if (rr < 12) {
-        const a2 = Math.atan2(z, x);
-        const t = (((a2 / (Math.PI * 2)) % 1) + 1) % 1;
-        const dr = DAIS_RADII.length
-          ? DAIS_RADII[Math.floor(t * DAIS_RADII.length) % DAIS_RADII.length]
-          : 0;
-        best = Math.min(best, Math.abs(rr - dr));
-      }
-      for (let i = 0; i < LAGOON.length; i++) {
-        const p0 = LAGOON[i];
-        const p1 = LAGOON[(i + 1) % LAGOON.length];
-        const dx = p1.x - p0.x;
-        const dz = p1.z - p0.z;
-        const l2 = dx * dx + dz * dz || 1;
-        const tt = Math.max(0, Math.min(1, ((x - p0.x) * dx + (z - p0.z) * dz) / l2));
-        best = Math.min(
-          best,
-          Math.hypot(x - (p0.x + dx * tt), z - (p0.z + dz * tt))
-        );
-      }
-      return best;
-    };
+    // 물가까지의 거리 — villageTerrain 의 단일 권위. 캐릭터 가라앉음(walkHeightAt)이
+    // 같은 함수를 보므로, 색이 짙어지는 곳에서 정확히 그만큼 몸이 잠긴다.
+    const shoreDist = shoreDistAt;
 
     const STEP = 0.85;
     const xs = LAGOON.map((p) => p.x);
@@ -791,73 +764,91 @@ function Waterways() {
     const c1 = new Color();
 
     /** 깊이 0~1 — 물가에서 이만큼 떨어지면 바닥이 완전히 안 보인다 */
-    const FULL_DEPTH = 4.5;
+    const FULL_DEPTH = WATER_FULL_DEPTH;
 
-    // ─── 물가의 톱니를 없애려면 물을 **뭍 밑으로 밀어 넣어야 한다** ──────────
+    // ─── 물가의 톱니는 격자를 **진짜 물가로 당겨서** 없앤다 ──────────────────
     // 격자를 물인 칸에서 딱 끊으면 물가가 0.85 짜리 계단이 된다. 낮은 시점에서
     // 이게 그대로 보인다 — 물결을 아무리 잘 만들어도 가장자리가 톱니면 종이를
-    // 오려 붙인 것으로 보인다.
+    // 오려 붙인 것으로 보인다. 격자를 더 잘게 해도 계단은 안 없어지고 정점만 는다.
     //
-    // 격자를 더 잘게 해도 계단은 안 없어지고 정점만 는다. 답은 **가장자리를
-    // 안 보이게 하는 것**이다: 물가 바로 바깥이 단(구역 축대·광장 섬)이면 그
-    // 칸까지 물을 한 칸 더 깔아 축대 벽 뒤로 숨긴다. 진짜 물가 선은 그때부터
-    // 축대가 정하므로 격자와 무관해진다.
+    // ── 먼저 시도했다가 되돌린 방법: 뭍 밑으로 한 칸 더 깔기 ──────────────
+    // 물가 바깥이 단이면 그 칸까지 물을 깔아 축대 벽 뒤로 숨기는 방법이다.
+    // 걷는 땅을 침범하지는 않았지만(격자 실측 0%), **단이 없는 물가는 못 고친다** —
+    // 껍질이 트인 들판을 지나는 구간에는 숨겨 줄 축대가 없어서 톱니가 그대로 남고,
+    // 거기로 늘리면 물이 잔디 위로 넘친다. 반쪽짜리 해법이었다.
     //
-    // **뭍이라고 아무 데나 늘리면 안 된다.** 껍질 바깥은 높이가 같은 잔디라,
-    // 거기로 늘리면 물이 잔디 위로 넘친다. 그래서 "단 위"일 때만 늘린다.
-    const onRaised = (x: number, z: number) => {
-      for (const r of TERRACE_RECTS)
-        if (
-          x > r.x0 - PLATEAU_PAD &&
-          x < r.x1 + PLATEAU_PAD &&
-          z > r.z0 - PLATEAU_PAD &&
-          z < r.z1 + PLATEAU_PAD
-        )
-          return true;
-      const rr = Math.hypot(x, z);
-      if (rr >= 12 || DAIS_RADII.length === 0) return false;
-      const t = (((Math.atan2(z, x) / (Math.PI * 2)) % 1) + 1) % 1;
-      return rr <= DAIS_RADII[Math.floor(t * DAIS_RADII.length) % DAIS_RADII.length];
-    };
-
+    // (그때 "걷는 땅의 12%가 물에 덮인다"고 읽었는데 오독이었다 — **다리 칸**을
+    //  세고 있었다. 다리는 물 위를 건너라고 뚫어 둔 구멍이라 그게 정상이다.
+    //  물가 판정을 잴 때는 `isWater` 인 점을 먼저 빼고 세야 한다.)
+    //
+    // ── 지금 방법: 마른 정점을 물가 선까지 당긴다 ─────────────────────────
+    // 물에 닿은 마른 정점을 후보에 넣되, **자리를 격자에 두지 않는다.** 물인
+    // 이웃 쪽으로 이분 탐색해 `isWater` 가 바뀌는 지점을 찾아 거기로 옮긴다.
+    // 그러면 다각형 테두리가 격자와 무관하게 실제 물가를 따라간다 — 톱니도 없고
+    // 뭍을 덮지도 않는다. 8cm 만 뭍 쪽으로 남겨 축대 밑동과 사이가 안 벌어지게 한다.
     const wet = new Uint8Array(nx * nz);
-    const high = new Uint8Array(nx * nz);
     for (let j = 0; j < nz; j++)
-      for (let i = 0; i < nx; i++) {
-        const x = x0 + i * STEP;
-        const z = z0 + j * STEP;
-        if (isWater(x, z)) wet[j * nx + i] = 1;
-        else if (onRaised(x, z)) high[j * nx + i] = 1;
-      }
+      for (let i = 0; i < nx; i++)
+        if (isWater(x0 + i * STEP, z0 + j * STEP)) wet[j * nx + i] = 1;
 
-    const near = (flags: Uint8Array, i: number, j: number) => {
+    const nearWet = (i: number, j: number) => {
       for (let dj = -1; dj <= 1; dj++)
         for (let di = -1; di <= 1; di++) {
           const ii = i + di;
           const jj = j + dj;
           if (ii < 0 || jj < 0 || ii >= nx || jj >= nz) continue;
-          if (flags[jj * nx + ii]) return true;
+          if (wet[jj * nx + ii]) return true;
         }
       return false;
+    };
+
+    /** 뭍 쪽으로 남기는 여유 — 축대 밑동과 물 사이에 실틈이 생기지 않게 */
+    const SEAL = 0.08;
+
+    /**
+     * 마른 정점을 물가 선으로 당긴다. 물인 이웃마다 경계를 이분 탐색해
+     * 평균 낸다 — 이웃이 여러 방향이면 그 사이 어딘가로 가는데, 어차피
+     * 한 칸(0.85) 안이라 눈에 안 띈다.
+     */
+    const snapToShore = (x: number, z: number, i: number, j: number) => {
+      let sx = 0;
+      let sz = 0;
+      let k = 0;
+      for (let dj = -1; dj <= 1; dj++)
+        for (let di = -1; di <= 1; di++) {
+          const ii = i + di;
+          const jj = j + dj;
+          if (ii < 0 || jj < 0 || ii >= nx || jj >= nz) continue;
+          if (!wet[jj * nx + ii]) continue;
+          const wx = x0 + ii * STEP;
+          const wz = z0 + jj * STEP;
+          let dry = 0;
+          let sea = 1;
+          for (let it = 0; it < 7; it++) {
+            const m = (dry + sea) / 2;
+            if (isWater(x + (wx - x) * m, z + (wz - z) * m)) sea = m;
+            else dry = m;
+          }
+          // 경계보다 살짝 뭍 쪽(dry)에서 멈춘다
+          const t = Math.max(0, sea - SEAL / (Math.hypot(wx - x, wz - z) || 1));
+          sx += x + (wx - x) * t;
+          sz += z + (wz - z) * t;
+          k += 1;
+        }
+      return k ? {x: sx / k, z: sz / k} : {x, z};
     };
 
     let n = 0;
     for (let j = 0; j < nz; j++)
       for (let i = 0; i < nx; i++) {
-        const x = x0 + i * STEP;
-        const z = z0 + j * STEP;
-        // 물이 아니면, **물에 닿아 있으면서 단에 붙어 있을 때만** 한 칸 늘린다.
-        //
-        // "단 위"만으로는 부족했다. 축대 rect 와 물 사이에는 `isWater` 가 단의
-        // PLATEAU_PAD(0.94)만큼 비워 둔 **높이 0 짜리 잔디 띠**가 있다(실측 최대
-        // 2.9유닛). 톱니가 실제로 드러나던 곳이 거기다 — 단 밑이 아니라 그 띠였다.
-        // 그래서 "단이거나, 단에 붙은 칸"까지 넓힌다. 물가가 축대 벽에 바로 닿아
-        // 구역이 물에 뜬 섬으로 읽힌다.
-        //
-        // 껍질 바깥(구역이 없는 트인 들판 쪽)은 단이 없으므로 안 늘어난다 —
-        // 거기로 늘리면 물이 잔디 위로 넘친다.
-        if (!wet[j * nx + i] && !(near(wet, i, j) && (high[j * nx + i] || near(high, i, j))))
-          continue;
+        const gx = x0 + i * STEP;
+        const gz = z0 + j * STEP;
+        const isWet = wet[j * nx + i] === 1;
+        if (!isWet && !nearWet(i, j)) continue;
+        // 물인 칸은 격자 그대로, 마른 칸은 물가 선으로 당겨서
+        const p = isWet ? {x: gx, z: gz} : snapToShore(gx, gz, i, j);
+        const x = p.x;
+        const z = p.z;
         at[j * nx + i] = n++;
         const sd = shoreDist(x, z);
         shore.push(sd);
@@ -1338,44 +1329,40 @@ function TerraceBanks() {
       vAt.push(vAt[i - 1] + d / TERRACE_STEP);
     }
 
-    for (const r of TERRACE_RECTS) {
-      const x0 = r.x0 - PLATEAU_PAD,
-        x1 = r.x1 + PLATEAU_PAD;
-      const z0 = r.z0 - PLATEAU_PAD,
-        z1 = r.z1 + PLATEAU_PAD;
-
-      /** 바깥으로 o 만큼 물린 네 귀퉁이. 모서리는 두 변의 법선을 더한 대각선이라
-          변끼리 어긋나지 않고 맞물린다. */
-      const corners = (o: number): [number, number][] => [
-        [x0 - o, z0 - o],
-        [x1 + o, z0 - o],
-        [x1 + o, z1 + o],
-        [x0 - o, z1 + o]
-      ];
-
-      // u 는 둘레를 따라간 거리 / 격자 한 칸 — 어느 벽에서나 돌 한 장 크기가 같다.
-      // 물린 거리를 빼고 원래 변 길이로 재야 마디마다 줄눈이 세로로 딱 맞는다.
-      const sideLen = [x1 - x0, z1 - z0, x1 - x0, z1 - z0];
+    for (const isl of ISLANDS) {
+      // 원반 섬 — 사각 단 시절의 "네 귀퉁이 + 변"이 "원둘레 N마디"가 됐다.
+      // 마디 0.9유닛이면 곡률이 눈에 안 걸린다(제일 작은 섬 r 4.3 에서 30마디).
+      const N = Math.max(24, Math.round((2 * Math.PI * isl.r) / 0.9));
+      const ring = (o: number): [number, number][] =>
+        Array.from({length: N}, (_, k) => {
+          const a = (k / N) * Math.PI * 2;
+          return [
+            isl.x + Math.cos(a) * (isl.r + o),
+            isl.z + Math.sin(a) * (isl.r + o)
+          ];
+        });
+      // u 는 둘레를 따라간 거리 / 격자 한 칸 — 어느 섬에서나 돌 한 장 크기가 같다
+      const segLen = (2 * Math.PI * isl.r) / N;
 
       for (let i = 0; i + 1 < profile.length; i++) {
-        const A = corners(profile[i][0]);
-        const B = corners(profile[i + 1][0]);
+        const A = ring(profile[i][0]);
+        const B = ring(profile[i + 1][0]);
         const yA = profile[i][1],
           yB = profile[i + 1][1];
         const vA = vAt[i],
           vB = vAt[i + 1];
 
-        for (let s = 0; s < 4; s++) {
-          const e = (s + 1) % 4;
-          const u1 = sideLen[s] / 1.88;
+        for (let s = 0; s < N; s++) {
+          const e = (s + 1) % N;
+          const u0 = (s * segLen) / 1.88;
+          const u1 = ((s + 1) * segLen) / 1.88;
           const base = positions.length / 3;
-          // 시작 귀퉁이의 A·B, 끝 귀퉁이의 A·B 순. 이 순서가 곧 면의 앞뒤다 —
-          // 수직 마디는 A 가 아래라 바깥을 보고, 수평 마디는 A 가 바깥이면
-          // 위를, 안쪽이면 아래를 본다. profile 을 그 규칙에 맞춰 적어 뒀다.
+          // 각도 증가 방향이 사각형 시절의 귀퉁이 순서와 같은 감기라 면의
+          // 앞뒤 규칙(profile 주석)이 그대로 성립한다.
           positions.push(A[s][0], yA, A[s][1]);
-          uvs.push(0, vA);
+          uvs.push(u0, vA);
           positions.push(B[s][0], yB, B[s][1]);
-          uvs.push(0, vB);
+          uvs.push(u0, vB);
           positions.push(A[e][0], yA, A[e][1]);
           uvs.push(u1, vA);
           positions.push(B[e][0], yB, B[e][1]);
@@ -1434,32 +1421,23 @@ function TerraceTops() {
     const positions: number[] = [];
     const uvs: number[] = [];
     const indices: number[] = [];
-    for (const r of TERRACE_RECTS) {
-      const x0 = r.x0 - PLATEAU_PAD,
-        x1 = r.x1 + PLATEAU_PAD;
-      const z0 = r.z0 - PLATEAU_PAD,
-        z1 = r.z1 + PLATEAU_PAD;
-      const base4 = positions.length / 3;
-      // uv 를 **월드 좌표**로 잡는다 — 구역마다 잔디 결이 이어지고, 단 크기가
-      // 달라도 늘어나지 않는다.
-      for (const [x, z] of [
-        [x0, z0],
-        [x1, z0],
-        [x0, z1],
-        [x1, z1]
-      ] as [number, number][]) {
+    for (const isl of ISLANDS) {
+      // 원반 뚜껑 — 가운데 정점에서 부챗살. uv 는 **월드 좌표**라 섬마다 잔디
+      // 결이 이어지고, 크기가 달라도 늘어나지 않는다.
+      const N = Math.max(24, Math.round((2 * Math.PI * isl.r) / 0.9));
+      const center = positions.length / 3;
+      positions.push(isl.x, TERRACE_STEP, isl.z);
+      uvs.push(isl.x / GRASS_TILE_WORLD, isl.z / GRASS_TILE_WORLD);
+      for (let k = 0; k < N; k++) {
+        const a = (k / N) * Math.PI * 2;
+        const x = isl.x + Math.cos(a) * isl.r;
+        const z = isl.z + Math.sin(a) * isl.r;
         positions.push(x, TERRACE_STEP, z);
         uvs.push(x / GRASS_TILE_WORLD, z / GRASS_TILE_WORLD);
       }
-      // 위를 보게 — (x0,z0)→(x1,z0)→(x0,z1) 의 법선이 +Y 다
-      indices.push(
-        base4,
-        base4 + 2,
-        base4 + 1,
-        base4 + 1,
-        base4 + 2,
-        base4 + 3
-      );
+      // 위를 보게 — 각도 증가(반시계) 순서에서 (중심, k+1, k) 가 +Y 법선이다
+      for (let k = 0; k < N; k++)
+        indices.push(center, center + 1 + ((k + 1) % N), center + 1 + k);
     }
     const geo = new BufferGeometry();
     geo.setAttribute("position", new Float32BufferAttribute(positions, 3));

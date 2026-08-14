@@ -3,8 +3,8 @@
 import {useFrame, useThree} from "@react-three/fiber";
 import {Suspense, useEffect, useRef} from "react";
 import {Group, Vector3} from "three";
-import {slideTo, SPAWN} from "@/lib/villageWalk";
-import {terrainHeightAt} from "@/lib/villageTerrain";
+import {slideTo, SPAWN, walkHeightAt} from "@/lib/villageWalk";
+import {WADE_MAX} from "@/lib/villageTerrain";
 import {WarriorCharacter, type MoveState} from "./WarriorCharacter";
 
 const SPEED = 4.5;
@@ -39,7 +39,10 @@ export function CharacterController() {
 
   useFrame((_, delta) => {
     const keys = keysRef.current;
-    const speed = SPEED * delta;
+    // 물속에서는 느려진다 — 허리 깊이에서 절반. 감쇠 중인 groundY(음수 = 잠긴
+    // 깊이)를 그대로 쓰므로 들어갈수록 서서히 무거워지고, 나오면 서서히 풀린다.
+    const wade = Math.max(0, -groundYRef.current) / WADE_MAX;
+    const speed = SPEED * (1 - 0.5 * Math.min(1, wade)) * delta;
     const turn = TURN_SPEED * delta;
 
     if (keys.has("KeyA") || keys.has("ArrowLeft")) rotRef.current += turn;
@@ -89,10 +92,10 @@ export function CharacterController() {
       regress(); // 이동/회전 중 해상도 저하
     }
 
-    // 구역 단차 — 걷기 범위(x ±11.5 / z −8.8~12.5)는 여섯 구역의 광장 쪽
-    // 가장자리와 겹친다. 한 단이 0.21이라 그냥 대입하면 경계에서 툭 튄다.
-    // 목표 높이로 감쇠시켜 두 계단을 걸어 오르는 것처럼 보이게 한다.
-    const groundTarget = terrainHeightAt(posRef.current.x, posRef.current.z);
+    // 구역 단차와 **물 깊이** — walkHeightAt 은 단 위에서 +1.1, 물속에서 음수다.
+    // 그냥 대입하면 경계에서 툭 튀므로 목표 높이로 감쇠시킨다. 물에 들어갈 때도
+    // 같은 감쇠가 발목 → 무릎 → 허리로 잠기는 템포를 만든다.
+    const groundTarget = walkHeightAt(posRef.current.x, posRef.current.z);
     groundYRef.current +=
       (groundTarget - groundYRef.current) * Math.min(1, delta * 7);
     const groundY = groundYRef.current;

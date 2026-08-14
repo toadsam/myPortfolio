@@ -134,12 +134,13 @@ function stampCircle(x: number, z: number, radius: number) {
 function buildMask() {
   const pad = terraces.pitch / 2; // villageTerrain 의 PLATEAU_PAD 와 같은 식
 
-  // ① 구역 단 — 축대 발치(y=0)가 평평한 땅을 전제로 지어져 있다
-  for (const r of terraces.blocks as {x0: number; x1: number; z0: number; z1: number}[]) {
-    const m = pad + 0.8;
-    for (let z = r.z0 - m; z <= r.z1 + m; z += CELL * 0.9) {
-      for (let x = r.x0 - m; x <= r.x1 + m; x += CELL * 0.9) stampCircle(x, z, 0.7);
-    }
+  // ① 구역 원반 섬 — 축대 발치(y=0)가 평평한 땅을 전제로 지어져 있다
+  void pad;
+  for (const isl of (terraces.islands ?? []) as {x: number; z: number; r: number}[]) {
+    const m = isl.r + 0.8;
+    for (let z = isl.z - m; z <= isl.z + m; z += CELL * 0.9)
+      for (let x = isl.x - m; x <= isl.x + m; x += CELL * 0.9)
+        if (Math.hypot(x - isl.x, z - isl.z) <= m) stampCircle(x, z, 0.7);
   }
 
   // ①-b 광장 섬 축대 — 발치가 y=0 의 평평한 땅을 전제로 지어져 있다.

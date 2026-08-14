@@ -84,7 +84,8 @@ const TERR = (() => {
 })();
 const LAGOON = TERR.lagoon ?? [];
 const DAIS_LINE = TERR.plazaDais ?? [];
-const TERR_BLOCKS = TERR.blocks ?? [];
+/** 구역 **원반 섬** — {district, x, z, r}. 사각 blocks 는 없어졌다. */
+const TERR_ISLANDS = TERR.islands ?? [];
 const TERR_PAD = (TERR.pitch ?? 1.88) / 2;
 
 const inLagoon = (x, z) => {
@@ -106,10 +107,10 @@ const daisRadiusAt = ang => {
 
 const onDais = (x, z) => Math.hypot(x, z) <= daisRadiusAt(Math.atan2(z, x));
 
-const onBlock = (x, z, pad = TERR_PAD) =>
-  TERR_BLOCKS.some(
-    b => x >= b.x0 - pad && x <= b.x1 + pad && z >= b.z0 - pad && z <= b.z1 + pad
-  );
+// 이름은 blocks 시절 그대로 둔다 — 뜻은 "구역 섬 위인가". 원반의 반지름에는
+// 둘레 여유가 이미 들어 있어 pad 기본값이 0 이다.
+const onBlock = (x, z, pad = 0) =>
+  TERR_ISLANDS.some(b => Math.hypot(x - b.x, z - b.z) <= b.r + pad);
 
 /** 그 자리가 물인가 */
 function inInnerWater(x, z) {
@@ -501,7 +502,12 @@ const onWall = (x, z, slack = 0) =>
 // 범위는 **원본(src/lib/villageWalk.ts)에서 읽는다.** 예전엔 여기 사각형을 손으로
 // 적고 주석에 컨트롤러 값을 옮겨 놨는데, 애초에 둘이 다른 값이었다.
 const WALK_RADIUS = readWalkRadius();
-const inWalkZone = (x, z) => Math.hypot(x, z) < WALK_RADIUS;
+// 걷는 경계가 원반(r 18)에서 **석호 껍질**로 바뀌었다(물에 들어갈 수 있게 되면서
+// "섬 = 껍질 안"이 경계다). WALK_RADIUS 는 이제 껍질을 감싸는 성긴 원(35)일 뿐이라
+// 그걸 쓰면 껍질 밖 벌판·숲 모서리(r 33~35)까지 원본으로 바꿔 심게 된다 —
+// 실제 경계와 같은 껍질 판정을 쓴다.
+const inWalkZone = (x, z) =>
+  LAGOON.length >= 3 ? inLagoon(x, z) : Math.hypot(x, z) < WALK_RADIUS;
 // 대역 모델 → 원본 대응표. null 이면 아예 심지 않는다.
 // 덤불만 null 인 이유: 원본이 13,514 삼각형이라(잎마다 UV 섬이라 simplify가 안 먹는다)
 // 걸어 다니는 구역 안 30그루를 원본으로 바꿨더니 그것만 40만이 됐다. 게다가 이
@@ -566,9 +572,17 @@ function place(
   // 프롭 종류마다 회피를 따로 붙이면 새 종류가 생길 때마다 같은 사고가 난다.
   // 물 위에 서야 하는 것(다리·폭포)만 onWater 로 빠져나간다.
   if (!onWater && (inMoatWater(x, z) || inInnerWater(x, z))) return false;
-  // 물가 턱에 걸치면 반은 축대에 박히고 반은 뜬다. 계단만 예외 — 그 턱을
-  // 오르라고 있는 물건이라 일부러 붙여 놓는다.
-  if (!onWater && kind !== "terrace-stair" && nearShore(x, z)) return false;
+  // 물가 턱에 걸치면 반은 축대에 박히고 반은 뜬다. 예외 둘 — 계단은 그 턱을
+  // 오르라고 있는 물건이고, 울타리(fence-rail)는 **턱 위 난간**이라 물가에
+  // 서는 게 목적 그 자체다(두께 0.13 이라 걸쳐도 삐져나올 몸이 없다).
+  // 이 규칙이 구역 섬 울타리 50토막을 소리 없이 거부하고 있었다.
+  if (
+    !onWater &&
+    kind !== "terrace-stair" &&
+    kind !== "fence-rail" &&
+    nearShore(x, z)
+  )
+    return false;
   props.push({
     id: `decor-${id}`,
     glb: `/models/props/${KIT[kind].glb}`,
@@ -988,88 +1002,47 @@ const blockRect = new Map();
   const terr = JSON.parse(
     readFileSync("src/data/villageTerraces.json", "utf8")
   );
-  // 정확히 경계에 세우면 부동소수 때문에 몇 토막이 한 단 아래로 판정된다.
-  // 손톱만큼 안쪽으로 들여 세운다.
-  const PLATEAU_PAD = terr.pitch / 2 - 0.06;
+  /** 담장선 — 섬 물가에서 손톱만큼 안쪽 (부동소수로 물 판정되는 사고 방지) */
+  const WALL_INSET = 0.35;
 
-  /**
-   * 그 자리가 **단 위인가 골짜기 바닥인가.** `villageTerrain.ts` 의
-   * `terrainHeightAt` 과 같은 규칙이어야 한다 — 여기만 0.06 을 들이면
-   * 계단이 뜨거나 묻힌다. 그래서 담장선(위)과 달리 여백을 그대로 쓴다.
-   */
-  const TRUE_PAD = terr.pitch / 2;
+  /** 그 자리가 **섬 위인가 물/골짜기인가** — villageTerrain 과 같은 규칙 */
+  const islands = terr.islands ?? [];
   const onPlateau = (x, z) =>
-    terr.blocks.some(
-      b =>
-        x >= b.x0 - TRUE_PAD &&
-        x <= b.x1 + TRUE_PAD &&
-        z >= b.z0 - TRUE_PAD &&
-        z <= b.z1 + TRUE_PAD
-    );
-  const terraceOf = new Map(terr.blocks.map(b => [b.district, b]));
+    islands.some(b => Math.hypot(x - b.x, z - b.z) <= b.r);
   let n = 0;
   let openings = 0;
-  /** 길이 단을 넘는 자리 — 아래에서 계단으로 채운다 */
+  /** 길이 섬을 나서는 자리 — 아래에서 계단으로 채운다. nx/nz 는 바깥 방향. */
   const gateSteps = [];
 
-  for (const [district, fallback] of blockRect) {
-    const t = terraceOf.get(district);
-    const r = t
-      ? {
-          x0: t.x0 - PLATEAU_PAD,
-          x1: t.x1 + PLATEAU_PAD,
-          z0: t.z0 - PLATEAU_PAD,
-          z1: t.z1 + PLATEAU_PAD
-        }
-      : {
-          x0: fallback.x0 - 1.45,
-          x1: fallback.x1 + 1.45,
-          z0: fallback.z0 - 1.45,
-          z1: fallback.z1 + 1.45
-        };
-    const x0 = r.x0,
-      x1 = r.x1;
-    const z0 = r.z0,
-      z1 = r.z1;
-
-    // 네 변. along 은 변이 뻗는 방향, rot 은 담장 긴 축(모델 +X)을 거기 맞추는 각.
-    const edges = [
-      {from: [x0, z0], to: [x1, z0], rot: 0, nx: 0, nz: -1}, // 북
-      {from: [x0, z1], to: [x1, z1], rot: 0, nx: 0, nz: 1}, // 남
-      {from: [x0, z0], to: [x0, z1], rot: Math.PI / 2, nx: -1, nz: 0}, // 서
-      {from: [x1, z0], to: [x1, z1], rot: Math.PI / 2, nx: 1, nz: 0} // 동
-    ];
-
-    for (const e of edges) {
-      const len = Math.hypot(e.to[0] - e.from[0], e.to[1] - e.from[1]);
-      // 변 길이를 토막 수로 나눠 **딱 맞게** 편다. 고정 간격으로 깔면 마지막
-      // 토막이 모서리를 넘어가거나 모자란다.
-      const count = Math.max(1, Math.round(len / STEP));
-      for (let k = 0; k < count; k++) {
-        const t = (k + 0.5) / count;
-        const x = e.from[0] + (e.to[0] - e.from[0]) * t;
-        const z = e.from[1] + (e.to[1] - e.from[1]) * t;
-        // 길이 지나는 자리는 비운다 = 구역 대문. 여유를 넉넉히 줘야 통행이 막히지 않는다.
-        // 길이 지나는 자리는 비운다 = 구역 대문. 그 자리에 **계단**을 놓는다 —
-        // 단이 1.1 이라 그냥 두면 길이 턱을 뛰어오른다.
-        if (onRoad(x, z, 0.75)) {
-          openings += 1;
-          gateSteps.push({x, z, nx: e.nx, nz: e.nz});
-          continue;
-        }
-        if (onBuilding(x, z, 0.15) || onDisc(x, z, 0.05)) continue;
-        // 채움 민가·랜드마크가 이미 선 자리면 비켜 준다
-        if (!free(x, z, 1.15)) continue;
-        place(`wall-${district}-${n++}`, "wall-low", x, z, round3(e.rot), {
-          gap: 1.15
-        });
-        // 담장은 점이 아니라 1.9짜리 선분이라 taken 의 한 점으로는 못 막는다.
-        // 그렇다고 양 끝을 taken 에 더 넣었더니(처음엔 그렇게 했다) 블록 둘레
-        // 1.5유닛이 통째로 죽어서 가로등·깃대·화단이 마을에서 절반 넘게 사라졌다 —
-        // 담장 두께는 0.4밖에 안 되는데 taken 은 방향을 모르니 원으로 막는다.
-        // 실제 선분으로 따로 재는 쪽이 맞다 (onWall).
-        walls.push({x, z, ax: e.rot === 0 ? 1 : 0, az: e.rot === 0 ? 0 : 1});
+  for (const isl of islands) {
+    const district = isl.district;
+    const R = isl.r - WALL_INSET;
+    const count = Math.max(8, Math.round((2 * Math.PI * R) / STEP));
+    for (let k = 0; k < count; k++) {
+      const a = (k / count) * Math.PI * 2;
+      const nx = Math.cos(a);
+      const nz = Math.sin(a);
+      const x = round3(isl.x + nx * R);
+      const z = round3(isl.z + nz * R);
+      // 길이 지나는 자리는 비운다 = 구역 대문. 그 자리에 **계단**을 놓는다 —
+      // 단이 1.1 이라 그냥 두면 길이 턱을 뛰어오른다.
+      if (onRoad(x, z, 0.75)) {
+        openings += 1;
+        gateSteps.push({x, z, nx, nz});
+        continue;
       }
+      if (onBuilding(x, z, 0.15) || onDisc(x, z, 0.05)) continue;
+      // 채움 민가·랜드마크가 이미 선 자리면 비켜 준다
+      if (!free(x, z, 1.15)) continue;
+      // 담장 긴 축(모델 +X)을 접선에 맞춘다. rotationY=r 은 +X 를
+      // (cos r, -sin r) 로 돌리므로 접선 t=(-nz, nx) 에는 r = atan2(-nx, -nz).
+      const rot = round3(Math.atan2(-nx, -nz));
+      place(`wall-${district}-${n++}`, "wall-low", x, z, rot, {
+        gap: 1.15
+      });
+      // 담장은 점이 아니라 1.9짜리 선분이라 taken 의 한 점으로는 못 막는다.
+      // 실제 선분으로 따로 재야 옆에 가로등을 붙여 세울 수 있다 (onWall).
+      walls.push({x, z, ax: Math.cos(rot), az: Math.sin(rot)});
     }
   }
   console.log(`  담장 ${n}토막 · 길이 지나가 비운 자리 ${openings}곳`);
@@ -1095,13 +1068,9 @@ const blockRect = new Map();
       // 안길이 절반만큼 바깥으로 빼면 밑동이 골짜기 바닥에서 시작해, 높은 쪽
       // 끝이 딱 단 모서리에 닿는다. 안길이 1.902 × 배율 1.484 = 2.82 → 절반 1.41.
       // 여기 g 는 담장선(PLATEAU_PAD −0.06)이고 진짜 단 경계는 0.06 더 밖이므로
-      // 그만큼 더 민다: 1.41 + 0.06 = 1.47.
-      //
-      // **바깥 방향은 반드시 그 변의 법선이어야 한다.** 처음엔 사각형 중심에서
-      // 밀어냈는데(방사 방향), 긴 변의 끝 쪽 대문에서는 그게 거의 **변을 따라
-      // 가는 방향**이라 계단이 단 안에 그대로 남았다 — 29개 중 8개가 단 위에
-      // 1.1 만큼 떠 있었다. 격자로 검산해서야 찾았다.
-      const OUT = 1.47;
+      // 그만큼 더 민다. 담장선이 물가에서 0.35 안쪽이므로 1.41 + 0.35 = 1.76.
+      // (원반 섬에서는 바깥 방향이 곧 방사 방향이라 법선 걱정이 없다.)
+      const OUT = 1.76;
       const sx = round3(g.x + g.nx * OUT);
       const sz = round3(g.z + g.nz * OUT);
       // **밀어낸 자리가 또 단 위면 놓지 않는다.** 이웃한 두 구역의 단이 맞닿은
@@ -1303,13 +1272,19 @@ const plots = (() => {
   const seen = new Set(
     out.map(c => `${Math.round(c.x / pitch)},${Math.round(c.z / pitch)}`)
   );
-  for (const b of terr.blocks) {
-    for (let i = Math.round(b.x0 / pitch); i <= Math.round(b.x1 / pitch); i++) {
+  for (const b of terr.islands ?? []) {
+    for (
+      let i = Math.round((b.x - b.r) / pitch);
+      i <= Math.round((b.x + b.r) / pitch);
+      i++
+    ) {
       for (
-        let j = Math.round(b.z0 / pitch);
-        j <= Math.round(b.z1 / pitch);
+        let j = Math.round((b.z - b.r) / pitch);
+        j <= Math.round((b.z + b.r) / pitch);
         j++
       ) {
+        // 원반 밖 모서리 칸은 물 위다
+        if (Math.hypot(i * pitch - b.x, j * pitch - b.z) > b.r - 0.4) continue;
         const k = `${i},${j}`;
         if (seen.has(k)) continue;
         seen.add(k);
@@ -2196,12 +2171,8 @@ const BELT_DEPTH = 12;
   // (실측: 후보 3477곳 중 2768곳이 이 컷에 걸렸고, 살아남은 30곳 중 29곳은
   //  이미 프롭이 있어서 결국 무리 1개만 섰다.)
   //
-  // 담 안은 마을이다. 껍질 **또는** 구역 단 안이면 후보로 친다.
-  const terraceBlocks = JSON.parse(
-    readFileSync("src/data/villageTerraces.json", "utf8")
-  ).blocks;
-  const inTerrace = (x, z) =>
-    terraceBlocks.some(b => x >= b.x0 && x <= b.x1 && z >= b.z0 && z <= b.z1);
+  // 담 안은 마을이다. 껍질 **또는** 구역 섬 안이면 후보로 친다.
+  const inTerrace = (x, z) => onBlock(x, z);
 
   for (let x = -34; x <= 38; x += STEP) {
     for (let z = -30; z <= 38; z += STEP) {
@@ -2398,6 +2369,254 @@ const BELT_DEPTH = 12;
   }
   console.log(
     `  참배로 울타리 ${n}토막 · 교차로라 건너뛴 칸 ${skippedJunction}곳`
+  );
+}
+
+// ─── ⑭-a 구역 섬 울타리 — 돌담의 틈을 채워 **닫힌 섬**으로 ────────────────────
+// 골짜기가 물이 되면서 구역 하나하나가 섬이다. 그런데 ②-d 의 돌담은 91토막을
+// 여섯 구역이 나눠 갖는 성긴 줄이라(길·민가·랜드마크에 밀려 빈 틈 투성이) 섬이
+// "둘러싸였다"로 안 읽힌다. 돌담이 못 선 틈마다 **울타리(fence-rail)** 를 채워
+// 구역마다 완전히 닫힌 테두리를 만든다 — 돌담과 울타리가 섞인 줄은 오히려
+// 마을답다(전부 같은 토막이면 공장 티가 난다).
+//
+// **문은 두 군데만 연다**: ① 길이 지나는 자리(현판 아치·대문 계단이 서는 곳),
+// ② 다리·둑길이 닿는 자리. 그리로만 옆 구역·광장·물로 나간다.
+//
+// 회전 규약: rotationY=r 은 모델 +X 를 (cos r, -sin r) 로 돌린다. 변 방향
+// (dx,dz) 에 맞추려면 r = atan2(-dz, dx).
+{
+  const SEG = 1.9;
+  /** 다리·둑길이 닿는 자리인가 — 건널목 좌표에서 이 안이면 문이다 */
+  const nearCrossing = (x, z) =>
+    (TERR.crossings ?? []).some(c => Math.hypot(c.x - x, c.z - z) < 2.2);
+  // 진짜 문의 표지 — 대문 계단·현판 아치가 이미 서 있는 자리.
+  // onRoad(0.75) 를 문으로 쳤더니 **테두리를 따라 도는 길**까지 전부 문이 되어
+  // 170칸 중 84칸이 비고 울타리가 1토막 섰다. 길이 테두리와 나란한 것과
+  // 테두리를 **가로질러 나가는** 것은 다르다 — 나가는 자리에는 반드시 계단이나
+  // 아치가 서 있으므로 그걸 표지로 삼는다.
+  const gateProps = props.filter(p =>
+    /^decor-(gatestep-|arch-|gate-|pier-)/.test(p.id)
+  );
+  const nearGate = (x, z) =>
+    gateProps.some(
+      p => Math.hypot(p.position[0] - x, p.position[2] - z) < 2.4
+    );
+  let put = 0;
+  let gates = 0;
+  let cutWall = 0;
+  let cutBuilding = 0;
+  let cutFree = 0;
+  for (const isl of TERR_ISLANDS) {
+    // 담장(②-d)과 같은 선 — 물가에서 0.35 안쪽 원둘레
+    const R = isl.r - 0.35;
+    const count = Math.max(8, Math.round((2 * Math.PI * R) / SEG));
+    for (let k = 0; k < count; k++) {
+      const a = (k / count) * Math.PI * 2;
+      const nx = Math.cos(a);
+      const nz = Math.sin(a);
+      const x = round3(isl.x + nx * R);
+      const z = round3(isl.z + nz * R);
+      // 문: 다리 어귀·대문 계단·현판 아치 자리 **뿐이다.** onRoad 는 어떤
+      // 여유로도 쓰면 안 된다 — 구역 안 길이 테두리에 바짝 붙어 돌아서
+      // 0.35 로도 40칸 넘게 문이 됐다. 밖으로 나가는 길에는 반드시 계단이나
+      // 아치나 건널목이 서 있으므로 그 표지로 충분하다.
+      if (nearCrossing(x, z) || nearGate(x, z)) {
+        gates++;
+        continue;
+      }
+      // 이미 돌담(또는 앞서 놓은 울타리)이 서 있으면 그 토막이 담당이다
+      if (onWall(x, z, 0.55)) {
+        cutWall++;
+        continue;
+      }
+      if (onBuilding(x, z, 0.15) || onDisc(x, z, 0.05)) {
+        cutBuilding++;
+        continue;
+      }
+      if (!free(x, z, 0.5)) {
+        cutFree++;
+        continue;
+      }
+      // 접선 정렬 — ②-d 담장과 같은 식
+      const rot = round3(Math.atan2(-nx, -nz));
+      if (place(`isle-fence-${put}`, "fence-rail", x, z, rot, {gap: 0.5})) {
+        walls.push({x, z, ax: Math.cos(rot), az: Math.sin(rot)});
+        put++;
+      }
+    }
+  }
+  console.log(
+    `  구역 섬 울타리 ${put}토막 · 문 ${gates} · 돌담 ${cutWall} · 건물/원반 ${cutBuilding} · 기존프롭 ${cutFree}`
+  );
+}
+
+// ─── ⑭ 물가 단장 ──────────────────────────────────────────────────────────────
+// 골짜기를 물로 채우면서 장식물 262개가 사라졌다 — 나무 58, 가로등 20, 돌 26,
+// 채움 민가 20, 담장 73토막. 전부 이제 물이 된 자리에 서 있던 것들이다.
+//
+// **그런데 단 위로 "옮길" 자리는 없다.** 실측해 보니 구역 단은 어느 점을 짚어도
+// 반경 2.2 안에 건물이나 프롭이 있다(빈 땅 0%). 물이 삼킨 건 원래 구역 **사이**
+// 였고, 거긴 이제 물인 게 맞다.
+//
+// 정말로 빈 곳은 따로 있었다 — **물가**다. 물은 마을에서 가장 긴 테두리를
+// 새로 그었는데, 그 선을 위해 놓인 물건이 하나도 없다. 게다가 `place` 의
+// `nearShore` 규칙(물가 0.9 안 금지)이 그 띠를 **구조적으로** 비워 두고 있었다.
+// 그래서 물 건너에서 구역을 보면 축대 위가 민둥 잔디로 끝난다.
+//
+// 여기서 채우는 건 "잃은 것을 되돌리기"가 아니라 **물가라서 생긴 새 자리**다:
+// 축대 위를 따라 늘어선 가로등, 물을 보고 앉은 벤치, 둑 밑에 반쯤 잠긴 바위.
+//
+// ── 왜 담장 안쪽 1.35 인가 ─────────────────────────────────────────────────
+// 단 테두리에는 이미 ②-d 의 낮은 돌담이 서 있다. 그 바깥은 곧장 축대 절벽이라
+// 놓을 데가 없다. 담 안쪽에 세우면 물 건너에서 볼 때 물 → 축대 → 돌담 → 가로등
+// 순으로 층이 쌓여 **부두**처럼 읽힌다. 1.35 면 담장 선분(반두께 0.2)에서
+// 1.29 떨어져 겹치지 않고, 물에서도 2.29 라 `nearShore` 에 안 걸린다.
+//
+// ── 물가 바위만 물 위에 놓는다 ─────────────────────────────────────────────
+// 축대 밑동이 물과 만나는 선이 자로 그은 듯 곧아서 인공적으로 보인다. 그 선에
+// 바위를 걸쳐 놓으면 선이 부서진다. 프롭 높이는 씬이 `terrainHeightAt` 로 얹는데
+// 물 위는 0 이라 바위가 수면(0.03)에 반쯤 잠긴다 — 노린 그림이 그대로 나온다.
+{
+  const terr = JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"));
+  const INSET = 1.35;
+  /** 테두리를 훑는 간격. 아래 리듬은 이 간격의 배수로 잡는다. */
+  const STEP = 1.1;
+
+  /** {x,z} 는 놓을 자리, {ex,ez} 는 물가 선, {ox,oz} 는 물 쪽 단위벡터 */
+  const rim = [];
+  const outIsWater = (ex, ez, ox, oz) => inInnerWater(ex + ox * 1.4, ez + oz * 1.4);
+
+  for (const isl of terr.islands ?? []) {
+    // 원반 섬 — 물가는 원둘레, 바깥 방향은 방사 방향이다
+    const count = Math.max(8, Math.round((2 * Math.PI * isl.r) / STEP));
+    for (let k = 0; k < count; k++) {
+      const a = (k / count) * Math.PI * 2;
+      const ox = Math.cos(a);
+      const oz = Math.sin(a);
+      const ex = isl.x + ox * isl.r;
+      const ez = isl.z + oz * isl.r;
+      // 이웃 섬과 마주 붙은 좁은 목은 물가가 아니다
+      if (!outIsWater(ex, ez, ox, oz)) continue;
+      rim.push({
+        x: ex - ox * INSET,
+        z: ez - oz * INSET,
+        ex,
+        ez,
+        ox,
+        oz
+      });
+    }
+  }
+
+  // 광장 섬. 240 마디를 3칸씩 건너뛰면 0.7 간격이라 구역 테두리와 비슷해진다.
+  for (let i = 0; i < DAIS_LINE.length; i += 3) {
+    const p = DAIS_LINE[i];
+    const r = Math.hypot(p.x, p.z) || 1;
+    const ox = p.x / r;
+    const oz = p.z / r;
+    if (!outIsWater(p.x, p.z, ox, oz)) continue;
+    rim.push({x: p.x - ox * INSET, z: p.z - oz * INSET, ex: p.x, ez: p.z, ox, oz});
+  }
+
+  /**
+   * 테두리를 따라가며 종류별로 다른 주기로 놓는다.
+   *
+   * 주기를 서로 **서로소**로 잡는 게 요령이다. 7·17·23·29·61 은 공배수가 멀어
+   * 같은 자리에 두 개가 겹치는 일이 거의 없고, 무엇보다 반복 주기가 안 보인다.
+   * 전부 6의 배수로 잡으면 "가로등-벤치-화분"이 한 세트로 되풀이되는 게 눈에 띈다.
+   */
+  const MENU = [
+    // 가로등이 가장 촘촘하다 — 물가 리듬을 만드는 건 결국 불빛이다 (1,780 삼각형)
+    {kind: "lantern-post", every: 7, phase: 0, gap: 1.1, face: true},
+    // 물을 보고 앉은 벤치. 물가에 사람이 머무는 이유가 된다.
+    {kind: "bench", every: 17, phase: 3, gap: 1.5, face: true},
+    {kind: "flower-pot", every: 23, phase: 9, gap: 1.2, face: true},
+    {kind: "barrel-iron", every: 29, phase: 14, gap: 1.0},
+    // 물 위로 늘어진 벚나무. 드물어야 눈에 띈다.
+    {kind: "tree-sakura", every: 61, phase: 31, gap: 2.0, grow: 0.85}
+  ];
+
+  const tally = {};
+  // 어디서 걸러지는지 세어 둔다. 이 파일에서 여러 번 당한 실패가 "규칙은 도는데
+  // 결과가 한 자리 수"라 로그 없이는 원인을 못 찾는다.
+  const cut = {road: 0, disc: 0, building: 0, wall: 0, free: 0, place: 0};
+  let n = 0;
+  rim.forEach((s, i) => {
+    for (const m of MENU) {
+      if ((i + m.phase) % m.every !== 0) continue;
+      if (onRoad(s.x, s.z, 0.4)) {
+        cut.road += 1;
+        continue;
+      }
+      if (onDisc(s.x, s.z, 0.1)) {
+        cut.disc += 1;
+        continue;
+      }
+      if (onBuilding(s.x, s.z, 0.5)) {
+        cut.building += 1;
+        continue;
+      }
+      if (onWall(s.x, s.z, 0.3)) {
+        cut.wall += 1;
+        continue;
+      }
+      const rot = m.face ? faceTo(s.ox, s.oz) : round3(((i * 137) % 360) * (Math.PI / 180));
+      // 정확히 그 점이 막혔으면 **물가를 따라** 조금 비켜 놓는다. 그냥 버리면
+      // (처음엔 그랬다) 89번 시도해 9개밖에 안 섰다 — 물가 띠에는 이미 담장·
+      // 가로등·앞뜰이 있어 정확한 한 점이 비어 있을 확률이 낮다.
+      //
+      // **비키는 방향은 접선뿐이다.** 범용 `findSpot` 을 썼더니 물 쪽으로도
+      // 밀어서 28개가 `nearShore` 에 걸려 되돌아왔다. 물가에서의 거리는 이
+      // 절의 전제(담장 안쪽 1.35)라 건드리면 안 된다.
+      const tx = -s.oz;
+      const tz = s.ox;
+      let put = false;
+      for (const d of [0, 0.55, -0.55, 1.1, -1.1]) {
+        const px = s.x + tx * d;
+        const pz = s.z + tz * d;
+        if (!free(px, pz, m.gap)) continue;
+        if (onWall(px, pz, 0.3) || onBuilding(px, pz, 0.5)) continue;
+        if (place(`quay-${n}`, m.kind, px, pz, rot, {gap: m.gap, grow: m.grow ?? 1})) {
+          tally[m.kind] = (tally[m.kind] ?? 0) + 1;
+          n += 1;
+          put = true;
+        }
+        break;
+      }
+      if (!put) cut.free += 1;
+      break; // 한 자리엔 하나만
+    }
+  });
+  console.log(
+    `  물가 컷: 길 ${cut.road} · 앞마당 ${cut.disc} · 건물 ${cut.building} · ` +
+      `담장 ${cut.wall} · 기존프롭 ${cut.free} · place ${cut.place}`
+  );
+
+  // ─── 둑 밑 바위 ─────────────────────────────────────────────────────────────
+  // 물 위라 `onWater` 로 물·물가 검사를 건너뛴다. 다리 자리는 피한다 —
+  // 건널목마다 반경 3.4 짜리 금지 원이 landmarks 에 들어 있다.
+  let rocks = 0;
+  rim.forEach((s, i) => {
+    if ((i + 5) % 9 !== 0) return;
+    const x = round3(s.ex + s.ox * 0.55);
+    const z = round3(s.ez + s.oz * 0.55);
+    if (nearLandmark(x, z)) return;
+    if (!free(x, z, 1.6)) return;
+    const kind = (i / 9) % 2 === 0 ? "stones" : "boulder";
+    if (
+      place(`quay-rock-${rocks}`, kind, x, z, round3(((i * 97) % 360) * (Math.PI / 180)), {
+        gap: 1.6,
+        grow: round3(0.55 + rand() * 0.45),
+        onWater: true
+      })
+    )
+      rocks += 1;
+  });
+
+  console.log(
+    `  물가 단장 ${n}개 (${Object.entries(tally)
+      .map(([k, v]) => `${k} ${v}`)
+      .join(" · ")}) · 둑 밑 바위 ${rocks}개  [테두리 표본 ${rim.length}]`
   );
 }
 

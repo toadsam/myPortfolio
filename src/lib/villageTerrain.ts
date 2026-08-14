@@ -31,10 +31,14 @@ export const TERRACE_STEP: number = 1.1;
 const PITCH: number = terraces.pitch;
 const HALF = PITCH / 2;
 
-export type TerraceRect = {district: string; x0: number; x1: number; z0: number; z1: number};
+export type IslandDisc = {district: string; x: number; z: number; r: number};
 
-/** 생성기가 내보낸 구역 사각형 (칸 중심 기준). 바닥 판석을 깐 범위와 같다. */
-export const TERRACE_RECTS: TerraceRect[] = terraces.blocks;
+/**
+ * 구역 **원반 섬** — 컨셉의 마을은 둥근 섬들이다. 반지름은 생성기가 그 구역
+ * 건물의 가장 먼 모서리 + 둘레 여유로 계산해 내보낸다. 한동안 사각형이었는데
+ * (격자 스냅 시절), 물에 뜬 "섬"으로 읽히려면 원이어야 해서 바꿨다.
+ */
+export const ISLANDS: IslandDisc[] = terraces.islands ?? [];
 
 /**
  * 구역 사이 골짜기를 흐르는 물길. 생성기(generate-ground-layout.mjs)가 계산해
@@ -141,13 +145,19 @@ export function onPlazaDais(x: number, z: number): boolean {
 }
 
 /**
- * 윗단(플래토)의 실제 경계 — 칸 중심 사각형을 반 칸 넓힌 것.
- * 이 값이 곧 **가장 바깥 판석의 바깥 모서리**라 축대가 타일과 딱 맞물린다.
+ * (구식 이름) 판석 반 칸 여유 — 사각 단 시절의 값. 원반 섬의 반지름에는 이미
+ * 둘레 여유가 들어 있어 섬 판정에는 안 쓰지만, 플라자 앞치마 등이 아직 읽는다.
  */
 export const PLATEAU_PAD = HALF;
 
-function within(r: TerraceRect, x: number, z: number, pad: number) {
-  return x >= r.x0 - pad && x <= r.x1 + pad && z >= r.z0 - pad && z <= r.z1 + pad;
+/** 섬 위인가 — 원반이라 중심 거리 하나로 끝난다 */
+function onAnyIsland(x: number, z: number): boolean {
+  for (const isl of ISLANDS) {
+    const dx = x - isl.x;
+    const dz = z - isl.z;
+    if (dx * dx + dz * dz <= isl.r * isl.r) return true;
+  }
+  return false;
 }
 
 /**
@@ -159,7 +169,7 @@ function within(r: TerraceRect, x: number, z: number, pad: number) {
  */
 export function terrainHeightAt(x: number, z: number): number {
   const step =
-    TERRACE_STEP !== 0 && TERRACE_RECTS.some((r) => within(r, x, z, PLATEAU_PAD))
+    TERRACE_STEP !== 0 && onAnyIsland(x, z)
       ? TERRACE_STEP
       : onPlazaDais(x, z)
         ? PLAZA_STEP
@@ -183,16 +193,75 @@ export function inLagoon(x: number, z: number): boolean {
   return true;
 }
 
-/** 그 자리가 물인가 — 마을 속이면서 단 위가 아닌 곳 */
+/** 그 자리가 물인가 — 마을 속이면서 섬 위가 아닌 곳 */
 export function isWater(x: number, z: number): boolean {
   if (TERRACE_STEP === 0) return false;
   if (onPlazaDais(x, z)) return false;
-  if (TERRACE_RECTS.some((r) => within(r, x, z, PLATEAU_PAD))) return false;
+  if (onAnyIsland(x, z)) return false;
   return inLagoon(x, z);
 }
 
-/** 구역 단 위인가. 물길·계단처럼 "위냐 아래냐"만 필요한 데 쓴다. */
+/** 구역 섬 위인가. 물길·계단처럼 "위냐 아래냐"만 필요한 데 쓴다. */
 export function onTerrace(x: number, z: number): boolean {
   if (TERRACE_STEP === 0) return false;
-  return TERRACE_RECTS.some((r) => within(r, x, z, PLATEAU_PAD));
+  return onAnyIsland(x, z);
+}
+
+// ─── 물가까지의 거리와 물 깊이 ────────────────────────────────────────────────
+// 물빛 셰이딩(VillageScene)과 캐릭터 가라앉음이 **같은 함수**를 봐야 한다 —
+// 색이 짙어지는 곳에서 정확히 그만큼 몸이 잠겨야 눈과 발이 같은 물을 믿는다.
+// 원래 VillageScene 안에 있던 계산을 여기로 올렸다.
+
+/** 물빛이 완전히 짙어지는 물가 거리 — 석호 색·투명도 그라데이션의 축척 */
+export const WATER_FULL_DEPTH = 4.5;
+
+/**
+ * 캐릭터가 최대로 잠기는 깊이(허리께). 캐릭터 키가 0.8 이니 0.55 면 가슴 아래다.
+ *
+ * 축척이 색(4.5)과 **다른** 이유: 골짜기 물은 폭이 4 라 물가거리가 최대 2 다.
+ * 색 축척으로 깊이를 재면 골짜기 한가운데서 무릎(0.2)에서 멈춰 "빠지는 느낌"이
+ * 안 난다. 몸은 두 걸음(1.6)이면 허리까지 잠기는 게 물답다.
+ */
+export const WADE_MAX = 0.55;
+const WADE_FULL = 1.6;
+
+/**
+ * 물가(구역 단·광장 섬·석호 껍질 중 가장 가까운 것)까지의 거리.
+ * 물 안에서 부르는 것을 전제한다 — 뭍에서 부르면 "가장 가까운 물가"가 아니라
+ * 지금 선 뭍 자신까지의 거리(0)가 나온다.
+ */
+export function shoreDistAt(x: number, z: number): number {
+  let best = Infinity;
+  for (const isl of ISLANDS)
+    best = Math.min(
+      best,
+      Math.max(0, Math.hypot(x - isl.x, z - isl.z) - isl.r)
+    );
+  const rr = Math.hypot(x, z);
+  if (rr < 12 && DAIS_R.length) {
+    const t = (((Math.atan2(z, x) / (Math.PI * 2)) % 1) + 1) % 1;
+    const dr = DAIS_R[Math.floor(t * DAIS_R.length) % DAIS_R.length];
+    best = Math.min(best, Math.abs(rr - dr));
+  }
+  for (let i = 0; i < HULL.length; i++) {
+    const p0 = HULL[i];
+    const p1 = HULL[(i + 1) % HULL.length];
+    const dx = p1.x - p0.x;
+    const dz = p1.z - p0.z;
+    const l2 = dx * dx + dz * dz || 1;
+    const t = Math.max(0, Math.min(1, ((x - p0.x) * dx + (z - p0.z) * dz) / l2));
+    best = Math.min(best, Math.hypot(x - (p0.x + dx * t), z - (p0.z + dz * t)));
+  }
+  return best;
+}
+
+/**
+ * 그 자리의 물 깊이(양수). 물이 아니면 0.
+ * 물가에서 0 으로 시작해 smoothstep 으로 내려가므로, 걸어 들어가면 턱 없이
+ * 발목 → 무릎 → 허리 순서로 잠긴다.
+ */
+export function waterDepthAt(x: number, z: number): number {
+  if (!isWater(x, z)) return 0;
+  const d = Math.min(1, shoreDistAt(x, z) / WADE_FULL);
+  return WADE_MAX * d * d * (3 - 2 * d);
 }

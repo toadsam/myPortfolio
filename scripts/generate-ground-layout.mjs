@@ -310,6 +310,50 @@ for (const [district, rect] of BLOCK_RECT) {
   });
 }
 
+// ─── 원반 섬 ──────────────────────────────────────────────────────────────────
+// 컨셉 아트의 마을은 **둥근 섬**들이다 — 구역 하나가 원반 하나, 테두리를 축대와
+// 난간이 두르고, 섬끼리 다리로 이어진다. 사각 단은 격자에는 맞지만 "섬"으로는
+// 안 읽혀서 원반으로 바꿨다.
+//
+// 반지름은 그 구역 건물의 **가장 먼 모서리**가 정한다(+둘레 여유). 건물 배치가
+// 정사각형에 가까울수록 원반이 작아지므로, arrange-district-rows 가 줄 수를
+// 정사각형 비율로 잡는다(9채 → 3줄).
+//
+// 원은 격자에 스냅하지 않는다 — 스냅은 사각 단이 타일과 맞물리기 위한 것이었고,
+// 원반 위 타일은 "칸 중심이 원 안이면 단 위" 규칙로 충분하다.
+/** 건물 모서리에서 물가까지 — 담장·가로등·둘렛길이 설 띠 */
+const ISLAND_PAD = 1.5;
+const ISLAND = new Map();
+for (const [district, rect] of BLOCK_RECT) {
+  const cx = (rect.x0 + rect.x1) / 2;
+  const cz = (rect.z0 + rect.z1) / 2;
+  let r = 0;
+  for (const b of OUTER) {
+    if (b.district !== district) continue;
+    r = Math.max(
+      r,
+      Math.hypot(Math.abs(b.x - cx) + b.w / 2, Math.abs(b.z - cz) + b.d / 2)
+    );
+  }
+  ISLAND.set(district, {
+    district,
+    x: round3(cx),
+    z: round3(cz),
+    r: round3(r + ISLAND_PAD)
+  });
+}
+/** 섬 물가까지 남은 거리 (섬 안이면 0) */
+const islandGap = (x, z) => {
+  let best = Infinity;
+  for (const isl of ISLAND.values())
+    best = Math.min(
+      best,
+      Math.max(0, Math.hypot(x - isl.x, z - isl.z) - isl.r)
+    );
+  return best;
+};
+const onIsland = (x, z) => islandGap(x, z) === 0;
+
 // ─── 마을 속을 채우는 물 (석호) ───────────────────────────────────────────────
 // 한동안 물은 "잔디 위에 그린 띠"였다 — 광장을 두르는 고리 하나와 골짜기로 빠지는
 // 개울 여섯. 컨셉을 다시 보면 발상이 반대다: **물이 바닥이고 땅이 그 위로 솟는다.**
@@ -320,22 +364,18 @@ for (const [district, rect] of BLOCK_RECT) {
 // 얕은 방향에서 벌판 한복판에 물가가 생긴다. 구역 블록 모서리들의 **볼록 껍질**로
 // 자르면 껍질이 구역 바깥 변을 따라 지나가므로, 물가가 늘 축대 뒤에 숨는다.
 const LAGOON = (() => {
+  // 섬 테두리에서 0.6 나간 원둘레 표본들의 볼록 껍질 — 껍질이 늘 섬 물가
+  // 바로 밖을 지나므로, 벌판 한복판에 물가가 생기지 않는다.
   const pts = [];
-  for (const b of BLOCK_RECT.values())
-    for (const [x, z] of [
-      [b.x0, b.z0],
-      [b.x1, b.z0],
-      [b.x1, b.z1],
-      [b.x0, b.z1]
-    ])
-      pts.push({x, z});
-  // 단 발치가 사각형보다 HALF 넓으므로 껍질도 그만큼 바깥으로 밀어야 물가가
-  // 축대에 가린다. 중심에서 방사로 미는 걸로 충분하다(껍질은 볼록이라 안 뒤집힌다).
-  const grown = pts.map(p => {
-    const r = Math.hypot(p.x, p.z) || 1;
-    const k = (r + HALF + 0.6) / r;
-    return {x: p.x * k, z: p.z * k};
-  });
+  for (const isl of ISLAND.values())
+    for (let k = 0; k < 16; k++) {
+      const a = (k / 16) * Math.PI * 2;
+      pts.push({
+        x: isl.x + Math.cos(a) * (isl.r + 0.6),
+        z: isl.z + Math.sin(a) * (isl.r + 0.6)
+      });
+    }
+  const grown = pts;
   // 볼록 껍질 (Andrew monotone chain)
   const sorted = grown.slice().sort((a, b) => a.x - b.x || a.z - b.z);
   const cross = (o, a, b) =>
@@ -385,20 +425,8 @@ const LAGOON_MIN_WIDTH = 2.6;
 /** 구역이 멀리 물러난 방향에서 단상이 같이 퍼지지 않게 씌우는 뚜껑 */
 const DAIS_MAX = 9.0;
 const PLAZA_DAIS = (() => {
-  const rects = [...BLOCK_RECT.values()];
-  // villageTerrain 의 PLATEAU_PAD 와 같은 값 — 단이 실제로 솟는 범위는 사각형보다
-  // 이만큼 넓다. 사각형만 보고 재면 단상이 구역 축대 밑으로 파고든다.
-  const PAD = HALF;
-  /** 구역 단 발치까지 남은 거리 — 사각형 **바깥에서 잰 실거리**다 */
-  const footGap = (x, z) => {
-    let best = Infinity;
-    for (const b of rects) {
-      const dx = Math.max(b.x0 - PAD - x, 0, x - (b.x1 + PAD));
-      const dz = Math.max(b.z0 - PAD - z, 0, z - (b.z1 + PAD));
-      best = Math.min(best, Math.hypot(dx, dz));
-    }
-    return best;
-  };
+  /** 구역 섬 물가까지 남은 거리 — 원반이라 중심 거리에서 반지름을 빼면 끝이다 */
+  const footGap = islandGap;
 
   // ─── 왜 "광선이 처음 닿는 거리"로 재면 안 되나 ──────────────────────────────
   // 각도마다 바깥으로 쏘아 단에 닿는 반지름에서 일정 값을 빼는 방식은, 단 모서리를
@@ -442,18 +470,11 @@ const PLAZA_DAIS = (() => {
 })();
 const plazaDaisRadius = ang => radiusOn(PLAZA_DAIS, ang);
 
-/** 그 자리가 물인가 — 마을 속(석호 껍질 안)이면서 단 위가 아닌 곳 */
+/** 그 자리가 물인가 — 마을 속(석호 껍질 안)이면서 섬 위가 아닌 곳 */
 const isWater = (x, z) => {
   if (!inLagoon(x, z)) return false;
   if (Math.hypot(x, z) <= plazaDaisRadius(Math.atan2(z, x))) return false;
-  for (const b of BLOCK_RECT.values())
-    if (
-      x >= b.x0 - HALF &&
-      x <= b.x1 + HALF &&
-      z >= b.z0 - HALF &&
-      z <= b.z1 + HALF
-    )
-      return false;
+  if (onIsland(x, z)) return false;
   return true;
 };
 
@@ -733,21 +754,7 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
 // 아래도 잔디라 그럴 이유가 없어졌다.
 // ±1 로 잡았더니 여섯 구역이 서로 맞붙어 광장만 우물처럼 파인 도넛이 됐다.
 {
-  const blocks = [];
-  for (const [district, box] of BLOCK_BOX) {
-    const i0 = box.i0,
-      i1 = box.i1,
-      j0 = box.j0,
-      j1 = box.j1;
-    blocks.push({
-      district,
-      // 칸 중심 격자이므로 바깥 테두리는 반 칸 더 나간다
-      x0: round3(worldX(i0) - HALF),
-      x1: round3(worldX(i1) + HALF),
-      z0: round3(worldZ(j0) - HALF),
-      z1: round3(worldZ(j1) + HALF)
-    });
-  }
+  const islands = [...ISLAND.values()];
   // ─── 구역 사이 골짜기를 따라 흐르는 물길 ────────────────────────────────────
   // 컨셉 아트에서 물은 마을 **안**을, 구역 덩어리 사이를 지난다. 처음엔 마을을
   // 두르는 해자만 놨는데 반지름이 27이라 숲에 완전히 가려, 기본 카메라에서 물이
@@ -777,27 +784,12 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
       return best;
     };
 
-    const angles = blocks
-      .map(b => Math.atan2((b.z0 + b.z1) / 2, (b.x0 + b.x1) / 2))
+    const angles = islands
+      .map(isl => Math.atan2(isl.z, isl.x))
       .sort((x, y) => x - y);
 
-    const onPlateau = (x, z) =>
-      blocks.some(
-        b =>
-          x >= b.x0 - HALF &&
-          x <= b.x1 + HALF &&
-          z >= b.z0 - HALF &&
-          z <= b.z1 + HALF
-      );
-    const clearOf = (x, z) => {
-      let best = Infinity;
-      for (const b of blocks) {
-        const dx = Math.max(b.x0 - HALF - x, 0, x - (b.x1 + HALF));
-        const dz = Math.max(b.z0 - HALF - z, 0, z - (b.z1 + HALF));
-        best = Math.min(best, Math.hypot(dx, dz));
-      }
-      return best;
-    };
+    const onPlateau = onIsland;
+    const clearOf = islandGap;
 
     const NEED = 0.9; // 물 반폭 + 여유
     const ROAD_KEEP = 1.5; // 길 타일 중심에서 이만큼 안쪽은 "길 위"
@@ -1088,10 +1080,8 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
     // 구역 정면으로 곧게 가지 않고 L 자로 도는 탓이라, 물을 건너는 자리가 구역
     // 앞이 아니라 엉뚱한 각도에 생긴다 — 걸어서 닿는 건물이 6채까지 떨어졌다.
     // 구역마다 무게중심 방향으로 **둑길 한 줄**을 놓아 광장 섬과 잇는다.
-    for (const [district, b] of BLOCK_RECT) {
-      const cx = (b.x0 + b.x1) / 2;
-      const cz = (b.z0 + b.z1) / 2;
-      const ang = Math.atan2(cz, cx);
+    for (const [district, isl] of ISLAND) {
+      const ang = Math.atan2(isl.z, isl.x);
       const c = Math.cos(ang);
       const si = Math.sin(ang);
       const span = [];
@@ -1117,43 +1107,66 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
       void district;
     }
 
-    // ─── 구역끼리 잇는 다리 ────────────────────────────────────────────────────
+    // ─── 구역끼리 잇는 다리 — **고리의 이웃 6쌍 전부** ─────────────────────────
     // 골짜기가 통째로 물이 되면 구역 사이 직통이 끊긴다. 광장을 거치지 않고도
-    // 옆 구역으로 갈 수 있게 골짜기마다 하나씩 놓는다.
+    // 옆 구역으로 도는 순환 동선이 되게, 이웃마다 하나씩 놓는다.
+    //
+    // 예전엔 "축이 겹치는 쌍"만 찾았다 — 좌우·상하로 나란히 마주보는 구역만
+    // 걸려서 여섯 골짜기 중 **둘**에만 다리가 섰다. 고리에서 이웃한 구역은
+    // 대각선으로 어긋난 경우가 더 많다. 이제 각도로 이웃을 정하고, 두 단의
+    // 가장 가까운 점끼리 이어 그 사이 물 구간에 놓는다.
     {
-      const rects = [...BLOCK_RECT.entries()];
+      // 광장 기준 각도로 한 바퀴 정렬 — i 와 i+1 이 곧 이웃이다
+      const ring = [...ISLAND.values()]
+        .map(isl => ({isl, ang: Math.atan2(isl.z, isl.x)}))
+        .sort((p, q) => p.ang - q.ang);
+
       let put = 0;
-      for (let i = 0; i < rects.length; i++)
-        for (let j = i + 1; j < rects.length; j++) {
-          const A = rects[i][1];
-          const B = rects[j][1];
-          const ox = Math.min(A.x1, B.x1) - Math.max(A.x0, B.x0);
-          const oz = Math.min(A.z1, B.z1) - Math.max(A.z0, B.z0);
-          if (ox <= 0 && oz <= 0) continue; // 대각선으로 떨어진 구역
-          let x;
-          let z;
-          let ang;
-          if (oz > ox) {
-            // 좌우로 마주본다 — 골짜기가 세로로 흐르므로 다리는 가로로 눕는다
-            const gap =
-              A.x0 > B.x1 ? [B.x1, A.x0] : B.x0 > A.x1 ? [A.x1, B.x0] : null;
-            if (!gap || gap[1] - gap[0] < 1.5) continue;
-            x = (gap[0] + gap[1]) / 2;
-            z = (Math.max(A.z0, B.z0) + Math.min(A.z1, B.z1)) / 2;
-            ang = Math.PI / 2;
-          } else {
-            const gap =
-              A.z0 > B.z1 ? [B.z1, A.z0] : B.z0 > A.z1 ? [A.z1, B.z0] : null;
-            if (!gap || gap[1] - gap[0] < 1.5) continue;
-            z = (gap[0] + gap[1]) / 2;
-            x = (Math.max(A.x0, B.x0) + Math.min(A.x1, B.x1)) / 2;
-            ang = 0;
+      for (let i = 0; i < ring.length; i++) {
+        const A = ring[i].isl;
+        const B = ring[(i + 1) % ring.length].isl;
+        // 원끼리 가장 가까운 점 쌍 — 중심을 잇는 선 위에 있다
+        const cx = B.x - A.x;
+        const cz = B.z - A.z;
+        const cd = Math.hypot(cx, cz) || 1;
+        const ux = cx / cd;
+        const uz = cz / cd;
+        const pA = {x: A.x + ux * A.r, z: A.z + uz * A.r};
+        const pB = {x: B.x - ux * B.r, z: B.z - uz * B.r};
+        const dx = pB.x - pA.x;
+        const dz = pB.z - pA.z;
+        const len = Math.hypot(dx, dz);
+        if (len < 0.5) continue; // 섬끼리 맞닿아 있다 — 다리가 필요 없다
+
+        // 잇는 선을 따라 걸으며 물 구간을 줍는다. 다리 프롭은 가운데,
+        // 걷기 구멍은 구간 전부 — 안 뚫으면 다리가 있어도 못 건넌다.
+        const span = [];
+        for (let t = -0.15; t <= 1.15; t += PITCH * 0.5 / len) {
+          const x = pA.x + dx * t;
+          const z = pA.z + dz * t;
+          if (!isWater(x, z)) {
+            if (span.length === 0) continue;
+            break;
           }
-          if (crossings.some(c => Math.hypot(c.x - x, c.z - z) < 4)) continue;
-          crossings.push({x: round3(x), z: round3(z), angle: round3(ang)});
-          put += 1;
+          span.push({x: round3(x), z: round3(z)});
         }
-      console.log(`  구역끼리 잇는 다리 ${put}개`);
+        if (span.length === 0) continue;
+        const mid = span[Math.floor(span.length / 2)];
+        // 다리 프롭끼리 몸이 겹칠 때만 피한다(돌다리 길이 ≈2.8). 반경 4 로
+        // 뒀더니 광장 둑길 건널목이 여섯 골짜기 중 넷을 먹어 버렸다 — 둑길은
+        // 광장↔구역 길이지 구역↔구역 직통이 아니라서, 양보하면 순환 동선이 없다.
+        if (crossings.some(c => Math.hypot(c.x - mid.x, c.z - mid.z) < 2.5))
+          continue;
+        for (const q of span) bridgeCells.push(q);
+        crossings.push({
+          x: mid.x,
+          z: mid.z,
+          // 저장 규약은 "건너는 방향 + 90°" (다리 모델의 긴 축 정렬)
+          angle: round3(Math.atan2(dz, dx) + Math.PI / 2)
+        });
+        put += 1;
+      }
+      console.log(`  구역끼리 잇는 다리 ${put}개 / 이웃 ${ring.length}쌍`);
     }
 
     console.log(
@@ -1182,7 +1195,7 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
       JSON.stringify(
         {
           pitch: PITCH,
-          blocks,
+          islands,
           channels,
           lagoon: LAGOON,
           plazaDais: PLAZA_DAIS,
@@ -1195,7 +1208,11 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
     );
   }
   console.log(
-    `  구역 단차 사각형 ${blocks.length}개 → src/data/villageTerraces.json`
+    `  구역 원반 섬 ${islands.length}개 (r ${Math.min(
+      ...islands.map(i => i.r)
+    ).toFixed(1)}~${Math.max(...islands.map(i => i.r)).toFixed(
+      1
+    )}) → src/data/villageTerraces.json`
   );
 }
 
@@ -1454,6 +1471,23 @@ for (const k of [...road].sort()) {
   // 판석 위를 지나는 길은 갓길이 돌인 변종. 포장 밖(남쪽 진입로·북쪽 참배로)은
   // 잔디를 밟고 가므로 원본 그대로가 맞다.
   const paved = pavedCells.has(k);
+  // ─── 원반 테두리에 걸친 잔디 타일은 뺀다 ─────────────────────────────────
+  // 타일은 1.88 정사각형(반대각 1.33)이라, 중심이 섬 안이어도 모서리가 둥근
+  // 테두리 밖 물 위로 삐져나온다 — 부감에서 물에 뜬 초록 네모로 보인다.
+  // 섬 위 잔디는 TerraceTops 의 원형 뚜껑이 이미 덮으므로 빼도 구멍이 없다.
+  // 길 타일은 유지한다 — 문(계단·다리) 연결이 끊기면 안 되고, 걸친 부분은
+  // 계단·다리 프롭이 가린다.
+  if (chosen.kind === "grass") {
+    let hang = false;
+    for (const isl of ISLAND.values()) {
+      const d = Math.hypot(worldX(i) - isl.x, worldZ(j) - isl.z);
+      if (d <= isl.r && d + 1.33 > isl.r) {
+        hang = true;
+        break;
+      }
+    }
+    if (hang) continue;
+  }
   const {spec, rot} = place(
     chosen,
     paved ? SETS.paved : v2 ? SETS.v2 : SETS.v1

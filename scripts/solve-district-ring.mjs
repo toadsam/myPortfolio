@@ -121,15 +121,29 @@ function solveT(arr, target, u) {
 // 그렇게 됐고, 맞닿으면 골짜기가 사라져 물길이 아예 생성되지 않는다.
 // 계산은 read-village.mjs 의 blockOf 하나뿐이다 — 바닥 생성기도 같은 걸 쓴다.
 
-/** 마주보는(한 축에서 겹치는) 블록 쌍만 골짜기를 공유한다 — check-village.mjs 와 같은 판정 */
-function blockGap(A, B) {
-  const overlapX = Math.min(A.x1, B.x1) - Math.max(A.x0, B.x0) > 0;
-  const overlapZ = Math.min(A.z1, B.z1) - Math.max(A.z0, B.z0) > 0;
-  if (!overlapX && !overlapZ) return Infinity; // 대각선으로 떨어진 구역
-  return Math.max(
-    Math.max(B.x0 - A.x1, A.x0 - B.x1, 0),
-    Math.max(B.z0 - A.z1, A.z0 - B.z1, 0)
-  );
+// ─── 판정 단위가 사각 블록에서 **원반 섬**으로 바뀌었다 ─────────────────────
+// 단이 원반이 되면서(generate-ground-layout 의 ISLAND) 구역의 몸집은 사각형이
+// 아니라 "블록 중심에서 가장 먼 건물 모서리 + 둘레 여유(1.5)"의 원이다.
+// 사각형으로 재면 **대각선 방향 몸집을 몰라** 원반끼리 겹친다 — 실제로
+// study↔experience 가 0.99 겹친 채 통과했다. 원반 공식은 바닥 생성기와
+// 반드시 같아야 한다.
+const ISLAND_PAD = 1.5;
+function discOf(arr) {
+  const b = blockOf(arr);
+  const cx = (b.x0 + b.x1) / 2;
+  const cz = (b.z0 + b.z1) / 2;
+  let r = 0;
+  for (const q of arr)
+    r = Math.max(
+      r,
+      Math.hypot(Math.abs(q.x - cx) + q.w / 2, Math.abs(q.z - cz) + q.d / 2)
+    );
+  return {x: cx, z: cz, r: r + ISLAND_PAD};
+}
+/** 원반 사이 골짜기 폭 — 멀리 떨어진 쌍(8 이상)은 골짜기를 공유하지 않는다 */
+function discGap(A, B) {
+  const g = Math.hypot(A.x - B.x, A.z - B.z) - A.r - B.r;
+  return g > 8 ? Infinity : g;
 }
 
 function evaluate(plan) {
@@ -149,31 +163,26 @@ function evaluate(plan) {
         overlap++;
     }
 
-  const blocks = Object.entries(set).map(([d, arr]) => [d, blockOf(arr)]);
+  const discs = Object.entries(set).map(([d, arr]) => [d, discOf(arr)]);
   let gap = Infinity,
     pair = "";
-  for (let i = 0; i < blocks.length; i++)
-    for (let j = i + 1; j < blocks.length; j++) {
-      const g = blockGap(blocks[i][1], blocks[j][1]);
+  for (let i = 0; i < discs.length; i++)
+    for (let j = i + 1; j < discs.length; j++) {
+      const g = discGap(discs[i][1], discs[j][1]);
       if (g < gap) {
         gap = g;
-        pair = `${blocks[i][0]}↔${blocks[j][0]}`;
+        pair = `${discs[i][0]}↔${discs[j][0]}`;
       }
     }
   const outer = Math.max(
     ...moved.map(b => Math.hypot(b.x, b.z) + Math.max(b.w, b.d) / 2)
   );
 
-  // 단차 블록이 광장 쪽으로 내려오는 한계 — **건물이 아니라 이 값**이 광장과
-  // 순환 도로가 쓸 수 있는 띠를 정한다. 블록은 격자에 스냅되느라 건물보다
-  // 최대 PITCH+HALF(2.82) 더 안쪽까지 내려온다. 물길도 여기서 막혔다.
+  // 섬이 광장 쪽으로 내려오는 한계 — **건물이 아니라 이 값**이 광장과 물 고리가
+  // 쓸 수 있는 띠를 정한다. 원반은 대각선 몸집까지 포함하므로 건물 안쪽 끝보다
+  // 더 안쪽까지 내려온다.
   const blockInner = Math.min(
-    ...blocks.map(([, b]) =>
-      Math.hypot(
-        Math.max(Math.max(b.x0, -b.x1), 0),
-        Math.max(Math.max(b.z0, -b.z1), 0)
-      )
-    )
+    ...discs.map(([, c]) => Math.max(0, Math.hypot(c.x, c.z) - c.r))
   );
 
   // 해자를 넘는 건물 (check-village.mjs 의 ② 와 같은 판정)
@@ -222,19 +231,25 @@ const scoreOf = e =>
 function optimise(target) {
   const us = Object.fromEntries(names.map(d => [d, 0]));
   let best = evaluate(planFrom(target, us));
-  for (let step = 2.4; step > 0.05; step *= 0.6)
-    for (let round = 0; round < 6; round++) {
+  // 사각 블록 시절엔 출발 배치가 늘 "겹침 없음"이라 좋은 수만 받으면 됐다.
+  // 원반은 대각선 몸집이 커서 **출발부터 겹친다** — 그때 "골짜기 ≥ 2.2" 문을
+  // 걸어 두면 한 발짝도 못 떼고 그대로 끝난다(실제로 contact↔life 가 −5 인 채
+  // 여섯 목표 거리 전부 제자리였다). 그래서 두 단계다:
+  //   겹친 동안은 골짜기가 넓어지는 수라면 무엇이든 받고,
+  //   풀린 뒤에는 예전처럼 점수 오르는 수만 받는다.
+  const feasible = e => e.gap >= 2.2;
+  for (let step = 4.8; step > 0.05; step *= 0.6)
+    for (let round = 0; round < 8; round++) {
       let improved = false;
       for (const d of names)
         for (const dir of [1, -1]) {
           const trial = {...us, [d]: us[d] + dir * step};
           const e = evaluate(planFrom(target, trial));
-          // 겹침이 생기면 무효. 골짜기가 물길 최소치 아래로 내려가도 무효.
-          if (
-            e.overlap === 0 &&
-            e.gap >= 2.2 &&
-            scoreOf(e) > scoreOf(best) + 1e-4
-          ) {
+          if (e.overlap !== 0) continue; // 건물끼리 겹치는 수는 늘 무효
+          const take = feasible(best)
+            ? feasible(e) && scoreOf(e) > scoreOf(best) + 1e-4
+            : e.gap > best.gap + 1e-4;
+          if (take) {
             us[d] = trial[d];
             best = e;
             improved = true;

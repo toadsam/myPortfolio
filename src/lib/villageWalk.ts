@@ -1,5 +1,11 @@
 import propsLayout from "@/data/propsLayout.json";
-import {BRIDGE_CELLS, isWater} from "./villageTerrain";
+import {
+  BRIDGE_CELLS,
+  inLagoon,
+  isWater,
+  terrainHeightAt,
+  waterDepthAt
+} from "./villageTerrain";
 import {villageBuildings} from "./constants";
 
 // 걸어 다니는 범위와, 몸으로 막히는 것들.
@@ -13,17 +19,18 @@ import {villageBuildings} from "./constants";
 // 그래서 범위는 여기 하나만 두고 양쪽이 읽는다.
 
 /**
- * 걸어 다닐 수 있는 반경.
+ * 걸어 다니는 범위의 **바깥 반지름** — 대략적 필터용.
  *
- * 예전엔 사각형(x ±11.5 · z −8.8~12.5)이었다. 구역을 광장에서 14 떨어진 고리로
- * 옮기고 나니 그 상자 안에 **닿는 건물이 기념비와 알고리즘 도장 둘뿐**이었다 —
- * 걸어서는 어느 구역에도 갈 수 없었다.
+ * 진짜 경계는 반지름이 아니라 **석호 껍질**이다(아래 isWalkable). 물에 들어갈
+ * 수 있게 되면서 "섬 = 껍질 안"이 됐고, 껍질 밖은 벌판이라 걸어 나갈 수 없다.
+ * 이 상수는 껍질을 감싸는 원(껍질 최대 반지름 34.9)으로, 막는 프롭을 격자에
+ * 담을지 말지 같은 **성긴 필터**에만 쓴다. 경계 판정에 쓰면 안 된다 —
+ * 껍질은 원이 아니라서 모서리(r 21~35)마다 원과 어긋난다.
  *
- * 마을이 광장 중심의 동심원이 됐으니 범위도 원반이 맞다. 18 이면 아홉 채에
- * 닿고, 새로 들어오는 빌보드가 4개뿐이라 원본 교체 비용이 거의 없다
- * (20 으로 넓히면 12채에 빌보드가 10개로 뛴다).
+ * (예전엔 이 값이 곧 경계였다: 원반 r 18. 껍질 최소 반지름이 21.3 이라
+ *  지금 범위는 그때의 순수 확장이다 — 잃는 땅이 없다.)
  */
-export const WALK_RADIUS = 18;
+export const WALK_RADIUS = 35;
 
 /** 캐릭터 몸 반지름 — 막는 것들의 반경에 이만큼 더해 판정한다 */
 export const CHARACTER_RADIUS = 0.42;
@@ -142,26 +149,32 @@ for (const p of propsLayout.props as Array<{
 }
 
 // ─── 물 ───────────────────────────────────────────────────────────────────────
-// 물길이 골짜기에만 있을 때는 걸어 들어갈 일이 없어 안 막았다. 광장을 두르는
-// 물 고리가 생기면서 사정이 달라졌다 — 안 막으면 다리를 놔두고 물을 가로질러
-// 걷게 되고, 그러면 "구역에 가려면 다리를 건넌다"는 배치가 통째로 무의미해진다.
-//
-// **다리 자리에는 구멍을 낸다.** 돌다리 프롭 좌표를 그대로 쓰므로 다리가 옮겨
-// 가면 구멍도 따라간다. 구멍을 빠뜨리면 광장에 갇히는데, `check-village.mjs` 의
-// 「갇히지 않음」·「걸어서 건물 앞까지」 두 검사가 그걸 잡는다.
-/** 길 칸 반폭 + 몸 반지름 — 걷어낸 칸 한 장이 열어 주는 넓이 */
+// 한동안 물을 통째로 막았다(다리 자리만 구멍). 지금은 반대다 — **물에 들어가진다.**
+// 걸어 들어가면 waterDepthAt 만큼 가라앉아 허리까지 잠기고, 다리는 "젖지 않고
+// 건너는 길"로 남는다. 못 나가는 경계는 물이 아니라 석호 껍질이 긋는다(isWalkable).
+/** 길 칸 반폭 + 몸 반지름 — 다리 칸 한 장이 "마른 길"로 세는 넓이 */
 const BRIDGE_OPEN = 0.94 + CHARACTER_RADIUS;
 
-function inWater(x: number, z: number): boolean {
-  if (!isWater(x, z)) return false;
-  // 다리가 잇는 자리는 뚫어 둔다. 좌표는 바닥 생성기가 "물에 잠겨 걷어낸 길 칸"
-  // 그대로 내보낸 것이라, 물 폭이 어떻게 변해도 구멍이 정확히 그만큼 열린다.
-  // 구멍을 빠뜨리면 광장 섬에 갇히는데, check-village.mjs 의 「갇히지 않음」·
-  // 「걸어서 건물 앞까지」 두 검사가 그걸 잡는다.
+/** 다리가 잇는 자리인가 — 여기서는 물 위라도 젖지 않고 걷는다 */
+function onBridge(x: number, z: number): boolean {
   for (const c of BRIDGE_CELLS)
     if (Math.abs(x - c.x) < BRIDGE_OPEN && Math.abs(z - c.z) < BRIDGE_OPEN)
-      return false;
-  return true;
+      return true;
+  return false;
+}
+
+/**
+ * 캐릭터·NPC 가 밟는 높이. 지형 높이에 **물 깊이**를 뺀 것이다.
+ *
+ * 프롭·건물은 terrainHeightAt(물 위 0)을 그대로 쓴다 — 다리·바위가 몸처럼
+ * 가라앉으면 안 되니까. 가라앉는 건 걷는 것들뿐이다.
+ *
+ * 잠기는 그림은 하상이 그린다: 하상이 불투명 메시라 그 아래로 내려간 다리는
+ * 하상에 가려 사라지고, 수면 위 상체만 남는다.
+ */
+export function walkHeightAt(x: number, z: number): number {
+  if (isWater(x, z) && !onBridge(x, z)) return -waterDepthAt(x, z);
+  return terrainHeightAt(x, z);
 }
 
 /** 건물은 상자로 막는다 — 원으로 근사하면 모서리가 뭉개져 벽을 뚫는다 */
@@ -182,8 +195,11 @@ const boxes = villageBuildings
  * 그게 전부 그냥 통과됐다. "캐릭터가 건물을 통과한다"의 정체가 이것이다.
  */
 export function isWalkable(x: number, z: number): boolean {
-  if (Math.hypot(x, z) > WALK_RADIUS) return false;
-  if (inWater(x, z)) return false;
+  // **섬 밖으로는 못 나간다.** 경계는 석호 껍질(볼록 10각형) — 껍질 안은
+  // 물이든 단이든 어디든 다니고, 껍질 밖은 벌판이라 발을 딛을 수 없다.
+  // 울타리 프롭은 이 경계를 눈에 보이게 그린 것일 뿐, 막는 건 이 한 줄이다 —
+  // 토막 사이 틈으로 새는 사고가 원천적으로 없다.
+  if (!inLagoon(x, z)) return false;
 
   for (const b of boxes) {
     if (
