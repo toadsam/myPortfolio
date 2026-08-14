@@ -136,7 +136,7 @@ console.log("── 마을 정합성 검사 ────────────
   // ring-lantern 은 물 위 데크(고리 회랑) 위, gatestep 은 다리 어귀 얕은 물에
   // 발을 담근 돌계단이라 물 위가 정상이다
   const EXEMPT =
-    /^decor-(island-north|pagoda-portfolio|waterfall-|bridge-|quay-rock-|ring-lantern-|gatestep-)/;
+    /^decor-(island-north|pagoda-portfolio|waterfall-|bridge-|quay-rock-|ring-lantern-|ring-fence-|gatestep-)/;
   const {isWater} = await import("../src/lib/villageTerrain.ts");
   const sunk = layout.props.filter(
     p =>

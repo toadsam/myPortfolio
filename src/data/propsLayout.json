@@ -12968,6 +12968,204 @@
       ],
       "rotationY": -1.309,
       "scale": 0.634
+    },
+    {
+      "id": "decor-ring-fence-0",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        10.82,
+        0.5,
+        0
+      ],
+      "rotationY": -1.571,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-1",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        10.655,
+        0.5,
+        1.879
+      ],
+      "rotationY": -1.745,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-2",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        6.955,
+        0.5,
+        8.289
+      ],
+      "rotationY": -2.443,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-3",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        5.41,
+        0.5,
+        9.37
+      ],
+      "rotationY": -2.618,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-4",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        3.701,
+        0.5,
+        10.167
+      ],
+      "rotationY": -2.793,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-5",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        -3.701,
+        0.5,
+        10.168
+      ],
+      "rotationY": 2.793,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-6",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        -5.41,
+        0.5,
+        9.37
+      ],
+      "rotationY": 2.618,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-7",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        -6.955,
+        0.5,
+        8.288
+      ],
+      "rotationY": 2.443,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-8",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        -10.655,
+        0.5,
+        1.879
+      ],
+      "rotationY": 1.745,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-9",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        -10.82,
+        0.5,
+        0
+      ],
+      "rotationY": 1.571,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-10",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        -10.655,
+        0.5,
+        -1.879
+      ],
+      "rotationY": 1.396,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-11",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        -6.955,
+        0.5,
+        -8.289
+      ],
+      "rotationY": 0.698,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-12",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        -5.41,
+        0.5,
+        -9.37
+      ],
+      "rotationY": 0.524,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-13",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        -3.701,
+        0.5,
+        -10.167
+      ],
+      "rotationY": 0.349,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-14",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        3.701,
+        0.5,
+        -10.168
+      ],
+      "rotationY": -0.349,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-15",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        5.41,
+        0.5,
+        -9.37
+      ],
+      "rotationY": -0.524,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-16",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        6.955,
+        0.5,
+        -8.288
+      ],
+      "rotationY": -0.698,
+      "scale": 1
+    },
+    {
+      "id": "decor-ring-fence-17",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
+        10.655,
+        0.5,
+        -1.879
+      ],
+      "rotationY": -1.396,
+      "scale": 1
     }
   ],
   "buildings": {}

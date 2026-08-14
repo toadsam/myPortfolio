@@ -2769,6 +2769,64 @@ const BELT_DEPTH = 12;
   console.log(`  고리 회랑 가로등 ${put}개`);
 }
 
+// ─── ⑮-b 고리 회랑 난간 ──────────────────────────────────────────────────────
+// 섬 테두리처럼 광장 회랑(물 위 데크)의 바깥 가장자리도 나무 울타리로 두른다 —
+// 다리가 갈라져 나가는 어귀만 뚫는다. 데크에서 물로 떨어지는 유일한 낭떠러지가
+// 여기였다. 울타리는 걷기 충돌 선분(fence-rail)이라 세우는 즉시 몸도 막는다.
+//
+// 가로등(⑮)을 먼저 세우고 여기서는 free() 를 안 본다 — 난간은 이어져야 값을
+// 하는 물건이라 등불 옆이라고 끊으면 안 되고, 등불 기둥이 난간 위로 솟는 그림이
+// 컨셉 그대로다.
+{
+  // 데크 폭의 권위는 villageTerrain.PLAZA_RING — 값을 베끼면 낡는다
+  const RING_W = Number(
+    readFileSync("src/lib/villageTerrain.ts", "utf8").match(
+      /width:\s*([\d.]+)/
+    )?.[1] ?? 2.1
+  );
+  const DECK = 0.14;
+  const SEG = 1.9;
+  const bridgeCells = TERR.bridgeCells ?? [];
+  const nearBridge = (x, z) =>
+    bridgeCells.some(c => Math.hypot(c.x - x, c.z - z) < 1.15);
+  let put = 0;
+  let gates = 0;
+  // 반지름은 각도별 데크 바깥 가장자리에서 반 뼘 안쪽
+  const R_OF = a => daisRadiusAt(a) + RING_W - 0.28;
+  const COUNT = Math.max(24, Math.round((2 * Math.PI * R_OF(0)) / SEG));
+  for (let k = 0; k < COUNT; k++) {
+    const a = (k / COUNT) * Math.PI * 2;
+    const nx = Math.cos(a);
+    const nz = Math.sin(a);
+    const R = R_OF(a);
+    const x = round3(nx * R);
+    const z = round3(nz * R);
+    // 다리 어귀는 문이다 — 건널목(다리 몸통)과 둑길 칸 둘 다 본다
+    if (
+      (TERR.crossings ?? []).some(c => Math.hypot(c.x - x, c.z - z) < 2.3) ||
+      nearBridge(x, z)
+    ) {
+      gates++;
+      continue;
+    }
+    if (onWall(x, z, 0.3)) continue;
+    const rot = round3(Math.atan2(-nx, -nz));
+    const p = props.length;
+    if (
+      place(`ring-fence-${put}`, "fence-rail", x, z, rot, {
+        gap: 0.1,
+        onWater: true
+      })
+    ) {
+      // place 는 y 를 지면 기준으로 잡는다 — 데크 높이만큼 올린다 (⑮ 와 같다)
+      props[p].position[1] = round3(props[p].position[1] + DECK);
+      walls.push({x, z, ax: Math.cos(rot), az: Math.sin(rot)});
+      put++;
+    }
+  }
+  console.log(`  고리 회랑 난간 ${put}토막 · 다리 어귀 ${gates}곳 비움`);
+}
+
 // ─── 쓰기 ─────────────────────────────────────────────────────────────────────
 const kept = layout.props.filter(p => !p.id.startsWith("decor-"));
 const next = {...layout, props: [...kept, ...props]};
