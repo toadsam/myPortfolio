@@ -2311,6 +2311,1579 @@
       "scale": 1.424
     },
     {
+      "id": "decor-wall-study-0",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -10.74,
+        0.3,
+        10.51
+      ],
+      "rotationY": -1.571,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-1",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -10.974,
+        0.3,
+        12.365
+      ],
+      "rotationY": -1.822,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-2",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -12.762,
+        0.3,
+        15.617
+      ],
+      "rotationY": -2.325,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-3",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -14.203,
+        0.3,
+        16.809
+      ],
+      "rotationY": -2.576,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-4",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -15.895,
+        0.3,
+        17.605
+      ],
+      "rotationY": -2.827,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-5",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -17.732,
+        0.3,
+        17.955
+      ],
+      "rotationY": -3.079,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-6",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -19.598,
+        0.3,
+        17.838
+      ],
+      "rotationY": 2.953,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-7",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -21.376,
+        0.3,
+        17.26
+      ],
+      "rotationY": 2.702,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-8",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -22.955,
+        0.3,
+        16.258
+      ],
+      "rotationY": 2.45,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-9",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -24.235,
+        0.3,
+        14.895
+      ],
+      "rotationY": 2.199,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-10",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -25.136,
+        0.3,
+        13.256
+      ],
+      "rotationY": 1.948,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-11",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -25.601,
+        0.3,
+        11.445
+      ],
+      "rotationY": 1.696,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-12",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -25.601,
+        0.3,
+        9.575
+      ],
+      "rotationY": 1.445,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-13",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -25.136,
+        0.3,
+        7.764
+      ],
+      "rotationY": 1.194,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-14",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -24.235,
+        0.3,
+        6.125
+      ],
+      "rotationY": 0.942,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-15",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -22.955,
+        0.3,
+        4.762
+      ],
+      "rotationY": 0.691,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-16",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -21.376,
+        0.3,
+        3.76
+      ],
+      "rotationY": 0.44,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-17",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -15.895,
+        0.3,
+        3.415
+      ],
+      "rotationY": -0.314,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-study-18",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -14.203,
+        0.3,
+        4.211
+      ],
+      "rotationY": -0.565,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-19",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        11.23,
+        0.3,
+        -24.78
+      ],
+      "rotationY": -1.571,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-20",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        11.068,
+        0.3,
+        -22.882
+      ],
+      "rotationY": -1.741,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-21",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        10.589,
+        0.3,
+        -21.039
+      ],
+      "rotationY": -1.91,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-22",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        8.737,
+        0.3,
+        -17.725
+      ],
+      "rotationY": -2.25,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-23",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        7.419,
+        0.3,
+        -16.35
+      ],
+      "rotationY": -2.42,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-24",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        5.888,
+        0.3,
+        -15.217
+      ],
+      "rotationY": -2.59,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-25",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        4.187,
+        0.3,
+        -14.36
+      ],
+      "rotationY": -2.76,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-26",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -3.288,
+        0.3,
+        -14.042
+      ],
+      "rotationY": 2.844,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-27",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -5.056,
+        0.3,
+        -14.752
+      ],
+      "rotationY": 2.675,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-28",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -6.678,
+        0.3,
+        -15.751
+      ],
+      "rotationY": 2.505,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-29",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -8.108,
+        0.3,
+        -17.01
+      ],
+      "rotationY": 2.335,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-30",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -10.233,
+        0.3,
+        -20.154
+      ],
+      "rotationY": 1.995,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-31",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -10.868,
+        0.3,
+        -21.95
+      ],
+      "rotationY": 1.826,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-32",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -11.19,
+        0.3,
+        -23.828
+      ],
+      "rotationY": 1.656,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-33",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -11.19,
+        0.3,
+        -25.732
+      ],
+      "rotationY": 1.486,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-34",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -10.868,
+        0.3,
+        -27.61
+      ],
+      "rotationY": 1.316,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-35",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -10.233,
+        0.3,
+        -29.406
+      ],
+      "rotationY": 1.146,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-36",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -9.304,
+        0.3,
+        -31.069
+      ],
+      "rotationY": 0.976,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-37",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -8.108,
+        0.3,
+        -32.55
+      ],
+      "rotationY": 0.807,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-38",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -6.678,
+        0.3,
+        -33.809
+      ],
+      "rotationY": 0.637,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-39",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -5.056,
+        0.3,
+        -34.808
+      ],
+      "rotationY": 0.467,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-40",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -1.426,
+        0.3,
+        -35.919
+      ],
+      "rotationY": 0.127,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-41",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        0.477,
+        0.3,
+        -36
+      ],
+      "rotationY": -0.042,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-42",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        2.366,
+        0.3,
+        -35.758
+      ],
+      "rotationY": -0.212,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-43",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        4.187,
+        0.3,
+        -35.2
+      ],
+      "rotationY": -0.382,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-44",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        5.888,
+        0.3,
+        -34.343
+      ],
+      "rotationY": -0.552,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-45",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        7.419,
+        0.3,
+        -33.21
+      ],
+      "rotationY": -0.722,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-46",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        8.737,
+        0.3,
+        -31.835
+      ],
+      "rotationY": -0.892,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-47",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        9.804,
+        0.3,
+        -30.257
+      ],
+      "rotationY": -1.061,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-48",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        10.589,
+        0.3,
+        -28.521
+      ],
+      "rotationY": -1.231,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-projects-49",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        11.068,
+        0.3,
+        -26.678
+      ],
+      "rotationY": -1.401,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-50",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        31.52,
+        0.3,
+        -12.07
+      ],
+      "rotationY": -1.571,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-51",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        31.349,
+        0.3,
+        -10.176
+      ],
+      "rotationY": -1.75,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-52",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        30.843,
+        0.3,
+        -8.342
+      ],
+      "rotationY": -1.93,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-53",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        30.018,
+        0.3,
+        -6.628
+      ],
+      "rotationY": -2.109,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-54",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        28.9,
+        0.3,
+        -5.089
+      ],
+      "rotationY": -2.289,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-55",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        27.525,
+        0.3,
+        -3.775
+      ],
+      "rotationY": -2.468,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-56",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        25.938,
+        0.3,
+        -2.727
+      ],
+      "rotationY": -2.648,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-57",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        24.189,
+        0.3,
+        -1.979
+      ],
+      "rotationY": -2.827,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-58",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        22.334,
+        0.3,
+        -1.556
+      ],
+      "rotationY": -3.007,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-59",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        18.549,
+        0.3,
+        -1.726
+      ],
+      "rotationY": 2.917,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-60",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        16.74,
+        0.3,
+        -2.314
+      ],
+      "rotationY": 2.738,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-61",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        15.065,
+        0.3,
+        -3.215
+      ],
+      "rotationY": 2.558,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-62",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        13.578,
+        0.3,
+        -4.401
+      ],
+      "rotationY": 2.379,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-63",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        10.343,
+        0.3,
+        -11.119
+      ],
+      "rotationY": 1.661,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-64",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        10.343,
+        0.3,
+        -13.021
+      ],
+      "rotationY": 1.481,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-65",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        10.682,
+        0.3,
+        -14.893
+      ],
+      "rotationY": 1.302,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-66",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        13.578,
+        0.3,
+        -19.739
+      ],
+      "rotationY": 0.763,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-67",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        15.065,
+        0.3,
+        -20.925
+      ],
+      "rotationY": 0.583,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-68",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        16.74,
+        0.3,
+        -21.826
+      ],
+      "rotationY": 0.404,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-69",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        18.549,
+        0.3,
+        -22.414
+      ],
+      "rotationY": 0.224,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-70",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        20.434,
+        0.3,
+        -22.669
+      ],
+      "rotationY": 0.045,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-71",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        22.334,
+        0.3,
+        -22.584
+      ],
+      "rotationY": -0.135,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-72",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        24.189,
+        0.3,
+        -22.161
+      ],
+      "rotationY": -0.314,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-73",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        25.938,
+        0.3,
+        -21.413
+      ],
+      "rotationY": -0.494,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-74",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        27.525,
+        0.3,
+        -20.365
+      ],
+      "rotationY": -0.673,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-75",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        28.9,
+        0.3,
+        -19.051
+      ],
+      "rotationY": -0.853,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-76",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        30.018,
+        0.3,
+        -17.512
+      ],
+      "rotationY": -1.032,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-skills-77",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        31.349,
+        0.3,
+        -13.964
+      ],
+      "rotationY": -1.391,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-78",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -10.65,
+        0.3,
+        -10.85
+      ],
+      "rotationY": -1.571,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-79",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -13.925,
+        0.3,
+        -4.329
+      ],
+      "rotationY": -2.502,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-80",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -15.56,
+        0.3,
+        -3.385
+      ],
+      "rotationY": -2.734,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-81",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -21.112,
+        0.3,
+        -3.062
+      ],
+      "rotationY": 2.851,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-82",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -22.845,
+        0.3,
+        -3.809
+      ],
+      "rotationY": 2.618,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-83",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -24.359,
+        0.3,
+        -4.936
+      ],
+      "rotationY": 2.385,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-84",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -25.573,
+        0.3,
+        -6.382
+      ],
+      "rotationY": 2.153,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-85",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -26.42,
+        0.3,
+        -8.069
+      ],
+      "rotationY": 1.92,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-86",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -26.855,
+        0.3,
+        -9.906
+      ],
+      "rotationY": 1.687,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-87",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -26.855,
+        0.3,
+        -11.794
+      ],
+      "rotationY": 1.454,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-88",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -26.42,
+        0.3,
+        -13.631
+      ],
+      "rotationY": 1.222,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-89",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -25.573,
+        0.3,
+        -15.318
+      ],
+      "rotationY": 0.989,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-90",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -24.359,
+        0.3,
+        -16.764
+      ],
+      "rotationY": 0.756,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-91",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -22.845,
+        0.3,
+        -17.891
+      ],
+      "rotationY": 0.524,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-92",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -21.112,
+        0.3,
+        -18.638
+      ],
+      "rotationY": 0.291,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-93",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -19.253,
+        0.3,
+        -18.966
+      ],
+      "rotationY": 0.058,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-94",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -17.368,
+        0.3,
+        -18.856
+      ],
+      "rotationY": -0.175,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-95",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -15.56,
+        0.3,
+        -18.315
+      ],
+      "rotationY": -0.407,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-96",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -13.925,
+        0.3,
+        -17.371
+      ],
+      "rotationY": -0.64,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-97",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -11.515,
+        0.3,
+        -14.499
+      ],
+      "rotationY": -1.105,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-experience-98",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -10.869,
+        0.3,
+        -12.725
+      ],
+      "rotationY": -1.338,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-99",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        7.28,
+        0.3,
+        20.83
+      ],
+      "rotationY": -1.571,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-100",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        7.032,
+        0.3,
+        22.714
+      ],
+      "rotationY": -1.833,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-101",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        6.305,
+        0.3,
+        24.47
+      ],
+      "rotationY": -2.094,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-102",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        5.148,
+        0.3,
+        25.978
+      ],
+      "rotationY": -2.356,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-103",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        3.64,
+        0.3,
+        27.135
+      ],
+      "rotationY": -2.618,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-104",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        1.884,
+        0.3,
+        27.862
+      ],
+      "rotationY": -2.88,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-105",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        0,
+        0.3,
+        28.11
+      ],
+      "rotationY": -3.142,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-106",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -1.884,
+        0.3,
+        27.862
+      ],
+      "rotationY": 2.88,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-107",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -3.64,
+        0.3,
+        27.135
+      ],
+      "rotationY": 2.618,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-108",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -5.148,
+        0.3,
+        25.978
+      ],
+      "rotationY": 2.356,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-109",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -6.305,
+        0.3,
+        24.47
+      ],
+      "rotationY": 2.094,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-110",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -7.032,
+        0.3,
+        22.714
+      ],
+      "rotationY": 1.833,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-111",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -7.28,
+        0.3,
+        20.83
+      ],
+      "rotationY": 1.571,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-112",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -7.032,
+        0.3,
+        18.946
+      ],
+      "rotationY": 1.309,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-113",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -5.148,
+        0.3,
+        15.682
+      ],
+      "rotationY": 0.785,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-114",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        -3.64,
+        0.3,
+        14.525
+      ],
+      "rotationY": 0.524,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-115",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        3.64,
+        0.3,
+        14.525
+      ],
+      "rotationY": -0.524,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-contact-116",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        5.148,
+        0.3,
+        15.682
+      ],
+      "rotationY": -0.785,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-117",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        30.973,
+        0.3,
+        13.893
+      ],
+      "rotationY": -1.756,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-118",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        30.447,
+        0.3,
+        15.741
+      ],
+      "rotationY": -1.94,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-119",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        29.591,
+        0.3,
+        17.46
+      ],
+      "rotationY": -2.125,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-120",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        28.433,
+        0.3,
+        18.993
+      ],
+      "rotationY": -2.31,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-121",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        25.38,
+        0.3,
+        21.299
+      ],
+      "rotationY": -2.68,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-122",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        23.589,
+        0.3,
+        21.993
+      ],
+      "rotationY": -2.864,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-123",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        21.701,
+        0.3,
+        22.346
+      ],
+      "rotationY": -3.049,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-124",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        19.779,
+        0.3,
+        22.346
+      ],
+      "rotationY": 3.049,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-125",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        17.891,
+        0.3,
+        21.993
+      ],
+      "rotationY": 2.864,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-126",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        16.1,
+        0.3,
+        21.299
+      ],
+      "rotationY": 2.68,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-127",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        14.467,
+        0.3,
+        20.287
+      ],
+      "rotationY": 2.495,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-128",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        13.047,
+        0.3,
+        18.993
+      ],
+      "rotationY": 2.31,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-129",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        11.889,
+        0.3,
+        17.46
+      ],
+      "rotationY": 2.125,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-130",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        10.507,
+        0.3,
+        13.893
+      ],
+      "rotationY": 1.756,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-131",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        10.33,
+        0.3,
+        11.98
+      ],
+      "rotationY": 1.571,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-132",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        10.507,
+        0.3,
+        10.067
+      ],
+      "rotationY": 1.386,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-133",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        14.467,
+        0.3,
+        3.673
+      ],
+      "rotationY": 0.647,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-134",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        16.1,
+        0.3,
+        2.661
+      ],
+      "rotationY": 0.462,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-135",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        17.891,
+        0.3,
+        1.967
+      ],
+      "rotationY": 0.277,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-136",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        23.589,
+        0.3,
+        1.967
+      ],
+      "rotationY": -0.277,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-137",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        25.38,
+        0.3,
+        2.661
+      ],
+      "rotationY": -0.462,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-138",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        27.013,
+        0.3,
+        3.673
+      ],
+      "rotationY": -0.647,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-139",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        28.433,
+        0.3,
+        4.967
+      ],
+      "rotationY": -0.832,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-140",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        29.591,
+        0.3,
+        6.5
+      ],
+      "rotationY": -1.016,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-141",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        30.447,
+        0.3,
+        8.219
+      ],
+      "rotationY": -1.201,
+      "scale": 1
+    },
+    {
+      "id": "decor-wall-life-142",
+      "glb": "/models/props/decor/wall-low.glb",
+      "position": [
+        30.973,
+        0.3,
+        10.067
+      ],
+      "rotationY": -1.386,
+      "scale": 1
+    },
+    {
       "id": "decor-gatestep-0",
       "glb": "/models/props/decor/terrace-stair.glb",
       "position": [
@@ -7030,26 +8603,37 @@
       "scale": 1.218
     },
     {
+      "id": "decor-forest-120",
+      "glb": "/models/props/impostor/tree-emerald-crown.glb",
+      "position": [
+        -19.705,
+        1.307,
+        22.013
+      ],
+      "rotationY": 5.746,
+      "scale": 1.378
+    },
+    {
       "id": "decor-forest-121",
       "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
-        -20.422,
-        1.593,
-        21.666
+        -19.602,
+        1.651,
+        23.229
       ],
-      "rotationY": 4.42,
-      "scale": 1.68
+      "rotationY": 3.347,
+      "scale": 1.741
     },
     {
       "id": "decor-forest-122",
-      "glb": "/models/props/impostor/tree-golden-canopy.glb",
+      "glb": "/models/props/impostor/tree-emerald-crown.glb",
       "position": [
-        -20.362,
-        0.9,
-        28.257
+        -19.51,
+        1.163,
+        25.827
       ],
-      "rotationY": 1.576,
-      "scale": 1.031
+      "rotationY": 1.12,
+      "scale": 1.227
     },
     {
       "id": "decor-forest-123",
@@ -9849,152 +11433,163 @@
       "id": "decor-thicket-50",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -18.678,
-        0.279,
-        26.484
+        -19.035,
+        0.289,
+        24.723
       ],
-      "rotationY": 4.404,
-      "scale": 0.491
+      "rotationY": 5.056,
+      "scale": 0.509
     },
     {
       "id": "decor-thicket-51",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -17.079,
-        0.317,
-        -43.383
+        -16.054,
+        0.429,
+        -40.034
       ],
-      "rotationY": 5.743,
-      "scale": 0.558
+      "rotationY": 5.75,
+      "scale": 0.754
     },
     {
       "id": "decor-thicket-52",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -19.066,
-        0.246,
-        -41.499
+        -17.804,
+        0.35,
+        -38.941
       ],
-      "rotationY": 3.531,
-      "scale": 0.432
+      "rotationY": 5.272,
+      "scale": 0.616
     },
     {
       "id": "decor-thicket-53",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -18.188,
-        0.23,
-        -39.544
-      ],
-      "rotationY": 3.248,
-      "scale": 0.405
-    },
-    {
-      "id": "decor-thicket-54",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        -15.967,
+        -16.254,
         0.424,
-        -30.262
+        22.134
       ],
       "rotationY": 2.878,
       "scale": 0.745
     },
     {
-      "id": "decor-thicket-55",
+      "id": "decor-thicket-54",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -17.714,
-        0.421,
-        25.607
-      ],
-      "rotationY": 5.322,
-      "scale": 0.74
-    },
-    {
-      "id": "decor-thicket-56",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        -14.533,
+        -14.084,
         0.253,
-        -29.158
+        -30.766
       ],
       "rotationY": 5.448,
       "scale": 0.445
     },
     {
-      "id": "decor-thicket-57",
+      "id": "decor-thicket-55",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -16.632,
+        -16.299,
         0.267,
-        -43.154
+        -29.808
       ],
       "rotationY": 3.194,
       "scale": 0.47
     },
     {
+      "id": "decor-thicket-56",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        -13.758,
+        0.366,
+        -32.844
+      ],
+      "rotationY": 3.988,
+      "scale": 0.644
+    },
+    {
+      "id": "decor-thicket-57",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        -12.161,
+        0.263,
+        34.048
+      ],
+      "rotationY": 4.726,
+      "scale": 0.463
+    },
+    {
+      "id": "decor-thicket-58",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        -10.336,
+        0.408,
+        -40.998
+      ],
+      "rotationY": 2.642,
+      "scale": 0.718
+    },
+    {
       "id": "decor-thicket-59",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -11.337,
-        0.41,
-        -42.553
-      ],
-      "rotationY": 5.335,
-      "scale": 0.721
-    },
-    {
-      "id": "decor-thicket-60",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        -11.557,
+        -10.049,
         0.342,
-        -42.964
+        -43.673
       ],
       "rotationY": 5.272,
       "scale": 0.602
     },
     {
-      "id": "decor-thicket-61",
+      "id": "decor-thicket-60",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -9.439,
+        -9.758,
         0.274,
-        -42.653
+        30.475
       ],
       "rotationY": 6.118,
       "scale": 0.481
     },
     {
-      "id": "decor-thicket-62",
+      "id": "decor-thicket-61",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -9.977,
+        -8.895,
         0.327,
-        -41.836
+        -45.294
       ],
       "rotationY": 3.506,
       "scale": 0.575
     },
     {
+      "id": "decor-thicket-62",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        -8.695,
+        0.379,
+        -43.302
+      ],
+      "rotationY": 0.836,
+      "scale": 0.668
+    },
+    {
       "id": "decor-thicket-63",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -10.886,
-        0.233,
-        30.081
+        -9.769,
+        0.398,
+        27.198
       ],
-      "rotationY": 3.833,
-      "scale": 0.41
+      "rotationY": 3.426,
+      "scale": 0.7
     },
     {
       "id": "decor-thicket-64",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -10.643,
+        -10.229,
         0.389,
-        27.019
+        30.191
       ],
       "rotationY": 4.987,
       "scale": 0.684
@@ -10003,251 +11598,251 @@
       "id": "decor-thicket-65",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -8.698,
-        0.279,
-        32.127
+        -5.368,
+        0.285,
+        30.703
       ],
-      "rotationY": 3.298,
-      "scale": 0.491
+      "rotationY": 2,
+      "scale": 0.502
     },
     {
       "id": "decor-thicket-66",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -4.892,
-        0.417,
-        29.99
+        -3.548,
+        0.367,
+        30.347
       ],
-      "rotationY": 1.647,
-      "scale": 0.733
+      "rotationY": 0.39,
+      "scale": 0.645
     },
     {
       "id": "decor-thicket-67",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -6.185,
-        0.229,
-        33.584
-      ],
-      "rotationY": 4.899,
-      "scale": 0.403
-    },
-    {
-      "id": "decor-thicket-68",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        -5.289,
+        -1.501,
         0.394,
-        40.627
+        32.751
       ],
       "rotationY": 2.109,
       "scale": 0.692
     },
     {
-      "id": "decor-thicket-69",
+      "id": "decor-thicket-68",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        -3.644,
+        -2.184,
         0.372,
-        29.978
+        33.202
       ],
       "rotationY": 4.814,
       "scale": 0.654
     },
     {
-      "id": "decor-thicket-71",
+      "id": "decor-thicket-70",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        5.95,
+        6.884,
         0.292,
-        29.343
+        30.369
       ],
       "rotationY": 0.409,
       "scale": 0.514
     },
     {
+      "id": "decor-thicket-71",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        9.11,
+        0.284,
+        -45.117
+      ],
+      "rotationY": 5.452,
+      "scale": 0.499
+    },
+    {
       "id": "decor-thicket-72",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        8.23,
-        0.436,
-        30.134
-      ],
-      "rotationY": 6.092,
-      "scale": 0.766
-    },
-    {
-      "id": "decor-thicket-73",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        9.46,
+        10.917,
         0.407,
-        29.058
+        -42.18
       ],
       "rotationY": 2.277,
       "scale": 0.716
     },
     {
-      "id": "decor-thicket-74",
+      "id": "decor-thicket-73",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        6.563,
+        8.552,
         0.385,
-        28.936
+        -43.247
       ],
       "rotationY": 0.23,
       "scale": 0.678
     },
     {
-      "id": "decor-thicket-75",
+      "id": "decor-thicket-74",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        8.635,
+        9.651,
         0.288,
-        38.48
+        30.171
       ],
       "rotationY": 3.495,
       "scale": 0.507
     },
     {
-      "id": "decor-thicket-76",
+      "id": "decor-thicket-75",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        8.711,
+        10.072,
         0.342,
-        -42.288
+        -44.936
       ],
       "rotationY": 1.061,
       "scale": 0.602
     },
     {
-      "id": "decor-thicket-77",
+      "id": "decor-thicket-76",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        10.133,
+        13.088,
         0.238,
-        -39.647
+        -43.087
       ],
       "rotationY": 5.843,
       "scale": 0.418
     },
     {
-      "id": "decor-thicket-78",
+      "id": "decor-thicket-77",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        11.589,
-        0.338,
-        -45.65
-      ],
-      "rotationY": 3.478,
-      "scale": 0.594
-    },
-    {
-      "id": "decor-thicket-79",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        11.474,
+        14.273,
         0.378,
-        -42.285
+        -43.875
       ],
       "rotationY": 3.832,
       "scale": 0.666
     },
     {
+      "id": "decor-thicket-78",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        16.266,
+        0.313,
+        -39.477
+      ],
+      "rotationY": 5.844,
+      "scale": 0.551
+    },
+    {
+      "id": "decor-thicket-79",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        17.857,
+        0.364,
+        -38.158
+      ],
+      "rotationY": 3.275,
+      "scale": 0.64
+    },
+    {
       "id": "decor-thicket-80",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        12.725,
+        16.563,
         0.316,
-        -40.58
+        -38.134
       ],
-      "rotationY": 2.962,
-      "scale": 0.557
+      "rotationY": 4.727,
+      "scale": 0.556
     },
     {
       "id": "decor-thicket-81",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        13.545,
-        0.27,
-        -37.727
+        14.84,
+        0.33,
+        26.572
       ],
-      "rotationY": 2.496,
-      "scale": 0.475
+      "rotationY": 3.098,
+      "scale": 0.581
     },
     {
       "id": "decor-thicket-82",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        15.061,
-        0.29,
-        -39.103
-      ],
-      "rotationY": 3.917,
-      "scale": 0.511
-    },
-    {
-      "id": "decor-thicket-83",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        15.508,
-        0.344,
-        -43.155
-      ],
-      "rotationY": 2.497,
-      "scale": 0.605
-    },
-    {
-      "id": "decor-thicket-84",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        18.365,
+        19.412,
         0.392,
-        -37.586
+        -36.274
       ],
       "rotationY": 2.76,
       "scale": 0.69
     },
     {
-      "id": "decor-thicket-85",
+      "id": "decor-thicket-83",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        17.353,
+        16.643,
         0.281,
-        -38.44
+        31.902
       ],
       "rotationY": 1.114,
       "scale": 0.495
     },
     {
-      "id": "decor-thicket-86",
+      "id": "decor-thicket-84",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        19.175,
+        19.347,
+        0.299,
+        -35.631
+      ],
+      "rotationY": 5.23,
+      "scale": 0.525
+    },
+    {
+      "id": "decor-thicket-85",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        20.217,
         0.265,
-        -38.114
+        -39.541
       ],
       "rotationY": 1.341,
       "scale": 0.466
     },
     {
-      "id": "decor-thicket-87",
+      "id": "decor-thicket-86",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        21.681,
+        22.523,
         0.29,
-        -38.13
+        -37.078
       ],
       "rotationY": 5.221,
       "scale": 0.51
     },
     {
+      "id": "decor-thicket-87",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        22.758,
+        0.385,
+        -39.176
+      ],
+      "rotationY": 5.743,
+      "scale": 0.678
+    },
+    {
       "id": "decor-thicket-88",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        25.504,
+        25.446,
         0.386,
-        -38.286
+        -34.08
       ],
       "rotationY": 0.145,
       "scale": 0.68
@@ -10256,51 +11851,40 @@
       "id": "decor-thicket-89",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        24.515,
-        0.42,
-        -32.434
-      ],
-      "rotationY": 4.94,
-      "scale": 0.739
-    },
-    {
-      "id": "decor-thicket-90",
-      "glb": "/models/props/impostor/bush-emerald-berry.glb",
-      "position": [
-        26.444,
+        27.74,
         0.236,
-        -34.761
+        -35.141
       ],
       "rotationY": 4.468,
       "scale": 0.415
     },
     {
-      "id": "decor-thicket-91",
+      "id": "decor-thicket-90",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        27.608,
+        27.649,
         0.345,
-        -37.476
+        -33.318
       ],
       "rotationY": 3.044,
       "scale": 0.606
     },
     {
-      "id": "decor-thicket-92",
+      "id": "decor-thicket-91",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        28.548,
+        29.932,
         0.426,
-        -35.971
+        -34.702
       ],
       "rotationY": 4.086,
       "scale": 0.75
     },
     {
-      "id": "decor-thicket-93",
+      "id": "decor-thicket-92",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        28.366,
+        29.681,
         0.251,
         -33.406
       ],
@@ -10308,144 +11892,177 @@
       "scale": 0.442
     },
     {
-      "id": "decor-thicket-94",
+      "id": "decor-thicket-93",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        27.371,
+        28.895,
         0.305,
-        -33.946
+        -31.349
       ],
       "rotationY": 3.722,
       "scale": 0.537
     },
     {
-      "id": "decor-thicket-95",
+      "id": "decor-thicket-94",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        30.468,
+        31.466,
         0.306,
-        -32.295
+        -31.329
       ],
       "rotationY": 4.5,
       "scale": 0.538
     },
     {
-      "id": "decor-thicket-96",
+      "id": "decor-thicket-95",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        31.226,
+        31.365,
         0.269,
-        -30.416
+        -21.092
       ],
       "rotationY": 3.038,
       "scale": 0.474
     },
     {
+      "id": "decor-thicket-96",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        30.648,
+        0.379,
+        -29.849
+      ],
+      "rotationY": 1.669,
+      "scale": 0.668
+    },
+    {
       "id": "decor-thicket-97",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        32.378,
-        0.409,
-        -28.253
+        30.726,
+        0.226,
+        -19.509
       ],
-      "rotationY": 0.346,
-      "scale": 0.72
+      "rotationY": 3.055,
+      "scale": 0.398
     },
     {
       "id": "decor-thicket-98",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        33.496,
-        0.303,
-        -28.123
+        33.876,
+        0.389,
+        -30.98
       ],
-      "rotationY": 3.293,
-      "scale": 0.533
+      "rotationY": 4.85,
+      "scale": 0.684
     },
     {
       "id": "decor-thicket-100",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        33.47,
-        0.234,
-        7.339
+        33.857,
+        0.316,
+        7.696
       ],
-      "rotationY": 0.602,
-      "scale": 0.412
+      "rotationY": 0.807,
+      "scale": 0.556
     },
     {
       "id": "decor-thicket-101",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        32.25,
-        0.426,
-        17.249
+        34.109,
+        0.354,
+        9.55
       ],
-      "rotationY": 4.236,
-      "scale": 0.75
+      "rotationY": 5.23,
+      "scale": 0.622
     },
     {
       "id": "decor-thicket-102",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        31.619,
-        0.325,
-        -27.824
+        32.185,
+        0.426,
+        16.028
       ],
-      "rotationY": 5.609,
-      "scale": 0.572
+      "rotationY": 4.236,
+      "scale": 0.75
     },
     {
       "id": "decor-thicket-103",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        33.386,
-        0.374,
-        -25.834
+        32.183,
+        0.325,
+        -29.88
       ],
-      "rotationY": 4.247,
-      "scale": 0.658
+      "rotationY": 5.609,
+      "scale": 0.572
     },
     {
       "id": "decor-thicket-104",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        34.418,
-        0.325,
-        -14.554
+        33.589,
+        0.374,
+        -28.689
       ],
-      "rotationY": 0.493,
-      "scale": 0.572
+      "rotationY": 4.247,
+      "scale": 0.658
+    },
+    {
+      "id": "decor-thicket-105",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        32.962,
+        0.443,
+        -15.151
+      ],
+      "rotationY": 3.086,
+      "scale": 0.779
+    },
+    {
+      "id": "decor-thicket-106",
+      "glb": "/models/props/impostor/bush-emerald-berry.glb",
+      "position": [
+        35.006,
+        0.366,
+        11.815
+      ],
+      "rotationY": 5.578,
+      "scale": 0.645
     },
     {
       "id": "decor-thicket-107",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        33.046,
-        0.253,
-        12.472
+        33.137,
+        0.231,
+        14.807
       ],
-      "rotationY": 1.844,
-      "scale": 0.446
+      "rotationY": 4.901,
+      "scale": 0.406
     },
     {
       "id": "decor-thicket-108",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        35.234,
-        0.297,
-        12.872
+        35.479,
+        0.252,
+        25.769
       ],
-      "rotationY": 4.641,
-      "scale": 0.522
+      "rotationY": 0.825,
+      "scale": 0.443
     },
     {
       "id": "decor-thicket-109",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        35.452,
+        35.119,
         0.303,
-        -22.827
+        -7.275
       ],
       "rotationY": 0.053,
       "scale": 0.533
@@ -10454,9 +12071,9 @@
       "id": "decor-thicket-110",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        34.13,
+        33.635,
         0.227,
-        -24.544
+        -8.179
       ],
       "rotationY": 5.088,
       "scale": 0.399
@@ -10465,9 +12082,9 @@
       "id": "decor-thicket-111",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        34.614,
+        34.627,
         0.233,
-        -10.263
+        10.569
       ],
       "rotationY": 3.414,
       "scale": 0.409
@@ -10476,342 +12093,287 @@
       "id": "decor-thicket-112",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        36.23,
-        0.333,
-        12.325
+        35.681,
+        0.236,
+        14.374
       ],
-      "rotationY": 1.285,
-      "scale": 0.586
+      "rotationY": 5.38,
+      "scale": 0.414
     },
     {
       "id": "decor-thicket-113",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        35.52,
-        0.233,
-        12.276
+        33.915,
+        0.275,
+        17.973
       ],
-      "rotationY": 1.103,
-      "scale": 0.409
+      "rotationY": 3.061,
+      "scale": 0.484
     },
     {
       "id": "decor-thicket-114",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        35.725,
-        0.258,
-        17.232
+        36.978,
+        0.416,
+        -25.651
       ],
-      "rotationY": 0.407,
-      "scale": 0.454
+      "rotationY": 2.14,
+      "scale": 0.731
     },
     {
       "id": "decor-thicket-115",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        34.259,
-        0.272,
-        25.742
+        37.683,
+        0.314,
+        -24.072
       ],
-      "rotationY": 5.987,
-      "scale": 0.478
+      "rotationY": 1.165,
+      "scale": 0.552
     },
     {
       "id": "decor-thicket-116",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        37.661,
-        0.34,
-        -23.473
+        37.849,
+        0.323,
+        -22.461
       ],
-      "rotationY": 4.58,
-      "scale": 0.598
+      "rotationY": 4.054,
+      "scale": 0.567
     },
     {
       "id": "decor-thicket-117",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        35.589,
-        0.255,
-        -10.139
+        34.567,
+        0.446,
+        -12.554
       ],
-      "rotationY": 4.5,
-      "scale": 0.448
+      "rotationY": 3.253,
+      "scale": 0.785
     },
     {
       "id": "decor-thicket-118",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        37.97,
-        0.435,
-        23.151
+        35.958,
+        0.295,
+        -12.647
       ],
-      "rotationY": 4.146,
-      "scale": 0.765
+      "rotationY": 2.678,
+      "scale": 0.518
     },
     {
       "id": "decor-thicket-119",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        37.991,
-        0.231,
-        8.037
+        35.63,
+        0.233,
+        14.55
       ],
-      "rotationY": 2.568,
-      "scale": 0.406
+      "rotationY": 0.142,
+      "scale": 0.41
     },
     {
       "id": "decor-thicket-120",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        36.817,
-        0.292,
-        7.299
+        39.292,
+        0.435,
+        -25.56
       ],
-      "rotationY": 0.611,
-      "scale": 0.514
+      "rotationY": 4.146,
+      "scale": 0.765
     },
     {
       "id": "decor-thicket-121",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        37.83,
-        0.448,
-        24.157
+        37.647,
+        0.249,
+        -7.893
       ],
-      "rotationY": 0.767,
-      "scale": 0.788
+      "rotationY": 5.998,
+      "scale": 0.439
     },
     {
       "id": "decor-thicket-122",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        37.119,
-        0.235,
-        -23.421
+        38.89,
+        0.246,
+        9.2
       ],
-      "rotationY": 4.662,
-      "scale": 0.413
+      "rotationY": 1.996,
+      "scale": 0.432
     },
     {
       "id": "decor-thicket-123",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        37.185,
-        0.358,
-        -21.962
+        36.776,
+        0.325,
+        14.049
       ],
-      "rotationY": 4.614,
-      "scale": 0.63
+      "rotationY": 1.42,
+      "scale": 0.572
     },
     {
       "id": "decor-thicket-124",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        39.221,
-        0.265,
-        -17.943
+        38.778,
+        0.443,
+        22.769
       ],
-      "rotationY": 4.602,
-      "scale": 0.466
+      "rotationY": 2.831,
+      "scale": 0.779
     },
     {
       "id": "decor-thicket-125",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        39.451,
-        0.314,
-        -19.747
+        38.791,
+        0.389,
+        -21.135
       ],
-      "rotationY": 1.272,
-      "scale": 0.552
+      "rotationY": 4.336,
+      "scale": 0.684
     },
     {
       "id": "decor-thicket-126",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        41.012,
-        0.258,
-        -13.57
+        38.534,
+        0.265,
+        -6.516
       ],
-      "rotationY": 2.823,
-      "scale": 0.454
+      "rotationY": 4.602,
+      "scale": 0.466
     },
     {
       "id": "decor-thicket-127",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        40.288,
-        0.323,
-        -19.161
+        39.341,
+        0.314,
+        -16.987
       ],
-      "rotationY": 5.499,
-      "scale": 0.568
+      "rotationY": 1.272,
+      "scale": 0.552
     },
     {
       "id": "decor-thicket-128",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        40.889,
-        0.414,
-        -15.364
+        42.751,
+        0.329,
+        -18.043
       ],
-      "rotationY": 3.396,
-      "scale": 0.728
+      "rotationY": 2.173,
+      "scale": 0.579
     },
     {
       "id": "decor-thicket-129",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        43.247,
-        0.232,
-        -12.423
+        42.758,
+        0.365,
+        -15.385
       ],
-      "rotationY": 4.748,
-      "scale": 0.408
+      "rotationY": 2.594,
+      "scale": 0.643
     },
     {
       "id": "decor-thicket-130",
       "glb": "/models/props/impostor/bush-emerald-berry.glb",
       "position": [
-        43.452,
-        0.35,
-        -18.46
+        44.193,
+        0.232,
+        -17.07
       ],
-      "rotationY": 2.766,
-      "scale": 0.615
+      "rotationY": 4.748,
+      "scale": 0.408
     },
     {
-      "id": "decor-glade-123",
+      "id": "decor-glade-46",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        4.794,
-        0.176,
-        -6.318
+        -6.578,
+        0.165,
+        -0.166
       ],
-      "rotationY": 2.173,
-      "scale": 0.449
+      "rotationY": 2.626,
+      "scale": 0.421
     },
     {
-      "id": "decor-glade-127",
+      "id": "decor-glade-47",
+      "glb": "/models/props/nature/rock-verdant-boulder.glb",
+      "position": [
+        -8.003,
+        0.23,
+        -0.234
+      ],
+      "rotationY": 2.491,
+      "scale": 0.359
+    },
+    {
+      "id": "decor-glade-63",
+      "glb": "/models/props/decor/barrel-iron.glb",
+      "position": [
+        7.583,
+        0.207,
+        -0.042
+      ],
+      "rotationY": 3.061,
+      "scale": 0.219
+    },
+    {
+      "id": "decor-glade-82",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        -5.5,
-        0.19,
-        -5.593
+        5.871,
+        0.173,
+        5.484
       ],
-      "rotationY": 3.6,
-      "scale": 0.484
+      "rotationY": 0.513,
+      "scale": 0.44
     },
     {
       "id": "decor-glade-131",
-      "glb": "/models/props/nature/tree-golden-canopy.glb",
-      "position": [
-        -2.28,
-        0.798,
-        -23.223
-      ],
-      "rotationY": 1.837,
-      "scale": 0.916
-    },
-    {
-      "id": "decor-glade-135",
-      "glb": "/models/props/nature/tree-golden-canopy.glb",
-      "position": [
-        2.792,
-        0.713,
-        -25.169
-      ],
-      "rotationY": 0.066,
-      "scale": 0.818
-    },
-    {
-      "id": "decor-glade-136",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        2.054,
-        0.268,
-        -26.355
-      ],
-      "rotationY": 0.223,
-      "scale": 0.419
-    },
-    {
-      "id": "decor-glade-137",
       "glb": "/models/props/nature/tree-emerald-crown.glb",
       "position": [
-        -13.768,
-        0.755,
-        -10.427
+        -2.312,
+        0.721,
+        -23.529
       ],
-      "rotationY": 5.079,
-      "scale": 0.795
-    },
-    {
-      "id": "decor-glade-141",
-      "glb": "/models/props/nature/tree-golden-canopy.glb",
-      "position": [
-        15.944,
-        0.645,
-        -17.502
-      ],
-      "rotationY": 3.555,
-      "scale": 0.739
-    },
-    {
-      "id": "decor-glade-142",
-      "glb": "/models/props/nature/tree-emerald-crown.glb",
-      "position": [
-        -21.526,
-        0.687,
-        13.501
-      ],
-      "rotationY": 4.164,
-      "scale": 0.724
-    },
-    {
-      "id": "decor-glade-143",
-      "glb": "/models/props/nature/rock-three-stones.glb",
-      "position": [
-        -21.472,
-        0.146,
-        11.956
-      ],
-      "rotationY": 0.445,
-      "scale": 0.372
-    },
-    {
-      "id": "decor-glade-148",
-      "glb": "/models/props/nature/tree-emerald-crown.glb",
-      "position": [
-        -15.582,
-        0.814,
-        -6.761
-      ],
-      "rotationY": 3.85,
-      "scale": 0.858
+      "rotationY": 5.527,
+      "scale": 0.76
     },
     {
       "id": "decor-verge-0",
       "glb": "/models/props/nature/rock-three-stones.glb",
       "position": [
-        1.249,
-        0.181,
+        1.529,
+        0.204,
         -22.56
       ],
-      "rotationY": 5.911,
-      "scale": 0.463
+      "rotationY": 3.874,
+      "scale": 0.519
     },
     {
       "id": "decor-verge-1",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        -1.242,
-        0.327,
+        -1.466,
+        0.303,
         18.8
       ],
-      "rotationY": 2.634,
-      "scale": 0.51
+      "rotationY": 2.274,
+      "scale": 0.474
     },
     {
       "id": "decor-fence-0",
@@ -10850,9 +12412,9 @@
       "id": "decor-fence-3",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
-        -0.92,
+        0.92,
         0.36,
-        -24.44
+        -22.56
       ],
       "rotationY": 1.571,
       "scale": 1
@@ -10861,7 +12423,7 @@
       "id": "decor-fence-4",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
-        0.92,
+        -0.92,
         0.36,
         -24.44
       ],
@@ -10872,9 +12434,9 @@
       "id": "decor-fence-5",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
-        -0.92,
+        0.92,
         0.36,
-        -26.32
+        -24.44
       ],
       "rotationY": 1.571,
       "scale": 1
@@ -10883,7 +12445,7 @@
       "id": "decor-fence-6",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
-        0.92,
+        -0.92,
         0.36,
         -26.32
       ],
@@ -10894,9 +12456,9 @@
       "id": "decor-fence-7",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
-        -0.92,
+        0.92,
         0.36,
-        -28.2
+        -26.32
       ],
       "rotationY": 1.571,
       "scale": 1
@@ -10905,7 +12467,7 @@
       "id": "decor-fence-8",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
-        0.92,
+        -0.92,
         0.36,
         -28.2
       ],
@@ -10916,9 +12478,9 @@
       "id": "decor-fence-9",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
-        -0.92,
+        0.92,
         0.36,
-        -16.92
+        -28.2
       ],
       "rotationY": 1.571,
       "scale": 1
@@ -10927,7 +12489,7 @@
       "id": "decor-fence-10",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
-        0.92,
+        -0.92,
         0.36,
         -16.92
       ],
@@ -10938,6 +12500,17 @@
       "id": "decor-fence-11",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
+        0.92,
+        0.36,
+        -16.92
+      ],
+      "rotationY": 1.571,
+      "scale": 1
+    },
+    {
+      "id": "decor-fence-12",
+      "glb": "/models/props/decor/fence-rail.glb",
+      "position": [
         -0.92,
         0.36,
         16.92
@@ -10946,7 +12519,7 @@
       "scale": 1
     },
     {
-      "id": "decor-fence-12",
+      "id": "decor-fence-13",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         0.92,
@@ -10957,7 +12530,7 @@
       "scale": 1
     },
     {
-      "id": "decor-fence-21",
+      "id": "decor-fence-22",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         0.918,
@@ -10968,7 +12541,7 @@
       "scale": 1
     },
     {
-      "id": "decor-fence-22",
+      "id": "decor-fence-23",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         1.108,
@@ -10979,7 +12552,7 @@
       "scale": 1
     },
     {
-      "id": "decor-fence-23",
+      "id": "decor-fence-24",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -0.921,
@@ -10990,7 +12563,7 @@
       "scale": 1
     },
     {
-      "id": "decor-fence-24",
+      "id": "decor-fence-25",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         0.919,
@@ -11001,7 +12574,7 @@
       "scale": 1
     },
     {
-      "id": "decor-fence-25",
+      "id": "decor-fence-26",
       "glb": "/models/props/decor/fence-rail.glb",
       "position": [
         -0.922,
@@ -11114,9 +12687,9 @@
       "id": "decor-quay-1",
       "glb": "/models/props/decor/lantern-post.glb",
       "position": [
-        6.175,
+        6.532,
         0.6,
-        4.55
+        4.132
       ],
       "rotationY": 0.864,
       "scale": 0.634
@@ -11235,221 +12808,34 @@
       "id": "decor-quay-rock-0",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        -24.963,
-        0.189,
-        5.596
+        9.55,
+        0.233,
+        0
       ],
-      "rotationY": 3.159,
-      "scale": 0.295
+      "rotationY": 4.416,
+      "scale": 0.363
     },
     {
       "id": "decor-quay-rock-1",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        -15.617,
-        0.278,
-        2.559
+        -4.989,
+        0.253,
+        8.143
       ],
-      "rotationY": 5.829,
-      "scale": 0.434
+      "rotationY": 6.144,
+      "scale": 0.395
     },
     {
       "id": "decor-quay-rock-2",
       "glb": "/models/props/nature/rock-verdant-boulder.glb",
       "position": [
-        12.13,
-        0.26,
-        -24.78
-      ],
-      "rotationY": 2.217,
-      "scale": 0.406
-    },
-    {
-      "id": "decor-quay-rock-3",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        7.943,
-        0.196,
-        -15.613
-      ],
-      "rotationY": 4.887,
-      "scale": 0.306
-    },
-    {
-      "id": "decor-quay-rock-4",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        -11.639,
-        0.281,
-        -28.197
-      ],
-      "rotationY": 0.332,
-      "scale": 0.439
-    },
-    {
-      "id": "decor-quay-rock-5",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        31.018,
-        0.268,
-        -6.565
-      ],
-      "rotationY": 3.002,
-      "scale": 0.418
-    },
-    {
-      "id": "decor-quay-rock-6",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        13.294,
-        0.243,
-        -3.44
-      ],
-      "rotationY": 2.059,
-      "scale": 0.379
-    },
-    {
-      "id": "decor-quay-rock-7",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        9.414,
-        0.231,
-        -12.644
-      ],
-      "rotationY": 4.73,
-      "scale": 0.36
-    },
-    {
-      "id": "decor-quay-rock-8",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        14.191,
-        0.189,
-        -21.415
-      ],
-      "rotationY": 1.117,
-      "scale": 0.295
-    },
-    {
-      "id": "decor-quay-rock-9",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        -9.827,
-        0.191,
-        -9.671
-      ],
-      "rotationY": 3.787,
-      "scale": 0.298
-    },
-    {
-      "id": "decor-quay-rock-10",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        -25.944,
-        0.189,
-        -5.353
-      ],
-      "rotationY": 2.845,
-      "scale": 0.295
-    },
-    {
-      "id": "decor-quay-rock-11",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        7.849,
-        0.312,
-        23.135
-      ],
-      "rotationY": 1.902,
-      "scale": 0.487
-    },
-    {
-      "id": "decor-quay-rock-12",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        -8.18,
-        0.327,
-        20.83
-      ],
-      "rotationY": 4.573,
-      "scale": 0.51
-    },
-    {
-      "id": "decor-quay-rock-13",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        13.495,
-        0.251,
-        20.665
-      ],
-      "rotationY": 0.017,
-      "scale": 0.392
-    },
-    {
-      "id": "decor-quay-rock-14",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        9.445,
-        0.326,
-        11.398
-      ],
-      "rotationY": 2.688,
-      "scale": 0.509
-    },
-    {
-      "id": "decor-quay-rock-15",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        14.426,
-        0.281,
-        2.596
-      ],
-      "rotationY": 5.358,
-      "scale": 0.439
-    },
-    {
-      "id": "decor-quay-rock-16",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        24.456,
-        0.334,
-        1.298
-      ],
-      "rotationY": 1.745,
-      "scale": 0.521
-    },
-    {
-      "id": "decor-quay-rock-17",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        9.55,
-        0.31,
-        0
-      ],
-      "rotationY": 4.416,
-      "scale": 0.484
-    },
-    {
-      "id": "decor-quay-rock-18",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
-        -4.989,
-        0.324,
-        8.143
-      ],
-      "rotationY": 6.144,
-      "scale": 0.506
-    },
-    {
-      "id": "decor-quay-rock-19",
-      "glb": "/models/props/nature/rock-verdant-boulder.glb",
-      "position": [
         -4.336,
-        0.237,
+        0.297,
         -8.509
       ],
       "rotationY": 1.588,
-      "scale": 0.371
+      "scale": 0.464
     },
     {
       "id": "decor-ring-lantern-0",

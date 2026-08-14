@@ -585,14 +585,16 @@ function place(
   // 프롭 종류마다 회피를 따로 붙이면 새 종류가 생길 때마다 같은 사고가 난다.
   // 물 위에 서야 하는 것(다리·폭포)만 onWater 로 빠져나간다.
   if (!onWater && (inMoatWater(x, z) || inInnerWater(x, z))) return false;
-  // 물가 턱에 걸치면 반은 축대에 박히고 반은 뜬다. 예외 둘 — 계단은 그 턱을
-  // 오르라고 있는 물건이고, 울타리(fence-rail)는 **턱 위 난간**이라 물가에
-  // 서는 게 목적 그 자체다(두께 0.13 이라 걸쳐도 삐져나올 몸이 없다).
-  // 이 규칙이 구역 섬 울타리 50토막을 소리 없이 거부하고 있었다.
+  // 물가 턱에 걸치면 반은 축대에 박히고 반은 뜬다. 예외 셋 — 계단은 그 턱을
+  // 오르라고 있는 물건이고, 울타리(fence-rail)와 돌담(wall-low)은 **턱 위
+  // 난간**이라 물가에 서는 게 목적 그 자체다(두께 0.13/0.4 라 삐져나올 몸이 없다).
+  // 이 규칙이 구역 섬 울타리 50토막을, 다음엔 물가 쪽 돌담 호를 통째로
+  // 소리 없이 거부하고 있었다 — 섬 테두리가 물가에서만 뻥 뚫린 원인.
   if (
     !onWater &&
     kind !== "terrace-stair" &&
     kind !== "fence-rail" &&
+    kind !== "wall-low" &&
     nearShore(x, z)
   )
     return false;
@@ -1073,12 +1075,13 @@ const blockRect = new Map();
       // 담장 긴 축(모델 +X)을 접선에 맞춘다. rotationY=r 은 +X 를
       // (cos r, -sin r) 로 돌리므로 접선 t=(-nz, nx) 에는 r = atan2(-nx, -nz).
       const rot = round3(Math.atan2(-nx, -nz));
-      place(`wall-${district}-${n++}`, "wall-low", x, z, rot, {
-        gap: 1.15
-      });
       // 담장은 점이 아니라 1.9짜리 선분이라 taken 의 한 점으로는 못 막는다.
       // 실제 선분으로 따로 재야 옆에 가로등을 붙여 세울 수 있다 (onWall).
-      walls.push({x, z, ax: Math.cos(rot), az: Math.sin(rot)});
+      // **place 가 성공했을 때만** 등록한다 — 거부된 담장을 등록하면 "유령
+      // 담장"이 되어, 틈을 메우는 울타리(⑭-a)가 빈 자리를 이미 찼다고 보고
+      // 건너뛴다(실제로 물가 호 전체가 그렇게 뚫린 채 남았다).
+      if (place(`wall-${district}-${n++}`, "wall-low", x, z, rot, {gap: 1.15}))
+        walls.push({x, z, ax: Math.cos(rot), az: Math.sin(rot)});
     }
   }
   console.log(`  담장 ${n}토막 · 길이 지나가 비운 자리 ${openings}곳`);
