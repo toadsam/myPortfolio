@@ -26,7 +26,8 @@ import {villageBuildings} from "./constants";
 
 /** **false 로 두면 예전 평지 그대로다.** 되돌리기 스위치: /?relief=0 */
 export const RELIEF_ENABLED: boolean =
-  typeof window === "undefined" || new URLSearchParams(window.location.search).get("relief") !== "0";
+  typeof window === "undefined" ||
+  new URLSearchParams(window.location.search).get("relief") !== "0";
 
 /**
  * 들판이 오르내리는 최대 폭(유닛). 캐릭터 키가 1.05, 구역 단이 1.1 이므로
@@ -71,7 +72,11 @@ const EDGE_FADE_END = 52;
 //
 // 건물이 해자 밖으로 나갔는지 확인:
 //   node scripts/check-building-clearance.mjs --moat
-export const MOAT = {cx: 0, cz: 1, a: 42, b: 35};
+//
+// b 35 → 38: 구역을 육각 방위 고리 배치로 바꾸며 PROJECTS(9채)가 북쪽 한
+// 방위에 고리로 서게 됐다 — 남북으로 가장 깊은 구역이라 북쪽 물가가 3 더
+// 필요하다. 잔디 원반(r 53)과의 여유는 아직 7 이상이다(check ③, max 는 a=42).
+export const MOAT = {cx: 0, cz: 0, a: 42, b: 38};
 /** 해자 리본 반폭 1.23 + 흔들림(drift) 1.9 + 여유 0.3 → 이 안은 전부 평평하게 */
 const MOAT_FLAT_HALF = 3.4;
 
@@ -82,17 +87,27 @@ const MOAT_FLAT_HALF = 3.4;
 // 지배 파장을 27 → 18 로 내렸다. 들판은 폭 6~10유닛의 **띠**라서, 27유닛짜리
 // 너울은 띠 안에서 반의반 밖에 못 펼쳐져 완만한 경사로만 보였다. 18 이면 띠를
 // 가로질러 둔덕 하나가 통째로 들어간다.
-const WAVES: {wavelength: number; amp: number; dirDeg: number; phase: number}[] = [
+const WAVES: {
+  wavelength: number;
+  amp: number;
+  dirDeg: number;
+  phase: number;
+}[] = [
   {wavelength: 18, amp: 1.0, dirDeg: 15, phase: 0.9},
   {wavelength: 11, amp: 0.55, dirDeg: 74, phase: 2.4},
-  {wavelength: 7, amp: 0.28, dirDeg: 133, phase: 4.2},
+  {wavelength: 7, amp: 0.28, dirDeg: 133, phase: 4.2}
 ];
 const TAU = Math.PI * 2;
 // 미리 계산해 둔 (파수 벡터, 위상)
-const WAVE_K = WAVES.map((w) => {
+const WAVE_K = WAVES.map(w => {
   const rad = (w.dirDeg * Math.PI) / 180;
   const k = TAU / w.wavelength;
-  return {kx: Math.cos(rad) * k, kz: Math.sin(rad) * k, amp: w.amp, phase: w.phase};
+  return {
+    kx: Math.cos(rad) * k,
+    kz: Math.sin(rad) * k,
+    amp: w.amp,
+    phase: w.phase
+  };
 });
 
 function rawField(x: number, z: number): number {
@@ -136,7 +151,11 @@ function buildMask() {
 
   // ① 구역 원반 섬 — 축대 발치(y=0)가 평평한 땅을 전제로 지어져 있다
   void pad;
-  for (const isl of (terraces.islands ?? []) as {x: number; z: number; r: number}[]) {
+  for (const isl of (terraces.islands ?? []) as {
+    x: number;
+    z: number;
+    r: number;
+  }[]) {
     const m = isl.r + 0.8;
     for (let z = isl.z - m; z <= isl.z + m; z += CELL * 0.9)
       for (let x = isl.x - m; x <= isl.x + m; x += CELL * 0.9)
@@ -155,19 +174,24 @@ function buildMask() {
       for (let i = 0; i < hull.length; i++) {
         const a2 = hull[i];
         const b2 = hull[(i + 1) % hull.length];
-        if ((b2.x - a2.x) * (z - a2.z) - (b2.z - a2.z) * (x - a2.x) < 0) return false;
+        if ((b2.x - a2.x) * (z - a2.z) - (b2.z - a2.z) * (x - a2.x) < 0)
+          return false;
       }
       return true;
     };
-    const xs = hull.map((p) => p.x);
-    const zs = hull.map((p) => p.z);
+    const xs = hull.map(p => p.x);
+    const zs = hull.map(p => p.z);
     for (let z = Math.min(...zs); z <= Math.max(...zs); z += CELL)
       for (let x = Math.min(...xs); x <= Math.max(...xs); x += CELL)
         if (inHull(x, z)) stampCircle(x, z, 0.7);
   }
 
   // ② 포장 타일·광장 원반. 풀숲(grass-patch)은 땅을 따라도 되므로 뺀다.
-  for (const p of (propsLayout as {props: {id: string; glb: string; position: number[]; scale: number}[]}).props) {
+  for (const p of (
+    propsLayout as {
+      props: {id: string; glb: string; position: number[]; scale: number}[];
+    }
+  ).props) {
     if (!p.id.startsWith("ground-")) continue;
     if (p.glb.includes("grass-patch")) continue;
     // 타일 한 칸이 1.88유닛 — 반대각 1.33 에 여유를 더한다. 광장 원반은 scale 로 커진다.
@@ -176,11 +200,17 @@ function buildMask() {
 
   // ③ 건물 발자국 — 바닥 링·앞마당이 평평한 땅을 전제로 한다
   for (const b of villageBuildings) {
-    stampCircle(b.position[0], b.position[2], Math.max(b.size[0], b.size[2]) / 2 + 1.0);
+    stampCircle(
+      b.position[0],
+      b.position[2],
+      Math.max(b.size[0], b.size[2]) / 2 + 1.0
+    );
   }
 
   // ④ 물길 + 광장을 두르는 물 고리 — 수면(y=0.05)보다 잔디가 높아지면 물이 사라진다
-  const waterLines = [...((terraces.channels ?? []) as {x: number; z: number}[][])];
+  const waterLines = [
+    ...((terraces.channels ?? []) as {x: number; z: number}[][])
+  ];
   for (const channel of waterLines) {
     for (let i = 0; i + 1 < channel.length; i++) {
       const a = channel[i];
@@ -198,7 +228,11 @@ function buildMask() {
   const STEPS = 280;
   for (let s = 0; s < STEPS; s++) {
     const ang = (s / STEPS) * TAU;
-    stampCircle(MOAT.cx + Math.cos(ang) * MOAT.a, MOAT.cz + Math.sin(ang) * MOAT.b, MOAT_FLAT_HALF);
+    stampCircle(
+      MOAT.cx + Math.cos(ang) * MOAT.a,
+      MOAT.cz + Math.sin(ang) * MOAT.b,
+      MOAT_FLAT_HALF
+    );
   }
 
   // ── 거리 변환(chamfer, 앞뒤 두 번 훑기) → 지은 곳에서 멀수록 굽이가 살아난다
@@ -213,7 +247,8 @@ function buildMask() {
       if (i > 0) dist[g] = Math.min(dist[g], dist[g - 1] + D);
       if (j > 0) dist[g] = Math.min(dist[g], dist[g - GN] + D);
       if (i > 0 && j > 0) dist[g] = Math.min(dist[g], dist[g - GN - 1] + DIAG);
-      if (i < GN - 1 && j > 0) dist[g] = Math.min(dist[g], dist[g - GN + 1] + DIAG);
+      if (i < GN - 1 && j > 0)
+        dist[g] = Math.min(dist[g], dist[g - GN + 1] + DIAG);
     }
   }
   for (let j = GN - 1; j >= 0; j--) {
@@ -221,8 +256,10 @@ function buildMask() {
       const g = j * GN + i;
       if (i < GN - 1) dist[g] = Math.min(dist[g], dist[g + 1] + D);
       if (j < GN - 1) dist[g] = Math.min(dist[g], dist[g + GN] + D);
-      if (i < GN - 1 && j < GN - 1) dist[g] = Math.min(dist[g], dist[g + GN + 1] + DIAG);
-      if (i > 0 && j < GN - 1) dist[g] = Math.min(dist[g], dist[g + GN - 1] + DIAG);
+      if (i < GN - 1 && j < GN - 1)
+        dist[g] = Math.min(dist[g], dist[g + GN + 1] + DIAG);
+      if (i > 0 && j < GN - 1)
+        dist[g] = Math.min(dist[g], dist[g + GN - 1] + DIAG);
     }
   }
   for (let g = 0; g < GN * GN; g++) {

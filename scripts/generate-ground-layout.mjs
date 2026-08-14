@@ -30,7 +30,10 @@ import {readFileSync, writeFileSync} from "node:fs";
 import {
   readVillage,
   readMoat,
-  districtBlocks,
+  readHubs,
+  cornersOf,
+  obbContains,
+  discOfDistrict,
   readWaterHalf
 } from "./lib/read-village.mjs";
 
@@ -209,12 +212,14 @@ const [I_MIN, I_MAX, J_MIN, J_MAX] = (() => {
     i1 = 0,
     j0 = 0,
     j1 = 0;
-  for (const b of buildings) {
-    i0 = Math.min(i0, Math.floor((b.x - b.w / 2) / PITCH));
-    i1 = Math.max(i1, Math.ceil((b.x + b.w / 2) / PITCH));
-    j0 = Math.min(j0, Math.floor((b.z - b.d / 2) / PITCH));
-    j1 = Math.max(j1, Math.ceil((b.z + b.d / 2) / PITCH));
-  }
+  // 건물이 임의 각으로 돌므로(고리 배치) 범위는 회전 모서리로 잰다
+  for (const b of buildings)
+    for (const [x, z] of cornersOf(b)) {
+      i0 = Math.min(i0, Math.floor(x / PITCH));
+      i1 = Math.max(i1, Math.ceil(x / PITCH));
+      j0 = Math.min(j0, Math.floor(z / PITCH));
+      j1 = Math.max(j1, Math.ceil(z / PITCH));
+    }
   return [
     i0 - MARGIN,
     i1 + MARGIN,
@@ -224,16 +229,13 @@ const [I_MIN, I_MAX, J_MIN, J_MAX] = (() => {
 })();
 const inBounds = (i, j) => i >= I_MIN && i <= I_MAX && j >= J_MIN && j <= J_MAX;
 
-// 건물이 깔고 앉은 칸 — 길이 지나갈 수 없다
+// 건물이 깔고 앉은 칸 — 길이 지나갈 수 없다. 회전 상자(OBB)로 잰다.
 const blocked = new Set();
 for (let i = I_MIN; i <= I_MAX; i++) {
   for (let j = J_MIN; j <= J_MAX; j++) {
     const x = worldX(i);
     const z = worldZ(j);
-    const hit = buildings.some(
-      b =>
-        Math.abs(b.x - x) < b.w / 2 + HALF && Math.abs(b.z - z) < b.d / 2 + HALF
-    );
+    const hit = buildings.some(b => obbContains(b, x, z, HALF));
     if (hit) blocked.add(key(i, j));
   }
 }
@@ -252,33 +254,14 @@ for (let i = I_MIN; i <= I_MAX; i++) {
 //   · 구역 블록마다 광장에서 오는 L자 진입로
 //   · 블록 안에서 **건물 줄과 줄 사이 빈 칸**을 잇는 골목
 // 이 셋을 배치에서 계산하면 건물을 어떻게 옮겨도 길이 따라온다.
-const TRUNKS = [
-  // 광장에서 뻗는 두 축 — 마을의 등뼈.
-  [I_MIN + 1, 0, I_MAX - 1, 0],
-  [0, J_MIN + 1, 0, J_MAX - 1]
-];
-
-// ─── 광장 둘레 링 도로 ────────────────────────────────────────────────────────
-// 컨셉 아트의 길은 격자가 아니라 **광장에서 뻗는 방사선 + 그걸 두르는 고리**다.
-// 우리는 축 둘 + L자 진입로뿐이라 완전한 맨해튼 격자로 보였다.
-//
-// 한동안 정사각 고리(r 4·8)를 놓았다. 네 모서리에 커브가, 축과 만나는 곳에 T 가
-// 자동으로 들어가 부감에서 그럭저럭 고리로 읽혔다. 그런데 **정사각형은 모서리가
-// 반지름의 1.41배**라, 구역을 같은 고리(DISTRICT_INNER)에 올린 뒤로는 모서리가
-// 구역 단 위로 올라타 바깥 고리가 64칸 중 37칸만 남았다 — 반쪽짜리 고리다.
-//
-// 그래서 원을 격자에 **래스터화**한다. 칸마다 이웃이 직각 두 방향이면 커브가
-// 들어가므로, 계단처럼 꺾이는 자리마다 커브가 박히고 나머지는 직선이 된다.
-// 모든 칸이 반지름 ±0.5 안에 있어 정사각형과 달리 띠를 벗어나지 않는다.
-const RINGS = [8]; // 구역 안을 지나는 옛 정사각 고리 — 살아남은 조각이 구역 내 골목이 된다
-for (const r of RINGS) {
-  TRUNKS.push(
-    [-r, -r, r, -r], // 북
-    [-r, r, r, r], // 남
-    [-r, -r, -r, r], // 서
-    [r, -r, r, r] // 동
-  );
-}
+// ── 축은 남북 하나뿐이다 ─────────────────────────────────────────────────────
+// 예전엔 동서 대로 + 정사각 고리(RINGS)도 있었다. 섬 내부가 격자 골목에서
+// **방사 차선**(아래 commons)으로 바뀌면서 격자 길은 남북 참배로만 남는다 —
+// 남쪽 정문 대계단 → 광장 → 북쪽 파고다 섬을 잇는 마을의 등뼈이자,
+// 컨셉 이미지에서도 위아래로 곧게 지나가는 유일한 직선 길이다.
+// 동서 대로는 육각 방위에서 어느 섬도 지나지 않아, 석호를 가로지르는 뜬금없는
+// 둑길만 만들기에 걷어냈다.
+const TRUNKS = [[0, J_MIN + 1, 0, J_MAX - 1]];
 
 // ── 그 고리는 이제 **길이 아니라 물**이다 ────────────────────────────────────
 // 한동안 여기에 원을 래스터화한 길 타일 고리(r 9.4)를 깔았다. 컨셉 아트를 확대해
@@ -296,50 +279,26 @@ const CEREMONIAL = new Set();
 for (let j = 1; j <= SOUTH_END; j++) CEREMONIAL.add(key(0, j));
 for (let j = NORTH_END; j <= -1; j++) CEREMONIAL.add(key(0, j));
 
-// 구역별 블록 상자 (격자 단위, 건물이 실제로 먹는 칸 기준).
-// 사각형 계산은 read-village.mjs 의 blockOf 한 곳에만 있다 — 구역 배치 솔버가
-// 같은 값으로 골짜기를 재야 하므로 두 벌로 두면 반드시 어긋난다.
-const BLOCK_RECT = districtBlocks(OUTER);
-const BLOCK_BOX = new Map();
-for (const [district, rect] of BLOCK_RECT) {
-  BLOCK_BOX.set(district, {
-    i0: Math.round((rect.x0 + HALF) / PITCH),
-    i1: Math.round((rect.x1 - HALF) / PITCH),
-    j0: Math.round((rect.z0 + HALF) / PITCH),
-    j1: Math.round((rect.z1 - HALF) / PITCH)
-  });
-}
-
 // ─── 원반 섬 ──────────────────────────────────────────────────────────────────
 // 컨셉 아트의 마을은 **둥근 섬**들이다 — 구역 하나가 원반 하나, 테두리를 축대와
-// 난간이 두르고, 섬끼리 다리로 이어진다. 사각 단은 격자에는 맞지만 "섬"으로는
-// 안 읽혀서 원반으로 바꿨다.
+// 난간이 두르고, 섬끼리 다리로 이어진다.
 //
-// 반지름은 그 구역 건물의 **가장 먼 모서리**가 정한다(+둘레 여유). 건물 배치가
-// 정사각형에 가까울수록 원반이 작아지므로, arrange-district-rows 가 줄 수를
-// 정사각형 비율로 잡는다(9채 → 3줄).
-//
-// 원은 격자에 스냅하지 않는다 — 스냅은 사각 단이 타일과 맞물리기 위한 것이었고,
-// 원반 위 타일은 "칸 중심이 원 안이면 단 위" 규칙로 충분하다.
-/** 건물 모서리에서 물가까지 — 담장·가로등·둘렛길이 설 띠 */
-const ISLAND_PAD = 1.5;
+// 중심은 **hub**(고리 배치의 중심 — arrange-district-round 가 constants.ts 에
+// 적는다)다. 건물 무게중심으로 잡으면 호(arc) 배치 구역에서 중심이 건물 쪽으로
+// 쏠려, 미니광장이 섬 한켠에 몰린다. 반지름은 가장 먼 건물 모서리(회전 반영)
+// + 둘레 여유 — 계산은 read-village.mjs 의 discOfDistrict 한 곳뿐이다(솔버·검사
+// 와 같은 식이어야 섬이 어긋나지 않는다).
+const HUBS = readHubs();
 const ISLAND = new Map();
-for (const [district, rect] of BLOCK_RECT) {
-  const cx = (rect.x0 + rect.x1) / 2;
-  const cz = (rect.z0 + rect.z1) / 2;
-  let r = 0;
-  for (const b of OUTER) {
-    if (b.district !== district) continue;
-    r = Math.max(
-      r,
-      Math.hypot(Math.abs(b.x - cx) + b.w / 2, Math.abs(b.z - cz) + b.d / 2)
-    );
-  }
+for (const [district, hub] of Object.entries(HUBS)) {
+  const list = OUTER.filter(b => b.district === district);
+  if (!list.length) continue;
+  const disc = discOfDistrict(list, hub);
   ISLAND.set(district, {
     district,
-    x: round3(cx),
-    z: round3(cz),
-    r: round3(r + ISLAND_PAD)
+    x: round3(disc.x),
+    z: round3(disc.z),
+    r: round3(disc.r)
   });
 }
 /** 섬 물가까지 남은 거리 (섬 안이면 0) */
@@ -383,7 +342,10 @@ const LAGOON = (() => {
   const half = src => {
     const out = [];
     for (const p of src) {
-      while (out.length >= 2 && cross(out[out.length - 2], out[out.length - 1], p) <= 0)
+      while (
+        out.length >= 2 &&
+        cross(out[out.length - 2], out[out.length - 1], p) <= 0
+      )
         out.pop();
       out.push(p);
     }
@@ -478,76 +440,10 @@ const isWater = (x, z) => {
   return true;
 };
 
-for (const box of BLOCK_BOX.values()) {
-  const ci = Math.round((box.i0 + box.i1) / 2);
-  const cj = Math.round((box.j0 + box.j1) / 2);
-
-  // ⓐ 광장 → 블록 L자 진입로. 먼 축을 먼저 달리고 꺾어야 길이 광장 앞에서
-  //    부챗살처럼 퍼지지 않고, 대로에 한 번 붙었다가 갈라진다.
-  if (Math.abs(ci) >= Math.abs(cj)) {
-    TRUNKS.push([0, 0, ci, 0], [ci, 0, ci, cj]);
-  } else {
-    TRUNKS.push([0, 0, 0, cj], [0, cj, ci, cj]);
-  }
-
-  // ⓑ 줄과 줄 사이 골목 — 블록 폭 전체가 비어 있는 줄만 고른다.
-  //    한 칸이라도 건물이 걸리면 안 깐다(길이 건물을 뚫고 지나가는 걸 막는다).
-  const [ei0, ei1, ej0, ej1] = [box.i0 - 1, box.i1 + 1, box.j0 - 1, box.j1 + 1];
-
-  // 건물 줄이 늘어선 축으로만 깐다. 처음엔 가로·세로 양쪽을 다 깔았더니
-  // 길 타일이 123 → 303장으로 늘면서 T자 169개짜리 **격자**가 됐다 —
-  // 골목이 난 마을이 아니라 잔디에 그은 바둑판이었다.
-  // 블록이 가로로 넓으면 줄도 가로이고, 골목은 줄 사이(같은 j)에 난다.
-  const wide = box.i1 - box.i0 >= box.j1 - box.j0;
-  const spanFree = fixed => {
-    if (wide) {
-      for (let i = ei0; i <= ei1; i++)
-        if (blocked.has(key(i, fixed))) return false;
-    } else {
-      for (let j = ej0; j <= ej1; j++)
-        if (blocked.has(key(fixed, j))) return false;
-    }
-    return true;
-  };
-  // 광장 반대쪽 바깥 변은 뺀다 — 블록 뒤편은 아무 데도 안 가는 길이다
-  const far = wide ? (cj < 0 ? ej0 : ej1) : ci < 0 ? ei0 : ei1;
-  const [lo, hi] = wide ? [ej0, ej1] : [ei0, ei1];
-  // 빈 줄을 전부 깔면 골목 두 개가 나란히 붙어 **두 칸 폭 대로**가 된다.
-  // 실제로 블록 가장자리 줄과 그 바로 옆 줄이 함께 깔려, 위에서 보면 길이
-  // 아니라 포장된 벌판이었다. 그래서 사이를 띄운다 — 그 사이엔 집이 선다.
-  //
-  // 간격 2 로 뒀더니 골목 중심 사이가 3.76 유닛인데 골목 폭이 1.88 이라,
-  // **블록의 절반이 길**이었다(구역 단 넓이의 34%). 블록 안을 잔디로 되돌리고
-  // 부감으로 보니 그 격자가 마을이 아니라 텃밭 두렁으로 보였다. 3 이면 골목
-  // 사이가 5.64 라 집 한 채가 들어가고, 길 비율이 3분의 1로 떨어진다.
-  const ALLEY_GAP = 3;
-
-  // **lastLaid 만으로는 모자란다.** 그건 골목끼리의 간격만 보는데, 이 블록에는
-  // 이미 광장 축과 고리 도로(RINGS 4·8)가 지나간다. 그래서 고리 바로 옆 줄에
-  // 골목이 깔려 **길 두 줄 사이에 아무것도 없는 잔디 띠**가 남았다 —
-  // STUDY 블록에서 j = 4·6·8 이 그렇게 나란히 깔렸다(부감 캡처로 확인).
-  // 이 블록을 실제로 지나가는 간선만 골라 같은 간격을 적용한다.
-  const blockers = [];
-  for (const [a0, b0, a1, b1] of TRUNKS) {
-    if (wide) {
-      if (b0 !== b1) continue; // 가로선만
-      if (Math.max(a0, a1) < ei0 || Math.min(a0, a1) > ei1) continue; // 이 블록을 안 지난다
-      blockers.push(b0);
-    } else {
-      if (a0 !== a1) continue; // 세로선만
-      if (Math.max(b0, b1) < ej0 || Math.min(b0, b1) > ej1) continue;
-      blockers.push(a0);
-    }
-  }
-
-  let lastLaid = -Infinity;
-  for (let n = lo; n <= hi; n++) {
-    if (n === far || !spanFree(n) || n - lastLaid < ALLEY_GAP) continue;
-    if (blockers.some(t => Math.abs(t - n) < ALLEY_GAP)) continue;
-    TRUNKS.push(wide ? [ei0, n, ei1, n] : [n, ej0, n, ej1]);
-    lastLaid = n;
-  }
-}
+// ── 블록 L자 진입로·골목은 없어졌다 ──────────────────────────────────────────
+// 격자 줄 배치 시절의 것이다. 섬 내부가 고리 배치(미니광장 + 방사 차선)로
+// 바뀌면서 섬 안 길은 아래 commons 절이 **리본 메시**로 만든다 — 격자 타일로
+// 방사선을 그리면 계단처럼 삐뚤어진다.
 
 const road = new Set();
 function addSegment(i0, j0, i1, j1) {
@@ -566,10 +462,7 @@ function addSegment(i0, j0, i1, j1) {
 }
 for (const [i0, j0, i1, j1] of TRUNKS) addSegment(i0, j0, i1, j1);
 
-
-// ─── ② 건물마다 도로망까지 최단 지선을 잇는다 ────────────────────────────────
-// 손으로 노선을 다 그리면 건물 하나가 늘 때마다 길이 끊긴다. 대신 건물에서
-// 출발해 이미 깔린 길에 닿을 때까지 BFS로 최단 경로를 찾아 붙인다.
+// 4-이웃 — 아래 여러 절(물에 잠긴 칸 묶기·외톨이 정리·막다른 길 다듬기)이 쓴다
 const NEIGHBORS = [
   [0, -1],
   [0, 1],
@@ -577,72 +470,10 @@ const NEIGHBORS = [
   [1, 0]
 ];
 
-function connect(building) {
-  // 건물에 인접한 빈 칸들이 출발점 (여러 개를 동시에 BFS 시작점으로 넣는다)
-  const starts = [];
-  const ci = Math.round(building.x / PITCH);
-  const cj = Math.round(building.z / PITCH);
-  for (let i = ci - 2; i <= ci + 2; i++) {
-    for (let j = cj - 2; j <= cj + 2; j++) {
-      if (!inBounds(i, j) || blocked.has(key(i, j))) continue;
-      const dx = worldX(i) - building.x;
-      const dz = worldZ(j) - building.z;
-      // 건물 외곽에서 한 칸 정도 떨어진 고리만
-      if (
-        Math.hypot(dx, dz) >
-        Math.max(building.w, building.d) / 2 + PITCH * 1.6
-      )
-        continue;
-      starts.push(key(i, j));
-    }
-  }
-  if (starts.length === 0) return {ok: false, added: 0};
-  // 이미 길에 닿아 있으면 할 일 없음
-  if (starts.some(k => road.has(k))) return {ok: true, added: 0};
-
-  // BFS — 이미 깔린 길에 처음 닿는 지점까지
-  const prev = new Map();
-  const queue = [];
-  for (const s of starts) {
-    prev.set(s, null);
-    queue.push(s);
-  }
-  let hit = null;
-  for (let head = 0; head < queue.length && !hit; head++) {
-    const cur = queue[head];
-    const [i, j] = parse(cur);
-    for (const [di, dj] of NEIGHBORS) {
-      const ni = i + di;
-      const nj = j + dj;
-      const nk = key(ni, nj);
-      if (!inBounds(ni, nj) || blocked.has(nk) || prev.has(nk)) continue;
-      prev.set(nk, cur);
-      if (road.has(nk)) {
-        hit = nk;
-        break;
-      }
-      queue.push(nk);
-    }
-  }
-  if (!hit) return {ok: false, added: 0};
-
-  let added = 0;
-  for (let k = hit; k !== null && k !== undefined; k = prev.get(k)) {
-    if (!road.has(k)) added++;
-    road.add(k);
-  }
-  return {ok: true, added};
-}
-
-// 광장에서 가까운 건물부터 이어야 지선이 짧고 자연스럽게 뻗는다
-const byDistance = [...OUTER].sort(
-  (a, b) => Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z)
-);
-const unreachable = [];
-for (const b of byDistance) {
-  const r = connect(b);
-  if (!r.ok) unreachable.push(b.id);
-}
+// ─── (없어짐) 건물 → 도로망 BFS 지선 ─────────────────────────────────────────
+// 격자 길 시절엔 건물마다 가장 가까운 길까지 타일 지선을 이었다. 지금 건물은
+// 전부 섬 위 고리에 서고 문 앞을 **차선 고리**(commons)가 지나므로, 타일
+// 지선을 이으면 섬 잔디에 격자 토막만 남는다.
 
 // ─── ③ 앞마당 원반 ────────────────────────────────────────────────────────────
 // 건물마다 원반을 하나 깔아, 건물이 잔디 위에 덩그러니 떠 있지 않게 한다.
@@ -1000,7 +831,9 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
       const dx = b.x - a.x;
       const dz = b.z - a.z;
       const l2 = dx * dx + dz * dz;
-      const t = l2 ? Math.max(0, Math.min(1, ((x - a.x) * dx + (z - a.z) * dz) / l2)) : 0;
+      const t = l2
+        ? Math.max(0, Math.min(1, ((x - a.x) * dx + (z - a.z) * dz) / l2))
+        : 0;
       return Math.hypot(x - (a.x + dx * t), z - (a.z + dz * t));
     };
     const nearChannel = (x, z) =>
@@ -1075,6 +908,12 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
       orphan += 1;
     }
 
+    // ─── 섬 대문 각도 수집 ────────────────────────────────────────────────────
+    // 다리(둑길·이웃 다리)가 섬 테두리에 닿는 각도. 아래 commons 절이 이
+    // 각도마다 방사 스포크 차선을 내고, 장식물 생성기는 그 스포크를 "길"로
+    // 읽어 담장을 끊는다(구역 대문).
+    for (const [, isl] of ISLAND) isl.gates = [];
+
     // ─── 구역마다 광장에서 오는 다리를 **보장한다** ───────────────────────────
     // 위의 "걷어낸 길 칸" 만으로는 구역 여섯 중 절반에만 다리가 생긴다. 대로가
     // 구역 정면으로 곧게 가지 않고 L 자로 도는 탓이라, 물을 건너는 자리가 구역
@@ -1104,7 +943,8 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
           z: mid.z,
           angle: round3(ang + Math.PI / 2)
         });
-      void district;
+      // 둑길은 섬의 광장 쪽 테두리에 닿는다 — 섬 중심에서 본 각도는 ang+π
+      ISLAND.get(district).gates.push(round3(ang + Math.PI));
     }
 
     // ─── 구역끼리 잇는 다리 — **고리의 이웃 6쌍 전부** ─────────────────────────
@@ -1141,7 +981,7 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
         // 잇는 선을 따라 걸으며 물 구간을 줍는다. 다리 프롭은 가운데,
         // 걷기 구멍은 구간 전부 — 안 뚫으면 다리가 있어도 못 건넌다.
         const span = [];
-        for (let t = -0.15; t <= 1.15; t += PITCH * 0.5 / len) {
+        for (let t = -0.15; t <= 1.15; t += (PITCH * 0.5) / len) {
           const x = pA.x + dx * t;
           const z = pA.z + dz * t;
           if (!isWater(x, z)) {
@@ -1164,6 +1004,9 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
           // 저장 규약은 "건너는 방향 + 90°" (다리 모델의 긴 축 정렬)
           angle: round3(Math.atan2(dz, dx) + Math.PI / 2)
         });
+        // 이웃 다리가 두 섬 테두리에 닿는 각도 — 서로를 향한 방향
+        A.gates.push(round3(Math.atan2(cz, cx)));
+        B.gates.push(round3(Math.atan2(-cz, -cx)));
         put += 1;
       }
       console.log(`  구역끼리 잇는 다리 ${put}개 / 이웃 ${ring.length}쌍`);
@@ -1171,6 +1014,109 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
 
     console.log(
       `  물에 잠겨 걷어낸 길 칸: ${wetCells.size}개 · 외톨이 ${orphan}개 정리 · 건널목 ${crossings.length}곳`
+    );
+  }
+
+  // ─── 섬 공유지: 미니광장 + 차선 ─────────────────────────────────────────────
+  // 컨셉 이미지의 섬 내부는 격자 골목이 아니라 **동심원**이다: 가운데 둥근
+  // 미니광장(분수) → 문 앞을 도는 안쪽 차선 → 담장 안쪽을 도는 테두리 차선 →
+  // 다리 각도마다 밖으로 나가는 방사 스포크. 격자 타일로 방사선을 그리면
+  // 계단처럼 삐뚤어지므로, 여기서는 **좌표만** 내보내고 VillageScene 이 리본
+  // 메시로 그린다. 장식물 생성기는 laneCells 를 "길"로 읽는다(담장 대문·가로등).
+  const commons = [];
+  const lanes = [];
+  const laneCells = [];
+  {
+    const pushLane = (pts, closed) => {
+      lanes.push({
+        closed,
+        pts: pts.map(p => ({x: round3(p.x), z: round3(p.z)}))
+      });
+      const n = pts.length;
+      const end = closed ? n : n - 1;
+      for (let i = 0; i < end; i++) {
+        const a = pts[i];
+        const b = pts[(i + 1) % n];
+        const len = Math.hypot(b.x - a.x, b.z - a.z) || 1;
+        const tx = (b.x - a.x) / len;
+        const tz = (b.z - a.z) / len;
+        for (let s = 0; s < len; s += 1.25)
+          laneCells.push({
+            x: round3(a.x + tx * s),
+            z: round3(a.z + tz * s),
+            tx: round3(tx),
+            tz: round3(tz),
+            // 스포크(열린 차선) 표식 — 담장을 끊는 대문 판정은 이것만 본다.
+            // 고리 차선까지 대문으로 치면 테두리를 도는 차선이 담장을 전부
+            // 걷어낸다(실제로 182칸 전부가 "길"이 되어 돌담 0토막이 됐다).
+            s: closed ? 0 : 1
+          });
+      }
+    };
+    /** 스포크가 건물을 뚫지 않는가 */
+    const clearPath = (isl, ang, r0, r1) => {
+      const list = OUTER.filter(b => b.district === isl.district);
+      for (let r = r0; r <= r1; r += 0.4) {
+        const x = isl.x + Math.cos(ang) * r;
+        const z = isl.z + Math.sin(ang) * r;
+        if (list.some(b => obbContains(b, x, z, 0.45))) return false;
+      }
+      return true;
+    };
+
+    for (const [district, isl] of ISLAND) {
+      const list = OUTER.filter(b => b.district === district);
+      let doorR = Infinity;
+      for (const b of list)
+        doorR = Math.min(doorR, Math.hypot(b.x - isl.x, b.z - isl.z) - b.d / 2);
+      // 안쪽 차선은 문 앞 0.75, 미니광장은 그 안쪽. 테두리 차선은 담장
+      // (물가 −0.35) 에서 0.9 안쪽 — 담장 대문 판정(onRoad 0.75)이 테두리
+      // 차선을 대문으로 오인하지 않는 거리다.
+      const laneR = Math.max(1.5, doorR - 0.75);
+      const rimR = isl.r - 1.25;
+      const plazaR = Math.max(1.3, laneR - 1.05);
+      commons.push({
+        district,
+        x: isl.x,
+        z: isl.z,
+        plazaR: round3(plazaR),
+        laneR: round3(laneR),
+        rimR: round3(rimR)
+      });
+
+      const ringOf = r => {
+        const N = Math.max(20, Math.round((2 * Math.PI * r) / 0.9));
+        return Array.from({length: N}, (_, k) => {
+          const a = (k / N) * Math.PI * 2;
+          return {x: isl.x + Math.cos(a) * r, z: isl.z + Math.sin(a) * r};
+        });
+      };
+      pushLane(ringOf(laneR), true);
+      if (rimR > laneR + 1.2) pushLane(ringOf(rimR), true);
+
+      // 방사 스포크: 대문(다리) 각도마다 테두리 차선 → 섬 밖(다리 어귀)까지.
+      // 건물이 안 막는 각도면 안쪽 차선까지 이어 광장으로 통하게 한다.
+      for (const a of isl.gates ?? []) {
+        const inner = clearPath(isl, a, laneR, rimR)
+          ? plazaR + 0.1
+          : rimR - 0.2;
+        pushLane(
+          [
+            {
+              x: isl.x + Math.cos(a) * inner,
+              z: isl.z + Math.sin(a) * inner
+            },
+            {
+              x: isl.x + Math.cos(a) * (isl.r + 0.5),
+              z: isl.z + Math.sin(a) * (isl.r + 0.5)
+            }
+          ],
+          false
+        );
+      }
+    }
+    console.log(
+      `  섬 공유지: 미니광장 ${commons.length}곳 · 차선 ${lanes.length}줄 (표본 ${laneCells.length}칸)`
     );
   }
 
@@ -1195,12 +1141,16 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
       JSON.stringify(
         {
           pitch: PITCH,
-          islands,
+          // gates(대문 각도)는 위에서 계산용으로만 쓰고 굽지 않는다
+          islands: islands.map(({district, x, z, r}) => ({district, x, z, r})),
           channels,
           lagoon: LAGOON,
           plazaDais: PLAZA_DAIS,
           crossings,
-          bridgeCells
+          bridgeCells,
+          commons,
+          lanes,
+          laneCells
         },
         null,
         2
@@ -1525,7 +1475,6 @@ clumps.forEach((c, n) => {
   });
 });
 
-
 // ─── 기존 레이아웃에 병합 ─────────────────────────────────────────────────────
 const layout = JSON.parse(readFileSync(LAYOUT, "utf8"));
 const kept = (layout.props ?? []).filter(p => !p.id.startsWith("ground-"));
@@ -1553,9 +1502,6 @@ if (V2_RECT) {
 }
 console.log(
   `  앞마당에 먹혀 뺀 길 칸: ${swallowed}개  ·  막다른 길로 깎은 칸: ${pruned}개`
-);
-console.log(
-  `  길이 안 닿은 건물: ${unreachable.length ? unreachable.join(", ") : "없음"}`
 );
 console.log(
   `  구역 포장  : ${pavedCount}장 (판석, 장당 2삼각형 = ${

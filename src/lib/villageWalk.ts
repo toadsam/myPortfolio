@@ -181,15 +181,26 @@ export function walkHeightAt(x: number, z: number): number {
   return terrainHeightAt(x, z);
 }
 
-/** 건물은 상자로 막는다 — 원으로 근사하면 모서리가 뭉개져 벽을 뚫는다 */
+/**
+ * 건물은 상자로 막는다 — 원으로 근사하면 모서리가 뭉개져 벽을 뚫는다.
+ *
+ * 건물이 임의 각으로 돌게 되면서(고리 배치) 축정렬 상자로는 안 된다 — 45도로
+ * 돌아선 건물이면 축정렬 외접 상자가 실제보다 41% 부풀어 문 앞이 막힌다.
+ * 점을 건물의 모델 좌표로 되돌려(역회전) 재면 돌아간 그대로 막힌다.
+ */
 const boxes = villageBuildings
   .filter(b => Math.hypot(b.position[0], b.position[2]) < WALK_RADIUS + 8)
-  .map(b => ({
-    x: b.position[0],
-    z: b.position[2],
-    hw: b.size[0] / 2,
-    hd: b.size[2] / 2
-  }));
+  .map(b => {
+    const r = b.rotationY ?? 0;
+    return {
+      x: b.position[0],
+      z: b.position[2],
+      hw: b.size[0] / 2,
+      hd: b.size[2] / 2,
+      cos: Math.cos(r),
+      sin: Math.sin(r)
+    };
+  });
 
 /**
  * 그 자리에 설 수 있나. 컨트롤러가 매 프레임 다음 위치로 물어본다.
@@ -206,11 +217,15 @@ export function isWalkable(x: number, z: number): boolean {
   if (!inLagoon(x, z)) return false;
 
   for (const b of boxes) {
+    const dx = x - b.x;
+    const dz = z - b.z;
+    if (Math.abs(dx) > 6 || Math.abs(dz) > 6) continue; // 먼 건물은 회전 계산 생략
+    // 모델 좌표로 역회전: rotationY=r 이 +X→(cos r,−sin r) 이므로 역은 전치
+    const lx = b.cos * dx - b.sin * dz;
+    const lz = b.sin * dx + b.cos * dz;
     if (
-      x > b.x - b.hw - CHARACTER_RADIUS &&
-      x < b.x + b.hw + CHARACTER_RADIUS &&
-      z > b.z - b.hd - CHARACTER_RADIUS &&
-      z < b.z + b.hd + CHARACTER_RADIUS
+      Math.abs(lx) < b.hw + CHARACTER_RADIUS &&
+      Math.abs(lz) < b.hd + CHARACTER_RADIUS
     )
       return false;
   }

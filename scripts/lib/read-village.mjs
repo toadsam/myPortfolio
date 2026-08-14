@@ -11,6 +11,112 @@ const CONSTANTS = "src/lib/constants.ts";
 
 const round2 = v => Math.round(v * 100) / 100;
 
+// ─── 회전 상자 (OBB) — **여기 하나뿐이다** ───────────────────────────────────
+// 건물이 임의 각으로 돌게 되면서(고리 배치) "축정렬 사각형" 전제가 사라졌다.
+// 발자국이 필요한 곳(겹침 검사·막힌 칸·원반 반지름·해자 검사)은 전부 이
+// 헬퍼를 쓴다. 규칙을 베껴 적으면 90도 스왑 시절처럼 세 곳이 따로 낡는다.
+//
+// 회전 규약: rotationY=r 은 모델 +X 를 (cos r, −sin r) 로, +Z 를 (sin r, cos r)
+// 로 돌린다(three.js Y축 회전). faceTo(dx,dz)=atan2(dx,dz) 가 정면(+Z)을
+// (dx,dz) 로 돌리는 것과 같은 규약이다.
+
+/** 회전을 반영한 건물 네 모서리(월드 XZ). b = {x, z, w, d, rotationY?} */
+export function cornersOf(b) {
+  const r = b.rotationY ?? 0;
+  const c = Math.cos(r);
+  const s = Math.sin(r);
+  const hw = b.w / 2;
+  const hd = b.d / 2;
+  return [
+    [-hw, -hd],
+    [hw, -hd],
+    [hw, hd],
+    [-hw, hd]
+  ].map(([lx, lz]) => [b.x + c * lx + s * lz, b.z + (-s * lx + c * lz)]);
+}
+
+/** (x,z) 가 회전 상자 안인가 (여유 m 포함). 점을 모델 좌표로 되돌려 잰다. */
+export function obbContains(b, x, z, m = 0) {
+  const r = b.rotationY ?? 0;
+  const c = Math.cos(r);
+  const s = Math.sin(r);
+  const dx = x - b.x;
+  const dz = z - b.z;
+  const lx = c * dx - s * dz;
+  const lz = s * dx + c * dz;
+  return Math.abs(lx) < b.w / 2 + m && Math.abs(lz) < b.d / 2 + m;
+}
+
+/**
+ * 두 회전 상자 사이 간격(SAT, 네 축 투영). 양수면 그만큼 떨어져 있고,
+ * 음수면 겹친다. 축정렬 시절의 `max(|dx|-(wA+wB)/2, …)` 를 대체한다.
+ */
+export function obbGap(A, B) {
+  const CA = cornersOf(A);
+  const CB = cornersOf(B);
+  let best = -Infinity;
+  for (const box of [A, B]) {
+    const r = box.rotationY ?? 0;
+    for (const [ax, az] of [
+      [Math.cos(r), -Math.sin(r)],
+      [Math.sin(r), Math.cos(r)]
+    ]) {
+      let a0 = Infinity,
+        a1 = -Infinity,
+        b0 = Infinity,
+        b1 = -Infinity;
+      for (const [x, z] of CA) {
+        const p = x * ax + z * az;
+        a0 = Math.min(a0, p);
+        a1 = Math.max(a1, p);
+      }
+      for (const [x, z] of CB) {
+        const p = x * ax + z * az;
+        b0 = Math.min(b0, p);
+        b1 = Math.max(b1, p);
+      }
+      best = Math.max(best, Math.max(b0 - a1, a0 - b1));
+    }
+  }
+  return best;
+}
+
+/** 건물 모서리에서 섬 물가까지의 둘레 여유 — 원반 섬 반지름의 일부다 */
+export const ISLAND_PAD = 1.5;
+
+/**
+ * 구역이 앉을 방위(컨셉 이미지의 육각 배치). atan2(z,x) 라디안.
+ *
+ *        PROJECTS(북)
+ *   EXPERIENCE      SKILLS
+ *   STUDY           LIFE
+ *        CONTACT(남)
+ *
+ * 배치기(arrange-district-round)와 솔버(solve-district-ring)가 **같은 표**를
+ * 봐야 한다 — 배치기는 이 방위로 입구 호를 비우고, 솔버는 이 방위로 섬을 민다.
+ * 서로 다른 표를 보면 입구가 광장 반대편에 열린다.
+ */
+export const TARGET_BEARING = {
+  projects: -Math.PI / 2,
+  skills: -Math.PI / 6,
+  life: Math.PI / 6,
+  contact: Math.PI / 2,
+  study: (Math.PI * 5) / 6,
+  experience: (-Math.PI * 5) / 6
+};
+
+/**
+ * 구역 원반 섬 — 중심은 **고리 배치의 중심(hub)**, 반지름은 가장 먼 건물
+ * 모서리 + 둘레 여유. 솔버·바닥 생성기·검사가 전부 이걸 써야 같은 섬을 본다.
+ */
+export function discOfDistrict(list, hub) {
+  let r = 0;
+  for (const b of list)
+    for (const [x, z] of cornersOf(b))
+      r = Math.max(r, Math.hypot(x - hub.x, z - hub.z));
+  return {x: hub.x, z: hub.z, r: round2(r + ISLAND_PAD)};
+}
+
 /**
  * constants.ts 의 건물 표를 **아무 배치 보정도 하지 않은 상태**로 읽는다.
  *
@@ -141,11 +247,47 @@ export function readWaterHalf() {
   };
 }
 
-/** 구역이 광장에서 시작해야 하는 거리 — 솔버의 목표값이자 검사 기준 */
+/** 구역 섬 물가가 광장에서 시작해야 하는 거리 — 솔버의 목표값이자 검사 기준 */
 export function readDistrictInner(source = readFileSync(CONSTANTS, "utf8")) {
   const m = source.match(/export const DISTRICT_INNER\s*=\s*([\d.]+)/);
   if (!m) throw new Error(`${CONSTANTS} 에서 DISTRICT_INNER 를 못 찾았습니다`);
   return Number(m[1]);
+}
+
+/**
+ * 구역 고리 배치의 중심(hub) 표 — arrange-district-round.mjs 가 적는다.
+ * 원시 좌표(배율·이동 전)라, 월드로 쓰려면 SPREAD 와 districtShift 를 얹어야
+ * 한다(readHubs). 섬 원반·미니광장·차선이 전부 이 점을 중심으로 돈다.
+ */
+export function readDistrictHub(source = readFileSync(CONSTANTS, "utf8")) {
+  const block = source.match(/districtHub[^=]*=\s*\{([\s\S]*?)\n\};/);
+  if (!block)
+    throw new Error(
+      `${CONSTANTS} 에서 districtHub 표를 못 찾았습니다 — \`node scripts/arrange-district-round.mjs --write\` 로 만드세요`
+    );
+  const out = {};
+  for (const m of block[1].matchAll(
+    /([\w-]+):\s*\[\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\]/g
+  ))
+    out[m[1]] = [Number(m[2]), Number(m[3])];
+  if (!Object.keys(out).length)
+    throw new Error(`${CONSTANTS} 의 districtHub 가 비었습니다`);
+  return out;
+}
+
+/** 구역 hub 의 **월드 좌표** — 건물과 같은 변환(SPREAD + shift)을 태운다 */
+export function readHubs(source = readFileSync(CONSTANTS, "utf8")) {
+  const raw = readDistrictHub(source);
+  const SHIFT = readDistrictShift(source);
+  const spread = Number(
+    source.match(/export const SPREAD\s*=\s*([\d.]+)/)?.[1]
+  );
+  const out = {};
+  for (const [d, [px, pz]] of Object.entries(raw)) {
+    const [sx, sz] = SHIFT[d] ?? [0, 0];
+    out[d] = {x: round2(px * spread + sx), z: round2(pz * spread + sz)};
+  }
+  return out;
 }
 
 export function readVillage() {
@@ -154,21 +296,21 @@ export function readVillage() {
 
   // constants.ts 의 `placeInDistrict` 와 **한 줄까지 같은 식**이어야 한다.
   // (알고리즘이 아니라 표를 더하는 것뿐이라 어긋날 여지가 거의 없다)
+  //
+  // size 는 **모델 기준 그대로**다. 예전엔 90도짜리만 폭/깊이를 맞바꿨는데,
+  // 임의 각 회전(고리 배치)이 들어오며 그 요령이 사라졌다 — 발자국이 필요한
+  // 소비자는 w/d 를 직접 쓰지 말고 cornersOf/obbContains/obbGap 을 쓴다.
   const buildings = raw.map(b => {
     const [sx, sz] = SHIFT[b.district] ?? [0, 0];
-    // 90도로 돌아선 건물은 월드에서 폭과 깊이가 맞바뀐다 — constants.ts 의
-    // villageBuildings 내보내기와 같은 규칙이다. 여기서 안 바꾸면 생성기·검사만
-    // 돌기 전 발자국을 본다.
-    const quarter = Math.abs(Math.abs(b.rotationY ?? 0) - Math.PI / 2) < 0.1;
-    const [w, d] = quarter ? [b.d, b.w] : [b.w, b.d];
     return {
       id: b.id,
       district: b.district,
       x: round2(b.px * SPREAD + sx),
       z: round2(b.pz * SPREAD + sz),
-      w: round2(w * BUILDING_SCALE),
+      w: round2(b.w * BUILDING_SCALE),
       h: round2(b.h * BUILDING_SCALE),
-      d: round2(d * BUILDING_SCALE)
+      d: round2(b.d * BUILDING_SCALE),
+      rotationY: b.rotationY ?? 0
     };
   });
 
@@ -285,10 +427,21 @@ export function blockOf(list) {
     j0 = Infinity,
     j1 = -Infinity;
   for (const b of list) {
-    i0 = Math.min(i0, Math.floor((b.x - b.w / 2 + HALF) / PITCH));
-    i1 = Math.max(i1, Math.ceil((b.x + b.w / 2 - HALF) / PITCH));
-    j0 = Math.min(j0, Math.floor((b.z - b.d / 2 + HALF) / PITCH));
-    j1 = Math.max(j1, Math.ceil((b.z + b.d / 2 - HALF) / PITCH));
+    // 회전 상자의 축정렬 외접 사각형 — 임의 각이면 네 모서리가 정한다
+    let x0 = Infinity,
+      x1 = -Infinity,
+      z0 = Infinity,
+      z1 = -Infinity;
+    for (const [x, z] of cornersOf(b)) {
+      x0 = Math.min(x0, x);
+      x1 = Math.max(x1, x);
+      z0 = Math.min(z0, z);
+      z1 = Math.max(z1, z);
+    }
+    i0 = Math.min(i0, Math.floor((x0 + HALF) / PITCH));
+    i1 = Math.max(i1, Math.ceil((x1 - HALF) / PITCH));
+    j0 = Math.min(j0, Math.floor((z0 + HALF) / PITCH));
+    j1 = Math.max(j1, Math.ceil((z1 - HALF) / PITCH));
   }
   return {
     x0: i0 * PITCH - HALF,

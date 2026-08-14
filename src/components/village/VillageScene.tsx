@@ -56,6 +56,8 @@ import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
 import {makeBankTexture} from "@/lib/terraceBank";
 import {
   DAIS_RADII,
+  ISLAND_COMMONS,
+  ISLAND_LANES,
   ISLANDS,
   isWater,
   PLAZA_DAIS,
@@ -242,7 +244,10 @@ function Ground() {
         positions.push(x, reliefAt(x, z), z);
         // circleGeometry 의 uv 와 같은 규칙(외접 정사각형 0~1) — 위의
         // map.repeat 계산이 그대로 맞는다.
-        gUvs.push((x - cx) / (ISLAND_RADIUS * 2) + 0.5, (z - cz) / (ISLAND_RADIUS * 2) + 0.5);
+        gUvs.push(
+          (x - cx) / (ISLAND_RADIUS * 2) + 0.5,
+          (z - cz) / (ISLAND_RADIUS * 2) + 0.5
+        );
       }
     }
     for (let s = 0; s < SEG; s++) {
@@ -733,8 +738,8 @@ function Waterways() {
     const shoreDist = shoreDistAt;
 
     const STEP = 0.85;
-    const xs = LAGOON.map((p) => p.x);
-    const zs = LAGOON.map((p) => p.z);
+    const xs = LAGOON.map(p => p.x);
+    const zs = LAGOON.map(p => p.z);
     const x0 = Math.min(...xs);
     const x1 = Math.max(...xs);
     const z0 = Math.min(...zs);
@@ -1267,7 +1272,10 @@ function PlazaDais() {
     // ── 옆면: 계단 단면을 한 바퀴 두른다. 높이는 PLAZA_STEP 에 맞춰 늘인다 —
     //    표는 0.55 기준으로 적혀 있으므로 단 높이를 바꿔도 비율이 유지된다.
     const k = PLAZA_STEP / 0.55;
-    const profile: [number, number][] = DAIS_PROFILE.map(([o, y]) => [o, y * k]);
+    const profile: [number, number][] = DAIS_PROFILE.map(([o, y]) => [
+      o,
+      y * k
+    ]);
     const wp: number[] = [];
     const wuv: number[] = [];
     const widx: number[] = [];
@@ -1540,6 +1548,104 @@ function TerraceTops() {
         polygonOffsetFactor={2}
         polygonOffsetUnits={4}
       />
+    </mesh>
+  );
+}
+
+// ─── 섬 공유지: 미니광장 + 차선 ──────────────────────────────────────────────
+// 컨셉의 섬 내부는 동심원이다 — 가운데 포장 미니광장(분수 자리), 문 앞을 도는
+// 안쪽 차선, 담장 안쪽을 도는 테두리 차선, 다리로 나가는 방사 스포크.
+// 격자 타일로 방사선을 그리면 계단처럼 삐뚤어지므로, 좌표는 생성기
+// (generate-ground-layout → villageTerraces.json)가 내보내고 여기서는 리본
+// 메시로만 그린다. 재질은 축대·회랑과 같은 돌(makeBankTexture) — 섬의 돌
+// 요소가 한 재질로 묶여야 "깎아 만든 땅"으로 읽힌다.
+const LANE_W = 1.15;
+
+function IslandCommons() {
+  const texture = useMemo(() => makeBankTexture(), []);
+
+  const geometry = useMemo(() => {
+    if (TERRACE_STEP === 0) return null;
+    const pos: number[] = [];
+    const uv: number[] = [];
+    const idx: number[] = [];
+
+    // ① 미니광장 원반 — 부챗살. 감김은 TerraceTops 와 같다(+Y).
+    for (const c of ISLAND_COMMONS) {
+      const N = Math.max(20, Math.round((2 * Math.PI * c.plazaR) / 0.6));
+      const center = pos.length / 3;
+      pos.push(c.x, TERRACE_STEP + 0.02, c.z);
+      uv.push(c.x / 1.88, c.z / 1.88);
+      for (let k = 0; k < N; k++) {
+        const a = (k / N) * Math.PI * 2;
+        const x = c.x + Math.cos(a) * c.plazaR;
+        const z = c.z + Math.sin(a) * c.plazaR;
+        pos.push(x, TERRACE_STEP + 0.02, z);
+        uv.push(x / 1.88, z / 1.88);
+      }
+      for (let k = 0; k < N; k++)
+        idx.push(center, center + 1 + ((k + 1) % N), center + 1 + k);
+    }
+
+    // ② 차선 리본 — 마디 접선의 수직으로 좌우 반폭. 닫힌 고리는 첫 마디를
+    //    한 번 더 밟아 이음매를 붙인다.
+    for (const lane of ISLAND_LANES) {
+      const p = lane.pts;
+      const n = p.length;
+      if (n < 2) continue;
+      const base = pos.length / 3;
+      const count = lane.closed ? n + 1 : n;
+      let arc = 0;
+      for (let i = 0; i < count; i++) {
+        const cur = p[i % n];
+        const prev = p[(i - 1 + n) % n];
+        const next = p[(i + 1) % n];
+        const useP = lane.closed || i > 0 ? prev : cur;
+        const useN = lane.closed || i < n - 1 ? next : cur;
+        let dx = useN.x - useP.x;
+        let dz = useN.z - useP.z;
+        const l = Math.hypot(dx, dz) || 1;
+        dx /= l;
+        dz /= l;
+        if (i > 0) {
+          const q = p[(i - 1 + n) % n];
+          arc += Math.hypot(cur.x - q.x, cur.z - q.z);
+        }
+        pos.push(
+          cur.x - dz * (LANE_W / 2),
+          TERRACE_STEP + 0.03,
+          cur.z + dx * (LANE_W / 2)
+        );
+        uv.push(arc / 1.88, 0.05);
+        pos.push(
+          cur.x + dz * (LANE_W / 2),
+          TERRACE_STEP + 0.03,
+          cur.z - dx * (LANE_W / 2)
+        );
+        uv.push(arc / 1.88, 0.55);
+      }
+      // 감김: (L, L+1, R) 순이 +Y — 반대로 감으면 위에서 통째로 컬링된다
+      // (고리 회랑에서 한 번 당한 함정이다)
+      for (let i = 0; i + 1 < count; i++) {
+        const a = base + i * 2;
+        idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3);
+      }
+    }
+
+    const geo = new BufferGeometry();
+    geo.setAttribute("position", new Float32BufferAttribute(pos, 3));
+    geo.setAttribute("uv", new Float32BufferAttribute(uv, 2));
+    geo.setIndex(idx);
+    geo.computeVertexNormals();
+    return geo;
+  }, []);
+
+  if (!geometry) return null;
+  // TerraceTops(잔디 뚜껑)가 polygonOffset 으로 뒤로 밀려 있으므로 여기는
+  // 기본값이면 이긴다. 몇 cm 위에 떠 있어 그림자도 자연스럽다.
+  return (
+    <mesh geometry={geometry} receiveShadow>
+      <meshStandardMaterial map={texture} roughness={0.92} metalness={0} />
     </mesh>
   );
 }
@@ -2233,6 +2339,7 @@ function VillageSceneImpl({
           <TerraceBanks />
           <PlazaDais />
           <PlazaRingWalk />
+          <IslandCommons />
           <DistantHills />
           {PLAZA_LANDMARK_READY ? null : <Statue />}
 

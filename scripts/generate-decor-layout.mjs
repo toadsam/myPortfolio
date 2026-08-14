@@ -15,7 +15,8 @@ import {
   readMoat,
   readIsland,
   readWalkRadius,
-  readWaterHalf
+  readWaterHalf,
+  obbContains
 } from "./lib/read-village.mjs";
 
 const LAYOUT = "src/data/propsLayout.json";
@@ -100,7 +101,7 @@ const inLagoon = (x, z) => {
 
 const daisRadiusAt = ang => {
   if (DAIS_LINE.length < 8) return 0;
-  const t = ((ang / (Math.PI * 2)) % 1 + 1) % 1;
+  const t = (((ang / (Math.PI * 2)) % 1) + 1) % 1;
   const p = DAIS_LINE[Math.floor(t * DAIS_LINE.length) % DAIS_LINE.length];
   return Math.hypot(p.x, p.z);
 };
@@ -129,7 +130,9 @@ const SHORE_KEEP = 0.9;
 function nearShore(x, z) {
   if (!onDais(x, z) && !onBlock(x, z)) return false;
   for (let a = 0; a < Math.PI * 2; a += Math.PI / 8)
-    if (inInnerWater(x + Math.cos(a) * SHORE_KEEP, z + Math.sin(a) * SHORE_KEEP))
+    if (
+      inInnerWater(x + Math.cos(a) * SHORE_KEEP, z + Math.sin(a) * SHORE_KEEP)
+    )
       return true;
   return false;
 }
@@ -423,30 +426,42 @@ const discs = OUTER.map(b => ({
 const HUB_DISC = layout.props.find(p => p.id === "ground-plaza-center");
 const HUB_RADIUS = (HUB_DISC?.scale ?? 4.84) * PLAZA_RADIUS_AT_1;
 
-// 길 — 바닥 레이아웃에 깔린 길 타일이 곧 길이다.
+// 길 — 바닥 레이아웃에 깔린 길 타일 + 다리 칸 + **섬 차선**이 곧 길이다.
 //
 // **다리로 건너는 칸도 길이다.** 바닥 생성기가 물이 지나는 길 타일을 걷어내는데
 // (안 그러면 길이 물보다 1cm 높아 물을 덮는다), 그 칸을 길에서 빼면 여기 규칙이
 // 줄줄이 어긋난다: 담장이 그 자리를 "길이 아니다"로 보고 **구역 대문을 막아
 // 버리고**(문 49곳 → 40곳), 가로등·나무가 다리 앞에 선다.
-// 걷어낸 칸 목록은 생성기가 bridgeCells 로 같이 내보낸다.
+//
+// 섬 차선(laneCells)도 같은 이유로 길이다 — 담장은 스포크가 테두리를 가로지르는
+// 자리에서 끊겨야 하고, 프롭이 차선 위에 서면 안 된다. 단, 가로등·깃대처럼
+// **길 방향**이 필요한 규칙은 격자 타일(tileRoads)에만 돌린다 — 차선은 격자가
+// 아니라 이웃 판정(hasWE)이 안 먹는다. 차선용 가로등은 접선(tx,tz)을 아는
+// 전용 절이 따로 있다.
+const tileRoads = layout.props
+  .filter(p => p.glb.includes("/path-"))
+  .map(p => ({x: p.position[0], z: p.position[2]}));
+const LANE_CELLS = TERR.laneCells ?? [];
+/** 방사 스포크 표본만 — 담장을 끊는 "대문" 판정은 이것만 본다.
+ *  고리 차선(테두리를 도는 것)까지 대문으로 치면 담장이 전부 걷힌다. */
+const SPOKE_CELLS = LANE_CELLS.filter(c => c.s);
+const nearSpoke = (x, z, d = 1.3) =>
+  SPOKE_CELLS.some(c => Math.hypot(c.x - x, c.z - z) < d);
 const roads = [
-  ...layout.props
-    .filter(p => p.glb.includes("/path-"))
-    .map(p => ({x: p.position[0], z: p.position[2]})),
-  ...(JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"))
-    .bridgeCells ?? [])
+  ...tileRoads,
+  ...(TERR.bridgeCells ?? []),
+  ...LANE_CELLS.map(c => ({x: c.x, z: c.z}))
 ];
 if (roads.length < 20)
   throw new Error(
     `길 타일을 ${roads.length}장밖에 못 찾았습니다 — 먼저 바닥을 생성하세요`
   );
 
-// 타일 간격 — 가장 가까운 두 타일 사이 거리
+// 타일 간격 — 격자 타일끼리 가장 가까운 거리 (차선 표본은 간격이 달라 뺀다)
 const PITCH = round3(
   Math.min(
-    ...roads.slice(0, 40).flatMap((a, i) =>
-      roads
+    ...tileRoads.slice(0, 40).flatMap((a, i) =>
+      tileRoads
         .slice(0, 40)
         .filter((_, j) => j !== i)
         .map(b => Math.hypot(a.x - b.x, a.z - b.z))
@@ -466,11 +481,9 @@ const onRoad = (x, z, slack = 0) =>
 const onDisc = (x, z, slack = 0) =>
   discs.some(d => Math.hypot(d.x - x, d.z - z) < d.r + slack) ||
   Math.hypot(HUB.x - x, HUB.z - z) < HUB_RADIUS + slack;
+// 건물이 임의 각으로 돌므로(고리 배치) 발자국은 회전 상자(OBB)로 잰다
 const onBuilding = (x, z, slack = 0) =>
-  buildings.some(
-    b =>
-      Math.abs(b.x - x) < b.w / 2 + slack && Math.abs(b.z - z) < b.d / 2 + slack
-  );
+  buildings.some(b => obbContains(b, x, z, slack));
 
 const props = [];
 const taken = [];
@@ -664,42 +677,31 @@ const SIGN_OF = {
 /** 구역별 입구 지점 — ⑬ 깃대 행렬이 이 자리를 다시 쓴다 */
 const gateways = [];
 
-for (const district of Object.keys(centers)) {
-  const c = centers[district];
-  if (!c) continue;
-  const len = Math.hypot(c.x, c.z) || 1;
-  const dir = {x: c.x / len, z: c.z / len}; // 광장 → 지구 방향
-
-  // 지구로 가는 길 중 광장 쪽에 있는 칸을 고른다
-  const approach = roads
-    .filter(r => Math.hypot(r.x, r.z) < len - PITCH)
-    .sort(
-      (a, b) =>
-        Math.hypot(a.x - c.x, a.z - c.z) - Math.hypot(b.x - c.x, b.z - c.z)
-    )[0];
-  if (!approach) continue;
-
+// 대문 자리는 이제 길 칸이 아니라 **섬의 광장 쪽 테두리**다 — 둑길 스포크가
+// 테두리를 가로지르는 각도(방위 그대로)에 아치를 세우면, 다리를 건너 섬에
+// 오르는 사람의 머리 위로 현판이 지나간다.
+for (const isl of TERR_ISLANDS) {
+  const district = isl.district;
+  const len = Math.hypot(isl.x, isl.z) || 1;
+  const dir = {x: isl.x / len, z: isl.z / len}; // 광장 → 섬 방향
+  // 테두리에서 1.15 안쪽 — 물가 금지(nearShore 0.9)에 안 걸리는 한계선
+  const at = {
+    x: isl.x - dir.x * (isl.r - 1.15),
+    z: isl.z - dir.z * (isl.r - 1.15)
+  };
   const perp = {x: -dir.z, z: dir.x};
   const facing = faceTo(-dir.x, -dir.z); // 광장 쪽을 본다
   const arch = ARCH_OF[district];
-  gateways.push({
-    district,
-    at: approach,
-    dir,
-    perp,
-    facing,
-    arch: Boolean(arch)
-  });
+  gateways.push({district, at, dir, perp, facing, arch: Boolean(arch)});
 
   if (arch) {
-    // 아치는 길을 **가로질러** 선다 — 비켜 세우면 그냥 큰 간판이 된다.
-    // 다리 사이로 길이 지나가야 문으로 읽힌다.
-    place(`arch-${district}`, arch, approach.x, approach.z, facing, {gap: 0.1});
+    // 아치는 스포크 차선을 **가로질러** 선다 — 비켜 세우면 그냥 큰 간판이 된다.
+    place(`arch-${district}`, arch, at.x, at.z, facing, {gap: 0.1});
 
-    // 아치 양옆을 받치는 석축. 길 폭 밖으로 밀어 세워야 통행을 안 막는다.
+    // 아치 양옆을 받치는 석축. 차선 폭 밖으로 밀어 세워야 통행을 안 막는다.
     for (const side of [-1, 1]) {
-      const px = approach.x + perp.x * (ROAD_SIDE + 1.15) * side;
-      const pz = approach.z + perp.z * (ROAD_SIDE + 1.15) * side;
+      const px = at.x + perp.x * (ROAD_SIDE + 1.15) * side;
+      const pz = at.z + perp.z * (ROAD_SIDE + 1.15) * side;
       if (onBuilding(px, pz, 0.4) || onDisc(px, pz, 0.1)) continue;
       place(
         `pier-${district}-${side > 0 ? "r" : "l"}`,
@@ -712,15 +714,38 @@ for (const district of Object.keys(centers)) {
     }
   } else {
     // 아치가 없는 구역 — 예전처럼 길가 팻말
-    const x = approach.x + perp.x * (ROAD_SIDE + 0.55);
-    const z = approach.z + perp.z * (ROAD_SIDE + 0.55);
+    const x = at.x + perp.x * (ROAD_SIDE + 0.55);
+    const z = at.z + perp.z * (ROAD_SIDE + 0.55);
     place(`sign-${district}`, SIGN_OF[district], x, z, facing, {gap: 1.2});
   }
+}
 
-  // 입구 좌우 깃대는 ⑬ 이 길 축을 따라 세운다. 여기서 구역 방향(dir)으로
-  // 재 보려다 실패했다 — dir 이 사선인 구역에서는 좌우 오프셋이 x·z 양쪽에
-  // 나뉘어 걸리는 바람에 여섯 쌍 중 두 개만 살아남았다.
-  // 길은 축 정렬 격자라, 길 칸의 이웃을 보고 방향을 잡는 쪽이 맞다.
+// ─── ①-b 섬 미니광장 한가운데 ────────────────────────────────────────────────
+// 컨셉의 섬마다 가운데 둥근 광장과 **분수(또는 기념물)**가 있다 — 건물들이
+// 이걸 둘러싸고 앉아야 "둘러앉음"이 완성된다. 자리는 생성기가 계산한
+// commons(미니광장) 중심 그대로다. 여섯 개가 전부 분수면 복제 티가 나므로
+// 구역 성격대로 섞는다.
+{
+  const CENTER_OF = {
+    projects: "fountain", // 프로젝트 — 광장 분수
+    skills: "lantern-bearer", // 기술 — 등불 든 석상
+    life: "fountain", // 생활 — 분수 (컨셉 이미지의 LIFE 도 분수다)
+    experience: "well", // 경험 — 우물 (기록을 길어 올리는 자리)
+    study: "candle-tome", // 학습 — 촛불 얹은 큰 책
+    contact: "notice-board" // 연락 — 게시판
+  };
+  let put = 0;
+  for (const c of TERR.commons ?? []) {
+    const kind = CENTER_OF[c.district] ?? "fountain";
+    // 광장 쪽을 본다 — 다리를 건너 들어온 사람 정면
+    if (
+      place(`plazita-${c.district}`, kind, c.x, c.z, faceTo(-c.x, -c.z), {
+        gap: 0.5
+      })
+    )
+      put += 1;
+  }
+  console.log(`  섬 미니광장 기념물 ${put}/${(TERR.commons ?? []).length}곳`);
 }
 
 // 중앙 광장 간판은 원반 남쪽 가장자리에서 바깥(남)을 본다
@@ -826,7 +851,8 @@ for (const {kind, angle} of PLAZA_LANDMARK_RING) {
   // 셋뿐이던 랜드마크 고리에 셋을 더해 60° 간격 여섯으로 만드는 편이,
   // 부감에서 광장이 동심원으로 읽히는 데 훨씬 낫다.
   PLAZA_LANDMARK_RING.forEach(({angle}, n) => {
-    const next = PLAZA_LANDMARK_RING[(n + 1) % PLAZA_LANDMARK_RING.length].angle;
+    const next =
+      PLAZA_LANDMARK_RING[(n + 1) % PLAZA_LANDMARK_RING.length].angle;
     const span = (next - angle + Math.PI * 2) % (Math.PI * 2);
     const mid = angle + span / 2;
     const x = HUB.x + Math.cos(mid) * (HUB_RADIUS + 1.5);
@@ -861,13 +887,16 @@ const blockRect = new Map();
   // 컨셉 아트의 블록은 이름표 붙은 건물 서넛 뒤로 이름 없는 집이 대여섯 겹으로
   // 들어차 있다. 7/6/6/6/6/5 로 요청해 25채가 섰는데 아직 성겼다 — 요청을 올린다
   // (자리를 못 찾으면 알아서 덜 선다).
+  // 고리 배치로 바꾸며 한 채당 6개 → 구역당 6~9로 줄였다. 섬 내부가 고리·차선·
+  // 미니광장으로 이미 차서 민가가 낄 자리도 줄었고, 예산도 1,800k 를 넘겼다
+  // (민가 한 채가 8~12k 라 여기가 가장 굵은 손잡이다).
   const PER_DISTRICT = {
-    projects: 11,
-    skills: 10,
-    life: 10,
-    experience: 9,
-    study: 9,
-    contact: 8
+    projects: 9,
+    skills: 8,
+    life: 8,
+    experience: 7,
+    study: 7,
+    contact: 6
   };
   // 두 종으로 12채를 돌려쓰니 위에서 보면 같은 집이 여섯 번씩 나왔다. 세 종이면
   // 한 구역 안에서는 같은 집이 두 번 안 나온다(구역당 최대 3채).
@@ -1024,9 +1053,16 @@ const blockRect = new Map();
       const nz = Math.sin(a);
       const x = round3(isl.x + nx * R);
       const z = round3(isl.z + nz * R);
-      // 길이 지나는 자리는 비운다 = 구역 대문. 그 자리에 **계단**을 놓는다 —
-      // 단이 1.1 이라 그냥 두면 길이 턱을 뛰어오른다.
-      if (onRoad(x, z, 0.75)) {
+      // **스포크(다리로 나가는 방사 차선)나 격자 길이 테두리를 가로지르는
+      // 자리만** 비운다 = 구역 대문. onRoad 를 쓰면 안 된다 — 테두리를 도는
+      // 고리 차선(담장 안쪽 0.9)이 전부 "길"로 잡혀 담장이 한 토막도 못 선다
+      // (실제로 182칸 전부 비었다).
+      if (
+        nearSpoke(x, z, 1.3) ||
+        tileRoads.some(
+          r => Math.abs(r.x - x) < 1.35 && Math.abs(r.z - z) < 1.35
+        )
+      ) {
         openings += 1;
         gateSteps.push({x, z, nx, nz});
         continue;
@@ -1057,8 +1093,14 @@ const blockRect = new Map();
       if (here.some(q => Math.hypot(q.x - g.x, q.z - g.z) < 3.6)) continue;
       if (onBuilding(g.x, g.z, 0.2) || onDisc(g.x, g.z, 0.05)) continue;
       // 담장을 비운 이유가 "길이 스쳤다" 정도면 계단이 잔디 위에 혼자 선다.
-      // 길 **한복판**일 때만 놓는다 — 30곳에서 대문다운 자리만 남는다.
-      if (!onRoad(g.x, g.z, 0.35)) continue;
+      // 스포크 **한복판**일 때만 놓는다 — 대문다운 자리만 남는다.
+      if (
+        !nearSpoke(g.x, g.z, 0.8) &&
+        !tileRoads.some(
+          r => Math.abs(r.x - g.x) < 1.0 && Math.abs(r.z - g.z) < 1.0
+        )
+      )
+        continue;
       // terrace-stair 는 **−Z 쪽으로 오른다**(bake-prop 옆면으로 확인 — 왼쪽이
       // −Z 이고 거기가 높다). 그러니 낮은 쪽 +Z 가 **구역 바깥**을 봐야 한다.
       // 직접 구웠던 쐐기는 반대로 올라가서 여기 부호가 뒤집혀 있었다.
@@ -1078,11 +1120,17 @@ const blockRect = new Map();
       // 오를 턱 자체가 없다 — 그런데도 놓았더니 30개 중 9개가 평지 위에 선
       // 계단이 됐다(밑동 지면 1.1, 윗끝 지면 1.1). 격자로 검산해서야 찾았다.
       if (onPlateau(sx, sz)) continue;
-      place(`gatestep-${put}`, "terrace-stair", sx, sz, round3(facingOut), {
-        gap: 1.4
-      });
-      here.push({x: sx, z: sz});
-      put += 1;
+      // 다리 어귀 계단은 얕은 물에 발을 담근 채 선다 — 물 금지를 일부러 푼다.
+      // (돌계단이 수면에서 시작해 섬 테두리에 닿는, 컨셉의 그 그림이다)
+      if (
+        place(`gatestep-${put}`, "terrace-stair", sx, sz, round3(facingOut), {
+          gap: 1.4,
+          onWater: true
+        })
+      ) {
+        here.push({x: sx, z: sz});
+        put += 1;
+      }
     }
     console.log(`  구역 대문 계단 ${put}곳`);
   }
@@ -1131,7 +1179,7 @@ const gates = [];
 {
   const isRoad = (x, z) =>
     roads.some(r => Math.abs(r.x - x) < 0.05 && Math.abs(r.z - z) < 0.05);
-  const ends = roads
+  const ends = tileRoads
     .map(r => {
       const around = [
         [PITCH, 0],
@@ -1181,7 +1229,7 @@ const gates = [];
 {
   const EVERY = 3; // 몇 칸마다
   const REACH = 18; // 광장에서 이 거리까지만 (깃대가 제대로 생겼으니 조금 더 멀리)
-  const onAxis = roads
+  const onAxis = tileRoads
     .filter(r => Math.abs(r.x) < HALF_TILE || Math.abs(r.z) < HALF_TILE)
     .filter(r => Math.hypot(r.x, r.z) < REACH)
     .sort((a, b) => Math.hypot(a.x, a.z) - Math.hypot(b.x, b.z));
@@ -1741,7 +1789,7 @@ const nearLandmark = (x, z) =>
 const LANTERN_GAP = 1.1;
 const LANTERN_EVERY = 2;
 {
-  const sorted = roads.slice().sort((a, b) => a.z - b.z || a.x - b.x);
+  const sorted = tileRoads.slice().sort((a, b) => a.z - b.z || a.x - b.x);
   let n = 0;
   const why = {원반: 0, 건물: 0, 담장: 0, 자리없음: 0};
   for (let i = 0; i < sorted.length; i += LANTERN_EVERY) {
@@ -1789,8 +1837,46 @@ const LANTERN_EVERY = 2;
     void put;
   }
   console.log(
-    `  가로등 ${n}개 (길 ${roads.length}장 · ${LANTERN_EVERY}장마다 시도) — ` +
+    `  가로등 ${n}개 (격자 길 ${tileRoads.length}장 · ${LANTERN_EVERY}장마다 시도) — ` +
       `막힌 자리: 원반 ${why.원반} · 건물 ${why.건물} · 담장 ${why.담장} · 너무붙음 ${why.자리없음}`
+  );
+}
+
+// ─── ④-b 차선 가로등 ─────────────────────────────────────────────────────────
+// 컨셉 이미지에서 섬을 섬으로 읽히게 하는 건 **차선을 따라 줄지어 선 등불**이다
+// — 밤 부감에서 섬마다 빛 고리 두 겹(안쪽 차선·테두리 차선)이 그려진다.
+// 격자 가로등(④)은 길 방향을 이웃 칸으로 판정해서 차선(비격자)에는 못 세운다.
+// 차선 표본(laneCells)은 접선(tx,tz)을 가지고 있으므로 그 수직으로 비켜 세운다.
+//
+// 간격: 표본이 1.25 간격이니 5칸 = 6.25유닛. 등 하나가 1,780 삼각형이라
+// 촘촘함과 예산의 절충점이다(전체 청구서는 맨 아래 삼각형 표가 알려 준다).
+{
+  const EVERY = 5;
+  let n = 0;
+  for (let i = 0; i < LANE_CELLS.length; i += EVERY) {
+    const c = LANE_CELLS[i];
+    // 좌우 교대로 시작하되, 막히면(테두리 차선의 바깥쪽은 물가 금지에 걸린다)
+    // 반대쪽에 세운다 — 격자 가로등(④)과 같은 요령이다.
+    const first = n % 2 === 0 ? 1 : -1;
+    for (const side of [first, -first]) {
+      const px = c.x + -c.tz * (ROAD_SIDE + 0.4) * side;
+      const pz = c.z + c.tx * (ROAD_SIDE + 0.4) * side;
+      if (
+        onRoad(px, pz, 0.25) ||
+        onDisc(px, pz, 0.1) ||
+        onBuilding(px, pz, 0.35) ||
+        onWall(px, pz, 0.2) ||
+        !free(px, pz, 1.3)
+      )
+        continue;
+      if (place(`lanelamp-${n}`, "lantern-post", px, pz, 0, {gap: 1.3})) {
+        n += 1;
+        break;
+      }
+    }
+  }
+  console.log(
+    `  차선 가로등 ${n}개 (표본 ${LANE_CELLS.length}칸 · ${EVERY}칸마다)`
   );
 }
 
@@ -2288,7 +2374,7 @@ const BELT_DEPTH = 12;
     "far-bush",
     "boulder"
   ];
-  const sorted = roads.slice().sort((a, b) => a.z - b.z || a.x - b.x);
+  const sorted = tileRoads.slice().sort((a, b) => a.z - b.z || a.x - b.x);
   let n = 0;
   for (const r of sorted) {
     const hasWE = sorted.some(
@@ -2334,7 +2420,7 @@ const BELT_DEPTH = 12;
 // 먼저 차지해 버려서 화단이 34→15, 가로등이 13→4, 앞마당 소품이 25→5 로 줄었다.
 {
   const key = (x, z) => `${Math.round(x / PITCH)}_${Math.round(z / PITCH)}`;
-  const roadAt = new Set(roads.map(r => key(r.x, r.z)));
+  const roadAt = new Set(tileRoads.map(r => key(r.x, r.z)));
   const has = (x, z) => roadAt.has(key(x, z));
   /** 참배로 = 바닥 생성기의 i=0 축(남쪽 진입로 + 북쪽 파고다 길) */
   const onAxis = r => Math.abs(r.x) < PITCH * 0.6;
@@ -2398,9 +2484,7 @@ const BELT_DEPTH = 12;
     /^decor-(gatestep-|arch-|gate-|pier-)/.test(p.id)
   );
   const nearGate = (x, z) =>
-    gateProps.some(
-      p => Math.hypot(p.position[0] - x, p.position[2] - z) < 2.4
-    );
+    gateProps.some(p => Math.hypot(p.position[0] - x, p.position[2] - z) < 2.4);
   let put = 0;
   let gates = 0;
   let cutWall = 0;
@@ -2477,14 +2561,17 @@ const BELT_DEPTH = 12;
 // 바위를 걸쳐 놓으면 선이 부서진다. 프롭 높이는 씬이 `terrainHeightAt` 로 얹는데
 // 물 위는 0 이라 바위가 수면(0.03)에 반쯤 잠긴다 — 노린 그림이 그대로 나온다.
 {
-  const terr = JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"));
+  const terr = JSON.parse(
+    readFileSync("src/data/villageTerraces.json", "utf8")
+  );
   const INSET = 1.35;
   /** 테두리를 훑는 간격. 아래 리듬은 이 간격의 배수로 잡는다. */
   const STEP = 1.1;
 
   /** {x,z} 는 놓을 자리, {ex,ez} 는 물가 선, {ox,oz} 는 물 쪽 단위벡터 */
   const rim = [];
-  const outIsWater = (ex, ez, ox, oz) => inInnerWater(ex + ox * 1.4, ez + oz * 1.4);
+  const outIsWater = (ex, ez, ox, oz) =>
+    inInnerWater(ex + ox * 1.4, ez + oz * 1.4);
 
   for (const isl of terr.islands ?? []) {
     // 원반 섬 — 물가는 원둘레, 바깥 방향은 방사 방향이다
@@ -2515,7 +2602,14 @@ const BELT_DEPTH = 12;
     const ox = p.x / r;
     const oz = p.z / r;
     if (!outIsWater(p.x, p.z, ox, oz)) continue;
-    rim.push({x: p.x - ox * INSET, z: p.z - oz * INSET, ex: p.x, ez: p.z, ox, oz});
+    rim.push({
+      x: p.x - ox * INSET,
+      z: p.z - oz * INSET,
+      ex: p.x,
+      ez: p.z,
+      ox,
+      oz
+    });
   }
 
   /**
@@ -2560,7 +2654,9 @@ const BELT_DEPTH = 12;
         cut.wall += 1;
         continue;
       }
-      const rot = m.face ? faceTo(s.ox, s.oz) : round3(((i * 137) % 360) * (Math.PI / 180));
+      const rot = m.face
+        ? faceTo(s.ox, s.oz)
+        : round3(((i * 137) % 360) * (Math.PI / 180));
       // 정확히 그 점이 막혔으면 **물가를 따라** 조금 비켜 놓는다. 그냥 버리면
       // (처음엔 그랬다) 89번 시도해 9개밖에 안 섰다 — 물가 띠에는 이미 담장·
       // 가로등·앞뜰이 있어 정확한 한 점이 비어 있을 확률이 낮다.
@@ -2576,7 +2672,12 @@ const BELT_DEPTH = 12;
         const pz = s.z + tz * d;
         if (!free(px, pz, m.gap)) continue;
         if (onWall(px, pz, 0.3) || onBuilding(px, pz, 0.5)) continue;
-        if (place(`quay-${n}`, m.kind, px, pz, rot, {gap: m.gap, grow: m.grow ?? 1})) {
+        if (
+          place(`quay-${n}`, m.kind, px, pz, rot, {
+            gap: m.gap,
+            grow: m.grow ?? 1
+          })
+        ) {
           tally[m.kind] = (tally[m.kind] ?? 0) + 1;
           n += 1;
           put = true;
@@ -2604,11 +2705,18 @@ const BELT_DEPTH = 12;
     if (!free(x, z, 1.6)) return;
     const kind = (i / 9) % 2 === 0 ? "stones" : "boulder";
     if (
-      place(`quay-rock-${rocks}`, kind, x, z, round3(((i * 97) % 360) * (Math.PI / 180)), {
-        gap: 1.6,
-        grow: round3(0.55 + rand() * 0.45),
-        onWater: true
-      })
+      place(
+        `quay-rock-${rocks}`,
+        kind,
+        x,
+        z,
+        round3(((i * 97) % 360) * (Math.PI / 180)),
+        {
+          gap: 1.6,
+          grow: round3(0.55 + rand() * 0.45),
+          onWater: true
+        }
+      )
     )
       rocks += 1;
   });

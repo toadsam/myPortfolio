@@ -14,7 +14,16 @@
 // 검사기가 앱과 다른 마을을 보면서 "통과"라고 말하는 사고를 막는다.
 
 import {readFileSync} from "node:fs";
-import {readVillage, readMoat, readIsland} from "./lib/read-village.mjs";
+import {
+  readVillage,
+  readMoat,
+  readIsland,
+  readHubs,
+  cornersOf,
+  obbGap,
+  obbContains,
+  discOfDistrict
+} from "./lib/read-village.mjs";
 
 const {buildings, DISTRICT_INNER} = readVillage();
 const MOAT = readMoat();
@@ -69,18 +78,13 @@ const inMoat = (x, z) => {
 
 console.log("── 마을 정합성 검사 ────────────────────────────────\n");
 
-// ① 건물끼리 안 겹치나
+// ① 건물끼리 안 겹치나 — 임의 각 회전이라 SAT(회전 상자)로 잰다
 {
   let overlap = 0,
     worst = Infinity;
   for (let i = 0; i < buildings.length; i++)
     for (let j = i + 1; j < buildings.length; j++) {
-      const a = buildings[i],
-        b = buildings[j];
-      const g = Math.max(
-        Math.abs(a.x - b.x) - (a.w + b.w) / 2,
-        Math.abs(a.z - b.z) - (a.d + b.d) / 2
-      );
+      const g = obbGap(buildings[i], buildings[j]);
       if (g < 0) overlap++;
       worst = Math.min(worst, g);
     }
@@ -91,17 +95,14 @@ console.log("── 마을 정합성 검사 ────────────
   );
 }
 
-// ② 건물이 해자 밖으로 나가지 않았나
+// ② 건물이 해자 밖으로 나가지 않았나 — 회전 모서리로 잰다
 {
-  const out = buildings.filter(b => {
-    const r = Math.max(b.w, b.d) / 2;
-    return (
-      Math.hypot(
-        (Math.abs(b.x - MOAT.cx) + r) / MOAT.a,
-        (Math.abs(b.z - MOAT.cz) + r) / MOAT.b
-      ) > 0.92
-    );
-  });
+  const out = buildings.filter(b =>
+    cornersOf(b).some(
+      ([x, z]) =>
+        Math.hypot((x - MOAT.cx) / MOAT.a, (z - MOAT.cz) / MOAT.b) > 0.92
+    )
+  );
   check(
     "건물이 해자 안",
     out.length === 0,
@@ -132,9 +133,10 @@ console.log("── 마을 정합성 검사 ────────────
 // 이 검사는 해자만 봤다 — 석호에 프롭이 빠져도 조용히 통과했다. 앱의 판정을
 // 그대로 부른다(규칙을 베껴 적으면 언젠가 갈라진다).
 {
-  // ring-lantern 은 물 위 데크(고리 회랑) 위에 서는 게 정상이다
+  // ring-lantern 은 물 위 데크(고리 회랑) 위, gatestep 은 다리 어귀 얕은 물에
+  // 발을 담근 돌계단이라 물 위가 정상이다
   const EXEMPT =
-    /^decor-(island-north|pagoda-portfolio|waterfall-|bridge-|quay-rock-|ring-lantern-)/;
+    /^decor-(island-north|pagoda-portfolio|waterfall-|bridge-|quay-rock-|ring-lantern-|gatestep-)/;
   const {isWater} = await import("../src/lib/villageTerrain.ts");
   const sunk = layout.props.filter(
     p =>
@@ -261,16 +263,16 @@ console.log("── 마을 정합성 검사 ────────────
           0,
           Math.min(1, ((c.x - pA.x) * dx + (c.z - pA.z) * dz) / l2)
         );
-        return (
-          Math.hypot(c.x - (pA.x + dx * t), c.z - (pA.z + dz * t)) < 2.6
-        );
+        return Math.hypot(c.x - (pA.x + dx * t), c.z - (pA.z + dz * t)) < 2.6;
       });
       if (!near) missing.push(`${A.district}↔${B.district}`);
     }
     check(
       "이웃 구역마다 다리",
       missing.length === 0,
-      missing.length ? `빠진 곳: ${missing.join(", ")}` : `${ring.length}쌍 모두`
+      missing.length
+        ? `빠진 곳: ${missing.join(", ")}`
+        : `${ring.length}쌍 모두`
     );
   }
 }
@@ -303,32 +305,26 @@ console.log("── 마을 정합성 검사 ────────────
   );
 }
 
-// ⑧ 구역 이동 표가 낡지 않았나 — 여섯 구역이 정말 같은 고리에서 시작하나
+// ⑧ 구역 이동 표가 낡지 않았나 — 여섯 **섬의 안쪽 물가**가 같은 원에 맞나
 //
 // constants.ts 의 districtShift 는 solve-district-ring.mjs 가 적어 주는 **계산 결과**다.
-// 건물 크기(BUILDING_SCALE)나 SPREAD, 구역 구성을 바꾸고 솔버를 다시 안 돌리면
-// 표만 옛 값으로 남아 구역이 고리에서 벗어난다 — 화면으로는 알아채기 어렵고,
-// 순환 도로가 지나갈 띠도 조용히 사라진다.
+// 건물 크기·고리 배치·hub 를 바꾸고 솔버를 다시 안 돌리면 표만 옛 값으로 남아
+// 섬이 고리에서 벗어난다. 기준이 "건물 안쪽 모서리"에서 "섬 물가"로 바뀌었다 —
+// 고리 배치는 광장 쪽 호가 비어 건물 기준으로는 고리가 안 보인다.
 {
+  const HUBS = readHubs();
   const by = {};
   for (const b of buildings) {
     if (b.district === "plaza") continue;
     (by[b.district] ??= []).push(b);
   }
-  const edges = Object.entries(by).map(([d, arr]) => [
-    d,
-    Math.min(
-      ...arr.map(b =>
-        Math.hypot(
-          Math.max(Math.abs(b.x) - b.w / 2, 0),
-          Math.max(Math.abs(b.z) - b.d / 2, 0)
-        )
-      )
-    )
-  ]);
+  const edges = Object.entries(by).map(([d, arr]) => {
+    const disc = discOfDistrict(arr, HUBS[d]);
+    return [d, Math.hypot(disc.x, disc.z) - disc.r];
+  });
   const off = edges.filter(([, e]) => Math.abs(e - DISTRICT_INNER) > 0.05);
   check(
-    "구역이 같은 고리에서 시작",
+    "구역 섬이 같은 고리에서 시작",
     off.length === 0,
     off.length
       ? `${off
@@ -336,7 +332,7 @@ console.log("── 마을 정합성 검사 ────────────
           .join(
             ", "
           )} (목표 ${DISTRICT_INNER}) — node scripts/solve-district-ring.mjs --write`
-      : `${edges.length}구역 모두 ${DISTRICT_INNER}`
+      : `${edges.length}구역 모두 물가 ${DISTRICT_INNER}`
   );
 }
 
@@ -409,7 +405,9 @@ console.log("── 마을 정합성 검사 ────────────
     check(
       "섬 밖 탈출 불가",
       leaks === 0,
-      leaks ? `${leaks}곳이 걸을 수 있음` : `껍질 밖 표본 ${outside}점 전부 막힘`
+      leaks
+        ? `${leaks}곳이 걸을 수 있음`
+        : `껍질 밖 표본 ${outside}점 전부 막힘`
     );
   }
 
@@ -448,11 +446,7 @@ console.log("── 마을 정합성 검사 ────────────
       const x = i * STEP;
       const z = j * STEP;
       if (!isWalkable(x, z)) continue;
-      if (
-        Math.abs(x - b.x) < b.w / 2 + pad &&
-        Math.abs(z - b.z) < b.d / 2 + pad
-      )
-        return true;
+      if (obbContains(b, x, z, pad)) return true;
     }
     return false;
   });

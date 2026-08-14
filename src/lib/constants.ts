@@ -70,9 +70,9 @@ const studyBuildings: BuildingData[] = [
     label: "Coding Test",
     description:
       "백준·프로그래머스에서 푼 문제와 풀이를 기록하는 코딩테스트 공간",
-    position: [-5.26, 0, 3.49],
+    position: [-5.82, 0, 2.26],
     size: [2.64, 3.3, 2.64],
-    rotationY: 1.5708,
+    rotationY: 0.9746,
     color: "#cfd8e3",
     roofColor: "#3f6fa8",
     accentColor: "#929cf5",
@@ -87,9 +87,9 @@ const studyBuildings: BuildingData[] = [
     name: "지식 서고",
     label: "CS Notes",
     description: "운영체제·네트워크·DB 등 전공 지식을 정리하는 학습 서고",
-    position: [-2.74, 0, 3.49],
+    position: [-3.84, 0, 5.68],
     size: [2.76, 2.51, 2.76],
-    rotationY: 1.5708,
+    rotationY: -3.069,
     color: "#ddd4ea",
     roofColor: "#6d4fa0",
     accentColor: "#929cf5",
@@ -129,9 +129,9 @@ const projectBuildings: BuildingData[] = [
     label: "Finance AI",
     description:
       "거래 기록 기반 포트폴리오 분석과 AI 체크리스트, 자산 흐름 대시보드(MyWave)를 담은 서비스",
-    position: [-6.72, 0, -8.95],
+    position: [-6.24, 0, -2.21],
     size: [2.05, 3.3, 2.05],
-    rotationY: 0,
+    rotationY: 2.6141,
     color: "#0d1f3a",
     roofColor: "#1a3a6a",
     accentColor: "#e88762",
@@ -146,9 +146,9 @@ const projectBuildings: BuildingData[] = [
     name: "FestFlow",
     label: "Festival",
     description: "대학 축제 운영을 위한 실시간 부스 관리 시스템",
-    position: [-5.85, 0, -2.86],
+    position: [-0.13, 0, -7.29],
     size: [3.1, 1.85, 2.28],
-    rotationY: 0,
+    rotationY: -1.2265,
     color: "#1a1a0d",
     roofColor: "#3a3a1a",
     accentColor: "#e88762",
@@ -163,9 +163,9 @@ const projectBuildings: BuildingData[] = [
     name: "수어지구",
     label: "Social Tech",
     description: "수어 동작 영상을 보고 뜻을 익히는 학습 앱",
-    position: [-4.38, 0, -8.95],
+    position: [-8.09, 0, -4.43],
     size: [2.88, 2.51, 2.88],
-    rotationY: 0,
+    rotationY: 1.9165,
     color: "#dee7f2",
     roofColor: "#4a7fbf",
     accentColor: "#e88762",
@@ -180,9 +180,9 @@ const projectBuildings: BuildingData[] = [
     name: "ACLUB",
     label: "Platform",
     description: "동아리 탐색과 모집을 연결하는 캠퍼스 플랫폼",
-    position: [-1.86, 0, -2.86],
+    position: [-3.5, 0, -10.05],
     size: [1.5, 2.51, 0.92],
-    rotationY: 0,
+    rotationY: -0.147,
     color: "#1a0d2e",
     roofColor: "#3a1a5a",
     accentColor: "#e88762",
@@ -197,9 +197,9 @@ const projectBuildings: BuildingData[] = [
     name: "아주분투",
     label: "Web Game",
     description: "아주대학교 캠퍼스를 배경으로 한 Phaser 3 기반 2D 러닝 게임",
-    position: [-1.82, 0, -8.95],
+    position: [-7.93, 0, -7.69],
     size: [2.64, 2.51, 2.64],
-    rotationY: 0,
+    rotationY: 1.1263,
     color: "#dbe7c8",
     roofColor: "#5f8c33",
     accentColor: "#e88762",
@@ -214,9 +214,9 @@ const projectBuildings: BuildingData[] = [
     name: "아주총학",
     label: "Student Council",
     description: "아주대학교 총학생회 공식 웹사이트 프론트엔드",
-    position: [-4.35, 0, -5.79],
+    position: [-0.26, 0, -4.14],
     size: [2.51, 2.51, 2.51],
-    rotationY: 0,
+    rotationY: -1.9923,
     color: "#1f0d0d",
     roofColor: "#3a1a1a",
     accentColor: "#e88762",
@@ -231,9 +231,9 @@ const projectBuildings: BuildingData[] = [
     name: "근근 MuscleUp",
     label: "Fitness",
     description: "운동 기록을 성장 루프와 커뮤니티로 연결한 피트니스 플랫폼",
-    position: [-6.53, 0, -5.79],
+    position: [-2.01, 0, -2.2],
     size: [2.01, 2.51, 2.01],
-    rotationY: 0,
+    rotationY: -2.6199,
     color: "#1a0d0d",
     roofColor: "#3a1a1a",
     accentColor: "#e88762",
@@ -248,9 +248,9 @@ const projectBuildings: BuildingData[] = [
     name: "DarkLab",
     label: "Horror Game",
     description: "1인칭 탐색 기반 3D 공포 어드벤처 게임",
-    position: [-1.97, 0, -5.79],
+    position: [-5.76, 0, -9.76],
     size: [2.51, 2.51, 2.51],
-    rotationY: 0,
+    rotationY: 0.4002,
     color: "#0d0d0d",
     roofColor: "#1a1a1a",
     accentColor: "#e88762",
@@ -265,9 +265,9 @@ const projectBuildings: BuildingData[] = [
     name: "TSEROF",
     label: "3D Platformer",
     description: "잃어버린 아이템을 찾아 스테이지를 클리어하는 3D 플랫폼 게임",
-    position: [-3.56, 0, -2.86],
+    position: [-1.81, 0, -9.41],
     size: [1.72, 1.72, 1.72],
-    rotationY: 0,
+    rotationY: -0.5775,
     color: "#0d1a0d",
     roofColor: "#1a2e1a",
     accentColor: "#e88762",
@@ -285,9 +285,9 @@ const skillBuildings: BuildingData[] = [
     name: "Frontend",
     label: "FE Hub",
     description: "React, Next.js, TypeScript, Tailwind CSS 중심의 UI 구현",
-    position: [9.84, 0, -6.49],
+    position: [10.25, 0, -4.56],
     size: [3, 2.51, 3],
-    rotationY: -1.5708,
+    rotationY: -1.7181,
     color: "#0d1a2e",
     roofColor: "#0a2a4a",
     accentColor: "#b8a636",
@@ -303,9 +303,9 @@ const skillBuildings: BuildingData[] = [
     label: "3D Lab",
     description:
       "Three.js, React Three Fiber, Drei, Framer Motion 기반 인터랙션",
-    position: [6.79, 0, -6.49],
+    position: [7.46, 0, -8.46],
     size: [3.8, 3.3, 3.8],
-    rotationY: -1.5708,
+    rotationY: -0.1817,
     color: "#1a0d2e",
     roofColor: "#2a1a4a",
     accentColor: "#b8a636",
@@ -320,9 +320,9 @@ const skillBuildings: BuildingData[] = [
     name: "Backend",
     label: "BE Tower",
     description: "Spring Boot, FastAPI, PostgreSQL, SQLite 기반 API 설계",
-    position: [3.7, 0, -6.49],
+    position: [3.52, 0, -5.98],
     size: [2.68, 4.09, 3.12],
-    rotationY: -1.5708,
+    rotationY: 1.3048,
     color: "#1a1a0d",
     roofColor: "#2a2a1a",
     accentColor: "#b8a636",
@@ -337,9 +337,9 @@ const skillBuildings: BuildingData[] = [
     name: "Game / XR",
     label: "Arcade",
     description: "Unity, C#, XR/AR 인터랙션, 게임 루프 구현",
-    position: [5.9, 0, -2.94],
+    position: [5.79, 0, -1.79],
     size: [2.64, 2.51, 2.64],
-    rotationY: -1.5708,
+    rotationY: 2.832,
     color: "#2a0d0d",
     roofColor: "#4a1a1a",
     accentColor: "#b8a636",
@@ -354,9 +354,9 @@ const skillBuildings: BuildingData[] = [
     name: "Workflow",
     label: "DevOps",
     description: "GitHub, Docker, Nginx, 배포와 협업 흐름",
-    position: [7.98, 0, -2.94],
+    position: [8.51, 0, -2.06],
     size: [1.82, 1.72, 1.62],
-    rotationY: -1.5708,
+    rotationY: -2.6356,
     color: "#1a1a1a",
     roofColor: "#2a2a2a",
     accentColor: "#b8a636",
@@ -374,9 +374,9 @@ const experienceBuildings: BuildingData[] = [
     name: "2025 Unity UI",
     label: "2025",
     description: "게임 UI 상태와 피드백을 구현한 경험",
-    position: [-8.06, 0, -0.94],
+    position: [-7.99, 0, 3.48],
     size: [1.82, 1.72, 1.61],
-    rotationY: 1.5708,
+    rotationY: 3.1321,
     color: "#1a0d2e",
     roofColor: "#3a1a5a",
     accentColor: "#c889d7",
@@ -391,9 +391,9 @@ const experienceBuildings: BuildingData[] = [
     name: "2025 Demo Platform",
     label: "2025",
     description: "B2B SaaS 데모 흐름과 행동 로그 구조 설계",
-    position: [-6.64, 0, 2.18],
+    position: [-10.3, 0, 1.3],
     size: [2.65, 2.51, 2.38],
-    rotationY: 1.5708,
+    rotationY: 1.6385,
     color: "#0d1a2e",
     roofColor: "#1a3a5a",
     accentColor: "#c889d7"
@@ -407,9 +407,9 @@ const experienceBuildings: BuildingData[] = [
     name: "2026 AI Portfolio",
     label: "2026",
     description: "3D 마을을 통해 프로젝트와 기술 경험을 탐색하는 포트폴리오",
-    position: [-9.2, 0, 2.18],
+    position: [-6.96, 0, -0.97],
     size: [3.47, 3.3, 3.14],
-    rotationY: 1.5708,
+    rotationY: -0.4464,
     color: "#0d2a1a",
     roofColor: "#1a4a2a",
     accentColor: "#c889d7",
@@ -429,9 +429,9 @@ const contactBuilding: BuildingData = {
   // 이웃끼리는 안 벌어진다. contact(67°)와 life(37°)가 그랬다 — 둘의 단이 1.88
   // 겹쳐 골짜기가 사라졌고, 그러면 그 사이엔 물길도 축대 턱도 안 생긴다.
   // 우체국은 이 구역의 유일한 건물이라 이 한 줄로 골짜기가 열린다.
-  position: [3.43, 0, 10.7],
+  position: [3.43, 0, 12.88],
   size: [2.77, 2.51, 2.51],
-    rotationY: 3.1416,
+  rotationY: -3.1416,
   color: "#f0e2cc",
   roofColor: "#c2502e",
   accentColor: "#e9808f"
@@ -448,9 +448,9 @@ const lifeBuildings: BuildingData[] = [
     name: "가치관 비석",
     label: "Values",
     description: "내가 왜 개발하는가 — 일하는 원칙과 가치관.",
-    position: [6.06, 0, 1.52],
+    position: [6.68, 0, 1.91],
     size: [1.72, 1.72, 1.72],
-    rotationY: 3.1416,
+    rotationY: -0.5448,
     color: "#efe4c6",
     roofColor: "#b8862f",
     accentColor: "#dc9243",
@@ -465,9 +465,9 @@ const lifeBuildings: BuildingData[] = [
     name: "헬스장",
     label: "Fitness",
     description: "운동 스트릭과 오늘의 운동 기록 — 꾸준함의 공간.",
-    position: [6.11, 0, 4.96],
+    position: [8.38, 0, 4.84],
     size: [3.39, 2.51, 3.39],
-    rotationY: 3.1416,
+    rotationY: -1.5439,
     color: "#1a0d0d",
     roofColor: "#3a1a1a",
     accentColor: "#dc9243",
@@ -482,9 +482,9 @@ const lifeBuildings: BuildingData[] = [
     name: "투자 타워",
     label: "Invest",
     description: "포트폴리오 흐름과 시장 분위기 (금액은 비공개).",
-    position: [5.98, 0, 8.32],
+    position: [6.66, 0, 7.97],
     size: [2.05, 3.3, 2.05],
-    rotationY: 3.1416,
+    rotationY: -2.6041,
     color: "#d6ead9",
     roofColor: "#2f8a63",
     accentColor: "#dc9243",
@@ -499,9 +499,9 @@ const lifeBuildings: BuildingData[] = [
     name: "도서관",
     label: "Library",
     description: "읽은 책과 학습 기록 — 오늘의 학습 시간 반영.",
-    position: [3.89, 0, 1.52],
+    position: [3.93, 0, 1.52],
     size: [2.76, 2.51, 2.76],
-    rotationY: 3.1416,
+    rotationY: 0.2628,
     color: "#ecdcc2",
     roofColor: "#8a5a2f",
     accentColor: "#dc9243",
@@ -516,9 +516,9 @@ const lifeBuildings: BuildingData[] = [
     name: "음악 스튜디오",
     label: "Music",
     description: "플레이리스트와 사운드를 모아둔 공간.",
-    position: [3.27, 0, 4.96],
+    position: [1.46, 0, 5.95],
     size: [2.88, 2.51, 2.88],
-    rotationY: 3.1416,
+    rotationY: 1.8634,
     color: "#160d2a",
     roofColor: "#2a1a4a",
     accentColor: "#dc9243",
@@ -533,9 +533,9 @@ const lifeBuildings: BuildingData[] = [
     name: "연혁 타임라인",
     label: "Timeline",
     description: "입학·전향·첫 커밋·프로젝트 — 내 인생의 순간들.",
-    position: [3.77, 0, 8.32],
+    position: [3.89, 0, 8.33],
     size: [2.53, 4.09, 2.53],
-    rotationY: 3.1416,
+    rotationY: 2.8668,
     color: "#dde6f0",
     roofColor: "#3f6a96",
     accentColor: "#dc9243"
@@ -619,25 +619,40 @@ function scaleSize(s: Vector3Tuple): Vector3Tuple {
 // (check-village.mjs 가 표가 낡았는지 매번 검사한다)
 
 /**
- * 구역이 광장에서 시작하는 거리(월드). 순환 도로가 이 안쪽 띠를 지난다.
+ * 구역 **섬 물가**가 광장에서 시작하는 거리(월드).
  *
- * 14 인 이유는 **건물이 아니라 단차 블록** 때문이다. 블록은 구역 건물을 감싼
- * 사각형을 격자(1.88)에 스냅해서 만드는데, 그러느라 건물보다 최대 2.82 더
- * 안쪽까지 내려온다. 12.5 로 뒀을 때 블록이 r 9.3 까지 내려와 광장 둘레를
- * 거의 닫아 버렸고, 골짜기로 낼 물길이 6곳 중 4곳에서 r≈10 에 막혔다.
- * 14 면 블록이 10.7 에서 멈춰 광장(7.7)과의 사이에 띠가 남고, 골짜기도
- * 3.76 → 5.64 로 넓어진다. 14.5 부터는 건물이 해자를 넘는다.
+ * 뜻이 바뀌었다 — 예전엔 "가장 안쪽 건물 모서리"였는데, 건물이 고리(원형)로
+ * 서면서 광장 쪽 호가 비어 건물 기준으로는 고리가 안 읽힌다. 컨셉 이미지의
+ * 고리는 **여섯 섬의 안쪽 물가가 같은 원**에 맞는 것이므로 그걸 기준으로 잡는다.
+ *
+ * 13.5 인 이유: 광장 단상이 최대 9.0, 고리 회랑이 +2.1 이라 데크 바깥끝이
+ * 11.1 이다. 물가가 13.5 면 데크와 섬 사이에 물 2.4 가 남아 방사 다리가
+ * "물을 건너는" 그림이 된다. 더 밀면(15+) PROJECTS 섬이 해자를 넘는다.
  */
-export const DISTRICT_INNER = 15.5;
+export const DISTRICT_INNER = 13.2;
+
+/**
+ * 구역 고리 배치의 중심(원시 좌표). **arrange-district-round.mjs 가 적는다.**
+ * 섬 원반·미니광장·차선·현판이 전부 이 점을 중심으로 돈다 — 건물 무게중심으로
+ * 대신하면 호(arc) 배치 구역(건물이 반쪽에만 선다)에서 중심이 바깥으로 쏠린다.
+ */
+export const districtHub: Record<string, [number, number]> = {
+  study: [-4, 3.49],
+  projects: [-4.12, -5.87],
+  skills: [6.84, -5.07],
+  experience: [-7.97, 1.14],
+  contact: [3.43, 10.7],
+  life: [4.85, 4.93]
+};
 
 /** 구역별 이동 벡터(월드). solve-district-ring.mjs 가 적는다. */
 const districtShift: Record<string, [number, number]> = {
-  projects: [-4.38, -9.26],
-  skills: [4.66, -3.46],
-  life: [8.49, 6.18],
-  contact: [-5.89, -2.64],
-  study: [-5.77, 8.11],
-  experience: [-4.81, -1.77]
+  experience: [-3.96, -12.97],
+  projects: [7.66, -13.86],
+  skills: [8.19, -2.64],
+  life: [11.72, 2.81],
+  contact: [-6.38, 0.93],
+  study: [-10.76, 4.02]
 };
 
 const round2 = (v: number) => Math.round(v * 100) / 100;
@@ -674,19 +689,16 @@ export const villageBuildings: BuildingData[] = [
   ...lifeBuildings,
   ...studyBuildings,
   contactBuilding
-].map(b => {
-  // 90도로 돌아선 건물은 **월드에서 폭과 깊이가 맞바뀐다.** size 리터럴은 모델
-  // 기준 그대로 두고(회전을 되돌리면 원래대로), 내보낼 때만 바꾼다. 충돌·원반
-  // 섬·검사가 전부 이 내보낸 size 를 읽으므로 여기 한 곳이면 된다.
+].map(b => ({
+  // size 는 **모델 기준 그대로** 배율만 탄다. 예전엔 90도짜리만 폭/깊이를
+  // 맞바꿨는데, 건물이 임의 각(고리 배치)으로 돌면서 그 요령이 사라졌다 —
+  // 발자국이 필요한 소비자(걷기 충돌·NPC·검사·생성기)는 size 를 축정렬로
+  // 읽지 말고 rotationY 를 반영한 회전 상자(OBB)로 재야 한다.
   // (모델 맞춤은 대각선 기준 균등 배율이라 회전해도 안 깨진다 — Building.tsx)
-  const quarter = Math.abs(Math.abs(b.rotationY ?? 0) - Math.PI / 2) < 0.1;
-  const [w, h, d] = b.size;
-  return {
-    ...b,
-    position: placeInDistrict(b.position, b.district),
-    size: scaleSize(quarter ? [d, h, w] : b.size)
-  };
-});
+  ...b,
+  position: placeInDistrict(b.position, b.district),
+  size: scaleSize(b.size)
+}));
 
 export const treePositions: Vector3Tuple[] = [
   [-8.2, 0, -5.2],
@@ -719,32 +731,34 @@ export const rockPositions: Vector3Tuple[] = [
   [12.5, 0, 6.5]
 ].map(spread);
 
-const rawCameraTargets: Record<
-  string,
-  {position: Vector3Tuple; lookAt: Vector3Tuple}
-> = {
-  intro: {position: [2, 18, 17], lookAt: [0, 0, 2]},
-  projects: {position: [-10, 7, 3], lookAt: [-6.5, 1, 1]},
-  github: {position: [3, 8, 0], lookAt: [2, 1, -4.5]},
-  experience: {position: [10, 6, 6], lookAt: [7, 1, 5.5]},
-  contact: {position: [2, 6, 13], lookAt: [0, 1, 8.5]},
-  life: {position: [14, 8, 4], lookAt: [10, 1, 2]},
-  study: {position: [0, 8, 17], lookAt: [0, 1, 11.5]}
-};
-
-// 카메라 타깃도 건물과 **같은 변환**을 태워, 옮겨진 구역 덩어리를 정확히 비추게 한다.
+// ─── 구역 카메라는 hub 에서 계산한다 ─────────────────────────────────────────
+// 예전엔 구역마다 카메라 좌표를 손으로 적고 districtShift 만 얹었다. 그 좌표는
+// **그때의 구역 방위**에 묶인 값이라, 구역을 컨셉 방위(육각형)로 돌려 앉히면
+// 전부 엉뚱한 데를 비춘다. 섬 중심(hub)에서 광장 쪽으로 물러나 내려다보는
+// 구도로 계산하면 배치가 어떻게 바뀌어도 카메라가 따라온다.
 export const cameraTargets: Record<
   string,
   {position: Vector3Tuple; lookAt: Vector3Tuple}
-> = Object.fromEntries(
-  Object.entries(rawCameraTargets).map(([key, value]) => {
-    const district = viewKeyDistrict[key] ?? "plaza";
-    return [
-      key,
-      {
-        position: placeInDistrict(value.position, district),
-        lookAt: placeInDistrict(value.lookAt, district)
-      }
-    ];
-  })
-);
+> = (() => {
+  const out: Record<string, {position: Vector3Tuple; lookAt: Vector3Tuple}> = {
+    intro: {
+      position: placeInDistrict([2, 18, 17], "plaza"),
+      lookAt: placeInDistrict([0, 0, 2], "plaza")
+    }
+  };
+  for (const [key, district] of Object.entries(viewKeyDistrict)) {
+    if (district === "plaza") continue;
+    const [hx, hz] = districtHub[district] ?? [0, 0];
+    const hub = placeInDistrict([hx, 0, hz], district);
+    const len = Math.hypot(hub[0], hub[2]) || 1;
+    const ux = hub[0] / len;
+    const uz = hub[2] / len;
+    out[key] = {
+      // 광장 쪽으로 13 물러나 높이 9 에서 섬을 내려다본다 — 섬 반지름 7~11 을
+      // 화면에 담는 거리다
+      position: [round2(hub[0] - ux * 13), 9, round2(hub[2] - uz * 13)],
+      lookAt: [hub[0], 1, hub[2]]
+    };
+  }
+  return out;
+})();

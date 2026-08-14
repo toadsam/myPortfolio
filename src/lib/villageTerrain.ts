@@ -44,7 +44,8 @@ export const ISLANDS: IslandDisc[] = terraces.islands ?? [];
  * 구역 사이 골짜기를 흐르는 물길. 생성기(generate-ground-layout.mjs)가 계산해
  * 같은 파일에 내보낸다 — 씬과 장식물 생성기가 **같은 좌표**를 봐야 다리가 물 위에 선다.
  */
-export const WATER_CHANNELS: {x: number; z: number}[][] = terraces.channels ?? [];
+export const WATER_CHANNELS: {x: number; z: number}[][] =
+  terraces.channels ?? [];
 
 /**
  * 마을 속을 채우는 물(석호)의 껍질 — 볼록 다각형.
@@ -64,6 +65,23 @@ export const WATER_CROSSINGS: {x: number; z: number; angle: number}[] =
   terraces.crossings ?? [];
 
 /**
+ * 섬 공유지 — 미니광장(분수 자리)과 차선 반지름. 생성기가 계산해 내보낸다.
+ * VillageScene 의 IslandCommons 가 이걸로 포장 원반·차선 리본을 그린다.
+ */
+export const ISLAND_COMMONS: {
+  district: string;
+  x: number;
+  z: number;
+  plazaR: number;
+  laneR: number;
+  rimR: number;
+}[] = terraces.commons ?? [];
+
+/** 섬 위 차선(폴리라인). closed 면 고리(안쪽·테두리), 아니면 방사 스포크다. */
+export const ISLAND_LANES: {closed: boolean; pts: {x: number; z: number}[]}[] =
+  terraces.lanes ?? [];
+
+/**
  * 물에 잠겨 걷어낸 **길 칸 그대로**의 목록. 다리가 잇는 자리라 여전히 길이다.
  *
  * 걷기 판정의 구멍을 "건널목 중심 ± 고정 반경"으로 뚫었다가 크게 데었다. 물이
@@ -71,7 +89,8 @@ export const WATER_CROSSINGS: {x: number; z: number; angle: number}[] =
  * 사이가 4 유닛까지 벌어졌다 — 구멍이 물을 다 못 덮어 **다리가 있는데 못 건너고**
  * 걸어서 닿는 건물이 0채가 됐다. 걷어낸 칸을 그대로 뚫으면 폭이 어떻게 변해도 맞다.
  */
-export const BRIDGE_CELLS: {x: number; z: number}[] = terraces.bridgeCells ?? [];
+export const BRIDGE_CELLS: {x: number; z: number}[] =
+  terraces.bridgeCells ?? [];
 
 // ─── 물의 치수 — **여기 하나뿐이다** ─────────────────────────────────────────
 // 이 값을 보는 곳이 넷이다: 수면 리본(VillageScene) · 도랑 단면(WaterBanks) ·
@@ -107,7 +126,9 @@ export const WATER_BANK_OUT = 0.45;
 /** 리본 반폭 — t 는 경로를 따라 0~1 */
 export function waterHalfAt(kind: "ring" | "channel", t: number): number {
   if (kind === "ring") return WATER_HALF.ring;
-  return WATER_HALF.channelIn + (WATER_HALF.channelOut - WATER_HALF.channelIn) * t;
+  return (
+    WATER_HALF.channelIn + (WATER_HALF.channelOut - WATER_HALF.channelIn) * t
+  );
 }
 
 // ─── 광장 섬 ──────────────────────────────────────────────────────────────────
@@ -130,7 +151,7 @@ export const PLAZA_STEP: number = TERRACE_STEP;
 export const PLAZA_DAIS: {x: number; z: number}[] = terraces.plazaDais ?? [];
 
 /** 각도별 단상 반지름 — 미리 풀어 두고 조회만 한다(매 프레임 캐릭터가 부른다) */
-export const DAIS_RADII: number[] = PLAZA_DAIS.map((p) => Math.hypot(p.x, p.z));
+export const DAIS_RADII: number[] = PLAZA_DAIS.map(p => Math.hypot(p.x, p.z));
 const DAIS_R = DAIS_RADII;
 
 // ─── 광장 고리 회랑 ──────────────────────────────────────────────────────────
@@ -161,7 +182,7 @@ export function onPlazaDais(x: number, z: number): boolean {
   // 가장 먼 테두리보다 밖이면 각도를 볼 것도 없다 — 프롭 수천 개가 이 분기로 빠진다
   if (r > 9.6) return false;
   const a = Math.atan2(z, x);
-  const t = ((a / (Math.PI * 2)) % 1 + 1) % 1;
+  const t = (((a / (Math.PI * 2)) % 1) + 1) % 1;
   return r <= DAIS_R[Math.floor(t * DAIS_R.length) % DAIS_R.length];
 }
 
@@ -193,8 +214,8 @@ export function terrainHeightAt(x: number, z: number): number {
     TERRACE_STEP !== 0 && onAnyIsland(x, z)
       ? TERRACE_STEP
       : onPlazaDais(x, z)
-        ? PLAZA_STEP
-        : 0;
+      ? PLAZA_STEP
+      : 0;
   return step + reliefAt(x, z);
 }
 
@@ -270,7 +291,10 @@ export function shoreDistAt(x: number, z: number): number {
     const dx = p1.x - p0.x;
     const dz = p1.z - p0.z;
     const l2 = dx * dx + dz * dz || 1;
-    const t = Math.max(0, Math.min(1, ((x - p0.x) * dx + (z - p0.z) * dz) / l2));
+    const t = Math.max(
+      0,
+      Math.min(1, ((x - p0.x) * dx + (z - p0.z) * dz) / l2)
+    );
     best = Math.min(best, Math.hypot(x - (p0.x + dx * t), z - (p0.z + dz * t)));
   }
   return best;
