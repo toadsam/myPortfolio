@@ -1,4 +1,12 @@
-import {CanvasTexture, Color, NoColorSpace, RepeatWrapping, Vector2, type MeshStandardMaterial, type Texture} from "three";
+import {
+  CanvasTexture,
+  Color,
+  NoColorSpace,
+  RepeatWrapping,
+  Vector2,
+  type MeshStandardMaterial,
+  type Texture
+} from "three";
 
 // 물이 "흐르는" 느낌을 만드는 레이어.
 //
@@ -49,7 +57,7 @@ const WAVES: {fx: number; fy: number; amp: number; phase: number}[] = [
   {fx: 1, fy: -3, amp: 0.5, phase: 3.1},
   {fx: 3, fy: 1, amp: 0.5, phase: 0.9},
   {fx: 2, fy: 4, amp: 0.25, phase: 2.3},
-  {fx: 4, fy: -2, amp: 0.25, phase: 4.4},
+  {fx: 4, fy: -2, amp: 0.25, phase: 4.4}
 ];
 
 /**
@@ -156,6 +164,17 @@ export interface WaterFlowOptions {
   speed: number;
   /** 법선 세기. 물결이 얼마나 깊어 보이는지. */
   normalScale: number;
+  /**
+   * 부감용 **큰 너울** 층 — 같은 노멀맵을 아주 성긴 배율로 한 번 더 샘플링한다.
+   *
+   * 잔물결 두 층은 눈높이에서는 물이지만 부감(기본 카메라)에서는 너무 작아
+   * 정지된 색면으로 읽혔다. 큰 너울이 있어야 멀리서도 수면에 결이 보인다.
+   * 정점을 실제로 올리는 너울(swell)은 법선을 안 바꿔 부감에서 안 보인다 —
+   * 보이는 건 법선이다. 생략하면 예전 두 층 그대로다.
+   */
+  scaleC?: number;
+  /** 큰 너울의 섞임 세기 (잔물결 xy 에 더해지는 배수) */
+  bigWeight?: number;
 }
 
 /**
@@ -182,13 +201,19 @@ export function applyWaterFlow(
   // 패치가 통째로 무시된다. 자세한 설명은 foliageWind.ts 의 같은 자리 참고.
   material.customProgramCacheKey = () => "water-flow";
 
-  material.onBeforeCompile = (shader) => {
+  material.onBeforeCompile = shader => {
     shader.uniforms.uFlowTime = FLOW_TIME;
-    shader.uniforms.uFlowDirA = {value: new Vector2(options.dirA[0], options.dirA[1])};
-    shader.uniforms.uFlowDirB = {value: new Vector2(options.dirB[0], options.dirB[1])};
+    shader.uniforms.uFlowDirA = {
+      value: new Vector2(options.dirA[0], options.dirA[1])
+    };
+    shader.uniforms.uFlowDirB = {
+      value: new Vector2(options.dirB[0], options.dirB[1])
+    };
     shader.uniforms.uFlowScaleA = {value: options.scaleA};
     shader.uniforms.uFlowScaleB = {value: options.scaleB};
     shader.uniforms.uFlowSpeed = {value: options.speed};
+    shader.uniforms.uFlowScaleC = {value: options.scaleC ?? 0};
+    shader.uniforms.uBigWeight = {value: options.bigWeight ?? 0};
     // groundMacro 와 같은 이유로 남긴다 — onBeforeCompile 은 재질을 만들 때가 아니라
     // 처음 그려질 때 불리므로, 패치를 걸었다는 것만으로 컴파일까지 됐는지 알 수 없다.
     material.userData.__flowCompiled = true;
@@ -202,17 +227,25 @@ uniform vec2 uFlowDirA;
 uniform vec2 uFlowDirB;
 uniform float uFlowScaleA;
 uniform float uFlowScaleB;
-uniform float uFlowSpeed;`
+uniform float uFlowSpeed;
+uniform float uFlowScaleC;
+uniform float uBigWeight;`
       )
       .replace(
         "#include <normal_fragment_maps>",
         // 두 층을 "화이트아웃" 방식으로 합친다: xy 는 더하고 z 는 곱한다.
         // 단순 평균은 두 물결이 서로를 상쇄해 평평해지는 구간이 생긴다.
+        // 세 번째(큰 너울)는 부감용 — 느리게 흘려 큰 결만 만든다.
         `vec2 flowUvA = vNormalMapUv * uFlowScaleA + uFlowDirA * ( uFlowTime * uFlowSpeed );
 vec2 flowUvB = vNormalMapUv * uFlowScaleB + uFlowDirB * ( uFlowTime * uFlowSpeed );
 vec3 flowNA = texture2D( normalMap, flowUvA ).xyz * 2.0 - 1.0;
 vec3 flowNB = texture2D( normalMap, flowUvB ).xyz * 2.0 - 1.0;
-vec3 mapN = normalize( vec3( flowNA.xy + flowNB.xy, flowNA.z * flowNB.z ) );
+vec2 bigXY = vec2( 0.0 );
+if ( uBigWeight > 0.0 ) {
+  vec2 flowUvC = vNormalMapUv * uFlowScaleC + uFlowDirA * ( uFlowTime * uFlowSpeed * 0.32 );
+  bigXY = ( texture2D( normalMap, flowUvC ).xy * 2.0 - 1.0 ) * uBigWeight;
+}
+vec3 mapN = normalize( vec3( flowNA.xy + flowNB.xy + bigXY, flowNA.z * flowNB.z ) );
 mapN.xy *= normalScale;
 normal = normalize( tbn * mapN );`
       );
@@ -280,11 +313,13 @@ export function applyWaterSurface(
   material.normalScale = new Vector2(options.normalScale, options.normalScale);
   material.customProgramCacheKey = () => "water-surface";
 
-  material.onBeforeCompile = (shader) => {
+  material.onBeforeCompile = shader => {
     shader.uniforms.uFlowTime = FLOW_TIME;
     shader.uniforms.uFlowScaleA = {value: options.scaleA};
     shader.uniforms.uFlowScaleB = {value: options.scaleB};
     shader.uniforms.uFlowSpeed = {value: options.speed};
+    shader.uniforms.uFlowScaleC = {value: options.scaleC ?? 0};
+    shader.uniforms.uBigWeight = {value: options.bigWeight ?? 0};
     shader.uniforms.uSwellAmp = {value: options.swellAmp};
     shader.uniforms.uSwellSpeed = {value: options.swellSpeed};
     shader.uniforms.uFoamWidth = {value: options.foamWidth};
@@ -334,6 +369,8 @@ uniform float uFlowTime;
 uniform float uFlowScaleA;
 uniform float uFlowScaleB;
 uniform float uFlowSpeed;
+uniform float uFlowScaleC;
+uniform float uBigWeight;
 uniform float uFoamWidth;
 uniform float uFresnelPower;
 uniform vec3 uSkyTint;
@@ -344,7 +381,8 @@ varying vec2 vWorldXZ;`
       .replace(
         "#include <normal_fragment_maps>",
         // ① 물결 — 두 층을 그 자리의 흐름 방향으로 흘린다. 방향이 정점마다
-        //    다르므로 광장을 도는 물살이 된다.
+        //    다르므로 광장을 도는 물살이 된다. 세 번째 층은 부감용 큰 너울 —
+        //    잔물결은 기본 카메라(부감)에서 너무 작아 정지된 색면으로 읽혔다.
         `vec2 flowDir = normalize( vFlowDir + vec2( 1e-4 ) );
 vec2 flowSide = vec2( -flowDir.y, flowDir.x );
 float flowT = uFlowTime * uFlowSpeed;
@@ -352,7 +390,12 @@ vec2 flowUvA = vNormalMapUv * uFlowScaleA + flowDir * flowT;
 vec2 flowUvB = vNormalMapUv * uFlowScaleB + ( flowDir * 0.62 + flowSide * 0.22 ) * flowT;
 vec3 flowNA = texture2D( normalMap, flowUvA ).xyz * 2.0 - 1.0;
 vec3 flowNB = texture2D( normalMap, flowUvB ).xyz * 2.0 - 1.0;
-vec3 mapN = normalize( vec3( flowNA.xy + flowNB.xy, flowNA.z * flowNB.z ) );
+vec2 bigXY = vec2( 0.0 );
+if ( uBigWeight > 0.0 ) {
+  vec2 flowUvC = vNormalMapUv * uFlowScaleC + flowDir * flowT * 0.3;
+  bigXY = ( texture2D( normalMap, flowUvC ).xy * 2.0 - 1.0 ) * uBigWeight;
+}
+vec3 mapN = normalize( vec3( flowNA.xy + flowNB.xy + bigXY, flowNA.z * flowNB.z ) );
 mapN.xy *= normalScale;
 normal = normalize( tbn * mapN );
 
@@ -413,7 +456,7 @@ export function applyWaterBed(
 
   material.customProgramCacheKey = () => "water-bed";
 
-  material.onBeforeCompile = (shader) => {
+  material.onBeforeCompile = shader => {
     shader.uniforms.uFlowTime = FLOW_TIME;
     shader.uniforms.uCausticScale = {value: options.scale};
     shader.uniforms.uCausticSpeed = {value: options.speed};

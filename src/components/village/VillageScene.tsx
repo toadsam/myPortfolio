@@ -23,15 +23,18 @@ import {
   AdditiveBlending,
   BackSide,
   BufferGeometry,
+  CanvasTexture,
   Color,
   Float32BufferAttribute,
   type Mesh,
+  MeshBasicMaterial,
   MeshStandardMaterial,
   RepeatWrapping,
   SphereGeometry,
   SRGBColorSpace,
   Vector3
 } from "three";
+import propsLayout from "@/data/propsLayout.json";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {
@@ -396,7 +399,11 @@ function Water() {
       dirA: [1, 0.16],
       dirB: [-0.86, 0.42],
       speed: 0.02,
-      normalScale: 0.6
+      normalScale: 0.6,
+      // 큰 너울 층 — 96 배율 잔결만으로는 바다 전체에 같은 반짝임 타일이
+      // 96번 되풀이되는 게 부감에서 그대로 보였다. 성긴 층이 그 주기를 깬다.
+      scaleC: 11,
+      bigWeight: 1.3
     });
     return m;
   }, []);
@@ -409,6 +416,114 @@ function Water() {
     >
       <circleGeometry args={[240, 64]} />
     </mesh>
+  );
+}
+
+// ─── 밤 물비침 (등불 글린트) ─────────────────────────────────────────────────
+// 컨셉의 밤 그림에서 물이 화면을 채우는 건 **등불이 수면에 비쳐서**다. 우리 물은
+// 밤에 반사할 광원이 없어 검푸른 판이 됐다. 진짜 평면 반사는 비싸니, 물가
+// 등불마다 수면에 가산 블렌딩 타원(가짜 반사)을 눕힌다 — 멀리서는 진짜 비침과
+// 구분이 안 되고, 값은 등불당 삼각형 2개다.
+//
+// 세기는 시간대 팔레트의 lamp(등불 세기)를 따른다 — 한낮(0.7)에는 0 이 되어
+// 아예 안 그린다. 등불 자체가 lamp 로 밝아지므로 비침도 같이 밝아지는 게 맞다.
+const GLINT_STRENGTH = Math.max(
+  0,
+  Math.min(1, (VILLAGE_PALETTE.lamp - 0.85) / 1.6)
+);
+
+function WaterGlints() {
+  const {texture, spots} = useMemo(() => {
+    // 세로로 긴 부드러운 타원 스프라이트 — 캔버스 한 장이면 된다
+    const c = document.createElement("canvas");
+    c.width = 64;
+    c.height = 128;
+    const ctx = c.getContext("2d")!;
+    const g = ctx.createRadialGradient(32, 64, 2, 32, 64, 62);
+    g.addColorStop(0, "rgba(255,255,255,0.95)");
+    g.addColorStop(0.35, "rgba(255,255,255,0.34)");
+    g.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.translate(32, 64);
+    ctx.scale(0.5, 1);
+    ctx.translate(-32, -64);
+    ctx.fillStyle = g;
+    ctx.fillRect(-32, 0, 128, 128);
+    const tex = new CanvasTexture(c);
+
+    // 물가 등불 찾기 — 등불류 프롭에서 사방 두 반경(1.4 · 2.2)을 훑어, **가장
+    // 깊은 물**이 있는 방향으로 한 발 나간 수면 위가 글린트 자리다. 첫 히트를
+    // 쓰면 회랑 등불이 데크 밑 물을 잡아 글린트가 돌바닥 위에 눕고, 부두
+    // 등불(물가에서 2.29)은 아예 못 찾았다.
+    const spots: {x: number; z: number; rot: number; s: number}[] = [];
+    for (const p of (
+      propsLayout as {
+        props: {glb: string; position: number[]}[];
+      }
+    ).props) {
+      if (!/lantern-post|orb-lantern/.test(p.glb)) continue;
+      const px = p.position[0];
+      const pz = p.position[2];
+      let best: {dx: number; dz: number; r: number; deep: number} | null = null;
+      for (let a = 0; a < Math.PI * 2; a += Math.PI / 6) {
+        const dx = Math.cos(a);
+        const dz = Math.sin(a);
+        for (const r of [1.4, 2.2]) {
+          const qx = px + dx * r;
+          const qz = pz + dz * r;
+          if (!isWater(qx, qz)) continue;
+          const deep = shoreDistAt(qx, qz);
+          if (!best || deep > best.deep) best = {dx, dz, r, deep};
+        }
+      }
+      if (!best) continue;
+      spots.push({
+        x: px + best.dx * (best.r + 0.85),
+        z: pz + best.dz * (best.r + 0.85),
+        rot: Math.atan2(best.dx, best.dz),
+        s: 0.8 + ((spots.length * 37) % 10) / 18
+      });
+    }
+    return {texture: tex, spots};
+  }, []);
+
+  const material = useMemo(
+    () =>
+      new MeshBasicMaterial({
+        map: texture,
+        // 톤매핑·색보정이 채도를 깎으므로 원색은 일부러 진하게 — 화면에서는
+        // 등불(#ffd9a8 계열)과 같은 호박색으로 내려앉는다.
+        color: new Color("#ff9d38"),
+        transparent: true,
+        blending: AdditiveBlending,
+        depthWrite: false,
+        opacity: 0
+      }),
+    [texture]
+  );
+
+  // 은은한 일렁임 — 주기 둘을 겹쳐 규칙이 안 보이게 한다
+  useFrame(state => {
+    const t = state.clock.elapsedTime;
+    material.opacity =
+      GLINT_STRENGTH *
+      (0.5 + 0.13 * Math.sin(t * 1.7) + 0.07 * Math.sin(t * 4.3));
+  });
+
+  if (GLINT_STRENGTH <= 0.01 || spots.length === 0) return null;
+  return (
+    <group>
+      {spots.map((s, i) => (
+        <mesh
+          key={i}
+          material={material}
+          position={[s.x, WATER_SURFACE_Y + 0.012, s.z]}
+          rotation={[-Math.PI / 2, 0, -s.rot]}
+          scale={[0.62 * s.s, 2.3 * s.s, 1]}
+        >
+          <planeGeometry args={[1, 1]} />
+        </mesh>
+      ))}
+    </group>
   );
 }
 
@@ -759,10 +874,11 @@ function Waterways() {
     /** 그 자리의 흐름 방향 */
     const flow: number[] = [];
 
-    // 물가 — 젖은 모래·자갈. **마른 흙색이면 안 된다.** 그늘에 들어가면 수면의
-    // 반사가 사라져 하상이 그대로 드러나는데, 그때 색이 흙빛이면 물이 아니라
-    // 갯벌로 보인다. 초록을 섞어 물속에 잠긴 바닥으로 읽히게 한다.
-    const sandy = new Color("#7b8a72");
+    // 물가 — 젖은 모래·자갈. **마른 흙색도, 회록색도 안 된다.** 그늘에 들어가면
+    // 수면의 반사가 사라져 하상이 그대로 드러나는데, 그때 색이 흙빛이면 갯벌,
+    // 회록빛이면 물때 낀 웅덩이로 보인다(실제로 회록 #7b8a72 얼룩이 부감에서
+    // 지저분하게 떠 보였다). 청록을 섞어 "물빛에 잠긴 바닥"으로 읽히게 한다.
+    const sandy = new Color("#5f9a90");
     const abyss = new Color("#0d2436"); // 가운데 — 바닥이 안 보이는 곳
     const clear = new Color("#7fd4d0"); // 얕은 물빛
     const deep = new Color("#1f7fa8"); // 깊은 물빛
@@ -771,6 +887,29 @@ function Waterways() {
 
     /** 깊이 0~1 — 물가에서 이만큼 떨어지면 바닥이 완전히 안 보인다 */
     const FULL_DEPTH = WATER_FULL_DEPTH;
+    void FULL_DEPTH;
+
+    // ─── 얕은물 얼룩 노이즈 ────────────────────────────────────────────────────
+    // 색 램프를 물가 거리로만 매기면 섬 사이 좁은 물(폭 ~2.4)이 통째로 같은
+    // "얕음" 색 하나가 되어 **수영장 바닥**처럼 보인다. 거리값을 자리마다
+    // 노이즈로 흔들면 밝은 물가 띠의 폭이 굽이치고, 판이 아니라 물로 읽힌다.
+    const hashN = (i: number, j: number) => {
+      let h = Math.imul(i, 374761393) ^ Math.imul(j, 668265263);
+      h = Math.imul(h ^ (h >>> 13), 1274126177);
+      return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+    };
+    const smoothT = (t: number) => t * t * (3 - 2 * t);
+    const noise2 = (x: number, z: number) => {
+      const i = Math.floor(x);
+      const j = Math.floor(z);
+      const fx = smoothT(x - i);
+      const fz = smoothT(z - j);
+      const a = hashN(i, j);
+      const b = hashN(i + 1, j);
+      const c = hashN(i, j + 1);
+      const d = hashN(i + 1, j + 1);
+      return (a * (1 - fx) + b * fx) * (1 - fz) + (c * (1 - fx) + d * fx) * fz;
+    };
 
     // ─── 물가의 톱니는 격자를 **진짜 물가로 당겨서** 없앤다 ──────────────────
     // 격자를 물인 칸에서 딱 끊으면 물가가 0.85 짜리 계단이 된다. 낮은 시점에서
@@ -866,9 +1005,12 @@ function Waterways() {
         // 것과 같은 움직임이다.
         const rr0 = Math.hypot(x, z) || 1;
         flow.push(-z / rr0, x / rr0);
-        const d = Math.min(1, sd / FULL_DEPTH);
-        // 물가 근처는 완만하게, 가운데로 갈수록 빠르게 어두워진다
-        const k = d * d * (3 - 2 * d);
+        // ─── 깊이 램프는 비선형 + 노이즈 ───────────────────────────────────
+        // smoothstep(sd/4.5) 시절엔 섬 사이 좁은 물이 전부 "얕음" 근처에 몰려
+        // 민트색 판이 됐다. 지수 램프는 물가 1.3유닛 안에서 이미 63% 깊어져
+        // 밝은 띠가 **얇게** 남고, 좁은 물길 가운데도 제 깊이 색이 나온다.
+        const wob = 0.7 + 0.6 * noise2(x * 0.21 + 7.3, z * 0.21 + 2.9);
+        const k = Math.min(1, 1 - Math.exp(-(sd * wob) / 1.35));
         bedPos.push(x, 0, z);
         c0.copy(sandy).lerp(abyss, k);
         bedCol.push(c0.r, c0.g, c0.b);
@@ -954,6 +1096,10 @@ function Waterways() {
       // (하상을 끄고 찍어 봐서 범인이 수면임을 확인하고 고친 값이다.)
       scaleA: 1.6,
       scaleB: 1.05,
+      // 부감용 큰 너울 — 타일 한 장이 9유닛쯤 되는 성긴 층. 잔물결(1.2~1.9유닛)은
+      // 기본 카메라(부감)에서 안 읽혀 수면이 정지된 색면으로 보였다.
+      scaleC: 0.21,
+      bigWeight: 1.5,
       // dirA/dirB 는 안 쓴다(방향이 정점마다 다르다). 인터페이스를 맞추려고 둔다.
       dirA: [0, 1],
       dirB: [0, 1],
@@ -2336,6 +2482,7 @@ function VillageSceneImpl({
           <AnimationClock />
           <Water />
           <Waterways />
+          <WaterGlints />
           <TerraceBanks />
           <PlazaDais />
           <PlazaRingWalk />
