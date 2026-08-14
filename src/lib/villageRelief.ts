@@ -142,10 +142,28 @@ function buildMask() {
     }
   }
 
-  // ①-b 광장 단상 — 축대 발치가 y=0 의 평평한 땅을 전제로 지어져 있다.
-  //     테두리보다 조금 넉넉히 밟아야 굽이가 발치를 들어 올리지 않는다.
+  // ①-b 광장 섬 축대 — 발치가 y=0 의 평평한 땅을 전제로 지어져 있다.
   for (const p of (terraces.plazaDais ?? []) as {x: number; z: number}[])
     stampCircle(p.x, p.z, 1.6);
+
+  // ①-c 마을 속 물(석호) — 수면이 y=0.03 한 장이라 잔디가 그 위로 올라오면
+  //     물이 통째로 사라진다. 껍질 안을 성기게 밟아 평평하게 잠근다.
+  const hull = (terraces.lagoon ?? []) as {x: number; z: number}[];
+  if (hull.length >= 3) {
+    const inHull = (x: number, z: number) => {
+      for (let i = 0; i < hull.length; i++) {
+        const a2 = hull[i];
+        const b2 = hull[(i + 1) % hull.length];
+        if ((b2.x - a2.x) * (z - a2.z) - (b2.z - a2.z) * (x - a2.x) < 0) return false;
+      }
+      return true;
+    };
+    const xs = hull.map((p) => p.x);
+    const zs = hull.map((p) => p.z);
+    for (let z = Math.min(...zs); z <= Math.max(...zs); z += CELL)
+      for (let x = Math.min(...xs); x <= Math.max(...xs); x += CELL)
+        if (inHull(x, z)) stampCircle(x, z, 0.7);
+  }
 
   // ② 포장 타일·광장 원반. 풀숲(grass-patch)은 땅을 따라도 되므로 뺀다.
   for (const p of (propsLayout as {props: {id: string; glb: string; position: number[]; scale: number}[]}).props) {
@@ -161,13 +179,7 @@ function buildMask() {
   }
 
   // ④ 물길 + 광장을 두르는 물 고리 — 수면(y=0.05)보다 잔디가 높아지면 물이 사라진다
-  const waterLines = [
-    ...((terraces.channels ?? []) as {x: number; z: number}[][]),
-    // 고리는 닫혀 있으므로 첫 점을 끝에 한 번 더 붙여 이음매까지 평평하게 만든다
-    ...(terraces.plazaRing?.length
-      ? [[...terraces.plazaRing, terraces.plazaRing[0]] as {x: number; z: number}[]]
-      : [])
-  ];
+  const waterLines = [...((terraces.channels ?? []) as {x: number; z: number}[][])];
   for (const channel of waterLines) {
     for (let i = 0; i + 1 < channel.length; i++) {
       const a = channel[i];

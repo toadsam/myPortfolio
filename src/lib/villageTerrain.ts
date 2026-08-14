@@ -43,19 +43,31 @@ export const TERRACE_RECTS: TerraceRect[] = terraces.blocks;
 export const WATER_CHANNELS: {x: number; z: number}[][] = terraces.channels ?? [];
 
 /**
- * 광장을 두르는 물 고리 (닫힌 고리).
+ * 마을 속을 채우는 물(석호)의 껍질 — 볼록 다각형.
  *
- * 컨셉 아트에서 물은 광장에서 뻗는 바큇살이 아니라 광장을 **감싸고** 있고,
- * 거기서 넘친 물이 구역 사이 골짜기(WATER_CHANNELS)로 빠진다. 그래서 어느
- * 구역에 가든 다리를 하나 건너게 된다 — 다리가 곧 구역의 정문이다.
- * 완전한 원은 아니다: SKILLS 단 모서리가 광장 쪽으로 파고든 방향에서는
- * 고리도 같이 안으로 물러난다(생성기가 단 발치를 재서 정한다).
+ * 물을 리본으로 그리던 시절이 있었다(광장 고리 + 개울 여섯). 컨셉의 발상은 반대다:
+ * **물이 바닥이고 땅이 그 위로 솟는다.** 구역 단(+1.1)과 광장 섬이 물에서 올라온
+ * 것이고, 높이 0 인 곳은 전부 수면이다. 그래서 규칙이 "높이 0 이면 물" 하나로
+ * 줄고, 남는 문제는 "어디까지가 마을 속인가"뿐이다 — 그게 이 껍질이다.
+ *
+ * 구역 블록 모서리들의 볼록 껍질이라, 경계가 구역 바깥 변을 따라 지나간다.
+ * 그래서 물가가 늘 축대 뒤에 숨고, 벌판 한복판에 물가가 생기지 않는다.
  */
-export const PLAZA_WATER_RING: {x: number; z: number}[] = terraces.plazaRing ?? [];
+export const LAGOON: {x: number; z: number}[] = terraces.lagoon ?? [];
 
-/** 길이 물을 건너는 곳 — 여기에 돌다리가 서고, 걷기 판정도 여기만 뚫는다 */
+/** 길이 물을 건너는 곳 — 여기에 돌다리가 선다 */
 export const WATER_CROSSINGS: {x: number; z: number; angle: number}[] =
   terraces.crossings ?? [];
+
+/**
+ * 물에 잠겨 걷어낸 **길 칸 그대로**의 목록. 다리가 잇는 자리라 여전히 길이다.
+ *
+ * 걷기 판정의 구멍을 "건널목 중심 ± 고정 반경"으로 뚫었다가 크게 데었다. 물이
+ * 리본이던 시절엔 폭이 2 라 1.6 이면 넉넉했는데, 물이 면이 되면서 광장 섬과 구역
+ * 사이가 4 유닛까지 벌어졌다 — 구멍이 물을 다 못 덮어 **다리가 있는데 못 건너고**
+ * 걸어서 닿는 건물이 0채가 됐다. 걷어낸 칸을 그대로 뚫으면 폭이 어떻게 변해도 맞다.
+ */
+export const BRIDGE_CELLS: {x: number; z: number}[] = terraces.bridgeCells ?? [];
 
 // ─── 물의 치수 — **여기 하나뿐이다** ─────────────────────────────────────────
 // 이 값을 보는 곳이 넷이다: 수면 리본(VillageScene) · 도랑 단면(WaterBanks) ·
@@ -94,15 +106,14 @@ export function waterHalfAt(kind: "ring" | "channel", t: number): number {
   return WATER_HALF.channelIn + (WATER_HALF.channelOut - WATER_HALF.channelIn) * t;
 }
 
-// ─── 광장 단상 ────────────────────────────────────────────────────────────────
-// 컨셉 아트의 광장은 계단 몇 단 올라선 단상이다. 구역 여섯만 단(+1.1) 위에 있고
-// 광장은 잔디·물과 같은 평면이라, 단면으로 보면 마을이 **가운데가 파인 그릇**이고
-// 기념비가 그 바닥에 서 있었다.
+// ─── 광장 섬 ──────────────────────────────────────────────────────────────────
+// 광장은 오래 잔디·물과 같은 평면이었다. 단면으로 보면 마을이 **가운데가 파인
+// 그릇**이고 기념비가 그 바닥에 서 있었다 — 컨셉과 정반대다.
 //
-// **구역과 같은 높이로 올리지 않는다.** 그러면 물길 골짜기 말고는 마을 전체가
-// 다시 한 평면이 되어, 구역을 떼어 놓기 전의 "층이 하나도 안 느껴진다"로 돌아간다.
-// 컨셉은 세 단이다: 물·잔디(0) → 광장(0.55) → 구역(1.1).
-export const PLAZA_STEP: number = TERRACE_STEP === 0 ? 0 : 0.55;
+// 한동안 0.55(구역의 절반)로 뒀다. 마을 속 바닥이 전부 물이 된 지금은 **구역과
+// 같은 높이**라야 한다 — 사방이 물인데 절반 높이면 가장 중요한 섬이 제일 낮은
+// 섬이 되고, 물에서 살짝 나온 여울턱으로 읽힌다.
+export const PLAZA_STEP: number = TERRACE_STEP;
 
 /**
  * 단상 꼭대기 테두리 (닫힌 폴리라인 240마디).
@@ -110,19 +121,20 @@ export const PLAZA_STEP: number = TERRACE_STEP === 0 ? 0 : 0.55;
  * **사각형이 아닌 이유**: 광장 포장은 사각형이 아니다. 대로 넷이 축 방향 칸을
  * 먹고, SKILLS 단 모서리가 한쪽을 파고든다. 사각형 단을 깔면 네 모서리가 잔디로
  * 튀어나오고 대로가 계단 대신 벽을 만난다. 그래서 각도별 반지름으로 정의하고,
- * 생성기가 물 고리에서 축대 길이만큼 안쪽으로 물려 계산해 둔다.
+ * 생성기가 구역 단 발치에서 물 폭 + 축대 길이만큼 안쪽으로 물려 계산해 둔다.
  */
 export const PLAZA_DAIS: {x: number; z: number}[] = terraces.plazaDais ?? [];
 
 /** 각도별 단상 반지름 — 미리 풀어 두고 조회만 한다(매 프레임 캐릭터가 부른다) */
-const DAIS_R: number[] = PLAZA_DAIS.map((p) => Math.hypot(p.x, p.z));
+export const DAIS_RADII: number[] = PLAZA_DAIS.map((p) => Math.hypot(p.x, p.z));
+const DAIS_R = DAIS_RADII;
 
 /** 그 자리가 광장 단상 위인가 */
 export function onPlazaDais(x: number, z: number): boolean {
   if (PLAZA_STEP === 0 || DAIS_R.length === 0) return false;
   const r = Math.hypot(x, z);
   // 가장 먼 테두리보다 밖이면 각도를 볼 것도 없다 — 프롭 수천 개가 이 분기로 빠진다
-  if (r > 8.6) return false;
+  if (r > 9.6) return false;
   const a = Math.atan2(z, x);
   const t = ((a / (Math.PI * 2)) % 1 + 1) % 1;
   return r <= DAIS_R[Math.floor(t * DAIS_R.length) % DAIS_R.length];
@@ -153,6 +165,30 @@ export function terrainHeightAt(x: number, z: number): number {
         ? PLAZA_STEP
         : 0;
   return step + reliefAt(x, z);
+}
+
+// ─── 물 ───────────────────────────────────────────────────────────────────────
+// **높이 0 이면 물이다.** 단, 마을 속(석호 껍질 안)에서만 — 껍질 밖은 벌판·숲이고
+// 그 너머에 해자가 따로 있다. 걷기 판정·프롭 배치·바닥 타일이 전부 이 하나를 본다.
+const HULL = LAGOON;
+
+/** (x,z) 가 석호 껍질 안인가 — 볼록 다각형이라 모든 변의 같은 쪽이면 안이다 */
+export function inLagoon(x: number, z: number): boolean {
+  if (HULL.length < 3) return false;
+  for (let i = 0; i < HULL.length; i++) {
+    const a = HULL[i];
+    const b = HULL[(i + 1) % HULL.length];
+    if ((b.x - a.x) * (z - a.z) - (b.z - a.z) * (x - a.x) < 0) return false;
+  }
+  return true;
+}
+
+/** 그 자리가 물인가 — 마을 속이면서 단 위가 아닌 곳 */
+export function isWater(x: number, z: number): boolean {
+  if (TERRACE_STEP === 0) return false;
+  if (onPlazaDais(x, z)) return false;
+  if (TERRACE_RECTS.some((r) => within(r, x, z, PLATEAU_PAD))) return false;
+  return inLagoon(x, z);
 }
 
 /** 구역 단 위인가. 물길·계단처럼 "위냐 아래냐"만 필요한 데 쓴다. */

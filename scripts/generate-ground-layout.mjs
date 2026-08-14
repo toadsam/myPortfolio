@@ -310,31 +310,86 @@ for (const [district, rect] of BLOCK_RECT) {
   });
 }
 
-// ─── 광장을 두르는 물 고리 ────────────────────────────────────────────────────
-// 컨셉 아트를 확대해 보면 물의 뼈대는 이렇다:
+// ─── 마을 속을 채우는 물 (석호) ───────────────────────────────────────────────
+// 한동안 물은 "잔디 위에 그린 띠"였다 — 광장을 두르는 고리 하나와 골짜기로 빠지는
+// 개울 여섯. 컨셉을 다시 보면 발상이 반대다: **물이 바닥이고 땅이 그 위로 솟는다.**
+// 구역 단(+1.1)과 광장이 물에서 올라온 섬이고, 높이 0 인 곳은 전부 수면이다.
 //
-//   기념비 → 광장 포장 → 잔디 → ★물 고리★ → (다리) → 구역(단 위)
+// 그래서 물을 리본으로 그리지 않는다. **높이 0 이면 물**이라는 규칙 하나면 되고,
+// 남는 문제는 "어디까지가 마을 속인가" 하나다. 그냥 반지름으로 자르면 구역이
+// 얕은 방향에서 벌판 한복판에 물가가 생긴다. 구역 블록 모서리들의 **볼록 껍질**로
+// 자르면 껍질이 구역 바깥 변을 따라 지나가므로, 물가가 늘 축대 뒤에 숨는다.
+const LAGOON = (() => {
+  const pts = [];
+  for (const b of BLOCK_RECT.values())
+    for (const [x, z] of [
+      [b.x0, b.z0],
+      [b.x1, b.z0],
+      [b.x1, b.z1],
+      [b.x0, b.z1]
+    ])
+      pts.push({x, z});
+  // 단 발치가 사각형보다 HALF 넓으므로 껍질도 그만큼 바깥으로 밀어야 물가가
+  // 축대에 가린다. 중심에서 방사로 미는 걸로 충분하다(껍질은 볼록이라 안 뒤집힌다).
+  const grown = pts.map(p => {
+    const r = Math.hypot(p.x, p.z) || 1;
+    const k = (r + HALF + 0.6) / r;
+    return {x: p.x * k, z: p.z * k};
+  });
+  // 볼록 껍질 (Andrew monotone chain)
+  const sorted = grown.slice().sort((a, b) => a.x - b.x || a.z - b.z);
+  const cross = (o, a, b) =>
+    (a.x - o.x) * (b.z - o.z) - (a.z - o.z) * (b.x - o.x);
+  const half = src => {
+    const out = [];
+    for (const p of src) {
+      while (out.length >= 2 && cross(out[out.length - 2], out[out.length - 1], p) <= 0)
+        out.pop();
+      out.push(p);
+    }
+    out.pop();
+    return out;
+  };
+  const hull = [...half(sorted), ...half(sorted.slice().reverse())];
+  return hull.map(p => ({x: round3(p.x), z: round3(p.z)}));
+})();
+
+/** (x,z) 가 석호 껍질 안인가 — 볼록이라 모든 변의 같은 쪽이면 안이다 */
+const inLagoon = (x, z) => {
+  for (let i = 0; i < LAGOON.length; i++) {
+    const a = LAGOON[i];
+    const b = LAGOON[(i + 1) % LAGOON.length];
+    if ((b.x - a.x) * (z - a.z) - (b.z - a.z) * (x - a.x) < 0) return false;
+  }
+  return true;
+};
+
+/** 닫힌 폴리라인(240마디)에서 그 각도의 반지름을 읽는다 */
+const radiusOn = (line, ang) => {
+  const t = ((ang / (Math.PI * 2)) % 1 || 0) * line.length;
+  const i = ((Math.floor(t) % line.length) + line.length) % line.length;
+  return Math.hypot(line[i].x, line[i].z);
+};
+
+// ─── 광장 단상 ────────────────────────────────────────────────────────────────
+// 마을 속 바닥이 전부 물이 되면 광장은 **섬**이다. 그러니 구역과 같은 높이(+1.1)로
+// 올라가야 대등한 섬으로 읽힌다 — 0.55 로 두면 가장 중요한 섬이 제일 낮은 섬이 된다.
 //
-// 즉 물은 광장에서 사방으로 **새어 나가는** 게 아니라 광장을 **감싸고**, 넘친
-// 물이 구역 사이 골짜기로 빠진다. 그래서 어느 구역에 가든 다리를 하나 건너게 되고,
-// 그 다리가 구역의 정문 노릇을 한다. 우리 물길 넷은 전부 r 7.7 에서 시작해 곧게
-// 바깥으로 나가기만 해서, 물이 어디서 와서 어디로 가는지가 안 읽혔다.
-//
-// 반지름은 **구역 단 발치가 허락하는 만큼** 크게 잡는다. 물이 단 발치에 붙어야
-// 축대가 물가 옹벽으로 읽히고, 광장이 넉넉해진다.
-/** 씬(Waterways)이 이 고리를 그릴 때 쓰는 리본 반폭 */
-const PLAZA_RING_HALF = WATER.ring;
-/** 물 가장자리와 단 발치 사이에 남길 풀 여유 */
-const PLAZA_RING_MARGIN = 0.5;
-// 구역이 멀리 물러난 방향(북·남 참배로 쪽은 아예 구역이 없다)에서 고리가 한없이
-// 퍼지지 않게 씌우는 뚜껑. 이 값이 사실상 고리의 반지름이다.
-const PLAZA_RING_CAP = 9.6;
-const PLAZA_RING = (() => {
+// 사각형이 아니라 **각도별 반지름**으로 정의한다. 광장 포장은 사각형이 아니고
+// (대로 네 개가 축 방향 칸을 먹는다) 사각형 단을 깔면 네 모서리가 물로 튀어나온다.
+// 내보내는 선은 **꼭대기 테두리**이고, 축대는 거기서 바깥으로 내려가 수면에 닿는다.
+/** 축대가 수면까지 내려오는 데 필요한 수평 거리 */
+const DAIS_WALL_RUN = 0.5;
+/** 단상 축대 발치와 구역 축대 발치 사이에 남길 물 폭 — 이게 석호의 목폭이다 */
+const LAGOON_MIN_WIDTH = 2.6;
+/** 구역이 멀리 물러난 방향에서 단상이 같이 퍼지지 않게 씌우는 뚜껑 */
+const DAIS_MAX = 9.0;
+const PLAZA_DAIS = (() => {
   const rects = [...BLOCK_RECT.values()];
   // villageTerrain 의 PLATEAU_PAD 와 같은 값 — 단이 실제로 솟는 범위는 사각형보다
-  // 이만큼 넓다. 사각형만 보고 물을 놓으면 물가가 축대 밑으로 파고든다.
+  // 이만큼 넓다. 사각형만 보고 재면 단상이 구역 축대 밑으로 파고든다.
   const PAD = HALF;
-  /** 단 발치까지 남은 거리 — 사각형 **바깥에서 잰 실거리**다 */
+  /** 구역 단 발치까지 남은 거리 — 사각형 **바깥에서 잰 실거리**다 */
   const footGap = (x, z) => {
     let best = Infinity;
     for (const b of rects) {
@@ -346,25 +401,23 @@ const PLAZA_RING = (() => {
   };
 
   // ─── 왜 "광선이 처음 닿는 거리"로 재면 안 되나 ──────────────────────────────
-  // 처음엔 각도마다 바깥으로 쏘아 단에 닿는 반지름을 구하고 거기서 1.12 를 뺐다.
-  // 단 모서리를 **스치듯 지나가는 방향**에서는 반지름을 1.12 줄여도 사각형과의
-  // 수직 거리는 거의 안 늘어난다 — 그래서 두 마디가 축대 밑에 남았다.
-  // 실거리로 재면 각도와 무관하게 물가가 항상 그만큼 떨어진다.
-  const NEED = PLAZA_RING_HALF + PLAZA_RING_MARGIN;
+  // 각도마다 바깥으로 쏘아 단에 닿는 반지름에서 일정 값을 빼는 방식은, 단 모서리를
+  // **스치듯 지나가는 방향**에서 수직 거리가 거의 안 늘어난다. 실거리로 재면
+  // 각도와 무관하게 물 폭이 늘 그만큼 확보된다.
+  const NEED = LAGOON_MIN_WIDTH + DAIS_WALL_RUN;
   const STEPS = 240;
   const limit = [];
   for (let s = 0; s < STEPS; s++) {
     const a = (s / STEPS) * Math.PI * 2;
     const c = Math.cos(a);
     const si = Math.sin(a);
-    let r = PLAZA_RING_CAP;
+    let r = DAIS_MAX;
     while (r > 3 && footGap(c * r, si * r) < NEED) r -= 0.05;
     limit.push(r);
   }
 
-  // 그대로 쓰면 SKILLS 블록 모서리가 파고든 구간(318~342°)에서 고리가 각지게
-  // 꺾인다. 한 바퀴를 둥글게 평활한 뒤 다시 한계로 눌러, 꺾이지 않으면서도
-  // 단을 침범하지 않는 곡선을 만든다.
+  // 구역 모서리가 파고든 방향에서 테두리가 각지지 않게 한 바퀴 평활한 뒤
+  // 다시 한계로 눌러, 꺾이지 않으면서도 물 폭을 잃지 않는 곡선을 만든다.
   const smooth = src => {
     const W = 12; // ±18°
     return src.map((_, i) => {
@@ -387,66 +440,22 @@ const PLAZA_RING = (() => {
     return {x: round3(Math.cos(a) * rr), z: round3(Math.sin(a) * rr)};
   });
 })();
-/** 닫힌 폴리라인(240마디)에서 그 각도의 반지름을 읽는다 */
-const radiusOn = (line, ang) => {
-  const t = ((ang / (Math.PI * 2)) % 1 || 0) * line.length;
-  const i = ((Math.floor(t) % line.length) + line.length) % line.length;
-  return Math.hypot(line[i].x, line[i].z);
-};
-/** 고리가 그 방향에서 지나는 반지름 — 포장·물길이 물을 피하는 데 쓴다 */
-const plazaRingRadius = ang => radiusOn(PLAZA_RING, ang);
-
-// ─── 광장 단상 ────────────────────────────────────────────────────────────────
-// 컨셉 아트의 광장은 계단 몇 단 올라선 **단상**이다. 우리 마을은 구역 여섯만
-// 단(+1.1) 위에 있고 광장은 잔디·물과 같은 평면이라, 단면으로 보면 마을이
-// **가운데가 파인 그릇**이고 기념비가 그 바닥에 서 있었다 — 컨셉과 정반대다.
-//
-// **구역과 같은 높이(1.1)로 올리면 안 된다.** 그러면 물길 골짜기 말고는 마을
-// 전체가 다시 한 평면이 되어, 구역을 떼어 놓기 전의 "층이 하나도 안 느껴진다"로
-// 되돌아간다. 컨셉은 세 단이다: 물·잔디(0) → 광장(중간) → 구역(1.1).
-//
-// 사각형이 아니라 **각도별 반지름**으로 정의한다. 광장 포장은 사각형이 아니고
-// (대로 네 개가 축 방향 칸을 먹고, SKILLS 단 모서리가 한쪽을 파고든다) 사각형
-// 단을 깔면 네 모서리가 잔디로 튀어나오고 대로가 계단 대신 벽을 만난다.
-// 내보내는 선은 **꼭대기 테두리**다. 축대는 거기서 바깥으로 DAIS_WALL_RUN 만큼
-// 내려가 지면에 닿는다. 그 발치가 물에 잠기면 안 되므로, 테두리 자리는
-// "물가에서 축대 길이 + 여유만큼 안쪽"이 상한이다.
-/** 축대가 지면까지 내려오는 데 필요한 수평 거리 */
-const DAIS_WALL_RUN = 0.5;
-/** 축대 발치와 물가 사이에 남길 풀 여유 */
-const DAIS_WATER_GAP = 0.2;
-/** 물 고리가 멀리 물러난 방향에서 단상이 같이 퍼지지 않게 씌우는 뚜껑 */
-const DAIS_MAX = 8.2;
-const PLAZA_DAIS = (() => {
-  const raw = PLAZA_RING.map(p => {
-    const ring = Math.hypot(p.x, p.z);
-    // 물가(고리 중심 − 반폭)에서 축대 길이와 여유를 뺀 자리가 상한
-    const room = ring - PLAZA_RING_HALF - DAIS_WATER_GAP - DAIS_WALL_RUN;
-    // 기념비 원반보다는 커야 단상이지 발판이 아니다. 다만 물가를 넘지는 않는다 —
-    // SKILLS 단 모서리가 파고든 방향(330°)은 원반과 물 사이가 0.6 밖에 없어서
-    // 둘 중 하나는 포기해야 하고, 물에 잠기는 쪽이 훨씬 나쁘다.
-    return Math.min(DAIS_MAX, Math.max(HUB_RADIUS + 0.4, room), room);
-  });
-  // 물 고리가 꺾이는 자리에서 단상까지 각지지 않게 한 바퀴 평활한다
-  const N = raw.length;
-  const W = 10;
-  const smoothed = raw.map((_, i) => {
-    let sum = 0;
-    let wsum = 0;
-    for (let k = -W; k <= W; k++) {
-      const w = 1 - Math.abs(k) / (W + 1);
-      sum += raw[(i + k + N * 2) % N] * w;
-      wsum += w;
-    }
-    return sum / wsum;
-  });
-  return smoothed.map((r, i) => {
-    const a = (i / N) * Math.PI * 2;
-    const rr = Math.min(r, raw[i]); // 평활 뒤에도 물가를 넘지 않게 다시 누른다
-    return {x: round3(Math.cos(a) * rr), z: round3(Math.sin(a) * rr)};
-  });
-})();
 const plazaDaisRadius = ang => radiusOn(PLAZA_DAIS, ang);
+
+/** 그 자리가 물인가 — 마을 속(석호 껍질 안)이면서 단 위가 아닌 곳 */
+const isWater = (x, z) => {
+  if (!inLagoon(x, z)) return false;
+  if (Math.hypot(x, z) <= plazaDaisRadius(Math.atan2(z, x))) return false;
+  for (const b of BLOCK_RECT.values())
+    if (
+      x >= b.x0 - HALF &&
+      x <= b.x1 + HALF &&
+      z >= b.z0 - HALF &&
+      z <= b.z1 + HALF
+    )
+      return false;
+  return true;
+};
 
 for (const box of BLOCK_BOX.values()) {
   const ci = Math.round((box.i0 + box.i1) / 2);
@@ -808,7 +817,16 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
     // HUB_RADIUS + 2.6 이라 네 줄기가 전부 r 7.7 에서 시작했고, 광장 한복판에서
     // 물이 솟아 사방으로 새는 모양이었다. 이제는 고리에 고인 물이 넘쳐
     // 골짜기로 빠지는 모양이 된다 — 시작점이 고리 위에 붙는다.
-    const startRadius = ang => plazaRingRadius(ang) - PLAZA_RING_HALF * 0.5;
+    // 물길은 **석호가 끝나는 자리**에서 갈라져 나간다. 석호 안은 이미 물이므로
+    // 거기까지 리본을 그리면 같은 높이 면이 겹쳐 지글거린다.
+    const startRadius = startAng => {
+      const c = Math.cos(startAng);
+      const si = Math.sin(startAng);
+      let r = 6;
+      // 껍질 밖으로 나가는 첫 반지름 — 거기서부터가 개울이다
+      while (r < 40 && inLagoon(c * r, si * r)) r += 0.3;
+      return r - 0.9; // 석호에 살짝 담가 이어 붙인다
+    };
 
     // ─── 물길은 **해자까지 가야 한다** ────────────────────────────────────────
     // 예전엔 끝 반지름이 27 로 박혀 있었다. 마을을 키우면서 구역 단이 r≈31 까지
@@ -979,20 +997,13 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
   /** 물이 지나가 걷어낸 길 칸 — 다리가 잇는 자리라 **여전히 길이다** */
   const bridgeCells = [];
 
-  // ─── 물이 지나는 칸의 길 타일을 걷어낸다 ──────────────────────────────────────
-  // 길 타일은 y 0.060, 수면은 0.050 이다. 딱 1cm 차이로 **길이 물을 덮어** 물이
-  // 그 밑으로 사라진다. 문 넷마다 2유닛씩 물이 뚝 끊긴 것처럼 보였고, 그 위에 선
-  // 돌다리는 마른 길 위에 놓인 다리가 됐다(고리 241마디 중 29마디가 이 상태였다).
-  //
-  // y 를 조정해 물을 위로 올리는 방법도 있지만 그건 물이 **길 위로 흐르는** 그림이다.
+  // ─── 물에 잠기는 길 타일을 걷어낸다 ────────────────────────────────────────
+  // 마을 속 바닥이 전부 물이 됐으므로, 단 위가 아닌 길 칸은 전부 물속이다.
+  // 길 타일은 y 0.060, 수면은 0.030 이라 그냥 두면 **길이 물을 덮어** 물이 그
+  // 밑으로 사라지고, 그 위에 선 다리는 마른 길 위에 놓인 다리가 된다.
   // 물이 지나는 자리는 길이 아니라 다리다 — 타일을 빼고 그 자리를 다리가 잇는다.
   {
-    const WATER_HALF = Math.max(WATER.ring, WATER.channelOut);
-    // **점이 아니라 선분까지의 거리**로 재야 한다. 마디마다 사각형으로 재면
-    // (칸 반폭 0.94 를 x·z 양쪽에 적용) 실제로는 1.56 만 겹치면 되는데 대각으로
-    // 2.2 까지 걸려, 걷어낸 칸이 37개 = 도로망의 40% 였다.
-    const CUT = HALF + WATER_HALF;
-    const lines = [...channels, [...PLAZA_RING, PLAZA_RING[0]]];
+    const CUT = HALF + Math.max(WATER.ring, WATER.channelOut);
     const segDist = (x, z, a, b) => {
       const dx = b.x - a.x;
       const dz = b.z - a.z;
@@ -1000,26 +1011,65 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
       const t = l2 ? Math.max(0, Math.min(1, ((x - a.x) * dx + (z - a.z) * dz) / l2)) : 0;
       return Math.hypot(x - (a.x + dx * t), z - (a.z + dz * t));
     };
+    const nearChannel = (x, z) =>
+      channels.some(line => {
+        for (let n = 0; n + 1 < line.length; n++)
+          if (segDist(x, z, line[n], line[n + 1]) < CUT) return true;
+        return false;
+      });
+
     const wetCells = new Set();
     for (const k of [...road]) {
       const [i, j] = parse(k);
       const x = worldX(i);
       const z = worldZ(j);
-      const wet = lines.some(line => {
-        for (let n = 0; n + 1 < line.length; n++)
-          if (segDist(x, z, line[n], line[n + 1]) < CUT) return true;
-        return false;
-      });
-      if (wet) {
-        road.delete(k);
-        wetCells.add(k);
-        bridgeCells.push({x: round3(x), z: round3(z)});
-      }
+      if (!isWater(x, z) && !nearChannel(x, z)) continue;
+      road.delete(k);
+      wetCells.add(k);
+      bridgeCells.push({x: round3(x), z: round3(z)});
     }
 
-    // 건널목 하나가 칸 둘을 먹으므로, 그 사이에 낀 외톨이 한 칸이 남는다 —
-    // 이웃이 하나도 없는 포장 조각이라 다리 옆에 떨어진 부스러기로 보인다.
-    // 다만 **물가에 닿은 칸은 지키다** — 그게 다리가 내려앉는 자리다.
+    // ─── 건널목 = 걷어낸 칸이 이어진 덩어리 하나 ──────────────────────────────
+    // 예전엔 물길 마디를 훑어 "여기 길이 있었나"로 찾았다. 물이 면이 된 지금은
+    // 물길 폴리라인이 없는 자리(석호 한복판)에서도 길이 끊기므로, 걷어낸 칸
+    // 자체를 4-이웃으로 묶는 쪽이 일반적이다.
+    const seen = new Set();
+    for (const k of wetCells) {
+      if (seen.has(k)) continue;
+      const group = [];
+      const stack = [k];
+      seen.add(k);
+      while (stack.length) {
+        const cur = stack.pop();
+        group.push(cur);
+        const [i, j] = parse(cur);
+        for (const [di, dj] of NEIGHBORS) {
+          const nk = key(i + di, j + dj);
+          if (wetCells.has(nk) && !seen.has(nk)) {
+            seen.add(nk);
+            stack.push(nk);
+          }
+        }
+      }
+      const xs = group.map(g => worldX(parse(g)[0]));
+      const zs = group.map(g => worldZ(parse(g)[1]));
+      const cx = xs.reduce((a, b) => a + b, 0) / group.length;
+      const cz = zs.reduce((a, b) => a + b, 0) / group.length;
+      // 덩어리가 길게 뻗은 축이 곧 길 방향이다. 다리 모델의 긴 축(+X)은 물
+      // 진행 방향에 맞춰야 물을 **가로지르므로**, 길 방향에 수직으로 눕힌다.
+      const spanX = Math.max(...xs) - Math.min(...xs);
+      const spanZ = Math.max(...zs) - Math.min(...zs);
+      const roadAng = spanX >= spanZ ? 0 : Math.PI / 2;
+      crossings.push({
+        x: round3(cx),
+        z: round3(cz),
+        angle: round3(roadAng + Math.PI / 2)
+      });
+    }
+
+    // 건널목 하나가 칸 여럿을 먹으므로 사이에 낀 외톨이가 남는다 — 이웃이 하나도
+    // 없는 포장 조각이라 다리 옆 부스러기로 보인다. 물가에 닿은 칸은 다리가
+    // 내려앉는 자리이므로 지킨다.
     const touchesWater = k => {
       const [i, j] = parse(k);
       return NEIGHBORS.some(([di, dj]) => wetCells.has(key(i + di, j + dj)));
@@ -1033,95 +1083,95 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
       orphan += 1;
     }
 
-    // ─── 건널목을 좌표로 내보낸다 ─────────────────────────────────────────────
-    // 예전엔 장식물 생성기가 "물길 마디가 길 타일 위에 있으면 다리를 놓는다"로
-    // 스스로 찾았다. 그런데 여기서 그 길 타일을 걷어내 버리므로, 그 규칙으로는
-    // **다리가 한 개도 안 선다**(실제로 15개 → 1개가 됐다). 건널목을 아는 건
-    // 타일을 걷어낸 이 자리뿐이니, 여기서 정해 terraces.json 에 같이 내보낸다.
-    //
-    // ─── 걷어낸 칸을 뭉치로 묶으면 안 된다 ────────────────────────────────────
-    // 처음엔 걷어낸 칸끼리 가까우면 한 건널목으로 묶었다. 그런데 물길 하나가
-    // 큰길과 **나란히** 달리는 구간에서는 칸 대여섯이 한 줄로 걷혀 뭉치 하나가
-    // 되고, 바로 옆 물 고리의 건널목까지 같이 삼킨다 — 동쪽 문이 그렇게 사라졌다.
-    //
-    // 대신 **물줄기마다 따로** 훑는다. 마디를 따라가며 "여기 길이 있었나"를 보고,
-    // 이어지는 구간 하나가 건널목 하나다. 그러면 고리의 문과 개울의 건널목이
-    // 서로 다른 줄기라 절대 안 섞인다.
-    const wasRoad = (x, z) =>
-      [...wetCells].some(k => {
-        const [i, j] = parse(k);
-        return (
-          Math.abs(worldX(i) - x) < HALF + 0.3 &&
-          Math.abs(worldZ(j) - z) < HALF + 0.3
-        );
-      });
-    for (const line of lines) {
-      let run = [];
-      const flush = () => {
-        if (run.length === 0) return;
-        const mid = run[Math.floor(run.length / 2)];
-        const prev = line[Math.max(0, mid - 1)];
-        const next = line[Math.min(line.length - 1, mid + 1)];
-        crossings.push({
-          x: round3(line[mid].x),
-          z: round3(line[mid].z),
-          // 모델의 긴 축(+X)을 물 진행 방향에 맞춘다 — 그래야 물을 **가로지른다**
-          angle: round3(Math.atan2(next.z - prev.z, next.x - prev.x))
-        });
-        run = [];
-      };
-      for (let n = 0; n < line.length; n++) {
-        if (wasRoad(line[n].x, line[n].z)) run.push(n);
-        else flush();
-      }
-      flush();
-    }
-
-    // ─── 물길 초입마다 징검다리 하나 ──────────────────────────────────────────
-    // 고리 바깥에는 구역 앞까지 이어지는 띠가 한 바퀴 돈다. 그런데 물길 여섯이
-    // 그 띠를 여섯 조각으로 자르고, 고리를 건너는 문은 넷뿐이라 **두 조각은
-    // 어느 문에서도 못 간다**(설 수 있는 땅의 28% 가 섬이 됐다).
-    // 북문으로 나갔다가 동쪽 구역에 가려면 광장으로 되돌아와야 한다는 뜻이다.
-    //
-    // 물길이 고리에서 갈라지는 자리에 다리를 하나씩 놓으면 띠가 다시 한 바퀴
-    // 이어진다. 컨셉 아트에도 이런 자리마다 작은 다리가 있다.
-    for (const ch of channels) {
-      let at = -1;
-      for (let n = 1; n + 1 < ch.length; n++) {
-        // 고리 바깥으로 조금 나온 첫 마디 — 여기가 개울의 초입이다
-        const r = Math.hypot(ch[n].x, ch[n].z);
-        if (r > plazaRingRadius(Math.atan2(ch[n].z, ch[n].x)) + 1.4) {
-          at = n;
+    // ─── 구역마다 광장에서 오는 다리를 **보장한다** ───────────────────────────
+    // 위의 "걷어낸 길 칸" 만으로는 구역 여섯 중 절반에만 다리가 생긴다. 대로가
+    // 구역 정면으로 곧게 가지 않고 L 자로 도는 탓이라, 물을 건너는 자리가 구역
+    // 앞이 아니라 엉뚱한 각도에 생긴다 — 걸어서 닿는 건물이 6채까지 떨어졌다.
+    // 구역마다 무게중심 방향으로 **둑길 한 줄**을 놓아 광장 섬과 잇는다.
+    for (const [district, b] of BLOCK_RECT) {
+      const cx = (b.x0 + b.x1) / 2;
+      const cz = (b.z0 + b.z1) / 2;
+      const ang = Math.atan2(cz, cx);
+      const c = Math.cos(ang);
+      const si = Math.sin(ang);
+      const span = [];
+      for (let r = plazaDaisRadius(ang) - PITCH; r < 40; r += PITCH * 0.5) {
+        const x = c * r;
+        const z = si * r;
+        if (!isWater(x, z)) {
+          // 물을 벗어났는데 아직 시작도 안 했으면 계속 나간다(광장 섬 위)
+          if (span.length === 0) continue;
           break;
         }
+        span.push({x: round3(x), z: round3(z)});
       }
-      if (at < 0) continue;
-      const here = ch[at];
-      // 이미 옆에 다리가 있으면 겹쳐 놓지 않는다
-      if (crossings.some(c => Math.hypot(c.x - here.x, c.z - here.z) < 3.2))
-        continue;
-      crossings.push({
-        x: round3(here.x),
-        z: round3(here.z),
-        angle: round3(
-          Math.atan2(ch[at + 1].z - ch[at - 1].z, ch[at + 1].x - ch[at - 1].x)
-        )
-      });
+      if (span.length === 0) continue;
+      for (const q of span) bridgeCells.push(q);
+      const mid = span[Math.floor(span.length / 2)];
+      if (!crossings.some(q => Math.hypot(q.x - mid.x, q.z - mid.z) < 3))
+        crossings.push({
+          x: mid.x,
+          z: mid.z,
+          angle: round3(ang + Math.PI / 2)
+        });
+      void district;
+    }
+
+    // ─── 구역끼리 잇는 다리 ────────────────────────────────────────────────────
+    // 골짜기가 통째로 물이 되면 구역 사이 직통이 끊긴다. 광장을 거치지 않고도
+    // 옆 구역으로 갈 수 있게 골짜기마다 하나씩 놓는다.
+    {
+      const rects = [...BLOCK_RECT.entries()];
+      let put = 0;
+      for (let i = 0; i < rects.length; i++)
+        for (let j = i + 1; j < rects.length; j++) {
+          const A = rects[i][1];
+          const B = rects[j][1];
+          const ox = Math.min(A.x1, B.x1) - Math.max(A.x0, B.x0);
+          const oz = Math.min(A.z1, B.z1) - Math.max(A.z0, B.z0);
+          if (ox <= 0 && oz <= 0) continue; // 대각선으로 떨어진 구역
+          let x;
+          let z;
+          let ang;
+          if (oz > ox) {
+            // 좌우로 마주본다 — 골짜기가 세로로 흐르므로 다리는 가로로 눕는다
+            const gap =
+              A.x0 > B.x1 ? [B.x1, A.x0] : B.x0 > A.x1 ? [A.x1, B.x0] : null;
+            if (!gap || gap[1] - gap[0] < 1.5) continue;
+            x = (gap[0] + gap[1]) / 2;
+            z = (Math.max(A.z0, B.z0) + Math.min(A.z1, B.z1)) / 2;
+            ang = Math.PI / 2;
+          } else {
+            const gap =
+              A.z0 > B.z1 ? [B.z1, A.z0] : B.z0 > A.z1 ? [A.z1, B.z0] : null;
+            if (!gap || gap[1] - gap[0] < 1.5) continue;
+            z = (gap[0] + gap[1]) / 2;
+            x = (Math.max(A.x0, B.x0) + Math.min(A.x1, B.x1)) / 2;
+            ang = 0;
+          }
+          if (crossings.some(c => Math.hypot(c.x - x, c.z - z) < 4)) continue;
+          crossings.push({x: round3(x), z: round3(z), angle: round3(ang)});
+          put += 1;
+        }
+      console.log(`  구역끼리 잇는 다리 ${put}개`);
     }
 
     console.log(
-      `  물이 지나가 걷어낸 길 칸: ${wetCells.size}개 · 외톨이 ${orphan}개 정리 · 건널목 ${crossings.length}곳 (여기에 돌다리가 선다)`
+      `  물에 잠겨 걷어낸 길 칸: ${wetCells.size}개 · 외톨이 ${orphan}개 정리 · 건널목 ${crossings.length}곳`
     );
   }
-  const ringR = PLAZA_RING.map(p => Math.hypot(p.x, p.z));
+
   const daisR = PLAZA_DAIS.map(p => Math.hypot(p.x, p.z));
+  const hullR = LAGOON.map(p => Math.hypot(p.x, p.z));
   console.log(
-    `  광장 물 고리 반지름 ${Math.min(...ringR).toFixed(1)}~${Math.max(
-      ...ringR
-    ).toFixed(1)}  ·  구역 사이 물길 ${channels.length}줄기`
+    `  마을 속 물(석호) 껍질 ${LAGOON.length}각형 · 반지름 ${Math.min(
+      ...hullR
+    ).toFixed(1)}~${Math.max(...hullR).toFixed(1)}  ·  바깥 물길 ${
+      channels.length
+    }줄기`
   );
   console.log(
-    `  광장 단상 반지름 ${Math.min(...daisR).toFixed(1)}~${Math.max(
+    `  광장 단상(섬) 반지름 ${Math.min(...daisR).toFixed(1)}~${Math.max(
       ...daisR
     ).toFixed(1)}  (기념비 원반 ${HUB_RADIUS.toFixed(1)})`
   );
@@ -1134,7 +1184,7 @@ for (let pass = 0; pass < PRUNE_PASSES; pass++) {
           pitch: PITCH,
           blocks,
           channels,
-          plazaRing: PLAZA_RING,
+          lagoon: LAGOON,
           plazaDais: PLAZA_DAIS,
           crossings,
           bridgeCells

@@ -71,70 +71,66 @@ function inMoatWater(x, z) {
   return best < half + WATER_BANK_KEEP;
 }
 
-// ─── 마을 안 물길 (광장 물 고리 + 골짜기 개울) ────────────────────────────────
-// 해자와 같은 이유로 여기도 물 위·물가에는 아무것도 못 놓는다. 다만 이쪽이
-// 훨씬 중요하다 — 광장 둘레 잔디 띠(r 10~14)에 심는 초목·벤치가 전부 고리를
-// 스친다. 좌표는 바닥 생성기가 계산해 둔 것을 그대로 읽는다.
-const INNER_WATER = (() => {
+// ─── 마을 속 물 (석호) ────────────────────────────────────────────────────────
+// **높이 0 이면 물이다** — 마을 속(구역 블록 볼록 껍질 안)에서만. 껍질 밖은
+// 벌판·숲이고 그 너머에 해자가 따로 있다. 앱의 `villageTerrain.isWater` 와 같은
+// 판정이고, 같은 데이터(villageTerraces.json)를 읽으므로 규칙이 두 벌은 아니다.
+const TERR = (() => {
   try {
-    const t = JSON.parse(
-      readFileSync("src/data/villageTerraces.json", "utf8")
-    );
-    const ring = t.plazaRing ?? [];
-    const out = [];
-    // {점, 그 자리 리본 반폭}
-    if (ring.length > 2)
-      for (const q of ring) out.push({x: q.x, z: q.z, half: WATER.ring});
-    for (const ch of t.channels ?? [])
-      ch.forEach((q, i) =>
-        out.push({
-          x: q.x,
-          z: q.z,
-          half:
-            WATER.channelIn +
-            (i / (ch.length - 1)) * (WATER.channelOut - WATER.channelIn)
-        })
-      );
-    return out;
+    return JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"));
   } catch {
-    return [];
+    return {};
   }
 })();
+const LAGOON = TERR.lagoon ?? [];
+const DAIS_LINE = TERR.plazaDais ?? [];
+const TERR_BLOCKS = TERR.blocks ?? [];
+const TERR_PAD = (TERR.pitch ?? 1.88) / 2;
 
+const inLagoon = (x, z) => {
+  if (LAGOON.length < 3) return false;
+  for (let i = 0; i < LAGOON.length; i++) {
+    const a = LAGOON[i];
+    const b = LAGOON[(i + 1) % LAGOON.length];
+    if ((b.x - a.x) * (z - a.z) - (b.z - a.z) * (x - a.x) < 0) return false;
+  }
+  return true;
+};
+
+const daisRadiusAt = ang => {
+  if (DAIS_LINE.length < 8) return 0;
+  const t = ((ang / (Math.PI * 2)) % 1 + 1) % 1;
+  const p = DAIS_LINE[Math.floor(t * DAIS_LINE.length) % DAIS_LINE.length];
+  return Math.hypot(p.x, p.z);
+};
+
+const onDais = (x, z) => Math.hypot(x, z) <= daisRadiusAt(Math.atan2(z, x));
+
+const onBlock = (x, z, pad = TERR_PAD) =>
+  TERR_BLOCKS.some(
+    b => x >= b.x0 - pad && x <= b.x1 + pad && z >= b.z0 - pad && z <= b.z1 + pad
+  );
+
+/** 그 자리가 물인가 */
 function inInnerWater(x, z) {
-  for (const q of INNER_WATER)
-    if (Math.hypot(x - q.x, z - q.z) < q.half + WATER_BANK_KEEP) return true;
-  return false;
+  if (onDais(x, z)) return false;
+  if (onBlock(x, z)) return false;
+  return inLagoon(x, z);
 }
 
-// ─── 광장 단상 테두리 ─────────────────────────────────────────────────────────
-// 단상이 0.55 올라앉으면서 테두리에 축대가 생겼다. 그 선 위에 걸친 프롭은
-// `terrainHeightAt` 이 "안이냐 밖이냐"로만 답하므로 **반쯤 벽에 박히거나 허공에
-// 뜬다**(벤치·깃대·나무 등 7개가 그랬다). 물가와 같은 방식으로 여기서 한 번 막는다.
-const PLAZA_DAIS_LINE = (() => {
-  try {
-    return (
-      JSON.parse(readFileSync("src/data/villageTerraces.json", "utf8"))
-        .plazaDais ?? []
-    );
-  } catch {
-    return [];
-  }
-})();
-/** 축대 두께(0.5) + 프롭이 걸치지 않을 여유 */
-const DAIS_EDGE_KEEP = 0.9;
-
-function onDaisEdge(x, z) {
-  if (PLAZA_DAIS_LINE.length < 8) return false;
-  const r = Math.hypot(x, z);
-  if (r > 9.5) return false;
-  const a = Math.atan2(z, x);
-  const t = ((a / (Math.PI * 2)) % 1 + 1) % 1;
-  const p =
-    PLAZA_DAIS_LINE[
-      Math.floor(t * PLAZA_DAIS_LINE.length) % PLAZA_DAIS_LINE.length
-    ];
-  return Math.abs(r - Math.hypot(p.x, p.z)) < DAIS_EDGE_KEEP;
+/**
+ * 물가 턱에 걸치는가.
+ *
+ * 축대 꼭대기 바로 옆에 프롭을 놓으면 반은 허공으로 삐져나온다. 물속은 위에서
+ * 막고, 여기서는 **단 위의 물가 쪽 테두리**를 막는다.
+ */
+const SHORE_KEEP = 0.9;
+function nearShore(x, z) {
+  if (!onDais(x, z) && !onBlock(x, z)) return false;
+  for (let a = 0; a < Math.PI * 2; a += Math.PI / 8)
+    if (inInnerWater(x + Math.cos(a) * SHORE_KEEP, z + Math.sin(a) * SHORE_KEEP))
+      return true;
+  return false;
 }
 
 // ─── 규격 ─────────────────────────────────────────────────────────────────────
@@ -570,9 +566,9 @@ function place(
   // 프롭 종류마다 회피를 따로 붙이면 새 종류가 생길 때마다 같은 사고가 난다.
   // 물 위에 서야 하는 것(다리·폭포)만 onWater 로 빠져나간다.
   if (!onWater && (inMoatWater(x, z) || inInnerWater(x, z))) return false;
-  // 광장 단상 테두리에 걸치면 반은 축대에 박히고 반은 뜬다. 계단만 예외다 —
-  // 계단은 그 턱을 오르라고 있는 물건이라 일부러 테두리에 붙여 놓는다.
-  if (kind !== "terrace-stair" && onDaisEdge(x, z)) return false;
+  // 물가 턱에 걸치면 반은 축대에 박히고 반은 뜬다. 계단만 예외 — 그 턱을
+  // 오르라고 있는 물건이라 일부러 붙여 놓는다.
+  if (!onWater && kind !== "terrace-stair" && nearShore(x, z)) return false;
   props.push({
     id: `decor-${id}`,
     glb: `/models/props/${KIT[kind].glb}`,

@@ -46,17 +46,21 @@ import {MOAT, RELIEF_ENABLED, reliefAt} from "@/lib/villageRelief";
 import {makeCloudTexture} from "@/lib/skyClouds";
 import {
   advanceWaterFlow,
+  applyWaterBed,
   applyWaterFlow,
+  applyWaterSurface,
   makeWaterNormal
 } from "@/lib/waterFlow";
 import {advanceFoliageWind} from "@/lib/foliageWind";
 import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
 import {makeBankTexture} from "@/lib/terraceBank";
 import {
+  DAIS_RADII,
+  isWater,
   PLATEAU_PAD,
   PLAZA_DAIS,
   PLAZA_STEP,
-  PLAZA_WATER_RING,
+  LAGOON,
   TERRACE_RECTS,
   TERRACE_STEP,
   terrainHeightAt,
@@ -529,11 +533,12 @@ function waterLines(): WaterLine[] {
     lift: 0
   });
 
-  // ② 광장을 두르는 물 고리 — 물의 본류. 골짜기로 빠지는 게 지류다.
-  if (PLAZA_WATER_RING.length > 2) {
+  // ② 마을 속 물(석호)의 **물가**. 면 자체는 아래 Lagoon 이 한 장으로 깔고,
+  //    여기서는 껍질을 따라 리본 하나를 둘러 물가 자갈·둔덕을 만든다.
+  if (LAGOON.length > 2) {
     lines.push({
-      pts: [...PLAZA_WATER_RING, PLAZA_WATER_RING[0]],
-      half: t => waterHalfAt("ring", t),
+      pts: [...LAGOON, LAGOON[0]],
+      half: () => 0.6,
       closed: true,
       lift: 0
     });
@@ -703,9 +708,315 @@ function Waterways() {
     return m;
   }, []);
 
+  // ─── 물 면 자체 ─────────────────────────────────────────────────────────────
+  // 마을 속 바닥은 전부 물이다. 리본을 촘촘히 까는 대신 **껍질을 한 장으로 덮고**
+  // 구역 단(+1.1)과 광장 섬이 그 위로 솟게 둔다 — 물가는 축대가 알아서 가린다.
+  // 볼록 다각형이라 중심에서 부챗살로 삼각형을 깔면 끝난다(20삼각형 남짓).
+  // ─── 물 면 자체 ─────────────────────────────────────────────────────────────
+  // 마을 속 바닥은 전부 물이다. 처음엔 껍질을 부챗살 한 장으로 덮었는데, 그러면
+  // 수면이 **한 가지 색 판때기**라 넓이만 있고 깊이가 없다. 물이 깊어 보이는 건
+  // 물빛이 아니라 **물가에서 멀어질수록 바닥이 안 보이게 되는 변화**다.
+  //
+  // 그래서 두 겹으로 깐다:
+  //   ① 하상  — 물가에선 젖은 모래, 가운데로 갈수록 캄캄해진다 (불투명)
+  //   ② 수면  — 물가에선 맑아 하상이 비치고, 가운데로 갈수록 불투명해진다
+  // 둘 다 물가까지의 거리로 색·투명도를 매기므로, 구역이 옮겨 가도 저절로 따라온다.
+  //
+  // 격자로 잘게 나누는 이유: 정점이 껍질 모서리 열 개뿐이면 색을 매길 자리가 없다.
+  const {bed, surface} = useMemo(() => {
+    if (LAGOON.length < 3) return {bed: null, surface: null};
+
+    // 물가까지의 거리 — 구역 단, 광장 섬, 껍질 테두리 중 가장 가까운 것
+    const shoreDist = (x: number, z: number) => {
+      let best = Infinity;
+      for (const r of TERRACE_RECTS) {
+        const dx = Math.max(r.x0 - PLATEAU_PAD - x, 0, x - (r.x1 + PLATEAU_PAD));
+        const dz = Math.max(r.z0 - PLATEAU_PAD - z, 0, z - (r.z1 + PLATEAU_PAD));
+        best = Math.min(best, Math.hypot(dx, dz));
+      }
+      const rr = Math.hypot(x, z);
+      if (rr < 12) {
+        const a2 = Math.atan2(z, x);
+        const t = (((a2 / (Math.PI * 2)) % 1) + 1) % 1;
+        const dr = DAIS_RADII.length
+          ? DAIS_RADII[Math.floor(t * DAIS_RADII.length) % DAIS_RADII.length]
+          : 0;
+        best = Math.min(best, Math.abs(rr - dr));
+      }
+      for (let i = 0; i < LAGOON.length; i++) {
+        const p0 = LAGOON[i];
+        const p1 = LAGOON[(i + 1) % LAGOON.length];
+        const dx = p1.x - p0.x;
+        const dz = p1.z - p0.z;
+        const l2 = dx * dx + dz * dz || 1;
+        const tt = Math.max(0, Math.min(1, ((x - p0.x) * dx + (z - p0.z) * dz) / l2));
+        best = Math.min(
+          best,
+          Math.hypot(x - (p0.x + dx * tt), z - (p0.z + dz * tt))
+        );
+      }
+      return best;
+    };
+
+    const STEP = 0.85;
+    const xs = LAGOON.map((p) => p.x);
+    const zs = LAGOON.map((p) => p.z);
+    const x0 = Math.min(...xs);
+    const x1 = Math.max(...xs);
+    const z0 = Math.min(...zs);
+    const z1 = Math.max(...zs);
+    const nx = Math.ceil((x1 - x0) / STEP) + 1;
+    const nz = Math.ceil((z1 - z0) / STEP) + 1;
+
+    // 정점 격자 — 물이 아닌 자리는 −1 로 비워 둔다
+    const at = new Int32Array(nx * nz).fill(-1);
+    const bedPos: number[] = [];
+    const bedCol: number[] = [];
+    const surPos: number[] = [];
+    const surCol: number[] = [];
+    const surUv: number[] = [];
+    /** 물가까지의 월드 거리 — 너울·포말·커스틱이 전부 이걸 본다 (waterFlow 참고) */
+    const shore: number[] = [];
+    /** 그 자리의 흐름 방향 */
+    const flow: number[] = [];
+
+    // 물가 — 젖은 모래·자갈. **마른 흙색이면 안 된다.** 그늘에 들어가면 수면의
+    // 반사가 사라져 하상이 그대로 드러나는데, 그때 색이 흙빛이면 물이 아니라
+    // 갯벌로 보인다. 초록을 섞어 물속에 잠긴 바닥으로 읽히게 한다.
+    const sandy = new Color("#7b8a72");
+    const abyss = new Color("#0d2436"); // 가운데 — 바닥이 안 보이는 곳
+    const clear = new Color("#7fd4d0"); // 얕은 물빛
+    const deep = new Color("#1f7fa8"); // 깊은 물빛
+    const c0 = new Color();
+    const c1 = new Color();
+
+    /** 깊이 0~1 — 물가에서 이만큼 떨어지면 바닥이 완전히 안 보인다 */
+    const FULL_DEPTH = 4.5;
+
+    // ─── 물가의 톱니를 없애려면 물을 **뭍 밑으로 밀어 넣어야 한다** ──────────
+    // 격자를 물인 칸에서 딱 끊으면 물가가 0.85 짜리 계단이 된다. 낮은 시점에서
+    // 이게 그대로 보인다 — 물결을 아무리 잘 만들어도 가장자리가 톱니면 종이를
+    // 오려 붙인 것으로 보인다.
+    //
+    // 격자를 더 잘게 해도 계단은 안 없어지고 정점만 는다. 답은 **가장자리를
+    // 안 보이게 하는 것**이다: 물가 바로 바깥이 단(구역 축대·광장 섬)이면 그
+    // 칸까지 물을 한 칸 더 깔아 축대 벽 뒤로 숨긴다. 진짜 물가 선은 그때부터
+    // 축대가 정하므로 격자와 무관해진다.
+    //
+    // **뭍이라고 아무 데나 늘리면 안 된다.** 껍질 바깥은 높이가 같은 잔디라,
+    // 거기로 늘리면 물이 잔디 위로 넘친다. 그래서 "단 위"일 때만 늘린다.
+    const onRaised = (x: number, z: number) => {
+      for (const r of TERRACE_RECTS)
+        if (
+          x > r.x0 - PLATEAU_PAD &&
+          x < r.x1 + PLATEAU_PAD &&
+          z > r.z0 - PLATEAU_PAD &&
+          z < r.z1 + PLATEAU_PAD
+        )
+          return true;
+      const rr = Math.hypot(x, z);
+      if (rr >= 12 || DAIS_RADII.length === 0) return false;
+      const t = (((Math.atan2(z, x) / (Math.PI * 2)) % 1) + 1) % 1;
+      return rr <= DAIS_RADII[Math.floor(t * DAIS_RADII.length) % DAIS_RADII.length];
+    };
+
+    const wet = new Uint8Array(nx * nz);
+    const high = new Uint8Array(nx * nz);
+    for (let j = 0; j < nz; j++)
+      for (let i = 0; i < nx; i++) {
+        const x = x0 + i * STEP;
+        const z = z0 + j * STEP;
+        if (isWater(x, z)) wet[j * nx + i] = 1;
+        else if (onRaised(x, z)) high[j * nx + i] = 1;
+      }
+
+    const near = (flags: Uint8Array, i: number, j: number) => {
+      for (let dj = -1; dj <= 1; dj++)
+        for (let di = -1; di <= 1; di++) {
+          const ii = i + di;
+          const jj = j + dj;
+          if (ii < 0 || jj < 0 || ii >= nx || jj >= nz) continue;
+          if (flags[jj * nx + ii]) return true;
+        }
+      return false;
+    };
+
+    let n = 0;
+    for (let j = 0; j < nz; j++)
+      for (let i = 0; i < nx; i++) {
+        const x = x0 + i * STEP;
+        const z = z0 + j * STEP;
+        // 물이 아니면, **물에 닿아 있으면서 단에 붙어 있을 때만** 한 칸 늘린다.
+        //
+        // "단 위"만으로는 부족했다. 축대 rect 와 물 사이에는 `isWater` 가 단의
+        // PLATEAU_PAD(0.94)만큼 비워 둔 **높이 0 짜리 잔디 띠**가 있다(실측 최대
+        // 2.9유닛). 톱니가 실제로 드러나던 곳이 거기다 — 단 밑이 아니라 그 띠였다.
+        // 그래서 "단이거나, 단에 붙은 칸"까지 넓힌다. 물가가 축대 벽에 바로 닿아
+        // 구역이 물에 뜬 섬으로 읽힌다.
+        //
+        // 껍질 바깥(구역이 없는 트인 들판 쪽)은 단이 없으므로 안 늘어난다 —
+        // 거기로 늘리면 물이 잔디 위로 넘친다.
+        if (!wet[j * nx + i] && !(near(wet, i, j) && (high[j * nx + i] || near(high, i, j))))
+          continue;
+        at[j * nx + i] = n++;
+        const sd = shoreDist(x, z);
+        shore.push(sd);
+        // ─── 흐름 방향은 **접선**이다 ──────────────────────────────────────
+        // 석호는 광장 섬을 두르는 고리다. 세계 좌표로 한 방향(예: +z)으로 밀면
+        // 고리의 한쪽에서는 물이 뭍으로 기어오르고 반대쪽에서는 물가에서
+        // 멀어진다 — 물이 아니라 컨베이어 벨트로 보인다. 중심을 도는 접선으로
+        // 주면 어느 물가에서나 물이 **나란히 지나가고**, 그게 강가에서 보는
+        // 것과 같은 움직임이다.
+        const rr0 = Math.hypot(x, z) || 1;
+        flow.push(-z / rr0, x / rr0);
+        const d = Math.min(1, sd / FULL_DEPTH);
+        // 물가 근처는 완만하게, 가운데로 갈수록 빠르게 어두워진다
+        const k = d * d * (3 - 2 * d);
+        bedPos.push(x, 0, z);
+        c0.copy(sandy).lerp(abyss, k);
+        bedCol.push(c0.r, c0.g, c0.b);
+        surPos.push(x, 0, z);
+        c1.copy(clear).lerp(deep, k);
+        // 알파: 물가에선 하상이 비치고 가운데로 갈수록 막힌다.
+        // 바닥값을 0.42 → 0.55 로 올렸다. 0.42 는 볕에서는 좋았지만 **그늘에서**
+        // 수면의 반사가 사라지자 하상이 58% 로 드러나 물이 흙바닥이 됐다.
+        // 0.55 면 그늘에서도 물빛이 이기면서 얕은 데 바닥은 여전히 비친다.
+        surCol.push(c1.r, c1.g, c1.b, 0.55 + 0.42 * k);
+        surUv.push(x * UV_PER_UNIT, z * UV_PER_UNIT);
+      }
+
+    const idx: number[] = [];
+    for (let j = 0; j + 1 < nz; j++)
+      for (let i = 0; i + 1 < nx; i++) {
+        const a0 = at[j * nx + i];
+        const b0 = at[j * nx + i + 1];
+        const c2 = at[(j + 1) * nx + i];
+        const d0 = at[(j + 1) * nx + i + 1];
+        if (a0 < 0 || b0 < 0 || c2 < 0 || d0 < 0) continue;
+        // 네 귀 중 **하나라도** 물이어야 한다. 이 조건이 없으면 단 안쪽까지
+        // 물이 통째로 깔려 구역 광장에 물이 고인다.
+        if (
+          !wet[j * nx + i] &&
+          !wet[j * nx + i + 1] &&
+          !wet[(j + 1) * nx + i] &&
+          !wet[(j + 1) * nx + i + 1]
+        )
+          continue;
+        idx.push(a0, c2, b0, b0, c2, d0);
+      }
+    if (idx.length === 0) return {bed: null, surface: null};
+
+    const bedGeo = new BufferGeometry();
+    bedGeo.setAttribute("position", new Float32BufferAttribute(bedPos, 3));
+    bedGeo.setAttribute("color", new Float32BufferAttribute(bedCol, 3));
+    bedGeo.setAttribute("aShore", new Float32BufferAttribute(shore, 1));
+    bedGeo.setIndex(idx);
+    bedGeo.computeVertexNormals();
+
+    const surGeo = new BufferGeometry();
+    surGeo.setAttribute("position", new Float32BufferAttribute(surPos, 3));
+    surGeo.setAttribute("color", new Float32BufferAttribute(surCol, 4));
+    surGeo.setAttribute("uv", new Float32BufferAttribute(surUv, 2));
+    surGeo.setAttribute("aShore", new Float32BufferAttribute(shore.slice(), 1));
+    surGeo.setAttribute("aFlow", new Float32BufferAttribute(flow, 2));
+    surGeo.setIndex(idx.slice());
+    surGeo.computeVertexNormals();
+
+    return {bed: bedGeo, surface: surGeo};
+  }, []);
+
+  // ─── 석호 수면 ──────────────────────────────────────────────────────────────
+  // **리본 재질을 clone 하면 안 된다.** three 의 Material.copy 는 onBeforeCompile 을
+  // 복사하지 않아서 물결이 얼어붙는다(자세한 설명은 waterFlow.ts 의 applyWaterSurface
+  // 주석). 넓은 수면은 필요한 것도 다르다 — 너울·프레넬·포말이 여기서 붙는다.
+  const lagoonMaterial = useMemo(() => {
+    const m = new MeshStandardMaterial({
+      vertexColors: true,
+      transparent: true,
+      depthWrite: false, // 반투명 면끼리 서로를 지우지 않게
+      // 0.28/0.2 로 뒀더니 눈높이에서 햇빛 반사가 수면을 통째로 하얗게 덮었다
+      // (해자에서 겪은 "회백색"과 같은 사고다 — 넓은 면이라 더 크게 터진다).
+      // 조금 거칠게 하면 반사가 좁아져 물빛이 드러난다.
+      roughness: 0.38,
+      metalness: 0.12,
+      emissive: new Color("#0f3f57"),
+      emissiveIntensity: 0.25
+    });
+    applyWaterSurface(m, makeWaterNormal(), {
+      // ─── 배율을 리본(8:5)에서 크게 낮춘 이유 ────────────────────────────
+      // 처음엔 리본과 똑같이 8:5 로 뒀다. 개울에서 석호로 이어질 때 물결 크기가
+      // 달라지면 이음매가 보일 줄 알았는데, 실제 화면은 **격자무늬 그물**이었다.
+      //
+      // 물결 텍스처는 타일 한 장이 되풀이되는 것이다. 배율 8 이면 타일 한 칸이
+      // 0.25유닛 — 폭 1.5유닛짜리 개울에서는 여섯 번밖에 안 반복되니 잔물결로
+      // 읽히지만, 폭 20유닛짜리 석호에서는 **여든 번** 반복된다. 그 정도면 눈이
+      // 되풀이를 알아채고 물결이 아니라 짜인 그물로 본다. 비스듬히 볼수록 심하다.
+      //
+      // 1.6:1.05 면 타일이 1.25 · 1.9유닛이라 석호 폭에 열 번 남짓 들어간다.
+      // 마침 실제로도 맞다 — 연못의 잔물결은 개울의 물살보다 크고 느긋하다.
+      // (하상을 끄고 찍어 봐서 범인이 수면임을 확인하고 고친 값이다.)
+      scaleA: 1.6,
+      scaleB: 1.05,
+      // dirA/dirB 는 안 쓴다(방향이 정점마다 다르다). 인터페이스를 맞추려고 둔다.
+      dirA: [0, 1],
+      dirB: [0, 1],
+      // 월드 속도 = speed / (UV_PER_UNIT × scaleA) = 0.28/0.8 ≈ 0.35유닛/초.
+      // 배율을 바꾸면 같은 speed 라도 실제 빠르기가 달라지므로 늘 이 식으로 잡는다.
+      speed: 0.28,
+      // 물결 한 칸이 커진 만큼 기울기를 낮춰야 한다 — 안 그러면 큰 너울이
+      // 하나하나 도드라져 젤리 표면처럼 보인다.
+      normalScale: 0.5,
+      // 4cm. 이보다 크면 물가에서 수면이 둑을 넘본다.
+      swellAmp: 0.045,
+      swellSpeed: 0.6,
+      foamWidth: 0.5,
+      skyTint: "#bcdcea",
+      // 3 이면 정면에서도 하늘이 제법 비친다 — 얕아 보인다. 4.5 로 세워
+      // 위에서 볼 때는 물속이 보이고 비스듬할 때만 하늘이 덮게 한다.
+      fresnelPower: 4.5
+    });
+    return m;
+  }, []);
+
+  // 하상 — 가만히 있고 그 위로 물빛 무늬만 지나간다
+  const bedMaterial = useMemo(() => {
+    const m = new MeshStandardMaterial({
+      vertexColors: true,
+      roughness: 0.95,
+      metalness: 0
+    });
+    applyWaterBed(m, {
+      scale: 1.15,
+      speed: 0.5,
+      // 물빛(FULL_DEPTH 4.5)보다 얕게 잡는다. 무늬가 물빛보다 **먼저** 사라져야
+      // "바닥이 안 보이기 시작하는 곳"이 물빛이 어두워지는 곳보다 앞선다.
+      depth: 3.2,
+      strength: 0.5,
+      color: "#a8d9b4"
+    });
+    return m;
+  }, []);
+
   return (
     <>
       <WaterBanks />
+      {bed ? (
+        // 하상 — 잔디보다 살짝 위라 잔디를 가리고, 수면 밑으로 비친다
+        <mesh
+          geometry={bed}
+          material={bedMaterial}
+          position={[0, WATER_SURFACE_Y - 0.02, 0]}
+          receiveShadow
+        />
+      ) : null}
+      {surface ? (
+        // 리본보다 2mm 아래 — 껍질 물가 리본과 같은 높이면 지글거린다
+        <mesh
+          geometry={surface}
+          material={lagoonMaterial}
+          position={[0, WATER_SURFACE_Y - 0.002, 0]}
+        />
+      ) : null}
       <mesh
         geometry={geometry}
         material={material}

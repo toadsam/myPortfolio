@@ -189,93 +189,39 @@ console.log("── 마을 정합성 검사 ────────────
   );
 }
 
-// ⑥-2 광장 물 고리 — 닫혀 있고, 단 발치를 침범하지 않고, 문(다리)이 있나
+// ⑥-2 마을 속 물(석호) — 껍질이 있고, 광장 섬이 서 있고, 사방에 다리가 있나
 {
-  const ring = terraces.plazaRing ?? [];
-  const HALF = terraces.pitch / 2;
-  const RING_HALF = 0.62; // VillageScene 의 Waterways 가 쓰는 반폭
-
-  // ⓐ 단 발치를 파고들면 물이 축대 밑으로 사라진다
-  const sunk = ring.filter(q =>
-    terraces.blocks.some(
-      b =>
-        q.x >= b.x0 - HALF - RING_HALF &&
-        q.x <= b.x1 + HALF + RING_HALF &&
-        q.z >= b.z0 - HALF - RING_HALF &&
-        q.z <= b.z1 + HALF + RING_HALF
-    )
-  );
-
-  // ⓑ 이음매가 벌어지면 고리가 아니라 C 자다
-  const seam = ring.length
-    ? Math.hypot(ring[0].x - ring[ring.length - 1].x, ring[0].z - ring[ring.length - 1].z)
-    : Infinity;
-
-  const rr = ring.map(q => Math.hypot(q.x, q.z));
-  check(
-    "광장 물 고리",
-    ring.length > 32 && sunk.length === 0 && seam < 1.5,
-    ring.length === 0
-      ? "없음 — generate-ground-layout.mjs 를 돌리세요"
-      : sunk.length
-        ? `${sunk.length}마디가 구역 단 밑으로 들어갑니다`
-        : `반지름 ${Math.min(...rr).toFixed(1)}~${Math.max(...rr).toFixed(1)} · ${ring.length}마디`
-  );
-
-  // ⓒ 물 고리를 건너는 다리 — 이게 없으면 광장에 갇힌다
-  const onRing = layout.props.filter(p => {
-    if (!p.glb.includes("bridge-stone")) return false;
-    const [x, , z] = p.position;
-    return ring.some(q => Math.hypot(q.x - x, q.z - z) < 1.2);
-  });
-  // 문이 사방으로 갈려 있어야 한 방향만 뚫린 게 아니다
-  const quadrants = new Set(
-    onRing.map(p =>
-      Math.round(
-        (Math.atan2(p.position[2], p.position[0]) / (Math.PI / 2) + 4) % 4
-      ) % 4
-    )
-  );
-  check(
-    "물 고리를 건너는 문",
-    onRing.length >= 4 && quadrants.size >= 4,
-    `돌다리 ${onRing.length}개 · 사방 ${quadrants.size}/4`
-  );
-}
-
-// ⑥-3 광장 단상 — 축대 발치가 물에 잠기지 않고, 대로마다 계단이 있나
-{
+  const hull = terraces.lagoon ?? [];
   const dais = terraces.plazaDais ?? [];
-  const ring = terraces.plazaRing ?? [];
-  const rAt = (line, ang) => {
-    const t = (((ang / (Math.PI * 2)) % 1) + 1) % 1;
-    const p = line[Math.floor(t * line.length) % line.length];
-    return Math.hypot(p.x, p.z);
-  };
-  // 축대는 테두리에서 바깥으로 0.5 내려간다(VillageScene 의 DAIS_WALL_RUN).
-  // 그 발치가 물가를 넘으면 단이 물에 잠긴 것처럼 보이고, 계단도 물 위에 선다.
-  const WALL_RUN = 0.5;
-  let worst = Infinity;
-  let at = 0;
-  if (dais.length > 8 && ring.length > 8)
-    for (let d = 0; d < 360; d += 2) {
-      const a = (d * Math.PI) / 180;
-      const gap = rAt(ring, a) - 0.95 - (rAt(dais, a) + WALL_RUN);
-      if (gap < worst) {
-        worst = gap;
-        at = d;
-      }
-    }
   const rr = dais.map(p => Math.hypot(p.x, p.z));
+  const hullR = hull.map(p => Math.hypot(p.x, p.z));
   check(
-    "광장 단상",
-    dais.length > 8 && worst > 0.05,
-    dais.length <= 8
+    "마을 속 물(석호)",
+    hull.length >= 3 && dais.length > 8,
+    hull.length < 3
       ? "없음 — generate-ground-layout.mjs 를 돌리세요"
-      : `반지름 ${Math.min(...rr).toFixed(1)}~${Math.max(...rr).toFixed(1)} · ` +
-        `축대 발치와 물 사이 최소 ${worst.toFixed(2)} (${at}°)`
+      : `껍질 ${hull.length}각형 r ${Math.min(...hullR).toFixed(1)}~${Math.max(
+          ...hullR
+        ).toFixed(1)} · 광장 섬 r ${Math.min(...rr).toFixed(1)}~${Math.max(
+          ...rr
+        ).toFixed(1)}`
   );
 
+  // 물을 건너는 다리가 사방으로 갈려 있어야 한 방향만 뚫린 게 아니다
+  const bridges = layout.props.filter(p => /^decor-bridge-cross-/.test(p.id));
+  const quads = new Set(
+    bridges.map(
+      p =>
+        Math.round(
+          (Math.atan2(p.position[2], p.position[0]) / (Math.PI / 2) + 4) % 4
+        ) % 4
+    )
+  );
+  check(
+    "물을 건너는 다리",
+    bridges.length >= 6 && quads.size >= 4,
+    `${bridges.length}개 · 사방 ${quads.size}/4`
+  );
 }
 
 // ⑦ 구역 단 사이에 골짜기가 남아 있나 — 맞닿으면 물길도 축대도 안 보인다
