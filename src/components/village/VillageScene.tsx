@@ -59,6 +59,7 @@ import {
   ISLANDS,
   isWater,
   PLAZA_DAIS,
+  PLAZA_RING,
   PLAZA_STEP,
   LAGOON,
   shoreDistAt,
@@ -1166,6 +1167,84 @@ const DAIS_PROFILE: [number, number][] = [
   [0, 0.55]
 ];
 
+// ─── 광장 고리 회랑 ──────────────────────────────────────────────────────────
+// 컨셉의 광장 섬은 물 위 둥근 산책로가 두른다. 단상 축대 발치를 따라 도는
+// 돌 데크 — 방사 다리들이 여기서 갈라져 나가는 그림이 된다.
+//
+// 치수(폭·데크 높이)는 villageTerrain.PLAZA_RING 이 유일한 권위다. 걷기
+// (walkHeightAt)가 같은 값을 보므로, 여기 그린 데크 위를 정확히 그 높이로 걷는다.
+//
+// 단면: 안쪽 테두리(단상 발치에 밀어 넣음) → 데크 상판 → 바깥 모서리 →
+// 수면 아래로 내려가는 치마. 치마가 없으면 데크가 물 위에 뜬 종이가 된다.
+function PlazaRingWalk() {
+  const texture = useMemo(() => makeBankTexture(), []);
+
+  const geometry = useMemo(() => {
+    if (PLAZA_STEP === 0 || PLAZA_DAIS.length < 8) return null;
+    const DECK = PLAZA_RING.deck;
+    const W = PLAZA_RING.width;
+    // (테두리에서 바깥으로, y) — 안쪽부터. 안쪽 끝은 축대 발치 밑으로 0.3
+    // 밀어 넣어 실틈이 안 생기게 한다.
+    const profile: [number, number][] = [
+      [-0.3, DECK],
+      [W - 0.12, DECK],
+      [W, DECK - 0.06],
+      [W, -0.25]
+    ];
+    const vAt = [0];
+    for (let i = 1; i < profile.length; i++)
+      vAt.push(
+        vAt[i - 1] +
+          Math.hypot(
+            profile[i][0] - profile[i - 1][0],
+            profile[i][1] - profile[i - 1][1]
+          ) /
+            1.88
+      );
+
+    const pts = [...PLAZA_DAIS, PLAZA_DAIS[0]];
+    const wp: number[] = [];
+    const wuv: number[] = [];
+    const widx: number[] = [];
+    let arc = 0;
+    for (let i = 0; i < pts.length; i++) {
+      if (i > 0)
+        arc += Math.hypot(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z);
+      const r = Math.hypot(pts[i].x, pts[i].z) || 1;
+      const nx = pts[i].x / r;
+      const nz = pts[i].z / r;
+      for (let n = 0; n < profile.length; n++) {
+        const [out, y] = profile[n];
+        wp.push(pts[i].x + nx * out, y, pts[i].z + nz * out);
+        wuv.push(arc / 1.88, vAt[n]);
+      }
+    }
+    const CROSS = profile.length;
+    for (let i = 0; i + 1 < pts.length; i++) {
+      const a = i * CROSS;
+      const b = (i + 1) * CROSS;
+      // 감김은 PlazaDais 와 같은 순서여야 한다. "안→밖 단면이니 반대"라고
+      // 뒤집었다가 상판 법선이 −Y 가 되어 **하늘에서 데크가 통째로 컬링**됐다
+      // (남는 치마만 검은 지느러미로 보였다). 반시계 고리에서 이 순서가 +Y 다.
+      for (let n = 0; n + 1 < CROSS; n++)
+        widx.push(a + n, b + n, a + n + 1, a + n + 1, b + n, b + n + 1);
+    }
+    const geo = new BufferGeometry();
+    geo.setAttribute("position", new Float32BufferAttribute(wp, 3));
+    geo.setAttribute("uv", new Float32BufferAttribute(wuv, 2));
+    geo.setIndex(widx);
+    geo.computeVertexNormals();
+    return geo;
+  }, []);
+
+  if (!geometry) return null;
+  return (
+    <mesh geometry={geometry} receiveShadow castShadow>
+      <meshStandardMaterial map={texture} roughness={0.9} metalness={0} />
+    </mesh>
+  );
+}
+
 function PlazaDais() {
   const texture = useMemo(() => makeBankTexture(), []);
   const grass = useTexture("/textures/grass-village.png");
@@ -2153,6 +2232,7 @@ function VillageSceneImpl({
           <Waterways />
           <TerraceBanks />
           <PlazaDais />
+          <PlazaRingWalk />
           <DistantHills />
           {PLAZA_LANDMARK_READY ? null : <Statue />}
 

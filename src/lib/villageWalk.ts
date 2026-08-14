@@ -3,6 +3,8 @@ import {
   BRIDGE_CELLS,
   inLagoon,
   isWater,
+  onPlazaRing,
+  PLAZA_RING,
   terrainHeightAt,
   waterDepthAt
 } from "./villageTerrain";
@@ -173,6 +175,8 @@ function onBridge(x: number, z: number): boolean {
  * 하상에 가려 사라지고, 수면 위 상체만 남는다.
  */
 export function walkHeightAt(x: number, z: number): number {
+  // 고리 회랑이 물보다 먼저다 — 데크는 수면 위에 떠 있다
+  if (onPlazaRing(x, z)) return PLAZA_RING.deck;
   if (isWater(x, z) && !onBridge(x, z)) return -waterDepthAt(x, z);
   return terrainHeightAt(x, z);
 }

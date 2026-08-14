@@ -132,8 +132,9 @@ console.log("── 마을 정합성 검사 ────────────
 // 이 검사는 해자만 봤다 — 석호에 프롭이 빠져도 조용히 통과했다. 앱의 판정을
 // 그대로 부른다(규칙을 베껴 적으면 언젠가 갈라진다).
 {
+  // ring-lantern 은 물 위 데크(고리 회랑) 위에 서는 게 정상이다
   const EXEMPT =
-    /^decor-(island-north|pagoda-portfolio|waterfall-|bridge-|quay-rock-)/;
+    /^decor-(island-north|pagoda-portfolio|waterfall-|bridge-|quay-rock-|ring-lantern-)/;
   const {isWater} = await import("../src/lib/villageTerrain.ts");
   const sunk = layout.props.filter(
     p =>

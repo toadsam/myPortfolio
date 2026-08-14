@@ -133,6 +133,27 @@ export const PLAZA_DAIS: {x: number; z: number}[] = terraces.plazaDais ?? [];
 export const DAIS_RADII: number[] = PLAZA_DAIS.map((p) => Math.hypot(p.x, p.z));
 const DAIS_R = DAIS_RADII;
 
+// ─── 광장 고리 회랑 ──────────────────────────────────────────────────────────
+// 컨셉의 광장 섬은 **물 위 둥근 산책로**가 두른다 — 단상 축대 발치를 따라 도는
+// 데크가 방사 다리들을 한 고리로 잇는다. 폭과 데크 높이는 여기가 유일한 권위다:
+// 걷기(villageWalk)와 그리기(VillageScene)가 같은 값을 봐야 발이 데크에 붙는다.
+export const PLAZA_RING = {
+  /** 단상 테두리에서 바깥으로 — 사람 둘이 스치는 폭 */
+  width: 2.1,
+  /** 데크 높이. 수면(0.03)보다 위, 물결 너울(±0.045)로도 안 잠기는 높이 */
+  deck: 0.14
+};
+
+/** 그 자리가 고리 회랑 위인가 — 단상 테두리 반지름을 따라 도는 띠 */
+export function onPlazaRing(x: number, z: number): boolean {
+  if (PLAZA_STEP === 0 || DAIS_R.length === 0) return false;
+  const r = Math.hypot(x, z);
+  if (r > 11.5) return false; // 테두리 최대 9.0 + 폭 2.1 밖이면 볼 것도 없다
+  const t = (((Math.atan2(z, x) / (Math.PI * 2)) % 1) + 1) % 1;
+  const dr = DAIS_R[Math.floor(t * DAIS_R.length) % DAIS_R.length];
+  return r >= dr - 0.05 && r <= dr + PLAZA_RING.width;
+}
+
 /** 그 자리가 광장 단상 위인가 */
 export function onPlazaDais(x: number, z: number): boolean {
   if (PLAZA_STEP === 0 || DAIS_R.length === 0) return false;

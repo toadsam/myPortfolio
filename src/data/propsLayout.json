@@ -11978,6 +11978,83 @@
       ],
       "rotationY": 2.531,
       "scale": 0.457
+    },
+    {
+      "id": "decor-ring-lantern-0",
+      "glb": "/models/props/decor/lantern-post.glb",
+      "position": [
+        10.183,
+        0.74,
+        2.729
+      ],
+      "rotationY": -1.833,
+      "scale": 0.634
+    },
+    {
+      "id": "decor-ring-lantern-1",
+      "glb": "/models/props/decor/lantern-post.glb",
+      "position": [
+        2.73,
+        0.74,
+        10.19
+      ],
+      "rotationY": -2.88,
+      "scale": 0.634
+    },
+    {
+      "id": "decor-ring-lantern-2",
+      "glb": "/models/props/decor/lantern-post.glb",
+      "position": [
+        -2.73,
+        0.74,
+        10.19
+      ],
+      "rotationY": 2.88,
+      "scale": 0.634
+    },
+    {
+      "id": "decor-ring-lantern-3",
+      "glb": "/models/props/decor/lantern-post.glb",
+      "position": [
+        -10.112,
+        0.74,
+        2.709
+      ],
+      "rotationY": 1.833,
+      "scale": 0.634
+    },
+    {
+      "id": "decor-ring-lantern-4",
+      "glb": "/models/props/decor/lantern-post.glb",
+      "position": [
+        -10.021,
+        0.74,
+        -2.685
+      ],
+      "rotationY": 1.309,
+      "scale": 0.634
+    },
+    {
+      "id": "decor-ring-lantern-5",
+      "glb": "/models/props/decor/lantern-post.glb",
+      "position": [
+        -7.403,
+        0.74,
+        -7.403
+      ],
+      "rotationY": 0.785,
+      "scale": 0.634
+    },
+    {
+      "id": "decor-ring-lantern-6",
+      "glb": "/models/props/decor/lantern-post.glb",
+      "position": [
+        9.689,
+        0.74,
+        -2.596
+      ],
+      "rotationY": -1.309,
+      "scale": 0.634
     }
   ],
   "buildings": {

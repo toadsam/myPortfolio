@@ -2620,6 +2620,40 @@ const BELT_DEPTH = 12;
   );
 }
 
+// ─── ⑮ 고리 회랑 가로등 ───────────────────────────────────────────────────────
+// 광장을 두르는 물 위 데크(VillageScene 의 PlazaRingWalk)에 가로등을 띄엄띄엄.
+// 컨셉의 고리 산책로에는 등이 줄지어 서서, 밤 부감에서 광장이 빛 고리로 읽힌다.
+//
+// 데크는 물 위라 place() 의 물 금지에 걸린다 — onWater 로 지나간다. 높이는
+// 씬이 terrainHeightAt(물 위 0)을 얹으므로 데크(0.14)에 맞춰 미리 띄운다.
+{
+  const DECK = 0.14;
+  const EVERY = Math.PI / 6; // 30° — 한 바퀴 12자리
+  let put = 0;
+  for (let a = EVERY / 2; a < Math.PI * 2; a += EVERY) {
+    const dr = daisRadiusAt(a);
+    if (dr === 0) break;
+    const x = round3(Math.cos(a) * (dr + 1.55));
+    const z = round3(Math.sin(a) * (dr + 1.55));
+    // 다리가 갈라지는 어귀는 비운다 — 등이 다리 난간과 겹친다
+    if ((TERR.crossings ?? []).some(c => Math.hypot(c.x - x, c.z - z) < 2.4))
+      continue;
+    if (!free(x, z, 1.6)) continue;
+    const p = props.length;
+    if (
+      place(`ring-lantern-${put}`, "lantern-post", x, z, faceTo(-x, -z), {
+        gap: 1.6,
+        onWater: true
+      })
+    ) {
+      // place 는 y 를 지면 기준으로 잡는다 — 데크 높이만큼 올린다
+      props[p].position[1] = round3(props[p].position[1] + DECK);
+      put += 1;
+    }
+  }
+  console.log(`  고리 회랑 가로등 ${put}개`);
+}
+
 // ─── 쓰기 ─────────────────────────────────────────────────────────────────────
 const kept = layout.props.filter(p => !p.id.startsWith("decor-"));
 const next = {...layout, props: [...kept, ...props]};
