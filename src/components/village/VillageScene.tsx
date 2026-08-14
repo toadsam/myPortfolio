@@ -374,7 +374,17 @@ function IslandCliff() {
 
   return (
     <mesh geometry={geometry} position={ISLAND_CENTER} receiveShadow>
-      <meshStandardMaterial vertexColors roughness={0.95} metalness={0} />
+      {/* emissive: 밤에 달빛을 등진 곶이 **완전 검정 실루엣**이 되면, 바다 위에
+          뜬 각진 검은 다각형(유령 지느러미)으로 읽힌다. 달빛색 바닥광을 깔아
+          실루엣에도 바위 형태가 남게 한다. 세기는 등불 세기(GLINT_STRENGTH)를
+          따라 밤에만 켜진다 — 한낮에는 0 이라 절벽 색이 안 바랜다. */}
+      <meshStandardMaterial
+        vertexColors
+        roughness={0.95}
+        metalness={0}
+        emissive="#2e3c55"
+        emissiveIntensity={0.42 * GLINT_STRENGTH}
+      />
     </mesh>
   );
 }
@@ -754,6 +764,68 @@ function waterLines(): WaterLine[] {
       closed: false,
       lift: -0.002
     });
+
+  // ─── 끝 다듬기: 개울 끝이 상대 물을 **지나쳐** 잔디에 얹히는 것 방지 ────────
+  // 생성기는 끝을 해자 한가운데로 밀어 넣지만, 해자에는 굽이(drift ±1.9)가 있어
+  // 각도에 따라 물길이 해자를 뚫고 반대편 잔디까지 나간다 — 잔디 위의 연한
+  // 사각 조각이 그것이다. 끝 4유닛 안에서 "다른 물 속" 마디를 찾으면 거기서
+  // 자른다. 폭포로 가는 물길은 끝 근처에 다른 물이 없으므로 안 잘린다.
+  for (const line of lines) {
+    if (line.closed) continue;
+    const others = lines
+      .filter(l => l !== line)
+      .map(l =>
+        l.pts.map((p, i) => ({
+          x: p.x,
+          z: p.z,
+          hw: l.half(i / (l.pts.length - 1))
+        }))
+      );
+    const insideOther = (x: number, z: number) => {
+      for (const s of others)
+        for (let i = 0; i + 1 < s.length; i++) {
+          const dx = s[i + 1].x - s[i].x;
+          const dz = s[i + 1].z - s[i].z;
+          const l2 = dx * dx + dz * dz || 1;
+          const t = Math.min(
+            1,
+            Math.max(0, ((x - s[i].x) * dx + (z - s[i].z) * dz) / l2)
+          );
+          const hw = s[i].hw + (s[i + 1].hw - s[i].hw) * t;
+          if (
+            Math.hypot(x - (s[i].x + dx * t), z - (s[i].z + dz * t)) <
+            hw - 0.2
+          )
+            return true;
+        }
+      return false;
+    };
+    const arcs: number[] = [0];
+    for (let i = 1; i < line.pts.length; i++)
+      arcs.push(
+        arcs[i - 1] +
+          Math.hypot(
+            line.pts[i].x - line.pts[i - 1].x,
+            line.pts[i].z - line.pts[i - 1].z
+          )
+      );
+    const total = arcs[arcs.length - 1] || 1;
+    const REACH = 4;
+    let head = 0;
+    for (let i = 0; i < line.pts.length && arcs[i] <= REACH; i++)
+      if (insideOther(line.pts[i].x, line.pts[i].z)) {
+        head = i;
+        break;
+      }
+    let tail = line.pts.length - 1;
+    for (let i = line.pts.length - 1; i >= 0 && total - arcs[i] <= REACH; i--)
+      if (insideOther(line.pts[i].x, line.pts[i].z)) {
+        tail = i;
+        break;
+      }
+    if ((head > 0 || tail < line.pts.length - 1) && tail - head >= 2)
+      line.pts = line.pts.slice(head, tail + 1);
+  }
 
   return lines;
 }
@@ -1294,7 +1366,46 @@ function WaterBanks() {
     const indices: number[] = [];
     const rgb = WATER_PROFILE.map(p => new Color(p.color));
 
-    for (const line of waterLines()) {
+    // ─── 다른 물줄기 속에서는 둑을 안 판다 ─────────────────────────────────
+    // 개울은 해자를 **가로질러** 폭포로 나간다. 끝 어귀(MOUTH)만 눕히면 해자
+    // 한복판을 개울 둑이, 개울 한복판을 해자 둑이 X자로 가로지른다 — 부감에서
+    // 물 위에 검은 막대가 얹힌 그 버그다. 그래서 마디마다 "다른 물줄기의 수면
+    // 안인가"를 재서, 안이면 깊이를 0 으로 눕힌다.
+    const lines = waterLines();
+    const sampled = lines.map(line => {
+      const {pts, half} = line;
+      return pts.map((p, i) => ({
+        x: p.x,
+        z: p.z,
+        hw: half(i / (pts.length - 1))
+      }));
+    });
+    /** li 번째 물줄기의 (x,z)가 **다른** 물줄기 수면에서 얼마나 떨어져 있나 */
+    const otherWaterDist = (li: number, x: number, z: number) => {
+      let best = Infinity;
+      for (let j = 0; j < sampled.length; j++) {
+        if (j === li) continue;
+        const s = sampled[j];
+        for (let i = 0; i + 1 < s.length; i++) {
+          const ax = s[i].x;
+          const az = s[i].z;
+          const bx = s[i + 1].x;
+          const bz = s[i + 1].z;
+          const dx = bx - ax;
+          const dz = bz - az;
+          const l2 = dx * dx + dz * dz || 1;
+          const t = Math.min(1, Math.max(0, ((x - ax) * dx + (z - az) * dz) / l2));
+          const px = ax + dx * t;
+          const pz = az + dz * t;
+          const hw = s[i].hw + (s[i + 1].hw - s[i].hw) * t;
+          best = Math.min(best, Math.hypot(x - px, z - pz) - hw);
+        }
+      }
+      return best;
+    };
+
+    for (let li = 0; li < lines.length; li++) {
+      const line = lines[li];
       const {pts, half, closed} = line;
       const base = positions.length / 3;
       // 열린 물길은 양 끝이 다른 물(광장 고리·해자) 속으로 들어간다. 거기까지
@@ -1309,9 +1420,16 @@ function WaterBanks() {
       const total = arcs[arcs.length - 1] || 1;
       const MOUTH = 2.2; // 이 거리 안에서 깊이가 0 → 1 로 살아난다
       const depthAt = (i: number) => {
-        if (closed) return 1;
-        const d = Math.min(arcs[i], total - arcs[i]);
-        return Math.min(1, Math.max(0, d / MOUTH));
+        let k = 1;
+        if (!closed) {
+          const d = Math.min(arcs[i], total - arcs[i]);
+          k = Math.min(1, Math.max(0, d / MOUTH));
+        }
+        // 다른 물줄기 수면 안(+살짝 밖까지)에서는 눕힌다 — 교차점의 X자 둑 방지.
+        // 1.2 는 둑 어깨(WATER_BANK_OUT)가 상대 수면을 밟지 않는 최소 여유다.
+        const od = otherWaterDist(li, pts[i].x, pts[i].z);
+        k *= Math.min(1, Math.max(0, od / 1.2));
+        return k;
       };
 
       // 한 마디마다 단면 정점을 왼쪽 바깥 → 가운데 → 오른쪽 바깥 순으로 깐다
@@ -1331,7 +1449,12 @@ function WaterBanks() {
           const p = WATER_PROFILE[n];
           // 0번은 한가운데. 나머지는 수면 가장자리에서 out 만큼 — 하상 가장자리는
           // out 이 음수라 안쪽으로 들어오는데, 중심을 넘어가면 단면이 뒤집히므로 접는다.
-          const d = n === 0 ? 0 : Math.max(0.05, h + p.out) * side;
+          //
+          // out 에도 k 를 곱한다: 깊이만 눕히면 어깨(out 0.6)가 물 높이의
+          // 팬케이크로 잔디·상대 수면 위에 남는다 — 물길 끝의 연한 파편이
+          // 그것이었다. 같이 접으면 눕힌 단면이 수면 폭 안에 들어가 3cm 아래로
+          // 숨는다.
+          const d = n === 0 ? 0 : Math.max(0.05, h + p.out * k) * side;
           positions.push(pts[i].x + ux * d, p.y * k, pts[i].z + uz * d);
           colors.push(rgb[n].r, rgb[n].g, rgb[n].b);
         };
