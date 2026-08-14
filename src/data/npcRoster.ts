@@ -135,7 +135,7 @@ const coreNpcs: NPCData[] = [
     role: "프로젝트 큐레이터",
     dialogue:
       "저는 프로젝트 큐레이터 픽셀이에요. 단순 목록이 아니라 문제, 구현 판단, 결과가 잘 보이도록 프로젝트를 골라드릴게요. 관심사가 있으면 그 기준으로 추천을 바꿀 수 있어요.",
-    position: [-5.7, 0, 1.5],
+    position: [-14.1, 0, -24.1],
     color: "#f3b35b",
     accessoryColor: "#5f7be8",
     agent: {
@@ -163,7 +163,7 @@ const coreNpcs: NPCData[] = [
     role: "기술 멘토",
     dialogue:
       "저는 기술 멘토 테오예요. React, Next.js, Three.js, FastAPI, Spring Boot, Unity 경험을 단순 나열이 아니라 실제 프로젝트 판단과 연결해서 설명해드릴게요.",
-    position: [4.5, 0, -3.2],
+    position: [9.7, 0, -12.5],
     color: "#68c7cf",
     accessoryColor: "#253342",
     agent: {
@@ -191,7 +191,7 @@ const coreNpcs: NPCData[] = [
     role: "성장 기록 관리자",
     dialogue:
       "저는 기록 관리자 아카예요. 프로젝트 결과만 보지 않고, 어떤 시행착오를 겪었고 무엇을 배웠는지 성장 흐름으로 정리해드릴게요.",
-    position: [6.2, 0, 6.5],
+    position: [-19.6, 0, 1.5],
     color: "#c69af0",
     accessoryColor: "#8b5a35",
     agent: {
@@ -219,7 +219,7 @@ const coreNpcs: NPCData[] = [
     role: "연락 담당",
     dialogue:
       "저는 연락 담당 포스트예요. 이메일, GitHub, 협업 문의처럼 다음 행동으로 이어지는 정보를 간결하게 안내해드릴게요.",
-    position: [1.8, 0, 7.4],
+    position: [0, 0, 14],
     color: "#ef8f72",
     accessoryColor: "#e8f2ff",
     agent: {

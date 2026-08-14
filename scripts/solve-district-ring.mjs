@@ -43,15 +43,22 @@ const round2 = v => Math.round(v * 100) / 100;
 
 const {source, SPREAD, BUILDING_SCALE, raw} = readRaw();
 
-// 배치 보정 전 월드 좌표 (SPREAD 만 적용)
-const world = raw.map(b => ({
-  id: b.id,
-  district: b.district,
-  x: b.px * SPREAD,
-  z: b.pz * SPREAD,
-  w: b.w * BUILDING_SCALE,
-  d: b.d * BUILDING_SCALE
-}));
+// 배치 보정 전 월드 좌표 (SPREAD 만 적용).
+// 90도로 돌아선 건물은 월드 폭/깊이가 맞바뀐다 — readVillage 와 같은 규칙.
+// 여기서 안 바꾸면 솔버만 돌기 전 발자국으로 풀어서, 검사(돈 발자국)와 0.2쯤
+// 어긋난 고리가 나온다(실제로 experience 가 15.7 vs 목표 15.5 로 걸렸다).
+const world = raw.map(b => {
+  const quarter = Math.abs(Math.abs(b.rotationY ?? 0) - Math.PI / 2) < 0.1;
+  const [w, d] = quarter ? [b.d, b.w] : [b.w, b.d];
+  return {
+    id: b.id,
+    district: b.district,
+    x: b.px * SPREAD,
+    z: b.pz * SPREAD,
+    w: w * BUILDING_SCALE,
+    d: d * BUILDING_SCALE
+  };
+});
 
 const DIST = {};
 for (const b of world) {

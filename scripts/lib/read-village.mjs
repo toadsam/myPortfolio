@@ -46,7 +46,19 @@ export function readRaw(source = readFileSync(CONSTANTS, "utf8")) {
     if (!size || !position || !district) continue;
     const [w, h, d] = size[1].split(",").map(v => Number(v.trim()));
     const [px, , pz] = position[1].split(",").map(v => Number(v.trim()));
-    raw.push({id: ids[n][1], district: district[1], px, pz, w, h, d});
+    // 건물이 광장을 보게 도는 각 (0/±90/180, 라디안). size 리터럴은 **모델 기준**
+    // 그대로 두므로, 90도짜리는 아래 readVillage 가 월드 폭/깊이를 맞바꾼다.
+    const rot = chunk.match(/rotationY:\s*(-?[\d.]+)/);
+    raw.push({
+      id: ids[n][1],
+      district: district[1],
+      px,
+      pz,
+      w,
+      h,
+      d,
+      rotationY: rot ? Number(rot[1]) : 0
+    });
   }
   if (raw.length < 20)
     throw new Error(
@@ -144,14 +156,19 @@ export function readVillage() {
   // (알고리즘이 아니라 표를 더하는 것뿐이라 어긋날 여지가 거의 없다)
   const buildings = raw.map(b => {
     const [sx, sz] = SHIFT[b.district] ?? [0, 0];
+    // 90도로 돌아선 건물은 월드에서 폭과 깊이가 맞바뀐다 — constants.ts 의
+    // villageBuildings 내보내기와 같은 규칙이다. 여기서 안 바꾸면 생성기·검사만
+    // 돌기 전 발자국을 본다.
+    const quarter = Math.abs(Math.abs(b.rotationY ?? 0) - Math.PI / 2) < 0.1;
+    const [w, d] = quarter ? [b.d, b.w] : [b.w, b.d];
     return {
       id: b.id,
       district: b.district,
       x: round2(b.px * SPREAD + sx),
       z: round2(b.pz * SPREAD + sz),
-      w: round2(b.w * BUILDING_SCALE),
+      w: round2(w * BUILDING_SCALE),
       h: round2(b.h * BUILDING_SCALE),
-      d: round2(b.d * BUILDING_SCALE)
+      d: round2(d * BUILDING_SCALE)
     };
   });
 

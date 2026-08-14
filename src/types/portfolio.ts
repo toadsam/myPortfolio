@@ -38,6 +38,12 @@ export interface BuildingData {
   description: string;
   position: Vector3Tuple;
   size: Vector3Tuple;
+  /**
+   * 건물이 광장을 보게 도는 각(라디안, 0/±π/2/π 스냅).
+   * arrange-district-rows --write 가 적는다. **size 리터럴은 모델 기준**이고,
+   * 90도짜리는 constants 내보내기와 read-village 가 월드 폭/깊이를 맞바꾼다.
+   */
+  rotationY?: number;
   color: string;
   roofColor: string;
   accentColor: string;

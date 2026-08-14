@@ -52,6 +52,32 @@ for (const b of raw) {
   (DIST[b.district] ??= []).push(b);
 }
 
+// ─── 건물이 광장을 보게 돈다 ─────────────────────────────────────────────────
+// 컨셉의 건물들은 저마다 광장 쪽으로 돌아서 있다. 임의 각으로 돌리면 발자국
+// 상자가 돌아가 축정렬 전제(충돌·겹침 검사·원반 섬·솔버)가 전부 무너지므로,
+// **90도 단위로 스냅**한다 — 구역 하나가 같은 각으로 도니 줄 전체가 광장을
+// 향해 서고, 발자국은 폭/깊이만 맞바뀐 축정렬 상자로 남는다.
+//
+// raw 의 w/d 는 **모델 기준**이다(readRaw 는 리터럴 그대로). 여기서 새 회전을
+// 정하고, 90도짜리 구역은 아래에서 w/d 를 맞바꿔 **월드 발자국**으로 계산한다.
+// 이전 실행이 적어 둔 rotationY 는 무시한다 — 매번 새로 정하므로 되돌려도 맞다.
+const ROT = {};
+for (const [d, arr] of Object.entries(DIST)) {
+  const cx = arr.reduce((s, b) => s + b.px, 0) / arr.length;
+  const cz = arr.reduce((s, b) => s + b.pz, 0) / arr.length;
+  // 정면(+Z)이 광장(원점) 쪽을 보는 각 — faceTo 규약: atan2(dx, dz)
+  const want = Math.atan2(-cx, -cz);
+  let snap = Math.round(want / (Math.PI / 2)) * (Math.PI / 2);
+  if (snap <= -Math.PI + 1e-6) snap = Math.PI; // −180 은 +180 으로 통일
+  ROT[d] = Math.round(snap * 10000) / 10000;
+  if (Math.abs(Math.abs(snap) - Math.PI / 2) < 0.1)
+    for (const b of arr) {
+      const t = b.w;
+      b.w = b.d;
+      b.d = t;
+    }
+}
+
 /**
  * 몇 줄로 세울까 — 컨셉의 구역은 **한 줄 아니면 두 줄**이다.
  * (STUDY 는 넷이 한 줄, SKILLS 는 셋+셋 두 줄)
@@ -305,6 +331,7 @@ if (WRITE) {
   // position 리터럴만 골라 바꾼다. id 뒤 첫 position 이 그 건물의 것이다.
   let next = source;
   let n = 0;
+  let rotWrote = 0;
   for (const [id, at] of moved) {
     const rx = round2(at.x / SPREAD);
     const rz = round2(at.z / SPREAD);
@@ -314,8 +341,33 @@ if (WRITE) {
     if (!re.test(next)) throw new Error(`${id} 의 position 을 못 찾았습니다`);
     next = next.replace(re, `$1${rx}, $2, ${rz}$3`);
     n++;
+
+    // 회전 리터럴 — 있으면 갱신, 없으면 size 줄 뒤에 끼운다.
+    // **반드시 그 건물의 청크 안에서만.** `id … 800자 안의 rotationY` 식으로
+    // 찾으면 자기한테 없을 때 **다음 건물의 rotationY 를 덮는다** — 실제로
+    // 26개를 썼다면서 19개만 남았다(7개는 이웃 것을 두 번 쓴 것).
+    const rot = ROT[raw.find(b => b.id === id)?.district] ?? 0;
+    const start = next.indexOf(`id: "${id}"`);
+    if (start < 0) throw new Error(`${id} 청크를 못 찾았습니다`);
+    const chunkEnd = next.indexOf(`id: "`, start + 6);
+    const end = chunkEnd < 0 ? next.length : chunkEnd;
+    let chunk = next.slice(start, end);
+    if (/rotationY:\s*-?[\d.]+/.test(chunk)) {
+      chunk = chunk.replace(/rotationY:\s*-?[\d.]+/, `rotationY: ${rot}`);
+    } else {
+      if (!/size:\s*\[[^\]]+\]/.test(chunk))
+        throw new Error(`${id} 의 size 를 못 찾았습니다`);
+      chunk = chunk.replace(
+        /(size:\s*\[[^\]]+\])/,
+        `$1,\n    rotationY: ${rot}`
+      );
+    }
+    next = next.slice(0, start) + chunk + next.slice(end);
+    rotWrote++;
   }
   writeFileSync(CONSTANTS, next);
-  console.log(`\n${CONSTANTS} 의 건물 좌표 ${n}개를 다시 썼습니다.`);
+  console.log(
+    `\n${CONSTANTS} 의 건물 좌표 ${n}개 · 회전 ${rotWrote}개를 다시 썼습니다.`
+  );
   console.log("이어서: node scripts/solve-district-ring.mjs --write");
 }

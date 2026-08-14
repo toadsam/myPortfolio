@@ -1095,7 +1095,8 @@ function BuildingImpl({
     onRequestEnter(building.id);
   }
 
-  const rotY = edit?.rotationY ?? 0;
+  // 배치 회전(광장을 보게 돈 각) 위에 편집기의 임시 회전이 덮는다
+  const rotY = edit?.rotationY ?? building.rotationY ?? 0;
   const extraScale = edit?.scale ?? 1;
   const scale = (isHighlighted ? 1.04 : 1) * extraScale;
 

@@ -28,28 +28,28 @@ const baseProfiles: Record<string, NpcBehaviorProfile> = {
   "project-npc": {
     npcId: "project-npc",
     assignedBuildingId: "project-mystock",
-    home: [-5.7, 0, 1.5],
+    home: [-14.1, 0, -24.1],
     roamRadius: 5.2,
     roleSummary: "대표 프로젝트와 구현 난이도를 추천합니다."
   },
   "developer-npc": {
     npcId: "developer-npc",
     assignedBuildingId: "skill-backend",
-    home: [4.5, 0, -3.2],
+    home: [9.7, 0, -12.5],
     roamRadius: 4.4,
     roleSummary: "기술 스택과 개발 판단을 설명합니다."
   },
   "archivist-npc": {
     npcId: "archivist-npc",
     assignedBuildingId: "exp-portfolio",
-    home: [6.2, 0, 6.5],
+    home: [-19.6, 0, 1.5],
     roamRadius: 3.2,
     roleSummary: "경험, 회고, 성장 기록을 정리합니다."
   },
   "contact-npc": {
     npcId: "contact-npc",
     assignedBuildingId: "post-office",
-    home: [1.8, 0, 7.4],
+    home: [0, 0, 14],
     roamRadius: 2.4,
     roleSummary: "연락과 협업 동선을 안내합니다."
   }
