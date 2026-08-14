@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "check:village": "node --experimental-strip-types --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/lib/ts-loader.mjs scripts/check-village.mjs",
     "format": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json,md}\"",
-    "check-format": "prettier -c \"./**/*.{js,jsx,ts,tsx,css,json,md}\""
+    "check-format": "prettier -c \"./**/*.{js,jsx,ts,tsx,css,json,md}\"",
+    "optimize:webp": "node scripts/compress-glb-webp.mjs"
   },
   "dependencies": {
     "@react-three/drei": "10.7.7",
@@ -27,6 +28,7 @@
     "three": "0.183.0"
   },
   "devDependencies": {
+    "@gltf-transform/cli": "^4.4.2",
     "@tailwindcss/postcss": "4.3.1",
     "@types/node": "26.0.1",
     "@types/react": "19.2.17",
@@ -35,6 +37,7 @@
     "autoprefixer": "10.5.2",
     "postcss": "8.5.15",
     "prettier": "^2.3.1",
+    "sharp": "^0.35.3",
     "tailwindcss": "4.3.1",
     "typescript": "6.0.3"
   }

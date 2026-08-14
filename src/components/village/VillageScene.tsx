@@ -8,6 +8,7 @@ import {
   ContactShadows,
   Html,
   useGLTF,
+  useProgress,
   useTexture
 } from "@react-three/drei";
 import {
@@ -18,7 +19,7 @@ import {
   ToneMapping
 } from "@react-three/postprocessing";
 import {ToneMappingMode} from "postprocessing";
-import {memo, Suspense, useEffect, useMemo, useRef} from "react";
+import {memo, Suspense, useEffect, useMemo, useRef, useState} from "react";
 import {
   AdditiveBlending,
   BackSide,
@@ -524,6 +525,78 @@ function WaterGlints() {
         </mesh>
       ))}
     </group>
+  );
+}
+
+// ─── 로딩 베일 ───────────────────────────────────────────────────────────────
+// 에셋(GLB ~30MB)이 내려오는 동안 캔버스는 빈 하늘이라 "고장난 것 같은" 첫인상을
+// 줬다. 진행률을 보여 주면 같은 시간이 "로딩 중"으로 읽힌다. useProgress 는
+// three 의 DefaultLoadingManager 를 구독하므로 Canvas 밖(DOM)에서도 동작한다.
+//
+// 안전장치: 파일 하나가 404 면 progress 가 100 에 못 미친 채 멈출 수 있다 —
+// 25초가 지나면 무조건 걷는다(마을은 그 뒤에도 알아서 마저 뜬다).
+function LoadingVeil() {
+  const {progress, active} = useProgress();
+  const [gone, setGone] = useState(false);
+  const finished = !active && progress >= 100;
+  useEffect(() => {
+    if (!finished) return;
+    const t = setTimeout(() => setGone(true), 650);
+    return () => clearTimeout(t);
+  }, [finished]);
+  useEffect(() => {
+    const t = setTimeout(() => setGone(true), 25000);
+    return () => clearTimeout(t);
+  }, []);
+  if (gone) return null;
+  const pct = Math.round(progress);
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 40,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 16,
+        background: "rgba(6, 13, 28, 0.72)",
+        pointerEvents: "none",
+        transition: "opacity 0.6s ease",
+        opacity: finished ? 0 : 1
+      }}
+    >
+      <div
+        style={{
+          fontFamily: "var(--font-mono, monospace)",
+          fontSize: 14,
+          letterSpacing: "0.18em",
+          color: "#9fd7ef"
+        }}
+      >
+        {">"} 마을을 짓는 중… {pct}%
+      </div>
+      <div
+        style={{
+          width: 240,
+          height: 4,
+          borderRadius: 2,
+          background: "rgba(159, 215, 239, 0.18)",
+          overflow: "hidden"
+        }}
+      >
+        <div
+          style={{
+            width: `${pct}%`,
+            height: "100%",
+            borderRadius: 2,
+            background: "linear-gradient(90deg, #3fb1ea, #9fd7ef)",
+            transition: "width 0.3s ease"
+          }}
+        />
+      </div>
+    </div>
   );
 }
 
@@ -2366,6 +2439,7 @@ function VillageSceneImpl({
           : undefined
       }
     >
+      <LoadingVeil />
       <Canvas
         camera={{fov: 40, position: [4, 14, 16]}}
         dpr={isMobile ? [1, 1] : [1, 1.25]}
@@ -2508,83 +2582,95 @@ function VillageSceneImpl({
           {!isWalkMode && <ActiveRoute activeSection={activeSection} />}
           <BuildingNetwork buildings={projectNetworkBuildings} />
           <LiveDecorations villageState={villageState} />
-          <PropsLayer api={propsApi} />
 
-          {villageBuildings.map(building => {
-            const ov = propsApi.buildingOverrides[building.id];
-            const merged = ov?.position
-              ? {...building, position: ov.position}
-              : building;
-            return (
-              <Building
-                key={building.id}
-                building={merged}
-                buildingState={buildingStateMap.get(building.id)}
-                isActive={activeSection === building.sectionId}
-                onRequestEnter={
-                  isWalkMode || editing ? noopRequestEnter : onRequestEnter
-                }
-                edit={
-                  editing
-                    ? {
-                        editing: true,
-                        selected:
-                          propsApi.selection?.kind === "building" &&
-                          propsApi.selection.id === building.id,
-                        rotationY: ov?.rotationY ?? 0,
-                        scale: ov?.scale ?? 1,
-                        onSelectDown: () => {
-                          propsApi.setSelection({
-                            kind: "building",
-                            id: building.id
-                          });
-                          propsApi.setDragging(true);
+          {/* ─── 무거운 것들은 저마다의 Suspense 에 ────────────────────────
+              전부 한 경계에 있으면 GLB 하나라도 안 오면 **마을 전체가** 빈
+              하늘이다. 경계를 쪼개면 지형·하늘·물(위쪽, GLB 없음)이 먼저 뜨고
+              프롭 → 건물 → NPC 가 내려오는 대로 차례차례 나타난다 —
+              같은 로딩 시간이 "짓는 중"으로 보인다. */}
+          <Suspense fallback={null}>
+            <PropsLayer api={propsApi} />
+          </Suspense>
+
+          <Suspense fallback={null}>
+            {villageBuildings.map(building => {
+              const ov = propsApi.buildingOverrides[building.id];
+              const merged = ov?.position
+                ? {...building, position: ov.position}
+                : building;
+              return (
+                <Building
+                  key={building.id}
+                  building={merged}
+                  buildingState={buildingStateMap.get(building.id)}
+                  isActive={activeSection === building.sectionId}
+                  onRequestEnter={
+                    isWalkMode || editing ? noopRequestEnter : onRequestEnter
+                  }
+                  edit={
+                    editing
+                      ? {
+                          editing: true,
+                          selected:
+                            propsApi.selection?.kind === "building" &&
+                            propsApi.selection.id === building.id,
+                          rotationY: ov?.rotationY ?? 0,
+                          scale: ov?.scale ?? 1,
+                          onSelectDown: () => {
+                            propsApi.setSelection({
+                              kind: "building",
+                              id: building.id
+                            });
+                            propsApi.setDragging(true);
+                          }
                         }
-                      }
+                      : undefined
+                  }
+                />
+              );
+            })}
+          </Suspense>
+
+          <Suspense fallback={null}>
+            {autonomousNpcs.map((npc, index) => (
+              <NPC
+                behavior={npcBehaviorProfiles[npc.id]}
+                bubbleText={visibleBubble(npcRuntimeStates[npc.id])}
+                buildings={villageBuildings}
+                isActive={activeNpcId === npc.id}
+                key={npc.id}
+                npc={npc}
+                baseNpcState={npcStateMap.get(npc.id)}
+                runtimeMood={npcRuntimeStates[npc.id]?.mood}
+                runtimeMemory={npcRuntimeStates[npc.id]?.memory}
+                currentAction={npcRuntimeStates[npc.id]?.currentAction}
+                onPositionChange={onNpcPositionChange}
+                onSelect={onSelectNpc}
+                facePoint={npcRuntimeStates[npc.id]?.facePoint}
+                holdUntil={npcRuntimeStates[npc.id]?.holdUntil}
+                emote={visibleEmote(npcRuntimeStates[npc.id])}
+                socialTarget={npcSocialTargets?.[npc.id]}
+                scriptedTarget={
+                  npc.id === "guide-npc"
+                    ? guideScriptedTarget
+                    : npc.id === "overseer-npc"
+                    ? overseerTarget
                     : undefined
                 }
+                scriptedStart={
+                  npc.id === "guide-npc" ? GUIDE_SCRIPTED_START : undefined
+                }
+                onScriptedArrive={
+                  npc.id === "guide-npc" ? onGuideArrive : undefined
+                }
+                forceHold={npc.id === "guide-npc" ? guideForceHold : undefined}
+                command={npcCommand}
+                commandTarget={npcCommandTargets?.[npc.id]}
+                commandSlot={index}
+                commandTotal={autonomousNpcs.length}
               />
-            );
-          })}
-
-          {autonomousNpcs.map((npc, index) => (
-            <NPC
-              behavior={npcBehaviorProfiles[npc.id]}
-              bubbleText={visibleBubble(npcRuntimeStates[npc.id])}
-              buildings={villageBuildings}
-              isActive={activeNpcId === npc.id}
-              key={npc.id}
-              npc={npc}
-              baseNpcState={npcStateMap.get(npc.id)}
-              runtimeMood={npcRuntimeStates[npc.id]?.mood}
-              runtimeMemory={npcRuntimeStates[npc.id]?.memory}
-              currentAction={npcRuntimeStates[npc.id]?.currentAction}
-              onPositionChange={onNpcPositionChange}
-              onSelect={onSelectNpc}
-              facePoint={npcRuntimeStates[npc.id]?.facePoint}
-              holdUntil={npcRuntimeStates[npc.id]?.holdUntil}
-              emote={visibleEmote(npcRuntimeStates[npc.id])}
-              socialTarget={npcSocialTargets?.[npc.id]}
-              scriptedTarget={
-                npc.id === "guide-npc"
-                  ? guideScriptedTarget
-                  : npc.id === "overseer-npc"
-                  ? overseerTarget
-                  : undefined
-              }
-              scriptedStart={
-                npc.id === "guide-npc" ? GUIDE_SCRIPTED_START : undefined
-              }
-              onScriptedArrive={
-                npc.id === "guide-npc" ? onGuideArrive : undefined
-              }
-              forceHold={npc.id === "guide-npc" ? guideForceHold : undefined}
-              command={npcCommand}
-              commandTarget={npcCommandTargets?.[npc.id]}
-              commandSlot={index}
-              commandTotal={autonomousNpcs.length}
-            />
-          ))}
+            ))}
+          </Suspense>
 
           {/* 나무·바위는 propsLayout.json 의 decor 프롭으로 옮겼다 (scripts/generate-decor-layout.mjs).
               예전엔 여기서 네온 콘과 검은 다면체를 절차적으로 그렸는데, 마을이 따뜻한
