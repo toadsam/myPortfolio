@@ -338,6 +338,28 @@ export function AIPortfolioVillage() {
   const [viewMode, setViewMode] = useState<
     "village" | "interior" | "project-interior" | "resume"
   >("village");
+
+  // ─── 모바일(터치 전용) 방문자는 이력서 모드로 먼저 안내한다 ───────────────
+  // 마을 조작(캐릭터 이동·카메라)은 마우스/키보드 전제라 터치로는 사실상
+  // 움직일 수 없다. 폰으로 링크를 연 방문자(대개 면접관이다)가 30MB 로딩
+  // 끝에 "조작 안 되는 마을"을 만나는 것보다, 바로 읽히는 이력서가 낫다.
+  // ResumeMode 의 "마을 입장" 버튼은 살아 있으므로 원하면 들어가 볼 수 있다.
+  // 캔버스가 viewMode==="village" 로 게이트돼 있어, 마운트 직후 전환하면
+  // 모바일에서는 3D 에셋 다운로드 자체가 시작되지 않는다.
+  useEffect(() => {
+    const touchOnly =
+      window.matchMedia("(pointer: coarse)").matches &&
+      window.matchMedia("(hover: none)").matches;
+    if (touchOnly && window.innerWidth < 900) {
+      setShowIntro(false);
+      setViewMode("resume");
+      trackVisitorEvent({
+        event_type: "mobile_resume_redirect",
+        target_id: "resume",
+        label: "모바일 자동 이력서 모드"
+      });
+    }
+  }, []);
   const [interiorSectionId, setInteriorSectionId] = useState<SectionId | null>(
     null
   );
