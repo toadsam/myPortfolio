@@ -538,6 +538,89 @@ function WaterGlints() {
   );
 }
 
+// ─── 등불 빛 웅덩이 ──────────────────────────────────────────────────────────
+// 컨셉의 밤 아늑함은 등불 **밑 바닥에 고이는 호박빛**에서 온다. 진짜 pointLight
+// 는 4개뿐이라 가로등 수십 개가 밤에 장식으로만 서 있었다 — WaterGlints 와
+// 같은 수법으로, 등불마다 바닥에 가산 블렌딩 원반(등불당 삼각형 2개)을 깐다.
+// 세기는 GLINT_STRENGTH(팔레트 lamp 연동)라 낮에는 아예 안 그린다.
+function LampPools() {
+  const {texture, spots} = useMemo(() => {
+    const c = document.createElement("canvas");
+    c.width = 64;
+    c.height = 64;
+    const ctx = c.getContext("2d")!;
+    const g = ctx.createRadialGradient(32, 32, 2, 32, 32, 31);
+    g.addColorStop(0, "rgba(255,255,255,0.85)");
+    g.addColorStop(0.4, "rgba(255,255,255,0.3)");
+    g.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 64, 64);
+    const tex = new CanvasTexture(c);
+
+    const spots: {x: number; y: number; z: number; s: number}[] = [];
+    for (const p of (
+      propsLayout as {
+        props: {glb: string; position: number[]}[];
+      }
+    ).props) {
+      if (!/lantern-post|orb-lantern|lantern-bearer|lantern-archway/.test(p.glb))
+        continue;
+      spots.push({
+        x: p.position[0],
+        // 프롭 높이는 데이터에 안 굽는다 — InstancedProps 처럼 terrainHeightAt
+        // 을 렌더 때 더해야 한다. 안 더하면 구역 단(+1.1) 위 등불의 웅덩이가
+        // 땅속에 깔린다(실제로 그랬다). +0.08 은 길 타일 윗면(5~6cm) 위로 띄우는
+        // 여유 — 낮으면 타일에 깊이 클리핑으로 잘린다.
+        y:
+          p.position[1] +
+          terrainHeightAt(p.position[0], p.position[2]) +
+          0.08,
+        z: p.position[2],
+        s: 0.85 + ((spots.length * 29) % 10) / 22
+      });
+    }
+    return {texture: tex, spots};
+  }, []);
+
+  const material = useMemo(
+    () =>
+      new MeshBasicMaterial({
+        map: texture,
+        // WaterGlints 와 같은 이유로 원색은 진하게 — 화면에선 등불빛 호박색이 된다
+        color: new Color("#ff9d38"),
+        transparent: true,
+        blending: AdditiveBlending,
+        depthWrite: false,
+        opacity: 0
+      }),
+    [texture]
+  );
+
+  // 아주 느린 숨쉬기 — 글린트보다 잔잔하게 (바닥빛이 촐랑대면 싸구려 네온이 된다)
+  useFrame(state => {
+    const t = state.clock.elapsedTime;
+    material.opacity =
+      GLINT_STRENGTH * (0.55 + 0.06 * Math.sin(t * 1.3) + 0.04 * Math.sin(t * 3.1));
+  });
+
+  if (GLINT_STRENGTH <= 0.01 || spots.length === 0) return null;
+  return (
+    <group>
+      {spots.map((s, i) => (
+        <mesh
+          key={i}
+          material={material}
+          position={[s.x, s.y, s.z]}
+          rotation={[-Math.PI / 2, 0, 0]}
+          scale={[3.1 * s.s, 3.1 * s.s, 1]}
+        >
+          <planeGeometry args={[1, 1]} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 // ─── 로딩 베일 ───────────────────────────────────────────────────────────────
 // 에셋(GLB ~30MB)이 내려오는 동안 캔버스는 빈 하늘이라 "고장난 것 같은" 첫인상을
 // 줬다. 진행률을 보여 주면 같은 시간이 "로딩 중"으로 읽힌다. useProgress 는
@@ -2768,6 +2851,7 @@ function VillageSceneImpl({
           <Water />
           <Waterways />
           <WaterGlints />
+          <LampPools />
           <TerraceBanks />
           <PlazaDais />
           <PlazaRingWalk />
