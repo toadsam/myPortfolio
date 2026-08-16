@@ -34,12 +34,15 @@ export const metadata: Metadata = {
     siteName: "Developer's City",
     locale: "ko_KR",
     type: "website",
+    // 링크 미리보기의 첫인상 — 앱 아이콘(384px 정사각)이 아니라 밤 마을 대표
+    // 컷을 OG 규격(1200×630)으로 보여 준다. 마을이 크게 바뀌면 다시 찍어서
+    // public/og-image.jpg 만 교체하면 된다.
     images: [
       {
-        url: "/android-chrome-384x384.png",
-        width: 384,
-        height: 384,
-        alt: "Developer's City"
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Developer's City — 밤의 포트폴리오 마을"
       }
     ]
   },
@@ -47,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title,
     description,
-    images: ["/android-chrome-384x384.png"]
+    images: ["/og-image.jpg"]
   }
 };
 
