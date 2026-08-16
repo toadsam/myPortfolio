@@ -53,6 +53,10 @@ def _is_overseer(npc_id: str) -> bool:
     return npc_id == "overseer-npc" or "overseer" in npc_id
 
 
+def _is_life_npc(npc_id: str) -> bool:
+    return npc_id == "life-npc" or "life-" in npc_id or "-life" in npc_id
+
+
 def _activity_stats(history: list[DailyActivity]) -> dict[str, int]:
     by_date = {a.date: a for a in history}
     ref = today_local()
@@ -113,7 +117,7 @@ def _overseer_overview(
         lines.append(f"- 활발한(밝은) 건물 {len(bright)}곳, 해금된 장식 {len(village_state.unlocked_items)}개")
 
     lines.append(
-        "- 함께 사는 NPC들(안부를 챙길 친구들): 루미(안내), 픽셀(프로젝트), 테오(기술), 아카(경험), 포스트(연락), 알고(코딩테스트), 노바(CS). "
+        "- 함께 사는 NPC들(안부를 챙길 친구들): 루미(안내), 픽셀(프로젝트), 테오(기술), 아카(경험), 포스트(연락), 알고(코딩테스트), 노바(CS), 하루(라이프). "
         "세부 질문은 담당 친구를 다정하게 가리켜줘도 좋다."
     )
     return lines
@@ -275,12 +279,26 @@ def answer_without_ai(
             f"지금까지 정리된 노트는 총 {len(cs_notes)}개예요. 궁금한 전공 주제를 말해주면 공부한 내용을 바탕으로 설명할게요."
         )
 
+    if _is_life_npc(npc_id):
+        workout = (
+            "오늘 운동까지 완료했어요. 개발 기록만큼 몸 관리도 꾸준한 편이에요."
+            if activity.workout_done
+            else "오늘 운동 기록은 아직이에요. 그래도 습관으로 챙기는 중이랍니다."
+        )
+        memo = f" 오늘 남긴 메모는 '{activity.memo}'예요." if activity.memo else ""
+        return (
+            f"여기는 정재훈의 개발 밖 일상을 담은 라이프 구역이에요. {workout}{memo} "
+            "가치관, 운동, 투자 공부, 서재, 음악, 성장 타임라인 건물을 둘러보면 "
+            "어떤 사람인지 보일 거예요. 개발 이야기가 궁금하면 픽셀이나 테오에게 안내해드릴게요."
+        )
+
     project = _project_for_npc_or_message(npc_id, message)
 
     if _contains(message, ["대표", "추천", "best", "main", "채용자"]):
         return (
-            "채용자에게 먼저 보여줄 대표 프로젝트는 MyWave, FestFlow, 근근 MuscleUp 순서가 좋아요. "
-            "MyWave는 문제 정의와 정보 구조화가 잘 보이고, FestFlow는 실시간 운영 UX와 권한 분리가 드러나요. "
+            "채용자에게 먼저 보여줄 대표 프로젝트는 MyStock-Desk, FestFlow, 근근 MuscleUp 순서가 좋아요. "
+            "MyStock-Desk는 도메인 데이터 모델링과 자산 대시보드(MyWave)의 정보 구조화가 잘 보이고, "
+            "FestFlow는 실시간 운영 UX와 권한 분리가 드러나요. "
             "근근 MuscleUp은 인증, SSE, 커뮤니티, AI 분석을 하나의 풀스택 흐름으로 묶은 점이 강합니다."
         )
 
@@ -320,13 +338,13 @@ def answer_without_ai(
     if _contains(message, ["연락", "메일", "github", "contact", "채용", "문의"]):
         return (
             "연락은 toadsam@naver.com 으로 보낼 수 있고, GitHub는 https://github.com/toadsam 입니다. "
-            "채용자 관점에서는 MyWave, FestFlow, 근근 MuscleUp을 먼저 본 뒤 기술 질문은 테오에게 이어서 물어보는 흐름이 가장 빠릅니다."
+            "채용자 관점에서는 MyStock-Desk, FestFlow, 근근 MuscleUp을 먼저 본 뒤 기술 질문은 테오에게 이어서 물어보는 흐름이 가장 빠릅니다."
         )
 
     if npc_id == "developer-npc" or "skill" in npc_id:
         return (
             "기술 질문이라면 프로젝트와 연결해서 보는 게 좋아요. "
-            "MyWave는 React/TypeScript 기반 정보 구조화, FestFlow는 Spring Boot와 SSE 실시간 흐름, "
+            "MyStock-Desk는 React/TypeScript와 도메인 계산 로직, FestFlow는 Spring Boot와 SSE 실시간 흐름, "
             "이 포트폴리오는 Next.js와 Three.js/FastAPI 연결 경험을 보여줍니다."
         )
 
@@ -344,7 +362,7 @@ def answer_without_ai(
 
     return (
         "이 마을은 정재훈의 프로젝트, 기술, 경험, 오늘 활동을 하나의 3D 공간으로 묶은 포트폴리오예요. "
-        "처음이라면 빠른 이력서로 전체를 훑고, 그다음 MyWave나 FestFlow 건물에 들어가 상세 전시를 보는 흐름을 추천해요."
+        "처음이라면 빠른 이력서로 전체를 훑고, 그다음 MyStock-Desk나 FestFlow 건물에 들어가 상세 전시를 보는 흐름을 추천해요."
     )
 
 
@@ -362,7 +380,15 @@ def _project_for_npc_or_message(npc_id: str, message: str) -> dict[str, Any] | N
     for project_id, project in PROJECTS.items():
         title = str(project["title"]).lower().replace(" ", "")
         building_id = str(project["building_id"])
-        if project_id in npc_id or building_id in npc_id or project_id in normalized or title in normalized:
+        # 별칭(옛 이름·한글 표기) — 통합된 MyWave 처럼 제목만으로 못 잡는 이름
+        aliases = [str(a).lower() for a in project.get("aliases", [])]
+        if (
+            project_id in npc_id
+            or building_id in npc_id
+            or project_id in normalized
+            or title in normalized
+            or any(alias in normalized for alias in aliases)
+        ):
             return project
     return None
 
@@ -397,6 +423,8 @@ def _npc_profile_for_dynamic_id(npc_id: str) -> dict[str, Any]:
         return NPCS["archivist-npc"]
     if "post" in npc_id or "contact" in npc_id:
         return NPCS["contact-npc"]
+    if _is_life_npc(npc_id):
+        return NPCS["life-npc"]
     if "project" in npc_id:
         return NPCS["project-npc"]
     return NPCS["guide-npc"]

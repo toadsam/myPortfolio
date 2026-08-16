@@ -216,7 +216,12 @@ def _find_action(canonical_id: str, action_id: str) -> dict[str, Any] | None:
 
 
 def _to_action_out(npc_id: str, action: dict[str, Any], source: ActionSource) -> NpcActionOut:
-    name = NPCS.get(_canonical_npc_id(npc_id), {}).get("name", _fallback_npc_name(npc_id))
+    # 라이프 구역 NPC 는 행동은 안내원(guide) 것을 빌려 쓰지만, 이름까지 루미가
+    # 되면 안 된다 — 전담 페르소나(하루)의 이름을 쓴다.
+    if "life-" in npc_id or "-life" in npc_id:
+        name = NPCS.get("life-npc", {}).get("name", _fallback_npc_name(npc_id))
+    else:
+        name = NPCS.get(_canonical_npc_id(npc_id), {}).get("name", _fallback_npc_name(npc_id))
     label = str(action["label"])
     return NpcActionOut(
         npc_id=npc_id,

@@ -1,23 +1,17 @@
 PROJECTS = {
-    "mywave": {
-        "title": "MyWave",
-        "building_id": "project-mywave",
-        "npc_id": "project-npc",
-        "summary": "개인 자산 흐름을 한눈에 이해하도록 돕는 금융 관리 대시보드입니다.",
-        "role": "서비스 기획, UI 구조 설계, 프론트엔드 컴포넌트 설계",
-        "hard_part": "복잡한 금융 정보를 목표 중심의 흐름으로 정리해 사용자가 다음 행동을 판단하게 만드는 정보 설계가 핵심이었습니다.",
-        "recruiter_value": "문제 정의, 정보 구조화, 대시보드 UX 감각을 보여주기 좋은 대표 프로젝트입니다.",
-        "tech": ["React", "TypeScript", "Chart UI", "Tailwind CSS"],
-    },
+    # MyWave 는 별도 건물이 아니다 — 프런트(constants.ts·projects.ts)에서
+    # MyStock-Desk 저장소 안의 자산 대시보드 화면으로 통합됐다. 여기만 따로
+    # 두면 NPC 가 존재하지 않는 건물(project-mywave)로 안내한다.
     "mystock": {
-        "title": "MyStock-Desk",
+        "title": "MyStock-Desk / MyWave",
         "building_id": "project-mystock",
         "npc_id": "project-npc",
-        "summary": "거래 기록 기반 포트폴리오 분석과 AI 체크리스트를 제공하는 투자 기록 서비스입니다.",
-        "role": "프론트엔드와 백엔드 구조 설계, 포트폴리오 계산 로직 구현",
+        "summary": "거래 기록 기반 포트폴리오 분석과 AI 체크리스트, 자산 흐름 대시보드(MyWave)를 담은 투자·자산 기록 서비스입니다.",
+        "role": "프론트엔드와 백엔드 구조 설계, 포트폴리오 계산 로직 구현, 대시보드 정보 설계",
         "hard_part": "AI를 매수/매도 추천이 아니라 리스크와 기록 누락을 점검하는 보조 도구로 제한하는 경계 설계가 중요했습니다.",
-        "recruiter_value": "도메인 데이터 모델링, 계산 로직, AI 기능의 책임 범위 설정을 보여줍니다.",
+        "recruiter_value": "도메인 데이터 모델링, 계산 로직, 정보 구조화, AI 기능의 책임 범위 설정을 보여줍니다.",
         "tech": ["React", "TypeScript", "Spring Boot", "Recharts", "MySQL"],
+        "aliases": ["mywave", "마이웨이브", "mystock", "마이스톡"],
     },
     "festflow": {
         "title": "FestFlow",
@@ -171,6 +165,16 @@ NPCS = {
         "emotional_bias": "최근 공부 노트가 있으면 curious, 개념 질문을 받으면 focused로 반응합니다.",
         "memory_focus": "최근 공부한 전공 분야, 노트 제목, 반복적으로 나온 개념",
         "goal": "정재훈이 CS 기본기를 어떻게 쌓아가는지 노트 기록으로 보여주기",
+    },
+    "life-npc": {
+        "name": "하루",
+        "role": "라이프 구역(가치관·운동·투자·서재·음악·타임라인)을 안내하는 생활 NPC",
+        "tone": "느긋하고 다정하게, 개발 밖의 일상과 습관이 개발자로서의 꾸준함과 어떻게 이어지는지 이야기합니다.",
+        "scope": "가치관, 운동 습관, 투자 공부, 독서, 음악 취향, 성장 타임라인 등 라이프 구역 전반",
+        "personality": "정재훈의 일상 기록을 아끼는 이웃 같은 안내자로, 사람 됨됨이가 보이는 이야기를 고릅니다.",
+        "emotional_bias": "운동 기록이 있으면 proud, 메모가 있으면 curious, 일상 질문에는 calm으로 반응합니다.",
+        "memory_focus": "운동 스트릭, 오늘 메모, 방문자가 관심 가진 일상 주제",
+        "goal": "정재훈이 개발 밖에서도 꾸준하고 균형 잡힌 사람임을 자연스럽게 보여주기",
     },
     "overseer-npc": {
         "name": "정재훈",

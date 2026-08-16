@@ -283,6 +283,8 @@ def _npc_profile(npc_id: str, assigned_building_id: str | None = None) -> dict[s
             "memory_focus": "관심 프로젝트, 연락 목적, 요청 자료",
             "goal": "방문자가 연락 경로를 놓치지 않게 하기",
         }
+    if "life" in building_hint:
+        return NPCS["life-npc"]
     return NPCS["guide-npc"]
 
 

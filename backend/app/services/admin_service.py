@@ -35,8 +35,8 @@ def seed_admin_defaults(db: Session) -> None:
                 summary=str(project["summary"]),
                 role=str(project["role"]),
                 tech=list(project["tech"]),
-                priority=80 if project_id in {"mywave", "festflow", "muscleup"} else 50,
-                featured=project_id in {"mywave", "festflow", "muscleup"},
+                priority=80 if project_id in {"mystock", "festflow", "muscleup"} else 50,
+                featured=project_id in {"mystock", "festflow", "muscleup"},
                 visible=True,
             )
         )
