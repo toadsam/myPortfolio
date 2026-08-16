@@ -7,7 +7,14 @@ import {Cmt, Fn, Kw, Num, Str, Ty} from "../parts";
 const TAKEOVER_LINE = "지금 커서를 움직여도 빛이 따라오지 않습니다.";
 
 export function TakeoverSection() {
-  const {rootRef, reducedMotion, lockScroll, setFlash, sequencesDone, markSequenceDone} = useDarkLab();
+  const {
+    rootRef,
+    reducedMotion,
+    lockScroll,
+    setFlash,
+    sequencesDone,
+    markSequenceDone
+  } = useDarkLab();
   const triggerRef = useRef<HTMLDivElement>(null);
   const cancelled = useRef(false);
   const running = useRef(false);
@@ -39,7 +46,7 @@ export function TakeoverSection() {
     lockScroll(true);
 
     const wait = (ms: number) =>
-      new Promise<void>((resolve) => {
+      new Promise<void>(resolve => {
         window.setTimeout(resolve, ms);
       });
     const alive = () => !cancelled.current;
@@ -49,7 +56,11 @@ export function TakeoverSection() {
 
     await wait(800);
     if (!alive()) return;
-    setFlash({x: window.innerWidth / 2, y: window.innerHeight / 2, radius: 260});
+    setFlash({
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+      radius: 260
+    });
 
     for (let i = 1; i <= TAKEOVER_LINE.length; i += 1) {
       await wait(40);
@@ -74,13 +85,13 @@ export function TakeoverSection() {
     if (!el || !root) return;
 
     const io = new IntersectionObserver(
-      (entries) => {
+      entries => {
         if (entries[0]?.isIntersecting) {
           io.disconnect();
           void run();
         }
       },
-      {root, threshold: 0.5},
+      {root, threshold: 0.5}
     );
     io.observe(el);
     return () => io.disconnect();
@@ -109,15 +120,22 @@ export function TakeoverSection() {
       }
       setFlash({follow: true, radius: 220});
     },
-    [lockScroll, setFlash],
+    [lockScroll, setFlash]
   );
 
   return (
-    <section id="dl-sec-5" data-dl-section className="relative flex min-h-screen w-full flex-col items-center py-24">
+    <section
+      id="dl-sec-5"
+      data-dl-section
+      className="relative flex min-h-screen w-full flex-col items-center py-24"
+    >
       <div ref={triggerRef} className="mb-20 h-1 w-full max-w-[820px]" />
 
       <div className="z-10 w-full max-w-[820px] px-6">
-        <div className="transition-opacity duration-1000" style={{opacity: showCode ? 1 : 0}}>
+        <div
+          className="transition-opacity duration-1000"
+          style={{opacity: showCode ? 1 : 0}}
+        >
           <div className="mb-4 flex items-center gap-3">
             <span className="font-mono text-[12px] font-medium text-[#ff5a4d]">
               {"// 방금 그 3초를 게임에서 만든 코드"}
@@ -127,11 +145,17 @@ export function TakeoverSection() {
           <div className="overflow-hidden rounded-md border border-[rgba(255,255,255,0.10)] bg-[#0b0708] shadow-2xl">
             <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.10)] bg-[#0f0a0c] px-4 py-3">
               <div className="flex gap-1.5">
-                {["#ff5f56", "#ffbd2e", "#27c93f"].map((c) => (
-                  <span key={c} className="h-3 w-3 rounded-full" style={{background: c}} />
+                {["#ff5f56", "#ffbd2e", "#27c93f"].map(c => (
+                  <span
+                    key={c}
+                    className="h-3 w-3 rounded-full"
+                    style={{background: c}}
+                  />
                 ))}
               </div>
-              <span className="font-mono text-[11px] text-[rgba(255,255,255,0.42)]">CameraDirector.cs</span>
+              <span className="font-mono text-[11px] text-[rgba(255,255,255,0.42)]">
+                CameraDirector.cs
+              </span>
             </div>
 
             <div className="flex gap-4 overflow-x-auto p-4 font-mono text-[11px] leading-relaxed whitespace-pre text-[rgba(255,255,255,0.7)] md:p-6 md:text-[12px]">
@@ -153,11 +177,13 @@ export function TakeoverSection() {
                   {";"}
                 </span>
                 {"\n    \n    "}
-                <Kw>yield return new</Kw> <Ty>WaitForSeconds</Ty>(<Num>1.0f</Num>);
+                <Kw>yield return new</Kw> <Ty>WaitForSeconds</Ty>(
+                <Num>1.0f</Num>);
                 {"\n    uiManager.ShowMessage("}
                 <Str>&quot;Takeover Active&quot;</Str>
                 {");\n    "}
-                <Kw>yield return new</Kw> <Ty>WaitForSeconds</Ty>(<Num>2.0f</Num>);
+                <Kw>yield return new</Kw> <Ty>WaitForSeconds</Ty>(
+                <Num>2.0f</Num>);
                 {"\n\n    "}
                 <Cmt>{"// 4. 다시 플레이어에게 제어권 반환"}</Cmt>
                 {"\n"}
@@ -179,8 +205,11 @@ export function TakeoverSection() {
 
           <p className="mt-12 max-w-[720px] text-[16px] leading-9 text-[rgba(255,255,255,0.82)]">
             제어권을 뺏는 코드는 다섯 줄이면 된다.{" "}
-            <span className="font-bold text-[#ff5a4d]">어려운 건 돌려주는 쪽이었다.</span> 연출 도중에 씬이 바뀌거나
-            플레이어가 죽으면 입력이 잠긴 채로 남았다. 이 버그를 잡는 데 3일이 걸렸고, 그 얘기는 조금 뒤에 하겠다.
+            <span className="font-bold text-[#ff5a4d]">
+              어려운 건 돌려주는 쪽이었다.
+            </span>{" "}
+            연출 도중에 씬이 바뀌거나 플레이어가 죽으면 입력이 잠긴 채로 남았다.
+            이 버그를 잡는 데 3일이 걸렸고, 그 얘기는 조금 뒤에 하겠다.
           </p>
         </div>
       </div>
@@ -195,7 +224,9 @@ export function TakeoverSection() {
           ESC to skip
         </div>
         <div className="px-10 text-center">
-          <div className="mb-4 text-[18px] text-[rgba(255,255,255,0.82)] md:text-[20px]">{typed}</div>
+          <div className="mb-4 text-[18px] text-[rgba(255,255,255,0.82)] md:text-[20px]">
+            {typed}
+          </div>
           <div
             className="text-[18px] font-bold text-[#ff5a4d] transition-opacity duration-500 md:text-[20px]"
             style={{opacity: showPunchline ? 1 : 0}}

@@ -20,23 +20,31 @@ type Renderer = (args: RenderArgs) => ReactNode;
 // 프로젝트별 시그니처 인터랙티브 데모 — 각 프로젝트 컨셉에 맞춘 고유 인터랙션.
 // 개요(step 0) 상단에 표시된다.
 const SIGNATURE: Partial<Record<string, (theme: ProjectTheme) => ReactNode>> = {
-  festflow: (theme) => <FestFlowLiveDemo theme={theme} />,
-  mystock: (theme) => <MyStockDemo theme={theme} />,
-  muscleup: (theme) => <MuscleUpDemo theme={theme} />,
-  aclub: (theme) => <AClubDemo theme={theme} />,
-  "sign-language": (theme) => <SignLanguageDemo theme={theme} />,
-  ajouchong: (theme) => <AjouchongDemo theme={theme} />,
-  darklab: (theme) => <DarkLabReveal theme={theme} />,
-  "ajou-adventure": (theme) => <AjouAdventureDemo theme={theme} />,
-  tserof: (theme) => <TserofDemo theme={theme} />,
+  festflow: theme => <FestFlowLiveDemo theme={theme} />,
+  mystock: theme => <MyStockDemo theme={theme} />,
+  muscleup: theme => <MuscleUpDemo theme={theme} />,
+  aclub: theme => <AClubDemo theme={theme} />,
+  "sign-language": theme => <SignLanguageDemo theme={theme} />,
+  ajouchong: theme => <AjouchongDemo theme={theme} />,
+  darklab: theme => <DarkLabReveal theme={theme} />,
+  "ajou-adventure": theme => <AjouAdventureDemo theme={theme} />,
+  tserof: theme => <TserofDemo theme={theme} />
 };
 
 const dataDriven: Partial<Record<string, Renderer>> = Object.fromEntries(
-  Object.keys(RICH_DATA).map((id) => [
+  Object.keys(RICH_DATA).map(id => [
     id,
     ({step, project, theme}: RenderArgs) => {
       const signature = step === 0 ? SIGNATURE[id] : undefined;
-      const base = <RichSection step={step} data={RICH_DATA[id]!} theme={theme} links={project.links} title={project.title} />;
+      const base = (
+        <RichSection
+          step={step}
+          data={RICH_DATA[id]!}
+          theme={theme}
+          links={project.links}
+          title={project.title}
+        />
+      );
       return signature ? (
         <div className="flex flex-col gap-6">
           {signature(theme)}
@@ -45,11 +53,12 @@ const dataDriven: Partial<Record<string, Renderer>> = Object.fromEntries(
       ) : (
         base
       );
-    },
-  ]),
+    }
+  ])
 );
 
 export const RICH_RENDERERS: Partial<Record<string, Renderer>> = {
-  mywave: ({step, project, theme}: RenderArgs) => MyWaveRichSection({step, project, theme}),
-  ...dataDriven,
+  mywave: ({step, project, theme}: RenderArgs) =>
+    MyWaveRichSection({step, project, theme}),
+  ...dataDriven
 };

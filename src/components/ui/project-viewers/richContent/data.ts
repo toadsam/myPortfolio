@@ -1229,7 +1229,11 @@ export const RICH_DATA: Record<string, RichProject> = {
       {t: "발표", d: "파란학기"}
     ],
     architecture: [
-      {tag: "View", name: "Expo (React Native)", desc: "퀴즈·변환 화면 · expo-video"},
+      {
+        tag: "View",
+        name: "Expo (React Native)",
+        desc: "퀴즈·변환 화면 · expo-video"
+      },
       {tag: "API", name: "Spring Boot", desc: "학습·정답판정·변환 API (담당)"},
       {
         tag: "Data",
@@ -1274,13 +1278,13 @@ export const RICH_DATA: Record<string, RichProject> = {
         caption: "선택지 ID를 양쪽 다 정규화한 뒤 비교",
         highlightLines: [1, 2, 4],
         lines: [
-          "String correctChoiceId = normalizeChoiceId(doc.getString(\"correctChoiceId\"));",
+          'String correctChoiceId = normalizeChoiceId(doc.getString("correctChoiceId"));',
           "String selectedChoiceId = normalizeChoiceId(request.selectedChoiceId());",
           "",
           "boolean isCorrect = correctChoiceId.equals(selectedChoiceId);",
           "",
           "private String normalizeChoiceId(String value) {",
-          "  return value == null ? \"\" : value.trim().toUpperCase(Locale.ROOT);",
+          '  return value == null ? "" : value.trim().toUpperCase(Locale.ROOT);',
           "}"
         ]
       },
@@ -1294,7 +1298,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           "  if (storageUrl != null && !storageUrl.isBlank()) {",
           "    return storageUrl;",
           "  }",
-          "  return fallbackUrl == null ? \"\" : fallbackUrl.trim();",
+          '  return fallbackUrl == null ? "" : fallbackUrl.trim();',
           "}"
         ]
       }
@@ -1320,7 +1324,13 @@ export const RICH_DATA: Record<string, RichProject> = {
           "Storage를 단어로 먼저 조회하고 없으면 Firestore의 영상 URL로 폴백하는 단일 조회 경로를 만들었다."
       }
     ],
-    tech: ["Spring Boot", "Firebase Firestore", "Firebase Storage", "Expo", "React Native"],
+    tech: [
+      "Spring Boot",
+      "Firebase Firestore",
+      "Firebase Storage",
+      "Expo",
+      "React Native"
+    ],
     resultScreens: [
       {
         title: "sign/quiz",
@@ -1890,7 +1900,8 @@ export const RICH_DATA: Record<string, RichProject> = {
     coreCode: [
       {
         filename: "ForceReceiver.cs",
-        caption: "접지를 한 점이 아니라 발 4방향으로 검사 — 가장자리 점프 씹힘 해결",
+        caption:
+          "접지를 한 점이 아니라 발 4방향으로 검사 — 가장자리 점프 씹힘 해결",
         highlightLines: [2, 3, 4, 5, 9],
         lines: [
           "Ray[] rays = new Ray[4]",
@@ -1902,17 +1913,18 @@ export const RICH_DATA: Record<string, RichProject> = {
           "};",
           "",
           "for (int i = 0; i < rays.Length; i++)",
-          "  if (Physics.Raycast(rays[i], maxDistance, LayerMask.GetMask(\"Ground\")))",
+          '  if (Physics.Raycast(rays[i], maxDistance, LayerMask.GetMask("Ground")))',
           "  { if (!isGrounded) EnterGround(); return; }"
         ]
       },
       {
         filename: "FileDataHandler.cs",
-        caption: "세이브 파일을 XOR로 난독화 — 메모장으로 열어 고치는 것만 막는 수준",
+        caption:
+          "세이브 파일을 XOR로 난독화 — 메모장으로 열어 고치는 것만 막는 수준",
         highlightLines: [4],
         lines: [
           "private string EncryptDecrypt(string data) {",
-          "  string modifiedData = \"\";",
+          '  string modifiedData = "";',
           "  for (int i = 0; i < data.Length; i++)",
           "    modifiedData += (char)(data[i] ^ _encryptionCodeWord[i % _encryptionCodeWord.Length]);",
           "  return modifiedData;",
@@ -1923,7 +1935,10 @@ export const RICH_DATA: Record<string, RichProject> = {
     work: [
       {g: "제어", items: ["이동·2단 점프 컨트롤러", "4방향 레이 접지 판정"]},
       {g: "스테이지", items: ["선택·잠금 해제 시스템"]},
-      {g: "저장", items: ["진행상황 직렬화·이어하기", "XOR 저장 데이터 난독화"]},
+      {
+        g: "저장",
+        items: ["진행상황 직렬화·이어하기", "XOR 저장 데이터 난독화"]
+      },
       {g: "협업", items: ["씬 분리 작업 구조"]}
     ],
     challenges: [

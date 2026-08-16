@@ -21,9 +21,7 @@ export default function Talks() {
       return;
     }
     const timer = setInterval(() => {
-      setCurrentIndex(prev =>
-        (prev + 1) % (activeValue.images?.length || 1)
-      );
+      setCurrentIndex(prev => (prev + 1) % (activeValue.images?.length || 1));
     }, 4000);
     return () => clearInterval(timer);
   }, [activeValue, isPaused]);
@@ -61,8 +59,7 @@ export default function Talks() {
       return 0;
     }
     return (
-      (currentIndex - 1 + activeValue.images.length) %
-      activeValue.images.length
+      (currentIndex - 1 + activeValue.images.length) % activeValue.images.length
     );
   };
 
@@ -170,7 +167,9 @@ export default function Talks() {
                       <button
                         className="values-lightbox-image-wrap side"
                         type="button"
-                        onClick={() => openViewer(activeValue.images[getPrevIndex()])}
+                        onClick={() =>
+                          openViewer(activeValue.images[getPrevIndex()])
+                        }
                       >
                         <img
                           className="values-lightbox-image"
@@ -182,7 +181,9 @@ export default function Talks() {
                         key={currentIndex}
                         className="values-lightbox-image-wrap active"
                         type="button"
-                        onClick={() => openViewer(activeValue.images[currentIndex])}
+                        onClick={() =>
+                          openViewer(activeValue.images[currentIndex])
+                        }
                       >
                         <img
                           className="values-lightbox-image"
@@ -193,7 +194,9 @@ export default function Talks() {
                       <button
                         className="values-lightbox-image-wrap side"
                         type="button"
-                        onClick={() => openViewer(activeValue.images[getNextIndex()])}
+                        onClick={() =>
+                          openViewer(activeValue.images[getNextIndex()])
+                        }
                       >
                         <img
                           className="values-lightbox-image"
@@ -216,9 +219,7 @@ export default function Talks() {
                     </div>
                   </div>
                   <div className="values-lightbox-text">
-                    <h3 className="values-lightbox-title">
-                      {activeValue.key}
-                    </h3>
+                    <h3 className="values-lightbox-title">{activeValue.key}</h3>
                     <div className="values-lightbox-description">
                       {activeValue.description.map((line, index) => (
                         <p
@@ -245,9 +246,7 @@ export default function Talks() {
                 onClick={closeViewer}
               >
                 <div
-                  className={`values-viewer${
-                    viewerClosing ? " closing" : ""
-                  }`}
+                  className={`values-viewer${viewerClosing ? " closing" : ""}`}
                   role="dialog"
                   aria-modal="true"
                   aria-label="Image viewer"

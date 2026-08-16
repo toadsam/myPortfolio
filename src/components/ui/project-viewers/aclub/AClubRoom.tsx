@@ -51,7 +51,10 @@ export function AClubRoom({onClose}: Props) {
 
   // 인트로 동안에는 룸 스크롤을 봉인한다.
   useEffect(() => {
-    rootRef.current?.classList.toggle("ac-locked", !introDone && lockCount.current === 0);
+    rootRef.current?.classList.toggle(
+      "ac-locked",
+      !introDone && lockCount.current === 0
+    );
   }, [introDone]);
 
   const lockScroll = useCallback((locked: boolean) => {
@@ -82,24 +85,35 @@ export function AClubRoom({onClose}: Props) {
   }, []);
 
   const api = useMemo(
-    () => ({rootRef, reducedMotion, lockScroll, setReadout, announce, setLit, onClose}),
-    [reducedMotion, lockScroll, setReadout, announce, onClose],
+    () => ({
+      rootRef,
+      reducedMotion,
+      lockScroll,
+      setReadout,
+      announce,
+      setLit,
+      onClose
+    }),
+    [reducedMotion, lockScroll, setReadout, announce, onClose]
   );
 
   return (
     <AClubProvider value={api}>
       <div
         ref={rootRef}
-        className={`ac-root ${aClubSans.variable} ${aClubMono.variable} ${lit ? "ac-lit" : ""} ${
-          introDone ? "" : "ac-locked"
-        }`}
+        className={`ac-root ${aClubSans.variable} ${aClubMono.variable} ${
+          lit ? "ac-lit" : ""
+        } ${introDone ? "" : "ac-locked"}`}
       >
         <div ref={liveRef} aria-live="polite" className="sr-only" />
 
         {/* ── 고정 헤더 ── */}
         <header
           className="fixed inset-x-0 top-0 z-[90] flex h-[54px] items-center justify-between border-b border-[rgba(192,132,252,0.18)] bg-[rgba(13,8,22,0.85)] px-6 backdrop-blur-[10px] transition-opacity duration-500"
-          style={{opacity: introDone ? 1 : 0, pointerEvents: introDone ? "auto" : "none"}}
+          style={{
+            opacity: introDone ? 1 : 0,
+            pointerEvents: introDone ? "auto" : "none"
+          }}
         >
           <button
             type="button"
@@ -108,7 +122,9 @@ export function AClubRoom({onClose}: Props) {
           >
             ← 마을로
           </button>
-          <div className="select-none text-[14px] font-black tracking-widest text-[#c084fc]">ACLUB</div>
+          <div className="select-none text-[14px] font-black tracking-widest text-[#c084fc]">
+            ACLUB
+          </div>
           <span
             ref={readoutRef}
             className="font-mono text-[13px] tracking-wide tabular-nums text-[rgba(255,255,255,0.46)]"
@@ -130,7 +146,12 @@ export function AClubRoom({onClose}: Props) {
           <RetroSection onExit={onClose} />
         </main>
 
-        {introDone ? null : <IntroOverlay onDismiss={dismissIntro} reducedMotion={reducedMotion} />}
+        {introDone ? null : (
+          <IntroOverlay
+            onDismiss={dismissIntro}
+            reducedMotion={reducedMotion}
+          />
+        )}
       </div>
     </AClubProvider>
   );

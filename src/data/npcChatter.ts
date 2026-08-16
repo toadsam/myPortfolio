@@ -37,19 +37,37 @@ export function pickRandom<T>(list: T[]): T {
 export function canonKind(npcId: string): string {
   if (npcId === "overseer-npc" || npcId.includes("overseer")) return "overseer";
   if (npcId.includes("codingtest")) return "coding";
-  if (npcId === "cs-npc" || npcId.includes("study-cs") || npcId.endsWith("-cs")) return "cs";
+  if (npcId === "cs-npc" || npcId.includes("study-cs") || npcId.endsWith("-cs"))
+    return "cs";
   if (npcId === "guide-npc") return "guide";
   if (npcId === "developer-npc" || npcId.includes("skill")) return "developer";
   if (npcId === "archivist-npc" || npcId.includes("exp")) return "archivist";
-  if (npcId === "contact-npc" || npcId.includes("post") || npcId.includes("contact")) return "contact";
+  if (
+    npcId === "contact-npc" ||
+    npcId.includes("post") ||
+    npcId.includes("contact")
+  )
+    return "contact";
   return "project";
 }
 
 // 특정 쌍이 마주칠 때 나오는 러닝개그 (무료, AI 없음)
 const PAIR_GAGS: Record<string, string[]> = {
-  "developer|project": ["또 기술 자랑이야? ㅋㅋ", "내 프로젝트가 더 멋지거든~", "그거 사실 내가 만든 거야!"],
-  "contact|project": ["연락 좀 잘 넘겨줘~", "또 나한테 떠넘기기? ㅋㅋ", "이번엔 네가 응대해!"],
-  "coding|developer": ["그 문제 시간복잡도 얘기해줘!", "DP로 풀었어?", "우리 또 삼천포 간다 ㅋㅋ"],
+  "developer|project": [
+    "또 기술 자랑이야? ㅋㅋ",
+    "내 프로젝트가 더 멋지거든~",
+    "그거 사실 내가 만든 거야!"
+  ],
+  "contact|project": [
+    "연락 좀 잘 넘겨줘~",
+    "또 나한테 떠넘기기? ㅋㅋ",
+    "이번엔 네가 응대해!"
+  ],
+  "coding|developer": [
+    "그 문제 시간복잡도 얘기해줘!",
+    "DP로 풀었어?",
+    "우리 또 삼천포 간다 ㅋㅋ"
+  ],
   "coding|cs": ["오늘 몇 문제 풀었어?", "무슨 개념 봤어?", "같이 공부하자!"],
   "guide|project": ["오늘도 수고했어~", "장난 그만 ㅋㅋ", "역시 우리 단짝!"]
 };

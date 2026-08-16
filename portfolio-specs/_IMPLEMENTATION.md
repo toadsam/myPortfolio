@@ -15,12 +15,12 @@ portfolio-specs/_IMPLEMENTATION.md 읽고, 아래 HTML을 <프로젝트 id> 방�
 
 ## 1. 방이 이미 있는지부터 확인
 
-| 프로젝트 id | 방 폴더 | 상태 |
-|---|---|---|
-| `darklab` | `project-viewers/darklab/` | ✅ 12섹션 (포맷 기준 코드) |
-| `aclub` | `project-viewers/aclub/` | ✅ |
-| `sign-language` | `project-viewers/sueo/` | ✅ 11섹션 |
-| 그 외 | 없음 | 카테고리별 뷰어(`PlatformProjectViewer` 등)로 렌더 |
+| 프로젝트 id     | 방 폴더                    | 상태                                               |
+| --------------- | -------------------------- | -------------------------------------------------- |
+| `darklab`       | `project-viewers/darklab/` | ✅ 12섹션 (포맷 기준 코드)                         |
+| `aclub`         | `project-viewers/aclub/`   | ✅                                                 |
+| `sign-language` | `project-viewers/sueo/`    | ✅ 11섹션                                          |
+| 그 외           | 없음                       | 카테고리별 뷰어(`PlatformProjectViewer` 등)로 렌더 |
 
 방이 없으면 §2부터, 있으면 해당 폴더의 `sections/`에 파일만 추가하고 Room에 등록.
 
@@ -42,9 +42,11 @@ src/components/ui/project-viewers/<room>/
 **배선은 `ProjectViewer.tsx:538` 부근 한 줄.** 카테고리 분기보다 **위**에 둔다.
 
 ```tsx
-if (project.id === "darklab") return <DarkLabRoom key={project.id} {...shared} />;
+if (project.id === "darklab")
+  return <DarkLabRoom key={project.id} {...shared} />;
 if (project.id === "aclub") return <AClubRoom key={project.id} {...shared} />;
-if (project.id === "sign-language") return <SueoDistrictRoom key={project.id} {...shared} />;
+if (project.id === "sign-language")
+  return <SueoDistrictRoom key={project.id} {...shared} />;
 // ↑ 여기에 추가. shared = {project, theme, onClose}
 ```
 
@@ -69,8 +71,9 @@ Variant HTML은 `tailwind.config = { colors: { primary, accent, ok, bad, warn ..
   /* ... */
 }
 ```
+
 ```tsx
-className="text-[var(--sd-primary)] border-[rgba(126,184,255,0.18)]"
+className = "text-[var(--sd-primary)] border-[rgba(126,184,255,0.18)]";
 ```
 
 `bg-primary` → `bg-[var(--sd-primary)]`, `text-ok` → `text-[var(--sd-ok)]` 식으로 1:1 치환.
@@ -87,34 +90,48 @@ Variant는 Pretendard·JetBrains Mono를 CDN `@import`로 부른다.
 Pretendard는 Google Fonts에 없으므로 **Noto Sans KR로 대체**하고 next/font를 쓴다.
 
 ```ts
-export const sueoSans = Noto_Sans_KR({ subsets: ["latin"], weight: ["400","500","700","900"],
-  display: "swap", variable: "--sd-font-sans" });
-export const sueoMono = JetBrains_Mono({ subsets: ["latin"], weight: ["400","700"],
-  display: "swap", variable: "--sd-font-mono" });
+export const sueoSans = Noto_Sans_KR({
+  subsets: ["latin"],
+  weight: ["400", "500", "700", "900"],
+  display: "swap",
+  variable: "--sd-font-sans"
+});
+export const sueoMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+  variable: "--sd-font-mono"
+});
 ```
+
 ```tsx
 <div className={`sd-root ${sueoSans.variable} ${sueoMono.variable}`}>
 ```
+
 ```css
-.sd-root { font-family: var(--sd-font-sans), ...; }
-.sd-root .font-mono { font-family: var(--sd-font-mono), ...; }
+.sd-root {
+  font-family: var(--sd-font-sans), ...;
+}
+.sd-root .font-mono {
+  font-family: var(--sd-font-mono), ...;
+}
 ```
 
 ---
 
 ## 5. 바닐라 JS → React 변환 대응표
 
-| Variant HTML | React |
-|---|---|
-| `setTimeout` 타임라인 나열 | `useTimeline(STEPS, start, instant)` → `boolean[]` |
-| `IntersectionObserver`로 등장 | `useInView(ref)` → 타임라인의 `start` 인자로 |
-| `el.style.opacity = '1'` | `style={rise(on, instant)}` / `fade(...)` (`parts.tsx`) |
-| `classList.add('active')` | 조건부 className 또는 인라인 style |
-| `document.getElementById(...)` | `useRef` |
-| `requestAnimationFrame` 루프 | `useEffect` + ref로 DOM 직접 갱신 (**state 금지 — 60fps 리렌더**) |
-| `<dialog>.showModal()` | `useState` + 조건부 `fixed inset-0` div + Esc 핸들러 |
-| `prefers-reduced-motion` | `useSueo().reducedMotion` → `instant` 인자로 전파 |
-| 드래그 (`setPointerCapture`) | `onPointerDown/Move/Up` + `svg.getScreenCTM().inverse()` 그대로 |
+| Variant HTML                   | React                                                             |
+| ------------------------------ | ----------------------------------------------------------------- |
+| `setTimeout` 타임라인 나열     | `useTimeline(STEPS, start, instant)` → `boolean[]`                |
+| `IntersectionObserver`로 등장  | `useInView(ref)` → 타임라인의 `start` 인자로                      |
+| `el.style.opacity = '1'`       | `style={rise(on, instant)}` / `fade(...)` (`parts.tsx`)           |
+| `classList.add('active')`      | 조건부 className 또는 인라인 style                                |
+| `document.getElementById(...)` | `useRef`                                                          |
+| `requestAnimationFrame` 루프   | `useEffect` + ref로 DOM 직접 갱신 (**state 금지 — 60fps 리렌더**) |
+| `<dialog>.showModal()`         | `useState` + 조건부 `fixed inset-0` div + Esc 핸들러              |
+| `prefers-reduced-motion`       | `useSueo().reducedMotion` → `instant` 인자로 전파                 |
+| 드래그 (`setPointerCapture`)   | `onPointerDown/Move/Up` + `svg.getScreenCTM().inverse()` 그대로   |
 
 **핵심 원칙**: 매 프레임 바뀌는 값(재생 위치·좌표·카운터 표시)은 **state가 아니라 ref + DOM 직접 조작**.
 코드 패널 하이라이트 같은 것도 `container.querySelectorAll('[data-kf]')`로 원안 방식 유지.
@@ -129,15 +146,25 @@ export const sueoMono = JetBrains_Mono({ subsets: ["latin"], weight: ["400","700
 **① SVG `transform-origin`이 엉뚱한 곳에 잡힌다**
 `.hand-part { transform-origin: bottom center }`는 SVG 기본 `transform-box: view-box` 때문에
 **뷰박스 밑변** 기준이 된다. 손가락을 굽히면 손에서 떨어져 나간다. Variant HTML의 고질 버그.
+
 ```css
-.sd-hand-part { transform-box: fill-box; transform-origin: bottom center; }
+.sd-hand-part {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+}
 ```
 
 **② JSX에서 `inline-block` 사이 공백이 사라진다**
+
 ```tsx
-{WORDS.map(w => <span className="inline-block">{w}{" "}</span>)}  // ❌ "수어는손모양이"
-{WORDS.map(w => <span className="mr-[0.25em] inline-block">{w}</span>)}  // ✅
+{
+  WORDS.map(w => <span className="inline-block">{w} </span>);
+} // ❌ "수어는손모양이"
+{
+  WORDS.map(w => <span className="mr-[0.25em] inline-block">{w}</span>);
+} // ✅
 ```
+
 HTML은 태그 사이 공백 텍스트 노드가 살지만 JSX `.map()`은 안 남는다.
 
 **③ `overflow-x-auto`가 세로도 잘라낸다**
@@ -145,6 +172,7 @@ CSS 규칙상 `overflow-x: auto`면 `overflow-y`도 `auto`가 된다.
 그 안의 `top-[-15px]` 같은 음수 오프셋 요소는 **클리핑돼 안 보인다** → 패딩 안쪽(`top-0`)으로 옮길 것.
 
 **④ 타입 두 가지**
+
 - `as const` 배열 → `setState<number[]>`에 못 넣음. `setLit([...path])`로 복사.
 - `{type:"word", p0, p1}` / `{type:"trans"}` 섞인 배열은 `p0`가 optional로 잡힘.
   → 인터페이스를 나눠 선언하고 `const SEQ: (WordSeg|TransSeg)[] = [...]`.
@@ -157,6 +185,7 @@ CSS 규칙상 `overflow-x: auto`면 `overflow-y`도 `auto`가 된다.
 npm run typecheck                                    # 필수
 npx prettier --write "src/components/ui/project-viewers/<room>/**/*.{ts,tsx,css}"
 ```
+
 > `npm run check-format`은 저장소 전체에 기존 경고 766건이 있으니 **새 파일만** 따로 검사할 것.
 > lint 스크립트와 JS 테스트 러너는 **없다**.
 
@@ -166,7 +195,7 @@ npx prettier --write "src/components/ui/project-viewers/<room>/**/*.{ts,tsx,css}
 ```tsx
 export default function Page() {
   if (process.env.NODE_ENV !== "development") notFound();
-  return <Preview />;   // "use client" 컴포넌트에서 <XRoom project={...} theme={...} onClose={...} />
+  return <Preview />; // "use client" 컴포넌트에서 <XRoom project={...} theme={...} onClose={...} />
 }
 ```
 
@@ -196,17 +225,18 @@ Variant HTML에는 **어느 시점 프롬프트로 만들었는지 표시가 없
 **받은 HTML이 교체 전 프롬프트로 만들어진 것일 수 있다.**
 
 **구현 전 3분 체크**
+
 1. 해당 `NN-*.md`의 `## PAGE NN` 제목을 HTML의 섹션 제목과 대조
 2. 그 페이지 상단에 `> 🔴 ... 전면 교체됨` 박스가 있으면 **HTML을 버리고 스펙을 따른다**
 3. `_STATUS.md` 하단의 교체 이력 표도 확인
 
 ### 실제로 걸린 사례 — 07 수어지구 PAGE 04 (해결됨)
 
-| | 내용 |
-|---|---|
-| 받은 HTML | 「고맙습니다」라고 썼더니 틀렸다 — **주관식 입력 + 동의어 판정** |
+|           | 내용                                                                                             |
+| --------- | ------------------------------------------------------------------------------------------------ |
+| 받은 HTML | 「고맙습니다」라고 썼더니 틀렸다 — **주관식 입력 + 동의어 판정**                                 |
 | 스펙 현행 | 「에러는 없는데 영상 자리만 비어 있었다」 — **Storage/Firestore 이원화 + `findUrlOrFallback()`** |
-| 스펙 판정 | *"주관식 입력 자체가 없습니다. 퀴즈는 4지선다. 그 페이지는 **통째로 창작**이었습니다"* |
+| 스펙 판정 | _"주관식 입력 자체가 없습니다. 퀴즈는 4지선다. 그 페이지는 **통째로 창작**이었습니다"_           |
 
 → 낡은 HTML로 한 번 구현했다가 **스펙 텍스트만 보고 다시 썼다**. Variant를 다시 돌릴 필요 없이
 `## PAGE NN` 아래 ` ```text ` 블록의 VERBATIM 문구·토큰·레이아웃 지시만으로 구현이 된다.
@@ -214,18 +244,18 @@ Variant HTML에는 **어느 시점 프롬프트로 만들었는지 표시가 없
 
 ### 스펙 PAGE ↔ 구현 파일 대응 (07 수어지구)
 
-| 스펙 | 구현 파일 | 상태 |
-|---|---|---|
-| PAGE 00 진입 | `EntrySection` | ✅ |
-| PAGE 01 히어로·갤러리 | `GallerySection` | ✅ |
-| PAGE 02 동작 데이터 | `MotionDataSection` | ✅ |
-| PAGE 03 어순 | `SentenceSection` | ✅ |
-| PAGE 04 영상 누락 | `Trouble01Section` | ✅ (낡은 HTML로 만들었다가 스펙 기준으로 재작성) |
-| PAGE 05 반복 학습 | `ReviewLoopSection` | ✅ |
-| PAGE 06 손 끊김 | `Trouble02Section` | ✅ |
-| PAGE 07 백엔드 구조 | `ArchitectureSection` | ✅ |
-| PAGE 08 한계 | `LimitsSection` | ✅ |
-| PAGE 09 결과 | `ResultSection` | ✅ |
-| PAGE 10 회고·퇴장 | `RetroSection` | ✅ |
+| 스펙                  | 구현 파일             | 상태                                             |
+| --------------------- | --------------------- | ------------------------------------------------ |
+| PAGE 00 진입          | `EntrySection`        | ✅                                               |
+| PAGE 01 히어로·갤러리 | `GallerySection`      | ✅                                               |
+| PAGE 02 동작 데이터   | `MotionDataSection`   | ✅                                               |
+| PAGE 03 어순          | `SentenceSection`     | ✅                                               |
+| PAGE 04 영상 누락     | `Trouble01Section`    | ✅ (낡은 HTML로 만들었다가 스펙 기준으로 재작성) |
+| PAGE 05 반복 학습     | `ReviewLoopSection`   | ✅                                               |
+| PAGE 06 손 끊김       | `Trouble02Section`    | ✅                                               |
+| PAGE 07 백엔드 구조   | `ArchitectureSection` | ✅                                               |
+| PAGE 08 한계          | `LimitsSection`       | ✅                                               |
+| PAGE 09 결과          | `ResultSection`       | ✅                                               |
+| PAGE 10 회고·퇴장     | `RetroSection`        | ✅                                               |
 
 > 참고: HTML 안의 섹션 번호 라벨(`03 · 트러블슈팅 01`)은 스펙 PAGE 번호와 다르다. **제목으로 대조할 것.**

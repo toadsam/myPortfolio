@@ -5,8 +5,15 @@ function MobileDock(props) {
   const {activeZone, onClose, onSelectZone} = props;
 
   return (
-    <nav className="mobile-world-dock" aria-label="Mobile portfolio world navigation">
-      <button className={!activeZone ? "is-active" : ""} type="button" onClick={onClose}>
+    <nav
+      className="mobile-world-dock"
+      aria-label="Mobile portfolio world navigation"
+    >
+      <button
+        className={!activeZone ? "is-active" : ""}
+        type="button"
+        onClick={onClose}
+      >
         World
       </button>
       {zones.map(function renderZone(zone) {

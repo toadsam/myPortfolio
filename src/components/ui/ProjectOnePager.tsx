@@ -213,11 +213,7 @@ function CodeWindow({spec, theme}: {spec: CodeSpec; theme: ProjectTheme}) {
                 : undefined
             }
           >
-            {line.trim() === "" ? (
-              " "
-            ) : (
-              <CodeLine line={line} theme={theme} />
-            )}
+            {line.trim() === "" ? " " : <CodeLine line={line} theme={theme} />}
           </div>
         ))}
       </pre>
@@ -413,7 +409,9 @@ export function ProjectOnePager({
                       <tr key={r.k}>
                         <td className="mono w-24 text-accent">{r.k}</td>
                         <td
-                          className={`text-gray-300 ${roleRow(r.k) ? "font-bold" : ""}`}
+                          className={`text-gray-300 ${
+                            roleRow(r.k) ? "font-bold" : ""
+                          }`}
                         >
                           {r.v}
                         </td>
@@ -430,7 +428,9 @@ export function ProjectOnePager({
                 ) : null}
                 {data.tech.map((t, i) => (
                   <span
-                    className={`badge ${i < 3 ? "border-accent text-accent" : ""}`}
+                    className={`badge ${
+                      i < 3 ? "border-accent text-accent" : ""
+                    }`}
                     key={t}
                   >
                     {t}
@@ -530,12 +530,16 @@ export function ProjectOnePager({
                 const hero = i === heroLayer;
                 return (
                   <div
-                    className={`arch-card reveal ${hero ? "border-accent bg-accent/5" : ""}`}
+                    className={`arch-card reveal ${
+                      hero ? "border-accent bg-accent/5" : ""
+                    }`}
                     key={layer.name}
                   >
                     <div
                       className={`mb-4 flex h-10 w-10 items-center justify-center rounded ${
-                        hero ? "bg-accent text-black" : "bg-accent/10 text-accent"
+                        hero
+                          ? "bg-accent text-black"
+                          : "bg-accent/10 text-accent"
                       }`}
                     >
                       <Icon
@@ -610,7 +614,9 @@ export function ProjectOnePager({
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 {data.coreCode.map((c, i) => (
                   <div
-                    className={`space-y-4 ${i % 2 === 0 ? "reveal-left" : "reveal-right"}`}
+                    className={`space-y-4 ${
+                      i % 2 === 0 ? "reveal-left" : "reveal-right"
+                    }`}
                     key={c.filename}
                   >
                     <p className="text-sm font-medium text-gray-400">
@@ -654,7 +660,9 @@ export function ProjectOnePager({
                       <p className="rounded border-l-2 border-accent bg-accent/5 p-4 text-sm leading-relaxed text-gray-200">
                         {c.solution}
                       </p>
-                      {c.code ? <CodeWindow spec={c.code} theme={theme} /> : null}
+                      {c.code ? (
+                        <CodeWindow spec={c.code} theme={theme} />
+                      ) : null}
                     </div>
                   </div>
                 ))}

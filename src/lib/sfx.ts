@@ -7,7 +7,10 @@ let muted = false;
 function getCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;
   if (!ctx) {
-    const AC = window.AudioContext || (window as unknown as {webkitAudioContext: typeof AudioContext}).webkitAudioContext;
+    const AC =
+      window.AudioContext ||
+      (window as unknown as {webkitAudioContext: typeof AudioContext})
+        .webkitAudioContext;
     if (!AC) return null;
     ctx = new AC();
   }
@@ -15,7 +18,13 @@ function getCtx(): AudioContext | null {
   return ctx;
 }
 
-function tone(freq: number, dur: number, type: OscillatorType = "sine", vol = 0.05, at = 0) {
+function tone(
+  freq: number,
+  dur: number,
+  type: OscillatorType = "sine",
+  vol = 0.05,
+  at = 0
+) {
   if (muted) return;
   const c = getCtx();
   if (!c) return;
@@ -34,7 +43,8 @@ function tone(freq: number, dur: number, type: OscillatorType = "sine", vol = 0.
 }
 
 // 앰비언트 드론 (Developer City 이식) — 저역 사인 2개 + lowpass
-let drone: {osc1: OscillatorNode; osc2: OscillatorNode; gain: GainNode} | null = null;
+let drone: {osc1: OscillatorNode; osc2: OscillatorNode; gain: GainNode} | null =
+  null;
 
 // ── 생성형 마을 배경음악 — 코드 패드 + 스파스 벨 아르페지오 + 에코 (에셋 없음) ──
 // 잔잔한 코드 진행을 천천히 순환하며, 위에 벨이 띄엄띄엄 떨어진다.
@@ -42,11 +52,12 @@ const PROGRESSION: number[][] = [
   [130.81, 196.0, 246.94, 329.63], // Cmaj7 (밝은 보이싱)
   [123.47, 196.0, 293.66, 369.99], // Gmaj7
   [130.81, 220.0, 261.63, 329.63], // Am7
-  [174.61, 220.0, 261.63, 329.63], // Fmaj7
+  [174.61, 220.0, 261.63, 329.63] // Fmaj7
 ];
 const CHORD_DUR = 6; // 초 (살짝 경쾌하게)
 
-let music: {master: GainNode; lp: BiquadFilterNode; delay: DelayNode} | null = null;
+let music: {master: GainNode; lp: BiquadFilterNode; delay: DelayNode} | null =
+  null;
 let musicTimer: ReturnType<typeof setInterval> | null = null;
 let chordIdx = 0;
 
@@ -75,7 +86,7 @@ function playChord() {
   }
 
   // 벨 아르페지오 (한 옥타브 위에서 띄엄띄엄)
-  const notes = chord.map((f) => f * 2);
+  const notes = chord.map(f => f * 2);
   const hits = 5;
   for (let i = 0; i < hits; i += 1) {
     if (Math.random() < 0.18) continue; // 가끔 쉼 (밝게 — 더 자주)
@@ -217,5 +228,5 @@ export const sfx = {
   tick() {
     const f = 2100 + (Math.random() - 0.5) * 600;
     tone(f, 0.025, "square", 0.012);
-  },
+  }
 };

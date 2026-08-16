@@ -8,10 +8,13 @@ interface SectionTabsProps {
   onSelectSection: (sectionId: SectionId) => void;
 }
 
-export function SectionTabs({activeSection, onSelectSection}: SectionTabsProps) {
+export function SectionTabs({
+  activeSection,
+  onSelectSection
+}: SectionTabsProps) {
   return (
     <div className="fixed bottom-4 left-1/2 z-20 flex w-[calc(100%-24px)] max-w-3xl -translate-x-1/2 gap-2 overflow-x-auto rounded-xl border border-[#dac88c]/80 bg-[#fff8e5]/92 p-2 shadow-panel backdrop-blur-xl md:hidden">
-      {sectionMeta.map((section) => (
+      {sectionMeta.map(section => (
         <button
           className={
             activeSection === section.id

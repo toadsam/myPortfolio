@@ -42,7 +42,12 @@ function flattenText(value) {
   }
 
   if (typeof value === "object") {
-    return flattenText([value.title, value.desc, value.description, value.oneLiner]);
+    return flattenText([
+      value.title,
+      value.desc,
+      value.description,
+      value.oneLiner
+    ]);
   }
 
   return String(value).replace(/\s+/g, " ").trim();
@@ -82,9 +87,12 @@ function parseStack(project) {
   const tagStack = asArray(project.tags).map(function cleanTag(tag) {
     return String(tag).replace(/^#/, "").trim();
   });
-  const overviewStack = asArray(overview.techStack).flatMap(function parseLine(line) {
+  const overviewStack = asArray(overview.techStack).flatMap(function parseLine(
+    line
+  ) {
     const text = String(line);
-    const stackText = text.indexOf(":") >= 0 ? text.split(":").slice(1).join(":") : text;
+    const stackText =
+      text.indexOf(":") >= 0 ? text.split(":").slice(1).join(":") : text;
 
     return stackText.split(",").map(function trimStack(item) {
       return item.trim();
@@ -113,12 +121,16 @@ function getProjectGallery(project, heroImage) {
   const details = project.details || {};
   const overview = details.overview || {};
   const intro = details.intro || {};
-  const coreDesignImages = asArray(details.coreDesign).map(function mapDesign(item) {
+  const coreDesignImages = asArray(details.coreDesign).map(function mapDesign(
+    item
+  ) {
     return item.proofImage || item.image;
   });
-  const featureImages = asArray(details.coreFeatureShots).map(function mapFeature(item) {
-    return item.proofImage || item.image;
-  });
+  const featureImages = asArray(details.coreFeatureShots).map(
+    function mapFeature(item) {
+      return item.proofImage || item.image;
+    }
+  );
   const rawImages = compact(
     [heroImage, overview.image, project.image]
       .concat(asArray(intro.images))
@@ -143,7 +155,9 @@ function getProjectGallery(project, heroImage) {
 
 function getMetrics(project, stack) {
   const details = project.details || {};
-  const quickSummary = asArray(details.quickSummary).map(function mapSummary(item) {
+  const quickSummary = asArray(details.quickSummary).map(function mapSummary(
+    item
+  ) {
     return {
       value: item.title,
       label: item.desc
@@ -155,7 +169,10 @@ function getMetrics(project, stack) {
   }
 
   return [
-    {value: project.status === "live" ? "LIVE" : "CASE", label: "Project status"},
+    {
+      value: project.status === "live" ? "LIVE" : "CASE",
+      label: "Project status"
+    },
     {value: stack[0] || "React", label: "Primary stack"},
     {value: (details.overview || {}).period || "Portfolio", label: "Timeline"}
   ];
@@ -190,17 +207,29 @@ function normalizeProject(project, index) {
     number: String(index + 1).padStart(2, "0"),
     title: title,
     label: project.status === "live" ? "Live Work" : "Case Archive",
-    category: project.tags && project.tags.length ? String(project.tags[0]).replace("#", "") : "Project",
+    category:
+      project.tags && project.tags.length
+        ? String(project.tags[0]).replace("#", "")
+        : "Project",
     role: overview.role || details.role || "Planning / Development",
     period: overview.period || "",
-    description: shorten(joinText(project.recommendation, project.projectDesc), 176),
-    deepDescription: joinText(overview.coreValue, project.projectDesc, project.recommendation),
+    description: shorten(
+      joinText(project.recommendation, project.projectDesc),
+      176
+    ),
+    deepDescription: joinText(
+      overview.coreValue,
+      project.projectDesc,
+      project.recommendation
+    ),
     image: heroImage,
     gallery: getProjectGallery(project, heroImage),
     stack: stack,
     metrics: getMetrics(project, stack),
     problem: problem.length ? problem : [shorten(project.projectDesc, 120)],
-    solution: solution.length ? solution : [shorten(project.recommendation, 120)],
+    solution: solution.length
+      ? solution
+      : [shorten(project.recommendation, 120)],
     links: links,
     accent: accents[index % accents.length]
   };
@@ -288,12 +317,27 @@ function MenuOverlay(props) {
   }
 
   return (
-    <div className="mp-menu" role="dialog" aria-modal="true" aria-label="Navigation menu">
-      <button className="mp-menu__backdrop" type="button" aria-label="Close menu" onClick={onClose} />
+    <div
+      className="mp-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Navigation menu"
+    >
+      <button
+        className="mp-menu__backdrop"
+        type="button"
+        aria-label="Close menu"
+        onClick={onClose}
+      />
       <section className="mp-menu__panel">
         <div className="mp-menu__top">
           <span>Navigation</span>
-          <button className="mp-square-button" type="button" aria-label="Close menu" onClick={onClose}>
+          <button
+            className="mp-square-button"
+            type="button"
+            aria-label="Close menu"
+            onClick={onClose}
+          >
             <i className="fas fa-times" aria-hidden="true" />
           </button>
         </div>
@@ -493,7 +537,9 @@ function ProjectCard(props) {
       <div className="mp-card__body">
         <div className="mp-card__meta">
           <span>{project.category}</span>
-          <span>{focus > 0.78 ? "In focus" : offset < 0 ? "Leaving" : "Approaching"}</span>
+          <span>
+            {focus > 0.78 ? "In focus" : offset < 0 ? "Leaving" : "Approaching"}
+          </span>
         </div>
         <h2>{project.title}</h2>
         <p>{project.description}</p>
@@ -525,13 +571,25 @@ function ProjectCard(props) {
             Case details
           </button>
           {primaryLink ? (
-            <a className="mp-icon-link" href={primaryLink.url} rel="noreferrer" target="_blank" tabIndex={tabIndex}>
+            <a
+              className="mp-icon-link"
+              href={primaryLink.url}
+              rel="noreferrer"
+              target="_blank"
+              tabIndex={tabIndex}
+            >
               <i className="fas fa-external-link-alt" aria-hidden="true" />
               Live
             </a>
           ) : null}
           {codeLink ? (
-            <a className="mp-icon-link" href={codeLink.url} rel="noreferrer" target="_blank" tabIndex={tabIndex}>
+            <a
+              className="mp-icon-link"
+              href={codeLink.url}
+              rel="noreferrer"
+              target="_blank"
+              tabIndex={tabIndex}
+            >
               <i className="fab fa-github" aria-hidden="true" />
               Code
             </a>
@@ -543,7 +601,14 @@ function ProjectCard(props) {
 }
 
 function ProjectSequence(props) {
-  const {activeIndex, onOpenProject, onScrollToProject, projects, scrollProgress, trackRef} = props;
+  const {
+    activeIndex,
+    onOpenProject,
+    onScrollToProject,
+    projects,
+    scrollProgress,
+    trackRef
+  } = props;
   const activeProject = projects[activeIndex];
   const safeProgress = Number.isFinite(scrollProgress) ? scrollProgress : 0;
   const continuousIndex = safeProgress * Math.max(projects.length - 1, 1);
@@ -581,11 +646,21 @@ function ProjectSequence(props) {
             const absOffset = Math.abs(offset);
             const clampedOffset = Math.max(-3, Math.min(3, offset));
             const focus = clamp(1 - absOffset, 0, 1);
-            const scale = 0.82 + focus * 0.18 - Math.min(absOffset * 0.025, 0.06);
+            const scale =
+              0.82 + focus * 0.18 - Math.min(absOffset * 0.025, 0.06);
             const x = clampedOffset * 96;
-            const y = offset === 0 ? 0 : clampedOffset * 58 + Math.pow(absOffset, 1.2) * 18;
+            const y =
+              offset === 0
+                ? 0
+                : clampedOffset * 58 + Math.pow(absOffset, 1.2) * 18;
             const rotate = clampedOffset * -5.6;
-            const rawOpacity = offset < -2.2 || offset > 3.2 ? 0 : Math.max(0, 0.12 + focus * 0.88 - Math.max(absOffset - 1, 0) * 0.14);
+            const rawOpacity =
+              offset < -2.2 || offset > 3.2
+                ? 0
+                : Math.max(
+                    0,
+                    0.12 + focus * 0.88 - Math.max(absOffset - 1, 0) * 0.14
+                  );
             const opacity = Number.isFinite(rawOpacity) ? rawOpacity : 0;
             const style = {
               "--abs-offset": absOffset,
@@ -692,8 +767,8 @@ function StackSection(props) {
         <span className="mp-eyebrow">System Stack</span>
         <h2>Interactive UI, backed by service thinking.</h2>
         <p>
-          웹 프로젝트는 화면만 멋있으면 끝나지 않습니다. 인증, API, 배포, 피드백까지 이어지는
-          구조를 기준으로 인터랙션을 설계합니다.
+          웹 프로젝트는 화면만 멋있으면 끝나지 않습니다. 인증, API, 배포,
+          피드백까지 이어지는 구조를 기준으로 인터랙션을 설계합니다.
         </p>
       </div>
       <div className="mp-process-grid">
@@ -729,10 +804,21 @@ function StackSection(props) {
 }
 
 function ContactSection() {
-  const email = contactInfo.email_address || socialMediaLinks.gmail || "toadsam@naver.com";
+  const email =
+    contactInfo.email_address || socialMediaLinks.gmail || "toadsam@naver.com";
   const links = [
-    {label: "Email", value: email, href: "mailto:" + email, icon: "fas fa-envelope"},
-    {label: "GitHub", value: socialMediaLinks.github || "https://github.com/toadsam", href: socialMediaLinks.github || "https://github.com/toadsam", icon: "fab fa-github"}
+    {
+      label: "Email",
+      value: email,
+      href: "mailto:" + email,
+      icon: "fas fa-envelope"
+    },
+    {
+      label: "GitHub",
+      value: socialMediaLinks.github || "https://github.com/toadsam",
+      href: socialMediaLinks.github || "https://github.com/toadsam",
+      icon: "fab fa-github"
+    }
   ];
 
   return (
@@ -745,7 +831,12 @@ function ContactSection() {
       <div className="mp-contact-links">
         {links.map(function renderLink(link) {
           return (
-            <a href={link.href} key={link.label} rel="noreferrer" target={link.href.indexOf("mailto:") === 0 ? undefined : "_blank"}>
+            <a
+              href={link.href}
+              key={link.label}
+              rel="noreferrer"
+              target={link.href.indexOf("mailto:") === 0 ? undefined : "_blank"}
+            >
               <i className={link.icon} aria-hidden="true" />
               <span>{link.label}</span>
               <strong>{link.value.replace(/^https?:\/\//, "")}</strong>
@@ -763,8 +854,18 @@ function ProjectModal(props) {
   const codeLink = getCodeLink(project);
 
   return (
-    <div className="mp-modal" role="dialog" aria-modal="true" aria-labelledby="mp-modal-title">
-      <button className="mp-modal__backdrop" type="button" aria-label="Close case details" onClick={onClose} />
+    <div
+      className="mp-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="mp-modal-title"
+    >
+      <button
+        className="mp-modal__backdrop"
+        type="button"
+        aria-label="Close case details"
+        onClick={onClose}
+      />
       <article className="mp-modal__panel">
         <header>
           <div>
@@ -772,13 +873,24 @@ function ProjectModal(props) {
             <h2 id="mp-modal-title">{project.title}</h2>
             <p>{project.deepDescription || project.description}</p>
           </div>
-          <button className="mp-square-button" type="button" aria-label="Close case details" onClick={onClose}>
+          <button
+            className="mp-square-button"
+            type="button"
+            aria-label="Close case details"
+            onClick={onClose}
+          >
             <i className="fas fa-times" aria-hidden="true" />
           </button>
         </header>
         <div className="mp-modal__gallery">
           {project.gallery.map(function renderImage(image, index) {
-            return <img alt={project.title + " screenshot " + (index + 1)} key={String(image) + index} src={image} />;
+            return (
+              <img
+                alt={project.title + " screenshot " + (index + 1)}
+                key={String(image) + index}
+                src={image}
+              />
+            );
           })}
         </div>
         <div className="mp-modal__grid">
@@ -809,13 +921,23 @@ function ProjectModal(props) {
         </div>
         <footer>
           {primaryLink ? (
-            <a className="mp-action-button" href={primaryLink.url} rel="noreferrer" target="_blank">
+            <a
+              className="mp-action-button"
+              href={primaryLink.url}
+              rel="noreferrer"
+              target="_blank"
+            >
               <i className="fas fa-external-link-alt" aria-hidden="true" />
               Open Live
             </a>
           ) : null}
           {codeLink ? (
-            <a className="mp-action-button is-secondary" href={codeLink.url} rel="noreferrer" target="_blank">
+            <a
+              className="mp-action-button is-secondary"
+              href={codeLink.url}
+              rel="noreferrer"
+              target="_blank"
+            >
               <i className="fab fa-github" aria-hidden="true" />
               View Code
             </a>
@@ -879,12 +1001,23 @@ function MotionPortfolio() {
 
         const rect = track.getBoundingClientRect();
         const viewportHeight = window.innerHeight || 1;
-        const scrollableDistance = Math.max(track.offsetHeight - viewportHeight, 1);
-        const progress = Math.max(0, Math.min(1, -rect.top / scrollableDistance));
-        const nextIndex = Math.min(projects.length - 1, Math.round(progress * (projects.length - 1)));
+        const scrollableDistance = Math.max(
+          track.offsetHeight - viewportHeight,
+          1
+        );
+        const progress = Math.max(
+          0,
+          Math.min(1, -rect.top / scrollableDistance)
+        );
+        const nextIndex = Math.min(
+          projects.length - 1,
+          Math.round(progress * (projects.length - 1))
+        );
 
         setScrollProgress(function updateProgress(currentProgress) {
-          return Math.abs(currentProgress - progress) < 0.001 ? currentProgress : progress;
+          return Math.abs(currentProgress - progress) < 0.001
+            ? currentProgress
+            : progress;
         });
         setActiveIndex(function updateIndex(currentIndex) {
           return currentIndex === nextIndex ? currentIndex : nextIndex;
@@ -915,25 +1048,22 @@ function MotionPortfolio() {
     [projects.length]
   );
 
-  useEffect(
-    function closeOnEscape() {
-      function onKeyDown(event) {
-        if (event.key !== "Escape") {
-          return;
-        }
-
-        setMenuOpen(false);
-        setSelectedProject(null);
+  useEffect(function closeOnEscape() {
+    function onKeyDown(event) {
+      if (event.key !== "Escape") {
+        return;
       }
 
-      window.addEventListener("keydown", onKeyDown);
+      setMenuOpen(false);
+      setSelectedProject(null);
+    }
 
-      return function cleanupEscape() {
-        window.removeEventListener("keydown", onKeyDown);
-      };
-    },
-    []
-  );
+    window.addEventListener("keydown", onKeyDown);
+
+    return function cleanupEscape() {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
 
   const scrollToSection = useCallback(function scrollToSection(sectionId) {
     const element = document.getElementById(sectionId);
@@ -969,7 +1099,10 @@ function MotionPortfolio() {
     };
 
     setMouse(function updateMouse(currentMouse) {
-      if (Math.abs(currentMouse.x - nextMouse.x) < 2 && Math.abs(currentMouse.y - nextMouse.y) < 2) {
+      if (
+        Math.abs(currentMouse.x - nextMouse.x) < 2 &&
+        Math.abs(currentMouse.y - nextMouse.y) < 2
+      ) {
         return currentMouse;
       }
 
@@ -992,7 +1125,11 @@ function MotionPortfolio() {
         "--scroll-progress": scrollProgress
       }}
     >
-      <LivingField activeProject={activeProject} projects={projects} scrollProgress={scrollProgress} />
+      <LivingField
+        activeProject={activeProject}
+        projects={projects}
+        scrollProgress={scrollProgress}
+      />
       <div className="mp-frame" aria-hidden="true" />
       <HudHeader
         activeProject={activeProject}

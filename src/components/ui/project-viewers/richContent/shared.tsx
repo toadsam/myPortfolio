@@ -1,6 +1,14 @@
 "use client";
 
-import {AnimatePresence, animate, motion, useInView, useMotionValue, useSpring, useTransform} from "framer-motion";
+import {
+  AnimatePresence,
+  animate,
+  motion,
+  useInView,
+  useMotionValue,
+  useSpring,
+  useTransform
+} from "framer-motion";
 import {useCallback, useEffect, useRef, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
@@ -16,7 +24,13 @@ export interface CodeSpec {
   highlightLines?: number[];
 }
 
-export type ScreenKind = "dashboard" | "bars" | "cards" | "feed" | "stats" | "title";
+export type ScreenKind =
+  | "dashboard"
+  | "bars"
+  | "cards"
+  | "feed"
+  | "stats"
+  | "title";
 
 export interface ScreenSpec {
   title: string;
@@ -59,19 +73,33 @@ export interface RichProject {
   problem: string;
   research: {quotes: {q: string; who: string}[]; stat?: {n: string; l: string}};
   beforeCode?: CodeSpec;
-  beforeAfter?: {before: {label: string; screen: ScreenSpec}; after: {label: string; screen: ScreenSpec}};
+  beforeAfter?: {
+    before: {label: string; screen: ScreenSpec};
+    after: {label: string; screen: ScreenSpec};
+  };
   hypothesis: string;
   process: {t: string; d: string}[];
   architecture: {name: string; desc: string; tag: string}[];
   decisions: {area: string; pick: string; why: string; alt: string}[];
   coreCode: CodeSpec[];
   work: {g: string; items: string[]}[];
-  challenges: {title: string; problem: string; solution: string; code?: CodeSpec}[];
-  perf?: {rows: {label: string; before: number; after: number; unit: string}[]; note?: string};
+  challenges: {
+    title: string;
+    problem: string;
+    solution: string;
+    code?: CodeSpec;
+  }[];
+  perf?: {
+    rows: {label: string; before: number; after: number; unit: string}[];
+    note?: string;
+  };
   tech: string[];
   resultScreens: ScreenSpec[];
   metrics: {n: string; l: string}[];
-  usability?: {rows: {label: string; before: number; after: number; unit: string}[]; note?: string};
+  usability?: {
+    rows: {label: string; before: number; after: number; unit: string}[];
+    note?: string;
+  };
   kpt: {keep: string[]; problem: string[]; try: string[]};
   learning: string;
 }
@@ -108,7 +136,13 @@ export function CodeLine({line, theme}: {line: string; theme: ProjectTheme}) {
   );
 }
 
-export function CodeBlock({theme, spec}: {theme: ProjectTheme; spec: CodeSpec}) {
+export function CodeBlock({
+  theme,
+  spec
+}: {
+  theme: ProjectTheme;
+  spec: CodeSpec;
+}) {
   const hl = spec.highlightLines ?? [];
   return (
     <motion.div
@@ -120,24 +154,57 @@ export function CodeBlock({theme, spec}: {theme: ProjectTheme; spec: CodeSpec}) 
       transition={{duration: 0.4}}
       whileHover={{y: -3, boxShadow: `0 12px 30px ${theme.primary}1f`}}
     >
-      <div className="flex items-center gap-2 border-b px-4 py-2" style={{borderColor: `${theme.primary}18`, background: "rgba(255,255,255,0.02)"}}>
+      <div
+        className="flex items-center gap-2 border-b px-4 py-2"
+        style={{
+          borderColor: `${theme.primary}18`,
+          background: "rgba(255,255,255,0.02)"
+        }}
+      >
         <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f56]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#27c93f]" />
-        <span className="ml-2 font-mono text-[11px] font-bold text-white/45">{spec.filename}</span>
+        <span className="ml-2 font-mono text-[11px] font-bold text-white/45">
+          {spec.filename}
+        </span>
       </div>
       <div className="overflow-x-auto px-4 py-3">
         <pre className="font-mono text-[12px] leading-[1.7]">
           {spec.lines.map((line, i) => (
-            <div key={i} className="flex" style={hl.includes(i + 1) ? {background: `${theme.primary}12`, marginInline: -16, paddingInline: 16} : undefined}>
-              <span className="mr-4 select-none text-right text-white/20" style={{minWidth: 18}}>{i + 1}</span>
-              <code className="text-white/85"><CodeLine line={line} theme={theme} /></code>
+            <div
+              key={i}
+              className="flex"
+              style={
+                hl.includes(i + 1)
+                  ? {
+                      background: `${theme.primary}12`,
+                      marginInline: -16,
+                      paddingInline: 16
+                    }
+                  : undefined
+              }
+            >
+              <span
+                className="mr-4 select-none text-right text-white/20"
+                style={{minWidth: 18}}
+              >
+                {i + 1}
+              </span>
+              <code className="text-white/85">
+                <CodeLine line={line} theme={theme} />
+              </code>
             </div>
           ))}
         </pre>
       </div>
       {spec.caption ? (
-        <div className="border-t px-4 py-2 font-mono text-[11px] text-white/40" style={{borderColor: `${theme.primary}15`}}>{"// "}{spec.caption}</div>
+        <div
+          className="border-t px-4 py-2 font-mono text-[11px] text-white/40"
+          style={{borderColor: `${theme.primary}15`}}
+        >
+          {"// "}
+          {spec.caption}
+        </div>
       ) : null}
     </motion.div>
   );
@@ -147,24 +214,55 @@ function AreaSvg({theme, pts}: {theme: ProjectTheme; pts: number[]}) {
   const max = Math.max(...pts) * 1.1;
   const w = 320;
   const h = 72;
-  const line = pts.map((p, i) => `${(i / (pts.length - 1)) * w},${h - (p / max) * h}`).join(" ");
+  const line = pts
+    .map((p, i) => `${(i / (pts.length - 1)) * w},${h - (p / max) * h}`)
+    .join(" ");
   const area = `0,${h} ${line} ${w},${h}`;
-  const gid = `ar-${theme.primary.replace("#", "")}-${pts.length}-${Math.round(pts[0] ?? 0)}`;
+  const gid = `ar-${theme.primary.replace("#", "")}-${pts.length}-${Math.round(
+    pts[0] ?? 0
+  )}`;
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full" preserveAspectRatio="none" style={{height: 64}}>
+    <svg
+      viewBox={`0 0 ${w} ${h}`}
+      className="w-full"
+      preserveAspectRatio="none"
+      style={{height: 64}}
+    >
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor={theme.primary} stopOpacity="0.35" />
           <stop offset="100%" stopColor={theme.primary} stopOpacity="0" />
         </linearGradient>
       </defs>
-      <motion.polygon points={area} fill={`url(#${gid})`} initial={{opacity: 0}} animate={{opacity: 1}} transition={{duration: 0.8, delay: 0.3}} />
-      <motion.polyline points={line} fill="none" stroke={theme.primary} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" initial={{pathLength: 0}} animate={{pathLength: 1}} transition={{duration: 1.1, ease: "easeOut"}} />
+      <motion.polygon
+        points={area}
+        fill={`url(#${gid})`}
+        initial={{opacity: 0}}
+        animate={{opacity: 1}}
+        transition={{duration: 0.8, delay: 0.3}}
+      />
+      <motion.polyline
+        points={line}
+        fill="none"
+        stroke={theme.primary}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        initial={{pathLength: 0}}
+        animate={{pathLength: 1}}
+        transition={{duration: 1.1, ease: "easeOut"}}
+      />
     </svg>
   );
 }
 
-export function MockScreen({theme, spec}: {theme: ProjectTheme; spec: ScreenSpec}) {
+export function MockScreen({
+  theme,
+  spec
+}: {
+  theme: ProjectTheme;
+  spec: ScreenSpec;
+}) {
   return (
     <motion.div
       className="overflow-hidden rounded-xl border"
@@ -175,17 +273,32 @@ export function MockScreen({theme, spec}: {theme: ProjectTheme; spec: ScreenSpec
       transition={{duration: 0.4}}
       whileHover={{y: -3, boxShadow: `0 12px 30px ${theme.primary}1f`}}
     >
-      <div className="flex items-center gap-2 border-b px-3 py-2" style={{borderColor: `${theme.primary}18`, background: "rgba(255,255,255,0.02)"}}>
+      <div
+        className="flex items-center gap-2 border-b px-3 py-2"
+        style={{
+          borderColor: `${theme.primary}18`,
+          background: "rgba(255,255,255,0.02)"
+        }}
+      >
         <span className="h-2 w-2 rounded-full bg-[#ff5f56]" />
         <span className="h-2 w-2 rounded-full bg-[#ffbd2e]" />
         <span className="h-2 w-2 rounded-full bg-[#27c93f]" />
-        <div className="ml-2 flex-1 truncate rounded bg-white/5 px-2 py-0.5 font-mono text-[10px] text-white/35">{spec.title}</div>
+        <div className="ml-2 flex-1 truncate rounded bg-white/5 px-2 py-0.5 font-mono text-[10px] text-white/35">
+          {spec.title}
+        </div>
       </div>
       <div className="p-3">
         {spec.kind === "title" ? (
           <div className="flex flex-col items-center justify-center gap-2 py-6">
-            <p className="font-mono text-xl font-black" style={{color: theme.primary}}>{spec.titleText}</p>
-            <p className="font-mono text-[10px] tracking-[0.3em] text-white/45">{spec.subText ?? "▶ PRESS START"}</p>
+            <p
+              className="font-mono text-xl font-black"
+              style={{color: theme.primary}}
+            >
+              {spec.titleText}
+            </p>
+            <p className="font-mono text-[10px] tracking-[0.3em] text-white/45">
+              {spec.subText ?? "▶ PRESS START"}
+            </p>
           </div>
         ) : null}
 
@@ -193,16 +306,30 @@ export function MockScreen({theme, spec}: {theme: ProjectTheme; spec: ScreenSpec
           <>
             {spec.kpi ? (
               <div className="mb-2 grid grid-cols-3 gap-1.5">
-                {spec.kpi.map((k) => (
-                  <div key={k.l} className="rounded-lg border p-2" style={{borderColor: `${theme.primary}1a`}}>
-                    <p className="font-mono text-[8px] uppercase text-white/35">{k.l}</p>
-                    <p className="mt-0.5 font-mono text-xs font-black text-white">{k.v}</p>
+                {spec.kpi.map(k => (
+                  <div
+                    key={k.l}
+                    className="rounded-lg border p-2"
+                    style={{borderColor: `${theme.primary}1a`}}
+                  >
+                    <p className="font-mono text-[8px] uppercase text-white/35">
+                      {k.l}
+                    </p>
+                    <p className="mt-0.5 font-mono text-xs font-black text-white">
+                      {k.v}
+                    </p>
                   </div>
                 ))}
               </div>
             ) : null}
-            <div className="rounded-lg border p-2.5" style={{borderColor: `${theme.primary}1a`}}>
-              <AreaSvg theme={theme} pts={spec.chart ?? [10, 18, 14, 26, 22, 34, 44, 52, 60]} />
+            <div
+              className="rounded-lg border p-2.5"
+              style={{borderColor: `${theme.primary}1a`}}
+            >
+              <AreaSvg
+                theme={theme}
+                pts={spec.chart ?? [10, 18, 14, 26, 22, 34, 44, 52, 60]}
+              />
             </div>
           </>
         ) : null}
@@ -211,9 +338,18 @@ export function MockScreen({theme, spec}: {theme: ProjectTheme; spec: ScreenSpec
           <div className="space-y-2">
             {(spec.bars ?? []).map((b, i) => (
               <div key={b.l}>
-                <div className="flex justify-between font-mono text-[10px] text-white/55"><span>{b.l}</span>{b.v ? <span>{b.v}</span> : null}</div>
+                <div className="flex justify-between font-mono text-[10px] text-white/55">
+                  <span>{b.l}</span>
+                  {b.v ? <span>{b.v}</span> : null}
+                </div>
                 <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/8">
-                  <motion.div className="h-full rounded-full" style={{background: theme.primary}} initial={{width: 0}} animate={{width: `${b.p}%`}} transition={{duration: 0.8, delay: i * 0.1}} />
+                  <motion.div
+                    className="h-full rounded-full"
+                    style={{background: theme.primary}}
+                    initial={{width: 0}}
+                    animate={{width: `${b.p}%`}}
+                    transition={{duration: 0.8, delay: i * 0.1}}
+                  />
                 </div>
               </div>
             ))}
@@ -222,10 +358,20 @@ export function MockScreen({theme, spec}: {theme: ProjectTheme; spec: ScreenSpec
 
         {spec.kind === "cards" ? (
           <div className="grid grid-cols-2 gap-1.5">
-            {(spec.cards ?? []).map((c) => (
-              <div key={c.l} className="rounded-lg border p-2" style={{borderColor: `${theme.primary}1a`}}>
-                <p className="font-mono text-[10px] font-bold text-white/75">{c.l}</p>
-                {c.sub ? <p className="mt-0.5 font-mono text-[8px] text-white/40">{c.sub}</p> : null}
+            {(spec.cards ?? []).map(c => (
+              <div
+                key={c.l}
+                className="rounded-lg border p-2"
+                style={{borderColor: `${theme.primary}1a`}}
+              >
+                <p className="font-mono text-[10px] font-bold text-white/75">
+                  {c.l}
+                </p>
+                {c.sub ? (
+                  <p className="mt-0.5 font-mono text-[8px] text-white/40">
+                    {c.sub}
+                  </p>
+                ) : null}
               </div>
             ))}
           </div>
@@ -234,8 +380,15 @@ export function MockScreen({theme, spec}: {theme: ProjectTheme; spec: ScreenSpec
         {spec.kind === "feed" ? (
           <div className="space-y-1">
             {(spec.feed ?? []).map((f, i) => (
-              <div key={i} className="flex items-center gap-2 rounded border px-2 py-1.5" style={{borderColor: `${theme.primary}15`}}>
-                <span className="h-1.5 w-1.5 rounded-full" style={{background: theme.primary}} />
+              <div
+                key={i}
+                className="flex items-center gap-2 rounded border px-2 py-1.5"
+                style={{borderColor: `${theme.primary}15`}}
+              >
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{background: theme.primary}}
+                />
                 <span className="font-mono text-[10px] text-white/65">{f}</span>
               </div>
             ))}
@@ -244,9 +397,18 @@ export function MockScreen({theme, spec}: {theme: ProjectTheme; spec: ScreenSpec
 
         {spec.kind === "stats" ? (
           <div className="grid grid-cols-2 gap-1.5">
-            {(spec.stats ?? []).map((s) => (
-              <div key={s.l} className="rounded-lg border p-2.5 text-center" style={{borderColor: `${theme.primary}1a`}}>
-                <p className="font-mono text-base font-black" style={{color: theme.primary}}>{s.n}</p>
+            {(spec.stats ?? []).map(s => (
+              <div
+                key={s.l}
+                className="rounded-lg border p-2.5 text-center"
+                style={{borderColor: `${theme.primary}1a`}}
+              >
+                <p
+                  className="font-mono text-base font-black"
+                  style={{color: theme.primary}}
+                >
+                  {s.n}
+                </p>
                 <p className="font-mono text-[8px] text-white/40">{s.l}</p>
               </div>
             ))}
@@ -257,75 +419,212 @@ export function MockScreen({theme, spec}: {theme: ProjectTheme; spec: ScreenSpec
   );
 }
 
-function ArchDiagram({theme, layers}: {theme: ProjectTheme; layers: {name: string; desc: string; tag: string}[]}) {
+function ArchDiagram({
+  theme,
+  layers
+}: {
+  theme: ProjectTheme;
+  layers: {name: string; desc: string; tag: string}[];
+}) {
   return (
     <div className="flex flex-col gap-1.5">
       {layers.map((l, i) => (
         <div key={l.name}>
-          <motion.div className="flex items-center gap-3 rounded-lg border px-4 py-3" style={{borderColor: `${theme.primary}25`, background: `${theme.primary}08`}} initial={{opacity: 0, y: 10}} animate={{opacity: 1, y: 0}} transition={{delay: i * 0.1}}>
-            <span className="rounded px-2 py-0.5 font-mono text-[10px] font-black" style={{background: `${theme.primary}20`, color: theme.primary}}>{l.tag}</span>
+          <motion.div
+            className="flex items-center gap-3 rounded-lg border px-4 py-3"
+            style={{
+              borderColor: `${theme.primary}25`,
+              background: `${theme.primary}08`
+            }}
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: i * 0.1}}
+          >
+            <span
+              className="rounded px-2 py-0.5 font-mono text-[10px] font-black"
+              style={{background: `${theme.primary}20`, color: theme.primary}}
+            >
+              {l.tag}
+            </span>
             <div>
-              <p className="font-mono text-sm font-black text-white">{l.name}</p>
+              <p className="font-mono text-sm font-black text-white">
+                {l.name}
+              </p>
               <p className="font-mono text-[11px] text-white/45">{l.desc}</p>
             </div>
           </motion.div>
-          {i < layers.length - 1 ? <div className="my-0.5 text-center font-mono text-xs" style={{color: `${theme.primary}88`}}>↓</div> : null}
+          {i < layers.length - 1 ? (
+            <div
+              className="my-0.5 text-center font-mono text-xs"
+              style={{color: `${theme.primary}88`}}
+            >
+              ↓
+            </div>
+          ) : null}
         </div>
       ))}
     </div>
   );
 }
 
-function DecisionTable({theme, rows}: {theme: ProjectTheme; rows: {area: string; pick: string; why: string; alt: string}[]}) {
+function DecisionTable({
+  theme,
+  rows
+}: {
+  theme: ProjectTheme;
+  rows: {area: string; pick: string; why: string; alt: string}[];
+}) {
   return (
-    <div className="overflow-hidden rounded-xl border" style={{borderColor: `${theme.primary}22`}}>
-      <div className="grid grid-cols-[64px_92px_1fr] gap-2 border-b px-3 py-2 font-mono text-[10px] font-black uppercase tracking-wide text-white/35" style={{borderColor: `${theme.primary}18`, background: `${theme.primary}08`}}>
-        <span>영역</span><span>선택</span><span>이유 / 대안</span>
+    <div
+      className="overflow-hidden rounded-xl border"
+      style={{borderColor: `${theme.primary}22`}}
+    >
+      <div
+        className="grid grid-cols-[64px_92px_1fr] gap-2 border-b px-3 py-2 font-mono text-[10px] font-black uppercase tracking-wide text-white/35"
+        style={{
+          borderColor: `${theme.primary}18`,
+          background: `${theme.primary}08`
+        }}
+      >
+        <span>영역</span>
+        <span>선택</span>
+        <span>이유 / 대안</span>
       </div>
       {rows.map((r, i) => (
-        <motion.div key={r.area} className="grid grid-cols-[64px_92px_1fr] gap-2 border-b px-3 py-2.5 last:border-0" style={{borderColor: `${theme.primary}10`}} initial={{opacity: 0, x: -10}} animate={{opacity: 1, x: 0}} transition={{delay: i * 0.08}}>
-          <span className="font-mono text-[11px] font-bold text-white/55">{r.area}</span>
-          <span className="font-mono text-[11px] font-black" style={{color: theme.primary}}>{r.pick}</span>
-          <span className="text-[11px] leading-5 text-white/70">{r.why}<span className="mt-0.5 block text-white/35">↔ {r.alt}</span></span>
+        <motion.div
+          key={r.area}
+          className="grid grid-cols-[64px_92px_1fr] gap-2 border-b px-3 py-2.5 last:border-0"
+          style={{borderColor: `${theme.primary}10`}}
+          initial={{opacity: 0, x: -10}}
+          animate={{opacity: 1, x: 0}}
+          transition={{delay: i * 0.08}}
+        >
+          <span className="font-mono text-[11px] font-bold text-white/55">
+            {r.area}
+          </span>
+          <span
+            className="font-mono text-[11px] font-black"
+            style={{color: theme.primary}}
+          >
+            {r.pick}
+          </span>
+          <span className="text-[11px] leading-5 text-white/70">
+            {r.why}
+            <span className="mt-0.5 block text-white/35">↔ {r.alt}</span>
+          </span>
         </motion.div>
       ))}
     </div>
   );
 }
 
-function ChallengeCard({theme, index, c}: {theme: ProjectTheme; index: number; c: {title: string; problem: string; solution: string; code?: CodeSpec}}) {
+function ChallengeCard({
+  theme,
+  index,
+  c
+}: {
+  theme: ProjectTheme;
+  index: number;
+  c: {title: string; problem: string; solution: string; code?: CodeSpec};
+}) {
   return (
-    <motion.div className="rounded-xl border p-4" style={{borderColor: `${theme.primary}22`}} initial={{opacity: 0, y: 14}} animate={{opacity: 1, y: 0}} transition={{duration: 0.4}}>
+    <motion.div
+      className="rounded-xl border p-4"
+      style={{borderColor: `${theme.primary}22`}}
+      initial={{opacity: 0, y: 14}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.4}}
+    >
       <div className="mb-2 flex items-center gap-2">
-        <span className="flex h-6 w-6 items-center justify-center rounded font-mono text-xs font-black" style={{background: `${theme.primary}1a`, color: theme.primary}}>{String(index).padStart(2, "0")}</span>
+        <span
+          className="flex h-6 w-6 items-center justify-center rounded font-mono text-xs font-black"
+          style={{background: `${theme.primary}1a`, color: theme.primary}}
+        >
+          {String(index).padStart(2, "0")}
+        </span>
         <p className="font-mono text-sm font-black text-white">{c.title}</p>
       </div>
-      <div className="mb-1 flex gap-2"><span className="shrink-0 font-mono text-[11px] font-black text-[#f87171]">문제</span><p className="text-[13px] leading-6 text-white/70">{c.problem}</p></div>
-      <div className="mb-3 flex gap-2"><span className="shrink-0 font-mono text-[11px] font-black" style={{color: theme.primary}}>해결</span><p className="text-[13px] leading-6 text-white/80">{c.solution}</p></div>
+      <div className="mb-1 flex gap-2">
+        <span className="shrink-0 font-mono text-[11px] font-black text-[#f87171]">
+          문제
+        </span>
+        <p className="text-[13px] leading-6 text-white/70">{c.problem}</p>
+      </div>
+      <div className="mb-3 flex gap-2">
+        <span
+          className="shrink-0 font-mono text-[11px] font-black"
+          style={{color: theme.primary}}
+        >
+          해결
+        </span>
+        <p className="text-[13px] leading-6 text-white/80">{c.solution}</p>
+      </div>
       {c.code ? <CodeBlock theme={theme} spec={c.code} /> : null}
     </motion.div>
   );
 }
 
-function CompareBars({theme, rows, lowerBetter}: {theme: ProjectTheme; rows: {label: string; before: number; after: number; unit: string}[]; lowerBetter: boolean}) {
+function CompareBars({
+  theme,
+  rows,
+  lowerBetter
+}: {
+  theme: ProjectTheme;
+  rows: {label: string; before: number; after: number; unit: string}[];
+  lowerBetter: boolean;
+}) {
   return (
     <div className="flex flex-col gap-4">
       {rows.map((r, i) => {
         const peak = Math.max(r.before, r.after);
-        const delta = lowerBetter ? Math.round((1 - r.after / r.before) * 100) : Math.round((r.after / r.before - 1) * 100);
+        const delta = lowerBetter
+          ? Math.round((1 - r.after / r.before) * 100)
+          : Math.round((r.after / r.before - 1) * 100);
         return (
           <div key={r.label}>
             <div className="mb-1.5 flex items-center justify-between">
-              <span className="font-mono text-[12px] font-bold text-white/70">{r.label}</span>
-              <span className="font-mono text-[11px] font-black" style={{color: theme.primary}}>{delta >= 0 ? "+" : ""}{delta}% {lowerBetter ? "↓" : "↑"}</span>
+              <span className="font-mono text-[12px] font-bold text-white/70">
+                {r.label}
+              </span>
+              <span
+                className="font-mono text-[11px] font-black"
+                style={{color: theme.primary}}
+              >
+                {delta >= 0 ? "+" : ""}
+                {delta}% {lowerBetter ? "↓" : "↑"}
+              </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-16 shrink-0 text-right font-mono text-[10px] text-white/35">{r.before}{r.unit}</span>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/6"><motion.div className="h-full rounded-full bg-white/25" initial={{width: 0}} animate={{width: `${(r.before / peak) * 100}%`}} transition={{duration: 0.7, delay: i * 0.1}} /></div>
+              <span className="w-16 shrink-0 text-right font-mono text-[10px] text-white/35">
+                {r.before}
+                {r.unit}
+              </span>
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/6">
+                <motion.div
+                  className="h-full rounded-full bg-white/25"
+                  initial={{width: 0}}
+                  animate={{width: `${(r.before / peak) * 100}%`}}
+                  transition={{duration: 0.7, delay: i * 0.1}}
+                />
+              </div>
             </div>
             <div className="mt-1 flex items-center gap-2">
-              <span className="w-16 shrink-0 text-right font-mono text-[10px] font-black" style={{color: theme.primary}}>{r.after}{r.unit}</span>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/6"><motion.div className="h-full rounded-full" style={{background: theme.primary}} initial={{width: 0}} animate={{width: `${(r.after / peak) * 100}%`}} transition={{duration: 0.7, delay: 0.15 + i * 0.1}} /></div>
+              <span
+                className="w-16 shrink-0 text-right font-mono text-[10px] font-black"
+                style={{color: theme.primary}}
+              >
+                {r.after}
+                {r.unit}
+              </span>
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/6">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{background: theme.primary}}
+                  initial={{width: 0}}
+                  animate={{width: `${(r.after / peak) * 100}%`}}
+                  transition={{duration: 0.7, delay: 0.15 + i * 0.1}}
+                />
+              </div>
             </div>
           </div>
         );
@@ -334,32 +633,84 @@ function CompareBars({theme, rows, lowerBetter}: {theme: ProjectTheme; rows: {la
   );
 }
 
-function ProcessTimeline({theme, steps}: {theme: ProjectTheme; steps: {t: string; d: string}[]}) {
+function ProcessTimeline({
+  theme,
+  steps
+}: {
+  theme: ProjectTheme;
+  steps: {t: string; d: string}[];
+}) {
   return (
     <div className="flex items-center gap-1 overflow-x-auto pb-1">
       {steps.map((s, i) => (
         <div key={s.t} className="flex items-center">
-          <motion.div className="flex flex-col items-center rounded-lg border px-3 py-2" style={{borderColor: `${theme.primary}25`, background: `${theme.primary}08`}} initial={{opacity: 0, y: 8}} animate={{opacity: 1, y: 0}} transition={{delay: i * 0.08}}>
-            <span className="whitespace-nowrap font-mono text-[12px] font-black text-white">{s.t}</span>
+          <motion.div
+            className="flex flex-col items-center rounded-lg border px-3 py-2"
+            style={{
+              borderColor: `${theme.primary}25`,
+              background: `${theme.primary}08`
+            }}
+            initial={{opacity: 0, y: 8}}
+            animate={{opacity: 1, y: 0}}
+            transition={{delay: i * 0.08}}
+          >
+            <span className="whitespace-nowrap font-mono text-[12px] font-black text-white">
+              {s.t}
+            </span>
             <span className="font-mono text-[9px] text-white/40">{s.d}</span>
           </motion.div>
-          {i < steps.length - 1 ? <span className="mx-1 font-mono text-xs" style={{color: `${theme.primary}88`}}>→</span> : null}
+          {i < steps.length - 1 ? (
+            <span
+              className="mx-1 font-mono text-xs"
+              style={{color: `${theme.primary}88`}}
+            >
+              →
+            </span>
+          ) : null}
         </div>
       ))}
     </div>
   );
 }
 
-function TldrBanner({theme, rows}: {theme: ProjectTheme; rows: {k: string; v: string}[]}) {
+function TldrBanner({
+  theme,
+  rows
+}: {
+  theme: ProjectTheme;
+  rows: {k: string; v: string}[];
+}) {
   return (
-    <motion.div className="overflow-hidden rounded-xl border" style={{borderColor: `${theme.primary}40`, background: `${theme.primary}0a`}} initial={{opacity: 0, y: 12}} animate={{opacity: 1, y: 0}} transition={{duration: 0.45}}>
-      <div className="flex items-center gap-2 border-b px-4 py-2" style={{borderColor: `${theme.primary}20`}}>
-        <span className="font-mono text-[10px] font-black uppercase tracking-[0.25em]" style={{color: theme.primary}}>★ TL;DR · 30초 요약</span>
+    <motion.div
+      className="overflow-hidden rounded-xl border"
+      style={{
+        borderColor: `${theme.primary}40`,
+        background: `${theme.primary}0a`
+      }}
+      initial={{opacity: 0, y: 12}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration: 0.45}}
+    >
+      <div
+        className="flex items-center gap-2 border-b px-4 py-2"
+        style={{borderColor: `${theme.primary}20`}}
+      >
+        <span
+          className="font-mono text-[10px] font-black uppercase tracking-[0.25em]"
+          style={{color: theme.primary}}
+        >
+          ★ TL;DR · 30초 요약
+        </span>
       </div>
       <div className="p-4">
-        {rows.map((r) => (
+        {rows.map(r => (
           <div key={r.k} className="flex gap-3 py-1.5">
-            <span className="w-14 shrink-0 font-mono text-[11px] font-black" style={{color: theme.accent}}>{r.k}</span>
+            <span
+              className="w-14 shrink-0 font-mono text-[11px] font-black"
+              style={{color: theme.accent}}
+            >
+              {r.k}
+            </span>
             <span className="text-[13px] leading-6 text-white/80">{r.v}</span>
           </div>
         ))}
@@ -368,24 +719,69 @@ function TldrBanner({theme, rows}: {theme: ProjectTheme; rows: {k: string; v: st
   );
 }
 
-function DemoCTA({theme, demo}: {theme: ProjectTheme; demo: RichProject["demo"]}) {
+function DemoCTA({
+  theme,
+  demo
+}: {
+  theme: ProjectTheme;
+  demo: RichProject["demo"];
+}) {
   const links = [
     demo.live ? {icon: "🔗", label: "라이브 데모", href: demo.live} : null,
     demo.video ? {icon: "▶", label: "풀 영상", href: demo.video} : null,
-    demo.repo ? {icon: "⌥", label: "GitHub 저장소", href: demo.repo} : null,
+    demo.repo ? {icon: "⌥", label: "GitHub 저장소", href: demo.repo} : null
   ].filter(Boolean) as {icon: string; label: string; href: string}[];
   return (
     <div className="grid gap-3 sm:grid-cols-[1.4fr_1fr]">
-      <motion.div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-xl border" style={{borderColor: `${theme.primary}30`, background: "#06100c"}} initial={{opacity: 0, scale: 0.97}} animate={{opacity: 1, scale: 1}} transition={{duration: 0.5}}>
-        <div className="pointer-events-none absolute inset-0 opacity-40" style={{backgroundImage: `radial-gradient(${theme.primary}20, transparent 70%)`}} />
-        <motion.div className="relative flex h-14 w-14 items-center justify-center rounded-full" style={{background: theme.primary}} animate={{boxShadow: [`0 0 0 0 ${theme.primary}55`, `0 0 0 16px ${theme.primary}00`]}} transition={{duration: 1.8, repeat: Infinity}}>
-          <span className="ml-1 text-xl" style={{color: theme.bg}}>▶</span>
+      <motion.div
+        className="relative flex aspect-video items-center justify-center overflow-hidden rounded-xl border"
+        style={{borderColor: `${theme.primary}30`, background: "#06100c"}}
+        initial={{opacity: 0, scale: 0.97}}
+        animate={{opacity: 1, scale: 1}}
+        transition={{duration: 0.5}}
+      >
+        <div
+          className="pointer-events-none absolute inset-0 opacity-40"
+          style={{
+            backgroundImage: `radial-gradient(${theme.primary}20, transparent 70%)`
+          }}
+        />
+        <motion.div
+          className="relative flex h-14 w-14 items-center justify-center rounded-full"
+          style={{background: theme.primary}}
+          animate={{
+            boxShadow: [
+              `0 0 0 0 ${theme.primary}55`,
+              `0 0 0 16px ${theme.primary}00`
+            ]
+          }}
+          transition={{duration: 1.8, repeat: Infinity}}
+        >
+          <span className="ml-1 text-xl" style={{color: theme.bg}}>
+            ▶
+          </span>
         </motion.div>
-        <span className="absolute bottom-3 left-3 font-mono text-[11px] font-bold text-white/50">데모 영상{demo.videoLen ? ` · ${demo.videoLen}` : ""}</span>
+        <span className="absolute bottom-3 left-3 font-mono text-[11px] font-bold text-white/50">
+          데모 영상{demo.videoLen ? ` · ${demo.videoLen}` : ""}
+        </span>
       </motion.div>
       <div className="flex flex-col justify-center gap-2.5">
         {links.map((l, i) => (
-          <a key={l.label} className="flex items-center justify-between rounded-xl border px-4 py-3 font-mono text-sm font-black transition hover:bg-white/5" style={{borderColor: i === 0 ? `${theme.primary}40` : `${theme.primary}25`, color: i === 0 ? theme.primary : theme.accent}} href={l.href} target={l.href.startsWith("http") ? "_blank" : undefined} rel="noreferrer" onClick={(e) => {if (l.href === "#") e.preventDefault();}}>
+          <a
+            key={l.label}
+            className="flex items-center justify-between rounded-xl border px-4 py-3 font-mono text-sm font-black transition hover:bg-white/5"
+            style={{
+              borderColor:
+                i === 0 ? `${theme.primary}40` : `${theme.primary}25`,
+              color: i === 0 ? theme.primary : theme.accent
+            }}
+            href={l.href}
+            target={l.href.startsWith("http") ? "_blank" : undefined}
+            rel="noreferrer"
+            onClick={e => {
+              if (l.href === "#") e.preventDefault();
+            }}
+          >
             {l.icon} {l.label} <span>↗</span>
           </a>
         ))}
@@ -394,40 +790,97 @@ function DemoCTA({theme, demo}: {theme: ProjectTheme; demo: RichProject["demo"]}
   );
 }
 
-function BeforeAfter({theme, ba}: {theme: ProjectTheme; ba: NonNullable<RichProject["beforeAfter"]>}) {
+function BeforeAfter({
+  theme,
+  ba
+}: {
+  theme: ProjectTheme;
+  ba: NonNullable<RichProject["beforeAfter"]>;
+}) {
   return (
     <div className="grid items-stretch gap-3 sm:grid-cols-[1fr_28px_1fr]">
-      <div className="rounded-xl border p-3" style={{borderColor: "#f8717133", background: "#f871710a"}}>
-        <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-wide text-[#f87171]">Before · {ba.before.label}</p>
+      <div
+        className="rounded-xl border p-3"
+        style={{borderColor: "#f8717133", background: "#f871710a"}}
+      >
+        <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-wide text-[#f87171]">
+          Before · {ba.before.label}
+        </p>
         <MockScreen theme={theme} spec={ba.before.screen} />
       </div>
-      <div className="flex items-center justify-center font-mono text-lg font-black" style={{color: theme.primary}}>→</div>
-      <div className="rounded-xl border p-3" style={{borderColor: `${theme.primary}40`, background: `${theme.primary}0a`}}>
-        <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-wide" style={{color: theme.primary}}>After · {ba.after.label}</p>
+      <div
+        className="flex items-center justify-center font-mono text-lg font-black"
+        style={{color: theme.primary}}
+      >
+        →
+      </div>
+      <div
+        className="rounded-xl border p-3"
+        style={{
+          borderColor: `${theme.primary}40`,
+          background: `${theme.primary}0a`
+        }}
+      >
+        <p
+          className="mb-2 font-mono text-[11px] font-black uppercase tracking-wide"
+          style={{color: theme.primary}}
+        >
+          After · {ba.after.label}
+        </p>
         <MockScreen theme={theme} spec={ba.after.screen} />
       </div>
     </div>
   );
 }
 
-function MetaRow({label, value, theme}: {label: string; value: string; theme: ProjectTheme}) {
+function MetaRow({
+  label,
+  value,
+  theme
+}: {
+  label: string;
+  value: string;
+  theme: ProjectTheme;
+}) {
   return (
-    <div className="flex gap-3 border-b py-2 last:border-0" style={{borderColor: `${theme.primary}12`}}>
-      <span className="w-14 shrink-0 font-mono text-[11px] font-bold uppercase tracking-wide text-white/35">{label}</span>
+    <div
+      className="flex gap-3 border-b py-2 last:border-0"
+      style={{borderColor: `${theme.primary}12`}}
+    >
+      <span className="w-14 shrink-0 font-mono text-[11px] font-bold uppercase tracking-wide text-white/35">
+        {label}
+      </span>
       <span className="text-sm text-white/80">{value}</span>
     </div>
   );
 }
 
-function SubLabel({children, theme}: {children: React.ReactNode; theme: ProjectTheme}) {
+function SubLabel({
+  children,
+  theme
+}: {
+  children: React.ReactNode;
+  theme: ProjectTheme;
+}) {
   return (
-    <p className="mb-3 mt-1 font-mono text-[11px] font-black uppercase tracking-[0.2em]" style={{color: theme.primary}}>
+    <p
+      className="mb-3 mt-1 font-mono text-[11px] font-black uppercase tracking-[0.2em]"
+      style={{color: theme.primary}}
+    >
       {">"} <DecodeText text={String(children)} />
     </p>
   );
 }
 
-function QuoteCard({theme, quote, who}: {theme: ProjectTheme; quote: string; who: string}) {
+function QuoteCard({
+  theme,
+  quote,
+  who
+}: {
+  theme: ProjectTheme;
+  quote: string;
+  who: string;
+}) {
   return (
     <motion.div
       className="rounded-lg border-l-2 px-4 py-3"
@@ -448,23 +901,59 @@ function Divider() {
 // ── 이미지 슬롯 ──────────────────────────────────────────────────────────────
 // src가 있으면 실제 이미지를, 없으면 비율 고정 회색 플레이스홀더를 렌더링.
 // 나중에 데이터에서 src만 채우면 그 자리에 사진이 들어갑니다.
-function ImgPlaceholder({theme, spec, large}: {theme: ProjectTheme; spec: ImgSpec; large?: boolean}) {
+function ImgPlaceholder({
+  theme,
+  spec,
+  large
+}: {
+  theme: ProjectTheme;
+  spec: ImgSpec;
+  large?: boolean;
+}) {
   const ratio = spec.ratio ?? "16/9";
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-2"
-      style={{backgroundImage: `repeating-linear-gradient(45deg, ${theme.primary}08 0 12px, transparent 12px 24px)`}}>
-      <svg width={large ? 56 : 34} height={large ? 56 : 34} viewBox="0 0 24 24" fill="none" stroke={`${theme.primary}aa`} strokeWidth="1.5" className="transition-transform duration-500 group-hover:scale-110">
+    <div
+      className="flex h-full w-full flex-col items-center justify-center gap-2"
+      style={{
+        backgroundImage: `repeating-linear-gradient(45deg, ${theme.primary}08 0 12px, transparent 12px 24px)`
+      }}
+    >
+      <svg
+        width={large ? 56 : 34}
+        height={large ? 56 : 34}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke={`${theme.primary}aa`}
+        strokeWidth="1.5"
+        className="transition-transform duration-500 group-hover:scale-110"
+      >
         <rect x="3" y="4" width="18" height="16" rx="2" />
         <circle cx="9" cy="10" r="1.6" />
         <path d="M3 17l5-4 4 3 4-4 5 4" />
       </svg>
-      <span className={`px-4 text-center font-mono font-bold text-white/45 ${large ? "text-sm" : "text-[11px]"}`}>{spec.label}</span>
-      <span className="font-mono text-[9px] tracking-[0.2em] text-white/25">{ratio.replace("/", " : ")} · 이미지 자리</span>
+      <span
+        className={`px-4 text-center font-mono font-bold text-white/45 ${
+          large ? "text-sm" : "text-[11px]"
+        }`}
+      >
+        {spec.label}
+      </span>
+      <span className="font-mono text-[9px] tracking-[0.2em] text-white/25">
+        {ratio.replace("/", " : ")} · 이미지 자리
+      </span>
     </div>
   );
 }
 
-export function ImageSlot({theme, spec, className}: {theme: ProjectTheme; spec: ImgSpec; className?: string}) {
+export function ImageSlot({
+  theme,
+  spec,
+  className
+}: {
+  theme: ProjectTheme;
+  spec: ImgSpec;
+  className?: string;
+}) {
   const [open, setOpen] = useState(false);
   const ratio = spec.ratio ?? "16/9";
 
@@ -480,7 +969,9 @@ export function ImageSlot({theme, spec, className}: {theme: ProjectTheme; spec: 
   return (
     <>
       <motion.figure
-        className={`group relative m-0 cursor-zoom-in overflow-hidden rounded-xl border ${className ?? ""}`}
+        className={`group relative m-0 cursor-zoom-in overflow-hidden rounded-xl border ${
+          className ?? ""
+        }`}
         style={{borderColor: `${theme.primary}25`, background: "#070d12"}}
         initial={{opacity: 0, y: 14}}
         whileInView={{opacity: 1, y: 0}}
@@ -489,7 +980,10 @@ export function ImageSlot({theme, spec, className}: {theme: ProjectTheme; spec: 
         whileHover={{y: -4, boxShadow: `0 12px 32px ${theme.primary}22`}}
         onClick={() => setOpen(true)}
       >
-        <div className="relative w-full overflow-hidden" style={{aspectRatio: ratio}}>
+        <div
+          className="relative w-full overflow-hidden"
+          style={{aspectRatio: ratio}}
+        >
           {spec.src ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -508,7 +1002,10 @@ export function ImageSlot({theme, spec, className}: {theme: ProjectTheme; spec: 
           </span>
         </div>
         {spec.caption ? (
-          <figcaption className="border-t px-4 py-2 font-mono text-[11px] text-white/45" style={{borderColor: `${theme.primary}15`}}>
+          <figcaption
+            className="border-t px-4 py-2 font-mono text-[11px] text-white/45"
+            style={{borderColor: `${theme.primary}15`}}
+          >
             {spec.caption}
           </figcaption>
         ) : null}
@@ -518,7 +1015,10 @@ export function ImageSlot({theme, spec, className}: {theme: ProjectTheme; spec: 
         {open ? (
           <motion.div
             className="fixed inset-0 z-[80] flex cursor-zoom-out items-center justify-center p-6 sm:p-10"
-            style={{background: "rgba(2,4,8,0.86)", backdropFilter: "blur(4px)"}}
+            style={{
+              background: "rgba(2,4,8,0.86)",
+              backdropFilter: "blur(4px)"
+            }}
             initial={{opacity: 0}}
             animate={{opacity: 1}}
             exit={{opacity: 0}}
@@ -531,17 +1031,24 @@ export function ImageSlot({theme, spec, className}: {theme: ProjectTheme; spec: 
               animate={{scale: 1, opacity: 1}}
               exit={{scale: 0.92, opacity: 0}}
               transition={{type: "spring", stiffness: 260, damping: 26}}
-              onClick={(e) => e.stopPropagation()}
+              onClick={e => e.stopPropagation()}
             >
               <div className="relative w-full" style={{aspectRatio: ratio}}>
                 {spec.src ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={spec.src} alt={spec.label} className="h-full w-full object-contain" />
+                  <img
+                    src={spec.src}
+                    alt={spec.label}
+                    className="h-full w-full object-contain"
+                  />
                 ) : (
                   <ImgPlaceholder theme={theme} spec={spec} large />
                 )}
               </div>
-              <figcaption className="flex items-center justify-between border-t px-4 py-3 font-mono text-[12px] text-white/55" style={{borderColor: `${theme.primary}20`}}>
+              <figcaption
+                className="flex items-center justify-between border-t px-4 py-3 font-mono text-[12px] text-white/55"
+                style={{borderColor: `${theme.primary}20`}}
+              >
                 <span>{spec.caption ?? spec.label}</span>
                 <span className="text-white/30">ESC · 클릭으로 닫기</span>
               </figcaption>
@@ -555,7 +1062,15 @@ export function ImageSlot({theme, spec, className}: {theme: ProjectTheme; spec: 
 
 // ── 숫자 카운트업 ────────────────────────────────────────────────────────────
 // "40+", "-88%", "<1s" 같은 문자열에서 숫자만 0→목표로 굴리고 접두/접미는 그대로 둠.
-export function CountUp({value, className, style}: {value: string; className?: string; style?: React.CSSProperties}) {
+export function CountUp({
+  value,
+  className,
+  style
+}: {
+  value: string;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, {once: true, margin: "-30px"});
   const motionVal = useMotionValue(0);
@@ -564,7 +1079,10 @@ export function CountUp({value, className, style}: {value: string; className?: s
   const decimals = match ? (match[0].split(".")[1] ?? "").length : 0;
   const prefix = match ? value.slice(0, match.index) : value;
   const suffix = match ? value.slice((match.index ?? 0) + match[0].length) : "";
-  const display = useTransform(motionVal, (v) => `${prefix}${v.toFixed(decimals)}${suffix}`);
+  const display = useTransform(
+    motionVal,
+    v => `${prefix}${v.toFixed(decimals)}${suffix}`
+  );
 
   useEffect(() => {
     if (!match || !inView) return;
@@ -572,8 +1090,17 @@ export function CountUp({value, className, style}: {value: string; className?: s
     return () => controls.stop();
   }, [inView, motionVal, target, match]);
 
-  if (!match) return <span className={className} style={style}>{value}</span>;
-  return <motion.span ref={ref} className={className} style={style}>{display}</motion.span>;
+  if (!match)
+    return (
+      <span className={className} style={style}>
+        {value}
+      </span>
+    );
+  return (
+    <motion.span ref={ref} className={className} style={style}>
+      {display}
+    </motion.span>
+  );
 }
 
 // ── 디코드(스크램블) 텍스트 ──────────────────────────────────────────────────
@@ -582,7 +1109,15 @@ export function CountUp({value, className, style}: {value: string; className?: s
 const SCRAMBLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&*<>/";
 const scrambleable = (c: string) => /[A-Za-z0-9]/.test(c);
 
-export function DecodeText({text, className, style}: {text: string; className?: string; style?: React.CSSProperties}) {
+export function DecodeText({
+  text,
+  className,
+  style
+}: {
+  text: string;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, {once: true, margin: "-20px"});
   const [display, setDisplay] = useState(text);
@@ -596,7 +1131,15 @@ export function DecodeText({text, className, style}: {text: string; className?: 
     timer.current = setInterval(() => {
       progress += 0.5;
       const p = Math.floor(progress);
-      setDisplay(chars.map((c, i) => (!scrambleable(c) || i < p ? c : SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)])).join(""));
+      setDisplay(
+        chars
+          .map((c, i) =>
+            !scrambleable(c) || i < p
+              ? c
+              : SCRAMBLE[Math.floor(Math.random() * SCRAMBLE.length)]
+          )
+          .join("")
+      );
       if (p >= chars.length) {
         if (timer.current) clearInterval(timer.current);
         setDisplay(text);
@@ -611,9 +1154,12 @@ export function DecodeText({text, className, style}: {text: string; className?: 
     }
   }, [inView, run]);
 
-  useEffect(() => () => {
-    if (timer.current) clearInterval(timer.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (timer.current) clearInterval(timer.current);
+    },
+    []
+  );
 
   return (
     <span ref={ref} className={className} style={style} onMouseEnter={run}>
@@ -630,7 +1176,7 @@ export function RevealText({
   className,
   style,
   highlight,
-  theme,
+  theme
 }: {
   text: string;
   className?: string;
@@ -639,7 +1185,9 @@ export function RevealText({
   theme?: ProjectTheme;
 }) {
   const words = text.split(" ");
-  const hi = new Set((highlight ?? []).filter((h) => /^[A-Za-z]/.test(h)).map((h) => h.toLowerCase()));
+  const hi = new Set(
+    (highlight ?? []).filter(h => /^[A-Za-z]/.test(h)).map(h => h.toLowerCase())
+  );
   return (
     <motion.p
       className={className}
@@ -656,14 +1204,24 @@ export function RevealText({
           <span key={i}>
             <motion.span
               className="inline-block"
-              variants={{hidden: {opacity: 0, y: 8, filter: "blur(3px)"}, show: {opacity: 1, y: 0, filter: "blur(0px)"}}}
+              variants={{
+                hidden: {opacity: 0, y: 8, filter: "blur(3px)"},
+                show: {opacity: 1, y: 0, filter: "blur(0px)"}
+              }}
               transition={{duration: 0.34}}
             >
               {isHi ? (
                 <motion.span
                   className="rounded px-1 font-bold"
-                  style={{color: theme!.accent, background: `${theme!.primary}14`, cursor: "help"}}
-                  whileHover={{background: `${theme!.primary}38`, color: "#ffffff"}}
+                  style={{
+                    color: theme!.accent,
+                    background: `${theme!.primary}14`,
+                    cursor: "help"
+                  }}
+                  whileHover={{
+                    background: `${theme!.primary}38`,
+                    color: "#ffffff"
+                  }}
                   transition={{duration: 0.15}}
                 >
                   {w}
@@ -682,7 +1240,15 @@ export function RevealText({
 
 // ── 마그네틱 ─────────────────────────────────────────────────────────────────
 // 마우스가 다가오면 요소가 커서 쪽으로 살짝 끌려가고, 벗어나면 스프링으로 복귀.
-export function Magnetic({children, strength = 0.3, className}: {children: React.ReactNode; strength?: number; className?: string}) {
+export function Magnetic({
+  children,
+  strength = 0.3,
+  className
+}: {
+  children: React.ReactNode;
+  strength?: number;
+  className?: string;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -694,7 +1260,7 @@ export function Magnetic({children, strength = 0.3, className}: {children: React
       ref={ref}
       className={className}
       style={{x: sx, y: sy, display: "inline-block"}}
-      onMouseMove={(e) => {
+      onMouseMove={e => {
         const r = ref.current?.getBoundingClientRect();
         if (!r) return;
         x.set((e.clientX - (r.left + r.width / 2)) * strength);
@@ -718,7 +1284,7 @@ export function DemoFrame({
   tag,
   controls,
   footer,
-  children,
+  children
 }: {
   theme: ProjectTheme;
   label: string;
@@ -730,25 +1296,56 @@ export function DemoFrame({
   return (
     <motion.div
       className="overflow-hidden rounded-2xl border"
-      style={{borderColor: `${theme.primary}33`, background: `${theme.primary}06`}}
+      style={{
+        borderColor: `${theme.primary}33`,
+        background: `${theme.primary}06`
+      }}
       initial={{opacity: 0, y: 16}}
       animate={{opacity: 1, y: 0}}
       transition={{duration: 0.5}}
     >
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3" style={{borderColor: `${theme.primary}22`}}>
+      <div
+        className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3"
+        style={{borderColor: `${theme.primary}22`}}
+      >
         <div className="flex items-center gap-2.5">
           <span className="relative flex h-2.5 w-2.5">
-            <motion.span className="absolute inline-flex h-full w-full rounded-full" style={{background: theme.primary}} animate={{scale: [1, 2.4], opacity: [0.6, 0]}} transition={{duration: 1.6, repeat: Infinity, ease: "easeOut"}} />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full" style={{background: theme.primary}} />
+            <motion.span
+              className="absolute inline-flex h-full w-full rounded-full"
+              style={{background: theme.primary}}
+              animate={{scale: [1, 2.4], opacity: [0.6, 0]}}
+              transition={{duration: 1.6, repeat: Infinity, ease: "easeOut"}}
+            />
+            <span
+              className="relative inline-flex h-2.5 w-2.5 rounded-full"
+              style={{background: theme.primary}}
+            />
           </span>
-          <span className="font-mono text-sm font-black text-white">{label}</span>
-          {tag ? <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em]" style={{color: theme.primary}}>{tag}</span> : null}
+          <span className="font-mono text-sm font-black text-white">
+            {label}
+          </span>
+          {tag ? (
+            <span
+              className="font-mono text-[10px] font-bold uppercase tracking-[0.2em]"
+              style={{color: theme.primary}}
+            >
+              {tag}
+            </span>
+          ) : null}
         </div>
-        {controls ? <div className="flex items-center gap-2">{controls}</div> : null}
+        {controls ? (
+          <div className="flex items-center gap-2">{controls}</div>
+        ) : null}
       </div>
       <div className="p-5">{children}</div>
       {footer ? (
-        <div className="border-t px-5 py-2.5" style={{borderColor: `${theme.primary}18`, background: "rgba(0,0,0,0.15)"}}>
+        <div
+          className="border-t px-5 py-2.5"
+          style={{
+            borderColor: `${theme.primary}18`,
+            background: "rgba(0,0,0,0.15)"
+          }}
+        >
           {footer}
         </div>
       ) : null}
@@ -760,23 +1357,59 @@ export function DemoFrame({
 //  데이터 기반 5단계 렌더러
 // ════════════════════════════════════════════════════════════════════════════
 
-export function RichSection({step, data, theme, links, title}: {step: number; data: RichProject; theme: ProjectTheme; links: ProjectData["links"]; title: string}) {
+export function RichSection({
+  step,
+  data,
+  theme,
+  links,
+  title
+}: {
+  step: number;
+  data: RichProject;
+  theme: ProjectTheme;
+  links: ProjectData["links"];
+  title: string;
+}) {
   // ── 개요 ──
   if (step === 0) {
     return (
       <div className="flex flex-col gap-6 py-2">
         <div>
-          <p className="font-mono text-xs font-black uppercase tracking-[0.3em]" style={{color: theme.primary}}>{">"} <DecodeText text={data.tagline} /></p>
-          <h1 className="mt-2 text-5xl font-black leading-tight text-white"><Magnetic strength={0.35}><DecodeText text={title} /></Magnetic></h1>
+          <p
+            className="font-mono text-xs font-black uppercase tracking-[0.3em]"
+            style={{color: theme.primary}}
+          >
+            {">"} <DecodeText text={data.tagline} />
+          </p>
+          <h1 className="mt-2 text-5xl font-black leading-tight text-white">
+            <Magnetic strength={0.35}>
+              <DecodeText text={title} />
+            </Magnetic>
+          </h1>
         </div>
-        {data.heroImage ? <ImageSlot theme={theme} spec={data.heroImage} /> : null}
+        {data.heroImage ? (
+          <ImageSlot theme={theme} spec={data.heroImage} />
+        ) : null}
         <div className="grid items-start gap-6 lg:grid-cols-2">
           <TldrBanner theme={theme} rows={data.tldr} />
-          <div><SubLabel theme={theme}>데모 · 직접 확인</SubLabel><DemoCTA theme={theme} demo={data.demo} /></div>
+          <div>
+            <SubLabel theme={theme}>데모 · 직접 확인</SubLabel>
+            <DemoCTA theme={theme} demo={data.demo} />
+          </div>
         </div>
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-xl border p-4" style={{borderColor: `${theme.primary}22`}}>
-            {data.meta.map((m) => <MetaRow key={m.label} label={m.label} value={m.value} theme={theme} />)}
+          <div
+            className="rounded-xl border p-4"
+            style={{borderColor: `${theme.primary}22`}}
+          >
+            {data.meta.map(m => (
+              <MetaRow
+                key={m.label}
+                label={m.label}
+                value={m.value}
+                theme={theme}
+              />
+            ))}
           </div>
           <MockScreen theme={theme} spec={data.heroScreen} />
         </div>
@@ -784,10 +1417,21 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
           <div>
             <SubLabel theme={theme}>한 줄 임팩트</SubLabel>
             <div className="grid grid-cols-3 gap-3">
-              {data.impact.map((s) => (
-                <motion.div key={s.l} className="rounded-xl border p-3 text-center" style={{borderColor: `${theme.primary}22`}} whileHover={{y: -3, borderColor: `${theme.primary}55`}}>
-                  <CountUp value={s.n} className="font-mono text-2xl font-black" style={{color: theme.primary}} />
-                  <p className="mt-1 text-[11px] leading-4 text-white/50">{s.l}</p>
+              {data.impact.map(s => (
+                <motion.div
+                  key={s.l}
+                  className="rounded-xl border p-3 text-center"
+                  style={{borderColor: `${theme.primary}22`}}
+                  whileHover={{y: -3, borderColor: `${theme.primary}55`}}
+                >
+                  <CountUp
+                    value={s.n}
+                    className="font-mono text-2xl font-black"
+                    style={{color: theme.primary}}
+                  />
+                  <p className="mt-1 text-[11px] leading-4 text-white/50">
+                    {s.l}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -795,10 +1439,26 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
           <div>
             <SubLabel theme={theme}>핵심 기능</SubLabel>
             <div className="grid gap-2 sm:grid-cols-2">
-              {data.features.map((f) => (
-                <motion.div key={f.t} className="rounded-lg border p-3" style={{borderColor: `${theme.primary}1a`}} whileHover={{y: -3, borderColor: `${theme.primary}55`, background: `${theme.primary}0a`}}>
-                  <p className="font-mono text-sm font-black" style={{color: theme.accent}}>{f.t}</p>
-                  <p className="mt-1 text-[12px] leading-5 text-white/55">{f.d}</p>
+              {data.features.map(f => (
+                <motion.div
+                  key={f.t}
+                  className="rounded-lg border p-3"
+                  style={{borderColor: `${theme.primary}1a`}}
+                  whileHover={{
+                    y: -3,
+                    borderColor: `${theme.primary}55`,
+                    background: `${theme.primary}0a`
+                  }}
+                >
+                  <p
+                    className="font-mono text-sm font-black"
+                    style={{color: theme.accent}}
+                  >
+                    {f.t}
+                  </p>
+                  <p className="mt-1 text-[12px] leading-5 text-white/55">
+                    {f.d}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -814,28 +1474,79 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
       <div className="flex flex-col gap-6 py-2">
         <div className="grid items-start gap-6 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
-            <div><SubLabel theme={theme}>PROBLEM · 무엇이 문제였나</SubLabel><RevealText text={data.problem} className="text-base leading-8 text-white/85" highlight={data.tech} theme={theme} /></div>
+            <div>
+              <SubLabel theme={theme}>PROBLEM · 무엇이 문제였나</SubLabel>
+              <RevealText
+                text={data.problem}
+                className="text-base leading-8 text-white/85"
+                highlight={data.tech}
+                theme={theme}
+              />
+            </div>
             <div>
               <SubLabel theme={theme}>가설</SubLabel>
-              <div className="rounded-xl border-l-2 p-4" style={{borderColor: theme.primary, background: `${theme.primary}08`}}><RevealText text={data.hypothesis} className="text-sm leading-7 text-white/80" highlight={data.tech} theme={theme} /></div>
+              <div
+                className="rounded-xl border-l-2 p-4"
+                style={{
+                  borderColor: theme.primary,
+                  background: `${theme.primary}08`
+                }}
+              >
+                <RevealText
+                  text={data.hypothesis}
+                  className="text-sm leading-7 text-white/80"
+                  highlight={data.tech}
+                  theme={theme}
+                />
+              </div>
             </div>
           </div>
           <div>
             <SubLabel theme={theme}>사용자 리서치</SubLabel>
             <div className="flex flex-col gap-2.5">
-              {data.research.quotes.map((q) => <QuoteCard key={q.who} theme={theme} quote={q.q} who={q.who} />)}
+              {data.research.quotes.map(q => (
+                <QuoteCard key={q.who} theme={theme} quote={q.q} who={q.who} />
+              ))}
               {data.research.stat ? (
-                <div className="flex items-center gap-3 rounded-lg border px-4 py-3" style={{borderColor: `${theme.primary}22`}}>
-                  <CountUp value={data.research.stat.n} className="font-mono text-2xl font-black" style={{color: theme.primary}} />
-                  <span className="text-sm text-white/65">{data.research.stat.l}</span>
+                <div
+                  className="flex items-center gap-3 rounded-lg border px-4 py-3"
+                  style={{borderColor: `${theme.primary}22`}}
+                >
+                  <CountUp
+                    value={data.research.stat.n}
+                    className="font-mono text-2xl font-black"
+                    style={{color: theme.primary}}
+                  />
+                  <span className="text-sm text-white/65">
+                    {data.research.stat.l}
+                  </span>
                 </div>
               ) : null}
-              {data.problemShot ? <ImageSlot theme={theme} spec={data.problemShot} className="mt-1" /> : null}
+              {data.problemShot ? (
+                <ImageSlot
+                  theme={theme}
+                  spec={data.problemShot}
+                  className="mt-1"
+                />
+              ) : null}
             </div>
           </div>
         </div>
-        {data.beforeCode ? (<><Divider /><div><SubLabel theme={theme}>기존 방식의 한계 (Before)</SubLabel><CodeBlock theme={theme} spec={data.beforeCode} /></div></>) : null}
-        {data.beforeAfter ? (<div><SubLabel theme={theme}>핵심 전환 · Before → After</SubLabel><BeforeAfter theme={theme} ba={data.beforeAfter} /></div>) : null}
+        {data.beforeCode ? (
+          <>
+            <Divider />
+            <div>
+              <SubLabel theme={theme}>기존 방식의 한계 (Before)</SubLabel>
+              <CodeBlock theme={theme} spec={data.beforeCode} />
+            </div>
+          </>
+        ) : null}
+        {data.beforeAfter ? (
+          <div>
+            <SubLabel theme={theme}>핵심 전환 · Before → After</SubLabel>
+            <BeforeAfter theme={theme} ba={data.beforeAfter} />
+          </div>
+        ) : null}
       </div>
     );
   }
@@ -844,15 +1555,28 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
   if (step === 2) {
     return (
       <div className="flex flex-col gap-6 py-2">
-        <div><SubLabel theme={theme}>PROCESS · 진행 과정</SubLabel><ProcessTimeline theme={theme} steps={data.process} /></div>
+        <div>
+          <SubLabel theme={theme}>PROCESS · 진행 과정</SubLabel>
+          <ProcessTimeline theme={theme} steps={data.process} />
+        </div>
         <div className="grid items-start gap-6 lg:grid-cols-2">
-          <div><SubLabel theme={theme}>ARCHITECTURE · 구조</SubLabel><ArchDiagram theme={theme} layers={data.architecture} /></div>
-          <div><SubLabel theme={theme}>기술 의사결정 · 왜 이걸 골랐나</SubLabel><DecisionTable theme={theme} rows={data.decisions} /></div>
+          <div>
+            <SubLabel theme={theme}>ARCHITECTURE · 구조</SubLabel>
+            <ArchDiagram theme={theme} layers={data.architecture} />
+          </div>
+          <div>
+            <SubLabel theme={theme}>기술 의사결정 · 왜 이걸 골랐나</SubLabel>
+            <DecisionTable theme={theme} rows={data.decisions} />
+          </div>
         </div>
         <Divider />
         <div>
           <SubLabel theme={theme}>핵심 구현</SubLabel>
-          <div className="grid gap-3 xl:grid-cols-2">{data.coreCode.map((c) => <CodeBlock key={c.filename} theme={theme} spec={c} />)}</div>
+          <div className="grid gap-3 xl:grid-cols-2">
+            {data.coreCode.map(c => (
+              <CodeBlock key={c.filename} theme={theme} spec={c} />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -866,11 +1590,30 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
           <div>
             <SubLabel theme={theme}>WORK · 직접 만든 것</SubLabel>
             <div className="grid gap-2 sm:grid-cols-2">
-              {data.work.map((group) => (
-                <div key={group.g} className="rounded-lg border p-3" style={{borderColor: `${theme.primary}1a`}}>
-                  <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-wide" style={{color: theme.primary}}>{group.g}</p>
-                  {group.items.map((it) => (
-                    <div key={it} className="mb-1 flex items-start gap-2"><span className="mt-0.5 font-mono text-xs" style={{color: theme.accent}}>✓</span><span className="text-[12px] leading-5 text-white/70">{it}</span></div>
+              {data.work.map(group => (
+                <div
+                  key={group.g}
+                  className="rounded-lg border p-3"
+                  style={{borderColor: `${theme.primary}1a`}}
+                >
+                  <p
+                    className="mb-2 font-mono text-[11px] font-black uppercase tracking-wide"
+                    style={{color: theme.primary}}
+                  >
+                    {group.g}
+                  </p>
+                  {group.items.map(it => (
+                    <div key={it} className="mb-1 flex items-start gap-2">
+                      <span
+                        className="mt-0.5 font-mono text-xs"
+                        style={{color: theme.accent}}
+                      >
+                        ✓
+                      </span>
+                      <span className="text-[12px] leading-5 text-white/70">
+                        {it}
+                      </span>
+                    </div>
                   ))}
                 </div>
               ))}
@@ -880,22 +1623,59 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
             {data.perf ? (
               <div>
                 <SubLabel theme={theme}>성능 개선 · 측정 기반</SubLabel>
-                <div className="rounded-xl border p-4" style={{borderColor: `${theme.primary}22`}}>
-                  <CompareBars theme={theme} lowerBetter rows={data.perf.rows} />
-                  {data.perf.note ? <p className="mt-3 font-mono text-[11px] text-white/35">{"// "}{data.perf.note}</p> : null}
+                <div
+                  className="rounded-xl border p-4"
+                  style={{borderColor: `${theme.primary}22`}}
+                >
+                  <CompareBars
+                    theme={theme}
+                    lowerBetter
+                    rows={data.perf.rows}
+                  />
+                  {data.perf.note ? (
+                    <p className="mt-3 font-mono text-[11px] text-white/35">
+                      {"// "}
+                      {data.perf.note}
+                    </p>
+                  ) : null}
                 </div>
               </div>
             ) : null}
             <div>
               <SubLabel theme={theme}>사용 기술</SubLabel>
-              <div className="flex flex-wrap gap-2">{data.tech.map((t) => <motion.span key={t} className="cursor-default rounded-lg border px-3 py-1.5 font-mono text-sm font-bold" style={{borderColor: `${theme.primary}35`, color: theme.accent}} whileHover={{y: -2, scale: 1.05, borderColor: theme.primary, background: `${theme.primary}1a`, boxShadow: `0 4px 16px ${theme.primary}33`}} whileTap={{scale: 0.96}}>{t}</motion.span>)}</div>
+              <div className="flex flex-wrap gap-2">
+                {data.tech.map(t => (
+                  <motion.span
+                    key={t}
+                    className="cursor-default rounded-lg border px-3 py-1.5 font-mono text-sm font-bold"
+                    style={{
+                      borderColor: `${theme.primary}35`,
+                      color: theme.accent
+                    }}
+                    whileHover={{
+                      y: -2,
+                      scale: 1.05,
+                      borderColor: theme.primary,
+                      background: `${theme.primary}1a`,
+                      boxShadow: `0 4px 16px ${theme.primary}33`
+                    }}
+                    whileTap={{scale: 0.96}}
+                  >
+                    {t}
+                  </motion.span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
         <Divider />
         <div>
           <SubLabel theme={theme}>가장 어려웠던 문제 · Challenge</SubLabel>
-          <div className="grid gap-3 xl:grid-cols-2">{data.challenges.map((c, i) => <ChallengeCard key={c.title} theme={theme} index={i + 1} c={c} />)}</div>
+          <div className="grid gap-3 xl:grid-cols-2">
+            {data.challenges.map((c, i) => (
+              <ChallengeCard key={c.title} theme={theme} index={i + 1} c={c} />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -906,22 +1686,37 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
     <div className="flex flex-col gap-6 py-2">
       <div>
         <SubLabel theme={theme}>RESULT · 완성된 화면</SubLabel>
-        <div className="grid gap-3 sm:grid-cols-2">{data.resultScreens.map((s) => <MockScreen key={s.title} theme={theme} spec={s} />)}</div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {data.resultScreens.map(s => (
+            <MockScreen key={s.title} theme={theme} spec={s} />
+          ))}
+        </div>
       </div>
       {data.gallery && data.gallery.length > 0 ? (
         <div>
           <SubLabel theme={theme}>스크린샷</SubLabel>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {data.gallery.map((g) => <ImageSlot key={g.label} theme={theme} spec={g} />)}
+            {data.gallery.map(g => (
+              <ImageSlot key={g.label} theme={theme} spec={g} />
+            ))}
           </div>
         </div>
       ) : null}
       <div>
         <SubLabel theme={theme}>성과 지표</SubLabel>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {data.metrics.map((m) => (
-            <motion.div key={m.l} className="rounded-xl border p-4" style={{borderColor: `${theme.primary}22`}} whileHover={{y: -3, borderColor: `${theme.primary}55`}}>
-              <CountUp value={m.n} className="font-mono text-2xl font-black" style={{color: theme.primary}} />
+          {data.metrics.map(m => (
+            <motion.div
+              key={m.l}
+              className="rounded-xl border p-4"
+              style={{borderColor: `${theme.primary}22`}}
+              whileHover={{y: -3, borderColor: `${theme.primary}55`}}
+            >
+              <CountUp
+                value={m.n}
+                className="font-mono text-2xl font-black"
+                style={{color: theme.primary}}
+              />
               <p className="mt-1 text-[11px] leading-4 text-white/50">{m.l}</p>
             </motion.div>
           ))}
@@ -933,32 +1728,93 @@ export function RichSection({step, data, theme, links, title}: {step: number; da
           {data.usability ? (
             <div>
               <SubLabel theme={theme}>변화 · Before → After</SubLabel>
-              <div className="rounded-xl border p-4" style={{borderColor: `${theme.primary}22`}}>
-                <CompareBars theme={theme} lowerBetter={false} rows={data.usability.rows} />
-                {data.usability.note ? <p className="mt-3 font-mono text-[11px] text-white/35">{"// "}{data.usability.note}</p> : null}
+              <div
+                className="rounded-xl border p-4"
+                style={{borderColor: `${theme.primary}22`}}
+              >
+                <CompareBars
+                  theme={theme}
+                  lowerBetter={false}
+                  rows={data.usability.rows}
+                />
+                {data.usability.note ? (
+                  <p className="mt-3 font-mono text-[11px] text-white/35">
+                    {"// "}
+                    {data.usability.note}
+                  </p>
+                ) : null}
               </div>
             </div>
           ) : null}
           <div>
             <SubLabel theme={theme}>배운 점</SubLabel>
-            <div className="rounded-xl border-l-2 p-4" style={{borderColor: `${theme.primary}88`, background: `${theme.primary}08`}}><RevealText text={data.learning} className="text-sm leading-7 text-white/75" highlight={data.tech} theme={theme} /></div>
+            <div
+              className="rounded-xl border-l-2 p-4"
+              style={{
+                borderColor: `${theme.primary}88`,
+                background: `${theme.primary}08`
+              }}
+            >
+              <RevealText
+                text={data.learning}
+                className="text-sm leading-7 text-white/75"
+                highlight={data.tech}
+                theme={theme}
+              />
+            </div>
           </div>
         </div>
         <div>
           <SubLabel theme={theme}>회고 · KPT</SubLabel>
           <div className="grid gap-3 sm:grid-cols-3">
-            {([["Keep", theme.primary, data.kpt.keep], ["Problem", "#f87171", data.kpt.problem], ["Try", "#fbbf24", data.kpt.try]] as const).map(([k, c, items]) => (
-              <div key={k} className="rounded-xl border p-3" style={{borderColor: `${theme.primary}1a`}}>
-                <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-wide" style={{color: c}}>{k}</p>
-                {items.map((it) => <div key={it} className="mb-1.5 flex items-start gap-2"><span className="mt-1 h-1 w-1 shrink-0 rounded-full" style={{background: c}} /><span className="text-[12px] leading-5 text-white/65">{it}</span></div>)}
+            {(
+              [
+                ["Keep", theme.primary, data.kpt.keep],
+                ["Problem", "#f87171", data.kpt.problem],
+                ["Try", "#fbbf24", data.kpt.try]
+              ] as const
+            ).map(([k, c, items]) => (
+              <div
+                key={k}
+                className="rounded-xl border p-3"
+                style={{borderColor: `${theme.primary}1a`}}
+              >
+                <p
+                  className="mb-2 font-mono text-[11px] font-black uppercase tracking-wide"
+                  style={{color: c}}
+                >
+                  {k}
+                </p>
+                {items.map(it => (
+                  <div key={it} className="mb-1.5 flex items-start gap-2">
+                    <span
+                      className="mt-1 h-1 w-1 shrink-0 rounded-full"
+                      style={{background: c}}
+                    />
+                    <span className="text-[12px] leading-5 text-white/65">
+                      {it}
+                    </span>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
         </div>
       </div>
       <div className="flex flex-wrap gap-3">
-        {links.map((link) => (
-          <motion.a key={link.label} href={link.href} target="_blank" rel="noreferrer" className="rounded-lg px-6 py-3 font-mono text-sm font-black" style={{background: theme.primary, color: theme.bg}} whileHover={{scale: 1.04, boxShadow: `0 0 24px ${theme.primary}55`}} whileTap={{scale: 0.97}}>{link.label} ↗</motion.a>
+        {links.map(link => (
+          <motion.a
+            key={link.label}
+            href={link.href}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-lg px-6 py-3 font-mono text-sm font-black"
+            style={{background: theme.primary, color: theme.bg}}
+            whileHover={{scale: 1.04, boxShadow: `0 0 24px ${theme.primary}55`}}
+            whileTap={{scale: 0.97}}
+          >
+            {link.label} ↗
+          </motion.a>
         ))}
       </div>
     </div>

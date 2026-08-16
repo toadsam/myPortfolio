@@ -5,8 +5,15 @@ function MobileDock(props) {
   const {activeLayer, onClose, onSelectLayer} = props;
 
   return (
-    <nav className="habitat-mobile-dock" aria-label="Digital habitat mobile navigation">
-      <button className={!activeLayer ? "is-active" : ""} type="button" onClick={onClose}>
+    <nav
+      className="habitat-mobile-dock"
+      aria-label="Digital habitat mobile navigation"
+    >
+      <button
+        className={!activeLayer ? "is-active" : ""}
+        type="button"
+        onClick={onClose}
+      >
         System
       </button>
       {layers.map(function renderLayer(layer) {

@@ -5,9 +5,18 @@ import {useEffect, useMemo, useState} from "react";
 import type {FormEvent} from "react";
 import {npcDefaultPresetQuestions} from "@/data/npcRoster";
 import {sectionMeta} from "@/lib/constants";
-import {fetchNpcPresets, sendNpcMessage, trackVisitorEvent} from "@/lib/liveApi";
+import {
+  fetchNpcPresets,
+  sendNpcMessage,
+  trackVisitorEvent
+} from "@/lib/liveApi";
 import {moodLabel} from "@/lib/liveState";
-import type {NpcActionDefinition, NpcRuntimeState, NpcState, NpcSuggestedAction} from "@/types/live";
+import type {
+  NpcActionDefinition,
+  NpcRuntimeState,
+  NpcState,
+  NpcSuggestedAction
+} from "@/types/live";
 import type {NPCData, SectionId} from "@/types/portfolio";
 
 interface DialogueBoxProps {
@@ -72,12 +81,16 @@ export function DialogueBox({
   onSuggestedAction,
   aiOffline
 }: DialogueBoxProps) {
-  const section = npc ? sectionMeta.find((item) => item.id === npc.sectionId) : null;
+  const section = npc
+    ? sectionMeta.find(item => item.id === npc.sectionId)
+    : null;
   const [message, setMessage] = useState("");
   const [lines, setLines] = useState<ChatLine[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [fallbackMode, setFallbackMode] = useState(false);
-  const [remotePresetQuestions, setRemotePresetQuestions] = useState<string[]>([]);
+  const [remotePresetQuestions, setRemotePresetQuestions] = useState<string[]>(
+    []
+  );
   const offline = Boolean(aiOffline) || fallbackMode;
   const agent = npc?.agent;
   const mood = moodLabel(npcRuntimeState?.mood ?? npcState?.mood);
@@ -86,11 +99,23 @@ export function DialogueBox({
 
   const presetQuestions = useMemo(() => {
     const agentQuestions = agent?.presetQuestions ?? [];
-    return uniqueItems([...remotePresetQuestions, ...agentQuestions, ...npcDefaultPresetQuestions]).slice(0, 3);
+    return uniqueItems([
+      ...remotePresetQuestions,
+      ...agentQuestions,
+      ...npcDefaultPresetQuestions
+    ]).slice(0, 3);
   }, [agent, remotePresetQuestions]);
 
   const recentMessages = useMemo(
-    () => lines.slice(-8).map((line) => `${line.role === "visitor" ? "방문자" : npc?.name ?? "NPC"}: ${line.text}`),
+    () =>
+      lines
+        .slice(-8)
+        .map(
+          line =>
+            `${line.role === "visitor" ? "방문자" : npc?.name ?? "NPC"}: ${
+              line.text
+            }`
+        ),
     [lines, npc?.name]
   );
 
@@ -123,9 +148,9 @@ export function DialogueBox({
     if (!npc) return;
     let ignore = false;
     fetchNpcPresets()
-      .then((presets) => {
+      .then(presets => {
         if (ignore) return;
-        const preset = presets.find((item) => item.npc_id === npc.id);
+        const preset = presets.find(item => item.npc_id === npc.id);
         setRemotePresetQuestions(preset?.enabled ? preset.questions : []);
       })
       .catch(() => {
@@ -138,7 +163,10 @@ export function DialogueBox({
 
   useEffect(() => {
     if (!npc || lines.length === 0) return;
-    window.localStorage.setItem(storageKey(npc.id), JSON.stringify(lines.slice(-30)));
+    window.localStorage.setItem(
+      storageKey(npc.id),
+      JSON.stringify(lines.slice(-30))
+    );
   }, [lines, npc]);
 
   useEffect(() => {
@@ -154,23 +182,24 @@ export function DialogueBox({
       label: npc.name,
       metadata: {sectionId: npc.sectionId, length: nextMessage.length}
     });
-    setLines((current) => current.concat({role: "visitor", text: nextMessage}));
+    setLines(current => current.concat({role: "visitor", text: nextMessage}));
     setMessage("");
     setIsSending(true);
 
     // AI에 현재 기분 + 최근 사건(주변 NPC와의 일)을 컨텍스트로 함께 전달
     const context: string[] = [`[상태] 지금 기분: ${moodText}`];
-    if (npcRuntimeState?.memory) context.push(`[최근 사건] ${npcRuntimeState.memory}`);
+    if (npcRuntimeState?.memory)
+      context.push(`[최근 사건] ${npcRuntimeState.memory}`);
     context.push(...recentMessages);
 
     try {
       const response = await sendNpcMessage(npc.id, nextMessage, context);
       onSuggestedAction(response.suggested_action);
       setFallbackMode(!response.used_ai);
-      setLines((current) => current.concat({role: "npc", text: response.reply}));
+      setLines(current => current.concat({role: "npc", text: response.reply}));
     } catch {
       setFallbackMode(true);
-      setLines((current) =>
+      setLines(current =>
         current.concat({
           role: "npc",
           text: "지금은 잠깐 생각이 끊겼어요. 잠시 후 다시 물어봐 주세요."
@@ -207,11 +236,18 @@ export function DialogueBox({
             <div className="flex min-w-0 items-center gap-3">
               <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#00d4ff]/40 bg-[#00d4ff]/10 text-lg">
                 🤖
-                <span className="absolute -bottom-1 -right-1 text-base" title={moodText}>{moodEmoji}</span>
+                <span
+                  className="absolute -bottom-1 -right-1 text-base"
+                  title={moodText}
+                >
+                  {moodEmoji}
+                </span>
               </span>
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="truncate text-base font-black text-white">{npc.name}</p>
+                  <p className="truncate text-base font-black text-white">
+                    {npc.name}
+                  </p>
                   {offline ? (
                     <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-[0.1em] text-amber-300">
                       ⚠ AI 오프라인
@@ -259,12 +295,16 @@ export function DialogueBox({
             ))}
             {isSending ? (
               <div className="mr-8 flex items-center gap-1 rounded-2xl rounded-bl-sm bg-white/[0.07] px-3 py-2.5">
-                {[0, 1, 2].map((i) => (
+                {[0, 1, 2].map(i => (
                   <motion.span
                     key={i}
                     className="h-1.5 w-1.5 rounded-full bg-white/50"
                     animate={{opacity: [0.3, 1, 0.3], y: [0, -2, 0]}}
-                    transition={{duration: 0.9, repeat: Infinity, delay: i * 0.15}}
+                    transition={{
+                      duration: 0.9,
+                      repeat: Infinity,
+                      delay: i * 0.15
+                    }}
                   />
                 ))}
               </div>
@@ -274,7 +314,7 @@ export function DialogueBox({
           {/* 추천 질문 */}
           {presetQuestions.length > 0 ? (
             <div className="flex flex-wrap gap-1.5 px-4 pb-1">
-              {presetQuestions.map((preset) => (
+              {presetQuestions.map(preset => (
                 <button
                   className="rounded-full border border-[#00d4ff]/25 bg-[#00d4ff]/8 px-3 py-1 text-xs font-semibold text-[#c8efff] transition hover:bg-[#00d4ff]/18 active:scale-95 disabled:opacity-50"
                   disabled={isSending}
@@ -293,7 +333,7 @@ export function DialogueBox({
             <form className="flex gap-2" onSubmit={handleSubmit}>
               <input
                 className="min-w-0 flex-1 rounded-full border border-white/12 bg-white/[0.06] px-4 py-2 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#00d4ff]/70"
-                onChange={(event) => setMessage(event.target.value)}
+                onChange={event => setMessage(event.target.value)}
                 placeholder={`${npc.name}에게 물어보기…`}
                 type="text"
                 value={message}

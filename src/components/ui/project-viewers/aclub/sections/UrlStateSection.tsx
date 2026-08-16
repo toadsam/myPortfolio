@@ -3,20 +3,35 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useAClub} from "../context";
 import {CATEGORY_COLORS, SIM_CLUBS} from "../data";
-import {CodeWindow, HlLine, Kicker, Kw, MetricCell, NoteBox, Num, Reveal, useInViewOnce} from "../parts";
+import {
+  CodeWindow,
+  HlLine,
+  Kicker,
+  Kw,
+  MetricCell,
+  NoteBox,
+  Num,
+  Reveal,
+  useInViewOnce
+} from "../parts";
 
 type Mode = "before" | "after";
 type SimFilters = {art: boolean; acad: boolean; rec: boolean; newbie: boolean};
 type Entry = {url: string; view: "list" | "detail"};
 
-const NO_FILTERS: SimFilters = {art: false, acad: false, rec: false, newbie: false};
+const NO_FILTERS: SimFilters = {
+  art: false,
+  acad: false,
+  rec: false,
+  newbie: false
+};
 const BASE_URL = "aclub.app/clubs";
 
 const FILTER_CHIPS: {key: keyof SimFilters; label: string}[] = [
   {key: "art", label: "예술"},
   {key: "acad", label: "학술"},
   {key: "rec", label: "모집중만"},
-  {key: "newbie", label: "신입생 환영"},
+  {key: "newbie", label: "신입생 환영"}
 ];
 
 function toQuery(f: SimFilters): string {
@@ -46,33 +61,54 @@ const HEAD_WORDS = ["조건을", "다섯 개", "걸어놓고", "뒤로가기를"
 const TRANSITIONS = [
   {
     no: "01 · 공유",
-    body: ["조건을 걸어둔 화면을 링크로 보낼 수 없었다.", "받는 사람은 항상 아무 조건도 없는 첫 화면을 봤다."],
-    fix: "→ 조건을 쿼리스트링으로 옮겨서, 주소만 보내면 같은 화면이 열리게",
+    body: [
+      "조건을 걸어둔 화면을 링크로 보낼 수 없었다.",
+      "받는 사람은 항상 아무 조건도 없는 첫 화면을 봤다."
+    ],
+    fix: "→ 조건을 쿼리스트링으로 옮겨서, 주소만 보내면 같은 화면이 열리게"
   },
   {
     no: "02 · 뒤로가기",
-    body: ["상세를 보고 뒤로 나오면 조건이 전부 풀렸다.", "사용자는 매번 다시 다섯 번을 눌러야 했다."],
-    fix: "→ 목록 화면이 조건을 기억하는 게 아니라, 주소가 기억하게",
+    body: [
+      "상세를 보고 뒤로 나오면 조건이 전부 풀렸다.",
+      "사용자는 매번 다시 다섯 번을 눌러야 했다."
+    ],
+    fix: "→ 목록 화면이 조건을 기억하는 게 아니라, 주소가 기억하게"
   },
   {
     no: "03 · 새로고침",
-    body: ["새로고침하면 초기화됐다.", "화면이 멈춘 것 같아서 새로고침했는데 오히려 잃어버렸다."],
-    fix: "→ 첫 렌더에서 주소를 읽어 조건을 복원",
-  },
+    body: [
+      "새로고침하면 초기화됐다.",
+      "화면이 멈춘 것 같아서 새로고침했는데 오히려 잃어버렸다."
+    ],
+    fix: "→ 첫 렌더에서 주소를 읽어 조건을 복원"
+  }
 ];
 
 export function UrlStateSection() {
   const {reducedMotion, announce} = useAClub();
-  const {ref: sectionRef, inView} = useInViewOnce<HTMLElement>({threshold: 0.1});
+  const {ref: sectionRef, inView} = useInViewOnce<HTMLElement>({
+    threshold: 0.1
+  });
 
   const [mode, setMode] = useState<Mode>("before");
-  const [history, setHistory] = useState<Entry[]>([{url: BASE_URL, view: "list"}]);
+  const [history, setHistory] = useState<Entry[]>([
+    {url: BASE_URL, view: "list"}
+  ]);
   const [index, setIndex] = useState(0);
   const [filters, setFilters] = useState<SimFilters>(NO_FILTERS);
   const [address, setAddress] = useState(BASE_URL);
-  const [addressFlash, setAddressFlash] = useState<"" | "error" | "success">("");
-  const [marker, setMarker] = useState<{text: string; tone: "error" | "success" | "neutral"} | null>(null);
-  const [toast, setToast] = useState<{text: string; tone: "error" | "success"} | null>(null);
+  const [addressFlash, setAddressFlash] = useState<"" | "error" | "success">(
+    ""
+  );
+  const [marker, setMarker] = useState<{
+    text: string;
+    tone: "error" | "success" | "neutral";
+  } | null>(null);
+  const [toast, setToast] = useState<{
+    text: string;
+    tone: "error" | "success";
+  } | null>(null);
   const [bugVisible, setBugVisible] = useState(false);
   const [detail, setDetail] = useState<(typeof SIM_CLUBS)[number] | null>(null);
   const [cardAnim, setCardAnim] = useState<"none" | "fall" | "pop">("none");
@@ -85,7 +121,7 @@ export function UrlStateSection() {
   const stackRef = useRef<HTMLDivElement>(null);
 
   const clearTimers = useCallback(() => {
-    timers.current.forEach((t) => window.clearTimeout(t));
+    timers.current.forEach(t => window.clearTimeout(t));
     timers.current = [];
     window.clearTimeout(typing.current);
   }, []);
@@ -108,14 +144,14 @@ export function UrlStateSection() {
 
   const visible = useMemo(
     () =>
-      SIM_CLUBS.filter((c) => {
+      SIM_CLUBS.filter(c => {
         if (filters.art && c.cat !== "예술") return false;
         if (filters.acad && c.cat !== "학술") return false;
         if (filters.rec && !c.rec) return false;
         if (filters.newbie && !c.newbie) return false;
         return true;
       }),
-    [filters],
+    [filters]
   );
 
   function resetSim(nextMode: Mode) {
@@ -180,8 +216,8 @@ export function UrlStateSection() {
 
     const qs = toQuery(next);
     const url = qs ? `${BASE_URL}?${qs}` : BASE_URL;
-    setHistory((h) => [...h.slice(0, index + 1), {url, view: "list"}]);
-    setIndex((i) => i + 1);
+    setHistory(h => [...h.slice(0, index + 1), {url, view: "list"}]);
+    setIndex(i => i + 1);
     flash("success");
     typeAddress(url);
   }
@@ -190,8 +226,8 @@ export function UrlStateSection() {
     dismissHint();
     const url = `${BASE_URL}/${club.id}`;
     window.clearTimeout(typing.current);
-    setHistory((h) => [...h.slice(0, index + 1), {url, view: "detail"}]);
-    setIndex((i) => i + 1);
+    setHistory(h => [...h.slice(0, index + 1), {url, view: "detail"}]);
+    setIndex(i => i + 1);
     setAddress(url);
     setDetail(club);
   }
@@ -236,10 +272,13 @@ export function UrlStateSection() {
       return;
     }
 
-    const wait = (ms: number) => new Promise<void>((r) => timers.current.push(window.setTimeout(r, ms)));
-    const active = (Object.keys(filters) as (keyof SimFilters)[]).filter((k) => filters[k]);
+    const wait = (ms: number) =>
+      new Promise<void>(r => timers.current.push(window.setTimeout(r, ms)));
+    const active = (Object.keys(filters) as (keyof SimFilters)[]).filter(
+      k => filters[k]
+    );
     for (const key of active) {
-      setFilters((f) => ({...f, [key]: false}));
+      setFilters(f => ({...f, [key]: false}));
       await wait(60);
     }
     setFilters(NO_FILTERS);
@@ -254,8 +293,10 @@ export function UrlStateSection() {
   function share() {
     const isBefore = mode === "before";
     setToast({
-      text: isBefore ? `복사됨: ${BASE_URL} — 조건은 포함되지 않았습니다` : "복사됨: 조건이 포함된 주소",
-      tone: isBefore ? "error" : "success",
+      text: isBefore
+        ? `복사됨: ${BASE_URL} — 조건은 포함되지 않았습니다`
+        : "복사됨: 조건이 포함된 주소",
+      tone: isBefore ? "error" : "success"
     });
     timers.current.push(window.setTimeout(() => setToast(null), 3000));
   }
@@ -284,7 +325,7 @@ export function UrlStateSection() {
               style={{
                 transitionDelay: `${i * 0.15}s`,
                 opacity: seqIn ? 1 : 0,
-                transform: seqIn ? "none" : "translateY(10px)",
+                transform: seqIn ? "none" : "translateY(10px)"
               }}
             >
               {w}
@@ -294,11 +335,16 @@ export function UrlStateSection() {
 
         <div
           className="mt-[24px] transition-all duration-[600ms] ease-out"
-          style={{transitionDelay: "0.6s", opacity: seqIn ? 1 : 0, transform: seqIn ? "none" : "translateX(-12px)"}}
+          style={{
+            transitionDelay: "0.6s",
+            opacity: seqIn ? 1 : 0,
+            transform: seqIn ? "none" : "translateX(-12px)"
+          }}
         >
           <NoteBox label="증상" tone="bad">
             <p className="text-[16px] leading-[32px]">
-              친구한테 「이 조건으로 보면 딱 좋아」 하면서 링크를 보냈는데, 그냥 첫 화면이 열렸다.
+              친구한테 「이 조건으로 보면 딱 좋아」 하면서 링크를 보냈는데, 그냥
+              첫 화면이 열렸다.
               <br />
               나도 동아리 상세를 보고 뒤로 나오면 조건이 다 풀려 있었다.
               <br />
@@ -310,10 +356,14 @@ export function UrlStateSection() {
         {/* ── 브라우저 시뮬레이터 ── */}
         <div
           className="relative mt-[36px] w-full transition-all duration-[600ms] ease-out"
-          style={{transitionDelay: "1.1s", opacity: seqIn ? 1 : 0, transform: seqIn ? "none" : "translateY(18px)"}}
+          style={{
+            transitionDelay: "1.1s",
+            opacity: seqIn ? 1 : 0,
+            transform: seqIn ? "none" : "translateY(18px)"
+          }}
         >
           <div className="absolute -top-8 right-0 flex gap-2 font-mono text-[11px]">
-            {(["before", "after"] as Mode[]).map((m) => (
+            {(["before", "after"] as Mode[]).map(m => (
               <button
                 key={m}
                 type="button"
@@ -334,8 +384,12 @@ export function UrlStateSection() {
             {/* 크롬 */}
             <div className="relative z-20 flex h-[44px] shrink-0 items-center border-b border-[rgba(192,132,252,0.14)] bg-[#170f26] px-4">
               <div className="hidden w-14 gap-1.5 sm:flex">
-                {["#ff5f56", "#ffbd2e", "#27c93f"].map((c) => (
-                  <span key={c} className="h-[9px] w-[9px] rounded-full" style={{background: c}} />
+                {["#ff5f56", "#ffbd2e", "#27c93f"].map(c => (
+                  <span
+                    key={c}
+                    className="h-[9px] w-[9px] rounded-full"
+                    style={{background: c}}
+                  />
                 ))}
               </div>
               <div className="mr-3 flex shrink-0 items-center gap-1 sm:mr-4 sm:gap-2">
@@ -345,7 +399,9 @@ export function UrlStateSection() {
                   disabled={index <= 0}
                   aria-label="뒤로가기"
                   className={`flex h-[30px] w-[30px] items-center justify-center rounded-full border border-[rgba(255,255,255,0.20)] font-mono text-[15px] text-[rgba(255,255,255,0.75)] outline-none transition-all ${
-                    index <= 0 ? "cursor-not-allowed opacity-50" : "hover:bg-[rgba(255,255,255,0.1)]"
+                    index <= 0
+                      ? "cursor-not-allowed opacity-50"
+                      : "hover:bg-[rgba(255,255,255,0.1)]"
                   } ${pulse && !hintDismissed ? "ac-pulse-red" : ""}`}
                 >
                   ←
@@ -369,7 +425,11 @@ export function UrlStateSection() {
               <div className="relative flex min-w-0 flex-1 items-center justify-center">
                 <div
                   className={`flex h-[28px] w-full max-w-[500px] items-center overflow-hidden truncate rounded-full border border-[rgba(255,255,255,0.10)] bg-[rgba(255,255,255,0.05)] px-2 font-mono text-[11px] text-[rgba(255,255,255,0.70)] sm:px-[14px] ${
-                    addressFlash === "error" ? "ac-flash-error" : addressFlash === "success" ? "ac-flash-success" : ""
+                    addressFlash === "error"
+                      ? "ac-flash-error"
+                      : addressFlash === "success"
+                      ? "ac-flash-success"
+                      : ""
                   }`}
                   aria-live="polite"
                 >
@@ -380,7 +440,11 @@ export function UrlStateSection() {
                     className="pointer-events-none absolute top-[32px] font-mono text-[9px]"
                     style={{
                       color:
-                        marker.tone === "error" ? "#f87171" : marker.tone === "success" ? "#4ade80" : "rgba(255,255,255,0.46)",
+                        marker.tone === "error"
+                          ? "#f87171"
+                          : marker.tone === "success"
+                          ? "#4ade80"
+                          : "rgba(255,255,255,0.46)"
                     }}
                   >
                     {marker.text}
@@ -411,8 +475,11 @@ export function UrlStateSection() {
                 <div
                   className="absolute bottom-6 left-1/2 z-50 max-w-[90%] -translate-x-1/2 truncate whitespace-nowrap rounded border bg-[#0f0a1a] px-4 py-2 text-center font-mono text-[11px] shadow-lg"
                   style={{
-                    borderColor: toast.tone === "error" ? "rgba(248,113,113,0.35)" : "rgba(74,222,128,0.35)",
-                    color: toast.tone === "error" ? "#f87171" : "#4ade80",
+                    borderColor:
+                      toast.tone === "error"
+                        ? "rgba(248,113,113,0.35)"
+                        : "rgba(74,222,128,0.35)",
+                    color: toast.tone === "error" ? "#f87171" : "#4ade80"
                   }}
                 >
                   {toast.text}
@@ -421,7 +488,10 @@ export function UrlStateSection() {
 
               <div
                 className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-[rgba(13,8,22,0.85)] p-6 backdrop-blur-sm transition-opacity duration-500"
-                style={{opacity: bugVisible ? 1 : 0, pointerEvents: bugVisible ? "auto" : "none"}}
+                style={{
+                  opacity: bugVisible ? 1 : 0,
+                  pointerEvents: bugVisible ? "auto" : "none"
+                }}
                 aria-hidden={!bugVisible}
               >
                 <div className="max-w-[460px] text-center">
@@ -439,11 +509,11 @@ export function UrlStateSection() {
                   className="ac-scroll-thin absolute inset-0 flex h-full w-full flex-col items-center overflow-y-auto px-4 pb-12 pt-6 transition-transform duration-[350ms]"
                   style={{
                     transform: detail ? "translateX(-100%)" : "translateX(0)",
-                    transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)",
+                    transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)"
                   }}
                 >
                   <div className="mb-6 flex w-full max-w-[420px] flex-wrap justify-center gap-2">
-                    {FILTER_CHIPS.map((chip) => {
+                    {FILTER_CHIPS.map(chip => {
                       const on = filters[chip.key];
                       return (
                         <button
@@ -454,7 +524,9 @@ export function UrlStateSection() {
                             on
                               ? "border-[#c084fc] bg-[rgba(192,132,252,0.15)] text-[#c084fc]"
                               : "border-[rgba(255,255,255,0.14)] text-[rgba(255,255,255,0.7)] hover:text-white"
-                          } ${pulse && !hintDismissed ? "ac-pulse-purple" : ""}`}
+                          } ${
+                            pulse && !hintDismissed ? "ac-pulse-purple" : ""
+                          }`}
                         >
                           {chip.label}
                         </button>
@@ -467,10 +539,14 @@ export function UrlStateSection() {
                       const col = CATEGORY_COLORS[c.cat];
                       const anim =
                         cardAnim === "fall"
-                          ? `ac-fall-drop 0.4s cubic-bezier(0.22,1,0.36,1) ${i * 0.02}s forwards`
+                          ? `ac-fall-drop 0.4s cubic-bezier(0.22,1,0.36,1) ${
+                              i * 0.02
+                            }s forwards`
                           : cardAnim === "pop"
-                            ? `ac-pop-in 0.3s cubic-bezier(0.22,1,0.36,1) ${i * 0.02}s forwards`
-                            : undefined;
+                          ? `ac-pop-in 0.3s cubic-bezier(0.22,1,0.36,1) ${
+                              i * 0.02
+                            }s forwards`
+                          : undefined;
                       return (
                         <button
                           key={c.id}
@@ -478,9 +554,15 @@ export function UrlStateSection() {
                           onClick={() => openDetail(c)}
                           aria-label={`${c.name} 상세 보기`}
                           className="relative flex aspect-[3/4] w-full flex-col overflow-hidden rounded-sm border border-[rgba(192,132,252,0.20)] bg-[#170f26] p-3 text-left outline-none transition-colors hover:border-[rgba(192,132,252,0.5)]"
-                          style={{animation: anim, opacity: cardAnim === "pop" ? 0 : 1}}
+                          style={{
+                            animation: anim,
+                            opacity: cardAnim === "pop" ? 0 : 1
+                          }}
                         >
-                          <span className="absolute inset-x-0 top-0 h-[3px]" style={{backgroundColor: col}} />
+                          <span
+                            className="absolute inset-x-0 top-0 h-[3px]"
+                            style={{backgroundColor: col}}
+                          />
                           <span className="mb-2 flex h-[45px] w-full items-center justify-center rounded-sm border border-[rgba(255,255,255,0.04)] bg-[rgba(13,8,22,0.5)] sm:h-[50px]">
                             <span
                               className="h-5 w-5 rounded border border-dashed opacity-30 sm:h-6 sm:w-6"
@@ -513,7 +595,7 @@ export function UrlStateSection() {
                   className="absolute inset-0 flex h-full w-full flex-col items-center justify-center bg-[#0d0816] p-6 transition-transform duration-[350ms]"
                   style={{
                     transform: detail ? "translateX(0)" : "translateX(100%)",
-                    transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)",
+                    transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)"
                   }}
                 >
                   <div className="flex w-full max-w-[320px] flex-col items-center text-center">
@@ -521,12 +603,16 @@ export function UrlStateSection() {
                       className="mb-4 rounded-sm border bg-[rgba(255,255,255,0.02)] px-2 py-1 font-mono text-[10px]"
                       style={{
                         color: detail ? CATEGORY_COLORS[detail.cat] : undefined,
-                        borderColor: detail ? CATEGORY_COLORS[detail.cat] : "transparent",
+                        borderColor: detail
+                          ? CATEGORY_COLORS[detail.cat]
+                          : "transparent"
                       }}
                     >
                       {detail?.cat}
                     </div>
-                    <h3 className="mb-3 text-[22px] font-black">{detail?.name}</h3>
+                    <h3 className="mb-3 text-[22px] font-black">
+                      {detail?.name}
+                    </h3>
                     <p className="mb-8 text-[14px] leading-7 text-[rgba(255,255,255,0.6)]">
                       동아리 상세 정보 화면입니다.
                       <br />
@@ -548,7 +634,12 @@ export function UrlStateSection() {
             <div className="ac-no-scrollbar relative z-20 flex h-[34px] shrink-0 items-center overflow-x-auto border-t border-[rgba(192,132,252,0.12)] bg-[#170f26] px-4">
               <div ref={stackRef} className="flex h-full items-center gap-1.5">
                 {history.map((s, i) => {
-                  const label = s.view === "detail" ? "Detail" : s.url.includes("?") ? "List (F)" : "List";
+                  const label =
+                    s.view === "detail"
+                      ? "Detail"
+                      : s.url.includes("?")
+                      ? "List (F)"
+                      : "List";
                   const active = i === index;
                   return (
                     <div
@@ -580,13 +671,17 @@ export function UrlStateSection() {
               delay={i * 0.12}
               className="w-full rounded-md border border-[rgba(255,255,255,0.10)] border-t-[3px] border-t-[#f87171] bg-[#170f26] p-[20px]"
             >
-              <div className="mb-3 font-mono text-[10px] tracking-[0.18em] text-[#f87171]">{t.no}</div>
+              <div className="mb-3 font-mono text-[10px] tracking-[0.18em] text-[#f87171]">
+                {t.no}
+              </div>
               <p className="mb-4 text-[15px] leading-[32px]">
                 {t.body[0]}
                 <br />
                 {t.body[1]}
               </p>
-              <div className="font-mono text-[12px] text-[#4ade80]">{t.fix}</div>
+              <div className="font-mono text-[12px] text-[#4ade80]">
+                {t.fix}
+              </div>
             </Reveal>
           ))}
         </div>
@@ -594,7 +689,8 @@ export function UrlStateSection() {
         <Reveal className="mt-[40px]">
           <NoteBox label="원인" tone="warn">
             <p className="text-[16px] leading-[32px]">
-              필터 상태를 컴포넌트 안의 상태로만 들고 있었다. 화면이 언마운트되면 같이 사라진다.
+              필터 상태를 컴포넌트 안의 상태로만 들고 있었다. 화면이
+              언마운트되면 같이 사라진다.
               <br />
               그런데 사용자 입장에서 조건은 「화면의 일시적인 설정」이 아니라
               <br />
@@ -609,7 +705,11 @@ export function UrlStateSection() {
 
         {/* ── before / after 코드 ── */}
         <Reveal className="mt-[40px] flex flex-col gap-[16px] lg:flex-row">
-          <CodeWindow file="ClubListPage.tsx (before)" tone="bad" className="flex-1">
+          <CodeWindow
+            file="ClubListPage.tsx (before)"
+            tone="bad"
+            className="flex-1"
+          >
             <Kw>export function</Kw>
             {" ClubListPage() {\n  "}
             <span style={{color: "#7a5f8a"}}>{"// 로컬 상태로 필터 관리"}</span>
@@ -627,7 +727,9 @@ export function UrlStateSection() {
             <Kw>const</Kw>
             {" toggleFilter = (key: "}
             <Kw>string</Kw>
-            {") => {\n    setFilters(prev => ({ ...prev, [key]: !prev[key] }));\n  };\n\n  "}
+            {
+              ") => {\n    setFilters(prev => ({ ...prev, [key]: !prev[key] }));\n  };\n\n  "
+            }
             <Kw>return</Kw>
             {" ("}
             {"\n    <div>{/* 렌더링 영역 */}</div>\n  );\n}"}
@@ -640,7 +742,9 @@ export function UrlStateSection() {
             subHeader={
               <div className="border-b border-[rgba(74,222,128,0.1)] bg-[rgba(74,222,128,0.05)] px-4 py-2">
                 <div className="font-mono text-[11px] text-[#4ade80]">
-                  {"// 상태를 주소에서 파생시키면, 뒤로가기와 공유는 공짜로 따라온다"}
+                  {
+                    "// 상태를 주소에서 파생시키면, 뒤로가기와 공유는 공짜로 따라온다"
+                  }
                 </div>
               </div>
             }
@@ -663,7 +767,9 @@ export function UrlStateSection() {
             {" isRapidChange = Date.now() - lastChange.current < "}
             <Num>1000</Num>
             {";\n"}
-            <HlLine tone="ok">{"    setSearchParams(nextParams, { replace: isRapidChange });"}</HlLine>
+            <HlLine tone="ok">
+              {"    setSearchParams(nextParams, { replace: isRapidChange });"}
+            </HlLine>
             {"    lastChange.current = Date.now();\n  };\n\n  "}
             <Kw>return</Kw>
             {" { filters, updateFilters };\n}"}
@@ -672,8 +778,11 @@ export function UrlStateSection() {
 
         <Reveal className="mt-[20px] max-w-[800px]">
           <p className="text-[15px] leading-[32px] text-[rgba(255,255,255,0.88)]">
-            처음엔 조건을 바꿀 때마다 히스토리에 쌓았더니, 칩을 다섯 번 누르면 뒤로가기를 다섯 번 눌러야 목록을 벗어났다.
-            그래서 <strong className="font-bold text-[#d8b4fe]">짧은 시간 안의 연속 변경은 히스토리를 덮어쓰도록</strong>{" "}
+            처음엔 조건을 바꿀 때마다 히스토리에 쌓았더니, 칩을 다섯 번 누르면
+            뒤로가기를 다섯 번 눌러야 목록을 벗어났다. 그래서{" "}
+            <strong className="font-bold text-[#d8b4fe]">
+              짧은 시간 안의 연속 변경은 히스토리를 덮어쓰도록
+            </strong>{" "}
             바꿨다.
           </p>
         </Reveal>
@@ -701,11 +810,21 @@ export function UrlStateSection() {
           </div>
 
           <div className="mt-[28px] rounded-md border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.02)] p-[20px]">
-            <div className="mb-3 font-mono text-[10px] tracking-[0.18em] text-[rgba(255,255,255,0.46)]">아직 남은 것</div>
+            <div className="mb-3 font-mono text-[10px] tracking-[0.18em] text-[rgba(255,255,255,0.46)]">
+              아직 남은 것
+            </div>
             <ul className="space-y-1 text-[15px] leading-[32px] text-[rgba(255,255,255,0.88)]">
-              <li>· 조건이 많아지면 주소가 길어진다. 짧은 코드로 압축하는 건 하지 않았다.</li>
-              <li>· 잘못된 파라미터는 기본값으로 되돌리기만 한다. 사용자에게 알려주지는 않는다.</li>
-              <li>· 스크롤 위치는 여전히 복원되지 않는다. 그건 다음 장에서 다룬다.</li>
+              <li>
+                · 조건이 많아지면 주소가 길어진다. 짧은 코드로 압축하는 건 하지
+                않았다.
+              </li>
+              <li>
+                · 잘못된 파라미터는 기본값으로 되돌리기만 한다. 사용자에게
+                알려주지는 않는다.
+              </li>
+              <li>
+                · 스크롤 위치는 여전히 복원되지 않는다. 그건 다음 장에서 다룬다.
+              </li>
             </ul>
           </div>
         </Reveal>

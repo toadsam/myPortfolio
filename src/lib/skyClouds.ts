@@ -24,18 +24,27 @@ const smooth = (t: number) => t * t * (3 - 2 * t);
 
 /** periodX 로 가로가 되풀이되는 값 노이즈 */
 function valueNoise(x: number, y: number, periodX: number) {
-  const xi = Math.floor(x), yi = Math.floor(y);
-  const xf = x - xi, yf = y - yi;
+  const xi = Math.floor(x),
+    yi = Math.floor(y);
+  const xf = x - xi,
+    yf = y - yi;
   const x0 = ((xi % periodX) + periodX) % periodX;
-  const x1 = ((xi + 1) % periodX + periodX) % periodX;
-  const a = hash(x0, yi), b = hash(x1, yi), c = hash(x0, yi + 1), d = hash(x1, yi + 1);
-  const u = smooth(xf), v = smooth(yf);
+  const x1 = (((xi + 1) % periodX) + periodX) % periodX;
+  const a = hash(x0, yi),
+    b = hash(x1, yi),
+    c = hash(x0, yi + 1),
+    d = hash(x1, yi + 1);
+  const u = smooth(xf),
+    v = smooth(yf);
   return a * (1 - u) * (1 - v) + b * u * (1 - v) + c * (1 - u) * v + d * u * v;
 }
 
 /** periodX 를 2의 거듭제곱으로 두면 옥타브마다 주기가 정수로 유지된다 */
 function fbm(x: number, y: number, periodX: number, octaves: number) {
-  let sum = 0, amp = 0.5, freq = 1, norm = 0;
+  let sum = 0,
+    amp = 0.5,
+    freq = 1,
+    norm = 0;
   for (let o = 0; o < octaves; o++) {
     sum += amp * valueNoise(x * freq, y * freq, periodX * freq);
     norm += amp;

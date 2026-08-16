@@ -25,7 +25,8 @@
   scrollbar-width: none;
   background-color: var(--ac-bg);
   color: var(--ac-text);
-  font-family: var(--ac-font-sans), "Pretendard", "Apple SD Gothic Neo", system-ui, sans-serif;
+  font-family: var(--ac-font-sans), "Pretendard", "Apple SD Gothic Neo",
+    system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   transition: background-color 1.2s var(--ac-ease);
 }
@@ -44,7 +45,8 @@
 }
 
 .ac-root .font-mono {
-  font-family: var(--ac-font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-family: var(--ac-font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, monospace;
 }
 
 .ac-root ::selection {
@@ -104,7 +106,11 @@
   transform: translate(-50%, -50%);
   filter: blur(40px);
   pointer-events: none;
-  background: radial-gradient(ellipse at center, rgba(192, 132, 252, 0.07) 0%, transparent 70%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(192, 132, 252, 0.07) 0%,
+    transparent 70%
+  );
 }
 
 /* ── 포스터 벽 (히어로 배경) ──────────────────────────────────── */
@@ -134,7 +140,8 @@
   z-index: 30;
   outline: none;
   transform: translateY(-6px) rotate(0deg) scale(1.04) !important;
-  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(192, 132, 252, 0.4);
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(192, 132, 252, 0.4);
 }
 
 .ac-poster-hover:hover .ac-cat-bar,
@@ -164,7 +171,8 @@
   display: inline-block;
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 0.4s var(--ac-ease), transform 0.4s var(--ac-ease), filter 0.4s var(--ac-ease);
+  transition: opacity 0.4s var(--ac-ease), transform 0.4s var(--ac-ease),
+    filter 0.4s var(--ac-ease);
 }
 
 .ac-reveal.ac-in,
@@ -381,8 +389,11 @@
 /* ── 플레이스홀더 격자 ────────────────────────────────────────── */
 .ac-media-grid {
   background-size: 40px 40px;
-  background-image:
-    linear-gradient(to right, rgba(192, 132, 252, 0.05) 1px, transparent 1px),
+  background-image: linear-gradient(
+      to right,
+      rgba(192, 132, 252, 0.05) 1px,
+      transparent 1px
+    ),
     linear-gradient(to bottom, rgba(192, 132, 252, 0.05) 1px, transparent 1px);
 }
 
@@ -390,15 +401,20 @@
   background-color: #0d0816;
   background-position: center center;
   background-size: 24px 24px;
-  background-image:
-    linear-gradient(to right, rgba(192, 132, 252, 0.04) 1px, transparent 1px),
+  background-image: linear-gradient(
+      to right,
+      rgba(192, 132, 252, 0.04) 1px,
+      transparent 1px
+    ),
     linear-gradient(to bottom, rgba(192, 132, 252, 0.04) 1px, transparent 1px);
 }
 
 .ac-dot-grid {
   background-size: 20px 20px;
-  background-image:
-    linear-gradient(rgba(192, 132, 252, 0.05) 1px, transparent 1px),
+  background-image: linear-gradient(
+      rgba(192, 132, 252, 0.05) 1px,
+      transparent 1px
+    ),
     linear-gradient(90deg, rgba(192, 132, 252, 0.05) 1px, transparent 1px);
 }
 
@@ -422,8 +438,8 @@
 .ac-comp-layer {
   backface-visibility: hidden;
   will-change: transform, outline, box-shadow;
-  transition: transform 0.5s var(--ac-ease), box-shadow 0.5s var(--ac-ease), outline 0.5s var(--ac-ease),
-    opacity 0.3s ease, filter 0.3s ease;
+  transition: transform 0.5s var(--ac-ease), box-shadow 0.5s var(--ac-ease),
+    outline 0.5s var(--ac-ease), opacity 0.3s ease, filter 0.3s ease;
 }
 
 .ac-comp-annotation {
@@ -488,7 +504,11 @@
 .ac-dust {
   opacity: 0;
   pointer-events: none;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
 }
 
 .ac-wall-active .ac-dust {

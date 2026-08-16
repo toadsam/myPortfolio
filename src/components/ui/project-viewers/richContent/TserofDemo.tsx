@@ -1,6 +1,12 @@
 "use client";
 
-import {AnimatePresence, motion, useMotionValue, useSpring, useTransform} from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform
+} from "framer-motion";
 import {useRef, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import {DemoFrame} from "./shared";
@@ -11,18 +17,24 @@ const ITEMS = [
   {id: 2, x: "70%", y: "22%", z: 70},
   {id: 3, x: "40%", y: "60%", z: 20},
   {id: 4, x: "82%", y: "66%", z: 55},
-  {id: 5, x: "55%", y: "40%", z: 90},
+  {id: 5, x: "55%", y: "40%", z: 90}
 ];
 
 export function TserofDemo({theme}: {theme: ProjectTheme}) {
   const ref = useRef<HTMLDivElement>(null);
   const px = useMotionValue(0.5);
   const py = useMotionValue(0.5);
-  const rotY = useSpring(useTransform(px, [0, 1], [14, -14]), {stiffness: 200, damping: 20});
-  const rotX = useSpring(useTransform(py, [0, 1], [-12, 12]), {stiffness: 200, damping: 20});
+  const rotY = useSpring(useTransform(px, [0, 1], [14, -14]), {
+    stiffness: 200,
+    damping: 20
+  });
+  const rotX = useSpring(useTransform(py, [0, 1], [-12, 12]), {
+    stiffness: 200,
+    damping: 20
+  });
   const [collected, setCollected] = useState<number[]>([]);
 
-  const remaining = ITEMS.filter((i) => !collected.includes(i.id));
+  const remaining = ITEMS.filter(i => !collected.includes(i.id));
   const done = collected.length === ITEMS.length;
 
   return (
@@ -32,7 +44,12 @@ export function TserofDemo({theme}: {theme: ProjectTheme}) {
       tag="3D STAGE"
       controls={
         <>
-          <span className="font-mono text-[12px] font-black" style={{color: theme.primary}}>⭐ {collected.length}/{ITEMS.length}</span>
+          <span
+            className="font-mono text-[12px] font-black"
+            style={{color: theme.primary}}
+          >
+            ⭐ {collected.length}/{ITEMS.length}
+          </span>
           {collected.length > 0 ? (
             <button
               type="button"
@@ -47,7 +64,11 @@ export function TserofDemo({theme}: {theme: ProjectTheme}) {
       }
       footer={
         <p className="font-mono text-[11px] leading-5 text-white/45">
-          🎮 마우스로 스테이지를 <span style={{color: theme.primary}}>3D로 기울이고, 숨은 별을 클릭</span>해 모으세요.
+          🎮 마우스로 스테이지를{" "}
+          <span style={{color: theme.primary}}>
+            3D로 기울이고, 숨은 별을 클릭
+          </span>
+          해 모으세요.
         </p>
       }
     >
@@ -60,9 +81,9 @@ export function TserofDemo({theme}: {theme: ProjectTheme}) {
             background: "linear-gradient(160deg, #16203a 0%, #0a0f1e 70%)",
             rotateX: rotX,
             rotateY: rotY,
-            transformStyle: "preserve-3d",
+            transformStyle: "preserve-3d"
           }}
-          onMouseMove={(e) => {
+          onMouseMove={e => {
             const r = ref.current?.getBoundingClientRect();
             if (!r) return;
             px.set((e.clientX - r.left) / r.width);
@@ -74,26 +95,53 @@ export function TserofDemo({theme}: {theme: ProjectTheme}) {
           }}
         >
           {/* 바닥 그리드 */}
-          <div className="absolute inset-0 opacity-25" style={{backgroundImage: `linear-gradient(${theme.primary}44 1px, transparent 1px), linear-gradient(90deg, ${theme.primary}44 1px, transparent 1px)`, backgroundSize: "32px 32px", transform: "translateZ(-10px)"}} />
+          <div
+            className="absolute inset-0 opacity-25"
+            style={{
+              backgroundImage: `linear-gradient(${theme.primary}44 1px, transparent 1px), linear-gradient(90deg, ${theme.primary}44 1px, transparent 1px)`,
+              backgroundSize: "32px 32px",
+              transform: "translateZ(-10px)"
+            }}
+          />
 
           {/* 플랫폼 블록 */}
-          <div className="absolute left-[10%] top-[55%] h-10 w-24 rounded" style={{background: `${theme.primary}33`, transform: "translateZ(30px)"}} />
-          <div className="absolute right-[14%] top-[40%] h-10 w-20 rounded" style={{background: `${theme.primary}2a`, transform: "translateZ(50px)"}} />
+          <div
+            className="absolute left-[10%] top-[55%] h-10 w-24 rounded"
+            style={{
+              background: `${theme.primary}33`,
+              transform: "translateZ(30px)"
+            }}
+          />
+          <div
+            className="absolute right-[14%] top-[40%] h-10 w-20 rounded"
+            style={{
+              background: `${theme.primary}2a`,
+              transform: "translateZ(50px)"
+            }}
+          />
 
           {/* 수집 아이템 */}
           <AnimatePresence>
-            {remaining.map((it) => (
+            {remaining.map(it => (
               <motion.button
                 key={it.id}
                 type="button"
                 className="absolute text-2xl"
-                style={{left: it.x, top: it.y, transform: `translateZ(${it.z}px)`}}
+                style={{
+                  left: it.x,
+                  top: it.y,
+                  transform: `translateZ(${it.z}px)`
+                }}
                 initial={{scale: 0}}
                 animate={{scale: 1, rotate: [0, 12, -12, 0], y: [0, -6, 0]}}
                 exit={{scale: 1.8, opacity: 0}}
-                transition={{rotate: {duration: 2.4, repeat: Infinity}, y: {duration: 1.8, repeat: Infinity}, scale: {duration: 0.3}}}
+                transition={{
+                  rotate: {duration: 2.4, repeat: Infinity},
+                  y: {duration: 1.8, repeat: Infinity},
+                  scale: {duration: 0.3}
+                }}
                 whileHover={{scale: 1.35}}
-                onClick={() => setCollected((c) => [...c, it.id])}
+                onClick={() => setCollected(c => [...c, it.id])}
               >
                 ⭐
               </motion.button>
@@ -101,13 +149,35 @@ export function TserofDemo({theme}: {theme: ProjectTheme}) {
           </AnimatePresence>
 
           {/* 캐릭터 */}
-          <div className="absolute bottom-3 left-[44%] text-3xl" style={{transform: "translateZ(60px)"}}>🦊</div>
+          <div
+            className="absolute bottom-3 left-[44%] text-3xl"
+            style={{transform: "translateZ(60px)"}}
+          >
+            🦊
+          </div>
 
           {/* 클리어 */}
           <AnimatePresence>
             {done ? (
-              <motion.div className="absolute inset-0 flex items-center justify-center" style={{background: "rgba(0,0,0,0.5)", transform: "translateZ(80px)"}} initial={{opacity: 0}} animate={{opacity: 1}}>
-                <motion.p className="font-mono text-2xl font-black" style={{color: theme.accent, textShadow: `0 0 24px ${theme.primary}`}} initial={{scale: 0.5}} animate={{scale: 1}} transition={{type: "spring", stiffness: 300, damping: 14}}>
+              <motion.div
+                className="absolute inset-0 flex items-center justify-center"
+                style={{
+                  background: "rgba(0,0,0,0.5)",
+                  transform: "translateZ(80px)"
+                }}
+                initial={{opacity: 0}}
+                animate={{opacity: 1}}
+              >
+                <motion.p
+                  className="font-mono text-2xl font-black"
+                  style={{
+                    color: theme.accent,
+                    textShadow: `0 0 24px ${theme.primary}`
+                  }}
+                  initial={{scale: 0.5}}
+                  animate={{scale: 1}}
+                  transition={{type: "spring", stiffness: 300, damping: 14}}
+                >
                   STAGE CLEAR! 🏆
                 </motion.p>
               </motion.div>

@@ -3,7 +3,10 @@
 import dynamic from "next/dynamic";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {useGLTF} from "@react-three/drei";
-import {ConciergePanel, type ConciergeIntent} from "@/components/ui/ConciergePanel";
+import {
+  ConciergePanel,
+  type ConciergeIntent
+} from "@/components/ui/ConciergePanel";
 import {DialogueBox} from "@/components/ui/DialogueBox";
 import {Header} from "@/components/ui/Header";
 import {InfoPanel} from "@/components/ui/InfoPanel";
@@ -12,7 +15,14 @@ import {SceneTransition} from "@/components/ui/SceneTransition";
 import {SectionTabs} from "@/components/ui/SectionTabs";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
-import {canonKind, NPC_EMOTES, NPC_SMALL_TALK, OVERSEER_GREETINGS, pairGag, pickRandom} from "@/data/npcChatter";
+import {
+  canonKind,
+  NPC_EMOTES,
+  NPC_SMALL_TALK,
+  OVERSEER_GREETINGS,
+  pairGag,
+  pickRandom
+} from "@/data/npcChatter";
 import type {NpcCommand} from "@/components/village/NPC";
 import {
   CommandDock,
@@ -34,7 +44,14 @@ import {
 } from "@/components/village/VillageHud";
 import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {cameraTargets, villageBuildings} from "@/lib/constants";
-import {fetchRelationships, fetchVillageState, requestGroupChat, requestNpcEncounter, requestNpcTick, trackVisitorEvent} from "@/lib/liveApi";
+import {
+  fetchRelationships,
+  fetchVillageState,
+  requestGroupChat,
+  requestNpcEncounter,
+  requestNpcTick,
+  trackVisitorEvent
+} from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
 import type {
@@ -89,21 +106,29 @@ function announceDelta(
   unlocked: string[],
   prevUnlocked: string[]
 ): string | null {
-  if (cur.workout_done && !prev.workout_done) return "얘들아, 재훈이 오늘 운동 완료했대! 💪";
+  if (cur.workout_done && !prev.workout_done)
+    return "얘들아, 재훈이 오늘 운동 완료했대! 💪";
   const dc = cur.github_commits - prev.github_commits;
   if (dc > 0) return `얘들아, 재훈이 방금 커밋 ${dc}개 올렸대! 🎉`;
   const ds = cur.study_minutes - prev.study_minutes;
   if (ds >= 20) return `재훈이 공부 ${ds}분 더 했대, 대단하지? 📚`;
   const dco = cur.coding_minutes - prev.coding_minutes;
   if (dco >= 20) return `재훈이 코딩 ${dco}분 더 했더라! ⌨️`;
-  const newUnlocked = unlocked.filter((u) => !prevUnlocked.includes(u) && !u.startsWith("active-"));
+  const newUnlocked = unlocked.filter(
+    u => !prevUnlocked.includes(u) && !u.startsWith("active-")
+  );
   if (newUnlocked.length > 0) return "마을에 새 장식이 생겼어! 다들 봤어? ✨";
   return null;
 }
-import type {ExplorationMode, NPCData, SectionId, Vector3Tuple} from "@/types/portfolio";
+import type {
+  ExplorationMode,
+  NPCData,
+  SectionId,
+  Vector3Tuple
+} from "@/types/portfolio";
 
 const VillageScene = dynamic(
-  () => import("@/components/village/VillageScene").then((m) => m.VillageScene),
+  () => import("@/components/village/VillageScene").then(m => m.VillageScene),
   {
     loading: () => (
       <div className="relative grid h-[54vh] min-h-[420px] place-items-center overflow-hidden bg-[#050d1a] md:h-screen">
@@ -120,7 +145,9 @@ const VillageScene = dynamic(
             <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#00d4ff]/50 font-mono text-sm font-black text-[#00d4ff] shadow-[0_0_18px_rgba(0,212,255,0.3)]">
               AI
             </span>
-            <span className="font-mono text-base font-black uppercase tracking-[0.3em] text-white/90">Developer&apos;s City</span>
+            <span className="font-mono text-base font-black uppercase tracking-[0.3em] text-white/90">
+              Developer&apos;s City
+            </span>
           </div>
           <div className="relative h-1 w-56 overflow-hidden rounded-full bg-white/10">
             <div
@@ -139,12 +166,16 @@ const VillageScene = dynamic(
 );
 
 const InteriorScene = dynamic(
-  () => import("@/components/interior/InteriorScene").then((m) => m.InteriorScene),
+  () =>
+    import("@/components/interior/InteriorScene").then(m => m.InteriorScene),
   {ssr: false}
 );
 
 const ProjectInterior = dynamic(
-  () => import("@/components/interior/ProjectInterior").then((m) => m.ProjectInterior),
+  () =>
+    import("@/components/interior/ProjectInterior").then(
+      m => m.ProjectInterior
+    ),
   {
     ssr: false,
     loading: () => (
@@ -158,7 +189,7 @@ const ProjectInterior = dynamic(
 );
 
 const ResumeMode = dynamic(
-  () => import("@/components/ui/ResumeMode").then((m) => m.ResumeMode),
+  () => import("@/components/ui/ResumeMode").then(m => m.ResumeMode),
   {ssr: false}
 );
 
@@ -176,7 +207,11 @@ const COMMAND_DISK_TARGETS: Record<string, Vector3Tuple> = (() => {
   autonomousNpcs.forEach((npc, i) => {
     const r = 0.6 + 2.2 * Math.sqrt(i / total);
     const a = i * golden;
-    out[npc.id] = [RALLY_POINT[0] + Math.cos(a) * r, 0, RALLY_POINT[2] + Math.sin(a) * r];
+    out[npc.id] = [
+      RALLY_POINT[0] + Math.cos(a) * r,
+      0,
+      RALLY_POINT[2] + Math.sin(a) * r
+    ];
   });
   return out;
 })();
@@ -204,14 +239,20 @@ const CONCIERGE_CAM: {position: Vector3Tuple; lookAt: Vector3Tuple} = {
 };
 
 // NPC 위치 기준 상반신 클로즈업 카메라
-function closeUp(pos: Vector3Tuple): {position: Vector3Tuple; lookAt: Vector3Tuple} {
+function closeUp(pos: Vector3Tuple): {
+  position: Vector3Tuple;
+  lookAt: Vector3Tuple;
+} {
   return {position: [pos[0], 1.4, pos[2] + 3], lookAt: [pos[0], 1.35, pos[2]]};
 }
 
 const CONVO_STEP = 2600; // NPC 간 대화 한 턴 길이(ms)
 
 // 두 NPC를 옆에서 함께 담는 투샷 카메라 (엿듣기 장면)
-function twoShot(a: Vector3Tuple, b: Vector3Tuple): {position: Vector3Tuple; lookAt: Vector3Tuple} {
+function twoShot(
+  a: Vector3Tuple,
+  b: Vector3Tuple
+): {position: Vector3Tuple; lookAt: Vector3Tuple} {
   const mx = (a[0] + b[0]) / 2;
   const mz = (a[2] + b[2]) / 2;
   const dx = b[0] - a[0];
@@ -226,13 +267,17 @@ function twoShot(a: Vector3Tuple, b: Vector3Tuple): {position: Vector3Tuple; loo
   return {position: [mx + px * 4.5, 2.3, mz + pz * 4.5], lookAt: [mx, 1.2, mz]};
 }
 
-useGLTF.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+useGLTF.setDecoderPath(
+  "https://www.gstatic.com/draco/versioned/decoders/1.5.6/"
+);
 
 // 매 렌더 재생성되는 핸들러를 항상 최신 클로저는 유지하면서 참조는 고정해서 넘겨준다 —
 // React.memo(VillageScene/NPC/Building)가 무관한 부모 리렌더를 실제로 스킵하려면
 // 콜백 props의 참조가 안정적이어야 하는데, 이 컴포넌트의 핸들러들은 서로 얽혀 있어
 // useCallback 의존성 배열을 손으로 맞추면 오래된 클로저 버그가 생기기 쉽다.
-function useStableCallback<Args extends unknown[], R>(fn: (...args: Args) => R): (...args: Args) => R {
+function useStableCallback<Args extends unknown[], R>(
+  fn: (...args: Args) => R
+): (...args: Args) => R {
   const ref = useRef(fn);
   useEffect(() => {
     ref.current = fn;
@@ -242,34 +287,69 @@ function useStableCallback<Args extends unknown[], R>(fn: (...args: Args) => R):
 
 export function AIPortfolioVillage() {
   const [activeSection, setActiveSection] = useState<SectionId>("intro");
-  const [activeContentId, setActiveContentId] = useState<string | undefined>(undefined);
+  const [activeContentId, setActiveContentId] = useState<string | undefined>(
+    undefined
+  );
   const [selectedNpc, setSelectedNpc] = useState<NPCData | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
-  const [explorationMode, setExplorationMode] = useState<ExplorationMode>("click");
+  const [explorationMode, setExplorationMode] =
+    useState<ExplorationMode>("click");
   const [soundOn, setSoundOn] = useState(true);
   const [konami, setKonami] = useState(false);
-  const [conciergeStage, setConciergeStage] = useState<"idle" | "running" | "panel" | "closed">("idle");
-  const [talkCam, setTalkCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
-  const [travelCam, setTravelCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
+  const [conciergeStage, setConciergeStage] = useState<
+    "idle" | "running" | "panel" | "closed"
+  >("idle");
+  const [talkCam, setTalkCam] = useState<{
+    position: Vector3Tuple;
+    lookAt: Vector3Tuple;
+  } | null>(null);
+  const [travelCam, setTravelCam] = useState<{
+    position: Vector3Tuple;
+    lookAt: Vector3Tuple;
+  } | null>(null);
   const [npcCommand, setNpcCommand] = useState<NpcCommand | null>(null);
-  const [overseerTarget, setOverseerTarget] = useState<Vector3Tuple | null>(null);
-  const [npcSocialTargets, setNpcSocialTargets] = useState<Record<string, Vector3Tuple>>({});
+  const [overseerTarget, setOverseerTarget] = useState<Vector3Tuple | null>(
+    null
+  );
+  const [npcSocialTargets, setNpcSocialTargets] = useState<
+    Record<string, Vector3Tuple>
+  >({});
   const [groupChatBusy, setGroupChatBusy] = useState(false);
-  const [groupChat, setGroupChat] = useState<{lines: {name: string; text: string}[]} | null>(null);
+  const [groupChat, setGroupChat] = useState<{
+    lines: {name: string; text: string}[];
+  } | null>(null);
   const [groupChatOpen, setGroupChatOpen] = useState(false);
-  const [conciergeCam, setConciergeCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
-  const [eavesdrop, setEavesdrop] = useState<{aName: string; bName: string; lines: {name: string; text: string}[]} | null>(null);
+  const [conciergeCam, setConciergeCam] = useState<{
+    position: Vector3Tuple;
+    lookAt: Vector3Tuple;
+  } | null>(null);
+  const [eavesdrop, setEavesdrop] = useState<{
+    aName: string;
+    bName: string;
+    lines: {name: string; text: string}[];
+  } | null>(null);
   const [eavesOpen, setEavesOpen] = useState(false);
-  const [convoCam, setConvoCam] = useState<{position: Vector3Tuple; lookAt: Vector3Tuple} | null>(null);
+  const [convoCam, setConvoCam] = useState<{
+    position: Vector3Tuple;
+    lookAt: Vector3Tuple;
+  } | null>(null);
 
-  const [viewMode, setViewMode] = useState<"village" | "interior" | "project-interior" | "resume">("village");
-  const [interiorSectionId, setInteriorSectionId] = useState<SectionId | null>(null);
-  const [interiorProjectId, setInteriorProjectId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<
+    "village" | "interior" | "project-interior" | "resume"
+  >("village");
+  const [interiorSectionId, setInteriorSectionId] = useState<SectionId | null>(
+    null
+  );
+  const [interiorProjectId, setInteriorProjectId] = useState<string | null>(
+    null
+  );
   const [showTransitionOverlay, setShowTransitionOverlay] = useState(false);
   const [villageState, setVillageState] = useState<VillageState | null>(null);
   const [liveError, setLiveError] = useState<string | null>(null);
-  const [npcRuntimeStates, setNpcRuntimeStates] = useState<Record<string, NpcRuntimeState>>({});
+  const [npcRuntimeStates, setNpcRuntimeStates] = useState<
+    Record<string, NpcRuntimeState>
+  >({});
   const [encounterNotice, setEncounterNotice] = useState<string | null>(null);
   const [milestoneEvent, setMilestoneEvent] = useState<string | null>(null);
   const [relOpen, setRelOpen] = useState(false);
@@ -309,34 +389,51 @@ export function AIPortfolioVillage() {
     npcCommandRef.current = npcCommand;
   }, [npcCommand]);
 
-  useEffect(() => () => {
-    if (greetTimerRef.current) clearTimeout(greetTimerRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (greetTimerRef.current) clearTimeout(greetTimerRef.current);
+    },
+    []
+  );
 
   useEffect(() => {
-    trackVisitorEvent({event_type: "page_view", target_id: "home", label: "Portfolio Village"});
+    trackVisitorEvent({
+      event_type: "page_view",
+      target_id: "home",
+      label: "Portfolio Village"
+    });
   }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (editingRef.current) return;
       const now = Date.now();
-      setNpcRuntimeStates((states) => {
+      setNpcRuntimeStates(states => {
         let changed = false;
         const next = {...states};
 
         for (const [npcId, state] of Object.entries(states)) {
           if (state.bubbleExpiresAt && state.bubbleExpiresAt <= now) {
-            next[npcId] = {...(next[npcId] ?? state), bubbleText: undefined, bubbleExpiresAt: undefined};
+            next[npcId] = {
+              ...(next[npcId] ?? state),
+              bubbleText: undefined,
+              bubbleExpiresAt: undefined
+            };
             changed = true;
           }
 
           if (state.emoteExpiresAt && state.emoteExpiresAt <= now) {
-            next[npcId] = {...(next[npcId] ?? state), emote: undefined, emoteExpiresAt: undefined};
+            next[npcId] = {
+              ...(next[npcId] ?? state),
+              emote: undefined,
+              emoteExpiresAt: undefined
+            };
             changed = true;
           }
 
-          const actionExpiresAt = state.currentAction ? state.currentAction.startedAt + state.currentAction.durationMs : 0;
+          const actionExpiresAt = state.currentAction
+            ? state.currentAction.startedAt + state.currentAction.durationMs
+            : 0;
           if (actionExpiresAt && actionExpiresAt <= now) {
             next[npcId] = {...(next[npcId] ?? state), currentAction: undefined};
             changed = true;
@@ -364,13 +461,21 @@ export function AIPortfolioVillage() {
         // 내 기록 변화 감지 → 분신(총괄 NPC)이 마을에 소문내기 (무료)
         const prev = prevActivityRef.current;
         if (prev) {
-          const msg = announceDelta(prev, nextState.activity, nextState.unlocked_items, prevUnlockedRef.current);
+          const msg = announceDelta(
+            prev,
+            nextState.activity,
+            nextState.unlocked_items,
+            prevUnlockedRef.current
+          );
           if (msg && !npcCommandRef.current) {
             const now = Date.now();
-            setNpcRuntimeStates((states) => ({
+            setNpcRuntimeStates(states => ({
               ...states,
               [OVERSEER_ID]: {
-                ...(states[OVERSEER_ID] ?? {mood: "excited" as NpcMood, energy: 78}),
+                ...(states[OVERSEER_ID] ?? {
+                  mood: "excited" as NpcMood,
+                  energy: 78
+                }),
                 mood: "excited",
                 bubbleText: msg,
                 bubbleExpiresAt: now + 8000
@@ -402,7 +507,10 @@ export function AIPortfolioVillage() {
       if (!position) return [];
 
       return Object.entries(npcPositionsRef.current)
-        .filter(([otherId, otherPosition]) => otherId !== npcId && distance(position, otherPosition) < 3.2)
+        .filter(
+          ([otherId, otherPosition]) =>
+            otherId !== npcId && distance(position, otherPosition) < 3.2
+        )
         .map(([otherId]) => otherId);
     }
 
@@ -412,57 +520,67 @@ export function AIPortfolioVillage() {
       if (npcTickBusyRef.current) return;
       npcTickBusyRef.current = true;
 
-      const batch = Array.from({length: Math.min(2, autonomousNpcs.length)}, (_, index) => {
-        const npc = autonomousNpcs[(npcTickCursorRef.current + index) % autonomousNpcs.length]!;
-        return npc;
-      });
-      npcTickCursorRef.current = (npcTickCursorRef.current + batch.length) % autonomousNpcs.length;
-
-      await Promise.all(batch.map(async (npc) => {
-        const current = npcRuntimeStatesRef.current[npc.id];
-        const profile = npcBehaviorProfiles[npc.id];
-        const baseMood = getNpcState(villageStateRef.current, npc.id)?.mood ?? "calm";
-
-        try {
-          const response = await requestNpcTick({
-            npc_id: npc.id,
-            mood: current?.mood ?? baseMood,
-            energy: current?.energy ?? 50,
-            assigned_building_id: profile?.assignedBuildingId,
-            nearby_npc_ids: nearbyNpcIds(npc.id),
-            recent_memory: npcMemoryRef.current.slice(-6)
-          });
-
-          remember(response.memory);
-          setNpcRuntimeStates((states) => ({
-            ...states,
-            [npc.id]: applySuggestedActionToRuntime(
-              {
-                ...(states[npc.id] ?? {}),
-                mood: response.mood,
-                energy: response.energy,
-                bubbleText: response.bubble_text,
-                bubbleExpiresAt: Date.now() + 8500,
-                memory: response.memory,
-                nextGoal: response.next_goal
-              },
-              response.suggested_action
-            )
-          }));
-        } catch {
-          setNpcRuntimeStates((states) => ({
-            ...states,
-            [npc.id]: {
-              ...(states[npc.id] ?? current ?? {}),
-              mood: current?.mood ?? baseMood,
-              energy: current?.energy ?? 45,
-              bubbleText: "잠깐 생각을 정리하는 중이에요.",
-              bubbleExpiresAt: Date.now() + 4500,
-              memory: "NPC tick request failed."
-            }
-          }));
+      const batch = Array.from(
+        {length: Math.min(2, autonomousNpcs.length)},
+        (_, index) => {
+          const npc =
+            autonomousNpcs[
+              (npcTickCursorRef.current + index) % autonomousNpcs.length
+            ]!;
+          return npc;
         }
-      }));
+      );
+      npcTickCursorRef.current =
+        (npcTickCursorRef.current + batch.length) % autonomousNpcs.length;
+
+      await Promise.all(
+        batch.map(async npc => {
+          const current = npcRuntimeStatesRef.current[npc.id];
+          const profile = npcBehaviorProfiles[npc.id];
+          const baseMood =
+            getNpcState(villageStateRef.current, npc.id)?.mood ?? "calm";
+
+          try {
+            const response = await requestNpcTick({
+              npc_id: npc.id,
+              mood: current?.mood ?? baseMood,
+              energy: current?.energy ?? 50,
+              assigned_building_id: profile?.assignedBuildingId,
+              nearby_npc_ids: nearbyNpcIds(npc.id),
+              recent_memory: npcMemoryRef.current.slice(-6)
+            });
+
+            remember(response.memory);
+            setNpcRuntimeStates(states => ({
+              ...states,
+              [npc.id]: applySuggestedActionToRuntime(
+                {
+                  ...(states[npc.id] ?? {}),
+                  mood: response.mood,
+                  energy: response.energy,
+                  bubbleText: response.bubble_text,
+                  bubbleExpiresAt: Date.now() + 8500,
+                  memory: response.memory,
+                  nextGoal: response.next_goal
+                },
+                response.suggested_action
+              )
+            }));
+          } catch {
+            setNpcRuntimeStates(states => ({
+              ...states,
+              [npc.id]: {
+                ...(states[npc.id] ?? current ?? {}),
+                mood: current?.mood ?? baseMood,
+                energy: current?.energy ?? 45,
+                bubbleText: "잠깐 생각을 정리하는 중이에요.",
+                bubbleExpiresAt: Date.now() + 4500,
+                memory: "NPC tick request failed."
+              }
+            }));
+          }
+        })
+      );
 
       npcTickBusyRef.current = false;
     }
@@ -508,14 +626,20 @@ export function AIPortfolioVillage() {
             const response = await requestNpcEncounter(
               {
                 npc_id: npcAId,
-                mood: stateA?.mood ?? (getNpcState(villageStateRef.current, npcAId)?.mood ?? "calm"),
+                mood:
+                  stateA?.mood ??
+                  getNpcState(villageStateRef.current, npcAId)?.mood ??
+                  "calm",
                 energy: stateA?.energy ?? 50,
                 assigned_building_id: profileA?.assignedBuildingId,
                 recent_memory: stateA?.memory ? [stateA.memory] : []
               },
               {
                 npc_id: npcBId,
-                mood: stateB?.mood ?? (getNpcState(villageStateRef.current, npcBId)?.mood ?? "calm"),
+                mood:
+                  stateB?.mood ??
+                  getNpcState(villageStateRef.current, npcBId)?.mood ??
+                  "calm",
                 energy: stateB?.energy ?? 50,
                 assigned_building_id: profileB?.assignedBuildingId,
                 recent_memory: stateB?.memory ? [stateB.memory] : []
@@ -525,9 +649,10 @@ export function AIPortfolioVillage() {
 
             remember(response.memory);
             notifyRelationship(npcAId, npcBId, response.relationship);
-            encounterCooldownRef.current[pairKey] = now + response.cooldown_seconds * 1000;
+            encounterCooldownRef.current[pairKey] =
+              now + response.cooldown_seconds * 1000;
             const convoMs = response.dialogue.length * CONVO_STEP + 1500;
-            setNpcRuntimeStates((states) => {
+            setNpcRuntimeStates(states => {
               const next = {...states};
 
               for (const change of response.state_changes) {
@@ -542,7 +667,9 @@ export function AIPortfolioVillage() {
               for (const action of response.suggested_actions) {
                 next[action.npc_id] = applySuggestedActionToRuntime(
                   next[action.npc_id] ?? {
-                    mood: getNpcState(villageStateRef.current, action.npc_id)?.mood ?? "curious",
+                    mood:
+                      getNpcState(villageStateRef.current, action.npc_id)
+                        ?.mood ?? "curious",
                     energy: 55
                   },
                   action
@@ -595,7 +722,8 @@ export function AIPortfolioVillage() {
       }
       if (patrolBusyRef.current) return;
 
-      const targetId = OVERSEER_PATROL[patrolIdxRef.current % OVERSEER_PATROL.length]!;
+      const targetId =
+        OVERSEER_PATROL[patrolIdxRef.current % OVERSEER_PATROL.length]!;
       const home = npcBehaviorProfiles[targetId]?.home;
       if (!home) {
         patrolIdxRef.current += 1;
@@ -645,7 +773,8 @@ export function AIPortfolioVillage() {
             npc_id: targetId,
             mood: stateT?.mood ?? "calm",
             energy: stateT?.energy ?? 52,
-            assigned_building_id: npcBehaviorProfiles[targetId]?.assignedBuildingId,
+            assigned_building_id:
+              npcBehaviorProfiles[targetId]?.assignedBuildingId,
             recent_memory: stateT?.memory ? [stateT.memory] : []
           },
           npcMemoryRef.current.slice(-6)
@@ -654,14 +783,27 @@ export function AIPortfolioVillage() {
         notifyRelationship(OVERSEER_ID, targetId, res.relationship);
         const now = Date.now();
         const convoMs = res.dialogue.length * CONVO_STEP + 1500;
-        setNpcRuntimeStates((states) => {
+        setNpcRuntimeStates(states => {
           const next = {...states};
           for (const change of res.state_changes) {
-            next[change.npc_id] = {...(next[change.npc_id] ?? {}), mood: change.mood, energy: change.energy, memory: res.memory};
+            next[change.npc_id] = {
+              ...(next[change.npc_id] ?? {}),
+              mood: change.mood,
+              energy: change.energy,
+              memory: res.memory
+            };
           }
           const holdUntil = now + convoMs;
-          next[OVERSEER_ID] = {...(next[OVERSEER_ID] ?? {mood: "excited" as NpcMood, energy: 72}), facePoint: [tpos[0], 0, tpos[2]], holdUntil};
-          next[targetId] = {...(next[targetId] ?? {mood: "calm" as NpcMood, energy: 55}), facePoint: [opos[0], 0, opos[2]], holdUntil};
+          next[OVERSEER_ID] = {
+            ...(next[OVERSEER_ID] ?? {mood: "excited" as NpcMood, energy: 72}),
+            facePoint: [tpos[0], 0, tpos[2]],
+            holdUntil
+          };
+          next[targetId] = {
+            ...(next[targetId] ?? {mood: "calm" as NpcMood, energy: 55}),
+            facePoint: [opos[0], 0, opos[2]],
+            holdUntil
+          };
           return next;
         });
         setConvoCam(twoShot(opos, tpos));
@@ -669,9 +811,16 @@ export function AIPortfolioVillage() {
         advance(convoMs + 800);
       } catch {
         // AI 실패 → 무료 안부 한 줄
-        setNpcRuntimeStates((states) => ({
+        setNpcRuntimeStates(states => ({
           ...states,
-          [OVERSEER_ID]: {...(states[OVERSEER_ID] ?? {mood: "excited" as NpcMood, energy: 72}), bubbleText: pickRandom(OVERSEER_GREETINGS), bubbleExpiresAt: Date.now() + 4000}
+          [OVERSEER_ID]: {
+            ...(states[OVERSEER_ID] ?? {
+              mood: "excited" as NpcMood,
+              energy: 72
+            }),
+            bubbleText: pickRandom(OVERSEER_GREETINGS),
+            bubbleExpiresAt: Date.now() + 4000
+          }
         }));
         advance(4200);
       }
@@ -699,19 +848,36 @@ export function AIPortfolioVillage() {
           if (d > 2.6 || d < 0.3) continue;
           const ra = npcRuntimeStatesRef.current[aId];
           const rb = npcRuntimeStatesRef.current[bId];
-          if ((ra?.holdUntil ?? 0) > now || (rb?.holdUntil ?? 0) > now) continue;
+          if ((ra?.holdUntil ?? 0) > now || (rb?.holdUntil ?? 0) > now)
+            continue;
           emoteCooldownRef.current[pair] = now + 16000;
           const talk = Math.random() < 0.4;
-          setNpcRuntimeStates((states) => {
+          setNpcRuntimeStates(states => {
             const next = {...states};
             const baseA = next[aId] ?? {mood: "calm" as NpcMood, energy: 50};
             const baseB = next[bId] ?? {mood: "calm" as NpcMood, energy: 50};
             if (talk) {
-              next[aId] = {...baseA, bubbleText: pairGag(aId, bId) ?? pickRandom(NPC_SMALL_TALK), bubbleExpiresAt: now + 3200};
-              next[bId] = {...baseB, emote: pickRandom(NPC_EMOTES), emoteExpiresAt: now + 2600};
+              next[aId] = {
+                ...baseA,
+                bubbleText: pairGag(aId, bId) ?? pickRandom(NPC_SMALL_TALK),
+                bubbleExpiresAt: now + 3200
+              };
+              next[bId] = {
+                ...baseB,
+                emote: pickRandom(NPC_EMOTES),
+                emoteExpiresAt: now + 2600
+              };
             } else {
-              next[aId] = {...baseA, emote: pickRandom(NPC_EMOTES), emoteExpiresAt: now + 2600};
-              next[bId] = {...baseB, emote: pickRandom(NPC_EMOTES), emoteExpiresAt: now + 2600};
+              next[aId] = {
+                ...baseA,
+                emote: pickRandom(NPC_EMOTES),
+                emoteExpiresAt: now + 2600
+              };
+              next[bId] = {
+                ...baseB,
+                emote: pickRandom(NPC_EMOTES),
+                emoteExpiresAt: now + 2600
+              };
             }
             return next;
           });
@@ -750,14 +916,19 @@ export function AIPortfolioVillage() {
       const rels = relationshipsRef.current;
       if (!rels.length) return;
 
-      const actor = SOCIAL_CAST[Math.floor(Math.random() * SOCIAL_CAST.length)]!;
-      if ((npcRuntimeStatesRef.current[actor]?.holdUntil ?? 0) > Date.now()) return; // 대화 중이면 스킵
+      const actor =
+        SOCIAL_CAST[Math.floor(Math.random() * SOCIAL_CAST.length)]!;
+      if ((npcRuntimeStatesRef.current[actor]?.holdUntil ?? 0) > Date.now())
+        return; // 대화 중이면 스킵
 
       const kind = canonKind(actor);
       const mine = rels
-        .filter((r) => r.npc_a === kind || r.npc_b === kind)
-        .map((r) => ({other: r.npc_a === kind ? r.npc_b : r.npc_a, affinity: r.affinity}))
-        .filter((m) => m.other !== kind);
+        .filter(r => r.npc_a === kind || r.npc_b === kind)
+        .map(r => ({
+          other: r.npc_a === kind ? r.npc_b : r.npc_a,
+          affinity: r.affinity
+        }))
+        .filter(m => m.other !== kind);
       if (!mine.length) return;
 
       mine.sort((x, y) => y.affinity - x.affinity);
@@ -776,9 +947,12 @@ export function AIPortfolioVillage() {
       const pos = npcPositionsRef.current[repId];
       if (!pos) return;
 
-      setNpcSocialTargets((state) => ({...state, [actor]: [pos[0], 0, pos[2]] as Vector3Tuple}));
+      setNpcSocialTargets(state => ({
+        ...state,
+        [actor]: [pos[0], 0, pos[2]] as Vector3Tuple
+      }));
       window.setTimeout(() => {
-        setNpcSocialTargets((state) => {
+        setNpcSocialTargets(state => {
           const next = {...state};
           delete next[actor];
           return next;
@@ -813,7 +987,18 @@ export function AIPortfolioVillage() {
 
   // 코나미 코드 이스터에그 (↑↑↓↓←→←→ B A)
   useEffect(() => {
-    const seq = ["arrowup", "arrowup", "arrowdown", "arrowdown", "arrowleft", "arrowright", "arrowleft", "arrowright", "b", "a"];
+    const seq = [
+      "arrowup",
+      "arrowup",
+      "arrowdown",
+      "arrowdown",
+      "arrowleft",
+      "arrowright",
+      "arrowleft",
+      "arrowright",
+      "b",
+      "a"
+    ];
     let idx = 0;
     function onKey(event: KeyboardEvent) {
       const key = event.key.toLowerCase();
@@ -859,7 +1044,10 @@ export function AIPortfolioVillage() {
   // 루미가 안 도착해도 패널이 뜨도록 안전망
   useEffect(() => {
     if (conciergeStage !== "running") return;
-    const t = setTimeout(() => setConciergeStage((s) => (s === "running" ? "panel" : s)), 6500);
+    const t = setTimeout(
+      () => setConciergeStage(s => (s === "running" ? "panel" : s)),
+      6500
+    );
     return () => clearTimeout(t);
   }, [conciergeStage]);
 
@@ -901,7 +1089,7 @@ export function AIPortfolioVillage() {
   function handleConciergeAsk() {
     markConciergeSeen();
     setConciergeStage("closed");
-    const guide = autonomousNpcs.find((n) => n.id === GUIDE_ID);
+    const guide = autonomousNpcs.find(n => n.id === GUIDE_ID);
     if (guide) openNpcDialogue(guide);
   }
 
@@ -914,46 +1102,72 @@ export function AIPortfolioVillage() {
   function notifyRelationship(
     aId: string,
     bId: string,
-    rel?: {vibe: string; delta: number; affinity: number; milestone?: string} | null
+    rel?: {
+      vibe: string;
+      delta: number;
+      affinity: number;
+      milestone?: string;
+    } | null
   ) {
     if (!rel) return;
-    const nameOf = (id: string) => autonomousNpcs.find((n) => n.id === id)?.name ?? id;
+    const nameOf = (id: string) =>
+      autonomousNpcs.find(n => n.id === id)?.name ?? id;
     if (rel.milestone) {
-      const emoji = rel.milestone.includes("절친") ? "💞" : rel.milestone.includes("화해") ? "🤝" : rel.milestone.includes("앙숙") ? "💔" : "😤";
-      setMilestoneEvent(`${emoji} ${nameOf(aId)} ↔ ${nameOf(bId)} · ${rel.milestone}!`);
+      const emoji = rel.milestone.includes("절친")
+        ? "💞"
+        : rel.milestone.includes("화해")
+        ? "🤝"
+        : rel.milestone.includes("앙숙")
+        ? "💔"
+        : "😤";
+      setMilestoneEvent(
+        `${emoji} ${nameOf(aId)} ↔ ${nameOf(bId)} · ${rel.milestone}!`
+      );
       window.setTimeout(() => setMilestoneEvent(null), 5200);
       return;
     }
     if (Math.abs(rel.delta) < 2) return;
     const emoji = rel.delta > 0 ? "💚" : "💢";
-    setEncounterNotice(`${nameOf(aId)} ↔ ${nameOf(bId)} · ${rel.vibe} ${emoji}`);
+    setEncounterNotice(
+      `${nameOf(aId)} ↔ ${nameOf(bId)} · ${rel.vibe} ${emoji}`
+    );
     window.setTimeout(() => setEncounterNotice(null), 3400);
   }
 
   // NPC 간 대화를 한 줄씩 순차로 말풍선 재생(주고받기) + 엿듣기 기록
-  function playConversation(aId: string, bId: string, dialogue: {npc_id: string; text: string}[]) {
-    convoTimersRef.current.forEach((t) => window.clearTimeout(t));
+  function playConversation(
+    aId: string,
+    bId: string,
+    dialogue: {npc_id: string; text: string}[]
+  ) {
+    convoTimersRef.current.forEach(t => window.clearTimeout(t));
     convoTimersRef.current = [];
-    const nameOf = (id: string) => autonomousNpcs.find((n) => n.id === id)?.name ?? id;
+    const nameOf = (id: string) =>
+      autonomousNpcs.find(n => n.id === id)?.name ?? id;
 
     setEavesdrop({
       aName: nameOf(aId),
       bName: nameOf(bId),
-      lines: dialogue.map((l) => ({name: nameOf(l.npc_id), text: l.text}))
+      lines: dialogue.map(l => ({name: nameOf(l.npc_id), text: l.text}))
     });
     setEavesOpen(false);
 
     dialogue.forEach((line, i) => {
       const t = window.setTimeout(() => {
         const other = line.npc_id === aId ? bId : aId;
-        setNpcRuntimeStates((states) => {
+        setNpcRuntimeStates(states => {
           const next = {...states};
           next[line.npc_id] = {
             ...(next[line.npc_id] ?? {mood: "curious" as NpcMood, energy: 55}),
             bubbleText: line.text,
             bubbleExpiresAt: Date.now() + CONVO_STEP + 800
           };
-          if (next[other]) next[other] = {...next[other], bubbleText: undefined, bubbleExpiresAt: undefined};
+          if (next[other])
+            next[other] = {
+              ...next[other],
+              bubbleText: undefined,
+              bubbleExpiresAt: undefined
+            };
           return next;
         });
       }, i * CONVO_STEP);
@@ -968,27 +1182,38 @@ export function AIPortfolioVillage() {
     convoTimersRef.current.push(clearT);
   }
 
-  useEffect(() => () => convoTimersRef.current.forEach((t) => window.clearTimeout(t)), []);
-  useEffect(() => () => patrolTimersRef.current.forEach((t) => window.clearTimeout(t)), []);
+  useEffect(
+    () => () => convoTimersRef.current.forEach(t => window.clearTimeout(t)),
+    []
+  );
+  useEffect(
+    () => () => patrolTimersRef.current.forEach(t => window.clearTimeout(t)),
+    []
+  );
 
   function handleNpcPositionChange(npcId: string, position: Vector3Tuple) {
     npcPositionsRef.current[npcId] = position;
   }
 
-  function handleNpcSuggestedAction(action: NpcSuggestedAction | null | undefined) {
+  function handleNpcSuggestedAction(
+    action: NpcSuggestedAction | null | undefined
+  ) {
     if (!action) return;
 
     const actionState = suggestedActionToState(action);
-    setNpcRuntimeStates((states) => ({
+    setNpcRuntimeStates(states => ({
       ...states,
-      [actionState.npcId]: applyActionStateToRuntime(states[actionState.npcId], actionState)
+      [actionState.npcId]: applyActionStateToRuntime(
+        states[actionState.npcId],
+        actionState
+      )
     }));
     remember(actionState.statusText);
   }
 
   function runManualNpcAction(npc: NPCData, action: NpcActionDefinition) {
     const actionState = actionDefinitionToState(npc, action);
-    setNpcRuntimeStates((states) => ({
+    setNpcRuntimeStates(states => ({
       ...states,
       [npc.id]: applyActionStateToRuntime(states[npc.id], actionState)
     }));
@@ -1027,14 +1252,21 @@ export function AIPortfolioVillage() {
   function travelTo(point: TravelPoint) {
     const target = cameraTargets[point.key];
     if (!target) return;
-    trackVisitorEvent({event_type: "quick_travel", target_id: point.key, label: point.label});
+    trackVisitorEvent({
+      event_type: "quick_travel",
+      target_id: point.key,
+      label: point.label
+    });
     setShowIntro(false);
     setSelectedNpc(null);
     setIsPanelOpen(false);
     setConciergeStage("closed");
     if (point.sectionId) setActiveSection(point.sectionId);
     // 매번 새 객체로 만들어 카메라 전환을 다시 트리거
-    setTravelCam({position: [...target.position] as Vector3Tuple, lookAt: [...target.lookAt] as Vector3Tuple});
+    setTravelCam({
+      position: [...target.position] as Vector3Tuple,
+      lookAt: [...target.lookAt] as Vector3Tuple
+    });
   }
 
   // ── NPC 단체 명령 ──
@@ -1054,16 +1286,26 @@ export function AIPortfolioVillage() {
     setShowIntro(false);
     setSelectedNpc(null);
     const willActivate = npcCommand !== mode;
-    trackVisitorEvent({event_type: "npc_command", target_id: mode, label: willActivate ? "on" : "off"});
+    trackVisitorEvent({
+      event_type: "npc_command",
+      target_id: mode,
+      label: willActivate ? "on" : "off"
+    });
 
     if (willActivate && mode === "follow") setExplorationMode("walk");
 
     // 모으기·단체사진·파티는 광장이 보이게 카메라도 같이 이동
-    if (willActivate && (mode === "gather" || mode === "photo" || mode === "party")) {
+    if (
+      willActivate &&
+      (mode === "gather" || mode === "photo" || mode === "party")
+    ) {
       const t = cameraTargets.intro;
       setActiveSection("intro");
       setIsPanelOpen(false);
-      setTravelCam({position: [...t.position] as Vector3Tuple, lookAt: [...t.lookAt] as Vector3Tuple});
+      setTravelCam({
+        position: [...t.position] as Vector3Tuple,
+        lookAt: [...t.lookAt] as Vector3Tuple
+      });
     }
 
     setNpcCommand(willActivate ? mode : null);
@@ -1071,7 +1313,11 @@ export function AIPortfolioVillage() {
 
   // 인사 — 잠깐 모두 인사하고 이전 상태로 복귀(일회성)
   function commandGreet() {
-    trackVisitorEvent({event_type: "npc_command", target_id: "greet", label: "on"});
+    trackVisitorEvent({
+      event_type: "npc_command",
+      target_id: "greet",
+      label: "on"
+    });
     setOverseerTarget(null);
     patrolTargetIdRef.current = "";
     setShowIntro(false);
@@ -1088,7 +1334,11 @@ export function AIPortfolioVillage() {
   // 다시 일하기 — 모든 명령 해제, 각자 배회로 복귀
   function backToWork() {
     clearGreetTimer();
-    trackVisitorEvent({event_type: "npc_command", target_id: "disperse", label: "off"});
+    trackVisitorEvent({
+      event_type: "npc_command",
+      target_id: "disperse",
+      label: "off"
+    });
     setNpcCommand(null);
   }
 
@@ -1096,8 +1346,8 @@ export function AIPortfolioVillage() {
     npcCommand === "photo"
       ? COMMAND_PHOTO_TARGETS
       : npcCommand === "gather" || npcCommand === "party"
-        ? COMMAND_DISK_TARGETS
-        : undefined;
+      ? COMMAND_DISK_TARGETS
+      : undefined;
 
   // 다 같이 수다 — 핵심 NPC들을 광장에 모으고 단체 대화를 말풍선으로 재생 (AI 1회 호출)
   function commandGroupTalk() {
@@ -1110,14 +1360,23 @@ export function AIPortfolioVillage() {
     const t = cameraTargets.intro;
     setActiveSection("intro");
     setIsPanelOpen(false);
-    setTravelCam({position: [...t.position] as Vector3Tuple, lookAt: [...t.lookAt] as Vector3Tuple});
+    setTravelCam({
+      position: [...t.position] as Vector3Tuple,
+      lookAt: [...t.lookAt] as Vector3Tuple
+    });
     setNpcCommand("gather");
     setGroupChatBusy(true);
-    trackVisitorEvent({event_type: "npc_command", target_id: "group-talk", label: "on"});
+    trackVisitorEvent({
+      event_type: "npc_command",
+      target_id: "group-talk",
+      label: "on"
+    });
 
-    const ids = autonomousNpcs.filter((npc) => CORE_NPC_IDS.has(npc.id)).map((npc) => npc.id);
+    const ids = autonomousNpcs
+      .filter(npc => CORE_NPC_IDS.has(npc.id))
+      .map(npc => npc.id);
     requestGroupChat(ids, npcMemoryRef.current.slice(-6))
-      .then((res) => playGroupChat(res.dialogue))
+      .then(res => playGroupChat(res.dialogue))
       .catch(() => {
         setGroupChatBusy(false);
         setEncounterNotice("수다 생성에 실패했어요 (백엔드 확인) 🚧");
@@ -1126,9 +1385,10 @@ export function AIPortfolioVillage() {
   }
 
   function playGroupChat(dialogue: {npc_id: string; text: string}[]) {
-    convoTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+    convoTimersRef.current.forEach(timer => window.clearTimeout(timer));
     convoTimersRef.current = [];
-    const nameOf = (id: string) => autonomousNpcs.find((npc) => npc.id === id)?.name ?? id;
+    const nameOf = (id: string) =>
+      autonomousNpcs.find(npc => npc.id === id)?.name ?? id;
 
     if (!dialogue.length) {
       setGroupChatBusy(false);
@@ -1136,15 +1396,25 @@ export function AIPortfolioVillage() {
     }
 
     remember("마을 NPC들이 다 같이 수다를 떨었다.");
-    setGroupChat({lines: dialogue.map((line) => ({name: nameOf(line.npc_id), text: line.text}))});
+    setGroupChat({
+      lines: dialogue.map(line => ({
+        name: nameOf(line.npc_id),
+        text: line.text
+      }))
+    });
     setGroupChatOpen(true);
 
     dialogue.forEach((line, index) => {
       const timer = window.setTimeout(() => {
-        setNpcRuntimeStates((states) => {
+        setNpcRuntimeStates(states => {
           const next = {...states};
           for (const key of Object.keys(next)) {
-            if (next[key]?.bubbleText) next[key] = {...next[key], bubbleText: undefined, bubbleExpiresAt: undefined};
+            if (next[key]?.bubbleText)
+              next[key] = {
+                ...next[key],
+                bubbleText: undefined,
+                bubbleExpiresAt: undefined
+              };
           }
           next[line.npc_id] = {
             ...(next[line.npc_id] ?? {mood: "curious" as NpcMood, energy: 55}),
@@ -1157,7 +1427,10 @@ export function AIPortfolioVillage() {
       convoTimersRef.current.push(timer);
     });
 
-    const endTimer = window.setTimeout(() => setGroupChatBusy(false), dialogue.length * CONVO_STEP + 600);
+    const endTimer = window.setTimeout(
+      () => setGroupChatBusy(false),
+      dialogue.length * CONVO_STEP + 600
+    );
     const closeTimer = window.setTimeout(() => {
       setGroupChatOpen(false);
       setGroupChat(null);
@@ -1186,7 +1459,7 @@ export function AIPortfolioVillage() {
   function handleGuideArrive() {
     const pos = npcPositionsRef.current[GUIDE_ID] ?? WELCOME_SPOT;
     setConciergeCam(closeUp(pos));
-    setConciergeStage((s) => (s === "running" ? "panel" : s));
+    setConciergeStage(s => (s === "running" ? "panel" : s));
   }
 
   // 루미(가이드)는 컨시어지 패널로, 나머지는 일반 대화로
@@ -1203,7 +1476,11 @@ export function AIPortfolioVillage() {
   }
 
   function startExploring(mode: ExplorationMode) {
-    trackVisitorEvent({event_type: "exploration_start", target_id: mode, label: mode});
+    trackVisitorEvent({
+      event_type: "exploration_start",
+      target_id: mode,
+      label: mode
+    });
     setShowIntro(false);
     setExplorationMode(mode);
     setActiveSection("intro");
@@ -1211,7 +1488,11 @@ export function AIPortfolioVillage() {
   }
 
   function openResume() {
-    trackVisitorEvent({event_type: "resume_open", target_id: "resume", label: "Resume Mode"});
+    trackVisitorEvent({
+      event_type: "resume_open",
+      target_id: "resume",
+      label: "Resume Mode"
+    });
     setShowIntro(false);
     setViewMode("resume");
   }
@@ -1226,14 +1507,18 @@ export function AIPortfolioVillage() {
 
   // 클릭하면 확인창 없이 바로 입장
   function handleRequestEnter(buildingId: string) {
-    const building = villageBuildings.find((b) => b.id === buildingId);
+    const building = villageBuildings.find(b => b.id === buildingId);
     if (!building) return;
 
     trackVisitorEvent({
-      event_type: building.district === "projects" ? "project_open" : "building_enter",
+      event_type:
+        building.district === "projects" ? "project_open" : "building_enter",
       target_id: building.id,
       label: building.name,
-      metadata: {district: building.district, contentId: building.contentId ?? ""}
+      metadata: {
+        district: building.district,
+        contentId: building.contentId ?? ""
+      }
     });
 
     if (building.district === "plaza") {
@@ -1303,7 +1588,9 @@ export function AIPortfolioVillage() {
   const stableHandleRequestEnter = useStableCallback(handleRequestEnter);
   const stableOpenNpc = useStableCallback(openNpc);
   const stableOpenSection = useStableCallback(openSection);
-  const stableHandleNpcPositionChange = useStableCallback(handleNpcPositionChange);
+  const stableHandleNpcPositionChange = useStableCallback(
+    handleNpcPositionChange
+  );
   const stableHandleGuideArrive = useStableCallback(handleGuideArrive);
   const stableSetEditing = useStableCallback((e: boolean) => {
     editingRef.current = e;
@@ -1314,7 +1601,12 @@ export function AIPortfolioVillage() {
       {viewMode === "village" ? (
         <>
           {/* 인트로 중엔 헤더 숨김 — 첫 화면 집중 */}
-          {!showIntro ? <Header activeSection={activeSection} onSelectSection={stableOpenSection} /> : null}
+          {!showIntro ? (
+            <Header
+              activeSection={activeSection}
+              onSelectSection={stableOpenSection}
+            />
+          ) : null}
           <section
             className={
               isPanelOpen
@@ -1333,7 +1625,9 @@ export function AIPortfolioVillage() {
               npcRuntimeStates={npcRuntimeStates}
               onNpcPositionChange={stableHandleNpcPositionChange}
               villageState={villageState}
-              guideScriptedTarget={conciergeStage === "running" ? WELCOME_SPOT : null}
+              guideScriptedTarget={
+                conciergeStage === "running" ? WELCOME_SPOT : null
+              }
               onGuideArrive={stableHandleGuideArrive}
               guideForceHold={conciergeStage === "panel"}
               npcCommand={npcCommand}
@@ -1345,28 +1639,34 @@ export function AIPortfolioVillage() {
                 eavesOpen && convoCam
                   ? convoCam
                   : conciergeStage === "running"
-                    ? CONCIERGE_CAM
-                    : conciergeStage === "panel"
-                      ? conciergeCam
-                      : talkCam ?? travelCam
+                  ? CONCIERGE_CAM
+                  : conciergeStage === "panel"
+                  ? conciergeCam
+                  : talkCam ?? travelCam
               }
             />
-            {showIntro ? <IntroOverlay onStart={startExploring} onResume={openResume} /> : null}
+            {showIntro ? (
+              <IntroOverlay onStart={startExploring} onResume={openResume} />
+            ) : null}
           </section>
           {!showIntro ? (
             <button
               type="button"
               onClick={() => {
-                setExplorationMode((m) => (m === "walk" ? "click" : "walk"));
+                setExplorationMode(m => (m === "walk" ? "click" : "walk"));
                 setIsPanelOpen(false);
                 setSelectedNpc(null);
               }}
               className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 active:scale-95 md:bottom-6"
             >
               {explorationMode === "walk" ? (
-                <><span>🖱️</span> 클릭 모드로</>
+                <>
+                  <span>🖱️</span> 클릭 모드로
+                </>
               ) : (
-                <><span>🚶</span> 직접 이동 (WASD)</>
+                <>
+                  <span>🚶</span> 직접 이동 (WASD)
+                </>
               )}
             </button>
           ) : null}
@@ -1375,7 +1675,7 @@ export function AIPortfolioVillage() {
               type="button"
               aria-label={soundOn ? "사운드 끄기" : "사운드 켜기"}
               onClick={() => {
-                setSoundOn((on) => {
+                setSoundOn(on => {
                   const next = !on;
                   sfx.setMuted(!next);
                   if (next) sfx.startAmbient();
@@ -1387,16 +1687,19 @@ export function AIPortfolioVillage() {
               {soundOn ? "🔊" : "🔇"}
             </button>
           ) : null}
-          {!showIntro ? <LiveStatusPanel error={liveError} villageState={villageState} /> : null}
+          {!showIntro ? (
+            <LiveStatusPanel error={liveError} villageState={villageState} />
+          ) : null}
           {!showIntro ? <ControlsHint /> : null}
           {!showIntro ? (
-            <NpcQuickDock
-              activeNpcId={selectedNpc?.id}
-              onSelect={openNpc}
-            />
+            <NpcQuickDock activeNpcId={selectedNpc?.id} onSelect={openNpc} />
           ) : null}
-          {!showIntro && !isPanelOpen ? <QuickTravelDock activeKey={activeSection} onTravel={travelTo} /> : null}
-          {!showIntro && !isPanelOpen ? <Minimap activeKey={activeSection} onTravel={travelTo} /> : null}
+          {!showIntro && !isPanelOpen ? (
+            <QuickTravelDock activeKey={activeSection} onTravel={travelTo} />
+          ) : null}
+          {!showIntro && !isPanelOpen ? (
+            <Minimap activeKey={activeSection} onTravel={travelTo} />
+          ) : null}
           {!showIntro ? (
             <CommandDock
               command={npcCommand}
@@ -1421,9 +1724,14 @@ export function AIPortfolioVillage() {
               onOpenRelations={() => setRelOpen(true)}
             />
           ) : null}
-          {relOpen ? <RelationshipViewer onClose={() => setRelOpen(false)} /> : null}
+          {relOpen ? (
+            <RelationshipViewer onClose={() => setRelOpen(false)} />
+          ) : null}
           {groupChat && groupChatOpen ? (
-            <GroupChatPanel lines={groupChat.lines} onClose={() => setGroupChatOpen(false)} />
+            <GroupChatPanel
+              lines={groupChat.lines}
+              onClose={() => setGroupChatOpen(false)}
+            />
           ) : null}
           {encounterNotice ? <EncounterNotice text={encounterNotice} /> : null}
           {milestoneEvent ? <MilestoneBanner text={milestoneEvent} /> : null}
@@ -1438,10 +1746,19 @@ export function AIPortfolioVillage() {
             />
           ) : null}
           {eavesdrop && !eavesOpen ? (
-            <EavesdropButton aName={eavesdrop.aName} bName={eavesdrop.bName} onOpen={() => setEavesOpen(true)} />
+            <EavesdropButton
+              aName={eavesdrop.aName}
+              bName={eavesdrop.bName}
+              onOpen={() => setEavesOpen(true)}
+            />
           ) : null}
           {eavesdrop && eavesOpen ? (
-            <EavesdropPanel aName={eavesdrop.aName} bName={eavesdrop.bName} lines={eavesdrop.lines} onClose={() => setEavesOpen(false)} />
+            <EavesdropPanel
+              aName={eavesdrop.aName}
+              bName={eavesdrop.bName}
+              lines={eavesdrop.lines}
+              onClose={() => setEavesOpen(false)}
+            />
           ) : null}
           <InfoPanel
             activeSection={activeSection}
@@ -1451,24 +1768,37 @@ export function AIPortfolioVillage() {
           />
           <DialogueBox
             npc={selectedNpc}
-            npcState={selectedNpc ? getDisplayedNpcState(selectedNpc.id) : undefined}
-            npcRuntimeState={selectedNpc ? npcRuntimeStates[selectedNpc.id] : undefined}
+            npcState={
+              selectedNpc ? getDisplayedNpcState(selectedNpc.id) : undefined
+            }
+            npcRuntimeState={
+              selectedNpc ? npcRuntimeStates[selectedNpc.id] : undefined
+            }
             onClose={() => setSelectedNpc(null)}
             onOpenSection={openSection}
             onRunAction={runManualNpcAction}
             onSuggestedAction={handleNpcSuggestedAction}
             aiOffline={!!liveError}
           />
-          <SectionTabs activeSection={activeSection} onSelectSection={openSection} />
+          <SectionTabs
+            activeSection={activeSection}
+            onSelectSection={openSection}
+          />
         </>
       ) : null}
 
       {viewMode === "interior" && interiorSectionId ? (
-        <InteriorScene sectionId={interiorSectionId} onBack={handleExitInterior} />
+        <InteriorScene
+          sectionId={interiorSectionId}
+          onBack={handleExitInterior}
+        />
       ) : null}
 
       {viewMode === "project-interior" && interiorProjectId ? (
-        <ProjectInterior projectId={interiorProjectId} onBack={handleExitInterior} />
+        <ProjectInterior
+          projectId={interiorProjectId}
+          onBack={handleExitInterior}
+        />
       ) : null}
 
       {viewMode === "resume" ? (
@@ -1503,7 +1833,10 @@ function suggestedActionToState(action: NpcSuggestedAction): NpcActionState {
   };
 }
 
-function actionDefinitionToState(npc: NPCData, action: NpcActionDefinition): NpcActionState {
+function actionDefinitionToState(
+  npc: NPCData,
+  action: NpcActionDefinition
+): NpcActionState {
   return {
     npcId: npc.id,
     actionId: action.id,
@@ -1526,7 +1859,10 @@ function applySuggestedActionToRuntime(
   return applyActionStateToRuntime(state, suggestedActionToState(action));
 }
 
-function applyActionStateToRuntime(state: NpcRuntimeState | undefined, action: NpcActionState): NpcRuntimeState {
+function applyActionStateToRuntime(
+  state: NpcRuntimeState | undefined,
+  action: NpcActionState
+): NpcRuntimeState {
   const base = state ?? {mood: "curious" as NpcMood, energy: 55};
   return {
     ...base,
@@ -1534,4 +1870,3 @@ function applyActionStateToRuntime(state: NpcRuntimeState | undefined, action: N
     recentActions: [action, ...(base.recentActions ?? [])].slice(0, 5)
   };
 }
-

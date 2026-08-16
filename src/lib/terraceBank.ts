@@ -73,9 +73,12 @@ export function makeBankTexture() {
   // 켜 높이를 흔든다. 아래쪽 켜를 두껍게 두면 밑을 크게 쌓아 올린 축대로 읽힌다.
   const rows = jitteredEdges(COURSES, H, 17);
   // 켜마다 돌 나누기 + 어긋냄. 켜에만 달린 값이라 미리 구해 둔다.
-  const colsOf = Array.from({length: COURSES}, (_, c) => jitteredEdges(PER_TILE, W, 40 + c));
-  const shiftOf = Array.from({length: COURSES}, (_, c) =>
-    (c % 2 === 0 ? 0 : W / (PER_TILE * 2)) + hash(c, 29) * W * 0.04
+  const colsOf = Array.from({length: COURSES}, (_, c) =>
+    jitteredEdges(PER_TILE, W, 40 + c)
+  );
+  const shiftOf = Array.from(
+    {length: COURSES},
+    (_, c) => (c % 2 === 0 ? 0 : W / (PER_TILE * 2)) + hash(c, 29) * W * 0.04
   );
 
   // 담쟁이 줄기 — 발치에서 시작해 위로 기어오른다. 줄기마다 뻗는 높이가 다르다.
@@ -120,15 +123,22 @@ export function makeBankTexture() {
 
       // 줄눈 폭도 켜마다 조금씩 다르게 — 일정하면 자로 그은 티가 난다
       const mortar = 1.8 + 1.1 * hash(col + 5, course + 5);
-      const inMortar = fx < mortar || fx > colW - mortar || fy < mortar || fy > rowH - mortar;
+      const inMortar =
+        fx < mortar || fx > colW - mortar || fy < mortar || fy > rowH - mortar;
       // 왼쪽 위를 밝게, 오른쪽 아래를 어둡게 — 노멀맵 없이 돌이 도드라진다
       const bevel =
-        fx < colW * 0.16 || fy < rowH * 0.2 ? 1.09 : fx > colW * 0.86 || fy > rowH * 0.82 ? 0.88 : 1;
+        fx < colW * 0.16 || fy < rowH * 0.2
+          ? 1.09
+          : fx > colW * 0.86 || fy > rowH * 0.82
+          ? 0.88
+          : 1;
 
       let r: number, g: number, b: number;
       if (inMortar) {
         // 줄눈은 어둡게, 그러나 **따뜻하게.** 차갑게 두면 벽 전체가 시멘트로 보인다.
-        r = 112; g = 99; b = 78;
+        r = 112;
+        g = 99;
+        b = 78;
       } else {
         // 판석(182,164,131)과 같은 계열 — 축대에서 포장으로 재료가 이어져 보인다
         r = 186 * tone * bevel;
@@ -137,10 +147,13 @@ export function makeBankTexture() {
       }
 
       // 발치의 이끼 — 축대가 땅에서 자라난 것처럼 보이게 한다
-      const moss = Math.max(0, 1 - v * 4.2) * lerp(0.4, 1, hash(col + 71, course + 31));
+      const moss =
+        Math.max(0, 1 - v * 4.2) * lerp(0.4, 1, hash(col + 71, course + 31));
       if (moss > 0) {
         const m = Math.min(0.66, moss * (0.4 + 0.6 * hash(i, j)));
-        r = lerp(r, 104, m); g = lerp(g, 124, m); b = lerp(b, 66, m);
+        r = lerp(r, 104, m);
+        g = lerp(g, 124, m);
+        b = lerp(b, 66, m);
       }
 
       // 담쟁이 — 격자를 깨뜨리는 게 절반, 손그림처럼 보이게 하는 게 절반이다.
@@ -152,7 +165,9 @@ export function makeBankTexture() {
         // 가로가 되풀이되므로 거리도 원형으로 재야 이음매에서 줄기가 잘리지 않는다
         const d = Math.min(Math.abs(i - cx), W - Math.abs(i - cx));
         // 잎이 뭉치고 흩어지게 — 폭을 세로로 흔든다
-        const half = vine.half * (0.55 + 0.9 * hash(Math.floor(j / 7), Math.floor(vine.x)));
+        const half =
+          vine.half *
+          (0.55 + 0.9 * hash(Math.floor(j / 7), Math.floor(vine.x)));
         if (d > half) continue;
         ivy = Math.max(ivy, (1 - v / vine.reach) * (1 - d / half) * 1.5);
       }

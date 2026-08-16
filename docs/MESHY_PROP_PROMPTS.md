@@ -8,14 +8,14 @@
 
 현재 마을의 배경 오브젝트는 전부 **코드로 그린 사이버펑크 네온**입니다.
 
-| 요소 | 현재 구현 위치 | 지금 모습 |
-| --- | --- | --- |
-| 나무 | `src/components/village/Tree.tsx` | `metalness 0.85` + emissive `#00ff88`/`#aa44ff` 금속 네온 트리 |
-| 바위 | `Decorations.tsx:35` `Rock` | 십이면체 + `pointLight #00aaff` 발광 크리스탈 |
-| 울타리 | `Decorations.tsx:50` `Fence` | `meshBasicMaterial #00d4ff` — 에너지 배리어 |
-| 길 | `Decorations.tsx:18` `PathSegment` | 검은 아스팔트 + 네온 센터라인 |
-| 표지판 | `Decorations.tsx:73` `SignPost` | 홀로그램 패널 + 글로우 |
-| 씬 조명 | `VillageScene.tsx:279-282` | `#00d4ff` `#aa44ff` `#00ff88` `#ff6600` 포인트라이트 4개 |
+| 요소    | 현재 구현 위치                     | 지금 모습                                                      |
+| ------- | ---------------------------------- | -------------------------------------------------------------- |
+| 나무    | `src/components/village/Tree.tsx`  | `metalness 0.85` + emissive `#00ff88`/`#aa44ff` 금속 네온 트리 |
+| 바위    | `Decorations.tsx:35` `Rock`        | 십이면체 + `pointLight #00aaff` 발광 크리스탈                  |
+| 울타리  | `Decorations.tsx:50` `Fence`       | `meshBasicMaterial #00d4ff` — 에너지 배리어                    |
+| 길      | `Decorations.tsx:18` `PathSegment` | 검은 아스팔트 + 네온 센터라인                                  |
+| 표지판  | `Decorations.tsx:73` `SignPost`    | 홀로그램 패널 + 글로우                                         |
+| 씬 조명 | `VillageScene.tsx:279-282`         | `#00d4ff` `#aa44ff` `#00ff88` `#ff6600` 포인트라이트 4개       |
 
 판타지 건물만 올리면 이 네온 배경 위에 건물만 동떨어져 보입니다. **건물 교체와 데코 교체는 한 세트입니다.**
 
@@ -116,34 +116,34 @@ blurry, misspelled text, garbled letters, watermark
 
 **캐릭터 키 = 1.0** 을 기준으로 삼습니다. 이미지 안에서 이 비율감이 느껴지게 프롬프트에 크기 서술을 넣었고, 배치할 때도 이 표대로 맞추면 마을 전체 축척이 흔들리지 않습니다.
 
-| 항목 | 상대 높이 | 항목 | 상대 높이 |
-| --- | --- | --- | --- |
-| 침엽수 | 3.0 | 마을 입구 아치 | 3.2 |
-| 참나무 | 2.5 | 깃대 | 3.5 |
-| 꽃나무 | 2.2 | 동상 | 3.0 |
-| 가로등 | 2.2 | 노점 | 2.4 |
-| 이정표 | 2.0 | 분수 | 1.8 |
-| 구역 표지판 | 1.8 | 게시판 | 1.5 |
-| 우물 | 1.2 | 우편함 | 1.1 |
-| 울타리 문 | 1.6 | 이젤 | 1.4 |
-| 울타리 | 0.8 | 나무통 | 0.8 |
-| 바위 | 0.7 | 벤치 | 0.6 |
-| 상자 | 0.6 | 모닥불 | 0.6 |
-| 덤불 | 0.5 | 그루터기 | 0.4 |
-| 작은 돌무더기 | 0.3 | 꽃무리 | 0.2 |
+| 항목          | 상대 높이 | 항목           | 상대 높이 |
+| ------------- | --------- | -------------- | --------- |
+| 침엽수        | 3.0       | 마을 입구 아치 | 3.2       |
+| 참나무        | 2.5       | 깃대           | 3.5       |
+| 꽃나무        | 2.2       | 동상           | 3.0       |
+| 가로등        | 2.2       | 노점           | 2.4       |
+| 이정표        | 2.0       | 분수           | 1.8       |
+| 구역 표지판   | 1.8       | 게시판         | 1.5       |
+| 우물          | 1.2       | 우편함         | 1.1       |
+| 울타리 문     | 1.6       | 이젤           | 1.4       |
+| 울타리        | 0.8       | 나무통         | 0.8       |
+| 바위          | 0.7       | 벤치           | 0.6       |
+| 상자          | 0.6       | 모닥불         | 0.6       |
+| 덤불          | 0.5       | 그루터기       | 0.4       |
+| 작은 돌무더기 | 0.3       | 꽃무리         | 0.2       |
 
 ---
 
 ## 5. Meshy 설정
 
-| 항목 | 값 |
-| --- | --- |
-| 모드 | **Image to 3D** |
-| Topology | Triangle |
+| 항목      | 값                                    |
+| --------- | ------------------------------------- |
+| 모드      | **Image to 3D**                       |
+| Topology  | Triangle                              |
 | Polycount | **Low (~5k)** — 건물보다 한 단계 낮게 |
-| Texture | On, PBR 끔 (매트 룩이라 필요 없음) |
-| Symmetry | Auto (표지판·가로등은 On 권장) |
-| Rigging | **사용 안 함** (데코는 정적) |
+| Texture   | On, PBR 끔 (매트 룩이라 필요 없음)    |
+| Symmetry  | Auto (표지판·가로등은 On 권장)        |
+| Rigging   | **사용 안 함** (데코는 정적)          |
 
 ---
 
@@ -158,6 +158,7 @@ blurry, misspelled text, garbled letters, watermark
 ### `nature/` — 자연물 (7종) · 프리픽스 A
 
 #### ★ 1. `tree-oak.glb` — 둥근 활엽수
+
 ```
 a chubby fairytale oak tree with one big rounded puffy canopy made of a few
 simple blobby leaf clusters, warm green foliage with soft yellow-green highlights,
@@ -166,6 +167,7 @@ height
 ```
 
 #### ★ 2. `tree-pine.glb` — 침엽수
+
 ```
 a tall slim fairytale pine tree with three stacked rounded cone layers of deep
 green foliage, a slender brown trunk, gently tapering to a soft rounded tip,
@@ -174,6 +176,7 @@ height
 ```
 
 #### 3. `tree-blossom.glb` — 꽃나무 (포인트)
+
 ```
 a small fairytale blossom tree with a soft rounded canopy of pale pink and cream
 flowers, a slender curved trunk, a few petals resting on the branches, warm and
@@ -181,6 +184,7 @@ cheerful, slightly shorter than an oak tree
 ```
 
 #### ★ 4. `bush.glb` — 덤불
+
 ```
 a small round fairytale bush, one compact dome of soft green leafy blobs sitting
 directly on the ground, a few tiny berries, no trunk visible, about knee height
@@ -188,6 +192,7 @@ to a person
 ```
 
 #### 5. `flower-patch.glb` — 꽃무리
+
 ```
 a small cluster of chunky fairytale wildflowers growing together in one compact
 tuft, simple round petals in warm yellow orange and soft pink, short green stems
@@ -195,6 +200,7 @@ and a few leaves, forming a single connected clump, very low to the ground
 ```
 
 #### ★ 6. `rock.glb` — 바위
+
 ```
 a single chunky fairytale boulder with a few large flat faceted surfaces, warm
 grey stone with soft beige and mossy green patches on top, rounded weathered
@@ -202,6 +208,7 @@ edges, sitting solidly on its base, about waist height to a person
 ```
 
 #### 7. `rock-small.glb` — 작은 돌무더기
+
 ```
 a small pile of three rounded fairytale pebbles clustered together into one
 connected group, warm grey stone with soft beige tones, smooth weathered
@@ -215,6 +222,7 @@ surfaces, very low to the ground, ankle height to a person
 > 이 6종만 프리픽스 B를 씁니다. 나머지 전부 A입니다.
 
 #### ★ 8. `path-straight.glb` — 직선 돌길
+
 ```
 a square fairytale village path tile made of warm sandy beige cobblestones with
 rounded irregular shapes, a straight walking path running from one edge to the
@@ -223,6 +231,7 @@ a flat slab with slight visible thickness at the edges
 ```
 
 #### ★ 9. `path-curve.glb` — 곡선 돌길
+
 ```
 a square fairytale village path tile made of warm sandy beige cobblestones,
 a curved walking path entering from one edge and turning to exit through the
@@ -231,6 +240,7 @@ the remaining corners, a flat slab with slight visible thickness at the edges
 ```
 
 #### 10. `path-cross.glb` — 교차로
+
 ```
 a square fairytale village path tile made of warm sandy beige cobblestones,
 two walking paths crossing at the center forming a plus shape reaching all four
@@ -239,6 +249,7 @@ a flat slab with slight visible thickness at the edges
 ```
 
 #### ★ 11. `path-t.glb` — T자 분기로
+
 ```
 a square fairytale village path tile made of warm sandy beige cobblestones,
 three walking paths meeting at the center forming a T shape reaching three
@@ -248,6 +259,7 @@ edges
 ```
 
 #### ★ 12. `plaza-tile.glb` — 광장 원형 바닥
+
 ```
 a round fairytale village plaza floor made of warm cream and terracotta paving
 stones arranged in concentric rings, a simple decorative sunburst pattern at the
@@ -256,6 +268,7 @@ visible thickness at the edges
 ```
 
 #### 13. `grass-patch.glb` — 잔디 패치
+
 ```
 a square fairytale village grass tile, soft rounded green turf with gentle
 mounded bumps, a few tiny white and yellow flowers and small leaf tufts scattered
@@ -268,6 +281,7 @@ edges
 ### `fence/` — 경계·입구 (3종) · 프리픽스 A
 
 #### ★ 14. `fence-wood.glb` — 나무 울타리
+
 ```
 a short fairytale village wooden fence section, three chunky rounded vertical
 posts connected by two horizontal rails, warm honey-brown painted wood with
@@ -275,6 +289,7 @@ visible soft grain, slightly worn rounded edges, about waist height to a person
 ```
 
 #### 15. `fence-gate.glb` — 울타리 문
+
 ```
 a small fairytale village wooden gate, two thicker posts with a simple swinging
 door panel of vertical planks between them, a rounded arched top rail, warm
@@ -283,6 +298,7 @@ a person
 ```
 
 #### ★ 16. `village-arch.glb` — 마을 입구 아치
+
 ```
 a fairytale village entrance archway, two chunky rounded stone pillars supporting
 a curved wooden beam across the top, a small pointed shingle roof over the beam,
@@ -297,6 +313,7 @@ sides, tall enough for several people to walk under
 > 발광부는 재질만 밝게 나옵니다. 실제 빛은 배치 후 코드에서 `pointLight`로 추가합니다.
 
 #### ★ 17. `lamp-post.glb` — 가로등
+
 ```
 a fairytale village lamp post, a slender tapered wooden pole with a small
 four-sided lantern box on top under a tiny pointed copper roof, warm glowing
@@ -305,6 +322,7 @@ about twice a person's height
 ```
 
 #### 18. `lantern-hanging.glb` — 걸이 랜턴
+
 ```
 a small fairytale hanging lantern, a rounded paper-lantern body with warm glowing
 amber emissive light inside, a tiny domed cap and a short hanging ring on top,
@@ -312,6 +330,7 @@ soft cream and warm orange, small enough to be held in one hand
 ```
 
 #### 19. `campfire.glb` — 모닥불
+
 ```
 a small fairytale village campfire, a ring of rounded grey stones enclosing a few
 stacked logs with simple stylized flame shapes above them, warm glowing orange
@@ -328,6 +347,7 @@ a person
 > 한글은 이미지 AI가 자주 뭉개므로 전부 영문입니다. 글자가 깨지면 문구를 짧게 줄이거나(`Projects` 등) 재생성하세요.
 
 #### ★ 20. `sign-plaza.glb`
+
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Central Plaza" in clean
@@ -336,6 +356,7 @@ surface, a tiny pointed roof cap on the post, about shoulder height to a person
 ```
 
 #### ★ 21. `sign-projects.glb`
+
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Project District" in
@@ -345,6 +366,7 @@ height to a person
 ```
 
 #### ★ 22. `sign-skills.glb`
+
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Skills District" in
@@ -354,6 +376,7 @@ to a person
 ```
 
 #### ★ 23. `sign-experience.glb`
+
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Experience Archive" in
@@ -363,6 +386,7 @@ shoulder height to a person
 ```
 
 #### ★ 24. `sign-study.glb`
+
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Study District" in clean
@@ -372,6 +396,7 @@ height to a person
 ```
 
 #### ★ 25. `sign-contact.glb`
+
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Contact Post" in clean
@@ -381,6 +406,7 @@ height to a person
 ```
 
 #### ★ 26. `sign-life.glb`
+
 ```
 a fairytale village signboard, a carved wooden plank hanging from a sturdy
 rounded post by two small iron rings, the plank reading "Life District" in clean
@@ -390,6 +416,7 @@ height to a person
 ```
 
 #### 27. `signpost-arrow.glb` — 방향 이정표
+
 ```
 a fairytale village direction signpost, a tall rounded wooden post with three
 pointed arrow-shaped planks attached at different heights facing different
@@ -399,6 +426,7 @@ about a person's height
 ```
 
 #### 28. `notice-board.glb` — 게시판
+
 ```
 a fairytale village notice board, a wide wooden board on two sturdy legs under a
 small pointed shingle roof, a few small blank paper notes pinned to the cork
@@ -412,6 +440,7 @@ a person
 ### `plaza/` — 광장 중심물 (3종) · 프리픽스 A
 
 #### ★ 29. `fountain.glb` — 분수
+
 ```
 a small fairytale village fountain, a round tiered stone basin with a slender
 center column and a smaller upper bowl, gentle stylized water arcs and a soft
@@ -420,6 +449,7 @@ decorative carvings, wide and low, slightly under a person's height
 ```
 
 #### 30. `statue.glb` — 마을 동상
+
 ```
 a small fairytale village monument statue, a chunky rounded stone figure of a
 cloaked traveler holding a lantern, standing on a square tiered pedestal with a
@@ -428,6 +458,7 @@ the base, about three times a person's height including the pedestal
 ```
 
 #### 31. `banner-pole.glb` — 깃대
+
 ```
 a tall fairytale village banner pole, a slender rounded wooden mast with a long
 vertical fabric banner hanging from a short crossbar, the banner in warm amber
@@ -440,6 +471,7 @@ tapering, notably taller than a lamp post
 ### `furniture/` — 생활 소품 (6종) · 프리픽스 A
 
 #### ★ 32. `bench.glb` — 벤치
+
 ```
 a small fairytale village bench, a chunky rounded wooden seat plank on two thick
 curved legs with a simple slatted backrest, warm honey-brown painted wood with
@@ -447,6 +479,7 @@ soft worn edges, low and wide, about knee height at the seat
 ```
 
 #### ★ 33. `barrel.glb` — 나무통
+
 ```
 a single fairytale village wooden barrel standing upright, a rounded bulging body
 of vertical staves bound by two darker iron hoops, a flat lid on top, warm
@@ -454,6 +487,7 @@ honey-brown wood with soft worn edges, about waist height to a person
 ```
 
 #### 34. `crate.glb` — 나무 상자
+
 ```
 a single fairytale village wooden crate, a chunky cube box made of thick planks
 with rounded corners and simple cross-braced side panels, warm honey-brown wood
@@ -461,6 +495,7 @@ with soft worn edges, about knee height to a person
 ```
 
 #### ★ 35. `well.glb` — 우물
+
 ```
 a small fairytale village stone well, a round low stone rim with two side posts
 supporting a small pointed shingle roof, a tiny wooden bucket hanging from a rope
@@ -469,6 +504,7 @@ height to a person
 ```
 
 #### 36. `market-stall.glb` — 노점
+
 ```
 a small fairytale village market stall, a simple wooden counter table under a
 striped fabric awning held up by four slender posts, the awning in warm cream and
@@ -477,6 +513,7 @@ on the counter, taller than a person
 ```
 
 #### 37. `flag-banner.glb` — 삼각 깃발 줄
+
 ```
 a fairytale village bunting garland, a gently sagging rope strung with a row of
 small triangular fabric flags in warm cream, amber and soft coral, each flag
@@ -490,6 +527,7 @@ softly rounded at the corners, forming one connected piece, wide and light
 각 구역 앞에 놓아 구역 성격을 한눈에 드러내는 소품입니다.
 
 #### 38. `theme-project-easel.glb` — 프로젝트 구역
+
 ```
 a fairytale village display easel, a wooden tripod stand holding a framed board
 showing a simple painted landscape, a small shelf with two paint pots at the
@@ -498,6 +536,7 @@ a person
 ```
 
 #### 39. `theme-skill-anvil.glb` — 스킬 구역
+
 ```
 a fairytale village blacksmith anvil on a chunky round wooden stump, a rounded
 hammer resting on top and a small pair of tongs leaning against the side, warm
@@ -506,6 +545,7 @@ a person
 ```
 
 #### 40. `theme-study-bookstack.glb` — 학습 구역
+
 ```
 a small fairytale stack of four chunky closed books piled slightly askew, warm
 cream and deep blue covers with soft golden trim on the spines, a short lit candle
@@ -514,6 +554,7 @@ height to a person
 ```
 
 #### 41. `theme-experience-scroll.glb` — 경력 구역
+
 ```
 a fairytale village scroll holder, a round wooden barrel-shaped container packed
 with several rolled parchment scrolls fanning out from the top, a small brass
@@ -522,6 +563,7 @@ height to a person
 ```
 
 #### 42. `theme-life-picnic.glb` — Life 구역
+
 ```
 a small fairytale village picnic setup, a folded checkered blanket in warm cream
 and soft coral spread on the ground with a rounded wicker basket and a simple
@@ -533,6 +575,7 @@ wooden lute resting on it, forming one connected group, very low to the ground
 ### `misc/` — 분위기 소품 (2종) · 프리픽스 A
 
 #### 43. `mailbox.glb` — 우편함
+
 ```
 a fairytale village mailbox, a small rounded box with a curved lid and a narrow
 letter slot mounted on a short sturdy post, a tiny raised flag on the side and a
@@ -541,6 +584,7 @@ chest height to a person
 ```
 
 #### 44. `potted-plant.glb` — 화분
+
 ```
 a small fairytale village potted plant, a rounded terracotta pot with a slightly
 flared rim holding a compact bushy plant with a few chunky rounded leaves and two
@@ -554,15 +598,15 @@ knee height to a person
 
 GLB가 들어오면 이 코드들이 정리 대상이 됩니다.
 
-| 새 에셋 | 대체할 현재 코드 | 처리 |
-| --- | --- | --- |
-| `nature/tree-*.glb` | `Tree.tsx` 전체 | 컴포넌트 삭제, `VillageScene.tsx:351` `treePositions` 루프 제거 후 프롭 배치로 이관 |
-| `nature/rock*.glb` | `Decorations.tsx:35` `Rock` | 삭제, `VillageScene.tsx:355` `rockPositions` 루프 제거 |
-| `fence/fence-wood.glb` | `Decorations.tsx:50` `Fence` | 삭제 (에너지 배리어 + `pointLight` 동반 제거) |
-| `ground/path-*.glb` | `Decorations.tsx:18` `PathSegment` | 삭제 |
-| `sign/sign-*.glb` | `Decorations.tsx:73` `SignPost` + `VillageScene.tsx:288-291` `DistrictSign` | 삭제, 표지판 7개 전부 프롭으로 배치 |
-| `plaza/statue.glb` | `public/models/environment/statue.glb` | 파일 교체 (`VillageScene.tsx:70` 경로 유지) |
-| `plaza/fountain.glb` | — | 신규 |
+| 새 에셋                | 대체할 현재 코드                                                            | 처리                                                                                |
+| ---------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `nature/tree-*.glb`    | `Tree.tsx` 전체                                                             | 컴포넌트 삭제, `VillageScene.tsx:351` `treePositions` 루프 제거 후 프롭 배치로 이관 |
+| `nature/rock*.glb`     | `Decorations.tsx:35` `Rock`                                                 | 삭제, `VillageScene.tsx:355` `rockPositions` 루프 제거                              |
+| `fence/fence-wood.glb` | `Decorations.tsx:50` `Fence`                                                | 삭제 (에너지 배리어 + `pointLight` 동반 제거)                                       |
+| `ground/path-*.glb`    | `Decorations.tsx:18` `PathSegment`                                          | 삭제                                                                                |
+| `sign/sign-*.glb`      | `Decorations.tsx:73` `SignPost` + `VillageScene.tsx:288-291` `DistrictSign` | 삭제, 표지판 7개 전부 프롭으로 배치                                                 |
+| `plaza/statue.glb`     | `public/models/environment/statue.glb`                                      | 파일 교체 (`VillageScene.tsx:70` 경로 유지)                                         |
+| `plaza/fountain.glb`   | —                                                                           | 신규                                                                                |
 
 **추가로 손봐야 할 톤 충돌**
 

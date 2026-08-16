@@ -9,7 +9,12 @@ import {useEffect, useMemo, useRef} from "react";
 import type {MutableRefObject} from "react";
 import {Box3, Mesh, Vector3, type AnimationClip, type Group} from "three";
 import {SkeletonUtils} from "three-stdlib";
-import {characterModels, classifyClip, DEFAULT_NPC_MODEL, type CharacterState} from "@/data/characterModels";
+import {
+  characterModels,
+  classifyClip,
+  DEFAULT_NPC_MODEL,
+  type CharacterState
+} from "@/data/characterModels";
 import {lockSceneMaterials} from "@/lib/villageMaterial";
 import type {CharacterModelId} from "@/types/portfolio";
 
@@ -57,7 +62,7 @@ export function NpcCharacter({
     // 없이 metalness 팩터가 1.0 이었다. 환경맵이 없는 씬에서 순수 금속은
     // 확산광을 잃고 검게만 남는다.
     lockSceneMaterials(copy);
-    copy.traverse((o) => {
+    copy.traverse(o => {
       if (o instanceof Mesh) {
         o.castShadow = true;
         o.receiveShadow = false;
@@ -71,7 +76,11 @@ export function NpcCharacter({
     // 정상 배율은 0.7 근처다. 범위를 벗어나면 측정을 버리고 기준 배율로 간다.
     let next = height > 0 ? model.height / height : model.height / MESHY_HEIGHT;
     if (!Number.isFinite(next) || next < 0.05 || next > 20) {
-      console.warn(`[NpcCharacter] ${modelId}: 높이 측정 이상 (${height.toFixed(4)}) — 기준 배율로 대체`);
+      console.warn(
+        `[NpcCharacter] ${modelId}: 높이 측정 이상 (${height.toFixed(
+          4
+        )}) — 기준 배율로 대체`
+      );
       next = model.height / MESHY_HEIGHT;
     }
     return {cloned: copy, scale: next};
@@ -79,7 +88,11 @@ export function NpcCharacter({
 
   // 클립을 상태별로 분류. 분류 안 되는 클립(어퍼컷 등)은 등록만 하고 재생은 안 한다.
   const {clips, byState} = useMemo(() => {
-    const buckets: Record<CharacterState, string[]> = {idle: [], walk: [], run: []};
+    const buckets: Record<CharacterState, string[]> = {
+      idle: [],
+      walk: [],
+      run: []
+    };
     const list: AnimationClip[] = [];
     const used = new Set<string>();
 
@@ -109,7 +122,7 @@ export function NpcCharacter({
     idleTurnRef.current = Math.floor(Math.random() * 4);
   }, [actions]);
 
-  useFrame((state) => {
+  useFrame(state => {
     if (!innerRef.current) return;
 
     // 거리 컬링 — 멀면 숨김(렌더/스키닝 비용 제거)
@@ -127,14 +140,21 @@ export function NpcCharacter({
     let want: string | null = null;
 
     if (pool.length > 0) {
-      const holding = playingRef.current !== null && pool.includes(playingRef.current);
+      const holding =
+        playingRef.current !== null && pool.includes(playingRef.current);
       // idle 클립이 둘 이상이면 주기적으로 갈아탄다 — 가만히 서 있어도 살아있어 보인다
-      if (target === "idle" && pool.length > 1 && holding && now < idleSwapAtRef.current) {
+      if (
+        target === "idle" &&
+        pool.length > 1 &&
+        holding &&
+        now < idleSwapAtRef.current
+      ) {
         want = playingRef.current;
       } else if (target === "idle" && pool.length > 1) {
         if (!holding || now >= idleSwapAtRef.current) {
           idleTurnRef.current += 1;
-          idleSwapAtRef.current = now + IDLE_SWAP_SECONDS * (0.8 + Math.random() * 0.4);
+          idleSwapAtRef.current =
+            now + IDLE_SWAP_SECONDS * (0.8 + Math.random() * 0.4);
         }
         want = pool[idleTurnRef.current % pool.length];
       } else {

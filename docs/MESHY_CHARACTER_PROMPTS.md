@@ -7,10 +7,10 @@
 
 현재 코드가 요구하는 것:
 
-| 파일 | 요구 사항 |
-|---|---|
-| `src/components/village/WarriorCharacter.tsx` | `warrior-walk.glb` + `warrior-run.glb`, 클립 이름에 `walk` / `run` 포함, idle 상태 포함 |
-| `src/components/village/NpcWarrior.tsx` | `neon-robot-npc.glb` 하나를 **모든 NPC가 공유**, `SkeletonUtils.clone`으로 복제, 클립 이름을 `walk`/`run`으로 정규화 |
+| 파일                                          | 요구 사항                                                                                                            |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `src/components/village/WarriorCharacter.tsx` | `warrior-walk.glb` + `warrior-run.glb`, 클립 이름에 `walk` / `run` 포함, idle 상태 포함                              |
+| `src/components/village/NpcWarrior.tsx`       | `neon-robot-npc.glb` 하나를 **모든 NPC가 공유**, `SkeletonUtils.clone`으로 복제, 클립 이름을 `walk`/`run`으로 정규화 |
 
 즉 캐릭터는 **스킨드 메시 + 본(bone) 리깅 + 애니메이션 클립**이 있어야 합니다. 정적인 조각상은 쓸 수 없습니다.
 
@@ -28,15 +28,15 @@
 
 이미지 단계에서 이걸 어기면 ③에서 반드시 실패합니다.
 
-| 규칙 | 이유 |
-|---|---|
-| **정면(front view) 고정** | 3/4 뷰·측면은 오토리깅이 골격을 못 잡음. 건물과 정반대 |
-| **A-포즈** (팔을 아래로 45도 벌림) | 팔이 몸통에 붙으면 팔뼈와 몸통이 하나로 융합됨 |
-| **양다리를 어깨 너비로 벌림** | 다리가 붙으면 하나의 기둥으로 인식 |
-| **전신, 머리부터 발끝까지** | 잘리면 그 부위 뼈가 생성 안 됨 |
-| **휴머노이드 형태 유지** | 팔다리 2개씩, 머리 1개. 동물·4족·무정형은 오토리깅 불가 |
-| **긴 망토·롱드레스·큰 무기 금지** | 스키닝이 깨지고 걷기 애니메이션에서 뚫림 |
-| **대칭 유지** | 비대칭 실루엣은 골격 추정 실패율이 높음 |
+| 규칙                               | 이유                                                    |
+| ---------------------------------- | ------------------------------------------------------- |
+| **정면(front view) 고정**          | 3/4 뷰·측면은 오토리깅이 골격을 못 잡음. 건물과 정반대  |
+| **A-포즈** (팔을 아래로 45도 벌림) | 팔이 몸통에 붙으면 팔뼈와 몸통이 하나로 융합됨          |
+| **양다리를 어깨 너비로 벌림**      | 다리가 붙으면 하나의 기둥으로 인식                      |
+| **전신, 머리부터 발끝까지**        | 잘리면 그 부위 뼈가 생성 안 됨                          |
+| **휴머노이드 형태 유지**           | 팔다리 2개씩, 머리 1개. 동물·4족·무정형은 오토리깅 불가 |
+| **긴 망토·롱드레스·큰 무기 금지**  | 스키닝이 깨지고 걷기 애니메이션에서 뚫림                |
+| **대칭 유지**                      | 비대칭 실루엣은 골격 추정 실패율이 높음                 |
 
 ## 이미지 생성 공통 프리픽스 (모든 캐릭터에 앞에 붙임)
 
@@ -83,17 +83,18 @@ harsh shadows, motion blur
 마을에는 NPC가 **32명**(코어 6 + 건물별 자동 생성 26) 있지만, 32개를 다 만들 필요는 없습니다.
 **이름과 성격이 확실한 8명은 개별 제작**, 나머지 24명은 **구역별 아키타입 5종을 공유**합니다.
 
-| 그룹 | 개수 | 비고 |
-|---|---|---|
-| 개별 캐릭터 | 8 | 코어 NPC 6 + 학습 구역 전담 2 |
-| 구역 아키타입 | 5 | 건물 안내원 24명이 공유 |
-| 플레이어 | 1 | 현재 `warrior-walk/run.glb` |
+| 그룹          | 개수 | 비고                          |
+| ------------- | ---- | ----------------------------- |
+| 개별 캐릭터   | 8    | 코어 NPC 6 + 학습 구역 전담 2 |
+| 구역 아키타입 | 5    | 건물 안내원 24명이 공유       |
+| 플레이어      | 1    | 현재 `warrior-walk/run.glb`   |
 
 ---
 
 # A. 개별 캐릭터 (8종)
 
 ### 1. `npc-jaehoon.glb` — 정재훈 · 마을 총괄 관리자 (본인 AI 분신)
+
 색: 금색 `#f5c542` / 갈색 `#6b4f1d` · 성격: 활기차고 친절, 마을을 돌며 모두를 챙김
 
 ```
@@ -105,6 +106,7 @@ scheme, approachable and energetic
 ```
 
 ### 2. `npc-lumi.glb` — 루미 · 마을 총괄 안내원
+
 색: 초록 `#7ecf68` / 노랑 `#f5d26b` · 성격: 밝고 침착한 길잡이
 
 ```
@@ -115,6 +117,7 @@ and soft yellow color scheme, welcoming and calm expression
 ```
 
 ### 3. `npc-pixel.glb` — 픽셀 · 프로젝트 큐레이터
+
 색: 주황 `#f3b35b` / 파랑 `#5f7be8` · 성격: 활발하고 관찰력 좋음
 
 ```
@@ -125,6 +128,7 @@ cornflower blue color scheme, curious and energetic expression
 ```
 
 ### 4. `npc-theo.glb` — 테오 · 기술 멘토
+
 색: 청록 `#68c7cf` / 진남색 `#253342` · 성격: 분석적이고 현실적
 
 ```
@@ -135,6 +139,7 @@ color scheme, thoughtful and reliable
 ```
 
 ### 5. `npc-aka.glb` — 아카 · 성장 기록 관리자
+
 색: 보라 `#c69af0` / 갈색 `#8b5a35` · 성격: 차분하고 기억력 좋음
 
 ```
@@ -145,6 +150,7 @@ scheme, gentle attentive expression, robe kept short above the knees
 ```
 
 ### 6. `npc-post.glb` — 포스트 · 연락 담당
+
 색: 살구 `#ef8f72` / 흰색 `#e8f2ff` · 성격: 간결하고 프로페셔널
 
 ```
@@ -155,6 +161,7 @@ color scheme, brisk professional friendly expression
 ```
 
 ### 7. `npc-algo.glb` — 알고 · 알고리즘 도장 코치
+
 색: 스카이 `#5aa9e6` / 진남색 `#1f2a44` · 성격: 담백한 코치
 
 ```
@@ -166,6 +173,7 @@ uniform kept short and fitted
 ```
 
 ### 8. `npc-nova.glb` — 노바 · 지식 서고 사서
+
 색: 퍼플 `#a78bfa` / 진남색 `#1f2a44` · 성격: 차분한 사서
 
 ```
@@ -183,6 +191,7 @@ color scheme, quiet knowledgeable expression, outfit kept short and simple
 이미 정의되어 있으므로, 하나의 모델을 색만 바꿔 쓰거나 아래 프롬프트로 5종을 각각 뽑으면 됩니다.
 
 ### 9. `npc-arch-project.glb` — 프로젝트 구역 안내원 (9명 공유)
+
 색: 주황 `#f3b35b` / 파랑 `#5f7be8`
 
 ```
@@ -193,6 +202,7 @@ helpful expression, deliberately simple and generic design
 ```
 
 ### 10. `npc-arch-developer.glb` — 스킬 구역 안내원 (5명 공유)
+
 색: 청록 `#68c7cf` / 진남색 `#253342`
 
 ```
@@ -203,6 +213,7 @@ neutral helpful expression, deliberately simple and generic design
 ```
 
 ### 11. `npc-arch-archivist.glb` — 경력 구역 안내원 (3명 공유)
+
 색: 보라 `#c69af0` / 갈색 `#8b5a35`
 
 ```
@@ -213,6 +224,7 @@ expression, deliberately simple and generic design
 ```
 
 ### 12. `npc-arch-guide.glb` — Life 구역 안내원 (6명 공유)
+
 색: 초록 `#7ecf68` / 노랑 `#f5d26b`
 
 ```
@@ -221,10 +233,12 @@ sash, a small lantern hanging from the belt, plain trousers, short simple hair,
 minimal accessories, green and soft yellow color scheme, neutral friendly
 expression, deliberately simple and generic design
 ```
+
 > Life 구역은 `npcRoster.ts`의 `districtNpcType`에 항목이 없어 `guide` 타입으로 폴백됩니다.
 > Life 전용 NPC 타입이 필요하면 별도 요청 주세요.
 
 ### 13. `npc-arch-contact.glb` — 우체국 안내원 (1명)
+
 색: 살구 `#ef8f72` / 흰색 `#e8f2ff`
 
 ```
@@ -239,6 +253,7 @@ expression, deliberately simple and generic design
 # C. 플레이어 캐릭터 (1종)
 
 ### 14. `player-walk.glb` / `player-run.glb` — 방문자 아바타
+
 색: 자유 (마을 톤에 맞는 중성적 배색) · 현재 파일: `warrior-walk.glb` / `warrior-run.glb`
 
 ```

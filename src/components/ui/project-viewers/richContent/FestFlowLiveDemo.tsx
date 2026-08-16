@@ -26,7 +26,7 @@ const BOOTHS: Booth[] = [
   {id: "b5", name: "VR 체험", zone: "체험존"},
   {id: "b6", name: "캐리커처", zone: "체험존"},
   {id: "b7", name: "포토존", zone: "체험존"},
-  {id: "b8", name: "메인 무대", zone: "무대"},
+  {id: "b8", name: "메인 무대", zone: "무대"}
 ];
 
 const INITIAL: Record<string, Status> = {
@@ -37,7 +37,7 @@ const INITIAL: Record<string, Status> = {
   b5: "운영중",
   b6: "운영중",
   b7: "혼잡",
-  b8: "운영중",
+  b8: "운영중"
 };
 
 interface FeedItem {
@@ -75,12 +75,27 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
     statusesRef.current = statuses;
   }, [statuses]);
 
-  const apply = useCallback((id: string, next: Status, who: "나" | "스태프") => {
-    const booth = BOOTHS.find((b) => b.id === id);
-    if (!booth) return;
-    setStatuses((prev) => ({...prev, [id]: next}));
-    setFeed((prev) => [{key: idRef.current++, name: booth.name, zone: booth.zone, status: next, who, time: nowStr()}, ...prev].slice(0, 7));
-  }, []);
+  const apply = useCallback(
+    (id: string, next: Status, who: "나" | "스태프") => {
+      const booth = BOOTHS.find(b => b.id === id);
+      if (!booth) return;
+      setStatuses(prev => ({...prev, [id]: next}));
+      setFeed(prev =>
+        [
+          {
+            key: idRef.current++,
+            name: booth.name,
+            zone: booth.zone,
+            status: next,
+            who,
+            time: nowStr()
+          },
+          ...prev
+        ].slice(0, 7)
+      );
+    },
+    []
+  );
 
   const cycle = useCallback(
     (id: string) => {
@@ -88,7 +103,7 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
       const next = ORDER[(ORDER.indexOf(cur) + 1) % ORDER.length];
       apply(id, next, "나");
     },
-    [apply],
+    [apply]
   );
 
   // 자동 스트림 — 다른 스태프가 현장에서 상태를 바꾸는 것처럼.
@@ -97,7 +112,7 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
     const t = setInterval(() => {
       const booth = BOOTHS[Math.floor(Math.random() * BOOTHS.length)];
       const cur = statusesRef.current[booth.id];
-      const options = ORDER.filter((o) => o !== cur);
+      const options = ORDER.filter(o => o !== cur);
       const next = options[Math.floor(Math.random() * options.length)];
       apply(booth.id, next, "스태프");
     }, 2600);
@@ -109,31 +124,57 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
     setFeed([]);
   }, []);
 
-  const counts = ORDER.map((s) => ({status: s, n: BOOTHS.filter((b) => statuses[b.id] === s).length}));
+  const counts = ORDER.map(s => ({
+    status: s,
+    n: BOOTHS.filter(b => statuses[b.id] === s).length
+  }));
 
   return (
     <motion.div
       className="overflow-hidden rounded-2xl border"
-      style={{borderColor: `${theme.primary}33`, background: `${theme.primary}06`}}
+      style={{
+        borderColor: `${theme.primary}33`,
+        background: `${theme.primary}06`
+      }}
       initial={{opacity: 0, y: 16}}
       animate={{opacity: 1, y: 0}}
       transition={{duration: 0.5}}
     >
       {/* 헤더 */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3" style={{borderColor: `${theme.primary}22`}}>
+      <div
+        className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3"
+        style={{borderColor: `${theme.primary}22`}}
+      >
         <div className="flex items-center gap-2.5">
           <span className="relative flex h-2.5 w-2.5">
-            <motion.span className="absolute inline-flex h-full w-full rounded-full" style={{background: theme.primary}} animate={{scale: [1, 2.4], opacity: [0.6, 0]}} transition={{duration: 1.6, repeat: Infinity, ease: "easeOut"}} />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full" style={{background: theme.primary}} />
+            <motion.span
+              className="absolute inline-flex h-full w-full rounded-full"
+              style={{background: theme.primary}}
+              animate={{scale: [1, 2.4], opacity: [0.6, 0]}}
+              transition={{duration: 1.6, repeat: Infinity, ease: "easeOut"}}
+            />
+            <span
+              className="relative inline-flex h-2.5 w-2.5 rounded-full"
+              style={{background: theme.primary}}
+            />
           </span>
-          <span className="font-mono text-sm font-black text-white">FestFlow</span>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em]" style={{color: theme.primary}}>LIVE DEMO</span>
-          <span className="hidden font-mono text-[11px] text-white/40 sm:inline">· 실제 SSE 동작 시연</span>
+          <span className="font-mono text-sm font-black text-white">
+            FestFlow
+          </span>
+          <span
+            className="font-mono text-[10px] font-bold uppercase tracking-[0.2em]"
+            style={{color: theme.primary}}
+          >
+            LIVE DEMO
+          </span>
+          <span className="hidden font-mono text-[11px] text-white/40 sm:inline">
+            · 실제 SSE 동작 시연
+          </span>
         </div>
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setPaused((p) => !p)}
+            onClick={() => setPaused(p => !p)}
             className="rounded-lg border px-3 py-1.5 font-mono text-[11px] font-black transition hover:bg-white/5"
             style={{borderColor: `${theme.primary}35`, color: theme.accent}}
           >
@@ -154,11 +195,14 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
       <div className="grid gap-4 p-5 lg:grid-cols-[1fr_1.05fr_1fr]">
         {/* 1. 부스 — 클릭 */}
         <div>
-          <p className="mb-2 font-mono text-[10px] font-black uppercase tracking-[0.18em]" style={{color: theme.primary}}>
+          <p
+            className="mb-2 font-mono text-[10px] font-black uppercase tracking-[0.18em]"
+            style={{color: theme.primary}}
+          >
             부스 · 👆 클릭해서 상태 변경
           </p>
           <div className="flex flex-col gap-1.5">
-            {BOOTHS.map((b) => {
+            {BOOTHS.map(b => {
               const st = statuses[b.id];
               const c = statusColor(st, theme);
               return (
@@ -167,13 +211,24 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
                   type="button"
                   onClick={() => cycle(b.id)}
                   className="flex items-center justify-between rounded-lg border px-3 py-2 text-left"
-                  style={{borderColor: `${theme.primary}1f`, background: "rgba(255,255,255,0.02)"}}
-                  whileHover={{x: 3, borderColor: `${c}88`, background: `${c}10`}}
+                  style={{
+                    borderColor: `${theme.primary}1f`,
+                    background: "rgba(255,255,255,0.02)"
+                  }}
+                  whileHover={{
+                    x: 3,
+                    borderColor: `${c}88`,
+                    background: `${c}10`
+                  }}
                   whileTap={{scale: 0.97}}
                 >
                   <span className="flex items-center gap-2">
-                    <span className="font-mono text-[12px] font-bold text-white/80">{b.name}</span>
-                    <span className="font-mono text-[9px] text-white/30">{b.zone}</span>
+                    <span className="font-mono text-[12px] font-bold text-white/80">
+                      {b.name}
+                    </span>
+                    <span className="font-mono text-[9px] text-white/30">
+                      {b.zone}
+                    </span>
                   </span>
                   <AnimatePresence mode="wait">
                     <motion.span
@@ -196,10 +251,19 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
 
         {/* 2. 실시간 피드 */}
         <div>
-          <p className="mb-2 font-mono text-[10px] font-black uppercase tracking-[0.18em]" style={{color: theme.primary}}>
+          <p
+            className="mb-2 font-mono text-[10px] font-black uppercase tracking-[0.18em]"
+            style={{color: theme.primary}}
+          >
             실시간 피드 · SSE Push
           </p>
-          <div className="flex min-h-[260px] flex-col gap-1.5 rounded-lg border p-2.5" style={{borderColor: `${theme.primary}1a`, background: "rgba(0,0,0,0.2)"}}>
+          <div
+            className="flex min-h-[260px] flex-col gap-1.5 rounded-lg border p-2.5"
+            style={{
+              borderColor: `${theme.primary}1a`,
+              background: "rgba(0,0,0,0.2)"
+            }}
+          >
             <AnimatePresence initial={false}>
               {feed.length === 0 ? (
                 <motion.p
@@ -214,7 +278,7 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
                   상태 변경이 여기에 실시간으로 쌓입니다.
                 </motion.p>
               ) : (
-                feed.map((f) => {
+                feed.map(f => {
                   const c = statusColor(f.status, theme);
                   return (
                     <motion.div
@@ -227,16 +291,37 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
                       exit={{opacity: 0, height: 0}}
                       transition={{duration: 0.28}}
                     >
-                      <span className="font-mono text-[9px] text-white/30">{f.time}</span>
+                      <span className="font-mono text-[9px] text-white/30">
+                        {f.time}
+                      </span>
                       <span
                         className="rounded px-1.5 py-0.5 font-mono text-[8px] font-black"
-                        style={f.who === "나" ? {background: `${theme.accent}22`, color: theme.accent} : {background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.4)"}}
+                        style={
+                          f.who === "나"
+                            ? {
+                                background: `${theme.accent}22`,
+                                color: theme.accent
+                              }
+                            : {
+                                background: "rgba(255,255,255,0.06)",
+                                color: "rgba(255,255,255,0.4)"
+                              }
+                        }
                       >
                         {f.who}
                       </span>
-                      <span className="font-mono text-[11px] font-bold text-white/75">{f.name}</span>
-                      <span className="font-mono text-[11px] text-white/30">→</span>
-                      <span className="font-mono text-[11px] font-black" style={{color: c}}>{f.status}</span>
+                      <span className="font-mono text-[11px] font-bold text-white/75">
+                        {f.name}
+                      </span>
+                      <span className="font-mono text-[11px] text-white/30">
+                        →
+                      </span>
+                      <span
+                        className="font-mono text-[11px] font-black"
+                        style={{color: c}}
+                      >
+                        {f.status}
+                      </span>
                     </motion.div>
                   );
                 })
@@ -247,21 +332,40 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
 
         {/* 3. 지도 + 현황 */}
         <div>
-          <p className="mb-2 font-mono text-[10px] font-black uppercase tracking-[0.18em]" style={{color: theme.primary}}>
+          <p
+            className="mb-2 font-mono text-[10px] font-black uppercase tracking-[0.18em]"
+            style={{color: theme.primary}}
+          >
             지도 · 현황
           </p>
-          <div className="grid grid-cols-4 gap-1.5 rounded-lg border p-2.5" style={{borderColor: `${theme.primary}1a`, background: "rgba(0,0,0,0.2)"}}>
-            {BOOTHS.map((b) => {
+          <div
+            className="grid grid-cols-4 gap-1.5 rounded-lg border p-2.5"
+            style={{
+              borderColor: `${theme.primary}1a`,
+              background: "rgba(0,0,0,0.2)"
+            }}
+          >
+            {BOOTHS.map(b => {
               const c = statusColor(statuses[b.id], theme);
               return (
-                <div key={b.id} className="flex flex-col items-center gap-1 rounded-md py-2" style={{background: `${c}0d`}}>
+                <div
+                  key={b.id}
+                  className="flex flex-col items-center gap-1 rounded-md py-2"
+                  style={{background: `${c}0d`}}
+                >
                   <motion.span
                     className="h-3.5 w-3.5 rounded-full"
                     style={{background: c, boxShadow: `0 0 10px ${c}`}}
                     animate={{scale: [1, 1.25, 1]}}
-                    transition={{duration: 1.8, repeat: Infinity, ease: "easeInOut"}}
+                    transition={{
+                      duration: 1.8,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
                   />
-                  <span className="font-mono text-[8px] text-white/45">{b.name}</span>
+                  <span className="font-mono text-[8px] text-white/45">
+                    {b.name}
+                  </span>
                 </div>
               );
             })}
@@ -270,7 +374,11 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
             {counts.map(({status, n}) => {
               const c = statusColor(status, theme);
               return (
-                <div key={status} className="rounded-lg border p-2 text-center" style={{borderColor: `${c}2a`}}>
+                <div
+                  key={status}
+                  className="rounded-lg border p-2 text-center"
+                  style={{borderColor: `${c}2a`}}
+                >
                   <AnimatePresence mode="wait">
                     <motion.p
                       key={n}
@@ -293,9 +401,17 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
       </div>
 
       {/* 푸터 메시지 */}
-      <div className="border-t px-5 py-2.5" style={{borderColor: `${theme.primary}18`, background: "rgba(0,0,0,0.15)"}}>
+      <div
+        className="border-t px-5 py-2.5"
+        style={{
+          borderColor: `${theme.primary}18`,
+          background: "rgba(0,0,0,0.15)"
+        }}
+      >
         <p className="font-mono text-[11px] leading-5 text-white/45">
-          💡 당신이 바꾼 상태가 <span style={{color: theme.primary}}>피드 · 지도 · 현황</span>에 1초 안에 반영됩니다 — 이것이 SSE 브로드캐스트입니다.
+          💡 당신이 바꾼 상태가{" "}
+          <span style={{color: theme.primary}}>피드 · 지도 · 현황</span>에 1초
+          안에 반영됩니다 — 이것이 SSE 브로드캐스트입니다.
         </p>
       </div>
     </motion.div>

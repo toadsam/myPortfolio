@@ -27,11 +27,14 @@ import type {
   VisitorEventInput
 } from "@/types/live";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
 const ADMIN_TOKEN_KEY = "portfolio-admin-token";
 let adminToken: string | null =
-  typeof window !== "undefined" ? window.localStorage.getItem(ADMIN_TOKEN_KEY) : null;
+  typeof window !== "undefined"
+    ? window.localStorage.getItem(ADMIN_TOKEN_KEY)
+    : null;
 
 export function setAdminToken(token: string | null): void {
   adminToken = token && token.length > 0 ? token : null;
@@ -49,7 +52,9 @@ export class ApiError extends Error {
   detail?: string;
 
   constructor(status: number, detail?: string) {
-    super(detail ? `API request failed: ${detail}` : `API request failed: ${status}`);
+    super(
+      detail ? `API request failed: ${detail}` : `API request failed: ${status}`
+    );
     this.status = status;
     this.detail = detail;
   }
@@ -95,20 +100,29 @@ export function saveActivity(payload: ActivityInput): Promise<DailyActivity> {
 }
 
 export function fetchAdminAuthStatus(): Promise<{auth_enabled: boolean}> {
-  return requestJson<{auth_enabled: boolean}>("/admin/auth-status", {cache: "no-store"});
+  return requestJson<{auth_enabled: boolean}>("/admin/auth-status", {
+    cache: "no-store"
+  });
 }
 
-export async function loginAdmin(password: string): Promise<{token: string; auth_enabled: boolean}> {
-  const res = await requestJson<{token: string; auth_enabled: boolean}>("/admin/login", {
-    method: "POST",
-    body: JSON.stringify({password})
-  });
+export async function loginAdmin(
+  password: string
+): Promise<{token: string; auth_enabled: boolean}> {
+  const res = await requestJson<{token: string; auth_enabled: boolean}>(
+    "/admin/login",
+    {
+      method: "POST",
+      body: JSON.stringify({password})
+    }
+  );
   setAdminToken(res.token || null);
   return res;
 }
 
 export function fetchActivityHistory(days = 120): Promise<DailyActivity[]> {
-  return requestJson<DailyActivity[]>(`/activity/history?days=${days}`, {cache: "no-store"});
+  return requestJson<DailyActivity[]>(`/activity/history?days=${days}`, {
+    cache: "no-store"
+  });
 }
 
 export function syncGithubActivity(): Promise<GithubSyncResponse> {
@@ -124,11 +138,17 @@ export function sendNpcMessage(
 ): Promise<NpcChatResponse> {
   return requestJson<NpcChatResponse>("/npc/chat", {
     method: "POST",
-    body: JSON.stringify({npc_id: npcId, message, recent_messages: recentMessages.slice(-8)})
+    body: JSON.stringify({
+      npc_id: npcId,
+      message,
+      recent_messages: recentMessages.slice(-8)
+    })
   });
 }
 
-export function requestNpcTick(payload: NpcTickRequest): Promise<NpcTickResponse> {
+export function requestNpcTick(
+  payload: NpcTickRequest
+): Promise<NpcTickResponse> {
   return requestJson<NpcTickResponse>("/npc/tick", {
     method: "POST",
     body: JSON.stringify(payload)
@@ -142,22 +162,36 @@ export function requestNpcEncounter(
 ): Promise<NpcEncounterResponse> {
   return requestJson<NpcEncounterResponse>("/npc/encounter", {
     method: "POST",
-    body: JSON.stringify({npc_a: npcA, npc_b: npcB, recent_memory: recentMemory})
+    body: JSON.stringify({
+      npc_a: npcA,
+      npc_b: npcB,
+      recent_memory: recentMemory
+    })
   });
 }
 
 export function fetchRelationships(): Promise<NpcRelationshipRow[]> {
-  return requestJson<NpcRelationshipRow[]>("/npc/relationships", {cache: "no-store"});
-}
-
-export function requestGroupChat(npcIds: string[], recentMemory: string[] = []): Promise<NpcGroupChatResponse> {
-  return requestJson<NpcGroupChatResponse>("/npc/group-chat", {
-    method: "POST",
-    body: JSON.stringify({npc_ids: npcIds, recent_memory: recentMemory.slice(-6)})
+  return requestJson<NpcRelationshipRow[]>("/npc/relationships", {
+    cache: "no-store"
   });
 }
 
-export function logVisitorEvent(payload: VisitorEventInput): Promise<VisitorEvent> {
+export function requestGroupChat(
+  npcIds: string[],
+  recentMemory: string[] = []
+): Promise<NpcGroupChatResponse> {
+  return requestJson<NpcGroupChatResponse>("/npc/group-chat", {
+    method: "POST",
+    body: JSON.stringify({
+      npc_ids: npcIds,
+      recent_memory: recentMemory.slice(-6)
+    })
+  });
+}
+
+export function logVisitorEvent(
+  payload: VisitorEventInput
+): Promise<VisitorEvent> {
   return requestJson<VisitorEvent>("/analytics/event", {
     method: "POST",
     body: JSON.stringify({
@@ -186,54 +220,78 @@ export function fetchManagedProjects(): Promise<ManagedProject[]> {
   return requestJson<ManagedProject[]>("/admin/projects", {cache: "no-store"});
 }
 
-export function updateManagedProject(projectId: string, payload: ManagedProjectInput): Promise<ManagedProject> {
-  return requestJson<ManagedProject>(`/admin/projects/${encodeURIComponent(projectId)}`, {
-    method: "PUT",
-    body: JSON.stringify(payload)
-  });
+export function updateManagedProject(
+  projectId: string,
+  payload: ManagedProjectInput
+): Promise<ManagedProject> {
+  return requestJson<ManagedProject>(
+    `/admin/projects/${encodeURIComponent(projectId)}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(payload)
+    }
+  );
 }
 
 export function fetchNpcLogs(): Promise<NpcConversationLog[]> {
-  return requestJson<NpcConversationLog[]>("/admin/npc/logs", {cache: "no-store"});
+  return requestJson<NpcConversationLog[]>("/admin/npc/logs", {
+    cache: "no-store"
+  });
 }
 
 export function fetchNpcPresets(): Promise<NpcPreset[]> {
   return requestJson<NpcPreset[]>("/npc/presets", {cache: "no-store"});
 }
 
-export function updateNpcPreset(npcId: string, payload: NpcPresetInput): Promise<NpcPreset> {
-  return requestJson<NpcPreset>(`/admin/npc/presets/${encodeURIComponent(npcId)}`, {
-    method: "PUT",
-    body: JSON.stringify(payload)
-  });
+export function updateNpcPreset(
+  npcId: string,
+  payload: NpcPresetInput
+): Promise<NpcPreset> {
+  return requestJson<NpcPreset>(
+    `/admin/npc/presets/${encodeURIComponent(npcId)}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(payload)
+    }
+  );
 }
 
 export function fetchVillageOverrides(): Promise<VillageBuildingOverride[]> {
-  return requestJson<VillageBuildingOverride[]>("/admin/village/overrides", {cache: "no-store"});
+  return requestJson<VillageBuildingOverride[]>("/admin/village/overrides", {
+    cache: "no-store"
+  });
 }
 
 export function updateVillageOverride(
   buildingId: string,
   payload: VillageBuildingOverrideInput
 ): Promise<VillageBuildingOverride> {
-  return requestJson<VillageBuildingOverride>(`/admin/village/overrides/${encodeURIComponent(buildingId)}`, {
-    method: "PUT",
-    body: JSON.stringify(payload)
-  });
+  return requestJson<VillageBuildingOverride>(
+    `/admin/village/overrides/${encodeURIComponent(buildingId)}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(payload)
+    }
+  );
 }
 
 export function fetchCodingTests(): Promise<CodingTestLog[]> {
   return requestJson<CodingTestLog[]>("/coding-tests", {cache: "no-store"});
 }
 
-export function createCodingTest(payload: CodingTestInput): Promise<CodingTestLog> {
+export function createCodingTest(
+  payload: CodingTestInput
+): Promise<CodingTestLog> {
   return requestJson<CodingTestLog>("/admin/coding-tests", {
     method: "POST",
     body: JSON.stringify(payload)
   });
 }
 
-export function updateCodingTest(logId: number, payload: CodingTestInput): Promise<CodingTestLog> {
+export function updateCodingTest(
+  logId: number,
+  payload: CodingTestInput
+): Promise<CodingTestLog> {
   return requestJson<CodingTestLog>(`/admin/coding-tests/${logId}`, {
     method: "PUT",
     body: JSON.stringify(payload)
@@ -241,7 +299,9 @@ export function updateCodingTest(logId: number, payload: CodingTestInput): Promi
 }
 
 export function deleteCodingTest(logId: number): Promise<{ok: boolean}> {
-  return requestJson<{ok: boolean}>(`/admin/coding-tests/${logId}`, {method: "DELETE"});
+  return requestJson<{ok: boolean}>(`/admin/coding-tests/${logId}`, {
+    method: "DELETE"
+  });
 }
 
 export function fetchCsNotes(): Promise<CsNote[]> {
@@ -255,7 +315,10 @@ export function createCsNote(payload: CsNoteInput): Promise<CsNote> {
   });
 }
 
-export function updateCsNote(noteId: number, payload: CsNoteInput): Promise<CsNote> {
+export function updateCsNote(
+  noteId: number,
+  payload: CsNoteInput
+): Promise<CsNote> {
   return requestJson<CsNote>(`/admin/cs-notes/${noteId}`, {
     method: "PUT",
     body: JSON.stringify(payload)
@@ -263,7 +326,9 @@ export function updateCsNote(noteId: number, payload: CsNoteInput): Promise<CsNo
 }
 
 export function deleteCsNote(noteId: number): Promise<{ok: boolean}> {
-  return requestJson<{ok: boolean}>(`/admin/cs-notes/${noteId}`, {method: "DELETE"});
+  return requestJson<{ok: boolean}>(`/admin/cs-notes/${noteId}`, {
+    method: "DELETE"
+  });
 }
 
 export function getVisitorSessionId(): string {

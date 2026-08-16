@@ -4,12 +4,14 @@ export const skills: SkillData[] = [
   {
     name: "Next.js",
     group: "Frontend",
-    description: "App Router 기반 페이지 구조와 배포 가능한 포트폴리오 UI를 설계합니다."
+    description:
+      "App Router 기반 페이지 구조와 배포 가능한 포트폴리오 UI를 설계합니다."
   },
   {
     name: "TypeScript",
     group: "Frontend",
-    description: "데이터 모델, 컴포넌트 props, UI 상태를 명확한 타입으로 관리합니다."
+    description:
+      "데이터 모델, 컴포넌트 props, UI 상태를 명확한 타입으로 관리합니다."
   },
   {
     name: "React",
@@ -49,17 +51,20 @@ export const skills: SkillData[] = [
   {
     name: "Spring Boot",
     group: "Backend",
-    description: "도메인 중심 REST API, 인증, 실시간 기능을 구현한 경험이 있습니다."
+    description:
+      "도메인 중심 REST API, 인증, 실시간 기능을 구현한 경험이 있습니다."
   },
   {
     name: "PostgreSQL",
     group: "Backend",
-    description: "서비스 데이터와 사용자 행동 로그를 저장하는 구조를 설계합니다."
+    description:
+      "서비스 데이터와 사용자 행동 로그를 저장하는 구조를 설계합니다."
   },
   {
     name: "Unity",
     group: "Game / XR",
-    description: "게임 UI, 플레이어 조작, XR/AR 인터랙션 프로젝트를 구현했습니다."
+    description:
+      "게임 UI, 플레이어 조작, XR/AR 인터랙션 프로젝트를 구현했습니다."
   },
   {
     name: "GitHub",
@@ -69,6 +74,7 @@ export const skills: SkillData[] = [
   {
     name: "Notion",
     group: "Workflow",
-    description: "기획 문서, 작업 로그, 회고를 한곳에 모아 프로젝트 진행을 관리합니다."
+    description:
+      "기획 문서, 작업 로그, 회고를 한곳에 모아 프로젝트 진행을 관리합니다."
   }
 ];

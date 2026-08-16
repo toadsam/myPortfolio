@@ -31,13 +31,10 @@ export function useDraggable(id: string) {
     elRef.current = el;
   }, []);
 
-  const apply = useCallback(
-    (next: Pos | null) => {
-      posRef.current = next;
-      setPos(next);
-    },
-    []
-  );
+  const apply = useCallback((next: Pos | null) => {
+    posRef.current = next;
+    setPos(next);
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -75,14 +72,21 @@ export function useDraggable(id: string) {
       let moved = false;
 
       const move = (ev: PointerEvent) => {
-        if (!moved && Math.hypot(ev.clientX - startX, ev.clientY - startY) < 4) return;
+        if (!moved && Math.hypot(ev.clientX - startX, ev.clientY - startY) < 4)
+          return;
         moved = true;
         ev.preventDefault();
         const node = elRef.current;
         const w = node?.offsetWidth ?? 0;
         const h = node?.offsetHeight ?? 0;
-        const x = Math.max(4, Math.min(ev.clientX - offX, window.innerWidth - w - 4));
-        const y = Math.max(4, Math.min(ev.clientY - offY, window.innerHeight - h - 4));
+        const x = Math.max(
+          4,
+          Math.min(ev.clientX - offX, window.innerWidth - w - 4)
+        );
+        const y = Math.max(
+          4,
+          Math.min(ev.clientY - offY, window.innerHeight - h - 4)
+        );
         apply({x, y});
       };
       const up = () => {
@@ -102,10 +106,15 @@ export function useDraggable(id: string) {
     [enabled, key, apply]
   );
 
-  const style: CSSProperties = enabled && pos ? {left: pos.x, top: pos.y, right: "auto", bottom: "auto"} : {};
+  const style: CSSProperties =
+    enabled && pos
+      ? {left: pos.x, top: pos.y, right: "auto", bottom: "auto"}
+      : {};
   const handleProps = {
     onPointerDown: enabled ? onPointerDown : undefined,
-    style: (enabled ? {touchAction: "none", cursor: "grab"} : undefined) as CSSProperties | undefined
+    style: (enabled ? {touchAction: "none", cursor: "grab"} : undefined) as
+      | CSSProperties
+      | undefined
   };
 
   return {ref: setRef, style, handleProps};

@@ -18,7 +18,10 @@ interface CameraControllerProps {
   isIntro?: boolean;
   lockRotate?: boolean;
   /** 연출용 카메라 override (컨시어지 등). 있으면 섹션 타깃 대신 이걸로 이동 */
-  cinematic?: {position: [number, number, number]; lookAt: [number, number, number]} | null;
+  cinematic?: {
+    position: [number, number, number];
+    lookAt: [number, number, number];
+  } | null;
 }
 
 // 방향키 → WASD 별칭
@@ -26,7 +29,7 @@ const KEY_ALIAS: Record<string, string> = {
   arrowup: "w",
   arrowdown: "s",
   arrowleft: "a",
-  arrowright: "d",
+  arrowright: "d"
 };
 
 // 자유비행 useFrame 루프용 스크래치 인스턴스 (매 프레임 재할당 방지, GC 압박 감소)
@@ -41,18 +44,33 @@ function isTyping() {
   const el = typeof document !== "undefined" ? document.activeElement : null;
   if (!el) return false;
   const tag = el.tagName;
-  return tag === "INPUT" || tag === "TEXTAREA" || (el as HTMLElement).isContentEditable;
+  return (
+    tag === "INPUT" ||
+    tag === "TEXTAREA" ||
+    (el as HTMLElement).isContentEditable
+  );
 }
 
-export function CameraController({activeSection, isIntro = false, lockRotate = false, cinematic = null}: CameraControllerProps) {
+export function CameraController({
+  activeSection,
+  isIntro = false,
+  lockRotate = false,
+  cinematic = null
+}: CameraControllerProps) {
   const controlsRef = useRef<OrbitController | null>(null);
   const {camera, gl} = useThree();
-  const regress = useThree((s) => s.performance.regress);
+  const regress = useThree(s => s.performance.regress);
   const sectionTarget = cameraTargets[activeSection] || cameraTargets.intro;
   const target = cinematic ?? sectionTarget;
 
-  const desiredCamera = useMemo(() => new Vector3(...target.position), [target.position]);
-  const desiredLookAt = useMemo(() => new Vector3(...target.lookAt), [target.lookAt]);
+  const desiredCamera = useMemo(
+    () => new Vector3(...target.position),
+    [target.position]
+  );
+  const desiredLookAt = useMemo(
+    () => new Vector3(...target.lookAt),
+    [target.lookAt]
+  );
 
   const isTransitioning = useRef(true);
   const prevSection = useRef(activeSection);
@@ -85,7 +103,9 @@ export function CameraController({activeSection, isIntro = false, lockRotate = f
       dom.style.cursor = "";
       const fwd = new Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
       if (controlsRef.current) {
-        controlsRef.current.target.copy(camera.position).add(fwd.multiplyScalar(8));
+        controlsRef.current.target
+          .copy(camera.position)
+          .add(fwd.multiplyScalar(8));
         controlsRef.current.enabled = true;
         controlsRef.current.update();
       }
@@ -93,7 +113,7 @@ export function CameraController({activeSection, isIntro = false, lockRotate = f
 
     // 키나 우클릭 상태에 따라 자유모드 진입/이탈을 동기화
     function sync() {
-      const hasMove = [...MOVE_KEYS].some((k) => keys.current.has(k));
+      const hasMove = [...MOVE_KEYS].some(k => keys.current.has(k));
       const shouldFly = rmb.current || hasMove;
       if (shouldFly) enterFree();
       else exitFree();
@@ -245,7 +265,8 @@ export function CameraController({activeSection, isIntro = false, lockRotate = f
 
     const settled =
       camera.position.distanceTo(desiredCamera) < 0.018 &&
-      (!controlsRef.current || controlsRef.current.target.distanceTo(desiredLookAt) < 0.018);
+      (!controlsRef.current ||
+        controlsRef.current.target.distanceTo(desiredLookAt) < 0.018);
 
     if (settled) {
       camera.position.copy(desiredCamera);
@@ -259,7 +280,7 @@ export function CameraController({activeSection, isIntro = false, lockRotate = f
 
   return (
     <OrbitControls
-      ref={(node) => {
+      ref={node => {
         controlsRef.current = node as unknown as OrbitController | null;
       }}
       dampingFactor={0.08}

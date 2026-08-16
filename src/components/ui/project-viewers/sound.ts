@@ -4,12 +4,15 @@
 // 분위기별 앰비언트 패드 + 인터랙션 효과음. 음소거 토글은 localStorage에 저장.
 import type {AmbientVariant} from "./atmosphere";
 
-const MOOD: Record<AmbientVariant, {base: number; fifth: number; type: OscillatorType}> = {
+const MOOD: Record<
+  AmbientVariant,
+  {base: number; fifth: number; type: OscillatorType}
+> = {
   horror: {base: 55, fifth: 58.27, type: "sawtooth"}, // 불협 · 음산
   energy: {base: 110, fifth: 164.81, type: "triangle"},
   data: {base: 98, fifth: 146.83, type: "sine"},
   arcade: {base: 130.81, fifth: 196, type: "square"},
-  calm: {base: 130.81, fifth: 196, type: "sine"},
+  calm: {base: 130.81, fifth: 196, type: "sine"}
 };
 
 class SoundManager {
@@ -29,7 +32,10 @@ class SoundManager {
   private ensure() {
     if (this.ctx) return;
     try {
-      const Ctx = window.AudioContext || (window as unknown as {webkitAudioContext: typeof AudioContext}).webkitAudioContext;
+      const Ctx =
+        window.AudioContext ||
+        (window as unknown as {webkitAudioContext: typeof AudioContext})
+          .webkitAudioContext;
       this.ctx = new Ctx();
       this.master = this.ctx.createGain();
       this.master.gain.value = 0.5;
@@ -79,19 +85,24 @@ class SoundManager {
     }
     const oscs = this.oscs;
     this.oscs = [];
-    setTimeout(() => oscs.forEach((o) => {
-      try {
-        o.stop();
-      } catch {
-        /* noop */
-      }
-    }), 500);
+    setTimeout(
+      () =>
+        oscs.forEach(o => {
+          try {
+            o.stop();
+          } catch {
+            /* noop */
+          }
+        }),
+      500
+    );
     this.padGain = null;
   }
 
   setEnabled(on: boolean) {
     this.enabled = on;
-    if (typeof window !== "undefined") window.localStorage.setItem("portfolio-sound", on ? "on" : "off");
+    if (typeof window !== "undefined")
+      window.localStorage.setItem("portfolio-sound", on ? "on" : "off");
     if (on) {
       this.ensure();
       this.ctx?.resume();
@@ -136,14 +147,23 @@ class SoundManager {
       // open / intro — 짧은 상승 스윕
       o.type = "sine";
       o.frequency.setValueAtTime(base, t);
-      o.frequency.exponentialRampToValueAtTime(base * 3, t + (kind === "intro" ? 0.5 : 0.3));
+      o.frequency.exponentialRampToValueAtTime(
+        base * 3,
+        t + (kind === "intro" ? 0.5 : 0.3)
+      );
       g.gain.setValueAtTime(0.0, t);
       g.gain.linearRampToValueAtTime(0.1, t + 0.05);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + (kind === "intro" ? 0.7 : 0.4));
+      g.gain.exponentialRampToValueAtTime(
+        0.0001,
+        t + (kind === "intro" ? 0.7 : 0.4)
+      );
       o.start(t);
       o.stop(t + 0.8);
     }
   }
 }
 
-export const sound = typeof window !== "undefined" ? new SoundManager() : (null as unknown as SoundManager);
+export const sound =
+  typeof window !== "undefined"
+    ? new SoundManager()
+    : (null as unknown as SoundManager);

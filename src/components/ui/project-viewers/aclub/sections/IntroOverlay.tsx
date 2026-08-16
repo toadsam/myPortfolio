@@ -39,16 +39,19 @@ export function IntroOverlay({onDismiss, reducedMotion}: Props) {
         const angle = seeded(i + 1) * Math.PI * 2;
         const distance = 1400;
         return {
-          color: CATEGORY_COLORS[CATEGORY_NAMES[Math.floor(seeded(i + 7) * CATEGORY_NAMES.length)]!],
+          color:
+            CATEGORY_COLORS[
+              CATEGORY_NAMES[Math.floor(seeded(i + 7) * CATEGORY_NAMES.length)]!
+            ],
           endX: (seeded(i + 2) * 8 - 4).toFixed(1),
           endY: (seeded(i + 3) * 8 - 4).toFixed(1),
           endR: (seeded(i + 4) * 6 - 3).toFixed(1),
           startX: (Math.cos(angle) * distance).toFixed(1),
           startY: (Math.sin(angle) * distance).toFixed(1),
-          startR: (seeded(i + 5) > 0.5 ? 25 : -25) + (seeded(i + 6) * 10 - 5),
+          startR: (seeded(i + 5) > 0.5 ? 25 : -25) + (seeded(i + 6) * 10 - 5)
         };
       }),
-    [total],
+    [total]
   );
 
   const words = useMemo(() => MOTIVATION.split(" "), []);
@@ -68,19 +71,21 @@ export function IntroOverlay({onDismiss, reducedMotion}: Props) {
 
     // 앞쪽 6장은 천천히 안착, 나머지는 빠르게 쏟아진다.
     for (let i = 0; i < Math.min(6, total); i += 1) {
-      push(() => setSettled((s) => new Set(s).add(i)), 200 + i * 90);
+      push(() => setSettled(s => new Set(s).add(i)), 200 + i * 90);
     }
     push(() => setPhase(1), 400); // 건너뛰기 노출
     for (let i = 6; i < total; i += 1) {
-      push(() => setSettled((s) => new Set(s).add(i)), 900 + (i - 6) * 40);
+      push(() => setSettled(s => new Set(s).add(i)), 900 + (i - 6) * 40);
     }
     push(() => setPhase(2), 1800); // 스포트라이트 · 그림자
     push(() => setPhase(3), 2000); // 벽을 낮추고 타이틀
-    words.forEach((_, i) => push(() => setWordsIn((n) => Math.max(n, i + 1)), 2500 + i * 35));
+    words.forEach((_, i) =>
+      push(() => setWordsIn(n => Math.max(n, i + 1)), 2500 + i * 35)
+    );
     push(() => setPhase(4), 4000); // 스크롤 안내
 
     return () => {
-      timers.current.forEach((t) => window.clearTimeout(t));
+      timers.current.forEach(t => window.clearTimeout(t));
       timers.current = [];
     };
   }, [reducedMotion, total, words]);
@@ -146,9 +151,11 @@ export function IntroOverlay({onDismiss, reducedMotion}: Props) {
                   boxShadow: phase >= 2 ? "0 4px 12px rgba(0,0,0,0.3)" : "none",
                   transition: reducedMotion
                     ? "none"
-                    : `transform ${slow ? 600 : 400}ms ${slow ? SETTLE_EASE : FALL_EASE}, opacity ${
+                    : `transform ${slow ? 600 : 400}ms ${
+                        slow ? SETTLE_EASE : FALL_EASE
+                      }, opacity ${
                         slow ? 600 : 400
-                      }ms linear, box-shadow 0.5s ease`,
+                      }ms linear, box-shadow 0.5s ease`
                 }}
               />
             );
@@ -162,7 +169,9 @@ export function IntroOverlay({onDismiss, reducedMotion}: Props) {
           className="flex flex-col items-center transition-opacity duration-500 ease-out"
           style={{opacity: phase >= 3 ? 1 : 0}}
         >
-          <h1 className="text-[36px] font-black leading-none tracking-[-0.02em] text-[#c084fc] md:text-[58px]">ACLUB</h1>
+          <h1 className="text-[36px] font-black leading-none tracking-[-0.02em] text-[#c084fc] md:text-[58px]">
+            ACLUB
+          </h1>
           <p className="mt-[12px] text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[rgba(255,255,255,0.46)] md:text-[13px]">
             동아리 탐색·모집 플랫폼 · React + TypeScript
           </p>
@@ -175,7 +184,7 @@ export function IntroOverlay({onDismiss, reducedMotion}: Props) {
               className="inline-block transition-all duration-[400ms] ease-out"
               style={{
                 opacity: i < wordsIn ? 1 : 0,
-                transform: i < wordsIn ? "translateY(0)" : "translateY(6px)",
+                transform: i < wordsIn ? "translateY(0)" : "translateY(6px)"
               }}
             >
               {word}
@@ -201,7 +210,12 @@ export function IntroOverlay({onDismiss, reducedMotion}: Props) {
           viewBox="0 0 24 24"
           aria-hidden="true"
         >
-          <path d="M19 14l-7 7m0 0l-7-7m7 7V3" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+          <path
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+          />
         </svg>
       </button>
 
@@ -209,7 +223,10 @@ export function IntroOverlay({onDismiss, reducedMotion}: Props) {
         type="button"
         onClick={onDismiss}
         className="pointer-events-auto absolute bottom-[32px] right-[32px] z-40 cursor-pointer rounded px-2 py-1 font-mono text-[11px] tracking-widest text-[rgba(255,255,255,0.35)] outline-none transition-all hover:text-[rgba(255,255,255,0.88)]"
-        style={{opacity: phase >= 1 && phase < 4 ? 1 : 0, pointerEvents: phase >= 1 && phase < 4 ? "auto" : "none"}}
+        style={{
+          opacity: phase >= 1 && phase < 4 ? 1 : 0,
+          pointerEvents: phase >= 1 && phase < 4 ? "auto" : "none"
+        }}
       >
         [ 건너뛰기 ]
       </button>

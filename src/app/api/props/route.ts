@@ -55,5 +55,9 @@ export async function POST(req: Request) {
   } catch (err) {
     return NextResponse.json({error: String(err)}, {status: 500});
   }
-  return NextResponse.json({ok: true, props: body.props.length, buildings: Object.keys(out.buildings).length});
+  return NextResponse.json({
+    ok: true,
+    props: body.props.length,
+    buildings: Object.keys(out.buildings).length
+  });
 }

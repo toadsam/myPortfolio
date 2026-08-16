@@ -4,7 +4,8 @@ import {useEffect, useRef} from "react";
 
 // 네온 링/닷 커스텀 커서 — 사이트 전역.
 // 터치(coarse) 기기에서는 비활성, prefers-reduced-motion이면 트레일(관성) 제거.
-const INTERACTIVE = 'a,button,input,select,textarea,label,[role="button"],[data-cursor="hover"]';
+const INTERACTIVE =
+  'a,button,input,select,textarea,label,[role="button"],[data-cursor="hover"]';
 
 export function CustomCursor() {
   const ringRef = useRef<HTMLDivElement>(null);
@@ -18,7 +19,9 @@ export function CustomCursor() {
     const dot = dotRef.current;
     if (!ring || !dot) return;
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
     const root = document.documentElement;
     root.classList.add("custom-cursor-active");
 

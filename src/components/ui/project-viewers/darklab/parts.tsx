@@ -6,13 +6,22 @@ import type {ReactNode} from "react";
 
 export function IconPlay({className = "h-6 w-6"}: {className?: string}) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
       <polygon points="5 3 19 12 5 21 5 3" />
     </svg>
   );
 }
 
-export function IconPlayCircle({className = "h-16 w-16"}: {className?: string}) {
+export function IconPlayCircle({
+  className = "h-16 w-16"
+}: {
+  className?: string;
+}) {
   return (
     <svg
       className={className}
@@ -25,12 +34,22 @@ export function IconPlayCircle({className = "h-16 w-16"}: {className?: string}) 
       aria-hidden="true"
     >
       <circle cx="12" cy="12" r="10" />
-      <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none" />
+      <polygon
+        points="10 8 16 12 10 16 10 8"
+        fill="currentColor"
+        stroke="none"
+      />
     </svg>
   );
 }
 
-export function IconVolume({muted, className = "h-4 w-4"}: {muted?: boolean; className?: string}) {
+export function IconVolume({
+  muted,
+  className = "h-4 w-4"
+}: {
+  muted?: boolean;
+  className?: string;
+}) {
   return (
     <svg
       className={className}
@@ -67,7 +86,7 @@ export function CodeWindow({
   trafficLights = "mono",
   className = "",
   bodyClassName = "p-5",
-  header,
+  header
 }: {
   file: string;
   children: ReactNode;
@@ -77,13 +96,20 @@ export function CodeWindow({
   header?: ReactNode;
 }) {
   return (
-    <div className={`overflow-hidden rounded-md border border-[rgba(255,255,255,0.10)] bg-[#0b0708] ${className}`}>
+    <div
+      className={`overflow-hidden rounded-md border border-[rgba(255,255,255,0.10)] bg-[#0b0708] ${className}`}
+    >
       <div className="flex h-[44px] items-center justify-between border-b border-[rgba(255,255,255,0.10)] bg-[#0f0a0c] px-4">
         {trafficLights === "none" ? (
-          <span className="font-mono text-[11px] uppercase tracking-wider text-[rgba(255,255,255,0.42)]">{header}</span>
+          <span className="font-mono text-[11px] uppercase tracking-wider text-[rgba(255,255,255,0.42)]">
+            {header}
+          </span>
         ) : (
           <div className="flex gap-1.5">
-            {(trafficLights === "color" ? ["#ff5f56", "#ffbd2e", "#27c93f"] : ["", "", ""]).map((c, i) => (
+            {(trafficLights === "color"
+              ? ["#ff5f56", "#ffbd2e", "#27c93f"]
+              : ["", "", ""]
+            ).map((c, i) => (
               <div
                 key={i}
                 className="h-2.5 w-2.5 rounded-full"
@@ -92,7 +118,9 @@ export function CodeWindow({
             ))}
           </div>
         )}
-        <span className="font-mono text-[11px] text-[rgba(255,255,255,0.42)]">{file}</span>
+        <span className="font-mono text-[11px] text-[rgba(255,255,255,0.42)]">
+          {file}
+        </span>
       </div>
       <div className={bodyClassName}>{children}</div>
     </div>
@@ -100,17 +128,26 @@ export function CodeWindow({
 }
 
 /** 섹션 상단 키커 — "01 · 무엇을 만들었나" 같은 번호표. */
-export function Kicker({children, tone = "red"}: {children: ReactNode; tone?: "red" | "accent" | "muted" | "warn"}) {
+export function Kicker({
+  children,
+  tone = "red"
+}: {
+  children: ReactNode;
+  tone?: "red" | "accent" | "muted" | "warn";
+}) {
   const color =
     tone === "red"
       ? "#ef4444"
       : tone === "accent"
-        ? "#ff5a4d"
-        : tone === "warn"
-          ? "#fbbf24"
-          : "rgba(255,255,255,0.42)";
+      ? "#ff5a4d"
+      : tone === "warn"
+      ? "#fbbf24"
+      : "rgba(255,255,255,0.42)";
   return (
-    <div className="font-mono text-[11px] uppercase tracking-[0.25em]" style={{color}}>
+    <div
+      className="font-mono text-[11px] uppercase tracking-[0.25em]"
+      style={{color}}
+    >
       {children}
     </div>
   );
@@ -124,7 +161,7 @@ export const SYNTAX = {
   keyword: "#ef4444",
   number: "#b58cf0",
   type: "#4ec9b0",
-  method: "#dcdcaa",
+  method: "#dcdcaa"
 } as const;
 
 export function Kw({children}: {children: ReactNode}) {

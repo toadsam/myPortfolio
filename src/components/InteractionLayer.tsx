@@ -17,16 +17,23 @@ export function InteractionLayer() {
   const idRef = useRef(0);
 
   useEffect(() => {
-    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    const reduced =
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
     if (reduced) return;
 
     function onDown(e: PointerEvent) {
       if (e.button !== 0) return;
       const target = e.target as HTMLElement | null;
-      const el = target?.closest?.("button, a, [role='button'], label, summary, input[type='checkbox'], input[type='radio']");
+      const el = target?.closest?.(
+        "button, a, [role='button'], label, summary, input[type='checkbox'], input[type='radio']"
+      );
       const interactive = !!el;
 
-      if (interactive && typeof navigator !== "undefined" && "vibrate" in navigator) {
+      if (
+        interactive &&
+        typeof navigator !== "undefined" &&
+        "vibrate" in navigator
+      ) {
         try {
           navigator.vibrate?.(9);
         } catch {
@@ -35,8 +42,14 @@ export function InteractionLayer() {
       }
 
       const id = idRef.current++;
-      setBursts((list) => [...list.slice(-6), {id, x: e.clientX, y: e.clientY, interactive}]);
-      window.setTimeout(() => setBursts((list) => list.filter((b) => b.id !== id)), 650);
+      setBursts(list => [
+        ...list.slice(-6),
+        {id, x: e.clientX, y: e.clientY, interactive}
+      ]);
+      window.setTimeout(
+        () => setBursts(list => list.filter(b => b.id !== id)),
+        650
+      );
     }
 
     window.addEventListener("pointerdown", onDown);
@@ -46,7 +59,7 @@ export function InteractionLayer() {
   return (
     <div className="pointer-events-none fixed inset-0 z-[200] overflow-hidden">
       <AnimatePresence>
-        {bursts.map((burst) => (
+        {bursts.map(burst => (
           <BurstFx key={burst.id} burst={burst} />
         ))}
       </AnimatePresence>
@@ -69,7 +82,13 @@ function BurstFx({burst}: {burst: Burst}) {
     <div className="absolute" style={{left: burst.x, top: burst.y}}>
       <motion.span
         className="absolute rounded-full border"
-        style={{width: ringSize, height: ringSize, borderColor: color, marginLeft: -ringSize / 2, marginTop: -ringSize / 2}}
+        style={{
+          width: ringSize,
+          height: ringSize,
+          borderColor: color,
+          marginLeft: -ringSize / 2,
+          marginTop: -ringSize / 2
+        }}
         initial={{scale: 0.2, opacity: 0.85}}
         animate={{scale: 1, opacity: 0}}
         exit={{opacity: 0}}
@@ -79,7 +98,14 @@ function BurstFx({burst}: {burst: Burst}) {
         <motion.span
           key={i}
           className="absolute rounded-full"
-          style={{width: 4, height: 4, marginLeft: -2, marginTop: -2, background: color, boxShadow: `0 0 6px ${color}`}}
+          style={{
+            width: 4,
+            height: 4,
+            marginLeft: -2,
+            marginTop: -2,
+            background: color,
+            boxShadow: `0 0 6px ${color}`
+          }}
           initial={{x: 0, y: 0, opacity: 1, scale: 1}}
           animate={{x: p.dx, y: p.dy, opacity: 0, scale: 0.4}}
           exit={{opacity: 0}}

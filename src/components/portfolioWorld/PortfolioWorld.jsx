@@ -11,11 +11,18 @@ function Header(props) {
 
   return (
     <header className="portfolio-world__header">
-      <button className="portfolio-world__brand" type="button" onClick={onClose}>
+      <button
+        className="portfolio-world__brand"
+        type="button"
+        onClick={onClose}
+      >
         <strong>JH</strong>
         <span>Portfolio World</span>
       </button>
-      <nav className="portfolio-world__nav" aria-label="Portfolio world shortcuts">
+      <nav
+        className="portfolio-world__nav"
+        aria-label="Portfolio world shortcuts"
+      >
         {zones.map(function renderShortcut(zone) {
           return (
             <button
@@ -42,12 +49,20 @@ function Header(props) {
 
 function HoverHint(props) {
   const {hoveredZone, activeZone} = props;
-  const zone = hoveredZone ? zoneMap[hoveredZone] : activeZone ? zoneMap[activeZone] : null;
+  const zone = hoveredZone
+    ? zoneMap[hoveredZone]
+    : activeZone
+    ? zoneMap[activeZone]
+    : null;
 
   return (
     <div className={zone ? "world-hover-hint is-visible" : "world-hover-hint"}>
       <span>{zone ? zone.label : "Move through the world"}</span>
-      <strong>{zone ? zone.subtitle : "Hover a glowing marker, then click to enter a zone."}</strong>
+      <strong>
+        {zone
+          ? zone.subtitle
+          : "Hover a glowing marker, then click to enter a zone."}
+      </strong>
     </div>
   );
 }
@@ -78,7 +93,11 @@ function PortfolioWorld() {
   }, []);
 
   return (
-    <main className={activeZone ? "portfolio-world has-active-zone" : "portfolio-world"}>
+    <main
+      className={
+        activeZone ? "portfolio-world has-active-zone" : "portfolio-world"
+      }
+    >
       <WorldScene
         activeZone={activeZone}
         hoveredZone={hoveredZone}
@@ -87,7 +106,11 @@ function PortfolioWorld() {
       />
       <div className="portfolio-world__grain" aria-hidden="true" />
       <div className="portfolio-world__vignette" aria-hidden="true" />
-      <Header activeZone={activeZone} onClose={closeZone} onSelectZone={selectZone} />
+      <Header
+        activeZone={activeZone}
+        onClose={closeZone}
+        onSelectZone={selectZone}
+      />
       <HoverHint activeZone={activeZone} hoveredZone={hoveredZone} />
       <ZonePanel
         activeZone={activeZone}
@@ -95,7 +118,11 @@ function PortfolioWorld() {
         onOpenProject={openProject}
         onSelectZone={selectZone}
       />
-      <MobileDock activeZone={activeZone} onClose={closeZone} onSelectZone={selectZone} />
+      <MobileDock
+        activeZone={activeZone}
+        onClose={closeZone}
+        onSelectZone={selectZone}
+      />
       <ProjectModal
         project={selectedProject}
         onClose={function closeProject() {

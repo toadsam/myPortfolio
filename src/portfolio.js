@@ -146,7 +146,7 @@ const educationInfo = {
       desc: "HTML, CSS, JavaScript대한 기초 감각을 익혔습니다.",
       descBullets: ["프론트엔드 기초 감각 확장"]
     },
-    
+
     {
       schoolName: "스파르타 내일 배움 캠프",
       logo: require("./assets/images/스파르타.png"),
@@ -497,7 +497,8 @@ const bigProjects = {
           oneLiner:
             "Issue: 서버 기반 인증·권한 검증을 통한 관리자 기능 접근 제어",
           how: "초기 관리자 계정 생성을 위한 운영 스크립트 제공으로 권한 관리 단순화",
-          result: "권한 검증이 서버 중심으로 일관되게 적용되어 관리자 기능의 보안 안정성 ",
+          result:
+            "권한 검증이 서버 중심으로 일관되게 적용되어 관리자 기능의 보안 안정성 ",
           proofCaption: "관리자 권한 코드 캡처",
           proofImage: require("./assets/images/AjouCampusFood/ACF관리자코드.png")
         },
@@ -532,7 +533,8 @@ const bigProjects = {
           image: require("./assets/images/aclub/동아리홈페이지 메인.jpg"),
           caption: "메인화면",
           role: "Frontend 개발 + 운영 구조 설계 + 분석(GA4/GSC) 기반 개선",
-          period: "v1(운영/배포): 2025.01 – 2025.04\nv2(리메이크): 2025.12 – 현재",
+          period:
+            "v1(운영/배포): 2025.01 – 2025.04\nv2(리메이크): 2025.12 – 현재",
           techStack: [
             "Frontend: React, Vite, Axios",
             "Analytics: GA4, Google Search Console",
@@ -551,48 +553,40 @@ const bigProjects = {
           outcome:
             "정보 도달 시간이 줄고 참여 동선이 단순해져, 운영자가 반복 안내하던 문의를 줄이며 운영 효율을 개선",
           caption: "메인→상세→참여 캡처",
-          images: [
-            require("./assets/images/aclub/동아리 세부 저장.jpg")
-          ]
+          images: [require("./assets/images/aclub/동아리 세부 저장.jpg")]
         },
         quickSummary: [
           {
             icon: "🧩",
             title: "기능 개발",
-            desc:
-              "모집/공지/행사/자료 페이지와 상세 화면을 컴포넌트 기반으로 구현하고, 사용자 동선 중심 라우팅 구조 설계"
+            desc: "모집/공지/행사/자료 페이지와 상세 화면을 컴포넌트 기반으로 구현하고, 사용자 동선 중심 라우팅 구조 설계"
           },
           {
             icon: "🧭",
             title: "정보 구조·UX",
-            desc:
-              "메뉴/카테고리를 단순화하고, 핵심 행동(신청·문의) CTA를 ‘바로 보이는 위치’로 재배치"
+            desc: "메뉴/카테고리를 단순화하고, 핵심 행동(신청·문의) CTA를 ‘바로 보이는 위치’로 재배치"
           },
           {
             icon: "📈",
             title: "데이터 기반 개선",
-            desc:
-              "GA4로 페이지 흐름/체류/이벤트를, GSC로 검색 유입/CTR을 확인해 개선 포인트를 근거로 확정"
+            desc: "GA4로 페이지 흐름/체류/이벤트를, GSC로 검색 유입/CTR을 확인해 개선 포인트를 근거로 확정"
           },
           {
             icon: "🛠️",
             title: "운영 피드백 반영",
-            desc:
-              "배포 후 반복 문의/혼선이 생기는 구간을 수집해 문구·배치·링크 구조를 빠르게 개선"
+            desc: "배포 후 반복 문의/혼선이 생기는 구간을 수집해 문구·배치·링크 구조를 빠르게 개선"
           },
           {
             icon: "🚀",
             title: "배포·운영",
-            desc:
-              "운영 사이트를 안정적으로 배포하고, 변경 사항을 빠르게 반영할 수 있는 운영 프로세스 유지"
+            desc: "운영 사이트를 안정적으로 배포하고, 변경 사항을 빠르게 반영할 수 있는 운영 프로세스 유지"
           }
         ],
         coreDesign: [
           {
             title: "동아리 참여 동선 설계(UX)",
             oneLiner: "유입 후 ‘참여’까지 막히지 않도록 동선을 짧게 설계",
-            how:
-              "How: 메인에서 모집/행사 진입 → 상세에서 핵심 정보 요약 → 하단 고정 CTA(신청/문의/링크)로 행동 유도",
+            how: "How: 메인에서 모집/행사 진입 → 상세에서 핵심 정보 요약 → 하단 고정 CTA(신청/문의/링크)로 행동 유도",
             result:
               "Result: ‘어디서 신청해요?’ 같은 반복 문의 감소 + 참여 전환 흐름 강화",
             proofCaption: "소학회 전체 페이지 캡처",
@@ -601,8 +595,7 @@ const bigProjects = {
           {
             title: "운영 피드백 반영(실사용 개선)",
             oneLiner: "Everytime/카카오톡 유입을 ‘바로 행동’으로 연결",
-            how:
-              "How: 홍보 글/공지 링크를 메인·모집 상세로 연결하고, 상세 상단에 신청/문의 CTA를 고정 배치해 진입 즉시 행동 가능하게 설계",
+            how: "How: 홍보 글/공지 링크를 메인·모집 상세로 연결하고, 상세 상단에 신청/문의 CTA를 고정 배치해 진입 즉시 행동 가능하게 설계",
             result:
               "Result: Result: 홍보→유입→참여 흐름이 명확해져 전환 동선 강화",
             proofCaption: "Everytime 홍보글/카톡 캡처",
@@ -611,8 +604,7 @@ const bigProjects = {
           {
             title: "GA4/GSC 기반 개선 루프",
             oneLiner: "감이 아닌 지표로 운영 개선 우선순위를 결정",
-            how:
-              "How: GA4 홈 지표(조회수/사용자/참여시간)로 운영 성과를 추적하고, (추가로) 페이지·이벤트 리포트와 GSC 성과를 함께 보며 개선안을 도출",
+            how: "How: GA4 홈 지표(조회수/사용자/참여시간)로 운영 성과를 추적하고, (추가로) 페이지·이벤트 리포트와 GSC 성과를 함께 보며 개선안을 도출",
             result:
               "Result: 운영 개선을 ‘측정→수정→검증’ 루프로 반복 가능하게 정착",
             proofCaption: "GA4 핵심 지표(조회수/사용자/참여시간) 캡처",
@@ -620,11 +612,14 @@ const bigProjects = {
           },
           {
             title: "토큰 기반 인증(자동 재발급)",
-            oneLiner: "Access Token 만료 상황을 사용자에게 노출하지 않는 인증 흐름 구현",
+            oneLiner:
+              "Access Token 만료 상황을 사용자에게 노출하지 않는 인증 흐름 구현",
             how: "How: Access Token 만료(401) 시 HttpOnly Refresh Token 쿠키로 재발급 요청을 보내고, 새 토큰으로 기존 API 요청을 자동 재시도하도록 구성",
-            result: "Result: 로그인 유지 경험 개선 + 운영 중 인증 오류/재로그인 요구 감소",
-            proofCaption: "401 발생 시 Refresh Token 기반 Access Token 자동 재발급 및 재요청 처리 코드",
-            proofImage: require('./assets/images/aclub/동아리토큰코드.png')
+            result:
+              "Result: 로그인 유지 경험 개선 + 운영 중 인증 오류/재로그인 요구 감소",
+            proofCaption:
+              "401 발생 시 Refresh Token 기반 Access Token 자동 재발급 및 재요청 처리 코드",
+            proofImage: require("./assets/images/aclub/동아리토큰코드.png")
           }
         ],
         links: [{name: "aClub", url: "https://aclub.co.kr/"}]
@@ -649,7 +644,8 @@ const bigProjects = {
           image: require("./assets/images/아주총/홈페이지 화면2.png"),
           caption: "메인 화면",
           role: "Frontend 개발 + 운영 구조 설계 + GA4/GSC 분석 기반 개선",
-          period: "v1(운영/배포): 2025.03 – 2025.08\nv2(리메이크): 2026.01 – 현재",
+          period:
+            "v1(운영/배포): 2025.03 – 2025.08\nv2(리메이크): 2026.01 – 현재",
           techStack: [
             "Frontend: React, Vite, Axios",
             "Analytics: GA4, Google Search Console",
@@ -668,48 +664,40 @@ const bigProjects = {
           outcome:
             "정보 도달 시간이 줄고 참여 동선이 명확해져 반복 문의가 감소하고 운영 효율이 개선됨",
           caption: "소개 페이지",
-          images: [
-            require("./assets/images/아주총/총학생회소개 페이지.png")
-          ]
+          images: [require("./assets/images/아주총/총학생회소개 페이지.png")]
         },
         quickSummary: [
           {
             icon: "🧩",
             title: "프론트 기능 구현",
-            desc:
-              "공지/행사/지원/자료/신청 흐름을 페이지 단위로 구성하고 라우팅 기반 탐색 구조를 설계"
+            desc: "공지/행사/지원/자료/신청 흐름을 페이지 단위로 구성하고 라우팅 기반 탐색 구조를 설계"
           },
           {
             icon: "🔍",
             title: "정보 구조·UX",
-            desc:
-              "메뉴/카테고리를 단순화하고 사용자가 빠르게 ‘필요한 정보→행동’까지 가도록 동선 최적화"
+            desc: "메뉴/카테고리를 단순화하고 사용자가 빠르게 ‘필요한 정보→행동’까지 가도록 동선 최적화"
           },
           {
             icon: "📣",
             title: "운영형 홍보",
-            desc:
-              "공지/안내 콘텐츠를 운영 목적에 맞게 구조화하고 핵심 CTA로 참여를 유도"
+            desc: "공지/안내 콘텐츠를 운영 목적에 맞게 구조화하고 핵심 CTA로 참여를 유도"
           },
           {
             icon: "📈",
             title: "유입·행동 분석",
-            desc:
-              "GA4/GSC로 유입·CTR·체류·이벤트를 확인해 개선 우선순위를 결정"
+            desc: "GA4/GSC로 유입·CTR·체류·이벤트를 확인해 개선 우선순위를 결정"
           },
           {
             icon: "🛠️",
             title: "피드백 반영 개선",
-            desc:
-              "배포 후 반복 문의가 생기는 지점을 수집해 문구·배치·링크 구조를 빠르게 수정"
+            desc: "배포 후 반복 문의가 생기는 지점을 수집해 문구·배치·링크 구조를 빠르게 수정"
           }
         ],
         coreDesign: [
           {
             title: "정보 구조·탐색 UX",
             oneLiner: "공지/지원/신청을 ‘찾기→확인→신청’ 흐름으로 재구성",
-            how:
-              "How: 메뉴/카테고리 구조를 정리하고, 상세 화면에 핵심 정보 요약 + CTA(신청/문의/링크)를 명확한 위치에 배치",
+            how: "How: 메뉴/카테고리 구조를 정리하고, 상세 화면에 핵심 정보 요약 + CTA(신청/문의/링크)를 명확한 위치에 배치",
             result:
               "Result: ‘어디서 신청하나요?’ 같은 반복 문의 감소 + 필요한 정보 도달 속도 향상",
             proofCaption: "메인/메뉴 구조/상세",
@@ -719,8 +707,7 @@ const bigProjects = {
             title: "운영 피드백 반영(실사용 개선)",
             oneLiner:
               "운영 중 발생한 혼선 구간을 빠르게 수정하는 개선 루프 구축",
-            how:
-              "How: 자주 들어오는 질문/혼선 포인트를 기준으로 안내 문구를 짧고 명확하게 수정하고, 버튼 라벨·배치·링크 위치를 행동 중심으로 개선",
+            how: "How: 자주 들어오는 질문/혼선 포인트를 기준으로 안내 문구를 짧고 명확하게 수정하고, 버튼 라벨·배치·링크 위치를 행동 중심으로 개선",
             result:
               "Result: 운영자 안내 부담 감소 + 사용자 self-serve(스스로 해결) 비율 증가",
             proofCaption: "문구/버튼/배치 수정 캡처(피드백 반영 사례)",
@@ -729,10 +716,8 @@ const bigProjects = {
           {
             title: "유입·행동 분석(운영 개선 루프)",
             oneLiner: "감이 아닌 지표로 개선 포인트를 확정",
-            how:
-              "How: GA4로 페이지 흐름/체류/이벤트를 확인하고, GSC로 검색 유입/CTR을 확인해 콘텐츠/랜딩 구조 개선 근거를 확보",
-            result:
-              "Result: 개선의 우선순위와 효과를 설명 가능한 형태로 축적",
+            how: "How: GA4로 페이지 흐름/체류/이벤트를 확인하고, GSC로 검색 유입/CTR을 확인해 콘텐츠/랜딩 구조 개선 근거를 확보",
+            result: "Result: 개선의 우선순위와 효과를 설명 가능한 형태로 축적",
             proofCaption: "GA4/GSC 화면",
             proofImage: require("./assets/images/아주총/총학생회 배포자료.png")
           }
@@ -773,9 +758,7 @@ const bigProjects = {
           outcome:
             "출시/배포까지 완료된 3D 액션 플랫폼 게임을 구현하고, 저장 안정성(XOR)과 성능(충돌/레이캐스트/풀링)을 개선해 완성도를 확보했다.",
           caption: "플레이 화면/스테이지 선택 화면",
-          images: [
-            require("./assets/images/트세로프/트세로프난이도선택.png")
-          ]
+          images: [require("./assets/images/트세로프/트세로프난이도선택.png")]
         },
         quickSummary: [
           {
@@ -855,8 +838,9 @@ const bigProjects = {
         ops: {
           oneLiner: "User Test–Driven UX Improvement",
           how: "How: 실제 플레이어 대상 단계별 유저테스트를 진행하고, 플레이 로그·피드백 기반으로 난이도·UX를 반복 개선",
-          result: "Result: 조작 이해도 향상과 초반 이탈 감소, 플레이 흐름 안정화",
-          proofImage: require("./assets/images/트세로프/트세로프유저피드백.png"),
+          result:
+            "Result: 조작 이해도 향상과 초반 이탈 감소, 플레이 흐름 안정화",
+          proofImage: require("./assets/images/트세로프/트세로프유저피드백.png")
         },
         links: [
           {
@@ -1023,9 +1007,7 @@ const bigProjects = {
           outcome:
             "VR 환경에서도 조작 부담이 적은 퍼즐 중심 공포 게임 구현 및 몰입형 플레이 경험 제공",
           caption: "VR 플레이 화면 및 퍼즐/추적 장면",
-          images: [
-            require("./assets/images/VR/따라오는 몬스터.png")
-          ]
+          images: [require("./assets/images/VR/따라오는 몬스터.png")]
         },
         quickSummary: [
           {
@@ -1092,17 +1074,19 @@ const bigProjects = {
             proofImage: require("./assets/images/VR/VR중앙제어코드.png")
           }
         ],
-        links: [{name: "GitHub", url: "https://github.com/kbwon/IMP_VR"},
+        links: [
+          {name: "GitHub", url: "https://github.com/kbwon/IMP_VR"},
           {
             name: "Demo Video",
             url: "https://youtu.be/sK9OoBNC9vc"
-          }]
+          }
+        ]
       }
     },
 
     {
       image: require("./assets/images/AR/AR로고.png"),
-      projectName: "INTO MONSTER POINT(AR)",  
+      projectName: "INTO MONSTER POINT(AR)",
       status: "archived",
       projectDesc:
         "AR Plane Scan 기반 전투 공간 자동 생성.\n웨이브/보스 트리거 슈터",
@@ -1134,9 +1118,7 @@ const bigProjects = {
           outcome:
             "현실 공간 크기에 맞춰 전투 맵이 자동 생성되어 몰입도가 높아지고, 웨이브→보스 전환 구조가 안정화됨",
           caption: "AR Plane Scan 기반 전투 공간 생성 및 전투 진행 화면",
-          images: [
-            require("./assets/images/AR/보스몬스터 사진.png")
-          ]
+          images: [require("./assets/images/AR/보스몬스터 사진.png")]
         },
         quickSummary: [
           {
@@ -1207,11 +1189,13 @@ const bigProjects = {
             proofImage: require("./assets/images/AR/AR웨이브보스트러거코드.png")
           }
         ],
-        links: [{name: "GitHub", url: "https://github.com/toadsam/IMP"},
+        links: [
+          {name: "GitHub", url: "https://github.com/toadsam/IMP"},
           {
             name: "Demo Video",
             url: "https://youtu.be/9Lf2K1qBJ2E"
-          }]
+          }
+        ]
       }
     }
   ],
@@ -1231,167 +1215,159 @@ const achievementSection = {
       subtitle: "타워 디펜스 게임 1인 개발",
       image: require("./assets/images/서브 프로젝트/고양이로부터 지켜라.png"),
       imageAlt: "고양이로부터 지켜라",
-      footerLink: [
-          
-        ]
+      footerLink: []
     },
     {
       title: "루탄의 카드 게임",
-      subtitle:
-        "덱 빌딩 카드 게임 개발",
+      subtitle: "덱 빌딩 카드 게임 개발",
       image: require("./assets/images/서브 프로젝트/르탄게임.png"),
       imageAlt: "덱 빌딩 카드 게임 개발",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/KimDaeMins/CardGame"},
-          {
-            name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=fsbsZMmkxDE"
-          }
-        ]
+        {name: "GitHub", url: "https://github.com/KimDaeMins/CardGame"},
+        {
+          name: "Demo Video",
+          url: "https://www.youtube.com/watch?v=fsbsZMmkxDE"
+        }
+      ]
     },
     {
       title: "내 꿈이 현실의 버그에 침식당하기 시작해서 위험해",
-      subtitle:
-        "잠든 개발자가 꿈속 코드 세계에서 버그를 해결하는 게임",
+      subtitle: "잠든 개발자가 꿈속 코드 세계에서 버그를 해결하는 게임",
       image: require("./assets/images/서브 프로젝트/개발자게임.png"),
       imageAlt: "내 꿈이 현실의 버그에 침식당하기 시작해서 위험해",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/phw97123/B10_DreamsComeTrue"},
-          {
-            name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=3ZMRb3Ro87o"
-
-          },
-          {
-            name: "Notion",
-            url: "https://teamsparta.notion.site/10-75e0e926db5b44e7a07f009b57ee577a"
-
-          }
-        ]
+        {name: "GitHub", url: "https://github.com/phw97123/B10_DreamsComeTrue"},
+        {
+          name: "Demo Video",
+          url: "https://www.youtube.com/watch?v=3ZMRb3Ro87o"
+        },
+        {
+          name: "Notion",
+          url: "https://teamsparta.notion.site/10-75e0e926db5b44e7a07f009b57ee577a"
+        }
+      ]
     },
     {
       title: "스파르타 던전 배틀 (Text 게임)",
-      subtitle:
-        "나만의 캐릭터를 생성하고, 그 캐릭터를 활용한 텍스트 게임",
+      subtitle: "나만의 캐릭터를 생성하고, 그 캐릭터를 활용한 텍스트 게임",
       image: require("./assets/images/서브 프로젝트/스파르터 던전 배틀.png"),
       imageAlt: "스파르타 던전 배틀 (Text 게임)",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/toadsam/2-1teamproject?tab=readme-ov-file##-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%86%8C%EA%B0%9C"},
-          {
-            name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=akilbeG1NyY"
-          },
-          {
-            name: "Notion",
-            url: "https://teamsparta.notion.site/02-BE-077931748646472e87afa346c1c84063"
-          }
-        
-        ]
+        {
+          name: "GitHub",
+          url: "https://github.com/toadsam/2-1teamproject?tab=readme-ov-file##-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%86%8C%EA%B0%9C"
+        },
+        {
+          name: "Demo Video",
+          url: "https://www.youtube.com/watch?v=akilbeG1NyY"
+        },
+        {
+          name: "Notion",
+          url: "https://teamsparta.notion.site/02-BE-077931748646472e87afa346c1c84063"
+        }
+      ]
     },
     {
       title: "Fossil Runner",
-      subtitle:
-        "섬에서 자원을 모아 성장하고, 용을 처치해 현실로 돌아가는 게임",
+      subtitle: "섬에서 자원을 모아 성장하고, 용을 처치해 현실로 돌아가는 게임",
       image: require("./assets/images/서브 프로젝트/파슬러너.png"),
       imageAlt: "Fossil Runner",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/KimEoJin24/Fossil_Runner"},
-          {
-            name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=Le8jc3p3Z68"
-          }
-        ]
+        {name: "GitHub", url: "https://github.com/KimEoJin24/Fossil_Runner"},
+        {
+          name: "Demo Video",
+          url: "https://www.youtube.com/watch?v=Le8jc3p3Z68"
+        }
+      ]
     },
     {
       title: "MOVYDICK",
-      subtitle:
-        "이더리옴 고래 활동 추적 및 매매 시점 예측 시스템 개발",
+      subtitle: "이더리옴 고래 활동 추적 및 매매 시점 예측 시스템 개발",
       image: require("./assets/images/서브 프로젝트/MOVYDICK.png"),
       imageAlt: "MOVYDICK",
       footerLink: [
-          
-          {
-            name: "Demo Video",
-            url: "https://youtu.be/Ul-gFH8Dd8U"
-          },
-          {
-            name: "Notion",
-            url: "https://www.notion.so/1350657d60d380a2bc93cf97bf660b53"
-          }
-        ]
+        {
+          name: "Demo Video",
+          url: "https://youtu.be/Ul-gFH8Dd8U"
+        },
+        {
+          name: "Notion",
+          url: "https://www.notion.so/1350657d60d380a2bc93cf97bf660b53"
+        }
+      ]
     },
     {
       title: "NovelKub",
-      subtitle:
-        "NPC 단서 수집 기반 살인사건 추리 게임",
+      subtitle: "NPC 단서 수집 기반 살인사건 추리 게임",
       image: require("./assets/images/서브 프로젝트/노벨.png"),
       imageAlt: "NovelKub",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/jwonp9127/Novelkub"},
-          {
-            name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=Xkv1aamogcA"
-          },
-          {
-            name: "Notion",
-            url: "https://teamsparta.notion.site/03-Rumikub-d735d92158cb45b296e8b3b79bd68da0"
-          }
-        ]
+        {name: "GitHub", url: "https://github.com/jwonp9127/Novelkub"},
+        {
+          name: "Demo Video",
+          url: "https://www.youtube.com/watch?v=Xkv1aamogcA"
+        },
+        {
+          name: "Notion",
+          url: "https://teamsparta.notion.site/03-Rumikub-d735d92158cb45b296e8b3b79bd68da0"
+        }
+      ]
     },
     {
       title: "time rewinder",
-      subtitle:
-        "Godot 기반 퍼즐 게발",
+      subtitle: "Godot 기반 퍼즐 게발",
       image: require("./assets/images/time rewinder2.png"),
       imageAlt: "Time 게임",
       footerLink: [
-          {
-            name: "Demo Video",
-            url: "https://youtu.be/HkcLSAoo6bE"
-          }
-        ]
+        {
+          name: "Demo Video",
+          url: "https://youtu.be/HkcLSAoo6bE"
+        }
+      ]
     },
     {
       title: "불빛아래",
-      subtitle:
-        "AI 디자인 적용 3D 공포 게임",
+      subtitle: "AI 디자인 적용 3D 공포 게임",
       image: require("./assets/images/서브 프로젝트/불빛아래.png"),
       imageAlt: "AR Monster Shooter",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/toadsam/GameEnginePrograming"},
-          {
-            name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=EswL1T42w-w"
-          }
-        ]
+        {
+          name: "GitHub",
+          url: "https://github.com/toadsam/GameEnginePrograming"
+        },
+        {
+          name: "Demo Video",
+          url: "https://www.youtube.com/watch?v=EswL1T42w-w"
+        }
+      ]
     },
     {
       title: "경복궁을 지켜라",
-      subtitle:
-        "로블록스 기반으로 제작된 경복궁을 복원하는 게임",
+      subtitle: "로블록스 기반으로 제작된 경복궁을 복원하는 게임",
       image: require("./assets/images/경복궁을 지켜라.png"),
       imageAlt: "경복궁을 지켜라",
       footerLink: [
-          
-          {
-            name: "Demo Video",
-            url: "https://youtu.be/bhqtLzMQlz0"
-          }
-        ]
+        {
+          name: "Demo Video",
+          url: "https://youtu.be/bhqtLzMQlz0"
+        }
+      ]
     },
     {
       title: "페스트러너",
-      subtitle:
-        "곤충을 피해 도망하가는 ar기반 러너 게임",
+      subtitle: "곤충을 피해 도망하가는 ar기반 러너 게임",
       image: require("./assets/images/페스트러너.png"),
       imageAlt: "AR Monster Shooter",
       footerLink: [
-          {name: "GitHub", url: "https://github.com/HyunmoSeomoon/MetaverseProgramming"},
-          {
-            name: "Demo Video",
-            url: "https://www.youtube.com/watch?v=48f_wfQ1NO4"
-          }
-        ]
+        {
+          name: "GitHub",
+          url: "https://github.com/HyunmoSeomoon/MetaverseProgramming"
+        },
+        {
+          name: "Demo Video",
+          url: "https://www.youtube.com/watch?v=48f_wfQ1NO4"
+        }
+      ]
     }
   ],
   display: true // Set false to hide this section, defaults to true
@@ -1407,7 +1383,8 @@ const blogSection = {
     {
       url: "https://simple-club-a2b.notion.site/f4211dd073904c08bb779f4504ffa716?v=8b02760b1a944b7592694ffd13e06166&pvs=74",
       title: "개발하며 기억에 남은 하루의 기록",
-      description: "개발 중 인상 깊었던 문제와 배운 점, 그날의 고민을 짧게 정리합니다."
+      description:
+        "개발 중 인상 깊었던 문제와 배운 점, 그날의 고민을 짧게 정리합니다."
     },
     {
       url: "https://www.notion.so/hyuuna/b2febb5d7e174118b40ea32b551db3d8?source=copy_link",
@@ -1418,7 +1395,7 @@ const blogSection = {
       url: "https://simple-club-a2b.notion.site/13a6894d4ed349c983db120db7e3f4c4?v=673a55f82ff1425fb58b291d97917157&p=a44e8eb59dce482ea3960c09bf983e13&pm=s",
       title: "코딩 테스트 문제 풀이 기록",
       description: "문제 풀이 과정과 접근 방식을 정리합니다."
-    },
+    }
   ],
   display: true // Set false to hide this section, defaults to true
 };

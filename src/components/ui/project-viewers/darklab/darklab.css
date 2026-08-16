@@ -23,7 +23,8 @@
   scrollbar-width: none;
   background-color: var(--dl-bg-dark);
   color: var(--dl-text);
-  font-family: var(--dl-font-sans), "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+  font-family: var(--dl-font-sans), "Noto Sans KR", "Apple SD Gothic Neo",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -42,7 +43,8 @@
 }
 
 .dl-root .font-mono {
-  font-family: var(--dl-font-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  font-family: var(--dl-font-mono), "JetBrains Mono", ui-monospace,
+    SFMono-Regular, monospace;
 }
 
 .dl-root ::selection {
@@ -85,8 +87,16 @@
   z-index: 50;
   pointer-events: none;
   background-color: var(--dl-bg-dark);
-  -webkit-mask-image: radial-gradient(circle var(--dl-r) at var(--dl-mx) var(--dl-my), transparent 0%, black 70%);
-  mask-image: radial-gradient(circle var(--dl-r) at var(--dl-mx) var(--dl-my), transparent 0%, black 70%);
+  -webkit-mask-image: radial-gradient(
+    circle var(--dl-r) at var(--dl-mx) var(--dl-my),
+    transparent 0%,
+    black 70%
+  );
+  mask-image: radial-gradient(
+    circle var(--dl-r) at var(--dl-mx) var(--dl-my),
+    transparent 0%,
+    black 70%
+  );
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -128,7 +138,8 @@
 .dl-kpt {
   opacity: 0;
   transform: translateY(18px);
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.6s, box-shadow 0.6s, opacity 0.6s;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.6s,
+    box-shadow 0.6s, opacity 0.6s;
 }
 
 .dl-fade-up.dl-in,
@@ -147,7 +158,12 @@
   width: 50%;
   height: 100%;
   pointer-events: none;
-  background: linear-gradient(90deg, transparent, rgba(255, 90, 77, 0.1), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 90, 77, 0.1),
+    transparent
+  );
 }
 
 .dl-sweeping .dl-ray-sweep {
@@ -307,7 +323,8 @@
   height: 1px;
   width: 0;
   background: rgba(255, 90, 77, 0.45);
-  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1), left 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    left 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dl-exit-btn:hover .dl-exit-border {
@@ -320,7 +337,11 @@
   inset: 0;
   z-index: 110;
   pointer-events: none;
-  background: radial-gradient(circle var(--dl-beam, 0px) at 50% 50%, rgba(255, 240, 220, 0.14) 0%, transparent 70%);
+  background: radial-gradient(
+    circle var(--dl-beam, 0px) at 50% 50%,
+    rgba(255, 240, 220, 0.14) 0%,
+    transparent 70%
+  );
   transition: background 0.4s ease;
 }
 
@@ -378,7 +399,8 @@
 }
 
 .dl-lightbox-in {
-  animation: dl-lightbox-spring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation: dl-lightbox-spring 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+    forwards;
 }
 
 /* ── 동작 줄이기 ─────────────────────────────────────────────── */

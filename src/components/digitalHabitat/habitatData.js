@@ -2,13 +2,22 @@ export {contactLinks} from "../../data/siteData";
 
 export const habitatIntro = {
   title: "The World I Build",
-  subtitle: "A living system of interfaces, projects, backend flows, simulations, and growth.",
+  subtitle:
+    "A living system of interfaces, projects, backend flows, simulations, and growth.",
   description:
     "Interfaces, projects, system flows, simulations, and growth records are connected as one digital habitat.",
   ctas: ["Explore System", "View Works"]
 };
 
-export const layerOrder = ["core", "interface", "works", "systems", "simulation", "evolution", "signal"];
+export const layerOrder = [
+  "core",
+  "interface",
+  "works",
+  "systems",
+  "simulation",
+  "evolution",
+  "signal"
+];
 
 export const layers = [
   {
@@ -35,7 +44,14 @@ export const layers = [
     meaning:
       "The visible layer users touch directly: UI components, responsive layouts, API-connected states, and interaction details.",
     position: [-1.85, 0.64, 0.72],
-    highlights: ["React", "JavaScript", "HTML", "CSS / SCSS", "UI Components", "API Integration"],
+    highlights: [
+      "React",
+      "JavaScript",
+      "HTML",
+      "CSS / SCSS",
+      "UI Components",
+      "API Integration"
+    ],
     cta: "View related works"
   },
   {
@@ -57,7 +73,14 @@ export const layers = [
     meaning:
       "The lower infrastructure layer: authentication, REST APIs, database cores, deployment nodes, CORS, HTTPS, and debugging.",
     position: [0.88, 0.22, -1.65],
-    highlights: ["Spring Boot", "Java", "REST API", "JWT", "MySQL / PostgreSQL", "Deployment"],
+    highlights: [
+      "Spring Boot",
+      "Java",
+      "REST API",
+      "JWT",
+      "MySQL / PostgreSQL",
+      "Deployment"
+    ],
     cta: "Inspect system flow"
   },
   {
@@ -68,7 +91,13 @@ export const layers = [
     meaning:
       "Unity, VR, AR, and interaction prototypes shown as a test chamber where input becomes playable experience.",
     position: [-1.78, 0.58, -1.25],
-    highlights: ["Unity", "VR horror", "AR interaction", "Player input", "Prototype systems"],
+    highlights: [
+      "Unity",
+      "VR horror",
+      "AR interaction",
+      "Player input",
+      "Prototype systems"
+    ],
     cta: "Enter simulation"
   },
   {
@@ -79,7 +108,14 @@ export const layers = [
     meaning:
       "A curved data stream of learning, team projects, backend integration, deployment issues, XR work, and portfolio evolution.",
     position: [0.05, 0.35, 1.95],
-    highlights: ["Web learning", "React UI", "Spring API", "Team projects", "Deployment issues", "Unity / XR"],
+    highlights: [
+      "Web learning",
+      "React UI",
+      "Spring API",
+      "Team projects",
+      "Deployment issues",
+      "Unity / XR"
+    ],
     cta: "Trace growth"
   },
   {
@@ -108,7 +144,12 @@ export const projects = [
     category: "Web / Full-stack",
     role: "Frontend UI implementation, API-connected states, routine and record flow integration.",
     tech: ["React", "Spring Boot", "Java", "MySQL", "JWT"],
-    features: ["Workout record flow", "Routine cards", "Auth / data integration", "Progress-oriented UI"],
+    features: [
+      "Workout record flow",
+      "Routine cards",
+      "Auth / data integration",
+      "Progress-oriented UI"
+    ],
     problem:
       "운동 기록과 루틴 데이터가 실제 서비스처럼 신뢰감 있게 보이도록 loading, empty, error, connected state를 정리했습니다.",
     learned:
@@ -122,7 +163,12 @@ export const projects = [
     category: "Web",
     role: "Map-based UI, place cards, route-like visual hierarchy, frontend data rendering.",
     tech: ["React", "JavaScript", "Map UI", "REST API"],
-    features: ["3D map plate", "Place markers", "Route signal", "Floating food cards"],
+    features: [
+      "3D map plate",
+      "Place markers",
+      "Route signal",
+      "Floating food cards"
+    ],
     problem:
       "분산된 위치 정보를 사용자가 빠르게 탐색할 수 있도록 지도, 카드, 필터의 시각적 우선순위를 정리했습니다.",
     learned:
@@ -136,7 +182,12 @@ export const projects = [
     category: "Web / Team Project",
     role: "Reusable screens, post/list interaction, API-driven community flow.",
     tech: ["React", "Spring Boot", "REST API", "PostgreSQL"],
-    features: ["Post cards", "Message nodes", "Campus communication flow", "Team API workflow"],
+    features: [
+      "Post cards",
+      "Message nodes",
+      "Campus communication flow",
+      "Team API workflow"
+    ],
     problem:
       "여러 기능이 한 서비스처럼 보이도록 공통 컴포넌트와 일관된 인터랙션 패턴을 맞췄습니다.",
     learned:
@@ -150,7 +201,12 @@ export const projects = [
     category: "Web / Team Project",
     role: "UI implementation, service structure, dashboard-like visual system.",
     tech: ["React", "SCSS", "JavaScript", "Deployment"],
-    features: ["Dashboard panel", "Chart blocks", "Status indicators", "Workflow nodes"],
+    features: [
+      "Dashboard panel",
+      "Chart blocks",
+      "Status indicators",
+      "Workflow nodes"
+    ],
     problem:
       "프로젝트가 포트폴리오에서 신뢰감 있게 보이도록 정보 구조, 간격, 상태 표시를 정리했습니다.",
     learned:
@@ -169,17 +225,47 @@ export const systemNodes = [
 
 export const simulations = [
   ["아주대탐험", "Ajou campus exploration indie game prototype"],
-  ["The Other Side", "VR horror interaction concept with camera and hidden elements"],
+  [
+    "The Other Side",
+    "VR horror interaction concept with camera and hidden elements"
+  ],
   ["AR Monster Shooter", "Mobile AR prototype with monster interaction"]
 ];
 
 export const evolutionLogs = [
-  ["01", "Web development learning", "HTML, CSS, JavaScript and basic programming flow."],
-  ["02", "React UI implementation", "Component structure, state, responsive layout, and data rendering."],
-  ["03", "Spring Boot API experience", "REST API, auth flow, and backend integration."],
-  ["04", "Team project delivery", "Collaboration, API contracts, feature ownership, and project delivery."],
-  ["05", "Deployment issue solving", "CORS, HTTPS, environment settings, and production debugging."],
-  ["06", "Unity / VR / AR experience", "Game interaction, XR prototypes, and simulation logic."],
-  ["07", "3D interactive portfolio", "Turning the portfolio into a living digital habitat."]
+  [
+    "01",
+    "Web development learning",
+    "HTML, CSS, JavaScript and basic programming flow."
+  ],
+  [
+    "02",
+    "React UI implementation",
+    "Component structure, state, responsive layout, and data rendering."
+  ],
+  [
+    "03",
+    "Spring Boot API experience",
+    "REST API, auth flow, and backend integration."
+  ],
+  [
+    "04",
+    "Team project delivery",
+    "Collaboration, API contracts, feature ownership, and project delivery."
+  ],
+  [
+    "05",
+    "Deployment issue solving",
+    "CORS, HTTPS, environment settings, and production debugging."
+  ],
+  [
+    "06",
+    "Unity / VR / AR experience",
+    "Game interaction, XR prototypes, and simulation logic."
+  ],
+  [
+    "07",
+    "3D interactive portfolio",
+    "Turning the portfolio into a living digital habitat."
+  ]
 ];
-

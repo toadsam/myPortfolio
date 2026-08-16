@@ -25,7 +25,15 @@ function getPanelPosition(index: number): [number, number, number] {
 }
 
 // 클릭 시 바닥에서 퍼지는 리플 링
-function ClickRipple({position, color, onDone}: {position: [number, number, number]; color: string; onDone: () => void}) {
+function ClickRipple({
+  position,
+  color,
+  onDone
+}: {
+  position: [number, number, number];
+  color: string;
+  onDone: () => void;
+}) {
   const meshRef = useRef<Group>(null);
   const t = useRef(0);
 
@@ -42,7 +50,11 @@ function ClickRipple({position, color, onDone}: {position: [number, number, numb
     <group ref={meshRef} position={[position[0], 0.03, position[2]]}>
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[0.7, 0.88, 40]} />
-        <meshBasicMaterial color={color} transparent opacity={Math.max(0, 1 - (t.current ?? 0))} />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={Math.max(0, 1 - (t.current ?? 0))}
+        />
       </mesh>
     </group>
   );
@@ -86,7 +98,11 @@ function ProjectPanel({
       {/* Glow border */}
       <mesh position={[0, 0, -0.06]}>
         <boxGeometry args={[2.7, 3.5, 0.02]} />
-        <meshBasicMaterial color={hovered ? "#7ed9ff" : "#3a6eb5"} transparent opacity={hovered ? 0.85 : 0.35} />
+        <meshBasicMaterial
+          color={hovered ? "#7ed9ff" : "#3a6eb5"}
+          transparent
+          opacity={hovered ? 0.85 : 0.35}
+        />
       </mesh>
       {/* Panel body */}
       <mesh>
@@ -102,32 +118,99 @@ function ProjectPanel({
       {/* Top strip */}
       <mesh position={[0, 1.65, 0.06]}>
         <boxGeometry args={[2.5, 0.12, 0.05]} />
-        <meshBasicMaterial color={hovered ? "#7ed9ff" : "#3a6eb5"} transparent opacity={hovered ? 1 : 0.6} />
+        <meshBasicMaterial
+          color={hovered ? "#7ed9ff" : "#3a6eb5"}
+          transparent
+          opacity={hovered ? 1 : 0.6}
+        />
       </mesh>
       {/* Floor ring */}
       <mesh position={[0, -PANEL_Y + 0.03, 0]} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[1.05, 1.2, 40]} />
-        <meshBasicMaterial color={hovered ? "#7ed9ff" : "#3a6eb5"} transparent opacity={hovered ? 0.55 : 0.18} />
+        <meshBasicMaterial
+          color={hovered ? "#7ed9ff" : "#3a6eb5"}
+          transparent
+          opacity={hovered ? 0.55 : 0.18}
+        />
       </mesh>
       {/* Content */}
-      <Html center distanceFactor={9} position={[0, 0.1, 0.12]} zIndexRange={[5, 0]}>
-        <div style={{pointerEvents: "none", userSelect: "none", width: 160, textAlign: "center", fontFamily: "system-ui, sans-serif"}}>
-          <div style={{fontSize: 10, fontWeight: 900, letterSpacing: "0.18em", textTransform: "uppercase", color: hovered ? "#7ed9ff" : "#5a9abf", marginBottom: 8}}>
+      <Html
+        center
+        distanceFactor={9}
+        position={[0, 0.1, 0.12]}
+        zIndexRange={[5, 0]}
+      >
+        <div
+          style={{
+            pointerEvents: "none",
+            userSelect: "none",
+            width: 160,
+            textAlign: "center",
+            fontFamily: "system-ui, sans-serif"
+          }}
+        >
+          <div
+            style={{
+              fontSize: 10,
+              fontWeight: 900,
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              color: hovered ? "#7ed9ff" : "#5a9abf",
+              marginBottom: 8
+            }}
+          >
             {project.tech[0] ?? "Project"}
           </div>
-          <div style={{fontSize: 14, fontWeight: 900, color: "#ffffff", lineHeight: 1.3, marginBottom: 8}}>
+          <div
+            style={{
+              fontSize: 14,
+              fontWeight: 900,
+              color: "#ffffff",
+              lineHeight: 1.3,
+              marginBottom: 8
+            }}
+          >
             {project.title}
           </div>
           <div style={{fontSize: 9, color: "#7a9db5", lineHeight: 1.5}}>
             {project.description.slice(0, 55)}…
           </div>
-          <div style={{marginTop: 10, display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "center"}}>
-            {project.tech.slice(0, 3).map((t) => (
-              <span key={t} style={{fontSize: 8, fontWeight: 700, color: "#3a6eb5", border: "1px solid #3a6eb5", borderRadius: 4, padding: "1px 5px"}}>{t}</span>
+          <div
+            style={{
+              marginTop: 10,
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 3,
+              justifyContent: "center"
+            }}
+          >
+            {project.tech.slice(0, 3).map(t => (
+              <span
+                key={t}
+                style={{
+                  fontSize: 8,
+                  fontWeight: 700,
+                  color: "#3a6eb5",
+                  border: "1px solid #3a6eb5",
+                  borderRadius: 4,
+                  padding: "1px 5px"
+                }}
+              >
+                {t}
+              </span>
             ))}
           </div>
           {hovered ? (
-            <div style={{marginTop: 12, fontSize: 9, fontWeight: 900, color: "#7ed9ff", letterSpacing: "0.12em", textTransform: "uppercase"}}>
+            <div
+              style={{
+                marginTop: 12,
+                fontSize: 9,
+                fontWeight: 900,
+                color: "#7ed9ff",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase"
+              }}
+            >
               클릭해서 상세보기 →
             </div>
           ) : null}
@@ -142,9 +225,13 @@ function LabRoom() {
     <group>
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[20, 18]} />
-        <meshStandardMaterial color="#0c1320" metalness={0.4} roughness={0.25} />
+        <meshStandardMaterial
+          color="#0c1320"
+          metalness={0.4}
+          roughness={0.25}
+        />
       </mesh>
-      {Array.from({length: 11}, (_, i) => i - 5).map((i) => (
+      {Array.from({length: 11}, (_, i) => i - 5).map(i => (
         <group key={`grid-${i}`}>
           <mesh position={[i * 1.8, 0.005, 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <planeGeometry args={[0.025, 18]} />
@@ -156,18 +243,39 @@ function LabRoom() {
           </mesh>
         </group>
       ))}
-      <mesh position={[0, 2.5, -8]}><planeGeometry args={[20, 5]} /><meshStandardMaterial color="#06090f" roughness={0.95} /></mesh>
-      <mesh position={[-10, 2.5, 0]} rotation={[0, Math.PI / 2, 0]}><planeGeometry args={[18, 5]} /><meshStandardMaterial color="#06090f" roughness={0.95} /></mesh>
-      <mesh position={[10, 2.5, 0]} rotation={[0, -Math.PI / 2, 0]}><planeGeometry args={[18, 5]} /><meshStandardMaterial color="#06090f" roughness={0.95} /></mesh>
-      <mesh position={[0, 2.5, 8]} rotation={[0, Math.PI, 0]}><planeGeometry args={[20, 5]} /><meshStandardMaterial color="#06090f" roughness={0.95} /></mesh>
-      <mesh position={[0, 5, 0]} rotation={[Math.PI / 2, 0, 0]}><planeGeometry args={[20, 18]} /><meshStandardMaterial color="#040608" roughness={1} /></mesh>
-      {[-3.5, 0, 3.5].map((x) => (
+      <mesh position={[0, 2.5, -8]}>
+        <planeGeometry args={[20, 5]} />
+        <meshStandardMaterial color="#06090f" roughness={0.95} />
+      </mesh>
+      <mesh position={[-10, 2.5, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <planeGeometry args={[18, 5]} />
+        <meshStandardMaterial color="#06090f" roughness={0.95} />
+      </mesh>
+      <mesh position={[10, 2.5, 0]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[18, 5]} />
+        <meshStandardMaterial color="#06090f" roughness={0.95} />
+      </mesh>
+      <mesh position={[0, 2.5, 8]} rotation={[0, Math.PI, 0]}>
+        <planeGeometry args={[20, 5]} />
+        <meshStandardMaterial color="#06090f" roughness={0.95} />
+      </mesh>
+      <mesh position={[0, 5, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[20, 18]} />
+        <meshStandardMaterial color="#040608" roughness={1} />
+      </mesh>
+      {[-3.5, 0, 3.5].map(x => (
         <group key={`strip-${x}`}>
           <mesh position={[x, 4.92, 0]}>
             <boxGeometry args={[0.18, 0.04, 14]} />
             <meshBasicMaterial color="#4a9eff" />
           </mesh>
-          <pointLight color="#4a9eff" decay={2} distance={8} intensity={1.2} position={[x, 4.7, 0]} />
+          <pointLight
+            color="#4a9eff"
+            decay={2}
+            distance={8}
+            intensity={1.2}
+            position={[x, 4.7, 0]}
+          />
         </group>
       ))}
     </group>
@@ -179,31 +287,64 @@ interface Props {
 }
 
 export function LabInterior({onBack}: Props) {
-  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
-  const [ripples, setRipples] = useState<{id: number; pos: [number, number, number]}[]>([]);
+  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
+    null
+  );
+  const [ripples, setRipples] = useState<
+    {id: number; pos: [number, number, number]}[]
+  >([]);
   const rippleId = useRef(0);
 
   function handleSelect(project: ProjectData, pos: [number, number, number]) {
     setSelectedProject(project);
     const id = rippleId.current++;
-    setRipples((r) => [...r, {id, pos}]);
+    setRipples(r => [...r, {id, pos}]);
   }
 
   function removeRipple(id: number) {
-    setRipples((r) => r.filter((item) => item.id !== id));
+    setRipples(r => r.filter(item => item.id !== id));
   }
 
-  const uiDelay = (n: number) => ({initial: {opacity: 0, y: n < 0 ? -10 : 10}, animate: {opacity: 1, y: 0}, transition: {duration: 0.5, delay: 0.3 + n * 0.1, ease: [0.22, 1, 0.36, 1] as const}});
+  const uiDelay = (n: number) => ({
+    initial: {opacity: 0, y: n < 0 ? -10 : 10},
+    animate: {opacity: 1, y: 0},
+    transition: {
+      duration: 0.5,
+      delay: 0.3 + n * 0.1,
+      ease: [0.22, 1, 0.36, 1] as const
+    }
+  });
 
   return (
     <div className="fixed inset-0 z-40 bg-[#040608]">
-      <Canvas camera={{fov: 58, position: [0, 3.5, 9.5]}} dpr={[1, 1.75]} gl={{antialias: true}} shadows>
+      <Canvas
+        camera={{fov: 58, position: [0, 3.5, 9.5]}}
+        dpr={[1, 1.75]}
+        gl={{antialias: true}}
+        shadows
+      >
         <color args={["#040608"]} attach="background" />
         <fog args={["#040608", 14, 26]} attach="fog" />
         <ambientLight color="#1a3a6e" intensity={0.4} />
-        <pointLight color="#3a6eb5" decay={2} distance={15} intensity={2.5} position={[0, 4, -2]} />
-        <pointLight color="#7ed9ff" decay={2} distance={10} intensity={1.2} position={[0, 4, 4]} />
-        <directionalLight color="#5a9abf" intensity={0.4} position={[5, 7, 5]} />
+        <pointLight
+          color="#3a6eb5"
+          decay={2}
+          distance={15}
+          intensity={2.5}
+          position={[0, 4, -2]}
+        />
+        <pointLight
+          color="#7ed9ff"
+          decay={2}
+          distance={10}
+          intensity={1.2}
+          position={[0, 4, 4]}
+        />
+        <directionalLight
+          color="#5a9abf"
+          intensity={0.4}
+          position={[5, 7, 5]}
+        />
         <Suspense fallback={null}>
           <LabRoom />
           {projects.map((project, index) => (
@@ -215,10 +356,21 @@ export function LabInterior({onBack}: Props) {
               project={project}
             />
           ))}
-          {ripples.map((r) => (
-            <ClickRipple key={r.id} color="#7ed9ff" position={r.pos} onDone={() => removeRipple(r.id)} />
+          {ripples.map(r => (
+            <ClickRipple
+              key={r.id}
+              color="#7ed9ff"
+              position={r.pos}
+              onDone={() => removeRipple(r.id)}
+            />
           ))}
-          <ContactShadows blur={3.5} far={7} opacity={0.7} position={[0, 0.01, 0]} scale={22} />
+          <ContactShadows
+            blur={3.5}
+            far={7}
+            opacity={0.7}
+            position={[0, 0.01, 0]}
+            scale={22}
+          />
           <OrbitControls
             enablePan={false}
             maxDistance={14}
@@ -267,7 +419,10 @@ export function LabInterior({onBack}: Props) {
       </motion.div>
 
       {/* 시네마틱 프로젝트 뷰어 */}
-      <ProjectViewer project={selectedProject} onClose={() => setSelectedProject(null)} />
+      <ProjectViewer
+        project={selectedProject}
+        onClose={() => setSelectedProject(null)}
+      />
     </div>
   );
 }

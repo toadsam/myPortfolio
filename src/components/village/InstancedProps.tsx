@@ -17,11 +17,26 @@
 import {useGLTF} from "@react-three/drei";
 import type {ThreeEvent} from "@react-three/fiber";
 import {Suspense, useLayoutEffect, useMemo, useRef} from "react";
-import {Euler, InstancedMesh, Matrix4, Mesh, type MeshDepthMaterial, Quaternion, Vector3, type BufferGeometry, type Material, type Object3D} from "three";
+import {
+  Euler,
+  InstancedMesh,
+  Matrix4,
+  Mesh,
+  type MeshDepthMaterial,
+  Quaternion,
+  Vector3,
+  type BufferGeometry,
+  type Material,
+  type Object3D
+} from "three";
 import type {PropPlacement} from "@/types/props";
 import {terrainHeightAt} from "@/lib/villageTerrain";
 import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
-import {applyFoliageWind, makeFoliageDepthMaterial, type FoliageWindOptions} from "@/lib/foliageWind";
+import {
+  applyFoliageWind,
+  makeFoliageDepthMaterial,
+  type FoliageWindOptions
+} from "@/lib/foliageWind";
 import {lockSceneMaterials} from "@/lib/villageMaterial";
 
 /** 이 개수를 넘는 GLB만 격자 청크로 쪼갠다. 그 이하는 통째로 하나. */
@@ -51,14 +66,14 @@ function extractParts(root: Object3D): Part[] {
   const rootInverse = new Matrix4().copy(root.matrixWorld).invert();
   const parts: Part[] = [];
   let index = 0;
-  root.traverse((obj) => {
+  root.traverse(obj => {
     const mesh = obj as Mesh;
     if (!mesh.isMesh || !mesh.geometry) return;
     parts.push({
       key: `${mesh.name || "mesh"}_${index++}`,
       geometry: mesh.geometry,
       material: mesh.material,
-      local: new Matrix4().multiplyMatrices(rootInverse, mesh.matrixWorld),
+      local: new Matrix4().multiplyMatrices(rootInverse, mesh.matrixWorld)
     });
   });
   return parts;
@@ -72,15 +87,24 @@ function chunkPlacements(placements: PropPlacement[]): PropPlacement[][] {
   // 마을을 두르는 숲 띠는 지름 80유닛에 걸쳐 있어 15유닛 격자로는 30칸 —
   // 즉 draw call 30회다. 컬링으로 아끼는 것보다 나누느라 쓰는 게 많아진다.
   // 배치가 퍼진 넓이에서 거꾸로 칸 크기를 구해 청크 수를 MAX_CHUNKS 안에 묶는다.
-  let x0 = Infinity, x1 = -Infinity, z0 = Infinity, z1 = -Infinity;
+  let x0 = Infinity,
+    x1 = -Infinity,
+    z0 = Infinity,
+    z1 = -Infinity;
   for (const p of placements) {
     x0 = Math.min(x0, p.position[0]);
     x1 = Math.max(x1, p.position[0]);
     z0 = Math.min(z0, p.position[2]);
     z1 = Math.max(z1, p.position[2]);
   }
-  const want = Math.min(MAX_CHUNKS, Math.max(1, Math.round(placements.length / CHUNK_TARGET)));
-  const size = Math.max(8, Math.sqrt(Math.max(1, (x1 - x0) * (z1 - z0)) / want));
+  const want = Math.min(
+    MAX_CHUNKS,
+    Math.max(1, Math.round(placements.length / CHUNK_TARGET))
+  );
+  const size = Math.max(
+    8,
+    Math.sqrt(Math.max(1, (x1 - x0) * (z1 - z0)) / want)
+  );
 
   const cells = new Map<string, PropPlacement[]>();
   for (const p of placements) {
@@ -139,7 +163,7 @@ function InstancedPart({
   onPropDown,
   cast,
   receive,
-  depthMaterial,
+  depthMaterial
 }: {
   part: Part;
   placements: PropPlacement[];
@@ -211,7 +235,7 @@ function InstancedPart({
 function GlbInstances({
   glb,
   placements,
-  onPropDown,
+  onPropDown
 }: {
   glb: string;
   placements: PropPlacement[];
@@ -227,9 +251,13 @@ function GlbInstances({
   useMemo(() => {
     if (!isFoliage(glb)) return;
     for (const part of parts) {
-      const mats = Array.isArray(part.material) ? part.material : [part.material];
+      const mats = Array.isArray(part.material)
+        ? part.material
+        : [part.material];
       for (const m of mats) {
-        const tinted = m as unknown as {color?: {setRGB: (r: number, g: number, b: number) => void}};
+        const tinted = m as unknown as {
+          color?: {setRGB: (r: number, g: number, b: number) => void};
+        };
         tinted.color?.setRGB(FOLIAGE_TINT.r, FOLIAGE_TINT.g, FOLIAGE_TINT.b);
       }
     }
@@ -257,9 +285,11 @@ function GlbInstances({
         height,
         amplitude: height * (bush ? WIND_SWAY.bush : WIND_SWAY.tree),
         speed: bush ? WIND_SPEED.bush : WIND_SPEED.tree,
-        direction: WIND_DIRECTION,
+        direction: WIND_DIRECTION
       };
-      const mats = Array.isArray(part.material) ? part.material : [part.material];
+      const mats = Array.isArray(part.material)
+        ? part.material
+        : [part.material];
       for (const m of mats) applyFoliageWind(m, options);
       map.set(part.key, makeFoliageDepthMaterial(options, mats[0]));
     }
@@ -275,7 +305,9 @@ function GlbInstances({
     if (!isGroundTile(glb)) return;
     const macro = makeMacroTexture();
     for (const part of parts) {
-      const mats = Array.isArray(part.material) ? part.material : [part.material];
+      const mats = Array.isArray(part.material)
+        ? part.material
+        : [part.material];
       for (const m of mats) applyGroundMacro(m, macro);
     }
   }, [glb, parts]);
@@ -283,7 +315,7 @@ function GlbInstances({
   return (
     <>
       {chunks.map((chunk, chunkIndex) =>
-        parts.map((part) => (
+        parts.map(part => (
           // placements.length가 바뀌면 InstancedMesh를 새로 할당해야 한다 (args 변경)
           <InstancedPart
             key={`${chunkIndex}:${part.key}:${chunk.length}`}
@@ -303,7 +335,7 @@ function GlbInstances({
 // ─── 엔트리 ──────────────────────────────────────────────────────────────────
 export function InstancedProps({
   items,
-  onPropDown,
+  onPropDown
 }: {
   items: PropPlacement[];
   onPropDown?: (event: ThreeEvent<PointerEvent>, propId: string) => void;
@@ -324,7 +356,11 @@ export function InstancedProps({
       {groups.map(([glb, placements]) => (
         // GLB별로 Suspense를 나눠 하나가 늦게 와도 나머지는 먼저 보인다
         <Suspense key={glb} fallback={null}>
-          <GlbInstances glb={glb} placements={placements} onPropDown={onPropDown} />
+          <GlbInstances
+            glb={glb}
+            placements={placements}
+            onPropDown={onPropDown}
+          />
         </Suspense>
       ))}
     </>

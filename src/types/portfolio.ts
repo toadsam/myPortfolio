@@ -1,6 +1,20 @@
-export type SectionId = "intro" | "projects" | "github" | "experience" | "contact" | "study" | "life";
+export type SectionId =
+  | "intro"
+  | "projects"
+  | "github"
+  | "experience"
+  | "contact"
+  | "study"
+  | "life";
 export type ExplorationMode = "click" | "walk";
-export type District = "plaza" | "projects" | "skills" | "experience" | "contact" | "life" | "study";
+export type District =
+  | "plaza"
+  | "projects"
+  | "skills"
+  | "experience"
+  | "contact"
+  | "life"
+  | "study";
 
 export type BuildingKind =
   | "plaza"
@@ -15,7 +29,12 @@ export type BuildingKind =
   | "townhouse"
   | "post";
 
-export type NPCType = "guide" | "project" | "developer" | "archivist" | "contact";
+export type NPCType =
+  | "guide"
+  | "project"
+  | "developer"
+  | "archivist"
+  | "contact";
 
 export type Vector3Tuple = [number, number, number];
 

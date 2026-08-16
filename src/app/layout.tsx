@@ -11,7 +11,17 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://toadsam.github.io/myPortfolio/"),
   title,
   description,
-  keywords: ["정재훈", "포트폴리오", "프론트엔드", "풀스택", "React", "Three.js", "3D", "WebGL", "게임"],
+  keywords: [
+    "정재훈",
+    "포트폴리오",
+    "프론트엔드",
+    "풀스택",
+    "React",
+    "Three.js",
+    "3D",
+    "WebGL",
+    "게임"
+  ],
   authors: [{name: "정재훈 (Jaehoon Jung)"}],
   icons: {
     icon: "/favicon.svg",
@@ -24,7 +34,14 @@ export const metadata: Metadata = {
     siteName: "Developer's City",
     locale: "ko_KR",
     type: "website",
-    images: [{url: "/android-chrome-384x384.png", width: 384, height: 384, alt: "Developer's City"}]
+    images: [
+      {
+        url: "/android-chrome-384x384.png",
+        width: 384,
+        height: 384,
+        alt: "Developer's City"
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
@@ -38,7 +55,9 @@ export const viewport: Viewport = {
   themeColor: "#050d1a"
 };
 
-export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
+export default function RootLayout({
+  children
+}: Readonly<{children: React.ReactNode}>) {
   return (
     <html lang="ko">
       <body>

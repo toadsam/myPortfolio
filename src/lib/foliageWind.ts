@@ -1,4 +1,9 @@
-import {MeshDepthMaterial, RGBADepthPacking, Vector2, type Material} from "three";
+import {
+  MeshDepthMaterial,
+  RGBADepthPacking,
+  Vector2,
+  type Material
+} from "three";
 
 // 나무·덤불을 바람에 흔든다.
 //
@@ -92,7 +97,9 @@ function patch(material: Material, options: FoliageWindOptions): void {
     previous?.call(material, shader, renderer);
 
     shader.uniforms.uWindTime = WIND_TIME;
-    shader.uniforms.uWindDir = {value: new Vector2(options.direction[0], options.direction[1])};
+    shader.uniforms.uWindDir = {
+      value: new Vector2(options.direction[0], options.direction[1])
+    };
     shader.uniforms.uWindAmp = {value: options.amplitude};
     shader.uniforms.uWindSpeed = {value: options.speed};
     shader.uniforms.uWindMinY = {value: options.minY};
@@ -100,7 +107,10 @@ function patch(material: Material, options: FoliageWindOptions): void {
 
     shader.vertexShader = shader.vertexShader
       .replace("#include <common>", `#include <common>${WIND_UNIFORMS}`)
-      .replace("#include <begin_vertex>", `#include <begin_vertex>${WIND_BODY}`);
+      .replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>${WIND_BODY}`
+      );
   };
 
   // ─── 이게 없으면 패치가 통째로 무시된다 ────────────────────────────────────
@@ -116,7 +126,10 @@ function patch(material: Material, options: FoliageWindOptions): void {
 }
 
 /** 색상 재질에 바람을 물린다. 이미 물려 있으면 아무것도 안 한다. */
-export function applyFoliageWind(material: Material, options: FoliageWindOptions): void {
+export function applyFoliageWind(
+  material: Material,
+  options: FoliageWindOptions
+): void {
   if (!WIND_ENABLED) return;
   if (material.userData.__windApplied) return;
   material.userData.__windApplied = true;
@@ -141,10 +154,13 @@ export function makeFoliageDepthMaterial(
   // 알파 컷아웃을 안 옮기면 잎 사이 구멍이 그림자에서 메워져 나무가 통짜
   // 덩어리 그림자를 드리운다. three 의 공용 깊이 재질은 이걸 알아서 해 주는데,
   // customDepthMaterial 을 주는 순간 우리 책임이 된다.
-  const src = source as {alphaTest?: number; alphaMap?: unknown; map?: unknown} | undefined;
+  const src = source as
+    | {alphaTest?: number; alphaMap?: unknown; map?: unknown}
+    | undefined;
   if (src?.alphaTest) {
     depth.alphaTest = src.alphaTest;
-    if (src.alphaMap) depth.alphaMap = src.alphaMap as MeshDepthMaterial["alphaMap"];
+    if (src.alphaMap)
+      depth.alphaMap = src.alphaMap as MeshDepthMaterial["alphaMap"];
     if (src.map) depth.map = src.map as MeshDepthMaterial["map"];
   }
 

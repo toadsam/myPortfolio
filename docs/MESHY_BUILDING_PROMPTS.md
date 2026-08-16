@@ -38,8 +38,7 @@ id와 안 맞는 파일이 있으면 optimize 로그가 이렇게 알려줍니�
 study-cs                 지식 서고
 ```
 
-> 2026-08-10 저녁에 8채(`post-office` `study-codingtest` `project-sign-language`
-> `project-ajou-adventure` `life-values` `life-invest` `life-library` `life-timeline`)가
+> 2026-08-10 저녁에 8채(`post-office` `study-codingtest` `project-sign-language` > `project-ajou-adventure` `life-values` `life-invest` `life-library` `life-timeline`)가
 > 한 번에 들어왔습니다. 받은 파일과 넣은 이름의 대조표는
 > `VILLAGE_ASSET_WISHLIST.md` 의 **5차 입고** 표에 있습니다.
 > `study-cs` 만 컨셉 이미지도 GLB도 없습니다 — 아래 프롬프트로 그림부터 그려야 합니다.
@@ -119,14 +118,14 @@ clean product shot, no ground plane, no cast shadow,
 
 Meshy Image-to-3D의 품질은 **이미지 구도**가 8할입니다. 위 프리픽스에 들어간 지시를 절대 빼지 마세요.
 
-| 지시 | 이유 |
-|---|---|
-| `front three-quarter view` | 정면+측면이 동시에 보여야 Meshy가 깊이를 추정함. 완전 정면은 납작하게, 탑뷰는 실루엣이 뭉개짐 |
-| `signboard faces the viewer` | 간판이 비스듬하면 글자가 원근에 눌려 텍스처에서 읽히지 않음 |
-| `entire building fully visible, centered` | 잘리면 그 부분이 통째로 소실됨 |
-| `plain flat light grey background` | 배경이 복잡하면 배경까지 메시로 만들어버림 |
-| `isolated single object` | 여러 건물이 있으면 하나로 뭉침 |
-| `no cast shadow` | 바닥 그림자를 지오메트리로 오해함 |
+| 지시                                      | 이유                                                                                          |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `front three-quarter view`                | 정면+측면이 동시에 보여야 Meshy가 깊이를 추정함. 완전 정면은 납작하게, 탑뷰는 실루엣이 뭉개짐 |
+| `signboard faces the viewer`              | 간판이 비스듬하면 글자가 원근에 눌려 텍스처에서 읽히지 않음                                   |
+| `entire building fully visible, centered` | 잘리면 그 부분이 통째로 소실됨                                                                |
+| `plain flat light grey background`        | 배경이 복잡하면 배경까지 메시로 만들어버림                                                    |
+| `isolated single object`                  | 여러 건물이 있으면 하나로 뭉침                                                                |
+| `no cast shadow`                          | 바닥 그림자를 지오메트리로 오해함                                                             |
 
 ## 공통 네거티브 프롬프트
 
@@ -184,6 +183,7 @@ npm run optimize -- --force   이미 최신인 것도 다시 굽기
 ## 1) 프로젝트 구역 (9개) — 마을 서쪽
 
 ### 1. `project-mystock.glb` — MyStock-Desk · 금융/AI 대시보드
+
 비율: 세로로 높음 (1.9 / **2.6** / 1.9) · 포인트 색: 청록
 
 ```
@@ -197,6 +197,7 @@ notably taller than it is wide
 ```
 
 ### 2. `project-festflow.glb` — FestFlow · 대학 축제 운영
+
 비율: 낮고 넓음 (2.2 / 1.5 / 2.2) · 포인트 색: 노랑
 
 ```
@@ -209,6 +210,7 @@ facade and clearly legible, golden yellow accents, clearly wider than tall
 ```
 
 ### 3. `project-sign-language.glb` — 수어지구 · 수어 학습 앱
+
 비율: 둥근 돔 (2.0 / 1.8 / 2.0) · 포인트 색: 하늘색
 
 ```
@@ -219,9 +221,11 @@ signboard spanning most of the front width above the door, reading "수어지구
 in big bold high-contrast Korean letters, the sign is a dominant feature of
 the facade and clearly legible, light sky blue accents, calm welcoming shape
 ```
+
 > 영문 대체: `reading "Sign Village"`
 
 ### 4. `project-aclub.glb` — ACLUB · 동아리 플랫폼
+
 비율: 단정한 중형 (1.8 / 1.6 / 1.8) · 포인트 색: 보라
 
 ```
@@ -234,6 +238,7 @@ facade and clearly legible, soft lavender purple accents, orderly compact shape
 ```
 
 ### 5. `project-ajou-adventure.glb` — 아주분투 · 2D 러닝 게임
+
 비율: 아케이드형 (1.9 / 1.7 / 1.9) · 포인트 색: 연두
 
 ```
@@ -244,9 +249,11 @@ the full front width above the entrance, reading "아주분투" in big bold
 high-contrast Korean letters, the sign is a dominant feature of the facade
 and clearly legible, bright lime green accents, cheerful chunky shape
 ```
+
 > 영문 대체: `reading "AJOU RUN"`
 
 ### 6. `project-ajouchong.glb` — 아주총학 · 총학생회 웹사이트
+
 비율: 작고 낮음 (1.8 / 1.4 / 1.8) · 포인트 색: 주홍
 
 ```
@@ -257,9 +264,11 @@ full width above the doors, reading "아주총학" in big bold high-contrast
 Korean letters, the sign is a dominant feature of the facade and clearly
 legible, warm orange red accents, compact and low
 ```
+
 > 영문 대체: `reading "AJOU COUNCIL"`
 
 ### 7. `project-muscleup.glb` — 근근 MuscleUp · 피트니스 플랫폼
+
 비율: 세로로 높음 (1.8 / **2.2** / 1.8) · 포인트 색: 핑크
 
 ```
@@ -270,9 +279,11 @@ width mounted above the entrance, reading "근근 MuscleUp" in big bold
 high-contrast letters, the sign is a dominant feature of the facade and
 clearly legible, warm pink and coral accents, taller than wide
 ```
+
 > 영문 대체: `reading "MuscleUp"` (한글·영문 혼용이 깨지면 영문만)
 
 ### 8. `project-darklab.glb` — DarkLab · 3D 공포 게임
+
 비율: 중형 (1.9 / 1.8 / 1.9) · 포인트 색: 어두운 적갈
 
 ```
@@ -286,6 +297,7 @@ red accents, still cute and stylized, not scary or gory
 ```
 
 ### 9. `project-tserof.glb` — TSEROF · 3D 플랫포머
+
 비율: 작고 둥금 (1.7 / 1.5 / 1.7) · 포인트 색: 숲 초록
 
 ```
@@ -306,6 +318,7 @@ small and rounded
 > 코드 간판에는 React · Spring Boot · Three.js · Unity · GitHub 배지가 이미 붙습니다.
 
 ### 10. `skill-frontend.glb` — Frontend
+
 비율: 넓고 낮음 (2.6 / 1.6 / 2.2) · 포인트 색: 시안
 **형태 컨셉**: React 원자 — 궤도 고리가 지붕을 감싼다
 
@@ -321,6 +334,7 @@ and clearly legible, cheerful cyan blue accents, wide and welcoming
 ```
 
 ### 11. `skill-backend.glb` — Backend
+
 비율: 세로로 높음 (1.8 / **2.6** / 1.8) · 포인트 색: 앰버
 **형태 컨셉**: 서버랙 — 층층이 쌓인 기계실 탑
 
@@ -336,6 +350,7 @@ solid and tall
 ```
 
 ### 12. `skill-3d.glb` — 3D / Motion
+
 비율: 돔형 (2.3 / 2.2 / 2.3) · 포인트 색: 바이올렛
 **형태 컨셉**: 와이어프레임 다면체가 지붕을 뚫고 솟음
 
@@ -348,10 +363,12 @@ a very large prominent engraved arch sign spanning the full width over the
 entrance, reading "3D Motion" in big bold high-contrast letters, the sign is
 a dominant feature of the facade and clearly legible, violet purple accents
 ```
+
 > 이름은 `3D / Motion` 이지만 간판에서는 슬래시를 뺐습니다 — 이미지 생성 AI가
 > 문장부호를 자주 엉뚱한 기호로 바꿉니다. 코드 간판에는 `3D / Motion` 그대로 뜹니다.
 
 ### 13. `skill-game.glb` — Game / XR
+
 비율: 아케이드형 (2.1 / 1.9 / 2.1) · 포인트 색: 오렌지
 **형태 컨셉**: 유니티 큐브 — 세 개의 각진 면이 맞물린 덩어리
 
@@ -364,9 +381,11 @@ marquee sign spanning the full width, reading "Game XR" in big bold
 high-contrast letters, the sign is a dominant feature of the facade and
 clearly legible, bright orange accents, chunky and fun
 ```
+
 > 이름은 `Game / XR` 이지만 간판에서는 슬래시를 뺐습니다 (위 3D 항목과 같은 이유).
 
 ### 14. `skill-workflow.glb` — Workflow
+
 비율: 낮고 넓음 (1.8 / 1.4 / 1.6) · 포인트 색: 앰버
 **형태 컨셉**: 나뭇가지처럼 갈라지는 브랜치 + 노트 블록
 
@@ -386,6 +405,7 @@ clearly legible, warm amber accents, low and wide
 ## 3) 경력 구역 (3개) — 마을 남동쪽
 
 ### 15. `exp-unity-ui.glb` — 2025 Unity UI
+
 비율: 작고 낮음 (1.7 / 1.3 / 1.5) · 포인트 색: 바이올렛
 **형태 컨셉**: 지붕 위에 각진 큐브 장식
 
@@ -400,6 +420,7 @@ small and low
 ```
 
 ### 16. `exp-demo-platform.glb` — 2025 Demo Platform
+
 비율: 중형 2층 (1.9 / 1.6 / 1.7) · 포인트 색: 시안
 
 ```
@@ -412,6 +433,7 @@ modest two-story shape
 ```
 
 ### 17. `exp-portfolio.glb` — 2026 AI Portfolio
+
 비율: 중대형 (2.1 / 2.0 / 1.9) · 포인트 색: 민트
 
 ```
@@ -428,6 +450,7 @@ accents, whimsical village-within-a-village concept
 ## 4) Life 구역 (6개) — 마을 동쪽
 
 ### 18. `life-values.glb` — 가치관 비석
+
 비율: 작은 정육면체감 (1.3 / 1.3 / 1.3) · 포인트 색: 앰버
 **건물 아님 — 모뉴먼트**
 
@@ -439,11 +462,13 @@ clearly legible, a small stone base with grass and flowers around it, a
 lantern on a post beside it, warm amber accents, this is a monument NOT a
 building, no roof, no windows, no door, compact standing stone
 ```
+
 > 영문 대체: `reading "VALUES"`
 > 이름은 `가치관 비석` 이지만 비석에 "비석"이라고 새기면 어색해서 `가치관` 만
 > 새깁니다. 전체 이름은 코드 간판이 보여 줍니다.
 
 ### 19. `life-gym.glb` — 헬스장
+
 비율: 넓고 낮음 (2.2 / 1.5 / 2.2) · 포인트 색: 레드
 
 ```
@@ -454,9 +479,11 @@ arch, reading "헬스장" in big bold high-contrast Korean letters, the sign is 
 dominant feature of the facade and clearly legible, warm red accents,
 wide and short
 ```
+
 > 영문 대체: `reading "GYM"`
 
 ### 20. `life-invest.glb` — 투자 타워
+
 비율: 얇고 높음 (1.8 / **2.8** / 1.8) · 포인트 색: 에메랄드
 
 ```
@@ -467,9 +494,11 @@ full width above the door, reading "투자 타워" in big bold high-contrast
 Korean letters, the sign is a dominant feature of the facade and clearly
 legible, emerald green accents, clearly tall and narrow
 ```
+
 > 영문 대체: `reading "INVEST"`
 
 ### 21. `life-library.glb` — 도서관
+
 비율: 넓고 둥금 (2.2 / 1.8 / 2.2) · 포인트 색: 샌드
 
 ```
@@ -480,9 +509,11 @@ full width above the doors, reading "도서관" in big bold high-contrast Korean
 letters, the sign is a dominant feature of the facade and clearly legible,
 sandy beige accents, wide and rounded
 ```
+
 > 영문 대체: `reading "LIBRARY"`
 
 ### 22. `life-music.glb` — 음악 스튜디오
+
 비율: 돔형 (2.0 / 1.9 / 2.0) · 포인트 색: 라벤더
 
 ```
@@ -493,9 +524,11 @@ reading "음악 스튜디오" in big bold high-contrast Korean letters, the sign
 dominant feature of the facade and clearly legible, soft lavender accents,
 rounded and gentle
 ```
+
 > 영문 대체: `reading "MUSIC"`
 
 ### 23. `life-timeline.glb` — 연혁 타임라인
+
 비율: 가장 얇고 높음 (1.6 / **3.0** / 1.6) · 포인트 색: 하늘색
 
 ```
@@ -506,6 +539,7 @@ mounted across the full width near the base, reading "연혁 타임라인" in bi
 bold high-contrast Korean letters, the sign is a dominant feature and clearly
 legible, light sky blue accents, extremely tall and narrow
 ```
+
 > 영문 대체: `reading "TIMELINE"`
 > 세로 간판은 글자가 뭉개지기 쉬워 **가로 간판**으로 바꿨습니다.
 
@@ -514,6 +548,7 @@ legible, light sky blue accents, extremely tall and narrow
 ## 5) 학습 구역 (2개) — 마을 남쪽
 
 ### 24. `study-codingtest.glb` — 알고리즘 도장
+
 비율: 세로로 높음 (1.9 / **2.4** / 1.9) · 포인트 색: 스카이
 
 ```
@@ -524,10 +559,12 @@ wooden sign spanning the full width above the door, reading "알고리즘 도장
 big bold high-contrast Korean letters, the sign is a dominant feature of the
 facade and clearly legible, sky blue accents, taller than wide
 ```
+
 > 영문 대체: `reading "ALGO DOJO"`
 > 원래 세로 걸개였는데 글자가 뭉개져서 **가로 간판**으로 바꿨습니다.
 
 ### 25. `study-cs.glb` — 지식 서고
+
 비율: 둥근 중형 (2.0 / 1.9 / 2.0) · 포인트 색: 퍼플
 
 ```
@@ -538,6 +575,7 @@ the full width over the entrance arch, reading "지식 서고" in big bold
 high-contrast Korean letters, the sign is a dominant feature of the facade
 and clearly legible, purple accents, rounded and solid
 ```
+
 > 영문 대체: `reading "CS ARCHIVE"`
 
 ---
@@ -545,6 +583,7 @@ and clearly legible, purple accents, rounded and solid
 ## 6) 단독 오브젝트 (2개)
 
 ### 26. `post-office.glb` — 연락 우체국
+
 비율: 아담함 (2.1 / 1.5 / 1.9) · 포인트 색: 오렌지
 
 ```
@@ -555,9 +594,11 @@ full width above the entrance, reading "연락 우체국" in big bold high-contr
 Korean letters, the sign is a dominant feature of the facade and clearly
 legible, warm orange accents, cozy and welcoming
 ```
+
 > 영문 대체: `reading "POST OFFICE"`
 
 ### 27. `central-plaza.glb` — 중앙 광장 기념비 ★ 마을의 얼굴
+
 비율: 크고 높음 (3.6 / **4.2** / 3.6) · 포인트 색: 청록·금
 **바닥이 아니라 기념비입니다** — 원형 포석은 이미 `ground-flat/plaza-tile.glb`로 깔려 있습니다.
 
@@ -579,6 +620,7 @@ small lantern, flower beds and low benches around the base, teal water and
 warm golden accents, majestic and welcoming, clearly the biggest and tallest
 structure, taller than it is wide
 ```
+
 > 영문 대체: `reading "JAEHUN JEONG"`
 > 이름을 앞면에, `Developer's City`를 아래 리본에 — 두 줄을 다른 크기로 두면
 > 이미지 AI가 덜 헷갈립니다. 건물 이름(`중앙 광장`)은 코드 간판이 위에 띄웁니다.

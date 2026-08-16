@@ -1,4 +1,10 @@
-import {CanvasTexture, NoColorSpace, RepeatWrapping, type Material, type Texture} from "three";
+import {
+  CanvasTexture,
+  NoColorSpace,
+  RepeatWrapping,
+  type Material,
+  type Texture
+} from "three";
 
 // 바닥 "대지 얼룩" 레이어 (1단계 — 가짜 그림으로 방식만 검증한다).
 //
@@ -66,19 +72,30 @@ const smooth = (t: number) => t * t * (3 - 2 * t);
  * 가로줄 이음매가 생긴다.
  */
 function valueNoise(x: number, y: number, period: number) {
-  const xi = Math.floor(x), yi = Math.floor(y);
-  const xf = x - xi, yf = y - yi;
+  const xi = Math.floor(x),
+    yi = Math.floor(y);
+  const xf = x - xi,
+    yf = y - yi;
   const wrap = (v: number) => ((v % period) + period) % period;
-  const x0 = wrap(xi), x1 = wrap(xi + 1);
-  const y0 = wrap(yi), y1 = wrap(yi + 1);
-  const a = hash(x0, y0), b = hash(x1, y0), c = hash(x0, y1), d = hash(x1, y1);
-  const u = smooth(xf), v = smooth(yf);
+  const x0 = wrap(xi),
+    x1 = wrap(xi + 1);
+  const y0 = wrap(yi),
+    y1 = wrap(yi + 1);
+  const a = hash(x0, y0),
+    b = hash(x1, y0),
+    c = hash(x0, y1),
+    d = hash(x1, y1);
+  const u = smooth(xf),
+    v = smooth(yf);
   return a * (1 - u) * (1 - v) + b * u * (1 - v) + c * (1 - u) * v + d * u * v;
 }
 
 /** period 를 2의 거듭제곱으로 두면 옥타브마다 주기가 정수로 유지된다 */
 function fbm(x: number, y: number, period: number, octaves: number) {
-  let sum = 0, amp = 0.5, freq = 1, norm = 0;
+  let sum = 0,
+    amp = 0.5,
+    freq = 1,
+    norm = 0;
   for (let o = 0; o < octaves; o++) {
     sum += amp * valueNoise(x * freq, y * freq, period * freq);
     norm += amp;
@@ -154,7 +171,7 @@ export function applyGroundMacro(material: Material, macro: Texture): void {
   if (material.userData.__macroApplied) return;
   material.userData.__macroApplied = true;
 
-  material.onBeforeCompile = (shader) => {
+  material.onBeforeCompile = shader => {
     shader.uniforms.macroMap = {value: macro};
     shader.uniforms.macroWorld = {value: MACRO_WORLD};
     shader.uniforms.macroStrength = {value: MACRO_STRENGTH};

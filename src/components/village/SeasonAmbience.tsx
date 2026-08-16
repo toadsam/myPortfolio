@@ -6,11 +6,59 @@ import {AdditiveBlending, NormalBlending, type Points} from "three";
 
 type Variant = "snow" | "petals" | "leaves" | "fireflies";
 
-const CONFIG: Record<Variant, {count: number; color: string; size: number; fall: number; drift: number; opacity: number; rise: boolean; glow: boolean}> = {
-  snow: {count: 340, color: "#ffffff", size: 0.17, fall: 1.2, drift: 0.5, opacity: 0.85, rise: false, glow: false},
-  petals: {count: 210, color: "#ffcfe4", size: 0.17, fall: 0.85, drift: 1.0, opacity: 0.8, rise: false, glow: false},
-  leaves: {count: 190, color: "#e0863a", size: 0.2, fall: 1.05, drift: 1.3, opacity: 0.85, rise: false, glow: false},
-  fireflies: {count: 90, color: "#ffe27a", size: 0.16, fall: 0, drift: 0, opacity: 0.95, rise: true, glow: true}
+const CONFIG: Record<
+  Variant,
+  {
+    count: number;
+    color: string;
+    size: number;
+    fall: number;
+    drift: number;
+    opacity: number;
+    rise: boolean;
+    glow: boolean;
+  }
+> = {
+  snow: {
+    count: 340,
+    color: "#ffffff",
+    size: 0.17,
+    fall: 1.2,
+    drift: 0.5,
+    opacity: 0.85,
+    rise: false,
+    glow: false
+  },
+  petals: {
+    count: 210,
+    color: "#ffcfe4",
+    size: 0.17,
+    fall: 0.85,
+    drift: 1.0,
+    opacity: 0.8,
+    rise: false,
+    glow: false
+  },
+  leaves: {
+    count: 190,
+    color: "#e0863a",
+    size: 0.2,
+    fall: 1.05,
+    drift: 1.3,
+    opacity: 0.85,
+    rise: false,
+    glow: false
+  },
+  fireflies: {
+    count: 90,
+    color: "#ffe27a",
+    size: 0.16,
+    fall: 0,
+    drift: 0,
+    opacity: 0.95,
+    rise: true,
+    glow: true
+  }
 };
 
 const AREA = 34;
@@ -37,7 +85,9 @@ function Particles({variant, lite}: {variant: Variant; lite: boolean}) {
     const seeds = new Float32Array(count);
     for (let i = 0; i < count; i += 1) {
       positions[i * 3] = (Math.random() - 0.5) * AREA * 2;
-      positions[i * 3 + 1] = cfg.rise ? 0.7 + Math.random() * 2.4 : Math.random() * TOP;
+      positions[i * 3 + 1] = cfg.rise
+        ? 0.7 + Math.random() * 2.4
+        : Math.random() * TOP;
       positions[i * 3 + 2] = (Math.random() - 0.5) * AREA * 2;
       seeds[i] = Math.random() * Math.PI * 2;
     }

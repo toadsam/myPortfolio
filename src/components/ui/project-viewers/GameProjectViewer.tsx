@@ -6,7 +6,7 @@ import {
   useMotionTemplate,
   useMotionValue,
   useSpring,
-  useTransform,
+  useTransform
 } from "framer-motion";
 import type {CSSProperties, ReactNode} from "react";
 import {useEffect, useMemo, useRef, useState} from "react";
@@ -22,21 +22,22 @@ const STEPS = [
   {id: "problem", label: "DISTRESS LOG", ko: "문제"},
   {id: "approach", label: "PROTOCOL", ko: "접근"},
   {id: "contribution", label: "EVIDENCE", ko: "기여"},
-  {id: "result", label: "OUTCOME", ko: "결과"},
+  {id: "result", label: "OUTCOME", ko: "결과"}
 ] as const;
 
-const MOOD_LABEL: Record<string, {tag: string; enter: string; system: string}> = {
-  horror: {tag: "CASE FILE", enter: "ENTER THE LAB", system: "DARKLAB://"},
-  arcade: {tag: "GAME CART", enter: "PRESS START", system: "ARCADE://"},
-  platformer: {tag: "STAGE DATA", enter: "START GAME", system: "STAGE://"},
-};
+const MOOD_LABEL: Record<string, {tag: string; enter: string; system: string}> =
+  {
+    horror: {tag: "CASE FILE", enter: "ENTER THE LAB", system: "DARKLAB://"},
+    arcade: {tag: "GAME CART", enter: "PRESS START", system: "ARCADE://"},
+    platformer: {tag: "STAGE DATA", enter: "START GAME", system: "STAGE://"}
+  };
 
 function ScrambleText({
   text,
   className,
   style,
   speed = 32,
-  delay = 0,
+  delay = 0
 }: {
   text: string;
   className?: string;
@@ -65,7 +66,9 @@ function ScrambleText({
       for (let index = 0; index < text.length; index += 1) {
         if (text[index] === " ") result += " ";
         else if (index < revealed) result += text[index];
-        else result += SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
+        else
+          result +=
+            SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)];
       }
 
       setOut(result);
@@ -87,10 +90,28 @@ function ScrambleText({
 function Overlays({accent, mood}: {accent: string; mood: string}) {
   const cfg =
     mood === "arcade"
-      ? {grain: 0.08, scan: 0.5, scanGap: 2, vignette: "inset 0 0 180px 30px rgba(0,0,0,0.6)", flicker: [0, 0.04, 0, 0.02, 0]}
+      ? {
+          grain: 0.08,
+          scan: 0.5,
+          scanGap: 2,
+          vignette: "inset 0 0 180px 30px rgba(0,0,0,0.6)",
+          flicker: [0, 0.04, 0, 0.02, 0]
+        }
       : mood === "platformer"
-        ? {grain: 0.05, scan: 0.12, scanGap: 4, vignette: "inset 0 0 160px 20px rgba(0,0,0,0.45)", flicker: [0, 0.01, 0, 0.015, 0]}
-        : {grain: 0.12, scan: 0.3, scanGap: 3, vignette: "inset 0 0 220px 60px rgba(0,0,0,0.92)", flicker: [0, 0.015, 0, 0.04, 0, 0.01, 0]};
+      ? {
+          grain: 0.05,
+          scan: 0.12,
+          scanGap: 4,
+          vignette: "inset 0 0 160px 20px rgba(0,0,0,0.45)",
+          flicker: [0, 0.01, 0, 0.015, 0]
+        }
+      : {
+          grain: 0.12,
+          scan: 0.3,
+          scanGap: 3,
+          vignette: "inset 0 0 220px 60px rgba(0,0,0,0.92)",
+          flicker: [0, 0.015, 0, 0.04, 0, 0.01, 0]
+        };
 
   return (
     <>
@@ -99,25 +120,30 @@ function Overlays({accent, mood}: {accent: string; mood: string}) {
         style={{
           opacity: cfg.grain,
           backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")"
         }}
       />
       <div
         className="pointer-events-none absolute inset-0 z-[3]"
         style={{
           opacity: cfg.scan,
-          backgroundImage: `repeating-linear-gradient(0deg, rgba(0,0,0,0.5) 0px, rgba(0,0,0,0.5) 1px, transparent 1px, transparent ${cfg.scanGap}px)`,
+          backgroundImage: `repeating-linear-gradient(0deg, rgba(0,0,0,0.5) 0px, rgba(0,0,0,0.5) 1px, transparent 1px, transparent ${cfg.scanGap}px)`
         }}
       />
       {mood === "arcade" ? (
         <motion.div
           className="pointer-events-none absolute inset-x-0 z-[3] h-24"
-          style={{background: `linear-gradient(180deg, transparent, ${accent}10, transparent)`}}
+          style={{
+            background: `linear-gradient(180deg, transparent, ${accent}10, transparent)`
+          }}
           animate={{top: ["-10%", "110%"]}}
           transition={{duration: 4, repeat: Infinity, ease: "linear"}}
         />
       ) : null}
-      <div className="pointer-events-none absolute inset-0 z-[3]" style={{boxShadow: cfg.vignette}} />
+      <div
+        className="pointer-events-none absolute inset-0 z-[3]"
+        style={{boxShadow: cfg.vignette}}
+      />
       <motion.div
         className="pointer-events-none absolute inset-0 z-[3]"
         style={{background: accent}}
@@ -139,7 +165,7 @@ function HorrorLayer({theme}: {theme: ProjectTheme}) {
       const wait = 4500 + Math.random() * 9000;
       window.setTimeout(() => {
         if (!alive) return;
-        setBlackout((b) => b + 1);
+        setBlackout(b => b + 1);
         if (sound) sound.sfx("click");
         flick();
       }, wait);
@@ -148,7 +174,7 @@ function HorrorLayer({theme}: {theme: ProjectTheme}) {
       const wait = 9000 + Math.random() * 12000;
       window.setTimeout(() => {
         if (!alive) return;
-        setShadowKey((s) => s + 1);
+        setShadowKey(s => s + 1);
         shadow();
       }, wait);
     }
@@ -162,7 +188,13 @@ function HorrorLayer({theme}: {theme: ProjectTheme}) {
   return (
     <>
       {/* 짙은 비네팅 — 손전등이 유일한 빛처럼 */}
-      <div className="pointer-events-none absolute inset-0 z-[4]" style={{background: "radial-gradient(ellipse at 50% 45%, transparent 20%, rgba(0,0,0,0.8) 92%)"}} />
+      <div
+        className="pointer-events-none absolute inset-0 z-[4]"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 45%, transparent 20%, rgba(0,0,0,0.8) 92%)"
+        }}
+      />
       {/* 정전 깜빡임 */}
       <AnimatePresence>
         {blackout ? (
@@ -181,7 +213,11 @@ function HorrorLayer({theme}: {theme: ProjectTheme}) {
           <motion.div
             key={shadowKey}
             className="pointer-events-none absolute z-[5] w-44 blur-2xl"
-            style={{top: "-20%", height: "140%", background: "rgba(0,0,0,0.88)"}}
+            style={{
+              top: "-20%",
+              height: "140%",
+              background: "rgba(0,0,0,0.88)"
+            }}
             initial={{left: "-18%", opacity: 0, skewX: -8}}
             animate={{left: "118%", opacity: [0, 0.85, 0]}}
             transition={{duration: 2.6, ease: "easeInOut"}}
@@ -200,9 +236,9 @@ function ArcadeLayer({theme}: {theme: ProjectTheme}) {
         x: ((Math.sin(i * 99) + 1) / 2) * 100,
         d: 5 + ((Math.cos(i * 7) + 1) / 2) * 6,
         delay: ((Math.sin(i * 3) + 1) / 2) * 4,
-        s: 4 + (i % 3) * 3,
+        s: 4 + (i % 3) * 3
       })),
-    [],
+    []
   );
   const [glitch, setGlitch] = useState(0);
   useEffect(() => {
@@ -211,7 +247,7 @@ function ArcadeLayer({theme}: {theme: ProjectTheme}) {
       const w = 3000 + Math.random() * 6000;
       window.setTimeout(() => {
         if (!alive) return;
-        setGlitch((x) => x + 1);
+        setGlitch(x => x + 1);
         g();
       }, w);
     }
@@ -226,18 +262,38 @@ function ArcadeLayer({theme}: {theme: ProjectTheme}) {
         <motion.span
           key={i}
           className="absolute"
-          style={{left: `${p.x}%`, bottom: -12, width: p.s, height: p.s, background: i % 2 ? theme.accent : theme.primary, opacity: 0.5, boxShadow: `0 0 8px ${theme.primary}`}}
+          style={{
+            left: `${p.x}%`,
+            bottom: -12,
+            width: p.s,
+            height: p.s,
+            background: i % 2 ? theme.accent : theme.primary,
+            opacity: 0.5,
+            boxShadow: `0 0 8px ${theme.primary}`
+          }}
           animate={{y: [0, -460], opacity: [0, 0.65, 0]}}
-          transition={{duration: p.d + 4, delay: p.delay, repeat: Infinity, ease: "linear"}}
+          transition={{
+            duration: p.d + 4,
+            delay: p.delay,
+            repeat: Infinity,
+            ease: "linear"
+          }}
         />
       ))}
-      <div className="pointer-events-none absolute inset-0 z-[4]" style={{boxShadow: "inset 0 0 120px 40px rgba(0,0,0,0.55)"}} />
+      <div
+        className="pointer-events-none absolute inset-0 z-[4]"
+        style={{boxShadow: "inset 0 0 120px 40px rgba(0,0,0,0.55)"}}
+      />
       <AnimatePresence>
         {glitch ? (
           <motion.div
             key={glitch}
             className="pointer-events-none absolute inset-0 z-[6]"
-            style={{background: "linear-gradient(90deg, rgba(255,0,0,0.13), transparent, rgba(0,255,255,0.13))", mixBlendMode: "screen"}}
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(255,0,0,0.13), transparent, rgba(0,255,255,0.13))",
+              mixBlendMode: "screen"
+            }}
             initial={{opacity: 0, x: -6}}
             animate={{opacity: [0, 0.5, 0], x: [6, -6, 0]}}
             transition={{duration: 0.18}}
@@ -256,27 +312,47 @@ function PlatformerLayer({theme}: {theme: ProjectTheme}) {
         x: ((Math.sin(i * 51) + 1) / 2) * 100,
         y: ((Math.cos(i * 23) + 1) / 2) * 100,
         d: 2 + (i % 4),
-        delay: ((Math.sin(i * 9) + 1) / 2) * 3,
+        delay: ((Math.sin(i * 9) + 1) / 2) * 3
       })),
-    [],
+    []
   );
   return (
     <>
-      <div className="pointer-events-none absolute inset-0 z-[1]" style={{background: `radial-gradient(circle at 70% 8%, ${theme.accent}16, transparent 52%)`}} />
-      {[0, 1, 2].map((i) => (
+      <div
+        className="pointer-events-none absolute inset-0 z-[1]"
+        style={{
+          background: `radial-gradient(circle at 70% 8%, ${theme.accent}16, transparent 52%)`
+        }}
+      />
+      {[0, 1, 2].map(i => (
         <motion.div
           key={i}
           className="absolute rounded-full blur-xl"
-          style={{width: 120 + i * 40, height: 40 + i * 10, background: `${theme.primary}14`, left: `${14 + i * 28}%`, top: `${20 + i * 22}%`}}
+          style={{
+            width: 120 + i * 40,
+            height: 40 + i * 10,
+            background: `${theme.primary}14`,
+            left: `${14 + i * 28}%`,
+            top: `${20 + i * 22}%`
+          }}
           animate={{x: [0, 30, 0], y: [0, -14, 0]}}
-          transition={{duration: 10 + i * 4, repeat: Infinity, ease: "easeInOut"}}
+          transition={{
+            duration: 10 + i * 4,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
         />
       ))}
       {sparks.map((s, i) => (
         <motion.span
           key={i}
           className="absolute"
-          style={{left: `${s.x}%`, top: `${s.y}%`, fontSize: 10, color: theme.accent}}
+          style={{
+            left: `${s.x}%`,
+            top: `${s.y}%`,
+            fontSize: 10,
+            color: theme.accent
+          }}
           animate={{opacity: [0, 1, 0], scale: [0.6, 1.2, 0.6]}}
           transition={{duration: s.d, delay: s.delay, repeat: Infinity}}
         >
@@ -287,7 +363,13 @@ function PlatformerLayer({theme}: {theme: ProjectTheme}) {
   );
 }
 
-function TitleScreen({project, theme}: {project: ProjectData; theme: ProjectTheme}) {
+function TitleScreen({
+  project,
+  theme
+}: {
+  project: ProjectData;
+  theme: ProjectTheme;
+}) {
   const mood = theme.mood ?? "horror";
   const labels = MOOD_LABEL[mood] ?? MOOD_LABEL.horror!;
 
@@ -337,7 +419,10 @@ function TitleScreen({project, theme}: {project: ProjectData; theme: ProjectThem
 
       <motion.div
         className="rounded-lg border p-5"
-        style={{borderColor: `${theme.primary}30`, background: "rgba(0,0,0,0.4)"}}
+        style={{
+          borderColor: `${theme.primary}30`,
+          background: "rgba(0,0,0,0.4)"
+        }}
         initial={{opacity: 0, x: -16}}
         animate={{opacity: 1, x: 0}}
         transition={{duration: 0.5, delay: 0.6}}
@@ -374,18 +459,41 @@ function TitleScreen({project, theme}: {project: ProjectData; theme: ProjectThem
   );
 }
 
-function LogWindow({title, theme, children}: {title: string; theme: ProjectTheme; children: ReactNode}) {
+function LogWindow({
+  title,
+  theme,
+  children
+}: {
+  title: string;
+  theme: ProjectTheme;
+  children: ReactNode;
+}) {
   return (
     <motion.div
       className="overflow-hidden rounded-lg border"
-      style={{borderColor: `${theme.primary}35`, background: "rgba(0,0,0,0.55)"}}
+      style={{
+        borderColor: `${theme.primary}35`,
+        background: "rgba(0,0,0,0.55)"
+      }}
       initial={{opacity: 0, scale: 0.98}}
       animate={{opacity: 1, scale: 1}}
       transition={{duration: 0.4}}
     >
-      <div className="flex items-center gap-2 border-b px-4 py-2.5" style={{borderColor: `${theme.primary}25`, background: `${theme.primary}10`}}>
-        <span className="h-2.5 w-2.5 rounded-full" style={{background: theme.primary}} />
-        <span className="font-mono text-[11px] font-black uppercase tracking-[0.2em]" style={{color: theme.accent}}>
+      <div
+        className="flex items-center gap-2 border-b px-4 py-2.5"
+        style={{
+          borderColor: `${theme.primary}25`,
+          background: `${theme.primary}10`
+        }}
+      >
+        <span
+          className="h-2.5 w-2.5 rounded-full"
+          style={{background: theme.primary}}
+        />
+        <span
+          className="font-mono text-[11px] font-black uppercase tracking-[0.2em]"
+          style={{color: theme.accent}}
+        >
           {title}
         </span>
       </div>
@@ -394,17 +502,34 @@ function LogWindow({title, theme, children}: {title: string; theme: ProjectTheme
   );
 }
 
-function StepHeader({step, theme}: {step: (typeof STEPS)[number]; theme: ProjectTheme}) {
+function StepHeader({
+  step,
+  theme
+}: {
+  step: (typeof STEPS)[number];
+  theme: ProjectTheme;
+}) {
   return (
     <div className="mb-5">
-      <span className="font-mono text-xs font-black uppercase tracking-[0.35em]" style={{color: theme.primary}}>
+      <span
+        className="font-mono text-xs font-black uppercase tracking-[0.35em]"
+        style={{color: theme.primary}}
+      >
         {">"} <ScrambleText text={step.label} speed={24} />
       </span>
     </div>
   );
 }
 
-function GameSection({step, project, theme}: {step: number; project: ProjectData; theme: ProjectTheme}) {
+function GameSection({
+  step,
+  project,
+  theme
+}: {
+  step: number;
+  project: ProjectData;
+  theme: ProjectTheme;
+}) {
   const meta = STEPS[step]!;
 
   if (step === 0) return <TitleScreen project={project} theme={theme} />;
@@ -414,7 +539,9 @@ function GameSection({step, project, theme}: {step: number; project: ProjectData
       <div className="flex h-full flex-col justify-center gap-6 py-4">
         <StepHeader step={meta} theme={theme} />
         <LogWindow title="DISTRESS LOG - 무엇이 문제였나" theme={theme}>
-          <p className="font-mono text-sm leading-7 text-white/80">{project.problem}</p>
+          <p className="font-mono text-sm leading-7 text-white/80">
+            {project.problem}
+          </p>
         </LogWindow>
         <motion.div
           className="rounded-lg border-l-2 p-4"
@@ -423,7 +550,9 @@ function GameSection({step, project, theme}: {step: number; project: ProjectData
           animate={{opacity: 1, x: 0}}
           transition={{delay: 0.3}}
         >
-          <p className="mb-1 font-mono text-[10px] font-black uppercase tracking-[0.2em] text-white/30">INSIGHT - 배운 점</p>
+          <p className="mb-1 font-mono text-[10px] font-black uppercase tracking-[0.2em] text-white/30">
+            INSIGHT - 배운 점
+          </p>
           <p className="text-sm leading-7 text-white/70">{project.learning}</p>
         </motion.div>
       </div>
@@ -439,7 +568,10 @@ function GameSection({step, project, theme}: {step: number; project: ProjectData
             <motion.div
               key={item}
               className="flex items-start gap-4 rounded-lg border p-4"
-              style={{borderColor: `${theme.primary}25`, background: "rgba(0,0,0,0.45)"}}
+              style={{
+                borderColor: `${theme.primary}25`,
+                background: "rgba(0,0,0,0.45)"
+              }}
               initial={{opacity: 0, x: -20}}
               animate={{opacity: 1, x: 0}}
               transition={{delay: 0.15 + index * 0.1}}
@@ -451,7 +583,9 @@ function GameSection({step, project, theme}: {step: number; project: ProjectData
               >
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <p className="font-mono text-sm leading-7 text-white/75">{item}</p>
+              <p className="font-mono text-sm leading-7 text-white/75">
+                {item}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -468,7 +602,10 @@ function GameSection({step, project, theme}: {step: number; project: ProjectData
             <motion.div
               key={item}
               className="flex items-center gap-3 rounded-lg border px-4 py-3"
-              style={{borderColor: `${theme.primary}25`, background: "rgba(0,0,0,0.45)"}}
+              style={{
+                borderColor: `${theme.primary}25`,
+                background: "rgba(0,0,0,0.45)"
+              }}
               initial={{opacity: 0, y: 10}}
               animate={{opacity: 1, y: 0}}
               transition={{delay: 0.1 + index * 0.08}}
@@ -481,7 +618,9 @@ function GameSection({step, project, theme}: {step: number; project: ProjectData
               >
                 &gt;
               </motion.span>
-              <p className="font-mono text-sm leading-6 text-white/80">{item}</p>
+              <p className="font-mono text-sm leading-6 text-white/80">
+                {item}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -511,24 +650,37 @@ function GameSection({step, project, theme}: {step: number; project: ProjectData
       </LogWindow>
       <motion.div
         className="rounded-lg border-l-2 p-4"
-        style={{borderColor: `${theme.primary}88`, background: "rgba(0,0,0,0.4)"}}
+        style={{
+          borderColor: `${theme.primary}88`,
+          background: "rgba(0,0,0,0.4)"
+        }}
         initial={{opacity: 0, y: 10}}
         animate={{opacity: 1, y: 0}}
         transition={{delay: 0.3}}
       >
-        <p className="mb-1 font-mono text-[10px] font-black uppercase tracking-[0.2em] text-white/30">NEXT - 다음 단계</p>
+        <p className="mb-1 font-mono text-[10px] font-black uppercase tracking-[0.2em] text-white/30">
+          NEXT - 다음 단계
+        </p>
         <p className="text-sm leading-7 text-white/70">{project.nextStep}</p>
       </motion.div>
       <div className="flex flex-wrap gap-3">
-        {project.links.map((link) => (
+        {project.links.map(link => (
           <motion.a
             key={link.label}
             href={link.href}
             target="_blank"
             rel="noreferrer"
             className="rounded-lg border px-6 py-3 font-mono text-sm font-black tracking-[0.1em] transition"
-            style={{borderColor: theme.primary, color: theme.primary, background: `${theme.primary}12`}}
-            whileHover={{scale: 1.04, background: `${theme.primary}25`, boxShadow: `0 0 20px ${theme.primary}50`}}
+            style={{
+              borderColor: theme.primary,
+              color: theme.primary,
+              background: `${theme.primary}12`
+            }}
+            whileHover={{
+              scale: 1.04,
+              background: `${theme.primary}25`,
+              boxShadow: `0 0 20px ${theme.primary}50`
+            }}
             whileTap={{scale: 0.97}}
           >
             {link.label} -&gt;
@@ -549,15 +701,23 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
   const [step, setStep] = useState(0);
   const [booting, setBooting] = useState(true);
   const [glitch, setGlitch] = useState(false);
-  const [bursts, setBursts] = useState<{id: number; x: number; y: number}[]>([]);
+  const [bursts, setBursts] = useState<{id: number; x: number; y: number}[]>(
+    []
+  );
   const mood = theme.mood ?? "horror";
   const containerRef = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(50);
   const my = useMotionValue(38);
   const sx = useSpring(mx, {stiffness: 140, damping: 22});
   const sy = useSpring(my, {stiffness: 140, damping: 22});
-  const tiltX = useSpring(useTransform(my, [0, 100], [4, -4]), {stiffness: 120, damping: 18});
-  const tiltY = useSpring(useTransform(mx, [0, 100], [-5, 5]), {stiffness: 120, damping: 18});
+  const tiltX = useSpring(useTransform(my, [0, 100], [4, -4]), {
+    stiffness: 120,
+    damping: 18
+  });
+  const tiltY = useSpring(useTransform(mx, [0, 100], [-5, 5]), {
+    stiffness: 120,
+    damping: 18
+  });
   const flashRadius = mood === "horror" ? 340 : 460;
   const flashGlow = mood === "horror" ? "33" : "1f";
   const spotlight = useMotionTemplate`radial-gradient(circle ${flashRadius}px at ${sx}% ${sy}%, ${theme.primary}${flashGlow}, transparent 70%)`;
@@ -573,8 +733,11 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
 
   function handleClick(event: React.MouseEvent) {
     const id = Date.now();
-    setBursts((items) => [...items, {id, x: event.clientX, y: event.clientY}]);
-    setTimeout(() => setBursts((items) => items.filter((item) => item.id !== id)), 450);
+    setBursts(items => [...items, {id, x: event.clientX, y: event.clientY}]);
+    setTimeout(
+      () => setBursts(items => items.filter(item => item.id !== id)),
+      450
+    );
   }
 
   function changeStep(next: number) {
@@ -593,8 +756,9 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
-      if (event.key === "ArrowRight") setStep((value) => Math.min(value + 1, STEPS.length - 1));
-      if (event.key === "ArrowLeft") setStep((value) => Math.max(value - 1, 0));
+      if (event.key === "ArrowRight")
+        setStep(value => Math.min(value + 1, STEPS.length - 1));
+      if (event.key === "ArrowLeft") setStep(value => Math.max(value - 1, 0));
       if (event.key === "Escape") onClose();
     }
 
@@ -606,7 +770,10 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
     <motion.div
       ref={containerRef}
       className="fixed inset-0 z-[60] overflow-hidden font-mono"
-      style={{background: theme.bg, cursor: mood === "horror" ? "crosshair" : undefined}}
+      style={{
+        background: theme.bg,
+        cursor: mood === "horror" ? "crosshair" : undefined
+      }}
       initial={{opacity: 0}}
       animate={{opacity: 1}}
       exit={{opacity: 0}}
@@ -614,7 +781,10 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
       onMouseMove={handleMove}
       onClick={handleClick}
     >
-      <motion.div className="pointer-events-none absolute inset-0 z-[1]" style={{background: spotlight}} />
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-[1]"
+        style={{background: spotlight}}
+      />
       <Overlays accent={theme.accent} mood={mood} />
       {mood === "horror" ? <HorrorLayer theme={theme} /> : null}
       {mood === "arcade" ? <ArcadeLayer theme={theme} /> : null}
@@ -642,14 +812,14 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
         ) : null}
       </AnimatePresence>
 
-      {bursts.map((burst) => (
+      {bursts.map(burst => (
         <motion.div
           key={burst.id}
           className="pointer-events-none fixed z-[9] rounded-full"
           style={{
             left: burst.x,
             top: burst.y,
-            background: `radial-gradient(circle, ${theme.accent}55, transparent 70%)`,
+            background: `radial-gradient(circle, ${theme.accent}55, transparent 70%)`
           }}
           initial={{width: 0, height: 0, x: 0, y: 0, opacity: 0.9}}
           animate={{width: 180, height: 180, x: -90, y: -90, opacity: 0}}
@@ -672,9 +842,15 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
               animate={{opacity: [0.3, 1, 0.3]}}
               transition={{duration: 0.8, repeat: Infinity}}
             >
-              <ScrambleText text={`${labels.system} ACCESSING ${labels.tag}`} speed={20} />
+              <ScrambleText
+                text={`${labels.system} ACCESSING ${labels.tag}`}
+                speed={20}
+              />
             </motion.p>
-            <motion.div className="mt-5 h-0.5 w-56 overflow-hidden rounded-full" style={{background: `${theme.primary}22`}}>
+            <motion.div
+              className="mt-5 h-0.5 w-56 overflow-hidden rounded-full"
+              style={{background: `${theme.primary}22`}}
+            >
               <motion.div
                 className="h-full"
                 style={{background: theme.primary}}
@@ -688,7 +864,10 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
       </AnimatePresence>
 
       <div className="absolute left-0 right-0 top-0 z-10 flex items-center justify-between px-8 py-5">
-        <span className="font-mono text-xs font-black uppercase tracking-[0.3em]" style={{color: theme.primary}}>
+        <span
+          className="font-mono text-xs font-black uppercase tracking-[0.3em]"
+          style={{color: theme.primary}}
+        >
           {labels.tag}
         </span>
         <button
@@ -702,7 +881,14 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
       </div>
 
       <div className="relative z-[5] mx-auto flex h-full max-w-6xl flex-col px-8 pt-16">
-        <motion.div className="relative flex-1 overflow-hidden" style={richRender ? undefined : {rotateX: tiltX, rotateY: tiltY, transformPerspective: 1400}}>
+        <motion.div
+          className="relative flex-1 overflow-hidden"
+          style={
+            richRender
+              ? undefined
+              : {rotateX: tiltX, rotateY: tiltY, transformPerspective: 1400}
+          }
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={`${project.id}-${step}`}
@@ -712,12 +898,19 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
               exit={{opacity: 0, y: -12, filter: "blur(6px)"}}
               transition={{duration: 0.4}}
             >
-              {richRender ? richRender({step, project, theme}) : <GameSection step={step} project={project} theme={theme} />}
+              {richRender ? (
+                richRender({step, project, theme})
+              ) : (
+                <GameSection step={step} project={project} theme={theme} />
+              )}
             </motion.div>
           </AnimatePresence>
         </motion.div>
 
-        <div className="flex shrink-0 items-center justify-between gap-2 border-t py-4" style={{borderColor: `${theme.primary}22`}}>
+        <div
+          className="flex shrink-0 items-center justify-between gap-2 border-t py-4"
+          style={{borderColor: `${theme.primary}22`}}
+        >
           <div className="flex gap-1">
             {STEPS.map((item, index) => (
               <button
@@ -725,8 +918,13 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
                 className="flex items-center gap-2 rounded px-3 py-2 font-mono text-[11px] font-black uppercase tracking-[0.1em] transition"
                 onClick={() => changeStep(index)}
                 style={{
-                  color: index === step ? theme.bg : index < step ? `${theme.accent}99` : "rgba(255,255,255,0.25)",
-                  background: index === step ? theme.primary : "transparent",
+                  color:
+                    index === step
+                      ? theme.bg
+                      : index < step
+                      ? `${theme.accent}99`
+                      : "rgba(255,255,255,0.25)",
+                  background: index === step ? theme.primary : "transparent"
                 }}
                 type="button"
               >
@@ -751,7 +949,10 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
               style={
                 step < STEPS.length - 1
                   ? {background: theme.primary, color: theme.bg}
-                  : {border: `1px solid ${theme.primary}30`, color: "rgba(255,255,255,0.3)"}
+                  : {
+                      border: `1px solid ${theme.primary}30`,
+                      color: "rgba(255,255,255,0.3)"
+                    }
               }
               disabled={step === STEPS.length - 1}
               onClick={() => changeStep(Math.min(step + 1, STEPS.length - 1))}

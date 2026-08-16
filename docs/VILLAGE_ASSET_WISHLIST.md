@@ -14,15 +14,15 @@
 
 급한 순서. **① 은 지금 마을에서 눈에 걸리는 문제를 바로 고치는 것들이다.**
 
-| # | 무엇 | 파일명 | 왜 지금 |
-|---|---|---|---|
-| **B8** | **광장 문 아치 돌다리** | `props/raw/decor/bridge-arch.glb` | 광장 물 고리에 문이 넷 생겼다. 지금은 골짜기 개울 다리와 **똑같은 모델**이라 정문으로 안 읽힌다 |
-| **B9** | **물길 둔치 한 토막** | `props/raw/decor/water-bank.glb` | 물이 잔디에 칠한 파란 띠로 보인다. 물가에 자갈·둔덕이 있어야 깊이가 생긴다 |
-| **B2** | 지식 서고 | `buildings/raw/study-cs.glb` | 건물 27채 중 마지막. 지금은 배경 민가가 대신 서 있다 |
-| **B7** | 구역 축대 직선 한 토막 | `props/raw/decor/terrace-bank.glb` | 코드로 그린 돌쌓기라 줄눈이 반듯한 격자다 |
-| B7 | 〃 바깥 모서리 | `props/raw/decor/terrace-bank-corner.glb` | 〃 |
-| **C4** | 물가 소품 5종 | `props/raw/nature/reed-clump.glb` 외 | 물가 65유닛이 새로 생겼는데 심을 게 일반 덤불뿐이다 |
-| **X1** | **`raw/` 원본 3개** | `wall-low` · `fence-rail` · `terrace-steps` | 원본이 없어 **디라이팅에서 빠졌다.** 담장 218토막이 아직 옛 구운 조명을 달고 있다 |
+| #      | 무엇                    | 파일명                                      | 왜 지금                                                                                         |
+| ------ | ----------------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **B8** | **광장 문 아치 돌다리** | `props/raw/decor/bridge-arch.glb`           | 광장 물 고리에 문이 넷 생겼다. 지금은 골짜기 개울 다리와 **똑같은 모델**이라 정문으로 안 읽힌다 |
+| **B9** | **물길 둔치 한 토막**   | `props/raw/decor/water-bank.glb`            | 물이 잔디에 칠한 파란 띠로 보인다. 물가에 자갈·둔덕이 있어야 깊이가 생긴다                      |
+| **B2** | 지식 서고               | `buildings/raw/study-cs.glb`                | 건물 27채 중 마지막. 지금은 배경 민가가 대신 서 있다                                            |
+| **B7** | 구역 축대 직선 한 토막  | `props/raw/decor/terrace-bank.glb`          | 코드로 그린 돌쌓기라 줄눈이 반듯한 격자다                                                       |
+| B7     | 〃 바깥 모서리          | `props/raw/decor/terrace-bank-corner.glb`   | 〃                                                                                              |
+| **C4** | 물가 소품 5종           | `props/raw/nature/reed-clump.glb` 외        | 물가 65유닛이 새로 생겼는데 심을 게 일반 덤불뿐이다                                             |
+| **X1** | **`raw/` 원본 3개**     | `wall-low` · `fence-rail` · `terrace-steps` | 원본이 없어 **디라이팅에서 빠졌다.** 담장 218토막이 아직 옛 구운 조명을 달고 있다               |
 
 > B8·B9·C4 는 2026-08-14 에 생겼다 — 광장을 두르는 물 고리를 넣으면서 물가가
 > 마을 한복판으로 들어왔기 때문이다. 자세한 건 각 항목.
@@ -71,16 +71,16 @@ A6 SKILLS 아치 · B1 알고리즘 도장 · B3 연혁 타임라인 · B4 연�
 
 경로는 전부 `바탕 화면/정재훈의 포트폴리오 모음집/3d 포트폴리오 마을에 대한 정보/` 기준.
 
-| # | 올릴 이미지 |
-|---|---|
-| A1 | `건물 찐 모음집/ChatGPT Image 2026년 8월 9일 오후 06_31_25.png` (흰 돔 + 손 모양) |
-| A2 | `포트폴리오건물모음집/아주대탐험.png` |
-| A3 | `건물 찐 모음집/ChatGPT Image 2026년 8월 9일 오후 06_32_59.png` (가치관 비석) |
-| A4 | `건물 찐 모음집/ChatGPT Image 2026년 8월 9일 오후 06_33_14.png` (INVEST 저울 탑) |
-| A5 | `건물 찐 모음집/ChatGPT Image 2026년 8월 9일 오후 06_33_20.png` (LIBRARY 돔) |
-| A6 | `장식물사진/ChatGPT Image 2026년 8월 10일 오전 08_37_36.png` (SKILLS 아치) |
-| A7 | `장식물사진/장식물4/ChatGPT Image 2026년 8월 10일 오후 01_26_46.png` (파란 지붕 민가) |
-| A8 | `장식물사진/장식물4/ChatGPT Image 2026년 8월 10일 오후 01_26_49.png` (붉은 지붕 민가) |
+| #   | 올릴 이미지                                                                           |
+| --- | ------------------------------------------------------------------------------------- |
+| A1  | `건물 찐 모음집/ChatGPT Image 2026년 8월 9일 오후 06_31_25.png` (흰 돔 + 손 모양)     |
+| A2  | `포트폴리오건물모음집/아주대탐험.png`                                                 |
+| A3  | `건물 찐 모음집/ChatGPT Image 2026년 8월 9일 오후 06_32_59.png` (가치관 비석)         |
+| A4  | `건물 찐 모음집/ChatGPT Image 2026년 8월 9일 오후 06_33_14.png` (INVEST 저울 탑)      |
+| A5  | `건물 찐 모음집/ChatGPT Image 2026년 8월 9일 오후 06_33_20.png` (LIBRARY 돔)          |
+| A6  | `장식물사진/ChatGPT Image 2026년 8월 10일 오전 08_37_36.png` (SKILLS 아치)            |
+| A7  | `장식물사진/장식물4/ChatGPT Image 2026년 8월 10일 오후 01_26_46.png` (파란 지붕 민가) |
+| A8  | `장식물사진/장식물4/ChatGPT Image 2026년 8월 10일 오후 01_26_49.png` (붉은 지붕 민가) |
 
 > 장식물4 의 민가 그림은 셋인데(파랑·빨강·초록) 초록만 3D로 뽑으셨다 — 그게 지금 `house-c` 다.
 
@@ -108,7 +108,8 @@ glass skyscraper, modern corporate, blurry, motion blur,
 tiny sign, small text, illegible text, unreadable letters, blank signboard
 ```
 
-#### A1. `project-sign-language.glb` — 수어지구  ✅ 입고 완료 (5차)
+#### A1. `project-sign-language.glb` — 수어지구 ✅ 입고 완료 (5차)
+
 비율 둥근 돔 (2.0 / 1.8 / 2.0) · 포인트 색 하늘색
 
 ```
@@ -119,9 +120,11 @@ signboard spanning most of the front width above the door, reading "수어지구
 in big bold high-contrast Korean letters, the sign is a dominant feature of
 the facade and clearly legible, light sky blue accents, calm welcoming shape
 ```
+
 > 영문 대체: `reading "Sign Village"`
 
-#### A2. `project-ajou-adventure.glb` — 아주분투  ✅ 입고 완료 (5차)
+#### A2. `project-ajou-adventure.glb` — 아주분투 ✅ 입고 완료 (5차)
+
 비율 아케이드형 (1.9 / 1.7 / 1.9) · 포인트 색 연두
 
 ```
@@ -132,11 +135,13 @@ the full front width above the entrance, reading "아주분투" in big bold
 high-contrast Korean letters, the sign is a dominant feature of the facade
 and clearly legible, bright lime green accents, cheerful chunky shape
 ```
+
 > 영문 대체: `reading "AJOU RUN"`
 > 이미 있는 그림에는 "아주대탐험" 이라고 쓰여 있다. 그대로 써도 상관없다 —
 > 패널에 뜨는 이름은 간판이 아니라 `constants.ts` 가 정한다.
 
-#### A3. `life-values.glb` — 가치관 비석  ✅ 입고 완료 (5차)
+#### A3. `life-values.glb` — 가치관 비석 ✅ 입고 완료 (5차)
+
 비율 작은 정육면체감 (1.3 / 1.3 / 1.3) · 포인트 색 앰버 · **건물 아님, 모뉴먼트**
 
 ```
@@ -147,9 +152,11 @@ clearly legible, a small stone base with grass and flowers around it, a
 lantern on a post beside it, warm amber accents, this is a monument NOT a
 building, no roof, no windows, no door, compact standing stone
 ```
+
 > 영문 대체: `reading "VALUES"`
 
-#### A4. `life-invest.glb` — 투자 타워  ✅ 입고 완료 (5차)
+#### A4. `life-invest.glb` — 투자 타워 ✅ 입고 완료 (5차)
+
 비율 얇고 높음 (1.8 / **2.8** / 1.8) · 포인트 색 에메랄드
 
 ```
@@ -160,9 +167,11 @@ full width above the door, reading "투자 타워" in big bold high-contrast
 Korean letters, the sign is a dominant feature of the facade and clearly
 legible, emerald green accents, clearly tall and narrow
 ```
+
 > 영문 대체: `reading "INVEST"`
 
-#### A5. `life-library.glb` — 도서관  ✅ 입고 완료 (5차)
+#### A5. `life-library.glb` — 도서관 ✅ 입고 완료 (5차)
+
 비율 넓고 둥금 (2.2 / 1.8 / 2.2) · 포인트 색 샌드
 
 ```
@@ -173,9 +182,11 @@ full width above the doors, reading "도서관" in big bold high-contrast Korean
 letters, the sign is a dominant feature of the facade and clearly legible,
 sandy beige accents, wide and rounded
 ```
+
 > 영문 대체: `reading "LIBRARY"`
 
-#### A6. `arch-skills.glb` — SKILLS 현판 아치  ✅ 입고 완료 (5차)
+#### A6. `arch-skills.glb` — SKILLS 현판 아치 ✅ 입고 완료 (5차)
+
 이미 받은 아치 4개와 **같은 형태·같은 두께**여야 한다. 색만 구역 색으로.
 
 ```
@@ -187,10 +198,12 @@ narrow vertical pennant flags on each post, moss and ivy at the base,
 warm sunset lighting, Ghibli-like storybook game art, soft painterly textures,
 low poly game asset, under 8000 triangles, front-facing flat composition
 ```
+
 > **뽑고 나서 텍스처를 눈으로 확인할 것.** 글자가 "SKILLS" 로 제대로 나왔는지.
 > EXPERIENCE 가 두 번 나온 게 이걸 안 봐서 생긴 일이다.
 
 #### A7 · A8. `house-d.glb` · `house-e.glb` — 채움 민가
+
 받은 세 채와 **같은 2층·같은 눈높이.** 지붕 색과 평면 모양만 다르게.
 
 ```
@@ -211,7 +224,8 @@ low poly game asset, under 8000 triangles, front-facing
 
 # B. 그림부터 그려야 하는 것 (6)
 
-## B1. `study-codingtest.glb` — 알고리즘 도장  ✅ 입고 완료 (5차)
+## B1. `study-codingtest.glb` — 알고리즘 도장 ✅ 입고 완료 (5차)
+
 비율 세로로 높음 (1.9 / **2.4** / 1.9) · 포인트 색 스카이 · 위 공통 프리픽스를 앞에 붙인다
 
 ```
@@ -222,9 +236,11 @@ wooden sign spanning the full width above the door, reading "알고리즘 도장
 big bold high-contrast Korean letters, the sign is a dominant feature of the
 facade and clearly legible, sky blue accents, taller than wide
 ```
+
 > 영문 대체: `reading "ALGO DOJO"` · 세로 걸개는 글자가 뭉개져서 **가로 간판**으로 바꿨다.
 
-## B2. `study-cs.glb` — 지식 서고  ← **★ 지금 필요한 건 이거 하나뿐**
+## B2. `study-cs.glb` — 지식 서고 ← **★ 지금 필요한 건 이거 하나뿐**
+
 비율 둥근 중형 (2.0 / 1.9 / 2.0) · 포인트 색 퍼플
 
 > 이게 없어서 STUDY 구역의 한 채가 배경 민가로 대신 서 있다.
@@ -239,9 +255,11 @@ the full width over the entrance arch, reading "지식 서고" in big bold
 high-contrast Korean letters, the sign is a dominant feature of the facade
 and clearly legible, purple accents, rounded and solid
 ```
+
 > 영문 대체: `reading "CS ARCHIVE"`
 
-## B3. `life-timeline.glb` — 연혁 타임라인  ✅ 입고 완료 (5차)
+## B3. `life-timeline.glb` — 연혁 타임라인 ✅ 입고 완료 (5차)
+
 비율 가장 얇고 높음 (1.6 / **3.0** / 1.6) · 포인트 색 하늘색
 
 ```
@@ -252,9 +270,11 @@ mounted across the full width near the base, reading "연혁 타임라인" in bi
 bold high-contrast Korean letters, the sign is a dominant feature and clearly
 legible, light sky blue accents, extremely tall and narrow
 ```
+
 > 영문 대체: `reading "TIMELINE"`
 
-## B4. `post-office.glb` — 연락 우체국  ✅ 입고 완료 (5차)
+## B4. `post-office.glb` — 연락 우체국 ✅ 입고 완료 (5차)
+
 비율 아담함 (2.1 / 1.5 / 1.9) · 포인트 색 오렌지
 
 ```
@@ -265,9 +285,11 @@ full width above the entrance, reading "연락 우체국" in big bold high-contr
 Korean letters, the sign is a dominant feature of the facade and clearly
 legible, warm orange accents, cozy and welcoming
 ```
+
 > 영문 대체: `reading "POST OFFICE"`
 
-## B5. `arch-contact.glb` — CONTACT 현판 아치  ✅ 입고 완료 (5차)
+## B5. `arch-contact.glb` — CONTACT 현판 아치 ✅ 입고 완료 (5차)
+
 A6 과 같은 프롬프트에서 두 곳만 바꾼다: `"SKILLS"` → `"CONTACT"`,
 `teal-painted` → `deep green painted`.
 
@@ -308,11 +330,11 @@ under 1500 triangles, front-facing
 받은 세 개는 전부 **자기 땅을 들고 있는 지형 덩어리**라서, 우리처럼 사각형 단을
 코드로 만드는 마을에는 못 붙인다. 굽어서 위·옆에서 본 그림으로 확인한 결론이다:
 
-| 받은 것 | 실제 모양 | 왜 못 쓰나 | 지금 쓰임 |
-|---|---|---|---|
-| `terrace-wall`<br>(Verdant Rampart) | **ㄱ자 모서리** 벽 + 위에 잔디·나무 울타리 | 직선 구간에 늘어놓으면 ㄱ자만 되풀이된다. 모서리에 맞춰 놓으려면 원점이 단 **안쪽**으로 들어가는데, 그러면 `terrainHeightAt` 이 1.1 을 얹어 **통째로 뜬다** | 아치 옆 문기둥 11개 |
-| `terrace-slab`<br>(Verdant Stone Terrace) | **사방이 벽인 단 한 칸** (가운데 잔디, 두 변에 울타리) | 사방이 막혀 있어 이어 붙일 수가 없다. 단 가장자리에 놓으면 안쪽 벽이 포장을 뚫고 올라온다 | **없음** |
-| `terrace-stair`<br>(Overgrown Stone Stair) | 양옆에 석주가 선 **돌계단** | — 이건 딱 맞는다 | **구역 대문 23곳 + 정문** ✅ |
+| 받은 것                                    | 실제 모양                                              | 왜 못 쓰나                                                                                                                                                  | 지금 쓰임                    |
+| ------------------------------------------ | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `terrace-wall`<br>(Verdant Rampart)        | **ㄱ자 모서리** 벽 + 위에 잔디·나무 울타리             | 직선 구간에 늘어놓으면 ㄱ자만 되풀이된다. 모서리에 맞춰 놓으려면 원점이 단 **안쪽**으로 들어가는데, 그러면 `terrainHeightAt` 이 1.1 을 얹어 **통째로 뜬다** | 아치 옆 문기둥 11개          |
+| `terrace-slab`<br>(Verdant Stone Terrace)  | **사방이 벽인 단 한 칸** (가운데 잔디, 두 변에 울타리) | 사방이 막혀 있어 이어 붙일 수가 없다. 단 가장자리에 놓으면 안쪽 벽이 포장을 뚫고 올라온다                                                                   | **없음**                     |
+| `terrace-stair`<br>(Overgrown Stone Stair) | 양옆에 석주가 선 **돌계단**                            | — 이건 딱 맞는다                                                                                                                                            | **구역 대문 23곳 + 정문** ✅ |
 
 그래서 직선 축대는 지금 `VillageScene.tsx` 의 `TerraceBanks` 가 코드로 그린다
 (단면 세 마디 + `src/lib/terraceBank.ts` 의 런타임 돌쌓기 텍스처, 합계 288 삼각형).
@@ -362,11 +384,11 @@ under 1200 triangles, front-facing
 
 지금 마을에 다리가 16개인데 **전부 같은 `bridge-stone`** 이다:
 
-| 어디 | 개수 | 성격 |
-|---|---|---|
+| 어디                          | 개수  | 성격                              |
+| ----------------------------- | ----- | --------------------------------- |
 | 광장 물 고리 (동·서·남·북 문) | **4** | 마을의 정문. 사람이 반드시 지난다 |
-| 구역 사이 골짜기 물길 | 10 | 들판을 건너는 시골 개울 다리 |
-| 해자 남북 참배로 | 2 | 마을 밖으로 나가는 큰 다리 |
+| 구역 사이 골짜기 물길         | 10    | 들판을 건너는 시골 개울 다리      |
+| 해자 남북 참배로              | 2     | 마을 밖으로 나가는 큰 다리        |
 
 넷이 열여섯 중 하나로 보이면 문이 문으로 안 읽힌다.
 
@@ -476,18 +498,18 @@ low poly game asset, under 4000 triangles, front-facing
 
 전부 `props/raw/decor/` (마지막 둘만 `props/raw/nature/`). **전부 1,500 삼각형 이하.**
 
-| 파일명 | 무엇 | 프롬프트 앞부분 |
-|---|---|---|
-| `easel.glb` | 이젤 | `Wooden artist easel holding a small painted canvas, a paint palette and brushes hanging from one leg` |
-| `anvil.glb` | 모루 | `Blacksmith anvil on a thick wooden stump, a hammer resting on top and tongs leaning against the side` |
-| `book-stack.glb` | 책더미 | `Stack of five worn leather-bound books with cloth bookmarks, one open book resting on top` |
-| `scroll-rack.glb` | 두루마리 선반 | `Small wooden rack holding rolled parchment scrolls, one scroll unrolled and hanging over the front` |
-| `signpost-arrow.glb` | 이정표 | `Wooden signpost with three arrow-shaped direction boards pointing different ways, small lantern on top` |
-| `brazier.glb` | 화로 | `Standing iron brazier bowl on three legs with glowing orange embers and small flames` |
-| `bell-tower-small.glb` | 작은 종탑 | `Small open wooden bell tower with a tiled pyramid roof and a bronze bell hanging inside` |
-| `hedge-round.glb` | 다듬은 관목 | `Neatly trimmed round topiary bush in a square stone planter` |
-| `tree-pine-tall.glb` | 키 큰 침엽수 → `nature/` | `Very tall narrow dark green pine tree, single trunk, layered conical foliage` |
-| `tree-willow.glb` | 수양버들 → `nature/` | `Weeping willow tree with long drooping pale green branches` |
+| 파일명                 | 무엇                     | 프롬프트 앞부분                                                                                          |
+| ---------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `easel.glb`            | 이젤                     | `Wooden artist easel holding a small painted canvas, a paint palette and brushes hanging from one leg`   |
+| `anvil.glb`            | 모루                     | `Blacksmith anvil on a thick wooden stump, a hammer resting on top and tongs leaning against the side`   |
+| `book-stack.glb`       | 책더미                   | `Stack of five worn leather-bound books with cloth bookmarks, one open book resting on top`              |
+| `scroll-rack.glb`      | 두루마리 선반            | `Small wooden rack holding rolled parchment scrolls, one scroll unrolled and hanging over the front`     |
+| `signpost-arrow.glb`   | 이정표                   | `Wooden signpost with three arrow-shaped direction boards pointing different ways, small lantern on top` |
+| `brazier.glb`          | 화로                     | `Standing iron brazier bowl on three legs with glowing orange embers and small flames`                   |
+| `bell-tower-small.glb` | 작은 종탑                | `Small open wooden bell tower with a tiled pyramid roof and a bronze bell hanging inside`                |
+| `hedge-round.glb`      | 다듬은 관목              | `Neatly trimmed round topiary bush in a square stone planter`                                            |
+| `tree-pine-tall.glb`   | 키 큰 침엽수 → `nature/` | `Very tall narrow dark green pine tree, single trunk, layered conical foliage`                           |
+| `tree-willow.glb`      | 수양버들 → `nature/`     | `Weeping willow tree with long drooping pale green branches`                                             |
 
 공통 꼬리말:
 
@@ -502,13 +524,13 @@ VERY LOW POLY, flat shaded, under 1500 triangles, front-facing
 물 고리(둘레 약 60유닛)와 물길 여섯 줄기의 물가가 **마을에서 사람이 제일 가까이
 가는 물**인데, 지금 그 띠에 심는 게 일반 덤불·꽃뿐이다. 물가로 안 읽힌다.
 
-| 파일명 | 폴더 | 프롬프트 앞부분 |
-|---|---|---|
-| `reed-clump.glb` | `nature/` | `Clump of tall slender water reeds and cattails growing from wet mud, a few bent stems` |
-| `lily-pads.glb` | `nature/` | `Small cluster of flat round lily pads with two white water lilies, floating flat` |
-| `stepping-stones.glb` | `decor/` | `Row of five flat weathered stepping stones of different sizes, wet mossy tops, arranged in a gentle line` |
-| `water-mill-small.glb` | `decor/` | `Small wooden water wheel on a stone footing, half of the wheel below the axle, mossy paddles` |
-| `dock-small.glb` | `decor/` | `Very small wooden jetty of weathered planks on short posts, a coil of rope and a lantern at the end` |
+| 파일명                 | 폴더      | 프롬프트 앞부분                                                                                            |
+| ---------------------- | --------- | ---------------------------------------------------------------------------------------------------------- |
+| `reed-clump.glb`       | `nature/` | `Clump of tall slender water reeds and cattails growing from wet mud, a few bent stems`                    |
+| `lily-pads.glb`        | `nature/` | `Small cluster of flat round lily pads with two white water lilies, floating flat`                         |
+| `stepping-stones.glb`  | `decor/`  | `Row of five flat weathered stepping stones of different sizes, wet mossy tops, arranged in a gentle line` |
+| `water-mill-small.glb` | `decor/`  | `Small wooden water wheel on a stone footing, half of the wheel below the axle, mossy paddles`             |
+| `dock-small.glb`       | `decor/`  | `Very small wooden jetty of weathered planks on short posts, a coil of rope and a lantern at the end`      |
 
 `lily-pads` 만 꼬리말에서 `standing alone on flat ground` 를 빼고
 `floating flat on water, no water attached` 로 바꾼다.
@@ -525,11 +547,11 @@ VERY LOW POLY, flat shaded, under 1500 triangles, front-facing
 
 이 셋이 그렇다:
 
-| 파일 | 왜 raw 가 없나 | 지금 상태 |
-|---|---|---|
-| `decor/wall-low.glb` | `scripts/make-low-wall.mjs` 가 **코드로 굽는다** | 담장 218토막이 옛 조명 그대로 |
-| `decor/fence-rail.glb` | `scripts/make-fence-rail.mjs` 가 코드로 굽는다 | 울타리 11토막 |
-| `decor/terrace-steps.glb` | 〃 (지금은 받은 `terrace-stair` 를 쓰지만 폴백이 남아 있다) | — |
+| 파일                      | 왜 raw 가 없나                                              | 지금 상태                     |
+| ------------------------- | ----------------------------------------------------------- | ----------------------------- |
+| `decor/wall-low.glb`      | `scripts/make-low-wall.mjs` 가 **코드로 굽는다**            | 담장 218토막이 옛 조명 그대로 |
+| `decor/fence-rail.glb`    | `scripts/make-fence-rail.mjs` 가 코드로 굽는다              | 울타리 11토막                 |
+| `decor/terrace-steps.glb` | 〃 (지금은 받은 `terrace-stair` 를 쓰지만 폴백이 남아 있다) | —                             |
 
 **두 갈래 중 하나면 된다:**
 
@@ -542,13 +564,13 @@ VERY LOW POLY, flat shaded, under 1500 triangles, front-facing
 
 # 규격 (전부 공통)
 
-| 항목 | 값 |
-|---|---|
-| 포맷 | GLB (텍스처 포함), Y-up |
-| 원점 | **바닥 중심.** 물체가 원점 위에 서 있어야 한다 |
-| 크기 | 신경 쓰지 말 것 — Meshy가 긴 변을 1.9로 정규화하고 코드가 다시 맞춘다 |
+| 항목     | 값                                                                              |
+| -------- | ------------------------------------------------------------------------------- |
+| 포맷     | GLB (텍스처 포함), Y-up                                                         |
+| 원점     | **바닥 중심.** 물체가 원점 위에 서 있어야 한다                                  |
+| 크기     | 신경 쓰지 말 것 — Meshy가 긴 변을 1.9로 정규화하고 코드가 다시 맞춘다           |
 | **비율** | **지킬 것.** 바닥면 대각선으로 배율을 잡으므로, 납작하게 그리면 그만큼 낮아진다 |
-| 앞면 | **+Z 방향**이 정면 (간판·문이 +Z를 보게) |
+| 앞면     | **+Z 방향**이 정면 (간판·문이 +Z를 보게)                                        |
 
 Meshy Image-to-3D 설정: Art Style `Stylized` · Topology `Quad` · Polycount `Low ~ Medium` ·
 Texture `On` (간판 글자가 텍스처로 구워져야 한다) · Symmetry `Auto` (비대칭이면 `Off`)
@@ -579,11 +601,11 @@ npm run optimize
 UV 섬이 많으면 **simplify가 거의 안 먹는다** — 받은 축대벽을 오차 0.05까지 올려도
 10,612 → 8,191 에서 멈췄다. 처음부터 가볍게 뽑는 수밖에 없다.
 
-| 쓰임새 | 목표 | 프롬프트 꼬리에 붙일 말 |
-|---|---|---|
+| 쓰임새                        | 목표           | 프롬프트 꼬리에 붙일 말                                                                               |
+| ----------------------------- | -------------- | ----------------------------------------------------------------------------------------------------- |
 | 수십 개 반복 (담장·깃대·소품) | **1,500 이하** | `VERY LOW POLY, flat shaded, minimal geometric detail, no separate small props, under 1500 triangles` |
-| 열 개 안팎 (민가·아치·노점) | 8,000 이하 | `low poly game asset, under 8000 triangles` |
-| 한두 개 (건물·랜드마크) | 자유 | — |
+| 열 개 안팎 (민가·아치·노점)   | 8,000 이하     | `low poly game asset, under 8000 triangles`                                                           |
+| 한두 개 (건물·랜드마크)       | 자유           | —                                                                                                     |
 
 ## 공통 화풍 꼬리말 (장식물용)
 
@@ -598,83 +620,85 @@ soft painterly textures, muted natural colors, front-facing
 
 # 코드로 해결한 것 — 에셋 안 받아도 됨
 
-| 무엇 | 어떻게 |
-|---|---|
-| 판석 포장 | `scripts/make-paving-tile.mjs` — 받은 손그림(Mossy Cobblestone)에서 윗면을 오려 **삼각형 2개**짜리 평면에 입힌다. 원본 GLB는 8,476 삼각형이라 386장이면 327만이다. 오릴 때 가장자리를 이웃 화소와 섞어 이어붙게 만들고, 칸마다 90°씩 돌려 반복 주기를 네 배로 늘린다 |
-| 길 갓길 | `scripts/make_paved_road_tiles.py` — 길 타일의 **초록 잔디 갓길**을 판석 색으로 바꾼 변종. 포장 위를 지나는 길에만 쓴다. 안 바꿨을 땐 돌마당에 초록 격자가 떠올랐다 |
-| 낮은 담장 | `scripts/make-low-wall.mjs` — 상자 둘, **24 삼각형**. 130토막으로 여섯 블록을 두르고 길이 지나는 자리는 비워 구역 대문이 된다. B6 이 오면 교체 |
-| **구역 단차** | `src/lib/villageTerrain.ts` + `VillageScene.tsx` 의 `TerraceBanks` — 여섯 구역을 두 계단(0 → 0.35 → 0.7) 올려 컨셉 아트의 계단식 마을을 만든다. 옆구리 축대가 **96 삼각형**. 아래 「구역 단차는 어떻게 도나」 참고 |
-| 길가 울타리 | `scripts/make-fence-rail.mjs` — 기둥 둘 + 가로대 둘, **36 삼각형**. 받은 `fence.glb` 는 1,473 이라 130토막을 못 깐다(19만). 컨셉에서 길이 "길"로 보이는 건 포장색이 아니라 양옆을 따라가는 이 선 두 줄이다 |
-| 마을을 두르는 해자 | `VillageScene.tsx` 의 `Waterways` — 타원 한 바퀴 리본. 북쪽 꼭짓점이 예전 개울 자리(z −20.7)에 정확히 와서 돌다리·참배로를 그대로 쓴다 |
-| **광장을 두르는 물 고리** | `generate-ground-layout.mjs` 가 구역 단 발치까지 남은 실거리를 재서 반지름을 정하고(7.2~10.3), `villageTerraces.json` 의 `plazaRing` 으로 내보낸다. 씬·장식물 생성기가 같은 값을 읽어 다리를 놓는다. **길 고리는 걷어냈다** — 같은 띠를 물과 다퉜다 |
-| 구름 하늘 | `src/lib/skyClouds.ts` — 값 노이즈로 1024×512 캔버스 텍스처를 **런타임에** 굽는다. 색을 시간대 팔레트에서 받아야 해서 파일로 못 둔다 |
-| 잔디 텍스처 | `scripts/make-grass-texture.mjs` |
-| 먼 숲 | `scripts/bake-impostors.mjs` — 나무 한 그루를 4~6삼각형 빌보드로 |
-| 하늘·해·물·절벽·먼 산 | `VillageScene.tsx` 에서 절차적으로 |
-| 계절·시간대 파티클 | `SeasonAmbience.tsx` |
+| 무엇                      | 어떻게                                                                                                                                                                                                                                                               |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 판석 포장                 | `scripts/make-paving-tile.mjs` — 받은 손그림(Mossy Cobblestone)에서 윗면을 오려 **삼각형 2개**짜리 평면에 입힌다. 원본 GLB는 8,476 삼각형이라 386장이면 327만이다. 오릴 때 가장자리를 이웃 화소와 섞어 이어붙게 만들고, 칸마다 90°씩 돌려 반복 주기를 네 배로 늘린다 |
+| 길 갓길                   | `scripts/make_paved_road_tiles.py` — 길 타일의 **초록 잔디 갓길**을 판석 색으로 바꾼 변종. 포장 위를 지나는 길에만 쓴다. 안 바꿨을 땐 돌마당에 초록 격자가 떠올랐다                                                                                                  |
+| 낮은 담장                 | `scripts/make-low-wall.mjs` — 상자 둘, **24 삼각형**. 130토막으로 여섯 블록을 두르고 길이 지나는 자리는 비워 구역 대문이 된다. B6 이 오면 교체                                                                                                                       |
+| **구역 단차**             | `src/lib/villageTerrain.ts` + `VillageScene.tsx` 의 `TerraceBanks` — 여섯 구역을 두 계단(0 → 0.35 → 0.7) 올려 컨셉 아트의 계단식 마을을 만든다. 옆구리 축대가 **96 삼각형**. 아래 「구역 단차는 어떻게 도나」 참고                                                   |
+| 길가 울타리               | `scripts/make-fence-rail.mjs` — 기둥 둘 + 가로대 둘, **36 삼각형**. 받은 `fence.glb` 는 1,473 이라 130토막을 못 깐다(19만). 컨셉에서 길이 "길"로 보이는 건 포장색이 아니라 양옆을 따라가는 이 선 두 줄이다                                                           |
+| 마을을 두르는 해자        | `VillageScene.tsx` 의 `Waterways` — 타원 한 바퀴 리본. 북쪽 꼭짓점이 예전 개울 자리(z −20.7)에 정확히 와서 돌다리·참배로를 그대로 쓴다                                                                                                                               |
+| **광장을 두르는 물 고리** | `generate-ground-layout.mjs` 가 구역 단 발치까지 남은 실거리를 재서 반지름을 정하고(7.2~10.3), `villageTerraces.json` 의 `plazaRing` 으로 내보낸다. 씬·장식물 생성기가 같은 값을 읽어 다리를 놓는다. **길 고리는 걷어냈다** — 같은 띠를 물과 다퉜다                  |
+| 구름 하늘                 | `src/lib/skyClouds.ts` — 값 노이즈로 1024×512 캔버스 텍스처를 **런타임에** 굽는다. 색을 시간대 팔레트에서 받아야 해서 파일로 못 둔다                                                                                                                                 |
+| 잔디 텍스처               | `scripts/make-grass-texture.mjs`                                                                                                                                                                                                                                     |
+| 먼 숲                     | `scripts/bake-impostors.mjs` — 나무 한 그루를 4~6삼각형 빌보드로                                                                                                                                                                                                     |
+| 하늘·해·물·절벽·먼 산     | `VillageScene.tsx` 에서 절차적으로                                                                                                                                                                                                                                   |
+| 계절·시간대 파티클        | `SeasonAmbience.tsx`                                                                                                                                                                                                                                                 |
 
 ---
 
 # 입고 완료
 
 ## 1차 (2026-08-08) — 장식물 28종
+
 `lantern-post` `notice-board` `leaf-banner` `scroll-barrel` `sign-*`(6) `gate-arch`
 `market-stall` `bunting` `mailbox` `campfire` `candle-tome` `orb-lantern` `lantern-archway`
 `lantern-bearer` `lute-picnic` `fence` `stump-forge` `bench` `flower-pot` `fountain` `well`
 `barrel-iron` `sign-theme-project`
 
 ## 2차 (2026-08-09) — 건물 18채 + 나무·바위 7종
+
 건물 18채는 `MESHY_BUILDING_PROMPTS.md` 참고.
 `tree-golden-canopy` `tree-emerald-crown` `tree-sakura` `tree-petal-parade`
 `bush-emerald-berry` `rock-verdant-boulder` `rock-three-stones`
 
 ## 3차 (2026-08-10 새벽) — 아치·민가·석축
 
-| 파일 | 쓰이는 곳 | 삼각형 |
-|---|---|---|
-| `decor/arch-projects.glb` | PROJECTS 입구 현판 | 6,350 |
-| `decor/arch-study.glb` | STUDY 입구 현판 | 7,642 |
-| `decor/arch-experience.glb` | EXPERIENCE 입구 현판 | 6,955 |
-| `decor/arch-life.glb` | LIFE 입구 현판 | 7,832 |
-| `decor/house-a.glb` | 채움 민가 (붉은 기와) | 8,705 |
-| `decor/house-b.glb` | 채움 민가 (청회색 슬레이트) | 11,856 |
-| `decor/terrace-wall.glb` | 아치 옆 문기둥 · 정문 석축 | 10,612 |
-| `decor/terrace-stair.glb` | 남쪽 정문 대계단 | 10,052 |
-| `decor/terrace-slab.glb` | **안 씀** — 한 장 1만 삼각형이라 포장으로 못 쓴다 | 10,174 |
-| `decor/arch-alt.glb` | **안 씀** — EXPERIENCE 글자 중복 (원래 SKILLS여야 했다 → A6) | 7,015 |
+| 파일                        | 쓰이는 곳                                                    | 삼각형 |
+| --------------------------- | ------------------------------------------------------------ | ------ |
+| `decor/arch-projects.glb`   | PROJECTS 입구 현판                                           | 6,350  |
+| `decor/arch-study.glb`      | STUDY 입구 현판                                              | 7,642  |
+| `decor/arch-experience.glb` | EXPERIENCE 입구 현판                                         | 6,955  |
+| `decor/arch-life.glb`       | LIFE 입구 현판                                               | 7,832  |
+| `decor/house-a.glb`         | 채움 민가 (붉은 기와)                                        | 8,705  |
+| `decor/house-b.glb`         | 채움 민가 (청회색 슬레이트)                                  | 11,856 |
+| `decor/terrace-wall.glb`    | 아치 옆 문기둥 · 정문 석축                                   | 10,612 |
+| `decor/terrace-stair.glb`   | 남쪽 정문 대계단                                             | 10,052 |
+| `decor/terrace-slab.glb`    | **안 씀** — 한 장 1만 삼각형이라 포장으로 못 쓴다            | 10,174 |
+| `decor/arch-alt.glb`        | **안 씀** — EXPERIENCE 글자 중복 (원래 SKILLS여야 했다 → A6) | 7,015  |
 
 ## 4차 (2026-08-10 오후) — 바닥·랜드마크
 
-| 파일 | 쓰이는 곳 | 삼각형 |
-|---|---|---|
-| `ground-flat/paving-square.glb` | 구역 바닥 판석 386장 (손그림에서 구움) | **2** |
-| `ground-flat/paved/*.glb` | 포장 위를 지나는 길 6종 (갓길을 돌색으로) | 2 |
-| `decor/wall-low.glb` | 블록 담장 130토막 (**코드 생성**, B6 이 오면 교체) | 24 |
-| `decor/flagpole-banner.glb` | 대로변·광장 깃대 | 3,483 |
-| `decor/flowerbed-round.glb` | 포장 위 원형 화단 | 9,898 |
-| `decor/house-c.glb` | 채움 민가 3종째 · 모델 없는 건물 폴백 | 8,010 |
-| `decor/bridge-stone.glb` | 북쪽 참배로가 개울 건너는 돌다리 | 6,448 |
-| `decor/island-north.glb` | 북쪽 "AI Portfolio" 섬 (아래를 묻어 언덕으로) | 12,325 |
-| `decor/pagoda-portfolio.glb` | 그 위 파고다 랜드마크 | 7,617 |
-| `decor/windmill.glb` | 북동 언덕 풍차 | 8,768 |
-| `decor/waterfall.glb` | 섬 테두리 폭포 3곳 | 11,546 |
+| 파일                            | 쓰이는 곳                                          | 삼각형 |
+| ------------------------------- | -------------------------------------------------- | ------ |
+| `ground-flat/paving-square.glb` | 구역 바닥 판석 386장 (손그림에서 구움)             | **2**  |
+| `ground-flat/paved/*.glb`       | 포장 위를 지나는 길 6종 (갓길을 돌색으로)          | 2      |
+| `decor/wall-low.glb`            | 블록 담장 130토막 (**코드 생성**, B6 이 오면 교체) | 24     |
+| `decor/flagpole-banner.glb`     | 대로변·광장 깃대                                   | 3,483  |
+| `decor/flowerbed-round.glb`     | 포장 위 원형 화단                                  | 9,898  |
+| `decor/house-c.glb`             | 채움 민가 3종째 · 모델 없는 건물 폴백              | 8,010  |
+| `decor/bridge-stone.glb`        | 북쪽 참배로가 개울 건너는 돌다리                   | 6,448  |
+| `decor/island-north.glb`        | 북쪽 "AI Portfolio" 섬 (아래를 묻어 언덕으로)      | 12,325 |
+| `decor/pagoda-portfolio.glb`    | 그 위 파고다 랜드마크                              | 7,617  |
+| `decor/windmill.glb`            | 북동 언덕 풍차                                     | 8,768  |
+| `decor/waterfall.glb`           | 섬 테두리 폭포 3곳                                 | 11,546 |
 
 ## 5차 (2026-08-10 저녁) — 건물 8채 + 아치 2개
 
 이걸로 건물이 **26/27** 이 됐고 구역 아치가 **6/6** 이 됐다.
 
-| 받은 파일 | 넣은 이름 | 쓰이는 곳 |
-|---|---|---|
-| `Meshy_AI_Palm_Welcome_House_0810064653` | `buildings/raw/project-sign-language.glb` | 수어지구 |
-| `Meshy_AI_Whimsical_Adventure_H_0810071057` | `buildings/raw/project-ajou-adventure.glb` | 아주분투 |
-| `Meshy_AI_Monument_of_Values_0810064219` | `buildings/raw/life-values.glb` | 가치관 비석 |
-| `Meshy_AI_Tower_of_Investment_0810064212` | `buildings/raw/life-invest.glb` | 투자 타워 |
-| `Meshy_AI_Grand_Dome_Library_0810064207` | `buildings/raw/life-library.glb` | 도서관 |
-| `Meshy_AI_Timeline_Tower_0810064658` | `buildings/raw/life-timeline.glb` | 연혁 타임라인 |
-| `Meshy_AI_Algorithmic_Pagoda_0810064707` | `buildings/raw/study-codingtest.glb` | 알고리즘 도장 |
-| `Meshy_AI_Enchanted_Post_Office_0810064714` | `buildings/raw/post-office.glb` | 연락 우체국 |
-| `Meshy_AI_Skills_Archway_0810071103` | `props/raw/decor/arch-skills.glb` | SKILLS 입구 현판 (6,975) |
-| `Meshy_AI_Contact_Gate_0810071106` | `props/raw/decor/arch-contact.glb` | CONTACT 입구 현판 (6,984) |
+| 받은 파일                                   | 넣은 이름                                  | 쓰이는 곳                 |
+| ------------------------------------------- | ------------------------------------------ | ------------------------- |
+| `Meshy_AI_Palm_Welcome_House_0810064653`    | `buildings/raw/project-sign-language.glb`  | 수어지구                  |
+| `Meshy_AI_Whimsical_Adventure_H_0810071057` | `buildings/raw/project-ajou-adventure.glb` | 아주분투                  |
+| `Meshy_AI_Monument_of_Values_0810064219`    | `buildings/raw/life-values.glb`            | 가치관 비석               |
+| `Meshy_AI_Tower_of_Investment_0810064212`   | `buildings/raw/life-invest.glb`            | 투자 타워                 |
+| `Meshy_AI_Grand_Dome_Library_0810064207`    | `buildings/raw/life-library.glb`           | 도서관                    |
+| `Meshy_AI_Timeline_Tower_0810064658`        | `buildings/raw/life-timeline.glb`          | 연혁 타임라인             |
+| `Meshy_AI_Algorithmic_Pagoda_0810064707`    | `buildings/raw/study-codingtest.glb`       | 알고리즘 도장             |
+| `Meshy_AI_Enchanted_Post_Office_0810064714` | `buildings/raw/post-office.glb`            | 연락 우체국               |
+| `Meshy_AI_Skills_Archway_0810071103`        | `props/raw/decor/arch-skills.glb`          | SKILLS 입구 현판 (6,975)  |
+| `Meshy_AI_Contact_Gate_0810071106`          | `props/raw/decor/arch-contact.glb`         | CONTACT 입구 현판 (6,984) |
 
 > 같은 배치로 받은 `Blue_Slate_Cottage` · `Hearthside_Cottage` 는 이미 들어와 있는
 > `house-a` · `house-b` 와 **바이트 단위로 동일**해서 안 넣었다. A7·A8 채움 민가를
@@ -705,7 +729,6 @@ soft painterly textures, muted natural colors, front-facing
 node scripts/generate-ground-layout.mjs && node scripts/generate-decor-layout.mjs
 ```
 
-
 ---
 
 # 구역 단차는 어떻게 도나
@@ -731,7 +754,7 @@ scripts/generate-ground-layout.mjs
 **되돌리기 스위치는 한 줄이다.** `villageTerrain.ts` 의
 
 ```ts
-export const TERRACE_STEP: number = 1.1;   // 0 이면 예전 평지 그대로
+export const TERRACE_STEP: number = 1.1; // 0 이면 예전 평지 그대로
 ```
 
 ## 왜 매끄러운 경사가 아니라 뚝 끊는 한 단인가
@@ -796,7 +819,6 @@ export const TERRACE_STEP: number = 1.1;   // 0 이면 예전 평지 그대로
 그리고 **이 모델은 −Z 쪽으로 오른다.** 직접 구웠던 쐐기는 반대였다. 낮은 쪽(+Z)이
 구역 바깥을 보도록 회전 부호를 뒤집었다.
 
-
 ---
 
 # 컨셉 아트에 맞추려고 한 것 (2026-08-11)
@@ -804,16 +826,16 @@ export const TERRACE_STEP: number = 1.1;   // 0 이면 예전 평지 그대로
 컨셉 아트와 렌더를 나란히 놓고 다른 점을 일곱 개로 추렸고, 전부 손봤다.
 **남은 차이는 에셋이 아니라 지형이다** — 아래 「아직 남은 차이」 참고.
 
-| 무엇 | 어떻게 | 결과 |
-|---|---|---|
-| **빛** | 노을 구간을 15~20시로 넓히고, **한낮도 따뜻하게 내렸다**(태양 고도 52°→32°, 지평선을 금빛 아지랑이로, 창문 발광 0.14→0.4). 노을은 고도 11°, 발광 1.05 | 정오에 들어와도 컨셉 톤이 유지된다 |
-| **하늘** | `skyClouds.ts` — 지평선 위에 낮게 깔린 구름 띠 | v 는 천정각이라 0.10~0.49 로 잡으면 고도 2°~72°(하늘 전부)다. 지금은 2°~50° |
-| **길 모양** | 광장 둘레 정사각 고리 두 겹 (`RINGS = [4, 8]`) | 직선 64→90 · T 17→12 · **커브 6→15** · 교차 4→3 |
-| **물** | 마을을 두르는 타원 해자 + 남북 돌다리 둘 | 남쪽 참배로를 `SOUTH_END = 12` 까지 늘려 다리까지 잇는다 |
-| **울타리** | 36삼각형짜리를 구워 길가에 **134토막** | 예전엔 27개(1,473삼각형짜리) |
-| **소품** | 구역당 6개를 흩던 것을 **건물 앞뜰마다 3~4개 뭉치기**로 | 42개 / 19채 |
-| **중앙 기념비** | `Building.tsx` 의 `boost` 로 배율만 1.45배 | `size` 를 키웠더니 길 생성기가 그 상자를 피해 도로망이 무너졌다(T 20→6) — `size` 는 길·충돌·앞마당이 같이 읽는 값이라 건드리면 안 된다 |
-| **건물 밀집도** | `SPREAD` 1.45 → 1.32 + 채움 민가 25→33채 | 상자 겹침 0, 길 안 닿는 건물 0 |
+| 무엇            | 어떻게                                                                                                                                                | 결과                                                                                                                                   |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **빛**          | 노을 구간을 15~20시로 넓히고, **한낮도 따뜻하게 내렸다**(태양 고도 52°→32°, 지평선을 금빛 아지랑이로, 창문 발광 0.14→0.4). 노을은 고도 11°, 발광 1.05 | 정오에 들어와도 컨셉 톤이 유지된다                                                                                                     |
+| **하늘**        | `skyClouds.ts` — 지평선 위에 낮게 깔린 구름 띠                                                                                                        | v 는 천정각이라 0.10~0.49 로 잡으면 고도 2°~72°(하늘 전부)다. 지금은 2°~50°                                                            |
+| **길 모양**     | 광장 둘레 정사각 고리 두 겹 (`RINGS = [4, 8]`)                                                                                                        | 직선 64→90 · T 17→12 · **커브 6→15** · 교차 4→3                                                                                        |
+| **물**          | 마을을 두르는 타원 해자 + 남북 돌다리 둘                                                                                                              | 남쪽 참배로를 `SOUTH_END = 12` 까지 늘려 다리까지 잇는다                                                                               |
+| **울타리**      | 36삼각형짜리를 구워 길가에 **134토막**                                                                                                                | 예전엔 27개(1,473삼각형짜리)                                                                                                           |
+| **소품**        | 구역당 6개를 흩던 것을 **건물 앞뜰마다 3~4개 뭉치기**로                                                                                               | 42개 / 19채                                                                                                                            |
+| **중앙 기념비** | `Building.tsx` 의 `boost` 로 배율만 1.45배                                                                                                            | `size` 를 키웠더니 길 생성기가 그 상자를 피해 도로망이 무너졌다(T 20→6) — `size` 는 길·충돌·앞마당이 같이 읽는 값이라 건드리면 안 된다 |
+| **건물 밀집도** | `SPREAD` 1.45 → 1.32 + 채움 민가 25→33채                                                                                                              | 상자 겹침 0, 길 안 닿는 건물 0                                                                                                         |
 
 전체 858개 프롭 · **1,542k 삼각형** (상한 1,800k).
 
@@ -833,12 +855,12 @@ export const TERRACE_STEP: number = 1.1;   // 0 이면 예전 평지 그대로
 광장에만 깔린다. 블록 안까지 깔았더니 판석이 613장(2,167유닛²)으로 구역 단 넓이
 (1,159유닛²)를 통째로 덮어, **마을 전체가 하나의 거대한 광장**으로 보였다.
 
-| | 전 | 후 |
-|---|---|---|
-| 포장 타일 | 613장 (블록 안 + 광장) | **69장** (광장 앞치마만) |
-| 울타리 | 길마다 양옆 133토막 | **참배로 16토막** |
-| 블록 안 길 비율 | 34% | **22%** |
-| 구역 안 나무·화단 | 26그루 / 7개 | **39그루 / 12개** |
+|                   | 전                     | 후                       |
+| ----------------- | ---------------------- | ------------------------ |
+| 포장 타일         | 613장 (블록 안 + 광장) | **69장** (광장 앞치마만) |
+| 울타리            | 길마다 양옆 133토막    | **참배로 16토막**        |
+| 블록 안 길 비율   | 34%                    | **22%**                  |
+| 구역 안 나무·화단 | 26그루 / 7개           | **39그루 / 12개**        |
 
 세 가지가 딸려 왔다:
 
@@ -868,11 +890,11 @@ export const TERRACE_STEP: number = 1.1;   // 0 이면 예전 평지 그대로
   소품·담장·건물 배치 로직을 전부 갈아야 한다.
 - **물에 깊이가 없다 — 그리고 길 타일이 물을 잘라 먹는다.** (2026-08-14 실측)
 
-  | 무엇 | y | |
-  |---|---|---|
-  | 길 타일 (`path-*`) | **0.060** | 물보다 **1cm 위** → 물이 그 밑으로 사라진다 |
-  | 물 수면 (`Waterways`) | 0.050 | |
-  | 광장 판석 (`paving-square`) | 0.045 | 물보다 5mm 아래 → z-파이팅 직전 |
+  | 무엇                        | y         |                                             |
+  | --------------------------- | --------- | ------------------------------------------- |
+  | 길 타일 (`path-*`)          | **0.060** | 물보다 **1cm 위** → 물이 그 밑으로 사라진다 |
+  | 물 수면 (`Waterways`)       | 0.050     |                                             |
+  | 광장 판석 (`paving-square`) | 0.045     | 물보다 5mm 아래 → z-파이팅 직전             |
 
   물 고리 241마디 중 **29마디(12%)가 길 타일 밑**이다. 문 넷마다 2유닛씩 물이 뚝
   끊긴 것처럼 보이고, 그 위에 선 돌다리는 **마른 길 위에 놓인 다리**가 된다.

@@ -9,7 +9,14 @@ interface HeaderProps {
   onSelectSection: (sectionId: SectionId) => void;
 }
 
-const visibleNav: SectionId[] = ["projects", "github", "study", "experience", "life", "contact"];
+const visibleNav: SectionId[] = [
+  "projects",
+  "github",
+  "study",
+  "experience",
+  "life",
+  "contact"
+];
 
 const NAV_COLORS: Record<string, string> = {
   projects: "#00d4ff",
@@ -49,9 +56,12 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
           </span>
         </motion.button>
 
-        <nav className="hidden items-center gap-2 md:flex" aria-label="Portfolio sections">
-          {visibleNav.map((sectionId) => {
-            const section = sectionMeta.find((item) => item.id === sectionId);
+        <nav
+          className="hidden items-center gap-2 md:flex"
+          aria-label="Portfolio sections"
+        >
+          {visibleNav.map(sectionId => {
+            const section = sectionMeta.find(item => item.id === sectionId);
             if (!section) return null;
             const isActive = activeSection === section.id;
             const color = NAV_COLORS[sectionId] ?? "#00d4ff";
@@ -64,7 +74,9 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
                 style={{
                   color: isActive ? color : "rgba(255,255,255,0.45)",
                   background: isActive ? `${color}14` : "transparent",
-                  border: isActive ? `1px solid ${color}50` : "1px solid transparent",
+                  border: isActive
+                    ? `1px solid ${color}50`
+                    : "1px solid transparent",
                   boxShadow: isActive ? `0 0 14px ${color}22` : "none"
                 }}
                 type="button"

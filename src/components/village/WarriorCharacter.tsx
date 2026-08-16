@@ -19,7 +19,11 @@ const MODEL_SCALE = NPC_HEIGHT / MESHY_HEIGHT;
 const MODEL_Y = 0;
 const MODEL_FACING = Math.PI; // 모델이 +Z를 보면 180도 돌려 -Z(전방)로
 
-export function WarriorCharacter({stateRef}: {stateRef: React.MutableRefObject<MoveState>}) {
+export function WarriorCharacter({
+  stateRef
+}: {
+  stateRef: React.MutableRefObject<MoveState>;
+}) {
   const innerRef = useRef<Group>(null);
   const {scene, animations: walkAnims} = useGLTF(WALK_URL);
   const {animations: runAnims} = useGLTF(RUN_URL);
@@ -57,7 +61,12 @@ export function WarriorCharacter({stateRef}: {stateRef: React.MutableRefObject<M
         if (prev !== "idle") actions[prev]?.fadeOut(0.18);
         if (target !== "idle") {
           const act = actions[target];
-          if (act) act.reset().setEffectiveTimeScale(target === "run" ? 1.1 : 1).fadeIn(0.18).play();
+          if (act)
+            act
+              .reset()
+              .setEffectiveTimeScale(target === "run" ? 1.1 : 1)
+              .fadeIn(0.18)
+              .play();
         }
         currentRef.current = target;
       }
@@ -68,7 +77,12 @@ export function WarriorCharacter({stateRef}: {stateRef: React.MutableRefObject<M
   }, [actions, stateRef]);
 
   return (
-    <group ref={innerRef} scale={MODEL_SCALE} position={[0, MODEL_Y, 0]} rotation={[0, MODEL_FACING, 0]}>
+    <group
+      ref={innerRef}
+      scale={MODEL_SCALE}
+      position={[0, MODEL_Y, 0]}
+      rotation={[0, MODEL_FACING, 0]}
+    >
       <primitive object={scene} />
     </group>
   );

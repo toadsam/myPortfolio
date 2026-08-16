@@ -6,12 +6,12 @@ export const aClubSans = Noto_Sans_KR({
   subsets: ["latin"],
   weight: ["400", "500", "700", "900"],
   display: "swap",
-  variable: "--ac-font-sans",
+  variable: "--ac-font-sans"
 });
 
 export const aClubMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
-  variable: "--ac-font-mono",
+  variable: "--ac-font-mono"
 });

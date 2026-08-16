@@ -65,8 +65,14 @@ export function InteriorCharacterController({
       posRef.current.z -= dz * speed * 0.6;
     }
 
-    posRef.current.x = Math.max(bounds.xMin, Math.min(bounds.xMax, posRef.current.x));
-    posRef.current.z = Math.max(bounds.zMin, Math.min(bounds.zMax, posRef.current.z));
+    posRef.current.x = Math.max(
+      bounds.xMin,
+      Math.min(bounds.xMax, posRef.current.x)
+    );
+    posRef.current.z = Math.max(
+      bounds.zMin,
+      Math.min(bounds.zMax, posRef.current.z)
+    );
 
     if (groupRef.current) {
       groupRef.current.position.set(posRef.current.x, 0, posRef.current.z);

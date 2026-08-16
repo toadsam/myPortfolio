@@ -6,12 +6,12 @@ export const darkLabSans = Noto_Sans_KR({
   subsets: ["latin"],
   weight: ["400", "500", "700", "900"],
   display: "swap",
-  variable: "--dl-font-sans",
+  variable: "--dl-font-sans"
 });
 
 export const darkLabMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
   display: "swap",
-  variable: "--dl-font-mono",
+  variable: "--dl-font-mono"
 });

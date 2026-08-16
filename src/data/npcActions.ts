@@ -176,12 +176,15 @@ const dynamicNpcFallback: Record<string, string> = {
 };
 
 export function getNpcActions(npcId: string): NpcActionDefinition[] {
-  const exact = npcActions.filter((action) => action.npcId === npcId);
+  const exact = npcActions.filter(action => action.npcId === npcId);
   if (exact.length > 0) return exact;
 
-  const fallbackActionId = Object.entries(dynamicNpcFallback).find(([token]) => npcId.includes(token))?.[1];
-  if (!fallbackActionId) return npcActions.filter((action) => action.npcId === "guide-npc");
+  const fallbackActionId = Object.entries(dynamicNpcFallback).find(([token]) =>
+    npcId.includes(token)
+  )?.[1];
+  if (!fallbackActionId)
+    return npcActions.filter(action => action.npcId === "guide-npc");
 
-  const fallback = npcActions.find((action) => action.id === fallbackActionId);
+  const fallback = npcActions.find(action => action.id === fallbackActionId);
   return fallback ? [fallback] : [];
 }

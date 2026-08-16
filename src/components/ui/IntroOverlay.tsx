@@ -1,6 +1,14 @@
 "use client";
 
-import {AnimatePresence, motion, useMotionTemplate, useMotionValue, useSpring, useTransform, type MotionValue} from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  type MotionValue
+} from "framer-motion";
 import {useEffect, useRef, useState} from "react";
 import {sfx} from "@/lib/sfx";
 import type {ExplorationMode} from "@/types/portfolio";
@@ -10,15 +18,24 @@ interface IntroOverlayProps {
   onResume: () => void;
 }
 
-
 // ─── 디코딩(스크램블) 텍스트 ──────────────────────────────────────────────────
 const SCRAMBLE = "0123456789<>/\\[]{}#$%&ABCDEFXYZ아주개발";
 // active가 true가 되면 한 글자씩 쳐지고, 끝나면 onDone 호출.
 // 속도를 ±35% 흔들어(휴먼라이즈드) 사람이 치는 리듬을 만들고, 글자마다 틱음.
 // caret: "typing" = 치는 동안만 캐럿 / "always" = 활성 후 계속 깜빡임 / "none"
 function Typewriter({
-  text, active, speed = 55, caret = "none", onDone
-}: {text: string; active: boolean; speed?: number; caret?: "typing" | "always" | "none"; onDone?: () => void}) {
+  text,
+  active,
+  speed = 55,
+  caret = "none",
+  onDone
+}: {
+  text: string;
+  active: boolean;
+  speed?: number;
+  caret?: "typing" | "always" | "none";
+  onDone?: () => void;
+}) {
   const [n, setN] = useState(0);
   const doneRef = useRef(false);
   const onDoneRef = useRef(onDone);
@@ -52,7 +69,8 @@ function Typewriter({
   }, [active, text, speed]);
 
   const typing = active && n < text.length;
-  const showCaret = caret === "always" ? active : caret === "typing" ? typing : false;
+  const showCaret =
+    caret === "always" ? active : caret === "typing" ? typing : false;
 
   return (
     <>
@@ -67,7 +85,15 @@ function Typewriter({
   );
 }
 
-function ScrambleUnused({text, delay = 0, speed = 42}: {text: string; delay?: number; speed?: number}) {
+function ScrambleUnused({
+  text,
+  delay = 0,
+  speed = 42
+}: {
+  text: string;
+  delay?: number;
+  speed?: number;
+}) {
   const [out, setOut] = useState("");
   useEffect(() => {
     let raf = 0;
@@ -75,7 +101,10 @@ function ScrambleUnused({text, delay = 0, speed = 42}: {text: string; delay?: nu
     const start = performance.now();
     function tick(now: number) {
       const e = now - start - delay;
-      if (e < 0) { raf = requestAnimationFrame(tick); return; }
+      if (e < 0) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
       const p = Math.min(e / total, 1);
       const reveal = p * text.length;
       let s = "";
@@ -95,7 +124,15 @@ function ScrambleUnused({text, delay = 0, speed = 42}: {text: string; delay?: nu
 }
 
 // ─── 마우스 트레일 (캔버스 혜성 꼬리) ─────────────────────────────────────────
-function TrailCanvas({mx, my, stageRef}: {mx: MotionValue<number>; my: MotionValue<number>; stageRef: React.RefObject<HTMLDivElement | null>}) {
+function TrailCanvas({
+  mx,
+  my,
+  stageRef
+}: {
+  mx: MotionValue<number>;
+  my: MotionValue<number>;
+  stageRef: React.RefObject<HTMLDivElement | null>;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -154,12 +191,25 @@ function TrailCanvas({mx, my, stageRef}: {mx: MotionValue<number>; my: MotionVal
       ro.disconnect();
     };
   }, [mx, my, stageRef]);
-  return <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 z-[1]" />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="pointer-events-none absolute inset-0 z-[1]"
+    />
+  );
 }
 
 // ─── 커서 자력 반응형 입자 필드 (캔버스) ──────────────────────────────────────
 // 커서 근처 입자는 살짝 밀려나고, 멀어지면 원위치로 복귀한다.
-function ParticleField({mx, my, stageRef}: {mx: MotionValue<number>; my: MotionValue<number>; stageRef: React.RefObject<HTMLDivElement | null>}) {
+function ParticleField({
+  mx,
+  my,
+  stageRef
+}: {
+  mx: MotionValue<number>;
+  my: MotionValue<number>;
+  stageRef: React.RefObject<HTMLDivElement | null>;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -170,7 +220,15 @@ function ParticleField({mx, my, stageRef}: {mx: MotionValue<number>; my: MotionV
 
     let W = 0;
     let H = 0;
-    type P = {hx: number; hy: number; x: number; y: number; r: number; ph: number; sp: number};
+    type P = {
+      hx: number;
+      hy: number;
+      x: number;
+      y: number;
+      r: number;
+      ph: number;
+      sp: number;
+    };
     let pts: P[] = [];
 
     function seed() {
@@ -180,7 +238,15 @@ function ParticleField({mx, my, stageRef}: {mx: MotionValue<number>; my: MotionV
       pts = Array.from({length: 30}, () => {
         const hx = Math.random() * W;
         const hy = Math.random() * H;
-        return {hx, hy, x: hx, y: hy, r: 0.8 + Math.random() * 2.2, ph: Math.random() * 6.28, sp: 0.4 + Math.random() * 0.7};
+        return {
+          hx,
+          hy,
+          x: hx,
+          y: hy,
+          r: 0.8 + Math.random() * 2.2,
+          ph: Math.random() * 6.28,
+          sp: 0.4 + Math.random() * 0.7
+        };
       });
     }
     seed();
@@ -221,11 +287,24 @@ function ParticleField({mx, my, stageRef}: {mx: MotionValue<number>; my: MotionV
       ro.disconnect();
     };
   }, [mx, my, stageRef]);
-  return <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 z-[1]" />;
+  return (
+    <canvas
+      ref={canvasRef}
+      className="pointer-events-none absolute inset-0 z-[1]"
+    />
+  );
 }
 
 // ─── 마그네틱 래퍼: 커서가 가까우면 요소가 끌려온다 ───────────────────────────
-function Magnetic({children, strength = 0.35, className}: {children: React.ReactNode; strength?: number; className?: string}) {
+function Magnetic({
+  children,
+  strength = 0.35,
+  className
+}: {
+  children: React.ReactNode;
+  strength?: number;
+  className?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const mvx = useMotionValue(0);
   const mvy = useMotionValue(0);
@@ -243,7 +322,13 @@ function Magnetic({children, strength = 0.35, className}: {children: React.React
     mvy.set(0);
   }
   return (
-    <motion.div ref={ref} className={className} style={{x, y}} onMouseMove={onMove} onMouseLeave={reset}>
+    <motion.div
+      ref={ref}
+      className={className}
+      style={{x, y}}
+      onMouseMove={onMove}
+      onMouseLeave={reset}
+    >
       {children}
     </motion.div>
   );
@@ -279,9 +364,15 @@ function TiltCard({children}: {children: React.ReactNode}) {
       onMouseLeave={reset}
       className="relative overflow-hidden rounded-lg border border-[#7c9acc]/15 bg-[#84a0d2]/[0.045] p-4"
       style={{rotateX: rx, rotateY: ry, transformPerspective: 600}}
-      whileHover={{borderColor: "rgba(134,176,230,0.4)", boxShadow: "0 8px 30px rgba(20,40,80,0.4)"}}
+      whileHover={{
+        borderColor: "rgba(134,176,230,0.4)",
+        boxShadow: "0 8px 30px rgba(20,40,80,0.4)"
+      }}
     >
-      <motion.span className="pointer-events-none absolute inset-0" style={{background: gloss}} />
+      <motion.span
+        className="pointer-events-none absolute inset-0"
+        style={{background: gloss}}
+      />
       <div style={{transform: "translateZ(20px)"}}>{children}</div>
     </motion.div>
   );
@@ -293,7 +384,12 @@ function ClockChip() {
   useEffect(() => {
     const tick = () => {
       try {
-        setTime(new Date().toLocaleTimeString("en-GB", {timeZone: "Asia/Seoul", hour12: false}));
+        setTime(
+          new Date().toLocaleTimeString("en-GB", {
+            timeZone: "Asia/Seoul",
+            hour12: false
+          })
+        );
       } catch {
         setTime(new Date().toLocaleTimeString());
       }
@@ -304,7 +400,10 @@ function ClockChip() {
   }, []);
   return (
     <div className="flex items-center gap-2.5 rounded-full border border-[#7c9acc]/20 bg-[#0a101b]/55 px-3.5 py-1.5 font-mono text-[11px] backdrop-blur-md">
-      <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#6fe0a8]" style={{boxShadow: "0 0 8px #6fe0a8"}} />
+      <span
+        className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#6fe0a8]"
+        style={{boxShadow: "0 0 8px #6fe0a8"}}
+      />
       <span className="tracking-[0.12em] text-[#9fb4cf]">ONLINE</span>
       <span className="text-[#5a6678]">·</span>
       <span className="tracking-[0.1em] text-[#eef2f9]">{time} KST</span>
@@ -365,7 +464,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
   }
 
   function toggleMute() {
-    setMuted((m) => {
+    setMuted(m => {
       const next = !m;
       sfx.setMuted(next);
       return next;
@@ -399,18 +498,25 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
           <motion.div
             className="pointer-events-none absolute inset-0"
             style={{
-              background: "linear-gradient(135deg, rgba(4,8,18,0.985) 0%, rgba(6,11,24,0.965) 60%, rgba(4,9,20,0.94) 100%)",
+              background:
+                "linear-gradient(135deg, rgba(4,8,18,0.985) 0%, rgba(6,11,24,0.965) 60%, rgba(4,9,20,0.94) 100%)",
               WebkitMaskImage: revealMask,
-              maskImage: revealMask,
+              maskImage: revealMask
             }}
           />
           {/* 드러난 마을을 살짝 덮어 지저분함을 정리하는 상시 스크림 */}
           <div
             className="pointer-events-none absolute inset-0"
-            style={{background: "radial-gradient(120% 90% at 70% 30%, rgba(7,11,19,0.35) 0%, rgba(7,11,19,0.62) 60%, rgba(7,11,19,0.82) 100%)"}}
+            style={{
+              background:
+                "radial-gradient(120% 90% at 70% 30%, rgba(7,11,19,0.35) 0%, rgba(7,11,19,0.62) 60%, rgba(7,11,19,0.82) 100%)"
+            }}
           />
           {/* 커서 스틸블루 글로우 */}
-          <motion.div className="pointer-events-none absolute inset-0" style={{background: glow}} />
+          <motion.div
+            className="pointer-events-none absolute inset-0"
+            style={{background: glow}}
+          />
           {/* 격자 (기본 은은) */}
           <div
             className="pointer-events-none absolute inset-0"
@@ -428,7 +534,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                 "linear-gradient(rgba(134,176,230,0.28) 1px, transparent 1px), linear-gradient(90deg, rgba(134,176,230,0.28) 1px, transparent 1px)",
               backgroundSize: "40px 40px",
               WebkitMaskImage: gridMask,
-              maskImage: gridMask,
+              maskImage: gridMask
             }}
           />
           <ParticleField mx={mx} my={my} stageRef={stageRef} />
@@ -463,16 +569,34 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
           {/* 커스텀 링 커서: 바깥 링(부드럽게 따라옴) + 안쪽 점(즉시 추적) */}
           <motion.div
             className="pointer-events-none absolute z-[6] rounded-full border border-[#86b0e6]/70"
-            style={{left: ringLeft, top: ringTop, x: "-50%", y: "-50%", width: 26, height: 26}}
+            style={{
+              left: ringLeft,
+              top: ringTop,
+              x: "-50%",
+              y: "-50%",
+              width: 26,
+              height: 26
+            }}
             animate={{scale: [1, 1.12, 1]}}
             transition={{duration: 1.8, repeat: Infinity, ease: "easeInOut"}}
           />
           <motion.div
             className="pointer-events-none absolute z-[6] rounded-full bg-[#86b0e6]"
-            style={{left: dotLeft, top: dotTop, x: "-50%", y: "-50%", width: 5, height: 5, boxShadow: "0 0 8px #86b0e6"}}
+            style={{
+              left: dotLeft,
+              top: dotTop,
+              x: "-50%",
+              y: "-50%",
+              width: 5,
+              height: 5,
+              boxShadow: "0 0 8px #86b0e6"
+            }}
           />
 
-          <motion.div className="relative z-[2] px-6 md:px-14" style={{x: px, y: py}}>
+          <motion.div
+            className="relative z-[2] px-6 md:px-14"
+            style={{x: px, y: py}}
+          >
             {/* 라벨 → 제목 → 부제 순서로 타자기처럼 쳐진다 (Developer City 부팅 연출) */}
             <p
               className="min-h-[15px] font-mono text-xs font-black uppercase tracking-[0.32em]"
@@ -482,7 +606,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                 text="> DEVELOPER'S CITY · 2026"
                 active
                 speed={26}
-                onDone={() => setBootStep((s) => Math.max(s, 1))}
+                onDone={() => setBootStep(s => Math.max(s, 1))}
               />
             </p>
 
@@ -495,7 +619,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                 active={bootStep >= 1}
                 speed={70}
                 caret="typing"
-                onDone={() => setBootStep((s) => Math.max(s, 2))}
+                onDone={() => setBootStep(s => Math.max(s, 2))}
               />
               <br />
               <Typewriter
@@ -503,7 +627,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                 active={bootStep >= 2}
                 speed={70}
                 caret="always"
-                onDone={() => setBootStep((s) => Math.max(s, 3))}
+                onDone={() => setBootStep(s => Math.max(s, 3))}
               />
             </h1>
 
@@ -512,7 +636,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                 text="Fullstack / 3D / Game / XR"
                 active={bootStep >= 3}
                 speed={22}
-                onDone={() => setBootStep((s) => Math.max(s, 4))}
+                onDone={() => setBootStep(s => Math.max(s, 4))}
               />
             </p>
 
@@ -523,67 +647,92 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
               transition={{duration: 0.7, ease: [0.22, 1, 0.36, 1]}}
               style={{pointerEvents: revealed ? "auto" : "none"}}
             >
-            <p className="mt-5 max-w-xl text-sm leading-7 text-white/58 md:text-base">
-              먼저 건물을 클릭해 프로젝트 내부로 들어가거나, NPC에게 프로젝트와 기술에 대해 질문해보세요.
-              오늘의 관리자 기록은 마을 조명과 NPC 상태에 반영됩니다.
-            </p>
+              <p className="mt-5 max-w-xl text-sm leading-7 text-white/58 md:text-base">
+                먼저 건물을 클릭해 프로젝트 내부로 들어가거나, NPC에게
+                프로젝트와 기술에 대해 질문해보세요. 오늘의 관리자 기록은 마을
+                조명과 NPC 상태에 반영됩니다.
+              </p>
 
-            <div className="mt-7 grid max-w-3xl gap-3 md:grid-cols-3">
-              {[
-                ["1", "건물 클릭", "클릭하면 바로 프로젝트 전시실로 입장"],
-                ["2", "NPC 질문", "프로젝트, 기술, 연락처를 대화로 확인"],
-                ["3", "Admin 기록", "오늘 활동을 마을 상태로 반영"]
-              ].map(([index, title, body]) => (
-                <TiltCard key={index}>
-                  <span className="font-mono text-xs font-black text-[#86b0e6]">STEP {index}</span>
-                  <p className="mt-2 text-sm font-black text-white">{title}</p>
-                  <p className="mt-1 text-xs leading-5 text-white/45">{body}</p>
-                </TiltCard>
-              ))}
-            </div>
+              <div className="mt-7 grid max-w-3xl gap-3 md:grid-cols-3">
+                {[
+                  ["1", "건물 클릭", "클릭하면 바로 프로젝트 전시실로 입장"],
+                  ["2", "NPC 질문", "프로젝트, 기술, 연락처를 대화로 확인"],
+                  ["3", "Admin 기록", "오늘 활동을 마을 상태로 반영"]
+                ].map(([index, title, body]) => (
+                  <TiltCard key={index}>
+                    <span className="font-mono text-xs font-black text-[#86b0e6]">
+                      STEP {index}
+                    </span>
+                    <p className="mt-2 text-sm font-black text-white">
+                      {title}
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-white/45">
+                      {body}
+                    </p>
+                  </TiltCard>
+                ))}
+              </div>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              {/* 메인 CTA — 마을 탐험 시작 (마그네틱) */}
-              <Magnetic className="flex-1">
-                <motion.button
-                  className="group relative w-full overflow-hidden rounded-xl border border-[#5b8fd6]/60 bg-[#5b8fd6]/15 px-6 py-5 text-left hover:border-[#86b0e6] hover:bg-[#5b8fd6]/22"
-                  onClick={() => handleStart("click")}
-                  onMouseEnter={() => sfx.hover()}
-                  type="button"
-                  whileHover={{scale: 1.02, boxShadow: "0 0 32px rgba(91,143,214,0.35)"}}
-                  whileTap={{scale: 0.97}}
-                  transition={{type: "spring", stiffness: 320, damping: 20}}
-                >
-                  <span className="flex items-center gap-2 font-mono text-base font-black text-white">
-                    🏘️ 마을 탐험 시작 <span className="transition-transform group-hover:translate-x-1">→</span>
-                  </span>
-                  <span className="mt-1 block text-xs text-[#86b0e6]/80">건물을 클릭해 프로젝트·기술·경험을 둘러봅니다.</span>
-                  <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#86b0e6]/12 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
-                </motion.button>
-              </Magnetic>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                {/* 메인 CTA — 마을 탐험 시작 (마그네틱) */}
+                <Magnetic className="flex-1">
+                  <motion.button
+                    className="group relative w-full overflow-hidden rounded-xl border border-[#5b8fd6]/60 bg-[#5b8fd6]/15 px-6 py-5 text-left hover:border-[#86b0e6] hover:bg-[#5b8fd6]/22"
+                    onClick={() => handleStart("click")}
+                    onMouseEnter={() => sfx.hover()}
+                    type="button"
+                    whileHover={{
+                      scale: 1.02,
+                      boxShadow: "0 0 32px rgba(91,143,214,0.35)"
+                    }}
+                    whileTap={{scale: 0.97}}
+                    transition={{type: "spring", stiffness: 320, damping: 20}}
+                  >
+                    <span className="flex items-center gap-2 font-mono text-base font-black text-white">
+                      🏘️ 마을 탐험 시작{" "}
+                      <span className="transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    </span>
+                    <span className="mt-1 block text-xs text-[#86b0e6]/80">
+                      건물을 클릭해 프로젝트·기술·경험을 둘러봅니다.
+                    </span>
+                    <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#86b0e6]/12 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                  </motion.button>
+                </Magnetic>
 
-              {/* 면접관용 빠른 길 — 동등하게 강조 (마그네틱) */}
-              <Magnetic className="flex-1">
-                <motion.button
-                  className="group relative w-full overflow-hidden rounded-xl border border-white/25 bg-white/[0.06] px-6 py-5 text-left hover:border-white/50 hover:bg-white/[0.1]"
-                  onClick={handleResume}
-                  onMouseEnter={() => sfx.hover()}
-                  whileHover={{scale: 1.02}}
-                  whileTap={{scale: 0.97}}
-                  transition={{type: "spring", stiffness: 320, damping: 20}}
-                  type="button"
-                >
-                  <span className="flex items-center gap-2 font-mono text-base font-black text-white">
-                    📄 빠른 이력서 보기 <span className="transition-transform group-hover:translate-x-1">→</span>
-                  </span>
-                  <span className="mt-1 block text-xs text-white/50">시간이 없다면 — 요약·프로젝트·스킬을 한 페이지로.</span>
-                </motion.button>
-              </Magnetic>
-            </div>
+                {/* 면접관용 빠른 길 — 동등하게 강조 (마그네틱) */}
+                <Magnetic className="flex-1">
+                  <motion.button
+                    className="group relative w-full overflow-hidden rounded-xl border border-white/25 bg-white/[0.06] px-6 py-5 text-left hover:border-white/50 hover:bg-white/[0.1]"
+                    onClick={handleResume}
+                    onMouseEnter={() => sfx.hover()}
+                    whileHover={{scale: 1.02}}
+                    whileTap={{scale: 0.97}}
+                    transition={{type: "spring", stiffness: 320, damping: 20}}
+                    type="button"
+                  >
+                    <span className="flex items-center gap-2 font-mono text-base font-black text-white">
+                      📄 빠른 이력서 보기{" "}
+                      <span className="transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    </span>
+                    <span className="mt-1 block text-xs text-white/50">
+                      시간이 없다면 — 요약·프로젝트·스킬을 한 페이지로.
+                    </span>
+                  </motion.button>
+                </Magnetic>
+              </div>
 
-            <p className="mt-6 font-mono text-xs text-white/40">
-              {"// "}마을 안에서 <span className="text-[#6fe0a8]/80">WASD 직접 이동</span> 모드로 전환할 수 있어요 · <span className="sm:hidden text-[#86b0e6]/80">모바일은 이력서 보기를 추천</span>
-            </p>
+              <p className="mt-6 font-mono text-xs text-white/40">
+                {"// "}마을 안에서{" "}
+                <span className="text-[#6fe0a8]/80">WASD 직접 이동</span> 모드로
+                전환할 수 있어요 ·{" "}
+                <span className="sm:hidden text-[#86b0e6]/80">
+                  모바일은 이력서 보기를 추천
+                </span>
+              </p>
             </motion.div>
           </motion.div>
         </motion.div>

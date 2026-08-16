@@ -563,7 +563,9 @@ function LampPools() {
         props: {glb: string; position: number[]}[];
       }
     ).props) {
-      if (!/lantern-post|orb-lantern|lantern-bearer|lantern-archway/.test(p.glb))
+      if (
+        !/lantern-post|orb-lantern|lantern-bearer|lantern-archway/.test(p.glb)
+      )
         continue;
       spots.push({
         x: p.position[0],
@@ -571,10 +573,7 @@ function LampPools() {
         // 을 렌더 때 더해야 한다. 안 더하면 구역 단(+1.1) 위 등불의 웅덩이가
         // 땅속에 깔린다(실제로 그랬다). +0.08 은 길 타일 윗면(5~6cm) 위로 띄우는
         // 여유 — 낮으면 타일에 깊이 클리핑으로 잘린다.
-        y:
-          p.position[1] +
-          terrainHeightAt(p.position[0], p.position[2]) +
-          0.08,
+        y: p.position[1] + terrainHeightAt(p.position[0], p.position[2]) + 0.08,
         z: p.position[2],
         s: 0.85 + ((spots.length * 29) % 10) / 22
       });
@@ -600,7 +599,8 @@ function LampPools() {
   useFrame(state => {
     const t = state.clock.elapsedTime;
     material.opacity =
-      GLINT_STRENGTH * (0.55 + 0.06 * Math.sin(t * 1.3) + 0.04 * Math.sin(t * 3.1));
+      GLINT_STRENGTH *
+      (0.55 + 0.06 * Math.sin(t * 1.3) + 0.04 * Math.sin(t * 3.1));
   });
 
   if (GLINT_STRENGTH <= 0.01 || spots.length === 0) return null;
@@ -932,13 +932,19 @@ function waterLines(): WaterLine[] {
     // 잘린 끝은 여전히 다른 물 속으로 최대 한 마디(0.8유닛)까지 들어가 있어,
     // 재질이 다른 물 위에 밝은 마름모 조각으로 걸쳐 보인다. 경계를 이분 탐색해
     // 끝을 "경계에서 0.3 물 쪽"으로 옮기면 이음은 남고 조각은 사라진다.
-    const settle = (inP: {x: number; z: number}, outP: {x: number; z: number}) => {
+    const settle = (
+      inP: {x: number; z: number},
+      outP: {x: number; z: number}
+    ) => {
       let lo = 0;
       let hi = 1;
       for (let it = 0; it < 8; it++) {
         const mid = (lo + hi) / 2;
         if (
-          insideOther(inP.x + (outP.x - inP.x) * mid, inP.z + (outP.z - inP.z) * mid)
+          insideOther(
+            inP.x + (outP.x - inP.x) * mid,
+            inP.z + (outP.z - inP.z) * mid
+          )
         )
           lo = mid;
         else hi = mid;
@@ -1544,7 +1550,10 @@ function WaterBanks() {
           const dx = bx - ax;
           const dz = bz - az;
           const l2 = dx * dx + dz * dz || 1;
-          const t = Math.min(1, Math.max(0, ((x - ax) * dx + (z - az) * dz) / l2));
+          const t = Math.min(
+            1,
+            Math.max(0, ((x - ax) * dx + (z - az) * dz) / l2)
+          );
           const px = ax + dx * t;
           const pz = az + dz * t;
           const hw = s[i].hw + (s[i + 1].hw - s[i].hw) * t;

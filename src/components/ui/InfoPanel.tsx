@@ -38,11 +38,21 @@ const stagger = {
 
 const fadeUp = {
   hidden: {opacity: 0, y: 14},
-  visible: {opacity: 1, y: 0, transition: {duration: 0.4, ease: [0.22, 1, 0.36, 1] as const}}
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {duration: 0.4, ease: [0.22, 1, 0.36, 1] as const}
+  }
 };
 
-export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: InfoPanelProps) {
-  const section = sectionMeta.find((item) => item.id === activeSection) ?? sectionMeta[0]!;
+export function InfoPanel({
+  activeSection,
+  activeContentId,
+  isOpen,
+  onClose
+}: InfoPanelProps) {
+  const section =
+    sectionMeta.find(item => item.id === activeSection) ?? sectionMeta[0]!;
   const color = SECTION_COLORS[activeSection] ?? "#00d4ff";
 
   return (
@@ -59,7 +69,9 @@ export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: Inf
             animate={{scaleX: 1}}
             className="absolute left-0 top-0 h-[2px] w-full origin-left"
             initial={{scaleX: 0}}
-            style={{background: `linear-gradient(to right, ${color}, transparent)`}}
+            style={{
+              background: `linear-gradient(to right, ${color}, transparent)`
+            }}
             transition={{duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1}}
           />
 
@@ -72,10 +84,15 @@ export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: Inf
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="font-mono text-xs font-black uppercase tracking-[0.22em]" style={{color}}>
+                <p
+                  className="font-mono text-xs font-black uppercase tracking-[0.22em]"
+                  style={{color}}
+                >
                   {">"} {section.label}
                 </p>
-                <h2 className="mt-2 text-2xl font-black text-white">{section.title}</h2>
+                <h2 className="mt-2 text-2xl font-black text-white">
+                  {section.title}
+                </h2>
               </div>
               <motion.button
                 className="rounded-lg border border-white/10 px-3 py-1.5 font-mono text-xs font-bold text-white/45 transition hover:border-white/25 hover:text-white/75"
@@ -87,16 +104,28 @@ export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: Inf
                 닫기
               </motion.button>
             </div>
-            <p className="mt-3 text-sm leading-6 text-white/55">{section.description}</p>
+            <p className="mt-3 text-sm leading-6 text-white/55">
+              {section.description}
+            </p>
           </motion.div>
 
           <motion.div animate="visible" initial="hidden" variants={stagger}>
             {activeSection === "intro" && <IntroPanel color={color} />}
-            {activeSection === "projects" && <ProjectsPanel color={color} initialProjectId={activeContentId} />}
-            {activeSection === "github" && <SkillsPanel color={color} initialGroup={activeContentId} />}
-            {activeSection === "study" && <StudyPanel color={color} initialTab={activeContentId} />}
-            {activeSection === "experience" && <ExperiencePanel color={color} highlightTitle={activeContentId} />}
-            {activeSection === "life" && <LifePanel color={color} highlightId={activeContentId} />}
+            {activeSection === "projects" && (
+              <ProjectsPanel color={color} initialProjectId={activeContentId} />
+            )}
+            {activeSection === "github" && (
+              <SkillsPanel color={color} initialGroup={activeContentId} />
+            )}
+            {activeSection === "study" && (
+              <StudyPanel color={color} initialTab={activeContentId} />
+            )}
+            {activeSection === "experience" && (
+              <ExperiencePanel color={color} highlightTitle={activeContentId} />
+            )}
+            {activeSection === "life" && (
+              <LifePanel color={color} highlightId={activeContentId} />
+            )}
             {activeSection === "contact" && <ContactPanel color={color} />}
           </motion.div>
         </motion.aside>
@@ -105,7 +134,15 @@ export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: Inf
   );
 }
 
-function Card({children, color, className = ""}: {children: ReactNode; color: string; className?: string}) {
+function Card({
+  children,
+  color,
+  className = ""
+}: {
+  children: ReactNode;
+  color: string;
+  className?: string;
+}) {
   return (
     <motion.div
       className={`rounded-lg border bg-[#0a1525] p-5 ${className}`}
@@ -123,14 +160,16 @@ function IntroPanel({color}: {color: string}) {
   return (
     <div className="grid gap-4">
       <Card color={color}>
-        <h3 className="text-lg font-black text-white">정재훈의 Developer's City</h3>
+        <h3 className="text-lg font-black text-white">
+          정재훈의 Developer's City
+        </h3>
         <p className="mt-3 text-sm leading-7 text-white/60">
-          프로젝트, 기술, 경험, 연락처를 하나의 3D 마을로 구성했습니다. 건물은 콘텐츠를 열고,
-          NPC는 방문자의 질문에 맞춰 포트폴리오를 설명합니다.
+          프로젝트, 기술, 경험, 연락처를 하나의 3D 마을로 구성했습니다. 건물은
+          콘텐츠를 열고, NPC는 방문자의 질문에 맞춰 포트폴리오를 설명합니다.
         </p>
       </Card>
       <div className="grid grid-cols-2 gap-3">
-        {["3D Interactive", "AI NPC", "Live Data", "Fullstack"].map((label) => (
+        {["3D Interactive", "AI NPC", "Live Data", "Fullstack"].map(label => (
           <motion.span
             className="rounded-lg border border-white/8 bg-[#0a1525] px-3 py-3 font-mono text-sm font-black text-white/70"
             key={label}
@@ -146,12 +185,27 @@ function IntroPanel({color}: {color: string}) {
   );
 }
 
-function ProjectsPanel({color, initialProjectId}: {color: string; initialProjectId?: string}) {
-  const initial = initialProjectId ? projects.find((project) => project.id === initialProjectId) ?? null : null;
-  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(initial);
+function ProjectsPanel({
+  color,
+  initialProjectId
+}: {
+  color: string;
+  initialProjectId?: string;
+}) {
+  const initial = initialProjectId
+    ? projects.find(project => project.id === initialProjectId) ?? null
+    : null;
+  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(
+    initial
+  );
 
   if (selectedProject) {
-    return <ProjectDetail project={selectedProject} onBack={() => setSelectedProject(null)} />;
+    return (
+      <ProjectDetail
+        project={selectedProject}
+        onBack={() => setSelectedProject(null)}
+      />
+    );
   }
 
   return (
@@ -159,10 +213,11 @@ function ProjectsPanel({color, initialProjectId}: {color: string; initialProject
       <Card color={color}>
         <h3 className="font-black text-white">대표 프로젝트</h3>
         <p className="mt-2 text-sm leading-6 text-white/55">
-          목록에서 프로젝트를 열어 자세한 설명을 보거나, 마을에서 프로젝트 건물 안으로 들어가 3D 전시 화면을 볼 수 있습니다.
+          목록에서 프로젝트를 열어 자세한 설명을 보거나, 마을에서 프로젝트 건물
+          안으로 들어가 3D 전시 화면을 볼 수 있습니다.
         </p>
       </Card>
-      {projects.map((project) => (
+      {projects.map(project => (
         <motion.div key={project.id} variants={fadeUp}>
           <ProjectCard onOpen={setSelectedProject} project={project} />
         </motion.div>
@@ -171,10 +226,20 @@ function ProjectsPanel({color, initialProjectId}: {color: string; initialProject
   );
 }
 
-function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: string}) {
-  const [openGroup, setOpenGroup] = useState<string | null>(initialGroup ?? null);
+function SkillsPanel({
+  color,
+  initialGroup
+}: {
+  color: string;
+  initialGroup?: string;
+}) {
+  const [openGroup, setOpenGroup] = useState<string | null>(
+    initialGroup ?? null
+  );
   const groups = skills.reduce<Record<string, typeof skills>>((acc, skill) => {
-    acc[skill.group] = acc[skill.group] ? acc[skill.group].concat(skill) : [skill];
+    acc[skill.group] = acc[skill.group]
+      ? acc[skill.group].concat(skill)
+      : [skill];
     return acc;
   }, {});
 
@@ -183,7 +248,8 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
       <Card color={color}>
         <h3 className="font-black text-white">기술 스택과 구현 경험</h3>
         <p className="mt-2 text-sm leading-6 text-white/55">
-          프론트엔드, 백엔드, 3D, 게임/XR, 워크플로 경험을 기술 그룹별로 정리했습니다.
+          프론트엔드, 백엔드, 3D, 게임/XR, 워크플로 경험을 기술 그룹별로
+          정리했습니다.
         </p>
         <motion.a
           className="mt-4 inline-flex items-center gap-2 rounded-lg border px-3 py-2 font-mono text-xs font-black uppercase tracking-[0.12em] transition"
@@ -191,7 +257,10 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
           rel="noreferrer"
           style={{borderColor: `${color}50`, background: `${color}18`, color}}
           target="_blank"
-          whileHover={{background: `${color}30`, boxShadow: `0 0 14px ${color}30`}}
+          whileHover={{
+            background: `${color}30`,
+            boxShadow: `0 0 14px ${color}30`
+          }}
           whileTap={{scale: 0.97}}
         >
           GitHub 열기
@@ -204,7 +273,9 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
           <motion.section
             className="overflow-hidden rounded-lg border bg-[#0a1525]"
             key={group}
-            style={{borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"}}
+            style={{
+              borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"
+            }}
             variants={fadeUp}
           >
             <motion.button
@@ -215,8 +286,15 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
             >
               <span className="font-black text-white">{group}</span>
               <span className="flex items-center gap-2">
-                <span className="font-mono text-xs text-white/30">{groupSkills.length}개</span>
-                <motion.span animate={{rotate: isOpen ? 180 : 0}} className="text-xs" style={{color}} transition={{duration: 0.25}}>
+                <span className="font-mono text-xs text-white/30">
+                  {groupSkills.length}개
+                </span>
+                <motion.span
+                  animate={{rotate: isOpen ? 180 : 0}}
+                  className="text-xs"
+                  style={{color}}
+                  transition={{duration: 0.25}}
+                >
                   v
                 </motion.span>
               </span>
@@ -231,19 +309,26 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
                   transition={{duration: 0.3, ease: [0.22, 1, 0.36, 1]}}
                 >
                   <div className="mb-3 flex flex-wrap gap-2">
-                    {groupSkills.map((skill) => (
+                    {groupSkills.map(skill => (
                       <span
                         className="rounded-full border px-3 py-1 font-mono text-xs font-black"
                         key={skill.name}
-                        style={{borderColor: `${color}40`, color, background: `${color}12`}}
+                        style={{
+                          borderColor: `${color}40`,
+                          color,
+                          background: `${color}12`
+                        }}
                       >
                         {skill.name}
                       </span>
                     ))}
                   </div>
                   <div className="grid gap-2">
-                    {groupSkills.map((skill) => (
-                      <p className="rounded-lg border border-white/6 bg-[#060e1a] p-3 text-sm leading-6 text-white/55" key={skill.name + "-desc"}>
+                    {groupSkills.map(skill => (
+                      <p
+                        className="rounded-lg border border-white/6 bg-[#060e1a] p-3 text-sm leading-6 text-white/55"
+                        key={skill.name + "-desc"}
+                      >
                         <strong style={{color}}>{skill.name}</strong>
                         <span className="text-white/30"> / </span>
                         {skill.description}
@@ -260,7 +345,13 @@ function SkillsPanel({color, initialGroup}: {color: string; initialGroup?: strin
   );
 }
 
-function ExperiencePanel({color, highlightTitle}: {color: string; highlightTitle?: string}) {
+function ExperiencePanel({
+  color,
+  highlightTitle
+}: {
+  color: string;
+  highlightTitle?: string;
+}) {
   return (
     <div className="grid gap-3">
       {experienceItems.map((item, index) => {
@@ -269,9 +360,18 @@ function ExperiencePanel({color, highlightTitle}: {color: string; highlightTitle
           <motion.article
             className="rounded-lg border bg-[#0a1525] p-5 transition"
             key={item.title}
-            style={{borderColor: isHighlighted ? `${color}50` : "rgba(255,255,255,0.06)", boxShadow: isHighlighted ? `0 0 18px ${color}15` : "none"}}
+            style={{
+              borderColor: isHighlighted
+                ? `${color}50`
+                : "rgba(255,255,255,0.06)",
+              boxShadow: isHighlighted ? `0 0 18px ${color}15` : "none"
+            }}
             variants={fadeUp}
-            whileHover={{borderColor: `${color}40`, boxShadow: `0 0 18px ${color}10`, x: 2}}
+            whileHover={{
+              borderColor: `${color}40`,
+              boxShadow: `0 0 18px ${color}10`,
+              x: 2
+            }}
           >
             <div className="flex items-center gap-3">
               <span
@@ -280,10 +380,17 @@ function ExperiencePanel({color, highlightTitle}: {color: string; highlightTitle
               >
                 {index + 1}
               </span>
-              <p className="font-mono text-xs font-black uppercase tracking-[0.2em]" style={{color}}>{item.year}</p>
+              <p
+                className="font-mono text-xs font-black uppercase tracking-[0.2em]"
+                style={{color}}
+              >
+                {item.year}
+              </p>
             </div>
             <h3 className="mt-3 font-black text-white">{item.title}</h3>
-            <p className="mt-2 text-sm leading-6 text-white/55">{item.description}</p>
+            <p className="mt-2 text-sm leading-6 text-white/55">
+              {item.description}
+            </p>
           </motion.article>
         );
       })}
@@ -321,14 +428,20 @@ function LifePlaceholder() {
   return <p>아직 실제 내용을 채우지 못한 카드예요 — 곧 채워질 예정입니다.</p>;
 }
 
-function LifePanel({color, highlightId}: {color: string; highlightId?: string}) {
+function LifePanel({
+  color,
+  highlightId
+}: {
+  color: string;
+  highlightId?: string;
+}) {
   const [villageState, setVillageState] = useState<VillageState | null>(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     let ignore = false;
     fetchVillageState()
-      .then((state) => {
+      .then(state => {
         if (!ignore) setVillageState(state);
       })
       .catch(() => {
@@ -346,26 +459,38 @@ function LifePanel({color, highlightId}: {color: string; highlightId?: string}) 
       <Card color={color}>
         <h3 className="font-black text-white">인생·일상</h3>
         <p className="mt-2 text-sm leading-6 text-white/55">
-          프로젝트 밖의 일상을 모아둔 구역입니다. 운동·학습 카드는 관리자 기록과 실시간으로 연결되어 있고,
-          나머지 카드는 아직 내용을 채우는 중입니다.
+          프로젝트 밖의 일상을 모아둔 구역입니다. 운동·학습 카드는 관리자 기록과
+          실시간으로 연결되어 있고, 나머지 카드는 아직 내용을 채우는 중입니다.
         </p>
       </Card>
 
-      <LifeCard color={color} highlighted={highlightId === "gym"} title="🏋️ 헬스장 · 오늘의 운동">
+      <LifeCard
+        color={color}
+        highlighted={highlightId === "gym"}
+        title="🏋️ 헬스장 · 오늘의 운동"
+      >
         {error ? (
           <p>기록 서버에 연결하지 못했습니다.</p>
         ) : !activity ? (
           <p>불러오는 중...</p>
         ) : activity.workout_done ? (
           <p>
-            오늘 {activity.workout_type || "운동"} {activity.workout_minutes}분을 기록했어요. 관리자 페이지에 기록한 내용이 그대로 반영됩니다.
+            오늘 {activity.workout_type || "운동"} {activity.workout_minutes}
+            분을 기록했어요. 관리자 페이지에 기록한 내용이 그대로 반영됩니다.
           </p>
         ) : (
-          <p>오늘은 아직 운동 기록이 없어요. 기록하면 이 카드와 마을 조명에 바로 반영됩니다.</p>
+          <p>
+            오늘은 아직 운동 기록이 없어요. 기록하면 이 카드와 마을 조명에 바로
+            반영됩니다.
+          </p>
         )}
       </LifeCard>
 
-      <LifeCard color={color} highlighted={highlightId === "library"} title="📚 도서관 · 오늘의 학습">
+      <LifeCard
+        color={color}
+        highlighted={highlightId === "library"}
+        title="📚 도서관 · 오늘의 학습"
+      >
         {error ? (
           <p>기록 서버에 연결하지 못했습니다.</p>
         ) : !activity ? (
@@ -373,27 +498,51 @@ function LifePanel({color, highlightId}: {color: string; highlightId?: string}) 
         ) : activity.study_minutes > 0 ? (
           <p>
             오늘 공부 {activity.study_minutes}분
-            {activity.study_topics?.length ? ` · ${activity.study_topics.join(", ")}` : ""}이 기록됐어요.
+            {activity.study_topics?.length
+              ? ` · ${activity.study_topics.join(", ")}`
+              : ""}
+            이 기록됐어요.
           </p>
         ) : (
           <p>오늘은 아직 학습 기록이 없어요.</p>
         )}
       </LifeCard>
 
-      <LifeCard color={color} highlighted={highlightId === "values"} title="🪨 가치관 비석">
+      <LifeCard
+        color={color}
+        highlighted={highlightId === "values"}
+        title="🪨 가치관 비석"
+      >
         <LifePlaceholder />
       </LifeCard>
 
-      <LifeCard color={color} highlighted={highlightId === "invest"} title="📈 투자 타워">
-        <p>금액은 비공개로 유지할 예정이고, 투자 원칙만 짧게 정리할 계획이에요.</p>
+      <LifeCard
+        color={color}
+        highlighted={highlightId === "invest"}
+        title="📈 투자 타워"
+      >
+        <p>
+          금액은 비공개로 유지할 예정이고, 투자 원칙만 짧게 정리할 계획이에요.
+        </p>
         <LifePlaceholder />
       </LifeCard>
 
-      <LifeCard color={color} highlighted={highlightId === "music"} title="🎵 음악 스튜디오">
-        <p>플레이리스트와 사운드 작업을 모아두는 공간입니다. 취향 소개는 준비 중이에요.</p>
+      <LifeCard
+        color={color}
+        highlighted={highlightId === "music"}
+        title="🎵 음악 스튜디오"
+      >
+        <p>
+          플레이리스트와 사운드 작업을 모아두는 공간입니다. 취향 소개는 준비
+          중이에요.
+        </p>
       </LifeCard>
 
-      <LifeCard color={color} highlighted={highlightId === "timeline"} title="🕰️ 연혁 타임라인">
+      <LifeCard
+        color={color}
+        highlighted={highlightId === "timeline"}
+        title="🕰️ 연혁 타임라인"
+      >
         <LifePlaceholder />
       </LifeCard>
     </div>
@@ -401,7 +550,9 @@ function LifePanel({color, highlightId}: {color: string; highlightId?: string}) 
 }
 
 function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
-  const [tab, setTab] = useState<"codingtest" | "cs">(initialTab === "cs" ? "cs" : "codingtest");
+  const [tab, setTab] = useState<"codingtest" | "cs">(
+    initialTab === "cs" ? "cs" : "codingtest"
+  );
   const [codingTests, setCodingTests] = useState<CodingTestLog[] | null>(null);
   const [csNotes, setCsNotes] = useState<CsNote[] | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
@@ -431,13 +582,25 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
       <Card color={color}>
         <h3 className="font-black text-white">학습 기록</h3>
         <p className="mt-2 text-sm leading-6 text-white/55">
-          매일 푼 코딩테스트 풀이와 공부한 CS 전공지식을 기록합니다. 알고리즘 도장의 알고, 지식 서고의 노바에게 물어보면 이 기록을 바탕으로 답해줍니다.
+          매일 푼 코딩테스트 풀이와 공부한 CS 전공지식을 기록합니다. 알고리즘
+          도장의 알고, 지식 서고의 노바에게 물어보면 이 기록을 바탕으로
+          답해줍니다.
         </p>
         <div className="mt-4 flex gap-2">
-          {([
-            {id: "codingtest", label: `코딩테스트${codingTests ? ` ${codingTests.length}` : ""}`},
-            {id: "cs", label: `CS 전공지식${csNotes ? ` ${csNotes.length}` : ""}`}
-          ] as const).map((item) => {
+          {(
+            [
+              {
+                id: "codingtest",
+                label: `코딩테스트${
+                  codingTests ? ` ${codingTests.length}` : ""
+                }`
+              },
+              {
+                id: "cs",
+                label: `CS 전공지식${csNotes ? ` ${csNotes.length}` : ""}`
+              }
+            ] as const
+          ).map(item => {
             const active = tab === item.id;
             return (
               <button
@@ -464,7 +627,8 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
       {error ? (
         <Card color={color}>
           <p className="text-sm leading-6 text-white/55">
-            학습 기록 서버(FastAPI)에 연결하지 못했습니다. 백엔드를 실행한 뒤 다시 시도해 주세요.
+            학습 기록 서버(FastAPI)에 연결하지 못했습니다. 백엔드를 실행한 뒤
+            다시 시도해 주세요.
           </p>
         </Card>
       ) : loading ? (
@@ -473,16 +637,21 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
         </Card>
       ) : tab === "codingtest" ? (
         (codingTests ?? []).length === 0 ? (
-          <EmptyStudy color={color} text="아직 기록된 코딩테스트 풀이가 없습니다. /admin에서 푼 문제를 기록하면 여기에 표시됩니다." />
+          <EmptyStudy
+            color={color}
+            text="아직 기록된 코딩테스트 풀이가 없습니다. /admin에서 푼 문제를 기록하면 여기에 표시됩니다."
+          />
         ) : (
-          (codingTests ?? []).map((test) => {
+          (codingTests ?? []).map(test => {
             const key = `ct-${test.id}`;
             const isOpen = openId === key;
             return (
               <motion.article
                 className="overflow-hidden rounded-lg border bg-[#0a1525]"
                 key={key}
-                style={{borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"}}
+                style={{
+                  borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"
+                }}
                 variants={fadeUp}
               >
                 <button
@@ -491,18 +660,30 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
                   type="button"
                 >
                   <span className="min-w-0">
-                    <span className="block font-black text-white">{test.title}</span>
+                    <span className="block font-black text-white">
+                      {test.title}
+                    </span>
                     <span className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-white/45">
-                      {[test.platform, test.difficulty, test.language, test.solved_date]
+                      {[
+                        test.platform,
+                        test.difficulty,
+                        test.language,
+                        test.solved_date
+                      ]
                         .filter(Boolean)
-                        .map((meta) => (
-                          <span className="rounded border border-white/10 px-1.5 py-0.5" key={meta}>
+                        .map(meta => (
+                          <span
+                            className="rounded border border-white/10 px-1.5 py-0.5"
+                            key={meta}
+                          >
                             {meta}
                           </span>
                         ))}
                     </span>
                   </span>
-                  <span className="text-xs" style={{color}}>{isOpen ? "−" : "+"}</span>
+                  <span className="text-xs" style={{color}}>
+                    {isOpen ? "−" : "+"}
+                  </span>
                 </button>
                 <AnimatePresence>
                   {isOpen ? (
@@ -515,8 +696,15 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
                     >
                       {test.approach ? (
                         <div className="mb-3">
-                          <p className="font-mono text-[10px] font-black uppercase tracking-[0.14em]" style={{color}}>풀이 방법</p>
-                          <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-white/65">{test.approach}</p>
+                          <p
+                            className="font-mono text-[10px] font-black uppercase tracking-[0.14em]"
+                            style={{color}}
+                          >
+                            풀이 방법
+                          </p>
+                          <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-white/65">
+                            {test.approach}
+                          </p>
                         </div>
                       ) : null}
                       {test.code ? (
@@ -543,16 +731,21 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
           })
         )
       ) : (csNotes ?? []).length === 0 ? (
-        <EmptyStudy color={color} text="아직 기록된 CS 전공지식 노트가 없습니다. /admin에서 공부한 내용을 기록하면 여기에 표시됩니다." />
+        <EmptyStudy
+          color={color}
+          text="아직 기록된 CS 전공지식 노트가 없습니다. /admin에서 공부한 내용을 기록하면 여기에 표시됩니다."
+        />
       ) : (
-        (csNotes ?? []).map((note) => {
+        (csNotes ?? []).map(note => {
           const key = `cs-${note.id}`;
           const isOpen = openId === key;
           return (
             <motion.article
               className="overflow-hidden rounded-lg border bg-[#0a1525]"
               key={key}
-              style={{borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"}}
+              style={{
+                borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"
+              }}
               variants={fadeUp}
             >
               <button
@@ -561,16 +754,25 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
                 type="button"
               >
                 <span className="min-w-0">
-                  <span className="block font-black text-white">{note.title}</span>
+                  <span className="block font-black text-white">
+                    {note.title}
+                  </span>
                   <span className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-white/45">
-                    {[note.category, note.study_date].filter(Boolean).map((meta) => (
-                      <span className="rounded border border-white/10 px-1.5 py-0.5" key={meta}>
-                        {meta}
-                      </span>
-                    ))}
+                    {[note.category, note.study_date]
+                      .filter(Boolean)
+                      .map(meta => (
+                        <span
+                          className="rounded border border-white/10 px-1.5 py-0.5"
+                          key={meta}
+                        >
+                          {meta}
+                        </span>
+                      ))}
                   </span>
                 </span>
-                <span className="text-xs" style={{color}}>{isOpen ? "−" : "+"}</span>
+                <span className="text-xs" style={{color}}>
+                  {isOpen ? "−" : "+"}
+                </span>
               </button>
               <AnimatePresence>
                 {isOpen ? (
@@ -581,7 +783,9 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
                     initial={{height: 0, opacity: 0}}
                     transition={{duration: 0.25}}
                   >
-                    <p className="whitespace-pre-wrap text-sm leading-6 text-white/65">{note.content}</p>
+                    <p className="whitespace-pre-wrap text-sm leading-6 text-white/65">
+                      {note.content}
+                    </p>
                   </motion.div>
                 ) : null}
               </AnimatePresence>
@@ -619,14 +823,26 @@ function ContactPanel({color}: {color: string}) {
               href={link.href}
               key={link.label}
               rel="noreferrer"
-              style={{borderColor: "rgba(255,255,255,0.06)", borderLeft: `3px solid ${linkColor}`}}
+              style={{
+                borderColor: "rgba(255,255,255,0.06)",
+                borderLeft: `3px solid ${linkColor}`
+              }}
               target={link.href.startsWith("mailto:") ? undefined : "_blank"}
               variants={fadeUp}
-              whileHover={{borderColor: `${linkColor}50`, boxShadow: `0 0 16px ${linkColor}14`, x: 3}}
+              whileHover={{
+                borderColor: `${linkColor}50`,
+                boxShadow: `0 0 16px ${linkColor}14`,
+                x: 3
+              }}
               whileTap={{scale: 0.98}}
             >
               <span className="font-black text-white">{link.label}</span>
-              <span className="truncate font-mono text-xs" style={{color: linkColor}}>{link.value} -&gt;</span>
+              <span
+                className="truncate font-mono text-xs"
+                style={{color: linkColor}}
+              >
+                {link.value} -&gt;
+              </span>
             </motion.a>
           );
         })}

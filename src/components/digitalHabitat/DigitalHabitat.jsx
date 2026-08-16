@@ -7,7 +7,8 @@ import {habitatIntro, layerMap, layers} from "./habitatData";
 import "./digitalHabitat.css";
 
 function HabitatHeader(props) {
-  const {activeLayer, hoveredLayer, onClose, onHoverLayer, onSelectLayer} = props;
+  const {activeLayer, hoveredLayer, onClose, onHoverLayer, onSelectLayer} =
+    props;
 
   return (
     <header className="habitat-header">
@@ -47,7 +48,13 @@ function HabitatHeader(props) {
       </nav>
       <div className="habitat-status">
         <i />
-        <span>{activeLayer ? layerMap[activeLayer].nav : hoveredLayer ? layerMap[hoveredLayer].nav : "System"}</span>
+        <span>
+          {activeLayer
+            ? layerMap[activeLayer].nav
+            : hoveredLayer
+            ? layerMap[hoveredLayer].nav
+            : "System"}
+        </span>
       </div>
     </header>
   );
@@ -62,10 +69,20 @@ function IntroLabel(props) {
       <h1>{habitatIntro.title}</h1>
       <p>{habitatIntro.subtitle}</p>
       <div>
-        <button type="button" onClick={function openCore() { onSelectLayer("core"); }}>
+        <button
+          type="button"
+          onClick={function openCore() {
+            onSelectLayer("core");
+          }}
+        >
           {habitatIntro.ctas[0]}
         </button>
-        <button type="button" onClick={function openWorks() { onSelectLayer("works"); }}>
+        <button
+          type="button"
+          onClick={function openWorks() {
+            onSelectLayer("works");
+          }}
+        >
           {habitatIntro.ctas[1]}
         </button>
       </div>
@@ -75,10 +92,16 @@ function IntroLabel(props) {
 
 function LayerHint(props) {
   const {activeLayer, hoveredLayer} = props;
-  const layer = hoveredLayer ? layerMap[hoveredLayer] : activeLayer ? layerMap[activeLayer] : null;
+  const layer = hoveredLayer
+    ? layerMap[hoveredLayer]
+    : activeLayer
+    ? layerMap[activeLayer]
+    : null;
 
   return (
-    <aside className={layer ? "habitat-layer-hint is-visible" : "habitat-layer-hint"}>
+    <aside
+      className={layer ? "habitat-layer-hint is-visible" : "habitat-layer-hint"}
+    >
       <span>{layer ? layer.nav + " / " + layer.subtitle : ""}</span>
       <strong>{layer ? layer.meaning : ""}</strong>
     </aside>
@@ -111,7 +134,11 @@ function DigitalHabitat() {
   }, []);
 
   return (
-    <main className={activeLayer ? "digital-habitat has-active-layer" : "digital-habitat"}>
+    <main
+      className={
+        activeLayer ? "digital-habitat has-active-layer" : "digital-habitat"
+      }
+    >
       <HabitatScene
         activeLayer={activeLayer}
         hoveredLayer={hoveredLayer}
@@ -135,7 +162,11 @@ function DigitalHabitat() {
         onOpenProject={openProject}
         onSelectLayer={selectLayer}
       />
-      <MobileDock activeLayer={activeLayer} onClose={closeLayer} onSelectLayer={selectLayer} />
+      <MobileDock
+        activeLayer={activeLayer}
+        onClose={closeLayer}
+        onSelectLayer={selectLayer}
+      />
       <ProjectCaseModal
         project={selectedProject}
         onClose={function closeProject() {

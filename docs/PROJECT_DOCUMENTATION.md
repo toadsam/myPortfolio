@@ -169,18 +169,18 @@ myPortfolio/
 
 각 폴더의 역할은 다음과 같습니다.
 
-| 폴더 | 역할 |
-|---|---|
-| `src/app` | Next.js App Router 페이지, 레이아웃, API route |
-| `src/components` | 화면을 구성하는 React 컴포넌트 |
-| `src/components/village` | 3D 마을, 건물, NPC, 카메라, 캐릭터 이동 |
-| `src/components/interior` | 건물 내부 전시실 화면 |
-| `src/components/ui` | 패널, 대화창, 프로젝트 상세 뷰어, 이력서 모드 |
-| `src/data` | 프로젝트, 스킬, NPC, 테마 같은 정적 데이터 |
-| `src/lib` | API 호출 함수, 공통 상수, 상태 계산 보조 함수 |
-| `src/types` | TypeScript 타입 정의 |
-| `backend/app` | FastAPI 백엔드 코드 |
-| `public/models` | GLB 3D 모델 파일 |
+| 폴더                      | 역할                                           |
+| ------------------------- | ---------------------------------------------- |
+| `src/app`                 | Next.js App Router 페이지, 레이아웃, API route |
+| `src/components`          | 화면을 구성하는 React 컴포넌트                 |
+| `src/components/village`  | 3D 마을, 건물, NPC, 카메라, 캐릭터 이동        |
+| `src/components/interior` | 건물 내부 전시실 화면                          |
+| `src/components/ui`       | 패널, 대화창, 프로젝트 상세 뷰어, 이력서 모드  |
+| `src/data`                | 프로젝트, 스킬, NPC, 테마 같은 정적 데이터     |
+| `src/lib`                 | API 호출 함수, 공통 상수, 상태 계산 보조 함수  |
+| `src/types`               | TypeScript 타입 정의                           |
+| `backend/app`             | FastAPI 백엔드 코드                            |
+| `public/models`           | GLB 3D 모델 파일                               |
 
 ---
 
@@ -303,25 +303,25 @@ package.json
 
 각 스크립트의 의미는 다음과 같습니다.
 
-| 명령어 | 의미 |
-|---|---|
-| `npm run dev` | Next.js 개발 서버 실행 |
+| 명령어                | 의미                          |
+| --------------------- | ----------------------------- |
+| `npm run dev`         | Next.js 개발 서버 실행        |
 | `npm run backend:dev` | FastAPI 백엔드 개발 서버 실행 |
-| `npm run optimize` | GLB 모델 압축 스크립트 실행 |
-| `npm run build` | 배포용 프론트엔드 빌드 |
-| `npm run start` | 빌드된 Next.js 서버 실행 |
-| `npm run typecheck` | TypeScript 타입 검사 |
+| `npm run optimize`    | GLB 모델 압축 스크립트 실행   |
+| `npm run build`       | 배포용 프론트엔드 빌드        |
+| `npm run start`       | 빌드된 Next.js 서버 실행      |
+| `npm run typecheck`   | TypeScript 타입 검사          |
 
 중요한 라이브러리는 다음입니다.
 
-| 라이브러리 | 역할 |
-|---|---|
-| `next` | React 기반 웹 프레임워크 |
-| `react`, `react-dom` | UI 컴포넌트 작성 |
-| `three` | WebGL 3D 그래픽 엔진 |
-| `@react-three/fiber` | React 방식으로 Three.js 사용 |
-| `@react-three/drei` | React Three Fiber 보조 컴포넌트 |
-| `framer-motion` | UI 애니메이션 |
+| 라이브러리           | 역할                            |
+| -------------------- | ------------------------------- |
+| `next`               | React 기반 웹 프레임워크        |
+| `react`, `react-dom` | UI 컴포넌트 작성                |
+| `three`              | WebGL 3D 그래픽 엔진            |
+| `@react-three/fiber` | React 방식으로 Three.js 사용    |
+| `@react-three/drei`  | React Three Fiber 보조 컴포넌트 |
+| `framer-motion`      | UI 애니메이션                   |
 
 ---
 
@@ -410,10 +410,20 @@ src/app/layout.tsx
 export const metadata: Metadata = {
   title,
   description,
-  keywords: ["정재훈", "포트폴리오", "프론트엔드", "풀스택", "React", "Three.js", "3D"]
+  keywords: [
+    "정재훈",
+    "포트폴리오",
+    "프론트엔드",
+    "풀스택",
+    "React",
+    "Three.js",
+    "3D"
+  ]
 };
 
-export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
+export default function RootLayout({
+  children
+}: Readonly<{children: React.ReactNode}>) {
   return (
     <html lang="ko">
       <body>
@@ -538,7 +548,7 @@ src/components/AIPortfolioVillage.tsx
 
 ```tsx
 const VillageScene = dynamic(
-  () => import("@/components/village/VillageScene").then((m) => m.VillageScene),
+  () => import("@/components/village/VillageScene").then(m => m.VillageScene),
   {
     loading: () => (
       <div className="relative grid h-[54vh] min-h-[420px] place-items-center overflow-hidden bg-[#050d1a] md:h-screen">
@@ -559,7 +569,7 @@ const VillageScene = dynamic(
 그래서 다음처럼 설정합니다.
 
 ```ts
-ssr: false
+ssr: false;
 ```
 
 뜻은 다음입니다.
@@ -579,14 +589,17 @@ export function AIPortfolioVillage() {
   const [selectedNpc, setSelectedNpc] = useState<NPCData | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
-  const [explorationMode, setExplorationMode] = useState<ExplorationMode>("click");
+  const [explorationMode, setExplorationMode] =
+    useState<ExplorationMode>("click");
   const [soundOn, setSoundOn] = useState(true);
-  const [viewMode, setViewMode] =
-    useState<"village" | "interior" | "project-interior" | "resume">("village");
+  const [viewMode, setViewMode] = useState<
+    "village" | "interior" | "project-interior" | "resume"
+  >("village");
   const [villageState, setVillageState] = useState<VillageState | null>(null);
   const [liveError, setLiveError] = useState<string | null>(null);
-  const [npcRuntimeStates, setNpcRuntimeStates] =
-    useState<Record<string, NpcRuntimeState>>({});
+  const [npcRuntimeStates, setNpcRuntimeStates] = useState<
+    Record<string, NpcRuntimeState>
+  >({});
 }
 ```
 
@@ -608,19 +621,19 @@ setShowIntro(false)를 호출하면 showIntro가 false로 바뀌고 화면도 �
 
 주요 상태를 정리하면 다음과 같습니다.
 
-| 상태 | 의미 |
-|---|---|
-| `activeSection` | 현재 선택된 구역 |
-| `activeContentId` | 현재 선택된 상세 콘텐츠 ID |
-| `selectedNpc` | 현재 대화 중인 NPC |
-| `isPanelOpen` | 오른쪽 정보 패널 열림 여부 |
-| `showIntro` | 첫 인트로 화면 표시 여부 |
-| `explorationMode` | 클릭 탐색 모드 또는 WASD 직접 이동 모드 |
-| `soundOn` | 사운드 켜짐 여부 |
-| `viewMode` | 마을, 내부 공간, 프로젝트 전시실, 이력서 중 현재 화면 |
-| `villageState` | 백엔드가 계산해준 오늘의 마을 상태 |
-| `liveError` | 백엔드 연결 실패 메시지 |
-| `npcRuntimeStates` | 브라우저에서 실시간으로 움직이는 NPC 상태 |
+| 상태               | 의미                                                  |
+| ------------------ | ----------------------------------------------------- |
+| `activeSection`    | 현재 선택된 구역                                      |
+| `activeContentId`  | 현재 선택된 상세 콘텐츠 ID                            |
+| `selectedNpc`      | 현재 대화 중인 NPC                                    |
+| `isPanelOpen`      | 오른쪽 정보 패널 열림 여부                            |
+| `showIntro`        | 첫 인트로 화면 표시 여부                              |
+| `explorationMode`  | 클릭 탐색 모드 또는 WASD 직접 이동 모드               |
+| `soundOn`          | 사운드 켜짐 여부                                      |
+| `viewMode`         | 마을, 내부 공간, 프로젝트 전시실, 이력서 중 현재 화면 |
+| `villageState`     | 백엔드가 계산해준 오늘의 마을 상태                    |
+| `liveError`        | 백엔드 연결 실패 메시지                               |
+| `npcRuntimeStates` | 브라우저에서 실시간으로 움직이는 NPC 상태             |
 
 ### 9.3 useRef
 
@@ -651,7 +664,11 @@ const encounterBusyRef = useRef(false);
 
 ```tsx
 useEffect(() => {
-  trackVisitorEvent({event_type: "page_view", target_id: "home", label: "Portfolio Village"});
+  trackVisitorEvent({
+    event_type: "page_view",
+    target_id: "home",
+    label: "Portfolio Village"
+  });
 }, []);
 ```
 
@@ -742,10 +759,16 @@ NPC tick은 NPC가 혼자 생각하거나 말풍선을 띄우는 기능입니다
 코드에서는 한 번에 최대 2명만 처리합니다.
 
 ```tsx
-const batch = Array.from({length: Math.min(2, autonomousNpcs.length)}, (_, index) => {
-  const npc = autonomousNpcs[(npcTickCursorRef.current + index) % autonomousNpcs.length]!;
-  return npc;
-});
+const batch = Array.from(
+  {length: Math.min(2, autonomousNpcs.length)},
+  (_, index) => {
+    const npc =
+      autonomousNpcs[
+        (npcTickCursorRef.current + index) % autonomousNpcs.length
+      ]!;
+    return npc;
+  }
+);
 ```
 
 이렇게 하면 API 비용과 브라우저 부담을 줄일 수 있습니다.
@@ -786,11 +809,12 @@ NPC 위치 확인
 
 ```tsx
 function handleRequestEnter(buildingId: string) {
-  const building = villageBuildings.find((b) => b.id === buildingId);
+  const building = villageBuildings.find(b => b.id === buildingId);
   if (!building) return;
 
   trackVisitorEvent({
-    event_type: building.district === "projects" ? "project_open" : "building_enter",
+    event_type:
+      building.district === "projects" ? "project_open" : "building_enter",
     target_id: building.id,
     label: building.name,
     metadata: {district: building.district, contentId: building.contentId ?? ""}
@@ -821,8 +845,9 @@ function handleRequestEnter(buildingId: string) {
 `viewMode`는 현재 화면 종류를 결정합니다.
 
 ```tsx
-const [viewMode, setViewMode] =
-  useState<"village" | "interior" | "project-interior" | "resume">("village");
+const [viewMode, setViewMode] = useState<
+  "village" | "interior" | "project-interior" | "resume"
+>("village");
 ```
 
 화면 렌더링 부분은 다음처럼 조건부로 나뉩니다.
@@ -858,9 +883,20 @@ src/types/portfolio.ts
 핵심 스니펫:
 
 ```ts
-export type SectionId = "intro" | "projects" | "github" | "experience" | "contact";
+export type SectionId =
+  | "intro"
+  | "projects"
+  | "github"
+  | "experience"
+  | "contact";
 export type ExplorationMode = "click" | "walk";
-export type District = "plaza" | "projects" | "skills" | "experience" | "contact" | "life";
+export type District =
+  | "plaza"
+  | "projects"
+  | "skills"
+  | "experience"
+  | "contact"
+  | "life";
 
 export type Vector3Tuple = [number, number, number];
 
@@ -949,16 +985,16 @@ const projectBuildings: BuildingData[] = [
 
 중요한 필드:
 
-| 필드 | 의미 |
-|---|---|
-| `id` | 건물 고유 ID |
-| `sectionId` | 연결되는 큰 구역 |
-| `district` | 마을 내 구역 종류 |
-| `contentId` | 프로젝트 상세 데이터와 연결되는 ID |
-| `kind` | 건물 모양 |
-| `position` | 3D 위치 |
-| `size` | 3D 크기 |
-| `accentColor` | 강조 색상 |
+| 필드          | 의미                               |
+| ------------- | ---------------------------------- |
+| `id`          | 건물 고유 ID                       |
+| `sectionId`   | 연결되는 큰 구역                   |
+| `district`    | 마을 내 구역 종류                  |
+| `contentId`   | 프로젝트 상세 데이터와 연결되는 ID |
+| `kind`        | 건물 모양                          |
+| `position`    | 3D 위치                            |
+| `size`        | 3D 크기                            |
+| `accentColor` | 강조 색상                          |
 
 ### 10.3 좌표 확대
 
@@ -982,7 +1018,7 @@ export const villageBuildings: BuildingData[] = [
   ...experienceBuildings,
   ...lifeBuildings,
   contactBuilding
-].map((b) => ({...b, position: spread(b.position)}));
+].map(b => ({...b, position: spread(b.position)}));
 ```
 
 건물 원본 좌표에 `SPREAD`를 곱해서 전체 마을 간격을 넓힙니다.
@@ -1004,11 +1040,18 @@ export const projects: ProjectData[] = [
   {
     id: "mywave",
     title: "MyWave",
-    description: "개인 자산 흐름을 한눈에 이해하도록 돕는 금융 관리 대시보드입니다.",
+    description:
+      "개인 자산 흐름을 한눈에 이해하도록 돕는 금융 관리 대시보드입니다.",
     role: "서비스 기획, UI 구조 설계, 프론트엔드 컴포넌트 설계",
     tech: ["React", "TypeScript", "Chart UI", "Tailwind CSS"],
-    features: ["자산 흐름 시각화", "목표 관리", "개인 대시보드", "차트 기반 요약"],
-    learning: "복잡한 금융 정보를 사용자의 다음 행동으로 이어지게 만드는 정보 설계의 중요성을 배웠습니다.",
+    features: [
+      "자산 흐름 시각화",
+      "목표 관리",
+      "개인 대시보드",
+      "차트 기반 요약"
+    ],
+    learning:
+      "복잡한 금융 정보를 사용자의 다음 행동으로 이어지게 만드는 정보 설계의 중요성을 배웠습니다.",
     problem: "...",
     approach: ["...", "..."],
     contribution: ["...", "..."],
@@ -1043,7 +1086,8 @@ export const skills: SkillData[] = [
   {
     name: "Next.js",
     group: "Frontend",
-    description: "App Router 기반 페이지 구조와 배포 가능한 포트폴리오 UI를 설계합니다."
+    description:
+      "App Router 기반 페이지 구조와 배포 가능한 포트폴리오 UI를 설계합니다."
   },
   {
     name: "FastAPI",
@@ -1082,7 +1126,10 @@ const coreNpcs: NPCData[] = [
       personality: "밝고 침착한 길잡이.",
       specialty: "첫 방문 안내, 전체 포트폴리오 흐름",
       currentGoal: "방문자가 30초 안에 첫 클릭을 고르고 헤매지 않게 만들기",
-      presetQuestions: ["처음이면 어디부터 보면 돼?", "대표 프로젝트만 빠르게 골라줘"]
+      presetQuestions: [
+        "처음이면 어디부터 보면 돼?",
+        "대표 프로젝트만 빠르게 골라줘"
+      ]
     }
   }
 ];
@@ -1104,7 +1151,7 @@ NPC는 단순 캐릭터가 아니라 다음 데이터를 가집니다.
 export const autonomousNpcs: NPCData[] = [
   ...coreNpcs,
   ...villageBuildings
-    .filter((building) => building.id !== "central-plaza")
+    .filter(building => building.id !== "central-plaza")
     .map((building, index) => {
       return {
         id: `npc-${building.id}`,
@@ -1141,7 +1188,8 @@ src/lib/liveApi.ts
 핵심 스니펫:
 
 ```ts
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 ```
 
 환경 변수가 있으면 그 값을 사용하고, 없으면 기본적으로 `http://localhost:8000`을 사용합니다.
@@ -1189,7 +1237,7 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
 예를 들어:
 
 ```ts
-requestJson<VillageState>("/village-state")
+requestJson<VillageState>("/village-state");
 ```
 
 뜻은 다음입니다.
@@ -1221,7 +1269,11 @@ export function sendNpcMessage(
 ): Promise<NpcChatResponse> {
   return requestJson<NpcChatResponse>("/npc/chat", {
     method: "POST",
-    body: JSON.stringify({npc_id: npcId, message, recent_messages: recentMessages.slice(-8)})
+    body: JSON.stringify({
+      npc_id: npcId,
+      message,
+      recent_messages: recentMessages.slice(-8)
+    })
   });
 }
 ```
@@ -1274,9 +1326,7 @@ export function VillageScene({
 
   return (
     <div className="relative h-[48vh] min-h-[390px] overflow-hidden ...">
-      <Canvas camera={{fov: 40, position: [4, 14, 16]}}>
-        ...
-      </Canvas>
+      <Canvas camera={{fov: 40, position: [4, 14, 16]}}>...</Canvas>
       <PropsEditorTray api={propsApi} />
     </div>
   );
@@ -1440,15 +1490,24 @@ function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
   if (b.glbPath) return <GlbModel glbPath={b.glbPath} size={b.size} />;
 
   switch (b.kind) {
-    case "tower":          return <TowerBuilding b={b} hl={hl} />;
-    case "office-rounded": return <OfficeRoundedBuilding b={b} hl={hl} />;
-    case "flat-hub":       return <FlatHubBuilding b={b} hl={hl} />;
-    case "dome":           return <DomeBuilding b={b} hl={hl} />;
-    case "server-tower":   return <ServerTowerBuilding b={b} hl={hl} />;
-    case "arcade":         return <ArcadeBuilding b={b} hl={hl} />;
-    case "post":           return <PostBuilding b={b} hl={hl} />;
-    case "plaza":          return <PlazaBuilding b={b} hl={hl} />;
-    default:               return <TownhouseBuilding b={b} hl={hl} />;
+    case "tower":
+      return <TowerBuilding b={b} hl={hl} />;
+    case "office-rounded":
+      return <OfficeRoundedBuilding b={b} hl={hl} />;
+    case "flat-hub":
+      return <FlatHubBuilding b={b} hl={hl} />;
+    case "dome":
+      return <DomeBuilding b={b} hl={hl} />;
+    case "server-tower":
+      return <ServerTowerBuilding b={b} hl={hl} />;
+    case "arcade":
+      return <ArcadeBuilding b={b} hl={hl} />;
+    case "post":
+      return <PostBuilding b={b} hl={hl} />;
+    case "plaza":
+      return <PlazaBuilding b={b} hl={hl} />;
+    default:
+      return <TownhouseBuilding b={b} hl={hl} />;
   }
 }
 ```
@@ -1458,7 +1517,7 @@ function BuildingGeometry({b, hl}: {b: BuildingData; hl: boolean}) {
 예를 들어:
 
 ```ts
-kind: "server-tower"
+kind: "server-tower";
 ```
 
 이면 `ServerTowerBuilding`을 사용합니다.
@@ -1476,15 +1535,17 @@ if (b.glbPath) return <GlbModel glbPath={b.glbPath} size={b.size} />;
 ```tsx
 const liveGlow = lightIntensity(buildingState?.light_level);
 
-{liveGlow > 0 ? (
-  <pointLight
-    color={building.accentColor}
-    decay={2}
-    distance={4 + liveGlow * 4}
-    intensity={liveGlow * 1.8}
-    position={[0, h + 0.6, 0]}
-  />
-) : null}
+{
+  liveGlow > 0 ? (
+    <pointLight
+      color={building.accentColor}
+      decay={2}
+      distance={4 + liveGlow * 4}
+      intensity={liveGlow * 1.8}
+      position={[0, h + 0.6, 0]}
+    />
+  ) : null;
+}
 ```
 
 백엔드가 건물마다 `light_level`을 줍니다.
@@ -1500,7 +1561,9 @@ src/lib/liveState.ts
 코드:
 
 ```ts
-export function lightIntensity(lightLevel: BuildingState["light_level"] | undefined): number {
+export function lightIntensity(
+  lightLevel: BuildingState["light_level"] | undefined
+): number {
   if (lightLevel === "bright") return 1;
   if (lightLevel === "normal") return 0.65;
   if (lightLevel === "dim") return 0.35;
@@ -1511,11 +1574,11 @@ export function lightIntensity(lightLevel: BuildingState["light_level"] | undefi
 결과:
 
 | 백엔드 값 | 프론트 조명 세기 |
-|---|---|
-| `bright` | 1 |
-| `normal` | 0.65 |
-| `dim` | 0.35 |
-| `dark` | 0 |
+| --------- | ---------------- |
+| `bright`  | 1                |
+| `normal`  | 0.65             |
+| `dim`     | 0.35             |
+| `dark`    | 0                |
 
 ---
 
@@ -1563,12 +1626,12 @@ useFrame(({clock}, delta) => {
 
 NPC는 자신의 감정 상태에 따라 속도가 달라집니다.
 
-| mood | 움직임 |
-|---|---|
-| `busy` | 빠르게 움직임 |
+| mood      | 움직임        |
+| --------- | ------------- |
+| `busy`    | 빠르게 움직임 |
 | `excited` | 빠르게 움직임 |
-| `sleepy` | 느리게 움직임 |
-| 그 외 | 보통 속도 |
+| `sleepy`  | 느리게 움직임 |
+| 그 외     | 보통 속도     |
 
 ### 14.2 NPC 클릭
 
@@ -1590,15 +1653,17 @@ NPC를 클릭하면 부모에게 `onSelect(npc)`를 호출합니다.
 핵심 스니펫:
 
 ```tsx
-{bubbleText ? (
-  <Billboard position={[0, 2.28, 0]}>
-    <Html center distanceFactor={7.4}>
-      <div className="rounded-xl border border-[#00d4ff]/35 bg-[#050d1a]/92 ...">
-        {bubbleText}
-      </div>
-    </Html>
-  </Billboard>
-) : null}
+{
+  bubbleText ? (
+    <Billboard position={[0, 2.28, 0]}>
+      <Html center distanceFactor={7.4}>
+        <div className="rounded-xl border border-[#00d4ff]/35 bg-[#050d1a]/92 ...">
+          {bubbleText}
+        </div>
+      </Html>
+    </Billboard>
+  ) : null;
+}
 ```
 
 `Billboard`는 카메라를 향해 항상 보이도록 만드는 Drei 컴포넌트입니다.
@@ -1612,13 +1677,17 @@ NPC를 클릭하면 부모에게 `onSelect(npc)`를 호출합니다.
 핵심 스니펫:
 
 ```tsx
-{currentAction ? (
-  <NpcActionEffect
-    action={currentAction}
-    color={actionTarget?.accentColor ?? actionColor(currentAction.animationKey)}
-    targetName={actionTarget?.name}
-  />
-) : null}
+{
+  currentAction ? (
+    <NpcActionEffect
+      action={currentAction}
+      color={
+        actionTarget?.accentColor ?? actionColor(currentAction.animationKey)
+      }
+      targetName={actionTarget?.name}
+    />
+  ) : null;
+}
 ```
 
 백엔드가 `suggested_action`을 반환하면 프론트는 이것을 `currentAction`으로 저장합니다.
@@ -1646,13 +1715,24 @@ src/components/village/CameraController.tsx
 핵심 스니펫:
 
 ```tsx
-export function CameraController({activeSection, isIntro = false, lockRotate = false, cinematic = null}: CameraControllerProps) {
+export function CameraController({
+  activeSection,
+  isIntro = false,
+  lockRotate = false,
+  cinematic = null
+}: CameraControllerProps) {
   const {camera, gl} = useThree();
   const sectionTarget = cameraTargets[activeSection] || cameraTargets.intro;
   const target = cinematic ?? sectionTarget;
 
-  const desiredCamera = useMemo(() => new Vector3(...target.position), [target.position]);
-  const desiredLookAt = useMemo(() => new Vector3(...target.lookAt), [target.lookAt]);
+  const desiredCamera = useMemo(
+    () => new Vector3(...target.position),
+    [target.position]
+  );
+  const desiredLookAt = useMemo(
+    () => new Vector3(...target.lookAt),
+    [target.lookAt]
+  );
 
   useFrame((_, delta) => {
     camera.position.lerp(desiredCamera, lerpSpeed);
@@ -1667,7 +1747,10 @@ export function CameraController({activeSection, isIntro = false, lockRotate = f
 카메라 목표 위치는 `src/lib/constants.ts`에 있습니다.
 
 ```ts
-const rawCameraTargets: Record<string, {position: Vector3Tuple; lookAt: Vector3Tuple}> = {
+const rawCameraTargets: Record<
+  string,
+  {position: Vector3Tuple; lookAt: Vector3Tuple}
+> = {
   intro: {position: [2, 16, 15], lookAt: [0, 0, 2]},
   projects: {position: [-10, 7, 3], lookAt: [-6.5, 1, 1]},
   github: {position: [3, 8, 0], lookAt: [2, 1, -4.5]},
@@ -1701,7 +1784,9 @@ useFrame((_, delta) => {
     nextZ += dz * speed;
   }
 
-  if (isWalkablePosition({x: nextX, z: nextZ}, villageBuildings, {padding: 0.42})) {
+  if (
+    isWalkablePosition({x: nextX, z: nextZ}, villageBuildings, {padding: 0.42})
+  ) {
     posRef.current.x = nextX;
     posRef.current.z = nextZ;
   }
@@ -1761,12 +1846,12 @@ export function InfoPanel({activeSection, activeContentId, isOpen, onClose}: Inf
 구역별 렌더링:
 
 | activeSection | 보여주는 컴포넌트 |
-|---|---|
-| `intro` | `IntroPanel` |
-| `projects` | `ProjectsPanel` |
-| `github` | `SkillsPanel` |
-| `experience` | `ExperiencePanel` |
-| `contact` | `ContactPanel` |
+| ------------- | ----------------- |
+| `intro`       | `IntroPanel`      |
+| `projects`    | `ProjectsPanel`   |
+| `github`      | `SkillsPanel`     |
+| `experience`  | `ExperiencePanel` |
+| `contact`     | `ContactPanel`    |
 
 ---
 
@@ -1791,7 +1876,10 @@ function storageKey(npcId: string) {
 
 useEffect(() => {
   if (!npc || lines.length === 0) return;
-  window.localStorage.setItem(storageKey(npc.id), JSON.stringify(lines.slice(-30)));
+  window.localStorage.setItem(
+    storageKey(npc.id),
+    JSON.stringify(lines.slice(-30))
+  );
 }, [lines, npc]);
 ```
 
@@ -1815,22 +1903,23 @@ async function ask(text: string) {
     metadata: {sectionId: npc.sectionId, length: nextMessage.length}
   });
 
-  setLines((current) => current.concat({role: "visitor", text: nextMessage}));
+  setLines(current => current.concat({role: "visitor", text: nextMessage}));
   setMessage("");
   setIsSending(true);
 
   const context: string[] = [`[상태] 지금 기분: ${moodText}`];
-  if (npcRuntimeState?.memory) context.push(`[최근 사건] ${npcRuntimeState.memory}`);
+  if (npcRuntimeState?.memory)
+    context.push(`[최근 사건] ${npcRuntimeState.memory}`);
   context.push(...recentMessages);
 
   try {
     const response = await sendNpcMessage(npc.id, nextMessage, context);
     onSuggestedAction(response.suggested_action);
     setFallbackMode(!response.used_ai);
-    setLines((current) => current.concat({role: "npc", text: response.reply}));
+    setLines(current => current.concat({role: "npc", text: response.reply}));
   } catch {
     setFallbackMode(true);
-    setLines((current) =>
+    setLines(current =>
       current.concat({
         role: "npc",
         text: "지금은 잠깐 생각이 끊겼어요. 잠시 후 다시 물어봐 주세요."
@@ -1861,11 +1950,9 @@ async function ask(text: string) {
 ```tsx
 const offline = Boolean(aiOffline) || fallbackMode;
 
-{offline ? (
-  <span className="...">
-    AI 오프라인
-  </span>
-) : null}
+{
+  offline ? <span className="...">AI 오프라인</span> : null;
+}
 ```
 
 백엔드가 꺼져 있거나, OpenAI API를 사용하지 못해서 fallback 답변을 사용하면 `AI 오프라인` 표시가 뜹니다.
@@ -1888,7 +1975,7 @@ src/components/interior/ProjectInterior.tsx
 
 ```tsx
 export function ProjectInterior({projectId, onBack}: ProjectInteriorProps) {
-  const project = projects.find((item) => item.id === projectId);
+  const project = projects.find(item => item.id === projectId);
   const theme = getProjectTheme(projectId);
   const [viewerOpen, setViewerOpen] = useState(false);
 
@@ -1981,12 +2068,12 @@ export function ProjectViewer({project, onClose}: Props) {
 
 프로젝트 테마의 `category`에 따라 다른 상세 화면을 보여줍니다.
 
-| category | 컴포넌트 |
-|---|---|
-| `game` | `GameProjectViewer` |
+| category    | 컴포넌트                 |
+| ----------- | ------------------------ |
+| `game`      | `GameProjectViewer`      |
 | `dashboard` | `DashboardProjectViewer` |
-| `realtime` | `RealtimeProjectViewer` |
-| `platform` | `PlatformProjectViewer` |
+| `realtime`  | `RealtimeProjectViewer`  |
+| `platform`  | `PlatformProjectViewer`  |
 
 ### 19.2 프로젝트 테마
 
@@ -2041,15 +2128,15 @@ src/components/ui/project-viewers/richContent/index.tsx
 
 ```tsx
 const SIGNATURE: Partial<Record<string, (theme: ProjectTheme) => ReactNode>> = {
-  festflow: (theme) => <FestFlowLiveDemo theme={theme} />,
-  mystock: (theme) => <MyStockDemo theme={theme} />,
-  muscleup: (theme) => <MuscleUpDemo theme={theme} />,
-  aclub: (theme) => <AClubDemo theme={theme} />,
-  "sign-language": (theme) => <SignLanguageDemo theme={theme} />,
-  ajouchong: (theme) => <AjouchongDemo theme={theme} />,
-  darklab: (theme) => <DarkLabReveal theme={theme} />,
-  "ajou-adventure": (theme) => <AjouAdventureDemo theme={theme} />,
-  tserof: (theme) => <TserofDemo theme={theme} />
+  festflow: theme => <FestFlowLiveDemo theme={theme} />,
+  mystock: theme => <MyStockDemo theme={theme} />,
+  muscleup: theme => <MuscleUpDemo theme={theme} />,
+  aclub: theme => <AClubDemo theme={theme} />,
+  "sign-language": theme => <SignLanguageDemo theme={theme} />,
+  ajouchong: theme => <AjouchongDemo theme={theme} />,
+  darklab: theme => <DarkLabReveal theme={theme} />,
+  "ajou-adventure": theme => <AjouAdventureDemo theme={theme} />,
+  tserof: theme => <TserofDemo theme={theme} />
 };
 ```
 
@@ -2084,9 +2171,7 @@ export function ResumeMode({onEnterVillage}: Props) {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-[#040608] text-white">
       <header className="sticky top-0 z-20 ...">
-        <button onClick={onEnterVillage}>
-          3D 마을 탐험
-        </button>
+        <button onClick={onEnterVillage}>3D 마을 탐험</button>
       </header>
 
       <main>
@@ -2194,7 +2279,9 @@ async function handleSave(event?: React.FormEvent) {
     await saveActivity(normalizeForm(form));
     const state = await fetchVillageState();
     setVillageState(state);
-    setStatus("기록이 저장되었습니다. 3D 마을 조명, NPC 상태, 장식이 갱신됐습니다.");
+    setStatus(
+      "기록이 저장되었습니다. 3D 마을 조명, NPC 상태, 장식이 갱신됐습니다."
+    );
   } catch {
     setStatus("기록 저장에 실패했습니다. 백엔드 상태를 확인하세요.");
   } finally {
@@ -2226,12 +2313,17 @@ async function handleGithubSync() {
 
   try {
     const result = await syncGithubActivity();
-    setForm((current) => ({...current, github_commits: result.commits}));
+    setForm(current => ({...current, github_commits: result.commits}));
     const state = await fetchVillageState();
     setVillageState(state);
-    setStatus(result.warning ?? `GitHub 커밋 ${result.commits}개를 오늘 기록에 반영했습니다.`);
+    setStatus(
+      result.warning ??
+        `GitHub 커밋 ${result.commits}개를 오늘 기록에 반영했습니다.`
+    );
   } catch {
-    setStatus("GitHub 동기화에 실패했습니다. 토큰 또는 백엔드 상태를 확인하세요.");
+    setStatus(
+      "GitHub 동기화에 실패했습니다. 토큰 또는 백엔드 상태를 확인하세요."
+    );
   } finally {
     setIsSaving(false);
   }
@@ -2340,21 +2432,21 @@ backend/app/
 
 역할은 다음과 같습니다.
 
-| 파일 | 역할 |
-|---|---|
-| `main.py` | FastAPI 앱과 API 엔드포인트 |
-| `config.py` | 환경 변수 설정 |
-| `database.py` | DB 연결과 세션 관리 |
-| `models.py` | DB 테이블 구조 |
-| `schemas.py` | API 요청/응답 데이터 구조 |
-| `catalog.py` | 백엔드용 프로젝트/NPC 지식 베이스 |
-| `activity_service.py` | 오늘 활동 저장/조회 |
-| `village_service.py` | 활동 기록을 마을 상태로 변환 |
-| `chat_service.py` | NPC 채팅 답변 |
-| `npc_brain_service.py` | NPC 자동 말풍선/만남 대화 |
-| `npc_action_service.py` | NPC 행동 추천 |
-| `github_service.py` | GitHub API 동기화 |
-| `admin_service.py` | 관리자 데이터와 분석 |
+| 파일                    | 역할                              |
+| ----------------------- | --------------------------------- |
+| `main.py`               | FastAPI 앱과 API 엔드포인트       |
+| `config.py`             | 환경 변수 설정                    |
+| `database.py`           | DB 연결과 세션 관리               |
+| `models.py`             | DB 테이블 구조                    |
+| `schemas.py`            | API 요청/응답 데이터 구조         |
+| `catalog.py`            | 백엔드용 프로젝트/NPC 지식 베이스 |
+| `activity_service.py`   | 오늘 활동 저장/조회               |
+| `village_service.py`    | 활동 기록을 마을 상태로 변환      |
+| `chat_service.py`       | NPC 채팅 답변                     |
+| `npc_brain_service.py`  | NPC 자동 말풍선/만남 대화         |
+| `npc_action_service.py` | NPC 행동 추천                     |
+| `github_service.py`     | GitHub API 동기화                 |
+| `admin_service.py`      | 관리자 데이터와 분석              |
 
 ---
 
@@ -2578,10 +2670,10 @@ NPC 대화 기록을 저장합니다.
 
 이 세 테이블은 관리자 기능을 위한 것입니다.
 
-| 테이블 | 역할 |
-|---|---|
-| `managed_project` | 관리자용 프로젝트 정보 |
-| `npc_preset_setting` | NPC 추천 질문 설정 |
+| 테이블                      | 역할                       |
+| --------------------------- | -------------------------- |
+| `managed_project`           | 관리자용 프로젝트 정보     |
+| `npc_preset_setting`        | NPC 추천 질문 설정         |
 | `village_building_override` | 건물 조명/강조/비활성 설정 |
 
 ---
@@ -2758,26 +2850,26 @@ def on_startup() -> None:
 
 `main.py`에 정의된 엔드포인트:
 
-| 메서드 | 경로 | 역할 |
-|---|---|---|
-| GET | `/health` | 서버 상태 확인 |
-| GET | `/activity/today` | 오늘 활동 조회 |
-| POST | `/activity` | 오늘 활동 저장 |
-| GET | `/village-state` | 마을 상태 조회 |
-| POST | `/npc/chat` | NPC 채팅 |
-| POST | `/npc/tick` | NPC 자동 말풍선/상태 |
-| POST | `/npc/encounter` | NPC끼리 만남 대화 |
-| POST | `/github/sync` | GitHub 커밋 동기화 |
-| POST | `/analytics/event` | 방문자 이벤트 저장 |
-| GET | `/admin/overview` | 관리자 전체 요약 |
-| GET | `/admin/analytics` | 분석 요약 |
-| GET | `/admin/projects` | 관리자 프로젝트 목록 |
-| PUT | `/admin/projects/{project_id}` | 프로젝트 관리 정보 수정 |
-| GET | `/admin/npc/logs` | NPC 대화 로그 |
-| GET | `/npc/presets` | NPC 추천 질문 목록 |
-| PUT | `/admin/npc/presets/{npc_id}` | NPC 추천 질문 수정 |
-| GET | `/admin/village/overrides` | 건물 override 목록 |
-| PUT | `/admin/village/overrides/{building_id}` | 건물 override 수정 |
+| 메서드 | 경로                                     | 역할                    |
+| ------ | ---------------------------------------- | ----------------------- |
+| GET    | `/health`                                | 서버 상태 확인          |
+| GET    | `/activity/today`                        | 오늘 활동 조회          |
+| POST   | `/activity`                              | 오늘 활동 저장          |
+| GET    | `/village-state`                         | 마을 상태 조회          |
+| POST   | `/npc/chat`                              | NPC 채팅                |
+| POST   | `/npc/tick`                              | NPC 자동 말풍선/상태    |
+| POST   | `/npc/encounter`                         | NPC끼리 만남 대화       |
+| POST   | `/github/sync`                           | GitHub 커밋 동기화      |
+| POST   | `/analytics/event`                       | 방문자 이벤트 저장      |
+| GET    | `/admin/overview`                        | 관리자 전체 요약        |
+| GET    | `/admin/analytics`                       | 분석 요약               |
+| GET    | `/admin/projects`                        | 관리자 프로젝트 목록    |
+| PUT    | `/admin/projects/{project_id}`           | 프로젝트 관리 정보 수정 |
+| GET    | `/admin/npc/logs`                        | NPC 대화 로그           |
+| GET    | `/npc/presets`                           | NPC 추천 질문 목록      |
+| PUT    | `/admin/npc/presets/{npc_id}`            | NPC 추천 질문 수정      |
+| GET    | `/admin/village/overrides`               | 건물 override 목록      |
+| PUT    | `/admin/village/overrides/{building_id}` | 건물 override 수정      |
 
 ---
 
@@ -2874,14 +2966,14 @@ def derive_village_state(activity: DailyActivity) -> VillageState:
 
 오늘 활동을 여러 점수로 바꿉니다.
 
-| 점수 | 기반 데이터 |
-|---|---|
-| `commit_score` | GitHub 커밋 수 |
-| `study_score` | 공부 시간, 공부 주제 수 |
-| `coding_score` | 코딩 시간, 프로젝트별 작업 시간 |
-| `workout_score` | 운동 여부, 운동 시간 |
-| `focus_score` | 관리자 입력 집중도 |
-| `memo_score` | 오늘 메모 존재 여부 |
+| 점수            | 기반 데이터                     |
+| --------------- | ------------------------------- |
+| `commit_score`  | GitHub 커밋 수                  |
+| `study_score`   | 공부 시간, 공부 주제 수         |
+| `coding_score`  | 코딩 시간, 프로젝트별 작업 시간 |
+| `workout_score` | 운동 여부, 운동 시간            |
+| `focus_score`   | 관리자 입력 집중도              |
+| `memo_score`    | 오늘 메모 존재 여부             |
 
 ### 30.2 점수를 조명 단계로 변환
 
@@ -2900,11 +2992,11 @@ def _light_for_score(score: int) -> str:
 
 점수가 높을수록 건물이 밝아집니다.
 
-| 점수 | 조명 |
-|---|---|
-| 0 이하 | `dark` |
-| 1-34 | `dim` |
-| 35-74 | `normal` |
+| 점수    | 조명     |
+| ------- | -------- |
+| 0 이하  | `dark`   |
+| 1-34    | `dim`    |
+| 35-74   | `normal` |
 | 75 이상 | `bright` |
 
 ### 30.3 프로젝트 건물 상태
@@ -3200,16 +3292,16 @@ ACTION_DEFINITIONS: dict[str, list[dict[str, Any]]] = {
 
 행동 하나는 다음 정보를 가집니다.
 
-| 필드 | 의미 |
-|---|---|
-| `action_id` | 행동 ID |
-| `label` | 화면 표시 이름 |
-| `description` | 설명 |
-| `keywords` | 메시지에 이 단어가 있으면 선택 가능 |
-| `moods` | 이 기분일 때 어울리는 행동 |
-| `animation_key` | 프론트에서 보여줄 이펙트 종류 |
-| `target_id` | 가리킬 건물 ID |
-| `duration_ms` | 행동 지속 시간 |
+| 필드            | 의미                                |
+| --------------- | ----------------------------------- |
+| `action_id`     | 행동 ID                             |
+| `label`         | 화면 표시 이름                      |
+| `description`   | 설명                                |
+| `keywords`      | 메시지에 이 단어가 있으면 선택 가능 |
+| `moods`         | 이 기분일 때 어울리는 행동          |
+| `animation_key` | 프론트에서 보여줄 이펙트 종류       |
+| `target_id`     | 가리킬 건물 ID                      |
+| `duration_ms`   | 행동 지속 시간                      |
 
 ### 33.2 행동 선택
 
@@ -3718,7 +3810,9 @@ export function fetchStats(): Promise<StatsOut> {
 
 ```tsx
 useEffect(() => {
-  fetchStats().then(setStats).catch(() => setStats(null));
+  fetchStats()
+    .then(setStats)
+    .catch(() => setStats(null));
 }, []);
 ```
 
@@ -3941,4 +4035,3 @@ FastAPI 백엔드
 ```
 
 이 프로젝트는 단순히 예쁜 3D 화면을 만든 것이 아니라, 포트폴리오 데이터, 오늘 활동, AI NPC, 관리자 기록, 방문자 분석이 서로 연결되도록 구성되어 있습니다.
-

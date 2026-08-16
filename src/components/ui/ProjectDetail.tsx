@@ -17,13 +17,20 @@ export function ProjectDetail({onBack, project}: ProjectDetailProps) {
         프로젝트 목록으로
       </button>
 
-      <p className="text-xs font-black uppercase tracking-[0.2em] text-[#5e9b5b]">Project Detail</p>
-      <h3 className="mt-2 text-2xl font-black text-[#1f2a24]">{project.title}</h3>
+      <p className="text-xs font-black uppercase tracking-[0.2em] text-[#5e9b5b]">
+        Project Detail
+      </p>
+      <h3 className="mt-2 text-2xl font-black text-[#1f2a24]">
+        {project.title}
+      </h3>
       <p className="mt-3 leading-7 text-[#465044]">{project.description}</p>
 
       <div className="mt-5 flex flex-wrap gap-2">
-        {project.tech.map((tech) => (
-          <span className="rounded-full border border-[#c7dd9a] bg-[#eef8db] px-3 py-1.5 text-xs font-black text-[#3f6e35]" key={tech}>
+        {project.tech.map(tech => (
+          <span
+            className="rounded-full border border-[#c7dd9a] bg-[#eef8db] px-3 py-1.5 text-xs font-black text-[#3f6e35]"
+            key={tech}
+          >
             {tech}
           </span>
         ))}
@@ -53,7 +60,7 @@ export function ProjectDetail({onBack, project}: ProjectDetailProps) {
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2">
-        {project.links.map((link) => (
+        {project.links.map(link => (
           <a
             className={
               link.label === "Demo"
@@ -85,7 +92,7 @@ function DetailBlock({children, title}: {children: ReactNode; title: string}) {
 function BulletList({items}: {items: string[]}) {
   return (
     <ul className="grid gap-2">
-      {items.map((item) => (
+      {items.map(item => (
         <li className="flex gap-2" key={item}>
           <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#79b95e]" />
           <span>{item}</span>

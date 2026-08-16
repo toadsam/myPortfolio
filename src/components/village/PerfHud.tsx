@@ -30,8 +30,14 @@ export interface PerfSample {
 }
 
 const EMPTY: PerfSample = {
-  fps: 0, calls: 0, triangles: 0, geometries: 0,
-  textures: 0, programs: 0, textureBytes: 0, objects: 0,
+  fps: 0,
+  calls: 0,
+  triangles: 0,
+  geometries: 0,
+  textures: 0,
+  programs: 0,
+  textureBytes: 0,
+  objects: 0
 };
 
 // ─── 모듈 스토어 (Probe → Panel 단방향) ───────────────────────────────────────
@@ -47,7 +53,10 @@ function publish(sample: PerfSample) {
 // three는 텍스처 "개수"만 알려주고 바이트를 안 알려준다. 실제 VRAM은
 // 픽셀수 × 4byte(RGBA) × 1.333(밉맵 체인)으로 추정한다. 압축 텍스처(KTX2)를
 // 쓰기 시작하면 이 추정은 과대평가가 되므로 그때 보정해야 한다.
-function estimateTextureBytes(renderer: WebGLRenderer, scene: {traverse: (fn: (o: object) => void) => void}) {
+function estimateTextureBytes(
+  renderer: WebGLRenderer,
+  scene: {traverse: (fn: (o: object) => void) => void}
+) {
   const seen = new Set<Texture>();
   let bytes = 0;
 
@@ -65,10 +74,13 @@ function estimateTextureBytes(renderer: WebGLRenderer, scene: {traverse: (fn: (o
   };
 
   const addMaterial = (mat: Material) => {
-    for (const value of Object.values(mat as unknown as Record<string, unknown>)) addTexture(value);
+    for (const value of Object.values(
+      mat as unknown as Record<string, unknown>
+    ))
+      addTexture(value);
   };
 
-  scene.traverse((obj) => {
+  scene.traverse(obj => {
     const mesh = obj as Mesh;
     if (!mesh.material) return;
     if (Array.isArray(mesh.material)) mesh.material.forEach(addMaterial);
@@ -91,7 +103,11 @@ export function PerfProbe() {
   // 밖으로 카메라를 잠깐 빼야 하는데, CameraController가 매 프레임 되돌린다.
   useEffect(() => {
     if (!isDev) return;
-    (window as unknown as {__village?: unknown}).__village = {gl, scene, camera};
+    (window as unknown as {__village?: unknown}).__village = {
+      gl,
+      scene,
+      camera
+    };
   }, [gl, scene, camera]);
 
   const frames = useRef(0);
@@ -115,7 +131,9 @@ export function PerfProbe() {
     }
 
     let objects = 0;
-    scene.traverse(() => {objects += 1;});
+    scene.traverse(() => {
+      objects += 1;
+    });
 
     publish({
       fps: Math.round((frames.current * 1000) / elapsed),
@@ -125,7 +143,7 @@ export function PerfProbe() {
       textures: info.memory.textures,
       programs: info.programs?.length ?? 0,
       textureBytes: textureBytes.current,
-      objects,
+      objects
     });
 
     frames.current = 0;
@@ -144,20 +162,41 @@ export function PerfProbe() {
 // 실측 130만 언저리가 됐는데, 정작 fps 는 안 떨어졌다 — 전부 인스턴싱이라
 // draw call 이 안 늘고, 요즘 GPU 에서 130만 삼각형은 부담이 아니다.
 // 경고선을 실제로 위험해지는 지점으로 올린다. fps 와 draw call 이 진짜 지표다.
-const BUDGET = {calls: 200, triangles: 1_800_000, textureBytes: 340 * 1024 * 1024, fps: 55};
+const BUDGET = {
+  calls: 200,
+  triangles: 1_800_000,
+  textureBytes: 340 * 1024 * 1024,
+  fps: 55
+};
 
 function tone(ok: boolean, warn: boolean) {
   if (warn) return "#ff6b6b";
   return ok ? "#6fe0a8" : "#ffcc66";
 }
 
-function Row({label, value, color, hint}: {label: string; value: string; color: string; hint?: string}) {
+function Row({
+  label,
+  value,
+  color,
+  hint
+}: {
+  label: string;
+  value: string;
+  color: string;
+  hint?: string;
+}) {
   return (
     <div className="flex items-baseline justify-between gap-3">
-      <span className="text-[9px] uppercase tracking-[0.14em] text-[#5a6678]">{label}</span>
+      <span className="text-[9px] uppercase tracking-[0.14em] text-[#5a6678]">
+        {label}
+      </span>
       <span className="flex items-baseline gap-1">
-        <span className="text-[12px] font-black tabular-nums" style={{color}}>{value}</span>
-        {hint ? <span className="text-[8px] text-[#3f4a5a]">{hint}</span> : null}
+        <span className="text-[12px] font-black tabular-nums" style={{color}}>
+          {value}
+        </span>
+        {hint ? (
+          <span className="text-[8px] text-[#3f4a5a]">{hint}</span>
+        ) : null}
       </span>
     </div>
   );
@@ -180,14 +219,18 @@ export function PerfHudPanel() {
   useEffect(() => {
     if (!isDev) return;
     listeners.add(setSample);
-    return () => {listeners.delete(setSample);};
+    return () => {
+      listeners.delete(setSample);
+    };
   }, []);
 
   // F8로 접기/펴기 — 스크린샷 찍을 때 방해되지 않도록
   useEffect(() => {
     if (!isDev) return;
     function onKey(e: KeyboardEvent) {
-      if (e.key === "F8") {setOpen((v) => !v);}
+      if (e.key === "F8") {
+        setOpen(v => !v);
+      }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -215,7 +258,9 @@ export function PerfHudPanel() {
   return (
     <div className="fixed bottom-4 left-4 z-40 w-[186px] rounded-xl border border-[#5b8fd6]/30 bg-[#0a101b]/92 p-3 font-mono shadow-2xl backdrop-blur-md">
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-[0.16em] text-[#86b0e6]">📊 perf</span>
+        <span className="text-[10px] font-black uppercase tracking-[0.16em] text-[#86b0e6]">
+          📊 perf
+        </span>
         <button
           type="button"
           onClick={() => setOpen(false)}
@@ -227,14 +272,37 @@ export function PerfHudPanel() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <Row label="fps" value={String(sample.fps)} color={tone(!fpsLow, sample.fps > 0 && sample.fps < 30)} />
-        <Row label="draw calls" value={String(sample.calls)} color={tone(!callsWarn, callsWarn)} hint={`/${BUDGET.calls}`} />
-        <Row label="triangles" value={formatCount(sample.triangles)} color={tone(!triWarn, triWarn)} hint={`/${formatCount(BUDGET.triangles)}`} />
-        <Row label="texture" value={formatMB(sample.textureBytes)} color={tone(!texWarn, texWarn)} hint={`/${formatMB(BUDGET.textureBytes)}`} />
+        <Row
+          label="fps"
+          value={String(sample.fps)}
+          color={tone(!fpsLow, sample.fps > 0 && sample.fps < 30)}
+        />
+        <Row
+          label="draw calls"
+          value={String(sample.calls)}
+          color={tone(!callsWarn, callsWarn)}
+          hint={`/${BUDGET.calls}`}
+        />
+        <Row
+          label="triangles"
+          value={formatCount(sample.triangles)}
+          color={tone(!triWarn, triWarn)}
+          hint={`/${formatCount(BUDGET.triangles)}`}
+        />
+        <Row
+          label="texture"
+          value={formatMB(sample.textureBytes)}
+          color={tone(!texWarn, texWarn)}
+          hint={`/${formatMB(BUDGET.textureBytes)}`}
+        />
       </div>
 
       <div className="mt-2 flex flex-col gap-1 border-t border-[#5b8fd6]/15 pt-2">
-        <Row label="geometries" value={String(sample.geometries)} color="#8fa3bd" />
+        <Row
+          label="geometries"
+          value={String(sample.geometries)}
+          color="#8fa3bd"
+        />
         <Row label="textures" value={String(sample.textures)} color="#8fa3bd" />
         <Row label="shaders" value={String(sample.programs)} color="#8fa3bd" />
         <Row label="objects" value={String(sample.objects)} color="#8fa3bd" />

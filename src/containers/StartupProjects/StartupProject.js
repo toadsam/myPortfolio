@@ -114,7 +114,15 @@ export default function StartupProject() {
             onClick={onClose}
             aria-label="닫기"
           >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
               <line x1="3" y1="3" x2="15" y2="15" />
               <line x1="15" y1="3" x2="3" y2="15" />
             </svg>
@@ -127,7 +135,16 @@ export default function StartupProject() {
                 onClick={onPrev}
                 aria-label="이전"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <polyline points="10 3 5 8 10 13" />
                 </svg>
               </button>
@@ -137,7 +154,16 @@ export default function StartupProject() {
                 onClick={onNext}
                 aria-label="다음"
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <polyline points="6 3 11 8 6 13" />
                 </svg>
               </button>
@@ -1166,7 +1192,15 @@ export default function StartupProject() {
               onClick={() => setSelectedProject(null)}
               aria-label="닫기"
             >
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
                 <line x1="4" y1="4" x2="16" y2="16" />
                 <line x1="16" y1="4" x2="4" y2="16" />
               </svg>
@@ -1397,24 +1431,24 @@ export default function StartupProject() {
                       title="Ops & Issue"
                       subtitle="운영 이슈 대응 요약"
                     />
-                      <ProofSection
-                        pattern="B"
-                        text={
-                          <TextBlock
-                            badge={
-                              <Badge icon="▲" label="Ops & Issue" tone="fire" />
-                            }
-                            title="운영 이슈 대응"
-                            bullets={buildGenericBullets(opsItem, "ops")}
-                            variant="ops"
-                          />
-                        }
-                        proof={{
-                          src: opsItem.proofImage || genericProofImage,
-                          alt: `${selectedProject.projectName} ops proof`
-                        }}
-                        caption={opsItem.proofCaption || "운영 이슈 증명"}
-                      />
+                    <ProofSection
+                      pattern="B"
+                      text={
+                        <TextBlock
+                          badge={
+                            <Badge icon="▲" label="Ops & Issue" tone="fire" />
+                          }
+                          title="운영 이슈 대응"
+                          bullets={buildGenericBullets(opsItem, "ops")}
+                          variant="ops"
+                        />
+                      }
+                      proof={{
+                        src: opsItem.proofImage || genericProofImage,
+                        alt: `${selectedProject.projectName} ops proof`
+                      }}
+                      caption={opsItem.proofCaption || "운영 이슈 증명"}
+                    />
                   </>
                 ) : null}
               </>

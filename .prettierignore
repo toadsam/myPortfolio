@@ -5,3 +5,9 @@ src/assets/lottie
 node_modules
 backend
 
+.agents
+.claude
+.tmp
+.ua
+public
+.tmp_startup_project.js

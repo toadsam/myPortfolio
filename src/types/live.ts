@@ -1,7 +1,23 @@
 export type LightLevel = "dark" | "dim" | "normal" | "bright";
-export type NpcMood = "sleepy" | "calm" | "busy" | "proud" | "training" | "curious" | "focused" | "worried" | "excited";
+export type NpcMood =
+  | "sleepy"
+  | "calm"
+  | "busy"
+  | "proud"
+  | "training"
+  | "curious"
+  | "focused"
+  | "worried"
+  | "excited";
 export type NpcActionSource = "chat" | "tick" | "encounter" | "manual";
-export type NpcAnimationKey = "wave" | "point" | "think" | "type" | "send" | "walk-to-building" | "open-hologram";
+export type NpcAnimationKey =
+  | "wave"
+  | "point"
+  | "think"
+  | "type"
+  | "send"
+  | "walk-to-building"
+  | "open-hologram";
 
 export interface NpcSuggestedAction {
   npc_id: string;

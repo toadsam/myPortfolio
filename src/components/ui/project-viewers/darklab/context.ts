@@ -35,6 +35,7 @@ export const DarkLabProvider = DarkLabContext.Provider;
 
 export function useDarkLab(): DarkLabRoomApi {
   const api = useContext(DarkLabContext);
-  if (!api) throw new Error("useDarkLab는 DarkLabRoom 내부에서만 사용할 수 있습니다.");
+  if (!api)
+    throw new Error("useDarkLab는 DarkLabRoom 내부에서만 사용할 수 있습니다.");
   return api;
 }

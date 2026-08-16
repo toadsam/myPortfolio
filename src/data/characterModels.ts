@@ -54,12 +54,18 @@ export const DEFAULT_NPC_MODEL: CharacterModelId = "robot";
 //   warrior "Armature|walking_man|baselayer"
 //   lumi    "walking", "running", "idle_14", "idle_15", "right_uppercut_from_guard"
 // 그래서 부분 문자열로 판정한다. idle을 먼저 봐야 "running"이 run으로 간다.
-export function classifyClip(name: string, overrides?: CharacterModel["clipOverrides"]): CharacterState | null {
+export function classifyClip(
+  name: string,
+  overrides?: CharacterModel["clipOverrides"]
+): CharacterState | null {
   const lower = name.toLowerCase();
 
   if (overrides) {
     for (const state of ["idle", "walk", "run"] as const) {
-      if (overrides[state]?.some((pattern) => lower.includes(pattern.toLowerCase()))) return state;
+      if (
+        overrides[state]?.some(pattern => lower.includes(pattern.toLowerCase()))
+      )
+        return state;
     }
   }
 

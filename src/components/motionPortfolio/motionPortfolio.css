@@ -9,7 +9,8 @@ body.motion-portfolio-body,
 body.motion-portfolio-body button,
 body.motion-portfolio-body input,
 body.motion-portfolio-body textarea {
-  font-family: "Space Grotesk", "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+  font-family: "Space Grotesk", "Pretendard", "Apple SD Gothic Neo", "Segoe UI",
+    sans-serif;
 }
 
 body.motion-portfolio-body a {
@@ -42,11 +43,22 @@ body.motion-portfolio-body a {
   position: relative;
   min-height: 100vh;
   overflow: visible;
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+  background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px
+    ),
     linear-gradient(0deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    radial-gradient(circle at 78% 8%, rgba(103, 216, 255, 0.14), transparent 25%),
-    radial-gradient(circle at 12% 78%, rgba(41, 231, 167, 0.13), transparent 28%),
+    radial-gradient(
+      circle at 78% 8%,
+      rgba(103, 216, 255, 0.14),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 12% 78%,
+      rgba(41, 231, 167, 0.13),
+      transparent 28%
+    ),
     linear-gradient(180deg, #040707 0%, #07100f 46%, #050808 100%);
   background-size: 72px 72px, 72px 72px, auto, auto, auto;
   color: var(--text);
@@ -64,18 +76,39 @@ body.motion-portfolio-body a {
 }
 
 .motion-portfolio::before {
-  background:
-    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.09), transparent 18%),
-    radial-gradient(circle at 68% 48%, rgba(41, 231, 167, 0.08), transparent 23%),
-    radial-gradient(circle at 26% 42%, rgba(255, 107, 145, 0.07), transparent 18%);
+  background: radial-gradient(
+      circle at 50% 18%,
+      rgba(255, 255, 255, 0.09),
+      transparent 18%
+    ),
+    radial-gradient(
+      circle at 68% 48%,
+      rgba(41, 231, 167, 0.08),
+      transparent 23%
+    ),
+    radial-gradient(
+      circle at 26% 42%,
+      rgba(255, 107, 145, 0.07),
+      transparent 18%
+    );
   opacity: 0.82;
   mix-blend-mode: screen;
 }
 
 .motion-portfolio::after {
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.72), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.74)),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 34%, rgba(0, 0, 0, 0.58));
+  background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.72),
+      transparent 18%,
+      transparent 82%,
+      rgba(0, 0, 0, 0.74)
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.42),
+      transparent 34%,
+      rgba(0, 0, 0, 0.58)
+    );
 }
 
 .mp-living-field {
@@ -101,30 +134,62 @@ body.motion-portfolio-body a {
   width: clamp(260px, 38vw, 620px);
   height: clamp(260px, 38vw, 620px);
   border-radius: 50%;
-  background:
-    radial-gradient(circle, color-mix(in srgb, var(--active-accent) 22%, transparent) 0 8%, rgba(255, 255, 255, 0.06) 18%, transparent 68%);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--active-accent) 22%, transparent) 0 8%,
+    rgba(255, 255, 255, 0.06) 18%,
+    transparent 68%
+  );
   filter: blur(18px);
   opacity: 0.76;
   transform: translate(-50%, -50%);
-  transition: top 640ms cubic-bezier(0.16, 1, 0.3, 1), left 640ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: top 640ms cubic-bezier(0.16, 1, 0.3, 1),
+    left 640ms cubic-bezier(0.16, 1, 0.3, 1);
   animation: mp-cursor-breathe 5.8s ease-in-out infinite;
 }
 
 .mp-living-field__mesh {
-  background:
-    linear-gradient(102deg, transparent 0 18%, color-mix(in srgb, var(--active-accent) 10%, transparent) 18.2% 18.5%, transparent 18.8% 100%),
-    linear-gradient(42deg, transparent 0 58%, rgba(255, 255, 255, 0.045) 58.1% 58.35%, transparent 58.6% 100%),
-    repeating-linear-gradient(90deg, transparent 0 96px, rgba(255, 255, 255, 0.028) 97px 98px, transparent 99px 190px);
+  background: linear-gradient(
+      102deg,
+      transparent 0 18%,
+      color-mix(in srgb, var(--active-accent) 10%, transparent) 18.2% 18.5%,
+      transparent 18.8% 100%
+    ),
+    linear-gradient(
+      42deg,
+      transparent 0 58%,
+      rgba(255, 255, 255, 0.045) 58.1% 58.35%,
+      transparent 58.6% 100%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 96px,
+      rgba(255, 255, 255, 0.028) 97px 98px,
+      transparent 99px 190px
+    );
   opacity: 0.5;
   transform: translate3d(0, 0, 0);
   animation: mp-mesh-drift 18s ease-in-out infinite;
-  mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), black 0 38%, transparent 82%);
+  mask-image: radial-gradient(
+    circle at var(--mouse-x) var(--mouse-y),
+    black 0 38%,
+    transparent 82%
+  );
 }
 
 .mp-living-field__scanner {
-  background:
-    linear-gradient(180deg, transparent 0 42%, rgba(255, 255, 255, 0.08) 48%, transparent 54%),
-    linear-gradient(90deg, transparent, color-mix(in srgb, var(--active-accent) 8%, transparent), transparent);
+  background: linear-gradient(
+      180deg,
+      transparent 0 42%,
+      rgba(255, 255, 255, 0.08) 48%,
+      transparent 54%
+    ),
+    linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--active-accent) 8%, transparent),
+      transparent
+    );
   opacity: 0.38;
   transform: translateY(-58%);
   animation: mp-field-scan 8s linear infinite;
@@ -134,7 +199,12 @@ body.motion-portfolio-body a {
   position: absolute;
   width: clamp(260px, 42vw, 680px);
   height: 1px;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--active-accent) 55%, white 10%), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--active-accent) 55%, white 10%),
+    transparent
+  );
   opacity: 0.26;
   transform-origin: left center;
   animation: mp-route-pulse 6.4s ease-in-out infinite;
@@ -176,8 +246,8 @@ body.motion-portfolio-body a {
   border: 1px solid color-mix(in srgb, var(--particle-accent) 62%, white 8%);
   border-radius: 50%;
   background: color-mix(in srgb, var(--particle-accent) 72%, transparent);
-  box-shadow:
-    0 0 18px color-mix(in srgb, var(--particle-accent) 52%, transparent),
+  box-shadow: 0 0 18px
+      color-mix(in srgb, var(--particle-accent) 52%, transparent),
     0 0 54px color-mix(in srgb, var(--particle-accent) 18%, transparent);
   opacity: 0.5;
   transform: translate(-50%, -50%);
@@ -341,7 +411,8 @@ body.motion-portfolio-body a {
   background: rgba(255, 255, 255, 0.05);
   color: var(--text);
   cursor: pointer;
-  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+  transition: border-color 160ms ease, background 160ms ease,
+    transform 160ms ease;
 }
 
 .mp-menu-button {
@@ -442,7 +513,8 @@ body.motion-portfolio-body a {
   font-size: 13px;
   font-weight: 800;
   text-decoration: none;
-  transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+  transition: border-color 180ms ease, background 180ms ease,
+    transform 180ms ease;
 }
 
 .mp-action-button.is-secondary,
@@ -456,7 +528,11 @@ body.motion-portfolio-body a {
 .mp-icon-link:hover,
 .mp-icon-link:focus-visible {
   border-color: var(--project-accent, var(--green));
-  background: color-mix(in srgb, var(--project-accent, var(--green)) 18%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--project-accent, var(--green)) 18%,
+    transparent
+  );
   transform: translateY(-2px);
 }
 
@@ -470,8 +546,11 @@ body.motion-portfolio-body a {
   inset: 12% 5% 6% 11%;
   border: 1px solid rgba(220, 255, 245, 0.12);
   border-radius: var(--radius);
-  background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+  background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 1px,
+      transparent 1px
+    ),
     linear-gradient(0deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
     rgba(255, 255, 255, 0.025);
   background-size: 44px 44px;
@@ -733,9 +812,16 @@ body.motion-portfolio-body a {
   overflow: hidden;
   border: 1px solid rgba(220, 255, 245, 0.13);
   border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 16% 18%, color-mix(in srgb, var(--project-accent) 20%, transparent), transparent 28%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.018)),
+  background: radial-gradient(
+      circle at 16% 18%,
+      color-mix(in srgb, var(--project-accent) 20%, transparent),
+      transparent 28%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.018)
+    ),
     rgba(8, 13, 14, 0.92);
   box-shadow: 0 34px 120px rgba(0, 0, 0, 0.42);
   pointer-events: none;
@@ -755,9 +841,17 @@ body.motion-portfolio-body a {
 .mp-project-card::before {
   inset: 0;
   border-radius: inherit;
-  background:
-    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent),
-    radial-gradient(circle at 82% 20%, color-mix(in srgb, var(--project-accent) 18%, transparent), transparent 26%);
+  background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      transparent
+    ),
+    radial-gradient(
+      circle at 82% 20%,
+      color-mix(in srgb, var(--project-accent) 18%, transparent),
+      transparent 26%
+    );
   opacity: var(--card-shine-opacity);
   transform: translateX(var(--shine-shift));
 }
@@ -769,13 +863,18 @@ body.motion-portfolio-body a {
   height: 72px;
   border: 1px solid color-mix(in srgb, var(--project-accent) 42%, transparent);
   border-radius: 50%;
-  box-shadow: 0 0 34px color-mix(in srgb, var(--project-accent) 18%, transparent);
+  box-shadow: 0 0 34px
+    color-mix(in srgb, var(--project-accent) 18%, transparent);
   opacity: var(--ring-opacity);
   animation: mp-orbit-ring 8s linear infinite;
 }
 
 .mp-project-card.is-active {
-  border-color: color-mix(in srgb, var(--project-accent) 58%, rgba(255, 255, 255, 0.14));
+  border-color: color-mix(
+    in srgb,
+    var(--project-accent) 58%,
+    rgba(255, 255, 255, 0.14)
+  );
   pointer-events: auto;
 }
 
@@ -791,7 +890,11 @@ body.motion-portfolio-body a {
   z-index: 4;
   width: 22px;
   height: 22px;
-  border-color: color-mix(in srgb, var(--project-accent) 62%, rgba(255, 255, 255, 0.12));
+  border-color: color-mix(
+    in srgb,
+    var(--project-accent) 62%,
+    rgba(255, 255, 255, 0.12)
+  );
   opacity: var(--corner-opacity);
   pointer-events: none;
 }
@@ -842,8 +945,7 @@ body.motion-portfolio-body a {
 .mp-card__media::after {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(90deg, rgba(3, 7, 7, 0.24), transparent 42%),
+  background: linear-gradient(90deg, rgba(3, 7, 7, 0.24), transparent 42%),
     linear-gradient(0deg, rgba(3, 7, 7, 0.72), transparent 40%);
   content: "";
 }
@@ -859,9 +961,11 @@ body.motion-portfolio-body a {
 
 .mp-card__depth-map span {
   position: absolute;
-  border: 1px solid color-mix(in srgb, var(--project-accent) 55%, rgba(255, 255, 255, 0.16));
+  border: 1px solid
+    color-mix(in srgb, var(--project-accent) 55%, rgba(255, 255, 255, 0.16));
   border-radius: 6px;
-  box-shadow: 0 0 28px color-mix(in srgb, var(--project-accent) 16%, transparent);
+  box-shadow: 0 0 28px
+    color-mix(in srgb, var(--project-accent) 16%, transparent);
 }
 
 .mp-card__depth-map span:nth-child(1) {
@@ -914,7 +1018,12 @@ body.motion-portfolio-body a {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(255, 255, 255, 0.16),
+    transparent
+  );
   opacity: var(--scan-opacity);
   transform: translateY(-100%);
   animation: mp-scan 5.6s linear infinite;
@@ -930,8 +1039,8 @@ body.motion-portfolio-body a {
   height: 18px;
   border: 1px solid color-mix(in srgb, var(--project-accent) 80%, white 8%);
   border-radius: 50%;
-  box-shadow:
-    0 0 24px color-mix(in srgb, var(--project-accent) 48%, transparent),
+  box-shadow: 0 0 24px
+      color-mix(in srgb, var(--project-accent) 48%, transparent),
     0 0 86px color-mix(in srgb, var(--project-accent) 18%, transparent);
   opacity: var(--pulse-opacity);
   transform: translate(-50%, -50%);
@@ -951,7 +1060,12 @@ body.motion-portfolio-body a {
   left: 50%;
   width: 120px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--project-accent) 64%, white 8%), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--project-accent) 64%, white 8%),
+    transparent
+  );
   transform: translate(-50%, -50%);
 }
 
@@ -1099,7 +1213,8 @@ body.motion-portfolio-body a {
   background: rgba(255, 255, 255, 0.045);
   color: rgba(244, 255, 251, 0.55);
   cursor: pointer;
-  transition: border-color 160ms ease, background 160ms ease, color 160ms ease, transform 160ms ease;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease,
+    transform 160ms ease;
 }
 
 .mp-project-dots button[aria-current="step"],
@@ -1142,8 +1257,11 @@ body.motion-portfolio-body a {
   padding: 20px;
   border: 1px solid rgba(220, 255, 245, 0.12);
   border-radius: var(--radius);
-  background:
-    linear-gradient(150deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02)),
+  background: linear-gradient(
+      150deg,
+      rgba(255, 255, 255, 0.07),
+      rgba(255, 255, 255, 0.02)
+    ),
     rgba(7, 13, 14, 0.78);
 }
 
@@ -1166,9 +1284,16 @@ body.motion-portfolio-body a {
   padding: clamp(20px, 3vw, 34px);
   border: 1px solid rgba(220, 255, 245, 0.12);
   border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 18% 20%, rgba(246, 200, 95, 0.13), transparent 24%),
-    radial-gradient(circle at 88% 74%, rgba(103, 216, 255, 0.12), transparent 22%),
+  background: radial-gradient(
+      circle at 18% 20%,
+      rgba(246, 200, 95, 0.13),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 88% 74%,
+      rgba(103, 216, 255, 0.12),
+      transparent 22%
+    ),
     rgba(255, 255, 255, 0.04);
 }
 
@@ -1233,7 +1358,8 @@ body.motion-portfolio-body a {
   background: rgba(255, 255, 255, 0.045);
   color: var(--text);
   text-decoration: none;
-  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+  transition: border-color 160ms ease, background 160ms ease,
+    transform 160ms ease;
 }
 
 .mp-contact-links a:hover,
@@ -1288,8 +1414,11 @@ body.motion-portfolio-body a {
   padding: clamp(20px, 4vw, 42px);
   border: 1px solid rgba(220, 255, 245, 0.14);
   border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 84% 12%, rgba(41, 231, 167, 0.16), transparent 30%),
+  background: radial-gradient(
+      circle at 84% 12%,
+      rgba(41, 231, 167, 0.16),
+      transparent 30%
+    ),
     rgba(8, 13, 14, 0.94);
   box-shadow: 0 34px 140px rgba(0, 0, 0, 0.56);
   animation: mp-panel-in 260ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -1359,9 +1488,16 @@ body.motion-portfolio-body a {
   padding: clamp(20px, 3vw, 34px);
   border: 1px solid rgba(220, 255, 245, 0.16);
   border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 0% 0%, rgba(41, 231, 167, 0.13), transparent 30%),
-    radial-gradient(circle at 100% 20%, rgba(103, 216, 255, 0.11), transparent 25%),
+  background: radial-gradient(
+      circle at 0% 0%,
+      rgba(41, 231, 167, 0.13),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 100% 20%,
+      rgba(103, 216, 255, 0.11),
+      transparent 25%
+    ),
     rgba(8, 13, 14, 0.96);
   box-shadow: 0 34px 150px rgba(0, 0, 0, 0.62);
   animation: mp-panel-in 280ms cubic-bezier(0.16, 1, 0.3, 1);

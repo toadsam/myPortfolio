@@ -111,14 +111,17 @@ function getStack(project) {
   const tags = asArray(project.tags).map(function cleanTag(tag) {
     return String(tag).replace(/^#/, "").trim();
   });
-  const stackFromOverview = asArray(overview.techStack).flatMap(function parseStack(item) {
-    const text = String(item);
-    const stackText = text.indexOf(":") >= 0 ? text.split(":").slice(1).join(":") : text;
+  const stackFromOverview = asArray(overview.techStack).flatMap(
+    function parseStack(item) {
+      const text = String(item);
+      const stackText =
+        text.indexOf(":") >= 0 ? text.split(":").slice(1).join(":") : text;
 
-    return stackText.split(",").map(function trimStack(stack) {
-      return stack.trim();
-    });
-  });
+      return stackText.split(",").map(function trimStack(stack) {
+        return stack.trim();
+      });
+    }
+  );
 
   const stack = unique(tags.concat(stackFromOverview)).filter(Boolean);
 
@@ -174,7 +177,9 @@ function getCodeUrl(project) {
 function getMetrics(project) {
   const details = project.details || {};
   const overview = details.overview || {};
-  const quickSummary = asArray(details.quickSummary).map(function mapSummary(item) {
+  const quickSummary = asArray(details.quickSummary).map(function mapSummary(
+    item
+  ) {
     return {
       value: item.title,
       label: item.desc
@@ -186,7 +191,10 @@ function getMetrics(project) {
   }
 
   return [
-    {value: project.status === "live" ? "LIVE" : "CASE", label: "프로젝트 상태"},
+    {
+      value: project.status === "live" ? "LIVE" : "CASE",
+      label: "프로젝트 상태"
+    },
     {value: getStack(project)[0] || "React", label: "대표 기술"},
     {value: overview.period || "Portfolio", label: "기간 / 유형"}
   ];
@@ -201,9 +209,11 @@ function getProblem(project) {
     .concat(asArray(intro.problem));
 
   if (items.length) {
-    return items.map(function mapProblem(item) {
-      return joinText(item);
-    }).slice(0, 4);
+    return items
+      .map(function mapProblem(item) {
+        return joinText(item);
+      })
+      .slice(0, 4);
   }
 
   return [joinText(project.projectDesc)];
@@ -221,9 +231,11 @@ function getSolution(project) {
     .concat(asArray(overview.coreValue));
 
   if (items.length) {
-    return items.map(function mapSolution(item) {
-      return joinText(item);
-    }).slice(0, 4);
+    return items
+      .map(function mapSolution(item) {
+        return joinText(item);
+      })
+      .slice(0, 4);
   }
 
   return [project.recommendation || project.projectDesc];
@@ -232,7 +244,9 @@ function getSolution(project) {
 function getRolePoints(project) {
   const details = project.details || {};
   const overview = details.overview || {};
-  const roleText = joinText(overview.role || details.role || "기획, 구현, 테스트, 배포");
+  const roleText = joinText(
+    overview.role || details.role || "기획, 구현, 테스트, 배포"
+  );
 
   return roleText
     .split(/,|\/|·|ㆍ|\n/)
@@ -261,7 +275,15 @@ function getFeatureImage(project, fallback) {
 function createFeature(project, item, image, body) {
   return {
     title: item.title || item.step || item.oneLiner || project.projectName,
-    body: body || joinText(item.oneLiner, item.description, item.how, item.result, item.bullets),
+    body:
+      body ||
+      joinText(
+        item.oneLiner,
+        item.description,
+        item.how,
+        item.result,
+        item.bullets
+      ),
     caption: item.caption || item.proofCaption || "",
     image: image || getFeatureImage(project)
   };
@@ -285,7 +307,12 @@ function getFeatures(project) {
 
   asArray(details.coreFeatureShots).forEach(function addCoreFeature(item) {
     features.push(
-      createFeature(project, item, item.image || item.proofImage, joinText(item.bullets))
+      createFeature(
+        project,
+        item,
+        item.image || item.proofImage,
+        joinText(item.bullets)
+      )
     );
   });
 
@@ -307,7 +334,12 @@ function getFeatures(project) {
   if (!features.length && intro.images) {
     features.push({
       title: intro.headline || project.projectName,
-      body: joinText(intro.highlight, intro.problem, intro.solution, intro.outcome),
+      body: joinText(
+        intro.highlight,
+        intro.problem,
+        intro.solution,
+        intro.outcome
+      ),
       caption: intro.caption || "",
       image: asArray(intro.images)[0] || project.image
     });
@@ -353,16 +385,30 @@ function getGallery(project) {
   const items = [];
   const seen = new Set();
 
-  addGalleryItem(items, seen, project, project.image, project.projectName, project.recommendation);
-  addGalleryItem(items, seen, project, overview.image, overview.caption, overview.coreValue);
+  addGalleryItem(
+    items,
+    seen,
+    project,
+    project.image,
+    project.projectName,
+    project.recommendation
+  );
+  addGalleryItem(
+    items,
+    seen,
+    project,
+    overview.image,
+    overview.caption,
+    overview.coreValue
+  );
 
   asArray(intro.images).forEach(function addIntroImage(image, index) {
     const caption =
       index === 0
         ? intro.caption || "프로젝트 대표 화면"
         : intro.caption
-          ? intro.caption + " " + (index + 1)
-          : "프로젝트 화면 " + (index + 1);
+        ? intro.caption + " " + (index + 1)
+        : "프로젝트 화면 " + (index + 1);
 
     addGalleryItem(
       items,
@@ -375,15 +421,36 @@ function getGallery(project) {
   });
 
   asArray(details.strategySteps).forEach(function addStrategyImage(item) {
-    addGalleryItem(items, seen, project, item.image, item.caption || item.title, item.description);
+    addGalleryItem(
+      items,
+      seen,
+      project,
+      item.image,
+      item.caption || item.title,
+      item.description
+    );
   });
 
   asArray(details.coreDesign).forEach(function addCoreDesignImage(item) {
-    addGalleryItem(items, seen, project, item.proofImage, item.proofCaption || item.title, joinText(item.oneLiner, item.how, item.result));
+    addGalleryItem(
+      items,
+      seen,
+      project,
+      item.proofImage,
+      item.proofCaption || item.title,
+      joinText(item.oneLiner, item.how, item.result)
+    );
   });
 
   asArray(details.coreFeatureShots).forEach(function addCoreFeatureImage(item) {
-    addGalleryItem(items, seen, project, item.image || item.proofImage, item.caption || item.proofCaption || item.title, joinText(item.bullets));
+    addGalleryItem(
+      items,
+      seen,
+      project,
+      item.image || item.proofImage,
+      item.caption || item.proofCaption || item.title,
+      joinText(item.bullets)
+    );
   });
 
   if (details.ops) {
@@ -397,8 +464,17 @@ function getGallery(project) {
     );
   }
 
-  const fallbackImage = (sourceProjects[0] && sourceProjects[0].image) || project.image;
-  return items.length ? items : [{image: fallbackImage, caption: project.projectName, body: project.projectDesc}];
+  const fallbackImage =
+    (sourceProjects[0] && sourceProjects[0].image) || project.image;
+  return items.length
+    ? items
+    : [
+        {
+          image: fallbackImage,
+          caption: project.projectName,
+          body: project.projectDesc
+        }
+      ];
 }
 
 function getFlow(project) {
@@ -431,9 +507,11 @@ function getLearnings(project) {
     .concat(asArray(details.takeaways));
 
   if (direct.length) {
-    return direct.map(function mapLearning(item) {
-      return joinText(item);
-    }).slice(0, 4);
+    return direct
+      .map(function mapLearning(item) {
+        return joinText(item);
+      })
+      .slice(0, 4);
   }
 
   return unique([
@@ -463,7 +541,10 @@ function normalizeProject(project, index) {
     year: overview.period || "",
     role: overview.role || "Developer",
     description: toPreview(project.projectDesc || project.recommendation, 130),
-    shortDescription: toPreview(project.recommendation || overview.coreValue || project.projectDesc, 170),
+    shortDescription: toPreview(
+      project.recommendation || overview.coreValue || project.projectDesc,
+      170
+    ),
     stack: stack,
     heroImage: overview.image || asArray(intro.images)[0] || project.image,
     gallery: getGallery(project),
@@ -482,21 +563,34 @@ function normalizeProject(project, index) {
 
 const projects = sourceProjects.map(normalizeProject);
 
-const contactEmail = contactInfo.email_address || socialMediaLinks.gmail || "toadsam@naver.com";
+const contactEmail =
+  contactInfo.email_address || socialMediaLinks.gmail || "toadsam@naver.com";
 const githubUrl = socialMediaLinks.github || "https://github.com/toadsam";
 const linkedinUrl = socialMediaLinks.linkedin || "";
 
 const contactLinks = [
   {label: "Email", value: contactEmail, href: "mailto:" + contactEmail},
-  {label: "GitHub", value: githubUrl.replace(/^https?:\/\//, ""), href: githubUrl},
+  {
+    label: "GitHub",
+    value: githubUrl.replace(/^https?:\/\//, ""),
+    href: githubUrl
+  },
   {label: "Resume", value: "resume.pdf", href: resumePdf}
 ].concat(
   linkedinUrl
-    ? [{label: "LinkedIn", value: linkedinUrl.replace(/^https?:\/\//, ""), href: linkedinUrl}]
+    ? [
+        {
+          label: "LinkedIn",
+          value: linkedinUrl.replace(/^https?:\/\//, ""),
+          href: linkedinUrl
+        }
+      ]
     : []
 );
 
-const skillNames = asArray(skillsSection.softwareSkills).map(function mapSkill(skill) {
+const skillNames = asArray(skillsSection.softwareSkills).map(function mapSkill(
+  skill
+) {
   return skill.skillName;
 });
 
@@ -596,7 +690,8 @@ const uiExperiments = projects
 const scheduleCard = {
   month: "June 2026",
   prompt: "프로젝트나 협업 이야기를 나눠볼까요?",
-  description: "메일로 간단히 남겨주시면 프로젝트 맥락에 맞춰 답변드리겠습니다.",
+  description:
+    "메일로 간단히 남겨주시면 프로젝트 맥락에 맞춰 답변드리겠습니다.",
   cta: "메일 보내기"
 };
 

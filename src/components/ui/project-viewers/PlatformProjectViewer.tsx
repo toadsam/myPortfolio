@@ -13,7 +13,7 @@ const STEPS = [
   {id: "problem", label: "배경", en: "CONTEXT"},
   {id: "approach", label: "진행", en: "PROCESS"},
   {id: "contribution", label: "기여", en: "WORK"},
-  {id: "result", label: "성과", en: "RESULT"},
+  {id: "result", label: "성과", en: "RESULT"}
 ] as const;
 
 function Stamp({color, delay}: {color: string; delay: number}) {
@@ -34,7 +34,7 @@ function DocCard({
   label,
   theme,
   children,
-  delay = 0,
+  delay = 0
 }: {
   label?: string;
   theme: ProjectTheme;
@@ -48,12 +48,20 @@ function DocCard({
       initial={{opacity: 0, y: 14}}
       animate={{opacity: 1, y: 0}}
       transition={{duration: 0.4, delay}}
-      whileHover={{borderColor: `${theme.primary}50`, background: "rgba(255,255,255,0.045)"}}
+      whileHover={{
+        borderColor: `${theme.primary}50`,
+        background: "rgba(255,255,255,0.045)"
+      }}
     >
       {label ? (
         <div className="mb-3 flex items-center gap-2">
-          <span className="h-3 w-1 rounded-full" style={{background: theme.primary}} />
-          <span className="font-mono text-[10px] font-black uppercase tracking-[0.2em] text-white/40">{label}</span>
+          <span
+            className="h-3 w-1 rounded-full"
+            style={{background: theme.primary}}
+          />
+          <span className="font-mono text-[10px] font-black uppercase tracking-[0.2em] text-white/40">
+            {label}
+          </span>
         </div>
       ) : null}
       {children}
@@ -61,16 +69,31 @@ function DocCard({
   );
 }
 
-function Section({step, project, theme}: {step: number; project: ProjectData; theme: ProjectTheme}) {
+function Section({
+  step,
+  project,
+  theme
+}: {
+  step: number;
+  project: ProjectData;
+  theme: ProjectTheme;
+}) {
   if (step === 0) {
     return (
       <div className="flex h-full flex-col justify-center gap-6 py-2">
         <div className="border-l-4 pl-5" style={{borderColor: theme.primary}}>
-          <p className="font-mono text-xs font-black uppercase tracking-[0.3em]" style={{color: theme.primary}}>
+          <p
+            className="font-mono text-xs font-black uppercase tracking-[0.3em]"
+            style={{color: theme.primary}}
+          >
             OFFICIAL - PLATFORM
           </p>
-          <h1 className="mt-2 text-5xl font-black leading-tight text-white md:text-6xl">{project.title}</h1>
-          <p className="mt-3 max-w-xl text-base leading-7 text-white/60">{project.description}</p>
+          <h1 className="mt-2 text-5xl font-black leading-tight text-white md:text-6xl">
+            {project.title}
+          </h1>
+          <p className="mt-3 max-w-xl text-base leading-7 text-white/60">
+            {project.description}
+          </p>
         </div>
 
         <DocCard label="담당 역할" theme={theme} delay={0.15}>
@@ -88,7 +111,10 @@ function Section({step, project, theme}: {step: number; project: ProjectData; th
                 animate={{opacity: 1, x: 0}}
                 transition={{delay: 0.3 + index * 0.06}}
               >
-                <span className="font-mono text-xs font-black" style={{color: theme.primary}}>
+                <span
+                  className="font-mono text-xs font-black"
+                  style={{color: theme.primary}}
+                >
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span className="text-sm text-white/80">{feature}</span>
@@ -155,11 +181,15 @@ function Section({step, project, theme}: {step: number; project: ProjectData; th
 
         <DocCard label="기술 스택" theme={theme} delay={0.3}>
           <div className="flex flex-wrap gap-2">
-            {project.tech.map((item) => (
+            {project.tech.map(item => (
               <span
                 key={item}
                 className="rounded-lg border px-3 py-1.5 font-mono text-sm font-bold"
-                style={{borderColor: `${theme.primary}35`, color: theme.accent, background: `${theme.primary}0d`}}
+                style={{
+                  borderColor: `${theme.primary}35`,
+                  color: theme.accent,
+                  background: `${theme.primary}0d`
+                }}
               >
                 {item}
               </span>
@@ -179,7 +209,7 @@ function Section({step, project, theme}: {step: number; project: ProjectData; th
         <p className="text-sm leading-7 text-white/70">{project.nextStep}</p>
       </DocCard>
       <div className="flex flex-wrap gap-3">
-        {project.links.map((link) => (
+        {project.links.map(link => (
           <motion.a
             key={link.label}
             href={link.href}
@@ -212,8 +242,9 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
-      if (event.key === "ArrowRight") setStep((value) => Math.min(value + 1, STEPS.length - 1));
-      if (event.key === "ArrowLeft") setStep((value) => Math.max(value - 1, 0));
+      if (event.key === "ArrowRight")
+        setStep(value => Math.min(value + 1, STEPS.length - 1));
+      if (event.key === "ArrowLeft") setStep(value => Math.max(value - 1, 0));
       if (event.key === "Escape") onClose();
     }
 
@@ -224,16 +255,24 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
   return (
     <motion.div
       className="fixed inset-0 z-[60] flex flex-col"
-      style={{backgroundColor: theme.bg, backgroundImage: `linear-gradient(160deg, ${theme.primary}0c, ${theme.bg} 55%)`}}
+      style={{
+        backgroundColor: theme.bg,
+        backgroundImage: `linear-gradient(160deg, ${theme.primary}0c, ${theme.bg} 55%)`
+      }}
       initial={{opacity: 0}}
       animate={{opacity: 1}}
       exit={{opacity: 0}}
       transition={{duration: 0.3}}
     >
       <AmbientBackground projectId={project.id} theme={theme} />
-      <div className="relative z-10 shrink-0 border-b" style={{borderColor: `${theme.primary}20`}}>
+      <div
+        className="relative z-10 shrink-0 border-b"
+        style={{borderColor: `${theme.primary}20`}}
+      >
         <div className="flex items-center justify-between px-8 py-4">
-          <span className="font-mono text-sm font-black text-white">{project.title}</span>
+          <span className="font-mono text-sm font-black text-white">
+            {project.title}
+          </span>
           <button
             className="rounded border px-3 py-1.5 font-mono text-xs font-black uppercase tracking-[0.15em] transition hover:bg-white/10"
             style={{borderColor: `${theme.primary}40`, color: theme.accent}}
@@ -249,7 +288,9 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
               key={item.id}
               className="relative px-4 py-2.5 font-mono text-xs font-black transition"
               onClick={() => setStep(index)}
-              style={{color: index === step ? theme.primary : "rgba(255,255,255,0.35)"}}
+              style={{
+                color: index === step ? theme.primary : "rgba(255,255,255,0.35)"
+              }}
               type="button"
             >
               {item.label}
@@ -276,14 +317,23 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
               exit={{opacity: 0, y: -12}}
               transition={{duration: 0.3}}
             >
-              {richRender ? richRender({step, project, theme}) : <Section step={step} project={project} theme={theme} />}
+              {richRender ? (
+                richRender({step, project, theme})
+              ) : (
+                <Section step={step} project={project} theme={theme} />
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
 
-        <div className="flex shrink-0 items-center justify-between gap-2 border-t py-4" style={{borderColor: `${theme.primary}20`}}>
+        <div
+          className="flex shrink-0 items-center justify-between gap-2 border-t py-4"
+          style={{borderColor: `${theme.primary}20`}}
+        >
           <div className="flex items-center gap-2 font-mono text-xs text-white/40">
-            <span style={{color: theme.primary}}>{String(step + 1).padStart(2, "0")}</span>
+            <span style={{color: theme.primary}}>
+              {String(step + 1).padStart(2, "0")}
+            </span>
             <span>/ {String(STEPS.length).padStart(2, "0")}</span>
           </div>
           <div className="flex gap-2">
@@ -291,7 +341,7 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
               className="rounded-lg border px-4 py-2 font-mono text-xs font-black disabled:opacity-20"
               style={{borderColor: `${theme.primary}40`, color: theme.accent}}
               disabled={step === 0}
-              onClick={() => setStep((value) => Math.max(value - 1, 0))}
+              onClick={() => setStep(value => Math.max(value - 1, 0))}
               type="button"
             >
               이전
@@ -301,10 +351,15 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
               style={
                 step < STEPS.length - 1
                   ? {background: theme.primary, color: theme.bg}
-                  : {border: `1px solid ${theme.primary}30`, color: "rgba(255,255,255,0.3)"}
+                  : {
+                      border: `1px solid ${theme.primary}30`,
+                      color: "rgba(255,255,255,0.3)"
+                    }
               }
               disabled={step === STEPS.length - 1}
-              onClick={() => setStep((value) => Math.min(value + 1, STEPS.length - 1))}
+              onClick={() =>
+                setStep(value => Math.min(value + 1, STEPS.length - 1))
+              }
               type="button"
             >
               다음 -&gt;

@@ -25,7 +25,12 @@ interface Edge {
 function buildEdges(buildings: BuildingData[]): Edge[] {
   // 건물이 구역 단차 위에 서 있으므로 호도 같이 올려야 지붕 아래에서 시작한다
   const points = buildings.map(
-    (b) => new Vector3(b.position[0], EDGE_Y + terrainHeightAt(b.position[0], b.position[2]), b.position[2])
+    b =>
+      new Vector3(
+        b.position[0],
+        EDGE_Y + terrainHeightAt(b.position[0], b.position[2]),
+        b.position[2]
+      )
   );
   const seen = new Set<string>();
   const edges: Edge[] = [];
@@ -34,11 +39,11 @@ function buildEdges(buildings: BuildingData[]): Edge[] {
     // i번 건물에서 가까운 이웃 정렬
     const neighbors = points
       .map((q, j) => ({j, d: p.distanceTo(q)}))
-      .filter((n) => n.j !== i && n.d <= MAX_DISTANCE)
+      .filter(n => n.j !== i && n.d <= MAX_DISTANCE)
       .sort((m, n) => m.d - n.d)
       .slice(0, MAX_NEIGHBORS);
 
-    neighbors.forEach((n) => {
+    neighbors.forEach(n => {
       const key = i < n.j ? `${i}-${n.j}` : `${n.j}-${i}`;
       if (seen.has(key)) return;
       seen.add(key);
@@ -64,7 +69,12 @@ function Pulse({edge}: {edge: Edge}) {
   return (
     <mesh ref={ref}>
       <sphereGeometry args={[0.07, 8, 8]} />
-      <meshBasicMaterial color={EDGE_COLOR} transparent opacity={0.6} depthWrite={false} />
+      <meshBasicMaterial
+        color={EDGE_COLOR}
+        transparent
+        opacity={0.6}
+        depthWrite={false}
+      />
     </mesh>
   );
 }

@@ -12,19 +12,31 @@ const NEON_COLORS: Record<string, string> = {
   LAB: "#00d4ff",
   SKILLS: "#00ff88",
   ARCHIVE: "#aa44ff",
-  POST: "#ff6600",
+  POST: "#ff6600"
 };
 
-export function PathSegment({length, position, rotationZ = 0, width = 0.48}: PathSegmentProps) {
+export function PathSegment({
+  length,
+  position,
+  rotationZ = 0,
+  width = 0.48
+}: PathSegmentProps) {
   return (
     <group>
       {/* 도로 베이스 */}
-      <mesh receiveShadow position={[position[0], 0.006, position[2]]} rotation={[-Math.PI / 2, 0, rotationZ]}>
+      <mesh
+        receiveShadow
+        position={[position[0], 0.006, position[2]]}
+        rotation={[-Math.PI / 2, 0, rotationZ]}
+      >
         <planeGeometry args={[length, width]} />
         <meshStandardMaterial color="#071525" roughness={0.9} metalness={0.3} />
       </mesh>
       {/* 네온 센터라인 */}
-      <mesh position={[position[0], 0.012, position[2]]} rotation={[-Math.PI / 2, 0, rotationZ]}>
+      <mesh
+        position={[position[0], 0.012, position[2]]}
+        rotation={[-Math.PI / 2, 0, rotationZ]}
+      >
         <planeGeometry args={[length, 0.025]} />
         <meshBasicMaterial color="#00d4ff" transparent opacity={0.6} />
       </mesh>
@@ -32,13 +44,25 @@ export function PathSegment({length, position, rotationZ = 0, width = 0.48}: Pat
   );
 }
 
-export function Fence({position, rotation = 0}: {position: Vector3Tuple; rotation?: number}) {
+export function Fence({
+  position,
+  rotation = 0
+}: {
+  position: Vector3Tuple;
+  rotation?: number;
+}) {
   return (
     <group position={position} rotation={[0, rotation, 0]}>
-      {[-0.75, 0, 0.75].map((x) => (
+      {[-0.75, 0, 0.75].map(x => (
         <mesh castShadow key={x} position={[x, 0.28, 0]}>
           <cylinderGeometry args={[0.03, 0.04, 0.56, 8]} />
-          <meshStandardMaterial color="#0a1a30" roughness={0.4} metalness={0.8} emissive="#0044aa" emissiveIntensity={0.15} />
+          <meshStandardMaterial
+            color="#0a1a30"
+            roughness={0.4}
+            metalness={0.8}
+            emissive="#0044aa"
+            emissiveIntensity={0.15}
+          />
         </mesh>
       ))}
       {/* 에너지 배리어 */}
@@ -50,12 +74,24 @@ export function Fence({position, rotation = 0}: {position: Vector3Tuple; rotatio
         <boxGeometry args={[1.68, 0.025, 0.02]} />
         <meshBasicMaterial color="#00d4ff" transparent opacity={0.4} />
       </mesh>
-      <pointLight color="#00d4ff" intensity={0.4} distance={2} decay={2} position={[0, 0.34, 0]} />
+      <pointLight
+        color="#00d4ff"
+        intensity={0.4}
+        distance={2}
+        decay={2}
+        position={[0, 0.34, 0]}
+      />
     </group>
   );
 }
 
-export function SignPost({label, position}: {label: string; position: Vector3Tuple}) {
+export function SignPost({
+  label,
+  position
+}: {
+  label: string;
+  position: Vector3Tuple;
+}) {
   const color = NEON_COLORS[label] ?? "#00d4ff";
   return (
     <group position={position}>
@@ -67,26 +103,47 @@ export function SignPost({label, position}: {label: string; position: Vector3Tup
       {/* 홀로그램 패널 */}
       <mesh castShadow position={[0, 0.72, 0]}>
         <boxGeometry args={[0.9, 0.3, 0.04]} />
-        <meshStandardMaterial color="#050d1a" roughness={0.2} metalness={0.7} emissive={color} emissiveIntensity={0.15} transparent opacity={0.85} />
+        <meshStandardMaterial
+          color="#050d1a"
+          roughness={0.2}
+          metalness={0.7}
+          emissive={color}
+          emissiveIntensity={0.15}
+          transparent
+          opacity={0.85}
+        />
       </mesh>
       {/* 테두리 글로우 */}
       <mesh position={[0, 0.72, 0.025]}>
         <boxGeometry args={[0.92, 0.32, 0.01]} />
         <meshBasicMaterial color={color} transparent opacity={0.5} />
       </mesh>
-      <pointLight color={color} intensity={0.5} distance={1.5} decay={2} position={[0, 0.72, 0.1]} />
-      <Html center distanceFactor={10} position={[0, 0.75, 0.06]} zIndexRange={[5, 0]}>
-        <span style={{
-          fontFamily: "monospace",
-          fontSize: 9,
-          fontWeight: 900,
-          letterSpacing: "0.18em",
-          color,
-          textShadow: `0 0 8px ${color}`,
-          userSelect: "none",
-          pointerEvents: "none",
-          whiteSpace: "nowrap",
-        }}>
+      <pointLight
+        color={color}
+        intensity={0.5}
+        distance={1.5}
+        decay={2}
+        position={[0, 0.72, 0.1]}
+      />
+      <Html
+        center
+        distanceFactor={10}
+        position={[0, 0.75, 0.06]}
+        zIndexRange={[5, 0]}
+      >
+        <span
+          style={{
+            fontFamily: "monospace",
+            fontSize: 9,
+            fontWeight: 900,
+            letterSpacing: "0.18em",
+            color,
+            textShadow: `0 0 8px ${color}`,
+            userSelect: "none",
+            pointerEvents: "none",
+            whiteSpace: "nowrap"
+          }}
+        >
           {">"} {label}
         </span>
       </Html>

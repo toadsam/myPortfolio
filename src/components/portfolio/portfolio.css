@@ -45,8 +45,11 @@ html {
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at 12% 16%, rgba(47, 189, 95, 0.11), transparent 24%),
+  background: radial-gradient(
+      circle at 12% 16%,
+      rgba(47, 189, 95, 0.11),
+      transparent 24%
+    ),
     radial-gradient(circle at 88% 10%, rgba(47, 189, 95, 0.08), transparent 22%),
     linear-gradient(180deg, var(--page) 0%, var(--page-soft) 100%);
   color: var(--text);
@@ -84,8 +87,11 @@ mark {
   position: fixed;
   inset: 0;
   z-index: 0;
-  background-image:
-    radial-gradient(circle, rgba(28, 41, 34, 0.07) 1px, transparent 1px),
+  background-image: radial-gradient(
+      circle,
+      rgba(28, 41, 34, 0.07) 1px,
+      transparent 1px
+    ),
     linear-gradient(90deg, rgba(20, 33, 27, 0.04) 1px, transparent 1px);
   background-position: 0 0, 0 0;
   background-size: 22px 22px, 100vw 100%;
@@ -116,12 +122,30 @@ mark {
 
 .living-tree-layer::before {
   inset: -18% -10% -12%;
-  background:
-    linear-gradient(116deg, transparent 0 18%, rgba(47, 189, 95, 0.055) 18.3% 18.8%, transparent 19.2% 100%),
-    linear-gradient(64deg, transparent 0 46%, rgba(173, 222, 185, 0.07) 46.2% 46.8%, transparent 47.2% 100%),
-    repeating-linear-gradient(92deg, transparent 0 72px, rgba(47, 189, 95, 0.036) 73px 74px, transparent 75px 148px);
+  background: linear-gradient(
+      116deg,
+      transparent 0 18%,
+      rgba(47, 189, 95, 0.055) 18.3% 18.8%,
+      transparent 19.2% 100%
+    ),
+    linear-gradient(
+      64deg,
+      transparent 0 46%,
+      rgba(173, 222, 185, 0.07) 46.2% 46.8%,
+      transparent 47.2% 100%
+    ),
+    repeating-linear-gradient(
+      92deg,
+      transparent 0 72px,
+      rgba(47, 189, 95, 0.036) 73px 74px,
+      transparent 75px 148px
+    );
   filter: blur(0.2px);
-  mask-image: radial-gradient(ellipse at var(--tree-x) var(--tree-y), black 0 30%, transparent 72%);
+  mask-image: radial-gradient(
+    ellipse at var(--tree-x) var(--tree-y),
+    black 0 30%,
+    transparent 72%
+  );
   opacity: 0.72;
   transform: translate3d(var(--tree-drift-soft-x), var(--tree-drift-soft-y), 0);
   animation: tree-canopy-breathe 16s ease-in-out infinite;
@@ -132,9 +156,13 @@ mark {
   bottom: -18%;
   left: -8%;
   height: 48vh;
-  background:
-    linear-gradient(5deg, rgba(47, 189, 95, 0.09), transparent 64%),
-    repeating-linear-gradient(168deg, transparent 0 34px, rgba(110, 92, 57, 0.075) 35px 36px, transparent 37px 76px);
+  background: linear-gradient(5deg, rgba(47, 189, 95, 0.09), transparent 64%),
+    repeating-linear-gradient(
+      168deg,
+      transparent 0 34px,
+      rgba(110, 92, 57, 0.075) 35px 36px,
+      transparent 37px 76px
+    );
   mask-image: linear-gradient(0deg, black 0 48%, transparent 92%);
   opacity: 0.52;
   transform: translate3d(calc(var(--tree-drift-x) * -0.45), 0, 0);
@@ -156,7 +184,11 @@ body.portfolio-dark .living-tree-layer {
   height: 109%;
   opacity: 1;
   filter: drop-shadow(0 0 24px rgba(47, 189, 95, 0.16));
-  transform: translate3d(calc(var(--tree-drift-x) * 0.22), calc(var(--tree-drift-y) * 0.18), 0);
+  transform: translate3d(
+    calc(var(--tree-drift-x) * 0.22),
+    calc(var(--tree-drift-y) * 0.18),
+    0
+  );
   transition: opacity 0.45s ease, transform 0.28s ease-out;
 }
 
@@ -213,7 +245,8 @@ body.portfolio-dark .living-tree-layer {
   stroke-width: 1.8;
   stroke-dasharray: 7 18;
   opacity: 0.4;
-  animation: tree-canopy-vein-drift 24s linear infinite, tree-organism-breathe 12s ease-in-out infinite;
+  animation: tree-canopy-vein-drift 24s linear infinite,
+    tree-organism-breathe 12s ease-in-out infinite;
 }
 
 .living-tree-sap-path {
@@ -221,7 +254,8 @@ body.portfolio-dark .living-tree-layer {
   stroke-dasharray: 5 36;
   stroke-width: 2;
   opacity: 0.62;
-  animation: tree-sap-flow 14s linear infinite, tree-sap-breathe 7.2s ease-in-out infinite;
+  animation: tree-sap-flow 14s linear infinite,
+    tree-sap-breathe 7.2s ease-in-out infinite;
   transition: opacity 0.36s ease, stroke-width 0.36s ease;
 }
 
@@ -322,7 +356,11 @@ body.portfolio-dark .living-tree-layer {
 
 .living-tree-leaves {
   z-index: 3;
-  transform: translate3d(calc(var(--tree-drift-soft-x) * 0.32), calc(var(--tree-drift-soft-y) * 0.28), 0);
+  transform: translate3d(
+    calc(var(--tree-drift-soft-x) * 0.32),
+    calc(var(--tree-drift-soft-y) * 0.28),
+    0
+  );
 }
 
 .living-tree-leaf {
@@ -333,9 +371,18 @@ body.portfolio-dark .living-tree-layer {
   height: var(--leaf-size);
   border: 1px solid rgba(47, 189, 95, 0.18);
   border-radius: 76% 8% 74% 16%;
-  background:
-    linear-gradient(130deg, rgba(232, 255, 236, 0.56), rgba(47, 189, 95, 0.16) 58%, transparent),
-    linear-gradient(34deg, transparent 45%, rgba(47, 189, 95, 0.3) 47% 50%, transparent 52%);
+  background: linear-gradient(
+      130deg,
+      rgba(232, 255, 236, 0.56),
+      rgba(47, 189, 95, 0.16) 58%,
+      transparent
+    ),
+    linear-gradient(
+      34deg,
+      transparent 45%,
+      rgba(47, 189, 95, 0.3) 47% 50%,
+      transparent 52%
+    );
   box-shadow: 0 0 22px rgba(47, 189, 95, 0.16);
   opacity: 0.44;
   transform: translate(-50%, -50%) rotate(var(--leaf-rotate)) scaleY(0.58);
@@ -345,15 +392,21 @@ body.portfolio-dark .living-tree-layer {
 }
 
 .living-tree-layer.is-skill-frontend .living-tree-leaf:nth-child(-n + 4),
-.living-tree-layer.is-skill-backend .living-tree-leaf:nth-child(n + 4):nth-child(-n + 8),
-.living-tree-layer.is-skill-game .living-tree-leaf:nth-child(n + 7):nth-child(-n + 10) {
+.living-tree-layer.is-skill-backend
+  .living-tree-leaf:nth-child(n + 4):nth-child(-n + 8),
+.living-tree-layer.is-skill-game
+  .living-tree-leaf:nth-child(n + 7):nth-child(-n + 10) {
   opacity: 0.82;
   box-shadow: 0 0 34px rgba(47, 189, 95, 0.28);
 }
 
 .living-fireflies {
   z-index: 4;
-  transform: translate3d(calc(var(--tree-drift-x) * 0.1), calc(var(--tree-drift-y) * 0.1), 0);
+  transform: translate3d(
+    calc(var(--tree-drift-x) * 0.1),
+    calc(var(--tree-drift-y) * 0.1),
+    0
+  );
 }
 
 .living-firefly {
@@ -363,11 +416,15 @@ body.portfolio-dark .living-tree-layer {
   width: var(--firefly-size);
   height: var(--firefly-size);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 234, 1) 0 18%, rgba(126, 255, 157, 0.96) 28%, rgba(47, 189, 95, 0.42) 58%, transparent 72%);
-  box-shadow:
-    0 0 18px rgba(255, 255, 217, 1),
-    0 0 48px rgba(116, 255, 143, 0.56),
-    0 0 96px rgba(47, 189, 95, 0.28);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 234, 1) 0 18%,
+    rgba(126, 255, 157, 0.96) 28%,
+    rgba(47, 189, 95, 0.42) 58%,
+    transparent 72%
+  );
+  box-shadow: 0 0 18px rgba(255, 255, 217, 1),
+    0 0 48px rgba(116, 255, 143, 0.56), 0 0 96px rgba(47, 189, 95, 0.28);
   opacity: 0;
   transform: translate3d(0, 0, 0) scale(0.7);
   animation: firefly-drift var(--firefly-duration) ease-in-out infinite;
@@ -384,7 +441,12 @@ body.portfolio-dark .living-tree-layer {
 
 .living-firefly::before {
   inset: -24px;
-  background: radial-gradient(circle, rgba(232, 255, 201, 0.26), rgba(112, 255, 150, 0.14) 42%, transparent 72%);
+  background: radial-gradient(
+    circle,
+    rgba(232, 255, 201, 0.26),
+    rgba(112, 255, 150, 0.14) 42%,
+    transparent 72%
+  );
   filter: blur(2px);
   animation: firefly-halo 4.8s ease-in-out infinite;
 }
@@ -394,7 +456,12 @@ body.portfolio-dark .living-tree-layer {
   left: 50%;
   width: 74px;
   height: 2px;
-  background: linear-gradient(90deg, rgba(219, 255, 176, 0.42), rgba(116, 255, 143, 0.18), transparent);
+  background: linear-gradient(
+    90deg,
+    rgba(219, 255, 176, 0.42),
+    rgba(116, 255, 143, 0.18),
+    transparent
+  );
   opacity: 0.36;
   transform: translate(-50%, -50%) rotate(-18deg);
 }
@@ -411,12 +478,18 @@ body.portfolio-dark .living-tree-layer {
   width: clamp(300px, 31vw, 520px);
   height: clamp(300px, 31vw, 520px);
   border-radius: 50%;
-  background:
-    radial-gradient(circle, rgba(249, 255, 224, 0.24) 0 4%, rgba(126, 255, 157, 0.15) 18%, rgba(47, 189, 95, 0.075) 40%, transparent 72%);
+  background: radial-gradient(
+    circle,
+    rgba(249, 255, 224, 0.24) 0 4%,
+    rgba(126, 255, 157, 0.15) 18%,
+    rgba(47, 189, 95, 0.075) 40%,
+    transparent 72%
+  );
   filter: blur(10px);
   opacity: 0.5;
   transform: translate(-50%, -50%);
-  transition: top 0.74s cubic-bezier(0.16, 1, 0.3, 1), left 0.74s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
+  transition: top 0.74s cubic-bezier(0.16, 1, 0.3, 1),
+    left 0.74s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.32s ease;
   animation: cursor-light-breathe 4.8s ease-in-out infinite;
 }
 
@@ -427,16 +500,22 @@ body.portfolio-dark .living-tree-layer {
   width: var(--cursor-firefly-size);
   height: var(--cursor-firefly-size);
   border-radius: 50%;
-  background:
-    radial-gradient(circle, #fffff0 0 16%, #dfffaa 20% 31%, rgba(127, 255, 143, 0.96) 38%, rgba(47, 189, 95, 0.5) 58%, transparent 76%);
-  box-shadow:
-    0 0 22px rgba(255, 255, 220, 1),
-    0 0 58px rgba(139, 255, 142, 0.82),
-    0 0 148px rgba(47, 189, 95, 0.4);
+  background: radial-gradient(
+    circle,
+    #fffff0 0 16%,
+    #dfffaa 20% 31%,
+    rgba(127, 255, 143, 0.96) 38%,
+    rgba(47, 189, 95, 0.5) 58%,
+    transparent 76%
+  );
+  box-shadow: 0 0 22px rgba(255, 255, 220, 1),
+    0 0 58px rgba(139, 255, 142, 0.82), 0 0 148px rgba(47, 189, 95, 0.4);
   opacity: 0.94;
   transform: translate(-50%, -50%);
-  transition: top var(--cursor-firefly-follow) cubic-bezier(0.16, 1, 0.3, 1), left var(--cursor-firefly-follow) cubic-bezier(0.16, 1, 0.3, 1);
-  animation: cursor-firefly-orbit var(--cursor-firefly-duration) ease-in-out infinite;
+  transition: top var(--cursor-firefly-follow) cubic-bezier(0.16, 1, 0.3, 1),
+    left var(--cursor-firefly-follow) cubic-bezier(0.16, 1, 0.3, 1);
+  animation: cursor-firefly-orbit var(--cursor-firefly-duration) ease-in-out
+    infinite;
   animation-delay: var(--cursor-firefly-delay);
 }
 
@@ -450,8 +529,13 @@ body.portfolio-dark .living-tree-layer {
 .cursor-firefly::before {
   inset: -58px;
   border-radius: 50%;
-  background:
-    radial-gradient(circle, rgba(249, 255, 214, 0.34), rgba(132, 255, 154, 0.17) 34%, rgba(47, 189, 95, 0.07) 56%, transparent 74%);
+  background: radial-gradient(
+    circle,
+    rgba(249, 255, 214, 0.34),
+    rgba(132, 255, 154, 0.17) 34%,
+    rgba(47, 189, 95, 0.07) 56%,
+    transparent 74%
+  );
   filter: blur(5px);
   animation: cursor-firefly-halo 3.8s ease-in-out infinite;
   animation-delay: var(--cursor-firefly-delay);
@@ -463,7 +547,12 @@ body.portfolio-dark .living-tree-layer {
   width: 120px;
   height: 2px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(241, 255, 188, 0.52), rgba(82, 239, 139, 0.16), transparent);
+  background: linear-gradient(
+    90deg,
+    rgba(241, 255, 188, 0.52),
+    rgba(82, 239, 139, 0.16),
+    transparent
+  );
   opacity: 0.38;
   filter: blur(0.4px);
   transform: translate(-50%, -50%) rotate(-22deg);
@@ -476,9 +565,7 @@ body.portfolio-dark .living-tree-layer {
 }
 
 .living-tree-layer.has-pulse .cursor-firefly {
-  box-shadow:
-    0 0 26px rgba(255, 255, 218, 1),
-    0 0 72px rgba(139, 255, 142, 0.9),
+  box-shadow: 0 0 26px rgba(255, 255, 218, 1), 0 0 72px rgba(139, 255, 142, 0.9),
     0 0 178px rgba(47, 189, 95, 0.48);
 }
 
@@ -491,9 +578,18 @@ body.portfolio-dark .living-tree-shadow {
 }
 
 body.portfolio-dark .living-tree-leaf {
-  background:
-    linear-gradient(130deg, rgba(190, 255, 205, 0.4), rgba(47, 189, 95, 0.18) 58%, transparent),
-    linear-gradient(34deg, transparent 45%, rgba(92, 255, 143, 0.34) 47% 50%, transparent 52%);
+  background: linear-gradient(
+      130deg,
+      rgba(190, 255, 205, 0.4),
+      rgba(47, 189, 95, 0.18) 58%,
+      transparent
+    ),
+    linear-gradient(
+      34deg,
+      transparent 45%,
+      rgba(92, 255, 143, 0.34) 47% 50%,
+      transparent 52%
+    );
 }
 
 .living-tree-veins {
@@ -503,7 +599,11 @@ body.portfolio-dark .living-tree-leaf {
   height: 106%;
   filter: drop-shadow(0 0 16px rgba(47, 189, 95, 0.13));
   opacity: 0.56;
-  transform: translate3d(calc(var(--tree-drift-x) * 0.32), calc(var(--tree-drift-y) * 0.24), 0);
+  transform: translate3d(
+    calc(var(--tree-drift-x) * 0.32),
+    calc(var(--tree-drift-y) * 0.24),
+    0
+  );
   transition: transform 0.28s ease-out, opacity 0.45s ease;
 }
 
@@ -514,7 +614,8 @@ body.portfolio-dark .living-tree-leaf {
   stroke-linecap: round;
   stroke-width: 0.2;
   vector-effect: non-scaling-stroke;
-  animation: tree-sap-flow 18s linear infinite, tree-vein-breathe 9s ease-in-out infinite;
+  animation: tree-sap-flow 18s linear infinite,
+    tree-vein-breathe 9s ease-in-out infinite;
 }
 
 .living-tree-path--main {
@@ -547,14 +648,25 @@ body.portfolio-dark .living-tree-leaf {
   width: clamp(360px, 43vw, 760px);
   height: clamp(220px, 32vw, 500px);
   border-radius: 56% 44% 48% 52%;
-  background:
-    conic-gradient(from 122deg at 42% 48%, transparent, rgba(47, 189, 95, 0.12), transparent 42%),
-    linear-gradient(96deg, transparent 8%, rgba(47, 189, 95, 0.11) 31%, rgba(171, 223, 182, 0.08) 56%, transparent 82%);
+  background: conic-gradient(
+      from 122deg at 42% 48%,
+      transparent,
+      rgba(47, 189, 95, 0.12),
+      transparent 42%
+    ),
+    linear-gradient(
+      96deg,
+      transparent 8%,
+      rgba(47, 189, 95, 0.11) 31%,
+      rgba(171, 223, 182, 0.08) 56%,
+      transparent 82%
+    );
   filter: blur(24px);
   mix-blend-mode: multiply;
   opacity: 0.48;
   transform: translate3d(-50%, -50%, 0);
-  transition: left 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.45s ease;
+  transition: left 0.7s cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.45s ease;
   animation: tree-fiber-breathe 12s ease-in-out infinite;
 }
 
@@ -584,13 +696,28 @@ body.portfolio-dark .living-tree-fiber {
   width: clamp(330px, 36vw, 690px);
   height: clamp(210px, 27vw, 470px);
   border-radius: 48% 52% 58% 42%;
-  background:
-    radial-gradient(ellipse at 38% 45%, rgba(84, 235, 137, 0.28), transparent 50%),
-    linear-gradient(122deg, transparent 8%, rgba(244, 255, 239, 0.32) 34%, rgba(47, 189, 95, 0.16) 54%, transparent 76%);
+  background: radial-gradient(
+      ellipse at 38% 45%,
+      rgba(84, 235, 137, 0.28),
+      transparent 50%
+    ),
+    linear-gradient(
+      122deg,
+      transparent 8%,
+      rgba(244, 255, 239, 0.32) 34%,
+      rgba(47, 189, 95, 0.16) 54%,
+      transparent 76%
+    );
   filter: blur(18px);
   opacity: 0.5;
-  transform: translate3d(calc(-50% + var(--tree-drift-x)), calc(-50% + var(--tree-drift-y)), 0) rotate(-3deg);
-  transition: left 0.68s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.68s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.36s ease;
+  transform: translate3d(
+      calc(-50% + var(--tree-drift-x)),
+      calc(-50% + var(--tree-drift-y)),
+      0
+    )
+    rotate(-3deg);
+  transition: left 0.68s cubic-bezier(0.2, 0.8, 0.2, 1),
+    top 0.68s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.36s ease;
   animation: tree-core-breathe 10.8s ease-in-out infinite;
 }
 
@@ -600,8 +727,7 @@ body.portfolio-dark .living-tree-fiber {
   bottom: 0;
   left: 86px;
   height: 42vh;
-  background:
-    linear-gradient(0deg, rgba(47, 189, 95, 0.08), transparent 72%),
+  background: linear-gradient(0deg, rgba(47, 189, 95, 0.08), transparent 72%),
     linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
   mask-image: linear-gradient(0deg, black, transparent 82%);
   opacity: 0.48;
@@ -654,7 +780,12 @@ body.portfolio-dark .living-tree-fiber {
   width: var(--pulse-length);
   height: 2px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(47, 189, 95, 0.82), rgba(191, 255, 211, 0.44), transparent);
+  background: linear-gradient(
+    90deg,
+    rgba(47, 189, 95, 0.82),
+    rgba(191, 255, 211, 0.44),
+    transparent
+  );
   filter: blur(0.2px);
   transform: translate(0, -50%) rotate(var(--pulse-angle)) scaleX(0);
   transform-origin: left center;
@@ -691,7 +822,12 @@ body.portfolio-dark .living-tree-fiber {
   width: 180px;
   height: 180px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(56, 232, 122, 0.22), rgba(56, 232, 122, 0.08) 36%, transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(56, 232, 122, 0.22),
+    rgba(56, 232, 122, 0.08) 36%,
+    transparent 70%
+  );
   filter: blur(10px);
   opacity: 0.25;
   pointer-events: none;
@@ -735,13 +871,21 @@ body.portfolio-dark .cursor-glow {
   align-items: center;
   gap: 1.5rem;
   padding: 1.25rem clamp(1.2rem, 3vw, 3.2rem);
-  background: linear-gradient(180deg, rgba(247, 248, 245, 0.86), rgba(247, 248, 245, 0.46));
+  background: linear-gradient(
+    180deg,
+    rgba(247, 248, 245, 0.86),
+    rgba(247, 248, 245, 0.46)
+  );
   border-bottom: 1px solid rgba(20, 33, 27, 0.04);
   backdrop-filter: blur(20px);
 }
 
 body.portfolio-dark .top-nav {
-  background: linear-gradient(180deg, rgba(7, 16, 12, 0.86), rgba(7, 16, 12, 0.46));
+  background: linear-gradient(
+    180deg,
+    rgba(7, 16, 12, 0.86),
+    rgba(7, 16, 12, 0.46)
+  );
 }
 
 .brand-mark,
@@ -934,7 +1078,8 @@ main {
 .portfolio-section {
   position: relative;
   min-height: 100vh;
-  padding: clamp(6.5rem, 9vw, 8.5rem) clamp(1.25rem, 5vw, 6rem) clamp(3rem, 6vw, 5rem);
+  padding: clamp(6.5rem, 9vw, 8.5rem) clamp(1.25rem, 5vw, 6rem)
+    clamp(3rem, 6vw, 5rem);
   border-bottom: 1px solid var(--line);
 }
 
@@ -949,7 +1094,8 @@ main {
 .reveal {
   opacity: 0;
   transform: translateY(40px) scale(0.98);
-  transition: opacity 0.75s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: opacity 0.75s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .reveal.is-visible {
@@ -1037,13 +1183,18 @@ main {
   text-transform: uppercase;
   cursor: pointer;
   overflow: hidden;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease,
+    transform 0.25s ease;
 }
 
 .magnetic-button::before {
   position: absolute;
   inset: -45%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.36), transparent 42%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.36),
+    transparent 42%
+  );
   content: "";
   opacity: 0;
   transform: scale(0.5);
@@ -1126,7 +1277,8 @@ main {
   background: var(--card-strong);
   box-shadow: var(--shadow);
   backdrop-filter: blur(24px);
-  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.18s ease-out;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease,
+    transform 0.18s ease-out;
 }
 
 .floating-card:hover {
@@ -1223,8 +1375,11 @@ main {
   min-height: 230px;
   overflow: hidden;
   border-radius: 22px;
-  background:
-    radial-gradient(circle at 72% 24%, rgba(255, 255, 255, 0.8), transparent 5%),
+  background: radial-gradient(
+      circle at 72% 24%,
+      rgba(255, 255, 255, 0.8),
+      transparent 5%
+    ),
     linear-gradient(180deg, #9ec9ef 0%, #d9efd7 46%, #615c4e 100%);
   transition: transform 0.35s ease;
 }
@@ -1235,7 +1390,11 @@ main {
   bottom: 0;
   left: 0;
   height: 45%;
-  background: radial-gradient(ellipse at center, rgba(47, 189, 95, 0.22), transparent 68%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(47, 189, 95, 0.22),
+    transparent 68%
+  );
   content: "";
   opacity: 0;
   pointer-events: none;
@@ -1252,8 +1411,12 @@ main {
   bottom: 8%;
   left: -10%;
   height: 58%;
-  background:
-    linear-gradient(135deg, transparent 24%, #3f7556 25% 46%, transparent 47%),
+  background: linear-gradient(
+      135deg,
+      transparent 24%,
+      #3f7556 25% 46%,
+      transparent 47%
+    ),
     linear-gradient(45deg, transparent 18%, #315f47 19% 48%, transparent 49%),
     linear-gradient(135deg, transparent 38%, #234534 39% 66%, transparent 67%);
   opacity: 0.85;
@@ -1393,30 +1556,58 @@ main {
   width: min(680px, 58vw);
   height: min(680px, 58vw);
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(47, 189, 95, 0.12), transparent 58%),
-    conic-gradient(from 120deg, transparent, rgba(47, 189, 95, 0.16), transparent 42%);
+  background: radial-gradient(
+      circle at 50% 50%,
+      rgba(47, 189, 95, 0.12),
+      transparent 58%
+    ),
+    conic-gradient(
+      from 120deg,
+      transparent,
+      rgba(47, 189, 95, 0.16),
+      transparent 42%
+    );
   content: "";
   filter: blur(4px);
   opacity: 0.72;
   pointer-events: none;
-  transform: translate3d(var(--skill-pointer-x, 0), var(--skill-pointer-y, 0), 0);
+  transform: translate3d(
+    var(--skill-pointer-x, 0),
+    var(--skill-pointer-y, 0),
+    0
+  );
   transition: transform 0.28s ease, opacity 0.32s ease;
-  animation: skill-orbit-field 24s linear infinite, skill-field-breathe 11s ease-in-out infinite;
+  animation: skill-orbit-field 24s linear infinite,
+    skill-field-breathe 11s ease-in-out infinite;
 }
 
 .skills-section--linked::after {
   inset: auto auto 8% 4%;
   width: min(440px, 42vw);
   height: min(440px, 42vw);
-  background:
-    linear-gradient(90deg, transparent 0 48%, rgba(47, 189, 95, 0.1) 48% 52%, transparent 52%),
-    linear-gradient(0deg, transparent 0 48%, rgba(47, 189, 95, 0.08) 48% 52%, transparent 52%);
+  background: linear-gradient(
+      90deg,
+      transparent 0 48%,
+      rgba(47, 189, 95, 0.1) 48% 52%,
+      transparent 52%
+    ),
+    linear-gradient(
+      0deg,
+      transparent 0 48%,
+      rgba(47, 189, 95, 0.08) 48% 52%,
+      transparent 52%
+    );
   background-size: 42px 42px;
   border-radius: 32px;
   opacity: 0.34;
-  transform: translate3d(var(--skill-pointer-x-soft, 0), var(--skill-pointer-y-soft, 0), 0) rotate(-8deg);
-  animation: skill-grid-drift 18s ease-in-out infinite alternate, skill-grid-fade 9s ease-in-out infinite;
+  transform: translate3d(
+      var(--skill-pointer-x-soft, 0),
+      var(--skill-pointer-y-soft, 0),
+      0
+    )
+    rotate(-8deg);
+  animation: skill-grid-drift 18s ease-in-out infinite alternate,
+    skill-grid-fade 9s ease-in-out infinite;
 }
 
 .skills-section--linked[data-active-area="frontend"]::before {
@@ -1425,15 +1616,25 @@ main {
 
 .skills-section--linked[data-active-area="backend"]::before {
   inset: 6% 8% auto auto;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(47, 189, 95, 0.14), transparent 56%),
-    repeating-linear-gradient(90deg, transparent 0 22px, rgba(47, 189, 95, 0.08) 22px 24px);
+  background: radial-gradient(
+      circle at 50% 50%,
+      rgba(47, 189, 95, 0.14),
+      transparent 56%
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 22px,
+      rgba(47, 189, 95, 0.08) 22px 24px
+    );
 }
 
 .skills-section--linked[data-active-area="game"]::before {
   inset: 1% 2% auto auto;
-  background:
-    radial-gradient(circle at 68% 38%, rgba(47, 189, 95, 0.16), transparent 34%),
+  background: radial-gradient(
+      circle at 68% 38%,
+      rgba(47, 189, 95, 0.16),
+      transparent 34%
+    ),
     radial-gradient(circle at 24% 66%, rgba(47, 189, 95, 0.08), transparent 30%);
 }
 
@@ -1495,7 +1696,8 @@ main {
   color: var(--green);
   font-weight: 700;
   cursor: pointer;
-  transition: background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  transition: background 0.25s ease, box-shadow 0.25s ease, color 0.25s ease,
+    transform 0.25s ease;
 }
 
 .skills-related-button i,
@@ -1554,14 +1756,19 @@ main {
   overflow: hidden;
   cursor: pointer;
   outline: none;
-  transition: border-color 0.28s ease, box-shadow 0.28s ease, min-height 0.36s ease, opacity 0.28s ease, transform 0.28s ease;
+  transition: border-color 0.28s ease, box-shadow 0.28s ease,
+    min-height 0.36s ease, opacity 0.28s ease, transform 0.28s ease;
 }
 
 .skill-area-card::before {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at calc(20% + var(--skill-pointer-x, 0px)) calc(6% + var(--skill-pointer-y, 0px)), rgba(47, 189, 95, 0.14), transparent 34%),
+  background: radial-gradient(
+      circle at calc(20% + var(--skill-pointer-x, 0px))
+        calc(6% + var(--skill-pointer-y, 0px)),
+      rgba(47, 189, 95, 0.14),
+      transparent 34%
+    ),
     linear-gradient(135deg, rgba(47, 189, 95, 0.04), transparent 42%);
   content: "";
   opacity: 0;
@@ -1573,7 +1780,12 @@ main {
   inset: auto 1.4rem 1.2rem 1.4rem;
   z-index: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(47, 189, 95, 0.55), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(47, 189, 95, 0.55),
+    transparent
+  );
   content: "";
   opacity: 0;
   transform: scaleX(0.3);
@@ -1605,9 +1817,11 @@ main {
 .skill-area-card.is-active {
   min-height: 602px;
   border-color: var(--green);
-  box-shadow: var(--shadow-strong), 0 0 0 1px rgba(47, 189, 95, 0.12), 0 24px 90px rgba(47, 189, 95, 0.16);
+  box-shadow: var(--shadow-strong), 0 0 0 1px rgba(47, 189, 95, 0.12),
+    0 24px 90px rgba(47, 189, 95, 0.16);
   opacity: 1;
-  transform: translate3d(var(--skill-card-x, 0), var(--skill-card-y, 0), 0) scale(1.01);
+  transform: translate3d(var(--skill-card-x, 0), var(--skill-card-y, 0), 0)
+    scale(1.01);
   animation: skill-active-breathe 9s ease-in-out infinite;
 }
 
@@ -1621,7 +1835,8 @@ main {
   animation: skill-card-scan 8.6s ease-in-out infinite;
 }
 
-.skill-area-cards:has(.skill-area-card.is-active) .skill-area-card:not(.is-active) {
+.skill-area-cards:has(.skill-area-card.is-active)
+  .skill-area-card:not(.is-active) {
   opacity: 0.76;
 }
 
@@ -1645,7 +1860,8 @@ main {
   border-radius: 16px;
   background: var(--card-strong);
   color: var(--muted);
-  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  transition: background 0.25s ease, border-color 0.25s ease,
+    box-shadow 0.25s ease, color 0.25s ease, transform 0.25s ease;
 }
 
 .skill-area-card.is-active .skill-area-icon {
@@ -1840,18 +2056,17 @@ main {
   overflow: hidden;
   border: 1px solid rgba(47, 189, 95, 0.16);
   border-radius: 16px;
-  background:
-    linear-gradient(135deg, rgba(47, 189, 95, 0.08), transparent 58%),
+  background: linear-gradient(135deg, rgba(47, 189, 95, 0.08), transparent 58%),
     rgba(255, 255, 255, 0.46);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42), 0 18px 44px rgba(47, 189, 95, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.42),
+    0 18px 44px rgba(47, 189, 95, 0.06);
   opacity: 0;
   transform: translateY(10px);
   transition: opacity 0.52s ease, transform 0.52s ease;
 }
 
 body.portfolio-dark .skill-live-system {
-  background:
-    linear-gradient(135deg, rgba(47, 189, 95, 0.12), transparent 58%),
+  background: linear-gradient(135deg, rgba(47, 189, 95, 0.12), transparent 58%),
     rgba(255, 255, 255, 0.04);
 }
 
@@ -1865,8 +2080,12 @@ body.portfolio-dark .skill-live-system {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background:
-    linear-gradient(90deg, transparent, rgba(47, 189, 95, 0.16), transparent),
+  background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(47, 189, 95, 0.16),
+      transparent
+    ),
     radial-gradient(circle at 20% 20%, rgba(47, 189, 95, 0.1), transparent 26%);
   content: "";
   opacity: 0.58;
@@ -1879,10 +2098,22 @@ body.portfolio-dark .skill-live-system {
   inset: 10px;
   z-index: 0;
   border-radius: 14px;
-  background:
-    radial-gradient(circle at 18% 22%, rgba(47, 189, 95, 0.2) 0 3px, transparent 4px),
-    radial-gradient(circle at 76% 64%, rgba(47, 189, 95, 0.14) 0 2px, transparent 3px),
-    linear-gradient(120deg, transparent 0 44%, rgba(47, 189, 95, 0.08) 44% 46%, transparent 46% 100%);
+  background: radial-gradient(
+      circle at 18% 22%,
+      rgba(47, 189, 95, 0.2) 0 3px,
+      transparent 4px
+    ),
+    radial-gradient(
+      circle at 76% 64%,
+      rgba(47, 189, 95, 0.14) 0 2px,
+      transparent 3px
+    ),
+    linear-gradient(
+      120deg,
+      transparent 0 44%,
+      rgba(47, 189, 95, 0.08) 44% 46%,
+      transparent 46% 100%
+    );
   content: "";
   opacity: 0.46;
   pointer-events: none;
@@ -1924,7 +2155,11 @@ body.portfolio-dark .skill-live-system {
 .live-ui-hero {
   height: 25px;
   border-radius: 8px;
-  background: linear-gradient(90deg, rgba(47, 189, 95, 0.34), rgba(47, 189, 95, 0.1));
+  background: linear-gradient(
+    90deg,
+    rgba(47, 189, 95, 0.34),
+    rgba(47, 189, 95, 0.1)
+  );
   animation: live-ui-fill 8.2s ease-in-out infinite;
 }
 
@@ -2093,8 +2328,11 @@ body.portfolio-dark .skill-live-system {
   min-height: 84px;
   overflow: hidden;
   border-radius: 13px;
-  background:
-    linear-gradient(135deg, rgba(16, 23, 21, 0.9), rgba(21, 40, 32, 0.72)),
+  background: linear-gradient(
+      135deg,
+      rgba(16, 23, 21, 0.9),
+      rgba(21, 40, 32, 0.72)
+    ),
     radial-gradient(circle at 80% 30%, rgba(47, 189, 95, 0.42), transparent 30%);
 }
 
@@ -2140,7 +2378,11 @@ body.portfolio-dark .skill-live-system {
   top: 52%;
   width: 48%;
   height: 2px;
-  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.75) 0 8px, transparent 8px 15px);
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.75) 0 8px,
+    transparent 8px 15px
+  );
   opacity: 0.32;
   transform: rotate(-17deg);
 }
@@ -2227,7 +2469,8 @@ body.portfolio-dark .skill-live-system {
 .skill-card-tags > span {
   opacity: 0;
   transform: translateY(6px);
-  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
+  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease,
+    opacity 0.25s ease, transform 0.25s ease;
 }
 
 .skill-card-tags > span:hover {
@@ -2295,7 +2538,8 @@ body.portfolio-dark .skill-live-system {
   color: var(--muted);
   opacity: 0.58;
   transform: scale(1);
-  transition: opacity 0.25s ease, transform 0.25s ease, border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease, border-color 0.25s ease,
+    background 0.25s ease, color 0.25s ease;
 }
 
 .skill-logo-frame {
@@ -2309,7 +2553,8 @@ body.portfolio-dark .skill-live-system {
   border-radius: 7px;
   background: rgba(255, 255, 255, 0.96);
   color: var(--text);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, background 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease,
+    transform 0.25s ease, background 0.25s ease;
 }
 
 .skill-logo-frame img {
@@ -2358,8 +2603,11 @@ body.portfolio-dark .skill-live-system {
 
 .linked-tag.is-active {
   border-color: rgba(47, 189, 95, 0.58);
-  background:
-    linear-gradient(180deg, rgba(47, 189, 95, 0.11), rgba(47, 189, 95, 0.04)),
+  background: linear-gradient(
+      180deg,
+      rgba(47, 189, 95, 0.11),
+      rgba(47, 189, 95, 0.04)
+    ),
     var(--card-strong);
   color: var(--text);
   opacity: 1;
@@ -2387,8 +2635,7 @@ body.portfolio-dark .skill-live-system {
 }
 
 .skill-linked-row--projects {
-  background:
-    linear-gradient(90deg, rgba(47, 189, 95, 0.08), transparent 64%),
+  background: linear-gradient(90deg, rgba(47, 189, 95, 0.08), transparent 64%),
     var(--card);
 }
 
@@ -2411,8 +2658,10 @@ body.portfolio-dark .skill-live-system {
   text-align: left;
   opacity: 0;
   transform: translateY(18px);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.28s ease, transform 0.28s ease;
-  animation: skill-project-card-in 0.36s ease forwards, skill-project-idle 9.5s ease-in-out infinite;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, opacity 0.28s ease,
+    transform 0.28s ease;
+  animation: skill-project-card-in 0.36s ease forwards,
+    skill-project-idle 9.5s ease-in-out infinite;
   animation-delay: 0s, var(--project-pulse-delay, 0s);
 }
 
@@ -2467,7 +2716,8 @@ body.portfolio-dark .skill-live-system {
   font-family: var(--mono);
   font-size: 0.68rem;
   cursor: pointer;
-  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .filter-button:hover,
@@ -2525,7 +2775,8 @@ body.portfolio-dark .skill-live-system {
   border-radius: 28px;
   background: var(--card-strong);
   box-shadow: var(--shadow);
-  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .project-card:hover,
@@ -2609,14 +2860,20 @@ body.portfolio-dark .skill-live-system {
   min-height: 360px;
   overflow: hidden;
   border-radius: 24px;
-  background:
-    radial-gradient(circle at 70% 28%, var(--project-color), transparent 24%),
+  background: radial-gradient(
+      circle at 70% 28%,
+      var(--project-color),
+      transparent 24%
+    ),
     linear-gradient(135deg, #edf3f0, #d8e7dc);
 }
 
 body.portfolio-dark .project-visual {
-  background:
-    radial-gradient(circle at 70% 28%, var(--project-color), transparent 24%),
+  background: radial-gradient(
+      circle at 70% 28%,
+      var(--project-color),
+      transparent 24%
+    ),
     linear-gradient(135deg, #101915, #18261f);
 }
 
@@ -2679,8 +2936,7 @@ body.portfolio-dark .project-visual {
 .mock-browser__grid span {
   min-height: 55px;
   border-radius: 12px;
-  background:
-    linear-gradient(120deg, rgba(255, 255, 255, 0.1), transparent),
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.1), transparent),
     linear-gradient(135deg, var(--project-color), #14231c);
 }
 
@@ -2878,7 +3134,8 @@ body.portfolio-dark .mock-phone {
   background: rgba(255, 255, 255, 0.38);
   color: var(--muted);
   line-height: 1.65;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease,
+    transform 0.25s ease;
 }
 
 body.portfolio-dark .issue-grid article,
@@ -3226,7 +3483,8 @@ body.portfolio-dark .flow-stepper button {
   gap: 1rem;
   min-height: 110px;
   padding: 1.1rem;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease,
+    transform 0.25s ease;
 }
 
 .sub-project-card:hover {
@@ -3298,8 +3556,11 @@ body.portfolio-dark .flow-stepper button {
   min-height: 82px;
   overflow: hidden;
   border-radius: 16px;
-  background:
-    radial-gradient(circle at 50% 50%, rgba(47, 189, 95, 0.4), transparent 24%),
+  background: radial-gradient(
+      circle at 50% 50%,
+      rgba(47, 189, 95, 0.4),
+      transparent 24%
+    ),
     linear-gradient(135deg, rgba(47, 189, 95, 0.1), rgba(255, 255, 255, 0.5));
 }
 
@@ -3322,7 +3583,10 @@ body.portfolio-dark .flow-stepper button {
 
 .contact-grid {
   display: grid;
-  grid-template-columns: minmax(300px, 0.9fr) minmax(260px, 0.7fr) minmax(360px, 1fr);
+  grid-template-columns: minmax(300px, 0.9fr) minmax(260px, 0.7fr) minmax(
+      360px,
+      1fr
+    );
   align-items: start;
   gap: 1.2rem;
   min-height: calc(100vh - 12rem);
@@ -3496,12 +3760,22 @@ body.portfolio-dark .contact-form textarea {
   0%,
   100% {
     opacity: 0.62;
-    transform: translate3d(var(--tree-drift-soft-x), var(--tree-drift-soft-y), 0) scale(1);
+    transform: translate3d(
+        var(--tree-drift-soft-x),
+        var(--tree-drift-soft-y),
+        0
+      )
+      scale(1);
   }
 
   50% {
     opacity: 0.84;
-    transform: translate3d(calc(var(--tree-drift-soft-x) + 10px), calc(var(--tree-drift-soft-y) - 8px), 0) scale(1.035);
+    transform: translate3d(
+        calc(var(--tree-drift-soft-x) + 10px),
+        calc(var(--tree-drift-soft-y) - 8px),
+        0
+      )
+      scale(1.035);
   }
 }
 
@@ -3637,7 +3911,8 @@ body.portfolio-dark .contact-form textarea {
   }
 
   50% {
-    box-shadow: 0 0 0 9px rgba(47, 189, 95, 0.12), 0 0 26px rgba(47, 189, 95, 0.22);
+    box-shadow: 0 0 0 9px rgba(47, 189, 95, 0.12),
+      0 0 26px rgba(47, 189, 95, 0.22);
   }
 }
 
@@ -3709,17 +3984,20 @@ body.portfolio-dark .contact-form textarea {
   0%,
   100% {
     opacity: 0.24;
-    transform: translate(-50%, -50%) rotate(var(--leaf-rotate)) scaleY(0.56) scale(0.94);
+    transform: translate(-50%, -50%) rotate(var(--leaf-rotate)) scaleY(0.56)
+      scale(0.94);
   }
 
   38% {
     opacity: 0.55;
-    transform: translate(-50%, calc(-50% - 4px)) rotate(calc(var(--leaf-rotate) + 4deg)) scaleY(0.62) scale(1.08);
+    transform: translate(-50%, calc(-50% - 4px))
+      rotate(calc(var(--leaf-rotate) + 4deg)) scaleY(0.62) scale(1.08);
   }
 
   72% {
     opacity: 0.36;
-    transform: translate(calc(-50% + 3px), calc(-50% + 2px)) rotate(calc(var(--leaf-rotate) - 3deg)) scaleY(0.58) scale(1);
+    transform: translate(calc(-50% + 3px), calc(-50% + 2px))
+      rotate(calc(var(--leaf-rotate) - 3deg)) scaleY(0.58) scale(1);
   }
 }
 
@@ -3736,7 +4014,12 @@ body.portfolio-dark .contact-form textarea {
 
   38% {
     opacity: 0.58;
-    transform: translate3d(calc(var(--firefly-dx) * 0.42), calc(var(--firefly-dy) * -0.28), 0) scale(0.86);
+    transform: translate3d(
+        calc(var(--firefly-dx) * 0.42),
+        calc(var(--firefly-dy) * -0.28),
+        0
+      )
+      scale(0.86);
   }
 
   58% {
@@ -3746,7 +4029,12 @@ body.portfolio-dark .contact-form textarea {
 
   82% {
     opacity: 0.42;
-    transform: translate3d(calc(var(--firefly-dx) * -0.22), calc(var(--firefly-dy) * 0.62), 0) scale(0.72);
+    transform: translate3d(
+        calc(var(--firefly-dx) * -0.22),
+        calc(var(--firefly-dy) * 0.62),
+        0
+      )
+      scale(0.72);
   }
 }
 
@@ -3780,22 +4068,38 @@ body.portfolio-dark .contact-form textarea {
   0%,
   100% {
     opacity: 0.52;
-    transform: translate(calc(-50% + var(--cursor-orbit-x)), calc(-50% + var(--cursor-orbit-y))) scale(0.78);
+    transform: translate(
+        calc(-50% + var(--cursor-orbit-x)),
+        calc(-50% + var(--cursor-orbit-y))
+      )
+      scale(0.78);
   }
 
   24% {
     opacity: 1;
-    transform: translate(calc(-50% + var(--cursor-orbit-x-2)), calc(-50% + var(--cursor-orbit-y-2))) scale(1.16);
+    transform: translate(
+        calc(-50% + var(--cursor-orbit-x-2)),
+        calc(-50% + var(--cursor-orbit-y-2))
+      )
+      scale(1.16);
   }
 
   52% {
     opacity: 0.68;
-    transform: translate(calc(-50% + var(--cursor-orbit-x-3)), calc(-50% + var(--cursor-orbit-y-3))) scale(0.9);
+    transform: translate(
+        calc(-50% + var(--cursor-orbit-x-3)),
+        calc(-50% + var(--cursor-orbit-y-3))
+      )
+      scale(0.9);
   }
 
   78% {
     opacity: 0.96;
-    transform: translate(calc(-50% + var(--cursor-orbit-x-4)), calc(-50% + var(--cursor-orbit-y-4))) scale(1.04);
+    transform: translate(
+        calc(-50% + var(--cursor-orbit-x-4)),
+        calc(-50% + var(--cursor-orbit-y-4))
+      )
+      scale(1.04);
   }
 }
 
@@ -3956,10 +4260,12 @@ body.portfolio-dark .contact-form textarea {
 @keyframes skill-active-breathe {
   0%,
   100% {
-    box-shadow: var(--shadow-strong), 0 0 0 1px rgba(47, 189, 95, 0.12), 0 24px 90px rgba(47, 189, 95, 0.13);
+    box-shadow: var(--shadow-strong), 0 0 0 1px rgba(47, 189, 95, 0.12),
+      0 24px 90px rgba(47, 189, 95, 0.13);
   }
   50% {
-    box-shadow: var(--shadow-strong), 0 0 0 1px rgba(47, 189, 95, 0.2), 0 30px 110px rgba(47, 189, 95, 0.2);
+    box-shadow: var(--shadow-strong), 0 0 0 1px rgba(47, 189, 95, 0.2),
+      0 30px 110px rgba(47, 189, 95, 0.2);
   }
 }
 
@@ -4530,8 +4836,11 @@ body.portfolio-dark .contact-form textarea {
 
 body.tree-portfolio-body {
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 12%, rgba(80, 255, 142, 0.16), transparent 28%),
+  background: radial-gradient(
+      circle at 50% 12%,
+      rgba(80, 255, 142, 0.16),
+      transparent 28%
+    ),
     radial-gradient(circle at 18% 80%, rgba(33, 120, 63, 0.18), transparent 32%),
     linear-gradient(180deg, #020806 0%, #07140d 45%, #0a160e 100%);
 }
@@ -4541,9 +4850,16 @@ body.tree-portfolio-body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 46%, rgba(57, 204, 103, 0.14), transparent 29%),
-    radial-gradient(circle at 82% 18%, rgba(204, 255, 202, 0.07), transparent 22%),
+  background: radial-gradient(
+      circle at 50% 46%,
+      rgba(57, 204, 103, 0.14),
+      transparent 29%
+    ),
+    radial-gradient(
+      circle at 82% 18%,
+      rgba(204, 255, 202, 0.07),
+      transparent 22%
+    ),
     linear-gradient(180deg, rgba(2, 8, 6, 0.76), rgba(3, 12, 7, 0.96));
   color: #eef8f0;
   isolation: isolate;
@@ -4559,17 +4875,29 @@ body.tree-portfolio-body {
 }
 
 .tree-explorer::before {
-  background:
-    linear-gradient(90deg, rgba(139, 255, 170, 0.035) 1px, transparent 1px),
+  background: linear-gradient(
+      90deg,
+      rgba(139, 255, 170, 0.035) 1px,
+      transparent 1px
+    ),
     linear-gradient(0deg, rgba(139, 255, 170, 0.025) 1px, transparent 1px);
   background-size: 84px 84px;
   mask-image: radial-gradient(circle at 50% 50%, black 0 48%, transparent 82%);
 }
 
 .tree-explorer::after {
-  background:
-    radial-gradient(circle at 48% 50%, transparent 0 33%, rgba(1, 7, 4, 0.42) 72%),
-    linear-gradient(90deg, rgba(2, 8, 5, 0.8), transparent 26%, transparent 74%, rgba(2, 8, 5, 0.8));
+  background: radial-gradient(
+      circle at 48% 50%,
+      transparent 0 33%,
+      rgba(1, 7, 4, 0.42) 72%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(2, 8, 5, 0.8),
+      transparent 26%,
+      transparent 74%,
+      rgba(2, 8, 5, 0.8)
+    );
 }
 
 .tree-explorer-scene {
@@ -4593,9 +4921,17 @@ body.tree-portfolio-body {
   position: absolute;
   inset: 0;
   z-index: 3;
-  background:
-    radial-gradient(circle at 50% 44%, transparent 0 34%, rgba(0, 0, 0, 0.26) 72%),
-    linear-gradient(180deg, rgba(1, 7, 4, 0.36), transparent 28%, rgba(1, 7, 4, 0.54));
+  background: radial-gradient(
+      circle at 50% 44%,
+      transparent 0 34%,
+      rgba(0, 0, 0, 0.26) 72%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(1, 7, 4, 0.36),
+      transparent 28%,
+      rgba(1, 7, 4, 0.54)
+    );
   pointer-events: none;
 }
 
@@ -4689,7 +5025,8 @@ body.tree-portfolio-body {
   padding: 0.76rem 0.9rem;
   border-radius: 16px;
   text-align: left;
-  transition: border-color 0.22s ease, background 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+  transition: border-color 0.22s ease, background 0.22s ease,
+    box-shadow 0.22s ease, transform 0.22s ease;
 }
 
 .tree-dock-button strong {
@@ -4725,10 +5062,14 @@ body.tree-portfolio-body {
   padding: 1.15rem;
   border: 1px solid rgba(151, 255, 178, 0.2);
   border-radius: 24px;
-  background:
-    radial-gradient(circle at 18% 12%, rgba(81, 255, 137, 0.13), transparent 36%),
+  background: radial-gradient(
+      circle at 18% 12%,
+      rgba(81, 255, 137, 0.13),
+      transparent 36%
+    ),
     rgba(5, 15, 9, 0.72);
-  box-shadow: 0 34px 140px rgba(0, 0, 0, 0.42), inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+  box-shadow: 0 34px 140px rgba(0, 0, 0, 0.42),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.035);
   backdrop-filter: blur(22px);
   animation: tree-panel-in 0.38s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -4858,8 +5199,11 @@ body.tree-portfolio-body {
   overflow: hidden;
   border-radius: 18px;
   text-align: left;
-  background:
-    radial-gradient(circle at 88% 18%, var(--project-color), transparent 34%),
+  background: radial-gradient(
+      circle at 88% 18%,
+      var(--project-color),
+      transparent 34%
+    ),
     rgba(255, 255, 255, 0.048);
   transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -4931,8 +5275,11 @@ body.tree-portfolio-body {
 
 .tree-detail-card {
   padding: 1rem;
-  background:
-    radial-gradient(circle at 84% 18%, var(--project-color), transparent 34%),
+  background: radial-gradient(
+      circle at 84% 18%,
+      var(--project-color),
+      transparent 34%
+    ),
     rgba(255, 255, 255, 0.052);
 }
 

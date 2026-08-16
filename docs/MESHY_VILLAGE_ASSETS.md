@@ -4,7 +4,6 @@
 > [`VILLAGE_ASSET_WISHLIST.md`](VILLAGE_ASSET_WISHLIST.md) 를 볼 것.
 > 여기 남은 내용은 그쪽에 전부 포함돼 있다.
 
-
 두 번째 컨셉 아트(2026-08-10, 구역 이름표가 다 붙은 조감도)와 지금 마을의 차이를
 메우는 데 **코드로는 못 만드는 것**만 모았다. 건물 27채 프롬프트는 별도 문서
 (`MESHY_BUILDING_PROMPTS.md`)에 있고 이 문서와 겹치지 않는다.
@@ -17,13 +16,13 @@
 
 Meshy 기본 출력 그대로 받으면 된다. 파이프라인이 알아서 맞춘다.
 
-| 항목 | 값 |
-|---|---|
-| 포맷 | GLB (텍스처 포함) |
-| 원점 | **바닥 중심**. 물체가 원점 위에 서 있어야 한다 |
-| 크기 | 신경 쓰지 말 것 — Meshy가 긴 변을 1.9로 정규화하고, 코드가 다시 맞춘다 |
-| 앞면 | **+Z 방향**을 정면으로 (간판·문이 +Z를 보게) |
-| 폴리곤 | 기본값. `npm run optimize`가 40~60% 깎는다 |
+| 항목   | 값                                                                     |
+| ------ | ---------------------------------------------------------------------- |
+| 포맷   | GLB (텍스처 포함)                                                      |
+| 원점   | **바닥 중심**. 물체가 원점 위에 서 있어야 한다                         |
+| 크기   | 신경 쓰지 말 것 — Meshy가 긴 변을 1.9로 정규화하고, 코드가 다시 맞춘다 |
+| 앞면   | **+Z 방향**을 정면으로 (간판·문이 +Z를 보게)                           |
+| 폴리곤 | 기본값. `npm run optimize`가 40~60% 깎는다                             |
 
 **넣는 법**
 
@@ -50,11 +49,11 @@ npm run optimize
 겉보기와 달리 1만 삼각형이 넘고, 잎사귀·벽돌처럼 UV 섬이 많은 모델은
 simplify가 거의 안 먹는다 (축대벽을 오차 0.05까지 올려도 10,612 → 8,191).
 
-| 쓰임새 | 목표 삼각형 | 프롬프트에 넣을 말 |
-|---|---|---|
+| 쓰임새                          | 목표 삼각형    | 프롬프트에 넣을 말                                      |
+| ------------------------------- | -------------- | ------------------------------------------------------- |
 | 수십 개 반복 (울타리·포장·깃대) | **1,500 이하** | `low poly, flat shaded, minimal detail, no small props` |
-| 열 개 안팎 (민가·아치) | 8,000 이하 | `low poly game asset` |
-| 한두 개 (랜드마크) | 자유 | — |
+| 열 개 안팎 (민가·아치)          | 8,000 이하     | `low poly game asset`                                   |
+| 한두 개 (랜드마크)              | 자유           | —                                                       |
 
 ---
 
@@ -254,16 +253,16 @@ warm sunset lighting, Ghibli-like storybook game art, low poly game asset
 
 컨셉 아트 하단 소품 띠에 있는데 우리한테 없는 것들. 전부 **1,500 삼각형 이하**로.
 
-| 파일명 | 무엇 | 프롬프트 핵심어 |
-|---|---|---|
-| `easel.glb` | 이젤 (그림 그리는 삼각대) | `wooden artist easel with a small canvas, paint palette hanging` |
-| `anvil.glb` | 모루 (대장간) | `blacksmith anvil on a wooden stump, hammer and tongs beside` |
-| `book-stack.glb` | 책더미 | `stack of five worn leather books with bookmarks, one open on top` |
-| `scroll-rack.glb` | 두루마리 선반 | `wooden rack holding rolled parchment scrolls, one unrolled` |
-| `signpost-arrow.glb` | 화살표 이정표 | `wooden signpost with three arrow-shaped direction boards` |
-| `hedge-round.glb` | 다듬은 관목 | `neatly trimmed round topiary bush in a stone pot` |
-| `windmill.glb` | 풍차 (컨셉 우상단) | `small stone windmill with four wooden sails, thatched cap` |
-| `tree-pine-tall.glb` | 키 큰 침엽수 | `very tall narrow pine tree, dark green` → `nature/` 폴더 |
+| 파일명               | 무엇                      | 프롬프트 핵심어                                                    |
+| -------------------- | ------------------------- | ------------------------------------------------------------------ |
+| `easel.glb`          | 이젤 (그림 그리는 삼각대) | `wooden artist easel with a small canvas, paint palette hanging`   |
+| `anvil.glb`          | 모루 (대장간)             | `blacksmith anvil on a wooden stump, hammer and tongs beside`      |
+| `book-stack.glb`     | 책더미                    | `stack of five worn leather books with bookmarks, one open on top` |
+| `scroll-rack.glb`    | 두루마리 선반             | `wooden rack holding rolled parchment scrolls, one unrolled`       |
+| `signpost-arrow.glb` | 화살표 이정표             | `wooden signpost with three arrow-shaped direction boards`         |
+| `hedge-round.glb`    | 다듬은 관목               | `neatly trimmed round topiary bush in a stone pot`                 |
+| `windmill.glb`       | 풍차 (컨셉 우상단)        | `small stone windmill with four wooden sails, thatched cap`        |
+| `tree-pine-tall.glb` | 키 큰 침엽수              | `very tall narrow pine tree, dark green` → `nature/` 폴더          |
 
 공통 꼬리말:
 
@@ -277,18 +276,18 @@ under 1500 triangles, front-facing
 
 ## 입고 완료 (2026-08-10)
 
-| 파일 | 쓰이는 곳 | 삼각형 |
-|---|---|---|
-| `decor/arch-projects.glb` | PROJECTS 입구 현판 | 6,350 |
-| `decor/arch-study.glb` | STUDY 입구 현판 | 7,642 |
-| `decor/arch-experience.glb` | EXPERIENCE 입구 현판 | 6,955 |
-| `decor/arch-life.glb` | LIFE 입구 현판 | 7,832 |
-| `decor/house-a.glb` | 채움 민가 (붉은 기와) | 8,705 |
-| `decor/house-b.glb` | 채움 민가 (청회색 슬레이트) | 11,856 |
-| `decor/terrace-wall.glb` | 아치 옆 문기둥 · 정문 석축 | 10,612 |
-| `decor/terrace-stair.glb` | 남쪽 정문 대계단 | 10,052 |
-| `decor/terrace-slab.glb` | **아직 안 씀** — 한 장 1만 삼각형이라 포장용으로 못 쓴다. ③번으로 다시 요청 | 10,174 |
-| `decor/arch-alt.glb` | **안 씀** — EXPERIENCE 글자 중복 | 7,015 |
+| 파일                        | 쓰이는 곳                                                                   | 삼각형 |
+| --------------------------- | --------------------------------------------------------------------------- | ------ |
+| `decor/arch-projects.glb`   | PROJECTS 입구 현판                                                          | 6,350  |
+| `decor/arch-study.glb`      | STUDY 입구 현판                                                             | 7,642  |
+| `decor/arch-experience.glb` | EXPERIENCE 입구 현판                                                        | 6,955  |
+| `decor/arch-life.glb`       | LIFE 입구 현판                                                              | 7,832  |
+| `decor/house-a.glb`         | 채움 민가 (붉은 기와)                                                       | 8,705  |
+| `decor/house-b.glb`         | 채움 민가 (청회색 슬레이트)                                                 | 11,856 |
+| `decor/terrace-wall.glb`    | 아치 옆 문기둥 · 정문 석축                                                  | 10,612 |
+| `decor/terrace-stair.glb`   | 남쪽 정문 대계단                                                            | 10,052 |
+| `decor/terrace-slab.glb`    | **아직 안 씀** — 한 장 1만 삼각형이라 포장용으로 못 쓴다. ③번으로 다시 요청 | 10,174 |
+| `decor/arch-alt.glb`        | **안 씀** — EXPERIENCE 글자 중복                                            | 7,015  |
 
 배치를 담당하는 코드는 `scripts/generate-decor-layout.mjs`의 `KIT` 표와
 ①(구역 입구) · ②-b(채움 민가) · ②-c(남쪽 정문) 절이다. 새 모델을 넣을 때는

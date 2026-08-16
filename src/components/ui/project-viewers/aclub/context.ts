@@ -23,6 +23,7 @@ export const AClubProvider = AClubContext.Provider;
 
 export function useAClub(): AClubRoomApi {
   const api = useContext(AClubContext);
-  if (!api) throw new Error("useAClub은 AClubRoom 내부에서만 사용할 수 있습니다.");
+  if (!api)
+    throw new Error("useAClub은 AClubRoom 내부에서만 사용할 수 있습니다.");
   return api;
 }

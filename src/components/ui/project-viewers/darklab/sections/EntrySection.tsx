@@ -45,12 +45,15 @@ export function EntrySection() {
     >
       {reducedMotion ? (
         <p className="absolute top-[70px] z-10 px-4 text-center font-mono text-[12px] text-[rgba(255,255,255,0.42)]">
-          이 페이지는 원래 손전등으로 탐색하는 화면입니다. 동작 줄이기 설정이 켜져 있어 밝은 상태로 보여드립니다.
+          이 페이지는 원래 손전등으로 탐색하는 화면입니다. 동작 줄이기 설정이
+          켜져 있어 밝은 상태로 보여드립니다.
         </p>
       ) : null}
 
       <div className="absolute left-1/2 top-1/2 z-10 flex w-full -translate-x-1/2 -translate-y-[120px] flex-col items-center text-center">
-        <h1 className="text-[44px] font-black leading-none tracking-[-0.02em] md:text-[72px]">DarkLab</h1>
+        <h1 className="text-[44px] font-black leading-none tracking-[-0.02em] md:text-[72px]">
+          DarkLab
+        </h1>
         <h2 className="mt-4 font-mono text-[13px] uppercase tracking-[0.2em] text-[rgba(255,255,255,0.42)] md:text-[15px]">
           1인칭 공포 어드벤처 · Unity
         </h2>

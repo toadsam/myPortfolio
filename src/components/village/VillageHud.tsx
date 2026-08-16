@@ -54,16 +54,26 @@ export const DISTRICT_TO_TRAVEL_KEY: Record<string, string> = {
   contact: "contact"
 };
 
-export function LiveStatusPanel({error, villageState}: {error: string | null; villageState: VillageState | null}) {
+export function LiveStatusPanel({
+  error,
+  villageState
+}: {
+  error: string | null;
+  villageState: VillageState | null;
+}) {
   const [collapsed, setCollapsed] = useState(false);
   const drag = useDraggable("live-status");
   if (!villageState && !error) return null;
 
   return (
-    <aside ref={drag.ref} style={drag.style} className="fixed left-4 top-[132px] z-20 hidden w-[260px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-3.5 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:block">
+    <aside
+      ref={drag.ref}
+      style={drag.style}
+      className="fixed left-4 top-[132px] z-20 hidden w-[260px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-3.5 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:block"
+    >
       <button
         type="button"
-        onClick={() => setCollapsed((c) => !c)}
+        onClick={() => setCollapsed(c => !c)}
         className="flex w-full items-center justify-between gap-2 transition active:scale-[0.98]"
         title={collapsed ? "펼치기" : "접기"}
         {...drag.handleProps}
@@ -75,43 +85,71 @@ export function LiveStatusPanel({error, villageState}: {error: string | null; vi
           </span>
           Live Village
         </span>
-        <span className="text-sm text-white/40" style={{transform: collapsed ? "rotate(-90deg)" : "none", transition: "transform 0.2s"}}>▾</span>
+        <span
+          className="text-sm text-white/40"
+          style={{
+            transform: collapsed ? "rotate(-90deg)" : "none",
+            transition: "transform 0.2s"
+          }}
+        >
+          ▾
+        </span>
       </button>
-      {!collapsed ? (error ? (
-        <p className="mt-2 leading-5 text-[#ff9a6c]">{error}. 기본 마을 화면으로 표시 중입니다.</p>
-      ) : villageState ? (
-        <>
-          <p className="mt-2 leading-5 text-white/70">{villageState.summary}</p>
-          <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-            <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
-              <strong className="block text-[#00d4ff]">{villageState.activity.github_commits}</strong>
-              <span className="text-[9px] text-white/40">커밋</span>
-            </span>
-            <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
-              <strong className="block text-[#00ff88]">{villageState.activity.study_minutes}</strong>
-              <span className="text-[9px] text-white/40">학습·분</span>
-            </span>
-            <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
-              <strong className="block text-[#ff9a6c]">{villageState.activity.workout_done ? "✅" : "💤"}</strong>
-              <span className="text-[9px] text-white/40">운동</span>
-            </span>
-          </div>
-          <p className="mt-2 text-[10px] leading-4 text-white/35">오늘의 실시간 활동 · 1분마다 갱신</p>
-          <button
-            type="button"
-            onClick={resetHudLayout}
-            className="mt-2 w-full rounded-md border border-white/8 py-1 text-[10px] font-bold text-white/35 transition hover:border-[#00d4ff]/40 hover:text-[#9beaff]"
-          >
-            ⤢ 패널 배치 초기화
-          </button>
-        </>
-      ) : null) : null}
+      {!collapsed ? (
+        error ? (
+          <p className="mt-2 leading-5 text-[#ff9a6c]">
+            {error}. 기본 마을 화면으로 표시 중입니다.
+          </p>
+        ) : villageState ? (
+          <>
+            <p className="mt-2 leading-5 text-white/70">
+              {villageState.summary}
+            </p>
+            <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+              <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
+                <strong className="block text-[#00d4ff]">
+                  {villageState.activity.github_commits}
+                </strong>
+                <span className="text-[9px] text-white/40">커밋</span>
+              </span>
+              <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
+                <strong className="block text-[#00ff88]">
+                  {villageState.activity.study_minutes}
+                </strong>
+                <span className="text-[9px] text-white/40">학습·분</span>
+              </span>
+              <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
+                <strong className="block text-[#ff9a6c]">
+                  {villageState.activity.workout_done ? "✅" : "💤"}
+                </strong>
+                <span className="text-[9px] text-white/40">운동</span>
+              </span>
+            </div>
+            <p className="mt-2 text-[10px] leading-4 text-white/35">
+              오늘의 실시간 활동 · 1분마다 갱신
+            </p>
+            <button
+              type="button"
+              onClick={resetHudLayout}
+              className="mt-2 w-full rounded-md border border-white/8 py-1 text-[10px] font-bold text-white/35 transition hover:border-[#00d4ff]/40 hover:text-[#9beaff]"
+            >
+              ⤢ 패널 배치 초기화
+            </button>
+          </>
+        ) : null
+      ) : null}
     </aside>
   );
 }
 
-export function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onSelect: (npc: NPCData) => void}) {
-  const coreNpcs = autonomousNpcs.filter((npc) => CORE_NPC_IDS.has(npc.id));
+export function NpcQuickDock({
+  activeNpcId,
+  onSelect
+}: {
+  activeNpcId?: string;
+  onSelect: (npc: NPCData) => void;
+}) {
+  const coreNpcs = autonomousNpcs.filter(npc => CORE_NPC_IDS.has(npc.id));
   const [collapsed, setCollapsed] = useState(false);
   const drag = useDraggable("npc-dock");
 
@@ -125,13 +163,18 @@ export function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onS
         onClick={() => setCollapsed(false)}
         className="fixed bottom-40 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#00d4ff]/55 active:scale-95 md:bottom-20"
       >
-        <span className="text-sm">🤖</span> AI NPC <span className="text-white/40">▸</span>
+        <span className="text-sm">🤖</span> AI NPC{" "}
+        <span className="text-white/40">▸</span>
       </button>
     );
   }
 
   return (
-    <aside ref={drag.ref} style={drag.style} className="fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]">
+    <aside
+      ref={drag.ref}
+      style={drag.style}
+      className="fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]"
+    >
       <button
         type="button"
         onClick={() => setCollapsed(true)}
@@ -141,7 +184,7 @@ export function NpcQuickDock({activeNpcId, onSelect}: {activeNpcId?: string; onS
       >
         AI NPC <span className="text-white/40">▾</span>
       </button>
-      {coreNpcs.map((npc) => (
+      {coreNpcs.map(npc => (
         <button
           className={
             activeNpcId === npc.id
@@ -200,13 +243,18 @@ export function CommandDock({
         onClick={() => setCollapsed(false)}
         className="fixed left-4 top-[300px] z-30 hidden items-center gap-2 rounded-xl border border-[#7ed957]/30 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#9affc4] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#7ed957]/55 active:scale-95 md:flex"
       >
-        <span className="text-sm">🎮</span> 지휘 <span className="text-white/40">▸</span>
+        <span className="text-sm">🎮</span> 지휘{" "}
+        <span className="text-white/40">▸</span>
       </button>
     );
   }
 
   return (
-    <aside ref={drag.ref} style={drag.style} className="fixed left-4 top-[300px] z-30 hidden w-[150px] flex-col gap-1 rounded-xl border border-[#7ed957]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:flex">
+    <aside
+      ref={drag.ref}
+      style={drag.style}
+      className="fixed left-4 top-[300px] z-30 hidden w-[150px] flex-col gap-1 rounded-xl border border-[#7ed957]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:flex"
+    >
       <button
         type="button"
         onClick={() => setCollapsed(true)}
@@ -215,7 +263,7 @@ export function CommandDock({
       >
         🎮 NPC 지휘 <span className="text-white/40">◂</span>
       </button>
-      {modes.map((item) => {
+      {modes.map(item => {
         const active = command === item.mode;
         return (
           <button
@@ -250,7 +298,8 @@ export function CommandDock({
             : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
         }
       >
-        <span className="text-sm">💬</span> {groupTalkBusy ? "수다 중…" : "다 같이 수다"}
+        <span className="text-sm">💬</span>{" "}
+        {groupTalkBusy ? "수다 중…" : "다 같이 수다"}
       </button>
       <button
         type="button"
@@ -275,7 +324,13 @@ export function CommandDock({
   );
 }
 
-export function GroupChatPanel({lines, onClose}: {lines: {name: string; text: string}[]; onClose: () => void}) {
+export function GroupChatPanel({
+  lines,
+  onClose
+}: {
+  lines: {name: string; text: string}[];
+  onClose: () => void;
+}) {
   return (
     <div className="fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 rounded-2xl border border-[#7ed957]/30 bg-[#050d1a]/95 p-4 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
       <div className="mb-3 flex items-center justify-between gap-3">
@@ -293,8 +348,12 @@ export function GroupChatPanel({lines, onClose}: {lines: {name: string; text: st
       <div className="max-h-[40vh] space-y-2 overflow-y-auto">
         {lines.map((line, index) => (
           <div key={index} className="rounded-xl bg-white/[0.04] px-3 py-2">
-            <p className="font-mono text-[9px] font-black uppercase tracking-[0.1em] text-[#7ed957]/75">{line.name}</p>
-            <p className="mt-0.5 text-sm leading-6 text-white/85">{line.text}</p>
+            <p className="font-mono text-[9px] font-black uppercase tracking-[0.1em] text-[#7ed957]/75">
+              {line.name}
+            </p>
+            <p className="mt-0.5 text-sm leading-6 text-white/85">
+              {line.text}
+            </p>
           </div>
         ))}
       </div>
@@ -337,20 +396,27 @@ export function MobileHud({
   const W = 260;
   const H = 168;
   const pad = 16;
-  const xs = villageBuildings.map((b) => b.position[0]);
-  const zs = villageBuildings.map((b) => b.position[2]);
+  const xs = villageBuildings.map(b => b.position[0]);
+  const zs = villageBuildings.map(b => b.position[2]);
   const minX = Math.min(...xs);
   const maxX = Math.max(...xs);
   const minZ = Math.min(...zs);
   const maxZ = Math.max(...zs);
-  const sx = (x: number) => pad + ((x - minX) / (maxX - minX || 1)) * (W - 2 * pad);
-  const sy = (z: number) => pad + ((z - minZ) / (maxZ - minZ || 1)) * (H - 2 * pad);
-  const colorOf = (key: string) => TRAVEL_POINTS.find((p) => p.key === key)?.color ?? "#9aa";
-  const centroids = TRAVEL_POINTS.map((point) => {
-    const members = villageBuildings.filter((b) => (DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro") === point.key);
+  const sx = (x: number) =>
+    pad + ((x - minX) / (maxX - minX || 1)) * (W - 2 * pad);
+  const sy = (z: number) =>
+    pad + ((z - minZ) / (maxZ - minZ || 1)) * (H - 2 * pad);
+  const colorOf = (key: string) =>
+    TRAVEL_POINTS.find(p => p.key === key)?.color ?? "#9aa";
+  const centroids = TRAVEL_POINTS.map(point => {
+    const members = villageBuildings.filter(
+      b => (DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro") === point.key
+    );
     if (members.length === 0) return null;
-    const cx = members.reduce((sum, b) => sum + b.position[0], 0) / members.length;
-    const cz = members.reduce((sum, b) => sum + b.position[2], 0) / members.length;
+    const cx =
+      members.reduce((sum, b) => sum + b.position[0], 0) / members.length;
+    const cz =
+      members.reduce((sum, b) => sum + b.position[2], 0) / members.length;
     return {point, x: sx(cx), y: sy(cz)};
   }).filter(Boolean) as {point: TravelPoint; x: number; y: number}[];
 
@@ -363,7 +429,7 @@ export function MobileHud({
     <div className="md:hidden">
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => setOpen(o => !o)}
         aria-label="이동·지휘·지도 메뉴"
         className="fixed bottom-[15rem] right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[#00d4ff]/40 bg-[#050d1a]/90 text-xl shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] active:scale-90"
       >
@@ -372,15 +438,20 @@ export function MobileHud({
 
       {open ? (
         <>
-          <div className="fixed inset-0 z-40 bg-black/45" onClick={() => setOpen(false)} />
+          <div
+            className="fixed inset-0 z-40 bg-black/45"
+            onClick={() => setOpen(false)}
+          />
           <div className="fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[#00d4ff]/25 bg-[#050d1a]/97 p-3 pb-8 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
             <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/20" />
             <div className="mb-3 flex items-center gap-1">
-              {([
-                {id: "travel", label: "🧭 이동"},
-                {id: "command", label: "🎮 지휘"},
-                {id: "map", label: "🗺️ 지도"}
-              ] as const).map((t) => (
+              {(
+                [
+                  {id: "travel", label: "🧭 이동"},
+                  {id: "command", label: "🎮 지휘"},
+                  {id: "map", label: "🗺️ 지도"}
+                ] as const
+              ).map(t => (
                 <button
                   key={t.id}
                   type="button"
@@ -394,14 +465,18 @@ export function MobileHud({
                   {t.label}
                 </button>
               ))}
-              <button type="button" onClick={() => setOpen(false)} className="ml-auto rounded-lg border border-white/12 px-3 py-2 text-sm text-white/70">
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="ml-auto rounded-lg border border-white/12 px-3 py-2 text-sm text-white/70"
+              >
                 ✕
               </button>
             </div>
 
             {tab === "travel" ? (
               <div className="grid grid-cols-2 gap-2">
-                {TRAVEL_POINTS.map((point) => (
+                {TRAVEL_POINTS.map(point => (
                   <button
                     key={point.key}
                     type="button"
@@ -411,25 +486,45 @@ export function MobileHud({
                     }}
                     className={chip(activeKey === point.key)}
                   >
-                    <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{background: point.color}} />
+                    <span
+                      className="h-2.5 w-2.5 shrink-0 rounded-full"
+                      style={{background: point.color}}
+                    />
                     {point.label}
                   </button>
                 ))}
               </div>
             ) : tab === "command" ? (
               <div className="grid grid-cols-2 gap-2">
-                {modes.map((item) => (
-                  <button key={item.mode} type="button" onClick={() => onCommand(item.mode)} className={chip(command === item.mode)}>
+                {modes.map(item => (
+                  <button
+                    key={item.mode}
+                    type="button"
+                    onClick={() => onCommand(item.mode)}
+                    className={chip(command === item.mode)}
+                  >
                     <span>{item.icon}</span> {item.label}
                   </button>
                 ))}
                 <button type="button" onClick={onGreet} className={chip(false)}>
                   <span>👋</span> 인사
                 </button>
-                <button type="button" onClick={onGroupTalk} disabled={groupTalkBusy} className={chip(groupTalkBusy)}>
+                <button
+                  type="button"
+                  onClick={onGroupTalk}
+                  disabled={groupTalkBusy}
+                  className={chip(groupTalkBusy)}
+                >
                   <span>💬</span> {groupTalkBusy ? "수다 중…" : "다 같이 수다"}
                 </button>
-                <button type="button" onClick={() => {onOpenRelations(); setOpen(false);}} className={`col-span-2 ${chip(false)}`}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onOpenRelations();
+                    setOpen(false);
+                  }}
+                  className={`col-span-2 ${chip(false)}`}
+                >
                   <span>💞</span> 관계도 보기
                 </button>
                 <button
@@ -447,27 +542,61 @@ export function MobileHud({
               </div>
             ) : (
               <div className="grid place-items-center">
-                <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="rounded-lg bg-white/[0.03]">
-                  {villageBuildings.map((b) => {
+                <svg
+                  width={W}
+                  height={H}
+                  viewBox={`0 0 ${W} ${H}`}
+                  className="rounded-lg bg-white/[0.03]"
+                >
+                  {villageBuildings.map(b => {
                     const key = DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro";
                     const active = activeKey === key;
                     return (
-                      <circle key={b.id} cx={sx(b.position[0])} cy={sy(b.position[2])} r={active ? 4 : 3} fill={colorOf(key)} fillOpacity={active ? 1 : 0.65} />
+                      <circle
+                        key={b.id}
+                        cx={sx(b.position[0])}
+                        cy={sy(b.position[2])}
+                        r={active ? 4 : 3}
+                        fill={colorOf(key)}
+                        fillOpacity={active ? 1 : 0.65}
+                      />
                     );
                   })}
                   {centroids.map(({point, x, y}) => (
-                    <g key={point.key} onClick={() => {
-                      onTravel(point);
-                      setOpen(false);
-                    }}>
-                      <circle cx={x} cy={y} r={16} fill={point.color} fillOpacity={0.001} style={{pointerEvents: "all"}}>
+                    <g
+                      key={point.key}
+                      onClick={() => {
+                        onTravel(point);
+                        setOpen(false);
+                      }}
+                    >
+                      <circle
+                        cx={x}
+                        cy={y}
+                        r={16}
+                        fill={point.color}
+                        fillOpacity={0.001}
+                        style={{pointerEvents: "all"}}
+                      >
                         <title>{point.label}</title>
                       </circle>
-                      {activeKey === point.key ? <circle cx={x} cy={y} r={14} fill="none" stroke={point.color} strokeWidth={1.6} strokeOpacity={0.9} /> : null}
+                      {activeKey === point.key ? (
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r={14}
+                          fill="none"
+                          stroke={point.color}
+                          strokeWidth={1.6}
+                          strokeOpacity={0.9}
+                        />
+                      ) : null}
                     </g>
                   ))}
                 </svg>
-                <p className="mt-2 font-mono text-[10px] text-white/40">구역을 누르면 그쪽으로 이동</p>
+                <p className="mt-2 font-mono text-[10px] text-white/40">
+                  구역을 누르면 그쪽으로 이동
+                </p>
               </div>
             )}
           </div>
@@ -477,7 +606,13 @@ export function MobileHud({
   );
 }
 
-export function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTravel: (point: TravelPoint) => void}) {
+export function QuickTravelDock({
+  activeKey,
+  onTravel
+}: {
+  activeKey: string;
+  onTravel: (point: TravelPoint) => void;
+}) {
   const [collapsed, setCollapsed] = useState(false);
   const drag = useDraggable("travel-dock");
 
@@ -491,13 +626,18 @@ export function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTra
         onClick={() => setCollapsed(false)}
         className="fixed right-4 top-[80px] z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
       >
-        <span className="text-sm">🧭</span> 이동 <span className="text-white/40">◂</span>
+        <span className="text-sm">🧭</span> 이동{" "}
+        <span className="text-white/40">◂</span>
       </button>
     );
   }
 
   return (
-    <aside ref={drag.ref} style={drag.style} className="fixed right-4 top-[80px] z-30 hidden w-[152px] flex-col gap-1 rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:flex">
+    <aside
+      ref={drag.ref}
+      style={drag.style}
+      className="fixed right-4 top-[80px] z-30 hidden w-[152px] flex-col gap-1 rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:flex"
+    >
       <button
         type="button"
         onClick={() => setCollapsed(true)}
@@ -506,7 +646,7 @@ export function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTra
       >
         🧭 빠른 이동 <span className="text-white/40">▴</span>
       </button>
-      {TRAVEL_POINTS.map((point) => {
+      {TRAVEL_POINTS.map(point => {
         const active = activeKey === point.key;
         return (
           <button
@@ -521,7 +661,10 @@ export function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTra
           >
             <span
               className="h-2.5 w-2.5 shrink-0 rounded-full"
-              style={{background: point.color, boxShadow: active ? `0 0 8px ${point.color}` : "none"}}
+              style={{
+                background: point.color,
+                boxShadow: active ? `0 0 8px ${point.color}` : "none"
+              }}
             />
             {point.label}
           </button>
@@ -531,29 +674,42 @@ export function QuickTravelDock({activeKey, onTravel}: {activeKey: string; onTra
   );
 }
 
-export function Minimap({activeKey, onTravel}: {activeKey: string; onTravel: (point: TravelPoint) => void}) {
+export function Minimap({
+  activeKey,
+  onTravel
+}: {
+  activeKey: string;
+  onTravel: (point: TravelPoint) => void;
+}) {
   const [collapsed, setCollapsed] = useState(false);
   const drag = useDraggable("minimap");
 
   const W = 172;
   const H = 156;
   const pad = 16;
-  const xs = villageBuildings.map((b) => b.position[0]);
-  const zs = villageBuildings.map((b) => b.position[2]);
+  const xs = villageBuildings.map(b => b.position[0]);
+  const zs = villageBuildings.map(b => b.position[2]);
   const minX = Math.min(...xs);
   const maxX = Math.max(...xs);
   const minZ = Math.min(...zs);
   const maxZ = Math.max(...zs);
-  const sx = (x: number) => pad + ((x - minX) / (maxX - minX || 1)) * (W - 2 * pad);
-  const sy = (z: number) => pad + ((z - minZ) / (maxZ - minZ || 1)) * (H - 2 * pad);
-  const colorOf = (key: string) => TRAVEL_POINTS.find((p) => p.key === key)?.color ?? "#9aa";
+  const sx = (x: number) =>
+    pad + ((x - minX) / (maxX - minX || 1)) * (W - 2 * pad);
+  const sy = (z: number) =>
+    pad + ((z - minZ) / (maxZ - minZ || 1)) * (H - 2 * pad);
+  const colorOf = (key: string) =>
+    TRAVEL_POINTS.find(p => p.key === key)?.color ?? "#9aa";
 
   // 구역별 중심점 (클릭 히트 영역 + 강조용)
-  const centroids = TRAVEL_POINTS.map((point) => {
-    const members = villageBuildings.filter((b) => (DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro") === point.key);
+  const centroids = TRAVEL_POINTS.map(point => {
+    const members = villageBuildings.filter(
+      b => (DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro") === point.key
+    );
     if (members.length === 0) return null;
-    const cx = members.reduce((sum, b) => sum + b.position[0], 0) / members.length;
-    const cz = members.reduce((sum, b) => sum + b.position[2], 0) / members.length;
+    const cx =
+      members.reduce((sum, b) => sum + b.position[0], 0) / members.length;
+    const cz =
+      members.reduce((sum, b) => sum + b.position[2], 0) / members.length;
     return {point, x: sx(cx), y: sy(cz)};
   }).filter(Boolean) as {point: TravelPoint; x: number; y: number}[];
 
@@ -573,9 +729,18 @@ export function Minimap({activeKey, onTravel}: {activeKey: string; onTravel: (po
   }
 
   return (
-    <aside ref={drag.ref} style={drag.style} className="fixed bottom-6 right-4 z-30 hidden rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2.5 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:block">
-      <div className="mb-1.5 flex cursor-grab items-center justify-between px-1" {...drag.handleProps}>
-        <span className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75">🗺️ 미니맵</span>
+    <aside
+      ref={drag.ref}
+      style={drag.style}
+      className="fixed bottom-6 right-4 z-30 hidden rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2.5 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:block"
+    >
+      <div
+        className="mb-1.5 flex cursor-grab items-center justify-between px-1"
+        {...drag.handleProps}
+      >
+        <span className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75">
+          🗺️ 미니맵
+        </span>
         <button
           type="button"
           onClick={() => setCollapsed(true)}
@@ -584,8 +749,13 @@ export function Minimap({activeKey, onTravel}: {activeKey: string; onTravel: (po
           ▾
         </button>
       </div>
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="rounded-lg bg-white/[0.03]">
-        {villageBuildings.map((b) => {
+      <svg
+        width={W}
+        height={H}
+        viewBox={`0 0 ${W} ${H}`}
+        className="rounded-lg bg-white/[0.03]"
+      >
+        {villageBuildings.map(b => {
           const key = DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro";
           const active = activeKey === key;
           return (
@@ -602,16 +772,39 @@ export function Minimap({activeKey, onTravel}: {activeKey: string; onTravel: (po
         {centroids.map(({point, x, y}) => {
           const active = activeKey === point.key;
           return (
-            <g key={point.key} style={{cursor: "pointer"}} onClick={() => onTravel(point)}>
-              {active ? <circle cx={x} cy={y} r={12} fill="none" stroke={point.color} strokeWidth={1.4} strokeOpacity={0.9} /> : null}
-              <circle cx={x} cy={y} r={13} fill={point.color} fillOpacity={0.001} style={{pointerEvents: "all"}}>
+            <g
+              key={point.key}
+              style={{cursor: "pointer"}}
+              onClick={() => onTravel(point)}
+            >
+              {active ? (
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={12}
+                  fill="none"
+                  stroke={point.color}
+                  strokeWidth={1.4}
+                  strokeOpacity={0.9}
+                />
+              ) : null}
+              <circle
+                cx={x}
+                cy={y}
+                r={13}
+                fill={point.color}
+                fillOpacity={0.001}
+                style={{pointerEvents: "all"}}
+              >
                 <title>{point.label}</title>
               </circle>
             </g>
           );
         })}
       </svg>
-      <p className="mt-1.5 px-1 font-mono text-[9px] leading-tight text-white/35">구역을 누르면 그쪽으로 이동</p>
+      <p className="mt-1.5 px-1 font-mono text-[9px] leading-tight text-white/35">
+        구역을 누르면 그쪽으로 이동
+      </p>
     </aside>
   );
 }
@@ -623,7 +816,7 @@ export function KonamiBurst() {
     delay: (i % 12) * 0.18,
     dur: 3 + (i % 5) * 0.6,
     emoji: emojis[i % emojis.length],
-    size: 18 + (i % 4) * 9,
+    size: 18 + (i % 4) * 9
   }));
 
   return (
@@ -632,14 +825,22 @@ export function KonamiBurst() {
         <span
           key={i}
           className="absolute top-0 select-none"
-          style={{left: `${p.left}%`, fontSize: p.size, animation: `konamiFall ${p.dur}s linear ${p.delay}s both`}}
+          style={{
+            left: `${p.left}%`,
+            fontSize: p.size,
+            animation: `konamiFall ${p.dur}s linear ${p.delay}s both`
+          }}
         >
           {p.emoji}
         </span>
       ))}
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-[#00ff88]/40 bg-[#050d1a]/90 px-7 py-5 text-center shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
-        <p className="font-mono text-xl font-black text-[#00ff88]">🎉 히든 모드 발견!</p>
-        <p className="mt-1.5 font-mono text-xs text-white/60">개발자만 아는 그 코드를 입력했군요 😎</p>
+        <p className="font-mono text-xl font-black text-[#00ff88]">
+          🎉 히든 모드 발견!
+        </p>
+        <p className="mt-1.5 font-mono text-xs text-white/60">
+          개발자만 아는 그 코드를 입력했군요 😎
+        </p>
       </div>
     </div>
   );
@@ -657,16 +858,30 @@ export function ControlsHint() {
 
   return (
     <div className="pointer-events-none fixed left-1/2 top-[80px] z-30 flex -translate-x-1/2 animate-[fadeIn_0.4s_ease] items-center gap-3 rounded-full border border-[#00d4ff]/30 bg-[#050d1a]/90 px-4 py-2 font-mono text-[11px] font-bold text-white/75 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
-      <span className="flex items-center gap-1.5"><span className="text-sm">🖱️</span> 건물 클릭해 입장</span>
+      <span className="flex items-center gap-1.5">
+        <span className="text-sm">🖱️</span> 건물 클릭해 입장
+      </span>
       <span className="text-white/20">·</span>
-      <span className="flex items-center gap-1.5"><span className="text-sm">🔄</span> 드래그·스크롤로 둘러보기</span>
+      <span className="flex items-center gap-1.5">
+        <span className="text-sm">🔄</span> 드래그·스크롤로 둘러보기
+      </span>
       <span className="text-white/20">·</span>
-      <span className="flex items-center gap-1.5"><span className="text-sm">🚶</span> 직접 이동은 좌하단 버튼</span>
+      <span className="flex items-center gap-1.5">
+        <span className="text-sm">🚶</span> 직접 이동은 좌하단 버튼
+      </span>
     </div>
   );
 }
 
-export function EavesdropButton({aName, bName, onOpen}: {aName: string; bName: string; onOpen: () => void}) {
+export function EavesdropButton({
+  aName,
+  bName,
+  onOpen
+}: {
+  aName: string;
+  bName: string;
+  onOpen: () => void;
+}) {
   return (
     <button
       type="button"
@@ -712,7 +927,11 @@ export function EavesdropPanel({
           const isA = line.name === aName;
           return (
             <div key={index} className={isA ? "mr-8" : "ml-8"}>
-              <p className={`font-mono text-[9px] font-black uppercase tracking-[0.1em] ${isA ? "text-[#00d4ff]/70" : "text-[#ff9a6c]/70"} ${isA ? "" : "text-right"}`}>
+              <p
+                className={`font-mono text-[9px] font-black uppercase tracking-[0.1em] ${
+                  isA ? "text-[#00d4ff]/70" : "text-[#ff9a6c]/70"
+                } ${isA ? "" : "text-right"}`}
+              >
                 {line.name}
               </p>
               <div
@@ -743,7 +962,9 @@ export function EncounterNotice({text}: {text: string}) {
 export function MilestoneBanner({text}: {text: string}) {
   return (
     <div className="pointer-events-none fixed left-1/2 top-1/3 z-[60] -translate-x-1/2 animate-[fadeIn_0.4s_ease] rounded-2xl border border-[#ff6ec7]/45 bg-[#1a0a1f]/92 px-6 py-4 text-center shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
-      <p className="font-mono text-[11px] font-black uppercase tracking-[0.2em] text-[#ff9ad9]">관계 사건</p>
+      <p className="font-mono text-[11px] font-black uppercase tracking-[0.2em] text-[#ff9ad9]">
+        관계 사건
+      </p>
       <p className="mt-1.5 text-lg font-black text-white">{text}</p>
     </div>
   );
@@ -761,14 +982,17 @@ const REL_KIND_NAME: Record<string, string> = {
 };
 
 function RelRow({r}: {r: NpcRelationshipRow}) {
-  const color = r.affinity >= 6 ? "#7ee787" : r.affinity <= -6 ? "#ff8a8a" : "#94a3b8";
+  const color =
+    r.affinity >= 6 ? "#7ee787" : r.affinity <= -6 ? "#ff8a8a" : "#94a3b8";
   return (
     <div className="flex items-center justify-between rounded-lg border border-white/8 bg-white/[0.04] px-3 py-2">
       <span className="text-xs font-bold text-white/80">
-        {REL_KIND_NAME[r.npc_a] ?? r.npc_a} ↔ {REL_KIND_NAME[r.npc_b] ?? r.npc_b}
+        {REL_KIND_NAME[r.npc_a] ?? r.npc_a} ↔{" "}
+        {REL_KIND_NAME[r.npc_b] ?? r.npc_b}
       </span>
       <span className="font-mono text-[11px]" style={{color}}>
-        {r.vibe} ({r.affinity >= 0 ? "+" : ""}{r.affinity})
+        {r.vibe} ({r.affinity >= 0 ? "+" : ""}
+        {r.affinity})
       </span>
     </div>
   );
@@ -781,7 +1005,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
   useEffect(() => {
     let ignore = false;
     fetchRelationships()
-      .then((r) => {
+      .then(r => {
         if (!ignore) setRels(r);
       })
       .catch(() => {
@@ -797,7 +1021,15 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
   const cx = 170;
   const cy = 158;
   const R = 118;
-  const ring = ["guide", "project", "developer", "archivist", "contact", "coding", "cs"];
+  const ring = [
+    "guide",
+    "project",
+    "developer",
+    "archivist",
+    "contact",
+    "coding",
+    "cs"
+  ];
   const posOf = (kind: string) => {
     if (kind === "overseer") return {x: cx, y: cy};
     const i = ring.indexOf(kind);
@@ -805,28 +1037,47 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
     const a = (i / ring.length) * Math.PI * 2 - Math.PI / 2;
     return {x: cx + Math.cos(a) * R, y: cy + Math.sin(a) * R};
   };
-  const edgeColor = (aff: number) => (aff >= 6 ? "#16a34a" : aff <= -6 ? "#ef4444" : "#64748b");
+  const edgeColor = (aff: number) =>
+    aff >= 6 ? "#16a34a" : aff <= -6 ? "#ef4444" : "#64748b";
   const allKinds = ["overseer", ...ring];
   const sorted = (rels ?? []).slice().sort((a, b) => b.affinity - a.affinity);
-  const top = sorted.filter((r) => r.affinity >= 6).slice(0, 2);
-  const bottom = sorted.filter((r) => r.affinity <= -6).slice(-2).reverse();
+  const top = sorted.filter(r => r.affinity >= 6).slice(0, 2);
+  const bottom = sorted
+    .filter(r => r.affinity <= -6)
+    .slice(-2)
+    .reverse();
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4"
+      onClick={onClose}
+    >
       <div
         className="w-[min(94vw,420px)] rounded-2xl border border-[#00d4ff]/30 bg-[#050d1a]/97 p-5 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]"
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <div className="flex items-start justify-between">
           <div>
-            <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#00d4ff]">Village Social Graph</p>
-            <h2 className="mt-1 text-xl font-black text-white">마을 관계도 💞</h2>
+            <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#00d4ff]">
+              Village Social Graph
+            </p>
+            <h2 className="mt-1 text-xl font-black text-white">
+              마을 관계도 💞
+            </h2>
           </div>
-          <button type="button" onClick={onClose} className="text-white/50 transition hover:text-white">✕</button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-white/50 transition hover:text-white"
+          >
+            ✕
+          </button>
         </div>
 
         {err ? (
-          <p className="mt-4 text-sm leading-6 text-white/55">백엔드에 연결하지 못했어요. 서버를 켜면 관계가 보여요.</p>
+          <p className="mt-4 text-sm leading-6 text-white/55">
+            백엔드에 연결하지 못했어요. 서버를 켜면 관계가 보여요.
+          </p>
         ) : !rels ? (
           <p className="mt-4 text-sm text-white/45">불러오는 중…</p>
         ) : (
@@ -849,13 +1100,27 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                   />
                 );
               })}
-              {allKinds.map((kind) => {
+              {allKinds.map(kind => {
                 const p = posOf(kind);
                 const isHub = kind === "overseer";
                 return (
                   <g key={kind}>
-                    <circle cx={p.x} cy={p.y} r={isHub ? 15 : 12} fill={isHub ? "#f5c542" : "#0b1a2e"} stroke="#00d4ff" strokeWidth={1.2} />
-                    <text x={p.x} y={p.y + (isHub ? 27 : 25)} textAnchor="middle" fontSize="11" fontWeight="800" fill="#cfe6ff">
+                    <circle
+                      cx={p.x}
+                      cy={p.y}
+                      r={isHub ? 15 : 12}
+                      fill={isHub ? "#f5c542" : "#0b1a2e"}
+                      stroke="#00d4ff"
+                      strokeWidth={1.2}
+                    />
+                    <text
+                      x={p.x}
+                      y={p.y + (isHub ? 27 : 25)}
+                      textAnchor="middle"
+                      fontSize="11"
+                      fontWeight="800"
+                      fill="#cfe6ff"
+                    >
                       {REL_KIND_NAME[kind]}
                     </text>
                   </g>
@@ -863,9 +1128,15 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
               })}
             </svg>
             <div className="flex items-center justify-center gap-3 font-mono text-[10px] text-white/45">
-              <span><span style={{color: "#16a34a"}}>━</span> 친함</span>
-              <span><span style={{color: "#64748b"}}>━</span> 보통</span>
-              <span><span style={{color: "#ef4444"}}>━</span> 나쁨</span>
+              <span>
+                <span style={{color: "#16a34a"}}>━</span> 친함
+              </span>
+              <span>
+                <span style={{color: "#64748b"}}>━</span> 보통
+              </span>
+              <span>
+                <span style={{color: "#ef4444"}}>━</span> 나쁨
+              </span>
             </div>
             {top.length || bottom.length ? (
               <div className="mt-3 grid gap-1.5">
@@ -877,7 +1148,9 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                 ))}
               </div>
             ) : (
-              <p className="mt-3 text-center text-xs leading-5 text-white/40">아직 관계가 쌓이지 않았어요. 마을을 조금 지켜보면 사이가 생겨요.</p>
+              <p className="mt-3 text-center text-xs leading-5 text-white/40">
+                아직 관계가 쌓이지 않았어요. 마을을 조금 지켜보면 사이가 생겨요.
+              </p>
             )}
           </>
         )}

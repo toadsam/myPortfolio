@@ -58,14 +58,34 @@ function makeBasicMat(color, opacity) {
 
 function makeTube(points, radius, material, segments) {
   const curve = new THREE.CatmullRomCurve3(points.map(vectorFromArray));
-  const geometry = new THREE.TubeGeometry(curve, segments || 72, radius, 12, false);
+  const geometry = new THREE.TubeGeometry(
+    curve,
+    segments || 72,
+    radius,
+    12,
+    false
+  );
   const mesh = new THREE.Mesh(geometry, material);
   mesh.userData.curve = curve;
   return mesh;
 }
 
-function makeRoundedBox(width, height, depth, material, position, rotation, radius) {
-  const geometry = new RoundedBoxGeometry(width, height, depth, 5, radius == null ? 0.035 : radius);
+function makeRoundedBox(
+  width,
+  height,
+  depth,
+  material,
+  position,
+  rotation,
+  radius
+) {
+  const geometry = new RoundedBoxGeometry(
+    width,
+    height,
+    depth,
+    5,
+    radius == null ? 0.035 : radius
+  );
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.fromArray(position);
   if (rotation) {
@@ -77,13 +97,24 @@ function makeRoundedBox(width, height, depth, material, position, rotation, radi
 function addEdges(target, color, opacity) {
   const edges = new THREE.LineSegments(
     new THREE.EdgesGeometry(target.geometry, 26),
-    new THREE.LineBasicMaterial({color: color, transparent: true, opacity: opacity == null ? 0.28 : opacity})
+    new THREE.LineBasicMaterial({
+      color: color,
+      transparent: true,
+      opacity: opacity == null ? 0.28 : opacity
+    })
   );
   target.add(edges);
   return edges;
 }
 
-function makeIrregularIslandGeometry(radiusX, radiusZ, height, segments, salt, lowerScale) {
+function makeIrregularIslandGeometry(
+  radiusX,
+  radiusZ,
+  height,
+  segments,
+  salt,
+  lowerScale
+) {
   const vertices = [];
   const indices = [];
   vertices.push(0, 0.04, 0);
@@ -93,7 +124,8 @@ function makeIrregularIslandGeometry(radiusX, radiusZ, height, segments, salt, l
     const angle = (i / segments) * Math.PI * 2;
     const n = 0.82 + seeded(i, salt) * 0.28 + Math.sin(i * 1.37 + salt) * 0.055;
     const topX = Math.cos(angle) * radiusX * n;
-    const topZ = Math.sin(angle) * radiusZ * (0.88 + seeded(i, salt + 1) * 0.24);
+    const topZ =
+      Math.sin(angle) * radiusZ * (0.88 + seeded(i, salt + 1) * 0.24);
     const topY = Math.sin(i * 0.83 + salt) * 0.025;
     const taper = lowerScale * (0.82 + seeded(i, salt + 2) * 0.28);
     const bottomY = -height - seeded(i, salt + 3) * 0.28;
@@ -113,7 +145,10 @@ function makeIrregularIslandGeometry(radiusX, radiusZ, height, segments, salt, l
   }
 
   const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
+  geometry.setAttribute(
+    "position",
+    new THREE.Float32BufferAttribute(vertices, 3)
+  );
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
   return geometry;
@@ -170,10 +205,16 @@ function collectZoneMaterials(group) {
     if (!node.material) {
       return;
     }
-    const nodeMaterials = Array.isArray(node.material) ? node.material : [node.material];
+    const nodeMaterials = Array.isArray(node.material)
+      ? node.material
+      : [node.material];
     nodeMaterials.forEach(function addMaterial(material) {
-      if (materials.indexOf(material) === -1 && material.isMeshStandardMaterial) {
-        material.userData.baseEmissiveIntensity = material.emissiveIntensity || 0;
+      if (
+        materials.indexOf(material) === -1 &&
+        material.isMeshStandardMaterial
+      ) {
+        material.userData.baseEmissiveIntensity =
+          material.emissiveIntensity || 0;
         materials.push(material);
       }
     });
@@ -189,10 +230,42 @@ function registerZoneGroup(world, zoneId, group) {
 
 function addLayeredBase(group, materials, options) {
   const accent = options.accent;
-  const base = makeRoundedBox(options.width, 0.1, options.depth, materials.platform, [0, 0.2, 0], null, 0.055);
-  const rim = makeRoundedBox(options.width + 0.12, 0.035, options.depth + 0.12, accent, [0, 0.265, 0], null, 0.07);
-  const shadow = makeRoundedBox(options.width + 0.22, 0.035, options.depth + 0.22, materials.platformDark, [0, 0.145, 0], null, 0.08);
-  const aura = new THREE.Mesh(new THREE.TorusGeometry(Math.max(options.width, options.depth) * 0.48, 0.012, 8, 80), accent.clone());
+  const base = makeRoundedBox(
+    options.width,
+    0.1,
+    options.depth,
+    materials.platform,
+    [0, 0.2, 0],
+    null,
+    0.055
+  );
+  const rim = makeRoundedBox(
+    options.width + 0.12,
+    0.035,
+    options.depth + 0.12,
+    accent,
+    [0, 0.265, 0],
+    null,
+    0.07
+  );
+  const shadow = makeRoundedBox(
+    options.width + 0.22,
+    0.035,
+    options.depth + 0.22,
+    materials.platformDark,
+    [0, 0.145, 0],
+    null,
+    0.08
+  );
+  const aura = new THREE.Mesh(
+    new THREE.TorusGeometry(
+      Math.max(options.width, options.depth) * 0.48,
+      0.012,
+      8,
+      80
+    ),
+    accent.clone()
+  );
   aura.position.y = 0.315;
   aura.rotation.x = Math.PI / 2;
   aura.material.transparent = true;
@@ -225,12 +298,22 @@ function addZoneHotspot(world, zone, radius, interactiveMeshes) {
   const group = new THREE.Group();
   const point = vectorFromArray(zone.position);
   const zoneColor = colorForZone(zone.id, "secondary");
-  const marker = new THREE.Mesh(new THREE.IcosahedronGeometry(0.066, 2), makeBasicMat(zoneColor, 0.88));
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(radius * 0.28, 0.012, 8, 54), makeBasicMat(zoneColor, 0.38));
+  const marker = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(0.066, 2),
+    makeBasicMat(zoneColor, 0.88)
+  );
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(radius * 0.28, 0.012, 8, 54),
+    makeBasicMat(zoneColor, 0.38)
+  );
   const label = makeLabelSprite(zone.label, zoneColor);
   const hotspot = new THREE.Mesh(
     new THREE.SphereGeometry(radius, 20, 14),
-    new THREE.MeshBasicMaterial({transparent: true, opacity: 0, depthWrite: false})
+    new THREE.MeshBasicMaterial({
+      transparent: true,
+      opacity: 0,
+      depthWrite: false
+    })
   );
 
   marker.userData.zoneId = zone.id;
@@ -256,10 +339,22 @@ function addZoneHotspot(world, zone, radius, interactiveMeshes) {
 
 function addIsland(world, materials) {
   const island = new THREE.Group();
-  const top = new THREE.Mesh(makeIrregularIslandGeometry(4.05, 2.72, 0.18, 58, 4, 0.92), materials.terrain);
-  const cliff = new THREE.Mesh(makeIrregularIslandGeometry(4.0, 2.7, 1.42, 58, 12, 0.32), materials.cliff);
-  const lowerCliff = new THREE.Mesh(makeIrregularIslandGeometry(2.65, 1.8, 0.78, 42, 18, 0.18), materials.cliffDark);
-  const corePlate = new THREE.Mesh(new THREE.CylinderGeometry(0.82, 0.92, 0.06, 72), materials.platformDark);
+  const top = new THREE.Mesh(
+    makeIrregularIslandGeometry(4.05, 2.72, 0.18, 58, 4, 0.92),
+    materials.terrain
+  );
+  const cliff = new THREE.Mesh(
+    makeIrregularIslandGeometry(4.0, 2.7, 1.42, 58, 12, 0.32),
+    materials.cliff
+  );
+  const lowerCliff = new THREE.Mesh(
+    makeIrregularIslandGeometry(2.65, 1.8, 0.78, 42, 18, 0.18),
+    materials.cliffDark
+  );
+  const corePlate = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.82, 0.92, 0.06, 72),
+    materials.platformDark
+  );
 
   top.position.y = 0.02;
   cliff.position.y = -0.08;
@@ -276,12 +371,25 @@ function addIsland(world, materials) {
     const angle = (i / 34) * Math.PI * 2;
     const rX = 3.15 + seeded(i, 2) * 0.78;
     const rZ = 2.0 + seeded(i, 3) * 0.62;
-    const colorKey = i % 5 === 0 ? "violetCrystal" : i % 3 === 0 ? "mintCrystal" : "blueCrystal";
+    const colorKey =
+      i % 5 === 0
+        ? "violetCrystal"
+        : i % 3 === 0
+        ? "mintCrystal"
+        : "blueCrystal";
     const shard = new THREE.Mesh(
-      new THREE.ConeGeometry(0.05 + seeded(i, 4) * 0.075, 0.25 + seeded(i, 5) * 0.42, 7),
+      new THREE.ConeGeometry(
+        0.05 + seeded(i, 4) * 0.075,
+        0.25 + seeded(i, 5) * 0.42,
+        7
+      ),
       materials[colorKey]
     );
-    shard.position.set(Math.cos(angle) * rX, -0.16 + seeded(i, 6) * 0.16, Math.sin(angle) * rZ);
+    shard.position.set(
+      Math.cos(angle) * rX,
+      -0.16 + seeded(i, 6) * 0.16,
+      Math.sin(angle) * rZ
+    );
     shard.rotation.set(seeded(i, 7) * 0.7, angle, seeded(i, 8) * 0.48);
     island.add(shard);
   }
@@ -292,12 +400,30 @@ function addIsland(world, materials) {
 
 function addCore(world, materials) {
   const group = new THREE.Group();
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.52, 0.15, 64), materials.platform);
-  const column = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 0.82, 48), materials.glassBlue);
-  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.22, 3), materials.core);
-  const halo = new THREE.Mesh(new THREE.SphereGeometry(0.34, 36, 24), materials.coreHalo);
-  const ringA = new THREE.Mesh(new THREE.TorusGeometry(0.48, 0.014, 10, 96), materials.coreLine);
-  const ringB = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.01, 10, 96), materials.coreLine);
+  const base = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.42, 0.52, 0.15, 64),
+    materials.platform
+  );
+  const column = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.16, 0.22, 0.82, 48),
+    materials.glassBlue
+  );
+  const core = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(0.22, 3),
+    materials.core
+  );
+  const halo = new THREE.Mesh(
+    new THREE.SphereGeometry(0.34, 36, 24),
+    materials.coreHalo
+  );
+  const ringA = new THREE.Mesh(
+    new THREE.TorusGeometry(0.48, 0.014, 10, 96),
+    materials.coreLine
+  );
+  const ringB = new THREE.Mesh(
+    new THREE.TorusGeometry(0.34, 0.01, 10, 96),
+    materials.coreLine
+  );
 
   base.position.y = 0.2;
   column.position.y = 0.68;
@@ -327,12 +453,60 @@ function addWebLab(world, materials) {
   const accent = materials.webAccent.clone();
   addLayeredBase(group, materials, {width: 1.12, depth: 0.82, accent: accent});
 
-  const labBody = makeRoundedBox(0.86, 0.46, 0.62, materials.webGlass, [0, 0.55, 0], null, 0.075);
-  const roof = makeRoundedBox(0.92, 0.05, 0.68, materials.webRoof, [0, 0.82, 0], null, 0.06);
-  const monitor = makeRoundedBox(0.38, 0.25, 0.04, materials.screenAqua, [-0.18, 0.56, 0.34], [-0.08, 0, 0], 0.02);
-  const terminal = makeRoundedBox(0.34, 0.22, 0.04, materials.screenMint, [0.21, 0.54, 0.34], [-0.08, 0, 0], 0.02);
-  const scan = makeRoundedBox(0.77, 0.012, 0.018, materials.webScan, [0, 0.5, 0.355], null, 0.005);
-  const codePanel = makeRoundedBox(0.42, 0.28, 0.025, materials.webHologram, [-0.48, 0.82, -0.08], [0.04, 0.44, 0], 0.02);
+  const labBody = makeRoundedBox(
+    0.86,
+    0.46,
+    0.62,
+    materials.webGlass,
+    [0, 0.55, 0],
+    null,
+    0.075
+  );
+  const roof = makeRoundedBox(
+    0.92,
+    0.05,
+    0.68,
+    materials.webRoof,
+    [0, 0.82, 0],
+    null,
+    0.06
+  );
+  const monitor = makeRoundedBox(
+    0.38,
+    0.25,
+    0.04,
+    materials.screenAqua,
+    [-0.18, 0.56, 0.34],
+    [-0.08, 0, 0],
+    0.02
+  );
+  const terminal = makeRoundedBox(
+    0.34,
+    0.22,
+    0.04,
+    materials.screenMint,
+    [0.21, 0.54, 0.34],
+    [-0.08, 0, 0],
+    0.02
+  );
+  const scan = makeRoundedBox(
+    0.77,
+    0.012,
+    0.018,
+    materials.webScan,
+    [0, 0.5, 0.355],
+    null,
+    0.005
+  );
+  const codePanel = makeRoundedBox(
+    0.42,
+    0.28,
+    0.025,
+    materials.webHologram,
+    [-0.48, 0.82, -0.08],
+    [0.04, 0.44, 0],
+    0.02
+  );
 
   addEdges(labBody, 0x22d3ee, 0.34);
   addEdges(codePanel, 0x2dd4bf, 0.46);
@@ -344,7 +518,15 @@ function addWebLab(world, materials) {
   group.add(codePanel);
 
   for (let i = 0; i < 4; i += 1) {
-    const line = makeRoundedBox(0.28 - i * 0.03, 0.012, 0.012, materials.webLine, [-0.5, 0.88 - i * 0.055, -0.06], [0.04, 0.44, 0], 0.004);
+    const line = makeRoundedBox(
+      0.28 - i * 0.03,
+      0.012,
+      0.012,
+      materials.webLine,
+      [-0.5, 0.88 - i * 0.055, -0.06],
+      [0.04, 0.44, 0],
+      0.004
+    );
     group.add(line);
   }
 
@@ -361,15 +543,34 @@ function addProjectGallery(world, materials) {
   const accent = materials.projectAccent.clone();
   addLayeredBase(group, materials, {width: 1.28, depth: 0.88, accent: accent});
 
-  const backWall = makeRoundedBox(1.1, 0.42, 0.05, materials.galleryGlass, [0, 0.56, -0.3], [0.05, 0, 0], 0.04);
-  const canopy = makeRoundedBox(1.18, 0.055, 0.82, materials.galleryCanopy, [0, 0.86, -0.02], null, 0.06);
+  const backWall = makeRoundedBox(
+    1.1,
+    0.42,
+    0.05,
+    materials.galleryGlass,
+    [0, 0.56, -0.3],
+    [0.05, 0, 0],
+    0.04
+  );
+  const canopy = makeRoundedBox(
+    1.18,
+    0.055,
+    0.82,
+    materials.galleryCanopy,
+    [0, 0.86, -0.02],
+    null,
+    0.06
+  );
   addEdges(backWall, 0x8b5cf6, 0.38);
   group.add(backWall);
   group.add(canopy);
 
   for (let i = 0; i < 4; i += 1) {
     const x = -0.42 + i * 0.28;
-    const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.075, 0.2, 20), materials.galleryStand);
+    const stand = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.055, 0.075, 0.2, 20),
+      materials.galleryStand
+    );
     const cube = makeRoundedBox(
       0.15,
       0.15,
@@ -379,7 +580,10 @@ function addProjectGallery(world, materials) {
       [0.25, 0.35 + i * 0.38, 0.2],
       0.025
     );
-    const frame = new THREE.Mesh(new THREE.TorusGeometry(0.135, 0.007, 6, 36), i % 2 ? materials.projectLineBlue : materials.projectLineViolet);
+    const frame = new THREE.Mesh(
+      new THREE.TorusGeometry(0.135, 0.007, 6, 36),
+      i % 2 ? materials.projectLineBlue : materials.projectLineViolet
+    );
     stand.position.set(x, 0.35, 0.04);
     frame.position.set(x, 0.52, 0.04);
     frame.rotation.y = Math.PI / 2;
@@ -404,9 +608,33 @@ function addBackendTower(world, materials) {
 
   for (let i = 0; i < 6; i += 1) {
     const y = 0.36 + i * 0.145;
-    const server = makeRoundedBox(0.54 - i * 0.018, 0.12, 0.42, i % 2 ? materials.serverAlt : materials.server, [0, y, 0], null, 0.035);
-    const ledA = makeRoundedBox(0.035, 0.018, 0.018, materials.serverLed, [-0.19, y, 0.22], null, 0.006);
-    const ledB = makeRoundedBox(0.13, 0.012, 0.018, materials.serverLedCold, [0.08, y, 0.22], null, 0.005);
+    const server = makeRoundedBox(
+      0.54 - i * 0.018,
+      0.12,
+      0.42,
+      i % 2 ? materials.serverAlt : materials.server,
+      [0, y, 0],
+      null,
+      0.035
+    );
+    const ledA = makeRoundedBox(
+      0.035,
+      0.018,
+      0.018,
+      materials.serverLed,
+      [-0.19, y, 0.22],
+      null,
+      0.006
+    );
+    const ledB = makeRoundedBox(
+      0.13,
+      0.012,
+      0.018,
+      materials.serverLedCold,
+      [0.08, y, 0.22],
+      null,
+      0.005
+    );
     ledA.userData.seed = i;
     ledB.userData.seed = i + 10;
     world.animated.serverLeds.push(ledA, ledB);
@@ -419,14 +647,24 @@ function addBackendTower(world, materials) {
   shield.position.set(0.42, 0.82, 0.02);
   shield.rotation.set(0, -0.5, 0);
   shield.scale.setScalar(0.7);
-  const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.018, 0.46, 18), materials.backendLine);
+  const antenna = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.014, 0.018, 0.46, 18),
+    materials.backendLine
+  );
   antenna.position.y = 1.28;
   group.add(shield);
   group.add(antenna);
 
   for (let i = 0; i < 7; i += 1) {
-    const node = new THREE.Mesh(new THREE.IcosahedronGeometry(0.035, 1), i % 2 ? materials.dataNodeCyan : materials.dataNodeBlue);
-    node.position.set(Math.cos(i * 1.25) * 0.58, 0.55 + i * 0.075, Math.sin(i * 1.25) * 0.38);
+    const node = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.035, 1),
+      i % 2 ? materials.dataNodeCyan : materials.dataNodeBlue
+    );
+    node.position.set(
+      Math.cos(i * 1.25) * 0.58,
+      0.55 + i * 0.075,
+      Math.sin(i * 1.25) * 0.38
+    );
     node.userData.seed = i;
     world.animated.dataNodes.push(node);
     group.add(node);
@@ -442,13 +680,49 @@ function addGameZone(world, materials) {
   const accent = materials.gameAccent.clone();
   addLayeredBase(group, materials, {width: 1.15, depth: 0.92, accent: accent});
 
-  const portalOuter = new THREE.Mesh(new THREE.TorusGeometry(0.39, 0.035, 18, 104), materials.portalViolet);
-  const portalInner = new THREE.Mesh(new THREE.TorusGeometry(0.29, 0.014, 14, 90), materials.portalPink);
-  const inner = new THREE.Mesh(new THREE.CircleGeometry(0.33, 64), materials.portalGlass);
-  const headset = makeRoundedBox(0.36, 0.16, 0.18, materials.xrHeadset, [0.52, 0.44, 0.05], [0, -0.25, 0], 0.04);
-  const lensA = makeRoundedBox(0.1, 0.08, 0.025, materials.portalPink, [0.45, 0.44, 0.15], [0, -0.25, 0], 0.018);
-  const lensB = makeRoundedBox(0.1, 0.08, 0.025, materials.portalViolet, [0.58, 0.44, 0.12], [0, -0.25, 0], 0.018);
-  const gameToken = new THREE.Mesh(new THREE.IcosahedronGeometry(0.13, 1), materials.gameToken);
+  const portalOuter = new THREE.Mesh(
+    new THREE.TorusGeometry(0.39, 0.035, 18, 104),
+    materials.portalViolet
+  );
+  const portalInner = new THREE.Mesh(
+    new THREE.TorusGeometry(0.29, 0.014, 14, 90),
+    materials.portalPink
+  );
+  const inner = new THREE.Mesh(
+    new THREE.CircleGeometry(0.33, 64),
+    materials.portalGlass
+  );
+  const headset = makeRoundedBox(
+    0.36,
+    0.16,
+    0.18,
+    materials.xrHeadset,
+    [0.52, 0.44, 0.05],
+    [0, -0.25, 0],
+    0.04
+  );
+  const lensA = makeRoundedBox(
+    0.1,
+    0.08,
+    0.025,
+    materials.portalPink,
+    [0.45, 0.44, 0.15],
+    [0, -0.25, 0],
+    0.018
+  );
+  const lensB = makeRoundedBox(
+    0.1,
+    0.08,
+    0.025,
+    materials.portalViolet,
+    [0.58, 0.44, 0.12],
+    [0, -0.25, 0],
+    0.018
+  );
+  const gameToken = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(0.13, 1),
+    materials.gameToken
+  );
 
   portalOuter.position.y = 0.66;
   portalOuter.rotation.y = Math.PI / 2;
@@ -491,7 +765,15 @@ function addGrowthRoad(world, materials) {
 
   for (let i = 0; i < 7; i += 1) {
     const x = -1.42 + i * 0.47;
-    const milestone = makeRoundedBox(0.08, 0.14, 0.08, i % 2 ? materials.growthMint : materials.growthSeed, [x, 0.36 + Math.sin(i) * 0.04, Math.sin(i * 1.7) * 0.16], null, 0.025);
+    const milestone = makeRoundedBox(
+      0.08,
+      0.14,
+      0.08,
+      i % 2 ? materials.growthMint : materials.growthSeed,
+      [x, 0.36 + Math.sin(i) * 0.04, Math.sin(i * 1.7) * 0.16],
+      null,
+      0.025
+    );
     milestone.userData.seed = i;
     milestone.userData.baseY = milestone.position.y;
     group.add(milestone);
@@ -508,10 +790,22 @@ function addContactBeacon(world, materials) {
   const accent = materials.contactAccent.clone();
   addLayeredBase(group, materials, {width: 0.84, depth: 0.72, accent: accent});
 
-  const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.04, 0.95, 24), materials.contactMast);
-  const orb = new THREE.Mesh(new THREE.IcosahedronGeometry(0.14, 3), materials.contactOrb);
-  const beam = new THREE.Mesh(new THREE.ConeGeometry(0.32, 1.72, 42, 1, true), materials.contactBeam);
-  const ringGold = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.01, 8, 64), materials.goldLine);
+  const mast = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.026, 0.04, 0.95, 24),
+    materials.contactMast
+  );
+  const orb = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(0.14, 3),
+    materials.contactOrb
+  );
+  const beam = new THREE.Mesh(
+    new THREE.ConeGeometry(0.32, 1.72, 42, 1, true),
+    materials.contactBeam
+  );
+  const ringGold = new THREE.Mesh(
+    new THREE.TorusGeometry(0.28, 0.01, 8, 64),
+    materials.goldLine
+  );
 
   mast.position.y = 0.76;
   orb.position.y = 1.32;
@@ -557,7 +851,10 @@ function addEnergyLines(world, materials) {
       lineMaterial,
       70
     );
-    const pulse = new THREE.Mesh(new THREE.IcosahedronGeometry(0.035, 1), makeBasicMat(zoneColor, 0.6));
+    const pulse = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.035, 1),
+      makeBasicMat(zoneColor, 0.6)
+    );
     line.userData.zoneId = zone.id;
     line.material.opacity = 0.16;
     world.energyLines[zone.id] = line;
@@ -592,58 +889,357 @@ function createWorld(scene) {
   };
 
   const materials = {
-    terrain: makeMat({color: 0x101a2d, emissive: 0x071426, emissiveIntensity: 0.08, roughness: 0.72, metalness: 0.04}),
+    terrain: makeMat({
+      color: 0x101a2d,
+      emissive: 0x071426,
+      emissiveIntensity: 0.08,
+      roughness: 0.72,
+      metalness: 0.04
+    }),
     cliff: makeMat({color: 0x0b1020, roughness: 0.82, metalness: 0.08}),
     cliffDark: makeMat({color: 0x050816, roughness: 0.86, metalness: 0.06}),
-    platform: makeMat({color: 0x172033, emissive: 0x0b1020, emissiveIntensity: 0.04, roughness: 0.42, metalness: 0.45}),
+    platform: makeMat({
+      color: 0x172033,
+      emissive: 0x0b1020,
+      emissiveIntensity: 0.04,
+      roughness: 0.42,
+      metalness: 0.45
+    }),
     platformDark: makeMat({color: 0x080d1c, roughness: 0.52, metalness: 0.5}),
-    glassBlue: makeMat({color: 0x38bdf8, emissive: 0x38bdf8, emissiveIntensity: 0.16, roughness: 0.08, metalness: 0.04, transparent: true, opacity: 0.26}),
-    core: makeMat({color: 0xf8fafc, emissive: 0x38bdf8, emissiveIntensity: 2.1, roughness: 0.18}),
-    coreHalo: makeMat({color: 0x38bdf8, emissive: 0x38bdf8, emissiveIntensity: 0.85, transparent: true, opacity: 0.17, side: THREE.DoubleSide, depthWrite: false}),
-    coreLine: makeMat({color: 0x7dd3fc, emissive: 0x38bdf8, emissiveIntensity: 1.2, transparent: true, opacity: 0.7}),
+    glassBlue: makeMat({
+      color: 0x38bdf8,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.16,
+      roughness: 0.08,
+      metalness: 0.04,
+      transparent: true,
+      opacity: 0.26
+    }),
+    core: makeMat({
+      color: 0xf8fafc,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 2.1,
+      roughness: 0.18
+    }),
+    coreHalo: makeMat({
+      color: 0x38bdf8,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.85,
+      transparent: true,
+      opacity: 0.17,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    }),
+    coreLine: makeMat({
+      color: 0x7dd3fc,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 1.2,
+      transparent: true,
+      opacity: 0.7
+    }),
     metalCool: makeMat({color: 0x1f2a44, roughness: 0.35, metalness: 0.62}),
-    webAccent: makeMat({color: 0x22d3ee, emissive: 0x22d3ee, emissiveIntensity: 0.9, roughness: 0.2, transparent: true, opacity: 0.66}),
-    webGlass: makeMat({color: 0x22d3ee, emissive: 0x22d3ee, emissiveIntensity: 0.16, roughness: 0.08, metalness: 0.04, transparent: true, opacity: 0.28}),
-    webRoof: makeMat({color: 0x164e63, emissive: 0x22d3ee, emissiveIntensity: 0.18, roughness: 0.24, metalness: 0.34}),
-    screenAqua: makeMat({color: 0x071426, emissive: 0x22d3ee, emissiveIntensity: 0.5, roughness: 0.18}),
-    screenMint: makeMat({color: 0x061b1b, emissive: 0x2dd4bf, emissiveIntensity: 0.46, roughness: 0.18}),
-    webScan: makeMat({color: 0x2dd4bf, emissive: 0x2dd4bf, emissiveIntensity: 1.2, transparent: true, opacity: 0.82}),
-    webHologram: makeMat({color: 0x22d3ee, emissive: 0x22d3ee, emissiveIntensity: 0.48, roughness: 0.12, transparent: true, opacity: 0.34}),
-    webLine: makeMat({color: 0x2dd4bf, emissive: 0x2dd4bf, emissiveIntensity: 0.95, transparent: true, opacity: 0.78}),
-    projectAccent: makeMat({color: 0x8b5cf6, emissive: 0x8b5cf6, emissiveIntensity: 0.9, roughness: 0.2, transparent: true, opacity: 0.64}),
-    galleryGlass: makeMat({color: 0x8b5cf6, emissive: 0x8b5cf6, emissiveIntensity: 0.12, transparent: true, opacity: 0.24, roughness: 0.1}),
-    galleryCanopy: makeMat({color: 0x251640, emissive: 0x8b5cf6, emissiveIntensity: 0.2, roughness: 0.28, metalness: 0.42}),
+    webAccent: makeMat({
+      color: 0x22d3ee,
+      emissive: 0x22d3ee,
+      emissiveIntensity: 0.9,
+      roughness: 0.2,
+      transparent: true,
+      opacity: 0.66
+    }),
+    webGlass: makeMat({
+      color: 0x22d3ee,
+      emissive: 0x22d3ee,
+      emissiveIntensity: 0.16,
+      roughness: 0.08,
+      metalness: 0.04,
+      transparent: true,
+      opacity: 0.28
+    }),
+    webRoof: makeMat({
+      color: 0x164e63,
+      emissive: 0x22d3ee,
+      emissiveIntensity: 0.18,
+      roughness: 0.24,
+      metalness: 0.34
+    }),
+    screenAqua: makeMat({
+      color: 0x071426,
+      emissive: 0x22d3ee,
+      emissiveIntensity: 0.5,
+      roughness: 0.18
+    }),
+    screenMint: makeMat({
+      color: 0x061b1b,
+      emissive: 0x2dd4bf,
+      emissiveIntensity: 0.46,
+      roughness: 0.18
+    }),
+    webScan: makeMat({
+      color: 0x2dd4bf,
+      emissive: 0x2dd4bf,
+      emissiveIntensity: 1.2,
+      transparent: true,
+      opacity: 0.82
+    }),
+    webHologram: makeMat({
+      color: 0x22d3ee,
+      emissive: 0x22d3ee,
+      emissiveIntensity: 0.48,
+      roughness: 0.12,
+      transparent: true,
+      opacity: 0.34
+    }),
+    webLine: makeMat({
+      color: 0x2dd4bf,
+      emissive: 0x2dd4bf,
+      emissiveIntensity: 0.95,
+      transparent: true,
+      opacity: 0.78
+    }),
+    projectAccent: makeMat({
+      color: 0x8b5cf6,
+      emissive: 0x8b5cf6,
+      emissiveIntensity: 0.9,
+      roughness: 0.2,
+      transparent: true,
+      opacity: 0.64
+    }),
+    galleryGlass: makeMat({
+      color: 0x8b5cf6,
+      emissive: 0x8b5cf6,
+      emissiveIntensity: 0.12,
+      transparent: true,
+      opacity: 0.24,
+      roughness: 0.1
+    }),
+    galleryCanopy: makeMat({
+      color: 0x251640,
+      emissive: 0x8b5cf6,
+      emissiveIntensity: 0.2,
+      roughness: 0.28,
+      metalness: 0.42
+    }),
     galleryStand: makeMat({color: 0x25314b, roughness: 0.34, metalness: 0.58}),
-    projectCubeBlue: makeMat({color: 0x38bdf8, emissive: 0x38bdf8, emissiveIntensity: 0.52, roughness: 0.22, metalness: 0.18, transparent: true, opacity: 0.78}),
-    projectCubeViolet: makeMat({color: 0x8b5cf6, emissive: 0x8b5cf6, emissiveIntensity: 0.58, roughness: 0.2, metalness: 0.18, transparent: true, opacity: 0.78}),
-    projectLineBlue: makeMat({color: 0x38bdf8, emissive: 0x38bdf8, emissiveIntensity: 1.0, transparent: true, opacity: 0.66}),
-    projectLineViolet: makeMat({color: 0x8b5cf6, emissive: 0x8b5cf6, emissiveIntensity: 1.0, transparent: true, opacity: 0.66}),
-    backendAccent: makeMat({color: 0x00b4d8, emissive: 0x00b4d8, emissiveIntensity: 0.85, roughness: 0.18, transparent: true, opacity: 0.62}),
-    server: makeMat({color: 0x14213d, emissive: 0x00b4d8, emissiveIntensity: 0.07, roughness: 0.38, metalness: 0.58}),
-    serverAlt: makeMat({color: 0x1e3a8a, emissive: 0x00b4d8, emissiveIntensity: 0.12, roughness: 0.36, metalness: 0.56}),
-    serverLed: makeMat({color: 0x00b4d8, emissive: 0x00b4d8, emissiveIntensity: 1.25, transparent: true, opacity: 0.82}),
-    serverLedCold: makeMat({color: 0x7dd3fc, emissive: 0x7dd3fc, emissiveIntensity: 1.0, transparent: true, opacity: 0.65}),
-    shield: makeMat({color: 0x00b4d8, emissive: 0x00b4d8, emissiveIntensity: 0.42, transparent: true, opacity: 0.52, roughness: 0.16}),
-    backendLine: makeMat({color: 0x00b4d8, emissive: 0x00b4d8, emissiveIntensity: 1.0, transparent: true, opacity: 0.82}),
-    dataNodeCyan: makeMat({color: 0x00b4d8, emissive: 0x00b4d8, emissiveIntensity: 0.72, transparent: true, opacity: 0.8}),
-    dataNodeBlue: makeMat({color: 0x38bdf8, emissive: 0x38bdf8, emissiveIntensity: 0.6, transparent: true, opacity: 0.74}),
-    gameAccent: makeMat({color: 0xa855f7, emissive: 0xa855f7, emissiveIntensity: 0.88, transparent: true, opacity: 0.62}),
-    portalViolet: makeMat({color: 0xa855f7, emissive: 0xa855f7, emissiveIntensity: 1.35, roughness: 0.16, metalness: 0.22}),
-    portalPink: makeMat({color: 0xec4899, emissive: 0xec4899, emissiveIntensity: 1.1, transparent: true, opacity: 0.78}),
-    portalGlass: makeMat({color: 0x312e81, emissive: 0xa855f7, emissiveIntensity: 0.48, transparent: true, opacity: 0.28, side: THREE.DoubleSide, depthWrite: false}),
-    xrHeadset: makeMat({color: 0x171427, emissive: 0xa855f7, emissiveIntensity: 0.12, roughness: 0.28, metalness: 0.5}),
-    gameToken: makeMat({color: 0xec4899, emissive: 0xec4899, emissiveIntensity: 0.58, roughness: 0.18, metalness: 0.18}),
-    growthRoad: makeMat({color: 0x34d399, emissive: 0x34d399, emissiveIntensity: 0.78, transparent: true, opacity: 0.74}),
-    growthMint: makeMat({color: 0x2dd4bf, emissive: 0x2dd4bf, emissiveIntensity: 0.6, roughness: 0.28}),
-    growthSeed: makeMat({color: 0x34d399, emissive: 0x34d399, emissiveIntensity: 0.52, roughness: 0.3}),
-    contactAccent: makeMat({color: 0xe0f2fe, emissive: 0x38bdf8, emissiveIntensity: 0.75, transparent: true, opacity: 0.7}),
-    contactMast: makeMat({color: 0xe0f2fe, emissive: 0x38bdf8, emissiveIntensity: 0.22, roughness: 0.26, metalness: 0.62}),
-    contactOrb: makeMat({color: 0xf8fafc, emissive: 0x38bdf8, emissiveIntensity: 1.45, roughness: 0.15}),
-    contactBeam: makeMat({color: 0xe0f2fe, emissive: 0x38bdf8, emissiveIntensity: 0.45, transparent: true, opacity: 0.14, side: THREE.DoubleSide, depthWrite: false}),
-    goldLine: makeMat({color: 0xfacc15, emissive: 0xfacc15, emissiveIntensity: 0.8, transparent: true, opacity: 0.7}),
-    blueCrystal: makeMat({color: 0x38bdf8, emissive: 0x38bdf8, emissiveIntensity: 0.18, roughness: 0.2, transparent: true, opacity: 0.78}),
-    violetCrystal: makeMat({color: 0x8b5cf6, emissive: 0x8b5cf6, emissiveIntensity: 0.18, roughness: 0.2, transparent: true, opacity: 0.72}),
-    mintCrystal: makeMat({color: 0x2dd4bf, emissive: 0x2dd4bf, emissiveIntensity: 0.14, roughness: 0.2, transparent: true, opacity: 0.7})
+    projectCubeBlue: makeMat({
+      color: 0x38bdf8,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.52,
+      roughness: 0.22,
+      metalness: 0.18,
+      transparent: true,
+      opacity: 0.78
+    }),
+    projectCubeViolet: makeMat({
+      color: 0x8b5cf6,
+      emissive: 0x8b5cf6,
+      emissiveIntensity: 0.58,
+      roughness: 0.2,
+      metalness: 0.18,
+      transparent: true,
+      opacity: 0.78
+    }),
+    projectLineBlue: makeMat({
+      color: 0x38bdf8,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 1.0,
+      transparent: true,
+      opacity: 0.66
+    }),
+    projectLineViolet: makeMat({
+      color: 0x8b5cf6,
+      emissive: 0x8b5cf6,
+      emissiveIntensity: 1.0,
+      transparent: true,
+      opacity: 0.66
+    }),
+    backendAccent: makeMat({
+      color: 0x00b4d8,
+      emissive: 0x00b4d8,
+      emissiveIntensity: 0.85,
+      roughness: 0.18,
+      transparent: true,
+      opacity: 0.62
+    }),
+    server: makeMat({
+      color: 0x14213d,
+      emissive: 0x00b4d8,
+      emissiveIntensity: 0.07,
+      roughness: 0.38,
+      metalness: 0.58
+    }),
+    serverAlt: makeMat({
+      color: 0x1e3a8a,
+      emissive: 0x00b4d8,
+      emissiveIntensity: 0.12,
+      roughness: 0.36,
+      metalness: 0.56
+    }),
+    serverLed: makeMat({
+      color: 0x00b4d8,
+      emissive: 0x00b4d8,
+      emissiveIntensity: 1.25,
+      transparent: true,
+      opacity: 0.82
+    }),
+    serverLedCold: makeMat({
+      color: 0x7dd3fc,
+      emissive: 0x7dd3fc,
+      emissiveIntensity: 1.0,
+      transparent: true,
+      opacity: 0.65
+    }),
+    shield: makeMat({
+      color: 0x00b4d8,
+      emissive: 0x00b4d8,
+      emissiveIntensity: 0.42,
+      transparent: true,
+      opacity: 0.52,
+      roughness: 0.16
+    }),
+    backendLine: makeMat({
+      color: 0x00b4d8,
+      emissive: 0x00b4d8,
+      emissiveIntensity: 1.0,
+      transparent: true,
+      opacity: 0.82
+    }),
+    dataNodeCyan: makeMat({
+      color: 0x00b4d8,
+      emissive: 0x00b4d8,
+      emissiveIntensity: 0.72,
+      transparent: true,
+      opacity: 0.8
+    }),
+    dataNodeBlue: makeMat({
+      color: 0x38bdf8,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.6,
+      transparent: true,
+      opacity: 0.74
+    }),
+    gameAccent: makeMat({
+      color: 0xa855f7,
+      emissive: 0xa855f7,
+      emissiveIntensity: 0.88,
+      transparent: true,
+      opacity: 0.62
+    }),
+    portalViolet: makeMat({
+      color: 0xa855f7,
+      emissive: 0xa855f7,
+      emissiveIntensity: 1.35,
+      roughness: 0.16,
+      metalness: 0.22
+    }),
+    portalPink: makeMat({
+      color: 0xec4899,
+      emissive: 0xec4899,
+      emissiveIntensity: 1.1,
+      transparent: true,
+      opacity: 0.78
+    }),
+    portalGlass: makeMat({
+      color: 0x312e81,
+      emissive: 0xa855f7,
+      emissiveIntensity: 0.48,
+      transparent: true,
+      opacity: 0.28,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    }),
+    xrHeadset: makeMat({
+      color: 0x171427,
+      emissive: 0xa855f7,
+      emissiveIntensity: 0.12,
+      roughness: 0.28,
+      metalness: 0.5
+    }),
+    gameToken: makeMat({
+      color: 0xec4899,
+      emissive: 0xec4899,
+      emissiveIntensity: 0.58,
+      roughness: 0.18,
+      metalness: 0.18
+    }),
+    growthRoad: makeMat({
+      color: 0x34d399,
+      emissive: 0x34d399,
+      emissiveIntensity: 0.78,
+      transparent: true,
+      opacity: 0.74
+    }),
+    growthMint: makeMat({
+      color: 0x2dd4bf,
+      emissive: 0x2dd4bf,
+      emissiveIntensity: 0.6,
+      roughness: 0.28
+    }),
+    growthSeed: makeMat({
+      color: 0x34d399,
+      emissive: 0x34d399,
+      emissiveIntensity: 0.52,
+      roughness: 0.3
+    }),
+    contactAccent: makeMat({
+      color: 0xe0f2fe,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.75,
+      transparent: true,
+      opacity: 0.7
+    }),
+    contactMast: makeMat({
+      color: 0xe0f2fe,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.22,
+      roughness: 0.26,
+      metalness: 0.62
+    }),
+    contactOrb: makeMat({
+      color: 0xf8fafc,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 1.45,
+      roughness: 0.15
+    }),
+    contactBeam: makeMat({
+      color: 0xe0f2fe,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.45,
+      transparent: true,
+      opacity: 0.14,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    }),
+    goldLine: makeMat({
+      color: 0xfacc15,
+      emissive: 0xfacc15,
+      emissiveIntensity: 0.8,
+      transparent: true,
+      opacity: 0.7
+    }),
+    blueCrystal: makeMat({
+      color: 0x38bdf8,
+      emissive: 0x38bdf8,
+      emissiveIntensity: 0.18,
+      roughness: 0.2,
+      transparent: true,
+      opacity: 0.78
+    }),
+    violetCrystal: makeMat({
+      color: 0x8b5cf6,
+      emissive: 0x8b5cf6,
+      emissiveIntensity: 0.18,
+      roughness: 0.2,
+      transparent: true,
+      opacity: 0.72
+    }),
+    mintCrystal: makeMat({
+      color: 0x2dd4bf,
+      emissive: 0x2dd4bf,
+      emissiveIntensity: 0.14,
+      roughness: 0.2,
+      transparent: true,
+      opacity: 0.7
+    })
   };
 
   scene.add(world.root);
@@ -657,7 +1253,15 @@ function createWorld(scene) {
   addGrowthRoad(world, materials);
   addContactBeacon(world, materials);
 
-  const radii = {about: 0.54, skills: 0.7, projects: 0.72, backend: 0.72, game: 0.72, growth: 0.9, contact: 0.62};
+  const radii = {
+    about: 0.54,
+    skills: 0.7,
+    projects: 0.72,
+    backend: 0.72,
+    game: 0.72,
+    growth: 0.9,
+    contact: 0.62
+  };
   zones.forEach(function addZone(zone) {
     addZoneHotspot(world, zone, radii[zone.id], world.interactiveMeshes);
   });
@@ -672,7 +1276,10 @@ function createWorld(scene) {
     positions[i * 3 + 1] = -0.45 + seeded(i, 52) * 3.55;
     positions[i * 3 + 2] = Math.sin(angle) * radius * 0.82;
   }
-  particleGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  particleGeometry.setAttribute(
+    "position",
+    new THREE.BufferAttribute(positions, 3)
+  );
   world.animated.particles = new THREE.Points(
     particleGeometry,
     new THREE.PointsMaterial({
@@ -703,18 +1310,27 @@ function WorldScene(props) {
   const onHoverRef = useRef(onHoverZone);
   const onSelectRef = useRef(onSelectZone);
 
-  useEffect(function updateRefs() {
-    activeRef.current = activeZone;
-  }, [activeZone]);
+  useEffect(
+    function updateRefs() {
+      activeRef.current = activeZone;
+    },
+    [activeZone]
+  );
 
-  useEffect(function updateHoverRef() {
-    hoveredRef.current = hoveredZone;
-  }, [hoveredZone]);
+  useEffect(
+    function updateHoverRef() {
+      hoveredRef.current = hoveredZone;
+    },
+    [hoveredZone]
+  );
 
-  useEffect(function updateHandlers() {
-    onHoverRef.current = onHoverZone;
-    onSelectRef.current = onSelectZone;
-  }, [onHoverZone, onSelectZone]);
+  useEffect(
+    function updateHandlers() {
+      onHoverRef.current = onHoverZone;
+      onSelectRef.current = onSelectZone;
+    },
+    [onHoverZone, onSelectZone]
+  );
 
   useEffect(function mountScene() {
     const mount = mountRef.current;
@@ -759,7 +1375,14 @@ function WorldScene(props) {
     key.shadow.camera.bottom = -4;
     scene.add(key);
 
-    const spotlight = new THREE.SpotLight(0x38bdf8, 3.6, 9, Math.PI / 5, 0.48, 1.2);
+    const spotlight = new THREE.SpotLight(
+      0x38bdf8,
+      3.6,
+      9,
+      Math.PI / 5,
+      0.48,
+      1.2
+    );
     spotlight.position.set(-1.2, 4.2, 3.6);
     spotlight.target.position.set(0.4, 0.1, 0);
     spotlight.castShadow = true;
@@ -826,7 +1449,8 @@ function WorldScene(props) {
       }
       zoneGroup.userData.materials.forEach(function updateMaterial(material) {
         const base = material.userData.baseEmissiveIntensity || 0;
-        material.emissiveIntensity += (base + boost - material.emissiveIntensity) * 0.12;
+        material.emissiveIntensity +=
+          (base + boost - material.emissiveIntensity) * 0.12;
       });
     }
 
@@ -851,19 +1475,26 @@ function WorldScene(props) {
         const pulse = 1 + Math.sin(elapsed * 2.5) * 0.09;
         core.scale.setScalar(pulse);
         halo.scale.setScalar(1.04 + Math.sin(elapsed * 2.1) * 0.08);
-        halo.material.opacity = 0.13 + (Math.sin(elapsed * 2.1) * 0.5 + 0.5) * 0.08;
+        halo.material.opacity =
+          0.13 + (Math.sin(elapsed * 2.1) * 0.5 + 0.5) * 0.08;
         rings[0].rotation.z += 0.009;
         rings[1].rotation.z -= 0.006;
       }
 
-      world.animated.projectCubes.forEach(function animateProjectCube(mesh, index) {
+      world.animated.projectCubes.forEach(function animateProjectCube(
+        mesh,
+        index
+      ) {
         mesh.rotation.x += 0.005 + index * 0.0006;
         mesh.rotation.y += 0.008;
-        mesh.position.y = mesh.userData.baseY + Math.sin(elapsed * 1.75 + index) * 0.045;
+        mesh.position.y =
+          mesh.userData.baseY + Math.sin(elapsed * 1.75 + index) * 0.045;
       });
 
       world.animated.serverLeds.forEach(function animateLed(mesh, index) {
-        const blink = Math.sin(elapsed * (3.2 + index * 0.12) + mesh.userData.seed) * 0.5 + 0.5;
+        const blink =
+          Math.sin(elapsed * (3.2 + index * 0.12) + mesh.userData.seed) * 0.5 +
+          0.5;
         mesh.material.opacity = 0.35 + blink * 0.55;
         mesh.material.emissiveIntensity = 0.65 + blink * 1.1;
       });
@@ -874,21 +1505,29 @@ function WorldScene(props) {
       });
 
       world.animated.milestones.forEach(function animateMilestone(mesh, index) {
-        mesh.position.y = mesh.userData.baseY + Math.sin(elapsed * 1.4 + index) * 0.025;
+        mesh.position.y =
+          mesh.userData.baseY + Math.sin(elapsed * 1.4 + index) * 0.025;
         mesh.scale.setScalar(1 + Math.sin(elapsed * 2 + index * 0.6) * 0.12);
       });
 
-      if (world.animated.zoneGroups.game && world.animated.zoneGroups.game.userData.portalRings) {
+      if (
+        world.animated.zoneGroups.game &&
+        world.animated.zoneGroups.game.userData.portalRings
+      ) {
         const rings = world.animated.zoneGroups.game.userData.portalRings;
         rings[0].rotation.z += 0.013;
         rings[1].rotation.z -= 0.018;
         world.animated.zoneGroups.game.userData.gameToken.rotation.y += 0.012;
       }
 
-      if (world.animated.zoneGroups.skills && world.animated.zoneGroups.skills.userData.scan) {
+      if (
+        world.animated.zoneGroups.skills &&
+        world.animated.zoneGroups.skills.userData.scan
+      ) {
         const scan = world.animated.zoneGroups.skills.userData.scan;
         scan.position.y = 0.46 + (Math.sin(elapsed * 1.5) * 0.5 + 0.5) * 0.28;
-        world.animated.zoneGroups.skills.userData.hologram.position.y = 0.82 + Math.sin(elapsed * 1.2) * 0.035;
+        world.animated.zoneGroups.skills.userData.hologram.position.y =
+          0.82 + Math.sin(elapsed * 1.2) * 0.035;
       }
 
       if (world.animated.zoneGroups.contact) {
@@ -897,14 +1536,16 @@ function WorldScene(props) {
         const ring = world.animated.zoneGroups.contact.userData.goldRing;
         const pulse = 1 + Math.sin(elapsed * 2.8) * 0.12;
         orb.scale.setScalar(pulse);
-        beam.material.opacity = 0.09 + (Math.sin(elapsed * 1.7) * 0.5 + 0.5) * 0.11;
+        beam.material.opacity =
+          0.09 + (Math.sin(elapsed * 1.7) * 0.5 + 0.5) * 0.11;
         ring.rotation.z += 0.012;
       }
 
       world.animated.energyPulses.forEach(function animatePulse(item, index) {
         const t = (elapsed * 0.12 + item.phase + index * 0.07) % 1;
         const isActive = selected === item.zoneId;
-        const isHover = activeHover === item.zoneId || hoveredRef.current === item.zoneId;
+        const isHover =
+          activeHover === item.zoneId || hoveredRef.current === item.zoneId;
         item.mesh.position.copy(item.curve.getPointAt(t));
         item.mesh.material.opacity = isActive ? 0.95 : isHover ? 0.72 : 0.34;
         item.mesh.scale.setScalar(isActive ? 1.28 : isHover ? 1.08 : 0.86);
@@ -913,36 +1554,59 @@ function WorldScene(props) {
       if (world.animated.particles) {
         world.animated.particles.rotation.y += 0.0009;
         world.animated.particles.rotation.x = Math.sin(elapsed * 0.18) * 0.08;
-        world.animated.particles.material.opacity = 0.46 + (Math.sin(elapsed * 0.72) * 0.5 + 0.5) * 0.16;
+        world.animated.particles.material.opacity =
+          0.46 + (Math.sin(elapsed * 0.72) * 0.5 + 0.5) * 0.16;
       }
 
       zoneIds.forEach(function updateZoneVisual(zoneId) {
         const marker = world.zoneMarkers[zoneId];
         const isActive = selected === zoneId;
         const isHover = activeHover === zoneId || hoveredRef.current === zoneId;
-        const scale = isActive ? 1.86 : isHover ? 1.48 : 1 + Math.sin(elapsed * 1.6 + zoneId.length) * 0.08;
+        const scale = isActive
+          ? 1.86
+          : isHover
+          ? 1.48
+          : 1 + Math.sin(elapsed * 1.6 + zoneId.length) * 0.08;
         tempScale.set(scale, scale, scale);
         marker.scale.lerp(tempScale, 0.12);
-        marker.position.y = marker.userData.baseY + Math.sin(elapsed * 1.25 + zoneId.length) * 0.025;
+        marker.position.y =
+          marker.userData.baseY +
+          Math.sin(elapsed * 1.25 + zoneId.length) * 0.025;
         marker.userData.ring.rotation.z += isActive || isHover ? 0.018 : 0.006;
-        marker.userData.marker.material.opacity += ((isActive ? 1 : isHover ? 0.9 : 0.5) - marker.userData.marker.material.opacity) * 0.14;
-        marker.userData.ring.material.opacity += ((isActive ? 0.86 : isHover ? 0.62 : 0.24) - marker.userData.ring.material.opacity) * 0.14;
-        marker.userData.label.material.opacity += ((isActive || isHover ? 0.96 : 0) - marker.userData.label.material.opacity) * 0.16;
+        marker.userData.marker.material.opacity +=
+          ((isActive ? 1 : isHover ? 0.9 : 0.5) -
+            marker.userData.marker.material.opacity) *
+          0.14;
+        marker.userData.ring.material.opacity +=
+          ((isActive ? 0.86 : isHover ? 0.62 : 0.24) -
+            marker.userData.ring.material.opacity) *
+          0.14;
+        marker.userData.label.material.opacity +=
+          ((isActive || isHover ? 0.96 : 0) -
+            marker.userData.label.material.opacity) *
+          0.16;
 
         if (world.energyLines[zoneId]) {
-          world.energyLines[zoneId].material.opacity += ((isActive ? 0.72 : isHover ? 0.46 : 0.14) - world.energyLines[zoneId].material.opacity) * 0.12;
+          world.energyLines[zoneId].material.opacity +=
+            ((isActive ? 0.72 : isHover ? 0.46 : 0.14) -
+              world.energyLines[zoneId].material.opacity) *
+            0.12;
         }
 
         if (world.animated.zoneGroups[zoneId]) {
           const zoneGroup = world.animated.zoneGroups[zoneId];
           const baseY = zoneGroup.userData.baseY || 0;
           const lift = isActive ? 0.09 : isHover ? 0.055 : 0.018;
-          zoneGroup.position.y = baseY + Math.sin(elapsed * 2.2 + zoneId.length) * lift;
+          zoneGroup.position.y =
+            baseY + Math.sin(elapsed * 2.2 + zoneId.length) * lift;
           updateZoneMaterials(zoneGroup, isActive ? 0.38 : isHover ? 0.24 : 0);
           if (zoneGroup.userData.aura) {
             const aura = zoneGroup.userData.aura;
             aura.rotation.z += isActive || isHover ? 0.018 : 0.006;
-            aura.material.opacity += ((isActive ? 0.78 : isHover ? 0.58 : aura.userData.baseOpacity) - aura.material.opacity) * 0.12;
+            aura.material.opacity +=
+              ((isActive ? 0.78 : isHover ? 0.58 : aura.userData.baseOpacity) -
+                aura.material.opacity) *
+              0.12;
             aura.scale.setScalar(isActive ? 1.12 : isHover ? 1.06 : 1);
           }
         }
@@ -977,7 +1641,13 @@ function WorldScene(props) {
     };
   }, []);
 
-  return <div className="portfolio-world-scene" ref={mountRef} aria-label="Interactive 3D portfolio world" />;
+  return (
+    <div
+      className="portfolio-world-scene"
+      ref={mountRef}
+      aria-label="Interactive 3D portfolio world"
+    />
+  );
 }
 
 export default WorldScene;

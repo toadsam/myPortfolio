@@ -3,7 +3,11 @@ import {Vector3, type Camera, type Object3D} from "three";
 // drei Html의 defaultCalculatePosition과 동일한 투영 공식 (drei가 export하지 않아 복제)
 const _pos = new Vector3();
 
-function project(el: Object3D, camera: Camera, size: {width: number; height: number}): [number, number] {
+function project(
+  el: Object3D,
+  camera: Camera,
+  size: {width: number; height: number}
+): [number, number] {
   _pos.setFromMatrixPosition(el.matrixWorld);
   _pos.project(camera);
   const widthHalf = size.width / 2;
@@ -19,7 +23,11 @@ function project(el: Object3D, camera: Camera, size: {width: number; height: num
 export function createThrottledCalculatePosition(stride: number) {
   let frame = 0;
   let cached: [number, number] = [0, 0];
-  return (el: Object3D, camera: Camera, size: {width: number; height: number}) => {
+  return (
+    el: Object3D,
+    camera: Camera,
+    size: {width: number; height: number}
+  ) => {
     if (frame % stride === 0) {
       cached = project(el, camera, size);
     }

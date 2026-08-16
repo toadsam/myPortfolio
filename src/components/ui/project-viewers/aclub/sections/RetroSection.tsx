@@ -13,8 +13,8 @@ const KPT = [
     items: [
       "필터 상태를 주소에서 파생시킨 것",
       "상세를 모달이 아니라 라우트로 만든 것",
-      "컴포넌트가 라우터를 모르게 유지한 것",
-    ],
+      "컴포넌트가 라우터를 모르게 유지한 것"
+    ]
   },
   {
     title: "PROBLEM",
@@ -22,14 +22,18 @@ const KPT = [
     items: [
       "뒤로가기 문제를 사용자가 말해주기 전까지 몰랐다",
       "스크롤 복원을 처음엔 잘못된 시점에 넣어서 두 번 고쳤다",
-      "테스트 코드가 하나도 없다",
-    ],
+      "테스트 코드가 하나도 없다"
+    ]
   },
   {
     title: "TRY",
     color: "#fbbf24",
-    items: ["백엔드 API 연동과 실제 배포", "핵심 흐름(탐색→지원)에 E2E 테스트 붙이기", "실제 학생 5명에게 조건 필터를 써보게 하기"],
-  },
+    items: [
+      "백엔드 API 연동과 실제 배포",
+      "핵심 흐름(탐색→지원)에 E2E 테스트 붙이기",
+      "실제 학생 5명에게 조건 필터를 써보게 하기"
+    ]
+  }
 ];
 
 function seeded(seed: number): number {
@@ -43,7 +47,9 @@ interface Props {
 
 export function RetroSection({onExit}: Props) {
   const {reducedMotion, lockScroll} = useAClub();
-  const {ref: sectionRef, inView} = useInViewOnce<HTMLElement>({threshold: 0.1});
+  const {ref: sectionRef, inView} = useInViewOnce<HTMLElement>({
+    threshold: 0.1
+  });
   const [exiting, setExiting] = useState(false);
   const [mobile, setMobile] = useState(false);
   const [hovered, setHovered] = useState<number | null>(null);
@@ -67,7 +73,7 @@ export function RetroSection({onExit}: Props) {
     const stagger = count > 1 ? 0.65 / (count - 1) : 0;
     return order.map((slot, i) => ({
       fall: 0.45 + slot * stagger,
-      rotate: (seeded(i + 17) > 0.5 ? 1 : -1) * (8 + seeded(i + 29) * 10),
+      rotate: (seeded(i + 17) > 0.5 ? 1 : -1) * (8 + seeded(i + 29) * 10)
     }));
   }, [count]);
 
@@ -82,7 +88,7 @@ export function RetroSection({onExit}: Props) {
     () => () => {
       window.clearTimeout(timer.current);
     },
-    [],
+    []
   );
 
   return (
@@ -100,20 +106,22 @@ export function RetroSection({onExit}: Props) {
           <Kicker tone="muted">09 · 회고</Kicker>
 
           <h2 className="mt-6 flex flex-wrap justify-center gap-x-[0.25em] gap-y-1 text-[24px] font-black leading-tight md:text-[30px]">
-            {"기능을 만드는 것보다 브라우저를 되찾는 데 시간을 더 썼다".split(" ").map((word, i) => (
-              <span
-                key={`${word}-${i}`}
-                className="inline-block transition-all duration-[600ms]"
-                style={{
-                  transitionDelay: reducedMotion ? "0s" : `${i * 0.15}s`,
-                  transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)",
-                  opacity: inView ? 1 : 0,
-                  transform: inView ? "none" : "translateY(12px)",
-                }}
-              >
-                {word}
-              </span>
-            ))}
+            {"기능을 만드는 것보다 브라우저를 되찾는 데 시간을 더 썼다"
+              .split(" ")
+              .map((word, i) => (
+                <span
+                  key={`${word}-${i}`}
+                  className="inline-block transition-all duration-[600ms]"
+                  style={{
+                    transitionDelay: reducedMotion ? "0s" : `${i * 0.15}s`,
+                    transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)",
+                    opacity: inView ? 1 : 0,
+                    transform: inView ? "none" : "translateY(12px)"
+                  }}
+                >
+                  {word}
+                </span>
+              ))}
           </h2>
 
           <p
@@ -122,7 +130,7 @@ export function RetroSection({onExit}: Props) {
               transitionDelay: reducedMotion ? "0s" : "0.7s",
               transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)",
               opacity: inView ? 1 : 0,
-              transform: inView ? "none" : "translateY(16px)",
+              transform: inView ? "none" : "translateY(16px)"
             }}
           >
             필터도 목록도 상세도 하루면 만들었습니다.
@@ -147,15 +155,24 @@ export function RetroSection({onExit}: Props) {
                 style={{
                   transitionDelay: reducedMotion ? "0s" : `${delay}s`,
                   opacity: inView ? 1 : 0,
-                  transform: inView ? (isHovered ? "translateY(-4px)" : "none") : "translateY(20px)",
+                  transform: inView
+                    ? isHovered
+                      ? "translateY(-4px)"
+                      : "none"
+                    : "translateY(20px)",
                   borderStyle: "solid",
                   borderWidth: 1,
-                  borderColor: isHovered ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.10)",
+                  borderColor: isHovered
+                    ? "rgba(255,255,255,0.22)"
+                    : "rgba(255,255,255,0.10)",
                   borderTopWidth: isHovered ? 4 : 3,
-                  borderTopColor: col.color,
+                  borderTopColor: col.color
                 }}
               >
-                <h3 className="mb-[18px] font-mono text-[11px] uppercase tracking-[0.2em]" style={{color: col.color}}>
+                <h3
+                  className="mb-[18px] font-mono text-[11px] uppercase tracking-[0.2em]"
+                  style={{color: col.color}}
+                >
                   {col.title}
                 </h3>
                 <div className="flex flex-col gap-[14px]">
@@ -164,10 +181,12 @@ export function RetroSection({onExit}: Props) {
                       key={item}
                       className="flex items-start text-[15px] leading-[32px] text-[rgba(255,255,255,0.88)] transition-all duration-500"
                       style={{
-                        transitionDelay: reducedMotion ? "0s" : `${delay + 0.06 * (itemIndex + 2)}s`,
+                        transitionDelay: reducedMotion
+                          ? "0s"
+                          : `${delay + 0.06 * (itemIndex + 2)}s`,
                         transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)",
                         opacity: inView ? 1 : 0,
-                        transform: inView ? "none" : "translateX(-10px)",
+                        transform: inView ? "none" : "translateX(-10px)"
                       }}
                     >
                       <span className="mr-1.5 opacity-60">·</span>
@@ -181,7 +200,9 @@ export function RetroSection({onExit}: Props) {
         </div>
 
         <Reveal className="mt-[48px] w-full rounded-md border border-[rgba(192,132,252,0.22)] border-l-[3px] border-l-[#c084fc] bg-[rgba(192,132,252,0.04)] p-[22px]">
-          <div className="font-mono text-[11px] tracking-[0.2em] text-[#c084fc]">다음 단계</div>
+          <div className="font-mono text-[11px] tracking-[0.2em] text-[#c084fc]">
+            다음 단계
+          </div>
           <p className="mt-3 text-[16px] leading-[32px] text-[rgba(255,255,255,0.88)]">
             백엔드 API 연동과 실제 배포를 진행할 예정입니다.
             <br className="hidden md:block" />
@@ -208,19 +229,24 @@ export function RetroSection({onExit}: Props) {
           {(
             [
               {cls: "top-0 left-1/2 -translate-x-1/2 h-[1px]", grow: "width"},
-              {cls: "bottom-0 left-1/2 -translate-x-1/2 h-[1px]", grow: "width"},
+              {
+                cls: "bottom-0 left-1/2 -translate-x-1/2 h-[1px]",
+                grow: "width"
+              },
               {cls: "top-1/2 left-0 -translate-y-1/2 w-[1px]", grow: "height"},
-              {cls: "top-1/2 right-0 -translate-y-1/2 w-[1px]", grow: "height"},
+              {cls: "top-1/2 right-0 -translate-y-1/2 w-[1px]", grow: "height"}
             ] as const
           ).map((edge, i) => (
             <span
               key={i}
               className={`absolute z-20 bg-[rgba(255,255,255,0.14)] transition-all duration-[700ms] group-hover:bg-[rgba(192,132,252,0.45)] ${edge.cls}`}
-              style={{
-                [edge.grow]: inView ? "100%" : "0%",
-                transitionDelay: reducedMotion ? "0s" : "2.9s",
-                transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)",
-              } as CSSProperties}
+              style={
+                {
+                  [edge.grow]: inView ? "100%" : "0%",
+                  transitionDelay: reducedMotion ? "0s" : "2.9s",
+                  transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)"
+                } as CSSProperties
+              }
             />
           ))}
 
@@ -237,7 +263,10 @@ export function RetroSection({onExit}: Props) {
 
       {/* ── 퇴장: 포스터가 한 장씩 떨어지고 불이 꺼진다 ── */}
       {exiting ? (
-        <div className="pointer-events-none fixed inset-0 z-[110] overflow-hidden" aria-hidden="true">
+        <div
+          className="pointer-events-none fixed inset-0 z-[110] overflow-hidden"
+          aria-hidden="true"
+        >
           {reducedMotion ? (
             <div className="absolute inset-0 bg-[#0d0816]" />
           ) : (
@@ -246,7 +275,7 @@ export function RetroSection({onExit}: Props) {
                 className="absolute inset-0"
                 style={{
                   background:
-                    "radial-gradient(circle at 50% -20%, rgba(192,132,252,0.12), transparent 50%), radial-gradient(circle at 50% 120%, rgba(192,132,252,0.06), transparent 50%)",
+                    "radial-gradient(circle at 50% -20%, rgba(192,132,252,0.12), transparent 50%), radial-gradient(circle at 50% 120%, rgba(192,132,252,0.06), transparent 50%)"
                 }}
               />
               <div
@@ -255,23 +284,30 @@ export function RetroSection({onExit}: Props) {
                   gridTemplateColumns: `repeat(${cols}, 1fr)`,
                   gridTemplateRows: `repeat(${rows}, 1fr)`,
                   gap: mobile ? "12px" : "24px",
-                  padding: mobile ? "32px 16px" : "64px 32px",
+                  padding: mobile ? "32px 16px" : "64px 32px"
                 }}
               >
                 {posters.map((p, i) => (
-                  <div key={i} className="relative flex h-full w-full items-center justify-center">
+                  <div
+                    key={i}
+                    className="relative flex h-full w-full items-center justify-center"
+                  >
                     <div
                       className="ac-exit-poster relative flex h-full max-h-[160px] w-full flex-col rounded-sm border border-[rgba(255,255,255,0.10)] bg-[#1c1330] px-3 pt-6"
                       style={
                         {
                           "--ac-exit-delay": `${p.fall}s`,
-                          "--ac-exit-rot": `${p.rotate}deg`,
+                          "--ac-exit-rot": `${p.rotate}deg`
                         } as CSSProperties
                       }
                     >
                       <span
                         className="ac-exit-tape absolute -top-[6px] left-1/2 h-4 w-8 -translate-x-1/2 rounded-sm bg-white/20 backdrop-blur-[2px] md:-top-[10px] md:h-5 md:w-12"
-                        style={{"--ac-exit-peel": `${Math.max(0.25, p.fall - 0.1)}s`} as CSSProperties}
+                        style={
+                          {
+                            "--ac-exit-peel": `${Math.max(0.25, p.fall - 0.1)}s`
+                          } as CSSProperties
+                        }
                       />
                       <span className="mb-3 h-1.5 w-[80%] rounded-full bg-white/10 md:h-2" />
                       <span className="mb-2 h-1.5 w-[50%] rounded-full bg-white/10 md:h-2" />
@@ -282,7 +318,9 @@ export function RetroSection({onExit}: Props) {
               </div>
               <div
                 className="absolute inset-0 bg-[#0d0816] opacity-0 transition-opacity duration-[350ms]"
-                style={{animation: "ac-exit-blackout 0.35s ease 1.85s forwards"}}
+                style={{
+                  animation: "ac-exit-blackout 0.35s ease 1.85s forwards"
+                }}
               />
             </>
           )}

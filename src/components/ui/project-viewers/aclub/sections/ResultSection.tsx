@@ -8,19 +8,67 @@ import {useInViewOnce} from "../parts";
 const EASE = [0.22, 1, 0.36, 1] as const;
 
 const GALLERY = [
-  {header: "01 · 동아리 탐색", slot: "[IMG-07]", ratio: "16:10", aspect: "aspect-[16/10]", caption: "조건을 누르면 목록이 재배치된다", span: "md:col-span-2", narrow: false},
-  {header: "02 · 모바일 목록", slot: "[IMG-08]", ratio: "9:16", aspect: "aspect-[9/16]", caption: "모바일에서는 2열", span: "md:col-span-1", narrow: true},
-  {header: "03 · 동아리 상세", slot: "[IMG-09]", ratio: "16:10", aspect: "aspect-[16/10]", caption: "모달이 아니라 독립된 주소를 가진 화면", span: "md:col-span-1", narrow: false},
-  {header: "04 · 모집 공고", slot: "[IMG-10]", ratio: "16:10", aspect: "aspect-[16/10]", caption: "마감일이 가장 먼저 보이도록", span: "md:col-span-1", narrow: false},
-  {header: "05 · 마이페이지", slot: "[IMG-11]", ratio: "16:10", aspect: "aspect-[16/10]", caption: "내가 지원한 것만 모아서", span: "md:col-span-1", narrow: false},
-  {header: "06 · 관리자 화면", slot: "[IMG-12]", ratio: "21:9", aspect: "aspect-[21/9]", caption: "같은 데이터, 완전히 다른 화면", span: "md:col-span-full", narrow: false},
+  {
+    header: "01 · 동아리 탐색",
+    slot: "[IMG-07]",
+    ratio: "16:10",
+    aspect: "aspect-[16/10]",
+    caption: "조건을 누르면 목록이 재배치된다",
+    span: "md:col-span-2",
+    narrow: false
+  },
+  {
+    header: "02 · 모바일 목록",
+    slot: "[IMG-08]",
+    ratio: "9:16",
+    aspect: "aspect-[9/16]",
+    caption: "모바일에서는 2열",
+    span: "md:col-span-1",
+    narrow: true
+  },
+  {
+    header: "03 · 동아리 상세",
+    slot: "[IMG-09]",
+    ratio: "16:10",
+    aspect: "aspect-[16/10]",
+    caption: "모달이 아니라 독립된 주소를 가진 화면",
+    span: "md:col-span-1",
+    narrow: false
+  },
+  {
+    header: "04 · 모집 공고",
+    slot: "[IMG-10]",
+    ratio: "16:10",
+    aspect: "aspect-[16/10]",
+    caption: "마감일이 가장 먼저 보이도록",
+    span: "md:col-span-1",
+    narrow: false
+  },
+  {
+    header: "05 · 마이페이지",
+    slot: "[IMG-11]",
+    ratio: "16:10",
+    aspect: "aspect-[16/10]",
+    caption: "내가 지원한 것만 모아서",
+    span: "md:col-span-1",
+    narrow: false
+  },
+  {
+    header: "06 · 관리자 화면",
+    slot: "[IMG-12]",
+    ratio: "21:9",
+    aspect: "aspect-[21/9]",
+    caption: "같은 데이터, 완전히 다른 화면",
+    span: "md:col-span-full",
+    narrow: false
+  }
 ];
 
 const STATS = [
   {value: 6, suffix: "", label: "핵심 화면"},
   {value: 5, suffix: "종", label: "공통 컴포넌트"},
   {value: 17, suffix: "곳", label: "컴포넌트 재사용"},
-  {value: 3, suffix: "종", label: "복구한 브라우저 동작"},
+  {value: 3, suffix: "종", label: "복구한 브라우저 동작"}
 ];
 
 function useCountUp(end: number, trigger: boolean, reducedMotion: boolean) {
@@ -48,28 +96,45 @@ function useCountUp(end: number, trigger: boolean, reducedMotion: boolean) {
   return value;
 }
 
-function StatCell({stat, index, trigger}: {stat: (typeof STATS)[number]; index: number; trigger: boolean}) {
+function StatCell({
+  stat,
+  index,
+  trigger
+}: {
+  stat: (typeof STATS)[number];
+  index: number;
+  trigger: boolean;
+}) {
   const {reducedMotion} = useAClub();
   const value = useCountUp(stat.value, trigger, reducedMotion);
   return (
     <motion.div
       initial={{opacity: 0, y: reducedMotion ? 0 : 10}}
       animate={trigger ? {opacity: 1, y: 0} : {}}
-      transition={{delay: reducedMotion ? 0 : 2.3 + index * 0.09, duration: 0.5, ease: EASE}}
+      transition={{
+        delay: reducedMotion ? 0 : 2.3 + index * 0.09,
+        duration: 0.5,
+        ease: EASE
+      }}
       className="flex w-full flex-col justify-center rounded-md border border-[rgba(192,132,252,0.22)] bg-[rgba(192,132,252,0.04)] p-[22px] shadow-sm"
     >
       <div className="font-mono text-[32px] font-black leading-none tracking-tight tabular-nums text-[#c084fc]">
         {value}
         {stat.suffix}
       </div>
-      <div className="mt-1.5 font-mono text-[11px] tracking-wide text-[rgba(255,255,255,0.48)]">{stat.label}</div>
+      <div className="mt-1.5 font-mono text-[11px] tracking-wide text-[rgba(255,255,255,0.48)]">
+        {stat.label}
+      </div>
     </motion.div>
   );
 }
 
 export function ResultSection() {
   const {reducedMotion, lockScroll, setLit} = useAClub();
-  const {ref: sectionRef, inView} = useInViewOnce<HTMLElement>({threshold: 0.1, rootMargin: "-10% 0px"});
+  const {ref: sectionRef, inView} = useInViewOnce<HTMLElement>({
+    threshold: 0.1,
+    rootMargin: "-10% 0px"
+  });
   const [lightbox, setLightbox] = useState<number | null>(null);
 
   // 결과 장에 닿으면 페이지 바닥색이 한 단계 밝아진다.
@@ -85,9 +150,9 @@ export function ResultSection() {
         e.stopPropagation();
         setLightbox(null);
       } else if (e.key === "ArrowRight") {
-        setLightbox((i) => ((i ?? 0) + 1) % GALLERY.length);
+        setLightbox(i => ((i ?? 0) + 1) % GALLERY.length);
       } else if (e.key === "ArrowLeft") {
-        setLightbox((i) => ((i ?? 0) - 1 + GALLERY.length) % GALLERY.length);
+        setLightbox(i => ((i ?? 0) - 1 + GALLERY.length) % GALLERY.length);
       }
     }
     window.addEventListener("keydown", onKey, true);
@@ -114,14 +179,20 @@ export function ResultSection() {
             animate={inView ? {opacity: 1} : {}}
             transition={{duration: 1.2, ease: EASE}}
             className="pointer-events-none absolute left-[20%] top-[30%] h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-screen"
-            style={{background: "radial-gradient(circle, rgba(192, 132, 252, 0.08) 0%, transparent 60%)"}}
+            style={{
+              background:
+                "radial-gradient(circle, rgba(192, 132, 252, 0.08) 0%, transparent 60%)"
+            }}
           />
           <motion.div
             initial={{opacity: 0}}
             animate={inView ? {opacity: 1} : {}}
             transition={{duration: 1.2, ease: EASE}}
             className="pointer-events-none absolute left-[80%] top-[30%] h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-screen"
-            style={{background: "radial-gradient(circle, rgba(192, 132, 252, 0.06) 0%, transparent 65%)"}}
+            style={{
+              background:
+                "radial-gradient(circle, rgba(192, 132, 252, 0.06) 0%, transparent 65%)"
+            }}
           />
         </>
       ) : null}
@@ -143,7 +214,11 @@ export function ResultSection() {
                 key={i}
                 initial={{opacity: 0, y: reducedMotion ? 0 : 10}}
                 animate={inView ? {opacity: 1, y: 0} : {}}
-                transition={{delay: reducedMotion ? 0 : 0.1 + i * 0.2, duration: 0.5, ease: EASE}}
+                transition={{
+                  delay: reducedMotion ? 0 : 0.1 + i * 0.2,
+                  duration: 0.5,
+                  ease: EASE
+                }}
               >
                 {word}
               </motion.span>
@@ -156,9 +231,10 @@ export function ResultSection() {
             transition={{delay: reducedMotion ? 0 : 0.8, duration: 0.6}}
             className="mt-5 max-w-[740px] text-[16px] leading-[36px] text-[rgba(255,255,255,0.88)]"
           >
-            조건으로 좁히고, 상세를 보고, 모집 공고를 확인하고, 지원까지 이어진다. 조건은 주소에 남아서 공유되고, 목록으로
-            돌아오면 보던 자리다. 동아리 정보 탐색부터 모집 지원까지 하나의 서비스에서 처리할 수 있는 플랫폼 프론트엔드를
-            완성했습니다.
+            조건으로 좁히고, 상세를 보고, 모집 공고를 확인하고, 지원까지
+            이어진다. 조건은 주소에 남아서 공유되고, 목록으로 돌아오면 보던
+            자리다. 동아리 정보 탐색부터 모집 지원까지 하나의 서비스에서 처리할
+            수 있는 플랫폼 프론트엔드를 완성했습니다.
           </motion.p>
         </header>
 
@@ -170,11 +246,19 @@ export function ResultSection() {
               type="button"
               initial={{opacity: 0, y: reducedMotion ? 0 : 20}}
               animate={inView ? {opacity: 1, y: 0} : {}}
-              transition={{delay: reducedMotion ? 0 : 1.3 + i * 0.09, duration: 0.6, ease: EASE}}
+              transition={{
+                delay: reducedMotion ? 0 : 1.3 + i * 0.09,
+                duration: 0.6,
+                ease: EASE
+              }}
               onClick={() => setLightbox(i)}
               aria-label={`${g.header}: ${g.caption} — 확대해서 보기`}
-              className={`group relative flex flex-col overflow-hidden rounded-md border border-[rgba(192,132,252,0.18)] bg-[#1c1330] text-left outline-none transition-all duration-[350ms] hover:-translate-y-1 hover:border-[rgba(192,132,252,0.45)] ${g.span} ${
-                g.narrow ? "max-[899px]:mx-auto max-[899px]:max-h-[420px] max-[899px]:max-w-[236px] max-[899px]:w-full" : "w-full"
+              className={`group relative flex flex-col overflow-hidden rounded-md border border-[rgba(192,132,252,0.18)] bg-[#1c1330] text-left outline-none transition-all duration-[350ms] hover:-translate-y-1 hover:border-[rgba(192,132,252,0.45)] ${
+                g.span
+              } ${
+                g.narrow
+                  ? "max-[899px]:mx-auto max-[899px]:max-h-[420px] max-[899px]:max-w-[236px] max-[899px]:w-full"
+                  : "w-full"
               }`}
               style={{transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)"}}
             >
@@ -185,7 +269,9 @@ export function ResultSection() {
                 <span className="h-1.5 w-1.5 rounded-full bg-[#c084fc] shadow-[0_0_8px_rgba(192,132,252,0.6)]" />
               </div>
 
-              <div className={`ac-placeholder-grid relative w-full shrink-0 overflow-hidden ${g.aspect}`}>
+              <div
+                className={`ac-placeholder-grid relative w-full shrink-0 overflow-hidden ${g.aspect}`}
+              >
                 <div className="absolute inset-0 flex transform-gpu flex-col items-center justify-center transition-transform duration-[350ms] group-hover:scale-[1.03]">
                   <span className="font-mono text-[12px] tabular-nums text-[rgba(255,255,255,0.35)]">
                     {g.slot} · {g.ratio}
@@ -216,8 +302,8 @@ export function ResultSection() {
             className="rounded-md border border-[rgba(251,191,36,0.28)] bg-[rgba(251,191,36,0.05)] px-5 py-4"
           >
             <p className="font-mono text-[11px] leading-relaxed tracking-wide text-[#fbbf24]">
-              이 프로젝트는 백엔드 연동 전의 프론트엔드 구현입니다. 화면의 모든 동아리와 지원자는 가상이며, 실제 사용자
-              데이터는 없습니다.
+              이 프로젝트는 백엔드 연동 전의 프론트엔드 구현입니다. 화면의 모든
+              동아리와 지원자는 가상이며, 실제 사용자 데이터는 없습니다.
             </p>
           </motion.div>
 
@@ -228,7 +314,8 @@ export function ResultSection() {
             className="rounded-md border border-[rgba(255,255,255,0.10)] bg-[rgba(255,255,255,0.02)] px-[18px] py-[14px]"
           >
             <p className="font-mono text-[11px] leading-relaxed tracking-wide text-[rgba(255,255,255,0.45)]">
-              위 숫자는 구현 범위를 센 것입니다. 이용자 수나 지원 건수 같은 지표는 없습니다.
+              위 숫자는 구현 범위를 센 것입니다. 이용자 수나 지원 건수 같은
+              지표는 없습니다.
             </p>
           </motion.div>
         </div>
@@ -240,7 +327,7 @@ export function ResultSection() {
           role="dialog"
           aria-modal="true"
           aria-label="화면 갤러리 확대보기"
-          onClick={(e) => {
+          onClick={e => {
             if (e.target === e.currentTarget) setLightbox(null);
           }}
         >
@@ -251,7 +338,18 @@ export function ResultSection() {
               aria-label="닫기"
               className="absolute -top-12 right-0 rounded p-1 text-[rgba(255,255,255,0.48)] outline-none transition-colors hover:text-white"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
                 <path d="M18 6 6 18" />
                 <path d="m6 6 12 12" />
               </svg>
@@ -268,25 +366,56 @@ export function ResultSection() {
             <div className="mt-6 flex w-full max-w-2xl items-center justify-between">
               <button
                 type="button"
-                onClick={() => setLightbox((i) => ((i ?? 0) - 1 + GALLERY.length) % GALLERY.length)}
+                onClick={() =>
+                  setLightbox(
+                    i => ((i ?? 0) - 1 + GALLERY.length) % GALLERY.length
+                  )
+                }
                 aria-label="이전 이미지"
                 className="rounded p-2 text-[rgba(255,255,255,0.48)] outline-none transition-colors hover:text-white"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
                   <path d="m15 18-6-6 6-6" />
                 </svg>
               </button>
               <p className="px-4 text-center font-mono text-sm tabular-nums text-[rgba(255,255,255,0.48)]">
-                {item.header.split("·")[0]!.trim()} / {String(GALLERY.length).padStart(2, "0")}
-                <span className="mt-1 block font-sans text-white/80">{item.caption}</span>
+                {item.header.split("·")[0]!.trim()} /{" "}
+                {String(GALLERY.length).padStart(2, "0")}
+                <span className="mt-1 block font-sans text-white/80">
+                  {item.caption}
+                </span>
               </p>
               <button
                 type="button"
-                onClick={() => setLightbox((i) => ((i ?? 0) + 1) % GALLERY.length)}
+                onClick={() =>
+                  setLightbox(i => ((i ?? 0) + 1) % GALLERY.length)
+                }
                 aria-label="다음 이미지"
                 className="rounded p-2 text-[rgba(255,255,255,0.48)] outline-none transition-colors hover:text-white"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
                   <path d="m9 18 6-6-6-6" />
                 </svg>
               </button>

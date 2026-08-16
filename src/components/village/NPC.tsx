@@ -10,7 +10,12 @@ import type {NpcBehaviorProfile} from "@/data/npcBehaviors";
 import {moodLabel} from "@/lib/liveState";
 import {isWalkablePosition} from "@/lib/worldCollision";
 import {walkHeightAt} from "@/lib/villageWalk";
-import type {NpcActionState, NpcAnimationKey, NpcMood, NpcState} from "@/types/live";
+import type {
+  NpcActionState,
+  NpcAnimationKey,
+  NpcMood,
+  NpcState
+} from "@/types/live";
 import type {BuildingData, NPCData, Vector3Tuple} from "@/types/portfolio";
 
 /** 플레이어가 내리는 단체 명령 — gather(집결)/photo(단체사진)/party(파티)/follow(따라오기)/greet(인사) */
@@ -26,7 +31,9 @@ interface NPCProps {
   currentAction?: NpcActionState;
   behavior?: NpcBehaviorProfile;
   bubbleText?: string;
-  buildings: Array<Pick<BuildingData, "id" | "name" | "position" | "size" | "accentColor">>;
+  buildings: Array<
+    Pick<BuildingData, "id" | "name" | "position" | "size" | "accentColor">
+  >;
   isActive: boolean;
   onPositionChange?: (npcId: string, position: Vector3Tuple) => void;
   onSelect: (npc: NPCData) => void;
@@ -101,13 +108,19 @@ function NPCImpl({
       mood: runtimeMood ?? baseNpcState?.mood ?? "calm",
       status_text: runtimeMemory ?? baseNpcState?.status_text ?? ""
     };
-  }, [npc.id, runtimeMood, runtimeMemory, baseNpcState?.mood, baseNpcState?.status_text]);
+  }, [
+    npc.id,
+    runtimeMood,
+    runtimeMemory,
+    baseNpcState?.mood,
+    baseNpcState?.status_text
+  ]);
   const rawMood = npcState?.mood ?? "calm";
   const mood = moodLabel(rawMood);
   const home = behavior?.home ?? npc.position;
   const roamRadius = behavior?.roamRadius ?? 1.5;
   const actionTarget = currentAction?.targetId
-    ? buildings.find((building) => building.id === currentAction.targetId)
+    ? buildings.find(building => building.id === currentAction.targetId)
     : undefined;
 
   useCursor(hovered);
@@ -121,7 +134,8 @@ function NPCImpl({
     // walkHeightAt: 단 위 +1.1, **물속은 음수** — 배회 경로가 물을 지나면
     // NPC 도 캐릭터처럼 잠긴다. 일부러 그대로 둔다(물에 든 NPC 가 마을을 살린다).
     const target = walkHeightAt(g.position.x, g.position.z);
-    groundYRef.current += (target - groundYRef.current) * Math.min(1, delta * 6);
+    groundYRef.current +=
+      (target - groundYRef.current) * Math.min(1, delta * 6);
     return groundYRef.current;
   };
 
@@ -159,8 +173,10 @@ function NPCImpl({
           onScriptedArrive?.();
         }
       }
-      g.position.y = settleGround(g, delta) + Math.sin(elapsedRef.current * 5) * 0.07;
-      if (onPositionChange) onPositionChange(npc.id, [g.position.x, 0, g.position.z]);
+      g.position.y =
+        settleGround(g, delta) + Math.sin(elapsedRef.current * 5) * 0.07;
+      if (onPositionChange)
+        onPositionChange(npc.id, [g.position.x, 0, g.position.z]);
       return;
     } else {
       if (arrivedRef.current) arrivedRef.current = false;
@@ -171,7 +187,8 @@ function NPCImpl({
     if ((isActive || forceHold) && !currentAction) {
       const g = groupRef.current;
       g.rotation.y += (0 - g.rotation.y) * Math.min(1, delta * 6);
-      g.position.y = settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03; // 잔잔한 호흡
+      g.position.y =
+        settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03; // 잔잔한 호흡
       moveStateRef.current = "idle";
       return;
     }
@@ -194,9 +211,11 @@ function NPCImpl({
       } else if (commandTarget) {
         tx = commandTarget[0];
         tz = commandTarget[2];
-        faceCamera = command === "photo" || command === "party" || command === "greet";
+        faceCamera =
+          command === "photo" || command === "party" || command === "greet";
       } else {
-        faceCamera = command === "photo" || command === "party" || command === "greet";
+        faceCamera =
+          command === "photo" || command === "party" || command === "greet";
       }
 
       const dx = tx - g.position.x;
@@ -208,7 +227,8 @@ function NPCImpl({
         g.position.x += (dx / dist) * step;
         g.position.z += (dz / dist) * step;
         g.rotation.y = Math.atan2(dx, dz);
-        g.position.y = settleGround(g, delta) + Math.sin(elapsedRef.current * 8) * 0.05;
+        g.position.y =
+          settleGround(g, delta) + Math.sin(elapsedRef.current * 8) * 0.05;
         moveStateRef.current = dist > 0.6 ? "run" : "walk";
       } else {
         moveStateRef.current = "idle";
@@ -221,12 +241,17 @@ function NPCImpl({
           g.rotation.y += d * Math.min(1, delta * 7);
         }
         if (command === "greet") {
-          g.position.y = settleGround(g, delta) + Math.abs(Math.sin(elapsedRef.current * 6)) * 0.13;
+          g.position.y =
+            settleGround(g, delta) +
+            Math.abs(Math.sin(elapsedRef.current * 6)) * 0.13;
         } else if (command === "party") {
-          g.position.y = settleGround(g, delta) + Math.abs(Math.sin(elapsedRef.current * 7 + home[0])) * 0.32;
+          g.position.y =
+            settleGround(g, delta) +
+            Math.abs(Math.sin(elapsedRef.current * 7 + home[0])) * 0.32;
           g.rotation.y += delta * 1.6;
         } else {
-          g.position.y = settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03;
+          g.position.y =
+            settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03;
         }
       }
 
@@ -249,18 +274,30 @@ function NPCImpl({
         d = Math.atan2(Math.sin(d), Math.cos(d)); // 최단 회전
         g.rotation.y += d * Math.min(1, delta * 6);
       }
-      g.position.y = settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03;
+      g.position.y =
+        settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03;
       moveStateRef.current = "idle";
       return;
     }
 
     const speed = rawMood === "busy" ? 4.2 : rawMood === "sleepy" ? 1.2 : 2.4;
-    const height = rawMood === "busy" ? 0.08 : rawMood === "sleepy" ? 0.025 : 0.05;
-    const moveSpeed = rawMood === "busy" || rawMood === "excited" ? 0.95 : rawMood === "sleepy" ? 0.22 : 0.48;
+    const height =
+      rawMood === "busy" ? 0.08 : rawMood === "sleepy" ? 0.025 : 0.05;
+    const moveSpeed =
+      rawMood === "busy" || rawMood === "excited"
+        ? 0.95
+        : rawMood === "sleepy"
+        ? 0.22
+        : 0.48;
     const now = clock.getElapsedTime();
     const isActing = Boolean(currentAction);
 
-    if (!isActing && !socialTarget && (now > retargetAtRef.current || distanceToTarget(groupRef.current.position, targetRef.current) < 0.25)) {
+    if (
+      !isActing &&
+      !socialTarget &&
+      (now > retargetAtRef.current ||
+        distanceToTarget(groupRef.current.position, targetRef.current) < 0.25)
+    ) {
       targetRef.current = pickTarget(home, roamRadius, buildings);
       retargetAtRef.current = now + 4 + Math.random() * 7;
     }
@@ -285,7 +322,9 @@ function NPCImpl({
       const nextX = groupRef.current.position.x + (dx / dist) * step;
       const nextZ = groupRef.current.position.z + (dz / dist) * step;
 
-      if (isWalkablePosition({x: nextX, z: nextZ}, buildings, {padding: 0.38})) {
+      if (
+        isWalkablePosition({x: nextX, z: nextZ}, buildings, {padding: 0.38})
+      ) {
         groupRef.current.position.x = nextX;
         groupRef.current.position.z = nextZ;
         groupRef.current.rotation.y = Math.atan2(dx, dz);
@@ -294,18 +333,30 @@ function NPCImpl({
         retargetAtRef.current = 0;
       }
     }
-    moveStateRef.current = walking ? (rawMood === "busy" || rawMood === "excited" ? "run" : "walk") : "idle";
+    moveStateRef.current = walking
+      ? rawMood === "busy" || rawMood === "excited"
+        ? "run"
+        : "walk"
+      : "idle";
 
     groupRef.current.position.y =
-      settleGround(groupRef.current, delta) + Math.sin(elapsedRef.current * speed + home[0]) * height;
+      settleGround(groupRef.current, delta) +
+      Math.sin(elapsedRef.current * speed + home[0]) * height;
 
     if (onPositionChange && now > reportAtRef.current) {
-      onPositionChange(npc.id, [groupRef.current.position.x, 0, groupRef.current.position.z]);
+      onPositionChange(npc.id, [
+        groupRef.current.position.x,
+        0,
+        groupRef.current.position.z
+      ]);
       reportAtRef.current = now + 0.4;
     }
   });
 
-  function handlePointer(event: ThreeEvent<PointerEvent>, nextHovered: boolean) {
+  function handlePointer(
+    event: ThreeEvent<PointerEvent>,
+    nextHovered: boolean
+  ) {
     event.stopPropagation();
     setHovered(nextHovered);
   }
@@ -319,8 +370,8 @@ function NPCImpl({
     <group ref={groupRef} position={home}>
       <group
         onClick={handleClick}
-        onPointerEnter={(event) => handlePointer(event, true)}
-        onPointerLeave={(event) => handlePointer(event, false)}
+        onPointerEnter={event => handlePointer(event, true)}
+        onPointerLeave={event => handlePointer(event, false)}
         scale={highlighted ? 1.08 : 1}
       >
         <Suspense fallback={null}>
@@ -329,7 +380,10 @@ function NPCImpl({
         {currentAction ? (
           <NpcActionEffect
             action={currentAction}
-            color={actionTarget?.accentColor ?? actionColor(currentAction.animationKey)}
+            color={
+              actionTarget?.accentColor ??
+              actionColor(currentAction.animationKey)
+            }
             targetName={actionTarget?.name}
           />
         ) : null}
@@ -358,7 +412,11 @@ function NPCImpl({
               type="button"
             >
               <span className="block">{npc.name}</span>
-              {npcState ? <span className="block text-[9px] uppercase tracking-[0.12em] opacity-65">{mood}</span> : null}
+              {npcState ? (
+                <span className="block text-[9px] uppercase tracking-[0.12em] opacity-65">
+                  {mood}
+                </span>
+              ) : null}
             </button>
           </Html>
         </Billboard>
@@ -378,7 +436,9 @@ function NPCImpl({
       {command === "greet" || command === "party" ? (
         <Billboard position={[0, 2.46, 0]}>
           <Html center distanceFactor={7.4} zIndexRange={[12, 0]}>
-            <div style={{fontSize: 22, userSelect: "none", pointerEvents: "none"}}>
+            <div
+              style={{fontSize: 22, userSelect: "none", pointerEvents: "none"}}
+            >
               {command === "greet" ? "👋" : "🎉"}
             </div>
           </Html>
@@ -387,7 +447,14 @@ function NPCImpl({
       {emote && !command && !bubbleText ? (
         <Billboard position={[0, 2.4, 0]}>
           <Html center distanceFactor={7.4} zIndexRange={[12, 0]}>
-            <div style={{fontSize: 20, userSelect: "none", pointerEvents: "none", animation: "fadeIn 0.3s ease"}}>
+            <div
+              style={{
+                fontSize: 20,
+                userSelect: "none",
+                pointerEvents: "none",
+                animation: "fadeIn 0.3s ease"
+              }}
+            >
               {emote}
             </div>
           </Html>
@@ -427,7 +494,13 @@ function NpcActionEffect({
 
   return (
     <group>
-      <pointLight color={color} decay={2} distance={3.2} intensity={0.9} position={[0, 1.4, 0.3]} />
+      <pointLight
+        color={color}
+        decay={2}
+        distance={3.2}
+        intensity={0.9}
+        position={[0, 1.4, 0.3]}
+      />
       <group ref={pulseRef} position={[0, 1.65, 0]}>
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.34, 0.012, 8, 44]} />
@@ -439,7 +512,9 @@ function NpcActionEffect({
         </mesh>
       </group>
 
-      <group ref={frontRef}>{renderActionCue(action.animationKey, color)}</group>
+      <group ref={frontRef}>
+        {renderActionCue(action.animationKey, color)}
+      </group>
 
       <Billboard position={[0, 2.08, 0]}>
         <Html center distanceFactor={7.2} zIndexRange={[12, 0]}>
@@ -456,7 +531,11 @@ function NpcActionEffect({
             }}
           >
             <span className="block">{action.label}</span>
-            {targetName ? <span className="block text-[9px] text-white/58">{targetName}</span> : null}
+            {targetName ? (
+              <span className="block text-[9px] text-white/58">
+                {targetName}
+              </span>
+            ) : null}
           </div>
         </Html>
       </Billboard>
@@ -490,7 +569,11 @@ function renderActionCue(animationKey: NpcAnimationKey, color: string) {
         ].map(([x, y, z], index) => (
           <mesh key={`${x}-${y}-${z}`} position={[x, y, z]}>
             <sphereGeometry args={[0.055 + index * 0.012, 12, 12]} />
-            <meshBasicMaterial color={color} transparent opacity={0.76 - index * 0.12} />
+            <meshBasicMaterial
+              color={color}
+              transparent
+              opacity={0.76 - index * 0.12}
+            />
           </mesh>
         ))}
       </group>
@@ -540,7 +623,7 @@ function renderActionCue(animationKey: NpcAnimationKey, color: string) {
           <ringGeometry args={[0.2, 0.215, 34]} />
           <meshBasicMaterial color={color} transparent opacity={0.82} />
         </mesh>
-        {[-0.28, 0.28].map((x) => (
+        {[-0.28, 0.28].map(x => (
           <mesh key={x} position={[x, 0.16, 0.018]}>
             <boxGeometry args={[0.14, 0.045, 0.012]} />
             <meshBasicMaterial color={color} transparent opacity={0.8} />
@@ -570,7 +653,11 @@ function renderActionCue(animationKey: NpcAnimationKey, color: string) {
       {[0.28, 0.44, 0.6].map((radius, index) => (
         <mesh key={radius} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[radius, 0.01, 8, 36]} />
-          <meshBasicMaterial color={color} transparent opacity={0.62 - index * 0.16} />
+          <meshBasicMaterial
+            color={color}
+            transparent
+            opacity={0.62 - index * 0.16}
+          />
         </mesh>
       ))}
     </group>
@@ -600,7 +687,7 @@ function distanceToTarget(position: Vector3, target: Vector3Tuple) {
 function pickTarget(
   home: Vector3Tuple,
   radius: number,
-  buildings: Array<Pick<BuildingData, "id" | "position" | "size">>,
+  buildings: Array<Pick<BuildingData, "id" | "position" | "size">>
 ): Vector3Tuple {
   for (let i = 0; i < 12; i += 1) {
     const angle = Math.random() * Math.PI * 2;
@@ -608,10 +695,14 @@ function pickTarget(
     const candidate: Vector3Tuple = [
       home[0] + Math.cos(angle) * distance,
       0,
-      home[2] + Math.sin(angle) * distance,
+      home[2] + Math.sin(angle) * distance
     ];
 
-    if (isWalkablePosition({x: candidate[0], z: candidate[2]}, buildings, {padding: 0.38})) {
+    if (
+      isWalkablePosition({x: candidate[0], z: candidate[2]}, buildings, {
+        padding: 0.38
+      })
+    ) {
       return candidate;
     }
   }

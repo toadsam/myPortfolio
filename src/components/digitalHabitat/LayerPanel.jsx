@@ -1,5 +1,13 @@
 import React from "react";
-import {contactLinks, evolutionLogs, layerMap, layers, projects, systemNodes, simulations} from "./habitatData";
+import {
+  contactLinks,
+  evolutionLogs,
+  layerMap,
+  layers,
+  projects,
+  systemNodes,
+  simulations
+} from "./habitatData";
 
 function TagList(props) {
   return (
@@ -18,7 +26,11 @@ function ProjectModuleList(props) {
     <div className="habitat-project-modules">
       {projects.map(function renderProject(project, index) {
         return (
-          <article className="habitat-module-card" key={project.id} style={{"--delay": index * 60 + "ms"}}>
+          <article
+            className="habitat-module-card"
+            key={project.id}
+            style={{"--delay": index * 60 + "ms"}}
+          >
             <span>{project.category}</span>
             <strong>{project.name}</strong>
             <p>{project.summary}</p>
@@ -97,7 +109,11 @@ function ContactList() {
           <a
             href={link.href}
             key={link.label}
-            rel={link.href.indexOf("http") === 0 ? "noopener noreferrer" : undefined}
+            rel={
+              link.href.indexOf("http") === 0
+                ? "noopener noreferrer"
+                : undefined
+            }
             style={{"--delay": index * 55 + "ms"}}
             target={link.href.indexOf("http") === 0 ? "_blank" : undefined}
           >
@@ -140,7 +156,10 @@ function LayerPanel(props) {
   }
 
   return (
-    <aside className={"habitat-layer-panel is-" + activeLayer} data-active-layer={activeLayer}>
+    <aside
+      className={"habitat-layer-panel is-" + activeLayer}
+      data-active-layer={activeLayer}
+    >
       <header>
         <div>
           <span>{layer.nav}</span>

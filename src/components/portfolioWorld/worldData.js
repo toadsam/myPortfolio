@@ -1,6 +1,14 @@
 export {contactLinks} from "../../data/siteData";
 
-export const zoneOrder = ["about", "skills", "projects", "backend", "game", "growth", "contact"];
+export const zoneOrder = [
+  "about",
+  "skills",
+  "projects",
+  "backend",
+  "game",
+  "growth",
+  "contact"
+];
 
 export const zones = [
   {
@@ -8,7 +16,8 @@ export const zones = [
     label: "Core Zone",
     shortLabel: "About",
     title: "Jaehoon's Portfolio World",
-    subtitle: "Frontend / Full-stack developer building interactive web products.",
+    subtitle:
+      "Frontend / Full-stack developer building interactive web products.",
     description:
       "I design user-facing interfaces, connect real service flows, and keep improving the product until it feels clear, stable, and usable.",
     position: [0, 0.55, 0],
@@ -30,7 +39,8 @@ export const zones = [
     label: "Project Gallery",
     shortLabel: "Projects",
     title: "Main project showcase",
-    subtitle: "Representative web projects with role, stack, and problem solving.",
+    subtitle:
+      "Representative web projects with role, stack, and problem solving.",
     description:
       "A gallery of main projects. Each project opens a detailed case study focused on my contribution and implementation decisions.",
     position: [2.15, 0.42, 0.15],
@@ -52,7 +62,8 @@ export const zones = [
     label: "Game / XR Zone",
     shortLabel: "Game/XR",
     title: "Unity, VR, AR interaction work",
-    subtitle: "Playable systems, portals, XR prototypes, and interaction loops.",
+    subtitle:
+      "Playable systems, portals, XR prototypes, and interaction loops.",
     description:
       "A portal zone for Unity projects, VR/AR experiments, player interaction, and game-system thinking.",
     position: [-1.55, 0.42, -1.65],
@@ -63,7 +74,8 @@ export const zones = [
     label: "Growth Road",
     shortLabel: "Growth",
     title: "Experience and growth timeline",
-    subtitle: "Learning, team projects, deployment, backend integration, and 3D portfolio evolution.",
+    subtitle:
+      "Learning, team projects, deployment, backend integration, and 3D portfolio evolution.",
     description:
       "A road of milestones showing how web, backend, deployment, and XR experience have connected over time.",
     position: [0, 0.24, 2.05],
@@ -92,19 +104,34 @@ export const skillGroups = [
     title: "Frontend",
     summary: "Builds responsive interfaces and clear user flows.",
     stack: ["React", "JavaScript", "HTML", "CSS", "SCSS"],
-    proof: ["Component UI", "Responsive layout", "Interactive states", "Project gallery UI"]
+    proof: [
+      "Component UI",
+      "Responsive layout",
+      "Interactive states",
+      "Project gallery UI"
+    ]
   },
   {
     title: "Backend Connection",
     summary: "Connects UI to real APIs and service data.",
     stack: ["REST API", "JWT", "Postman", "GitHub"],
-    proof: ["API request flow", "Auth state handling", "Error states", "Data rendering"]
+    proof: [
+      "API request flow",
+      "Auth state handling",
+      "Error states",
+      "Data rendering"
+    ]
   },
   {
     title: "Product Detail",
     summary: "Focuses on readability, feedback, and practical UX.",
     stack: ["UI/UX", "SCSS", "Deployment", "Debugging"],
-    proof: ["Polished panels", "Motion feedback", "CORS/HTTPS issue handling", "Submission-ready structure"]
+    proof: [
+      "Polished panels",
+      "Motion feedback",
+      "CORS/HTTPS issue handling",
+      "Submission-ready structure"
+    ]
   }
 ];
 
@@ -131,14 +158,19 @@ export const mainProjects = [
   {
     id: "muscleup",
     name: "득근득근 (MuscleUp)",
-    oneLine: "Fitness service project focused on workout records and user motivation.",
+    oneLine:
+      "Fitness service project focused on workout records and user motivation.",
     category: "Web / Full-stack",
     tech: ["React", "Spring Boot", "Java", "MySQL", "JWT"],
     overview:
       "A team web service that helps users manage workout routines, track activity, and stay motivated through a structured product flow.",
-    role:
-      "Implemented user-facing screens, connected API data to UI states, refined interaction feedback, and handled feature-level integration details.",
-    features: ["Workout record flow", "User state UI", "API-connected pages", "Responsive dashboard"],
+    role: "Implemented user-facing screens, connected API data to UI states, refined interaction feedback, and handled feature-level integration details.",
+    features: [
+      "Workout record flow",
+      "User state UI",
+      "API-connected pages",
+      "Responsive dashboard"
+    ],
     problem:
       "The main challenge was making service data feel reliable in the UI. I focused on loading/error/empty states and consistent page structure.",
     result:
@@ -154,9 +186,13 @@ export const mainProjects = [
     tech: ["React", "JavaScript", "Map UI", "REST API"],
     overview:
       "A location-centered service that organizes campus food information into a clearer discovery experience.",
-    role:
-      "Worked on UI layout, information hierarchy, map-based interaction, and frontend data rendering.",
-    features: ["Map-based browsing", "Food-place cards", "Filtering UI", "Detail information"],
+    role: "Worked on UI layout, information hierarchy, map-based interaction, and frontend data rendering.",
+    features: [
+      "Map-based browsing",
+      "Food-place cards",
+      "Filtering UI",
+      "Detail information"
+    ],
     problem:
       "Food information can become scattered quickly, so I focused on visible hierarchy and predictable navigation.",
     result:
@@ -167,14 +203,19 @@ export const mainProjects = [
   {
     id: "ajouchong",
     name: "ajouchong",
-    oneLine: "Community-style service project for campus information and interaction.",
+    oneLine:
+      "Community-style service project for campus information and interaction.",
     category: "Web / Team",
     tech: ["React", "Spring Boot", "REST API", "PostgreSQL"],
     overview:
       "A campus community project that connects posts, users, and information flows into a service-like structure.",
-    role:
-      "Implemented frontend screens, API-connected UI, reusable components, and interaction states for team delivery.",
-    features: ["Post list/detail", "User interaction", "API data binding", "Team project workflow"],
+    role: "Implemented frontend screens, API-connected UI, reusable components, and interaction states for team delivery.",
+    features: [
+      "Post list/detail",
+      "User interaction",
+      "API data binding",
+      "Team project workflow"
+    ],
     problem:
       "Team projects require interface consistency across features. I worked on reusable patterns and clearer page behavior.",
     result:
@@ -185,14 +226,19 @@ export const mainProjects = [
   {
     id: "tserof",
     name: "TSEROF",
-    oneLine: "Interactive service project with structured UI and system-oriented thinking.",
+    oneLine:
+      "Interactive service project with structured UI and system-oriented thinking.",
     category: "Web / Product",
     tech: ["React", "SCSS", "JavaScript", "Deployment"],
     overview:
       "A project focused on presenting information and interaction as a polished product experience.",
-    role:
-      "Designed and implemented core UI sections, page interaction, responsive behavior, and visual consistency.",
-    features: ["Landing flow", "Reusable UI sections", "Interactive cards", "Responsive polish"],
+    role: "Designed and implemented core UI sections, page interaction, responsive behavior, and visual consistency.",
+    features: [
+      "Landing flow",
+      "Reusable UI sections",
+      "Interactive cards",
+      "Responsive polish"
+    ],
     problem:
       "The product needed to look credible quickly. I focused on hierarchy, spacing, and motion that supports comprehension.",
     result:
@@ -221,12 +267,39 @@ export const gameProjects = [
 ];
 
 export const growthSteps = [
-  ["01", "Started web development", "Learned HTML, CSS, JavaScript and basic programming flow."],
-  ["02", "Built React interfaces", "Practiced component structure, state, responsive layout, and data rendering."],
-  ["03", "Worked in team projects", "Experienced collaboration, API contracts, feature ownership, and project delivery."],
-  ["04", "Connected backend APIs", "Integrated Spring Boot APIs, auth state, REST responses, and database-driven UI."],
-  ["05", "Solved deployment issues", "Handled CORS, HTTPS, environment settings, and production debugging."],
-  ["06", "Expanded into Unity / XR", "Applied interaction thinking to game, VR, and AR prototypes."],
-  ["07", "Built 3D interactive portfolio", "Evolved the portfolio into an exploratory 3D world with practical information panels."]
+  [
+    "01",
+    "Started web development",
+    "Learned HTML, CSS, JavaScript and basic programming flow."
+  ],
+  [
+    "02",
+    "Built React interfaces",
+    "Practiced component structure, state, responsive layout, and data rendering."
+  ],
+  [
+    "03",
+    "Worked in team projects",
+    "Experienced collaboration, API contracts, feature ownership, and project delivery."
+  ],
+  [
+    "04",
+    "Connected backend APIs",
+    "Integrated Spring Boot APIs, auth state, REST responses, and database-driven UI."
+  ],
+  [
+    "05",
+    "Solved deployment issues",
+    "Handled CORS, HTTPS, environment settings, and production debugging."
+  ],
+  [
+    "06",
+    "Expanded into Unity / XR",
+    "Applied interaction thinking to game, VR, and AR prototypes."
+  ],
+  [
+    "07",
+    "Built 3D interactive portfolio",
+    "Evolved the portfolio into an exploratory 3D world with practical information panels."
+  ]
 ];
-

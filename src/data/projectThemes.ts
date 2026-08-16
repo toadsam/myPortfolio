@@ -23,14 +23,14 @@ export const projectThemes: Record<string, ProjectTheme> = {
     primary: "#34d399",
     secondary: "#10b981",
     bg: "#04110c",
-    accent: "#6ee7b7",
+    accent: "#6ee7b7"
   },
   mystock: {
     category: "dashboard",
     primary: "#38bdf8",
     secondary: "#0ea5e9",
     bg: "#040d18",
-    accent: "#7dd3fc",
+    accent: "#7dd3fc"
   },
 
   // 실시간 서비스형 프로젝트
@@ -39,14 +39,14 @@ export const projectThemes: Record<string, ProjectTheme> = {
     primary: "#fbbf24",
     secondary: "#f59e0b",
     bg: "#140f04",
-    accent: "#fcd34d",
+    accent: "#fcd34d"
   },
   muscleup: {
     category: "realtime",
     primary: "#f472b6",
     secondary: "#ec4899",
     bg: "#140510",
-    accent: "#f9a8d4",
+    accent: "#f9a8d4"
   },
 
   // 플랫폼/공공 서비스형 프로젝트
@@ -55,21 +55,21 @@ export const projectThemes: Record<string, ProjectTheme> = {
     primary: "#c084fc",
     secondary: "#a855f7",
     bg: "#0d0816",
-    accent: "#d8b4fe",
+    accent: "#d8b4fe"
   },
   ajouchong: {
     category: "platform",
     primary: "#fb7185",
     secondary: "#f43f5e",
     bg: "#160709",
-    accent: "#fda4af",
+    accent: "#fda4af"
   },
   "sign-language": {
     category: "platform",
     primary: "#7eb8ff",
     secondary: "#60a5fa",
     bg: "#060d18",
-    accent: "#bfdbfe",
+    accent: "#bfdbfe"
   },
 
   // 게임형 프로젝트
@@ -79,7 +79,7 @@ export const projectThemes: Record<string, ProjectTheme> = {
     primary: "#ef4444",
     secondary: "#991b1b",
     bg: "#070405",
-    accent: "#ff5a4d",
+    accent: "#ff5a4d"
   },
   "ajou-adventure": {
     category: "game",
@@ -87,7 +87,7 @@ export const projectThemes: Record<string, ProjectTheme> = {
     primary: "#a3e635",
     secondary: "#84cc16",
     bg: "#0a0f04",
-    accent: "#bef264",
+    accent: "#bef264"
   },
   tserof: {
     category: "game",
@@ -95,8 +95,8 @@ export const projectThemes: Record<string, ProjectTheme> = {
     primary: "#34d399",
     secondary: "#059669",
     bg: "#04120d",
-    accent: "#6ee7b7",
-  },
+    accent: "#6ee7b7"
+  }
 };
 
 export const DEFAULT_THEME: ProjectTheme = {
@@ -104,7 +104,7 @@ export const DEFAULT_THEME: ProjectTheme = {
   primary: "#7ed9ff",
   secondary: "#38bdf8",
   bg: "#040608",
-  accent: "#7ed9ff",
+  accent: "#7ed9ff"
 };
 
 export function getProjectTheme(id: string): ProjectTheme {

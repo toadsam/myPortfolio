@@ -42,7 +42,14 @@ export function DarkLabRoom({onClose}: Props) {
   const beamRef = useRef<HTMLDivElement>(null);
 
   // 마우스 좌표는 state로 들고 있으면 매 프레임 리렌더가 나므로 ref + rAF로만 쓴다.
-  const pointer = useRef({x: 0, y: 0, radius: 0, target: 0, follow: true, ignited: false});
+  const pointer = useRef({
+    x: 0,
+    y: 0,
+    radius: 0,
+    target: 0,
+    follow: true,
+    ignited: false
+  });
   const lockCount = useRef(0);
 
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -50,22 +57,24 @@ export function DarkLabRoom({onClose}: Props) {
   const [activeSection, setActiveSection] = useState(0);
   const [soundOn, setSoundOn] = useState(false);
   const [exiting, setExiting] = useState(false);
-  const [sequencesDone, setSequencesDone] = useState<Record<SequenceKey, boolean>>({
+  const [sequencesDone, setSequencesDone] = useState<
+    Record<SequenceKey, boolean>
+  >({
     takeover: false,
-    scroll: false,
+    scroll: false
   });
 
   // 이미 본 연출은 다시 틀지 않는다(세션당 1회).
   useEffect(() => {
     setSequencesDone({
       takeover: sessionStorage.getItem("darklab-seq-takeover") === "1",
-      scroll: sessionStorage.getItem("darklab-seq-scroll") === "1",
+      scroll: sessionStorage.getItem("darklab-seq-scroll") === "1"
     });
   }, []);
 
   const markSequenceDone = useCallback((key: SequenceKey) => {
     sessionStorage.setItem(`darklab-seq-${key}`, "1");
-    setSequencesDone((prev) => (prev[key] ? prev : {...prev, [key]: true}));
+    setSequencesDone(prev => (prev[key] ? prev : {...prev, [key]: true}));
   }, []);
 
   // ── 동작 줄이기: 손전등 연출을 통째로 건너뛰고 밝은 상태로 시작한다 ──
@@ -165,10 +174,14 @@ export function DarkLabRoom({onClose}: Props) {
       const max = el.scrollHeight - el.clientHeight;
       const pct = max > 0 ? Math.min(1, el.scrollTop / max) : 0;
       if (readoutRef.current) {
-        readoutRef.current.textContent = lightsOn ? "● 조명 100%" : `○ 조명 ${Math.round(pct * 100)}%`;
+        readoutRef.current.textContent = lightsOn
+          ? "● 조명 100%"
+          : `○ 조명 ${Math.round(pct * 100)}%`;
       }
       if (!lightsOn && !reducedMotion && flashRef.current) {
-        flashRef.current.style.opacity = String(Math.max(0.1, 0.85 - pct * 0.75));
+        flashRef.current.style.opacity = String(
+          Math.max(0.1, 0.85 - pct * 0.75)
+        );
       }
     }
 
@@ -182,24 +195,28 @@ export function DarkLabRoom({onClose}: Props) {
     const root = rootRef.current;
     if (!root) return;
 
-    const sections = Array.from(root.querySelectorAll<HTMLElement>("[data-dl-section]"));
+    const sections = Array.from(
+      root.querySelectorAll<HTMLElement>("[data-dl-section]")
+    );
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
           const index = sections.indexOf(entry.target as HTMLElement);
           if (index >= 0) setActiveSection(index);
 
-          entry.target.querySelectorAll<HTMLElement>(REVEAL_SELECTOR).forEach((el, i) => {
-            const step = el.classList.contains("dl-word") ? 45 : 100;
-            window.setTimeout(() => el.classList.add("dl-in"), i * step);
-          });
+          entry.target
+            .querySelectorAll<HTMLElement>(REVEAL_SELECTOR)
+            .forEach((el, i) => {
+              const step = el.classList.contains("dl-word") ? 45 : 100;
+              window.setTimeout(() => el.classList.add("dl-in"), i * step);
+            });
         }
       },
-      {root, threshold: 0.2},
+      {root, threshold: 0.2}
     );
 
-    sections.forEach((section) => observer.observe(section));
+    sections.forEach(section => observer.observe(section));
     return () => observer.disconnect();
   }, []);
 
@@ -230,10 +247,12 @@ export function DarkLabRoom({onClose}: Props) {
   }, [onClose]);
 
   function toggleLights() {
-    setLightsOn((on) => {
+    setLightsOn(on => {
       const next = !on;
-      if (flashRef.current) flashRef.current.style.opacity = next ? "0" : "0.85";
-      if (readoutRef.current) readoutRef.current.textContent = next ? "● 조명 100%" : "○ 조명 0%";
+      if (flashRef.current)
+        flashRef.current.style.opacity = next ? "0" : "0.85";
+      if (readoutRef.current)
+        readoutRef.current.textContent = next ? "● 조명 100%" : "○ 조명 0%";
       return next;
     });
   }
@@ -261,7 +280,10 @@ export function DarkLabRoom({onClose}: Props) {
   function goToSection(index: number) {
     rootRef.current
       ?.querySelectorAll<HTMLElement>("[data-dl-section]")
-      [index]?.scrollIntoView({behavior: reducedMotion ? "auto" : "smooth", block: "start"});
+      [index]?.scrollIntoView({
+        behavior: reducedMotion ? "auto" : "smooth",
+        block: "start"
+      });
   }
 
   const api = useMemo(
@@ -274,9 +296,17 @@ export function DarkLabRoom({onClose}: Props) {
       setFlash,
       sequencesDone,
       markSequenceDone,
-      onClose,
+      onClose
     }),
-    [reducedMotion, lightsOn, lockScroll, setFlash, sequencesDone, markSequenceDone, onClose],
+    [
+      reducedMotion,
+      lightsOn,
+      lockScroll,
+      setFlash,
+      sequencesDone,
+      markSequenceDone,
+      onClose
+    ]
   );
 
   const headerVisible = activeSection > 0;
@@ -285,8 +315,13 @@ export function DarkLabRoom({onClose}: Props) {
     <DarkLabProvider value={api}>
       <div
         ref={rootRef}
-        className={`dl-root ${darkLabSans.variable} ${darkLabMono.variable} ${lightsOn ? "dl-lit" : ""}`}
-        style={{opacity: exiting ? 0 : 1, transition: "opacity 0.5s cubic-bezier(0.4,0,0.2,1)"}}
+        className={`dl-root ${darkLabSans.variable} ${darkLabMono.variable} ${
+          lightsOn ? "dl-lit" : ""
+        }`}
+        style={{
+          opacity: exiting ? 0 : 1,
+          transition: "opacity 0.5s cubic-bezier(0.4,0,0.2,1)"
+        }}
       >
         <div className="dl-noise" aria-hidden="true" />
         <div className="dl-torch" aria-hidden="true" />
@@ -319,7 +354,10 @@ export function DarkLabRoom({onClose}: Props) {
         <header className="fixed inset-x-0 top-0 z-[56] flex h-[56px] items-center justify-between px-4 transition-all duration-500 md:px-6">
           <div
             className="flex-1 transition-opacity duration-500"
-            style={{opacity: headerVisible ? 1 : 0, pointerEvents: headerVisible ? "auto" : "none"}}
+            style={{
+              opacity: headerVisible ? 1 : 0,
+              pointerEvents: headerVisible ? "auto" : "none"
+            }}
           >
             <button
               type="button"
@@ -351,7 +389,7 @@ export function DarkLabRoom({onClose}: Props) {
               style={{
                 opacity: headerVisible ? 1 : 0,
                 pointerEvents: headerVisible ? "auto" : "none",
-                color: soundOn ? "#ff5a4d" : undefined,
+                color: soundOn ? "#ff5a4d" : undefined
               }}
             >
               <IconVolume muted={!soundOn} />
@@ -384,7 +422,12 @@ export function DarkLabRoom({onClose}: Props) {
           <RetroSection onExit={handleExit} />
         </main>
 
-        <div ref={beamRef} className="dl-exit-beam" aria-hidden="true" style={{display: exiting ? "block" : "none"}} />
+        <div
+          ref={beamRef}
+          className="dl-exit-beam"
+          aria-hidden="true"
+          style={{display: exiting ? "block" : "none"}}
+        />
       </div>
     </DarkLabProvider>
   );

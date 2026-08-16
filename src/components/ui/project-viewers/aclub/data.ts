@@ -6,7 +6,7 @@ export const CATEGORY_COLORS = {
   학술: "#38bdf8",
   운동: "#fbbf24",
   봉사: "#4ade80",
-  취미: "#c084fc",
+  취미: "#c084fc"
 } as const;
 
 export type CategoryName = keyof typeof CATEGORY_COLORS;
@@ -37,7 +37,7 @@ const RAW_CLUBS: {name: string; cat: CategoryName}[] = [
   {name: "숲 가꾸기", cat: "봉사"},
   {name: "체스 한 판", cat: "취미"},
   {name: "라디오 만들기", cat: "학술"},
-  {name: "한글 서예회", cat: "예술"},
+  {name: "한글 서예회", cat: "예술"}
 ];
 
 // 시드 기반 난수 — 서버·클라이언트에서 같은 값이 나와야 하므로 Math.random을 쓰지 않는다.
@@ -71,7 +71,7 @@ export const CLUBS: Club[] = RAW_CLUBS.map((c, i) => {
     noWeekend: seeded(i * 1.3) > 0.5,
     daysLeft: recruiting ? Math.floor(seeded(i * 1.4) * 20) : -1,
     createdAt: 1600000000000 - Math.floor(seeded(i * 1.5) * 10000000000),
-    exitRotate: (seeded(i * 1.6) > 0.5 ? 1 : -1) * (6 + seeded(i * 1.7) * 8),
+    exitRotate: (seeded(i * 1.6) > 0.5 ? 1 : -1) * (6 + seeded(i * 1.7) * 8)
   };
 });
 
@@ -80,11 +80,17 @@ export type SortKey = "deadline" | "name" | "recent";
 export const SORT_LABELS: {key: SortKey; label: string}[] = [
   {key: "deadline", label: "마감 임박순"},
   {key: "name", label: "가나다순"},
-  {key: "recent", label: "최근 등록순"},
+  {key: "recent", label: "최근 등록순"}
 ];
 
 // 주소 상태 시뮬레이터(트러블슈팅 01)용 축약 목록
-export const SIM_CLUBS: {id: string; name: string; cat: CategoryName; rec: boolean; newbie: boolean}[] = [
+export const SIM_CLUBS: {
+  id: string;
+  name: string;
+  cat: CategoryName;
+  rec: boolean;
+  newbie: boolean;
+}[] = [
   {id: "1", name: "푸른 캔버스", cat: "예술", rec: true, newbie: true},
   {id: "2", name: "코드의 향연", cat: "학술", rec: true, newbie: false},
   {id: "3", name: "필름 속으로", cat: "예술", rec: false, newbie: true},
@@ -96,7 +102,7 @@ export const SIM_CLUBS: {id: string; name: string; cat: CategoryName; rec: boole
   {id: "9", name: "연극 바닥", cat: "예술", rec: true, newbie: false},
   {id: "10", name: "환경지킴이", cat: "봉사", rec: false, newbie: false},
   {id: "11", name: "독서 토론", cat: "학술", rec: true, newbie: true},
-  {id: "12", name: "보드게임부", cat: "취미", rec: true, newbie: true},
+  {id: "12", name: "보드게임부", cat: "취미", rec: true, newbie: true}
 ];
 
 // 스크롤 복원 시뮬레이터(트러블슈팅 02)용 24행 목록
@@ -124,5 +130,5 @@ export const SCROLL_CLUBS: {name: string; cat: CategoryName}[] = [
   {name: "클래식 기타", cat: "취미"},
   {name: "단편 소설회", cat: "학술"},
   {name: "아침 조깅부", cat: "운동"},
-  {name: "바리스타 랩", cat: "취미"},
+  {name: "바리스타 랩", cat: "취미"}
 ];

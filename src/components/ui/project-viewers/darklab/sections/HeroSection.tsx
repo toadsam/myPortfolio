@@ -11,7 +11,7 @@ const META = [
   {value: "6", label: "기술 스택"},
   {value: "5", label: "핵심 시스템"},
   {value: "1인칭", label: "시점"},
-  {value: "Unity", label: "엔진 / URP"},
+  {value: "Unity", label: "엔진 / URP"}
 ];
 
 const GITHUB = "https://github.com/toadsam/DarkLab";
@@ -62,12 +62,14 @@ export function HeroSection() {
         </h2>
 
         <div className="mb-[10vh] grid w-full grid-cols-2 gap-4 md:mb-[16vh] md:grid-cols-4">
-          {META.map((cell) => (
+          {META.map(cell => (
             <div
               key={cell.label}
               className="dl-fade-up rounded-md border border-[rgba(255,255,255,0.08)] p-4"
             >
-              <div className="font-mono text-[24px] font-black text-[rgba(255,255,255,0.82)]">{cell.value}</div>
+              <div className="font-mono text-[24px] font-black text-[rgba(255,255,255,0.82)]">
+                {cell.value}
+              </div>
               <div className="mt-1 font-mono text-[11px] tracking-[0.1em] text-[rgba(255,255,255,0.42)]">
                 {cell.label}
               </div>
@@ -91,8 +93,12 @@ export function HeroSection() {
                 <IconPlay className="ml-1 h-6 w-6 text-[#ff5a4d]" />
               </span>
               <span className="mt-4 flex flex-col items-center gap-1">
-                <span className="font-mono text-[12px] text-[#ff5a4d]">▶ 플레이 영상</span>
-                <span className="font-mono text-[10px] text-[rgba(255,255,255,0.42)]">1분 42초</span>
+                <span className="font-mono text-[12px] text-[#ff5a4d]">
+                  ▶ 플레이 영상
+                </span>
+                <span className="font-mono text-[10px] text-[rgba(255,255,255,0.42)]">
+                  1분 42초
+                </span>
               </span>
             </button>
 
@@ -103,17 +109,25 @@ export function HeroSection() {
               className="absolute left-[58%] top-[66%] flex -translate-x-1/2 -translate-y-1/2 flex-col items-center opacity-30 outline-none transition-opacity duration-300 hover:opacity-100 focus-visible:opacity-100"
             >
               <span className="flex h-[108px] w-[108px] items-center justify-center rounded-2xl border border-white/20 transition-colors hover:bg-white/5">
-                <span className="font-mono text-[26px] tracking-widest text-[rgba(255,255,255,0.82)]">&lt; &gt;</span>
+                <span className="font-mono text-[26px] tracking-widest text-[rgba(255,255,255,0.82)]">
+                  &lt; &gt;
+                </span>
               </span>
               <span className="mt-3 flex flex-col items-center gap-1">
-                <span className="font-mono text-[12px] text-[rgba(255,255,255,0.82)]">GitHub 저장소</span>
-                <span className="font-mono text-[10px] text-[rgba(255,255,255,0.42)]">C# · Unity 2022</span>
+                <span className="font-mono text-[12px] text-[rgba(255,255,255,0.82)]">
+                  GitHub 저장소
+                </span>
+                <span className="font-mono text-[10px] text-[rgba(255,255,255,0.42)]">
+                  C# · Unity 2022
+                </span>
               </span>
             </a>
 
             <div className="absolute left-[82%] top-[30%] -translate-x-1/2 -translate-y-1/2 opacity-30 transition-opacity duration-300 hover:opacity-100">
               <div className="flex h-[64px] w-[96px] -rotate-3 items-center justify-center border border-white/10 bg-[#14100e] p-2 transition-all hover:-translate-y-1 hover:rotate-0">
-                <span className="text-center font-mono text-[10px] text-white/55">개발 4주 · 1인 프로토타입</span>
+                <span className="text-center font-mono text-[10px] text-white/55">
+                  개발 4주 · 1인 프로토타입
+                </span>
               </div>
             </div>
           </div>
@@ -130,11 +144,17 @@ export function HeroSection() {
         >
           <div className="dl-lightbox-in w-full max-w-[1000px]">
             <div className="dl-hatch flex aspect-video w-full items-center justify-center rounded-md border border-white/10 bg-[#131011]">
-              <span className="font-mono text-[16px] text-white/35">게임플레이 영상 자리 · 16:9</span>
+              <span className="font-mono text-[16px] text-white/35">
+                게임플레이 영상 자리 · 16:9
+              </span>
             </div>
             <div className="mt-6 flex items-center justify-between">
-              <span className="font-mono text-[11px] text-[rgba(255,255,255,0.42)]">복도 탐색 · 손전등 · 상호작용 1회</span>
-              <span className="font-mono text-[12px] text-white/35">ESC · 클릭으로 닫기</span>
+              <span className="font-mono text-[11px] text-[rgba(255,255,255,0.42)]">
+                복도 탐색 · 손전등 · 상호작용 1회
+              </span>
+              <span className="font-mono text-[12px] text-white/35">
+                ESC · 클릭으로 닫기
+              </span>
             </div>
           </div>
         </div>

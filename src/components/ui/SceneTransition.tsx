@@ -23,7 +23,10 @@ export function SceneTransition({active, color = "#0a0e1a"}: Props) {
           {/* 뒤따르는 잔상 패널 (살짝 늦게) */}
           <motion.div
             className="absolute inset-[-25%]"
-            style={{background: "rgba(0,212,255,0.13)", transformOrigin: "left center"}}
+            style={{
+              background: "rgba(0,212,255,0.13)",
+              transformOrigin: "left center"
+            }}
             initial={{x: "-130%", skewX: -14}}
             animate={{x: "0%", skewX: 0}}
             exit={{x: "130%", skewX: 14}}
@@ -32,7 +35,10 @@ export function SceneTransition({active, color = "#0a0e1a"}: Props) {
           {/* 메인 패널 */}
           <motion.div
             className="absolute inset-[-25%]"
-            style={{background: `linear-gradient(120deg, #060d18, ${color} 55%, #060d18)`, transformOrigin: "left center"}}
+            style={{
+              background: `linear-gradient(120deg, #060d18, ${color} 55%, #060d18)`,
+              transformOrigin: "left center"
+            }}
             initial={{x: "-120%", skewX: -12}}
             animate={{x: "0%", skewX: 0}}
             exit={{x: "120%", skewX: 12}}
@@ -43,7 +49,13 @@ export function SceneTransition({active, color = "#0a0e1a"}: Props) {
             <motion.div
               key={i}
               className="absolute h-px"
-              style={{top: `${10 + i * 12}%`, left: 0, right: 0, background: "linear-gradient(90deg, transparent, rgba(0,212,255,0.6), transparent)"}}
+              style={{
+                top: `${10 + i * 12}%`,
+                left: 0,
+                right: 0,
+                background:
+                  "linear-gradient(90deg, transparent, rgba(0,212,255,0.6), transparent)"
+              }}
               initial={{x: "-100%", opacity: 0}}
               animate={{x: "100%", opacity: [0, 1, 0]}}
               transition={{duration: 0.5, delay: i * 0.025, ease: "easeIn"}}

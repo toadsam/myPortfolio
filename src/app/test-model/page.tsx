@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 
 const ModelTest = dynamic(
-  () => import("@/components/ModelTest").then((m) => m.ModelTest),
+  () => import("@/components/ModelTest").then(m => m.ModelTest),
   {ssr: false}
 );
 
