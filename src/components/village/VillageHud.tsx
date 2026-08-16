@@ -69,7 +69,7 @@ export function LiveStatusPanel({
     <aside
       ref={drag.ref}
       style={drag.style}
-      className="fixed left-4 top-[132px] z-20 hidden w-[260px] rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-3.5 font-mono text-xs text-white/60 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:block"
+      className="v-panel fixed left-4 top-[132px] z-20 hidden w-[260px] p-3.5 text-xs transform-gpu will-change-[backdrop-filter,transform] md:block"
     >
       <button
         type="button"
@@ -78,15 +78,15 @@ export function LiveStatusPanel({
         title={collapsed ? "펼치기" : "접기"}
         {...drag.handleProps}
       >
-        <span className="flex items-center gap-2 font-black uppercase tracking-[0.2em] text-[#00d4ff]">
+        <span className="v-panel-title flex items-center gap-2 text-[13px]">
           <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00d4ff] opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00d4ff]" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ff9d38] opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#ff9d38]" />
           </span>
-          Live Village
+          마을 소식
         </span>
         <span
-          className="text-sm text-white/40"
+          className="text-sm text-[#a9bdd6]/50"
           style={{
             transform: collapsed ? "rotate(-90deg)" : "none",
             transition: "transform 0.2s"
@@ -102,36 +102,36 @@ export function LiveStatusPanel({
           </p>
         ) : villageState ? (
           <>
-            <p className="mt-2 leading-5 text-white/70">
+            <p className="mt-2 leading-5 text-[#c9d6e8]">
               {villageState.summary}
             </p>
             <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-              <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
-                <strong className="block text-[#00d4ff]">
+              <span className="rounded-lg border border-[#e2c078]/12 bg-white/[0.04] px-2 py-2">
+                <strong className="block text-[#e2c078]">
                   {villageState.activity.github_commits}
                 </strong>
-                <span className="text-[9px] text-white/40">커밋</span>
+                <span className="text-[9px] text-[#a9bdd6]/60">커밋</span>
               </span>
-              <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
-                <strong className="block text-[#00ff88]">
+              <span className="rounded-lg border border-[#e2c078]/12 bg-white/[0.04] px-2 py-2">
+                <strong className="block text-[#a8d8a0]">
                   {villageState.activity.study_minutes}
                 </strong>
-                <span className="text-[9px] text-white/40">학습·분</span>
+                <span className="text-[9px] text-[#a9bdd6]/60">학습·분</span>
               </span>
-              <span className="rounded-lg border border-white/8 bg-white/[0.04] px-2 py-2">
+              <span className="rounded-lg border border-[#e2c078]/12 bg-white/[0.04] px-2 py-2">
                 <strong className="block text-[#ff9a6c]">
                   {villageState.activity.workout_done ? "✅" : "💤"}
                 </strong>
-                <span className="text-[9px] text-white/40">운동</span>
+                <span className="text-[9px] text-[#a9bdd6]/60">운동</span>
               </span>
             </div>
-            <p className="mt-2 text-[10px] leading-4 text-white/35">
+            <p className="mt-2 text-[10px] leading-4 text-[#a9bdd6]/50">
               오늘의 실시간 활동 · 1분마다 갱신
             </p>
             <button
               type="button"
               onClick={resetHudLayout}
-              className="mt-2 w-full rounded-md border border-white/8 py-1 text-[10px] font-bold text-white/35 transition hover:border-[#00d4ff]/40 hover:text-[#9beaff]"
+              className="mt-2 w-full rounded-md border border-[#e2c078]/15 py-1 text-[10px] font-bold text-[#a9bdd6]/55 transition hover:border-[#e2c078]/45 hover:text-[#f3e6c8]"
             >
               ⤢ 패널 배치 초기화
             </button>
@@ -161,10 +161,10 @@ export function NpcQuickDock({
         onPointerDown={drag.handleProps.onPointerDown}
         style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
-        className="fixed bottom-40 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#00d4ff]/55 active:scale-95 md:bottom-20"
+        className="v-panel v-panel-title fixed bottom-40 left-4 z-30 flex items-center gap-2 px-3.5 py-2.5 text-[13px] transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#e2c078]/60 active:scale-95 md:bottom-20"
       >
         <span className="text-sm">🤖</span> AI NPC{" "}
-        <span className="text-white/40">▸</span>
+        <span className="text-[#a9bdd6]/50">▸</span>
       </button>
     );
   }
@@ -173,23 +173,23 @@ export function NpcQuickDock({
     <aside
       ref={drag.ref}
       style={drag.style}
-      className="fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]"
+      className="v-panel fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto p-2 transform-gpu will-change-[backdrop-filter,transform] md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]"
     >
       <button
         type="button"
         onClick={() => setCollapsed(true)}
         title="접기 · 드래그로 이동"
-        className="flex shrink-0 items-center gap-1 px-2 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75 transition hover:text-[#00d4ff] active:scale-95"
+        className="v-panel-title flex shrink-0 items-center gap-1 px-2 text-[13px] transition hover:brightness-125 active:scale-95"
         {...drag.handleProps}
       >
-        AI NPC <span className="text-white/40">▾</span>
+        AI NPC <span className="text-[#a9bdd6]/50">▾</span>
       </button>
       {coreNpcs.map(npc => (
         <button
           className={
             activeNpcId === npc.id
-              ? "shrink-0 rounded-lg border border-[#00ff88]/50 bg-[#00ff88]/18 px-3 py-2 text-left text-xs font-black text-white transition active:scale-95"
-              : "shrink-0 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2 text-left text-xs font-black text-white/68 transition hover:border-[#00d4ff]/45 hover:text-white active:scale-95"
+              ? "shrink-0 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-3 py-2 text-left text-xs font-black text-[#ffe9d2] transition active:scale-95"
+              : "shrink-0 rounded-lg border border-[#e2c078]/15 bg-white/[0.04] px-3 py-2 text-left text-xs font-black text-[#c9d6e8] transition hover:border-[#e2c078]/45 hover:text-[#f3e6c8] active:scale-95"
           }
           key={npc.id}
           onClick={() => onSelect(npc)}
@@ -197,7 +197,7 @@ export function NpcQuickDock({
           type="button"
         >
           <span className="block">{npc.name}</span>
-          <span className="mt-0.5 block font-mono text-[9px] font-bold uppercase tracking-[0.1em] text-white/42">
+          <span className="mt-0.5 block text-[9px] font-bold uppercase tracking-[0.1em] text-[#a9bdd6]/60">
             {npc.type}
           </span>
         </button>
@@ -241,10 +241,10 @@ export function CommandDock({
         onPointerDown={drag.handleProps.onPointerDown}
         style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
-        className="fixed left-4 top-[300px] z-30 hidden items-center gap-2 rounded-xl border border-[#7ed957]/30 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#9affc4] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#7ed957]/55 active:scale-95 md:flex"
+        className="v-panel v-panel-title fixed left-4 top-[300px] z-30 hidden items-center gap-2 px-3.5 py-2.5 text-[13px] transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#e2c078]/60 active:scale-95 md:flex"
       >
         <span className="text-sm">🎮</span> 지휘{" "}
-        <span className="text-white/40">▸</span>
+        <span className="text-[#a9bdd6]/50">▸</span>
       </button>
     );
   }
@@ -253,15 +253,15 @@ export function CommandDock({
     <aside
       ref={drag.ref}
       style={drag.style}
-      className="fixed left-4 top-[300px] z-30 hidden w-[150px] flex-col gap-1 rounded-xl border border-[#7ed957]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:flex"
+      className="v-panel fixed left-4 top-[300px] z-30 hidden w-[150px] flex-col gap-1 p-2 transform-gpu will-change-[backdrop-filter,transform] md:flex"
     >
       <button
         type="button"
         onClick={() => setCollapsed(true)}
-        className="mb-0.5 flex items-center justify-between px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#9affc4]/80 transition hover:text-[#9affc4]"
+        className="v-panel-title mb-0.5 flex items-center justify-between px-2 py-1 text-[13px] transition hover:brightness-125"
         {...drag.handleProps}
       >
-        🎮 NPC 지휘 <span className="text-white/40">◂</span>
+        🎮 NPC 지휘 <span className="text-[#a9bdd6]/50">◂</span>
       </button>
       {modes.map(item => {
         const active = command === item.mode;
@@ -272,8 +272,8 @@ export function CommandDock({
             onClick={() => onCommand(item.mode)}
             className={
               active
-                ? "flex items-center gap-2.5 rounded-lg border border-[#7ed957]/55 bg-[#7ed957]/16 px-3 py-2 text-left text-xs font-black text-white"
-                : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
+                ? "flex items-center gap-2.5 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/13 px-3 py-2 text-left text-xs font-black text-[#ffe9d2]"
+                : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
             }
           >
             <span className="text-sm">{item.icon}</span>
@@ -284,7 +284,7 @@ export function CommandDock({
       <button
         type="button"
         onClick={onGreet}
-        className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
+        className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
       >
         <span className="text-sm">👋</span> 인사
       </button>
@@ -294,8 +294,8 @@ export function CommandDock({
         disabled={groupTalkBusy}
         className={
           groupTalkBusy
-            ? "flex items-center gap-2.5 rounded-lg border border-[#7ed957]/40 bg-[#7ed957]/10 px-3 py-2 text-left text-xs font-black text-[#9affc4]"
-            : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
+            ? "flex items-center gap-2.5 rounded-lg border border-[#ff9d38]/40 bg-[#ff9d38]/10 px-3 py-2 text-left text-xs font-black text-[#ffd9ae]"
+            : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
         }
       >
         <span className="text-sm">💬</span>{" "}
@@ -304,7 +304,7 @@ export function CommandDock({
       <button
         type="button"
         onClick={onOpenRelations}
-        className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
+        className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
       >
         <span className="text-sm">💞</span> 관계도
       </button>
@@ -314,8 +314,8 @@ export function CommandDock({
         disabled={!busy}
         className={
           busy
-            ? "mt-0.5 flex items-center gap-2.5 rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/12 px-3 py-2 text-left text-xs font-black text-[#9beaff] transition hover:bg-[#00d4ff]/20 active:scale-[0.98]"
-            : "mt-0.5 flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/25"
+            ? "mt-0.5 flex items-center gap-2.5 rounded-lg border border-[#e2c078]/45 bg-[#e2c078]/12 px-3 py-2 text-left text-xs font-black text-[#f3e6c8] transition hover:bg-[#e2c078]/20 active:scale-[0.98]"
+            : "mt-0.5 flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6]/35"
         }
       >
         <span className="text-sm">🛠️</span> 다시 일하기
@@ -332,15 +332,14 @@ export function GroupChatPanel({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 rounded-2xl border border-[#7ed957]/30 bg-[#050d1a]/95 p-4 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
+    <div className="v-panel fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 p-4 transform-gpu will-change-[backdrop-filter,transform]">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="font-mono text-[11px] font-black uppercase tracking-[0.16em] text-[#9affc4]">
-          💬 마을 단체 수다
-        </p>
+        <p className="v-panel-title text-[13px]">💬 마을 단체 수다</p>
         <button
           type="button"
           onClick={onClose}
-          className="rounded-md border border-white/15 px-2 py-0.5 text-sm font-bold text-white/70 transition hover:text-white active:scale-90"
+          aria-label="단체 수다 닫기"
+          className="rounded-md border border-[#e2c078]/20 px-2 py-0.5 text-sm font-bold text-[#a9bdd6] transition hover:text-[#f3e6c8] active:scale-90"
         >
           ✕
         </button>
@@ -348,10 +347,10 @@ export function GroupChatPanel({
       <div className="max-h-[40vh] space-y-2 overflow-y-auto">
         {lines.map((line, index) => (
           <div key={index} className="rounded-xl bg-white/[0.04] px-3 py-2">
-            <p className="font-mono text-[9px] font-black uppercase tracking-[0.1em] text-[#7ed957]/75">
+            <p className="text-[10px] font-black text-[#e2c078]/80">
               {line.name}
             </p>
-            <p className="mt-0.5 text-sm leading-6 text-white/85">
+            <p className="mt-0.5 text-sm leading-6 text-[#e8eef7]/90">
               {line.text}
             </p>
           </div>
@@ -422,8 +421,8 @@ export function MobileHud({
 
   const chip = (active: boolean) =>
     active
-      ? "flex items-center gap-2 rounded-lg border border-[#00ff88]/45 bg-[#00ff88]/15 px-3 py-2.5 text-left text-sm font-black text-white"
-      : "flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-2.5 text-left text-sm font-bold text-white/75 active:scale-95";
+      ? "flex items-center gap-2 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-3 py-2.5 text-left text-sm font-black text-[#ffe9d2]"
+      : "flex items-center gap-2 rounded-lg border border-[#e2c078]/15 bg-white/[0.04] px-3 py-2.5 text-left text-sm font-bold text-[#c9d6e8] active:scale-95";
 
   return (
     <div className="md:hidden">
@@ -431,7 +430,7 @@ export function MobileHud({
         type="button"
         onClick={() => setOpen(o => !o)}
         aria-label="이동·지휘·지도 메뉴"
-        className="fixed bottom-[15rem] right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[#00d4ff]/40 bg-[#050d1a]/90 text-xl shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] active:scale-90"
+        className="fixed bottom-[15rem] right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[#7a5a38]/60 bg-[#0b1626]/90 text-xl shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] active:scale-90"
       >
         🎛️
       </button>
@@ -442,8 +441,8 @@ export function MobileHud({
             className="fixed inset-0 z-40 bg-black/45"
             onClick={() => setOpen(false)}
           />
-          <div className="fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[#00d4ff]/25 bg-[#050d1a]/97 p-3 pb-8 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
-            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/20" />
+          <div className="fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[#7a5a38]/55 bg-[#0b1626]/97 p-3 pb-8 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-[#e2c078]/25" />
             <div className="mb-3 flex items-center gap-1">
               {(
                 [
@@ -458,8 +457,8 @@ export function MobileHud({
                   onClick={() => setTab(t.id)}
                   className={
                     tab === t.id
-                      ? "rounded-lg bg-[#00d4ff]/18 px-3 py-2 font-mono text-xs font-black text-[#9beaff]"
-                      : "rounded-lg px-3 py-2 font-mono text-xs font-bold text-white/50"
+                      ? "rounded-lg bg-[#ff9d38]/15 px-3 py-2 text-xs font-black text-[#ffd9ae]"
+                      : "rounded-lg px-3 py-2 text-xs font-bold text-[#a9bdd6]/70"
                   }
                 >
                   {t.label}
@@ -468,7 +467,8 @@ export function MobileHud({
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="ml-auto rounded-lg border border-white/12 px-3 py-2 text-sm text-white/70"
+                aria-label="메뉴 닫기"
+                className="ml-auto rounded-lg border border-[#e2c078]/20 px-3 py-2 text-sm text-[#a9bdd6]"
               >
                 ✕
               </button>
@@ -533,8 +533,8 @@ export function MobileHud({
                   disabled={!busy}
                   className={
                     busy
-                      ? "col-span-2 rounded-lg border border-[#00d4ff]/40 bg-[#00d4ff]/12 px-3 py-2.5 text-sm font-black text-[#9beaff]"
-                      : "col-span-2 rounded-lg border border-white/10 px-3 py-2.5 text-sm font-bold text-white/30"
+                      ? "col-span-2 rounded-lg border border-[#e2c078]/45 bg-[#e2c078]/12 px-3 py-2.5 text-sm font-black text-[#f3e6c8]"
+                      : "col-span-2 rounded-lg border border-[#e2c078]/12 px-3 py-2.5 text-sm font-bold text-[#a9bdd6]/40"
                   }
                 >
                   🛠️ 다시 일하기
@@ -594,7 +594,7 @@ export function MobileHud({
                     </g>
                   ))}
                 </svg>
-                <p className="mt-2 font-mono text-[10px] text-white/40">
+                <p className="mt-2 text-[10px] text-[#a9bdd6]/60">
                   구역을 누르면 그쪽으로 이동
                 </p>
               </div>
@@ -624,10 +624,10 @@ export function QuickTravelDock({
         onPointerDown={drag.handleProps.onPointerDown}
         style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
-        className="fixed right-4 top-[80px] z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
+        className="v-panel v-panel-title fixed right-4 top-[80px] z-30 hidden items-center gap-2 px-3.5 py-2.5 text-[13px] transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#e2c078]/60 active:scale-95 md:flex"
       >
         <span className="text-sm">🧭</span> 이동{" "}
-        <span className="text-white/40">◂</span>
+        <span className="text-[#a9bdd6]/50">◂</span>
       </button>
     );
   }
@@ -636,15 +636,15 @@ export function QuickTravelDock({
     <aside
       ref={drag.ref}
       style={drag.style}
-      className="fixed right-4 top-[80px] z-30 hidden w-[152px] flex-col gap-1 rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:flex"
+      className="v-panel fixed right-4 top-[80px] z-30 hidden w-[152px] flex-col gap-1 p-2 transform-gpu will-change-[backdrop-filter,transform] md:flex"
     >
       <button
         type="button"
         onClick={() => setCollapsed(true)}
-        className="mb-0.5 flex items-center justify-between px-2 py-1 font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75 transition hover:text-[#00d4ff]"
+        className="v-panel-title mb-0.5 flex items-center justify-between px-2 py-1 text-[13px] transition hover:brightness-125"
         {...drag.handleProps}
       >
-        🧭 빠른 이동 <span className="text-white/40">▴</span>
+        🧭 빠른 이동 <span className="text-[#a9bdd6]/50">▴</span>
       </button>
       {TRAVEL_POINTS.map(point => {
         const active = activeKey === point.key;
@@ -655,8 +655,8 @@ export function QuickTravelDock({
             onClick={() => onTravel(point)}
             className={
               active
-                ? "flex items-center gap-2.5 rounded-lg border border-white/15 bg-white/[0.08] px-3 py-2 text-left text-xs font-black text-white"
-                : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-white/65 transition hover:bg-white/[0.05] hover:text-white active:scale-[0.98]"
+                ? "flex items-center gap-2.5 rounded-lg border border-[#ff9d38]/45 bg-[#ff9d38]/12 px-3 py-2 text-left text-xs font-black text-[#ffe9d2]"
+                : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
             }
           >
             <span
@@ -721,7 +721,7 @@ export function Minimap({
         onPointerDown={drag.handleProps.onPointerDown}
         style={{...drag.style, ...drag.handleProps.style}}
         onClick={() => setCollapsed(false)}
-        className="fixed bottom-6 right-4 z-30 hidden items-center gap-2 rounded-xl border border-[#00d4ff]/25 bg-[#050d1a]/86 px-3.5 py-2.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/80 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#00d4ff]/55 active:scale-95 md:flex"
+        className="v-panel v-panel-title fixed bottom-6 right-4 z-30 hidden items-center gap-2 px-3.5 py-2.5 text-[13px] transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#e2c078]/60 active:scale-95 md:flex"
       >
         🗺️ 지도
       </button>
@@ -732,19 +732,18 @@ export function Minimap({
     <aside
       ref={drag.ref}
       style={drag.style}
-      className="fixed bottom-6 right-4 z-30 hidden rounded-xl border border-[#00d4ff]/20 bg-[#050d1a]/86 p-2.5 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] md:block"
+      className="v-panel fixed bottom-6 right-4 z-30 hidden p-2.5 transform-gpu will-change-[backdrop-filter,transform] md:block"
     >
       <div
         className="mb-1.5 flex cursor-grab items-center justify-between px-1"
         {...drag.handleProps}
       >
-        <span className="font-mono text-[10px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/75">
-          🗺️ 미니맵
-        </span>
+        <span className="v-panel-title text-[13px]">🗺️ 미니맵</span>
         <button
           type="button"
           onClick={() => setCollapsed(true)}
-          className="font-mono text-[10px] font-black text-white/40 transition hover:text-white"
+          aria-label="미니맵 접기"
+          className="text-[11px] font-black text-[#a9bdd6]/50 transition hover:text-[#f3e6c8]"
         >
           ▾
         </button>
@@ -802,7 +801,7 @@ export function Minimap({
           );
         })}
       </svg>
-      <p className="mt-1.5 px-1 font-mono text-[9px] leading-tight text-white/35">
+      <p className="mt-1.5 px-1 text-[9px] leading-tight text-[#a9bdd6]/55">
         구역을 누르면 그쪽으로 이동
       </p>
     </aside>
@@ -857,15 +856,15 @@ export function ControlsHint() {
   if (!show) return null;
 
   return (
-    <div className="pointer-events-none fixed left-1/2 top-[80px] z-30 flex -translate-x-1/2 animate-[fadeIn_0.4s_ease] items-center gap-3 rounded-full border border-[#00d4ff]/30 bg-[#050d1a]/90 px-4 py-2 font-mono text-[11px] font-bold text-white/75 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
+    <div className="pointer-events-none fixed left-1/2 top-[80px] z-30 flex -translate-x-1/2 animate-[fadeIn_0.4s_ease] items-center gap-3 rounded-full border border-[#7a5a38]/60 bg-[#0b1626]/90 px-4 py-2 text-[11px] font-bold text-[#c9d6e8] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
       <span className="flex items-center gap-1.5">
         <span className="text-sm">🖱️</span> 건물 클릭해 입장
       </span>
-      <span className="text-white/20">·</span>
+      <span className="text-[#a9bdd6]/30">·</span>
       <span className="flex items-center gap-1.5">
         <span className="text-sm">🔄</span> 드래그·스크롤로 둘러보기
       </span>
-      <span className="text-white/20">·</span>
+      <span className="text-[#a9bdd6]/30">·</span>
       <span className="flex items-center gap-1.5">
         <span className="text-sm">🚶</span> 직접 이동은 좌하단 버튼
       </span>
@@ -886,11 +885,11 @@ export function EavesdropButton({
     <button
       type="button"
       onClick={onOpen}
-      className="fixed left-1/2 top-[112px] z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#00ff88]/40 bg-[#050d1a]/90 px-4 py-2 font-mono text-[11px] font-black text-[#9affc4] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:bg-[#00ff88]/12 active:scale-95"
+      className="fixed left-1/2 top-[112px] z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#e2c078]/45 bg-[#0b1626]/90 px-4 py-2 text-[11px] font-black text-[#ffd9ae] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:bg-[#ff9d38]/12 active:scale-95"
     >
       <span className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#00ff88] opacity-60" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#00ff88]" />
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ff9d38] opacity-60" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#ff9d38]" />
       </span>
       💬 {aName} ↔ {bName} 대화 · 엿듣기
     </button>
@@ -909,15 +908,16 @@ export function EavesdropPanel({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 rounded-2xl border border-[#00ff88]/30 bg-[#050d1a]/95 p-4 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
+    <div className="v-panel fixed bottom-6 left-1/2 z-40 w-[min(92vw,460px)] -translate-x-1/2 p-4 transform-gpu will-change-[backdrop-filter,transform]">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="font-mono text-[11px] font-black uppercase tracking-[0.16em] text-[#9affc4]">
+        <p className="v-panel-title text-[13px]">
           🕵 엿듣는 중 · {aName} ↔ {bName}
         </p>
         <button
           type="button"
           onClick={onClose}
-          className="rounded-md border border-white/15 px-2 py-0.5 text-sm font-bold text-white/70 transition hover:text-white active:scale-90"
+          aria-label="엿듣기 닫기"
+          className="rounded-md border border-[#e2c078]/20 px-2 py-0.5 text-sm font-bold text-[#a9bdd6] transition hover:text-[#f3e6c8] active:scale-90"
         >
           ✕
         </button>
@@ -928,8 +928,8 @@ export function EavesdropPanel({
           return (
             <div key={index} className={isA ? "mr-8" : "ml-8"}>
               <p
-                className={`font-mono text-[9px] font-black uppercase tracking-[0.1em] ${
-                  isA ? "text-[#00d4ff]/70" : "text-[#ff9a6c]/70"
+                className={`text-[10px] font-black ${
+                  isA ? "text-[#8fb8e8]/80" : "text-[#ff9a6c]/80"
                 } ${isA ? "" : "text-right"}`}
               >
                 {line.name}
@@ -937,7 +937,7 @@ export function EavesdropPanel({
               <div
                 className={
                   isA
-                    ? "mt-0.5 rounded-2xl rounded-bl-sm bg-[#00d4ff]/12 px-3 py-2 text-sm leading-6 text-[#dff8ff]"
+                    ? "mt-0.5 rounded-2xl rounded-bl-sm bg-[#6ea8dc]/12 px-3 py-2 text-sm leading-6 text-[#e3eefa]"
                     : "mt-0.5 rounded-2xl rounded-br-sm bg-[#ff9a6c]/12 px-3 py-2 text-sm leading-6 text-[#ffe6d8]"
                 }
               >
@@ -953,7 +953,7 @@ export function EavesdropPanel({
 
 export function EncounterNotice({text}: {text: string}) {
   return (
-    <div className="fixed left-1/2 top-[78px] z-30 -translate-x-1/2 rounded-lg border border-[#00ff88]/25 bg-[#04140e]/86 px-4 py-2 font-mono text-xs font-black text-[#00ff88] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
+    <div className="fixed left-1/2 top-[78px] z-30 -translate-x-1/2 rounded-lg border border-[#e2c078]/35 bg-[#0b1626]/88 px-4 py-2 text-xs font-black text-[#e2c078] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
       {text}
     </div>
   );
@@ -961,11 +961,9 @@ export function EncounterNotice({text}: {text: string}) {
 
 export function MilestoneBanner({text}: {text: string}) {
   return (
-    <div className="pointer-events-none fixed left-1/2 top-1/3 z-[60] -translate-x-1/2 animate-[fadeIn_0.4s_ease] rounded-2xl border border-[#ff6ec7]/45 bg-[#1a0a1f]/92 px-6 py-4 text-center shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
-      <p className="font-mono text-[11px] font-black uppercase tracking-[0.2em] text-[#ff9ad9]">
-        관계 사건
-      </p>
-      <p className="mt-1.5 text-lg font-black text-white">{text}</p>
+    <div className="pointer-events-none fixed left-1/2 top-1/3 z-[60] -translate-x-1/2 animate-[fadeIn_0.4s_ease] rounded-2xl border border-[#ff9ad9]/40 bg-[#0b1626]/92 px-6 py-4 text-center shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
+      <p className="v-panel-title text-[12px] !text-[#ff9ad9]">관계 사건</p>
+      <p className="mt-1.5 text-lg font-black text-[#f3e6c8]">{text}</p>
     </div>
   );
 }
@@ -985,8 +983,8 @@ function RelRow({r}: {r: NpcRelationshipRow}) {
   const color =
     r.affinity >= 6 ? "#7ee787" : r.affinity <= -6 ? "#ff8a8a" : "#94a3b8";
   return (
-    <div className="flex items-center justify-between rounded-lg border border-white/8 bg-white/[0.04] px-3 py-2">
-      <span className="text-xs font-bold text-white/80">
+    <div className="flex items-center justify-between rounded-lg border border-[#e2c078]/12 bg-white/[0.04] px-3 py-2">
+      <span className="text-xs font-bold text-[#dfe7f2]">
         {REL_KIND_NAME[r.npc_a] ?? r.npc_a} ↔{" "}
         {REL_KIND_NAME[r.npc_b] ?? r.npc_b}
       </span>
@@ -1053,33 +1051,32 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
       onClick={onClose}
     >
       <div
-        className="w-[min(94vw,420px)] rounded-2xl border border-[#00d4ff]/30 bg-[#050d1a]/97 p-5 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]"
+        className="v-panel w-[min(94vw,420px)] p-5 transform-gpu will-change-[backdrop-filter,transform]"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex items-start justify-between">
           <div>
-            <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#00d4ff]">
-              Village Social Graph
+            <p className="text-xs font-bold text-[#a9bdd6]/70">
+              NPC들이 지내며 쌓은 사이
             </p>
-            <h2 className="mt-1 text-xl font-black text-white">
-              마을 관계도 💞
-            </h2>
+            <h2 className="v-panel-title mt-1 text-xl">마을 관계도 💞</h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-white/50 transition hover:text-white"
+            aria-label="관계도 닫기"
+            className="text-[#a9bdd6]/60 transition hover:text-[#f3e6c8]"
           >
             ✕
           </button>
         </div>
 
         {err ? (
-          <p className="mt-4 text-sm leading-6 text-white/55">
+          <p className="mt-4 text-sm leading-6 text-[#a9bdd6]">
             백엔드에 연결하지 못했어요. 서버를 켜면 관계가 보여요.
           </p>
         ) : !rels ? (
-          <p className="mt-4 text-sm text-white/45">불러오는 중…</p>
+          <p className="mt-4 text-sm text-[#a9bdd6]/70">불러오는 중…</p>
         ) : (
           <>
             <svg viewBox={`0 0 ${W} ${H}`} className="mt-2 w-full">
@@ -1109,8 +1106,8 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                       cx={p.x}
                       cy={p.y}
                       r={isHub ? 15 : 12}
-                      fill={isHub ? "#f5c542" : "#0b1a2e"}
-                      stroke="#00d4ff"
+                      fill={isHub ? "#f5c542" : "#13223a"}
+                      stroke="#e2c078"
                       strokeWidth={1.2}
                     />
                     <text
@@ -1119,7 +1116,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                       textAnchor="middle"
                       fontSize="11"
                       fontWeight="800"
-                      fill="#cfe6ff"
+                      fill="#e5d8ba"
                     >
                       {REL_KIND_NAME[kind]}
                     </text>
@@ -1127,7 +1124,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                 );
               })}
             </svg>
-            <div className="flex items-center justify-center gap-3 font-mono text-[10px] text-white/45">
+            <div className="flex items-center justify-center gap-3 text-[10px] text-[#a9bdd6]/70">
               <span>
                 <span style={{color: "#16a34a"}}>━</span> 친함
               </span>
@@ -1148,7 +1145,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                 ))}
               </div>
             ) : (
-              <p className="mt-3 text-center text-xs leading-5 text-white/40">
+              <p className="mt-3 text-center text-xs leading-5 text-[#a9bdd6]/70">
                 아직 관계가 쌓이지 않았어요. 마을을 조금 지켜보면 사이가 생겨요.
               </p>
             )}

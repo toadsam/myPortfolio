@@ -60,7 +60,7 @@ export function InfoPanel({
       {isOpen ? (
         <motion.aside
           animate={{opacity: 1, x: 0}}
-          className="relative z-20 w-full border-t border-[#00d4ff]/15 bg-[#06101e] p-5 shadow-2xl md:fixed md:bottom-0 md:right-0 md:top-[65px] md:max-h-none md:w-[460px] md:overflow-y-auto md:border-l md:border-t-0 md:p-6"
+          className="relative z-20 w-full border-t border-[#7a5a38]/40 bg-[#0b1626] p-5 shadow-2xl md:fixed md:bottom-0 md:right-0 md:top-[65px] md:max-h-none md:w-[460px] md:overflow-y-auto md:border-l md:border-t-0 md:p-6"
           exit={{opacity: 0, x: 44}}
           initial={{opacity: 0, x: 44}}
           transition={{duration: 0.32, ease: [0.22, 1, 0.36, 1]}}
@@ -77,7 +77,7 @@ export function InfoPanel({
 
           <motion.div
             animate={{opacity: 1, y: 0}}
-            className="mb-5 rounded-lg border bg-[#0a1525] p-5"
+            className="mb-5 rounded-lg border bg-[#0e1a2e] p-5"
             initial={{opacity: 0, y: -10}}
             style={{borderColor: `${color}30`}}
             transition={{duration: 0.4, ease: [0.22, 1, 0.36, 1]}}
@@ -85,17 +85,15 @@ export function InfoPanel({
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p
-                  className="font-mono text-xs font-black uppercase tracking-[0.22em]"
+                  className="text-xs font-black uppercase tracking-[0.16em]"
                   style={{color}}
                 >
-                  {">"} {section.label}
+                  {section.label}
                 </p>
-                <h2 className="mt-2 text-2xl font-black text-white">
-                  {section.title}
-                </h2>
+                <h2 className="v-panel-title mt-2 text-2xl">{section.title}</h2>
               </div>
               <motion.button
-                className="rounded-lg border border-white/10 px-3 py-1.5 font-mono text-xs font-bold text-white/45 transition hover:border-white/25 hover:text-white/75"
+                className="rounded-lg border border-[#e2c078]/20 px-3 py-1.5 text-xs font-bold text-[#a9bdd6]/70 transition hover:border-[#e2c078]/45 hover:text-[#f3e6c8]"
                 onClick={onClose}
                 type="button"
                 whileHover={{scale: 1.04}}
@@ -104,7 +102,7 @@ export function InfoPanel({
                 닫기
               </motion.button>
             </div>
-            <p className="mt-3 text-sm leading-6 text-white/55">
+            <p className="mt-3 text-sm leading-6 text-[#a9bdd6]">
               {section.description}
             </p>
           </motion.div>

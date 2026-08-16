@@ -1,7 +1,16 @@
 import type {Metadata, Viewport} from "next";
+import {Gowun_Batang} from "next/font/google";
 import {Providers} from "@/components/Providers";
 import {CustomCursor} from "@/components/ui/CustomCursor";
 import "./globals.css";
+
+// 마을 UI 디스플레이 서체 — 간판·패널 제목 전용. 본문은 기존 산세리프 유지.
+const gowunBatang = Gowun_Batang({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap"
+});
 
 const title = "정재훈 | Developer's City — 3D 인터랙티브 포트폴리오";
 const description =
@@ -55,14 +64,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050d1a"
+  themeColor: "#0b1626"
 };
 
 export default function RootLayout({
   children
 }: Readonly<{children: React.ReactNode}>) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={gowunBatang.variable}>
       <body>
         <Providers>{children}</Providers>
         <CustomCursor />

@@ -2720,7 +2720,7 @@ function VillageSceneImpl({
 
   return (
     <div
-      className="relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#00d4ff]/15 bg-[#050d1a] shadow-[inset_0_-30px_70px_rgba(0,100,255,0.1)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r"
+      className="relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#7a5a38]/35 bg-[#0b1626] shadow-[inset_0_-30px_70px_rgba(255,157,56,0.06)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r"
       onDragOver={editing ? e => e.preventDefault() : undefined}
       onDrop={
         editing
@@ -3094,7 +3094,7 @@ function VillageSceneImpl({
       </Canvas>
 
       {isWalkMode ? (
-        <div className="pointer-events-none absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-xl border border-[#00d4ff]/30 bg-[#050d1a]/85 px-4 py-2.5 backdrop-blur-md">
+        <div className="pointer-events-none absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-xl border border-[#7a5a38]/55 bg-[#0b1626]/85 px-4 py-2.5 backdrop-blur-md">
           {[
             ["W", "앞"],
             ["A", "왼쪽"],
@@ -3102,17 +3102,15 @@ function VillageSceneImpl({
             ["D", "오른쪽"]
           ].map(([key, label]) => (
             <span className="flex flex-col items-center gap-0.5" key={key}>
-              <kbd className="rounded border border-[#00d4ff]/50 bg-[#0a1a30] px-2 py-0.5 font-mono text-xs font-black text-[#00d4ff]">
+              <kbd className="rounded border border-[#e2c078]/50 bg-[#13223a] px-2 py-0.5 font-mono text-xs font-black text-[#e2c078]">
                 {key}
               </kbd>
-              <span className="font-mono text-[10px] text-[#0066aa]">
-                {label}
-              </span>
+              <span className="text-[10px] text-[#a9bdd6]/70">{label}</span>
             </span>
           ))}
         </div>
       ) : (
-        <div className="pointer-events-none absolute right-4 top-4 rounded-full border border-[#00d4ff]/25 bg-[#050d1a]/85 px-3 py-1.5 font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00d4ff]/70 backdrop-blur-md">
+        <div className="pointer-events-none absolute right-4 top-4 rounded-full border border-[#7a5a38]/55 bg-[#0b1626]/85 px-3 py-1.5 text-[11px] font-black text-[#e2c078]/85 backdrop-blur-md">
           {sky.label === "밤"
             ? "🌙"
             : sky.label === "새벽"

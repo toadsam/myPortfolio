@@ -425,7 +425,7 @@ function NPCImpl({
         <Billboard position={[0, 2.28, 0]}>
           <Html center distanceFactor={7.4} zIndexRange={[11, 0]}>
             <div
-              className="rounded-xl border border-[#00d4ff]/35 bg-[#050d1a]/92 px-3 py-2 text-center font-mono text-[11px] font-bold leading-5 text-white shadow-2xl"
+              className="rounded-xl border border-[#e2c078]/40 bg-[#0b1626]/92 px-3 py-2 text-center text-[11px] font-bold leading-5 text-[#f3e6c8] shadow-2xl"
               style={{width: 180, whiteSpace: "normal", wordBreak: "keep-all"}}
             >
               {bubbleText}

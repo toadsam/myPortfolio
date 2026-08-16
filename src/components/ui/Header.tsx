@@ -31,7 +31,7 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
   return (
     <motion.header
       animate={{opacity: 1, y: 0}}
-      className="fixed left-0 right-0 top-0 z-40 border-b border-[#00d4ff]/15 bg-[#050d1a]/92 backdrop-blur-xl transform-gpu will-change-[backdrop-filter,transform]"
+      className="fixed left-0 right-0 top-0 z-40 border-b border-[#7a5a38]/40 bg-[#0b1626]/92 backdrop-blur-xl transform-gpu will-change-[backdrop-filter,transform]"
       initial={{opacity: 0, y: -12}}
       transition={{duration: 0.5, ease: [0.22, 1, 0.36, 1]}}
     >
@@ -43,14 +43,14 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
           whileHover={{x: 2}}
           whileTap={{scale: 0.97}}
         >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-[#00d4ff]/40 bg-[#0a1a30] font-mono text-sm font-black text-[#00d4ff] shadow-[0_0_12px_rgba(0,212,255,0.2)]">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-[#ff9d38]/45 bg-[#131f33] text-sm font-black text-[#ff9d38] shadow-[0_0_12px_rgba(255,157,56,0.22)]">
             AI
           </span>
           <span className="min-w-0">
-            <strong className="block truncate font-mono text-sm font-black uppercase tracking-[0.2em] text-white">
-              Developer's City
+            <strong className="v-panel-title block truncate text-[15px] tracking-[0.06em]">
+              Developer&apos;s City
             </strong>
-            <small className="hidden font-mono text-xs font-semibold text-[#00d4ff]/50 sm:block">
+            <small className="hidden text-xs font-semibold text-[#a9bdd6]/70 sm:block">
               정재훈의 3D 포트폴리오
             </small>
           </span>
@@ -68,11 +68,11 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
 
             return (
               <motion.button
-                className="relative rounded-lg px-4 py-2 font-mono text-xs font-black uppercase tracking-[0.14em] transition-all duration-200"
+                className="relative rounded-lg px-4 py-2 text-xs font-black uppercase tracking-[0.14em] transition-all duration-200"
                 key={section.id}
                 onClick={() => onSelectSection(section.id)}
                 style={{
-                  color: isActive ? color : "rgba(255,255,255,0.45)",
+                  color: isActive ? color : "rgba(169,189,214,0.6)",
                   background: isActive ? `${color}14` : "transparent",
                   border: isActive
                     ? `1px solid ${color}50`

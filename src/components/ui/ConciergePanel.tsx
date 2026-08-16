@@ -33,7 +33,7 @@ export function ConciergePanel({
 }) {
   return (
     <motion.div
-      className="fixed bottom-6 left-1/2 z-[55] w-[min(94vw,640px)] -translate-x-1/2 rounded-2xl border border-[#00d4ff]/35 bg-[#050d1a]/92 p-5 shadow-2xl backdrop-blur-md"
+      className="v-panel fixed bottom-6 left-1/2 z-[55] w-[min(94vw,640px)] -translate-x-1/2 p-5"
       initial={{opacity: 0, y: 30}}
       animate={{opacity: 1, y: 0}}
       exit={{opacity: 0, y: 30}}
@@ -41,14 +41,12 @@ export function ConciergePanel({
     >
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#00ff88]/50 bg-[#00ff88]/12 text-lg">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#ff9d38]/50 bg-[#ff9d38]/12 text-lg">
             🤖
           </span>
           <div>
-            <p className="font-mono text-[11px] font-black uppercase tracking-[0.18em] text-[#00ff88]">
-              루미 · GUIDE
-            </p>
-            <p className="mt-0.5 text-sm font-bold text-white">
+            <p className="v-panel-title text-[13px]">루미 · 마을 안내인</p>
+            <p className="mt-0.5 text-sm font-bold text-[#f3e6c8]">
               안녕하세요! 어떤 목적으로 오셨어요?
             </p>
           </div>
@@ -56,7 +54,7 @@ export function ConciergePanel({
         <button
           type="button"
           onClick={onClose}
-          className="shrink-0 rounded-lg border border-white/15 px-2.5 py-1 font-mono text-[10px] font-black text-white/45 transition hover:text-white/80 active:scale-95"
+          className="shrink-0 rounded-lg border border-[#e2c078]/20 px-2.5 py-1 text-[11px] font-black text-[#a9bdd6]/70 transition hover:text-[#f3e6c8] active:scale-95"
         >
           건너뛰기
         </button>
@@ -70,19 +68,17 @@ export function ConciergePanel({
             onClick={() => onPick(c.id)}
             whileHover={{
               y: -3,
-              borderColor: "rgba(0,212,255,0.6)",
-              background: "rgba(0,212,255,0.08)"
+              borderColor: "rgba(226,192,120,0.6)",
+              background: "rgba(226,192,120,0.08)"
             }}
             whileTap={{scale: 0.96}}
-            className="flex flex-col items-start gap-1 rounded-xl border border-[#00d4ff]/22 bg-white/[0.03] p-3 text-left"
+            className="flex flex-col items-start gap-1 rounded-xl border border-[#e2c078]/20 bg-white/[0.03] p-3 text-left"
           >
             <span className="text-lg">{c.icon}</span>
-            <span className="text-[13px] font-black text-white/90">
+            <span className="text-[13px] font-black text-[#eef2f8]">
               {c.label}
             </span>
-            <span className="font-mono text-[10px] text-white/45">
-              {c.desc}
-            </span>
+            <span className="text-[10px] text-[#a9bdd6]/70">{c.desc}</span>
           </motion.button>
         ))}
         <motion.button
@@ -90,17 +86,17 @@ export function ConciergePanel({
           onClick={onAskAI}
           whileHover={{
             y: -3,
-            borderColor: "rgba(0,255,136,0.6)",
-            background: "rgba(0,255,136,0.08)"
+            borderColor: "rgba(255,157,56,0.6)",
+            background: "rgba(255,157,56,0.08)"
           }}
           whileTap={{scale: 0.96}}
-          className="flex flex-col items-start gap-1 rounded-xl border border-[#00ff88]/30 bg-white/[0.03] p-3 text-left"
+          className="flex flex-col items-start gap-1 rounded-xl border border-[#ff9d38]/35 bg-white/[0.03] p-3 text-left"
         >
           <span className="text-lg">💬</span>
-          <span className="text-[13px] font-black text-white/90">
+          <span className="text-[13px] font-black text-[#eef2f8]">
             직접 물어보기
           </span>
-          <span className="font-mono text-[10px] text-white/45">
+          <span className="text-[10px] text-[#a9bdd6]/70">
             루미와 대화 (AI)
           </span>
         </motion.button>

@@ -7,6 +7,46 @@
   color: #1f2a24;
 }
 
+/* ── 마을 UI 토큰 — HUD는 '관제탑'이 아니라 '마을 안내소' ──
+   색은 전부 3D 마을에 이미 있는 것에서 추출했다:
+   lantern = LampPools 호박색, gold = 건물 간판 금박, night = 밤하늘.
+   공백 구분 RGB로 선언해 rgb(var(--v-gold) / 0.14) 꼴로 투명도를 섞는다. */
+:root {
+  --v-night: 11 22 38; /* #0b1626 밤하늘 — 패널 바탕 */
+  --v-lantern: 255 157 56; /* #ff9d38 랜턴 — 주 액센트 */
+  --v-gold: 226 192 120; /* #e2c078 간판금 — 제목·하이라이트 */
+  --v-wood: 122 90 56; /* #7a5a38 목재 — 프레임 */
+  --v-moon: 169 189 214; /* #a9bdd6 달빛 — 보조 텍스트 */
+  --v-paper: 243 230 200; /* #f3e6c8 양피지 — 밝은 텍스트 */
+}
+
+/* 떠 있는 HUD 패널의 공용 껍데기 — 나무 프레임 + 금박 안선 + 밤하늘 바탕.
+   위쪽에 은은한 금빛 그라디언트를 깔아 '랜턴 불이 위에서 비치는' 인상을 준다. */
+.v-panel {
+  border: 1px solid rgb(var(--v-wood) / 0.55);
+  border-radius: 12px;
+  background: linear-gradient(
+      180deg,
+      rgb(var(--v-gold) / 0.07),
+      transparent 30%
+    ),
+    rgb(var(--v-night) / 0.88);
+  box-shadow: inset 0 0 0 1px rgb(var(--v-gold) / 0.12),
+    0 18px 50px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  color: rgb(var(--v-moon));
+}
+
+/* 패널 제목 — 간판 서체(고운바탕). 모노스페이스 대문자 자간의 대체재.
+   font-size는 일부러 안 정한다: 이 파일이 테일윈드 유틸리티보다 뒤에 로드돼
+   text-* 유틸리티를 이겨버리므로, 크기는 사용처에서 지정한다. */
+.v-panel-title {
+  font-family: var(--font-display), "Gowun Batang", serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: rgb(var(--v-gold));
+}
+
 * {
   box-sizing: border-box;
 }
@@ -37,6 +77,13 @@ body {
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 키보드 포커스 — 마우스 클릭에는 안 뜨고 Tab 이동에만 랜턴색 링 */
+:focus-visible {
+  outline: 2px solid rgb(var(--v-lantern) / 0.85);
+  outline-offset: 2px;
 }
 
 button {
@@ -71,9 +118,9 @@ canvas {
 .cursor-ring {
   height: 34px;
   width: 34px;
-  border: 1.5px solid #00d4ff;
+  border: 1.5px solid #ffbe7a;
   border-radius: 999px;
-  box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+  box-shadow: 0 0 10px rgba(255, 190, 122, 0.5);
   transition: width 0.18s ease, height 0.18s ease, border-color 0.18s ease,
     background 0.18s ease, opacity 0.2s ease;
 }
@@ -81,9 +128,9 @@ canvas {
 .cursor-ring.hover {
   height: 52px;
   width: 52px;
-  border-color: #00ff88;
-  background: rgba(0, 255, 136, 0.08);
-  box-shadow: 0 0 16px rgba(0, 255, 136, 0.5);
+  border-color: #ff9d38;
+  background: rgba(255, 157, 56, 0.08);
+  box-shadow: 0 0 16px rgba(255, 157, 56, 0.5);
 }
 
 .cursor-ring.down {
@@ -95,8 +142,8 @@ canvas {
   height: 6px;
   width: 6px;
   border-radius: 999px;
-  background: #00d4ff;
-  box-shadow: 0 0 6px rgba(0, 212, 255, 0.85);
+  background: #ffbe7a;
+  box-shadow: 0 0 6px rgba(255, 190, 122, 0.85);
   transition: opacity 0.2s ease;
 }
 

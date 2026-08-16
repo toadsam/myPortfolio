@@ -77,8 +77,8 @@ function Typewriter({
       {active ? text.slice(0, n) : ""}
       {showCaret ? (
         <span
-          className="ml-0.5 inline-block w-[0.5ch] animate-pulse rounded-[1px] bg-[#86b0e6] align-middle"
-          style={{height: "0.82em", boxShadow: "0 0 10px #86b0e6"}}
+          className="ml-0.5 inline-block w-[0.5ch] animate-pulse rounded-[1px] bg-[#ffbe7a] align-middle"
+          style={{height: "0.82em", boxShadow: "0 0 10px #ffbe7a"}}
         />
       ) : null}
     </>
@@ -135,6 +135,8 @@ function TrailCanvas({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
+    // 동작 줄이기 설정이면 꼬리 연출 자체를 끈다 (캔버스 RAF는 CSS 미디어쿼리가 못 잡는다)
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const canvas = canvasRef.current;
     const stage = stageRef.current;
     if (!canvas || !stage) return;
@@ -166,7 +168,7 @@ function TrailCanvas({
       // 글로우 추가
       ctx!.globalCompositeOperation = "lighter";
       if (last) {
-        ctx!.strokeStyle = "rgba(134,176,230,0.35)";
+        ctx!.strokeStyle = "rgba(255,190,122,0.32)";
         ctx!.lineWidth = 2.5;
         ctx!.lineCap = "round";
         ctx!.beginPath();
@@ -175,8 +177,8 @@ function TrailCanvas({
         ctx!.stroke();
       }
       const g = ctx!.createRadialGradient(x, y, 0, x, y, 14);
-      g.addColorStop(0, "rgba(134,176,230,0.55)");
-      g.addColorStop(1, "rgba(134,176,230,0)");
+      g.addColorStop(0, "rgba(255,190,122,0.5)");
+      g.addColorStop(1, "rgba(255,190,122,0)");
       ctx!.fillStyle = g;
       ctx!.beginPath();
       ctx!.arc(x, y, 14, 0, Math.PI * 2);
@@ -212,6 +214,8 @@ function ParticleField({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
+    // 동작 줄이기 설정이면 입자 부유 연출을 끈다
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const canvas = canvasRef.current;
     const stage = stageRef.current;
     if (!canvas || !stage) return;
@@ -274,7 +278,7 @@ function ParticleField({
         p.x += (tx - p.x) * 0.12;
         p.y += (ty - p.y) * 0.12;
         const alpha = 0.12 + force * 0.4;
-        ctx!.fillStyle = `rgba(134,176,230,${alpha})`;
+        ctx!.fillStyle = `rgba(255,205,150,${alpha})`;
         ctx!.beginPath();
         ctx!.arc(p.x, p.y, p.r + force * 1.4, 0, 6.28);
         ctx!.fill();
@@ -341,7 +345,7 @@ function TiltCard({children}: {children: React.ReactNode}) {
   const ry = useSpring(useMotionValue(0), {stiffness: 200, damping: 16});
   const gx = useMotionValue(50);
   const gy = useMotionValue(50);
-  const gloss = useMotionTemplate`radial-gradient(circle 120px at ${gx}% ${gy}%, rgba(134,176,230,0.18), transparent 70%)`;
+  const gloss = useMotionTemplate`radial-gradient(circle 120px at ${gx}% ${gy}%, rgba(255,190,122,0.16), transparent 70%)`;
   function onMove(e: React.MouseEvent<HTMLDivElement>) {
     const el = ref.current;
     if (!el) return;
@@ -362,11 +366,11 @@ function TiltCard({children}: {children: React.ReactNode}) {
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={reset}
-      className="relative overflow-hidden rounded-lg border border-[#7c9acc]/15 bg-[#84a0d2]/[0.045] p-4"
+      className="relative overflow-hidden rounded-lg border border-[#e2c078]/18 bg-[#e2c078]/[0.05] p-4"
       style={{rotateX: rx, rotateY: ry, transformPerspective: 600}}
       whileHover={{
-        borderColor: "rgba(134,176,230,0.4)",
-        boxShadow: "0 8px 30px rgba(20,40,80,0.4)"
+        borderColor: "rgba(226,192,120,0.45)",
+        boxShadow: "0 8px 30px rgba(40,26,10,0.45)"
       }}
     >
       <motion.span
@@ -399,14 +403,14 @@ function ClockChip() {
     return () => clearInterval(id);
   }, []);
   return (
-    <div className="flex items-center gap-2.5 rounded-full border border-[#7c9acc]/20 bg-[#0a101b]/55 px-3.5 py-1.5 font-mono text-[11px] backdrop-blur-md">
+    <div className="flex items-center gap-2.5 rounded-full border border-[#e2c078]/20 bg-[#0b1626]/60 px-3.5 py-1.5 font-mono text-[11px] backdrop-blur-md">
       <span
         className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#6fe0a8]"
         style={{boxShadow: "0 0 8px #6fe0a8"}}
       />
-      <span className="tracking-[0.12em] text-[#9fb4cf]">ONLINE</span>
+      <span className="tracking-[0.12em] text-[#a9bdd6]">ONLINE</span>
       <span className="text-[#5a6678]">·</span>
-      <span className="tracking-[0.1em] text-[#eef2f9]">{time} KST</span>
+      <span className="tracking-[0.1em] text-[#f3e6c8]">{time} KST</span>
     </div>
   );
 }
@@ -425,12 +429,10 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
   const sx = useSpring(mx, {stiffness: 120, damping: 22});
   const sy = useSpring(my, {stiffness: 120, damping: 22});
 
-  // 커서 스포트라이트 — 어두운 막에 구멍을 뚫어 뒤 마을이 드러남
+  // 커서 스포트라이트 — 방문자가 든 '랜턴'. 어두운 막에 구멍을 뚫어 뒤 마을이 드러남
   const revealMask = useMotionTemplate`radial-gradient(circle 210px at ${sx}% ${sy}%, transparent 0%, transparent 26%, black 70%)`;
-  // 커서 스틸블루 글로우
-  const glow = useMotionTemplate`radial-gradient(circle 300px at ${sx}% ${sy}%, rgba(91,143,214,0.13), transparent 70%)`;
-  // 커서 근처에서만 밝아지는 격자 마스크
-  const gridMask = useMotionTemplate`radial-gradient(circle 200px at ${sx}% ${sy}%, black 0%, transparent 72%)`;
+  // 랜턴 불빛 글로우 (마을 램프와 같은 호박색)
+  const glow = useMotionTemplate`radial-gradient(circle 300px at ${sx}% ${sy}%, rgba(255,157,56,0.11), transparent 70%)`;
   // 패럴랙스 (콘텐츠가 커서 반대로 살짝)
   const px = useTransform(sx, [0, 100], [14, -14]);
   const py = useTransform(sy, [0, 100], [10, -10]);
@@ -512,30 +514,10 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                 "radial-gradient(120% 90% at 70% 30%, rgba(7,11,19,0.35) 0%, rgba(7,11,19,0.62) 60%, rgba(7,11,19,0.82) 100%)"
             }}
           />
-          {/* 커서 스틸블루 글로우 */}
+          {/* 랜턴 불빛 글로우 — 격자는 뺐다: 기술 도면이 아니라 밤 들판이니까 */}
           <motion.div
             className="pointer-events-none absolute inset-0"
             style={{background: glow}}
-          />
-          {/* 격자 (기본 은은) */}
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(124,154,204,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(124,154,204,0.05) 1px, transparent 1px)",
-              backgroundSize: "40px 40px"
-            }}
-          />
-          {/* 격자 (커서 근처만 밝게 점등) */}
-          <motion.div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(134,176,230,0.28) 1px, transparent 1px), linear-gradient(90deg, rgba(134,176,230,0.28) 1px, transparent 1px)",
-              backgroundSize: "40px 40px",
-              WebkitMaskImage: gridMask,
-              maskImage: gridMask
-            }}
           />
           <ParticleField mx={mx} my={my} stageRef={stageRef} />
           <TrailCanvas mx={mx} my={my} stageRef={stageRef} />
@@ -547,7 +529,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
           <button
             type="button"
             onClick={toggleMute}
-            className="absolute right-5 top-5 z-[3] flex h-9 w-9 items-center justify-center rounded-full border border-[#5b8fd6]/30 bg-[#0a101b]/70 text-sm text-[#86b0e6]/90 transition hover:border-[#86b0e6]/70 hover:text-[#86b0e6]"
+            className="absolute right-5 top-5 z-[3] flex h-9 w-9 items-center justify-center rounded-full border border-[#e2c078]/30 bg-[#0b1626]/70 text-sm text-[#e2c078]/90 transition hover:border-[#e2c078]/70 hover:text-[#ffd9ae]"
             aria-label={muted ? "사운드 켜기" : "사운드 끄기"}
           >
             {muted ? "🔇" : "🔊"}
@@ -559,7 +541,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
             style={{left: ringLeft, top: ringTop, x: "-50%", y: "-50%"}}
           >
             <motion.div
-              className="rounded-full border border-[#5b8fd6]/25"
+              className="rounded-full border border-[#ffbe7a]/25"
               style={{width: 220, height: 220}}
               animate={{scale: [1, 1.08, 1], opacity: [0.2, 0.42, 0.2]}}
               transition={{duration: 2.4, repeat: Infinity, ease: "easeInOut"}}
@@ -568,7 +550,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
 
           {/* 커스텀 링 커서: 바깥 링(부드럽게 따라옴) + 안쪽 점(즉시 추적) */}
           <motion.div
-            className="pointer-events-none absolute z-[6] rounded-full border border-[#86b0e6]/70"
+            className="pointer-events-none absolute z-[6] rounded-full border border-[#ffbe7a]/70"
             style={{
               left: ringLeft,
               top: ringTop,
@@ -581,7 +563,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
             transition={{duration: 1.8, repeat: Infinity, ease: "easeInOut"}}
           />
           <motion.div
-            className="pointer-events-none absolute z-[6] rounded-full bg-[#86b0e6]"
+            className="pointer-events-none absolute z-[6] rounded-full bg-[#ffbe7a]"
             style={{
               left: dotLeft,
               top: dotTop,
@@ -589,7 +571,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
               y: "-50%",
               width: 5,
               height: 5,
-              boxShadow: "0 0 8px #86b0e6"
+              boxShadow: "0 0 8px #ffbe7a"
             }}
           />
 
@@ -597,13 +579,13 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
             className="relative z-[2] px-6 md:px-14"
             style={{x: px, y: py}}
           >
-            {/* 라벨 → 제목 → 부제 순서로 타자기처럼 쳐진다 (Developer City 부팅 연출) */}
+            {/* 라벨 → 제목 → 부제 순서로 타자기처럼 쳐진다 (마을 입구 현판 연출) */}
             <p
-              className="min-h-[15px] font-mono text-xs font-black uppercase tracking-[0.32em]"
-              style={{color: "#5b8fd6", textShadow: "0 0 12px #5b8fd688"}}
+              className="min-h-[15px] text-xs font-black uppercase tracking-[0.32em]"
+              style={{color: "#e2c078", textShadow: "0 0 12px #e2c07866"}}
             >
               <Typewriter
-                text="> DEVELOPER'S CITY · 2026"
+                text="DEVELOPER'S CITY · 2026"
                 active
                 speed={26}
                 onDone={() => setBootStep(s => Math.max(s, 1))}
@@ -611,8 +593,8 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
             </p>
 
             <h1
-              className="mt-4 max-w-4xl font-mono text-4xl font-black leading-tight text-white md:text-7xl"
-              style={{textShadow: "0 0 40px rgba(91,143,214,0.4)"}}
+              className="v-panel-title mt-4 max-w-4xl text-4xl leading-tight md:text-7xl"
+              style={{textShadow: "0 0 40px rgba(255,157,56,0.32)"}}
             >
               <Typewriter
                 text="정재훈의 3D"
@@ -631,7 +613,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
               />
             </h1>
 
-            <p className="mt-4 min-h-[20px] font-mono text-sm font-bold tracking-[0.16em] text-[#86b0e6]/80 md:text-base">
+            <p className="mt-4 min-h-[20px] text-sm font-bold tracking-[0.16em] text-[#a9bdd6]/85 md:text-base">
               <Typewriter
                 text="Fullstack / 3D / Game / XR"
                 active={bootStep >= 3}
@@ -647,7 +629,7 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
               transition={{duration: 0.7, ease: [0.22, 1, 0.36, 1]}}
               style={{pointerEvents: revealed ? "auto" : "none"}}
             >
-              <p className="mt-5 max-w-xl text-sm leading-7 text-white/58 md:text-base">
+              <p className="mt-5 max-w-xl text-sm leading-7 text-[#c9d6e8]/80 md:text-base">
                 먼저 건물을 클릭해 프로젝트 내부로 들어가거나, NPC에게
                 프로젝트와 기술에 대해 질문해보세요. 오늘의 관리자 기록은 마을
                 조명과 NPC 상태에 반영됩니다.
@@ -660,13 +642,13 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                   ["3", "Admin 기록", "오늘 활동을 마을 상태로 반영"]
                 ].map(([index, title, body]) => (
                   <TiltCard key={index}>
-                    <span className="font-mono text-xs font-black text-[#86b0e6]">
+                    <span className="text-xs font-black tracking-[0.12em] text-[#e2c078]">
                       STEP {index}
                     </span>
-                    <p className="mt-2 text-sm font-black text-white">
+                    <p className="mt-2 text-sm font-black text-[#f3e6c8]">
                       {title}
                     </p>
-                    <p className="mt-1 text-xs leading-5 text-white/45">
+                    <p className="mt-1 text-xs leading-5 text-[#a9bdd6]/70">
                       {body}
                     </p>
                   </TiltCard>
@@ -677,34 +659,34 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                 {/* 메인 CTA — 마을 탐험 시작 (마그네틱) */}
                 <Magnetic className="flex-1">
                   <motion.button
-                    className="group relative w-full overflow-hidden rounded-xl border border-[#5b8fd6]/60 bg-[#5b8fd6]/15 px-6 py-5 text-left hover:border-[#86b0e6] hover:bg-[#5b8fd6]/22"
+                    className="group relative w-full overflow-hidden rounded-xl border border-[#ff9d38]/60 bg-[#ff9d38]/14 px-6 py-5 text-left hover:border-[#ffbe7a] hover:bg-[#ff9d38]/20"
                     onClick={() => handleStart("click")}
                     onMouseEnter={() => sfx.hover()}
                     type="button"
                     whileHover={{
                       scale: 1.02,
-                      boxShadow: "0 0 32px rgba(91,143,214,0.35)"
+                      boxShadow: "0 0 32px rgba(255,157,56,0.3)"
                     }}
                     whileTap={{scale: 0.97}}
                     transition={{type: "spring", stiffness: 320, damping: 20}}
                   >
-                    <span className="flex items-center gap-2 font-mono text-base font-black text-white">
+                    <span className="flex items-center gap-2 text-base font-black text-[#ffe9d2]">
                       🏘️ 마을 탐험 시작{" "}
                       <span className="transition-transform group-hover:translate-x-1">
                         →
                       </span>
                     </span>
-                    <span className="mt-1 block text-xs text-[#86b0e6]/80">
+                    <span className="mt-1 block text-xs text-[#ffd9ae]/80">
                       건물을 클릭해 프로젝트·기술·경험을 둘러봅니다.
                     </span>
-                    <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#86b0e6]/12 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                    <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#ffbe7a]/12 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
                   </motion.button>
                 </Magnetic>
 
                 {/* 면접관용 빠른 길 — 동등하게 강조 (마그네틱) */}
                 <Magnetic className="flex-1">
                   <motion.button
-                    className="group relative w-full overflow-hidden rounded-xl border border-white/25 bg-white/[0.06] px-6 py-5 text-left hover:border-white/50 hover:bg-white/[0.1]"
+                    className="group relative w-full overflow-hidden rounded-xl border border-[#e2c078]/30 bg-[#e2c078]/[0.07] px-6 py-5 text-left hover:border-[#e2c078]/60 hover:bg-[#e2c078]/[0.12]"
                     onClick={handleResume}
                     onMouseEnter={() => sfx.hover()}
                     whileHover={{scale: 1.02}}
@@ -712,24 +694,24 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                     transition={{type: "spring", stiffness: 320, damping: 20}}
                     type="button"
                   >
-                    <span className="flex items-center gap-2 font-mono text-base font-black text-white">
+                    <span className="flex items-center gap-2 text-base font-black text-[#f3e6c8]">
                       📄 빠른 이력서 보기{" "}
                       <span className="transition-transform group-hover:translate-x-1">
                         →
                       </span>
                     </span>
-                    <span className="mt-1 block text-xs text-white/50">
+                    <span className="mt-1 block text-xs text-[#a9bdd6]/80">
                       시간이 없다면 — 요약·프로젝트·스킬을 한 페이지로.
                     </span>
                   </motion.button>
                 </Magnetic>
               </div>
 
-              <p className="mt-6 font-mono text-xs text-white/40">
-                {"// "}마을 안에서{" "}
-                <span className="text-[#6fe0a8]/80">WASD 직접 이동</span> 모드로
+              <p className="mt-6 text-xs text-[#a9bdd6]/60">
+                마을 안에서{" "}
+                <span className="text-[#e2c078]/85">WASD 직접 이동</span> 모드로
                 전환할 수 있어요 ·{" "}
-                <span className="sm:hidden text-[#86b0e6]/80">
+                <span className="sm:hidden text-[#ffd9ae]/80">
                   모바일은 이력서 보기를 추천
                 </span>
               </p>
@@ -744,11 +726,11 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
           transition={{duration: 0.5, ease: [0.76, 0, 0.24, 1]}}
         >
           <div className="flex h-full items-center justify-between px-6 md:px-14">
-            <span className="font-mono text-xs font-bold tracking-[0.2em] text-[#5b8fd6]/40">
-              {">"} DEVELOPER'S CITY
+            <span className="text-xs font-bold tracking-[0.2em] text-[#e2c078]/40">
+              DEVELOPER&apos;S CITY
             </span>
-            <span className="font-mono text-xs font-bold tracking-[0.2em] text-[#5b8fd6]/40">
-              JAEHOON JUNG_
+            <span className="text-xs font-bold tracking-[0.2em] text-[#e2c078]/40">
+              JAEHOON JUNG
             </span>
           </div>
         </motion.div>

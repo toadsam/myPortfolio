@@ -226,15 +226,15 @@ export function DialogueBox({
       {npc ? (
         <motion.aside
           animate={{opacity: 1, y: 0}}
-          className="fixed bottom-24 left-4 z-30 flex max-h-[70vh] w-[min(calc(100vw-32px),400px)] flex-col overflow-hidden rounded-2xl border border-[#00d4ff]/25 bg-[#06111f]/95 text-white shadow-[0_22px_70px_rgba(0,0,0,0.45)] backdrop-blur-xl md:bottom-6 md:left-6"
+          className="v-panel fixed bottom-24 left-4 z-30 flex max-h-[70vh] w-[min(calc(100vw-32px),400px)] flex-col overflow-hidden md:bottom-6 md:left-6"
           exit={{opacity: 0, y: 18}}
           initial={{opacity: 0, y: 18}}
           role="dialog"
         >
           {/* 헤더 — 아이콘 + 이름 + 역할 + 기분 + 닫기 */}
-          <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-[#071827] px-4 py-3">
+          <div className="flex items-center justify-between gap-3 border-b border-[#e2c078]/15 bg-[#0e1a2e] px-4 py-3">
             <div className="flex min-w-0 items-center gap-3">
-              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#00d4ff]/40 bg-[#00d4ff]/10 text-lg">
+              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#ff9d38]/45 bg-[#ff9d38]/10 text-lg">
                 🤖
                 <span
                   className="absolute -bottom-1 -right-1 text-base"
@@ -245,33 +245,33 @@ export function DialogueBox({
               </span>
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="truncate text-base font-black text-white">
-                    {npc.name}
-                  </p>
+                  <p className="v-panel-title truncate text-base">{npc.name}</p>
                   {offline ? (
-                    <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 font-mono text-[9px] font-black uppercase tracking-[0.1em] text-amber-300">
+                    <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[9px] font-black text-amber-300">
                       ⚠ AI 오프라인
                     </span>
                   ) : null}
                 </div>
-                <p className="truncate font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-[#00d4ff]/80">
+                <p className="truncate text-[11px] font-bold text-[#a9bdd6]/80">
                   {npc.role} · {moodText}
                 </p>
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <button
-                className="rounded-md px-2 py-1 font-mono text-xs text-white/40 transition hover:text-white/80"
+                className="rounded-md px-2 py-1 text-xs text-[#a9bdd6]/60 transition hover:text-[#f3e6c8]"
                 onClick={clearHistory}
                 title="대화 초기화"
+                aria-label="대화 초기화"
                 type="button"
               >
                 ↺
               </button>
               <button
-                className="rounded-md border border-white/15 px-2.5 py-1 text-sm font-bold text-white/70 transition hover:border-[#00d4ff]/60 hover:text-white"
+                className="rounded-md border border-[#e2c078]/20 px-2.5 py-1 text-sm font-bold text-[#a9bdd6] transition hover:border-[#e2c078]/55 hover:text-[#f3e6c8]"
                 onClick={onClose}
                 title="닫기"
+                aria-label="대화창 닫기"
                 type="button"
               >
                 ✕
@@ -285,8 +285,8 @@ export function DialogueBox({
               <div
                 className={
                   line.role === "visitor"
-                    ? "ml-8 rounded-2xl rounded-br-sm bg-[#00d4ff]/18 px-3 py-2 text-sm leading-6 text-[#dff8ff]"
-                    : "mr-8 rounded-2xl rounded-bl-sm bg-white/[0.07] px-3 py-2 text-sm leading-6 text-white/85"
+                    ? "ml-8 rounded-2xl rounded-br-sm bg-[#ff9d38]/16 px-3 py-2 text-sm leading-6 text-[#ffe9d2]"
+                    : "mr-8 rounded-2xl rounded-bl-sm bg-white/[0.07] px-3 py-2 text-sm leading-6 text-[#e8eef7]/90"
                 }
                 key={`${line.role}-${index}`}
               >
@@ -316,7 +316,7 @@ export function DialogueBox({
             <div className="flex flex-wrap gap-1.5 px-4 pb-1">
               {presetQuestions.map(preset => (
                 <button
-                  className="rounded-full border border-[#00d4ff]/25 bg-[#00d4ff]/8 px-3 py-1 text-xs font-semibold text-[#c8efff] transition hover:bg-[#00d4ff]/18 active:scale-95 disabled:opacity-50"
+                  className="rounded-full border border-[#e2c078]/25 bg-[#e2c078]/8 px-3 py-1 text-xs font-semibold text-[#f0e4c8] transition hover:bg-[#e2c078]/18 active:scale-95 disabled:opacity-50"
                   disabled={isSending}
                   key={preset}
                   onClick={() => void ask(preset)}
@@ -332,23 +332,27 @@ export function DialogueBox({
           <div className="space-y-2 px-4 pb-3 pt-2">
             <form className="flex gap-2" onSubmit={handleSubmit}>
               <input
-                className="min-w-0 flex-1 rounded-full border border-white/12 bg-white/[0.06] px-4 py-2 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#00d4ff]/70"
+                className="min-w-0 flex-1 rounded-full border border-[#e2c078]/18 bg-white/[0.06] px-4 py-2 text-sm text-[#f3e6c8] outline-none placeholder:text-[#a9bdd6]/40 focus:border-[#ff9d38]/60"
                 onChange={event => setMessage(event.target.value)}
                 placeholder={`${npc.name}에게 물어보기…`}
+                aria-label={`${npc.name}에게 질문 입력`}
+                name="npc-message"
+                autoComplete="off"
                 type="text"
                 value={message}
               />
               <button
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#00ff88]/45 bg-[#00ff88]/18 text-[#baffd2] transition hover:bg-[#00ff88]/28 active:scale-90 disabled:opacity-40"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#ff9d38]/50 bg-[#ff9d38]/18 text-[#ffd9ae] transition hover:bg-[#ff9d38]/28 active:scale-90 disabled:opacity-40"
                 disabled={isSending || !message.trim()}
                 type="submit"
                 title="보내기"
+                aria-label="메시지 보내기"
               >
                 ↑
               </button>
             </form>
             <button
-              className="w-full rounded-lg border border-[#00d4ff]/30 bg-[#00d4ff]/10 px-3 py-2 text-xs font-black text-[#c8efff] transition hover:bg-[#00d4ff]/18 active:scale-[0.98]"
+              className="w-full rounded-lg border border-[#e2c078]/30 bg-[#e2c078]/10 px-3 py-2 text-xs font-black text-[#f0e4c8] transition hover:bg-[#e2c078]/18 active:scale-[0.98]"
               onClick={() => onOpenSection(npc.sectionId)}
               type="button"
             >
