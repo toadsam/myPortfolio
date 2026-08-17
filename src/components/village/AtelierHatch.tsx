@@ -14,7 +14,7 @@
 import {Html} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
 import {useRef, useState} from "react";
-import {MathUtils, type Mesh} from "three";
+import {AdditiveBlending, MathUtils, type Mesh} from "three";
 import {terrainHeightAt} from "@/lib/villageTerrain";
 
 // 중앙 광장 남동쪽 모서리 바로 옆. 광장 단 위라 지면이 확실히 평평하다.
@@ -102,13 +102,21 @@ export function AtelierHatch({onEnter}: {onEnter: () => void}) {
         <meshStandardMaterial color="#3a332c" metalness={0.6} roughness={0.5} />
       </mesh>
 
-      <pointLight
-        color="#ffbe74"
-        decay={2}
-        distance={hovered ? 6 : 2.6}
-        intensity={hovered ? 2.4 : 0.55}
-        position={[0, 0.35, 0]}
-      />
+      {/* 실광원(pointLight)은 쓰지 않는다. 마을 규약이 "진짜 pointLight 는 4개"라
+          가로등 수십 개도 전부 가산 원반으로 흉내 낸다(VillageScene 의 LampPools).
+          여기에 하나 더 얹으면 마을 전 재질의 라이트 순열이 바뀌어 셰이더가
+          다시 컴파일되고, 매 픽셀 조명 비용도 늘어난다. 같은 수법으로 바닥에
+          호박빛을 깔아 "아래에서 빛이 샌다"를 만든다. */}
+      <mesh position={[0, 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[hovered ? 2.6 : 1.5, 24]} />
+        <meshBasicMaterial
+          blending={AdditiveBlending}
+          color="#ffbe74"
+          depthWrite={false}
+          opacity={hovered ? 0.5 : 0.16}
+          transparent
+        />
+      </mesh>
 
       {hovered ? (
         <Html

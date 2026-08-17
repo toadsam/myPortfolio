@@ -17,7 +17,7 @@ import {ContactShadows, Html, OrbitControls} from "@react-three/drei";
 import {Canvas, useFrame} from "@react-three/fiber";
 import {motion} from "framer-motion";
 import {Suspense, useMemo, useRef, useState} from "react";
-import {Group, MathUtils, PointLight} from "three";
+import {AdditiveBlending, Group, MathUtils, PointLight} from "three";
 import {atelierNpcs} from "@/data/atelierRoster";
 import type {NPCData} from "@/types/portfolio";
 
@@ -61,7 +61,8 @@ function AtelierFigure({
     }
   });
 
-  const glow = hovered ? 0.55 : 0.16;
+  // 광원을 걷어낸 만큼 자체발광을 올려 호버 반응이 여전히 읽히게 한다
+  const glow = hovered ? 1.05 : 0.3;
 
   return (
     <group
@@ -125,13 +126,9 @@ function AtelierFigure({
         />
       </mesh>
 
-      <pointLight
-        color={npc.color}
-        decay={2}
-        distance={hovered ? 4 : 2.4}
-        intensity={hovered ? 1.5 : 0.5}
-        position={[0, 1.3, 0.3]}
-      />
+      {/* NPC마다 실광원을 달았더니 이 방에만 pointLight 가 12개가 됐다.
+          표준 재질은 광원 수만큼 프래그먼트 비용이 붙는다 — 존재감은
+          emissive 와 발밑 고리로 충분하므로 광원은 걷어냈다. */}
 
       <Html
         center
@@ -324,13 +321,17 @@ function Workbench({
               </mesh>
             </group>
           ))}
-          <pointLight
-            color={color}
-            decay={2}
-            distance={2.6}
-            intensity={0.7}
-            position={[0.3, 1, 0.6]}
-          />
+          {/* 랙 앞에 고이는 파란 빛 — 실광원 대신 가산 원반(마을 LampPools 수법) */}
+          <mesh position={[0, 0.014, 0.75]} rotation={[-Math.PI / 2, 0, 0]}>
+            <circleGeometry args={[1.1, 20]} />
+            <meshBasicMaterial
+              blending={AdditiveBlending}
+              color={color}
+              depthWrite={false}
+              opacity={0.16}
+              transparent
+            />
+          </mesh>
         </group>
       ) : null}
     </group>
@@ -348,9 +349,9 @@ function Lantern({position}: {position: [number, number, number]}) {
     tRef.current += delta;
     if (lightRef.current) {
       lightRef.current.intensity =
-        2.6 +
-        Math.sin(tRef.current * 2.6) * 0.26 +
-        Math.sin(tRef.current * 7.1) * 0.12;
+        3.6 +
+        Math.sin(tRef.current * 2.6) * 0.3 +
+        Math.sin(tRef.current * 7.1) * 0.14;
     }
   });
 
@@ -387,9 +388,9 @@ function Lantern({position}: {position: [number, number, number]}) {
         ref={lightRef}
         castShadow={false}
         color="#ffbe74"
-        decay={1.6}
-        distance={16}
-        intensity={2.6}
+        decay={1.5}
+        distance={22}
+        intensity={3.6}
       />
     </group>
   );
@@ -494,14 +495,16 @@ function AtelierRoom() {
         />
       </group>
 
-      {/* 랜턴 */}
+      {/* 랜턴 — 방을 밝히는 **유일한** 실광원이라 개수를 셋으로 묶는다.
+          다섯 개까지 늘렸더니 NPC·서버랙 광원까지 합쳐 pointLight 가 12개가 됐고
+          그만큼 프래그먼트 비용이 곱해졌다. 광량은 개수 대신 세기로 채운다. */}
       {(
         [
-          [-6, 2.9, -4.5],
-          [6, 2.9, -4.5],
-          [-6, 2.9, 3],
-          [6, 2.9, 3],
-          [0, 2.9, -2]
+          // 셋째는 x=0 에 두면 안 된다 — 카메라와 뒷벽 현판이 같은 축이라
+          // 랜턴 상자가 "의 뢰 공 방" 글자를 정면으로 가린다.
+          [-5.6, 2.9, -3.6],
+          [5.6, 2.9, -3.6],
+          [-3.2, 2.9, 2.6]
         ] as [number, number, number][]
       ).map((pos, i) => (
         <Lantern key={i} position={pos} />
@@ -616,8 +619,8 @@ export function AtelierInterior({onBack, onSelectNpc}: Props) {
         {/* 안개는 방보다 멀리서 시작해야 한다. 14부터 걸었더니 뒷벽(≈17 거리)이
             통째로 배경색에 먹혀 '허공에 뜬 가구'처럼 보였다. */}
         <fog args={[NIGHT, 26, 52]} attach="fog" />
-        <ambientLight intensity={0.62} />
-        <hemisphereLight args={["#5b7ea8", "#241a10", 0.85]} />
+        <ambientLight intensity={0.72} />
+        <hemisphereLight args={["#5b7ea8", "#241a10", 1.0]} />
         <directionalLight
           castShadow
           color="#ffcf9a"
