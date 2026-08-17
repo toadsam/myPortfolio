@@ -31,6 +31,18 @@ class Settings(BaseSettings):
     commission_attempts_per_hour: int = 20 # IP당 시간당 시도 상한(오타 재시도 허용, 봇 홍수 차단)
     commission_daily_limit: int = 40       # 전체 하루 접수 상한
 
+    # 의뢰 공방 3단계 — 직군별 에이전트.
+    #
+    # agent_worker_enabled 는 **기본 꺼짐**이다. 켜면 관리자 페이지 버튼이
+    # 이 프로세스 안에서 파일을 쓰는 에이전트를 띄운다. 공개 배포된 웹 서버에서
+    # 그게 돌면 안 되므로, 로컬에서만 .env 로 켜고 배포본은 CLI 경로를 쓴다.
+    agent_worker_enabled: bool = False
+    agent_max_turns: int = 40              # 에이전트 한 번 실행의 도구 왕복 상한(비용 상한이기도 하다)
+    agent_timeout_seconds: int = 900       # 한 번 실행이 이보다 길면 끊는다(15분)
+    agent_workspace_dir: str = ""          # 비면 리포 루트의 workspace/
+    agent_model: str = ""                  # 비면 Claude Code CLI 기본 모델
+    anthropic_api_key: str | None = None   # 없으면 Claude Code CLI 로그인을 그대로 쓴다
+
     model_config = SettingsConfigDict(env_file=BACKEND_DIR / ".env", env_file_encoding="utf-8", extra="ignore")
 
 

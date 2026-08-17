@@ -2,8 +2,11 @@ from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
+from app.agents import gate, workspace as agent_workspace
+from app.agents.runner import AgentUnavailable, run_task as run_commission_task
 from app.config import settings
 from app.database import get_db, init_db
+from app.models import CommissionRequest
 from app.security import (
     AdminGuard,
     AiRateLimit,
@@ -23,15 +26,21 @@ from app.schemas import (
     AnalyticsSummary,
     ChatMessageIn,
     ChatMessageOut,
+    ArtifactContentOut,
     CodingTestIn,
     CodingTestOut,
     CommissionAck,
+    CommissionArtifactOut,
+    CommissionBoardOut,
     CommissionConsultIn,
     CommissionConsultOut,
     CommissionDetailOut,
     CommissionIn,
     CommissionOut,
     CommissionStatusIn,
+    CommissionTaskOut,
+    GateIn,
+    TaskRejectIn,
     CsNoteIn,
     CsNoteOut,
     GithubSyncOut,
@@ -73,15 +82,21 @@ from app.services.activity_service import get_or_create_today, list_activity_his
 from app.services.chat_service import answer_npc_message
 from app.services.commission_service import (
     CommissionRejected,
+    apply_gate_decision,
+    artifacts_for as commission_artifacts_for,
     consult as commission_consult,
     create_commission,
     delete_commission,
+    get_artifact as commission_get_artifact,
     get_commission,
+    get_task as commission_get_task,
     list_commissions,
     messages_for,
     notify_discord,
     recent_messages as commission_recent_messages,
+    reject_task as reject_commission_task,
     save_message as save_commission_message,
+    tasks_for as commission_tasks_for,
     update_status as update_commission_status,
 )
 from app.services.github_service import fetch_today_commit_count
@@ -500,3 +515,150 @@ def admin_delete_commission(commission_id: int, db: Session = Depends(get_db)):
     if not delete_commission(db, commission_id):
         raise HTTPException(status_code=404, detail="해당 의뢰를 찾을 수 없습니다.")
     return {"ok": True}
+
+
+# ─────────────────── 의뢰 공방 3단계 — 직군별 에이전트 ───────────────────
+#
+# 진행은 오직 /gate 로만 일어난다. 실행 라우트는 게이트를 통과한 작업만 돌릴 수 있고,
+# 실행이 끝나면 반드시 검수 대기에서 멈춘다(app/agents/gate.py).
+
+def _load_commission(db: Session, commission_id: int) -> CommissionRequest:
+    commission = get_commission(db, commission_id)
+    if not commission:
+        raise HTTPException(status_code=404, detail="해당 의뢰를 찾을 수 없습니다.")
+    return commission
+
+
+def _board(db: Session, commission: CommissionRequest) -> CommissionBoardOut:
+    by_task: dict[int, list] = {}
+    for artifact in commission_artifacts_for(db, commission.id):
+        by_task.setdefault(artifact.task_id, []).append(
+            CommissionArtifactOut.model_validate(artifact)
+        )
+
+    tasks = [
+        CommissionTaskOut(
+            **CommissionTaskOut.model_validate(task).model_dump(exclude={"artifacts"}),
+            artifacts=by_task.get(task.id, []),
+        )
+        for task in commission_tasks_for(db, commission.id)
+    ]
+    return CommissionBoardOut(
+        commission_id=commission.id,
+        public_id=commission.public_id,
+        status=commission.status,
+        open_gate=gate.gate_for_status(commission.status),
+        worker_enabled=settings.agent_worker_enabled,
+        tasks=tasks,
+    )
+
+
+@app.get(
+    "/admin/commissions/{commission_id}/tasks",
+    response_model=CommissionBoardOut,
+    dependencies=[AdminGuard],
+)
+def admin_commission_tasks(commission_id: int, db: Session = Depends(get_db)):
+    return _board(db, _load_commission(db, commission_id))
+
+
+@app.post(
+    "/admin/commissions/{commission_id}/gate",
+    response_model=CommissionBoardOut,
+    dependencies=[AdminGuard],
+)
+def admin_commission_gate(commission_id: int, payload: GateIn, db: Session = Depends(get_db)):
+    """게이트 통과. **작업이 앞으로 나아가는 유일한 입구다.**"""
+    commission = _load_commission(db, commission_id)
+    try:
+        apply_gate_decision(db, commission, payload.gate, payload.decision, payload.feedback)
+    except gate.GateViolation as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    return _board(db, commission)
+
+
+@app.post(
+    "/admin/commissions/{commission_id}/tasks/{task_id}/run",
+    response_model=CommissionBoardOut,
+    dependencies=[AdminGuard],
+)
+async def admin_run_commission_task(
+    commission_id: int, task_id: int, db: Session = Depends(get_db)
+):
+    """에이전트 한 번 실행. AGENT_WORKER_ENABLED 가 켜져 있을 때만 연다."""
+    if not settings.agent_worker_enabled:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "이 서버에서는 에이전트 실행이 꺼져 있습니다. "
+                "backend/.env 에 AGENT_WORKER_ENABLED=true 를 넣거나, "
+                "터미널에서 `npm run atelier -- <접수번호>` 로 실행해 주세요."
+            ),
+        )
+
+    commission = _load_commission(db, commission_id)
+    task = commission_get_task(db, task_id)
+    if not task or task.commission_id != commission.id:
+        raise HTTPException(status_code=404, detail="해당 작업을 찾을 수 없습니다.")
+
+    try:
+        await run_commission_task(db, commission, task)
+    except gate.GateViolation as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    except AgentUnavailable as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+
+    return _board(db, commission)
+
+
+@app.post(
+    "/admin/commissions/{commission_id}/tasks/{task_id}/reject",
+    response_model=CommissionBoardOut,
+    dependencies=[AdminGuard],
+)
+def admin_reject_commission_task(
+    commission_id: int, task_id: int, payload: TaskRejectIn, db: Session = Depends(get_db)
+):
+    """직군 하나만 다시 돌린다. 피드백은 다음 실행 프롬프트에 들어간다."""
+    commission = _load_commission(db, commission_id)
+    task = commission_get_task(db, task_id)
+    if not task or task.commission_id != commission.id:
+        raise HTTPException(status_code=404, detail="해당 작업을 찾을 수 없습니다.")
+    try:
+        reject_commission_task(db, task, payload.feedback)
+    except gate.GateViolation as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    db.refresh(commission)
+    return _board(db, commission)
+
+
+@app.get(
+    "/admin/commissions/{commission_id}/artifacts/{artifact_id}",
+    response_model=ArtifactContentOut,
+    dependencies=[AdminGuard],
+)
+def admin_commission_artifact(
+    commission_id: int, artifact_id: int, db: Session = Depends(get_db)
+):
+    """산출물 본문.
+
+    HTML 시안도 여기서 **텍스트로** 내려간다 — 관리자 페이지가 srcdoc + sandbox
+    iframe 에 넣어 렌더한다. text/html 로 직접 서빙하면 관리자 오리진에서
+    에이전트가 만든 스크립트가 도는 셈이 되므로 그렇게 하지 않는다.
+    """
+    commission = _load_commission(db, commission_id)
+    artifact = commission_get_artifact(db, artifact_id)
+    if not artifact or artifact.commission_id != commission.id:
+        raise HTTPException(status_code=404, detail="해당 산출물을 찾을 수 없습니다.")
+
+    root = agent_workspace.workspace_for(commission.public_id)
+    content = agent_workspace.read_artifact(root, artifact.rel_path)
+    if content is None:
+        raise HTTPException(status_code=404, detail="파일을 읽을 수 없습니다(삭제되었거나 너무 큽니다).")
+
+    return ArtifactContentOut(
+        id=artifact.id,
+        rel_path=artifact.rel_path,
+        kind=artifact.kind,
+        content=content,
+    )

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "backend:dev": "node scripts/backend-dev.mjs",
+    "atelier": "node scripts/atelier-worker.mjs",
     "optimize": "node scripts/optimize-glb.mjs",
     "merge-character": "node scripts/merge-character.mjs",
     "build": "next build",

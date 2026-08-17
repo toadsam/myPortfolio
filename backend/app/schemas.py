@@ -360,13 +360,19 @@ class CsNoteOut(BaseModel):
 
 # ─────────────────────────── 홈페이지 제작 의뢰 (의뢰 공방) ───────────────────────────
 
+# 3단계 게이트가 지나가는 길. 전이 규칙은 app/agents/gate.py 가 유일한 출처다.
+# 프론트의 CommissionStatus 유니온과 COMMISSION_STATUS_STYLE 이 이 목록의 거울이라,
+# 여기에 추가하고 저기를 빠뜨리면 타입체크가 잡아 준다.
 CommissionStatus = Literal[
-    "received",     # 접수됨
-    "reviewing",    # 관리자 검토중
-    "briefed",      # 작업 지시 완료 (3단계에서 사용)
-    "in_progress",  # 제작중
-    "delivered",    # 전달 완료
-    "rejected",     # 반려/거절
+    "received",         # 접수됨
+    "reviewing",        # 관리자 검토중        ← 게이트1
+    "briefing",         # 기획 에이전트 실행 대기/실행중
+    "brief_review",     # 브리프 검수 대기      ← 게이트2
+    "briefed",          # 브리프 확정, 팀 3직군 대기
+    "in_progress",      # 디자인·프론트·백엔드 제작중
+    "artifact_review",  # 산출물 검수 대기      ← 게이트3
+    "delivered",        # 전달 완료
+    "rejected",         # 반려/거절
 ]
 
 # AI가 부른 금액은 확정 견적이 아니다. 방문자 화면과 접수 메일 양쪽에 이 문구를 노출한다.
@@ -486,3 +492,65 @@ class CommissionDetailOut(CommissionOut):
 class CommissionStatusIn(BaseModel):
     status: CommissionStatus
     admin_note: str = Field(default="", max_length=4000)
+
+
+# ─────────────────── 3단계: 직군별 에이전트 작업 ───────────────────
+
+CommissionRole = Literal["planner", "designer", "frontend", "backend"]
+
+
+class CommissionArtifactOut(BaseModel):
+    id: int
+    task_id: int
+    rel_path: str
+    kind: str
+    size_bytes: int
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class CommissionTaskOut(BaseModel):
+    id: int
+    role: str
+    status: str
+    round: int
+    brief: str
+    feedback: str
+    log: str
+    error: str
+    cost_usd: float
+    duration_ms: int
+    started_at: datetime | None = None
+    finished_at: datetime | None = None
+    artifacts: list[CommissionArtifactOut] = Field(default_factory=list)
+
+    model_config = {"from_attributes": True}
+
+
+class CommissionBoardOut(BaseModel):
+    """관리자 작업 지시 패널이 한 번에 받아 가는 묶음."""
+
+    commission_id: int
+    public_id: str
+    status: str
+    open_gate: int | None = None   # 지금 열려 있는 게이트(없으면 None)
+    worker_enabled: bool = False   # 관리자 페이지의 [실행] 버튼을 띄울지
+    tasks: list[CommissionTaskOut] = Field(default_factory=list)
+
+
+class GateIn(BaseModel):
+    gate: Literal[1, 2, 3]
+    decision: Literal["approve", "reject"]
+    feedback: str = Field(default="", max_length=4000)
+
+
+class TaskRejectIn(BaseModel):
+    feedback: str = Field(default="", max_length=4000)
+
+
+class ArtifactContentOut(BaseModel):
+    id: int
+    rel_path: str
+    kind: str
+    content: str

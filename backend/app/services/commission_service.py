@@ -7,8 +7,9 @@
 2. AI가 죽어도 접수는 살아야 한다. OpenAI 실패 시 규칙 기반 상담으로 조용히 내려간다.
 3. 접수되면 반드시 나에게 알린다(디스코드). admin 페이지를 안 열어도 새 의뢰를 놓치지 않게.
 
-3단계(직군별 에이전트 제작)에서는 이 파일의 `get_commission()` 이 만든 행을 부모로
-CommissionTask/CommissionArtifact 가 붙는다. 지금은 접수까지만 한다.
+파일 뒤쪽 절반은 3단계(직군별 에이전트 제작)다. 접수 건에 CommissionTask 4개가
+붙고 게이트 3단을 지나며 산출물이 쌓인다. **다만 "진행해도 되는가"의 판단은
+여기 없다** — 전부 app/agents/gate.py 에 있고 이 파일은 그 결정을 저장만 한다.
 """
 
 import json
@@ -19,8 +20,14 @@ from typing import Any
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
+from app.agents import gate
 from app.config import settings
-from app.models import CommissionMessage, CommissionRequest
+from app.models import (
+    CommissionArtifact,
+    CommissionMessage,
+    CommissionRequest,
+    CommissionTask,
+)
 from app.schemas import (
     ESTIMATE_DISCLAIMER,
     CommissionDraft,
@@ -461,9 +468,192 @@ def delete_commission(db: Session, commission_id: int) -> bool:
     db.query(CommissionMessage).filter(
         CommissionMessage.commission_id == commission.id
     ).delete(synchronize_session=False)
+    # 3단계 작업·산출물 색인도 함께. 디스크의 workspace/ 는 남긴다 —
+    # 접수 기록을 지운다고 만들어 둔 산출물까지 날리는 건 되돌릴 수 없어서 위험하다.
+    db.query(CommissionArtifact).filter(
+        CommissionArtifact.commission_id == commission.id
+    ).delete(synchronize_session=False)
+    db.query(CommissionTask).filter(
+        CommissionTask.commission_id == commission.id
+    ).delete(synchronize_session=False)
     db.delete(commission)
     db.commit()
     return True
+
+
+# ─────────────────── 3단계: 직군별 작업 (게이트) ───────────────────
+#
+# 여기는 저장만 한다. "진행해도 되는가"의 판단은 전부 app/agents/gate.py 에 있다.
+
+def tasks_for(db: Session, commission_id: int) -> list[CommissionTask]:
+    rows = (
+        db.query(CommissionTask)
+        .filter(CommissionTask.commission_id == commission_id)
+        .all()
+    )
+    order = {role: index for index, role in enumerate(gate.ALL_ROLES)}
+    return sorted(rows, key=lambda row: order.get(row.role, 99))
+
+
+def get_task(db: Session, task_id: int) -> CommissionTask | None:
+    return db.get(CommissionTask, task_id)
+
+
+def artifacts_for(db: Session, commission_id: int) -> list[CommissionArtifact]:
+    return (
+        db.query(CommissionArtifact)
+        .filter(CommissionArtifact.commission_id == commission_id)
+        .order_by(CommissionArtifact.rel_path)
+        .all()
+    )
+
+
+def get_artifact(db: Session, artifact_id: int) -> CommissionArtifact | None:
+    return db.get(CommissionArtifact, artifact_id)
+
+
+def _team_task_statuses(db: Session, commission_id: int) -> dict[str, str]:
+    return {row.role: row.status for row in tasks_for(db, commission_id)}
+
+
+def apply_gate_decision(
+    db: Session, commission: CommissionRequest, gate_number: int, decision: str, feedback: str
+) -> CommissionRequest:
+    """관리자의 승인/반려를 저장한다. 규칙 위반이면 gate.GateViolation 이 올라온다."""
+    effect = gate.apply_gate(gate_number, commission.status, decision)
+
+    existing = {row.role: row for row in tasks_for(db, commission.id)}
+
+    # 새로 열리는 작업 — 없으면 만들고, 있으면 다시 실행 대기로 돌린다
+    for role in effect.create_roles:
+        task = existing.get(role)
+        if task is None:
+            task = CommissionTask(commission_id=commission.id, role=role, status="ready")
+            db.add(task)
+            existing[role] = task
+        else:
+            task.status = "ready"
+
+    # 반려 — 무엇이 아쉬웠는지를 안고 다시 대기열로. 이 feedback 이 다음 실행 프롬프트에 들어간다.
+    for role in effect.reset_roles:
+        task = existing.get(role)
+        if task is None:
+            continue
+        task.status = "ready"
+        task.round = task.round + 1
+        task.feedback = feedback.strip()
+        task.error = ""
+
+    for role in effect.approve_roles:
+        task = existing.get(role)
+        if task is not None:
+            task.status = "approved"
+
+    commission.status = effect.commission_status
+    if feedback.strip() and decision == "reject":
+        commission.admin_note = feedback.strip()
+
+    db.commit()
+
+    # 게이트2 통과 = 기획 문서를 팀에게 넘기는 순간. 브리프를 태스크에 박아 둔다.
+    if gate_number == 2 and decision == "approve":
+        _handoff_brief(db, commission)
+
+    db.refresh(commission)
+    return commission
+
+
+def _handoff_brief(db: Session, commission: CommissionRequest) -> None:
+    """기획 산출물을 팀 3직군의 brief 에 복사한다.
+
+    실행 시점에 파일을 다시 읽지 않고 여기서 굳히는 이유: 승인한 그 내용으로
+    작업이 돌아야 하기 때문이다. 승인 뒤에 기획 파일이 바뀌어도 팀이 받은
+    지시는 관리자가 승인한 그 버전으로 남는다.
+    """
+    from app.agents import workspace as ws
+
+    root = ws.workspace_for(commission.public_id)
+    planner_dir = gate.ROLE_DIRS[gate.PLANNER]
+
+    chunks: list[str] = []
+    for rel_path, kind, _size in ws.collect_artifacts(root):
+        if not rel_path.startswith(f"{planner_dir}/") or kind != "markdown":
+            continue
+        body = ws.read_artifact(root, rel_path)
+        if body:
+            chunks.append(f"## {rel_path}\n\n{body}")
+
+    brief = "\n\n---\n\n".join(chunks).strip()
+    if not brief:
+        return
+
+    for task in tasks_for(db, commission.id):
+        if task.role in gate.TEAM_ROLES:
+            task.brief = brief[:20000]
+    db.commit()
+
+
+def reject_task(db: Session, task: CommissionTask, feedback: str) -> CommissionTask:
+    """개별 직군만 다시 돌린다(게이트3에서 셋 다 반려하는 것과 별개)."""
+    if task.status not in ("review", "failed", "approved"):
+        raise gate.GateViolation(f"반려할 수 있는 상태가 아닙니다: {task.status}")
+    task.status = "ready"
+    task.round = task.round + 1
+    task.feedback = feedback.strip()
+    task.error = ""
+
+    commission = db.get(CommissionRequest, task.commission_id)
+    if commission and commission.status == "artifact_review":
+        # 하나라도 다시 도는 중이면 산출물 검수 상태가 아니다
+        commission.status = "in_progress"
+
+    db.commit()
+    db.refresh(task)
+    return task
+
+
+def sync_artifacts(db: Session, commission: CommissionRequest, task: CommissionTask) -> None:
+    """작업 공간을 훑어 산출물 색인을 이 태스크 기준으로 갱신한다."""
+    from app.agents import workspace as ws
+
+    root = ws.workspace_for(commission.public_id)
+    role_dir = gate.ROLE_DIRS.get(task.role, "")
+    found = ws.collect_artifacts(root)
+
+    existing = {
+        row.rel_path: row
+        for row in db.query(CommissionArtifact)
+        .filter(CommissionArtifact.commission_id == commission.id)
+        .all()
+    }
+
+    seen: set[str] = set()
+    for rel_path, kind, size in found:
+        seen.add(rel_path)
+        row = existing.get(rel_path)
+        if row is None:
+            db.add(
+                CommissionArtifact(
+                    commission_id=commission.id,
+                    task_id=task.id,
+                    rel_path=rel_path,
+                    kind=kind,
+                    size_bytes=size,
+                )
+            )
+            continue
+        row.kind = kind
+        row.size_bytes = size
+        # 이번에 돈 직군의 폴더에 있는 파일만 소유자를 이 태스크로 옮긴다.
+        # 남의 폴더 파일까지 가져오면 검수 화면에서 누가 만든 건지 뒤섞인다.
+        if role_dir and rel_path.startswith(f"{role_dir}/"):
+            row.task_id = task.id
+
+    for rel_path, row in existing.items():
+        if rel_path not in seen:
+            db.delete(row)
+
+    db.commit()
 
 
 # ─────────────────────────── 접수 알림 ───────────────────────────
