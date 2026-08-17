@@ -33,6 +33,7 @@ import {
   MeshStandardMaterial,
   RepeatWrapping,
   SphereGeometry,
+  SpriteMaterial,
   SRGBColorSpace,
   Vector3
 } from "three";
@@ -548,13 +549,46 @@ function WaterGlints() {
   );
 }
 
-// ─── 등불 빛 웅덩이 ──────────────────────────────────────────────────────────
-// 컨셉의 밤 아늑함은 등불 **밑 바닥에 고이는 호박빛**에서 온다. 진짜 pointLight
-// 는 4개뿐이라 가로등 수십 개가 밤에 장식으로만 서 있었다 — WaterGlints 와
-// 같은 수법으로, 등불마다 바닥에 가산 블렌딩 원반(등불당 삼각형 2개)을 깐다.
+// ─── 등불빛 ──────────────────────────────────────────────────────────────────
+// 진짜 pointLight 는 4개뿐이라(마을 규약) 가로등 수십 개가 밤에 장식으로만 서
+// 있었다. WaterGlints 와 같은 수법으로 가산 블렌딩 판때기를 얹어 흉내 낸다.
+//
+// **빛은 등불 머리에 있어야 한다.** 두 번 틀렸으니 기록을 남긴다.
+//   ① 원래는 바닥 원반 하나뿐이었는데 그마저 `p.position[1]` 을 높이로 더하고
+//      있었다. 그건 높이가 아니라 Meshy 원점 보정값(−minY × scale)이라, 빛이
+//      기둥 **허리춤**에 가로로 걸쳐 떠 있었다.
+//   ② 그래서 원반을 바닥으로 내렸더니 — 등불은 캄캄한데 발치만 밝은,
+//      더 이상한 그림이 됐다. 가로등을 보고 "빛난다"고 느끼게 하는 건 등갓
+//      둘레의 **빛무리**지 발밑 얼룩이 아니다.
+// 지금은 머리의 빛무리가 주연이고, 바닥 반사는 옅게 깔리는 조연이다.
+//
+// 빛무리는 sprite 다 — 부감이든 3인칭 눈높이든 늘 카메라를 마주 봐야 하는데,
+// 판때기를 매 프레임 돌리면 등불 수십 개만큼 계산이 붙는다. sprite 는 그걸
+// GPU 가 공짜로 해 준다.
+//
 // 세기는 GLINT_STRENGTH(팔레트 lamp 연동)라 낮에는 아예 안 그린다.
+
+/**
+ * 등불 종류별로 **불이 어디서 나는가** — 모델 전체 높이에 대한 비율.
+ *
+ * 눈대중이 아니라 형상에서 읽었다. 정점을 높이로 20칸에 나눠 각 칸의 최대
+ * 반경을 재면 등불대는 가늘고 등갓은 굵어서 프로파일에 그대로 드러난다:
+ * 가로등은 78% 에서 0.15 로 잘록해졌다가 83~88% 에서 0.22 로 부푼다(등갓),
+ * 정원등은 78% 에서 0.11 까지 좁아졌다가 84~91% 에서 0.20 으로 부푼다(구슬).
+ */
+const LAMP_HEAD_FRAC: Array<[RegExp, number]> = [
+  [/lantern-post/, 0.86],
+  [/orb-lantern/, 0.88],
+  [/lantern-bearer/, 0.82],
+  [/lantern-archway/, 0.75]
+];
+const headFracFor = (glb: string) => {
+  for (const [re, f] of LAMP_HEAD_FRAC) if (re.test(glb)) return f;
+  return 0.85;
+};
+
 function LampPools() {
-  const {texture, spots} = useMemo(() => {
+  const {texture, spots, poolGeometry} = useMemo(() => {
     const c = document.createElement("canvas");
     c.width = 64;
     c.height = 64;
@@ -567,35 +601,117 @@ function LampPools() {
     ctx.fillRect(0, 0, 64, 64);
     const tex = new CanvasTexture(c);
 
-    const spots: {x: number; y: number; z: number; s: number}[] = [];
-    for (const p of (
+    const lamps = (
       propsLayout as {
-        props: {glb: string; position: number[]}[];
+        props: {glb: string; position: number[]; scale: number}[];
       }
-    ).props) {
-      if (
-        !/lantern-post|orb-lantern|lantern-bearer|lantern-archway/.test(p.glb)
-      )
-        continue;
+    ).props.filter(p =>
+      /lantern-post|orb-lantern|lantern-bearer|lantern-archway/.test(p.glb)
+    );
+
+    // 웅덩이 크기의 기준자 = 가로등. 예전엔 등불 종류를 안 보고 전부 3.1 로 깔아서,
+    // 높이 0.28 유닛짜리 정원등(orb-lantern)이 1.2 유닛짜리 가로등과 똑같은 크기의
+    // 빛을 냈다. 기준값을 상수로 박지 않고 배치 데이터에서 읽는 이유는, 생성기의
+    // 연출 배율(generate-decor-layout.mjs 의 boostOf)을 손보면 여기가 조용히
+    // 낡기 때문이다. 데이터를 보면 늘 따라온다.
+    //
+    // 최댓값이 아니라 **중앙값**이다. 배치에는 복제 티를 없애려는 크기 흔들림(grow)이
+    // 섞여 있어서, 최댓값을 기준으로 잡으면 가로등이 전부 기준 미만이 되어 마을
+    // 전체의 밤 호박빛이 조금씩 줄어든다. 보통 가로등이 지금 크기(3.1)를 그대로
+    // 유지하고, 작은 등불만 줄어드는 게 이 변경의 목적이다.
+    const postScales = lamps
+      .filter(p => /lantern-post/.test(p.glb))
+      .map(p => p.scale)
+      .sort((x, y) => x - y);
+    const postScale =
+      postScales.length > 0
+        ? postScales[Math.floor(postScales.length / 2)]
+        : 0.824;
+
+    const spots: {
+      x: number;
+      z: number;
+      /** 바닥(지형 높이) */
+      groundY: number;
+      /** 불이 나는 자리 — 등갓/구슬의 높이 */
+      headY: number;
+      /** 빛무리 지름 */
+      halo: number;
+      /** 바닥 반사 지름 */
+      pool: number;
+    }[] = [];
+    for (const p of lamps) {
+      // position[1] 은 높이가 아니라 원점 보정값 (h/2 × scale) 이라, 두 배가
+      // 곧 이 등불의 **월드 높이**다. 종류마다 원본 h 가 달라도 이 한 줄로
+      // 전부 맞는다 — GLB 치수를 여기에 또 베껴 적지 않아도 된다.
+      const worldH = 2 * p.position[1];
+      // 지형 높이는 데이터에 안 굽는다 — InstancedProps 처럼 렌더 때 더한다.
+      // 안 더하면 구역 단(+1.1) 위 등불의 빛이 통째로 1.1 아래에 생긴다.
+      const groundY = terrainHeightAt(p.position[0], p.position[2]);
+      const jitter = 0.85 + ((spots.length * 29) % 10) / 22;
       spots.push({
         x: p.position[0],
-        // 프롭 높이는 데이터에 안 굽는다 — InstancedProps 처럼 terrainHeightAt
-        // 을 렌더 때 더해야 한다. 안 더하면 구역 단(+1.1) 위 등불의 웅덩이가
-        // 땅속에 깔린다(실제로 그랬다). +0.08 은 길 타일 윗면(5~6cm) 위로 띄우는
-        // 여유 — 낮으면 타일에 깊이 클리핑으로 잘린다.
-        y: p.position[1] + terrainHeightAt(p.position[0], p.position[2]) + 0.08,
         z: p.position[2],
-        s: 0.85 + ((spots.length * 29) % 10) / 22
+        // +0.08 은 길 타일 윗면(5~6cm) 위로 띄우는 여유 — 낮으면 타일에 깊이
+        // 클리핑으로 잘린다.
+        groundY: groundY + 0.08,
+        headY: groundY + worldH * headFracFor(p.glb),
+        // 빛무리는 등불 자신의 크기를 따른다. 등갓 반경이 가로등 기준 0.18
+        // 유닛이라, 그 서너 배가 "등갓을 감싼 번짐"으로 읽힌다.
+        halo: worldH * 0.62 * jitter,
+        // 바닥 반사는 조연이다. 완전 비례로 두면 정원등 것이 거의 안 보이므로
+        // 하한을 둔다.
+        pool: 3.1 * jitter * Math.max(0.5, p.scale / postScale)
       });
     }
-    return {texture: tex, spots};
+
+    // 바닥 반사 74장을 **한 덩어리로 굽는다.** 전부 수평이고 자리가 고정이라
+    // 월드 좌표로 그대로 구울 수 있다 — 74 draw call 이 1 이 된다(삼각형은
+    // 148 그대로). 머리의 빛무리는 카메라를 따라 돌아야 해서 이렇게 못 묶고
+    // sprite 로 남는데, 여기서 아낀 만큼을 그쪽이 쓴다.
+    const pos: number[] = [];
+    const uv: number[] = [];
+    for (const s of spots) {
+      const h = s.pool / 2;
+      const x0 = s.x - h,
+        x1 = s.x + h,
+        z0 = s.z - h,
+        z1 = s.z + h;
+      // 삼각형 둘 (반시계 — 위에서 내려다볼 때 앞면)
+      pos.push(x0, s.groundY, z1, x1, s.groundY, z1, x1, s.groundY, z0);
+      pos.push(x0, s.groundY, z1, x1, s.groundY, z0, x0, s.groundY, z0);
+      uv.push(0, 0, 1, 0, 1, 1);
+      uv.push(0, 0, 1, 1, 0, 1);
+    }
+    const poolGeometry = new BufferGeometry();
+    poolGeometry.setAttribute("position", new Float32BufferAttribute(pos, 3));
+    poolGeometry.setAttribute("uv", new Float32BufferAttribute(uv, 2));
+    poolGeometry.computeBoundingSphere();
+
+    return {texture: tex, spots, poolGeometry};
   }, []);
 
-  const material = useMemo(
+  // 두 재질을 나눠 두는 이유는 밝기가 다르기 때문이다 — 광원 자체와 그 빛이
+  // 닿은 바닥이 같은 세기면 바닥이 스스로 빛나는 것처럼 보인다.
+  const haloMaterial = useMemo(
+    () =>
+      new SpriteMaterial({
+        map: texture,
+        // WaterGlints 와 같은 이유로 원색은 진하게 — 톤매핑·색보정이 채도를
+        // 깎아서, 화면에서는 등불빛 호박색으로 내려앉는다.
+        color: new Color("#ffb055"),
+        transparent: true,
+        blending: AdditiveBlending,
+        depthWrite: false,
+        opacity: 0
+      }),
+    [texture]
+  );
+
+  const poolMaterial = useMemo(
     () =>
       new MeshBasicMaterial({
         map: texture,
-        // WaterGlints 와 같은 이유로 원색은 진하게 — 화면에선 등불빛 호박색이 된다
         color: new Color("#ff9d38"),
         transparent: true,
         blending: AdditiveBlending,
@@ -605,28 +721,27 @@ function LampPools() {
     [texture]
   );
 
-  // 아주 느린 숨쉬기 — 글린트보다 잔잔하게 (바닥빛이 촐랑대면 싸구려 네온이 된다)
+  // 아주 느린 숨쉬기 — 글린트보다 잔잔하게 (빛이 촐랑대면 싸구려 네온이 된다).
+  // 바닥은 빛무리의 40% — 빛나는 건 등불이고 바닥은 그 빛을 받을 뿐이다.
   useFrame(state => {
     const t = state.clock.elapsedTime;
-    material.opacity =
-      GLINT_STRENGTH *
-      (0.55 + 0.06 * Math.sin(t * 1.3) + 0.04 * Math.sin(t * 3.1));
+    const breath = 0.55 + 0.06 * Math.sin(t * 1.3) + 0.04 * Math.sin(t * 3.1);
+    haloMaterial.opacity = GLINT_STRENGTH * breath;
+    poolMaterial.opacity = GLINT_STRENGTH * breath * 0.4;
   });
 
   if (GLINT_STRENGTH <= 0.01 || spots.length === 0) return null;
   return (
     <group>
       {spots.map((s, i) => (
-        <mesh
-          key={i}
-          material={material}
-          position={[s.x, s.y, s.z]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          scale={[3.1 * s.s, 3.1 * s.s, 1]}
-        >
-          <planeGeometry args={[1, 1]} />
-        </mesh>
+        <sprite
+          key={`halo-${i}`}
+          material={haloMaterial}
+          position={[s.x, s.headY, s.z]}
+          scale={[s.halo, s.halo, 1]}
+        />
       ))}
+      <mesh geometry={poolGeometry} material={poolMaterial} />
     </group>
   );
 }

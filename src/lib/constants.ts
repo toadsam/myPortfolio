@@ -59,6 +59,36 @@ export const sectionMeta: SectionMeta[] = [
   }
 ];
 
+/**
+ * 구역별 UI 강조색과 문장.
+ *
+ * 예전엔 같은 표가 **세 벌로 복사**돼 있었다 — Header 의 NAV_COLORS,
+ * InfoPanel 의 SECTION_COLORS, VillageHud 의 TRAVEL_POINTS. 셋이 조금씩
+ * 어긋나 있어서(같은 구역이 헤더에선 초록, 이동 도크에선 파랑) 한 곳으로 모았다.
+ *
+ * 색은 전부 **마을 팔레트 안**이다. 원래는 #00d4ff·#00ff88·#aa44ff 같은
+ * 사이버 네온이었는데, 마을이 밤 랜턴 톤으로 바뀐 뒤에도 UI 구역색만 남아
+ * 혼자 겉돌았다. 구역이 서로 구분되는 것은 그대로 두되, 전부 랜턴빛에서
+ * 갈라져 나온 색으로 바꿨다 — 채도를 낮추고 명도를 살려 밤하늘 위에서 읽힌다.
+ *
+ * `crest` 는 src/data/villageCrests.ts 의 이름이다. 문자열 유니온으로 묶으면
+ * constants.ts 가 데이터 파일을 import 하게 되어 순환이 생길 수 있어, 여기서는
+ * string 으로 두고 사용처(Crest)가 이름을 검증한다.
+ */
+export const DISTRICT_TONE: Record<string, {accent: string; crest: string}> = {
+  intro: {accent: "#e2c078", crest: "compass"}, // 간판금
+  projects: {accent: "#f0a955", crest: "tower"}, // 랜턴 호박
+  github: {accent: "#7fb98a", crest: "gear"}, // 이끼
+  study: {accent: "#8fb4d8", crest: "book"}, // 달빛 푸름
+  experience: {accent: "#c58fb0", crest: "scroll"}, // 저녁 자두
+  life: {accent: "#e8c25f", crest: "leaf"}, // 밀짚
+  contact: {accent: "#d98b5f", crest: "envelope"} // 구리
+};
+
+/** 표에 없는 구역이 와도 화면이 안 깨지게 — 기본은 간판금 */
+export const districtTone = (sectionId: string) =>
+  DISTRICT_TONE[sectionId] ?? DISTRICT_TONE.intro!;
+
 const studyBuildings: BuildingData[] = [
   {
     id: "study-codingtest",

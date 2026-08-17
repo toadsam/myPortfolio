@@ -3,11 +3,14 @@
 import {useEffect, useState} from "react";
 import {autonomousNpcs} from "@/data/npcRoster";
 import type {NpcCommand} from "@/components/village/NPC";
-import {villageBuildings} from "@/lib/constants";
+import {Crest} from "@/components/ui/Crest";
+import {VillageFrame} from "@/components/ui/VillageFrame";
+import type {CrestName} from "@/data/villageCrests";
+import {districtTone, villageBuildings} from "@/lib/constants";
 import {resetHudLayout, useDraggable} from "@/lib/useDraggable";
 import {fetchRelationships} from "@/lib/liveApi";
 import type {NpcRelationshipRow, VillageState} from "@/types/live";
-import type {NPCData, SectionId} from "@/types/portfolio";
+import type {NPCData, NPCType, SectionId} from "@/types/portfolio";
 
 /**
  * 3D 씬 위에 떠 있는 순수 UI 위젯(HUD) 모음.
@@ -33,15 +36,42 @@ export interface TravelPoint {
   color: string;
 }
 
-export const TRAVEL_POINTS: TravelPoint[] = [
-  {key: "intro", sectionId: "intro", label: "중앙 광장", color: "#00d4ff"},
-  {key: "projects", sectionId: "projects", label: "프로젝트", color: "#00d4ff"},
-  {key: "github", sectionId: "github", label: "기술 스택", color: "#00ff88"},
-  {key: "study", sectionId: "study", label: "학습", color: "#38bdf8"},
-  {key: "experience", sectionId: "experience", label: "경험", color: "#aa44ff"},
-  {key: "life", sectionId: null, label: "인생·일상", color: "#fbbf24"},
-  {key: "contact", sectionId: "contact", label: "연락", color: "#ff6600"}
-];
+// 색은 constants.ts 의 DISTRICT_TONE 이 정한다 — 예전엔 여기, Header, InfoPanel
+// 세 곳에 같은 표가 복사돼 있어서 같은 구역이 화면마다 다른 색이었다.
+export const TRAVEL_POINTS: TravelPoint[] = (
+  [
+    {key: "intro", sectionId: "intro", label: "중앙 광장"},
+    {key: "projects", sectionId: "projects", label: "프로젝트"},
+    {key: "github", sectionId: "github", label: "기술 스택"},
+    {key: "study", sectionId: "study", label: "학습"},
+    {key: "experience", sectionId: "experience", label: "경험"},
+    {key: "life", sectionId: null, label: "인생·일상"},
+    {key: "contact", sectionId: "contact", label: "연락"}
+  ] satisfies Omit<TravelPoint, "color">[]
+).map(point => ({...point, color: districtTone(point.key).accent}));
+
+/** NPC 직군 → 문장. 이모지는 OS마다 그림이 달라 금색 한 톤으로 못 묶는다. */
+const NPC_CREST: Record<NPCType, CrestName> = {
+  guide: "compass",
+  project: "tower",
+  developer: "gear",
+  archivist: "scroll",
+  contact: "envelope"
+};
+
+/**
+ * HUD 패널은 **접힌 채로 시작한다.**
+ *
+ * 다섯 개가 한꺼번에 펼쳐져 있으면 입장하자마자 마을이 패널에 덮여서, 정작
+ * 보여 주려던 3D 마을이 화면 구석에만 남는다. 첫 화면의 주인공은 마을이고,
+ * HUD 는 필요할 때 펴는 것이다.
+ *
+ * 접힌 상태도 이름표(문장 + 글자)가 남으므로 "여기 뭔가 있다"는 계속 보인다 —
+ * 아예 숨기는 것과는 다르다.
+ *
+ * 여는 순간 그 상태를 기억하지는 않는다. 새로고침하면 다시 접힌 채로 시작한다.
+ */
+const HUD_STARTS_COLLAPSED = true;
 
 // 건물 district → 빠른 이동 key
 export const DISTRICT_TO_TRAVEL_KEY: Record<string, string> = {
@@ -61,15 +91,17 @@ export function LiveStatusPanel({
   error: string | null;
   villageState: VillageState | null;
 }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(HUD_STARTS_COLLAPSED);
   const drag = useDraggable("live-status");
   if (!villageState && !error) return null;
 
   return (
-    <aside
+    <VillageFrame
+      bodyClassName="p-3.5 text-xs"
+      className="fixed left-4 top-[132px] z-20 hidden w-[260px] transform-gpu will-change-[backdrop-filter,transform] md:block"
       ref={drag.ref}
       style={drag.style}
-      className="v-panel fixed left-4 top-[132px] z-20 hidden w-[260px] p-3.5 text-xs transform-gpu will-change-[backdrop-filter,transform] md:block"
+      variant="plaque"
     >
       <button
         type="button"
@@ -79,9 +111,10 @@ export function LiveStatusPanel({
         {...drag.handleProps}
       >
         <span className="v-panel-title flex items-center gap-2 text-[13px]">
-          <span className="relative flex h-2 w-2">
+          <Crest name="horn" size={15} />
+          <span className="relative flex h-1.5 w-1.5">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ff9d38] opacity-60" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#ff9d38]" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#ff9d38]" />
           </span>
           마을 소식
         </span>
@@ -138,7 +171,7 @@ export function LiveStatusPanel({
           </>
         ) : null
       ) : null}
-    </aside>
+    </VillageFrame>
   );
 }
 
@@ -150,30 +183,34 @@ export function NpcQuickDock({
   onSelect: (npc: NPCData) => void;
 }) {
   const coreNpcs = autonomousNpcs.filter(npc => CORE_NPC_IDS.has(npc.id));
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(HUD_STARTS_COLLAPSED);
   const drag = useDraggable("npc-dock");
 
   if (collapsed) {
     return (
-      <button
-        type="button"
-        ref={drag.ref}
-        onPointerDown={drag.handleProps.onPointerDown}
-        style={{...drag.style, ...drag.handleProps.style}}
+      <VillageFrame
+        bare
+        bodyClassName="flex items-center gap-2 px-3.5 py-2.5 text-[13px] v-panel-title"
+        className="fixed bottom-40 left-4 z-30 transform-gpu cursor-pointer will-change-[backdrop-filter,transform] transition active:scale-95 md:bottom-20"
         onClick={() => setCollapsed(false)}
-        className="v-panel v-panel-title fixed bottom-40 left-4 z-30 flex items-center gap-2 px-3.5 py-2.5 text-[13px] transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#e2c078]/60 active:scale-95 md:bottom-20"
+        onPointerDown={drag.handleProps.onPointerDown}
+        ref={drag.ref}
+        style={{...drag.style, ...drag.handleProps.style}}
+        variant="plaque"
       >
-        <span className="text-sm">🤖</span> AI NPC{" "}
+        <Crest name="npc" size={15} /> AI NPC{" "}
         <span className="text-[#a9bdd6]/50">▸</span>
-      </button>
+      </VillageFrame>
     );
   }
 
   return (
-    <aside
+    <VillageFrame
+      bodyClassName="flex items-center gap-2 overflow-x-auto p-2"
+      className="fixed bottom-40 left-4 right-4 z-30 transform-gpu will-change-[backdrop-filter,transform] md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]"
       ref={drag.ref}
       style={drag.style}
-      className="v-panel fixed bottom-40 left-4 right-4 z-30 flex items-center gap-2 overflow-x-auto p-2 transform-gpu will-change-[backdrop-filter,transform] md:bottom-20 md:right-auto md:w-auto md:max-w-[560px]"
+      variant="plaque"
     >
       <button
         type="button"
@@ -182,27 +219,36 @@ export function NpcQuickDock({
         className="v-panel-title flex shrink-0 items-center gap-1 px-2 text-[13px] transition hover:brightness-125 active:scale-95"
         {...drag.handleProps}
       >
-        AI NPC <span className="text-[#a9bdd6]/50">▾</span>
+        <Crest name="npc" size={14} /> AI NPC{" "}
+        <span className="text-[#a9bdd6]/50">▾</span>
       </button>
       {coreNpcs.map(npc => (
         <button
           className={
             activeNpcId === npc.id
-              ? "shrink-0 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-3 py-2 text-left text-xs font-black text-[#ffe9d2] transition active:scale-95"
-              : "shrink-0 rounded-lg border border-[#e2c078]/15 bg-white/[0.04] px-3 py-2 text-left text-xs font-black text-[#c9d6e8] transition hover:border-[#e2c078]/45 hover:text-[#f3e6c8] active:scale-95"
+              ? "shrink-0 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-3 py-1.5 text-center text-xs font-black text-[#ffe9d2] transition active:scale-95"
+              : "shrink-0 rounded-lg border border-[#e2c078]/15 bg-white/[0.04] px-3 py-1.5 text-center text-xs font-black text-[#c9d6e8] transition hover:border-[#e2c078]/45 hover:text-[#f3e6c8] active:scale-95"
           }
           key={npc.id}
           onClick={() => onSelect(npc)}
           title={npc.agent?.specialty ?? npc.role}
           type="button"
         >
-          <span className="block">{npc.name}</span>
-          <span className="mt-0.5 block text-[9px] font-bold uppercase tracking-[0.1em] text-[#a9bdd6]/60">
+          {/* 컨셉대로 문장 / 이름 / 역할 3단. 문장은 활성일 때만 금박이고
+              평소엔 달빛색이라, 여섯 칸이 한꺼번에 반짝이지 않는다. */}
+          <Crest
+            className="mx-auto"
+            name={NPC_CREST[npc.type] ?? "npc"}
+            size={16}
+            tone={activeNpcId === npc.id ? undefined : "rgba(169,189,214,0.55)"}
+          />
+          <span className="mt-0.5 block">{npc.name}</span>
+          <span className="block text-[9px] font-bold uppercase tracking-[0.1em] text-[#a9bdd6]/60">
             {npc.type}
           </span>
         </button>
       ))}
-    </aside>
+    </VillageFrame>
   );
 }
 
@@ -223,37 +269,41 @@ export function CommandDock({
   onBackToWork: () => void;
   onOpenRelations: () => void;
 }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(HUD_STARTS_COLLAPSED);
   const drag = useDraggable("command-dock");
-  const modes: {mode: NpcCommand; icon: string; label: string}[] = [
-    {mode: "gather", icon: "🧲", label: "모으기"},
-    {mode: "photo", icon: "📸", label: "단체사진"},
-    {mode: "party", icon: "🎉", label: "파티"},
-    {mode: "follow", icon: "🏃", label: "따라와"}
+  const modes: {mode: NpcCommand; crest: CrestName; label: string}[] = [
+    {mode: "gather", crest: "magnet", label: "모으기"},
+    {mode: "photo", crest: "camera", label: "단체사진"},
+    {mode: "party", crest: "bunting", label: "파티"},
+    {mode: "follow", crest: "steps", label: "따라와"}
   ];
   const busy = command !== null;
 
   if (collapsed) {
     return (
-      <button
-        type="button"
-        ref={drag.ref}
-        onPointerDown={drag.handleProps.onPointerDown}
-        style={{...drag.style, ...drag.handleProps.style}}
+      <VillageFrame
+        bare
+        bodyClassName="v-panel-title flex items-center gap-2 px-3.5 py-2.5 text-[13px]"
+        className="fixed left-4 top-[300px] z-30 hidden transform-gpu cursor-pointer will-change-[backdrop-filter,transform] transition active:scale-95 md:block"
         onClick={() => setCollapsed(false)}
-        className="v-panel v-panel-title fixed left-4 top-[300px] z-30 hidden items-center gap-2 px-3.5 py-2.5 text-[13px] transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#e2c078]/60 active:scale-95 md:flex"
+        onPointerDown={drag.handleProps.onPointerDown}
+        ref={drag.ref}
+        style={{...drag.style, ...drag.handleProps.style}}
+        variant="plaque"
       >
-        <span className="text-sm">🎮</span> 지휘{" "}
+        <Crest name="baton" size={15} /> 지휘{" "}
         <span className="text-[#a9bdd6]/50">▸</span>
-      </button>
+      </VillageFrame>
     );
   }
 
   return (
-    <aside
+    <VillageFrame
+      bodyClassName="flex flex-col gap-1 p-2"
+      className="fixed left-4 top-[300px] z-30 hidden w-[150px] transform-gpu will-change-[backdrop-filter,transform] md:block"
       ref={drag.ref}
       style={drag.style}
-      className="v-panel fixed left-4 top-[300px] z-30 hidden w-[150px] flex-col gap-1 p-2 transform-gpu will-change-[backdrop-filter,transform] md:flex"
+      variant="plaque"
     >
       <button
         type="button"
@@ -261,7 +311,10 @@ export function CommandDock({
         className="v-panel-title mb-0.5 flex items-center justify-between px-2 py-1 text-[13px] transition hover:brightness-125"
         {...drag.handleProps}
       >
-        🎮 NPC 지휘 <span className="text-[#a9bdd6]/50">◂</span>
+        <span className="flex items-center gap-1.5">
+          <Crest name="baton" size={14} /> NPC 지휘
+        </span>
+        <span className="text-[#a9bdd6]/50">◂</span>
       </button>
       {modes.map(item => {
         const active = command === item.mode;
@@ -276,7 +329,11 @@ export function CommandDock({
                 : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
             }
           >
-            <span className="text-sm">{item.icon}</span>
+            <Crest
+              name={item.crest}
+              size={15}
+              tone={active ? undefined : "rgba(169,189,214,0.62)"}
+            />
             {item.label}
           </button>
         );
@@ -286,7 +343,7 @@ export function CommandDock({
         onClick={onGreet}
         className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
       >
-        <span className="text-sm">👋</span> 인사
+        <Crest name="wave" size={15} tone="rgba(169,189,214,0.62)" /> 인사
       </button>
       <button
         type="button"
@@ -298,7 +355,11 @@ export function CommandDock({
             : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
         }
       >
-        <span className="text-sm">💬</span>{" "}
+        <Crest
+          name="chat"
+          size={15}
+          tone={groupTalkBusy ? undefined : "rgba(169,189,214,0.62)"}
+        />{" "}
         {groupTalkBusy ? "수다 중…" : "다 같이 수다"}
       </button>
       <button
@@ -306,7 +367,7 @@ export function CommandDock({
         onClick={onOpenRelations}
         className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
       >
-        <span className="text-sm">💞</span> 관계도
+        <Crest name="bond" size={15} tone="rgba(169,189,214,0.62)" /> 관계도
       </button>
       <button
         type="button"
@@ -318,9 +379,14 @@ export function CommandDock({
             : "mt-0.5 flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6]/35"
         }
       >
-        <span className="text-sm">🛠️</span> 다시 일하기
+        <Crest
+          name="hammer"
+          size={15}
+          tone={busy ? undefined : "rgba(169,189,214,0.35)"}
+        />{" "}
+        다시 일하기
       </button>
-    </aside>
+    </VillageFrame>
   );
 }
 
@@ -613,30 +679,34 @@ export function QuickTravelDock({
   activeKey: string;
   onTravel: (point: TravelPoint) => void;
 }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(HUD_STARTS_COLLAPSED);
   const drag = useDraggable("travel-dock");
 
   if (collapsed) {
     return (
-      <button
-        type="button"
-        ref={drag.ref}
-        onPointerDown={drag.handleProps.onPointerDown}
-        style={{...drag.style, ...drag.handleProps.style}}
+      <VillageFrame
+        bare
+        bodyClassName="v-panel-title flex items-center gap-2 px-3.5 py-2.5 text-[13px]"
+        className="fixed right-4 top-[80px] z-30 hidden transform-gpu cursor-pointer will-change-[backdrop-filter,transform] transition active:scale-95 md:block"
         onClick={() => setCollapsed(false)}
-        className="v-panel v-panel-title fixed right-4 top-[80px] z-30 hidden items-center gap-2 px-3.5 py-2.5 text-[13px] transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#e2c078]/60 active:scale-95 md:flex"
+        onPointerDown={drag.handleProps.onPointerDown}
+        ref={drag.ref}
+        style={{...drag.style, ...drag.handleProps.style}}
+        variant="plaque"
       >
-        <span className="text-sm">🧭</span> 이동{" "}
+        <Crest name="compass" size={15} /> 이동{" "}
         <span className="text-[#a9bdd6]/50">◂</span>
-      </button>
+      </VillageFrame>
     );
   }
 
   return (
-    <aside
+    <VillageFrame
+      bodyClassName="flex flex-col gap-1 p-2"
+      className="fixed right-4 top-[80px] z-30 hidden w-[152px] transform-gpu will-change-[backdrop-filter,transform] md:block"
       ref={drag.ref}
       style={drag.style}
-      className="v-panel fixed right-4 top-[80px] z-30 hidden w-[152px] flex-col gap-1 p-2 transform-gpu will-change-[backdrop-filter,transform] md:flex"
+      variant="plaque"
     >
       <button
         type="button"
@@ -644,7 +714,10 @@ export function QuickTravelDock({
         className="v-panel-title mb-0.5 flex items-center justify-between px-2 py-1 text-[13px] transition hover:brightness-125"
         {...drag.handleProps}
       >
-        🧭 빠른 이동 <span className="text-[#a9bdd6]/50">▴</span>
+        <span className="flex items-center gap-1.5">
+          <Crest name="compass" size={14} /> 빠른 이동
+        </span>
+        <span className="text-[#a9bdd6]/50">▴</span>
       </button>
       {TRAVEL_POINTS.map(point => {
         const active = activeKey === point.key;
@@ -670,7 +743,7 @@ export function QuickTravelDock({
           </button>
         );
       })}
-    </aside>
+    </VillageFrame>
   );
 }
 
@@ -681,7 +754,7 @@ export function Minimap({
   activeKey: string;
   onTravel: (point: TravelPoint) => void;
 }) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(HUD_STARTS_COLLAPSED);
   const drag = useDraggable("minimap");
 
   const W = 172;
@@ -715,30 +788,39 @@ export function Minimap({
 
   if (collapsed) {
     return (
-      <button
-        type="button"
-        ref={drag.ref}
-        onPointerDown={drag.handleProps.onPointerDown}
-        style={{...drag.style, ...drag.handleProps.style}}
+      <VillageFrame
+        bare
+        bodyClassName="v-panel-title flex items-center gap-2 px-3.5 py-2.5 text-[13px]"
+        // bottom-6 이 아니라 bottom-20 이다 — 그 자리엔 「제작 의뢰」 버튼이
+        // 있고(z-52 라 이쪽이 진다), 접힌 미니맵은 작아서 그 밑에 통째로
+        // 숨어 버렸다. 펼친 쪽도 같은 값을 써서 둘이 위아래로 쌓이게 한다.
+        className="fixed bottom-20 right-4 z-30 hidden transform-gpu cursor-pointer will-change-[backdrop-filter,transform] transition active:scale-95 md:block"
         onClick={() => setCollapsed(false)}
-        className="v-panel v-panel-title fixed bottom-6 right-4 z-30 hidden items-center gap-2 px-3.5 py-2.5 text-[13px] transform-gpu will-change-[backdrop-filter,transform] transition hover:border-[#e2c078]/60 active:scale-95 md:flex"
+        onPointerDown={drag.handleProps.onPointerDown}
+        ref={drag.ref}
+        style={{...drag.style, ...drag.handleProps.style}}
+        variant="plaque"
       >
-        🗺️ 지도
-      </button>
+        <Crest name="map" size={15} /> 지도
+      </VillageFrame>
     );
   }
 
   return (
-    <aside
+    <VillageFrame
+      bodyClassName="p-2.5"
+      className="fixed bottom-20 right-4 z-30 hidden transform-gpu will-change-[backdrop-filter,transform] md:block"
       ref={drag.ref}
       style={drag.style}
-      className="v-panel fixed bottom-6 right-4 z-30 hidden p-2.5 transform-gpu will-change-[backdrop-filter,transform] md:block"
+      variant="plaque"
     >
       <div
         className="mb-1.5 flex cursor-grab items-center justify-between px-1"
         {...drag.handleProps}
       >
-        <span className="v-panel-title text-[13px]">🗺️ 미니맵</span>
+        <span className="v-panel-title flex items-center gap-1.5 text-[13px]">
+          <Crest name="map" size={14} /> 미니맵
+        </span>
         <button
           type="button"
           onClick={() => setCollapsed(true)}
@@ -804,7 +886,7 @@ export function Minimap({
       <p className="mt-1.5 px-1 text-[9px] leading-tight text-[#a9bdd6]/55">
         구역을 누르면 그쪽으로 이동
       </p>
-    </aside>
+    </VillageFrame>
   );
 }
 

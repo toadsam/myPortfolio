@@ -11,6 +11,7 @@ import {
 import {CommissionDesk} from "@/components/ui/CommissionDesk";
 import {DialogueBox} from "@/components/ui/DialogueBox";
 import {Header} from "@/components/ui/Header";
+import {Crest} from "@/components/ui/Crest";
 import {InfoPanel} from "@/components/ui/InfoPanel";
 import {IntroOverlay} from "@/components/ui/IntroOverlay";
 import {SceneTransition} from "@/components/ui/SceneTransition";
@@ -1586,7 +1587,11 @@ export function AIPortfolioVillage() {
     setShowIntro(false);
     setExplorationMode(mode);
     setActiveSection("intro");
-    setIsPanelOpen(mode === "click");
+    // 입장하자마자 「중앙 광장」 패널을 펴지 않는다. 예전엔 클릭 모드로 들어오면
+    // 무조건 열었는데, 그 패널이 화면 오른쪽 460px 를 먹은 채로 HUD 다섯 개까지
+    // 같이 펼쳐져 있어서 정작 보여 주려던 3D 마을이 구석에만 남았다.
+    // 첫 화면에서 말을 거는 건 루미의 안내 하나면 충분하다.
+    setIsPanelOpen(false);
   }
 
   function openResume() {
@@ -1604,7 +1609,9 @@ export function AIPortfolioVillage() {
     setShowIntro(false);
     setExplorationMode("click");
     setActiveSection("intro");
-    setIsPanelOpen(true);
+    // startExploring 과 같은 이유로 닫은 채 들어간다 — 마을로 들어오는 길이
+    // 둘인데 한쪽만 패널을 열면 같은 화면이 경로에 따라 달라 보인다.
+    setIsPanelOpen(false);
   }
 
   // 클릭하면 확인창 없이 바로 입장
@@ -1898,7 +1905,9 @@ export function AIPortfolioVillage() {
               className="v-panel fixed bottom-24 right-4 z-[52] flex items-center gap-2 px-3.5 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:brightness-125 active:scale-95 md:bottom-6"
               title="홈페이지 제작 의뢰"
             >
-              <span className="v-lantern-glow text-base">🛠️</span>
+              <span className="v-lantern-glow flex">
+                <Crest name="hammer" size={16} />
+              </span>
               제작 의뢰
             </button>
           ) : null}

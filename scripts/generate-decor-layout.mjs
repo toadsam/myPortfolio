@@ -373,7 +373,62 @@ function polygonDistance(poly, x, z) {
 }
 
 const round3 = v => Math.round(v * 1000) / 1000;
-const scaleOf = kind => round3((KIT[kind].m * UNITS_PER_METER) / KIT[kind].h);
+
+// ─── 연출 배율 ────────────────────────────────────────────────────────────────
+// 위의 m 은 **실물 치수**고, 그 자체로는 틀린 데가 없다. 문제는 그 정확함이 마을
+// 카메라에서 안 읽힌다는 것이다 — 부감 40°, 높이 14유닛에서 벤치(0.9m)는 화면
+// 높이의 2.4%, 통(0.9m)은 2.5%다. 양식화된 디오라마는 소품을 과장해야 눈에 든다.
+//
+// 그래서 m 을 고쳐 쓰지 않고 여기서만 부풀린다. m 이 실물 기준으로 남아 있어야
+// "이게 원래 몇 미터짜리였나"를 되물을 수 있고, 되돌리려면 아래 숫자만 1 로 두면 된다.
+//
+// 두 단인 이유: 균일하게 곱하면 제일 안 보이던 것이 여전히 제일 안 보인다.
+// 바닥에 놓이는 잡동사니가 부감에서 가장 먼저 사라지므로 그쪽을 더 키운다.
+const SMALL_BOOST = 1.6; // 바닥에 놓이는 가구·잡동사니
+const MEDIUM_BOOST = 1.3; // 서 있는 설치물
+
+// **적용할 것만 적는다.** 반대로(기본 부풀림 + 예외) 하면 새 물건이 들어올 때마다
+// 조용히 커지는데, 이 표에 없는 것들은 대부분 "이유가 있어서 그 크기"다:
+// wall-low·fence-rail 은 배율 1 이 되게 h·m 을 맞춰 놨고(생성기가 이미 월드 크기로
+// 굽는다), terrace-stair 의 m=3.85 는 밟는 윗단이 단 높이 1.1 에 맞도록 역산한 값이며,
+// arch-*(7.5m)·house-*(6.0m)·랜드마크(14~24m)는 이미 건물 축척에 맞춰 놓은 것이다.
+// bunting 은 place() 를 안 거치고 매다는 높이(1.25)가 따로 박혀 있어 크기만 키우면
+// 줄에서 떨어진 천이 된다. 나무·덤불·바위는 이번 조정 대상이 아니다.
+const SMALL_BOOSTED = new Set([
+  "bench",
+  "barrel-iron",
+  "scroll-barrel",
+  "campfire",
+  "lute-picnic",
+  "mailbox",
+  "flower-pot",
+  "orb-lantern",
+  "candle-tome",
+  "stump-forge"
+]);
+const MEDIUM_BOOSTED = new Set([
+  "lantern-post",
+  "lantern-archway",
+  "lantern-bearer",
+  "notice-board",
+  "market-stall",
+  "well",
+  "fountain",
+  "flowerbed-round",
+  "gate-arch",
+  "flagpole-banner",
+  "leaf-banner"
+]);
+
+const boostOf = kind =>
+  SMALL_BOOSTED.has(kind)
+    ? SMALL_BOOST
+    : MEDIUM_BOOSTED.has(kind)
+      ? MEDIUM_BOOST
+      : 1;
+
+const scaleOf = kind =>
+  round3((KIT[kind].m * UNITS_PER_METER * boostOf(kind)) / KIT[kind].h);
 
 // Meshy 모델은 원점이 bbox 한가운데다(바닥 y ≈ −0.95). InstancedProps 는 position 에
 // GLB 원점을 그대로 놓으므로, 바닥 오프셋만큼 올려야 땅에 선다. 안 올리면 절반이 묻힌다.

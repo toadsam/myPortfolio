@@ -7,12 +7,15 @@ import {experienceItems} from "@/data/experience";
 import {portfolioLinks} from "@/data/links";
 import {projects} from "@/data/projects";
 import {skills} from "@/data/skills";
-import {sectionMeta} from "@/lib/constants";
+import {districtTone, sectionMeta} from "@/lib/constants";
 import {fetchCodingTests, fetchCsNotes, fetchVillageState} from "@/lib/liveApi";
+import type {CrestName} from "@/data/villageCrests";
 import type {CodingTestLog, CsNote, VillageState} from "@/types/live";
 import type {ProjectData, SectionId} from "@/types/portfolio";
+import {Crest} from "./Crest";
 import {ProjectCard} from "./ProjectCard";
 import {ProjectDetail} from "./ProjectDetail";
+import {VillageFrame} from "./VillageFrame";
 
 interface InfoPanelProps {
   activeSection: SectionId;
@@ -21,15 +24,8 @@ interface InfoPanelProps {
   onClose: () => void;
 }
 
-const SECTION_COLORS: Record<string, string> = {
-  intro: "#00d4ff",
-  projects: "#00d4ff",
-  github: "#00ff88",
-  study: "#38bdf8",
-  experience: "#aa44ff",
-  life: "#fbbf24",
-  contact: "#ff6600"
-};
+// 구역 색은 constants.ts 의 DISTRICT_TONE 하나가 정한다 — 예전엔 여기와
+// Header, VillageHud 세 곳에 같은 표가 복사돼 있었다.
 
 const stagger = {
   hidden: {},
@@ -53,79 +49,96 @@ export function InfoPanel({
 }: InfoPanelProps) {
   const section =
     sectionMeta.find(item => item.id === activeSection) ?? sectionMeta[0]!;
-  const color = SECTION_COLORS[activeSection] ?? "#00d4ff";
+  const tone = districtTone(activeSection);
+  const color = tone.accent;
 
   return (
     <AnimatePresence>
       {isOpen ? (
         <motion.aside
           animate={{opacity: 1, x: 0}}
-          className="relative z-20 w-full border-t border-[#7a5a38]/40 bg-[#0b1626] p-5 shadow-2xl md:fixed md:bottom-0 md:right-0 md:top-[65px] md:max-h-none md:w-[460px] md:overflow-y-auto md:border-l md:border-t-0 md:p-6"
+          // 화면 가장자리에 붙은 사각 판이 아니라, 마을에 걸린 **액자**다.
+          // md 이상에서 상하좌우로 여백을 두고 떠 있게 하고, 스크롤은 액자
+          // 안쪽(v-frame-body)이 맡는다 — 액자째 스크롤하면 금테가 같이 밀린다.
+          className="relative z-20 w-full p-3 md:fixed md:bottom-3 md:right-3 md:top-[71px] md:w-[468px] md:p-0"
           exit={{opacity: 0, x: 44}}
           initial={{opacity: 0, x: 44}}
           transition={{duration: 0.32, ease: [0.22, 1, 0.36, 1]}}
         >
-          <motion.div
-            animate={{scaleX: 1}}
-            className="absolute left-0 top-0 h-[2px] w-full origin-left"
-            initial={{scaleX: 0}}
-            style={{
-              background: `linear-gradient(to right, ${color}, transparent)`
-            }}
-            transition={{duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1}}
-          />
-
-          <motion.div
-            animate={{opacity: 1, y: 0}}
-            className="mb-5 rounded-lg border bg-[#0e1a2e] p-5"
-            initial={{opacity: 0, y: -10}}
-            style={{borderColor: `${color}30`}}
-            transition={{duration: 0.4, ease: [0.22, 1, 0.36, 1]}}
+          <VillageFrame
+            // md:h-full 이 없으면 내용이 짧을 때 안쪽 판이 줄어들어 액자
+            // 바닥에 금색 띠가 그대로 드러난다(실제로 그랬다).
+            bodyClassName="overflow-y-auto p-5 md:h-full md:p-6"
+            className="h-full"
+            variant="grand"
           >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p
-                  className="text-xs font-black uppercase tracking-[0.16em]"
-                  style={{color}}
+            <motion.div
+              animate={{opacity: 1, y: 0}}
+              initial={{opacity: 0, y: -10}}
+              transition={{duration: 0.4, ease: [0.22, 1, 0.36, 1]}}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex min-w-0 items-start gap-3">
+                  <span
+                    className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg border bg-[#131f33]"
+                    style={{borderColor: `${color}55`}}
+                  >
+                    <Crest name={tone.crest as CrestName} size={20} />
+                  </span>
+                  <div className="min-w-0">
+                    <p
+                      className="text-[11px] font-black uppercase tracking-[0.16em]"
+                      style={{color}}
+                    >
+                      {section.label}
+                    </p>
+                    <h2 className="v-serif v-emboss mt-1 text-2xl leading-tight">
+                      {section.title}
+                    </h2>
+                  </div>
+                </div>
+                <motion.button
+                  className="shrink-0 rounded-lg border border-[#e2c078]/25 px-3 py-1.5 text-xs font-bold text-[#a9bdd6]/70 transition hover:border-[#e2c078]/50 hover:text-[#f3e6c8]"
+                  onClick={onClose}
+                  type="button"
+                  whileHover={{scale: 1.04}}
+                  whileTap={{scale: 0.96}}
                 >
-                  {section.label}
-                </p>
-                <h2 className="v-panel-title mt-2 text-2xl">{section.title}</h2>
+                  닫기
+                </motion.button>
               </div>
-              <motion.button
-                className="rounded-lg border border-[#e2c078]/20 px-3 py-1.5 text-xs font-bold text-[#a9bdd6]/70 transition hover:border-[#e2c078]/45 hover:text-[#f3e6c8]"
-                onClick={onClose}
-                type="button"
-                whileHover={{scale: 1.04}}
-                whileTap={{scale: 0.96}}
-              >
-                닫기
-              </motion.button>
-            </div>
-            <p className="mt-3 text-sm leading-6 text-[#a9bdd6]">
-              {section.description}
-            </p>
-          </motion.div>
+              <p className="mt-3.5 text-sm leading-6 text-[#a9bdd6]">
+                {section.description}
+              </p>
+              <div className="v-rule my-5" role="separator" />
+            </motion.div>
 
-          <motion.div animate="visible" initial="hidden" variants={stagger}>
-            {activeSection === "intro" && <IntroPanel color={color} />}
-            {activeSection === "projects" && (
-              <ProjectsPanel color={color} initialProjectId={activeContentId} />
-            )}
-            {activeSection === "github" && (
-              <SkillsPanel color={color} initialGroup={activeContentId} />
-            )}
-            {activeSection === "study" && (
-              <StudyPanel color={color} initialTab={activeContentId} />
-            )}
-            {activeSection === "experience" && (
-              <ExperiencePanel color={color} highlightTitle={activeContentId} />
-            )}
-            {activeSection === "life" && (
-              <LifePanel color={color} highlightId={activeContentId} />
-            )}
-            {activeSection === "contact" && <ContactPanel color={color} />}
-          </motion.div>
+            <motion.div animate="visible" initial="hidden" variants={stagger}>
+              {activeSection === "intro" && <IntroPanel color={color} />}
+              {activeSection === "projects" && (
+                <ProjectsPanel
+                  color={color}
+                  initialProjectId={activeContentId}
+                />
+              )}
+              {activeSection === "github" && (
+                <SkillsPanel color={color} initialGroup={activeContentId} />
+              )}
+              {activeSection === "study" && (
+                <StudyPanel color={color} initialTab={activeContentId} />
+              )}
+              {activeSection === "experience" && (
+                <ExperiencePanel
+                  color={color}
+                  highlightTitle={activeContentId}
+                />
+              )}
+              {activeSection === "life" && (
+                <LifePanel color={color} highlightId={activeContentId} />
+              )}
+              {activeSection === "contact" && <ContactPanel color={color} />}
+            </motion.div>
+          </VillageFrame>
         </motion.aside>
       ) : null}
     </AnimatePresence>
@@ -143,8 +156,10 @@ function Card({
 }) {
   return (
     <motion.div
-      className={`rounded-lg border bg-[#0a1525] p-5 ${className}`}
-      style={{borderColor: `${color}22`}}
+      // 카드 바탕은 액자 안쪽보다 **더 어둡게** 판다. 액자가 이미 밝은 금테라
+      // 카드까지 밝으면 층이 안 생겨 글자가 떠 보인다.
+      className={`rounded-lg border bg-[#081222] p-5 ${className}`}
+      style={{borderColor: `${color}26`}}
       variants={fadeUp}
       whileHover={{borderColor: `${color}55`, boxShadow: `0 0 18px ${color}12`}}
       transition={{duration: 0.2}}
@@ -154,28 +169,42 @@ function Card({
   );
 }
 
+/** 컨셉의 2×2 특징 카드 — 문장 + 한 줄 설명 */
+const INTRO_FEATURES: {crest: CrestName; label: string; hint: string}[] = [
+  {crest: "tower", label: "3D Interactive", hint: "걸어 다니는 마을"},
+  {crest: "npc", label: "AI NPC", hint: "질문에 답하는 주민"},
+  {crest: "horn", label: "Live Data", hint: "오늘의 활동 반영"},
+  {crest: "gear", label: "Fullstack", hint: "프론트 + 백엔드"}
+];
+
 function IntroPanel({color}: {color: string}) {
   return (
     <div className="grid gap-4">
       <Card color={color}>
-        <h3 className="text-lg font-black text-white">
-          정재훈의 Developer's City
+        <h3 className="v-serif text-lg text-[#f3e6c8]">
+          정재훈의 Developer&apos;s City
         </h3>
-        <p className="mt-3 text-sm leading-7 text-white/60">
+        <p className="mt-3 text-sm leading-7 text-[#a9bdd6]">
           프로젝트, 기술, 경험, 연락처를 하나의 3D 마을로 구성했습니다. 건물은
           콘텐츠를 열고, NPC는 방문자의 질문에 맞춰 포트폴리오를 설명합니다.
         </p>
       </Card>
       <div className="grid grid-cols-2 gap-3">
-        {["3D Interactive", "AI NPC", "Live Data", "Fullstack"].map(label => (
+        {INTRO_FEATURES.map(item => (
           <motion.span
-            className="rounded-lg border border-white/8 bg-[#0a1525] px-3 py-3 font-mono text-sm font-black text-white/70"
-            key={label}
+            className="flex flex-col gap-1.5 rounded-lg border border-[#e2c078]/14 bg-[#081222] px-3.5 py-3.5"
+            key={item.label}
             variants={fadeUp}
-            whileHover={{borderColor: `${color}50`, color, x: 2}}
+            whileHover={{borderColor: `${color}55`, y: -2}}
             transition={{duration: 0.15}}
           >
-            {label}
+            <Crest name={item.crest} size={20} />
+            <span className="text-[13px] font-black text-[#f3e6c8]">
+              {item.label}
+            </span>
+            <span className="text-[10px] font-semibold text-[#a9bdd6]/65">
+              {item.hint}
+            </span>
           </motion.span>
         ))}
       </div>
@@ -209,8 +238,8 @@ function ProjectsPanel({
   return (
     <div className="grid gap-4">
       <Card color={color}>
-        <h3 className="font-black text-white">대표 프로젝트</h3>
-        <p className="mt-2 text-sm leading-6 text-white/55">
+        <h3 className="font-black text-[#f3e6c8]">대표 프로젝트</h3>
+        <p className="mt-2 text-sm leading-6 text-[#a9bdd6]">
           목록에서 프로젝트를 열어 자세한 설명을 보거나, 마을에서 프로젝트 건물
           안으로 들어가 3D 전시 화면을 볼 수 있습니다.
         </p>
@@ -244,8 +273,8 @@ function SkillsPanel({
   return (
     <div className="grid gap-4">
       <Card color={color}>
-        <h3 className="font-black text-white">기술 스택과 구현 경험</h3>
-        <p className="mt-2 text-sm leading-6 text-white/55">
+        <h3 className="font-black text-[#f3e6c8]">기술 스택과 구현 경험</h3>
+        <p className="mt-2 text-sm leading-6 text-[#a9bdd6]">
           프론트엔드, 백엔드, 3D, 게임/XR, 워크플로 경험을 기술 그룹별로
           정리했습니다.
         </p>
@@ -269,7 +298,7 @@ function SkillsPanel({
         const isOpen = openGroup === group;
         return (
           <motion.section
-            className="overflow-hidden rounded-lg border bg-[#0a1525]"
+            className="overflow-hidden rounded-lg border bg-[#081222]"
             key={group}
             style={{
               borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"
@@ -282,9 +311,9 @@ function SkillsPanel({
               type="button"
               whileHover={{background: `${color}08`}}
             >
-              <span className="font-black text-white">{group}</span>
+              <span className="font-black text-[#f3e6c8]">{group}</span>
               <span className="flex items-center gap-2">
-                <span className="font-mono text-xs text-white/30">
+                <span className="font-mono text-xs text-[#a9bdd6]/50">
                   {groupSkills.length}개
                 </span>
                 <motion.span
@@ -324,11 +353,11 @@ function SkillsPanel({
                   <div className="grid gap-2">
                     {groupSkills.map(skill => (
                       <p
-                        className="rounded-lg border border-white/6 bg-[#060e1a] p-3 text-sm leading-6 text-white/55"
+                        className="rounded-lg border border-[#e2c078]/6 bg-[#060f1c] p-3 text-sm leading-6 text-[#a9bdd6]"
                         key={skill.name + "-desc"}
                       >
                         <strong style={{color}}>{skill.name}</strong>
-                        <span className="text-white/30"> / </span>
+                        <span className="text-[#a9bdd6]/50"> / </span>
                         {skill.description}
                       </p>
                     ))}
@@ -356,7 +385,7 @@ function ExperiencePanel({
         const isHighlighted = highlightTitle === item.title;
         return (
           <motion.article
-            className="rounded-lg border bg-[#0a1525] p-5 transition"
+            className="rounded-lg border bg-[#081222] p-5 transition"
             key={item.title}
             style={{
               borderColor: isHighlighted
@@ -385,8 +414,8 @@ function ExperiencePanel({
                 {item.year}
               </p>
             </div>
-            <h3 className="mt-3 font-black text-white">{item.title}</h3>
-            <p className="mt-2 text-sm leading-6 text-white/55">
+            <h3 className="mt-3 font-black text-[#f3e6c8]">{item.title}</h3>
+            <p className="mt-2 text-sm leading-6 text-[#a9bdd6]">
               {item.description}
             </p>
           </motion.article>
@@ -409,15 +438,15 @@ function LifeCard({
 }) {
   return (
     <motion.article
-      className="rounded-lg border bg-[#0a1525] p-5 transition"
+      className="rounded-lg border bg-[#081222] p-5 transition"
       style={{
         borderColor: highlighted ? `${color}55` : "rgba(255,255,255,0.06)",
         boxShadow: highlighted ? `0 0 18px ${color}18` : "none"
       }}
       variants={fadeUp}
     >
-      <h3 className="font-black text-white">{title}</h3>
-      <div className="mt-2 text-sm leading-6 text-white/55">{children}</div>
+      <h3 className="font-black text-[#f3e6c8]">{title}</h3>
+      <div className="mt-2 text-sm leading-6 text-[#a9bdd6]">{children}</div>
     </motion.article>
   );
 }
@@ -455,8 +484,8 @@ function LifePanel({
   return (
     <div className="grid gap-4">
       <Card color={color}>
-        <h3 className="font-black text-white">인생·일상</h3>
-        <p className="mt-2 text-sm leading-6 text-white/55">
+        <h3 className="font-black text-[#f3e6c8]">인생·일상</h3>
+        <p className="mt-2 text-sm leading-6 text-[#a9bdd6]">
           프로젝트 밖의 일상을 모아둔 구역입니다. 운동·학습 카드는 관리자 기록과
           실시간으로 연결되어 있고, 나머지 카드는 아직 내용을 채우는 중입니다.
         </p>
@@ -578,8 +607,8 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
   return (
     <div className="grid gap-4">
       <Card color={color}>
-        <h3 className="font-black text-white">학습 기록</h3>
-        <p className="mt-2 text-sm leading-6 text-white/55">
+        <h3 className="font-black text-[#f3e6c8]">학습 기록</h3>
+        <p className="mt-2 text-sm leading-6 text-[#a9bdd6]">
           매일 푼 코딩테스트 풀이와 공부한 CS 전공지식을 기록합니다. 알고리즘
           도장의 알고, 지식 서고의 노바에게 물어보면 이 기록을 바탕으로
           답해줍니다.
@@ -624,14 +653,14 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
 
       {error ? (
         <Card color={color}>
-          <p className="text-sm leading-6 text-white/55">
+          <p className="text-sm leading-6 text-[#a9bdd6]">
             학습 기록 서버(FastAPI)에 연결하지 못했습니다. 백엔드를 실행한 뒤
             다시 시도해 주세요.
           </p>
         </Card>
       ) : loading ? (
         <Card color={color}>
-          <p className="text-sm text-white/45">기록을 불러오는 중...</p>
+          <p className="text-sm text-[#a9bdd6]/65">기록을 불러오는 중...</p>
         </Card>
       ) : tab === "codingtest" ? (
         (codingTests ?? []).length === 0 ? (
@@ -645,7 +674,7 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
             const isOpen = openId === key;
             return (
               <motion.article
-                className="overflow-hidden rounded-lg border bg-[#0a1525]"
+                className="overflow-hidden rounded-lg border bg-[#081222]"
                 key={key}
                 style={{
                   borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"
@@ -658,10 +687,10 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
                   type="button"
                 >
                   <span className="min-w-0">
-                    <span className="block font-black text-white">
+                    <span className="block font-black text-[#f3e6c8]">
                       {test.title}
                     </span>
-                    <span className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-white/45">
+                    <span className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-[#a9bdd6]/65">
                       {[
                         test.platform,
                         test.difficulty,
@@ -671,7 +700,7 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
                         .filter(Boolean)
                         .map(meta => (
                           <span
-                            className="rounded border border-white/10 px-1.5 py-0.5"
+                            className="rounded border border-[#e2c078]/10 px-1.5 py-0.5"
                             key={meta}
                           >
                             {meta}
@@ -700,13 +729,13 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
                           >
                             풀이 방법
                           </p>
-                          <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-white/65">
+                          <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-[#a9bdd6]">
                             {test.approach}
                           </p>
                         </div>
                       ) : null}
                       {test.code ? (
-                        <pre className="max-h-72 overflow-auto rounded-lg border border-white/8 bg-[#060e1a] p-3 font-mono text-xs leading-5 text-white/70">
+                        <pre className="max-h-72 overflow-auto rounded-lg border border-[#e2c078]/8 bg-[#060f1c] p-3 font-mono text-xs leading-5 text-[#c9d6e8]">
                           {test.code}
                         </pre>
                       ) : null}
@@ -739,7 +768,7 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
           const isOpen = openId === key;
           return (
             <motion.article
-              className="overflow-hidden rounded-lg border bg-[#0a1525]"
+              className="overflow-hidden rounded-lg border bg-[#081222]"
               key={key}
               style={{
                 borderColor: isOpen ? `${color}40` : "rgba(255,255,255,0.06)"
@@ -752,15 +781,15 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
                 type="button"
               >
                 <span className="min-w-0">
-                  <span className="block font-black text-white">
+                  <span className="block font-black text-[#f3e6c8]">
                     {note.title}
                   </span>
-                  <span className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-white/45">
+                  <span className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-[#a9bdd6]/65">
                     {[note.category, note.study_date]
                       .filter(Boolean)
                       .map(meta => (
                         <span
-                          className="rounded border border-white/10 px-1.5 py-0.5"
+                          className="rounded border border-[#e2c078]/10 px-1.5 py-0.5"
                           key={meta}
                         >
                           {meta}
@@ -781,7 +810,7 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
                     initial={{height: 0, opacity: 0}}
                     transition={{duration: 0.25}}
                   >
-                    <p className="whitespace-pre-wrap text-sm leading-6 text-white/65">
+                    <p className="whitespace-pre-wrap text-sm leading-6 text-[#a9bdd6]">
                       {note.content}
                     </p>
                   </motion.div>
@@ -798,7 +827,7 @@ function StudyPanel({color, initialTab}: {color: string; initialTab?: string}) {
 function EmptyStudy({color, text}: {color: string; text: string}) {
   return (
     <Card color={color}>
-      <p className="text-sm leading-6 text-white/55">{text}</p>
+      <p className="text-sm leading-6 text-[#a9bdd6]">{text}</p>
     </Card>
   );
 }
@@ -807,7 +836,7 @@ function ContactPanel({color}: {color: string}) {
   return (
     <div className="grid gap-4">
       <Card color={color}>
-        <p className="text-sm leading-7 text-white/60">
+        <p className="text-sm leading-7 text-[#a9bdd6]">
           협업, 인터뷰, 프로젝트 제안은 아래 링크를 통해 연결할 수 있습니다.
         </p>
       </Card>
@@ -817,7 +846,7 @@ function ContactPanel({color}: {color: string}) {
           const linkColor = linkColors[index % linkColors.length] ?? color;
           return (
             <motion.a
-              className="flex items-center justify-between gap-4 rounded-lg border bg-[#0a1525] px-4 py-4 text-sm font-bold text-white transition"
+              className="flex items-center justify-between gap-4 rounded-lg border bg-[#081222] px-4 py-4 text-sm font-bold text-[#f3e6c8] transition"
               href={link.href}
               key={link.label}
               rel="noreferrer"
@@ -834,7 +863,7 @@ function ContactPanel({color}: {color: string}) {
               }}
               whileTap={{scale: 0.98}}
             >
-              <span className="font-black text-white">{link.label}</span>
+              <span className="font-black text-[#f3e6c8]">{link.label}</span>
               <span
                 className="truncate font-mono text-xs"
                 style={{color: linkColor}}
