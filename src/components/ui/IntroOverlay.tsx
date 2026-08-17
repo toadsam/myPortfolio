@@ -10,6 +10,9 @@ import {
   type MotionValue
 } from "framer-motion";
 import {useEffect, useRef, useState} from "react";
+import {projects} from "@/data/projects";
+import {autonomousNpcs} from "@/data/npcRoster";
+import {villageBuildings} from "@/lib/constants";
 import {sfx} from "@/lib/sfx";
 import type {ExplorationMode} from "@/types/portfolio";
 
@@ -299,6 +302,265 @@ function ParticleField({
   );
 }
 
+// ─── 마을 미술 조각 (SVG 근사치) ─────────────────────────────────────────────
+// 손으로 그린 에셋이 들어오기 전까지 쓰는 대역이다. 실제 그림이 오면 각
+// 컴포넌트의 <svg> 를 <img src="/ui/…" /> 로 바꾸기만 하면 되도록, 크기는
+// 전부 바깥에서 className 으로 정하게 해 뒀다.
+
+// 현판을 타고 오르는 담쟁이
+function VineSprig({className, flip}: {className?: string; flip?: boolean}) {
+  const leaves = [
+    {x: 18, y: 13, r: -30, s: 1},
+    {x: 40, y: 25, r: 16, s: 0.86},
+    {x: 58, y: 37, r: -20, s: 1.06},
+    {x: 76, y: 57, r: 28, s: 0.8},
+    {x: 97, y: 72, r: -10, s: 0.92}
+  ];
+  return (
+    <svg
+      viewBox="0 0 120 84"
+      aria-hidden="true"
+      className={className}
+      style={flip ? {transform: "scaleX(-1)"} : undefined}
+    >
+      <defs>
+        <linearGradient id="vLeafGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#83a857" />
+          <stop offset="1" stopColor="#3c5a29" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M6 8 C 34 14 58 32 74 56 C 84 70 98 76 116 78"
+        fill="none"
+        stroke="#4b6634"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      {leaves.map((l, i) => (
+        <path
+          key={i}
+          d="M0 0 C 7 -11 22 -13 27 -2 C 22 9 7 11 0 0 Z"
+          fill="url(#vLeafGrad)"
+          transform={`translate(${l.x} ${l.y}) rotate(${l.r}) scale(${l.s})`}
+        />
+      ))}
+      <circle cx="31" cy="7" r="3.4" fill="#edd0dc" />
+      <circle cx="31" cy="7" r="1.3" fill="#f7e6a4" />
+      <circle cx="89" cy="65" r="2.9" fill="#edd0dc" />
+      <circle cx="89" cy="65" r="1.1" fill="#f7e6a4" />
+    </svg>
+  );
+}
+
+// 현판 옆에 매달린 랜턴 — 마을 램프와 같은 호박색으로 깜빡인다
+function HangingLantern({className}: {className?: string}) {
+  return (
+    <svg viewBox="0 0 34 76" aria-hidden="true" className={className}>
+      <circle
+        cx="17"
+        cy="33"
+        r="15"
+        fill="#ff9d38"
+        opacity="0.2"
+        className="v-lantern-glow"
+      />
+      <path d="M17 0 V17" stroke="#6b5a3a" strokeWidth="2" />
+      <path d="M9 17 H25 L23 23 H11 Z" fill="#5b4526" />
+      <rect x="10" y="23" width="14" height="20" rx="2" fill="#3a2a16" />
+      <rect
+        x="12.2"
+        y="25"
+        width="9.6"
+        height="16"
+        rx="1.6"
+        fill="#ffbe72"
+        className="v-lantern-glow"
+      />
+      <path d="M11 43 H23 L21 48 H13 Z" fill="#5b4526" />
+      <path d="M17 48 V53" stroke="#6b5a3a" strokeWidth="1.6" />
+    </svg>
+  );
+}
+
+// 좌상단 문장(紋章) — 나침반 장미
+function CompassBadge({className}: {className?: string}) {
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true" className={className}>
+      <rect
+        x="2"
+        y="2"
+        width="44"
+        height="44"
+        rx="8"
+        fill="#3d2a16"
+        stroke="#b8892f"
+        strokeWidth="1.6"
+      />
+      <circle cx="24" cy="24" r="15" fill="#1c2c44" />
+      <path
+        d="M24 8 L27.4 20.6 L40 24 L27.4 27.4 L24 40 L20.6 27.4 L8 24 L20.6 20.6 Z"
+        fill="#e6c47c"
+      />
+      <path d="M24 12 L26 22 L24 24 L22 22 Z" fill="#fdf1cd" />
+      <circle cx="24" cy="24" r="2.6" fill="#3d2a16" />
+    </svg>
+  );
+}
+
+const LINE = {
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.6,
+  strokeLinecap: "round",
+  strokeLinejoin: "round"
+} as const;
+
+// 건물을 클릭한다
+function IconHouseClick({className}: {className?: string}) {
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
+      <path d="M5 15 L16 6 L27 15" {...LINE} />
+      <path d="M8 14 V25 H24 V14" {...LINE} />
+      <path d="M14 25 V19 H18 V25" {...LINE} />
+      <path
+        d="M20 20 L27 23.5 L23.8 24.6 L25.6 28 L23.8 29 L22 25.6 L19.8 27.6 Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+// 후드 쓴 안내인에게 묻는다
+function IconNpcAsk({className}: {className?: string}) {
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
+      <path d="M8 27 C8 20 11 17 14 17 C17 17 20 20 20 27" {...LINE} />
+      <path d="M14 17 C10 17 8.5 13 9.5 10 C10.4 7.4 13 6 15 6.4" {...LINE} />
+      <circle cx="14.6" cy="12.4" r="1.1" fill="currentColor" />
+      <path d="M21 6 H29 V13 H25 L22.5 16 V13 H21 Z" {...LINE} />
+      <path d="M24 9.4 H26.4" {...LINE} />
+      <path d="M24 11.2 H27.6" {...LINE} />
+    </svg>
+  );
+}
+
+// 깃펜 꽂힌 기록부
+function IconBookQuill({className}: {className?: string}) {
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
+      <path
+        d="M16 10 C13 7.6 8.6 7.4 5 8.4 V24 C8.6 23 13 23.2 16 25.6"
+        {...LINE}
+      />
+      <path d="M16 10 C19 7.6 23.4 7.4 27 8.4 V17" {...LINE} />
+      <path d="M16 10 V25.6" {...LINE} />
+      <path
+        d="M29 15 C25 17.5 22 20.5 20.5 25 L23 24 L26 20 Z"
+        fill="currentColor"
+      />
+      <path d="M20.5 25 L18.5 27.5" {...LINE} />
+    </svg>
+  );
+}
+
+// 펼친 지도 — 마을로 입장
+function IconMap({className}: {className?: string}) {
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
+      <path d="M4 9 L12 6 L20 9 L28 6 V23 L20 26 L12 23 L4 26 Z" {...LINE} />
+      <path d="M12 6 V23" {...LINE} />
+      <path d="M20 9 V26" {...LINE} />
+      <circle cx="16.2" cy="14.6" r="2.2" fill="currentColor" />
+      <path d="M7 13 L9.5 15.6" {...LINE} />
+      <path d="M23 18.4 L25.6 16" {...LINE} />
+    </svg>
+  );
+}
+
+// 두루마리 — 빠른 이력서
+function IconScroll({className}: {className?: string}) {
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
+      <path
+        d="M9 7 H24 C22.6 8.4 22.6 10 24 11.4 V25 C24 27 22.4 27.6 21 27.6 H10"
+        {...LINE}
+      />
+      <path d="M9 7 C7 7 6.4 8.6 6.4 10 C6.4 11.4 7.6 12 9 12 H12" {...LINE} />
+      <path d="M10 27.6 C8 27.6 7.4 26 7.4 24.6 H14" {...LINE} />
+      <path d="M12.5 15.4 H20" {...LINE} />
+      <path d="M12.5 19 H20" {...LINE} />
+    </svg>
+  );
+}
+
+// 하단 상태바 아이콘
+function IconStack({className}: {className?: string}) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path d="M12 3 L21 7.5 L12 12 L3 7.5 Z" {...LINE} />
+      <path d="M4.6 12 L12 15.8 L19.4 12" {...LINE} />
+      <path d="M4.6 16.5 L12 20.3 L19.4 16.5" {...LINE} />
+    </svg>
+  );
+}
+
+function IconPeople({className}: {className?: string}) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <circle cx="9.4" cy="8.6" r="3.2" {...LINE} />
+      <path
+        d="M3.6 19.6 C3.6 15.8 6.2 14 9.4 14 C12.6 14 15.2 15.8 15.2 19.6"
+        {...LINE}
+      />
+      <path
+        d="M16 6.2 C18.2 6.2 19.6 7.8 19.6 9.6 C19.6 11.4 18.2 12.6 16.4 12.6"
+        {...LINE}
+      />
+      <path d="M17.4 14.6 C19.6 15.2 20.8 17 20.8 19.6" {...LINE} />
+    </svg>
+  );
+}
+
+function IconVillage({className}: {className?: string}) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path d="M3 12 L8 7.4 L13 12" {...LINE} />
+      <path d="M4.8 11 V19.4 H11.2 V11" {...LINE} />
+      <path d="M13 19.4 V10 L17.6 6.4 L21 9.2 V19.4" {...LINE} />
+      <path d="M2.4 19.6 H21.8" {...LINE} />
+    </svg>
+  );
+}
+
+// 첫 화면 안내 카드 — 리본 색은 구역 색이 아니라 순서를 구분하는 용도다
+const STEP_CARDS = [
+  {
+    title: "건물 클릭",
+    body: "클릭하면 바로 프로젝트 전시실로 입장",
+    band: "linear-gradient(180deg,#3a6ea8 0%,#24466f 100%)",
+    Icon: IconHouseClick
+  },
+  {
+    title: "NPC 질문",
+    body: "프로젝트·기술·연락처를 대화로 확인",
+    band: "linear-gradient(180deg,#4e7d46 0%,#2d4c29 100%)",
+    Icon: IconNpcAsk
+  },
+  {
+    title: "Admin 기록",
+    body: "오늘 활동을 마을 상태로 반영",
+    band: "linear-gradient(180deg,#6b4f96 0%,#402e5e 100%)",
+    Icon: IconBookQuill
+  }
+] as const;
+
+// 하단 상태바 — 전부 실제 데이터에서 센다 (지어낸 숫자를 걸지 않는다)
+const VILLAGE_STATS = [
+  {label: "PROJECTS", value: projects.length, Icon: IconStack},
+  {label: "NPC", value: autonomousNpcs.length, Icon: IconPeople},
+  {label: "건물", value: villageBuildings.length, Icon: IconVillage}
+] as const;
+
 // ─── 마그네틱 래퍼: 커서가 가까우면 요소가 끌려온다 ───────────────────────────
 function Magnetic({
   children,
@@ -366,18 +628,17 @@ function TiltCard({children}: {children: React.ReactNode}) {
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={reset}
-      className="relative overflow-hidden rounded-lg border border-[#e2c078]/18 bg-[#e2c078]/[0.05] p-4"
+      className="v-wood relative overflow-hidden"
       style={{rotateX: rx, rotateY: ry, transformPerspective: 600}}
-      whileHover={{
-        borderColor: "rgba(226,192,120,0.45)",
-        boxShadow: "0 8px 30px rgba(40,26,10,0.45)"
-      }}
+      whileHover={{boxShadow: "0 22px 44px rgba(0,0,0,0.6)"}}
     >
       <motion.span
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 z-[1]"
         style={{background: gloss}}
       />
-      <div style={{transform: "translateZ(20px)"}}>{children}</div>
+      <div className="relative z-[2]" style={{transform: "translateZ(20px)"}}>
+        {children}
+      </div>
     </motion.div>
   );
 }
@@ -429,8 +690,6 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
   const sx = useSpring(mx, {stiffness: 120, damping: 22});
   const sy = useSpring(my, {stiffness: 120, damping: 22});
 
-  // 커서 스포트라이트 — 방문자가 든 '랜턴'. 어두운 막에 구멍을 뚫어 뒤 마을이 드러남
-  const revealMask = useMotionTemplate`radial-gradient(circle 210px at ${sx}% ${sy}%, transparent 0%, transparent 26%, black 70%)`;
   // 랜턴 불빛 글로우 (마을 램프와 같은 호박색)
   const glow = useMotionTemplate`radial-gradient(circle 300px at ${sx}% ${sy}%, rgba(255,157,56,0.11), transparent 70%)`;
   // 패럴랙스 (콘텐츠가 커서 반대로 살짝)
@@ -482,36 +741,28 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
         variants={{hidden: {}, visible: {}, exit: {}}}
       >
         <motion.div
-          animate={{height: isExiting ? 0 : "8vh"}}
-          className="w-full flex-shrink-0 bg-[#020810]"
-          initial={{height: "8vh"}}
-          transition={{duration: 0.5, ease: [0.76, 0, 0.24, 1]}}
-        />
-
-        <motion.div
           ref={stageRef}
           animate={{opacity: isExiting ? 0 : 1}}
-          className="relative flex flex-1 flex-col justify-center overflow-hidden [cursor:none]"
+          className="relative flex h-full w-full flex-col justify-center overflow-hidden pb-12 pt-[65px] [cursor:none]"
           initial={{opacity: 0}}
           onMouseMove={handleMove}
           transition={{duration: isExiting ? 0.4 : 0.5, ease: "easeInOut"}}
         >
-          {/* 어두운 막 — 커서 위치에 구멍이 뚫려 뒤의 살아있는 마을이 드러남 */}
-          <motion.div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(4,8,18,0.985) 0%, rgba(6,11,24,0.965) 60%, rgba(4,9,20,0.94) 100%)",
-              WebkitMaskImage: revealMask,
-              maskImage: revealMask
-            }}
-          />
-          {/* 드러난 마을을 살짝 덮어 지저분함을 정리하는 상시 스크림 */}
+          {/* 마을은 가리지 않는다 — 글자가 앉는 왼쪽만 숲 그늘처럼 어둡게 깔고
+              오른쪽은 열어 둬서 마을 자체가 첫 화면의 주인공이 되게 한다 */}
           <div
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "radial-gradient(120% 90% at 70% 30%, rgba(7,11,19,0.35) 0%, rgba(7,11,19,0.62) 60%, rgba(7,11,19,0.82) 100%)"
+                "linear-gradient(100deg, rgba(5,10,20,0.96) 0%, rgba(5,10,20,0.93) 30%, rgba(5,10,20,0.7) 47%, rgba(5,10,20,0.28) 62%, rgba(5,10,20,0.1) 78%, rgba(5,10,20,0.3) 100%)"
+            }}
+          />
+          {/* 위아래 비네트 — 상태바·시계가 앉을 자리를 만든다 */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, rgba(4,9,18,0.8) 0%, transparent 15%, transparent 74%, rgba(4,9,18,0.88) 100%)"
             }}
           />
           {/* 랜턴 불빛 글로우 — 격자는 뺐다: 기술 도면이 아니라 밤 들판이니까 */}
@@ -576,51 +827,87 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
           />
 
           <motion.div
-            className="relative z-[2] px-6 md:px-14"
+            className="relative z-[2] w-full px-6 md:px-12 lg:w-[56%] lg:pl-20 lg:pr-4"
             style={{x: px, y: py}}
           >
-            {/* 라벨 → 제목 → 부제 순서로 타자기처럼 쳐진다 (마을 입구 현판 연출) */}
-            <p
-              className="min-h-[15px] text-xs font-black uppercase tracking-[0.32em]"
-              style={{color: "#e2c078", textShadow: "0 0 12px #e2c07866"}}
+            {/* 문장 + 리본: 마을 이름표 */}
+            <div
+              className="flex items-center gap-3"
+              style={{filter: "drop-shadow(0 6px 14px rgba(0,0,0,0.55))"}}
             >
-              <Typewriter
-                text="DEVELOPER'S CITY · 2026"
-                active
-                speed={26}
-                onDone={() => setBootStep(s => Math.max(s, 1))}
-              />
-            </p>
+              <CompassBadge className="h-11 w-11 shrink-0" />
+              <div className="v-ribbon v-wood px-6 py-1.5">
+                <span className="block min-h-[14px] text-[11px] font-black tracking-[0.26em] text-[#e2c078]">
+                  <Typewriter
+                    text="DEVELOPER'S CITY · 2026"
+                    active
+                    speed={26}
+                    onDone={() => setBootStep(s => Math.max(s, 1))}
+                  />
+                </span>
+              </div>
+            </div>
 
-            <h1
-              className="v-panel-title mt-4 max-w-4xl text-4xl leading-tight md:text-7xl"
-              style={{textShadow: "0 0 40px rgba(255,157,56,0.32)"}}
+            {/* 제목 현판 — 덩굴이 감고 랜턴이 걸린 나무 간판 */}
+            <div className="relative mt-4 inline-block">
+              <VineSprig className="pointer-events-none absolute -left-7 -top-8 z-[3] w-28 md:w-32" />
+              <VineSprig
+                className="pointer-events-none absolute -bottom-9 -right-9 z-[3] w-24 md:w-28"
+                flip
+              />
+              <HangingLantern className="pointer-events-none absolute -left-9 top-6 z-[3] h-[4.6rem]" />
+              <div className="v-wood v-wood-inset px-8 py-5 md:px-11 md:py-6">
+                <span className="v-corner left-2.5 top-2.5" />
+                <span className="v-corner right-2.5 top-2.5" />
+                <span className="v-corner bottom-2.5 left-2.5" />
+                <span className="v-corner bottom-2.5 right-2.5" />
+                {/* 화면이 낮으면 제목도 같이 줄어든다 — 현판이 헤더 뒤로 잘리지 않게 */}
+                <h1
+                  className="v-serif v-emboss relative leading-[1.22]"
+                  style={{fontSize: "clamp(1.72rem, min(3.1vw, 5vh), 2.95rem)"}}
+                >
+                  <Typewriter
+                    text="정재훈의 3D"
+                    active={bootStep >= 1}
+                    speed={70}
+                    caret="typing"
+                    onDone={() => setBootStep(s => Math.max(s, 2))}
+                  />
+                  <br />
+                  <Typewriter
+                    text="포트폴리오 마을"
+                    active={bootStep >= 2}
+                    speed={70}
+                    caret="always"
+                    onDone={() => setBootStep(s => Math.max(s, 3))}
+                  />
+                </h1>
+              </div>
+            </div>
+
+            {/* 부제 리본 */}
+            <div
+              className="mt-4 block w-fit"
+              style={{filter: "drop-shadow(0 8px 18px rgba(0,0,0,0.5))"}}
             >
-              <Typewriter
-                text="정재훈의 3D"
-                active={bootStep >= 1}
-                speed={70}
-                caret="typing"
-                onDone={() => setBootStep(s => Math.max(s, 2))}
-              />
-              <br />
-              <Typewriter
-                text="포트폴리오 마을"
-                active={bootStep >= 2}
-                speed={70}
-                caret="always"
-                onDone={() => setBootStep(s => Math.max(s, 3))}
-              />
-            </h1>
-
-            <p className="mt-4 min-h-[20px] text-sm font-bold tracking-[0.16em] text-[#a9bdd6]/85 md:text-base">
-              <Typewriter
-                text="Fullstack / 3D / Game / XR"
-                active={bootStep >= 3}
-                speed={22}
-                onDone={() => setBootStep(s => Math.max(s, 4))}
-              />
-            </p>
+              <div
+                className="v-ribbon px-8 py-1.5"
+                style={{
+                  background:
+                    "linear-gradient(180deg,#33629b 0%,#1f4270 58%,#16304f 100%)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.18)"
+                }}
+              >
+                <span className="v-serif block min-h-[20px] text-[15px] tracking-[0.12em] text-[#ecdfba] md:text-lg">
+                  <Typewriter
+                    text="Fullstack / 3D / Game / XR"
+                    active={bootStep >= 3}
+                    speed={22}
+                    onDone={() => setBootStep(s => Math.max(s, 4))}
+                  />
+                </span>
+              </div>
+            </div>
 
             {/* 부제 타이핑이 끝나면(revealed) 나머지가 한 번에 떠오른다 */}
             <motion.div
@@ -629,110 +916,153 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
               transition={{duration: 0.7, ease: [0.22, 1, 0.36, 1]}}
               style={{pointerEvents: revealed ? "auto" : "none"}}
             >
-              <p className="mt-5 max-w-xl text-sm leading-7 text-[#c9d6e8]/80 md:text-base">
+              <p
+                className="mt-4 max-w-lg text-[13px] leading-[1.7] text-[#d6cdb4]"
+                style={{textShadow: "0 2px 6px rgba(0,0,0,0.8)"}}
+              >
                 먼저 건물을 클릭해 프로젝트 내부로 들어가거나, NPC에게
                 프로젝트와 기술에 대해 질문해보세요. 오늘의 관리자 기록은 마을
                 조명과 NPC 상태에 반영됩니다.
               </p>
 
-              <div className="mt-7 grid max-w-3xl gap-3 md:grid-cols-3">
-                {[
-                  ["1", "건물 클릭", "클릭하면 바로 프로젝트 전시실로 입장"],
-                  ["2", "NPC 질문", "프로젝트, 기술, 연락처를 대화로 확인"],
-                  ["3", "Admin 기록", "오늘 활동을 마을 상태로 반영"]
-                ].map(([index, title, body]) => (
-                  <TiltCard key={index}>
-                    <span className="text-xs font-black tracking-[0.12em] text-[#e2c078]">
-                      STEP {index}
-                    </span>
-                    <p className="mt-2 text-sm font-black text-[#f3e6c8]">
-                      {title}
-                    </p>
-                    <p className="mt-1 text-xs leading-5 text-[#a9bdd6]/70">
-                      {body}
-                    </p>
+              <div className="mt-5 grid max-w-xl gap-2.5 sm:grid-cols-3">
+                {STEP_CARDS.map((step, index) => (
+                  <TiltCard key={step.title}>
+                    <div className="px-3 pb-3 pt-2.5">
+                      <div
+                        className="mx-auto w-fit"
+                        style={{
+                          filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.55))"
+                        }}
+                      >
+                        <div
+                          className="v-ribbon px-4 py-0.5"
+                          style={{background: step.band}}
+                        >
+                          <span className="text-[10px] font-black tracking-[0.16em] text-[#f0e6cd]">
+                            STEP {index + 1}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="v-serif mt-2 text-center text-[15px] text-[#f2dfae]">
+                        {step.title}
+                      </p>
+                      <p className="mt-1 text-center text-[11px] leading-[1.5] text-[#bdb094]">
+                        {step.body}
+                      </p>
+                      <div className="mt-2.5 flex justify-center text-[#e2c078]/80">
+                        <step.Icon className="h-8 w-8" />
+                      </div>
+                    </div>
                   </TiltCard>
                 ))}
               </div>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                {/* 메인 CTA — 마을 탐험 시작 (마그네틱) */}
+              <div className="mt-5 flex max-w-2xl flex-col gap-2.5 sm:flex-row">
+                {/* 메인 CTA — 마을로 입장 (마그네틱) */}
                 <Magnetic className="flex-1">
                   <motion.button
-                    className="group relative w-full overflow-hidden rounded-xl border border-[#ff9d38]/60 bg-[#ff9d38]/14 px-6 py-5 text-left hover:border-[#ffbe7a] hover:bg-[#ff9d38]/20"
+                    className="v-wood v-wood-inset group relative w-full px-5 py-4 text-left"
                     onClick={() => handleStart("click")}
                     onMouseEnter={() => sfx.hover()}
                     type="button"
                     whileHover={{
                       scale: 1.02,
-                      boxShadow: "0 0 32px rgba(255,157,56,0.3)"
+                      boxShadow: "0 0 34px rgba(255,157,56,0.28)"
                     }}
                     whileTap={{scale: 0.97}}
                     transition={{type: "spring", stiffness: 320, damping: 20}}
                   >
-                    <span className="flex items-center gap-2 text-base font-black text-[#ffe9d2]">
-                      🏘️ 마을 탐험 시작{" "}
-                      <span className="transition-transform group-hover:translate-x-1">
-                        →
+                    <span className="v-corner left-2 top-2" />
+                    <span className="v-corner bottom-2 right-2" />
+                    <span className="relative flex items-center gap-3">
+                      <IconMap className="h-9 w-9 shrink-0 text-[#e2c078]" />
+                      <span className="min-w-0">
+                        <span className="v-serif v-emboss block text-[17px]">
+                          마을로 입장하기{" "}
+                          <span className="inline-block transition-transform group-hover:translate-x-1">
+                            →
+                          </span>
+                        </span>
+                        <span className="mt-0.5 block text-[11px] text-[#bdb094]">
+                          프로젝트·기술·경험을 둘러봅니다.
+                        </span>
                       </span>
                     </span>
-                    <span className="mt-1 block text-xs text-[#ffd9ae]/80">
-                      건물을 클릭해 프로젝트·기술·경험을 둘러봅니다.
-                    </span>
-                    <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-[#ffbe7a]/12 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
                   </motion.button>
                 </Magnetic>
 
                 {/* 면접관용 빠른 길 — 동등하게 강조 (마그네틱) */}
                 <Magnetic className="flex-1">
                   <motion.button
-                    className="group relative w-full overflow-hidden rounded-xl border border-[#e2c078]/30 bg-[#e2c078]/[0.07] px-6 py-5 text-left hover:border-[#e2c078]/60 hover:bg-[#e2c078]/[0.12]"
+                    className="v-wood v-wood-inset group relative w-full px-5 py-4 text-left"
                     onClick={handleResume}
                     onMouseEnter={() => sfx.hover()}
-                    whileHover={{scale: 1.02}}
+                    whileHover={{
+                      scale: 1.02,
+                      boxShadow: "0 0 34px rgba(226,192,120,0.22)"
+                    }}
                     whileTap={{scale: 0.97}}
                     transition={{type: "spring", stiffness: 320, damping: 20}}
                     type="button"
                   >
-                    <span className="flex items-center gap-2 text-base font-black text-[#f3e6c8]">
-                      📄 빠른 이력서 보기{" "}
-                      <span className="transition-transform group-hover:translate-x-1">
-                        →
+                    <span className="v-corner left-2 top-2" />
+                    <span className="v-corner bottom-2 right-2" />
+                    <span className="relative flex items-center gap-3">
+                      <IconScroll className="h-9 w-9 shrink-0 text-[#e2c078]" />
+                      <span className="min-w-0">
+                        <span className="v-serif v-emboss block text-[17px]">
+                          빠른 이력서 보기{" "}
+                          <span className="inline-block transition-transform group-hover:translate-x-1">
+                            →
+                          </span>
+                        </span>
+                        <span className="mt-0.5 block text-[11px] text-[#bdb094]">
+                          시간이 없다면 — 한 페이지 요약으로.
+                        </span>
                       </span>
-                    </span>
-                    <span className="mt-1 block text-xs text-[#a9bdd6]/80">
-                      시간이 없다면 — 요약·프로젝트·스킬을 한 페이지로.
                     </span>
                   </motion.button>
                 </Magnetic>
               </div>
 
-              <p className="mt-6 text-xs text-[#a9bdd6]/60">
+              <p
+                className="mt-4 text-[11px] text-[#a99e84]"
+                style={{textShadow: "0 2px 5px rgba(0,0,0,0.8)"}}
+              >
                 마을 안에서{" "}
-                <span className="text-[#e2c078]/85">WASD 직접 이동</span> 모드로
+                <span className="text-[#e2c078]">WASD 직접 이동</span> 모드로
                 전환할 수 있어요 ·{" "}
-                <span className="sm:hidden text-[#ffd9ae]/80">
+                <span className="text-[#ffd9ae] sm:hidden">
                   모바일은 이력서 보기를 추천
                 </span>
               </p>
             </motion.div>
           </motion.div>
-        </motion.div>
 
-        <motion.div
-          animate={{height: isExiting ? 0 : "8vh"}}
-          className="w-full flex-shrink-0 overflow-hidden bg-[#020810]"
-          initial={{height: "8vh"}}
-          transition={{duration: 0.5, ease: [0.76, 0, 0.24, 1]}}
-        >
-          <div className="flex h-full items-center justify-between px-6 md:px-14">
-            <span className="text-xs font-bold tracking-[0.2em] text-[#e2c078]/40">
-              DEVELOPER&apos;S CITY
-            </span>
-            <span className="text-xs font-bold tracking-[0.2em] text-[#e2c078]/40">
-              JAEHOON JUNG
-            </span>
-          </div>
+          {/* 하단 상태바 — 마을의 규모를 실제 데이터로 보여 준다 */}
+          <motion.div
+            animate={revealed ? {opacity: 1, y: 0} : {opacity: 0, y: 10}}
+            initial={{opacity: 0, y: 10}}
+            transition={{duration: 0.6, delay: 0.15}}
+            className="pointer-events-none fixed inset-x-0 bottom-0 z-[3] flex items-center gap-5 border-t border-[#e2c078]/15 px-6 py-2.5 md:gap-8 md:px-12"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(8,15,26,0.95) 0%, rgba(8,15,26,0.8) 55%, rgba(8,15,26,0.35) 100%)"
+            }}
+          >
+            {VILLAGE_STATS.map(stat => (
+              <span key={stat.label} className="flex items-center gap-2">
+                <stat.Icon className="h-4 w-4 shrink-0 text-[#e2c078]/70" />
+                <span className="text-[10px] font-black tracking-[0.18em] text-[#a99e84]">
+                  {stat.label}
+                </span>
+                <strong className="v-serif text-sm text-[#f2dfae]">
+                  {stat.value}
+                </strong>
+              </span>
+            ))}
+          </motion.div>
         </motion.div>
       </motion.div>
     </AnimatePresence>

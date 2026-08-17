@@ -962,7 +962,7 @@ export function EncounterNotice({text}: {text: string}) {
 export function MilestoneBanner({text}: {text: string}) {
   return (
     <div className="pointer-events-none fixed left-1/2 top-1/3 z-[60] -translate-x-1/2 animate-[fadeIn_0.4s_ease] rounded-2xl border border-[#ff9ad9]/40 bg-[#0b1626]/92 px-6 py-4 text-center shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
-      <p className="v-panel-title text-[12px] !text-[#ff9ad9]">관계 사건</p>
+      <p className="v-serif text-[12px] text-[#ff9ad9]">관계 사건</p>
       <p className="mt-1.5 text-lg font-black text-[#f3e6c8]">{text}</p>
     </div>
   );
