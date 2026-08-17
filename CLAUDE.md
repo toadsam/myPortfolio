@@ -18,6 +18,7 @@ npm run typecheck    # tsc --noEmit
 npm run format        # prettier --write
 npm run check-format  # prettier -c (CI-safe check)
 npm run optimize      # scripts/optimize-glb.mjs — compress GLB models in public/models
+npm run atelier       # 의뢰 공방 직군 에이전트 (no args = list commissions)
 ```
 
 Backend:
@@ -28,6 +29,7 @@ npm run backend:dev   # scripts/backend-dev.mjs: launches uvicorn from backend/.
 cd backend
 python -m venv .venv && .venv\Scripts\activate
 pip install -r requirements-dev.txt   # adds pytest on top of requirements.txt
+pip install -r requirements-agent.txt # 의뢰 공방 3단계 에이전트를 돌릴 때만 (claude-agent-sdk)
 copy .env.example .env
 uvicorn app.main:app --reload --port 8000   # http://localhost:8000
 pytest                                 # backend/tests/ — pure-logic unit tests (village_service, relations, relationship_service), in-memory SQLite, no .env needed
@@ -39,6 +41,7 @@ There is no lint script and no JS/TS test runner in this repo currently — don'
 
 - Root (`.env.local`): `NEXT_PUBLIC_API_BASE_URL` (defaults to `http://localhost:8000` in `src/lib/liveApi.ts` if unset).
 - `backend/.env`: `DATABASE_URL` (defaults to local SQLite), `FRONTEND_ORIGIN`, `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_NPC_MODEL`, `GITHUB_TOKEN`, `GITHUB_USERNAME`, `LOCAL_TIMEZONE`. No `OPENAI_API_KEY` → NPCs use rule-based fallback replies, never fail. No `GITHUB_TOKEN` → GitHub sync is skipped gracefully.
+- Commission atelier: `DISCORD_WEBHOOK_URL` (unset → intake notification silently skipped), `AGENT_WORKER_ENABLED` (**default false** — gates the in-process agent run route), `AGENT_MAX_TURNS`, `AGENT_TIMEOUT_SECONDS`, `AGENT_MODEL`, `ANTHROPIC_API_KEY` (unset → the SDK uses the Claude Code CLI's own login).
 
 ## Architecture
 
@@ -88,6 +91,25 @@ Three things make this unlike every other district:
 Two naming traps, both already guarded and locked by `tests/test_relations.py` — keep the atelier branch
 **first** in both `relations.canon()` and `chat_service._npc_profile_for_dynamic_id()`, since the existing
 `"backend"`/`"frontend"` substring checks would otherwise swallow `atelier-backend` into `developer`.
+
+#### Stage 3 — the four NPCs actually produce files (`backend/app/agents/`)
+
+Claude Agent SDK writes markdown + a single self-contained HTML mockup into
+`workspace/commissions/<public_id>/`. Two invariants hold the whole thing up, both locked by
+`tests/test_commission_gates.py`:
+
+- **Progress authority is not the model's.** An agent run can only move a task to `review`; the sole
+  function that advances anything is `gate.apply_gate()`, called only from `POST /admin/commissions/{id}/gate`.
+  `gate.py` is pure (no `Session`) so the rules are testable in isolation — `commission_service` only persists
+  its decisions. The team's `CommissionTask` rows don't exist until gate 2 passes.
+- **`can_use_tool` is the only real sandbox, and it dies silently.** `permission_mode="default"` +
+  `allowed_tools=()` + `setting_sources=[]` is **one set** — `acceptEdits`, or any tool name in
+  `allowed_tools`, skips the callback entirely with no error. Reads are path-gated too (an absolute-path
+  `Read` would otherwise leak this repo into the deliverables).
+
+`requirements-agent.txt` is deliberately separate: the SDK pulls `mcp` → `starlette 1.x`, which breaks
+`fastapi 0.115.6`, so it re-pins starlette. `AGENT_WORKER_ENABLED` defaults to false — the in-process
+`/run` route is for local use, and a deployed server should run agents via `npm run atelier` instead.
 
 ### Texture/VRAM budget — measure before trading anything away
 

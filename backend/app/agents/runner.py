@@ -41,27 +41,39 @@ class AgentUnavailable(Exception):
     """SDK 나 Claude Code CLI 가 없어서 실행할 수 없다. 라우트가 503으로 변환한다."""
 
 
-# 읽기 전용이라 자동 승인해도 되는 것들. 작업 공간 밖을 읽어도 파일을 바꾸지는 못한다.
-_AUTO_ALLOWED = ("Read", "Glob", "Grep", "TodoWrite")
+# **allowed_tools 는 비워 둔다.** 여기에 도구 이름을 넣으면 그 도구는 콜백이
+# 불리기도 전에 자동 승인된다(SDK 가 CanUseToolShadowedWarning 으로 직접 경고한다).
+# 모든 호출이 can_use_tool 로 떨어지게 두고, 판단은 아래 표가 한다.
+_ALLOWED_TOOLS: tuple[str, ...] = ()
 
 # 아예 손에 쥐여 주지 않는 것들. 셸과 네트워크는 이 작업에 필요 없다.
 _DISALLOWED = ("Bash", "BashOutput", "KillShell", "WebSearch", "WebFetch", "Task")
 
-# 경로를 검사한 뒤에만 허용하는 것들 → {도구: 경로가 담긴 입력 키}
+# 경로가 작업 공간 안일 때만 허용하는 것들 → {도구: 경로가 담긴 입력 키}
+#
+# 읽기(Read/Glob/Grep)까지 가두는 이유: cwd 를 옮겨도 절대경로로 리포 어디든
+# 읽을 수 있고, 읽은 내용은 산출물이나 요약을 타고 밖으로 나갈 수 있다.
+# 에이전트에게 필요한 맥락은 전부 프롬프트에 들어 있으므로 못 읽어서 곤란할 일이 없다.
 _PATH_GUARDED = {
+    "Read": "file_path",
     "Write": "file_path",
     "Edit": "file_path",
     "MultiEdit": "file_path",
     "NotebookEdit": "notebook_path",
+    "Glob": "path",
+    "Grep": "path",
 }
+
+# 파일을 만지지 않는 도구 — 경로가 없으니 그냥 허용한다.
+_PATHLESS_OK = ("TodoWrite",)
 
 
 def _build_guard(root: Path):
-    """작업 공간 밖으로 나가는 쓰기를 막는 콜백."""
+    """작업 공간 밖으로 나가는 파일 접근을 막는 콜백. **이것이 진짜 방어선이다.**"""
     from claude_agent_sdk import PermissionResultAllow, PermissionResultDeny
 
     async def guard(tool_name: str, input_data: dict[str, Any], context: Any):
-        if tool_name in _AUTO_ALLOWED:
+        if tool_name in _PATHLESS_OK:
             return PermissionResultAllow(updated_input=input_data)
 
         key = _PATH_GUARDED.get(tool_name)
@@ -69,17 +81,22 @@ def _build_guard(root: Path):
             # 모르는 도구는 거절한다. 화이트리스트 방식이라야 SDK 에 도구가
             # 새로 생겨도 구멍이 열리지 않는다.
             return PermissionResultDeny(
-                message=f"이 작업에서는 {tool_name} 도구를 쓸 수 없습니다.",
+                message=f"이 작업에서는 {tool_name} 도구를 쓸 수 없습니다."
             )
 
-        target = input_data.get(key, "")
-        if not target or ws.resolve_inside(root, target) is None:
+        target = input_data.get(key) or ""
+        if not target:
+            # 경로를 안 준 건 cwd(=작업 공간) 기준이라는 뜻이다. Glob/Grep 이 그렇다.
+            return PermissionResultAllow(updated_input=input_data)
+
+        if ws.resolve_inside(root, target) is None:
+            # interrupt 는 쓰지 않는다 — 턴을 끊으면 에이전트가 안으로 다시
+            # 시도할 기회 없이 통째로 멈춘다. 거절 사유만 돌려주고 계속 시킨다.
             return PermissionResultDeny(
                 message=(
-                    f"'{target}' 은 이 의뢰의 작업 공간 밖입니다. "
-                    f"파일은 반드시 작업 공간 안에만 만들어 주세요."
-                ),
-                interrupt=True,  # 밖을 노렸으면 그 턴을 끊는다
+                    f"'{target}' 은 이 의뢰의 작업 공간 밖이라 거부했습니다. "
+                    f"파일은 반드시 작업 공간 안의 상대경로로만 다뤄 주세요."
+                )
             )
 
         return PermissionResultAllow(updated_input=input_data)
@@ -126,9 +143,9 @@ async def _drive(system_prompt: str, prompt: str, root: Path) -> tuple[str, floa
         from claude_agent_sdk import (
             AssistantMessage,
             ClaudeAgentOptions,
+            ClaudeSDKClient,
             ResultMessage,
             TextBlock,
-            query,
         )
     except ImportError as error:
         raise AgentUnavailable(
@@ -144,7 +161,7 @@ async def _drive(system_prompt: str, prompt: str, root: Path) -> tuple[str, floa
         "cwd": str(root),
         # ↓ 이 네 줄이 세트다. 하나만 바꾸면 경로 검사가 무력화된다(파일 상단 주석 참고).
         "permission_mode": "default",
-        "allowed_tools": list(_AUTO_ALLOWED),
+        "allowed_tools": list(_ALLOWED_TOOLS),
         "disallowed_tools": list(_DISALLOWED),
         "can_use_tool": _build_guard(root),
         "setting_sources": [],
@@ -155,16 +172,26 @@ async def _drive(system_prompt: str, prompt: str, root: Path) -> tuple[str, floa
 
     options = ClaudeAgentOptions(**options_kwargs)
 
+    # query() 가 아니라 ClaudeSDKClient 를 쓰는 이유 — 여기서 한 번 걸렸다.
+    #
+    # can_use_tool 은 문자열 프롬프트를 거부하고(“requires streaming mode”),
+    # 스트리밍으로 바꿔도 **입력 채널이 살아 있어야 한다**. 권한 승인 응답이
+    # 그 채널로 되돌아가기 때문이다. 한 번 yield 하고 끝나는 제너레이터를 주면
+    # SDK 가 stdin 을 닫아버려서, 첫 Write 부터 `AbortError: Stream closed` 로
+    # 전부 실패한다(에이전트는 "파일 쓰기가 안 된다"고 보고하고 빈손으로 끝난다).
+    # ClaudeSDKClient 는 컨텍스트가 끝날 때까지 채널을 열어 둔다.
     texts: list[str] = []
     cost = 0.0
     try:
-        async for message in query(prompt=prompt, options=options):
-            if isinstance(message, AssistantMessage):
-                for block in message.content:
-                    if isinstance(block, TextBlock) and block.text.strip():
-                        texts.append(block.text.strip())
-            elif isinstance(message, ResultMessage):
-                cost = float(getattr(message, "total_cost_usd", 0.0) or 0.0)
+        async with ClaudeSDKClient(options=options) as client:
+            await client.query(prompt)
+            async for message in client.receive_response():
+                if isinstance(message, AssistantMessage):
+                    for block in message.content:
+                        if isinstance(block, TextBlock) and block.text.strip():
+                            texts.append(block.text.strip())
+                elif isinstance(message, ResultMessage):
+                    cost = float(getattr(message, "total_cost_usd", 0.0) or 0.0)
     except FileNotFoundError as error:
         # SDK 가 claude CLI 를 못 찾은 경우가 대부분이다
         raise AgentUnavailable(

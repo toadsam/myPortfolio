@@ -11,3 +11,6 @@ backend
 .ua
 public
 .tmp_startup_project.js
+
+# 의뢰 공방 에이전트가 만든 산출물. 남의 일감이고 포맷을 강제할 대상이 아니다.
+workspace

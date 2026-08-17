@@ -2,6 +2,7 @@
 
 import {useEffect, useMemo, useState} from "react";
 import type * as React from "react";
+import CommissionWorkboard from "@/components/admin/CommissionWorkboard";
 import {projects} from "@/data/projects";
 import {skills} from "@/data/skills";
 import {
@@ -1012,104 +1013,125 @@ function CommissionAdmin() {
 
                 {isOpen ? (
                   detail && detail.id === item.id ? (
-                    <div className="mt-3 grid gap-4 border-t border-[#e3e8ef] pt-3 lg:grid-cols-2">
-                      <div className="grid gap-3">
-                        <DetailRow label="연락처">
-                          {[
-                            detail.contact_name,
-                            detail.contact_email,
-                            detail.contact_phone,
-                            detail.org
-                          ]
-                            .filter(Boolean)
-                            .join(" · ")}
-                        </DetailRow>
-                        <DetailRow label="요청 내용">
-                          {detail.summary || "-"}
-                        </DetailRow>
-                        <DetailRow label="요구사항">
-                          <RequirementDump value={detail.requirements} />
-                        </DetailRow>
-                        <DetailRow label="일정 / 예산">
-                          {`${detail.deadline_hint || "-"} / ${
-                            detail.budget_hint || "-"
-                          }`}
-                        </DetailRow>
-                        <DetailRow label="견적 근거">
-                          {detail.estimate_reason || "-"}
-                        </DetailRow>
+                    <div className="mt-3 border-t border-[#e3e8ef] pt-3">
+                      <div className="grid gap-4 lg:grid-cols-2">
+                        <div className="grid gap-3">
+                          <DetailRow label="연락처">
+                            {[
+                              detail.contact_name,
+                              detail.contact_email,
+                              detail.contact_phone,
+                              detail.org
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </DetailRow>
+                          <DetailRow label="요청 내용">
+                            {detail.summary || "-"}
+                          </DetailRow>
+                          <DetailRow label="요구사항">
+                            <RequirementDump value={detail.requirements} />
+                          </DetailRow>
+                          <DetailRow label="일정 / 예산">
+                            {`${detail.deadline_hint || "-"} / ${
+                              detail.budget_hint || "-"
+                            }`}
+                          </DetailRow>
+                          <DetailRow label="견적 근거">
+                            {detail.estimate_reason || "-"}
+                          </DetailRow>
 
-                        <div className="grid gap-2 rounded-lg border border-[#e3e8ef] bg-white p-3">
-                          <LabeledField label="진행 상태">
-                            <select
-                              className="field"
-                              value={detail.status}
+                          <div className="grid gap-2 rounded-lg border border-[#e3e8ef] bg-white p-3">
+                            <LabeledField label="진행 상태">
+                              <select
+                                className="field"
+                                value={detail.status}
+                                disabled={busy}
+                                onChange={e =>
+                                  void changeStatus(
+                                    item,
+                                    e.target.value as CommissionStatus,
+                                    note
+                                  )
+                                }
+                              >
+                                {COMMISSION_STATUS_OPTIONS.map(option => (
+                                  <option
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </option>
+                                ))}
+                              </select>
+                            </LabeledField>
+                            <LabeledField label="관리자 메모">
+                              <textarea
+                                className="field min-h-[80px]"
+                                value={note}
+                                onChange={e => setNote(e.target.value)}
+                                placeholder="연락 예정일, 판단, 거절 사유 등"
+                              />
+                            </LabeledField>
+                            <button
+                              className="rounded-lg bg-[#f59e0b] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#1f1300] transition hover:bg-[#fbbf24] disabled:opacity-45"
                               disabled={busy}
-                              onChange={e =>
-                                void changeStatus(
-                                  item,
-                                  e.target.value as CommissionStatus,
-                                  note
-                                )
+                              onClick={() =>
+                                void changeStatus(item, detail.status, note)
                               }
+                              type="button"
                             >
-                              {COMMISSION_STATUS_OPTIONS.map(option => (
-                                <option key={option.value} value={option.value}>
-                                  {option.label}
-                                </option>
-                              ))}
-                            </select>
-                          </LabeledField>
-                          <LabeledField label="관리자 메모">
-                            <textarea
-                              className="field min-h-[80px]"
-                              value={note}
-                              onChange={e => setNote(e.target.value)}
-                              placeholder="연락 예정일, 판단, 거절 사유 등"
-                            />
-                          </LabeledField>
-                          <button
-                            className="rounded-lg bg-[#f59e0b] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#1f1300] transition hover:bg-[#fbbf24] disabled:opacity-45"
-                            disabled={busy}
-                            onClick={() =>
-                              void changeStatus(item, detail.status, note)
-                            }
-                            type="button"
-                          >
-                            메모 저장
-                          </button>
+                              메모 저장
+                            </button>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div>
+                            <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#b45309]/70">
+                              상담 대화 기록
+                            </p>
+                            {detail.messages.length === 0 ? (
+                              <p className="text-sm text-[#94a3b8]">
+                                상담 없이 바로 접수된 건입니다.
+                              </p>
+                            ) : (
+                              <div className="grid max-h-[420px] gap-1.5 overflow-y-auto rounded-lg border border-[#e3e8ef] bg-white p-3">
+                                {detail.messages.map(message => (
+                                  <p
+                                    key={message.id}
+                                    className={
+                                      message.role === "visitor"
+                                        ? "rounded-md bg-[#fffbeb] px-2.5 py-1.5 text-xs leading-5 text-[#78350f]"
+                                        : "rounded-md bg-[#f1f4f9] px-2.5 py-1.5 text-xs leading-5 text-[#475569]"
+                                    }
+                                  >
+                                    <span className="mr-1.5 font-mono text-[10px] font-black opacity-60">
+                                      {message.role === "visitor"
+                                        ? "방문자"
+                                        : "도안"}
+                                    </span>
+                                    {message.content}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
 
-                      <div>
+                      {/* 3단계 — 게이트와 직군별 작업.
+                          2단 그리드 밖에 두어 **전체 폭**을 쓴다: HTML 시안을
+                          좁은 칸에서 보면 태블릿 브레이크포인트만 보여 검수가 안 된다. */}
+                      <div className="mt-4 border-t border-[#e3e8ef] pt-4">
                         <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#b45309]/70">
-                          상담 대화 기록
+                          작업 지시 · 검수
                         </p>
-                        {detail.messages.length === 0 ? (
-                          <p className="text-sm text-[#94a3b8]">
-                            상담 없이 바로 접수된 건입니다.
-                          </p>
-                        ) : (
-                          <div className="grid max-h-[420px] gap-1.5 overflow-y-auto rounded-lg border border-[#e3e8ef] bg-white p-3">
-                            {detail.messages.map(message => (
-                              <p
-                                key={message.id}
-                                className={
-                                  message.role === "visitor"
-                                    ? "rounded-md bg-[#fffbeb] px-2.5 py-1.5 text-xs leading-5 text-[#78350f]"
-                                    : "rounded-md bg-[#f1f4f9] px-2.5 py-1.5 text-xs leading-5 text-[#475569]"
-                                }
-                              >
-                                <span className="mr-1.5 font-mono text-[10px] font-black opacity-60">
-                                  {message.role === "visitor"
-                                    ? "방문자"
-                                    : "도안"}
-                                </span>
-                                {message.content}
-                              </p>
-                            ))}
-                          </div>
-                        )}
+                        <CommissionWorkboard
+                          commissionId={detail.id}
+                          publicId={detail.public_id}
+                          onStatusChange={() => void load()}
+                        />
                       </div>
                     </div>
                   ) : (
@@ -1130,8 +1152,11 @@ function CommissionAdmin() {
 const COMMISSION_STATUS_OPTIONS: {value: CommissionStatus; label: string}[] = [
   {value: "received", label: "접수됨"},
   {value: "reviewing", label: "검토중"},
-  {value: "briefed", label: "작업 지시함"},
+  {value: "briefing", label: "기획 작업중"},
+  {value: "brief_review", label: "브리프 검수 대기"},
+  {value: "briefed", label: "브리프 확정"},
   {value: "in_progress", label: "제작중"},
+  {value: "artifact_review", label: "산출물 검수 대기"},
   {value: "delivered", label: "전달 완료"},
   {value: "rejected", label: "반려"}
 ];
@@ -1139,8 +1164,12 @@ const COMMISSION_STATUS_OPTIONS: {value: CommissionStatus; label: string}[] = [
 const COMMISSION_STATUS_STYLE: Record<CommissionStatus, string> = {
   received: "border-[#f59e0b]/40 bg-[#fffbeb] text-[#b45309]",
   reviewing: "border-[#0284c7]/30 bg-[#f0f9ff] text-[#0369a1]",
+  briefing: "border-[#a78bfa]/40 bg-[#f5f3ff] text-[#6d28d9]",
+  // 검수 대기는 "내가 움직여야 하는 상태"라 눈에 띄게 — 여기서 멈춰 있다는 신호다
+  brief_review: "border-[#f59e0b]/50 bg-[#fef3c7] text-[#92400e]",
   briefed: "border-[#a78bfa]/40 bg-[#f5f3ff] text-[#6d28d9]",
   in_progress: "border-[#a78bfa]/40 bg-[#f5f3ff] text-[#6d28d9]",
+  artifact_review: "border-[#f59e0b]/50 bg-[#fef3c7] text-[#92400e]",
   delivered: "border-[#10b981]/35 bg-[#ecfdf5] text-[#047857]",
   rejected: "border-[#e3e8ef] bg-[#f1f4f9] text-[#94a3b8]"
 };

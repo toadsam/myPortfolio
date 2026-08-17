@@ -2,10 +2,12 @@ import type {
   ActivityInput,
   AdminOverview,
   AnalyticsSummary,
+  ArtifactContent,
   CodingTestInput,
   CodingTestLog,
   Commission,
   CommissionAck,
+  CommissionBoard,
   CommissionConsultResponse,
   CommissionDetail,
   CommissionDraft,
@@ -14,6 +16,7 @@ import type {
   CsNote,
   CsNoteInput,
   DailyActivity,
+  GateInput,
   GithubSyncResponse,
   ManagedProject,
   ManagedProjectInput,
@@ -397,6 +400,66 @@ export function deleteCommission(commissionId: number): Promise<{ok: boolean}> {
   return requestJson<{ok: boolean}>(`/admin/commissions/${commissionId}`, {
     method: "DELETE"
   });
+}
+
+/* ── 3단계: 직군별 에이전트 작업 ─────────────────────────────────── */
+
+export function fetchCommissionBoard(
+  commissionId: number
+): Promise<CommissionBoard> {
+  return requestJson<CommissionBoard>(
+    `/admin/commissions/${commissionId}/tasks`,
+    {cache: "no-store"}
+  );
+}
+
+/**
+ * 게이트 통과 — 작업이 앞으로 나아가는 유일한 입구.
+ * 백엔드가 상태를 검사하므로 순서를 건너뛰면 409가 돌아온다.
+ */
+export function postCommissionGate(
+  commissionId: number,
+  payload: GateInput
+): Promise<CommissionBoard> {
+  return requestJson<CommissionBoard>(
+    `/admin/commissions/${commissionId}/gate`,
+    {method: "POST", body: JSON.stringify(payload)}
+  );
+}
+
+export function runCommissionTask(
+  commissionId: number,
+  taskId: number
+): Promise<CommissionBoard> {
+  return requestJson<CommissionBoard>(
+    `/admin/commissions/${commissionId}/tasks/${taskId}/run`,
+    {method: "POST"}
+  );
+}
+
+export function rejectCommissionTask(
+  commissionId: number,
+  taskId: number,
+  feedback: string
+): Promise<CommissionBoard> {
+  return requestJson<CommissionBoard>(
+    `/admin/commissions/${commissionId}/tasks/${taskId}/reject`,
+    {method: "POST", body: JSON.stringify({feedback})}
+  );
+}
+
+/**
+ * 산출물 본문. HTML 시안도 **텍스트로** 받는다 —
+ * 렌더는 srcdoc + sandbox="" iframe 이 맡는다(관리자 오리진에서 스크립트를 돌리지 않으려고).
+ */
+export function fetchCommissionArtifact(
+  commissionId: number,
+  artifactId: number
+): Promise<ArtifactContent> {
+  return requestJson<ArtifactContent>(
+    `/admin/commissions/${commissionId}/artifacts/${artifactId}`,
+    {cache: "no-store"}
+  );
 }
 
 export function getVisitorSessionId(): string {

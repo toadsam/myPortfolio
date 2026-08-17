@@ -261,10 +261,82 @@ def test_runner_permission_mode_keeps_the_guard_alive():
     assert '"permission_mode": "default"' in source
     assert '"setting_sources": []' in source
 
-    # 쓰기 도구가 자동 승인 목록에 있으면 역시 콜백을 건너뛴다
-    for tool in ("Write", "Edit", "MultiEdit", "NotebookEdit"):
-        assert tool not in runner._AUTO_ALLOWED
+    # allowed_tools 에 이름이 하나라도 들어가면 그 도구는 콜백 없이 자동 승인된다
+    # (SDK 가 CanUseToolShadowedWarning 으로 경고한다). 비어 있어야 한다.
+    assert runner._ALLOWED_TOOLS == ()
+
+    # 파일을 만지는 도구는 전부 경로 검사를 거쳐야 한다 — 읽기도 포함.
+    # 절대경로 Read 로 리포를 읽어 산출물에 흘리는 길을 막는다.
+    for tool in ("Read", "Write", "Edit", "MultiEdit", "NotebookEdit", "Glob", "Grep"):
+        assert tool in runner._PATH_GUARDED
 
     # 셸과 네트워크는 애초에 쥐여 주지 않는다
     for tool in ("Bash", "WebFetch", "WebSearch"):
         assert tool in runner._DISALLOWED
+
+    # 입력 채널이 닫히면 권한 승인 응답이 못 돌아와 모든 쓰기가 실패한다.
+    # ClaudeSDKClient 로 채널을 열어 두는 것이 그 대응이다(runner 주석 참고).
+    assert "ClaudeSDKClient(options=options)" in source
+
+
+# ─────────────────── 권한 콜백이 실제로 막는가 ───────────────────
+#
+# 위 테스트들은 "설정이 무력화되지 않았나"를 보고, 아래는 콜백을 직접 불러
+# **판정 결과**를 확인한다. SDK 가 없는 환경(웹 서버만 있는 배포본)에서는 건너뛴다.
+
+
+def _guard_for(tmp_path):
+    pytest.importorskip("claude_agent_sdk")
+    from app.agents import runner
+
+    root = tmp_path / "WO-TEST"
+    root.mkdir()
+    return runner._build_guard(root), root
+
+
+@pytest.mark.parametrize(
+    "tool,key",
+    [
+        ("Write", "file_path"),
+        ("Edit", "file_path"),
+        ("Read", "file_path"),
+        ("Glob", "path"),
+    ],
+)
+def test_guard_denies_paths_outside_workspace(tmp_path, tool, key):
+    import asyncio
+
+    guard, _ = _guard_for(tmp_path)
+    outside = str(tmp_path / "바깥" / "package.json")
+    result = asyncio.run(guard(tool, {key: outside}, None))
+    assert result.behavior == "deny"
+
+
+def test_guard_allows_paths_inside_workspace(tmp_path):
+    import asyncio
+
+    guard, _ = _guard_for(tmp_path)
+    result = asyncio.run(guard("Write", {"file_path": "01-기획/정리서.md"}, None))
+    assert result.behavior == "allow"
+
+
+def test_guard_denies_unknown_tools(tmp_path):
+    """화이트리스트 방식 — SDK 에 도구가 새로 생겨도 구멍이 열리지 않는다."""
+    import asyncio
+
+    guard, _ = _guard_for(tmp_path)
+    for tool in ("Bash", "WebFetch", "SomeFutureTool"):
+        result = asyncio.run(guard(tool, {"command": "ls"}, None))
+        assert result.behavior == "deny", tool
+
+
+def test_guard_does_not_interrupt(tmp_path):
+    """거절해도 턴을 끊지 않는다 — 끊으면 안쪽으로 다시 시도할 기회 없이 통째로 멈춘다."""
+    import asyncio
+
+    guard, _ = _guard_for(tmp_path)
+    result = asyncio.run(
+        guard("Write", {"file_path": str(tmp_path / "밖.md")}, None)
+    )
+    assert result.behavior == "deny"
+    assert getattr(result, "interrupt", False) is False

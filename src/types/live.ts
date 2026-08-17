@@ -425,11 +425,16 @@ export interface CommissionAck {
   message: string;
 }
 
+// backend/app/schemas.py 의 CommissionStatus 와 같은 목록이어야 한다.
+// 전이 규칙의 출처는 backend/app/agents/gate.py 하나뿐이다.
 export type CommissionStatus =
   | "received"
-  | "reviewing"
+  | "reviewing" // ← 게이트1
+  | "briefing"
+  | "brief_review" // ← 게이트2
   | "briefed"
   | "in_progress"
+  | "artifact_review" // ← 게이트3
   | "delivered"
   | "rejected";
 
@@ -472,4 +477,65 @@ export interface CommissionDetail extends Commission {
 export interface CommissionStatusInput {
   status: CommissionStatus;
   admin_note: string;
+}
+
+/* ── 3단계: 직군별 에이전트 작업 ─────────────────────────────────── */
+
+export type CommissionRole = "planner" | "designer" | "frontend" | "backend";
+
+export type CommissionTaskStatus =
+  | "ready" // 실행 대기 (승인된 상태)
+  | "running"
+  | "review" // 실행 끝. 검수 대기 — 여기서 멈춘다
+  | "approved"
+  | "rejected"
+  | "failed";
+
+export interface CommissionArtifact {
+  id: number;
+  task_id: number;
+  rel_path: string;
+  kind: "markdown" | "html" | "text" | "other";
+  size_bytes: number;
+  updated_at: string;
+}
+
+export interface CommissionTask {
+  id: number;
+  role: CommissionRole;
+  status: CommissionTaskStatus;
+  round: number;
+  brief: string;
+  feedback: string;
+  log: string;
+  error: string;
+  cost_usd: number;
+  duration_ms: number;
+  started_at: string | null;
+  finished_at: string | null;
+  artifacts: CommissionArtifact[];
+}
+
+export interface CommissionBoard {
+  commission_id: number;
+  public_id: string;
+  status: CommissionStatus;
+  /** 지금 열려 있는 게이트. null이면 통과시킬 게이트가 없다. */
+  open_gate: 1 | 2 | 3 | null;
+  /** 백엔드에서 에이전트 실행이 켜져 있는지(꺼져 있으면 CLI로 돌려야 한다). */
+  worker_enabled: boolean;
+  tasks: CommissionTask[];
+}
+
+export interface GateInput {
+  gate: 1 | 2 | 3;
+  decision: "approve" | "reject";
+  feedback?: string;
+}
+
+export interface ArtifactContent {
+  id: number;
+  rel_path: string;
+  kind: string;
+  content: string;
 }

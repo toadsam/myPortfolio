@@ -1,8 +1,12 @@
 """터미널에서 직군 에이전트를 돌린다.
 
-    python -m app.agents.cli WO-3F2A9C71              대기 중인 작업 전부
-    python -m app.agents.cli WO-3F2A9C71 --role planner  한 직군만
-    python -m app.agents.cli --list                   접수 목록과 상태
+    npm run atelier                              접수 목록과 상태
+    npm run atelier -- WO-3F2A9C71               대기 중인 작업 전부
+    npm run atelier -- WO-3F2A9C71 planner       한 직군만
+
+직군을 위치 인자로도 받는 이유: `npm run atelier -- ... --role planner` 는
+npm 이 `--role` 을 자기 설정으로 가로채 파이썬까지 오지 않는다.
+(python -m 으로 직접 부를 때는 --role 도 그대로 쓸 수 있다)
 
 관리자 페이지 버튼과 **같은 `runner.run_task()` 를 부른다.** 게이트도 똑같이 걸린다 —
 터미널이라고 승인을 건너뛸 수 있는 뒷문은 없다.
@@ -99,6 +103,12 @@ async def _run(public_id: str, role: str | None) -> int:
 def main() -> int:
     parser = argparse.ArgumentParser(description="의뢰 공방 직군 에이전트 실행")
     parser.add_argument("public_id", nargs="?", help="접수번호 (예: WO-3F2A9C71)")
+    parser.add_argument(
+        "role_positional",
+        nargs="?",
+        choices=list(gate.ALL_ROLES),
+        help="이 직군만 실행 (npm 경로에서는 --role 이 npm 에 먹히므로 이쪽을 쓴다)",
+    )
     parser.add_argument("--role", choices=list(gate.ALL_ROLES), help="이 직군만 실행")
     parser.add_argument("--list", action="store_true", help="접수 목록 보기")
     args = parser.parse_args()
@@ -113,7 +123,7 @@ def main() -> int:
             db.close()
         return 0
 
-    return asyncio.run(_run(args.public_id, args.role))
+    return asyncio.run(_run(args.public_id, args.role or args.role_positional))
 
 
 if __name__ == "__main__":

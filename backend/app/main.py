@@ -79,7 +79,7 @@ from app.services.admin_service import (
     update_village_override,
 )
 from app.services.activity_service import get_or_create_today, list_activity_history, upsert_activity
-from app.services.chat_service import answer_npc_message
+from app.services.chat_service import answer_npc_message, atelier_role_for
 from app.services.commission_service import (
     CommissionRejected,
     apply_gate_decision,
@@ -98,6 +98,7 @@ from app.services.commission_service import (
     save_message as save_commission_message,
     tasks_for as commission_tasks_for,
     update_status as update_commission_status,
+    worklog_lines as commission_worklog,
 )
 from app.services.github_service import fetch_today_commit_count
 from app.services.learning_service import (
@@ -213,6 +214,10 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
             ),
         )
 
+    # 공방 팀원이면 자기 직군의 작업 현황을 들려 보낸다 (접수번호·상태까지만)
+    atelier_role = atelier_role_for(payload.npc_id)
+    atelier_work = commission_worklog(db, atelier_role) if atelier_role else None
+
     reply, used_ai, suggested_action = await answer_npc_message(
         payload.npc_id,
         payload.message,
@@ -222,6 +227,7 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
         cs_notes=list_cs_notes(db, limit=coding_limit),
         activity_history=activity_history,
         village_state=village_state_ctx,
+        atelier_work=atelier_work,
     )
     log_npc_conversation(
         db,

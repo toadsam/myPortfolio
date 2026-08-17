@@ -25,10 +25,12 @@ async def answer_npc_message(
     cs_notes: list[CsNoteLog] | None = None,
     activity_history: list[DailyActivity] | None = None,
     village_state: VillageState | None = None,
+    atelier_work: list[str] | None = None,
 ) -> tuple[str, bool, NpcActionOut]:
     npc = NPCS.get(npc_id, _npc_profile_for_dynamic_id(npc_id))
     context = build_context(
-        npc_id, activity, recent_messages or [], coding_tests or [], cs_notes or [], activity_history, village_state
+        npc_id, activity, recent_messages or [], coding_tests or [], cs_notes or [], activity_history, village_state,
+        atelier_work=atelier_work,
     )
     suggested_action = choose_npc_action(npc_id, message=message, activity=activity, source="chat")
 
@@ -131,6 +133,7 @@ def build_context(
     cs_notes: list[CsNoteLog] | None = None,
     activity_history: list[DailyActivity] | None = None,
     village_state: VillageState | None = None,
+    atelier_work: list[str] | None = None,
 ) -> str:
     npc = NPCS.get(npc_id, _npc_profile_for_dynamic_id(npc_id))
     coding_tests = coding_tests or []
@@ -181,6 +184,16 @@ def build_context(
         detail = cs_note_detail_lines(cs_notes[:6])
         lines.append("CS 전공지식 노트 상세(전담 지식 베이스):")
         lines.extend(detail or ["- 아직 상세 노트 기록이 없습니다."])
+
+    # 공방 팀원에게는 자기가 맡은 의뢰의 진행 상황을 준다.
+    # 이게 있어야 "요즘 뭐 해?"에 실제로 답할 수 있다 — 3단계 전에는 할 말이 없었다.
+    if atelier_work is not None:
+        lines.append("내가 지금 맡고 있는 의뢰(직군별 작업 현황):")
+        lines.extend(atelier_work or ["- 지금 맡은 의뢰가 없습니다. 새 의뢰가 들어오길 기다리는 중."])
+        lines.append(
+            "※ 손님의 이름·연락처는 알지 못하고, 알아도 말하지 않는다. "
+            "접수번호와 진행 상태까지만 이야기한다."
+        )
 
     # 총괄 NPC에게는 마을 전체를 조망하는 종합 브리핑을 추가로 제공
     if _is_overseer(npc_id):
@@ -410,6 +423,26 @@ def _clean_response_text(text: str) -> str:
     cleaned = re.sub(r"^\s*[-*]\s+", "- ", cleaned, flags=re.MULTILINE)
     cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
     return cleaned.strip()
+
+
+def atelier_role_for(npc_id: str) -> str | None:
+    """공방 팀원 NPC 라면 그 직군('planner' 등), 아니면 None.
+
+    _atelier_profile 과 **같은 순서·같은 조각**으로 판정해야 한다. 어긋나면
+    말투는 프론트인데 작업 현황은 백엔드가 나오는 꼴이 된다.
+    접수원 도안은 직군 작업이 없으므로 None 이다.
+    """
+    if not npc_id.startswith("atelier-") and "atelier" not in npc_id:
+        return None
+    if "plan" in npc_id:
+        return "planner"
+    if "design" in npc_id:
+        return "designer"
+    if "front" in npc_id:
+        return "frontend"
+    if "back" in npc_id:
+        return "backend"
+    return None
 
 
 def _atelier_profile(npc_id: str) -> dict[str, Any]:

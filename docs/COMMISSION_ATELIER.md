@@ -9,9 +9,7 @@
 | ---- | ---------------------------------- | ------------------ |
 | 1    | 접수·상담·견적 + 관리자 접수함     | ✅ 2026-08-17 완료 |
 | 2    | 지하 3D 공방 + 팀 NPC 5명          | ✅ 2026-08-17 완료 |
-| 3    | 직군별 에이전트가 실제 산출물 제작 | ⬜ 미착수          |
-
-> **이 문서는 1·2단계의 구현 기록이다.** 3단계 설계는 맨 아래 참조.
+| 3    | 직군별 에이전트가 실제 산출물 제작 | ✅ 2026-08-17 완료 |
 
 ---
 
@@ -179,6 +177,47 @@ DELETE /admin/commissions/{id}      관리자
 → 공방 NPC는 remote 프리셋을 쓰지 않는다(단일 출처는 `atelierRoster`).
 `_default_questions_for_npc`에도 직군 분기를 넣어 관리자 페이지 기본값도 맞췄다.
 
+### 4-A. `can_use_tool` 은 조용히 무력화된다 (3단계)
+
+SDK 문서에는 "권한 판정이 물어보기까지 내려올 때만 호출된다"고만 적혀 있다. 실제로는:
+
+- `permission_mode` 가 `acceptEdits`/`bypassPermissions` → **콜백이 아예 안 불린다**
+- 그 도구가 `allowed_tools` 에 있으면 → 콜백 전에 자동 승인
+  (SDK 가 `CanUseToolShadowedWarning` 으로 경고해 준다. 이걸 실제로 봤다)
+- 설정 파일의 allow 규칙도 콜백을 가린다 → `setting_sources=[]`
+
+→ `permission_mode="default"` + `allowed_tools=()` + `setting_sources=[]` 가 **한 세트**다.
+편하자고 하나만 바꾸면 경로 검사가 **에러 하나 없이** 죽는다.
+`test_runner_permission_mode_keeps_the_guard_alive` 가 이 상수들을 잠근다.
+
+### 4-B. 스트리밍 입력 채널을 닫으면 모든 쓰기가 실패한다 (3단계)
+
+`can_use_tool` 은 문자열 프롬프트를 거부한다(`requires streaming mode`).
+그래서 `AsyncIterable` 로 바꿨는데, **한 번 yield 하고 끝나는 제너레이터**를 주니
+SDK 가 stdin 을 닫아버렸다. 권한 승인 **응답이 그 채널로 되돌아가기** 때문에,
+첫 `Write` 부터 `AbortError: Stream closed` 로 전부 실패했다.
+
+증상이 고약하다 — 에이전트는 236초 동안 열심히 일하고 "이 세션에서 파일 쓰기가
+안 되는 시스템 오류가 있습니다"라고 **성실하게 보고하며 빈손으로** 끝난다($0.72 날렸다).
+→ `ClaudeSDKClient` 로 바꿨다. 컨텍스트가 끝날 때까지 채널을 열어 둔다.
+
+### 4-C. `pip install claude-agent-sdk` 가 웹 서버를 깬다 (3단계)
+
+`claude-agent-sdk` → `mcp` → `starlette 1.x` 로 올라가고, `fastapi 0.115.6` 은
+`starlette<0.42` 를 요구한다. 같은 venv 에 넣으면 **서버가 죽는다.**
+→ `requirements-agent.txt` 에서 starlette 를 다시 고정했다. SDK 는 mcp 의 서버 쪽
+코드를 쓰지 않으므로 0.41 로 되돌려도 정상 동작한다(import·query 모두 확인).
+
+### 4-D. CLI 의 작업 폴더는 리포 루트여야 한다 (3단계)
+
+`DATABASE_URL` 기본값이 `sqlite:///./portfolio_village.db` — **cwd 기준 상대경로**다.
+`backend-dev.mjs` 는 루트에서 uvicorn 을 띄우므로(`--app-dir backend`) DB 는 루트에 있다.
+워커만 `cwd: backend` 로 띄웠더니 다른 DB 파일을 보고 "접수번호를 찾을 수 없습니다"가 났다.
+→ `cwd: root` + `PYTHONPATH=backend`.
+
+덤으로: `npm run atelier -- WO-XXX --role planner` 에서 **npm 이 `--role` 을 가로챈다.**
+그래서 직군을 위치 인자로도 받는다(`npm run atelier -- WO-XXX planner`).
+
 ### 4-6. 마을의 실광원 예산은 4개다
 
 `VillageScene.tsx`의 `LampPools` 주석에 명시돼 있다 — *"진짜 pointLight는 4개뿐"*이라
@@ -192,8 +231,11 @@ DELETE /admin/commissions/{id}      관리자
 ## 5. 실행과 검증
 
 ```bash
-# 백엔드 단위 테스트 (80개)
+# 백엔드 단위 테스트 (140개)
 cd backend && pytest
+
+# 3단계 에이전트를 돌릴 컴퓨터에서만 추가로
+pip install -r requirements-agent.txt   # claude-agent-sdk (Claude Code CLI 필요)
 
 npm run typecheck
 npm run check-format
@@ -214,6 +256,16 @@ npm run dev           # :3000
 6. 팀원 4명이 **서로 다른 성격**으로 답하는지 (전부 도안 말투면 `chat_service` 분기 실패)
 7. 허니팟: `POST /commission` 에 `website` 값을 넣으면 400
 
+3단계:
+
+8. `/admin` 상세 → **[게이트1] 승인** → `npm run atelier -- <접수번호> planner`
+9. 기획 문서가 생기고 상태가 `brief_review` 에서 **멈추는지** (이게 설계의 핵심)
+10. 브리프를 읽고 **반려 + 피드백** → 회차가 오르고, 재실행 때 피드백이 반영되는지
+11. **[게이트2] 승인** → `npm run atelier -- <접수번호>` → 팀 3명 실행 → `artifact_review`
+12. `03-프론트/시안.html` 이 관리자 페이지 iframe 에 렌더되고 **스크립트가 차단되는지**
+13. **[게이트3] 전달 완료** → `delivered`
+14. 3D 공방에서 굴뚝에게 말 걸어 자기 작업(접수번호·상태)을 언급하는지
+
 ---
 
 ## 6. 배포 전 필수
@@ -226,23 +278,93 @@ npm run dev           # :3000
 
 ---
 
-## 7. 3단계 (미착수)
+## 7. 3단계 — 직군별 에이전트가 실제로 만든다
 
-**목표**: 관리자가 접수 건에 작업 지시를 내리면 직군별 에이전트가 **실제 산출물**을 만든다.
+관리자가 승인한 접수 건에 대해 Claude Agent SDK 에이전트가 파일을 만든다.
 
-- 런타임: **Claude Agent SDK 워커**
-- 테이블: `CommissionTask`(직군별 작업) · `CommissionArtifact`(산출물)
-- 작업 공간: `workspace/commissions/<id>/` — **포트폴리오 리포는 건드리지 않는다**
-- **"항상 상의한다"를 구조로 강제** — 게이트 3단:
+### 7-1. 설계의 중심: 진행 권한을 모델에게 주지 않는다
+
+"언제까지나 나랑 상의한다"는 프롬프트로 부탁할 일이 아니다. 언젠가는 안 지킨다.
+그래서 **에이전트가 할 수 있는 일은 태스크를 `running` → `review` 로 옮기는 것까지**다.
+`review` 에서 나가는 문은 `gate.apply_gate()` 하나뿐이고, 그 함수가 자동으로
+불리는 경로는 코드 어디에도 없다.
 
 ```
-접수 도착
-  └ [게이트 1] 관리자 검토 → 승인/반려
-      └ 기획 에이전트 → 요구사항 정리서
-          └ [게이트 2] 브리프 검수 → 승인해야 진행
-              └ 디자인 / 프론트 / 백엔드 병렬 실행
-                  └ [게이트 3] 산출물 검수 → 반려 시 피드백과 함께 재실행
-                      └ 관리자가 최종 전달
+received ─[게이트1]─▶ briefing ─▶ brief_review ─[게이트2]─▶ briefed
+   │                  (체리)          │                        │
+   └──▶ rejected                      └──반려(round+1)──┘      ▼
+                                                         in_progress
+                                                  (먹지·리코·굴뚝 병렬)
+                                delivered ◀─[게이트3]─ artifact_review
+                                                        └──반려(round+1)──┘
 ```
 
-자동으로 최종 전달까지 가지 않는다. 각 게이트에서 반드시 멈춘다.
+승인 규칙을 **행의 존재**로도 표현했다. 팀 3직군의 `CommissionTask` 는 게이트2를
+통과할 때 비로소 만들어진다 — 승인 전에는 돌릴 작업 자체가 없다.
+
+`tests/test_commission_gates.py` 가 이걸 잠근다. 특히
+`test_no_run_outcome_ever_delivers` 는 팀 3직군의 모든 상태 조합(6³×4)에 대해
+**에이전트 실행만으로는 `delivered` 에 도달할 수 없음**을 전수로 확인한다.
+
+### 7-2. 작업 공간 격리
+
+산출물은 `workspace/commissions/<접수번호>/` 안에만 생긴다(`.gitignore` 에 `workspace/`).
+
+```
+workspace/commissions/WO-31960672/
+├─ 01-기획/요구사항-정리서.md
+├─ 02-디자인/디자인-가이드.md
+├─ 03-프론트/시안.html          ← /admin 에서 샌드박스 iframe 미리보기
+│           /화면-명세.md
+└─ 04-백엔드/API-명세.md, DB-스키마.md
+```
+
+경계는 두 겹이다.
+
+1. `cwd=root` — **방어가 아니라 편의다.** 절대경로 한 방이면 넘어간다.
+2. `can_use_tool` 콜백에서 `workspace.resolve_inside()` — 이쪽이 진짜 방어선.
+   정규화 후 판정하므로 `../` 조합·절대경로·접두사가 같은 이웃 폴더가 다 막힌다.
+
+읽기(`Read`/`Glob`/`Grep`)까지 가둔다. cwd 를 옮겨도 절대경로로 리포를 읽을 수 있고,
+읽은 내용은 산출물이나 요약을 타고 밖으로 나간다. 필요한 맥락은 전부 프롬프트에 있다.
+
+### 7-3. 실행 경로 둘, 같은 함수
+
+| 경로                             | 조건                                        |
+| -------------------------------- | ------------------------------------------- |
+| `/admin` 의 [실행] 버튼          | `AGENT_WORKER_ENABLED=true` (기본 **꺼짐**) |
+| `npm run atelier -- WO-XXXXXXXX` | 항상                                        |
+
+둘 다 `runner.run_task()` 를 부르고, 그 첫 줄이 `gate.assert_can_run()` 이다.
+**터미널이라고 승인을 건너뛰는 뒷문은 없다.**
+
+기본을 꺼 둔 이유: 공개 배포된 웹 서버 프로세스에서 파일 쓰는 에이전트가 돌면 안 된다.
+배포본은 승인만 웹에서 하고 실행은 내 컴퓨터에서 CLI 로 한다.
+
+### 7-4. 파일 지도 (3단계)
+
+| 파일                                       | 역할                                      |
+| ------------------------------------------ | ----------------------------------------- |
+| `app/agents/gate.py`                       | **상태 기계.** 순수 함수만 (DB 를 모른다) |
+| `app/agents/workspace.py`                  | 경로 격리 · 산출물 수집                   |
+| `app/agents/prompts.py`                    | 4직군 프롬프트 (NPC 인격 그대로)          |
+| `app/agents/runner.py`                     | SDK 호출 · 권한 콜백 · 상태 전이          |
+| `app/agents/cli.py`                        | 터미널 경로                               |
+| `services/commission_service.py`           | 게이트 결정 **저장** (판단은 안 한다)     |
+| `components/admin/CommissionWorkboard.tsx` | 검수대 UI                                 |
+| `requirements-agent.txt`                   | SDK (웹 서버에는 설치하지 않는다)         |
+
+라우트 5개 추가: `/tasks` · `/gate` · `/tasks/{id}/run` · `/tasks/{id}/reject` · `/artifacts/{id}`
+
+### 7-5. 실측 (WO-31960672, 동네 베이커리 소개 사이트)
+
+| 직군         | 시간  | 비용  | 산출물                              |
+| ------------ | ----- | ----- | ----------------------------------- |
+| 체리(기획)   | 49초  | $0.13 | 요구사항-정리서.md                  |
+| 먹지(디자인) | 68초  | $0.18 | 디자인-가이드.md (HEX·rem 수치까지) |
+| 리코(프론트) | 176초 | $0.46 | 시안.html + 화면-명세.md            |
+| 굴뚝(백엔드) | 138초 | $0.32 | API-명세.md + DB-스키마.md          |
+
+**한 건 전체 약 $1.1 / 8분.** 프롬프트가 요구한 것들이 실제로 지켜졌다:
+개인정보 미기재, 확인 필요 항목 명시, 시안 HTML 의 외부 요청 0건.
+체리는 예산(150만원)과 참고 견적 하단(190만원)의 어긋남을 스스로 짚었다.

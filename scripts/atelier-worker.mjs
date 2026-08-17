@@ -24,10 +24,19 @@ const child = spawn(
   python,
   ["-B", "-m", "app.agents.cli", ...process.argv.slice(2)],
   {
-    // 파이썬이 app 패키지를 찾도록 backend/ 를 작업 폴더로 삼는다.
-    // 산출물 경로는 config.BACKEND_DIR 기준이라 cwd 와 무관하다.
-    cwd: join(root, "backend"),
-    env: {...process.env, PYTHONDONTWRITEBYTECODE: "1", PYTHONIOENCODING: "utf-8"},
+    // **작업 폴더는 리포 루트여야 한다.** DATABASE_URL 기본값이
+    // `sqlite:///./portfolio_village.db` 라 cwd 기준 상대경로이고,
+    // backend-dev.mjs 도 루트에서 uvicorn 을 띄운다(--app-dir backend).
+    // 여기서만 backend/ 로 옮기면 서버와 **다른 DB 파일**을 보게 된다
+    // (실제로 "접수번호를 찾을 수 없습니다"로 한 번 걸렸다).
+    // app 패키지는 cwd 대신 PYTHONPATH 로 찾게 한다.
+    cwd: root,
+    env: {
+      ...process.env,
+      PYTHONPATH: join(root, "backend"),
+      PYTHONDONTWRITEBYTECODE: "1",
+      PYTHONIOENCODING: "utf-8"
+    },
     stdio: "inherit"
   }
 );

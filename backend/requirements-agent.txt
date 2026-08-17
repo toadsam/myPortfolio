@@ -10,4 +10,12 @@
 # 있어야 하고, 인증은 CLI 로그인 또는 ANTHROPIC_API_KEY 를 쓴다.
 
 -r requirements.txt
-claude-agent-sdk>=0.1.0
+claude-agent-sdk>=0.2.0
+
+# ⚠ starlette 를 다시 고정하는 이유
+#
+# claude-agent-sdk → mcp → starlette 인데, mcp 가 starlette 1.x 를 끌어올린다.
+# 그러면 fastapi 0.115.6 (starlette<0.42 요구)이 깨져서 **웹 서버가 죽는다.**
+# SDK 는 mcp 의 서버 쪽 코드를 쓰지 않으므로 0.41 로 되돌려도 정상 동작한다
+# (import·query 모두 확인). 이 줄을 지우면 pip 가 조용히 1.x 로 올려버린다.
+starlette>=0.40.0,<0.42.0

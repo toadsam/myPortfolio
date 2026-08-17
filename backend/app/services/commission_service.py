@@ -593,6 +593,39 @@ def _handoff_brief(db: Session, commission: CommissionRequest) -> None:
     db.commit()
 
 
+def worklog_lines(db: Session, role: str, limit: int = 4) -> list[str]:
+    """이 직군이 지금 뭘 하고 있는지 — 공방 NPC 대화에 넣을 요약.
+
+    마을에서 굴뚝에게 말을 걸면 "지금 WO-… API 명세 잡고 있어요" 라고 답하게 하는
+    재료다. 손님의 개인정보는 절대 넣지 않는다 — NPC 대화는 아무나 볼 수 있다.
+    """
+    rows = (
+        db.query(CommissionTask, CommissionRequest)
+        .join(CommissionRequest, CommissionRequest.id == CommissionTask.commission_id)
+        .filter(CommissionTask.role == role)
+        .order_by(desc(CommissionTask.updated_at))
+        .limit(limit)
+        .all()
+    )
+
+    labels = {
+        "ready": "곧 시작할 참",
+        "running": "지금 작업 중",
+        "review": "정재훈의 검수를 기다리는 중",
+        "approved": "검수를 통과함",
+        "rejected": "다시 손보는 중",
+        "failed": "실패해서 다시 해야 함",
+    }
+
+    lines: list[str] = []
+    for task, commission in rows:
+        state = labels.get(task.status, task.status)
+        what = commission.site_type or "홈페이지"
+        retry = f" ({task.round}회차)" if task.round > 1 else ""
+        lines.append(f"- {commission.public_id} {what} 건: {state}{retry}")
+    return lines
+
+
 def reject_task(db: Session, task: CommissionTask, feedback: str) -> CommissionTask:
     """개별 직군만 다시 돌린다(게이트3에서 셋 다 반려하는 것과 별개)."""
     if task.status not in ("review", "failed", "approved"):
