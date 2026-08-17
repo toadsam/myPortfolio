@@ -364,3 +364,112 @@ export interface CsNoteInput {
   title: string;
   content: string;
 }
+
+/* ── 의뢰 공방 (홈페이지 제작 의뢰) ──
+   마을에서 유일하게 외부인이 데이터를 쓰는 경로다. */
+
+/** 상담 중 누적되는 요구사항 + 참고 견적. 프런트가 보관하고 매 턴 백엔드에 되돌려준다. */
+export interface CommissionDraft {
+  site_type: string;
+  summary: string;
+  pages: string[];
+  features: string[];
+  tone: string;
+  references: string[];
+  budget_hint: string;
+  deadline_hint: string;
+  /** 원 단위. 확정 견적이 아니라 참고 범위다. */
+  estimate_min: number;
+  estimate_max: number;
+  weeks_min: number;
+  weeks_max: number;
+  estimate_reason: string;
+  /** 접수원이 아직 못 들은 항목 */
+  missing: string[];
+  /** 접수 폼을 띄울 만큼 모였는지 */
+  ready_to_submit: boolean;
+}
+
+export interface CommissionConsultResponse {
+  reply: string;
+  used_ai: boolean;
+  draft: CommissionDraft;
+  disclaimer: string;
+}
+
+export interface CommissionInput {
+  session_id?: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone: string;
+  org: string;
+  site_type: string;
+  summary: string;
+  requirements: Record<string, unknown>;
+  budget_hint: string;
+  deadline_hint: string;
+  estimate_min: number;
+  estimate_max: number;
+  weeks_min: number;
+  weeks_max: number;
+  estimate_reason: string;
+  /** 연락처 수집 동의. false면 백엔드가 거부한다. */
+  consent: boolean;
+  /** 허니팟 — 사람은 비워 두는 필드. 값이 있으면 봇으로 보고 거부한다. */
+  website?: string;
+}
+
+export interface CommissionAck {
+  public_id: string;
+  status: string;
+  message: string;
+}
+
+export type CommissionStatus =
+  | "received"
+  | "reviewing"
+  | "briefed"
+  | "in_progress"
+  | "delivered"
+  | "rejected";
+
+export interface Commission {
+  id: number;
+  public_id: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone: string;
+  org: string;
+  site_type: string;
+  summary: string;
+  requirements: Record<string, unknown>;
+  budget_hint: string;
+  deadline_hint: string;
+  estimate_min: number;
+  estimate_max: number;
+  weeks_min: number;
+  weeks_max: number;
+  estimate_reason: string;
+  status: CommissionStatus;
+  admin_note: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CommissionMessage {
+  id: number;
+  role: "visitor" | "npc";
+  content: string;
+  used_ai: boolean;
+  created_at: string;
+}
+
+export interface CommissionDetail extends Commission {
+  session_id: string;
+  messages: CommissionMessage[];
+}
+
+export interface CommissionStatusInput {
+  status: CommissionStatus;
+  admin_note: string;
+}

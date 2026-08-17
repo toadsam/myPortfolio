@@ -8,11 +8,14 @@ import {
   createCodingTest,
   createCsNote,
   deleteCodingTest,
+  deleteCommission,
   deleteCsNote,
   fetchActivityHistory,
   fetchAdminAuthStatus,
   fetchAdminOverview,
   fetchCodingTests,
+  fetchCommissionDetail,
+  fetchCommissions,
   fetchCsNotes,
   fetchVillageState,
   hasAdminToken,
@@ -20,6 +23,7 @@ import {
   saveActivity,
   syncGithubActivity,
   updateCodingTest,
+  updateCommissionStatus,
   updateCsNote
 } from "@/lib/liveApi";
 import {villageBuildings} from "@/lib/constants";
@@ -27,6 +31,9 @@ import type {
   ActivityInput,
   AiUsage,
   CodingTestLog,
+  Commission,
+  CommissionDetail,
+  CommissionStatus,
   CsNote,
   DailyActivity,
   VillageState
@@ -807,6 +814,7 @@ export default function AdminPage() {
       </form>
 
       <div className="mx-auto grid max-w-7xl gap-5 px-5 pb-10">
+        <CommissionAdmin />
         <CodingTestAdmin defaultDate={selectedDate} />
         <CsNoteAdmin defaultDate={selectedDate} />
       </div>
@@ -839,6 +847,365 @@ function matchesQuery(query: string, fields: (string | undefined)[]): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return true;
   return fields.some(field => (field ?? "").toLowerCase().includes(q));
+}
+
+/** 의뢰 공방 접수함 — 외부인이 남긴 유일한 데이터라 삭제는 되물어보고 진행한다. */
+function CommissionAdmin() {
+  const [items, setItems] = useState<Commission[]>([]);
+  const [detail, setDetail] = useState<CommissionDetail | null>(null);
+  const [openId, setOpenId] = useState<number | null>(null);
+  const [note, setNote] = useState("");
+  const [status, setStatus] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  async function load() {
+    try {
+      setItems(await fetchCommissions());
+      setStatus("");
+    } catch {
+      setStatus("의뢰 목록을 불러오지 못했습니다. 백엔드를 확인하세요.");
+    }
+  }
+
+  async function toggle(commission: Commission) {
+    if (openId === commission.id) {
+      setOpenId(null);
+      setDetail(null);
+      return;
+    }
+    setOpenId(commission.id);
+    setDetail(null);
+    try {
+      const loaded = await fetchCommissionDetail(commission.id);
+      setDetail(loaded);
+      setNote(loaded.admin_note);
+    } catch {
+      setStatus("상세 내용을 불러오지 못했습니다.");
+    }
+  }
+
+  async function changeStatus(
+    commission: Commission,
+    next: CommissionStatus,
+    adminNote: string
+  ) {
+    setBusy(true);
+    try {
+      const updated = await updateCommissionStatus(commission.id, {
+        status: next,
+        admin_note: adminNote
+      });
+      setItems(list =>
+        list.map(item => (item.id === updated.id ? updated : item))
+      );
+      if (detail?.id === updated.id) setDetail({...detail, ...updated});
+      setStatus("저장했습니다.");
+    } catch {
+      setStatus("상태를 저장하지 못했습니다.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove(commission: Commission) {
+    const ok = window.confirm(
+      `${commission.public_id} 의뢰를 삭제할까요? 상담 대화 기록도 함께 지워지고 되돌릴 수 없습니다.`
+    );
+    if (!ok) return;
+
+    setBusy(true);
+    try {
+      await deleteCommission(commission.id);
+      setItems(list => list.filter(item => item.id !== commission.id));
+      if (openId === commission.id) {
+        setOpenId(null);
+        setDetail(null);
+      }
+      setStatus("삭제했습니다.");
+    } catch {
+      setStatus("삭제하지 못했습니다.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const pending = items.filter(item => item.status === "received").length;
+
+  return (
+    <Panel title="의뢰 접수함" kicker="Commission Atelier">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <span className="rounded-full border border-[#f59e0b]/30 bg-[#fffbeb] px-3 py-1.5 font-mono text-xs font-black text-[#b45309]">
+          새 접수 {pending}건 · 전체 {items.length}건
+        </span>
+        <button
+          className="sub-button"
+          onClick={() => void load()}
+          type="button"
+        >
+          새로고침
+        </button>
+        {status ? (
+          <span className="text-xs text-[#64748b]">{status}</span>
+        ) : null}
+      </div>
+
+      {items.length === 0 ? (
+        <p className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-4 text-sm leading-6 text-[#94a3b8]">
+          아직 접수된 의뢰가 없습니다. 마을의 &ldquo;제작 의뢰&rdquo; 버튼으로
+          방문자가 접수하면 여기에 쌓입니다.
+        </p>
+      ) : (
+        <div className="grid gap-2">
+          {items.map(item => {
+            const isOpen = openId === item.id;
+            return (
+              <div
+                key={item.id}
+                className="rounded-lg border border-[#eef1f5] bg-[#f1f4f9] p-3"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <button
+                    className="min-w-0 flex-1 text-left"
+                    onClick={() => void toggle(item)}
+                    type="button"
+                  >
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[11px] font-black text-[#b45309]">
+                        {item.public_id}
+                      </span>
+                      <CommissionStatusBadge status={item.status} />
+                      <span className="font-mono text-[11px] text-[#94a3b8]">
+                        {prettyDate(item.created_at.slice(0, 10))}
+                      </span>
+                    </div>
+                    <p className="mt-1 truncate text-sm font-bold text-[#1e293b]">
+                      {item.site_type ? `[${item.site_type}] ` : ""}
+                      {item.summary || "(내용 없음)"}
+                    </p>
+                    <p className="mt-0.5 font-mono text-[11px] text-[#94a3b8]">
+                      {formatWon(item.estimate_min)} ~{" "}
+                      {formatWon(item.estimate_max)} · {item.weeks_min}~
+                      {item.weeks_max}주 · {item.contact_email}
+                    </p>
+                  </button>
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    <button
+                      className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#f59e0b]/50 hover:text-[#b45309]"
+                      onClick={() => void toggle(item)}
+                      type="button"
+                    >
+                      {isOpen ? "접기" : "상세"}
+                    </button>
+                    <button
+                      className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]"
+                      onClick={() => void remove(item)}
+                      type="button"
+                    >
+                      삭제
+                    </button>
+                  </div>
+                </div>
+
+                {isOpen ? (
+                  detail && detail.id === item.id ? (
+                    <div className="mt-3 grid gap-4 border-t border-[#e3e8ef] pt-3 lg:grid-cols-2">
+                      <div className="grid gap-3">
+                        <DetailRow label="연락처">
+                          {[
+                            detail.contact_name,
+                            detail.contact_email,
+                            detail.contact_phone,
+                            detail.org
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </DetailRow>
+                        <DetailRow label="요청 내용">
+                          {detail.summary || "-"}
+                        </DetailRow>
+                        <DetailRow label="요구사항">
+                          <RequirementDump value={detail.requirements} />
+                        </DetailRow>
+                        <DetailRow label="일정 / 예산">
+                          {`${detail.deadline_hint || "-"} / ${
+                            detail.budget_hint || "-"
+                          }`}
+                        </DetailRow>
+                        <DetailRow label="견적 근거">
+                          {detail.estimate_reason || "-"}
+                        </DetailRow>
+
+                        <div className="grid gap-2 rounded-lg border border-[#e3e8ef] bg-white p-3">
+                          <LabeledField label="진행 상태">
+                            <select
+                              className="field"
+                              value={detail.status}
+                              disabled={busy}
+                              onChange={e =>
+                                void changeStatus(
+                                  item,
+                                  e.target.value as CommissionStatus,
+                                  note
+                                )
+                              }
+                            >
+                              {COMMISSION_STATUS_OPTIONS.map(option => (
+                                <option key={option.value} value={option.value}>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                          </LabeledField>
+                          <LabeledField label="관리자 메모">
+                            <textarea
+                              className="field min-h-[80px]"
+                              value={note}
+                              onChange={e => setNote(e.target.value)}
+                              placeholder="연락 예정일, 판단, 거절 사유 등"
+                            />
+                          </LabeledField>
+                          <button
+                            className="rounded-lg bg-[#f59e0b] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#1f1300] transition hover:bg-[#fbbf24] disabled:opacity-45"
+                            disabled={busy}
+                            onClick={() =>
+                              void changeStatus(item, detail.status, note)
+                            }
+                            type="button"
+                          >
+                            메모 저장
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#b45309]/70">
+                          상담 대화 기록
+                        </p>
+                        {detail.messages.length === 0 ? (
+                          <p className="text-sm text-[#94a3b8]">
+                            상담 없이 바로 접수된 건입니다.
+                          </p>
+                        ) : (
+                          <div className="grid max-h-[420px] gap-1.5 overflow-y-auto rounded-lg border border-[#e3e8ef] bg-white p-3">
+                            {detail.messages.map(message => (
+                              <p
+                                key={message.id}
+                                className={
+                                  message.role === "visitor"
+                                    ? "rounded-md bg-[#fffbeb] px-2.5 py-1.5 text-xs leading-5 text-[#78350f]"
+                                    : "rounded-md bg-[#f1f4f9] px-2.5 py-1.5 text-xs leading-5 text-[#475569]"
+                                }
+                              >
+                                <span className="mr-1.5 font-mono text-[10px] font-black opacity-60">
+                                  {message.role === "visitor"
+                                    ? "방문자"
+                                    : "도안"}
+                                </span>
+                                {message.content}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="mt-3 border-t border-[#e3e8ef] pt-3 text-sm text-[#94a3b8]">
+                      불러오는 중…
+                    </p>
+                  )
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </Panel>
+  );
+}
+
+const COMMISSION_STATUS_OPTIONS: {value: CommissionStatus; label: string}[] = [
+  {value: "received", label: "접수됨"},
+  {value: "reviewing", label: "검토중"},
+  {value: "briefed", label: "작업 지시함"},
+  {value: "in_progress", label: "제작중"},
+  {value: "delivered", label: "전달 완료"},
+  {value: "rejected", label: "반려"}
+];
+
+const COMMISSION_STATUS_STYLE: Record<CommissionStatus, string> = {
+  received: "border-[#f59e0b]/40 bg-[#fffbeb] text-[#b45309]",
+  reviewing: "border-[#0284c7]/30 bg-[#f0f9ff] text-[#0369a1]",
+  briefed: "border-[#a78bfa]/40 bg-[#f5f3ff] text-[#6d28d9]",
+  in_progress: "border-[#a78bfa]/40 bg-[#f5f3ff] text-[#6d28d9]",
+  delivered: "border-[#10b981]/35 bg-[#ecfdf5] text-[#047857]",
+  rejected: "border-[#e3e8ef] bg-[#f1f4f9] text-[#94a3b8]"
+};
+
+function CommissionStatusBadge({status}: {status: CommissionStatus}) {
+  const label =
+    COMMISSION_STATUS_OPTIONS.find(option => option.value === status)?.label ??
+    status;
+  return (
+    <span
+      className={`rounded-full border px-2 py-0.5 font-mono text-[10px] font-black ${
+        COMMISSION_STATUS_STYLE[status] ?? COMMISSION_STATUS_STYLE.rejected
+      }`}
+    >
+      {label}
+    </span>
+  );
+}
+
+function DetailRow({
+  label,
+  children
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#94a3b8]">
+        {label}
+      </p>
+      <div className="mt-1 text-sm leading-6 text-[#1e293b]">{children}</div>
+    </div>
+  );
+}
+
+function RequirementDump({value}: {value: Record<string, unknown>}) {
+  const entries = Object.entries(value).filter(([, item]) =>
+    Array.isArray(item) ? item.length > 0 : !!item
+  );
+  if (entries.length === 0) return <>-</>;
+
+  const LABELS: Record<string, string> = {
+    pages: "페이지",
+    features: "기능",
+    tone: "분위기",
+    references: "참고"
+  };
+
+  return (
+    <ul className="grid gap-0.5">
+      {entries.map(([key, item]) => (
+        <li key={key}>
+          <span className="text-[#94a3b8]">{LABELS[key] ?? key}</span>{" "}
+          {Array.isArray(item) ? item.join(", ") : String(item)}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function formatWon(value: number): string {
+  if (!value) return "-";
+  if (value >= 100_000_000) return `${(value / 100_000_000).toFixed(1)}억`;
+  return `${Math.round(value / 10_000).toLocaleString()}만`;
 }
 
 function CodingTestAdmin({defaultDate}: {defaultDate: string}) {

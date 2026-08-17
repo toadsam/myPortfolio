@@ -98,6 +98,63 @@ def ai_rate_limit(request: Request) -> None:
     _daily_count["count"] += 1
 
 
+# ─────────────────────────── 의뢰 접수 레이트리밋 ───────────────────────────
+#
+# AI 리밋과 별도로 둔다. 접수는 AI 호출보다 훨씬 드물어야 정상이고,
+# 여기가 뚫리면 비용이 아니라 내 받은편지함이 망가지기 때문이다.
+#
+# **시도**와 **성공**을 따로 센다. 둘을 하나로 묶었더니 이메일 오타 두어 번에
+# 멀쩡한 손님이 한 시간 잠기는 일이 실제로 났다. 검증에 걸려 되돌아간 요청은
+# 받은편지함에 아무것도 남기지 않으므로, 성공 할당량을 깎아선 안 된다.
+#   - 시도 한도(넉넉): 봇의 무한 POST 를 막는 홍수 방지선
+#   - 성공 한도(빡빡): 실제로 내게 도착하는 접수 건수
+
+_commission_attempts: dict[str, deque[float]] = {}
+_commission_success: dict[str, deque[float]] = {}
+_commission_daily = {"day": time.strftime("%Y-%m-%d"), "count": 0}
+
+
+def _prune(window: deque[float], now: float, seconds: float = 3600) -> deque[float]:
+    while window and now - window[0] > seconds:
+        window.popleft()
+    return window
+
+
+def commission_rate_limit(request: Request) -> None:
+    """접수 시도 전 검사. 성공 카운트는 라우트가 record_commission_success 로 따로 올린다."""
+    now = time.time()
+
+    today = time.strftime("%Y-%m-%d")
+    if _commission_daily["day"] != today:
+        _commission_daily["day"] = today
+        _commission_daily["count"] = 0
+    if _commission_daily["count"] >= settings.commission_daily_limit:
+        raise HTTPException(status_code=429, detail="오늘 접수 가능한 건수를 넘었어요. 내일 다시 시도해 주세요.")
+
+    ip = _client_ip(request)
+
+    attempts = _prune(_commission_attempts.setdefault(ip, deque()), now)
+    if len(attempts) >= settings.commission_attempts_per_hour:
+        raise HTTPException(status_code=429, detail="요청이 너무 잦아요. 잠시 후 다시 시도해 주세요.")
+
+    success = _prune(_commission_success.setdefault(ip, deque()), now)
+    if len(success) >= settings.commission_rate_per_hour:
+        raise HTTPException(
+            status_code=429,
+            detail="접수가 접수되었어요. 추가 문의는 회신 메일로 이어서 보내주세요.",
+        )
+
+    attempts.append(now)
+
+
+def record_commission_success(request: Request) -> None:
+    """접수가 실제로 저장된 뒤에만 호출한다 — 검증 실패는 할당량을 깎지 않는다."""
+    now = time.time()
+    ip = _client_ip(request)
+    _prune(_commission_success.setdefault(ip, deque()), now).append(now)
+    _commission_daily["count"] += 1
+
+
 def ai_usage_snapshot() -> dict[str, int]:
     """관리자 페이지용 — 오늘 AI 호출 수 / 하루 상한."""
     _reset_daily_count_if_new_day()
@@ -107,3 +164,4 @@ def ai_usage_snapshot() -> dict[str, int]:
 # 라우트 데코레이터에 그대로 쓰기 위한 별칭
 AdminGuard = Depends(require_admin)
 AiRateLimit = Depends(ai_rate_limit)
+CommissionRateLimit = Depends(commission_rate_limit)

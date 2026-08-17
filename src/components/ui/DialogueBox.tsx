@@ -3,6 +3,7 @@
 import {AnimatePresence, motion} from "framer-motion";
 import {useEffect, useMemo, useState} from "react";
 import type {FormEvent} from "react";
+import {isAtelierNpc} from "@/data/atelierRoster";
 import {npcDefaultPresetQuestions} from "@/data/npcRoster";
 import {sectionMeta} from "@/lib/constants";
 import {
@@ -26,6 +27,8 @@ interface DialogueBoxProps {
   onClose: () => void;
   onOpenSection: (sectionId: SectionId) => void;
   onRunAction: (npc: NPCData, action: NpcActionDefinition) => void;
+  /** 연락 담당 NPC 대화에서만 노출되는 의뢰 공방 진입 */
+  onOpenCommission?: () => void;
   onSuggestedAction: (action: NpcSuggestedAction | null | undefined) => void;
   /** 백엔드/AI 연결 불가 (기본 대사 모드) */
   aiOffline?: boolean;
@@ -72,12 +75,22 @@ function introLine(npc: NPCData) {
   return `안녕하세요! ${npc.name}입니다. ${npc.role} 담당이에요. 무엇이든 편하게 물어보세요 :)`;
 }
 
+/** 백엔드 relations.canon 의 contact 판정과 같은 규칙 — 두 곳이 어긋나면 안 된다. */
+function isContactNpc(npcId: string) {
+  return (
+    npcId === "contact-npc" ||
+    npcId.includes("post") ||
+    npcId.includes("contact")
+  );
+}
+
 export function DialogueBox({
   npc,
   npcState,
   npcRuntimeState,
   onClose,
   onOpenSection,
+  onOpenCommission,
   onSuggestedAction,
   aiOffline
 }: DialogueBoxProps) {
@@ -99,12 +112,17 @@ export function DialogueBox({
 
   const presetQuestions = useMemo(() => {
     const agentQuestions = agent?.presetQuestions ?? [];
+    // 공방 NPC는 백엔드 프리셋을 쓰지 않는다. 백엔드는 catalog 의 모든 NPC에
+    // 마을 기준 기본 질문("대표 프로젝트 추천해줘"…)을 시드하는데, 그게 remote 로
+    // 먼저 들어와 slice(0,3) 을 다 차지하는 바람에 공방 식구가 마을 안내원처럼
+    // 말을 걸었다. 공방 질문의 단일 출처는 atelierRoster 다.
+    if (npc && isAtelierNpc(npc.id)) return agentQuestions.slice(0, 3);
     return uniqueItems([
       ...remotePresetQuestions,
       ...agentQuestions,
       ...npcDefaultPresetQuestions
     ]).slice(0, 3);
-  }, [agent, remotePresetQuestions]);
+  }, [agent, npc, remotePresetQuestions]);
 
   const recentMessages = useMemo(
     () =>
@@ -351,13 +369,28 @@ export function DialogueBox({
                 ↑
               </button>
             </form>
-            <button
-              className="w-full rounded-lg border border-[#e2c078]/30 bg-[#e2c078]/10 px-3 py-2 text-xs font-black text-[#f0e4c8] transition hover:bg-[#e2c078]/18 active:scale-[0.98]"
-              onClick={() => onOpenSection(npc.sectionId)}
-              type="button"
-            >
-              ▸ {section?.navLabel || "이 구역"} 보기
-            </button>
+            {/* 공방 식구는 마을 구역에 속하지 않는다 — 구역 이동 버튼을 숨긴다.
+                (NPCData.sectionId 는 타입을 채우려고 넣어둔 값이라 여기서 쓰면 엉뚱한 데로 간다.) */}
+            {!isAtelierNpc(npc.id) ? (
+              <button
+                className="w-full rounded-lg border border-[#e2c078]/30 bg-[#e2c078]/10 px-3 py-2 text-xs font-black text-[#f0e4c8] transition hover:bg-[#e2c078]/18 active:scale-[0.98]"
+                onClick={() => onOpenSection(npc.sectionId)}
+                type="button"
+              >
+                ▸ {section?.navLabel || "이 구역"} 보기
+              </button>
+            ) : null}
+            {/* 의뢰 공방으로 가는 '숨겨진' 입구 — 연락 담당 NPC만 알려준다.
+                헤더의 상시 버튼과 달리, 대화를 나눠야 발견되는 두 번째 경로다. */}
+            {onOpenCommission && isContactNpc(npc.id) ? (
+              <button
+                className="w-full rounded-lg border border-[#ff9d38]/40 bg-[#ff9d38]/12 px-3 py-2 text-xs font-black text-[#ffd9ae] transition hover:bg-[#ff9d38]/22 active:scale-[0.98]"
+                onClick={onOpenCommission}
+                type="button"
+              >
+                🛠️ 홈페이지 제작을 의뢰하고 싶어요
+              </button>
+            ) : null}
           </div>
         </motion.aside>
       ) : null}

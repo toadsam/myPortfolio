@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -7,8 +7,10 @@ from app.database import get_db, init_db
 from app.security import (
     AdminGuard,
     AiRateLimit,
+    CommissionRateLimit,
     auth_enabled,
     create_admin_token,
+    record_commission_success,
     verify_password,
 )
 from app.schemas import (
@@ -23,6 +25,13 @@ from app.schemas import (
     ChatMessageOut,
     CodingTestIn,
     CodingTestOut,
+    CommissionAck,
+    CommissionConsultIn,
+    CommissionConsultOut,
+    CommissionDetailOut,
+    CommissionIn,
+    CommissionOut,
+    CommissionStatusIn,
     CsNoteIn,
     CsNoteOut,
     GithubSyncOut,
@@ -62,6 +71,19 @@ from app.services.admin_service import (
 )
 from app.services.activity_service import get_or_create_today, list_activity_history, upsert_activity
 from app.services.chat_service import answer_npc_message
+from app.services.commission_service import (
+    CommissionRejected,
+    consult as commission_consult,
+    create_commission,
+    delete_commission,
+    get_commission,
+    list_commissions,
+    messages_for,
+    notify_discord,
+    recent_messages as commission_recent_messages,
+    save_message as save_commission_message,
+    update_status as update_commission_status,
+)
 from app.services.github_service import fetch_today_commit_count
 from app.services.learning_service import (
     count_coding_tests,
@@ -401,4 +423,80 @@ def admin_update_cs_note(note_id: int, payload: CsNoteIn, db: Session = Depends(
 def admin_delete_cs_note(note_id: int, db: Session = Depends(get_db)):
     if not delete_cs_note(db, note_id):
         raise HTTPException(status_code=404, detail="해당 CS 노트를 찾을 수 없습니다.")
+    return {"ok": True}
+
+
+# ─────────────────────────── 의뢰 공방 (홈페이지 제작 의뢰) ───────────────────────────
+#
+# /commission/* 는 마을에서 유일하게 외부인이 쓰는 공개 경로다.
+# consult 는 AI 리밋을, 접수는 별도의 commission 리밋을 탄다.
+
+@app.post("/commission/consult", response_model=CommissionConsultOut, dependencies=[AiRateLimit])
+async def commission_consult_route(payload: CommissionConsultIn, db: Session = Depends(get_db)):
+    """접수원 NPC '도안'과의 상담 한 턴."""
+    history = payload.recent_messages[-10:]
+    if payload.session_id and not history:
+        # 새로고침 등으로 프런트 히스토리가 비었으면 DB에서 복구한다
+        history = [f"{row.role}: {row.content}" for row in commission_recent_messages(db, payload.session_id)]
+
+    reply, used_ai, draft = await commission_consult(payload.message, history, payload.draft)
+
+    if payload.session_id:
+        save_commission_message(db, payload.session_id, "visitor", payload.message)
+        save_commission_message(db, payload.session_id, "npc", reply, used_ai=used_ai)
+
+    return CommissionConsultOut(reply=reply, used_ai=used_ai, draft=draft)
+
+
+@app.post("/commission", response_model=CommissionAck, dependencies=[CommissionRateLimit])
+async def submit_commission(request: Request, payload: CommissionIn, db: Session = Depends(get_db)):
+    """의뢰 접수. 저장에 성공하면 디스코드로 알린다(알림 실패는 접수를 실패시키지 않는다)."""
+    try:
+        commission = create_commission(db, payload)
+    except CommissionRejected as error:
+        # 검증에 걸린 요청은 성공 할당량을 깎지 않는다 — 오타 재시도를 막지 않기 위해서.
+        raise HTTPException(status_code=400, detail=str(error)) from error
+
+    record_commission_success(request)
+    await notify_discord(commission)
+
+    return CommissionAck(
+        public_id=commission.public_id,
+        status=commission.status,
+        message=(
+            f"접수되었습니다. 접수번호는 {commission.public_id} 입니다. "
+            "정재훈이 직접 내용을 확인한 뒤 남겨주신 이메일로 연락드릴게요."
+        ),
+    )
+
+
+@app.get("/admin/commissions", response_model=list[CommissionOut], dependencies=[AdminGuard])
+def admin_commissions(db: Session = Depends(get_db)):
+    return list_commissions(db)
+
+
+@app.get("/admin/commissions/{commission_id}", response_model=CommissionDetailOut, dependencies=[AdminGuard])
+def admin_commission_detail(commission_id: int, db: Session = Depends(get_db)):
+    commission = get_commission(db, commission_id)
+    if not commission:
+        raise HTTPException(status_code=404, detail="해당 의뢰를 찾을 수 없습니다.")
+    return CommissionDetailOut(
+        **CommissionOut.model_validate(commission).model_dump(),
+        session_id=commission.session_id,
+        messages=messages_for(db, commission),
+    )
+
+
+@app.patch("/admin/commissions/{commission_id}", response_model=CommissionOut, dependencies=[AdminGuard])
+def admin_update_commission(commission_id: int, payload: CommissionStatusIn, db: Session = Depends(get_db)):
+    commission = update_commission_status(db, commission_id, payload.status, payload.admin_note)
+    if not commission:
+        raise HTTPException(status_code=404, detail="해당 의뢰를 찾을 수 없습니다.")
+    return commission
+
+
+@app.delete("/admin/commissions/{commission_id}", dependencies=[AdminGuard])
+def admin_delete_commission(commission_id: int, db: Session = Depends(get_db)):
+    if not delete_commission(db, commission_id):
+        raise HTTPException(status_code=404, detail="해당 의뢰를 찾을 수 없습니다.")
     return {"ok": True}

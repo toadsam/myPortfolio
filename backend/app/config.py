@@ -25,6 +25,12 @@ class Settings(BaseSettings):
     ai_rate_per_min: int = 30  # IP당 분당 AI 호출 상한
     ai_daily_limit: int = 800  # 전체 하루 AI 호출 상한
 
+    # 의뢰 공방 — 실제 외부인이 쓰는 유일한 공개 쓰기 경로라 별도 상한을 둔다.
+    discord_webhook_url: str = ""          # 비어 있으면 접수 알림을 조용히 건너뛴다
+    commission_rate_per_hour: int = 3      # IP당 시간당 '성공한' 접수 상한
+    commission_attempts_per_hour: int = 20 # IP당 시간당 시도 상한(오타 재시도 허용, 봇 홍수 차단)
+    commission_daily_limit: int = 40       # 전체 하루 접수 상한
+
     model_config = SettingsConfigDict(env_file=BACKEND_DIR / ".env", env_file_encoding="utf-8", extra="ignore")
 
 

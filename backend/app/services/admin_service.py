@@ -249,6 +249,19 @@ def question_frequency(db: Session, limit: int = 8) -> list[AnalyticsMetric]:
 
 
 def _default_questions_for_npc(npc_id: str) -> list[str]:
+    # 의뢰 공방 식구에게 마을 질문("대표 프로젝트 추천해줘")을 물릴 수는 없다.
+    # 프런트는 atelierRoster 의 질문을 쓰지만, 관리자 페이지에 뜨는 기본값도
+    # 공방 맥락에 맞아야 한다.
+    if "atelier" in npc_id:
+        if "plan" in npc_id:
+            return ["기획은 어떻게 시작해?", "화면은 몇 개나 필요할까?", "우선순위는 어떻게 정해?"]
+        if "design" in npc_id:
+            return ["분위기는 어떻게 정해?", "참고 사이트를 주면 도움이 돼?", "색은 어떻게 고르는 거야?"]
+        if "front" in npc_id:
+            return ["모바일에서도 잘 나와?", "화면 만드는 데 얼마나 걸려?", "어떤 기술로 만들어?"]
+        if "back" in npc_id:
+            return ["결제 기능도 넣을 수 있어?", "회원 로그인은 어떻게 돼?", "데이터는 어디에 저장돼?"]
+        return ["홈페이지 제작 의뢰하고 싶어요", "견적이 대략 얼마나 나와요?", "제작 기간은 얼마나 걸려요?"]
     if npc_id == "guide-npc":
         return ["처음이면 어디부터 보면 돼?", "대표 프로젝트만 빠르게 골라줘", "채용자라면 어떤 순서로 보면 좋아?"]
     if npc_id == "project-npc":

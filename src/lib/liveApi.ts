@@ -4,6 +4,13 @@ import type {
   AnalyticsSummary,
   CodingTestInput,
   CodingTestLog,
+  Commission,
+  CommissionAck,
+  CommissionConsultResponse,
+  CommissionDetail,
+  CommissionDraft,
+  CommissionInput,
+  CommissionStatusInput,
   CsNote,
   CsNoteInput,
   DailyActivity,
@@ -327,6 +334,67 @@ export function updateCsNote(
 
 export function deleteCsNote(noteId: number): Promise<{ok: boolean}> {
   return requestJson<{ok: boolean}>(`/admin/cs-notes/${noteId}`, {
+    method: "DELETE"
+  });
+}
+
+/* ── 의뢰 공방 ──
+   consult/submit 은 공개 경로다. 세션 id는 방문자 분석과 같은 값을 쓴다 —
+   상담 로그를 접수 건에 귀속시키는 열쇠이기도 하다. */
+
+export function consultCommission(
+  message: string,
+  draft: CommissionDraft | null,
+  recentMessages: string[] = []
+): Promise<CommissionConsultResponse> {
+  return requestJson<CommissionConsultResponse>("/commission/consult", {
+    method: "POST",
+    body: JSON.stringify({
+      session_id: getVisitorSessionId(),
+      message,
+      recent_messages: recentMessages.slice(-10),
+      draft
+    })
+  });
+}
+
+export function submitCommission(
+  payload: CommissionInput
+): Promise<CommissionAck> {
+  return requestJson<CommissionAck>("/commission", {
+    method: "POST",
+    body: JSON.stringify({
+      ...payload,
+      session_id: payload.session_id ?? getVisitorSessionId(),
+      website: payload.website ?? ""
+    })
+  });
+}
+
+export function fetchCommissions(): Promise<Commission[]> {
+  return requestJson<Commission[]>("/admin/commissions", {cache: "no-store"});
+}
+
+export function fetchCommissionDetail(
+  commissionId: number
+): Promise<CommissionDetail> {
+  return requestJson<CommissionDetail>(`/admin/commissions/${commissionId}`, {
+    cache: "no-store"
+  });
+}
+
+export function updateCommissionStatus(
+  commissionId: number,
+  payload: CommissionStatusInput
+): Promise<Commission> {
+  return requestJson<Commission>(`/admin/commissions/${commissionId}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function deleteCommission(commissionId: number): Promise<{ok: boolean}> {
+  return requestJson<{ok: boolean}>(`/admin/commissions/${commissionId}`, {
     method: "DELETE"
   });
 }

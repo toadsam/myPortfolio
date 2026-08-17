@@ -412,7 +412,28 @@ def _clean_response_text(text: str) -> str:
     return cleaned.strip()
 
 
+def _atelier_profile(npc_id: str) -> dict[str, Any]:
+    """공방 NPC id → 직군 프로필. 정확한 id 로 못 찾았을 때의 부분 매칭 경로.
+
+    relations.canon 의 공방 분기와 판정 규칙이 같아야 한다 — 한쪽만 고치면
+    말투는 기획인데 관계는 백엔드로 잡히는 어긋남이 생긴다.
+    """
+    if "plan" in npc_id:
+        return NPCS["atelier-planner-npc"]
+    if "design" in npc_id:
+        return NPCS["atelier-designer-npc"]
+    if "front" in npc_id:
+        return NPCS["atelier-frontend-npc"]
+    if "back" in npc_id:
+        return NPCS["atelier-backend-npc"]
+    return NPCS["atelier-intake-npc"]
+
+
 def _npc_profile_for_dynamic_id(npc_id: str) -> dict[str, Any]:
+    # 의뢰 공방 식구가 먼저다 — 아래 developer 분기의 "backend"/"frontend" 부분 매칭이
+    # atelier-backend 같은 공방 NPC 를 삼켜버리기 때문이다. (relations.canon 과 같은 이유)
+    if "atelier" in npc_id:
+        return NPCS.get(npc_id) or _atelier_profile(npc_id)
     if _is_coding_npc(npc_id):
         return NPCS["coding-test-npc"]
     if _is_cs_npc(npc_id):

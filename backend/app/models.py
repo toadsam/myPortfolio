@@ -119,6 +119,64 @@ class NpcRelationship(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 
+class CommissionRequest(Base):
+    """홈페이지 제작 의뢰 접수 건 — 마을 지하 '의뢰 공방'의 접수원 NPC가 상담해 만든다.
+
+    다른 테이블과 달리 **외부인이 쓰는 유일한 테이블**이다. 그래서
+    - 연락처는 최소 수집(이메일만 필수)이고,
+    - estimate_* 는 확정 견적이 아니라 참고 범위다(schemas 의 면책 문구 참고).
+    3단계(에이전트 제작)에서 CommissionTask/Artifact 가 이 행을 부모로 붙는다.
+    """
+
+    __tablename__ = "commission_request"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    public_id: Mapped[str] = mapped_column(String(40), unique=True, index=True)  # 방문자 조회용 접수번호
+    session_id: Mapped[str] = mapped_column(String(120), default="", index=True)
+
+    contact_name: Mapped[str] = mapped_column(String(80), default="")
+    contact_email: Mapped[str] = mapped_column(String(200), default="")
+    contact_phone: Mapped[str] = mapped_column(String(60), default="")
+    org: Mapped[str] = mapped_column(String(160), default="")
+
+    site_type: Mapped[str] = mapped_column(String(60), default="")   # 랜딩/기업소개/쇼핑몰/예약/포트폴리오/기타
+    summary: Mapped[str] = mapped_column(Text, default="")           # 한 줄 요약
+    requirements: Mapped[dict] = mapped_column(JSON, default=dict)   # {pages: [], features: [], tone: "", references: []}
+    budget_hint: Mapped[str] = mapped_column(String(120), default="")
+    deadline_hint: Mapped[str] = mapped_column(String(120), default="")
+
+    # 참고 견적 범위 (원 / 주). 0 이면 산출 못 한 것.
+    estimate_min: Mapped[int] = mapped_column(Integer, default=0)
+    estimate_max: Mapped[int] = mapped_column(Integer, default=0)
+    weeks_min: Mapped[int] = mapped_column(Integer, default=0)
+    weeks_max: Mapped[int] = mapped_column(Integer, default=0)
+    estimate_reason: Mapped[str] = mapped_column(Text, default="")
+
+    status: Mapped[str] = mapped_column(String(30), default="received", index=True)
+    admin_note: Mapped[str] = mapped_column(Text, default="")
+
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class CommissionMessage(Base):
+    """접수원 NPC ↔ 방문자 상담 로그.
+
+    상담은 접수 **이전에** 시작되므로 commission_id 는 나중에 채워진다.
+    그전까지는 session_id 로만 묶인다.
+    """
+
+    __tablename__ = "commission_message"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    session_id: Mapped[str] = mapped_column(String(120), default="", index=True)
+    commission_id: Mapped[int | None] = mapped_column(Integer, default=None, index=True)
+    role: Mapped[str] = mapped_column(String(20), default="visitor")  # visitor | npc
+    content: Mapped[str] = mapped_column(Text, default="")
+    used_ai: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+
+
 class CsNoteLog(Base):
     __tablename__ = "cs_note_log"
 

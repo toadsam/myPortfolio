@@ -1,12 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import {AnimatePresence} from "framer-motion";
 import {useCallback, useEffect, useRef, useState} from "react";
 import {useGLTF} from "@react-three/drei";
 import {
   ConciergePanel,
   type ConciergeIntent
 } from "@/components/ui/ConciergePanel";
+import {CommissionDesk} from "@/components/ui/CommissionDesk";
 import {DialogueBox} from "@/components/ui/DialogueBox";
 import {Header} from "@/components/ui/Header";
 import {InfoPanel} from "@/components/ui/InfoPanel";
@@ -169,6 +171,24 @@ const InteriorScene = dynamic(
   () =>
     import("@/components/interior/InteriorScene").then(m => m.InteriorScene),
   {ssr: false}
+);
+
+// 공방은 마을 '구역'이 아니라 지하 공간이라 InteriorScene(sectionId 라우터)을 거치지 않는다.
+const AtelierInterior = dynamic(
+  () =>
+    import("@/components/interior/AtelierInterior").then(
+      m => m.AtelierInterior
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="fixed inset-0 z-40 flex items-center justify-center bg-[#0b1626]">
+        <span className="v-serif text-[13px] tracking-[0.2em] text-[#e2c078]/60">
+          지하로 내려가는 중...
+        </span>
+      </div>
+    )
+  }
 );
 
 const ProjectInterior = dynamic(
@@ -336,8 +356,21 @@ export function AIPortfolioVillage() {
   } | null>(null);
 
   const [viewMode, setViewMode] = useState<
-    "village" | "interior" | "project-interior" | "resume"
+    "village" | "interior" | "project-interior" | "resume" | "atelier"
   >("village");
+
+  // 접수 데스크(2D)는 어느 화면 위에도 뜬다 — 공방 안에서 도안에게 말을 걸어도,
+  // 마을에서 상시 버튼을 눌러도 결국 같은 이 패널이 열린다.
+  const [isCommissionOpen, setIsCommissionOpen] = useState(false);
+
+  const openCommission = useCallback((from: string) => {
+    setIsCommissionOpen(true);
+    trackVisitorEvent({
+      event_type: "commission_open",
+      target_id: "atelier-desk",
+      label: `의뢰 접수대 (${from})`
+    });
+  }, []);
 
   // ─── 모바일(터치 전용) 방문자는 이력서 모드로 먼저 안내한다 ───────────────
   // 마을 조작(캐릭터 이동·카메라)은 마우스/키보드 전제라 터치로는 사실상
@@ -1497,6 +1530,53 @@ export function AIPortfolioVillage() {
     openNpcDialogue(npc);
   }
 
+  // ─── 지하 의뢰 공방 ────────────────────────────────────────────────────
+  //
+  // 실사용 경로(우하단 상시 버튼)는 2D 접수 데스크로 바로 간다. 이쪽은
+  // '발견 경로' 전용 — 마을 해치나 포스트의 귀띔으로만 내려온다.
+
+  function openAtelier(from: string) {
+    trackVisitorEvent({
+      event_type: "atelier_enter",
+      target_id: "atelier",
+      label: `지하 공방 입장 (${from})`
+    });
+    setIsPanelOpen(false);
+    setSelectedNpc(null);
+    setShowTransitionOverlay(true);
+
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setViewMode("atelier");
+      setShowTransitionOverlay(false);
+    }, FADE_DURATION);
+  }
+
+  function exitAtelier() {
+    setSelectedNpc(null);
+    setShowTransitionOverlay(true);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      setViewMode("village");
+      setShowTransitionOverlay(false);
+    }, FADE_DURATION);
+  }
+
+  /** 공방 안에서 인형을 클릭했을 때. 도안은 접수대를 열고, 팀원은 대화창을 연다. */
+  function selectAtelierNpc(npc: NPCData) {
+    if (npc.id === "atelier-intake-npc") {
+      openCommission("공방 접수대");
+      return;
+    }
+    trackVisitorEvent({
+      event_type: "npc_open",
+      target_id: npc.id,
+      label: npc.name,
+      metadata: {place: "atelier", type: npc.type}
+    });
+    setSelectedNpc(npc);
+  }
+
   function startExploring(mode: ExplorationMode) {
     trackVisitorEvent({
       event_type: "exploration_start",
@@ -1614,6 +1694,7 @@ export function AIPortfolioVillage() {
     handleNpcPositionChange
   );
   const stableHandleGuideArrive = useStableCallback(handleGuideArrive);
+  const stableEnterAtelier = useStableCallback(() => openAtelier("마을 해치"));
   const stableSetEditing = useStableCallback((e: boolean) => {
     editingRef.current = e;
   });
@@ -1656,6 +1737,7 @@ export function AIPortfolioVillage() {
               npcCommandTargets={npcCommandTargets}
               overseerTarget={overseerTarget}
               npcSocialTargets={npcSocialTargets}
+              onEnterAtelier={stableEnterAtelier}
               onEditingChange={stableSetEditing}
               cinematic={
                 eavesOpen && convoCam
@@ -1798,6 +1880,7 @@ export function AIPortfolioVillage() {
             }
             onClose={() => setSelectedNpc(null)}
             onOpenSection={openSection}
+            onOpenCommission={() => openAtelier("포스트 귀띔")}
             onRunAction={runManualNpcAction}
             onSuggestedAction={handleNpcSuggestedAction}
             aiOffline={!!liveError}
@@ -1806,6 +1889,19 @@ export function AIPortfolioVillage() {
             activeSection={activeSection}
             onSelectSection={openSection}
           />
+          {/* 의뢰 공방 상시 진입 — 실사용 창구라 '숨겨진 입구'만 두면 아무도 못 찾는다.
+              발견의 재미는 포스트 대화 쪽 두 번째 입구가 맡는다. */}
+          {!showIntro && !isPanelOpen && !selectedNpc ? (
+            <button
+              type="button"
+              onClick={() => openCommission("상시 버튼")}
+              className="v-panel fixed bottom-24 right-4 z-[52] flex items-center gap-2 px-3.5 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:brightness-125 active:scale-95 md:bottom-6"
+              title="홈페이지 제작 의뢰"
+            >
+              <span className="v-lantern-glow text-base">🛠️</span>
+              제작 의뢰
+            </button>
+          ) : null}
         </>
       ) : null}
 
@@ -1827,7 +1923,36 @@ export function AIPortfolioVillage() {
         <ResumeMode onEnterVillage={enterVillageFromResume} />
       ) : null}
 
+      {viewMode === "atelier" ? (
+        <>
+          <AtelierInterior
+            onBack={exitAtelier}
+            onSelectNpc={selectAtelierNpc}
+          />
+          {/* 공방 팀원과의 대화. 마을과 같은 대화창을 그대로 쓴다.
+              DialogueBox 자체는 z-30 이고 공방 화면은 z-40 이라 그냥 두면
+              캔버스 밑에 깔려 안 보인다 — 스태킹 컨텍스트를 위로 올려준다. */}
+          <div className="relative z-50">
+            <DialogueBox
+              npc={selectedNpc}
+              onClose={() => setSelectedNpc(null)}
+              onOpenSection={openSection}
+              onRunAction={runManualNpcAction}
+              onSuggestedAction={handleNpcSuggestedAction}
+              aiOffline={!!liveError}
+            />
+          </div>
+        </>
+      ) : null}
+
       {konami ? <KonamiBurst /> : null}
+
+      {/* 의뢰 공방은 어느 viewMode에서든 열릴 수 있다 (이력서 모드 포함) */}
+      <AnimatePresence>
+        {isCommissionOpen ? (
+          <CommissionDesk onClose={() => setIsCommissionOpen(false)} />
+        ) : null}
+      </AnimatePresence>
 
       <SceneTransition active={showTransitionOverlay} />
     </main>

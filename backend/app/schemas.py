@@ -356,3 +356,133 @@ class CsNoteOut(BaseModel):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+# ─────────────────────────── 홈페이지 제작 의뢰 (의뢰 공방) ───────────────────────────
+
+CommissionStatus = Literal[
+    "received",     # 접수됨
+    "reviewing",    # 관리자 검토중
+    "briefed",      # 작업 지시 완료 (3단계에서 사용)
+    "in_progress",  # 제작중
+    "delivered",    # 전달 완료
+    "rejected",     # 반려/거절
+]
+
+# AI가 부른 금액은 확정 견적이 아니다. 방문자 화면과 접수 메일 양쪽에 이 문구를 노출한다.
+ESTIMATE_DISCLAIMER = (
+    "이 금액과 기간은 대화 내용을 바탕으로 한 참고 범위이며 확정 견적이 아닙니다. "
+    "정확한 견적은 담당자 확인 후 안내드립니다."
+)
+
+
+class CommissionDraft(BaseModel):
+    """상담 대화에서 추출한 구조화 요구사항 + 참고 견적."""
+
+    site_type: str = ""
+    summary: str = ""
+    pages: list[str] = Field(default_factory=list)
+    features: list[str] = Field(default_factory=list)
+    tone: str = ""
+    references: list[str] = Field(default_factory=list)
+    budget_hint: str = ""
+    deadline_hint: str = ""
+    estimate_min: int = 0
+    estimate_max: int = 0
+    weeks_min: int = 0
+    weeks_max: int = 0
+    estimate_reason: str = ""
+    missing: list[str] = Field(default_factory=list)   # 아직 못 들은 항목
+    ready_to_submit: bool = False                      # 접수 폼을 띄워도 될 만큼 모였는지
+
+
+class CommissionConsultIn(BaseModel):
+    session_id: str = Field(default="", max_length=120)
+    message: str = Field(min_length=1, max_length=2000)
+    recent_messages: list[str] = Field(default_factory=list)
+    # 지금까지 파악된 내용. 프런트가 돌려주므로 백엔드는 상태를 들고 있지 않는다.
+    draft: CommissionDraft | None = None
+
+
+class CommissionConsultOut(BaseModel):
+    reply: str
+    used_ai: bool
+    draft: CommissionDraft
+    disclaimer: str = ESTIMATE_DISCLAIMER
+
+
+class CommissionIn(BaseModel):
+    session_id: str = Field(default="", max_length=120)
+
+    contact_name: str = Field(default="", max_length=80)
+    contact_email: str = Field(min_length=3, max_length=200)
+    contact_phone: str = Field(default="", max_length=60)
+    org: str = Field(default="", max_length=160)
+
+    site_type: str = Field(default="", max_length=60)
+    summary: str = Field(default="", max_length=2000)
+    requirements: dict = Field(default_factory=dict)
+    budget_hint: str = Field(default="", max_length=120)
+    deadline_hint: str = Field(default="", max_length=120)
+
+    estimate_min: int = Field(default=0, ge=0)
+    estimate_max: int = Field(default=0, ge=0)
+    weeks_min: int = Field(default=0, ge=0)
+    weeks_max: int = Field(default=0, ge=0)
+    estimate_reason: str = Field(default="", max_length=2000)
+
+    consent: bool = False   # 연락처 수집 동의 — False면 접수 거부
+    website: str = ""       # 허니팟. 사람은 비워 두는 필드라 값이 있으면 봇.
+
+
+class CommissionOut(BaseModel):
+    id: int
+    public_id: str
+    contact_name: str
+    contact_email: str
+    contact_phone: str
+    org: str
+    site_type: str
+    summary: str
+    requirements: dict
+    budget_hint: str
+    deadline_hint: str
+    estimate_min: int
+    estimate_max: int
+    weeks_min: int
+    weeks_max: int
+    estimate_reason: str
+    status: str
+    admin_note: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class CommissionAck(BaseModel):
+    """접수 직후 방문자에게 돌려주는 최소 정보(내부 id는 노출하지 않는다)."""
+
+    public_id: str
+    status: str
+    message: str
+
+
+class CommissionMessageOut(BaseModel):
+    id: int
+    role: str
+    content: str
+    used_ai: bool
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class CommissionDetailOut(CommissionOut):
+    session_id: str
+    messages: list[CommissionMessageOut] = Field(default_factory=list)
+
+
+class CommissionStatusIn(BaseModel):
+    status: CommissionStatus
+    admin_note: str = Field(default="", max_length=4000)

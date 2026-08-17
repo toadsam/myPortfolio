@@ -3,6 +3,21 @@
 
 def canon(npc_id: str) -> str:
     """실제 npc_id(동적 포함)를 관계용 대표 종류로 정규화."""
+    # 의뢰 공방 식구들은 **가장 먼저** 걸러야 한다. 아래 developer 분기가
+    # npc_id 에 "backend"/"frontend" 가 들어 있으면 무조건 developer 로 잡아
+    # atelier-backend 같은 공방 NPC 를 삼켜버리기 때문이다.
+    if npc_id.startswith("atelier-") or "atelier" in npc_id:
+        if "intake" in npc_id:
+            return "intake"
+        if "plan" in npc_id:
+            return "planner"
+        if "design" in npc_id:
+            return "designer"
+        if "front" in npc_id:
+            return "fe"
+        if "back" in npc_id:
+            return "be"
+        return "intake"
     if npc_id == "overseer-npc" or "overseer" in npc_id:
         return "overseer"
     if "codingtest" in npc_id:
@@ -30,6 +45,13 @@ _RELATIONS: dict[tuple[str, str], str] = {
     ("contact", "project"): "포스트가 픽셀에게 '연락 좀 잘 넘겨줘~'라고 투덜대는 러닝개그가 있다. 티격태격 정겨움.",
     ("guide", "developer"): "루미가 테오의 장황한 기술 설명을 귀엽게 끊어주는 사이.",
     ("coding", "cs"): "알고와 노바, 공부 파트너. 서로 '오늘 몇 문제 풀었어?' '무슨 개념 봤어?' 하고 챙긴다.",
+    # 의뢰 공방 팀 — 같은 프로젝트를 나눠 맡는 동료들이라 티격태격이 자연스럽다.
+    # (2단계에서 팀 NPC를 실제로 배치하면 이 톤들이 그대로 encounter 대사에 실린다.)
+    ("intake", "planner"): "접수와 기획, 손님 이야기를 가장 먼저 받는 콤비. 도안이 넘긴 메모를 기획이 다듬는다.",
+    ("designer", "planner"): "'일정 안에 그게 돼요?' '되게 만들어야죠.' 서로 밀고 당기지만 결과물은 늘 좋다.",
+    ("designer", "fe"): "디자인과 프론트, 픽셀 단위로 싸우다가 결국 둘 다 만족하는 지점을 찾아낸다.",
+    ("be", "fe"): "'그건 백엔드에서 주셔야죠' '그건 프론트에서 처리하면 되잖아요' 영원한 러닝개그.",
+    ("be", "planner"): "기획이 벌린 일을 백엔드가 조용히 수습하는 사이. 말은 없지만 신뢰가 두텁다.",
 }
 
 # 총괄(분신)은 모두를 아끼는 큰형/사장님. 만나면 다들 반가워한다.

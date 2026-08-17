@@ -85,6 +85,7 @@ import type {
   SectionId,
   Vector3Tuple
 } from "@/types/portfolio";
+import {AtelierHatch} from "./AtelierHatch";
 import {Building} from "./Building";
 import {BuildingNetwork} from "./BuildingNetwork";
 import {CameraController} from "./CameraController";
@@ -117,6 +118,8 @@ interface VillageSceneProps {
   overseerTarget?: Vector3Tuple | null;
   onEditingChange?: (editing: boolean) => void;
   npcSocialTargets?: Record<string, Vector3Tuple>;
+  /** 지하 의뢰 공방 해치를 눌렀을 때 */
+  onEnterAtelier?: () => void;
 }
 
 // 네트워크 펄스로 연결할 프로젝트 건물들 (한 번만 계산)
@@ -2681,7 +2684,8 @@ function VillageSceneImpl({
   npcCommandTargets,
   overseerTarget,
   onEditingChange,
-  npcSocialTargets
+  npcSocialTargets,
+  onEnterAtelier
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
   const propsApi = usePropsEditor();
@@ -2998,6 +3002,12 @@ function VillageSceneImpl({
           ) : null}
 
           <SeasonAmbience lite={isMobile} />
+
+          {/* 지하 의뢰 공방으로 내려가는 해치 — 숨겨진 입구.
+              인트로 중에는 첫 화면에 집중하도록 감춘다. */}
+          {onEnterAtelier && !isIntro ? (
+            <AtelierHatch onEnter={onEnterAtelier} />
+          ) : null}
 
           {/* ─── 빛 번짐 ────────────────────────────────────────────────────
               컨셉 아트에서 눈을 잡아끄는 건 형태가 아니라 **빛이 번지는 것**이다.
