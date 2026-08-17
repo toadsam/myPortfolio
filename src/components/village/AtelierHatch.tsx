@@ -3,29 +3,52 @@
 /**
  * 지하 의뢰 공방으로 내려가는 해치 — 마을에 숨겨진 두 번째 입구.
  *
- * "숨겨진 공간"이 컨셉이라 평소엔 눈에 잘 안 띈다. 대신 널빤지 틈에서 아래쪽
- * 랜턴빛이 은은하게 새어 나와, 유심히 보는 사람만 알아챈다.
+ * 널빤지 틈에서 아래쪽 랜턴빛이 새어 나온다.
  * (실사용 경로는 헤더 옆 상시 '제작 의뢰' 버튼이다 — 여긴 발견의 재미 담당.)
+ *
+ * ── 왜 옆에 표지판을 세웠나 ─────────────────────────────────────────────────
+ * 처음엔 표지 없이 바닥 빛(opacity 0.16)만 뒀다. 결과는 **만든 사람도 못 찾는
+ * 입구**였다 — 회색 포장 위의 짙은 갈색 널빤지가 부감 카메라에서는 바닥 얼룩과
+ * 구분이 안 된다. 숨김이 재미가 되려면 "저기 뭔가 있다"까지는 보여야 한다.
+ *
+ * 표지판은 마을 간판 언어를 그대로 쓴다(Building.tsx 의 BuildingLabel 참고):
+ * 크림색 나무판 + 갈색 테두리, 3D 가 아니라 DOM. draw call 이 0 이고,
+ * 아무리 가까이 가도 글자가 안 뭉개진다. 대신 판을 매단 **기둥만 3D** 로 둬서
+ * 허공에 뜬 칩이 아니라 땅에 박힌 팻말로 읽히게 했다.
  *
  * 높이는 절대 좌표에 굽지 않고 terrainHeightAt 으로 렌더 때 얹는다.
  * 마을 규칙: 바닥 타일·건물·NPC·프롭이 전부 같은 함수를 본다.
  */
 
-import {Html} from "@react-three/drei";
+import {Html, useCursor} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
-import {useRef, useState} from "react";
+import {useMemo, useRef, useState} from "react";
 import {AdditiveBlending, MathUtils, type Mesh} from "three";
+import {
+  createThrottledCalculatePosition,
+  LABEL_SYNC_STRIDE
+} from "@/lib/htmlLabelThrottle";
 import {terrainHeightAt} from "@/lib/villageTerrain";
 
-// 중앙 광장 남동쪽 모서리 바로 옆. 광장 단 위라 지면이 확실히 평평하다.
+// 중앙 광장 남동쪽, 우물(5.74, 3.32) 바로 옆. 광장 포장 위라 지면이 평평하다.
 const HATCH_X = 4.2;
 const HATCH_Z = 3.4;
+
+// 팻말은 해치 서쪽 가장자리에. 동쪽은 우물, 북쪽은 화단, 북동쪽은 개러랜드가
+// 이미 차지하고 있어 이쪽만 비어 있다(가장 가까운 프롭이 1.3 유닛 밖).
+const SIGN_X = -1.4;
+const SIGN_Z = 0;
 
 export function AtelierHatch({onEnter}: {onEnter: () => void}) {
   const [hovered, setHovered] = useState(false);
   const glowRef = useRef<Mesh>(null);
   const tRef = useRef(0);
   const litRef = useRef(0);
+  const calculatePosition = useMemo(
+    () => createThrottledCalculatePosition(LABEL_SYNC_STRIDE),
+    []
+  );
+  useCursor(hovered);
 
   useFrame((_, delta) => {
     tRef.current += delta;
@@ -118,49 +141,85 @@ export function AtelierHatch({onEnter}: {onEnter: () => void}) {
         />
       </mesh>
 
-      {hovered ? (
+      {/* ── 팻말 ── 기둥만 3D, 판은 DOM(마을 간판 규칙) */}
+      <group position={[SIGN_X, 0, SIGN_Z]}>
+        {/* 땅에 박힌 기둥 */}
+        <mesh castShadow receiveShadow position={[0, 0.42, 0]}>
+          <cylinderGeometry args={[0.055, 0.07, 0.84, 7]} />
+          <meshStandardMaterial color="#6b4a2c" roughness={0.9} />
+        </mesh>
+        {/* 판을 매다는 가로대 */}
+        <mesh castShadow position={[0, 0.8, 0]}>
+          <boxGeometry args={[0.44, 0.055, 0.07]} />
+          <meshStandardMaterial color="#54381f" roughness={0.9} />
+        </mesh>
+        {/* 발치 받침돌 — 기둥이 포장에 그냥 꽂힌 것처럼 보이지 않게 */}
+        <mesh receiveShadow position={[0, 0.03, 0]}>
+          <cylinderGeometry args={[0.2, 0.24, 0.06, 10]} />
+          <meshStandardMaterial color="#5c5a52" roughness={0.95} />
+        </mesh>
+
         <Html
           center
-          distanceFactor={14}
-          position={[0, 1.15, 0]}
-          zIndexRange={[6, 0]}
+          calculatePosition={calculatePosition}
+          distanceFactor={11}
+          position={[0, 1.16, 0]}
+          zIndexRange={[10, 0]}
         >
-          <div
+          <button
+            onClick={event => {
+              event.stopPropagation();
+              onEnter();
+            }}
+            onPointerEnter={() => setHovered(true)}
+            onPointerLeave={() => setHovered(false)}
+            type="button"
             style={{
-              pointerEvents: "none",
-              userSelect: "none",
-              whiteSpace: "nowrap",
+              // 마을 건물 간판과 같은 크림색 나무판 + 갈색 테두리.
+              // 여기만 다른 톤을 쓰면 "UI 칩"으로 도로 읽힌다.
+              background:
+                "linear-gradient(#fdf3df 0%, #f6e7c8 55%, #e8d3ac 100%)",
+              border: `3px solid ${hovered ? "#ff9d38" : "#8a5a33"}`,
+              borderRadius: 10,
+              padding: "6px 12px",
+              cursor: "pointer",
+              boxShadow: hovered
+                ? "0 0 0 2px rgba(255,157,56,0.4), 0 6px 14px rgba(40,24,10,0.45)"
+                : "0 4px 10px rgba(40,24,10,0.35)",
+              transition:
+                "transform 0.18s, box-shadow 0.18s, border-color 0.18s",
+              transform: hovered ? "scale(1.08)" : "scale(1)",
               textAlign: "center",
+              whiteSpace: "nowrap",
+              userSelect: "none",
               fontFamily: "system-ui, sans-serif"
             }}
           >
-            <div
+            <span
               style={{
-                display: "inline-block",
-                borderRadius: 9,
-                border: "1.5px solid #ff9d38",
-                background: "rgba(11,22,38,0.92)",
-                padding: "5px 13px",
-                boxShadow: "0 0 18px rgba(255,157,56,0.45)"
+                display: "block",
+                fontSize: 13,
+                fontWeight: 800,
+                color: "#4a2f18",
+                letterSpacing: "0.02em"
               }}
             >
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 900,
-                  color: "#ff9d38",
-                  letterSpacing: "0.1em"
-                }}
-              >
-                지하로 내려가기 ↓
-              </div>
-              <div style={{fontSize: 9, color: "#a9bdd6", marginTop: 2}}>
-                아래에서 불빛이 새어 나온다
-              </div>
-            </div>
-          </div>
+              의뢰 공방
+            </span>
+            <span
+              style={{
+                display: "block",
+                fontSize: 10,
+                fontWeight: 700,
+                color: "#8a5a33",
+                marginTop: 1
+              }}
+            >
+              지하 ↓
+            </span>
+          </button>
         </Html>
-      ) : null}
+      </group>
     </group>
   );
 }
