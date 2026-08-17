@@ -76,8 +76,10 @@ Frontend mirror: `constants.ts` (sectionMeta + buildings + cameraTargets) → `t
 
 A hidden underground workshop where visitors commission website work: an AI receptionist (도안) extracts
 requirements and quotes a **reference** estimate, visitors submit, and the admin reviews in an inbox.
-Four teammate NPCs (기획/디자인/프론트/백엔드) staff the room. See **`docs/COMMISSION_ATELIER.md`** before
-touching any of it — that doc records the design decisions and, more importantly, the traps already hit.
+Four teammate NPCs (기획/디자인/프론트/백엔드) staff the room. Two docs cover it:
+**`docs/ATELIER_GUIDE.md`** (what works today, how to run a commission end to end) and
+**`docs/COMMISSION_ATELIER.md`** (design decisions and, more importantly, the traps already hit —
+read this before touching any of it).
 
 Three things make this unlike every other district:
 
