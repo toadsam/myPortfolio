@@ -69,6 +69,45 @@ Frontend mirror: `constants.ts` (sectionMeta + buildings + cameraTargets) → `t
 
 **Critical convention**: auto NPC id is `npc-${building.id}`. The backend routes to a dedicated profile by matching a substring of that id (e.g. `study-codingtest` → matches `"codingtest"`), so name new building ids so the substring match stays unambiguous.
 
+### Commission atelier (의뢰 공방) — the one public write path
+
+A hidden underground workshop where visitors commission website work: an AI receptionist (도안) extracts
+requirements and quotes a **reference** estimate, visitors submit, and the admin reviews in an inbox.
+Four teammate NPCs (기획/디자인/프론트/백엔드) staff the room. See **`docs/COMMISSION_ATELIER.md`** before
+touching any of it — that doc records the design decisions and, more importantly, the traps already hit.
+
+Three things make this unlike every other district:
+
+- It is the **only endpoint outsiders write to** (`POST /commission/consult`, `POST /commission`). Honeypot,
+  a dedicated rate limit separate from the AI one, consent, and a Discord notification are all load-bearing.
+- **Estimates are clamped, not trusted.** `commission_service._clamp_estimate()` holds the model's number
+  inside 0.6–1.8× of a rule-based baseline. Never surface a figure without `ESTIMATE_DISCLAIMER`.
+- **Entry is deliberately split**: the always-visible button opens the 2D desk directly (real intake path,
+  works on mobile); the village hatch and 포스트's hint lead to the 3D room. Don't collapse these into one.
+
+Two naming traps, both already guarded and locked by `tests/test_relations.py` — keep the atelier branch
+**first** in both `relations.canon()` and `chat_service._npc_profile_for_dynamic_id()`, since the existing
+`"backend"`/`"frontend"` substring checks would otherwise swallow `atelier-backend` into `developer`.
+
+### Texture/VRAM budget — measure before trading anything away
+
+`PerfHud` reports texture VRAM, and the number that matters is **GPU-resident bytes, not file size**.
+JPEG/WebP are transport formats: a 1024² albedo is ~300 KB on disk but **5.6 MB in VRAM**.
+
+Two things are already true and easy to break:
+
+- **`villageMaterial.ts` nulls `metalnessMap`/`roughnessMap`** so the whole village shares one roughness.
+  Shipped GLBs therefore must not carry metallicRoughness images — `scripts/strip-metallic-roughness.mjs`
+  removes them without touching Draco (`gltf-transform copy` would decode it and re-quantize).
+  Re-run that script after any `npm run optimize`.
+- **Real `pointLight` count is capped at 4** (see `LampPools`); every extra light changes the shader
+  permutation for _all_ materials. Fake additional light with additive ground discs.
+
+`npm run optimize -- --ktx2` exists but is **off by default**. Measured on `central-plaza` baseColor 1024²:
+WebP 312 KB/31.3 dB, ETC1S 251 KB/**26.4 dB (visible regression — never use)**, UASTC 1166 KB/35.7 dB.
+UASTC improves quality and cuts VRAM 4×, but downloads grow ~2.5× and UASTC floors at ~1 byte/pixel,
+so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottleneck.
+
 ### NPC relationship system
 
 `backend/app/relations.py` normalizes any npc*id (including dynamic per-building ids) into a canonical kind (`guide`/`developer`/`archivist`/`coding`/`cs`/`contact`/`project`/`overseer`) and defines a base relationship tone per canonical-kind pair. `backend/app/services/relationship_service.py` persists the \_actual* evolving relationship (`NpcRelationship` model: affinity −100..100, a vibe label, last few history events, meet count) keyed on the canonical pair — same-kind pairs (e.g. two `project` NPCs) never get a relationship row. `relationship_context()` builds the prompt fragment fed into encounter/chat generation; `apply_outcome()` nudges affinity by at most ±5 per interaction and flags milestones (화해했어요/절친이 됐어요/etc). When touching NPC-to-NPC dialogue (`npc_brain_service.py`'s encounter path), this is the layer that gives it continuity.

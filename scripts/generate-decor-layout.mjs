@@ -1084,7 +1084,9 @@ const blockRect = new Map();
       // 종류는 **나무 울타리**다. 돌담(wall-low)으로 둘렀더니 섬이 성벽에
       // 갇힌 요새로 읽혔다 — 컨셉의 섬 테두리는 나무 난간이고, 사용자도
       // 나무를 원했다. 돌은 마을 바깥 테두리(rimwall)에만 남는다.
-      if (place(`wall-${district}-${n++}`, "fence-rail", x, z, rot, {gap: 1.15}))
+      if (
+        place(`wall-${district}-${n++}`, "fence-rail", x, z, rot, {gap: 1.15})
+      )
         walls.push({x, z, ax: Math.cos(rot), az: Math.sin(rot)});
     }
   }

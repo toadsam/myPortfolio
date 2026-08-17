@@ -24,6 +24,7 @@ import buildingModelsJson from "@/data/buildingModels.json";
 import {techIcons} from "@/data/techIcons";
 import {VILLAGE_PALETTE} from "@/lib/villagePalette";
 import {terrainHeightAt} from "@/lib/villageTerrain";
+import {extendGltfLoader} from "@/lib/gltfLoaders";
 
 // 생성된 JSON이라 키가 그때그때 달라진다 — 지금 있는 4채로 타입이 굳으면
 // 다음 건물을 넣을 때마다 컴파일이 깨진다.
@@ -157,7 +158,7 @@ function GlbModel({
   size: [number, number, number];
   boost?: number;
 }) {
-  const {scene} = useGLTF(glbPath);
+  const {scene} = useGLTF(glbPath, true, true, extendGltfLoader);
 
   // <primitive castShadow /> 는 루트 Object3D 한 개에만 플래그를 세운다. GLB는
   // 안에 메시가 수십 개 들어 있는 계층이라, 루트만 켜면 그림자가 하나도 안 진다.

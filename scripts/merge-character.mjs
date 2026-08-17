@@ -13,7 +13,16 @@
 //   이어서 `npm run optimize -- characters` 로 텍스처까지 줄인다.
 
 import {execSync} from "node:child_process";
-import {existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync} from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+  writeFileSync
+} from "node:fs";
 import {tmpdir} from "node:os";
 import {basename, join} from "node:path";
 
@@ -30,7 +39,7 @@ if (!existsSync(inputDir)) {
 }
 
 const sources = readdirSync(inputDir)
-  .filter((f) => f.toLowerCase().endsWith(".glb"))
+  .filter(f => f.toLowerCase().endsWith(".glb"))
   .sort();
 
 if (sources.length === 0) {
@@ -48,7 +57,10 @@ function clipNameFrom(file) {
   return name.toLowerCase();
 }
 
-const gltf = (args) => execSync(`npx --yes @gltf-transform/cli ${args}`, {stdio: ["ignore", "ignore", "inherit"]});
+const gltf = args =>
+  execSync(`npx --yes @gltf-transform/cli ${args}`, {
+    stdio: ["ignore", "ignore", "inherit"]
+  });
 const temp = mkdtempSync(join(tmpdir(), "char-merge-"));
 
 try {
@@ -58,7 +70,12 @@ try {
   const docs = sources.map((file, i) => {
     const path = join(temp, `src${i}.gltf`);
     gltf(`copy "${join(inputDir, file)}" "${path}"`);
-    return {file, path, json: JSON.parse(readFileSync(path, "utf-8")), clip: clipNameFrom(file)};
+    return {
+      file,
+      path,
+      json: JSON.parse(readFileSync(path, "utf-8")),
+      clip: clipNameFrom(file)
+    };
   });
 
   // ── 첫 파일이 본체. 메시·스킨·텍스처는 여기 것만 남는다.
@@ -94,18 +111,22 @@ try {
     const bufferViewMap = new Map();
     const accessorMap = new Map();
 
-    const addBufferView = (index) => {
+    const addBufferView = index => {
       if (bufferViewMap.has(index)) return bufferViewMap.get(index);
-      const view = {...src.bufferViews[index], buffer: bufferOffset + (src.bufferViews[index].buffer ?? 0)};
+      const view = {
+        ...src.bufferViews[index],
+        buffer: bufferOffset + (src.bufferViews[index].buffer ?? 0)
+      };
       base.bufferViews.push(view);
       const next = base.bufferViews.length - 1;
       bufferViewMap.set(index, next);
       return next;
     };
-    const addAccessor = (index) => {
+    const addAccessor = index => {
       if (accessorMap.has(index)) return accessorMap.get(index);
       const accessor = {...src.accessors[index]};
-      if (accessor.bufferView !== undefined) accessor.bufferView = addBufferView(accessor.bufferView);
+      if (accessor.bufferView !== undefined)
+        accessor.bufferView = addBufferView(accessor.bufferView);
       base.accessors.push(accessor);
       const next = base.accessors.length - 1;
       accessorMap.set(index, next);
@@ -113,7 +134,7 @@ try {
     };
 
     for (const animation of src.animations) {
-      const samplers = animation.samplers.map((sampler) => ({
+      const samplers = animation.samplers.map(sampler => ({
         ...sampler,
         input: addAccessor(sampler.input),
         output: addAccessor(sampler.output)
@@ -123,12 +144,16 @@ try {
       const channels = [];
       for (const channel of animation.channels) {
         const boneName = src.nodes[channel.target.node]?.name;
-        const targetIndex = boneName === undefined ? undefined : nodeIndexByName.get(boneName);
+        const targetIndex =
+          boneName === undefined ? undefined : nodeIndexByName.get(boneName);
         if (targetIndex === undefined) {
           orphanChannels += 1;
           continue;
         }
-        channels.push({sampler: channel.sampler, target: {node: targetIndex, path: channel.target.path}});
+        channels.push({
+          sampler: channel.sampler,
+          target: {node: targetIndex, path: channel.target.path}
+        });
       }
 
       base.animations.push({name: doc.clip, channels, samplers});
@@ -137,7 +162,9 @@ try {
   }
 
   if (orphanChannels > 0) {
-    console.log(`  ! 본체에 없는 뼈를 가리키는 채널 ${orphanChannels}개를 버렸습니다`);
+    console.log(
+      `  ! 본체에 없는 뼈를 가리키는 채널 ${orphanChannels}개를 버렸습니다`
+    );
   }
 
   // ── 합친 JSON을 쓰고 GLB로 되묶는다.
@@ -150,10 +177,19 @@ try {
   const outPath = join(outDir, `${outName}.glb`);
   gltf(`copy "${mergedPath}" "${outPath}"`);
 
-  const totalIn = sources.reduce((sum, f) => sum + statSync(join(inputDir, f)).size, 0);
+  const totalIn = sources.reduce(
+    (sum, f) => sum + statSync(join(inputDir, f)).size,
+    0
+  );
   const out = statSync(outPath).size;
   console.log(`\n✔ ${outPath}`);
-  console.log(`  ${(totalIn / 1024 / 1024).toFixed(2)} MB (${sources.length}개) → ${(out / 1024 / 1024).toFixed(2)} MB · 클립 ${base.animations.length}개`);
+  console.log(
+    `  ${(totalIn / 1024 / 1024).toFixed(2)} MB (${sources.length}개) → ${(
+      out /
+      1024 /
+      1024
+    ).toFixed(2)} MB · 클립 ${base.animations.length}개`
+  );
   console.log(`\n  다음: npm run optimize -- characters\n`);
 } finally {
   rmSync(temp, {recursive: true, force: true});

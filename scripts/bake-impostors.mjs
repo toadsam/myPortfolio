@@ -77,12 +77,15 @@ const CAP = {
 function parseGlb(buf) {
   const dv = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
   const total = dv.getUint32(8, true);
-  let off = 12, json = null, bin = null;
+  let off = 12,
+    json = null,
+    bin = null;
   while (off < total) {
     const len = dv.getUint32(off, true);
     const type = dv.getUint32(off + 4, true);
     const start = off + 8;
-    if (type === 0x4e4f534a) json = JSON.parse(buf.slice(start, start + len).toString("utf8"));
+    if (type === 0x4e4f534a)
+      json = JSON.parse(buf.slice(start, start + len).toString("utf8"));
     else if (type === 0x004e4942) bin = buf.slice(start, start + len);
     off = start + len;
     while (off % 4 !== 0) off++;
@@ -90,7 +93,14 @@ function parseGlb(buf) {
   return {gltf: json, bin};
 }
 
-const COMP = {5120: [Int8Array, 1], 5121: [Uint8Array, 1], 5122: [Int16Array, 2], 5123: [Uint16Array, 2], 5125: [Uint32Array, 4], 5126: [Float32Array, 4]};
+const COMP = {
+  5120: [Int8Array, 1],
+  5121: [Uint8Array, 1],
+  5122: [Int16Array, 2],
+  5123: [Uint16Array, 2],
+  5125: [Uint32Array, 4],
+  5126: [Float32Array, 4]
+};
 const NUM = {SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4};
 
 function readAccessor(gltf, bin, index) {
@@ -105,7 +115,9 @@ function readAccessor(gltf, bin, index) {
   for (let i = 0; i < acc.count; i++) {
     const at = base + i * stride;
     const slice = src.subarray(at, at + n * bytes);
-    const view = new Ctor(slice.buffer.slice(slice.byteOffset, slice.byteOffset + slice.byteLength));
+    const view = new Ctor(
+      slice.buffer.slice(slice.byteOffset, slice.byteOffset + slice.byteLength)
+    );
     for (let c = 0; c < n; c++) out[i * n + c] = view[c];
   }
   return out;
@@ -117,8 +129,9 @@ function readAccessor(gltf, bin, index) {
 const ident = () => [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 function mul(a, b) {
   const o = new Array(16).fill(0);
-  for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++)
-    for (let k = 0; k < 4; k++) o[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k];
+  for (let r = 0; r < 4; r++)
+    for (let c = 0; c < 4; c++)
+      for (let k = 0; k < 4; k++) o[c * 4 + r] += a[k * 4 + r] * b[c * 4 + k];
   return o;
 }
 function trs(node) {
@@ -128,13 +141,22 @@ function trs(node) {
   const [sx, sy, sz] = node.scale ?? [1, 1, 1];
   const [tx, ty, tz] = node.translation ?? [0, 0, 0];
   const r = [
-    1 - 2 * (qy * qy + qz * qz), 2 * (qx * qy + qz * qw), 2 * (qx * qz - qy * qw),
-    2 * (qx * qy - qz * qw), 1 - 2 * (qx * qx + qz * qz), 2 * (qy * qz + qx * qw),
-    2 * (qx * qz + qy * qw), 2 * (qy * qz - qx * qw), 1 - 2 * (qx * qx + qy * qy)
+    1 - 2 * (qy * qy + qz * qz),
+    2 * (qx * qy + qz * qw),
+    2 * (qx * qz - qy * qw),
+    2 * (qx * qy - qz * qw),
+    1 - 2 * (qx * qx + qz * qz),
+    2 * (qy * qz + qx * qw),
+    2 * (qx * qz + qy * qw),
+    2 * (qy * qz - qx * qw),
+    1 - 2 * (qx * qx + qy * qy)
   ];
   const s = [sx, sy, sz];
-  for (let c = 0; c < 3; c++) for (let row = 0; row < 3; row++) m[c * 4 + row] = r[c * 3 + row] * s[c];
-  m[12] = tx; m[13] = ty; m[14] = tz;
+  for (let c = 0; c < 3; c++)
+    for (let row = 0; row < 3; row++) m[c * 4 + row] = r[c * 3 + row] * s[c];
+  m[12] = tx;
+  m[13] = ty;
+  m[14] = tz;
   return m;
 }
 const apply = (m, x, y, z) => [
@@ -158,20 +180,35 @@ function flatten(gltf) {
 
 // ─── PNG ──────────────────────────────────────────────────────────────────────
 function decodePng(buf) {
-  let off = 8, w = 0, h = 0, colorType = 0;
+  let off = 8,
+    w = 0,
+    h = 0,
+    colorType = 0;
   const idat = [];
   while (off < buf.length) {
     const len = buf.readUInt32BE(off);
     const tag = buf.toString("ascii", off + 4, off + 8);
     const data = buf.subarray(off + 8, off + 8 + len);
     if (tag === "IHDR") {
-      w = data.readUInt32BE(0); h = data.readUInt32BE(4); colorType = data[9];
-      if (data[8] !== 8 || data[12] !== 0) throw new Error("8bit 비인터레이스 PNG만 지원");
+      w = data.readUInt32BE(0);
+      h = data.readUInt32BE(4);
+      colorType = data[9];
+      if (data[8] !== 8 || data[12] !== 0)
+        throw new Error("8bit 비인터레이스 PNG만 지원");
     } else if (tag === "IDAT") idat.push(data);
     else if (tag === "IEND") break;
     off += 12 + len;
   }
-  const ch = colorType === 6 ? 4 : colorType === 2 ? 3 : colorType === 0 ? 1 : (() => {throw new Error(`colorType ${colorType}`);})();
+  const ch =
+    colorType === 6
+      ? 4
+      : colorType === 2
+      ? 3
+      : colorType === 0
+      ? 1
+      : (() => {
+          throw new Error(`colorType ${colorType}`);
+        })();
   const raw = inflateSync(Buffer.concat(idat));
   const out = Buffer.alloc(w * h * ch);
   const stride = w * ch;
@@ -191,7 +228,9 @@ function decodePng(buf) {
       else if (filter === 2) v += b;
       else if (filter === 3) v += (a + b) >> 1;
       else if (filter === 4) {
-        const pa = Math.abs(b - c), pb = Math.abs(a - c), pc = Math.abs(a + b - 2 * c);
+        const pa = Math.abs(b - c),
+          pb = Math.abs(a - c),
+          pc = Math.abs(a + b - 2 * c);
         v += pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
       }
       cur[x] = v & 0xff;
@@ -211,7 +250,8 @@ function crc32(buf) {
     }
   }
   let c = -1;
-  for (let i = 0; i < buf.length; i++) c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
+  for (let i = 0; i < buf.length; i++)
+    c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
   return c ^ -1;
 }
 /** RGBA PNG — 알파가 있어야 잎 사이로 하늘이 보인다 */
@@ -231,8 +271,10 @@ function encodePngRgba(w, h, rgba) {
     return Buffer.concat([len, body, crc]);
   };
   const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4);
-  ihdr[8] = 8; ihdr[9] = 6; // 8bit RGBA
+  ihdr.writeUInt32BE(w, 0);
+  ihdr.writeUInt32BE(h, 4);
+  ihdr[8] = 8;
+  ihdr[9] = 6; // 8bit RGBA
   return Buffer.concat([
     Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
     chunk("IHDR", ihdr),
@@ -245,7 +287,7 @@ function encodePngRgba(w, h, rgba) {
 // h/v/d = 화폭 가로축 / 세로축 / 깊이축(카메라가 보는 방향)
 const VIEWS = [
   {name: "front", h: 0, v: 1, d: 2}, // −Z 에서 본다 (가로 = X)
-  {name: "side", h: 2, v: 1, d: 0}   // −X 에서 본다 (가로 = Z)
+  {name: "side", h: 2, v: 1, d: 0} // −X 에서 본다 (가로 = Z)
 ];
 /** 뚜껑용 — 위에서 내려다본다. 화면 세로가 Z라 뒤집지 않는다(glTF UV와 같은 방향) */
 const TOP_VIEW = {name: "top", h: 0, v: 2, d: 1, noFlip: true};
@@ -255,7 +297,7 @@ function load(path) {
   const parts = flatten(gltf);
 
   const texCache = new Map();
-  const texFor = (matIdx) => {
+  const texFor = matIdx => {
     if (matIdx === undefined) return null;
     if (texCache.has(matIdx)) return texCache.get(matIdx);
     let tex = null;
@@ -263,9 +305,16 @@ function load(path) {
     if (t) {
       const img = gltf.images[gltf.textures[t.index].source];
       const bv = gltf.bufferViews[img.bufferView];
-      const raw = Buffer.from(bin.buffer, bin.byteOffset + (bv.byteOffset ?? 0), bv.byteLength);
+      const raw = Buffer.from(
+        bin.buffer,
+        bin.byteOffset + (bv.byteOffset ?? 0),
+        bv.byteLength
+      );
       if (raw[0] === 0x89) tex = decodePng(raw);
-      else throw new Error(`${basename(path)} 의 텍스처가 PNG가 아닙니다 — raw/ 원본을 쓰세요`);
+      else
+        throw new Error(
+          `${basename(path)} 의 텍스처가 PNG가 아닙니다 — raw/ 원본을 쓰세요`
+        );
     }
     texCache.set(matIdx, tex);
     return tex;
@@ -273,30 +322,41 @@ function load(path) {
 
   const geo = parts.map(({prim, m}) => {
     const pos = readAccessor(gltf, bin, prim.attributes.POSITION);
-    const uv = prim.attributes.TEXCOORD_0 !== undefined ? readAccessor(gltf, bin, prim.attributes.TEXCOORD_0) : null;
-    const idx = prim.indices !== undefined
-      ? readAccessor(gltf, bin, prim.indices)
-      : Float64Array.from({length: pos.length / 3}, (_, i) => i);
+    const uv =
+      prim.attributes.TEXCOORD_0 !== undefined
+        ? readAccessor(gltf, bin, prim.attributes.TEXCOORD_0)
+        : null;
+    const idx =
+      prim.indices !== undefined
+        ? readAccessor(gltf, bin, prim.indices)
+        : Float64Array.from({length: pos.length / 3}, (_, i) => i);
     const world = new Float64Array(pos.length);
     for (let i = 0; i < pos.length; i += 3) {
       const [x, y, z] = apply(m, pos[i], pos[i + 1], pos[i + 2]);
-      world[i] = x; world[i + 1] = y; world[i + 2] = z;
+      world[i] = x;
+      world[i + 1] = y;
+      world[i + 2] = z;
     }
     return {
-      pos: world, uv, idx,
+      pos: world,
+      uv,
+      idx,
       tex: texFor(prim.material),
-      base: gltf.materials?.[prim.material]?.pbrMetallicRoughness?.baseColorFactor
+      base: gltf.materials?.[prim.material]?.pbrMetallicRoughness
+        ?.baseColorFactor
     };
   });
 
-  const lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+  const lo = [Infinity, Infinity, Infinity],
+    hi = [-Infinity, -Infinity, -Infinity];
   let tris = 0;
   for (const g of geo) {
     tris += g.idx.length / 3;
-    for (let i = 0; i < g.pos.length; i += 3) for (let c = 0; c < 3; c++) {
-      if (g.pos[i + c] < lo[c]) lo[c] = g.pos[i + c];
-      if (g.pos[i + c] > hi[c]) hi[c] = g.pos[i + c];
-    }
+    for (let i = 0; i < g.pos.length; i += 3)
+      for (let c = 0; c < 3; c++) {
+        if (g.pos[i + c] < lo[c]) lo[c] = g.pos[i + c];
+        if (g.pos[i + c] > hi[c]) hi[c] = g.pos[i + c];
+      }
   }
   return {geo, lo, hi, tris};
 }
@@ -310,69 +370,104 @@ function render(geo, view, center, span, minY = -Infinity) {
   for (const {pos, uv, idx, tex, base} of geo) {
     for (let t = 0; t < idx.length; t += 3) {
       const o = [idx[t] * 3, idx[t + 1] * 3, idx[t + 2] * 3];
-      if (Math.max(pos[o[0] + 1], pos[o[1] + 1], pos[o[2] + 1]) < minY) continue;
-      const ph = o.map((k) => ((pos[k + H] - center[H]) / span + 0.5) * PX);
+      if (Math.max(pos[o[0] + 1], pos[o[1] + 1], pos[o[2] + 1]) < minY)
+        continue;
+      const ph = o.map(k => ((pos[k + H] - center[H]) / span + 0.5) * PX);
       // 화면 세로는 아래로 자란다 — 모델 위쪽이 이미지 0행이 되도록 뒤집는다
       const pv = view.noFlip
-        ? o.map((k) => ((pos[k + V] - center[V]) / span + 0.5) * PX)
-        : o.map((k) => PX - ((pos[k + V] - center[V]) / span + 0.5) * PX);
-      const pd = o.map((k) => pos[k + D]);
+        ? o.map(k => ((pos[k + V] - center[V]) / span + 0.5) * PX)
+        : o.map(k => PX - ((pos[k + V] - center[V]) / span + 0.5) * PX);
+      const pd = o.map(k => pos[k + D]);
 
-      const e1 = [pos[o[1]] - pos[o[0]], pos[o[1] + 1] - pos[o[0] + 1], pos[o[1] + 2] - pos[o[0] + 2]];
-      const e2 = [pos[o[2]] - pos[o[0]], pos[o[2] + 1] - pos[o[0] + 1], pos[o[2] + 2] - pos[o[0] + 2]];
-      const n = [e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0]];
+      const e1 = [
+        pos[o[1]] - pos[o[0]],
+        pos[o[1] + 1] - pos[o[0] + 1],
+        pos[o[1] + 2] - pos[o[0] + 2]
+      ];
+      const e2 = [
+        pos[o[2]] - pos[o[0]],
+        pos[o[2] + 1] - pos[o[0] + 1],
+        pos[o[2] + 2] - pos[o[0] + 2]
+      ];
+      const n = [
+        e1[1] * e2[2] - e1[2] * e2[1],
+        e1[2] * e2[0] - e1[0] * e2[2],
+        e1[0] * e2[1] - e1[1] * e2[0]
+      ];
       const nl = Math.hypot(...n) || 1;
       // 마을 조명이 위에서 다시 칠하지만, 빌보드는 법선이 전부 위를 봐서 균일하게
       // 밝아진다. 음영을 약하게 구웠더니 나무가 색종이처럼 납작해 보여서, 원본과
       // 나란히 놓고 비교해 대비를 키웠다 — 위를 보는 면은 밝게, 옆·아래는 어둡게.
-      const shade = 0.56 + 0.16 * Math.abs(n[D] / nl) + 0.34 * Math.max(0, n[1] / nl);
+      const shade =
+        0.56 + 0.16 * Math.abs(n[D] / nl) + 0.34 * Math.max(0, n[1] / nl);
 
-      const i0 = Math.max(0, Math.floor(Math.min(...ph))), i1 = Math.min(PX - 1, Math.ceil(Math.max(...ph)));
-      const j0 = Math.max(0, Math.floor(Math.min(...pv))), j1 = Math.min(PX - 1, Math.ceil(Math.max(...pv)));
-      const den = (pv[1] - pv[2]) * (ph[0] - ph[2]) + (ph[2] - ph[1]) * (pv[0] - pv[2]);
+      const i0 = Math.max(0, Math.floor(Math.min(...ph))),
+        i1 = Math.min(PX - 1, Math.ceil(Math.max(...ph)));
+      const j0 = Math.max(0, Math.floor(Math.min(...pv))),
+        j1 = Math.min(PX - 1, Math.ceil(Math.max(...pv)));
+      const den =
+        (pv[1] - pv[2]) * (ph[0] - ph[2]) + (ph[2] - ph[1]) * (pv[0] - pv[2]);
       if (Math.abs(den) < 1e-12) continue;
 
-      for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
-        const qx = i + 0.5, qy = j + 0.5;
-        const w0 = ((pv[1] - pv[2]) * (qx - ph[2]) + (ph[2] - ph[1]) * (qy - pv[2])) / den;
-        const w1 = ((pv[2] - pv[0]) * (qx - ph[2]) + (ph[0] - ph[2]) * (qy - pv[2])) / den;
-        const w2 = 1 - w0 - w1;
-        if (w0 < 0 || w1 < 0 || w2 < 0) continue;
-        const d = w0 * pd[0] + w1 * pd[1] + w2 * pd[2];
-        const at = j * PX + i;
-        if (d <= depth[at]) continue;
-        depth[at] = d;
+      for (let j = j0; j <= j1; j++)
+        for (let i = i0; i <= i1; i++) {
+          const qx = i + 0.5,
+            qy = j + 0.5;
+          const w0 =
+            ((pv[1] - pv[2]) * (qx - ph[2]) + (ph[2] - ph[1]) * (qy - pv[2])) /
+            den;
+          const w1 =
+            ((pv[2] - pv[0]) * (qx - ph[2]) + (ph[0] - ph[2]) * (qy - pv[2])) /
+            den;
+          const w2 = 1 - w0 - w1;
+          if (w0 < 0 || w1 < 0 || w2 < 0) continue;
+          const d = w0 * pd[0] + w1 * pd[1] + w2 * pd[2];
+          const at = j * PX + i;
+          if (d <= depth[at]) continue;
+          depth[at] = d;
 
-        let r = 190, g = 190, b = 190, a = 255;
-        if (tex && uv) {
-          let u = w0 * uv[idx[t] * 2] + w1 * uv[idx[t + 1] * 2] + w2 * uv[idx[t + 2] * 2];
-          let v = w0 * uv[idx[t] * 2 + 1] + w1 * uv[idx[t + 1] * 2 + 1] + w2 * uv[idx[t + 2] * 2 + 1];
-          u -= Math.floor(u); v -= Math.floor(v);
-          const sx = Math.min(tex.w - 1, Math.floor(u * tex.w));
-          // glTF UV 원점은 좌상단 — 뒤집으면 아틀라스의 엉뚱한 칸을 찍는다
-          const sy = Math.min(tex.h - 1, Math.floor(v * tex.h));
-          const s = (sy * tex.w + sx) * tex.ch;
-          r = tex.data[s];
-          g = tex.ch === 1 ? r : tex.data[s + 1];
-          b = tex.ch === 1 ? r : tex.data[s + 2];
-          if (tex.ch === 4) a = tex.data[s + 3];
-        } else if (base) {
-          r = base[0] * 255; g = base[1] * 255; b = base[2] * 255;
+          let r = 190,
+            g = 190,
+            b = 190,
+            a = 255;
+          if (tex && uv) {
+            let u =
+              w0 * uv[idx[t] * 2] +
+              w1 * uv[idx[t + 1] * 2] +
+              w2 * uv[idx[t + 2] * 2];
+            let v =
+              w0 * uv[idx[t] * 2 + 1] +
+              w1 * uv[idx[t + 1] * 2 + 1] +
+              w2 * uv[idx[t + 2] * 2 + 1];
+            u -= Math.floor(u);
+            v -= Math.floor(v);
+            const sx = Math.min(tex.w - 1, Math.floor(u * tex.w));
+            // glTF UV 원점은 좌상단 — 뒤집으면 아틀라스의 엉뚱한 칸을 찍는다
+            const sy = Math.min(tex.h - 1, Math.floor(v * tex.h));
+            const s = (sy * tex.w + sx) * tex.ch;
+            r = tex.data[s];
+            g = tex.ch === 1 ? r : tex.data[s + 1];
+            b = tex.ch === 1 ? r : tex.data[s + 2];
+            if (tex.ch === 4) a = tex.data[s + 3];
+          } else if (base) {
+            r = base[0] * 255;
+            g = base[1] * 255;
+            b = base[2] * 255;
+          }
+          // ─── 숲 색 낮추기 ──────────────────────────────────────────────
+          // Meshy 나무는 흰 배경에 렌더한 거라 잎이 쨍한 연두다. 마을을 두르는
+          // 띠로 300그루를 심으니 **초록 벽**이 마을보다 밝아서, 정작 봐야 할
+          // 건물이 그 안에 파묻혔다. 컨셉 아트의 바깥 숲은 짙은 청록 침엽수다.
+          // 밝기를 낮추고 초록을 파랑 쪽으로 조금 돌려 마을이 도드라지게 한다.
+          const gy = 0.299 * r + 0.587 * g + 0.114 * b;
+          r = gy + (r - gy) * FOREST_SAT;
+          g = gy + (g - gy) * FOREST_SAT;
+          b = gy + (b - gy) * FOREST_SAT;
+          rgba[at * 4] = Math.min(255, r * shade * FOREST_TINT[0]);
+          rgba[at * 4 + 1] = Math.min(255, g * shade * FOREST_TINT[1]);
+          rgba[at * 4 + 2] = Math.min(255, b * shade * FOREST_TINT[2]);
+          rgba[at * 4 + 3] = a;
         }
-        // ─── 숲 색 낮추기 ──────────────────────────────────────────────
-        // Meshy 나무는 흰 배경에 렌더한 거라 잎이 쨍한 연두다. 마을을 두르는
-        // 띠로 300그루를 심으니 **초록 벽**이 마을보다 밝아서, 정작 봐야 할
-        // 건물이 그 안에 파묻혔다. 컨셉 아트의 바깥 숲은 짙은 청록 침엽수다.
-        // 밝기를 낮추고 초록을 파랑 쪽으로 조금 돌려 마을이 도드라지게 한다.
-        const gy = 0.299 * r + 0.587 * g + 0.114 * b;
-        r = gy + (r - gy) * FOREST_SAT;
-        g = gy + (g - gy) * FOREST_SAT;
-        b = gy + (b - gy) * FOREST_SAT;
-        rgba[at * 4] = Math.min(255, r * shade * FOREST_TINT[0]);
-        rgba[at * 4 + 1] = Math.min(255, g * shade * FOREST_TINT[1]);
-        rgba[at * 4 + 2] = Math.min(255, b * shade * FOREST_TINT[2]);
-        rgba[at * 4 + 3] = a;
-      }
     }
   }
 
@@ -380,25 +475,41 @@ function render(geo, view, center, span, minY = -Infinity) {
   // 잎 색과 섞어 멀리서 나무에 검은 테두리가 생긴다 — 알파 블리딩.
   for (let pass = 0; pass < 4; pass++) {
     const src = Buffer.from(rgba);
-    for (let j = 0; j < PX; j++) for (let i = 0; i < PX; i++) {
-      const at = j * PX + i;
-      if (src[at * 4 + 3] > 0) continue;
-      let r = 0, g = 0, b = 0, n = 0;
-      for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-        const ni = i + di, nj = j + dj;
-        if (ni < 0 || nj < 0 || ni >= PX || nj >= PX) continue;
-        const nat = (nj * PX + ni) * 4;
-        if (src[nat + 3] === 0) continue;
-        r += src[nat]; g += src[nat + 1]; b += src[nat + 2]; n++;
+    for (let j = 0; j < PX; j++)
+      for (let i = 0; i < PX; i++) {
+        const at = j * PX + i;
+        if (src[at * 4 + 3] > 0) continue;
+        let r = 0,
+          g = 0,
+          b = 0,
+          n = 0;
+        for (const [di, dj] of [
+          [1, 0],
+          [-1, 0],
+          [0, 1],
+          [0, -1]
+        ]) {
+          const ni = i + di,
+            nj = j + dj;
+          if (ni < 0 || nj < 0 || ni >= PX || nj >= PX) continue;
+          const nat = (nj * PX + ni) * 4;
+          if (src[nat + 3] === 0) continue;
+          r += src[nat];
+          g += src[nat + 1];
+          b += src[nat + 2];
+          n++;
+        }
+        if (!n) continue;
+        rgba[at * 4] = r / n;
+        rgba[at * 4 + 1] = g / n;
+        rgba[at * 4 + 2] = b / n;
+        // 알파는 0 그대로 — 색만 번지게 하고 실루엣은 안 키운다
       }
-      if (!n) continue;
-      rgba[at * 4] = r / n; rgba[at * 4 + 1] = g / n; rgba[at * 4 + 2] = b / n;
-      // 알파는 0 그대로 — 색만 번지게 하고 실루엣은 안 키운다
-    }
   }
 
   let covered = 0;
-  for (let i = 0; i < PX * PX; i++) if (rgba[i * 4 + 3] >= ALPHA_CUTOFF * 255) covered++;
+  for (let i = 0; i < PX * PX; i++)
+    if (rgba[i * 4 + 3] >= ALPHA_CUTOFF * 255) covered++;
   return {rgba, covered};
 }
 
@@ -406,29 +517,50 @@ function render(geo, view, center, span, minY = -Infinity) {
 function buildGlb(cells, center, span, capY = null) {
   const half = span / 2;
   const [cx, cy, cz] = center;
-  const positions = [], uvs = [], normals = [], indices = [];
+  const positions = [],
+    uvs = [],
+    normals = [],
+    indices = [];
 
   /** 칸 하나가 아틀라스에서 차지하는 u 구간 */
   const cellU = 1 / cells.length;
 
   // 앞면 사각형 — X 로 눕고 Z 중앙에 선다
   const quads = [
-    [[cx - half, cy + half, cz], [cx + half, cy + half, cz], [cx + half, cy - half, cz], [cx - half, cy - half, cz]],
+    [
+      [cx - half, cy + half, cz],
+      [cx + half, cy + half, cz],
+      [cx + half, cy - half, cz],
+      [cx - half, cy - half, cz]
+    ],
     // 옆면 사각형 — Z 로 눕고 X 중앙에 선다
-    [[cx, cy + half, cz - half], [cx, cy + half, cz + half], [cx, cy - half, cz + half], [cx, cy - half, cz - half]]
+    [
+      [cx, cy + half, cz - half],
+      [cx, cy + half, cz + half],
+      [cx, cy - half, cz + half],
+      [cx, cy - half, cz - half]
+    ]
   ];
   // 수평 뚜껑 — 위에서 본 그림. UV의 v가 +Z 방향이라 좌상단이 (−X, −Z) 다.
   if (capY !== null)
     quads.push([
-      [cx - half, capY, cz - half], [cx + half, capY, cz - half],
-      [cx + half, capY, cz + half], [cx - half, capY, cz + half]
+      [cx - half, capY, cz - half],
+      [cx + half, capY, cz - half],
+      [cx + half, capY, cz + half],
+      [cx - half, capY, cz + half]
     ]);
 
   quads.forEach((quad, cell) => {
-    const u0 = cell * cellU, u1 = (cell + 1) * cellU;
+    const u0 = cell * cellU,
+      u1 = (cell + 1) * cellU;
     const base = positions.length / 3;
     // 좌상 → 우상 → 우하 → 좌하. 이미지 0행이 위쪽이라 v는 0이 위다.
-    const corners = [[u0, 0], [u1, 0], [u1, 1], [u0, 1]];
+    const corners = [
+      [u0, 0],
+      [u1, 0],
+      [u1, 1],
+      [u0, 1]
+    ];
     quad.forEach((p, k) => {
       positions.push(p[0], p[1], p[2]);
       uvs.push(corners[k][0], corners[k][1]);
@@ -455,47 +587,108 @@ function buildGlb(cells, center, span, capY = null) {
 
   // 청크는 4바이트 배수로 채운다. BIN은 0으로, JSON은 반드시 공백으로 —
   // 0으로 채우면 JSON.parse 가 "Unexpected non-whitespace character" 로 죽는다.
-  const pad = (b, fill = 0) => (b.length % 4 === 0 ? b : Buffer.concat([b, Buffer.alloc(4 - (b.length % 4), fill)]));
-  const parts = [posBuf, nrmBuf, uvBuf, idxBuf, png].map((p) => pad(p));
+  const pad = (b, fill = 0) =>
+    b.length % 4 === 0
+      ? b
+      : Buffer.concat([b, Buffer.alloc(4 - (b.length % 4), fill)]);
+  const parts = [posBuf, nrmBuf, uvBuf, idxBuf, png].map(p => pad(p));
   const offsets = [];
   let cursor = 0;
-  for (const p of parts) { offsets.push(cursor); cursor += p.length; }
+  for (const p of parts) {
+    offsets.push(cursor);
+    cursor += p.length;
+  }
   const bin = Buffer.concat(parts);
 
-  const lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
-  for (let n = 0; n < positions.length; n += 3) for (let c = 0; c < 3; c++) {
-    lo[c] = Math.min(lo[c], positions[n + c]);
-    hi[c] = Math.max(hi[c], positions[n + c]);
-  }
+  const lo = [Infinity, Infinity, Infinity],
+    hi = [-Infinity, -Infinity, -Infinity];
+  for (let n = 0; n < positions.length; n += 3)
+    for (let c = 0; c < 3; c++) {
+      lo[c] = Math.min(lo[c], positions[n + c]);
+      hi[c] = Math.max(hi[c], positions[n + c]);
+    }
 
   const gltf = {
     asset: {version: "2.0", generator: "bake-impostors.mjs"},
     scene: 0,
     scenes: [{nodes: [0]}],
     nodes: [{mesh: 0}],
-    meshes: [{primitives: [{attributes: {POSITION: 0, NORMAL: 1, TEXCOORD_0: 2}, indices: 3, material: 0}]}],
-    materials: [{
-      pbrMetallicRoughness: {baseColorTexture: {index: 0}, metallicFactor: 0, roughnessFactor: 1},
-      // MASK(알파 테스트)여야 깊이를 쓴다. BLEND로 하면 나무끼리 앞뒤 정렬이
-      // 카메라가 돌 때마다 뒤집혀 잎이 깜빡인다.
-      alphaMode: "MASK",
-      alphaCutoff: ALPHA_CUTOFF,
-      doubleSided: true
-    }],
+    meshes: [
+      {
+        primitives: [
+          {
+            attributes: {POSITION: 0, NORMAL: 1, TEXCOORD_0: 2},
+            indices: 3,
+            material: 0
+          }
+        ]
+      }
+    ],
+    materials: [
+      {
+        pbrMetallicRoughness: {
+          baseColorTexture: {index: 0},
+          metallicFactor: 0,
+          roughnessFactor: 1
+        },
+        // MASK(알파 테스트)여야 깊이를 쓴다. BLEND로 하면 나무끼리 앞뒤 정렬이
+        // 카메라가 돌 때마다 뒤집혀 잎이 깜빡인다.
+        alphaMode: "MASK",
+        alphaCutoff: ALPHA_CUTOFF,
+        doubleSided: true
+      }
+    ],
     textures: [{source: 0, sampler: 0}],
     samplers: [{magFilter: 9729, minFilter: 9987, wrapS: 33071, wrapT: 33071}],
     images: [{bufferView: 4, mimeType: "image/png"}],
     accessors: [
-      {bufferView: 0, componentType: 5126, count: positions.length / 3, type: "VEC3", min: lo, max: hi},
-      {bufferView: 1, componentType: 5126, count: normals.length / 3, type: "VEC3"},
+      {
+        bufferView: 0,
+        componentType: 5126,
+        count: positions.length / 3,
+        type: "VEC3",
+        min: lo,
+        max: hi
+      },
+      {
+        bufferView: 1,
+        componentType: 5126,
+        count: normals.length / 3,
+        type: "VEC3"
+      },
       {bufferView: 2, componentType: 5126, count: uvs.length / 2, type: "VEC2"},
-      {bufferView: 3, componentType: 5123, count: indices.length, type: "SCALAR"}
+      {
+        bufferView: 3,
+        componentType: 5123,
+        count: indices.length,
+        type: "SCALAR"
+      }
     ],
     bufferViews: [
-      {buffer: 0, byteOffset: offsets[0], byteLength: posBuf.length, target: 34962},
-      {buffer: 0, byteOffset: offsets[1], byteLength: nrmBuf.length, target: 34962},
-      {buffer: 0, byteOffset: offsets[2], byteLength: uvBuf.length, target: 34962},
-      {buffer: 0, byteOffset: offsets[3], byteLength: idxBuf.length, target: 34963},
+      {
+        buffer: 0,
+        byteOffset: offsets[0],
+        byteLength: posBuf.length,
+        target: 34962
+      },
+      {
+        buffer: 0,
+        byteOffset: offsets[1],
+        byteLength: nrmBuf.length,
+        target: 34962
+      },
+      {
+        buffer: 0,
+        byteOffset: offsets[2],
+        byteLength: uvBuf.length,
+        target: 34962
+      },
+      {
+        buffer: 0,
+        byteOffset: offsets[3],
+        byteLength: idxBuf.length,
+        target: 34963
+      },
       {buffer: 0, byteOffset: offsets[4], byteLength: png.length}
     ],
     buffers: [{byteLength: bin.length}]
@@ -512,7 +705,14 @@ function buildGlb(cells, center, span, capY = null) {
     h.writeUInt32LE(type, 4);
     return Buffer.concat([h, data]);
   };
-  return {glb: Buffer.concat([header, chunk(0x4e4f534a, jsonBuf), chunk(0x004e4942, bin)]), pngBytes: png.length};
+  return {
+    glb: Buffer.concat([
+      header,
+      chunk(0x4e4f534a, jsonBuf),
+      chunk(0x004e4942, bin)
+    ]),
+    pngBytes: png.length
+  };
 }
 
 // ─── 실행 ─────────────────────────────────────────────────────────────────────
@@ -522,14 +722,15 @@ let before = 0;
 let after = 0;
 for (const name of TARGETS) {
   const {geo, lo, hi, tris} = load(join(SRC, name));
-  const center = [0, 1, 2].map((c) => (lo[c] + hi[c]) / 2);
+  const center = [0, 1, 2].map(c => (lo[c] + hi[c]) / 2);
   // 두 시점이 같은 크기여야 십자가 안 찌그러진다. 가장 긴 변에 맞추고 여유를 조금.
   const span = Math.max(hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2]) * 1.04;
   const height = hi[1] - lo[1];
   const cap = CAP[name];
   const capped = Boolean(cap);
-  const cells = VIEWS.map((v) => render(geo, v, center, span));
-  if (cap) cells.push(render(geo, TOP_VIEW, center, span, lo[1] + height * cap.floor));
+  const cells = VIEWS.map(v => render(geo, v, center, span));
+  if (cap)
+    cells.push(render(geo, TOP_VIEW, center, span, lo[1] + height * cap.floor));
   const capY = cap ? lo[1] + height * cap.at : null;
   const {glb, pngBytes} = buildGlb(cells, center, span, capY);
   writeFileSync(join(OUT, name), glb);
@@ -538,10 +739,16 @@ for (const name of TARGETS) {
   after += faces;
   const fill = ((cells[0].covered / (PX * PX)) * 100).toFixed(0);
   console.log(
-    `  ${name.padEnd(26)} ${String(Math.round(tris)).padStart(6)} → ${faces} 삼각형` +
-      `   높이 ${height.toFixed(3)}   화면 채움 ${fill}%   png ${(pngBytes / 1024).toFixed(0)}KB` +
+    `  ${name.padEnd(26)} ${String(Math.round(tris)).padStart(
+      6
+    )} → ${faces} 삼각형` +
+      `   높이 ${height.toFixed(3)}   화면 채움 ${fill}%   png ${(
+        pngBytes / 1024
+      ).toFixed(0)}KB` +
       (capped ? "   +수평 뚜껑" : "")
   );
 }
 console.log(`\n합계 ${Math.round(before).toLocaleString()} → ${after} 삼각형`);
-console.log(`${OUT} 에 바로 씁니다 — optimize 파이프라인을 타면 JPEG로 바뀌어 알파가 날아갑니다`);
+console.log(
+  `${OUT} 에 바로 씁니다 — optimize 파이프라인을 타면 JPEG로 바뀌어 알파가 날아갑니다`
+);

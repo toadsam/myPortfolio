@@ -36,10 +36,10 @@ const LENGTH = 1.94;
 // 그림자가 져야 담장으로 읽히는데 그러기엔 너무 낮았다.
 /** 몸통 높이. 캐릭터가 0.8유닛(1.7m)이니 0.50 은 가슴 아래다. */
 const BODY_H = 0.5;
-const BODY_D = 0.30;
+const BODY_D = 0.3;
 /** 갓돌 — 몸통보다 살짝 넓고 납작해야 "쌓은 담"으로 보인다 */
-const CAP_H = 0.10;
-const CAP_D = 0.40;
+const CAP_H = 0.1;
+const CAP_D = 0.4;
 const CAP_OVER = 0.03; // 좌우로 튀어나오는 길이
 
 const TOTAL_H = BODY_H + CAP_H;
@@ -74,7 +74,7 @@ function mulberry32(seed) {
   };
 }
 const rand = mulberry32(20260810);
-const smooth = (t) => t * t * (3 - 2 * t);
+const smooth = t => t * t * (3 - 2 * t);
 function hash2(i, j) {
   let h = Math.imul(i | 0, 374761393) ^ Math.imul(j | 0, 668265263);
   h = Math.imul(h ^ (h >>> 13), 1274126177);
@@ -104,30 +104,38 @@ const PER_COURSE = 5;
     const inCourse = (y - course * courseH) / courseH; // 0(위) ~ 1(아래)
     for (let x = 0; x < SIZE; x++) {
       // 돌 한 장의 좌표. 나머지 연산이라 x=SIZE 에서 x=0 으로 자연스럽게 넘어간다.
-      const u = x / SIZE * PER_COURSE + shift;
+      const u = (x / SIZE) * PER_COURSE + shift;
       const block = Math.floor(u);
       const inBlock = u - block;
       // 막돌이라 가장자리가 반듯하지 않다 — 줄눈 폭을 돌마다 흔든다
       const wobbleX = (hash2(block, course) - 0.5) * 0.06;
-      const wobbleY = (hash2(course, block + 71) - 0.5) * 0.10;
+      const wobbleY = (hash2(course, block + 71) - 0.5) * 0.1;
       const edge = Math.min(
-        inBlock + wobbleX, 1 - inBlock - wobbleX,
-        (inCourse + wobbleY) * 1.6, (1 - inCourse - wobbleY) * 1.6
+        inBlock + wobbleX,
+        1 - inBlock - wobbleX,
+        (inCourse + wobbleY) * 1.6,
+        (1 - inCourse - wobbleY) * 1.6
       );
       const t = Math.min(1, Math.max(0, edge / 0.09)); // 0=줄눈 한복판
 
-      const stone = STONES[Math.floor(hash2(block + course * 13, course * 7) * STONES.length)];
+      const stone =
+        STONES[
+          Math.floor(hash2(block + course * 13, course * 7) * STONES.length)
+        ];
       const shade = 0.88 + hash2(block * 31 + course, course * 17) * 0.24;
       // 돌 한 장 안에서도 미세하게 얼룩지게
       const grain = (hash2(x, y) - 0.5) * 10;
 
       // 밑동 이끼 — 아래로 갈수록 짙게, 잡음으로 들쭉날쭉하게
       const foot = Math.max(0, (y / SPLIT - 0.6) / 0.4);
-      const mossAmt = smooth(Math.min(1, foot * (0.4 + hash2(x >> 3, y >> 3) * 1.6))) * 0.75;
+      const mossAmt =
+        smooth(Math.min(1, foot * (0.4 + hash2(x >> 3, y >> 3) * 1.6))) * 0.75;
 
       const at = (y * SIZE + x) * 3;
       for (let c = 0; c < 3; c++) {
-        let v = MORTAR[c] + (Math.min(255, stone[c] * shade) + grain - MORTAR[c]) * smooth(t);
+        let v =
+          MORTAR[c] +
+          (Math.min(255, stone[c] * shade) + grain - MORTAR[c]) * smooth(t);
         v = v + (MOSS[c] - v) * mossAmt;
         rgb[at + c] = Math.max(0, Math.min(255, v));
       }
@@ -149,7 +157,9 @@ const PER_COURSE = 5;
       const grain = (hash2(x, y + 333) - 0.5) * 12;
       const at = (y * SIZE + x) * 3;
       for (let c = 0; c < 3; c++) {
-        const v = MORTAR[c] + (Math.min(255, CAP_STONE[c] * shade) + grain - MORTAR[c]) * smooth(t);
+        const v =
+          MORTAR[c] +
+          (Math.min(255, CAP_STONE[c] * shade) + grain - MORTAR[c]) * smooth(t);
         rgb[at + c] = Math.max(0, Math.min(255, v));
       }
     }
@@ -158,16 +168,23 @@ const PER_COURSE = 5;
 
 // 마모 — 짧은 획으로 긁힘. 단색 면은 플라스틱처럼 보인다.
 for (let n = 0; n < 2600; n++) {
-  const x0 = rand() * SIZE, y0 = rand() * SIZE;
+  const x0 = rand() * SIZE,
+    y0 = rand() * SIZE;
   const angle = rand() * Math.PI * 2;
   const len = 2 + rand() * 5;
   const shift = (rand() < 0.5 ? -1 : 1) * (4 + rand() * 8);
   const steps = Math.ceil(len);
   for (let s = 0; s <= steps; s++) {
-    const x = ((Math.round(x0 + Math.cos(angle) * (s / steps) * len) % SIZE) + SIZE) % SIZE;
-    const y = Math.max(0, Math.min(SIZE - 1, Math.round(y0 + Math.sin(angle) * (s / steps) * len)));
+    const x =
+      ((Math.round(x0 + Math.cos(angle) * (s / steps) * len) % SIZE) + SIZE) %
+      SIZE;
+    const y = Math.max(
+      0,
+      Math.min(SIZE - 1, Math.round(y0 + Math.sin(angle) * (s / steps) * len))
+    );
     const at = (y * SIZE + x) * 3;
-    for (let c = 0; c < 3; c++) rgb[at + c] = Math.max(0, Math.min(255, rgb[at + c] + shift));
+    for (let c = 0; c < 3; c++)
+      rgb[at + c] = Math.max(0, Math.min(255, rgb[at + c] + shift));
   }
 }
 
@@ -183,7 +200,8 @@ function crc32(buf) {
     }
   }
   let c = -1;
-  for (let i = 0; i < buf.length; i++) c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
+  for (let i = 0; i < buf.length; i++)
+    c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
   return c ^ -1;
 }
 function encodePng(w, h, data) {
@@ -227,27 +245,59 @@ const indices = [];
 function box(cx, cy, cz, hw, hh, hd, v0, v1, uRepeat) {
   //            면 방향        가로축        세로축
   const faces = [
-    [[0, 0, 1], [1, 0, 0], [0, 1, 0]],   // +Z (앞)
-    [[0, 0, -1], [-1, 0, 0], [0, 1, 0]], // −Z (뒤)
-    [[1, 0, 0], [0, 0, -1], [0, 1, 0]],  // +X (오른쪽 끝)
-    [[-1, 0, 0], [0, 0, 1], [0, 1, 0]],  // −X (왼쪽 끝)
+    [
+      [0, 0, 1],
+      [1, 0, 0],
+      [0, 1, 0]
+    ], // +Z (앞)
+    [
+      [0, 0, -1],
+      [-1, 0, 0],
+      [0, 1, 0]
+    ], // −Z (뒤)
+    [
+      [1, 0, 0],
+      [0, 0, -1],
+      [0, 1, 0]
+    ], // +X (오른쪽 끝)
+    [
+      [-1, 0, 0],
+      [0, 0, 1],
+      [0, 1, 0]
+    ], // −X (왼쪽 끝)
     // 위·아래 면의 세로축은 다른 넷과 반대로 잡아야 감기가 바깥을 향한다.
     // (1,0,0)×(0,0,1) 은 −Y 라, 그대로 두면 갓돌 윗면이 뒷면이 돼 위에서 보면 사라진다.
-    [[0, 1, 0], [1, 0, 0], [0, 0, -1]],  // +Y (윗면)
-    [[0, -1, 0], [1, 0, 0], [0, 0, 1]]   // −Y (밑면)
+    [
+      [0, 1, 0],
+      [1, 0, 0],
+      [0, 0, -1]
+    ], // +Y (윗면)
+    [
+      [0, -1, 0],
+      [1, 0, 0],
+      [0, 0, 1]
+    ] // −Y (밑면)
   ];
   const center = [cx, cy, cz];
   const half = [hw, hh, hd];
   /** 축 a 방향으로 이 상자가 원점에서 얼마나 뻗어 있나 */
-  const reach = (a) => Math.abs(a[0]) * hw + Math.abs(a[1]) * hh + Math.abs(a[2]) * hd;
+  const reach = a =>
+    Math.abs(a[0]) * hw + Math.abs(a[1]) * hh + Math.abs(a[2]) * hd;
 
   for (const [n, ax, ay] of faces) {
     const base = positions.length / 3;
-    const eu = reach(ax);  // 이 면의 가로 반폭
-    const ev = reach(ay);  // 이 면의 세로 반폭
-    for (const [su, sv] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
+    const eu = reach(ax); // 이 면의 가로 반폭
+    const ev = reach(ay); // 이 면의 세로 반폭
+    for (const [su, sv] of [
+      [-1, -1],
+      [1, -1],
+      [1, 1],
+      [-1, 1]
+    ]) {
       for (let c = 0; c < 3; c++)
-        positions.push(center[c] + n[c] * half[c] + ax[c] * eu * su + ay[c] * ev * sv);
+        positions.push(
+          center[c] + n[c] * half[c] + ax[c] * eu * su + ay[c] * ev * sv
+        );
       normals.push(n[0], n[1], n[2]);
       // 긴 면은 무늬를 uRepeat 번, 짧은 마구리는 폭에 비례해 조금만 — 그래야
       // 끝면에서 돌 한 장이 늘어져 보이지 않는다.
@@ -259,9 +309,29 @@ function box(cx, cy, cz, hw, hh, hd, v0, v1, uRepeat) {
 }
 
 // 몸통 — 아틀라스 위 3/4. 갓돌에 가려질 만큼만 위로 올린다.
-box(0, -TOTAL_H / 2 + BODY_H / 2, 0, LENGTH / 2, BODY_H / 2, BODY_D / 2, 0, 0.75, 1);
+box(
+  0,
+  -TOTAL_H / 2 + BODY_H / 2,
+  0,
+  LENGTH / 2,
+  BODY_H / 2,
+  BODY_D / 2,
+  0,
+  0.75,
+  1
+);
 // 갓돌 — 아틀라스 아래 1/4
-box(0, TOTAL_H / 2 - CAP_H / 2, 0, LENGTH / 2 + CAP_OVER, CAP_H / 2, CAP_D / 2, 0.75, 1, 1);
+box(
+  0,
+  TOTAL_H / 2 - CAP_H / 2,
+  0,
+  LENGTH / 2 + CAP_OVER,
+  CAP_H / 2,
+  CAP_D / 2,
+  0.75,
+  1,
+  1
+);
 
 const posArr = new Float32Array(positions);
 const nrmArr = new Float32Array(normals);
@@ -270,7 +340,7 @@ const idxArr = new Uint16Array(indices);
 
 const png = encodePng(SIZE, SIZE, rgb);
 
-const pad4 = (n) => (n + 3) & ~3;
+const pad4 = n => (n + 3) & ~3;
 const parts = [];
 let offset = 0;
 const views = [];
@@ -283,13 +353,19 @@ for (const [data, target] of [
 ]) {
   const padded = Buffer.alloc(pad4(data.length));
   data.copy(padded);
-  views.push({buffer: 0, byteOffset: offset, byteLength: data.length, ...(target ? {target} : {})});
+  views.push({
+    buffer: 0,
+    byteOffset: offset,
+    byteLength: data.length,
+    ...(target ? {target} : {})
+  });
   parts.push(padded);
   offset += padded.length;
 }
 const bin = Buffer.concat(parts);
 
-let min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
+let min = [Infinity, Infinity, Infinity],
+  max = [-Infinity, -Infinity, -Infinity];
 for (let i = 0; i < posArr.length; i += 3)
   for (let c = 0; c < 3; c++) {
     min[c] = Math.min(min[c], posArr[i + c]);
@@ -301,19 +377,47 @@ const gltf = {
   scene: 0,
   scenes: [{nodes: [0]}],
   nodes: [{mesh: 0, name: "wall-low"}],
-  meshes: [{primitives: [{attributes: {POSITION: 1, NORMAL: 2, TEXCOORD_0: 3}, indices: 0, material: 0}]}],
-  materials: [{
-    name: "wall-low",
-    pbrMetallicRoughness: {baseColorTexture: {index: 0}, metallicFactor: 0, roughnessFactor: 0.95}
-  }],
+  meshes: [
+    {
+      primitives: [
+        {
+          attributes: {POSITION: 1, NORMAL: 2, TEXCOORD_0: 3},
+          indices: 0,
+          material: 0
+        }
+      ]
+    }
+  ],
+  materials: [
+    {
+      name: "wall-low",
+      pbrMetallicRoughness: {
+        baseColorTexture: {index: 0},
+        metallicFactor: 0,
+        roughnessFactor: 0.95
+      }
+    }
+  ],
   textures: [{source: 0, sampler: 0}],
   // 가로(U)만 반복이면 된다. 세로는 아틀라스라 반복하면 갓돌이 몸통에 나온다.
   samplers: [{wrapS: 10497, wrapT: 33071}],
   images: [{bufferView: 4, mimeType: "image/png"}],
   accessors: [
     {bufferView: 0, componentType: 5123, count: idxArr.length, type: "SCALAR"},
-    {bufferView: 1, componentType: 5126, count: posArr.length / 3, type: "VEC3", min, max},
-    {bufferView: 2, componentType: 5126, count: nrmArr.length / 3, type: "VEC3"},
+    {
+      bufferView: 1,
+      componentType: 5126,
+      count: posArr.length / 3,
+      type: "VEC3",
+      min,
+      max
+    },
+    {
+      bufferView: 2,
+      componentType: 5126,
+      count: nrmArr.length / 3,
+      type: "VEC3"
+    },
     {bufferView: 3, componentType: 5126, count: uvArr.length / 2, type: "VEC2"}
   ],
   bufferViews: views,
@@ -336,12 +440,29 @@ const chunkHeader = (len, type) => {
 };
 
 mkdirSync("public/models/props/decor", {recursive: true});
-writeFileSync(OUT_GLB, Buffer.concat([
-  header,
-  chunkHeader(jsonPad.length, 0x4e4f534a), jsonPad,
-  chunkHeader(bin.length, 0x004e4942), bin
-]));
+writeFileSync(
+  OUT_GLB,
+  Buffer.concat([
+    header,
+    chunkHeader(jsonPad.length, 0x4e4f534a),
+    jsonPad,
+    chunkHeader(bin.length, 0x004e4942),
+    bin
+  ])
+);
 
-console.log(`${OUT_GLB}  ${(png.length / 1024).toFixed(0)}KB 텍스처 · 삼각형 ${idxArr.length / 3}개`);
-console.log(`  길이 ${LENGTH} × 높이 ${TOTAL_H.toFixed(2)} (몸통 ${BODY_H} + 갓돌 ${CAP_H}) · 두께 ${CAP_D}`);
-console.log(`  generate-decor-layout.mjs 의 KIT 에  "wall-low": {h: ${TOTAL_H.toFixed(3)}, m: ${(TOTAL_H * 2.5).toFixed(3)}}  로 적을 것 (배율 1)`);
+console.log(
+  `${OUT_GLB}  ${(png.length / 1024).toFixed(0)}KB 텍스처 · 삼각형 ${
+    idxArr.length / 3
+  }개`
+);
+console.log(
+  `  길이 ${LENGTH} × 높이 ${TOTAL_H.toFixed(
+    2
+  )} (몸통 ${BODY_H} + 갓돌 ${CAP_H}) · 두께 ${CAP_D}`
+);
+console.log(
+  `  generate-decor-layout.mjs 의 KIT 에  "wall-low": {h: ${TOTAL_H.toFixed(
+    3
+  )}, m: ${(TOTAL_H * 2.5).toFixed(3)}}  로 적을 것 (배율 1)`
+);

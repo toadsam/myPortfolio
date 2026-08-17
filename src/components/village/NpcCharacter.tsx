@@ -17,6 +17,7 @@ import {
 } from "@/data/characterModels";
 import {lockSceneMaterials} from "@/lib/villageMaterial";
 import type {CharacterModelId} from "@/types/portfolio";
+import {extendGltfLoader} from "@/lib/gltfLoaders";
 
 export type NpcMoveState = CharacterState;
 
@@ -40,7 +41,7 @@ export function NpcCharacter({
   const innerRef = useRef<Group>(null);
   const {camera} = useThree();
   const model = characterModels[modelId] ?? characterModels[DEFAULT_NPC_MODEL];
-  const {scene, animations} = useGLTF(model.url);
+  const {scene, animations} = useGLTF(model.url, true, true, extendGltfLoader);
 
   // 인스턴스마다 골격 복제.
   //
@@ -183,4 +184,5 @@ export function NpcCharacter({
 }
 
 // 레지스트리에 등록된 모델은 미리 받아둔다 (NPC가 화면에 뜰 때 끊기지 않게)
-for (const entry of Object.values(characterModels)) useGLTF.preload(entry.url);
+for (const entry of Object.values(characterModels))
+  useGLTF.preload(entry.url, true, true, extendGltfLoader);

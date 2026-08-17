@@ -38,6 +38,7 @@ import {
   type FoliageWindOptions
 } from "@/lib/foliageWind";
 import {lockSceneMaterials} from "@/lib/villageMaterial";
+import {extendGltfLoader} from "@/lib/gltfLoaders";
 
 /** 이 개수를 넘는 GLB만 격자 청크로 쪼갠다. 그 이하는 통째로 하나. */
 const CHUNK_THRESHOLD = 80;
@@ -241,7 +242,7 @@ function GlbInstances({
   placements: PropPlacement[];
   onPropDown?: (event: ThreeEvent<PointerEvent>, propId: string) => void;
 }) {
-  const {scene} = useGLTF(glb);
+  const {scene} = useGLTF(glb, true, true, extendGltfLoader);
   const parts = useMemo(() => extractParts(scene), [scene]);
   const chunks = useMemo(() => chunkPlacements(placements), [placements]);
   const {cast, receive} = useMemo(() => shadowRole(glb), [glb]);

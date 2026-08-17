@@ -12,3 +12,4 @@
 *.ico binary
 *.pdf binary
 *.docx binary
+*.wasm binary

@@ -7,6 +7,7 @@ import {
   Billboard,
   ContactShadows,
   Html,
+  Preload,
   useGLTF,
   useProgress,
   useTexture
@@ -94,6 +95,7 @@ import {NPC, type NpcCommand} from "./NPC";
 import {PerfHudPanel, PerfProbe} from "./PerfHud";
 import {SeasonAmbience} from "./SeasonAmbience";
 import {PropsEditorTray, PropsLayer, usePropsEditor} from "./PropsEditor";
+import {extendGltfLoader} from "@/lib/gltfLoaders";
 
 interface VillageSceneProps {
   activeSection: SectionId;
@@ -142,7 +144,12 @@ const GUIDE_SCRIPTED_START: [number, number, number] = [-4, 0, 1];
 const PLAZA_LANDMARK_READY = "central-plaza" in buildingModels;
 
 function Statue() {
-  const {scene} = useGLTF("/models/environment/statue.glb");
+  const {scene} = useGLTF(
+    "/models/environment/statue.glb",
+    true,
+    true,
+    extendGltfLoader
+  );
   useMemo(() => lockSceneMaterials(scene), [scene]);
   return (
     <primitive
@@ -154,7 +161,7 @@ function Statue() {
   );
 }
 
-useGLTF.preload("/models/environment/statue.glb");
+useGLTF.preload("/models/environment/statue.glb", true, true, extendGltfLoader);
 
 // 마을 바닥.
 //
@@ -3100,6 +3107,17 @@ function VillageSceneImpl({
               cinematic={cinematic}
             />
           )}
+
+          {/* ─── 셰이더 사전 컴파일 ───────────────────────────────────────
+              three 는 어떤 재질이 **처음 화면에 잡히는 프레임**에 그 셰이더를
+              컴파일·링크한다. 컴파일은 메인 스레드를 막으므로, 마을에 막
+              들어와 카메라가 움직이며 건물이 하나씩 시야에 들어올 때마다
+              한 번씩 툭툭 끊긴다("들어가자마자 막 끊기는" 증상의 정체다).
+
+              Preload 는 그 컴파일을 **로딩 베일 뒤로 옮긴다** — 어차피 기다리는
+              구간이라 체감 비용이 없다. 총 대기 시간은 조금 늘지만, 놀고 있는
+              동안의 끊김이 사라진다. */}
+          <Preload all />
         </Suspense>
       </Canvas>
 

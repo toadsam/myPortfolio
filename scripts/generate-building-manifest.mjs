@@ -34,11 +34,17 @@ function buildingIds() {
   const ids = [...source.matchAll(/id:\s*"([^"]+)"/g)];
   const out = [];
   for (let n = 0; n < ids.length; n++) {
-    const chunk = source.slice(ids[n].index, n + 1 < ids.length ? ids[n + 1].index : source.length);
+    const chunk = source.slice(
+      ids[n].index,
+      n + 1 < ids.length ? ids[n + 1].index : source.length
+    );
     if (!/size:\s*\[/.test(chunk) || !/district:\s*"/.test(chunk)) continue;
     out.push(ids[n][1]);
   }
-  if (out.length < 20) throw new Error(`${CONSTANTS} 에서 건물을 ${out.length}채밖에 못 읽었습니다 — 형식이 바뀐 듯합니다`);
+  if (out.length < 20)
+    throw new Error(
+      `${CONSTANTS} 에서 건물을 ${out.length}채밖에 못 읽었습니다 — 형식이 바뀐 듯합니다`
+    );
   return out;
 }
 
@@ -56,14 +62,27 @@ if (existsSync(DIR)) {
 }
 
 // 키를 정렬해 둔다 — 파일 순서에 따라 diff가 흔들리지 않게
-const sorted = Object.fromEntries(Object.keys(models).sort().map((k) => [k, models[k]]));
+const sorted = Object.fromEntries(
+  Object.keys(models)
+    .sort()
+    .map(k => [k, models[k]])
+);
 
-const missing = [...ids].filter((id) => !(id in sorted));
-console.log(`건물 ${ids.size}채 중 ${Object.keys(sorted).length}채에 모델이 붙었습니다.`);
-if (missing.length) console.log(`  아직 상자로 그려지는 건물 ${missing.length}채:\n    ${missing.join(", ")}`);
+const missing = [...ids].filter(id => !(id in sorted));
+console.log(
+  `건물 ${ids.size}채 중 ${Object.keys(sorted).length}채에 모델이 붙었습니다.`
+);
+if (missing.length)
+  console.log(
+    `  아직 상자로 그려지는 건물 ${missing.length}채:\n    ${missing.join(
+      ", "
+    )}`
+  );
 if (orphans.length)
   console.log(
-    `  ! 건물 id와 이름이 안 맞아 안 붙은 파일 ${orphans.length}개: ${orphans.join(", ")}\n` +
+    `  ! 건물 id와 이름이 안 맞아 안 붙은 파일 ${
+      orphans.length
+    }개: ${orphans.join(", ")}\n` +
       `    파일명을 건물 id와 똑같이 바꾸세요 (예: 3d.glb → skill-3d.glb)`
   );
 

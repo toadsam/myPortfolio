@@ -44,7 +44,7 @@ const base = readVillage();
  * SPREAD 를 sm 배 하는 것과 x 를 sm 배 하는 것이 같다(0.01 반올림 차이뿐).
  */
 function variant(sm, k) {
-  return base.buildings.map((b) => ({
+  return base.buildings.map(b => ({
     ...b,
     x: b.x * sm,
     z: b.z * sm,
@@ -82,11 +82,13 @@ if (args.includes("--moat")) {
   // 마을을 키우면 해자를 넘어가는 건물이 생긴다 — 해자 타원은 고정값이라
   // SPREAD 를 올려도 같이 안 커지기 때문. 실제로 한 번 당했다.
   const src = readFileSync("src/lib/villageRelief.ts", "utf8");
-  const m = src.match(/MOAT\s*=\s*\{cx:\s*([-\d.]+),\s*cz:\s*([-\d.]+),\s*a:\s*([-\d.]+),\s*b:\s*([-\d.]+)\}/);
+  const m = src.match(
+    /MOAT\s*=\s*\{cx:\s*([-\d.]+),\s*cz:\s*([-\d.]+),\s*a:\s*([-\d.]+),\s*b:\s*([-\d.]+)\}/
+  );
   if (!m) throw new Error("villageRelief.ts 에서 MOAT 를 못 읽었다");
   const MOAT = {cx: +m[1], cz: +m[2], a: +m[3], b: +m[4]};
   const rows = base.buildings
-    .map((b) => {
+    .map(b => {
       const r = Math.max(b.w, b.d) / 2;
       // 건물 모서리까지 포함해 가장 불리한 점으로 잰다
       const t = Math.hypot(
@@ -96,28 +98,39 @@ if (args.includes("--moat")) {
       return {id: b.id, t};
     })
     .sort((p, q) => q.t - p.t);
-  console.log(`해자 타원 a=${MOAT.a} b=${MOAT.b} (1.0 = 해자 위, >1 = 해자 밖)\n`);
-  for (const o of rows.slice(0, 8)) console.log(`   ${o.t.toFixed(2)}  ${o.id}`);
-  const bad = rows.filter((o) => o.t > 0.92).length;
-  console.log(`\n   해자에 닿거나 넘은 건물: ${bad}채${bad ? "  ← MOAT 를 키울 것" : ""}`);
+  console.log(
+    `해자 타원 a=${MOAT.a} b=${MOAT.b} (1.0 = 해자 위, >1 = 해자 밖)\n`
+  );
+  for (const o of rows.slice(0, 8))
+    console.log(`   ${o.t.toFixed(2)}  ${o.id}`);
+  const bad = rows.filter(o => o.t > 0.92).length;
+  console.log(
+    `\n   해자에 닿거나 넘은 건물: ${bad}채${bad ? "  ← MOAT 를 키울 것" : ""}`
+  );
   process.exit(bad ? 1 : 0);
 }
 
-const spreadMul = Number(args.find((a) => a.startsWith("--spread="))?.split("=")[1]) || 1;
-const scales = args.filter((a) => !a.startsWith("--")).map(Number).filter((n) => n > 0);
+const spreadMul =
+  Number(args.find(a => a.startsWith("--spread="))?.split("=")[1]) || 1;
+const scales = args
+  .filter(a => !a.startsWith("--"))
+  .map(Number)
+  .filter(n => n > 0);
 if (scales.length === 0) scales.push(1);
 
 if (args.includes("--solve")) {
   // 크기별로, 겹침이 사라지는 최소 간격배율을 찾는다.
   // 마을이 무한정 퍼지면 부감에서 듬성해지므로 간격은 1.6배까지만 본다.
-  console.log(`현재 SPREAD ${base.SPREAD} · BUILDING_SCALE ${base.BUILDING_SCALE}`);
+  console.log(
+    `현재 SPREAD ${base.SPREAD} · BUILDING_SCALE ${base.BUILDING_SCALE}`
+  );
   console.log("여기서 더 키우려면 간격을 얼마나 벌려야 하나 (겹침 0 기준)\n");
   console.log("   크기   최소간격   최악여유   마을폭    캐릭터대비");
   for (const k of [1.1, 1.2, 1.3, 1.4, 1.5]) {
     let found = null;
     for (let sm = 1; sm <= 1.6001; sm += 0.01) {
       const list = variant(sm, k);
-      const worst = Math.min(...pairsOf(list).map((p) => p.g), Infinity);
+      const worst = Math.min(...pairsOf(list).map(p => p.g), Infinity);
       if (worst >= 0) {
         found = {sm, worst};
         break;
@@ -128,10 +141,12 @@ if (args.includes("--solve")) {
       continue;
     }
     const list = variant(found.sm, k);
-    const span = Math.max(...list.map((b) => Math.hypot(b.x, b.z))) * 2;
+    const span = Math.max(...list.map(b => Math.hypot(b.x, b.z))) * 2;
     const avgH = list.reduce((s, b) => s + b.h, 0) / list.length;
     console.log(
-      `   ${k.toFixed(2)}배  ${found.sm.toFixed(2)}배   ${found.worst.toFixed(2).padStart(6)}   ` +
+      `   ${k.toFixed(2)}배  ${found.sm.toFixed(2)}배   ${found.worst
+        .toFixed(2)
+        .padStart(6)}   ` +
         `${span.toFixed(1)}유닛   ${(avgH / CHAR).toFixed(2)}배`
     );
   }
@@ -146,20 +161,28 @@ console.log(
 for (const scale of scales) {
   const list = variant(spreadMul, scale);
   const pairs = pairsOf(list);
-  const overlap = pairs.filter((p) => p.g < 0);
-  const span = Math.max(...list.map((b) => Math.hypot(b.x, b.z))) * 2;
+  const overlap = pairs.filter(p => p.g < 0);
+  const span = Math.max(...list.map(b => Math.hypot(b.x, b.z))) * 2;
   const avgH = list.reduce((s, b) => s + b.h, 0) / list.length;
 
   const label =
-    scale === 1 && spreadMul === 1 ? "현재" : `간격 ×${spreadMul.toFixed(2)} · 크기 ×${scale.toFixed(2)}`;
+    scale === 1 && spreadMul === 1
+      ? "현재"
+      : `간격 ×${spreadMul.toFixed(2)} · 크기 ×${scale.toFixed(2)}`;
   console.log(`── ${label} ${"─".repeat(Math.max(0, 46 - label.length))}`);
   console.log(
-    `   겹침 ${overlap.length}쌍 · 좁음(<${MIN_GAP}) ${pairs.length - overlap.length}쌍` +
-      ` · 마을폭 ${span.toFixed(1)}유닛 · 캐릭터대비 ${(avgH / CHAR).toFixed(2)}배`
+    `   겹침 ${overlap.length}쌍 · 좁음(<${MIN_GAP}) ${
+      pairs.length - overlap.length
+    }쌍` +
+      ` · 마을폭 ${span.toFixed(1)}유닛 · 캐릭터대비 ${(avgH / CHAR).toFixed(
+        2
+      )}배`
   );
   for (const p of pairs.slice(0, 10)) {
     console.log(
-      `   ${p.g < 0 ? "겹침" : "좁음"} ${p.g.toFixed(2).padStart(6)}  ${p.a.id} ↔ ${p.b.id}`
+      `   ${p.g < 0 ? "겹침" : "좁음"} ${p.g.toFixed(2).padStart(6)}  ${
+        p.a.id
+      } ↔ ${p.b.id}`
     );
   }
   if (pairs.length > 10) console.log(`   … 외 ${pairs.length - 10}쌍`);

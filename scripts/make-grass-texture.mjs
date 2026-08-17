@@ -55,15 +55,20 @@ function tileableNoise(period, rand) {
   const cells = SIZE / period;
   const lattice = new Float64Array(cells * cells);
   for (let i = 0; i < lattice.length; i++) lattice[i] = rand();
-  const smooth = (t) => t * t * (3 - 2 * t);
+  const smooth = t => t * t * (3 - 2 * t);
   return (x, y) => {
     const fx = (x / period) % cells;
     const fy = (y / period) % cells;
-    const x0 = Math.floor(fx), y0 = Math.floor(fy);
-    const x1 = (x0 + 1) % cells, y1 = (y0 + 1) % cells;
-    const tx = smooth(fx - x0), ty = smooth(fy - y0);
-    const a = lattice[y0 * cells + x0], b = lattice[y0 * cells + x1];
-    const c = lattice[y1 * cells + x0], d = lattice[y1 * cells + x1];
+    const x0 = Math.floor(fx),
+      y0 = Math.floor(fy);
+    const x1 = (x0 + 1) % cells,
+      y1 = (y0 + 1) % cells;
+    const tx = smooth(fx - x0),
+      ty = smooth(fy - y0);
+    const a = lattice[y0 * cells + x0],
+      b = lattice[y0 * cells + x1];
+    const c = lattice[y1 * cells + x0],
+      d = lattice[y1 * cells + x1];
     return (a * (1 - tx) + b * tx) * (1 - ty) + (c * (1 - tx) + d * tx) * ty;
   };
 }
@@ -87,7 +92,8 @@ for (let y = 0; y < SIZE; y++)
   }
 
 // 실제로 쓰인 범위로 늘려 대비를 일정하게 맞춘다 (옥타브를 바꿔도 결과가 안 흔들린다)
-let lo = Infinity, hi = -Infinity;
+let lo = Infinity,
+  hi = -Infinity;
 for (const v of field) {
   if (v < lo) lo = v;
   if (v > hi) hi = v;
@@ -100,9 +106,10 @@ const rgb = Buffer.alloc(SIZE * SIZE * 3);
 for (let i = 0; i < field.length; i++) {
   const t = field[i];
   for (let c = 0; c < 3; c++) {
-    const v = t < 0.5
-      ? DARK[c] + (MID[c] - DARK[c]) * (t / 0.5)
-      : MID[c] + (LIGHT[c] - MID[c]) * ((t - 0.5) / 0.5);
+    const v =
+      t < 0.5
+        ? DARK[c] + (MID[c] - DARK[c]) * (t / 0.5)
+        : MID[c] + (LIGHT[c] - MID[c]) * ((t - 0.5) / 0.5);
     rgb[i * 3 + c] = v;
   }
 }
@@ -143,7 +150,8 @@ function crc32(buf) {
     }
   }
   let c = -1;
-  for (let i = 0; i < buf.length; i++) c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
+  for (let i = 0; i < buf.length; i++)
+    c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
   return c ^ -1;
 }
 function encodePng(w, h, data) {
@@ -178,7 +186,12 @@ const png = encodePng(SIZE, SIZE, rgb);
 writeFileSync(OUT, png);
 
 let sum = [0, 0, 0];
-for (let i = 0; i < SIZE * SIZE; i++) for (let c = 0; c < 3; c++) sum[c] += rgb[i * 3 + c];
+for (let i = 0; i < SIZE * SIZE; i++)
+  for (let c = 0; c < 3; c++) sum[c] += rgb[i * 3 + c];
 console.log(`${OUT}  ${SIZE}×${SIZE}  ${(png.length / 1024).toFixed(0)}KB`);
-console.log(`  평균 rgb(${sum.map((v) => Math.round(v / (SIZE * SIZE))).join(",")})  — 길 타일 갓길 중앙값 rgb(${MID.join(",")})`);
+console.log(
+  `  평균 rgb(${sum
+    .map(v => Math.round(v / (SIZE * SIZE)))
+    .join(",")})  — 길 타일 갓길 중앙값 rgb(${MID.join(",")})`
+);
 console.log(`  가장 긴 파장 ${64}px (타일의 1/8) — 반복 주기가 눈에 안 잡힌다`);

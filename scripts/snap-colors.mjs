@@ -26,11 +26,15 @@
 
 import {readFileSync} from "node:fs";
 
-const {colors, hues} = JSON.parse(readFileSync("src/data/villageColors.json", "utf8"));
+const {colors, hues} = JSON.parse(
+  readFileSync("src/data/villageColors.json", "utf8")
+);
 
 // ─── Oklab ────────────────────────────────────────────────────────────────────
-const toLinear = (c) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
-const toSrgb = (c) => (c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055);
+const toLinear = c =>
+  c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+const toSrgb = c =>
+  c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
 
 function hexToOklab(hex) {
   const n = parseInt(hex.replace("#", ""), 16);
@@ -55,18 +59,27 @@ function oklabToHex(L, a, b) {
     4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
     -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
     -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s
-  ].map((v) => Math.max(0, Math.min(255, Math.round(toSrgb(Math.max(0, Math.min(1, v))) * 255))));
-  return "#" + rgb.map((v) => v.toString(16).padStart(2, "0")).join("");
+  ].map(v =>
+    Math.max(
+      0,
+      Math.min(255, Math.round(toSrgb(Math.max(0, Math.min(1, v))) * 255))
+    )
+  );
+  return "#" + rgb.map(v => v.toString(16).padStart(2, "0")).join("");
 }
 
 // ─── 채도 상한 — 컨셉 아트에서 실측 ──────────────────────────────────────────
 // 감으로 정하면 취향 싸움이 되므로, 컨셉 아트 팔레트가 실제로 쓰는 채도의
 // 상위 몇 %를 상한으로 삼는다. 컨셉에 없는 채도는 우리 마을에도 없어야 한다.
-const chromas = colors.map((c) => Math.hypot(c.a, c.b)).sort((x, y) => x - y);
+const chromas = colors.map(c => Math.hypot(c.a, c.b)).sort((x, y) => x - y);
 const CEIL = chromas[Math.floor(chromas.length * 0.9)];
 console.log(
-  `컨셉 아트 채도: 중앙 ${chromas[Math.floor(chromas.length / 2)].toFixed(3)} · ` +
-    `상한(90%) ${CEIL.toFixed(3)} · 최대 ${chromas[chromas.length - 1].toFixed(3)}\n`
+  `컨셉 아트 채도: 중앙 ${chromas[Math.floor(chromas.length / 2)].toFixed(
+    3
+  )} · ` +
+    `상한(90%) ${CEIL.toFixed(3)} · 최대 ${chromas[chromas.length - 1].toFixed(
+      3
+    )}\n`
 );
 
 /**
@@ -78,17 +91,26 @@ function snap(hex, ceilMul = 1) {
   const C = Math.hypot(a, b);
   if (C < 1e-4) return {hex, out: hex, note: "무채색 — 색조가 없어 그대로"};
   const dir = [a / C, b / C];
-  let best = null, bestDot = -2;
+  let best = null,
+    bestDot = -2;
   for (const h of hues) {
     const d = dir[0] * h.dir[0] + dir[1] * h.dir[1];
-    if (d > bestDot) { bestDot = d; best = h; }
+    if (d > bestDot) {
+      bestDot = d;
+      best = h;
+    }
   }
   const newC = Math.min(C, CEIL * ceilMul);
   const out = oklabToHex(L, best.dir[0] * newC, best.dir[1] * newC);
-  const turn = Math.round((Math.acos(Math.max(-1, Math.min(1, bestDot))) * 180) / Math.PI);
+  const turn = Math.round(
+    (Math.acos(Math.max(-1, Math.min(1, bestDot))) * 180) / Math.PI
+  );
   return {
-    hex, out,
-    note: `색조 ${turn}° 돌림 · 채도 ${C.toFixed(3)}→${newC.toFixed(3)}${newC < C ? " (깎임)" : ""}`
+    hex,
+    out,
+    note: `색조 ${turn}° 돌림 · 채도 ${C.toFixed(3)}→${newC.toFixed(3)}${
+      newC < C ? " (깎임)" : ""
+    }`
   };
 }
 
@@ -97,7 +119,12 @@ function mute(hex, ceilMul = 1) {
   const [L, a, b] = hexToOklab(hex);
   const C = Math.hypot(a, b);
   const ceil = CEIL * ceilMul;
-  if (C <= ceil) return {hex, out: hex, note: `채도 ${C.toFixed(3)} — 이미 상한 이하, 그대로`};
+  if (C <= ceil)
+    return {
+      hex,
+      out: hex,
+      note: `채도 ${C.toFixed(3)} — 이미 상한 이하, 그대로`
+    };
   const k = ceil / C;
   return {
     hex,
@@ -117,20 +144,30 @@ function show(title, list, fn, ceilMul = 1) {
 
 // ① 물 — 화면에서 제일 튀는 것. 색조(청록)는 팔레트 안에 있으니 채도만.
 //    물은 배경이 아니라 눈길이 가야 하는 요소라 상한을 조금 더 준다.
-show("물 (채도만)", [
-  ["호수 (Water)", "#2d6a86"],
-  ["개울 가장자리 shallow", "#63c7c4"],
-  ["개울 한가운데 deep", "#2f8fa6"]
-], mute, 0.8);
+show(
+  "물 (채도만)",
+  [
+    ["호수 (Water)", "#2d6a86"],
+    ["개울 가장자리 shallow", "#63c7c4"],
+    ["개울 한가운데 deep", "#2f8fa6"]
+  ],
+  mute,
+  0.8
+);
 
 // ② 먼 산 / 절벽 — 멀리 있는 배경이라 더 눌러야 공기원근이 산다
-show("먼 산 · 절벽 (채도만)", [
-  ["산 골짜기 low", "#3f6b39"],
-  ["산 능선 high", "#7fa958"],
-  ["절벽 윗단 rim", "#5f8a3f"],
-  ["절벽 바위 rock", "#8a7a63"],
-  ["절벽 물속 deep", "#43382f"]
-], mute, 0.7);
+show(
+  "먼 산 · 절벽 (채도만)",
+  [
+    ["산 골짜기 low", "#3f6b39"],
+    ["산 능선 high", "#7fa958"],
+    ["절벽 윗단 rim", "#5f8a3f"],
+    ["절벽 바위 rock", "#8a7a63"],
+    ["절벽 물속 deep", "#43382f"]
+  ],
+  mute,
+  0.7
+);
 
 // ③ accentColor — 하나씩 눌러 봐야 "19가지 제각각"은 그대로다.
 //
@@ -154,16 +191,26 @@ const DISTRICT_HUE = [
 console.log("── 구역별 accentColor (팔레트에서 배정) ──────────");
 for (const [district, why, deg] of DISTRICT_HUE) {
   const h = hues.reduce((best, x) =>
-    Math.abs(((x.deg - deg + 540) % 360) - 180) < Math.abs(((best.deg - deg + 540) % 360) - 180) ? x : best
+    Math.abs(((x.deg - deg + 540) % 360) - 180) <
+    Math.abs(((best.deg - deg + 540) % 360) - 180)
+      ? x
+      : best
   );
   const out = oklabToHex(ACCENT_L, h.dir[0] * ACCENT_C, h.dir[1] * ACCENT_C);
-  console.log(`   ${district.padEnd(12)} ${out}   ${Math.round(h.deg)}°   ${why}`);
+  console.log(
+    `   ${district.padEnd(12)} ${out}   ${Math.round(h.deg)}°   ${why}`
+  );
 }
 console.log();
 
 // ④ 마커 · 살아있는 장식 — UI 기능이 있어 눈에 띄어야 한다
-show("마커 · 발광 (색조+채도)", [
-  ["경로 링 / 포인트라이트", "#00d4ff"],
-  ["훈련 동상", "#7ed957"],
-  ["학습 분수", "#00ff88"]
-], snap, 1.3);
+show(
+  "마커 · 발광 (색조+채도)",
+  [
+    ["경로 링 / 포인트라이트", "#00d4ff"],
+    ["훈련 동상", "#7ed957"],
+    ["학습 분수", "#00ff88"]
+  ],
+  snap,
+  1.3
+);

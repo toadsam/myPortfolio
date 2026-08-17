@@ -33,7 +33,7 @@ const POST_INSET = 0.06;
 /** 가로대 두 줄 */
 const RAIL_H = 0.09;
 const RAIL_D = 0.06;
-const RAIL_Y = [0.20, 0.47]; // 밑에서부터
+const RAIL_Y = [0.2, 0.47]; // 밑에서부터
 const TOTAL_H = POST_H;
 
 // ─── 색 ───────────────────────────────────────────────────────────────────────
@@ -44,7 +44,7 @@ const WOOD_MID = [124, 88, 55];
 const WOOD_LIGHT = [156, 116, 74];
 const MOSS = [96, 118, 62];
 
-const smooth = (t) => t * t * (3 - 2 * t);
+const smooth = t => t * t * (3 - 2 * t);
 function hash2(i, j) {
   let h = Math.imul(i | 0, 374761393) ^ Math.imul(j | 0, 668265263);
   h = Math.imul(h ^ (h >>> 13), 1274126177);
@@ -67,18 +67,24 @@ const rgb = Buffer.alloc(SIZE * SIZE * 3);
 for (let y = 0; y < SIZE; y++) {
   for (let x = 0; x < SIZE; x++) {
     // 결 — 가로로 길게 늘인 잡음. 나이테처럼 몇 줄이 진하게 지나간다
-    const band = Math.sin((y / SIZE) * Math.PI * 9 + hash2(0, y >> 2) * 3) * 0.5 + 0.5;
+    const band =
+      Math.sin((y / SIZE) * Math.PI * 9 + hash2(0, y >> 2) * 3) * 0.5 + 0.5;
     const fine = hash2(x >> 1, y);
     const t = Math.min(1, Math.max(0, band * 0.7 + fine * 0.3));
     // 아래쪽은 흙·이끼로 어둡게
     const foot = Math.max(0, (y / SIZE - 0.72) / 0.28);
-    const mossAmt = smooth(Math.min(1, foot * (0.3 + hash2(x >> 3, y >> 3) * 1.5))) * 0.55;
+    const mossAmt =
+      smooth(Math.min(1, foot * (0.3 + hash2(x >> 3, y >> 3) * 1.5))) * 0.55;
     const at = (y * SIZE + x) * 3;
     for (let c = 0; c < 3; c++) {
-      const wood = t < 0.5
-        ? WOOD_DARK[c] + (WOOD_MID[c] - WOOD_DARK[c]) * (t / 0.5)
-        : WOOD_MID[c] + (WOOD_LIGHT[c] - WOOD_MID[c]) * ((t - 0.5) / 0.5);
-      rgb[at + c] = Math.max(0, Math.min(255, wood + (MOSS[c] - wood) * mossAmt));
+      const wood =
+        t < 0.5
+          ? WOOD_DARK[c] + (WOOD_MID[c] - WOOD_DARK[c]) * (t / 0.5)
+          : WOOD_MID[c] + (WOOD_LIGHT[c] - WOOD_MID[c]) * ((t - 0.5) / 0.5);
+      rgb[at + c] = Math.max(
+        0,
+        Math.min(255, wood + (MOSS[c] - wood) * mossAmt)
+      );
     }
   }
 }
@@ -89,9 +95,10 @@ for (let n = 0; n < 1800; n++) {
   const len = 4 + rand() * 22;
   const shift = (rand() < 0.5 ? -1 : 1) * (6 + rand() * 12);
   for (let s = 0; s < len; s++) {
-    const x = (Math.round(x0 + s) % SIZE + SIZE) % SIZE;
+    const x = ((Math.round(x0 + s) % SIZE) + SIZE) % SIZE;
     const at = (y * SIZE + x) * 3;
-    for (let c = 0; c < 3; c++) rgb[at + c] = Math.max(0, Math.min(255, rgb[at + c] + shift));
+    for (let c = 0; c < 3; c++)
+      rgb[at + c] = Math.max(0, Math.min(255, rgb[at + c] + shift));
   }
 }
 
@@ -107,7 +114,8 @@ function crc32(buf) {
     }
   }
   let c = -1;
-  for (let i = 0; i < buf.length; i++) c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
+  for (let i = 0; i < buf.length; i++)
+    c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
   return c ^ -1;
 }
 function encodePng(w, h, data) {
@@ -148,24 +156,53 @@ const indices = [];
 /** 상자 하나. 옆·앞뒤 네 면만 만든다 — 밑면은 땅에 묻히고 윗면은 아주 작다. */
 function box(cx, cy, cz, hw, hh, hd, withTop) {
   const faces = [
-    [[0, 0, 1], [1, 0, 0], [0, 1, 0]],
-    [[0, 0, -1], [-1, 0, 0], [0, 1, 0]],
-    [[1, 0, 0], [0, 0, -1], [0, 1, 0]],
-    [[-1, 0, 0], [0, 0, 1], [0, 1, 0]]
+    [
+      [0, 0, 1],
+      [1, 0, 0],
+      [0, 1, 0]
+    ],
+    [
+      [0, 0, -1],
+      [-1, 0, 0],
+      [0, 1, 0]
+    ],
+    [
+      [1, 0, 0],
+      [0, 0, -1],
+      [0, 1, 0]
+    ],
+    [
+      [-1, 0, 0],
+      [0, 0, 1],
+      [0, 1, 0]
+    ]
   ];
   // (1,0,0)×(0,0,1) 은 −Y 다 — 윗면은 세로축을 뒤집어야 바깥을 본다 (wall-low 에서 겪었다)
-  if (withTop) faces.push([[0, 1, 0], [1, 0, 0], [0, 0, -1]]);
+  if (withTop)
+    faces.push([
+      [0, 1, 0],
+      [1, 0, 0],
+      [0, 0, -1]
+    ]);
   const center = [cx, cy, cz];
   const half = [hw, hh, hd];
-  const reach = (a) => Math.abs(a[0]) * hw + Math.abs(a[1]) * hh + Math.abs(a[2]) * hd;
+  const reach = a =>
+    Math.abs(a[0]) * hw + Math.abs(a[1]) * hh + Math.abs(a[2]) * hd;
 
   for (const [n, ax, ay] of faces) {
     const base = positions.length / 3;
     const eu = reach(ax);
     const ev = reach(ay);
-    for (const [su, sv] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
+    for (const [su, sv] of [
+      [-1, -1],
+      [1, -1],
+      [1, 1],
+      [-1, 1]
+    ]) {
       for (let c = 0; c < 3; c++)
-        positions.push(center[c] + n[c] * half[c] + ax[c] * eu * su + ay[c] * ev * sv);
+        positions.push(
+          center[c] + n[c] * half[c] + ax[c] * eu * su + ay[c] * ev * sv
+        );
       normals.push(n[0], n[1], n[2]);
       // 결은 물체의 긴 축을 따라 흐른다. 가로대는 길고 기둥은 세로로 길다 —
       // 기둥에서 U 를 세로에 물리면 결이 세로로 서서 나무처럼 보인다.
@@ -178,7 +215,15 @@ function box(cx, cy, cz, hw, hh, hd, withTop) {
 const midY = TOTAL_H / 2;
 // 기둥 둘 (윗면 있음 — 위에서 내려다보면 기둥머리가 보인다)
 for (const side of [-1, 1]) {
-  box(side * (LENGTH / 2 - POST_INSET - POST_W / 2), 0, 0, POST_W / 2, POST_H / 2, POST_W / 2, true);
+  box(
+    side * (LENGTH / 2 - POST_INSET - POST_W / 2),
+    0,
+    0,
+    POST_W / 2,
+    POST_H / 2,
+    POST_W / 2,
+    true
+  );
 }
 // 가로대 둘 (윗면 생략 — 얇아서 안 보이고, 60삼각형이 30으로 준다)
 for (const y of RAIL_Y) {
@@ -191,7 +236,7 @@ const uvArr = new Float32Array(uvs);
 const idxArr = new Uint16Array(indices);
 const png = encodePng(SIZE, SIZE, rgb);
 
-const pad4 = (n) => (n + 3) & ~3;
+const pad4 = n => (n + 3) & ~3;
 const parts = [];
 let offset = 0;
 const views = [];
@@ -204,7 +249,12 @@ for (const [data, target] of [
 ]) {
   const padded = Buffer.alloc(pad4(data.length));
   data.copy(padded);
-  views.push({buffer: 0, byteOffset: offset, byteLength: data.length, ...(target ? {target} : {})});
+  views.push({
+    buffer: 0,
+    byteOffset: offset,
+    byteLength: data.length,
+    ...(target ? {target} : {})
+  });
   parts.push(padded);
   offset += padded.length;
 }
@@ -223,20 +273,48 @@ const gltf = {
   scene: 0,
   scenes: [{nodes: [0]}],
   nodes: [{mesh: 0, name: "fence-rail"}],
-  meshes: [{primitives: [{attributes: {POSITION: 1, NORMAL: 2, TEXCOORD_0: 3}, indices: 0, material: 0}]}],
-  materials: [{
-    name: "fence-rail",
-    // 얇은 판이라 뒷면도 보인다 — 컬링을 끄지 않으면 가로대 안쪽이 뚫려 보인다
-    doubleSided: true,
-    pbrMetallicRoughness: {baseColorTexture: {index: 0}, metallicFactor: 0, roughnessFactor: 0.9}
-  }],
+  meshes: [
+    {
+      primitives: [
+        {
+          attributes: {POSITION: 1, NORMAL: 2, TEXCOORD_0: 3},
+          indices: 0,
+          material: 0
+        }
+      ]
+    }
+  ],
+  materials: [
+    {
+      name: "fence-rail",
+      // 얇은 판이라 뒷면도 보인다 — 컬링을 끄지 않으면 가로대 안쪽이 뚫려 보인다
+      doubleSided: true,
+      pbrMetallicRoughness: {
+        baseColorTexture: {index: 0},
+        metallicFactor: 0,
+        roughnessFactor: 0.9
+      }
+    }
+  ],
   textures: [{source: 0, sampler: 0}],
   samplers: [{wrapS: 10497, wrapT: 10497}],
   images: [{bufferView: 4, mimeType: "image/png"}],
   accessors: [
     {bufferView: 0, componentType: 5123, count: idxArr.length, type: "SCALAR"},
-    {bufferView: 1, componentType: 5126, count: posArr.length / 3, type: "VEC3", min, max},
-    {bufferView: 2, componentType: 5126, count: nrmArr.length / 3, type: "VEC3"},
+    {
+      bufferView: 1,
+      componentType: 5126,
+      count: posArr.length / 3,
+      type: "VEC3",
+      min,
+      max
+    },
+    {
+      bufferView: 2,
+      componentType: 5126,
+      count: nrmArr.length / 3,
+      type: "VEC3"
+    },
     {bufferView: 3, componentType: 5126, count: uvArr.length / 2, type: "VEC2"}
   ],
   bufferViews: views,
@@ -259,12 +337,25 @@ const chunkHeader = (len, type) => {
 };
 
 mkdirSync("public/models/props/decor", {recursive: true});
-writeFileSync(OUT_GLB, Buffer.concat([
-  header,
-  chunkHeader(jsonPad.length, 0x4e4f534a), jsonPad,
-  chunkHeader(bin.length, 0x004e4942), bin
-]));
+writeFileSync(
+  OUT_GLB,
+  Buffer.concat([
+    header,
+    chunkHeader(jsonPad.length, 0x4e4f534a),
+    jsonPad,
+    chunkHeader(bin.length, 0x004e4942),
+    bin
+  ])
+);
 
-console.log(`${OUT_GLB}  ${(png.length / 1024).toFixed(0)}KB 텍스처 · 삼각형 ${idxArr.length / 3}개`);
+console.log(
+  `${OUT_GLB}  ${(png.length / 1024).toFixed(0)}KB 텍스처 · 삼각형 ${
+    idxArr.length / 3
+  }개`
+);
 console.log(`  길이 ${LENGTH} × 높이 ${TOTAL_H}`);
-console.log(`  generate-decor-layout.mjs 의 KIT 에  "fence-rail": {h: ${TOTAL_H.toFixed(3)}, m: ${(TOTAL_H * 2.5).toFixed(3)}}  (배율 1)`);
+console.log(
+  `  generate-decor-layout.mjs 의 KIT 에  "fence-rail": {h: ${TOTAL_H.toFixed(
+    3
+  )}, m: ${(TOTAL_H * 2.5).toFixed(3)}}  (배율 1)`
+);

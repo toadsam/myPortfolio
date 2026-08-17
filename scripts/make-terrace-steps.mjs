@@ -39,7 +39,7 @@ const STONE_DARK = [112, 106, 93];
 const MORTAR = [86, 82, 71];
 const MOSS = [96, 118, 62];
 
-const smooth = (t) => t * t * (3 - 2 * t);
+const smooth = t => t * t * (3 - 2 * t);
 function hash2(i, j) {
   let h = Math.imul(i | 0, 374761393) ^ Math.imul(j | 0, 668265263);
   h = Math.imul(h ^ (h >>> 13), 1274126177);
@@ -76,9 +76,18 @@ for (let y = 0; y < SIZE; y++) {
     const at = (y * SIZE + x) * 3;
     for (let c = 0; c < 3; c++) {
       const base = STONE[c] + (STONE_DARK[c] - STONE[c]) * low;
-      let val = MORTAR[c] + (Math.min(255, base * shade) + grain - MORTAR[c]) * smooth(t);
+      let val =
+        MORTAR[c] +
+        (Math.min(255, base * shade) + grain - MORTAR[c]) * smooth(t);
       // 모서리 이끼
-      const mossAmt = smooth(Math.min(1, Math.max(0, (low - 0.78) / 0.22) * (0.3 + hash2(x >> 3, y >> 3) * 1.4))) * 0.5;
+      const mossAmt =
+        smooth(
+          Math.min(
+            1,
+            Math.max(0, (low - 0.78) / 0.22) *
+              (0.3 + hash2(x >> 3, y >> 3) * 1.4)
+          )
+        ) * 0.5;
       val = val + (MOSS[c] - val) * mossAmt;
       rgb[at + c] = Math.max(0, Math.min(255, val));
     }
@@ -93,9 +102,13 @@ for (let n = 0; n < 1500; n++) {
   const shift = (rand() < 0.5 ? -1 : 1) * (5 + rand() * 10);
   for (let s = 0; s <= len; s++) {
     const x = ((Math.round(x0 + Math.cos(angle) * s) % SIZE) + SIZE) % SIZE;
-    const y = Math.max(0, Math.min(SIZE - 1, Math.round(y0 + Math.sin(angle) * s)));
+    const y = Math.max(
+      0,
+      Math.min(SIZE - 1, Math.round(y0 + Math.sin(angle) * s))
+    );
     const at = (y * SIZE + x) * 3;
-    for (let c = 0; c < 3; c++) rgb[at + c] = Math.max(0, Math.min(255, rgb[at + c] + shift));
+    for (let c = 0; c < 3; c++)
+      rgb[at + c] = Math.max(0, Math.min(255, rgb[at + c] + shift));
   }
 }
 
@@ -111,7 +124,8 @@ function crc32(buf) {
     }
   }
   let c = -1;
-  for (let i = 0; i < buf.length; i++) c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
+  for (let i = 0; i < buf.length; i++)
+    c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
   return c ^ -1;
 }
 function encodePng(w, h, data) {
@@ -153,23 +167,51 @@ const indices = [];
 
 function box(cx, cy, cz, hw, hh, hd) {
   const faces = [
-    [[0, 0, 1], [1, 0, 0], [0, 1, 0]],
-    [[0, 0, -1], [-1, 0, 0], [0, 1, 0]],
-    [[1, 0, 0], [0, 0, -1], [0, 1, 0]],
-    [[-1, 0, 0], [0, 0, 1], [0, 1, 0]],
+    [
+      [0, 0, 1],
+      [1, 0, 0],
+      [0, 1, 0]
+    ],
+    [
+      [0, 0, -1],
+      [-1, 0, 0],
+      [0, 1, 0]
+    ],
+    [
+      [1, 0, 0],
+      [0, 0, -1],
+      [0, 1, 0]
+    ],
+    [
+      [-1, 0, 0],
+      [0, 0, 1],
+      [0, 1, 0]
+    ],
     // (1,0,0)×(0,0,1) 은 −Y — 윗면은 세로축을 뒤집어야 바깥을 본다 (wall-low 에서 겪었다)
-    [[0, 1, 0], [1, 0, 0], [0, 0, -1]]
+    [
+      [0, 1, 0],
+      [1, 0, 0],
+      [0, 0, -1]
+    ]
   ];
   const center = [cx, cy, cz];
   const half = [hw, hh, hd];
-  const reach = (a) => Math.abs(a[0]) * hw + Math.abs(a[1]) * hh + Math.abs(a[2]) * hd;
+  const reach = a =>
+    Math.abs(a[0]) * hw + Math.abs(a[1]) * hh + Math.abs(a[2]) * hd;
   for (const [n, ax, ay] of faces) {
     const base = positions.length / 3;
     const eu = reach(ax);
     const ev = reach(ay);
-    for (const [su, sv] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) {
+    for (const [su, sv] of [
+      [-1, -1],
+      [1, -1],
+      [1, 1],
+      [-1, 1]
+    ]) {
       for (let c = 0; c < 3; c++)
-        positions.push(center[c] + n[c] * half[c] + ax[c] * eu * su + ay[c] * ev * sv);
+        positions.push(
+          center[c] + n[c] * half[c] + ax[c] * eu * su + ay[c] * ev * sv
+        );
       normals.push(n[0], n[1], n[2]);
       uvs.push(0.5 + su * (eu / 1.1), 0.5 + sv * (ev / 0.55));
     }
@@ -182,15 +224,8 @@ function box(cx, cy, cz, hw, hh, hd) {
 for (let n = 0; n < STEPS; n++) {
   const top = (n + 1) * RISER;
   const z0 = -DEPTH / 2 + n * TREAD; // 이 단의 앞쪽 모서리
-  const z1 = DEPTH / 2;              // 안쪽 끝까지
-  box(
-    0,
-    top / 2 - RISE / 2,
-    (z0 + z1) / 2,
-    WIDTH / 2,
-    top / 2,
-    (z1 - z0) / 2
-  );
+  const z1 = DEPTH / 2; // 안쪽 끝까지
+  box(0, top / 2 - RISE / 2, (z0 + z1) / 2, WIDTH / 2, top / 2, (z1 - z0) / 2);
 }
 
 const posArr = new Float32Array(positions);
@@ -199,7 +234,7 @@ const uvArr = new Float32Array(uvs);
 const idxArr = new Uint16Array(indices);
 const png = encodePng(SIZE, SIZE, rgb);
 
-const pad4 = (n) => (n + 3) & ~3;
+const pad4 = n => (n + 3) & ~3;
 const parts = [];
 let offset = 0;
 const views = [];
@@ -212,7 +247,12 @@ for (const [data, target] of [
 ]) {
   const padded = Buffer.alloc(pad4(data.length));
   data.copy(padded);
-  views.push({buffer: 0, byteOffset: offset, byteLength: data.length, ...(target ? {target} : {})});
+  views.push({
+    buffer: 0,
+    byteOffset: offset,
+    byteLength: data.length,
+    ...(target ? {target} : {})
+  });
   parts.push(padded);
   offset += padded.length;
 }
@@ -231,18 +271,46 @@ const gltf = {
   scene: 0,
   scenes: [{nodes: [0]}],
   nodes: [{mesh: 0, name: "terrace-steps"}],
-  meshes: [{primitives: [{attributes: {POSITION: 1, NORMAL: 2, TEXCOORD_0: 3}, indices: 0, material: 0}]}],
-  materials: [{
-    name: "terrace-steps",
-    pbrMetallicRoughness: {baseColorTexture: {index: 0}, metallicFactor: 0, roughnessFactor: 0.95}
-  }],
+  meshes: [
+    {
+      primitives: [
+        {
+          attributes: {POSITION: 1, NORMAL: 2, TEXCOORD_0: 3},
+          indices: 0,
+          material: 0
+        }
+      ]
+    }
+  ],
+  materials: [
+    {
+      name: "terrace-steps",
+      pbrMetallicRoughness: {
+        baseColorTexture: {index: 0},
+        metallicFactor: 0,
+        roughnessFactor: 0.95
+      }
+    }
+  ],
   textures: [{source: 0, sampler: 0}],
   samplers: [{wrapS: 10497, wrapT: 10497}],
   images: [{bufferView: 4, mimeType: "image/png"}],
   accessors: [
     {bufferView: 0, componentType: 5123, count: idxArr.length, type: "SCALAR"},
-    {bufferView: 1, componentType: 5126, count: posArr.length / 3, type: "VEC3", min, max},
-    {bufferView: 2, componentType: 5126, count: nrmArr.length / 3, type: "VEC3"},
+    {
+      bufferView: 1,
+      componentType: 5126,
+      count: posArr.length / 3,
+      type: "VEC3",
+      min,
+      max
+    },
+    {
+      bufferView: 2,
+      componentType: 5126,
+      count: nrmArr.length / 3,
+      type: "VEC3"
+    },
     {bufferView: 3, componentType: 5126, count: uvArr.length / 2, type: "VEC2"}
   ],
   bufferViews: views,
@@ -265,12 +333,29 @@ const chunkHeader = (len, type) => {
 };
 
 mkdirSync("public/models/props/decor", {recursive: true});
-writeFileSync(OUT_GLB, Buffer.concat([
-  header,
-  chunkHeader(jsonPad.length, 0x4e4f534a), jsonPad,
-  chunkHeader(bin.length, 0x004e4942), bin
-]));
+writeFileSync(
+  OUT_GLB,
+  Buffer.concat([
+    header,
+    chunkHeader(jsonPad.length, 0x4e4f534a),
+    jsonPad,
+    chunkHeader(bin.length, 0x004e4942),
+    bin
+  ])
+);
 
-console.log(`${OUT_GLB}  ${(png.length / 1024).toFixed(0)}KB 텍스처 · 삼각형 ${idxArr.length / 3}개`);
-console.log(`  오름 ${RISE} · 폭 ${WIDTH} · 안길이 ${DEPTH.toFixed(2)} (${STEPS}단 × ${RISER.toFixed(3)})`);
-console.log(`  KIT 에  "terrace-steps": {h: ${RISE.toFixed(3)}, m: ${(RISE * 2.5).toFixed(3)}}  (배율 1) · −Z 에서 +Z 로 오른다`);
+console.log(
+  `${OUT_GLB}  ${(png.length / 1024).toFixed(0)}KB 텍스처 · 삼각형 ${
+    idxArr.length / 3
+  }개`
+);
+console.log(
+  `  오름 ${RISE} · 폭 ${WIDTH} · 안길이 ${DEPTH.toFixed(
+    2
+  )} (${STEPS}단 × ${RISER.toFixed(3)})`
+);
+console.log(
+  `  KIT 에  "terrace-steps": {h: ${RISE.toFixed(3)}, m: ${(RISE * 2.5).toFixed(
+    3
+  )}}  (배율 1) · −Z 에서 +Z 로 오른다`
+);

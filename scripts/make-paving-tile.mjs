@@ -55,7 +55,9 @@ const SATURATION = 0.78;
 // (sharp 는 이 환경에서 깨져 있고, Pillow 를 부르자고 파이썬을 띄우기엔 과하다.)
 function decodePng(buf) {
   if (buf.readUInt32BE(0) !== 0x89504e47) throw new Error("PNG 가 아닙니다");
-  let off = 8, w = 0, h = 0;
+  let off = 8,
+    w = 0,
+    h = 0;
   const idat = [];
   while (off < buf.length) {
     const len = buf.readUInt32BE(off);
@@ -65,7 +67,9 @@ function decodePng(buf) {
       w = body.readUInt32BE(0);
       h = body.readUInt32BE(4);
       if (body[8] !== 8 || body[9] !== 2 || body[12] !== 0)
-        throw new Error(`8비트 트루컬러 비인터레이스만 지원합니다 (bit ${body[8]} color ${body[9]} interlace ${body[12]})`);
+        throw new Error(
+          `8비트 트루컬러 비인터레이스만 지원합니다 (bit ${body[8]} color ${body[9]} interlace ${body[12]})`
+        );
     } else if (tag === "IDAT") idat.push(body);
     else if (tag === "IEND") break;
     off += 12 + len;
@@ -86,7 +90,9 @@ function decodePng(buf) {
       else if (filter === 3) v += (a + b) >> 1;
       else if (filter === 4) {
         const p = a + b - c;
-        const pa = Math.abs(p - a), pb = Math.abs(p - b), pc = Math.abs(p - c);
+        const pa = Math.abs(p - a),
+          pb = Math.abs(p - b),
+          pc = Math.abs(p - c);
         v += pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
       }
       out[y * stride + i] = v & 0xff;
@@ -112,7 +118,10 @@ const at = (x, y, c) => src.data[(y * src.w + x) * 3 + c];
 // 상자를 찾고, 거기서 다시 안쪽으로 파고든다 — 테두리는 모서리가 둥글고
 // 아래쪽에는 슬래브 **옆면**(두께)이 보이므로 그대로 쓰면 타일마다 그 그림자가 찍힌다.
 const bbox = (() => {
-  let x0 = src.w, x1 = 0, y0 = src.h, y1 = 0;
+  let x0 = src.w,
+    x1 = 0,
+    y0 = src.h,
+    y1 = 0;
   for (let y = 0; y < src.h; y++) {
     for (let x = 0; x < src.w; x++) {
       // 배경은 순백에 가깝다. 세 채널이 모두 밝으면 배경으로 본다.
@@ -127,7 +136,8 @@ const bbox = (() => {
 })();
 
 // 상자 안에서 정사각형을 뜬다. 위쪽으로 조금 올려 잡아 아래 옆면을 피한다.
-const boxW = bbox.x1 - bbox.x0, boxH = bbox.y1 - bbox.y0;
+const boxW = bbox.x1 - bbox.x0,
+  boxH = bbox.y1 - bbox.y0;
 /** 윗면 중 안전하게 평평한 비율 — 둥근 모서리와 옆면을 뺀 값 */
 const KEEP = 0.8;
 const crop = Math.floor(Math.min(boxW, boxH) * KEEP);
@@ -137,8 +147,15 @@ const cy0 = bbox.y0 + Math.floor((boxH - crop) / 2) - Math.floor(boxH * 0.03);
 // 이음매를 녹이려면 정사각형 **양옆**으로 여유 화소가 필요하다 (아래 fold 참고).
 // 여유를 뺀 나머지가 실제 타일 크기다.
 const B0 = Math.round((SEAM / SIZE) * crop);
-const TILE = Math.min(crop - 2 * B0, bbox.x1 - cx0 - 2 * B0, bbox.y1 - cy0 - 2 * B0);
-if (TILE < 64) throw new Error(`오려낼 윗면이 너무 작습니다 (${TILE}px) — KEEP 이나 SEAM 을 줄이세요`);
+const TILE = Math.min(
+  crop - 2 * B0,
+  bbox.x1 - cx0 - 2 * B0,
+  bbox.y1 - cy0 - 2 * B0
+);
+if (TILE < 64)
+  throw new Error(
+    `오려낼 윗면이 너무 작습니다 (${TILE}px) — KEEP 이나 SEAM 을 줄이세요`
+  );
 const B = B0;
 
 /** 원본에서 (u,v)∈[−B, TILE+B) 를 읽는다 */
@@ -182,14 +199,23 @@ const passB = blended;
 const rgb = Buffer.alloc(SIZE * SIZE * 3);
 const scale = TILE / SIZE;
 for (let y = 0; y < SIZE; y++) {
-  const v0 = Math.floor(y * scale), v1 = Math.max(v0 + 1, Math.floor((y + 1) * scale));
+  const v0 = Math.floor(y * scale),
+    v1 = Math.max(v0 + 1, Math.floor((y + 1) * scale));
   for (let x = 0; x < SIZE; x++) {
-    const u0 = Math.floor(x * scale), u1 = Math.max(u0 + 1, Math.floor((x + 1) * scale));
+    const u0 = Math.floor(x * scale),
+      u1 = Math.max(u0 + 1, Math.floor((x + 1) * scale));
     for (let c = 0; c < 3; c++) {
-      let sum = 0, n = 0;
+      let sum = 0,
+        n = 0;
       for (let v = v0; v < v1; v++)
-        for (let u = u0; u < u1; u++) { sum += passB[(v * TILE + u) * 3 + c]; n++; }
-      rgb[(y * SIZE + x) * 3 + c] = Math.max(0, Math.min(255, Math.round(sum / n)));
+        for (let u = u0; u < u1; u++) {
+          sum += passB[(v * TILE + u) * 3 + c];
+          n++;
+        }
+      rgb[(y * SIZE + x) * 3 + c] = Math.max(
+        0,
+        Math.min(255, Math.round(sum / n))
+      );
     }
   }
 }
@@ -199,7 +225,9 @@ for (let y = 0; y < SIZE; y++) {
 // 모래밭이 된다 (실제로 한 번 그렇게 나왔다 — rgb(200,176,130)).
 {
   for (let i = 0; i < SIZE * SIZE; i++) {
-    const r = rgb[i * 3], g = rgb[i * 3 + 1], b = rgb[i * 3 + 2];
+    const r = rgb[i * 3],
+      g = rgb[i * 3 + 1],
+      b = rgb[i * 3 + 2];
     const grey = 0.299 * r + 0.587 * g + 0.114 * b;
     rgb[i * 3] = Math.round(grey + (r - grey) * SATURATION);
     rgb[i * 3 + 1] = Math.round(grey + (g - grey) * SATURATION);
@@ -207,11 +235,17 @@ for (let y = 0; y < SIZE; y++) {
   }
   let luma = 0;
   for (let i = 0; i < SIZE * SIZE; i++)
-    luma += 0.299 * rgb[i * 3] + 0.587 * rgb[i * 3 + 1] + 0.114 * rgb[i * 3 + 2];
+    luma +=
+      0.299 * rgb[i * 3] + 0.587 * rgb[i * 3 + 1] + 0.114 * rgb[i * 3 + 2];
   luma /= SIZE * SIZE;
   const gain = TARGET_LUMA / luma;
-  for (let i = 0; i < SIZE * SIZE * 3; i++) rgb[i] = Math.min(255, Math.round(rgb[i] * gain));
-  console.log(`  밝기 ${luma.toFixed(0)} → ${TARGET_LUMA} (×${gain.toFixed(2)}) · 채도 ×${SATURATION}`);
+  for (let i = 0; i < SIZE * SIZE * 3; i++)
+    rgb[i] = Math.min(255, Math.round(rgb[i] * gain));
+  console.log(
+    `  밝기 ${luma.toFixed(0)} → ${TARGET_LUMA} (×${gain.toFixed(
+      2
+    )}) · 채도 ×${SATURATION}`
+  );
 }
 
 // ─── PNG ──────────────────────────────────────────────────────────────────────
@@ -226,7 +260,8 @@ function crc32(buf) {
     }
   }
   let c = -1;
-  for (let i = 0; i < buf.length; i++) c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
+  for (let i = 0; i < buf.length; i++)
+    c = CRC_T[(c ^ buf[i]) & 0xff] ^ (c >>> 8);
   return c ^ -1;
 }
 function encodePng(w, h, data) {
@@ -268,7 +303,7 @@ const uvs = new Float32Array([0, 0, 1, 0, 1, 1, 0, 1]);
 // 마을 카메라는 늘 위에서 내려다보므로 이게 뒤집히면 바닥이 통째로 사라진다.
 const indices = new Uint16Array([0, 2, 1, 0, 3, 2]);
 
-const pad4 = (n) => (n + 3) & ~3;
+const pad4 = n => (n + 3) & ~3;
 const parts = [];
 let offset = 0;
 const views = [];
@@ -281,7 +316,12 @@ for (const [data, target] of [
 ]) {
   const padded = Buffer.alloc(pad4(data.length));
   data.copy(padded);
-  views.push({buffer: 0, byteOffset: offset, byteLength: data.length, ...(target ? {target} : {})});
+  views.push({
+    buffer: 0,
+    byteOffset: offset,
+    byteLength: data.length,
+    ...(target ? {target} : {})
+  });
   parts.push(padded);
   offset += padded.length;
 }
@@ -292,23 +332,42 @@ const gltf = {
   scene: 0,
   scenes: [{nodes: [0]}],
   nodes: [{mesh: 0, name: "paving-square"}],
-  meshes: [{primitives: [{attributes: {POSITION: 1, NORMAL: 2, TEXCOORD_0: 3}, indices: 0, material: 0}]}],
-  materials: [{
-    name: "paving",
-    pbrMetallicRoughness: {
-      baseColorTexture: {index: 0},
-      metallicFactor: 0,
-      // 젖은 돌처럼 반짝이면 잔디와 안 붙는다. 거의 완전 무광.
-      roughnessFactor: 0.95
+  meshes: [
+    {
+      primitives: [
+        {
+          attributes: {POSITION: 1, NORMAL: 2, TEXCOORD_0: 3},
+          indices: 0,
+          material: 0
+        }
+      ]
     }
-  }],
+  ],
+  materials: [
+    {
+      name: "paving",
+      pbrMetallicRoughness: {
+        baseColorTexture: {index: 0},
+        metallicFactor: 0,
+        // 젖은 돌처럼 반짝이면 잔디와 안 붙는다. 거의 완전 무광.
+        roughnessFactor: 0.95
+      }
+    }
+  ],
   textures: [{source: 0, sampler: 0}],
   // 포장은 여러 장이 이어 붙으므로 UV 가 가장자리에서 반복돼야 이음매가 안 뜬다
   samplers: [{wrapS: 10497, wrapT: 10497}],
   images: [{bufferView: 4, mimeType: "image/png"}],
   accessors: [
     {bufferView: 0, componentType: 5123, count: 6, type: "SCALAR"},
-    {bufferView: 1, componentType: 5126, count: 4, type: "VEC3", min: [-H, 0, -H], max: [H, 0, H]},
+    {
+      bufferView: 1,
+      componentType: 5126,
+      count: 4,
+      type: "VEC3",
+      min: [-H, 0, -H],
+      max: [H, 0, H]
+    },
     {bufferView: 2, componentType: 5126, count: 4, type: "VEC3"},
     {bufferView: 3, componentType: 5126, count: 4, type: "VEC2"}
   ],
@@ -332,14 +391,26 @@ const chunkHeader = (len, type) => {
 };
 
 mkdirSync("public/models/props/ground-flat", {recursive: true});
-writeFileSync(OUT_GLB, Buffer.concat([
-  header,
-  chunkHeader(jsonPad.length, 0x4e4f534a), jsonPad,
-  chunkHeader(bin.length, 0x004e4942), bin
-]));
+writeFileSync(
+  OUT_GLB,
+  Buffer.concat([
+    header,
+    chunkHeader(jsonPad.length, 0x4e4f534a),
+    jsonPad,
+    chunkHeader(bin.length, 0x004e4942),
+    bin
+  ])
+);
 
 let sum = [0, 0, 0];
-for (let i = 0; i < SIZE * SIZE; i++) for (let c = 0; c < 3; c++) sum[c] += rgb[i * 3 + c];
-console.log(`${OUT_GLB}  ${(png.length / 1024).toFixed(0)}KB 텍스처 · 삼각형 2개`);
-console.log(`  손그림 ${src.w}×${src.h} → 윗면 ${TILE}px 오림 → ${SIZE}×${SIZE} · 폭 ${WIDTH} (길 타일과 동일)`);
-console.log(`  평균 rgb(${sum.map((v) => Math.round(v / (SIZE * SIZE))).join(",")})`);
+for (let i = 0; i < SIZE * SIZE; i++)
+  for (let c = 0; c < 3; c++) sum[c] += rgb[i * 3 + c];
+console.log(
+  `${OUT_GLB}  ${(png.length / 1024).toFixed(0)}KB 텍스처 · 삼각형 2개`
+);
+console.log(
+  `  손그림 ${src.w}×${src.h} → 윗면 ${TILE}px 오림 → ${SIZE}×${SIZE} · 폭 ${WIDTH} (길 타일과 동일)`
+);
+console.log(
+  `  평균 rgb(${sum.map(v => Math.round(v / (SIZE * SIZE))).join(",")})`
+);

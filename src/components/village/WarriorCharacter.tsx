@@ -5,6 +5,7 @@ import {useEffect, useMemo, useRef} from "react";
 import type {Group} from "three";
 import {MESHY_HEIGHT, NPC_HEIGHT} from "@/data/characterModels";
 import {lockSceneMaterials} from "@/lib/villageMaterial";
+import {extendGltfLoader} from "@/lib/gltfLoaders";
 
 export type MoveState = "idle" | "walk" | "run";
 
@@ -25,8 +26,13 @@ export function WarriorCharacter({
   stateRef: React.MutableRefObject<MoveState>;
 }) {
   const innerRef = useRef<Group>(null);
-  const {scene, animations: walkAnims} = useGLTF(WALK_URL);
-  const {animations: runAnims} = useGLTF(RUN_URL);
+  const {scene, animations: walkAnims} = useGLTF(
+    WALK_URL,
+    true,
+    true,
+    extendGltfLoader
+  );
+  const {animations: runAnims} = useGLTF(RUN_URL, true, true, extendGltfLoader);
 
   // 조종 캐릭터도 NPC·건물과 같은 빛 반응을 탄다 (villageMaterial 참고 —
   // 이 GLB 들은 metalness 팩터가 1.0 이라 환경맵 없는 씬에서 검게 남는다)
@@ -88,5 +94,5 @@ export function WarriorCharacter({
   );
 }
 
-useGLTF.preload(WALK_URL);
-useGLTF.preload(RUN_URL);
+useGLTF.preload(WALK_URL, true, true, extendGltfLoader);
+useGLTF.preload(RUN_URL, true, true, extendGltfLoader);

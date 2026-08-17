@@ -26,7 +26,10 @@ const K = Number(process.argv[2]) || 16;
 
 // ─── PNG 디코더 (bake-impostors.mjs 와 같은 것) ──────────────────────────────
 function decodePng(buf) {
-  let off = 8, w = 0, h = 0, colorType = 0;
+  let off = 8,
+    w = 0,
+    h = 0,
+    colorType = 0;
   const idat = [];
   while (off < buf.length) {
     const len = buf.readUInt32BE(off);
@@ -36,12 +39,14 @@ function decodePng(buf) {
       w = data.readUInt32BE(0);
       h = data.readUInt32BE(4);
       colorType = data[9];
-      if (data[8] !== 8 || data[12] !== 0) throw new Error("8bit 비인터레이스 PNG만 지원");
+      if (data[8] !== 8 || data[12] !== 0)
+        throw new Error("8bit 비인터레이스 PNG만 지원");
     } else if (tag === "IDAT") idat.push(data);
     else if (tag === "IEND") break;
     off += 12 + len;
   }
-  const ch = colorType === 6 ? 4 : colorType === 2 ? 3 : colorType === 0 ? 1 : 0;
+  const ch =
+    colorType === 6 ? 4 : colorType === 2 ? 3 : colorType === 0 ? 1 : 0;
   if (!ch) throw new Error(`colorType ${colorType}`);
   const raw = inflateSync(Buffer.concat(idat));
   const out = Buffer.alloc(w * h * ch);
@@ -62,7 +67,9 @@ function decodePng(buf) {
       else if (filter === 2) v += b;
       else if (filter === 3) v += (a + b) >> 1;
       else if (filter === 4) {
-        const pa = Math.abs(b - c), pb = Math.abs(a - c), pc = Math.abs(a + b - 2 * c);
+        const pa = Math.abs(b - c),
+          pb = Math.abs(a - c),
+          pc = Math.abs(a + b - 2 * c);
         v += pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
       }
       cur[x] = v & 0xff;
@@ -72,11 +79,15 @@ function decodePng(buf) {
 }
 
 // ─── Oklab ────────────────────────────────────────────────────────────────────
-const toLinear = (c) => (c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
-const toSrgb = (c) => (c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055);
+const toLinear = c =>
+  c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+const toSrgb = c =>
+  c <= 0.0031308 ? c * 12.92 : 1.055 * Math.pow(c, 1 / 2.4) - 0.055;
 
 function rgbToOklab(r, g, b) {
-  const R = toLinear(r), G = toLinear(g), B = toLinear(b);
+  const R = toLinear(r),
+    G = toLinear(g),
+    B = toLinear(b);
   const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
   const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
   const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
@@ -94,10 +105,16 @@ function oklabToRgb(L, a, b) {
   const R = 4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
   const G = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
   const B = -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s;
-  return [R, G, B].map((v) => Math.max(0, Math.min(255, Math.round(toSrgb(Math.max(0, Math.min(1, v))) * 255))));
+  return [R, G, B].map(v =>
+    Math.max(
+      0,
+      Math.min(255, Math.round(toSrgb(Math.max(0, Math.min(1, v))) * 255))
+    )
+  );
 }
 
-const hex = ([r, g, b]) => "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
+const hex = ([r, g, b]) =>
+  "#" + [r, g, b].map(v => v.toString(16).padStart(2, "0")).join("");
 
 // ─── 표본 뽑기 ────────────────────────────────────────────────────────────────
 const img = decodePng(readFileSync(CONCEPT));
@@ -108,14 +125,18 @@ console.log(`컨셉 아트 ${img.w}×${img.h} (채널 ${img.ch})`);
 // 지배해서, 정작 재질 색조는 4개(그중 초록 없음)로 뭉개졌다. 하늘은 우리 씬에서
 // SkyDome 이 따로 그리므로 재질 팔레트에 들어가면 안 된다.
 // UI 패널도 화면 가장자리에 몰려 있으니 같이 잘라 낸다.
-const X0 = Math.round(img.w * 0.12), X1 = Math.round(img.w * 0.88);
-const Y0 = Math.round(img.h * 0.26), Y1 = Math.round(img.h * 0.9);
+const X0 = Math.round(img.w * 0.12),
+  X1 = Math.round(img.w * 0.88);
+const Y0 = Math.round(img.h * 0.26),
+  Y1 = Math.round(img.h * 0.9);
 
 const samples = [];
 for (let y = Y0; y < Y1; y += 3) {
   for (let x = X0; x < X1; x += 3) {
     const i = (y * img.w + x) * img.ch;
-    const r = img.data[i] / 255, g = img.data[i + 1] / 255, b = img.data[i + 2] / 255;
+    const r = img.data[i] / 255,
+      g = img.data[i + 1] / 255,
+      b = img.data[i + 2] / 255;
     if (img.ch === 4 && img.data[i + 3] < 200) continue;
     samples.push(rgbToOklab(r, g, b));
   }
@@ -125,13 +146,15 @@ console.log(`표본 ${samples.length.toLocaleString()}개`);
 // ─── k-means (k-means++ 로 초기화) ────────────────────────────────────────────
 // 무작위 초기화는 돌릴 때마다 팔레트가 바뀌어서, 값을 고정하려면 씨앗을 박아야 한다.
 let seed = 20260813;
-const rand = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
-const dist2 = (p, q) => (p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2 + (p[2] - q[2]) ** 2;
+const rand = () =>
+  (seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
+const dist2 = (p, q) =>
+  (p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2 + (p[2] - q[2]) ** 2;
 
 const centers = [samples[Math.floor(rand() * samples.length)]];
 while (centers.length < K) {
   // 기존 중심에서 먼 표본일수록 뽑힐 확률이 높다 — 팔레트가 한쪽에 몰리지 않는다
-  const d = samples.map((s) => Math.min(...centers.map((c) => dist2(s, c))));
+  const d = samples.map(s => Math.min(...centers.map(c => dist2(s, c))));
   const total = d.reduce((a, b) => a + b, 0);
   let t = rand() * total;
   let idx = 0;
@@ -143,27 +166,44 @@ const assign = new Int32Array(samples.length);
 for (let iter = 0; iter < 40; iter++) {
   let moved = 0;
   for (let i = 0; i < samples.length; i++) {
-    let best = 0, bd = Infinity;
+    let best = 0,
+      bd = Infinity;
     for (let c = 0; c < centers.length; c++) {
       const d = dist2(samples[i], centers[c]);
-      if (d < bd) { bd = d; best = c; }
+      if (d < bd) {
+        bd = d;
+        best = c;
+      }
     }
-    if (assign[i] !== best) { assign[i] = best; moved++; }
+    if (assign[i] !== best) {
+      assign[i] = best;
+      moved++;
+    }
   }
   const sum = centers.map(() => [0, 0, 0, 0]);
   for (let i = 0; i < samples.length; i++) {
     const a = sum[assign[i]];
-    a[0] += samples[i][0]; a[1] += samples[i][1]; a[2] += samples[i][2]; a[3]++;
+    a[0] += samples[i][0];
+    a[1] += samples[i][1];
+    a[2] += samples[i][2];
+    a[3]++;
   }
   for (let c = 0; c < centers.length; c++)
-    if (sum[c][3]) centers[c] = [sum[c][0] / sum[c][3], sum[c][1] / sum[c][3], sum[c][2] / sum[c][3]];
+    if (sum[c][3])
+      centers[c] = [
+        sum[c][0] / sum[c][3],
+        sum[c][1] / sum[c][3],
+        sum[c][2] / sum[c][3]
+      ];
   if (!moved) break;
 }
 
 // 쓰인 빈도순 — 마을을 지배하는 색이 위로 온다
 const counts = centers.map(() => 0);
 for (const a of assign) counts[a]++;
-const order = centers.map((c, i) => ({c, n: counts[i]})).sort((p, q) => q.n - p.n);
+const order = centers
+  .map((c, i) => ({c, n: counts[i]}))
+  .sort((p, q) => q.n - p.n);
 
 console.log("\n마을 팔레트 (빈도순)");
 const palette = [];
@@ -171,8 +211,18 @@ for (const {c, n} of order) {
   const rgb = oklabToRgb(c[0], c[1], c[2]);
   const share = ((n / samples.length) * 100).toFixed(1);
   const chroma = Math.hypot(c[1], c[2]);
-  palette.push({hex: hex(rgb), L: +c[0].toFixed(4), a: +c[1].toFixed(4), b: +c[2].toFixed(4), share: +share});
-  console.log(`  ${hex(rgb)}  ${String(share).padStart(5)}%  L=${c[0].toFixed(2)}  채도=${chroma.toFixed(3)}`);
+  palette.push({
+    hex: hex(rgb),
+    L: +c[0].toFixed(4),
+    a: +c[1].toFixed(4),
+    b: +c[2].toFixed(4),
+    share: +share
+  });
+  console.log(
+    `  ${hex(rgb)}  ${String(share).padStart(5)}%  L=${c[0].toFixed(
+      2
+    )}  채도=${chroma.toFixed(3)}`
+  );
 }
 
 // ─── 셰이더가 실제로 쓸 것: **색조(hue) 방향**만 ─────────────────────────────
@@ -195,15 +245,19 @@ for (const {c, n} of order) {
   const chroma = Math.hypot(c[1], c[2]);
   if (chroma < 0.02) continue; // 무채색은 색조가 없다 — 방향을 정할 수 없다
   const deg = (Math.atan2(c[2], c[1]) * 180) / Math.PI;
-  const near = hues.find((h) => {
+  const near = hues.find(h => {
     const d = Math.abs(((h.deg - deg + 540) % 360) - 180);
     return d < MERGE_DEG;
   });
   if (near) {
     // 빈도로 가중 평균 — 흔한 쪽으로 대표 색조가 기운다
     const w = near.weight + n;
-    const ax = Math.cos((near.deg * Math.PI) / 180) * near.weight + Math.cos((deg * Math.PI) / 180) * n;
-    const ay = Math.sin((near.deg * Math.PI) / 180) * near.weight + Math.sin((deg * Math.PI) / 180) * n;
+    const ax =
+      Math.cos((near.deg * Math.PI) / 180) * near.weight +
+      Math.cos((deg * Math.PI) / 180) * n;
+    const ay =
+      Math.sin((near.deg * Math.PI) / 180) * near.weight +
+      Math.sin((deg * Math.PI) / 180) * n;
     near.deg = (Math.atan2(ay, ax) * 180) / Math.PI;
     near.weight = w;
   } else {
@@ -214,19 +268,31 @@ hues.sort((p, q) => q.weight - p.weight);
 const totalW = hues.reduce((s, h) => s + h.weight, 0);
 
 console.log(`\n셰이더가 쓸 색조 ${hues.length}개 (${MERGE_DEG}° 안쪽은 병합)`);
-const hueOut = hues.map((h) => {
+const hueOut = hues.map(h => {
   const rad = (h.deg * Math.PI) / 180;
   const dir = [+Math.cos(rad).toFixed(5), +Math.sin(rad).toFixed(5)];
   // 눈으로 확인하라고 대표색을 하나 찍어 준다 (L=0.6, 채도 0.09 로 고정)
   const swatch = hex(oklabToRgb(0.6, dir[0] * 0.09, dir[1] * 0.09));
   console.log(
-    `  ${swatch}  ${h.deg.toFixed(0).padStart(4)}°  비중 ${((h.weight / totalW) * 100).toFixed(1)}%`
+    `  ${swatch}  ${h.deg.toFixed(0).padStart(4)}°  비중 ${(
+      (h.weight / totalW) *
+      100
+    ).toFixed(1)}%`
   );
-  return {deg: +h.deg.toFixed(2), dir, share: +((h.weight / totalW) * 100).toFixed(1), swatch};
+  return {
+    deg: +h.deg.toFixed(2),
+    dir,
+    share: +((h.weight / totalW) * 100).toFixed(1),
+    swatch
+  };
 });
 
 writeFileSync(
   OUT,
-  JSON.stringify({source: "전체적인배경사진.png", k: K, colors: palette, hues: hueOut}, null, 2)
+  JSON.stringify(
+    {source: "전체적인배경사진.png", k: K, colors: palette, hues: hueOut},
+    null,
+    2
+  )
 );
 console.log(`\n→ ${OUT}`);
