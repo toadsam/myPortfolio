@@ -57,6 +57,24 @@ def require_admin(x_admin_token: str | None = Header(default=None)) -> None:
         raise HTTPException(status_code=401, detail="관리자 인증이 필요합니다.")
 
 
+def require_island(x_admin_token: str | None = Header(default=None)) -> None:
+    """갓생 섬(/island) 전용 가드 — 관리자보다 **한 단계 더 엄격하다.**
+
+    `require_admin` 은 admin_password 가 비어 있으면 그냥 통과시킨다(로컬 편의).
+    그 관례를 섬에 그대로 적용하면, 비밀번호 설정을 깜빡한 채 배포했을 때 내
+    운동 기록·연속 기록·노션 링크가 전부 공개된다. 섬은 애초에 남에게 보여주려고
+    만든 곳이 아니므로, **비밀번호가 없으면 로컬에서도 안 열리게 한다.**
+    편의보다 "까먹고 배포" 라는 실패 모드를 없애는 쪽이 중요하다.
+    """
+    if not auth_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="backend/.env 에 ADMIN_PASSWORD 를 설정해야 섬을 쓸 수 있어요.",
+        )
+    if not verify_admin_token(x_admin_token):
+        raise HTTPException(status_code=401, detail="섬은 나만 들어갈 수 있어요.")
+
+
 # ─────────────────────────── AI 레이트리밋 ───────────────────────────
 
 _ip_hits: dict[str, deque[float]] = {}
@@ -163,5 +181,6 @@ def ai_usage_snapshot() -> dict[str, int]:
 
 # 라우트 데코레이터에 그대로 쓰기 위한 별칭
 AdminGuard = Depends(require_admin)
+IslandGuard = Depends(require_island)
 AiRateLimit = Depends(ai_rate_limit)
 CommissionRateLimit = Depends(commission_rate_limit)

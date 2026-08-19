@@ -21,6 +21,19 @@ class DailyActivity(Base):
     workout_done: Mapped[bool] = mapped_column(Boolean, default=False)
     workout_minutes: Mapped[int] = mapped_column(Integer, default=0)
     workout_type: Mapped[str] = mapped_column(String(80), default="")
+    # ── 갓생 섬(/island) 전용 칸 ──
+    # ActivityOut(공개 스키마)에는 **일부러 안 넣는다** — /activity/today 는 손님도
+    # 부르는 공개 라우트라, 여기에 링크를 실으면 내 노션 주소가 그대로 노출된다.
+    # 섬 전용 스키마(IslandTodayOut)로만 나간다.
+    notion_done: Mapped[bool] = mapped_column(Boolean, default=False)
+    notion_url: Mapped[str] = mapped_column(String(400), default="")
+    notion_title: Mapped[str] = mapped_column(String(200), default="")
+    # solved.ac 의 '푼 문제 총합' 스냅샷. 오늘 푼 수 = 오늘 총합 − 직전 기록일 총합.
+    # 차이를 매번 다시 계산하지 않고 결과를 따로 저장하는 이유: 하루에 여러 번
+    # 새로고침해도 값이 흔들리면 안 되고, 판정 함수(quest_flags)가 '어제 행'을
+    # 알 필요 없이 순수하게 유지돼야 하기 때문이다.
+    boj_solved_total: Mapped[int] = mapped_column(Integer, default=0)
+    boj_solved_today: Mapped[int] = mapped_column(Integer, default=0)
     focus_score: Mapped[int] = mapped_column(Integer, default=50)
     memo: Mapped[str] = mapped_column(Text, default="")
     mood: Mapped[str] = mapped_column(String(40), default="steady")
@@ -248,3 +261,23 @@ class CsNoteLog(Base):
     content: Mapped[str] = mapped_column(Text, default="")                # 공부한 내용
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class CoachNote(Base):
+    """갓생 섬 코치의 '오늘의 한마디'. 하루 한 줄.
+
+    저장하는 이유는 비용이 아니라 **일관성**이다. 섬에 다시 들어올 때마다 코치가
+    다른 말을 하면 그날의 브리핑이라는 느낌이 사라진다. 하루에 한 번 정하고 그날은
+    그 말을 고수한다. (덤으로 AI 호출도 하루 한 번이 된다.)
+    """
+
+    __tablename__ = "coach_note"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    date: Mapped[date] = mapped_column(Date, unique=True, index=True)
+    message: Mapped[str] = mapped_column(Text, default="")
+    # 규칙 기반으로 만든 말인지(=OpenAI 없이). 나중에 키를 넣었을 때 그날 것을
+    # 다시 만들지 판단하는 근거가 된다.
+    from_ai: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+

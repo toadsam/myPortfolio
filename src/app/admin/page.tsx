@@ -320,6 +320,8 @@ export default function AdminPage() {
 
   return (
     <main className="min-h-screen bg-[#f6f8fb] text-[#1e293b]">
+      {/* 폼 밖에 둔다 — 안에 넣으면 배너의 링크가 form 제출에 얽힌다 */}
+      <CommissionAlert />
       <form onSubmit={handleSave}>
         <header className="border-b border-[#e3e8ef] bg-[#ffffff]">
           <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-6 lg:flex-row lg:items-end lg:justify-between">
@@ -850,6 +852,101 @@ function matchesQuery(query: string, fields: (string | undefined)[]): boolean {
   return fields.some(field => (field ?? "").toLowerCase().includes(q));
 }
 
+/* ─────────────────────────── 새 의뢰 알림 ───────────────────────────
+ *
+ * 접수함 안에 「새 접수 N건」 칩이 있긴 했지만, 이 페이지가 2,400줄이라
+ * 스크롤해서 그 패널까지 가야 보였다. 새 의뢰가 왔다는 건 페이지를 열자마자
+ * 알아야 하는 정보라 맨 위로 끌어올린다.
+ *
+ * **세는 대상은 "새 접수"가 아니라 "내 결재를 기다리는 것" 전부다.**
+ * 게이트가 3단이라 의뢰 하나가 나를 세 번 부른다 — 접수 직후, 기획 검수,
+ * 산출물 검수. 접수만 세면 나머지 둘에서 조용히 멈춰 있게 된다.
+ * 상태 → 게이트 대응은 backend/app/agents/gate.py 의 _GATE_OPEN_AT 이 원본이다.
+ *
+ * 한계 — 이건 **관리자 페이지를 열어 놨을 때만** 동작한다. 자는 동안 들어온
+ * 의뢰는 다음에 페이지를 열 때 알게 된다. 자리를 비운 사이에도 알려면 외부
+ * 채널(메일·메신저)이 따로 필요하다. 대신 탭 제목에 건수를 박아 두어서,
+ * 탭을 켜 놓고 다른 일을 하는 동안에도 눈에 걸리게 했다.
+ */
+
+const WAITING_ON_ME: Partial<Record<CommissionStatus, string>> = {
+  received: "새 접수 — 검토 시작",
+  reviewing: "검토 중 — 기획 승인 대기",
+  brief_review: "기획안 검수 대기",
+  artifact_review: "산출물 검수 대기"
+};
+
+/** 폴링 간격. 의뢰는 하루 몇 건이라 자주 볼 이유가 없다. */
+const POLL_MS = 60_000;
+
+function CommissionAlert() {
+  const [items, setItems] = useState<Commission[]>([]);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+
+    async function poll() {
+      try {
+        const list = await fetchCommissions();
+        if (alive) {
+          setItems(list);
+          setFailed(false);
+        }
+      } catch {
+        // 백엔드가 꺼져 있어도 관리자 페이지의 나머지는 써야 하므로
+        // 조용히 접어 둔다. 배너 자리에 빨간 에러를 띄우면 매번 거슬린다.
+        if (alive) setFailed(true);
+      }
+    }
+
+    void poll();
+    const timer = setInterval(() => void poll(), POLL_MS);
+    return () => {
+      alive = false;
+      clearInterval(timer);
+    };
+  }, []);
+
+  const waiting = items.filter(item => WAITING_ON_ME[item.status]);
+
+  // 탭 제목에 건수를 박는다 — 다른 탭을 보고 있어도 눈에 걸린다.
+  useEffect(() => {
+    const base = "관리자 · Developer's City";
+    document.title = waiting.length ? `(${waiting.length}) ${base}` : base;
+    return () => {
+      document.title = base;
+    };
+  }, [waiting.length]);
+
+  if (failed || waiting.length === 0) return null;
+
+  return (
+    <div className="border-b border-[#f59e0b]/40 bg-[#fffbeb]">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3">
+        <span className="relative flex h-2.5 w-2.5 shrink-0">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#f59e0b] opacity-70" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#f59e0b]" />
+        </span>
+        <strong className="text-sm font-black text-[#b45309]">
+          내 처리를 기다리는 의뢰 {waiting.length}건
+        </strong>
+        <span className="flex flex-wrap gap-2">
+          {waiting.map(item => (
+            <a
+              className="rounded-full border border-[#f59e0b]/40 bg-white px-3 py-1 font-mono text-[11px] font-black text-[#b45309] transition hover:bg-[#fef3c7]"
+              href="#commission-inbox"
+              key={item.id}
+            >
+              {item.public_id} · {WAITING_ON_ME[item.status]}
+            </a>
+          ))}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /** 의뢰 공방 접수함 — 외부인이 남긴 유일한 데이터라 삭제는 되물어보고 진행한다. */
 function CommissionAdmin() {
   const [items, setItems] = useState<Commission[]>([]);
@@ -934,218 +1031,223 @@ function CommissionAdmin() {
     }
   }
 
-  const pending = items.filter(item => item.status === "received").length;
+  // 배너(CommissionAlert)와 **같은 기준**으로 센다. 예전엔 여기만 "received"
+  // 를 세서, 위 배너가 "1건 기다림"이라는데 이 칩은 "새 접수 0건"이라고 하는
+  // 모순이 났다 — 게이트2·3 대기는 접수 상태가 아니기 때문이다.
+  const pending = items.filter(item => WAITING_ON_ME[item.status]).length;
 
   return (
-    <Panel title="의뢰 접수함" kicker="Commission Atelier">
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <span className="rounded-full border border-[#f59e0b]/30 bg-[#fffbeb] px-3 py-1.5 font-mono text-xs font-black text-[#b45309]">
-          새 접수 {pending}건 · 전체 {items.length}건
-        </span>
-        <button
-          className="sub-button"
-          onClick={() => void load()}
-          type="button"
-        >
-          새로고침
-        </button>
-        {status ? (
-          <span className="text-xs text-[#64748b]">{status}</span>
-        ) : null}
-      </div>
+    <div id="commission-inbox" className="scroll-mt-8">
+      <Panel title="의뢰 접수함" kicker="Commission Atelier">
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <span className="rounded-full border border-[#f59e0b]/30 bg-[#fffbeb] px-3 py-1.5 font-mono text-xs font-black text-[#b45309]">
+            내 처리 대기 {pending}건 · 전체 {items.length}건
+          </span>
+          <button
+            className="sub-button"
+            onClick={() => void load()}
+            type="button"
+          >
+            새로고침
+          </button>
+          {status ? (
+            <span className="text-xs text-[#64748b]">{status}</span>
+          ) : null}
+        </div>
 
-      {items.length === 0 ? (
-        <p className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-4 text-sm leading-6 text-[#94a3b8]">
-          아직 접수된 의뢰가 없습니다. 마을의 &ldquo;제작 의뢰&rdquo; 버튼으로
-          방문자가 접수하면 여기에 쌓입니다.
-        </p>
-      ) : (
-        <div className="grid gap-2">
-          {items.map(item => {
-            const isOpen = openId === item.id;
-            return (
-              <div
-                key={item.id}
-                className="rounded-lg border border-[#eef1f5] bg-[#f1f4f9] p-3"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <button
-                    className="min-w-0 flex-1 text-left"
-                    onClick={() => void toggle(item)}
-                    type="button"
-                  >
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-mono text-[11px] font-black text-[#b45309]">
-                        {item.public_id}
-                      </span>
-                      <CommissionStatusBadge status={item.status} />
-                      <span className="font-mono text-[11px] text-[#94a3b8]">
-                        {prettyDate(item.created_at.slice(0, 10))}
-                      </span>
-                    </div>
-                    <p className="mt-1 truncate text-sm font-bold text-[#1e293b]">
-                      {item.site_type ? `[${item.site_type}] ` : ""}
-                      {item.summary || "(내용 없음)"}
-                    </p>
-                    <p className="mt-0.5 font-mono text-[11px] text-[#94a3b8]">
-                      {formatWon(item.estimate_min)} ~{" "}
-                      {formatWon(item.estimate_max)} · {item.weeks_min}~
-                      {item.weeks_max}주 · {item.contact_email}
-                    </p>
-                  </button>
-                  <div className="flex shrink-0 items-center gap-1.5">
+        {items.length === 0 ? (
+          <p className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-4 text-sm leading-6 text-[#94a3b8]">
+            아직 접수된 의뢰가 없습니다. 마을의 &ldquo;제작 의뢰&rdquo; 버튼으로
+            방문자가 접수하면 여기에 쌓입니다.
+          </p>
+        ) : (
+          <div className="grid gap-2">
+            {items.map(item => {
+              const isOpen = openId === item.id;
+              return (
+                <div
+                  key={item.id}
+                  className="rounded-lg border border-[#eef1f5] bg-[#f1f4f9] p-3"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <button
-                      className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#f59e0b]/50 hover:text-[#b45309]"
+                      className="min-w-0 flex-1 text-left"
                       onClick={() => void toggle(item)}
                       type="button"
                     >
-                      {isOpen ? "접기" : "상세"}
-                    </button>
-                    <button
-                      className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]"
-                      onClick={() => void remove(item)}
-                      type="button"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                </div>
-
-                {isOpen ? (
-                  detail && detail.id === item.id ? (
-                    <div className="mt-3 border-t border-[#e3e8ef] pt-3">
-                      <div className="grid gap-4 lg:grid-cols-2">
-                        <div className="grid gap-3">
-                          <DetailRow label="연락처">
-                            {[
-                              detail.contact_name,
-                              detail.contact_email,
-                              detail.contact_phone,
-                              detail.org
-                            ]
-                              .filter(Boolean)
-                              .join(" · ")}
-                          </DetailRow>
-                          <DetailRow label="요청 내용">
-                            {detail.summary || "-"}
-                          </DetailRow>
-                          <DetailRow label="요구사항">
-                            <RequirementDump value={detail.requirements} />
-                          </DetailRow>
-                          <DetailRow label="일정 / 예산">
-                            {`${detail.deadline_hint || "-"} / ${
-                              detail.budget_hint || "-"
-                            }`}
-                          </DetailRow>
-                          <DetailRow label="견적 근거">
-                            {detail.estimate_reason || "-"}
-                          </DetailRow>
-
-                          <div className="grid gap-2 rounded-lg border border-[#e3e8ef] bg-white p-3">
-                            <LabeledField label="진행 상태">
-                              <select
-                                className="field"
-                                value={detail.status}
-                                disabled={busy}
-                                onChange={e =>
-                                  void changeStatus(
-                                    item,
-                                    e.target.value as CommissionStatus,
-                                    note
-                                  )
-                                }
-                              >
-                                {COMMISSION_STATUS_OPTIONS.map(option => (
-                                  <option
-                                    key={option.value}
-                                    value={option.value}
-                                  >
-                                    {option.label}
-                                  </option>
-                                ))}
-                              </select>
-                            </LabeledField>
-                            <LabeledField label="관리자 메모">
-                              <textarea
-                                className="field min-h-[80px]"
-                                value={note}
-                                onChange={e => setNote(e.target.value)}
-                                placeholder="연락 예정일, 판단, 거절 사유 등"
-                              />
-                            </LabeledField>
-                            <button
-                              className="rounded-lg bg-[#f59e0b] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#1f1300] transition hover:bg-[#fbbf24] disabled:opacity-45"
-                              disabled={busy}
-                              onClick={() =>
-                                void changeStatus(item, detail.status, note)
-                              }
-                              type="button"
-                            >
-                              메모 저장
-                            </button>
-                          </div>
-                        </div>
-
-                        <div>
-                          <div>
-                            <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#b45309]/70">
-                              상담 대화 기록
-                            </p>
-                            {detail.messages.length === 0 ? (
-                              <p className="text-sm text-[#94a3b8]">
-                                상담 없이 바로 접수된 건입니다.
-                              </p>
-                            ) : (
-                              <div className="grid max-h-[420px] gap-1.5 overflow-y-auto rounded-lg border border-[#e3e8ef] bg-white p-3">
-                                {detail.messages.map(message => (
-                                  <p
-                                    key={message.id}
-                                    className={
-                                      message.role === "visitor"
-                                        ? "rounded-md bg-[#fffbeb] px-2.5 py-1.5 text-xs leading-5 text-[#78350f]"
-                                        : "rounded-md bg-[#f1f4f9] px-2.5 py-1.5 text-xs leading-5 text-[#475569]"
-                                    }
-                                  >
-                                    <span className="mr-1.5 font-mono text-[10px] font-black opacity-60">
-                                      {message.role === "visitor"
-                                        ? "방문자"
-                                        : "도안"}
-                                    </span>
-                                    {message.content}
-                                  </p>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-mono text-[11px] font-black text-[#b45309]">
+                          {item.public_id}
+                        </span>
+                        <CommissionStatusBadge status={item.status} />
+                        <span className="font-mono text-[11px] text-[#94a3b8]">
+                          {prettyDate(item.created_at.slice(0, 10))}
+                        </span>
                       </div>
+                      <p className="mt-1 truncate text-sm font-bold text-[#1e293b]">
+                        {item.site_type ? `[${item.site_type}] ` : ""}
+                        {item.summary || "(내용 없음)"}
+                      </p>
+                      <p className="mt-0.5 font-mono text-[11px] text-[#94a3b8]">
+                        {formatWon(item.estimate_min)} ~{" "}
+                        {formatWon(item.estimate_max)} · {item.weeks_min}~
+                        {item.weeks_max}주 · {item.contact_email}
+                      </p>
+                    </button>
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <button
+                        className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#f59e0b]/50 hover:text-[#b45309]"
+                        onClick={() => void toggle(item)}
+                        type="button"
+                      >
+                        {isOpen ? "접기" : "상세"}
+                      </button>
+                      <button
+                        className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]"
+                        onClick={() => void remove(item)}
+                        type="button"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
 
-                      {/* 3단계 — 게이트와 직군별 작업.
+                  {isOpen ? (
+                    detail && detail.id === item.id ? (
+                      <div className="mt-3 border-t border-[#e3e8ef] pt-3">
+                        <div className="grid gap-4 lg:grid-cols-2">
+                          <div className="grid gap-3">
+                            <DetailRow label="연락처">
+                              {[
+                                detail.contact_name,
+                                detail.contact_email,
+                                detail.contact_phone,
+                                detail.org
+                              ]
+                                .filter(Boolean)
+                                .join(" · ")}
+                            </DetailRow>
+                            <DetailRow label="요청 내용">
+                              {detail.summary || "-"}
+                            </DetailRow>
+                            <DetailRow label="요구사항">
+                              <RequirementDump value={detail.requirements} />
+                            </DetailRow>
+                            <DetailRow label="일정 / 예산">
+                              {`${detail.deadline_hint || "-"} / ${
+                                detail.budget_hint || "-"
+                              }`}
+                            </DetailRow>
+                            <DetailRow label="견적 근거">
+                              {detail.estimate_reason || "-"}
+                            </DetailRow>
+
+                            <div className="grid gap-2 rounded-lg border border-[#e3e8ef] bg-white p-3">
+                              <LabeledField label="진행 상태">
+                                <select
+                                  className="field"
+                                  value={detail.status}
+                                  disabled={busy}
+                                  onChange={e =>
+                                    void changeStatus(
+                                      item,
+                                      e.target.value as CommissionStatus,
+                                      note
+                                    )
+                                  }
+                                >
+                                  {COMMISSION_STATUS_OPTIONS.map(option => (
+                                    <option
+                                      key={option.value}
+                                      value={option.value}
+                                    >
+                                      {option.label}
+                                    </option>
+                                  ))}
+                                </select>
+                              </LabeledField>
+                              <LabeledField label="관리자 메모">
+                                <textarea
+                                  className="field min-h-[80px]"
+                                  value={note}
+                                  onChange={e => setNote(e.target.value)}
+                                  placeholder="연락 예정일, 판단, 거절 사유 등"
+                                />
+                              </LabeledField>
+                              <button
+                                className="rounded-lg bg-[#f59e0b] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#1f1300] transition hover:bg-[#fbbf24] disabled:opacity-45"
+                                disabled={busy}
+                                onClick={() =>
+                                  void changeStatus(item, detail.status, note)
+                                }
+                                type="button"
+                              >
+                                메모 저장
+                              </button>
+                            </div>
+                          </div>
+
+                          <div>
+                            <div>
+                              <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#b45309]/70">
+                                상담 대화 기록
+                              </p>
+                              {detail.messages.length === 0 ? (
+                                <p className="text-sm text-[#94a3b8]">
+                                  상담 없이 바로 접수된 건입니다.
+                                </p>
+                              ) : (
+                                <div className="grid max-h-[420px] gap-1.5 overflow-y-auto rounded-lg border border-[#e3e8ef] bg-white p-3">
+                                  {detail.messages.map(message => (
+                                    <p
+                                      key={message.id}
+                                      className={
+                                        message.role === "visitor"
+                                          ? "rounded-md bg-[#fffbeb] px-2.5 py-1.5 text-xs leading-5 text-[#78350f]"
+                                          : "rounded-md bg-[#f1f4f9] px-2.5 py-1.5 text-xs leading-5 text-[#475569]"
+                                      }
+                                    >
+                                      <span className="mr-1.5 font-mono text-[10px] font-black opacity-60">
+                                        {message.role === "visitor"
+                                          ? "방문자"
+                                          : "도안"}
+                                      </span>
+                                      {message.content}
+                                    </p>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* 3단계 — 게이트와 직군별 작업.
                           2단 그리드 밖에 두어 **전체 폭**을 쓴다: HTML 시안을
                           좁은 칸에서 보면 태블릿 브레이크포인트만 보여 검수가 안 된다. */}
-                      <div className="mt-4 border-t border-[#e3e8ef] pt-4">
-                        <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#b45309]/70">
-                          작업 지시 · 검수
-                        </p>
-                        <CommissionWorkboard
-                          commissionId={detail.id}
-                          publicId={detail.public_id}
-                          onStatusChange={() => void load()}
-                        />
+                        <div className="mt-4 border-t border-[#e3e8ef] pt-4">
+                          <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#b45309]/70">
+                            작업 지시 · 검수
+                          </p>
+                          <CommissionWorkboard
+                            commissionId={detail.id}
+                            publicId={detail.public_id}
+                            onStatusChange={() => void load()}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <p className="mt-3 border-t border-[#e3e8ef] pt-3 text-sm text-[#94a3b8]">
-                      불러오는 중…
-                    </p>
-                  )
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </Panel>
+                    ) : (
+                      <p className="mt-3 border-t border-[#e3e8ef] pt-3 text-sm text-[#94a3b8]">
+                        불러오는 중…
+                      </p>
+                    )
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </Panel>
+    </div>
   );
 }
 

@@ -88,6 +88,7 @@ import type {
   Vector3Tuple
 } from "@/types/portfolio";
 import {AtelierHatch} from "./AtelierHatch";
+import {IslandDock} from "./IslandDock";
 import {Building} from "./Building";
 import {BuildingNetwork} from "./BuildingNetwork";
 import {CameraController} from "./CameraController";
@@ -123,6 +124,8 @@ interface VillageSceneProps {
   npcSocialTargets?: Record<string, Vector3Tuple>;
   /** 지하 의뢰 공방 해치를 눌렀을 때 */
   onEnterAtelier?: () => void;
+  /** 갓생 섬 선착장. 주인(관리자 토큰)일 때만 넘어온다 — 없으면 부두를 안 그린다. */
+  onDepartIsland?: () => void;
 }
 
 // 네트워크 펄스로 연결할 프로젝트 건물들 (한 번만 계산)
@@ -2807,7 +2810,8 @@ function VillageSceneImpl({
   overseerTarget,
   onEditingChange,
   npcSocialTargets,
-  onEnterAtelier
+  onEnterAtelier,
+  onDepartIsland
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
   const propsApi = usePropsEditor();
@@ -3127,6 +3131,9 @@ function VillageSceneImpl({
 
           {/* 지하 의뢰 공방으로 내려가는 해치 — 숨겨진 입구.
               인트로 중에는 첫 화면에 집중하도록 감춘다. */}
+          {onDepartIsland && !isIntro ? (
+            <IslandDock onDepart={onDepartIsland} />
+          ) : null}
           {onEnterAtelier && !isIntro ? (
             <AtelierHatch onEnter={onEnterAtelier} />
           ) : null}

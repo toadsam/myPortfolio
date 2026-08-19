@@ -11,6 +11,7 @@ from app.security import (
     AdminGuard,
     AiRateLimit,
     CommissionRateLimit,
+    IslandGuard,
     auth_enabled,
     create_admin_token,
     record_commission_success,
@@ -40,6 +41,15 @@ from app.schemas import (
     CommissionStatusIn,
     CommissionTaskOut,
     GateIn,
+    CoachChatIn,
+    CoachMessageOut,
+    CodingMinutesIn,
+    CodingTestQuestIn,
+    IslandHistoryRow,
+    IslandRefreshOut,
+    IslandTodayOut,
+    NotionQuestIn,
+    WorkoutQuestIn,
     TaskRejectIn,
     CsNoteIn,
     CsNoteOut,
@@ -117,6 +127,7 @@ from app.services.learning_service import (
 )
 from app.services.npc_brain_service import generate_group_chat, generate_npc_encounter, generate_npc_tick
 from app.services.relationship_service import apply_outcome, list_all as list_relationships, relationship_context
+from app.services import coach_service, external_service, quest_service
 from app.services.village_service import derive_village_state
 
 app = FastAPI(title="AI Portfolio Village API", version="0.1.0")
@@ -178,6 +189,137 @@ def save_activity(payload: ActivityIn, db: Session = Depends(get_db)):
 @app.get("/activity/history", response_model=list[ActivityOut])
 def activity_history(days: int = 120, db: Session = Depends(get_db)):
     return list_activity_history(db, days)
+
+
+# ─────────────────────────── 갓생 섬 (/island) ───────────────────────────
+#
+# 전부 IslandGuard 뒤에 있다. 여기 있는 건 손님용 데이터가 아니라 내 하루 기록이다.
+# 마을 라우트와 달리 공개판이 하나도 없다는 점이 이 구역의 규칙이다.
+
+
+@app.get("/island/today", response_model=IslandTodayOut, dependencies=[IslandGuard])
+def island_today(db: Session = Depends(get_db)):
+    return quest_service.today_snapshot(db)
+
+
+@app.get("/island/history", response_model=list[IslandHistoryRow], dependencies=[IslandGuard])
+def island_history(days: int = 30, db: Session = Depends(get_db)):
+    return quest_service.history_rows(db, days)
+
+
+@app.post("/island/quest/workout", response_model=IslandTodayOut, dependencies=[IslandGuard])
+def island_quest_workout(payload: WorkoutQuestIn, db: Session = Depends(get_db)):
+    quest_service.set_workout(db, payload.done, payload.minutes, payload.workout_type)
+    return quest_service.today_snapshot(db)
+
+
+@app.post("/island/quest/notion", response_model=IslandTodayOut, dependencies=[IslandGuard])
+def island_quest_notion(payload: NotionQuestIn, db: Session = Depends(get_db)):
+    quest_service.set_notion(db, payload.url, payload.title)
+    return quest_service.today_snapshot(db)
+
+
+@app.post("/island/refresh", response_model=IslandRefreshOut, dependencies=[IslandGuard])
+async def island_refresh(db: Session = Depends(get_db)):
+    """섬에 들어올 때 자동으로 채울 수 있는 것들을 채운다.
+
+    **여기서 나는 어떤 실패도 500 이 되지 않는다.** 깃허브가 죽든 solved.ac 가
+    막히든, 오늘 화면은 떠야 하고 손으로 찍는 길은 열려 있어야 한다. 실패는
+    `notes` 에 안내 문구로 담아 돌려준다.
+    """
+    filled: list[str] = []
+    notes: list[str] = []
+
+    # ── 깃허브 커밋 ──
+    if settings.github_token:
+        try:
+            commits = await fetch_today_commit_count()
+            quest_service.set_github_commits(db, commits)
+            if commits:
+                filled.append(f"깃허브 커밋 {commits}개")
+        except Exception:
+            notes.append("깃허브를 불러오지 못했어요. 코딩 칸은 직접 적으면 됩니다.")
+    else:
+        notes.append("GITHUB_TOKEN 이 없어 커밋 자동 조회를 건너뛰었어요.")
+
+    # ── 백준(solved.ac) ──
+    if settings.boj_handle.strip():
+        total = await external_service.fetch_boj_solved_total()
+        if total is None:
+            notes.append("solved.ac 에 닿지 못했어요. 코테는 링크로 남기면 됩니다.")
+        else:
+            solved_today = quest_service.apply_boj_snapshot(db, total)
+            if solved_today:
+                filled.append(f"백준 {solved_today}문제")
+    else:
+        notes.append("BOJ_HANDLE 이 없어 백준 자동 조회를 건너뛰었어요.")
+
+    return IslandRefreshOut(today=quest_service.today_snapshot(db), filled=filled, notes=notes)
+
+
+@app.post("/island/quest/coding-test", response_model=IslandTodayOut, dependencies=[IslandGuard])
+async def island_quest_coding_test(payload: CodingTestQuestIn, db: Session = Depends(get_db)):
+    """링크 하나로 코테 기록 남기기. 제목이 비면 긁어서 채우되, 못 긁어도 저장은 된다."""
+    url = payload.url.strip()
+    title = payload.title.strip()
+    platform = payload.platform.strip() or external_service.platform_of(url)
+
+    if not title and url:
+        title = await external_service.fetch_link_title(url)
+
+    if not title and not url:
+        raise HTTPException(status_code=400, detail="링크나 제목 중 하나는 필요해요.")
+
+    # 제목을 못 긁었어도 **저장은 반드시 성공해야 한다.** CodingTestIn.title 은
+    # 최소 1글자를 요구하므로(빈 제목으로는 저장이 막힌다), 링크에서 알아낼 수
+    # 있는 만큼으로 대체 제목을 만든다. 남의 사이트가 죽었다고 내 오늘 기록이
+    # 안 남으면 안 된다 — 백준이 실제로 그렇게 됐다.
+    if not title:
+        problem_no = external_service.problem_no_of(url)
+        title = f"{platform} {problem_no}번".strip() if problem_no else url[:200]
+
+    create_coding_test(
+        db,
+        CodingTestIn(
+            solved_date=None,
+            platform=platform,
+            problem_no=external_service.problem_no_of(url),
+            title=title,
+            difficulty="",
+            language="",
+            url=url,
+            code="",
+            approach="",
+        ),
+    )
+    return quest_service.today_snapshot(db)
+
+
+@app.post("/island/quest/coding", response_model=IslandTodayOut, dependencies=[IslandGuard])
+def island_quest_coding(payload: CodingMinutesIn, db: Session = Depends(get_db)):
+    """커밋 없이 코딩만 한 날의 수동 입력. 커밋이 있으면 이걸 안 눌러도 자동으로 채워진다."""
+    quest_service.set_coding_minutes(db, payload.minutes)
+    return quest_service.today_snapshot(db)
+
+
+@app.get("/island/coach", response_model=CoachMessageOut, dependencies=[IslandGuard])
+async def island_coach_briefing(db: Session = Depends(get_db)):
+    """오늘의 브리핑. 하루 한 번 만들고 그날은 그 말을 고수한다."""
+    message, from_ai = await coach_service.daily_briefing(db)
+    return CoachMessageOut(message=message, from_ai=from_ai)
+
+
+@app.post("/island/coach/chat", response_model=CoachMessageOut, dependencies=[IslandGuard])
+async def island_coach_chat(payload: CoachChatIn, db: Session = Depends(get_db)):
+    """코치와 대화.
+
+    **`/npc/chat`(공개)에 얹지 않고 여기 따로 둔 이유**: 코치는 내 운동 기록과
+    연속 기록을 프롬프트에 담는다. 그 대화창이 공개 라우트에 있으면 남이 내
+    하루를 물어볼 수 있다. AiRateLimit 도 안 붙인다 — 여기는 나 혼자 쓰고,
+    IslandGuard 가 이미 남을 막는다.
+    """
+    message, from_ai = await coach_service.reply(db, payload.message)
+    return CoachMessageOut(message=message, from_ai=from_ai)
 
 
 @app.get("/village-state", response_model=VillageState)

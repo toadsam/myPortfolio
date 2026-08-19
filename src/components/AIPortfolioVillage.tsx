@@ -12,6 +12,7 @@ import {CommissionDesk} from "@/components/ui/CommissionDesk";
 import {DialogueBox} from "@/components/ui/DialogueBox";
 import {Header} from "@/components/ui/Header";
 import {Crest} from "@/components/ui/Crest";
+import {VoyageOverlay} from "@/components/ui/VoyageOverlay";
 import {InfoPanel} from "@/components/ui/InfoPanel";
 import {IntroOverlay} from "@/components/ui/IntroOverlay";
 import {SceneTransition} from "@/components/ui/SceneTransition";
@@ -50,6 +51,7 @@ import {cameraTargets, villageBuildings} from "@/lib/constants";
 import {
   fetchRelationships,
   fetchVillageState,
+  hasAdminToken,
   requestGroupChat,
   requestNpcEncounter,
   requestNpcTick,
@@ -314,6 +316,19 @@ export function AIPortfolioVillage() {
   const [selectedNpc, setSelectedNpc] = useState<NPCData | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
+  // 갓생 섬 선착장을 보일지. 섬은 내 기록만 있는 비공개 공간이라 손님에겐
+  // 부두 자체를 안 보여준다 — 눌러봤자 로그인 벽이면 재미가 아니라 막다른 길이다.
+  //
+  // **렌더 중에 hasAdminToken() 을 바로 부르면 안 된다** — 서버 렌더에서는
+  // localStorage 가 없어 false, 브라우저에서는 true 가 되어 하이드레이션
+  // 불일치가 난다. 마운트 뒤에 한 번만 읽는다.
+  const [isOwner, setIsOwner] = useState(false);
+  // 항해 중이면 화면을 덮고, 그 사이 VoyageOverlay 가 /island 로 넘긴다.
+  const [voyaging, setVoyaging] = useState(false);
+
+  useEffect(() => {
+    setIsOwner(hasAdminToken());
+  }, []);
   const [explorationMode, setExplorationMode] =
     useState<ExplorationMode>("click");
   const [soundOn, setSoundOn] = useState(true);
@@ -1701,6 +1716,8 @@ export function AIPortfolioVillage() {
     handleNpcPositionChange
   );
   const stableHandleGuideArrive = useStableCallback(handleGuideArrive);
+  const stableDepartIsland = useCallback(() => setVoyaging(true), []);
+
   const stableEnterAtelier = useStableCallback(() => openAtelier("마을 해치"));
   const stableSetEditing = useStableCallback((e: boolean) => {
     editingRef.current = e;
@@ -1745,6 +1762,7 @@ export function AIPortfolioVillage() {
               overseerTarget={overseerTarget}
               npcSocialTargets={npcSocialTargets}
               onEnterAtelier={stableEnterAtelier}
+              onDepartIsland={isOwner ? stableDepartIsland : undefined}
               onEditingChange={stableSetEditing}
               cinematic={
                 eavesOpen && convoCam
@@ -1964,6 +1982,10 @@ export function AIPortfolioVillage() {
       </AnimatePresence>
 
       <SceneTransition active={showTransitionOverlay} />
+
+      {/* 항해 — 이 오버레이가 스스로 /island 로 넘어간다(진짜 페이지 이동).
+          그래야 마을이 쥔 Three.js 와 30 MB GLB 가 통째로 해제된다. */}
+      {voyaging ? <VoyageOverlay href="/island" /> : null}
     </main>
   );
 }

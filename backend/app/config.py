@@ -15,6 +15,10 @@ class Settings(BaseSettings):
     github_username: str = "toadsam"
     local_timezone: str = "Asia/Seoul"
 
+    # 갓생 섬(/island) — 백준 자동 조회용 solved.ac 핸들.
+    # 비어 있으면 자동 조회를 조용히 건너뛴다(수동 입력은 그대로 된다).
+    boj_handle: str = ""
+
     # 보안 — 관리자 인증. admin_password 가 비어 있으면 인증이 비활성(로컬 개발 편의).
     # 배포 전에는 반드시 ADMIN_PASSWORD 를 설정할 것.
     admin_password: str = ""

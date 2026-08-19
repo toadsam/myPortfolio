@@ -554,3 +554,75 @@ class ArtifactContentOut(BaseModel):
     rel_path: str
     kind: str
     content: str
+
+
+# ─────────────────────────── 갓생 섬 (/island) ───────────────────────────
+#
+# ActivityOut 과 일부러 분리한다 — /activity/today 는 손님도 부르는 공개
+# 라우트라, 노션 링크 같은 개인 정보는 섬 스키마로만 나가야 한다.
+
+
+class QuestOut(BaseModel):
+    id: str
+    label: str
+    done: bool
+    detail: str = ""
+
+
+class IslandTodayOut(BaseModel):
+    date: dt_date
+    opened_on: dt_date
+    cleared: bool
+    streak: int
+    best_streak: int
+    quests: list[QuestOut]
+
+
+class IslandHistoryRow(BaseModel):
+    date: dt_date
+    cleared: bool
+    done_count: int
+
+
+class WorkoutQuestIn(BaseModel):
+    done: bool = True
+    minutes: int = Field(default=0, ge=0, le=600)
+    workout_type: str = ""
+
+
+class NotionQuestIn(BaseModel):
+    # url 이 비면 '취소'로 본다 — 잘못 누른 걸 되돌릴 수 있어야 한다.
+    url: str = ""
+    title: str = ""
+
+
+class CodingMinutesIn(BaseModel):
+    minutes: int = Field(default=0, ge=0, le=1440)
+
+
+class CodingTestQuestIn(BaseModel):
+    """섬에서 코테를 남길 때 — **링크 하나만 있어도 된다.**
+    제목이 비면 서버가 긁어서 채우고, 못 긁으면 그냥 빈 채로 저장한다."""
+
+    url: str = ""
+    platform: str = ""
+    title: str = ""
+
+
+class IslandRefreshOut(BaseModel):
+    today: IslandTodayOut
+    # 무엇이 자동으로 채워졌는지 사람이 읽을 한 줄. 아무것도 없으면 빈 리스트.
+    filled: list[str] = Field(default_factory=list)
+    # 자동 조회가 왜 안 됐는지(핸들 미설정 등). 실패해도 오류가 아니라 안내다.
+    notes: list[str] = Field(default_factory=list)
+
+
+class CoachMessageOut(BaseModel):
+    message: str
+    # AI가 쓴 말인지 규칙 기반인지. 화면에 티내려는 게 아니라, OPENAI_API_KEY 를
+    # 넣었는데도 규칙 기반이 나오면 뭔가 잘못된 걸 알아채기 위한 신호다.
+    from_ai: bool
+
+
+class CoachChatIn(BaseModel):
+    message: str = Field(min_length=1, max_length=500)

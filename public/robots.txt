@@ -1,2 +1,5 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
+
+# 갓생 섬은 나만 쓰는 비공개 공간이라 색인하지 않는다.
+Disallow: /island

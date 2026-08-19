@@ -57,6 +57,11 @@ export function hasAdminToken(): boolean {
   return !!adminToken;
 }
 
+/** 갓생 섬(islandApi)이 같은 토큰을 쓰기 위한 접근자 — 저장은 여기 한 곳에서만 한다. */
+export function getAdminToken(): string | null {
+  return adminToken;
+}
+
 export class ApiError extends Error {
   status: number;
   detail?: string;
