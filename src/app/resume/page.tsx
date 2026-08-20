@@ -18,6 +18,7 @@
 
 import dynamic from "next/dynamic";
 import {useRouter} from "next/navigation";
+import {ForestWorld} from "@/components/ui/ForestWorld";
 
 // three 를 끌고 오므로 `ssr:false` 로 클라이언트 청크에 가둔다.
 const ResumeMode = dynamic(
@@ -27,5 +28,12 @@ const ResumeMode = dynamic(
 
 export default function ResumePage() {
   const router = useRouter();
-  return <ResumeMode onEnterVillage={() => router.push("/village")} />;
+  return (
+    <>
+      {/* 살아 있는 배경. 이력서 본문(z-50)보다 아래(z-0)에 깔리고
+          `pointer-events: none` 이라 조작을 가로채지 않는다. */}
+      <ForestWorld />
+      <ResumeMode onEnterVillage={() => router.push("/village")} />
+    </>
+  );
 }

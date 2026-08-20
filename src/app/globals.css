@@ -583,6 +583,31 @@ canvas {
   }
 }
 
+/* ── 밤 숲(ForestWorld) 전용 키프레임 ────────────────────────────────────────
+   등불이 매달려 흔들리고(sway), 불빛이 숨 쉰다(breathe).
+   **자동으로 움직이지만 의미가 있는** 두 가지다 — 떠다니는 먼지나 반짝임과
+   달리 광원의 물리라, 이 둘은 "장식 금지" 규칙의 예외로 둔다.
+   위쪽 prefers-reduced-motion 블록이 이 둘도 함께 멈춘다. */
+@keyframes forest-sway {
+  0%,
+  100% {
+    transform: rotate(-2.2deg);
+  }
+  50% {
+    transform: rotate(2.2deg);
+  }
+}
+
+@keyframes forest-breathe {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 /* 동작 줄이기 설정 존중 — 멀미·접근성 (CSS 애니메이션/전환 최소화) */
 @media (prefers-reduced-motion: reduce) {
   *,

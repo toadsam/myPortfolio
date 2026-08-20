@@ -8,7 +8,6 @@ import {
   useState,
   type CSSProperties
 } from "react";
-import * as THREE from "three";
 import {projects} from "@/data/projects";
 import {getTechIcon} from "@/data/techIcons";
 import {
@@ -26,6 +25,8 @@ import {
 } from "@/data/resume";
 import type {ProjectData} from "@/types/portfolio";
 import {ProjectOnePager} from "./ProjectOnePager";
+import {FloatingIsle} from "./FloatingIsle";
+import {TechConstellation} from "./TechConstellation";
 import "./ResumeTerminal.css";
 
 // 학력: "학과명 (전공)" 에서 태그 분리
@@ -42,7 +43,6 @@ interface Props {
 
 export function ResumeMode({onEnterVillage}: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const gridRef = useRef(false);
   const dragMovedRef = useRef(0);
   const rotateRef = useRef<(dir: number) => void>(() => {});
@@ -91,67 +91,6 @@ export function ResumeMode({onEnterVillage}: Props) {
     if (idx >= 0) setSelectedRich(idx);
   }
 
-  // ── Three.js 히어로 (와이어프레임 + 파티클) ──
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: true
-    });
-    renderer.setSize(500, 500);
-
-    const geometry = new THREE.IcosahedronGeometry(2, 1);
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x00f5ff,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.4
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-
-    const particlesGeometry = new THREE.BufferGeometry();
-    const count = 500;
-    const posArray = new Float32Array(count * 3);
-    for (let i = 0; i < count * 3; i++)
-      posArray[i] = (Math.random() - 0.5) * 10;
-    particlesGeometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(posArray, 3)
-    );
-    const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.005,
-      color: 0x00f5ff
-    });
-    const points = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(points);
-
-    camera.position.z = 5;
-
-    let raf = 0;
-    const animate = () => {
-      raf = requestAnimationFrame(animate);
-      mesh.rotation.x += 0.002;
-      mesh.rotation.y += 0.002;
-      points.rotation.y -= 0.001;
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    return () => {
-      cancelAnimationFrame(raf);
-      geometry.dispose();
-      material.dispose();
-      particlesGeometry.dispose();
-      particlesMaterial.dispose();
-      renderer.dispose();
-    };
-  }, []);
-
   // ── reveal (스크롤 등장) ──
   useEffect(() => {
     const root = rootRef.current;
@@ -182,7 +121,10 @@ export function ResumeMode({onEnterVillage}: Props) {
           }
         });
       },
-      {threshold: 0.1, rootMargin: "0px 0px -50px 0px"}
+      // **화면에 닿기 전에 미리 시작한다.** 예전엔 -50px 였다 — 요소가 들어오고
+      // 50px 더 지나야 전환이 시작돼, 스크롤하면 한동안 빈 자리가 보였다.
+      // 양수 rootMargin 은 판정 영역을 아래로 넓혀 도착 전에 켜 준다.
+      {threshold: 0.1, rootMargin: "0px 0px 12% 0px"}
     );
     root
       .querySelectorAll("section .reveal, section .section-header")
@@ -362,8 +304,11 @@ export function ResumeMode({onEnterVillage}: Props) {
           </aside>
 
           <main>
+            {/* 기술 별자리 — 예전엔 의미 없는 와이어프레임 정이십면체였다.
+                지금은 프로젝트 데이터로 그린다: 별 하나가 기술 하나, 크기는
+                그 기술을 쓴 프로젝트 수, 선은 같은 프로젝트에서 함께 쓴 관계. */}
             <div className="xr-canvas-container">
-              <canvas id="mesh-canvas" ref={canvasRef} />
+              <TechConstellation />
             </div>
             <div className="main-title-wrap">
               <h1 className="hero-name reveal reveal-delay-1">
@@ -834,6 +779,10 @@ export function ResumeMode({onEnterVillage}: Props) {
                 </p>
               ) : null}
             </div>
+
+            {/* 떠 있는 마을 섬 — 바로 위 「3D 개발자 마을 탐험하기」 버튼의 예고편.
+                밤 숲길을 걸어 내려온 끝에 마을이 보인다는 흐름을 여기서 닫는다. */}
+            <FloatingIsle />
           </div>
         </section>
       </div>

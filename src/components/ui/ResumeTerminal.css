@@ -1,29 +1,88 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   면접관 이력서 — 터미널 / 관제 시스템 테마
-   목업 디자인을 .resume-terminal 루트로 스코프해 앱 전역에 누출되지 않게 함.
+   면접관 이력서 — 밤 숲의 등불길
+   .resume-terminal 루트로 스코프해 앱 전역에 누출되지 않게 함.
+
+   ## 마을과 같은 언어를 쓴다
+   색은 마을의 --v-* 토큰 6개만, 폰트는 제목=Gowun Batang / 본문=Inter /
+   모노스페이스=날짜·수치 전용. 예전엔 순검정 바탕에 시안 네온(#00f5ff)을 쓰는
+   완전히 다른 사이트였다 — 같은 사이트의 다른 방으로 보이게 하는 게 이 파일의 일이다.
+
+   ## 배경은 여기서 칠하지 않는다
+   뒤에 ForestWorld(시차 5겹·등불·반딧불)가 깔린다. 그래서 루트 배경을
+   **투명**으로 둔다. 여기서 배경색을 칠하면 그 세계가 통째로 가려진다.
+
+   ## 폰트를 CDN 에서 받지 않는다
+   예전엔 Pretendard·JetBrains Mono 를 @import 로 받았다. @import 는 렌더를 막고
+   next/font 의 셀프호스팅 이점을 버린다 — 시스템 스택과 앱 폰트로 대체했다.
    ════════════════════════════════════════════════════════════════════════════ */
 
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500&display=swap");
-
 .resume-terminal {
-  --bg: #000000;
-  --fg: #ffffff;
-  --accent: #00f5ff;
-  --muted: #444444;
-  --border: #1a1a1a;
-  --mono: "JetBrains Mono", monospace;
-  --sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  /* 마을 토큰(globals.css)과 같은 값. 공백 구분 RGB 라 rgb(var(--x) / 0.4) 로 섞는다 */
+  --v-night: 11 22 38;
+  --v-lantern: 255 157 56;
+  --v-gold: 226 192 120;
+  --v-wood: 122 90 56;
+  --v-moon: 169 189 214;
+  --v-paper: 243 230 200;
+
+  /* 기존 이름은 그대로 두고 값만 마을 토큰으로 다시 배선한다 —
+     1,400줄이 이 네 변수를 참조하고 있어, 여기만 바꾸면 전체 톤이 따라온다 */
+  --bg: transparent;
+  --fg: rgb(var(--v-paper));
+  --accent: rgb(var(--v-lantern));
+  --muted: rgb(var(--v-moon) / 0.55);
+  --border: rgb(var(--v-wood) / 0.55);
+
+  --serif: var(--font-display), "Gowun Batang", serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   position: fixed;
   inset: 0;
   z-index: 50;
   overflow-x: hidden;
   overflow-y: auto;
+  /* 투명 — 뒤의 ForestWorld 가 보여야 한다 */
   background-color: var(--bg);
-  color: var(--fg);
+  color: rgb(var(--v-moon));
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
+}
+
+/* 제목은 전부 한글 세리프로. 예전엔 모노스페이스였고, 그게 "터미널"로
+   읽히게 만든 가장 큰 원인이었다. */
+.resume-terminal .hero-name,
+.resume-terminal .section-title,
+.resume-terminal .project-name,
+.resume-terminal .edu-name,
+.resume-terminal .value-title,
+.resume-terminal .proficiency-title,
+.resume-terminal .side-project-name,
+.resume-terminal h1,
+.resume-terminal h2,
+.resume-terminal h3 {
+  font-family: var(--serif);
+  letter-spacing: 0;
+}
+
+/* 본문이 숲 위에 얹히므로, 글이 있는 판만 밤하늘색으로 살짝 눌러 대비를 지킨다.
+   분위기가 가독성을 이기면 안 된다. */
+.resume-terminal section,
+.resume-terminal .viewport {
+  position: relative;
+}
+.resume-terminal section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 80% at 30% 40%,
+    rgb(var(--v-night) / 0.82) 0%,
+    rgb(var(--v-night) / 0.62) 55%,
+    rgb(var(--v-night) / 0.35) 100%
+  );
+  pointer-events: none;
+  z-index: -1;
 }
 
 /* 원페이지 등 내부 컴포넌트가 쓰는 font-mono 유틸을 JetBrains Mono로 고정 */
@@ -41,22 +100,9 @@
 
 /* CRT 라인 오버레이 */
 .resume-terminal::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-    linear-gradient(
-      90deg,
-      rgba(255, 0, 0, 0.01),
-      rgba(0, 255, 0, 0.01),
-      rgba(0, 0, 255, 0.01)
-    );
-  background-size: 100% 2px, 3px 100%;
-  pointer-events: none;
-  z-index: 100;
+  /* CRT 스캔라인이 있던 자리. 터미널 컨셉의 잔재라 껐다 —
+     선택자는 남겨 둔다(되살릴 일이 있으면 여기만 보면 된다). */
+  content: none;
 }
 
 /* ── 히어로 뷰포트 ── */
@@ -100,8 +146,8 @@
 }
 
 .resume-terminal .nav-capsule {
-  background: #111;
-  border: 1px solid #222;
+  background: rgb(var(--v-night) / 0.6);
+  border: 1px solid rgb(var(--v-wood) / 0.35);
   border-radius: 100px;
   padding: 4px;
   display: flex;
@@ -127,7 +173,7 @@
 }
 
 .resume-terminal .nav-capsule button:not(.active):hover {
-  color: #ccc;
+  color: rgb(var(--v-moon));
 }
 
 .resume-terminal .village-btn {
@@ -248,13 +294,51 @@
 
 .resume-terminal .xr-canvas-container {
   position: absolute;
-  top: 10%;
+  top: 8%;
   right: 0%;
   width: 500px;
   height: 500px;
-  pointer-events: none;
-  opacity: 0.6;
+  /* 예전엔 pointer-events: none 이었다 — 그냥 도는 장식이었으니까.
+     지금은 끌어서 돌리고 별에 마우스를 올려 이름을 보는 곳이라 조작을 받는다.
+     이 상자는 히어로의 빈 가운데를 덮을 뿐 글자와는 안 겹친다. */
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+  opacity: 1;
   z-index: 1;
+}
+
+/* 조작 안내 — 커스텀 커서 때문에 `cursor: grab` 이 안 보여서 대신 두는 줄.
+   한 번 끌면 JS 가 opacity 를 0 으로 내린다. */
+.resume-terminal .constellation-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 6%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: rgb(var(--v-moon) / 0.42);
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+/* 별 이름표 — 평소엔 숨어 있다. 이게 "멀리서는 성운, 다가가면 지도"의 장치다. */
+.resume-terminal .constellation-label {
+  position: absolute;
+  transform: translateX(-50%);
+  padding: 4px 10px;
+  border: 1px solid rgb(var(--v-wood) / 0.55);
+  border-radius: 6px;
+  background: rgb(var(--v-night) / 0.92);
+  color: rgb(var(--v-paper));
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  z-index: 2;
 }
 
 .resume-terminal #mesh-canvas {
@@ -276,7 +360,7 @@
   font-size: 18px;
   font-weight: 500;
   line-height: 1.6;
-  color: #eee;
+  color: rgb(var(--v-paper));
   position: relative;
   padding-left: 20px;
 }
@@ -322,7 +406,7 @@
 .resume-terminal .spec-value {
   font-size: 13px;
   font-weight: 400;
-  color: #ccc;
+  color: rgb(var(--v-moon));
 }
 
 .resume-terminal footer {
@@ -369,7 +453,7 @@
 .resume-terminal .vertical-divider {
   width: 1px;
   height: 30px;
-  background: #222;
+  background: rgb(var(--v-wood) / 0.35);
 }
 
 /* ── 공통 섹션 ── */
@@ -455,8 +539,8 @@
   padding: 8px 16px;
   border: 1px solid var(--border);
   border-radius: 4px;
-  color: #ccc;
-  background: #0a0a0a;
+  color: rgb(var(--v-moon));
+  background: rgb(var(--v-night) / 0.6);
   transition: all 0.2s;
   animation: rt-glowPulse 3s ease-in-out infinite;
 }
@@ -513,7 +597,7 @@
 
 .resume-terminal .skills-table td {
   font-size: 14px;
-  color: #aaa;
+  color: rgb(var(--v-moon));
   padding: 16px 0;
   border-bottom: 1px solid var(--border);
   line-height: 1.6;
@@ -563,14 +647,14 @@
 .resume-terminal .proficiency-label {
   font-family: var(--mono);
   font-size: 12px;
-  color: #ccc;
+  color: rgb(var(--v-moon));
   min-width: 130px;
 }
 
 .resume-terminal .proficiency-bar {
   flex: 1;
   height: 4px;
-  background: #1a1a1a;
+  background: rgb(var(--v-wood) / 0.35);
   border-radius: 2px;
   overflow: hidden;
   position: relative;
@@ -627,7 +711,7 @@
 .resume-terminal .edu-name {
   font-size: 16px;
   font-weight: 600;
-  color: #eee;
+  color: rgb(var(--v-paper));
   display: flex;
   align-items: center;
   gap: 10px;
@@ -651,7 +735,7 @@
 
 .resume-terminal .edu-desc {
   font-size: 14px;
-  color: #aaa;
+  color: rgb(var(--v-moon));
   line-height: 1.6;
   margin-bottom: 12px;
 }
@@ -665,7 +749,7 @@
 
 .resume-terminal .edu-detail li {
   font-size: 13px;
-  color: #777;
+  color: rgb(var(--v-moon) / 0.7);
   padding-left: 16px;
   position: relative;
 }
@@ -751,7 +835,7 @@
   height: 400px;
   left: 10px;
   top: 20px;
-  background: #0a0a0a;
+  background: rgb(var(--v-night) / 0.6);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 24px;
@@ -802,8 +886,8 @@
 }
 
 .resume-terminal .project-status.status-active {
-  color: #00ff88;
-  border-color: #00ff88;
+  color: rgb(var(--v-lantern));
+  border-color: rgb(var(--v-lantern));
 }
 
 .resume-terminal .project-status.status-complete {
@@ -814,18 +898,18 @@
 .resume-terminal .project-card-image {
   width: 100%;
   height: 220px;
-  background: #111;
+  background: rgb(var(--v-night) / 0.6);
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--mono);
   font-size: 10px;
-  color: #444;
+  color: rgb(var(--v-moon) / 0.45);
   margin-bottom: 16px;
   overflow: hidden;
   position: relative;
-  border: 1px solid #1a1a1a;
+  border: 1px solid rgb(var(--v-wood) / 0.35);
   text-align: center;
   letter-spacing: 1px;
 }
@@ -857,7 +941,7 @@
 .resume-terminal .project-name {
   font-size: 15px;
   font-weight: 700;
-  color: #eee;
+  color: rgb(var(--v-paper));
   margin-bottom: 12px;
   line-height: 1.3;
 }
@@ -871,9 +955,9 @@
 .resume-terminal .project-tag {
   font-family: var(--mono);
   font-size: 10px;
-  color: #666;
+  color: rgb(var(--v-moon) / 0.45);
   padding: 3px 8px;
-  border: 1px solid #222;
+  border: 1px solid rgb(var(--v-wood) / 0.35);
   border-radius: 4px;
 }
 
@@ -1013,7 +1097,7 @@
 
 .resume-terminal .projects-table td {
   font-size: 14px;
-  color: #aaa;
+  color: rgb(var(--v-moon));
   padding: 16px 0;
   border-bottom: 1px solid var(--border);
   line-height: 1.6;
@@ -1026,7 +1110,7 @@
 }
 
 .resume-terminal .projects-table td:nth-child(2) {
-  color: #eee;
+  color: rgb(var(--v-paper));
   font-weight: 600;
 }
 
@@ -1060,8 +1144,8 @@
 }
 
 .resume-terminal .side-project-card {
-  background: #0a0a0a;
-  border: 1px solid #1a1a1a;
+  background: rgb(var(--v-night) / 0.6);
+  border: 1px solid rgb(var(--v-wood) / 0.35);
   border-radius: 6px;
   padding: 20px;
   display: flex;
@@ -1072,7 +1156,7 @@
 }
 
 .resume-terminal .side-project-card:hover {
-  border-color: #333;
+  border-color: rgb(var(--v-wood) / 0.4);
   transform: translateY(-2px);
 }
 
@@ -1081,8 +1165,8 @@
   aspect-ratio: 16 / 10;
   border-radius: 4px;
   overflow: hidden;
-  border: 1px solid #1a1a1a;
-  background: #111;
+  border: 1px solid rgb(var(--v-wood) / 0.35);
+  background: rgb(var(--v-night) / 0.6);
 }
 
 .resume-terminal .side-project-image img {
@@ -1095,13 +1179,13 @@
 .resume-terminal .side-project-name {
   font-size: 13px;
   font-weight: 600;
-  color: #999;
+  color: rgb(var(--v-moon) / 0.7);
   line-height: 1.4;
 }
 
 .resume-terminal .side-project-desc {
   font-size: 11px;
-  color: #555;
+  color: rgb(var(--v-moon) / 0.45);
   line-height: 1.5;
   flex: 1;
 }
@@ -1115,8 +1199,8 @@
 .resume-terminal .side-project-link {
   font-family: var(--mono);
   font-size: 9px;
-  color: #666;
-  border: 1px solid #222;
+  color: rgb(var(--v-moon) / 0.45);
+  border: 1px solid rgb(var(--v-wood) / 0.35);
   padding: 3px 8px;
   border-radius: 4px;
   text-decoration: none;
@@ -1130,7 +1214,7 @@
 
 .resume-terminal .side-project-link.slot {
   border-style: dashed;
-  color: #444;
+  color: rgb(var(--v-moon) / 0.45);
   cursor: default;
 }
 
@@ -1142,7 +1226,7 @@
 }
 
 .resume-terminal .value-card {
-  background: #0a0a0a;
+  background: rgb(var(--v-night) / 0.6);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 32px;
@@ -1157,7 +1241,7 @@
 .resume-terminal .value-title {
   font-size: 20px;
   font-weight: 700;
-  color: #eee;
+  color: rgb(var(--v-paper));
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -1172,7 +1256,7 @@
 
 .resume-terminal .value-desc {
   font-size: 14px;
-  color: #aaa;
+  color: rgb(var(--v-moon));
   line-height: 1.6;
 }
 
@@ -1185,7 +1269,7 @@
 
 .resume-terminal .about-item {
   font-size: 16px;
-  color: #ccc;
+  color: rgb(var(--v-moon));
   line-height: 1.8;
   padding-left: 20px;
   position: relative;
@@ -1206,7 +1290,7 @@
 
 .resume-terminal .contact-intro {
   font-size: 16px;
-  color: #aaa;
+  color: rgb(var(--v-moon));
   margin-bottom: 40px;
   line-height: 1.6;
 }
@@ -1224,7 +1308,7 @@
   gap: 12px;
   font-family: var(--mono);
   font-size: 14px;
-  color: #ccc;
+  color: rgb(var(--v-moon));
   text-decoration: none;
   padding: 16px 32px;
   border: 1px solid var(--border);
@@ -1247,16 +1331,45 @@
   margin-right: 8px;
 }
 
+/* 떠 있는 마을 섬 (연락처 섹션 끝) */
+.resume-terminal .floating-isle {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+  height: 340px;
+  margin: 8px auto 0;
+  /* 커서를 따라 살짝 기우는 반응만 받는다 — 끌거나 누를 것은 없다 */
+  pointer-events: auto;
+}
+
+.resume-terminal .floating-isle canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .resume-terminal .floating-isle {
+    height: 240px;
+  }
+}
+
 /* ── reveal 애니메이션 ── */
 .resume-terminal .reveal {
   opacity: 0;
-  transform: translateY(40px);
-  filter: blur(4px);
+  transform: translateY(18px);
+  filter: blur(2px);
   /* `all`이면 height·min-height 같은 레이아웃 속성까지 전환 대상이 되어
-     캐러셀↔그리드 전환이 0.8s 동안 기어간다. 실제 쓰는 3개만 전환한다. */
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+     캐러셀↔그리드 전환이 함께 기어간다. 실제 쓰는 3개만 전환한다. */
+
+  /* **0.8s 였다가 0.45s 로 줄였다.** 뒤에 ForestWorld(움직이는 숲·등불·반딧불)가
+     깔리고 나서, 전환이 끝나기 전 1초 남짓 동안 글자 자리가 비어 보이는 게
+     "애니메이션이 깨졌다"로 읽혔다. 배경이 순검정이던 시절엔 그 빈 시간이
+     '아직 안 왔네'로 넘어갔지만, 배경이 살아 움직이면 같은 공백이 고장으로 보인다.
+     이동 거리(40→18px)와 흐림(4→2px)도 같이 줄여 **빨리 자리를 잡게** 했다. */
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .resume-terminal .reveal.active {
@@ -1265,14 +1378,15 @@
   filter: blur(0);
 }
 
+/* 시차도 함께 줄인다 — 마지막 요소까지 0.6s 안에 끝나야 한다 */
 .resume-terminal .reveal-delay-1 {
-  transition-delay: 0.1s;
+  transition-delay: 0.05s;
 }
 .resume-terminal .reveal-delay-2 {
-  transition-delay: 0.2s;
+  transition-delay: 0.1s;
 }
 .resume-terminal .reveal-delay-3 {
-  transition-delay: 0.3s;
+  transition-delay: 0.15s;
 }
 
 /* ── 키프레임 (rt- 프리픽스로 전역 충돌 방지) ── */
