@@ -384,10 +384,34 @@ export interface CommissionDraft {
   weeks_min: number;
   weeks_max: number;
   estimate_reason: string;
+
+  /* ── 제작 슬롯 ──
+     "얼마짜리 일인가"가 아니라 "어떻게 만들어야 잘 만드는가"를 담는다.
+     1차 상담에서는 들리면 담기만 하고 먼저 묻지 않으며, 접수 뒤 심화 문답에서 채운다.
+     출처: backend/app/services/commission_service.py 의 _DEPTH_SLOTS */
+  /** 만든 뒤 내용을 누가 고치나 — 이 한 줄이 아키텍처를 정한다 */
+  who_updates: string;
+  /** 사진·글·로고를 누가 준비하나 */
+  content_owner: string;
+  /** 사이트가 생기면 뭐가 달라져야 하나 */
+  success_metric: string;
+  /** 이미 가진 도메인·기존 사이트·SNS */
+  existing_assets: string;
+  /** 피하고 싶은 것 */
+  dislikes: string[];
+  /** 참고 사이트의 "왜" */
+  reference_notes: string;
+  /** 최종 결정하는 사람 */
+  decision_maker: string;
+
   /** 접수원이 아직 못 들은 항목 */
   missing: string[];
   /** 접수 폼을 띄울 만큼 모였는지 */
   ready_to_submit: boolean;
+  /** 심화 문답에서 아직 못 들은 제작 슬롯 (라벨) */
+  depth_missing: string[];
+  /** 제작 슬롯의 필수분이 다 찼는지 */
+  depth_done: boolean;
 }
 
 export interface CommissionConsultResponse {
@@ -423,6 +447,31 @@ export interface CommissionAck {
   public_id: string;
   status: string;
   message: string;
+  /** 심화 문답으로 돌아오는 열쇠 */
+  access_token: string;
+  /** 프런트 경로 (/commission/<token>) */
+  track_path: string;
+}
+
+/** 접수 뒤 심화 문답 화면이 받는 공개 정보. **연락처는 담기지 않는다.** */
+export interface CommissionTrack {
+  public_id: string;
+  status: CommissionStatus;
+  site_type: string;
+  summary: string;
+  created_at: string;
+  draft: CommissionDraft;
+  disclaimer: string;
+  /** 도안의 첫마디 — 남은 항목 중 첫 질문이 들어 있다 */
+  greeting: string;
+  messages: CommissionMessage[];
+}
+
+export interface CommissionDepthResponse {
+  reply: string;
+  used_ai: boolean;
+  draft: CommissionDraft;
+  disclaimer: string;
 }
 
 // backend/app/schemas.py 의 CommissionStatus 와 같은 목록이어야 한다.
@@ -471,6 +520,10 @@ export interface CommissionMessage {
 
 export interface CommissionDetail extends Commission {
   session_id: string;
+  /** 손님에게 보낼 심화 문답 링크 — 회신 메일에 붙여 쓴다 */
+  track_path: string;
+  /** 심화 문답으로 받아낸 제작 정보 (라벨 → 답) */
+  depth_answers: Record<string, string>;
   messages: CommissionMessage[];
 }
 

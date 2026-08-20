@@ -13,12 +13,14 @@
 """
 
 import json
+import logging
 import re
 import uuid
 from typing import Any
 
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import flag_modified
 
 from app.agents import gate
 from app.config import settings
@@ -33,6 +35,9 @@ from app.schemas import (
     CommissionDraft,
     CommissionIn,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 # ─────────────────────────── 견적 기준선 ───────────────────────────
@@ -146,6 +151,90 @@ def _clamp_estimate(draft: CommissionDraft) -> CommissionDraft:
     return draft
 
 
+# ─────────────────────────── 제작 슬롯 (2차 심화 문답) ───────────────────────────
+#
+# 이 표가 "재훈이 실제로 만들 때 알아야 하는 것" 목록이다. 견적 슬롯과 목적이 다르다 —
+# 견적 슬롯은 *얼마짜리인가*, 여기는 *어떻게 만들어야 잘 만드는가* 를 묻는다.
+#
+# **1차 상담에서는 이걸 쫓지 않는다.** 접수 전에 여덟 개를 캐물으면 손님이 떠난다.
+# 대신 접수를 마친 사람에게 링크를 주고 여기서 차분히 받는다 — 이미 투자한 사람은
+# 이탈 비용이 낮고, 답을 받고 싶어 하므로 문턱을 올려도 안전하다.
+#
+# (필드, 라벨, 필수 여부, 도안이 던질 질문)
+_DEPTH_SLOTS: tuple[tuple[str, str, bool, str], ...] = (
+    (
+        "who_updates",
+        "운영·수정 주체",
+        True,
+        "사이트를 만든 뒤에 내용(사진·글·가격 같은 것)은 누가 고치게 될까요? "
+        "직접 고치실 건지, 저에게 요청하실 건지에 따라 만드는 방식이 꽤 달라져요.",
+    ),
+    (
+        "content_owner",
+        "콘텐츠 준비",
+        True,
+        "들어갈 사진과 글은 준비된 게 있으실까요? "
+        "가지고 계신 사진을 주시는지, 새로 찍어야 하는지, 글은 누가 쓸지가 궁금해요.",
+    ),
+    (
+        "success_metric",
+        "성공 기준",
+        True,
+        "사이트가 생기고 나서 뭐가 달라지면 잘 만든 걸까요? "
+        "문의 전화가 늘어나는 것, 검색해서 찾아오는 것, 그냥 보여드릴 곳이 생기는 것 — 어느 쪽에 가까우세요?",
+    ),
+    (
+        "existing_assets",
+        "기존 자산",
+        True,
+        "이미 가지고 계신 게 있을까요? 도메인 주소, 예전에 만든 사이트, "
+        "인스타그램이나 네이버 플레이스 같은 것들이요.",
+    ),
+    (
+        "dislikes",
+        "피하고 싶은 것",
+        False,
+        "반대로, 이건 좀 아니다 싶은 게 있으세요? "
+        "예전에 봤던 사이트 중에 별로였던 점이나, 우리 사이트에선 안 했으면 하는 것이요.",
+    ),
+    (
+        "reference_notes",
+        "참고 사이트의 이유",
+        False,
+        "마음에 두신 사이트가 있다면, 그 사이트의 어떤 점이 좋으셨는지 알려주세요. "
+        "주소만으로는 어디를 보고 좋아하셨는지 제가 짚기가 어려워서요.",
+    ),
+    (
+        "decision_maker",
+        "결정하는 분",
+        False,
+        "시안을 보고 최종적으로 결정하시는 분은 누구실까요? "
+        "여러 분이 함께 보시는지도 알려주시면 일정을 잡기가 수월해요.",
+    ),
+)
+
+_DEPTH_REQUIRED = tuple(field for field, _, required, _q in _DEPTH_SLOTS if required)
+_DEPTH_FIELDS = tuple(field for field, _, _r, _q in _DEPTH_SLOTS)
+_DEPTH_LABELS = {field: label for field, label, _r, _q in _DEPTH_SLOTS}
+_DEPTH_QUESTIONS = {field: question for field, _l, _r, question in _DEPTH_SLOTS}
+
+
+def _depth_value(draft: CommissionDraft, field: str) -> str:
+    value = getattr(draft, field, "")
+    if isinstance(value, list):
+        return ", ".join(str(item).strip() for item in value if str(item).strip())
+    return str(value or "").strip()
+
+
+def depth_questions_for(draft: CommissionDraft) -> list[str]:
+    """아직 답이 없는 제작 슬롯의 질문 목록. 2차 화면이 안내로 쓴다."""
+    return [
+        _DEPTH_QUESTIONS[field]
+        for field in _DEPTH_FIELDS
+        if not _depth_value(draft, field)
+    ]
+
+
 # ─────────────────────────── 상담 ───────────────────────────
 
 _REQUIRED_SLOTS = ("site_type", "summary", "pages", "features")
@@ -173,6 +262,15 @@ def _fill_missing(draft: CommissionDraft) -> CommissionDraft:
     # 못 들은 항목은 missing 으로 계속 안내하되, 손님을 붙잡아 두지는 않는다 —
     # 어차피 접수 뒤에 사람이 한 번 더 확인하는 창구다.
     draft.ready_to_submit = bool(draft.site_type and (draft.pages or draft.features))
+
+    # 제작 슬롯은 **별도 목록으로** 쫓는다. 여기를 missing 에 합치면 도안이 1차에서
+    # 여덟 개를 캐묻기 시작하고, 그 순간 위에서 애써 낮춘 문턱이 무의미해진다.
+    draft.depth_missing = [
+        _DEPTH_LABELS[field]
+        for field in _DEPTH_FIELDS
+        if not _depth_value(draft, field)
+    ]
+    draft.depth_done = all(_depth_value(draft, field) for field in _DEPTH_REQUIRED)
     return draft
 
 
@@ -185,7 +283,13 @@ async def consult(
             reply, draft = await _consult_with_openai(message, history, previous)
             return reply, True, _fill_missing(_clamp_estimate(draft))
         except Exception:
-            pass
+            # 폴백은 옳지만 **조용히** 내려가면 안 된다. 여기가 침묵하면
+            # "도안이 왜 갑자기 밋밋해졌지"를 알아낼 방법이 없다.
+            logger.warning(
+                "상담 OpenAI 호출 실패 → 규칙 기반으로 폴백 (model=%s)",
+                settings.openai_model,
+                exc_info=True,
+            )
 
     reply, draft = _consult_without_ai(message, history, previous)
     return reply, False, _fill_missing(_clamp_estimate(draft))
@@ -198,6 +302,15 @@ _SYSTEM_PROMPT = """너는 정재훈의 3D 포트폴리오 마을 지하에 있�
 - 한국어로, 3~5문장으로 짧게 답한다. 마크다운 제목·굵게·코드블록은 쓰지 않는다.
 - 한 번에 질문은 최대 2개까지만. 취조하듯 몰아붙이지 않는다.
 - 아직 못 들은 항목이 있으면 그중 가장 중요한 것부터 자연스럽게 묻는다.
+- **같은 질문을 두 번 하지 않는다.** 손님이 답을 피하거나 화제를 돌렸으면 그 항목은
+  비워 둔 채 넘어간다. 되풀이하면 대화가 제자리를 돈다.
+- **무거운 단서가 나오면 쫓던 항목을 제쳐두고 그 뒤를 먼저 판다.**
+  결제·로그인·회원·예약·외부 연동·다국어가 언급되면, 그게 견적과 난이도를 가장 크게
+  바꾸는 지점이다. 한 겹 더 들어가서 묻는다 —
+  결제면 "무엇을 얼마에 파시는지, 월 몇 건쯤 예상하시는지",
+  로그인이면 "누가 로그인하고 로그인해야만 볼 수 있는 게 무엇인지",
+  연동이면 "어떤 서비스와 무엇을 주고받아야 하는지".
+  기능 이름만 목록에 담고 넘어가면 나중에 견적이 통째로 틀어진다.
 - 금액을 말할 때는 반드시 '참고 범위'라고 밝힌다. 확정 견적처럼 말하지 않는다.
 - 정재훈이 실제로 할 수 있는 범위(웹 프론트엔드, 백엔드 API, 3D/인터랙션)를 넘는 약속은 하지 않는다.
 - 방문자가 밝히지 않은 정보를 지어내지 않는다. 모르면 빈 값으로 둔다.
@@ -218,8 +331,19 @@ _SYSTEM_PROMPT = """너는 정재훈의 3D 포트폴리오 마을 지하에 있�
   "estimate_max": 원 단위 정수,
   "weeks_min": 주 단위 정수,
   "weeks_max": 주 단위 정수,
-  "estimate_reason": "그 범위가 나온 근거 한 줄"
+  "estimate_reason": "그 범위가 나온 근거 한 줄",
+  "who_updates": "만든 뒤 내용을 누가 고치는지 (안 나왔으면 빈 문자열)",
+  "content_owner": "사진·글·로고를 누가 준비하는지 (안 나왔으면 빈 문자열)",
+  "success_metric": "사이트가 생기면 뭐가 달라져야 하는지 (안 나왔으면 빈 문자열)",
+  "existing_assets": "이미 가진 도메인·기존 사이트·SNS (안 나왔으면 빈 문자열)",
+  "dislikes": ["피하고 싶다고 말한 것"],
+  "reference_notes": "참고 사이트의 어떤 점이 좋다고 했는지 (안 나왔으면 빈 문자열)",
+  "decision_maker": "최종 결정하는 사람 (안 나왔으면 빈 문자열)"
 }
+
+**마지막 일곱 개(who_updates ~ decision_maker)는 먼저 묻지 않는다.** 손님이 말이 나온
+김에 알려주면 담기만 하고, 없으면 빈 문자열로 둔다. 이건 접수 뒤에 따로 여쭐 것들이라
+지금 캐물으면 접수까지 못 가고 손님이 떠난다. 채우려고 질문을 만들어내지 마라.
 
 pages/features/references 는 이전 대화에서 이미 파악된 것을 **누적해서** 모두 담는다.
 summary 는 아직 질문이 남았더라도 **지금까지 들은 내용으로 항상 채운다** — 손님이 한 문장으로
@@ -274,22 +398,72 @@ async def _consult_with_openai(
     if not reply:
         raise ValueError("빈 응답")
 
-    draft = CommissionDraft(
-        site_type=str(data.get("site_type", "") or ""),
-        summary=str(data.get("summary", "") or ""),
-        pages=_str_list(data.get("pages")),
-        features=_str_list(data.get("features")),
-        tone=str(data.get("tone", "") or ""),
-        references=_str_list(data.get("references")),
-        budget_hint=str(data.get("budget_hint", "") or ""),
-        deadline_hint=str(data.get("deadline_hint", "") or ""),
-        estimate_min=_int(data.get("estimate_min")),
-        estimate_max=_int(data.get("estimate_max")),
-        weeks_min=_int(data.get("weeks_min")),
-        weeks_max=_int(data.get("weeks_max")),
-        estimate_reason=str(data.get("estimate_reason", "") or ""),
+    return reply, _draft_from_data(data, previous)
+
+
+def _keeps_more(previous: str, fresh: str) -> bool:
+    """새 값이 이전 값을 **줄여 쓴 것**인가.
+
+    실제로 돌려 보고 잡은 사고다. 손님이 "가격표가 자주 바뀌어서 제가 직접 고칠 수
+    있으면 좋겠어요, 컴퓨터를 잘 다루진 못해요" 라고 답해 슬롯이 그대로 찼는데,
+    다음 턴에 모델이 같은 항목을 "손님" 으로 다시 요약해 보내면서 원문을 덮어썼다.
+    지워진 "컴퓨터를 잘 못 다룬다" 는 CMS 를 붙일지 말지를 가르는 정보였다.
+
+    그래서 새 값이 이전 값 안에 이미 들어 있으면(=줄여 쓴 것이면) 이전 값을 지킨다.
+    정정은 대개 없던 말을 들고 오므로 이 규칙에 걸리지 않는다.
+    """
+    if not previous or not fresh:
+        return False
+    return fresh in previous
+
+
+def _draft_from_data(data: dict, previous: CommissionDraft | None) -> CommissionDraft:
+    """모델이 돌려준 JSON을 draft 로 만든다. **정보를 잃는 쪽으로는 바꾸지 않는다.**
+
+    두 가지를 막는다:
+    1. 빈 값 덮어쓰기 — 이번 턴에 언급이 없었다는 이유로 모델이 빈 문자열을 돌려주는
+       일이 흔하다. 그대로 반영하면 앞 턴에 어렵게 받아낸 답이 지워진다.
+    2. 요약으로 덮어쓰기 — `_keeps_more()` 참고. 이쪽이 더 알아채기 어렵다.
+
+    제작 슬롯은 한 번 듣고 지나가는 항목이라 둘 다 치명적이다.
+    """
+    prev = previous or CommissionDraft()
+
+    def text(key: str) -> str:
+        fresh = str(data.get(key, "") or "").strip()
+        before = str(getattr(prev, key, "") or "")
+        if not fresh:
+            return before
+        if _keeps_more(before, fresh):
+            return before
+        return fresh
+
+    def items(key: str) -> list[str]:
+        fresh = _str_list(data.get(key))
+        return fresh or list(getattr(prev, key, []) or [])
+
+    return CommissionDraft(
+        site_type=text("site_type"),
+        summary=text("summary"),
+        pages=items("pages"),
+        features=items("features"),
+        tone=text("tone"),
+        references=items("references"),
+        budget_hint=text("budget_hint"),
+        deadline_hint=text("deadline_hint"),
+        estimate_min=_int(data.get("estimate_min")) or prev.estimate_min,
+        estimate_max=_int(data.get("estimate_max")) or prev.estimate_max,
+        weeks_min=_int(data.get("weeks_min")) or prev.weeks_min,
+        weeks_max=_int(data.get("weeks_max")) or prev.weeks_max,
+        estimate_reason=text("estimate_reason"),
+        who_updates=text("who_updates"),
+        content_owner=text("content_owner"),
+        success_metric=text("success_metric"),
+        existing_assets=text("existing_assets"),
+        dislikes=items("dislikes"),
+        reference_notes=text("reference_notes"),
+        decision_maker=text("decision_maker"),
     )
-    return reply, draft
 
 
 def _consult_without_ai(
@@ -337,6 +511,249 @@ def _consult_without_ai(
         )
 
     return reply, draft
+
+
+# ─────────────────────────── 심화 문답 (접수 뒤 2차) ───────────────────────────
+#
+# 1차와 같은 인물(도안)이지만 **목적이 다르다.** 1차는 "얼마짜리 일인지" 가늠해
+# 접수까지 데려오는 것이고, 여기는 "재훈이 잘 만들 수 있게" 제작 정보를 받아내는 것이다.
+# 이미 접수한 사람이라 문턱을 올려도 안전하다 — 그래서 여기서는 캐물어도 된다.
+
+_DEPTH_SYSTEM_PROMPT = """너는 '의뢰 공방'의 접수원 NPC '도안'이다.
+이 손님은 **이미 의뢰를 접수한 분**이다. 지금은 견적을 내는 자리가 아니라,
+정재훈이 실제로 잘 만들 수 있도록 **제작에 필요한 것들을 마저 여쭙는 자리**다.
+
+지켜야 할 것:
+- 한국어로, 2~4문장으로 짧게 답한다. 마크다운 제목·굵게·코드블록은 쓰지 않는다.
+- 접수해 주셔서 고맙다는 태도로, 이미 말씀하신 걸 다시 묻지 않는다.
+- **한 번에 한 가지만 묻는다.** 아래 '아직 못 들은 것' 중 맨 위 하나를 고른다.
+- 손님의 답이 막연하면(예: "잘 모르겠어요") 선택지를 두어 개 제시해 고르게 돕는다.
+  이 손님은 대개 웹을 모르는 분이다. 전문용어를 쓰지 않는다.
+- 다 여쭤봤으면 더 묻지 말고, 정재훈이 곧 연락드릴 거라고 안내하며 마무리한다.
+- 금액·납기를 확정처럼 말하지 않는다.
+
+반드시 아래 JSON 형식으로만 답한다:
+{
+  "reply": "손님에게 보여줄 답변",
+  "who_updates": "만든 뒤 내용을 누가 고치는지",
+  "content_owner": "사진·글·로고를 누가 준비하는지",
+  "success_metric": "사이트가 생기면 뭐가 달라져야 하는지",
+  "existing_assets": "이미 가진 도메인·기존 사이트·SNS",
+  "dislikes": ["피하고 싶다고 말한 것"],
+  "reference_notes": "참고 사이트의 어떤 점이 좋다고 했는지",
+  "decision_maker": "최종 결정하는 사람",
+  "pages": ["추가로 언급된 페이지"],
+  "features": ["추가로 언급된 기능"]
+}
+
+**아직 답을 못 들은 항목은 빈 문자열로 둔다. 지어내지 않는다.**
+이 문서는 그대로 제작에 쓰이므로, 없는 답을 채우면 잘못 만들게 된다.
+
+**이미 받은 항목도 빈 문자열로 둔다.** 손님이 앞서 한 말을 **정정**할 때만 새 값을 쓴다.
+같은 내용을 다시 요약해서 보내면 앞서 받은 원문이 덮어써진다.
+
+값을 적을 때는 **손님이 한 말을 줄이지 않는다.** "손님" 같은 한 단어가 아니라
+"가격이 자주 바뀌어서 직접 고치고 싶어하심, 컴퓨터는 익숙하지 않음" 처럼
+판단에 필요한 맥락을 그대로 남긴다. 이 값을 보고 무엇을 만들지 정하기 때문이다."""
+
+
+async def consult_depth(
+    message: str, history: list[str], previous: CommissionDraft
+) -> tuple[str, bool, CommissionDraft]:
+    """심화 문답 한 턴. (답변, AI 사용 여부, 갱신된 draft)
+
+    1차와 마찬가지로 **AI가 죽어도 문답은 굴러가야 한다.** 실패하면 규칙 기반으로
+    다음 질문을 그냥 읽어 준다 — 말투는 밋밋해도 항목은 끝까지 다 받는다.
+    """
+    if settings.openai_api_key:
+        try:
+            reply, draft = await _depth_with_openai(message, history, previous)
+            return reply, True, _fill_missing(draft)
+        except Exception:
+            logger.warning("심화 문답 OpenAI 호출 실패 → 규칙 기반으로 진행", exc_info=True)
+
+    reply, draft = _depth_without_ai(message, previous)
+    return reply, False, _fill_missing(draft)
+
+
+async def _depth_with_openai(
+    message: str, history: list[str], previous: CommissionDraft
+) -> tuple[str, CommissionDraft]:
+    import httpx
+
+    known_lines = [
+        f"- {_DEPTH_LABELS[field]}: {_depth_value(previous, field)}"
+        for field in _DEPTH_FIELDS
+        if _depth_value(previous, field)
+    ]
+    remaining = [
+        f"- {_DEPTH_LABELS[field]}: {_DEPTH_QUESTIONS[field]}"
+        for field in _DEPTH_FIELDS
+        if not _depth_value(previous, field)
+    ]
+
+    context_lines = [
+        "접수된 의뢰 내용:",
+        f"- 유형: {previous.site_type or '-'}",
+        f"- 요약: {previous.summary or '-'}",
+        f"- 페이지: {', '.join(previous.pages) or '-'}",
+        f"- 기능: {', '.join(previous.features) or '-'}",
+        "",
+        "이미 받은 제작 정보:",
+        *(known_lines or ["- (아직 없음)"]),
+        "",
+        "아직 못 들은 것 (위에서부터 하나씩):",
+        *(remaining or ["- (없음 — 더 묻지 말고 마무리한다)"]),
+    ]
+
+    messages = [
+        {"role": "system", "content": _DEPTH_SYSTEM_PROMPT + "\n\n" + "\n".join(context_lines)}
+    ]
+    if history:
+        messages.append(
+            {"role": "user", "content": "최근 대화:\n" + "\n".join(history[-10:])}
+        )
+    messages.append({"role": "user", "content": message})
+
+    async with httpx.AsyncClient(timeout=25) as client:
+        response = await client.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {settings.openai_api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": settings.openai_model,
+                "messages": messages,
+                "response_format": {"type": "json_object"},
+                "temperature": 0.6,
+                "max_tokens": 700,
+            },
+        )
+        response.raise_for_status()
+        raw = response.json()["choices"][0]["message"]["content"]
+
+    data = json.loads(raw)
+    reply = _clean(str(data.get("reply", "")).strip())
+    if not reply:
+        raise ValueError("빈 응답")
+
+    return reply, _draft_from_data(data, previous)
+
+
+def _depth_without_ai(message: str, previous: CommissionDraft) -> tuple[str, CommissionDraft]:
+    """AI 없이도 문답이 끝까지 가게 하는 경로.
+
+    직전에 물어본 항목에 지금 답을 준 것으로 보고 그 슬롯에 담은 뒤, 다음 질문을 읽어 준다.
+    투박하지만 **항목이 빠짐없이 채워지는 것**이 이 화면의 목적이라 이걸로도 목적은 이룬다.
+    """
+    draft = previous.model_copy(deep=True)
+    answer = message.strip()
+
+    pending = [field for field in _DEPTH_FIELDS if not _depth_value(draft, field)]
+    if pending and len(answer) > 1:
+        field = pending[0]
+        if field == "dislikes":
+            draft.dislikes = [part.strip() for part in re.split(r"[,·/]", answer) if part.strip()]
+        else:
+            setattr(draft, field, answer[:400])
+        pending = pending[1:]
+
+    if pending:
+        reply = _DEPTH_QUESTIONS[pending[0]]
+    else:
+        reply = (
+            "여기까지면 충분해요. 알려주신 내용은 그대로 작업에 반영됩니다. "
+            "정재훈이 확인하고 남겨주신 이메일로 연락드릴게요. 고맙습니다."
+        )
+    return reply, draft
+
+
+def draft_from_commission(commission: CommissionRequest) -> CommissionDraft:
+    """저장된 접수 건에서 draft 를 복원한다.
+
+    제작 슬롯은 `requirements` JSON 안에 산다 — 컬럼을 일곱 개 늘리는 대신
+    이미 JSON 인 자리를 쓴다(마이그레이션 0). 조회·문답 양쪽이 이 함수를 쓴다.
+    """
+    requirements = dict(commission.requirements or {})
+
+    draft = CommissionDraft(
+        site_type=commission.site_type or "",
+        summary=commission.summary or "",
+        pages=_str_list(requirements.get("pages")),
+        features=_str_list(requirements.get("features")),
+        tone=str(requirements.get("tone", "") or ""),
+        references=_str_list(requirements.get("references")),
+        budget_hint=commission.budget_hint or "",
+        deadline_hint=commission.deadline_hint or "",
+        estimate_min=commission.estimate_min or 0,
+        estimate_max=commission.estimate_max or 0,
+        weeks_min=commission.weeks_min or 0,
+        weeks_max=commission.weeks_max or 0,
+        estimate_reason=commission.estimate_reason or "",
+        who_updates=str(requirements.get("who_updates", "") or ""),
+        content_owner=str(requirements.get("content_owner", "") or ""),
+        success_metric=str(requirements.get("success_metric", "") or ""),
+        existing_assets=str(requirements.get("existing_assets", "") or ""),
+        dislikes=_str_list(requirements.get("dislikes")),
+        reference_notes=str(requirements.get("reference_notes", "") or ""),
+        decision_maker=str(requirements.get("decision_maker", "") or ""),
+    )
+    return _fill_missing(draft)
+
+
+def store_depth_answers(
+    db: Session, commission: CommissionRequest, draft: CommissionDraft
+) -> CommissionRequest:
+    """심화 문답에서 받은 제작 정보를 접수 건에 반영한다.
+
+    **접수 원문(요약·유형·견적)은 건드리지 않는다.** 손님이 나중에 말을 보태는 자리이지
+    이미 접수된 내용을 갈아엎는 자리가 아니고, 견적은 관리자가 본 그 값으로 남아야 한다.
+    """
+    requirements = dict(commission.requirements or {})
+
+    for field in _DEPTH_FIELDS:
+        value = getattr(draft, field)
+        if isinstance(value, list):
+            if value:
+                requirements[field] = [str(item) for item in value]
+        elif str(value or "").strip():
+            requirements[field] = str(value).strip()
+
+    # 문답 중에 페이지·기능이 더 나오면 누적한다(덮어쓰지 않는다).
+    for key, fresh in (("pages", draft.pages), ("features", draft.features)):
+        merged = list(dict.fromkeys([*_str_list(requirements.get(key)), *fresh]))
+        if merged:
+            requirements[key] = merged
+
+    commission.requirements = requirements
+    # SQLAlchemy 는 JSON 컬럼의 **제자리 변경**을 감지하지 못한다. 새 dict 를 대입하더라도
+    # 확실히 하려고 명시적으로 표시해 둔다 — 이걸 빼면 답이 조용히 저장되지 않는다.
+    flag_modified(commission, "requirements")
+    db.commit()
+    db.refresh(commission)
+    return commission
+
+
+def ensure_access_token(db: Session, commission: CommissionRequest) -> str:
+    """심화 문답 링크의 열쇠. 없으면(=이 기능 이전에 들어온 접수) 그 자리에서 발급한다."""
+    if not (commission.access_token or "").strip():
+        commission.access_token = uuid.uuid4().hex
+        db.commit()
+        db.refresh(commission)
+    return commission.access_token
+
+
+def get_by_token(db: Session, token: str) -> CommissionRequest | None:
+    cleaned = (token or "").strip()
+    if len(cleaned) < 16:
+        # 짧은 값은 조회조차 하지 않는다 — 대입 시도에 DB 를 쓰게 두지 않는다.
+        return None
+    return (
+        db.query(CommissionRequest)
+        .filter(CommissionRequest.access_token == cleaned)
+        .first()
+    )
 
 
 # ─────────────────────────── 접수 CRUD ───────────────────────────
@@ -394,6 +811,8 @@ def create_commission(db: Session, payload: CommissionIn) -> CommissionRequest:
 
     commission = CommissionRequest(
         public_id=f"WO-{uuid.uuid4().hex[:8].upper()}",
+        # 심화 문답으로 돌아오는 열쇠는 접수 순간에 만든다 — 접수 완료 화면이 바로 링크를 준다.
+        access_token=uuid.uuid4().hex,
         session_id=payload.session_id.strip(),
         contact_name=payload.contact_name.strip(),
         contact_email=payload.contact_email.strip(),
@@ -717,6 +1136,18 @@ async def notify_discord(commission: CommissionRequest) -> bool:
         },
         {"name": "요청 내용", "value": (commission.summary or "-")[:1000], "inline": False},
     ]
+
+    # 심화 문답 링크. 손님에게 이걸 보내면 제작에 필요한 나머지(운영 주체·콘텐츠 준비·
+    # 성공 기준·기존 자산)를 도안이 대신 받아 준다. 알림에 넣어 두면 바로 복사해 쓸 수 있다.
+    if commission.access_token:
+        base = settings.frontend_origin.strip().rstrip("/")
+        fields.append(
+            {
+                "name": "손님에게 보낼 심화 문답 링크",
+                "value": f"{base}/commission/{commission.access_token}",
+                "inline": False,
+            }
+        )
     if commission.deadline_hint or commission.budget_hint:
         fields.append(
             {

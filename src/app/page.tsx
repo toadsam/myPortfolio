@@ -28,7 +28,7 @@
 import dynamic from "next/dynamic";
 import {useRouter} from "next/navigation";
 import {useCallback, useState} from "react";
-import {LandingScreen} from "@/components/ui/LandingScreen";
+import {TicketLanding} from "@/components/ui/landing/TicketLanding";
 
 /**
  * 의뢰 접수 데스크. 세 사람 중 한 명만 누르는 화면이라 지연 로드한다.
@@ -59,7 +59,7 @@ export default function Home() {
 
   return (
     <>
-      <LandingScreen
+      <TicketLanding
         onEnterVillage={() => router.push("/village")}
         onOpenCommission={() => setCommissionOpen(true)}
         onOpenResume={() => router.push("/resume")}

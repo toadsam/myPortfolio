@@ -91,6 +91,15 @@ Three things make this unlike every other district:
   inside 0.6–1.8× of a rule-based baseline. Never surface a figure without `ESTIMATE_DISCLAIMER`.
 - **Entry is deliberately split**: the always-visible button opens the 2D desk directly (real intake path,
   works on mobile); the village hatch and 포스트's hint lead to the 3D room. Don't collapse these into one.
+- **Intake and elicitation happen at different times, on purpose.** Intake (1차) exists to get a quote and
+  a low threshold — `ready_to_submit` needs only site_type + (pages or features). The information that
+  actually decides *how to build it* (who maintains the site → static/CMS/admin, who supplies photos and
+  copy, what counts as success, what already exists) is collected **after** submission at
+  `/commission/<access_token>`, because someone who already submitted has low exit cost. Those seven slots
+  live in `commission_service._DEPTH_SLOTS` (single source) and are tracked by `depth_missing`, never by
+  `missing` — merging them would turn the intake desk into an interrogation. `tests/test_commission_depth.py`
+  locks that threshold. The link key is `access_token`, not `public_id` (8 hex is enumerable), and the
+  track endpoint never returns contact details.
 
 Two naming traps, both already guarded and locked by `tests/test_relations.py` — keep the atelier branch
 **first** in both `relations.canon()` and `chat_service._npc_profile_for_dynamic_id()`, since the existing

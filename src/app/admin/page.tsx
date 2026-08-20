@@ -1142,6 +1142,8 @@ function CommissionAdmin() {
                               {detail.estimate_reason || "-"}
                             </DetailRow>
 
+                            <DepthPanel detail={detail} />
+
                             <div className="grid gap-2 rounded-lg border border-[#e3e8ef] bg-white p-3">
                               <LabeledField label="진행 상태">
                                 <select
@@ -1288,6 +1290,74 @@ function CommissionStatusBadge({status}: {status: CommissionStatus}) {
     >
       {label}
     </span>
+  );
+}
+
+/**
+ * 심화 문답 패널 — 손님에게 보낼 링크와, 그렇게 받아낸 제작 정보.
+ *
+ * 접수 원문과 **일부러 갈라 둔다.** 접수 때 들은 것과 나중에 받아낸 것은
+ * 확실성이 다르고(후자가 더 확정적이다), 섞어 두면 어느 쪽을 믿고 만들지가
+ * 흐려진다. 여기 값이 차 있을수록 실제로 만들 때 되물을 일이 줄어든다.
+ */
+function DepthPanel({detail}: {detail: CommissionDetail}) {
+  const [copied, setCopied] = useState(false);
+  const answers = Object.entries(detail.depth_answers ?? {});
+
+  const link =
+    typeof window !== "undefined" && detail.track_path
+      ? `${window.location.origin}${detail.track_path}`
+      : detail.track_path;
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  return (
+    <div className="grid gap-2 rounded-lg border border-[#e3e8ef] bg-white p-3">
+      <p className="font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#b45309]/70">
+        제작 정보 (심화 문답)
+      </p>
+
+      {answers.length ? (
+        <dl className="grid gap-1.5">
+          {answers.map(([label, value]) => (
+            <div key={label} className="flex gap-2 text-xs leading-5">
+              <dt className="w-20 shrink-0 font-bold text-[#b45309]">
+                {label}
+              </dt>
+              <dd className="flex-1 text-[#475569]">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : (
+        <p className="text-xs leading-5 text-[#94a3b8]">
+          아직 받은 게 없습니다. 아래 링크를 회신 메일에 붙여 보내면 도안이 대신
+          여쭤봅니다 — 운영·수정 주체, 콘텐츠 준비, 성공 기준, 기존 자산.
+        </p>
+      )}
+
+      {detail.track_path ? (
+        <div className="mt-1 flex flex-wrap items-center gap-2">
+          <code className="min-w-0 flex-1 truncate rounded-md bg-[#f1f4f9] px-2 py-1.5 font-mono text-[11px] text-[#475569]">
+            {link}
+          </code>
+          <button
+            className="sub-button"
+            onClick={() => void copy()}
+            type="button"
+          >
+            {copied ? "복사됨" : "링크 복사"}
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }
 

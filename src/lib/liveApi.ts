@@ -9,10 +9,12 @@ import type {
   CommissionAck,
   CommissionBoard,
   CommissionConsultResponse,
+  CommissionDepthResponse,
   CommissionDetail,
   CommissionDraft,
   CommissionInput,
   CommissionStatusInput,
+  CommissionTrack,
   CsNote,
   CsNoteInput,
   DailyActivity,
@@ -377,6 +379,35 @@ export function submitCommission(
       website: payload.website ?? ""
     })
   });
+}
+
+/* ── 심화 문답 (접수 뒤 2차) ──
+   접수는 견적을 낼 만큼만 받고, 실제 제작에 필요한 것들은 여기서 받는다.
+   열쇠는 접수번호가 아니라 access_token 이다 — 접수번호는 8 hex 라 열거를
+   시도할 수 있어서 조회 키로 쓰지 않는다. */
+
+export function fetchCommissionTrack(token: string): Promise<CommissionTrack> {
+  return requestJson<CommissionTrack>(
+    `/commission/track/${encodeURIComponent(token)}`,
+    {cache: "no-store"}
+  );
+}
+
+export function consultCommissionDepth(
+  token: string,
+  message: string,
+  recentMessages: string[] = []
+): Promise<CommissionDepthResponse> {
+  return requestJson<CommissionDepthResponse>(
+    `/commission/track/${encodeURIComponent(token)}/consult`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        message,
+        recent_messages: recentMessages.slice(-10)
+      })
+    }
+  );
 }
 
 export function fetchCommissions(): Promise<Commission[]> {

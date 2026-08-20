@@ -12,6 +12,7 @@ from app.security import (
     AiRateLimit,
     CommissionRateLimit,
     IslandGuard,
+    assert_secret_usable,
     auth_enabled,
     create_admin_token,
     record_commission_success,
@@ -31,6 +32,9 @@ from app.schemas import (
     CodingTestIn,
     CodingTestOut,
     CommissionAck,
+    CommissionDepthIn,
+    CommissionDepthOut,
+    CommissionTrackOut,
     CommissionArtifactOut,
     CommissionBoardOut,
     CommissionConsultIn,
@@ -95,7 +99,12 @@ from app.services.commission_service import (
     apply_gate_decision,
     artifacts_for as commission_artifacts_for,
     consult as commission_consult,
+    consult_depth as commission_consult_depth,
     create_commission,
+    depth_questions_for,
+    draft_from_commission,
+    ensure_access_token,
+    get_by_token as commission_by_token,
     delete_commission,
     get_artifact as commission_get_artifact,
     get_commission,
@@ -106,6 +115,7 @@ from app.services.commission_service import (
     recent_messages as commission_recent_messages,
     reject_task as reject_commission_task,
     save_message as save_commission_message,
+    store_depth_answers,
     tasks_for as commission_tasks_for,
     update_status as update_commission_status,
     worklog_lines as commission_worklog,
@@ -170,6 +180,7 @@ def admin_auth_status() -> AdminAuthStatus:
 
 @app.post("/admin/login", response_model=AdminLoginOut)
 def admin_login(payload: AdminLoginIn) -> AdminLoginOut:
+    assert_secret_usable()
     if not verify_password(payload.password):
         raise HTTPException(status_code=401, detail="비밀번호가 올바르지 않습니다.")
     token = create_admin_token() if auth_enabled() else ""
@@ -630,7 +641,98 @@ async def submit_commission(request: Request, payload: CommissionIn, db: Session
             f"접수되었습니다. 접수번호는 {commission.public_id} 입니다. "
             "정재훈이 직접 내용을 확인한 뒤 남겨주신 이메일로 연락드릴게요."
         ),
+        access_token=commission.access_token,
+        track_path=f"/commission/{commission.access_token}",
     )
+
+
+# ─────────────────── 심화 문답 (접수 뒤 2차) ───────────────────
+#
+# 접수는 "얼마짜리 일인가"까지만 받는다. 실제로 만들 때 필요한 것들(운영 주체·콘텐츠
+# 준비·성공 기준·기존 자산)은 여기서 받는다 — **이미 접수한 사람은 이탈 비용이 낮아서**
+# 문턱을 올려도 안전하기 때문이다.
+#
+# 열쇠는 public_id 가 아니라 access_token 이다. public_id 는 8 hex 라 사람이
+# 받아적을 수 있는 대신 열거를 시도할 수 있어서, 조회 키로는 쓰지 않는다.
+
+
+def _load_by_token(db: Session, token: str) -> CommissionRequest:
+    commission = commission_by_token(db, token)
+    if not commission:
+        # 존재하지 않는 토큰과 형식이 틀린 토큰을 구분해 주지 않는다.
+        raise HTTPException(status_code=404, detail="접수 내역을 찾을 수 없어요. 링크를 다시 확인해 주세요.")
+    return commission
+
+
+def _track_session(commission: CommissionRequest) -> str:
+    """심화 문답 로그를 담을 세션 id. 1차 상담과 **다른 값**을 쓴다.
+
+    같은 session_id 에 이어 붙이면 관리자 화면에서 '접수 전에 나눈 대화'와
+    '접수 후 문답'이 한 덩어리로 보여 어느 쪽이 확정된 요구사항인지 흐려진다.
+    """
+    return f"depth-{commission.public_id}"
+
+
+@app.get("/commission/track/{token}", response_model=CommissionTrackOut, dependencies=[CommissionRateLimit])
+def commission_track(token: str, db: Session = Depends(get_db)):
+    """접수 조회 + 심화 문답 진입. **연락처는 절대 담지 않는다** — 링크가 어디로
+    전달될지 통제할 수 없으므로, 토큰을 쥔 사람이 볼 수 있는 건 자기가 말한 내용까지다."""
+    commission = _load_by_token(db, token)
+    draft = draft_from_commission(commission)
+    remaining = depth_questions_for(draft)
+    past = commission_recent_messages(db, _track_session(commission), limit=40)
+
+    if not remaining:
+        greeting = (
+            f"접수번호 {commission.public_id} 건은 필요한 내용을 다 받았어요. "
+            "덧붙이고 싶은 게 있으면 편하게 남겨주세요."
+        )
+    elif past:
+        # 이어서 하는 사람에게 자기소개를 다시 하지 않는다. 남은 질문만 잇는다.
+        greeting = remaining[0]
+    else:
+        greeting = (
+            f"다시 뵙네요. 접수번호 {commission.public_id} 건으로 몇 가지만 더 여쭐게요. "
+            "정재훈이 실제로 만들 때 꼭 알아야 하는 것들이라, 답해주시면 결과가 많이 달라져요.\n\n"
+            + remaining[0]
+        )
+
+    return CommissionTrackOut(
+        public_id=commission.public_id,
+        status=commission.status,
+        site_type=commission.site_type,
+        summary=commission.summary,
+        created_at=commission.created_at,
+        draft=draft,
+        greeting=greeting,
+        messages=past,
+    )
+
+
+@app.post(
+    "/commission/track/{token}/consult",
+    response_model=CommissionDepthOut,
+    dependencies=[AiRateLimit],
+)
+async def commission_track_consult(
+    token: str, payload: CommissionDepthIn, db: Session = Depends(get_db)
+):
+    """심화 문답 한 턴. 받은 답은 곧바로 접수 건에 반영한다(중간에 창을 닫아도 남게)."""
+    commission = _load_by_token(db, token)
+    previous = draft_from_commission(commission)
+
+    session_id = _track_session(commission)
+    history = payload.recent_messages[-10:]
+    if not history:
+        history = [f"{row.role}: {row.content}" for row in commission_recent_messages(db, session_id)]
+
+    reply, used_ai, draft = await commission_consult_depth(payload.message, history, previous)
+
+    save_commission_message(db, session_id, "visitor", payload.message)
+    save_commission_message(db, session_id, "npc", reply, used_ai=used_ai)
+    store_depth_answers(db, commission, draft)
+
+    return CommissionDepthOut(reply=reply, used_ai=used_ai, draft=draft)
 
 
 @app.get("/admin/commissions", response_model=list[CommissionOut], dependencies=[AdminGuard])
@@ -643,11 +745,32 @@ def admin_commission_detail(commission_id: int, db: Session = Depends(get_db)):
     commission = get_commission(db, commission_id)
     if not commission:
         raise HTTPException(status_code=404, detail="해당 의뢰를 찾을 수 없습니다.")
+    # 이 기능 이전에 들어온 접수 건에는 토큰이 없다. 여는 김에 발급해 준다.
+    token = ensure_access_token(db, commission)
     return CommissionDetailOut(
         **CommissionOut.model_validate(commission).model_dump(),
         session_id=commission.session_id,
-        messages=messages_for(db, commission),
+        track_path=f"/commission/{token}",
+        depth_answers={
+            label: value
+            for label, value in _depth_summary(commission).items()
+        },
+        messages=messages_for(db, commission) + commission_recent_messages(
+            db, _track_session(commission), limit=60
+        ),
     )
+
+
+def _depth_summary(commission: CommissionRequest) -> dict[str, str]:
+    """관리자 화면에 보여줄 '제작 정보' 요약. 심화 문답으로 받은 것들이다."""
+    from app.services.commission_service import _DEPTH_FIELDS, _DEPTH_LABELS, _depth_value
+
+    draft = draft_from_commission(commission)
+    return {
+        _DEPTH_LABELS[field]: _depth_value(draft, field)
+        for field in _DEPTH_FIELDS
+        if _depth_value(draft, field)
+    }
 
 
 @app.patch("/admin/commissions/{commission_id}", response_model=CommissionOut, dependencies=[AdminGuard])

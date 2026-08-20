@@ -17,8 +17,43 @@ from app.config import settings
 
 # ─────────────────────────── 관리자 토큰 ───────────────────────────
 
+# .env.example 과 config.py 기본값에 적혀 있는 값들 — 즉 **리포를 읽은 사람은 누구나 아는 값**이다.
+# 토큰이 "<만료epoch>.HMAC(secret, 만료epoch)" 뿐이라, 이 비밀키를 아는 사람은
+# 비밀번호 없이 관리자 토큰을 직접 만들 수 있다. 비밀번호를 걸어 둔 의미가 사라진다.
+_KNOWN_DEFAULT_SECRETS = frozenset(
+    {
+        "change-me-in-prod",
+        "change-me-to-a-long-random-string",
+        "",
+    }
+)
+
+
+def secret_is_default() -> bool:
+    return settings.admin_secret.strip() in _KNOWN_DEFAULT_SECRETS
+
+
 def auth_enabled() -> bool:
     return bool(settings.admin_password.strip())
+
+
+def assert_secret_usable() -> None:
+    """비밀번호를 걸어 뒀는데 서명키가 공개 기본값이면 **인증을 통과시키지 않는다.**
+
+    비밀번호만 바꾸고 서명키를 두는 실수가 제일 흔하고, 그때 겉보기에는
+    로그인이 정상 동작해서 뚫린 줄을 모른다. 그래서 조용히 넘어가지 않고 막는다.
+    공방이 생긴 뒤로 여기가 새면 나가는 건 내 기록이 아니라 **방문자의 이름·이메일·
+    전화번호와 의뢰 산출물**이다. (require_island 와 같은 철학 — 편의보다 실패 모드를 없앤다.)
+    """
+    if auth_enabled() and secret_is_default():
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "ADMIN_SECRET 이 예시 기본값 그대로입니다. 이 상태로는 관리자 토큰을 "
+                "누구나 위조할 수 있어 인증을 막았습니다. backend/.env 의 ADMIN_SECRET 을 "
+                "길고 무작위한 값으로 교체해 주세요."
+            ),
+        )
 
 
 def _sign(payload: str) -> str:
@@ -53,6 +88,7 @@ def require_admin(x_admin_token: str | None = Header(default=None)) -> None:
     """보호된 관리자 엔드포인트용 의존성. 인증 비활성 시 통과."""
     if not auth_enabled():
         return
+    assert_secret_usable()
     if not verify_admin_token(x_admin_token):
         raise HTTPException(status_code=401, detail="관리자 인증이 필요합니다.")
 
@@ -71,6 +107,7 @@ def require_island(x_admin_token: str | None = Header(default=None)) -> None:
             status_code=403,
             detail="backend/.env 에 ADMIN_PASSWORD 를 설정해야 섬을 쓸 수 있어요.",
         )
+    assert_secret_usable()
     if not verify_admin_token(x_admin_token):
         raise HTTPException(status_code=401, detail="섬은 나만 들어갈 수 있어요.")
 

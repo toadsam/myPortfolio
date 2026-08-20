@@ -1,0 +1,544 @@
+/* 표 착륙장 — 세 목적지를 세 장의 표로.
+   색·질감은 전부 여기, 배치와 연출은 TicketLanding.tsx. */
+
+.tl-root {
+  /* 마을 토큰에서 파생한다. 원안의 초록/남색/빨강 잉크와 황동은 이 마을 색이
+     아니라 전부 갈아끼웠다. 종이 위 잉크는 어두워야 읽히므로 밝은 토큰
+     (--v-lantern/--v-gold)은 잉크가 아니라 빛과 테두리에만 쓴다. */
+  --tl-paper: rgb(var(--v-paper));
+  --tl-paper-back: #e6d6b4;
+  --tl-ink-village: rgb(var(--v-wood)); /* 나무·흙 — 걸어 다니는 곳 */
+  --tl-ink-resume: rgb(var(--v-night)); /* 밤하늘 남색 — 문서 */
+  --tl-ink-atelier: #8a4a12; /* 등불색을 잉크 농도로 졸인 것 */
+  --tl-brass: rgb(var(--v-gold));
+  --tl-glow: rgb(var(--v-lantern));
+
+  /* 질감 두 장. 외부 호스트에서 PNG 를 받지 않는다(위 .tl-desk 주석 참고).
+     data URI 안에서는 `#` 를 %23 으로 써야 한다 — 안 그러면 URL 이 거기서 잘린다.
+
+     **feTurbulence 는 채널마다 다른 난수를 넣어 컬러 노이즈를 만든다.**
+     그대로 깔면 나뭇결이 아니라 TV 지지직이 된다(처음에 그렇게 나왔다).
+     `feColorMatrix type="saturate" values="0"` 로 색을 빼야 결이 된다. */
+  --tl-wood-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='360' height='360'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.006 0.42' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='360' height='360' filter='url(%23w)' opacity='0.22'/%3E%3C/svg%3E");
+  --tl-paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23p)' opacity='0.16'/%3E%3C/svg%3E");
+
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  perspective: 2000px;
+  user-select: none;
+  background: #0a0806;
+}
+
+/* ── 바탕: 책상 ──────────────────────────────────────────────────────────────
+   원안은 transparenttextures.com 에서 나뭇결 PNG 두 장을 받아 썼다. 외부 호스트에
+   첫 화면이 묶이면 그쪽이 죽는 날 우리 첫인상도 같이 죽는다. SVG feTurbulence 로
+   같은 결을 만든다 — 파일 0개, 요청 0회. baseFrequency 의 x 를 낮추고 y 를 높이면
+   세로로 늘어난 나뭇결이 된다. */
+.tl-desk {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-color: #17110c;
+  /* 결(노이즈) 위에 판자 이음새를 얇은 줄무늬로 얹고, 그 위에 빛과 비네트를 덮는다.
+     노이즈만으로는 나무가 안 된다 — 나무처럼 보이게 하는 건 결이 아니라 **판자**다. */
+  background-image: radial-gradient(
+      circle at 50% 8%,
+      rgb(var(--v-lantern) / 0.09) 0%,
+      transparent 55%
+    ),
+    radial-gradient(circle at 50% 55%, transparent 8%, rgb(0 0 0 / 0.9) 100%),
+    repeating-linear-gradient(
+      90deg,
+      rgb(0 0 0 / 0.22) 0 1px,
+      transparent 1px 168px
+    ),
+    var(--tl-wood-grain),
+    linear-gradient(180deg, #241a12 0%, #17110c 55%, #0e0a07 100%);
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+.tl-desk.is-lit {
+  opacity: 1;
+}
+
+/* 오른쪽 아래에서 드는 등불. 마을이 밤인 이유와 같은 빛이다. */
+.tl-lantern {
+  position: absolute;
+  right: -10%;
+  bottom: -20%;
+  width: 80%;
+  height: 80%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgb(var(--v-lantern) / 0.1) 0%,
+    transparent 70%
+  );
+  filter: blur(80px);
+}
+
+.tl-dust {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.tl-mote {
+  position: absolute;
+  border-radius: 50%;
+  background: rgb(var(--v-paper));
+  opacity: 0.18;
+}
+
+/* ── 무대 ─────────────────────────────────────────────────────────────────── */
+.tl-stage {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  height: 78vh;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  perspective-origin: 50% 40%;
+  /* 마우스 시차는 **무대에만** 건다. 원안은 카드마다 style.transform 문자열을
+     잘라 다시 썼는데(`.split(' translateY')`), 30ms 부유 타이머와 mousemove 가
+     같은 문자열을 서로 덮어써서 카드가 떨렸다. 층을 나눠 각자 제 것만 만진다. */
+  transform: rotateY(var(--tl-px, 0deg)) rotateX(var(--tl-py, 0deg));
+}
+
+.tl-ticket {
+  position: absolute;
+  width: 320px;
+  height: 500px;
+  padding: 0;
+  border: 0;
+  background: none;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  /* 층: 배치(tx/tz/ry/s)는 React 가, 부유(bob/tilt)는 rAF 가 쓴다. 서로 안 겹친다. */
+  transform: translateX(var(--tl-tx, 0)) translateZ(var(--tl-tz, 0px))
+    rotateY(var(--tl-ry, 0deg)) scale(var(--tl-s, 1))
+    translateY(var(--tl-bob, 0px)) rotateZ(var(--tl-tilt, 0deg));
+  filter: brightness(var(--tl-dim, 100%)) blur(var(--tl-blur, 0px));
+  z-index: var(--tl-z, 10);
+  transition: transform 0.6s cubic-bezier(0.2, 1, 0.3, 1), filter 0.5s ease,
+    opacity 0.5s ease;
+}
+.tl-ticket:focus {
+  outline: none;
+}
+.tl-ticket:focus-visible .tl-face {
+  box-shadow: 0 0 0 3px var(--tl-glow), 0 0 26px rgb(var(--v-lantern) / 0.55),
+    0 30px 60px rgb(0 0 0 / 0.7);
+}
+
+.tl-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+/* 뒤집기: 포인터가 있는 기기는 호버로, 터치·키보드는 상태로(js 가 is-flipped) */
+@media (hover: hover) {
+  .tl-ticket.is-active:hover .tl-inner {
+    transform: rotateY(180deg);
+  }
+}
+.tl-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.tl-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 28px;
+  text-align: left;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background-color: var(--tl-paper);
+  background-image: var(--tl-paper-grain);
+  background-blend-mode: multiply;
+  box-shadow: 0 30px 60px rgb(0 0 0 / 0.6);
+  transition: box-shadow 0.3s ease;
+  /* 표 모양 — 양옆에 뜯는 홈이 파여 있다 */
+  clip-path: polygon(
+    0% 4%,
+    4% 0%,
+    96% 0%,
+    100% 4%,
+    100% 12%,
+    94% 15%,
+    100% 18%,
+    100% 82%,
+    94% 85%,
+    100% 88%,
+    100% 96%,
+    96% 100%,
+    4% 100%,
+    0% 96%,
+    0% 88%,
+    6% 85%,
+    0% 82%,
+    0% 18%,
+    6% 15%,
+    0% 12%
+  );
+}
+@media (hover: hover) {
+  .tl-ticket.is-active:hover .tl-face {
+    box-shadow: 0 0 22px rgb(var(--v-lantern) / 0.45),
+      0 30px 60px rgb(0 0 0 / 0.7);
+  }
+}
+
+.tl-back {
+  transform: rotateY(180deg);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: var(--tl-paper-back);
+}
+
+.tl-perf {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  border-left: 3px dotted rgb(0 0 0 / 0.14);
+  transform: translateX(-50%);
+}
+
+/* ── 표 앞면 ─────────────────────────────────────────────────────────────── */
+.tl-stub {
+  display: inline-block;
+  width: fit-content;
+  margin-bottom: 22px;
+  padding: 4px 10px;
+  border: 1.5px solid rgb(0 0 0 / 0.12);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: rgb(0 0 0 / 0.5);
+  mix-blend-mode: multiply;
+}
+.tl-title {
+  margin-bottom: 10px;
+  font-family: var(--font-display), "Gowun Batang", serif;
+  font-size: 40px;
+  line-height: 1.08;
+  word-break: keep-all;
+  filter: drop-shadow(0.5px 0.5px 0.5px rgb(0 0 0 / 0.2));
+}
+.tl-rule {
+  width: 100%;
+  height: 2px;
+  margin: 16px 0;
+  background: rgb(0 0 0 / 0.14);
+}
+.tl-sub {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(0 0 0 / 0.68);
+}
+.tl-seal {
+  display: flex;
+  width: 120px;
+  height: 120px;
+  margin-top: auto;
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+}
+.tl-seal svg {
+  width: 96px;
+  height: 96px;
+  opacity: 0;
+  mix-blend-mode: multiply;
+  filter: blur(0.4px) drop-shadow(1px 1px 0 rgb(255 255 255 / 0.3));
+  transform: rotate(-14deg) scale(2);
+}
+.tl-seal.is-stamped svg {
+  opacity: 0.72;
+  transform: rotate(-14deg) scale(1);
+  transition: transform 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.5),
+    opacity 0.3s ease;
+}
+/* 일련번호는 라틴 숫자뿐이라 모노가 어울린다. 한글은 여기 넣지 않는다 —
+   모노 스택에 한글 글립이 없어 시스템 고딕으로 떨어진다(이력서에서 겪었다). */
+.tl-serial {
+  position: absolute;
+  right: -34px;
+  bottom: 34px;
+  transform: rotate(-90deg);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: rgb(0 0 0 / 0.25);
+}
+
+/* ── 표 뒷면 ─────────────────────────────────────────────────────────────── */
+.tl-back-inner {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  border: 1px solid rgb(0 0 0 / 0.1);
+}
+.tl-back-title {
+  margin-bottom: 12px;
+  font-family: var(--font-display), "Gowun Batang", serif;
+  font-size: 19px;
+  color: rgb(0 0 0 / 0.82);
+}
+.tl-back-desc {
+  font-size: 13px;
+  line-height: 1.75;
+  color: rgb(0 0 0 / 0.62);
+  word-break: keep-all;
+}
+.tl-back-cta {
+  margin-top: 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgb(0 0 0 / 0.45);
+}
+
+.tl-scan {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(255 255 255 / 0.4),
+    transparent
+  );
+  opacity: 0;
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+/* ── 찢기 ────────────────────────────────────────────────────────────────── */
+.tl-ticket.is-tearing .tl-inner {
+  opacity: 0;
+  pointer-events: none;
+}
+.tl-half {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--tl-paper);
+  background-image: var(--tl-paper-grain);
+  background-blend-mode: multiply;
+  box-shadow: 0 30px 60px rgb(0 0 0 / 0.6);
+  pointer-events: none;
+}
+.tl-half-l {
+  left: 0;
+  clip-path: polygon(
+    0% 4%,
+    8% 0%,
+    100% 0%,
+    100% 100%,
+    8% 100%,
+    0% 96%,
+    0% 88%,
+    12% 85%,
+    0% 82%,
+    0% 18%,
+    12% 15%,
+    0% 12%
+  );
+}
+.tl-half-r {
+  right: 0;
+  clip-path: polygon(
+    0% 0%,
+    92% 0%,
+    100% 4%,
+    100% 12%,
+    88% 15%,
+    100% 18%,
+    100% 82%,
+    88% 85%,
+    100% 88%,
+    100% 96%,
+    92% 100%,
+    0% 100%
+  );
+}
+.tl-scrap {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--tl-paper);
+  pointer-events: none;
+  filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.2));
+}
+
+/* ── 주변 장치 ───────────────────────────────────────────────────────────── */
+.tl-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 20;
+  display: flex;
+  width: 58px;
+  height: 58px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--tl-brass);
+  border-radius: 50%;
+  background: rgb(var(--v-night) / 0.9);
+  color: var(--tl-brass);
+  font-size: 22px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(-50%);
+  transition: opacity 0.6s ease, background 0.3s ease, color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.tl-root.is-ready .tl-nav {
+  opacity: 1;
+}
+.tl-nav:hover {
+  background: var(--tl-brass);
+  color: rgb(var(--v-night));
+  box-shadow: 0 0 26px rgb(var(--v-gold) / 0.5);
+}
+.tl-nav:focus-visible {
+  outline: 3px solid var(--tl-glow);
+  outline-offset: 3px;
+}
+.tl-nav-prev {
+  left: 56px;
+}
+.tl-nav-next {
+  right: 56px;
+}
+
+.tl-dots {
+  position: absolute;
+  bottom: 116px;
+  z-index: 20;
+  display: flex;
+  gap: 15px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.tl-root.is-ready .tl-dots {
+  opacity: 1;
+}
+.tl-dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 2px solid rgb(255 255 255 / 0.22);
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+.tl-dot.is-on {
+  border-color: currentColor;
+  background: currentColor;
+  box-shadow: 0 0 14px currentColor;
+  transform: scale(1.4);
+}
+.tl-dot:focus-visible {
+  outline: 2px solid var(--tl-glow);
+  outline-offset: 4px;
+}
+
+.tl-foot {
+  position: absolute;
+  bottom: 46px;
+  z-index: 20;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: rgb(var(--v-moon) / 0.55);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.tl-root.is-ready .tl-foot {
+  opacity: 1;
+}
+.tl-foot b {
+  color: rgb(var(--v-gold) / 0.85);
+  font-weight: 700;
+}
+
+.tl-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  background: rgb(var(--v-night));
+}
+
+@media (max-width: 768px) {
+  .tl-ticket {
+    width: 258px;
+    height: 418px;
+  }
+  .tl-title {
+    font-size: 31px;
+  }
+  .tl-nav {
+    width: 44px;
+    height: 44px;
+    font-size: 17px;
+  }
+  .tl-nav-prev {
+    left: 14px;
+  }
+  .tl-nav-next {
+    right: 14px;
+  }
+  .tl-dots {
+    bottom: 92px;
+  }
+  .tl-foot {
+    bottom: 34px;
+    font-size: 10px;
+    gap: 12px;
+  }
+}
+
+/* 모션을 줄인 사용자: 부유·먼지·스캔라인 전부 멈춘다. 이 리포의 규칙이다. */
+@media (prefers-reduced-motion: reduce) {
+  .tl-ticket,
+  .tl-inner,
+  .tl-desk,
+  .tl-nav,
+  .tl-dots,
+  .tl-foot {
+    transition-duration: 0.001s !important;
+  }
+  .tl-mote,
+  .tl-scan {
+    display: none;
+  }
+}

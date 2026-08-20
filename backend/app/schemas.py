@@ -383,7 +383,22 @@ ESTIMATE_DISCLAIMER = (
 
 
 class CommissionDraft(BaseModel):
-    """상담 대화에서 추출한 구조화 요구사항 + 참고 견적."""
+    """상담 대화에서 추출한 구조화 요구사항 + 참고 견적.
+
+    필드가 **두 무리**로 나뉜다. 이걸 섞으면 접수 창구가 취조실이 된다.
+
+    ① 견적 슬롯 (site_type ~ estimate_reason)
+       "얼마짜리 일인가"를 계산하려고 받는다. 1차 상담에서 도안이 **먼저 묻는다.**
+
+    ② 제작 슬롯 (who_updates ~ decision_maker)
+       "어떻게 만들어야 잘 만드는가"를 위해 받는다. 이쪽이 실제 제작 난이도와
+       퀄리티를 좌우하지만, 1차에서 캐물으면 손님이 떠난다. 그래서 1차에서는
+       **들리면 담기만 하고 먼저 묻지 않으며**, 접수 뒤 심화 문답(2차)에서
+       `depth_missing` 을 쫓아 채운다.
+
+    ready_to_submit 은 ①만 본다. 접수 문턱은 지금 그대로 낮게 유지한다 —
+    문턱을 올려 이탈시키는 대신, 뽑는 시점을 접수 뒤로 옮기는 게 이 설계다.
+    """
 
     site_type: str = ""
     summary: str = ""
@@ -398,8 +413,27 @@ class CommissionDraft(BaseModel):
     weeks_min: int = 0
     weeks_max: int = 0
     estimate_reason: str = ""
-    missing: list[str] = Field(default_factory=list)   # 아직 못 들은 항목
-    ready_to_submit: bool = False                      # 접수 폼을 띄워도 될 만큼 모였는지
+
+    # ── 제작 슬롯 (2차 심화 문답에서 채운다) ──
+    # 만든 뒤 누가 고치나. **이 한 줄이 아키텍처를 정한다** — 정적 HTML / CMS / 어드민.
+    who_updates: str = ""
+    # 사진·글·로고를 누가 준비하나. 웹 프로젝트 지연 원인 1위라 착수 전에 알아야 한다.
+    content_owner: str = ""
+    # "뭐가 일어나면 성공인가". 카피·CTA·디자인 결정이 전부 여기서 나온다.
+    success_metric: str = ""
+    # 도메인·호스팅·기존 사이트·SNS. 있으면 작업이 반으로 줄고, 없으면 새로 준비해야 한다.
+    existing_assets: str = ""
+    # 피하고 싶은 것. 취향은 좋아하는 것보다 싫어하는 것에서 훨씬 정확하게 드러난다.
+    dislikes: list[str] = Field(default_factory=list)
+    # references 의 짝 — "그 사이트의 뭐가 좋으세요?". URL만 있으면 읽을 수가 없다.
+    reference_notes: str = ""
+    # 최종 승인자·관여 인원.
+    decision_maker: str = ""
+
+    missing: list[str] = Field(default_factory=list)        # 1차에서 아직 못 들은 항목
+    ready_to_submit: bool = False                           # 접수 폼을 띄워도 될 만큼 모였는지
+    depth_missing: list[str] = Field(default_factory=list)  # 2차에서 아직 못 들은 제작 슬롯
+    depth_done: bool = False                                # 제작 슬롯의 필수분이 다 찼는지
 
 
 class CommissionConsultIn(BaseModel):
@@ -472,6 +506,41 @@ class CommissionAck(BaseModel):
     public_id: str
     status: str
     message: str
+    # 심화 문답으로 돌아오는 열쇠. public_id 는 8 hex 라 열거를 시도할 수 있어
+    # 조회 키로 쓰지 않는다. 이 토큰을 아는 사람만 자기 접수 건에 닿는다.
+    access_token: str = ""
+    track_path: str = ""   # 프런트 경로 (/commission/<token>)
+
+
+class CommissionTrackOut(BaseModel):
+    """접수 조회 + 심화 문답 화면이 받는 공개 정보.
+
+    **연락처는 절대 담지 않는다.** 링크가 전달되는 경로(메일·메신저)는
+    통제할 수 없으므로, 토큰을 쥔 사람이 볼 수 있는 것은 자기가 이미 말한
+    내용과 진행 상태까지다.
+    """
+
+    public_id: str
+    status: str
+    site_type: str
+    summary: str
+    created_at: datetime
+    draft: CommissionDraft
+    disclaimer: str = ESTIMATE_DISCLAIMER
+    greeting: str = ""
+    messages: list["CommissionMessageOut"] = Field(default_factory=list)
+
+
+class CommissionDepthIn(BaseModel):
+    message: str = Field(min_length=1, max_length=2000)
+    recent_messages: list[str] = Field(default_factory=list)
+
+
+class CommissionDepthOut(BaseModel):
+    reply: str
+    used_ai: bool
+    draft: CommissionDraft
+    disclaimer: str = ESTIMATE_DISCLAIMER
 
 
 class CommissionMessageOut(BaseModel):
@@ -484,8 +553,17 @@ class CommissionMessageOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+# CommissionTrackOut 이 CommissionMessageOut 을 앞서 참조한다(전방 참조).
+# 여기서 한 번 확정해 둔다 — 첫 요청 때 지연 해석에 기대지 않는다.
+CommissionTrackOut.model_rebuild()
+
+
 class CommissionDetailOut(CommissionOut):
     session_id: str
+    # 손님에게 보낼 심화 문답 링크. 회신 메일에 붙여 쓴다.
+    track_path: str = ""
+    # 심화 문답으로 받아낸 제작 정보 (라벨 → 답). 접수 원문과 섞이지 않게 따로 둔다.
+    depth_answers: dict[str, str] = Field(default_factory=dict)
     messages: list[CommissionMessageOut] = Field(default_factory=list)
 
 

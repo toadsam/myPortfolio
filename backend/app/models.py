@@ -144,7 +144,11 @@ class CommissionRequest(Base):
     __tablename__ = "commission_request"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    public_id: Mapped[str] = mapped_column(String(40), unique=True, index=True)  # 방문자 조회용 접수번호
+    public_id: Mapped[str] = mapped_column(String(40), unique=True, index=True)  # 방문자에게 알려주는 접수번호
+    # 심화 문답으로 돌아오는 열쇠. **public_id 와 역할이 다르다** — public_id 는
+    # 8 hex 라 사람이 받아적을 수 있는 대신 열거를 시도할 수 있어서, 조회 키로는
+    # 쓰지 않는다. 이 토큰이 링크에 담기고, 이걸 쥔 사람만 자기 접수 건에 닿는다.
+    access_token: Mapped[str] = mapped_column(String(64), default="", index=True)
     session_id: Mapped[str] = mapped_column(String(120), default="", index=True)
 
     contact_name: Mapped[str] = mapped_column(String(80), default="")

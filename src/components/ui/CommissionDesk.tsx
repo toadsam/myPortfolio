@@ -9,13 +9,34 @@
  * 3. 허니팟 필드를 둔다 — 사람 눈에는 안 보이고 봇만 채우는 함정.
  *
  * 상담 상태(draft)는 이 컴포넌트가 들고 매 턴 백엔드에 되돌려준다. 서버는 stateless다.
+ *
+ * ## 화면이 둘인데 컴포넌트는 하나다
+ *
+ * `mode="intake"` 는 접수 창구(1차), `mode="depth"` 는 접수 뒤의 심화 문답(2차)이다.
+ * **목적이 정반대다** — 1차는 문턱을 낮춰 접수까지 데려오는 게 목적이라 조금만 듣고
+ * 접수 폼을 열고, 2차는 이미 접수한 사람에게서 제작에 필요한 것들을 캐내는 게 목적이라
+ * 폼 대신 남은 항목을 보여준다.
+ *
+ * 그런데도 한 컴포넌트인 이유는 **말풍선·입력창·현판이 같은 물건이어야 하기 때문**이다.
+ * 갈라 두면 한쪽만 손보다가 도안이 두 사람처럼 보이게 된다. 다른 것은 mode 분기 세 곳
+ * (첫마디 / 보내는 곳 / 오른쪽 패널)뿐이고, 나머지는 전부 공유한다.
  */
 
 import {AnimatePresence, motion} from "framer-motion";
 import {useEffect, useRef, useState} from "react";
 
-import {consultCommission, submitCommission} from "@/lib/liveApi";
-import type {CommissionAck, CommissionDraft} from "@/types/live";
+import {
+  consultCommission,
+  consultCommissionDepth,
+  submitCommission
+} from "@/lib/liveApi";
+import type {
+  CommissionAck,
+  CommissionDraft,
+  CommissionTrack
+} from "@/types/live";
+
+type DeskMode = "intake" | "depth";
 
 interface ChatLine {
   role: "visitor" | "npc";
@@ -39,12 +60,36 @@ function formatMoney(value: number): string {
   return `${Math.round(value / 10_000).toLocaleString()}만원`;
 }
 
-export function CommissionDesk({onClose}: {onClose: () => void}) {
-  const [lines, setLines] = useState<ChatLine[]>([
-    {role: "npc", content: GREETING}
-  ]);
-  const [draft, setDraft] = useState<CommissionDraft | null>(null);
-  const [disclaimer, setDisclaimer] = useState("");
+export function CommissionDesk({
+  onClose,
+  mode = "intake",
+  track,
+  token = ""
+}: {
+  onClose: () => void;
+  /** intake = 접수 창구(1차) · depth = 접수 뒤 심화 문답(2차) */
+  mode?: DeskMode;
+  /** depth 모드에서만 쓴다. 서버가 준 접수 요약 + 지난 문답. */
+  track?: CommissionTrack;
+  /** depth 모드의 열쇠. 주소창에서 온다 — track 응답에는 담기지 않는다. */
+  token?: string;
+}) {
+  const depth = mode === "depth";
+
+  const [lines, setLines] = useState<ChatLine[]>(() => {
+    if (!depth) return [{role: "npc", content: GREETING}];
+    // 지난 문답이 있으면 그대로 이어 붙인다 — 창을 닫았다 다시 와도 처음부터
+    // 설명하지 않아도 되는 게 이 화면의 존재 이유 중 하나다.
+    const history: ChatLine[] = (track?.messages ?? []).map(message => ({
+      role: message.role,
+      content: message.content
+    }));
+    return [...history, {role: "npc", content: track?.greeting ?? GREETING}];
+  });
+  const [draft, setDraft] = useState<CommissionDraft | null>(
+    track?.draft ?? null
+  );
+  const [disclaimer, setDisclaimer] = useState(track?.disclaimer ?? "");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
@@ -87,7 +132,10 @@ export function CommissionDesk({onClose}: {onClose: () => void}) {
 
     try {
       const history = lines.map(line => `${line.role}: ${line.content}`);
-      const result = await consultCommission(trimmed, draft, history);
+      const result =
+        depth && token
+          ? await consultCommissionDepth(token, trimmed, history)
+          : await consultCommission(trimmed, draft, history);
       setDraft(result.draft);
       setDisclaimer(result.disclaimer);
       setLines(prev => [...prev, {role: "npc", content: result.reply}]);
@@ -145,7 +193,8 @@ export function CommissionDesk({onClose}: {onClose: () => void}) {
     }
   }
 
-  const ready = draft?.ready_to_submit ?? false;
+  // 심화 문답에는 접수 폼이 없다. 이미 접수한 사람이니까.
+  const ready = !depth && (draft?.ready_to_submit ?? false);
 
   return (
     <motion.div
@@ -173,7 +222,9 @@ export function CommissionDesk({onClose}: {onClose: () => void}) {
             <div>
               <p className="v-panel-title text-[15px]">의뢰 공방</p>
               <p className="mt-0.5 text-[11px] text-[#a9bdd6]/75">
-                접수원 도안 · 홈페이지 제작 상담과 접수
+                {depth
+                  ? `접수원 도안 · ${track?.public_id ?? ""} 추가 문답`
+                  : "접수원 도안 · 홈페이지 제작 상담과 접수"}
               </p>
             </div>
           </div>
@@ -223,7 +274,7 @@ export function CommissionDesk({onClose}: {onClose: () => void}) {
                   </p>
                 ) : null}
 
-                {lines.length === 1 && !sending ? (
+                {!depth && lines.length === 1 && !sending ? (
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {STARTERS.map(starter => (
                       <button
@@ -255,7 +306,11 @@ export function CommissionDesk({onClose}: {onClose: () => void}) {
                 <input
                   value={input}
                   onChange={event => setInput(event.target.value)}
-                  placeholder="어떤 홈페이지가 필요하신가요?"
+                  placeholder={
+                    depth
+                      ? "편하게 답해 주세요"
+                      : "어떤 홈페이지가 필요하신가요?"
+                  }
                   disabled={sending}
                   className="min-w-0 flex-1 rounded-lg border border-[#e2c078]/25 bg-white/[0.04] px-3 py-2.5 text-[13px] text-[#f3e6c8] outline-none transition placeholder:text-[#a9bdd6]/45 focus:border-[#ff9d38]/60 disabled:opacity-50"
                 />
@@ -273,6 +328,8 @@ export function CommissionDesk({onClose}: {onClose: () => void}) {
             <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto border-t border-[#7a5a38]/40 px-5 py-4 lg:w-[380px] lg:border-t-0">
               <EstimateCard draft={draft} disclaimer={disclaimer} />
               <RequirementList draft={draft} />
+
+              {depth ? <DepthProgress draft={draft} /> : null}
 
               <AnimatePresence>
                 {ready ? (
@@ -358,8 +415,9 @@ export function CommissionDesk({onClose}: {onClose: () => void}) {
                   </motion.div>
                 ) : (
                   <p className="mt-4 border-t border-[#7a5a38]/40 pt-4 text-[11px] leading-relaxed text-[#a9bdd6]/60">
-                    대화를 조금 더 나누면 접수 창이 열려요. 어떤 사이트인지,
-                    어떤 기능이 필요한지 알려주세요.
+                    {depth
+                      ? "여기서 주신 답은 바로 저장돼요. 중간에 닫으셔도 이어서 하실 수 있어요."
+                      : "대화를 조금 더 나누면 접수 창이 열려요. 어떤 사이트인지, 어떤 기능이 필요한지 알려주세요."}
                   </p>
                 )}
               </AnimatePresence>
@@ -455,6 +513,59 @@ function RequirementList({draft}: {draft: CommissionDraft | null}) {
   );
 }
 
+/**
+ * 심화 문답의 오른쪽 패널 — 무엇을 받았고 무엇이 남았는지.
+ *
+ * 접수 폼 자리를 대신한다. 끝이 안 보이는 문답은 사람이 중간에 그만두므로,
+ * **남은 개수를 눈에 보이게** 두는 것이 이 패널의 유일한 목적이다.
+ */
+function DepthProgress({draft}: {draft: CommissionDraft | null}) {
+  if (!draft) return null;
+
+  const answered: {label: string; value: string}[] = [
+    {label: "운영·수정", value: draft.who_updates},
+    {label: "콘텐츠", value: draft.content_owner},
+    {label: "성공 기준", value: draft.success_metric},
+    {label: "기존 자산", value: draft.existing_assets},
+    {label: "피할 것", value: draft.dislikes.join(", ")},
+    {label: "참고 이유", value: draft.reference_notes},
+    {label: "결정하는 분", value: draft.decision_maker}
+  ].filter(row => row.value.trim());
+
+  const remaining = draft.depth_missing;
+
+  return (
+    <div className="mt-4 border-t border-[#7a5a38]/40 pt-4">
+      <p className="v-serif mb-2 text-[13px] text-[#e2c078]">
+        제작에 필요한 것
+      </p>
+
+      {answered.length ? (
+        <dl className="space-y-1.5">
+          {answered.map(row => (
+            <div key={row.label} className="flex gap-2 text-[11px]">
+              <dt className="w-16 shrink-0 text-[#7bd88f]">✓ {row.label}</dt>
+              <dd className="flex-1 leading-relaxed text-[#dfe7f2]">
+                {row.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+
+      {remaining.length ? (
+        <p className="mt-3 text-[11px] leading-relaxed text-[#a9bdd6]/60">
+          남은 항목 {remaining.length}가지 — {remaining.join(" · ")}
+        </p>
+      ) : (
+        <p className="mt-3 rounded-lg border border-[#7bd88f]/30 bg-[#7bd88f]/10 px-3 py-2 text-[11px] leading-relaxed text-[#dfe7f2]">
+          필요한 내용을 다 받았어요. 덧붙이실 게 있으면 편하게 남겨주세요.
+        </p>
+      )}
+    </div>
+  );
+}
+
 function CommissionReceipt({
   ack,
   onClose
@@ -478,10 +589,36 @@ function CommissionReceipt({
         접수번호를 적어두시면 나중에 문의하실 때 빠르게 찾을 수 있어요. 상담
         내용도 함께 저장되어 있어 처음부터 다시 설명하지 않으셔도 됩니다.
       </p>
+
+      {/* 심화 문답으로 가는 문. **접수 직후가 가장 잘 눌리는 순간이다** —
+          이미 마음을 낸 참이고, 메일을 기다리는 동안 할 일이 생기는 셈이라. */}
+      {ack.track_path ? (
+        <div className="w-full max-w-[440px] rounded-xl border border-[#e2c078]/25 bg-white/[0.04] p-4">
+          <p className="v-serif text-[13px] text-[#e2c078]">
+            3분만 더 — 결과가 많이 달라져요
+          </p>
+          <p className="mt-1.5 text-[11px] leading-relaxed text-[#a9bdd6]/80">
+            사진은 누가 준비하실지, 만든 뒤엔 누가 고치실지 같은 걸 몇 가지 더
+            여쭤보고 싶어요. 실제로 만들 때 꼭 필요한 것들이라, 미리 알면 훨씬
+            잘 맞춰 드릴 수 있습니다.
+          </p>
+          <a
+            href={ack.track_path}
+            className="mt-3 inline-block rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-4 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25 active:scale-95"
+          >
+            도안에게 마저 알려주기
+          </a>
+          <p className="mt-2 text-[10px] leading-relaxed text-[#a9bdd6]/50">
+            지금 안 하셔도 괜찮아요. 이 주소는 그대로 열려 있으니 나중에
+            돌아오셔도 됩니다.
+          </p>
+        </div>
+      ) : null}
+
       <button
         type="button"
         onClick={onClose}
-        className="mt-1 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-5 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25 active:scale-95"
+        className="mt-1 rounded-lg border border-[#e2c078]/25 px-5 py-2.5 text-[12px] font-black text-[#a9bdd6]/80 transition hover:border-[#e2c078]/60 hover:text-[#f3e6c8] active:scale-95"
       >
         마을로 돌아가기
       </button>
