@@ -253,7 +253,7 @@ export default function IslandPage() {
       <footer className="py-8 text-center">
         <a
           className="text-xs text-[rgb(var(--v-moon)/0.55)] underline underline-offset-4"
-          href="/"
+          href="/village"
         >
           마을로 돌아가기
         </a>

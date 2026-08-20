@@ -52,6 +52,20 @@ export function ResumeMode({onEnterVillage}: Props) {
   const [gridView, setGridView] = useState(false);
   const [selectedRich, setSelectedRich] = useState<number | null>(null);
 
+  // 터치 전용 기기인가. 이 화면에 온 터치 방문자는 대개 자동 전환으로 왔는데,
+  // 아래 "마을 탐험" 버튼을 누르면 **조작이 안 되는 마을**로 들어가게 된다.
+  // 막지는 않고 한 줄로 알려만 준다.
+  //
+  // 렌더 중에 matchMedia 를 바로 부르면 서버 렌더(false)와 어긋나 하이드레이션
+  // 경고가 난다 — 마운트 뒤에 한 번만 읽는다.
+  const [touchOnly, setTouchOnly] = useState(false);
+  useEffect(() => {
+    setTouchOnly(
+      window.matchMedia("(pointer: coarse)").matches &&
+        window.matchMedia("(hover: none)").matches
+    );
+  }, []);
+
   const eduMain = useMemo(
     () => education.filter(e => isAcademic(e.program)),
     []
@@ -806,6 +820,19 @@ export function ResumeMode({onEnterVillage}: Props) {
               >
                 🏘 3D 개발자 마을 탐험하기 →
               </button>
+              {touchOnly ? (
+                <p
+                  style={{
+                    marginTop: 10,
+                    fontSize: 12,
+                    lineHeight: 1.6,
+                    opacity: 0.55
+                  }}
+                >
+                  마을은 마우스·키보드로 돌아다니는 곳이라, PC에서 훨씬 잘
+                  동작해요. (약 25MB를 내려받습니다)
+                </p>
+              ) : null}
             </div>
           </div>
         </section>

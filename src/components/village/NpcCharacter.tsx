@@ -184,5 +184,12 @@ export function NpcCharacter({
 }
 
 // 레지스트리에 등록된 모델은 미리 받아둔다 (NPC가 화면에 뜰 때 끊기지 않게)
-for (const entry of Object.values(characterModels))
-  useGLTF.preload(entry.url, true, true, extendGltfLoader);
+//
+// **모듈 최상위에서 부르지 않는다.** 이 파일은 dynamic(VillageScene) 청크에 실려
+// 있는데, Next 가 그 청크를 미리 로드하는 것만으로 최상위 코드가 실행된다.
+// 그러면 인트로만 보고 갈 사람도 캐릭터 GLB 를 내려받게 된다(실측 1.4MB).
+// 씬이 실제로 마운트될 때 한 번만 돌도록 아래 훅으로 옮겼다.
+export function preloadCharacterModels(): void {
+  for (const entry of Object.values(characterModels))
+    useGLTF.preload(entry.url, true, true, extendGltfLoader);
+}

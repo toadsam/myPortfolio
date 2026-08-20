@@ -14,11 +14,22 @@ import {projects} from "@/data/projects";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {villageBuildings} from "@/lib/constants";
 import {sfx} from "@/lib/sfx";
-import type {ExplorationMode} from "@/types/portfolio";
 
-interface IntroOverlayProps {
-  onStart: (mode: ExplorationMode) => void;
-  onResume: () => void;
+interface LandingScreenProps {
+  /** 「마을 보기」 — 부모가 `/village` 로 보낸다. */
+  onEnterVillage: () => void;
+  /** 「이력서 보기」 — 부모가 `/resume` 로 보낸다. */
+  onOpenResume: () => void;
+  /** 「작업 의뢰하기」 — 주소를 옮기지 않고 2D 접수 데스크를 연다. */
+  onOpenCommission: () => void;
+  /**
+   * "이 사람은 마을로 들어갈 것 같다" 신호. 부모가 이때 마을 라우트를 미리 받는다.
+   *
+   * 마을은 이제 별도 주소라 이 화면은 three.js 를 한 바이트도 안 받는다. 대신
+   * 누른 **뒤에** 청크를 받기 시작하면 그만큼 기다리게 되므로, 누르기 직전의
+   * 신호(마우스가 버튼에 올라옴 · 키보드 포커스)를 잡아 미리 받아 둔다.
+   */
+  onPrepareVillage?: () => void;
 }
 
 // ─── 디코딩(스크램블) 텍스트 ──────────────────────────────────────────────────
@@ -676,9 +687,31 @@ function ClockChip() {
   );
 }
 
-export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
+export function LandingScreen({
+  onEnterVillage,
+  onOpenResume,
+  onOpenCommission,
+  onPrepareVillage
+}: LandingScreenProps) {
   const [isExiting, setIsExiting] = useState(false);
   const [muted, setMuted] = useState(false);
+
+  // 마우스가 없는 기기인가. 마을 조작(카메라·이동)은 마우스/키보드 전제라
+  // 터치로는 사실상 못 움직인다. **막지는 않는다** — 예전엔 말없이 이력서로
+  // 돌려버렸는데, 그러면 일을 맡기러 온 사람까지 이력서로 끌려갔다.
+  // 여기서는 「마을 보기」에 무게(약 25MB)와 권장 기기만 붙여 알려 주고,
+  // 고르는 건 방문자에게 맡긴다.
+  //
+  // 렌더 중에 matchMedia 를 바로 부르면 서버 렌더(false)와 어긋나 하이드레이션
+  // 경고가 난다 — 마운트 뒤에 한 번만 읽는다.
+  const [touchOnly, setTouchOnly] = useState(false);
+  useEffect(() => {
+    setTouchOnly(
+      window.matchMedia("(pointer: coarse)").matches &&
+        window.matchMedia("(hover: none)").matches
+    );
+  }, []);
+
   // 부팅 타이핑 단계: 0 라벨 → 1 제목1 → 2 제목2 → 3 부제 → 4 나머지 reveal
   const [bootStep, setBootStep] = useState(0);
   const revealed = bootStep >= 4;
@@ -709,19 +742,25 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
     my.set(((e.clientY - r.top) / r.height) * 100);
   }
 
-  function handleStart(mode: ExplorationMode) {
+  function handleEnterVillage() {
     if (isExiting) return;
     sfx.enter();
     // 입장 효과음 뒤로 잔잔한 앰비언트 드론을 깔아 마을로 이어준다
     setTimeout(() => sfx.startAmbient(), 700);
     setIsExiting(true);
-    setTimeout(() => onStart(mode), 620);
+    setTimeout(onEnterVillage, 620);
   }
 
   function handleResume() {
     if (isExiting) return;
     sfx.click();
-    onResume();
+    onOpenResume();
+  }
+
+  function handleCommission() {
+    if (isExiting) return;
+    sfx.click();
+    onOpenCommission();
   }
 
   function toggleMute() {
@@ -736,14 +775,34 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
     <AnimatePresence>
       <motion.div
         animate={isExiting ? "exit" : "visible"}
-        className="pointer-events-auto absolute inset-0 z-20 flex flex-col"
+        // **이 화면은 자기 배경을 스스로 칠해야 한다.**
+        // 예전엔 마을 위에 얹힌 오버레이(`absolute inset-0`)라 뒤를 마을 캔버스와
+        // 마을 `<main>` 의 검은 바탕이 받쳐 줬다. 독립하고 나서 그대로 뒀더니
+        // `body` 의 크림색(마을 낮 바탕)이 그대로 비쳤다.
+        //
+        // 배경은 og-image(152KB) — 링크 미리보기용으로 이미 있는 밤 마을 컷이다.
+        // 아래 그라디언트가 **왼쪽만 어둡게 깔고 오른쪽은 열어 두는** 구성이라
+        // (글자는 왼쪽, 마을이 주인공) 뒤에 마을 그림이 있어야 그 의도가 산다.
+        //
+        // **multiply 로 한 번 눌러야 한다.** og-image 는 밝고 쨍한 홍보용 컷인데,
+        // 아래 막은 훨씬 어두운 실시간 3D 캔버스에 맞춰 만든 것이라 이 그림 위에서는
+        // 전혀 안 눌린다 — 그냥 깔았더니 글자가 배경에 묻혀 안 읽혔다.
+        className="pointer-events-auto relative flex h-dvh w-full flex-col bg-[#0b1626] bg-cover bg-center"
+        style={{
+          backgroundImage: "url(/og-image.jpg)",
+          backgroundColor: "#2a3a52",
+          backgroundBlendMode: "multiply"
+        }}
         initial="hidden"
         variants={{hidden: {}, visible: {}, exit: {}}}
       >
         <motion.div
           ref={stageRef}
           animate={{opacity: isExiting ? 0 : 1}}
-          className="relative flex h-full w-full flex-col justify-center overflow-hidden pb-12 pt-[65px] [cursor:none]"
+          // pt 가 65px 이었던 건 마을 헤더(fixed h-[65px]) 자리를 비우려던 것이다.
+          // 이 화면엔 헤더가 없고, 버튼이 셋으로 늘어 세로가 빠듯해졌다 —
+          // 그 65px 를 그대로 두면 맨 아래 안내 줄이 하단 통계 바에 가린다.
+          className="relative flex h-full w-full flex-col justify-center overflow-hidden pb-12 pt-6 [cursor:none]"
           initial={{opacity: 0}}
           onMouseMove={handleMove}
           transition={{duration: isExiting ? 0.4 : 0.5, ease: "easeInOut"}}
@@ -958,13 +1017,22 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                 ))}
               </div>
 
-              <div className="mt-5 flex max-w-2xl flex-col gap-2.5 sm:flex-row">
-                {/* 메인 CTA — 마을로 입장 (마그네틱) */}
+              {/* 갈림길 셋 — 둘러보러 온 사람 / 평가하러 온 사람 / 일 맡기러 온 사람.
+                  셋을 같은 무게로 둔다. 앞의 둘만 있던 시절엔 의뢰하러 온 사람이
+                  첫 화면에서 갈 곳이 없어 마을 구석의 떠 있는 버튼을 찾아야 했다. */}
+              <div className="mt-5 flex max-w-4xl flex-col gap-2.5 sm:flex-row">
+                {/* 마을 — 이 포트폴리오의 본편 */}
                 <Magnetic className="flex-1">
                   <motion.button
                     className="v-wood v-wood-inset group relative w-full px-5 py-4 text-left"
-                    onClick={() => handleStart("click")}
-                    onMouseEnter={() => sfx.hover()}
+                    onClick={handleEnterVillage}
+                    // 마우스가 올라온 순간 = 곧 누른다. 여기서 마을 라우트를 미리
+                    // 받아야 누른 뒤에 기다리지 않는다(키보드 이동은 onFocus 가 잡는다).
+                    onFocus={onPrepareVillage}
+                    onMouseEnter={() => {
+                      sfx.hover();
+                      onPrepareVillage?.();
+                    }}
                     type="button"
                     whileHover={{
                       scale: 1.02,
@@ -979,20 +1047,22 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                       <IconMap className="h-9 w-9 shrink-0 text-[#e2c078]" />
                       <span className="min-w-0">
                         <span className="v-serif v-emboss block text-[17px]">
-                          마을로 입장하기{" "}
+                          마을 보기{" "}
                           <span className="inline-block transition-transform group-hover:translate-x-1">
                             →
                           </span>
                         </span>
                         <span className="mt-0.5 block text-[11px] text-[#bdb094]">
-                          프로젝트·기술·경험을 둘러봅니다.
+                          {touchOnly
+                            ? "PC 권장 · 약 25MB를 내려받아요."
+                            : "프로젝트·기술·경험을 3D 마을에서."}
                         </span>
                       </span>
                     </span>
                   </motion.button>
                 </Magnetic>
 
-                {/* 면접관용 빠른 길 — 동등하게 강조 (마그네틱) */}
+                {/* 면접관용 빠른 길 — 동등하게 강조 */}
                 <Magnetic className="flex-1">
                   <motion.button
                     className="v-wood v-wood-inset group relative w-full px-5 py-4 text-left"
@@ -1012,13 +1082,48 @@ export function IntroOverlay({onStart, onResume}: IntroOverlayProps) {
                       <IconScroll className="h-9 w-9 shrink-0 text-[#e2c078]" />
                       <span className="min-w-0">
                         <span className="v-serif v-emboss block text-[17px]">
-                          빠른 이력서 보기{" "}
+                          이력서 보기{" "}
                           <span className="inline-block transition-transform group-hover:translate-x-1">
                             →
                           </span>
                         </span>
                         <span className="mt-0.5 block text-[11px] text-[#bdb094]">
                           시간이 없다면 — 한 페이지 요약으로.
+                        </span>
+                      </span>
+                    </span>
+                  </motion.button>
+                </Magnetic>
+
+                {/* 의뢰 — 주소를 옮기지 않고 2D 접수 데스크를 연다.
+                    3D 공방(마을 해치·포스트의 귀띔)과는 다른 길이다. 여기는
+                    모바일에서도 되는 실사용 접수 경로라, 둘을 합치면 안 된다. */}
+                <Magnetic className="flex-1">
+                  <motion.button
+                    className="v-wood v-wood-inset group relative w-full px-5 py-4 text-left"
+                    onClick={handleCommission}
+                    onMouseEnter={() => sfx.hover()}
+                    whileHover={{
+                      scale: 1.02,
+                      boxShadow: "0 0 34px rgba(226,192,120,0.22)"
+                    }}
+                    whileTap={{scale: 0.97}}
+                    transition={{type: "spring", stiffness: 320, damping: 20}}
+                    type="button"
+                  >
+                    <span className="v-corner left-2 top-2" />
+                    <span className="v-corner bottom-2 right-2" />
+                    <span className="relative flex items-center gap-3">
+                      <IconBookQuill className="h-9 w-9 shrink-0 text-[#e2c078]" />
+                      <span className="min-w-0">
+                        <span className="v-serif v-emboss block text-[17px]">
+                          작업 의뢰하기{" "}
+                          <span className="inline-block transition-transform group-hover:translate-x-1">
+                            →
+                          </span>
+                        </span>
+                        <span className="mt-0.5 block text-[11px] text-[#bdb094]">
+                          홈페이지 제작을 맡기실 분은 이쪽으로.
                         </span>
                       </span>
                     </span>

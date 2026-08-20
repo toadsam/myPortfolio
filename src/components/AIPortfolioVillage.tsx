@@ -14,7 +14,6 @@ import {Header} from "@/components/ui/Header";
 import {Crest} from "@/components/ui/Crest";
 import {VoyageOverlay} from "@/components/ui/VoyageOverlay";
 import {InfoPanel} from "@/components/ui/InfoPanel";
-import {IntroOverlay} from "@/components/ui/IntroOverlay";
 import {SceneTransition} from "@/components/ui/SceneTransition";
 import {SectionTabs} from "@/components/ui/SectionTabs";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
@@ -315,7 +314,6 @@ export function AIPortfolioVillage() {
   );
   const [selectedNpc, setSelectedNpc] = useState<NPCData | null>(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [showIntro, setShowIntro] = useState(true);
   // 갓생 섬 선착장을 보일지. 섬은 내 기록만 있는 비공개 공간이라 손님에겐
   // 부두 자체를 안 보여준다 — 눌러봤자 로그인 벽이면 재미가 아니라 막다른 길이다.
   //
@@ -388,27 +386,6 @@ export function AIPortfolioVillage() {
     });
   }, []);
 
-  // ─── 모바일(터치 전용) 방문자는 이력서 모드로 먼저 안내한다 ───────────────
-  // 마을 조작(캐릭터 이동·카메라)은 마우스/키보드 전제라 터치로는 사실상
-  // 움직일 수 없다. 폰으로 링크를 연 방문자(대개 면접관이다)가 30MB 로딩
-  // 끝에 "조작 안 되는 마을"을 만나는 것보다, 바로 읽히는 이력서가 낫다.
-  // ResumeMode 의 "마을 입장" 버튼은 살아 있으므로 원하면 들어가 볼 수 있다.
-  // 캔버스가 viewMode==="village" 로 게이트돼 있어, 마운트 직후 전환하면
-  // 모바일에서는 3D 에셋 다운로드 자체가 시작되지 않는다.
-  useEffect(() => {
-    const touchOnly =
-      window.matchMedia("(pointer: coarse)").matches &&
-      window.matchMedia("(hover: none)").matches;
-    if (touchOnly && window.innerWidth < 900) {
-      setShowIntro(false);
-      setViewMode("resume");
-      trackVisitorEvent({
-        event_type: "mobile_resume_redirect",
-        target_id: "resume",
-        label: "모바일 자동 이력서 모드"
-      });
-    }
-  }, []);
   const [interiorSectionId, setInteriorSectionId] = useState<SectionId | null>(
     null
   );
@@ -1092,7 +1069,6 @@ export function AIPortfolioVillage() {
   // 오디오 지휘 — 마을이면 마을 BGM, 프로젝트면 프로젝트 음악, 그 외엔 무음.
   // 사운드가 켜져 있을 때만(soundOn) 재생. 화면 전환 시 자동으로 교체된다.
   useEffect(() => {
-    if (showIntro) return;
     if (viewMode === "village") {
       projectSound?.setEnabled(false);
       if (soundOn) sfx.startAmbient();
@@ -1104,13 +1080,13 @@ export function AIPortfolioVillage() {
       sfx.stopAmbient();
       projectSound?.setEnabled(false);
     }
-  }, [viewMode, soundOn, showIntro]);
+  }, [viewMode, soundOn]);
 
   // 컨시어지: 마을 진입 시 루미가 달려오게 트리거 (접속할 때마다 1회)
   useEffect(() => {
-    if (showIntro || conciergeStage !== "idle") return;
+    if (conciergeStage !== "idle") return;
     setConciergeStage("running");
-  }, [showIntro, conciergeStage]);
+  }, [conciergeStage]);
 
   // 루미가 안 도착해도 패널이 뜨도록 안전망
   useEffect(() => {
@@ -1136,7 +1112,6 @@ export function AIPortfolioVillage() {
   }
 
   function focusDistrict(sectionId: SectionId) {
-    setShowIntro(false);
     setSelectedNpc(null);
     setIsPanelOpen(false);
     setActiveSection(sectionId);
@@ -1312,7 +1287,6 @@ export function AIPortfolioVillage() {
       metadata: {sectionId, contentId: contentId ?? ""}
     });
     setTravelCam(null);
-    setShowIntro(false);
     setActiveSection(sectionId);
     setActiveContentId(contentId);
     setSelectedNpc(null);
@@ -1328,7 +1302,6 @@ export function AIPortfolioVillage() {
       target_id: point.key,
       label: point.label
     });
-    setShowIntro(false);
     setSelectedNpc(null);
     setIsPanelOpen(false);
     setConciergeStage("closed");
@@ -1354,7 +1327,6 @@ export function AIPortfolioVillage() {
     clearGreetTimer();
     setOverseerTarget(null);
     patrolTargetIdRef.current = "";
-    setShowIntro(false);
     setSelectedNpc(null);
     const willActivate = npcCommand !== mode;
     trackVisitorEvent({
@@ -1391,7 +1363,6 @@ export function AIPortfolioVillage() {
     });
     setOverseerTarget(null);
     patrolTargetIdRef.current = "";
-    setShowIntro(false);
     if (npcCommand !== "greet") beforeGreetRef.current = npcCommand;
     setNpcCommand("greet");
     if (greetTimerRef.current) clearTimeout(greetTimerRef.current);
@@ -1426,7 +1397,6 @@ export function AIPortfolioVillage() {
     clearGreetTimer();
     setOverseerTarget(null);
     patrolTargetIdRef.current = "";
-    setShowIntro(false);
     setSelectedNpc(null);
     const t = cameraTargets.intro;
     setActiveSection("intro");
@@ -1520,7 +1490,6 @@ export function AIPortfolioVillage() {
     const pos = npcPositionsRef.current[npc.id] ?? npc.position;
     setTravelCam(null);
     setTalkCam(closeUp(pos));
-    setShowIntro(false);
     setSelectedNpc(npc);
     setActiveSection(npc.sectionId);
     setIsPanelOpen(false);
@@ -1536,7 +1505,6 @@ export function AIPortfolioVillage() {
   // 루미(가이드)는 컨시어지 패널로, 나머지는 일반 대화로
   function openNpc(npc: NPCData) {
     if (npc.id === GUIDE_ID) {
-      setShowIntro(false);
       setSelectedNpc(null);
       const pos = npcPositionsRef.current[GUIDE_ID] ?? WELCOME_SPOT;
       setConciergeCam(closeUp(pos));
@@ -1593,39 +1561,21 @@ export function AIPortfolioVillage() {
     setSelectedNpc(npc);
   }
 
-  function startExploring(mode: ExplorationMode) {
-    trackVisitorEvent({
-      event_type: "exploration_start",
-      target_id: mode,
-      label: mode
-    });
-    setShowIntro(false);
-    setExplorationMode(mode);
-    setActiveSection("intro");
-    // 입장하자마자 「중앙 광장」 패널을 펴지 않는다. 예전엔 클릭 모드로 들어오면
-    // 무조건 열었는데, 그 패널이 화면 오른쪽 460px 를 먹은 채로 HUD 다섯 개까지
-    // 같이 펼쳐져 있어서 정작 보여 주려던 3D 마을이 구석에만 남았다.
-    // 첫 화면에서 말을 거는 건 루미의 안내 하나면 충분하다.
-    setIsPanelOpen(false);
-  }
-
   function openResume() {
     trackVisitorEvent({
       event_type: "resume_open",
       target_id: "resume",
       label: "Resume Mode"
     });
-    setShowIntro(false);
     setViewMode("resume");
   }
 
   function enterVillageFromResume() {
     setViewMode("village");
-    setShowIntro(false);
     setExplorationMode("click");
     setActiveSection("intro");
-    // startExploring 과 같은 이유로 닫은 채 들어간다 — 마을로 들어오는 길이
-    // 둘인데 한쪽만 패널을 열면 같은 화면이 경로에 따라 달라 보인다.
+    // 패널을 닫은 채 들어간다 — 마을로 들어오는 길이 둘(착륙장·이력서)인데
+    // 한쪽만 패널을 열면 같은 화면이 경로에 따라 달라 보인다.
     setIsPanelOpen(false);
   }
 
@@ -1727,13 +1677,10 @@ export function AIPortfolioVillage() {
     <main className="min-h-screen bg-[#050d1a] pb-24 text-white md:pb-0">
       {viewMode === "village" ? (
         <>
-          {/* 인트로 중엔 헤더 숨김 — 첫 화면 집중 */}
-          {!showIntro ? (
-            <Header
-              activeSection={activeSection}
-              onSelectSection={stableOpenSection}
-            />
-          ) : null}
+          <Header
+            activeSection={activeSection}
+            onSelectSection={stableOpenSection}
+          />
           <section
             className={
               isPanelOpen
@@ -1741,11 +1688,15 @@ export function AIPortfolioVillage() {
                 : "relative pt-[65px] transition-[padding] duration-300"
             }
           >
+            {/* 이 섹션은 자기 높이가 없다 — VillageScene 루트(h-[48vh] …
+                md:h-screen)가 높이를 만든다. 그래서 여기서 씬을 조건부로 떼면
+                섹션이 pt-[65px]만 남아 접힌다(실제로 한 번 그렇게 깨졌다).
+                무게는 이제 라우트로 가른다(`/` 착륙장 / `/village` 마을) —
+                이 자리에서 다시 조건을 걸 이유가 없다. */}
             <VillageScene
               activeNpcId={selectedNpc?.id}
               activeSection={activeSection}
               explorationMode={explorationMode}
-              isIntro={showIntro}
               onRequestEnter={stableHandleRequestEnter}
               onSelectNpc={stableOpenNpc}
               onSelectSection={stableOpenSection}
@@ -1774,73 +1725,60 @@ export function AIPortfolioVillage() {
                   : talkCam ?? travelCam
               }
             />
-            {showIntro ? (
-              <IntroOverlay onStart={startExploring} onResume={openResume} />
-            ) : null}
           </section>
-          {!showIntro ? (
-            <button
-              type="button"
-              onClick={() => {
-                setExplorationMode(m => (m === "walk" ? "click" : "walk"));
-                setIsPanelOpen(false);
-                setSelectedNpc(null);
-              }}
-              className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 active:scale-95 md:bottom-6"
-            >
-              {explorationMode === "walk" ? (
-                <>
-                  <span>🖱️</span> 클릭 모드로
-                </>
-              ) : (
-                <>
-                  <span>🚶</span> 직접 이동 (WASD)
-                </>
-              )}
-            </button>
-          ) : null}
-          {!showIntro ? (
-            <button
-              type="button"
-              aria-label={soundOn ? "사운드 끄기" : "사운드 켜기"}
-              onClick={() => {
-                setSoundOn(on => {
-                  const next = !on;
-                  sfx.setMuted(!next);
-                  if (next) sfx.startAmbient();
-                  return next;
-                });
-              }}
-              className="fixed bottom-[14.5rem] left-4 z-30 flex h-10 w-10 items-center justify-center rounded-xl border border-[#5b8fd6]/40 bg-[#050d1a]/85 text-base shadow-2xl backdrop-blur-md transition hover:border-[#86b0e6] hover:bg-[#5b8fd6]/12 active:scale-90 md:bottom-[8.75rem]"
-            >
-              {soundOn ? "🔊" : "🔇"}
-            </button>
-          ) : null}
-          {!showIntro ? (
-            <LiveStatusPanel error={liveError} villageState={villageState} />
-          ) : null}
-          {!showIntro ? <ControlsHint /> : null}
-          {!showIntro ? (
-            <NpcQuickDock activeNpcId={selectedNpc?.id} onSelect={openNpc} />
-          ) : null}
-          {!showIntro && !isPanelOpen ? (
+          <button
+            type="button"
+            onClick={() => {
+              setExplorationMode(m => (m === "walk" ? "click" : "walk"));
+              setIsPanelOpen(false);
+              setSelectedNpc(null);
+            }}
+            className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 active:scale-95 md:bottom-6"
+          >
+            {explorationMode === "walk" ? (
+              <>
+                <span>🖱️</span> 클릭 모드로
+              </>
+            ) : (
+              <>
+                <span>🚶</span> 직접 이동 (WASD)
+              </>
+            )}
+          </button>
+          <button
+            type="button"
+            aria-label={soundOn ? "사운드 끄기" : "사운드 켜기"}
+            onClick={() => {
+              setSoundOn(on => {
+                const next = !on;
+                sfx.setMuted(!next);
+                if (next) sfx.startAmbient();
+                return next;
+              });
+            }}
+            className="fixed bottom-[14.5rem] left-4 z-30 flex h-10 w-10 items-center justify-center rounded-xl border border-[#5b8fd6]/40 bg-[#050d1a]/85 text-base shadow-2xl backdrop-blur-md transition hover:border-[#86b0e6] hover:bg-[#5b8fd6]/12 active:scale-90 md:bottom-[8.75rem]"
+          >
+            {soundOn ? "🔊" : "🔇"}
+          </button>
+          <LiveStatusPanel error={liveError} villageState={villageState} />
+          <ControlsHint />
+          <NpcQuickDock activeNpcId={selectedNpc?.id} onSelect={openNpc} />
+          {!isPanelOpen ? (
             <QuickTravelDock activeKey={activeSection} onTravel={travelTo} />
           ) : null}
-          {!showIntro && !isPanelOpen ? (
+          {!isPanelOpen ? (
             <Minimap activeKey={activeSection} onTravel={travelTo} />
           ) : null}
-          {!showIntro ? (
-            <CommandDock
-              command={npcCommand}
-              onCommand={issueCommand}
-              onGreet={commandGreet}
-              onGroupTalk={commandGroupTalk}
-              groupTalkBusy={groupChatBusy}
-              onBackToWork={backToWork}
-              onOpenRelations={() => setRelOpen(true)}
-            />
-          ) : null}
-          {!showIntro && !isPanelOpen ? (
+          <CommandDock
+            command={npcCommand}
+            onCommand={issueCommand}
+            onGreet={commandGreet}
+            onGroupTalk={commandGroupTalk}
+            groupTalkBusy={groupChatBusy}
+            onBackToWork={backToWork}
+            onOpenRelations={() => setRelOpen(true)}
+          />
+          {!isPanelOpen ? (
             <MobileHud
               activeKey={activeSection}
               onTravel={travelTo}
@@ -1916,7 +1854,7 @@ export function AIPortfolioVillage() {
           />
           {/* 의뢰 공방 상시 진입 — 실사용 창구라 '숨겨진 입구'만 두면 아무도 못 찾는다.
               발견의 재미는 포스트 대화 쪽 두 번째 입구가 맡는다. */}
-          {!showIntro && !isPanelOpen && !selectedNpc ? (
+          {!isPanelOpen && !selectedNpc ? (
             <button
               type="button"
               onClick={() => openCommission("상시 버튼")}

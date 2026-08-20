@@ -88,6 +88,8 @@ import type {
   Vector3Tuple
 } from "@/types/portfolio";
 import {AtelierHatch} from "./AtelierHatch";
+import {preloadCharacterModels} from "./NpcCharacter";
+import {preloadWarriorModels} from "./WarriorCharacter";
 import {IslandDock} from "./IslandDock";
 import {Building} from "./Building";
 import {BuildingNetwork} from "./BuildingNetwork";
@@ -103,7 +105,6 @@ interface VillageSceneProps {
   activeSection: SectionId;
   activeNpcId?: string;
   explorationMode: ExplorationMode;
-  isIntro?: boolean;
   onSelectSection: (sectionId: SectionId) => void;
   onSelectNpc: (npc: NPCData) => void;
   onRequestEnter: (buildingId: string) => void;
@@ -165,7 +166,18 @@ function Statue() {
   );
 }
 
-useGLTF.preload("/models/environment/statue.glb", true, true, extendGltfLoader);
+// **모듈 최상위에서 부르지 않는다.** 이 파일은 dynamic(VillageScene) 청크에 실려
+// 있는데, Next 가 그 청크를 미리 로드하는 것만으로 최상위 코드가 실행된다.
+// 그러면 인트로만 보고 갈 사람도 캐릭터 GLB 를 내려받게 된다(실측 1.4MB).
+// 씬이 실제로 마운트될 때 한 번만 돌도록 아래 훅으로 옮겼다.
+function preloadSceneModels(): void {
+  useGLTF.preload(
+    "/models/environment/statue.glb",
+    true,
+    true,
+    extendGltfLoader
+  );
+}
 
 // 마을 바닥.
 //
@@ -2795,7 +2807,6 @@ function VillageSceneImpl({
   activeSection,
   activeNpcId,
   explorationMode,
-  isIntro = false,
   onSelectNpc,
   onRequestEnter,
   npcRuntimeStates,
@@ -2824,6 +2835,15 @@ function VillageSceneImpl({
       window.matchMedia("(max-width: 767px)").matches,
     []
   );
+  // 씬이 실제로 올라온 지금에야 모델을 미리 받는다. 예전엔 이 파일들의 최상위에서
+  // 바로 받았는데, Next 가 dynamic 청크를 미리 로드하는 것만으로 그게 실행돼
+  // **인트로만 보고 갈 사람도 캐릭터 GLB 1.4MB 를 내려받았다.**
+  useEffect(() => {
+    preloadSceneModels();
+    preloadCharacterModels();
+    preloadWarriorModels();
+  }, []);
+
   // villageState는 30초 주기로만 바뀌므로, npcRuntimeStates가 바뀌는 2~3초마다
   // 매번 Array.find로 선형 탐색하지 않도록 Map을 villageState가 바뀔 때만 새로 만든다.
   // 색보정표. 팔레트가 새로고침 전까지 안 바뀌므로 딱 한 번 굽는다.
@@ -3130,13 +3150,9 @@ function VillageSceneImpl({
           <SeasonAmbience lite={isMobile} />
 
           {/* 지하 의뢰 공방으로 내려가는 해치 — 숨겨진 입구.
-              인트로 중에는 첫 화면에 집중하도록 감춘다. */}
-          {onDepartIsland && !isIntro ? (
-            <IslandDock onDepart={onDepartIsland} />
-          ) : null}
-          {onEnterAtelier && !isIntro ? (
-            <AtelierHatch onEnter={onEnterAtelier} />
-          ) : null}
+              (첫 화면은 이제 별도 주소라 여기서 감출 이유가 없다.) */}
+          {onDepartIsland ? <IslandDock onDepart={onDepartIsland} /> : null}
+          {onEnterAtelier ? <AtelierHatch onEnter={onEnterAtelier} /> : null}
 
           {/* ─── 빛 번짐 ────────────────────────────────────────────────────
               컨셉 아트에서 눈을 잡아끄는 건 형태가 아니라 **빛이 번지는 것**이다.
@@ -3224,7 +3240,6 @@ function VillageSceneImpl({
           ) : (
             <CameraController
               activeSection={activeSection}
-              isIntro={isIntro}
               lockRotate={editing}
               cinematic={cinematic}
             />

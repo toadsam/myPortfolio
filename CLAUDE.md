@@ -47,7 +47,9 @@ There is no lint script and no JS/TS test runner in this repo currently — don'
 
 ### Frontend entry and data flow
 
-`src/app/page.tsx` → `AIPortfolioVillage.tsx` (the whole app's state machine: `viewMode` = `village | interior | project-interior | resume`, plus intro, panel, NPC selection, sound, and the NPC-tick/encounter loops). `VillageScene.tsx` is `dynamic`-imported with `ssr: false` since Three.js needs a browser.
+**Three top-level routes, split by weight.** `/` (`src/app/page.tsx`) is a landing screen — `LandingScreen.tsx` (the old `IntroOverlay`) plus three buttons: 마을 보기 / 이력서 보기 / 작업 의뢰하기. It imports **no three.js at all** (measured: 0 GLB, ~214 KB JS). `/village` (`src/app/village/page.tsx`) is the heavy one: `AIPortfolioVillage.tsx`, the app's state machine (`viewMode` = `village | interior | project-interior | resume | atelier`, plus panel, NPC selection, sound, and the NPC-tick/encounter loops), with `VillageScene.tsx` `dynamic`-imported (`ssr: false`) since Three.js needs a browser. `/resume` (`src/app/resume/page.tsx`) is `ResumeMode` alone, split out because it pulls raw `three` for a decorative background.
+
+**That split is the only thing keeping the landing light — don't collapse it.** The intro used to be an overlay rendered on top of a live village, so every visitor downloaded 87 GLBs (20.7 MB) just to read the intro. Every workaround for that (arming the scene on hover, a static backdrop, a spacer div) existed to paper over the structure, and one of them broke the first screen outright — `AIPortfolioVillage`'s `<section>` has no height of its own, so removing `VillageScene` collapsed it to `pt-[65px]`. Landing weight is now a routing property, not a flag someone has to remember. `/` warms the village on hover via `router.prefetch` **plus** an explicit `import("@/components/village/VillageScene")` — the prefetch alone only fetches the route shell, not the nested dynamic scene chunk.
 
 Buildings and NPCs are **generated, not hand-listed 1:1**: `src/lib/constants.ts` defines `villageBuildings` (position/size/color/kind per building), then `src/data/npcRoster.ts` auto-derives one dedicated NPC per building as `npc-${building.id}` — adding a building building automatically gets it a guide NPC. Coordinates in `constants.ts` are authored small and scaled up via `spread()` (`SPREAD` constant) at module load.
 
@@ -154,4 +156,4 @@ Ambient mood is separate from category: `atmosphere.ts` maps project id → `Amb
 
 ### Legacy code, not the active app
 
-`src/App.js`, `src/index.js`, `src/containers/**`, and assorted root-level `.js`/`.jsx` files are the old Create React App portfolio, kept for reference only. The live entry point is `src/app/page.tsx`; these legacy files aren't part of the Next.js build target — don't "fix" them under the assumption they're dead code, but don't extend them either.
+`src/App.js`, `src/index.js`, `src/containers/**`, and assorted root-level `.js`/`.jsx` files are the old Create React App portfolio, kept for reference only. The live entry points are `src/app/page.tsx` (landing), `src/app/village/page.tsx`, and `src/app/resume/page.tsx`; these legacy files aren't part of the Next.js build target — don't "fix" them under the assumption they're dead code, but don't extend them either.

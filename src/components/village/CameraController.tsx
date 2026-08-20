@@ -15,7 +15,6 @@ type OrbitController = {
 
 interface CameraControllerProps {
   activeSection: SectionId;
-  isIntro?: boolean;
   lockRotate?: boolean;
   /** 연출용 카메라 override (컨시어지 등). 있으면 섹션 타깃 대신 이걸로 이동 */
   cinematic?: {
@@ -53,7 +52,6 @@ function isTyping() {
 
 export function CameraController({
   activeSection,
-  isIntro = false,
   lockRotate = false,
   cinematic = null
 }: CameraControllerProps) {
@@ -74,7 +72,6 @@ export function CameraController({
 
   const isTransitioning = useRef(true);
   const prevSection = useRef(activeSection);
-  const introDone = useRef(false);
 
   // ── 자유 카메라 (WASD/QE 이동 + 우클릭 마우스룩 + Shift 가속) ──
   const flying = useRef(false);
@@ -193,17 +190,6 @@ export function CameraController({
     };
   }, [camera, gl]);
 
-  // 시네마틱 인트로: 첫 마운트 시 카메라를 높은 위치에서 시작
-  useEffect(() => {
-    if (isIntro && !introDone.current) {
-      camera.position.set(1.5, 30, 4);
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (!isIntro) introDone.current = true;
-  }, [isIntro]);
-
   useEffect(() => {
     if (prevSection.current !== activeSection) {
       isTransitioning.current = true;
@@ -253,8 +239,8 @@ export function CameraController({
     if (!isTransitioning.current) return;
     regress(); // 전환 중 해상도 저하
 
-    const lerpSpeed = isIntro && !introDone.current ? 0.014 : 0.062;
-    const targetSpeed = isIntro && !introDone.current ? 0.018 : 0.076;
+    const lerpSpeed = 0.062;
+    const targetSpeed = 0.076;
 
     camera.position.lerp(desiredCamera, lerpSpeed);
 
