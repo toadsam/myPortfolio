@@ -127,9 +127,13 @@
 }
 
 .resume-terminal .brand {
-  font-family: var(--mono);
-  font-size: 14px;
-  letter-spacing: -0.5px;
+  /* 한글이 들어오면서 --mono 를 뺐다. 이 스택(ui-monospace/Menlo/Consolas)에는
+     한글 글립이 없어, `정재훈` 이 시스템 고딕으로 떨어지면서 모노 자간만 남는다.
+     음수 자간도 `CORE_SYSTEM // 정재훈.SYS` 처럼 긴 라틴 문자열에 맞춘 값이라
+     세 글자짜리 이름에서는 글자가 붙어 보였다. */
+  font-family: var(--sans);
+  font-size: 15px;
+  letter-spacing: 0;
   display: flex;
   align-items: center;
   gap: 15px;
@@ -160,11 +164,12 @@
   color: var(--muted);
   padding: 6px 16px;
   border-radius: 100px;
-  font-size: 11px;
+  /* 11px 는 대문자 라틴 3~7글자 기준이었다. 한글은 같은 크기에서 훨씬 답답하다. */
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
-  font-family: var(--mono);
+  font-family: var(--sans);
 }
 
 .resume-terminal .nav-capsule button.active {
@@ -208,11 +213,16 @@
 
 .resume-terminal .vertical-text {
   writing-mode: vertical-rl;
-  text-transform: uppercase;
-  font-family: var(--mono);
+  /* **text-orientation 이 없으면 한 줄 안에서 방향이 갈린다.** 기본값 mixed 는
+     라틴·숫자를 눕히고 한글만 세우므로, `2026 · 기록` 이 "누운 2026 + 선 기록"
+     으로 찢어진다. upright 로 전부 세운다.
+     (text-transform: uppercase 는 한글·숫자에 아무 일도 안 하는 죽은 선언이라 뺐다) */
+  text-orientation: upright;
+  font-family: var(--sans);
   font-size: 10px;
   color: var(--muted);
-  letter-spacing: 4px;
+  /* 세로쓰기에서 letter-spacing 은 글자 사이 "높이"다. 세운 글자에 4px 는 너무 벌어진다. */
+  letter-spacing: 2px;
   animation: rt-fadeInUp 1s ease-out 0.5s backwards;
 }
 

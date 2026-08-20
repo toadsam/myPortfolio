@@ -268,8 +268,40 @@ export function slideTo(
   toX: number,
   toZ: number
 ): {x: number; z: number} {
-  if (isWalkable(toX, toZ)) return {x: toX, z: toZ};
-  if (isWalkable(toX, fromZ)) return {x: toX, z: fromZ};
-  if (isWalkable(fromX, toZ)) return {x: fromX, z: toZ};
+  return slideWith(isWalkable, fromX, fromZ, toX, toZ);
+}
+
+/**
+ * **주민은 물에 안 들어간다.** 플레이어는 걸어 들어가 허리까지 잠기는 게 기능이지만
+ * (위 "물" 절), NPC 가 그러면 그냥 물에 빠진 사람으로 보인다 — 실제로 32명 중
+ * 상시 1~4명이 물속에 잠긴 채 서 있었다(월드 좌표 실측, 최대 −0.59).
+ *
+ * 마른 땅 판정은 `walkHeightAt` 부호 하나로 끝난다: 물이면 음수(−깊이),
+ * 데크·단·잔디면 0 이상이다.
+ */
+export function isWalkableDry(x: number, z: number): boolean {
+  return isWalkable(x, z) && walkHeightAt(x, z) >= 0;
+}
+
+/** 물을 피하는 미끄러짐 — NPC 전용 */
+export function slideToDry(
+  fromX: number,
+  fromZ: number,
+  toX: number,
+  toZ: number
+): {x: number; z: number} {
+  return slideWith(isWalkableDry, fromX, fromZ, toX, toZ);
+}
+
+function slideWith(
+  ok: (x: number, z: number) => boolean,
+  fromX: number,
+  fromZ: number,
+  toX: number,
+  toZ: number
+): {x: number; z: number} {
+  if (ok(toX, toZ)) return {x: toX, z: toZ};
+  if (ok(toX, fromZ)) return {x: toX, z: fromZ};
+  if (ok(fromX, toZ)) return {x: fromX, z: toZ};
   return {x: fromX, z: fromZ};
 }

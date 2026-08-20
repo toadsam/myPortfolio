@@ -37,6 +37,15 @@ function parseEdu(program: string): {name: string; tag: string | null} {
 const isAcademic = (program: string) =>
   /\((전공|복수전공|부전공)\)/.test(program);
 
+// 상단 탭. 7개 섹션 전부를 태우면 캡슐이 터지므로 문서의 세 덩이만 짚는다 —
+// 기술/학력(=이력), 프로젝트(=작업), 연락처. id 는 <section id="resume-{id}"> 과 짝.
+const NAV_ITEMS = [
+  {id: "history", label: "이력"},
+  {id: "work", label: "작업"},
+  {id: "contact", label: "연락"}
+] as const;
+type NavId = (typeof NAV_ITEMS)[number]["id"];
+
 interface Props {
   onEnterVillage: () => void;
 }
@@ -48,6 +57,77 @@ export function ResumeMode({onEnterVillage}: Props) {
   const rotateRef = useRef<(dir: number) => void>(() => {});
   // 캐러셀 복귀 시 다음 rAF를 기다리지 않고 즉시 카드 배치를 다시 계산하기 위한 통로
   const updateRef = useRef<() => void>(() => {});
+
+  // 클릭 점프가 끝나는 시각(ms). 그때까지 스크롤 스파이는 입을 다문다.
+  const navLockRef = useRef(0);
+
+  // 상단 탭 3개가 가리키는 곳. id 는 섹션 <section id=...> 과 짝이다.
+  // 탭을 늘리려면 이 배열과 섹션 id 만 맞추면 된다 — 마크업은 map 이 만든다.
+  const [activeNav, setActiveNav] = useState<NavId>("history");
+
+  // 이력서 본문은 `.resume-terminal` 자신이 스크롤 컨테이너다(position:fixed +
+  // overflow-y:auto). 그래서 window.scrollTo 가 아니라 요소에게 물어봐야 한다 —
+  // scrollIntoView 는 스크롤 가능한 조상을 알아서 찾는다.
+  //
+  // 헤더는 sticky 가 아니라 본문과 같이 흘러가므로 보정할 오프셋이 없다.
+  const goToSection = (id: NavId) => {
+    setActiveNav(id);
+    const el = rootRef.current?.querySelector(`#resume-${id}`);
+    if (!el) return;
+    // 이 리포의 다른 움직임과 같은 규칙 — 모션을 줄인 사용자에겐 즉시 점프.
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // 점프가 끝날 때까지 아래 감시자를 재운다. 안 그러면 부드럽게 지나가는
+    // 중간 섹션마다 탭이 옮겨 붙어, 누른 곳에 닿기 전에 두세 번 깜빡인다.
+    navLockRef.current = still ? 0 : Date.now() + 1000;
+    el.scrollIntoView({behavior: still ? "auto" : "smooth", block: "start"});
+  };
+
+  // 손으로 스크롤할 때도 탭이 따라오게 한다(스크롤 스파이).
+  //
+  // 판정은 **화면 중앙의 얇은 띠**로 한다 — rootMargin 으로 위 45% / 아래 50% 를
+  // 깎아 5% 짜리 가로줄만 남기고, 거기 걸친 섹션을 현재 위치로 본다. 섹션 높이가
+  // 제각각(2,100px ~ 900px)이라 "가장 많이 보이는 섹션" 같은 비율 기준은 큰
+  // 섹션이 계속 이기고, threshold 방식은 짧은 섹션이 아예 못 잡힌다.
+  //
+  // 탭이 없는 구간(02 학력·05 가치관 등)에서는 걸리는 섹션이 없어 **직전 탭이
+  // 그대로 남는다.** 이게 원하는 동작이다 — 학력을 읽는 동안 `이력` 이 켜져 있다.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const seen = new Set<NavId>();
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          const id = entry.target.id.replace("resume-", "") as NavId;
+          if (entry.isIntersecting) seen.add(id);
+          else seen.delete(id);
+        });
+        if (Date.now() < navLockRef.current) return;
+        const hit = NAV_ITEMS.find(item => seen.has(item.id));
+        if (hit) {
+          setActiveNav(prev => (prev === hit.id ? prev : hit.id));
+          return;
+        }
+        // 첫 섹션보다 **위**(히어로)로 올라온 경우만은 유지가 아니라 되돌린다.
+        // 갓 로드한 화면과 스크롤해 올라온 화면이 같은데 탭이 다르면 틀린 것이다.
+        // (섹션 사이 빈 구간은 위 조건에 안 걸리므로 여전히 직전 탭을 지킨다)
+        const first = root.querySelector<HTMLElement>(
+          `#resume-${NAV_ITEMS[0].id}`
+        );
+        if (first && root.scrollTop < first.offsetTop) {
+          setActiveNav(prev =>
+            prev === NAV_ITEMS[0].id ? prev : NAV_ITEMS[0].id
+          );
+        }
+      },
+      {root, rootMargin: "-45% 0px -50% 0px"}
+    );
+    NAV_ITEMS.forEach(item => {
+      const el = root.querySelector(`#resume-${item.id}`);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
 
   const [gridView, setGridView] = useState(false);
   const [selectedRich, setSelectedRich] = useState<number | null>(null);
@@ -281,14 +361,19 @@ export function ResumeMode({onEnterVillage}: Props) {
           <header>
             <div className="brand">
               <div className="logo-orb" />
-              <span>CORE_SYSTEM // 정재훈.SYS</span>
+              <span>정재훈</span>
             </div>
             <div className="nav-capsule">
-              <button type="button" className="active">
-                ARCHIVE
-              </button>
-              <button type="button">LABS</button>
-              <button type="button">TERMINAL</button>
+              {NAV_ITEMS.map(item => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={item.id === activeNav ? "active" : undefined}
+                  onClick={() => goToSection(item.id)}
+                >
+                  {item.label}
+                </button>
+              ))}
             </div>
             <button
               type="button"
@@ -300,7 +385,7 @@ export function ResumeMode({onEnterVillage}: Props) {
           </header>
 
           <aside className="left-rail">
-            <div className="vertical-text">TECHNICAL MANIFESTO 2026</div>
+            <div className="vertical-text">2026 · 기록</div>
           </aside>
 
           <main>
@@ -328,8 +413,8 @@ export function ResumeMode({onEnterVillage}: Props) {
                   lineHeight: 1.8
                 }}
               >
-                // SYSTEM_BOOT: 웹 아키텍처와 XR 인터랙션을 결합해, 운영에서
-                생기는 마찰을 풀스택 구현으로 해결합니다.
+                웹 아키텍처와 XR 인터랙션을 결합해, 운영에서 생기는 마찰을
+                풀스택 구현으로 해결합니다.
               </div>
             </div>
           </main>
@@ -385,25 +470,11 @@ export function ResumeMode({onEnterVillage}: Props) {
                 <span className="status-unit">EDUCATION</span>
               </div>
             </div>
-            <div
-              style={{
-                marginLeft: "auto",
-                fontFamily: "var(--mono)",
-                color: "var(--accent)",
-                fontSize: 11,
-                display: "flex",
-                alignItems: "center",
-                gap: 8
-              }}
-            >
-              <span className="logo-orb" style={{width: 6, height: 6}} />
-              SYSTEM STATUS: OPTIMIZED
-            </div>
           </footer>
         </div>
 
         {/* ══════════ 01 Skills ══════════ */}
-        <section>
+        <section id="resume-history">
           <div className="skills-container">
             <header className="section-header reveal">
               <span className="section-id">## 01</span>
@@ -546,7 +617,7 @@ export function ResumeMode({onEnterVillage}: Props) {
         </section>
 
         {/* ══════════ 03 Main Projects ══════════ */}
-        <section>
+        <section id="resume-work">
           <div className="projects-container">
             <header className="section-header reveal">
               <span className="section-id">## 03</span>
@@ -732,7 +803,7 @@ export function ResumeMode({onEnterVillage}: Props) {
         </section>
 
         {/* ══════════ 07 Contact ══════════ */}
-        <section>
+        <section id="resume-contact">
           <div className="contact-container">
             <header className="section-header reveal">
               <span className="section-id">## 07</span>

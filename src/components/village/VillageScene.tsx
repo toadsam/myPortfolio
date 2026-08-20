@@ -62,10 +62,13 @@ import {applyGroundMacro, makeMacroTexture} from "@/lib/groundMacro";
 import {makeBankTexture} from "@/lib/terraceBank";
 import {
   DAIS_RADII,
+  inLagoon,
   ISLAND_COMMONS,
   ISLAND_LANES,
   ISLANDS,
   isWater,
+  onPlazaDais,
+  onPlazaRing,
   PLAZA_DAIS,
   PLAZA_RING,
   PLAZA_STEP,
@@ -78,6 +81,7 @@ import {
   WATER_FULL_DEPTH,
   waterHalfAt
 } from "@/lib/villageTerrain";
+import {isWalkable, walkHeightAt} from "@/lib/villageWalk";
 import buildingModels from "@/data/buildingModels.json";
 import {buildBuildingStateMap, buildNpcStateMap} from "@/lib/liveState";
 import type {NpcRuntimeState, VillageState} from "@/types/live";
@@ -95,6 +99,7 @@ import {Building} from "./Building";
 import {BuildingNetwork} from "./BuildingNetwork";
 import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
+import {LightPool} from "./LightPool";
 import {NPC, type NpcCommand} from "./NPC";
 import {PerfHudPanel, PerfProbe} from "./PerfHud";
 import {SeasonAmbience} from "./SeasonAmbience";
@@ -854,7 +859,20 @@ function AnimationClock() {
   // 실제로 만들어졌는지 바로 확인된다. 화면만 보고는 절대 못 잡는다.
   useEffect(() => {
     if (process.env.NODE_ENV !== "development") return;
-    (window as unknown as {__three?: unknown}).__three = {gl, scene, camera};
+    // 걷기 함수도 같이 연다 — 높이 단차·막힘은 화면만 보고는 어디가 끊겼는지
+    // 못 짚는다. 좌표를 넣어 프로파일을 뽑아 보면 한 번에 나온다.
+    (window as unknown as {__three?: unknown}).__three = {
+      gl,
+      scene,
+      camera,
+      walkHeightAt,
+      isWalkable,
+      terrainHeightAt,
+      onPlazaRing,
+      onPlazaDais,
+      inLagoon,
+      isWater
+    };
   }, [gl, scene, camera]);
 
   return null;
@@ -2991,6 +3009,10 @@ function VillageSceneImpl({
           decay={2}
           position={[0, 4, 9]}
         />
+
+        {/* 상주 광원 풀. NPC 행동·건물 강조·활동 발광이 전부 여기서 자리를 빌린다 —
+            개수가 고정이라 셰이더 재컴파일이 없다(LightPool.tsx 주석에 실측 근거). */}
+        <LightPool count={6} />
 
         <Suspense fallback={null}>
           <SkyDome horizon={sky.skyHorizon} top={sky.skyTop} />

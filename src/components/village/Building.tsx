@@ -13,6 +13,7 @@ import {
   type MeshStandardMaterial
 } from "three";
 import {lightIntensity} from "@/lib/liveState";
+import {PooledLight} from "./LightPool";
 import {lockSceneMaterials} from "@/lib/villageMaterial";
 import {
   createThrottledCalculatePosition,
@@ -507,15 +508,13 @@ function TowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
         <sphereGeometry args={[0.055, 8, 8]} />
         <meshBasicMaterial color={b.accentColor} />
       </mesh>
-      {hl && (
-        <pointLight
-          color={b.accentColor}
-          intensity={1.2}
-          distance={4}
-          decay={2}
-          position={[0, h * 0.5, 0]}
-        />
-      )}
+      <PooledLight
+        active={hl}
+        color={b.accentColor}
+        distance={4}
+        intensity={1.2}
+        position={[0, h * 0.5, 0]}
+      />
     </group>
   );
 }
@@ -560,15 +559,13 @@ function OfficeRoundedBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
           emissiveIntensity={hl ? 0.08 : 0}
         />
       </mesh>
-      {hl && (
-        <pointLight
-          color={b.accentColor}
-          intensity={1.0}
-          distance={3.5}
-          decay={2}
-          position={[0, h * 0.5, 0]}
-        />
-      )}
+      <PooledLight
+        active={hl}
+        color={b.accentColor}
+        distance={3.5}
+        intensity={1.0}
+        position={[0, h * 0.5, 0]}
+      />
     </group>
   );
 }
@@ -612,15 +609,13 @@ function CompactStudioBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
           roughness={0.2}
         />
       </mesh>
-      {hl && (
-        <pointLight
-          color={b.accentColor}
-          intensity={0.9}
-          distance={3}
-          decay={2}
-          position={[0, h * 0.6, d * 0.6]}
-        />
-      )}
+      <PooledLight
+        active={hl}
+        color={b.accentColor}
+        distance={3}
+        intensity={0.9}
+        position={[0, h * 0.6, d * 0.6]}
+      />
     </group>
   );
 }
@@ -661,15 +656,13 @@ function FlatHubBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
           opacity={0.6}
         />
       </mesh>
-      {hl && (
-        <pointLight
-          color={b.accentColor}
-          intensity={1.1}
-          distance={4}
-          decay={2}
-          position={[0, h, d * 0.5]}
-        />
-      )}
+      <PooledLight
+        active={hl}
+        color={b.accentColor}
+        distance={4}
+        intensity={1.1}
+        position={[0, h, d * 0.5]}
+      />
     </group>
   );
 }
@@ -711,15 +704,13 @@ function DomeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
           opacity={hl ? 0.7 : 0.25}
         />
       </mesh>
-      {hl && (
-        <pointLight
-          color={b.accentColor}
-          intensity={1.5}
-          distance={4.5}
-          decay={2}
-          position={[0, h * 0.8, 0]}
-        />
-      )}
+      <PooledLight
+        active={hl}
+        color={b.accentColor}
+        distance={4.5}
+        intensity={1.5}
+        position={[0, h * 0.8, 0]}
+      />
     </group>
   );
 }
@@ -761,15 +752,13 @@ function ServerTowerBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
           />
         </mesh>
       ))}
-      {hl && (
-        <pointLight
-          color={b.accentColor}
-          intensity={1.0}
-          distance={3.5}
-          decay={2}
-          position={[0, h * 0.7, d * 0.6]}
-        />
-      )}
+      <PooledLight
+        active={hl}
+        color={b.accentColor}
+        distance={3.5}
+        intensity={1.0}
+        position={[0, h * 0.7, d * 0.6]}
+      />
     </group>
   );
 }
@@ -811,15 +800,13 @@ function ArcadeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
           roughness={0.2}
         />
       </mesh>
-      {hl && (
-        <pointLight
-          color={b.accentColor}
-          intensity={1.3}
-          distance={4}
-          decay={2}
-          position={[0, h * 0.7, d * 0.6]}
-        />
-      )}
+      <PooledLight
+        active={hl}
+        color={b.accentColor}
+        distance={4}
+        intensity={1.3}
+        position={[0, h * 0.7, d * 0.6]}
+      />
     </group>
   );
 }
@@ -855,15 +842,13 @@ function MinimalOfficeBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
           />
         </mesh>
       ))}
-      {hl && (
-        <pointLight
-          color={b.accentColor}
-          intensity={0.8}
-          distance={3}
-          decay={2}
-          position={[0, h, 0]}
-        />
-      )}
+      <PooledLight
+        active={hl}
+        color={b.accentColor}
+        distance={3}
+        intensity={0.8}
+        position={[0, h, 0]}
+      />
     </group>
   );
 }
@@ -912,15 +897,13 @@ function TownhouseBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
           />
         </mesh>
       ))}
-      {hl && (
-        <pointLight
-          color={b.accentColor}
-          intensity={0.8}
-          distance={3}
-          decay={2}
-          position={[0, h * 0.5, 0]}
-        />
-      )}
+      <PooledLight
+        active={hl}
+        color={b.accentColor}
+        distance={3}
+        intensity={0.8}
+        position={[0, h * 0.5, 0]}
+      />
     </group>
   );
 }
@@ -991,15 +974,13 @@ function PostBuilding({b, hl}: {b: BuildingData; hl: boolean}) {
         <boxGeometry args={[0.44, 0.24, 0.035]} />
         <meshStandardMaterial color="#f4f0df" roughness={0.5} />
       </mesh>
-      {hl && (
-        <pointLight
-          color={b.accentColor}
-          intensity={0.9}
-          distance={3.5}
-          decay={2}
-          position={[0, h * 0.6, 0]}
-        />
-      )}
+      <PooledLight
+        active={hl}
+        color={b.accentColor}
+        distance={3.5}
+        intensity={0.9}
+        position={[0, h * 0.6, 0]}
+      />
     </group>
   );
 }
@@ -1149,15 +1130,13 @@ function BuildingImpl({
           height={h}
           radius={Math.max(building.size[0], building.size[2])}
         />
-        {liveGlow > 0 ? (
-          <pointLight
-            color={building.accentColor}
-            decay={2}
-            distance={4 + liveGlow * 4}
-            intensity={liveGlow * 1.8}
-            position={[0, h + 0.6, 0]}
-          />
-        ) : null}
+        <PooledLight
+          active={liveGlow > 0}
+          color={building.accentColor}
+          distance={4 + liveGlow * 4}
+          intensity={liveGlow * 1.8}
+          position={[0, h + 0.6, 0]}
+        />
       </group>
 
       <BuildingLabel

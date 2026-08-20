@@ -3,13 +3,13 @@
 import {Billboard, Html, useCursor} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
 import {memo, Suspense, useMemo, useRef, useState} from "react";
+import {PooledLight} from "./LightPool";
 import {NpcCharacter, type NpcMoveState} from "./NpcCharacter";
 import type {ThreeEvent} from "@react-three/fiber";
 import type {Group, Vector3} from "three";
 import type {NpcBehaviorProfile} from "@/data/npcBehaviors";
 import {moodLabel} from "@/lib/liveState";
-import {isWalkablePosition} from "@/lib/worldCollision";
-import {walkHeightAt} from "@/lib/villageWalk";
+import {isWalkableDry, slideToDry, walkHeightAt} from "@/lib/villageWalk";
 import type {
   NpcActionState,
   NpcAnimationKey,
@@ -298,7 +298,7 @@ function NPCImpl({
       (now > retargetAtRef.current ||
         distanceToTarget(groupRef.current.position, targetRef.current) < 0.25)
     ) {
-      targetRef.current = pickTarget(home, roamRadius, buildings);
+      targetRef.current = pickTarget(home, roamRadius);
       retargetAtRef.current = now + 4 + Math.random() * 7;
     }
 
@@ -322,14 +322,26 @@ function NPCImpl({
       const nextX = groupRef.current.position.x + (dx / dist) * step;
       const nextZ = groupRef.current.position.z + (dz / dist) * step;
 
-      if (
-        isWalkablePosition({x: nextX, z: nextZ}, buildings, {padding: 0.38})
-      ) {
-        groupRef.current.position.x = nextX;
-        groupRef.current.position.z = nextZ;
+      // **플레이어와 같은 규칙을 쓴다.** 예전엔 건물 발자국만 봐서 석호 껍질(섬
+      // 경계)도 장식물 108개도 그냥 통과했다 — 주민이 울타리를 넘어 물에 빠져
+      // 있던 원인이다. `slideToDry` 는 거기에 "물에 안 들어간다"를 더한 것이다.
+      const slid = slideToDry(
+        groupRef.current.position.x,
+        groupRef.current.position.z,
+        nextX,
+        nextZ
+      );
+      const moved =
+        Math.abs(slid.x - groupRef.current.position.x) > 1e-4 ||
+        Math.abs(slid.z - groupRef.current.position.z) > 1e-4;
+      if (moved) {
+        groupRef.current.position.x = slid.x;
+        groupRef.current.position.z = slid.z;
         groupRef.current.rotation.y = Math.atan2(dx, dz);
         walking = true;
       } else {
+        // 한 축도 못 살렸으면 진짜 막힌 것 — 그때만 목적지를 새로 뽑는다.
+        // (예전엔 스치기만 해도 새로 뽑아 모서리에서 제자리걸음을 했다)
         retargetAtRef.current = 0;
       }
     }
@@ -494,9 +506,8 @@ function NpcActionEffect({
 
   return (
     <group>
-      <pointLight
+      <PooledLight
         color={color}
-        decay={2}
         distance={3.2}
         intensity={0.9}
         position={[0, 1.4, 0.3]}
@@ -684,11 +695,9 @@ function distanceToTarget(position: Vector3, target: Vector3Tuple) {
   return Math.sqrt(dx * dx + dz * dz);
 }
 
-function pickTarget(
-  home: Vector3Tuple,
-  radius: number,
-  buildings: Array<Pick<BuildingData, "id" | "position" | "size">>
-): Vector3Tuple {
+// 건물 목록을 더 받지 않는다 — isWalkableDry 안의 마을 걷기 규칙이 건물·장식물·
+// 벽·섬 경계를 전부 알고 있다. 여기서 따로 건물만 보면 그때가 어긋나는 순간이다.
+function pickTarget(home: Vector3Tuple, radius: number): Vector3Tuple {
   for (let i = 0; i < 12; i += 1) {
     const angle = Math.random() * Math.PI * 2;
     const distance = radius * (0.25 + Math.random() * 0.75);
@@ -698,11 +707,9 @@ function pickTarget(
       home[2] + Math.sin(angle) * distance
     ];
 
-    if (
-      isWalkablePosition({x: candidate[0], z: candidate[2]}, buildings, {
-        padding: 0.38
-      })
-    ) {
+    // 목적지도 같은 기준으로 고른다 — 물 위나 섬 밖을 목적지로 잡으면
+    // 걸음마다 막혀서 제자리에서 떨거나, 경계까지 가서 붙어 선다.
+    if (isWalkableDry(candidate[0], candidate[2])) {
       return candidate;
     }
   }
