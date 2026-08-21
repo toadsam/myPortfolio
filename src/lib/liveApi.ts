@@ -15,6 +15,7 @@ import type {
   CommissionInput,
   CommissionStatusInput,
   CommissionTrack,
+  PlannerQuestionsResponse,
   CsNote,
   CsNoteInput,
   DailyActivity,
@@ -407,6 +408,28 @@ export function consultCommissionDepth(
         recent_messages: recentMessages.slice(-10)
       })
     }
+  );
+}
+
+/** 체리의 질문지를 도안의 대본으로 옮긴다. **진행이 아니라 질문 발행이다** — 게이트와 무관. */
+export function publishPlannerQuestions(
+  commissionId: number
+): Promise<PlannerQuestionsResponse> {
+  return requestJson<PlannerQuestionsResponse>(
+    `/admin/commissions/${commissionId}/questions`,
+    {method: "POST"}
+  );
+}
+
+/** 산출물 하나를 손님에게 공개/비공개. 한 번에 하나만 공개된다. */
+export function shareCommissionArtifact(
+  commissionId: number,
+  artifactId: number,
+  shared: boolean
+): Promise<CommissionBoard> {
+  return requestJson<CommissionBoard>(
+    `/admin/commissions/${commissionId}/artifacts/${artifactId}/share`,
+    {method: "PATCH", body: JSON.stringify({shared})}
   );
 }
 

@@ -56,7 +56,15 @@ def _ensure_columns(table: str, columns: dict[str, str]) -> None:
 def _ensure_commission_columns() -> None:
     # 심화 문답(2차)으로 돌아오는 열쇠. 기존 접수 건에는 값이 없으므로,
     # commission_service.ensure_access_token() 이 조회 시점에 채워 준다.
-    _ensure_columns("commission_request", {"access_token": "VARCHAR(64) DEFAULT ''"})
+    _ensure_columns(
+        "commission_request",
+        {
+            "access_token": "VARCHAR(64) DEFAULT ''",
+            "pending_questions": "JSON DEFAULT '[]'",
+        },
+    )
+    # 손님 공개 여부. 기본 0 — 검수 전 산출물이 새면 안 된다.
+    _ensure_columns("commission_artifact", {"shared": "BOOLEAN DEFAULT 0"})
 
 
 def _ensure_daily_activity_columns() -> None:

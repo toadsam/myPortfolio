@@ -48,6 +48,8 @@ interface Props {
   onOpenResume: () => void;
   onOpenCommission: () => void;
   onPrepareVillage: () => void;
+  /** 공방 표에 마우스가 닿았을 때. 데스크톱에서만 실제로 뭔가 받는다. */
+  onPrepareCommission: () => void;
 }
 
 type TicketId = "village" | "resume" | "atelier";
@@ -99,7 +101,8 @@ export function TicketLanding({
   onEnterVillage,
   onOpenResume,
   onOpenCommission,
-  onPrepareVillage
+  onPrepareVillage,
+  onPrepareCommission
 }: Props) {
   const rootRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -287,11 +290,15 @@ export function TicketLanding({
   //
   // 그래서 신호는 **의도**여야 한다 — 표에 마우스를 올리거나 포커스가 닿았을 때만.
   // (아래 `<button>` 의 onPointerEnter / onFocus)
+  //
+  // 공방 표도 같은 대접을 받는다 — 데스크톱에서는 이 표가 3D 방(`/atelier`)으로
+  // 가기 때문이다. 모바일에서는 부르는 쪽이 아무것도 안 하도록 되어 있다.
   const prepareIfVillage = useCallback(
     (id: TicketId) => {
       if (id === "village") onPrepareVillage();
+      if (id === "atelier") onPrepareCommission();
     },
-    [onPrepareVillage]
+    [onPrepareVillage, onPrepareCommission]
   );
 
   // ── 찢기 ───────────────────────────────────────────────────────────────────

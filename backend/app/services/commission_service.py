@@ -34,6 +34,7 @@ from app.schemas import (
     ESTIMATE_DISCLAIMER,
     CommissionDraft,
     CommissionIn,
+    PlannerQuestion,
 )
 
 
@@ -227,12 +228,18 @@ def _depth_value(draft: CommissionDraft, field: str) -> str:
 
 
 def depth_questions_for(draft: CommissionDraft) -> list[str]:
-    """아직 답이 없는 제작 슬롯의 질문 목록. 2차 화면이 안내로 쓴다."""
-    return [
+    """아직 답이 없는 질문 목록. 2차 화면이 안내로 쓴다.
+
+    고정 슬롯이 **먼저**고 체리의 질문이 뒤다. 고정 슬롯은 어떤 의뢰에나 필요한
+    것들이라 답을 못 받으면 아예 못 만들고, 체리 질문은 이 의뢰에만 해당하는
+    보충이라 뒤로 가도 손해가 적기 때문이다.
+    """
+    fixed = [
         _DEPTH_QUESTIONS[field]
         for field in _DEPTH_FIELDS
         if not _depth_value(draft, field)
     ]
+    return fixed + [item.question for item in unanswered_planner_questions(draft)]
 
 
 # ─────────────────────────── 상담 ───────────────────────────
@@ -269,7 +276,14 @@ def _fill_missing(draft: CommissionDraft) -> CommissionDraft:
         _DEPTH_LABELS[field]
         for field in _DEPTH_FIELDS
         if not _depth_value(draft, field)
+    ] + [
+        # 체리 질문은 라벨이 따로 없으니 질문을 줄여 보여준다.
+        (item.question[:18] + "…") if len(item.question) > 18 else item.question
+        for item in draft.planner_questions
+        if not item.answer.strip()
     ]
+    # depth_done 은 **고정 필수 슬롯만** 본다. 체리 질문은 의뢰마다 있을 수도
+    # 없을 수도 있어서, 그걸 완료 조건에 넣으면 기준이 의뢰마다 달라진다.
     draft.depth_done = all(_depth_value(draft, field) for field in _DEPTH_REQUIRED)
     return draft
 
@@ -543,8 +557,12 @@ _DEPTH_SYSTEM_PROMPT = """너는 '의뢰 공방'의 접수원 NPC '도안'이다
   "reference_notes": "참고 사이트의 어떤 점이 좋다고 했는지",
   "decision_maker": "최종 결정하는 사람",
   "pages": ["추가로 언급된 페이지"],
-  "features": ["추가로 언급된 기능"]
+  "features": ["추가로 언급된 기능"],
+  "planner_answers": {"q1": "그 질문에 손님이 준 답", "q2": "..."}
 }
+
+`planner_answers` 는 아래 '기획자가 추가로 여쭤보라고 한 것' 에 붙은 번호(q1, q2…)를 쓴다.
+답을 받은 질문만 넣는다. 아직 안 물어본 질문은 넣지 않는다.
 
 **아직 답을 못 들은 항목은 빈 문자열로 둔다. 지어내지 않는다.**
 이 문서는 그대로 제작에 쓰이므로, 없는 답을 채우면 잘못 만들게 된다.
@@ -592,6 +610,12 @@ async def _depth_with_openai(
         if not _depth_value(previous, field)
     ]
 
+    # 체리(기획)가 산출물을 만들며 "이건 손님에게 물어봐야 한다"고 남긴 것들.
+    planner_lines = [
+        f"- [{item.id}] {item.question}"
+        for item in unanswered_planner_questions(previous)
+    ]
+
     context_lines = [
         "접수된 의뢰 내용:",
         f"- 유형: {previous.site_type or '-'}",
@@ -603,8 +627,18 @@ async def _depth_with_openai(
         *(known_lines or ["- (아직 없음)"]),
         "",
         "아직 못 들은 것 (위에서부터 하나씩):",
-        *(remaining or ["- (없음 — 더 묻지 말고 마무리한다)"]),
+        *(remaining or ["- (없음)"]),
     ]
+
+    if planner_lines:
+        context_lines += [
+            "",
+            "기획자가 추가로 여쭤보라고 한 것 (위 항목을 다 받은 뒤에 묻는다):",
+            *planner_lines,
+        ]
+    elif not remaining:
+        context_lines.append("")
+        context_lines.append("→ 더 물을 것이 없다. 감사 인사와 함께 마무리한다.")
 
     messages = [
         {"role": "system", "content": _DEPTH_SYSTEM_PROMPT + "\n\n" + "\n".join(context_lines)}
@@ -638,7 +672,20 @@ async def _depth_with_openai(
     if not reply:
         raise ValueError("빈 응답")
 
-    return reply, _draft_from_data(data, previous)
+    draft = _draft_from_data(data, previous)
+    return reply, _apply_planner_answers(draft, data.get("planner_answers"))
+
+
+def _apply_planner_answers(draft: CommissionDraft, answers: Any) -> CommissionDraft:
+    """모델이 돌려준 {질문id: 답} 을 대본에 채운다. 빈 답은 무시한다."""
+    if not isinstance(answers, dict):
+        return draft
+
+    for item in draft.planner_questions:
+        fresh = str(answers.get(item.id, "") or "").strip()
+        if fresh and not _keeps_more(item.answer, fresh):
+            item.answer = fresh
+    return draft
 
 
 def _depth_without_ai(message: str, previous: CommissionDraft) -> tuple[str, CommissionDraft]:
@@ -658,9 +705,16 @@ def _depth_without_ai(message: str, previous: CommissionDraft) -> tuple[str, Com
         else:
             setattr(draft, field, answer[:400])
         pending = pending[1:]
+    elif not pending and len(answer) > 1:
+        # 고정 슬롯이 끝났으면 체리 질문 차례다.
+        waiting = unanswered_planner_questions(draft)
+        if waiting:
+            waiting[0].answer = answer[:400]
 
     if pending:
         reply = _DEPTH_QUESTIONS[pending[0]]
+    elif unanswered_planner_questions(draft):
+        reply = unanswered_planner_questions(draft)[0].question
     else:
         reply = (
             "여기까지면 충분해요. 알려주신 내용은 그대로 작업에 반영됩니다. "
@@ -698,6 +752,15 @@ def draft_from_commission(commission: CommissionRequest) -> CommissionDraft:
         dislikes=_str_list(requirements.get("dislikes")),
         reference_notes=str(requirements.get("reference_notes", "") or ""),
         decision_maker=str(requirements.get("decision_maker", "") or ""),
+        planner_questions=[
+            PlannerQuestion(
+                id=str(item.get("id", "")),
+                question=str(item.get("question", "")),
+                answer=str(item.get("answer", "")),
+            )
+            for item in (commission.pending_questions or [])
+            if str(item.get("question", "")).strip()
+        ],
     )
     return _fill_missing(draft)
 
@@ -726,6 +789,17 @@ def store_depth_answers(
         if merged:
             requirements[key] = merged
 
+    # 체리 질문지의 답도 같이 갈무리한다. 여기서도 빈 답은 기존 답을 덮지 않는다.
+    if draft.planner_questions:
+        by_id = {item.id: item.answer.strip() for item in draft.planner_questions}
+        merged = []
+        for item in commission.pending_questions or []:
+            answer = str(item.get("answer", ""))
+            fresh = by_id.get(str(item.get("id", "")), "")
+            merged.append({**item, "answer": fresh or answer})
+        commission.pending_questions = merged
+        flag_modified(commission, "pending_questions")
+
     commission.requirements = requirements
     # SQLAlchemy 는 JSON 컬럼의 **제자리 변경**을 감지하지 못한다. 새 dict 를 대입하더라도
     # 확실히 하려고 명시적으로 표시해 둔다 — 이걸 빼면 답이 조용히 저장되지 않는다.
@@ -733,6 +807,82 @@ def store_depth_answers(
     db.commit()
     db.refresh(commission)
     return commission
+
+
+# ─────────────────── 체리의 질문지 → 도안의 대본 (3단계) ───────────────────
+#
+# 체리는 산출물에 "확인 필요"를 적는다. 여태 그건 **문서에 적히고 끝났고**, 결국 내가
+# 손님에게 다시 연락해서 물어야 했다 — 공방이 없애려던 왕복이 그대로 남았던 것이다.
+#
+# 여기서 그 목록을 손님에게 던질 질문으로 옮긴다. 새로 만들 지능은 없다.
+# 체리는 이미 정확한 목록을 뽑아내고 있고, **목적지만 바꾸는 것**이다.
+
+PLANNER_QUESTION_FILE = "01-기획/손님-확인-질문.md"
+
+# 대본에 넣지 않는 줄 — 체리가 형식을 어기고 제목이나 설명을 끼워 넣었을 때 걸러낸다.
+_QUESTION_MIN_LEN = 6
+
+
+def parse_question_lines(text: str) -> list[str]:
+    """질문지 markdown 에서 질문 줄만 뽑는다.
+
+    체리에게 "한 줄에 하나, `- ` 로 시작" 을 시켰지만 **프롬프트는 방어선이 아니다.**
+    제목·번호·빈 줄이 섞여 들어와도 깨지지 않게 여기서 한 번 더 거른다.
+    """
+    questions: list[str] = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or line.startswith(">"):
+            continue
+
+        # "- ", "* ", "1. ", "1) " 를 모두 받아 준다
+        stripped = re.sub(r"^\s*(?:[-*+]|\d+[.)])\s+", "", line)
+        if stripped == line:
+            # 목록 표시가 없는 줄은 설명 문단으로 보고 버린다 (물음표로 끝나면 살린다)
+            if not line.endswith("?"):
+                continue
+            stripped = line
+
+        stripped = stripped.strip("*_` ").strip()
+        if len(stripped) < _QUESTION_MIN_LEN:
+            continue
+        if stripped not in questions:
+            questions.append(stripped)
+
+    return questions[:8]
+
+
+def import_planner_questions(
+    db: Session, commission: CommissionRequest, text: str
+) -> list[dict]:
+    """질문지 본문을 파싱해 대본으로 저장한다. **이미 받은 답은 지우지 않는다.**
+
+    체리를 반려하고 다시 돌리면 질문이 조금 바뀐다. 그때 같은 질문에 이미 받아 둔
+    답까지 날리면 손님에게 두 번 묻게 된다 — 질문 문장으로 짝을 지어 답을 옮겨 온다.
+    """
+    previous = {
+        str(item.get("question", "")): str(item.get("answer", ""))
+        for item in (commission.pending_questions or [])
+    }
+
+    questions = [
+        {
+            "id": f"q{index + 1}",
+            "question": question,
+            "answer": previous.get(question, ""),
+        }
+        for index, question in enumerate(parse_question_lines(text))
+    ]
+
+    commission.pending_questions = questions
+    flag_modified(commission, "pending_questions")
+    db.commit()
+    db.refresh(commission)
+    return questions
+
+
+def unanswered_planner_questions(draft: CommissionDraft) -> list[Any]:
+    return [item for item in draft.planner_questions if not item.answer.strip()]
 
 
 def ensure_access_token(db: Session, commission: CommissionRequest) -> str:
@@ -929,6 +1079,65 @@ def artifacts_for(db: Session, commission_id: int) -> list[CommissionArtifact]:
 
 def get_artifact(db: Session, artifact_id: int) -> CommissionArtifact | None:
     return db.get(CommissionArtifact, artifact_id)
+
+
+# ─────────────────── 시안 공개 (4단계) ───────────────────
+#
+# 시안을 납품물이 아니라 **미끼**로 쓴다. 추상적인 질문 열 개보다 구체적으로 틀린
+# 시안 한 장이 정보를 훨씬 많이 뽑아낸다 — "이거 보시고 어디가 아닌지 말씀해 주세요"
+# 는 사람이 대답을 정말 잘하는 질문 형태다.
+#
+# 그래서 여기 공개된 시안은 히어로+갤러리만 있어도 결함이 아니다. 오히려 적당한 미끼다.
+
+
+def set_artifact_shared(
+    db: Session,
+    commission: CommissionRequest,
+    artifact: CommissionArtifact,
+    shared: bool,
+) -> CommissionArtifact:
+    """산출물 하나를 손님에게 공개/비공개한다.
+
+    **한 번에 하나만 공개된다.** 손님에게 파일 목록을 늘어놓는 자리가 아니라
+    반응 하나를 받아내는 자리라서, 여러 개를 띄우면 초점이 흩어진다.
+    """
+    if shared:
+        db.query(CommissionArtifact).filter(
+            CommissionArtifact.commission_id == commission.id,
+            CommissionArtifact.id != artifact.id,
+        ).update({"shared": False}, synchronize_session=False)
+
+    artifact.shared = shared
+    db.commit()
+    db.refresh(artifact)
+    return artifact
+
+
+def shared_artifact_for(
+    db: Session, commission_id: int
+) -> tuple[CommissionArtifact, str] | None:
+    """공개된 산출물과 그 본문. 파일이 사라졌으면 None(색인만 남은 경우)."""
+    from app.agents import workspace as ws
+
+    artifact = (
+        db.query(CommissionArtifact)
+        .filter(
+            CommissionArtifact.commission_id == commission_id,
+            CommissionArtifact.shared.is_(True),
+        )
+        .first()
+    )
+    if not artifact:
+        return None
+
+    commission = db.get(CommissionRequest, commission_id)
+    if not commission:
+        return None
+
+    content = ws.read_artifact(ws.workspace_for(commission.public_id), artifact.rel_path)
+    if content is None:
+        return None
+    return artifact, content
 
 
 def _team_task_statuses(db: Session, commission_id: int) -> dict[str, str]:

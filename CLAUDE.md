@@ -92,14 +92,27 @@ Three things make this unlike every other district:
 - **Entry is deliberately split**: the always-visible button opens the 2D desk directly (real intake path,
   works on mobile); the village hatch and 포스트's hint lead to the 3D room. Don't collapse these into one.
 - **Intake and elicitation happen at different times, on purpose.** Intake (1차) exists to get a quote and
-  a low threshold — `ready_to_submit` needs only site_type + (pages or features). The information that
-  actually decides *how to build it* (who maintains the site → static/CMS/admin, who supplies photos and
+  a low threshold — `ready_to_submit` needs only site*type + (pages or features). The information that
+  actually decides \_how to build it* (who maintains the site → static/CMS/admin, who supplies photos and
   copy, what counts as success, what already exists) is collected **after** submission at
   `/commission/<access_token>`, because someone who already submitted has low exit cost. Those seven slots
   live in `commission_service._DEPTH_SLOTS` (single source) and are tracked by `depth_missing`, never by
   `missing` — merging them would turn the intake desk into an interrogation. `tests/test_commission_depth.py`
   locks that threshold. The link key is `access_token`, not `public_id` (8 hex is enumerable), and the
   track endpoint never returns contact details.
+- **The planner's "확인 필요" list is a script, not a document.** 체리 writes a second file
+  (`01-기획/손님-확인-질문.md`, one `- ` question per line) that `parse_question_lines()` turns into
+  `pending_questions`; 도안 asks them in the depth chat after the fixed slots. Publishing questions is
+  **not** progress — it never touches `gate.py`. Re-publishing preserves answers already collected
+  (matched by question text), or the customer gets asked twice.
+- **A mockup shared with the customer is bait, not a deliverable.** `CommissionArtifact.shared` (default
+  false, only one at a time) puts the HTML mockup on the depth screen via `srcdoc` + `sandbox=""` — never
+  a public URL per file, since that URL becomes the leak path.
+- **Entry is device-split, and `/atelier` is not the village.** Desktop (`min-width:1024px` AND
+  `pointer:fine`, decided only in `useImmersiveCapable()`) opens the standalone 3D room at `/atelier`;
+  everything else opens the 2D desk. `AtelierInterior` uses zero GLBs, which is the only reason the room
+  can stand alone — routing the landing button to `/village` instead would hand a commissioner 20.7 MB of
+  village models and undo the whole point of the route split. The village hatch still opens the same room.
 
 Two naming traps, both already guarded and locked by `tests/test_relations.py` — keep the atelier branch
 **first** in both `relations.canon()` and `chat_service._npc_profile_for_dynamic_id()`, since the existing

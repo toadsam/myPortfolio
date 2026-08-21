@@ -382,6 +382,14 @@ ESTIMATE_DISCLAIMER = (
 )
 
 
+class PlannerQuestion(BaseModel):
+    """체리가 "확인 필요"에서 뽑아낸, 손님이 바로 답할 수 있는 질문 하나."""
+
+    id: str
+    question: str
+    answer: str = ""
+
+
 class CommissionDraft(BaseModel):
     """상담 대화에서 추출한 구조화 요구사항 + 참고 견적.
 
@@ -429,6 +437,9 @@ class CommissionDraft(BaseModel):
     reference_notes: str = ""
     # 최종 승인자·관여 인원.
     decision_maker: str = ""
+
+    # 체리가 만든 추가 질문 (있으면 제작 슬롯 뒤에 이어서 묻는다)
+    planner_questions: list["PlannerQuestion"] = Field(default_factory=list)
 
     missing: list[str] = Field(default_factory=list)        # 1차에서 아직 못 들은 항목
     ready_to_submit: bool = False                           # 접수 폼을 띄워도 될 만큼 모였는지
@@ -512,6 +523,20 @@ class CommissionAck(BaseModel):
     track_path: str = ""   # 프런트 경로 (/commission/<token>)
 
 
+class SharedArtifactOut(BaseModel):
+    """손님에게 공개된 산출물 하나. 심화 문답 화면이 시안을 띄우는 데 쓴다.
+
+    **관리자가 켠 것만** 나간다(`CommissionArtifact.shared`). 내용을 통째로 실어
+    보내는 이유는 iframe 을 `srcdoc` 으로 띄우기 위해서다 — 별도 주소를 열어 주면
+    그 주소가 곧 공개 링크가 되어 버린다.
+    """
+
+    id: int
+    rel_path: str
+    kind: str
+    content: str
+
+
 class CommissionTrackOut(BaseModel):
     """접수 조회 + 심화 문답 화면이 받는 공개 정보.
 
@@ -529,11 +554,26 @@ class CommissionTrackOut(BaseModel):
     disclaimer: str = ESTIMATE_DISCLAIMER
     greeting: str = ""
     messages: list["CommissionMessageOut"] = Field(default_factory=list)
+    # 공개된 시안. 있으면 화면이 이걸 띄우고 "어디가 아닌지" 묻는다 —
+    # 추상적인 질문 열 개보다 구체적으로 틀린 시안 한 장이 정보를 더 뽑아낸다.
+    preview: SharedArtifactOut | None = None
 
 
 class CommissionDepthIn(BaseModel):
     message: str = Field(min_length=1, max_length=2000)
     recent_messages: list[str] = Field(default_factory=list)
+
+
+class ArtifactShareIn(BaseModel):
+    shared: bool
+
+
+class PlannerQuestionsOut(BaseModel):
+    """체리의 질문지를 손님 대본으로 옮긴 결과."""
+
+    questions: list[PlannerQuestion] = Field(default_factory=list)
+    source: str = ""      # 어느 파일에서 뽑았는지
+    message: str = ""
 
 
 class CommissionDepthOut(BaseModel):
@@ -583,6 +623,7 @@ class CommissionArtifactOut(BaseModel):
     rel_path: str
     kind: str
     size_bytes: int
+    shared: bool = False
     updated_at: datetime
 
     model_config = {"from_attributes": True}

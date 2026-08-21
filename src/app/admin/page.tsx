@@ -28,6 +28,19 @@ import {
   updateCsNote
 } from "@/lib/liveApi";
 import {villageBuildings} from "@/lib/constants";
+import {LiveVillagePreview} from "./_components/LiveVillagePreview";
+import {
+  LanternGauge,
+  NpcReactions,
+  SaveStamp,
+  StreakStamps
+} from "./_components/LedgerBits";
+import {
+  diffAgainstServer,
+  previewBuildingScores,
+  previewNpcMoods,
+  previewUnlocks
+} from "@/lib/villageLightPreview";
 import type {
   ActivityInput,
   AiUsage,
@@ -102,6 +115,30 @@ export default function AdminPage() {
   const [authChecked, setAuthChecked] = useState(false);
   const [locked, setLocked] = useState(false);
   const [aiUsage, setAiUsage] = useState<AiUsage | null>(null);
+
+  // 코딩테스트·CS 는 아래쪽 별도 패널이 저장한다. 이 폼으로는 못 움직이므로
+  // 미리보기에서 0 으로 두면 실제로 켜져 있는 도장·서고가 꺼져 보인다.
+  const [stampKey, setStampKey] = useState(0);
+  const npcPreview = useMemo(() => previewNpcMoods(form), [form]);
+  const unlockPreview = useMemo(() => previewUnlocks(form), [form]);
+  /** 기록이 남아 있는 날짜 — 연속 도장이 읽는다 */
+  const recordedDates = useMemo(
+    () => new Set(history.map(h => h.date)),
+    [history]
+  );
+
+  const studyOverrides = useMemo(() => {
+    const out: Record<string, number> = {};
+    for (const b of villageState?.buildings ?? []) {
+      if (
+        b.building_id === "study-codingtest" ||
+        b.building_id === "study-cs"
+      ) {
+        out[b.building_id] = b.activity_score;
+      }
+    }
+    return out;
+  }, [villageState]);
 
   const isToday = selectedDate === today();
   const historyByDate = useMemo(() => {
@@ -242,6 +279,35 @@ export default function AdminPage() {
       ]);
       setHistory(hist);
       setVillageState(state);
+
+      // 미리보기(프런트 사본)와 서버 계산을 대조한다. 규칙이 한쪽에서만 바뀌면
+      // 미리보기는 아무 티도 안 내고 틀린 그림을 계속 보여주므로, 저장할 때마다
+      // 확인해 **규칙을 바꾼 그날** 걸리게 한다. 개발 모드에서만 시끄럽다.
+      if (process.env.NODE_ENV === "development") {
+        const gaps = diffAgainstServer(
+          previewBuildingScores(form, {
+            codingToday: 0,
+            codingTotal: 0,
+            csToday: 0,
+            csTotal: 0
+          }),
+          state.buildings.filter(
+            b =>
+              b.building_id !== "study-codingtest" &&
+              b.building_id !== "study-cs"
+          )
+        );
+        if (gaps.length) {
+          console.warn(
+            [
+              "[마을 미리보기] 서버 계산과 어긋납니다.",
+              "villageLightPreview.ts 를 village_service.py 와 맞추세요:",
+              ...gaps
+            ].join(" | ")
+          );
+        }
+      }
+      setStampKey(k => k + 1);
       if (isToday) setReward({state, date: selectedDate});
       setStatus(
         "기록이 저장되었습니다. 3D 마을 조명, NPC 상태, 장식이 갱신됐습니다."
@@ -479,6 +545,13 @@ export default function AdminPage() {
                       value={form.workout_minutes}
                       onChange={value => updateForm({workout_minutes: value})}
                     />
+                    <LanternGauge
+                      disabled={!form.workout_done}
+                      label="끌어서 조절"
+                      max={180}
+                      onChange={value => updateForm({workout_minutes: value})}
+                      value={form.workout_minutes}
+                    />
                     <label className="grid gap-2">
                       <span className="field-label">운동 종류</span>
                       <select
@@ -508,6 +581,12 @@ export default function AdminPage() {
                     suffix="분"
                     value={form.study_minutes}
                     onChange={value => updateForm({study_minutes: value})}
+                  />
+                  <LanternGauge
+                    label="끌어서 조절"
+                    max={480}
+                    onChange={value => updateForm({study_minutes: value})}
+                    value={form.study_minutes}
                   />
                   <div className="grid gap-2">
                     <span className="field-label">공부한 주제/기술</span>
@@ -555,6 +634,12 @@ export default function AdminPage() {
                     suffix="분"
                     value={form.coding_minutes}
                     onChange={value => updateForm({coding_minutes: value})}
+                  />
+                  <LanternGauge
+                    label="끌어서 조절"
+                    max={600}
+                    onChange={value => updateForm({coding_minutes: value})}
+                    value={form.coding_minutes}
                   />
                   <NumberField
                     label="GitHub 커밋"
@@ -710,6 +795,29 @@ export default function AdminPage() {
 
             <Panel title="오늘 기록 요약" kicker="Village Impact">
               <div className="grid gap-3">
+                {/* 숫자를 만지는 동안 마을에 불이 들어온다. 이 화면의 논지가
+                    "기록이 마을을 바꾼다" 인데 그 장면이 여태 없었다. */}
+                <LiveVillagePreview
+                  form={form}
+                  overrides={studyOverrides}
+                  study={{
+                    codingToday: 0,
+                    codingTotal: 0,
+                    csToday: 0,
+                    csTotal: 0
+                  }}
+                />
+                {/* 숫자를 만지면 담당 NPC 의 기분과 한 줄이 그 자리에서 바뀐다 */}
+                <NpcReactions npcs={npcPreview} />
+                {unlockPreview.length ? (
+                  <p className="text-xs text-[#64748b]">
+                    오늘 열리는 장식{" "}
+                    <b className="text-[#b45309]">
+                      {unlockPreview.join(" · ")}
+                    </b>
+                  </p>
+                ) : null}
+                <StreakStamps dates={recordedDates} />
                 <div className="grid grid-cols-2 gap-3">
                   <Metric
                     label="운동"
@@ -802,7 +910,9 @@ export default function AdminPage() {
               )}
             </Panel>
 
-            <div className="rounded-lg border border-[#e3e8ef] bg-[#ffffff] p-4">
+            <div className="relative rounded-lg border border-[#e3e8ef] bg-[#ffffff] p-4">
+              {/* 저장에 성공하면 여기에 도장이 쿵 찍힌다. 화면을 안 막고 1.6초 뒤 사라진다. */}
+              <SaveStamp date={selectedDate} stampKey={stampKey} />
               <p className="text-sm leading-6 text-[#475569]">{status}</p>
               <button
                 className="mt-4 w-full rounded-lg bg-[#0284c7] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#0ea5e9] disabled:cursor-not-allowed disabled:opacity-45"

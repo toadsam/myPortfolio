@@ -172,6 +172,14 @@ class CommissionRequest(Base):
     status: Mapped[str] = mapped_column(String(30), default="received", index=True)
     admin_note: Mapped[str] = mapped_column(Text, default="")
 
+    # 체리(기획)가 산출물에 적은 "확인 필요"를 손님이 답할 수 있는 문장으로 바꾼 것.
+    # [{"id": "q1", "question": "...", "answer": ""}] — 답이 차면 answer 가 붙는다.
+    #
+    # **파이프라인이 자기 구멍을 스스로 메우는 자리다.** 접수 때 못 물어본 것을
+    # 체리가 발견하면, 지금까지는 문서에 적히고 끝나서 결국 내가 손님에게 다시
+    # 연락해야 했다. 이제 그 목록이 심화 문답의 대본이 된다.
+    pending_questions: Mapped[list] = mapped_column(JSON, default=list)
+
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
@@ -251,6 +259,9 @@ class CommissionArtifact(Base):
     rel_path: Mapped[str] = mapped_column(String(400))  # 작업 공간 루트 기준 상대경로
     kind: Mapped[str] = mapped_column(String(20), default="other")  # markdown|html|other
     size_bytes: Mapped[int] = mapped_column(Integer, default=0)
+    # 손님에게 보여줄지. **기본은 False** — 검수 전 산출물이 새 나가면 안 된다.
+    # 켜면 심화 문답 화면에 시안이 뜨고, 손님이 그걸 보고 "어디가 아닌지" 말해 준다.
+    shared: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 

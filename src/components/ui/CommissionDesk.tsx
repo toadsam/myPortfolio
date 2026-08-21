@@ -33,7 +33,8 @@ import {
 import type {
   CommissionAck,
   CommissionDraft,
-  CommissionTrack
+  CommissionTrack,
+  SharedArtifact
 } from "@/types/live";
 
 type DeskMode = "intake" | "depth";
@@ -240,188 +241,196 @@ export function CommissionDesk({
         {ack ? (
           <CommissionReceipt ack={ack} onClose={onClose} />
         ) : (
-          <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-            {/* ── 상담 ── */}
-            <section className="flex min-h-0 flex-1 flex-col lg:border-r lg:border-[#7a5a38]/40">
-              <div
-                ref={scrollRef}
-                className="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4"
-              >
-                {lines.map((line, index) => (
-                  <div
-                    key={index}
-                    className={
-                      line.role === "visitor"
-                        ? "flex justify-end"
-                        : "flex justify-start"
-                    }
-                  >
-                    <p
+          <div className="flex min-h-0 flex-1 flex-col">
+            {/* 시안이 공개돼 있으면 대화보다 위에 둔다 — 먼저 보고 반응하는 순서라야
+                "어디가 아닌지"라는 질문이 성립한다. */}
+            {depth && track?.preview ? (
+              <PreviewPane preview={track.preview} />
+            ) : null}
+
+            <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+              {/* ── 상담 ── */}
+              <section className="flex min-h-0 flex-1 flex-col lg:border-r lg:border-[#7a5a38]/40">
+                <div
+                  ref={scrollRef}
+                  className="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4"
+                >
+                  {lines.map((line, index) => (
+                    <div
+                      key={index}
                       className={
                         line.role === "visitor"
-                          ? "max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm border border-[#ff9d38]/35 bg-[#ff9d38]/12 px-3.5 py-2.5 text-[13px] leading-relaxed text-[#f3e6c8]"
-                          : "max-w-[88%] whitespace-pre-wrap rounded-2xl rounded-bl-sm border border-[#e2c078]/20 bg-white/[0.04] px-3.5 py-2.5 text-[13px] leading-relaxed text-[#dfe7f2]"
+                          ? "flex justify-end"
+                          : "flex justify-start"
                       }
                     >
-                      {line.content}
-                    </p>
-                  </div>
-                ))}
-
-                {sending ? (
-                  <p className="text-[12px] text-[#a9bdd6]/60">
-                    도안이 도면을 살펴보는 중…
-                  </p>
-                ) : null}
-
-                {!depth && lines.length === 1 && !sending ? (
-                  <div className="flex flex-wrap gap-1.5 pt-1">
-                    {STARTERS.map(starter => (
-                      <button
-                        key={starter}
-                        type="button"
-                        onClick={() => void send(starter)}
-                        className="rounded-full border border-[#e2c078]/25 px-3 py-1.5 text-[11px] text-[#a9bdd6] transition hover:border-[#e2c078]/60 hover:text-[#f3e6c8] active:scale-95"
+                      <p
+                        className={
+                          line.role === "visitor"
+                            ? "max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm border border-[#ff9d38]/35 bg-[#ff9d38]/12 px-3.5 py-2.5 text-[13px] leading-relaxed text-[#f3e6c8]"
+                            : "max-w-[88%] whitespace-pre-wrap rounded-2xl rounded-bl-sm border border-[#e2c078]/20 bg-white/[0.04] px-3.5 py-2.5 text-[13px] leading-relaxed text-[#dfe7f2]"
+                        }
                       >
-                        {starter}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-
-              {error ? (
-                <p className="mx-5 mb-2 rounded-lg border border-[#ff9d38]/40 bg-[#ff9d38]/10 px-3 py-2 text-[12px] text-[#f3e6c8]">
-                  {error}
-                </p>
-              ) : null}
-
-              <form
-                className="flex gap-2 border-t border-[#7a5a38]/40 px-5 py-3"
-                onSubmit={event => {
-                  event.preventDefault();
-                  void send(input);
-                }}
-              >
-                <input
-                  value={input}
-                  onChange={event => setInput(event.target.value)}
-                  placeholder={
-                    depth
-                      ? "편하게 답해 주세요"
-                      : "어떤 홈페이지가 필요하신가요?"
-                  }
-                  disabled={sending}
-                  className="min-w-0 flex-1 rounded-lg border border-[#e2c078]/25 bg-white/[0.04] px-3 py-2.5 text-[13px] text-[#f3e6c8] outline-none transition placeholder:text-[#a9bdd6]/45 focus:border-[#ff9d38]/60 disabled:opacity-50"
-                />
-                <button
-                  type="submit"
-                  disabled={sending || !input.trim()}
-                  className="shrink-0 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-4 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25 active:scale-95 disabled:opacity-40"
-                >
-                  보내기
-                </button>
-              </form>
-            </section>
-
-            {/* ── 도면(견적·요구사항)과 접수 ── */}
-            <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto border-t border-[#7a5a38]/40 px-5 py-4 lg:w-[380px] lg:border-t-0">
-              <EstimateCard draft={draft} disclaimer={disclaimer} />
-              <RequirementList draft={draft} />
-
-              {depth ? <DepthProgress draft={draft} /> : null}
-
-              <AnimatePresence>
-                {ready ? (
-                  <motion.div
-                    initial={{opacity: 0, y: 12}}
-                    animate={{opacity: 1, y: 0}}
-                    className="mt-4 border-t border-[#7a5a38]/40 pt-4"
-                  >
-                    <p className="v-serif mb-2 text-[13px] text-[#e2c078]">
-                      의뢰 접수하기
-                    </p>
-                    <p className="mb-3 text-[11px] leading-relaxed text-[#a9bdd6]/75">
-                      남겨주시면 정재훈이 직접 내용을 확인하고 연락드려요.
-                      이메일만 필수예요.
-                    </p>
-
-                    <div className="space-y-2">
-                      <Field
-                        label="이메일 *"
-                        value={email}
-                        onChange={setEmail}
-                        type="email"
-                        placeholder="you@example.com"
-                      />
-                      <Field
-                        label="이름"
-                        value={name}
-                        onChange={setName}
-                        placeholder="홍길동"
-                      />
-                      <Field
-                        label="연락처"
-                        value={phone}
-                        onChange={setPhone}
-                        placeholder="선택"
-                      />
-                      <Field
-                        label="회사·단체"
-                        value={org}
-                        onChange={setOrg}
-                        placeholder="선택"
-                      />
-
-                      {/* 허니팟 — 사람 눈에 보이지 않는다. 봇만 채운다. */}
-                      <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute left-[-9999px] h-0 w-0 overflow-hidden opacity-0"
-                      >
-                        <label htmlFor="commission-website">Website</label>
-                        <input
-                          id="commission-website"
-                          name="website"
-                          tabIndex={-1}
-                          autoComplete="off"
-                          value={website}
-                          onChange={event => setWebsite(event.target.value)}
-                        />
-                      </div>
-
-                      <label className="mt-1 flex cursor-pointer items-start gap-2 text-[11px] leading-relaxed text-[#a9bdd6]">
-                        <input
-                          type="checkbox"
-                          checked={consent}
-                          onChange={event => setConsent(event.target.checked)}
-                          className="mt-0.5 shrink-0 accent-[#ff9d38]"
-                        />
-                        <span>
-                          의뢰 회신을 위해 입력한 연락처와 상담 내용을 보관하는
-                          데 동의합니다. 회신 목적 외에는 사용하지 않으며,
-                          삭제를 요청하시면 지워 드려요.
-                        </span>
-                      </label>
-
-                      <button
-                        type="button"
-                        onClick={() => void submit()}
-                        disabled={submitting || !email.trim() || !consent}
-                        className="mt-1 w-full rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-4 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25 active:scale-95 disabled:opacity-40"
-                      >
-                        {submitting ? "접수하는 중…" : "이 내용으로 접수하기"}
-                      </button>
+                        {line.content}
+                      </p>
                     </div>
-                  </motion.div>
-                ) : (
-                  <p className="mt-4 border-t border-[#7a5a38]/40 pt-4 text-[11px] leading-relaxed text-[#a9bdd6]/60">
-                    {depth
-                      ? "여기서 주신 답은 바로 저장돼요. 중간에 닫으셔도 이어서 하실 수 있어요."
-                      : "대화를 조금 더 나누면 접수 창이 열려요. 어떤 사이트인지, 어떤 기능이 필요한지 알려주세요."}
+                  ))}
+
+                  {sending ? (
+                    <p className="text-[12px] text-[#a9bdd6]/60">
+                      도안이 도면을 살펴보는 중…
+                    </p>
+                  ) : null}
+
+                  {!depth && lines.length === 1 && !sending ? (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {STARTERS.map(starter => (
+                        <button
+                          key={starter}
+                          type="button"
+                          onClick={() => void send(starter)}
+                          className="rounded-full border border-[#e2c078]/25 px-3 py-1.5 text-[11px] text-[#a9bdd6] transition hover:border-[#e2c078]/60 hover:text-[#f3e6c8] active:scale-95"
+                        >
+                          {starter}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+
+                {error ? (
+                  <p className="mx-5 mb-2 rounded-lg border border-[#ff9d38]/40 bg-[#ff9d38]/10 px-3 py-2 text-[12px] text-[#f3e6c8]">
+                    {error}
                   </p>
-                )}
-              </AnimatePresence>
-            </aside>
+                ) : null}
+
+                <form
+                  className="flex gap-2 border-t border-[#7a5a38]/40 px-5 py-3"
+                  onSubmit={event => {
+                    event.preventDefault();
+                    void send(input);
+                  }}
+                >
+                  <input
+                    value={input}
+                    onChange={event => setInput(event.target.value)}
+                    placeholder={
+                      depth
+                        ? "편하게 답해 주세요"
+                        : "어떤 홈페이지가 필요하신가요?"
+                    }
+                    disabled={sending}
+                    className="min-w-0 flex-1 rounded-lg border border-[#e2c078]/25 bg-white/[0.04] px-3 py-2.5 text-[13px] text-[#f3e6c8] outline-none transition placeholder:text-[#a9bdd6]/45 focus:border-[#ff9d38]/60 disabled:opacity-50"
+                  />
+                  <button
+                    type="submit"
+                    disabled={sending || !input.trim()}
+                    className="shrink-0 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-4 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25 active:scale-95 disabled:opacity-40"
+                  >
+                    보내기
+                  </button>
+                </form>
+              </section>
+
+              {/* ── 도면(견적·요구사항)과 접수 ── */}
+              <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto border-t border-[#7a5a38]/40 px-5 py-4 lg:w-[380px] lg:border-t-0">
+                <EstimateCard draft={draft} disclaimer={disclaimer} />
+                <RequirementList draft={draft} />
+
+                {depth ? <DepthProgress draft={draft} /> : null}
+
+                <AnimatePresence>
+                  {ready ? (
+                    <motion.div
+                      initial={{opacity: 0, y: 12}}
+                      animate={{opacity: 1, y: 0}}
+                      className="mt-4 border-t border-[#7a5a38]/40 pt-4"
+                    >
+                      <p className="v-serif mb-2 text-[13px] text-[#e2c078]">
+                        의뢰 접수하기
+                      </p>
+                      <p className="mb-3 text-[11px] leading-relaxed text-[#a9bdd6]/75">
+                        남겨주시면 정재훈이 직접 내용을 확인하고 연락드려요.
+                        이메일만 필수예요.
+                      </p>
+
+                      <div className="space-y-2">
+                        <Field
+                          label="이메일 *"
+                          value={email}
+                          onChange={setEmail}
+                          type="email"
+                          placeholder="you@example.com"
+                        />
+                        <Field
+                          label="이름"
+                          value={name}
+                          onChange={setName}
+                          placeholder="홍길동"
+                        />
+                        <Field
+                          label="연락처"
+                          value={phone}
+                          onChange={setPhone}
+                          placeholder="선택"
+                        />
+                        <Field
+                          label="회사·단체"
+                          value={org}
+                          onChange={setOrg}
+                          placeholder="선택"
+                        />
+
+                        {/* 허니팟 — 사람 눈에 보이지 않는다. 봇만 채운다. */}
+                        <div
+                          aria-hidden="true"
+                          className="pointer-events-none absolute left-[-9999px] h-0 w-0 overflow-hidden opacity-0"
+                        >
+                          <label htmlFor="commission-website">Website</label>
+                          <input
+                            id="commission-website"
+                            name="website"
+                            tabIndex={-1}
+                            autoComplete="off"
+                            value={website}
+                            onChange={event => setWebsite(event.target.value)}
+                          />
+                        </div>
+
+                        <label className="mt-1 flex cursor-pointer items-start gap-2 text-[11px] leading-relaxed text-[#a9bdd6]">
+                          <input
+                            type="checkbox"
+                            checked={consent}
+                            onChange={event => setConsent(event.target.checked)}
+                            className="mt-0.5 shrink-0 accent-[#ff9d38]"
+                          />
+                          <span>
+                            의뢰 회신을 위해 입력한 연락처와 상담 내용을
+                            보관하는 데 동의합니다. 회신 목적 외에는 사용하지
+                            않으며, 삭제를 요청하시면 지워 드려요.
+                          </span>
+                        </label>
+
+                        <button
+                          type="button"
+                          onClick={() => void submit()}
+                          disabled={submitting || !email.trim() || !consent}
+                          className="mt-1 w-full rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-4 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25 active:scale-95 disabled:opacity-40"
+                        >
+                          {submitting ? "접수하는 중…" : "이 내용으로 접수하기"}
+                        </button>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <p className="mt-4 border-t border-[#7a5a38]/40 pt-4 text-[11px] leading-relaxed text-[#a9bdd6]/60">
+                      {depth
+                        ? "여기서 주신 답은 바로 저장돼요. 중간에 닫으셔도 이어서 하실 수 있어요."
+                        : "대화를 조금 더 나누면 접수 창이 열려요. 어떤 사이트인지, 어떤 기능이 필요한지 알려주세요."}
+                    </p>
+                  )}
+                </AnimatePresence>
+              </aside>
+            </div>
           </div>
         )}
       </motion.div>
@@ -514,6 +523,57 @@ function RequirementList({draft}: {draft: CommissionDraft | null}) {
 }
 
 /**
+ * 시안 미리보기 — **납품물이 아니라 미끼다.**
+ *
+ * 추상적인 질문 열 개보다 구체적으로 틀린 시안 한 장이 정보를 훨씬 많이 뽑아낸다.
+ * "이거 보시고 어디가 아닌지 말씀해 주세요" 는 사람이 대답을 정말 잘하는 질문 형태고,
+ * 그래서 이 시안이 메인 한 장뿐이어도 결함이 아니다 — 오히려 적당한 미끼다.
+ *
+ * `srcdoc` 으로 띄우는 이유: 파일마다 공개 주소를 열어 주면 **그 주소가 곧 유출
+ * 경로**가 된다. 토큰을 쥔 사람의 응답 안에 본문을 담아 보내는 편이 안전하다.
+ * `sandbox` 는 비워 둔다 — 스크립트도, 폼 전송도, 외부 요청도 전부 막힌다.
+ * (에이전트 프롬프트가 애초에 자립형 단일 파일을 시키므로 시안은 멀쩡히 보인다.)
+ */
+function PreviewPane({preview}: {preview: SharedArtifact}) {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <div className="border-b border-[#7a5a38]/40 px-5 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="min-w-0">
+          <p className="v-serif text-[13px] text-[#e2c078]">
+            먼저 만들어 본 시안이에요
+          </p>
+          <p className="mt-0.5 text-[11px] leading-relaxed text-[#a9bdd6]/75">
+            아직 초안이라 사진은 색 블록이에요.{" "}
+            <strong className="text-[#f3e6c8]">어디가 아닌지</strong> 편하게
+            말씀해 주시면 그게 제일 큰 도움이 돼요.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setOpen(value => !value)}
+          className="shrink-0 rounded-lg border border-[#e2c078]/25 px-3 py-1.5 text-[11px] font-black text-[#a9bdd6]/80 transition hover:border-[#e2c078]/60 hover:text-[#f3e6c8] active:scale-95"
+        >
+          {open ? "접기" : "펼치기"}
+        </button>
+      </div>
+
+      {open ? (
+        <div className="mt-2.5 overflow-hidden rounded-xl border border-[#e2c078]/25 bg-white">
+          <iframe
+            title="시안 미리보기"
+            srcDoc={preview.content}
+            sandbox=""
+            className="h-[320px] w-full border-0"
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/**
  * 심화 문답의 오른쪽 패널 — 무엇을 받았고 무엇이 남았는지.
  *
  * 접수 폼 자리를 대신한다. 끝이 안 보이는 문답은 사람이 중간에 그만두므로,
@@ -533,6 +593,9 @@ function DepthProgress({draft}: {draft: CommissionDraft | null}) {
   ].filter(row => row.value.trim());
 
   const remaining = draft.depth_missing;
+  const plannerAnswered = draft.planner_questions.filter(item =>
+    item.answer.trim()
+  );
 
   return (
     <div className="mt-4 border-t border-[#7a5a38]/40 pt-4">
@@ -551,6 +614,22 @@ function DepthProgress({draft}: {draft: CommissionDraft | null}) {
             </div>
           ))}
         </dl>
+      ) : null}
+
+      {plannerAnswered.length ? (
+        <>
+          <p className="mt-3 text-[11px] font-bold text-[#e2c078]/70">
+            기획자가 더 여쭌 것
+          </p>
+          <dl className="mt-1.5 space-y-1.5">
+            {plannerAnswered.map(item => (
+              <div key={item.id} className="text-[11px] leading-relaxed">
+                <dt className="text-[#a9bdd6]/60">{item.question}</dt>
+                <dd className="text-[#dfe7f2]">→ {item.answer}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
       ) : null}
 
       {remaining.length ? (

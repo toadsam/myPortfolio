@@ -404,6 +404,9 @@ export interface CommissionDraft {
   /** 최종 결정하는 사람 */
   decision_maker: string;
 
+  /** 체리(기획)가 "확인 필요"에서 뽑아낸 추가 질문. 제작 슬롯 뒤에 이어서 묻는다. */
+  planner_questions: PlannerQuestion[];
+
   /** 접수원이 아직 못 들은 항목 */
   missing: string[];
   /** 접수 폼을 띄울 만큼 모였는지 */
@@ -412,6 +415,28 @@ export interface CommissionDraft {
   depth_missing: string[];
   /** 제작 슬롯의 필수분이 다 찼는지 */
   depth_done: boolean;
+}
+
+/** 체리가 만든, 손님이 바로 답할 수 있는 질문 하나. */
+export interface PlannerQuestion {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+export interface PlannerQuestionsResponse {
+  questions: PlannerQuestion[];
+  source: string;
+  message: string;
+}
+
+/** 손님에게 공개된 산출물. 심화 문답 화면이 시안을 띄우는 데 쓴다. */
+export interface SharedArtifact {
+  id: number;
+  rel_path: string;
+  kind: string;
+  /** 본문 전체. iframe srcdoc 으로 띄운다(별도 공개 주소를 만들지 않으려고). */
+  content: string;
 }
 
 export interface CommissionConsultResponse {
@@ -465,6 +490,8 @@ export interface CommissionTrack {
   /** 도안의 첫마디 — 남은 항목 중 첫 질문이 들어 있다 */
   greeting: string;
   messages: CommissionMessage[];
+  /** 공개된 시안. 있으면 화면이 띄우고 "어디가 아닌지" 묻는다. */
+  preview: SharedArtifact | null;
 }
 
 export interface CommissionDepthResponse {
@@ -550,6 +577,8 @@ export interface CommissionArtifact {
   rel_path: string;
   kind: "markdown" | "html" | "text" | "other";
   size_bytes: number;
+  /** 손님 공개 여부. 기본 false — 검수 전 산출물이 새면 안 된다. */
+  shared: boolean;
   updated_at: string;
 }
 

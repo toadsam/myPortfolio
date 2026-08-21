@@ -29,6 +29,7 @@ import dynamic from "next/dynamic";
 import {useRouter} from "next/navigation";
 import {useCallback, useState} from "react";
 import {TicketLanding} from "@/components/ui/landing/TicketLanding";
+import {useImmersiveCapable} from "@/hooks/useImmersiveCapable";
 
 /**
  * 의뢰 접수 데스크. 세 사람 중 한 명만 누르는 화면이라 지연 로드한다.
@@ -57,13 +58,41 @@ export default function Home() {
     void import("@/components/village/VillageScene");
   }, [router]);
 
+  // 「작업 의뢰하기」는 기기에 따라 다른 곳으로 간다.
+  //
+  // 데스크톱은 3D 공방(`/atelier`), 모바일·태블릿은 이 화면에서 2D 접수 데스크가
+  // 바로 열린다. 3D 방에서 막히는 건 성능이 아니라 **조작**이다 — 손가락으로는
+  // 둘러보기와 스크롤이 부딪히고 NPC 라벨이 겹친다.
+  //
+  // `/atelier` 는 마을과 다른 주소다. `AtelierInterior` 가 GLB 를 안 쓰는 절차적
+  // 씬이라 방만 따로 세울 수 있었다 — 여기서 `/village` 로 보냈다면 의뢰하러 온
+  // 사람이 GLB 87개를 받게 되고, **이 파일이 존재하는 이유가 무너진다.**
+  const immersive = useImmersiveCapable();
+
+  // 아직 모르면(첫 렌더) 2D 로 둔다 — 접수가 끝까지 되는 쪽이 안전한 기본값이다.
+  const openCommission = useCallback(() => {
+    if (immersive) {
+      router.push("/atelier");
+      return;
+    }
+    setCommissionOpen(true);
+  }, [immersive, router]);
+
+  // 마을과 같은 두 줄짜리 예열. 모바일은 3D 를 안 쓰므로 받을 이유가 없다.
+  const prepareCommission = useCallback(() => {
+    if (!immersive) return;
+    router.prefetch("/atelier");
+    void import("@/components/interior/AtelierInterior");
+  }, [immersive, router]);
+
   return (
     <>
       <TicketLanding
         onEnterVillage={() => router.push("/village")}
-        onOpenCommission={() => setCommissionOpen(true)}
+        onOpenCommission={openCommission}
         onOpenResume={() => router.push("/resume")}
         onPrepareVillage={prepareVillage}
+        onPrepareCommission={prepareCommission}
       />
       {commissionOpen ? (
         <CommissionDesk onClose={() => setCommissionOpen(false)} />

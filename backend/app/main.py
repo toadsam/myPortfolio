@@ -35,6 +35,9 @@ from app.schemas import (
     CommissionDepthIn,
     CommissionDepthOut,
     CommissionTrackOut,
+    ArtifactShareIn,
+    PlannerQuestionsOut,
+    SharedArtifactOut,
     CommissionArtifactOut,
     CommissionBoardOut,
     CommissionConsultIn,
@@ -94,6 +97,7 @@ from app.services.admin_service import (
 )
 from app.services.activity_service import get_or_create_today, list_activity_history, upsert_activity
 from app.services.chat_service import answer_npc_message, atelier_role_for
+from app.services import commission_service
 from app.services.commission_service import (
     CommissionRejected,
     apply_gate_decision,
@@ -105,6 +109,8 @@ from app.services.commission_service import (
     draft_from_commission,
     ensure_access_token,
     get_by_token as commission_by_token,
+    import_planner_questions,
+    shared_artifact_for,
     delete_commission,
     get_artifact as commission_get_artifact,
     get_commission,
@@ -706,6 +712,27 @@ def commission_track(token: str, db: Session = Depends(get_db)):
         draft=draft,
         greeting=greeting,
         messages=past,
+        preview=_shared_preview(db, commission),
+    )
+
+
+def _shared_preview(db: Session, commission: CommissionRequest) -> SharedArtifactOut | None:
+    """손님에게 공개된 시안 하나. **관리자가 켠 것만** 나간다.
+
+    내용을 통째로 실어 보내고 프런트가 `srcdoc` 으로 띄운다 — 파일마다 공개 주소를
+    열어 주면 그 주소가 곧 유출 경로가 되기 때문이다. 토큰을 쥔 사람만 볼 수 있게
+    이 응답 안에 담아 보내는 편이 안전하다.
+    """
+    found = shared_artifact_for(db, commission.id)
+    if not found:
+        return None
+
+    artifact, content = found
+    return SharedArtifactOut(
+        id=artifact.id,
+        rel_path=artifact.rel_path,
+        kind=artifact.kind,
+        content=content,
     )
 
 
@@ -879,6 +906,73 @@ async def admin_run_commission_task(
     except AgentUnavailable as error:
         raise HTTPException(status_code=503, detail=str(error)) from error
 
+    return _board(db, commission)
+
+
+@app.post(
+    "/admin/commissions/{commission_id}/questions",
+    response_model=PlannerQuestionsOut,
+    dependencies=[AdminGuard],
+)
+def admin_publish_questions(commission_id: int, db: Session = Depends(get_db)):
+    """체리의 질문지를 도안의 대본으로 옮긴다.
+
+    **진행이 아니다** — 게이트를 건드리지 않고 상태도 바꾸지 않는다. 손님에게 물어볼
+    목록이 생길 뿐이라, `gate.py` 의 불변식과 무관하다.
+    """
+    commission = _load_commission(db, commission_id)
+    root = agent_workspace.workspace_for(commission.public_id)
+    text = agent_workspace.read_artifact(root, commission_service.PLANNER_QUESTION_FILE)
+
+    if text is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                f"{commission_service.PLANNER_QUESTION_FILE} 이 아직 없습니다. "
+                "체리(기획)를 먼저 실행해 주세요."
+            ),
+        )
+
+    questions = import_planner_questions(db, commission, text)
+    if not questions:
+        raise HTTPException(
+            status_code=422,
+            detail="질문지에서 질문을 찾지 못했습니다. 파일이 `- 질문` 형식인지 확인해 주세요.",
+        )
+
+    return PlannerQuestionsOut(
+        questions=questions,
+        source=commission_service.PLANNER_QUESTION_FILE,
+        message=(
+            f"질문 {len(questions)}개를 도안에게 넘겼습니다. "
+            "손님이 심화 문답 링크로 들어오면 제작 항목을 받은 뒤 이어서 여쭤봅니다."
+        ),
+    )
+
+
+@app.patch(
+    "/admin/commissions/{commission_id}/artifacts/{artifact_id}/share",
+    response_model=CommissionBoardOut,
+    dependencies=[AdminGuard],
+)
+def admin_share_artifact(
+    commission_id: int,
+    artifact_id: int,
+    payload: ArtifactShareIn,
+    db: Session = Depends(get_db),
+):
+    """산출물 하나를 손님에게 공개/비공개한다.
+
+    공개된 시안은 심화 문답 화면에 뜨고, 손님이 그걸 보고 "어디가 아닌지" 말해 준다.
+    **기본은 비공개**이고, 한 번에 하나만 공개된다(마지막에 켠 것이 이긴다) —
+    손님에게 파일 목록을 늘어놓는 자리가 아니라 반응을 받아내는 자리라서다.
+    """
+    commission = _load_commission(db, commission_id)
+    artifact = commission_get_artifact(db, artifact_id)
+    if not artifact or artifact.commission_id != commission.id:
+        raise HTTPException(status_code=404, detail="해당 산출물을 찾을 수 없습니다.")
+
+    commission_service.set_artifact_shared(db, commission, artifact, payload.shared)
     return _board(db, commission)
 
 

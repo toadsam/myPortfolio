@@ -270,6 +270,7 @@ workspace/commissions/WO-31960672/
 | Next.js 프로젝트 스캐폴드     | ❌ 일부러 안 한다 — 수십 개 파일은 게이트에서 사람이 검수 불가 |
 | 에이전트 진행률 실시간 표시   | ❌ 완료 후 결과만 보여준다                                     |
 | 3D 공방 GLB 에셋              | ⬜ 지금은 절차적 도형. 파일만 갈아끼우면 된다                  |
+| 모바일에서 3D 공방            | ❌ 일부러 안 한다 — 조작이 안 맞는다. 2D 데스크로 받는다       |
 | 손님의 접수 상태 조회         | ✅ `/commission/<token>` — 심화 문답 화면이 겸한다             |
 | 손님이 파일 첨부(로고·메뉴판) | ❌ 공개 업로드는 부담이 커서 안 한다. 문답에서 링크로 받는다   |
 
@@ -279,18 +280,21 @@ workspace/commissions/WO-31960672/
 
 상세한 파일 지도와 함정은 [COMMISSION_ATELIER.md](./COMMISSION_ATELIER.md) 에 있다. 요약만:
 
-| 고치고 싶은 것               | 파일                                                |
-| ---------------------------- | --------------------------------------------------- |
-| 도안의 상담 말투·견적 기준선 | `backend/app/services/commission_service.py`        |
-| 4직군이 만드는 산출물 내용   | `backend/app/agents/prompts.py`                     |
-| 게이트 순서·승인 규칙        | `backend/app/agents/gate.py` (**유일한 출처**)      |
-| 팀원 NPC 성격·말투           | `backend/app/catalog.py`                            |
-| 접수 데스크 화면             | `src/components/ui/CommissionDesk.tsx`              |
-| 심화 문답에서 받는 항목      | `commission_service._DEPTH_SLOTS` (**유일한 출처**) |
-| 심화 문답 화면               | `src/app/commission/[token]/page.tsx`               |
-| 관리자 검수대                | `src/components/admin/CommissionWorkboard.tsx`      |
-| 3D 공방 씬                   | `src/components/interior/AtelierInterior.tsx`       |
-| 해치·팻말 위치               | `src/components/village/AtelierHatch.tsx`           |
+| 고치고 싶은 것               | 파일                                                 |
+| ---------------------------- | ---------------------------------------------------- |
+| 도안의 상담 말투·견적 기준선 | `backend/app/services/commission_service.py`         |
+| 4직군이 만드는 산출물 내용   | `backend/app/agents/prompts.py`                      |
+| 게이트 순서·승인 규칙        | `backend/app/agents/gate.py` (**유일한 출처**)       |
+| 팀원 NPC 성격·말투           | `backend/app/catalog.py`                             |
+| 접수 데스크 화면             | `src/components/ui/CommissionDesk.tsx`               |
+| 심화 문답에서 받는 항목      | `commission_service._DEPTH_SLOTS` (**유일한 출처**)  |
+| 심화 문답 화면               | `src/app/commission/[token]/page.tsx`                |
+| 체리의 질문지 형식·파싱      | `prompts.py` planner + `parse_question_lines()`      |
+| 3D 공방 독립 라우트          | `src/app/atelier/page.tsx`                           |
+| 기기 판별                    | `src/hooks/useImmersiveCapable.ts` (**유일한 출처**) |
+| 관리자 검수대                | `src/components/admin/CommissionWorkboard.tsx`       |
+| 3D 공방 씬                   | `src/components/interior/AtelierInterior.tsx`        |
+| 해치·팻말 위치               | `src/components/village/AtelierHatch.tsx`            |
 
 ### 손대기 전에 알아야 할 것 셋
 

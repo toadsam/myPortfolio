@@ -15,6 +15,8 @@ import {useCallback, useEffect, useState} from "react";
 
 import {
   fetchCommissionArtifact,
+  publishPlannerQuestions,
+  shareCommissionArtifact,
   fetchCommissionBoard,
   postCommissionGate,
   rejectCommissionTask,
@@ -102,6 +104,7 @@ export default function CommissionWorkboard({
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
   const [viewing, setViewing] = useState<ArtifactContent | null>(null);
+  const [questionNote, setQuestionNote] = useState("");
 
   const load = useCallback(async () => {
     try {
@@ -130,6 +133,34 @@ export default function CommissionWorkboard({
     } finally {
       setBusy("");
     }
+  }
+
+  /**
+   * 체리의 "확인 필요" → 도안의 대본.
+   *
+   * **진행이 아니다.** 게이트를 건드리지 않고 상태도 안 바꾼다 — 손님에게 물어볼
+   * 목록이 생길 뿐이라, 승인 규칙(`gate.py`)과 무관하게 아무 때나 눌러도 된다.
+   */
+  async function publishQuestions() {
+    setBusy("questions");
+    setError("");
+    try {
+      const result = await publishPlannerQuestions(commissionId);
+      setQuestionNote(result.message);
+    } catch (caught) {
+      setQuestionNote("");
+      setError(
+        caught instanceof Error ? caught.message : "질문지를 옮기지 못했습니다."
+      );
+    } finally {
+      setBusy("");
+    }
+  }
+
+  async function toggleShare(artifactId: number, shared: boolean) {
+    await act("share", () =>
+      shareCommissionArtifact(commissionId, artifactId, shared)
+    );
   }
 
   async function openArtifact(artifactId: number) {
@@ -245,6 +276,7 @@ export default function CommissionWorkboard({
                 )
               }
               onOpen={openArtifact}
+              onShare={toggleShare}
             />
           ))}
         </div>
@@ -262,6 +294,38 @@ export default function CommissionWorkboard({
         </p>
       ) : null}
 
+      {/* 체리의 "확인 필요"를 손님에게 물어볼 대본으로 옮긴다.
+          여태 그 목록은 문서에 적히고 끝났고, 결국 내가 손님에게 다시 연락해야 했다 —
+          공방이 없애려던 왕복이 그대로 남아 있던 자리다. */}
+      <div className="rounded-lg border border-[#e3e8ef] bg-white p-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-[#1e293b]">
+              체리의 확인 필요 → 손님에게 질문
+            </p>
+            <p className="mt-0.5 text-xs leading-5 text-[#64748b]">
+              기획 산출물의{" "}
+              <code className="font-mono text-[11px]">손님-확인-질문.md</code>{" "}
+              를 도안의 대본으로 넘깁니다. 손님이 심화 문답 링크로 들어오면 제작
+              항목을 받은 뒤 이어서 여쭤봅니다.
+            </p>
+          </div>
+          <button
+            className="sub-button shrink-0"
+            type="button"
+            disabled={!!busy}
+            onClick={() => void publishQuestions()}
+          >
+            {busy === "questions" ? "옮기는 중…" : "손님에게 질문 보내기"}
+          </button>
+        </div>
+        {questionNote ? (
+          <p className="mt-2 rounded-md bg-[#fffbeb] px-2.5 py-1.5 text-xs leading-5 text-[#78350f]">
+            {questionNote}
+          </p>
+        ) : null}
+      </div>
+
       {viewing ? (
         <ArtifactViewer artifact={viewing} onClose={() => setViewing(null)} />
       ) : null}
@@ -276,7 +340,8 @@ function TaskCard({
   cliHint,
   onRun,
   onReject,
-  onOpen
+  onOpen,
+  onShare
 }: {
   task: CommissionTask;
   busy: boolean;
@@ -285,6 +350,7 @@ function TaskCard({
   onRun: () => void;
   onReject: () => void;
   onOpen: (artifactId: number) => void;
+  onShare: (artifactId: number, shared: boolean) => void;
 }) {
   const meta = ROLE_META[task.role];
   const seconds = task.duration_ms ? Math.round(task.duration_ms / 1000) : 0;
@@ -343,15 +409,45 @@ function TaskCard({
       {task.artifacts.length > 0 ? (
         <div className="mt-2 flex flex-wrap gap-1.5">
           {task.artifacts.map(artifact => (
-            <button
+            <span
               key={artifact.id}
-              className="rounded-md border border-[#e3e8ef] bg-[#f8fafc] px-2 py-1 font-mono text-[11px] text-[#475569] transition hover:border-[#f59e0b]/50 hover:text-[#b45309]"
-              type="button"
-              onClick={() => onOpen(artifact.id)}
+              className={`inline-flex items-center overflow-hidden rounded-md border ${
+                artifact.shared
+                  ? "border-[#f59e0b]/60 bg-[#fffbeb]"
+                  : "border-[#e3e8ef] bg-[#f8fafc]"
+              }`}
             >
-              {artifact.kind === "html" ? "🖼 " : "📄 "}
-              {artifact.rel_path}
-            </button>
+              <button
+                className="px-2 py-1 font-mono text-[11px] text-[#475569] transition hover:text-[#b45309]"
+                type="button"
+                onClick={() => onOpen(artifact.id)}
+              >
+                {artifact.kind === "html" ? "🖼 " : "📄 "}
+                {artifact.rel_path}
+              </button>
+
+              {/* 손님 공개 토글. HTML 시안만 의미가 있다 — 손님에게 보여줄 것은
+                  눈으로 볼 수 있는 화면이지 명세 문서가 아니다. */}
+              {artifact.kind === "html" ? (
+                <button
+                  className={`border-l px-2 py-1 font-mono text-[10px] font-black transition ${
+                    artifact.shared
+                      ? "border-[#f59e0b]/40 text-[#b45309] hover:bg-[#fef3c7]"
+                      : "border-[#e3e8ef] text-[#94a3b8] hover:text-[#b45309]"
+                  }`}
+                  type="button"
+                  disabled={busy}
+                  onClick={() => onShare(artifact.id, !artifact.shared)}
+                  title={
+                    artifact.shared
+                      ? "손님 화면에서 내린다"
+                      : "심화 문답 화면에 띄워 '어디가 아닌지' 묻는다"
+                  }
+                >
+                  {artifact.shared ? "손님 공개중" : "손님에게 보이기"}
+                </button>
+              ) : null}
+            </span>
           ))}
         </div>
       ) : null}
