@@ -2,7 +2,7 @@
 
 import {Line} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
-import {useMemo, useRef} from "react";
+import {memo, useMemo, useRef} from "react";
 import {Vector3, type Mesh} from "three";
 import type {BuildingData} from "@/types/portfolio";
 
@@ -79,7 +79,7 @@ function Pulse({edge}: {edge: Edge}) {
   );
 }
 
-export function BuildingNetwork({buildings}: {buildings: BuildingData[]}) {
+function BuildingNetworkImpl({buildings}: {buildings: BuildingData[]}) {
   const edges = useMemo(() => buildEdges(buildings), [buildings]);
 
   return (
@@ -101,3 +101,6 @@ export function BuildingNetwork({buildings}: {buildings: BuildingData[]}) {
     </group>
   );
 }
+
+// buildings 는 모듈 상수(projectNetworkBuildings)라 memo 로 부모 재렌더를 끊는다.
+export const BuildingNetwork = memo(BuildingNetworkImpl);

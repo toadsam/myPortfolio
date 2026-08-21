@@ -2,7 +2,7 @@
 
 import {Billboard, Html, useCursor} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
-import {memo, Suspense, useMemo, useRef, useState} from "react";
+import {memo, Suspense, useEffect, useMemo, useRef, useState} from "react";
 import {PooledLight} from "./LightPool";
 import {NpcCharacter, type NpcMoveState} from "./NpcCharacter";
 import type {ThreeEvent} from "@react-three/fiber";
@@ -20,6 +20,10 @@ import type {BuildingData, NPCData, Vector3Tuple} from "@/types/portfolio";
 
 /** 플레이어가 내리는 단체 명령 — gather(집결)/photo(단체사진)/party(파티)/follow(따라오기)/greet(인사) */
 export type NpcCommand = "gather" | "photo" | "party" | "follow" | "greet";
+
+/** 마우스를 올리고 이만큼 머물면 클릭 없이 대화가 열린다. 카메라 돌리다 스치는
+ *  정도(수십 ms)로는 안 열리고, 의도적으로 갖다 댄 경우만 잡히는 길이. */
+const HOVER_OPEN_DELAY_MS = 450;
 
 interface NPCProps {
   npc: NPCData;
@@ -59,6 +63,9 @@ interface NPCProps {
   emote?: string;
   /** 관계 기반 사회적 목표 — 친한 NPC를 찾아가거나 화해하러 갈 지점 */
   socialTarget?: Vector3Tuple | null;
+  /** hover 머무름으로 대화 열기 허용. 인트로·엿듣기 같은 연출 중엔 끈다 —
+   *  루미가 커서 옆을 지나가기만 해도 인트로가 잘려 나가면 안 되니까. */
+  hoverToTalk?: boolean;
 }
 
 function NPCImpl({
@@ -84,7 +91,8 @@ function NPCImpl({
   commandSlot,
   commandTotal,
   emote,
-  socialTarget
+  socialTarget,
+  hoverToTalk = true
 }: NPCProps) {
   const groupRef = useRef<Group | null>(null);
   const elapsedRef = useRef(0);
@@ -97,6 +105,7 @@ function NPCImpl({
   const scriptStartedRef = useRef(false);
   const moveStateRef = useRef<NpcMoveState>("idle");
   const [hovered, setHovered] = useState(false);
+  const hoverOpenTimerRef = useRef<number | null>(null);
   const highlighted = hovered || isActive;
   // villageState 기반 값과 실시간 runtime 값을 병합 — 원시값(runtimeMood/runtimeMemory)만
   // 의존성으로 두어, npcRuntimeStates 전체가 새 객체가 되어도 이 NPC의 실제 값이 그대로면
@@ -124,6 +133,27 @@ function NPCImpl({
     : undefined;
 
   useCursor(hovered);
+
+  // 대화창이 닫히면 hover 도 같이 푼다. 안 풀면 커서가 NPC 위에 그대로 있는 채로
+  // 닫았을 때 아래 타이머가 곧바로 다시 열어 버린다 — 벗어났다 다시 올려야 열리게.
+  useEffect(() => {
+    if (!isActive) setHovered(false);
+  }, [isActive]);
+
+  // hover 머무름 → 자동으로 대화 열기. 이미 열려 있거나 단체 명령 중이면 안 건다.
+  useEffect(() => {
+    if (!hovered || !hoverToTalk || isActive || command) return;
+    hoverOpenTimerRef.current = window.setTimeout(() => {
+      hoverOpenTimerRef.current = null;
+      onSelect(npc);
+    }, HOVER_OPEN_DELAY_MS);
+    return () => {
+      if (hoverOpenTimerRef.current !== null) {
+        window.clearTimeout(hoverOpenTimerRef.current);
+        hoverOpenTimerRef.current = null;
+      }
+    };
+  }, [hovered, hoverToTalk, isActive, command, npc, onSelect]);
 
   /**
    * 구역 단차 위에서 지금 밟고 있는 단 높이. NPC 는 상하로 통통 뛰므로
@@ -183,8 +213,9 @@ function NPCImpl({
       if (scriptStartedRef.current) scriptStartedRef.current = false;
     }
 
-    // ── 대화 중: 제자리 고정 + 카메라(+z) 바라보기 (진짜 대화하는 느낌) ──
-    if ((isActive || forceHold) && !currentAction) {
+    // ── 대화 중(또는 마우스가 올라와 있을 때): 제자리 고정 + 카메라(+z) 바라보기 ──
+    // hover 중에도 멈추는 이유: 걷는 캐릭터를 커서로 쫓아다니지 않게 하려고.
+    if ((isActive || forceHold || (hovered && !command)) && !currentAction) {
       const g = groupRef.current;
       g.rotation.y += (0 - g.rotation.y) * Math.min(1, delta * 6);
       g.position.y =
@@ -399,9 +430,11 @@ function NPCImpl({
             targetName={actionTarget?.name}
           />
         ) : null}
-        {/* 클릭 히트박스 (투명) */}
-        <mesh position={[0, 0.7, 0]} visible={false}>
-          <capsuleGeometry args={[0.3, 0.9, 4, 8]} />
+        {/* 포인터 히트박스 (투명). 캐릭터 메시는 raycast 를 껐으므로(NpcCharacter)
+            NPC 를 잡는 유일한 판정면이다. 몸통보다 한참 넉넉하게 — 근처에만
+            가져가도 잡히게. 삼각형 수십 개짜리라 27명분이어도 비용은 무시할 만하다. */}
+        <mesh position={[0, 0.95, 0]} visible={false}>
+          <capsuleGeometry args={[0.8, 1.2, 2, 8]} />
         </mesh>
         {/* 발밑 링은 지목했을 때만. 예전엔 상시로 연두 링(opacity 0.5)을 깔았는데,
             NPC가 땅에 붙어 보이게 하려던 목적은 이제 진짜 그림자가 대신한다.

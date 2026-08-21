@@ -392,7 +392,13 @@ float swellPhase = uFlowTime * uSwellSpeed;
 float swell = sin( transformed.x * 0.42 + swellPhase ) * 0.55
             + sin( transformed.z * 0.35 - swellPhase * 0.86 ) * 0.45
             + sin( ( transformed.x + transformed.z ) * 0.24 + swellPhase * 1.27 ) * 0.35;
-transformed.y += swell * uSwellAmp * smoothstep( 0.0, 1.6, aShore );`
+// 골(아래쪽)만 1/5 로 누른다. 석호 수면(+0.028)과 하상(+0.010) 사이는 1.8cm 뿐인데
+// 사인 셋의 합 1.35 × amp 0.055 = 7.4cm 가 그대로 내려가면 수면이 하상 밑으로
+// 들어가고, 그 삼각형들이 하상에 가려져 **밤 물 위를 떠다니는 검은 다각형**이 됐다
+// (하상을 숨기거나 수면을 8cm 올리면 사라지는 걸로 확인). 마루는 그대로 두어
+// 출렁임은 남기고, 골은 1.35×0.2×0.055 = 1.5cm 로 하상 위에 머문다.
+float swellShaped = swell < 0.0 ? swell * 0.2 : swell;
+transformed.y += swellShaped * uSwellAmp * smoothstep( 0.0, 1.6, aShore );`
       );
 
     shader.fragmentShader = shader.fragmentShader

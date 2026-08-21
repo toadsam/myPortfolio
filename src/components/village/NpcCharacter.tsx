@@ -5,7 +5,7 @@
 
 import {useAnimations, useGLTF} from "@react-three/drei";
 import {useFrame, useThree} from "@react-three/fiber";
-import {useEffect, useMemo, useRef} from "react";
+import {memo, useEffect, useMemo, useRef} from "react";
 import type {MutableRefObject} from "react";
 import {Box3, Mesh, Vector3, type AnimationClip, type Group} from "three";
 import {SkeletonUtils} from "three-stdlib";
@@ -19,6 +19,8 @@ import {lockSceneMaterials} from "@/lib/villageMaterial";
 import type {CharacterModelId} from "@/types/portfolio";
 import {extendGltfLoader} from "@/lib/gltfLoaders";
 
+const noopRaycast = () => {};
+
 export type NpcMoveState = CharacterState;
 
 // 카메라에서 이 거리 밖이면 렌더/애니 정지
@@ -31,7 +33,7 @@ const MESHY_HEIGHT = 1.7;
 // 프레임 루프 전용 스크래치. 측정에는 쓰지 않는다 — 측정은 useMemo 안에서 지역 객체로 한다.
 const _tmp = new Vector3();
 
-export function NpcCharacter({
+function NpcCharacterImpl({
   stateRef,
   modelId = DEFAULT_NPC_MODEL
 }: {
@@ -68,6 +70,11 @@ export function NpcCharacter({
         o.castShadow = true;
         o.receiveShadow = false;
         o.frustumCulled = true;
+        // 포인터 판정은 NPC.tsx 의 투명 캡슐이 전담한다. SkinnedMesh.raycast 는
+        // 삼각형마다 스키닝을 다시 계산하는 데다 바운딩 구는 바인드 포즈 기준이라
+        // 애니메이션 중엔 판정이 어긋난다 — 27명이 마우스 움직임마다 이걸 돌리면
+        // 느리고 부정확했다. 캐릭터 메시는 레이캐스트에서 아예 뺀다.
+        o.raycast = noopRaycast;
       }
     });
     copy.updateWorldMatrix(false, true);
@@ -193,3 +200,7 @@ export function preloadCharacterModels(): void {
   for (const entry of Object.values(characterModels))
     useGLTF.preload(entry.url, true, true, extendGltfLoader);
 }
+
+// NPC(부모)는 말풍선·기분이 바뀔 때마다 재렌더된다. 여기 props 는 ref 와 모델 id
+// 뿐이라 memo 로 끊으면 캐릭터 트리는 그때 다시 안 만든다.
+export const NpcCharacter = memo(NpcCharacterImpl);

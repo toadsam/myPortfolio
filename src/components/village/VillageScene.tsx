@@ -1,9 +1,8 @@
 "use client";
 
-import {Canvas, useFrame, useThree} from "@react-three/fiber";
+import {Canvas, useFrame, useThree, type ThreeEvent} from "@react-three/fiber";
 import {
   AdaptiveDpr,
-  AdaptiveEvents,
   Billboard,
   ContactShadows,
   Html,
@@ -123,6 +122,10 @@ interface VillageSceneProps {
     position: [number, number, number];
     lookAt: [number, number, number];
   } | null;
+  /** 바닥 클릭 이동 목적지 (CameraController 로 전달) */
+  groundTarget?: {point: Vector3Tuple; nonce: number} | null;
+  /** 바닥(섬 안)을 클릭했을 때. 드래그 끝 클릭은 걸러서 넘긴다. */
+  onGroundClick?: (point: Vector3Tuple) => void;
   npcCommand?: NpcCommand | null;
   npcCommandTargets?: Record<string, Vector3Tuple>;
   overseerTarget?: Vector3Tuple | null;
@@ -153,7 +156,7 @@ const GUIDE_SCRIPTED_START: [number, number, number] = [-4, 0, 1];
 // 조형물 두 개가 겹치는 사고가 안 난다.
 const PLAZA_LANDMARK_READY = "central-plaza" in buildingModels;
 
-function Statue() {
+function StatueImpl() {
   const {scene} = useGLTF(
     "/models/environment/statue.glb",
     true,
@@ -211,6 +214,77 @@ function preloadSceneModels(): void {
 // 숲은 교차 빌보드라 그루당 6삼각형뿐이므로, 원반을 넓혀도 삼각형 비용은 거의 없다.
 const ISLAND_CENTER: [number, number, number] = [0, 0, 3];
 const ISLAND_RADIUS = 53;
+// 바닥 클릭 이동이 먹는 범위 — 걸어 다니는 섬(반지름 40)까지. 물을 찍으면 무시.
+const GROUND_CLICK_RADIUS = 41;
+// 이보다 많이 움직인 뒤 떼면 드래그(회전)지 클릭이 아니다 (px)
+const GROUND_CLICK_MAX_DELTA = 5;
+
+/**
+ * 바닥 클릭 이동용 투명 판 하나 + 클릭 지점 링.
+ * 건물·NPC 는 자기 핸들러에서 stopPropagation 하므로 그쪽이 먼저 맞으면 여기까지
+ * 안 온다. 판정면은 삼각형 수십 개짜리 원반 한 장이라 포인터 비용은 없다시피 하다.
+ * 보이지 않는 메시도 레이캐스트는 되므로(NPC 히트박스와 같은 원리) visible=false.
+ */
+function GroundClickCatcher({
+  onGroundClick
+}: {
+  onGroundClick: (point: Vector3Tuple) => void;
+}) {
+  const [marker, setMarker] = useState<{
+    point: Vector3Tuple;
+    at: number;
+  } | null>(null);
+  const ringRef = useRef<Mesh | null>(null);
+
+  useFrame(() => {
+    if (!marker || !ringRef.current) return;
+    const t = (performance.now() - marker.at) / 700;
+    if (t >= 1) {
+      setMarker(null);
+      return;
+    }
+    const s = 0.6 + t * 1.4;
+    ringRef.current.scale.set(s, s, s);
+    (ringRef.current.material as MeshBasicMaterial).opacity = 0.85 * (1 - t);
+  });
+
+  function handleClick(event: ThreeEvent<MouseEvent>) {
+    if (event.delta > GROUND_CLICK_MAX_DELTA) return; // 드래그 회전의 끝
+    const {x, z} = event.point;
+    const y = terrainHeightAt(x, z);
+    const point: Vector3Tuple = [x, y, z];
+    setMarker({point, at: performance.now()});
+    onGroundClick(point);
+  }
+
+  return (
+    <>
+      <mesh
+        position={[ISLAND_CENTER[0], 0, ISLAND_CENTER[2]]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        visible={false}
+        onClick={handleClick}
+      >
+        <circleGeometry args={[GROUND_CLICK_RADIUS, 48]} />
+      </mesh>
+      {marker ? (
+        <mesh
+          ref={ringRef}
+          position={[marker.point[0], marker.point[1] + 0.08, marker.point[2]]}
+          rotation={[-Math.PI / 2, 0, 0]}
+        >
+          <ringGeometry args={[0.45, 0.6, 32]} />
+          <meshBasicMaterial
+            color="#f5d26b"
+            transparent
+            opacity={0.85}
+            depthWrite={false}
+          />
+        </mesh>
+      ) : null}
+    </>
+  );
+}
 /** 절벽이 물까지 떨어지는 깊이 */
 const CLIFF_DROP = 9;
 /** 수면 높이 — 절벽 중턱쯤에 둬야 벼랑이 물에 잠긴 것처럼 보인다 */
@@ -235,7 +309,7 @@ const GRASS_TINT = "#ffffff";
 // 잔디 텍스처는 scripts/make-grass-texture.mjs 가 만든다. 색은 길 타일 갓길에서
 // 실측한 값이라, 길이 지나가도 경계가 안 드러난다. 예전 grass.jpg는 연노랑 초록이라
 // 길이 잔디 위에 얹힌 초록 리본처럼 떠 보였다.
-function Ground() {
+function GroundImpl() {
   const map = useTexture("/textures/grass-village.png");
   // 대지 얼룩(아래층). 잔디 결과 곱해져서 큰 덩어리를 만든다 — src/lib/groundMacro.ts
   const macro = useMemo(() => makeMacroTexture(), []);
@@ -355,7 +429,7 @@ function Ground() {
 const CLIFF_SEGMENTS = 128;
 const CLIFF_RINGS = 6;
 
-function IslandCliff() {
+function IslandCliffImpl() {
   const geometry = useMemo(() => {
     const positions: number[] = [];
     const colors: number[] = [];
@@ -425,7 +499,7 @@ function IslandCliff() {
 // 파도를 넣고 싶어질 텐데, 카메라가 늘 섬 위에 있어서 수면은 늘 멀리 비스듬히
 // 보인다 — 그 각도에선 잔물결이 거의 안 읽히고 fog가 대부분 먹는다.
 // roughness 를 낮춰 하늘빛을 받는 것만으로 충분히 물처럼 보인다.
-function Water() {
+function WaterImpl() {
   const material = useMemo(() => {
     const m = new MeshStandardMaterial({
       color: "#2d6a86",
@@ -474,7 +548,7 @@ const GLINT_STRENGTH = Math.max(
   Math.min(1, (VILLAGE_PALETTE.lamp - 0.85) / 1.6)
 );
 
-function WaterGlints() {
+function WaterGlintsImpl() {
   const {texture, spots} = useMemo(() => {
     // 세로로 긴 부드러운 타원 스프라이트 — 캔버스 한 장이면 된다
     const c = document.createElement("canvas");
@@ -607,7 +681,7 @@ const headFracFor = (glb: string) => {
   return 0.85;
 };
 
-function LampPools() {
+function LampPoolsImpl() {
   const {texture, spots, poolGeometry} = useMemo(() => {
     const c = document.createElement("canvas");
     c.width = 64;
@@ -773,7 +847,7 @@ function LampPools() {
 //
 // 안전장치: 파일 하나가 404 면 progress 가 100 에 못 미친 채 멈출 수 있다 —
 // 25초가 지나면 무조건 걷는다(마을은 그 뒤에도 알아서 마저 뜬다).
-function LoadingVeil() {
+function LoadingVeilImpl() {
   const {progress, active} = useProgress();
   const [gone, setGone] = useState(false);
   const finished = !active && progress >= 100;
@@ -841,7 +915,7 @@ function LoadingVeil() {
 // 물·바람이 쓰는 시계를 한 곳에서 돌린다. 재질마다 useFrame 을 걸면 해자와
 // 개울이 서로 다른 위상으로 흘러 만나는 지점에서 어긋나고, 나무도 그루마다
 // 다른 순간에 같은 돌풍을 맞는다.
-function AnimationClock() {
+function AnimationClockImpl() {
   const gl = useThree(s => s.gl);
   const scene = useThree(s => s.scene);
   const camera = useThree(s => s.camera);
@@ -1131,7 +1205,7 @@ function waterLines(): WaterLine[] {
   return lines;
 }
 
-function Waterways() {
+function WaterwaysImpl() {
   const geometry = useMemo(() => {
     const positions: number[] = [];
     const colors: number[] = [];
@@ -1673,7 +1747,7 @@ const WATER_PROFILE: {out: number; y: number; color: string}[] = [
   {out: WATER_BANK_OUT, y: WATER_SURFACE_Y + 0.02, color: "#6b8748"}
 ];
 
-function WaterBanks() {
+function WaterBanksImpl() {
   const geometry = useMemo(() => {
     const positions: number[] = [];
     const colors: number[] = [];
@@ -1857,7 +1931,7 @@ const DAIS_PROFILE: [number, number][] = [
 //
 // 단면: 안쪽 테두리(단상 발치에 밀어 넣음) → 데크 상판 → 바깥 모서리 →
 // 수면 아래로 내려가는 치마. 치마가 없으면 데크가 물 위에 뜬 종이가 된다.
-function PlazaRingWalk() {
+function PlazaRingWalkImpl() {
   const texture = useMemo(() => makeBankTexture(), []);
 
   const geometry = useMemo(() => {
@@ -1926,7 +2000,7 @@ function PlazaRingWalk() {
   );
 }
 
-function PlazaDais() {
+function PlazaDaisImpl() {
   const texture = useMemo(() => makeBankTexture(), []);
   const grass = useTexture("/textures/grass-village.png");
   const macro = useMemo(() => makeMacroTexture(), []);
@@ -2062,7 +2136,7 @@ const PLINTH_H = 0.2;
 const CAP_OUT = 0.12;
 const CAP_H = 0.15;
 
-function TerraceBanks() {
+function TerraceBanksImpl() {
   const texture = useMemo(() => makeBankTexture(), []);
 
   const geometry = useMemo(() => {
@@ -2164,7 +2238,7 @@ function TerraceBanks() {
 // 텍스처는 `Ground` 와 **같은 그림에 같은 배율**(2유닛에 한 장)이라, 단 위 잔디와
 // 아래 잔디가 같은 결로 보인다. 다만 repeat 를 건드리면 원반 쪽이 같이 망가지므로
 // 복제해서 쓰고, 반복은 uv 에 직접 굽는다.
-function TerraceTops() {
+function TerraceTopsImpl() {
   const base = useTexture("/textures/grass-village.png");
   // 단 위도 같은 얼룩을 탄다. 안 걸면 단 위만 민무늬로 남아 층이 색으로 갈린다.
   const macro = useMemo(() => makeMacroTexture(), []);
@@ -2237,7 +2311,7 @@ function TerraceTops() {
 // 요소가 한 재질로 묶여야 "깎아 만든 땅"으로 읽힌다.
 const LANE_W = 1.15;
 
-function IslandCommons() {
+function IslandCommonsImpl() {
   const texture = useMemo(() => makeBankTexture(), []);
 
   const geometry = useMemo(() => {
@@ -2367,7 +2441,7 @@ function hillHeight(radius: number, angle: number) {
   return WATER_Y - 4 + ramp * Math.max(2, ridge) * layer;
 }
 
-function DistantHills() {
+function DistantHillsImpl() {
   const geometry = useMemo(() => {
     const positions: number[] = [];
     const colors: number[] = [];
@@ -2427,7 +2501,7 @@ function DistantHills() {
 // depthWrite 를 끄고 렌더 순서를 뒤로 밀어 모든 것 뒤에 그린다.
 const SKY_RADIUS = 420;
 
-function SkyDome({horizon, top}: {horizon: string; top: string}) {
+function SkyDomeImpl({horizon, top}: {horizon: string; top: string}) {
   const geometry = useMemo(() => {
     const geo = new SphereGeometry(SKY_RADIUS, 32, 20);
     const lo = new Color(horizon);
@@ -2468,7 +2542,7 @@ function SkyDome({horizon, top}: {horizon: string; top: string}) {
 //
 // 아주 느리게 돈다(약 26분에 한 바퀴). 멈춰 있으면 스티커처럼 보이고,
 // 눈에 띄게 돌면 시선을 뺏는다.
-function CloudLayer({
+function CloudLayerImpl({
   light,
   dark,
   cover
@@ -2504,7 +2578,7 @@ function CloudLayer({
 
 // 해(밤엔 달). 하늘 돔 바로 안쪽, 태양광과 **같은 방향**에 둔다 —
 // 빛은 오른쪽에서 오는데 해가 왼쪽에 떠 있으면 바로 눈에 걸린다.
-function SunDisc({
+function SunDiscImpl({
   direction,
   radius,
   color
@@ -2600,7 +2674,7 @@ const DISTRICT_CENTERS: Record<string, {x: number; z: number; top: number}> =
     );
   })();
 
-function DistrictBanner({
+function DistrictBannerImpl({
   label,
   ribbon,
   ink,
@@ -2682,7 +2756,7 @@ function shade(hex: string, factor: number) {
   return `rgb(${ch.join(",")})`;
 }
 
-function ActiveRoute({activeSection}: {activeSection: SectionId}) {
+function ActiveRouteImpl({activeSection}: {activeSection: SectionId}) {
   const building = villageBuildings.find(
     b => b.sectionId === activeSection && b.district !== "plaza"
   );
@@ -2742,7 +2816,7 @@ function ActiveRoute({activeSection}: {activeSection: SectionId}) {
   );
 }
 
-function LiveDecorations({villageState}: {villageState: VillageState | null}) {
+function LiveDecorationsImpl({villageState}: {villageState: VillageState | null}) {
   if (!villageState) return null;
 
   const unlocked = new Set(villageState.unlocked_items);
@@ -2834,6 +2908,8 @@ function VillageSceneImpl({
   onGuideArrive,
   guideForceHold,
   cinematic,
+  groundTarget,
+  onGroundClick,
   npcCommand,
   npcCommandTargets,
   overseerTarget,
@@ -2846,6 +2922,27 @@ function VillageSceneImpl({
   const propsApi = usePropsEditor();
   const editing = propsApi.enabled && propsApi.editMode;
   const sky = VILLAGE_PALETTE;
+
+  // ─── N8AO 투명 패스 끄기 ───────────────────────────────────────────────
+  // n8ao 는 씬에 transparent 재질이 하나라도 있으면 `transparencyAware` 를
+  // 스스로 켠다. 그러면 매 프레임 씬을 네 번 순회하고 **전체 씬을 두 번 더
+  // 렌더**한다(투명 오브젝트만 보이게 토글해 가며). 이 마을은 물·반짝임·
+  // 빌보드·말풍선 링 때문에 항상 걸려서, CPU 프로파일에서 renderTransparency
+  // 하나가 프레임 시간의 20% 였다. 투명 오브젝트 위에 AO 가 살짝 겹치는 대가로
+  // 그 패스를 통째로 뺀다. 래퍼(@react-three/postprocessing)가 이 옵션을 prop
+  // 으로 안 넘기므로 ref 로 잡아 configuration 에 직접 쓴다 — 명시적으로
+  // 쓰면 자동 감지(autoDetectTransparency)도 같이 꺼진다.
+  const aoRef = useRef<{
+    configuration: {transparencyAware: boolean};
+  } | null>(null);
+  useEffect(() => {
+    const pass = aoRef.current;
+    if (!pass) return;
+    pass.configuration.transparencyAware = false;
+    if (process.env.NODE_ENV === "development") {
+      (window as unknown as {__aoPass?: unknown}).__aoPass = pass; // A/B 토글용
+    }
+  });
   // 모바일 라이트 모드 — 해상도/안티앨리어싱을 낮춰 성능·배터리 확보
   const isMobile = useMemo(
     () =>
@@ -2928,7 +3025,11 @@ function VillageSceneImpl({
       >
         {/* 움직일 땐 해상도/이벤트 자동 저하 → 멈추면 선명하게 */}
         <AdaptiveDpr pixelated={false} />
-        <AdaptiveEvents />
+        {/* AdaptiveEvents 는 일부러 안 쓴다. performance.regress() 중엔 포인터
+            이벤트를 통째로 끄는데, CameraController 가 전환 내내 regress 를 부르고
+            입장 직후엔 전환이 연달아 일어나서 "초반엔 클릭이 안 되다가 나중에
+            되는" 증상이 났다. 대신 레이캐스트 자체를 싸게 만들었다 — 건물·NPC
+            GLB 는 raycast 를 끄고 투명 박스/캡슐만 판정한다. */}
         {/* 개발 모드 계기판 — Suspense 밖이라 로딩 중에도 계측된다 */}
         <PerfProbe />
         <color args={[sky.skyHorizon]} attach="background" />
@@ -3140,6 +3241,7 @@ function VillageSceneImpl({
                   npc.id === "guide-npc" ? onGuideArrive : undefined
                 }
                 forceHold={npc.id === "guide-npc" ? guideForceHold : undefined}
+                hoverToTalk={!cinematic}
                 command={npcCommand}
                 commandTarget={npcCommandTargets?.[npc.id]}
                 commandSlot={index}
@@ -3219,6 +3321,7 @@ function VillageSceneImpl({
                   ? [
                       <N8AO
                         key="ao"
+                        ref={aoRef}
                         color={sky.aoColor}
                         intensity={sky.aoI}
                         aoRadius={1.2}
@@ -3260,11 +3363,17 @@ function VillageSceneImpl({
           {isWalkMode ? (
             <CharacterController />
           ) : (
-            <CameraController
-              activeSection={activeSection}
-              lockRotate={editing}
-              cinematic={cinematic}
-            />
+            <>
+              <CameraController
+                activeSection={activeSection}
+                lockRotate={editing}
+                cinematic={cinematic}
+                groundTarget={groundTarget}
+              />
+              {onGroundClick && !editing ? (
+                <GroundClickCatcher onGroundClick={onGroundClick} />
+              ) : null}
+            </>
           )}
 
           {/* ─── 셰이더 사전 컴파일 ───────────────────────────────────────
@@ -3328,3 +3437,32 @@ function visibleEmote(runtime?: NpcRuntimeState) {
   if (!runtime?.emote || !runtime.emoteExpiresAt) return undefined;
   return runtime.emoteExpiresAt > Date.now() ? runtime.emote : undefined;
 }
+
+// ─── 정적 자식 memo ────────────────────────────────────────────────────────
+// VillageSceneImpl 은 npcRuntimeStates 가 바뀔 때마다(말풍선·이모트·순찰, 1~2초에
+// 한 번) 다시 렌더된다. 그때 아래 컴포넌트들은 props 가 없거나 원시값뿐인데도
+// 함수 본문과 JSX 트리를 매번 다시 만들고 있었다 — CPU 프로파일에서 React 가
+// 15% 를 먹던 이유의 큰 조각. memo 로 감싸면 VillageSceneImpl 재렌더 때 얕은
+// 비교 한 번으로 끝난다. (선언은 위에 function 으로 남겨 읽는 순서를 지킨다.)
+const Statue = memo(StatueImpl);
+const Ground = memo(GroundImpl);
+const IslandCliff = memo(IslandCliffImpl);
+const Water = memo(WaterImpl);
+const WaterGlints = memo(WaterGlintsImpl);
+const LampPools = memo(LampPoolsImpl);
+const LoadingVeil = memo(LoadingVeilImpl);
+const AnimationClock = memo(AnimationClockImpl);
+const Waterways = memo(WaterwaysImpl);
+const WaterBanks = memo(WaterBanksImpl);
+const PlazaRingWalk = memo(PlazaRingWalkImpl);
+const PlazaDais = memo(PlazaDaisImpl);
+const TerraceBanks = memo(TerraceBanksImpl);
+const TerraceTops = memo(TerraceTopsImpl);
+const IslandCommons = memo(IslandCommonsImpl);
+const DistantHills = memo(DistantHillsImpl);
+const SkyDome = memo(SkyDomeImpl);
+const CloudLayer = memo(CloudLayerImpl);
+const SunDisc = memo(SunDiscImpl);
+const DistrictBanner = memo(DistrictBannerImpl);
+const ActiveRoute = memo(ActiveRouteImpl);
+const LiveDecorations = memo(LiveDecorationsImpl);

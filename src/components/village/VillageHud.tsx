@@ -944,11 +944,11 @@ export function ControlsHint() {
       </span>
       <span className="text-[#a9bdd6]/30">·</span>
       <span className="flex items-center gap-1.5">
-        <span className="text-sm">🔄</span> 드래그·스크롤로 둘러보기
+        <span className="text-sm">📍</span> 바닥 클릭해 이동
       </span>
       <span className="text-[#a9bdd6]/30">·</span>
       <span className="flex items-center gap-1.5">
-        <span className="text-sm">🚶</span> 직접 이동은 좌하단 버튼
+        <span className="text-sm">🔄</span> 드래그·휠로 둘러보기
       </span>
     </div>
   );

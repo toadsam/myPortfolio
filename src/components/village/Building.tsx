@@ -150,6 +150,10 @@ function HighlightFX({
 
 // ─── GLB 에셋 렌더러 ──────────────────────────────────────────────────────────
 
+// 건물 GLB 메시는 포인터 판정에서 뺀다 — 수만 삼각형을 마우스 움직임마다 뒤지지
+// 않게. 판정은 BuildingImpl 의 투명 박스 하나가 맡는다(NPC 히트박스와 같은 원리).
+const noopRaycast = () => {};
+
 function GlbModel({
   glbPath,
   size,
@@ -185,6 +189,7 @@ function GlbModel({
       if (!mesh.isMesh) return;
       mesh.castShadow = true;
       mesh.receiveShadow = true;
+      mesh.raycast = noopRaycast;
       const mats = Array.isArray(mesh.material)
         ? mesh.material
         : [mesh.material];
@@ -1118,6 +1123,18 @@ function BuildingImpl({
             <SelectionBox size={building.size} />
           </>
         ) : null}
+        {/* 포인터 히트박스 (투명). GLB 는 raycast 를 껐으므로 건물을 잡는 유일한
+            판정면. GLB 는 앞마당 원반(max(w,d)+1.1)에 대각선을 맞춰 들어오고 높이는
+            선언값의 최대 1.6배까지 커지므로 그만큼 넉넉하게 잡는다. */}
+        <mesh position={[0, (h * 1.5) / 2, 0]} visible={false}>
+          <boxGeometry
+            args={[
+              Math.max(building.size[0], building.size[2]) + 1.1,
+              h * 1.5,
+              Math.max(building.size[0], building.size[2]) + 1.1
+            ]}
+          />
+        </mesh>
         <BuildingGeometry b={building} hl={isHighlighted} />
         <GroundRing
           color={building.accentColor}

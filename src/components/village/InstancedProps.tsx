@@ -16,7 +16,7 @@
 
 import {useGLTF} from "@react-three/drei";
 import type {ThreeEvent} from "@react-three/fiber";
-import {Suspense, useLayoutEffect, useMemo, useRef} from "react";
+import {memo, Suspense, useLayoutEffect, useMemo, useRef} from "react";
 import {
   Euler,
   InstancedMesh,
@@ -158,7 +158,7 @@ function shadowRole(glb: string) {
   return {cast: true, receive: true};
 }
 
-function InstancedPart({
+function InstancedPartImpl({
   part,
   placements,
   onPropDown,
@@ -233,7 +233,7 @@ function InstancedPart({
 }
 
 // ─── GLB 하나에 속한 모든 배치 ────────────────────────────────────────────────
-function GlbInstances({
+function GlbInstancesImpl({
   glb,
   placements,
   onPropDown
@@ -334,7 +334,7 @@ function GlbInstances({
 }
 
 // ─── 엔트리 ──────────────────────────────────────────────────────────────────
-export function InstancedProps({
+function InstancedPropsImpl({
   items,
   onPropDown
 }: {
@@ -367,3 +367,13 @@ export function InstancedProps({
     </>
   );
 }
+
+// ─── memo ──────────────────────────────────────────────────────────────────
+// PropsLayer 는 usePropsEditor() 가 매 렌더 새 객체를 돌려주는 탓에 VillageScene 이
+// 다시 그려질 때마다(1~2초에 한 번) 같이 재렌더된다. 여기로 오는 props(items 상태,
+// useMemo 로 묶은 placements, useCallback 콜백)는 전부 참조가 고정돼 있으므로
+// memo 한 겹이면 그 연쇄가 여기서 끊긴다 — CPU 프로파일에서 GlbInstances 가
+// 프로젝트 코드 중 1위(196ms/15s)였다.
+const InstancedPart = memo(InstancedPartImpl);
+const GlbInstances = memo(GlbInstancesImpl);
+export const InstancedProps = memo(InstancedPropsImpl);

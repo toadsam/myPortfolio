@@ -694,7 +694,7 @@ export function LandingScreen({
   onPrepareVillage
 }: LandingScreenProps) {
   const [isExiting, setIsExiting] = useState(false);
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(() => sfx.isMuted());
 
   // 마우스가 없는 기기인가. 마을 조작(카메라·이동)은 마우스/키보드 전제라
   // 터치로는 사실상 못 움직인다. **막지는 않는다** — 예전엔 말없이 이력서로

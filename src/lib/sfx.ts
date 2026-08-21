@@ -2,7 +2,8 @@
 // 브라우저 자동재생 정책상 첫 사용자 제스처에서 AudioContext가 활성화된다.
 
 let ctx: AudioContext | null = null;
-let muted = false;
+// 기본은 무음 — 방문자가 스피커 버튼으로 직접 켠다.
+let muted = true;
 
 function getCtx(): AudioContext | null {
   if (typeof window === "undefined") return null;

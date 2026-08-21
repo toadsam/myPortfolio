@@ -2,10 +2,10 @@
 
 import {OrbitControls} from "@react-three/drei";
 import {useFrame, useThree} from "@react-three/fiber";
-import {useEffect, useMemo, useRef} from "react";
+import {useEffect, useRef} from "react";
 import {Euler, Vector3} from "three";
 import {cameraTargets} from "@/lib/constants";
-import type {SectionId} from "@/types/portfolio";
+import type {SectionId, Vector3Tuple} from "@/types/portfolio";
 
 type OrbitController = {
   target: Vector3;
@@ -21,7 +21,20 @@ interface CameraControllerProps {
     position: [number, number, number];
     lookAt: [number, number, number];
   } | null;
+  /** 바닥 클릭 이동 — 이 지점을 바라보도록, 지금의 거리·각도를 유지한 채 옮긴다.
+   *  같은 자리를 다시 눌러도 움직이게 nonce 로 구분한다. */
+  groundTarget?: {point: Vector3Tuple; nonce: number} | null;
 }
+
+// 바닥 클릭 이동 때 유지할 카메라-타깃 거리 범위. 끝까지 당겨 섬 전체를 보다가
+// 바닥을 찍으면 그 먼 거리 그대로 옮겨 봐야 달라진 게 없어 보인다 — 가까이 데려간다.
+const GROUND_OFFSET_MIN = 6;
+const GROUND_OFFSET_MAX = 24;
+const _groundOffset = new Vector3();
+
+// 자유비행(WASD/QE + 우클릭 마우스룩)은 개발할 때 씬을 둘러보는 용도다. 방문자에겐
+// 안내도 없는 키를 누르면 카메라가 하늘로 날아오르는 꼴이라 빼 둔다.
+const FREE_FLY_ENABLED = process.env.NODE_ENV === "development";
 
 // 방향키 → WASD 별칭
 const KEY_ALIAS: Record<string, string> = {
@@ -53,7 +66,8 @@ function isTyping() {
 export function CameraController({
   activeSection,
   lockRotate = false,
-  cinematic = null
+  cinematic = null,
+  groundTarget = null
 }: CameraControllerProps) {
   const controlsRef = useRef<OrbitController | null>(null);
   const {camera, gl} = useThree();
@@ -61,17 +75,33 @@ export function CameraController({
   const sectionTarget = cameraTargets[activeSection] || cameraTargets.intro;
   const target = cinematic ?? sectionTarget;
 
-  const desiredCamera = useMemo(
-    () => new Vector3(...target.position),
-    [target.position]
-  );
-  const desiredLookAt = useMemo(
-    () => new Vector3(...target.lookAt),
-    [target.lookAt]
-  );
+  // 목적지는 ref 로 둔다 — 섹션/시네마틱 prop 과 바닥 클릭, 두 출처가 같은 자리를
+  // 갱신하고 useFrame 은 그냥 여기로 lerp 한다.
+  const desiredCamera = useRef(new Vector3(...target.position));
+  const desiredLookAt = useRef(new Vector3(...target.lookAt));
 
   const isTransitioning = useRef(true);
   const prevSection = useRef(activeSection);
+
+  useEffect(() => {
+    desiredCamera.current.set(...target.position);
+    desiredLookAt.current.set(...target.lookAt);
+    isTransitioning.current = true;
+  }, [target.position, target.lookAt]);
+
+  // 바닥 클릭: 지금 카메라가 타깃을 보는 방향·거리를 그대로 들어 클릭 지점에 놓는다.
+  useEffect(() => {
+    if (!groundTarget) return;
+    const look = new Vector3(...groundTarget.point);
+    const from = controlsRef.current?.target ?? desiredLookAt.current;
+    _groundOffset.copy(camera.position).sub(from);
+    const len = _groundOffset.length() || 1;
+    const clamped = Math.max(GROUND_OFFSET_MIN, Math.min(GROUND_OFFSET_MAX, len));
+    _groundOffset.multiplyScalar(clamped / len);
+    desiredLookAt.current.copy(look);
+    desiredCamera.current.copy(look).add(_groundOffset);
+    isTransitioning.current = true;
+  }, [groundTarget, camera]);
 
   // ── 자유 카메라 (WASD/QE 이동 + 우클릭 마우스룩 + Shift 가속) ──
   const flying = useRef(false);
@@ -82,6 +112,7 @@ export function CameraController({
   const pitch = useRef(0);
 
   useEffect(() => {
+    if (!FREE_FLY_ENABLED) return;
     const dom = gl.domElement;
 
     function enterFree() {
@@ -197,11 +228,6 @@ export function CameraController({
     }
   }, [activeSection]);
 
-  // 시네마틱 카메라가 켜지거나 꺼지면 새 목표로 이동
-  useEffect(() => {
-    isTransitioning.current = true;
-  }, [cinematic]);
-
   useFrame((_, delta) => {
     // ── 자유 카메라 ──
     if (flying.current) {
@@ -242,22 +268,24 @@ export function CameraController({
     const lerpSpeed = 0.062;
     const targetSpeed = 0.076;
 
-    camera.position.lerp(desiredCamera, lerpSpeed);
+    const wantCam = desiredCamera.current;
+    const wantLook = desiredLookAt.current;
+    camera.position.lerp(wantCam, lerpSpeed);
 
     if (controlsRef.current) {
-      controlsRef.current.target.lerp(desiredLookAt, targetSpeed);
+      controlsRef.current.target.lerp(wantLook, targetSpeed);
       controlsRef.current.update();
     }
 
     const settled =
-      camera.position.distanceTo(desiredCamera) < 0.018 &&
+      camera.position.distanceTo(wantCam) < 0.018 &&
       (!controlsRef.current ||
-        controlsRef.current.target.distanceTo(desiredLookAt) < 0.018);
+        controlsRef.current.target.distanceTo(wantLook) < 0.018);
 
     if (settled) {
-      camera.position.copy(desiredCamera);
+      camera.position.copy(wantCam);
       if (controlsRef.current) {
-        controlsRef.current.target.copy(desiredLookAt);
+        controlsRef.current.target.copy(wantLook);
         controlsRef.current.update();
       }
       isTransitioning.current = false;

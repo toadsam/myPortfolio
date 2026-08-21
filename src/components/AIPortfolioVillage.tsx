@@ -329,7 +329,8 @@ export function AIPortfolioVillage() {
   }, []);
   const [explorationMode, setExplorationMode] =
     useState<ExplorationMode>("click");
-  const [soundOn, setSoundOn] = useState(true);
+  // 기본 무음. 랜딩에서 이미 켰다면(클라이언트 내비게이션) 그 상태를 이어받는다.
+  const [soundOn, setSoundOn] = useState(() => !sfx.isMuted());
   const [konami, setKonami] = useState(false);
   const [conciergeStage, setConciergeStage] = useState<
     "idle" | "running" | "panel" | "closed"
@@ -341,6 +342,11 @@ export function AIPortfolioVillage() {
   const [travelCam, setTravelCam] = useState<{
     position: Vector3Tuple;
     lookAt: Vector3Tuple;
+  } | null>(null);
+  // 바닥 클릭 이동 목적지. nonce 로 같은 자리 재클릭도 구분한다.
+  const [groundTarget, setGroundTarget] = useState<{
+    point: Vector3Tuple;
+    nonce: number;
   } | null>(null);
   const [npcCommand, setNpcCommand] = useState<NpcCommand | null>(null);
   const [overseerTarget, setOverseerTarget] = useState<Vector3Tuple | null>(
@@ -1293,6 +1299,20 @@ export function AIPortfolioVillage() {
     setIsPanelOpen(true);
   }
 
+  // 바닥 클릭 — 카메라만 그 자리로. 열려 있던 대화·패널은 닫는다(빈 땅을 누른 건
+  // "이제 다른 데 볼래"라는 뜻이니까). 컨시어지 연출 중엔 무시.
+  const handleGroundClick = useCallback(
+    (point: Vector3Tuple) => {
+      if (conciergeStage === "running") return;
+      if (conciergeStage === "panel") setConciergeStage("closed");
+      setSelectedNpc(null);
+      setIsPanelOpen(false);
+      setTravelCam(null);
+      setGroundTarget({point, nonce: Date.now()});
+    },
+    [conciergeStage]
+  );
+
   // 빠른 이동 / 미니맵 — 카메라만 그 구역으로 이동 (패널·대화는 열지 않음)
   function travelTo(point: TravelPoint) {
     const target = cameraTargets[point.key];
@@ -1715,6 +1735,8 @@ export function AIPortfolioVillage() {
               onEnterAtelier={stableEnterAtelier}
               onDepartIsland={isOwner ? stableDepartIsland : undefined}
               onEditingChange={stableSetEditing}
+              groundTarget={groundTarget}
+              onGroundClick={handleGroundClick}
               cinematic={
                 eavesOpen && convoCam
                   ? convoCam
