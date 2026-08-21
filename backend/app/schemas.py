@@ -1,8 +1,8 @@
 from datetime import date as dt_date
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class ActivityIn(BaseModel):
@@ -161,6 +161,29 @@ class NpcRelationshipRow(BaseModel):
     meet_count: int
 
     model_config = {"from_attributes": True}
+
+
+class VillageEventOut(BaseModel):
+    """마을 소식 한 줄 — NPC 사이의 눈에 띄는 사건."""
+
+    id: int
+    emoji: str
+    text: str
+    npc_a: str
+    npc_b: str
+    delta: int
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+    @field_validator("created_at")
+    @classmethod
+    def _as_utc(cls, value: datetime) -> datetime:
+        # SQLite 의 func.now() 는 UTC 인데 tz 없이 돌아온다. 그대로 내보내면 브라우저가
+        # 로컬 시각으로 읽어 "9시간 전"이 된다(KST). UTC 를 명시해 'Z' 가 붙게 한다.
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value
 
 
 class NpcEncounterOut(BaseModel):

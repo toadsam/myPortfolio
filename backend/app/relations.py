@@ -62,5 +62,9 @@ def relation_for(npc_a: str, npc_b: str) -> str:
     a, b = canon(npc_a), canon(npc_b)
     if a == "overseer" or b == "overseer":
         return _OVERSEER_RELATION
+    if a == b:
+        # 관계가 NPC 개인 단위가 되면서 같은 종류끼리도 관계가 생긴다
+        # (프로젝트 안내원 둘, 기술 안내원 둘). 같은 구역 동료의 기본 톤.
+        return "같은 구역에서 일하는 동료. 서로의 일을 제일 잘 알고, 손님 얘기로 금방 통한다."
     key = tuple(sorted((a, b)))
     return _RELATIONS.get(key, "마을에서 함께 사는 친한 동료. 편하게 안부를 나누는 사이.")

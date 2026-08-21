@@ -169,11 +169,23 @@ export interface NpcEncounterParticipant {
 }
 
 export interface NpcRelationshipRow {
+  /** 2026-08-22 부터 실제 npc_id (예전엔 대표 종류) */
   npc_a: string;
   npc_b: string;
   affinity: number;
   vibe: string;
   meet_count: number;
+}
+
+/** 마을 소식 한 줄 — NPC 사이에 일어난 눈에 띄는 사건 (GET /npc/news) */
+export interface VillageEvent {
+  id: number;
+  emoji: string;
+  text: string;
+  npc_a: string;
+  npc_b: string;
+  delta: number;
+  created_at: string;
 }
 
 export interface NpcRelationshipChange {

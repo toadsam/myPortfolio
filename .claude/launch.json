@@ -22,6 +22,15 @@
         "3100"
       ],
       "port": 3100
+    },
+    {
+      "name": "backend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "backend:dev"
+      ],
+      "port": 8000
     }
   ]
 }

@@ -9,7 +9,11 @@ import type {CrestName} from "@/data/villageCrests";
 import {districtTone, villageBuildings} from "@/lib/constants";
 import {resetHudLayout, useDraggable} from "@/lib/useDraggable";
 import {fetchRelationships} from "@/lib/liveApi";
-import type {NpcRelationshipRow, VillageState} from "@/types/live";
+import type {
+  NpcRelationshipRow,
+  VillageEvent,
+  VillageState
+} from "@/types/live";
 import type {NPCData, NPCType, SectionId} from "@/types/portfolio";
 
 /**
@@ -84,12 +88,27 @@ export const DISTRICT_TO_TRAVEL_KEY: Record<string, string> = {
   contact: "contact"
 };
 
+/** "3분 전" 식 상대 시각. 소식 줄 옆에 붙는다. */
+function timeAgo(iso: string): string {
+  const ms = Date.now() - new Date(iso).getTime();
+  if (!Number.isFinite(ms) || ms < 0) return "";
+  const m = Math.floor(ms / 60000);
+  if (m < 1) return "방금";
+  if (m < 60) return `${m}분 전`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}시간 전`;
+  return `${Math.floor(h / 24)}일 전`;
+}
+
 export function LiveStatusPanel({
   error,
-  villageState
+  villageState,
+  news
 }: {
   error: string | null;
   villageState: VillageState | null;
+  /** NPC 사이의 사건 피드 (GET /npc/news). 없으면 섹션을 숨긴다. */
+  news?: VillageEvent[];
 }) {
   const [collapsed, setCollapsed] = useState(HUD_STARTS_COLLAPSED);
   const drag = useDraggable("live-status");
@@ -135,6 +154,27 @@ export function LiveStatusPanel({
           </p>
         ) : villageState ? (
           <>
+            {news && news.length > 0 ? (
+              <div className="mt-2 grid gap-1">
+                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#e2c078]/70">
+                  NPC 들 사이에서
+                </p>
+                {news.slice(0, 5).map(ev => (
+                  <p
+                    key={ev.id}
+                    className="flex items-start gap-1.5 leading-4 text-[11px] text-[#dfe7f2]"
+                  >
+                    <span className="shrink-0">{ev.emoji}</span>
+                    <span className="min-w-0 flex-1">
+                      {ev.text}
+                      <span className="ml-1 text-[#a9bdd6]/45">
+                        {timeAgo(ev.created_at)}
+                      </span>
+                    </span>
+                  </p>
+                ))}
+              </div>
+            ) : null}
             <p className="mt-2 leading-5 text-[#c9d6e8]">
               {villageState.summary}
             </p>
@@ -1050,16 +1090,10 @@ export function MilestoneBanner({text}: {text: string}) {
   );
 }
 
-const REL_KIND_NAME: Record<string, string> = {
-  overseer: "정재훈",
-  guide: "루미",
-  project: "픽셀",
-  developer: "테오",
-  archivist: "아카",
-  contact: "포스트",
-  coding: "알고",
-  cs: "노바"
-};
+/** npc_id → 이름. 관계 행은 2026-08-22 부터 실제 npc_id 라 로스터에서 찾는다. */
+function npcName(id: string): string {
+  return autonomousNpcs.find(n => n.id === id)?.name ?? id;
+}
 
 function RelRow({r}: {r: NpcRelationshipRow}) {
   const color =
@@ -1067,8 +1101,7 @@ function RelRow({r}: {r: NpcRelationshipRow}) {
   return (
     <div className="flex items-center justify-between rounded-lg border border-[#e2c078]/12 bg-white/[0.04] px-3 py-2">
       <span className="text-xs font-bold text-[#dfe7f2]">
-        {REL_KIND_NAME[r.npc_a] ?? r.npc_a} ↔{" "}
-        {REL_KIND_NAME[r.npc_b] ?? r.npc_b}
+        {npcName(r.npc_a)} ↔ {npcName(r.npc_b)}
       </span>
       <span className="font-mono text-[11px]" style={{color}}>
         {r.vibe} ({r.affinity >= 0 ? "+" : ""}
@@ -1101,25 +1134,31 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
   const cx = 170;
   const cy = 158;
   const R = 118;
-  const ring = [
-    "guide",
-    "project",
-    "developer",
-    "archivist",
-    "contact",
-    "coding",
-    "cs"
-  ];
-  const posOf = (kind: string) => {
-    if (kind === "overseer") return {x: cx, y: cy};
-    const i = ring.indexOf(kind);
-    if (i < 0) return {x: cx, y: cy};
+  // 노드 = 관계에 등장하는 NPC 중 |친밀도| 합이 큰 순서로 최대 10명.
+  // 분신(정재훈)은 가운데, 나머지는 고리에. 관계가 NPC 개인 단위라 전부 그리면
+  // 30명이 넘어 읽을 수 없다.
+  const weight = new Map<string, number>();
+  for (const r of rels ?? []) {
+    weight.set(r.npc_a, (weight.get(r.npc_a) ?? 0) + Math.abs(r.affinity) + 1);
+    weight.set(r.npc_b, (weight.get(r.npc_b) ?? 0) + Math.abs(r.affinity) + 1);
+  }
+  const hub = "overseer-npc";
+  const ring = [...weight.entries()]
+    .filter(([id]) => id !== hub)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([id]) => id);
+  const shown = new Set([hub, ...ring]);
+  const posOf = (id: string) => {
+    if (id === hub) return {x: cx, y: cy};
+    const i = ring.indexOf(id);
+    if (i < 0) return null;
     const a = (i / ring.length) * Math.PI * 2 - Math.PI / 2;
     return {x: cx + Math.cos(a) * R, y: cy + Math.sin(a) * R};
   };
   const edgeColor = (aff: number) =>
     aff >= 6 ? "#16a34a" : aff <= -6 ? "#ef4444" : "#64748b";
-  const allKinds = ["overseer", ...ring];
+  const allKinds = weight.has(hub) ? [hub, ...ring] : ring;
   const sorted = (rels ?? []).slice().sort((a, b) => b.affinity - a.affinity);
   const top = sorted.filter(r => r.affinity >= 6).slice(0, 2);
   const bottom = sorted
@@ -1163,8 +1202,10 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
           <>
             <svg viewBox={`0 0 ${W} ${H}`} className="mt-2 w-full">
               {rels.map((r, i) => {
+                if (!shown.has(r.npc_a) || !shown.has(r.npc_b)) return null;
                 const a = posOf(r.npc_a);
                 const b = posOf(r.npc_b);
+                if (!a || !b) return null;
                 return (
                   <line
                     key={i}
@@ -1181,7 +1222,8 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
               })}
               {allKinds.map(kind => {
                 const p = posOf(kind);
-                const isHub = kind === "overseer";
+                if (!p) return null;
+                const isHub = kind === hub;
                 return (
                   <g key={kind}>
                     <circle
@@ -1200,7 +1242,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                       fontWeight="800"
                       fill="#e5d8ba"
                     >
-                      {REL_KIND_NAME[kind]}
+                      {npcName(kind)}
                     </text>
                   </g>
                 );

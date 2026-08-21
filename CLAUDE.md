@@ -156,9 +156,35 @@ WebP 312 KB/31.3 dB, ETC1S 251 KB/**26.4 dB (visible regression — never use)**
 UASTC improves quality and cuts VRAM 4×, but downloads grow ~2.5× and UASTC floors at ~1 byte/pixel,
 so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottleneck.
 
-### NPC relationship system
+### NPC relationship system (2026-08-22 2단계 — 자세한 설명은 `docs/NPC_SOCIETY.md`)
 
-`backend/app/relations.py` normalizes any npc*id (including dynamic per-building ids) into a canonical kind (`guide`/`developer`/`archivist`/`coding`/`cs`/`contact`/`project`/`overseer`) and defines a base relationship tone per canonical-kind pair. `backend/app/services/relationship_service.py` persists the \_actual* evolving relationship (`NpcRelationship` model: affinity −100..100, a vibe label, last few history events, meet count) keyed on the canonical pair — same-kind pairs (e.g. two `project` NPCs) never get a relationship row. `relationship_context()` builds the prompt fragment fed into encounter/chat generation; `apply_outcome()` nudges affinity by at most ±5 per interaction and flags milestones (화해했어요/절친이 됐어요/etc). When touching NPC-to-NPC dialogue (`npc_brain_service.py`'s encounter path), this is the layer that gives it continuity.
+**결과는 규칙이 정하고 LLM은 대사만 쓴다.** `POST /npc/encounter` 순서: `relationship_rules.decide_outcome`
+(순수 함수 — 기분 궁합 + 오늘 활동 공통 화제 + 12% 확률 사건, ±5 클램프, 기분까지 결정) →
+`npc_brain_service.generate_npc_encounter`(그 사건이 드러나는 4줄, 실패 시 kind별 폴백 대사) →
+`relationship_service.apply_outcome` → `memory_service.remember`×2 + `gossip` → `VillageEvent`(마을 소식).
+모델이 돌려주는 `relationship`/`state_changes`는 **읽지 않는다**.
+
+- 관계 키는 **실제 npc_id 쌍**(`NpcRelationship.npc_a/npc_b`). `relations.canon` 종류 쌍은 씨앗값(`SEED_AFFINITY`)과
+  기본 톤에만 쓴다. 같은 종류 다른 NPC도 관계가 생기고, 자기 자신만 없다. 옛 종류-키 행은 startup `purge_legacy_kind_rows`.
+  vibe 라벨은 항상 친밀도 문턱에서, 하루 1씩 0으로 감쇠(`_apply_decay`).
+- 기억은 `NpcMemory`(NPC당 30, kind: encounter/incident/gossip/visitor). `build_context(memory_lines=…)`로 프롬프트에 들어간다.
+- 보이는 결과: `GET /npc/news` → HUD "마을 소식" 피드, `RelationshipViewer`는 NPC 이름 단위, 디렉터는 친밀도 ≥16 찾아가고
+  ≤−8은 피하거나 화해하러 간다(`AIPortfolioVillage` `SOUR_AFFINITY/CLOSE_AFFINITY` — 백엔드 상수와 같은 값).
+- 수렴 방지 규칙(친할수록 음수 사건 2배)과 클램프·감쇠는 `tests/test_relationship_rules.py`·`test_relationship_service.py`가 잠근다.
+  같은 종류 쌍에 관계가 "없어야 한다"는 옛 테스트는 의도적으로 뒤집혔다.
+
+### Pointer picking, camera, and render budget (2026-08-22)
+
+- **포인터 판정은 투명 히트박스만 한다.** NPC 캡슐(`NPC.tsx`)·건물 박스(`Building.tsx`)·바닥 클릭 원반(`GroundClickCatcher`).
+  GLB 메시는 전부 `raycast = noop`(`NpcCharacter.tsx`, `Building.tsx GlbModel`). 보이지 않는 메시도 레이캐스트된다(three Raycaster는
+  layers만 본다) — 그래서 되는 구조다. 새 상호작용 오브젝트를 달 때 GLB 자체에 핸들러를 붙이지 말 것.
+- **`<AdaptiveEvents/>` 는 쓰지 않는다.** regress 중 포인터 이벤트를 통째로 꺼서 "입장 직후 클릭이 안 되는" 증상을 만들었다.
+- NPC는 hover 0.45초면 대화가 열린다(연출 중 `hoverToTalk=false`). 바닥 클릭은 `CameraController.groundTarget`(현재 오프셋 유지).
+  자유비행 WASD는 `FREE_FLY_ENABLED`(dev 전용).
+- **N8AO의 `transparencyAware`는 반드시 false.** 래퍼가 prop으로 안 넘기므로 `VillageScene`이 ref로 직접 쓴다. 자동 감지가 켜지면
+  매 프레임 씬을 두 번 더 렌더한다(CPU 20%).
+- `VillageScene`의 정적 자식(지형·물·하늘·등불·프롭 인스턴싱)은 `memo`다 — `npcRuntimeStates`가 1~2초마다 바뀌어 부모가 재렌더된다.
+- 렉 보고는 **prod 빌드로 재라**(`npm run build && npm run start -- -p 3100`, launch.json `prod`). dev는 StrictMode 이중 렌더로 롱태스크가 남는다.
 
 ### Project detail viewer routing
 

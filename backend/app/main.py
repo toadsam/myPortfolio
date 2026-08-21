@@ -6,7 +6,7 @@ from app.agents import gate, workspace as agent_workspace
 from app.agents.runner import AgentUnavailable, run_task as run_commission_task
 from app.config import settings
 from app.database import get_db, init_db
-from app.models import CommissionRequest
+from app.models import CommissionRequest, VillageEvent
 from app.security import (
     AdminGuard,
     AiRateLimit,
@@ -69,6 +69,7 @@ from app.schemas import (
     NpcGroupChatOut,
     NpcRelationshipOut,
     NpcRelationshipRow,
+    VillageEventOut,
     NpcConversationLogOut,
     NpcPresetIn,
     NpcPresetOut,
@@ -141,8 +142,16 @@ from app.services.learning_service import (
     update_coding_test,
     update_cs_note,
 )
+from app.services import memory_service
 from app.services.npc_brain_service import generate_group_chat, generate_npc_encounter, generate_npc_tick
-from app.services.relationship_service import apply_outcome, list_all as list_relationships, relationship_context
+from app.services.relationship_rules import decide_outcome
+from app.services.relationship_service import (
+    apply_outcome,
+    get_or_create as get_or_create_relationship,
+    list_all as list_relationships,
+    purge_legacy_kind_rows,
+    relationship_context,
+)
 from app.services import coach_service, external_service, quest_service
 from app.services.village_service import derive_village_state
 
@@ -165,6 +174,12 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup() -> None:
     init_db()
+    # 관계가 종류-키에서 NPC id-키로 바뀌었다(2026-08-22). 옛 행은 어떤 id 와도
+    # 안 맞으니 한 번 지운다. 빈 DB 에선 아무 일도 안 한다.
+    from app.database import SessionLocal
+
+    with SessionLocal() as db:
+        purge_legacy_kind_rows(db)
     from app.database import SessionLocal
 
     db = SessionLocal()
@@ -387,6 +402,14 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
         activity_history=activity_history,
         village_state=village_state_ctx,
         atelier_work=atelier_work,
+        memory_lines=memory_service.memory_lines_for_prompt(db, payload.npc_id),
+    )
+    # 방문자와 나눈 말도 기억에 남긴다 — 원문 40자만(전문은 NpcConversationLog 에 이미 있다).
+    memory_service.remember(
+        db,
+        payload.npc_id,
+        f"방문자가 '{payload.message.strip()[:40]}' 하고 물어봤다",
+        kind="visitor",
     )
     log_npc_conversation(
         db,
@@ -412,34 +435,77 @@ async def npc_tick(payload: NpcTickIn, db: Session = Depends(get_db)):
 
 @app.post("/npc/encounter", response_model=NpcEncounterOut, dependencies=[AiRateLimit])
 async def npc_encounter(payload: NpcEncounterIn, db: Session = Depends(get_db)):
-    activity = get_or_create_today(db)
-    rel_ctx = relationship_context(db, payload.npc_a.npc_id, payload.npc_b.npc_id)
-    result = await generate_npc_encounter(payload.npc_a, payload.npc_b, payload.recent_memory, activity, rel_ctx)
+    """두 NPC 의 마주침. 순서가 중요하다:
 
-    # 이번 대화 결과를 관계 상태에 반영 (친밀도·사건 기억)
-    if result.relationship is not None:
-        rel, milestone = apply_outcome(
-            db,
-            payload.npc_a.npc_id,
-            payload.npc_b.npc_id,
-            result.relationship.delta,
-            result.relationship.event,
-            result.relationship.vibe,
+    1. 규칙(relationship_rules)이 **결과**를 정한다 — 친밀도 변화·이유·기분.
+    2. 모델은 그 결과가 드러나는 대사만 쓴다(실패하면 폴백 대사).
+    3. 관계·기억·뒷담화·마을 소식에 저장한다.
+    모델이 돌려주는 친밀도는 어디에도 쓰지 않는다.
+    """
+    a_id, b_id = payload.npc_a.npc_id, payload.npc_b.npc_id
+    activity = get_or_create_today(db)
+    rel = get_or_create_relationship(db, a_id, b_id)
+    if rel is None:
+        raise HTTPException(status_code=400, detail="같은 NPC 끼리는 마주칠 수 없어요.")
+
+    name_a, name_b = memory_service.display_name(a_id), memory_service.display_name(b_id)
+    outcome = decide_outcome(
+        a_id, b_id, payload.npc_a.mood, payload.npc_b.mood, activity, rel.affinity, name_a=name_a, name_b=name_b
+    )
+    known = memory_service.about(db, a_id, b_id)
+    rel_ctx = relationship_context(
+        db, a_id, b_id, known_lines=[f"{name_a}가 {name_b}에 대해 기억하는 것: " + "; ".join(known)] if known else None
+    )
+    result = await generate_npc_encounter(
+        payload.npc_a,
+        payload.npc_b,
+        payload.recent_memory,
+        activity,
+        outcome,
+        rel_ctx,
+        memory_lines=memory_service.memory_lines_for_prompt(db, a_id, b_id),
+    )
+
+    rel, milestone = apply_outcome(db, a_id, b_id, outcome.delta, outcome.reason)
+    if rel is not None:
+        result.relationship = NpcRelationshipOut(
+            npc_a=rel.npc_a,
+            npc_b=rel.npc_b,
+            affinity=rel.affinity,
+            vibe=rel.vibe,
+            delta=outcome.delta,
+            event=outcome.reason,
+            milestone=milestone,
         )
-        result.relationship = (
-            NpcRelationshipOut(
-                npc_a=rel.npc_a,
-                npc_b=rel.npc_b,
-                affinity=rel.affinity,
-                vibe=rel.vibe,
-                delta=result.relationship.delta,
-                event=result.relationship.event,
-                milestone=milestone,
+
+        # 각자의 기억 + 뒷담화
+        memory_kind = "incident" if outcome.kind == "incident" else "encounter"
+        memory_service.remember(db, a_id, f"{name_b} 만남 — {outcome.reason}", about=b_id, kind=memory_kind)
+        memory_service.remember(db, b_id, f"{name_a} 만남 — {outcome.reason}", about=a_id, kind=memory_kind)
+        memory_service.gossip(db, a_id, b_id)
+        memory_service.gossip(db, b_id, a_id)
+
+        # 마을 소식 — 눈에 띄는 것만
+        if milestone or outcome.kind == "incident" or abs(outcome.delta) >= 2:
+            emoji = (
+                "💞" if "절친" in milestone
+                else "🤝" if "화해" in milestone
+                else "💔" if milestone
+                else "💢" if outcome.delta < 0
+                else "💚" if outcome.delta > 0
+                else "💬"
             )
-            if rel is not None
-            else None
-        )
+            text = f"{name_a} ↔ {name_b} · {outcome.reason}" + (f" → {milestone}!" if milestone else "")
+            db.add(VillageEvent(emoji=emoji, text=text[:240], npc_a=a_id, npc_b=b_id, delta=outcome.delta))
+            db.commit()
     return result
+
+
+@app.get("/npc/news", response_model=list[VillageEventOut])
+def npc_news(limit: int = 12, db: Session = Depends(get_db)):
+    """마을 소식 — NPC 사이에 최근 일어난 사건. 읽기 전용, 레이트리밋 없음."""
+    limit = max(1, min(50, limit))
+    return db.query(VillageEvent).order_by(VillageEvent.created_at.desc(), VillageEvent.id.desc()).limit(limit).all()
 
 
 @app.get("/npc/relationships", response_model=list[NpcRelationshipRow])

@@ -19,6 +19,7 @@ from app.schemas import (
 )
 from app.services.chat_service import build_context
 from app.services.npc_action_service import choose_npc_action
+from app.services.relationship_rules import Outcome
 
 logger = logging.getLogger("npc_brain")
 
@@ -58,31 +59,40 @@ async def generate_npc_encounter(
     npc_b: EncounterParticipant,
     recent_memory: list[str],
     activity: DailyActivity,
+    outcome: Outcome,
     relation_context: str = "",
+    memory_lines: list[str] | None = None,
 ) -> NpcEncounterOut:
+    """두 NPC 의 마주침 대사.
+
+    **결과(outcome)는 이미 정해져서 들어온다** (relationship_rules). 모델은 그 사건이
+    드러나는 대사만 쓴다. 모델이 돌려주는 state_changes 도 outcome 의 기분으로 덮는다 —
+    친밀도·기분의 권한은 규칙에 있고, 모델의 권한은 말투뿐이다.
+    """
     a_profile = _npc_profile(npc_a.npc_id, npc_a.assigned_building_id)
     b_profile = _npc_profile(npc_b.npc_id, npc_b.assigned_building_id)
-    context = build_context(npc_a.npc_id, activity, recent_memory)
+    context = build_context(npc_a.npc_id, activity, recent_memory, memory_lines=memory_lines)
 
     if settings.openai_api_key:
         try:
             data = await _call_json_model(
-                system_prompt=_encounter_system_prompt(a_profile, b_profile, context, relation_context),
+                system_prompt=_encounter_system_prompt(a_profile, b_profile, context, relation_context, outcome),
                 user_prompt=json.dumps(
                     {
                         "npc_a": npc_a.model_dump(),
                         "npc_b": npc_b.model_dump(),
                         "recent_memory": recent_memory[-5:],
+                        "happened": outcome.reason,
                     },
                     ensure_ascii=False,
                 ),
                 max_tokens=520,
             )
-            return _encounter_from_data(npc_a.npc_id, npc_b.npc_id, data, used_ai=True, activity=activity)
+            return _encounter_from_data(npc_a.npc_id, npc_b.npc_id, data, used_ai=True, activity=activity, outcome=outcome)
         except Exception as exc:
             logger.warning("NPC encounter OpenAI 호출 실패 → 폴백 사용 (model=%s): %r", settings.openai_npc_model, exc)
 
-    return _fallback_encounter(npc_a, npc_b, activity)
+    return _fallback_encounter(npc_a, npc_b, activity, outcome)
 
 
 async def generate_group_chat(
@@ -289,9 +299,20 @@ def _npc_profile(npc_id: str, assigned_building_id: str | None = None) -> dict[s
 
 
 def _encounter_system_prompt(
-    a_profile: dict[str, Any], b_profile: dict[str, Any], context: str, relation: str = ""
+    a_profile: dict[str, Any],
+    b_profile: dict[str, Any],
+    context: str,
+    relation: str = "",
+    outcome: Outcome | None = None,
 ) -> str:
     relation_line = f"{relation}\n" if relation else ""
+    happened = ""
+    if outcome is not None:
+        happened = (
+            f"이번 만남에서 실제로 일어난 일(이미 정해짐, 바꾸지 마라): {outcome.reason} "
+            f"(둘 사이 {outcome.delta:+d}). 대사 네 줄 안에서 이 일이 자연스럽게 드러나야 한다 — "
+            "설명하지 말고 겪는 것처럼. 나쁜 일이면 정말 삐치거나 쏘아붙이고, 좋은 일이면 정말 고마워하거나 좋아해라.\n"
+        )
     return (
         "두 캐릭터가 아담한 3D 마을에서 우연히 마주쳐 나누는 짧고 자연스러운 한국어 수다를 써라. "
         "이들은 포트폴리오를 홍보하는 안내원이 아니라, 그냥 같이 사는 친구/동료다. 사람처럼, 감정적으로 말한다. "
@@ -301,12 +322,10 @@ def _encounter_system_prompt(
         "내용은 대부분 일상·감정 잡담이다: 오늘 기분, 피곤함, 날씨, 방문객 구경, 사소한 농담, 먹을 것, 어제 있었던 일 등. "
         "역할/일 얘기는 최대 한 번만, 그것도 가볍게 흘리듯이 — 절대 설명조로 늘어놓지 마라. "
         "진짜 주고받기: 각 줄은 상대가 '방금' 한 말에 직접 반응해야 한다 (맞장구·되묻기·농담 받기·티격태격). "
-        "이번 만남에서 둘 사이에 실제로 무슨 일이 벌어질 수도 있다 — 화해하거나, 티격태격하다 삐지거나, 더 친해지거나, 부탁을 하거나. 그냥 흘러가게 두지 말고 관계가 조금이라도 움직이게 하라. "
         "반말로 친근하게, 각 줄은 40자 이내, 실제 채팅처럼 자연스럽게. "
         "dialogue는 정확히 4개의 {npc_id, text} 객체, A, B, A, B 순서. user message의 정확한 npc_id 값을 써라. "
-        "그리고 이번 대화로 둘 사이가 어떻게 바뀌었는지 relationship 필드로 판단해 반환하라: "
-        "{affinity_delta: -5~5 정수(나빠지면 음수, 좋아지면 양수, 별일 없으면 0), event: 방금 무슨 일이 있었는지 한 문장, vibe: 지금 둘 사이를 한마디로(예: 절친, 서먹, 앙숙, 화해함, 티격태격)}. "
-        "JSON만 반환: 키는 dialogue, state_changes, memory, cooldown_seconds, relationship. state_changes는 {npc_id, mood, energy} 배열.\n"
+        "JSON만 반환: 키는 dialogue, memory, cooldown_seconds. memory 는 이 만남을 한 문장으로.\n"
+        f"{happened}"
         f"{relation_line}"
         f"캐릭터 A — 역할 힌트: {_profile_text(a_profile, 'role', '')} / 평소 말투: {_profile_text(a_profile, 'tone', '')}\n"
         f"캐릭터 B — 역할 힌트: {_profile_text(b_profile, 'role', '')} / 평소 말투: {_profile_text(b_profile, 'tone', '')}\n"
@@ -349,6 +368,7 @@ def _encounter_from_data(
     data: dict[str, Any],
     used_ai: bool,
     activity: DailyActivity | None = None,
+    outcome: Outcome | None = None,
 ) -> NpcEncounterOut:
     raw_dialogue = data.get("dialogue") if isinstance(data.get("dialogue"), list) else []
     dialogue = [
@@ -362,21 +382,26 @@ def _encounter_from_data(
             NpcDialogueLine(npc_id=npc_b_id, text="다음 질문은 기술 맥락까지 이어보자."),
         ]
 
-    raw_changes = data.get("state_changes") if isinstance(data.get("state_changes"), list) else []
-    changes = [
-        NpcStateChange(
-            npc_id=str(item.get("npc_id") or npc_a_id),
-            mood=_normalize_mood(item.get("mood"), "curious"),
-            energy=_clamp_int(item.get("energy"), 55),
-        )
-        for item in raw_changes[:2]
-        if isinstance(item, dict)
-    ]
-    if not changes:
+    # 기분은 규칙(outcome)이 정한다. 모델이 state_changes 를 보내도 무시한다 —
+    # 싸운 직후에 모델이 "excited" 를 보내는 일이 실제로 있었다.
+    if outcome is not None:
+        changes = _outcome_changes(npc_a_id, npc_b_id, outcome)
+    else:
+        raw_changes = data.get("state_changes") if isinstance(data.get("state_changes"), list) else []
         changes = [
-            NpcStateChange(npc_id=npc_a_id, mood="curious", energy=58),
-            NpcStateChange(npc_id=npc_b_id, mood="focused", energy=58),
+            NpcStateChange(
+                npc_id=str(item.get("npc_id") or npc_a_id),
+                mood=_normalize_mood(item.get("mood"), "curious"),
+                energy=_clamp_int(item.get("energy"), 55),
+            )
+            for item in raw_changes[:2]
+            if isinstance(item, dict)
         ]
+        if not changes:
+            changes = [
+                NpcStateChange(npc_id=npc_a_id, mood="curious", energy=58),
+                NpcStateChange(npc_id=npc_b_id, mood="focused", energy=58),
+            ]
 
     text_by_npc = {
         npc_id: " ".join(line.text for line in dialogue if line.npc_id == npc_id)
@@ -384,11 +409,11 @@ def _encounter_from_data(
     }
     mood_by_npc = {change.npc_id: change.mood for change in changes}
 
-    rel_raw = data.get("relationship") if isinstance(data.get("relationship"), dict) else {}
-    relationship = NpcRelationshipOut(
-        delta=_clamp_int(rel_raw.get("affinity_delta"), 0, -5, 5),
-        event=str(rel_raw.get("event") or "").strip(),
-        vibe=str(rel_raw.get("vibe") or "").strip(),
+    # 친밀도 변화는 규칙이 정한 값만. 모델이 relationship 을 보내도 읽지 않는다.
+    relationship = (
+        NpcRelationshipOut(delta=outcome.delta, event=outcome.reason)
+        if outcome is not None
+        else NpcRelationshipOut(delta=0)
     )
 
     return NpcEncounterOut(
@@ -446,35 +471,58 @@ def _fallback_tick(payload: NpcTickIn, activity: DailyActivity) -> NpcTickOut:
     )
 
 
+def _outcome_changes(npc_a_id: str, npc_b_id: str, outcome: Outcome) -> list[NpcStateChange]:
+    energy = 40 if outcome.delta < 0 else 66 if outcome.delta > 0 else 55
+    return [
+        NpcStateChange(npc_id=npc_a_id, mood=_normalize_mood(outcome.mood_a, "calm"), energy=energy),
+        NpcStateChange(npc_id=npc_b_id, mood=_normalize_mood(outcome.mood_b, "calm"), energy=energy),
+    ]
+
+
+# AI 없이 쓰는 대사 풀 — outcome.kind 별. 규칙이 정한 결과가 폴백에서도 보여야
+# "AI 가 꺼져도 관계가 굴러간다"가 말이 된다. {reason} 은 outcome.reason 으로 치환.
+_FALLBACK_LINES: dict[str, list[list[str]]] = {
+    "bond": [
+        ["오, 딱 보고 싶었는데!", "나도! 오늘 기분 좋다.", "그치, {reason}.", "이런 날은 같이 걸어야지."],
+        ["요즘 어때?", "좋아. 너 덕분에 더 좋아.", "뭐야 갑자기 ㅋㅋ", "{reason}잖아. 고마워서."],
+    ],
+    "clash": [
+        ["…야, 지금 좀 그래.", "뭐가? 나도 바빠.", "{reason}.", "알았어, 나중에 얘기해."],
+        ["아까 그거 말인데.", "또 그 얘기야?", "{reason}. 기분 별로였어.", "…미안. 근데 나도 힘들었어."],
+    ],
+    "incident": [
+        ["너 진짜…", "왜, 왜 그래?", "{reason}.", "아… 그건 내가 잘못했네."],
+        ["잠깐 얘기 좀.", "응, 무슨 일인데?", "{reason}.", "헉, 그랬어? 고마워… 아니, 미안해…"],
+    ],
+    "neutral": [
+        ["어, 안녕!", "오 왔네. 밥은?", "먹었지. 너는?", "나도. 이따 또 봐~"],
+        ["오늘 방문객 좀 있었어?", "조용했어. 너 쪽은?", "비슷해. 날씨 좋더라.", "그러게, 산책이나 할까."],
+    ],
+}
+
+
 def _fallback_encounter(
     npc_a: EncounterParticipant,
     npc_b: EncounterParticipant,
     activity: DailyActivity,
+    outcome: Outcome,
 ) -> NpcEncounterOut:
-    mood: NpcMood = "busy" if activity.github_commits >= 5 else "curious"
-    first_line = "오늘 커밋 덕분에 프로젝트 구역이 밝아졌어." if activity.github_commits else "오늘은 어떤 프로젝트를 추천할지 정리 중이야."
-    second_line = "오 그래? 방문자 오면 그 건물부터 안내하자." if activity.github_commits else "음, 그럼 빠른 이력서부터 보여주는 건 어때?"
-    third_line = "좋아. 근데 학습 기록도 같이 보여주면 설득력 있겠지." if activity.study_minutes else "그러자. 처음 온 사람은 길 잃기 쉬우니까."
-    fourth_line = "맞아, 그렇게 안내 동선 맞춰두자!" if activity.study_minutes else "콜. 내가 입구에서 먼저 말 걸어볼게."
+    pool = _FALLBACK_LINES.get(outcome.kind) or _FALLBACK_LINES["neutral"]
+    script = pool[(abs(hash((npc_a.npc_id, npc_b.npc_id, outcome.reason))) % len(pool))]
+    texts = [line.replace("{reason}", outcome.reason) for line in script]
+    ids = [npc_a.npc_id, npc_b.npc_id, npc_a.npc_id, npc_b.npc_id]
+    changes = _outcome_changes(npc_a.npc_id, npc_b.npc_id, outcome)
 
     return NpcEncounterOut(
-        dialogue=[
-            NpcDialogueLine(npc_id=npc_a.npc_id, text=first_line),
-            NpcDialogueLine(npc_id=npc_b.npc_id, text=second_line),
-            NpcDialogueLine(npc_id=npc_a.npc_id, text=third_line),
-            NpcDialogueLine(npc_id=npc_b.npc_id, text=fourth_line),
-        ],
-        state_changes=[
-            NpcStateChange(npc_id=npc_a.npc_id, mood=mood, energy=62),
-            NpcStateChange(npc_id=npc_b.npc_id, mood="focused", energy=60),
-        ],
-        memory="두 NPC가 오늘 활동과 방문자 안내 전략을 공유했습니다.",
+        dialogue=[NpcDialogueLine(npc_id=i, text=t) for i, t in zip(ids, texts)],
+        state_changes=changes,
+        memory=f"{outcome.reason}.",
         used_ai=False,
         cooldown_seconds=240,
-        relationship=NpcRelationshipOut(delta=0),
+        relationship=NpcRelationshipOut(delta=outcome.delta, event=outcome.reason),
         suggested_actions=[
-            choose_npc_action(npc_a.npc_id, message=first_line, mood=mood, activity=activity, source="encounter"),
-            choose_npc_action(npc_b.npc_id, message=second_line, mood="focused", activity=activity, source="encounter"),
+            choose_npc_action(npc_a.npc_id, message=texts[0], mood=changes[0].mood, activity=activity, source="encounter"),
+            choose_npc_action(npc_b.npc_id, message=texts[1], mood=changes[1].mood, activity=activity, source="encounter"),
         ],
     )
 

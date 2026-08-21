@@ -26,11 +26,12 @@ async def answer_npc_message(
     activity_history: list[DailyActivity] | None = None,
     village_state: VillageState | None = None,
     atelier_work: list[str] | None = None,
+    memory_lines: list[str] | None = None,
 ) -> tuple[str, bool, NpcActionOut]:
     npc = NPCS.get(npc_id, _npc_profile_for_dynamic_id(npc_id))
     context = build_context(
         npc_id, activity, recent_messages or [], coding_tests or [], cs_notes or [], activity_history, village_state,
-        atelier_work=atelier_work,
+        atelier_work=atelier_work, memory_lines=memory_lines,
     )
     suggested_action = choose_npc_action(npc_id, message=message, activity=activity, source="chat")
 
@@ -134,6 +135,7 @@ def build_context(
     activity_history: list[DailyActivity] | None = None,
     village_state: VillageState | None = None,
     atelier_work: list[str] | None = None,
+    memory_lines: list[str] | None = None,
 ) -> str:
     npc = NPCS.get(npc_id, _npc_profile_for_dynamic_id(npc_id))
     coding_tests = coding_tests or []
@@ -175,6 +177,10 @@ def build_context(
         *cs_brief,
     ]
 
+    # NPC 개인 기억(memory_service) — 마주침·사건·뒷담화·방문자 대화. 없으면 섹션 자체를 뺀다.
+    if memory_lines:
+        lines.extend(memory_lines)
+
     # 전담 NPC에게는 코드/풀이/내용 상세까지 제공
     if _is_coding_npc(npc_id):
         detail = coding_test_detail_lines(coding_tests[:6])
@@ -212,6 +218,7 @@ async def answer_with_openai(npc: dict[str, Any], context: str, message: str) ->
         "너는 정재훈의 살아있는 3D 포트폴리오 마을에 사는 AI NPC다. "
         "감정과 기억이 있는 것처럼 행동하되, 사실은 제공된 포트폴리오 데이터와 최근 대화만 근거로 말한다. "
         "모르는 내용은 지어내지 말고 확인 가능한 범위에서 답한다. "
+        "'내 최근 기억'이 주어지면 그것만 네 기억으로 삼고, 없는 기억을 만들어 말하지 않는다. "
         "방문자가 채용자라면 강점, 대표 프로젝트, 기술 판단, 협업 가능성을 명확하게 정리한다. "
         "답변은 한국어로 3~7문장, 필요하면 짧은 목록으로 답한다. "
         "브라우저 대화창에 그대로 표시되므로 과한 마크다운, 제목 문법, 코드블록은 쓰지 않는다. "

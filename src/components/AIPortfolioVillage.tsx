@@ -19,7 +19,6 @@ import {SectionTabs} from "@/components/ui/SectionTabs";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {
-  canonKind,
   NPC_EMOTES,
   NPC_SMALL_TALK,
   OVERSEER_GREETINGS,
@@ -49,6 +48,7 @@ import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {cameraTargets, villageBuildings} from "@/lib/constants";
 import {
   fetchRelationships,
+  fetchVillageNews,
   fetchVillageState,
   hasAdminToken,
   requestGroupChat,
@@ -67,32 +67,21 @@ import type {
   NpcRuntimeState,
   NpcState,
   NpcSuggestedAction,
+  VillageEvent,
   VillageState
 } from "@/types/live";
 
 const OVERSEER_ID = "overseer-npc";
 
-// 관계 대표 종류 → 실제 NPC id (그 종류의 대표 캐릭터)
-const KIND_REP: Record<string, string> = {
-  guide: "guide-npc",
-  project: "project-npc",
-  developer: "developer-npc",
-  archivist: "archivist-npc",
-  contact: "contact-npc",
-  coding: "npc-study-codingtest",
-  cs: "npc-study-cs",
-  overseer: "overseer-npc"
-};
-// 소셜 디렉터가 움직이는 명명 캐스트 (분신은 별도 순찰이 있어 제외)
-const SOCIAL_CAST = [
-  "guide-npc",
-  "project-npc",
-  "developer-npc",
-  "archivist-npc",
-  "contact-npc",
-  "npc-study-codingtest",
-  "npc-study-cs"
-];
+// 소셜 디렉터가 움직이는 캐스트 — 분신(별도 순찰)만 뺀 전원.
+// 관계가 NPC 개인 단위(2026-08-22)가 되면서 종류 대표(KIND_REP) 매핑이 필요 없어졌다.
+const SOCIAL_CAST = autonomousNpcs
+  .map(npc => npc.id)
+  .filter(id => id !== OVERSEER_ID);
+// 이 아래면 "서먹/앙숙" — 디렉터가 피하게 하거나 화해하러 보낸다. 백엔드 SOUR_AFFINITY 와 같은 값.
+const SOUR_AFFINITY = -8;
+// 이 위면 "꽤 가까운 사이" — 찾아가서 같이 논다.
+const CLOSE_AFFINITY = 16;
 
 const OVERSEER_PATROL = [
   "guide-npc",
@@ -407,6 +396,7 @@ export function AIPortfolioVillage() {
   const [encounterNotice, setEncounterNotice] = useState<string | null>(null);
   const [milestoneEvent, setMilestoneEvent] = useState<string | null>(null);
   const [relOpen, setRelOpen] = useState(false);
+  const [villageNews, setVillageNews] = useState<VillageEvent[]>([]);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const npcCommandRef = useRef<NpcCommand | null>(null);
@@ -703,8 +693,10 @@ export function AIPortfolioVillage() {
 
             remember(response.memory);
             notifyRelationship(npcAId, npcBId, response.relationship);
+            // 앙숙은 다음 마주침까지 두 배 — 피하는 것처럼 보이게
+            const sour = (response.relationship?.affinity ?? 0) <= SOUR_AFFINITY;
             encounterCooldownRef.current[pairKey] =
-              now + response.cooldown_seconds * 1000;
+              now + response.cooldown_seconds * 1000 * (sour ? 2 : 1);
             const convoMs = response.dialogue.length * CONVO_STEP + 1500;
             setNpcRuntimeStates(states => {
               const next = {...states};
@@ -943,6 +935,25 @@ export function AIPortfolioVillage() {
     return () => clearInterval(id);
   }, []);
 
+  // 마을 소식(NPC 사이의 사건) — 60초마다. 백엔드 없으면 조용히 빈 채로.
+  useEffect(() => {
+    let ignore = false;
+    async function loadNews() {
+      try {
+        const items = await fetchVillageNews(8);
+        if (!ignore) setVillageNews(items);
+      } catch {
+        /* 백엔드 오프라인 */
+      }
+    }
+    loadNews();
+    const id = setInterval(loadNews, 60000);
+    return () => {
+      ignore = true;
+      clearInterval(id);
+    };
+  }, []);
+
   // 관계 그래프 주기적 로드 (창발 사회의 현재 지형)
   useEffect(() => {
     let ignore = false;
@@ -975,35 +986,47 @@ export function AIPortfolioVillage() {
       if ((npcRuntimeStatesRef.current[actor]?.holdUntil ?? 0) > Date.now())
         return; // 대화 중이면 스킵
 
-      const kind = canonKind(actor);
+      // 관계 행은 실제 npc_id 쌍 — 내가 낀 것만 고른다
       const mine = rels
-        .filter(r => r.npc_a === kind || r.npc_b === kind)
+        .filter(r => r.npc_a === actor || r.npc_b === actor)
         .map(r => ({
-          other: r.npc_a === kind ? r.npc_b : r.npc_a,
+          other: r.npc_a === actor ? r.npc_b : r.npc_a,
           affinity: r.affinity
-        }))
-        .filter(m => m.other !== kind);
+        }));
       if (!mine.length) return;
 
       mine.sort((x, y) => y.affinity - x.affinity);
       const best = mine[0]!;
       const worst = mine[mine.length - 1]!;
+      const myPos = npcPositionsRef.current[actor];
 
-      let targetKind = best.other;
-      if (worst.affinity < -5 && Math.random() < 0.35) {
-        targetKind = worst.other; // 가끔 앙금 있는 상대에게 화해하러
-      } else if (best.affinity < 3 && Math.random() < 0.5) {
-        return; // 딱히 친한 상대 없으면 그냥 각자 배회
+      let target: Vector3Tuple | null = null;
+      if (worst.affinity <= SOUR_AFFINITY && Math.random() < 0.5) {
+        // 앙금 있는 상대: 반은 화해하러 가고, 반은 **피한다** — 상대 반대쪽으로 6유닛
+        const pos = npcPositionsRef.current[worst.other];
+        if (pos && myPos) {
+          if (Math.random() < 0.5) {
+            target = [pos[0], 0, pos[2]];
+          } else {
+            const dx = myPos[0] - pos[0];
+            const dz = myPos[2] - pos[2];
+            const len = Math.hypot(dx, dz) || 1;
+            target = [myPos[0] + (dx / len) * 6, 0, myPos[2] + (dz / len) * 6];
+          }
+        }
+      } else if (best.affinity >= CLOSE_AFFINITY) {
+        // 꽤 가까운 친구: 찾아가서 같이 논다
+        const pos = npcPositionsRef.current[best.other];
+        if (pos) target = [pos[0], 0, pos[2]];
+      } else if (best.affinity >= 3 && Math.random() < 0.5) {
+        const pos = npcPositionsRef.current[best.other];
+        if (pos) target = [pos[0], 0, pos[2]];
       }
-
-      const repId = KIND_REP[targetKind];
-      if (!repId || repId === actor) return;
-      const pos = npcPositionsRef.current[repId];
-      if (!pos) return;
+      if (!target) return; // 딱히 친하지도 서먹하지도 않으면 각자 배회
 
       setNpcSocialTargets(state => ({
         ...state,
-        [actor]: [pos[0], 0, pos[2]] as Vector3Tuple
+        [actor]: target as Vector3Tuple
       }));
       window.setTimeout(() => {
         setNpcSocialTargets(state => {
@@ -1782,7 +1805,11 @@ export function AIPortfolioVillage() {
           >
             {soundOn ? "🔊" : "🔇"}
           </button>
-          <LiveStatusPanel error={liveError} villageState={villageState} />
+          <LiveStatusPanel
+            error={liveError}
+            villageState={villageState}
+            news={villageNews}
+          />
           <ControlsHint />
           <NpcQuickDock activeNpcId={selectedNpc?.id} onSelect={openNpc} />
           {!isPanelOpen ? (

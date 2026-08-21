@@ -30,6 +30,7 @@ import type {
   NpcGroupChatResponse,
   NpcPreset,
   NpcRelationshipRow,
+  VillageEvent,
   NpcPresetInput,
   NpcTickRequest,
   NpcTickResponse,
@@ -190,6 +191,12 @@ export function requestNpcEncounter(
 
 export function fetchRelationships(): Promise<NpcRelationshipRow[]> {
   return requestJson<NpcRelationshipRow[]>("/npc/relationships", {
+    cache: "no-store"
+  });
+}
+
+export function fetchVillageNews(limit = 12): Promise<VillageEvent[]> {
+  return requestJson<VillageEvent[]>(`/npc/news?limit=${limit}`, {
     cache: "no-store"
   });
 }

@@ -122,7 +122,11 @@ class NpcRelationship(Base):
     __table_args__ = (UniqueConstraint("npc_a", "npc_b", name="uq_npc_pair"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    npc_a: Mapped[str] = mapped_column(String(40), index=True)  # 정렬된 대표 종류
+    # 2026-08-22 부터 **실제 npc_id**(정렬)다. 그 전엔 대표 종류(guide/project…)였는데
+    # 프로젝트 NPC 9명이 테오와 관계 한 줄을 공유하는 꼴이었다. 옛 종류-키 행은
+    # relationship_service.purge_legacy_kind_rows 가 시작 시 지운다.
+    # String(40) 은 SQLite 가 길이를 강제하지 않아 그대로 둔다.
+    npc_a: Mapped[str] = mapped_column(String(40), index=True)
     npc_b: Mapped[str] = mapped_column(String(40), index=True)
     affinity: Mapped[int] = mapped_column(Integer, default=0)   # 친밀도 -100..100
     vibe: Mapped[str] = mapped_column(String(60), default="그냥 아는 사이")
@@ -130,6 +134,44 @@ class NpcRelationship(Base):
     history: Mapped[list[str]] = mapped_column(JSON, default=list)  # 최근 사건들(롤링)
     meet_count: Mapped[int] = mapped_column(Integer, default=0)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+
+class NpcMemory(Base):
+    """NPC 한 명의 기억 한 줄.
+
+    관계 시스템 2단계에서 생겼다. 전엔 마을 전체가 문자열 6개(`npcMemoryRef`)를
+    공유하고 새로고침이면 날아갔다. 여기는 NPC 별로 쌓이고 남는다.
+      kind: encounter(마주침) | incident(사건) | gossip(남에게 들음) | visitor(방문자 대화)
+      about_npc_id: 그 기억이 누구에 관한 것인지 ("" 이면 불특정)
+    NPC 당 30개만 남긴다(memory_service.remember 가 자른다).
+    """
+
+    __tablename__ = "npc_memory"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    npc_id: Mapped[str] = mapped_column(String(120), index=True)
+    about_npc_id: Mapped[str] = mapped_column(String(120), default="", index=True)
+    kind: Mapped[str] = mapped_column(String(20), default="encounter")
+    text: Mapped[str] = mapped_column(Text, default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+
+
+class VillageEvent(Base):
+    """마을 소식 — NPC 사이에 일어난 사건 한 줄. `GET /npc/news` 가 읽는다.
+
+    관계가 바뀌어도 방문자 눈엔 안 보였다. 마주침 결과 중 눈에 띄는 것
+    (|delta| ≥ 2, 사건, 마일스톤)만 여기 적는다.
+    """
+
+    __tablename__ = "village_event"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    emoji: Mapped[str] = mapped_column(String(8), default="")
+    text: Mapped[str] = mapped_column(String(240), default="")
+    npc_a: Mapped[str] = mapped_column(String(120), default="")
+    npc_b: Mapped[str] = mapped_column(String(120), default="")
+    delta: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
 
 
 class CommissionRequest(Base):
