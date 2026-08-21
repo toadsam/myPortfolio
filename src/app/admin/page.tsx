@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import type * as React from "react";
 import CommissionWorkboard from "@/components/admin/CommissionWorkboard";
 import {projects} from "@/data/projects";
@@ -19,7 +19,7 @@ import {
   fetchCommissions,
   fetchCsNotes,
   fetchVillageState,
-  hasAdminToken,
+  setAdminToken,
   loginAdmin,
   saveActivity,
   syncGithubActivity,
@@ -27,14 +27,19 @@ import {
   updateCommissionStatus,
   updateCsNote
 } from "@/lib/liveApi";
+import {ApiError} from "@/lib/liveApi";
 import {villageBuildings} from "@/lib/constants";
 import {LiveVillagePreview} from "./_components/LiveVillagePreview";
+import {CircuitRow} from "./_components/CircuitRow";
+import {SwitchDrawer} from "./_components/SwitchDrawer";
+import {useSwitchboardFx} from "./_components/useSwitchboardFx";
+import {VaultDials} from "./_components/VaultDials";
+import "./admin.css";
 import {
-  LanternGauge,
   NpcReactions,
   SaveStamp,
   StreakStamps
-} from "./_components/LedgerBits";
+} from "./_components/SwitchboardBits";
 import {
   diffAgainstServer,
   previewBuildingScores,
@@ -148,11 +153,28 @@ export default function AdminPage() {
   }, [history]);
   const stats = useMemo(() => computeStats(history), [history]);
 
+  /**
+   * 잠금 판정 — **들어올 때마다 금고 문이 먼저다.**
+   *
+   * ## 왜 토큰이 있어도 잠그나
+   *
+   * 처음엔 저장된 토큰이 유효하면 그냥 통과시켰다. 그런데 토큰은 비밀번호가 아니라
+   * `ADMIN_SECRET` 으로 서명되고 유효기간이 7일이라, **비밀번호를 바꿔도 이미 나간
+   * 토큰은 그대로 살아 있다.** 그래서 6247 로 바꾼 뒤에도 배전반이 그냥 열렸다 —
+   * 로직은 정직하게 동작했지만 원하는 동작이 아니었다.
+   *
+   * 이 화면의 입구는 다이얼이다. 그래서 인증이 켜져 있으면 토큰이 뭐든 일단 잠근다.
+   * 대신 **토큰을 지우지는 않는다** — 지우면 다른 탭이나 갓생 섬이 같이 로그아웃된다.
+   * 문을 다시 여는 건 네 자리를 돌리는 것뿐이고, 그게 이 화면이 원하는 의식이다.
+   *
+   * 인증이 꺼져 있으면(로컬에서 `ADMIN_PASSWORD` 를 비워 둔 경우) 문이 없다.
+   * 잠글 것이 없는데 잠근 척하는 화면은 거짓말이다.
+   */
   useEffect(() => {
     async function checkAuth() {
       try {
         const status = await fetchAdminAuthStatus();
-        if (status.auth_enabled && !hasAdminToken()) {
+        if (status.auth_enabled) {
           setLocked(true);
           setAuthChecked(true);
           return;
@@ -169,6 +191,12 @@ export default function AdminPage() {
   function handleUnlocked() {
     setLocked(false);
     void loadAll();
+  }
+
+  /** 배전반을 다시 잠근다 — 토큰을 버리고 금고 문으로 돌아간다. */
+  function lockBoard() {
+    setAdminToken(null);
+    setLocked(true);
   }
 
   const totalProjectMinutes = useMemo(
@@ -345,6 +373,130 @@ export default function AdminPage() {
     setForm(current => ({...current, ...patch}));
   }
 
+  /**
+   * 레버를 내렸다 다시 올릴 때 되돌릴 값.
+   *
+   * 레버는 값의 거울이라 내리면 그 회로가 0 이 된다. 직전 값을 기억해 두지 않으면
+   * 실수로 내린 사람이 숫자를 처음부터 다시 쳐야 한다 — 매일 여는 도구에서 그건
+   * 그냥 손해다. 기억이 없을 때만 기본값으로 켠다.
+   */
+  const leverMemory = useRef<Record<string, number>>({});
+
+  function throwMinuteLever(
+    key: "study_minutes" | "coding_minutes",
+    next: boolean,
+    fallback: number
+  ) {
+    if (next) {
+      updateForm({[key]: leverMemory.current[key] || fallback});
+      return;
+    }
+    if (form[key] > 0) leverMemory.current[key] = form[key];
+    updateForm({[key]: 0});
+  }
+
+  /** 프로젝트 회로는 값이 하나가 아니라 표라서, 표째로 기억했다 되돌린다. */
+  const projectMemory = useRef<Record<string, number>>({});
+
+  function throwProjectLever(next: boolean) {
+    if (next) {
+      const restored = Object.entries(projectMemory.current).filter(
+        ([, minutes]) => minutes > 0
+      );
+      updateForm({
+        project_minutes: restored.length
+          ? Object.fromEntries(restored)
+          : {[projects[0]?.id ?? "portfolio"]: 30}
+      });
+      return;
+    }
+    projectMemory.current = {...form.project_minutes};
+    updateForm({project_minutes: {}});
+  }
+
+  /* ── 지도 ↔ 회로 양방향 연결 ──────────────────────────────────────────
+   *
+   * 이 화면의 논지는 "값을 넣으면 저 건물에 불이 켜진다"인데, 그 짝을 화살표나
+   * 설명으로 알려 주면 아무도 안 읽는다. 손으로 확인시킨다:
+   *
+   * - 회로에 마우스를 올리면 → 지도의 짝 건물에 조준 고리가 걸린다
+   * - 지도의 건물을 누르면   → 그 건물을 켜는 회로로 스크롤 + 포커스
+   *
+   * 짝은 `villageLightPreview.ts` 의 점수 표와 같은 id 를 쓴다. 거기가 원본이라
+   * 규칙이 바뀌어도 한쪽만 어긋나는 일이 없다.
+   */
+  const [hoverIds, setHoverIds] = useState<string[] | null>(null);
+  const [hoverName, setHoverName] = useState<string | null>(null);
+  const [pickedIds, setPickedIds] = useState<string[]>([]);
+  const [pickNote, setPickNote] = useState<string | null>(null);
+
+  // 배전반이 살아 있게 만드는 연출들(유휴 방전·조명 추적·파문·자석 버튼).
+  // 잠금이 풀린 뒤에만 건다 — 금고 문에는 회로가 없다.
+  useSwitchboardFx(!locked);
+
+  // 건물 id → 그 건물을 켜는 회로를 포커스하는 함수. 렌더마다 다시 만들면
+  // CircuitRow 의 등록 effect 가 매번 돌아서 ref 로 들고 있는다.
+  const focusByBuilding = useRef<Map<string, () => void>>(new Map());
+
+  const registerFocus = useCallback(
+    (buildingIds: string[], focus: () => void) => {
+      for (const id of buildingIds) {
+        // 먼저 등록한 회로가 그 건물의 주인이다. 프로젝트 건물은 1:1 이라
+        // 겹치지 않고, 광장처럼 여럿이 켜는 건물만 첫 회로로 간다.
+        if (!focusByBuilding.current.has(id)) {
+          focusByBuilding.current.set(id, focus);
+        }
+      }
+    },
+    []
+  );
+
+  const pickBuilding = useCallback((buildingId: string) => {
+    const focus = focusByBuilding.current.get(buildingId);
+    if (!focus) {
+      // 모든 건물이 회로를 갖는 건 아니다 — 경력·서고 건물은 다른 기록에서
+      // 켜진다. 아무 반응이 없으면 고장으로 보이므로 왜 안 되는지 말해 준다.
+      setPickNote(
+        "이 건물은 여기 회로로 켜지지 않아요 (다른 기록에서 밝아집니다)"
+      );
+      window.setTimeout(() => setPickNote(null), 2600);
+      return;
+    }
+    setPickedIds([buildingId]);
+    focus();
+    // 강조는 잠깐만 — 계속 켜 두면 다음에 뭘 눌렀는지 헷갈린다
+    window.setTimeout(() => setPickedIds([]), 1600);
+  }, []);
+
+  const isPicked = useCallback(
+    (ids: string[]) => ids.some(id => pickedIds.includes(id)),
+    [pickedIds]
+  );
+
+  /**
+   * 저장에 성공하면 살아 있는 회로가 순서대로 통전하고, 저장 버튼에서 불꽃이
+   * 터진다. `stampKey` 는 저장 성공에만 오르므로 실패했을 땐 아무 일도 없다 —
+   * 연출이 결과를 헷갈리게 만들면 그건 장식이 아니라 버그다.
+   */
+  useEffect(() => {
+    if (!stampKey) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rows = document.querySelectorAll<HTMLElement>(".sw-row.is-live");
+    const timers: number[] = [];
+    rows.forEach((row, index) => {
+      timers.push(
+        window.setTimeout(() => {
+          row.classList.add("is-surging");
+          timers.push(
+            window.setTimeout(() => row.classList.remove("is-surging"), 520)
+          );
+        }, index * 70)
+      );
+    });
+    burstFrom(document.querySelector<HTMLElement>(".sw-save-main"));
+    return () => timers.forEach(t => window.clearTimeout(t));
+  }, [stampKey]);
+
   function setProjectMinutes(projectId: string, minutes: number) {
     setForm(current => ({
       ...current,
@@ -374,7 +526,7 @@ export default function AdminPage() {
 
   if (!authChecked) {
     return (
-      <main className="grid min-h-screen place-items-center bg-[#f6f8fb] text-[#64748b]">
+      <main className="admin-switchboard grid min-h-screen place-items-center text-[#8b94a0]">
         <p className="font-mono text-sm">불러오는 중…</p>
       </main>
     );
@@ -385,65 +537,41 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f8fb] text-[#1e293b]">
-      {/* 폼 밖에 둔다 — 안에 넣으면 배너의 링크가 form 제출에 얽힌다 */}
-      <CommissionAlert />
-      <form onSubmit={handleSave}>
-        <header className="border-b border-[#e3e8ef] bg-[#ffffff]">
-          <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="font-mono text-xs font-black uppercase tracking-[0.24em] text-[#0284c7]">
-                Daily Village Journal
-              </p>
-              <h1 className="mt-2 text-3xl font-black md:text-5xl">
-                오늘의 기록이 마을을 바꿉니다
-              </h1>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-[#475569]">
-                운동, 공부, 코딩, 프로젝트 작업, GitHub 활동을 기록하면
-                포트폴리오 마을의 조명과 NPC 상태가 자동으로 달라집니다.
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-3">
-              <a
-                className="rounded-lg border border-[#0284c7]/35 px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#0369a1] transition hover:bg-[#0284c7]/10"
-                href="/"
-              >
-                마을 보기
-              </a>
-              <button
-                className="rounded-lg bg-[#0284c7] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#0ea5e9] disabled:cursor-not-allowed disabled:opacity-45"
-                disabled={isSaving}
-                type="submit"
-              >
-                오늘 기록 저장
-              </button>
-            </div>
-          </div>
-        </header>
+    <main className="admin-switchboard sw-board text-[#e8edf2]">
+      {/* ── 모선: 화면 위를 가로지르는 구리 띠 ─────────────────────────── */}
+      <header className="sw-busbar">
+        <div className="flex min-w-0 items-baseline gap-4">
+          <span className="font-mono text-sm font-black uppercase tracking-[0.22em] text-[#e2c078]">
+            Village Control Board
+          </span>
+          <span className="hidden truncate text-xs text-[#6b7580] xl:inline">
+            레버를 올리면 회로가 열리고, 오른쪽 지도에 불이 들어옵니다
+          </span>
+        </div>
 
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-5 pt-5">
-          <div className="flex items-center gap-1 rounded-lg border border-[#e3e8ef] bg-[#ffffff] p-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1 rounded border border-[#38414d] bg-[#12161c] p-1">
             <button
+              aria-label="이전 날"
               className="step-button"
               onClick={() => shiftDate(-1)}
               type="button"
-              aria-label="이전 날"
             >
               ◀
             </button>
             <input
-              className="field w-[150px] text-center"
-              type="date"
+              className="field w-[142px] text-center"
               max={today()}
-              value={selectedDate}
               onChange={event => selectDate(event.target.value || today())}
+              type="date"
+              value={selectedDate}
             />
             <button
+              aria-label="다음 날"
               className="step-button disabled:opacity-30"
+              disabled={isToday}
               onClick={() => shiftDate(1)}
               type="button"
-              aria-label="다음 날"
-              disabled={isToday}
             >
               ▶
             </button>
@@ -458,482 +586,442 @@ export default function AdminPage() {
             </button>
           ) : null}
           <button className="sub-button" onClick={copyYesterday} type="button">
-            어제 기록 복사
+            어제 복사
           </button>
-          <span className="rounded-full border border-[#0284c7]/25 px-3 py-1.5 font-mono text-xs text-[#0369a1]">
+          <span className="rounded-full border border-[#ff9d38]/25 px-3 py-1 font-mono text-[11px] text-[#e2c078]">
             {isToday ? "오늘" : prettyDate(selectedDate)}
             {historyByDate[selectedDate] ? " · 기록 있음" : " · 빈 날"}
           </span>
         </div>
 
-        <div className="mx-auto grid max-w-7xl gap-5 px-5 py-6 xl:grid-cols-[1fr_410px]">
-          <section className="grid gap-5">
-            <Panel title="오늘 컨디션" kicker="Daily Check-in">
-              <div className="grid gap-4 lg:grid-cols-[1fr_1fr_1.4fr]">
-                <label className="grid gap-2">
-                  <span className="field-label">오늘 기분</span>
+        <div className="flex items-center gap-2">
+          <button
+            className="sub-button"
+            disabled={isSaving}
+            onClick={handleGithubSync}
+            type="button"
+          >
+            GitHub 동기화
+          </button>
+          <a className="sub-button" href="/">
+            마을 보기
+          </a>
+          <button className="sub-button" onClick={lockBoard} type="button">
+            잠그기
+          </button>
+          <button
+            className="rounded bg-[#ff9d38] px-5 py-2.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#12161c] transition hover:bg-[#ffb15e] disabled:cursor-not-allowed disabled:opacity-45"
+            disabled={isSaving}
+            form="daily-form"
+            type="submit"
+          >
+            기록 저장
+          </button>
+        </div>
+      </header>
+
+      {/* ── 계기 레일: 매일 보지만 조작하지 않는 것들 ─────────────────── */}
+      <aside className="sw-rail">
+        <CommissionAlert />
+
+        <span className="sw-rail-label">Streak</span>
+        <div className="grid grid-cols-3 gap-2">
+          <Metric label="연속" value={`${stats.recordStreak}일`} />
+          <Metric label="운동" value={`${stats.workoutStreak}일`} />
+          <Metric label="주 코딩" value={`${stats.weekCoding}분`} />
+        </div>
+        <div className="mt-4">
+          <StreakStamps dates={recordedDates} />
+        </div>
+        <div className="mt-4">
+          <ActivityCalendar
+            byDate={historyByDate}
+            onPick={selectDate}
+            selectedDate={selectedDate}
+          />
+        </div>
+
+        <span className="sw-rail-label mt-8">Daily Rings</span>
+        <GoalRings
+          coding={form.coding_minutes}
+          study={form.study_minutes}
+          workout={form.workout_done ? form.workout_minutes : 0}
+        />
+
+        {aiUsage ? (
+          <>
+            <span className="sw-rail-label mt-8">AI Usage</span>
+            <AiUsageBar usage={aiUsage} />
+          </>
+        ) : null}
+
+        <span className="sw-rail-label mt-8">오늘 열리는 장식</span>
+        {unlockPreview.length ? (
+          <ul className="grid gap-1.5 text-xs text-[#e2c078]">
+            {unlockPreview.map(item => (
+              <li key={item}>· {item}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs leading-5 text-[#5b646e]">
+            조건을 채우면 여기에 나타납니다.
+          </p>
+        )}
+      </aside>
+
+      {/* ── 본체: 회로들 ──────────────────────────────────────────────── */}
+      <div className="sw-main">
+        <form id="daily-form" onSubmit={handleSave}>
+          {/* 컨디션은 회로가 아니다 — 켜고 끄는 게 아니라 늘 붙어 있는 계기다.
+              그래서 레버 없이 맨 위 스트립으로 둔다. */}
+          <div className="sw-strip">
+            <label className="grid gap-2">
+              <span className="field-label">오늘 기분</span>
+              <select
+                className="field"
+                onChange={event => updateForm({mood: event.target.value})}
+                value={form.mood}
+              >
+                {moodOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-2">
+              <span className="field-label">
+                집중도 <b className="text-[#ff9d38]">{form.focus_score}%</b>
+              </span>
+              <input
+                className="w-full accent-[#ff9d38]"
+                max={100}
+                min={0}
+                onChange={event =>
+                  updateForm({focus_score: Number(event.target.value)})
+                }
+                type="range"
+                value={form.focus_score}
+              />
+            </label>
+            <label className="grid gap-2">
+              <span className="field-label">오늘 한 줄</span>
+              <input
+                className="field"
+                onChange={event => updateForm({memo: event.target.value})}
+                placeholder="예: FestFlow SSE 흐름을 정리하고 운동까지 완료"
+                value={form.memo}
+              />
+            </label>
+          </div>
+
+          <p className="sw-rail-label mt-9">Main Circuits</p>
+          <div>
+            <CircuitRow
+              buildingIds={PLAZA_ONLY}
+              extras={
+                <label className="flex items-center gap-3">
+                  <span className="field-label">운동 종류</span>
                   <select
-                    className="field"
-                    onChange={event => updateForm({mood: event.target.value})}
-                    value={form.mood}
+                    className="field max-w-[220px]"
+                    disabled={!form.workout_done}
+                    onChange={event =>
+                      updateForm({workout_type: event.target.value})
+                    }
+                    value={form.workout_type}
                   >
-                    {moodOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
+                    <option value="">선택 안 함</option>
+                    {workoutTypes.map(type => (
+                      <option key={type} value={type}>
+                        {type}
                       </option>
                     ))}
                   </select>
                 </label>
-                <label className="grid gap-2">
-                  <span className="field-label">집중도</span>
-                  <div className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] px-3 py-3">
-                    <input
-                      className="w-full accent-[#0284c7]"
-                      max={100}
-                      min={0}
-                      onChange={event =>
-                        updateForm({focus_score: Number(event.target.value)})
-                      }
-                      type="range"
-                      value={form.focus_score}
-                    />
-                    <div className="mt-2 flex justify-between font-mono text-xs text-[#94a3b8]">
-                      <span>느슨함</span>
-                      <span>{form.focus_score}%</span>
-                      <span>몰입</span>
-                    </div>
-                  </div>
-                </label>
-                <label className="grid gap-2">
-                  <span className="field-label">오늘 한 줄 메모</span>
-                  <input
-                    className="field"
-                    onChange={event => updateForm({memo: event.target.value})}
-                    placeholder="예: FestFlow SSE 흐름을 정리하고 운동까지 완료"
-                    value={form.memo}
-                  />
-                </label>
-              </div>
-            </Panel>
+              }
+              live={form.workout_done}
+              max={180}
+              name="운동"
+              note="중앙 광장과 가이드 NPC 상태에 반영됩니다"
+              onChange={value =>
+                updateForm({workout_minutes: value, workout_done: value > 0})
+              }
+              onHover={setHoverIds}
+              onToggle={next =>
+                updateForm({
+                  workout_done: next,
+                  workout_minutes: next ? form.workout_minutes || 30 : 0
+                })
+              }
+              picked={isPicked(PLAZA_ONLY)}
+              registerFocus={registerFocus}
+              value={form.workout_minutes}
+            />
 
-            <div className="grid gap-5 lg:grid-cols-2">
-              <Panel title="운동 기록" kicker="Body Energy">
-                <div className="grid gap-4">
-                  <label className="flex items-center justify-between gap-4 rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] px-4 py-3">
-                    <span>
-                      <span className="block text-sm font-black">
-                        오늘 운동 완료
-                      </span>
-                      <span className="mt-1 block text-xs text-[#94a3b8]">
-                        운동 기록은 중앙 광장과 가이드 NPC 상태에 반영됩니다.
-                      </span>
-                    </span>
-                    <input
-                      checked={form.workout_done}
-                      className="h-5 w-5"
-                      onChange={event =>
-                        updateForm({workout_done: event.target.checked})
-                      }
-                      type="checkbox"
-                    />
-                  </label>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <NumberField
-                      disabled={!form.workout_done}
-                      label="운동 시간"
-                      suffix="분"
-                      value={form.workout_minutes}
-                      onChange={value => updateForm({workout_minutes: value})}
-                    />
-                    <LanternGauge
-                      disabled={!form.workout_done}
-                      label="끌어서 조절"
-                      max={180}
-                      onChange={value => updateForm({workout_minutes: value})}
-                      value={form.workout_minutes}
-                    />
-                    <label className="grid gap-2">
-                      <span className="field-label">운동 종류</span>
-                      <select
-                        className="field"
-                        disabled={!form.workout_done}
-                        onChange={event =>
-                          updateForm({workout_type: event.target.value})
-                        }
-                        value={form.workout_type}
-                      >
-                        <option value="">선택 안 함</option>
-                        {workoutTypes.map(type => (
-                          <option key={type} value={type}>
-                            {type}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                  </div>
-                </div>
-              </Panel>
-
-              <Panel title="공부 기록" kicker="Study Energy">
-                <div className="grid gap-4">
-                  <NumberField
-                    label="공부 시간"
-                    suffix="분"
-                    value={form.study_minutes}
-                    onChange={value => updateForm({study_minutes: value})}
-                  />
-                  <LanternGauge
-                    label="끌어서 조절"
-                    max={480}
-                    onChange={value => updateForm({study_minutes: value})}
-                    value={form.study_minutes}
-                  />
-                  <div className="grid gap-2">
-                    <span className="field-label">공부한 주제/기술</span>
-                    <div className="flex gap-2">
-                      <input
-                        className="field min-w-0 flex-1"
-                        onChange={event => setTopicInput(event.target.value)}
-                        onKeyDown={event => {
-                          if (event.key === "Enter") {
-                            event.preventDefault();
-                            addTopic();
-                          }
-                        }}
-                        placeholder="예: React Query, DB Index"
-                        value={topicInput}
-                      />
-                      <button
-                        className="sub-button"
-                        onClick={addTopic}
-                        type="button"
-                      >
-                        추가
-                      </button>
-                    </div>
-                    <TagCloud
-                      items={unique([...quickTopics, ...form.study_topics])}
-                      selected={form.studied_tech}
-                      onToggle={item =>
-                        updateForm({
-                          studied_tech: toggleValue(form.studied_tech, item),
-                          study_topics: unique([...form.study_topics, item])
-                        })
-                      }
-                    />
-                  </div>
-                </div>
-              </Panel>
-            </div>
-
-            <Panel title="코딩 기록" kicker="Development Log">
-              <div className="grid gap-5">
-                <div className="grid gap-4 lg:grid-cols-3">
-                  <NumberField
-                    label="총 코딩 시간"
-                    suffix="분"
-                    value={form.coding_minutes}
-                    onChange={value => updateForm({coding_minutes: value})}
-                  />
-                  <LanternGauge
-                    label="끌어서 조절"
-                    max={600}
-                    onChange={value => updateForm({coding_minutes: value})}
-                    value={form.coding_minutes}
-                  />
-                  <NumberField
-                    label="GitHub 커밋"
-                    value={form.github_commits}
-                    onChange={value => updateForm({github_commits: value})}
-                  />
-                  <div className="grid content-end">
-                    <button
-                      className="sub-button h-[46px]"
-                      disabled={isSaving}
-                      onClick={handleGithubSync}
-                      type="button"
-                    >
-                      GitHub 커밋 동기화
-                    </button>
-                  </div>
-                </div>
-
+            <CircuitRow
+              buildingIds={SKILL_BUILDINGS}
+              extras={
                 <div className="grid gap-2">
-                  <span className="field-label">오늘 건드린 GitHub repo</span>
                   <div className="flex gap-2">
                     <input
                       className="field min-w-0 flex-1"
-                      onChange={event => setRepoInput(event.target.value)}
+                      onChange={event => setTopicInput(event.target.value)}
                       onKeyDown={event => {
                         if (event.key === "Enter") {
                           event.preventDefault();
-                          addRepo();
+                          addTopic();
                         }
                       }}
-                      placeholder="예: toadsam/FestFlow"
-                      value={repoInput}
+                      placeholder="공부한 주제/기술 — 예: React Query, DB Index"
+                      value={topicInput}
                     />
                     <button
                       className="sub-button"
-                      onClick={addRepo}
+                      onClick={addTopic}
                       type="button"
                     >
                       추가
                     </button>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {form.github_repos.map(repo => (
-                      <Chip
-                        key={repo}
-                        onRemove={() =>
-                          updateForm({
-                            github_repos: form.github_repos.filter(
-                              item => item !== repo
-                            )
-                          })
-                        }
-                      >
-                        {repo}
-                      </Chip>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Panel>
-
-            <Panel title="프로젝트별 작업 시간" kicker="Project Work">
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                {projects.map(project => {
-                  const minutes = form.project_minutes[project.id] ?? 0;
-                  return (
-                    <article
-                      className={
-                        minutes > 0 ? "project-card active" : "project-card"
-                      }
-                      key={project.id}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <h3 className="font-black">{project.title}</h3>
-                          <p className="mt-1 line-clamp-2 text-xs leading-5 text-[#94a3b8]">
-                            {project.description}
-                          </p>
-                        </div>
-                        <span className="rounded-full border border-[#0284c7]/25 px-2 py-0.5 font-mono text-[11px] text-[#0369a1]">
-                          {minutes}m
-                        </span>
-                      </div>
-                      <div className="mt-4 flex items-center gap-2">
-                        <button
-                          className="step-button"
-                          onClick={() =>
-                            setProjectMinutes(project.id, minutes - 30)
-                          }
-                          type="button"
-                        >
-                          -30
-                        </button>
-                        <input
-                          className="field min-w-0 flex-1 text-center"
-                          min={0}
-                          onChange={event =>
-                            setProjectMinutes(
-                              project.id,
-                              Number(event.target.value)
-                            )
-                          }
-                          type="number"
-                          value={minutes}
-                        />
-                        <button
-                          className="step-button"
-                          onClick={() =>
-                            setProjectMinutes(project.id, minutes + 30)
-                          }
-                          type="button"
-                        >
-                          +30
-                        </button>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </Panel>
-          </section>
-
-          <aside className="grid content-start gap-5">
-            <Panel title="기록 스트릭" kicker="Keep Going">
-              <div className="grid gap-4">
-                <div className="grid grid-cols-3 gap-3">
-                  <Metric label="연속 기록" value={`${stats.recordStreak}일`} />
-                  <Metric
-                    label="운동 연속"
-                    value={`${stats.workoutStreak}일`}
-                  />
-                  <Metric
-                    label="이번 주 코딩"
-                    value={`${stats.weekCoding}분`}
-                  />
-                </div>
-                {aiUsage ? <AiUsageBar usage={aiUsage} /> : null}
-                <ActivityCalendar
-                  byDate={historyByDate}
-                  selectedDate={selectedDate}
-                  onPick={selectDate}
-                />
-              </div>
-            </Panel>
-
-            <Panel title="데일리 목표" kicker="Daily Rings">
-              <GoalRings
-                workout={form.workout_done ? form.workout_minutes : 0}
-                coding={form.coding_minutes}
-                study={form.study_minutes}
-              />
-            </Panel>
-
-            <Panel title="오늘 기록 요약" kicker="Village Impact">
-              <div className="grid gap-3">
-                {/* 숫자를 만지는 동안 마을에 불이 들어온다. 이 화면의 논지가
-                    "기록이 마을을 바꾼다" 인데 그 장면이 여태 없었다. */}
-                <LiveVillagePreview
-                  form={form}
-                  overrides={studyOverrides}
-                  study={{
-                    codingToday: 0,
-                    codingTotal: 0,
-                    csToday: 0,
-                    csTotal: 0
-                  }}
-                />
-                {/* 숫자를 만지면 담당 NPC 의 기분과 한 줄이 그 자리에서 바뀐다 */}
-                <NpcReactions npcs={npcPreview} />
-                {unlockPreview.length ? (
-                  <p className="text-xs text-[#64748b]">
-                    오늘 열리는 장식{" "}
-                    <b className="text-[#b45309]">
-                      {unlockPreview.join(" · ")}
-                    </b>
-                  </p>
-                ) : null}
-                <StreakStamps dates={recordedDates} />
-                <div className="grid grid-cols-2 gap-3">
-                  <Metric
-                    label="운동"
-                    value={
-                      form.workout_done ? `${form.workout_minutes}분` : "미완료"
+                  <TagCloud
+                    items={unique([...quickTopics, ...form.study_topics])}
+                    onToggle={item =>
+                      updateForm({
+                        studied_tech: toggleValue(form.studied_tech, item),
+                        study_topics: unique([...form.study_topics, item])
+                      })
                     }
+                    selected={form.studied_tech}
                   />
-                  <Metric label="공부" value={`${form.study_minutes}분`} />
-                  <Metric label="코딩" value={`${form.coding_minutes}분`} />
-                  <Metric label="프로젝트" value={`${totalProjectMinutes}분`} />
                 </div>
-                <div className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-4">
-                  <p className="font-black text-[#0284c7]">
-                    저장하면 바뀌는 것
-                  </p>
-                  <ul className="mt-3 grid gap-2 text-sm leading-6 text-[#475569]">
-                    {predictedChanges.map(change => (
-                      <li className="flex gap-2" key={change}>
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#0284c7]" />
-                        <span>{change}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </Panel>
+              }
+              live={form.study_minutes > 0}
+              max={480}
+              name="공부"
+              note="기술 건물 다섯 채의 조명을 함께 올립니다"
+              onChange={value => updateForm({study_minutes: value})}
+              onHover={setHoverIds}
+              onToggle={next => throwMinuteLever("study_minutes", next, 30)}
+              picked={isPicked(SKILL_BUILDINGS)}
+              registerFocus={registerFocus}
+              value={form.study_minutes}
+            />
 
-            <Panel title="활성 프로젝트" kicker="Today Focus">
-              {activeProjects.length > 0 ? (
-                <div className="grid gap-2">
-                  {activeProjects.slice(0, 5).map(({project, minutes}) => (
-                    <div
-                      className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-3"
-                      key={project.id}
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="font-bold">{project.title}</span>
-                        <span className="font-mono text-xs text-[#0284c7]">
-                          {minutes}분
-                        </span>
-                      </div>
-                      <p className="mt-1 text-xs leading-5 text-[#94a3b8]">
-                        이 프로젝트 건물 조명과 프로젝트 NPC 추천에 반영됩니다.
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-4 text-sm leading-6 text-[#94a3b8]">
-                  작업한 프로젝트 시간을 입력하면 해당 건물이 밝아집니다.
-                </p>
-              )}
-            </Panel>
-
-            <Panel title="현재 마을 상태" kicker="Live Preview">
-              {villageState ? (
-                <div className="grid gap-3">
-                  <p className="text-sm leading-6 text-[#475569]">
-                    {villageState.summary}
-                  </p>
+            <CircuitRow
+              buildingIds={PLAZA_ONLY}
+              extras={
+                <div className="grid gap-3 lg:grid-cols-[200px_minmax(0,1fr)]">
+                  <label className="flex items-center gap-3">
+                    <span className="field-label whitespace-nowrap">커밋</span>
+                    <input
+                      className="field w-full text-center"
+                      min={0}
+                      onChange={event =>
+                        updateForm({
+                          github_commits: Math.max(
+                            0,
+                            Number(event.target.value) || 0
+                          )
+                        })
+                      }
+                      type="number"
+                      value={form.github_commits}
+                    />
+                  </label>
                   <div className="grid gap-2">
-                    {villageState.buildings
-                      .filter(building => building.activity_score > 0)
-                      .sort((a, b) => b.activity_score - a.activity_score)
-                      .slice(0, 6)
-                      .map(building => (
-                        <div
-                          className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-3"
-                          key={building.building_id}
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <span className="font-mono text-xs font-black text-[#475569]">
-                              {building.building_id}
-                            </span>
-                            <span className="rounded-full border border-[#0284c7]/25 px-2 py-0.5 text-xs text-[#0369a1]">
-                              {building.light_level}
-                            </span>
-                          </div>
-                          <p className="mt-1 line-clamp-2 text-xs leading-5 text-[#94a3b8]">
-                            {building.reason}
-                          </p>
-                        </div>
-                      ))}
+                    <div className="flex gap-2">
+                      <input
+                        className="field min-w-0 flex-1"
+                        onChange={event => setRepoInput(event.target.value)}
+                        onKeyDown={event => {
+                          if (event.key === "Enter") {
+                            event.preventDefault();
+                            addRepo();
+                          }
+                        }}
+                        placeholder="오늘 만진 레포 — 예: toadsam/FestFlow"
+                        value={repoInput}
+                      />
+                      <button
+                        className="sub-button"
+                        onClick={addRepo}
+                        type="button"
+                      >
+                        추가
+                      </button>
+                    </div>
+                    {form.github_repos.length ? (
+                      <div className="flex flex-wrap gap-2">
+                        {form.github_repos.map(repo => (
+                          <Chip
+                            key={repo}
+                            onRemove={() =>
+                              updateForm({
+                                github_repos: form.github_repos.filter(
+                                  item => item !== repo
+                                )
+                              })
+                            }
+                          >
+                            {repo}
+                          </Chip>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
-              ) : (
-                <p className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-4 text-sm leading-6 text-[#94a3b8]">
-                  저장 후 마을 상태가 표시됩니다.
-                </p>
-              )}
-            </Panel>
+              }
+              live={form.coding_minutes > 0}
+              max={600}
+              name="코딩"
+              note="레포 이름이 프로젝트와 겹치면 그 건물도 함께 밝아집니다"
+              onChange={value => updateForm({coding_minutes: value})}
+              onHover={setHoverIds}
+              onToggle={next => throwMinuteLever("coding_minutes", next, 60)}
+              picked={isPicked(PLAZA_ONLY)}
+              registerFocus={registerFocus}
+              value={form.coding_minutes}
+            />
+          </div>
 
-            <div className="relative rounded-lg border border-[#e3e8ef] bg-[#ffffff] p-4">
-              {/* 저장에 성공하면 여기에 도장이 쿵 찍힌다. 화면을 안 막고 1.6초 뒤 사라진다. */}
-              <SaveStamp date={selectedDate} stampKey={stampKey} />
-              <p className="text-sm leading-6 text-[#475569]">{status}</p>
-              <button
-                className="mt-4 w-full rounded-lg bg-[#0284c7] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#0ea5e9] disabled:cursor-not-allowed disabled:opacity-45"
-                disabled={isSaving}
-                type="submit"
-              >
-                기록 저장하고 마을 갱신
-              </button>
-            </div>
-          </aside>
-        </div>
-      </form>
-
-      <div className="mx-auto grid max-w-7xl gap-5 px-5 pb-10">
-        <CommissionAdmin />
-        <CodingTestAdmin defaultDate={selectedDate} />
-        <CsNoteAdmin defaultDate={selectedDate} />
+          <div className="mt-9 flex items-baseline justify-between">
+            <p className="sw-rail-label">Project Circuits</p>
+            <span className="font-mono text-xs text-[#6b7580]">
+              합계 <b className="text-[#ff9d38]">{totalProjectMinutes}</b>분
+            </span>
+          </div>
+          <div>
+            {projects.map(project => {
+              const minutes = form.project_minutes[project.id] ?? 0;
+              const ids = projectBuildingIds[project.id];
+              return (
+                <CircuitRow
+                  buildingIds={ids}
+                  key={project.id}
+                  live={minutes > 0}
+                  max={300}
+                  name={project.title}
+                  note={project.description}
+                  onChange={value => setProjectMinutes(project.id, value)}
+                  onHover={setHoverIds}
+                  picked={isPicked(ids)}
+                  registerFocus={registerFocus}
+                  value={minutes}
+                />
+              );
+            })}
+          </div>
+        </form>
       </div>
 
+      {/* ── 지도 기둥: 값을 넣는 내내 보인다 ──────────────────────────── */}
+      <aside className="sw-pillar">
+        <div className="sw-pillar-head">
+          <span className="font-mono text-[11px] font-black uppercase tracking-[0.2em] text-[#e2c078]">
+            Village Live Feed
+          </span>
+          <span
+            className={`truncate font-mono text-[11px] ${
+              pickNote ? "text-[#e07a5f]" : "text-[#6b7580]"
+            }`}
+          >
+            {pickNote ?? hoverName ?? "저장 전 미리보기"}
+          </span>
+        </div>
+        <div className="sw-pillar-body">
+          {/* 숫자를 만지는 동안 마을에 불이 들어온다. 건물을 누르면 그 건물을
+              켜는 회로로 데려간다 — 지도는 그림이 아니라 목차이기도 하다. */}
+          <LiveVillagePreview
+            form={form}
+            highlightIds={hoverIds ?? undefined}
+            onHoverBuilding={setHoverName}
+            onPickBuilding={pickBuilding}
+            overrides={studyOverrides}
+            study={{codingToday: 0, codingTotal: 0, csToday: 0, csTotal: 0}}
+          />
+
+          <NpcReactions npcs={npcPreview} />
+
+          <div className="relative rounded border border-[#38414d] bg-[#12161c] p-3">
+            <SaveStamp date={selectedDate} stampKey={stampKey} />
+            <p className="text-xs leading-6 text-[#9aa4b0]">{status}</p>
+            <button
+              className="sw-save-main mt-3 w-full rounded bg-[#ff9d38] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#12161c] transition hover:bg-[#ffb15e] disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={isSaving}
+              form="daily-form"
+              type="submit"
+            >
+              기록 저장하고 마을 갱신
+            </button>
+          </div>
+
+          <div>
+            <span className="sw-rail-label">저장하면 바뀌는 것</span>
+            <ul className="grid gap-1.5 text-xs leading-5 text-[#9aa4b0]">
+              {predictedChanges.map(change => (
+                <li className="flex gap-2" key={change}>
+                  <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#ff9d38]" />
+                  <span>{change}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <span className="sw-rail-label">현재 마을 상태</span>
+            {villageState ? (
+              <div className="grid gap-2">
+                <p className="text-xs leading-5 text-[#9aa4b0]">
+                  {villageState.summary}
+                </p>
+                {villageState.buildings
+                  .filter(building => building.activity_score > 0)
+                  .sort((a, b) => b.activity_score - a.activity_score)
+                  .slice(0, 5)
+                  .map(building => (
+                    <div
+                      className="flex items-center justify-between gap-3 rounded border border-[#38414d] bg-[#12161c] px-2.5 py-1.5"
+                      key={building.building_id}
+                    >
+                      <span className="truncate font-mono text-[11px] text-[#8b94a0]">
+                        {building.building_id}
+                      </span>
+                      <span className="shrink-0 font-mono text-[11px] text-[#e2c078]">
+                        {building.light_level}
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <p className="text-xs leading-5 text-[#5b646e]">
+                저장 후 마을 상태가 표시됩니다.
+              </p>
+            )}
+          </div>
+        </div>
+      </aside>
+
+      {/* ── 서랍 ──────────────────────────────────────────────────────── */}
+      <footer className="sw-drawer">
+        <SwitchDrawer
+          panels={[
+            {id: "commission", label: "의뢰 접수함", node: <CommissionAdmin />},
+            {
+              id: "coding",
+              label: "코딩테스트",
+              node: <CodingTestAdmin defaultDate={selectedDate} />
+            },
+            {
+              id: "cs",
+              label: "CS 노트",
+              node: <CsNoteAdmin defaultDate={selectedDate} />
+            }
+          ]}
+        />
+      </footer>
+
       {reward ? (
-        <RewardCard reward={reward} onClose={() => setReward(null)} />
+        <RewardCard onClose={() => setReward(null)} reward={reward} />
       ) : null}
     </main>
   );
@@ -1032,19 +1120,19 @@ function CommissionAlert() {
   if (failed || waiting.length === 0) return null;
 
   return (
-    <div className="border-b border-[#f59e0b]/40 bg-[#fffbeb]">
+    <div className="border-b border-[#ffb15e]/40 bg-[#2a2118]">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-5 py-3">
         <span className="relative flex h-2.5 w-2.5 shrink-0">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#f59e0b] opacity-70" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#f59e0b]" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ffb15e] opacity-70" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#ffb15e]" />
         </span>
-        <strong className="text-sm font-black text-[#b45309]">
+        <strong className="text-sm font-black text-[#ff9d38]">
           내 처리를 기다리는 의뢰 {waiting.length}건
         </strong>
         <span className="flex flex-wrap gap-2">
           {waiting.map(item => (
             <a
-              className="rounded-full border border-[#f59e0b]/40 bg-white px-3 py-1 font-mono text-[11px] font-black text-[#b45309] transition hover:bg-[#fef3c7]"
+              className="rounded-full border border-[#ffb15e]/40 bg-[#1a2027] px-3 py-1 font-mono text-[11px] font-black text-[#ff9d38] transition hover:bg-[#2a2118]"
               href="#commission-inbox"
               key={item.id}
             >
@@ -1150,7 +1238,7 @@ function CommissionAdmin() {
     <div id="commission-inbox" className="scroll-mt-8">
       <Panel title="의뢰 접수함" kicker="Commission Atelier">
         <div className="mb-4 flex flex-wrap items-center gap-3">
-          <span className="rounded-full border border-[#f59e0b]/30 bg-[#fffbeb] px-3 py-1.5 font-mono text-xs font-black text-[#b45309]">
+          <span className="rounded-full border border-[#ffb15e]/30 bg-[#2a2118] px-3 py-1.5 font-mono text-xs font-black text-[#ff9d38]">
             내 처리 대기 {pending}건 · 전체 {items.length}건
           </span>
           <button
@@ -1161,12 +1249,12 @@ function CommissionAdmin() {
             새로고침
           </button>
           {status ? (
-            <span className="text-xs text-[#64748b]">{status}</span>
+            <span className="text-xs text-[#8b94a0]">{status}</span>
           ) : null}
         </div>
 
         {items.length === 0 ? (
-          <p className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-4 text-sm leading-6 text-[#94a3b8]">
+          <p className="rounded-lg border border-[#38414d] bg-[#232b34] p-4 text-sm leading-6 text-[#6b7580]">
             아직 접수된 의뢰가 없습니다. 마을의 &ldquo;제작 의뢰&rdquo; 버튼으로
             방문자가 접수하면 여기에 쌓입니다.
           </p>
@@ -1177,7 +1265,7 @@ function CommissionAdmin() {
               return (
                 <div
                   key={item.id}
-                  className="rounded-lg border border-[#eef1f5] bg-[#f1f4f9] p-3"
+                  className="rounded-lg border border-[#232b34] bg-[#232b34] p-3"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <button
@@ -1186,19 +1274,19 @@ function CommissionAdmin() {
                       type="button"
                     >
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-mono text-[11px] font-black text-[#b45309]">
+                        <span className="font-mono text-[11px] font-black text-[#ff9d38]">
                           {item.public_id}
                         </span>
                         <CommissionStatusBadge status={item.status} />
-                        <span className="font-mono text-[11px] text-[#94a3b8]">
+                        <span className="font-mono text-[11px] text-[#6b7580]">
                           {prettyDate(item.created_at.slice(0, 10))}
                         </span>
                       </div>
-                      <p className="mt-1 truncate text-sm font-bold text-[#1e293b]">
+                      <p className="mt-1 truncate text-sm font-bold text-[#e8edf2]">
                         {item.site_type ? `[${item.site_type}] ` : ""}
                         {item.summary || "(내용 없음)"}
                       </p>
-                      <p className="mt-0.5 font-mono text-[11px] text-[#94a3b8]">
+                      <p className="mt-0.5 font-mono text-[11px] text-[#6b7580]">
                         {formatWon(item.estimate_min)} ~{" "}
                         {formatWon(item.estimate_max)} · {item.weeks_min}~
                         {item.weeks_max}주 · {item.contact_email}
@@ -1206,14 +1294,14 @@ function CommissionAdmin() {
                     </button>
                     <div className="flex shrink-0 items-center gap-1.5">
                       <button
-                        className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#f59e0b]/50 hover:text-[#b45309]"
+                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#ffb15e]/50 hover:text-[#ff9d38]"
                         onClick={() => void toggle(item)}
                         type="button"
                       >
                         {isOpen ? "접기" : "상세"}
                       </button>
                       <button
-                        className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]"
+                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#c2492e]/50 hover:text-[#e07a5f]"
                         onClick={() => void remove(item)}
                         type="button"
                       >
@@ -1224,7 +1312,7 @@ function CommissionAdmin() {
 
                   {isOpen ? (
                     detail && detail.id === item.id ? (
-                      <div className="mt-3 border-t border-[#e3e8ef] pt-3">
+                      <div className="mt-3 border-t border-[#38414d] pt-3">
                         <div className="grid gap-4 lg:grid-cols-2">
                           <div className="grid gap-3">
                             <DetailRow label="연락처">
@@ -1254,7 +1342,7 @@ function CommissionAdmin() {
 
                             <DepthPanel detail={detail} />
 
-                            <div className="grid gap-2 rounded-lg border border-[#e3e8ef] bg-white p-3">
+                            <div className="grid gap-2 rounded-lg border border-[#38414d] bg-[#1a2027] p-3">
                               <LabeledField label="진행 상태">
                                 <select
                                   className="field"
@@ -1287,7 +1375,7 @@ function CommissionAdmin() {
                                 />
                               </LabeledField>
                               <button
-                                className="rounded-lg bg-[#f59e0b] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#1f1300] transition hover:bg-[#fbbf24] disabled:opacity-45"
+                                className="rounded-lg bg-[#ffb15e] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#0d1116] transition hover:bg-[#e2c078] disabled:opacity-45"
                                 disabled={busy}
                                 onClick={() =>
                                   void changeStatus(item, detail.status, note)
@@ -1301,22 +1389,22 @@ function CommissionAdmin() {
 
                           <div>
                             <div>
-                              <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#b45309]/70">
+                              <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#ff9d38]/70">
                                 상담 대화 기록
                               </p>
                               {detail.messages.length === 0 ? (
-                                <p className="text-sm text-[#94a3b8]">
+                                <p className="text-sm text-[#6b7580]">
                                   상담 없이 바로 접수된 건입니다.
                                 </p>
                               ) : (
-                                <div className="grid max-h-[420px] gap-1.5 overflow-y-auto rounded-lg border border-[#e3e8ef] bg-white p-3">
+                                <div className="grid max-h-[420px] gap-1.5 overflow-y-auto rounded-lg border border-[#38414d] bg-[#1a2027] p-3">
                                   {detail.messages.map(message => (
                                     <p
                                       key={message.id}
                                       className={
                                         message.role === "visitor"
-                                          ? "rounded-md bg-[#fffbeb] px-2.5 py-1.5 text-xs leading-5 text-[#78350f]"
-                                          : "rounded-md bg-[#f1f4f9] px-2.5 py-1.5 text-xs leading-5 text-[#475569]"
+                                          ? "rounded-md bg-[#2a2118] px-2.5 py-1.5 text-xs leading-5 text-[#c9a55f]"
+                                          : "rounded-md bg-[#232b34] px-2.5 py-1.5 text-xs leading-5 text-[#9aa4b0]"
                                       }
                                     >
                                       <span className="mr-1.5 font-mono text-[10px] font-black opacity-60">
@@ -1336,8 +1424,8 @@ function CommissionAdmin() {
                         {/* 3단계 — 게이트와 직군별 작업.
                           2단 그리드 밖에 두어 **전체 폭**을 쓴다: HTML 시안을
                           좁은 칸에서 보면 태블릿 브레이크포인트만 보여 검수가 안 된다. */}
-                        <div className="mt-4 border-t border-[#e3e8ef] pt-4">
-                          <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#b45309]/70">
+                        <div className="mt-4 border-t border-[#38414d] pt-4">
+                          <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#ff9d38]/70">
                             작업 지시 · 검수
                           </p>
                           <CommissionWorkboard
@@ -1348,7 +1436,7 @@ function CommissionAdmin() {
                         </div>
                       </div>
                     ) : (
-                      <p className="mt-3 border-t border-[#e3e8ef] pt-3 text-sm text-[#94a3b8]">
+                      <p className="mt-3 border-t border-[#38414d] pt-3 text-sm text-[#6b7580]">
                         불러오는 중…
                       </p>
                     )
@@ -1376,16 +1464,16 @@ const COMMISSION_STATUS_OPTIONS: {value: CommissionStatus; label: string}[] = [
 ];
 
 const COMMISSION_STATUS_STYLE: Record<CommissionStatus, string> = {
-  received: "border-[#f59e0b]/40 bg-[#fffbeb] text-[#b45309]",
-  reviewing: "border-[#0284c7]/30 bg-[#f0f9ff] text-[#0369a1]",
-  briefing: "border-[#a78bfa]/40 bg-[#f5f3ff] text-[#6d28d9]",
+  received: "border-[#ffb15e]/40 bg-[#2a2118] text-[#ff9d38]",
+  reviewing: "border-[#ff9d38]/30 bg-[#2a2118] text-[#e2c078]",
+  briefing: "border-[#9b8ac4]/40 bg-[#1a2027] text-[#8877b8]",
   // 검수 대기는 "내가 움직여야 하는 상태"라 눈에 띄게 — 여기서 멈춰 있다는 신호다
-  brief_review: "border-[#f59e0b]/50 bg-[#fef3c7] text-[#92400e]",
-  briefed: "border-[#a78bfa]/40 bg-[#f5f3ff] text-[#6d28d9]",
-  in_progress: "border-[#a78bfa]/40 bg-[#f5f3ff] text-[#6d28d9]",
-  artifact_review: "border-[#f59e0b]/50 bg-[#fef3c7] text-[#92400e]",
-  delivered: "border-[#10b981]/35 bg-[#ecfdf5] text-[#047857]",
-  rejected: "border-[#e3e8ef] bg-[#f1f4f9] text-[#94a3b8]"
+  brief_review: "border-[#ffb15e]/50 bg-[#2a2118] text-[#c9a55f]",
+  briefed: "border-[#9b8ac4]/40 bg-[#1a2027] text-[#8877b8]",
+  in_progress: "border-[#9b8ac4]/40 bg-[#1a2027] text-[#8877b8]",
+  artifact_review: "border-[#ffb15e]/50 bg-[#2a2118] text-[#c9a55f]",
+  delivered: "border-[#6fae8a]/35 bg-[#22301f] text-[#4d8a6a]",
+  rejected: "border-[#38414d] bg-[#232b34] text-[#6b7580]"
 };
 
 function CommissionStatusBadge({status}: {status: CommissionStatus}) {
@@ -1430,8 +1518,8 @@ function DepthPanel({detail}: {detail: CommissionDetail}) {
   }
 
   return (
-    <div className="grid gap-2 rounded-lg border border-[#e3e8ef] bg-white p-3">
-      <p className="font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#b45309]/70">
+    <div className="grid gap-2 rounded-lg border border-[#38414d] bg-[#1a2027] p-3">
+      <p className="font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#ff9d38]/70">
         제작 정보 (심화 문답)
       </p>
 
@@ -1439,15 +1527,15 @@ function DepthPanel({detail}: {detail: CommissionDetail}) {
         <dl className="grid gap-1.5">
           {answers.map(([label, value]) => (
             <div key={label} className="flex gap-2 text-xs leading-5">
-              <dt className="w-20 shrink-0 font-bold text-[#b45309]">
+              <dt className="w-20 shrink-0 font-bold text-[#ff9d38]">
                 {label}
               </dt>
-              <dd className="flex-1 text-[#475569]">{value}</dd>
+              <dd className="flex-1 text-[#9aa4b0]">{value}</dd>
             </div>
           ))}
         </dl>
       ) : (
-        <p className="text-xs leading-5 text-[#94a3b8]">
+        <p className="text-xs leading-5 text-[#6b7580]">
           아직 받은 게 없습니다. 아래 링크를 회신 메일에 붙여 보내면 도안이 대신
           여쭤봅니다 — 운영·수정 주체, 콘텐츠 준비, 성공 기준, 기존 자산.
         </p>
@@ -1455,7 +1543,7 @@ function DepthPanel({detail}: {detail: CommissionDetail}) {
 
       {detail.track_path ? (
         <div className="mt-1 flex flex-wrap items-center gap-2">
-          <code className="min-w-0 flex-1 truncate rounded-md bg-[#f1f4f9] px-2 py-1.5 font-mono text-[11px] text-[#475569]">
+          <code className="min-w-0 flex-1 truncate rounded-md bg-[#232b34] px-2 py-1.5 font-mono text-[11px] text-[#9aa4b0]">
             {link}
           </code>
           <button
@@ -1480,10 +1568,10 @@ function DetailRow({
 }) {
   return (
     <div>
-      <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#94a3b8]">
+      <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#6b7580]">
         {label}
       </p>
-      <div className="mt-1 text-sm leading-6 text-[#1e293b]">{children}</div>
+      <div className="mt-1 text-sm leading-6 text-[#e8edf2]">{children}</div>
     </div>
   );
 }
@@ -1505,7 +1593,7 @@ function RequirementDump({value}: {value: Record<string, unknown>}) {
     <ul className="grid gap-0.5">
       {entries.map(([key, item]) => (
         <li key={key}>
-          <span className="text-[#94a3b8]">{LABELS[key] ?? key}</span>{" "}
+          <span className="text-[#6b7580]">{LABELS[key] ?? key}</span>{" "}
           {Array.isArray(item) ? item.join(", ") : String(item)}
         </li>
       ))}
@@ -1727,7 +1815,7 @@ function CodingTestAdmin({defaultDate}: {defaultDate: string}) {
         </LabeledField>
         <div className="flex flex-wrap items-center gap-3">
           <button
-            className="rounded-lg bg-[#38bdf8] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#7dd3fc] disabled:opacity-45"
+            className="rounded-lg bg-[#ffb15e] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#1a2027] transition hover:bg-[#e2c078] disabled:opacity-45"
             disabled={busy}
             type="submit"
           >
@@ -1739,7 +1827,7 @@ function CodingTestAdmin({defaultDate}: {defaultDate: string}) {
             </button>
           ) : null}
           {status ? (
-            <span className="text-xs text-[#64748b]">{status}</span>
+            <span className="text-xs text-[#8b94a0]">{status}</span>
           ) : null}
         </div>
       </form>
@@ -1751,24 +1839,24 @@ function CodingTestAdmin({defaultDate}: {defaultDate: string}) {
           onChange={e => setQuery(e.target.value)}
           placeholder="제목·플랫폼·언어 검색"
         />
-        <span className="shrink-0 font-mono text-[11px] text-[#94a3b8]">
+        <span className="shrink-0 font-mono text-[11px] text-[#6b7580]">
           {filtered.length}개
         </span>
       </div>
 
       <div className="grid gap-4">
         {groups.length === 0 ? (
-          <p className="text-sm text-[#94a3b8]">기록이 없습니다.</p>
+          <p className="text-sm text-[#6b7580]">기록이 없습니다.</p>
         ) : (
           groups.map(([date, items]) => (
             <div key={date}>
-              <p className="mb-1.5 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#0369a1]/70">
+              <p className="mb-1.5 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#e2c078]/70">
                 {prettyDate(date)}
               </p>
               <div className="grid gap-2">
                 {items.map(log => (
                   <div
-                    className="flex items-center justify-between gap-3 rounded-lg border border-[#eef1f5] bg-[#f1f4f9] p-3"
+                    className="flex items-center justify-between gap-3 rounded-lg border border-[#232b34] bg-[#232b34] p-3"
                     key={log.id}
                   >
                     <button
@@ -1776,10 +1864,10 @@ function CodingTestAdmin({defaultDate}: {defaultDate: string}) {
                       onClick={() => startEdit(log)}
                       type="button"
                     >
-                      <p className="truncate text-sm font-bold text-[#1e293b] hover:text-[#0369a1]">
+                      <p className="truncate text-sm font-bold text-[#e8edf2] hover:text-[#e2c078]">
                         {log.title}
                       </p>
-                      <p className="mt-0.5 font-mono text-[11px] text-[#94a3b8]">
+                      <p className="mt-0.5 font-mono text-[11px] text-[#6b7580]">
                         {[
                           log.platform,
                           log.difficulty,
@@ -1792,14 +1880,14 @@ function CodingTestAdmin({defaultDate}: {defaultDate: string}) {
                     </button>
                     <div className="flex shrink-0 items-center gap-1.5">
                       <button
-                        className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#0369a1]/50 hover:text-[#0369a1]"
+                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#e2c078]/50 hover:text-[#e2c078]"
                         onClick={() => startEdit(log)}
                         type="button"
                       >
                         수정
                       </button>
                       <button
-                        className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]"
+                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#c2492e]/50 hover:text-[#e07a5f]"
                         onClick={() => handleDelete(log.id)}
                         type="button"
                       >
@@ -1957,7 +2045,7 @@ function CsNoteAdmin({defaultDate}: {defaultDate: string}) {
         </LabeledField>
         <div className="flex flex-wrap items-center gap-3">
           <button
-            className="rounded-lg bg-[#a78bfa] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#0b0820] transition hover:bg-[#c4b5fd] disabled:opacity-45"
+            className="rounded-lg bg-[#9b8ac4] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#0d1116] transition hover:bg-[#b3a4d0] disabled:opacity-45"
             disabled={busy}
             type="submit"
           >
@@ -1969,7 +2057,7 @@ function CsNoteAdmin({defaultDate}: {defaultDate: string}) {
             </button>
           ) : null}
           {status ? (
-            <span className="text-xs text-[#64748b]">{status}</span>
+            <span className="text-xs text-[#8b94a0]">{status}</span>
           ) : null}
         </div>
       </form>
@@ -1981,24 +2069,24 @@ function CsNoteAdmin({defaultDate}: {defaultDate: string}) {
           onChange={e => setQuery(e.target.value)}
           placeholder="제목·분야·내용 검색"
         />
-        <span className="shrink-0 font-mono text-[11px] text-[#94a3b8]">
+        <span className="shrink-0 font-mono text-[11px] text-[#6b7580]">
           {filtered.length}개
         </span>
       </div>
 
       <div className="grid gap-4">
         {groups.length === 0 ? (
-          <p className="text-sm text-[#94a3b8]">노트가 없습니다.</p>
+          <p className="text-sm text-[#6b7580]">노트가 없습니다.</p>
         ) : (
           groups.map(([date, items]) => (
             <div key={date}>
-              <p className="mb-1.5 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#7c3aed]/70">
+              <p className="mb-1.5 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#9b8ac4]/70">
                 {prettyDate(date)}
               </p>
               <div className="grid gap-2">
                 {items.map(note => (
                   <div
-                    className="flex items-center justify-between gap-3 rounded-lg border border-[#eef1f5] bg-[#f1f4f9] p-3"
+                    className="flex items-center justify-between gap-3 rounded-lg border border-[#232b34] bg-[#232b34] p-3"
                     key={note.id}
                   >
                     <button
@@ -2006,23 +2094,23 @@ function CsNoteAdmin({defaultDate}: {defaultDate: string}) {
                       onClick={() => startEdit(note)}
                       type="button"
                     >
-                      <p className="truncate text-sm font-bold text-[#1e293b] hover:text-[#7c3aed]">
+                      <p className="truncate text-sm font-bold text-[#e8edf2] hover:text-[#9b8ac4]">
                         {note.title}
                       </p>
-                      <p className="mt-0.5 font-mono text-[11px] text-[#94a3b8]">
+                      <p className="mt-0.5 font-mono text-[11px] text-[#6b7580]">
                         {[note.category].filter(Boolean).join(" · ")}
                       </p>
                     </button>
                     <div className="flex shrink-0 items-center gap-1.5">
                       <button
-                        className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#c4b5fd]/50 hover:text-[#7c3aed]"
+                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#b3a4d0]/50 hover:text-[#9b8ac4]"
                         onClick={() => startEdit(note)}
                         type="button"
                       >
                         수정
                       </button>
                       <button
-                        className="rounded-md border border-[#e3e8ef] px-2 py-1 text-xs text-[#64748b] transition hover:border-[#ff6b6b]/50 hover:text-[#ff9a9a]"
+                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#c2492e]/50 hover:text-[#e07a5f]"
                         onClick={() => handleDelete(note.id)}
                         type="button"
                       >
@@ -2040,66 +2128,213 @@ function CsNoteAdmin({defaultDate}: {defaultDate: string}) {
   );
 }
 
+/**
+ * 금고 문 — 배전반에 들어가는 유일한 입구.
+ *
+ * ## 다이얼은 손맛이고, 자물쇠는 서버다
+ *
+ * 목업의 다이얼 잠금은 정답 배열과 힌트가 화면에 박혀 있었다. 그러면 자물쇠가
+ * 아니라 자물쇠 그림이다. 여기서는 다이얼이 만든 네 자리를 그대로 서버로 보내고
+ * (`loginAdmin`), 맞고 틀리고는 서버가 판단한다 — **연출은 전부 가져오고 정답만
+ * 서버에 남긴다.**
+ *
+ * 열리면 불꽃이 사방으로 튀고 문이 밝아지며 사라진다. 틀리면 문이 흔들리고
+ * 다이얼이 0으로 되돌아간다. 성공과 실패가 눈으로 구분돼야 한다.
+ */
 function AdminGate({onUnlocked}: {onUnlocked: () => void}) {
-  const [password, setPassword] = useState("");
+  const [code, setCode] = useState("0000");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [shake, setShake] = useState(0);
+  const [pulled, setPulled] = useState(false);
+  const [opened, setOpened] = useState(false);
+  const doorRef = useRef<HTMLDivElement>(null);
 
-  async function submit(event: React.FormEvent) {
-    event.preventDefault();
-    setBusy(true);
-    setError("");
-    try {
-      await loginAdmin(password);
-      onUnlocked();
-    } catch {
-      setError("비밀번호가 올바르지 않습니다.");
-      setBusy(false);
-    }
-  }
+  const submit = useCallback(
+    async (attempt: string) => {
+      if (busy) return;
+      setBusy(true);
+      setPulled(true);
+      setError("");
+      try {
+        await loginAdmin(attempt);
+        burstFrom(doorRef.current, 34);
+        setOpened(true);
+        window.setTimeout(onUnlocked, 900);
+      } catch (err) {
+        /* 실패를 뭉뚱그리면 안 된다.
+         *
+         * 예전에는 어떤 실패든 "비밀번호가 틀렸다"고 말했다. 그래서 서명키가
+         * 기본값이라 서버가 500 을 던지던 동안, 화면은 계속 비밀번호를 탓했다.
+         * 맞는 번호를 넣는 사람은 영원히 못 들어가고 이유도 모른다.
+         * 401(정말 틀림)과 나머지(서버 문제)를 갈라서 말한다. */
+        const status = err instanceof ApiError ? err.status : 0;
+        if (status === 401) {
+          setError("맞지 않습니다. 다이얼이 처음으로 돌아갔어요.");
+        } else if (status === 500) {
+          setError(
+            "서버가 로그인을 거부했습니다. backend/.env 의 ADMIN_SECRET 을 확인하세요."
+          );
+        } else {
+          setError(
+            status
+              ? `서버 오류(${status}) — 백엔드 상태를 확인하세요.`
+              : "백엔드에 닿지 못했습니다. 서버가 켜져 있는지 확인하세요."
+          );
+        }
+        setShake(n => n + 1);
+        setBusy(false);
+        setPulled(false);
+      }
+    },
+    [busy, onUnlocked]
+  );
 
   return (
-    <main className="grid min-h-screen place-items-center bg-[#f6f8fb] px-5 text-[#1e293b]">
-      <form
-        onSubmit={submit}
-        className="w-[min(92vw,380px)] rounded-2xl border border-[#e3e8ef] bg-white p-7 shadow-[0_4px_20px_rgba(15,23,42,0.06)]"
+    <main className="admin-switchboard sw-vault text-[#e8edf2]">
+      <div aria-hidden="true" className="sw-vault-gears">
+        <svg viewBox="0 0 400 400">
+          <g className="sw-gear-outer">
+            <circle
+              cx="200"
+              cy="200"
+              fill="none"
+              r="186"
+              stroke="#242c36"
+              strokeWidth="2"
+            />
+            <circle
+              cx="200"
+              cy="200"
+              fill="none"
+              r="164"
+              stroke="#242c36"
+              strokeDasharray="14 10"
+              strokeWidth="8"
+            />
+          </g>
+          <g className="sw-gear-inner">
+            <circle
+              cx="200"
+              cy="200"
+              fill="none"
+              r="118"
+              stroke="#232b34"
+              strokeDasharray="6 14"
+              strokeWidth="10"
+            />
+            <circle
+              cx="200"
+              cy="200"
+              fill="none"
+              r="92"
+              stroke="#2b3440"
+              strokeWidth="1"
+            />
+          </g>
+        </svg>
+      </div>
+
+      <div
+        className={`sw-door${error ? " is-wrong" : ""}${
+          opened ? " is-open" : ""
+        }`}
+        ref={doorRef}
       >
-        <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#0284c7]">
-          Admin
-        </p>
-        <h1 className="mt-2 text-2xl font-black">관리자 인증</h1>
-        <p className="mt-2 text-sm leading-6 text-[#64748b]">
-          이 페이지는 정재훈 본인만 기록을 남길 수 있어요. 비밀번호를 입력해
-          주세요.
-        </p>
-        <input
-          autoFocus
-          className="field mt-5"
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          placeholder="비밀번호"
-        />
-        {error ? (
-          <p className="mt-2 text-xs font-bold text-[#dc2626]">{error}</p>
-        ) : null}
-        <button
-          className="mt-5 w-full rounded-lg bg-[#0284c7] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-white transition hover:bg-[#0ea5e9] disabled:opacity-45"
-          disabled={busy}
-          type="submit"
+        <div className="sw-plate">
+          <p className="sw-plate-kicker">Village Control Board</p>
+          <h1 className="mt-2 text-2xl font-black">배전반 잠김</h1>
+          <p className="mt-2 text-xs leading-6 text-[#8b94a0]">
+            마을의 등을 켜는 판입니다. 다이얼 네 자리를 맞춰 주세요.
+          </p>
+        </div>
+
+        <div className="mt-7 flex items-center justify-center gap-6">
+          <VaultDials
+            busy={busy}
+            onChange={setCode}
+            onSubmit={() => submit(code)}
+            shake={shake}
+          />
+          {/* 다이얼을 맞췄으면 손잡이를 당긴다. 한 칸 돌릴 때마다 시도하면
+              값도 엉키고 서버에 로그인 요청이 쏟아진다. */}
+          <button
+            aria-label="회로 열기"
+            className={`sw-door-lever${busy ? "" : " is-armed"}${
+              pulled ? " is-pulled" : ""
+            }`}
+            disabled={busy}
+            onClick={() => submit(code)}
+            type="button"
+          />
+        </div>
+
+        <p
+          aria-live="polite"
+          className="mt-5 min-h-[18px] text-center text-xs font-bold text-[#c2492e]"
         >
-          {busy ? "확인 중…" : "입장"}
-        </button>
+          {error}
+        </p>
+
+        <p className="mt-1 text-center font-mono text-[0.58rem] uppercase tracking-[0.16em] text-[#5b646e]">
+          {busy ? "회로 확인 중…" : "다이얼을 맞추고 레버를 당기세요 · Enter"}
+        </p>
+
         <a
-          className="mt-4 block text-center font-mono text-xs text-[#94a3b8] transition hover:text-[#0284c7]"
+          className="mt-6 block text-center font-mono text-xs text-[#6b7580] transition hover:text-[#ff9d38]"
           href="/"
         >
           ← 마을로 돌아가기
         </a>
-      </form>
+      </div>
     </main>
   );
 }
+
+/** 어떤 요소의 한가운데서 불꽃을 사방으로 터뜨린다. 저장·해정처럼 **성공했을 때만** 부른다. */
+function burstFrom(el: HTMLElement | null, count = 22) {
+  if (!el) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  for (let i = 0; i < count; i++) {
+    const spark = document.createElement("div");
+    spark.className = "sw-burst";
+    spark.style.left = `${cx}px`;
+    spark.style.top = `${cy}px`;
+    document.body.appendChild(spark);
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.6;
+    const dist = 80 + Math.random() * 170;
+    spark.animate(
+      [
+        {transform: "translate(0,0) scale(1)", opacity: 1},
+        {
+          transform: `translate(${Math.cos(angle) * dist}px, ${
+            Math.sin(angle) * dist
+          }px) scale(0)`,
+          opacity: 0
+        }
+      ],
+      {duration: 750, easing: "ease-out"}
+    );
+    window.setTimeout(() => spark.remove(), 780);
+  }
+}
+/* 회로가 켜는 건물. `villageLightPreview.ts` 의 점수 표와 같은 id 여야 지도와
+   회로가 같은 것을 가리킨다 — 여기서 오타가 나면 조준 고리만 조용히 안 걸린다. */
+const PLAZA_ONLY = ["central-plaza"];
+const SKILL_BUILDINGS = [
+  "skill-frontend",
+  "skill-3d",
+  "skill-backend",
+  "skill-game",
+  "skill-workflow"
+];
+/** 프로젝트 id → 건물 id. 프로젝트마다 건물 하나로 1:1 이다. */
+const projectBuildingIds: Record<string, string[]> = Object.fromEntries(
+  projects.map(project => [project.id, [`project-${project.id}`]])
+);
 
 const DAILY_GOALS = {workout: 30, coding: 120, study: 60};
 
@@ -2126,7 +2361,7 @@ function GoalRing({
           cy="38"
           r={R}
           fill="none"
-          stroke="#e9edf3"
+          stroke="#232b34"
           strokeWidth="7"
         />
         <circle
@@ -2148,13 +2383,13 @@ function GoalRing({
           textAnchor="middle"
           fontSize="15"
           fontWeight="800"
-          fill={done ? color : "#1e293b"}
+          fill={done ? color : "#e8edf2"}
         >
           {done ? "✓" : `${Math.round(pct * 100)}%`}
         </text>
       </svg>
-      <p className="mt-1 text-xs font-bold text-[#475569]">{label}</p>
-      <p className="font-mono text-[10px] text-[#94a3b8]">
+      <p className="mt-1 text-xs font-bold text-[#9aa4b0]">{label}</p>
+      <p className="font-mono text-[10px] text-[#6b7580]">
         {value}/{goal}분
       </p>
     </div>
@@ -2181,26 +2416,26 @@ function GoalRings({
           label="운동"
           value={workout}
           goal={DAILY_GOALS.workout}
-          color="#f97316"
+          color="#ffb15e"
         />
         <GoalRing
           label="코딩"
           value={coding}
           goal={DAILY_GOALS.coding}
-          color="#0284c7"
+          color="#ff9d38"
         />
         <GoalRing
           label="공부"
           value={study}
           goal={DAILY_GOALS.study}
-          color="#16a34a"
+          color="#6fae6a"
         />
       </div>
       <p
         className={`mt-3 rounded-lg border p-2.5 text-center text-xs font-bold ${
           allDone
-            ? "border-[#16a34a]/30 bg-[#16a34a]/8 text-[#15803d]"
-            : "border-[#e3e8ef] text-[#94a3b8]"
+            ? "border-[#6fae6a]/30 bg-[#6fae6a]/8 text-[#4d8a4a]"
+            : "border-[#38414d] text-[#6b7580]"
         }`}
       >
         {allDone
@@ -2266,12 +2501,13 @@ function activityLevel(a?: DailyActivity | null): number {
   return 4;
 }
 
+/** 활동 달력의 농도 — 등불이 진해지는 계단. 예전엔 파란 잔디였다. */
 const LEVEL_BG = [
-  "#eef1f5",
-  "rgba(2,132,199,0.22)",
-  "rgba(2,132,199,0.42)",
-  "rgba(2,132,199,0.66)",
-  "rgba(2,132,199,0.92)"
+  "#232b34",
+  "rgba(255,157,56,0.20)",
+  "rgba(255,157,56,0.40)",
+  "rgba(255,157,56,0.64)",
+  "rgba(255,157,56,0.90)"
 ];
 
 interface DailyStats {
@@ -2348,7 +2584,7 @@ function ActivityCalendar({
                   className="h-3 w-3 rounded-[3px] transition hover:scale-125"
                   style={{
                     background: LEVEL_BG[level],
-                    outline: selected ? "1.5px solid #0284c7" : "none",
+                    outline: selected ? "1.5px solid #ff9d38" : "none",
                     outlineOffset: selected ? "1px" : undefined
                   }}
                 />
@@ -2357,7 +2593,7 @@ function ActivityCalendar({
           </div>
         ))}
       </div>
-      <div className="mt-2 flex items-center justify-end gap-1.5 font-mono text-[10px] text-[#94a3b8]">
+      <div className="mt-2 flex items-center justify-end gap-1.5 font-mono text-[10px] text-[#6b7580]">
         <span>적음</span>
         {LEVEL_BG.map((bg, i) => (
           <span
@@ -2394,24 +2630,24 @@ function RewardCard({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-[#1e293b]/40 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-[#e8edf2]/40 p-4"
       onClick={onClose}
     >
       <div
-        className="w-[min(94vw,520px)] rounded-2xl border border-[#0284c7]/30 bg-[#ffffff] p-6 shadow-2xl"
+        className="w-[min(94vw,520px)] rounded-2xl border border-[#ff9d38]/30 bg-[#1a2027] p-6 shadow-2xl"
         onClick={event => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#0284c7]">
+            <p className="font-mono text-xs font-black uppercase tracking-[0.2em] text-[#ff9d38]">
               Village Updated
             </p>
-            <h2 className="mt-1 text-2xl font-black text-[#1e293b]">
+            <h2 className="mt-1 text-2xl font-black text-[#e8edf2]">
               오늘 마을에 생긴 일 ✨
             </h2>
           </div>
           <button
-            className="text-[#94a3b8] hover:text-[#1e293b]"
+            className="text-[#6b7580] hover:text-[#e8edf2]"
             onClick={onClose}
             type="button"
           >
@@ -2419,17 +2655,17 @@ function RewardCard({
           </button>
         </div>
 
-        <p className="mt-3 text-sm leading-6 text-[#475569]">{state.summary}</p>
+        <p className="mt-3 text-sm leading-6 text-[#9aa4b0]">{state.summary}</p>
 
         {lit.length > 0 ? (
           <div className="mt-4">
-            <p className="font-mono text-[11px] font-black uppercase tracking-[0.14em] text-[#0369a1]">
+            <p className="font-mono text-[11px] font-black uppercase tracking-[0.14em] text-[#e2c078]">
               밝아진 건물
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {lit.map(b => (
                 <span
-                  className="rounded-full border border-[#16a34a]/30 bg-[#16a34a]/10 px-3 py-1 text-xs font-bold text-[#15803d]"
+                  className="rounded-full border border-[#6fae6a]/30 bg-[#6fae6a]/10 px-3 py-1 text-xs font-bold text-[#4d8a4a]"
                   key={b.building_id}
                 >
                   {BUILDING_NAME[b.building_id] ?? b.building_id} ·{" "}
@@ -2442,13 +2678,13 @@ function RewardCard({
 
         {unlocked.length > 0 ? (
           <div className="mt-4">
-            <p className="font-mono text-[11px] font-black uppercase tracking-[0.14em] text-[#b45309]">
+            <p className="font-mono text-[11px] font-black uppercase tracking-[0.14em] text-[#ff9d38]">
               새로 해금
             </p>
             <div className="mt-2 flex flex-wrap gap-2">
               {unlocked.map(item => (
                 <span
-                  className="rounded-full border border-[#fbbf24]/30 bg-[#fbbf24]/10 px-3 py-1 text-xs font-bold text-[#b45309]"
+                  className="rounded-full border border-[#e2c078]/30 bg-[#e2c078]/10 px-3 py-1 text-xs font-bold text-[#ff9d38]"
                   key={item}
                 >
                   {UNLOCK_LABEL[item] ?? item}
@@ -2459,16 +2695,16 @@ function RewardCard({
         ) : null}
 
         {npcLine ? (
-          <div className="mt-4 rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-3">
-            <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#94a3b8]">
+          <div className="mt-4 rounded-lg border border-[#38414d] bg-[#232b34] p-3">
+            <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#6b7580]">
               루미의 한마디
             </p>
-            <p className="mt-1 text-sm leading-6 text-[#334155]">“{npcLine}”</p>
+            <p className="mt-1 text-sm leading-6 text-[#2a323b]">“{npcLine}”</p>
           </div>
         ) : null}
 
         <a
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-[#0284c7] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#06111f] transition hover:bg-[#0ea5e9]"
+          className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-[#ff9d38] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#1a2027] transition hover:bg-[#ffb15e]"
           href="/"
         >
           마을에서 직접 보기 →
@@ -2478,66 +2714,53 @@ function RewardCard({
   );
 }
 
+/**
+ * 배전반의 한 판. `lever` 를 주면 그 판은 **회로**가 되고, `live` 인 동안 왼쪽
+ * 모선에 전기가 흐른다(admin.css 의 `.sw-circuit.is-live::before`).
+ *
+ * `live` 는 따로 저장하는 상태가 아니라 **값에서 파생**된다 — 숫자가 0 이면 꺼지고
+ * 값이 들어가면 켜진다. 그래야 화면이 거짓말을 하지 않는다.
+ */
 function Panel({
   children,
   kicker,
+  lever,
+  live,
   title
 }: {
   children: React.ReactNode;
   kicker: string;
+  lever?: React.ReactNode;
+  live?: boolean;
   title: string;
 }) {
   return (
-    <section className="rounded-lg border border-[#e3e8ef] bg-[#ffffff] p-5 shadow-[0_4px_20px_rgba(15,23,42,0.06)]">
-      <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#0284c7]">
-        {kicker}
-      </p>
-      <h2 className="mt-2 text-xl font-black">{title}</h2>
+    <section
+      className={`sw-circuit${
+        live ? " is-live" : ""
+      } rounded-lg border border-[#38414d] bg-[#1a2027] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.45)]`}
+    >
+      <div className="flex items-start gap-4">
+        {lever ?? null}
+        <div className="min-w-0">
+          <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#ff9d38]">
+            {kicker}
+          </p>
+          <h2 className="mt-2 text-xl font-black">{title}</h2>
+        </div>
+      </div>
       <div className="mt-5">{children}</div>
     </section>
   );
 }
 
-function NumberField({
-  disabled,
-  label,
-  onChange,
-  suffix,
-  value
-}: {
-  disabled?: boolean;
-  label: string;
-  onChange: (value: number) => void;
-  suffix?: string;
-  value: number;
-}) {
-  return (
-    <label className="grid gap-2">
-      <span className="field-label">{label}</span>
-      <div className="flex rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] focus-within:border-[#0284c7]">
-        <input
-          className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm outline-none disabled:opacity-45"
-          disabled={disabled}
-          min={0}
-          onChange={event => onChange(Number(event.target.value))}
-          type="number"
-          value={value}
-        />
-        {suffix ? (
-          <span className="px-3 py-3 text-sm text-[#94a3b8]">{suffix}</span>
-        ) : null}
-      </div>
-    </label>
-  );
-}
-
 function Metric({label, value}: {label: string; value: string | number}) {
   return (
-    <div className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-3">
-      <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#94a3b8]">
+    <div className="rounded-lg border border-[#38414d] bg-[#232b34] p-3">
+      <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#6b7580]">
         {label}
       </p>
-      <p className="mt-1 text-xl font-black text-[#0284c7]">{value}</p>
+      <p className="mt-1 text-xl font-black text-[#ff9d38]">{value}</p>
     </div>
   );
 }
@@ -2545,18 +2768,18 @@ function Metric({label, value}: {label: string; value: string | number}) {
 function AiUsageBar({usage}: {usage: AiUsage}) {
   const ratio =
     usage.daily_limit > 0 ? usage.today_count / usage.daily_limit : 0;
-  const color = ratio >= 0.9 ? "#dc2626" : ratio >= 0.6 ? "#d97706" : "#0284c7";
+  const color = ratio >= 0.9 ? "#b03a24" : ratio >= 0.6 ? "#e2c078" : "#ff9d38";
   return (
-    <div className="rounded-lg border border-[#e3e8ef] bg-[#f1f4f9] p-3">
+    <div className="rounded-lg border border-[#38414d] bg-[#232b34] p-3">
       <div className="flex items-center justify-between">
-        <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#94a3b8]">
+        <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#6b7580]">
           오늘 AI 호출
         </p>
         <p className="font-mono text-xs font-black" style={{color}}>
           {usage.today_count} / {usage.daily_limit}
         </p>
       </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#e3e8ef]">
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#38414d]">
         <div
           className="h-full rounded-full transition-[width]"
           style={{width: `${Math.min(100, ratio * 100)}%`, background: color}}
@@ -2583,8 +2806,8 @@ function TagCloud({
           <button
             className={
               active
-                ? "rounded-full border border-[#22c55e]/45 bg-[#22c55e]/12 px-3 py-1.5 text-xs font-bold text-[#15803d]"
-                : "rounded-full border border-[#e3e8ef] bg-[#f1f4f9] px-3 py-1.5 text-xs font-bold text-[#64748b] transition hover:border-[#cbd5e1] hover:text-[#1e293b]"
+                ? "rounded-full border border-[#7dbd77]/45 bg-[#7dbd77]/12 px-3 py-1.5 text-xs font-bold text-[#4d8a4a]"
+                : "rounded-full border border-[#38414d] bg-[#232b34] px-3 py-1.5 text-xs font-bold text-[#8b94a0] transition hover:border-[#4a5462] hover:text-[#e8edf2]"
             }
             key={item}
             onClick={() => onToggle(item)}
@@ -2606,10 +2829,10 @@ function Chip({
   onRemove: () => void;
 }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-[#0284c7]/25 bg-[#0284c7]/8 px-3 py-1.5 text-xs font-bold text-[#0369a1]">
+    <span className="inline-flex items-center gap-2 rounded-full border border-[#ff9d38]/25 bg-[#ff9d38]/8 px-3 py-1.5 text-xs font-bold text-[#e2c078]">
       {children}
       <button
-        className="text-[#94a3b8] hover:text-[#1e293b]"
+        className="text-[#6b7580] hover:text-[#e8edf2]"
         onClick={onRemove}
         type="button"
       >

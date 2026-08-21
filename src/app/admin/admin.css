@@ -1,0 +1,1370 @@
+/* 마을 배전반 — /admin 한 화면에만 걸리는 껍데기.
+ *
+ * ## 컨셉
+ *
+ * 관리자는 숫자를 입력하는 사람이 아니라 **마을의 등을 켜는 사람**이다. 그래서
+ * 이 화면은 폼이 아니라 배전반이다. 회로(입력 묶음)마다 레버가 있고, 값이 들어가면
+ * 레버가 올라가고 왼쪽 모선에 전기가 흐르고 오른쪽 지도의 건물에 불이 들어온다.
+ * "오늘 기록이 마을을 바꾼다"를 문장이 아니라 한 줄의 물리 동작으로 보여주는 게 목적.
+ *
+ * ## 목업의 연출은 전부 들어와 있다
+ *
+ * 불꽃·모선 맥동·전류 흐름·회로 부양·게이지 반짝임·건물 깜빡임·저장 폭죽·
+ * 파문·조명 추적·자석 버튼·다이얼 잠금·숫자 스크램블 — 다 있다.
+ * 두 개만 **방식**을 바꿨는데, 원안 그대로면 도구가 망가지기 때문이다:
+ *
+ * - **스크램블**: 원안은 `input.value` 를 랜덤 숫자로 덮었다 되돌린다. 그 사이
+ *   React state 가 쓰레기 값을 받고, 그때 저장하면 잘못된 기록이 남는다. 여기서는
+ *   입력 위에 **유령 글자**를 얹는다(`.sw-scramble`) — 그림은 같고 값은 안전하다.
+ * - **자석 버튼**: 원안의 0.15 배는 저장 버튼이 손끝에서 도망갈 만큼 움직인다.
+ *   0.08 배 · 최대 4px 로 묶었다.
+ *
+ * 커서 꼬리는 안 넣었다 — 이 사이트에는 이미 전역 커스텀 커서(`.cursor-dot`)가
+ * 있어서 둘이 겹치면 점이 두 개로 보인다.
+ *
+ * ## 여기서만 덮어쓴다
+ *
+ * `.field` / `.field-label` / `.sub-button` / `.step-button` 은 globals.css 에 있는
+ * 공용 클래스다. 거기를 고치면 마을·의뢰 데스크까지 같이 바뀌므로 **건드리지 않고**,
+ * `.admin-switchboard` 안쪽에서만 다시 칠한다. 이 파일은 admin 라우트에서만 import 된다.
+ */
+
+/* 배전반 바깥까지 강철로. globals.css 의 body 는 크림색인데, 장부 테마일 때는
+   색이 같아서 안 보였을 뿐이다 — 어두워지고 나니 스크롤 튕김이나 화면보다 짧은
+   페이지에서 크림 바탕이 그대로 드러난다. globals.css 를 고치지 않고, **이 화면이
+   떠 있을 때만** body 를 덮는다. */
+body:has(.admin-switchboard) {
+  background-color: #12161c;
+  /* 브라우저가 스크롤바·기본 폼 컨트롤을 어두운 쪽으로 그리게 한다.
+     이게 없으면 강철 판 위에 **흰 스크롤바**가 뜨는데, 화면에서 제일 밝은 게
+     스크롤바가 된다. ::-webkit-scrollbar 로도 칠하지만, 이 한 줄이 있어야
+     그걸 지원하지 않는 자리(브라우저 UI 쪽)까지 같이 어두워진다. */
+  color-scheme: dark;
+}
+
+.admin-switchboard {
+  --sw-steel: #12161c;
+  --sw-steel-2: #1a2027;
+  --sw-steel-3: #232b34;
+  --sw-etch: #38414d;
+  --sw-label: #9aa4b0;
+  --sw-dim: #6b7580;
+  --sw-lantern: #ff9d38;
+  --sw-gold: #e2c078;
+
+  background-color: var(--sw-steel);
+  color: var(--sw-label);
+  position: relative;
+}
+
+/* 강철 표면의 결. 바깥 호스트에서 이미지를 받지 않는다 — feTurbulence 는 채널마다
+   다른 난수를 넣어 컬러 노이즈가 되므로 saturate 0 으로 색을 빼야 결이 된다. */
+.admin-switchboard::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.admin-switchboard > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 서체: 역할을 가른다 ────────────────────────────────────────────────────
+   제목만 마을 간판 서체. 라벨은 각인된 것처럼 넓은 자간의 작은 대문자.
+   숫자는 tabular-nums — 자릿수가 흔들리면 매일 보는 값을 훑을 수 없다. */
+.admin-switchboard h1,
+.admin-switchboard h2 {
+  font-family: var(--font-display), "Gowun Batang", serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--sw-gold);
+}
+.admin-switchboard input[type="number"],
+.admin-switchboard .sw-readout {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 패널: 배전반의 한 판 ──────────────────────────────────────────────── */
+.admin-switchboard section.rounded-lg {
+  position: relative;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03),
+    0 8px 24px rgb(0 0 0 / 0.35);
+}
+
+/* ── 회로: 값이 들어가면 왼쪽 모선에 전기가 흐른다 ──────────────────────── */
+.sw-circuit {
+  position: relative;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+.sw-circuit.is-live {
+  background: rgb(255 157 56 / 0.03);
+  box-shadow: inset 0 0 30px rgb(255 157 56 / 0.04);
+}
+.sw-circuit.is-live::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--sw-lantern);
+  box-shadow: 0 0 10px var(--sw-lantern);
+  animation: sw-bus 2.4s ease-in-out infinite;
+}
+@keyframes sw-bus {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ── 레버 ─────────────────────────────────────────────────────────────────
+   체크박스가 아니라 버튼이다. 값이 0이면 내려가 있고, 값이 들어가면 올라간다.
+   클릭하면 마지막 값 복원 / 0 으로 내림 — 손으로 회로를 여닫는 감각. */
+.sw-lever {
+  position: relative;
+  width: 38px;
+  height: 56px;
+  flex: none;
+  border: 1px solid var(--sw-etch);
+  border-radius: 4px;
+  background: linear-gradient(180deg, #171d24, #0f1319);
+  box-shadow: inset 0 0 12px rgb(0 0 0 / 0.6);
+  cursor: pointer;
+  transition: box-shadow 0.3s ease, border-color 0.2s ease;
+}
+.sw-lever:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.sw-lever::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 27px;
+  width: 26px;
+  height: 22px;
+  border-radius: 2px;
+  border: 2px solid var(--sw-etch);
+  background: #2a323b;
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sw-lever[aria-pressed="true"] {
+  box-shadow: inset 0 0 12px rgb(255 157 56 / 0.08),
+    0 0 22px rgb(255 157 56 / 0.13);
+}
+.sw-lever[aria-pressed="true"]::after {
+  transform: translateY(-22px);
+  background: var(--sw-lantern);
+  border-color: #ffd6a8;
+  box-shadow: 0 0 16px var(--sw-lantern), inset 0 0 8px rgb(255 255 255 / 0.35);
+}
+.sw-lever:focus-visible {
+  outline: 3px solid rgb(255 157 56 / 0.5);
+  outline-offset: 3px;
+}
+
+/* 레버를 젖힐 때 한 번 튀는 불꽃. 상시 인터벌이 아니라 **조작한 순간**에만 돈다. */
+.sw-spark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--sw-lantern);
+  box-shadow: 0 0 6px 2px var(--sw-lantern);
+  pointer-events: none;
+  animation: sw-spark 0.55s ease-out forwards;
+}
+@keyframes sw-spark {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) scale(0);
+  }
+}
+
+/* ── 입력칸 ───────────────────────────────────────────────────────────── */
+.admin-switchboard .field {
+  /* input 은 size 속성 때문에 min-width 가 auto 로 잡혀서, 좁은 화면에서 부모를
+     밀어내고 가로 스크롤을 만든다. width 는 건드리지 않는다 — 날짜칸처럼 폭을
+     직접 지정한 곳이 있어서 여기서 100% 로 덮으면 그쪽이 깨진다. */
+  min-width: 0;
+  border: 1px solid var(--sw-etch);
+  border-radius: 6px;
+  background: #0f1319;
+  color: #e8edf2;
+}
+.admin-switchboard .field:focus {
+  border-color: var(--sw-lantern);
+  outline: none;
+  box-shadow: 0 0 0 3px rgb(255 157 56 / 0.14);
+  background: rgb(255 157 56 / 0.04);
+}
+.admin-switchboard .field:disabled {
+  background: #191f26;
+  color: var(--sw-dim);
+}
+.admin-switchboard .field::placeholder {
+  color: #5b646e;
+}
+.admin-switchboard .field-label {
+  color: var(--sw-label);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+/* 날짜 입력의 달력 아이콘은 기본이 검정이라 강철 위에서 안 보인다 */
+.admin-switchboard input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7) sepia(1) saturate(3) hue-rotate(340deg);
+  cursor: pointer;
+}
+
+/* 숫자 스피너 제거 — 값은 옆의 게이지로도 조절되므로 기능 손실이 없다 */
+.admin-switchboard input[type="number"]::-webkit-outer-spin-button,
+.admin-switchboard input[type="number"]::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+.admin-switchboard input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+/* ── 버튼 ─────────────────────────────────────────────────────────────── */
+.admin-switchboard .sub-button {
+  border: 1px solid var(--sw-etch);
+  border-radius: 6px;
+  background: var(--sw-steel-3);
+  color: var(--sw-label);
+  font-weight: 700;
+}
+.admin-switchboard .sub-button:hover:not(:disabled) {
+  border-color: var(--sw-lantern);
+  color: var(--sw-lantern);
+  background: rgb(255 157 56 / 0.08);
+}
+.admin-switchboard .sub-button:disabled {
+  opacity: 0.4;
+}
+.admin-switchboard .step-button {
+  border: 1px solid var(--sw-etch);
+  background: var(--sw-steel-3);
+  color: var(--sw-label);
+}
+.admin-switchboard .step-button:hover:not(:disabled) {
+  border-color: var(--sw-lantern);
+  background: rgb(255 157 56 / 0.1);
+  color: var(--sw-lantern);
+}
+.admin-switchboard .step-button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+.admin-switchboard .sub-button:focus-visible,
+.admin-switchboard .step-button:focus-visible,
+.admin-switchboard .field:focus-visible {
+  outline: 3px solid rgb(255 157 56 / 0.45);
+  outline-offset: 2px;
+}
+
+/* 긴 라벨(모노 + 대문자 + 넓은 자간)은 min-content 가 그대로 칸 폭이 되어서,
+   좁은 화면에서 부모를 밀어내고 페이지에 가로 스크롤을 만든다. `anywhere` 는
+   `break-word` 와 달리 min-content 계산에도 반영돼서 이 문제를 실제로 없앤다. */
+.admin-switchboard button {
+  overflow-wrap: anywhere;
+}
+
+/* 저장 = 누름 버튼. 실제로 눌린다. */
+.admin-switchboard button[type="submit"] {
+  border-radius: 4px;
+  letter-spacing: 0.15em;
+  box-shadow: 0 4px 0 #a8590f;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.2s ease;
+}
+.admin-switchboard button[type="submit"]:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #a8590f;
+}
+.admin-switchboard button[type="submit"]:focus-visible {
+  outline: 3px solid rgb(255 157 56 / 0.5);
+  outline-offset: 3px;
+}
+
+/* ── 서랍 탭 ──────────────────────────────────────────────────────────── */
+.sw-tab {
+  position: relative;
+  white-space: nowrap;
+  padding: 12px 22px;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--sw-dim);
+  border-right: 1px solid var(--sw-etch);
+  background: var(--sw-steel);
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.sw-tab:hover {
+  color: var(--sw-label);
+  background: rgb(56 65 77 / 0.35);
+}
+.sw-tab[aria-selected="true"] {
+  color: var(--sw-gold);
+  background: var(--sw-steel-2);
+}
+.sw-tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px 0;
+  height: 2px;
+  background: var(--sw-gold);
+}
+.sw-tab:focus-visible {
+  outline: 3px solid rgb(255 157 56 / 0.45);
+  outline-offset: -3px;
+}
+
+/* ── 잠금 화면의 톱니 ─────────────────────────────────────────────────── */
+.sw-gear-outer {
+  transform-origin: center;
+  animation: sw-gear 26s linear infinite;
+}
+.sw-gear-inner {
+  transform-origin: center;
+  animation: sw-gear-rev 19s linear infinite;
+}
+@keyframes sw-gear {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes sw-gear-rev {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-switchboard *,
+  .admin-switchboard *::before,
+  .admin-switchboard *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+  }
+  .sw-gear-outer,
+  .sw-gear-inner {
+    animation: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   배전반 셸 — 3열 앱 레이아웃
+   ═══════════════════════════════════════════════════════════════════════════
+
+   목업 그대로 `240px | 1fr | 360px`, 위에 모선(busbar), 아래에 서랍.
+   칸 사이 간격을 1px 로 두고 바탕을 각인색으로 깔면 그 틈이 **패널 사이의 홈**이
+   된다 — 테두리를 그리는 것보다 판이 끼워져 있는 느낌이 난다.
+
+   높이는 `100dvh` 로 잡고 세 칸이 각자 스크롤한다. 목업과 다른 점은 여기 폼이
+   회로 15개짜리라는 것뿐이라, 가운데 칸만 길어지고 계기 레일과 지도 기둥은
+   제자리에 남는다 — 값을 넣는 동안 지도가 안 보이면 이 화면의 논지가 사라진다. */
+.sw-board {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr) 360px;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 1px;
+  height: 100dvh;
+  background-color: var(--sw-etch);
+}
+.sw-busbar,
+.sw-drawer {
+  grid-column: 1 / -1;
+}
+.sw-rail,
+.sw-main,
+.sw-pillar {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.sw-rail {
+  background: var(--sw-steel);
+  padding: 20px 18px 32px;
+}
+.sw-main {
+  background: var(--sw-steel);
+  padding: 28px 32px 40px;
+}
+.sw-pillar {
+  background: var(--sw-steel-2);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 모선 — 위를 가로지르는 구리 띠 */
+.sw-busbar {
+  background: var(--sw-steel-2);
+  box-shadow: inset 0 -4px 10px rgb(0 0 0 / 0.3);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* 화면이 낮거나 좁으면 셸을 풀고 평범하게 스크롤시킨다 — 칸마다 스크롤바가
+   생기는 레이아웃은 세로가 부족할 때 금방 못 쓰게 된다. */
+@media (max-width: 1180px), (max-height: 680px) {
+  .sw-board {
+    grid-template-columns: minmax(0, 1fr);
+    height: auto;
+  }
+  .sw-rail,
+  .sw-main,
+  .sw-pillar {
+    overflow-y: visible;
+  }
+  .sw-busbar,
+  .sw-drawer {
+    grid-column: auto;
+  }
+  .sw-busbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+  /* 한 줄로 접히면 순서가 곧 우선순위가 된다. 계기 레일이 먼저 오면 값을
+     넣으려고 계기판을 한참 스크롤해서 지나쳐야 한다 — 회로를 맨 앞으로. */
+  .sw-busbar {
+    order: 0;
+  }
+  .sw-main {
+    order: 1;
+  }
+  .sw-pillar {
+    order: 2;
+  }
+  .sw-rail {
+    order: 3;
+  }
+  .sw-drawer {
+    order: 4;
+  }
+}
+
+/* ── 회로 행 ───────────────────────────────────────────────────────────────
+   카드가 아니라 **행**이다. 레버 | 이름 | 큰 숫자 | 게이지 가 한 줄에 서고,
+   행끼리는 머리카락 선으로만 나뉜다. 27개 패널이 전부 같은 크기의 둥근 카드로
+   쌓여 있던 게 이전 디자인의 가장 큰 문제였다 — 위계가 없으면 다 똑같이 보인다. */
+.sw-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 132px minmax(0, 1.2fr);
+  align-items: center;
+  gap: 20px;
+  padding: 16px 0 16px 14px;
+  border-bottom: 1px solid var(--sw-etch);
+  transition: background 0.3s ease;
+}
+.sw-row.is-live {
+  background: rgb(255 157 56 / 0.03);
+}
+/* 살아 있는 회로의 왼쪽 모선에 전기가 흐른다 */
+.sw-row.is-live::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--sw-lantern);
+  box-shadow: 0 0 10px var(--sw-lantern);
+  animation: sw-bus 2s ease-in-out infinite;
+}
+/* 지도에서 이 회로의 건물을 짚으면 행이 되받아 빛난다(양방향) */
+.sw-row.is-picked {
+  background: rgb(255 157 56 / 0.09);
+  box-shadow: inset 0 0 0 1px rgb(255 157 56 / 0.35);
+}
+.sw-row-name {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--sw-label);
+}
+.sw-row-note {
+  margin-top: 3px;
+  font-size: 0.66rem;
+  color: var(--sw-dim);
+}
+.sw-row-extra {
+  grid-column: 2 / -1;
+  margin-top: 12px;
+}
+
+/* 큰 숫자 판독창 — 이 화면의 주인공 */
+.sw-readout {
+  width: 100%;
+  background: #0f1319;
+  border: 1px solid var(--sw-etch);
+  border-radius: 4px;
+  color: var(--sw-lantern);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 4px 10px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
+    color 0.15s ease, text-shadow 0.15s ease;
+}
+.sw-readout:focus {
+  outline: none;
+  border-color: var(--sw-lantern);
+  background: rgb(255 157 56 / 0.05);
+  box-shadow: 0 0 0 3px rgb(255 157 56 / 0.12);
+}
+/* 타이핑하는 동안만 심지가 밝아진다. 값은 절대 건드리지 않는다 —
+   목업의 스크램블은 입력값 자체를 굴려서 뺐고, 빛만 가져왔다. */
+.sw-readout.is-typing {
+  color: #fff;
+  text-shadow: 0 0 14px var(--sw-lantern);
+  border-color: var(--sw-lantern);
+}
+.sw-unit {
+  margin-left: 6px;
+  font-size: 0.7rem;
+  color: var(--sw-dim);
+}
+
+/* ── 게이지 ───────────────────────────────────────────────────────────── */
+.sw-gauge {
+  position: relative;
+  height: 10px;
+  background: var(--sw-steel-3);
+  border: 1px solid var(--sw-etch);
+  border-radius: 2px;
+  overflow: hidden;
+  cursor: ew-resize;
+}
+.sw-gauge-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--sw-lantern);
+  box-shadow: 0 0 10px var(--sw-lantern);
+  transition: width 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+/* 흐르는 빛. 전기가 지나가는 느낌은 이 한 줄이 만든다. */
+.sw-gauge-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 34px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.45),
+    transparent
+  );
+  animation: sw-shimmer 2.2s ease-in-out infinite;
+}
+@keyframes sw-shimmer {
+  0% {
+    transform: translateX(-34px);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(12px);
+    opacity: 0;
+  }
+}
+.sw-gauge:focus-visible {
+  outline: 3px solid rgb(255 157 56 / 0.5);
+  outline-offset: 3px;
+}
+
+/* ── 저장: 회로가 순서대로 통전한다 ───────────────────────────────────── */
+.sw-row.is-surging {
+  animation: sw-surge 0.5s ease-out;
+}
+@keyframes sw-surge {
+  0% {
+    box-shadow: inset 0 0 0 rgb(255 157 56 / 0);
+  }
+  40% {
+    box-shadow: inset 0 0 60px rgb(255 157 56 / 0.16);
+  }
+  100% {
+    box-shadow: inset 0 0 0 rgb(255 157 56 / 0);
+  }
+}
+.sw-burst {
+  position: fixed;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--sw-lantern);
+  box-shadow: 0 0 8px var(--sw-lantern);
+  pointer-events: none;
+  z-index: 60;
+}
+
+/* ── 계기 레일 ────────────────────────────────────────────────────────── */
+.sw-rail-label {
+  display: block;
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--sw-dim);
+  margin-bottom: 10px;
+}
+.sw-ring-track {
+  fill: none;
+  stroke: var(--sw-steel-3);
+  stroke-width: 5;
+}
+.sw-ring-value {
+  fill: none;
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.sw-ring-value.is-done {
+  animation: sw-ring 3s ease-in-out infinite;
+}
+@keyframes sw-ring {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px currentColor);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+}
+
+/* ── 지도 기둥 ────────────────────────────────────────────────────────── */
+.sw-pillar-head {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--sw-etch);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.sw-pillar-body {
+  padding: 14px 16px 20px;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+.sw-map {
+  cursor: crosshair;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   금고 문 — 비밀번호 화면
+   ═══════════════════════════════════════════════════════════════════════════
+
+   여기서 조합을 맞추는 게 아니다. **조합은 서버가 안다.** 목업의 다이얼 잠금은
+   정답과 힌트가 클라이언트에 있어서 자물쇠가 아니라 그림이었다. 그래서 모양만
+   기계식으로 만들고, 검증은 그대로 `loginAdmin` 에 맡긴다.
+
+   여는 동작은 차단기 레버다 — 비밀번호를 슬롯에 넣고 레버를 내리면 회로가 열린다.
+   Enter 로도 열리므로 키보드만 쓰는 사람이 손해 보지 않는다. */
+.sw-vault {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 24px;
+  overflow: hidden;
+}
+
+/* 뒤에서 도는 톱니 두 짝. 문 뒤에 기계가 있다는 신호. */
+.sw-vault-gears {
+  position: absolute;
+  width: min(120vmin, 780px);
+  height: min(120vmin, 780px);
+  pointer-events: none;
+  opacity: 0.5;
+}
+.sw-vault-gears svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* 문짝 */
+.sw-door {
+  position: relative;
+  width: min(94vw, 430px);
+  border: 1px solid var(--sw-etch);
+  border-radius: 10px;
+  padding: 30px 28px 24px;
+  background: linear-gradient(180deg, #1c232b, #141a21);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05),
+    0 24px 60px rgb(0 0 0 / 0.55);
+}
+/* 리벳 네 개 — 그림자만으로 판이 박혀 있는 느낌을 만든다 */
+.sw-door::before,
+.sw-door::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  width: 6px;
+  background-image: radial-gradient(
+    circle at 50% 0,
+    #46515f 0 2.4px,
+    transparent 2.6px
+  );
+  background-size: 6px 26px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.sw-door::before {
+  left: 10px;
+}
+.sw-door::after {
+  right: 10px;
+}
+.sw-door.is-wrong {
+  animation: sw-shake 0.4s ease;
+  border-color: #c2492e;
+}
+@keyframes sw-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-8px);
+  }
+  45% {
+    transform: translateX(7px);
+  }
+  70% {
+    transform: translateX(-4px);
+  }
+}
+.sw-door.is-open {
+  animation: sw-open 0.9s ease-out forwards;
+}
+@keyframes sw-open {
+  0% {
+    filter: brightness(1);
+  }
+  35% {
+    filter: brightness(2.4);
+  }
+  100% {
+    filter: brightness(1);
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+
+/* 명판 */
+.sw-plate {
+  text-align: center;
+  border-bottom: 1px solid var(--sw-etch);
+  padding-bottom: 16px;
+}
+.sw-plate-kicker {
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--sw-lantern);
+}
+
+/* 비밀번호 슬롯 — 글자 사이를 벌려 다이얼 눈금처럼 보이게 */
+.sw-slot {
+  width: 100%;
+  margin-top: 6px;
+  background: #0b0e13;
+  border: 1px solid var(--sw-etch);
+  border-radius: 4px;
+  box-shadow: inset 0 2px 10px rgb(0 0 0 / 0.75);
+  color: var(--sw-lantern);
+  caret-color: var(--sw-lantern);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.4rem;
+  letter-spacing: 0.42em;
+  text-align: center;
+  padding: 13px 10px;
+}
+.sw-slot:focus {
+  outline: none;
+  border-color: var(--sw-lantern);
+  box-shadow: inset 0 2px 10px rgb(0 0 0 / 0.75),
+    0 0 0 3px rgb(255 157 56 / 0.16), 0 0 30px rgb(255 157 56 / 0.14);
+}
+.sw-slot::placeholder {
+  color: #3f4855;
+  letter-spacing: 0.42em;
+}
+
+/* 여는 레버 — 화면의 다른 레버보다 크다. 이게 문을 여는 손잡이다. */
+.sw-door-lever {
+  position: relative;
+  width: 62px;
+  height: 92px;
+  flex: none;
+  border: 1px solid var(--sw-etch);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #171d24, #0d1116);
+  box-shadow: inset 0 0 16px rgb(0 0 0 / 0.7);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.3s ease;
+}
+.sw-door-lever::after {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  width: 42px;
+  height: 32px;
+  border-radius: 3px;
+  border: 2px solid var(--sw-etch);
+  background: #2a323b;
+  transition: transform 0.35s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.sw-door-lever:hover:not(:disabled) {
+  border-color: var(--sw-lantern);
+}
+.sw-door-lever.is-armed::after {
+  background: var(--sw-lantern);
+  border-color: #ffd6a8;
+  box-shadow: 0 0 18px var(--sw-lantern);
+}
+.sw-door-lever.is-pulled::after {
+  transform: translateY(40px);
+}
+.sw-door-lever:disabled {
+  cursor: progress;
+}
+.sw-door-lever:focus-visible {
+  outline: 3px solid rgb(255 157 56 / 0.5);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sw-vault-gears {
+    display: none;
+  }
+}
+
+/* 컨디션 스트립 — 회로가 아니라 늘 붙어 있는 계기. 레버가 없다. */
+.sw-strip {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  padding: 16px 18px;
+  border: 1px solid var(--sw-etch);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #1b222a, #151b22);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+
+/* 서랍 — 배전반 아래 칸 */
+.sw-drawer {
+  background: var(--sw-steel-2);
+}
+.sw-drawer [role="tabpanel"] {
+  max-height: 260px;
+  overflow-y: auto;
+}
+/* 서랍 안의 패널은 이미 칸 안에 들어 있으니 테두리를 한 겹 더 그리지 않는다 */
+.sw-drawer section.rounded-lg {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.sw-drawer-hint {
+  margin-left: auto;
+  align-self: center;
+  padding: 0 16px;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #4d5764;
+}
+.sw-drawer [role="tabpanel"] {
+  max-height: 34vh;
+  overflow-y: auto;
+  border-top: 1px solid var(--sw-etch);
+}
+
+/* 좁은 화면에서 회로 행 접기.
+   네 칸을 그대로 두면 설명 칸이 한 글자 폭으로 눌려서 세로로 흘러내리고,
+   게이지는 잡을 수 없는 토막이 된다. 첫 줄에 레버·이름·값을 두고,
+   게이지는 아래로 내려 폭을 되찾는다. */
+@media (max-width: 720px) {
+  .sw-row {
+    grid-template-columns: 46px minmax(0, 1fr) 104px;
+    gap: 10px 12px;
+    padding-left: 12px;
+  }
+  .sw-row > :nth-child(4) {
+    grid-column: 2 / -1;
+  }
+  .sw-readout {
+    font-size: 1.25rem;
+  }
+  .sw-row-note {
+    font-size: 0.62rem;
+  }
+  .sw-gauge {
+    height: 14px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   금고 다이얼
+   ═══════════════════════════════════════════════════════════════════════════ */
+.sw-dials {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+.sw-dial {
+  position: relative;
+  width: 58px;
+  height: 80px;
+  border: 2px solid var(--sw-etch);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #232b34, #10141a 55%, #1a212a);
+  box-shadow: inset 0 6px 14px rgb(0 0 0 / 0.65),
+    inset 0 -6px 14px rgb(0 0 0 / 0.5);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.1s ease;
+}
+.sw-dial:hover:not(:disabled) {
+  border-color: var(--sw-lantern);
+  box-shadow: inset 0 6px 14px rgb(0 0 0 / 0.65), 0 0 22px rgb(255 157 56 / 0.2);
+}
+.sw-dial:active:not(:disabled) {
+  transform: scale(0.95);
+}
+.sw-dial:disabled {
+  cursor: progress;
+  opacity: 0.5;
+}
+.sw-dial:focus-visible {
+  outline: 3px solid rgb(255 157 56 / 0.55);
+  outline-offset: 3px;
+}
+.sw-dial-face {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--sw-lantern);
+  text-shadow: 0 0 12px rgb(255 157 56 / 0.45);
+  font-variant-numeric: tabular-nums;
+}
+/* 눈금 한 줄 — 원통이 돌아가는 자리 */
+.sw-dial-notch {
+  position: absolute;
+  inset: 50% 6px auto 6px;
+  height: 1px;
+  background: rgb(255 255 255 / 0.07);
+}
+/* 숫자가 위로 넘어가고 새 숫자가 아래에서 올라온다 */
+.sw-dial.is-spinning .sw-dial-face {
+  animation: sw-dial-roll 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes sw-dial-roll {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   살아 있는 배전반
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 마우스를 따라다니는 조명. 색은 CSS 가 만들고 JS 는 좌표만 넘긴다. */
+.sw-main {
+  --sw-mx: 50%;
+  --sw-my: 50%;
+  transition: background-image 0.4s ease;
+}
+.sw-main.is-lit {
+  background-image: radial-gradient(
+    circle at var(--sw-mx) var(--sw-my),
+    rgb(255 157 56 / 0.045),
+    transparent 45%
+  );
+}
+
+/* 살아 있는 회로는 아주 조금 떠 있다 */
+.sw-row.is-live {
+  animation: sw-float 6s ease-in-out infinite;
+}
+@keyframes sw-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+/* 오른쪽 가장자리로 전류가 흘러 내려간다 */
+.sw-row.is-live::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--sw-lantern),
+    transparent
+  );
+  opacity: 0.22;
+  animation: sw-flow 3s linear infinite;
+  pointer-events: none;
+}
+@keyframes sw-flow {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+/* 저장 버튼에 손을 올렸을 때 */
+.sw-row.is-primed {
+  box-shadow: inset 0 0 40px rgb(255 157 56 / 0.1);
+}
+
+/* 유휴 방전용 불꽃 — 레버가 아니라 회로 행 기준으로 놓인다 */
+.sw-spark--free {
+  left: auto;
+  top: auto;
+}
+
+/* 회로 판을 누르면 번지는 파문 */
+.sw-ripple {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: rgb(255 157 56 / 0.28);
+  transform: scale(0);
+  animation: sw-ripple 0.6s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes sw-ripple {
+  to {
+    transform: scale(9);
+    opacity: 0;
+  }
+}
+
+/* 포커스 시 굴러가는 유령 숫자. 진짜 입력값 위에 겹쳐서 그린다. */
+.sw-readout-slot {
+  position: relative;
+}
+.sw-scramble {
+  position: absolute;
+  inset: 0 34px 0 0;
+  display: grid;
+  place-items: center end;
+  padding-right: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 14px var(--sw-lantern);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.sw-readout.is-scrambling {
+  color: transparent;
+  text-shadow: none;
+}
+
+/* 저장 버튼 위로 지나가는 빛 */
+.admin-switchboard button[type="submit"] {
+  position: relative;
+  overflow: hidden;
+}
+.admin-switchboard button[type="submit"]::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -100%;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 255 255 / 0.25),
+    transparent
+  );
+  transition: left 0.45s ease;
+}
+.admin-switchboard button[type="submit"]:hover::after {
+  left: 100%;
+}
+
+/* 스트릭 칸에 손을 올리면 커진다 */
+.admin-switchboard .sw-rail [title] {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.admin-switchboard .sw-rail [title]:hover {
+  transform: scale(1.35);
+  box-shadow: 0 0 12px var(--sw-lantern);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   게이지 — 분절 계기(바그래프)
+   ═══════════════════════════════════════════════════════════════════════════
+
+   앞선 두 번의 시도가 왜 구렸는지:
+
+   1. 얇은 막대 + 채움 → 값이 0이면 그냥 **빈 홈**. 고장 난 칸처럼 보였다.
+   2. 눈금 + 회색 손잡이 → 손잡이가 스크롤바 썸처럼 보였고, 눈금은 자(ruler)
+      같아서 계기가 아니라 장식이었다.
+
+   배전반·앰프의 레벨 미터는 **칸이 하나씩 켜진다.** 꺼진 칸이 물리적으로 보이니까
+   0에서도 "다 꺼진 계기"로 읽히고, 값이 오르면 칸이 차오르는 게 눈에 잡힌다.
+
+   ## 켜진 칸과 꺼진 칸은 같은 격자를 써야 한다
+
+   채움을 `width` 로 자르면 격자가 채움의 폭을 기준으로 다시 계산돼서, 값이 바뀔
+   때마다 칸 경계가 어긋나고 끝 칸이 반쪽으로 남는다. 그래서 켜진 층도 **전체 폭**
+   으로 깔고 `clip-path` 로만 잘라낸다 — 두 층의 칸이 언제나 정확히 겹친다. */
+
+.sw-gauge-wrap {
+  display: grid;
+  gap: 5px;
+}
+.sw-gauge {
+  --r: 0%;
+  --cell: 5%; /* 20칸 */
+  position: relative;
+  height: 26px;
+  padding: 3px;
+  border: 1px solid var(--sw-etch);
+  border-radius: 3px;
+  background: #090c11;
+  box-shadow: inset 0 2px 8px rgb(0 0 0 / 0.85),
+    inset 0 -1px 0 rgb(255 255 255 / 0.04);
+  cursor: ew-resize;
+}
+.sw-gauge[aria-disabled="true"] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 칸 격자 — 꺼진 칸과 켜진 칸이 공유한다 */
+.sw-gauge-cells,
+.sw-gauge-lit {
+  position: absolute;
+  inset: 3px;
+  border-radius: 2px;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    90deg,
+    currentColor 0 calc(var(--cell) - 3px),
+    transparent calc(var(--cell) - 3px) var(--cell)
+  );
+}
+/* 꺼진 칸: 살짝 도드라진 강철 조각 */
+.sw-gauge-cells {
+  color: #1b222a;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03);
+}
+/* 켜진 칸: 오른쪽으로 갈수록 뜨거워진다 */
+.sw-gauge-lit {
+  color: var(--sw-lantern);
+  clip-path: inset(0 calc(100% - var(--r)) 0 0);
+  transition: clip-path 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+  filter: drop-shadow(0 0 5px rgb(255 157 56 / 0.55));
+}
+/* 뜨거워지는 결 — 켜진 칸 위에 덧씌운다 */
+.sw-gauge-lit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    rgb(180 90 20 / 0.55),
+    transparent 45%,
+    rgb(255 255 255 / 0.35)
+  );
+  mix-blend-mode: overlay;
+}
+
+/* 지침 — 얇은 빛기둥에 놋쇠 물림쇠 */
+.sw-gauge-needle {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: var(--r);
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: #f6e7d2;
+  box-shadow: 0 0 8px rgb(255 200 140 / 0.8);
+  transition: left 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+  pointer-events: none;
+}
+.sw-gauge-needle::before,
+.sw-gauge-needle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 9px;
+  height: 5px;
+  margin-left: -4.5px;
+  background: linear-gradient(180deg, #c9a55f, #7a6448);
+  border-radius: 1px;
+}
+.sw-gauge-needle::before {
+  top: -4px;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.sw-gauge-needle::after {
+  bottom: -4px;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.sw-gauge:hover .sw-gauge-needle,
+.sw-gauge:focus-visible .sw-gauge-needle {
+  background: #fff;
+  box-shadow: 0 0 14px var(--sw-lantern);
+}
+.sw-gauge:focus-visible {
+  outline: 3px solid rgb(255 157 56 / 0.5);
+  outline-offset: 3px;
+}
+
+/* 척도 — 끝이 어디인지 */
+.sw-gauge-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  color: #4d5764;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   스크롤바
+   ═══════════════════════════════════════════════════════════════════════════
+
+   칸이 셋(계기 레일 · 본체 · 지도 기둥) 다 각자 스크롤하고 서랍까지 있어서,
+   이 화면에는 스크롤바가 동시에 네댓 개 뜬다. OS 기본값은 **흰 트랙에 회색 썸**
+   이라 강철 판 위에서 형광펜처럼 튄다 — 화면에서 제일 밝은 게 스크롤바였다.
+
+   그래서 홈에 박힌 놋쇠 활대처럼 만든다. 화살표 버튼도 없앤다(이 화면에서
+   한 번도 쓸 일이 없는데 위아래로 흰 삼각형만 남긴다).
+
+   `.admin-switchboard` 안쪽에만 건다 — 마을·이력서 쪽 스크롤바는 그대로 둔다. */
+
+/* ## 표준 속성과 webkit 을 같이 걸면 안 된다
+ *
+ * Chrome 121+ 는 `scrollbar-width` 가 지정돼 있으면 `::-webkit-scrollbar` 계열을
+ * **통째로 무시한다.** 둘 다 써 두면 "썸 색만 바뀐 기본 스크롤바"가 나오고, 아래
+ * 홈·물림쇠·호버 같은 건 하나도 안 나온다(그런데 CSS 는 멀쩡해 보인다).
+ *
+ * 그래서 Chromium 계열을 쓰는 이 프로젝트에서는 webkit 쪽만 남긴다. Firefox 는
+ * 이 규칙을 모르지만 위의 `color-scheme: dark` 덕에 어두운 기본 스크롤바가 나온다 —
+ * 흰 막대만 아니면 충분하다. */
+.admin-switchboard ::-webkit-scrollbar,
+.admin-switchboard::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.admin-switchboard ::-webkit-scrollbar-track,
+.admin-switchboard::-webkit-scrollbar-track {
+  background: #0d1116;
+  box-shadow: inset 1px 0 0 rgb(255 255 255 / 0.04);
+}
+.admin-switchboard ::-webkit-scrollbar-thumb,
+.admin-switchboard::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  /* 트랙과 썸 사이에 홈이 보이도록 안쪽으로 물린다 */
+  border: 2px solid #0d1116;
+  background: linear-gradient(180deg, #55606e, #39424e);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18);
+}
+.admin-switchboard ::-webkit-scrollbar-thumb:hover,
+.admin-switchboard::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #c9a55f, #8a6f42);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3),
+    0 0 10px rgb(255 157 56 / 0.3);
+}
+.admin-switchboard ::-webkit-scrollbar-thumb:active,
+.admin-switchboard::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, var(--sw-lantern), #b5651a);
+}
+/* 위아래 화살표 버튼 — 이 화면에서 쓸 일이 없고 흰 삼각형만 남는다 */
+.admin-switchboard ::-webkit-scrollbar-button,
+.admin-switchboard::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.admin-switchboard ::-webkit-scrollbar-corner,
+.admin-switchboard::-webkit-scrollbar-corner {
+  background: #0d1116;
+}
+
+/* 문서 자체의 스크롤바(좁은 화면에서 셸이 풀렸을 때 생긴다) */
+body:has(.admin-switchboard)::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+body:has(.admin-switchboard)::-webkit-scrollbar-track {
+  background: #0d1116;
+}
+body:has(.admin-switchboard)::-webkit-scrollbar-thumb {
+  border-radius: 6px;
+  border: 2px solid #0d1116;
+  background: linear-gradient(180deg, #55606e, #39424e);
+}
+body:has(.admin-switchboard)::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #c9a55f, #8a6f42);
+}
+body:has(.admin-switchboard)::-webkit-scrollbar-button {
+  display: none;
+}

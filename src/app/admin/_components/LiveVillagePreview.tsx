@@ -47,6 +47,13 @@ interface Props {
   overrides?: Record<string, number>;
   /** 마우스를 올린 건물 이름을 위로 알려준다(선택) */
   onHoverBuilding?: (name: string | null) => void;
+  /**
+   * 회로 쪽에서 짚어 준 건물들. 그 회로에 마우스를 올리면 여기 불이 굵어진다 —
+   * "이 줄이 저 건물을 켠다"를 화살표나 설명 없이 보여주는 유일한 방법이다.
+   */
+  highlightIds?: string[];
+  /** 건물을 누르면 그 건물을 켜는 회로로 데려간다 */
+  onPickBuilding?: (buildingId: string) => void;
 }
 
 /** 등급별 색. 마을 팔레트와 같은 값이라 화면끼리 어긋나지 않는다. */
@@ -61,7 +68,9 @@ export function LiveVillagePreview({
   form,
   study,
   overrides,
-  onHoverBuilding
+  onHoverBuilding,
+  highlightIds,
+  onPickBuilding
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -98,6 +107,20 @@ export function LiveVillagePreview({
 
   // 부드럽게 밝아지도록 현재 표시값을 따로 들고 목표값으로 다가간다.
   // 숫자를 한 번에 바꾸면 불이 툭 켜져서 "반응했다"는 느낌이 안 난다.
+  // 렌더 루프 안에서 최신 하이라이트를 읽어야 하는데, 이걸 effect 의존성에
+  // 넣으면 마우스를 움직일 때마다 캔버스가 재설정된다. ref 로만 흘려보낸다.
+  const highlightRef = useRef<string[]>([]);
+  highlightRef.current = highlightIds ?? [];
+
+  /* 모션을 줄인 사용자에게는 값이 다 도착하면 루프를 멈춘다(배터리). 그런데
+     멈춘 뒤에 하이라이트가 바뀌면 다시 그릴 사람이 없어서 조준 고리가 영영
+     안 나온다 — 실제로 이 상태로 한 번 새 나갔다. 그래서 루프를 깨우는
+     손잡이를 하나 두고, 하이라이트가 바뀔 때마다 두드린다. */
+  const kickRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    kickRef.current();
+  }, [highlightIds]);
+
   const shownRef = useRef<Map<string, number>>(new Map());
   const targetRef = useRef<Map<string, number>>(scores);
   targetRef.current = scores;
@@ -129,9 +152,11 @@ export function LiveVillagePreview({
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
 
+    let sleeping = false;
     const draw = () => {
       raf = requestAnimationFrame(draw);
       if (document.hidden || w === 0) return;
+      const now = performance.now();
 
       const shown = shownRef.current;
       const target = targetRef.current;
@@ -176,12 +201,28 @@ export function LiveVillagePreview({
           ctx.fill();
         }
 
-        // 건물 점
-        const dot = p.plaza ? 5.5 : 3.4;
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${0.32 + t * 0.68})`;
+        // 건물 점. 불이 들어온 건물은 아주 옅게 흔들린다 — 등불은 가만히
+        // 있지 않는다. 진폭을 작게 둬서 훑어볼 때 거슬리지 않게 했다.
+        const flicker =
+          score > 2 && !still
+            ? 0.9 + Math.sin(now / 320 + p.nx * 40 + p.nz * 25) * 0.1
+            : 1;
+        const dot = (p.plaza ? 5.5 : 3.4) * flicker;
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${
+          (0.32 + t * 0.68) * flicker
+        })`;
         ctx.beginPath();
         ctx.arc(x, y, dot, 0, Math.PI * 2);
         ctx.fill();
+
+        // 짚어 준 건물은 조준 고리를 두른다
+        if (highlightRef.current.includes(p.id)) {
+          ctx.strokeStyle = "rgba(255, 157, 56, 0.95)";
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.arc(x, y, dot + 7, 0, Math.PI * 2);
+          ctx.stroke();
+        }
 
         if (p.plaza) {
           ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, 0.55)`;
@@ -194,17 +235,47 @@ export function LiveVillagePreview({
 
       // 다 도착했고 움직임이 없으면 다음 프레임을 쉰다 — 매일 여는 화면이라
       // 가만히 있을 때까지 캔버스가 도는 건 낭비다.
+      // 모션을 줄인 사용자에겐 도착하는 즉시 루프를 멈춘다. 그 외에는 등불이
+      // 흔들려야 하므로 계속 돈다(탭이 숨겨지면 위에서 이미 건너뛴다).
       if (!moving && still) {
         cancelAnimationFrame(raf);
+        sleeping = true;
       }
     };
     raf = requestAnimationFrame(draw);
+    kickRef.current = () => {
+      if (!sleeping) return;
+      sleeping = false;
+      raf = requestAnimationFrame(draw);
+    };
 
     return () => {
+      kickRef.current = () => {};
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
   }, [plots]);
+
+  /** 화면 좌표에서 가장 가까운 건물을 찾는다. 히트 반경 밖이면 null. */
+  const buildingAt = (clientX: number, clientY: number) => {
+    const wrap = wrapRef.current;
+    if (!wrap) return null;
+    const rect = wrap.getBoundingClientRect();
+    const mx = clientX - rect.left;
+    const my = clientY - rect.top;
+    const pad = 18;
+    const size = Math.min(rect.width, rect.height) - pad * 2;
+    const ox = (rect.width - size) / 2;
+    const oy = (rect.height - size) / 2;
+    let best: {id: string; name: string; d: number} | null = null;
+    for (const p of plots) {
+      const x = ox + (p.nx + 0.5) * size;
+      const y = oy + (p.nz + 0.5) * size;
+      const d = Math.hypot(mx - x, my - y);
+      if (!best || d < best.d) best = {id: p.id, name: p.name, d};
+    }
+    return best && best.d < 16 ? best : null;
+  };
 
   // 마우스로 건물 짚기 — 가장 가까운 점을 찾는다
   const onMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
@@ -241,17 +312,21 @@ export function LiveVillagePreview({
       <div
         className="relative aspect-square w-full overflow-hidden rounded-lg"
         ref={wrapRef}
-        style={{background: "rgb(11 22 38)"}}
+        style={{background: "rgb(13 17 22)"}}
       >
         <canvas
-          className="absolute inset-0"
+          className="absolute inset-0 sw-map"
+          onClick={e => {
+            const hit = buildingAt(e.clientX, e.clientY);
+            if (hit) onPickBuilding?.(hit.id);
+          }}
           onPointerLeave={() => onHoverBuilding?.(null)}
           onPointerMove={onMove}
           ref={canvasRef}
         />
       </div>
-      <p className="text-center text-xs text-[#64748b]">
-        불이 들어온 건물 <b className="text-[#b45309]">{lit}</b> / {scores.size}
+      <p className="text-center text-xs text-[#8b94a0]">
+        불이 들어온 건물 <b className="text-[#ff9d38]">{lit}</b> / {scores.size}
         <span className="ml-2 opacity-70">· 저장하기 전 미리보기입니다</span>
       </p>
     </div>
