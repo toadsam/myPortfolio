@@ -88,6 +88,8 @@ class ChatMessageIn(BaseModel):
     npc_id: str
     message: str = Field(min_length=1, max_length=1000)
     recent_messages: list[str] = Field(default_factory=list)
+    # 익명 방문자 식별자(브라우저 localStorage 의 무작위 uuid). 개인정보 아님. 없으면 첫 방문 취급.
+    visitor_id: str = Field(default="", max_length=64)
 
 
 class RelayOut(BaseModel):
@@ -97,6 +99,21 @@ class RelayOut(BaseModel):
     about_name: str
     delta: int
     milestone: str = ""
+    # 방금 생긴 소식 — 프런트가 60초 폴링을 기다리지 않고 피드 맨 앞에 꽂는다.
+    news: "VillageEventOut | None" = None
+    # 이 전달이 NPC 의 부탁(NpcFavor)을 이행했으면 True — delta 는 +4 로 커져 있다.
+    favor_done: bool = False
+
+
+class FavorOut(BaseModel):
+    """NPC 가 방문자에게 건넨 부탁."""
+
+    id: int
+    npc_id: str
+    npc_name: str = ""
+    about_npc_id: str
+    about_name: str = ""
+    text: str
 
 
 class ChatMessageOut(BaseModel):
@@ -105,6 +122,8 @@ class ChatMessageOut(BaseModel):
     used_ai: bool
     suggested_action: NpcActionOut | None = None
     relay: RelayOut | None = None
+    # 이번 답변과 함께 NPC 가 건넨 부탁(없으면 None)
+    favor: FavorOut | None = None
 
 
 class NpcTickIn(BaseModel):
@@ -173,8 +192,21 @@ class NpcRelationshipRow(BaseModel):
     fights: int = 0
     reconciliations: int = 0
     milestones: list[str] = Field(default_factory=list)
+    timeline: list["MilestoneOut"] = Field(default_factory=list)
 
     model_config = {"from_attributes": True}
+
+
+class MilestoneOut(BaseModel):
+    milestone: str
+    created_at: datetime
+
+    @field_validator("created_at")
+    @classmethod
+    def _as_utc(cls, value: datetime) -> datetime:
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value
 
 
 class NpcMemoryOut(BaseModel):
@@ -225,6 +257,8 @@ class NpcEncounterOut(BaseModel):
     cooldown_seconds: int
     suggested_actions: list[NpcActionOut] = Field(default_factory=list)
     relationship: NpcRelationshipOut | None = None
+    # 이 마주침이 만든 마을 소식(눈에 띄는 것만). 프런트가 즉시 피드에 꽂는다.
+    news: VillageEventOut | None = None
 
 
 class NpcGroupChatIn(BaseModel):
@@ -507,6 +541,8 @@ class CommissionConsultIn(BaseModel):
     recent_messages: list[str] = Field(default_factory=list)
     # 지금까지 파악된 내용. 프런트가 돌려주므로 백엔드는 상태를 들고 있지 않는다.
     draft: CommissionDraft | None = None
+    # 릴레이 설문에서 지금 말 거는 식구. intake(도안)가 기본 — 옛 프런트와 호환.
+    speaker: Literal["intake", "planner", "designer", "frontend", "backend"] = "intake"
 
 
 class CommissionConsultOut(BaseModel):
@@ -799,3 +835,8 @@ class CoachMessageOut(BaseModel):
 
 class CoachChatIn(BaseModel):
     message: str = Field(min_length=1, max_length=500)
+
+
+# 앞에서 문자열로 참조한 타입(RelayOut.news, NpcRelationshipRow.timeline)을 확정한다.
+RelayOut.model_rebuild()
+NpcRelationshipRow.model_rebuild()

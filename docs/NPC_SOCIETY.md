@@ -97,10 +97,33 @@ NPC 당 30개. `kind` 는 encounter / incident / gossip / visitor.
 
 `relations.canon`에 `life` 종류가 생겼다(라이프 구역 NPC). 기존 `developer`/`project` 판정은 그대로.
 
+## 4-c. 4단계 (2026-08-23) — 빚 갚기 · 체감 · 깊이
+
+3단계 뒤 추천 목록 16개를 전부 처리했다. "VillageScene 정적 자식 memo"는 확인해 보니 **이미 돼 있었다**(`VillageScene.tsx` 끝의 22개 `memo`).
+
+| 무엇 | 어디 |
+|---|---|
+| relay 부정문 오탐 — 감정어 뒤 8자/앞 3자에 부정어(않/아니/없/하진/안 …)면 그 감정어 무효. "픽셀이 싫다고 하진 않았어" → None | `relay_service._negated` |
+| 라우트 스모크 — TestClient + 인메모리 DB(`StaticPool`, 다른 스레드에서도 같은 DB). 마주침·relay·뉴스·기억 4개 | `tests/test_npc_routes.py`, `conftest.py` |
+| 백엔드 자동 재시작 — `--reload` 대신 스크립트가 `fs.watch` 로 `.py` 감시 → `taskkill /T /F` → 재스폰. CTRL_C 가 없어 Windows "일괄 작업을 끝내시겠습니까" 에 안 걸린다 | `scripts/backend-dev.mjs` |
+| 소식 정리 — 500개 넘으면 오래된 것부터. 마일스톤·기억은 안 건드림 | `relationship_service.prune_events` |
+| 디렉터 캐스트 — 라이프 NPC(`npc-life-*`)는 `autonomousNpcs` 자동 포함. **공방 NPC(`atelier-*`)는 마을에 없다** — 공방 방 안에 마주침을 붙이기 전까지 그 사건 템플릿은 잠자는 상태 | (코드 변경 없음) |
+| 마주침 연출 — 대화 재생이 끝난 뒤 💢/💕(마일스톤이면 💞🤝💔) 이모트 1.4초. 싸우면(delta ≤ −2 또는 틀어짐/앙숙) 둘이 반대 방향 5유닛 걸어가고(`npcSocialTargets`), 가까워지면 1초 더 마주 본다. 분신은 순찰 경로가 있어 상대만 걷는다 | `AIPortfolioVillage.stageEncounterAftermath` |
+| 대화에 관계 온도 — `relationship_lines_for` 가 "내 인간관계: 픽셀: 서먹한 사이(−12) · 최근: …" 를 프롬프트에 넣고 system prompt 가 온도에 맞춰 말하라고 한다. 실측(루미↔픽셀 −6): "조심스러워요", "서먹한 편" 이 묻어남 | `relationship_service`, `chat_service` |
+| 소식 즉시 반영 — `NpcEncounterOut.news` / `RelayOut.news` 를 프런트가 `pushNews` 로 피드 맨 앞에(60초 폴링은 보정용) | `main.py`, `AIPortfolioVillage.pushNews` |
+| 관계 연표 — `NpcRelationshipRow.timeline`(최근 6개) → 노드 클릭 시 "테오 8/22 🤝 화해 → 루미 8/23 💢 틀어짐" | `VillageHud.NpcTimeline` |
+| 방문자 개인화 — `localStorage["wow-visitor"]` 무작위 uuid 를 `ChatMessageIn.visitor_id` 로. visitor 기억의 `about_npc_id="visitor:<id>"` → `visitor_history` 가 "[이 방문자] 나와는 3번째 대화, 지난번엔 …" 를 프롬프트에. 개인정보 없음, `public_recent` 는 visitor 를 이미 거른다 | `liveApi.visitorId`, `memory_service.visitor_history` |
+| 씨앗 소식 — 관계 0행·소식 0개인 빈 DB 에만 `SEED_AFFINITY` 쌍(\|값\| ≥ 4)을 관계로 만들고 톤에 맞는 소식 1줄씩(1~5시간 전) | `relationship_service.seed_village_if_empty` (startup) |
+| 하루 요약 📰 — `GET /npc/news` 첫 호출이 어제 소식으로 한 줄(가장 크게 움직인 쌍 + 사건 1 + 큰 사건 수) 을 만든다. 키 있으면 모델이 60자로 다듬고 실패하면 템플릿. 하루 1회. HUD 맨 위 고정 | `daily_digest_service` |
+| 편 들기 — `side_bias`: A 의 절친 C(≥16)가 B 와 앙금(≤−8)이면 −1 "(C 편을 들어서)", C 가 B 와도 절친이면 +1. 공통 친구는 양쪽에서 보여 ±1 캡. `decide_outcome(affinities=…)` | `relationship_rules.side_bias` |
+| NPC 의 부탁 — `NpcFavor`(NPC 당 미완료 1). 서먹한 상대가 있을 때 대화 중 20% 로 "픽셀한테 내가 미안해한다고 전해 줄래?"(앙숙이면 간접). 방문자가 *그 상대* 에게 *부탁한 NPC* 얘기를 긍정으로 전하면 이행 → +4, 🎁 소식, 칩 "🎁 부탁 완료". `GET /npc/favors` 로 HUD 줄(누르면 그 NPC 에게 감) | `favor_service`, `relay_service.apply_relay`, `DialogueBox`, `VillageHud` |
+| 건물 불빛 ↔ 관계 — 오늘 마일스톤: 싸움이면 두 NPC 집 한 칸 어둡게, 화해면 한 칸 밝게. 관리자 override **뒤**에 적용. reason 에 "오늘 픽셀이 루미와 싸워서 조금 어둡다". NPC→집은 `NPC_HOME_BUILDING`(핵심) + `npc-<building>` | `relationship_service.todays_light_shift`, `village_service.apply_light_shift` |
+
 ## 5. 테스트
 
 `backend/tests/test_relationship_rules.py`(규칙 결정성·가중·클램프·직군 제약·조사), `test_memory_service.py`(캡·about·뒷담화·delta·중복 방지·공개 필터),
-`test_relationship_service.py`(id 키·감쇠 주기·purge·영구 연표), `test_relay_service.py`(방문자 개입 감지·적용). 281개 전부 통과.
+`test_relationship_service.py`(id 키·감쇠 주기·purge·영구 연표·정리·씨앗·관계 줄), `test_relay_service.py`(방문자 개입 감지·부정문·적용),
+`test_npc_routes.py`(라우트 스모크), `test_favor_and_digest.py`(부탁 발급·이행, 불빛 보정, 하루 요약). 313개 전부 통과.
 
 ## 6. 같은 날 바뀐 조작·성능 (요약 — 자세한 근거는 메모리 `village-pointer-and-ao`)
 

@@ -8,12 +8,13 @@
 저장·감쇠·마일스톤만 맡는다.
 """
 
-from datetime import datetime, timezone
+import random
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
-from app.models import NpcRelationship, RelationshipMilestone
+from app.models import NpcRelationship, RelationshipMilestone, VillageEvent
 from app.relations import canon, relation_for
 
 # 초기 친밀도 씨앗(대표 종류 쌍). 대부분 0에서 시작해 대화로 굴러간다.
@@ -168,13 +169,106 @@ def milestone_counts(db: Session) -> dict[tuple[str, str], dict]:
     out: dict[tuple[str, str], dict] = {}
     rows = db.query(RelationshipMilestone).order_by(RelationshipMilestone.created_at.asc(), RelationshipMilestone.id.asc()).all()
     for m in rows:
-        entry = out.setdefault((m.npc_a, m.npc_b), {"fights": 0, "reconciliations": 0, "milestones": []})
+        entry = out.setdefault(
+            (m.npc_a, m.npc_b), {"fights": 0, "reconciliations": 0, "milestones": [], "timeline": []}
+        )
         if m.milestone in ("사이가 틀어졌어요", "앙숙이 됐어요"):
             entry["fights"] += 1
         elif m.milestone in ("화해했어요", "절친이 됐어요"):
             entry["reconciliations"] += 1
         entry["milestones"].append(m.milestone)
+        created = m.created_at
+        if created is not None and created.tzinfo is None:
+            created = created.replace(tzinfo=timezone.utc)
+        # 연표는 최근 6개만 — 관계도 패널 한 줄에 들어갈 만큼
+        entry["timeline"] = (entry["timeline"] + [{"milestone": m.milestone, "created_at": created}])[-6:]
     return out
+
+
+def relationship_lines_for(db: Session, npc_id: str, limit: int = 4) -> list[str]:
+    """대화 프롬프트용 '내 인간관계' — 이 NPC 가 낀 관계 중 |친밀도| 큰 순으로.
+
+    memory_lines 만으로는 모델이 *지금 사이가 어떤지* 를 모른다(기억은 사건 문장일 뿐).
+    여기서 '픽셀: 서먹한 사이(-12) · 최근: …' 꼴로 현재 온도를 직접 준다.
+    """
+    from app.services.memory_service import display_name  # 순환 import 회피
+
+    rows = [r for r in list_all(db) if r.npc_a == npc_id or r.npc_b == npc_id]
+    rows.sort(key=lambda r: -abs(r.affinity))
+    lines: list[str] = []
+    for rel in rows[:limit]:
+        other = rel.npc_b if rel.npc_a == npc_id else rel.npc_a
+        recent = f" · 최근: {rel.history[-1]}" if rel.history else ""
+        lines.append(f"- {display_name(other)}: {rel.vibe}({rel.affinity:+d}){recent}")
+    if not lines:
+        return []
+    return [
+        "내 인간관계(이 온도에 맞춰 말한다 — 서먹하면 말을 아끼고 삐친 티를 내고, 절친이면 편들거나 걱정한다):",
+        *lines,
+    ]
+
+
+# 첫 방문자가 텅 빈 마을을 보지 않게 — 씨앗 관계와 그 톤의 소식 한 줄씩. 빈 DB 에서 한 번만.
+_SEED_REP = {
+    "guide": "guide-npc",
+    "project": "project-npc",
+    "developer": "developer-npc",
+    "archivist": "archivist-npc",
+    "contact": "contact-npc",
+    "coding": "npc-study-codingtest",
+    "cs": "npc-study-cs",
+}
+_SEED_NEWS_POSITIVE = [
+    "{a}{a_wa} {b}{b_neun} 요즘 부쩍 붙어 다닌다",
+    "{a}{a_ga} {b}에게 간식을 나눠 줬다",
+    "{a}{a_wa} {b}{b_ga} 광장에서 한참 수다를 떨었다",
+]
+_SEED_NEWS_NEGATIVE = [
+    "{a}{a_neun} {b}{b_ga} 영 못마땅한 눈치다",
+    "{a}{a_wa} {b}{b_neun} 요즘 말을 잘 안 섞는다",
+]
+
+
+def seed_village_if_empty(db: Session) -> int:
+    """관계 0행·소식 0개인 빈 DB 에만 씨앗 관계 + 소식을 심는다. 심은 소식 수를 돌려준다."""
+    if db.query(NpcRelationship).count() or db.query(VillageEvent).count():
+        return 0
+    from app.services.memory_service import display_name
+    from app.services.relationship_rules import josa
+
+    rng = random.Random(42)
+    pairs = sorted(SEED_AFFINITY.items(), key=lambda kv: -abs(kv[1]))
+    planted = 0
+    now = datetime.now(timezone.utc)
+    for (ka, kb), seed in pairs:
+        if abs(seed) < 4:
+            continue
+        a, b = _SEED_REP.get(ka), _SEED_REP.get(kb)
+        if not a or not b:
+            continue
+        rel = get_or_create(db, a, b)
+        if rel is None:
+            continue
+        na, nb = display_name(a), display_name(b)
+        pool = _SEED_NEWS_POSITIVE if seed > 0 else _SEED_NEWS_NEGATIVE
+        text = rng.choice(pool).format(
+            a=na, b=nb,
+            a_wa=josa(na, "와"), a_ga=josa(na, "가"), a_neun=josa(na, "는"),
+            b_neun=josa(nb, "는"), b_ga=josa(nb, "가"),
+        )
+        db.add(
+            VillageEvent(
+                emoji="💚" if seed > 0 else "💢",
+                text=text,
+                npc_a=a,
+                npc_b=b,
+                delta=1 if seed > 0 else -1,
+                created_at=now - timedelta(hours=rng.uniform(1, 5)),
+            )
+        )
+        planted += 1
+    db.commit()
+    return planted
 
 
 def apply_outcome(
@@ -215,3 +309,85 @@ def apply_outcome(
     db.commit()
     db.refresh(rel)
     return rel, milestone
+
+
+# NPC → 사는 건물. 동적 NPC(npc-<building>)는 이름에 건물이 박혀 있고, 핵심 NPC 는
+# 프런트 npcBehaviors.ts 의 assignedBuildingId 와 같은 표를 둔다.
+NPC_HOME_BUILDING = {
+    "overseer-npc": "central-plaza",
+    "guide-npc": "central-plaza",
+    "project-npc": "project-mystock",
+    "developer-npc": "skill-backend",
+    "archivist-npc": "exp-portfolio",
+    "contact-npc": "post-office",
+}
+_FIGHTS = ("사이가 틀어졌어요", "앙숙이 됐어요")
+_MAKEUPS = ("화해했어요", "절친이 됐어요")
+
+
+def home_building(npc_id: str) -> str:
+    if npc_id in NPC_HOME_BUILDING:
+        return NPC_HOME_BUILDING[npc_id]
+    return npc_id[4:] if npc_id.startswith("npc-") else ""
+
+
+def todays_light_shift(db: Session) -> dict[str, tuple[int, str]]:
+    """오늘 마일스톤이 건물 불빛을 한 칸 움직인다: {building_id: (−1|+1, 이유)}.
+
+    싸운 NPC 의 집은 조금 어둡고, 화해한 집은 조금 밝다. 같은 건물에 둘 다 있으면 상쇄(0 → 생략).
+    """
+    from app.services.memory_service import display_name
+    from app.services.relationship_rules import josa
+    from app.time_utils import today_local
+
+    today = today_local()
+    rows = db.query(RelationshipMilestone).order_by(RelationshipMilestone.id.asc()).all()
+    shift: dict[str, int] = {}
+    why: dict[str, str] = {}
+    for m in rows:
+        created = m.created_at
+        if created is None:
+            continue
+        if created.tzinfo is None:
+            created = created.replace(tzinfo=timezone.utc)
+        if created.astimezone(_local_tz()).date() != today:
+            continue
+        if m.milestone in _FIGHTS:
+            step, verb = -1, "싸워서 조금 어둡다"
+        elif m.milestone in _MAKEUPS:
+            step, verb = 1, "화해해서 조금 밝다"
+        else:
+            continue
+        for me, other in ((m.npc_a, m.npc_b), (m.npc_b, m.npc_a)):
+            building = home_building(me)
+            if not building:
+                continue
+            shift[building] = shift.get(building, 0) + step
+            me_n, other_n = display_name(me), display_name(other)
+            why[building] = f"오늘 {me_n}{josa(me_n, '가')} {other_n}{josa(other_n, '와')} {verb}"
+    return {b: (1 if v > 0 else -1, why[b]) for b, v in shift.items() if v != 0}
+
+
+def _local_tz():
+    from zoneinfo import ZoneInfo
+
+    from app.config import settings
+
+    return ZoneInfo(settings.local_timezone)
+
+
+# 마을 소식은 영구 테이블이지만 피드는 최근 것만 본다. 이 이상이면 오래된 것부터 지운다.
+# 마일스톤(RelationshipMilestone)·기억(NpcMemory, NPC 당 30)은 여기서 손대지 않는다.
+EVENT_KEEP = 500
+
+
+def prune_events(db: Session, keep: int = EVENT_KEEP) -> int:
+    """소식이 keep 개를 넘으면 초과분을 id 오름차순(=오래된 순)으로 지운다. 지운 수를 돌려준다."""
+    total = db.query(VillageEvent).count()
+    excess = total - keep
+    if excess <= 0:
+        return 0
+    old_ids = [row.id for row in db.query(VillageEvent.id).order_by(VillageEvent.id.asc()).limit(excess).all()]
+    db.query(VillageEvent).filter(VillageEvent.id.in_(old_ids)).delete(synchronize_session=False)
+    db.commit()
+    return len(old_ids)

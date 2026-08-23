@@ -212,6 +212,52 @@ def _result_moods(delta: int, kind: str, mood_a: str, mood_b: str) -> tuple[str,
     return mood_a or "calm", mood_b or "calm"
 
 
+Affinities = dict[frozenset[str], int]
+
+
+def side_bias(
+    npc_a: str,
+    npc_b: str,
+    affinities: Affinities | None,
+    *,
+    name_of=None,
+) -> tuple[int, str]:
+    """편 들기 — 삼각관계 규칙 한 개. (delta 보정, 이유) 를 돌려준다.
+
+    A 의 절친 C(≥ CLOSE_AFFINITY)가 B 와 앙금(≤ SOUR_AFFINITY)이면 A 는 B 에게 한 칸 차갑다(−1, "친구의 적").
+    C 가 B 와도 절친이면 한 칸 따뜻하다(+1, "친구의 친구"). B 쪽에서도 같은 걸 본다.
+    양쪽이 상쇄되면 0. 한 번에 ±1 까지만 — 관계 엔진의 주인공은 여전히 둘의 직접 상호작용이다.
+    """
+    if not affinities:
+        return 0, ""
+    name_of = name_of or (lambda x: x)
+
+    def aff(x: str, y: str) -> int | None:
+        return affinities.get(frozenset((x, y)))
+
+    others = {n for pair in affinities for n in pair} - {npc_a, npc_b}
+    score = 0
+    why: list[str] = []
+    for me, them in ((npc_a, npc_b), (npc_b, npc_a)):
+        for c in sorted(others):
+            mine = aff(me, c)
+            theirs = aff(c, them)
+            if mine is None or theirs is None or mine < CLOSE_AFFINITY:
+                continue
+            if theirs <= SOUR_AFFINITY:
+                score -= 1
+                why.append(f"{name_of(me)}{josa(name_of(me), '가')} {name_of(c)} 편을 들어서")
+            elif theirs >= CLOSE_AFFINITY:
+                score += 1
+                why.append(f"{name_of(c)}{josa(name_of(c), '가')} 둘 다의 친구라서")
+    score = max(-1, min(1, score))
+    if score == 0:
+        return 0, ""
+    # 점수 부호에 맞는 이유만 남긴다(상쇄된 쪽은 버림)
+    keep = [w for w in why if ("편을" in w) == (score < 0)]
+    return score, keep[0] if keep else ""
+
+
 def decide_outcome(
     npc_a: str,
     npc_b: str,
@@ -223,6 +269,8 @@ def decide_outcome(
     name_a: str | None = None,
     name_b: str | None = None,
     rng: random.Random | None = None,
+    affinities: Affinities | None = None,
+    name_of=None,
 ) -> Outcome:
     rng = rng or random.Random()
     name_a = name_a or npc_a
@@ -250,6 +298,17 @@ def decide_outcome(
         parts.append(why)
         kind = "incident"
         actor_id = npc_a if side == "a" else npc_b
+
+    # 편 들기 — 공통 친구/적이 있으면 한 칸 보정
+    d, why = side_bias(
+        npc_a,
+        npc_b,
+        affinities,
+        name_of=name_of or (lambda x: name_a if x == npc_a else name_b if x == npc_b else x),
+    )
+    if d:
+        total += d
+        parts.append(why)
 
     total = max(-MAX_STEP, min(MAX_STEP, total))
     if kind != "incident":

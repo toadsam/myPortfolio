@@ -38,6 +38,24 @@ EXPERIENCE_BUILDING_IDS = [
 ]
 
 
+LIGHT_LEVELS = ["dark", "dim", "normal", "bright"]
+
+
+def apply_light_shift(state: "VillageState", shift: dict[str, tuple[int, str]]) -> "VillageState":
+    """관계 마일스톤이 건물 밝기를 한 칸 움직인다(C-16). 관리자 override 뒤에 적용한다."""
+    if not shift:
+        return state
+    for building in state.buildings:
+        item = shift.get(building.building_id)
+        if not item:
+            continue
+        step, why = item
+        idx = LIGHT_LEVELS.index(building.light_level) if building.light_level in LIGHT_LEVELS else 2
+        building.light_level = LIGHT_LEVELS[max(0, min(len(LIGHT_LEVELS) - 1, idx + step))]  # type: ignore[assignment]
+        building.reason = f"{building.reason} · {why}"
+    return state
+
+
 def _light_for_score(score: int) -> str:
     if score <= 0:
         return "dark"

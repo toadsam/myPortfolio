@@ -152,4 +152,45 @@ def test_milestone_rows_are_permanent_and_counted(db_session):
     assert [r.milestone for r in rows] == ["사이가 틀어졌어요", "화해했어요"]
     assert rows[1].source == "relay"
     counts = relationship_service.milestone_counts(db_session)[("archivist-npc", "developer-npc")]
+    timeline = counts.pop("timeline")
     assert counts == {"fights": 1, "reconciliations": 1, "milestones": ["사이가 틀어졌어요", "화해했어요"]}
+    assert [t["milestone"] for t in timeline] == ["사이가 틀어졌어요", "화해했어요"]
+    assert all(t["created_at"].tzinfo is not None for t in timeline)
+
+
+def test_prune_events_keeps_newest(db_session):
+    from app.models import VillageEvent
+
+    for i in range(510):
+        db_session.add(VillageEvent(emoji="💬", text=f"e{i}", npc_a="a", npc_b="b", delta=0))
+    db_session.commit()
+    removed = relationship_service.prune_events(db_session, keep=500)
+    assert removed == 10
+    rows = db_session.query(VillageEvent).order_by(VillageEvent.id.asc()).all()
+    assert len(rows) == 500 and rows[0].text == "e10"
+    assert relationship_service.prune_events(db_session, keep=500) == 0
+
+
+def test_seed_village_only_on_empty_db(db_session):
+    from app.models import VillageEvent
+
+    planted = relationship_service.seed_village_if_empty(db_session)
+    assert planted >= 4
+    assert db_session.query(VillageEvent).count() == planted
+    assert db_session.query(NpcRelationship).count() == planted
+    # 두 번째 호출은 아무것도 안 한다
+    assert relationship_service.seed_village_if_empty(db_session) == 0
+    texts = [e.text for e in db_session.query(VillageEvent).all()]
+    assert any("루미" in t and "픽셀" in t for t in texts)
+    assert not any("{" in t for t in texts)
+
+
+def test_relationship_lines_for_prompt(db_session):
+    assert relationship_service.relationship_lines_for(db_session, "guide-npc") == []
+    relationship_service.apply_outcome(db_session, "guide-npc", "project-npc", -5, "말다툼")
+    relationship_service.apply_outcome(db_session, "guide-npc", "project-npc", -5, "또 말다툼")
+    relationship_service.apply_outcome(db_session, "guide-npc", "developer-npc", 2, "인사")
+    lines = relationship_service.relationship_lines_for(db_session, "guide-npc")
+    assert lines[0].startswith("내 인간관계")
+    assert "픽셀" in lines[1] and "또 말다툼" in lines[1]  # |친밀도| 큰 순
+    assert "테오" in lines[2]

@@ -13,6 +13,8 @@ import type {
   CommissionDetail,
   CommissionDraft,
   CommissionInput,
+  CommissionPricing,
+  CommissionSpeaker,
   CommissionStatusInput,
   CommissionTrack,
   PlannerQuestionsResponse,
@@ -29,6 +31,7 @@ import type {
   NpcEncounterResponse,
   NpcGroupChatResponse,
   NpcPreset,
+  NpcFavor,
   NpcMemoryItem,
   NpcRelationshipRow,
   VillageEvent,
@@ -151,6 +154,30 @@ export function syncGithubActivity(): Promise<GithubSyncResponse> {
   });
 }
 
+/**
+ * 익명 방문자 식별자 — 브라우저에 한 번 만들어 두는 무작위 uuid. 이름·이메일 같은 건 없다.
+ * NPC 가 "지난번에 오셨던 분이죠?" 할 수 있게만 쓴다. 저장 불가 환경이면 빈 문자열(첫 방문 취급).
+ */
+export function visitorId(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const key = "wow-visitor";
+    let id = window.localStorage.getItem(key);
+    if (!id) {
+      id =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `${Date.now().toString(36)}-${Math.random()
+              .toString(36)
+              .slice(2, 10)}`;
+      window.localStorage.setItem(key, id);
+    }
+    return id.slice(0, 64);
+  } catch {
+    return "";
+  }
+}
+
 export function sendNpcMessage(
   npcId: string,
   message: string,
@@ -161,7 +188,8 @@ export function sendNpcMessage(
     body: JSON.stringify({
       npc_id: npcId,
       message,
-      recent_messages: recentMessages.slice(-8)
+      recent_messages: recentMessages.slice(-8),
+      visitor_id: visitorId()
     })
   });
 }
@@ -201,6 +229,10 @@ export function fetchNpcMemory(npcId: string): Promise<NpcMemoryItem[]> {
     `/npc/memory/${encodeURIComponent(npcId)}`,
     {cache: "no-store"}
   );
+}
+
+export function fetchNpcFavors(): Promise<NpcFavor[]> {
+  return requestJson<NpcFavor[]>("/npc/favors", {cache: "no-store"});
 }
 
 export function fetchVillageNews(limit = 12): Promise<VillageEvent[]> {
@@ -371,7 +403,8 @@ export function deleteCsNote(noteId: number): Promise<{ok: boolean}> {
 export function consultCommission(
   message: string,
   draft: CommissionDraft | null,
-  recentMessages: string[] = []
+  recentMessages: string[] = [],
+  speaker: CommissionSpeaker = "intake"
 ): Promise<CommissionConsultResponse> {
   return requestJson<CommissionConsultResponse>("/commission/consult", {
     method: "POST",
@@ -379,8 +412,26 @@ export function consultCommission(
       session_id: getVisitorSessionId(),
       message,
       recent_messages: recentMessages.slice(-10),
-      draft
+      draft,
+      speaker
     })
+  });
+}
+
+/* ── 릴레이 설문 ──
+   둘 다 LLM 없는 순수 계산이라 리밋이 없다. 선택지를 고를 때마다 불러도 된다. */
+
+export function fetchCommissionPricing(): Promise<CommissionPricing> {
+  return requestJson<CommissionPricing>("/commission/pricing");
+}
+
+/** draft 의 견적만 서버 규칙으로 다시 받는다. 화면이 굴린 숫자는 참고, 이 값이 이긴다. */
+export function estimateCommission(
+  draft: CommissionDraft
+): Promise<CommissionConsultResponse> {
+  return requestJson<CommissionConsultResponse>("/commission/estimate", {
+    method: "POST",
+    body: JSON.stringify(draft)
   });
 }
 

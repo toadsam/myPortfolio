@@ -27,7 +27,8 @@ import dynamic from "next/dynamic";
 import {useRouter} from "next/navigation";
 import {useCallback, useEffect, useState} from "react";
 
-import {CommissionDesk} from "@/components/ui/CommissionDesk";
+import {CommissionDesk, type DeskPrefill} from "@/components/ui/CommissionDesk";
+import {IntakeHud} from "@/components/ui/commission/IntakeHud";
 import {DialogueBox} from "@/components/ui/DialogueBox";
 import {useImmersiveCapable} from "@/hooks/useImmersiveCapable";
 import {trackVisitorEvent} from "@/lib/liveApi";
@@ -51,6 +52,10 @@ export default function AtelierPage() {
 
   const [deskOpen, setDeskOpen] = useState(false);
   const [selectedNpc, setSelectedNpc] = useState<NPCData | null>(null);
+  // 3D 에서는 접수가 두 단계다: 릴레이 설문 HUD(방이 보인다) → 설문 결과를 든 데스크(폼).
+  const [hudOpen, setHudOpen] = useState(false);
+  const [prefill, setPrefill] = useState<DeskPrefill | null>(null);
+  const [focusNpcId, setFocusNpcId] = useState<string | null>(null);
 
   // 모바일로 이 주소에 직접 닿은 사람은 2D 데스크를 바로 연다.
   const forcedDesk = capable === false;
@@ -63,7 +68,8 @@ export default function AtelierPage() {
   /** 도안은 접수대로, 나머지 넷은 대화창으로. 마을의 분기와 같은 규칙이다. */
   const selectNpc = useCallback((npc: NPCData) => {
     if (npc.id === "atelier-intake-npc") {
-      setDeskOpen(true);
+      setSelectedNpc(null);
+      setHudOpen(true);
       return;
     }
     trackVisitorEvent({
@@ -97,7 +103,24 @@ export default function AtelierPage() {
 
   return (
     <main className="min-h-dvh bg-[#0b1626]">
-      <AtelierInterior onBack={goHome} onSelectNpc={selectNpc} />
+      <AtelierInterior
+        onBack={goHome}
+        onSelectNpc={selectNpc}
+        focusNpcId={hudOpen ? focusNpcId : null}
+        hideHints={hudOpen}
+      />
+
+      {hudOpen ? (
+        <IntakeHud
+          onSpeakerNpc={setFocusNpcId}
+          onClose={() => setHudOpen(false)}
+          onFinish={result => {
+            setHudOpen(false);
+            setPrefill(result);
+            setDeskOpen(true);
+          }}
+        />
+      ) : null}
 
       {/* 팀원과의 대화. 공방 화면이 z-40 이라 그냥 두면 캔버스 밑에 깔린다
           (마을 쪽에서 이미 밟은 함정이라 같은 처방을 쓴다). */}
@@ -119,7 +142,15 @@ export default function AtelierPage() {
         />
       </div>
 
-      {deskOpen ? <CommissionDesk onClose={() => setDeskOpen(false)} /> : null}
+      {deskOpen ? (
+        <CommissionDesk
+          onClose={() => {
+            setDeskOpen(false);
+            setPrefill(null);
+          }}
+          prefill={prefill ?? undefined}
+        />
+      ) : null}
     </main>
   );
 }

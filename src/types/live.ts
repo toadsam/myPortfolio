@@ -138,6 +138,20 @@ export interface NpcRelay {
   about_name: string;
   delta: number;
   milestone: string;
+  /** 방금 생긴 💌 소식 — 폴링 전에 피드에 꽂는다 */
+  news?: VillageEvent | null;
+  /** 이 전달이 NPC 의 부탁을 이행했다 (delta 는 +4) */
+  favor_done?: boolean;
+}
+
+/** NPC 가 방문자에게 건넨 부탁 — "픽셀한테 내가 미안해한다고 전해 줄래?" */
+export interface NpcFavor {
+  id: number;
+  npc_id: string;
+  npc_name: string;
+  about_npc_id: string;
+  about_name: string;
+  text: string;
 }
 
 export interface NpcChatResponse {
@@ -146,6 +160,8 @@ export interface NpcChatResponse {
   used_ai: boolean;
   suggested_action?: NpcSuggestedAction | null;
   relay?: NpcRelay | null;
+  /** 이번 답변과 함께 NPC 가 건넨 부탁 */
+  favor?: NpcFavor | null;
 }
 
 /** NPC 개인 기억 한 줄 (GET /npc/memory/{id}; 방문자 대화는 제외) */
@@ -197,6 +213,8 @@ export interface NpcRelationshipRow {
   fights: number;
   reconciliations: number;
   milestones: string[];
+  /** 최근 마일스톤 6개(오래된 순) — 관계도 연표 */
+  timeline: Array<{milestone: string; created_at: string}>;
 }
 
 /** 마을 소식 한 줄 — NPC 사이에 일어난 눈에 띄는 사건 (GET /npc/news) */
@@ -228,6 +246,8 @@ export interface NpcEncounterResponse {
   cooldown_seconds: number;
   suggested_actions: NpcSuggestedAction[];
   relationship?: NpcRelationshipChange | null;
+  /** 이 마주침이 만든 소식(눈에 띄는 것만) — 폴링 전에 피드에 꽂는다 */
+  news?: VillageEvent | null;
 }
 
 export interface NpcGroupChatResponse {
@@ -478,6 +498,38 @@ export interface CommissionConsultResponse {
   used_ai: boolean;
   draft: CommissionDraft;
   disclaimer: string;
+}
+
+/** 릴레이 설문에서 지금 말 거는 공방 식구. 백엔드 `commission_service.SPEAKERS` 와 같은 키. */
+export type CommissionSpeaker =
+  | "intake"
+  | "planner"
+  | "designer"
+  | "frontend"
+  | "backend";
+
+/**
+ * 견적 규칙표 — `GET /commission/pricing`.
+ * 선택지마다 가산치를 보여주고 누적 견적을 굴리는 데 쓴다. 표를 프런트에 손으로
+ * 옮겨 적지 않는 게 핵심이다. 금액은 원 단위.
+ */
+export interface CommissionPricing {
+  base_by_type: Record<
+    string,
+    {min: number; max: number; weeks_min: number; weeks_max: number}
+  >;
+  default_base: {
+    min: number;
+    max: number;
+    weeks_min: number;
+    weeks_max: number;
+  };
+  feature_weights: Record<string, {min: number; max: number; weeks: number}>;
+  page_free: number;
+  page_add_min: number;
+  page_add_max: number;
+  clamp_low: number;
+  clamp_high: number;
 }
 
 export interface CommissionInput {

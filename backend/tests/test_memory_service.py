@@ -99,3 +99,16 @@ def test_gossip_does_not_repeat_the_same_story(db_session):
     assert mem.gossip(db_session, "guide-npc", "project-npc", rng=always) is not None
     assert mem.gossip(db_session, "guide-npc", "project-npc", rng=always) is None
 
+
+
+def test_visitor_history_is_empty_on_first_visit_and_grows(db_session):
+    assert mem.visitor_history(db_session, "guide-npc", "") == []
+    assert mem.visitor_history(db_session, "guide-npc", "abc") == []
+    mem.remember(db_session, "guide-npc", "방문자가 '프로젝트 뭐 있어?' 하고 물어봤다", about=mem.visitor_key("abc"), kind="visitor")
+    mem.remember(db_session, "project-npc", "방문자가 '안녕' 하고 물어봤다", about=mem.visitor_key("abc"), kind="visitor")
+    lines = mem.visitor_history(db_session, "guide-npc", "abc")
+    assert len(lines) == 1 and "2번째 대화" in lines[0] and "프로젝트 뭐 있어?" in lines[0] and "1번" in lines[0]
+    # 다른 방문자는 모른다
+    assert mem.visitor_history(db_session, "guide-npc", "zzz") == []
+    # 관계도용 공개 기억엔 visitor 가 안 섞인다
+    assert all(m.kind != "visitor" for m in mem.public_recent(db_session, "guide-npc"))

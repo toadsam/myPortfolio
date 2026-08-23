@@ -619,3 +619,87 @@ canvas {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── 의뢰 공방 릴레이 설문 — 예시 카드 연출 ──
+   Q6 "움직임 정도" 카드는 자기가 말하는 만큼 실제로 움직여야 한다. 이미지 에셋 없이
+   CSS 로만 그린다(/atelier 가 GLB 0개로 서는 것과 같은 이유). */
+@keyframes intakeFadeUp {
+  0%,
+  15% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  40%,
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes intakeSpin {
+  from {
+    transform: rotateY(0deg) rotateX(12deg);
+  }
+  to {
+    transform: rotateY(360deg) rotateX(12deg);
+  }
+}
+
+@keyframes intakeHover {
+  0%,
+  35% {
+    transform: translateY(0);
+    filter: brightness(1);
+  }
+  50%,
+  85% {
+    transform: translateY(-2px);
+    filter: brightness(1.35);
+  }
+  100% {
+    transform: translateY(0);
+    filter: brightness(1);
+  }
+}
+
+@keyframes intakeTicker {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes intakeBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.intake-fade-up {
+  animation: intakeFadeUp 2.6s ease-in-out infinite;
+}
+.intake-spin {
+  animation: intakeSpin 4s linear infinite;
+  transform-style: preserve-3d;
+}
+.intake-hover {
+  animation: intakeHover 2.2s ease-in-out infinite;
+}
+.intake-ticker {
+  animation: intakeTicker 0.35s ease-out;
+}
+.intake-caret {
+  animation: intakeBlink 0.9s step-end infinite;
+}

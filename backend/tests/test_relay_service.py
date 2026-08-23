@@ -36,6 +36,21 @@ def test_mixed_feelings_are_ignored():
     assert relay_service.detect_relay("픽셀 고마운데 좀 싫어", "guide-npc") is None
 
 
+def test_negated_feeling_is_not_a_relay():
+    # "싫" 이 있지만 "하진 않았어" 로 부정됐다 — 오탐이면 관계가 엉뚱하게 −2 로 움직인다.
+    assert relay_service.detect_relay("픽셀이 싫다고 하진 않았어", "guide-npc") is None
+
+
+def test_prefix_negation_is_not_a_relay():
+    assert relay_service.detect_relay("픽셀 안 싫어", "guide-npc") is None
+    assert relay_service.detect_relay("픽셀 안 미워해", "guide-npc") is None
+
+
+def test_plain_feeling_still_relays_with_negation_rule():
+    relay = relay_service.detect_relay("픽셀 진짜 싫어", "guide-npc")
+    assert relay is not None and relay.delta == -relay_service.RELAY_STEP
+
+
 def test_dynamic_project_guide_names_resolve():
     relay = relay_service.detect_relay("FestFlow 안내원 멋지다고 전해줘", "guide-npc")
     assert relay is not None
@@ -44,7 +59,9 @@ def test_dynamic_project_guide_names_resolve():
 
 def test_apply_relay_moves_affinity_and_records(db_session):
     relay = relay_service.detect_relay("픽셀이 미안하대", "guide-npc")
-    milestone = relay_service.apply_relay(db_session, "guide-npc", relay)
+    result = relay_service.apply_relay(db_session, "guide-npc", relay)
+    milestone, news = result.milestone, result.news
+    assert news is not None and news.emoji == "💌" and result.favor_done is False
     rel = relationship_service.get_or_create(db_session, "guide-npc", "project-npc")
     assert rel.affinity == 6 + 2  # 씨앗 6 + 전달 2
     assert rel.history[-1].startswith("방문자가 전해줌")

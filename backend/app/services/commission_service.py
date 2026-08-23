@@ -80,7 +80,41 @@ _FEATURE_WEIGHTS: dict[str, tuple[int, int, int]] = {
     "알림": (400_000, 1_000_000, 1),
     "게시판": (400_000, 1_200_000, 1),
     "ai": (1_000_000, 3_000_000, 2),
+    # 연출 가산 — NPC 릴레이 설문(Q6 움직임 정도)에서 고른다. 화면 연출은 기능이
+    # 아니지만 작업량은 기능만큼 드므로 같은 표에서 가산한다.
+    "스크롤연출": (300_000, 800_000, 1),
+    "인터랙티브": (1_500_000, 4_000_000, 2),
 }
+
+# 페이지 가산 — 기본 5장을 넘는 장당. 프론트가 같은 계산을 하므로 상수로 뺀다.
+_PAGE_FREE = 5
+_PAGE_ADD = (150_000, 300_000)
+
+
+def pricing_table() -> dict[str, Any]:
+    """견적 규칙을 프론트에 내려준다 — NPC 릴레이 설문이 선택지마다 가산치를 보여주고
+    누적 견적을 실시간으로 굴리기 위해서다. **표를 두 벌 손으로 복사하지 않는다.**
+    화면의 숫자는 참고이고, 서버 `_clamp_estimate()` 가 항상 이긴다."""
+    return {
+        "base_by_type": {
+            k: {"min": lo, "max": hi, "weeks_min": wlo, "weeks_max": whi}
+            for k, (lo, hi, wlo, whi) in _BASE_BY_TYPE.items()
+        },
+        "default_base": {
+            "min": _DEFAULT_BASE[0],
+            "max": _DEFAULT_BASE[1],
+            "weeks_min": _DEFAULT_BASE[2],
+            "weeks_max": _DEFAULT_BASE[3],
+        },
+        "feature_weights": {
+            k: {"min": lo, "max": hi, "weeks": w} for k, (lo, hi, w) in _FEATURE_WEIGHTS.items()
+        },
+        "page_free": _PAGE_FREE,
+        "page_add_min": _PAGE_ADD[0],
+        "page_add_max": _PAGE_ADD[1],
+        "clamp_low": 0.6,
+        "clamp_high": 1.8,
+    }
 
 
 def guess_site_type(text: str) -> str:
@@ -100,10 +134,10 @@ def _baseline_estimate(
     reasons = [f"{site_type or '일반 홈페이지'} 기준"]
 
     # 페이지 가산 — 기본 5장을 넘는 만큼만
-    extra_pages = max(0, len(pages) - 5)
+    extra_pages = max(0, len(pages) - _PAGE_FREE)
     if extra_pages:
-        lo += extra_pages * 150_000
-        hi += extra_pages * 300_000
+        lo += extra_pages * _PAGE_ADD[0]
+        hi += extra_pages * _PAGE_ADD[1]
         whi += (extra_pages + 2) // 3
         reasons.append(f"추가 페이지 {extra_pages}장")
 
@@ -150,6 +184,16 @@ def _clamp_estimate(draft: CommissionDraft) -> CommissionDraft:
         draft.weeks_max = max(draft.weeks_min, min(draft.weeks_max, whi * 2))
 
     return draft
+
+
+def estimate_only(draft: CommissionDraft) -> CommissionDraft:
+    """LLM 없이 draft 의 견적만 규칙으로 다시 낸다 — 릴레이 설문이 선택지를 고를 때마다
+    부른다. 프론트가 굴린 숫자는 버리고 기준선으로 덮는다(선택지 경로엔 모델 추정이 없다)."""
+    fresh = draft.model_copy(deep=True)
+    fresh.estimate_min = fresh.estimate_max = 0
+    fresh.weeks_min = fresh.weeks_max = 0
+    fresh.estimate_reason = ""
+    return _fill_missing(_clamp_estimate(fresh))
 
 
 # ─────────────────────────── 제작 슬롯 (2차 심화 문답) ───────────────────────────
@@ -288,13 +332,47 @@ def _fill_missing(draft: CommissionDraft) -> CommissionDraft:
     return draft
 
 
+# 릴레이 설문에서 "지금 말하는 식구"가 누구인지. 도안 말고 다른 식구가 답할 때는
+# 그 직군의 말투·관심사를 덧씌우되, 슬롯 추출 규칙(특히 제작 슬롯을 먼저 묻지 않기)은
+# 그대로다. 페르소나는 catalog 의 공방 프로필에서 가져온다 — 여기에 두 벌 적지 않는다.
+SPEAKERS: dict[str, str] = {
+    "intake": "atelier-intake-npc",
+    "planner": "atelier-planner-npc",
+    "designer": "atelier-designer-npc",
+    "frontend": "atelier-frontend-npc",
+    "backend": "atelier-backend-npc",
+}
+
+
+def _speaker_block(speaker: str) -> str:
+    npc_id = SPEAKERS.get(speaker, SPEAKERS["intake"])
+    if npc_id == SPEAKERS["intake"]:
+        return ""
+    from app.catalog import NPCS
+
+    profile = NPCS.get(npc_id, {})
+    if not profile:
+        return ""
+    return (
+        "\n\n"
+        f"지금 이 턴에 답하는 사람은 도안이 아니라 공방 식구 '{profile['name']}'({profile['role']})이다. "
+        f"말투: {profile['tone']} 성격: {profile['personality']} "
+        f"자기 분야({profile['scope']}) 이야기는 구체적으로 하되, 다른 분야 질문은 "
+        f"'그건 담당이 따로 있어요'라고 짧게 넘긴다. reply 는 {profile['name']}의 1인칭으로 쓴다. "
+        "JSON 형식과 슬롯 추출 규칙은 그대로다."
+    )
+
+
 async def consult(
-    message: str, history: list[str], previous: CommissionDraft | None = None
+    message: str,
+    history: list[str],
+    previous: CommissionDraft | None = None,
+    speaker: str = "intake",
 ) -> tuple[str, bool, CommissionDraft]:
     """접수원 NPC 한 턴. (답변, AI 사용 여부, 갱신된 draft)"""
     if settings.openai_api_key:
         try:
-            reply, draft = await _consult_with_openai(message, history, previous)
+            reply, draft = await _consult_with_openai(message, history, previous, speaker)
             return reply, True, _fill_missing(_clamp_estimate(draft))
         except Exception:
             # 폴백은 옳지만 **조용히** 내려가면 안 된다. 여기가 침묵하면
@@ -305,7 +383,7 @@ async def consult(
                 exc_info=True,
             )
 
-    reply, draft = _consult_without_ai(message, history, previous)
+    reply, draft = _consult_without_ai(message, history, previous, speaker)
     return reply, False, _fill_missing(_clamp_estimate(draft))
 
 
@@ -365,7 +443,10 @@ summary 는 아직 질문이 남았더라도 **지금까지 들은 내용으로 
 
 
 async def _consult_with_openai(
-    message: str, history: list[str], previous: CommissionDraft | None
+    message: str,
+    history: list[str],
+    previous: CommissionDraft | None,
+    speaker: str = "intake",
 ) -> tuple[str, CommissionDraft]:
     import httpx
 
@@ -396,7 +477,13 @@ async def _consult_with_openai(
             json={
                 "model": settings.openai_model,
                 "messages": [
-                    {"role": "system", "content": _SYSTEM_PROMPT + "\n\n" + "\n".join(context_lines)},
+                    {
+                        "role": "system",
+                        "content": _SYSTEM_PROMPT
+                        + _speaker_block(speaker)
+                        + "\n\n"
+                        + "\n".join(context_lines),
+                    },
                     {"role": "user", "content": message},
                 ],
                 "response_format": {"type": "json_object"},
@@ -480,8 +567,21 @@ def _draft_from_data(data: dict, previous: CommissionDraft | None) -> Commission
     )
 
 
+# AI 없이 식구가 답할 때의 고정 대사. 릴레이 설문은 선택지만으로 완주되므로
+# 여기는 "자유롭게 말 걸었는데 AI 가 없는" 드문 경우만 받친다.
+_SPEAKER_FALLBACK: dict[str, str] = {
+    "planner": "들었어요, 적어 둘게요. 지금은 제가 길게 못 답해 드리지만 접수되면 화면 목록으로 정리해서 짚어 드릴게요.",
+    "designer": "메모해 뒀어요. 분위기는 말보다 시안으로 보여 드리는 게 빨라서, 접수 뒤에 한 장 그려서 보여 드릴게요.",
+    "frontend": "오케이, 기억해 둘게요! 구현 얘기는 접수되고 나서 제대로 해 드릴게요.",
+    "backend": "…적어 뒀습니다. 자세한 건 접수 뒤에 다시 여쭙겠습니다.",
+}
+
+
 def _consult_without_ai(
-    message: str, history: list[str], previous: CommissionDraft | None
+    message: str,
+    history: list[str],
+    previous: CommissionDraft | None,
+    speaker: str = "intake",
 ) -> tuple[str, CommissionDraft]:
     """OPENAI_API_KEY 가 없거나 호출이 실패해도 상담이 끊기지 않게 하는 규칙 기반 경로."""
     draft = previous.model_copy(deep=True) if previous else CommissionDraft()
@@ -508,6 +608,9 @@ def _consult_without_ai(
             draft.budget_hint = found.group(1).strip()
 
     draft = _fill_missing(draft)
+
+    if speaker in _SPEAKER_FALLBACK:
+        return _SPEAKER_FALLBACK[speaker], draft
 
     if draft.missing:
         ask = draft.missing[0]

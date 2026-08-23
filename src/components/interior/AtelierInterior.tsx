@@ -16,8 +16,15 @@
 import {ContactShadows, Html, OrbitControls} from "@react-three/drei";
 import {Canvas, useFrame} from "@react-three/fiber";
 import {motion} from "framer-motion";
-import {Suspense, useMemo, useRef, useState} from "react";
-import {AdditiveBlending, Group, MathUtils, PointLight} from "three";
+import {
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ComponentRef
+} from "react";
+import {AdditiveBlending, Group, MathUtils, PointLight, Vector3} from "three";
 import {atelierNpcs} from "@/data/atelierRoster";
 import type {NPCData} from "@/types/portfolio";
 
@@ -32,13 +39,17 @@ const WOOD_DARK = "#2e1e12";
 function AtelierFigure({
   npc,
   onSelect,
-  isIntake
+  isIntake,
+  speaking = false
 }: {
   npc: NPCData;
   onSelect: (npc: NPCData) => void;
   isIntake: boolean;
+  /** 릴레이 설문에서 지금 말하는 식구 — 호버와 같은 들림·발광을 유지한다 */
+  speaking?: boolean;
 }) {
-  const [hovered, setHovered] = useState(false);
+  const [hoveredRaw, setHovered] = useState(false);
+  const hovered = hoveredRaw || speaking;
   const groupRef = useRef<Group>(null);
   const bobRef = useRef(Math.random() * Math.PI * 2);
   const liftRef = useRef(0);
@@ -171,7 +182,7 @@ function AtelierFigure({
               {npc.role}
             </span>
           </div>
-          {hovered ? (
+          {hoveredRaw ? (
             <div
               style={{
                 marginTop: 4,
@@ -590,12 +601,81 @@ const BENCHES: {
   {position: [4.75, 0, 1.9], color: "#5f7be8", kind: "backend"}
 ];
 
+/**
+ * 릴레이 설문의 카메라 — 말하는 식구 앞으로 부드럽게 옮겨 간다.
+ *
+ * 설문 중에는 **손님이 돌리던 시점을 덮어쓴다.** 대신 목표에 닿으면 손을 떼서
+ * 그 자리에서 다시 돌려볼 수 있게 한다(닿기 전까지만 lerp). 카메라 위치는 식구 자리에서
+ * 방 앞쪽(z=6, 계단 쪽)을 향해 3.2 떨어진 곳 — 벽(z=7, x=±6) 안쪽이라 뚫리지 않는다.
+ */
+function CameraRig({
+  focus,
+  controls
+}: {
+  focus: [number, number, number] | null;
+  controls: React.RefObject<ComponentRef<typeof OrbitControls> | null>;
+}) {
+  const goalTarget = useRef(new Vector3());
+  const goalCamera = useRef(new Vector3());
+  const settled = useRef(true);
+
+  useEffect(() => {
+    if (!focus) {
+      settled.current = true;
+      return;
+    }
+    const [x, , z] = focus;
+    // 설문 HUD 가 화면 아래 절반을 덮는다. 식구가 **위쪽 1/3** 에 오도록 발밑보다
+    // 낮은 점을 겨누고, 카메라는 조금 높고 멀리 둔다.
+    goalTarget.current.set(x, -0.05, z);
+    const dx = 0 - x;
+    const dz = 6 - z;
+    const len = Math.hypot(dx, dz) || 1;
+    goalCamera.current.set(x + (dx / len) * 3.6, 2.3, z + (dz / len) * 3.6);
+    settled.current = false;
+  }, [focus]);
+
+  useFrame(({camera}, delta) => {
+    const orbit = controls.current;
+    if (!orbit || settled.current) return;
+    const k = Math.min(1, delta * 3.2);
+    orbit.target.lerp(goalTarget.current, k);
+    camera.position.lerp(goalCamera.current, k);
+    orbit.update();
+    if (
+      camera.position.distanceTo(goalCamera.current) < 0.04 &&
+      orbit.target.distanceTo(goalTarget.current) < 0.04
+    ) {
+      settled.current = true;
+    }
+  });
+
+  return null;
+}
+
 interface Props {
   onBack: () => void;
   onSelectNpc: (npc: NPCData) => void;
+  /** 릴레이 설문에서 지금 말하는 식구의 id. 카메라가 따라가고 인형이 들린다. */
+  focusNpcId?: string | null;
+  /** 설문 HUD 가 바닥을 차지할 때 조작 안내를 숨긴다 */
+  hideHints?: boolean;
 }
 
-export function AtelierInterior({onBack, onSelectNpc}: Props) {
+export function AtelierInterior({
+  onBack,
+  onSelectNpc,
+  focusNpcId = null,
+  hideHints = false
+}: Props) {
+  const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
+  const focus = useMemo<[number, number, number] | null>(() => {
+    const npc = focusNpcId
+      ? atelierNpcs.find(item => item.id === focusNpcId)
+      : null;
+    return npc ? npc.position : null;
+  }, [focusNpcId]);
+
   const uiIn = (delay: number) => ({
     initial: {opacity: 0, y: 10},
     animate: {opacity: 1, y: 0},
@@ -653,8 +733,11 @@ export function AtelierInterior({onBack, onSelectNpc}: Props) {
               isIntake={npc.id === "atelier-intake-npc"}
               npc={npc}
               onSelect={onSelectNpc}
+              speaking={npc.id === focusNpcId}
             />
           ))}
+
+          <CameraRig controls={controlsRef} focus={focus} />
 
           <ContactShadows
             blur={2.6}
@@ -664,6 +747,7 @@ export function AtelierInterior({onBack, onSelectNpc}: Props) {
             scale={22}
           />
           <OrbitControls
+            ref={controlsRef}
             enablePan={false}
             maxDistance={7.3}
             maxPolarAngle={Math.PI / 2.05}
@@ -694,19 +778,21 @@ export function AtelierInterior({onBack, onSelectNpc}: Props) {
         </span>
       </motion.div>
 
-      <motion.div
-        {...uiIn(0.55)}
-        className="v-panel pointer-events-none fixed bottom-5 left-1/2 z-50 flex -translate-x-1/2 flex-wrap items-center justify-center gap-x-2 gap-y-1 px-4 py-2.5 text-[9px]"
-      >
-        <span className="text-[#a9bdd6]/70">🖱 드래그</span>
-        <span className="font-bold text-[#f3e6c8]">시점 회전</span>
-        <span className="mx-1.5 h-3 w-px bg-[#e2c078]/25" />
-        <span className="text-[#a9bdd6]/70">🖱 스크롤</span>
-        <span className="font-bold text-[#f3e6c8]">줌</span>
-        <span className="mx-1.5 h-3 w-px bg-[#e2c078]/25" />
-        <span className="text-[#a9bdd6]/70">도안에게 말 걸면</span>
-        <span className="font-bold text-[#ff9d38]">의뢰 접수</span>
-      </motion.div>
+      {hideHints ? null : (
+        <motion.div
+          {...uiIn(0.55)}
+          className="v-panel pointer-events-none fixed bottom-5 left-1/2 z-50 flex -translate-x-1/2 flex-wrap items-center justify-center gap-x-2 gap-y-1 px-4 py-2.5 text-[9px]"
+        >
+          <span className="text-[#a9bdd6]/70">🖱 드래그</span>
+          <span className="font-bold text-[#f3e6c8]">시점 회전</span>
+          <span className="mx-1.5 h-3 w-px bg-[#e2c078]/25" />
+          <span className="text-[#a9bdd6]/70">🖱 스크롤</span>
+          <span className="font-bold text-[#f3e6c8]">줌</span>
+          <span className="mx-1.5 h-3 w-px bg-[#e2c078]/25" />
+          <span className="text-[#a9bdd6]/70">도안에게 말 걸면</span>
+          <span className="font-bold text-[#ff9d38]">의뢰 접수</span>
+        </motion.div>
+      )}
     </div>
   );
 }

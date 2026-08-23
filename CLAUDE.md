@@ -114,6 +114,13 @@ Three things make this unlike every other district:
   can stand alone — routing the landing button to `/village` instead would hand a commissioner 20.7 MB of
   village models and undo the whole point of the route split. The village hatch still opens the same room.
 
+- **1차 접수는 NPC 릴레이 설문이다 (2026-08-23).** 도안→체리→먹지→리코→도안이 10문항을 나눠 묻고, 선택지마다 예시
+  카드와 가격 꼬리표가 붙으며 누적 견적이 실시간으로 굴러간다. 대본은 `src/data/atelierIntakeScript.ts` **한 곳**,
+  2D 데스크와 3D 공방(바닥 HUD + `CameraRig`)이 같은 `useIntakeFlow` 를 쓴다. 선택지 경로는 LLM 0회 — 서버는
+  `GET /commission/pricing` 과 `POST /commission/estimate`(둘 다 순수 계산, 리밋 없음)만 받고, 자유 입력·말 걸기만
+  `consult(speaker=…)` 로 그 식구 페르소나가 답한다. 제작 슬롯은 여전히 1차에서 묻지 않는다. 전체는
+  `docs/ATELIER_INTAKE_SCRIPT.md`.
+
 Two naming traps, both already guarded and locked by `tests/test_relations.py` — keep the atelier branch
 **first** in both `relations.canon()` and `chat_service._npc_profile_for_dynamic_id()`, since the existing
 `"backend"`/`"frontend"` substring checks would otherwise swallow `atelier-backend` into `developer`.
@@ -175,7 +182,14 @@ so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottlene
 - **3단계(같은 날)**: 사건은 직군별(`Incident.actors`, 템플릿은 `{a:가}` 꼴 조사 자동), 뒷담화가 듣는 이↔제3자 친밀도를 ±1 움직이고(`NpcMemory.delta`,
   같은 얘기는 한 번만), 방문자가 대화창에서 "다른 NPC 이름 + 감정어"를 말하면 `relay_service`가 ±2(LLM 추가 호출 없음, 응답 `relay`),
   마일스톤은 `RelationshipMilestone`에 영구 보관(관계도 "싸움 n · 화해 n"), `GET /npc/memory/{id}`는 visitor 기억을 빼고 내보낸다.
-- 백엔드 파일을 고치면 uvicorn `--reload`가 Windows 콘솔 프롬프트에 걸려 **죽는다** — `preview_stop` → `preview_start`로 다시 띄울 것.
+- **4단계(2026-08-23, `docs/NPC_SOCIETY.md` §4-c)**: relay 부정문 무시, 라우트 스모크 테스트(`test_npc_routes.py`, conftest 는 `StaticPool`),
+  마주침 뒤 💢/💕 이모트 + 싸우면 등 돌려 걷기(`stageEncounterAftermath`), 프롬프트에 "내 인간관계" 온도(`relationship_lines_for`),
+  응답의 `news` 를 즉시 피드에(`pushNews`), 관계 연표(`timeline`), 익명 방문자 기억(`visitor_id`, localStorage uuid), 빈 DB 씨앗 소식,
+  📰 하루 요약(`daily_digest_service`, `/npc/news` 첫 호출), 편 들기(`side_bias` ±1), NPC 의 부탁(`NpcFavor`, 이행 +4 🎁, `/npc/favors`),
+  오늘 마일스톤이 건물 불빛 한 칸(`todays_light_shift`, override 뒤). 소식은 500개에서 정리. 공방 NPC 는 마을에 없어 공방 사건은 아직 잠잔다.
+- `npm run backend:dev`(`scripts/backend-dev.mjs`)는 `--reload` 를 쓰지 않고 직접 `backend/app/**/*.py` 를 감시해 `taskkill` 로 재시작한다 —
+  예전엔 uvicorn 리로드가 Windows "일괄 작업을 끝내시겠습니까" 프롬프트에 걸려 죽었다. 로그에 `[backend-dev] restart: <file>` 가 찍힌다.
+  (수동으로 `uvicorn --reload` 를 띄웠다면 그 문제는 그대로다.)
 
 ### Pointer picking, camera, and render budget (2026-08-22)
 

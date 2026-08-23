@@ -8,7 +8,8 @@ import {
   ConciergePanel,
   type ConciergeIntent
 } from "@/components/ui/ConciergePanel";
-import {CommissionDesk} from "@/components/ui/CommissionDesk";
+import {CommissionDesk, type DeskPrefill} from "@/components/ui/CommissionDesk";
+import {IntakeHud} from "@/components/ui/commission/IntakeHud";
 import {DialogueBox} from "@/components/ui/DialogueBox";
 import {Header} from "@/components/ui/Header";
 import {Crest} from "@/components/ui/Crest";
@@ -48,6 +49,7 @@ import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {cameraTargets, villageBuildings} from "@/lib/constants";
 import {
   fetchRelationships,
+  fetchNpcFavors,
   fetchVillageNews,
   fetchVillageState,
   hasAdminToken,
@@ -67,6 +69,8 @@ import type {
   NpcRuntimeState,
   NpcState,
   NpcSuggestedAction,
+  NpcFavor,
+  NpcRelationshipChange,
   NpcRelay,
   VillageEvent,
   VillageState
@@ -372,6 +376,13 @@ export function AIPortfolioVillage() {
   // 접수 데스크(2D)는 어느 화면 위에도 뜬다 — 공방 안에서 도안에게 말을 걸어도,
   // 마을에서 상시 버튼을 눌러도 결국 같은 이 패널이 열린다.
   const [isCommissionOpen, setIsCommissionOpen] = useState(false);
+  // 3D 공방 안에서는 접수가 두 단계다(설문 HUD → 결과를 든 데스크). /atelier 와 같은 규칙.
+  const [atelierHudOpen, setAtelierHudOpen] = useState(false);
+  const [commissionPrefill, setCommissionPrefill] =
+    useState<DeskPrefill | null>(null);
+  const [atelierFocusNpcId, setAtelierFocusNpcId] = useState<string | null>(
+    null
+  );
 
   const openCommission = useCallback((from: string) => {
     setIsCommissionOpen(true);
@@ -398,6 +409,8 @@ export function AIPortfolioVillage() {
   const [milestoneEvent, setMilestoneEvent] = useState<string | null>(null);
   const [relOpen, setRelOpen] = useState(false);
   const [villageNews, setVillageNews] = useState<VillageEvent[]>([]);
+  // NPC 의 미완료 부탁 — HUD 한 줄. 새로고침 뒤에도 남게 백엔드에서 읽는다.
+  const [npcFavors, setNpcFavors] = useState<NpcFavor[]>([]);
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const npcCommandRef = useRef<NpcCommand | null>(null);
@@ -694,8 +707,10 @@ export function AIPortfolioVillage() {
 
             remember(response.memory);
             notifyRelationship(npcAId, npcBId, response.relationship);
+            if (response.news) pushNews(response.news);
             // 앙숙은 다음 마주침까지 두 배 — 피하는 것처럼 보이게
-            const sour = (response.relationship?.affinity ?? 0) <= SOUR_AFFINITY;
+            const sour =
+              (response.relationship?.affinity ?? 0) <= SOUR_AFFINITY;
             encounterCooldownRef.current[pairKey] =
               now + response.cooldown_seconds * 1000 * (sour ? 2 : 1);
             const convoMs = response.dialogue.length * CONVO_STEP + 1500;
@@ -742,6 +757,15 @@ export function AIPortfolioVillage() {
             // 말풍선을 한 줄씩 순차로 띄워 주고받는 대화처럼 + 엿듣기 기록
             setConvoCam(twoShot(npcAPosition, npcBPosition));
             playConversation(npcAId, npcBId, response.dialogue);
+            // 대화가 끝난 뒤 결과가 몸짓으로 드러난다 — 💢 하고 등 돌려 걷거나, 💕 하고 잠시 더 머문다
+            stageEncounterAftermath(
+              npcAId,
+              npcBId,
+              npcAPosition,
+              npcBPosition,
+              response.relationship,
+              now + convoMs
+            );
           } catch {
             encounterCooldownRef.current[pairKey] = now + 180000;
           } finally {
@@ -828,6 +852,7 @@ export function AIPortfolioVillage() {
         );
         remember(res.memory);
         notifyRelationship(OVERSEER_ID, targetId, res.relationship);
+        if (res.news) pushNews(res.news);
         const now = Date.now();
         const convoMs = res.dialogue.length * CONVO_STEP + 1500;
         setNpcRuntimeStates(states => {
@@ -855,6 +880,15 @@ export function AIPortfolioVillage() {
         });
         setConvoCam(twoShot(opos, tpos));
         playConversation(OVERSEER_ID, targetId, res.dialogue);
+        // 순찰 안부도 마주침 — 이모트는 뜨되, 분신은 순찰 경로가 있으니 등 돌려 걷기는 상대만
+        stageEncounterAftermath(
+          OVERSEER_ID,
+          targetId,
+          opos,
+          tpos,
+          res.relationship,
+          now + convoMs
+        );
         advance(convoMs + 800);
       } catch {
         // AI 실패 → 무료 안부 한 줄
@@ -936,13 +970,19 @@ export function AIPortfolioVillage() {
     return () => clearInterval(id);
   }, []);
 
-  // 마을 소식(NPC 사이의 사건) — 60초마다. 백엔드 없으면 조용히 빈 채로.
+  // 마을 소식(NPC 사이의 사건) + 미완료 부탁 — 60초마다. 백엔드 없으면 조용히 빈 채로.
   useEffect(() => {
     let ignore = false;
     async function loadNews() {
       try {
-        const items = await fetchVillageNews(8);
-        if (!ignore) setVillageNews(items);
+        const [items, favors] = await Promise.all([
+          fetchVillageNews(8),
+          fetchNpcFavors()
+        ]);
+        if (!ignore) {
+          setVillageNews(items);
+          setNpcFavors(favors);
+        }
       } catch {
         /* 백엔드 오프라인 */
       }
@@ -1174,6 +1214,93 @@ export function AIPortfolioVillage() {
     npcMemoryRef.current = npcMemoryRef.current.concat(memory).slice(-20);
   }
 
+  // 방금 생긴 소식을 폴링(60초) 전에 피드 맨 앞에 꽂는다. 같은 id 는 한 번만.
+  function pushNews(item: VillageEvent) {
+    setVillageNews(prev =>
+      prev.some(n => n.id === item.id) ? prev : [item, ...prev].slice(0, 8)
+    );
+  }
+
+  /** other 에서 멀어지는 쪽으로 dist 만큼 떨어진 점 */
+  function awayFrom(
+    me: Vector3Tuple,
+    other: Vector3Tuple,
+    dist: number
+  ): Vector3Tuple {
+    const dx = me[0] - other[0];
+    const dz = me[2] - other[2];
+    const len = Math.hypot(dx, dz) || 1;
+    return [me[0] + (dx / len) * dist, 0, me[2] + (dz / len) * dist];
+  }
+
+  // 마주침의 결과를 몸짓으로: 대화 재생이 끝나는 시각(endAt)에 이모트를 띄우고,
+  // 싸웠으면 서로 반대 방향으로 5유닛 걸어가고, 가까워졌으면 1초 더 마주 본다.
+  // 말풍선이 떠 있는 동안엔 이모트가 가려지므로(NPC.tsx) 반드시 대화 뒤에 건다.
+  function stageEncounterAftermath(
+    aId: string,
+    bId: string,
+    aPos: Vector3Tuple,
+    bPos: Vector3Tuple,
+    rel: NpcRelationshipChange | null | undefined,
+    endAt: number
+  ) {
+    if (!rel) return;
+    const milestone = rel.milestone ?? "";
+    const fought =
+      rel.delta <= -2 ||
+      milestone.includes("틀어졌") ||
+      milestone.includes("앙숙");
+    const warmed =
+      rel.delta >= 2 ||
+      milestone.includes("화해") ||
+      milestone.includes("절친");
+    if (!fought && !warmed) return;
+    const emote = milestone.includes("절친")
+      ? "💞"
+      : milestone.includes("화해")
+      ? "🤝"
+      : milestone.includes("앙숙")
+      ? "💔"
+      : fought
+      ? "💢"
+      : "💕";
+    const delay = Math.max(0, endAt - Date.now());
+    const t = window.setTimeout(() => {
+      const shown = Date.now();
+      setNpcRuntimeStates(states => {
+        const next = {...states};
+        for (const id of [aId, bId]) {
+          next[id] = {
+            ...(next[id] ?? {mood: "curious" as NpcMood, energy: 55}),
+            emote,
+            emoteExpiresAt: shown + 1400,
+            // 가까워졌으면 잠시 더 마주 본다
+            ...(warmed ? {holdUntil: shown + 1200} : {})
+          };
+        }
+        return next;
+      });
+      if (fought) {
+        // 등 돌리고 각자 반대쪽으로 — 디렉터의 "피하기"와 같은 이동 경로
+        // 분신(총괄)은 순찰 경로가 따로 있으니 상대만 걸어 나간다
+        setNpcSocialTargets(state => ({
+          ...state,
+          ...(aId !== OVERSEER_ID ? {[aId]: awayFrom(aPos, bPos, 5)} : {}),
+          ...(bId !== OVERSEER_ID ? {[bId]: awayFrom(bPos, aPos, 5)} : {})
+        }));
+        window.setTimeout(() => {
+          setNpcSocialTargets(state => {
+            const next = {...state};
+            delete next[aId];
+            delete next[bId];
+            return next;
+          });
+        }, 8000);
+      }
+    }, delay);
+    convoTimersRef.current.push(t);
+  }
+
   // 대화로 사이가 바뀌면 알림. 큰 사건(절친/앙숙/화해)은 크게, 작은 변화는 슬쩍.
   function notifyRelationship(
     aId: string,
@@ -1272,7 +1399,32 @@ export function AIPortfolioVillage() {
   }
 
   // 방문자 말이 관계를 움직여 마일스톤까지 넘겼으면 마주침 때와 같은 배너
+  function handleFavor(favor: NpcFavor) {
+    setNpcFavors(prev =>
+      prev.some(f => f.id === favor.id) ? prev : [favor, ...prev].slice(0, 5)
+    );
+  }
+
+  // 부탁 칩/HUD 줄에서 그 NPC 에게 가기 — 대화창을 바꿔 연다
+  function goToNpc(npcId: string) {
+    const npc = autonomousNpcs.find(n => n.id === npcId);
+    if (!npc) return;
+    setSelectedNpc(null);
+    window.setTimeout(() => openNpc(npc), 60);
+  }
+
   function handleRelay(relay: NpcRelay) {
+    if (relay.news) pushNews(relay.news);
+    if (relay.favor_done)
+      setNpcFavors(prev =>
+        prev.filter(
+          f =>
+            !(
+              f.npc_id === relay.about_npc_id &&
+              f.about_npc_id === selectedNpc?.id
+            )
+        )
+      );
     if (!relay.milestone || !selectedNpc) return;
     notifyRelationship(selectedNpc.id, relay.about_npc_id, {
       vibe: "",
@@ -1604,7 +1756,14 @@ export function AIPortfolioVillage() {
   /** 공방 안에서 인형을 클릭했을 때. 도안은 접수대를 열고, 팀원은 대화창을 연다. */
   function selectAtelierNpc(npc: NPCData) {
     if (npc.id === "atelier-intake-npc") {
-      openCommission("공방 접수대");
+      trackVisitorEvent({
+        event_type: "commission_open",
+        target_id: "commission",
+        label: "공방 접수대 (설문)",
+        metadata: {via: "atelier-hud"}
+      });
+      setSelectedNpc(null);
+      setAtelierHudOpen(true);
       return;
     }
     trackVisitorEvent({
@@ -1821,6 +1980,8 @@ export function AIPortfolioVillage() {
             error={liveError}
             villageState={villageState}
             news={villageNews}
+            favors={npcFavors}
+            onGoToNpc={goToNpc}
           />
           <ControlsHint />
           <NpcQuickDock activeNpcId={selectedNpc?.id} onSelect={openNpc} />
@@ -1908,6 +2069,8 @@ export function AIPortfolioVillage() {
             onRunAction={runManualNpcAction}
             onSuggestedAction={handleNpcSuggestedAction}
             onRelay={handleRelay}
+            onFavor={handleFavor}
+            onGoToNpc={goToNpc}
             aiOffline={!!liveError}
           />
           <SectionTabs
@@ -1955,7 +2118,20 @@ export function AIPortfolioVillage() {
           <AtelierInterior
             onBack={exitAtelier}
             onSelectNpc={selectAtelierNpc}
+            focusNpcId={atelierHudOpen ? atelierFocusNpcId : null}
+            hideHints={atelierHudOpen}
           />
+          {atelierHudOpen ? (
+            <IntakeHud
+              onSpeakerNpc={setAtelierFocusNpcId}
+              onClose={() => setAtelierHudOpen(false)}
+              onFinish={result => {
+                setAtelierHudOpen(false);
+                setCommissionPrefill(result);
+                setIsCommissionOpen(true);
+              }}
+            />
+          ) : null}
           {/* 공방 팀원과의 대화. 마을과 같은 대화창을 그대로 쓴다.
               DialogueBox 자체는 z-30 이고 공방 화면은 z-40 이라 그냥 두면
               캔버스 밑에 깔려 안 보인다 — 스태킹 컨텍스트를 위로 올려준다. */}
@@ -1967,6 +2143,8 @@ export function AIPortfolioVillage() {
               onRunAction={runManualNpcAction}
               onSuggestedAction={handleNpcSuggestedAction}
               onRelay={handleRelay}
+              onFavor={handleFavor}
+              onGoToNpc={goToNpc}
               aiOffline={!!liveError}
             />
           </div>
@@ -1978,7 +2156,13 @@ export function AIPortfolioVillage() {
       {/* 의뢰 공방은 어느 viewMode에서든 열릴 수 있다 (이력서 모드 포함) */}
       <AnimatePresence>
         {isCommissionOpen ? (
-          <CommissionDesk onClose={() => setIsCommissionOpen(false)} />
+          <CommissionDesk
+            onClose={() => {
+              setIsCommissionOpen(false);
+              setCommissionPrefill(null);
+            }}
+            prefill={commissionPrefill ?? undefined}
+          />
         ) : null}
       </AnimatePresence>
 

@@ -10,6 +10,7 @@ import {districtTone, villageBuildings} from "@/lib/constants";
 import {resetHudLayout, useDraggable} from "@/lib/useDraggable";
 import {fetchNpcMemory, fetchRelationships} from "@/lib/liveApi";
 import type {
+  NpcFavor,
   NpcMemoryItem,
   NpcRelationshipRow,
   VillageEvent,
@@ -104,13 +105,21 @@ function timeAgo(iso: string): string {
 export function LiveStatusPanel({
   error,
   villageState,
-  news
+  news,
+  favors,
+  onGoToNpc
 }: {
   error: string | null;
   villageState: VillageState | null;
   /** NPC 사이의 사건 피드 (GET /npc/news). 없으면 섹션을 숨긴다. */
   news?: VillageEvent[];
+  /** NPC 의 미완료 부탁 (GET /npc/favors) */
+  favors?: NpcFavor[];
+  onGoToNpc?: (npcId: string) => void;
 }) {
+  // 📰 하루 요약은 정렬과 무관하게 맨 위에 고정
+  const digest = news?.find(ev => ev.emoji === "📰") ?? null;
+  const feed = (news ?? []).filter(ev => ev !== digest);
   const [collapsed, setCollapsed] = useState(HUD_STARTS_COLLAPSED);
   const drag = useDraggable("live-status");
   if (!villageState && !error) return null;
@@ -155,12 +164,31 @@ export function LiveStatusPanel({
           </p>
         ) : villageState ? (
           <>
-            {news && news.length > 0 ? (
+            {favors && favors.length > 0 ? (
+              <button
+                type="button"
+                className="mt-2 flex w-full items-start gap-1.5 rounded-lg border border-[#9ad0ff]/30 bg-[#9ad0ff]/10 px-2.5 py-1.5 text-left text-[11px] leading-4 text-[#d9ecff] transition hover:bg-[#9ad0ff]/20"
+                onClick={() => onGoToNpc?.(favors[0]!.about_npc_id)}
+                title="눌러서 그 NPC 에게 가기"
+              >
+                <span className="shrink-0">📨</span>
+                <span className="min-w-0 flex-1">
+                  <b>{favors[0]!.npc_name}</b>의 부탁 · {favors[0]!.text}
+                </span>
+              </button>
+            ) : null}
+            {digest ? (
+              <p className="mt-2 flex items-start gap-1.5 rounded-lg border border-[#e2c078]/25 bg-[#e2c078]/10 px-2.5 py-1.5 text-[11px] leading-4 text-[#f3e6c8]">
+                <span className="shrink-0">📰</span>
+                <span className="min-w-0 flex-1">{digest.text}</span>
+              </p>
+            ) : null}
+            {feed.length > 0 ? (
               <div className="mt-2 grid gap-1">
                 <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#e2c078]/70">
                   NPC 들 사이에서
                 </p>
-                {news.slice(0, 5).map(ev => (
+                {feed.slice(0, 5).map(ev => (
                   <p
                     key={ev.id}
                     className="flex items-start gap-1.5 leading-4 text-[11px] text-[#dfe7f2]"
@@ -1124,6 +1152,75 @@ const MEMORY_ICON: Record<string, string> = {
   relay: "💌"
 };
 
+const MILESTONE_ICON = (m: string) =>
+  m.includes("절친")
+    ? "💞"
+    : m.includes("화해")
+    ? "🤝"
+    : m.includes("앙숙")
+    ? "💔"
+    : "💢";
+
+/** "사이가 틀어졌어요" → "틀어짐" — 연표 한 줄에 들어가게 */
+function shortMilestone(m: string): string {
+  if (m.includes("절친")) return "절친";
+  if (m.includes("화해")) return "화해";
+  if (m.includes("앙숙")) return "앙숙";
+  if (m.includes("틀어")) return "틀어짐";
+  return m;
+}
+
+function shortDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
+
+/** 관계도에서 노드를 눌렀을 때 — 그 NPC 가 낀 관계의 연표(마일스톤 있는 쌍만, 최대 3쌍) */
+function NpcTimeline({
+  npcId,
+  rels
+}: {
+  npcId: string;
+  rels: NpcRelationshipRow[];
+}) {
+  const rows = rels
+    .filter(r => (r.npc_a === npcId || r.npc_b === npcId) && r.timeline?.length)
+    .sort((x, y) => y.timeline.length - x.timeline.length)
+    .slice(0, 3);
+  if (!rows.length) return null;
+  return (
+    <div className="mt-3 rounded-lg border border-[#e2c078]/15 bg-white/[0.03] p-3">
+      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#e2c078]/70">
+        연표
+      </p>
+      <ul className="mt-1 grid gap-1">
+        {rows.map(r => {
+          const other = r.npc_a === npcId ? r.npc_b : r.npc_a;
+          return (
+            <li
+              key={`${r.npc_a}:${r.npc_b}`}
+              className="text-[11px] leading-4 text-[#dfe7f2]"
+            >
+              <span className="font-bold text-[#f3e6c8]">{npcName(other)}</span>
+              <span className="ml-1.5 text-[#a9bdd6]/80">
+                {r.timeline
+                  .map(
+                    t =>
+                      `${shortDate(t.created_at)} ${MILESTONE_ICON(
+                        t.milestone
+                      )} ${shortMilestone(t.milestone)}`
+                  )
+                  .join(" → ")}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 /** 관계도에서 노드를 눌렀을 때 — 그 NPC 의 최근 기억 */
 function NpcMemoryList({npcId}: {npcId: string}) {
   const [items, setItems] = useState<NpcMemoryItem[] | null>(null);
@@ -1329,6 +1426,9 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                 <span style={{color: "#ef4444"}}>━</span> 나쁨
               </span>
             </div>
+            {selected ? (
+              <NpcTimeline npcId={selected} rels={rels ?? []} />
+            ) : null}
             {selected ? <NpcMemoryList npcId={selected} /> : null}
             {top.length || bottom.length ? (
               <div className="mt-3 grid gap-1.5">

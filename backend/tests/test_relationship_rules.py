@@ -186,3 +186,45 @@ def test_incident_sentences_use_correct_particles():
         )
         assert "픽셀가" not in out.reason and "픽셀를" not in out.reason and "픽셀와" not in out.reason
 
+
+
+def _aff(*pairs):
+    return {frozenset((a, b)): v for a, b, v in pairs}
+
+
+def test_side_bias_friends_enemy_cools_down():
+    # 루미(a)–테오(c) 절친, 테오–픽셀(b) 앙숙 → 루미는 픽셀에게 한 칸 차갑다
+    d, why = rules.side_bias("guide-npc", "project-npc", _aff(("guide-npc", "developer-npc", 20), ("developer-npc", "project-npc", -10)))
+    assert d == -1 and "편을 들어서" in why
+
+
+def test_side_bias_mutual_friend_warms_up():
+    d, why = rules.side_bias("guide-npc", "project-npc", _aff(("guide-npc", "developer-npc", 20), ("developer-npc", "project-npc", 18)))
+    assert d == 1 and "둘 다의 친구" in why
+
+
+def test_side_bias_cancels_and_is_capped():
+    aff = _aff(
+        ("guide-npc", "developer-npc", 20), ("developer-npc", "project-npc", -10),  # 적
+        ("guide-npc", "archivist-npc", 20), ("archivist-npc", "project-npc", 20),  # 친구
+    )
+    # 공통 친구는 양쪽에서 보이므로(+2) 한쪽만의 적(−1)보다 세다 → +1 로 캡
+    assert rules.side_bias("guide-npc", "project-npc", aff)[0] == 1
+    # 적이 둘이어도 −1 까지만
+    aff2 = _aff(
+        ("guide-npc", "developer-npc", 20), ("developer-npc", "project-npc", -10),
+        ("guide-npc", "archivist-npc", 20), ("archivist-npc", "project-npc", -10),
+    )
+    assert rules.side_bias("guide-npc", "project-npc", aff2)[0] == -1
+    assert rules.side_bias("guide-npc", "project-npc", None) == (0, "")
+
+
+def test_decide_outcome_applies_side_bias_in_reason():
+    aff = _aff(("guide-npc", "developer-npc", 20), ("developer-npc", "project-npc", -10))
+    out = rules.decide_outcome(
+        "guide-npc", "project-npc", "calm", "calm", _activity(), 0,
+        name_a="루미", name_b="픽셀", rng=random.Random(1), affinities=aff,
+        name_of=lambda x: {"guide-npc": "루미", "project-npc": "픽셀", "developer-npc": "테오"}[x],
+    )
+    assert "루미가 테오 편을 들어서" in out.reason
+    assert -5 <= out.delta <= 5

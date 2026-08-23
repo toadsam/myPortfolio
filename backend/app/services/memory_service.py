@@ -111,6 +111,35 @@ def public_recent(db: Session, npc_id: str, limit: int = 8) -> list[NpcMemory]:
     )
 
 
+def visitor_key(visitor_id: str) -> str:
+    """방문자 기억의 about_npc_id. 'visitor:' 접두라 NPC id 와 절대 안 섞이고,
+    public_recent 는 kind 로 거르니 밖으로 새지 않는다."""
+    return f"visitor:{visitor_id.strip()[:64]}"
+
+
+def visitor_history(db: Session, npc_id: str, visitor_id: str) -> list[str]:
+    """이 방문자가 전에 왔었으면 프롬프트에 넣을 줄. 첫 방문이면 빈 리스트."""
+    if not visitor_id.strip():
+        return []
+    key = visitor_key(visitor_id)
+    with_me = (
+        db.query(NpcMemory)
+        .filter(and_(NpcMemory.about_npc_id == key, NpcMemory.npc_id == npc_id))
+        .order_by(NpcMemory.created_at.desc(), NpcMemory.id.desc())
+        .all()
+    )
+    with_others = db.query(NpcMemory).filter(and_(NpcMemory.about_npc_id == key, NpcMemory.npc_id != npc_id)).count()
+    if not with_me and not with_others:
+        return []
+    nth = len(with_me) + 1
+    line = f"이 방문자: 나와는 {nth}번째 대화"
+    if with_me:
+        line += f", 지난번엔 {with_me[0].text}"
+    if with_others:
+        line += f". 마을의 다른 NPC 와도 {with_others}번 얘기했다"
+    return ["[이 방문자] " + line + ". 아는 척 반갑게 맞되 이름·신상은 모른다(묻지도 않는다)."]
+
+
 def about(db: Session, npc_id: str, other_id: str, limit: int = 2) -> list[str]:
     rows = (
         db.query(NpcMemory)

@@ -42,6 +42,7 @@ from app.schemas import (
     CommissionBoardOut,
     CommissionConsultIn,
     CommissionConsultOut,
+    CommissionDraft,
     CommissionDetailOut,
     CommissionIn,
     CommissionOut,
@@ -70,6 +71,7 @@ from app.schemas import (
     NpcRelationshipOut,
     NpcMemoryOut,
     NpcRelationshipRow,
+    FavorOut,
     RelayOut,
     VillageEventOut,
     NpcConversationLogOut,
@@ -154,9 +156,15 @@ from app.services.relationship_service import (
     milestone_counts,
     purge_legacy_kind_rows,
     relationship_context,
+    prune_events,
+    relationship_lines_for,
+    seed_village_if_empty,
+    todays_light_shift,
 )
+from app.services import favor_service
+from app.services.daily_digest_service import ensure_today_digest
 from app.services import coach_service, external_service, quest_service
-from app.services.village_service import derive_village_state
+from app.services.village_service import apply_light_shift, derive_village_state
 
 app = FastAPI(title="AI Portfolio Village API", version="0.1.0")
 
@@ -183,6 +191,8 @@ def on_startup() -> None:
 
     with SessionLocal() as db:
         purge_legacy_kind_rows(db)
+        # 빈 DB 면 씨앗 관계 + 소식 몇 줄 — 첫 방문자가 텅 빈 마을을 보지 않게
+        seed_village_if_empty(db)
     from app.database import SessionLocal
 
     db = SessionLocal()
@@ -367,7 +377,8 @@ def village_state(db: Session = Depends(get_db)):
         cs_today=count_cs_notes_today(db),
         cs_total=count_cs_notes(db),
     )
-    return apply_village_overrides(db, state)
+    # 관리자 override 가 최종 — 그 위에 오늘의 관계 마일스톤(싸움 −1칸 / 화해 +1칸)만 얹는다
+    return apply_light_shift(apply_village_overrides(db, state), todays_light_shift(db))
 
 
 @app.post("/npc/chat", response_model=ChatMessageOut, dependencies=[AiRateLimit])
@@ -405,13 +416,20 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
         activity_history=activity_history,
         village_state=village_state_ctx,
         atelier_work=atelier_work,
-        memory_lines=memory_service.memory_lines_for_prompt(db, payload.npc_id),
+        memory_lines=[
+            # 현재 관계 온도(누구와 서먹한지) → 기억(사건 문장) → 이 방문자와의 과거 순
+            *relationship_lines_for(db, payload.npc_id),
+            *memory_service.memory_lines_for_prompt(db, payload.npc_id),
+            *memory_service.visitor_history(db, payload.npc_id, payload.visitor_id),
+        ],
     )
     # 방문자와 나눈 말도 기억에 남긴다 — 원문 40자만(전문은 NpcConversationLog 에 이미 있다).
+    # visitor_id 가 있으면 about 에 'visitor:…' 로 묶어 다음 방문 때 알아본다.
     memory_service.remember(
         db,
         payload.npc_id,
         f"방문자가 '{payload.message.strip()[:40]}' 하고 물어봤다",
+        about=memory_service.visitor_key(payload.visitor_id) if payload.visitor_id.strip() else "",
         kind="visitor",
     )
     log_npc_conversation(
@@ -426,9 +444,26 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
     relay_out = None
     relay = relay_service.detect_relay(payload.message, payload.npc_id)
     if relay is not None:
-        milestone = relay_service.apply_relay(db, payload.npc_id, relay)
+        applied = relay_service.apply_relay(db, payload.npc_id, relay)
         relay_out = RelayOut(
-            about_npc_id=relay.about_npc_id, about_name=relay.about_name, delta=relay.delta, milestone=milestone
+            about_npc_id=relay.about_npc_id,
+            about_name=relay.about_name,
+            delta=applied.delta,
+            milestone=applied.milestone,
+            news=VillageEventOut.model_validate(applied.news) if applied.news is not None else None,
+            favor_done=applied.favor_done,
+        )
+    # NPC 의 부탁 — 서먹한 상대가 있으면 가끔 방문자에게 다리를 놓아 달라고 한다
+    favor_out = None
+    favor = favor_service.maybe_issue(db, payload.npc_id)
+    if favor is not None:
+        favor_out = FavorOut(
+            id=favor.id,
+            npc_id=favor.npc_id,
+            npc_name=memory_service.display_name(favor.npc_id),
+            about_npc_id=favor.about_npc_id,
+            about_name=memory_service.display_name(favor.about_npc_id),
+            text=favor.text,
         )
     return ChatMessageOut(
         npc_id=payload.npc_id,
@@ -436,6 +471,7 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
         used_ai=used_ai,
         suggested_action=suggested_action,
         relay=relay_out,
+        favor=favor_out,
     )
 
 
@@ -461,8 +497,19 @@ async def npc_encounter(payload: NpcEncounterIn, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="같은 NPC 끼리는 마주칠 수 없어요.")
 
     name_a, name_b = memory_service.display_name(a_id), memory_service.display_name(b_id)
+    # 편 들기 규칙(C-14)용 — 마을 전체 친밀도 표. 행 수가 수백이라 매번 읽어도 싸다.
+    affinities = {frozenset((r.npc_a, r.npc_b)): r.affinity for r in list_relationships(db)}
     outcome = decide_outcome(
-        a_id, b_id, payload.npc_a.mood, payload.npc_b.mood, activity, rel.affinity, name_a=name_a, name_b=name_b
+        a_id,
+        b_id,
+        payload.npc_a.mood,
+        payload.npc_b.mood,
+        activity,
+        rel.affinity,
+        name_a=name_a,
+        name_b=name_b,
+        affinities=affinities,
+        name_of=memory_service.display_name,
     )
     known = memory_service.about(db, a_id, b_id)
     rel_ctx = relationship_context(
@@ -535,16 +582,40 @@ async def npc_encounter(payload: NpcEncounterIn, db: Session = Depends(get_db)):
                 text += f" — {result.memory.strip()}"
             if milestone:
                 text += f" → {milestone}!"
-            db.add(VillageEvent(emoji=emoji, text=text[:240], npc_a=a_id, npc_b=b_id, delta=outcome.delta))
+            news = VillageEvent(emoji=emoji, text=text[:240], npc_a=a_id, npc_b=b_id, delta=outcome.delta)
+            db.add(news)
             db.commit()
+            db.refresh(news)
+            result.news = VillageEventOut.model_validate(news)
+        prune_events(db)
     return result
 
 
 @app.get("/npc/news", response_model=list[VillageEventOut])
-def npc_news(limit: int = 12, db: Session = Depends(get_db)):
-    """마을 소식 — NPC 사이에 최근 일어난 사건. 읽기 전용, 레이트리밋 없음."""
+async def npc_news(limit: int = 12, db: Session = Depends(get_db)):
+    """마을 소식 — NPC 사이에 최근 일어난 사건. 읽기 전용, 레이트리밋 없음.
+
+    하루 첫 호출이 어제 요약(📰)을 만든다(daily_digest_service) — 자정 타이머 대신.
+    """
     limit = max(1, min(50, limit))
+    await ensure_today_digest(db)
     return db.query(VillageEvent).order_by(VillageEvent.created_at.desc(), VillageEvent.id.desc()).limit(limit).all()
+
+
+@app.get("/npc/favors", response_model=list[FavorOut])
+def npc_favors(db: Session = Depends(get_db)):
+    """미완료 부탁 — 새로고침 뒤에도 HUD 가 보여 주게. 공개, 읽기 전용."""
+    return [
+        FavorOut(
+            id=f.id,
+            npc_id=f.npc_id,
+            npc_name=memory_service.display_name(f.npc_id),
+            about_npc_id=f.about_npc_id,
+            about_name=memory_service.display_name(f.about_npc_id),
+            text=f.text,
+        )
+        for f in favor_service.list_pending(db)
+    ]
 
 
 @app.get("/npc/relationships", response_model=list[NpcRelationshipRow])
@@ -563,6 +634,7 @@ def npc_relationships(db: Session = Depends(get_db)):
                 fights=extra.get("fights", 0),
                 reconciliations=extra.get("reconciliations", 0),
                 milestones=extra.get("milestones", []),
+                timeline=extra.get("timeline", []),
             )
         )
     return out
@@ -746,13 +818,30 @@ async def commission_consult_route(payload: CommissionConsultIn, db: Session = D
         # 새로고침 등으로 프런트 히스토리가 비었으면 DB에서 복구한다
         history = [f"{row.role}: {row.content}" for row in commission_recent_messages(db, payload.session_id)]
 
-    reply, used_ai, draft = await commission_consult(payload.message, history, payload.draft)
+    reply, used_ai, draft = await commission_consult(
+        payload.message, history, payload.draft, speaker=payload.speaker
+    )
 
     if payload.session_id:
         save_commission_message(db, payload.session_id, "visitor", payload.message)
         save_commission_message(db, payload.session_id, "npc", reply, used_ai=used_ai)
 
     return CommissionConsultOut(reply=reply, used_ai=used_ai, draft=draft)
+
+
+# 아래 둘은 NPC 릴레이 설문용이다. LLM 도 DB 도 안 건드리는 순수 계산이라 리밋을
+# 안 붙인다 — 선택지를 고를 때마다 불리므로 AI 리밋에 얹으면 설문 한 바퀴에 할당량이 다 샌다.
+@app.get("/commission/pricing")
+def commission_pricing():
+    """견적 규칙표. 프런트가 선택지마다 가산치를 보여주고 누적 견적을 굴리는 데 쓴다."""
+    return commission_service.pricing_table()
+
+
+@app.post("/commission/estimate", response_model=CommissionConsultOut)
+def commission_estimate(draft: CommissionDraft):
+    """draft 의 견적만 규칙으로 다시 낸다. 화면의 숫자는 참고이고 이 값이 이긴다."""
+    fresh = commission_service.estimate_only(draft)
+    return CommissionConsultOut(reply="", used_ai=False, draft=fresh)
 
 
 @app.post("/commission", response_model=CommissionAck, dependencies=[CommissionRateLimit])

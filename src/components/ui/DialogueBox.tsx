@@ -17,6 +17,7 @@ import type {
   NpcRuntimeState,
   NpcState,
   NpcSuggestedAction,
+  NpcFavor,
   NpcRelay
 } from "@/types/live";
 import type {NPCData, SectionId} from "@/types/portfolio";
@@ -33,13 +34,19 @@ interface DialogueBoxProps {
   onSuggestedAction: (action: NpcSuggestedAction | null | undefined) => void;
   /** 방문자 말이 다른 NPC 와의 관계를 움직였을 때 (마일스톤 배너용) */
   onRelay?: (relay: NpcRelay) => void;
+  /** NPC 가 부탁을 건넸을 때 (HUD 부탁 줄 갱신용) */
+  onFavor?: (favor: NpcFavor) => void;
+  /** 부탁 칩을 눌러 그 NPC 에게 가기 */
+  onGoToNpc?: (npcId: string) => void;
   /** 백엔드/AI 연결 불가 (기본 대사 모드) */
   aiOffline?: boolean;
 }
 
 interface ChatLine {
-  role: "visitor" | "npc" | "relay";
+  role: "visitor" | "npc" | "relay" | "favor";
   text: string;
+  /** favor 칩: 눌러서 갈 NPC */
+  goTo?: string;
 }
 
 const MOOD_LABELS: Record<string, string> = {
@@ -96,6 +103,8 @@ export function DialogueBox({
   onOpenCommission,
   onSuggestedAction,
   onRelay,
+  onFavor,
+  onGoToNpc,
   aiOffline
 }: DialogueBoxProps) {
   const section = npc
@@ -219,6 +228,7 @@ export function DialogueBox({
       onSuggestedAction(response.suggested_action);
       setFallbackMode(!response.used_ai);
       const relay = response.relay ?? null;
+      const favor = response.favor ?? null;
       setLines(current =>
         current.concat(
           {role: "npc", text: response.reply},
@@ -227,15 +237,32 @@ export function DialogueBox({
             ? [
                 {
                   role: "relay" as const,
-                  text: `💌 ${relay.about_name}에게 전해졌어요 (${
-                    relay.delta > 0 ? "+" : ""
-                  }${relay.delta})${relay.milestone ? ` · ${relay.milestone}!` : ""}`
+                  text: relay.favor_done
+                    ? `🎁 부탁 완료 — ${relay.about_name}에게 전해졌어요 (+${
+                        relay.delta
+                      })${relay.milestone ? ` · ${relay.milestone}!` : ""}`
+                    : `💌 ${relay.about_name}에게 전해졌어요 (${
+                        relay.delta > 0 ? "+" : ""
+                      }${relay.delta})${
+                        relay.milestone ? ` · ${relay.milestone}!` : ""
+                      }`
+                }
+              ]
+            : []),
+          // NPC 가 부탁을 건넸다 — 눌러서 그 NPC 에게 갈 수 있는 칩
+          ...(favor
+            ? [
+                {
+                  role: "favor" as const,
+                  text: `📨 부탁: ${favor.text} → ${favor.about_name}에게 가기`,
+                  goTo: favor.about_npc_id
                 }
               ]
             : [])
         )
       );
       if (relay) onRelay?.(relay);
+      if (favor) onFavor?.(favor);
     } catch {
       setFallbackMode(true);
       setLines(current =>
@@ -321,7 +348,16 @@ export function DialogueBox({
           {/* 채팅 */}
           <div className="flex-1 space-y-2 overflow-y-auto px-4 py-3">
             {lines.map((line, index) =>
-              line.role === "relay" ? (
+              line.role === "favor" ? (
+                <button
+                  type="button"
+                  className="mx-auto w-fit max-w-full rounded-full border border-[#9ad0ff]/35 bg-[#9ad0ff]/10 px-3 py-1 text-left text-[11px] font-bold text-[#d9ecff] transition hover:bg-[#9ad0ff]/20"
+                  key={`${line.role}-${index}`}
+                  onClick={() => line.goTo && onGoToNpc?.(line.goTo)}
+                >
+                  {line.text}
+                </button>
+              ) : line.role === "relay" ? (
                 <div
                   className="mx-auto w-fit rounded-full border border-[#e2c078]/35 bg-[#e2c078]/10 px-3 py-1 text-[11px] font-bold text-[#f3e6c8]"
                   key={`${line.role}-${index}`}

@@ -159,6 +159,23 @@ class NpcMemory(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
 
 
+class NpcFavor(Base):
+    """NPC 가 방문자에게 건넨 부탁 — "픽셀한테 내가 미안해한다고 전해 줄래?".
+
+    서먹한 상대(친밀도 ≤ SOUR)가 있을 때 대화 중 가끔 생긴다. NPC 당 미완료 1개.
+    방문자가 about 쪽 NPC 에게 긍정 relay 를 전하면 이행(fulfilled_at)되고 보상이 +4 로 커진다.
+    """
+
+    __tablename__ = "npc_favor"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    npc_id: Mapped[str] = mapped_column(String(120), index=True)  # 부탁한 NPC
+    about_npc_id: Mapped[str] = mapped_column(String(120), index=True)  # 전해 받을 NPC
+    text: Mapped[str] = mapped_column(String(240), default="")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    fulfilled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
 class RelationshipMilestone(Base):
     """관계 연표 — 절친/앙숙/화해/틀어짐의 **영구** 기록.
 
