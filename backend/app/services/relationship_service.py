@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
-from app.models import NpcRelationship
+from app.models import NpcRelationship, RelationshipMilestone
 from app.relations import canon, relation_for
 
 # 초기 친밀도 씨앗(대표 종류 쌍). 대부분 0에서 시작해 대화로 굴러간다.
@@ -28,8 +28,18 @@ SEED_AFFINITY: dict[tuple[str, str], int] = {
     ("coding", "cs"): 6,
 }
 
-# 하루에 0 쪽으로 이만큼 돌아간다. 안 만나면 서서히 "그냥 아는 사이"로.
+# 안 만나면 0 쪽으로 돌아간다. 친할수록(|aff| 클수록) 천천히 식는다 —
+# 절친이 한 달 방치로 "그냥 아는 사이"가 되면 안 되니까. (3단계)
 DECAY_PER_DAY = 1
+
+
+def _decay_period_days(affinity: int) -> int:
+    a = abs(affinity)
+    if a >= 30:
+        return 3
+    if a >= 16:
+        return 2
+    return 1
 
 
 def _pair(npc_a: str, npc_b: str) -> tuple[str, str]:
@@ -65,7 +75,9 @@ def _apply_decay(rel: NpcRelationship, now: datetime | None = None) -> bool:
     days = (now - last).days
     if days <= 0:
         return False
-    step = min(abs(rel.affinity), days * DECAY_PER_DAY)
+    step = min(abs(rel.affinity), (days // _decay_period_days(rel.affinity)) * DECAY_PER_DAY)
+    if step <= 0:
+        return False
     rel.affinity -= step if rel.affinity > 0 else -step
     rel.vibe = _vibe_label(rel.affinity)
     return True
@@ -151,6 +163,20 @@ def _milestone(old: int, new: int) -> str:
     return ""
 
 
+def milestone_counts(db: Session) -> dict[tuple[str, str], dict]:
+    """쌍별 영구 연표 요약: 싸움(틀어짐·앙숙) / 화해(화해·절친) 횟수와 전체 목록."""
+    out: dict[tuple[str, str], dict] = {}
+    rows = db.query(RelationshipMilestone).order_by(RelationshipMilestone.created_at.asc(), RelationshipMilestone.id.asc()).all()
+    for m in rows:
+        entry = out.setdefault((m.npc_a, m.npc_b), {"fights": 0, "reconciliations": 0, "milestones": []})
+        if m.milestone in ("사이가 틀어졌어요", "앙숙이 됐어요"):
+            entry["fights"] += 1
+        elif m.milestone in ("화해했어요", "절친이 됐어요"):
+            entry["reconciliations"] += 1
+        entry["milestones"].append(m.milestone)
+    return out
+
+
 def apply_outcome(
     db: Session,
     npc_a: str,
@@ -158,6 +184,8 @@ def apply_outcome(
     affinity_delta: int,
     event: str,
     vibe: str = "",
+    *,
+    source: str = "encounter",
 ) -> tuple[NpcRelationship | None, str]:
     """친밀도를 delta(±5 클램프)만큼 움직이고 사건을 기억한다.
 
@@ -178,6 +206,12 @@ def apply_outcome(
         rel.history = history[-6:]
         rel.last_event = event.strip()[:200]
     rel.meet_count += 1
+    if milestone:
+        db.add(
+            RelationshipMilestone(
+                npc_a=rel.npc_a, npc_b=rel.npc_b, milestone=milestone, source=source, affinity=rel.affinity
+            )
+        )
     db.commit()
     db.refresh(rel)
     return rel, milestone

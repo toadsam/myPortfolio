@@ -68,7 +68,9 @@ from app.schemas import (
     NpcGroupChatIn,
     NpcGroupChatOut,
     NpcRelationshipOut,
+    NpcMemoryOut,
     NpcRelationshipRow,
+    RelayOut,
     VillageEventOut,
     NpcConversationLogOut,
     NpcPresetIn,
@@ -142,13 +144,14 @@ from app.services.learning_service import (
     update_coding_test,
     update_cs_note,
 )
-from app.services import memory_service
+from app.services import memory_service, relay_service
 from app.services.npc_brain_service import generate_group_chat, generate_npc_encounter, generate_npc_tick
-from app.services.relationship_rules import decide_outcome
+from app.services.relationship_rules import decide_outcome, josa
 from app.services.relationship_service import (
     apply_outcome,
     get_or_create as get_or_create_relationship,
     list_all as list_relationships,
+    milestone_counts,
     purge_legacy_kind_rows,
     relationship_context,
 )
@@ -419,11 +422,20 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
         used_ai,
         suggested_action.action_id if suggested_action else "",
     )
+    # 방문자 개입 — 다른 NPC 얘기를 감정 담아 전했으면 그 둘 사이가 움직인다 (규칙, LLM 추가 호출 없음)
+    relay_out = None
+    relay = relay_service.detect_relay(payload.message, payload.npc_id)
+    if relay is not None:
+        milestone = relay_service.apply_relay(db, payload.npc_id, relay)
+        relay_out = RelayOut(
+            about_npc_id=relay.about_npc_id, about_name=relay.about_name, delta=relay.delta, milestone=milestone
+        )
     return ChatMessageOut(
         npc_id=payload.npc_id,
         reply=reply,
         used_ai=used_ai,
         suggested_action=suggested_action,
+        relay=relay_out,
     )
 
 
@@ -480,10 +492,32 @@ async def npc_encounter(payload: NpcEncounterIn, db: Session = Depends(get_db)):
 
         # 각자의 기억 + 뒷담화
         memory_kind = "incident" if outcome.kind == "incident" else "encounter"
-        memory_service.remember(db, a_id, f"{name_b} 만남 — {outcome.reason}", about=b_id, kind=memory_kind)
-        memory_service.remember(db, b_id, f"{name_a} 만남 — {outcome.reason}", about=a_id, kind=memory_kind)
-        memory_service.gossip(db, a_id, b_id)
-        memory_service.gossip(db, b_id, a_id)
+        memory_service.remember(
+            db, a_id, f"{name_b} 만남 — {outcome.reason}", about=b_id, kind=memory_kind, delta=outcome.delta
+        )
+        memory_service.remember(
+            db, b_id, f"{name_a} 만남 — {outcome.reason}", about=a_id, kind=memory_kind, delta=outcome.delta
+        )
+        # 뒷담화는 **친밀도에도 번진다** — 듣는 이와 제3자 사이가 들은 얘기의 부호대로 ±1.
+        # 관계가 셋 이상으로 퍼지는 유일한 경로라 소식에도 남긴다.
+        for teller, listener in ((a_id, b_id), (b_id, a_id)):
+            planted = memory_service.gossip(db, teller, listener)
+            if planted is None or planted.delta == 0 or planted.about_npc_id == listener:
+                continue
+            step = 1 if planted.delta > 0 else -1
+            third = planted.about_npc_id
+            third_name = memory_service.display_name(third)
+            listener_name = memory_service.display_name(listener)
+            teller_name = memory_service.display_name(teller)
+            _, g_milestone = apply_outcome(
+                db, listener, third, step, f"{teller_name}에게 들은 얘기로", source="gossip"
+            )
+            feeling = "호감이 생겼다" if step > 0 else "서운해졌다"
+            g_text = f"{listener_name}{josa(listener_name, '가')} {teller_name}에게 들은 얘기로 {third_name}에게 {feeling}"
+            if g_milestone:
+                g_text += f" → {g_milestone}!"
+            db.add(VillageEvent(emoji="🗣️", text=g_text[:240], npc_a=listener, npc_b=third, delta=step))
+            db.commit()
 
         # 마을 소식 — 눈에 띄는 것만
         if milestone or outcome.kind == "incident" or abs(outcome.delta) >= 2:
@@ -495,7 +529,12 @@ async def npc_encounter(payload: NpcEncounterIn, db: Session = Depends(get_db)):
                 else "💚" if outcome.delta > 0
                 else "💬"
             )
-            text = f"{name_a} ↔ {name_b} · {outcome.reason}" + (f" → {milestone}!" if milestone else "")
+            text = f"{name_a} ↔ {name_b} · {outcome.reason}"
+            # 모델이 쓴 한 줄(memory)을 덧붙이면 템플릿 문장만 반복되는 단조로움이 풀린다. 비용 0.
+            if result.used_ai and result.memory and result.memory.strip() not in outcome.reason:
+                text += f" — {result.memory.strip()}"
+            if milestone:
+                text += f" → {milestone}!"
             db.add(VillageEvent(emoji=emoji, text=text[:240], npc_a=a_id, npc_b=b_id, delta=outcome.delta))
             db.commit()
     return result
@@ -510,7 +549,29 @@ def npc_news(limit: int = 12, db: Session = Depends(get_db)):
 
 @app.get("/npc/relationships", response_model=list[NpcRelationshipRow])
 def npc_relationships(db: Session = Depends(get_db)):
-    return list_relationships(db)
+    counts = milestone_counts(db)
+    out = []
+    for rel in list_relationships(db):
+        extra = counts.get((rel.npc_a, rel.npc_b), {})
+        out.append(
+            NpcRelationshipRow(
+                npc_a=rel.npc_a,
+                npc_b=rel.npc_b,
+                affinity=rel.affinity,
+                vibe=rel.vibe,
+                meet_count=rel.meet_count,
+                fights=extra.get("fights", 0),
+                reconciliations=extra.get("reconciliations", 0),
+                milestones=extra.get("milestones", []),
+            )
+        )
+    return out
+
+
+@app.get("/npc/memory/{npc_id}", response_model=list[NpcMemoryOut])
+def npc_memory(npc_id: str, db: Session = Depends(get_db)):
+    """관계도에서 노드를 눌렀을 때 보여 줄 그 NPC 의 기억. 방문자 대화는 뺀다."""
+    return memory_service.public_recent(db, npc_id)
 
 
 @app.post("/npc/group-chat", response_model=NpcGroupChatOut, dependencies=[AiRateLimit])

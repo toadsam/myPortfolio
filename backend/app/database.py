@@ -29,6 +29,12 @@ def init_db() -> None:
     Base.metadata.create_all(bind=engine)
     _ensure_daily_activity_columns()
     _ensure_commission_columns()
+    _ensure_npc_memory_columns()
+
+
+def _ensure_npc_memory_columns() -> None:
+    # 3단계(2026-08-22): 기억이 관계를 움직인 방향. 뒷담화 전파에 부호가 필요하다.
+    _ensure_columns("npc_memory", {"delta": "INTEGER DEFAULT 0"})
 
 
 def _ensure_columns(table: str, columns: dict[str, str]) -> None:

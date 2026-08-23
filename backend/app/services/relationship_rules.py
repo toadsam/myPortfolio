@@ -11,8 +11,10 @@ AI 가 꺼져 있어도(키 없음·실패) 관계는 똑같이 굴러간다.
 세 가지 재료를 더한다:
   1. 기분 궁합 — 둘 다 busy 면 날카롭고, worried 를 calm 이 달래 준다.
   2. 공통 화제 — 오늘 정재훈의 활동. 커밋이 많은 날 픽셀(프로젝트)과 테오(기술)가 가까워진다.
-  3. 확률 사건 — 간식을 뺏어 먹거나 약속을 깜빡하거나 선물을 준다. 친할수록 투닥거리고,
-     앙숙일수록 화해 기회가 오도록 가중해 **수렴을 막는다**.
+  3. 확률 사건 — **직군에 맞는 것만**(3단계). 테오는 장황한 설명으로 싸우고 버그를 잡아 주며,
+     체리는 범위를 또 늘리고, 하루는 운동을 같이 해 준다. 간식·선물처럼 누구나 할 법한
+     공통 사건은 `actors=None`. 친할수록 투닥거리고 앙숙일수록 화해 기회가 오도록 가중해
+     **수렴을 막는다**.
 합계는 ±5 로 자른다(한 번에 조금씩). 하루 감쇠는 relationship_service 쪽에 있다.
 """
 
@@ -40,6 +42,37 @@ class Outcome:
     kind: str  # bond | clash | incident | neutral
     mood_a: str
     mood_b: str
+    # 사건을 저지른/베푼 쪽 npc_id (사건이 아니면 ""). 기억의 delta·소식 문장에 쓴다.
+    actor_id: str = ""
+
+
+_JOSA = {"가": ("이", "가"), "를": ("을", "를"), "는": ("은", "는"), "와": ("과", "와"), "이": ("이", "")}
+
+
+def josa(word: str, kind: str) -> str:
+    """받침에 맞는 조사. "픽셀가/픽셀를" 같은 오류를 막는다. 한글이 아니면 받침 없음으로 본다."""
+    with_batchim, without = _JOSA[kind]
+    if not word:
+        return without
+    code = ord(word[-1])
+    if 0xAC00 <= code <= 0xD7A3:
+        return with_batchim if (code - 0xAC00) % 28 else without
+    return without
+
+
+class Name(str):
+    """템플릿에서 `{a:가}` 처럼 쓰면 이름 뒤에 맞는 조사를 붙인다."""
+
+    def __format__(self, spec: str) -> str:
+        base = str(self)
+        return base + josa(base, spec) if spec else base
+
+
+@dataclass(frozen=True)
+class Incident:
+    delta: int
+    template: str  # {a} = 행위자, {b} = 상대
+    actors: frozenset[str] | None = None  # None 이면 누구나. 아니면 행위자의 canon 종류 집합.
 
 
 # 기분 쌍 → (delta, 이유). 키는 정렬된 튜플. 없는 조합은 0.
@@ -58,16 +91,50 @@ _MOOD_PAIRS: dict[tuple[str, str], tuple[int, str]] = {
     ("busy", "worried"): (-1, "바빠서 걱정을 제대로 못 들어줬다"),
 }
 
-# 확률 사건: (delta, 이유 템플릿). {a}{b} 는 이름으로 치환된다 — a 가 저지른/베푼 쪽.
-_INCIDENTS: list[tuple[int, str]] = [
-    (-3, "{a}가 {b}의 간식을 몰래 먹어 버렸다"),
-    (-2, "{a}가 {b}와의 약속을 깜빡했다"),
-    (-2, "{a}의 농담이 {b}에게 좀 과했다"),
-    (-2, "{a}가 {b}의 말을 끝까지 안 듣고 끊었다"),
-    (3, "{a}가 {b}에게 작은 선물을 줬다"),
-    (3, "{a}가 {b}의 일을 말없이 도와줬다"),
-    (2, "{a}와 {b}가 옛 얘기를 하다 같이 울컥했다"),
-    (2, "{a}가 {b}의 고민을 끝까지 들어줬다"),
+
+def _k(*kinds: str) -> frozenset[str]:
+    return frozenset(kinds)
+
+
+# 확률 사건. 직군이 맞는 쪽이 행위자({a})가 된다.
+_INCIDENTS: list[Incident] = [
+    # ── 공통 ──
+    Incident(3, "{a:가} {b}에게 작은 선물을 줬다"),
+    Incident(2, "{a:가} {b}의 고민을 끝까지 들어줬다"),
+    Incident(-2, "{a:가} {b:와}의 약속을 깜빡했다"),
+    Incident(-2, "{a}의 농담이 {b}에게 좀 과했다"),
+    # ── 루미(안내) ──
+    Incident(-2, "{a:가} 길 안내를 한다며 {b:를} 너무 오래 붙잡았다", _k("guide")),
+    Incident(2, "{a:가} 방문객 앞에서 {b:를} 칭찬해 줬다", _k("guide")),
+    # ── 픽셀·프로젝트 안내원 ──
+    Incident(-2, "{a:가} 자기 프로젝트 자랑만 늘어놓아 {b:가} 지쳤다", _k("project")),
+    Incident(3, "{a:가} {b}의 전시 준비를 도와줬다", _k("project")),
+    # ── 테오·기술 안내원 ──
+    Incident(-2, "{a}의 기술 설명이 너무 장황해서 {b:가} 끊고 싶어했다", _k("developer")),
+    Incident(3, "{a:가} {b:를} 괴롭히던 버그를 잡아 줬다", _k("developer")),
+    # ── 아카·기록 안내원 ──
+    Incident(-2, "{a:가} {b}의 메모를 몰래 들여다봤다", _k("archivist")),
+    Incident(2, "{a:가} 옛 기록을 꺼내 {b:와} 같이 울컥했다", _k("archivist")),
+    # ── 포스트·연락 ──
+    Incident(-2, "{a:가} 손님 응대를 {b}에게 떠넘겼다", _k("contact")),
+    Incident(3, "{a:가} {b} 앞으로 온 편지를 대신 전해 줬다", _k("contact")),
+    # ── 알고(코딩테스트) ──
+    Incident(-1, "{a:가} 문제 얘기로 {b:를} 삼천포에 빠뜨렸다", _k("coding")),
+    Incident(2, "{a:가} {b:와} 같이 문제를 풀어 줬다", _k("coding")),
+    # ── 노바(CS) ──
+    Incident(-1, "{a}의 개념 설명이 밤까지 이어져 {b:가} 졸았다", _k("cs")),
+    Incident(2, "{a:가} {b:가} 헷갈리던 개념을 정리해 줬다", _k("cs")),
+    # ── 하루(라이프) ──
+    Incident(3, "{a:가} {b:와} 운동을 같이 해 줬다", _k("life")),
+    Incident(-3, "{a:가} {b}의 간식을 몰래 먹어 버렸다", _k("life")),
+    # ── 정재훈(총괄) ──
+    Incident(3, "{a:가} 일부러 찾아와 {b:를} 챙겨 줬다", _k("overseer")),
+    # ── 의뢰 공방 ──
+    Incident(-3, "{a:가} 의뢰 범위를 또 늘려서 {b:가} 한숨을 쉬었다", _k("planner")),
+    Incident(-2, "{a:가} 일정 얘기에 뾰족해져 {b}에게 쏘아붙였다", _k("designer")),
+    Incident(-2, "{a:와} {b:가} 픽셀 단위로 싸웠다", _k("fe", "designer")),
+    Incident(3, "{a:가} {b:가} 벌린 일을 조용히 수습해 줬다", _k("be")),
+    Incident(2, "{a:가} 손님 메모를 {b}에게 깔끔하게 넘겨 줬다", _k("intake")),
 ]
 
 
@@ -99,19 +166,41 @@ def _shared_topic(kind_a: str, kind_b: str, activity: Any) -> tuple[int, str]:
     return 0, ""
 
 
-def _pick_incident(affinity: int, rng: random.Random, name_a: str, name_b: str) -> tuple[int, str]:
+def candidate_incidents(kind_a: str, kind_b: str) -> list[tuple[Incident, list[str]]]:
+    """두 직군이 낄 수 있는 사건과, 각 사건에서 행위자가 될 수 있는 쪽('a'/'b')."""
+    out: list[tuple[Incident, list[str]]] = []
+    for inc in _INCIDENTS:
+        if inc.actors is None:
+            out.append((inc, ["a", "b"]))
+            continue
+        sides = [s for s, k in (("a", kind_a), ("b", kind_b)) if k in inc.actors]
+        if sides:
+            out.append((inc, sides))
+    return out
+
+
+def _pick_incident(
+    kind_a: str,
+    kind_b: str,
+    affinity: int,
+    rng: random.Random,
+    name_a: str,
+    name_b: str,
+) -> tuple[int, str, str]:
+    """(delta, 문장, 행위자 side 'a'|'b')"""
+    candidates = candidate_incidents(kind_a, kind_b)
     weights: list[float] = []
-    for delta, _ in _INCIDENTS:
+    for inc, _ in candidates:
         w = 1.0
-        if affinity >= CLOSE_AFFINITY and delta < 0:
+        if affinity >= CLOSE_AFFINITY and inc.delta < 0:
             w = 2.0  # 친할수록 투닥거린다
-        elif affinity <= SOUR_AFFINITY and delta > 0:
+        elif affinity <= SOUR_AFFINITY and inc.delta > 0:
             w = 2.0  # 앙숙일수록 화해 기회
         weights.append(w)
-    delta, template = rng.choices(_INCIDENTS, weights=weights, k=1)[0]
-    # 누가 저질렀는지는 동전 던지기
-    a, b = (name_a, name_b) if rng.random() < 0.5 else (name_b, name_a)
-    return delta, template.format(a=a, b=b)
+    inc, sides = rng.choices(candidates, weights=weights, k=1)[0]
+    side = sides[0] if len(sides) == 1 else ("a" if rng.random() < 0.5 else "b")
+    a, b = (name_a, name_b) if side == "a" else (name_b, name_a)
+    return inc.delta, inc.template.format(a=Name(a), b=Name(b)), side
 
 
 def _result_moods(delta: int, kind: str, mood_a: str, mood_b: str) -> tuple[str, str]:
@@ -138,26 +227,29 @@ def decide_outcome(
     rng = rng or random.Random()
     name_a = name_a or npc_a
     name_b = name_b or npc_b
+    kind_a, kind_b = canon(npc_a), canon(npc_b)
 
     parts: list[str] = []
     total = 0
     kind = "neutral"
+    actor_id = ""
 
     d, why = _mood_delta(mood_a, mood_b)
     if d:
         total += d
         parts.append(why)
 
-    d, why = _shared_topic(canon(npc_a), canon(npc_b), activity)
+    d, why = _shared_topic(kind_a, kind_b, activity)
     if d:
         total += d
         parts.append(why)
 
     if rng.random() < INCIDENT_CHANCE:
-        d, why = _pick_incident(affinity, rng, name_a, name_b)
+        d, why, side = _pick_incident(kind_a, kind_b, affinity, rng, name_a, name_b)
         total += d
         parts.append(why)
         kind = "incident"
+        actor_id = npc_a if side == "a" else npc_b
 
     total = max(-MAX_STEP, min(MAX_STEP, total))
     if kind != "incident":
@@ -165,4 +257,4 @@ def decide_outcome(
 
     reason = " · ".join(parts) if parts else "별일 없이 안부만 주고받았다"
     ma, mb = _result_moods(total, kind, mood_a, mood_b)
-    return Outcome(delta=total, reason=reason, kind=kind, mood_a=ma, mood_b=mb)
+    return Outcome(delta=total, reason=reason, kind=kind, mood_a=ma, mood_b=mb, actor_id=actor_id)

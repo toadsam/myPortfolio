@@ -67,6 +67,7 @@ import type {
   NpcRuntimeState,
   NpcState,
   NpcSuggestedAction,
+  NpcRelay,
   VillageEvent,
   VillageState
 } from "@/types/live";
@@ -1270,6 +1271,17 @@ export function AIPortfolioVillage() {
     npcPositionsRef.current[npcId] = position;
   }
 
+  // 방문자 말이 관계를 움직여 마일스톤까지 넘겼으면 마주침 때와 같은 배너
+  function handleRelay(relay: NpcRelay) {
+    if (!relay.milestone || !selectedNpc) return;
+    notifyRelationship(selectedNpc.id, relay.about_npc_id, {
+      vibe: "",
+      delta: relay.delta,
+      affinity: 0,
+      milestone: relay.milestone
+    });
+  }
+
   function handleNpcSuggestedAction(
     action: NpcSuggestedAction | null | undefined
   ) {
@@ -1895,6 +1907,7 @@ export function AIPortfolioVillage() {
             onOpenCommission={() => openAtelier("포스트 귀띔")}
             onRunAction={runManualNpcAction}
             onSuggestedAction={handleNpcSuggestedAction}
+            onRelay={handleRelay}
             aiOffline={!!liveError}
           />
           <SectionTabs
@@ -1953,6 +1966,7 @@ export function AIPortfolioVillage() {
               onOpenSection={openSection}
               onRunAction={runManualNpcAction}
               onSuggestedAction={handleNpcSuggestedAction}
+              onRelay={handleRelay}
               aiOffline={!!liveError}
             />
           </div>

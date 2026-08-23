@@ -132,11 +132,29 @@ export interface VillageState {
   summary: string;
 }
 
+/** 방문자가 다른 NPC 얘기를 감정 담아 전해서 관계가 움직였을 때 (규칙 기반) */
+export interface NpcRelay {
+  about_npc_id: string;
+  about_name: string;
+  delta: number;
+  milestone: string;
+}
+
 export interface NpcChatResponse {
   npc_id: string;
   reply: string;
   used_ai: boolean;
   suggested_action?: NpcSuggestedAction | null;
+  relay?: NpcRelay | null;
+}
+
+/** NPC 개인 기억 한 줄 (GET /npc/memory/{id}; 방문자 대화는 제외) */
+export interface NpcMemoryItem {
+  kind: "encounter" | "incident" | "gossip" | "relay" | string;
+  about_npc_id: string;
+  text: string;
+  delta: number;
+  created_at: string;
 }
 
 export interface NpcTickRequest {
@@ -175,6 +193,10 @@ export interface NpcRelationshipRow {
   affinity: number;
   vibe: string;
   meet_count: number;
+  /** 영구 연표(RelationshipMilestone)에서 센 값 */
+  fights: number;
+  reconciliations: number;
+  milestones: string[];
 }
 
 /** 마을 소식 한 줄 — NPC 사이에 일어난 눈에 띄는 사건 (GET /npc/news) */

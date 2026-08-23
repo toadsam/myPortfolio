@@ -121,3 +121,35 @@ def test_apply_outcome_crossing_zero_upward_triggers_reconciled_milestone(db_ses
         db_session, "developer-npc", "archivist-npc", affinity_delta=5, event="화해했다", vibe="편한 사이"
     )
     assert milestone == "화해했어요"
+
+
+# ── 3단계: 감쇠 주기 · 영구 연표 ──────────────────────────────────────────────
+
+
+def test_close_friends_decay_slower(db_session):
+    from app.models import NpcRelationship as _R  # noqa: F401
+
+    rel = relationship_service.get_or_create(db_session, "developer-npc", "archivist-npc")
+    rel.affinity = 40
+    rel.updated_at = datetime.now(timezone.utc) - timedelta(days=7, hours=1)
+    db_session.commit()
+    again = relationship_service.get_or_create(db_session, "developer-npc", "archivist-npc")
+    assert again.affinity == 40 - 7 // 3  # 3일에 1
+
+
+def test_milestone_rows_are_permanent_and_counted(db_session):
+    from app.models import RelationshipMilestone
+
+    rel = relationship_service.get_or_create(db_session, "developer-npc", "archivist-npc")
+    rel.affinity = 1
+    db_session.commit()
+    relationship_service.apply_outcome(db_session, "developer-npc", "archivist-npc", -5, "싸움")  # 틀어짐
+    relationship_service.apply_outcome(db_session, "developer-npc", "archivist-npc", 5, "화해", source="relay")
+    # history 는 롤링이지만 연표는 남는다
+    for i in range(10):
+        relationship_service.apply_outcome(db_session, "developer-npc", "archivist-npc", 0, f"잡담 {i}")
+    rows = db_session.query(RelationshipMilestone).all()
+    assert [r.milestone for r in rows] == ["사이가 틀어졌어요", "화해했어요"]
+    assert rows[1].source == "relay"
+    counts = relationship_service.milestone_counts(db_session)[("archivist-npc", "developer-npc")]
+    assert counts == {"fights": 1, "reconciliations": 1, "milestones": ["사이가 틀어졌어요", "화해했어요"]}

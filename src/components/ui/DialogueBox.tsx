@@ -16,7 +16,8 @@ import type {
   NpcActionDefinition,
   NpcRuntimeState,
   NpcState,
-  NpcSuggestedAction
+  NpcSuggestedAction,
+  NpcRelay
 } from "@/types/live";
 import type {NPCData, SectionId} from "@/types/portfolio";
 
@@ -30,12 +31,14 @@ interface DialogueBoxProps {
   /** 연락 담당 NPC 대화에서만 노출되는 의뢰 공방 진입 */
   onOpenCommission?: () => void;
   onSuggestedAction: (action: NpcSuggestedAction | null | undefined) => void;
+  /** 방문자 말이 다른 NPC 와의 관계를 움직였을 때 (마일스톤 배너용) */
+  onRelay?: (relay: NpcRelay) => void;
   /** 백엔드/AI 연결 불가 (기본 대사 모드) */
   aiOffline?: boolean;
 }
 
 interface ChatLine {
-  role: "visitor" | "npc";
+  role: "visitor" | "npc" | "relay";
   text: string;
 }
 
@@ -92,6 +95,7 @@ export function DialogueBox({
   onOpenSection,
   onOpenCommission,
   onSuggestedAction,
+  onRelay,
   aiOffline
 }: DialogueBoxProps) {
   const section = npc
@@ -214,7 +218,24 @@ export function DialogueBox({
       const response = await sendNpcMessage(npc.id, nextMessage, context);
       onSuggestedAction(response.suggested_action);
       setFallbackMode(!response.used_ai);
-      setLines(current => current.concat({role: "npc", text: response.reply}));
+      const relay = response.relay ?? null;
+      setLines(current =>
+        current.concat(
+          {role: "npc", text: response.reply},
+          // 방문자의 말이 다른 NPC 와의 사이를 움직였으면 대화 줄에 칩으로 남긴다
+          ...(relay
+            ? [
+                {
+                  role: "relay" as const,
+                  text: `💌 ${relay.about_name}에게 전해졌어요 (${
+                    relay.delta > 0 ? "+" : ""
+                  }${relay.delta})${relay.milestone ? ` · ${relay.milestone}!` : ""}`
+                }
+              ]
+            : [])
+        )
+      );
+      if (relay) onRelay?.(relay);
     } catch {
       setFallbackMode(true);
       setLines(current =>
@@ -299,18 +320,27 @@ export function DialogueBox({
 
           {/* 채팅 */}
           <div className="flex-1 space-y-2 overflow-y-auto px-4 py-3">
-            {lines.map((line, index) => (
-              <div
-                className={
-                  line.role === "visitor"
-                    ? "ml-8 rounded-2xl rounded-br-sm bg-[#ff9d38]/16 px-3 py-2 text-sm leading-6 text-[#ffe9d2]"
-                    : "mr-8 rounded-2xl rounded-bl-sm bg-white/[0.07] px-3 py-2 text-sm leading-6 text-[#e8eef7]/90"
-                }
-                key={`${line.role}-${index}`}
-              >
-                {line.text}
-              </div>
-            ))}
+            {lines.map((line, index) =>
+              line.role === "relay" ? (
+                <div
+                  className="mx-auto w-fit rounded-full border border-[#e2c078]/35 bg-[#e2c078]/10 px-3 py-1 text-[11px] font-bold text-[#f3e6c8]"
+                  key={`${line.role}-${index}`}
+                >
+                  {line.text}
+                </div>
+              ) : (
+                <div
+                  className={
+                    line.role === "visitor"
+                      ? "ml-8 rounded-2xl rounded-br-sm bg-[#ff9d38]/16 px-3 py-2 text-sm leading-6 text-[#ffe9d2]"
+                      : "mr-8 rounded-2xl rounded-bl-sm bg-white/[0.07] px-3 py-2 text-sm leading-6 text-[#e8eef7]/90"
+                  }
+                  key={`${line.role}-${index}`}
+                >
+                  {line.text}
+                </div>
+              )
+            )}
             {isSending ? (
               <div className="mr-8 flex items-center gap-1 rounded-2xl rounded-bl-sm bg-white/[0.07] px-3 py-2.5">
                 {[0, 1, 2].map(i => (

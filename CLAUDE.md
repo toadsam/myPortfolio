@@ -172,6 +172,10 @@ so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottlene
   ≤−8은 피하거나 화해하러 간다(`AIPortfolioVillage` `SOUR_AFFINITY/CLOSE_AFFINITY` — 백엔드 상수와 같은 값).
 - 수렴 방지 규칙(친할수록 음수 사건 2배)과 클램프·감쇠는 `tests/test_relationship_rules.py`·`test_relationship_service.py`가 잠근다.
   같은 종류 쌍에 관계가 "없어야 한다"는 옛 테스트는 의도적으로 뒤집혔다.
+- **3단계(같은 날)**: 사건은 직군별(`Incident.actors`, 템플릿은 `{a:가}` 꼴 조사 자동), 뒷담화가 듣는 이↔제3자 친밀도를 ±1 움직이고(`NpcMemory.delta`,
+  같은 얘기는 한 번만), 방문자가 대화창에서 "다른 NPC 이름 + 감정어"를 말하면 `relay_service`가 ±2(LLM 추가 호출 없음, 응답 `relay`),
+  마일스톤은 `RelationshipMilestone`에 영구 보관(관계도 "싸움 n · 화해 n"), `GET /npc/memory/{id}`는 visitor 기억을 빼고 내보낸다.
+- 백엔드 파일을 고치면 uvicorn `--reload`가 Windows 콘솔 프롬프트에 걸려 **죽는다** — `preview_stop` → `preview_start`로 다시 띄울 것.
 
 ### Pointer picking, camera, and render budget (2026-08-22)
 

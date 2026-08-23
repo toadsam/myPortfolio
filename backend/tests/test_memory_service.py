@@ -72,3 +72,30 @@ def test_display_name_resolves_dynamic_ids():
     assert mem.display_name("npc-study-codingtest") == "알고"
     assert mem.display_name("npc-life-gym") == "하루"
     assert mem.display_name("atelier-backend-npc") == "굴뚝"
+
+
+# ── 3단계 ──────────────────────────────────────────────────────────────────
+
+
+def test_remember_stores_delta_and_gossip_carries_it(db_session):
+    mem.remember(db_session, "guide-npc", "테오 만남 — 장황한 설명", about="developer-npc", kind="incident", delta=-2)
+    always = random.Random(0)
+    always.random = lambda: 0.0  # type: ignore[method-assign]
+    row = mem.gossip(db_session, "guide-npc", "project-npc", rng=always)
+    assert row is not None and row.delta == -2
+
+
+def test_public_recent_excludes_visitor_memories(db_session):
+    mem.remember(db_session, "guide-npc", "방문자가 '연락처' 하고 물어봤다", kind="visitor")
+    mem.remember(db_session, "guide-npc", "픽셀 만남 — 안부", about="project-npc")
+    rows = mem.public_recent(db_session, "guide-npc")
+    assert [r.text for r in rows] == ["픽셀 만남 — 안부"]
+
+
+def test_gossip_does_not_repeat_the_same_story(db_session):
+    mem.remember(db_session, "guide-npc", "테오 만남 — 장황한 설명", about="developer-npc", kind="incident", delta=-2)
+    always = random.Random(0)
+    always.random = lambda: 0.0  # type: ignore[method-assign]
+    assert mem.gossip(db_session, "guide-npc", "project-npc", rng=always) is not None
+    assert mem.gossip(db_session, "guide-npc", "project-npc", rng=always) is None
+

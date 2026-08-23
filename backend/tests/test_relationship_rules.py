@@ -122,3 +122,67 @@ def test_deterministic_for_same_seed(seed):
     a = rules.decide_outcome("project-npc", "developer-npc", "proud", "curious", rng=random.Random(seed), **kw)
     b = rules.decide_outcome("project-npc", "developer-npc", "proud", "curious", rng=random.Random(seed), **kw)
     assert a == b
+
+
+# ── 3단계: 직군별 사건 ──────────────────────────────────────────────────────
+
+
+def _incident_actor(a, b, seed, affinity=0):
+    out = rules.decide_outcome(a, b, "calm", "calm", _activity(), affinity, name_a=a, name_b=b, rng=_always_incident(seed))
+    assert out.kind == "incident"
+    return out
+
+
+def test_incident_actor_id_is_one_of_the_pair():
+    for seed in range(20):
+        out = _incident_actor("developer-npc", "project-npc", seed)
+        assert out.actor_id in ("developer-npc", "project-npc")
+        assert out.actor_id in out.reason  # {a} 자리엔 행위자 이름(여기선 id)이 들어간다
+
+
+def test_developer_never_steals_snacks_but_life_can():
+    """간식 사건은 life(하루) 전용. 테오↔픽셀 300번에 한 번도 안 나와야 한다."""
+    for seed in range(300):
+        out = _incident_actor("developer-npc", "project-npc", seed)
+        assert "간식" not in out.reason
+    seen = any("간식" in _incident_actor("npc-life-gym", "guide-npc", seed).reason for seed in range(300))
+    assert seen
+
+
+def test_role_specific_incident_is_attributed_to_the_right_side():
+    """'범위를 또 늘려서' 는 planner 만 저지른다 — 체리↔굴뚝 에서 행위자는 항상 체리."""
+    for seed in range(300):
+        out = _incident_actor("atelier-planner-npc", "atelier-backend-npc", seed)
+        if "범위" in out.reason:
+            assert out.actor_id == "atelier-planner-npc"
+            break
+    else:
+        raise AssertionError("planner 사건이 300번 안에 한 번도 안 나왔다")
+
+
+def test_candidate_incidents_filter_by_kind():
+    kinds = {inc.template for inc, _ in rules.candidate_incidents("developer", "project")}
+    assert any("기술 설명" in t for t in kinds)
+    assert any("프로젝트 자랑" in t for t in kinds)
+    assert not any("간식" in t for t in kinds)
+    assert any("선물" in t for t in kinds)  # 공통은 항상
+
+
+def test_josa_follows_batchim():
+    assert rules.josa("픽셀", "가") == "이"
+    assert rules.josa("루미", "가") == "가"
+    assert rules.josa("픽셀", "를") == "을"
+    assert rules.josa("테오", "를") == "를"
+    assert rules.josa("굴뚝", "와") == "과"
+    assert rules.josa("FestFlow 안내원", "가") == "이"
+    assert rules.josa("abc", "가") == "가"
+
+
+def test_incident_sentences_use_correct_particles():
+    for seed in range(200):
+        out = rules.decide_outcome(
+            "developer-npc", "project-npc", "calm", "calm", _activity(), 0,
+            name_a="테오", name_b="픽셀", rng=_always_incident(seed),
+        )
+        assert "픽셀가" not in out.reason and "픽셀를" not in out.reason and "픽셀와" not in out.reason
+

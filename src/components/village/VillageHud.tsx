@@ -8,8 +8,9 @@ import {VillageFrame} from "@/components/ui/VillageFrame";
 import type {CrestName} from "@/data/villageCrests";
 import {districtTone, villageBuildings} from "@/lib/constants";
 import {resetHudLayout, useDraggable} from "@/lib/useDraggable";
-import {fetchRelationships} from "@/lib/liveApi";
+import {fetchNpcMemory, fetchRelationships} from "@/lib/liveApi";
 import type {
+  NpcMemoryItem,
   NpcRelationshipRow,
   VillageEvent,
   VillageState
@@ -1106,7 +1107,69 @@ function RelRow({r}: {r: NpcRelationshipRow}) {
       <span className="font-mono text-[11px]" style={{color}}>
         {r.vibe} ({r.affinity >= 0 ? "+" : ""}
         {r.affinity})
+        {r.fights || r.reconciliations ? (
+          <span className="ml-2 text-[#a9bdd6]/60">
+            싸움 {r.fights} · 화해 {r.reconciliations}
+          </span>
+        ) : null}
       </span>
+    </div>
+  );
+}
+
+const MEMORY_ICON: Record<string, string> = {
+  encounter: "💬",
+  incident: "⚡",
+  gossip: "🗣️",
+  relay: "💌"
+};
+
+/** 관계도에서 노드를 눌렀을 때 — 그 NPC 의 최근 기억 */
+function NpcMemoryList({npcId}: {npcId: string}) {
+  const [items, setItems] = useState<NpcMemoryItem[] | null>(null);
+  useEffect(() => {
+    let ignore = false;
+    setItems(null);
+    fetchNpcMemory(npcId)
+      .then(rows => {
+        if (!ignore) setItems(rows);
+      })
+      .catch(() => {
+        if (!ignore) setItems([]);
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [npcId]);
+  return (
+    <div className="mt-3 rounded-lg border border-[#e2c078]/15 bg-white/[0.03] p-3">
+      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#e2c078]/70">
+        {npcName(npcId)}의 기억
+      </p>
+      {items === null ? (
+        <p className="mt-1 text-xs text-[#a9bdd6]/60">불러오는 중…</p>
+      ) : items.length === 0 ? (
+        <p className="mt-1 text-xs text-[#a9bdd6]/60">
+          아직 기억나는 일이 없어요.
+        </p>
+      ) : (
+        <ul className="mt-1 grid gap-1">
+          {items.slice(0, 6).map((m, i) => (
+            <li
+              key={i}
+              className="flex items-start gap-1.5 text-[11px] leading-4 text-[#dfe7f2]"
+            >
+              <span className="shrink-0">{MEMORY_ICON[m.kind] ?? "•"}</span>
+              <span className="min-w-0 flex-1">
+                {m.text}
+                <span className="ml-1 text-[#a9bdd6]/45">
+                  {timeAgo(m.created_at)}
+                </span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -1114,6 +1177,8 @@ function RelRow({r}: {r: NpcRelationshipRow}) {
 export function RelationshipViewer({onClose}: {onClose: () => void}) {
   const [rels, setRels] = useState<NpcRelationshipRow[] | null>(null);
   const [err, setErr] = useState(false);
+  // 노드를 누르면 그 NPC 의 기억을 아래에 보여 준다. 다시 누르면 닫힘.
+  const [selected, setSelected] = useState<string | null>(null);
 
   useEffect(() => {
     let ignore = false;
@@ -1224,15 +1289,20 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                 const p = posOf(kind);
                 if (!p) return null;
                 const isHub = kind === hub;
+                const isSel = selected === kind;
                 return (
-                  <g key={kind}>
+                  <g
+                    key={kind}
+                    style={{cursor: "pointer"}}
+                    onClick={() => setSelected(s => (s === kind ? null : kind))}
+                  >
                     <circle
                       cx={p.x}
                       cy={p.y}
                       r={isHub ? 15 : 12}
-                      fill={isHub ? "#f5c542" : "#13223a"}
-                      stroke="#e2c078"
-                      strokeWidth={1.2}
+                      fill={isHub ? "#f5c542" : isSel ? "#2b4a6f" : "#13223a"}
+                      stroke={isSel ? "#ffd27a" : "#e2c078"}
+                      strokeWidth={isSel ? 2.4 : 1.2}
                     />
                     <text
                       x={p.x}
@@ -1259,6 +1329,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                 <span style={{color: "#ef4444"}}>━</span> 나쁨
               </span>
             </div>
+            {selected ? <NpcMemoryList npcId={selected} /> : null}
             {top.length || bottom.length ? (
               <div className="mt-3 grid gap-1.5">
                 {top.map((r, i) => (

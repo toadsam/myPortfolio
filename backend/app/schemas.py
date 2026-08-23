@@ -90,11 +90,21 @@ class ChatMessageIn(BaseModel):
     recent_messages: list[str] = Field(default_factory=list)
 
 
+class RelayOut(BaseModel):
+    """방문자가 다른 NPC 얘기를 전해 관계가 움직였을 때."""
+
+    about_npc_id: str
+    about_name: str
+    delta: int
+    milestone: str = ""
+
+
 class ChatMessageOut(BaseModel):
     npc_id: str
     reply: str
     used_ai: bool
     suggested_action: NpcActionOut | None = None
+    relay: RelayOut | None = None
 
 
 class NpcTickIn(BaseModel):
@@ -159,8 +169,29 @@ class NpcRelationshipRow(BaseModel):
     affinity: int
     vibe: str
     meet_count: int
+    # 영구 연표(RelationshipMilestone)에서 센 값. 싸움 = 틀어짐·앙숙, 화해 = 화해·절친.
+    fights: int = 0
+    reconciliations: int = 0
+    milestones: list[str] = Field(default_factory=list)
 
     model_config = {"from_attributes": True}
+
+
+class NpcMemoryOut(BaseModel):
+    kind: str
+    about_npc_id: str
+    text: str
+    delta: int
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+    @field_validator("created_at")
+    @classmethod
+    def _as_utc(cls, value: datetime) -> datetime:
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value
 
 
 class VillageEventOut(BaseModel):

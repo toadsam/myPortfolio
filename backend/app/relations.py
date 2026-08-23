@@ -20,6 +20,9 @@ def canon(npc_id: str) -> str:
         return "intake"
     if npc_id == "overseer-npc" or "overseer" in npc_id:
         return "overseer"
+    if npc_id == "life-npc" or "life-" in npc_id or "-life" in npc_id:
+        # 라이프 구역(하루). 3단계 직군별 사건에 쓰려고 종류로 분리했다.
+        return "life"
     if "codingtest" in npc_id:
         return "coding"
     if npc_id == "cs-npc" or "study-cs" in npc_id or npc_id.endswith("-cs"):

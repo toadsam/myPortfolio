@@ -58,9 +58,17 @@ def display_name(npc_id: str) -> str:
     return _KIND_NAMES.get(kind, npc_id)
 
 
-def remember(db: Session, npc_id: str, text: str, *, about: str = "", kind: str = "encounter") -> NpcMemory:
+def remember(
+    db: Session,
+    npc_id: str,
+    text: str,
+    *,
+    about: str = "",
+    kind: str = "encounter",
+    delta: int = 0,
+) -> NpcMemory:
     text = text.strip()[:240]
-    row = NpcMemory(npc_id=npc_id, about_npc_id=about or "", kind=kind, text=text)
+    row = NpcMemory(npc_id=npc_id, about_npc_id=about or "", kind=kind, text=text, delta=int(delta))
     db.add(row)
     db.flush()
     _trim(db, npc_id)
@@ -89,6 +97,18 @@ def recent(db: Session, npc_id: str, limit: int = 5) -> list[str]:
         .all()
     )
     return [r.text for r in rows]
+
+
+def public_recent(db: Session, npc_id: str, limit: int = 8) -> list[NpcMemory]:
+    """관계도에서 보여 줄 기억 — 방문자 대화(visitor)는 뺀다. 다른 손님이 뭘 물었는지는
+    이 손님이 볼 일이 아니다."""
+    return (
+        db.query(NpcMemory)
+        .filter(and_(NpcMemory.npc_id == npc_id, NpcMemory.kind != "visitor"))
+        .order_by(NpcMemory.created_at.desc(), NpcMemory.id.desc())
+        .limit(limit)
+        .all()
+    )
 
 
 def about(db: Session, npc_id: str, other_id: str, limit: int = 2) -> list[str]:
@@ -127,7 +147,12 @@ def gossip(db: Session, teller: str, listener: str, rng: random.Random | None = 
     if source is None:
         return None
     text = f"{display_name(teller)}에게 들음: {source.text}"
-    return remember(db, listener, text, about=source.about_npc_id, kind="gossip")
+    # 같은 얘기를 만날 때마다 또 옮기지 않는다 — 실측에서 한 사건이 세 번 연속 "소식"이 됐다.
+    dup = db.query(NpcMemory).filter(and_(NpcMemory.npc_id == listener, NpcMemory.text == text)).first()
+    if dup is not None:
+        return None
+    # delta 부호를 같이 옮긴다 — 호출자(main)가 listener↔C 친밀도를 이 부호로 ±1 움직인다.
+    return remember(db, listener, text, about=source.about_npc_id, kind="gossip", delta=source.delta)
 
 
 def memory_lines_for_prompt(db: Session, npc_id: str, other_id: str | None = None) -> list[str]:

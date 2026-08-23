@@ -19,6 +19,8 @@ from app.services.chat_service import _npc_profile_for_dynamic_id
         ("contact-npc", "contact"),
         ("npc-post-office", "contact"),
         ("npc-project-mywave", "project"),
+        ("npc-life-gym", "life"),
+        ("life-npc", "life"),
     ],
 )
 def test_canon_matches_building_id_naming_convention(npc_id, expected):

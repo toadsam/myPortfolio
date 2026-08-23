@@ -153,6 +153,27 @@ class NpcMemory(Base):
     about_npc_id: Mapped[str] = mapped_column(String(120), default="", index=True)
     kind: Mapped[str] = mapped_column(String(20), default="encounter")
     text: Mapped[str] = mapped_column(Text, default="")
+    # 그 기억이 관계를 어느 쪽으로 움직였는지. 뒷담화가 친밀도에 번질 때 부호로 쓴다.
+    # (기존 DB 는 database._ensure_npc_memory_columns 가 채운다)
+    delta: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+
+
+class RelationshipMilestone(Base):
+    """관계 연표 — 절친/앙숙/화해/틀어짐의 **영구** 기록.
+
+    NpcRelationship.history 는 6개 롤링이라 한 달 뒤엔 다 잊는다. 여기는 지우지 않는다.
+    "싸움 3 · 화해 2" 같은 장기 서사는 이 표에서 센다.
+    """
+
+    __tablename__ = "relationship_milestone"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    npc_a: Mapped[str] = mapped_column(String(120), index=True)
+    npc_b: Mapped[str] = mapped_column(String(120), index=True)
+    milestone: Mapped[str] = mapped_column(String(40), default="")
+    source: Mapped[str] = mapped_column(String(20), default="encounter")  # encounter | gossip | relay
+    affinity: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
 
 

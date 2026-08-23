@@ -29,6 +29,7 @@ import type {
   NpcEncounterResponse,
   NpcGroupChatResponse,
   NpcPreset,
+  NpcMemoryItem,
   NpcRelationshipRow,
   VillageEvent,
   NpcPresetInput,
@@ -193,6 +194,13 @@ export function fetchRelationships(): Promise<NpcRelationshipRow[]> {
   return requestJson<NpcRelationshipRow[]>("/npc/relationships", {
     cache: "no-store"
   });
+}
+
+export function fetchNpcMemory(npcId: string): Promise<NpcMemoryItem[]> {
+  return requestJson<NpcMemoryItem[]>(
+    `/npc/memory/${encodeURIComponent(npcId)}`,
+    {cache: "no-store"}
+  );
 }
 
 export function fetchVillageNews(limit = 12): Promise<VillageEvent[]> {

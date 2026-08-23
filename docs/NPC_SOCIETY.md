@@ -83,10 +83,24 @@ NPC 당 30개. `kind` 는 encounter / incident / gossip / visitor.
 - 앙숙 쌍(≤−8)은 마주침 쿨다운 2배.
 - 마일스톤 배너(절친/앙숙/화해/틀어짐)는 그대로.
 
+## 4-b. 3단계 (같은 날) — 성격·전파·개입·역사
+
+| # | 무엇 | 어디 |
+|---|---|---|
+| 직군별 사건 | `Incident(delta, template, actors)` — 행위자의 `canon` 종류가 `actors`에 들어야 후보. 테오는 "기술 설명이 장황"/"버그를 잡아 줌", 체리는 "범위를 또 늘림", 하루는 "운동 같이"/"간식 몰래". 공통(선물·고민·약속·농담)은 `actors=None`. `Outcome.actor_id`로 누가 저질렀는지 남긴다. 템플릿은 `{a:가}` `{b:를}` 꼴로 받침 맞는 조사(`josa`, `Name.__format__`). | `relationship_rules.py` |
+| 뒷담화 → 친밀도 | `NpcMemory.delta`(기존 DB는 `_ensure_npc_memory_columns`). `gossip`이 옮긴 기억의 부호대로 **듣는 이 ↔ 제3자** ±1(`apply_outcome(source="gossip")`), 🗣️ 소식. 같은 얘기는 한 번만 옮긴다. 실측: 픽셀이 루미에게 테오 얘기 → 루미↔테오 1 → −2, "사이가 틀어졌어요". | `memory_service.gossip`, `main.py /npc/encounter` |
+| 방문자 개입 | `relay_service.detect_relay`: 메시지에 **다른 NPC 이름 + 감정어**(미안/고마/칭찬… vs 싫/욕/실망…) → 말 건 NPC ↔ 언급된 NPC ±2, 기억 `relay`, 💌 소식, 응답 `ChatMessageOut.relay` → 대화창에 "💌 픽셀에게 전해졌어요 (+2)" 칩. 이름만("픽셀 잘 지내?")이나 감정이 섞이면 무시. LLM 추가 호출 없음. | `relay_service.py`, `DialogueBox.tsx` |
+| 관계 연표 | `RelationshipMilestone`(영구). `NpcRelationshipRow.fights/reconciliations/milestones` → 관계도 행에 "싸움 1 · 화해 2". | `relationship_service.milestone_counts` |
+| 소식에 모델 한 줄 | `used_ai`면 `"{reason} — {model memory}"`. | `main.py` |
+| 친할수록 천천히 식음 | `_decay_period_days`: \|aff\| ≥ 30 → 3일에 1, ≥ 16 → 2일에 1. | `relationship_service` |
+| 노드 클릭 → 기억 | `GET /npc/memory/{id}`(visitor 제외 8개) → 관계도에서 노드 클릭 시 `NpcMemoryList`. | `VillageHud.tsx` |
+
+`relations.canon`에 `life` 종류가 생겼다(라이프 구역 NPC). 기존 `developer`/`project` 판정은 그대로.
+
 ## 5. 테스트
 
-`backend/tests/test_relationship_rules.py`(규칙 결정성·가중·클램프), `test_memory_service.py`(캡·about·뒷담화),
-`test_relationship_service.py`(id 키·감쇠·purge·마일스톤). 260개 전부 통과.
+`backend/tests/test_relationship_rules.py`(규칙 결정성·가중·클램프·직군 제약·조사), `test_memory_service.py`(캡·about·뒷담화·delta·중복 방지·공개 필터),
+`test_relationship_service.py`(id 키·감쇠 주기·purge·영구 연표), `test_relay_service.py`(방문자 개입 감지·적용). 281개 전부 통과.
 
 ## 6. 같은 날 바뀐 조작·성능 (요약 — 자세한 근거는 메모리 `village-pointer-and-ao`)
 
