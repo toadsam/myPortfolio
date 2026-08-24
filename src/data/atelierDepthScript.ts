@@ -12,7 +12,11 @@
  * 누적만 하고 "견적은 담당자가 다시 안내"가 규칙이다.
  */
 
-import type {AiQuestion, CommissionSpeaker, CommissionTrack} from "@/types/live";
+import type {
+  AiQuestion,
+  CommissionSpeaker,
+  CommissionTrack
+} from "@/types/live";
 
 import type {
   IntakeChoice,
@@ -22,7 +26,11 @@ import type {
 
 const RAW: IntakeChoice = {id: "free", label: "직접 적을게요", free: "raw"};
 
-function pick(id: string, label: string, extra?: Partial<IntakeChoice>): IntakeChoice {
+function pick(
+  id: string,
+  label: string,
+  extra?: Partial<IntakeChoice>
+): IntakeChoice {
   return {id, label, ...extra};
 }
 
@@ -52,10 +60,14 @@ const SLOT_SPECS: SlotSpec[] = [
         effect: {set: {who_updates: "본인이 직접 수정 (관리 화면 필요)"}}
       }),
       pick("rare", "자주 안 바뀌어요. 바뀔 때만 요청할게요", {
-        effect: {set: {who_updates: "변경 잦지 않음, 필요할 때 제작자에게 요청"}}
+        effect: {
+          set: {who_updates: "변경 잦지 않음, 필요할 때 제작자에게 요청"}
+        }
       }),
       pick("staff", "직원이 여럿이서 고칠 거예요", {
-        effect: {set: {who_updates: "직원 여러 명이 수정 (권한 구분 필요할 수 있음)"}}
+        effect: {
+          set: {who_updates: "직원 여러 명이 수정 (권한 구분 필요할 수 있음)"}
+        }
       }),
       RAW
     ],
@@ -66,8 +78,7 @@ const SLOT_SPECS: SlotSpec[] = [
     field: "content_owner",
     speaker: "designer",
     required: true,
-    prompt:
-      "들어갈 사진과 글은 준비된 게 있으실까요? 사진이 반이에요, 진짜로.",
+    prompt: "들어갈 사진과 글은 준비된 게 있으실까요? 사진이 반이에요, 진짜로.",
     choices: [
       pick("ready", "사진도 글도 어느 정도 있어요", {
         effect: {set: {content_owner: "사진·글 보유, 전달 예정"}}
@@ -76,7 +87,9 @@ const SLOT_SPECS: SlotSpec[] = [
         effect: {set: {content_owner: "사진 보유, 글은 제작 측 도움 필요"}}
       }),
       pick("none", "둘 다 없어요. 도움이 필요해요", {
-        effect: {set: {content_owner: "사진·글 모두 준비 필요 (촬영/작성 도움)"}}
+        effect: {
+          set: {content_owner: "사진·글 모두 준비 필요 (촬영/작성 도움)"}
+        }
       }),
       RAW
     ],
@@ -124,12 +137,17 @@ const SLOT_SPECS: SlotSpec[] = [
     speaker: "designer",
     required: false,
     multi: true,
-    prompt: "반대로, 이건 싫다 하는 게 있으세요? 피해야 할 걸 알면 헛돌지 않아요.",
+    prompt:
+      "반대로, 이건 싫다 하는 게 있으세요? 피해야 할 걸 알면 헛돌지 않아요.",
     choices: [
-      pick("flashy", "번쩍거리고 정신없는 거", {effect: {dislikes: ["번쩍거리고 정신없는 연출"]}}),
+      pick("flashy", "번쩍거리고 정신없는 거", {
+        effect: {dislikes: ["번쩍거리고 정신없는 연출"]}
+      }),
       pick("popup", "팝업·광고 느낌", {effect: {dislikes: ["팝업/광고 느낌"]}}),
       pick("dark", "어두운 분위기", {effect: {dislikes: ["어두운 분위기"]}}),
-      pick("text", "글이 빽빽한 거", {effect: {dislikes: ["글이 빽빽한 화면"]}}),
+      pick("text", "글이 빽빽한 거", {
+        effect: {dislikes: ["글이 빽빽한 화면"]}
+      }),
       pick("old", "촌스러운 옛날 디자인", {effect: {dislikes: ["구식 디자인"]}})
     ],
     reaction: "기억할게요. 싫다고 하신 건 시안에서 처음부터 뺄 거예요."
@@ -138,7 +156,8 @@ const SLOT_SPECS: SlotSpec[] = [
     field: "reference_notes",
     speaker: "designer",
     required: false,
-    prompt: "참고 사이트를 주셨다면(또는 지금 떠오른 게 있다면) — 그 사이트의 **어떤 점**이 좋았어요? 색인지, 정돈된 느낌인지, 사진인지.",
+    prompt:
+      "참고 사이트를 주셨다면(또는 지금 떠오른 게 있다면) — 그 사이트의 **어떤 점**이 좋았어요? 색인지, 정돈된 느낌인지, 사진인지.",
     choices: [RAW],
     reaction: "그 '왜'가 제일 값져요. 겉만 베끼는 걸 막아 주거든요."
   },
@@ -146,7 +165,8 @@ const SLOT_SPECS: SlotSpec[] = [
     field: "decision_maker",
     speaker: "planner",
     required: false,
-    prompt: "시안이 나오면 최종 결정은 누가 하세요? 확인받아야 할 분이 있는지 궁금해요.",
+    prompt:
+      "시안이 나오면 최종 결정은 누가 하세요? 확인받아야 할 분이 있는지 궁금해요.",
     choices: [
       pick("me", "제가 결정해요", {effect: {set: {decision_maker: "본인"}}}),
       pick("together", "동업자/가족과 같이요", {
@@ -210,7 +230,8 @@ const BRANCH_TREES: Record<string, BranchSpec[]> = {
         pick("global", "해외 결제도 필요해요"),
         RAW
       ],
-      reaction: "…해외 결제는 심사가 따로 있어요. 그건 접수된 내용에 적어 두겠습니다."
+      reaction:
+        "…해외 결제는 심사가 따로 있어요. 그건 접수된 내용에 적어 두겠습니다."
     },
     {
       id: "S4",
@@ -234,7 +255,8 @@ const BRANCH_TREES: Record<string, BranchSpec[]> = {
         pick("no", "필요 없어요"),
         RAW
       ],
-      reaction: "적었어요. 수량 관리는 관리 화면 쪽 일이 늘어나는 항목이라 표시해 둘게요."
+      reaction:
+        "적었어요. 수량 관리는 관리 화면 쪽 일이 늘어나는 항목이라 표시해 둘게요."
     },
     {
       id: "S6",
@@ -284,7 +306,8 @@ const BRANCH_TREES: Record<string, BranchSpec[]> = {
         pick("panel", "관리 화면에서 확인할게요"),
         RAW
       ],
-      reaction: "알림 방식 적었어요. 문자 쪽은 발송 비용이 조금 드는 것도 나중에 안내드릴게요."
+      reaction:
+        "알림 방식 적었어요. 문자 쪽은 발송 비용이 조금 드는 것도 나중에 안내드릴게요."
     },
     {
       id: "B4",
@@ -329,7 +352,8 @@ const BRANCH_TREES: Record<string, BranchSpec[]> = {
     {
       id: "A2",
       speaker: "planner",
-      prompt: "로그인하면 제일 먼저 뭐가 보여야 하나요? 그 화면 하나를 말로 그려 주세요.",
+      prompt:
+        "로그인하면 제일 먼저 뭐가 보여야 하나요? 그 화면 하나를 말로 그려 주세요.",
       choices: [RAW],
       reaction: "그 화면이 이 서비스의 심장이에요. 잘 받았어요."
     },
@@ -343,7 +367,8 @@ const BRANCH_TREES: Record<string, BranchSpec[]> = {
         pick("api", "외부 서비스와 데이터를 주고받아야 해요"),
         RAW
       ],
-      reaction: "…연동은 상대편 사정이 절반이라, 일찍 알수록 좋아요. 적었습니다."
+      reaction:
+        "…연동은 상대편 사정이 절반이라, 일찍 알수록 좋아요. 적었습니다."
     },
     {
       id: "A4",
@@ -367,7 +392,8 @@ const BRANCH_TREES: Record<string, BranchSpec[]> = {
         pick("l", "그보다 많이요"),
         RAW
       ],
-      reaction: "규모 감 잡았어요. 처음부터 크게 지을지 가볍게 시작할지의 기준이 돼요."
+      reaction:
+        "규모 감 잡았어요. 처음부터 크게 지을지 가볍게 시작할지의 기준이 돼요."
     }
   ],
   기업소개: [
@@ -393,7 +419,8 @@ const BRANCH_TREES: Record<string, BranchSpec[]> = {
         pick("often", "자주 올릴 거예요"),
         RAW
       ],
-      reaction: "자주 올리시면 게시판과 관리 화면 얘기가 붙어요. 그건 담당자가 다시 안내드릴게요.",
+      reaction:
+        "자주 올리시면 게시판과 관리 화면 얘기가 붙어요. 그건 담당자가 다시 안내드릴게요.",
       featureOn: {choiceId: "often", feature: "게시판"}
     },
     {
@@ -455,7 +482,8 @@ const BRANCH_TREES: Record<string, BranchSpec[]> = {
         pick("rare", "가끔이요, 그때 요청할게요"),
         RAW
       ],
-      reaction: "직접 올리시려면 관리 화면 얘기가 붙어요. 담당자가 다시 안내드릴게요.",
+      reaction:
+        "직접 올리시려면 관리 화면 얘기가 붙어요. 담당자가 다시 안내드릴게요.",
       featureOn: {choiceId: "often", feature: "관리자"}
     }
   ],
@@ -482,7 +510,8 @@ const BRANCH_TREES: Record<string, BranchSpec[]> = {
         pick("keep", "계속 쓸 거예요"),
         RAW
       ],
-      reaction: "기간 적었어요. 행사용이면 날짜 지나고 어떻게 할지도 나중에 정해요."
+      reaction:
+        "기간 적었어요. 행사용이면 날짜 지나고 어떻게 할지도 나중에 정해요."
     },
     {
       id: "L3",
@@ -529,7 +558,10 @@ function branchQuestion(spec: BranchSpec): IntakeQuestion {
     prompt: spec.prompt,
     choices: spec.choices.map(choice =>
       spec.featureOn && choice.id === spec.featureOn.choiceId
-        ? {...choice, effect: {...choice.effect, features: [spec.featureOn.feature]}}
+        ? {
+            ...choice,
+            effect: {...choice.effect, features: [spec.featureOn.feature]}
+          }
         : choice
     ),
     reaction: () => spec.reaction,
@@ -592,7 +624,9 @@ function slotValue(track: CommissionTrack, field: string): string {
  * AI 질문이 이미 생성돼 있으면(재방문) gate 없이 미답 질문만 잇는다.
  */
 export function buildDepthScript(track: CommissionTrack): IntakeStep[] {
-  const remainingSlots = SLOT_SPECS.filter(spec => !slotValue(track, spec.field));
+  const remainingSlots = SLOT_SPECS.filter(
+    spec => !slotValue(track, spec.field)
+  );
   const tree = BRANCH_TREES[track.site_type] ?? DEFAULT_BRANCH;
   const remainingBranch = tree.filter(spec => !track.branch[spec.id]);
 
@@ -602,7 +636,12 @@ export function buildDepthScript(track: CommissionTrack): IntakeStep[] {
   ];
 
   const steps: IntakeStep[] = [];
-  const revisit = track.messages.length > 0;
+  // 재방문 판정에 messages 만 보면 안 된다 — 릴레이 선택지로만 답한 사람은 대화 로그가
+  // 비어 있어서 두 번째 방문에도 첫 인사를 다시 듣게 된다(실측).
+  const revisit =
+    track.messages.length > 0 ||
+    Object.keys(track.branch).length > 0 ||
+    SLOT_SPECS.some(spec => slotValue(track, spec.field));
   const nothingLeft =
     questions.length === 0 &&
     (!track.ai_questions_done
@@ -615,10 +654,10 @@ export function buildDepthScript(track: CommissionTrack): IntakeStep[] {
     line: nothingLeft
       ? `접수번호 ${track.public_id} 건은 필요한 내용을 다 받았어요. 덧붙이고 싶은 게 있으면 아래에 편하게 남겨주세요.`
       : revisit
-        ? "다시 오셨네요. 남은 것만 이어서 여쭐게요."
-        : `다시 뵙네요. 접수번호 ${track.public_id} 건으로 몇 가지만 더 여쭐게요. ` +
-          "실제로 만들 때 꼭 알아야 하는 것들이라, 답해주시면 결과가 많이 달라져요. " +
-          "부담스러운 건 건너뛰셔도 돼요."
+      ? "다시 오셨네요. 남은 것만 이어서 여쭐게요."
+      : `다시 뵙네요. 접수번호 ${track.public_id} 건으로 몇 가지만 더 여쭐게요. ` +
+        "실제로 만들 때 꼭 알아야 하는 것들이라, 답해주시면 결과가 많이 달라져요. " +
+        "부담스러운 건 건너뛰셔도 돼요."
   });
 
   steps.push(...withHandoffs(questions));
@@ -660,7 +699,10 @@ export function collectAskedPairs(
 ): {question: string; answer: string}[] {
   const pairs: {question: string; answer: string}[] = [];
   for (const spec of SLOT_SPECS) {
-    pairs.push({question: spec.prompt, answer: readSlotValue(draft, spec.field)});
+    pairs.push({
+      question: spec.prompt,
+      answer: readSlotValue(draft, spec.field)
+    });
   }
   const tree = BRANCH_TREES[siteType] ?? DEFAULT_BRANCH;
   for (const spec of tree) {

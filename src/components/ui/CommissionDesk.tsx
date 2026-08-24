@@ -157,7 +157,10 @@ function DepthRelayDesk({
   const initialLines = useMemo<Omit<DialogueLine, "id">[]>(
     () =>
       (track.messages ?? []).map(message => ({
-        speaker: message.role === "visitor" ? ("visitor" as const) : ("intake" as const),
+        speaker:
+          message.role === "visitor"
+            ? ("visitor" as const)
+            : ("intake" as const),
         text: message.content
       })),
     [track.messages]
@@ -875,7 +878,7 @@ function PreviewPane({preview}: {preview: SharedArtifact}) {
 function DepthProgress({draft}: {draft: CommissionDraft | null}) {
   if (!draft) return null;
 
-  const answered: {label: string; value: string}[] = [
+  const rows: {label: string; value: string}[] = [
     {label: "운영·수정", value: draft.who_updates},
     {label: "콘텐츠", value: draft.content_owner},
     {label: "성공 기준", value: draft.success_metric},
@@ -883,9 +886,12 @@ function DepthProgress({draft}: {draft: CommissionDraft | null}) {
     {label: "피할 것", value: draft.dislikes.join(", ")},
     {label: "참고 이유", value: draft.reference_notes},
     {label: "결정하는 분", value: draft.decision_maker}
-  ].filter(row => row.value.trim());
+  ];
+  const answered = rows.filter(row => row.value.trim());
 
-  const remaining = draft.depth_missing;
+  // 남은 항목은 **여기서 센다.** 서버가 준 depth_missing 을 그대로 쓰면 릴레이가 답을
+  // 로컬 draft 에 담는 동안 숫자가 안 줄어, 답해도 그대로인 것처럼 보인다(실측 버그).
+  const remaining = rows.filter(row => !row.value.trim()).map(row => row.label);
   const plannerAnswered = draft.planner_questions.filter(item =>
     item.answer.trim()
   );

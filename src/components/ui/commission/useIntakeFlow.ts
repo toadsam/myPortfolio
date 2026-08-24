@@ -184,8 +184,8 @@ function applyEffects(
         effect.pages === "preset"
           ? presetPages(next.site_type)
           : effect.pages === "preset+5"
-            ? presetPages(next.site_type, true)
-            : [...effect.pages];
+          ? presetPages(next.site_type, true)
+          : [...effect.pages];
     }
     if (effect.features) {
       for (const feature of effect.features) {
@@ -287,24 +287,20 @@ export function useDialogueFlow(options: DialogueFlowOptions) {
   // 대본은 ref 로 든다 — gate 가 실행 중에 스텝을 끼워 넣기 때문. stepIndex 는 state.
   const scriptRef = useRef<IntakeStep[]>(options.script);
 
-  const [state, dispatch] = useReducer(
-    reducer,
-    undefined,
-    (): FlowState => {
-      let id = 1;
-      const seeded = (initialLines ?? []).map(line => ({...line, id: id++}));
-      return {
-        stepIndex: -1,
-        phase: "speaking",
-        speaker: "intake",
-        draft: initialDraft ?? emptyCommissionDraft(),
-        lines: seeded,
-        selected: [],
-        freeChoice: null,
-        nextLineId: id
-      };
-    }
-  );
+  const [state, dispatch] = useReducer(reducer, undefined, (): FlowState => {
+    let id = 1;
+    const seeded = (initialLines ?? []).map(line => ({...line, id: id++}));
+    return {
+      stepIndex: -1,
+      phase: "speaking",
+      speaker: "intake",
+      draft: initialDraft ?? emptyCommissionDraft(),
+      lines: seeded,
+      selected: [],
+      freeChoice: null,
+      nextLineId: id
+    };
+  });
 
   const pricingRef = useRef<CommissionPricing | null>(null);
   const [, forceRender] = useReducer((n: number) => n + 1, 0);
@@ -600,10 +596,7 @@ export function useDialogueFlow(options: DialogueFlowOptions) {
       if (choice.free === "raw") {
         // 원문 그대로 담는다 — 2층 슬롯·분기·AI 질문의 자유 입력 경로.
         const draft = question.slotField
-          ? applyEffects(
-              {...state.draft, [question.slotField]: trimmed},
-              []
-            )
+          ? applyEffects({...state.draft, [question.slotField]: trimmed}, [])
           : state.draft;
         const ctx = buildContext(draft, [choice]);
         dispatch({
@@ -741,7 +734,15 @@ export function useDialogueFlow(options: DialogueFlowOptions) {
         });
       }
     },
-    [state.phase, state.speaker, state.draft, history, refreshEstimate, consult, replyAs]
+    [
+      state.phase,
+      state.speaker,
+      state.draft,
+      history,
+      refreshEstimate,
+      consult,
+      replyAs
+    ]
   );
 
   const progress = useMemo(() => {

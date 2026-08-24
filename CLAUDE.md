@@ -121,6 +121,14 @@ Three things make this unlike every other district:
   `consult(speaker=…)` 로 그 식구 페르소나가 답한다. 제작 슬롯은 여전히 1차에서 묻지 않는다. 전체는
   `docs/ATELIER_INTAKE_SCRIPT.md`.
 
+- **2층 심화 문답도 같은 릴레이다 (2026-08-24).** `/commission/<token>` 은 세 겹으로 묻는다: 공통 7슬롯 →
+  **사이트 종류별 분기 문항**(쇼핑몰 6·예약 5·웹서비스 5·기업소개 4·포트폴리오 3·랜딩 3) → **AI 가 그 의뢰만
+  보고 뽑은 맞춤 질문**(`generate_ai_questions`, 의뢰당 **1회 멱등**·최대 5개·중복 제거, 실패하면 조용히 0개).
+  대본은 `src/data/atelierDepthScript.ts` 가 track 응답을 보고 **이미 답한 문항을 빼고** 조립하고, 엔진은 1층과
+  같은 `useDialogueFlow` 다. 답은 문항마다 `POST /commission/track/{token}/answers` 로 즉시 저장(순수 저장이라
+  리밋 없음, 토큰이 자물쇠). **`depth_done` 은 여전히 고정 필수 슬롯만 본다** — 분기 문항도 AI 질문도 완료
+  조건이 아니다. 전체는 `docs/ATELIER_DEPTH_SCRIPT.md`.
+
 Two naming traps, both already guarded and locked by `tests/test_relations.py` — keep the atelier branch
 **first** in both `relations.canon()` and `chat_service._npc_profile_for_dynamic_id()`, since the existing
 `"backend"`/`"frontend"` substring checks would otherwise swallow `atelier-backend` into `developer`.

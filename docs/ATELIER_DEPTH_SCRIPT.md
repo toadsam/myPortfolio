@@ -1,6 +1,7 @@
-# 의뢰 공방 심화 문답(2층) — 분기 트리 + AI 맞춤 질문 (계획, 2026-08-24)
+# 의뢰 공방 심화 문답(2층) — 분기 트리 + AI 맞춤 질문 (2026-08-24)
 
-> **상태: 계획서. 아직 코드 없음.** 확정되면 구현하고, 1층처럼 이 문서는 근거로 남긴다.
+> **상태: 구현 완료 (2026-08-24).** 대본은 `src/data/atelierDepthScript.ts` 에 있다.
+> 문항을 고치려면 **코드 쪽을 고치고** 이 문서는 근거(왜 이렇게 물었나)로 남긴다.
 > 1층(접수 릴레이 설문)은 [ATELIER_INTAKE_SCRIPT.md](./ATELIER_INTAKE_SCRIPT.md) — 구현 완료.
 > 배경은 [COMMISSION_ATELIER.md](./COMMISSION_ATELIER.md), 운영은 [ATELIER_GUIDE.md](./ATELIER_GUIDE.md).
 
@@ -146,21 +147,36 @@ AI 가 그 의뢰만 보고 뽑은 맞춤 질문(신규, 최대 5개)**. 그 뒤
   2층에 **없다**(위 3장의 이유).
 - 시안 미리보기(`PreviewPane`)·planner 질문 흐름은 그대로 위에 얹힌다.
 
-## 6. 구현 순서 (승인 후)
+## 6. 구현 결과 — 어디에 무엇이 있나
 
-1. 백엔드: `requirements["branch"]`·`["ai_questions"]` 저장 + `store_depth_answers` 확장,
-   `generate_ai_questions()` + 폴백, track 응답에 두 목록 노출 — 테스트
-   (`test_commission_depth.py` 확장: 저장·병합·재생성 답 보존·상한·중복 제거)
-2. `atelierDepthScript.ts` — 공통 7슬롯 카드화 + 종류별 트리(3장 표) + AI 질문 합성
-3. `useIntakeFlow` → `useDialogueFlow` 추상화 (1층 회귀 없음을 기존 동작으로 확인)
-4. `/commission/[token]` 릴레이 UI 교체, `DepthProgress`·관리자 화면·에이전트 브리프 반영
-5. E2E: 쇼핑몰 한 건을 접수→2층 완주→AI 질문 생성→관리자 상세 확인
+| 파일                                            | 역할                                                                                                                                                 |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/data/atelierDepthScript.ts`                | **2층 대본 단일 출처.** 공통 7슬롯 카드 + 종류별 분기 트리(6종) + AI 질문 스텝 합성. `buildDepthScript(track)` 가 **이미 답한 문항을 빼고** 조립한다 |
+| `src/components/ui/commission/useIntakeFlow.ts` | `useDialogueFlow(options)` 로 일반화. 1층은 `useIntakeFlow()` 래퍼. `gate` 스텝·`onAnswered`·`withEstimate:false`·`consult` 주입이 2층용             |
+| `src/components/ui/CommissionDesk.tsx`          | `DepthRelayDesk` 추가 — `mode="depth"` 는 여기로 온다(옛 `ChatDesk` 는 3D prefill 전용으로 남음)                                                     |
+| `backend/app/services/commission_service.py`    | `save_depth_form()`(화이트리스트·상한·누적), `generate_ai_questions()`(1회 멱등·상한 5·중복 제거·화자 검증)                                          |
+| `backend/app/main.py`                           | `POST /commission/track/{token}/answers`(순수 저장), `POST …/questions`(AI 질문) — 둘 다 리밋 없음, 토큰이 자물쇠                                    |
+| `backend/app/agents/prompts.py`                 | 브리프에 "심화 문답에서 받은 것" + "이 의뢰에만 필요했던 추가 문답" 블록                                                                             |
+| `src/app/admin/page.tsx`                        | `DepthPanel` 에 종류별 문답·AI 문답 블록                                                                                                             |
+| `backend/tests/test_commission_depth_relay.py`  | 저장 규칙 4개 + AI 질문 규칙 3개 + 라우트 배선 1개                                                                                                   |
 
-## 7. 결정 필요 (확정 전)
+밟은 함정:
 
-1. **AI 질문 생성 모델** — 기존 `OPENAI_MODEL` 그대로(제안) vs 저렴한 모델 별도 지정.
-   호출은 의뢰당 1회라 비용 차이는 무시할 수준.
-2. **① 공통 7슬롯의 선택지화 범위** — 7개 전부 카드 선택지를 다는 대신, 성격상 자유
-   입력이 맞는 것(기존 자산·참고 이유)은 자유 입력 유지(제안).
-3. **②에서 새 기능이 드러났을 때** — features 누적 + "견적은 담당자가 다시 안내"
-   한 줄(제안) vs 그 자리에서 재견적 표시. 제안 쪽이 "접수 원문 불변" 원칙과 맞는다.
+- **`ai_questions` 를 `pending_questions` 에 담으면 안 된다.** 체리 질문지 재발행
+  (`import_planner_questions`)이 목록을 통째로 갈아끼우므로 AI 질문이 증발한다. `requirements` 안의 별도 키로 뒀다.
+- **생성은 `ai_questions_done` 플래그로 잠근다.** 빈 결과(0개)여도 done 이다 — 안 그러면 새로고침마다
+  다시 생성돼 그게 곧 취조실이 된다.
+- **"남은 항목" 개수는 화면에서 센다.** 서버가 준 `depth_missing` 을 그대로 쓰면 릴레이가 답을 로컬 draft 에
+  담는 동안 숫자가 안 줄어 "답해도 그대로"로 보인다(실측 후 수정).
+- **재방문 판정에 `messages` 만 보면 안 된다.** 선택지로만 답한 사람은 대화 로그가 비어 있어 두 번째 방문에도
+  첫 인사를 듣는다 — 슬롯·분기 답 유무도 같이 본다.
+- **답 저장은 문항마다 즉시.** 창을 닫아도 남는 게 이 화면의 존재 이유고, 실제로 재방문 시 답한 문항이
+  빠지는 것까지 브라우저로 확인했다(예약 의뢰 12문항 → 재방문 시 2문항).
+
+## 7. 확정된 결정 (계획서 7장의 답)
+
+1. **AI 질문 생성 모델** — 기존 `OPENAI_MODEL` 그대로. 의뢰당 1콜이라 비용 차이가 없다.
+2. **공통 7슬롯의 선택지화** — 5개는 카드, 성격상 자유 입력이 맞는 `existing_assets`·`reference_notes` 는
+   자유 입력만 연다.
+3. **문답 중 새 기능이 드러나면** — features 에 누적만 하고 "견적은 담당자가 다시 안내" 한 줄
+   (예약금 → 결제, 잦은 공지 → 게시판, 직접 업로드 → 관리자). 접수 원문·견적은 불변.
