@@ -1,0 +1,270 @@
+/* 아주총 룸 전용 스타일.
+   전역 오염을 막기 위해 모든 셀렉터는 .aj-root 아래로 스코프하고 aj- 접두사를 쓴다.
+   (전역 tailwind.config.ts 토큰과 충돌하지 않도록 색은 전부 CSS 변수로만 둔다.) */
+
+.aj-root {
+  --aj-bg: #160709;
+  --aj-bg-end: #1c0a0e;
+  --aj-panel: #240d12;
+  --aj-panel-lift: #2d1218;
+  --aj-primary: #fb7185;
+  --aj-accent: #fda4af;
+  --aj-ok: #4ade80;
+  --aj-bad: #f87171;
+  --aj-warn: #fbbf24;
+  --aj-paper: #f4ece2; /* 게시판에 붙은 종이 */
+  --aj-ink: #2a1b1b; /* 그 종이 위의 글씨 */
+  --aj-text: rgba(255, 255, 255, 0.88);
+  --aj-muted: rgba(255, 255, 255, 0.46);
+  --aj-faint: rgba(255, 255, 255, 0.28);
+  --aj-code-bg: #10060a;
+  --aj-frame: rgba(251, 113, 133, 0.2);
+  --aj-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  background-color: var(--aj-bg);
+  color: var(--aj-text);
+  font-family: var(--aj-font-sans), "Pretendard", "Apple SD Gothic Neo",
+    system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+  transition: background-color 1.2s var(--aj-ease);
+}
+
+.aj-root .font-mono {
+  font-family: var(--aj-font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, monospace;
+}
+
+.aj-root ::selection {
+  background: rgba(251, 113, 133, 0.3);
+  color: #fff;
+}
+
+.aj-root .tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 배포가 고쳐지면 방 바닥색이 한 단계 올라간다 — 「고쳤다」의 시각적 보상. */
+.aj-root.aj-lit {
+  background-color: var(--aj-bg-end);
+}
+
+/* 엔트리 시퀀스가 화면을 잡고 있는 동안은 스크롤을 막는다. */
+.aj-root.aj-locked {
+  overflow-y: hidden;
+}
+
+.aj-root::-webkit-scrollbar {
+  width: 8px;
+}
+
+.aj-root::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.aj-root::-webkit-scrollbar-thumb {
+  background: rgba(251, 113, 133, 0.2);
+  border-radius: 4px;
+}
+
+.aj-root::-webkit-scrollbar-thumb:hover {
+  background: rgba(251, 113, 133, 0.35);
+}
+
+/* ── 포커스 ───────────────────────────────────────────────────────
+   이 방의 상호작용은 전부 버튼·링크다. 포커스 링을 지우지 않는다.
+   (다른 프로젝트 룸들이 outline:none 만 남겨 키보드 사용자를 잃은 전례가 있다.) */
+.aj-root :focus-visible {
+  outline: 2px solid var(--aj-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── 손가락 타겟 ──────────────────────────────────────────────────
+   마우스가 있는 화면에서는 밀도를 그대로 두고, 터치 기기에서만 최소 44px 을
+   보장한다. 이 방은 스위치·목록 줄처럼 작은 조작이 많아 그냥 두면 폰에서
+   누르기 어렵다. */
+@media (pointer: coarse) {
+  .aj-root button,
+  .aj-root a,
+  .aj-root [role="switch"] {
+    min-height: 44px;
+  }
+}
+
+/* ── 게시판에 붙은 종이 ───────────────────────────────────────── */
+.aj-paper {
+  background: linear-gradient(178deg, #f8f2ea 0%, var(--aj-paper) 100%);
+  color: var(--aj-ink);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.5) inset;
+}
+
+/* 종이 아래쪽 찢긴 결 */
+.aj-paper-torn {
+  -webkit-mask-image: linear-gradient(#000 0 calc(100% - 7px), transparent 0),
+    radial-gradient(circle at 5px 0, transparent 4px, #000 4.5px);
+  -webkit-mask-size: 100% 100%, 10px 8px;
+  -webkit-mask-position: 0 0, 0 100%;
+  -webkit-mask-repeat: no-repeat, repeat-x;
+  mask-image: linear-gradient(#000 0 calc(100% - 7px), transparent 0),
+    radial-gradient(circle at 5px 0, transparent 4px, #000 4.5px);
+  mask-size: 100% 100%, 10px 8px;
+  mask-position: 0 0, 0 100%;
+  mask-repeat: no-repeat, repeat-x;
+}
+
+/* 압정 */
+.aj-pin::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    #ffd0d6,
+    var(--aj-primary) 55%,
+    #7f1d2b
+  );
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.55);
+}
+
+/* ── 코르크 게시판 바탕 ──────────────────────────────────────── */
+.aj-cork {
+  background-color: #2a1a14;
+  background-image: radial-gradient(
+      circle at 20% 30%,
+      rgba(255, 220, 180, 0.05) 0 2px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 70% 60%,
+      rgba(255, 220, 180, 0.04) 0 2px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 45% 85%,
+      rgba(255, 220, 180, 0.03) 0 2px,
+      transparent 2px
+    );
+  background-size: 26px 26px, 34px 34px, 41px 41px;
+}
+
+/* ── 브라우저 창 ─────────────────────────────────────────────── */
+.aj-browser {
+  border: 1px solid var(--aj-frame);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--aj-code-bg);
+}
+
+/* 새로고침 아이콘 회전 */
+@keyframes aj-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.aj-spin {
+  animation: aj-spin 0.6s linear infinite;
+}
+
+/* 404가 뜰 때의 짧은 흔들림 */
+@keyframes aj-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-5px);
+  }
+  40% {
+    transform: translateX(5px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+
+.aj-shake {
+  animation: aj-shake 0.4s var(--aj-ease);
+}
+
+/* 요청이 서버로 날아가는 점 */
+@keyframes aj-travel {
+  from {
+    left: 0;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  to {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+.aj-travel {
+  animation: aj-travel 0.9s var(--aj-ease) forwards;
+}
+
+/* 도커 레이어가 쌓일 때 */
+@keyframes aj-stack {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scaleX(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleX(1);
+  }
+}
+
+.aj-stack {
+  animation: aj-stack 0.42s var(--aj-ease) backwards;
+}
+
+/* 커서 깜빡임(터미널) */
+@keyframes aj-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.aj-caret {
+  animation: aj-blink 1s step-end infinite;
+}
+
+/* ── 동작 줄이기 ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .aj-root *,
+  .aj-root *::before,
+  .aj-root *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -10,15 +10,19 @@ import {useEffect, useMemo, useRef, useState, type ReactNode} from "react";
 import {getProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
 import {AClubRoom} from "./project-viewers/aclub/AClubRoom";
+import {AjouRoom} from "./project-viewers/ajou/AjouRoom";
+import {AjouchongRoom} from "./project-viewers/ajouchong/AjouchongRoom";
 import {ambientFor} from "./project-viewers/atmosphere";
 import {DarkLabRoom} from "./project-viewers/darklab/DarkLabRoom";
 import {DashboardProjectViewer} from "./project-viewers/DashboardProjectViewer";
+import {MuscleUpRoom} from "./project-viewers/muscleup/MuscleUpRoom";
 import {GameProjectViewer} from "./project-viewers/GameProjectViewer";
 import {PlatformProjectViewer} from "./project-viewers/PlatformProjectViewer";
 import {ProjectIntro} from "./project-viewers/ProjectIntro";
 import {RealtimeProjectViewer} from "./project-viewers/RealtimeProjectViewer";
 import {SoundToggle} from "./project-viewers/SoundToggle";
 import {SueoDistrictRoom} from "./project-viewers/sueo/SueoDistrictRoom";
+import {TserofRoom} from "./project-viewers/tserof/TserofRoom";
 
 // ─── 상수 ────────────────────────────────────────────────────────────────────
 
@@ -743,6 +747,25 @@ export function ProjectViewer({project, onClose}: Props) {
     // 수어지구도 단계 탭 대신 엔트리 시퀀스로 시작하는 전용 스크롤 전시실을 쓴다.
     if (project.id === "sign-language")
       return <SueoDistrictRoom key={project.id} {...shared} />;
+    // 아주총은 핵심이 화면이 아니라 배포 사고 두 건이라, 방문자가 직접 새로고침을
+    // 눌러 404를 만나고 설정 한 줄로 고치는 전용 전시실을 쓴다.
+    if (project.id === "ajouchong")
+      return <AjouchongRoom key={project.id} {...shared} />;
+    // TSEROF 도 전용 전시실을 쓴다. 이 프로젝트에 남은 것은 스크린샷이 아니라
+    // 출시 전에 잡아야 했던 최적화 네 가지와 플레이어가 보내온 네 줄이라,
+    // 방문자가 직접 스위치를 켜 보는 편이 훨씬 빠르게 전달된다.
+    if (project.id === "tserof")
+      return <TserofRoom key={project.id} {...shared} />;
+    // 득근득근도 전용 전시실을 쓴다. 실서비스라 전달할 것이 화면이 아니라
+    // 토큰 로테이션·CORS·배포 사고 같은 「안 보이는 결정」이고, 그건 방문자가
+    // 직접 공격해 보고 스위치를 꺼 봐야 전달된다.
+    if (project.id === "muscleup")
+      return <MuscleUpRoom key={project.id} {...shared} />;
+    // 아주대탐험도 전용 전시실을 쓴다. 이 게임의 핵심은 그림이 아니라
+    // 시점 전환·랜덤 스킬·거리 기반 AI 같은 시스템 결정들이라,
+    // 방문자가 직접 조작해 보는 편이 훨씬 빠르게 전달된다.
+    if (project.id === "ajou-adventure")
+      return <AjouRoom key={project.id} {...shared} />;
 
     let viewer: ReactNode = null;
     if (cat === "game")

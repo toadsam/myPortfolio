@@ -12,7 +12,10 @@ const MOOD: Record<
   energy: {base: 110, fifth: 164.81, type: "triangle"},
   data: {base: 98, fifth: 146.83, type: "sine"},
   arcade: {base: 130.81, fifth: 196, type: "square"},
-  calm: {base: 130.81, fifth: 196, type: "sine"}
+  // calm 은 오래 arcade 와 음이 완전히 같았다(130.81/196). 파형만 달라서
+  // 「차분함」이 아니라 「소리 작은 오락실」로 들렸다. 한 4도 낮춰 F2+C3 로 두면
+  // 다섯 분위기의 기음이 전부 달라진다. 공방·게시판처럼 오래 머무는 방의 음이다.
+  calm: {base: 87.31, fifth: 130.81, type: "sine"}
 };
 
 class SoundManager {

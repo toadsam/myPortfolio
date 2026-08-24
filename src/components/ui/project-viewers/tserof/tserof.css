@@ -1,0 +1,418 @@
+/* TSEROF 룸 전용 스타일.
+   전역 오염을 막기 위해 모든 셀렉터는 .ts-root 아래로 스코프하고 ts- 접두사를 쓴다.
+   색·이징은 portfolio-specs/10-tserof.md 의 「공통 디자인 토큰」을 그대로 옮긴 값이다. */
+
+.ts-root {
+  --ts-bg: #04120d;
+  --ts-primary: #34d399;
+  --ts-secondary: #059669;
+  --ts-accent: #6ee7b7;
+  --ts-locked: rgba(255, 255, 255, 0.1);
+  --ts-text: rgba(255, 255, 255, 0.86);
+  --ts-muted: rgba(255, 255, 255, 0.46);
+  --ts-faint: rgba(255, 255, 255, 0.3);
+  --ts-bad: #f87171;
+  --ts-warn: #fbbf24;
+  --ts-ray: #7dd3fc;
+  --ts-panel: #061a12;
+  --ts-border: rgba(52, 211, 153, 0.16);
+  /* 코드 하이라이트 */
+  --ts-c-comment: #4b7c68;
+  --ts-c-string: #d9a45b;
+  --ts-c-keyword: #34d399;
+  --ts-c-number: #b58cf0;
+  /* 오버슛 이징 — 이 방의 리듬은 탄력적이고 경쾌하다(0.25~0.6s) */
+  --ts-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  background-color: var(--ts-bg);
+  color: var(--ts-text);
+  font-family: var(--ts-font-sans), "Pretendard", "Apple SD Gothic Neo",
+    system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+.ts-root .font-mono {
+  font-family: var(--ts-font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, monospace;
+}
+
+.ts-root ::selection {
+  background: rgba(52, 211, 153, 0.3);
+  color: #fff;
+}
+
+.ts-root .tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 부팅 시퀀스·영상 라이트박스 동안에만 잠근다. 본문에서는 절대 걸지 않는다. */
+.ts-root.ts-locked {
+  overflow-y: hidden;
+}
+
+.ts-root::-webkit-scrollbar {
+  width: 8px;
+}
+
+.ts-root::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ts-root::-webkit-scrollbar-thumb {
+  background: rgba(52, 211, 153, 0.2);
+  border-radius: 4px;
+}
+
+.ts-root::-webkit-scrollbar-thumb:hover {
+  background: rgba(52, 211, 153, 0.35);
+}
+
+/* ── 포커스 ─────────────────────────────────────────────────────
+   스펙: 2px #34d399, offset 2px. 데모 컨테이너도 같은 링을 쓴다. */
+.ts-root :focus-visible {
+  outline: 2px solid var(--ts-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 터치 기기에서만 최소 44px */
+@media (pointer: coarse) {
+  .ts-root button,
+  .ts-root a,
+  .ts-root [role="switch"] {
+    min-height: 44px;
+  }
+}
+
+/* ── 와이어프레임 그리드 (48px 셀) ──────────────────────────── */
+.ts-grid {
+  background-image: repeating-linear-gradient(
+      0deg,
+      rgba(52, 211, 153, 0.05) 0 1px,
+      transparent 1px 48px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(52, 211, 153, 0.05) 0 1px,
+      transparent 1px 48px
+    );
+}
+
+/* 부팅 화면의 바닥면 — 원근으로 눕힌 그리드 */
+.ts-groundgrid {
+  transform: perspective(800px) rotateX(58deg);
+  transform-origin: center bottom;
+}
+
+@keyframes ts-grid-in {
+  from {
+    opacity: 0;
+    transform: perspective(800px) rotateX(58deg) translateY(120px);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(800px) rotateX(58deg) translateY(0);
+  }
+}
+
+.ts-grid-in {
+  animation: ts-grid-in 0.7s ease-out backwards;
+}
+
+/* ── 플레이어 블록: 낙하 + 스쿼시 ───────────────────────────── */
+@keyframes ts-drop {
+  0% {
+    transform: translateY(-60vh) scaleY(1);
+  }
+  70% {
+    transform: translateY(0) scaleY(1);
+  }
+  80% {
+    transform: translateY(0) scaleY(0.7);
+  }
+  90% {
+    transform: translateY(0) scaleY(1.08);
+  }
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+.ts-drop {
+  animation: ts-drop 0.9s cubic-bezier(0.5, 0, 0.9, 0.6) backwards;
+}
+
+@keyframes ts-hop {
+  0% {
+    transform: translateY(0) scaleY(1);
+  }
+  35% {
+    transform: translateY(-70px) scaleY(1.06);
+  }
+  70% {
+    transform: translateY(0) scaleY(1);
+  }
+  80% {
+    transform: translateY(0) scaleY(0.7);
+  }
+  90% {
+    transform: translateY(0) scaleY(1.08);
+  }
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+.ts-hop {
+  animation: ts-hop 0.62s var(--ts-ease);
+}
+
+/* 착지 먼지 */
+@keyframes ts-dust {
+  from {
+    opacity: 0.9;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--dx, 10px), -4px) scale(0.4);
+  }
+}
+
+.ts-dust {
+  animation: ts-dust 0.3s ease-out forwards;
+}
+
+/* PRESS SPACE — 1.4s 주기(1Hz 미만, 광과민성 규칙 준수) */
+@keyframes ts-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.ts-pulse {
+  animation: ts-pulse 1.4s ease-in-out infinite;
+}
+
+/* ── 스테이지 보드 슬롯 ─────────────────────────────────────── */
+@keyframes ts-pop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.ts-pop {
+  animation: ts-pop 0.32s var(--ts-ease) backwards;
+}
+
+/* 헤더 미니 보드 칸이 열릴 때 */
+@keyframes ts-cellpop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.ts-cellpop {
+  animation: ts-cellpop 0.25s var(--ts-ease);
+}
+
+/* 현재 칸 호흡 */
+@keyframes ts-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+.ts-breathe {
+  animation: ts-breathe 2.4s ease-in-out infinite;
+}
+
+/* 잠긴 슬롯에 hover — 「아직 아니다」 */
+@keyframes ts-nope {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
+  }
+}
+
+.ts-nope:hover {
+  animation: ts-nope 0.2s ease-in-out;
+}
+
+/* ── 무대(그레이박스) ───────────────────────────────────────── */
+.ts-stage {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--ts-border);
+  border-radius: 6px;
+  background-color: #041610;
+  background-image: repeating-linear-gradient(
+      0deg,
+      rgba(52, 211, 153, 0.05) 0 1px,
+      transparent 1px 48px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(52, 211, 153, 0.05) 0 1px,
+      transparent 1px 48px
+    );
+}
+
+.ts-ground {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #0d3a29 0%, #072318 100%);
+  border-top: 2px solid rgba(110, 231, 183, 0.35);
+}
+
+/* 고드름 */
+.ts-icicle {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 22px solid var(--ts-ray);
+  filter: drop-shadow(0 0 6px rgba(125, 211, 252, 0.45));
+}
+
+/* 레이저 */
+.ts-laser {
+  position: absolute;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(52, 211, 153, 0.1),
+    var(--ts-primary)
+  );
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.6);
+}
+
+/* 프레임마다 버려지는 배열 */
+@keyframes ts-garbage {
+  from {
+    opacity: 0.9;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(16px) scale(0.7);
+  }
+}
+
+.ts-garbage {
+  animation: ts-garbage 0.9s ease-in forwards;
+}
+
+/* 계측 막대 */
+.ts-meter {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.ts-meter > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.25s linear, background-color 0.4s var(--ts-ease);
+}
+
+/* 피드백 카드 도착 */
+@keyframes ts-arrive {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.ts-arrive {
+  animation: ts-arrive 0.4s var(--ts-ease) backwards;
+}
+
+/* 터미널 커서 */
+@keyframes ts-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.ts-caret {
+  animation: ts-blink 1s step-end infinite;
+}
+
+/* 퇴장 — SAVED */
+@keyframes ts-fadeblack {
+  to {
+    opacity: 1;
+  }
+}
+
+.ts-fadeblack {
+  animation: ts-fadeblack 1.1s ease-in forwards;
+}
+
+/* ── 동작 줄이기 ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .ts-root *,
+  .ts-root *::before,
+  .ts-root *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .ts-groundgrid {
+    transform: none;
+  }
+}

@@ -1811,13 +1811,13 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {k: "왜", v: "이동 조작감과 스테이지 진행감을 동시에 살리고 싶었음"},
       {k: "결과", v: "팀 협업으로 스테이지 선택·잠금 해제·이어하기 구조 완성"},
-      {k: "내 역할", v: "게임 프로그래밍 — 플레이어 제어·스테이지 시스템"}
+      {k: "내 역할", v: "부팀장 — 레벨 디자인·장애물/기믹 구현·기획"}
     ],
     demo: {repo: "https://github.com/KimEoJin24/TSEROF"},
     meta: [
-      {label: "기간", value: "2023.11 – 2024.02"},
+      {label: "기간", value: "2023.07 – 2023.11"},
       {label: "팀", value: "5인 팀 프로젝트"},
-      {label: "역할", value: "게임 시스템 · 플레이 로직 구현"},
+      {label: "역할", value: "레벨 디자인 · 장애물/기믹 구현 · 기획 · 부팀장"},
       {label: "스택", value: "Unity 2022.3 · C#"},
       {label: "출시", value: "Steam 스토어 출시"},
       {
