@@ -21,6 +21,8 @@ from app.models import NpcMemory
 from app.relations import canon
 
 MAX_PER_NPC = 30
+# 방문자 대화 기억은 별도 통 — 사회 기억이 아무리 쌓여도 밀려나지 않는다 (5단계 D-1)
+MAX_VISITOR_PER_NPC = 12
 GOSSIP_CHANCE = 0.5
 
 _KIND_NAMES = {
@@ -78,13 +80,19 @@ def remember(
 
 
 def _trim(db: Session, npc_id: str) -> None:
+    """kind 별 2단 캡. visitor 기억을 사회 기억(마주침·사건·뒷담화, 1~2분마다 생김)과
+    같은 통에 두면 하루도 못 버티고 밀려나 "다시 온 손님"을 못 알아본다 — 통을 나눈다."""
     rows = (
         db.query(NpcMemory)
         .filter(NpcMemory.npc_id == npc_id)
         .order_by(NpcMemory.created_at.desc(), NpcMemory.id.desc())
         .all()
     )
-    for stale in rows[MAX_PER_NPC:]:
+    social = [r for r in rows if r.kind != "visitor"]
+    visitor = [r for r in rows if r.kind == "visitor"]
+    for stale in social[MAX_PER_NPC:]:
+        db.delete(stale)
+    for stale in visitor[MAX_VISITOR_PER_NPC:]:
         db.delete(stale)
 
 

@@ -105,6 +105,24 @@ class RelayOut(BaseModel):
     favor_done: bool = False
 
 
+class AdminAffinityIn(BaseModel):
+    npc_a: str
+    npc_b: str
+    affinity: int = Field(ge=-100, le=100)
+
+
+class SocietyResetOut(BaseModel):
+    removed: int
+    seeded: int
+
+
+class VisitorBondOut(BaseModel):
+    """방문자 ↔ NPC 호감 — 대화창 이름 옆 뱃지용."""
+
+    level: str
+    score: int
+
+
 class FavorOut(BaseModel):
     """NPC 가 방문자에게 건넨 부탁."""
 
@@ -124,6 +142,8 @@ class ChatMessageOut(BaseModel):
     relay: RelayOut | None = None
     # 이번 답변과 함께 NPC 가 건넨 부탁(없으면 None)
     favor: FavorOut | None = None
+    # 이 방문자와 이 NPC 의 호감(익명 단골 시스템). visitor_id 없으면 None.
+    bond: VisitorBondOut | None = None
 
 
 class NpcTickIn(BaseModel):
@@ -647,11 +667,49 @@ class CommissionTrackOut(BaseModel):
     # 공개된 시안. 있으면 화면이 이걸 띄우고 "어디가 아닌지" 묻는다 —
     # 추상적인 질문 열 개보다 구체적으로 틀린 시안 한 장이 정보를 더 뽑아낸다.
     preview: SharedArtifactOut | None = None
+    # 2층 릴레이 설문의 상태 — 종류별 분기 답과 AI 맞춤 질문(답 포함).
+    branch: dict[str, str] = Field(default_factory=dict)
+    ai_questions: list["AiQuestionOut"] = Field(default_factory=list)
+    ai_questions_done: bool = False
 
 
 class CommissionDepthIn(BaseModel):
     message: str = Field(min_length=1, max_length=2000)
     recent_messages: list[str] = Field(default_factory=list)
+
+
+class AiQuestionOut(BaseModel):
+    """AI 가 이 의뢰만 보고 뽑은 맞춤 질문 하나 (2층 세 번째 겹)."""
+
+    id: str
+    question: str
+    answer: str = ""
+    speaker: str = "intake"
+
+
+class CommissionDepthAnswersIn(BaseModel):
+    """릴레이 설문의 답 저장. 전부 선택적 — 온 것만 반영한다.
+
+    LLM 없는 순수 저장 경로라 리밋을 안 태운다. 대신 서비스가 키 화이트리스트
+    (`_DEPTH_FIELDS`, branch 키 형식)와 길이 상한으로 막는다.
+    """
+
+    slots: dict[str, str] = Field(default_factory=dict)
+    branch: dict[str, str] = Field(default_factory=dict)
+    ai_answers: dict[str, str] = Field(default_factory=dict)
+    pages: list[str] = Field(default_factory=list)
+    features: list[str] = Field(default_factory=list)
+
+
+class AiQuestionsIn(BaseModel):
+    """AI 맞춤 질문 생성 요청. `asked` 는 화면이 이미 물은 질문·답 — 중복 방지용 문맥."""
+
+    asked: list[dict[str, str]] = Field(default_factory=list, max_length=40)
+
+
+class AiQuestionsOut(BaseModel):
+    questions: list[AiQuestionOut] = Field(default_factory=list)
+    generated: bool = False
 
 
 class ArtifactShareIn(BaseModel):

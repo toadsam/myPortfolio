@@ -1,15 +1,20 @@
 "use client";
 
 /**
- * 릴레이 설문 상태기계 — 2D 데스크와 3D 공방이 **같은 훅**을 쓴다.
+ * 릴레이 설문 상태기계 — **대본을 주입받는 엔진**이다.
  *
- * 화면은 `lines`(대사 기록)·`phase`·`speaker`·`question` 만 보고 그린다.
+ * `useDialogueFlow(options)` 가 본체고, 1층 접수는 `useIntakeFlow()`(기본 옵션 래퍼),
+ * 2층 심화 문답은 `atelierDepthScript.ts` 가 만든 대본 + 저장 콜백으로 같은 엔진을 쓴다.
+ * 화면(`IntakeDialogue`)은 `lines`·`phase`·`speaker`·`question` 만 보고 그린다.
+ *
  * 규칙 셋:
  * - 선택지 경로는 LLM 0회. `choose/skip/next` 는 전부 동기 계산이고, 서버는
- *   `POST /commission/estimate` 로 견적만 다시 받는다(서버값이 화면값을 덮는다).
- * - "직접 말할게요"·자유 대화만 `consult` 를 부른다(그 식구의 페르소나로).
- *   실패하면 원문을 summary 에 붙이고 되묻지 않고 넘어간다.
- * - draft 는 서버 `CommissionDraft` 그대로다. 설문이 끝나면 기존 접수 폼이 이어받는다.
+ *   `POST /commission/estimate` 로 견적만 다시 받는다(서버값이 화면값을 덮는다). 2층은
+ *   `withEstimate:false` 로 이 경로 전체가 꺼진다 — 심화 문답은 견적의 자리가 아니다.
+ * - "직접 말할게요"·자유 대화만 `consult`(옵션 주입)를 부른다. 실패하면 원문을 담고
+ *   되묻지 않고 넘어간다.
+ * - `gate` 스텝: 대본이 멈추고 비동기로 스텝을 더 받아 온다(2층 AI 맞춤 질문).
+ *   **개수·시점은 대본과 서버 규칙이 정하고**, 실패하면 조용히 0개로 이어진다.
  */
 
 import {useCallback, useEffect, useMemo, useReducer, useRef} from "react";
@@ -58,9 +63,9 @@ export type FlowPhase =
   | "choosing"
   /** 직접 입력창이 열려 있다 */
   | "free-input"
-  /** 서버(consult) 응답 대기 */
+  /** 서버(consult/gate) 응답 대기 */
   | "waiting"
-  /** 설문 끝 — 접수 폼 차례 */
+  /** 설문 끝 */
   | "done";
 
 interface FlowState {
@@ -74,8 +79,6 @@ interface FlowState {
   /** 직접 입력 중인 선택지 */
   freeChoice: IntakeChoice | null;
   nextLineId: number;
-  /** 이 문항에서 답(또는 건너뛰기)을 이미 했는지 — 반응 대사 뒤 "다음" 이 문항을 넘긴다 */
-  answered: boolean;
 }
 
 type Action =
@@ -114,8 +117,7 @@ function reducer(state: FlowState, action: Action): FlowState {
         ...state,
         stepIndex: state.stepIndex + 1,
         selected: [],
-        freeChoice: null,
-        answered: false
+        freeChoice: null
       };
     case "draft":
       return {...state, draft: action.draft};
@@ -143,7 +145,6 @@ function reducer(state: FlowState, action: Action): FlowState {
         lines: [...state.lines, ...lines],
         nextLineId: id,
         phase: "speaking",
-        answered: true,
         freeChoice: null,
         selected: []
       };
@@ -153,6 +154,15 @@ function reducer(state: FlowState, action: Action): FlowState {
   }
 }
 
+const _SET_FIELDS = [
+  "who_updates",
+  "content_owner",
+  "success_metric",
+  "existing_assets",
+  "reference_notes",
+  "decision_maker"
+] as const;
+
 function applyEffects(
   draft: CommissionDraft,
   chosen: IntakeChoice[]
@@ -161,7 +171,8 @@ function applyEffects(
     ...draft,
     pages: [...draft.pages],
     features: [...draft.features],
-    references: [...draft.references]
+    references: [...draft.references],
+    dislikes: [...draft.dislikes]
   };
   const notes: string[] = [];
   for (const choice of chosen) {
@@ -173,8 +184,8 @@ function applyEffects(
         effect.pages === "preset"
           ? presetPages(next.site_type)
           : effect.pages === "preset+5"
-          ? presetPages(next.site_type, true)
-          : [...effect.pages];
+            ? presetPages(next.site_type, true)
+            : [...effect.pages];
     }
     if (effect.features) {
       for (const feature of effect.features) {
@@ -185,6 +196,17 @@ function applyEffects(
     if (effect.budget_hint) next.budget_hint = effect.budget_hint;
     if (effect.deadline_hint) next.deadline_hint = effect.deadline_hint;
     if (effect.note) notes.push(effect.note);
+    if (effect.set) {
+      for (const field of _SET_FIELDS) {
+        const value = effect.set[field];
+        if (value) next[field] = value;
+      }
+    }
+    if (effect.dislikes) {
+      for (const item of effect.dislikes) {
+        if (!next.dislikes.includes(item)) next.dislikes.push(item);
+      }
+    }
   }
   if (notes.length) {
     next.summary = [next.summary, ...notes].filter(Boolean).join(" / ");
@@ -212,33 +234,83 @@ function parseLinks(text: string): string[] {
   return found.length ? found : parseList(text);
 }
 
-export interface UseIntakeFlowOptions {
-  /** 바깥(접수 폼)이 draft 를 따라가야 할 때 */
+export interface ConsultResult {
+  reply: string;
+  draft: CommissionDraft;
+}
+
+export interface DialogueFlowOptions {
+  /** 대본. gate 스텝이 있으면 실행 중에 늘어날 수 있다. */
+  script: IntakeStep[];
+  initialDraft?: CommissionDraft;
+  /** 지난 대화 복원(2층) — 대사 기록 맨 앞에 깔린다. */
+  initialLines?: Omit<DialogueLine, "id">[];
+  /** 견적 기능(가격표 fetch·티커·서버 재계산). 1층 true, 2층 false. */
+  withEstimate?: boolean;
+  /** 자유 입력·말 걸기의 LLM 경로. 기본은 1층 consultCommission. */
+  consult?: (
+    message: string,
+    draft: CommissionDraft,
+    history: string[],
+    speaker: CommissionSpeaker
+  ) => Promise<ConsultResult>;
+  /** 자유 대화 답의 표시 화자 고정(2층: 도안 페르소나라 intake 로 고정) */
+  replyAs?: CommissionSpeaker;
+  /** 문항 하나가 끝날 때(답·건너뛰기·자유입력). 2층이 저장에 쓴다. */
+  onAnswered?: (
+    question: IntakeQuestion,
+    draft: CommissionDraft,
+    visitorText: string,
+    skipped: boolean
+  ) => void;
+  /** gate 스텝 도달 시 추가 스텝을 만들어 온다. 실패하면 빈 배열처럼 진행. */
+  gate?: (draft: CommissionDraft) => Promise<IntakeStep[]>;
+  /** wrapup 대사. 기본은 1층 요약 낭독. */
+  wrapup?: (draft: CommissionDraft) => string;
   onDraftChange?: (draft: CommissionDraft) => void;
 }
 
-export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
-  const {onDraftChange} = options;
+export function useDialogueFlow(options: DialogueFlowOptions) {
+  const {
+    initialDraft,
+    initialLines,
+    withEstimate = true,
+    consult = (message, draft, history, speaker) =>
+      consultCommission(message, draft, history, speaker),
+    replyAs,
+    onAnswered,
+    gate,
+    wrapup = wrapupLine,
+    onDraftChange
+  } = options;
+
+  // 대본은 ref 로 든다 — gate 가 실행 중에 스텝을 끼워 넣기 때문. stepIndex 는 state.
+  const scriptRef = useRef<IntakeStep[]>(options.script);
+
   const [state, dispatch] = useReducer(
     reducer,
     undefined,
-    (): FlowState => ({
-      stepIndex: -1,
-      phase: "speaking",
-      speaker: "intake",
-      draft: emptyCommissionDraft(),
-      lines: [],
-      selected: [],
-      freeChoice: null,
-      nextLineId: 1,
-      answered: false
-    })
+    (): FlowState => {
+      let id = 1;
+      const seeded = (initialLines ?? []).map(line => ({...line, id: id++}));
+      return {
+        stepIndex: -1,
+        phase: "speaking",
+        speaker: "intake",
+        draft: initialDraft ?? emptyCommissionDraft(),
+        lines: seeded,
+        selected: [],
+        freeChoice: null,
+        nextLineId: id
+      };
+    }
   );
 
   const pricingRef = useRef<CommissionPricing | null>(null);
   const [, forceRender] = useReducer((n: number) => n + 1, 0);
 
   useEffect(() => {
+    if (!withEstimate) return;
     let alive = true;
     fetchCommissionPricing()
       .then(pricing => {
@@ -252,17 +324,18 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [withEstimate]);
 
   const pricing = pricingRef.current;
 
   const localEstimate = useMemo<EstimateRange | null>(() => {
-    if (!pricing || !state.draft.site_type) return null;
+    if (!withEstimate || !pricing || !state.draft.site_type) return null;
     return estimateForDraft(pricing, state.draft);
-  }, [pricing, state.draft]);
+  }, [withEstimate, pricing, state.draft]);
 
-  /** 서버값이 있으면 그게 이긴다. 없으면 화면이 굴린 값. */
+  /** 서버값이 있으면 그게 이긴다. 없으면 화면이 굴린 값. 2층은 항상 null. */
   const estimate = useMemo<EstimateRange | null>(() => {
+    if (!withEstimate) return null;
     if (state.draft.estimate_max > 0) {
       return {
         min: state.draft.estimate_min,
@@ -272,7 +345,7 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
       };
     }
     return localEstimate;
-  }, [state.draft, localEstimate]);
+  }, [withEstimate, state.draft, localEstimate]);
 
   const buildContext = useCallback(
     (draft: CommissionDraft, chosen: IntakeChoice[]): ReactionContext => {
@@ -302,15 +375,18 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
     [pricing]
   );
 
-  const step: IntakeStep | null = INTAKE_SCRIPT[state.stepIndex] ?? null;
+  const step: IntakeStep | null = scriptRef.current[state.stepIndex] ?? null;
   const question: IntakeQuestion | null =
     step?.kind === "question" ? step.question : null;
 
   /** 한 스텝에 들어설 때 그 스텝의 첫 대사를 민다. */
   const enterStep = useCallback(
     (index: number, draft: CommissionDraft) => {
-      const next = INTAKE_SCRIPT[index];
-      if (!next) return;
+      const next = scriptRef.current[index];
+      if (!next) {
+        dispatch({type: "phase", phase: "done"});
+        return;
+      }
       const ctx = buildContext(draft, []);
       if (next.kind === "enter") {
         const text =
@@ -337,16 +413,40 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
           phase: "choosing",
           speaker: q.speaker
         });
+      } else if (next.kind === "gate") {
+        // 대본이 여기서 멈추고 스텝을 더 받아 온다. 실패는 조용히 0개.
+        dispatch({
+          type: "push",
+          lines: [{speaker: next.speaker, text: next.line}],
+          phase: "waiting",
+          speaker: next.speaker
+        });
+        const proceed = (extra: IntakeStep[]) => {
+          scriptRef.current = [
+            ...scriptRef.current.slice(0, index + 1),
+            ...extra,
+            ...scriptRef.current.slice(index + 1)
+          ];
+          dispatch({type: "advance"});
+          enterStep(index + 1, draft);
+        };
+        if (!gate) {
+          proceed([]);
+          return;
+        }
+        gate(draft)
+          .then(proceed)
+          .catch(() => proceed([]));
       } else if (next.kind === "wrapup") {
         dispatch({
           type: "push",
-          lines: [{speaker: next.speaker, text: wrapupLine(draft)}],
+          lines: [{speaker: next.speaker, text: wrapup(draft)}],
           phase: "done",
           speaker: next.speaker
         });
       }
     },
-    [buildContext]
+    [buildContext, gate, wrapup]
   );
 
   // 첫 스텝
@@ -365,34 +465,37 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
 
   // 서버 견적으로 덮기 — draft 의 견적 슬롯이 바뀔 때마다. 응답이 늦게 와도 최신만 반영.
   const estimateSeq = useRef(0);
-  const refreshEstimate = useCallback((draft: CommissionDraft) => {
-    if (!draft.site_type) return;
-    const seq = ++estimateSeq.current;
-    estimateCommission(draft)
-      .then(result => {
-        if (seq !== estimateSeq.current) return;
-        dispatch({
-          type: "draft",
-          draft: {
-            ...draft,
-            estimate_min: result.draft.estimate_min,
-            estimate_max: result.draft.estimate_max,
-            weeks_min: result.draft.weeks_min,
-            weeks_max: result.draft.weeks_max,
-            estimate_reason: result.draft.estimate_reason,
-            missing: result.draft.missing,
-            ready_to_submit: result.draft.ready_to_submit,
-            depth_missing: result.draft.depth_missing
-          }
-        });
-      })
-      .catch(() => undefined);
-  }, []);
+  const refreshEstimate = useCallback(
+    (draft: CommissionDraft) => {
+      if (!withEstimate || !draft.site_type) return;
+      const seq = ++estimateSeq.current;
+      estimateCommission(draft)
+        .then(result => {
+          if (seq !== estimateSeq.current) return;
+          dispatch({
+            type: "draft",
+            draft: {
+              ...draft,
+              estimate_min: result.draft.estimate_min,
+              estimate_max: result.draft.estimate_max,
+              weeks_min: result.draft.weeks_min,
+              weeks_max: result.draft.weeks_max,
+              estimate_reason: result.draft.estimate_reason,
+              missing: result.draft.missing,
+              ready_to_submit: result.draft.ready_to_submit,
+              depth_missing: result.draft.depth_missing
+            }
+          });
+        })
+        .catch(() => undefined);
+    },
+    [withEstimate]
+  );
 
   /** "다음" — 말하는 중이면 다음 스텝으로. */
   const next = useCallback(() => {
     if (state.phase !== "speaking") return;
-    const current = INTAKE_SCRIPT[state.stepIndex];
+    const current = scriptRef.current[state.stepIndex];
     if (!current) return;
     // 넘김 연출: 말이 끝나면 화자가 바뀐다
     if (current.kind === "handoff") {
@@ -422,9 +525,10 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
         });
       }
       dispatch({type: "answered", draft, lines});
+      onAnswered?.(question, draft, visitorText, false);
       refreshEstimate(draft);
     },
-    [question, state.draft, buildContext, refreshEstimate]
+    [question, state.draft, buildContext, onAnswered, refreshEstimate]
   );
 
   const choose = useCallback(
@@ -467,7 +571,8 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
         }
       ]
     });
-  }, [question, state.phase, state.draft]);
+    onAnswered?.(question, state.draft, "", true);
+  }, [question, state.phase, state.draft, onAnswered]);
 
   const cancelFree = useCallback(
     () => dispatch({type: "free", choice: null}),
@@ -485,12 +590,33 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
     [state.lines]
   );
 
-  /** 직접 입력 제출. list/links 는 LLM 없이 바로 담고, text 는 consult 로 추출한다. */
+  /** 직접 입력 제출. raw/list/links 는 LLM 없이 담고, text 는 consult 로 추출한다. */
   const submitFree = useCallback(
     async (text: string) => {
       const trimmed = text.trim();
       if (!question || !state.freeChoice || !trimmed) return;
       const choice = state.freeChoice;
+
+      if (choice.free === "raw") {
+        // 원문 그대로 담는다 — 2층 슬롯·분기·AI 질문의 자유 입력 경로.
+        const draft = question.slotField
+          ? applyEffects(
+              {...state.draft, [question.slotField]: trimmed},
+              []
+            )
+          : state.draft;
+        const ctx = buildContext(draft, [choice]);
+        dispatch({
+          type: "answered",
+          draft,
+          lines: [
+            {speaker: "visitor", text: trimmed},
+            {speaker: question.speaker, text: question.reaction(ctx)}
+          ]
+        });
+        onAnswered?.(question, draft, trimmed, false);
+        return;
+      }
 
       if (choice.free === "list") {
         const pages = parseList(trimmed);
@@ -504,6 +630,7 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
             {speaker: question.speaker, text: question.reaction(ctx)}
           ]
         });
+        onAnswered?.(question, draft, trimmed, false);
         refreshEstimate(draft);
         return;
       }
@@ -519,6 +646,7 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
             {speaker: question.speaker, text: question.reaction(ctx)}
           ]
         });
+        onAnswered?.(question, draft, trimmed, false);
         return;
       }
 
@@ -529,7 +657,7 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
         phase: "waiting"
       });
       try {
-        const result = await consultCommission(
+        const result = await consult(
           trimmed,
           state.draft,
           history(),
@@ -539,8 +667,9 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
         dispatch({
           type: "answered",
           draft,
-          lines: [{speaker: question.speaker, text: result.reply}]
+          lines: [{speaker: replyAs ?? question.speaker, text: result.reply}]
         });
+        onAnswered?.(question, draft, trimmed, false);
         refreshEstimate(draft);
       } catch {
         // 추출 실패 — 원문만 담고 되묻지 않는다.
@@ -557,10 +686,11 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
           lines: [
             {
               speaker: question.speaker,
-              text: "적어 뒀어요. 이건 접수되면 제가 다시 읽어 볼게요."
+              text: "적어 뒀어요. 이건 제가 다시 읽어 볼게요."
             }
           ]
         });
+        onAnswered?.(question, draft, trimmed, false);
       }
     },
     [
@@ -568,8 +698,11 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
       state.freeChoice,
       state.draft,
       buildContext,
+      onAnswered,
       refreshEstimate,
-      history
+      history,
+      consult,
+      replyAs
     ]
   );
 
@@ -586,17 +719,12 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
         phase: "waiting"
       });
       try {
-        const result = await consultCommission(
-          trimmed,
-          state.draft,
-          history(),
-          speaker
-        );
+        const result = await consult(trimmed, state.draft, history(), speaker);
         const draft = applyEffects(result.draft, []);
         dispatch({type: "draft", draft});
         dispatch({
           type: "push",
-          lines: [{speaker, text: result.reply}],
+          lines: [{speaker: replyAs ?? speaker, text: result.reply}],
           phase: phaseBefore
         });
         refreshEstimate(draft);
@@ -613,14 +741,15 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
         });
       }
     },
-    [state.phase, state.speaker, state.draft, history, refreshEstimate]
+    [state.phase, state.speaker, state.draft, history, refreshEstimate, consult, replyAs]
   );
 
   const progress = useMemo(() => {
-    const total = INTAKE_SCRIPT.filter(s => s.kind === "question").length;
-    const done = INTAKE_SCRIPT.slice(0, Math.max(0, state.stepIndex)).filter(
-      s => s.kind === "question"
-    ).length;
+    const script = scriptRef.current;
+    const total = script.filter(s => s.kind === "question").length;
+    const done = script
+      .slice(0, Math.max(0, state.stepIndex))
+      .filter(s => s.kind === "question").length;
     return {done, total};
   }, [state.stepIndex]);
 
@@ -645,4 +774,11 @@ export function useIntakeFlow(options: UseIntakeFlowOptions = {}) {
   };
 }
 
-export type IntakeFlow = ReturnType<typeof useIntakeFlow>;
+/** 1층 접수 설문 — 기본 대본과 기본 옵션. */
+export function useIntakeFlow(
+  options: Pick<DialogueFlowOptions, "onDraftChange"> = {}
+) {
+  return useDialogueFlow({script: INTAKE_SCRIPT, ...options});
+}
+
+export type IntakeFlow = ReturnType<typeof useDialogueFlow>;

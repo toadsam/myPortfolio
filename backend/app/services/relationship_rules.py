@@ -163,6 +163,13 @@ def _shared_topic(kind_a: str, kind_b: str, activity: Any) -> tuple[int, str]:
         return 1, "오늘 운동한 얘기로 기운이 났다"
     if memo and "archivist" in kinds:
         return 1, "오늘 메모를 같이 들여다봤다"
+    # 한쪽 직군만 걸려도 그 사람의 기분이 대화에 묻는다 (5단계 E-8) — 공통 화제가 없을 때만
+    if commits >= 5 and kinds & {"developer", "project"}:
+        return 1, f"오늘 커밋 {commits}개 소식에 기분이 좋았다"
+    if study >= 90 and kinds & {"coding", "cs"}:
+        return 1, "오늘 공부 얘기가 나와 신이 났다"
+    if not workout and "life" in kinds:
+        return -1, "운동 기록이 비어 하루가 시무룩했다"
     return 0, ""
 
 

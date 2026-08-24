@@ -62,6 +62,20 @@ export interface ChoiceEffect {
   deadline_hint?: string;
   /** summary 뒤에 덧붙일 한 줄 */
   note?: string;
+  /** 제작 슬롯(문자열 필드)에 그대로 적기 — 2층 공통 슬롯의 선택지가 쓴다 */
+  set?: Partial<
+    Record<
+      | "who_updates"
+      | "content_owner"
+      | "success_metric"
+      | "existing_assets"
+      | "reference_notes"
+      | "decision_maker",
+      string
+    >
+  >;
+  /** dislikes 목록에 추가 */
+  dislikes?: string[];
 }
 
 /** 반응 대사가 볼 수 있는 것. 숫자는 전부 원 단위. */
@@ -99,8 +113,8 @@ export interface IntakeChoice {
   priceKeyword?: string;
   /** site_type 선택지면 기준선을 꼬리표로 보여준다 */
   baseOf?: string;
-  /** "직접 말할게요" — 고르면 입력창이 열리고 그 말은 LLM 슬롯 추출로 간다 */
-  free?: "text" | "list" | "links";
+  /** "직접 말할게요" — text 는 LLM 슬롯 추출, raw 는 원문 그대로(LLM 0회), list/links 는 파싱만 */
+  free?: "text" | "list" | "links" | "raw";
   /** 예산·일정 비교용 (원 / 주). 선택지에만 붙는다 */
   budgetRange?: [number, number];
   deadlineWeeks?: number;
@@ -119,6 +133,10 @@ export interface IntakeQuestion {
   intrusion?: (ctx: ReactionContext) => Intrusion | null;
   /** 문항을 건너뛸 때 NPC 가 하는 말 */
   skipLine?: string;
+  /** raw 자유 입력이 적을 draft 문자열 필드(2층 슬롯 문항) */
+  slotField?: string;
+  /** 이 문항의 답을 어디에 저장하는가 — 2층 릴레이가 onAnswered 에서 읽는다 */
+  store?: {kind: "slot" | "branch" | "ai"; key: string};
 }
 
 export type IntakeStep =
@@ -134,6 +152,8 @@ export type IntakeStep =
       to: CommissionSpeaker;
       line: string;
     }
+  /** 대본이 여기서 멈추고 비동기로 스텝을 더 받아 온다(2층 AI 맞춤 질문) */
+  | {kind: "gate"; speaker: CommissionSpeaker; line: string}
   | {kind: "wrapup"; speaker: CommissionSpeaker};
 
 export const SPEAKER_NPC_ID: Record<CommissionSpeaker, string> = {

@@ -391,3 +391,29 @@ def prune_events(db: Session, keep: int = EVENT_KEEP) -> int:
     db.query(VillageEvent).filter(VillageEvent.id.in_(old_ids)).delete(synchronize_session=False)
     db.commit()
     return len(old_ids)
+
+
+def admin_set_affinity(db: Session, npc_a: str, npc_b: str, affinity: int) -> NpcRelationship | None:
+    """관리자 도구 — 특정 쌍의 친밀도를 직접 놓는다. vibe 는 문턱에서 재계산, history 에 흔적."""
+    rel = get_or_create(db, npc_a, npc_b)
+    if rel is None:
+        return None
+    rel.affinity = max(-100, min(100, int(affinity)))
+    rel.vibe = _vibe_label(rel.affinity)
+    history = list(rel.history or [])
+    history.append(f"관리자 조정 → {rel.affinity:+d}")
+    rel.history = history[-6:]
+    db.commit()
+    db.refresh(rel)
+    return rel
+
+
+def reset_society(db: Session) -> int:
+    """관리자 도구 — NPC 사회만 백지로. 활동/코테/CS/의뢰는 손대지 않는다. 지운 행 수를 돌려준다."""
+    from app.models import NpcFavor, NpcMemory, VisitorBond
+
+    removed = 0
+    for model in (NpcRelationship, RelationshipMilestone, NpcMemory, VillageEvent, NpcFavor, VisitorBond):
+        removed += db.query(model).delete(synchronize_session=False)
+    db.commit()
+    return removed

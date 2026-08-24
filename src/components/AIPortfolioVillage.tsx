@@ -1255,15 +1255,20 @@ export function AIPortfolioVillage() {
       milestone.includes("화해") ||
       milestone.includes("절친");
     if (!fought && !warmed) return;
-    const emote = milestone.includes("절친")
+    // 정점 마일스톤(절친/앙숙)은 한 단계 큰 연출 (5단계 E-7)
+    const isBff = milestone.includes("절친");
+    const isFeud = milestone.includes("앙숙");
+    const isMakeup = milestone.includes("화해");
+    const emote = isBff
       ? "💞"
-      : milestone.includes("화해")
+      : isMakeup
       ? "🤝"
-      : milestone.includes("앙숙")
+      : isFeud
       ? "💔"
       : fought
       ? "💢"
       : "💕";
+    const emoteMs = isBff || isFeud || isMakeup ? 2500 : 1400;
     const delay = Math.max(0, endAt - Date.now());
     const t = window.setTimeout(() => {
       const shown = Date.now();
@@ -1273,20 +1278,54 @@ export function AIPortfolioVillage() {
           next[id] = {
             ...(next[id] ?? {mood: "curious" as NpcMood, energy: 55}),
             emote,
-            emoteExpiresAt: shown + 1400,
-            // 가까워졌으면 잠시 더 마주 본다
-            ...(warmed ? {holdUntil: shown + 1200} : {})
+            emoteExpiresAt: shown + emoteMs,
+            // 가까워졌으면 잠시 더 마주 본다 (절친은 더 길게)
+            ...(warmed ? {holdUntil: shown + (isBff ? 3000 : 1200)} : {}),
+            ...(isFeud ? {mood: "worried" as NpcMood} : {})
           };
+        }
+        if (isBff) {
+          // 가장 가까운 다른 NPC 둘이 🎉 하며 구경 온다 — 마을이 같이 기뻐하는 그림
+          const mid: Vector3Tuple = [
+            (aPos[0] + bPos[0]) / 2,
+            0,
+            (aPos[2] + bPos[2]) / 2
+          ];
+          const near = Object.entries(npcPositionsRef.current)
+            .filter(([id]) => id !== aId && id !== bId && id !== OVERSEER_ID)
+            .sort((x, y) => distance(x[1], mid) - distance(y[1], mid))
+            .slice(0, 2);
+          for (const [id] of near) {
+            next[id] = {
+              ...(next[id] ?? {mood: "excited" as NpcMood, energy: 60}),
+              emote: "🎉",
+              emoteExpiresAt: shown + 2500
+            };
+          }
+          setNpcSocialTargets(state => ({
+            ...state,
+            ...Object.fromEntries(
+              near.map(([id]) => [id, [mid[0] + 1.5, 0, mid[2] + 1.5]])
+            )
+          }));
+          window.setTimeout(() => {
+            setNpcSocialTargets(state => {
+              const nextT = {...state};
+              for (const [id] of near) delete nextT[id];
+              return nextT;
+            });
+          }, 10000);
         }
         return next;
       });
       if (fought) {
-        // 등 돌리고 각자 반대쪽으로 — 디렉터의 "피하기"와 같은 이동 경로
+        // 등 돌리고 각자 반대쪽으로 — 디렉터의 "피하기"와 같은 이동 경로. 앙숙은 더 멀리.
         // 분신(총괄)은 순찰 경로가 따로 있으니 상대만 걸어 나간다
+        const dist = isFeud ? 8 : 5;
         setNpcSocialTargets(state => ({
           ...state,
-          ...(aId !== OVERSEER_ID ? {[aId]: awayFrom(aPos, bPos, 5)} : {}),
-          ...(bId !== OVERSEER_ID ? {[bId]: awayFrom(bPos, aPos, 5)} : {})
+          ...(aId !== OVERSEER_ID ? {[aId]: awayFrom(aPos, bPos, dist)} : {}),
+          ...(bId !== OVERSEER_ID ? {[bId]: awayFrom(bPos, aPos, dist)} : {})
         }));
         window.setTimeout(() => {
           setNpcSocialTargets(state => {

@@ -187,6 +187,11 @@ so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottlene
   응답의 `news` 를 즉시 피드에(`pushNews`), 관계 연표(`timeline`), 익명 방문자 기억(`visitor_id`, localStorage uuid), 빈 DB 씨앗 소식,
   📰 하루 요약(`daily_digest_service`, `/npc/news` 첫 호출), 편 들기(`side_bias` ±1), NPC 의 부탁(`NpcFavor`, 이행 +4 🎁, `/npc/favors`),
   오늘 마일스톤이 건물 불빛 한 칸(`todays_light_shift`, override 뒤). 소식은 500개에서 정리. 공방 NPC 는 마을에 없어 공방 사건은 아직 잠잔다.
+- **5단계(2026-08-24, `docs/NPC_SOCIETY.md` §4-d)**: visitor 기억 별도 캡(12), 부탁이 대사에 직접 섞임, 모델 응답이 JSON 이 되어
+  같은 호출로 relay 감지(사전 규칙 우선, `resolve_mention` 으로 검증), 공방 방이 자체 마주침 루프로 atelier 사건을 깨움,
+  절친/앙숙 정점 연출, 활동 한쪽 보정, `VisitorBond` 단골(하루 +2 상한·뱃지), 관계도 간선 💥/🤝 뱃지,
+  관리자 "NPC 사회" 서랍(`/admin/npc/society/reset` · `PUT /admin/npc/relationships`). E2E 스모크는 `node scripts/e2e/society.mjs`.
+  실 dev DB 는 **리포 루트** `portfolio_village.db`(상대경로) — backend/ 밑의 것은 옛 흔적.
 - `npm run backend:dev`(`scripts/backend-dev.mjs`)는 `--reload` 를 쓰지 않고 직접 `backend/app/**/*.py` 를 감시해 `taskkill` 로 재시작한다 —
   예전엔 uvicorn 리로드가 Windows "일괄 작업을 끝내시겠습니까" 프롬프트에 걸려 죽었다. 로그에 `[backend-dev] restart: <file>` 가 찍힌다.
   (수동으로 `uvicorn --reload` 를 띄웠다면 그 문제는 그대로다.)

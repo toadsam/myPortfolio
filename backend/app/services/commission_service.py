@@ -988,6 +988,236 @@ def unanswered_planner_questions(draft: CommissionDraft) -> list[Any]:
     return [item for item in draft.planner_questions if not item.answer.strip()]
 
 
+
+
+# ─────────────────── 2층 릴레이 저장 + AI 맞춤 질문 (docs/ATELIER_DEPTH_SCRIPT.md) ───────────────────
+#
+# 릴레이 설문은 답 하나마다 저장을 부른다(창을 닫아도 남게). LLM 없는 순수 저장이라
+# 리밋을 안 태우는 대신, 여기서 키 화이트리스트와 길이 상한으로 막는다.
+
+_BRANCH_KEY_RE = re.compile(r"^[A-Za-z][A-Za-z0-9_-]{0,23}$")
+_DEPTH_ANSWER_MAX = 1200
+
+# AI 맞춤 질문 — 개수·길이·화자는 전부 여기 규칙이 정한다. 모델은 후보만 낸다.
+AI_QUESTIONS_CAP = 5
+_AI_QUESTION_MAX_LEN = 120
+_AI_SPEAKERS = ("intake", "planner", "designer", "frontend", "backend")
+
+
+def save_depth_form(
+    db: Session,
+    commission: CommissionRequest,
+    *,
+    slots: dict[str, str] | None = None,
+    branch: dict[str, str] | None = None,
+    ai_answers: dict[str, str] | None = None,
+    pages: list[str] | None = None,
+    features: list[str] | None = None,
+) -> CommissionRequest:
+    """릴레이 설문의 답 하나를 접수 건에 반영한다.
+
+    `store_depth_answers` 와 같은 원칙: 접수 원문(요약·유형·견적)은 건드리지 않고,
+    빈 답은 기존 답을 덮지 않으며, pages/features 는 누적한다.
+    """
+    requirements = dict(commission.requirements or {})
+
+    for field, value in (slots or {}).items():
+        if field not in _DEPTH_FIELDS:
+            continue  # 화이트리스트 밖은 조용히 버린다 — 공개 경로다
+        text = str(value or "").strip()[:_DEPTH_ANSWER_MAX]
+        if not text:
+            continue
+        if field == "dislikes":
+            items = [part.strip() for part in re.split(r"[,\n]", text) if part.strip()]
+            merged = list(dict.fromkeys([*_str_list(requirements.get(field)), *items]))
+            requirements[field] = merged
+        else:
+            requirements[field] = text
+
+    if branch:
+        stored = dict(requirements.get("branch") or {})
+        for key, value in branch.items():
+            if not _BRANCH_KEY_RE.match(str(key)):
+                continue
+            text = str(value or "").strip()[:_DEPTH_ANSWER_MAX]
+            if text:
+                stored[str(key)] = text
+        if stored:
+            requirements["branch"] = stored
+
+    if ai_answers:
+        items = [dict(item) for item in (requirements.get("ai_questions") or [])]
+        for item in items:
+            fresh = str(ai_answers.get(str(item.get("id", "")), "") or "").strip()
+            if fresh:  # 빈 답이 기존 답을 덮지 않는다
+                item["answer"] = fresh[:_DEPTH_ANSWER_MAX]
+        requirements["ai_questions"] = items
+
+    for key, extra in (("pages", pages or []), ("features", features or [])):
+        cleaned = [str(item).strip()[:80] for item in extra if str(item).strip()][:20]
+        if cleaned:
+            requirements[key] = list(
+                dict.fromkeys([*_str_list(requirements.get(key)), *cleaned])
+            )
+
+    commission.requirements = requirements
+    flag_modified(commission, "requirements")
+    db.commit()
+    db.refresh(commission)
+    return commission
+
+
+def _squash(text: str) -> str:
+    return re.sub(r"\s+", "", text)
+
+
+async def generate_ai_questions(
+    db: Session, commission: CommissionRequest, asked: list[dict] | None = None
+) -> tuple[list[dict], bool]:
+    """이 의뢰만 보고 뽑은 맞춤 질문. (목록, 이번에 새로 생성했는가)
+
+    고정 트리가 못 덮는 "신박한" 의뢰에서만 일하는 겹이다 — 전형적 의뢰면 0~2개가 정상.
+    **한 번만 생성한다.** 이미 생성했으면(빈 목록이어도) 저장본을 그대로 돌려준다 —
+    새로고침할 때마다 질문이 늘어나면 그게 곧 취조실이다.
+    실패하면 조용히 0개로 완료 처리한다: 2층은 이미 완주 상태라 잃는 게 없다.
+    """
+    requirements = dict(commission.requirements or {})
+    if requirements.get("ai_questions_done"):
+        return list(requirements.get("ai_questions") or []), False
+
+    asked = asked or []
+    raw: list[dict] = []
+    if settings.openai_api_key:
+        try:
+            raw = await _generate_ai_questions_openai(commission, asked)
+        except Exception:
+            logger.warning("AI 맞춤 질문 생성 실패 → 0개로 진행", exc_info=True)
+
+    # 후처리 — 모델 출력은 여기 규칙이 다듬는다: 상한·길이·중복(이미 물은 것 포함)·화자.
+    asked_keys = [_squash(str(item.get("question", ""))) for item in asked]
+    asked_keys += [_squash(question) for question in _DEPTH_QUESTIONS.values()]
+    cleaned: list[dict] = []
+    seen: set[str] = set()
+    for item in raw:
+        text = _clean(str(item.get("question", "")).strip())[:_AI_QUESTION_MAX_LEN]
+        if len(text) < 6:
+            continue
+        key = _squash(text)
+        if key in seen:
+            continue
+        if any(key in prev or prev in key for prev in asked_keys if prev):
+            continue
+        seen.add(key)
+        speaker = str(item.get("speaker", "") or "")
+        if speaker not in _AI_SPEAKERS:
+            speaker = "intake"
+        cleaned.append(
+            {
+                "id": f"a{len(cleaned) + 1}",
+                "question": text,
+                "answer": "",
+                "speaker": speaker,
+            }
+        )
+        if len(cleaned) >= AI_QUESTIONS_CAP:
+            break
+
+    requirements["ai_questions"] = cleaned
+    requirements["ai_questions_done"] = True
+    commission.requirements = requirements
+    flag_modified(commission, "requirements")
+    db.commit()
+    db.refresh(commission)
+    return cleaned, True
+
+
+_AI_QUESTIONS_PROMPT = """너는 홈페이지 제작 공방의 접수 검토자다. 아래는 한 손님의 의뢰 내용과,
+이미 물어본 질문·답 전체다. **이 의뢰를 실제로 만들기 시작할 때 막히게 될, 아직 불명확한
+지점**만 골라 손님에게 던질 추가 질문을 만든다.
+
+규칙:
+- 이미 답이 있는 것, 이미 물어본 것과 겹치는 질문은 절대 내지 않는다.
+- 최대 {cap}개. **내용이 이미 명백하면 빈 배열을 돌려준다** — 억지로 채우지 않는다.
+- 웹을 모르는 손님이 바로 답할 수 있는 쉬운 한국어 한 문장으로. 전문용어 금지. 120자 이내.
+- 연락처·개인정보를 묻지 않는다. 견적·가격 흥정을 하지 않는다.
+- speaker 는 그 질문과 가장 가까운 담당: planner(구조·내용), designer(생김새·자료),
+  frontend(화면·기기), backend(데이터·연동·결제), 애매하면 intake.
+
+반드시 아래 JSON 형식으로만 답한다:
+{{"questions": [{{"question": "...", "speaker": "planner|designer|frontend|backend|intake"}}]}}"""
+
+
+async def _generate_ai_questions_openai(
+    commission: CommissionRequest, asked: list[dict]
+) -> list[dict]:
+    import httpx
+
+    requirements = dict(commission.requirements or {})
+    requirements.pop("ai_questions", None)
+    requirements.pop("ai_questions_done", None)
+
+    # 연락처는 requirements 에 없다(컬럼에 있다). 그래도 방어적으로 요약만 추린다.
+    context = {
+        "site_type": commission.site_type,
+        "summary": commission.summary,
+        "budget_hint": commission.budget_hint,
+        "deadline_hint": commission.deadline_hint,
+        "requirements": requirements,
+    }
+    lines = [
+        "의뢰 내용(JSON):",
+        json.dumps(context, ensure_ascii=False),
+        "",
+        "이미 물어본 질문과 답:",
+        *(
+            f"- Q: {item.get('question', '')} / A: {item.get('answer', '') or '(답 없음)'}"
+            for item in asked[:40]
+        ),
+    ]
+
+    async with httpx.AsyncClient(timeout=25) as client:
+        response = await client.post(
+            "https://api.openai.com/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {settings.openai_api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": settings.openai_model,
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": _AI_QUESTIONS_PROMPT.format(cap=AI_QUESTIONS_CAP),
+                    },
+                    {"role": "user", "content": "\n".join(lines)},
+                ],
+                "response_format": {"type": "json_object"},
+                "temperature": 0.4,
+                "max_tokens": 600,
+            },
+        )
+        response.raise_for_status()
+        data = json.loads(response.json()["choices"][0]["message"]["content"])
+
+    items = data.get("questions")
+    if not isinstance(items, list):
+        return []
+    return [item for item in items if isinstance(item, dict)]
+
+
+def stored_ai_questions(commission: CommissionRequest) -> tuple[list[dict], bool]:
+    requirements = commission.requirements or {}
+    return (
+        list(requirements.get("ai_questions") or []),
+        bool(requirements.get("ai_questions_done")),
+    )
+
+
+def stored_branch_answers(commission: CommissionRequest) -> dict[str, str]:
+    branch = (commission.requirements or {}).get("branch") or {}
+    return {str(key): str(value) for key, value in branch.items()}
+
+
 def ensure_access_token(db: Session, commission: CommissionRequest) -> str:
     """심화 문답 링크의 열쇠. 없으면(=이 기능 이전에 들어온 접수) 그 자리에서 발급한다."""
     if not (commission.access_token or "").strip():

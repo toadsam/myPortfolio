@@ -26,6 +26,7 @@ import {
 } from "react";
 import {AdditiveBlending, Group, MathUtils, PointLight, Vector3} from "three";
 import {atelierNpcs} from "@/data/atelierRoster";
+import {requestNpcEncounter} from "@/lib/liveApi";
 import type {NPCData} from "@/types/portfolio";
 
 const LANTERN = "#ff9d38";
@@ -40,13 +41,19 @@ function AtelierFigure({
   npc,
   onSelect,
   isIntake,
-  speaking = false
+  speaking = false,
+  bubbleText,
+  emote
 }: {
   npc: NPCData;
   onSelect: (npc: NPCData) => void;
   isIntake: boolean;
   /** 릴레이 설문에서 지금 말하는 식구 — 호버와 같은 들림·발광을 유지한다 */
   speaking?: boolean;
+  /** 식구끼리 투닥거릴 때의 말풍선 (E-4 공방 사건) */
+  bubbleText?: string;
+  /** 마주침 결과 이모지 — 💢/💕 */
+  emote?: string;
 }) {
   const [hoveredRaw, setHovered] = useState(false);
   const hovered = hoveredRaw || speaking;
@@ -141,6 +148,46 @@ function AtelierFigure({
           표준 재질은 광원 수만큼 프래그먼트 비용이 붙는다 — 존재감은
           emissive 와 발밑 고리로 충분하므로 광원은 걷어냈다. */}
 
+      {bubbleText ? (
+        <Html
+          center
+          distanceFactor={10}
+          position={[0, 2.45, 0]}
+          zIndexRange={[8, 0]}
+        >
+          <div
+            style={{
+              pointerEvents: "none",
+              userSelect: "none",
+              width: 170,
+              borderRadius: 11,
+              border: "1.5px solid rgba(226,192,120,0.5)",
+              background: "rgba(11,22,38,0.94)",
+              padding: "6px 10px",
+              fontFamily: "system-ui, sans-serif",
+              fontSize: 11,
+              lineHeight: 1.45,
+              color: "#e8eef7",
+              textAlign: "center"
+            }}
+          >
+            {bubbleText}
+          </div>
+        </Html>
+      ) : emote ? (
+        <Html
+          center
+          distanceFactor={10}
+          position={[0, 2.45, 0]}
+          zIndexRange={[8, 0]}
+        >
+          <div
+            style={{pointerEvents: "none", userSelect: "none", fontSize: 26}}
+          >
+            {emote}
+          </div>
+        </Html>
+      ) : null}
       <Html
         center
         distanceFactor={11}
@@ -662,6 +709,77 @@ interface Props {
   hideHints?: boolean;
 }
 
+/** 공방 식구끼리의 마주침 루프 (5단계 E-4).
+ *
+ * 마을의 checkEncounter 는 거리 기반이지만 여기는 넷이 늘 한 방이라 타이머로 간다.
+ * 대사는 백엔드 /npc/encounter — 직군별 사건 템플릿(체리의 "범위를 또 늘림" 류)이
+ * 이 방에서 처음으로 실제로 일어난다. 관계·기억·마을 소식도 똑같이 쌓인다.
+ */
+function useAtelierSocialLoop(paused: boolean) {
+  const [bubbles, setBubbles] = useState<Record<string, string>>({});
+  const [emotes, setEmotes] = useState<Record<string, string>>({});
+  const busyRef = useRef(false);
+  const nextAtRef = useRef(Date.now() + 90000); // 입장 90초 뒤 첫 마주침
+  const timersRef = useRef<number[]>([]);
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+
+  useEffect(() => {
+    const team = atelierNpcs.filter(npc => npc.id !== "atelier-intake-npc");
+    const tick = async () => {
+      if (pausedRef.current || busyRef.current) return;
+      if (typeof document !== "undefined" && document.hidden) return;
+      if (Date.now() < nextAtRef.current) return;
+      busyRef.current = true;
+      try {
+        const pick = [...team].sort(() => Math.random() - 0.5).slice(0, 2);
+        const [a, b] = [pick[0]!, pick[1]!];
+        const res = await requestNpcEncounter(
+          {npc_id: a.id, mood: "calm", energy: 55, recent_memory: []},
+          {npc_id: b.id, mood: "calm", energy: 55, recent_memory: []},
+          []
+        );
+        const stepMs = 2600;
+        res.dialogue.forEach((line, i) => {
+          timersRef.current.push(
+            window.setTimeout(() => {
+              setBubbles({[line.npc_id]: line.text});
+            }, i * stepMs)
+          );
+        });
+        const endMs = res.dialogue.length * stepMs;
+        timersRef.current.push(
+          window.setTimeout(() => {
+            setBubbles({});
+            const delta = res.relationship?.delta ?? 0;
+            if (Math.abs(delta) >= 2) {
+              const emote = delta < 0 ? "💢" : "💕";
+              setEmotes({[a.id]: emote, [b.id]: emote});
+              timersRef.current.push(
+                window.setTimeout(() => setEmotes({}), 1600)
+              );
+            }
+          }, endMs)
+        );
+        nextAtRef.current =
+          Date.now() + Math.max(res.cooldown_seconds * 1000, 120000);
+      } catch {
+        nextAtRef.current = Date.now() + 180000; // 백엔드 오프라인 — 조용히 쉼
+      } finally {
+        busyRef.current = false;
+      }
+    };
+    const id = window.setInterval(tick, 5000);
+    return () => {
+      window.clearInterval(id);
+      timersRef.current.forEach(t => window.clearTimeout(t));
+      timersRef.current = [];
+    };
+  }, []);
+
+  return {bubbles, emotes};
+}
+
 export function AtelierInterior({
   onBack,
   onSelectNpc,
@@ -669,6 +787,8 @@ export function AtelierInterior({
   hideHints = false
 }: Props) {
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
+  // 설문(릴레이)이 진행 중이면 focusNpcId 가 잡혀 있다 — 그동안 식구끼리 잡담은 쉰다
+  const social = useAtelierSocialLoop(!!focusNpcId || hideHints);
   const focus = useMemo<[number, number, number] | null>(() => {
     const npc = focusNpcId
       ? atelierNpcs.find(item => item.id === focusNpcId)
@@ -730,6 +850,8 @@ export function AtelierInterior({
           {atelierNpcs.map(npc => (
             <AtelierFigure
               key={npc.id}
+              bubbleText={social.bubbles[npc.id]}
+              emote={social.emotes[npc.id]}
               isIntake={npc.id === "atelier-intake-npc"}
               npc={npc}
               onSelect={onSelectNpc}

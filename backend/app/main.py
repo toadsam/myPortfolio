@@ -32,6 +32,9 @@ from app.schemas import (
     CodingTestIn,
     CodingTestOut,
     CommissionAck,
+    AiQuestionsIn,
+    AiQuestionsOut,
+    CommissionDepthAnswersIn,
     CommissionDepthIn,
     CommissionDepthOut,
     CommissionTrackOut,
@@ -71,8 +74,11 @@ from app.schemas import (
     NpcRelationshipOut,
     NpcMemoryOut,
     NpcRelationshipRow,
+    AdminAffinityIn,
     FavorOut,
     RelayOut,
+    SocietyResetOut,
+    VisitorBondOut,
     VillageEventOut,
     NpcConversationLogOut,
     NpcPresetIn,
@@ -109,6 +115,10 @@ from app.services.commission_service import (
     artifacts_for as commission_artifacts_for,
     consult as commission_consult,
     consult_depth as commission_consult_depth,
+    generate_ai_questions,
+    save_depth_form,
+    stored_ai_questions,
+    stored_branch_answers,
     create_commission,
     depth_questions_for,
     draft_from_commission,
@@ -160,8 +170,10 @@ from app.services.relationship_service import (
     relationship_lines_for,
     seed_village_if_empty,
     todays_light_shift,
+    admin_set_affinity,
+    reset_society,
 )
-from app.services import favor_service
+from app.services import favor_service, visitor_service
 from app.services.daily_digest_service import ensure_today_digest
 from app.services import coach_service, external_service, quest_service
 from app.services.village_service import apply_light_shift, derive_village_state
@@ -406,7 +418,17 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
     atelier_role = atelier_role_for(payload.npc_id)
     atelier_work = commission_worklog(db, atelier_role) if atelier_role else None
 
-    reply, used_ai, suggested_action = await answer_npc_message(
+    # 단골 점수 — 대화 한 번마다. 답변 생성 전에 올려서 프롬프트에 최신 등급이 들어간다 (5단계 E-9)
+    bond = visitor_service.bump(db, payload.visitor_id, payload.npc_id)
+    bond_line = visitor_service.prompt_line(bond)
+    # NPC 의 부탁은 **답변 생성 전에** 판정한다 — 그래야 대사에 부탁이 자연스럽게 섞인다 (5단계 D-2)
+    favor = favor_service.maybe_issue(db, payload.npc_id)
+    favor_lines = (
+        [f"[지금 이 대화에서] 방문자에게 이렇게 부탁하려던 참이다: '{favor.text}' — 답변 끝에 자연스럽게 이 부탁을 꺼내라."]
+        if favor is not None
+        else []
+    )
+    reply, used_ai, suggested_action, mention = await answer_npc_message(
         payload.npc_id,
         payload.message,
         activity,
@@ -417,12 +439,20 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
         village_state=village_state_ctx,
         atelier_work=atelier_work,
         memory_lines=[
-            # 현재 관계 온도(누구와 서먹한지) → 기억(사건 문장) → 이 방문자와의 과거 순
+            # 현재 관계 온도(누구와 서먹한지) → 기억(사건 문장) → 이 방문자와의 과거 → 부탁 순
             *relationship_lines_for(db, payload.npc_id),
             *memory_service.memory_lines_for_prompt(db, payload.npc_id),
+            *([bond_line] if bond_line else []),
             *memory_service.visitor_history(db, payload.npc_id, payload.visitor_id),
+            *favor_lines,
         ],
     )
+    if favor is not None:
+        # 모델이 부탁을 대사에 안 녹였으면(상대 이름이 답변에 없음) 끝에 직접 붙인다.
+        # 폴백 대사는 항상 부탁을 모른 채 나오므로 같은 길로 온다.
+        about_name = memory_service.display_name(favor.about_npc_id)
+        if not used_ai or about_name not in reply:
+            reply = f"{reply}\n\n아, 그리고… {favor.text}"
     # 방문자와 나눈 말도 기억에 남긴다 — 원문 40자만(전문은 NpcConversationLog 에 이미 있다).
     # visitor_id 가 있으면 about 에 'visitor:…' 로 묶어 다음 방문 때 알아본다.
     memory_service.remember(
@@ -440,11 +470,20 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
         used_ai,
         suggested_action.action_id if suggested_action else "",
     )
-    # 방문자 개입 — 다른 NPC 얘기를 감정 담아 전했으면 그 둘 사이가 움직인다 (규칙, LLM 추가 호출 없음)
+    # 방문자 개입 — 다른 NPC 얘기를 감정 담아 전했으면 그 둘 사이가 움직인다.
+    # 감지는 두 겹: 사전 규칙(detect_relay, 오탐 필터 검증됨)이 우선, 놓치면 모델이 답변과 함께
+    # 감지한 mention(resolve_mention 으로 규칙 검증)을 쓴다. 적용(±2)은 언제나 규칙 (5단계 D-5).
     relay_out = None
     relay = relay_service.detect_relay(payload.message, payload.npc_id)
+    if relay is None and used_ai and mention is not None:
+        relay = relay_service.resolve_mention(
+            mention.name, mention.sentiment, payload.npc_id, snippet=payload.message.strip()
+        )
     if relay is not None:
         applied = relay_service.apply_relay(db, payload.npc_id, relay)
+        if applied.favor_done:
+            # 부탁했던 NPC(= 전달받은 상대, relay.about)가 방문자를 더 좋아하게 된다
+            visitor_service.favor_bonus(db, payload.visitor_id, relay.about_npc_id)
         relay_out = RelayOut(
             about_npc_id=relay.about_npc_id,
             about_name=relay.about_name,
@@ -453,9 +492,7 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
             news=VillageEventOut.model_validate(applied.news) if applied.news is not None else None,
             favor_done=applied.favor_done,
         )
-    # NPC 의 부탁 — 서먹한 상대가 있으면 가끔 방문자에게 다리를 놓아 달라고 한다
     favor_out = None
-    favor = favor_service.maybe_issue(db, payload.npc_id)
     if favor is not None:
         favor_out = FavorOut(
             id=favor.id,
@@ -472,6 +509,7 @@ async def npc_chat(payload: ChatMessageIn, db: Session = Depends(get_db)):
         suggested_action=suggested_action,
         relay=relay_out,
         favor=favor_out,
+        bond=VisitorBondOut(level=visitor_service.level(bond.score), score=bond.score) if bond is not None else None,
     )
 
 
@@ -600,6 +638,36 @@ async def npc_news(limit: int = 12, db: Session = Depends(get_db)):
     limit = max(1, min(50, limit))
     await ensure_today_digest(db)
     return db.query(VillageEvent).order_by(VillageEvent.created_at.desc(), VillageEvent.id.desc()).limit(limit).all()
+
+
+@app.post("/admin/npc/society/reset", response_model=SocietyResetOut, dependencies=[AdminGuard])
+def admin_reset_society(db: Session = Depends(get_db)):
+    """NPC 사회(관계·기억·소식·연표·부탁·단골)만 백지로 되돌리고 씨앗을 다시 심는다.
+
+    활동·코테·CS·의뢰 데이터는 건드리지 않는다. 라이브 데모 전에 마을을 깨끗이 할 때 쓴다.
+    """
+    removed = reset_society(db)
+    seeded = seed_village_if_empty(db)
+    return SocietyResetOut(removed=removed, seeded=seeded)
+
+
+@app.put("/admin/npc/relationships", response_model=NpcRelationshipRow, dependencies=[AdminGuard])
+def admin_set_relationship(payload: AdminAffinityIn, db: Session = Depends(get_db)):
+    rel = admin_set_affinity(db, payload.npc_a, payload.npc_b, payload.affinity)
+    if rel is None:
+        raise HTTPException(status_code=400, detail="같은 NPC 끼리는 관계가 없어요.")
+    counts = milestone_counts(db).get((rel.npc_a, rel.npc_b), {})
+    return NpcRelationshipRow(
+        npc_a=rel.npc_a,
+        npc_b=rel.npc_b,
+        affinity=rel.affinity,
+        vibe=rel.vibe,
+        meet_count=rel.meet_count,
+        fights=counts.get("fights", 0),
+        reconciliations=counts.get("reconciliations", 0),
+        milestones=counts.get("milestones", []),
+        timeline=counts.get("timeline", []),
+    )
 
 
 @app.get("/npc/favors", response_model=list[FavorOut])
@@ -919,6 +987,7 @@ def commission_track(token: str, db: Session = Depends(get_db)):
             + remaining[0]
         )
 
+    ai_questions, ai_done = stored_ai_questions(commission)
     return CommissionTrackOut(
         public_id=commission.public_id,
         status=commission.status,
@@ -929,7 +998,44 @@ def commission_track(token: str, db: Session = Depends(get_db)):
         greeting=greeting,
         messages=past,
         preview=_shared_preview(db, commission),
+        branch=stored_branch_answers(commission),
+        ai_questions=ai_questions,
+        ai_questions_done=ai_done,
     )
+
+
+# 아래 둘은 2층 릴레이 설문용이다 (docs/ATELIER_DEPTH_SCRIPT.md).
+# answers 는 LLM 없는 순수 저장이라 리밋을 안 태운다 — 답 하나마다 불리므로
+# 시도 리밋(20회/시간)에 태우면 설문 반 바퀴에 손님이 잠긴다. 토큰(32 hex)이
+# 곧 자물쇠고, 키 화이트리스트·길이 상한은 서비스가 건다.
+@app.post("/commission/track/{token}/answers", response_model=CommissionDepthOut)
+def commission_track_answers(
+    token: str, payload: CommissionDepthAnswersIn, db: Session = Depends(get_db)
+):
+    """릴레이 설문의 답 하나를 저장한다. 창을 닫아도 여기까지는 남는다."""
+    commission = _load_by_token(db, token)
+    commission = save_depth_form(
+        db,
+        commission,
+        slots=payload.slots,
+        branch=payload.branch,
+        ai_answers=payload.ai_answers,
+        pages=payload.pages,
+        features=payload.features,
+    )
+    return CommissionDepthOut(reply="", used_ai=False, draft=draft_from_commission(commission))
+
+
+# questions 는 의뢰당 **1회만** 실제 생성한다(이후엔 저장본 반환). AI 리밋을 태우면
+# 하루 상한을 깎으므로 여기서도 안 태우되, 생성 자체가 1회 멱등이라 비용은 의뢰당 1콜이다.
+@app.post("/commission/track/{token}/questions", response_model=AiQuestionsOut)
+async def commission_track_questions(
+    token: str, payload: AiQuestionsIn, db: Session = Depends(get_db)
+):
+    """고정 문항이 끝난 뒤, 이 의뢰만 보고 뽑는 AI 맞춤 질문(최대 5개, 없으면 0개)."""
+    commission = _load_by_token(db, token)
+    questions, generated = await generate_ai_questions(db, commission, payload.asked)
+    return AiQuestionsOut(questions=questions, generated=generated)
 
 
 def _shared_preview(db: Session, commission: CommissionRequest) -> SharedArtifactOut | None:

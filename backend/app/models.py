@@ -159,6 +159,28 @@ class NpcMemory(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
 
 
+class VisitorBond(Base):
+    """방문자 ↔ NPC 호감 — 익명 visitor_id(브라우저 uuid) 단위의 '단골' 점수.
+
+    대화할수록(하루 NPC 당 +2 상한), 부탁을 이행하면(+4) 오른다. 개인정보는 없다.
+    """
+
+    __tablename__ = "visitor_bond"
+    __table_args__ = (UniqueConstraint("visitor_id", "npc_id", name="uq_visitor_bond"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    visitor_id: Mapped[str] = mapped_column(String(80), index=True)
+    npc_id: Mapped[str] = mapped_column(String(120), index=True)
+    score: Mapped[int] = mapped_column(Integer, default=0)
+    visits: Mapped[int] = mapped_column(Integer, default=0)
+    # 마지막 대화 시각 + "오늘 오른 폭" (하루 상한 계산용)
+    last_day: Mapped[str] = mapped_column(String(10), default="")
+    gained_today: Mapped[int] = mapped_column(Integer, default=0)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
 class NpcFavor(Base):
     """NPC 가 방문자에게 건넨 부탁 — "픽셀한테 내가 미안해한다고 전해 줄래?".
 

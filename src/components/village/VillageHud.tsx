@@ -1368,18 +1368,34 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                 const a = posOf(r.npc_a);
                 const b = posOf(r.npc_b);
                 if (!a || !b) return null;
+                const history = r.fights + r.reconciliations;
                 return (
-                  <line
-                    key={i}
-                    x1={a.x}
-                    y1={a.y}
-                    x2={b.x}
-                    y2={b.y}
-                    stroke={edgeColor(r.affinity)}
-                    strokeWidth={1 + Math.min(4, Math.abs(r.affinity) / 6)}
-                    strokeOpacity={0.7}
-                    strokeLinecap="round"
-                  />
+                  <g key={i}>
+                    <line
+                      x1={a.x}
+                      y1={a.y}
+                      x2={b.x}
+                      y2={b.y}
+                      stroke={edgeColor(r.affinity)}
+                      strokeWidth={1 + Math.min(4, Math.abs(r.affinity) / 6)}
+                      strokeOpacity={0.7}
+                      strokeLinecap="round"
+                    />
+                    {history > 0 ? (
+                      // 사연 있는 사이 — 간선 중점에 역사 뱃지 (싸움이 많으면 💥, 화해가 많거나 같으면 🤝)
+                      <text
+                        x={(a.x + b.x) / 2}
+                        y={(a.y + b.y) / 2 + 3}
+                        fontSize={9}
+                        textAnchor="middle"
+                      >
+                        {r.fights > r.reconciliations ? "💥" : "🤝"}
+                        <tspan dy={1} fontSize={7} fill="#a9bdd6">
+                          {history}
+                        </tspan>
+                      </text>
+                    ) : null}
+                  </g>
                 );
               })}
               {allKinds.map(kind => {

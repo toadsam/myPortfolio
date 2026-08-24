@@ -1,5 +1,6 @@
 import type {
   ActivityInput,
+  AiQuestion,
   AdminOverview,
   AnalyticsSummary,
   ArtifactContent,
@@ -229,6 +230,27 @@ export function fetchNpcMemory(npcId: string): Promise<NpcMemoryItem[]> {
     `/npc/memory/${encodeURIComponent(npcId)}`,
     {cache: "no-store"}
   );
+}
+
+export function adminResetSociety(): Promise<{
+  removed: number;
+  seeded: number;
+}> {
+  return requestJson<{removed: number; seeded: number}>(
+    "/admin/npc/society/reset",
+    {method: "POST"}
+  );
+}
+
+export function adminSetAffinity(
+  npcA: string,
+  npcB: string,
+  affinity: number
+): Promise<NpcRelationshipRow> {
+  return requestJson<NpcRelationshipRow>("/admin/npc/relationships", {
+    method: "PUT",
+    body: JSON.stringify({npc_a: npcA, npc_b: npcB, affinity})
+  });
 }
 
 export function fetchNpcFavors(): Promise<NpcFavor[]> {
@@ -474,6 +496,36 @@ export function consultCommissionDepth(
         recent_messages: recentMessages.slice(-10)
       })
     }
+  );
+}
+
+/* ── 2층 릴레이 설문 ──
+   answers 는 LLM 없는 순수 저장(리밋 없음) — 답 하나마다 불러 창을 닫아도 남긴다.
+   questions 는 의뢰당 1회만 실제 생성되는 멱등 호출이다. */
+
+export function saveCommissionDepthAnswers(
+  token: string,
+  payload: {
+    slots?: Record<string, string>;
+    branch?: Record<string, string>;
+    ai_answers?: Record<string, string>;
+    pages?: string[];
+    features?: string[];
+  }
+): Promise<CommissionDepthResponse> {
+  return requestJson<CommissionDepthResponse>(
+    `/commission/track/${encodeURIComponent(token)}/answers`,
+    {method: "POST", body: JSON.stringify(payload)}
+  );
+}
+
+export function generateCommissionQuestions(
+  token: string,
+  asked: {question: string; answer: string}[]
+): Promise<{questions: AiQuestion[]; generated: boolean}> {
+  return requestJson<{questions: AiQuestion[]; generated: boolean}>(
+    `/commission/track/${encodeURIComponent(token)}/questions`,
+    {method: "POST", body: JSON.stringify({asked: asked.slice(0, 40)})}
   );
 }
 

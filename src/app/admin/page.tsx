@@ -25,10 +25,16 @@ import {
   syncGithubActivity,
   updateCodingTest,
   updateCommissionStatus,
-  updateCsNote
+  updateCsNote,
+  adminResetSociety,
+  adminSetAffinity,
+  fetchRelationships
 } from "@/lib/liveApi";
 import {ApiError} from "@/lib/liveApi";
 import {villageBuildings} from "@/lib/constants";
+import {autonomousNpcs} from "@/data/npcRoster";
+import {atelierNpcs} from "@/data/atelierRoster";
+import type {NpcRelationshipRow} from "@/types/live";
 import {LiveVillagePreview} from "./_components/LiveVillagePreview";
 import {CircuitRow} from "./_components/CircuitRow";
 import {SwitchDrawer} from "./_components/SwitchDrawer";
@@ -1015,7 +1021,8 @@ export default function AdminPage() {
               id: "cs",
               label: "CS 노트",
               node: <CsNoteAdmin defaultDate={selectedDate} />
-            }
+            },
+            {id: "society", label: "NPC 사회", node: <NpcSocietyAdmin />}
           ]}
         />
       </footer>
@@ -1024,6 +1031,133 @@ export default function AdminPage() {
         <RewardCard onClose={() => setReward(null)} reward={reward} />
       ) : null}
     </main>
+  );
+}
+
+/** NPC 사회 관리 — 관계 조정과 사회 리셋. 라이브 데모 전에 마을을 깨끗이 하거나
+ *  특정 서사(앙숙/절친)를 손으로 연출할 때 쓴다. 활동·코테·의뢰 데이터는 건드리지 않는다. */
+function NpcSocietyAdmin() {
+  const [rels, setRels] = useState<NpcRelationshipRow[]>([]);
+  const [status, setStatus] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const load = useCallback(async () => {
+    try {
+      setRels(await fetchRelationships());
+      setStatus("");
+    } catch {
+      setStatus("관계를 불러오지 못했습니다. 백엔드를 확인하세요.");
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  async function nudge(r: NpcRelationshipRow, delta: number) {
+    setBusy(true);
+    try {
+      const updated = await adminSetAffinity(
+        r.npc_a,
+        r.npc_b,
+        Math.max(-100, Math.min(100, r.affinity + delta))
+      );
+      setRels(current =>
+        current.map(row =>
+          row.npc_a === updated.npc_a && row.npc_b === updated.npc_b
+            ? updated
+            : row
+        )
+      );
+    } catch {
+      setStatus("조정에 실패했습니다.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function resetSociety() {
+    if (
+      !window.confirm(
+        "NPC 사회(관계·기억·소식·연표·부탁·단골)를 전부 지우고 씨앗부터 다시 시작합니다.\n활동/코테/CS/의뢰 기록은 남습니다. 계속할까요?"
+      )
+    )
+      return;
+    setBusy(true);
+    try {
+      const out = await adminResetSociety();
+      setStatus(`리셋 완료 — ${out.removed}행 정리, 씨앗 소식 ${out.seeded}개`);
+      await load();
+    } catch {
+      setStatus("리셋에 실패했습니다.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const nameOf = (id: string) => societyNpcName(id);
+
+  return (
+    <div className="grid gap-3">
+      {status ? (
+        <p className="text-xs font-bold text-[#e2c078]">{status}</p>
+      ) : null}
+      <div className="grid max-h-[300px] gap-1.5 overflow-y-auto pr-1">
+        {rels.map(r => (
+          <div
+            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs"
+            key={`${r.npc_a}:${r.npc_b}`}
+          >
+            <span className="min-w-0 flex-1 truncate">
+              {nameOf(r.npc_a)} ↔ {nameOf(r.npc_b)}
+              <span className="ml-2 text-[#8b94a0]">
+                {r.vibe} ({r.affinity >= 0 ? "+" : ""}
+                {r.affinity})
+                {r.fights + r.reconciliations > 0
+                  ? ` · 싸움 ${r.fights} 화해 ${r.reconciliations}`
+                  : ""}
+              </span>
+            </span>
+            <button
+              className="rounded border border-white/15 px-2 py-0.5 font-black text-[#ff8a8a] disabled:opacity-40"
+              disabled={busy}
+              onClick={() => void nudge(r, -10)}
+              type="button"
+            >
+              −10
+            </button>
+            <button
+              className="rounded border border-white/15 px-2 py-0.5 font-black text-[#7ee787] disabled:opacity-40"
+              disabled={busy}
+              onClick={() => void nudge(r, 10)}
+              type="button"
+            >
+              +10
+            </button>
+          </div>
+        ))}
+        {rels.length === 0 ? (
+          <p className="text-xs text-[#5b646e]">아직 관계가 없습니다.</p>
+        ) : null}
+      </div>
+      <button
+        className="w-fit rounded-lg border border-[#ff8a8a]/40 bg-[#ff8a8a]/10 px-3 py-1.5 text-xs font-black text-[#ff8a8a] disabled:opacity-40"
+        disabled={busy}
+        onClick={() => void resetSociety()}
+        type="button"
+      >
+        ⚠ 사회 리셋 (씨앗부터 다시)
+      </button>
+    </div>
+  );
+}
+
+/** npc_id → 이름. 마을 로스터 + 공방 로스터에서 찾는다. */
+function societyNpcName(id: string): string {
+  return (
+    autonomousNpcs.find(n => n.id === id)?.name ??
+    atelierNpcs.find(n => n.id === id)?.name ??
+    id
   );
 }
 
@@ -1502,6 +1636,16 @@ function DepthPanel({detail}: {detail: CommissionDetail}) {
   const [copied, setCopied] = useState(false);
   const answers = Object.entries(detail.depth_answers ?? {});
 
+  // 2층 릴레이가 추가로 받은 것 — 종류별 분기 답과 AI 맞춤 문답(답 있는 것만).
+  const requirements = (detail.requirements ?? {}) as {
+    branch?: Record<string, string>;
+    ai_questions?: {id: string; question: string; answer: string}[];
+  };
+  const branch = Object.entries(requirements.branch ?? {});
+  const aiAnswered = (requirements.ai_questions ?? []).filter(item =>
+    (item.answer ?? "").trim()
+  );
+
   const link =
     typeof window !== "undefined" && detail.track_path
       ? `${window.location.origin}${detail.track_path}`
@@ -1536,10 +1680,45 @@ function DepthPanel({detail}: {detail: CommissionDetail}) {
         </dl>
       ) : (
         <p className="text-xs leading-5 text-[#6b7580]">
-          아직 받은 게 없습니다. 아래 링크를 회신 메일에 붙여 보내면 도안이 대신
-          여쭤봅니다 — 운영·수정 주체, 콘텐츠 준비, 성공 기준, 기존 자산.
+          아직 받은 게 없습니다. 아래 링크를 회신 메일에 붙여 보내면 공방
+          식구들이 대신 여쭤봅니다 — 운영·수정 주체, 콘텐츠 준비, 성공 기준,
+          기존 자산, 그리고 사이트 종류별 세부 문항까지.
         </p>
       )}
+
+      {branch.length ? (
+        <>
+          <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#ff9d38]/50">
+            종류별 문답
+          </p>
+          <dl className="grid gap-1.5">
+            {branch.map(([key, value]) => (
+              <div key={key} className="flex gap-2 text-xs leading-5">
+                <dt className="w-20 shrink-0 font-bold text-[#ff9d38]/80">
+                  {key}
+                </dt>
+                <dd className="flex-1 text-[#9aa4b0]">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
+      ) : null}
+
+      {aiAnswered.length ? (
+        <>
+          <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#c69af0]/70">
+            AI 가 더 물은 것
+          </p>
+          <dl className="grid gap-1.5">
+            {aiAnswered.map(item => (
+              <div key={item.id} className="text-xs leading-5">
+                <dt className="text-[#c69af0]/80">{item.question}</dt>
+                <dd className="text-[#9aa4b0]">→ {item.answer}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
+      ) : null}
 
       {detail.track_path ? (
         <div className="mt-1 flex flex-wrap items-center gap-2">

@@ -70,3 +70,17 @@ def test_apply_relay_moves_affinity_and_records(db_session):
     assert memories and "픽셀 얘기를 전해 줬다" in memories[0]
     events = db_session.query(VillageEvent).all()
     assert len(events) == 1 and events[0].emoji == "💌" and events[0].delta == 2
+
+
+def test_resolve_mention_maps_model_detection_to_rule_delta():
+    relay = relay_service.resolve_mention("픽셀", "positive", "guide-npc", snippet="픽셀 참 대단하지")
+    assert relay is not None and relay.about_npc_id == "project-npc" and relay.delta == relay_service.RELAY_STEP
+    relay = relay_service.resolve_mention("테오", "negative", "guide-npc")
+    assert relay is not None and relay.delta == -relay_service.RELAY_STEP
+
+
+def test_resolve_mention_ignores_self_unknown_and_none():
+    assert relay_service.resolve_mention("루미", "positive", "guide-npc") is None  # 자기 자신
+    assert relay_service.resolve_mention("아무개", "positive", "guide-npc") is None  # 사전에 없음
+    assert relay_service.resolve_mention("픽셀", "none", "guide-npc") is None
+    assert relay_service.resolve_mention("", "positive", "guide-npc") is None

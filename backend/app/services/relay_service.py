@@ -107,6 +107,29 @@ def detect_relay(message: str, speaker_id: str) -> Relay | None:
     )
 
 
+def resolve_mention(name: str, sentiment: str, speaker_id: str, snippet: str = "") -> Relay | None:
+    """모델이 감지한 언급을 규칙으로 검증해 Relay 로 바꾼다 (D-5).
+
+    감지는 모델이 넓게, **결과는 규칙이**: 이름이 사전(_NAMES)에 있어야 하고, 말 건 NPC 자신이면
+    무시, delta 는 언제나 ±RELAY_STEP. 사전 기반 detect_relay 가 이미 잡았으면 호출자가 그쪽을 쓴다.
+    """
+    name = name.strip()
+    if not name or sentiment not in ("positive", "negative"):
+        return None
+    speaker_name = memory_service.display_name(speaker_id)
+    for known, npc_id in _NAMES:
+        if known == speaker_name or npc_id == speaker_id:
+            continue
+        if known == name or known in name or name in known:
+            return Relay(
+                about_npc_id=npc_id,
+                about_name=known,
+                delta=RELAY_STEP if sentiment == "positive" else -RELAY_STEP,
+                snippet=snippet[:40],
+            )
+    return None
+
+
 def apply_relay(db: Session, speaker_id: str, relay: Relay) -> RelayResult:
     """관계·기억·소식에 반영한다. 부탁(NpcFavor)을 이행하는 전달이면 보상이 +4 로 커지고 🎁 소식."""
     from app.services import favor_service  # 순환 import 회피

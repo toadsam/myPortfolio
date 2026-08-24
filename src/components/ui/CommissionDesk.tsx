@@ -33,7 +33,7 @@
  */
 
 import {AnimatePresence, motion} from "framer-motion";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 
 import {
   consultCommission,
@@ -48,9 +48,24 @@ import type {
 } from "@/types/live";
 
 import {SPEAKER_NAME} from "@/data/atelierIntakeScript";
+import {
+  aiQuestionStep,
+  buildDepthScript,
+  collectAskedPairs,
+  depthWrapupLine,
+  readSlotValue
+} from "@/data/atelierDepthScript";
+import {
+  generateCommissionQuestions,
+  saveCommissionDepthAnswers
+} from "@/lib/liveApi";
 import {EstimateTicker} from "./commission/EstimateTicker";
 import {IntakeDialogue} from "./commission/IntakeDialogue";
-import {useIntakeFlow, type DialogueLine} from "./commission/useIntakeFlow";
+import {
+  useDialogueFlow,
+  useIntakeFlow,
+  type DialogueLine
+} from "./commission/useIntakeFlow";
 
 type DeskMode = "intake" | "depth";
 
@@ -102,6 +117,9 @@ export function CommissionDesk({
   if (mode === "intake" && !prefill) {
     return <IntakeDesk onClose={onClose} />;
   }
+  if (mode === "depth" && track && token) {
+    return <DepthRelayDesk onClose={onClose} track={track} token={token} />;
+  }
   return (
     <ChatDesk
       onClose={onClose}
@@ -110,6 +128,114 @@ export function CommissionDesk({
       token={token}
       prefill={prefill}
     />
+  );
+}
+
+/* ─────────────────────────── 심화 문답 데스크 (2차 — 릴레이) ───────────────────────────
+ *
+ * 1층과 같은 엔진(`useDialogueFlow`)에 2층 대본(`atelierDepthScript`)을 꽂는다.
+ * 다른 점 셋:
+ * - 견적이 없다(`withEstimate:false`) — 심화 문답은 견적의 자리가 아니다. 문답 중
+ *   새 기능이 드러나면 features 에 누적만 하고 "담당자가 다시 안내"가 규칙.
+ * - 답 하나마다 `saveCommissionDepthAnswers` 로 저장한다 — 창을 닫아도 남는다.
+ * - 고정 문항이 끝나면 gate 스텝이 서버에서 AI 맞춤 질문(최대 5, 1회 멱등)을 받아 온다.
+ */
+
+function DepthRelayDesk({
+  onClose,
+  track,
+  token
+}: {
+  onClose: () => void;
+  track: CommissionTrack;
+  token: string;
+}) {
+  // 분기 답의 로컬 사본 — gate 의 "이미 물은 것" 목록을 만들 때 쓴다.
+  const branchRef = useRef<Record<string, string>>({...track.branch});
+
+  const script = useMemo(() => buildDepthScript(track), [track]);
+  const initialLines = useMemo<Omit<DialogueLine, "id">[]>(
+    () =>
+      (track.messages ?? []).map(message => ({
+        speaker: message.role === "visitor" ? ("visitor" as const) : ("intake" as const),
+        text: message.content
+      })),
+    [track.messages]
+  );
+
+  const flow = useDialogueFlow({
+    script,
+    initialDraft: track.draft,
+    initialLines,
+    withEstimate: false,
+    // 자유 대화는 심화 문답 경로(도안 페르소나 + 서버가 곧장 저장)를 탄다.
+    replyAs: "intake",
+    consult: async (message, _draft, history) => {
+      const result = await consultCommissionDepth(token, message, history);
+      return {reply: result.reply, draft: result.draft};
+    },
+    wrapup: () => depthWrapupLine(),
+    onAnswered: (question, draft, visitorText, skipped) => {
+      if (skipped || !question.store) return;
+      const {kind, key} = question.store;
+      const payload: Parameters<typeof saveCommissionDepthAnswers>[1] = {};
+      if (kind === "slot") {
+        payload.slots = {
+          [key]:
+            readSlotValue(draft as unknown as Record<string, unknown>, key) ||
+            visitorText
+        };
+      } else if (kind === "branch") {
+        branchRef.current[key] = visitorText;
+        payload.branch = {[key]: visitorText};
+      } else {
+        payload.ai_answers = {[key]: visitorText};
+      }
+      if (draft.features.length) payload.features = draft.features;
+      // 실패해도 대화는 계속 — 서버 폴백은 consult 경로가 이미 갖고 있다.
+      saveCommissionDepthAnswers(token, payload).catch(() => undefined);
+    },
+    gate: async draft => {
+      const asked = collectAskedPairs(
+        track.site_type,
+        draft as unknown as Record<string, unknown>,
+        branchRef.current
+      );
+      const result = await generateCommissionQuestions(token, asked);
+      return result.questions
+        .filter(item => !item.answer.trim())
+        .map(aiQuestionStep);
+    }
+  });
+
+  return (
+    <DeskShell
+      onClose={onClose}
+      subtitle={`접수번호 ${track.public_id} · 제작을 위한 심화 문답`}
+    >
+      <div className="flex min-h-0 flex-1 flex-col">
+        {track.preview ? <PreviewPane preview={track.preview} /> : null}
+
+        <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
+          <section className="flex min-h-0 flex-1 flex-col lg:border-r lg:border-[#7a5a38]/40">
+            <IntakeDialogue
+              flow={flow}
+              layout="panel"
+              doneNote="다 여쭤봤어요 · 덧붙일 말은 언제든"
+            />
+          </section>
+
+          <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto border-t border-[#7a5a38]/40 px-5 py-4 lg:w-[360px] lg:border-t-0">
+            <EstimateCard draft={track.draft} disclaimer={track.disclaimer} />
+            <DepthProgress draft={flow.draft} />
+            <p className="mt-4 border-t border-[#7a5a38]/40 pt-4 text-[11px] leading-relaxed text-[#a9bdd6]/60">
+              여기서 주신 답은 바로 저장돼요. 중간에 닫으셔도 이어서 하실 수
+              있어요.
+            </p>
+          </aside>
+        </div>
+      </div>
+    </DeskShell>
   );
 }
 

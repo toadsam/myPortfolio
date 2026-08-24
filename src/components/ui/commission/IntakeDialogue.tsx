@@ -261,12 +261,15 @@ function Line({
 export function IntakeDialogue({
   flow,
   layout = "panel",
-  className = ""
+  className = "",
+  doneNote = "설문 끝 · 접수만 남았어요"
 }: {
   flow: IntakeFlow;
   /** panel = 데스크 안 · hud = 3D 공방 바닥 */
   layout?: "panel" | "hud";
   className?: string;
+  /** phase === done 일 때 머리에 보일 문구 (2층은 다르게 쓴다) */
+  doneNote?: string;
 }) {
   const {
     lines,
@@ -349,7 +352,7 @@ export function IntakeDialogue({
             </p>
             <p className="text-[10px] text-[#a9bdd6]/60">
               {phase === "done"
-                ? "설문 끝 · 접수만 남았어요"
+                ? doneNote
                 : `${progress.done}/${progress.total} 문항`}
             </p>
           </div>

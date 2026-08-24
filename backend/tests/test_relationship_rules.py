@@ -228,3 +228,16 @@ def test_decide_outcome_applies_side_bias_in_reason():
     )
     assert "루미가 테오 편을 들어서" in out.reason
     assert -5 <= out.delta <= 5
+
+
+def test_one_sided_activity_carryover():
+    # 커밋 많은 날 developer 는 상대가 누구든 +1 (공통 화제가 없을 때)
+    d, why = rules._shared_topic("developer", "contact", _activity(github_commits=6))
+    assert d == 1 and "커밋" in why
+    d, why = rules._shared_topic("life", "contact", _activity(workout_done=False))
+    assert d == -1 and "시무룩" in why
+    d, why = rules._shared_topic("coding", "guide", _activity(study_minutes=120))
+    assert d == 1 and "공부" in why
+    # 공통 화제가 있으면 그쪽이 우선
+    d, why = rules._shared_topic("project", "developer", _activity(github_commits=6))
+    assert d == 2 and "신났다" in why

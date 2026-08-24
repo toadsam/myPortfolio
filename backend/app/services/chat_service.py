@@ -1,3 +1,5 @@
+import json
+from dataclasses import dataclass
 import re
 from datetime import timedelta
 from typing import Any
@@ -16,6 +18,34 @@ from app.services.npc_action_service import choose_npc_action
 from app.time_utils import today_local
 
 
+@dataclass(frozen=True)
+class ChatMention:
+    """모델이 답변과 함께 감지한 '방문자가 다른 NPC 를 감정 담아 언급함'. 적용(±2)은 규칙이 한다."""
+
+    name: str
+    sentiment: str  # "positive" | "negative"
+
+
+def _parse_chat_json(raw: str) -> tuple[str, ChatMention | None]:
+    """모델의 JSON 응답에서 (reply, mention) 을 꺼낸다. 어떤 실패든 (원문, None) — 지금까지의 동작."""
+    try:
+        data = json.loads(raw)
+    except (ValueError, TypeError):
+        return raw, None
+    if not isinstance(data, dict):
+        return raw, None
+    reply = str(data.get("reply") or "").strip()
+    if not reply:
+        return raw, None
+    mention = data.get("mention")
+    if isinstance(mention, dict):
+        name = str(mention.get("name") or "").strip()
+        sentiment = str(mention.get("sentiment") or "").strip().lower()
+        if name and sentiment in ("positive", "negative"):
+            return reply, ChatMention(name=name, sentiment=sentiment)
+    return reply, None
+
+
 async def answer_npc_message(
     npc_id: str,
     message: str,
@@ -27,7 +57,7 @@ async def answer_npc_message(
     village_state: VillageState | None = None,
     atelier_work: list[str] | None = None,
     memory_lines: list[str] | None = None,
-) -> tuple[str, bool, NpcActionOut]:
+) -> tuple[str, bool, NpcActionOut, ChatMention | None]:
     npc = NPCS.get(npc_id, _npc_profile_for_dynamic_id(npc_id))
     context = build_context(
         npc_id, activity, recent_messages or [], coding_tests or [], cs_notes or [], activity_history, village_state,
@@ -37,11 +67,12 @@ async def answer_npc_message(
 
     if settings.openai_api_key:
         try:
-            return await answer_with_openai(npc, context, message), True, suggested_action
+            reply, mention = await answer_with_openai(npc, context, message)
+            return reply, True, suggested_action, mention
         except Exception:
-            return answer_without_ai(npc_id, message, activity, coding_tests or [], cs_notes or [], activity_history, village_state), False, suggested_action
+            return answer_without_ai(npc_id, message, activity, coding_tests or [], cs_notes or [], activity_history, village_state), False, suggested_action, None
 
-    return answer_without_ai(npc_id, message, activity, coding_tests or [], cs_notes or [], activity_history, village_state), False, suggested_action
+    return answer_without_ai(npc_id, message, activity, coding_tests or [], cs_notes or [], activity_history, village_state), False, suggested_action, None
 
 
 def _is_coding_npc(npc_id: str) -> bool:
@@ -211,11 +242,15 @@ def build_context(
     return "\n".join(lines)
 
 
-async def answer_with_openai(npc: dict[str, Any], context: str, message: str) -> str:
+async def answer_with_openai(npc: dict[str, Any], context: str, message: str) -> tuple[str, ChatMention | None]:
     import httpx
 
     system_prompt = (
         "너는 정재훈의 살아있는 3D 포트폴리오 마을에 사는 AI NPC다. "
+        '반드시 JSON 하나로만 답한다: {"reply": "<방문자에게 보여줄 답변>", "mention": null}. '
+        "방문자의 이번 메시지가 **다른 NPC 를 감정을 담아** 언급했으면(칭찬·사과 전달·호감 vs 험담·서운함) "
+        'mention 을 {"name": "<그 NPC 이름>", "sentiment": "positive"|"negative"} 로 채운다. '
+        "그냥 이름만 나오거나(안부 질문 등) 부정문으로 감정을 부인하면 mention 은 null. "
         "감정과 기억이 있는 것처럼 행동하되, 사실은 제공된 포트폴리오 데이터와 최근 대화만 근거로 말한다. "
         "모르는 내용은 지어내지 말고 확인 가능한 범위에서 답한다. "
         "'내 최근 기억'이 주어지면 그것만 네 기억으로 삼고, 없는 기억을 만들어 말하지 않는다. "
@@ -246,11 +281,14 @@ async def answer_with_openai(npc: dict[str, Any], context: str, message: str) ->
                 ],
                 "temperature": 0.65,
                 "max_tokens": 650,
+                "response_format": {"type": "json_object"},
             },
         )
         response.raise_for_status()
         data = response.json()
-        return _clean_response_text(data["choices"][0]["message"]["content"])
+        raw = str(data["choices"][0]["message"]["content"])
+        reply, mention = _parse_chat_json(raw)
+        return _clean_response_text(reply), mention
 
 
 def answer_without_ai(

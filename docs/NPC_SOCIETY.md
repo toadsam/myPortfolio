@@ -119,11 +119,34 @@ NPC 당 30개. `kind` 는 encounter / incident / gossip / visitor.
 | NPC 의 부탁 — `NpcFavor`(NPC 당 미완료 1). 서먹한 상대가 있을 때 대화 중 20% 로 "픽셀한테 내가 미안해한다고 전해 줄래?"(앙숙이면 간접). 방문자가 *그 상대* 에게 *부탁한 NPC* 얘기를 긍정으로 전하면 이행 → +4, 🎁 소식, 칩 "🎁 부탁 완료". `GET /npc/favors` 로 HUD 줄(누르면 그 NPC 에게 감) | `favor_service`, `relay_service.apply_relay`, `DialogueBox`, `VillageHud` |
 | 건물 불빛 ↔ 관계 — 오늘 마일스톤: 싸움이면 두 NPC 집 한 칸 어둡게, 화해면 한 칸 밝게. 관리자 override **뒤**에 적용. reason 에 "오늘 픽셀이 루미와 싸워서 조금 어둡다". NPC→집은 `NPC_HOME_BUILDING`(핵심) + `npc-<building>` | `relationship_service.todays_light_shift`, `village_service.apply_light_shift` |
 
+## 4-d. 5단계 (2026-08-24) — 결함 수정 · 공방 사건 · 방문자 단골 · 운영 도구
+
+| 무엇 | 어디 |
+|---|---|
+| 방문자 기억 별도 캡 — visitor 기억은 12개짜리 자기 통(사회 기억 30개와 분리). 마주침이 1~2분마다 기억을 만들어 "다시 온 손님"이 하루도 못 버티던 결함 수정 | `memory_service._trim`, `MAX_VISITOR_PER_NPC` |
+| 부탁이 대사에 섞임 — `maybe_issue` 를 답변 생성 **전**에 판정해 프롬프트에 넣고, 모델이 안 녹였으면(상대 이름이 답변에 없음) 서버가 "아, 그리고… {부탁}" 을 붙인다 | `main.py /npc/chat` |
+| relay 감지 2겹 — 모델 응답이 JSON(`{reply, mention}`) 이 되어 같은 호출에서 언급을 감지("픽셀 좀 별로던데" 실측 −2). 사전 규칙(detect_relay)이 우선, 모델 mention 은 `resolve_mention` 으로 규칙 검증. 파싱 실패 시 원문=답변(예전 동작) | `chat_service._parse_chat_json`, `relay_service.resolve_mention` |
+| 폴백 대사 kind 당 5세트 | `npc_brain_service._FALLBACK_LINES` |
+| **공방 사건 가동** — `/atelier` 방이 90초 후부터 ~2분마다 팀원 둘을 `/npc/encounter` 로 마주치게 하고 말풍선·💢/💕 로 재생. 잠자던 atelier 사건 템플릿이 처음으로 발화(실측: 굴뚝↔체리 +3, 마을 소식 기록) | `AtelierInterior.useAtelierSocialLoop` |
+| 마일스톤 정점 연출 — 절친: 3초 마주 봄 + 근처 NPC 둘 🎉 구경, 앙숙: 8유닛 등 돌림 + worried, 화해: 🤝 | `AIPortfolioVillage.stageEncounterAftermath` |
+| 활동 한쪽 보정 — 공통 화제가 없어도 커밋 많은 날 developer/project +1, 운동 빼먹은 날 life −1, 공부 90분+ coding/cs +1 | `relationship_rules._shared_topic` |
+| 방문자 단골 — `VisitorBond`(visitor_id×npc, 하루 +2 상한, 부탁 이행 +4). ≥8 "아는 손님", ≥20 "단골 손님" — 프롬프트 한 줄 + 대화창 이름 옆 뱃지(`ChatMessageOut.bond`) | `visitor_service`, `DialogueBox` |
+| 관계도 간선 뱃지 — 사연 있는 쌍(싸움+화해>0)의 간선 중점에 💥/🤝+횟수 | `VillageHud.RelationshipViewer` |
+| 관리자 도구 — `POST /admin/npc/society/reset`(사회만 백지 + 씨앗 재파종, 활동·의뢰는 보존), `PUT /admin/npc/relationships`(친밀도 직접 설정). admin 페이지 서랍 "NPC 사회"(±10 조정, 리셋 confirm) | `relationship_service.reset_society/admin_set_affinity`, `admin/page.tsx NpcSocietyAdmin` |
+
+dev DB 는 2026-08-24 에 백업(`portfolio_village.backup-20260824.db`, 루트와 backend/ 두 개)으로 밀고 새로 시작 —
+startup 씨앗이 소식 5개·관계 5행을 심는 걸 실측했다. `database_url` 이 상대경로라 **실 DB 는 리포 루트**에 생긴다(backend/ 것은 옛 수동 실행 흔적).
+
 ## 5. 테스트
 
 `backend/tests/test_relationship_rules.py`(규칙 결정성·가중·클램프·직군 제약·조사), `test_memory_service.py`(캡·about·뒷담화·delta·중복 방지·공개 필터),
 `test_relationship_service.py`(id 키·감쇠 주기·purge·영구 연표·정리·씨앗·관계 줄), `test_relay_service.py`(방문자 개입 감지·부정문·적용),
-`test_npc_routes.py`(라우트 스모크), `test_favor_and_digest.py`(부탁 발급·이행, 불빛 보정, 하루 요약). 313개 전부 통과.
+`test_npc_routes.py`(라우트 스모크 + 관리자 리셋/조정 + 폴백 부탁), `test_favor_and_digest.py`(부탁 발급·이행, 불빛 보정, 하루 요약),
+`test_chat_parse.py`(모델 JSON 파싱·폴백 풀), `test_visitor_service.py`(단골 상한·등급). 333개 전부 통과.
+
+**E2E 스모크**: dev(3000)+백엔드(8000) 띄운 뒤 `node scripts/e2e/society.mjs` — 마을 열기(건너뛰기·PERF 닫기·HUD 펼치기 순서가
+`scripts/e2e/lib.mjs` 에 있다), 소식 피드·relay 칩·관계도 노드 클릭을 한 바퀴 돈다. `playwright-core` 필요(로컬 검증 전용이라
+devDependency 아님). 루미는 대화창이 아니라 안내 패널을 여니 하네스에 넣지 말 것.
 
 ## 6. 같은 날 바뀐 조작·성능 (요약 — 자세한 근거는 메모리 `village-pointer-and-ao`)
 

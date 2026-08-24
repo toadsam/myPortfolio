@@ -112,3 +112,27 @@ def test_visitor_history_is_empty_on_first_visit_and_grows(db_session):
     assert mem.visitor_history(db_session, "guide-npc", "zzz") == []
     # 관계도용 공개 기억엔 visitor 가 안 섞인다
     assert all(m.kind != "visitor" for m in mem.public_recent(db_session, "guide-npc"))
+
+
+def test_visitor_memories_survive_social_flood(db_session):
+    # 방문자 기억 하나 → 사회 기억 40개가 밀어내지 못한다 (5단계 D-1)
+    mem.remember(db_session, "guide-npc", "방문자가 '안녕' 하고 물어봤다", about=mem.visitor_key("abc"), kind="visitor")
+    for i in range(40):
+        mem.remember(db_session, "guide-npc", f"사건 {i}", about="project-npc", kind="encounter")
+    rows = mem.recent(db_session, "guide-npc", limit=60)
+    assert len([t for t in rows]) <= mem.MAX_PER_NPC + mem.MAX_VISITOR_PER_NPC
+    assert mem.visitor_history(db_session, "guide-npc", "abc")  # 아직 살아 있다
+
+
+def test_visitor_memories_have_their_own_cap(db_session):
+    for i in range(mem.MAX_VISITOR_PER_NPC + 3):
+        mem.remember(db_session, "guide-npc", f"방문자 질문 {i}", about=mem.visitor_key("abc"), kind="visitor")
+    from sqlalchemy import and_
+    from app.models import NpcMemory
+
+    visitor_rows = (
+        db_session.query(NpcMemory)
+        .filter(and_(NpcMemory.npc_id == "guide-npc", NpcMemory.kind == "visitor"))
+        .all()
+    )
+    assert len(visitor_rows) == mem.MAX_VISITOR_PER_NPC

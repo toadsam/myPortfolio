@@ -114,6 +114,8 @@ export function DialogueBox({
   const [lines, setLines] = useState<ChatLine[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [fallbackMode, setFallbackMode] = useState(false);
+  // 익명 단골 등급 — 응답마다 갱신. "처음 온 손님"은 뱃지를 안 단다.
+  const [bond, setBond] = useState<{level: string; score: number} | null>(null);
   const [remotePresetQuestions, setRemotePresetQuestions] = useState<string[]>(
     []
   );
@@ -227,6 +229,7 @@ export function DialogueBox({
       const response = await sendNpcMessage(npc.id, nextMessage, context);
       onSuggestedAction(response.suggested_action);
       setFallbackMode(!response.used_ai);
+      setBond(response.bond ?? null);
       const relay = response.relay ?? null;
       const favor = response.favor ?? null;
       setLines(current =>
@@ -312,6 +315,14 @@ export function DialogueBox({
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="v-panel-title truncate text-base">{npc.name}</p>
+                  {bond && bond.level !== "처음 온 손님" ? (
+                    <span
+                      className="shrink-0 rounded-full border border-[#e2c078]/40 bg-[#e2c078]/10 px-2 py-0.5 text-[9px] font-black text-[#f3e6c8]"
+                      title={`호감 ${bond.score}`}
+                    >
+                      {bond.level === "단골 손님" ? "단골 ⭐" : "아는 손님"}
+                    </span>
+                  ) : null}
                   {offline ? (
                     <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[9px] font-black text-amber-300">
                       ⚠ AI 오프라인

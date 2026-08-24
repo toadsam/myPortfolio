@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from app.config import settings
 from app.database import get_db
 from app.main import app
+from app.security import require_admin
 from app.models import NpcMemory, NpcRelationship, VillageEvent
 
 
@@ -21,10 +22,13 @@ def client(db_session, monkeypatch):
         yield db_session
 
     app.dependency_overrides[get_db] = _override
+    # 관리자 라우트 스모크용 — 실제 토큰 검증은 security 쪽 몫이라 여기선 통과시킨다
+    app.dependency_overrides[require_admin] = lambda: None
     try:
         yield TestClient(app)
     finally:
         app.dependency_overrides.pop(get_db, None)
+        app.dependency_overrides.pop(require_admin, None)
 
 
 def _encounter(client, a="guide-npc", b="project-npc"):
@@ -74,3 +78,49 @@ def test_news_is_newest_first_and_memory_hides_visitor(client, db_session):
 
     memory = client.get("/npc/memory/guide-npc").json()
     assert all(m["kind"] != "visitor" for m in memory)
+
+
+def test_fallback_reply_carries_favor_text(client, db_session):
+    # 서먹한 관계를 만들고 부탁 발급을 강제(확률 무시) — 폴백 답변 끝에 부탁 문장이 붙는다 (D-2)
+    from app.services import favor_service, relationship_service
+
+    for _ in range(4):
+        relationship_service.apply_outcome(db_session, "guide-npc", "project-npc", -5, "말다툼")
+    import app.services.favor_service as fs
+
+    original = fs.ISSUE_CHANCE
+    fs.ISSUE_CHANCE = 1.0
+    try:
+        res = client.post("/npc/chat", json={"npc_id": "guide-npc", "message": "안녕!", "recent_messages": []})
+    finally:
+        fs.ISSUE_CHANCE = original
+    body = res.json()
+    assert body["favor"] is not None
+    assert body["favor"]["text"] in body["reply"]
+
+
+def test_admin_society_reset_and_set_affinity(client, db_session):
+    from app.models import DailyActivity, NpcRelationship, VillageEvent
+
+    _encounter(client)  # 사회 데이터 생성 (활동 행도 생긴다)
+    assert db_session.query(NpcRelationship).count() >= 1
+
+    res = client.put(
+        "/admin/npc/relationships", json={"npc_a": "guide-npc", "npc_b": "project-npc", "affinity": 42}
+    )
+    assert res.status_code == 200, res.text
+    body = res.json()
+    assert body["affinity"] == 42 and body["vibe"] == "절친"
+
+    res = client.post("/admin/npc/society/reset")
+    assert res.status_code == 200
+    out = res.json()
+    assert out["removed"] >= 1 and out["seeded"] >= 4
+    # 사회는 씨앗만, 활동 기록은 그대로
+    assert db_session.query(VillageEvent).count() == out["seeded"]
+    assert db_session.query(DailyActivity).count() >= 1
+
+    res = client.put(
+        "/admin/npc/relationships", json={"npc_a": "guide-npc", "npc_b": "guide-npc", "affinity": 0}
+    )
+    assert res.status_code == 400

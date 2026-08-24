@@ -190,6 +190,31 @@ def _commission_block(context: dict) -> str:
     ]
     body = "\n".join(row for row in rows if row) or "- (접수 내용이 비어 있다)"
 
+    # 심화 문답(2층)에서 받은 것 — 접수 원문보다 나중에, 더 확정적으로 받은 답들이다.
+    depth_rows = [
+        line("운영·수정 주체", requirements.get("who_updates")),
+        line("콘텐츠 준비", requirements.get("content_owner")),
+        line("성공 기준", requirements.get("success_metric")),
+        line("기존 자산", requirements.get("existing_assets")),
+        line("피할 것", requirements.get("dislikes")),
+        line("참고 이유", requirements.get("reference_notes")),
+        line("결정하는 분", requirements.get("decision_maker")),
+    ]
+    branch = requirements.get("branch") or {}
+    depth_rows += [line(f"문답 {key}", value) for key, value in branch.items()]
+    depth_body = "\n".join(row for row in depth_rows if row)
+    if depth_body:
+        body += f"\n\n### 심화 문답에서 받은 것 (접수 원문보다 확정적이다)\n\n{depth_body}"
+
+    # AI 가 이 의뢰만 보고 더 물은 것 — 답이 있는 것만 싣는다. 여기 실린 건 다시 묻지 마라.
+    ai_rows = [
+        f"- Q: {item.get('question', '')}\n  A: {item.get('answer', '')}"
+        for item in (requirements.get("ai_questions") or [])
+        if str(item.get("answer", "")).strip()
+    ]
+    if ai_rows:
+        body += "\n\n### 이 의뢰에만 필요했던 추가 문답\n\n" + "\n".join(ai_rows)
+
     consult = str(context.get("consult_log") or "").strip()
     if consult:
         body += f"\n\n### 접수원 도안과 손님이 나눈 대화\n\n{consult}"

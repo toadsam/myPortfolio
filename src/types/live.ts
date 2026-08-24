@@ -162,6 +162,8 @@ export interface NpcChatResponse {
   relay?: NpcRelay | null;
   /** 이번 답변과 함께 NPC 가 건넨 부탁 */
   favor?: NpcFavor | null;
+  /** 이 방문자와 이 NPC 의 호감(익명 단골 시스템) */
+  bond?: {level: string; score: number} | null;
 }
 
 /** NPC 개인 기억 한 줄 (GET /npc/memory/{id}; 방문자 대화는 제외) */
@@ -578,6 +580,19 @@ export interface CommissionTrack {
   messages: CommissionMessage[];
   /** 공개된 시안. 있으면 화면이 띄우고 "어디가 아닌지" 묻는다. */
   preview: SharedArtifact | null;
+  /** 2층 릴레이 설문 — 종류별 분기 답({문항id: 답})과 AI 맞춤 질문. */
+  branch: Record<string, string>;
+  ai_questions: AiQuestion[];
+  /** AI 질문 생성이 이미 끝났는가(빈 목록이어도 true — 재생성하지 않는다) */
+  ai_questions_done: boolean;
+}
+
+/** AI 가 이 의뢰만 보고 뽑은 맞춤 질문 하나. */
+export interface AiQuestion {
+  id: string;
+  question: string;
+  answer: string;
+  speaker: CommissionSpeaker;
 }
 
 export interface CommissionDepthResponse {
