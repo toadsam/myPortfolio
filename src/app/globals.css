@@ -321,54 +321,12 @@ canvas {
   box-shadow: 0 24px 80px rgba(31, 42, 36, 0.2);
 }
 
-/* ── 커스텀 네온 커서 (fine 포인터 기기에서만 활성) ── */
-.custom-cursor-active,
-.custom-cursor-active * {
-  cursor: none !important;
-}
-
-.cursor-ring,
-.cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 99999;
-  pointer-events: none;
-  opacity: 0;
-  will-change: transform;
-}
-
-.cursor-ring {
-  height: 34px;
-  width: 34px;
-  border: 1.5px solid #ffbe7a;
-  border-radius: 999px;
-  box-shadow: 0 0 10px rgba(255, 190, 122, 0.5);
-  transition: width 0.18s ease, height 0.18s ease, border-color 0.18s ease,
-    background 0.18s ease, opacity 0.2s ease;
-}
-
-.cursor-ring.hover {
-  height: 52px;
-  width: 52px;
-  border-color: #ff9d38;
-  background: rgba(255, 157, 56, 0.08);
-  box-shadow: 0 0 16px rgba(255, 157, 56, 0.5);
-}
-
-.cursor-ring.down {
-  height: 26px;
-  width: 26px;
-}
-
-.cursor-dot {
-  height: 6px;
-  width: 6px;
-  border-radius: 999px;
-  background: #ffbe7a;
-  box-shadow: 0 0 6px rgba(255, 190, 122, 0.85);
-  transition: opacity 0.2s ease;
-}
+/* ── 커스텀 네온 커서 ──
+   규칙이 여기 없는 건 일부러다. 링/닷을 캔버스에 PNG 로 구워 `cursor: url(...)` 로 달기 때문에
+   선택자와 data URI 를 CustomCursor.tsx 가 런타임에 만들어 <style> 로 넘긴다.
+   예전엔 여기서 `cursor: none` 으로 진짜 커서를 숨기고 .cursor-ring / .cursor-dot 을
+   rAF 로 옆에서 따라다니게 했는데, 그러면 프레임이 안 나오는 구간에서 커서가 멈추었다.
+   자세한 사정은 CustomCursor.tsx 상단 주석에 있다. */
 
 /* 건물 간판 — 마을에 실제로 걸린 나무 팻말.
    ▶ASSET: background/box-shadow 를 border-image 로 교체 가능 */
