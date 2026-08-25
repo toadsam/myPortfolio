@@ -81,6 +81,46 @@ const RINGS = [
   {count: 11, radius: 145}
 ] as const;
 
+/* ─────────────────────────────────────────────────────────────────────────────
+ * "들어갔다" 신호
+ *
+ * 마을은 막 뒤에서 이미 살고 있었다. 루미가 달려오는 연출도, 순찰·사교·마주침
+ * 루프도 마운트 즉시 돌았어서, 막이 10~20초 떠 있는 동안 **다 끝나 있었다.**
+ * 관람객이 들어오면 루미는 이미 도착해 있고, 달려오는 장면은 아무도 못 봤다.
+ *
+ * 그래서 「들어가기」를 누를 때까지 마을을 재워 둔다. 로딩 중 헛수고도 그만큼 준다.
+ * (씨의 state 로 두지 않는 이유는 villageReadySignal 주석 참고 — 같은 이유다.)
+ * ──────────────────────────────────────────────────────────────────────── */
+
+const enteredSignal = {done: false, subs: new Set<() => void>()};
+
+export function markVillageEntered() {
+  if (enteredSignal.done) return;
+  enteredSignal.done = true;
+  for (const fn of enteredSignal.subs) fn();
+}
+
+/** 베일이 처음 뜼 때 불러 준다 — 마을을 다시 들어오면 처음부터다. */
+export function resetVillageEntry() {
+  enteredSignal.done = false;
+}
+
+export function useVillageEntered() {
+  const [entered, setEntered] = useState(enteredSignal.done);
+  useEffect(() => {
+    if (enteredSignal.done) {
+      setEntered(true);
+      return;
+    }
+    const fn = () => setEntered(true);
+    enteredSignal.subs.add(fn);
+    return () => {
+      enteredSignal.subs.delete(fn);
+    };
+  }, []);
+  return entered;
+}
+
 /* ────────────────────────────────────────────────────────────────────────────
  * 아래층 — 타이틀
  * ────────────────────────────────────────────────────────────────────────── */

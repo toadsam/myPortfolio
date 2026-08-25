@@ -47,7 +47,10 @@ import {
 } from "@/components/village/VillageHud";
 import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {cameraTargets, villageBuildings} from "@/lib/constants";
-import {VillageLoadingVeil} from "@/components/village/VillageLoadingVeil";
+import {
+  useVillageEntered,
+  VillageLoadingVeil
+} from "@/components/village/VillageLoadingVeil";
 import {
   fetchRelationships,
   fetchNpcFavors,
@@ -288,6 +291,8 @@ function useStableCallback<Args extends unknown[], R>(
 }
 
 export function AIPortfolioVillage() {
+  // 관람객이 「들어가기」를 누르기 전엔 마을을 재워 둔다(VillageLoadingVeil 주석 참고).
+  const villageEntered = useVillageEntered();
   const [activeSection, setActiveSection] = useState<SectionId>("intro");
   const [activeContentId, setActiveContentId] = useState<string | undefined>(
     undefined
@@ -546,6 +551,7 @@ export function AIPortfolioVillage() {
   }, []);
 
   useEffect(() => {
+    if (!villageEntered) return; // 입장 전엔 재워 둔다
     function nearbyNpcIds(npcId: string) {
       const position = npcPositionsRef.current[npcId];
       if (!position) return [];
@@ -636,9 +642,10 @@ export function AIPortfolioVillage() {
       clearTimeout(firstTick);
       clearInterval(tickInterval);
     };
-  }, []);
+  }, [villageEntered]);
 
   useEffect(() => {
+    if (!villageEntered) return; // 입장 전엔 재워 둔다
     async function checkEncounter() {
       if (typeof document !== "undefined" && document.hidden) return; // 탭 숨김 → AI 호출 중단(비용 절감)
       if (editingRef.current) return; // 배치 편집 중엔 씬 갱신 중단
@@ -765,10 +772,11 @@ export function AIPortfolioVillage() {
 
     const interval = setInterval(checkEncounter, 6000);
     return () => clearInterval(interval);
-  }, []);
+  }, [villageEntered]);
 
   // 분신(총괄 NPC) 순찰 — 친구들 집을 순회하며 도착하면 안부 대화
   useEffect(() => {
+    if (!villageEntered) return; // 입장 전엔 재워 둔다
     async function patrolTick() {
       if (typeof document !== "undefined" && document.hidden) return;
       if (editingRef.current) return; // 배치 편집 중엔 순찰 중단
@@ -895,10 +903,11 @@ export function AIPortfolioVillage() {
 
     const id = setInterval(patrolTick, 2500);
     return () => clearInterval(id);
-  }, []);
+  }, [villageEntered]);
 
   // 무료 상호작용 — 근접 시 이모트/짧은 잡담 (AI 없음, 상시 활기)
   useEffect(() => {
+    if (!villageEntered) return; // 입장 전엔 재워 둔다
     function socialTick() {
       if (typeof document !== "undefined" && document.hidden) return;
       if (editingRef.current) return; // 배치 편집 중엔 잡담 중단
@@ -954,7 +963,7 @@ export function AIPortfolioVillage() {
     }
     const id = setInterval(socialTick, 2600);
     return () => clearInterval(id);
-  }, []);
+  }, [villageEntered]);
 
   // 마을 소식(NPC 사이의 사건) + 미완료 부탁 — 60초마다. 백엔드 없으면 조용히 빈 채로.
   useEffect(() => {
@@ -1002,6 +1011,7 @@ export function AIPortfolioVillage() {
 
   // 소셜 디렉터 — 관계에 따라 NPC가 친한 친구를 찾아가거나 화해하러 가게 만든다(창발 루프의 엔진)
   useEffect(() => {
+    if (!villageEntered) return; // 입장 전엔 재워 둔다
     function directorTick() {
       if (typeof document !== "undefined" && document.hidden) return;
       if (editingRef.current || npcCommandRef.current) return;
@@ -1066,7 +1076,7 @@ export function AIPortfolioVillage() {
 
     const id = setInterval(directorTick, 9000);
     return () => clearInterval(id);
-  }, []);
+  }, [villageEntered]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -1139,10 +1149,15 @@ export function AIPortfolioVillage() {
   }, [viewMode, soundOn]);
 
   // 컨시어지: 마을 진입 시 루미가 달려오게 트리거 (접속할 때마다 1회)
+  //
+  // **막이 걷힌 뒤에 시작해야 한다.** 예전엔 마운트 즉시 달렸는데, 로딩 막이
+  // 10~20초 떠 있으니 관람객이 들어오면 루미는 이미 도착해 있었다 —
+  // 달려오는 장면을 아무도 못 봤다.
   useEffect(() => {
+    if (!villageEntered) return;
     if (conciergeStage !== "idle") return;
     setConciergeStage("running");
-  }, [conciergeStage]);
+  }, [villageEntered, conciergeStage]);
 
   // 루미가 안 도착해도 패널이 뜨도록 안전망
   useEffect(() => {

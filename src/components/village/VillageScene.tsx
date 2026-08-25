@@ -45,6 +45,8 @@ import {
 } from "@/lib/htmlLabelThrottle";
 import {spread, villageBuildings} from "@/lib/constants";
 import {
+  markVillageEntered,
+  resetVillageEntry,
   VillageLoadingVeil,
   VillageTitleCard
 } from "@/components/village/VillageLoadingVeil";
@@ -903,6 +905,7 @@ function LoadingVeilImpl() {
   if (firstRef.current) {
     firstRef.current = false;
     villageReadySignal.done = false;
+    resetVillageEntry();
   }
 
   const sceneReady = useVillageReady();
@@ -975,7 +978,11 @@ function LoadingVeilImpl() {
         revealed={ready}
         fading={entering}
         reduced={reduced}
-        onEnter={() => setEntering(true)}
+        onEnter={() => {
+          // 마을은 지금부터 산다 — 루미가 달려오는 것도, 순찰·사교 루프도.
+          markVillageEntered();
+          setEntering(true);
+        }}
       />
       {/* 액자는 다 지어지면 투명해지며 아래 타이틀을 드러낸다. 페이드가 끝날
           때까지 DOM 에 남겨야 한다 — 바로 빼면 타이틀이 튀어나온다. */}
