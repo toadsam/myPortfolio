@@ -1,6 +1,12 @@
 "use client";
 
-import {useEffect, useMemo, useRef, type CSSProperties} from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties
+} from "react";
 import {Nanum_Myeongjo, Space_Mono} from "next/font/google";
 import {villageBuildings} from "@/lib/constants";
 
@@ -99,6 +105,28 @@ export function VillageTitleCard({
     if (revealed && !fading) ref.current?.focus();
   }, [revealed, fading]);
 
+  // 「두둥」 — 글씨가 확 떠올랐다가 서서히 잦아든다.
+  //   0 숨음 → 1 진하게 떠오름(0.9) → 2 시안의 흐린 상태(0.2)로 가라앉음
+  // 시작을 450ms 미루는 이유: 액자가 1.2초에 걸쳐 투명해지는 중이라, 바로 띄우면
+  // 정작 제일 진한 순간이 액자에 가려 안 보인다. 액자가 걷히는 결에 맞춰 피어난다.
+  const [beat, setBeat] = useState(0);
+  useEffect(() => {
+    if (!revealed) {
+      setBeat(0);
+      return;
+    }
+    if (reduced) {
+      setBeat(2);
+      return;
+    }
+    const rise = window.setTimeout(() => setBeat(1), 450);
+    const settle = window.setTimeout(() => setBeat(2), 1900);
+    return () => {
+      window.clearTimeout(rise);
+      window.clearTimeout(settle);
+    };
+  }, [revealed, reduced]);
+
   return (
     <button
       ref={ref}
@@ -130,10 +158,16 @@ export function VillageTitleCard({
         opacity: fading ? 0 : 1
       }}
     >
-      {/* 시안의 opacity-20 그대로 — 어둠 속에 잠긴 간판처럼 흐리게 뜬다. */}
+      {/* 가라앉은 뒤가 시안의 opacity-20 — 어둠 속에 잠긴 간판처럼 흐리게 남는다. */}
       <div
         style={{
-          opacity: 0.2,
+          opacity: beat === 0 ? 0 : beat === 1 ? 0.9 : 0.2,
+          transform: beat === 0 ? "scale(1.05)" : "scale(1)",
+          transition: reduced
+            ? "none"
+            : beat === 2
+              ? "opacity 1.6s ease-in-out, transform 1.6s ease-in-out"
+              : "opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1.3s cubic-bezier(0.16, 1, 0.3, 1)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -146,9 +180,13 @@ export function VillageTitleCard({
             margin: 0,
             fontSize: "clamp(34px, 8vw, 60px)", // 시안 text-6xl
             textTransform: "uppercase",
-            letterSpacing: "-0.05em", // tracking-tighter
+            // 벌어져 있다가 제자리로 모인다 — 「두둥」의 무게는 여기서 나온다.
+            letterSpacing: beat === 0 ? "0.08em" : "-0.05em", // 시안 tracking-tighter
             fontWeight: 700,
-            lineHeight: 1.05
+            lineHeight: 1.05,
+            transition: reduced
+              ? "none"
+              : "letter-spacing 1.4s cubic-bezier(0.16, 1, 0.3, 1)"
           }}
         >
           Developer&apos;s City
@@ -157,7 +195,10 @@ export function VillageTitleCard({
           style={{
             margin: "16px 0 0", // 시안 mt-4
             fontSize: "clamp(15px, 2.4vw, 20px)", // 시안 text-xl
-            fontStyle: "italic"
+            fontStyle: "italic",
+            // 제목보다 반 박자 늦게 따라온다.
+            opacity: beat === 0 ? 0 : 1,
+            transition: reduced ? "none" : "opacity 1.1s ease 0.35s"
           }}
         >
           A 3D Interactive Experience
@@ -174,7 +215,9 @@ export function VillageTitleCard({
           letterSpacing: "0.28em",
           textTransform: "uppercase",
           color: C.gold,
-          opacity: 0.45
+          // 제목이 가라앉고 나서야 뜬다 — 같이 뜨면 「두둥」을 방해한다.
+          opacity: beat === 2 ? 0.45 : 0,
+          transition: reduced ? "none" : "opacity 1s ease 0.4s"
         }}
       >
         Click to enter
