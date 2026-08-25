@@ -11,23 +11,41 @@ import {
 import {projects} from "@/data/projects";
 import {getTechIcon} from "@/data/techIcons";
 import {
+  CATEGORY_META,
   aboutMe,
+  careers,
   contact,
+  devRecords,
   education,
   hero,
   mainProjects,
-  proficiency,
+  resumePdf,
+  githubEvidence,
   skillChips,
   skillDetails,
   subProjects,
   values,
-  type MainProjectCard
+  workExperience,
+  type MainProjectCard,
+  type ResumeCategory
 } from "@/data/resume";
+import dynamic from "next/dynamic";
 import type {ProjectData} from "@/types/portfolio";
 import {ProjectOnePager} from "./ProjectOnePager";
-import {FloatingIsle} from "./FloatingIsle";
-import {TechConstellation} from "./TechConstellation";
 import "./ResumeTerminal.css";
+
+// **three 를 끌고 오는 건 이 둘뿐이다.** 예전엔 이것 때문에 `/resume` 페이지
+// 전체가 `dynamic(ssr:false)` 로 묶여 있었고, 그 결과 서버가 내려주는 HTML 에
+// 이름 한 글자도 없었다(검색·링크 미리보기·ATS·JS 차단 환경에서 백지).
+// 장식 둘만 클라이언트에 가두면 본문은 정상적으로 서버 렌더된다.
+const FloatingIsle = dynamic(
+  () => import("./FloatingIsle").then(m => m.FloatingIsle),
+  {ssr: false}
+);
+const TechConstellation = dynamic(
+  () => import("./TechConstellation").then(m => m.TechConstellation),
+  {ssr: false}
+);
 
 // 학력: "학과명 (전공)" 에서 태그 분리
 function parseEdu(program: string): {name: string; tag: string | null} {
@@ -132,6 +150,20 @@ export function ResumeMode({onEnterVillage}: Props) {
   const [gridView, setGridView] = useState(false);
   const [selectedRich, setSelectedRich] = useState<number | null>(null);
 
+  // 좁은 화면에서는 **3D 고리가 성립하지 않는다.** 카드 폭이 화면 폭에 육박하면
+  // 12장이 한 점에 겹쳐 글자가 서로 위에 포개진다(390px 에서 실제로 그랬다).
+  // 반지름을 줄여도 결과는 같다 — 그래서 캐러셀을 끄고 그리드로 고정하고,
+  // "캐러셀로 보기" 토글도 감춘다. 돌아갈 곳이 없는 버튼은 없느니만 못하다.
+  const [narrow, setNarrow] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 720px)");
+    const apply = () => setNarrow(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+  const isGrid = gridView || narrow;
+
   // 터치 전용 기기인가. 이 화면에 온 터치 방문자는 대개 자동 전환으로 왔는데,
   // 아래 "마을 탐험" 버튼을 누르면 **조작이 안 되는 마을**로 들어가게 된다.
   // 막지는 않고 한 줄로 알려만 준다.
@@ -154,6 +186,23 @@ export function ResumeMode({onEnterVillage}: Props) {
     () => education.filter(e => !isAcademic(e.program)),
     []
   );
+
+  // 작업 비중. **세는 값이지 자기평가가 아니다.** mainProjects 의 카테고리를
+  // 그대로 집계하므로 프로젝트를 추가/삭제하면 막대도 따라 움직인다.
+  const areaWeights = useMemo(() => {
+    const groups: {label: string; cats: ResumeCategory[]}[] = [
+      {label: "웹 서비스 · 데이터", cats: ["web", "data", "ops"]},
+      {label: "게임", cats: ["game"]},
+      {label: "AR / XR", cats: ["ar"]}
+    ];
+    return groups
+      .map(g => ({
+        label: g.label,
+        count: mainProjects.filter(p => g.cats.includes(p.category)).length
+      }))
+      .filter(g => g.count > 0);
+  }, []);
+  const maxWeight = Math.max(...areaWeights.map(w => w.count), 1);
 
   const richList = useMemo(
     () =>
@@ -226,7 +275,12 @@ export function ResumeMode({onEnterVillage}: Props) {
     );
     if (!track || !cards.length) return;
 
-    const radius = 480;
+    // 고리 반지름은 **화면 폭을 따라간다.** 480px 로 못 박아 두면 좁은 화면에서
+    // 옆쪽 카드가 뷰포트 밖으로 밀려나고, 루트가 overflow-x:hidden 이라 스크롤로
+    // 따라갈 수도 없어 그냥 잘려 보였다(375px 에서 내용 폭이 653px 이었다).
+    const radiusFor = () =>
+      Math.round(Math.max(190, Math.min(480, window.innerWidth * 0.4)));
+    let radius = radiusFor();
     const angleStep = 360 / cards.length;
     let currentAngle = 0;
     let isDragging = false;
@@ -312,12 +366,21 @@ export function ResumeMode({onEnterVillage}: Props) {
       }, 3000);
     };
 
+    // 화면을 돌리거나 창을 줄이면 반지름을 다시 잰다.
+    const onResize = () => {
+      const next = radiusFor();
+      if (next === radius) return;
+      radius = next;
+      update();
+    };
+
     track.addEventListener("mousedown", onDown);
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
     track.addEventListener("touchstart", onDown, {passive: true});
     window.addEventListener("touchmove", onMove, {passive: true});
     window.addEventListener("touchend", onUp);
+    window.addEventListener("resize", onResize);
 
     return () => {
       cancelAnimationFrame(raf);
@@ -327,6 +390,7 @@ export function ResumeMode({onEnterVillage}: Props) {
       track.removeEventListener("touchstart", onDown);
       window.removeEventListener("touchmove", onMove);
       window.removeEventListener("touchend", onUp);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 
@@ -336,10 +400,10 @@ export function ResumeMode({onEnterVillage}: Props) {
   // backface-visibility: hidden 탓에 뒤를 향한 카드가 사라져 보인다.
   // gridRef도 여기서 먼저 뒤집어야 rAF 루프가 transform을 다시 써넣지 않는다.
   useLayoutEffect(() => {
-    gridRef.current = gridView;
+    gridRef.current = isGrid;
     const root = rootRef.current;
     if (!root) return;
-    if (gridView) {
+    if (isGrid) {
       root.querySelectorAll<HTMLElement>(".project-card").forEach(c => {
         c.style.transform = "";
         c.style.left = "";
@@ -351,7 +415,7 @@ export function ResumeMode({onEnterVillage}: Props) {
       // 캐러셀 복귀: 다음 rAF를 기다리면 카드가 한 프레임 가운데 겹쳐 보인다.
       updateRef.current();
     }
-  }, [gridView]);
+  }, [isGrid]);
 
   return (
     <>
@@ -375,13 +439,20 @@ export function ResumeMode({onEnterVillage}: Props) {
                 </button>
               ))}
             </div>
-            <button
-              type="button"
-              className="village-btn"
-              onClick={onEnterVillage}
-            >
-              🏘 3D 마을 탐험 →
-            </button>
+            <div className="header-actions">
+              {/* 대기업 서류는 대부분 PDF 첨부가 본체고 링크는 부가다.
+                  전화번호를 지운 사본이라 공개돼도 안전하다. */}
+              <a className="pdf-btn" download href={resumePdf}>
+                ⬇ PDF 이력서
+              </a>
+              <button
+                type="button"
+                className="village-btn"
+                onClick={onEnterVillage}
+              >
+                🏘 3D 마을 탐험 →
+              </button>
+            </div>
           </header>
 
           <aside className="left-rail">
@@ -396,10 +467,13 @@ export function ResumeMode({onEnterVillage}: Props) {
               <TechConstellation />
             </div>
             <div className="main-title-wrap">
-              <h1 className="hero-name reveal reveal-delay-1">
-                <span>{hero.name}</span>
-                <span className="filled">{hero.name}</span>
-              </h1>
+              {/* 이름은 한 번만 쓴다.
+                  예전엔 같은 이름을 span 두 개로 겹쳐 놓고, 위쪽 흰 글자를
+                  clip-path 로 아래 35% 잘라 낸 뒤 그 자리에 1px 윤곽선을
+                  드러내는 사이버펑크 글리치였다. 팔레트가 밤·등불로 바뀐 뒤에도
+                  글자 연출만 그 시절에 남아 배경과 언어가 어긋났고, 스크린리더와
+                  검색엔진에는 "정재훈정재훈" 으로 읽혔다. */}
+              <h1 className="hero-name reveal reveal-delay-1">{hero.name}</h1>
               <div className="hero-sub reveal reveal-delay-2">
                 <span className="typing-text">{hero.roleTag}</span>
                 <span className="cursor-blink" />
@@ -470,6 +544,23 @@ export function ResumeMode({onEnterVillage}: Props) {
                 <span className="status-unit">EDUCATION</span>
               </div>
             </div>
+            <div className="vertical-divider" />
+            {/* 공개 저장소 수는 이 화면에서 **누구나 눌러서 확인할 수 있는**
+                몇 안 되는 숫자다. 그래서 잠정 표시 없이 그대로 세운다. */}
+            <a
+              className="status-module status-link"
+              href={contact.github}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <span className="status-title">Public Repos</span>
+              <div className="status-data">
+                <span className="status-number">
+                  {githubEvidence.repoCount}
+                </span>
+                <span className="status-unit">GITHUB ↗</span>
+              </div>
+            </a>
           </footer>
         </div>
 
@@ -522,33 +613,53 @@ export function ResumeMode({onEnterVillage}: Props) {
                   {skillDetails.map(d => (
                     <tr key={d.area}>
                       <th>{d.area}</th>
-                      <td>{d.desc}</td>
+                      <td>
+                        {d.desc}
+                        {/* 영역마다 실제로 쓴 것들. 서술만 있으면 "무엇으로"
+                            했는지가 안 보여서, 심사자가 스택을 못 센다. */}
+                        <span className="skill-stack">
+                          {d.stack.map(s => (
+                            <span className="skill-stack-item" key={s}>
+                              {s}
+                            </span>
+                          ))}
+                        </span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
 
+            {/* 예전엔 "숙련도 85% / 80% / 70%" 막대였고, 옆에 「임시 수치 — 조정
+                필요」라는 편집 메모가 화면에 그대로 노출돼 있었다. 문구만 지우면
+                근거 없는 자기평가가 사실로 나가므로, **수치 자체를 바꿨다.**
+                지금 막대는 아래 프로젝트 목록에서 직접 센 값이라 데이터가 바뀌면
+                같이 움직이고, 심사자가 스크롤해서 검산할 수 있다. */}
             <div className="proficiency-section reveal reveal-delay-3">
               <h3 className="proficiency-title">
-                숙련도{" "}
+                작업 비중{" "}
                 <span className="proficiency-note">
-                  (임시 수치 — 조정 필요)
+                  (주요 프로젝트 {mainProjects.length}건 기준)
                 </span>
               </h3>
               <div className="proficiency-list">
-                {proficiency.map(p => (
-                  <div className="proficiency-item" key={p.label}>
-                    <span className="proficiency-label">{p.label}</span>
+                {areaWeights.map(w => (
+                  <div className="proficiency-item" key={w.label}>
+                    <span className="proficiency-label">{w.label}</span>
                     <div className="proficiency-bar">
                       <div
                         className="proficiency-fill"
                         style={
-                          {"--target-width": `${p.percent}%`} as CSSProperties
+                          {
+                            "--target-width": `${Math.round(
+                              (w.count / maxWeight) * 100
+                            )}%`
+                          } as CSSProperties
                         }
                       />
                     </div>
-                    <span className="proficiency-value">{p.percent}%</span>
+                    <span className="proficiency-value">{w.count}건</span>
                   </div>
                 ))}
               </div>
@@ -613,6 +724,51 @@ export function ResumeMode({onEnterVillage}: Props) {
                 </article>
               ))}
             </div>
+
+            {/* 활동·경력. 학력 6개와 같은 목록에 섞어 두면 "경력 없음"으로 읽힌다 —
+                실제로 총학생회 3대·학생회·동아리 회장·병역이 있는데도 그랬다. */}
+            {careers.length > 0 ? (
+              <div className="career-block reveal reveal-delay-2">
+                <h3 className="career-heading">활동 · 경력</h3>
+                <div className="career-list">
+                  {careers.map(c => (
+                    <article className="career-card" key={`${c.org}-${c.role}`}>
+                      <div className="edu-header">
+                        <h4 className="edu-name">
+                          {c.org}
+                          <span className="edu-tag">{c.role}</span>
+                        </h4>
+                        <span className="edu-date">{c.period}</span>
+                      </div>
+                      <p className="edu-desc">{c.desc}</p>
+                      {/* 활동과 프로젝트가 같은 자리에서 나왔다는 걸 한 줄로 잇는다. */}
+                      {c.ledTo ? (
+                        <p className="career-led">
+                          <span aria-hidden="true">↳</span> 이어진 프로젝트 ·{" "}
+                          <b>{c.ledTo}</b>
+                        </p>
+                      ) : null}
+                    </article>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {/* 근무 경험. 개발 이력과 섞으면 둘 다 흐려진다 — 한 줄씩만. */}
+            {workExperience.length > 0 ? (
+              <div className="career-block reveal reveal-delay-2">
+                <h3 className="career-heading">근무 경험</h3>
+                <ul className="work-list">
+                  {workExperience.map(w => (
+                    <li className="work-row" key={w.place}>
+                      <span className="work-place">{w.place}</span>
+                      <span className="work-date">{w.period}</span>
+                      <span className="work-desc">{w.desc}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
         </section>
 
@@ -637,54 +793,132 @@ export function ResumeMode({onEnterVillage}: Props) {
               사라진다(토글할 때 프로젝트가 사라졌다 뒤늦게 다시 나타나던 원인). */}
             <div
               className="carousel-wrapper reveal reveal-delay-1"
-              data-grid={gridView ? "true" : "false"}
+              data-grid={isGrid ? "true" : "false"}
             >
               <div className="carousel-scene">
                 <div className="carousel-track">
-                  {mainProjects.map((p, i) => (
-                    <div
-                      key={p.id}
-                      className={`project-card${p.richId ? " clickable" : ""}`}
-                      onClick={() => {
-                        if (dragMovedRef.current > 6) return;
-                        openProject(p);
-                      }}
-                    >
-                      <div className="project-card-header">
-                        <span className="project-number">
-                          #{String(i + 1).padStart(2, "0")}
-                        </span>
-                        <span
-                          className={`project-status ${
-                            p.status === "운영중"
-                              ? "status-active"
-                              : "status-complete"
-                          }`}
-                        >
-                          {p.status}
-                        </span>
-                      </div>
-                      <div className="project-card-image">
-                        {p.image ? (
-                          <img src={p.image} alt={p.title} />
-                        ) : (
-                          <>
-                            IMG_{String(i + 1).padStart(2, "0")}
-                            <br />
-                            이미지 자리
-                          </>
-                        )}
-                      </div>
-                      <div className="project-name">{p.title}</div>
-                      <div className="project-tags">
-                        {p.tags.map(t => (
-                          <span className="project-tag" key={t}>
-                            {t}
+                  {mainProjects.map((p, i) => {
+                    const cat = CATEGORY_META[p.category];
+                    // 카드 전체 클릭은 마우스 편의고, **키보드 경로는 제목 버튼**이다.
+                    // 카드를 통째로 <button> 으로 만들면 안쪽 <a>(GitHub·사이트)를
+                    // 넣을 수 없다 — 버튼 안의 링크는 유효하지 않은 마크업이다.
+                    // 그래서 제목만 버튼으로 올리고 링크는 형제로 둔다.
+                    const shownMetrics = (p.metrics ?? []).filter(m => m.value);
+                    const links = p.links.filter(l => l.href);
+                    return (
+                      <div
+                        key={p.id}
+                        className={`project-card${
+                          p.richId ? " clickable" : ""
+                        }`}
+                        onClick={() => {
+                          if (dragMovedRef.current > 6) return;
+                          openProject(p);
+                        }}
+                      >
+                        <div className="project-card-header">
+                          <span
+                            className="project-category"
+                            style={{"--cat": cat.color} as CSSProperties}
+                          >
+                            {cat.label}
                           </span>
-                        ))}
+                          <span
+                            className={`project-status ${
+                              p.status === "운영중"
+                                ? "status-active"
+                                : "status-complete"
+                            }`}
+                          >
+                            {p.status}
+                          </span>
+                        </div>
+                        <div className="project-card-image">
+                          {p.image ? (
+                            <img
+                              src={p.image}
+                              alt={p.title}
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          ) : (
+                            <span className="project-card-image-empty">
+                              {p.title}
+                            </span>
+                          )}
+                        </div>
+                        {p.richId ? (
+                          <button
+                            type="button"
+                            className="project-name project-name-btn"
+                            onClick={e => {
+                              e.stopPropagation();
+                              openProject(p);
+                            }}
+                          >
+                            {p.title}
+                          </button>
+                        ) : (
+                          <div className="project-name">{p.title}</div>
+                        )}
+
+                        {/* 기간·팀·역할 — 근거가 없는 값은 데이터에서 비어 있고,
+                            비면 그 줄이 통째로 사라진다. 지어내지 않기 위해서다. */}
+                        {p.period || p.team ? (
+                          <div className="project-meta">
+                            {[p.period, p.team].filter(Boolean).join(" · ")}
+                          </div>
+                        ) : null}
+                        {p.role ? (
+                          <div className="project-role">{p.role}</div>
+                        ) : null}
+
+                        {shownMetrics.length > 0 ? (
+                          <div className="project-metrics">
+                            {shownMetrics.map(m => (
+                              <span className="project-metric" key={m.label}>
+                                <b>{m.value}</b>
+                                {m.label}
+                                {m.provisional ? (
+                                  <i
+                                    className="metric-provisional"
+                                    title="아직 실측하지 않은 임시 수치입니다"
+                                  >
+                                    잠정
+                                  </i>
+                                ) : null}
+                              </span>
+                            ))}
+                          </div>
+                        ) : null}
+
+                        <div className="project-tags">
+                          {p.tags.map(t => (
+                            <span className="project-tag" key={t}>
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+
+                        {links.length > 0 ? (
+                          <div className="project-links">
+                            {links.map(l => (
+                              <a
+                                key={l.label}
+                                className="project-link"
+                                href={l.href}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={e => e.stopPropagation()}
+                              >
+                                {l.label} ↗
+                              </a>
+                            ))}
+                          </div>
+                        ) : null}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
               <div className="carousel-controls">
@@ -703,13 +937,16 @@ export function ResumeMode({onEnterVillage}: Props) {
                 >
                   →
                 </button>
-                <button
-                  type="button"
-                  className="view-toggle-btn"
-                  onClick={() => setGridView(v => !v)}
-                >
-                  {gridView ? "캐러셀로 보기" : "한번에 보기"}
-                </button>
+                {/* 좁은 화면에서는 캐러셀이 성립하지 않으므로 토글도 없다. */}
+                {narrow ? null : (
+                  <button
+                    type="button"
+                    className="view-toggle-btn"
+                    onClick={() => setGridView(v => !v)}
+                  >
+                    {gridView ? "캐러셀로 보기" : "한번에 보기"}
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -730,34 +967,36 @@ export function ResumeMode({onEnterVillage}: Props) {
                 <div className="side-project-card" key={s.title}>
                   {s.image ? (
                     <div className="side-project-image">
-                      <img src={s.image} alt={s.title} />
+                      <img
+                        src={s.image}
+                        alt={s.title}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </div>
                   ) : null}
                   <div className="side-project-name">{s.title}</div>
                   <div className="side-project-desc">{s.desc}</div>
-                  <div className="side-project-links">
-                    {s.links.map(l =>
-                      l.href ? (
-                        <a
-                          key={l.label}
-                          href={l.href}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="side-project-link"
-                        >
-                          {l.label}
-                        </a>
-                      ) : (
-                        <span
-                          key={l.label}
-                          className="side-project-link slot"
-                          title="링크 추가 예정"
-                        >
-                          {l.label}
-                        </span>
-                      )
-                    )}
-                  </div>
+                  {/* href 가 없는 라벨은 **그리지 않는다.** 예전엔 빈 슬롯을
+                      `<span class="slot">` 으로 띄워서, 링크처럼 보이는데 눌리지
+                      않는 GitHub/Demo/Notion 라벨이 25개 떠 있었다. */}
+                  {s.links.some(l => l.href) ? (
+                    <div className="side-project-links">
+                      {s.links
+                        .filter(l => l.href)
+                        .map(l => (
+                          <a
+                            key={l.label}
+                            href={l.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="side-project-link"
+                          >
+                            {l.label}
+                          </a>
+                        ))}
+                    </div>
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -779,17 +1018,58 @@ export function ResumeMode({onEnterVillage}: Props) {
                 <div className="value-card" key={v.title}>
                   <h3 className="value-title">{v.title}</h3>
                   <p className="value-desc">{v.desc}</p>
+                  {/* 형용사만 있으면 서류에서 가장 먼저 스킵되는 블록이다.
+                      실제로 있었던 일 한 줄이 붙어야 읽힌다. */}
+                  {v.evidence ? (
+                    <p className="value-evidence">{v.evidence}</p>
+                  ) : null}
                 </div>
               ))}
             </div>
           </div>
         </section>
 
+        {/* ══════════ 06 Development Records ══════════ */}
+        {/* URL 이 있는 것만 그린다 — 하나도 없으면 섹션째 사라진다. */}
+        {devRecords.some(r => r.href) ? (
+          <section>
+            <div className="records-container">
+              <header className="section-header reveal">
+                <span className="section-id">## 06</span>
+                <h2 className="section-title">
+                  개발 기록{" "}
+                  <span className="section-subtitle">
+                    (Development Records)
+                  </span>
+                </h2>
+              </header>
+              <div className="records-grid reveal reveal-delay-1">
+                {devRecords
+                  .filter(r => r.href)
+                  .map(r => (
+                    <a
+                      className="record-card"
+                      href={r.href}
+                      key={r.title}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      <h3 className="record-title">
+                        {r.title} <span aria-hidden="true">↗</span>
+                      </h3>
+                      <p className="record-desc">{r.desc}</p>
+                    </a>
+                  ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         {/* ══════════ 06 About ══════════ */}
         <section>
           <div className="about-container">
             <header className="section-header reveal">
-              <span className="section-id">## 06</span>
+              <span className="section-id">## 07</span>
               <h2 className="section-title">About Me</h2>
             </header>
             <div className="about-list reveal reveal-delay-1">
@@ -806,7 +1086,7 @@ export function ResumeMode({onEnterVillage}: Props) {
         <section id="resume-contact">
           <div className="contact-container">
             <header className="section-header reveal">
-              <span className="section-id">## 07</span>
+              <span className="section-id">## 08</span>
               <h2 className="section-title">
                 연락처 <span className="section-subtitle">(Contact)</span>
               </h2>
@@ -827,6 +1107,10 @@ export function ResumeMode({onEnterVillage}: Props) {
               >
                 <span className="contact-link-label">GitHub</span>
                 <span>github.com/toadsam</span>
+              </a>
+              <a className="contact-link" download href={resumePdf}>
+                <span className="contact-link-label">이력서</span>
+                <span>PDF 내려받기 ⬇</span>
               </a>
               <button
                 type="button"

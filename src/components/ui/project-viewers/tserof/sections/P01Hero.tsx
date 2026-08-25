@@ -161,7 +161,7 @@ export function P01Hero() {
         style={rise(on[IDX.meta], instant)}
       >
         <Shot
-          src="/projects/tserof.png"
+          src="/projects/tserof.webp"
           alt="TSEROF 타이틀 화면"
           caption="타이틀 화면"
           w={630}

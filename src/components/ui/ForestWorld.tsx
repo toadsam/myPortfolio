@@ -301,7 +301,10 @@ export function ForestWorld() {
     <div
       ref={rootRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      // `forest-world` 는 스타일이 아니라 **인쇄 때 숨기기 위한 손잡이**다
+      // (ResumeTerminal.css 의 @media print). Tailwind 유틸리티만으로는
+      // 바깥에서 이 겹을 지목할 방법이 없다.
+      className="forest-world pointer-events-none fixed inset-0 z-0 overflow-hidden"
     >
       {/* ① 하늘 — 유일하게 안 움직이는 겹. 색만 스크롤로 변한다 */}
       <div ref={skyRef} className="absolute inset-0" />

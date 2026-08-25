@@ -38,21 +38,21 @@ interface ShotDef {
 
 const SHOTS: ShotDef[] = [
   {
-    src: "/projects/op/tserof-stage.png",
+    src: "/projects/op/tserof-stage.webp",
     alt: "스테이지 선택 화면",
     caption: "스테이지 선택 — 이 페이지가 흉내 낸 그 화면",
     w: 530,
     h: 301
   },
   {
-    src: "/projects/op/tserof-difficulty.png",
+    src: "/projects/op/tserof-difficulty.webp",
     alt: "난이도 선택 화면",
     caption: "난이도 선택 — 재도전 문턱을 낮추기 위한 장치",
     w: 605,
     h: 388
   },
   {
-    src: "/projects/op/tserof-feedback.png",
+    src: "/projects/op/tserof-feedback.webp",
     alt: "유저테스트 피드백 정리 화면",
     caption: "유저테스트 기록 — 09 의 네 줄이 나온 곳",
     w: 870,

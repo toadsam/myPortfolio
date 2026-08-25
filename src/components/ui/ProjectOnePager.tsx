@@ -3,6 +3,9 @@
 import {AnimatePresence, motion} from "framer-motion";
 import {useEffect, useRef} from "react";
 import {getProjectTheme, type ProjectTheme} from "@/data/projectThemes";
+// 이름·직함·연락처는 이력서 데이터가 단일 출처다. 여기서 다시 적지 않는다 —
+// 예전엔 푸터에 템플릿 잔재("Sam Kim")가 하드코딩돼 있었다.
+import {contact, hero} from "@/data/resume";
 import type {ProjectData} from "@/types/portfolio";
 import {RICH_DATA} from "./project-viewers/richContent/data";
 import {MYWAVE_BRIEF} from "./project-viewers/richContent/mywaveBrief";
@@ -299,6 +302,11 @@ export function ProjectOnePager({
   const titleMatch = project.title.match(/^(.*?)\s*(\([^)]*\))\s*$/);
   const repoHref = data.demo.repo ?? project.links[0]?.href;
   const teamMeta = data.meta.find(m => m.label === "팀");
+  // 기간·역할은 `data.meta` 에 늘 있었는데 아무도 읽지 않았다.
+  // 값이 비어 있으면(= 근거가 없어 비워 둔 프로젝트) 그 항목은 빠진다.
+  const factRows = ["기간", "역할"]
+    .map(label => data.meta.find(m => m.label === label))
+    .filter((m): m is (typeof data.meta)[number] => Boolean(m?.value));
   const roleRow = (k: string) => k.includes("역할");
   // 실시간 계층처럼 핵심이 되는 계층은 목업처럼 강조 카드로.
   const heroLayer = data.architecture.findIndex(l =>
@@ -420,6 +428,23 @@ export function ProjectOnePager({
                   </tbody>
                 </table>
               </div>
+
+              {/* 기간 · 팀 · 역할.
+                  예전엔 `data.meta` 다섯 줄 중 **팀 하나만** 읽고 기간과 역할을
+                  버렸다. 서류 심사자가 프로젝트에서 가장 먼저 찾는 두 값이라
+                  여기서 먼저 보여 준다. 근거가 없어 비어 있으면 그 줄은 없다. */}
+              {factRows.length > 0 ? (
+                <dl className="flex flex-wrap gap-x-8 gap-y-3 rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] px-6 py-4">
+                  {factRows.map(m => (
+                    <div key={m.label}>
+                      <dt className="mono text-[11px] uppercase tracking-widest text-[#666]">
+                        {m.label}
+                      </dt>
+                      <dd className="text-sm text-gray-200">{m.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : null}
 
               {/* 뱃지 — 팀 구성 + 기술 스택 (앞 3개는 강조) */}
               <div className="flex flex-wrap gap-2">
@@ -760,15 +785,27 @@ export function ProjectOnePager({
               <div className="text-sm font-bold tracking-tight">
                 {project.title}
               </div>
+              {/* **하드코딩된 남의 이름이 있던 자리다.** developerFolio 템플릿의
+                  "Fullstack Developer: Sam Kim" 이 그대로 남아, 프로젝트 상세
+                  9개 전부의 푸터에 다른 사람 이름이 찍히고 있었다.
+                  이제 이력서 데이터 한 곳(`hero`)에서 가져온다. */}
               <p className="mono text-xs uppercase tracking-widest text-[#444]">
-                Fullstack Developer: Sam Kim
+                {hero.name} · {hero.roleTag}
               </p>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-6">
-              <span className="mono flex items-center gap-2 text-[10px] uppercase tracking-widest text-[#444]">
-                <span className="h-2 w-2 rounded-full bg-green-500" />
-                System Operational: 100%
-              </span>
+              {/* "System Operational: 100%" 가 있던 자리. 같은 템플릿 잔재이고
+                  아무것도 뜻하지 않는 장식이었다. 그 자리에는 실제로 확인할 수
+                  있는 것만 둔다 — 연락처. */}
+              <a
+                // 이메일은 uppercase 를 걸지 않는다 — 대문자로 찍힌 주소는
+                // 동작은 해도 잘못 옮겨 적기 쉽다.
+                className="mono flex items-center gap-2 text-[11px] tracking-wider text-[#666] transition-colors hover:text-accent"
+                href={`mailto:${contact.email}`}
+              >
+                <span className="h-2 w-2 rounded-full bg-accent" />
+                {contact.email}
+              </a>
               {onNext ? (
                 <button
                   className="mono rounded-lg border border-[#1a1a1a] px-6 py-3 text-xs font-bold text-gray-400 transition-colors hover:border-accent hover:text-white"

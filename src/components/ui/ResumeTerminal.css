@@ -71,7 +71,12 @@
 .resume-terminal .viewport {
   position: relative;
 }
-.resume-terminal section::before {
+/* **히어로도 포함한다.** 예전엔 `section` 만 걸려 있어서, 히어로는 뒤의
+   ForestWorld 가 그려 주는 어둠에만 기대고 있었다. 문서 배경은 크림색
+   (`body { background: #F7EDCF }`)이라, 캔버스가 못 뜨거나 JS 가 실패하면
+   히어로만 **밝은 바탕에 밝은 글자**가 된다. 판을 스스로 깔아 그걸 막는다. */
+.resume-terminal section::before,
+.resume-terminal .viewport::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -219,7 +224,7 @@
      (text-transform: uppercase 는 한글·숫자에 아무 일도 안 하는 죽은 선언이라 뺐다) */
   text-orientation: upright;
   font-family: var(--sans);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   /* 세로쓰기에서 letter-spacing 은 글자 사이 "높이"다. 세운 글자에 4px 는 너무 벌어진다. */
   letter-spacing: 2px;
@@ -243,28 +248,61 @@
 }
 
 .resume-terminal .hero-name {
-  font-size: clamp(80px, 10vw, 140px);
-  font-weight: 900;
-  line-height: 0.85;
-  letter-spacing: -0.06em;
-  margin-bottom: 20px;
+  font-size: clamp(76px, 9vw, 132px);
+
+  /* **700 이다. 900 이 아니다.** Gowun Batang 은 400 과 700 만 배포된다.
+     900 을 주면 브라우저가 700 위에 가짜 굵기를 덧칠(faux bold)하고, 명조의
+     붓끝과 획 대비가 뭉개져 마커펜으로 쓴 것처럼 부푼다. 큰 크기일수록 심하다. */
+  font-weight: 700;
+
+  /* 한글은 네모틀이라 이미 서로 맞물려 있다. -0.06em(132px 에서 -8px)은
+     `재`와 `훈`을 붙여 버렸다. 디스플레이 크기에서는 오히려 조금 벌린다. */
+  letter-spacing: 0.012em;
+
+  /* 0.85 는 `훈`의 받침을 행 상자 밖으로 밀어냈다. */
+  line-height: 1.04;
+
+  margin-bottom: 24px;
   position: relative;
+  width: fit-content;
 }
 
-.resume-terminal .hero-name span {
-  display: block;
+/* ── 이름: 등불빛 ──
+   화면 왼쪽 위에 실제로 걸려 있는 등불이 광원이다.
+   글자는 등불 쪽이 따뜻하고 멀어질수록 달빛으로 식는다. 각도(108deg)는
+   등불의 위치에서 나온 값이지 장식용 그라디언트가 아니다. */
+.resume-terminal .hero-name {
+  background: linear-gradient(
+    108deg,
+    rgb(var(--v-lantern)) 0%,
+    rgb(var(--v-gold)) 22%,
+    rgb(var(--v-paper)) 52%,
+    rgb(var(--v-moon)) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+  -webkit-text-fill-color: transparent;
 }
 
-.resume-terminal .hero-name .filled {
-  color: white;
-  -webkit-text-stroke: 0;
+/* 글자 뒤에 깔리는 등불 후광. 그라디언트 글자에는 text-shadow 를 쓸 수 없어
+   배경 겹으로 대신한다 — 어두운 숲 위에서 이름이 뜨게 만드는 유일한 장치다. */
+.resume-terminal .hero-name::before {
+  content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  clip-path: polygon(0 0, 100% 0, 100% 65%, 0 65%);
-  animation: rt-glitch 0.3s ease-in-out 2s 2;
+  left: -8%;
+  top: 2%;
+  width: 68%;
+  height: 92%;
+  background: radial-gradient(
+    58% 58% at 32% 42%,
+    rgb(var(--v-lantern) / 0.22) 0%,
+    rgb(var(--v-lantern) / 0.06) 55%,
+    transparent 72%
+  );
+  filter: blur(26px);
+  z-index: -1;
+  pointer-events: none;
 }
 
 .resume-terminal .hero-sub {
@@ -326,7 +364,7 @@
   bottom: 6%;
   transform: translateX(-50%);
   white-space: nowrap;
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.14em;
   color: rgb(var(--v-moon) / 0.42);
   pointer-events: none;
@@ -408,7 +446,7 @@
 
 .resume-terminal .spec-label {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   text-transform: uppercase;
 }
@@ -437,7 +475,7 @@
 
 .resume-terminal .status-title {
   font-family: var(--mono);
-  font-size: 9px;
+  font-size: 11px;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -456,7 +494,7 @@
 }
 
 .resume-terminal .status-unit {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
 }
 
@@ -729,7 +767,7 @@
 
 .resume-terminal .edu-tag {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--accent);
   border: 1px solid var(--accent);
   padding: 2px 8px;
@@ -786,7 +824,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--muted);
   background: var(--bg);
   padding: 0 16px;
@@ -845,7 +883,9 @@
   height: 400px;
   left: 10px;
   top: 20px;
-  background: rgb(var(--v-night) / 0.6);
+  /* 0.6 이었다. 뒤 ForestWorld 의 반딧불이가 카드 위 글자 사이로 비쳐
+     지표 숫자를 가렸다(캡처로 확인). 카드 안은 읽는 자리다 — 분위기보다 먼저다. */
+  background: rgb(var(--v-night) / 0.88);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 24px;
@@ -889,7 +929,7 @@
 
 .resume-terminal .project-status {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 11px;
   padding: 4px 10px;
   border-radius: 100px;
   border: 1px solid;
@@ -914,8 +954,8 @@
   align-items: center;
   justify-content: center;
   font-family: var(--mono);
-  font-size: 10px;
-  color: rgb(var(--v-moon) / 0.45);
+  font-size: 11px;
+  color: rgb(var(--v-moon) / 0.6);
   margin-bottom: 16px;
   overflow: hidden;
   position: relative;
@@ -964,8 +1004,8 @@
 
 .resume-terminal .project-tag {
   font-family: var(--mono);
-  font-size: 10px;
-  color: rgb(var(--v-moon) / 0.45);
+  font-size: 11px;
+  color: rgb(var(--v-moon) / 0.72);
   padding: 3px 8px;
   border: 1px solid rgb(var(--v-wood) / 0.35);
   border-radius: 4px;
@@ -1031,6 +1071,11 @@
   height: auto;
   min-height: 520px;
   align-items: flex-start;
+
+  /* **세로로 쌓아야 한다.** 래퍼는 flex row 라서, 그리드로 바뀌면 폭 100% 인
+     .carousel-scene 옆에 .carousel-controls 가 나란히 서고 남은 45px 로 눌린다.
+     그러면 "캐러셀로 보기" 글자가 세로로 쪼개지면서 카드 배지 위에 얹혔다. */
+  flex-direction: column;
 }
 
 .resume-terminal .carousel-wrapper[data-grid="true"] .carousel-scene {
@@ -1055,8 +1100,10 @@
   left: auto;
   top: auto;
   width: 100%;
+  /* 높이는 내용이 정한다. `aspect-ratio: 1/2` 로 고정하면 열 수가 줄어드는
+     좁은 화면에서 카드가 폭의 두 배로 늘어나 빈 공간만 커진다. 같은 행의
+     카드끼리는 grid 의 기본 stretch 로 어차피 키가 맞는다. */
   height: auto;
-  aspect-ratio: 1 / 2;
   transform: none;
   opacity: 1;
   filter: none;
@@ -1195,7 +1242,7 @@
 
 .resume-terminal .side-project-desc {
   font-size: 11px;
-  color: rgb(var(--v-moon) / 0.45);
+  color: rgb(var(--v-moon) / 0.72);
   line-height: 1.5;
   flex: 1;
 }
@@ -1208,8 +1255,8 @@
 
 .resume-terminal .side-project-link {
   font-family: var(--mono);
-  font-size: 9px;
-  color: rgb(var(--v-moon) / 0.45);
+  font-size: 11px;
+  color: rgb(var(--v-moon) / 0.72);
   border: 1px solid rgb(var(--v-wood) / 0.35);
   padding: 3px 8px;
   border-radius: 4px;
@@ -1220,12 +1267,6 @@
 .resume-terminal .side-project-link:hover {
   border-color: var(--accent);
   color: var(--accent);
-}
-
-.resume-terminal .side-project-link.slot {
-  border-style: dashed;
-  color: rgb(var(--v-moon) / 0.45);
-  cursor: default;
 }
 
 /* ── Values ── */
@@ -1457,27 +1498,6 @@
   }
 }
 
-@keyframes rt-glitch {
-  0% {
-    transform: translate(0);
-  }
-  20% {
-    transform: translate(-2px, 2px);
-  }
-  40% {
-    transform: translate(-2px, -2px);
-  }
-  60% {
-    transform: translate(2px, 2px);
-  }
-  80% {
-    transform: translate(2px, -2px);
-  }
-  100% {
-    transform: translate(0);
-  }
-}
-
 /* ── 반응형 ── */
 @media (max-width: 900px) {
   .resume-terminal .viewport {
@@ -1525,5 +1545,547 @@
   }
   .resume-terminal .side-projects-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   이력서 보강 (2026-08-25)
+   ──────────────────────────────────────────────────────────────────────────
+   서류 심사자가 카드만 보고 넘어가던 문제를 고치면서 들어온 것들:
+   카테고리 배지 · 기간/팀/역할 줄 · 성과 타일 · 프로젝트 링크 · 활동/경력 ·
+   가치관 근거 · 개발 기록 · PDF 버튼. 그리고 키보드와 인쇄 경로.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── 헤더: PDF + 마을 버튼 ── */
+.resume-terminal .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.resume-terminal .pdf-btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: rgb(var(--v-paper));
+  background: rgb(var(--v-night) / 0.55);
+  border: 1px solid rgb(var(--v-gold) / 0.55);
+  border-radius: 100px;
+  padding: 9px 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+}
+
+.resume-terminal .pdf-btn:hover {
+  border-color: rgb(var(--v-gold));
+  color: rgb(var(--v-gold));
+  background: rgb(var(--v-night) / 0.8);
+}
+
+/* ── 카드: 카테고리 배지 ──
+   CATEGORY_META 가 데이터에만 있고 화면엔 없어서, "카테고리: Web Service · …"
+   라는 안내 문구가 가리킬 대상이 없던 상태를 메운다. */
+.resume-terminal .project-category {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  color: var(--cat, rgb(var(--v-moon)));
+  border: 1px solid color-mix(in srgb, var(--cat, #a9bdd6) 55%, transparent);
+  background: color-mix(in srgb, var(--cat, #a9bdd6) 12%, transparent);
+  border-radius: 100px;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+/* 이미지가 없는 카드. 예전엔 "IMG_04 / 이미지 자리" 라는 편집 흔적이 그대로
+   보였다 — 심사자에게는 미완성 신호다. 지금은 제목을 옅게 앉힌다. */
+.resume-terminal .project-card-image-empty {
+  padding: 0 14px;
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgb(var(--v-moon) / 0.5);
+  letter-spacing: 0;
+}
+
+/* 제목 버튼 — 키보드로 프로젝트를 열 수 있는 유일한 경로다.
+   카드를 통째로 button 으로 만들면 안쪽 링크가 못 들어간다. */
+.resume-terminal .project-name-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.resume-terminal .project-name-btn:hover {
+  color: rgb(var(--v-gold));
+}
+
+/* ── 카드: 기간 · 팀 · 역할 ── */
+.resume-terminal .project-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgb(var(--v-gold) / 0.9);
+  margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+
+.resume-terminal .project-role {
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgb(var(--v-moon) / 0.8);
+  margin-bottom: 12px;
+}
+
+/* ── 카드: 성과 타일 ── */
+.resume-terminal .project-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.resume-terminal .project-metric {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  font-size: 11px;
+  color: rgb(var(--v-moon) / 0.75);
+  background: rgb(var(--v-night) / 0.5);
+  border: 1px solid rgb(var(--v-wood) / 0.4);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.resume-terminal .project-metric b {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: rgb(var(--v-paper));
+}
+
+/* 아직 실측하지 않은 값. 임시 숫자가 그대로 제출돼도 거짓 주장이 되지 않도록
+   화면에서 스스로 밝힌다 — 데이터에서 provisional 을 지우면 사라진다. */
+.resume-terminal .metric-provisional {
+  font-family: var(--mono);
+  font-style: normal;
+  font-size: 11px;
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: rgb(var(--v-night));
+  background: rgb(var(--v-gold) / 0.85);
+}
+
+/* ── 카드: 외부 링크 ── */
+.resume-terminal .project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.resume-terminal .project-link {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgb(var(--v-moon) / 0.85);
+  border: 1px solid rgb(var(--v-wood) / 0.5);
+  border-radius: 4px;
+  padding: 4px 9px;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.resume-terminal .project-link:hover {
+  border-color: rgb(var(--v-gold));
+  color: rgb(var(--v-gold));
+}
+
+/* ── 활동 · 경력 ──
+   학력 6개와 한 목록에 섞여 있으면 "경력 없음"으로 읽힌다. */
+.resume-terminal .career-block {
+  margin-top: 48px;
+}
+
+.resume-terminal .career-heading {
+  font-family: var(--serif);
+  font-size: 20px;
+  color: rgb(var(--v-paper));
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgb(var(--v-wood) / 0.4);
+}
+
+.resume-terminal .career-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.resume-terminal .career-card {
+  border-left: 2px solid rgb(var(--v-gold) / 0.5);
+  padding-left: 18px;
+}
+
+/* 활동 → 프로젝트 연결선. 이 이력서에서 가장 강한 사실이라 눈에 걸리게 둔다. */
+.resume-terminal .career-led {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgb(var(--v-lantern) / 0.9);
+}
+
+.resume-terminal .career-led b {
+  font-weight: 600;
+  color: rgb(var(--v-paper));
+}
+
+/* ── 근무 경험 ──
+   한 줄에 장소 / 기간 / 설명. 개발 이력과 무게를 다르게 두려고 카드가 아니다. */
+.resume-terminal .work-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resume-terminal .work-row {
+  display: grid;
+  grid-template-columns: 130px 150px 1fr;
+  gap: 16px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid rgb(var(--v-wood) / 0.3);
+}
+
+.resume-terminal .work-place {
+  font-weight: 600;
+  color: rgb(var(--v-paper));
+}
+
+.resume-terminal .work-date {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: rgb(var(--v-moon) / 0.7);
+}
+
+.resume-terminal .work-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgb(var(--v-moon) / 0.75);
+}
+
+@media (max-width: 720px) {
+  .resume-terminal .work-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
+/* ── 가치관 근거 ── */
+.resume-terminal .value-evidence {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgb(var(--v-wood) / 0.45);
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgb(var(--v-moon) / 0.75);
+}
+
+/* ── 개발 기록 ── */
+.resume-terminal .records-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* `auto-fit` 이었다. 카드가 하나뿐일 때 그 한 장이 1,000px 를 통째로 차지해
+   허전해 보였다. `auto-fill` 은 빈 트랙을 남겨 카드 폭을 지킨다. */
+.resume-terminal .records-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.resume-terminal .record-card {
+  display: block;
+  padding: 20px;
+  border: 1px solid rgb(var(--v-wood) / 0.45);
+  border-radius: 6px;
+  background: rgb(var(--v-night) / 0.45);
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.resume-terminal .record-card:hover {
+  border-color: rgb(var(--v-gold) / 0.8);
+  transform: translateY(-2px);
+}
+
+.resume-terminal .record-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: rgb(var(--v-paper));
+  margin-bottom: 8px;
+}
+
+.resume-terminal .record-desc {
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgb(var(--v-moon) / 0.75);
+}
+
+/* ── 키보드 초점 ──
+   예전엔 6,553px 짜리 문서에서 초점 가능한 요소가 10개였고, 그중 어느 것도
+   눈에 보이는 표시가 없었다. */
+.resume-terminal a:focus-visible,
+.resume-terminal button:focus-visible {
+  outline: 2px solid rgb(var(--v-gold));
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── 좁은 화면: 카드 폭 ──
+   고리 반지름은 JS 가 화면 폭에 맞춰 줄이고(ResumeMode), 카드 자체 폭은 여기서
+   줄인다. 둘 중 하나만 하면 여전히 옆 카드가 화면 밖으로 나간다. */
+@media (max-width: 620px) {
+  .resume-terminal .project-card {
+    width: 210px;
+    padding: 16px;
+  }
+
+  .resume-terminal .project-card-image {
+    height: 150px;
+  }
+
+  .resume-terminal .header-actions {
+    gap: 8px;
+  }
+
+  .resume-terminal .pdf-btn {
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 430px) {
+  .resume-terminal .project-card {
+    width: 176px;
+    padding: 14px;
+  }
+
+  .resume-terminal .project-card-image {
+    height: 120px;
+  }
+
+  /* 고리의 옆 카드는 원래 화면 가장자리를 스치며 지나간다. 다만 이 폭에서는
+     역할 문장이 카드 높이를 크게 밀어 올려서, 카드 안에서만 줄인다. */
+  .resume-terminal .project-role {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+}
+
+/* ── 영역별 스택 칩 ──
+   서술만 있으면 "무엇으로" 했는지가 안 보인다. 표 오른쪽 칸 안에 붙여
+   영역과 도구가 한 줄에서 읽히게 한다. */
+/* 한글은 기본값(break-all 계열 동작)에서 어절 가운데가 끊긴다 —
+   "프론트 3인" 이 "프론트 3 / 인" 으로 갈라져 `인` 한 글자가 다음 줄로 넘어갔다.
+   `keep-all` 은 어절 단위로만 끊는다. 좁은 카드 안 글에 특히 중요하다. */
+.resume-terminal .project-meta,
+.resume-terminal .project-role,
+.resume-terminal .project-name,
+.resume-terminal .card-metric,
+.resume-terminal .side-project-desc,
+.resume-terminal .edu-desc,
+.resume-terminal .career-led,
+.resume-terminal .work-desc,
+.resume-terminal .record-desc,
+.resume-terminal .value-evidence {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.resume-terminal .skill-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.resume-terminal .skill-stack-item {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1;
+  padding: 5px 9px;
+  border-radius: 4px;
+  color: rgb(var(--v-moon) / 0.85);
+  background: rgb(var(--v-night) / 0.55);
+  border: 1px solid rgb(var(--v-wood) / 0.4);
+}
+
+/* ── 히어로 지표: GitHub 저장소 수 ──
+   눌러서 확인되는 숫자라 링크다. 나머지 모듈과 생김새는 같게 둔다. */
+.resume-terminal .status-link {
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 0.2s;
+}
+
+.resume-terminal .status-link:hover {
+  opacity: 0.75;
+}
+
+/* ── 좁은 화면 ── */
+@media (max-width: 720px) {
+  /* 타자기 연출은 `white-space: nowrap; overflow: hidden` 으로 폭을 0 에서
+     늘린다. 좁은 화면에서는 그 상자가 화면보다 좁아, 다 늘어난 뒤에도
+     "Unity XR Dev" 에서 잘렸다. 좁으면 연출을 끄고 줄바꿈을 허용한다. */
+  .resume-terminal .hero-sub {
+    flex-wrap: wrap;
+  }
+
+  .resume-terminal .hero-sub .typing-text {
+    animation: none;
+    width: auto;
+    white-space: normal;
+    overflow: visible;
+  }
+}
+
+/* 모션을 줄인 사용자에게도 같은 이유로 연출 대신 글자를 준다. */
+@media (prefers-reduced-motion: reduce) {
+  .resume-terminal .hero-sub .typing-text {
+    animation: none;
+    width: auto;
+    white-space: normal;
+    overflow: visible;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   인쇄 / PDF 저장
+   ──────────────────────────────────────────────────────────────────────────
+   `.resume-terminal` 은 position:fixed; inset:0 인 자체 스크롤 컨테이너다.
+   그대로 인쇄하면 **첫 화면 한 장만** 나온다. 인쇄할 때만 문서 흐름으로
+   되돌리고, 화면 전용 장치(숲 배경 · 3D 캐러셀 · 등장 애니메이션)를 끈다.
+   ════════════════════════════════════════════════════════════════════════════ */
+@media print {
+  .resume-terminal {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    color: #111 !important;
+    background: #fff !important;
+  }
+
+  .resume-terminal section,
+  .resume-terminal .viewport {
+    background: none !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  /* 등장 애니메이션은 인쇄 시점에 IntersectionObserver 가 돌지 않아
+     opacity:0 인 채로 굳는다 — 전부 보이게 고정한다. */
+  .resume-terminal .reveal,
+  .resume-terminal .spec-item {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  /* 화면 전용 장치는 종이에서 의미가 없다. */
+  .forest-world,
+  .resume-terminal .xr-canvas-container,
+  .resume-terminal .floating-isle,
+  .resume-terminal .left-rail,
+  .resume-terminal .nav-capsule,
+  .resume-terminal .village-btn,
+  .resume-terminal .pdf-btn,
+  .resume-terminal .carousel-controls,
+  .resume-terminal .constellation-hint {
+    display: none !important;
+  }
+
+  /* 캐러셀은 3D 고리라 종이엔 한 장만 찍힌다. 세로 목록으로 편다. */
+  .resume-terminal .carousel-wrapper,
+  .resume-terminal .carousel-scene,
+  .resume-terminal .carousel-track {
+    position: static !important;
+    transform: none !important;
+    transform-style: flat !important;
+    perspective: none !important;
+    height: auto !important;
+    width: auto !important;
+  }
+
+  .resume-terminal .carousel-track {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .resume-terminal .project-card {
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    width: auto !important;
+    backface-visibility: visible !important;
+    break-inside: avoid;
+    border: 1px solid #ccc !important;
+    background: #fff !important;
+  }
+
+  .resume-terminal .project-card-image {
+    height: 120px !important;
+  }
+
+  .resume-terminal .project-name,
+  .resume-terminal .section-title,
+  .resume-terminal .edu-name,
+  .resume-terminal .career-heading,
+  .resume-terminal .record-title,
+  .resume-terminal .hero-name {
+    color: #111 !important;
+  }
+
+  .resume-terminal .project-meta,
+  .resume-terminal .project-role,
+  .resume-terminal .edu-desc,
+  .resume-terminal .about-item,
+  .resume-terminal .value-desc,
+  .resume-terminal .value-evidence,
+  .resume-terminal .record-desc,
+  .resume-terminal .side-project-desc {
+    color: #333 !important;
+  }
+
+  /* 히어로 이름은 화면에서 등불 그라디언트를 background-clip:text 로 입는다.
+     글자색이 transparent 라서, 위의 `color: #111` 만으로는 종이에 아무것도 안
+     찍힌다 — 배경을 걷어내고 채움색을 되돌려야 한다. */
+  .resume-terminal .hero-name {
+    background: none !important;
+    -webkit-text-fill-color: #111 !important;
+    text-shadow: none !important;
+  }
+
+  .resume-terminal .hero-name::before,
+  .resume-terminal .hero-name::after {
+    display: none !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
   }
 }

@@ -4,7 +4,10 @@ import type {RichProject} from "./shared";
 // 원칙: 검증 불가능한 수치(성능 %, 사용자 테스트 점수 등)는 넣지 않는다.
 //   - metrics/impact 는 리포에서 셀 수 있는 값(도메인 수·API 수·모듈 수 등)만 사용.
 //   - perf/usability(측정치) 필드는 실측이 없으므로 비워 둠(의도적).
-// TODO(사용자): 아래 [확인필요] 표시는 나중에 실제 값으로 교체하세요.
+// 기간·역할·팀은 `resume/jaehoon-jeong-resume.md`(이력서 원본) 기준. 원본에 근거가
+// 없는 프로젝트(mystock · ajou-adventure)는 기간 행 자체를 두지 않는다 — 예전엔
+// 그 자리에 `"[확인필요] 개인 프로젝트"` 라는 글자가 그대로 들어 있었고, 원페이저가
+// 기간 행을 렌더하는 순간 그게 화면에 나갈 뻔했다. 지어내느니 비운다.
 //   - demo.live: 실제 배포 URL이 있으면 추가 (지금은 repo만).
 //   - meta '기간': 실제 진행 기간으로 수정.
 export const RICH_DATA: Record<string, RichProject> = {
@@ -35,7 +38,6 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     demo: {repo: "https://github.com/toadsam/MyStock-Desk"},
     meta: [
-      {label: "기간", value: "[확인필요] 개인 프로젝트"},
       {label: "팀", value: "개인 프로젝트 (풀스택 1인)"},
       {label: "역할", value: "도메인 설계 · 프론트 · 백엔드 전부"},
       {
@@ -286,7 +288,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     demo: {repo: "https://github.com/toadsam/FestFlow"},
     meta: [
-      {label: "기간", value: "[확인필요] 개인 프로젝트"},
+      {label: "기간", value: "~ 2026.05"},
       {label: "팀", value: "개인 프로젝트 (풀스택 1인)"},
       {label: "역할", value: "프론트 전체 · SSE·GPS 백엔드"},
       {
@@ -490,19 +492,19 @@ export const RICH_DATA: Record<string, RichProject> = {
   muscleup: {
     tagline: "GAMIFIED FITNESS · 3-TIER FULL-STACK",
     heroImage: {
-      src: "/projects/muscleup.png",
+      src: "/projects/muscleup.webp",
       label: "득근득근 메인 화면",
       ratio: "16/9"
     },
     problemShot: {label: "작심삼일로 끊기던 기존 운동 기록", ratio: "4/3"},
     gallery: [
       {
-        src: "/projects/op/muscleup-erd.png",
+        src: "/projects/op/muscleup-erd.webp",
         label: "도메인 ERD",
         ratio: "16/10"
       },
       {
-        src: "/projects/op/muscleup-aws.png",
+        src: "/projects/op/muscleup-aws.webp",
         label: "AWS 배포 구성",
         ratio: "16/10"
       }
@@ -521,7 +523,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     demo: {repo: "https://github.com/toadsam/Ajou_MuscleUp"},
     meta: [
-      {label: "기간", value: "[확인필요] 개인 프로젝트"},
+      {label: "기간", value: "2025.09 ~ 진행 중"},
       {label: "팀", value: "개인 프로젝트 (풀스택 1인)"},
       {label: "역할", value: "핵심 루프 설계 · 프론트 · 백엔드 · 실시간 서버"},
       {
@@ -732,24 +734,24 @@ export const RICH_DATA: Record<string, RichProject> = {
   aclub: {
     tagline: "CLUB DISCOVERY · TEAM FRONTEND",
     heroImage: {
-      src: "/projects/aclub.jpg",
+      src: "/projects/aclub.webp",
       label: "동아리 탐색 홈",
       ratio: "16/9"
     },
     problemShot: {label: "에타·인스타·단톡에 흩어진 동아리 모집", ratio: "4/3"},
     gallery: [
       {
-        src: "/projects/op/aclub-analytics.png",
+        src: "/projects/op/aclub-analytics.webp",
         label: "동아리 이용 분석",
         ratio: "16/10"
       },
       {
-        src: "/projects/op/aclub-eta.png",
+        src: "/projects/op/aclub-eta.webp",
         label: "기존 모집 채널(에타·카톡)",
         ratio: "16/10"
       },
       {
-        src: "/projects/op/aclub-detail.jpg",
+        src: "/projects/op/aclub-detail.webp",
         label: "동아리 상세·저장",
         ratio: "16/10"
       }
@@ -765,7 +767,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     demo: {repo: "https://github.com/aClub2026/FE"},
     meta: [
-      {label: "기간", value: "[확인필요] 팀 프로젝트"},
+      {label: "기간", value: "2025.01 ~ 진행 중"},
       {label: "팀", value: "프론트엔드 3인 (본인 포함)"},
       {label: "역할", value: "탐색·상세·마이 등 화면·훅 담당"},
       {
@@ -960,19 +962,19 @@ export const RICH_DATA: Record<string, RichProject> = {
   ajouchong: {
     tagline: "STUDENT COUNCIL · TEAM SPA + DEPLOY",
     heroImage: {
-      src: "/projects/ajouchong.png",
+      src: "/projects/ajouchong.webp",
       label: "총학생회 메인",
       ratio: "16/9"
     },
     problemShot: {label: "인스타 등에 흩어져 있던 학생회 공지", ratio: "4/3"},
     gallery: [
       {
-        src: "/projects/op/ajouchong-notice.png",
+        src: "/projects/op/ajouchong-notice.webp",
         label: "공지 상세 페이지",
         ratio: "16/10"
       },
       {
-        src: "/projects/op/ajouchong-detail.png",
+        src: "/projects/op/ajouchong-detail.webp",
         label: "세부 안내 페이지",
         ratio: "16/10"
       }
@@ -985,7 +987,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     demo: {repo: "https://github.com/toadsam/ajouchong-web"},
     meta: [
-      {label: "기간", value: "[확인필요] 팀 프로젝트"},
+      {label: "기간", value: "2025.01 ~ 진행 중"},
       {label: "팀", value: "총학생회 IT · 프론트 3인"},
       {label: "역할", value: "SPA 라우팅·화면 · Docker/Nginx 배포"},
       {
@@ -1173,7 +1175,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     demo: {repo: "https://github.com/toadsam/Sign-Language"},
     meta: [
-      {label: "기간", value: "[확인필요] 파란학기제 (한 학기)"},
+      {label: "기간", value: "~ 2026.05 · 파란학기제 (한 학기)"},
       {label: "팀", value: "4인 (FE 1 · BE 2 · 3D 아바타 1)"},
       {label: "역할", value: "백엔드 — 서버 구축·API 설계·입력 데이터 처리"},
       {
@@ -1585,15 +1587,15 @@ export const RICH_DATA: Record<string, RichProject> = {
   "ajou-adventure": {
     tagline: "2D CASUAL RUNNER · PHASER 3 (SOLO)",
     heroImage: {
-      src: "/projects/ajou-adventure.png",
+      src: "/projects/ajou-adventure.webp",
       label: "인게임 플레이",
       ratio: "16/9"
     },
     problemShot: {label: "도형 기반 초기 프로토타입", ratio: "4/3"},
     gallery: [
-      {src: "/projects/op/aa-title.png", label: "타이틀 화면", ratio: "16/9"},
-      {src: "/projects/op/aa-levelup.png", label: "레벨업 UI", ratio: "16/9"},
-      {src: "/projects/op/aa-cheeto.png", label: "아이템·연출", ratio: "16/9"}
+      {src: "/projects/op/aa-title.webp", label: "타이틀 화면", ratio: "16/9"},
+      {src: "/projects/op/aa-levelup.webp", label: "레벨업 UI", ratio: "16/9"},
+      {src: "/projects/op/aa-cheeto.webp", label: "아이템·연출", ratio: "16/9"}
     ],
     tldr: [
       {k: "무엇을", v: "아주대 캠퍼스 테마 2D 캐주얼 러닝 게임 (아주분투)"},
@@ -1606,7 +1608,6 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     demo: {repo: "https://github.com/toadsam/Ajou_Mini_Game"},
     meta: [
-      {label: "기간", value: "[확인필요] 개인 프로젝트"},
       {label: "팀", value: "개인 프로젝트 (전담)"},
       {label: "역할", value: "기획·개발·플레이테스트 전부"},
       {label: "스택", value: "TypeScript · Phaser 3 · Vite"},
@@ -1786,20 +1787,20 @@ export const RICH_DATA: Record<string, RichProject> = {
   tserof: {
     tagline: "3D PLATFORMER · UNITY (TEAM)",
     heroImage: {
-      src: "/projects/tserof.png",
+      src: "/projects/tserof.webp",
       label: "TSEROF 타이틀",
       ratio: "16/9"
     },
     problemShot: {label: "그레이박스 레벨 프로토타입", ratio: "4/3"},
     gallery: [
       {
-        src: "/projects/op/tserof-difficulty.png",
+        src: "/projects/op/tserof-difficulty.webp",
         label: "난이도 선택",
         ratio: "16/9"
       },
-      {src: "/projects/op/tserof-stage.png", label: "스테이지", ratio: "16/9"},
+      {src: "/projects/op/tserof-stage.webp", label: "스테이지", ratio: "16/9"},
       {
-        src: "/projects/op/tserof-feedback.png",
+        src: "/projects/op/tserof-feedback.webp",
         label: "유저 피드백 반영",
         ratio: "16/9"
       }

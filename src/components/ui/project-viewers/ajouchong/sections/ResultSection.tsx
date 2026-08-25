@@ -29,21 +29,21 @@ interface Shot {
 
 const SHOTS: Shot[] = [
   {
-    src: "/projects/ajouchong.png",
+    src: "/projects/ajouchong.webp",
     alt: "아주대 총학생회 웹사이트 메인 화면",
     caption: "메인 — 공지·Q&A·복지·자료가 한 주소 아래로 모였다",
     w: 1889,
     h: 904
   },
   {
-    src: "/projects/op/ajouchong-notice.png",
+    src: "/projects/op/ajouchong-notice.webp",
     alt: "공지 상세 페이지 화면",
     caption: "공지 상세 — 새로고침해도 그대로 열린다",
     w: 1882,
     h: 845
   },
   {
-    src: "/projects/op/ajouchong-detail.png",
+    src: "/projects/op/ajouchong-detail.webp",
     alt: "세부 안내 페이지 화면",
     caption: "세부 안내 페이지",
     w: 600,
