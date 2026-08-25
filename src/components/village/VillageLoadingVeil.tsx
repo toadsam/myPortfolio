@@ -68,48 +68,8 @@ const SERIF_STACK =
 const BOX = 320;
 const pct = (v: number) => (v / BOX) * 100;
 
-/* ─────────────────────────────────────────────────────────────────────────────
- * 입장 화면 동안에는 **커스텀 커서를 끈다**
- *
- * 사이트 전역 커서(CustomCursor.tsx)는 `cursor: none !important` 로 진짜 커서를
- * 숨기고, 링/닷을 rAF 로 매 프레임 옮겨 그린다. 평소엔 티가 안 나지만 이 화면에서는
- * 뒤에서 GLB 20MB 를 파싱·업로드하느라 메인 스레드가 계속 멎는다. 그러면 커서를
- * 옮길 프레임이 안 오고, **마우스가 뻑뻑하게 끌리는 느낌**이 된다(링은 0.75 로
- * 따라오게 돼 있어 프레임이 밀리면 더 늘어진다).
- *
- * 진짜 커서는 OS 가 그리므로 스레드가 멎어도 절대 안 밀린다. 그래서 이 화면이
- * 떠 있는 동안만 native 로 돌려놓고, 들어가면(=이 컴포넌트가 사라지면) 원래대로.
- *
- * 두 겹(타이틀·액자)이 각각 켜므로 참조 수를 센다 — 한쪽만 사라져도 꺼지면 안 된다.
- * dynamic 경계를 넘을 때 폴백 액자 → 씬 액자로 갈아끼는 찰나에도 깜빡이지 않는다.
- * ──────────────────────────────────────────────────────────────────────── */
-
-const NATIVE_CURSOR_CLASS = "village-entry-native-cursor";
-const nativeCursorRefs = {count: 0};
-
-function useNativeCursor() {
-  useEffect(() => {
-    nativeCursorRefs.count += 1;
-    document.documentElement.classList.add(NATIVE_CURSOR_CLASS);
-    return () => {
-      nativeCursorRefs.count -= 1;
-      if (nativeCursorRefs.count <= 0) {
-        nativeCursorRefs.count = 0;
-        document.documentElement.classList.remove(NATIVE_CURSOR_CLASS);
-      }
-    };
-  }, []);
-}
-
-// globals.css 에 두지 않는 이유: 이 화면에서만 쓰는 규칙이고, 전역 커서 규칙을
-// 이기려면 특이도를 한 칸 올려야 해서(`html.…` 를 앞에 붙였다) 여기 붙여 두는 게
-// 왜 이렇게 생겼는지 읽기 쉽다.
+// 명패 전용 규칙 — 이 화면에서만 쓰여서 globals.css 에 두지 않았다.
 const ENTRY_CSS = `
-html.${NATIVE_CURSOR_CLASS},
-html.${NATIVE_CURSOR_CLASS} * { cursor: auto !important; }
-html.${NATIVE_CURSOR_CLASS} [data-village-enter] { cursor: pointer !important; }
-html.${NATIVE_CURSOR_CLASS} .cursor-ring,
-html.${NATIVE_CURSOR_CLASS} .cursor-dot { opacity: 0 !important; }
 
 /* 화면 전체가 버튼이라 어디에 올려도 명패가 반응해야 "여기 눌러도 되는구나"가 된다. */
 [data-village-enter]:hover [data-village-enter-plaque],
@@ -197,7 +157,6 @@ export function VillageTitleCard({
   onEnter?: () => void;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
-  useNativeCursor();
 
   // 액자가 걷히고 나서야 여기가 누를 곳이 된다. 그 전에 초점을 가져가면
   // 로딩 중인데 스크린리더가 「마을로 들어가기」를 먼저 읽어 버린다.
@@ -371,7 +330,6 @@ export function VillageLoadingVeil({
   reduced?: boolean;
 }) {
   const total = villageBuildings.length;
-  useNativeCursor();
 
   // 시안의 세 겹 고리 배치. 실제 마을 좌표가 아니라 **장식**이라 배치가 바뀌어도 그대로다.
   // 고리마다 각도를 0.5rad 씩 어긋내 살이 일렬로 서지 않게 한다(시안 그대로).
