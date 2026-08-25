@@ -1,12 +1,12 @@
 "use client";
 
 import {useEffect, useRef, type CSSProperties, type ReactNode} from "react";
-import {useMuscleUp} from "./context";
+import {useFestFlow} from "./context";
 import {useCrossedCenter, useInView} from "../_kit/useTimeline";
 
 // 여러 페이지가 공유하는 조각들. tserof 룸의 검증된 구성을 이 방의 토큰으로 옮긴 것이다.
 // 여러 페이지가 공유하는 조각들.
-// 색·크기·이징은 portfolio-specs/04-muscleup.md 의 토큰을 그대로 따른다.
+// 색·크기·이징은 portfolio-specs/03-festflow.md 의 토큰을 그대로 따른다.
 
 /* ─────────────────────────── 등장 ─────────────────────────── */
 
@@ -21,7 +21,7 @@ export function rise(
     transform: on ? "translateY(0)" : `translateY(${offset})`,
     transition: instant
       ? "none"
-      : `opacity ${duration} var(--mu-ease), transform ${duration} var(--mu-ease)`
+      : `opacity ${duration} var(--ff-ease), transform ${duration} var(--ff-ease)`
   };
 }
 
@@ -32,7 +32,7 @@ export function fade(
 ): CSSProperties {
   return {
     opacity: on ? 1 : 0,
-    transition: instant ? "none" : `opacity ${duration} var(--mu-ease)`
+    transition: instant ? "none" : `opacity ${duration} var(--ff-ease)`
   };
 }
 
@@ -40,7 +40,7 @@ export function fade(
 
 /**
  * 페이지 한 장. 화면에 들어오면 자기 슬롯을 연다.
- * 스크롤을 막지 않는다 — 스크롤 그 자체가 이 방의 경험치다.
+ * 스크롤을 막지 않는다 — 스크롤을 뺏지 않는다 - 이 방은 관람객이 지켜보는 관제실이다.
  */
 export function Page({
   index,
@@ -55,7 +55,7 @@ export function Page({
   maxWidth?: string;
   innerRef?: React.Ref<HTMLElement>;
 }) {
-  const {reach} = useMuscleUp();
+  const {reach} = useFestFlow();
   const localRef = useRef<HTMLElement>(null);
   const seen = useCrossedCenter(localRef);
 
@@ -71,7 +71,7 @@ export function Page({
         else if (innerRef)
           (innerRef as React.RefObject<HTMLElement | null>).current = node;
       }}
-      data-mu-section={index}
+      data-ff-section={index}
       className={`mx-auto w-full px-5 py-[96px] sm:px-6 sm:py-[120px] ${className}`}
       style={{maxWidth}}
     >
@@ -92,7 +92,7 @@ export function Kicker({
   children,
   on,
   instant,
-  color = "var(--mu-primary)"
+  color = "var(--ff-primary)"
 }: {
   children: ReactNode;
   on: boolean;
@@ -137,9 +137,9 @@ export function Heading({
             transform: on || instant ? "translateY(0)" : "translateY(8px)",
             transition: instant
               ? "none"
-              : `opacity 0.3s var(--mu-ease) ${
+              : `opacity 0.3s var(--ff-ease) ${
                   (i * 30) / 1000
-                }s, transform 0.3s var(--mu-ease) ${(i * 30) / 1000}s`
+                }s, transform 0.3s var(--ff-ease) ${(i * 30) / 1000}s`
           }}
         >
           {word}
@@ -158,7 +158,7 @@ export function Body({
 }) {
   return (
     <p
-      className={`max-w-[62ch] text-[15px] leading-8 text-[var(--mu-text)] sm:text-[16px] ${className}`}
+      className={`max-w-[62ch] text-[15px] leading-8 text-[var(--ff-text)] sm:text-[16px] ${className}`}
       style={{textWrap: "pretty"}}
     >
       {children}
@@ -214,13 +214,13 @@ export function Panel({
     <div
       className={`rounded-md p-4 ${className}`}
       style={{
-        border: "1px solid var(--mu-border)",
-        background: "var(--mu-panel)"
+        border: "1px solid var(--ff-border)",
+        background: "var(--ff-panel)"
       }}
     >
       {label ? (
         <div className="mb-3 flex items-center justify-between gap-2">
-          <span className="font-mono text-[10px] tracking-[0.18em] text-[var(--mu-muted)]">
+          <span className="font-mono text-[10px] tracking-[0.18em] text-[var(--ff-muted)]">
             {label}
           </span>
           {right}
@@ -237,14 +237,14 @@ export function MetaCell({value, label}: {value: string; label: string}) {
     <div
       className="rounded-md p-4"
       style={{
-        border: "1px solid var(--mu-border)",
-        background: "var(--mu-panel)"
+        border: "1px solid var(--ff-border)",
+        background: "var(--ff-panel)"
       }}
     >
-      <div className="font-mono text-[20px] font-black text-[var(--mu-text)] sm:text-[24px]">
+      <div className="font-mono text-[20px] font-black text-[var(--ff-text)] sm:text-[24px]">
         {value}
       </div>
-      <div className="mt-1 font-mono text-[11px] tracking-[0.1em] text-[var(--mu-muted)]">
+      <div className="mt-1 font-mono text-[11px] tracking-[0.1em] text-[var(--ff-muted)]">
         {label}
       </div>
     </div>
@@ -258,7 +258,7 @@ export function CodePanel({
   children,
   footer,
   badge,
-  borderColor = "var(--mu-border)",
+  borderColor = "var(--ff-border)",
   className = ""
 }: {
   filename: string;
@@ -271,7 +271,7 @@ export function CodePanel({
   return (
     <div
       className={`flex flex-col overflow-hidden rounded-md ${className}`}
-      style={{border: `1px solid ${borderColor}`, background: "var(--mu-code-bg)"}}
+      style={{border: `1px solid ${borderColor}`, background: "var(--ff-code-bg)"}}
     >
       <div
         className="flex h-[34px] shrink-0 items-center gap-3 px-4"
@@ -280,7 +280,7 @@ export function CodePanel({
           background: "rgba(255,255,255,0.02)"
         }}
       >
-        <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-[var(--mu-muted)]">
+        <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-[var(--ff-muted)]">
           {filename}
         </span>
         {badge ? (
@@ -300,11 +300,11 @@ export function CodePanel({
         <div
           className="shrink-0 p-3 text-center"
           style={{
-            borderTop: "1px solid rgba(244,114,182,0.12)",
+            borderTop: "1px solid rgba(251,191,36,0.12)",
             background: "rgba(0,0,0,0.25)"
           }}
         >
-          <span className="font-mono text-[11px] text-[var(--mu-muted)]">
+          <span className="font-mono text-[11px] text-[var(--ff-muted)]">
             {footer}
           </span>
         </div>
@@ -326,7 +326,7 @@ export function CodeLine({
   bad?: boolean;
   dim?: boolean;
 }) {
-  const accent = bad ? "var(--mu-bad)" : "var(--mu-primary)";
+  const accent = bad ? "var(--ff-bad)" : "var(--ff-primary)";
   const marked = highlight || bad;
   return (
     <div
@@ -336,10 +336,10 @@ export function CodeLine({
           ? `color-mix(in srgb, ${accent} 10%, transparent)`
           : "transparent",
         borderLeft: `2px solid ${marked ? accent : "transparent"}`,
-        color: dim ? "var(--mu-faint)" : "var(--mu-text)"
+        color: dim ? "var(--ff-faint)" : "var(--ff-text)"
       }}
     >
-      <span className="w-5 shrink-0 select-none text-right text-[var(--mu-faint)]">
+      <span className="w-5 shrink-0 select-none text-right text-[var(--ff-faint)]">
         {n}
       </span>
       <span className="whitespace-pre-wrap break-words">{children}</span>
@@ -349,7 +349,7 @@ export function CodeLine({
 
 /** 코드 안의 주석 — 색만 따로 준다. */
 export function Cm({children}: {children: ReactNode}) {
-  return <span style={{color: "var(--mu-c-comment)"}}>{children}</span>;
+  return <span style={{color: "var(--ff-c-comment)"}}>{children}</span>;
 }
 
 /* ─────────────────────────── 계측 ─────────────────────────── */
@@ -359,7 +359,7 @@ export function Meter({
   value,
   max,
   unit = "",
-  color = "var(--mu-primary)",
+  color = "var(--ff-primary)",
   hint
 }: {
   label: string;
@@ -373,7 +373,7 @@ export function Meter({
   return (
     <div>
       <div className="mb-1.5 flex items-baseline justify-between gap-2">
-        <span className="font-mono text-[10px] tracking-[0.14em] text-[var(--mu-muted)]">
+        <span className="font-mono text-[10px] tracking-[0.14em] text-[var(--ff-muted)]">
           {label}
         </span>
         <span
@@ -385,7 +385,7 @@ export function Meter({
         </span>
       </div>
       <div
-        className="mu-bar"
+        className="ff-bar"
         role="progressbar"
         aria-valuenow={Math.round(value)}
         aria-valuemin={0}
@@ -395,7 +395,7 @@ export function Meter({
         <span style={{width: `${pct}%`, backgroundColor: color}} />
       </div>
       {hint ? (
-        <p className="mt-1 font-mono text-[10px] leading-4 text-[var(--mu-faint)]">
+        <p className="mt-1 font-mono text-[10px] leading-4 text-[var(--ff-faint)]">
           {hint}
         </p>
       ) : null}
@@ -406,7 +406,7 @@ export function Meter({
 export function StatCard({
   n,
   l,
-  accent = "var(--mu-primary)"
+  accent = "var(--ff-primary)"
 }: {
   n: string;
   l: string;
@@ -423,7 +423,7 @@ export function StatCard({
       >
         {n}
       </div>
-      <div className="mt-1 font-mono text-[10px] text-[var(--mu-muted)]">
+      <div className="mt-1 font-mono text-[10px] text-[var(--ff-muted)]">
         {l}
       </div>
     </div>
@@ -447,7 +447,7 @@ export function Switch2({
   return (
     <div
       className="flex overflow-hidden rounded"
-      style={{border: "1px solid var(--mu-border)"}}
+      style={{border: "1px solid var(--ff-border)"}}
       role="group"
       aria-label={label}
     >
@@ -461,8 +461,8 @@ export function Switch2({
             aria-pressed={on}
             className="px-3 py-1.5 font-mono text-[11px] font-bold transition-colors duration-200"
             style={{
-              background: on ? "rgba(244,114,182,0.20)" : "transparent",
-              color: on ? "var(--mu-primary)" : "var(--mu-muted)"
+              background: on ? "rgba(251,191,36,0.20)" : "transparent",
+              color: on ? "var(--ff-primary)" : "var(--ff-muted)"
             }}
           >
             {opt}
@@ -478,7 +478,7 @@ export function Toggle({
   onToggle,
   title,
   note,
-  onColor = "var(--mu-primary)"
+  onColor = "var(--ff-primary)"
 }: {
   on: boolean;
   onToggle: () => void;
@@ -497,18 +497,18 @@ export function Toggle({
         border: `1px solid ${
           on
             ? `color-mix(in srgb, ${onColor} 45%, transparent)`
-            : "var(--mu-border)"
+            : "var(--ff-border)"
         }`,
         background: on
           ? `color-mix(in srgb, ${onColor} 8%, transparent)`
-          : "var(--mu-panel)"
+          : "var(--ff-panel)"
       }}
     >
       <span className="min-w-0">
-        <span className="block text-[13px] font-bold text-[var(--mu-text)]">
+        <span className="block text-[13px] font-bold text-[var(--ff-text)]">
           {title}
         </span>
-        <span className="mt-0.5 block font-mono text-[10px] text-[var(--mu-muted)]">
+        <span className="mt-0.5 block font-mono text-[10px] text-[var(--ff-muted)]">
           {note}
         </span>
       </span>
@@ -529,7 +529,7 @@ export function Toggle({
 /** 방문자가 눌러야 할 곳임을 알리는 힌트. */
 export function Hint({children}: {children: ReactNode}) {
   return (
-    <p className="font-mono text-[11px] leading-5 text-[var(--mu-faint)]">
+    <p className="font-mono text-[11px] leading-5 text-[var(--ff-faint)]">
       {children}
     </p>
   );
@@ -538,7 +538,7 @@ export function Hint({children}: {children: ReactNode}) {
 /** 측정하지 않은 것을 밝히는 각주. */
 export function Caveat({children}: {children: ReactNode}) {
   return (
-    <div className="mt-4 font-mono text-[10px] leading-5 text-[var(--mu-faint)]">
+    <div className="mt-4 font-mono text-[10px] leading-5 text-[var(--ff-faint)]">
       {children}
     </div>
   );
@@ -577,16 +577,16 @@ export function Shot({
       className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
     />
   ) : (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-[#220c1d]">
+    <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-[#1d1707]">
       <div className="flex flex-col items-center gap-1" aria-hidden="true">
-        <span className="block h-2.5 w-24 rounded-sm bg-[#3a1430]" />
-        <span className="block h-2.5 w-16 rounded-sm bg-[#31102a]" />
-        <span className="block h-2.5 w-28 rounded-sm bg-[#3a1430]" />
+        <span className="block h-2.5 w-24 rounded-sm bg-[#332810]" />
+        <span className="block h-2.5 w-16 rounded-sm bg-[#2a210c]" />
+        <span className="block h-2.5 w-28 rounded-sm bg-[#332810]" />
       </div>
       <span className="font-mono text-[12px] text-[rgba(255,255,255,0.35)]">
         {caption}
       </span>
-      <span className="font-mono text-[10px] text-[var(--mu-faint)]">
+      <span className="font-mono text-[10px] text-[var(--ff-faint)]">
         {w} : {h} · 이미지 자리
       </span>
     </div>
@@ -596,8 +596,8 @@ export function Shot({
     <figure
       className={`m-0 overflow-hidden rounded-md ${className}`}
       style={{
-        border: "1px solid var(--mu-border)",
-        background: "var(--mu-panel)"
+        border: "1px solid var(--ff-border)",
+        background: "var(--ff-panel)"
       }}
     >
       {onOpen && src ? (
@@ -611,7 +611,7 @@ export function Shot({
           {inner}
           <span
             className="pointer-events-none absolute right-2 top-2 rounded px-2 py-1 font-mono text-[10px] font-bold opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-            style={{background: "rgba(0,0,0,0.6)", color: "var(--mu-accent)"}}
+            style={{background: "rgba(0,0,0,0.6)", color: "var(--ff-accent)"}}
           >
             ⤢ 확대
           </span>
@@ -622,8 +622,8 @@ export function Shot({
         </div>
       )}
       <figcaption
-        className="px-3 py-2 font-mono text-[11px] text-[var(--mu-muted)]"
-        style={{borderTop: "1px solid rgba(244,114,182,0.12)"}}
+        className="px-3 py-2 font-mono text-[11px] text-[var(--ff-muted)]"
+        style={{borderTop: "1px solid rgba(251,191,36,0.12)"}}
       >
         {caption}
       </figcaption>
@@ -659,13 +659,13 @@ export function StatRow({
         opacity: on ? 1 : 0,
         transition: instant
           ? "none"
-          : `opacity 0.3s var(--mu-ease) ${delay}ms`
+          : `opacity 0.3s var(--ff-ease) ${delay}ms`
       }}
     >
-      <span className="w-[62px] shrink-0 font-mono text-[11px] text-[var(--mu-muted)]">
+      <span className="w-[62px] shrink-0 font-mono text-[11px] text-[var(--ff-muted)]">
         {label}
       </span>
-      <div className="mu-bar flex-1">
+      <div className="ff-bar flex-1">
         <span
           style={{
             width: on ? `${pct}%` : "0%",
@@ -673,7 +673,7 @@ export function StatRow({
           }}
         />
       </div>
-      <span className="w-[52px] shrink-0 text-right font-mono text-[11px] tabular-nums text-[var(--mu-accent)]">
+      <span className="w-[52px] shrink-0 text-right font-mono text-[11px] tabular-nums text-[var(--ff-accent)]">
         {value}
       </span>
     </div>
@@ -713,7 +713,7 @@ export function EquipSlot({
       >
         {equipped && !instant ? (
           <span
-            className="mu-ring absolute rounded-full"
+            className="ff-popring absolute rounded-full"
             style={{
               border: "1px solid rgba(244,114,182,0.5)",
               animationDelay: `${delay}ms`
@@ -722,7 +722,7 @@ export function EquipSlot({
         ) : null}
       </span>
       <span
-        className={equipped && !instant ? "mu-equip" : ""}
+        className={equipped && !instant ? "ff-pop" : ""}
         style={{animationDelay: `${delay}ms`}}
       >
         {children}
@@ -734,9 +734,9 @@ export function EquipSlot({
     "relative flex h-[92px] w-full items-center justify-center rounded-md transition-[border-color,transform,box-shadow] duration-300 sm:h-[96px]";
   const boxStyle: CSSProperties = {
     border: equipped
-      ? "1px solid rgba(244,114,182,0.45)"
-      : "1px dashed rgba(244,114,182,0.28)",
-    background: "rgba(244,114,182,0.03)"
+      ? "1px solid rgba(251,191,36,0.45)"
+      : "1px dashed rgba(251,191,36,0.26)",
+    background: "rgba(251,191,36,0.03)"
   };
 
   return (
@@ -746,7 +746,7 @@ export function EquipSlot({
           href={href}
           target="_blank"
           rel="noreferrer noopener"
-          className={`${boxClass} cursor-pointer hover:-translate-y-[3px] hover:border-[rgba(244,114,182,0.7)]`}
+          className={`${boxClass} cursor-pointer hover:-translate-y-[3px] hover:border-[rgba(251,191,36,0.7)]`}
           style={boxStyle}
           aria-label={`${slotLabel} — ${caption}`}
         >
@@ -756,7 +756,7 @@ export function EquipSlot({
         <button
           type="button"
           onClick={onClick}
-          className={`${boxClass} cursor-pointer hover:-translate-y-[3px] hover:border-[rgba(244,114,182,0.7)]`}
+          className={`${boxClass} cursor-pointer hover:-translate-y-[3px] hover:border-[rgba(251,191,36,0.7)]`}
           style={boxStyle}
           aria-label={`${slotLabel} — ${caption}`}
         >
@@ -772,7 +772,7 @@ export function EquipSlot({
       </span>
       <span
         className="text-center font-mono text-[10px] leading-4"
-        style={{color: note ? "var(--mu-muted)" : "var(--mu-accent)"}}
+        style={{color: note ? "var(--ff-muted)" : "var(--ff-accent)"}}
       >
         {caption}
       </span>
@@ -789,7 +789,7 @@ export function FlowNode({
   sub,
   active,
   done,
-  color = "var(--mu-primary)"
+  color = "var(--ff-primary)"
 }: {
   title: string;
   sub?: string;
@@ -811,13 +811,13 @@ export function FlowNode({
     >
       <div
         className="font-mono text-[11px] font-bold"
-        style={{color: lit ? color : "var(--mu-muted)"}}
+        style={{color: lit ? color : "var(--ff-muted)"}}
       >
         {done ? "✓ " : ""}
         {title}
       </div>
       {sub ? (
-        <div className="mt-1 font-mono text-[10px] leading-4 text-[var(--mu-faint)]">
+        <div className="mt-1 font-mono text-[10px] leading-4 text-[var(--ff-faint)]">
           {sub}
         </div>
       ) : null}
@@ -840,12 +840,12 @@ export function LogLine({
   note?: string;
 }) {
   const ok = status < 400;
-  const color = ok ? "var(--mu-ok)" : "var(--mu-bad)";
+  const color = ok ? "var(--ff-ok)" : "var(--ff-bad)";
   return (
     <div className="flex items-start gap-2 px-3 py-1 font-mono text-[11px] leading-5">
-      <span className="shrink-0 text-[var(--mu-faint)]">{time}</span>
-      <span className="shrink-0 text-[var(--mu-muted)]">{method}</span>
-      <span className="min-w-0 flex-1 truncate text-[var(--mu-text)]">
+      <span className="shrink-0 text-[var(--ff-faint)]">{time}</span>
+      <span className="shrink-0 text-[var(--ff-muted)]">{method}</span>
+      <span className="min-w-0 flex-1 truncate text-[var(--ff-text)]">
         {path}
       </span>
       <span className="shrink-0 font-bold tabular-nums" style={{color}}>

@@ -209,3 +209,37 @@ export function useKeyCapture<T extends HTMLElement>(
     }
   };
 }
+
+/**
+ * 섹션이 **화면 한가운데 띠를 지났는가** — 진행 지표(슬롯/레벨/스테이지/모니터)
+ * 를 여는 용도.
+ *
+ * 왜 비율(threshold)을 안 쓰는가: 섹션이 뷰포트보다 길면 자기 높이의 28% 가
+ * 화면에 들어오는 일이 **영원히 없다.** 실제로 festflow 의 10·11장은 2,400px
+ * 이라 720px 뷰포트에서 비율이 0.30, 600px 짜리 화면에서는 0.25 로 떨어져
+ * 그 칸이 끝내 안 열렸다. 그래서 높이와 무관한 「중앙선 통과」로 바꿨다.
+ */
+export function useCrossedCenter<T extends HTMLElement>(
+  ref: RefObject<T | null>
+): boolean {
+  const [crossed, setCrossed] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setCrossed(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      entries => {
+        for (const e of entries) setCrossed(e.isIntersecting);
+      },
+      // 위아래 45% 를 잘라 남긴 가운데 10% 띠와 겹치면 참.
+      {threshold: 0, rootMargin: "-45% 0px -45% 0px"}
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref]);
+
+  return crossed;
+}

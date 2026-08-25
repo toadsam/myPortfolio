@@ -7,6 +7,7 @@ export const sueoSans = Noto_Sans_KR({
   subsets: ["latin"],
   weight: ["400", "500", "700", "900"],
   display: "swap",
+  preload: false,
   variable: "--sd-font-sans"
 });
 
@@ -14,5 +15,6 @@ export const sueoMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
+  preload: false,
   variable: "--sd-font-mono"
 });

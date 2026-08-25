@@ -2,7 +2,7 @@
 
 import {useEffect, useRef, type CSSProperties, type ReactNode} from "react";
 import {useAjou} from "./context";
-import {useInView, useOnScreen} from "../_kit/useTimeline";
+import {useCrossedCenter, useInView} from "../_kit/useTimeline";
 
 // 여러 페이지가 공유하는 조각들. tserof 룸의 검증된 구성을 이 방의 토큰으로 옮긴 것이다.
 // 여러 페이지가 공유하는 조각들.
@@ -57,7 +57,7 @@ export function Page({
 }) {
   const {reach} = useAjou();
   const localRef = useRef<HTMLElement>(null);
-  const seen = useOnScreen(localRef, 0.28);
+  const seen = useCrossedCenter(localRef);
 
   useEffect(() => {
     if (seen) reach(index);

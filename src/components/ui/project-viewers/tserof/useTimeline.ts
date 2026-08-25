@@ -205,3 +205,33 @@ export function useKeyCapture<T extends HTMLElement>(
     }
   };
 }
+
+/**
+ * 섹션이 **화면 한가운데 띠를 지났는가** — 스테이지 보드를 여는 용도.
+ *
+ * 비율(threshold)을 쓰면 섹션이 뷰포트보다 길 때 그 비율에 영영 못 닿는다.
+ * 그래서 높이와 무관한 「중앙선 통과」로 판정한다.
+ */
+export function useCrossedCenter<T extends HTMLElement>(
+  ref: RefObject<T | null>
+): boolean {
+  const [crossed, setCrossed] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setCrossed(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      entries => {
+        for (const e of entries) setCrossed(e.isIntersecting);
+      },
+      {threshold: 0, rootMargin: "-45% 0px -45% 0px"}
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref]);
+
+  return crossed;
+}

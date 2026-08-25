@@ -2,7 +2,7 @@
 
 import {useEffect, useRef, type CSSProperties, type ReactNode} from "react";
 import {useTserof} from "./context";
-import {useInView, useOnScreen} from "./useTimeline";
+import {useCrossedCenter, useInView} from "./useTimeline";
 
 // 여러 페이지가 공유하는 조각들.
 // 색·크기·이징은 portfolio-specs/10-tserof.md 의 토큰을 그대로 따른다.
@@ -56,7 +56,7 @@ export function Page({
 }) {
   const {reach} = useTserof();
   const localRef = useRef<HTMLElement>(null);
-  const seen = useOnScreen(localRef, 0.28);
+  const seen = useCrossedCenter(localRef);
 
   useEffect(() => {
     if (seen) reach(index);

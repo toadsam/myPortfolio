@@ -6,6 +6,7 @@ export const ajSans = Noto_Sans_KR({
   subsets: ["latin"],
   weight: ["400", "500", "700", "900"],
   display: "swap",
+  preload: false,
   variable: "--aj-font-sans"
 });
 
@@ -13,5 +14,6 @@ export const ajMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
+  preload: false,
   variable: "--aj-font-mono"
 });

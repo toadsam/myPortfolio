@@ -11,6 +11,7 @@ import {getProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
 import {AClubRoom} from "./project-viewers/aclub/AClubRoom";
 import {AjouRoom} from "./project-viewers/ajou/AjouRoom";
+import {FestFlowRoom} from "./project-viewers/festflow/FestFlowRoom";
 import {AjouchongRoom} from "./project-viewers/ajouchong/AjouchongRoom";
 import {ambientFor} from "./project-viewers/atmosphere";
 import {DarkLabRoom} from "./project-viewers/darklab/DarkLabRoom";
@@ -766,6 +767,11 @@ export function ProjectViewer({project, onClose}: Props) {
     // 방문자가 직접 조작해 보는 편이 훨씬 빠르게 전달된다.
     if (project.id === "ajou-adventure")
       return <AjouRoom key={project.id} {...shared} />;
+    // FestFlow(Fest-A) 도 전용 전시실을 쓴다. 이 프로젝트의 핵심은
+    // 「내가 안 보고 있어도 상태가 바뀜다」이라, 가만히 있는 페이지로는
+    // 설명이 안 된다. 관제실처럼 화면이 계속 살아 있어야 한다.
+    if (project.id === "festflow")
+      return <FestFlowRoom key={project.id} {...shared} />;
 
     let viewer: ReactNode = null;
     if (cat === "game")
