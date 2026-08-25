@@ -558,16 +558,6 @@ canvas {
   }
 }
 
-/* 로딩 시머 바 */
-@keyframes cityLoaderShimmer {
-  0% {
-    transform: translateX(-120%);
-  }
-  100% {
-    transform: translateX(360%);
-  }
-}
-
 /* 코나미 이스터에그 낙하 */
 @keyframes konamiFall {
   0% {

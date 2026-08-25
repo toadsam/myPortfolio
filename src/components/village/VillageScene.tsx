@@ -44,6 +44,10 @@ import {
   LABEL_SYNC_STRIDE
 } from "@/lib/htmlLabelThrottle";
 import {spread, villageBuildings} from "@/lib/constants";
+import {
+  VillageLoadingVeil,
+  VillageTitleCard
+} from "@/components/village/VillageLoadingVeil";
 import {AO_ENABLED, LUT_ENABLED, VILLAGE_PALETTE} from "@/lib/villagePalette";
 import {makeGradeLut} from "@/lib/villageGrade";
 import {lockSceneMaterials} from "@/lib/villageMaterial";
@@ -840,76 +844,157 @@ function LampPoolsImpl() {
   );
 }
 
-// ─── 로딩 베일 ───────────────────────────────────────────────────────────────
-// 에셋(GLB ~30MB)이 내려오는 동안 캔버스는 빈 하늘이라 "고장난 것 같은" 첫인상을
-// 줬다. 진행률을 보여 주면 같은 시간이 "로딩 중"으로 읽힌다. useProgress 는
-// three 의 DefaultLoadingManager 를 구독하므로 Canvas 밖(DOM)에서도 동작한다.
+// ─── "마을이 섬" 신호 ──────────────────────────────────────
+// 처음엔 VillageSceneImpl 에 useState 를 놓고 SceneReadyProbe 가 그걸 올렸다.
+// 그러자 **마을이 서는 그 순간 씨 전체가 다시 렌더**됐고, 하필 그때가 GLB 들이
+// 막 끝나는 때라 three 로딩 매니저의 onProgress 가 렌더 도중에 쌏아져
+// React 가 "Maximum update depth exceeded" 로 죽었다(실측 — 이 코드를 빼면 안 난다).
 //
-// 안전장치: 파일 하나가 404 면 progress 가 100 에 못 미친 채 멈출 수 있다 —
-// 25초가 지나면 무조건 걷는다(마을은 그 뒤에도 알아서 마저 뜬다).
+// 그래서 씨는 건드리지 않고 베일에만 알린다. 모듈 스코프라 페이지를 다시
+// 들어오면 남아 있어서, 베일이 처음 렌더될 때 되돌린다(프로브보다 항상 먼저 뜼다).
+const villageReadySignal = {done: false, subs: new Set<() => void>()};
+
+function markVillageReady() {
+  if (villageReadySignal.done) return;
+  villageReadySignal.done = true;
+  for (const fn of villageReadySignal.subs) fn();
+}
+
+function useVillageReady() {
+  const [ready, setReady] = useState(villageReadySignal.done);
+  useEffect(() => {
+    if (villageReadySignal.done) {
+      setReady(true);
+      return;
+    }
+    const fn = () => setReady(true);
+    villageReadySignal.subs.add(fn);
+    return () => {
+      villageReadySignal.subs.delete(fn);
+    };
+  }, []);
+  return ready;
+}
+
+// ─── 입장 화면 ───────────────────────────────────────────────────────────────
+// 화면은 VillageLoadingVeil / VillageTitleCard 가 그린다(같은 로딩 액자를
+// AIPortfolioVillage 의 dynamic 폴백도 쓴다 — 그 파일 주석에 왜 나눴는지 적어 뒀다).
+// 여기는 "언제 넘어갈지"만 정한다. 시안과 같은 두 겹 구조다:
+//
+//   1. 짓는 중  — 타이틀(아래층) 위에 청사진 액자(위층)가 덮여 있다
+//   2. 다 지음  — 액자가 1.2초에 걸쳐 투명해지며 **아래 타이틀이 드러난다**
+//   3. 클릭     — 타이틀도 사라지고 마을로
+//
+// **걷는 시점을 useProgress 로 정하면 안 된다.** 실측하니 마을이 아직 지오메트리
+// 0개인데(캔버스에 빈 하늘만 주황으로 칠해진 상태) 막이 이미 걷혀 있었다.
+// three 의 로딩 매니저는 "지금 등록된 것"만 세는데, GLB 는 Suspense 경계별로
+// 나눠 내려오므로 묶음 사이 빈 틈에서 active=false, progress=100 이 된다.
+//
+// 그래서 **건물 Suspense 가 실제로 풀린 순간**(=Building 들이 마운트된 순간)을
+// 신호로 쓴다. ready 는 그 경계 안의 SceneReadyProbe 가 올려 준다.
+//
+// 안전장치: 25초가 지나면 **타이틀까지 넘긴다**(예전엔 막을 그냥 지웠다).
+// GLB 하나가 404 나면 건물 Suspense 가 영영 안 풀려 갇히는데, 이젠 사용자가
+// 눌러야 들어가므로 "없애기"가 아니라 "누를 거리를 주기"가 돼야 한다.
 function LoadingVeilImpl() {
-  const {progress, active} = useProgress();
+  // 페이지를 다시 들어왔을 때를 위해 첫 렌더에서 신호를 되돌린다.
+  // 베일은 건물 Suspense(=프로브)보다 항상 먼저 뜨므로 안전하다.
+  const firstRef = useRef(true);
+  if (firstRef.current) {
+    firstRef.current = false;
+    villageReadySignal.done = false;
+  }
+
+  const sceneReady = useVillageReady();
+  const {progress} = useProgress();
   const [gone, setGone] = useState(false);
-  const finished = !active && progress >= 100;
+  const [entering, setEntering] = useState(false);
+  const [hatched, setHatched] = useState(false);
+  const [reduced, setReduced] = useState(false);
+  const ready = sceneReady || hatched;
+
+  // **진행률을 state 로 미러링하면 안 된다.** three 의 로딩 매니저는 자산 하나가
+  // 끝날 때마다 onProgress 를 쏘고, 그게 곧 useProgress 의 스토어 갱신이다.
+  // 여기서 effect 로 setState 를 한 번 더 얹으면 캐시가 따뜻할 때 수십 개가
+  // 같은 틱에 몰려 React 가 "Maximum update depth exceeded" 로 죽는다(실측).
+  // ref 를 렌더 중에 올리면 추가 렌더 없이 최대값만 남길 수 있다 —
+  // 어차피 useProgress 가 이미 렌더를 일으키므로 화면은 따라온다.
+  // (뒤로 가는 진행률을 막아야 하는 이유: 묶음이 추가되면 total 이 늘어
+  //  progress 가 떨어지고, 그대로 그리면 세운 건물이 도로 꺼져 깜빡인다.)
+  const maxRef = useRef(0);
+  if (progress > maxRef.current) maxRef.current = progress;
+  if (ready) maxRef.current = 100;
+  const shown = maxRef.current;
+
+  // **자산 진행률을 그대로 보여 주면 거짓말이 된다.** 실측: 로딩 매니저는
+  // 1.7초에 100% 를 찍는데 건물이 실제로 선 건 13초였다. 그대로 그리면
+  // "건물 27 / 27 · 100%" 가 11초 동안 멈춰 있어 고장처럼 보인다.
+  // 그래서 92 에서 자르고, 기다리는 동안은 99 까지만 아주 천천히 기어가게
+  // 둔다. 100 과 마지막 한 칸은 마을이 진짜로 섰을 때만 준다.
+  const [creep, setCreep] = useState(0);
   useEffect(() => {
-    if (!finished) return;
-    const t = setTimeout(() => setGone(true), 650);
+    if (ready) return;
+    const id = window.setInterval(
+      () => setCreep(c => (c < 7 ? c + 0.3 : c)),
+      500
+    );
+    return () => window.clearInterval(id);
+  }, [ready]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReduced(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  // 타이틀까지 사라진 뒤에 걷는다. 시안의 페이드가 1.2s —
+  // 끝나기 전에 없애면 화면이 튀며 사라진다.
+  useEffect(() => {
+    if (!entering) return;
+    const t = setTimeout(() => setGone(true), 1250);
     return () => clearTimeout(t);
-  }, [finished]);
+  }, [entering]);
+
   useEffect(() => {
-    const t = setTimeout(() => setGone(true), 25000);
+    const t = setTimeout(() => setHatched(true), 25000);
     return () => clearTimeout(t);
   }, []);
+
   if (gone) return null;
-  const pct = Math.round(progress);
+
+  const capped = Math.min(92, shown);
+  const display = ready
+    ? 100
+    : Math.min(99, capped + (capped >= 92 ? creep : 0));
+
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 40,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 16,
-        background: "rgba(6, 13, 28, 0.72)",
-        pointerEvents: "none",
-        transition: "opacity 0.6s ease",
-        opacity: finished ? 0 : 1
-      }}
-    >
-      <div
-        style={{
-          fontFamily: "var(--font-mono, monospace)",
-          fontSize: 14,
-          letterSpacing: "0.18em",
-          color: "#9fd7ef"
-        }}
-      >
-        {">"} 마을을 짓는 중… {pct}%
-      </div>
-      <div
-        style={{
-          width: 240,
-          height: 4,
-          borderRadius: 2,
-          background: "rgba(159, 215, 239, 0.18)",
-          overflow: "hidden"
-        }}
-      >
-        <div
-          style={{
-            width: `${pct}%`,
-            height: "100%",
-            borderRadius: 2,
-            background: "linear-gradient(90deg, #3fb1ea, #9fd7ef)",
-            transition: "width 0.3s ease"
-          }}
-        />
-      </div>
-    </div>
+    <>
+      <VillageTitleCard
+        revealed={ready}
+        fading={entering}
+        reduced={reduced}
+        onEnter={() => setEntering(true)}
+      />
+      {/* 액자는 다 지어지면 투명해지며 아래 타이틀을 드러낸다. 페이드가 끝날
+          때까지 DOM 에 남겨야 한다 — 바로 빼면 타이틀이 튀어나온다. */}
+      <VillageLoadingVeil
+        progress={display}
+        fading={ready}
+        reduced={reduced}
+      />
+    </>
   );
+}
+
+// 건물 Suspense 안에서만 마운트된다 — 이게 곧 "마을이 섰다"는 신호다.
+// 씬에는 아무것도 그리지 않는다.
+function SceneReadyProbe() {
+  useEffect(() => {
+    markVillageReady();
+  }, []);
+  return null;
 }
 
 // 물·바람이 쓰는 시계를 한 곳에서 돌린다. 재질마다 useFrame 을 걸면 해자와
@@ -3206,6 +3291,8 @@ function VillageSceneImpl({
                 />
               );
             })}
+            {/* 건물들과 같은 경계 안 — 이게 마운트되는 순간이 곳 "마을이 섬"이다. */}
+            <SceneReadyProbe />
           </Suspense>
 
           <Suspense fallback={null}>

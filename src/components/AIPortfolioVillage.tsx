@@ -47,6 +47,7 @@ import {
 } from "@/components/village/VillageHud";
 import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {cameraTargets, villageBuildings} from "@/lib/constants";
+import {VillageLoadingVeil} from "@/components/village/VillageLoadingVeil";
 import {
   fetchRelationships,
   fetchNpcFavors,
@@ -125,38 +126,23 @@ import type {
   Vector3Tuple
 } from "@/types/portfolio";
 
+// 마을 장면은 three 를 끌고 오므로 dynamic — 그 청크가 오는 동안 보여 줄 화면이
+// 필요하다. 예전엔 여기가 **사이안 사이버펑크 화면**이었고, 청크가 도착하면
+// VillageScene 안의 로딩 베일로 바뀐다 — 생김새가 전혀 다른 화면 둘이 1초 간격으로
+// 갈리니 "깜빡거리며 안 된다"로 보였다(실측: 495ms 사이안 → 1497ms 도면 → 2513ms 사라짐).
+//
+// 이제 둘 다 VillageLoadingVeil 을 쓴다. 경계를 넘어도 화면이 그대로 이어지고,
+// 진행률만 0 에서 실제 값으로 바뀐다. VillageLoadingVeil 은 three 를 import 하지
+// 않으므로 이 자리에 써도 dynamic 분리가 깨지지 않는다.
+//
+// 바깥 div 는 높이를 위해 남긴다 — 이 섹션은 자기 높이가 없어서 비우면 페이지가
+// 접힌다(CLAUDE.md 에 같은 사고가 기록돼 있다).
 const VillageScene = dynamic(
   () => import("@/components/village/VillageScene").then(m => m.VillageScene),
   {
     loading: () => (
-      <div className="relative grid h-[54vh] min-h-[420px] place-items-center overflow-hidden bg-[#050d1a] md:h-screen">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-30"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,212,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.08) 1px, transparent 1px)",
-            backgroundSize: "44px 44px"
-          }}
-        />
-        <div className="relative flex flex-col items-center gap-5">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#00d4ff]/50 font-mono text-sm font-black text-[#00d4ff] shadow-[0_0_18px_rgba(0,212,255,0.3)]">
-              AI
-            </span>
-            <span className="font-mono text-base font-black uppercase tracking-[0.3em] text-white/90">
-              Developer&apos;s City
-            </span>
-          </div>
-          <div className="relative h-1 w-56 overflow-hidden rounded-full bg-white/10">
-            <div
-              className="absolute inset-y-0 w-1/3 rounded-full bg-gradient-to-r from-transparent via-[#00d4ff] to-transparent"
-              style={{animation: "cityLoaderShimmer 1.2s ease-in-out infinite"}}
-            />
-          </div>
-          <span className="font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-[#00d4ff]/55">
-            {">"} 마을을 불러오는 중...
-          </span>
-        </div>
+      <div className="relative h-[54vh] min-h-[420px] overflow-hidden bg-[#050d1a] md:h-screen">
+        <VillageLoadingVeil progress={0} />
       </div>
     ),
     ssr: false
