@@ -23,8 +23,33 @@ const noopRaycast = () => {};
 
 export type NpcMoveState = CharacterState;
 
-// 카메라에서 이 거리 밖이면 렌더/애니 정지
-const CULL_DISTANCE = 22;
+// 카메라에서 이 거리 밖이면 아예 안 그린다. 마을 반경이 32.6 이고 첫 화면
+// 카메라가 중심에서 33 쯤 떨어져 있으므로, 70 이면 어디에 서 있든 27명 전원이 보인다.
+const CULL_DISTANCE = 70;
+
+/**
+ * 이 거리 밖이면 **뼈대 계산만** 멈춘다(계속 보이고, 멈춘 자세로 서 있다).
+ *
+ * 컬링을 22 → 70 으로 넓혀 마을 어디서나 27명이 보이게 만든 대가를 여기서 갚는다.
+ * 넓히기만 했을 때와 비교(prod 실측, 같은 자리 · 같은 조작):
+ *
+ *              가만히          드래그 회전       휠 전진
+ *   CULL 22    50.8fps 0/202   48.2fps 2/96    51.0fps 0/91   ← 예전(멀면 사라짐)
+ *   CULL 70    45.5fps 2/180   40.9fps 3/72    45.1fps 3/77   ← 그냥 넓히기만
+ *   +ANIM 40   52.3fps 0/208   49.5fps 1/104   52.9fps 0/89   ← 지금. 예전보다도 낫다
+ *
+ * (0/208 = 33ms 넘긴 프레임 0개 / 측정 208프레임)
+ *
+ * 원리는 단순하다. 40 유닛 밖 캐릭터는 키가 0.8 유닛이라 1080p 에서 세로 30px 도
+ * 안 된다. 그 크기에서 팔다리가 움직이는지는 보이지 않는데, 비용은 그대로다 —
+ * AnimationMixer 가 매 프레임 뼈 26개 × 트랙 3종을 보간하고 스켈레톤을 다시 굽는다.
+ * 그래서 "보이기"와 "움직이기"의 경계를 따로 둔다. 가까이 오면 다시 살아난다.
+ *
+ * **대가 하나**: 이 거리 밖에서 걸어다니는 NPC 는 발이 멈춘 채 미끄러진다.
+ * 위치는 NPC.tsx 가 따로 옮기기 때문이다. 30px 짜리라 눈에 잘 안 띄지만
+ * 거슬리면 이 값을 올리면 된다 — 26 과 40 은 실측상 비용 차이가 없었다.
+ */
+const ANIM_DISTANCE = 40;
 
 /**
  * 이 거리 밖이면 **그림자만** 끈다(본체는 계속 보인다).
@@ -34,10 +59,9 @@ const CULL_DISTANCE = 22;
  * 예전 로봇(3,115)의 6배라 이 2배가 그냥 넘길 수치가 아니게 됐다.
  *
  * 실측(마을 반경 32.6, 건물 27채 격자 전수조사):
- *   반경 22 안 NPC — 최대 16명 · 평균 8.1명
- *   반경 12 안 NPC — 최대  9명 · 평균 3.0명
- *   NPC 삼각형 최악 624,000 → 487,500 · 평균 315,000 → 216,000
- *   마을 합계 최악 1,924,000 → 1,787,500 (PerfHud 경고선 1,800,000 아래로)
+ *   반경 70(현재 컬링) 안 NPC — 최대 27명 (즉 전원)
+ *   반경 12 안 NPC       — 최대  9명 · 평균 3.0명
+ *   NPC 삼각형 최악  1,053,000(전원 그림자) → 702,000(12유닛 제한)
  *
  * 12 유닛 밖 캐릭터는 키가 0.8 유닛이라 화면에서 손톱만 하고, 그 그림자는
  * 몇 픽셀이다. 눈에 띄는 손해 없이 비용만 뺀다.
@@ -117,7 +141,7 @@ function NpcCharacterImpl({
   }, [scene, model.height, modelId]);
 
   // 클립을 상태별로 분류. 분류 안 되는 클립(어퍼컷 등)은 등록만 하고 재생은 안 한다.
-  const {clips, byState} = useMemo(() => {
+  const {clips, byState, idleFrozen} = useMemo(() => {
     const buckets: Record<CharacterState, string[]> = {
       idle: [],
       walk: [],
@@ -134,7 +158,28 @@ function NpcCharacterImpl({
       const state = classifyClip(clip.name, model.clipOverrides);
       if (state) buckets[state].push(clip.name);
     }
-    return {clips: list, byState: buckets};
+
+    // ── 빈 버킷은 이웃 상태로 메운다 — 비워 두면 그 상태에 들어간 순간 아무
+    // 클립도 안 틀고 fadeOut 만 남아, 페이드가 끝나면 **바인드 포즈(T자)**가
+    // 드러난다. idle 이 비는 건 실제 사례다(neon-robot 은 walk/run 뿐).
+    // idle 을 walk 로 메울 땐 제자리 러닝머신이 되지 않게 아래 재생부가
+    // idleFrozen 으로 timeScale 0(정지 화면)으로 튼다.
+    const any = list.length ? [list[0].name] : [];
+    const idleFrozen = buckets.idle.length === 0;
+    if (!buckets.idle.length)
+      buckets.idle = buckets.walk.length
+        ? buckets.walk
+        : buckets.run.length
+        ? buckets.run
+        : any;
+    if (!buckets.walk.length)
+      buckets.walk = buckets.run.length
+        ? buckets.run
+        : buckets.idle.length
+        ? buckets.idle
+        : any;
+    if (!buckets.run.length) buckets.run = buckets.walk;
+    return {clips: list, byState: buckets, idleFrozen};
   }, [animations, model.clipOverrides]);
 
   const {actions, mixer} = useAnimations(clips, innerRef);
@@ -143,6 +188,7 @@ function NpcCharacterImpl({
   const idleTurnRef = useRef(0);
   const visibleRef = useRef(true);
   const shadowRef = useRef(true);
+  const animRef = useRef(true);
 
   useEffect(() => {
     // NPC들이 같은 위상으로 걷지 않게 시작 시점 분산
@@ -163,24 +209,45 @@ function NpcCharacterImpl({
     if (far !== !visibleRef.current) {
       visibleRef.current = !far;
       innerRef.current.visible = !far;
-      // 안 보이는 동안은 스켈레톤 계산도 멈춘다.
-      //
-      // visible=false 면 three 가 렌더는 건너뛰지만, drei 의 useAnimations 가
-      // 건 AnimationMixer 는 자기 useFrame 에서 계속 돈다 — 뼈 26개 × 트랙 3종을
-      // 매 프레임 보간한다. 화면 밖 NPC 20여 명이 그 짓을 하고 있었다.
-      // timeScale 0 이면 mixer.update 가 시간을 0 만큼 진행시켜 사실상 무동작이 된다.
-      // (재개하면 멈춘 자세에서 그대로 이어져 티가 안 난다)
-      mixer.timeScale = far ? 0 : 1;
+    }
+
+    // 뼈대 계산 정지 — 화면 밖이거나, 보이더라도 너무 멀면.
+    //
+    // visible=false 여도 drei 의 useAnimations 가 건 AnimationMixer 는 자기
+    // useFrame 에서 계속 돈다. timeScale 0 이면 mixer.update 가 시간을 0 만큼
+    // 진행시켜 사실상 무동작이 된다. (재개하면 멈춘 자세에서 이어져 티가 안 난다)
+    const animate = !far && dist <= ANIM_DISTANCE;
+    if (animate !== animRef.current) {
+      animRef.current = animate;
+      mixer.timeScale = animate ? 1 : 0;
+      if (!animate && !far) {
+        // ── 얼리기 전에 "입힐 포즈"를 보장한다 ──────────────────────────────
+        // timeScale 0 이면 페이드가 진행되지 않는다. 멀리서 마운트된 NPC 는
+        // 아직 어떤 액션도 무게가 없어서, 그대로 얼리면 **바인드 포즈(T자)가
+        // 미끄러져 다니는** 것이 40~70 밴드에서 그대로 보였다(실사용 보고).
+        // 지금 클립(또는 idle 첫 클립)을 무게 1 로 박아 넣고 얼린다.
+        const name = playingRef.current ?? byState.idle[0] ?? null;
+        const action = name ? actions[name] : null;
+        if (action) {
+          if (!playingRef.current) action.reset();
+          action.stopFading().setEffectiveWeight(1).play();
+          playingRef.current = name;
+        }
+      }
     }
     if (far) return;
 
-    // 그림자만 따로 끊는다 — 본체는 22 유닛까지 보이되 그림자는 12 유닛까지.
+    // 세 겹으로 끊는다 — 본체 70 / 애니메이션 40 / 그림자 12 유닛.
     // 밴드가 바뀌는 순간에만 건드린다(매 프레임 대입하면 27명분 낭비).
     const wantShadow = dist <= SHADOW_DISTANCE;
     if (wantShadow !== shadowRef.current) {
       shadowRef.current = wantShadow;
       for (const m of meshes) m.castShadow = wantShadow;
     }
+
+    // 얼린 밴드(40~70)에서는 클립 전환도 하지 않는다 — 전환의 fadeIn 이
+    // 진행되지 않아 새 클립 무게가 0(=T자)에 멈춘다. 포즈는 ②가 이미 입혔다.
+    if (!animate) return;
 
     const now = state.clock.elapsedTime;
     const target = stateRef.current;
@@ -216,7 +283,9 @@ function NpcCharacterImpl({
     if (want) {
       actions[want]
         ?.reset()
-        .setEffectiveTimeScale(target === "run" ? 1.08 : 1)
+        .setEffectiveTimeScale(
+          target === "run" ? 1.08 : target === "idle" && idleFrozen ? 0 : 1
+        )
         .fadeIn(0.25)
         .play();
     }

@@ -24,5 +24,6 @@
   "skill-frontend": "/models/buildings/skill-frontend.glb",
   "skill-game": "/models/buildings/skill-game.glb",
   "skill-workflow": "/models/buildings/skill-workflow.glb",
-  "study-codingtest": "/models/buildings/study-codingtest.glb"
+  "study-codingtest": "/models/buildings/study-codingtest.glb",
+  "study-cs": "/models/buildings/study-cs.glb"
 }

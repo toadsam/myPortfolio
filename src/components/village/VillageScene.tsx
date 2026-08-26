@@ -2,7 +2,6 @@
 
 import {Canvas, useFrame, useThree, type ThreeEvent} from "@react-three/fiber";
 import {
-  AdaptiveDpr,
   Billboard,
   ContactShadows,
   Html,
@@ -986,11 +985,7 @@ function LoadingVeilImpl() {
       />
       {/* 액자는 다 지어지면 투명해지며 아래 타이틀을 드러낸다. 페이드가 끝날
           때까지 DOM 에 남겨야 한다 — 바로 빼면 타이틀이 튀어나온다. */}
-      <VillageLoadingVeil
-        progress={display}
-        fading={ready}
-        reduced={reduced}
-      />
+      <VillageLoadingVeil progress={display} fading={ready} reduced={reduced} />
     </>
   );
 }
@@ -2908,7 +2903,11 @@ function ActiveRouteImpl({activeSection}: {activeSection: SectionId}) {
   );
 }
 
-function LiveDecorationsImpl({villageState}: {villageState: VillageState | null}) {
+function LiveDecorationsImpl({
+  villageState
+}: {
+  villageState: VillageState | null;
+}) {
   if (!villageState) return null;
 
   const unlocked = new Set(villageState.unlocked_items);
@@ -3116,7 +3115,12 @@ function VillageSceneImpl({
         shadows={!isMobile}
       >
         {/* 움직일 땐 해상도/이벤트 자동 저하 → 멈추면 선명하게 */}
-        <AdaptiveDpr pixelated={false} />
+        {/* <AdaptiveDpr/> 를 뺐다 — 해상도 조절이 두 겹이 되어 곱해지고 있었다.
+            위 dpr={[1, 1.25]} 만으로 이미 r3f 가 performance.current 에 맞춰
+            해상도를 조절한다. 거기에 drei 의 AdaptiveDpr 이 setDpr 을 또 부르면서
+            전환 때마다 캔버스가 1264 → 804 → 402px 로 반토막씩 나고 되돌아오지
+            않았다(prod 실측). "이동할 때 화면이 흐려진다"의 정체.
+            regress() 호출도 CameraController/CharacterController 에서 같이 뺐다. */}
         {/* AdaptiveEvents 는 일부러 안 쓴다. performance.regress() 중엔 포인터
             이벤트를 통째로 끄는데, CameraController 가 전환 내내 regress 를 부르고
             입장 직후엔 전환이 연달아 일어나서 "초반엔 클릭이 안 되다가 나중에
@@ -3286,11 +3290,11 @@ function VillageSceneImpl({
                           rotationY: ov?.rotationY ?? 0,
                           scale: ov?.scale ?? 1,
                           onSelectDown: () => {
+                            // 유니티식: 클릭은 선택만. 이동은 기즈모(축 핸들)가 한다.
                             propsApi.setSelection({
                               kind: "building",
                               id: building.id
                             });
-                            propsApi.setDragging(true);
                           }
                         }
                       : undefined
@@ -3302,47 +3306,52 @@ function VillageSceneImpl({
             <SceneReadyProbe />
           </Suspense>
 
-          <Suspense fallback={null}>
-            {autonomousNpcs.map((npc, index) => (
-              <NPC
-                behavior={npcBehaviorProfiles[npc.id]}
-                bubbleText={visibleBubble(npcRuntimeStates[npc.id])}
-                buildings={villageBuildings}
-                isActive={activeNpcId === npc.id}
-                key={npc.id}
-                npc={npc}
-                baseNpcState={npcStateMap.get(npc.id)}
-                runtimeMood={npcRuntimeStates[npc.id]?.mood}
-                runtimeMemory={npcRuntimeStates[npc.id]?.memory}
-                currentAction={npcRuntimeStates[npc.id]?.currentAction}
-                onPositionChange={onNpcPositionChange}
-                onSelect={onSelectNpc}
-                facePoint={npcRuntimeStates[npc.id]?.facePoint}
-                holdUntil={npcRuntimeStates[npc.id]?.holdUntil}
-                emote={visibleEmote(npcRuntimeStates[npc.id])}
-                socialTarget={npcSocialTargets?.[npc.id]}
-                scriptedTarget={
-                  npc.id === "guide-npc"
-                    ? guideScriptedTarget
-                    : npc.id === "overseer-npc"
-                    ? overseerTarget
-                    : undefined
-                }
-                scriptedStart={
-                  npc.id === "guide-npc" ? GUIDE_SCRIPTED_START : undefined
-                }
-                onScriptedArrive={
-                  npc.id === "guide-npc" ? onGuideArrive : undefined
-                }
-                forceHold={npc.id === "guide-npc" ? guideForceHold : undefined}
-                hoverToTalk={!cinematic}
-                command={npcCommand}
-                commandTarget={npcCommandTargets?.[npc.id]}
-                commandSlot={index}
-                commandTotal={autonomousNpcs.length}
-              />
-            ))}
-          </Suspense>
+          {/* 배치 편집 중엔 주민을 통째로 내린다 — 돌아다니는 몸이 클릭을
+              가로채서 건물·프롭 선택을 방해하고, 편집 대상도 아니다. */}
+          {editing ? null : (
+            <Suspense fallback={null}>
+              {autonomousNpcs.map((npc, index) => (
+                <NPC
+                  behavior={npcBehaviorProfiles[npc.id]}
+                  bubbleText={visibleBubble(npcRuntimeStates[npc.id])}
+                  buildings={villageBuildings}
+                  isActive={activeNpcId === npc.id}
+                  key={npc.id}
+                  npc={npc}
+                  baseNpcState={npcStateMap.get(npc.id)}
+                  runtimeMood={npcRuntimeStates[npc.id]?.mood}
+                  runtimeMemory={npcRuntimeStates[npc.id]?.memory}
+                  currentAction={npcRuntimeStates[npc.id]?.currentAction}
+                  onPositionChange={onNpcPositionChange}
+                  onSelect={onSelectNpc}
+                  facePoint={npcRuntimeStates[npc.id]?.facePoint}
+                  holdUntil={npcRuntimeStates[npc.id]?.holdUntil}
+                  emote={visibleEmote(npcRuntimeStates[npc.id])}
+                  socialTarget={npcSocialTargets?.[npc.id]}
+                  scriptedTarget={
+                    npc.id === "guide-npc"
+                      ? guideScriptedTarget
+                      : npc.id === "overseer-npc"
+                      ? overseerTarget
+                      : undefined
+                  }
+                  scriptedStart={
+                    npc.id === "guide-npc" ? GUIDE_SCRIPTED_START : undefined
+                  }
+                  onScriptedArrive={
+                    npc.id === "guide-npc" ? onGuideArrive : undefined
+                  }
+                  forceHold={
+                    npc.id === "guide-npc" ? guideForceHold : undefined
+                  }
+                  command={npcCommand}
+                  commandTarget={npcCommandTargets?.[npc.id]}
+                  commandSlot={index}
+                  commandTotal={autonomousNpcs.length}
+                />
+              ))}
+            </Suspense>
+          )}
 
           {/* 나무·바위는 propsLayout.json 의 decor 프롭으로 옮겼다 (scripts/generate-decor-layout.mjs).
               예전엔 여기서 네온 콘과 검은 다면체를 절차적으로 그렸는데, 마을이 따뜻한
@@ -3460,7 +3469,9 @@ function VillageSceneImpl({
             <>
               <CameraController
                 activeSection={activeSection}
-                lockRotate={editing}
+                // 편집 중에도 시점 회전을 살린다 — 기즈모를 끄는 동안은
+                // OrbitControls(makeDefault)가 자동으로 멈추므로 충돌하지 않는다.
+                lockRotate={false}
                 cinematic={cinematic}
                 groundTarget={groundTarget}
               />

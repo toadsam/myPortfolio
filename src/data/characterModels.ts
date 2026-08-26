@@ -25,13 +25,22 @@ export interface CharacterModel {
 /** Meshy가 캐릭터를 내보내는 기준 높이 (실측: 로봇·전사·루미 모두 1.7000) */
 export const MESHY_HEIGHT = 1.7;
 
-// 캐릭터 키는 건물 크기 사다리(constants.ts)에 맞춘다.
+// 캐릭터 키. **축척이 아니라 가독성 기준으로 잡는다.**
 //
-// 건물을 "1층 상가 3m"로 보고 계산하면 1.05가 나오는데, 실제로 세워 보니
-// 사람이 커 보였다. 이 마을 건물은 표준 M(1.9)조차 창이 여러 층 나 있는
-// 3~4층짜리로 읽히기 때문이다. 랜드마크(3.1)를 4층으로 잡으면 유닛당 2.5m 쯤이라
-// 사람 1.7m는 0.8유닛이다.
-export const NPC_HEIGHT = 0.8;
+// 원래는 건물 크기 사다리에서 역산한 0.8 이었다(랜드마크 3.1 을 4층으로 보면
+// 유닛당 2.5m, 사람 1.7m → 0.8유닛). 축척으로는 맞지만 실제로 세워 보니
+// 캐릭터가 너무 작았다 — 마을을 둘러보는 거리에서 얼굴도 종도 안 읽힌다.
+// 게임에서 캐릭터를 배경보다 크게 잡는 건 흔한 과장이고, 여기가 그 경우다.
+//
+// 0.8 × 1.5 = 1.2. 표준 건물(1.9)의 63% 로, 여전히 집보다는 확실히 작다.
+//
+// 이 값은 **플레이어 캐릭터도 같이 쓴다**(WarriorCharacter 의 MODEL_SCALE).
+// 일부러 묶어 둔 것이다 — 예전에 따로 놀 때 조종 캐릭터가 집만 했다.
+//
+// 참고: NPC.tsx 의 이름표(y 1.72~2.46)·히트박스 캡슐(반지름 0.8)과
+// closeUp 카메라(y 1.35)는 월드 단위로 박혀 있고 원래 이보다 큰 캐릭터에
+// 맞춰진 값이었다. 1.2 로 올리면서 오히려 제자리를 찾았다.
+export const NPC_HEIGHT = 1.2;
 
 export const characterModels: Record<CharacterModelId, CharacterModel> = {
   robot: {
@@ -212,6 +221,114 @@ export const characterModels: Record<CharacterModelId, CharacterModel> = {
     url: "/models/characters/jaehoon.glb",
     height: NPC_HEIGHT,
     clipOverrides: {idle: ["wave_hello", "talk_"]}
+  },
+
+  // ─── 핵심 NPC 6 + 공방 4 (2026-08-26) ───────────────────────────────────
+  //
+  // 방문자가 실제로 가장 많이 마주치는 NPC 들이다. 그런데 이번 묶음은
+  // **정지 클립이 대부분 "춤"으로 들어왔다.** 쓸 만한 게 그것뿐이라 일단 물렸지만,
+  // 아래 ⚠ 표시한 넷은 채용 담당자가 제일 오래 보는 NPC 라 차분한 동작으로
+  // 바꾸는 걸 권한다(Meshy 에서 정지 클립 하나 더 받아 재병합하면 끝이다).
+  collie: {
+    // 클립: cheer_with_both_hands_up / walking / running
+    // idle ← 두 손 들어 환영. 마을 안내원 루미에게 이보다 맞는 게 없다.
+    url: "/models/characters/collie.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["cheer"]}
+  },
+  cat: {
+    // 클립: funnydancing_01 / walking / running
+    // ⚠ idle ← 춤. 프로젝트 큐레이터가 상시로 춤춘다. 대체 권장.
+    url: "/models/characters/cat.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["funnydancing"]}
+  },
+  goat: {
+    // 클립: funnydancing_03 / walking / running
+    // ⚠ idle ← 춤. "분석적이고 현실적인 기술 멘토" 와 가장 안 맞는다. 대체 권장.
+    url: "/models/characters/goat.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["funnydancing"]}
+  },
+  armadillo: {
+    // 클립: funnydancing_01 / walking / running
+    // ⚠ idle ← 춤. "차분한 기록 관리자" 컨셉과 어긋난다. 대체 권장.
+    url: "/models/characters/armadillo.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["funnydancing"]}
+  },
+  swallow: {
+    // 클립: wave_for_help_1 / walking / running
+    // idle ← 손 흔들기. 연락 담당 포스트가 사람을 부른다.
+    url: "/models/characters/swallow.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["wave"]}
+  },
+  anteater: {
+    // 클립: bubble_dance / walking / running
+    // ⚠ idle ← 춤. 접수대에 선 도안이 춤추는 그림이 된다. 대체 권장.
+    url: "/models/characters/anteater.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["bubble"]}
+  },
+  raven: {
+    // 클립: alert / walking / running
+    // idle ← 경계. 범위를 재고 따지는 기획자 체리와 잘 맞는다.
+    url: "/models/characters/raven.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["alert"]}
+  },
+  bat: {
+    // 클립: alert / walking / running  (2026-08-27 입고, 건물 NPC 4차)
+    // 폴더명은 "박쥐"(다크랩 몫)인데 실제 모델은 페넥 교수(Professor Fennec)다.
+    // idle ← 경계(alert) — 연구실 지킴이가 주위를 살피는 그림.
+    url: "/models/characters/bat.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["alert"]}
+  },
+  lion: {
+    // 클립: left_uppercut_from_guard / walking / running
+    // idle ← 어퍼컷 — 총학생회 마스코트의 파이팅 세리머니.
+    url: "/models/characters/lion.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["uppercut"]}
+  },
+  hedgehog: {
+    // 클립: stand_on_pole_and_balance / walking / running
+    // idle ← 균형 잡기 — 비행사 고슴도치의 곡예. 어드벤처 게임 몫답다.
+    url: "/models/characters/hedgehog.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["balance"]}
+  },
+  wolf: {
+    // 클립: funnydancing_03 / walking / running
+    // idle ← 춤 — DJ 늑대. 음악 스튜디오 앞이라 춤이 곧 컨셉이다.
+    url: "/models/characters/wolf.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["funnydancing"]}
+  },
+  octopus: {
+    // 클립: jazz_hands_inplace / walking / running
+    // idle ← 재즈 핸즈(제자리). 디자이너 먹지가 "짜잔" 하고 펼쳐 보이는 그림.
+    url: "/models/characters/octopus.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["jazz"]}
+  },
+  lemur: {
+    // 클립: golf_drive / walking / running
+    // idle ← 골프 스윙. 직군과 무관하지만 이것뿐이었다. 리코가 활발한 캐릭터라
+    // 아주 어색하진 않다. 거슬리면 대체.
+    url: "/models/characters/lemur.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["golf"]}
+  },
+  mole: {
+    // 클립: gangnam_groove / walking / running
+    // idle ← 춤. 지하에서 혼자 신난 백엔드 굴뚝. 여기는 오히려 어울린다.
+    // (지식 서고 올빼미도 같은 춤이라 둘이 겹치긴 한다 — 구역이 멀어 티는 안 난다)
+    url: "/models/characters/mole.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["gangnam"]}
   }
 };
 

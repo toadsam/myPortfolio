@@ -89,7 +89,9 @@ export function CharacterController() {
       keys.has("ArrowLeft") ||
       keys.has("ArrowRight")
     ) {
-      regress(); // 이동/회전 중 해상도 저하
+      // regress() 를 뺐다 — 걸어다니는 내내 해상도가 깎여 화면이 흐려졌다.
+      // 자세한 경위는 CameraController 의 전환 regress 주석 참고(해상도 조절이
+      // 두 겹이라 곱해지고, 복구도 안 됐다).
     }
 
     // 구역 단차와 **물 깊이** — walkHeightAt 은 단 위에서 +1.1, 물속에서 음수다.

@@ -1,4 +1,9 @@
-# 다음 에셋 프롬프트 — 원반 섬 마을에 지금 필요한 것들
+# 다음 에셋 프롬프트 (구버전 — `VILLAGE_ASSET_WISHLIST.md` 로 합쳐짐)
+
+> ⚠️ **2026-08-26: 이 문서의 4종(`bridge-arch` · `reed-clump` · `lily-pads` ·
+> `stepping-stones`)과 `study-cs` 는 [`VILLAGE_ASSET_WISHLIST.md`](VILLAGE_ASSET_WISHLIST.md)
+> 로 옮겼다.** 거기 프롬프트는 프리픽스까지 합친 복붙본이고, 이 문서의 수치 일부는
+> 낡았다(다리 19곳 → 실측 14곳). 요청은 그쪽만 보면 된다.
 
 `MESHY_PROP_PROMPTS.md`(장식물) · `MESHY_BUILDING_PROMPTS.md`(건물)와 같은
 세계관·같은 파이프라인의 **추가분**입니다. 2026-08-14 원반 섬 개편 이후 실측으로

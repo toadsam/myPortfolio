@@ -40,7 +40,7 @@ study-cs                 지식 서고
 
 > 2026-08-10 저녁에 8채(`post-office` `study-codingtest` `project-sign-language` > `project-ajou-adventure` `life-values` `life-invest` `life-library` `life-timeline`)가
 > 한 번에 들어왔습니다. 받은 파일과 넣은 이름의 대조표는
-> `VILLAGE_ASSET_WISHLIST.md` 의 **5차 입고** 표에 있습니다.
+> `git log -p docs/VILLAGE_ASSET_WISHLIST.md` 의 옛 판(입고 이력)에 있습니다.
 > `study-cs` 만 컨셉 이미지도 GLB도 없습니다 — 아래 프롬프트로 그림부터 그려야 합니다.
 
 `study-cs` 는 절차적 상자가 아니라 **채움 민가 GLB(`house-a`~`c`)를 빌려 씁니다**

@@ -193,6 +193,34 @@ const KIT = {
   "island-north": {glb: "decor/island-north.glb", h: 1.811, m: 24},
   "pagoda-portfolio": {glb: "decor/pagoda-portfolio.glb", h: 1.904, m: 15},
   "bridge-stone": {glb: "decor/bridge-stone.glb", h: 0.74, m: 5.0},
+  // 등불 아치 돌다리(2026-08-27 입고). 진행 축 +X(정점 프로파일로 실측 — 아치
+  // 혹이 X 를 따라 솟는다).
+  //
+  // **원본은 판이 넓은 모델(X:Z = 1.9:1.5)이라 균일 배율로는 절대 안 맞았다** —
+  // 길이를 bridge-stone 에 맞추면 폭 4.0(물을 덮는 판때기), 폭을 길에 맞추면
+  // 길이 2.5(물길도 못 건넌다). 그래서 **원본 GLB 의 Z 를 0.55 로 눌러 구웠다**
+  // (스크립트 한 번, 노멀 역전치 포함). 지금 원본은 1.9 × 0.63 × 0.83.
+  // m 4.6 → 길이 5.56 · 폭 2.42 · 상판 꼭대기 1.42 — bridge-stone
+  // (5.12 · 1.27 · 상판 1.59)과 나란히 설 수 있는 비율이다.
+  "bridge-arch": {glb: "decor/bridge-arch.glb", h: 0.627, m: 4.6},
+
+  // ─── 물가 소품 3종 (2026-08-27 입고) ───────────────────────────────────────
+  // 섬 개편 뒤 물이 마을 한복판에 들어왔는데 물가에 자랄 것이 0종이었다.
+  // 전부 ⑭-c 절이 심는다. 개수 상한이 거기 박혀 있다 — 삼각형이 개당 2천쯤이라
+  // 마음껏 깔면 예산이 무너진다.
+  "reed-clump": {glb: "nature/reed-clump.glb", h: 1.9, m: 1.2},
+  // 평면 슬래브 — 실물 환산(무리 지름 1.5m = 0.6유닛)은 m 0.16 인데 부감에서
+  // 점으로 사라졌다. 다른 바닥 소품처럼 과장한다(무리 지름 0.83유닛 ≈ 2m).
+  "lily-pads": {glb: "nature/lily-pads.glb", h: 0.207, m: 0.22},
+  // 돌 5개 한 줄 — m 은 줄 길이가 1.6유닛(4m)이 되게 역산(돌 높이 0.29m)
+  "stepping-stones": {glb: "decor/stepping-stones.glb", h: 0.136, m: 0.29},
+
+  // 담쟁이 돌담(2026-08-27 입고). **wall-low 를 통째로 대체하지 못한다** —
+  // 담쟁이 잎 UV 심 때문에 simplify 바닥이 2,378 이라(오차 0.1 까지 올려도 그대로)
+  // 117토막이면 +28만 삼각형이다. 남북 참배로 대문 양옆 강조용으로만 쓴다(⑭-e).
+  // m=1.8 은 토막 길이가 wall-low(1.94)와 같아지는 값 — 높이는 0.72 로 살짝 높은데
+  // 대문 어귀가 솟는 그림이라 오히려 문기둥답다.
+  "wall-ivy": {glb: "decor/wall-ivy.glb", h: 0.703, m: 1.8},
 
   // ─── 낮은 돌담 ──────────────────────────────────────────────────────────────
   // scripts/make-low-wall.mjs 가 굽는다(상자 둘, 24 삼각형). 컨셉 아트에서 구역이
@@ -424,8 +452,8 @@ const boostOf = kind =>
   SMALL_BOOSTED.has(kind)
     ? SMALL_BOOST
     : MEDIUM_BOOSTED.has(kind)
-      ? MEDIUM_BOOST
-      : 1;
+    ? MEDIUM_BOOST
+    : 1;
 
 const scaleOf = kind =>
   round3((KIT[kind].m * UNITS_PER_METER * boostOf(kind)) / KIT[kind].h);
@@ -650,6 +678,7 @@ function place(
     kind !== "terrace-stair" &&
     kind !== "fence-rail" &&
     kind !== "wall-low" &&
+    kind !== "wall-ivy" &&
     nearShore(x, z)
   )
     return false;
@@ -1148,56 +1177,12 @@ const blockRect = new Map();
   console.log(`  담장 ${n}토막 · 길이 지나가 비운 자리 ${openings}곳`);
 
   // ─── 구역 대문 계단 ─────────────────────────────────────────────────────────
-  // 위에서 비워 둔 자리마다 계단을 놓는다. 길 타일이 1.88 간격이라 한 대문에
-  // 후보가 서넛씩 몰리므로, 3유닛 안에 이미 놓았으면 건너뛴다.
-  {
-    let put = 0;
-    const here = [];
-    for (const g of gateSteps) {
-      if (here.some(q => Math.hypot(q.x - g.x, q.z - g.z) < 3.6)) continue;
-      if (onBuilding(g.x, g.z, 0.2) || onDisc(g.x, g.z, 0.05)) continue;
-      // 담장을 비운 이유가 "길이 스쳤다" 정도면 계단이 잔디 위에 혼자 선다.
-      // 스포크 **한복판**일 때만 놓는다 — 대문다운 자리만 남는다.
-      if (
-        !nearSpoke(g.x, g.z, 0.8) &&
-        !tileRoads.some(
-          r => Math.abs(r.x - g.x) < 1.0 && Math.abs(r.z - g.z) < 1.0
-        )
-      )
-        continue;
-      // terrace-stair 는 **−Z 쪽으로 오른다**(bake-prop 옆면으로 확인 — 왼쪽이
-      // −Z 이고 거기가 높다). 그러니 낮은 쪽 +Z 가 **구역 바깥**을 봐야 한다.
-      // 직접 구웠던 쐐기는 반대로 올라가서 여기 부호가 뒤집혀 있었다.
-      const facingOut = Math.atan2(g.nx, g.nz);
-      // **경계선 위에 그대로 놓으면 안 된다.** 그 점은 단 안쪽으로 판정돼서
-      // terrainHeightAt 이 1.1 을 얹어 버린다 — 계단이 단 위에 통째로 떠 있었다.
-      // 안길이 절반만큼 바깥으로 빼면 밑동이 골짜기 바닥에서 시작해, 높은 쪽
-      // 끝이 딱 단 모서리에 닿는다. 안길이 1.902 × 배율 1.484 = 2.82 → 절반 1.41.
-      // 여기 g 는 담장선(PLATEAU_PAD −0.06)이고 진짜 단 경계는 0.06 더 밖이므로
-      // 그만큼 더 민다. 담장선이 물가에서 0.35 안쪽이므로 1.41 + 0.35 = 1.76.
-      // (원반 섬에서는 바깥 방향이 곧 방사 방향이라 법선 걱정이 없다.)
-      const OUT = 1.76;
-      const sx = round3(g.x + g.nx * OUT);
-      const sz = round3(g.z + g.nz * OUT);
-      // **밀어낸 자리가 또 단 위면 놓지 않는다.** 이웃한 두 구역의 단이 맞닿은
-      // 변(예: SKILLS 남쪽 = LIFE 북쪽)에서는 밖으로 나가 봐야 옆 구역 단이라
-      // 오를 턱 자체가 없다 — 그런데도 놓았더니 30개 중 9개가 평지 위에 선
-      // 계단이 됐다(밑동 지면 1.1, 윗끝 지면 1.1). 격자로 검산해서야 찾았다.
-      if (onPlateau(sx, sz)) continue;
-      // 다리 어귀 계단은 얕은 물에 발을 담근 채 선다 — 물 금지를 일부러 푼다.
-      // (돌계단이 수면에서 시작해 섬 테두리에 닿는, 컨셉의 그 그림이다)
-      if (
-        place(`gatestep-${put}`, "terrace-stair", sx, sz, round3(facingOut), {
-          gap: 1.4,
-          onWater: true
-        })
-      ) {
-        here.push({x: sx, z: sz});
-        put += 1;
-      }
-    }
-    console.log(`  구역 대문 계단 ${put}곳`);
-  }
+  // ── 구역 대문 계단은 **더 이상 놓지 않는다** (2026-08-27 제거) ─────────────
+  // 담쟁이 계단(terrace-stair)을 다리 어귀마다 물에 담가 세웠었는데, 아치 다리가
+  // 들어와 다리 끝이 둔덕 높이에 직접 맞물리자 계단이 "다리 옆에 쌓인 폐석"으로
+  // 보였다(사용자 캡처로 확인). 다리는 다리 하나로 잇는 그림이 맞다.
+  // 되살리려면 git log -p 로 이 절의 지난 판을 보면 된다 — gateSteps 수집은
+  // 위 담장 절이 여전히 하고 있으므로 그대로 붙일 수 있다.
 
   // ─── 광장 단상에는 계단 프롭을 안 놓는다 ────────────────────────────────────
   // 한때 대로 넷에 `terrace-stair` 를 세웠다. 단상 테두리와 물가 사이가 0.7 인데
@@ -1633,13 +1618,17 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
   // 남쪽은 대계단을 내려와 같은 물을 건넌다 — 축이 대칭이라야 조감도가 정돈된다.
   //
   // 다리는 물(동서)을 가로질러야 하므로 90° 돌린다 — 모델의 긴 축이 +X 다.
-  place("bridge-north", "bridge-stone", 0, CREEK_Z, round3(Math.PI / 2), {
+  // 대문 둘은 아치 돌다리(bridge-arch)다 — 등불 기둥이 달려 있어 "문"으로
+  // 읽히고, 부감에서 건널목 돌다리 12곳과 실루엣이 갈린다.
+  place("bridge-north", "bridge-arch", 0, CREEK_Z, round3(Math.PI / 2), {
     gap: 0.1,
+    grow: 1.1, // 해자는 물길보다 넓다 — 대문 둘만 길이 6.1 로 키워 둔치를 문다
     onWater: true
   });
   landmarks.push({x: 0, z: CREEK_Z, r: 4.5});
-  place("bridge-south", "bridge-stone", 0, MOAT_SOUTH_Z, round3(Math.PI / 2), {
+  place("bridge-south", "bridge-arch", 0, MOAT_SOUTH_Z, round3(Math.PI / 2), {
     gap: 0.1,
+    grow: 1.1,
     onWater: true
   });
   landmarks.push({x: 0, z: MOAT_SOUTH_Z, r: 4.5});
@@ -1668,12 +1657,81 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
     // 안 섰다(15 → 1). 건널목을 아는 건 타일을 걷어낸 그쪽뿐이므로,
     // 좌표와 각도를 받아 놓기만 한다.
     const crossings = terr.crossings ?? [];
+
+    // ── 건널목 다리 규칙 (2026-08-27 확정) ────────────────────────────────────
+    // 1) **에셋은 아치 돌다리 하나뿐이다.** 처음엔 bridge-stone 과 번갈아 놓아
+    //    "복제 티"를 피하려 했는데, 사용자가 레퍼런스를 들고 와 통일을 골랐다 —
+    //    두 에셋이 섞이니 오히려 "다른 곳에서 온 물건"으로 읽혔다.
+    // 2) **각도는 앵커 중심선이다.** 저장된 cr.angle 은 세 절이 따로 만들며
+    //    일부는 0°/90° 양자화라 못 쓴다. 물폭 최소 방향으로도 재 봤지만 광장
+    //    고리처럼 굽은 물에서는 최소선이 길과 어긋난다(스포크 다리가 삐딱했던
+    //    원인). 다리는 결국 **두 땅덩이를 잇는 것** — 건널목에서 가장 가까운
+    //    두 앵커(광장 섬 + 구역 섬 여섯)의 중심선이 곧 길이 나는 방향이다.
+    // 3) **중심은 그 축 위에서 양안 한가운데로** 다시 맞춘다.
+    // 4) **높이는 상판 끝이 낮은 쪽 둔덕에 닿게** 들어올린다. 섬-섬 건널목은
+    //    끝이 섬 원 안까지 물고 들어가 교대가 절벽면에 묻힌다 — 레퍼런스의
+    //    "높은 아치 밑으로 물이 지나는" 그림 그대로다.
+    const waterAt = (x, z) => inMoatWater(x, z) || inInnerWater(x, z);
+    /** 광장 섬(r 은 check-village 실측 9.0) + 구역 섬 여섯 */
+    const anchors = [{x: 0, z: 0, r: 9}, ...(terr.islands ?? [])];
+    /** 상판 끝의 모델 y (정점 프로파일 실측) */
+    const DECK_END = -0.227;
+    const bankH = (x, z) => {
+      if ((terr.islands ?? []).some(b => Math.hypot(x - b.x, z - b.z) <= b.r))
+        return 1.1; // TERRACE_STEP
+      const rr = Math.hypot(x, z);
+      const dr = daisRadiusAt(Math.atan2(z, x));
+      if (dr > 0 && rr <= dr) return 1.1; // 광장 단상
+      if (dr > 0 && rr <= dr + 2.2) return 0.14; // 고리 회랑 데크
+      return 0;
+    };
+
     crossings.forEach((cr, n) => {
-      place(`bridge-cross-${n}`, "bridge-stone", cr.x, cr.z, cr.angle, {
-        gap: 0.1,
-        onWater: true
-      });
-      landmarks.push({x: cr.x, z: cr.z, r: 3.4});
+      // 진행 축 = 가장 가까운 앵커 둘의 중심선
+      const near = anchors
+        .map(a => ({a, d: Math.hypot(cr.x - a.x, cr.z - a.z) - a.r}))
+        .sort((p, q) => p.d - q.d);
+      let ux = near[1].a.x - near[0].a.x;
+      let uz = near[1].a.z - near[0].a.z;
+      const ul = Math.hypot(ux, uz) || 1;
+      ux /= ul;
+      uz /= ul;
+      // 축 위에서 물 구간을 재 양안 한가운데로
+      let d1 = 0;
+      let d2 = 0;
+      while (
+        d1 < 9 &&
+        waterAt(cr.x + ux * (d1 + 0.25), cr.z + uz * (d1 + 0.25))
+      )
+        d1 += 0.25;
+      while (
+        d2 < 9 &&
+        waterAt(cr.x - ux * (d2 + 0.25), cr.z - uz * (d2 + 0.25))
+      )
+        d2 += 0.25;
+      const off = d1 < 9 && d2 < 9 ? (d1 - d2) / 2 : 0;
+      const bx = round3(cr.x + ux * off);
+      const bz = round3(cr.z + uz * off);
+      // 모델 +X 를 축 u 에: rotationY=r 은 +X 를 (cos r, -sin r) 로 돌린다
+      const rot = round3(Math.atan2(-uz, ux));
+
+      const sc = scaleOf("bridge-arch");
+      const endWorld = (DECK_END + KIT["bridge-arch"].h / 2) * sc;
+      const half = (1.897 * sc) / 2;
+      const hA = bankH(bx + ux * (half + 0.3), bz + uz * (half + 0.3));
+      const hB = bankH(bx - ux * (half + 0.3), bz - uz * (half + 0.3));
+      const dy = round3(Math.max(0, Math.min(hA, hB) - endWorld));
+
+      const pi = props.length;
+      if (
+        place(`bridge-cross-${n}`, "bridge-arch", bx, bz, rot, {
+          gap: 0.1,
+          onWater: true
+        }) &&
+        dy > 0
+      )
+        props[pi].position[1] = round3(props[pi].position[1] + dy);
+      landmarks.push({x: bx, z: bz, r: 3.4});
     });
 
     console.log(
@@ -1763,7 +1821,11 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
       }
       // 담장은 둘레 방향(접선)으로 눕는다
       const rot = round3(Math.atan2(-(nx / nl), nz / nl));
-      if (place(`rimwall-${put}`, "wall-low", x, z, rot, {gap: 0.9})) {
+      // 대문(남북 참배로) 어귀 토막만 담쟁이 돌담이다. 담장이 끊기는 자리라
+      // 끝단이 그대로 드러나는데, 담쟁이가 감긴 토막은 끝이 "마감"으로 읽힌다.
+      // 전 구간을 못 바꾸는 이유는 KIT 의 wall-ivy 주석 참고(삼각형 바닥 2,378).
+      const kind = Math.abs(x) < 7 ? "wall-ivy" : "wall-low";
+      if (place(`rimwall-${put}`, kind, x, z, rot, {gap: 0.9})) {
         walls.push({x, z, ax: Math.cos(rot), az: Math.sin(rot)});
         put++;
       }
@@ -2654,7 +2716,10 @@ const BELT_DEPTH = 12;
         ex,
         ez,
         ox,
-        oz
+        oz,
+        // 물풀(⑭-c)은 섬 물가에만 심는다 — 광장 둘레는 물 위에 회랑 데크(0.14)가
+        // 떠 있어서, 갈대가 데크를 뚫고 수련이 데크 밑에 깔린다.
+        isl: true
       });
     }
   }
@@ -2790,6 +2855,143 @@ const BELT_DEPTH = 12;
       .map(([k, v]) => `${k} ${v}`)
       .join(" · ")}) · 둑 밑 바위 ${rocks}개  [테두리 표본 ${rim.length}]`
   );
+
+  // ─── ⑭-c 물풀 — 갈대·수련·징검돌 (2026-08-27 입고) ─────────────────────────
+  // 물가를 "물가답게" 만드는 셋. 전부 장식이다 — 걷기 판정은 이미 물에 들어간다.
+  //
+  // **개수 상한이 예산이다.** 셋 다 담쟁이 잎·연잎 UV 심 때문에 simplify 가
+  // 덜 먹어 개당 1.9~2.4천 삼각형이다. 상한 없이 표본마다 깔면 물가 표본이
+  // 수백이라 혼자 수십만을 먹는다. (아치 다리 교대가 −3.3만을 벌어 준 걸
+  // 여기서 쓴다.)
+  //
+  // 높이는 씬이 terrainHeightAt(물 위 0)을 얹고 lift(h/2)가 더해지므로:
+  // 갈대는 밑동 진흙 둔덕이 수면(0.03)에 잠기고, 수련은 판 두께의 절반이
+  // 물에 잠긴 채 뜬다 — 따로 띄울 필요가 없다.
+  {
+    const REED_MAX = 16;
+    const LILY_MAX = 16;
+    const STEP_MAX = 6;
+
+    // nearLandmark 를 쓰면 안 된다 — 물길 폴리라인 전체에 금지 원(r 2.2)이
+    // 깔려 있어 "물가 = 랜드마크 옆"이라 물풀이 전멸한다(갈대 5 · 징검돌 0 으로
+    // 실측). 물풀이 피할 것은 **다리**뿐이니 다리 좌표만 잰다.
+    const bridgePts = [
+      {x: 0, z: CREEK_Z},
+      {x: 0, z: MOAT_SOUTH_Z},
+      ...(TERR.crossings ?? [])
+    ];
+    const nearBridgePt = (x, z) =>
+      bridgePts.some(b => Math.hypot(b.x - x, b.z - z) < 3.4);
+    let reeds = 0;
+    let lilies = 0;
+    let stones2 = 0;
+
+    const isles = rim.filter(r => r.isl);
+    isles.forEach((r, i) => {
+      // 갈대 — 물가 선에서 반 발짝 물 쪽. 밑동이 기슭에 걸친다.
+      // 간격 0.55 — 섬 테두리에는 이미 담장·울타리 taken 점이 0.65 거리에
+      // 줄지어 있어 1.0 으로 재면 전멸한다(실측 갈대 5/30). 물풀은 물 쪽이라
+      // 담장 발치에 붙어도 그림이 자연스럽다.
+      if (reeds < REED_MAX && (i + 2) % 7 === 0) {
+        const x = round3(r.ex + r.ox * 0.45);
+        const z = round3(r.ez + r.oz * 0.45);
+        if (!nearBridgePt(x, z) && free(x, z, 0.55)) {
+          if (
+            place(
+              `reed-${reeds}`,
+              "reed-clump",
+              x,
+              z,
+              round3(((i * 53) % 360) * (Math.PI / 180)),
+              {gap: 0.55, grow: round3(0.75 + rand() * 0.5), onWater: true}
+            )
+          )
+            reeds += 1;
+        }
+      }
+      // 수련 — 물가에서 한두 걸음 떨어진 잔잔한 물 위. 이웃 섬 기슭까지 나가면
+      // 안 되므로 그 점이 진짜 물인지 되묻는다.
+      if (lilies < LILY_MAX && (i + 5) % 11 === 0) {
+        const out = 1.05 + rand() * 0.5;
+        const x = round3(r.ex + r.ox * out);
+        const z = round3(r.ez + r.oz * out);
+        if (inInnerWater(x, z) && !nearBridgePt(x, z) && free(x, z, 0.8)) {
+          if (
+            place(
+              `lily-${lilies}`,
+              "lily-pads",
+              x,
+              z,
+              round3(((i * 91) % 360) * (Math.PI / 180)),
+              {gap: 0.8, grow: round3(0.85 + rand() * 0.45), onWater: true}
+            )
+          )
+            lilies += 1;
+        }
+      }
+      // 징검돌 — 물가 선과 나란히 반쯤 잠긴 한 줄. 자로 그은 듯한 기슭 선을
+      // 부순다(둑 밑 바위와 같은 일을 하되, "길"의 결을 더한다).
+      // 모델 +X 가 줄 방향이므로 접선 t=(-oz,ox) 에 맞춘다: r = atan2(-ox,-oz).
+      if (stones2 < STEP_MAX && (i + 3) % 19 === 0) {
+        const x = round3(r.ex + r.ox * 0.3);
+        const z = round3(r.ez + r.oz * 0.3);
+        if (!nearBridgePt(x, z) && free(x, z, 0.55)) {
+          if (
+            place(
+              `stepstone-${stones2}`,
+              "stepping-stones",
+              x,
+              z,
+              round3(Math.atan2(-r.ox, -r.oz)),
+              {gap: 0.55, grow: round3(0.9 + rand() * 0.3), onWater: true}
+            )
+          )
+            stones2 += 1;
+        }
+      }
+    });
+
+    // ── 해자 안쪽 기슭 갈대 ──────────────────────────────────────────────────
+    // 해자는 rim 표본에 없다(저긴 섬이 아니라 마을 테두리다). 담장(rimwall)과
+    // 같은 폴리라인을 따라가되, 물 중심선에서 안쪽 반폭(1.23)보다 살짝 덜
+    // 들어온 0.95 — 갈대가 물과 기슭에 반반 걸친다.
+    let moatReeds = 0;
+    {
+      const MOAT_REED_MAX = 10;
+      const perim = Math.PI * (MOAT.a + MOAT.b);
+      const steps = Math.max(80, Math.round(perim / 1.94));
+      for (let k = 0; k < steps && moatReeds < MOAT_REED_MAX; k += 7) {
+        const angle = (k / steps) * Math.PI * 2 - Math.PI / 2;
+        const drift =
+          Math.sin(angle * 3 + 0.7) * 1.4 + Math.sin(angle * 7) * 0.5;
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const nx = cos / MOAT.a;
+        const nz = sin / MOAT.b;
+        const nl = Math.hypot(nx, nz) || 1;
+        const x = round3(MOAT.cx + cos * MOAT.a + (nx / nl) * (drift - 0.95));
+        const z = round3(MOAT.cz + sin * MOAT.b + (nz / nl) * (drift - 0.95));
+        // 참배로 다리 어귀는 비운다
+        if (Math.abs(x) < 3.5) continue;
+        if (nearBridgePt(x, z) || !free(x, z, 1.2)) continue;
+        if (
+          place(
+            `moat-reed-${moatReeds}`,
+            "reed-clump",
+            x,
+            z,
+            round3(((k * 41) % 360) * (Math.PI / 180)),
+            {gap: 1.2, grow: round3(0.8 + rand() * 0.5), onWater: true}
+          )
+        )
+          moatReeds += 1;
+      }
+    }
+
+    console.log(
+      `  물풀: 갈대 ${reeds}+해자 ${moatReeds} · 수련 ${lilies} · 징검돌 ${stones2}`
+    );
+  }
 }
 
 // ─── ⑮ 고리 회랑 가로등 ───────────────────────────────────────────────────────

@@ -38,6 +38,9 @@ const buildingNpcModel: Record<string, CharacterModelId> = {
 
   // 프로젝트 구역
   "project-mystock": "buffalo",
+  "project-darklab": "bat",
+  "project-ajouchong": "lion",
+  "project-ajou-adventure": "hedgehog",
   "project-festflow": "parrot",
   "project-sign-language": "rabbit",
   "project-aclub": "meerkat",
@@ -61,6 +64,7 @@ const buildingNpcModel: Record<string, CharacterModelId> = {
   // 라이프 구역
   "life-values": "elephant",
   "life-gym": "kangaroo",
+  "life-music": "wolf",
   "life-invest": "squirrel",
   "life-library": "panda"
 };
@@ -174,7 +178,10 @@ const coreNpcs: NPCData[] = [
     sectionId: "intro",
     type: "guide",
     name: "루미",
-    model: "lumi",
+    // 보더콜리 — 무리를 이끄는 목양견. 안내원에게 맞는 종이다.
+    // (예전 model "lumi" 는 Meshy Greenleaf Scout. 레지스트리에는 남겨 뒀지만
+    //  이제 아무 NPC 도 안 쓴다 — preload 목록에서 빼려면 레지스트리에서도 지울 것)
+    model: "collie",
     location: "중앙 광장",
     role: "마을 총괄 안내원",
     dialogue:
@@ -207,6 +214,7 @@ const coreNpcs: NPCData[] = [
     id: "project-npc",
     sectionId: "projects",
     type: "project",
+    model: "cat",
     name: "픽셀",
     location: "프로젝트 구역",
     role: "프로젝트 큐레이터",
@@ -240,6 +248,7 @@ const coreNpcs: NPCData[] = [
     id: "developer-npc",
     sectionId: "github",
     type: "developer",
+    model: "goat",
     name: "테오",
     location: "기술 스택 구역",
     role: "기술 멘토",
@@ -273,6 +282,7 @@ const coreNpcs: NPCData[] = [
     id: "archivist-npc",
     sectionId: "experience",
     type: "archivist",
+    model: "armadillo",
     name: "아카",
     location: "경험 기록관",
     role: "성장 기록 관리자",
@@ -306,6 +316,7 @@ const coreNpcs: NPCData[] = [
     id: "contact-npc",
     sectionId: "contact",
     type: "contact",
+    model: "swallow",
     name: "포스트",
     location: "연락 우체국",
     role: "연락 담당",

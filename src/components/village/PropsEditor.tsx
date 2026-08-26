@@ -1,9 +1,9 @@
 "use client";
 
-import {Html} from "@react-three/drei";
+import {Html, TransformControls} from "@react-three/drei";
 import {useThree, type ThreeEvent} from "@react-three/fiber";
-import {useCallback, useEffect, useState} from "react";
-import {Plane, Raycaster, Vector2, Vector3} from "three";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {Group, Plane, Raycaster, Vector2, Vector3} from "three";
 import {villageBuildings} from "@/lib/constants";
 import savedLayout from "@/data/propsLayout.json";
 import type {BuildingOverride, PropPlacement, PropsLayout} from "@/types/props";
@@ -174,10 +174,12 @@ export function PropsLayer({api}: {api: PropsEditorApi}) {
   const onPropDown = useCallback(
     (e: ThreeEvent<PointerEvent>, id: string) => {
       e.stopPropagation();
+      // 유니티식: 클릭은 선택만 한다. 이동은 기즈모(축 핸들)가 전담한다 —
+      // 예전의 "누르자마자 커서를 따라오는" 드래그는 실수로 스치기만 해도
+      // 물건이 튀어서, 정밀 배치엔 오히려 방해였다.
       setSelection({kind: "prop", id});
-      setDragging(true);
     },
-    [setSelection, setDragging]
+    [setSelection]
   );
 
   // 선택 표시는 인스턴싱 밖에서 하나만 그린다 (기존엔 prop마다 조건부 렌더였다)
@@ -187,9 +189,13 @@ export function PropsLayer({api}: {api: PropsEditorApi}) {
       : undefined;
 
   return (
-    <group>
-      {/* 드래그 처리 — 메시 대신 수학 평면 레이캐스트라 다른 오브젝트에 안 가림 */}
-      {editMode && dragging ? <DragController api={api} /> : null}
+    <group
+      onPointerMissed={
+        editMode ? e => e.type === "click" && setSelection(null) : undefined
+      }
+    >
+      {/* 유니티식 이동 기즈모 — 선택된 건물/프롭에 X·Y·Z 축 핸들 */}
+      {editMode ? <TranslateGizmo api={api} /> : null}
 
       <InstancedProps
         items={items}
@@ -277,36 +283,56 @@ export function SelectionRing() {
   );
 }
 
-// 드래그 중 커서를 바닥(y=0) 평면에 레이캐스트해 선택 대상을 이동
-function DragController({api}: {api: PropsEditorApi}) {
-  const {moveSelected, setDragging} = api;
-  const {camera, gl} = useThree();
+// ─── 유니티식 이동 기즈모 ─────────────────────────────────────────────────────
+// 선택 대상 자리에 보이지 않는 프록시 그룹을 놓고 drei TransformControls 를
+// 붙인다. 축 핸들을 끌면 프록시가 움직이고, 그 월드 좌표를 저장 좌표로 되돌려
+// 적는다(저장 y 는 지면 상대값 — InstancedProps/Building 이 렌더 때
+// terrainHeightAt 을 더하므로 여기서 빼서 저장해야 화면이 안 튄다).
+//
+// 예전의 "누르면 커서를 따라오는" 바닥 평면 드래그(DragController)는 이걸로
+// 대체했다 — git log -p 로 지난 판을 볼 수 있다.
+function TranslateGizmo({api}: {api: PropsEditorApi}) {
+  const {selection, selTransform, updateSelected} = api;
+  const [proxy] = useState(() => new Group());
+  // 축 핸들을 끄는 동안엔 아래 동기화 effect 가 프록시를 되돌리면 안 된다
+  const draggingRef = useRef(false);
+
+  const px = selTransform?.position[0];
+  const py = selTransform?.position[1];
+  const pz = selTransform?.position[2];
   useEffect(() => {
-    const el = gl.domElement;
-    const ray = new Raycaster();
-    const plane = new Plane(new Vector3(0, 1, 0), 0);
-    const ndc = new Vector2();
-    const hit = new Vector3();
-    function onMove(e: PointerEvent) {
-      const rect = el.getBoundingClientRect();
-      ndc.set(
-        ((e.clientX - rect.left) / rect.width) * 2 - 1,
-        -(((e.clientY - rect.top) / rect.height) * 2 - 1)
-      );
-      ray.setFromCamera(ndc, camera);
-      if (ray.ray.intersectPlane(plane, hit)) moveSelected(hit.x, hit.z);
-    }
-    function onUp() {
-      setDragging(false);
-    }
-    el.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onUp);
-    return () => {
-      el.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", onUp);
-    };
-  }, [camera, gl, moveSelected, setDragging]);
-  return null;
+    if (draggingRef.current) return;
+    if (px === undefined || py === undefined || pz === undefined) return;
+    proxy.position.set(px, py + terrainHeightAt(px, pz), pz);
+  }, [proxy, px, py, pz, selection?.id]);
+
+  if (!selection || !selTransform) return null;
+  return (
+    <>
+      <primitive object={proxy} />
+      <TransformControls
+        object={proxy}
+        mode="translate"
+        size={0.85}
+        onMouseDown={() => {
+          draggingRef.current = true;
+        }}
+        onMouseUp={() => {
+          draggingRef.current = false;
+        }}
+        onObjectChange={() => {
+          const p = proxy.position;
+          updateSelected({
+            position: [
+              Math.round(p.x * 100) / 100,
+              Math.round((p.y - terrainHeightAt(p.x, p.z)) * 100) / 100,
+              Math.round(p.z * 100) / 100
+            ]
+          });
+        }}
+      />
+    </>
+  );
 }
 
 // 트레이에서 떨어뜨린 스크린 좌표를 바닥 월드 좌표로 변환해 prop 추가

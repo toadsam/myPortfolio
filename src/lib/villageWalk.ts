@@ -77,7 +77,7 @@ const BLOCK_RADIUS: Array<[RegExp, number]> = [
  * 땅이 원반의 5% 로 줄고 남쪽 참배로 한 줄기만 남았다. 길이 방향과 두께 방향을
  * 따로 재면 실제 판 모양대로 막힌다.
  */
-const WALL_KINDS = /^(wall-low|fence-rail|fence|terrace-wall)$/;
+const WALL_KINDS = /^(wall-low|wall-ivy|fence-rail|fence|terrace-wall)$/;
 const WALL_HALF_LEN = 0.97;
 const WALL_HALF_THICK = 0.2;
 

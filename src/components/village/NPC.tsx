@@ -21,10 +21,6 @@ import type {BuildingData, NPCData, Vector3Tuple} from "@/types/portfolio";
 /** 플레이어가 내리는 단체 명령 — gather(집결)/photo(단체사진)/party(파티)/follow(따라오기)/greet(인사) */
 export type NpcCommand = "gather" | "photo" | "party" | "follow" | "greet";
 
-/** 마우스를 올리고 이만큼 머물면 클릭 없이 대화가 열린다. 카메라 돌리다 스치는
- *  정도(수십 ms)로는 안 열리고, 의도적으로 갖다 댄 경우만 잡히는 길이. */
-const HOVER_OPEN_DELAY_MS = 450;
-
 /**
  * 지면 **위에서만** 흔들리는 상하 진폭. 반환값은 항상 0 ~ amp.
  *
@@ -77,9 +73,6 @@ interface NPCProps {
   emote?: string;
   /** 관계 기반 사회적 목표 — 친한 NPC를 찾아가거나 화해하러 갈 지점 */
   socialTarget?: Vector3Tuple | null;
-  /** hover 머무름으로 대화 열기 허용. 인트로·엿듣기 같은 연출 중엔 끈다 —
-   *  루미가 커서 옆을 지나가기만 해도 인트로가 잘려 나가면 안 되니까. */
-  hoverToTalk?: boolean;
 }
 
 function NPCImpl({
@@ -105,8 +98,7 @@ function NPCImpl({
   commandSlot,
   commandTotal,
   emote,
-  socialTarget,
-  hoverToTalk = true
+  socialTarget
 }: NPCProps) {
   const groupRef = useRef<Group | null>(null);
   const elapsedRef = useRef(0);
@@ -119,7 +111,6 @@ function NPCImpl({
   const scriptStartedRef = useRef(false);
   const moveStateRef = useRef<NpcMoveState>("idle");
   const [hovered, setHovered] = useState(false);
-  const hoverOpenTimerRef = useRef<number | null>(null);
   const highlighted = hovered || isActive;
   // villageState 기반 값과 실시간 runtime 값을 병합 — 원시값(runtimeMood/runtimeMemory)만
   // 의존성으로 두어, npcRuntimeStates 전체가 새 객체가 되어도 이 NPC의 실제 값이 그대로면
@@ -154,20 +145,13 @@ function NPCImpl({
     if (!isActive) setHovered(false);
   }, [isActive]);
 
-  // hover 머무름 → 자동으로 대화 열기. 이미 열려 있거나 단체 명령 중이면 안 건다.
-  useEffect(() => {
-    if (!hovered || !hoverToTalk || isActive || command) return;
-    hoverOpenTimerRef.current = window.setTimeout(() => {
-      hoverOpenTimerRef.current = null;
-      onSelect(npc);
-    }, HOVER_OPEN_DELAY_MS);
-    return () => {
-      if (hoverOpenTimerRef.current !== null) {
-        window.clearTimeout(hoverOpenTimerRef.current);
-        hoverOpenTimerRef.current = null;
-      }
-    };
-  }, [hovered, hoverToTalk, isActive, command, npc, onSelect]);
+  // 예전엔 hover 로 0.45초 머무르면 대화가 자동으로 열렸다(HOVER_OPEN_DELAY_MS).
+  // **뺐다.** onSelect 는 대화창만 여는 게 아니라 handleSelectNpc 에서
+  // setTalkCam(closeUp) + setActiveSection(npc.sectionId) 까지 부른다 — 즉
+  // 마우스가 NPC 위를 스쳐 지나가기만 해도 카메라가 클로즈업으로 붙고 구역이
+  // 통째로 바뀌었다. 마을을 둘러보려고 화면을 돌리는 중에 이게 터지면
+  // 조작을 빼앗긴 것처럼 느껴진다. 이제 대화는 **클릭**으로만 열린다.
+  // hover 는 커서 모양과 이름표 강조까지만 한다.
 
   /**
    * 구역 단차 위에서 지금 밟고 있는 단 높이. NPC 는 상하로 통통 뛰므로
@@ -210,8 +194,17 @@ function NPCImpl({
       const sdist = Math.sqrt(sx * sx + sz * sz);
       if (sdist > 0.25) {
         const step = Math.min(3.6 * delta, sdist); // 달려오기 (적당한 속도)
-        g.position.x += (sx / sdist) * step;
-        g.position.z += (sz / sdist) * step;
+        const nx = g.position.x + (sx / sdist) * step;
+        const nz = g.position.z + (sz / sdist) * step;
+        // 연출도 배회와 같은 충돌 규칙으로 미끄러진다. 단 완전히 막히면
+        // 직진한다 — 연출은 도착(onScriptedArrive)이 안 오면 인트로가
+        // 통째로 멎으므로, 잠깐의 관통이 무한 대기보다 낫다.
+        const slid = slideToDry(g.position.x, g.position.z, nx, nz);
+        const stuck =
+          Math.abs(slid.x - g.position.x) < 1e-4 &&
+          Math.abs(slid.z - g.position.z) < 1e-4;
+        g.position.x = stuck ? nx : slid.x;
+        g.position.z = stuck ? nz : slid.z;
         g.rotation.y = Math.atan2(sx, sz);
         moveStateRef.current = "run";
       } else {
@@ -274,12 +267,21 @@ function NPCImpl({
 
       if (dist > 0.14) {
         const step = Math.min(3.6 * delta, dist);
-        g.position.x += (dx / dist) * step;
-        g.position.z += (dz / dist) * step;
+        // 집결·사진·파티·따라오기가 직선으로 가로질러 **건물을 뚫고** 모였다.
+        // 배회와 같은 규칙으로 미끄러지고, 완전히 막히면 거기서 멈춰 선다 —
+        // 장애물 둘레에 둘러 모이는 그림이 뚫고 지나가는 것보다 자연스럽다.
+        const nx = g.position.x + (dx / dist) * step;
+        const nz = g.position.z + (dz / dist) * step;
+        const slid = slideToDry(g.position.x, g.position.z, nx, nz);
+        const moved =
+          Math.abs(slid.x - g.position.x) > 1e-4 ||
+          Math.abs(slid.z - g.position.z) > 1e-4;
+        g.position.x = slid.x;
+        g.position.z = slid.z;
         g.rotation.y = Math.atan2(dx, dz);
         g.position.y =
           settleGround(g, delta) + bobUp(elapsedRef.current * 8, 0.05);
-        moveStateRef.current = dist > 0.6 ? "run" : "walk";
+        moveStateRef.current = moved ? (dist > 0.6 ? "run" : "walk") : "idle";
       } else {
         moveStateRef.current = "idle";
         if (faceCamera) {

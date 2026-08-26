@@ -17,7 +17,7 @@
 //
 // 손그림 담장 GLB 가 나중에 오면 props/raw/decor/wall-low.glb 로 넣고
 // npm run optimize 만 돌리면 이 파일을 덮어쓴다 — 배치 코드는 안 고쳐도 된다.
-// (프롬프트는 docs/VILLAGE_ASSET_WISHLIST.md 1순위 ①)
+// (규격은 docs/VILLAGE_ASSET_WISHLIST.md 의 「에셋으로는 못 푸는 것」 절)
 //
 // 사용법: node scripts/make-low-wall.mjs [--px 256]
 

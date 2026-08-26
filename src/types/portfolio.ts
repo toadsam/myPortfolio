@@ -95,7 +95,22 @@ export type CharacterModelId =
   | "kangaroo"
   | "squirrel"
   | "panda"
-  | "jaehoon";
+  | "jaehoon"
+  | "bat"
+  | "lion"
+  | "hedgehog"
+  | "wolf"
+  // 핵심 NPC 6 + 공방 4
+  | "collie"
+  | "cat"
+  | "goat"
+  | "armadillo"
+  | "swallow"
+  | "anteater"
+  | "raven"
+  | "octopus"
+  | "lemur"
+  | "mole";
 
 export interface NPCData {
   id: string;
