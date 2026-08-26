@@ -1,0 +1,314 @@
+import type {RichProject} from "./shared";
+
+// 실제 GitHub 저장소(README·소스·구조)를 근거로 작성한 콘텐츠.
+// 원칙: 검증 불가능한 수치(성능 %, 사용자 테스트 점수 등)는 넣지 않는다.
+//   - metrics/impact 는 리포에서 셀 수 있는 값(도메인 수·API 수·모듈 수 등)만 사용.
+//   - perf/usability(측정치) 필드는 실측이 없으므로 비워 둠(의도적).
+// 기간·역할·팀은 `resume/jaehoon-jeong-resume.md`(이력서 원본) 기준. 원본에 근거가
+// 없는 프로젝트(mystock · ajou-adventure)는 기간 행 자체를 두지 않는다 — 예전엔
+// 그 자리에 `"[확인필요] 개인 프로젝트"` 라는 글자가 그대로 들어 있었고, 원페이저가
+// 기간 행을 렌더하는 순간 그게 화면에 나갈 뻔했다. 지어내느니 비운다.
+//   - demo.live: 실제 배포 URL이 있으면 추가 (지금은 repo만).
+//   - meta '기간': 실제 진행 기간으로 수정.
+export const RICH_DATA: Record<string, RichProject> = {
+  // ════════════════════════════ MyStock-Desk / StockFlow (dashboard) ═════════
+  mystock: {
+    tagline: "INVESTMENT PORTFOLIO · FULL-STACK WEB APP",
+    problemShot: {
+      label: "엑셀로 수익률을 직접 관리하던 기존 방식",
+      ratio: "4/3"
+    },
+    gallery: [
+      {label: "보유 종목 · 수익률 화면", ratio: "16/10"},
+      {label: "자산 비중 차트", ratio: "16/10"},
+      {label: "AI 체크포인트(리서치) 리포트", ratio: "16/10"},
+      {label: "MyWave 자산 흐름 대시보드", ratio: "16/10"}
+    ],
+    tldr: [
+      {
+        k: "무엇을",
+        v: "거래 기록 기반 포트폴리오 분석 + AI 체크포인트 웹앱 (StockFlow) · 자산 흐름 대시보드(MyWave) 포함"
+      },
+      {k: "왜", v: "수익률·자산 비중·뉴스 영향을 한 곳에서 보기 어려움"},
+      {
+        k: "결과",
+        v: "증권사 실연동 없이 입력 거래만으로 포트폴리오를 계산·분석"
+      },
+      {k: "내 역할", v: "1인 풀스택 — React 프론트 + Spring Boot 백엔드"}
+    ],
+    demo: {repo: "https://github.com/toadsam/MyStock-Desk"},
+    meta: [
+      {label: "팀", value: "개인 프로젝트 (풀스택 1인)"},
+      {label: "역할", value: "도메인 설계 · 프론트 · 백엔드 전부"},
+      {
+        label: "스택",
+        value: "React · TS · Vite · Spring Boot · JPA · H2/MySQL · Recharts"
+      },
+      {label: "실행", value: "Gradle bootRun + Vite · 데모 계정 제공"}
+    ],
+    heroScreen: {
+      title: "stockflow/portfolio",
+      kind: "dashboard",
+      kpi: [
+        {l: "도메인", v: "13"},
+        {l: "Provider", v: "Yahoo+Demo"},
+        {l: "AI", v: "정리형"}
+      ],
+      chart: [20, 26, 22, 34, 30, 42, 38, 50, 58, 64]
+    },
+    impact: [
+      {n: "13", l: "백엔드 도메인 모듈"},
+      {n: "2", l: "시세 Provider(폴백)"},
+      {n: "1인", l: "풀스택"}
+    ],
+    features: [
+      {
+        t: "보유 종목·수익률",
+        d: "입력 거래 기반 보유 종목·평가/실현 손익 계산"
+      },
+      {t: "자산 비중 차트", d: "종목·비중을 Recharts로 시각화"},
+      {t: "AI 체크포인트", d: "매수/매도 추천이 아닌 리스크·뉴스 변화 ‘정리’"},
+      {t: "테마·뉴스 탐색", d: "Google News RSS 기반 관련 기사·키워드"}
+    ],
+    problem:
+      "투자 기록을 직접 관리하면 수익률·자산 비중을 한눈에 파악하기 어렵고, 뉴스가 내 종목에 어떤 영향을 주는지 판단할 도구가 부족하다. 실제 증권사 연동 없이도 ‘내가 입력한 데이터’만으로 분석이 되어야 했다.",
+    research: {
+      quotes: [
+        {
+          q: "종목이 늘어날수록 엑셀로는 평균 매입가·수익률 관리가 무너진다.",
+          who: "프로젝트 문제 정의"
+        },
+        {
+          q: "AI가 ‘사라/팔라’를 말하면 오히려 신뢰가 떨어진다 — 판단은 사용자 몫이어야 한다.",
+          who: "설계 원칙 (README)"
+        }
+      ],
+      stat: {
+        n: "13",
+        l: "member·stock·portfolio·transaction·research 등 도메인 모듈 수"
+      }
+    },
+    beforeCode: {
+      filename: "naive-pnl.ts",
+      caption: "단순 현재가 합산 — 평균 매입가/실현손익 개념이 없음",
+      lines: [
+        "// 기존: 보유 수량 × 현재가만 합산",
+        "const total = holdings.reduce(",
+        "  (sum, h) => sum + h.qty * h.price, 0",
+        "); // 언제 얼마에 샀는지가 반영되지 않는다"
+      ]
+    },
+    hypothesis:
+      "“거래 기록을 도메인별로 나눠 서버에서 집계하고, AI는 ‘판단’이 아니라 ‘정리’ 역할로 한정하며, 외부 시세가 실패해도 Demo Provider로 폴백하면 — 실연동 없이도 신뢰할 수 있는 포트폴리오 분석을 제공할 수 있다.”",
+    process: [
+      {t: "도메인 설계", d: "13개 모듈"},
+      {t: "백엔드 API", d: "JPA·Security"},
+      {t: "프론트", d: "React·Recharts"},
+      {t: "AI 리서치", d: "정리형"},
+      {t: "시세 폴백", d: "Yahoo→Demo"}
+    ],
+    architecture: [
+      {
+        tag: "View",
+        name: "React + Recharts",
+        desc: "포트폴리오·수익률·뉴스·리서치 화면"
+      },
+      {
+        tag: "API",
+        name: "Spring Boot REST",
+        desc: "portfolio · transaction · stock · research 등 13 도메인"
+      },
+      {
+        tag: "Market",
+        name: "MarketDataProvider",
+        desc: "Yahoo Finance ↔ Demo(seed) 폴백 인터페이스"
+      },
+      {tag: "DB", name: "H2 / MySQL", desc: "JPA로 거래·보유·리서치 영속화"}
+    ],
+    decisions: [
+      {
+        area: "백엔드",
+        pick: "Spring Boot",
+        why: "도메인 분리·검증·보안에 강함",
+        alt: "Express(타입·검증 약함)"
+      },
+      {
+        area: "AI 역할",
+        pick: "정리형",
+        why: "투자 추천의 신뢰·법적 리스크 회피",
+        alt: "추천형(리스크 ↑)"
+      },
+      {
+        area: "시세",
+        pick: "Provider 추상화",
+        why: "Yahoo 실패 시 Demo로 폴백",
+        alt: "단일 연동(장애 시 빈 화면)"
+      },
+      {
+        area: "차트",
+        pick: "Recharts",
+        why: "선언적 구현·React 친화",
+        alt: "Chart.js(명령형)"
+      }
+    ],
+    coreCode: [
+      {
+        filename: "MarketDataProvider.java",
+        caption: "시세 소스를 인터페이스로 추상화 — Yahoo/Demo 교체 가능",
+        highlightLines: [1],
+        lines: [
+          "public interface MarketDataProvider {",
+          "  List<StockQuoteSnapshot> fetch(List<String> symbols);",
+          "}",
+          "// YahooFinanceMarketDataProvider · DemoMarketDataProvider 가 구현",
+          "// 설정(stockflow.market-data.provider)으로 스위치 → 실패 시 Demo 폴백"
+        ]
+      },
+      {
+        filename: "PortfolioService.java",
+        caption: "요청마다 스냅샷을 갱신한 뒤 포트폴리오 반환",
+        highlightLines: [3],
+        lines: [
+          "@Transactional",
+          "public PortfolioDto getPortfolio() {",
+          "  Portfolio portfolio = findPortfolio();",
+          "  portfolioSnapshotService.refresh(portfolio); // 최신 시세 반영",
+          "  return PortfolioDto.from(portfolio);",
+          "}"
+        ]
+      }
+    ],
+    work: [
+      {
+        g: "백엔드",
+        items: ["13개 도메인 모듈 설계", "거래 기반 보유/손익 집계"]
+      },
+      {g: "프론트", items: ["포트폴리오·수익률·비중 화면", "뉴스/리서치 화면"]},
+      {
+        g: "AI/데이터",
+        items: ["리서치(정리형) 응답 설계", "Google News RSS 연동"]
+      },
+      {g: "안정성", items: ["Provider 폴백", "데모 계정·seed 데이터"]}
+    ],
+    challenges: [
+      {
+        title: "외부 시세/뉴스가 실패하면 화면이 비었다",
+        problem:
+          "Yahoo Finance·뉴스 RSS 호출이 실패하면 대시보드가 빈 화면이 됐다.",
+        solution:
+          "MarketDataProvider를 인터페이스로 두고 DemoMarketDataProvider(seed)로 폴백해, 외부가 죽어도 화면 구조를 유지했다.",
+        code: {
+          filename: "provider-switch",
+          lines: [
+            "// 설정으로 provider 선택, 실패 시 Demo로",
+            "provider = resolve(props.getProvider());",
+            "return provider.fetch(symbols); // Demo면 seed 반환"
+          ]
+        }
+      },
+      {
+        title: "AI가 추천처럼 답하려 했다",
+        problem: "프롬프트에 따라 ‘사세요/파세요’ 류 답이 섞여 신뢰를 해쳤다.",
+        solution:
+          "리서치 응답을 ‘리스크·뉴스 변화 정리’ 스키마로 한정하고, 판단 주체를 사용자로 유지했다."
+      }
+    ],
+    tech: [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Spring Boot",
+      "Spring Data JPA",
+      "H2/MySQL",
+      "Recharts"
+    ],
+    resultScreens: [
+      {
+        title: "stockflow/portfolio",
+        kind: "bars",
+        bars: [
+          {l: "보유 종목", p: 70, v: "다수"},
+          {l: "자산 비중", p: 55, v: "차트"},
+          {l: "현금", p: 30, v: "비중"}
+        ]
+      },
+      {
+        title: "stockflow/research",
+        kind: "feed",
+        feed: [
+          "리스크 점검 항목",
+          "관련 뉴스 변화",
+          "재무지표 변화",
+          "보유 기준 영향도"
+        ]
+      }
+    ],
+    metrics: [
+      {n: "13", l: "백엔드 도메인"},
+      {n: "9", l: "주요 페이지"},
+      {n: "2", l: "시세 Provider"},
+      {n: "1인", l: "풀스택"}
+    ],
+    kpt: {
+      keep: [
+        "도메인을 먼저 나누고 화면을 붙인 순서",
+        "AI 역할을 ‘정리’로 제한",
+        "Provider 폴백 설계"
+      ],
+      problem: ["테스트 코드 부족", "프론트 상태 관리가 후반에 복잡해짐"],
+      try: ["실시간 시세 연동", "포트폴리오 자동 갱신"]
+    },
+    learning:
+      "AI를 ‘판단 주체’가 아니라 ‘정리 도구’로 제한했을 때 오히려 신뢰가 올라갔다. 그리고 외부 의존은 반드시 폴백을 두어야 화면이 살아있다는 걸 배웠다."
+  },
+
+  // ════════════════════════════ FestFlow / Fest-A (realtime) ════════════════
+  festflow: {
+    tagline: "REALTIME FESTIVAL OPS · FULL-STACK WEB APP",
+    problemShot: {
+      label: "전화·메신저로 부스 현황을 확인하던 방식",
+      ratio: "4/3"
+    },
+    gallery: [
+      {label: "실제 지도(OSM) + 부스 마커", ratio: "16/10"},
+      {label: "실시간 혼잡도·공지 피드", ratio: "16/10"},
+      {label: "관리자 부스 관리 대시보드", ratio: "16/10"}
+    ],
+    tldr: [
+      {
+        k: "무엇을",
+        v: "대학 축제 부스를 실시간으로 운영·관제하는 웹앱 (Fest-A)"
+      },
+      {
+        k: "왜",
+        v: "수십 개 부스의 상태·혼잡도·공지를 실시간 공유할 도구가 없었음"
+      },
+      {k: "결과", v: "7개 SSE 채널 + 실제 지도 + GPS 지오펜싱으로 실시간 운영"},
+      {k: "내 역할", v: "1인 풀스택 (프론트 전체 + Spring Boot 백엔드)"}
+    ],
+    demo: {repo: "https://github.com/toadsam/FestFlow"},
+    meta: [
+      {label: "기간", value: "~ 2026.05"},
+      {label: "팀", value: "개인 프로젝트 (풀스택 1인)"},
+      {label: "역할", value: "프론트 전체 · SSE·GPS 백엔드"},
+      {
+        label: "스택",
+        value:
+          "React · Vite · Leaflet · PWA · Spring Boot 3 · JWT · SSE · MySQL"
+      },
+      {label: "실행", value: "Gradle bootRun + Vite · PWA"}
+    ],
+    heroScreen: {
+      title: "fest-a/live",
+      kind: "feed",
+      feed: [
+        "혼잡도 스트림 갱신",
+        "부스 상태 변경 푸시",
+        "운영 공지(긴급/분실물)",
+        "예약/체크인 이벤트"
+      ]
+    },
+    impact: [
+      {n: "7", l: "SSE 실시간 채널"},
+      {n: "80m", l: "GPS 부스 지오펜싱"},
+      {n: "실제 지도", l: "Leaflet+OSM"}

@@ -306,13 +306,23 @@ export const LUT_ENABLED =
   typeof window === "undefined" ||
   new URLSearchParams(window.location.search).get("lut") !== "0";
 
-/** 접속 시각 대신 원하는 시간대를 보고 싶을 때: /?hour=13 */
+/**
+ * 접속 시각 대신 원하는 시간대를 보고 싶을 때: /?hour=13
+ *
+ * **`get()` 결과를 바로 `Number()` 에 넣지 말 것.** 파라미터가 없으면 `null` 이
+ * 오고 `Number(null)` 은 `NaN` 이 아니라 **0** 이다 — `Number.isInteger(0)` 이
+ * 참이라 검사를 그대로 통과해 버려서, 마을이 하루 종일 `hour=0`(밤) 으로
+ * 고정돼 있었다. 낮에 들어와도 등불이 다 켜진 밤이 나온 원인이 이것이다.
+ * `villageMaterial.ts` 의 `PALETTE_STRENGTH` 처럼 null 을 먼저 걷어낸다.
+ */
 function paletteHour() {
   if (typeof window !== "undefined") {
-    const forced = Number(
-      new URLSearchParams(window.location.search).get("hour")
-    );
-    if (Number.isInteger(forced) && forced >= 0 && forced <= 23) return forced;
+    const raw = new URLSearchParams(window.location.search).get("hour");
+    if (raw !== null && raw.trim() !== "") {
+      const forced = Number(raw);
+      if (Number.isInteger(forced) && forced >= 0 && forced <= 23)
+        return forced;
+    }
   }
   return new Date().getHours();
 }

@@ -58,8 +58,8 @@ const isAcademic = (program: string) =>
 // 상단 탭. 7개 섹션 전부를 태우면 캡슐이 터지므로 문서의 세 덩이만 짚는다 —
 // 기술/학력(=이력), 프로젝트(=작업), 연락처. id 는 <section id="resume-{id}"> 과 짝.
 const NAV_ITEMS = [
-  {id: "history", label: "이력"},
   {id: "work", label: "작업"},
+  {id: "history", label: "이력"},
   {id: "contact", label: "연락"}
 ] as const;
 type NavId = (typeof NAV_ITEMS)[number]["id"];
@@ -81,7 +81,7 @@ export function ResumeMode({onEnterVillage}: Props) {
 
   // 상단 탭 3개가 가리키는 곳. id 는 섹션 <section id=...> 과 짝이다.
   // 탭을 늘리려면 이 배열과 섹션 id 만 맞추면 된다 — 마크업은 map 이 만든다.
-  const [activeNav, setActiveNav] = useState<NavId>("history");
+  const [activeNav, setActiveNav] = useState<NavId>("work");
 
   // 이력서 본문은 `.resume-terminal` 자신이 스크롤 컨테이너다(position:fixed +
   // overflow-y:auto). 그래서 window.scrollTo 가 아니라 요소에게 물어봐야 한다 —
@@ -203,6 +203,17 @@ export function ResumeMode({onEnterVillage}: Props) {
       .filter(g => g.count > 0);
   }, []);
   const maxWeight = Math.max(...areaWeights.map(w => w.count), 1);
+
+  // 히어로 지표. **개수가 아니라 사실**만 올린다.
+  // 3,500 은 aClub GA4 실측(2026.01~03) — 카드 지표와 같은 출처다.
+  const HERO_ACTIVE_USERS = "3,500";
+  const STEAM_URL =
+    "https://store.steampowered.com/app/2743860/TSEROF/?l=koreana";
+  // 세는 값이라 데이터가 바뀌면 따라온다.
+  const shippedCount = mainProjects.filter(p => p.status === "출시").length;
+  const liveServiceCount = mainProjects.filter(
+    p => p.status === "운영중" && p.links.some(l => l.label === "사이트")
+  ).length;
 
   const richList = useMemo(
     () =>
@@ -514,34 +525,43 @@ export function ResumeMode({onEnterVillage}: Props) {
             </ul>
           </aside>
 
+          {/* 히어로 지표 — 심사자가 2분을 쓴다면 사실상 이 화면만 본다.
+              예전엔 "주요 13 · 사이드 11 · 학력 06 · 저장소 44" 로 **넷 다
+              개수**였다. 개수는 누구나 채울 수 있어서 변별력이 없다.
+              지금은 넷 중 셋이 눌러서 확인되는 사실이다. */}
           <footer className="reveal reveal-delay-3">
             <div className="status-module">
-              <span className="status-title">Main Projects</span>
+              <span className="status-title">실사용자</span>
               <div className="status-data">
-                <span className="status-number">
-                  {String(mainProjects.length).padStart(2, "0")}
-                </span>
-                <span className="status-unit">PROJECTS</span>
+                <span className="status-number">{HERO_ACTIVE_USERS}</span>
+                <span className="status-unit">ACLUB · GA4</span>
               </div>
             </div>
             <div className="vertical-divider" />
-            <div className="status-module">
-              <span className="status-title">Sub Projects</span>
+            {/* 스팀 출시는 이 이력서에서 가장 검증하기 쉬운 주장이다.
+                주장 옆에 확인 경로를 붙인다. */}
+            <a
+              className="status-module status-link"
+              href={STEAM_URL}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <span className="status-title">Steam 출시</span>
               <div className="status-data">
                 <span className="status-number">
-                  {String(subProjects.length).padStart(2, "0")}
+                  {String(shippedCount).padStart(2, "0")}
                 </span>
-                <span className="status-unit">MODULES</span>
+                <span className="status-unit">TSEROF ↗</span>
               </div>
-            </div>
+            </a>
             <div className="vertical-divider" />
             <div className="status-module">
-              <span className="status-title">Academic Runtime</span>
+              <span className="status-title">운영 중 서비스</span>
               <div className="status-data">
                 <span className="status-number">
-                  {String(education.length).padStart(2, "0")}
+                  {String(liveServiceCount).padStart(2, "0")}
                 </span>
-                <span className="status-unit">EDUCATION</span>
+                <span className="status-unit">LIVE</span>
               </div>
             </div>
             <div className="vertical-divider" />
@@ -564,11 +584,197 @@ export function ResumeMode({onEnterVillage}: Props) {
           </footer>
         </div>
 
+        {/* ══════════ 03 Main Projects ══════════ */}
+        <section id="resume-work">
+          <div className="projects-container">
+            <header className="section-header reveal">
+              <span className="section-id">## 01</span>
+              <h2 className="section-title">
+                주요 프로젝트{" "}
+                <span className="section-subtitle">(Main Projects)</span>
+              </h2>
+            </header>
+
+            <div className="projects-category reveal reveal-delay-1">
+              카테고리: Web Service · Data/AI · Game · AR/XR · Ops
+            </div>
+
+            {/* 그리드 상태는 class가 아니라 data 속성으로 둔다.
+              className에 gridView를 섞으면 리렌더마다 class 속성이 통째로 새로 쓰이고,
+              IntersectionObserver가 명령형으로 붙여둔 .active가 지워져 opacity:0으로
+              사라진다(토글할 때 프로젝트가 사라졌다 뒤늦게 다시 나타나던 원인). */}
+            <div
+              className="carousel-wrapper reveal reveal-delay-1"
+              data-grid={isGrid ? "true" : "false"}
+            >
+              <div className="carousel-scene">
+                <div className="carousel-track">
+                  {mainProjects.map((p, i) => {
+                    const cat = CATEGORY_META[p.category];
+                    // 카드 전체 클릭은 마우스 편의고, **키보드 경로는 제목 버튼**이다.
+                    // 카드를 통째로 <button> 으로 만들면 안쪽 <a>(GitHub·사이트)를
+                    // 넣을 수 없다 — 버튼 안의 링크는 유효하지 않은 마크업이다.
+                    // 그래서 제목만 버튼으로 올리고 링크는 형제로 둔다.
+                    const shownMetrics = (p.metrics ?? []).filter(m => m.value);
+                    const links = p.links.filter(l => l.href);
+                    return (
+                      <div
+                        key={p.id}
+                        className={`project-card${
+                          p.richId ? " clickable" : ""
+                        }`}
+                        onClick={() => {
+                          if (dragMovedRef.current > 6) return;
+                          openProject(p);
+                        }}
+                      >
+                        <div className="project-card-header">
+                          <span
+                            className="project-category"
+                            style={{"--cat": cat.color} as CSSProperties}
+                          >
+                            {cat.label}
+                          </span>
+                          <span
+                            className={`project-status ${
+                              p.status === "출시"
+                                ? "status-shipped"
+                                : p.status === "운영중"
+                                ? "status-active"
+                                : "status-complete"
+                            }`}
+                          >
+                            {p.status}
+                          </span>
+                        </div>
+                        <div className="project-card-image">
+                          {p.image ? (
+                            <img
+                              src={p.image}
+                              alt={p.title}
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          ) : (
+                            <span className="project-card-image-empty">
+                              {p.title}
+                            </span>
+                          )}
+                        </div>
+                        {p.richId ? (
+                          <button
+                            type="button"
+                            className="project-name project-name-btn"
+                            onClick={e => {
+                              e.stopPropagation();
+                              openProject(p);
+                            }}
+                          >
+                            {p.title}
+                          </button>
+                        ) : (
+                          <div className="project-name">{p.title}</div>
+                        )}
+
+                        {/* 기간·팀·역할 — 근거가 없는 값은 데이터에서 비어 있고,
+                            비면 그 줄이 통째로 사라진다. 지어내지 않기 위해서다. */}
+                        {p.period || p.team ? (
+                          <div className="project-meta">
+                            {[p.period, p.team].filter(Boolean).join(" · ")}
+                          </div>
+                        ) : null}
+                        {p.role ? (
+                          <div className="project-role">{p.role}</div>
+                        ) : null}
+
+                        {shownMetrics.length > 0 ? (
+                          <div className="project-metrics">
+                            {shownMetrics.map(m => (
+                              <span className="project-metric" key={m.label}>
+                                <b>{m.value}</b>
+                                {m.label}
+                                {m.provisional ? (
+                                  <i
+                                    className="metric-provisional"
+                                    title="아직 실측하지 않은 임시 수치입니다"
+                                  >
+                                    잠정
+                                  </i>
+                                ) : null}
+                              </span>
+                            ))}
+                          </div>
+                        ) : null}
+                        {/* 출처·기간. 지표가 있을 때만, 지표 바로 아래. */}
+                        {shownMetrics.length > 0 && p.metricsSource ? (
+                          <div className="metric-source">{p.metricsSource}</div>
+                        ) : null}
+
+                        <div className="project-tags">
+                          {p.tags.map(t => (
+                            <span className="project-tag" key={t}>
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+
+                        {links.length > 0 ? (
+                          <div className="project-links">
+                            {links.map(l => (
+                              <a
+                                key={l.label}
+                                className="project-link"
+                                href={l.href}
+                                target="_blank"
+                                rel="noreferrer"
+                                onClick={e => e.stopPropagation()}
+                              >
+                                {l.label} ↗
+                              </a>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="carousel-controls">
+                <button
+                  type="button"
+                  className="carousel-btn carousel-prev"
+                  onClick={() => rotateRef.current(1)}
+                >
+                  ←
+                </button>
+                <span className="carousel-hint">DRAG TO ROTATE</span>
+                <button
+                  type="button"
+                  className="carousel-btn carousel-next"
+                  onClick={() => rotateRef.current(-1)}
+                >
+                  →
+                </button>
+                {/* 좁은 화면에서는 캐러셀이 성립하지 않으므로 토글도 없다. */}
+                {narrow ? null : (
+                  <button
+                    type="button"
+                    className="view-toggle-btn"
+                    onClick={() => setGridView(v => !v)}
+                  >
+                    {gridView ? "캐러셀로 보기" : "한번에 보기"}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ══════════ 01 Skills ══════════ */}
         <section id="resume-history">
           <div className="skills-container">
             <header className="section-header reveal">
-              <span className="section-id">## 01</span>
+              <span className="section-id">## 02</span>
               <h2 className="section-title">
                 기술 스택 <span className="section-subtitle">(Skills)</span>
               </h2>
@@ -671,7 +877,7 @@ export function ResumeMode({onEnterVillage}: Props) {
         <section>
           <div className="education-container">
             <header className="section-header reveal">
-              <span className="section-id">## 02</span>
+              <span className="section-id">## 03</span>
               <h2 className="section-title">
                 학력 · 경력{" "}
                 <span className="section-subtitle">(Education)</span>
@@ -701,28 +907,6 @@ export function ResumeMode({onEnterVillage}: Props) {
                   </article>
                 );
               })}
-
-              {eduExternal.length > 0 ? <div className="edu-divider" /> : null}
-
-              {eduExternal.map(e => (
-                <article
-                  className="edu-card reveal reveal-delay-2"
-                  key={`${e.org}-${e.program}`}
-                >
-                  <div className="edu-header">
-                    <h3 className="edu-name">
-                      {e.org} — {e.program}
-                    </h3>
-                    <span className="edu-date">{e.period}</span>
-                  </div>
-                  <p className="edu-desc">{e.desc}</p>
-                  <ul className="edu-detail">
-                    {e.bullets.map(b => (
-                      <li key={b}>{b}</li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
             </div>
 
             {/* 활동·경력. 학력 6개와 같은 목록에 섞어 두면 "경력 없음"으로 읽힌다 —
@@ -770,186 +954,33 @@ export function ResumeMode({onEnterVillage}: Props) {
               </div>
             ) : null}
           </div>
-        </section>
 
-        {/* ══════════ 03 Main Projects ══════════ */}
-        <section id="resume-work">
-          <div className="projects-container">
-            <header className="section-header reveal">
-              <span className="section-id">## 03</span>
-              <h2 className="section-title">
-                주요 프로젝트{" "}
-                <span className="section-subtitle">(Main Projects)</span>
-              </h2>
-            </header>
-
-            <div className="projects-category reveal reveal-delay-1">
-              카테고리: Web Service · Data/AI · Game · AR/XR · Ops
-            </div>
-
-            {/* 그리드 상태는 class가 아니라 data 속성으로 둔다.
-              className에 gridView를 섞으면 리렌더마다 class 속성이 통째로 새로 쓰이고,
-              IntersectionObserver가 명령형으로 붙여둔 .active가 지워져 opacity:0으로
-              사라진다(토글할 때 프로젝트가 사라졌다 뒤늦게 다시 나타나던 원인). */}
-            <div
-              className="carousel-wrapper reveal reveal-delay-1"
-              data-grid={isGrid ? "true" : "false"}
-            >
-              <div className="carousel-scene">
-                <div className="carousel-track">
-                  {mainProjects.map((p, i) => {
-                    const cat = CATEGORY_META[p.category];
-                    // 카드 전체 클릭은 마우스 편의고, **키보드 경로는 제목 버튼**이다.
-                    // 카드를 통째로 <button> 으로 만들면 안쪽 <a>(GitHub·사이트)를
-                    // 넣을 수 없다 — 버튼 안의 링크는 유효하지 않은 마크업이다.
-                    // 그래서 제목만 버튼으로 올리고 링크는 형제로 둔다.
-                    const shownMetrics = (p.metrics ?? []).filter(m => m.value);
-                    const links = p.links.filter(l => l.href);
-                    return (
-                      <div
-                        key={p.id}
-                        className={`project-card${
-                          p.richId ? " clickable" : ""
-                        }`}
-                        onClick={() => {
-                          if (dragMovedRef.current > 6) return;
-                          openProject(p);
-                        }}
-                      >
-                        <div className="project-card-header">
-                          <span
-                            className="project-category"
-                            style={{"--cat": cat.color} as CSSProperties}
-                          >
-                            {cat.label}
-                          </span>
-                          <span
-                            className={`project-status ${
-                              p.status === "운영중"
-                                ? "status-active"
-                                : "status-complete"
-                            }`}
-                          >
-                            {p.status}
-                          </span>
-                        </div>
-                        <div className="project-card-image">
-                          {p.image ? (
-                            <img
-                              src={p.image}
-                              alt={p.title}
-                              loading="lazy"
-                              decoding="async"
-                            />
-                          ) : (
-                            <span className="project-card-image-empty">
-                              {p.title}
-                            </span>
-                          )}
-                        </div>
-                        {p.richId ? (
-                          <button
-                            type="button"
-                            className="project-name project-name-btn"
-                            onClick={e => {
-                              e.stopPropagation();
-                              openProject(p);
-                            }}
-                          >
-                            {p.title}
-                          </button>
-                        ) : (
-                          <div className="project-name">{p.title}</div>
-                        )}
-
-                        {/* 기간·팀·역할 — 근거가 없는 값은 데이터에서 비어 있고,
-                            비면 그 줄이 통째로 사라진다. 지어내지 않기 위해서다. */}
-                        {p.period || p.team ? (
-                          <div className="project-meta">
-                            {[p.period, p.team].filter(Boolean).join(" · ")}
-                          </div>
-                        ) : null}
-                        {p.role ? (
-                          <div className="project-role">{p.role}</div>
-                        ) : null}
-
-                        {shownMetrics.length > 0 ? (
-                          <div className="project-metrics">
-                            {shownMetrics.map(m => (
-                              <span className="project-metric" key={m.label}>
-                                <b>{m.value}</b>
-                                {m.label}
-                                {m.provisional ? (
-                                  <i
-                                    className="metric-provisional"
-                                    title="아직 실측하지 않은 임시 수치입니다"
-                                  >
-                                    잠정
-                                  </i>
-                                ) : null}
-                              </span>
-                            ))}
-                          </div>
-                        ) : null}
-
-                        <div className="project-tags">
-                          {p.tags.map(t => (
-                            <span className="project-tag" key={t}>
-                              {t}
-                            </span>
-                          ))}
-                        </div>
-
-                        {links.length > 0 ? (
-                          <div className="project-links">
-                            {links.map(l => (
-                              <a
-                                key={l.label}
-                                className="project-link"
-                                href={l.href}
-                                target="_blank"
-                                rel="noreferrer"
-                                onClick={e => e.stopPropagation()}
-                              >
-                                {l.label} ↗
-                              </a>
-                            ))}
-                          </div>
-                        ) : null}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              <div className="carousel-controls">
-                <button
-                  type="button"
-                  className="carousel-btn carousel-prev"
-                  onClick={() => rotateRef.current(1)}
-                >
-                  ←
-                </button>
-                <span className="carousel-hint">DRAG TO ROTATE</span>
-                <button
-                  type="button"
-                  className="carousel-btn carousel-next"
-                  onClick={() => rotateRef.current(-1)}
-                >
-                  →
-                </button>
-                {/* 좁은 화면에서는 캐러셀이 성립하지 않으므로 토글도 없다. */}
-                {narrow ? null : (
-                  <button
-                    type="button"
-                    className="view-toggle-btn"
-                    onClick={() => setGridView(v => !v)}
+          {/* 교육 이수. 예전엔 학력 바로 밑, 즉 **활동·경력보다 위**에
+                있었다 — "2021 코딩캠프에서 기초를 익혔습니다" 가 현직
+                총학생회 소통개발국장보다 먼저 읽혔다. 부수적인 이력이라
+                맨 아래로 내린다. */}
+          {eduExternal.length > 0 ? (
+            <div className="career-block reveal reveal-delay-2">
+              <h3 className="career-heading">교육 이수</h3>
+              <div className="career-list">
+                {eduExternal.map(e => (
+                  <article
+                    className="career-card"
+                    key={`${e.org}-${e.program}`}
                   >
-                    {gridView ? "캐러셀로 보기" : "한번에 보기"}
-                  </button>
-                )}
+                    <div className="edu-header">
+                      <h4 className="edu-name">
+                        {e.org}
+                        <span className="edu-tag">{e.program}</span>
+                      </h4>
+                      <span className="edu-date">{e.period}</span>
+                    </div>
+                    <p className="edu-desc">{e.desc}</p>
+                  </article>
+                ))}
               </div>
             </div>
-          </div>
+          ) : null}
         </section>
 
         {/* ══════════ 04 Sub Projects ══════════ */}

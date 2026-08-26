@@ -1,0 +1,82 @@
+FestFlow docs/ 이미지 158장
+
+폴더별:
+  docs/assets/qa-screenshots/homepage-master-docx-render/pages 59장
+  docs/assets/presentation/pptx-audit/rendered   21장
+  docs/assets/screenshots/admin                  15장
+  docs/assets/diagrams/technical                 12장
+  docs/assets/presentation/role-card-images      8장
+  docs/assets/qa-screenshots/stage-map-status-colors 8장
+  docs/assets/screenshots/previews               8장
+  docs/assets/diagrams/uml                       7장
+  docs/assets/qa-screenshots                     6장
+  docs/assets/ai-match/admin                     4장
+  docs/assets/qa-screenshots/homepage-master-docx-render 4장
+  docs/assets/diagrams/simple-architecture       1장
+  docs/assets/presentation/pptx-audit            1장
+  docs/assets/qa-screenshots/events-button-color 1장
+  docs/assets/qa-screenshots/events-current-review 1장
+  docs/assets/qa-screenshots/more-ai-cards       1장
+  docs/assets/qa-screenshots/more-settings-controls 1장
+
+파일 이름 (앞 60개):
+  docs/assets/ai-match/admin/ai-match-admin-dashboard-desktop.png
+  docs/assets/ai-match/admin/ai-match-admin-matches-desktop.png
+  docs/assets/ai-match/admin/ai-match-admin-profiles-desktop.png
+  docs/assets/ai-match/admin/ai-match-admin-requests-desktop.png
+  docs/assets/diagrams/simple-architecture/festflow_simple_technical_architecture.png
+  docs/assets/diagrams/technical/ai-match-architecture.png
+  docs/assets/diagrams/technical/ai-match-status-flow.png
+  docs/assets/diagrams/technical/festflow-backend-flow.png
+  docs/assets/diagrams/technical/festflow-backend-master-architecture.png
+  docs/assets/diagrams/technical/festflow-backend-security-flow.png
+  docs/assets/diagrams/technical/festflow-frontend-master-architecture.png
+  docs/assets/diagrams/technical/festflow-frontend-state-flow.png
+  docs/assets/diagrams/technical/festflow-homepage-backend-chain.png
+  docs/assets/diagrams/technical/festflow-homepage-data-flow.png
+  docs/assets/diagrams/technical/festflow-homepage-master-architecture.png
+  docs/assets/diagrams/technical/festflow-overall-architecture.png
+  docs/assets/diagrams/technical/festflow-realtime-streams.png
+  docs/assets/diagrams/uml/01_usecase_overview.png
+  docs/assets/diagrams/uml/02_activity_visitor_info_flow.png
+  docs/assets/diagrams/uml/03_activity_ai_match_flow.png
+  docs/assets/diagrams/uml/04_sequence_booth_congestion_lookup.png
+  docs/assets/diagrams/uml/05_sequence_admin_sse_realtime.png
+  docs/assets/diagrams/uml/06_sequence_ai_match_end_to_end.png
+  docs/assets/diagrams/uml/festflow_core_diagrams_contact_sheet.png
+  docs/assets/presentation/pptx-audit/pptx_render_contact_sheet.png
+  docs/assets/presentation/pptx-audit/rendered/슬라이드1.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드10.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드11.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드12.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드13.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드14.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드15.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드16.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드17.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드18.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드19.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드2.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드20.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드21.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드3.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드4.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드5.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드6.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드7.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드8.PNG
+  docs/assets/presentation/pptx-audit/rendered/슬라이드9.PNG
+  docs/assets/presentation/role-card-images/admin_clean_mobile_card.png
+  docs/assets/presentation/role-card-images/admin_mobile_card.png
+  docs/assets/presentation/role-card-images/role_mobile_card_clean_contact_sheet.png
+  docs/assets/presentation/role-card-images/role_mobile_card_contact_sheet.png
+  docs/assets/presentation/role-card-images/staff_clean_mobile_card.png
+  docs/assets/presentation/role-card-images/staff_mobile_card.png
+  docs/assets/presentation/role-card-images/visitor_clean_mobile_card.png
+  docs/assets/presentation/role-card-images/visitor_mobile_card.png
+  docs/assets/qa-screenshots/ai-match-bottom-check-3.png
+  docs/assets/qa-screenshots/ai-match-ref-detail.png
+  docs/assets/qa-screenshots/ai-match-ref-intro.png
+  docs/assets/qa-screenshots/ai-match-ref-people.png
+  docs/assets/qa-screenshots/ai-match-ref-register.png
+  docs/assets/qa-screenshots/events-button-color/events-buttons.png

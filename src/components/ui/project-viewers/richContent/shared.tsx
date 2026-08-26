@@ -10,6 +10,7 @@ import {
   useTransform
 } from "framer-motion";
 import {useCallback, useEffect, useRef, useState} from "react";
+import type {DiagramSpec} from "./ArchitectureDiagram";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
 
@@ -64,14 +65,26 @@ export interface RichProject {
   problemShot?: ImgSpec;
   /** 결과 단계 스크린샷 갤러리 (선택) */
   gallery?: ImgSpec[];
+  /** 해결 단계 끝의 21:9 전면 이미지. 이 페이지에서 가장 넓은 자리라
+   *  가로로 긴 자료(화면 여러 장·타임라인)만 여기에 넣는다. */
+  resultShot?: ImgSpec;
   tldr: {k: string; v: string}[];
   demo: {videoLen?: string; live?: string; video?: string; repo?: string};
   meta: {label: string; value: string}[];
   heroScreen: ScreenSpec;
   impact: {n: string; l: string}[];
+  /** 결과 지표의 출처·기간. 캡처보다 이 한 줄이 신뢰도를 더 올린다. */
+  metricsNote?: string;
   features: {t: string; d: string}[];
   problem: string;
   research: {quotes: {q: string; who: string}[]; stat?: {n: string; l: string}};
+  /**
+   * 사용자가 실제로 남긴 반응. 지표가 "얼마나 왔나" 라면 이건 "무슨 일이
+   * 벌어졌나" 다 — 대시보드 숫자보다 강하게 읽히므로 결과 섹션 맨 앞에 둔다.
+   * 제3자의 사적인 메시지가 출처일 수 있으니 **who 는 익명화해서 적을 것**
+   * (실명·단체명·캡처 금지). 근거가 없으면 그냥 비워 둔다.
+   */
+  testimonial?: {q: string; who: string};
   beforeCode?: CodeSpec;
   beforeAfter?: {
     before: {label: string; screen: ScreenSpec};
@@ -80,6 +93,16 @@ export interface RichProject {
   hypothesis: string;
   process: {t: string; d: string}[];
   architecture: {name: string; desc: string; tag: string}[];
+  /**
+   * 손으로 배치한 시스템 아키텍처 그림. 없으면 그 자리는 **아무것도 안 그린다**
+   * — 예전엔 "시스템 아키텍처 다이어그램" 이라고 적힌 1216×521 빈 점선 상자가
+   * 9개 프로젝트 전부에 있었고, 그건 "다이어그램이 없다" 는 광고였다.
+   * 자세한 설계 원칙은 ArchitectureDiagram.tsx 머리말 참고.
+   *
+   * 배열인 이유: 한 프로젝트에 시스템 구성도 + 데이터 모델처럼 **다른 질문에
+   * 답하는 그림**이 여러 장 필요하다. 한 장에 다 우겨넣으면 둘 다 안 읽힌다.
+   */
+  diagrams?: DiagramSpec[];
   decisions: {area: string; pick: string; why: string; alt: string}[];
   coreCode: CodeSpec[];
   work: {g: string; items: string[]}[];

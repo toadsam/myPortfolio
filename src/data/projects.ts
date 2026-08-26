@@ -159,7 +159,13 @@ export const projects: ProjectData[] = [
     result:
       "동아리 정보 탐색부터 모집 지원까지 하나의 서비스에서 처리할 수 있는 플랫폼 프론트엔드를 완성했습니다.",
     nextStep: "백엔드 API 연동과 실제 배포를 진행할 예정입니다.",
-    links: [{label: "GitHub", href: "https://github.com/aClub2026/FE"}]
+    links: [
+      {label: "GitHub (2026)", href: "https://github.com/aClub2026/FE"},
+      {
+        label: "GitHub (2025)",
+        href: "https://github.com/DBProject-24-2/DB_Project_FE"
+      }
+    ]
   },
   {
     id: "ajou-adventure",
@@ -227,7 +233,9 @@ export const projects: ProjectData[] = [
     result:
       "학생들이 총학생회 정보를 한곳에서 확인하고 Q&A를 주고받을 수 있는 실제 웹 서비스를 배포했습니다.",
     nextStep: "알림 기능과 모바일 최적화를 추가할 예정입니다.",
-    links: [{label: "GitHub", href: "https://github.com/toadsam/ajouchong-web"}]
+    links: [
+      {label: "GitHub", href: "https://github.com/ajouchong-dev/ajouchong-web"}
+    ]
   },
   {
     id: "muscleup",
@@ -263,7 +271,10 @@ export const projects: ProjectData[] = [
     result:
       "운동 기록, 커뮤니티, AI 분석을 하나의 흐름으로 연결한 풀스택 피트니스 플랫폼을 완성했습니다.",
     nextStep: "실사용자 테스트와 웨어러블 기기 연동을 검토할 예정입니다.",
-    links: [{label: "GitHub", href: "https://github.com/toadsam/Ajou_MuscleUp"}]
+    links: [
+      {label: "시연 영상", href: "https://www.youtube.com/watch?v=y6pbAoxveQM"},
+      {label: "GitHub", href: "https://github.com/toadsam/Ajou_MuscleUp"}
+    ]
   },
   {
     id: "darklab",
@@ -332,6 +343,16 @@ export const projects: ProjectData[] = [
     result:
       "스테이지 탐색과 진행 저장 구조를 갖춘 3D 플랫폼 게임 프로토타입을 완성했습니다.",
     nextStep: "추가 스테이지와 보스 패턴 설계의 완성도를 높일 예정입니다.",
-    links: [{label: "GitHub", href: "https://github.com/KimEoJin24/TSEROF"}]
+    links: [
+      {
+        label: "Steam 스토어",
+        href: "https://store.steampowered.com/app/2743860/TSEROF/?l=koreana"
+      },
+      {
+        label: "플레이 영상",
+        href: "https://www.youtube.com/watch?v=1Lm-lpVsmq8"
+      },
+      {label: "GitHub", href: "https://github.com/KimEoJin24/TSEROF"}
+    ]
   }
 ];

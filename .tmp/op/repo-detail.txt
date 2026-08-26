@@ -1,0 +1,26 @@
+=== FestFlow docs/ 172개 ===
+  확장자: {'png': 137, 'PNG': 21, 'docx': 7, 'md': 4, 'json': 1, 'txt': 1, 'pdf': 1}
+  md 파일: README.md, ai-matach_admin_관리자설명서.md, ai-matach_사용설명서.md, FestFlow_홈페이지_마스터_문서.md
+  이미지: 158장
+[festflow] Controller (26): AiGuideController.java, AiMatchController.java, BoothController.java, ChatController.java, EventController.java, GpsController.java, LostItemController.java, NoticeController.java, ReservationAuthController.java, TranslateController.java, UploadAssetController.java, AdminActionController.java, AdminAiController.java, AdminAiMatchController.java
+[festflow] SSE 관련 (204): EventController.java, UploadAssetController.java, AdminEventController.java, EventResponseDto.java, EventUpsertRequestDto.java, SimulationFlowEventDto.java, FestivalEvent.java, EventRepository.java, EventService.java, GpsService.java, TranslateMetricsService.java, AnalyticsService.java, AligoSmsSender.java, NoopSmsSender.java
+=== 수어지구 ===
+[sign-language] 수어 영상 (40): q001.mp4, q002.mp4, q003.mp4, q004.mp4, q005.mp4, q006.mp4, q007.mp4, q008.mp4, q009.mp4, q010.mp4, q011.mp4, q012.mp4, q013.mp4, q014.mp4
+[sign-language] Controller (6): AuthController.java, HealthController.java, TranslateController.java, AuthController.java, QuizController.java, UserController.java
+=== aClub 2025 vs 2026 ===
+  2025 src 확장자: {'jsx': 68, 'jpg': 15, 'png': 6, 'js': 5, 'css': 2, 'svg': 2}
+  2026 src 확장자: {'tsx': 58, 'svg': 27, 'ts': 22, 'png': 7, 'css': 2, 'jpg': 2}
+  2026 src 폴더: {'components': 41, 'assets': 36, 'pages': 15, 'Hooks': 7, 'api': 5, 'utils': 4, 'types': 3, 'lib': 1, 'stores': 1}
+=== MyStock ===
+[mystock] Controller (25): PortfolioReportController.java, AssetController.java, AuthController.java, FinancialCoachController.java, CompanyAnalysisController.java, MyWaveDashboardController.java, DisclosureController.java, EarningsController.java, ExpenseController.java, GoalController.java, MarketController.java, MarketDataController.java, MemberController.java, InvestmentMemoController.java
+=== 총학생회 ===
+  deploy: ['Dockerfile', 'deploy/Dockerfile', 'nginx.conf']
+=== TSEROF ===
+  {"repo": "KimEoJin24/TSEROF", "err": "HTTP Error 404: Not Found", "n": 0}
+=== 아주분투 playtest ===
+[ajou-adventure] 플레이테스트 산출물 (129): 01-menu.png, 02-started.png, 03-after-wire-press.png, 04-final.png, wire-debug.json, 01-menu.png, 02-started.png, 08-final.png, 09-game-over.png, playtest-log.json
+=== Unity C# 스크립트 수 ===
+  darklab          .cs 1개  예: WaterReflection.cs
+  ajou-indigame    .cs 13개  예: AnimationDemo.cs, SetDemoImage_FreeRPGIconsPack.cs, HS_DemoToonVFX.cs, HS_EffectSound.cs, HS_FrontMover.cs, HS_ParticleCollisionInstance.cs, AbstractTargetFollower.cs, FreeLookCam.cs
+  otherside-vr     .cs 49개  예: HandProcessor.cs, HandVisualizer.cs, JointVisualizer.cs, HandsSampleProjectValidation.cs, ObjectResetPlane.cs, PokeBlendShapeAnimator.cs, ToggleGameObject.cs, ToggleGraphicToggler.cs
+  monsterpoint-ar  .cs 24개  예: ARFeatheredPlaneMeshVisualizerCompanion.cs, ARTemplateMenuManager.cs, GoalManager.cs, CutoutMaskUI.cs, ARSampleMenuManager.cs, ARStarterAssetsSampleProjectValidation.cs, ARContactSpawnTrigger.cs, ARFeatheredPlaneMeshVisualizer.cs

@@ -1,0 +1,44 @@
+===== realtime/src/server.ts =====
+import { createServer } from "http";
+import { Server } from "socket.io";
+import {
+  addPlayer,
+  getMapSize,
+  getRoomName,
+  listPlayers,
+  removePlayer,
+  updatePlayerPosition,
+} from "./rooms.js";
+import type { CharacterTier, Gender, JoinPayload, PingPayload, TypingPayload } from "./types.js";
+
+const PORT = Number(process.env.PORT ?? 4001);
+const ORIGIN = process.env.ORIGIN ?? "http://localhost:5173";
+const ALLOWED_ORIGINS = ORIGIN.split(",").map((origin) => origin.trim());
+
+const roomName = getRoomName();
+const mapSize = getMapSize();
+
+const httpServer = createServer((req, res) => {
+  const origin = req.headers.origin ?? "";
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Vary", "Origin");
+  }
+
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+===== backend/src/main/resources/application.properties =====
+server.port=${PORT:8080}
+spring.profiles.active=${SPRING_PROFILES_ACTIVE:local}
+app.upload-dir=${UPLOAD_DIR:uploads}
+app.s3.enabled=${S3_ENABLED:false}
+app.s3.bucket=${S3_BUCKET:}
+app.s3.region=${AWS_REGION:ap-northeast-2}
+app.s3.prefix=${S3_PREFIX:uploads}
+app.s3.public-base-url=${S3_PUBLIC_BASE_URL:}

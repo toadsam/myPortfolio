@@ -1,0 +1,1751 @@
+{
+ "AiChatMessage": {
+  "table": "ai_chat_messages",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "type",
+    "type": "AiMessageType",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 20
+   },
+   {
+    "name": "question",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 1000
+   },
+   {
+    "name": "answer",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "shareSlug",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": true,
+    "len": 64
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "AnalyticsEvent": {
+  "table": "analytics_events",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "page",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 200
+   },
+   {
+    "name": "action",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 50
+   },
+   {
+    "name": "metadata",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": true
+   }
+  ]
+ },
+ "AttendanceLog": {
+  "table": "attendance_logs",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "date",
+    "type": "LocalDate",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "didWorkout",
+    "type": "boolean",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "memo",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 200
+   },
+   {
+    "name": "shareComment",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 280
+   },
+   {
+    "name": "workoutTypes",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 80
+   },
+   {
+    "name": "workoutIntensity",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 16
+   },
+   {
+    "name": "mediaUrls",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 4000
+   },
+   {
+    "name": "shareSlug",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": true,
+    "len": 64
+   },
+   {
+    "name": "lastEditedAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "AuditLog": {
+  "table": "audit_logs",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "action",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 50
+   },
+   {
+    "name": "resource",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 255
+   },
+   {
+    "name": "summary",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 1000
+   },
+   {
+    "name": "metadata",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": true
+   }
+  ]
+ },
+ "BaseTimeEntity": {
+  "table": null,
+  "fields": [
+   {
+    "name": "createdAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "updatedAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": []
+ },
+ "BragComment": {
+  "table": null,
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "content",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 500
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "BragPost",
+    "field": "bragPost",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "BragLike": {
+  "table": null,
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "BragPost",
+    "field": "bragPost",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "BragPost": {
+  "table": null,
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "title",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 100
+   },
+   {
+    "name": "content",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 2000
+   },
+   {
+    "name": "movement",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 120
+   },
+   {
+    "name": "weight",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 60
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "CharacterEvolutionHistory": {
+  "table": "character_evolution_history",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "triggerType",
+    "type": "CharacterEvolutionTriggerType",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 30
+   },
+   {
+    "name": "beforeLevel",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "afterLevel",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "beforeTier",
+    "type": "CharacterTier",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 20
+   },
+   {
+    "name": "afterTier",
+    "type": "CharacterTier",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 20
+   },
+   {
+    "name": "beforeStage",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "afterStage",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "CharacterProfile": {
+  "table": "character_profiles",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "level",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "tier",
+    "type": "CharacterTier",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 20
+   },
+   {
+    "name": "evolutionStage",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "title",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 40
+   },
+   {
+    "name": "isPublic",
+    "type": "boolean",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "lastEvaluatedAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "attendancePoints",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "avatarSeed",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 64
+   },
+   {
+    "name": "stylePreset",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 32
+   },
+   {
+    "name": "gender",
+    "type": "Gender",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 16
+   },
+   {
+    "name": "isResting",
+    "type": "boolean",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "rerollCount",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "OneToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "CmsEvent": {
+  "table": "cms_events",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "title",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 120
+   },
+   {
+    "name": "summary",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 300
+   },
+   {
+    "name": "content",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "thumbnailUrl",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 500
+   },
+   {
+    "name": "bannerUrl",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 500
+   },
+   {
+    "name": "startAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "endAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "status",
+    "type": "CmsEventStatus",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 20
+   },
+   {
+    "name": "isMainBanner",
+    "type": "boolean",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "isPinned",
+    "type": "boolean",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "priority",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "ctaText",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 60
+   },
+   {
+    "name": "ctaLink",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 500
+   },
+   {
+    "name": "viewCount",
+    "type": "long",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "clickCount",
+    "type": "long",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "createdBy",
+    "type": "Long",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": []
+ },
+ "CrewChallenge": {
+  "table": "crew_challenges",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "title",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 80
+   },
+   {
+    "name": "description",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 300
+   },
+   {
+    "name": "startDate",
+    "type": "LocalDate",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "endDate",
+    "type": "LocalDate",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "targetWorkoutDays",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "WorkoutCrew",
+    "field": "crew",
+    "optional": false
+   }
+  ]
+ },
+ "EmailVerification": {
+  "table": "email_verifications",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "email",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 100
+   },
+   {
+    "name": "code",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 6
+   },
+   {
+    "name": "createdAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "expireAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "verified",
+    "type": "boolean",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "attempts",
+    "type": "int",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": []
+ },
+ "Event": {
+  "table": "events",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "title",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 80
+   },
+   {
+    "name": "description",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 200
+   },
+   {
+    "name": "startDate",
+    "type": "LocalDate",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "endDate",
+    "type": "LocalDate",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "requiredAttendanceCount",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "status",
+    "type": "EventStatus",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 12
+   }
+  ],
+  "rels": []
+ },
+ "EventParticipant": {
+  "table": "event_participants",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "joinedAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "currentAttendanceCount",
+    "type": "int",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "success",
+    "type": "Boolean",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "Event",
+    "field": "event",
+    "optional": false
+   }
+  ]
+ },
+ "FriendChatMessage": {
+  "table": "friend_chat_messages",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "content",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 1000
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "FriendChatRoom",
+    "field": "room",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "sender",
+    "optional": false
+   }
+  ]
+ },
+ "FriendChatRoom": {
+  "table": "friend_chat_rooms",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "userLow",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "userHigh",
+    "optional": false
+   }
+  ]
+ },
+ "FriendRequest": {
+  "table": "friend_requests",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "status",
+    "type": "FriendRequestStatus",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 16
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "requester",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "receiver",
+    "optional": false
+   }
+  ]
+ },
+ "Friendship": {
+  "table": "friendships",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "userLow",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "userHigh",
+    "optional": false
+   }
+  ]
+ },
+ "Inquiry": {
+  "table": "inquiries",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "name",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 100
+   },
+   {
+    "name": "email",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 150
+   },
+   {
+    "name": "message",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 1000
+   },
+   {
+    "name": "page",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 200
+   },
+   {
+    "name": "userId",
+    "type": "Long",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "status",
+    "type": "InquiryStatus",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 30
+   },
+   {
+    "name": "adminNote",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 1000
+   },
+   {
+    "name": "handledAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": []
+ },
+ "LoungeVisitLog": {
+  "table": "lounge_visit_logs",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "ProgramApplication": {
+  "table": "program_applications",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "name",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 50
+   },
+   {
+    "name": "email",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 100
+   },
+   {
+    "name": "goal",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 500
+   },
+   {
+    "name": "track",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 50
+   },
+   {
+    "name": "commitment",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 200
+   },
+   {
+    "name": "status",
+    "type": "ApplicationStatus",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 20
+   }
+  ],
+  "rels": []
+ },
+ "Protein": {
+  "table": "proteins",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "name",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "price",
+    "type": "Integer",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "days",
+    "type": "Integer",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "goal",
+    "type": "Integer",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "imageUrl",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "description",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "category",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "avgRating",
+    "type": "Double",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "owner",
+    "optional": true
+   }
+  ]
+ },
+ "ProteinShareApplication": {
+  "table": "protein_share_applications",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "status",
+    "type": "ProteinShareStatus",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 20
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "Protein",
+    "field": "protein",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "ProteinShareMessage": {
+  "table": "protein_share_messages",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "content",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 1000
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "Protein",
+    "field": "protein",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "RefreshToken": {
+  "table": "refresh_tokens",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "token",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": true,
+    "len": 512
+   },
+   {
+    "name": "expiresAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "Review": {
+  "table": null,
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "rating",
+    "type": "int",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "content",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 1000
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "Protein",
+    "field": "protein",
+    "optional": false
+   }
+  ]
+ },
+ "User": {
+  "table": "users",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "name",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 50
+   },
+   {
+    "name": "email",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": true,
+    "len": 100
+   },
+   {
+    "name": "password",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "nickname",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 30
+   },
+   {
+    "name": "createdAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": []
+ },
+ "UserBodyStats": {
+  "table": "user_body_stats",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "heightCm",
+    "type": "Integer",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "gender",
+    "type": "Gender",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 10
+   },
+   {
+    "name": "weightKg",
+    "type": "Double",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "skeletalMuscleKg",
+    "type": "Double",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "bodyFatPercent",
+    "type": "Double",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "mbti",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 4
+   },
+   {
+    "name": "benchKg",
+    "type": "Double",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "squatKg",
+    "type": "Double",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "deadliftKg",
+    "type": "Double",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "OneToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ },
+ "WorkoutCrew": {
+  "table": "workout_crews",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "name",
+    "type": "String",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 60
+   },
+   {
+    "name": "description",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": 300
+   },
+   {
+    "name": "inviteCode",
+    "type": "String",
+    "pk": false,
+    "nn": false,
+    "uq": true,
+    "len": 20
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "owner",
+    "optional": false
+   }
+  ]
+ },
+ "WorkoutCrewJoinRequest": {
+  "table": "workout_crew_join_requests",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "status",
+    "type": "CrewJoinRequestStatus",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 20
+   },
+   {
+    "name": "decidedAt",
+    "type": "LocalDateTime",
+    "pk": false,
+    "nn": false,
+    "uq": false,
+    "len": null
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "WorkoutCrew",
+    "field": "crew",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "decidedBy",
+    "optional": true
+   }
+  ]
+ },
+ "WorkoutCrewMember": {
+  "table": "workout_crew_members",
+  "fields": [
+   {
+    "name": "id",
+    "type": "Long",
+    "pk": true,
+    "nn": false,
+    "uq": false,
+    "len": null
+   },
+   {
+    "name": "role",
+    "type": "WorkoutCrewMemberRole",
+    "pk": false,
+    "nn": true,
+    "uq": false,
+    "len": 16
+   }
+  ],
+  "rels": [
+   {
+    "kind": "ManyToOne",
+    "to": "WorkoutCrew",
+    "field": "crew",
+    "optional": false
+   },
+   {
+    "kind": "ManyToOne",
+    "to": "User",
+    "field": "user",
+    "optional": false
+   }
+  ]
+ }
+}

@@ -1,0 +1,17 @@
+StageMapPage.jsx | import { CircleMarker, MapContainer, Marker, Popup, TileLayer, Tooltip, useMap } from "react-leaflet";
+StageMapPage.jsx | const CAMPUS_RADIUS_METERS = 2500;
+StageMapPage.jsx | return distanceFromAjou(lat, lng) <= CAMPUS_RADIUS_METERS;
+StageMapPage.jsx | <TileLayer
+StageMapPage.jsx | attribution="&copy; OpenStreetMap"
+StageMapPage.jsx | url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+StageMapPage.jsx | <CircleMarker
+StageMapPage.jsx | radius={10}
+StageMapPage.jsx | </CircleMarker>
+StageCrowdPage.jsx | radiusMeters: 55,
+StageCrowdPage.jsx | const radius = 48;
+StageCrowdPage.jsx | const length = Math.PI * radius;
+StageCrowdPage.jsx | <p>반경 {mainZone.radiusMeters || 55}m 기준 · 수용 기준 {mainZone.capacityHint || 4000}명</p>
+StageCrowdPage.jsx | <span>반경 {zone.radiusMeters}m · 기준 {zone.capacityHint}명</span>
+AiCongestionService.java | .filter(log -> distanceInMeters(booth.latitude(), booth.longitude(), log.getLatitude(), log.getLongitude()) <= 80.0)
+BoothService.java | private static final double BOOTH_RADIUS_METERS = 80.0;
+BoothService.java | .filter(log -> distanceInMeters(booth.getLatitude(), booth.getLongitude(), log.getLatitude(), log.getLongitude()) <= BOOTH_RADIUS_METERS)

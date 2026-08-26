@@ -14,7 +14,9 @@
 // ─── 타입 ─────────────────────────────────────────────────────────────────────
 
 export type ResumeCategory = "web" | "data" | "game" | "ar" | "ops";
-export type ProjectStatus = "운영중" | "완료";
+// "출시" 는 Steam 에 상용 출시한 TSEROF 전용이다. 운영중/완료와 층이 다르다 —
+// 심사자에게 "만들어 봤다" 와 "상점에 올라가 있다" 는 완전히 다르게 읽힌다.
+export type ProjectStatus = "운영중" | "완료" | "출시";
 
 export interface ResumeLink {
   label: string; // GitHub · 사이트 · Notion 등
@@ -106,6 +108,13 @@ export interface MainProjectCard {
   role?: string;
   /** 값이 빈 타일은 생략되고, 전부 비면 지표 줄 자체가 사라진다. */
   metrics?: ProjectMetric[];
+  /**
+   * 지표의 출처와 기간. **거짓말하는 사람은 기간을 안 쓴다** — 기간을 적는
+   * 순간 반박당할 수 있게 되므로, 적는 행위 자체가 "검증당할 각오"의 신호로
+   * 읽힌다. 캡처 이미지보다 이 한 줄이 신뢰도를 더 올린다.
+   * 근거가 없는 지표에는 이 값을 달지 말고, 지표 자체를 빼라.
+   */
+  metricsSource?: string;
   /** 3D 마을 원페이지(ProjectOnePager)로 연결되는 projects.ts id. 없으면 외부 링크만. */
   richId?: string;
   /** public/ 기준 카드 대표 이미지 경로. 없으면 플레이스홀더 표시. */
@@ -415,14 +424,23 @@ export const mainProjects: MainProjectCard[] = [
     period: "2025.09 ~ 진행 중",
     team: "개인 개발",
     role: "기획 · UI 설계 · API 개발 · 인증/권한 · 배포",
+    // 임시로 박아 뒀던 "누적 가입자 120 · 운동 기록 1,400" 을 지웠다.
+    // 근거가 없던 숫자고, 본인 확인 결과 실제 이용 회원은 약 50명이다.
+    // 배포 도메인(muscle-up.click)은 현재 일시 중단이라 링크하지 않는다.
     metrics: [
-      {value: "16", label: "백엔드 도메인"},
-      {value: "120", label: "누적 가입자", provisional: true},
-      {value: "1,400", label: "누적 운동 기록", provisional: true}
+      {value: "약 50명", label: "이용 회원"},
+      {value: "28", label: "백엔드 Controller"}
     ],
+    metricsSource: "운영 기간 누적 · 본인 집계",
     richId: "muscleup",
     image: "/projects/muscleup.webp",
-    links: [{label: "GitHub", href: "https://github.com/toadsam/Ajou_MuscleUp"}]
+    links: [
+      {label: "GitHub", href: "https://github.com/toadsam/Ajou_MuscleUp"},
+      {
+        label: "시연 영상",
+        href: "https://www.youtube.com/watch?v=y6pbAoxveQM"
+      }
+    ]
   },
   {
     id: "aclub",
@@ -432,16 +450,29 @@ export const mainProjects: MainProjectCard[] = [
     category: "web",
     status: "운영중",
     tags: ["WebService", "Operations", "UX", "Analytics"],
+    // 두 번 했다. 2025 는 프론트 3인 중 한 명, 그게 잘 되어서 2026 에
+    // 프로젝트장을 맡아 개편했다 — 저장소가 둘인 이유다.
     period: "2025.01 ~ 진행 중",
-    team: "프론트엔드 3인",
-    role: "Frontend 개발 · 정보 구조 설계 · GA4/GSC 기반 개선",
+    team: "2025 프론트 3인 → 2026 프로젝트장",
+    role: "2025 Frontend 개발 → 2026 프로젝트 총괄 · 프론트 리드 · GA4 기반 개선",
+    // 전부 GA4 실측이다(2026.01~03). 예전엔 "월 방문자 2,300 · 문의 감소 40%"
+    // 라는 지어낸 숫자가 잠정 배지를 달고 화면에 나가고 있었다.
     metrics: [
-      {value: "2,300", label: "월 방문자", provisional: true},
-      {value: "40%", label: "문의 감소", provisional: true}
+      {value: "3,500", label: "활성 사용자"},
+      {value: "8.8만", label: "조회수"},
+      {value: "93.4%", label: "세션 참여율"}
     ],
+    metricsSource: "Google Analytics 4 · 2026.01–03",
     richId: "aclub",
     image: "/projects/aclub.webp",
-    links: [{label: "사이트", href: "https://aclub.co.kr/"}]
+    links: [
+      {label: "사이트", href: "https://aclub.co.kr/"},
+      {label: "GitHub (2026)", href: "https://github.com/aClub2026/FE"},
+      {
+        label: "GitHub (2025)",
+        href: "https://github.com/DBProject-24-2/DB_Project_FE"
+      }
+    ]
   },
   {
     id: "ajouchong",
@@ -451,16 +482,28 @@ export const mainProjects: MainProjectCard[] = [
     category: "web",
     status: "운영중",
     tags: ["WebService", "Operations", "UX", "Analytics"],
-    period: "2025.01 ~ 진행 중",
+    period: "2025.03 ~ 진행 중",
     team: "총학생회 IT · 프론트 3인",
-    role: "Frontend 개발 · 정보 구조 설계 · GA4/GSC 기반 개선",
+    role: "Frontend 개발 · 정보 구조 설계 · Search Console 기반 개선",
+    // Search Console 실측. **검색 유입 기준**이라는 단서가 라벨에 반드시 붙어야
+    // 한다 — 전체 방문자로 읽히면 과장이 된다.
     metrics: [
-      {value: "5,800", label: "월 방문자", provisional: true},
-      {value: "62%", label: "공지 열람률", provisional: true}
+      {value: "34,200", label: "검색 노출"},
+      {value: "1,080", label: "검색 클릭"},
+      {value: "3.2%", label: "검색 CTR"}
     ],
+    // "검색 유입 기준" 을 명시한다. 전체 방문자로 읽히면 과장이 된다 —
+    // 스스로 범위를 좁히는 문장이라 오히려 정직하게 읽힌다.
+    metricsSource: "Google Search Console · 검색 유입 기준",
     richId: "ajouchong",
     image: "/projects/ajouchong.webp",
-    links: [{label: "사이트", href: "https://ajouchong.com"}]
+    links: [
+      {label: "사이트", href: "https://ajouchong.com"},
+      {
+        label: "GitHub",
+        href: "https://github.com/ajouchong-dev/ajouchong-web"
+      }
+    ]
   },
   {
     id: "festflow",
@@ -468,11 +511,17 @@ export const mainProjects: MainProjectCard[] = [
     subtitle: "대학 축제 운영자를 위한 실시간 부스 관리 시스템",
     category: "web",
     status: "완료",
-    tags: ["React", "SSE", "Spring Boot", "PWA"],
-    period: "~ 2026.05",
+    tags: ["React", "SSE", "Spring Boot", "PWA", "scikit-learn"],
+    period: "~ 2026.06",
     team: "개인 개발",
-    role: "사용자·관리자 기능 전체 구현 (React · Spring Boot · JWT · SSE · PWA)",
-    metrics: [{value: "3", label: "SSE 실시간 스트림"}],
+    role: "사용자·관리자 기능 전체 구현 (React · Spring Boot · JWT · SSE · PWA) · 혼잡 예측 모델 연동",
+    // "SSE 3" 으로 적혀 있었는데 StreamController.java 의 엔드포인트는 7개다.
+    // 컨트롤러 26개도 저장소에서 센 값(*Controller.java).
+    metrics: [
+      {value: "7", label: "SSE 실시간 채널"},
+      {value: "26", label: "백엔드 컨트롤러"}
+    ],
+    metricsSource: "저장소 소스 집계 · 2026.06 기준",
     richId: "festflow",
     links: [{label: "GitHub", href: "https://github.com/toadsam/FestFlow"}]
   },
@@ -501,7 +550,10 @@ export const mainProjects: MainProjectCard[] = [
     period: "2024.10 ~ 2024.12",
     role: "Passport Local + Google/Naver OAuth 통합 · MongoStore 세션 유지 · CORS allowlist",
     image: "/projects/foodmap.webp",
-    links: []
+    links: [
+      {label: "Client", href: "https://github.com/toadsam/pwd-week6-client"},
+      {label: "Server", href: "https://github.com/toadsam/pwd-week6-server"}
+    ]
   },
   {
     id: "sign-language",
@@ -523,15 +575,27 @@ export const mainProjects: MainProjectCard[] = [
     title: "TSEROF",
     subtitle: "출시·배포까지 완주한 3D 액션 플랫폼 게임 프로젝트",
     category: "game",
-    status: "운영중",
-    tags: ["Unity", "GameDev", "3D"],
+    status: "출시",
+    tags: ["Unity", "GameDev", "3D", "Steam"],
     period: "2023.07 ~ 2023.11",
     team: "5인 팀 — 부팀장",
     role: "레벨 디자인 · 장애물/기믹 구현 · 기획",
     metrics: [{value: "Steam", label: "스토어 출시"}],
     richId: "tserof",
     image: "/projects/tserof.webp",
-    links: []
+    // "Steam 출시" 라고 적어 놓고 정작 스토어 링크가 없었다.
+    // 출시작이라는 주장은 눌러서 확인될 때만 무게가 있다.
+    links: [
+      {
+        label: "Steam 스토어",
+        href: "https://store.steampowered.com/app/2743860/TSEROF/?l=koreana"
+      },
+      {label: "GitHub", href: "https://github.com/KimEoJin24/TSEROF"},
+      {
+        label: "플레이 영상",
+        href: "https://www.youtube.com/watch?v=1Lm-lpVsmq8"
+      }
+    ]
   },
   {
     id: "ajou-adventure",
@@ -544,7 +608,9 @@ export const mainProjects: MainProjectCard[] = [
     team: "개인 개발 (전담)",
     richId: "ajou-adventure",
     image: "/projects/ajou-adventure.webp",
-    links: []
+    links: [
+      {label: "GitHub", href: "https://github.com/toadsam/Ajou_Mini_Game"}
+    ]
   },
   {
     id: "darklab",
@@ -556,7 +622,7 @@ export const mainProjects: MainProjectCard[] = [
     period: "2024-1 학기",
     team: "3인 — 프로그래밍 담당",
     richId: "darklab",
-    links: []
+    links: [{label: "GitHub", href: "https://github.com/toadsam/DarkLab"}]
   },
   {
     id: "otherside-vr",
@@ -565,9 +631,15 @@ export const mainProjects: MainProjectCard[] = [
     category: "ar",
     status: "완료",
     tags: ["VR", "XR", "Unity"],
-    role: "XR Interaction Toolkit 기반 상호작용 · 퍼즐 구현",
+    role: "AI 몬스터 시스템 · 감지 로직 · 중앙 제어 구조 설계",
     image: "/projects/otherside-vr.webp",
-    links: []
+    links: [
+      {
+        label: "플레이 영상",
+        href: "https://www.youtube.com/watch?v=sK9OoBNCVvc"
+      },
+      {label: "GitHub", href: "https://github.com/kbwon/IMP_VR"}
+    ]
   },
   {
     id: "monsterpoint-ar",
@@ -576,9 +648,37 @@ export const mainProjects: MainProjectCard[] = [
     category: "ar",
     status: "완료",
     tags: ["AR", "Unity", "Shooter"],
-    role: "AR Plane 기반 전투 공간 생성 · NavMesh AI · Object Pooling",
+    role: "무기 제작 · 스폰 시스템 · 게임 루프 설계",
     image: "/projects/monsterpoint-ar.webp",
-    links: []
+    links: [
+      {
+        label: "플레이 영상",
+        href: "https://www.youtube.com/watch?v=9Lf2K1qBJ2E"
+      },
+      {label: "GitHub", href: "https://github.com/toadsam/IMP"}
+    ]
+  },
+  {
+    // 「아주분투」(ajou-adventure)와 **다른 게임이다.** 그쪽은 Phaser 3 로 만든
+    // 2D 러너고, 이건 Unity 3D 액션 어드벤처다. 저장소도 Ajou_Mini_Game /
+    // Ajou_IndiGame 으로 따로다 — 이름이 비슷해 한 번 섞을 뻔했다.
+    id: "ajou-indigame",
+    title: "아주대탐험",
+    subtitle:
+      "1인칭↔탑다운 시점 전환과 랜덤 스킬 성장을 얹은 Unity 3D 액션 어드벤처",
+    category: "game",
+    status: "완료",
+    tags: ["Unity", "C#", "NavMesh", "Roguelike"],
+    period: "2024.08 ~ 2024.12",
+    team: "개인 개발 (1인)",
+    role: "게임 시스템 설계·구현 — 코어 루프 · 전투 AI · UI · 이벤트",
+    links: [
+      {
+        label: "플레이 영상",
+        href: "https://www.youtube.com/watch?v=mtIiIWmrSdg"
+      },
+      {label: "GitHub", href: "https://github.com/toadsam/Ajou_IndiGame"}
+    ]
   }
 ];
 

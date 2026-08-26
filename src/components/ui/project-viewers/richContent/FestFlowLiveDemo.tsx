@@ -49,10 +49,14 @@ interface FeedItem {
   time: string;
 }
 
-function statusColor(status: Status, theme: ProjectTheme) {
-  if (status === "혼잡") return "#fbbf24";
-  if (status === "품절") return "#f87171";
-  return theme.primary;
+// 세 상태는 **서로 다른 색상(hue)** 이어야 한눈에 갈린다.
+// 예전엔 "운영중" 이 `theme.primary` 였는데, 이력서 상세의 강조색이 시안에서
+// 간판금(#e2c078)으로 바뀌자 호박색 "혼잡"(#fbbf24)과 거의 같아져 버렸다.
+// 상태색은 브랜드색과 분리해 고정한다 — 파랑 / 주황 / 빨강.
+function statusColor(status: Status, _theme: ProjectTheme) {
+  if (status === "혼잡") return "#ff9d38"; // 등불 주황
+  if (status === "품절") return "#f87171"; // 경고 빨강
+  return "#8fd0e8"; // 평온한 하늘 — 정상 운영
 }
 
 function pad(n: number) {

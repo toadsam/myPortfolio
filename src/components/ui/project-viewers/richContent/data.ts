@@ -265,14 +265,48 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ FestFlow / Fest-A (realtime) ════════════════
   festflow: {
     tagline: "REALTIME FESTIVAL OPS · FULL-STACK WEB APP",
+    heroImage: {
+      src: "/projects/op/festflow-two-faces.webp",
+      label: "같은 앱, 역할에 따라 다른 화면",
+      // 정사각. 16:9 로 두면 5칸(약 480px)짜리 자리에서 폰이 96px 폭이 된다.
+      ratio: "1/1",
+      caption:
+        "왼쪽은 방문객이 보는 부스 지도(Leaflet + OSM), 오른쪽은 운영진이 보는 무대 혼잡 관제. 한 코드베이스이며 프론트 셸의 data-route-scope=“public|ops” 로 갈린다."
+    },
     problemShot: {
-      label: "전화·메신저로 부스 현황을 확인하던 방식",
-      ratio: "4/3"
+      src: "/projects/festflow/problem.webp",
+      label: "기획 단계에서 정의한 축제 운영의 문제",
+      ratio: "16/9",
+      caption: "중간 기획 발표 자료 — 구현 전에 정리한 문제 정의"
+    },
+    // 이 페이지에서 가장 넓은 자리(약 1,216px)라 세로로 긴 폰 캡처를
+    // 가로로 늘어놓기에 알맞다. 갤러리(약 390px)에 넣으면 글씨가 죽는다.
+    resultShot: {
+      src: "/projects/op/festflow-screens.webp",
+      label: "실제 화면 4종",
+      ratio: "21/9",
+      caption:
+        "왼쪽 셋은 방문객 화면(부스 목록·공연 일정·AI 허브), 오른쪽은 운영진 관제. 저장소 docs/assets/ 에 커밋된 캡처를 그대로 옮겼다."
     },
     gallery: [
-      {label: "실제 지도(OSM) + 부스 마커", ratio: "16/10"},
-      {label: "실시간 혼잡도·공지 피드", ratio: "16/10"},
-      {label: "관리자 부스 관리 대시보드", ratio: "16/10"}
+      {
+        src: "/projects/op/festflow-g-admin.webp",
+        label: "관리자 운영 콘솔",
+        ratio: "4/5",
+        caption: "공지 발행·부스 상태 변경 — SSE 팬아웃이 시작되는 지점"
+      },
+      {
+        src: "/projects/op/festflow-g-chat.webp",
+        label: "AI 축제 챗봇",
+        ratio: "4/5",
+        caption: "혼잡·공연·부스를 자연어로 묻는다 (AiGuideController)"
+      },
+      {
+        src: "/projects/op/festflow-g-lost.webp",
+        label: "분실물 센터",
+        ratio: "4/5",
+        caption: "7개 SSE 채널 중 lost-items — 등록·반환 상태가 즉시 전파된다"
+      }
     ],
     tldr: [
       {
@@ -283,18 +317,21 @@ export const RICH_DATA: Record<string, RichProject> = {
         k: "왜",
         v: "수십 개 부스의 상태·혼잡도·공지를 실시간 공유할 도구가 없었음"
       },
-      {k: "결과", v: "7개 SSE 채널 + 실제 지도 + GPS 지오펜싱으로 실시간 운영"},
-      {k: "내 역할", v: "1인 풀스택 (프론트 전체 + Spring Boot 백엔드)"}
+      {
+        k: "결과",
+        v: "7개 SSE 채널 · 백엔드 컨트롤러 26개 · GPS 지오펜싱 · AI 혼잡 예측까지 1인 구현"
+      },
+      {k: "내 역할", v: "1인 풀스택 (프론트 전체 + Spring Boot 백엔드 + 모델)"}
     ],
     demo: {repo: "https://github.com/toadsam/FestFlow"},
     meta: [
-      {label: "기간", value: "~ 2026.05"},
+      {label: "기간", value: "~ 2026.06"},
       {label: "팀", value: "개인 프로젝트 (풀스택 1인)"},
-      {label: "역할", value: "프론트 전체 · SSE·GPS 백엔드"},
+      {label: "역할", value: "프론트 전체 · SSE·GPS 백엔드 · 혼잡 예측 모델"},
       {
         label: "스택",
         value:
-          "React · Vite · Leaflet · PWA · Spring Boot 3 · JWT · SSE · MySQL"
+          "React · Vite · Leaflet · PWA · Spring Boot 3 · JWT · SSE · MySQL · scikit-learn"
       },
       {label: "실행", value: "Gradle bootRun + Vite · PWA"}
     ],
@@ -310,17 +347,34 @@ export const RICH_DATA: Record<string, RichProject> = {
     },
     impact: [
       {n: "7", l: "SSE 실시간 채널"},
-      {n: "80m", l: "GPS 부스 지오펜싱"},
-      {n: "실제 지도", l: "Leaflet+OSM"}
+      {n: "26", l: "백엔드 컨트롤러"},
+      {n: "80m", l: "GPS 부스 판정"}
     ],
     features: [
-      {t: "실시간 스트림", d: "혼잡도·부스·공지·분실물·예약 등 7개 SSE 채널"},
+      {
+        t: "실시간 스트림",
+        d: "혼잡도·부스·공지·분실물·예약·스태프·이벤트 7채널"
+      },
       {
         t: "실제 지도 배치",
-        d: "React Leaflet + OSM 타일 위 부스 마커·클러스터"
+        d: "React Leaflet + OpenStreetMap 타일 위 부스 마커·카테고리 필터"
       },
-      {t: "GPS 지오펜싱", d: "현재 위치 반경 80m 기준 부스 판정·도보시간"},
-      {t: "PWA·권한 분리", d: "관리자/스태프/방문자 JWT 권한 · 오프라인 대응"}
+      {
+        t: "GPS 지오펜싱",
+        d: "부스 반경 80m 로 근접 판정 · 무대는 반경 55m·수용 4,000명 기준"
+      },
+      {
+        t: "AI 혼잡 예측",
+        d: "24개 feature 로 30분 뒤 혼잡도 분류 (RandomForest)"
+      },
+      {
+        t: "AI 안내·번역·분실물·예약",
+        d: "챗봇·실시간 번역·분실물·QR 체크인까지 컨트롤러 26개"
+      },
+      {
+        t: "역할별 화면 분리",
+        d: "방문객/스태프/관리자 JWT 3등급 · 다국어·고대비 모드 · PWA"
+      }
     ],
     problem:
       "대학 축제는 수십 개 부스가 동시에 운영되는데, 혼잡도·품절·공지·분실물 같은 상태를 실시간으로 공유하고 역할별로 접근할 도구가 없어 전화·메신저로 처리하고 있었다.",
@@ -344,7 +398,186 @@ export const RICH_DATA: Record<string, RichProject> = {
       {t: "SSE 채널 설계", d: "7종 분리"},
       {t: "지도·GPS", d: "Leaflet·지오펜싱"},
       {t: "권한", d: "JWT 3등급"},
-      {t: "PWA", d: "오프라인"}
+      {t: "혼잡 예측", d: "모델 + 폴백"}
+    ],
+    // ── 그림 두 장이 답하는 질문 ──────────────────────────────────────────
+    //  ① 관리자가 버튼 하나 누르면 왜 방문객 화면이 새로고침 없이 바뀌는가
+    //  ② 파이썬 모델이 죽으면 서비스도 같이 죽는가 (아니오 — 그래서 그렸다)
+    //  좌표는 손으로 잡았다. 자동 배치로 뽑은 네모 네 개짜리 그림은
+    //  어떤 프로젝트에나 들어맞고, 그래서 이 프로젝트에 대해 아무 말도 못 한다.
+    diagrams: [
+      {
+        title: "Realtime Fan-out",
+        viewBox: [1180, 470],
+        caption:
+          "요점은 가운데서 한 번 모였다가 종류별로 갈라진다는 것 — 상태를 한 채널로 다 밀면 관심 없는 이벤트까지 모두가 받는다. 엔드포인트 7개는 StreamController.java 에 그대로 있다.",
+        groups: [
+          {label: "상태를 바꾸는 쪽 (쓰기)", x: 16, y: 40, w: 300, h: 376},
+          {label: "구독하는 쪽 (읽기)", x: 864, y: 40, w: 300, h: 376}
+        ],
+        nodes: [
+          {
+            id: "adm",
+            label: "관리자 콘솔",
+            note: "공지 발행 · 부스 상태",
+            x: 34,
+            y: 78,
+            w: 264,
+            h: 76
+          },
+          {
+            id: "stf",
+            label: "스태프 화면",
+            note: "예약 · 체크인 · 분실물",
+            x: 34,
+            y: 190,
+            w: 264,
+            h: 76
+          },
+          {
+            id: "gps",
+            label: "GPS 수집",
+            note: "반경 80m 혼잡도 집계",
+            x: 34,
+            y: 302,
+            w: 264,
+            h: 76
+          },
+          {
+            id: "hub",
+            label: "StreamService",
+            note: "SseEmitter 목록 관리",
+            sub: "끊긴 연결 정리",
+            x: 420,
+            y: 170,
+            w: 340,
+            h: 96,
+            accent: true
+          },
+          {
+            id: "ch",
+            label: "7개 채널",
+            note: "/congestion /events /notices /booths",
+            sub: "/staff /lost-items /reservations",
+            x: 396,
+            y: 330,
+            w: 388,
+            h: 96
+          },
+          {
+            id: "vis",
+            label: "방문객 앱",
+            note: "EventSource · 자동 재연결",
+            x: 882,
+            y: 78,
+            w: 264,
+            h: 76
+          },
+          {
+            id: "ops",
+            label: "관제 대시보드",
+            note: "KPI · 혼잡 · 공지",
+            x: 882,
+            y: 190,
+            w: 264,
+            h: 76
+          },
+          {
+            id: "fld",
+            label: "스태프 화면",
+            note: "현장 상태 즉시 반영",
+            x: 882,
+            y: 302,
+            w: 264,
+            h: 76
+          }
+        ],
+        edges: [
+          {from: [298, 116], to: [416, 196]},
+          {from: [298, 228], to: [416, 218]},
+          {from: [298, 340], to: [416, 240]},
+          {from: [762, 196], to: [880, 116]},
+          {from: [762, 218], to: [880, 228]},
+          {from: [762, 240], to: [880, 340]},
+          {from: [590, 268], to: [590, 326]}
+        ]
+      },
+      {
+        title: "Congestion Prediction — Fallback First",
+        viewBox: [1180, 460],
+        caption:
+          "모델이 있으면 쓰고, 없으면 규칙으로 내려간다. 강등 조건은 셋 — 설정으로 꺼져 있거나, 스크립트·모델 파일이 없거나, 20초 안에 못 끝내거나. 정확도는 시뮬레이션 데이터 2,520건 기준이지 실제 축제 데이터가 아니다.",
+        nodes: [
+          {
+            id: "req",
+            label: "혼잡 조회",
+            note: "부스 목록 요청",
+            x: 16,
+            y: 190,
+            w: 164,
+            h: 76
+          },
+          {
+            id: "svc",
+            label: "AiCongestionService",
+            note: "예약·체크인·GPS·대기 집계",
+            sub: "24개 feature 구성",
+            x: 220,
+            y: 180,
+            w: 250,
+            h: 96,
+            accent: true
+          },
+          {
+            id: "py",
+            label: "파이썬 모델 프로세스",
+            note: "ProcessBuilder(python3)",
+            sub: "random_forest_*.pkl · 20초 제한",
+            x: 520,
+            y: 60,
+            w: 280,
+            h: 96
+          },
+          {
+            id: "rule",
+            label: "규칙 기반 점수",
+            note: "가중 휴리스틱",
+            sub: "MODEL_UNAVAILABLE",
+            x: 520,
+            y: 316,
+            w: 280,
+            h: 96
+          },
+          {
+            id: "out",
+            label: "예측 혼잡도",
+            note: "여유 · 보통 · 혼잡 · 매우 혼잡",
+            sub: "30분 뒤 기준",
+            x: 860,
+            y: 180,
+            w: 300,
+            h: 96
+          }
+        ],
+        edges: [
+          {from: [180, 228], to: [218, 228]},
+          {
+            from: [470, 205],
+            to: [518, 110],
+            label: "정상",
+            labelAt: [497, 146]
+          },
+          {
+            from: [470, 252],
+            to: [518, 362],
+            kind: "dashed",
+            label: "꺼짐 · 파일 없음 · 20초 초과",
+            labelAt: [450, 300]
+          },
+          {from: [800, 110], to: [858, 205]},
+          {from: [800, 362], to: [858, 252], kind: "dashed"}
+        ]
+      }
     ],
     architecture: [
       {
@@ -384,6 +617,12 @@ export const RICH_DATA: Record<string, RichProject> = {
         alt: "정확 좌표 매칭(오차 ↑)"
       },
       {
+        area: "혼잡 예측",
+        pick: "파이썬 모델을 별도 프로세스로",
+        why: "scikit-learn 자산을 그대로 쓰고, 죽어도 API 는 안 죽는다",
+        alt: "자바 안에서 재구현(학습·검증을 다시)"
+      },
+      {
         area: "인증",
         pick: "JWT 3등급",
         why: "관리자/스태프/방문자 무상태 권한",
@@ -400,7 +639,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           "public class StreamController {",
           '  @GetMapping(value="/congestion", produces=TEXT_EVENT_STREAM_VALUE)',
           "  public SseEmitter congestion() { return service.subscribeCongestion(); }",
-          "  // + booths / notices / lost-items / reservations / staff / events",
+          "  // + /events /notices /booths /staff /lost-items /reservations",
           "}"
         ]
       },
@@ -418,8 +657,9 @@ export const RICH_DATA: Record<string, RichProject> = {
     work: [
       {g: "프론트", items: ["지도·부스·관리 화면", "7개 SSE 채널 구독"]},
       {g: "백엔드", items: ["SseEmitter 채널 분리", "GPS 지오펜싱·예약"]},
+      {g: "모델", items: ["24 feature 학습·비교", "자바↔파이썬 연결·폴백"]},
       {g: "인증", items: ["JWT 관리자/스태프/방문자 분리"]},
-      {g: "UX", items: ["PWA·오프라인", "카카오/네이버 길찾기 연동"]}
+      {g: "UX", items: ["PWA·오프라인·다국어·고대비", "카카오/네이버 길찾기"]}
     ],
     challenges: [
       {
@@ -441,6 +681,22 @@ export const RICH_DATA: Record<string, RichProject> = {
           "혼잡도·공지·부스를 한 스트림에 섞으니 불필요한 이벤트까지 모두가 받았다.",
         solution:
           "상태 종류별로 SSE 채널을 7개로 분리해, 클라이언트가 필요한 것만 구독하도록 했다."
+      },
+      {
+        title:
+          "혼잡 예측을 붙이면 축제 당일 모델이 서비스를 끌고 내려갈 수 있었다",
+        problem:
+          "학습한 RandomForest 는 파이썬 자산인데, 이걸 응답 경로에 그대로 넣으면 파이썬이 없거나 느린 순간 부스 목록 API 전체가 멈춘다. 축제 당일에는 복구할 시간이 없다.",
+        solution:
+          "모델을 별도 프로세스로 떼어 내고, 강등 조건 셋(설정 off · 스크립트/모델 파일 없음 · 20초 초과)에서 규칙 기반 점수로 자동으로 내려가게 했다. 화면은 어느 쪽이든 같은 라벨을 받는다.",
+        code: {
+          filename: "PythonCongestionModelService.java",
+          lines: [
+            "if (!enabled || !Files.exists(script) || !Files.exists(model)) return Map.of();",
+            "boolean finished = process.waitFor(timeout.toMillis(), MILLISECONDS); // 20s",
+            "// 비어서 돌아오면 AiCongestionService 가 fallback(…, MODEL_UNAVAILABLE)"
+          ]
+        }
       }
     ],
     tech: [
@@ -451,7 +707,8 @@ export const RICH_DATA: Record<string, RichProject> = {
       "Spring Boot 3",
       "JWT",
       "SSE",
-      "MySQL"
+      "MySQL",
+      "scikit-learn"
     ],
     resultScreens: [
       {
@@ -471,21 +728,28 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     ],
     metrics: [
+      {n: "26", l: "백엔드 컨트롤러"},
       {n: "7", l: "SSE 채널"},
-      {n: "80m", l: "GPS 지오펜싱"},
-      {n: "3", l: "권한 등급"},
+      {n: "24", l: "예측 feature"},
       {n: "1인", l: "풀스택"}
     ],
+    metricsNote:
+      "컨트롤러·채널·feature 수는 저장소에서 직접 센 값이다 (*Controller.java · StreamController.java · congestion_training_profile.json). 모델 정확도는 규칙 기반 0.70 → RandomForest 0.80(macro-F1 0.68 → 0.79)이지만, 운영 경험으로 만든 시뮬레이션 데이터 2,520건 기준이고 실제 축제 데이터로 검증한 값이 아니다.",
     kpt: {
       keep: [
         "상태를 종류별 채널로 분리한 설계",
+        "모델보다 폴백을 먼저 만든 것",
         "실제 지도 + GPS로 현장성 확보"
       ],
-      problem: ["부하 테스트 부족", "마커가 많을 때 렌더 최적화 미흡"],
-      try: ["부스 매출 집계", "혼잡도 히트맵"]
+      problem: [
+        "부하 테스트 부족",
+        "예측 모델의 학습 데이터가 실측이 아니라 시뮬레이션",
+        "마커가 많을 때 렌더 최적화 미흡"
+      ],
+      try: ["실제 운영 로그로 재학습", "부스 매출 집계", "혼잡도 히트맵"]
     },
     learning:
-      "‘실시간’이라고 무조건 WebSocket이 아니라, 단방향 푸시에는 SSE를 종류별로 나누는 게 더 단순하고 안정적이었다. 그리고 위치 판정은 ‘정확함’보다 ‘현장에서 말이 되는가’가 중요했다."
+      "‘실시간’이라고 무조건 WebSocket이 아니라, 단방향 푸시에는 SSE를 종류별로 나누는 게 더 단순하고 안정적이었다. 위치 판정도 ‘정확함’보다 ‘현장에서 말이 되는가’가 중요했다. 그리고 모델을 붙이면서 배운 건, 정확도를 올리는 것보다 모델이 없을 때 무엇이 남는지를 먼저 정하는 게 서비스에서는 더 급하다는 것이다."
   },
 
   // ════════════════════════════ MuscleUp (realtime) ═════════════════════════
@@ -502,12 +766,11 @@ export const RICH_DATA: Record<string, RichProject> = {
         src: "/projects/op/muscleup-erd.webp",
         label: "도메인 ERD",
         ratio: "16/10"
-      },
-      {
-        src: "/projects/op/muscleup-aws.webp",
-        label: "AWS 배포 구성",
-        ratio: "16/10"
       }
+      // AWS 콘솔 캡처(`muscleup-aws.webp`)를 뺐다. 배포 구성을 보여 주려던
+      // 자료였지만 실제로는 CloudFront 콘솔 화면이라, distribution ARN에
+      // **계정 ID가 그대로 노출**돼 있었고 화면 절반이 요금 안내였다.
+      // 배포 구성은 캡처가 아니라 직접 그린 구성도로 보여 주는 게 맞다.
     ],
     tldr: [
       {
@@ -537,14 +800,14 @@ export const RICH_DATA: Record<string, RichProject> = {
       title: "muscleup/home",
       kind: "bars",
       bars: [
-        {l: "REST API", p: 90, v: "16 도메인"},
+        {l: "REST API", p: 90, v: "Controller 28"},
         {l: "실시간", p: 70, v: "Socket.IO"},
         {l: "인증", p: 80, v: "JWT+OAuth"}
       ]
     },
     impact: [
       {n: "3", l: "실행 단위(FE/BE/RT)"},
-      {n: "16", l: "API 도메인"},
+      {n: "28", l: "Controller"},
       {n: "Socket.IO", l: "실시간 라운지"}
     ],
     features: [
@@ -580,6 +843,294 @@ export const RICH_DATA: Record<string, RichProject> = {
       {t: "실시간 분리", d: "Socket.IO :4001"},
       {t: "AI", d: "OpenAI·PDF"}
     ],
+    // ── 시스템 아키텍처 ──
+    // 숫자는 전부 저장소(toadsam/Ajou_MuscleUp)에서 센 값이다. 포트는 소스에서
+    // 확인했다 — realtime/src/server.ts 의 `PORT ?? 4001`, backend 의
+    // application.properties `server.port=${PORT:8080}`.
+    //
+    // 이 그림이 말하려는 건 한 가지다: **요청이 왼쪽에서 두 갈래로 갈라진다.**
+    // 자주 바뀌는 상태(위치·채팅)는 WebSocket 으로 얇은 서버가 받고, 나머지는
+    // REST 로 두꺼운 서버가 받는다. 두 서버의 박스 크기가 다른 것도 사실이다 —
+    // backend 는 Controller 28개, realtime 은 소스 파일 3개다.
+    diagrams: [
+      {
+        title: "System Architecture",
+        viewBox: [1180, 470],
+        caption:
+          "왼쪽에서 경로가 갈라지는 게 이 설계의 요점 — 자주 바뀌는 상태(위치·채팅)만 Socket.IO 가 받고 나머지는 REST 로 간다. 박스 크기 차이도 실제다(백엔드 Controller 28개 vs 실시간 서버 소스 3개). 점선 상자는 내가 만들지 않은 것.",
+        groups: [
+          {label: "BROWSER", x: 20, y: 60, w: 250, h: 330},
+          {label: "MY SERVERS", x: 360, y: 30, w: 400, h: 400},
+          {label: "EXTERNAL", x: 860, y: 210, w: 300, h: 220, dashed: true}
+        ],
+        nodes: [
+          {
+            id: "fe",
+            label: "React SPA",
+            note: "Vite · :5173",
+            sub: "pages 38 · components 23",
+            x: 40,
+            y: 150,
+            w: 210,
+            h: 150
+          },
+          {
+            id: "api",
+            label: "Spring Boot",
+            note: ":8080 · REST",
+            sub: "Controller 28 · Service 25",
+            x: 385,
+            y: 80,
+            w: 350,
+            h: 150,
+            accent: true
+          },
+          {
+            id: "rt",
+            label: "Socket.IO",
+            note: ":4001 · WebSocket",
+            sub: "server.ts · rooms.ts · types.ts",
+            x: 385,
+            y: 310,
+            w: 350,
+            h: 95
+          },
+          {
+            id: "db",
+            label: "MySQL / RDS",
+            note: "JPA · Entity 46",
+            x: 880,
+            y: 70,
+            w: 260,
+            h: 80
+          },
+          {
+            id: "s3",
+            label: "AWS S3",
+            note: "app.s3.enabled 로 전환",
+            x: 880,
+            y: 250,
+            w: 260,
+            h: 70
+          },
+          {
+            id: "ai",
+            label: "OpenAI GPT",
+            note: "/ai/analyze · plan · chat",
+            x: 880,
+            y: 340,
+            w: 260,
+            h: 70
+          }
+        ],
+        edges: [
+          // ── 갈라지는 두 경로. 이 그림이 말하려는 건 사실상 이것뿐이다. ──
+          {
+            from: [250, 195],
+            to: [381, 140],
+            label: "HTTP / REST",
+            kind: "solid",
+            labelAt: [316, 152]
+          },
+          {
+            from: [258, 268],
+            to: [381, 348],
+            label: "WebSocket",
+            kind: "double",
+            labelAt: [316, 330]
+          },
+          // 실패 경로. 정상 경로만 그린 다이어그램은 흔하다.
+          {
+            from: [383, 215],
+            to: [268, 243],
+            label: "401 → refresh → 재요청",
+            kind: "dashed",
+            labelAt: [338, 243]
+          },
+          // 오른쪽은 직각으로 꺾어 EXTERNAL 상자를 비스듬히 가로지르지 않게 한다.
+          {
+            from: [737, 110],
+            to: [876, 110],
+            label: "JPA",
+            kind: "solid",
+            labelAt: [806, 100]
+          },
+          {
+            from: [737, 170],
+            to: [876, 285],
+            label: "이미지",
+            kind: "solid",
+            bendX: 810,
+            labelAt: [810, 218]
+          },
+          {
+            from: [737, 200],
+            to: [876, 375],
+            label: "AI 코치",
+            kind: "solid",
+            bendX: 786,
+            labelAt: [786, 320]
+          }
+        ]
+      },
+      {
+        title: "Data Model — 31 tables / 8 domains",
+        viewBox: [1200, 656],
+        caption:
+          "저장소의 @Entity 클래스 31개를 전부 읽어 도메인별로 묶은 것 — 표 이름·개수·FK 수는 코드에서 센 값이다. users 한 곳으로 관계가 28개 모이는 허브 구조이고, 그래서 회원 탈퇴·권한 변경이 전 도메인에 걸린다. 선 위 숫자는 그 도메인이 users 를 참조하는 횟수.",
+        nodes: [
+          {
+            id: "users",
+            label: "users",
+            note: "id · name · email · password",
+            sub: "nickname · created_at · FK 28 유입",
+            x: 30,
+            y: 268,
+            w: 292,
+            h: 130,
+            accent: true
+          },
+          {
+            id: "d0",
+            label: "인증 · 계정",
+            note: "테이블 4 · users FK 2",
+            sub: "User · RefreshToken · EmailVerification · UserBodyStats",
+            x: 396,
+            y: 8,
+            w: 764,
+            h: 76
+          },
+          {
+            id: "d1",
+            label: "커뮤니티",
+            note: "테이블 3 · users FK 3",
+            sub: "BragPost · BragComment · BragLike",
+            x: 396,
+            y: 88,
+            w: 764,
+            h: 76
+          },
+          {
+            id: "d2",
+            label: "크루",
+            note: "테이블 4 · users FK 4",
+            sub: "WorkoutCrew · Member · JoinRequest · CrewChallenge",
+            x: 396,
+            y: 168,
+            w: 764,
+            h: 76
+          },
+          {
+            id: "d3",
+            label: "친구 · 채팅",
+            note: "테이블 4 · users FK 7",
+            sub: "Friendship · FriendRequest · ChatRoom · ChatMessage",
+            x: 396,
+            y: 248,
+            w: 764,
+            h: 76
+          },
+          {
+            id: "d4",
+            label: "프로틴 공유",
+            note: "테이블 4 · users FK 4",
+            sub: "Protein · ShareApplication · ShareMessage · Review",
+            x: 396,
+            y: 328,
+            w: 764,
+            h: 76
+          },
+          {
+            id: "d5",
+            label: "기록 · AI",
+            note: "테이블 4 · users FK 4",
+            sub: "AttendanceLog · AiChatMessage · CharacterProfile · EvolutionHistory",
+            x: 396,
+            y: 408,
+            w: 764,
+            h: 76
+          },
+          {
+            id: "d6",
+            label: "이벤트 · 프로그램",
+            note: "테이블 4 · users FK 1",
+            sub: "Event · EventParticipant · CmsEvent · ProgramApplication",
+            x: 396,
+            y: 488,
+            w: 764,
+            h: 76
+          },
+          {
+            id: "d7",
+            label: "운영 · 로그",
+            note: "테이블 4 · users FK 3",
+            sub: "AuditLog · AnalyticsEvent · LoungeVisitLog · Inquiry",
+            x: 396,
+            y: 568,
+            w: 764,
+            h: 76
+          }
+        ],
+        edges: [
+          {
+            from: [322, 333],
+            to: [392, 46],
+            label: "×2",
+            kind: "solid",
+            labelAt: [345, 171]
+          },
+          {
+            from: [322, 333],
+            to: [392, 126],
+            label: "×3",
+            kind: "solid",
+            labelAt: [345, 216]
+          },
+          {
+            from: [322, 333],
+            to: [392, 206],
+            label: "×4",
+            kind: "solid",
+            labelAt: [345, 261]
+          },
+          {
+            from: [322, 333],
+            to: [392, 286],
+            label: "×7",
+            kind: "solid",
+            labelAt: [345, 305]
+          },
+          {
+            from: [322, 333],
+            to: [392, 366],
+            label: "×4",
+            kind: "solid",
+            labelAt: [345, 350]
+          },
+          {
+            from: [322, 333],
+            to: [392, 446],
+            label: "×4",
+            kind: "solid",
+            labelAt: [345, 395]
+          },
+          {
+            from: [322, 333],
+            to: [392, 526],
+            label: "×1",
+            kind: "solid",
+            labelAt: [345, 440]
+          },
+          {
+            from: [322, 333],
+            to: [392, 606],
+            label: "×3",
+            kind: "solid",
+            labelAt: [345, 485]
+          }
+        ]
+      }
+    ],
     architecture: [
       {
         tag: "View",
@@ -589,7 +1140,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         tag: "API",
         name: "Spring Boot 3.5",
-        desc: "16 도메인 · JWT/OAuth · S3 · PDFBox"
+        desc: "Controller 28개 · JWT/OAuth · S3 · PDFBox"
       },
       {
         tag: "Realtime",
@@ -655,7 +1206,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     work: [
       {g: "기획", items: ["기록→성장→커뮤니티 루프", "캐릭터 성장 모델"]},
       {g: "프론트", items: ["홈·라운지·랭킹·AI 화면", "TanStack Query·PWA"]},
-      {g: "백엔드", items: ["16 도메인 API", "JWT/OAuth·S3·PDF"]},
+      {g: "백엔드", items: ["Controller 28개", "JWT/OAuth·S3·PDF"]},
       {g: "실시간", items: ["Socket.IO 라운지 서버", "room 상태 관리"]}
     ],
     challenges: [
@@ -763,13 +1314,29 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {k: "왜", v: "동아리 정보가 여러 채널에 흩어져 탐색·지원이 번거로움"},
       {k: "결과", v: "탐색→상세→지원까지 한 흐름으로 처리하는 FE 완성"},
-      {k: "내 역할", v: "3인 프론트엔드 팀 중 1인 (React + TS)"}
+      {
+        k: "내 역할",
+        v: "2025 프론트 3인 중 1인 → 2026 프로젝트장 · 프론트 리드"
+      }
     ],
-    demo: {repo: "https://github.com/aClub2026/FE"},
+    demo: {
+      live: "https://aclub.co.kr/",
+      repo: "https://github.com/aClub2026/FE"
+    },
+    // 서비스를 쓴 동아리 회장이 보내온 실제 메시지. **익명으로 적는다** —
+    // 공개될 걸 알고 보낸 사적인 메시지가 아니라서, 단체명·직함·캡처는 쓰지
+    // 않고 벌어진 일만 옮긴다. 지표 여섯 개보다 이 한 문장이 세다.
+    testimonial: {
+      q: "처음엔 이렇게 많이 신청해 주실 줄 몰라 상시모집으로 열어 뒀는데, 관리가 어려울 것 같아 급하게 모집을 마감했습니다.",
+      who: "서비스에 등록한 한 동아리 회장"
+    },
     meta: [
-      {label: "기간", value: "2025.01 ~ 진행 중"},
+      {label: "기간", value: "2025.01 ~ 진행 중 (2025 팀원 → 2026 프로젝트장)"},
       {label: "팀", value: "프론트엔드 3인 (본인 포함)"},
-      {label: "역할", value: "탐색·상세·마이 등 화면·훅 담당"},
+      {
+        label: "역할",
+        value: "2025 화면·훅 담당 → 2026 프로젝트 총괄 · 프론트 리드"
+      },
       {
         label: "스택",
         value: "React · TypeScript · Vite · Tailwind · React Router · axios"
@@ -786,10 +1353,14 @@ export const RICH_DATA: Record<string, RichProject> = {
         {l: "축구", sub: "마감"}
       ]
     },
+    // 예전엔 "커스텀 훅 6+ / FE 팀 3인 / 타입 TS" 였다 — 전부 **내가 만든 것의
+    // 개수**지 성과가 아니다. 심사자가 다음에 묻는 건 "그래서 몇 명이 썼나요" 다.
+    // 아래는 GA4 실측(2026.01~03).
     impact: [
-      {n: "6+", l: "커스텀 데이터 훅"},
-      {n: "3인", l: "FE 팀 협업"},
-      {n: "TS", l: "타입 기반"}
+      {n: "3,500", l: "활성 사용자"},
+      {n: "8.8만", l: "조회수"},
+      {n: "93.4%", l: "세션 참여율"},
+      {n: "1분 28초", l: "세션당 참여 시간"}
     ],
     features: [
       {t: "동아리 탐색·필터", d: "카테고리·모집상태·정렬(BottomSheet)"},
@@ -940,11 +1511,14 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     ],
     metrics: [
-      {n: "6+", l: "커스텀 훅"},
-      {n: "3인", l: "FE 팀"},
-      {n: "TS", l: "타입 적용"},
-      {n: "GitHub Pages", l: "배포"}
+      // 예전엔 "커스텀 훅 6+ / FE 팀 3인 / TS / GitHub Pages" 였다 — 넷 다
+      // **내가 만든 것의 개수·이름**이지 성과가 아니다. GA4 실측으로 바꿨다.
+      {n: "3,500", l: "활성 사용자"},
+      {n: "8.8만", l: "조회수"},
+      {n: "93.4%", l: "세션 참여율"},
+      {n: "1분 28초", l: "세션당 참여"}
     ],
+    metricsNote: "Google Analytics 4 · 2026.01–03 · 활성 사용자 기준",
     kpt: {
       keep: [
         "데이터 요청을 훅으로 모은 것",
@@ -985,7 +1559,11 @@ export const RICH_DATA: Record<string, RichProject> = {
       {k: "결과", v: "정보를 한 SPA에 모아 Docker + Nginx로 실제 배포"},
       {k: "내 역할", v: "3인 팀 프론트엔드 · 배포 담당"}
     ],
-    demo: {repo: "https://github.com/toadsam/ajouchong-web"},
+    demo: {
+      live: "https://ajouchong.com",
+      // 실서비스는 조직 저장소다(본인 확인). 개인 포크가 아니라 이쪽을 건다.
+      repo: "https://github.com/ajouchong-dev/ajouchong-web"
+    },
     meta: [
       {label: "기간", value: "2025.01 ~ 진행 중"},
       {label: "팀", value: "총학생회 IT · 프론트 3인"},
@@ -1006,10 +1584,12 @@ export const RICH_DATA: Record<string, RichProject> = {
         "[자료] 회의록"
       ]
     },
+    // Search Console 실측. 라벨에 **"검색"** 을 반드시 남긴다 —
+    // 전체 방문자로 읽히면 과장이 된다.
     impact: [
-      {n: "Docker+Nginx", l: "실배포 구성"},
-      {n: "3인", l: "팀 협업"},
-      {n: "SPA", l: "React Router"}
+      {n: "34,200", l: "검색 노출"},
+      {n: "1,080", l: "검색 클릭"},
+      {n: "3.2%", l: "검색 CTR"}
     ],
     features: [
       {t: "공지·소개", d: "메인·소개·공지 목록/상세"},
@@ -1135,11 +1715,14 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     ],
     metrics: [
-      {n: "Docker+Nginx", l: "실배포"},
-      {n: "3인", l: "팀 협업"},
-      {n: "SPA", l: "라우팅"},
+      // Search Console 실측. 라벨의 **"검색"** 은 지우면 안 된다 —
+      // 전체 방문자로 읽히면 과장이 된다.
+      {n: "34,200", l: "검색 노출"},
+      {n: "1,080", l: "검색 클릭"},
+      {n: "3.2%", l: "검색 CTR"},
       {n: "0", l: "새로고침 404"}
     ],
+    metricsNote: "Google Search Console · 검색 유입 기준 (전체 방문자 아님)",
     kpt: {
       keep: ["실제 배포까지 끝낸 경험", "환경을 Docker로 고정"],
       problem: ["모바일 최적화 미흡", "접근성 보강 필요"],

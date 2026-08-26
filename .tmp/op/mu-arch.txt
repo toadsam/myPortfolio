@@ -1,0 +1,5 @@
+Controller 28개: AdminController, AdminEventController, AiController, AnalyticsController, AttendanceController, AttendanceSharePageController, AuthController, BragInteractionController, BragPostController, CharacterController, CrewController, EventController, EventPublicController, FileController, FriendController, HealthController, HelloController, LoungeController, MetricsController, MyPageController, ProgramApplicationController, ProteinController, ProteinShareController, RankingController, ReviewController, StatsController, SupportController, UserController
+Service 25개
+Repository 31개
+Entity 46개: AiChatMessage, AiMessageType, AnalyticsEvent, ApplicationStatus, AttendanceLog, AuditLog, BaseTimeEntity, BragComment, BragLike, BragPost, BragVisibility, CharacterEvolutionHistory, CharacterEvolutionTriggerType, Charact
+최상위: {'realtime': 569, 'backend': 312, '.ua': 154, 'frontend': 111, 'docs': 4, '.gitignore': 1, '.vscode': 1, 'README.md': 1}

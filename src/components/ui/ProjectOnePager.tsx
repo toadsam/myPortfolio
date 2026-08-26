@@ -1,12 +1,15 @@
 "use client";
 
 import {AnimatePresence, motion} from "framer-motion";
+import dynamic from "next/dynamic";
+import type {ComponentType} from "react";
 import {useEffect, useRef} from "react";
 import {getProjectTheme, type ProjectTheme} from "@/data/projectThemes";
 // 이름·직함·연락처는 이력서 데이터가 단일 출처다. 여기서 다시 적지 않는다 —
 // 예전엔 푸터에 템플릿 잔재("Sam Kim")가 하드코딩돼 있었다.
 import {contact, hero} from "@/data/resume";
 import type {ProjectData} from "@/types/portfolio";
+import {ArchitectureDiagram} from "./project-viewers/richContent/ArchitectureDiagram";
 import {RICH_DATA} from "./project-viewers/richContent/data";
 import {MYWAVE_BRIEF} from "./project-viewers/richContent/mywaveBrief";
 import type {
@@ -41,10 +44,86 @@ const CATEGORY_LABEL: Record<string, string> = {
   game: "GAME"
 };
 
+// ─── 시그니처 라이브 데모 ────────────────────────────────────────────────────
+// 이 컴포넌트들은 three.js 를 한 줄도 쓰지 않는 평범한 React 다 — 마을(3D) 경로의
+// RICH_RENDERERS 에만 배선돼 있어서, 이력서로 들어온 사람은 볼 수 없었다.
+// 대신 보이던 건 "이미지 자리" 라고 적힌 빈 점선 상자였다.
+//
+// `dynamic(ssr:false)` 인 이유: 이력서 첫 화면의 무게를 늘리지 않기 위해서다.
+// 정적 import 로 두면 데모 코드가 ResumeMode 청크에 붙어, 상세를 한 번도 열지
+// 않는 방문자까지 내려받게 된다. 상세를 열 때 비로소 가져온다.
+const SIGNATURE_DEMO: Partial<
+  Record<string, ComponentType<{theme: ProjectTheme}>>
+> = {
+  festflow: dynamic(
+    () =>
+      import("./project-viewers/richContent/FestFlowLiveDemo").then(
+        m => m.FestFlowLiveDemo
+      ),
+    {ssr: false}
+  ),
+  mystock: dynamic(
+    () =>
+      import("./project-viewers/richContent/MyStockDemo").then(
+        m => m.MyStockDemo
+      ),
+    {ssr: false}
+  ),
+  muscleup: dynamic(
+    () =>
+      import("./project-viewers/richContent/MuscleUpDemo").then(
+        m => m.MuscleUpDemo
+      ),
+    {ssr: false}
+  ),
+  aclub: dynamic(
+    () =>
+      import("./project-viewers/richContent/AClubDemo").then(m => m.AClubDemo),
+    {ssr: false}
+  ),
+  ajouchong: dynamic(
+    () =>
+      import("./project-viewers/richContent/AjouchongDemo").then(
+        m => m.AjouchongDemo
+      ),
+    {ssr: false}
+  ),
+  "sign-language": dynamic(
+    () =>
+      import("./project-viewers/richContent/SignLanguageDemo").then(
+        m => m.SignLanguageDemo
+      ),
+    {ssr: false}
+  ),
+  darklab: dynamic(
+    () =>
+      import("./project-viewers/richContent/DarkLabReveal").then(
+        m => m.DarkLabReveal
+      ),
+    {ssr: false}
+  ),
+  "ajou-adventure": dynamic(
+    () =>
+      import("./project-viewers/richContent/AjouAdventureDemo").then(
+        m => m.AjouAdventureDemo
+      ),
+    {ssr: false}
+  ),
+  tserof: dynamic(
+    () =>
+      import("./project-viewers/richContent/TserofDemo").then(
+        m => m.TserofDemo
+      ),
+    {ssr: false}
+  )
+};
+
 // 이력서 모드는 전 프로젝트를 같은 톤으로 통일한다 (ProjectDetail.css의 --accent와 동일).
 // 마을(3D) 뷰는 getProjectTheme()을 각자 호출하므로 이 값에 영향받지 않는다.
-const TERMINAL_ACCENT = "#00f5ff";
-const TERMINAL_BG = "#050505";
+// 마을 간판금 · 밤하늘. globals.css 의 --v-gold / --v-night 와 같은 값이다.
+// (여기는 JS 값이라 CSS 변수를 못 읽어 리터럴로 둔다 — 바꿀 땐 둘 다 바꿀 것)
+const TERMINAL_ACCENT = "#e2c078";
+const TERMINAL_BG = "#0b1626";
 
 function terminalTheme(base: ProjectTheme): ProjectTheme {
   return {
@@ -181,7 +260,7 @@ function Shot({
         className={`${big ? "h-12 w-12" : "h-8 w-8"} mb-2 opacity-20`}
         name={iconName}
       />
-      <p className="px-4 text-center text-[10px] uppercase tracking-widest text-[#444] md:text-xs">
+      <p className="px-4 text-center text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.45)] md:text-xs">
         {spec?.label ?? "이미지 자리"}
       </p>
     </div>
@@ -200,16 +279,17 @@ function CodeWindow({spec, theme}: {spec: CodeSpec; theme: ProjectTheme}) {
           <div className="dot" />
           <div className="dot" />
         </div>
-        <span className="mono text-[10px] text-gray-500">{spec.filename}</span>
+        <span className="mono text-[11px] text-gray-500">{spec.filename}</span>
       </div>
-      <pre className="mono overflow-x-auto p-6 text-xs leading-relaxed text-[#d4d4d4]">
+      <pre className="mono overflow-x-auto p-6 text-xs leading-relaxed text-[rgb(243,230,200,0.9)]">
         {spec.lines.map((line, i) => (
           <div
             key={i}
             style={
               hl.includes(i + 1)
                 ? {
-                    background: "rgba(0,245,255,0.07)",
+                    // 강조 줄 — 간판금 옅게 (예전엔 시안이었다)
+                    background: "rgba(226,192,120,0.10)",
                     marginInline: -24,
                     paddingInline: 24
                   }
@@ -301,6 +381,13 @@ export function ProjectOnePager({
   // "득근득근 (MuscleUp)"처럼 괄호가 붙은 제목은 괄호 부분만 강조색으로.
   const titleMatch = project.title.match(/^(.*?)\s*(\([^)]*\))\s*$/);
   const repoHref = data.demo.repo ?? project.links[0]?.href;
+  // 실제로 열리는 주소가 있을 때만 "운영 중" 이라고 말하고, 그 주소로 보낸다.
+  const liveHref = data.demo.live;
+  // 오른쪽 5칸에 무엇을 둘지: 대표 이미지가 실제로 있으면 그걸 쓴다.
+  // 없을 때만 사실 묶음을 올린다 — 예전엔 여기가 "이미지 자리" 라고 적힌
+  // 빈 점선 상자였고, 이미지가 0장인 프로젝트에서는 첫 화면 절반이 그거였다.
+  const hasHeroShot = Boolean(data.heroImage?.src);
+  const asideOnRight = !hasHeroShot;
   const teamMeta = data.meta.find(m => m.label === "팀");
   // 기간·역할은 `data.meta` 에 늘 있었는데 아무도 읽지 않았다.
   // 값이 비어 있으면(= 근거가 없어 비워 둔 프로젝트) 그 항목은 빠진다.
@@ -309,8 +396,93 @@ export function ProjectOnePager({
     .filter((m): m is (typeof data.meta)[number] => Boolean(m?.value));
   const roleRow = (k: string) => k.includes("역할");
   // 실시간 계층처럼 핵심이 되는 계층은 목업처럼 강조 카드로.
+  // 시그니처 데모가 있으면 히어로의 "대표 화면" 칸은 그리지 않는다 —
+  // 데모 내부가 3단 그리드라 5/12 칸(약 500px)에 넣으면 찌그러진다.
+  // 대신 히어로 바로 아래 전체 폭에 놓는다.
+  const Signature = SIGNATURE_DEMO[project.id];
   const heroLayer = data.architecture.findIndex(l =>
     /realtime|실시간|socket/i.test(`${l.tag} ${l.name} ${l.desc}`)
+  );
+
+  // 히어로 오른쪽(또는 데모가 없을 때 왼쪽 아래)에 오는 사실 묶음.
+  // 두 자리에서 같은 것을 그리므로 변수로 한 번만 적는다.
+  const heroAside = (
+    <>
+      {/* 기간 · 역할 — `data.meta` 다섯 줄 중 예전엔 팀 하나만 읽고 기간과
+          역할을 버렸다. 서류 심사자가 가장 먼저 찾는 두 값이다.
+          근거가 없어 비어 있으면 그 줄은 빠진다. */}
+      {factRows.length > 0 ? (
+        <dl className="flex flex-wrap gap-x-8 gap-y-3 rounded-lg border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] px-6 py-4">
+          {factRows.map(m => (
+            <div key={m.label}>
+              <dt className="mono text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.6)]">
+                {m.label}
+              </dt>
+              <dd className="text-sm text-gray-200">{m.value}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
+
+      {/* 뱃지 — 팀 구성 + 기술 스택 (앞 3개는 강조) */}
+      <div className="flex flex-wrap gap-2">
+        {teamMeta ? (
+          <span className="badge">Team: {teamMeta.value}</span>
+        ) : null}
+        {data.tech.map((t, i) => (
+          <span
+            className={`badge ${i < 3 ? "border-accent text-accent" : ""}`}
+            key={t}
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+
+      {/* CTA — 라이브 사이트가 있으면 그게 첫 버튼이다.
+          실제로 돌아가는 서비스가 저장소 링크보다 강한 증거다. */}
+      <div className="flex flex-wrap gap-4 pt-4">
+        {liveHref ? (
+          <a
+            className="flex items-center gap-2 rounded-md bg-accent px-6 py-3 text-sm font-bold text-black transition-opacity hover:opacity-85"
+            href={liveHref}
+            rel="noreferrer"
+            target="_blank"
+          >
+            <Icon className="h-4 w-4" name="external" />
+            라이브 사이트 열기
+          </a>
+        ) : null}
+        {project.links.map((link, i) => {
+          // 라벨로 아이콘을 고른다. 링크가 GitHub 하나뿐이던 시절엔 전부
+          // 깃허브 아이콘이었는데, 이제 스팀 스토어·시연 영상이 섞인다.
+          const icon = /영상|video/i.test(link.label)
+            ? "rocket"
+            : /steam|스토어|사이트|store/i.test(link.label)
+            ? "external"
+            : "github";
+          // 첫 링크만 채운 버튼. 나머지는 테두리 버튼이라 무게가 갈린다 —
+          // 상용 출시 스토어와 참고용 저장소가 같은 크기로 보이면 안 된다.
+          const solid = i === 0 && !liveHref;
+          return (
+            <a
+              className={
+                solid
+                  ? "flex items-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-bold text-black transition-opacity hover:opacity-85"
+                  : "flex items-center gap-2 rounded-md border border-[rgb(122,90,56,0.45)] px-6 py-3 text-sm font-bold text-gray-300 transition-colors hover:border-accent hover:text-white"
+              }
+              href={link.href}
+              key={link.label}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <Icon className="h-4 w-4" name={icon} />
+              {link.label}
+            </a>
+          );
+        })}
+      </div>
+    </>
   );
 
   return (
@@ -326,7 +498,7 @@ export function ProjectOnePager({
       >
         {/* ══════════ 상단 바 ══════════ */}
         {/* 목업은 position:fixed지만, 스크롤 컨테이너 안에서는 sticky가 같은 결과를 준다 */}
-        <nav className="sticky top-0 z-50 w-full border-b border-[#1a1a1a] bg-black/80 px-5 py-4 backdrop-blur-md md:px-8">
+        <nav className="op-nav sticky top-0 z-50 w-full border-b border-[rgb(122,90,56,0.45)] px-5 py-4 backdrop-blur-md md:px-8">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
             <button
               className="flex shrink-0 items-center gap-2 text-xs font-medium uppercase tracking-widest text-muted transition-colors hover:text-white"
@@ -337,10 +509,15 @@ export function ProjectOnePager({
               목록으로
             </button>
 
-            <div className="mono hidden items-center gap-6 text-[10px] uppercase tracking-widest text-[#444] md:flex">
-              <span>
-                Status: <span className="text-green-500">Deployed</span>
-              </span>
+            <div className="mono hidden items-center gap-6 text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.45)] md:flex">
+              {/* 상태는 `demo.live` 하나만 근거로 삼는다. 예전엔 "Deployed" 가
+                  9개 전부에 하드코딩돼, 배포라는 말이 성립하지 않는 Unity
+                  게임에까지 붙었다. 근거가 없으면 아무 말도 하지 않는다. */}
+              {liveHref ? (
+                <span>
+                  Status: <span className="text-green-500">운영 중</span>
+                </span>
+              ) : null}
               <span className="text-accent">
                 {CATEGORY_LABEL[theme.category] ?? "PROJECT"} ·{" "}
                 {project.id.toUpperCase()}
@@ -349,14 +526,14 @@ export function ProjectOnePager({
 
             <div className="flex shrink-0 items-center gap-2">
               {typeof index === "number" && typeof total === "number" ? (
-                <span className="mono hidden text-[10px] text-[#444] sm:inline">
+                <span className="mono hidden text-[11px] text-[rgb(169,189,214,0.45)] sm:inline">
                   {index + 1} / {total}
                 </span>
               ) : null}
               {onPrev ? (
                 <button
                   aria-label="이전 프로젝트"
-                  className="mono rounded-full border border-[#1a1a1a] px-3 py-1.5 text-xs text-gray-500 transition-colors hover:border-accent hover:text-white"
+                  className="mono rounded-full border border-[rgb(122,90,56,0.45)] px-3 py-1.5 text-xs text-gray-500 transition-colors hover:border-accent hover:text-white"
                   onClick={onPrev}
                   type="button"
                 >
@@ -366,7 +543,7 @@ export function ProjectOnePager({
               {onNext ? (
                 <button
                   aria-label="다음 프로젝트"
-                  className="mono rounded-full border border-[#1a1a1a] px-3 py-1.5 text-xs text-gray-500 transition-colors hover:border-accent hover:text-white"
+                  className="mono rounded-full border border-[rgb(122,90,56,0.45)] px-3 py-1.5 text-xs text-gray-500 transition-colors hover:border-accent hover:text-white"
                   onClick={onNext}
                   type="button"
                 >
@@ -376,7 +553,7 @@ export function ProjectOnePager({
               {repoHref ? (
                 <a
                   aria-label="GitHub 저장소"
-                  className="rounded-full border border-[#1a1a1a] p-2 transition-colors hover:border-accent"
+                  className="rounded-full border border-[rgb(122,90,56,0.45)] p-2 transition-colors hover:border-accent"
                   href={repoHref}
                   rel="noreferrer"
                   target="_blank"
@@ -390,10 +567,14 @@ export function ProjectOnePager({
 
         <main className="mx-auto max-w-7xl space-y-24 px-5 pb-20 pt-10 md:px-8 md:space-y-32">
           {/* ══════════ HERO ══════════ */}
+          {/* 히어로는 늘 12단이다. 오른쪽 5칸에 들어가는 게 달라질 뿐 —
+              데모가 없으면 대표 화면(Shot), 있으면 사실표·뱃지·CTA 가 온다.
+              데모를 오른쪽에 넣지 않는 이유: 데모 내부가 3단 그리드라
+              약 500px 칸에서는 부스 이름이 줄바꿈돼 찌그러진다. */}
           <section className="anim-fade-up grid grid-cols-1 items-start gap-12 lg:grid-cols-12">
             <div className="anim-slide-left delay-1 space-y-8 lg:col-span-7">
               <div>
-                <h1 className="mb-4 text-4xl font-black tracking-tighter md:text-5xl lg:text-7xl">
+                <h1 className="op-title mb-4 text-4xl md:text-5xl lg:text-7xl">
                   {titleMatch ? (
                     <>
                       {titleMatch[1]}{" "}
@@ -409,7 +590,7 @@ export function ProjectOnePager({
               </div>
 
               {/* 핵심 요약 */}
-              <div className="rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] p-6">
+              <div className="rounded-lg border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6">
                 <div className="section-label mb-4">Core Summary</div>
                 <table className="cyber-table w-full text-sm">
                   <tbody>
@@ -429,76 +610,42 @@ export function ProjectOnePager({
                 </table>
               </div>
 
-              {/* 기간 · 팀 · 역할.
-                  예전엔 `data.meta` 다섯 줄 중 **팀 하나만** 읽고 기간과 역할을
-                  버렸다. 서류 심사자가 프로젝트에서 가장 먼저 찾는 두 값이라
-                  여기서 먼저 보여 준다. 근거가 없어 비어 있으면 그 줄은 없다. */}
-              {factRows.length > 0 ? (
-                <dl className="flex flex-wrap gap-x-8 gap-y-3 rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] px-6 py-4">
-                  {factRows.map(m => (
-                    <div key={m.label}>
-                      <dt className="mono text-[11px] uppercase tracking-widest text-[#666]">
-                        {m.label}
-                      </dt>
-                      <dd className="text-sm text-gray-200">{m.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              ) : null}
-
-              {/* 뱃지 — 팀 구성 + 기술 스택 (앞 3개는 강조) */}
-              <div className="flex flex-wrap gap-2">
-                {teamMeta ? (
-                  <span className="badge">Team: {teamMeta.value}</span>
-                ) : null}
-                {data.tech.map((t, i) => (
-                  <span
-                    className={`badge ${
-                      i < 3 ? "border-accent text-accent" : ""
-                    }`}
-                    key={t}
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-
-              {/* CTA */}
-              <div className="flex flex-wrap gap-4 pt-4">
-                {project.links.map(link => (
-                  <a
-                    className="flex items-center gap-2 rounded-md bg-white px-6 py-3 text-sm font-bold text-black transition-colors hover:bg-accent"
-                    href={link.href}
-                    key={link.label}
-                    rel="noreferrer"
-                    target="_blank"
-                  >
-                    <Icon className="h-4 w-4" name="github" />
-                    {link.label}
-                  </a>
-                ))}
-                <button
-                  className="flex cursor-not-allowed items-center gap-2 rounded-md border border-[#1a1a1a] px-6 py-3 text-sm font-bold text-[#444]"
-                  disabled
-                  type="button"
-                >
-                  <Icon className="h-4 w-4" name="external" />
-                  라이브 데모 (준비 중)
-                </button>
-              </div>
+              {asideOnRight ? null : heroAside}
             </div>
 
-            {/* 대표 화면 */}
-            <div className="anim-slide-right delay-2 h-full min-h-[300px] lg:col-span-5 lg:min-h-[400px]">
-              <Shot
-                big
-                className="h-full w-full rounded-xl"
-                ratio="16/9"
-                spec={data.heroImage}
-                theme={theme}
-              />
-            </div>
+            {/* 오른쪽 5칸 — 대표 이미지가 있으면 이미지, 없으면 사실 묶음.
+                이미지 쪽에 높이를 강제하지 않는 이유: ImageSlot 안쪽이
+                `aspectRatio` 로 16:9 를 잡는데 바깥에서 h-full/min-h 를 주면
+                그 차이만큼 이미지 아래가 검게 남았다 (총학생회에서 약 400px). */}
+            {asideOnRight ? (
+              <div className="anim-slide-right delay-2 space-y-8 lg:col-span-5">
+                {heroAside}
+              </div>
+            ) : (
+              <div className="anim-slide-right delay-2 lg:col-span-5">
+                <Shot
+                  big
+                  className="w-full rounded-xl"
+                  ratio="16/9"
+                  spec={data.heroImage}
+                  theme={theme}
+                />
+              </div>
+            )}
           </section>
+          {/* ══════════ 라이브 데모 ══════════ */}
+          {Signature ? (
+            <section className="reveal space-y-6">
+              <div className="section-label">Live Demo</div>
+              {/* 전체 폭(1,216px)에 15px 글자면 한 줄 80자가 넘는다 — 눈이
+                  다음 줄 첫머리를 못 찾는다. 한국어는 35~45자가 적당하다. */}
+              <p className="max-w-2xl text-sm text-gray-400">
+                설명 대신 직접 눌러 보세요. 아래는 실제 동작을 그대로 옮긴
+                시연입니다.
+              </p>
+              <Signature theme={theme} />
+            </section>
+          ) : null}
 
           {/* ══════════ 문제 정의 ══════════ */}
           <section className="reveal grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-16">
@@ -512,11 +659,11 @@ export function ProjectOnePager({
               {/* 리서치 인용 — 목업엔 없지만 근거 자료라 이미지 아래에 배치 */}
               {data.research.quotes.map(q => (
                 <blockquote
-                  className="border-l-2 border-[#1a1a1a] pl-4 text-sm italic leading-relaxed text-gray-500"
+                  className="border-l-2 border-[rgb(122,90,56,0.45)] pl-4 text-sm italic leading-relaxed text-gray-500"
                   key={q.who}
                 >
                   “{q.q}”
-                  <span className="mono mt-1 block not-italic text-[10px] uppercase tracking-widest text-[#444]">
+                  <span className="mono mt-1 block not-italic text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.45)]">
                     — {q.who}
                   </span>
                 </blockquote>
@@ -587,33 +734,43 @@ export function ProjectOnePager({
               })}
             </div>
 
-            <Shot
-              big
-              className="w-full rounded-xl"
-              iconName="share"
-              ratio="21/9"
-              spec={{label: "시스템 아키텍처 다이어그램", ratio: "21/9"}}
-              theme={theme}
-            />
+            {/* 다이어그램이 있으면 그린다. 없으면 **아무것도 안 그린다** —
+                예전엔 여기가 "시스템 아키텍처 다이어그램" 이라고 적힌
+                1216×521 빈 점선 상자였다. 9개 전부에 있었으니, 없는 걸
+                아홉 번 광고하고 있었던 셈이다. */}
+            {data.diagrams?.map(dg => (
+              // 좁은 화면에서 폭에 맞추면 350px 로 줄어 글자가 3px 이 된다.
+              // 최소 폭을 주고 가로로 굴린다 — 아래 결정 표와 같은 방식.
+              <div
+                className="reveal -mx-5 overflow-x-auto px-5 md:mx-0 md:px-0"
+                key={dg.title ?? dg.caption}
+              >
+                <div className="min-w-[880px]">
+                  <ArchitectureDiagram spec={dg} theme={theme} />
+                </div>
+              </div>
+            )) ?? null}
 
             <div className="reveal space-y-8">
               <h3 className="text-xl font-bold tracking-tight md:text-2xl">
                 Technical Decision Table
               </h3>
-              <div className="overflow-x-auto rounded-lg border border-[#1a1a1a]">
+              <div className="overflow-x-auto rounded-lg border border-[rgb(122,90,56,0.45)]">
                 <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-                  <thead className="mono bg-[#111] text-[10px] uppercase tracking-widest text-accent">
+                  <thead className="mono bg-[rgb(11,22,38,0.75)] text-[11px] uppercase tracking-widest text-accent">
                     <tr>
-                      <th className="border-b border-[#1a1a1a] p-4">영역</th>
-                      <th className="border-b border-[#1a1a1a] p-4">
+                      <th className="border-b border-[rgb(122,90,56,0.45)] p-4">
+                        영역
+                      </th>
+                      <th className="border-b border-[rgb(122,90,56,0.45)] p-4">
                         선택 (Choice)
                       </th>
-                      <th className="border-b border-[#1a1a1a] p-4">
+                      <th className="border-b border-[rgb(122,90,56,0.45)] p-4">
                         이유 / 대안 (Why vs Alternatives)
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#1a1a1a]">
+                  <tbody className="divide-y divide-[rgb(122,90,56,0.45)]">
                     {data.decisions.map(d => (
                       <tr
                         className="transition-colors hover:bg-white/[0.02]"
@@ -663,11 +820,11 @@ export function ProjectOnePager({
               <div className="stagger-children grid grid-cols-1 gap-8 lg:grid-cols-2">
                 {data.challenges.map(c => (
                   <div
-                    className="reveal flex flex-col overflow-hidden rounded-xl border border-[#1a1a1a] bg-[#0a0a0a]"
+                    className="reveal flex flex-col overflow-hidden rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)]"
                     key={c.title}
                   >
                     <div className="border-b border-red-500/20 bg-red-500/10 p-6">
-                      <h5 className="mono mb-2 text-[10px] uppercase tracking-widest text-red-500">
+                      <h5 className="mono mb-2 text-[11px] uppercase tracking-widest text-red-500">
                         [PROBLEM]
                       </h5>
                       <p className="font-bold text-gray-200">{c.title}</p>
@@ -698,7 +855,9 @@ export function ProjectOnePager({
                 className="w-full rounded-xl"
                 iconName="chart"
                 ratio="21/9"
-                spec={{label: "개선 결과 화면", ratio: "21/9"}}
+                spec={
+                  data.resultShot ?? {label: "개선 결과 화면", ratio: "21/9"}
+                }
                 theme={theme}
               />
             </section>
@@ -708,11 +867,24 @@ export function ProjectOnePager({
           <section className="reveal space-y-12 md:space-y-16">
             <div className="section-label">Results &amp; Retrospective</div>
 
+            {/* 사용자 반응 — 지표보다 먼저 온다.
+                "몇 명이 왔다" 보다 "그래서 무슨 일이 벌어졌다" 가 세다. */}
+            {data.testimonial ? (
+              <blockquote className="reveal highlight-box p-6 md:p-8">
+                <p className="text-lg font-light italic leading-snug text-white md:text-2xl">
+                  “{data.testimonial.q}”
+                </p>
+                <footer className="mono mt-4 text-[11px] uppercase tracking-widest text-muted">
+                  — {data.testimonial.who}
+                </footer>
+              </blockquote>
+            ) : null}
+
             {/* 지표 */}
             <div className="stagger-children grid grid-cols-2 gap-6 lg:grid-cols-4">
               {data.metrics.map(m => (
                 <div className="stat-tile reveal" key={m.l}>
-                  <div className="mono mb-1 text-[10px] uppercase tracking-widest text-muted">
+                  <div className="mono mb-1 text-[11px] uppercase tracking-widest text-muted">
                     {m.l}
                   </div>
                   <CountUp
@@ -722,6 +894,13 @@ export function ProjectOnePager({
                 </div>
               ))}
             </div>
+
+            {/* 지표 출처·기간 */}
+            {data.metricsNote ? (
+              <p className="mono -mt-6 text-[11px] text-muted">
+                {data.metricsNote}
+              </p>
+            ) : null}
 
             {/* 결과 스크린샷 */}
             {data.gallery && data.gallery.length > 0 ? (
@@ -749,7 +928,7 @@ export function ProjectOnePager({
                 ] as const
               ).map(([label, color, icon, items]) => (
                 <div
-                  className="reveal rounded-lg border border-[#1a1a1a] bg-[#0a0a0a] p-6"
+                  className="reveal rounded-lg border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6"
                   key={label}
                 >
                   <h6
@@ -779,7 +958,7 @@ export function ProjectOnePager({
         </main>
 
         {/* ══════════ 푸터 ══════════ */}
-        <footer className="mt-24 border-t border-[#1a1a1a] bg-[#050505] py-16">
+        <footer className="mt-24 border-t border-[rgb(122,90,56,0.45)] bg-[rgb(11,22,38)] py-16">
           <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 px-5 md:flex-row md:px-8">
             <div className="space-y-2 text-center md:text-left">
               <div className="text-sm font-bold tracking-tight">
@@ -789,7 +968,7 @@ export function ProjectOnePager({
                   "Fullstack Developer: Sam Kim" 이 그대로 남아, 프로젝트 상세
                   9개 전부의 푸터에 다른 사람 이름이 찍히고 있었다.
                   이제 이력서 데이터 한 곳(`hero`)에서 가져온다. */}
-              <p className="mono text-xs uppercase tracking-widest text-[#444]">
+              <p className="mono text-xs uppercase tracking-widest text-[rgb(169,189,214,0.45)]">
                 {hero.name} · {hero.roleTag}
               </p>
             </div>
@@ -800,7 +979,7 @@ export function ProjectOnePager({
               <a
                 // 이메일은 uppercase 를 걸지 않는다 — 대문자로 찍힌 주소는
                 // 동작은 해도 잘못 옮겨 적기 쉽다.
-                className="mono flex items-center gap-2 text-[11px] tracking-wider text-[#666] transition-colors hover:text-accent"
+                className="mono flex items-center gap-2 text-[11px] tracking-wider text-[rgb(169,189,214,0.6)] transition-colors hover:text-accent"
                 href={`mailto:${contact.email}`}
               >
                 <span className="h-2 w-2 rounded-full bg-accent" />
@@ -808,7 +987,7 @@ export function ProjectOnePager({
               </a>
               {onNext ? (
                 <button
-                  className="mono rounded-lg border border-[#1a1a1a] px-6 py-3 text-xs font-bold text-gray-400 transition-colors hover:border-accent hover:text-white"
+                  className="mono rounded-lg border border-[rgb(122,90,56,0.45)] px-6 py-3 text-xs font-bold text-gray-400 transition-colors hover:border-accent hover:text-white"
                   onClick={onNext}
                   type="button"
                 >

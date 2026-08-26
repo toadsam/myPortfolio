@@ -1,0 +1,6 @@
+realtime 소스 375개
+realtime 상위 폴더: {'node_modules': 369, 'dist': 3, 'src': 3}
+소켓 관련 파일 63개: rooms.js, index.d.ts, index.js, index.d.ts, index.js, socket.d.ts, socket.js, websocket.d.ts, websocket.js, websocket.d.ts, websocket.js, cluster-adapter.d.ts
+frontend 소스 83개
+frontend 상위: {'src': 82}
+설정 파일: 

@@ -5,9 +5,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // 이력서 모드(터미널 테마) 강조색. 색상 토큰으로 등록해야
+        // 프로젝트 상세(원페이지) 강조색 = 마을 간판금. 색상 토큰으로 등록해야
         // bg-accent/5 · hover:border-accent 같은 수식어가 생성된다.
-        accent: "#00f5ff",
+        // 2026-08-25 에 형광 시안(#00f5ff)에서 바꿨다 — 이 토큰을 쓰는 곳은
+        // ProjectDetail.css 와 ProjectOnePager.tsx 둘뿐이라 파급이 없다.
+        accent: "#e2c078",
         village: {
           ink: "#1f2a24",
           moss: "#4f8f5b",

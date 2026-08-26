@@ -1,34 +1,105 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   면접관 원페이지 프로젝트 상세 — 터미널 / 관제 시스템 테마
+   면접관 원페이지 프로젝트 상세 — 마을 간판 언어
    목업 디자인을 .op-detail 루트로 스코프해 앱 전역에 누출되지 않게 함.
    (ResumeTerminal.css와 같은 방식 · keyframes는 op- 프리픽스)
+
+   2026-08-25: 순검정(#050505) + 형광 시안(#00f5ff) 터미널 테마를 걷어냈다.
+   2026-08-16 에 UI 전체를 "사이버 HUD → 마을 간판 언어" 로 통일하면서
+   사이안 네온을 퇴출했는데(커밋 62c2e85), 이 화면만 예외 목록에 없이 남아
+   있었다. 이력서의 프로젝트 카드가 이미 밤하늘 남색 패널이라, 상세는 그
+   카드를 전체 화면으로 키운 것처럼 보이면 된다 — 크림색으로 갈 필요는 없다.
    ════════════════════════════════════════════════════════════════════════════ */
 
 .op-detail {
-  --bg: #050505;
-  --bg-card: #0a0a0a;
-  --accent: #00f5ff;
-  --border: #1a1a1a;
-  --text-muted: #888;
-  --problem: #ef4444;
+  /* 마을 토큰(globals.css :root)에서 끌어온다. 여기서 색을 새로 만들지 않는다. */
+  --bg: rgb(var(--v-night));
+  --bg-card: rgb(var(--v-moon) / 0.045);
+  --accent: rgb(var(--v-gold));
+  /* 등불은 "지금 켜져 있다" 는 뜻으로만 쓴다 — 라이브 배지·주 CTA. */
+  --accent-warm: rgb(var(--v-lantern));
+  --border: rgb(var(--v-wood) / 0.45);
+  --border-soft: rgb(var(--v-wood) / 0.26);
+  /* 0.62 였을 때 밤하늘 위 대비가 4.37 로 AA(4.5)에 못 미쳤다.
+     0.70 이면 5.22 — 섹션 라벨·뱃지가 10~12px 라 여유를 둔다. */
+  --text-muted: rgb(var(--v-moon) / 0.7);
+  --problem: #ef4444; /* 경고는 의미색이라 마을 팔레트 밖에 둔다 */
   --mono: "JetBrains Mono", monospace;
   --sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
   background-color: var(--bg);
-  color: #fff;
+  color: rgb(var(--v-moon));
   font-family: var(--sans);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
+/* Tailwind 회색/흰색 유틸리티를 마을 팔레트로 갈아끼운다.
+   `.op-detail .text-white`(0,2,0)가 `.text-white`(0,1,0)를 이긴다 —
+   TSX 30여 곳을 일일이 고치는 대신 여기서 한 번에 잡는다. */
+.op-detail .text-white {
+  color: rgb(var(--v-paper));
+}
+.op-detail .text-gray-200 {
+  color: rgb(var(--v-paper) / 0.92);
+}
+.op-detail .text-gray-300 {
+  color: rgb(var(--v-moon) / 0.92);
+}
+.op-detail .text-gray-400 {
+  color: rgb(var(--v-moon) / 0.78);
+}
+.op-detail .text-gray-500 {
+  color: rgb(var(--v-moon) / 0.7);
+}
+/* 흰 버튼 → 양피지 버튼. 밤하늘 위의 순백은 이력서 어디에도 없다. */
+.op-detail .bg-white {
+  background-color: rgb(var(--v-paper));
+}
+.op-detail .text-black {
+  color: rgb(var(--v-night));
+}
+/* "운영 중" = 불이 켜져 있다. 초록 대신 등불색이 세계관에 맞는다. */
+.op-detail .text-green-500 {
+  color: var(--accent-warm);
+}
+
 /* text-accent / bg-accent / border-accent는 Tailwind 색상 토큰(accent)이 생성한다.
-   여기서는 Tailwind에 없는 것만 정의. */
+   토큰 자체도 간판금으로 바꿔 뒀지만(tailwind.config), 투명도 수식어까지
+   확실히 잡으려면 여기서 한 번 더 못박는 편이 안전하다. */
+.op-detail .text-accent {
+  color: var(--accent);
+}
+.op-detail .border-accent {
+  border-color: var(--accent);
+}
+.op-detail .bg-accent {
+  background-color: var(--accent);
+}
 .op-detail .mono,
 .op-detail .font-mono {
   font-family: var(--mono);
 }
 .op-detail .text-muted {
   color: var(--text-muted);
+}
+
+/* ── 상단 바 ──
+   `bg-black/80` 이었다. 밤하늘 바탕 위에서는 순검정이 검은 띠로 떠 보인다. */
+.op-detail .op-nav {
+  background-color: rgb(var(--v-night) / 0.82);
+}
+
+/* ── 프로젝트 제목 ──
+   전에는 Pretendard 900 · 자간 -3.6px 였다. 굵기를 끝까지 올리고 자간을
+   조이는 건 사이버펑크 헤드라인 문법이고, 이력서 히어로는 정반대로
+   고운바탕 700 에 자간을 **벌려** 현판처럼 앉힌다. 그쪽에 맞춘다.
+   (고운바탕은 400·700만 배포돼 900을 주면 faux bold 로 뭉개진다.) */
+.op-detail .op-title {
+  font-family: var(--font-display), "Gowun Batang", serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.12;
+  color: rgb(var(--v-paper));
 }
 
 /* ── 섹션 라벨 (— UPPERCASE) ── */
@@ -53,13 +124,13 @@
 
 /* ── 이미지 자리 (점선 플레이스홀더) ── */
 .op-detail .placeholder-box {
-  background-color: #111;
-  border: 1px dashed #333;
+  background-color: rgb(var(--v-moon) / 0.03);
+  border: 1px dashed var(--border-soft);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #444;
+  color: rgb(var(--v-moon) / 0.4);
   position: relative;
   overflow: hidden;
   border-radius: 4px;
@@ -73,12 +144,12 @@
   right: 8px;
   font-family: var(--mono);
   font-size: 10px;
-  color: #333;
+  color: rgb(var(--v-moon) / 0.28);
 }
 
 .op-detail .placeholder-box:hover {
-  border-color: #444;
-  background-color: #151515;
+  border-color: var(--border);
+  background-color: rgb(var(--v-moon) / 0.055);
 }
 
 /* ── 요약 표 ── */
@@ -93,17 +164,17 @@
 
 /* ── 코드 창 ── */
 .op-detail .code-window {
-  background: #000;
+  background: rgb(var(--v-night) / 0.75);
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
   transition: box-shadow 0.3s;
 }
 .op-detail .code-window:hover {
-  box-shadow: 0 0 30px -5px rgba(0, 245, 255, 0.08);
+  box-shadow: 0 0 30px -5px rgb(var(--v-gold) / 0.12);
 }
 .op-detail .code-header {
-  background: #111;
+  background: rgb(var(--v-moon) / 0.05);
   padding: 8px 16px;
   display: flex;
   justify-content: space-between;
@@ -118,7 +189,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #333;
+  background: rgb(var(--v-wood) / 0.7);
 }
 
 /* ── 아키텍처 카드 ── */
@@ -132,7 +203,7 @@
 .op-detail .arch-card:hover {
   border-color: var(--accent);
   transform: translateY(-4px);
-  box-shadow: 0 8px 30px -10px rgba(0, 245, 255, 0.15);
+  box-shadow: 0 8px 30px -10px rgb(var(--v-gold) / 0.2);
 }
 
 /* ── 지표 타일 ── */
@@ -162,7 +233,7 @@
 .op-detail .highlight-box {
   background: linear-gradient(
     90deg,
-    rgba(0, 245, 255, 0.05) 0%,
+    rgb(var(--v-gold) / 0.09) 0%,
     transparent 100%
   );
   border-left: 2px solid var(--accent);
@@ -176,10 +247,10 @@
   background: var(--bg);
 }
 .op-detail::-webkit-scrollbar-thumb {
-  background: #333;
+  background: rgb(var(--v-wood) / 0.8);
 }
 .op-detail::-webkit-scrollbar-thumb:hover {
-  background: #444;
+  background: rgb(var(--v-gold) / 0.7);
 }
 
 /* ════════════════ 애니메이션 ════════════════ */
@@ -318,4 +389,49 @@
     transform: none;
     transition: none;
   }
+}
+
+/* ── 좁은 화면: 가로 등장 애니메이션을 세로로 바꾼다 ──
+   `reveal-left/right` 의 초기 상태가 `translateX(∓50px)` 라, 등장 전
+   요소가 화면 밖으로 삐져나가 **가로 스크롤 30px** 를 만들었다.
+   (390px 기기에서 scrollWidth 420 — 페이지가 좌우로 흔들렸다.)
+   좁은 화면은 어차피 1단이라 가로 이동이 의미가 없으므로 위로 올린다. */
+@media (max-width: 767px) {
+  .op-detail .reveal-left,
+  .op-detail .reveal-right {
+    transform: translateY(24px);
+  }
+  .op-detail .reveal-left.visible,
+  .op-detail .reveal-right.visible {
+    transform: translateY(0);
+  }
+}
+
+/* 어떤 경우에도 가로로는 스크롤되지 않는다. 세로 스크롤은 살아 있어야 하므로
+   `clip` 이 아니라 축별로 지정한다 (overflow-x:hidden 은 y 를 auto 로 만든다). */
+.op-detail {
+  overflow-x: clip;
+}
+
+/* ── 타입 스케일 ──
+   재보니 글자 크기가 **11단계**(10/11/12/14/16/18/20/24/30/36/72px)였고,
+   가장 많이 쓰인 크기가 12px(61곳)과 10px(34곳)이었다. 반대로 본문 18px 은
+   딱 2번. 즉 화면 대부분이 작은 글씨였다. 노트북으로 보는 심사자에게 부담이다.
+   아래 세 줄로 하한을 올려 단계를 줄인다. `.op-detail .text-sm`(0,2,0)이
+   테일윈드 `.text-sm`(0,1,0)을 이긴다. */
+.op-detail .text-xs {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.op-detail .text-sm {
+  font-size: 15px;
+  line-height: 1.65;
+}
+/* 뱃지는 10px 였다. 기술 스택은 훑어보는 정보라 작아도 되지만 10px 은 지나쳤다. */
+.op-detail .badge {
+  font-size: 11px;
+}
+/* 섹션 라벨(— CONTEXT 꼴)은 대문자 + 자간이라 12px 로도 읽히지만 한 칸 올린다. */
+.op-detail .section-label {
+  font-size: 13px;
 }

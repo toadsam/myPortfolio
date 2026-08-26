@@ -849,8 +849,9 @@
 
 .resume-terminal .carousel-wrapper {
   width: 100%;
-  height: 520px;
-  margin-bottom: 60px;
+  height: 580px;
+  /* 컨트롤을 고리 **아래**로 내보내느라 커졌다 — 아래 .carousel-controls 참고. */
+  margin-bottom: 118px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -859,7 +860,9 @@
 
 .resume-terminal .carousel-scene {
   width: 220px;
-  height: 440px;
+  /* 카드에 실측 지표와 출처 줄이 붙으면서 가장 긴 카드가 477px 이 됐다.
+     440px 고리에 담기면 아래가 삐져나와 컨트롤 위로 흘렀다. 실측 + 여유. */
+  height: 500px;
   perspective: 3000px;
   position: relative;
 }
@@ -945,6 +948,15 @@
   border-color: var(--accent);
 }
 
+/* "출시" 는 Steam 상용 출시(TSEROF) 하나뿐이다. 간판금 채움으로 확실히 띄운다 —
+   목록에서 카드 하나만 다르게 보여야 심사자가 거기서 멈춘다. */
+.resume-terminal .project-status.status-shipped {
+  color: rgb(var(--v-night));
+  background: rgb(var(--v-gold));
+  border-color: rgb(var(--v-gold));
+  font-weight: 700;
+}
+
 .resume-terminal .project-card-image {
   width: 100%;
   height: 220px;
@@ -1011,9 +1023,13 @@
   border-radius: 4px;
 }
 
+/* 예전엔 `bottom: 0` 이라 고리 위에 얹혀 있었다. 카드에 지표와 출처 줄이
+   붙어 길어지자 앞쪽 카드가 래퍼 바닥을 넘어서, "한번에 보기" 버튼이
+   **총학생회 카드 한가운데를 뚫고** 앉았다(카드 3장과 겹침).
+   버튼을 고리 밖 아래로 내보내고, 그만큼 래퍼 아래 여백을 준다. */
 .resume-terminal .carousel-controls {
   position: absolute;
-  bottom: 0;
+  bottom: -62px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -1676,6 +1692,16 @@
 
 /* 아직 실측하지 않은 값. 임시 숫자가 그대로 제출돼도 거짓 주장이 되지 않도록
    화면에서 스스로 밝힌다 — 데이터에서 provisional 을 지우면 사라진다. */
+/* 지표 출처·기간 — 숫자를 뒷받침하는 줄이라 눈에 띄되 숫자를 이기면 안 된다.
+   달빛 70% 는 밤하늘 위 대비 5.2 로 AA 를 넘긴다. */
+.resume-terminal .metric-source {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.5;
+  margin-top: 8px;
+  color: rgb(var(--v-moon) / 0.7);
+}
+
 .resume-terminal .metric-provisional {
   font-family: var(--mono);
   font-style: normal;

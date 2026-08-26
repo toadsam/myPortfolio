@@ -1,0 +1,224 @@
+  festflow: {
+    tagline: "REALTIME FESTIVAL OPS · FULL-STACK WEB APP",
+    problemShot: {
+      label: "전화·메신저로 부스 현황을 확인하던 방식",
+      ratio: "4/3"
+    },
+    gallery: [
+      {label: "실제 지도(OSM) + 부스 마커", ratio: "16/10"},
+      {label: "실시간 혼잡도·공지 피드", ratio: "16/10"},
+      {label: "관리자 부스 관리 대시보드", ratio: "16/10"}
+    ],
+    tldr: [
+      {
+        k: "무엇을",
+        v: "대학 축제 부스를 실시간으로 운영·관제하는 웹앱 (Fest-A)"
+      },
+      {
+        k: "왜",
+        v: "수십 개 부스의 상태·혼잡도·공지를 실시간 공유할 도구가 없었음"
+      },
+      {k: "결과", v: "7개 SSE 채널 + 실제 지도 + GPS 지오펜싱으로 실시간 운영"},
+      {k: "내 역할", v: "1인 풀스택 (프론트 전체 + Spring Boot 백엔드)"}
+    ],
+    demo: {repo: "https://github.com/toadsam/FestFlow"},
+    meta: [
+      {label: "기간", value: "~ 2026.05"},
+      {label: "팀", value: "개인 프로젝트 (풀스택 1인)"},
+      {label: "역할", value: "프론트 전체 · SSE·GPS 백엔드"},
+      {
+        label: "스택",
+        value:
+          "React · Vite · Leaflet · PWA · Spring Boot 3 · JWT · SSE · MySQL"
+      },
+      {label: "실행", value: "Gradle bootRun + Vite · PWA"}
+    ],
+    heroScreen: {
+      title: "fest-a/live",
+      kind: "feed",
+      feed: [
+        "혼잡도 스트림 갱신",
+        "부스 상태 변경 푸시",
+        "운영 공지(긴급/분실물)",
+        "예약/체크인 이벤트"
+      ]
+    },
+    impact: [
+      {n: "7", l: "SSE 실시간 채널"},
+      {n: "80m", l: "GPS 부스 지오펜싱"},
+      {n: "실제 지도", l: "Leaflet+OSM"}
+    ],
+    features: [
+      {t: "실시간 스트림", d: "혼잡도·부스·공지·분실물·예약 등 7개 SSE 채널"},
+      {
+        t: "실제 지도 배치",
+        d: "React Leaflet + OSM 타일 위 부스 마커·클러스터"
+      },
+      {t: "GPS 지오펜싱", d: "현재 위치 반경 80m 기준 부스 판정·도보시간"},
+      {t: "PWA·권한 분리", d: "관리자/스태프/방문자 JWT 권한 · 오프라인 대응"}
+    ],
+    problem:
+      "대학 축제는 수십 개 부스가 동시에 운영되는데, 혼잡도·품절·공지·분실물 같은 상태를 실시간으로 공유하고 역할별로 접근할 도구가 없어 전화·메신저로 처리하고 있었다.",
+    research: {
+      quotes: [
+        {
+          q: "부스가 품절됐는지 본부에서는 전화를 돌려야 알 수 있었다.",
+          who: "운영 현장 문제 정의"
+        },
+        {q: "방문객은 어디가 붐비는지 모른 채 돌아다닌다.", who: "방문객 관점"}
+      ],
+      stat: {
+        n: "7",
+        l: "혼잡도·부스·공지·분실물·예약·스태프·이벤트 SSE 채널 수"
+      }
+    },
+    hypothesis:
+      "“상태 변화를 종류별 SSE 채널로 분리해 즉시 푸시하고, 실제 지도 위에서 GPS 반경으로 부스를 판정하면 — 관리자·스태프·방문자가 같은 현황을 실시간으로 공유할 수 있다.”",
+    process: [
+      {t: "요구분석", d: "운영 흐름"},
+      {t: "SSE 채널 설계", d: "7종 분리"},
+      {t: "지도·GPS", d: "Leaflet·지오펜싱"},
+      {t: "권한", d: "JWT 3등급"},
+      {t: "PWA", d: "오프라인"}
+    ],
+    architecture: [
+      {
+        tag: "View",
+        name: "React + Leaflet(PWA)",
+        desc: "지도·부스 카드·관리 대시보드"
+      },
+      {
+        tag: "Stream",
+        name: "7× SseEmitter",
+        desc: "/api/stream/congestion·booths·notices·…"
+      },
+      {
+        tag: "Geo",
+        name: "BoothService",
+        desc: "GPS 로그 기반 반경 80m 지오펜싱"
+      },
+      {tag: "DB", name: "MySQL 8", desc: "부스·예약·GPS 로그·스태프"}
+    ],
+    decisions: [
+      {
+        area: "실시간",
+        pick: "SSE(채널 분리)",
+        why: "단방향 푸시에 충분, 종류별 구독으로 부하 분리",
+        alt: "WebSocket(양방향 과함)"
+      },
+      {
+        area: "지도",
+        pick: "React Leaflet + OSM",
+        why: "오픈소스·비용 0·커스텀 마커",
+        alt: "Google Maps(비용)"
+      },
+      {
+        area: "위치",
+        pick: "반경 80m 지오펜싱",
+        why: "현장 도보 판정에 현실적",
+        alt: "정확 좌표 매칭(오차 ↑)"
+      },
+      {
+        area: "인증",
+        pick: "JWT 3등급",
+        why: "관리자/스태프/방문자 무상태 권한",
+        alt: "세션(스케일 ↓)"
+      }
+    ],
+    coreCode: [
+      {
+        filename: "StreamController.java",
+        caption: "상태 종류별로 SSE 채널을 분리 (7개 엔드포인트)",
+        highlightLines: [3, 4],
+        lines: [
+          '@RestController @RequestMapping("/api/stream")',
+          "public class StreamController {",
+          '  @GetMapping(value="/congestion", produces=TEXT_EVENT_STREAM_VALUE)',
+          "  public SseEmitter congestion() { return service.subscribeCongestion(); }",
+          "  // + booths / notices / lost-items / reservations / staff / events",
+          "}"
+        ]
+      },
+      {
+        filename: "BoothService.java",
+        caption: "GPS 로그 기준 반경 80m로 부스 근접 판정",
+        highlightLines: [1],
+        lines: [
+          "private static final double BOOTH_RADIUS_METERS = 80.0;",
+          "// 방문자 GPS 로그와 부스 좌표 거리 계산 → 반경 안이면 ‘도착’",
+          "boolean near = distance(gps, booth) <= BOOTH_RADIUS_METERS;"
+        ]
+      }
+    ],
+    work: [
+      {g: "프론트", items: ["지도·부스·관리 화면", "7개 SSE 채널 구독"]},
+      {g: "백엔드", items: ["SseEmitter 채널 분리", "GPS 지오펜싱·예약"]},
+      {g: "인증", items: ["JWT 관리자/스태프/방문자 분리"]},
+      {g: "UX", items: ["PWA·오프라인", "카카오/네이버 길찾기 연동"]}
+    ],
+    challenges: [
+      {
+        title: "모바일에서 SSE 연결이 끊기면 현황이 멈췄다",
+        problem: "네트워크가 불안정하면 EventSource가 끊긴 채 복구되지 않았다.",
+        solution:
+          "끊김 감지 시 재연결하고, 재연결 직후 스냅샷을 다시 받아 상태를 동기화하도록 했다.",
+        code: {
+          filename: "reconnect.ts",
+          lines: [
+            "es.onerror = () => { es.close(); setTimeout(connect, backoff()); };",
+            "// 재연결 직후 전체 스냅샷 재수신으로 상태 정합성 복구"
+          ]
+        }
+      },
+      {
+        title: "모든 상태를 한 채널로 밀면 부하가 컸다",
+        problem:
+          "혼잡도·공지·부스를 한 스트림에 섞으니 불필요한 이벤트까지 모두가 받았다.",
+        solution:
+          "상태 종류별로 SSE 채널을 7개로 분리해, 클라이언트가 필요한 것만 구독하도록 했다."
+      }
+    ],
+    tech: [
+      "React",
+      "Vite",
+      "React Leaflet",
+      "PWA",
+      "Spring Boot 3",
+      "JWT",
+      "SSE",
+      "MySQL"
+    ],
+    resultScreens: [
+      {
+        title: "fest-a/map",
+        kind: "cards",
+        cards: [
+          {l: "푸드존", sub: "부스 마커"},
+          {l: "플리마켓", sub: "클러스터"},
+          {l: "체험존", sub: "혼잡도"},
+          {l: "무대", sub: "공연 상태"}
+        ]
+      },
+      {
+        title: "fest-a/stream",
+        kind: "feed",
+        feed: ["혼잡도 갱신", "긴급 공지", "분실물 등록", "부스 예약/체크인"]
+      }
+    ],
+    metrics: [
+      {n: "7", l: "SSE 채널"},
+      {n: "80m", l: "GPS 지오펜싱"},
+      {n: "3", l: "권한 등급"},
+      {n: "1인", l: "풀스택"}
+    ],
+    kpt: {
+      keep: [
+        "상태를 종류별 채널로 분리한 설계",
+        "실제 지도 + GPS로 현장성 확보"
+      ],
+      problem: ["부하 테스트 부족", "마커가 많을 때 렌더 최적화 미흡"],
+      try: ["부스 매출 집계", "혼잡도 히트맵"]
+    },
+    learning:
+      "‘실시간’이라고 무조건 WebSocket이 아니라, 단방향 푸시에는 SSE를 종류별로 나누는 게 더 단순하고 안정적이었다. 그리고 위치 판정은 ‘정확함’보다 ‘현장에서 말이 되는가’가 중요했다."
+  },

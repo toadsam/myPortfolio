@@ -1,0 +1,98 @@
+  {
+    id: "muscleup",
+    title: "득근득근 (MuscleUp)",
+    subtitle:
+      "운영을 전제로 인증·보안·배포까지 설계한 피트니스 커뮤니티 풀스택 서비스",
+    category: "web",
+    status: "운영중",
+    tags: ["FullStack", "JWT", "AWS", "Security"],
+    period: "2025.09 ~ 진행 중",
+    team: "개인 개발",
+    role: "기획 · UI 설계 · API 개발 · 인증/권한 · 배포",
+    metrics: [
+      {value: "16", label: "백엔드 도메인"},
+      {value: "120", label: "누적 가입자", provisional: true},
+      {value: "1,400", label: "누적 운동 기록", provisional: true}
+    ],
+    richId: "muscleup",
+    image: "/projects/muscleup.webp",
+    links: [{label: "GitHub", href: "https://github.com/toadsam/Ajou_MuscleUp"}]
+  }
+
+=====
+
+  {
+    id: "aclub",
+    title: "aClub",
+    subtitle:
+      "실사용 운영에서 ‘문의 감소·참여 동선 명확화’를 목표로 만든 운영형 웹 서비스",
+    category: "web",
+    status: "운영중",
+    tags: ["WebService", "Operations", "UX", "Analytics"],
+    period: "2025.01 ~ 진행 중",
+    team: "프론트엔드 3인",
+    role: "Frontend 개발 · 정보 구조 설계 · GA4/GSC 기반 개선",
+    metrics: [
+      {value: "2,300", label: "월 방문자", provisional: true},
+      {value: "40%", label: "문의 감소", provisional: true}
+    ],
+    richId: "aclub",
+    image: "/projects/aclub.webp",
+    links: [{label: "사이트", href: "https://aclub.co.kr/"}]
+  }
+
+=====
+
+  {
+    id: "ajouchong",
+    title: "아주대학교 총학생회",
+    subtitle:
+      "반복 문의를 줄이고 ‘공지→확인→신청’ 동선을 명확히 만든 운영형 웹 서비스",
+    category: "web",
+    status: "운영중",
+    tags: ["WebService", "Operations", "UX", "Analytics"],
+    period: "2025.01 ~ 진행 중",
+    team: "총학생회 IT · 프론트 3인",
+    role: "Frontend 개발 · 정보 구조 설계 · GA4/GSC 기반 개선",
+    metrics: [
+      {value: "5,800", label: "월 방문자", provisional: true},
+      {value: "62%", label: "공지 열람률", provisional: true}
+    ],
+    richId: "ajouchong",
+    image: "/projects/ajouchong.webp",
+    links: [{label: "사이트", href: "https://ajouchong.com"}]
+  }
+
+=====
+
+  {
+    id: "foodmap",
+    title: "Ajou Campus Foodmap",
+    subtitle:
+      "세션 기반 OAuth 로그인과 맛집 등록 플로우를 구현한 캠퍼스 지도 서비스",
+    category: "web",
+    status: "완료",
+    tags: ["FullStack", "OAuth", "Workflow"],
+    period: "2024.10 ~ 2024.12",
+    role: "Passport Local + Google/Naver OAuth 통합 · MongoStore 세션 유지 · CORS allowlist",
+    image: "/projects/foodmap.webp",
+    links: []
+  }
+
+=====
+
+  {
+    id: "tserof",
+    title: "TSEROF",
+    subtitle: "출시·배포까지 완주한 3D 액션 플랫폼 게임 프로젝트",
+    category: "game",
+    status: "운영중",
+    tags: ["Unity", "GameDev", "3D"],
+    period: "2023.07 ~ 2023.11",
+    team: "5인 팀 — 부팀장",
+    role: "레벨 디자인 · 장애물/기믹 구현 · 기획",
+    metrics: [{value: "Steam", label: "스토어 출시"}],
+    richId: "tserof",
+    image: "/projects/tserof.webp",
+    links: []
+  }
