@@ -1,5 +1,6 @@
 import {villageBuildings} from "@/lib/constants";
 import type {
+  CharacterModelId,
   NPCData,
   NPCAgentProfile,
   NPCType,
@@ -23,6 +24,45 @@ const districtColor: Record<string, {body: string; accessory: string}> = {
   contact: {body: "#ef8f72", accessory: "#e8f2ff"},
   plaza: {body: "#7ecf68", accessory: "#f5d26b"},
   study: {body: "#5aa9e6", accessory: "#1f2a44"}
+};
+
+// 건물 NPC 의 3D 모델 지정. 여기 없는 건물은 DEFAULT_NPC_MODEL(로봇)로 간다.
+//
+// 의인화 동물 캐스팅을 하나씩 갈아끼우는 자리다 — 종별 배정표는
+// docs/NPC_CHARACTER_PROMPTS.md 에 있다.
+const buildingNpcModel: Record<string, CharacterModelId> = {
+  // 거북 — 설계상 자리는 중앙 광장인데 `central-plaza` 는 아래 filter 에서
+  // 빠져 있어 NPC 가 생기지 않는다(광장은 정재훈·루미가 이미 서 있다).
+  // 그래서 임시로 여기 붙였다. 옮기려면 이 줄의 키만 바꾸면 된다.
+  "life-timeline": "tortoise",
+
+  // 프로젝트 구역
+  "project-mystock": "buffalo",
+  "project-festflow": "parrot",
+  "project-sign-language": "rabbit",
+  "project-aclub": "meerkat",
+  "project-muscleup": "gorilla",
+  "project-tserof": "deer",
+
+  // 기술 구역
+  "skill-frontend": "peacock",
+  "skill-3d": "chameleon",
+  "skill-backend": "beaver",
+  "skill-game": "raccoon",
+  "skill-workflow": "bee",
+
+  // 학습 구역 (전담 NPC 알고·노바)
+  "study-codingtest": "tiger",
+  "study-cs": "owl",
+
+  // 연락
+  "post-office": "stork",
+
+  // 라이프 구역
+  "life-values": "elephant",
+  "life-gym": "kangaroo",
+  "life-invest": "squirrel",
+  "life-library": "panda"
 };
 
 // 학습 구역 건물별 전담 NPC 프로필 (알고리즘 도장·지식 서고)
@@ -95,6 +135,9 @@ const coreNpcs: NPCData[] = [
     id: "overseer-npc",
     sectionId: "intro",
     type: "guide",
+    // 마을에서 유일한 사람. 동물 27마리 사이에 인간이 딱 하나 서 있는 것이
+    // "이 마을은 누구 것인가"를 대사 없이 말한다.
+    model: "jaehoon",
     name: "정재훈",
     location: "마을 전역",
     role: "마을 총괄 관리자 (본인 AI 분신)",
@@ -384,12 +427,15 @@ export const autonomousNpcs: NPCData[] = [
         z + Math.sin(angle) * distance
       ];
 
+      const model = buildingNpcModel[building.id];
+
       const study = studyNpcConfig[building.id];
       if (study) {
         return {
           id: `npc-${building.id}`,
           sectionId: building.sectionId,
           type,
+          ...(model ? {model} : {}),
           name: study.name,
           location: building.name,
           role: study.role,
@@ -405,6 +451,7 @@ export const autonomousNpcs: NPCData[] = [
         id: `npc-${building.id}`,
         sectionId: building.sectionId,
         type,
+        ...(model ? {model} : {}),
         name: `${building.name} 안내원`,
         location: building.name,
         role: `${building.name} 공간 안내`,

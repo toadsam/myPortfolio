@@ -72,7 +72,30 @@ export interface BuildingData {
 
 // 3D 캐릭터 모델 식별자. 실제 경로/설정은 data/characterModels.ts에 있다.
 // 여기에 추가하면 레지스트리도 채우라고 컴파일러가 강제한다.
-export type CharacterModelId = "robot" | "lumi";
+export type CharacterModelId =
+  | "robot"
+  | "lumi"
+  // 의인화 동물 캐스팅 — 배정표는 docs/NPC_CHARACTER_PROMPTS.md
+  | "tortoise"
+  | "meerkat"
+  | "buffalo"
+  | "parrot"
+  | "rabbit"
+  | "tiger"
+  | "gorilla"
+  | "peacock"
+  | "stork"
+  | "raccoon"
+  | "bee"
+  | "beaver"
+  | "deer"
+  | "owl"
+  | "chameleon"
+  | "elephant"
+  | "kangaroo"
+  | "squirrel"
+  | "panda"
+  | "jaehoon";
 
 export interface NPCData {
   id: string;
@@ -100,7 +123,10 @@ export interface NPCAgentProfile {
 }
 
 export interface ProjectLink {
-  label: "GitHub" | "Demo";
+  // 예전엔 "GitHub" | "Demo" 뿐이었다. 스팀 스토어·시연 영상처럼 종류가
+  // 다른 증거가 생겨서 자유 문자열로 연다 — 아이콘은 ProjectOnePager 가
+  // 라벨을 보고 고른다.
+  label: string;
   href: string;
 }
 

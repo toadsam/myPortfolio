@@ -25,6 +25,20 @@ export type NpcCommand = "gather" | "photo" | "party" | "follow" | "greet";
  *  정도(수십 ms)로는 안 열리고, 의도적으로 갖다 댄 경우만 잡히는 길이. */
 const HOVER_OPEN_DELAY_MS = 450;
 
+/**
+ * 지면 **위에서만** 흔들리는 상하 진폭. 반환값은 항상 0 ~ amp.
+ *
+ * 예전엔 `settleGround() + Math.sin(t) * amp` 였는데, sin 이 음수인 절반 동안
+ * NPC 가 지면 아래로 amp 만큼 내려갔다. 캐릭터 GLB 는 원점이 정확히 발바닥이라
+ * (실측: 전 모델 minY = 0.000) 그 값이 곧 "발이 땅에 박히는 깊이"였다 —
+ * 기분이 busy 면 0.08, 키가 0.8 이니 발목까지 묻힌 셈이다.
+ *
+ * 주기와 진폭은 그대로 두고 0 위로 올려 붙인다. 결과적으로 "가장 낮을 때 발이
+ * 땅에 닿는다"가 되어 걷는 그림으로도 이쪽이 맞다.
+ * (greet/party 가 이미 쓰던 Math.abs(sin) 과 같은 의도의 함수다)
+ */
+const bobUp = (phase: number, amp: number) => (Math.sin(phase) + 1) * 0.5 * amp;
+
 interface NPCProps {
   npc: NPCData;
   /** villageState 기반 30초 주기 기본 상태 (npcRuntimeStates가 없을 때의 fallback) */
@@ -157,15 +171,20 @@ function NPCImpl({
 
   /**
    * 구역 단차 위에서 지금 밟고 있는 단 높이. NPC 는 상하로 통통 뛰므로
-   * 그 진폭에 **더할** 바닥값이 필요하다. 단이 바뀌는 순간 순간이동하지 않게
-   * 감쇠시킨다 (한 단 0.21, delta*6 이면 반 초쯤 걸려 오른다).
+   * 그 진폭에 **더할** 바닥값이 필요하다.
+   *
+   * **오를 땐 즉시, 내려갈 땐 감쇠.** 예전엔 양쪽 다 감쇠였는데(delta*6, 반 초),
+   * 그러면 단에 올라서는 그 반 초 동안 바닥값이 아직 아래에 있어 발이 단 속에
+   * 박혀 걸어 올라간다. 반대로 단에서 내려올 때 즉시 떨어뜨리면 순간이동으로
+   * 보이므로 그쪽만 감쇠를 남긴다.
    */
   const settleGround = (g: Group, delta: number) => {
     // walkHeightAt: 단 위 +1.1, **물속은 음수** — 배회 경로가 물을 지나면
     // NPC 도 캐릭터처럼 잠긴다. 일부러 그대로 둔다(물에 든 NPC 가 마을을 살린다).
     const target = walkHeightAt(g.position.x, g.position.z);
-    groundYRef.current +=
-      (target - groundYRef.current) * Math.min(1, delta * 6);
+    const cur = groundYRef.current;
+    groundYRef.current =
+      target > cur ? target : cur + (target - cur) * Math.min(1, delta * 6);
     return groundYRef.current;
   };
 
@@ -204,7 +223,7 @@ function NPCImpl({
         }
       }
       g.position.y =
-        settleGround(g, delta) + Math.sin(elapsedRef.current * 5) * 0.07;
+        settleGround(g, delta) + bobUp(elapsedRef.current * 5, 0.07);
       if (onPositionChange)
         onPositionChange(npc.id, [g.position.x, 0, g.position.z]);
       return;
@@ -219,7 +238,7 @@ function NPCImpl({
       const g = groupRef.current;
       g.rotation.y += (0 - g.rotation.y) * Math.min(1, delta * 6);
       g.position.y =
-        settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03; // 잔잔한 호흡
+        settleGround(g, delta) + bobUp(elapsedRef.current * 2.2, 0.03); // 잔잔한 호흡
       moveStateRef.current = "idle";
       return;
     }
@@ -259,7 +278,7 @@ function NPCImpl({
         g.position.z += (dz / dist) * step;
         g.rotation.y = Math.atan2(dx, dz);
         g.position.y =
-          settleGround(g, delta) + Math.sin(elapsedRef.current * 8) * 0.05;
+          settleGround(g, delta) + bobUp(elapsedRef.current * 8, 0.05);
         moveStateRef.current = dist > 0.6 ? "run" : "walk";
       } else {
         moveStateRef.current = "idle";
@@ -282,7 +301,7 @@ function NPCImpl({
           g.rotation.y += delta * 1.6;
         } else {
           g.position.y =
-            settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03;
+            settleGround(g, delta) + bobUp(elapsedRef.current * 2.2, 0.03);
         }
       }
 
@@ -306,7 +325,7 @@ function NPCImpl({
         g.rotation.y += d * Math.min(1, delta * 6);
       }
       g.position.y =
-        settleGround(g, delta) + Math.sin(elapsedRef.current * 2.2) * 0.03;
+        settleGround(g, delta) + bobUp(elapsedRef.current * 2.2, 0.03);
       moveStateRef.current = "idle";
       return;
     }
@@ -384,7 +403,7 @@ function NPCImpl({
 
     groupRef.current.position.y =
       settleGround(groupRef.current, delta) +
-      Math.sin(elapsedRef.current * speed + home[0]) * height;
+      bobUp(elapsedRef.current * speed + home[0], height);
 
     if (onPositionChange && now > reportAtRef.current) {
       onPositionChange(npc.id, [

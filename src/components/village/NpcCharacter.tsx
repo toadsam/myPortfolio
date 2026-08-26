@@ -25,6 +25,24 @@ export type NpcMoveState = CharacterState;
 
 // 카메라에서 이 거리 밖이면 렌더/애니 정지
 const CULL_DISTANCE = 22;
+
+/**
+ * 이 거리 밖이면 **그림자만** 끈다(본체는 계속 보인다).
+ *
+ * 그림자 패스는 캐릭터를 한 번 더 스키닝해서 그린다 — 즉 보이는 NPC 마다
+ * 삼각형 비용이 정확히 2배다. 의인화 동물 모델은 종당 약 19,500 삼각형으로
+ * 예전 로봇(3,115)의 6배라 이 2배가 그냥 넘길 수치가 아니게 됐다.
+ *
+ * 실측(마을 반경 32.6, 건물 27채 격자 전수조사):
+ *   반경 22 안 NPC — 최대 16명 · 평균 8.1명
+ *   반경 12 안 NPC — 최대  9명 · 평균 3.0명
+ *   NPC 삼각형 최악 624,000 → 487,500 · 평균 315,000 → 216,000
+ *   마을 합계 최악 1,924,000 → 1,787,500 (PerfHud 경고선 1,800,000 아래로)
+ *
+ * 12 유닛 밖 캐릭터는 키가 0.8 유닛이라 화면에서 손톱만 하고, 그 그림자는
+ * 몇 픽셀이다. 눈에 띄는 손해 없이 비용만 뺀다.
+ */
+const SHADOW_DISTANCE = 12;
 // idle 클립이 여러 개일 때 갈아타는 간격(초). ±40% 흔들어 NPC끼리 안 겹치게 한다.
 const IDLE_SWAP_SECONDS = 9;
 // Meshy가 캐릭터를 내보내는 기준 높이 (three.js 실측: 로봇·전사·루미 모두 1.7000)
@@ -59,8 +77,11 @@ function NpcCharacterImpl({
   // 그 group의 scale이 측정값에 섞여 들어간다. 그러면 정규화가 자기 출력을 다시
   // 입력으로 먹으면서 스케일이 폭주한다(캐릭터가 거대해지는 원인).
   // 여기서는 copy.parent가 확실히 null이라 순수 원본 크기가 나온다.
-  const {cloned, scale} = useMemo(() => {
+  const {cloned, scale, meshes} = useMemo(() => {
     const copy = SkeletonUtils.clone(scene);
+    // 그림자를 거리별로 껐다 켜려면 메시 목록이 필요하다. 매 프레임 traverse
+    // 하는 건 27명 × 60fps 라 낭비이므로 복제할 때 한 번만 모아 둔다.
+    const list: Mesh[] = [];
     // 캐릭터야말로 이게 제일 급했다 — 실측하니 캐릭터 GLB 6개는 MR 텍스처도
     // 없이 metalness 팩터가 1.0 이었다. 환경맵이 없는 씬에서 순수 금속은
     // 확산광을 잃고 검게만 남는다.
@@ -75,6 +96,7 @@ function NpcCharacterImpl({
         // 애니메이션 중엔 판정이 어긋난다 — 27명이 마우스 움직임마다 이걸 돌리면
         // 느리고 부정확했다. 캐릭터 메시는 레이캐스트에서 아예 뺀다.
         o.raycast = noopRaycast;
+        list.push(o);
       }
     });
     copy.updateWorldMatrix(false, true);
@@ -91,7 +113,7 @@ function NpcCharacterImpl({
       );
       next = model.height / MESHY_HEIGHT;
     }
-    return {cloned: copy, scale: next};
+    return {cloned: copy, scale: next, meshes: list};
   }, [scene, model.height, modelId]);
 
   // 클립을 상태별로 분류. 분류 안 되는 클립(어퍼컷 등)은 등록만 하고 재생은 안 한다.
@@ -115,11 +137,12 @@ function NpcCharacterImpl({
     return {clips: list, byState: buckets};
   }, [animations, model.clipOverrides]);
 
-  const {actions} = useAnimations(clips, innerRef);
+  const {actions, mixer} = useAnimations(clips, innerRef);
   const playingRef = useRef<string | null>(null);
   const idleSwapAtRef = useRef(0);
   const idleTurnRef = useRef(0);
   const visibleRef = useRef(true);
+  const shadowRef = useRef(true);
 
   useEffect(() => {
     // NPC들이 같은 위상으로 걷지 않게 시작 시점 분산
@@ -135,12 +158,29 @@ function NpcCharacterImpl({
 
     // 거리 컬링 — 멀면 숨김(렌더/스키닝 비용 제거)
     innerRef.current.getWorldPosition(_tmp);
-    const far = _tmp.distanceTo(camera.position) > CULL_DISTANCE;
+    const dist = _tmp.distanceTo(camera.position);
+    const far = dist > CULL_DISTANCE;
     if (far !== !visibleRef.current) {
       visibleRef.current = !far;
       innerRef.current.visible = !far;
+      // 안 보이는 동안은 스켈레톤 계산도 멈춘다.
+      //
+      // visible=false 면 three 가 렌더는 건너뛰지만, drei 의 useAnimations 가
+      // 건 AnimationMixer 는 자기 useFrame 에서 계속 돈다 — 뼈 26개 × 트랙 3종을
+      // 매 프레임 보간한다. 화면 밖 NPC 20여 명이 그 짓을 하고 있었다.
+      // timeScale 0 이면 mixer.update 가 시간을 0 만큼 진행시켜 사실상 무동작이 된다.
+      // (재개하면 멈춘 자세에서 그대로 이어져 티가 안 난다)
+      mixer.timeScale = far ? 0 : 1;
     }
     if (far) return;
+
+    // 그림자만 따로 끊는다 — 본체는 22 유닛까지 보이되 그림자는 12 유닛까지.
+    // 밴드가 바뀌는 순간에만 건드린다(매 프레임 대입하면 27명분 낭비).
+    const wantShadow = dist <= SHADOW_DISTANCE;
+    if (wantShadow !== shadowRef.current) {
+      shadowRef.current = wantShadow;
+      for (const m of meshes) m.castShadow = wantShadow;
+    }
 
     const now = state.clock.elapsedTime;
     const target = stateRef.current;
