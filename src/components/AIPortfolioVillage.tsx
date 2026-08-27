@@ -2160,6 +2160,7 @@ export function AIPortfolioVillage() {
             onSelectNpc={selectAtelierNpc}
             focusNpcId={atelierHudOpen ? atelierFocusNpcId : null}
             hideHints={atelierHudOpen}
+            activeNpcId={selectedNpc?.id ?? null}
           />
           {atelierHudOpen ? (
             <IntakeHud

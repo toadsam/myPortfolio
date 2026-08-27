@@ -108,6 +108,7 @@ export default function AtelierPage() {
         onSelectNpc={selectNpc}
         focusNpcId={hudOpen ? focusNpcId : null}
         hideHints={hudOpen}
+        activeNpcId={selectedNpc?.id ?? null}
       />
 
       {hudOpen ? (

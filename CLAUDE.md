@@ -129,6 +129,13 @@ Three things make this unlike every other district:
   리밋 없음, 토큰이 자물쇠). **`depth_done` 은 여전히 고정 필수 슬롯만 본다** — 분기 문항도 AI 질문도 완료
   조건이 아니다. 전체는 `docs/ATELIER_DEPTH_SCRIPT.md`.
 
+- **공방 식구는 방을 걸어 다닌다 (2026-08-27).** GLB 캐릭터 5종(합 1.7MB, GLB-0 원칙은 "가볍게만"으로
+  완화)이 자기 작업대 근처를 배회하고, 클릭하면 손님 앞까지 걸어온 뒤 대화창이 열리며(부모가
+  `activeNpcId` 로 닫힘을 알려줘야 자리로 복귀), 릴레이 설문은 카메라가 접수대에 고정된 채 불린
+  식구가 `RELAY_SPOT` 으로 걸어온다. 충돌은 방 전용(경계 사각형 + 가구 AABB 축-슬라이드,
+  `AtelierInterior` "방 안 보행" 절) — 작업대 안쪽 모서리는 0.3 물러서 있다. 팀원 자리가 상판을
+  0.15 겹치고 서서, 실측대로 막으면 스폰 지점이 가구 안이 되어 첫걸음부터 갇힌다.
+
 Two naming traps, both already guarded and locked by `tests/test_relations.py` — keep the atelier branch
 **first** in both `relations.canon()` and `chat_service._npc_profile_for_dynamic_id()`, since the existing
 `"backend"`/`"frontend"` substring checks would otherwise swallow `atelier-backend` into `developer`.

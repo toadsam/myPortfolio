@@ -3,12 +3,20 @@
 /**
  * 의뢰 공방 — 마을 지하에 숨겨진 제작소.
  *
- * 기존 실내(Lab/Workshop/Archive/Post)와 같은 규칙으로 만든다: **GLB를 쓰지 않고**
- * 상자·원기둥·평면으로 공간을 짜고, 라벨은 <Html>, 시점은 OrbitControls.
- * 나중에 실제 에셋이 생기면 이 파일의 지오메트리만 갈아끼우면 된다.
+ * 기존 실내(Lab/Workshop/Archive/Post)와 같은 규칙으로 만든다: **공간은 GLB 없이**
+ * 상자·원기둥·평면으로 짜고, 라벨은 <Html>, 시점은 OrbitControls.
  *
- * 다만 실내에 NPC가 서는 건 여기가 처음이다. 마을의 `NpcCharacter`는 GLB 로더라
- * 여기서는 쓰지 않고, 같은 절차적 문법으로 만든 `AtelierFigure`를 쓴다.
+ * NPC 다섯 식구만 예외다(2026-08-27). 원래 "GLB 0개" 원칙으로 절차 인형
+ * (AtelierFigure)을 세웠는데 — /atelier 가 마을 20.7MB 없이 단독으로 서는 게
+ * 전제였다 — 캐릭터 GLB 가 최적화 후 개당 0.3MB, 5종 합쳐 1.7MB 가 되면서
+ * 그 전제를 깨지 않고도 진짜 몸을 세울 수 있게 됐다. 그래서 몸만 마을과 같은
+ * `NpcCharacter` 로 그리고, 로딩되는 동안과 model 이 없는 NPC 는 여전히
+ * 절차 인형이 선다. **마을 GLB(건물·프롭)는 여전히 하나도 안 끌어온다.**
+ *
+ * 식구들은 방을 걸어 다닌다(2026-08-27, "방 안 보행" 절 참고): 평소엔 자기
+ * 작업대 근처를 배회하고, 클릭하면 손님 앞까지 걸어온 뒤 대화창이 열리며,
+ * 릴레이 설문에서는 카메라가 접수대에 고정된 채 불린 식구가 접수대로 걸어온다.
+ * 마주침(E-4)도 한쪽이 실제로 상대 자리까지 걸어가서 시작한다.
  *
  * 팔레트는 마을 UI 간판 언어를 따른다 — 랜턴 #ff9d38, 간판금 #e2c078, 밤하늘 #0b1626.
  */
@@ -26,6 +34,10 @@ import {
 } from "react";
 import {AdditiveBlending, Group, MathUtils, PointLight, Vector3} from "three";
 import {atelierNpcs} from "@/data/atelierRoster";
+import {
+  NpcCharacter,
+  type NpcMoveState
+} from "@/components/village/NpcCharacter";
 import {requestNpcEncounter} from "@/lib/liveApi";
 import type {NPCData} from "@/types/portfolio";
 
@@ -37,10 +49,108 @@ const WOOD_DARK = "#2e1e12";
 
 /* ────────────────────────────── NPC 인형 ────────────────────────────── */
 
+// 절차 인형 — GLB 가 오기 전 폴백, model 이 없는 NPC 의 본체.
+// (2026-08-27 까지는 이게 다섯 식구의 본체였다)
+function DollBody({npc, glow}: {npc: NPCData; glow: number}) {
+  return (
+    <>
+      {/* 몸통 */}
+      <mesh castShadow position={[0, 0.62, 0]}>
+        <capsuleGeometry args={[0.26, 0.62, 6, 14]} />
+        <meshStandardMaterial
+          color={npc.color}
+          emissive={npc.color}
+          emissiveIntensity={glow * 0.4}
+          roughness={0.55}
+        />
+      </mesh>
+      {/* 앞치마 — 공방 식구라는 표식 */}
+      <mesh position={[0, 0.5, 0.24]}>
+        <boxGeometry args={[0.34, 0.42, 0.04]} />
+        <meshStandardMaterial color={npc.accessoryColor} roughness={0.75} />
+      </mesh>
+      {/* 머리 */}
+      <mesh castShadow position={[0, 1.22, 0]}>
+        <sphereGeometry args={[0.23, 20, 16]} />
+        <meshStandardMaterial
+          color="#f3e6c8"
+          emissive={npc.color}
+          emissiveIntensity={glow * 0.25}
+          roughness={0.6}
+        />
+      </mesh>
+      {/* 눈 */}
+      {[-0.085, 0.085].map(x => (
+        <mesh key={x} position={[x, 1.25, 0.2]}>
+          <sphereGeometry args={[0.028, 8, 8]} />
+          <meshBasicMaterial color={NIGHT} />
+        </mesh>
+      ))}
+      {/* 팔 */}
+      {[-0.32, 0.32].map(x => (
+        <mesh key={x} castShadow position={[x, 0.66, 0]}>
+          <capsuleGeometry args={[0.075, 0.34, 4, 8]} />
+          <meshStandardMaterial color={npc.color} roughness={0.6} />
+        </mesh>
+      ))}
+    </>
+  );
+}
+
+/* ────────────────────── 방 안 보행 (2026-08-27) ────────────────────── */
+//
+// 공방 식구가 방을 걸어 다닌다. 마을 villageWalk 를 끌어오지 않는 이유:
+// 이 방은 평지 하나에 가구 다섯 점이 전부라, 경계 사각형 + 가구 발자국 AABB 의
+// 축-슬라이드면 충분하다. 가구 상자는 **반지름 팽창 없이** 발자국만 막고,
+// 작업대의 방 안쪽 모서리는 0.3 물러서 둔다 — 팀원 자리(±3.6)가 상판 끝
+// (±3.45) 을 0.15 겹치고 서는 그림이라, 실측 발자국을 그대로 막으면 자기
+// 자리가 '가구 안'이 되어 첫걸음부터 막힌다(실제로 갇혔다).
+
+const WALK_SPEED = 1.55;
+const RUN_SPEED = 2.6; // 부르면 뛰어온다 — 남은 거리가 멀 때만
+
+/** 설문 릴레이에 불려온 식구가 서는 곳 — 접수대 옆, 도안 옆자리 */
+const RELAY_SPOT: [number, number] = [1.5, 1.15];
+/** 릴레이 카메라가 겨누는 점 — 도안(0, 0.6)과 RELAY_SPOT 의 사이 */
+const RELAY_FOCUS: [number, number, number] = [0.75, 0, 0.95];
+
+// 벽 안쪽 + 계단(z 6.1~) 앞을 남긴 보행 가능 사각형
+const WALK_BOUNDS = {minX: -8.2, maxX: 8.2, minZ: -6.3, maxZ: 4.6};
+// 접수대 + 작업대 4개의 발자국 [x1, x2, z1, z2]
+const SOLIDS: [number, number, number, number][] = [
+  [-1.7, 1.7, -0.88, 0.18],
+  [-6.05, -3.75, -3.25, -2.15],
+  [-6.05, -3.75, 1.35, 2.45],
+  [3.75, 6.05, -3.25, -2.15],
+  [3.75, 6.05, 1.35, 2.45]
+];
+
+function walkable(x: number, z: number) {
+  if (
+    x < WALK_BOUNDS.minX ||
+    x > WALK_BOUNDS.maxX ||
+    z < WALK_BOUNDS.minZ ||
+    z > WALK_BOUNDS.maxZ
+  )
+    return false;
+  return !SOLIDS.some(
+    ([x1, x2, z1, z2]) => x > x1 && x < x2 && z > z1 && z < z2
+  );
+}
+
+/** 식구 한 명에게 내리는 이동 지시 */
+export type FigureOrder =
+  | {kind: "free"} // 자기 자리 근처를 배회
+  | {kind: "home"} // 자리로 돌아가 대기 (설문 중인 나머지)
+  | {kind: "spot"; x: number; z: number; key: string}; // 지정한 곳으로 — 도착하면 onArrive(key)
+
 function AtelierFigure({
   npc,
   onSelect,
   isIntake,
+  order,
+  onArrive,
+  positions,
   speaking = false,
   bubbleText,
   emote
@@ -48,6 +158,12 @@ function AtelierFigure({
   npc: NPCData;
   onSelect: (npc: NPCData) => void;
   isIntake: boolean;
+  /** 지금 이 식구가 따라야 할 이동 지시 */
+  order: FigureOrder;
+  /** spot 지시에 도착했을 때 한 번 불린다 */
+  onArrive?: (key: string) => void;
+  /** 식구들의 현재 발 위치 공유 맵 — 마주침 루프가 걸음 시간을 잴 때 쓴다 */
+  positions?: {current: Map<string, {x: number; z: number}>};
   /** 릴레이 설문에서 지금 말하는 식구 — 호버와 같은 들림·발광을 유지한다 */
   speaking?: boolean;
   /** 식구끼리 투닥거릴 때의 말풍선 (E-4 공방 사건) */
@@ -57,12 +173,113 @@ function AtelierFigure({
 }) {
   const [hoveredRaw, setHovered] = useState(false);
   const hovered = hoveredRaw || speaking;
+  const rootRef = useRef<Group>(null);
   const groupRef = useRef<Group>(null);
+  const modelRef = useRef<Group>(null);
+  const moveRef = useRef<NpcMoveState>("idle");
+  const posRef = useRef({x: npc.position[0], z: npc.position[2]});
+  const yawRef = useRef(0);
+  const yawTargetRef = useRef(0);
+  const wanderRef = useRef<{x: number; z: number} | null>(null);
+  const wanderWaitRef = useRef(3 + Math.random() * 9);
+  const arrivedKeyRef = useRef<string | null>(null);
   const bobRef = useRef(Math.random() * Math.PI * 2);
   const liftRef = useRef(0);
+  // 도안은 접수대를 크게 못 벗어난다 — 손님이 오면 바로 맞아야 하니까
+  const wanderRadius = isIntake ? 0.9 : 2.1;
 
   useFrame((_, delta) => {
     bobRef.current += delta * 1.4;
+
+    // ── 이동 ──
+    const p = posRef.current;
+    const home = npc.position;
+    let tx: number | null = null;
+    let tz = 0;
+    let face: number | null = null;
+    let hustle = false;
+
+    if (order.kind === "spot") {
+      tx = order.x;
+      tz = order.z;
+      face = 0; // 도착하면 손님(카메라) 쪽을 본다
+      hustle = true;
+    } else if (order.kind === "home") {
+      tx = home[0];
+      tz = home[2];
+      face = 0;
+    } else if (wanderRef.current) {
+      tx = wanderRef.current.x;
+      tz = wanderRef.current.z;
+    } else {
+      wanderWaitRef.current -= delta;
+      if (wanderWaitRef.current <= 0) {
+        for (let i = 0; i < 8; i += 1) {
+          const ang = Math.random() * Math.PI * 2;
+          const r = 0.7 + Math.random() * Math.max(0.1, wanderRadius - 0.7);
+          const cx = home[0] + Math.cos(ang) * r;
+          const cz = home[2] + Math.sin(ang) * r;
+          if (walkable(cx, cz)) {
+            wanderRef.current = {x: cx, z: cz};
+            break;
+          }
+        }
+        wanderWaitRef.current = 8 + Math.random() * 14;
+      }
+    }
+
+    if (tx !== null) {
+      const dx = tx - p.x;
+      const dz = tz - p.z;
+      const dist = Math.hypot(dx, dz);
+      if (dist > 0.07) {
+        const speed = hustle && dist > 2.5 ? RUN_SPEED : WALK_SPEED;
+        const step = Math.min(dist, speed * delta);
+        const nx = p.x + (dx / dist) * step;
+        const nz = p.z + (dz / dist) * step;
+        let moved = true;
+        if (walkable(nx, nz)) {
+          p.x = nx;
+          p.z = nz;
+        } else if (walkable(nx, p.z)) {
+          p.x = nx; // 가구 모서리 — 한 축만 미끄러진다
+        } else if (walkable(p.x, nz)) {
+          p.z = nz;
+        } else {
+          moved = false;
+          if (order.kind === "free") wanderRef.current = null; // 낀 목표는 버림
+        }
+        if (moved) {
+          moveRef.current = speed === RUN_SPEED ? "run" : "walk";
+          yawTargetRef.current = Math.atan2(dx, dz);
+        } else {
+          moveRef.current = "idle";
+        }
+      } else {
+        moveRef.current = "idle";
+        if (order.kind === "free") {
+          wanderRef.current = null;
+        } else if (face !== null) {
+          yawTargetRef.current = face;
+        }
+        if (order.kind === "spot" && arrivedKeyRef.current !== order.key) {
+          arrivedKeyRef.current = order.key;
+          onArrive?.(order.key);
+        }
+      }
+    }
+
+    // yaw 스무딩 — ±π 래핑을 넘어가며 짧은 쪽으로 돈다
+    const diff =
+      ((yawTargetRef.current - yawRef.current + Math.PI * 3) % (Math.PI * 2)) -
+      Math.PI;
+    yawRef.current += diff * Math.min(1, delta * 9);
+    if (modelRef.current) modelRef.current.rotation.y = yawRef.current;
+    if (rootRef.current) {
+      rootRef.current.position.x = p.x;
+      rootRef.current.position.z = p.z;
+    }
+    positions?.current.set(npc.id, p);
     // 보간 계수는 반드시 1 이하로 묶는다. 접수 패널이 캔버스를 덮는 동안
     // 프레임루프가 쉬었다 재개되면 delta 가 몇 초 단위로 커지는데, 그때
     // delta*7 이 1 을 넘으면 lerp 가 목표를 지나쳐 인형이 바닥 아래로 꺼진다
@@ -84,6 +301,7 @@ function AtelierFigure({
 
   return (
     <group
+      ref={rootRef}
       position={npc.position}
       onClick={event => {
         event.stopPropagation();
@@ -93,45 +311,22 @@ function AtelierFigure({
       onPointerLeave={() => setHovered(false)}
     >
       <group ref={groupRef}>
-        {/* 몸통 */}
-        <mesh castShadow position={[0, 0.62, 0]}>
-          <capsuleGeometry args={[0.26, 0.62, 6, 14]} />
-          <meshStandardMaterial
-            color={npc.color}
-            emissive={npc.color}
-            emissiveIntensity={glow * 0.4}
-            roughness={0.55}
-          />
-        </mesh>
-        {/* 앞치마 — 공방 식구라는 표식 */}
-        <mesh position={[0, 0.5, 0.24]}>
-          <boxGeometry args={[0.34, 0.42, 0.04]} />
-          <meshStandardMaterial color={npc.accessoryColor} roughness={0.75} />
-        </mesh>
-        {/* 머리 */}
-        <mesh castShadow position={[0, 1.22, 0]}>
-          <sphereGeometry args={[0.23, 20, 16]} />
-          <meshStandardMaterial
-            color="#f3e6c8"
-            emissive={npc.color}
-            emissiveIntensity={glow * 0.25}
-            roughness={0.6}
-          />
-        </mesh>
-        {/* 눈 */}
-        {[-0.085, 0.085].map(x => (
-          <mesh key={x} position={[x, 1.25, 0.2]}>
-            <sphereGeometry args={[0.028, 8, 8]} />
-            <meshBasicMaterial color={NIGHT} />
+        {/* 몸통만 걷는 방향으로 돈다 — 라벨·말풍선(Html)은 어차피 빌보드 */}
+        <group ref={modelRef}>
+          {npc.model ? (
+            // 마을과 같은 GLB 캐릭터. 로딩되는 동안은 절차 인형이 폴백으로 선다.
+            <Suspense fallback={<DollBody glow={glow} npc={npc} />}>
+              <NpcCharacter modelId={npc.model} stateRef={moveRef} />
+            </Suspense>
+          ) : (
+            <DollBody glow={glow} npc={npc} />
+          )}
+          {/* GLB 메시는 raycast 가 꺼져 있다(NpcCharacter 의 규칙) —
+              보이지 않는 캡슐이 클릭·호버를 대신 받는다. */}
+          <mesh position={[0, 0.65, 0]} visible={false}>
+            <capsuleGeometry args={[0.34, 0.7, 4, 8]} />
           </mesh>
-        ))}
-        {/* 팔 */}
-        {[-0.32, 0.32].map(x => (
-          <mesh key={x} castShadow position={[x, 0.66, 0]}>
-            <capsuleGeometry args={[0.075, 0.34, 4, 8]} />
-            <meshStandardMaterial color={npc.color} roughness={0.6} />
-          </mesh>
-        ))}
+        </group>
       </group>
 
       {/* 발밑 고리 — 클릭할 수 있다는 신호 */}
@@ -239,7 +434,7 @@ function AtelierFigure({
                 letterSpacing: "0.1em"
               }}
             >
-              {isIntake ? "의뢰 접수하기 →" : "말 걸기 →"}
+              {isIntake ? "의뢰 접수하기 →" : "불러서 상담 →"}
             </div>
           ) : null}
         </div>
@@ -649,11 +844,12 @@ const BENCHES: {
 ];
 
 /**
- * 릴레이 설문의 카메라 — 말하는 식구 앞으로 부드럽게 옮겨 간다.
+ * 릴레이 설문의 카메라 — 접수대 앞으로 한 번 내려앉는다.
  *
- * 설문 중에는 **손님이 돌리던 시점을 덮어쓴다.** 대신 목표에 닿으면 손을 떼서
- * 그 자리에서 다시 돌려볼 수 있게 한다(닿기 전까지만 lerp). 카메라 위치는 식구 자리에서
- * 방 앞쪽(z=6, 계단 쪽)을 향해 3.2 떨어진 곳 — 벽(z=7, x=±6) 안쪽이라 뚫리지 않는다.
+ * 원래는 말하는 식구의 작업대 앞으로 날아다녔는데, 이제는 **식구 쪽이 접수대로
+ * 걸어온다**(RELAY_SPOT). 그래서 카메라는 설문이 시작될 때 RELAY_FOCUS 로 한 번만
+ * 이동하고, 화자가 바뀌어도 그대로 있다 — 불려온 식구가 화면 안으로 걸어 들어온다.
+ * 목표에 닿으면 손을 떼서 손님이 다시 돌려볼 수 있다(닿기 전까지만 lerp).
  */
 function CameraRig({
   focus,
@@ -703,10 +899,21 @@ function CameraRig({
 interface Props {
   onBack: () => void;
   onSelectNpc: (npc: NPCData) => void;
-  /** 릴레이 설문에서 지금 말하는 식구의 id. 카메라가 따라가고 인형이 들린다. */
+  /** 릴레이 설문에서 지금 말하는 식구의 id. 그 식구가 접수대로 걸어오고 인형이 들린다. */
   focusNpcId?: string | null;
   /** 설문 HUD 가 바닥을 차지할 때 조작 안내를 숨긴다 */
   hideHints?: boolean;
+  /** 대화창이 열려 있는 식구의 id — 상담이 끝날 때까지 손님 앞에 서 있는다 */
+  activeNpcId?: string | null;
+}
+
+/** 마주침 루프가 보행 시스템에 손을 대는 통로 — AtelierInterior 가 채워 준다. */
+interface SocialWalkApi {
+  posOf: (id: string) => {x: number; z: number} | undefined;
+  walkTo: (id: string, x: number, z: number) => void;
+  /** 배회를 멈추고 자기 자리로 — 듣는 쪽이 빈자리를 비우지 않게 */
+  station: (id: string) => void;
+  release: (id: string) => void;
 }
 
 /** 공방 식구끼리의 마주침 루프 (5단계 E-4).
@@ -714,8 +921,16 @@ interface Props {
  * 마을의 checkEncounter 는 거리 기반이지만 여기는 넷이 늘 한 방이라 타이머로 간다.
  * 대사는 백엔드 /npc/encounter — 직군별 사건 템플릿(체리의 "범위를 또 늘림" 류)이
  * 이 방에서 처음으로 실제로 일어난다. 관계·기억·마을 소식도 똑같이 쌓인다.
+ *
+ * 2026-08-27: 말풍선만 띄우던 것에서 **한쪽이 실제로 걸어가는** 것으로. 찾아가는
+ * 쪽(a)이 상대(b) 자리 옆까지 걸은 뒤에 대화가 시작된다. 걸음이 끝나는 시각은
+ * 도착 콜백 대신 거리/속도로 어림한다 — 몇백 ms 어긋나도 말풍선이라 티가 안 나고,
+ * 타이머 사슬을 그대로 쓸 수 있어서다.
  */
-function useAtelierSocialLoop(paused: boolean) {
+function useAtelierSocialLoop(
+  paused: boolean,
+  walkApi: {current: SocialWalkApi}
+) {
   const [bubbles, setBubbles] = useState<Record<string, string>>({});
   const [emotes, setEmotes] = useState<Record<string, string>>({});
   const busyRef = useRef(false);
@@ -739,18 +954,38 @@ function useAtelierSocialLoop(paused: boolean) {
           {npc_id: b.id, mood: "calm", energy: 55, recent_memory: []},
           []
         );
+        // a 가 b 자리 옆(1.2 떨어진 점)까지 걸어간 뒤 이야기가 시작된다.
+        const cur = walkApi.current.posOf(a.id) ?? {
+          x: a.position[0],
+          z: a.position[2]
+        };
+        const vx = cur.x - b.position[0];
+        const vz = cur.z - b.position[2];
+        const vl = Math.hypot(vx, vz) || 1;
+        let mx = b.position[0] + (vx / vl) * 1.2;
+        let mz = b.position[2] + (vz / vl) * 1.2;
+        if (!walkable(mx, mz)) {
+          mx = b.position[0];
+          mz = b.position[2] + 1.2; // 사이에 가구가 있으면 방 안쪽으로
+        }
+        walkApi.current.station(b.id); // 듣는 쪽은 자리를 지킨다
+        walkApi.current.walkTo(a.id, mx, mz);
+        const walkMs =
+          (Math.hypot(mx - cur.x, mz - cur.z) / WALK_SPEED) * 1000 + 400;
         const stepMs = 2600;
         res.dialogue.forEach((line, i) => {
           timersRef.current.push(
             window.setTimeout(() => {
               setBubbles({[line.npc_id]: line.text});
-            }, i * stepMs)
+            }, walkMs + i * stepMs)
           );
         });
-        const endMs = res.dialogue.length * stepMs;
+        const endMs = walkMs + res.dialogue.length * stepMs;
         timersRef.current.push(
           window.setTimeout(() => {
             setBubbles({});
+            walkApi.current.release(a.id); // 이야기 끝 — 둘 다 다시 자유
+            walkApi.current.release(b.id);
             const delta = res.relationship?.delta ?? 0;
             if (Math.abs(delta) >= 2) {
               const emote = delta < 0 ? "💢" : "💕";
@@ -775,6 +1010,8 @@ function useAtelierSocialLoop(paused: boolean) {
       timersRef.current.forEach(t => window.clearTimeout(t));
       timersRef.current = [];
     };
+    // walkApi 는 ref 라 안정적이다
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {bubbles, emotes};
@@ -784,17 +1021,96 @@ export function AtelierInterior({
   onBack,
   onSelectNpc,
   focusNpcId = null,
-  hideHints = false
+  hideHints = false,
+  activeNpcId = null
 }: Props) {
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
-  // 설문(릴레이)이 진행 중이면 focusNpcId 가 잡혀 있다 — 그동안 식구끼리 잡담은 쉰다
-  const social = useAtelierSocialLoop(!!focusNpcId || hideHints);
-  const focus = useMemo<[number, number, number] | null>(() => {
-    const npc = focusNpcId
-      ? atelierNpcs.find(item => item.id === focusNpcId)
-      : null;
-    return npc ? npc.position : null;
-  }, [focusNpcId]);
+
+  // ── 보행 오케스트레이션 ──
+  const positionsRef = useRef<Map<string, {x: number; z: number}>>(new Map());
+  // 클릭된 식구 — 손님 앞까지 걸어온 **뒤에** 대화창이 열린다
+  const [pendingTalk, setPendingTalk] = useState<{
+    npc: NPCData;
+    key: string;
+  } | null>(null);
+  const pendingTalkRef = useRef(pendingTalk);
+  pendingTalkRef.current = pendingTalk;
+  const talkSeqRef = useRef(0);
+  // 마주침 루프가 내리는 이동 지시 (찾아가는 쪽 한 명)
+  const [socialOrders, setSocialOrders] = useState<
+    Record<string, FigureOrder | undefined>
+  >({});
+  const socialApiRef = useRef<SocialWalkApi>({
+    posOf: id => positionsRef.current.get(id),
+    walkTo: (id, x, z) =>
+      setSocialOrders(prev => ({
+        ...prev,
+        [id]: {kind: "spot", x, z, key: `social-${id}-${x.toFixed(2)}`}
+      })),
+    station: id => setSocialOrders(prev => ({...prev, [id]: {kind: "home"}})),
+    release: id => setSocialOrders(prev => ({...prev, [id]: undefined}))
+  });
+
+  // 설문(릴레이)·상담 중에는 식구끼리 잡담을 쉰다
+  const social = useAtelierSocialLoop(
+    !!focusNpcId || hideHints || !!activeNpcId || !!pendingTalk,
+    socialApiRef
+  );
+
+  /** 클릭: 도안은 접수대에 이미 있으니 즉시, 팀원은 걸어온 뒤에 연다. */
+  const handleFigureClick = (npc: NPCData) => {
+    if (npc.id === "atelier-intake-npc") {
+      onSelectNpc(npc);
+      return;
+    }
+    talkSeqRef.current += 1;
+    setPendingTalk({npc, key: `talk-${talkSeqRef.current}`});
+  };
+
+  const handleArrive = (key: string) => {
+    const pt = pendingTalkRef.current;
+    if (pt && pt.key === key) {
+      setPendingTalk(null);
+      onSelectNpc(pt.npc);
+    }
+  };
+
+  /** 손님 앞 상담 자리 — 자기 작업대가 있는 쪽에 선다 */
+  const greetSpot = (npc: NPCData): [number, number] => [
+    npc.position[0] < 0 ? -1.1 : 1.1,
+    1.9
+  ];
+
+  /** 우선순위: 릴레이 > 클릭 상담 > 대화 유지 > 마주침 > 자유 배회 */
+  const orderFor = (npc: NPCData): FigureOrder => {
+    const isIntakeNpc = npc.id === "atelier-intake-npc";
+    if (focusNpcId) {
+      if (npc.id === focusNpcId && !isIntakeNpc)
+        return {
+          kind: "spot",
+          x: RELAY_SPOT[0],
+          z: RELAY_SPOT[1],
+          key: `relay-${npc.id}`
+        };
+      return {kind: "home"}; // 도안은 접수대, 나머지는 자기 자리에서 대기
+    }
+    if (pendingTalk?.npc.id === npc.id) {
+      const [gx, gz] = greetSpot(npc);
+      return {kind: "spot", x: gx, z: gz, key: pendingTalk.key};
+    }
+    if (activeNpcId === npc.id && !isIntakeNpc) {
+      const [gx, gz] = greetSpot(npc);
+      return {kind: "spot", x: gx, z: gz, key: `stay-${npc.id}`};
+    }
+    return socialOrders[npc.id] ?? {kind: "free"};
+  };
+
+  // 릴레이 중 카메라는 접수대 앞 한 곳만 본다 — 화자가 바뀌어도 안 움직인다
+  const hasFocus = !!focusNpcId;
+  const focus = useMemo<[number, number, number] | null>(
+    () => (hasFocus ? RELAY_FOCUS : null),
+    [hasFocus]
+  );
 
   const uiIn = (delay: number) => ({
     initial: {opacity: 0, y: 10},
@@ -854,7 +1170,10 @@ export function AtelierInterior({
               emote={social.emotes[npc.id]}
               isIntake={npc.id === "atelier-intake-npc"}
               npc={npc}
-              onSelect={onSelectNpc}
+              onArrive={handleArrive}
+              onSelect={handleFigureClick}
+              order={orderFor(npc)}
+              positions={positionsRef}
               speaking={npc.id === focusNpcId}
             />
           ))}
