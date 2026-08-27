@@ -112,6 +112,13 @@ function NPCImpl({
   const moveStateRef = useRef<NpcMoveState>("idle");
   /** 조향에서 지난 프레임에 튼 쪽 — 프레임마다 좌우가 바뀌며 떠는 걸 막는다 */
   const steerSideRef = useRef<1 | -1>(1);
+  /** 조향으로 크게 튼 방향을 잠깐 고수 — 없으면 벽 앞에서 왔다갔다(와리가리)한다 */
+  const commitDirRef = useRef<{x: number; z: number} | null>(null);
+  const commitUntilRef = useRef(0);
+  /** 배회 목표 진행 감시 — 오래 못 다가가면 목적지를 새로 뽑는다 */
+  const progressKeyRef = useRef("");
+  const progressBestRef = useRef(Infinity);
+  const progressStallRef = useRef(0);
   /** 연출 이동 진행 감시 — 목표가 바뀌면 리셋 */
   const scriptedKeyRef = useRef("");
   const scriptedBestRef = useRef(Infinity); // 지금까지 가장 가까웠던 거리
@@ -179,6 +186,58 @@ function NPCImpl({
     return groundYRef.current;
   };
 
+  /**
+   * 목표 방향으로 한 걸음. 막혀서 크게(50°+) 튼 프레임엔 그 튼 방향을 0.8초
+   * **유지**한다. 유지가 없으면 매 프레임 목표를 재조준하는 탓에 "벽에 닿음 →
+   * 틀어서 한 발 → 직진이 다시 뚫려 벽으로 → 또 막혀 틀고"를 반복하며 건물
+   * 앞에서 와리가리한다 (2026-08-27 사용자 보고). 잠깐 벽을 따라 걷게 두면
+   * 모서리를 실제로 돌아 나간다. 반환값 = 이번 프레임에 움직였는가.
+   */
+  const stepToward = (
+    g: Group,
+    dx: number,
+    dz: number,
+    step: number,
+    now: number
+  ): boolean => {
+    let wx = dx;
+    let wz = dz;
+    const commit = commitDirRef.current;
+    if (commit && now < commitUntilRef.current) {
+      wx = commit.x;
+      wz = commit.z;
+    } else {
+      commitDirRef.current = null;
+    }
+    const steered = steerDry(
+      g.position.x,
+      g.position.z,
+      wx,
+      wz,
+      step,
+      steerSideRef.current
+    );
+    if (!steered.moved) {
+      commitDirRef.current = null;
+      return false;
+    }
+    steerSideRef.current = steered.side;
+    const mx = steered.x - g.position.x;
+    const mz = steered.z - g.position.z;
+    // 실제 걸은 방향이 목표 방향에서 50° 넘게 벌어졌다 = 벽에 막혀 틀었다
+    let diff = Math.atan2(mx, mz) - Math.atan2(dx, dz);
+    diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+    if (Math.abs(diff) > (Math.PI * 50) / 180) {
+      commitDirRef.current = {x: mx, z: mz};
+      commitUntilRef.current = now + 0.8;
+    }
+    // 몸은 실제로 걷는 방향을 본다 — 목표를 보면 튼 게 티가 안 난다
+    g.rotation.y = Math.atan2(mx, mz);
+    g.position.x = steered.x;
+    g.position.z = steered.z;
+    return true;
+  };
+
   useFrame(({clock, camera}, delta) => {
     elapsedRef.current += delta;
 
@@ -223,24 +282,7 @@ function NPCImpl({
         }
         let moved = false;
         if (!scriptedPlowRef.current) {
-          const steered = steerDry(
-            g.position.x,
-            g.position.z,
-            sx,
-            sz,
-            step,
-            steerSideRef.current
-          );
-          if (steered.moved) {
-            steerSideRef.current = steered.side;
-            g.rotation.y = Math.atan2(
-              steered.x - g.position.x,
-              steered.z - g.position.z
-            );
-            g.position.x = steered.x;
-            g.position.z = steered.z;
-            moved = true;
-          }
+          moved = stepToward(g, sx, sz, step, elapsedRef.current);
         }
         if (!moved) {
           // 전 방향이 막혔거나(가이드가 섬 밖에서 달려올 때) 오래 갇혔다 — 직진
@@ -314,30 +356,10 @@ function NPCImpl({
         // 집결·사진·파티·따라오기가 직선으로 가로질러 **건물을 뚫고** 모였다.
         // 배회와 같은 조향으로 건물을 돌아가고, 전 방향이 막히면 거기 멈춰
         // 선다 — 장애물 둘레에 둘러 모이는 그림이 뚫는 것보다 자연스럽다.
-        const steered = steerDry(
-          g.position.x,
-          g.position.z,
-          dx,
-          dz,
-          step,
-          steerSideRef.current
-        );
-        if (steered.moved) {
-          steerSideRef.current = steered.side;
-          g.rotation.y = Math.atan2(
-            steered.x - g.position.x,
-            steered.z - g.position.z
-          );
-          g.position.x = steered.x;
-          g.position.z = steered.z;
-        }
+        const moved = stepToward(g, dx, dz, step, elapsedRef.current);
         g.position.y =
           settleGround(g, delta) + bobUp(elapsedRef.current * 8, 0.05);
-        moveStateRef.current = steered.moved
-          ? dist > 0.6
-            ? "run"
-            : "walk"
-          : "idle";
+        moveStateRef.current = moved ? (dist > 0.6 ? "run" : "walk") : "idle";
       } else {
         moveStateRef.current = "idle";
         if (faceCamera) {
@@ -430,29 +452,34 @@ function NPCImpl({
 
       // **막히면 방향을 튼다.** 예전엔 축-슬라이드(slideToDry)였는데, 목표가
       // 건물 너머면 주민이 벽에 얼굴을 박은 채 갈리거나 서 버렸다 — "건물로
-      // 뛰어드는" 그림의 정체. steerDry 는 원하는 방향이 막히면 좌우 30°씩
-      // 틀어 처음 뚫리는 쪽으로 걷는다(물·섬 경계 규칙은 그대로 물려받는다).
-      const steered = steerDry(
-        groupRef.current.position.x,
-        groupRef.current.position.z,
-        dx,
-        dz,
-        step,
-        steerSideRef.current
-      );
-      if (steered.moved) {
-        steerSideRef.current = steered.side;
-        // 몸은 실제로 걷는 방향을 본다 — 목표를 보면 튼 게 티가 안 난다
-        groupRef.current.rotation.y = Math.atan2(
-          steered.x - groupRef.current.position.x,
-          steered.z - groupRef.current.position.z
-        );
-        groupRef.current.position.x = steered.x;
-        groupRef.current.position.z = steered.z;
-        walking = true;
-      } else {
+      // 뛰어드는" 그림의 정체. stepToward 는 막히면 좌우 30°씩 틀고, 크게 튼
+      // 방향은 잠깐 고수해서 건물 앞 와리가리를 막는다.
+      walking = stepToward(groupRef.current, dx, dz, step, now);
+      if (!walking) {
         // 전 방향이 막힌 것 — 그때만 목적지를 새로 뽑는다.
         retargetAtRef.current = 0;
+      }
+
+      // 진행 감시: 조향으로 계속 걷고는 있는데 목표에 5초 넘게 못 다가가면
+      // (건물을 빙빙 돌거나 벽을 따라 오락가락) 그 목적지는 버리고 새로 뽑는다.
+      // 사회적 목표(socialTarget)는 부모가 관리하므로 감시만 리셋한다.
+      const progressKey = `${target[0]},${target[2]}`;
+      if (progressKeyRef.current !== progressKey) {
+        progressKeyRef.current = progressKey;
+        progressBestRef.current = Infinity;
+        progressStallRef.current = 0;
+      }
+      if (dist < progressBestRef.current - 0.2) {
+        progressBestRef.current = dist;
+        progressStallRef.current = 0;
+      } else {
+        progressStallRef.current += delta;
+        if (progressStallRef.current > 5) {
+          progressStallRef.current = 0;
+          progressBestRef.current = Infinity;
+          commitDirRef.current = null;
+          if (!socialTarget) retargetAtRef.current = 0;
+        }
       }
     }
     moveStateRef.current = walking

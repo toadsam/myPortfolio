@@ -106,6 +106,7 @@ import {CharacterController} from "./CharacterController";
 import {LightPool} from "./LightPool";
 import {NPC, type NpcCommand} from "./NPC";
 import {PerfHudPanel, PerfProbe} from "./PerfHud";
+import {LakeProps} from "./LakeProps";
 import {SeasonAmbience} from "./SeasonAmbience";
 import {PropsEditorTray, PropsLayer, usePropsEditor} from "./PropsEditor";
 import {extendGltfLoader} from "@/lib/gltfLoaders";
@@ -3375,6 +3376,9 @@ function VillageSceneImpl({
           ) : null}
 
           <SeasonAmbience lite={isMobile} />
+
+          {/* 호수 소품 — 나룻배·백조·물등불은 물길 따라 떠다니고, 수상기는 정박 */}
+          <LakeProps />
 
           {/* 지하 의뢰 공방으로 내려가는 해치 — 숨겨진 입구.
               (첫 화면은 이제 별도 주소라 여기서 감출 이유가 없다.) */}

@@ -213,8 +213,13 @@ const isTerracePiece = inPath =>
 //
 // 예외: props/raw/atelier/ 는 공방 실내 가구다 — 카메라가 1~3유닛 거리라
 // 512로 줄이면 뭉개져서 전용 예산(atelier: baseColor 1024)을 쓴다.
-const textureGroupFor = (group, inPath) =>
-  group === "props" && /[\\/]atelier[\\/]/.test(inPath) ? "atelier" : group;
+// props/raw/lake/ 는 물 위 소품 — 카메라가 늘 멀어서 반 칸 작은 예산(lake)을 쓴다.
+const textureGroupFor = (group, inPath) => {
+  if (group !== "props") return group;
+  if (/[\\/]atelier[\\/]/.test(inPath)) return "atelier";
+  if (/[\\/]lake[\\/]/.test(inPath)) return "lake";
+  return group;
+};
 
 // 건물도 simplify가 잘 먹는다. 오차 0.012면 평균 40%가 빠지는데 간판 글자와 창틀은
 // 그대로다 — 아주총학 14,593 → 8,764 를 나란히 구워 대조했다. 0.03까지 올려도

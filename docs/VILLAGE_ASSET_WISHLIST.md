@@ -29,14 +29,15 @@
 
 ## 한눈에 — 급한 순서
 
-| 순위  | 무엇              | 파일                                          | 왜 지금                                                       |
-| ----- | ----------------- | --------------------------------------------- | ------------------------------------------------------------- |
-| ~~①~~ | ~~지식 서고~~     | ✅ 2026-08-27 입고                            | 폴백 민가 자동 해제, 27/27                                    |
-| ~~②~~ | ~~물가 소품 3종~~ | ✅ 2026-08-27 입고                            | `generate-decor-layout.mjs` ⑭-c 절이 심는다(개수 상한 = 예산) |
-| ~~③~~ | ~~아치 돌다리~~   | ✅ 2026-08-27 입고                            | **원본 Z 를 0.55 로 눌러 구움** — 아래 「입고 후기」 참고     |
-| ④     | 채움 민가 2종     | `props/raw/decor/house-d.glb` · `house-e.glb` | 3종으로 32채. 한 블록에 같은 집이 두세 번 나온다              |
-| ⑤     | 구역 축대 토막    | `props/raw/decor/terrace-bank.glb`            | 코드로 그린 돌쌓기라 줄눈이 반듯하다. **급하지 않음**         |
-| ~~⑥~~ | ~~공방 소품 6종~~ | ✅ 2026-08-27 입고                            | 6종 전부 배치 완료 — 합 3.6MB, `AtelierInterior` 폴백 구조    |
+| 순위  | 무엇              | 파일                                                                                                             | 왜 지금                                                             |
+| ----- | ----------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| ~~①~~ | ~~지식 서고~~     | ✅ 2026-08-27 입고                                                                                               | 폴백 민가 자동 해제, 27/27                                          |
+| ~~②~~ | ~~물가 소품 3종~~ | ✅ 2026-08-27 입고                                                                                               | `generate-decor-layout.mjs` ⑭-c 절이 심는다(개수 상한 = 예산)       |
+| ~~③~~ | ~~아치 돌다리~~   | ✅ 2026-08-27 입고                                                                                               | **원본 Z 를 0.55 로 눌러 구움** — 아래 「입고 후기」 참고           |
+| ④     | 채움 민가 2종     | `props/raw/decor/house-d.glb` · `house-e.glb`                                                                    | 3종으로 32채. 한 블록에 같은 집이 두세 번 나온다                    |
+| ⑤     | 구역 축대 토막    | `props/raw/decor/terrace-bank.glb`                                                                               | 코드로 그린 돌쌓기라 줄눈이 반듯하다. **급하지 않음**               |
+| ~~⑥~~ | ~~공방 소품 6종~~ | ✅ 2026-08-27 입고                                                                                               | 6종 전부 배치 완료 — 합 3.6MB, `AtelierInterior` 폴백 구조          |
+| ~~⑦~~ | ~~호수 5종~~      | ✅ 2026-08-28 입고 — `props/lake/` 5종                                                                           | 실제 구현은 계획과 다르다 — 아래 「⑦ 입고 후기」 참고               |
 
 > 캐릭터 **4종**은 여기 안 적는다 — 프롬프트가 이미
 > [`NPC_CHARACTER_PROMPTS.md`](NPC_CHARACTER_PROMPTS.md) 에 종별로 다 있다.
@@ -209,14 +210,14 @@ under 1200 triangles
 가구만 도형 티가 난다. **방 껍데기(바닥·벽·천장·계단)는 절차 유지** —
 방 치수에 딱 맞춘 지오메트리라 GLB 로 바꾸면 이음새 관리만 는다.
 
-| 파일명 (`props/raw/atelier/`) | 무엇                 | 실물 기준(방 축척 1유닛≈1.4m)      |
-| ----------------------------- | -------------------- | ----------------------------------- |
-| `reception-desk.glb`          | 접수대               | 길이 4.8m · 높이 1.6m (가슴 높이)   |
-| `workbench-planner.glb`       | 기획 작업대+핀보드   | 책상 3.7m, 보드 상단 2.3m           |
-| `workbench-designer.glb`      | 디자인 작업대        | 3.7m · 허리 높이                    |
-| `workbench-frontend.glb`      | 프론트 작업대+모니터 | 3.7m · 화면이 가슴 높이             |
-| `server-rack.glb`             | 백엔드 서버 캐비닛   | 높이 2.7m (사람 1.6배)              |
-| `wall-lantern.glb`            | 벽걸이 랜턴 ×3       | 등롱 0.4m (한 손 크기)              |
+| 파일명 (`props/raw/atelier/`) | 무엇                 | 실물 기준(방 축척 1유닛≈1.4m)     |
+| ----------------------------- | -------------------- | --------------------------------- |
+| `reception-desk.glb`          | 접수대               | 길이 4.8m · 높이 1.6m (가슴 높이) |
+| `workbench-planner.glb`       | 기획 작업대+핀보드   | 책상 3.7m, 보드 상단 2.3m         |
+| `workbench-designer.glb`      | 디자인 작업대        | 3.7m · 허리 높이                  |
+| `workbench-frontend.glb`      | 프론트 작업대+모니터 | 3.7m · 화면이 가슴 높이           |
+| `server-rack.glb`             | 백엔드 서버 캐비닛   | 높이 2.7m (사람 1.6배)            |
+| `wall-lantern.glb`            | 벽걸이 랜턴 ×3       | 등롱 0.4m (한 손 크기)            |
 
 **마을 소품과 다른 점 넷** (넣기 전에 알 것):
 
@@ -355,14 +356,228 @@ low poly game asset, under 8000 triangles
 
 ---
 
+## ⑦ 호수를 채우는 것 — 5종
+
+> ### ⑦ 입고 후기 (2026-08-28) — 계획과 달라진 것
+>
+> 5종 전부 입고됐지만 **경로도 배치 방식도 아래 계획과 다르다**:
+>
+> - 파일은 `props/raw/lake/` → `props/lake/` 5종: `lake-rowboat` · `lake-swan` ·
+>   `lake-seaplane` · `lake-lantern-float`(부표 등불) · `lake-lantern-dock`(잔교+등불).
+> - **`generate-decor-layout.mjs` 의 `onWater` 를 안 만들었다.** 배·백조·물등불은
+>   정적 배치가 아니라 **물길을 따라 떠다녀야** 해서(사용자 요청) 전용 컴포넌트
+>   `LakeProps.tsx` 가 맡는다 — 좌표를 데이터에 굽지 않고 모듈 로드 때
+>   `isWater`/`shoreDistAt` 로 떠다니는 고리·정박지·물가 자리를 계산한다.
+> - 텍스처는 `lake` 전용 반 칸 예산(baseColor 256) — 512 로 넣었더니 전체 VRAM 이
+>   342/340MB 로 예산을 넘겼다 (`optimize_textures.py BUDGETS` · `textureGroupFor`).
+> - 흘수선은 계획대로 배치(y)에서 맞췄다. Meshy 원점이 bbox **중앙**이라
+>   `y = 수면 − 흘수 − min.y × scale`.
+
+### 왜 — 물가는 채워졌는데 **수면**이 비어 있다
+
+②(부들·수련·징검돌)가 들어가면서 물**가**는 채워졌다. 그런데 물 자체는 그대로다.
+
+| 확인한 것               | 수치                                         |
+| ----------------------- | -------------------------------------------- |
+| 석호 껍질               | r 28.2~37.0 (22각형)                         |
+| 광장 섬 / 구역 섬 6개   | r 9.0 / r 7.6~11.6                           |
+| 해자 타원               | a 42 · b 38 (리본 반폭 1.23)                 |
+| 물가에 자라는 것        | 갈대 26 · 수련 12 · 징검돌 4 ✅ (2026-08-27) |
+| **수면에 떠 있는 물건** | **0개** — 다리 14·폭포 3 말고는 없다         |
+| **물 위 불빛(밤)**      | **0개**                                      |
+
+마을에서 면적이 제일 넓은 게 물인데 그 위가 비어 있다. 이 다섯이 **수면**을 만든다.
+
+### 톤 — 다섯 개 모두 지킬 것
+
+- **맨 금속을 부르지 말 것.** 공통 네거티브에 `metallic, chrome` 이 들어 있다.
+  놋쇠·알루미늄이라고 쓰면 프롬프트가 네거티브와 싸운다. 금속으로 보여야 하는 것은
+  **칠한 쇠(painted iron)** 로 적는다
+- 나무는 **풍화된 판자**(`weathered planks`) — 이웃인 `bridge-stone`·`market-stall`·
+  `well` 이 전부 그 어휘로 뽑혔다
+- 색은 컨셉 팔레트 그대로: 따뜻한 갈색 · 크림 · 이끼 초록 · 바랜 청록
+  (`src/data/villageColors.json`, 배경 컨셉에서 뽑은 28색)
+- **등불은 따뜻한 노랑 하나뿐.** 마을 조명이 전부 그 색이다
+
+### 배치 — 다섯 개 공통
+
+- 전부 `KIT` 에 한 줄 + **`onWater: true`** (물 판정을 빠져나가야 물 위에 선다).
+  심는 절은 물가 소품과 같은 `generate-decor-layout.mjs` ⑭-c 다
+- **물에 뜨는 것(나룻배·부표·백조·수상기)은 흘수선을 배치에서 맞춘다.**
+  GLB 원점 규칙(바닥 중심)은 그대로 두고, 배치 코드에서 y 를 내려 선체 아래를
+  수면에 잠근다 — 모델을 흘수선 기준으로 뽑으면 다른 규칙과 어긋난다
+- **잔교만 물가 턱 예외**가 필요하다. `nearShore` 금지에 그대로 걸리면 조용히 하나도
+  안 놓인다(섬 테두리 울타리 50토막이 이미 그렇게 사라진 적 있다).
+  계단·난간과 같은 예외 목록에 넣는다
+- **개수는 예산이 정한다.** ②에서 이미 겪었듯 상한은 미관이 아니라 삼각형·텍스처다.
+  아래 개수는 목표치이고, 넣고 나서 F8 로 확인해 줄인다
+
+---
+
+### 7-a. `decor/rowboat-moored.glb` — 매인 나룻배 · 3~5척
+
+실물 길이 3.5m(1.65유닛) · 폭 1.2m. 물가에 밧줄로 묶어 둔다. **제일 싸고 효과가 크다** —
+수면에 뜬 것이 하나만 생겨도 물이 "판"에서 "물"로 읽힌다.
+
+```
+3D rendered miniature fairytale village prop, stylized very low-poly game asset,
+soft rounded chunky shapes, hand-painted matte textures with flat color blocks,
+warm golden-hour sunset lighting with soft ambient shadows, cozy storybook mood,
+single connected object with simple silhouette,
+front three-quarter view at eye level, entire object fully visible and centered
+in frame, plain flat light grey studio background, isolated single object,
+clean product shot, no ground plane, no cast shadow,
+a small fairytale wooden rowboat, weathered planks in warm brown with a faded
+teal painted stripe along the hull, two simple oars resting inside across the
+seats, a coil of rope at the bow, one folded canvas sack and a small wooden
+crate in the bottom, gently rounded bow and stern, open on top with two plank
+benches, about twice a person's height long and low enough to step into,
+Ghibli-like storybook game art, soft painterly textures, muted natural colors,
+low poly game asset, under 4000 triangles
+```
+
+> `KIT`: `"rowboat-moored": {glb: "decor/rowboat-moored.glb", h: <실측>, m: 3.5}`
+> 뱃머리가 **+Z**. 물가에 대는 각도는 배치가 물가 법선에서 정한다.
+
+---
+
+### 7-b. `decor/dock-small.glb` — 나루터 잔교 · 4~6곳
+
+실물 길이 4m(1.9유닛) · 폭 1.5m. 물가에서 물 쪽으로 뻗는다. 나룻배·수상기를
+**매어 둘 자리**라, 이게 있어야 배가 "떠내려온 것"이 아니라 "여기 사는 것"이 된다.
+
+```
+3D rendered miniature fairytale village prop, stylized very low-poly game asset,
+soft rounded chunky shapes, hand-painted matte textures with flat color blocks,
+warm golden-hour sunset lighting with soft ambient shadows, cozy storybook mood,
+single connected object with simple silhouette,
+front three-quarter view at eye level, entire object fully visible and centered
+in frame, plain flat light grey studio background, isolated single object,
+clean product shot, no ground plane, no cast shadow,
+a very small fairytale wooden jetty, a short walkway of weathered warm brown
+planks resting on four stubby round posts, two taller mooring posts at the far
+end with a coil of rope looped around one, a single hanging lantern with warm
+yellow glass on the end post, green moss and a few pebbles where the planks
+meet the shore, the deck about twice a person's height long and wide enough
+for one person to walk, no water attached,
+Ghibli-like storybook game art, soft painterly textures, muted natural colors,
+low poly game asset, under 4000 triangles
+```
+
+> 길이 축이 **+Z** — 배치가 물가 법선에 맞춰 돌려 물 쪽으로 뻗게 한다.
+> `KIT`: `"dock-small": {glb: "decor/dock-small.glb", h: <실측>, m: 4.0}`
+
+---
+
+### 7-c. `decor/buoy-lantern.glb` — 등불 부표 · 8~12개
+
+실물 높이 0.8m(0.38유닛). **값에 비해 밤 화면을 가장 크게 바꾸는 물건이다** —
+지금 해가 지면 물이 통째로 까맣게 죽는다.
+
+```
+3D rendered miniature fairytale village prop, stylized very low-poly game asset,
+soft rounded chunky shapes, hand-painted matte textures with flat color blocks,
+warm golden-hour sunset lighting with soft ambient shadows, cozy storybook mood,
+single connected object with simple silhouette,
+front three-quarter view at eye level, entire object fully visible and centered
+in frame, plain flat light grey studio background, isolated single object,
+clean product shot, no ground plane, no cast shadow,
+a small fairytale floating lantern buoy, a squat rounded wooden float painted
+cream and faded teal with a warm brown band, a short post rising from the
+middle holding a single glowing lantern with warm yellow glass panes, the
+lantern glass is brightly lit and clearly the brightest part of the object,
+a small rope loop on the side, gentle wear and moss at the waterline,
+about knee to waist height to a person,
+Ghibli-like storybook game art, soft painterly textures, muted natural colors,
+VERY LOW POLY, flat shaded, minimal geometric detail, no separate small props,
+under 1500 triangles
+```
+
+> ⚠️ **등불이 진짜로 밝아야 살아남는다.** `optimize_textures.py` 는 "보이는 밝기 이상인
+> 픽셀 비율"로 판정해 **의미 없는 emissive 를 통째로 지운다**(Meshy 가 발광부가 없어도
+> emissive 를 붙여 내보내기 때문). 유리가 흐릿하게 나오면 그 맵이 노이즈로 판정돼
+> 지워지고, 밤에 안 켜진다. `frontend` 건물 창문은 실제로 밝아서 유지됐다.
+>
+> **밤 불빛은 실광원으로 켜지 않는다.** `pointLight` 는 4개로 고정돼 있고
+> 개수가 바뀌면 전 재질이 재컴파일된다(`LampPools`). 물 위 불빛은
+> emissive + 가산 원반으로 낸다 — 마을 랜턴이 이미 그 방식이다.
+
+---
+
+### 7-d. `nature/swan-pair.glb` — 백조 한 쌍 · 4~6쌍
+
+실물 몸길이 1.2m · 목까지 높이 0.9m. 움직이지 않아도 된다 — 수면에 흰 점 둘이
+떠 있는 것만으로 물이 살아 있는 곳이 된다.
+
+```
+3D rendered miniature fairytale village prop, stylized very low-poly game asset,
+soft rounded chunky shapes, hand-painted matte textures with flat color blocks,
+warm golden-hour sunset lighting with soft ambient shadows, cozy storybook mood,
+single connected object with simple silhouette,
+front three-quarter view at eye level, entire object fully visible and centered
+in frame, plain flat light grey studio background, isolated single object,
+clean product shot, no ground plane, no cast shadow,
+two chubby fairytale swans floating side by side and slightly turned toward
+each other, smooth cream white bodies with soft rounded backs, gently curved
+necks, small warm orange beaks, wings folded flat against the body with a few
+simple feather shapes, no legs visible below the body, the two birds forming
+one connected group on a shared base, about knee height to a person,
+Ghibli-like storybook game art, soft painterly textures, muted natural colors,
+VERY LOW POLY, flat shaded, minimal geometric detail, no separate small props,
+under 1500 triangles
+```
+
+> **다리를 그리지 말 것.** 몸통 아래는 수면에 잠긴다 — 다리가 있으면 물 위에 서 있는
+> 새가 된다. 두 마리가 **한 덩어리**여야 인스턴싱 한 번으로 끝난다.
+> 폴더는 `nature/` 지만 바람 흔들림은 안 걸린다(`tree-`·`bush-` 로 시작하는 것만).
+
+---
+
+### 7-e. `decor/floatplane.glb` — 수상비행기 · 1대
+
+실물 날개폭 9m(4.3유닛) · 길이 7m. **호수가 비어 보이는 문제와 "큰 비행기 하나"를
+한 물건으로 푼다.** 잔교(7-b) 옆에 매어 둔다.
+
+**톤이 이 항목의 전부다.** 은색 알루미늄 여객기는 마을을 깬다 — 이건
+**나무 뼈대에 천을 씌워 칠한 옛 비행기**여야 한다. 마을에서 제일 큰 단일 프롭이
+되므로 실루엣이 단순해야 한다.
+
+```
+3D rendered miniature fairytale village prop, stylized low-poly game asset,
+soft rounded chunky shapes, hand-painted matte textures, warm golden-hour
+sunset lighting with soft ambient shadows, cozy storybook mood,
+front three-quarter view at eye level, entire object fully visible and
+centered in frame, plain flat light grey studio background,
+isolated single object, clean product shot, no ground plane, no cast shadow,
+a charming old fashioned fairytale seaplane resting on two long rounded
+pontoon floats, a stubby rounded fuselage of painted wood and canvas in cream
+with a faded teal stripe and warm brown trim, one straight high wing above the
+cabin held by simple struts, a small two-blade wooden propeller on the round
+nose, a single open cockpit with a curved windscreen, round porthole windows
+along the side, a small painted number on the tail fin, worn paint and soft
+weathering, no bare metal anywhere, the wings about five times a person's
+height across, standing alone with no water attached,
+Ghibli-like storybook game art, soft painterly textures, muted natural colors,
+low poly game asset, under 12000 triangles
+```
+
+> 기수가 **+Z**, 날개가 좌우(X). `KIT`: `m` 은 **긴 변 = 날개폭 9.0**.
+> 한 대뿐이라 프롭이 아니라 랜드마크로 다뤄도 된다(`island-north`·`windmill` 과 같은 급).
+>
+> ③ 아치 돌다리에서 겪은 것과 같은 문제가 날 수 있다 — **긴 변으로 정규화되므로
+> 날개폭이 기준이 되고 동체·플로트가 납작해질 수 있다.** 구운 뒤 옆에서 한 번 보고,
+> 필요하면 ③처럼 원본 축을 눌러 다시 굽는다(「입고 후기」 참고).
+
+---
+
 ## 캐릭터 — 남은 4종
 
 프롬프트는 종마다 [`NPC_CHARACTER_PROMPTS.md`](NPC_CHARACTER_PROMPTS.md) 에 있다.
 파이프라인이 달라서(이미지 → Meshy → **오토리깅** → `merge-character.mjs`)
 여기 옮기지 않는다.
 
-| 어디           | 남은 것               |
-| -------------- | --------------------- |
+| 어디           | 남은 것                 |
+| -------------- | ----------------------- |
 | 건물 NPC **4** | 까치·수달·여우·나무늘보 |
 
 - 상시 역할 5종(보더콜리·고양이·염소·아르마딜로·제비)과 공방 5종(개미핥기·
@@ -466,7 +681,6 @@ tiny sign, small text, illegible text, unreadable letters, blank signboard
 | ---------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | `easel.glb`            | 이젤                 | `Wooden artist easel holding a small painted canvas, a paint palette and brushes hanging from one leg`                        |
 | `water-mill-small.glb` | 작은 물레방아        | `Small wooden water wheel on a stone footing, half of the wheel below the axle, mossy paddles`                                |
-| `dock-small.glb`       | 작은 나루            | `Very small wooden jetty of weathered planks on short posts, a coil of rope and a lantern at the end`                         |
 | `stall-awning.glb`     | 천막 노점            | `Small fantasy market stall with a striped red and cream fabric awning on four wooden posts, wooden counter piled with goods` |
 | `signpost-arrow.glb`   | 이정표               | `Wooden signpost with three arrow-shaped direction boards pointing different ways, small lantern on top`                      |
 | `brazier.glb`          | 화로                 | `Standing iron brazier bowl on three legs with glowing orange embers and small flames`                                        |

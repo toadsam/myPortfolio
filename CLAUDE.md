@@ -138,7 +138,9 @@ Three things make this unlike every other district:
   목표가 가구 반대편이면 축-슬라이드가 dx=0 지점에서 **제자리걸음**이 된다(체리가 접수대 뒤에
   갇혔던 원인) — `detourPoint` 가 막는 가구의 모서리(0.4 물림)를 경유지로 잡아 돌아간다.
   손님이 처음 말을 걸면 전원 작업대에 붙는 **근무 모드**(90초 무접촉이면 해제), 마을 NPC 는
-  `steerDry`(villageWalk) 로 건물에 막히면 좌우 30°씩 틀어 돌아간다.
+  `steerDry`(villageWalk) 로 건물에 막히면 좌우 30°씩 틀어 돌아간다 — 단 매 프레임 목표를
+  재조준하면 벽 앞에서 와리가리하므로, 크게 튼 방향은 0.8초 고수하고 5초간 진행이 없으면
+  목적지를 새로 뽑는다(`NPC.tsx stepToward`).
   수다는 두 단: **잡담**(`atelierSmallTalk.ts` 고정 대본, LLM 0회·관계 무변화, 15~35초 간격,
   배회 중엔 걸어가서·근무 중엔 자리에서) + **마주침**(E-4 백엔드, 관계·기억, 2분 상한 유지).
 
@@ -176,6 +178,9 @@ Two things are already true and easy to break:
   Shipped GLBs therefore must not carry metallicRoughness images — `scripts/strip-metallic-roughness.mjs`
   removes them without touching Draco (`gltf-transform copy` would decode it and re-quantize).
   Re-run that script after any `npm run optimize`.
+  props 예산에 하위 폴더 예외가 둘 있다(`optimize-glb.mjs textureGroupFor`): `raw/atelier/` 는
+  실내 근접이라 1024, `raw/lake/` 는 물 위 소품이라 **반 칸 작은 256** — lake 를 기본 512 로
+  넣었더니 전체 텍스처가 342/340MB 로 예산을 넘겼다.
 - **Real `pointLight` count is capped at 4** (see `LampPools`); every extra light changes the shader
   permutation for _all_ materials. Fake additional light with additive ground discs.
 

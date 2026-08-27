@@ -32,6 +32,9 @@ BUDGETS = {
     # 공방 실내 가구(props/raw/atelier/) — 카메라가 1~3유닛 거리라 512로 줄이면
     # 뭉개진다. 방에 6종뿐이라 1024를 줘도 VRAM 부담이 작다.
     "atelier": {"baseColor": 1024, "normal": 512, "metallicRoughness": 256, "emissive": 512, "occlusion": 256},
+    # 호수 소품(props/raw/lake/) — 물 위라 카메라가 늘 멀고 개체도 작다.
+    # props 기본(512)으로 5종을 넣자 텍스처 VRAM 예산(340MB)을 342로 넘겨서 반 칸 줄였다.
+    "lake": {"baseColor": 256, "normal": 128, "metallicRoughness": 128, "emissive": 256, "occlusion": 128},
     "characters": {"baseColor": 512, "normal": 512, "metallicRoughness": 256, "emissive": 256, "occlusion": 256},
     "environment": {"baseColor": 1024, "normal": 512, "metallicRoughness": 512, "emissive": 512, "occlusion": 512},
 }
