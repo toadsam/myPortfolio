@@ -9,12 +9,7 @@ import type {ThreeEvent} from "@react-three/fiber";
 import type {Group, Vector3} from "three";
 import type {NpcBehaviorProfile} from "@/data/npcBehaviors";
 import {moodLabel} from "@/lib/liveState";
-import {
-  isWalkableDry,
-  slideToDry,
-  steerDry,
-  walkHeightAt
-} from "@/lib/villageWalk";
+import {isWalkableDry, steerDry, walkHeightAt} from "@/lib/villageWalk";
 import type {
   NpcActionState,
   NpcAnimationKey,
@@ -117,6 +112,11 @@ function NPCImpl({
   const moveStateRef = useRef<NpcMoveState>("idle");
   /** 조향에서 지난 프레임에 튼 쪽 — 프레임마다 좌우가 바뀌며 떠는 걸 막는다 */
   const steerSideRef = useRef<1 | -1>(1);
+  /** 연출 이동 진행 감시 — 목표가 바뀌면 리셋 */
+  const scriptedKeyRef = useRef("");
+  const scriptedBestRef = useRef(Infinity); // 지금까지 가장 가까웠던 거리
+  const scriptedStallRef = useRef(0); // 그 거리를 못 줄인 채 흐른 초
+  const scriptedPlowRef = useRef(false); // 최후수단 직진 모드
   const [hovered, setHovered] = useState(false);
   const highlighted = hovered || isActive;
   // villageState 기반 값과 실시간 runtime 값을 병합 — 원시값(runtimeMood/runtimeMemory)만
@@ -199,20 +199,55 @@ function NPCImpl({
       const sx = scriptedTarget[0] - g.position.x;
       const sz = scriptedTarget[2] - g.position.z;
       const sdist = Math.sqrt(sx * sx + sz * sz);
+      // 목표가 바뀌면(순찰 다음 집 등) 진행 감시를 새로 시작한다
+      const skey = `${scriptedTarget[0]},${scriptedTarget[2]}`;
+      if (scriptedKeyRef.current !== skey) {
+        scriptedKeyRef.current = skey;
+        scriptedBestRef.current = Infinity;
+        scriptedStallRef.current = 0;
+        scriptedPlowRef.current = false;
+      }
       if (sdist > 0.25) {
         const step = Math.min(3.6 * delta, sdist); // 달려오기 (적당한 속도)
-        const nx = g.position.x + (sx / sdist) * step;
-        const nz = g.position.z + (sz / sdist) * step;
-        // 연출도 배회와 같은 충돌 규칙으로 미끄러진다. 단 완전히 막히면
-        // 직진한다 — 연출은 도착(onScriptedArrive)이 안 오면 인트로가
-        // 통째로 멎으므로, 잠깐의 관통이 무한 대기보다 낫다.
-        const slid = slideToDry(g.position.x, g.position.z, nx, nz);
-        const stuck =
-          Math.abs(slid.x - g.position.x) < 1e-4 &&
-          Math.abs(slid.z - g.position.z) < 1e-4;
-        g.position.x = stuck ? nx : slid.x;
-        g.position.z = stuck ? nz : slid.z;
-        g.rotation.y = Math.atan2(sx, sz);
+        // 연출도 배회와 같은 조향으로 물가·건물을 돌아간다. 예전엔 "막히면
+        // 직진(관통)"이라 분신 순찰이 **매번 물 고리를 뚫고 잠긴 채 달렸다**
+        // (2026-08-27 사용자 보고). 지금은 조향으로 다리를 찾아 돌고,
+        // 직진은 6초 넘게 전진이 없을 때의 최후수단으로만 남긴다 — 연출은
+        // 도착(onScriptedArrive)이 안 오면 인트로/순찰이 통째로 멎으니까.
+        if (sdist < scriptedBestRef.current - 0.3) {
+          scriptedBestRef.current = sdist;
+          scriptedStallRef.current = 0;
+        } else {
+          scriptedStallRef.current += delta;
+          if (scriptedStallRef.current > 6) scriptedPlowRef.current = true;
+        }
+        let moved = false;
+        if (!scriptedPlowRef.current) {
+          const steered = steerDry(
+            g.position.x,
+            g.position.z,
+            sx,
+            sz,
+            step,
+            steerSideRef.current
+          );
+          if (steered.moved) {
+            steerSideRef.current = steered.side;
+            g.rotation.y = Math.atan2(
+              steered.x - g.position.x,
+              steered.z - g.position.z
+            );
+            g.position.x = steered.x;
+            g.position.z = steered.z;
+            moved = true;
+          }
+        }
+        if (!moved) {
+          // 전 방향이 막혔거나(가이드가 섬 밖에서 달려올 때) 오래 갇혔다 — 직진
+          g.position.x += (sx / sdist) * step;
+          g.position.z += (sz / sdist) * step;
+          g.rotation.y = Math.atan2(sx, sz);
+        }
         moveStateRef.current = "run";
       } else {
         g.rotation.y = Math.atan2(0.3, 1); // 도착 — 카메라(+z 쪽) 바라보기
@@ -230,6 +265,8 @@ function NPCImpl({
     } else {
       if (arrivedRef.current) arrivedRef.current = false;
       if (scriptStartedRef.current) scriptStartedRef.current = false;
+      // 같은 좌표로 다시 불려도(순찰 재방문) 감시가 새로 시작되게 키를 지운다
+      if (scriptedKeyRef.current) scriptedKeyRef.current = "";
     }
 
     // ── 대화 중(또는 마우스가 올라와 있을 때): 제자리 고정 + 카메라(+z) 바라보기 ──

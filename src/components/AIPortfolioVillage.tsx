@@ -64,6 +64,7 @@ import {
 } from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
+import {isWalkableDry} from "@/lib/villageWalk";
 import type {
   DailyActivity,
   NpcRelationshipRow,
@@ -1222,7 +1223,8 @@ export function AIPortfolioVillage() {
     );
   }
 
-  /** other 에서 멀어지는 쪽으로 dist 만큼 떨어진 점 */
+  /** other 에서 멀어지는 쪽으로 dist 만큼 떨어진 점 — 물·섬 밖이면 마른
+   * 땅이 나올 때까지 당겨 잡는다(물가에 목표가 찍히면 거기서 서성인다). */
   function awayFrom(
     me: Vector3Tuple,
     other: Vector3Tuple,
@@ -1231,7 +1233,12 @@ export function AIPortfolioVillage() {
     const dx = me[0] - other[0];
     const dz = me[2] - other[2];
     const len = Math.hypot(dx, dz) || 1;
-    return [me[0] + (dx / len) * dist, 0, me[2] + (dz / len) * dist];
+    for (let d = dist; d >= 1; d -= 1) {
+      const x = me[0] + (dx / len) * d;
+      const z = me[2] + (dz / len) * d;
+      if (isWalkableDry(x, z)) return [x, 0, z];
+    }
+    return me;
   }
 
   // 마주침의 결과를 몸짓으로: 대화 재생이 끝나는 시각(endAt)에 이모트를 띄우고,

@@ -45,9 +45,10 @@ const CULL_DISTANCE = 70;
  * AnimationMixer 가 매 프레임 뼈 26개 × 트랙 3종을 보간하고 스켈레톤을 다시 굽는다.
  * 그래서 "보이기"와 "움직이기"의 경계를 따로 둔다. 가까이 오면 다시 살아난다.
  *
- * **대가 하나**: 이 거리 밖에서 걸어다니는 NPC 는 발이 멈춘 채 미끄러진다.
- * 위치는 NPC.tsx 가 따로 옮기기 때문이다. 30px 짜리라 눈에 잘 안 띄지만
- * 거슬리면 이 값을 올리면 된다 — 26 과 40 은 실측상 비용 차이가 없었다.
+ * **얼리는 건 서 있는 NPC 뿐이다.** 처음엔 걷는 NPC 도 얼렸는데, 위치는
+ * NPC.tsx 가 계속 옮기니 "멈춘 자세로 미끄러지는" 게 그대로 보였다(사용자
+ * 보고, 2026-08-27). 걷기/뛰기 중엔 거리와 무관하게 뼈대를 돌린다 — 추가
+ * 비용은 40~70 밴드에서 '지금 걷는 중'인 몇 명뿐이라 절약분이 거의 그대로다.
  */
 const ANIM_DISTANCE = 40;
 
@@ -223,7 +224,8 @@ function NpcCharacterImpl({
     // visible=false 여도 drei 의 useAnimations 가 건 AnimationMixer 는 자기
     // useFrame 에서 계속 돈다. timeScale 0 이면 mixer.update 가 시간을 0 만큼
     // 진행시켜 사실상 무동작이 된다. (재개하면 멈춘 자세에서 이어져 티가 안 난다)
-    const animate = !far && dist <= ANIM_DISTANCE;
+    const animate =
+      !far && (dist <= ANIM_DISTANCE || stateRef.current !== "idle");
     if (animate !== animRef.current) {
       animRef.current = animate;
       mixer.timeScale = animate ? 1 : 0;

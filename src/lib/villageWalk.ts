@@ -154,15 +154,101 @@ for (const p of propsLayout.props as Array<{
 // 한동안 물을 통째로 막았다(다리 자리만 구멍). 지금은 반대다 — **물에 들어가진다.**
 // 걸어 들어가면 waterDepthAt 만큼 가라앉아 허리까지 잠기고, 다리는 "젖지 않고
 // 건너는 길"로 남는다. 못 나가는 경계는 물이 아니라 석호 껍질이 긋는다(isWalkable).
-/** 길 칸 반폭 + 몸 반지름 — 다리 칸 한 장이 "마른 길"로 세는 넓이 */
-const BRIDGE_OPEN = 0.94 + CHARACTER_RADIUS;
 
-/** 다리가 잇는 자리인가 — 여기서는 물 위라도 젖지 않고 걷는다 */
-function onBridge(x: number, z: number): boolean {
-  for (const c of BRIDGE_CELLS)
-    if (Math.abs(x - c.x) < BRIDGE_OPEN && Math.abs(z - c.z) < BRIDGE_OPEN)
-      return true;
-  return false;
+/**
+ * 다리 칸마다 미리 계산한 **상판 높이**.
+ *
+ * 예전엔 다리 칸이 그냥 "젖지 않는 구멍"이라 걷기 높이가 지면(≈0, 수면)이었다.
+ * 아치 돌다리 GLB 가 들어오면서 눈에 보이는 상판은 은행 높이(1.1)에서 봉긋하게
+ * 솟는데 발은 물 높이로 건너니, **다리를 건너는 모두가 수면 위를 걷는 사람**으로
+ * 보였다(2026-08-27 사용자 보고 — "갑자기 물에 빠져서 뛰어다닌다"의 정체가
+ * 분신 순찰의 다리 건너기였다). 사슬(다리 하나)로 묶어 양끝 은행 높이를 재고,
+ * 사이를 잇되 가운데를 ARCH_BUMP 만큼 올린다 — 끝은 은행과 같아 턱이 없다.
+ */
+const ARCH_BUMP = 0.6;
+
+interface DeckCell {
+  x: number;
+  z: number;
+  h: number;
+}
+
+const DECK_CELLS: DeckCell[] = (() => {
+  const cells = BRIDGE_CELLS;
+  const n = cells.length;
+  const parent = Array.from({length: n}, (_, i) => i);
+  const find = (i: number): number =>
+    parent[i] === i ? i : (parent[i] = find(parent[i]!));
+  for (let i = 0; i < n; i += 1)
+    for (let j = i + 1; j < n; j += 1) {
+      const a = cells[i]!;
+      const b = cells[j]!;
+      if (Math.hypot(a.x - b.x, a.z - b.z) < 1.2) parent[find(i)] = find(j);
+    }
+  const groups = new Map<number, number[]>();
+  for (let i = 0; i < n; i += 1) {
+    const r = find(i);
+    const at = groups.get(r);
+    if (at) at.push(i);
+    else groups.set(r, [i]);
+  }
+  const out: DeckCell[] = [];
+  for (const idxs of groups.values()) {
+    let ea = idxs[0]!;
+    let eb = idxs[0]!;
+    let span = -1;
+    for (const i of idxs)
+      for (const j of idxs) {
+        const a = cells[i]!;
+        const b = cells[j]!;
+        const d = Math.hypot(a.x - b.x, a.z - b.z);
+        if (d > span) {
+          span = d;
+          ea = i;
+          eb = j;
+        }
+      }
+    const A = cells[ea]!;
+    const B = cells[eb]!;
+    const L = Math.max(span, 0.001);
+    // 끝 칸 너머 1 유닛의 지면이 은행 높이 — 표본이 물이면 단 높이로 대체
+    const bank = (p: {x: number; z: number}, q: {x: number; z: number}) => {
+      const h = terrainHeightAt(
+        p.x + (p.x - q.x) / L,
+        p.z + (p.z - q.z) / L
+      );
+      return h > 0.2 ? h : PLAZA_RING.deck;
+    };
+    const hA = bank(A, B);
+    const hB = bank(B, A);
+    for (const i of idxs) {
+      const c = cells[i]!;
+      const t = Math.hypot(c.x - A.x, c.z - A.z) / L;
+      out.push({
+        x: c.x,
+        z: c.z,
+        h: hA + (hB - hA) * t + ARCH_BUMP * Math.sin(Math.PI * t)
+      });
+    }
+  }
+  return out;
+})();
+
+/** 다리 위라면 상판 높이, 아니면 null — 가까운 칸들의 역거리 가중 평균.
+ * 반경 1.1: 칸 간격 0.94 라 복도는 안 끊기고, 다리 **옆** 물에 선 플레이어가
+ * 보이지 않는 상판에 올라서는 폭은 최소로 줄인다. */
+function bridgeDeckAt(x: number, z: number): number | null {
+  let wsum = 0;
+  let hsum = 0;
+  for (const c of DECK_CELLS) {
+    const d = Math.hypot(x - c.x, z - c.z);
+    if (d < 1.1) {
+      const w = 1 / (d + 0.15);
+      wsum += w;
+      hsum += w * c.h;
+    }
+  }
+  return wsum > 0 ? hsum / wsum : null;
 }
 
 /**
@@ -177,7 +263,11 @@ function onBridge(x: number, z: number): boolean {
 export function walkHeightAt(x: number, z: number): number {
   // 고리 회랑이 물보다 먼저다 — 데크는 수면 위에 떠 있다
   if (onPlazaRing(x, z)) return PLAZA_RING.deck;
-  if (isWater(x, z) && !onBridge(x, z)) return -waterDepthAt(x, z);
+  if (isWater(x, z)) {
+    const deck = bridgeDeckAt(x, z);
+    if (deck !== null) return deck; // 다리 — 상판 위를 걷는다
+    return -waterDepthAt(x, z);
+  }
   return terrainHeightAt(x, z);
 }
 
@@ -278,9 +368,30 @@ export function slideTo(
  *
  * 마른 땅 판정은 `walkHeightAt` 부호 하나로 끝난다: 물이면 음수(−깊이),
  * 데크·단·잔디면 0 이상이다.
+ *
+ * 단, 다리 위에서는 플레이어보다 **좁게** 통과시킨다. 플레이어의 다리 여유
+ * (1.36)는 "몸 반지름이 판자 끝에 걸쳐도 젖지 않는" 기준이라, 그대로 쓰면
+ * NPC 가 다리 칸의 판자 **밖** 가장자리 — 시각적으로는 물 위 — 를 합법적으로
+ * 걸어 다닌다(2026-08-27 실측: 다리 옆 수면에 떠서 걷는 NPC 스크린샷).
+ * 중심이 판자 위(반경 0.85, 유클리드 — 사각형이면 대각 다리에서 모서리가
+ * 옆으로 불거진다)에 있어야만 마른 길로 센다. 칸 간격이 0.94 라 반경 0.85 면
+ * 사이 허리도 0.7 은 남아 복도가 안 끊긴다.
  */
+const BRIDGE_OPEN_NPC = 0.85;
+
+function onBridgePlank(x: number, z: number): boolean {
+  for (const c of BRIDGE_CELLS) {
+    const dx = x - c.x;
+    const dz = z - c.z;
+    if (dx * dx + dz * dz < BRIDGE_OPEN_NPC * BRIDGE_OPEN_NPC) return true;
+  }
+  return false;
+}
+
 export function isWalkableDry(x: number, z: number): boolean {
-  return isWalkable(x, z) && walkHeightAt(x, z) >= 0;
+  if (!isWalkable(x, z)) return false;
+  if (isWater(x, z) && !onPlazaRing(x, z) && !onBridgePlank(x, z)) return false;
+  return walkHeightAt(x, z) >= 0;
 }
 
 /** 물을 피하는 미끄러짐 — NPC 전용 */
