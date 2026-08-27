@@ -203,6 +203,9 @@ function walkable(x: number, z: number) {
   );
 }
 
+/** 공방 캐릭터 확대 배율 — 마을 키(1.2)로는 실내 가구에 비해 작아 보인다 */
+const ATELIER_NPC_SCALE = 1.3;
+
 /** 식구 한 명에게 내리는 이동 지시 */
 export type FigureOrder =
   | {kind: "free"} // 자기 자리 근처를 배회
@@ -376,8 +379,10 @@ function AtelierFigure({
       onPointerLeave={() => setHovered(false)}
     >
       <group ref={groupRef}>
-        {/* 몸통만 걷는 방향으로 돈다 — 라벨·말풍선(Html)은 어차피 빌보드 */}
-        <group ref={modelRef}>
+        {/* 몸통만 걷는 방향으로 돈다 — 라벨·말풍선(Html)은 어차피 빌보드.
+            스케일 1.3: 마을 키(1.2) 그대로 두면 접수대(1.2)와 키가 같아
+            가구에 파묻힌다. 실내는 카메라가 가까워 한 치수 키운다. */}
+        <group ref={modelRef} scale={ATELIER_NPC_SCALE}>
           {npc.model ? (
             // 마을과 같은 GLB 캐릭터. 로딩되는 동안은 절차 인형이 폴백으로 선다.
             <Suspense fallback={<DollBody glow={glow} npc={npc} />}>
@@ -394,9 +399,9 @@ function AtelierFigure({
         </group>
       </group>
 
-      {/* 발밑 고리 — 클릭할 수 있다는 신호 */}
+      {/* 발밑 고리 — 클릭할 수 있다는 신호 (1.3배 몸에 맞춤) */}
       <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0.42, 0.54, 32]} />
+        <ringGeometry args={[0.55, 0.7, 32]} />
         <meshBasicMaterial
           color={npc.color}
           transparent
@@ -412,7 +417,7 @@ function AtelierFigure({
         <Html
           center
           distanceFactor={10}
-          position={[0, 2.45, 0]}
+          position={[0, 3.0, 0]}
           zIndexRange={[8, 0]}
         >
           <div
@@ -438,7 +443,7 @@ function AtelierFigure({
         <Html
           center
           distanceFactor={10}
-          position={[0, 2.45, 0]}
+          position={[0, 3.0, 0]}
           zIndexRange={[8, 0]}
         >
           <div
@@ -451,7 +456,7 @@ function AtelierFigure({
       <Html
         center
         distanceFactor={11}
-        position={[0, 1.95, 0]}
+        position={[0, 2.5, 0]}
         zIndexRange={[6, 0]}
       >
         <div
@@ -514,14 +519,16 @@ function AtelierFigure({
 function Workbench({
   position,
   color,
-  kind
+  kind,
+  rot = 0
 }: {
   position: [number, number, number];
   color: string;
   kind: "planner" | "designer" | "frontend" | "backend";
+  rot?: number;
 }) {
   return (
-    <group position={position}>
+    <group position={position} rotation={[0, rot, 0]}>
       <Suspense fallback={<WorkbenchDoll color={color} kind={kind} />}>
         <AtelierProp
           file={
@@ -783,18 +790,34 @@ function LanternDoll() {
 }
 
 function AtelierRoom() {
-  // 바닥 돌판 — 규칙적이되 살짝 색이 갈리게
-  const tiles = useMemo(() => {
-    const out: {key: string; x: number; z: number; tone: string}[] = [];
-    for (let ix = -4; ix <= 4; ix += 1) {
-      for (let iz = -3; iz <= 3; iz += 1) {
-        const mixed = (ix + iz) % 2 === 0;
-        out.push({
-          key: `${ix}-${iz}`,
-          x: ix * 1.8,
-          z: iz * 1.8,
-          tone: mixed ? "#2a374d" : "#222e42"
-        });
+  // 바닥 널판 — 원래 남색 체크 석판이었는데 월넛 가구 6종이 들어오자 바닥만
+  // 차갑게 따로 놀았다(2026-08-27 사용자 피드백). 가구와 같은 계열의 어두운
+  // 나무 널판으로 바꾸고, 줄마다 이음매를 어긋나게 잘라 마루처럼 깐다.
+  const planks = useMemo(() => {
+    const tones = ["#3a2a1c", "#33251a", "#3e2d1f", "#362818", "#2f2216"];
+    const out: {key: string; x: number; z: number; w: number; tone: string}[] =
+      [];
+    let seed = 7;
+    const rand = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    for (let iz = 0; iz < 16; iz += 1) {
+      const z = -6.6 + iz * 0.88;
+      let x = -9 - (iz % 2 ? 1.4 : 0);
+      let i = 0;
+      while (x < 9) {
+        const w = 3.0 + rand() * 1.8;
+        const x1 = Math.max(-9, x);
+        const x2 = Math.min(9, x + w);
+        if (x2 - x1 > 0.3) {
+          out.push({
+            key: `${iz}-${i}`,
+            x: (x1 + x2) / 2,
+            z,
+            w: x2 - x1 - 0.06,
+            tone: tones[Math.floor(rand() * tones.length)]!
+          });
+        }
+        x += w + 0.06;
+        i += 1;
       }
     }
     return out;
@@ -802,21 +825,47 @@ function AtelierRoom() {
 
   return (
     <group>
-      {/* 바닥 */}
+      {/* 바닥 밑판 — 널판 틈으로 비치는 어둠 */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[18, 14]} />
-        <meshStandardMaterial color="#202c3f" roughness={0.9} />
+        <meshStandardMaterial color="#20160f" roughness={0.95} />
       </mesh>
-      {tiles.map(tile => (
+      {planks.map(p => (
         <mesh
-          key={tile.key}
-          position={[tile.x, 0.006, tile.z]}
+          key={p.key}
+          receiveShadow
+          position={[p.x, 0.006, p.z]}
           rotation={[-Math.PI / 2, 0, 0]}
         >
-          <planeGeometry args={[1.7, 1.7]} />
-          <meshStandardMaterial color={tile.tone} roughness={0.95} />
+          <planeGeometry args={[p.w, 0.8]} />
+          <meshStandardMaterial color={p.tone} roughness={0.85} />
         </mesh>
       ))}
+
+      {/* 접수대 앞 원형 러그 — 손님을 맞는 자리라는 표시. 가구의 금테와
+          같은 계열로 눌러, 방 가운데에 무게중심을 만든다. */}
+      <group position={[0, 0, 0.7]}>
+        <mesh
+          receiveShadow
+          position={[0, 0.012, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+        >
+          <circleGeometry args={[2.3, 44]} />
+          <meshStandardMaterial color="#5e2f28" roughness={0.95} />
+        </mesh>
+        <mesh position={[0, 0.016, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[1.9, 2.1, 44]} />
+          <meshStandardMaterial color="#8f6a3a" roughness={0.9} />
+        </mesh>
+        <mesh position={[0, 0.015, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[1.25, 36]} />
+          <meshStandardMaterial color="#6d3a30" roughness={0.95} />
+        </mesh>
+        <mesh position={[0, 0.017, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[1.05, 1.15, 36]} />
+          <meshStandardMaterial color="#8f6a3a" roughness={0.9} />
+        </mesh>
+      </group>
 
       {/* 벽 — 지하라 천장이 낮다 */}
       {(
@@ -947,15 +996,19 @@ function AtelierRoom() {
 
 /* ────────────────────────────── 씬 ────────────────────────────── */
 
+// rot: 벽과 나란히 세웠더니 전시장처럼 보여서, 방 가운데(접수대)를 살짝
+// 바라보게 튼다. 보행 SOLIDS 는 회전 전 발자국 그대로다 — ±0.2~0.34rad 는
+// AABB 를 조금 비어져 나올 뿐이라 스치는 정도고, 판정이 어긋나진 않는다.
 const BENCHES: {
   position: [number, number, number];
   color: string;
   kind: "planner" | "designer" | "frontend" | "backend";
+  rot: number;
 }[] = [
-  {position: [-4.75, 0, -2.7], color: "#7ecf68", kind: "planner"},
-  {position: [-4.75, 0, 1.9], color: "#c69af0", kind: "designer"},
-  {position: [4.75, 0, -2.7], color: "#68c7cf", kind: "frontend"},
-  {position: [4.75, 0, 1.9], color: "#5f7be8", kind: "backend"}
+  {position: [-4.75, 0, -2.7], color: "#7ecf68", kind: "planner", rot: 0.24},
+  {position: [-4.75, 0, 1.9], color: "#c69af0", kind: "designer", rot: 0.2},
+  {position: [4.75, 0, -2.7], color: "#68c7cf", kind: "frontend", rot: -0.24},
+  {position: [4.75, 0, 1.9], color: "#5f7be8", kind: "backend", rot: -0.34}
 ];
 
 /**
@@ -1275,6 +1328,7 @@ export function AtelierInterior({
               color={bench.color}
               kind={bench.kind}
               position={bench.position}
+              rot={bench.rot}
             />
           ))}
 
