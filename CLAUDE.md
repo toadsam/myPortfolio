@@ -132,9 +132,13 @@ Three things make this unlike every other district:
 - **공방 식구는 방을 걸어 다닌다 (2026-08-27).** GLB 캐릭터 5종(합 1.7MB, GLB-0 원칙은 "가볍게만"으로
   완화)이 자기 작업대 근처를 배회하고, 클릭하면 손님 앞까지 걸어온 뒤 대화창이 열리며(부모가
   `activeNpcId` 로 닫힘을 알려줘야 자리로 복귀), 릴레이 설문은 카메라가 접수대에 고정된 채 불린
-  식구가 `RELAY_SPOT` 으로 걸어온다. 충돌은 방 전용(경계 사각형 + 가구 AABB 축-슬라이드,
+  식구가 `RELAY_SPOT` 으로 걸어온다. 충돌은 방 전용(경계 사각형 + 가구 AABB,
   `AtelierInterior` "방 안 보행" 절) — 작업대 안쪽 모서리는 0.3 물러서 있다. 팀원 자리가 상판을
   0.15 겹치고 서서, 실측대로 막으면 스폰 지점이 가구 안이 되어 첫걸음부터 갇힌다.
+  목표가 가구 반대편이면 축-슬라이드가 dx=0 지점에서 **제자리걸음**이 된다(체리가 접수대 뒤에
+  갇혔던 원인) — `detourPoint` 가 막는 가구의 모서리(0.4 물림)를 경유지로 잡아 돌아간다.
+  손님이 처음 말을 걸면 전원 작업대에 붙는 **근무 모드**(90초 무접촉이면 해제), 마을 NPC 는
+  `steerDry`(villageWalk) 로 건물에 막히면 좌우 30°씩 틀어 돌아간다.
 
 Two naming traps, both already guarded and locked by `tests/test_relations.py` — keep the atelier branch
 **first** in both `relations.canon()` and `chat_service._npc_profile_for_dynamic_id()`, since the existing

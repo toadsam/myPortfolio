@@ -9,7 +9,12 @@ import type {ThreeEvent} from "@react-three/fiber";
 import type {Group, Vector3} from "three";
 import type {NpcBehaviorProfile} from "@/data/npcBehaviors";
 import {moodLabel} from "@/lib/liveState";
-import {isWalkableDry, slideToDry, walkHeightAt} from "@/lib/villageWalk";
+import {
+  isWalkableDry,
+  slideToDry,
+  steerDry,
+  walkHeightAt
+} from "@/lib/villageWalk";
 import type {
   NpcActionState,
   NpcAnimationKey,
@@ -110,6 +115,8 @@ function NPCImpl({
   const arrivedRef = useRef(false);
   const scriptStartedRef = useRef(false);
   const moveStateRef = useRef<NpcMoveState>("idle");
+  /** 조향에서 지난 프레임에 튼 쪽 — 프레임마다 좌우가 바뀌며 떠는 걸 막는다 */
+  const steerSideRef = useRef<1 | -1>(1);
   const [hovered, setHovered] = useState(false);
   const highlighted = hovered || isActive;
   // villageState 기반 값과 실시간 runtime 값을 병합 — 원시값(runtimeMood/runtimeMemory)만
@@ -268,20 +275,32 @@ function NPCImpl({
       if (dist > 0.14) {
         const step = Math.min(3.6 * delta, dist);
         // 집결·사진·파티·따라오기가 직선으로 가로질러 **건물을 뚫고** 모였다.
-        // 배회와 같은 규칙으로 미끄러지고, 완전히 막히면 거기서 멈춰 선다 —
-        // 장애물 둘레에 둘러 모이는 그림이 뚫고 지나가는 것보다 자연스럽다.
-        const nx = g.position.x + (dx / dist) * step;
-        const nz = g.position.z + (dz / dist) * step;
-        const slid = slideToDry(g.position.x, g.position.z, nx, nz);
-        const moved =
-          Math.abs(slid.x - g.position.x) > 1e-4 ||
-          Math.abs(slid.z - g.position.z) > 1e-4;
-        g.position.x = slid.x;
-        g.position.z = slid.z;
-        g.rotation.y = Math.atan2(dx, dz);
+        // 배회와 같은 조향으로 건물을 돌아가고, 전 방향이 막히면 거기 멈춰
+        // 선다 — 장애물 둘레에 둘러 모이는 그림이 뚫는 것보다 자연스럽다.
+        const steered = steerDry(
+          g.position.x,
+          g.position.z,
+          dx,
+          dz,
+          step,
+          steerSideRef.current
+        );
+        if (steered.moved) {
+          steerSideRef.current = steered.side;
+          g.rotation.y = Math.atan2(
+            steered.x - g.position.x,
+            steered.z - g.position.z
+          );
+          g.position.x = steered.x;
+          g.position.z = steered.z;
+        }
         g.position.y =
           settleGround(g, delta) + bobUp(elapsedRef.current * 8, 0.05);
-        moveStateRef.current = moved ? (dist > 0.6 ? "run" : "walk") : "idle";
+        moveStateRef.current = steered.moved
+          ? dist > 0.6
+            ? "run"
+            : "walk"
+          : "idle";
       } else {
         moveStateRef.current = "idle";
         if (faceCamera) {
@@ -371,29 +390,31 @@ function NPCImpl({
       }
     } else if (dist > 0.05) {
       const step = Math.min(moveSpeed * delta, dist);
-      const nextX = groupRef.current.position.x + (dx / dist) * step;
-      const nextZ = groupRef.current.position.z + (dz / dist) * step;
 
-      // **플레이어와 같은 규칙을 쓴다.** 예전엔 건물 발자국만 봐서 석호 껍질(섬
-      // 경계)도 장식물 108개도 그냥 통과했다 — 주민이 울타리를 넘어 물에 빠져
-      // 있던 원인이다. `slideToDry` 는 거기에 "물에 안 들어간다"를 더한 것이다.
-      const slid = slideToDry(
+      // **막히면 방향을 튼다.** 예전엔 축-슬라이드(slideToDry)였는데, 목표가
+      // 건물 너머면 주민이 벽에 얼굴을 박은 채 갈리거나 서 버렸다 — "건물로
+      // 뛰어드는" 그림의 정체. steerDry 는 원하는 방향이 막히면 좌우 30°씩
+      // 틀어 처음 뚫리는 쪽으로 걷는다(물·섬 경계 규칙은 그대로 물려받는다).
+      const steered = steerDry(
         groupRef.current.position.x,
         groupRef.current.position.z,
-        nextX,
-        nextZ
+        dx,
+        dz,
+        step,
+        steerSideRef.current
       );
-      const moved =
-        Math.abs(slid.x - groupRef.current.position.x) > 1e-4 ||
-        Math.abs(slid.z - groupRef.current.position.z) > 1e-4;
-      if (moved) {
-        groupRef.current.position.x = slid.x;
-        groupRef.current.position.z = slid.z;
-        groupRef.current.rotation.y = Math.atan2(dx, dz);
+      if (steered.moved) {
+        steerSideRef.current = steered.side;
+        // 몸은 실제로 걷는 방향을 본다 — 목표를 보면 튼 게 티가 안 난다
+        groupRef.current.rotation.y = Math.atan2(
+          steered.x - groupRef.current.position.x,
+          steered.z - groupRef.current.position.z
+        );
+        groupRef.current.position.x = steered.x;
+        groupRef.current.position.z = steered.z;
         walking = true;
       } else {
-        // 한 축도 못 살렸으면 진짜 막힌 것 — 그때만 목적지를 새로 뽑는다.
-        // (예전엔 스치기만 해도 새로 뽑아 모서리에서 제자리걸음을 했다)
+        // 전 방향이 막힌 것 — 그때만 목적지를 새로 뽑는다.
         retargetAtRef.current = 0;
       }
     }

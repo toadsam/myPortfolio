@@ -18,6 +18,8 @@
  * 작업대 근처를 배회하고, 클릭하면 손님 앞까지 걸어온 뒤 대화창이 열리며,
  * 릴레이 설문에서는 카메라가 접수대에 고정된 채 불린 식구가 접수대로 걸어온다.
  * 마주침(E-4)도 한쪽이 실제로 상대 자리까지 걸어가서 시작한다.
+ * 길에 가구가 끼면 모서리를 경유해 돌아가고(detourPoint), 손님이 처음
+ * 누군가에게 말을 걸면 전원 자기 작업대에 붙어 일하는 "근무 모드"가 된다.
  *
  * 팔레트는 마을 UI 간판 언어를 따른다 — 랜턴 #ff9d38, 간판금 #e2c078, 밤하늘 #0b1626.
  */
@@ -203,13 +205,127 @@ function walkable(x: number, z: number) {
   );
 }
 
+/** a→b 선분이 상자를 지나가나 — 슬랩 판정. 상자를 줄이거나 늘리지 않는다:
+ * 0.03 만 줄여도 "선분은 통과인데 발밑 판정은 막히는" 30mm 유령 통로가 생겨,
+ * NPC 가 그 껍질에 몸을 박고 떨었다(퍼즈 시뮬레이션에서 실제 재현). */
+function segHitsBox(
+  ax: number,
+  az: number,
+  bx: number,
+  bz: number,
+  box: [number, number, number, number]
+): boolean {
+  const [x1, x2, z1, z2] = box;
+  const dx = bx - ax;
+  const dz = bz - az;
+  let t0 = 0;
+  let t1 = 1;
+  if (Math.abs(dx) < 1e-9) {
+    if (ax <= x1 || ax >= x2) return false;
+  } else {
+    let u0 = (x1 - ax) / dx;
+    let u1 = (x2 - ax) / dx;
+    if (u0 > u1) [u0, u1] = [u1, u0];
+    t0 = Math.max(t0, u0);
+    t1 = Math.min(t1, u1);
+    if (t0 > t1) return false;
+  }
+  if (Math.abs(dz) < 1e-9) {
+    if (az <= z1 || az >= z2) return false;
+  } else {
+    let u0 = (z1 - az) / dz;
+    let u1 = (z2 - az) / dz;
+    if (u0 > u1) [u0, u1] = [u1, u0];
+    t0 = Math.max(t0, u0);
+    t1 = Math.min(t1, u1);
+    if (t0 > t1) return false;
+  }
+  return true;
+}
+
+const segClear = (ax: number, az: number, bx: number, bz: number) =>
+  !SOLIDS.some(b => segHitsBox(ax, az, bx, bz, b));
+
+/**
+ * 우회 경로 — 가구 모서리(0.4 물러난 점)를 노드로 한 가시성 그래프.
+ * 모서리끼리의 가시성·거리는 정적이라 모듈 로드 때 한 번만 계산한다.
+ *
+ * 탐욕(막는 상자 하나의 모서리만 보기)으로는 안 됐다: ① 목표가 가구
+ * 정반대편이면 축-슬라이드가 dx=0 지점에서 제자리걸음이 되고(릴레이에 불린
+ * 체리가 접수대 뒤에서 영원히 걸었다 — 2026-08-27 실제 증상), ② 한 수만
+ * 내다보면 "모서리→목표"가 마저 막히는 모서리 둘 사이에서 진동한다(무작위
+ * 퍼즈 300회 중 5회). 목표까지의 최단거리를 그래프로 다 풀어야 진동이 없다 —
+ * 상자 5개·모서리 20개라 막혔을 때만 도는 완화 루프는 공짜나 다름없다.
+ */
+const NAV_MARGIN = 0.4;
+const NAV_CORNERS: [number, number][] = SOLIDS.flatMap(
+  ([x1, x2, z1, z2]) =>
+    [
+      [x1 - NAV_MARGIN, z1 - NAV_MARGIN],
+      [x2 + NAV_MARGIN, z1 - NAV_MARGIN],
+      [x1 - NAV_MARGIN, z2 + NAV_MARGIN],
+      [x2 + NAV_MARGIN, z2 + NAV_MARGIN]
+    ] as [number, number][]
+).filter(([x, z]) => walkable(x, z));
+
+const NAV_EDGES: number[][] = NAV_CORNERS.map((a, i) =>
+  NAV_CORNERS.map((b, j) =>
+    i !== j && segClear(a[0], a[1], b[0], b[1])
+      ? Math.hypot(a[0] - b[0], a[1] - b[1])
+      : Infinity
+  )
+);
+
+/** 목표까지의 직선이 가구에 막히면, 최단 경로의 다음 모서리를 돌려준다. */
+function detourPoint(
+  px: number,
+  pz: number,
+  tx: number,
+  tz: number
+): [number, number] | null {
+  if (segClear(px, pz, tx, tz)) return null; // 직행
+  const n = NAV_CORNERS.length;
+  // 각 모서리에서 목표까지의 최단거리 (목표 쪽에서 역방향 완화)
+  const toTarget = NAV_CORNERS.map(([cx, cz]) =>
+    segClear(cx, cz, tx, tz) ? Math.hypot(tx - cx, tz - cz) : Infinity
+  );
+  for (let pass = 0; pass < n; pass += 1) {
+    let changed = false;
+    for (let i = 0; i < n; i += 1)
+      for (let j = 0; j < n; j += 1) {
+        const via = NAV_EDGES[i]![j]! + toTarget[j]!;
+        if (via < toTarget[i]!) {
+          toTarget[i] = via;
+          changed = true;
+        }
+      }
+    if (!changed) break;
+  }
+  // 지금 자리에서 보이는 모서리 중 (여기→모서리 + 모서리→목표) 최소
+  let best: [number, number] | null = null;
+  let bestCost = Infinity;
+  for (let i = 0; i < n; i += 1) {
+    if (toTarget[i] === Infinity) continue;
+    const [cx, cz] = NAV_CORNERS[i]!;
+    const dp = Math.hypot(cx - px, cz - pz);
+    if (dp < 0.12) continue; // 이미 이 모서리 — 다음 모서리를 고르게
+    if (!segClear(px, pz, cx, cz)) continue;
+    const cost = dp + toTarget[i]!;
+    if (cost < bestCost) {
+      bestCost = cost;
+      best = [cx, cz];
+    }
+  }
+  return best;
+}
+
 /** 공방 캐릭터 확대 배율 — 마을 키(1.2)로는 실내 가구에 비해 작아 보인다 */
 const ATELIER_NPC_SCALE = 1.3;
 
 /** 식구 한 명에게 내리는 이동 지시 */
 export type FigureOrder =
   | {kind: "free"} // 자기 자리 근처를 배회
-  | {kind: "home"} // 자리로 돌아가 대기 (설문 중인 나머지)
+  | {kind: "home"; face?: number} // 자리로 돌아가 대기 — face 는 도착 후 볼 방향(기본: 손님 쪽 0)
   | {kind: "spot"; x: number; z: number; key: string}; // 지정한 곳으로 — 도착하면 onArrive(key)
 
 function AtelierFigure({
@@ -275,7 +391,7 @@ function AtelierFigure({
     } else if (order.kind === "home") {
       tx = home[0];
       tz = home[2];
-      face = 0;
+      face = order.face ?? 0;
     } else if (wanderRef.current) {
       tx = wanderRef.current.x;
       tz = wanderRef.current.z;
@@ -297,11 +413,16 @@ function AtelierFigure({
     }
 
     if (tx !== null) {
-      const dx = tx - p.x;
-      const dz = tz - p.z;
-      const dist = Math.hypot(dx, dz);
-      if (dist > 0.07) {
-        const speed = hustle && dist > 2.5 ? RUN_SPEED : WALK_SPEED;
+      const distFinal = Math.hypot(tx - p.x, tz - p.z);
+      if (distFinal > 0.07) {
+        // 직선이 가구에 막히면 모서리를 경유해 돌아간다
+        const via = detourPoint(p.x, p.z, tx, tz);
+        const wx = via ? via[0] : tx;
+        const wz = via ? via[1] : tz;
+        const dx = wx - p.x;
+        const dz = wz - p.z;
+        const dist = Math.hypot(dx, dz) || 1;
+        const speed = hustle && distFinal > 2.5 ? RUN_SPEED : WALK_SPEED;
         const step = Math.min(dist, speed * delta);
         const nx = p.x + (dx / dist) * step;
         const nz = p.z + (dz / dist) * step;
@@ -309,13 +430,25 @@ function AtelierFigure({
         if (walkable(nx, nz)) {
           p.x = nx;
           p.z = nz;
-        } else if (walkable(nx, p.z)) {
+        } else if (walkable(nx, p.z) && Math.abs(nx - p.x) > 1e-4) {
           p.x = nx; // 가구 모서리 — 한 축만 미끄러진다
-        } else if (walkable(p.x, nz)) {
+        } else if (walkable(p.x, nz) && Math.abs(nz - p.z) > 1e-4) {
           p.z = nz;
         } else {
+          // 마지막 수: 경계에 몸이 딱 붙은 교착 — 좌우 45°씩 틀어 비켜 걷는다
           moved = false;
-          if (order.kind === "free") wanderRef.current = null; // 낀 목표는 버림
+          for (const s of [1, -1, 2, -2, 3, -3]) {
+            const a = Math.atan2(dx, dz) + (s * Math.PI) / 4;
+            const ex = p.x + Math.sin(a) * step;
+            const ez = p.z + Math.cos(a) * step;
+            if (walkable(ex, ez)) {
+              p.x = ex;
+              p.z = ez;
+              moved = true;
+              break;
+            }
+          }
+          if (!moved && order.kind === "free") wanderRef.current = null; // 낀 목표는 버림
         }
         if (moved) {
           moveRef.current = speed === RUN_SPEED ? "run" : "walk";
@@ -1219,14 +1352,38 @@ export function AtelierInterior({
     release: id => setSocialOrders(prev => ({...prev, [id]: undefined}))
   });
 
-  // 설문(릴레이)·상담 중에는 식구끼리 잡담을 쉰다
-  const social = useAtelierSocialLoop(
-    !!focusNpcId || hideHints || !!activeNpcId || !!pendingTalk,
-    socialApiRef
-  );
+  // ── 근무 모드 (2026-08-27) ──
+  // 평소엔 다들 자기 자리 근처에서 놀지만, 손님이 **처음 누군가에게 말을 걸면**
+  // 전원 자기 작업대로 가서 작업대를 바라보고 선다 — "일하는 공방" 연출.
+  // 차례가 온 식구만 손님 앞으로 걸어오고, 대화가 끝난 식구는 다시 자리로
+  // 돌아가 일한다. 손님이 90초쯤 아무와도 안 얘기하면 슬그머니 다시 논다.
+  const [workMode, setWorkMode] = useState(false);
+  const interacting =
+    !!focusNpcId || !!activeNpcId || !!pendingTalk || hideHints;
+  useEffect(() => {
+    if (interacting) setWorkMode(true);
+  }, [interacting]);
+  useEffect(() => {
+    if (!workMode || interacting) return;
+    const t = window.setTimeout(() => setWorkMode(false), 90000);
+    return () => window.clearTimeout(t);
+  }, [workMode, interacting]);
+
+  /** '작업 중' 시선 — 팀원은 자기 작업대(바깥쪽)를 본다. 도안은 접수원이라
+   * 언제나 손님 쪽(0)을 지킨다. */
+  const workFace = (npc: NPCData): number =>
+    npc.id === "atelier-intake-npc"
+      ? 0
+      : npc.position[0] < 0
+      ? -Math.PI / 2
+      : Math.PI / 2;
+
+  // 설문(릴레이)·상담·근무 중에는 식구끼리 잡담을 쉰다
+  const social = useAtelierSocialLoop(interacting || workMode, socialApiRef);
 
   /** 클릭: 도안은 접수대에 이미 있으니 즉시, 팀원은 걸어온 뒤에 연다. */
   const handleFigureClick = (npc: NPCData) => {
+    setWorkMode(true); // 손님이 말을 걸었다 — 전원 작업 태세
     if (npc.id === "atelier-intake-npc") {
       onSelectNpc(npc);
       return;
@@ -1249,7 +1406,7 @@ export function AtelierInterior({
     1.9
   ];
 
-  /** 우선순위: 릴레이 > 클릭 상담 > 대화 유지 > 마주침 > 자유 배회 */
+  /** 우선순위: 릴레이 > 클릭 상담 > 대화 유지 > 마주침 > 근무 > 자유 배회 */
   const orderFor = (npc: NPCData): FigureOrder => {
     const isIntakeNpc = npc.id === "atelier-intake-npc";
     if (focusNpcId) {
@@ -1260,7 +1417,8 @@ export function AtelierInterior({
           z: RELAY_SPOT[1],
           key: `relay-${npc.id}`
         };
-      return {kind: "home"}; // 도안은 접수대, 나머지는 자기 자리에서 대기
+      // 도안은 접수대에서 손님을 보고, 나머지는 자리에서 일하는 척 대기
+      return {kind: "home", face: workFace(npc)};
     }
     if (pendingTalk?.npc.id === npc.id) {
       const [gx, gz] = greetSpot(npc);
@@ -1270,7 +1428,8 @@ export function AtelierInterior({
       const [gx, gz] = greetSpot(npc);
       return {kind: "spot", x: gx, z: gz, key: `stay-${npc.id}`};
     }
-    return socialOrders[npc.id] ?? {kind: "free"};
+    if (socialOrders[npc.id]) return socialOrders[npc.id]!;
+    return workMode ? {kind: "home", face: workFace(npc)} : {kind: "free"};
   };
 
   // 릴레이 중 카메라는 접수대 앞 한 곳만 본다 — 화자가 바뀌어도 안 움직인다

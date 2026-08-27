@@ -293,6 +293,46 @@ export function slideToDry(
   return slideWith(isWalkableDry, fromX, fromZ, toX, toZ);
 }
 
+/**
+ * 막히면 **방향을 튼다** — NPC 배회·사회적 이동용 조향.
+ *
+ * 슬라이드는 벽에 비스듬히 닿았을 때만 살고, 목표가 건물 정반대편이면 NPC 가
+ * 벽에 얼굴을 박은 채 갈리거나 서 버린다("건물로 뛰어드는" 그림의 정체).
+ * 대신 원하는 방향이 막히면 좌우로 30°씩, 최대 165°까지 틀어 **처음 뚫리는
+ * 방향으로 걷는다** — 건물에 닿은 주민은 벽을 따라 돌아 나가거나 아예
+ * 딴 데로 걸어간다.
+ *
+ * prefer(+1/−1)는 지난 프레임에 튼 쪽이다. 매 프레임 좌우를 번갈아 고르면
+ * 문틀 앞에서 좌우로 떠는데, 같은 쪽을 먼저 시도하면 한 방향으로 매끈하게
+ * 돌아 나간다. 전 방향이 막히면 moved=false — 그때만 목적지를 새로 뽑는다.
+ */
+const STEER_DEGS = [30, 60, 90, 130, 165] as const;
+
+export function steerDry(
+  fromX: number,
+  fromZ: number,
+  dirX: number,
+  dirZ: number,
+  step: number,
+  prefer: 1 | -1
+): {x: number; z: number; moved: boolean; side: 1 | -1} {
+  const base = Math.atan2(dirX, dirZ); // rotation.y 와 같은 관례: (sin, cos)
+  const tryAt = (a: number) => {
+    const nx = fromX + Math.sin(a) * step;
+    const nz = fromZ + Math.cos(a) * step;
+    return isWalkableDry(nx, nz) ? {x: nx, z: nz} : null;
+  };
+  const straight = tryAt(base);
+  if (straight) return {...straight, moved: true, side: prefer};
+  for (const deg of STEER_DEGS) {
+    for (const s of [prefer, -prefer]) {
+      const hit = tryAt(base + (deg * Math.PI * s) / 180);
+      if (hit) return {...hit, moved: true, side: s as 1 | -1};
+    }
+  }
+  return {x: fromX, z: fromZ, moved: false, side: prefer};
+}
+
 function slideWith(
   ok: (x: number, z: number) => boolean,
   fromX: number,
