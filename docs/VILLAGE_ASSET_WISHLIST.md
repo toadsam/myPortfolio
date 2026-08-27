@@ -16,7 +16,7 @@
 | 무엇        | 지금                   | 비고                                                        |
 | ----------- | ---------------------- | ----------------------------------------------------------- |
 | 건물        | **27 / 27** ✅         | 2026-08-27 `study-cs`(지식 서고) 입고 — 전 채 완성          |
-| 캐릭터      | **20 / 38**            | 건물 NPC 8명이 아직 로봇이다 (별도 문서)                    |
+| 캐릭터      | **34 / 38**            | 건물 NPC 4명(까치·수달·여우·나무늘보)만 아직 로봇이다       |
 | 프롭        | 1,197개                | `src/data/propsLayout.json`                                 |
 | 돌다리      | 14곳 · **2종 교대** ✅ | 2026-08-27 `bridge-arch` 입고 — 남북 대문 + 건널목 교대     |
 | 채움 민가   | 32채 / **3종**         | `house-a` 11 · `house-b` 10 · `house-c` 11                  |
@@ -36,10 +36,11 @@
 | ~~③~~ | ~~아치 돌다리~~   | ✅ 2026-08-27 입고                            | **원본 Z 를 0.55 로 눌러 구움** — 아래 「입고 후기」 참고     |
 | ④     | 채움 민가 2종     | `props/raw/decor/house-d.glb` · `house-e.glb` | 3종으로 32채. 한 블록에 같은 집이 두세 번 나온다              |
 | ⑤     | 구역 축대 토막    | `props/raw/decor/terrace-bank.glb`            | 코드로 그린 돌쌓기라 줄눈이 반듯하다. **급하지 않음**         |
+| ⑥     | 공방 소품 6종     | `props/raw/atelier/*.glb`                     | 캐릭터 5종은 진짜 몸이 됐는데 가구는 아직 상자다 (아래 ⑥)     |
 
-> 캐릭터 **18종**은 여기 안 적는다 — 프롬프트가 이미
+> 캐릭터 **4종**은 여기 안 적는다 — 프롬프트가 이미
 > [`NPC_CHARACTER_PROMPTS.md`](NPC_CHARACTER_PROMPTS.md) 에 종별로 다 있다.
-> 아래 「캐릭터 — 남은 18종」에 목록만 둔다.
+> 아래 「캐릭터 — 남은 4종」에 목록만 둔다.
 
 ---
 
@@ -197,24 +198,182 @@ under 1200 triangles
 
 ---
 
-## 캐릭터 — 남은 18종
+## ⑥ 의뢰 공방 소품 6종 (2026-08-27) — 지하 방의 가구를 Meshy 로
+
+공방 캐릭터 5종이 진짜 GLB 몸으로 서면서(합 1.7MB) `AtelierInterior` 의
+"GLB 0개" 원칙은 이미 "가볍게만"으로 완화됐다. 다음 차례는 가구다 —
+접수대·작업대 4종·랜턴이 아직 상자·원기둥이라, 진짜 몸을 가진 식구들 옆에서
+가구만 도형 티가 난다. **방 껍데기(바닥·벽·천장·계단)는 절차 유지** —
+방 치수에 딱 맞춘 지오메트리라 GLB 로 바꾸면 이음새 관리만 는다.
+
+| 파일명 (`props/raw/atelier/`) | 무엇                 | 실물 기준(방 축척 1유닛≈1.4m)      |
+| ----------------------------- | -------------------- | ----------------------------------- |
+| `reception-desk.glb`          | 접수대               | 길이 4.8m · 높이 1.6m (가슴 높이)   |
+| `workbench-planner.glb`       | 기획 작업대+핀보드   | 책상 3.7m, 보드 상단 2.3m           |
+| `workbench-designer.glb`      | 디자인 작업대        | 3.7m · 허리 높이                    |
+| `workbench-frontend.glb`      | 프론트 작업대+모니터 | 3.7m · 화면이 가슴 높이             |
+| `server-rack.glb`             | 백엔드 서버 캐비닛   | 높이 2.7m (사람 1.6배)              |
+| `wall-lantern.glb`            | 벽걸이 랜턴 ×3       | 등롱 0.4m (한 손 크기)              |
+
+**마을 소품과 다른 점 넷** (넣기 전에 알 것):
+
+1. **새 카테고리 폴더 `atelier/` 를 만들고 그 안에 `raw/` 도 만들 것.** 없으면
+   optimize 가 조용히 건너뛴다 (「넣는 법」의 함정 그대로).
+2. **텍스처는 1024 를 유지해야 한다.** 실내는 카메라가 1~3유닛 거리라 props 기본
+   예산(512)으로 줄이면 뭉개진다. `scripts/optimize_textures.py` BUDGETS 에
+   `atelier: 1024` 를 추가하는 건 코드 쪽 몫 — 파일이 들어오면 같이 처리한다.
+3. **발광부는 에셋에 넣지 않는다.** 모니터 화면(짙은 남색 무지), 서버 표시등(꺼진
+   점), 랜턴 유리(emissive 재질만)로 뽑고, 실제 빛·화면 글로우는 지금처럼
+   `AtelierInterior` 코드가 GLB 위에 겹쳐 얹는다 (마을 가로등과 같은 규칙).
+4. **배치는 수동이다.** `generate-decor-layout.mjs` 를 안 탄다 — `AtelierInterior`
+   의 `Workbench`/`Lantern`/접수대 절차 지오메트리를 GLB+폴백으로 바꾸는 코드
+   작업이 따라온다 (캐릭터의 DollBody 폴백과 같은 구조).
+
+프롬프트 6종은 조립 규칙(프리픽스 A + 본문 + 인물 대비 크기 + 화풍 앵커 +
+삼각형 꼬리말) 그대로, **복붙용 완성본**이다. 네거티브는 장식물용 그대로.
+방 팔레트에 맞춰 전부 `dark walnut wood + warm golden trim` 으로 통일했다
+(마을의 honey-brown 보다 어둡다 — 지하 방의 WOOD `#4a3220`·GOLD `#e2c078`).
+
+#### ⑥-1 `reception-desk.glb` — 접수대
+
+```
+3D rendered miniature fairytale village prop, stylized very low-poly game asset,
+soft rounded chunky shapes, hand-painted matte textures with flat color blocks,
+warm golden-hour sunset lighting with soft ambient shadows, cozy storybook mood,
+single connected object with simple silhouette,
+front three-quarter view at eye level, entire object fully visible and centered
+in frame, plain flat light grey studio background, isolated single object,
+clean product shot, no ground plane, no cast shadow,
+a grand fairytale workshop reception counter, one long straight wooden counter
+with a panelled front and a slightly overhanging polished top, dark walnut wood
+with a warm golden trim band running along the top edge, small carved rounded
+details on the two corner posts, a rolled parchment and a small ink pot resting
+on the top, about chest height to a person and long enough for three people to
+stand behind,
+Ghibli-like storybook game art, soft painterly textures, muted natural colors,
+low poly game asset, under 8000 triangles
+```
+
+#### ⑥-2 `workbench-planner.glb` — 기획 작업대 (핀보드)
+
+```
+3D rendered miniature fairytale village prop, stylized very low-poly game asset,
+soft rounded chunky shapes, hand-painted matte textures with flat color blocks,
+warm golden-hour sunset lighting with soft ambient shadows, cozy storybook mood,
+single connected object with simple silhouette,
+front three-quarter view at eye level, entire object fully visible and centered
+in frame, plain flat light grey studio background, isolated single object,
+clean product shot, no ground plane, no cast shadow,
+a fairytale planner's workbench, a sturdy wooden desk with a large framed cork
+pin-board standing upright along its back edge, a few small blank sticky notes
+in soft yellow and green pinned to the board, rolled paper plans and a small ink
+pot on the desk, dark walnut wood with a warm golden trim line, the desk about
+waist height and the board rising to head height of a person,
+Ghibli-like storybook game art, soft painterly textures, muted natural colors,
+low poly game asset, under 8000 triangles
+```
+
+#### ⑥-3 `workbench-designer.glb` — 디자인 작업대 (색 견본)
+
+```
+3D rendered miniature fairytale village prop, stylized very low-poly game asset,
+soft rounded chunky shapes, hand-painted matte textures with flat color blocks,
+warm golden-hour sunset lighting with soft ambient shadows, cozy storybook mood,
+single connected object with simple silhouette,
+front three-quarter view at eye level, entire object fully visible and centered
+in frame, plain flat light grey studio background, isolated single object,
+clean product shot, no ground plane, no cast shadow,
+a fairytale designer's workbench, a sturdy wooden desk topped with a neat row of
+fanned-out color swatch cards in soft purple orange green and cream, a tilted
+drawing board leaning at the back edge holding a blank cream sketch sheet, a
+small jar of round brushes, dark walnut wood with a warm golden trim line,
+about waist height to a person,
+Ghibli-like storybook game art, soft painterly textures, muted natural colors,
+low poly game asset, under 8000 triangles
+```
+
+#### ⑥-4 `workbench-frontend.glb` — 프론트 작업대 (모니터 2대)
+
+```
+3D rendered miniature fairytale village prop, stylized very low-poly game asset,
+soft rounded chunky shapes, hand-painted matte textures with flat color blocks,
+warm golden-hour sunset lighting with soft ambient shadows, cozy storybook mood,
+single connected object with simple silhouette,
+front three-quarter view at eye level, entire object fully visible and centered
+in frame, plain flat light grey studio background, isolated single object,
+clean product shot, no ground plane, no cast shadow,
+a fairytale tinkerer's workbench, a sturdy wooden desk with two chunky rounded
+wooden-framed monitor screens standing side by side and angled slightly inward,
+both screens plain dark navy blue and switched off, a small wooden keyboard
+tray at the front, dark walnut wood with a warm golden trim line and small
+brass corner fittings, the desk about waist height with the screens at chest
+height of a person,
+Ghibli-like storybook game art, soft painterly textures, muted natural colors,
+low poly game asset, under 8000 triangles
+```
+
+#### ⑥-5 `server-rack.glb` — 백엔드 서버 캐비닛
+
+```
+3D rendered miniature fairytale village prop, stylized very low-poly game asset,
+soft rounded chunky shapes, hand-painted matte textures with flat color blocks,
+warm golden-hour sunset lighting with soft ambient shadows, cozy storybook mood,
+single connected object with simple silhouette,
+front three-quarter view at eye level, entire object fully visible and centered
+in frame, plain flat light grey studio background, isolated single object,
+clean product shot, no ground plane, no cast shadow,
+a fairytale arcane server cabinet, one tall narrow wooden cabinet with four
+stacked machine bays visible on its front face, each bay a dark navy panel with
+a row of small round unlit indicator dots, small brass pipe fittings and rivets
+along the sides, dark walnut wood frame with a warm golden trim line, standing
+flat on the floor, slightly taller than a person,
+Ghibli-like storybook game art, soft painterly textures, muted natural colors,
+low poly game asset, under 8000 triangles
+```
+
+#### ⑥-6 `wall-lantern.glb` — 벽걸이 랜턴
+
+```
+3D rendered miniature fairytale village prop, stylized very low-poly game asset,
+soft rounded chunky shapes, hand-painted matte textures with flat color blocks,
+warm golden-hour sunset lighting with soft ambient shadows, cozy storybook mood,
+single connected object with simple silhouette,
+front three-quarter view at eye level, entire object fully visible and centered
+in frame, plain flat light grey studio background, isolated single object,
+clean product shot, no ground plane, no cast shadow,
+a small fairytale hanging wall lantern, a four-sided amber glass lantern box
+with warm glowing amber emissive glass panels, a tiny pointed dark wooden roof
+cap on top, hanging from a short straight dark wooden ceiling rod by a small
+ring, dark walnut wood and small brass details, the lantern box small enough to
+be held in one hand,
+Ghibli-like storybook game art, soft painterly textures, muted natural colors,
+low poly game asset, under 8000 triangles
+```
+
+---
+
+## 캐릭터 — 남은 4종
 
 프롬프트는 종마다 [`NPC_CHARACTER_PROMPTS.md`](NPC_CHARACTER_PROMPTS.md) 에 있다.
 파이프라인이 달라서(이미지 → Meshy → **오토리깅** → `merge-character.mjs`)
 여기 옮기지 않는다.
 
-| 어디            | 남은 것                                                                   |
-| --------------- | ------------------------------------------------------------------------- |
-| 건물 NPC **4**  | 까치·수달·여우·나무늘보 (2026-08-27 고슴도치·사자·박쥐→페넥·늑대 입고)    |
-| 상시 역할 **5** | 보더콜리(루미 교체)·고양이(픽셀)·염소(테오)·아르마딜로(아카)·제비(포스트) |
-| 의뢰 공방 **5** | 개미핥기(도안)·까마귀(체리)·문어(먹지)·여우원숭이(리코)·두더지(굴뚝)      |
+| 어디           | 남은 것               |
+| -------------- | --------------------- |
+| 건물 NPC **4** | 까치·수달·여우·나무늘보 |
 
-- 건물 NPC 8명은 지금 **로봇(`neon-robot-npc`)** 으로 서 있다.
+- 상시 역할 5종(보더콜리·고양이·염소·아르마딜로·제비)과 공방 5종(개미핥기·
+  까마귀·문어·여우원숭이·두더지)은 **입고 완료**(2026-08-26~27). 공방 5종은
+  `AtelierInterior` 에 실제로 서서 걸어 다닌다 — GLB-0 원칙은 "가볍게만"으로 완화.
+- **숨쉬기 idle 전면 배치 완료**(2026-08-27): 동물 33종 전원에
+  `Short Breathe and Look Around` 클립을 `scripts/add-character-clip.mjs` 로 병합.
+  전원 idle ← 숨쉬기, 직업 동작은 special(가끔)로. **수달로 보이는 idle 파일이
+  하나 먼저 도착했는데**(리포에 몸이 없어 보류) — 수달을 입고하려면 같은 모델의
+  **walking / running** 클립까지 받아 폴더째 `merge-character.mjs` 로 병합해야 한다.
+- 남은 건물 NPC 4명은 지금 **로봇(`neon-robot-npc`)** 으로 서 있다.
   `npcRoster.ts` 의 `buildingNpcModel` 에 키가 없으면 기본값이 로봇이다.
 - `life-timeline` 에는 **거북**이 임시로 서 있다(원래 중앙 광장 몫).
   나무늘보가 들어오면 거북을 광장으로 옮긴다.
-- **공방 5종은 넣을지부터 정해야 한다.** `AtelierInterior` 가 GLB 를 하나도 안 쓰는
-  덕에 `/atelier` 가 마을(20.7MB) 없이 단독으로 선다. 캐릭터를 넣으면 그 전제가 깨진다.
 
 ---
 
