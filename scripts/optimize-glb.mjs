@@ -210,7 +210,11 @@ const isTerracePiece = inPath =>
 // 간판 7장이 그중 37MB를 먹고 있었다 — 마을 카메라에서 간판은 높이 1유닛이라
 // 화면에 수십 px밖에 안 잡히고, 가장 가까이 붙어도 512로 글자가 또렷하다.
 // 예산이 다시 넉넉해지면 여기만 되돌리면 된다.
-const textureGroupFor = group => group;
+//
+// 예외: props/raw/atelier/ 는 공방 실내 가구다 — 카메라가 1~3유닛 거리라
+// 512로 줄이면 뭉개져서 전용 예산(atelier: baseColor 1024)을 쓴다.
+const textureGroupFor = (group, inPath) =>
+  group === "props" && /[\\/]atelier[\\/]/.test(inPath) ? "atelier" : group;
 
 // 건물도 simplify가 잘 먹는다. 오차 0.012면 평균 40%가 빠지는데 간판 글자와 창틀은
 // 그대로다 — 아주총학 14,593 → 8,764 를 나란히 구워 대조했다. 0.03까지 올려도
@@ -269,7 +273,11 @@ for (const {group, inPath, outPath} of jobs) {
       // PYTHONIOENCODING — 없으면 Windows에서 파이썬이 cp949로 뱉어 한글이 깨진다
       execFileSync(
         python,
-        [join("scripts", "optimize_textures.py"), work, textureGroupFor(group)],
+        [
+          join("scripts", "optimize_textures.py"),
+          work,
+          textureGroupFor(group, inPath)
+        ],
         {
           stdio: "inherit",
           env: {...process.env, PYTHONIOENCODING: "utf-8"}

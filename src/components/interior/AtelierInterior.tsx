@@ -6,12 +6,13 @@
  * 기존 실내(Lab/Workshop/Archive/Post)와 같은 규칙으로 만든다: **공간은 GLB 없이**
  * 상자·원기둥·평면으로 짜고, 라벨은 <Html>, 시점은 OrbitControls.
  *
- * NPC 다섯 식구만 예외다(2026-08-27). 원래 "GLB 0개" 원칙으로 절차 인형
- * (AtelierFigure)을 세웠는데 — /atelier 가 마을 20.7MB 없이 단독으로 서는 게
- * 전제였다 — 캐릭터 GLB 가 최적화 후 개당 0.3MB, 5종 합쳐 1.7MB 가 되면서
- * 그 전제를 깨지 않고도 진짜 몸을 세울 수 있게 됐다. 그래서 몸만 마을과 같은
- * `NpcCharacter` 로 그리고, 로딩되는 동안과 model 이 없는 NPC 는 여전히
- * 절차 인형이 선다. **마을 GLB(건물·프롭)는 여전히 하나도 안 끌어온다.**
+ * NPC 다섯 식구(2026-08-27, 합 1.7MB)와 가구 6종(같은 날, 합 3.6MB)은 예외다.
+ * 원래 "GLB 0개" 원칙으로 절차 인형·상자 가구를 세웠는데 — /atelier 가 마을
+ * 20.7MB 없이 단독으로 서는 게 전제였다 — 최적화 후 방 전체가 5MB 대라
+ * 그 전제를 깨지 않고도 진짜 몸·진짜 가구를 세울 수 있게 됐다. 로딩되는 동안과
+ * 실패 시엔 여전히 절차 지오메트리가 폴백으로 선다(DollBody·*Doll 컴포넌트).
+ * **마을 GLB(건물·프롭)는 여전히 하나도 안 끌어온다** — 가구는 전용 폴더
+ * (props/atelier/, 텍스처 1024 예산)의 실내용이다.
  *
  * 식구들은 방을 걸어 다닌다(2026-08-27, "방 안 보행" 절 참고): 평소엔 자기
  * 작업대 근처를 배회하고, 클릭하면 손님 앞까지 걸어온 뒤 대화창이 열리며,
@@ -21,7 +22,7 @@
  * 팔레트는 마을 UI 간판 언어를 따른다 — 랜턴 #ff9d38, 간판금 #e2c078, 밤하늘 #0b1626.
  */
 
-import {ContactShadows, Html, OrbitControls} from "@react-three/drei";
+import {ContactShadows, Html, OrbitControls, useGLTF} from "@react-three/drei";
 import {Canvas, useFrame} from "@react-three/fiber";
 import {motion} from "framer-motion";
 import {
@@ -32,13 +33,22 @@ import {
   useState,
   type ComponentRef
 } from "react";
-import {AdditiveBlending, Group, MathUtils, PointLight, Vector3} from "three";
+import {
+  AdditiveBlending,
+  Group,
+  MathUtils,
+  Mesh,
+  PointLight,
+  Vector3
+} from "three";
 import {atelierNpcs} from "@/data/atelierRoster";
 import {
   NpcCharacter,
   type NpcMoveState
 } from "@/components/village/NpcCharacter";
+import {extendGltfLoader} from "@/lib/gltfLoaders";
 import {requestNpcEncounter} from "@/lib/liveApi";
+import {lockSceneMaterials} from "@/lib/villageMaterial";
 import type {NPCData} from "@/types/portfolio";
 
 const LANTERN = "#ff9d38";
@@ -94,6 +104,61 @@ function DollBody({npc, glow}: {npc: NPCData; glow: number}) {
         </mesh>
       ))}
     </>
+  );
+}
+
+/* ────────────────────── 가구 GLB (2026-08-27) ────────────────────── */
+//
+// Meshy 가구 6종(props/raw/atelier/, optimize 후 합 3.6MB). 캐릭터와 같은 규칙:
+// 로딩되는 동안과 실패 시엔 기존 절차 지오메트리가 폴백으로 선다.
+// 발광부(모니터 화면·서버 LED·랜턴 불빛)는 에셋에 없다 — 바닥 빛무리·pointLight
+// 등을 코드가 그대로 얹는다. 텍스처 예산은 optimize 의 atelier 카테고리(1024).
+
+const noopRaycast = () => {};
+
+// 실측 배율표. 모델은 전부 **중심 원점**이라 y 를 |minY|×scale 만큼 들어
+// 바닥에 세운다 (실측 예: reception-desk X 1.902 · minY −0.330).
+const FURNITURE = {
+  "reception-desk": {scale: 1.79, lift: 0.33},
+  "workbench-planner": {scale: 1.05, lift: 0.871},
+  "workbench-designer": {scale: 1.15, lift: 0.714},
+  "workbench-frontend": {scale: 1.15, lift: 0.678},
+  "server-rack": {scale: 1.0, lift: 0.952},
+  "wall-lantern": {scale: 0.55, lift: 0} // 매달아 쓰므로 자리에서 y 를 직접 준다
+} as const;
+
+function AtelierProp({
+  file,
+  yOffset = 0
+}: {
+  file: keyof typeof FURNITURE;
+  yOffset?: number;
+}) {
+  const spec = FURNITURE[file];
+  const {scene} = useGLTF(
+    `/models/props/atelier/${file}.glb`,
+    true,
+    true,
+    extendGltfLoader
+  );
+  const cloned = useMemo(() => {
+    const copy = scene.clone(true);
+    lockSceneMaterials(copy);
+    copy.traverse(o => {
+      if (o instanceof Mesh) {
+        o.castShadow = true;
+        o.receiveShadow = true;
+        o.raycast = noopRaycast; // 포인터는 투명 히트박스 몫 (마을 규칙)
+      }
+    });
+    return copy;
+  }, [scene]);
+  return (
+    <primitive
+      object={cloned}
+      position={[0, spec.lift * spec.scale + yOffset, 0]}
+      scale={spec.scale}
+    />
   );
 }
 
@@ -445,7 +510,7 @@ function AtelierFigure({
 
 /* ────────────────────────────── 작업대 ────────────────────────────── */
 
-/** 직군을 한눈에 알아볼 소품을 얹은 작업대. kind로 위에 놓이는 물건이 갈린다. */
+/** 직군별 작업대 — GLB 가구(2026-08-27) + 절차 폴백. 백엔드는 서버 캐비닛. */
 function Workbench({
   position,
   color,
@@ -457,6 +522,46 @@ function Workbench({
 }) {
   return (
     <group position={position}>
+      <Suspense fallback={<WorkbenchDoll color={color} kind={kind} />}>
+        <AtelierProp
+          file={
+            kind === "planner"
+              ? "workbench-planner"
+              : kind === "designer"
+              ? "workbench-designer"
+              : kind === "frontend"
+              ? "workbench-frontend"
+              : "server-rack"
+          }
+        />
+      </Suspense>
+      {kind === "backend" ? (
+        // 랙 앞에 고이는 파란 빛 — 실광원 대신 가산 원반(마을 LampPools 수법)
+        <mesh position={[0, 0.014, 0.6]} rotation={[-Math.PI / 2, 0, 0]}>
+          <circleGeometry args={[1.1, 20]} />
+          <meshBasicMaterial
+            blending={AdditiveBlending}
+            color={color}
+            depthWrite={false}
+            opacity={0.16}
+            transparent
+          />
+        </mesh>
+      ) : null}
+    </group>
+  );
+}
+
+/** GLB 가 오기 전의 절차 작업대 (2026-08-27 까지의 본체) */
+function WorkbenchDoll({
+  color,
+  kind
+}: {
+  color: string;
+  kind: "planner" | "designer" | "frontend" | "backend";
+}) {
+  return (
+    <>
       {/* 상판 + 다리 */}
       <mesh castShadow receiveShadow position={[0, 0.72, 0]}>
         <boxGeometry args={[2.6, 0.1, 1.1]} />
@@ -574,20 +679,34 @@ function Workbench({
               </mesh>
             </group>
           ))}
-          {/* 랙 앞에 고이는 파란 빛 — 실광원 대신 가산 원반(마을 LampPools 수법) */}
-          <mesh position={[0, 0.014, 0.75]} rotation={[-Math.PI / 2, 0, 0]}>
-            <circleGeometry args={[1.1, 20]} />
-            <meshBasicMaterial
-              blending={AdditiveBlending}
-              color={color}
-              depthWrite={false}
-              opacity={0.16}
-              transparent
-            />
-          </mesh>
         </group>
       ) : null}
-    </group>
+    </>
+  );
+}
+
+/** GLB 가 오기 전의 절차 접수대 (2026-08-27 까지의 본체) */
+function ReceptionDeskDoll() {
+  return (
+    <>
+      <mesh castShadow receiveShadow position={[0, 0.5, 0]}>
+        <boxGeometry args={[3.4, 1, 1.05]} />
+        <meshStandardMaterial color={WOOD} roughness={0.6} />
+      </mesh>
+      <mesh position={[0, 1.03, 0]}>
+        <boxGeometry args={[3.6, 0.08, 1.2]} />
+        <meshStandardMaterial color={GOLD} metalness={0.25} roughness={0.45} />
+      </mesh>
+      {/* 접수대 위 도면과 잉크병 */}
+      <mesh position={[-0.75, 1.09, 0.05]} rotation={[-Math.PI / 2, 0, 0.14]}>
+        <planeGeometry args={[0.9, 0.62]} />
+        <meshBasicMaterial color="#f3e6c8" />
+      </mesh>
+      <mesh castShadow position={[0.95, 1.16, 0.1]}>
+        <cylinderGeometry args={[0.09, 0.11, 0.18, 10]} />
+        <meshStandardMaterial color="#1b2536" roughness={0.4} />
+      </mesh>
+    </>
   );
 }
 
@@ -610,6 +729,38 @@ function Lantern({position}: {position: [number, number, number]}) {
 
   return (
     <group position={position}>
+      <Suspense fallback={<LanternDoll />}>
+        {/* GLB 는 등롱+걸이 막대가 한 몸(높이 1.05) — 천장(3.5)에 윗단이 닿게 */}
+        <AtelierProp file="wall-lantern" yOffset={0.03} />
+      </Suspense>
+      {/* 랜턴 주변에 퍼지는 빛무리 — 광원만으로는 랜턴이 '켜져 있다'는 게 안 읽힌다.
+          GLB 등롱은 막대 아래쪽에 매달려 있어 빛무리도 그만큼 내린다. */}
+      <mesh position={[0, -0.32, 0]}>
+        <sphereGeometry args={[0.62, 12, 10]} />
+        <meshBasicMaterial
+          color="#ffbe74"
+          depthWrite={false}
+          opacity={0.13}
+          transparent
+        />
+      </mesh>
+      <pointLight
+        ref={lightRef}
+        castShadow={false}
+        color="#ffbe74"
+        decay={1.5}
+        distance={22}
+        intensity={3.6}
+        position={[0, -0.32, 0]}
+      />
+    </group>
+  );
+}
+
+/** GLB 가 오기 전의 절차 랜턴 (2026-08-27 까지의 본체) */
+function LanternDoll() {
+  return (
+    <group position={[0, -0.32, 0]}>
       <mesh position={[0, 0.42, 0]}>
         <cylinderGeometry args={[0.012, 0.012, 0.84, 5]} />
         <meshStandardMaterial color={WOOD_DARK} roughness={0.9} />
@@ -627,24 +778,6 @@ function Lantern({position}: {position: [number, number, number]}) {
         <coneGeometry args={[0.26, 0.16, 4]} />
         <meshStandardMaterial color={WOOD_DARK} roughness={0.8} />
       </mesh>
-      {/* 랜턴 주변에 퍼지는 빛무리 — 광원만으로는 랜턴이 '켜져 있다'는 게 안 읽힌다 */}
-      <mesh>
-        <sphereGeometry args={[0.62, 12, 10]} />
-        <meshBasicMaterial
-          color="#ffbe74"
-          depthWrite={false}
-          opacity={0.13}
-          transparent
-        />
-      </mesh>
-      <pointLight
-        ref={lightRef}
-        castShadow={false}
-        color="#ffbe74"
-        decay={1.5}
-        distance={22}
-        intensity={3.6}
-      />
     </group>
   );
 }
@@ -763,29 +896,11 @@ function AtelierRoom() {
         <Lantern key={i} position={pos} />
       ))}
 
-      {/* 접수대 — 방 한가운데 */}
+      {/* 접수대 — 방 한가운데. GLB(도면·잉크병까지 구워져 있다) + 절차 폴백 */}
       <group position={[0, 0, -0.35]}>
-        <mesh castShadow receiveShadow position={[0, 0.5, 0]}>
-          <boxGeometry args={[3.4, 1, 1.05]} />
-          <meshStandardMaterial color={WOOD} roughness={0.6} />
-        </mesh>
-        <mesh position={[0, 1.03, 0]}>
-          <boxGeometry args={[3.6, 0.08, 1.2]} />
-          <meshStandardMaterial
-            color={GOLD}
-            metalness={0.25}
-            roughness={0.45}
-          />
-        </mesh>
-        {/* 접수대 위 도면과 잉크병 */}
-        <mesh position={[-0.75, 1.09, 0.05]} rotation={[-Math.PI / 2, 0, 0.14]}>
-          <planeGeometry args={[0.9, 0.62]} />
-          <meshBasicMaterial color="#f3e6c8" />
-        </mesh>
-        <mesh castShadow position={[0.95, 1.16, 0.1]}>
-          <cylinderGeometry args={[0.09, 0.11, 0.18, 10]} />
-          <meshStandardMaterial color="#1b2536" roughness={0.4} />
-        </mesh>
+        <Suspense fallback={<ReceptionDeskDoll />}>
+          <AtelierProp file="reception-desk" />
+        </Suspense>
       </group>
 
       {/* 공방 현판 */}

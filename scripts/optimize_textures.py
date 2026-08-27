@@ -29,6 +29,9 @@ except ImportError:
 BUDGETS = {
     "buildings": {"baseColor": 1024, "normal": 512, "metallicRoughness": 512, "emissive": 512, "occlusion": 512},
     "props": {"baseColor": 512, "normal": 256, "metallicRoughness": 256, "emissive": 256, "occlusion": 256},
+    # 공방 실내 가구(props/raw/atelier/) — 카메라가 1~3유닛 거리라 512로 줄이면
+    # 뭉개진다. 방에 6종뿐이라 1024를 줘도 VRAM 부담이 작다.
+    "atelier": {"baseColor": 1024, "normal": 512, "metallicRoughness": 256, "emissive": 512, "occlusion": 256},
     "characters": {"baseColor": 512, "normal": 512, "metallicRoughness": 256, "emissive": 256, "occlusion": 256},
     "environment": {"baseColor": 1024, "normal": 512, "metallicRoughness": 512, "emissive": 512, "occlusion": 512},
 }
