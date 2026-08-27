@@ -44,6 +44,7 @@ import {
   Vector3
 } from "three";
 import {atelierNpcs} from "@/data/atelierRoster";
+import {SMALL_TALK} from "@/data/atelierSmallTalk";
 import {
   NpcCharacter,
   type NpcMoveState
@@ -1217,35 +1218,100 @@ interface SocialWalkApi {
   release: (id: string) => void;
 }
 
-/** 공방 식구끼리의 마주침 루프 (5단계 E-4).
+/** 공방 식구끼리의 수다 루프 — 잡담(고정 대본) + 마주침(E-4, 백엔드).
  *
- * 마을의 checkEncounter 는 거리 기반이지만 여기는 넷이 늘 한 방이라 타이머로 간다.
- * 대사는 백엔드 /npc/encounter — 직군별 사건 템플릿(체리의 "범위를 또 늘림" 류)이
- * 이 방에서 처음으로 실제로 일어난다. 관계·기억·마을 소식도 똑같이 쌓인다.
+ * 마을의 checkEncounter 는 거리 기반이지만 여기는 다섯이 늘 한 방이라 타이머로 간다.
  *
- * 2026-08-27: 말풍선만 띄우던 것에서 **한쪽이 실제로 걸어가는** 것으로. 찾아가는
- * 쪽(a)이 상대(b) 자리 옆까지 걸은 뒤에 대화가 시작된다. 걸음이 끝나는 시각은
- * 도착 콜백 대신 거리/속도로 어림한다 — 몇백 ms 어긋나도 말풍선이라 티가 안 나고,
- * 타이머 사슬을 그대로 쓸 수 있어서다.
+ * 두 단으로 돈다(2026-08-27, "같은 방인데 왜 조용하냐"는 사용자 피드백):
+ * - **잡담**: `SMALL_TALK` 고정 대본, LLM 0회·관계 무변화. 입장 십몇 초 뒤부터
+ *   15~35초 간격으로 계속 — 같은 방 식구의 '평소 수다'는 이걸로 채운다.
+ * - **마주침**: 백엔드 /npc/encounter — 직군별 사건 템플릿이 관계·기억·마을 소식을
+ *   쌓는다. 호출 비용이 있으니 기존처럼 2분에 한 번이 상한.
+ *
+ * 동선: 배회 중이면 말 거는 쪽(a)이 상대(b) 자리 옆까지 실제로 걸어간 뒤 시작하고,
+ * 근무 모드면 **아무도 안 움직이고** 자기 작업대에서 방 너머로 주고받는다(사무실
+ * 잡담). 걸음이 끝나는 시각은 도착 콜백 대신 거리/속도로 어림한다 — 몇백 ms
+ * 어긋나도 말풍선이라 티가 안 나고, 타이머 사슬을 그대로 쓸 수 있어서다.
  */
 function useAtelierSocialLoop(
   paused: boolean,
+  atDesks: boolean,
   walkApi: {current: SocialWalkApi}
 ) {
   const [bubbles, setBubbles] = useState<Record<string, string>>({});
   const [emotes, setEmotes] = useState<Record<string, string>>({});
   const busyRef = useRef(false);
-  const nextAtRef = useRef(Date.now() + 90000); // 입장 90초 뒤 첫 마주침
+  const smallAtRef = useRef(Date.now() + 12000 + Math.random() * 10000);
+  const encounterAtRef = useRef(Date.now() + 90000); // 입장 90초 뒤 첫 마주침
+  const talkUntilRef = useRef(0); // 지금 진행 중인 수다가 끝나는 시각
+  const recentTalkRef = useRef<number[]>([]);
   const timersRef = useRef<number[]>([]);
   const pausedRef = useRef(paused);
   pausedRef.current = paused;
+  const atDesksRef = useRef(atDesks);
+  atDesksRef.current = atDesks;
 
   useEffect(() => {
     const team = atelierNpcs.filter(npc => npc.id !== "atelier-intake-npc");
-    const tick = async () => {
-      if (pausedRef.current || busyRef.current) return;
-      if (typeof document !== "undefined" && document.hidden) return;
-      if (Date.now() < nextAtRef.current) return;
+    const byId = new Map(atelierNpcs.map(npc => [npc.id, npc]));
+    const later = (ms: number, fn: () => void) =>
+      timersRef.current.push(window.setTimeout(fn, ms));
+    const STEP_MS = 2600;
+
+    /** a 가 b 곁(1.2 떨어진 점)까지 걸어가는 시간(ms). 근무 중이면 제자리. */
+    const approach = (a: NPCData, b: NPCData): number => {
+      if (atDesksRef.current) return 300; // 자리에서 일하며 말만 주고받는다
+      const cur = walkApi.current.posOf(a.id) ?? {
+        x: a.position[0],
+        z: a.position[2]
+      };
+      const bp = walkApi.current.posOf(b.id) ?? {
+        x: b.position[0],
+        z: b.position[2]
+      };
+      const vx = cur.x - bp.x;
+      const vz = cur.z - bp.z;
+      const vl = Math.hypot(vx, vz) || 1;
+      let mx = bp.x + (vx / vl) * 1.2;
+      let mz = bp.z + (vz / vl) * 1.2;
+      if (!walkable(mx, mz)) {
+        mx = bp.x;
+        mz = bp.z + 1.2; // 사이에 가구가 있으면 방 안쪽으로
+      }
+      walkApi.current.station(b.id); // 듣는 쪽은 자리를 지킨다
+      walkApi.current.walkTo(a.id, mx, mz);
+      return (Math.hypot(mx - cur.x, mz - cur.z) / WALK_SPEED) * 1000 + 400;
+    };
+
+    /** 고정 대본 잡담 — 최근에 나온 대본은 피해서 뽑는다 */
+    const smallTalk = () => {
+      let idx = Math.floor(Math.random() * SMALL_TALK.length);
+      while (recentTalkRef.current.includes(idx))
+        idx = (idx + 1) % SMALL_TALK.length;
+      recentTalkRef.current = [...recentTalkRef.current.slice(-5), idx];
+      const ex = SMALL_TALK[idx]!;
+      const a = byId.get(ex.pair[0]);
+      const b = byId.get(ex.pair[1]);
+      if (!a || !b) return;
+      const startMs = approach(a, b);
+      ex.lines.forEach((line, i) => {
+        const speaker = line.who === 0 ? a : b;
+        later(startMs + i * STEP_MS, () =>
+          setBubbles({[speaker.id]: line.text})
+        );
+      });
+      const endMs = startMs + ex.lines.length * STEP_MS;
+      later(endMs, () => {
+        setBubbles({});
+        walkApi.current.release(a.id); // 걷지 않았어도 무해하다
+        walkApi.current.release(b.id);
+      });
+      talkUntilRef.current = Date.now() + endMs + 500;
+      smallAtRef.current = Date.now() + endMs + 14000 + Math.random() * 20000;
+    };
+
+    /** 진짜 마주침 — 결과는 규칙이 정하고 LLM 은 대사만 쓴다(E-4) */
+    const encounter = async () => {
       busyRef.current = true;
       try {
         const pick = [...team].sort(() => Math.random() - 0.5).slice(0, 2);
@@ -1255,55 +1321,41 @@ function useAtelierSocialLoop(
           {npc_id: b.id, mood: "calm", energy: 55, recent_memory: []},
           []
         );
-        // a 가 b 자리 옆(1.2 떨어진 점)까지 걸어간 뒤 이야기가 시작된다.
-        const cur = walkApi.current.posOf(a.id) ?? {
-          x: a.position[0],
-          z: a.position[2]
-        };
-        const vx = cur.x - b.position[0];
-        const vz = cur.z - b.position[2];
-        const vl = Math.hypot(vx, vz) || 1;
-        let mx = b.position[0] + (vx / vl) * 1.2;
-        let mz = b.position[2] + (vz / vl) * 1.2;
-        if (!walkable(mx, mz)) {
-          mx = b.position[0];
-          mz = b.position[2] + 1.2; // 사이에 가구가 있으면 방 안쪽으로
-        }
-        walkApi.current.station(b.id); // 듣는 쪽은 자리를 지킨다
-        walkApi.current.walkTo(a.id, mx, mz);
-        const walkMs =
-          (Math.hypot(mx - cur.x, mz - cur.z) / WALK_SPEED) * 1000 + 400;
-        const stepMs = 2600;
+        const startMs = approach(a, b);
         res.dialogue.forEach((line, i) => {
-          timersRef.current.push(
-            window.setTimeout(() => {
-              setBubbles({[line.npc_id]: line.text});
-            }, walkMs + i * stepMs)
+          later(startMs + i * STEP_MS, () =>
+            setBubbles({[line.npc_id]: line.text})
           );
         });
-        const endMs = walkMs + res.dialogue.length * stepMs;
-        timersRef.current.push(
-          window.setTimeout(() => {
-            setBubbles({});
-            walkApi.current.release(a.id); // 이야기 끝 — 둘 다 다시 자유
-            walkApi.current.release(b.id);
-            const delta = res.relationship?.delta ?? 0;
-            if (Math.abs(delta) >= 2) {
-              const emote = delta < 0 ? "💢" : "💕";
-              setEmotes({[a.id]: emote, [b.id]: emote});
-              timersRef.current.push(
-                window.setTimeout(() => setEmotes({}), 1600)
-              );
-            }
-          }, endMs)
-        );
-        nextAtRef.current =
+        const endMs = startMs + res.dialogue.length * STEP_MS;
+        later(endMs, () => {
+          setBubbles({});
+          walkApi.current.release(a.id); // 이야기 끝 — 둘 다 다시 자유
+          walkApi.current.release(b.id);
+          const delta = res.relationship?.delta ?? 0;
+          if (Math.abs(delta) >= 2) {
+            const emote = delta < 0 ? "💢" : "💕";
+            setEmotes({[a.id]: emote, [b.id]: emote});
+            later(1600, () => setEmotes({}));
+          }
+        });
+        talkUntilRef.current = Date.now() + endMs + 500;
+        encounterAtRef.current =
           Date.now() + Math.max(res.cooldown_seconds * 1000, 120000);
       } catch {
-        nextAtRef.current = Date.now() + 180000; // 백엔드 오프라인 — 조용히 쉼
+        encounterAtRef.current = Date.now() + 180000; // 백엔드 오프라인 — 조용히 쉼
       } finally {
         busyRef.current = false;
       }
+    };
+
+    const tick = () => {
+      if (pausedRef.current || busyRef.current) return;
+      if (typeof document !== "undefined" && document.hidden) return;
+      const now = Date.now();
+      if (now < talkUntilRef.current) return; // 다른 수다가 진행 중
+      if (now >= encounterAtRef.current) void encounter();
+      else if (now >= smallAtRef.current) smallTalk();
     };
     const id = window.setInterval(tick, 5000);
     return () => {
@@ -1378,8 +1430,8 @@ export function AtelierInterior({
       ? -Math.PI / 2
       : Math.PI / 2;
 
-  // 설문(릴레이)·상담·근무 중에는 식구끼리 잡담을 쉰다
-  const social = useAtelierSocialLoop(interacting || workMode, socialApiRef);
+  // 설문(릴레이)·상담 중에만 수다를 쉰다 — 근무 중에는 자리에서 잡담을 이어간다
+  const social = useAtelierSocialLoop(interacting, workMode, socialApiRef);
 
   /** 클릭: 도안은 접수대에 이미 있으니 즉시, 팀원은 걸어온 뒤에 연다. */
   const handleFigureClick = (npc: NPCData) => {

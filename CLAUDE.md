@@ -139,6 +139,8 @@ Three things make this unlike every other district:
   갇혔던 원인) — `detourPoint` 가 막는 가구의 모서리(0.4 물림)를 경유지로 잡아 돌아간다.
   손님이 처음 말을 걸면 전원 작업대에 붙는 **근무 모드**(90초 무접촉이면 해제), 마을 NPC 는
   `steerDry`(villageWalk) 로 건물에 막히면 좌우 30°씩 틀어 돌아간다.
+  수다는 두 단: **잡담**(`atelierSmallTalk.ts` 고정 대본, LLM 0회·관계 무변화, 15~35초 간격,
+  배회 중엔 걸어가서·근무 중엔 자리에서) + **마주침**(E-4 백엔드, 관계·기억, 2분 상한 유지).
 
 Two naming traps, both already guarded and locked by `tests/test_relations.py` — keep the atelier branch
 **first** in both `relations.canon()` and `chat_service._npc_profile_for_dynamic_id()`, since the existing
