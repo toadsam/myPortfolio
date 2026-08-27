@@ -69,6 +69,8 @@ const ANIM_DISTANCE = 40;
 const SHADOW_DISTANCE = 12;
 // idle 클립이 여러 개일 때 갈아타는 간격(초). ±40% 흔들어 NPC끼리 안 겹치게 한다.
 const IDLE_SWAP_SECONDS = 9;
+// special(특기 동작)이 나오는 간격(초). idle 로 서 있는 동안에만, 한 번씩.
+const SPECIAL_GAP_SECONDS = 24;
 // Meshy가 캐릭터를 내보내는 기준 높이 (three.js 실측: 로봇·전사·루미 모두 1.7000)
 const MESHY_HEIGHT = 1.7;
 
@@ -141,12 +143,14 @@ function NpcCharacterImpl({
   }, [scene, model.height, modelId]);
 
   // 클립을 상태별로 분류. 분류 안 되는 클립(어퍼컷 등)은 등록만 하고 재생은 안 한다.
-  const {clips, byState, idleFrozen} = useMemo(() => {
+  // special 은 상태가 아니라 "idle 중 가끔 나오는 특기 동작" — 별도 목록으로 뺀다.
+  const {clips, byState, specials, idleFrozen} = useMemo(() => {
     const buckets: Record<CharacterState, string[]> = {
       idle: [],
       walk: [],
       run: []
     };
+    const specials: string[] = [];
     const list: AnimationClip[] = [];
     const used = new Set<string>();
 
@@ -156,7 +160,8 @@ function NpcCharacterImpl({
       used.add(clip.name);
       list.push(clip);
       const state = classifyClip(clip.name, model.clipOverrides);
-      if (state) buckets[state].push(clip.name);
+      if (state === "special") specials.push(clip.name);
+      else if (state) buckets[state].push(clip.name);
     }
 
     // ── 빈 버킷은 이웃 상태로 메운다 — 비워 두면 그 상태에 들어간 순간 아무
@@ -179,13 +184,15 @@ function NpcCharacterImpl({
         ? buckets.idle
         : any;
     if (!buckets.run.length) buckets.run = buckets.walk;
-    return {clips: list, byState: buckets, idleFrozen};
+    return {clips: list, byState: buckets, specials, idleFrozen};
   }, [animations, model.clipOverrides]);
 
   const {actions, mixer} = useAnimations(clips, innerRef);
   const playingRef = useRef<string | null>(null);
   const idleSwapAtRef = useRef(0);
   const idleTurnRef = useRef(0);
+  const specialAtRef = useRef(0); // 다음 특기 동작 시각 (0 = 아직 미정)
+  const specialEndRef = useRef(0); // 지금 도는 특기 동작이 끝나는 시각
   const visibleRef = useRef(true);
   const shadowRef = useRef(true);
   const animRef = useRef(true);
@@ -254,7 +261,30 @@ function NpcCharacterImpl({
     const pool = byState[target];
     let want: string | null = null;
 
-    if (pool.length > 0) {
+    // ── 특기 동작(special) — idle 로 서 있는 동안에만, 가끔 한 번 ─────────────
+    // 평소엔 숨쉬기 idle 이 돌고, SPECIAL_GAP 마다 직업 동작(손짓·춤·경계…)이
+    // 클립 길이만큼 한 번 나온 뒤 다시 idle 로 돌아온다. 걷기 시작하면 즉시 중단.
+    if (target === "idle" && specials.length > 0) {
+      if (specialAtRef.current === 0)
+        specialAtRef.current = now + 8 + Math.random() * 20;
+      const cur = playingRef.current;
+      if (cur && specials.includes(cur)) {
+        if (now < specialEndRef.current) {
+          want = cur; // 아직 재생 중
+        } else {
+          // 끝났다 — 다음 차례를 예약하고, 아래 일반 idle 선택으로 떨어진다
+          specialAtRef.current =
+            now + SPECIAL_GAP_SECONDS * (0.7 + Math.random() * 0.6);
+        }
+      } else if (now >= specialAtRef.current) {
+        const name = specials[Math.floor(Math.random() * specials.length)]!;
+        const duration = actions[name]?.getClip().duration ?? 2.5;
+        specialEndRef.current = now + Math.max(1.2, duration - 0.2);
+        want = name;
+      }
+    }
+
+    if (want === null && pool.length > 0) {
       const holding =
         playingRef.current !== null && pool.includes(playingRef.current);
       // idle 클립이 둘 이상이면 주기적으로 갈아탄다 — 가만히 서 있어도 살아있어 보인다
@@ -277,7 +307,23 @@ function NpcCharacterImpl({
       }
     }
 
-    if (want === playingRef.current) return;
+    if (want === playingRef.current) {
+      // ── 멈춘 액션 되살리기 ────────────────────────────────────────────────
+      // drei useAnimations 의 effect 가 재실행되면(mixer.stopAllAction 호출)
+      // 재생 중이던 액션이 무게 1·시간 그대로인 채 활성 목록에서만 빠진다.
+      // 마을에선 idle↔walk 상태 전환이 곧 다시 틀어 주지만, 공방처럼 상태가
+      // idle 로 고정된 곳은 영영 멈춘 자세로 남았다(공방 다섯 식구가 전원
+      // 정지 — 스택 추적으로 확인). want 가 그대로여도 실제로 돌고 있는지
+      // 확인하고, 멈췄으면 그 자리에서 이어 튼다.
+      // (getEffectiveTimeScale 0 은 일부러 정지 화면으로 쓰는 idleFrozen —
+      //  그건 되살리면 안 된다)
+      if (want) {
+        const a = actions[want];
+        if (a && !a.isRunning() && !a.paused && a.getEffectiveTimeScale() !== 0)
+          a.play();
+      }
+      return;
+    }
 
     if (playingRef.current) actions[playingRef.current]?.fadeOut(0.25);
     if (want) {

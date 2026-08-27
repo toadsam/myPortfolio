@@ -12,6 +12,13 @@ import type {CharacterModelId} from "@/types/portfolio";
 
 export type CharacterState = "idle" | "walk" | "run";
 
+/**
+ * special: 평소엔 안 틀고, idle 중에 **가끔** 한 번 재생되는 특기 동작.
+ * (2026-08-27 — 숨쉬기 idle 이 들어온 캐릭터들은 원래 idle 로 돌려쓰던
+ * 직업 동작을 여기로 옮겼다. NpcCharacter 가 15~35초 간격으로 튼다)
+ */
+export type ClipRole = CharacterState | "special";
+
 export interface CharacterModel {
   url: string;
   /** 렌더 높이(월드 유닛). GLB 원본 크기와 무관하게 이 높이로 정규화된다 */
@@ -19,7 +26,7 @@ export interface CharacterModel {
   /** 모델이 +Z를 안 보고 있을 때의 보정각(라디안) */
   facing?: number;
   /** 클립 이름 자동 분류가 틀릴 때만 지정. 이름의 일부만 적으면 된다 */
-  clipOverrides?: Partial<Record<CharacterState, string[]>>;
+  clipOverrides?: Partial<Record<ClipRole, string[]>>;
 }
 
 /** Meshy가 캐릭터를 내보내는 기준 높이 (실측: 로봇·전사·루미 모두 1.7000) */
@@ -64,151 +71,150 @@ export const characterModels: Record<CharacterModelId, CharacterModel> = {
   // (기존 lumi 가 같은 구조로 마을에서 멀쩡히 돈다).
   //
   // idle 을 **두 개 이상** 물리면 NpcCharacter 가 IDLE_SWAP_SECONDS 마다
-  // 자동으로 갈아탄다 — buffalo 가 그 경우다.
+  // 자동으로 갈아탄다.
+  //
+  // **2026-08-27 — 숨쉬기 idle 전면 배치.** 동물 33종 전원에
+  // short_breathe_and_look_around 클립을 `add-character-clip.mjs` 로 추가했다
+  // (robot·lumi·jaehoon 만 제외 — 로봇은 클립이 없고 나머지 둘은 진짜 정지
+  // 클립을 이미 가졌다). 전원 idle ← 숨쉬기, 원래 idle 로 돌려쓰던 직업 동작은
+  // special 로 옮겨 **가끔(15~35초)** 한 번씩 나온다. 수달로 보이는 (13)번
+  // 파일은 리포에 몸이 없는 새 캐릭터라 보류 — walking/running 까지 받아야 입고.
   tortoise: {
-    // 클립: elderly_shaky_walk_inplace / walking / running / golf_drive
-    // idle ← 제자리걸음. 흔들흔들 서 있는 노인으로 읽힌다.
-    // (golf_drive 는 분류 대상이 아니라 등록만 되고 재생되지 않는다)
+    // 클립: elderly_shaky_walk_inplace / walking / running / golf_drive / breathe
+    // idle ← 숨쉬며 둘러보기. special ← 제자리걸음 + 골프 스윙(드디어 쓰인다).
     url: "/models/characters/tortoise.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["elderly_shaky"]}
+    clipOverrides: {idle: ["breathe"], special: ["elderly_shaky", "golf"]}
   },
   meerkat: {
-    // 클립: wave_for_help_3 / walking / running
-    // idle ← 손 흔들기. 동아리(ACLUB) 조직책이 사람을 불러 모으는 그림.
+    // 클립: wave_for_help_3 / walking / running / breathe
+    // idle ← 숨쉬기. special ← 손 흔들기(ACLUB 조직책이 가끔 사람을 부른다).
     url: "/models/characters/meerkat.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["wave"]}
+    clipOverrides: {idle: ["breathe"], special: ["wave"]}
   },
   buffalo: {
-    // 클립: mage_soell_cast(원본 오타 그대로) / ymca_dance / walking / running
-    // idle ← 둘 다. 평소엔 허공에 손짓하며 차트를 가리키다가, 9초쯤마다
-    // 한 번씩 춤을 춘다. 주식 데스크(MyStock) NPC 라 "장 좋은 날" 로 읽힌다.
+    // 클립: mage_soell_cast(원본 오타 그대로) / ymca_dance / walking / running / breathe
+    // idle ← 숨쉬기. special ← 차트 손짓·YMCA 춤이 가끔 — "장 좋은 날" 유지.
     url: "/models/characters/buffalo.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["mage", "ymca"]}
+    clipOverrides: {idle: ["breathe"], special: ["mage", "ymca"]}
   },
   parrot: {
-    // 클립: mirror_viewing / walking / running
-    // idle ← 거울 보기. 축제(FestFlow) 사회자 앵무새가 깃털을 다듬는다.
+    // 클립: mirror_viewing / walking / running / breathe
+    // idle ← 숨쉬기. special ← 거울 보며 깃털 다듬기.
     url: "/models/characters/parrot.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["mirror"]}
+    clipOverrides: {idle: ["breathe"], special: ["mirror"]}
   },
   rabbit: {
-    // 클립: groovy_walk / walking / running
-    //
-    // **여기만 후보가 마땅치 않았다.** 걷기가 아닌 클립이 하나도 없어서
-    // 스타일 걷기(groovy)를 idle 로 돌렸다 — 제자리에서 리듬 타는 걸로 보인다.
-    // 통통 튀는 토끼라 못 봐줄 정도는 아니지만, 서 있는데 발을 구르는 건
-    // 사실이다. Meshy 에서 정지 동작(Idle/Wave/Look Around 등)을 하나 받아
-    // 다시 병합하면 이 override 만 바꾸면 된다.
+    // 클립: groovy_walk / walking / running / breathe
+    // 드디어 진짜 정지 동작이 생겼다 — 서서 발 구르던 문제 해소.
+    // special ← 스타일 걷기(가끔 제자리에서 리듬 탄다).
     url: "/models/characters/rabbit.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["groovy"]}
+    clipOverrides: {idle: ["breathe"], special: ["groovy"]}
   },
   tiger: {
-    // 클립: roundhouse_kick / walking / running
-    // idle ← 돌려차기. 알고리즘 '도장' 관장이 품새를 연습한다.
+    // 클립: roundhouse_kick / walking / running / breathe
+    // idle ← 숨쉬기. special ← 돌려차기(가끔 품새 연습).
     url: "/models/characters/tiger.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["roundhouse"]}
+    clipOverrides: {idle: ["breathe"], special: ["roundhouse"]}
   },
   gorilla: {
-    // 클립: idle_03 / walking / running  ← **진짜 Idle 이 들어왔다**
-    // 이름에 "idle" 이 있어서 classifyClip 기본 규칙이 알아서 잡는다. override 불필요.
-    // (Meshy 원본 이름은 MuscleUp Monkey 지만 마을에서는 근근 헬스장 고릴라다)
+    // 클립: idle_03 / walking / running / breathe — 정지 동작이 둘.
+    // 둘 다 idle 로 물려 IDLE_SWAP 로테이션 (Meshy 원본 이름은 MuscleUp Monkey).
     url: "/models/characters/gorilla.glb",
-    height: NPC_HEIGHT
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["idle", "breathe"]}
   },
   peacock: {
-    // 클립: agree_gesture / walking / running
-    // idle ← 끄덕이며 동의. 프론트엔드 담당이라 상시 재생해도 튀지 않는다.
+    // 클립: agree_gesture / walking / running / breathe
+    // idle ← 숨쉬기. special ← 끄덕이며 동의(가끔).
     url: "/models/characters/peacock.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["agree"]}
+    clipOverrides: {idle: ["breathe"], special: ["agree"]}
   },
   stork: {
-    // 클립: stand_and_drink / walking / running
-    // idle ← 서서 물 마시기. 배달 돌다 우체국 앞에서 한숨 돌리는 그림.
+    // 클립: stand_and_drink / walking / running / breathe
+    // idle ← 숨쉬기. special ← 서서 물 마시기(가끔 한숨 돌린다).
     url: "/models/characters/stork.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["drink"]}
+    clipOverrides: {idle: ["breathe"], special: ["drink"]}
   },
   raccoon: {
-    // 클립: idle_03 / walking / running  ← 여기도 진짜 Idle. override 불필요.
+    // 클립: idle_03 / walking / running / breathe — 정지 동작 둘을 로테이션.
     url: "/models/characters/raccoon.glb",
-    height: NPC_HEIGHT
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["idle", "breathe"]}
   },
   bee: {
-    // 클립: jumping_jacks / walking / running
-    // idle ← 팔벌려뛰기. 가만히 못 있는 Workflow 담당다운 그림.
+    // 클립: jumping_jacks / walking / running / breathe
+    // idle ← 숨쉬기. special ← 팔벌려뛰기(가끔 몸이 근질거린다).
     url: "/models/characters/bee.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["jumping"]}
+    clipOverrides: {idle: ["breathe"], special: ["jumping"]}
   },
   beaver: {
-    // 클립: alert / walking / running
-    // idle ← 경계. 백엔드가 서버를 지켜보고 선 것처럼 읽힌다.
+    // 클립: alert / walking / running / breathe
+    // idle ← 숨쉬기. special ← 경계(가끔 서버 쪽을 살핀다).
     url: "/models/characters/beaver.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["alert"]}
+    clipOverrides: {idle: ["breathe"], special: ["alert"]}
   },
   deer: {
-    // 클립: wave_for_help_1 / walking / running
-    // idle ← 손 흔들기. 숲(TSEROF)의 정령이 지나가는 사람을 부른다.
+    // 클립: wave_for_help_1 / walking / running / breathe
+    // idle ← 숨쉬기. special ← 손 흔들기(숲의 정령이 가끔 사람을 부른다).
     url: "/models/characters/deer.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["wave"]}
+    clipOverrides: {idle: ["breathe"], special: ["wave"]}
   },
   owl: {
-    // 클립: gangnam_groove / walking / running
-    //
-    // **이건 취향을 탄다.** 정지 동작이 하나도 없어서 춤을 idle 로 물렸다.
-    // 지식 서고 사서가 상시로 춤추는 셈이라 "반전 매력" 이거나 "안 어울림"
-    // 둘 중 하나다. 차분한 쪽을 원하면 Meshy 에서 정지 동작을 하나 받아
-    // 다시 병합하고 이 override 만 바꾸면 된다.
+    // 클립: gangnam_groove / walking / running / breathe
+    // idle ← 숨쉬기(상시 춤 문제 해소). special ← 강남스타일 — 가끔이라 반전 매력.
     url: "/models/characters/owl.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["gangnam"]}
+    clipOverrides: {idle: ["breathe"], special: ["gangnam"]}
   },
   chameleon: {
-    // 클립: magic_genie / walking / running
-    // idle ← 마법 부리는 손짓. 3D/모션 담당이 형태를 빚는 것처럼 보인다.
+    // 클립: magic_genie / walking / running / breathe
+    // idle ← 숨쉬기. special ← 마법 손짓(가끔 형태를 빚는다).
     url: "/models/characters/chameleon.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["magic"]}
+    clipOverrides: {idle: ["breathe"], special: ["magic"]}
   },
   elephant: {
-    // 클립: look_around_dumbfounded / walking / running
-    // idle ← 두리번거리기. 가치관 비석 앞을 지키는 코끼리.
+    // 클립: look_around_dumbfounded / walking / running / breathe
+    // idle ← 숨쉬기. special ← 두리번거리기.
+    // ⚠ special 패턴은 "dumbfounded" 여야 한다 — "look_around" 로 쓰면
+    // breathe 클립(short_breathe_and_look_around)까지 special 로 삼킨다.
     url: "/models/characters/elephant.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["look_around"]}
+    clipOverrides: {idle: ["breathe"], special: ["dumbfounded"]}
   },
   kangaroo: {
-    // 클립: idle_to_push_up / walking / running
-    // idle ← 팔굽혀펴기. 헬스장 캥거루라 이보다 맞는 게 없다.
-    // (이름에 "idle" 이 들어 있어 override 없이도 잡히지만, 의도를 남겨 둔다)
+    // 클립: idle_to_push_up / walking / running / breathe
+    // idle ← 숨쉬기. special ← 팔굽혀펴기(헬스장 캥거루의 세트 사이 휴식).
+    // (special 을 먼저 보는 classifyClip 덕에 "idle_to_push_up" 이 idle 로 안 샌다)
     url: "/models/characters/kangaroo.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["push_up"]}
+    clipOverrides: {idle: ["breathe"], special: ["push_up"]}
   },
   squirrel: {
-    // 클립: mage_soell_cast(원본 오타 그대로) / walking / running
-    // idle ← 손짓. 투자 타워에서 차트를 가리킨다 — 옆 구역 buffalo 와 같은
-    // 클립이라 "주식·투자 담당은 손으로 설명한다" 는 결이 생긴다.
+    // 클립: mage_soell_cast(원본 오타 그대로) / walking / running / breathe
+    // idle ← 숨쉬기. special ← 차트 손짓(buffalo 와 같은 결 유지).
     url: "/models/characters/squirrel.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["mage"]}
+    clipOverrides: {idle: ["breathe"], special: ["mage"]}
   },
   panda: {
-    // 클립: collect_object / fall3 / walking / running
-    // idle ← 물건 줍기. 도서관 사서가 책을 정리하는 그림.
-    // fall3(넘어짐)은 idle 로 쓰면 넘어진 채 반복돼 이상해서 뺐다 — 등록만 된다.
+    // 클립: collect_object / fall3 / walking / running / breathe
+    // idle ← 숨쉬기. special ← 물건 줍기(가끔 책 정리).
+    // fall3(넘어짐)은 여전히 등록만 된다.
     url: "/models/characters/panda.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["collect"]}
+    clipOverrides: {idle: ["breathe"], special: ["collect"]}
   },
   jaehoon: {
     // 클립: big_wave_hello / talk_passionately / talk_with_right_hand_open
@@ -230,105 +236,103 @@ export const characterModels: Record<CharacterModelId, CharacterModel> = {
   // 아래 ⚠ 표시한 넷은 채용 담당자가 제일 오래 보는 NPC 라 차분한 동작으로
   // 바꾸는 걸 권한다(Meshy 에서 정지 클립 하나 더 받아 재병합하면 끝이다).
   collie: {
-    // 클립: cheer_with_both_hands_up / walking / running
-    // idle ← 두 손 들어 환영. 마을 안내원 루미에게 이보다 맞는 게 없다.
+    // 클립: cheer_with_both_hands_up / walking / running / breathe
+    // idle ← 숨쉬기. special ← 두 손 들어 환영(가끔 — 안내원의 인사).
     url: "/models/characters/collie.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["cheer"]}
+    clipOverrides: {idle: ["breathe"], special: ["cheer"]}
   },
   cat: {
-    // 클립: funnydancing_01 / walking / running
-    // ⚠ idle ← 춤. 프로젝트 큐레이터가 상시로 춤춘다. 대체 권장.
+    // 클립: funnydancing_01 / walking / running / breathe
+    // idle ← 숨쉬기(⚠ 상시 춤 해소). special ← 춤(가끔이라 귀엽다).
     url: "/models/characters/cat.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["funnydancing"]}
+    clipOverrides: {idle: ["breathe"], special: ["funnydancing"]}
   },
   goat: {
-    // 클립: funnydancing_03 / walking / running
-    // ⚠ idle ← 춤. "분석적이고 현실적인 기술 멘토" 와 가장 안 맞는다. 대체 권장.
+    // 클립: funnydancing_03 / walking / running / breathe
+    // idle ← 숨쉬기(⚠ "기술 멘토가 상시 춤" 해소). special ← 춤(반전 매력으로 강등).
     url: "/models/characters/goat.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["funnydancing"]}
+    clipOverrides: {idle: ["breathe"], special: ["funnydancing"]}
   },
   armadillo: {
-    // 클립: funnydancing_01 / walking / running
-    // ⚠ idle ← 춤. "차분한 기록 관리자" 컨셉과 어긋난다. 대체 권장.
+    // 클립: funnydancing_01 / walking / running / breathe
+    // idle ← 숨쉬기(⚠ 상시 춤 해소). special ← 춤.
     url: "/models/characters/armadillo.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["funnydancing"]}
+    clipOverrides: {idle: ["breathe"], special: ["funnydancing"]}
   },
   swallow: {
-    // 클립: wave_for_help_1 / walking / running
-    // idle ← 손 흔들기. 연락 담당 포스트가 사람을 부른다.
+    // 클립: wave_for_help_1 / walking / running / breathe
+    // idle ← 숨쉬기. special ← 손 흔들기(가끔 사람을 부른다).
     url: "/models/characters/swallow.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["wave"]}
+    clipOverrides: {idle: ["breathe"], special: ["wave"]}
   },
   anteater: {
-    // 클립: bubble_dance / walking / running
-    // ⚠ idle ← 춤. 접수대에 선 도안이 춤추는 그림이 된다. 대체 권장.
+    // 클립: bubble_dance / walking / running / breathe
+    // idle ← 숨쉬기(⚠ 접수원 상시 춤 해소). special ← 버블댄스(한가할 때 몰래).
     url: "/models/characters/anteater.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["bubble"]}
+    clipOverrides: {idle: ["breathe"], special: ["bubble"]}
   },
   raven: {
-    // 클립: alert / walking / running
-    // idle ← 경계. 범위를 재고 따지는 기획자 체리와 잘 맞는다.
+    // 클립: alert / walking / running / breathe
+    // idle ← 숨쉬기. special ← 경계(기획자가 가끔 범위를 잰다).
     url: "/models/characters/raven.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["alert"]}
+    clipOverrides: {idle: ["breathe"], special: ["alert"]}
   },
   bat: {
-    // 클립: alert / walking / running  (2026-08-27 입고, 건물 NPC 4차)
+    // 클립: alert / walking / running / breathe  (2026-08-27 입고, 건물 NPC 4차)
     // 폴더명은 "박쥐"(다크랩 몫)인데 실제 모델은 페넥 교수(Professor Fennec)다.
-    // idle ← 경계(alert) — 연구실 지킴이가 주위를 살피는 그림.
+    // idle ← 숨쉬기. special ← 경계(가끔 주위를 살핀다).
     url: "/models/characters/bat.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["alert"]}
+    clipOverrides: {idle: ["breathe"], special: ["alert"]}
   },
   lion: {
-    // 클립: left_uppercut_from_guard / walking / running
-    // idle ← 어퍼컷 — 총학생회 마스코트의 파이팅 세리머니.
+    // 클립: left_uppercut_from_guard / walking / running / breathe
+    // idle ← 숨쉬기. special ← 어퍼컷(가끔 파이팅 세리머니).
     url: "/models/characters/lion.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["uppercut"]}
+    clipOverrides: {idle: ["breathe"], special: ["uppercut"]}
   },
   hedgehog: {
-    // 클립: stand_on_pole_and_balance / walking / running
-    // idle ← 균형 잡기 — 비행사 고슴도치의 곡예. 어드벤처 게임 몫답다.
+    // 클립: stand_on_pole_and_balance / walking / running / breathe
+    // idle ← 숨쉬기. special ← 균형 곡예(비행사의 가끔 묘기).
     url: "/models/characters/hedgehog.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["balance"]}
+    clipOverrides: {idle: ["breathe"], special: ["balance"]}
   },
   wolf: {
-    // 클립: funnydancing_03 / walking / running
-    // idle ← 춤 — DJ 늑대. 음악 스튜디오 앞이라 춤이 곧 컨셉이다.
+    // 클립: funnydancing_03 / walking / running / breathe
+    // idle ← 숨쉬기. special ← 춤 — DJ 라 자주 나와도 어울리지만 통일한다.
     url: "/models/characters/wolf.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["funnydancing"]}
+    clipOverrides: {idle: ["breathe"], special: ["funnydancing"]}
   },
   octopus: {
-    // 클립: jazz_hands_inplace / walking / running
-    // idle ← 재즈 핸즈(제자리). 디자이너 먹지가 "짜잔" 하고 펼쳐 보이는 그림.
+    // 클립: jazz_hands_inplace / walking / running / breathe
+    // idle ← 숨쉬기. special ← 재즈 핸즈(가끔 "짜잔").
     url: "/models/characters/octopus.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["jazz"]}
+    clipOverrides: {idle: ["breathe"], special: ["jazz"]}
   },
   lemur: {
-    // 클립: golf_drive / walking / running
-    // idle ← 골프 스윙. 직군과 무관하지만 이것뿐이었다. 리코가 활발한 캐릭터라
-    // 아주 어색하진 않다. 거슬리면 대체.
+    // 클립: golf_drive / walking / running / breathe
+    // idle ← 숨쉬기(⚠ 상시 골프 해소). special ← 골프 스윙(가끔이라 오히려 개그).
     url: "/models/characters/lemur.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["golf"]}
+    clipOverrides: {idle: ["breathe"], special: ["golf"]}
   },
   mole: {
-    // 클립: gangnam_groove / walking / running
-    // idle ← 춤. 지하에서 혼자 신난 백엔드 굴뚝. 여기는 오히려 어울린다.
-    // (지식 서고 올빼미도 같은 춤이라 둘이 겹치긴 한다 — 구역이 멀어 티는 안 난다)
+    // 클립: gangnam_groove / walking / running / breathe
+    // idle ← 숨쉬기. special ← 강남스타일(지하에서 가끔 혼자 신남).
     url: "/models/characters/mole.glb",
     height: NPC_HEIGHT,
-    clipOverrides: {idle: ["gangnam"]}
+    clipOverrides: {idle: ["breathe"], special: ["gangnam"]}
   }
 };
 
@@ -343,11 +347,13 @@ export const DEFAULT_NPC_MODEL: CharacterModelId = "robot";
 export function classifyClip(
   name: string,
   overrides?: CharacterModel["clipOverrides"]
-): CharacterState | null {
+): ClipRole | null {
   const lower = name.toLowerCase();
 
   if (overrides) {
-    for (const state of ["idle", "walk", "run"] as const) {
+    // special 을 먼저 본다 — groovy_walk 처럼 이름에 walk 가 든 특기 동작이
+    // 기본 규칙(walk)으로 새는 걸 막는다
+    for (const state of ["special", "idle", "walk", "run"] as const) {
       if (
         overrides[state]?.some(pattern => lower.includes(pattern.toLowerCase()))
       )
