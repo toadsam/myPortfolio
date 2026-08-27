@@ -112,9 +112,8 @@ function NPCImpl({
   const moveStateRef = useRef<NpcMoveState>("idle");
   /** 조향에서 지난 프레임에 튼 쪽 — 프레임마다 좌우가 바뀌며 떠는 걸 막는다 */
   const steerSideRef = useRef<1 | -1>(1);
-  /** 조향으로 크게 튼 방향을 잠깐 고수 — 없으면 벽 앞에서 왔다갔다(와리가리)한다 */
+  /** 벽 따라 걷기 중인 방향 — 목표 직진이 뚫리면 버린다 (stepToward 참고) */
   const commitDirRef = useRef<{x: number; z: number} | null>(null);
-  const commitUntilRef = useRef(0);
   /** 배회 목표 진행 감시 — 오래 못 다가가면 목적지를 새로 뽑는다 */
   const progressKeyRef = useRef("");
   const progressBestRef = useRef(Infinity);
@@ -123,7 +122,7 @@ function NPCImpl({
   const scriptedKeyRef = useRef("");
   const scriptedBestRef = useRef(Infinity); // 지금까지 가장 가까웠던 거리
   const scriptedStallRef = useRef(0); // 그 거리를 못 줄인 채 흐른 초
-  const scriptedPlowRef = useRef(false); // 최후수단 직진 모드
+  const scriptedPlowRef = useRef(0); // 최후수단 직진 버스트가 끝나는 시각
   const [hovered, setHovered] = useState(false);
   const highlighted = hovered || isActive;
   // villageState 기반 값과 실시간 runtime 값을 병합 — 원시값(runtimeMood/runtimeMemory)만
@@ -187,33 +186,38 @@ function NPCImpl({
   };
 
   /**
-   * 목표 방향으로 한 걸음. 막혀서 크게(50°+) 튼 프레임엔 그 튼 방향을 0.8초
-   * **유지**한다. 유지가 없으면 매 프레임 목표를 재조준하는 탓에 "벽에 닿음 →
-   * 틀어서 한 발 → 직진이 다시 뚫려 벽으로 → 또 막혀 틀고"를 반복하며 건물
-   * 앞에서 와리가리한다 (2026-08-27 사용자 보고). 잠깐 벽을 따라 걷게 두면
-   * 모서리를 실제로 돌아 나간다. 반환값 = 이번 프레임에 움직였는가.
+   * 목표 방향으로 한 걸음 — **벽 따라 걷기**.
+   *
+   * 매 프레임 목표를 재조준하면 "벽에 닿음 → 틀어서 한 발 → 직진이 다시 뚫려
+   * 벽으로 → 또 막혀 틀고"의 와리가리가 된다. 1차 수정(튼 방향을 0.8초 고수)은
+   * 시간이 지나면 다시 목표를 조준해 "0.8초 멀어졌다가 또 건물로"라는 더 큰
+   * 진폭의 왕복을 만들었다 (2026-08-28 사용자 보고). 시간이 아니라 **조건**으로
+   * 푼다: 목표 직진이 막혀 있는 동안은 커밋 방향(벽면)을 따라 계속 걷고 —
+   * 모서리에서 커밋 방향도 막히면 조향해 커밋을 갱신(모서리를 돈다) —
+   * 직진이 뚫리는 순간 커밋을 버리고 목표로 간다. 반환값 = 움직였는가.
    */
   const stepToward = (
     g: Group,
     dx: number,
     dz: number,
-    step: number,
-    now: number
+    step: number
   ): boolean => {
-    let wx = dx;
-    let wz = dz;
-    const commit = commitDirRef.current;
-    if (commit && now < commitUntilRef.current) {
-      wx = commit.x;
-      wz = commit.z;
-    } else {
+    const dist = Math.hypot(dx, dz) || 1;
+    const sx = g.position.x + (dx / dist) * step;
+    const sz = g.position.z + (dz / dist) * step;
+    if (isWalkableDry(sx, sz)) {
       commitDirRef.current = null;
+      g.rotation.y = Math.atan2(dx, dz);
+      g.position.x = sx;
+      g.position.z = sz;
+      return true;
     }
+    const base = commitDirRef.current ?? {x: dx, z: dz};
     const steered = steerDry(
       g.position.x,
       g.position.z,
-      wx,
-      wz,
+      base.x,
+      base.z,
       step,
       steerSideRef.current
     );
@@ -224,13 +228,7 @@ function NPCImpl({
     steerSideRef.current = steered.side;
     const mx = steered.x - g.position.x;
     const mz = steered.z - g.position.z;
-    // 실제 걸은 방향이 목표 방향에서 50° 넘게 벌어졌다 = 벽에 막혀 틀었다
-    let diff = Math.atan2(mx, mz) - Math.atan2(dx, dz);
-    diff = Math.atan2(Math.sin(diff), Math.cos(diff));
-    if (Math.abs(diff) > (Math.PI * 50) / 180) {
-      commitDirRef.current = {x: mx, z: mz};
-      commitUntilRef.current = now + 0.8;
-    }
+    commitDirRef.current = {x: mx, z: mz};
     // 몸은 실제로 걷는 방향을 본다 — 목표를 보면 튼 게 티가 안 난다
     g.rotation.y = Math.atan2(mx, mz);
     g.position.x = steered.x;
@@ -264,25 +262,31 @@ function NPCImpl({
         scriptedKeyRef.current = skey;
         scriptedBestRef.current = Infinity;
         scriptedStallRef.current = 0;
-        scriptedPlowRef.current = false;
+        scriptedPlowRef.current = 0;
       }
       if (sdist > 0.25) {
         const step = Math.min(3.6 * delta, sdist); // 달려오기 (적당한 속도)
-        // 연출도 배회와 같은 조향으로 물가·건물을 돌아간다. 예전엔 "막히면
-        // 직진(관통)"이라 분신 순찰이 **매번 물 고리를 뚫고 잠긴 채 달렸다**
-        // (2026-08-27 사용자 보고). 지금은 조향으로 다리를 찾아 돌고,
-        // 직진은 6초 넘게 전진이 없을 때의 최후수단으로만 남긴다 — 연출은
-        // 도착(onScriptedArrive)이 안 오면 인트로/순찰이 통째로 멎으니까.
+        // 연출도 배회와 같은 벽 따라 걷기로 물가·건물을 돌아간다. 예전엔 "막히면
+        // 직진(관통)"이라 분신 순찰이 매번 물 고리를 뚫고 잠긴 채 달렸고, 그 다음
+        // 판(6초 막히면 직진 **래치**)은 한 번 발동하면 그 목표 내내 벽이고 뭐고
+        // 뚫고 다녔다 — "벽·문을 통과하는 애들"의 큰 축 (2026-08-28 사용자 보고).
+        // 지금은 3초 못 다가가면 **1.6초 버스트**로만 직진하고 곧 조향으로
+        // 돌아온다 — 연출은 도착(onScriptedArrive)이 안 오면 통째로 멎으니
+        // 최후수단 자체는 남겨야 한다.
         if (sdist < scriptedBestRef.current - 0.3) {
           scriptedBestRef.current = sdist;
           scriptedStallRef.current = 0;
         } else {
           scriptedStallRef.current += delta;
-          if (scriptedStallRef.current > 6) scriptedPlowRef.current = true;
+          if (scriptedStallRef.current > 3) {
+            scriptedPlowRef.current = elapsedRef.current + 1.6;
+            scriptedStallRef.current = 0;
+            scriptedBestRef.current = sdist;
+          }
         }
         let moved = false;
-        if (!scriptedPlowRef.current) {
-          moved = stepToward(g, sx, sz, step, elapsedRef.current);
+        if (elapsedRef.current >= scriptedPlowRef.current) {
+          moved = stepToward(g, sx, sz, step);
         }
         if (!moved) {
           // 전 방향이 막혔거나(가이드가 섬 밖에서 달려올 때) 오래 갇혔다 — 직진
@@ -356,7 +360,7 @@ function NPCImpl({
         // 집결·사진·파티·따라오기가 직선으로 가로질러 **건물을 뚫고** 모였다.
         // 배회와 같은 조향으로 건물을 돌아가고, 전 방향이 막히면 거기 멈춰
         // 선다 — 장애물 둘레에 둘러 모이는 그림이 뚫는 것보다 자연스럽다.
-        const moved = stepToward(g, dx, dz, step, elapsedRef.current);
+        const moved = stepToward(g, dx, dz, step);
         g.position.y =
           settleGround(g, delta) + bobUp(elapsedRef.current * 8, 0.05);
         moveStateRef.current = moved ? (dist > 0.6 ? "run" : "walk") : "idle";
@@ -428,7 +432,11 @@ function NPCImpl({
       (now > retargetAtRef.current ||
         distanceToTarget(groupRef.current.position, targetRef.current) < 0.25)
     ) {
-      targetRef.current = pickTarget(home, roamRadius);
+      targetRef.current = pickTarget(
+        groupRef.current.position,
+        home,
+        roamRadius
+      );
       retargetAtRef.current = now + 4 + Math.random() * 7;
     }
 
@@ -450,19 +458,18 @@ function NPCImpl({
     } else if (dist > 0.05) {
       const step = Math.min(moveSpeed * delta, dist);
 
-      // **막히면 방향을 튼다.** 예전엔 축-슬라이드(slideToDry)였는데, 목표가
-      // 건물 너머면 주민이 벽에 얼굴을 박은 채 갈리거나 서 버렸다 — "건물로
-      // 뛰어드는" 그림의 정체. stepToward 는 막히면 좌우 30°씩 틀고, 크게 튼
-      // 방향은 잠깐 고수해서 건물 앞 와리가리를 막는다.
-      walking = stepToward(groupRef.current, dx, dz, step, now);
+      // **막히면 벽을 따라 걷는다** (stepToward). 배회 목적지는 pickTarget 이
+      // 가는 길까지 뚫린 곳만 뽑으므로 여기서 막히는 건 대부분 사회적 목표
+      // (친구 방문·화해 — 목적지가 건물 너머일 수 있다) 쪽이다.
+      walking = stepToward(groupRef.current, dx, dz, step);
       if (!walking) {
         // 전 방향이 막힌 것 — 그때만 목적지를 새로 뽑는다.
         retargetAtRef.current = 0;
       }
 
-      // 진행 감시: 조향으로 계속 걷고는 있는데 목표에 5초 넘게 못 다가가면
-      // (건물을 빙빙 돌거나 벽을 따라 오락가락) 그 목적지는 버리고 새로 뽑는다.
-      // 사회적 목표(socialTarget)는 부모가 관리하므로 감시만 리셋한다.
+      // 진행 감시: 걷고는 있는데 목표에 4초 넘게 못 다가가면(건물을 빙빙 도는
+      // 중) 그 목적지는 버리고 새로 뽑는다. 사회적 목표(socialTarget)는 부모가
+      // 관리하므로 감시만 리셋한다.
       const progressKey = `${target[0]},${target[2]}`;
       if (progressKeyRef.current !== progressKey) {
         progressKeyRef.current = progressKey;
@@ -474,7 +481,7 @@ function NPCImpl({
         progressStallRef.current = 0;
       } else {
         progressStallRef.current += delta;
-        if (progressStallRef.current > 5) {
+        if (progressStallRef.current > 4) {
           progressStallRef.current = 0;
           progressBestRef.current = Infinity;
           commitDirRef.current = null;
@@ -834,9 +841,24 @@ function distanceToTarget(position: Vector3, target: Vector3Tuple) {
   return Math.sqrt(dx * dx + dz * dz);
 }
 
+/** from→to 를 곧장 걸어서 갈 수 있나 — 0.45 간격 표본이 전부 마른 길이어야 한다 */
+function clearWalk(fx: number, fz: number, tx: number, tz: number): boolean {
+  const d = Math.hypot(tx - fx, tz - fz);
+  const steps = Math.max(1, Math.ceil(d / 0.45));
+  for (let s = 1; s <= steps; s += 1) {
+    const t = s / steps;
+    if (!isWalkableDry(fx + (tx - fx) * t, fz + (tz - fz) * t)) return false;
+  }
+  return true;
+}
+
 // 건물 목록을 더 받지 않는다 — isWalkableDry 안의 마을 걷기 규칙이 건물·장식물·
 // 벽·섬 경계를 전부 알고 있다. 여기서 따로 건물만 보면 그때가 어긋나는 순간이다.
-function pickTarget(home: Vector3Tuple, radius: number): Vector3Tuple {
+function pickTarget(
+  from: Vector3,
+  home: Vector3Tuple,
+  radius: number
+): Vector3Tuple {
   for (let i = 0; i < 12; i += 1) {
     const angle = Math.random() * Math.PI * 2;
     const distance = radius * (0.25 + Math.random() * 0.75);
@@ -846,12 +868,18 @@ function pickTarget(home: Vector3Tuple, radius: number): Vector3Tuple {
       home[2] + Math.sin(angle) * distance
     ];
 
-    // 목적지도 같은 기준으로 고른다 — 물 위나 섬 밖을 목적지로 잡으면
-    // 걸음마다 막혀서 제자리에서 떨거나, 경계까지 가서 붙어 선다.
-    if (isWalkableDry(candidate[0], candidate[2])) {
+    // 목적지만 마른 땅이면 되는 게 아니다 — **가는 길까지 뚫려 있어야** 뽑는다.
+    // 건물 너머 목적지를 뽑으면 벽 따라 걷기로 빙 돌게 되고, 그게 잦으면
+    // 주민 절반이 늘 건물에 붙어 서성이는 그림이 된다(와리가리의 남은 절반).
+    if (
+      isWalkableDry(candidate[0], candidate[2]) &&
+      clearWalk(from.x, from.z, candidate[0], candidate[2])
+    ) {
       return candidate;
     }
   }
 
-  return home;
+  // 열두 번 다 막혔다 — 제자리에서 잠깐 쉰다. 집으로 직행하면 그 길이 또 막힌
+  // 길일 수 있다(다음 재선정 때 다시 시도).
+  return [from.x, 0, from.z];
 }

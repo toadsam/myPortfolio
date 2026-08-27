@@ -65,6 +65,8 @@ import {
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
 import {isWalkableDry} from "@/lib/villageWalk";
+import {onPlazaDais} from "@/lib/villageTerrain";
+import propsLayout from "@/data/propsLayout.json";
 import type {
   DailyActivity,
   NpcRelationshipRow,
@@ -237,11 +239,92 @@ const COMMAND_PHOTO_TARGETS: Record<string, Vector3Tuple> = (() => {
   });
   return out;
 })();
-const WELCOME_SPOT: Vector3Tuple = [-4, 0, 10]; // 건물 없는 앞쪽-왼쪽 빈 곳 (중앙 타워 회피)
-// 컨시어지 시네마틱 — 앞쪽 빈 레인을 정면 저시점에서 바라봄 (멀리서 달려옴)
+/**
+ * 루미가 달려와 서는 환영 지점.
+ *
+ * 옛 고정값 [-4, 0, 10] 은 마을이 고리 배치로 바뀐 뒤 **회랑 울타리 줄 위**가
+ * 됐다 — 도착하면 난간이 몸을 관통하고 클로즈업 카메라도 난간에 가렸다
+ * (2026-08-28 사용자 보고 "벽에 끼이고 화면 안 보이고"). 좌표를 다시 굽는 대신
+ * 그 자리에서 광장 안쪽으로 당기면서 ① 본인 주변 0.6, ② 클로즈업 카메라가 설
+ * 자리(z+3) 주변 0.4 가 전부 뚫린 첫 지점에 선다 — 배치가 바뀌어도 따라온다.
+ */
+const WELCOME_SPOT: Vector3Tuple = ((): Vector3Tuple => {
+  const clearDisc = (x: number, z: number, r: number) => {
+    if (!isWalkableDry(x, z)) return false;
+    for (let k = 0; k < 8; k += 1) {
+      const a = (k / 8) * Math.PI * 2;
+      if (!isWalkableDry(x + Math.cos(a) * r, z + Math.sin(a) * r)) return false;
+    }
+    return true;
+  };
+  // 걷기 판정은 가로등·벤치·깃대 같은 "통과 프롭"을 일부러 안 막는다 — 그래서
+  // isWalkableDry 만으로 고르면 루미가 가로등 기둥 뒤에 서거나(1차 스냅), 카메라가
+  // 광장 성문 문짝 속에 들어간다(2차 스냅). "처음 통과하는 자리"가 아니라 광장
+  // 단상 남쪽을 전부 훑어서, **본인 주변과 카메라 시선(+z, 5.6 유닛)이 어떤
+  // 프롭에서도 가장 멀리 떨어진 자리**를 고른다. 바닥 무늬(포장·타일)와 머리 위
+  // 현수막만 빼고 전부 장애물로 세고, 성문은 문짝까지 넓게 잡는다.
+  const obstacles: Array<readonly [number, number, number]> = [];
+  for (const p of (propsLayout as {
+    props: {glb: string; position: number[]}[];
+  }).props) {
+    const px = p.position[0];
+    const pz = p.position[2];
+    if (Math.hypot(px, pz) > 16) continue;
+    const n = p.glb.split("/").pop()?.replace(".glb", "") ?? "";
+    // grass-patch 는 "바닥 무늬"가 아니었다 — 무릎 높이 풀더미라 그 위에 서면
+    // 루미가 화단에 들어가 선 그림이 된다(3차 스냅에서 실제로 일어난 일).
+    if (
+      /^(paving|path-|plaza-tile|verge|bunting|stepping-stones|lily-pads|reed-clump|waterfall|arch-)/.test(
+        n
+      )
+    )
+      continue;
+    if (n === "gate-arch") {
+      obstacles.push([px, pz, 1.3]); // 기둥+문짝 전체
+      continue;
+    }
+    // 화단·풀더미는 모델 원반이 넓다 — 0.6 으로 쟀더니 루미가 화단 테두리에
+    // 발을 딛고 섰다(4차 스냅). 간판도 팻말 판이 옆으로 뻗는다.
+    if (/^(flowerbed|grass-patch|sign-)/.test(n)) {
+      obstacles.push([px, pz, 1.0]);
+      continue;
+    }
+    obstacles.push([px, pz, 0.6]);
+  }
+  let bx = -1.5;
+  let bz = 4.2;
+  let bestScore = -Infinity;
+  for (let x = -7; x <= 7; x += 0.25) {
+    for (let z = 0.8; z <= 7.5; z += 0.25) {
+      if (!onPlazaDais(x, z) || !onPlazaDais(x, z + 3.2)) continue;
+      if (!clearDisc(x, z, 0.6)) continue;
+      let score = Infinity;
+      for (const [ox, oz, orad] of obstacles) {
+        // 장애물 → (스팟에서 클로즈업 카메라 쪽 +z 3.2 선분)까지의 거리.
+        // 5.6(시네마틱 카메라까지)으로 재면 남쪽 어디에도 자리가 없다 —
+        // 시네마틱 카메라는 대신 y 를 높여 프롭 위로 넘겨 본다.
+        const t = Math.max(0, Math.min(1, (oz - z) / 3.2));
+        score = Math.min(
+          score,
+          Math.hypot(ox - x, oz - (z + 3.2 * t)) - orad
+        );
+      }
+      if (score > bestScore) {
+        bestScore = score;
+        bx = x;
+        bz = z;
+      }
+    }
+  }
+  return [bx, 0, bz];
+})();
+// 컨시어지 시네마틱 — 환영 지점을 정면 저시점에서 바라봄 (멀리서 달려옴).
+// 환영 지점이 런타임에 정해지므로 카메라도 상대 오프셋으로 따라간다.
+// y 3.4: 광장 남쪽은 프롭이 빽빽해서 저시점으로는 어디서 봐도 뭔가에 가린다 —
+// 살짝 부감으로 프롭 머리 위를 넘겨 본다.
 const CONCIERGE_CAM: {position: Vector3Tuple; lookAt: Vector3Tuple} = {
-  position: [-3.5, 2.4, 16.5],
-  lookAt: [-4, 1.1, 10]
+  position: [WELCOME_SPOT[0] + 0.5, 3.4, WELCOME_SPOT[2] + 5.6],
+  lookAt: [WELCOME_SPOT[0], 1.5, WELCOME_SPOT[2]]
 };
 
 // NPC 위치 기준 상반신 클로즈업 카메라

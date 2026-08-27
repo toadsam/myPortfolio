@@ -66,7 +66,11 @@ const BLOCK_RADIUS: Array<[RegExp, number]> = [
   [/^(house-[abc]|market-stall)$/, 1.0],
   // 나무·바위
   [/^(tree-|far-oak|far-pine|far-sakura)/, 0.45],
-  [/^(rock-|boulder)/, 0.5]
+  [/^(rock-|boulder)/, 0.5],
+  // 덤불 — 어깨 높이 수풀이라 몸이 지나가면 그대로 뚫고 선다
+  // ("장식 풀을 통과한다", 2026-08-28 사용자 보고). 꽃밭·풀포기(grass-patch·
+  // flowerbed)는 발목 높이라 밟고 지나가도 어색하지 않아 그대로 둔다.
+  [/^bush-/, 0.32]
 ];
 
 /**
@@ -136,6 +140,7 @@ for (const p of propsLayout.props as Array<{
   glb: string;
   position: number[];
   rotationY?: number;
+  scale?: number;
 }>) {
   const x = p.position[0];
   const z = p.position[2];
@@ -144,6 +149,21 @@ for (const p of propsLayout.props as Array<{
   if (WALL_KINDS.test(name)) {
     const a = p.rotationY ?? 0;
     wallSegs.push({x, z, ax: Math.cos(a), az: Math.sin(a)});
+    continue;
+  }
+  // 성문(gate-arch)은 가운데가 길이다 — 원 하나로 막으면 길이 통째로 메워진다.
+  // 양쪽 **기둥만** 작은 원 둘로 막는다 (모델 X ±0.83 이 기둥 중심, bbox 실측).
+  // 기둥을 안 막으면 주민이 문틀 옆 기둥을 몸으로 뚫고 다닌다 (2026-08-28
+  // 사용자 보고 "문 통과").
+  if (name === "gate-arch") {
+    const a = p.rotationY ?? 0;
+    const s = p.scale ?? 1;
+    const ox = Math.cos(a) * 0.83 * s; // 로컬 +X 축의 월드 방향 (건물 상자와 같은 관례)
+    const oz = -Math.sin(a) * 0.83 * s;
+    // r 은 몸 반지름(0.42)이 더해진다 — 크게 주면 문 가운데 통로가 닫힌다
+    // (0.75 − r − 0.42 가 통행 반폭). 0.12 면 통로 0.44, 기둥은 그대로 막힌다.
+    addBlocker({x: x + ox, z: z + oz, r: 0.12 * s});
+    addBlocker({x: x - ox, z: z - oz, r: 0.12 * s});
     continue;
   }
   const r = radiusFor(p.glb);

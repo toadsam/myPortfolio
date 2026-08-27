@@ -109,8 +109,8 @@ function deepestSpot(
 
 /** 수상기 정박지 — 떠다니는 고리에서 2.2 이상 떨어진 가장 깊은 물 */
 const PLANE_SPOT = deepestSpot(LOOP, 2.2);
-/** 정박지 여유에 맞춰 크기를 줄인다 (원본 길이 1.9 유닛) */
-const PLANE_SCALE = Math.min(1.2, Math.max(0.7, (PLANE_SPOT.depth - 0.3) / 0.95));
+/** 정박지 여유에 맞춰 크기를 정한다 (원본 길이 1.9 유닛, 화면 기준 2배 상향) */
+const PLANE_SCALE = Math.min(2.0, Math.max(0.7, (PLANE_SPOT.depth - 0.3) / 0.95));
 
 /** 부두 등불 자리 — 높이 0 물가 뭍 중 앞 물이 가장 깊은 곳. 물 쪽 방향도 같이 */
 function dockSpot(): {x: number; z: number; yaw: number; depth: number} {
@@ -151,30 +151,34 @@ interface DrifterSpec {
   noYaw?: boolean;
 }
 
+// 크기는 실물 환산이 아니라 **화면 기준**이다 — 첫 배치(실물 환산 0.72/0.36/0.26)는
+// 부감 카메라에서 점으로 보여 "2배는 되어야 할 것 같다"는 피드백을 받았다
+// (2026-08-28). 흘수(draft)도 그때 같이 줄였다 — 0.07 은 석호 너울 마루(+0.07)와
+// 겹쳐 뱃전 절반이 잠겨 보였다. 선체 바닥이 수면 바로 아래(0.02~0.06)면 충분하다.
 const DRIFTERS: DrifterSpec[] = [
   {
     url: "/models/props/lake/lake-rowboat.glb",
-    scale: 0.72,
+    scale: 1.4,
     minY: -0.234,
-    draft: 0.07,
+    draft: 0.02,
     lapSec: 300,
     u0: 0.05,
     longAxisX: true
   },
   {
     url: "/models/props/lake/lake-swan.glb",
-    scale: 0.36,
+    scale: 0.7,
     minY: -0.422,
-    draft: 0.06,
+    draft: 0.04,
     lapSec: 210,
     u0: 0.48,
     longAxisX: true
   },
   {
     url: "/models/props/lake/lake-lantern-float.glb",
-    scale: 0.26,
+    scale: 0.5,
     minY: -0.952,
-    draft: 0.1,
+    draft: 0.06,
     lapSec: 380,
     u0: 0.24,
     longAxisX: false,
@@ -182,9 +186,9 @@ const DRIFTERS: DrifterSpec[] = [
   },
   {
     url: "/models/props/lake/lake-lantern-float.glb",
-    scale: 0.26,
+    scale: 0.5,
     minY: -0.952,
-    draft: 0.1,
+    draft: 0.06,
     lapSec: 380,
     u0: 0.74,
     longAxisX: false,
@@ -249,7 +253,7 @@ function Seaplane() {
   );
   const root = useMemo(() => prepare(scene, false), [scene]);
   const groupRef = useRef<Group | null>(null);
-  const baseY = SURFACE_Y - 0.05 + 0.332 * PLANE_SCALE;
+  const baseY = SURFACE_Y - 0.03 + 0.332 * PLANE_SCALE;
 
   useFrame(({clock}) => {
     const g = groupRef.current;
@@ -282,7 +286,7 @@ function DockLantern() {
   );
   const root = useMemo(() => prepare(scene, false), [scene]);
   if (DOCK_SPOT.depth < 0.4) return null;
-  const scale = 0.62;
+  const scale = 1.2;
   const y = terrainHeightAt(DOCK_SPOT.x, DOCK_SPOT.z) + 0.455 * scale - 0.02;
   return (
     <group
