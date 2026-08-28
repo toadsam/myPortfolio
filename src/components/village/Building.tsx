@@ -323,6 +323,7 @@ function BuildingLabel({
       calculatePosition={calculatePosition}
       distanceFactor={11}
       position={[0, height + 1.15, 0]}
+      wrapperClass="v-sign"
       zIndexRange={[10, 0]}
     >
       <button

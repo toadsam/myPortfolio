@@ -164,6 +164,7 @@ export function AtelierHatch({onEnter}: {onEnter: () => void}) {
           calculatePosition={calculatePosition}
           distanceFactor={11}
           position={[0, 1.16, 0]}
+          wrapperClass="v-sign"
           zIndexRange={[10, 0]}
         >
           <button

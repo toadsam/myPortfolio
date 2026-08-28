@@ -90,6 +90,50 @@ export const DISTRICT_TO_TRAVEL_KEY: Record<string, string> = {
   contact: "contact"
 };
 
+/** 미니맵 구역 라벨 — 색점만으론 어느 점이 어느 구역인지 알 수 없다.
+ *  호버 title 은 지연이 있고 터치에선 아예 안 뜬다 — 항상 그린다. */
+function MapDistrictLabels({
+  centroids,
+  activeKey,
+  width,
+  height,
+  fontSize
+}: {
+  centroids: {point: TravelPoint; x: number; y: number}[];
+  activeKey: string;
+  width: number;
+  height: number;
+  fontSize: number;
+}) {
+  return (
+    <>
+      {centroids.map(({point, x, y}) => {
+        // 라벨이 지도 밖으로 잘리지 않게 가장자리에서 안쪽으로 민다
+        const half = (point.label.length * fontSize) / 2 + 2;
+        const lx = Math.max(half, Math.min(width - half, x));
+        const ly = Math.min(height - 3, y + fontSize + 7);
+        return (
+          <text
+            key={`label-${point.key}`}
+            x={lx}
+            y={ly}
+            textAnchor="middle"
+            fontSize={fontSize}
+            fontWeight={800}
+            fill={activeKey === point.key ? "#ffd9ae" : "#e5d8ba"}
+            stroke="#0b1626"
+            strokeWidth={2.6}
+            paintOrder="stroke"
+            style={{pointerEvents: "none", userSelect: "none"}}
+          >
+            {point.label}
+          </text>
+        );
+      })}
+    </>
+  );
+}
+
 /** "3분 전" 식 상대 시각. 소식 줄 옆에 붙는다. */
 function timeAgo(iso: string): string {
   const ms = Date.now() - new Date(iso).getTime();
@@ -728,6 +772,13 @@ export function MobileHud({
                       ) : null}
                     </g>
                   ))}
+                  <MapDistrictLabels
+                    centroids={centroids}
+                    activeKey={activeKey}
+                    width={W}
+                    height={H}
+                    fontSize={9}
+                  />
                 </svg>
                 <p className="mt-2 text-[10px] text-[#a9bdd6]/60">
                   구역을 누르면 그쪽으로 이동
@@ -951,6 +1002,13 @@ export function Minimap({
             </g>
           );
         })}
+        <MapDistrictLabels
+          centroids={centroids}
+          activeKey={activeKey}
+          width={W}
+          height={H}
+          fontSize={8}
+        />
       </svg>
       <p className="mt-1.5 px-1 text-[9px] leading-tight text-[#a9bdd6]/55">
         구역을 누르면 그쪽으로 이동

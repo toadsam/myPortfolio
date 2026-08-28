@@ -562,7 +562,12 @@ function NPCImpl({
       {/* 이름표는 hover/선택 시에만 렌더 (상시 DOM 라벨이 회전 시 끊김 유발) */}
       {highlighted ? (
         <Billboard position={[0, 1.72, 0]}>
-          <Html center distanceFactor={8.2} zIndexRange={[10, 0]}>
+          <Html
+            center
+            distanceFactor={8.2}
+            wrapperClass="v-sign"
+            zIndexRange={[10, 0]}
+          >
             <button
               aria-label={"Talk to " + npc.name}
               className="npc-label npc-label-active"
@@ -581,7 +586,12 @@ function NPCImpl({
       ) : null}
       {bubbleText ? (
         <Billboard position={[0, 2.28, 0]}>
-          <Html center distanceFactor={7.4} zIndexRange={[11, 0]}>
+          <Html
+            center
+            distanceFactor={7.4}
+            wrapperClass="v-sign"
+            zIndexRange={[11, 0]}
+          >
             <div
               className="rounded-xl border border-[#e2c078]/40 bg-[#0b1626]/92 px-3 py-2 text-center text-[11px] font-bold leading-5 text-[#f3e6c8] shadow-2xl"
               style={{width: 180, whiteSpace: "normal", wordBreak: "keep-all"}}
@@ -593,7 +603,12 @@ function NPCImpl({
       ) : null}
       {command === "greet" || command === "party" ? (
         <Billboard position={[0, 2.46, 0]}>
-          <Html center distanceFactor={7.4} zIndexRange={[12, 0]}>
+          <Html
+            center
+            distanceFactor={7.4}
+            wrapperClass="v-sign"
+            zIndexRange={[12, 0]}
+          >
             <div
               style={{fontSize: 22, userSelect: "none", pointerEvents: "none"}}
             >
@@ -604,7 +619,12 @@ function NPCImpl({
       ) : null}
       {emote && !command && !bubbleText ? (
         <Billboard position={[0, 2.4, 0]}>
-          <Html center distanceFactor={7.4} zIndexRange={[12, 0]}>
+          <Html
+            center
+            distanceFactor={7.4}
+            wrapperClass="v-sign"
+            zIndexRange={[12, 0]}
+          >
             <div
               style={{
                 fontSize: 20,
@@ -674,7 +694,12 @@ function NpcActionEffect({
       </group>
 
       <Billboard position={[0, 2.08, 0]}>
-        <Html center distanceFactor={7.2} zIndexRange={[12, 0]}>
+        <Html
+          center
+          distanceFactor={7.2}
+          wrapperClass="v-sign"
+          zIndexRange={[12, 0]}
+        >
           <div
             className="rounded-full border px-2.5 py-1 text-center font-mono text-[10px] font-black leading-4 shadow-2xl backdrop-blur-md"
             style={{

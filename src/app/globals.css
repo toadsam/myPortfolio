@@ -651,3 +651,15 @@ canvas {
 .intake-caret {
   animation: intakeBlink 0.9s step-end infinite;
 }
+
+/* ── 클로즈업 연출 중 간판·말풍선 숨김 ─────────────────────────────────────
+   VillageScene 루트에 .v-hide-overlays 가 붙으면(환영 연출·NPC 대화·엿듣기)
+   drei <Html wrapperClass="v-sign"> 오버레이를 부드럽게 감춘다 — 멀리 있는
+   건물 간판이 연출 주인공 몸 위에 겹쳐 뜨는 문제의 해법. */
+.v-sign {
+  transition: opacity 0.25s ease;
+}
+.v-hide-overlays .v-sign {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

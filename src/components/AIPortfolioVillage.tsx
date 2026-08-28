@@ -327,12 +327,42 @@ const CONCIERGE_CAM: {position: Vector3Tuple; lookAt: Vector3Tuple} = {
   lookAt: [WELCOME_SPOT[0], 1.5, WELCOME_SPOT[2]]
 };
 
-// NPC 위치 기준 상반신 클로즈업 카메라
+// NPC 위치 기준 상반신 클로즈업 카메라.
+//
+// 방향을 +z 로 고정했더니 NPC 남쪽에 건물이 있으면 카메라가 지붕 속에 박혀
+// 화면이 통째로 갈색이 됐다 (2026-08-28 점검 — 독에서 테오를 열었을 때).
+// 8방위를 훑어 **걷기 판정이 트인 쪽**에서 찍는다 — 건물·가구·가로등이 전부
+// 걷기 블로커라 "걸을 수 있는 방향"이 곧 시야가 빈 방향이다. 동률이면 광장
+// (원점) 쪽 — 마을은 안쪽이 대체로 트여 있다.
 function closeUp(pos: Vector3Tuple): {
   position: Vector3Tuple;
   lookAt: Vector3Tuple;
 } {
-  return {position: [pos[0], 1.4, pos[2] + 3], lookAt: [pos[0], 1.35, pos[2]]};
+  const toCenterLen = Math.hypot(pos[0], pos[2]) || 1;
+  let bestDx = 0;
+  let bestDz = 1;
+  let bestScore = -Infinity;
+  for (let k = 0; k < 8; k += 1) {
+    const a = (k / 8) * Math.PI * 2;
+    const dx = Math.sin(a);
+    const dz = Math.cos(a);
+    let open = 0;
+    for (const d of [0.9, 1.8, 2.7]) {
+      if (!isWalkableDry(pos[0] + dx * d, pos[2] + dz * d)) break; // 이어진 공터만
+      open += 1;
+    }
+    const centerBias = -(pos[0] * dx + pos[2] * dz) / toCenterLen;
+    const score = open + centerBias * 0.25;
+    if (score > bestScore) {
+      bestScore = score;
+      bestDx = dx;
+      bestDz = dz;
+    }
+  }
+  return {
+    position: [pos[0] + bestDx * 3, 1.4, pos[2] + bestDz * 3],
+    lookAt: [pos[0], 1.35, pos[2]]
+  };
 }
 
 const CONVO_STEP = 2600; // NPC 간 대화 한 턴 길이(ms)
@@ -1170,6 +1200,12 @@ export function AIPortfolioVillage() {
         setSelectedNpc(null);
         return;
       }
+      if (conciergeStage === "panel") {
+        // 환영 카드도 ESC 로 닫힌다 — 예전엔 건너뛰기 버튼만 통했다
+        markConciergeSeen();
+        setConciergeStage("closed");
+        return;
+      }
       if (isPanelOpen) {
         setIsPanelOpen(false);
         return;
@@ -1181,7 +1217,7 @@ export function AIPortfolioVillage() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isPanelOpen, selectedNpc, viewMode]);
+  }, [isPanelOpen, selectedNpc, viewMode, conciergeStage]);
 
   // 코나미 코드 이스터에그 (↑↑↓↓←→←→ B A)
   useEffect(() => {
@@ -1263,6 +1299,15 @@ export function AIPortfolioVillage() {
       window.localStorage.setItem("concierge-seen-v1", "1");
     } catch {
       /* noop */
+    }
+  }
+
+  /** 환영 카드(컨시어지)를 다른 행동이 시작될 때 닫는다 — 대화창과 환영 카드가
+   *  동시에 떠 있으면 카메라도 환영 클로즈업에 묶인다 (2026-08-28 점검 #6·#7). */
+  function dismissConcierge() {
+    if (conciergeStage === "running" || conciergeStage === "panel") {
+      markConciergeSeen();
+      setConciergeStage("closed");
     }
   }
 
@@ -1609,6 +1654,7 @@ export function AIPortfolioVillage() {
       label: sectionId,
       metadata: {sectionId, contentId: contentId ?? ""}
     });
+    dismissConcierge();
     setTravelCam(null);
     setActiveSection(sectionId);
     setActiveContentId(contentId);
@@ -1641,7 +1687,7 @@ export function AIPortfolioVillage() {
     });
     setSelectedNpc(null);
     setIsPanelOpen(false);
-    setConciergeStage("closed");
+    dismissConcierge();
     if (point.sectionId) setActiveSection(point.sectionId);
     // 매번 새 객체로 만들어 카메라 전환을 다시 트리거
     setTravelCam({
@@ -1823,6 +1869,9 @@ export function AIPortfolioVillage() {
       label: npc.name,
       metadata: {sectionId: npc.sectionId, type: npc.type}
     });
+    // 환영 카드가 열려 있으면 먼저 닫는다 — 안 닫으면 카드와 대화창이 같이 뜨고,
+    // 카메라도 컨시어지 클로즈업이 우선이라 이 NPC 에게 날아가지 않는다.
+    dismissConcierge();
     // 대화 시작 시점의 NPC 위치를 스냅샷 → 상반신 클로즈업 카메라
     const pos = npcPositionsRef.current[npc.id] ?? npc.position;
     setTravelCam(null);
@@ -2061,6 +2110,13 @@ export function AIPortfolioVillage() {
               onEditingChange={stableSetEditing}
               groundTarget={groundTarget}
               onGroundClick={handleGroundClick}
+              hideOverlays={
+                // 환영 연출·NPC 대화 클로즈업 동안만 — 엿듣기는 말풍선이
+                // 주인공이라 숨기지 않는다
+                conciergeStage === "running" ||
+                conciergeStage === "panel" ||
+                !!selectedNpc
+              }
               cinematic={
                 eavesOpen && convoCam
                   ? convoCam

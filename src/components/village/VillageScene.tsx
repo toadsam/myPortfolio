@@ -132,6 +132,12 @@ interface VillageSceneProps {
   groundTarget?: {point: Vector3Tuple; nonce: number} | null;
   /** 바닥(섬 안)을 클릭했을 때. 드래그 끝 클릭은 걸러서 넘긴다. */
   onGroundClick?: (point: Vector3Tuple) => void;
+  /**
+   * 클로즈업 연출(환영·NPC 대화·엿듣기) 중이면 true — 간판·말풍선 같은
+   * DOM 오버레이(`v-sign`)를 잠깐 숨긴다. 멀리 있는 건물 간판이 연출의
+   * 주인공 몸 위에 겹쳐 뜨던 문제(2026-08-28 점검)의 해법.
+   */
+  hideOverlays?: boolean;
   npcCommand?: NpcCommand | null;
   npcCommandTargets?: Record<string, Vector3Tuple>;
   overseerTarget?: Vector3Tuple | null;
@@ -257,6 +263,9 @@ function GroundClickCatcher({
   function handleClick(event: ThreeEvent<MouseEvent>) {
     if (event.delta > GROUND_CLICK_MAX_DELTA) return; // 드래그 회전의 끝
     const {x, z} = event.point;
+    // 물 위는 이동 목적지가 아니다 — 저공 카메라가 물만 가득 보게 되고,
+    // 처음 온 사람은 빠른 이동 메뉴를 모르면 돌아올 방법이 없다 (2026-08-28 점검).
+    if (isWater(x, z)) return;
     const y = terrainHeightAt(x, z);
     const point: Vector3Tuple = [x, y, z];
     setMarker({point, at: performance.now()});
@@ -3002,6 +3011,7 @@ function VillageSceneImpl({
   cinematic,
   groundTarget,
   onGroundClick,
+  hideOverlays,
   npcCommand,
   npcCommandTargets,
   overseerTarget,
@@ -3077,7 +3087,9 @@ function VillageSceneImpl({
 
   return (
     <div
-      className="relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#7a5a38]/35 bg-[#0b1626] shadow-[inset_0_-30px_70px_rgba(255,157,56,0.06)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r"
+      className={`relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#7a5a38]/35 bg-[#0b1626] shadow-[inset_0_-30px_70px_rgba(255,157,56,0.06)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r${
+        hideOverlays ? " v-hide-overlays" : ""
+      }`}
       onDragOver={editing ? e => e.preventDefault() : undefined}
       onDrop={
         editing
