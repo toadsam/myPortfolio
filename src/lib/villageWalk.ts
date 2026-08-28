@@ -135,6 +135,70 @@ interface WallSeg {
 }
 const wallSegs: WallSeg[] = [];
 
+/**
+ * ─── 다리 상판 곡선 (bridge-arch GLB 정점 실측, 2026-08-28) ─────────────────
+ *
+ * 걷기 높이의 다리 처리(DECK_CELLS)는 **물 구간의 칸**만 안다. 그런데 다리
+ * GLB 는 그보다 길어 경사로가 뭍까지 이어지고, 물폭이 좁아 칸이 2개뿐인
+ * 다리는 t 가 0과 1뿐이라 아치 봉긋(sin) 항이 **정확히 0** 이었다 — 상판은
+ * 중앙에서 뚝방보다 1.1 이상 솟는데 발은 뚝방 높이 그대로라, 다리 한가운데를
+ * 건너는 모두가 허리까지 파묻혔다(2026-08-28 사용자 스크린샷, LIFE 북쪽 다리).
+ *
+ * 모든 다리가 propsLayout 의 bridge-arch 프롭이므로, 그 배치(중심·각도·배율)에
+ * GLB 상판 중앙 띠(|z|<0.12)의 윗면 y 를 실측한 곡선을 태워 걷기 높이를 만든다.
+ * 뭍 위 경사로 구간은 지형과 상판 중 **높은 쪽**을 밟는다.
+ */
+const BRIDGE_DECK_PROFILE: ReadonlyArray<readonly [number, number]> = [
+  [-0.95, -0.241],
+  [-0.85, -0.228],
+  [-0.76, -0.182],
+  [-0.67, -0.14],
+  [-0.57, -0.073],
+  [-0.47, -0.013],
+  [-0.38, 0.058],
+  [-0.29, 0.134],
+  [-0.19, 0.135],
+  [-0.1, 0.162],
+  [0.0, 0.171],
+  [0.09, 0.16],
+  [0.19, 0.143],
+  [0.28, 0.108],
+  [0.38, 0.053],
+  [0.48, 0.009],
+  [0.57, -0.08],
+  [0.66, -0.147],
+  [0.76, -0.184],
+  [0.86, -0.228],
+  [0.95, -0.245]
+];
+
+function deckLocalY(lx: number): number {
+  const P = BRIDGE_DECK_PROFILE;
+  if (lx <= P[0]![0]) return P[0]![1];
+  for (let i = 1; i < P.length; i += 1) {
+    if (lx <= P[i]![0]) {
+      const [x0, y0] = P[i - 1]!;
+      const [x1, y1] = P[i]!;
+      const t = (lx - x0) / (x1 - x0 || 1);
+      return y0 + (y1 - y0) * t;
+    }
+  }
+  return P[P.length - 1]![1];
+}
+
+interface BridgeSpan {
+  x: number;
+  z: number;
+  /** 모델 +X(길이 방향)의 월드 방향 */
+  ax: number;
+  az: number;
+  s: number;
+  y: number;
+  halfLen: number;
+  halfW: number;
+}
+const BRIDGE_SPANS: BridgeSpan[] = [];
+
 // 장식물 — 걷는 범위 근처만 담는다. 나머지는 어차피 갈 수 없다.
 for (const p of propsLayout.props as Array<{
   glb: string;
@@ -146,6 +210,22 @@ for (const p of propsLayout.props as Array<{
   const z = p.position[2];
   if (Math.hypot(x, z) > WALK_RADIUS + 3) continue;
   const name = p.glb.split("/").pop()?.replace(".glb", "") ?? "";
+  if (name === "bridge-arch") {
+    const a = p.rotationY ?? 0;
+    const s = p.scale ?? 1;
+    BRIDGE_SPANS.push({
+      x,
+      z,
+      ax: Math.cos(a),
+      az: -Math.sin(a),
+      s,
+      y: p.position[1] ?? 0,
+      halfLen: 0.95 * s,
+      // 걷는 폭은 상판 안쪽(난간 안) — bbox 반폭 0.413 보다 좁게
+      halfW: 0.35 * s
+    });
+    continue;
+  }
   if (WALL_KINDS.test(name)) {
     const a = p.rotationY ?? 0;
     wallSegs.push({x, z, ax: Math.cos(a), az: Math.sin(a)});
@@ -280,15 +360,36 @@ function bridgeDeckAt(x: number, z: number): number | null {
  * 잠기는 그림은 하상이 그린다: 하상이 불투명 메시라 그 아래로 내려간 다리는
  * 하상에 가려 사라지고, 수면 위 상체만 남는다.
  */
+/** 다리 상판 위라면 실측 곡선 높이, 아니면 null (위 BRIDGE_DECK_PROFILE 절) */
+function bridgeSpanHeightAt(x: number, z: number): number | null {
+  let best: number | null = null;
+  for (const b of BRIDGE_SPANS) {
+    const dx = x - b.x;
+    const dz = z - b.z;
+    if (Math.abs(dx) > b.halfLen + 1 || Math.abs(dz) > b.halfLen + 1) continue;
+    const u = dx * b.ax + dz * b.az;
+    if (Math.abs(u) > b.halfLen) continue;
+    const v = -dx * b.az + dz * b.ax;
+    if (Math.abs(v) > b.halfW) continue;
+    const h = b.y + deckLocalY(u / b.s) * b.s;
+    if (best === null || h > best) best = h;
+  }
+  return best;
+}
+
 export function walkHeightAt(x: number, z: number): number {
   // 고리 회랑이 물보다 먼저다 — 데크는 수면 위에 떠 있다
   if (onPlazaRing(x, z)) return PLAZA_RING.deck;
+  const span = bridgeSpanHeightAt(x, z);
   if (isWater(x, z)) {
+    if (span !== null) return span; // 다리 — 상판 곡선 위를 걷는다
     const deck = bridgeDeckAt(x, z);
-    if (deck !== null) return deck; // 다리 — 상판 위를 걷는다
+    if (deck !== null) return deck; // 안전망 — 프롭이 없는 다리 칸
     return -waterDepthAt(x, z);
   }
-  return terrainHeightAt(x, z);
+  const ground = terrainHeightAt(x, z);
+  // 뭍 위 경사로 — 상판이 지형보다 높으면 상판을 밟는다 (안 그러면 경사로에 파묻힌다)
+  return span !== null && span > ground ? span : ground;
 }
 
 /**

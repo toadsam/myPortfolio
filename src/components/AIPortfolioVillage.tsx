@@ -359,9 +359,12 @@ function closeUp(pos: Vector3Tuple): {
       bestDz = dz;
     }
   }
+  // y 1.4·거리 3 이던 저시점은 가슴 높이에서 올려다봐 머리가 잘렸다
+  // ("카메라 시점이 너무 아래", 2026-08-28). 살짝 부감 + 한 발 뒤로 —
+  // 전신과 주변 바닥이 같이 들어온다.
   return {
-    position: [pos[0] + bestDx * 3, 1.4, pos[2] + bestDz * 3],
-    lookAt: [pos[0], 1.35, pos[2]]
+    position: [pos[0] + bestDx * 3.6, 2.5, pos[2] + bestDz * 3.6],
+    lookAt: [pos[0], 1.2, pos[2]]
   };
 }
 
