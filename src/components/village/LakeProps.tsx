@@ -32,7 +32,7 @@ const SURFACE_Y = 0.03;
 const noRaycast = () => undefined;
 
 /** 각도마다 광장 바깥 첫 물 띠의 가장 깊은 지점을 이은 닫힌 고리 */
-function buildDriftLoop(): Vector3[] {
+function buildDriftLoop(): {pts: Vector3[]; depths: number[]} {
   const pts: Vector3[] = [];
   const N = 120;
   for (let i = 0; i < N; i += 1) {
@@ -74,12 +74,47 @@ function buildDriftLoop(): Vector3[] {
     pts.length = 0;
     pts.push(...smoothed);
   }
-  return pts;
+  return {pts, depths: pts.map(p => shoreDistAt(p.x, p.z))};
 }
 
-const LOOP = buildDriftLoop();
+const {pts: LOOP, depths: LOOP_DEPTHS} = buildDriftLoop();
 const CURVE =
   LOOP.length >= 8 ? new CatmullRomCurve3(LOOP, true, "centripetal", 0.5) : null;
+
+/**
+ * 나룻배 전용 **왕복 구간** — 고리 전체를 돌리면 좁은 물목에서 벽에 닿는다.
+ *
+ * 배는 2배 확대 후 길이 2.66·폭 1.4 라, 물가거리 1.05 미만인 지점에선 선체가
+ * 축대를 파고든다 (2026-08-28 사용자 스크린샷). 백조·물등불은 작아서 고리
+ * 전체를 그대로 쓰고, 배만 깊이 1.05 이상이 이어지는 **가장 긴 구간**을 골라
+ * 그 안에서 노 저어 갔다 돌아오기를 반복한다.
+ */
+const BOAT_CURVE: CatmullRomCurve3 | null = (() => {
+  const n = LOOP.length;
+  if (n < 16) return null;
+  const ok = LOOP_DEPTHS.map(d => d >= 1.05);
+  // 원형 배열에서 가장 긴 연속 참 구간
+  let bestStart = -1;
+  let bestLen = 0;
+  for (let s = 0; s < n; s += 1) {
+    if (!ok[s] || ok[(s + n - 1) % n]) continue; // 구간의 시작점에서만 잰다
+    let len = 0;
+    while (len < n && ok[(s + len) % n]) len += 1;
+    if (len > bestLen) {
+      bestLen = len;
+      bestStart = s;
+    }
+  }
+  // bestLen 0 = 전 구간이 깊어 시작점이 없다 → null 로 두면 고리 전체를 쓴다
+  if (bestLen < 12) return null; // 배 띄울 만한 구간이 없어도 고리로 폴백
+  // 양끝을 두 칸씩 물려 끝점에서도 벽과 여유를 둔다
+  const arc: Vector3[] = [];
+  for (let k = 2; k < bestLen - 2; k += 1)
+    arc.push(LOOP[(bestStart + k) % n]!);
+  return arc.length >= 8
+    ? new CatmullRomCurve3(arc, false, "centripetal", 0.5)
+    : null;
+})();
 
 /** 격자 훑기로 가장 깊은 물 지점 (avoid 점들에서 avoidR 안쪽은 제외) */
 function deepestSpot(
@@ -149,27 +184,32 @@ interface DrifterSpec {
   longAxisX: boolean;
   /** 방향을 아예 안 트는 소품 (물등불) */
   noYaw?: boolean;
+  /** 고리 대신 깊은 구간(BOAT_CURVE)을 왕복 — 몸집 큰 나룻배용 */
+  pingPong?: boolean;
 }
 
 // 크기는 실물 환산이 아니라 **화면 기준**이다 — 첫 배치(실물 환산 0.72/0.36/0.26)는
-// 부감 카메라에서 점으로 보여 "2배는 되어야 할 것 같다"는 피드백을 받았다
-// (2026-08-28). 흘수(draft)도 그때 같이 줄였다 — 0.07 은 석호 너울 마루(+0.07)와
-// 겹쳐 뱃전 절반이 잠겨 보였다. 선체 바닥이 수면 바로 아래(0.02~0.06)면 충분하다.
+// 부감 카메라에서 점으로 보여 "2배는 되어야 할 것 같다"는 피드백을 받았다.
+// 흘수(draft)는 **음수(들림)까지 허용** — 석호 수면은 정점 너울로 최대 +0.074 까지
+// 솟는데(waterFlow, 골만 0.2배) 선체 바닥이 수면(0.03) 언저리면 마루가 지날 때마다
+// "가끔씩 잠기는 배"가 된다 (2026-08-28 사용자 보고 2차). 바닥을 마루보다 살짝
+// 위(−0.05 = 수면+0.05)에 두면 물결이 뱃전을 스치는 정도로만 겹친다.
 const DRIFTERS: DrifterSpec[] = [
   {
     url: "/models/props/lake/lake-rowboat.glb",
     scale: 1.4,
     minY: -0.234,
-    draft: 0.02,
-    lapSec: 300,
+    draft: -0.05,
+    lapSec: 130, // 왕복이라 편도 시간 — 고리 한 바퀴보다 짧다
     u0: 0.05,
-    longAxisX: true
+    longAxisX: true,
+    pingPong: true
   },
   {
     url: "/models/props/lake/lake-swan.glb",
     scale: 0.7,
     minY: -0.422,
-    draft: 0.04,
+    draft: 0.0,
     lapSec: 210,
     u0: 0.48,
     longAxisX: true
@@ -178,7 +218,7 @@ const DRIFTERS: DrifterSpec[] = [
     url: "/models/props/lake/lake-lantern-float.glb",
     scale: 0.5,
     minY: -0.952,
-    draft: 0.06,
+    draft: 0.0,
     lapSec: 380,
     u0: 0.24,
     longAxisX: false,
@@ -188,7 +228,7 @@ const DRIFTERS: DrifterSpec[] = [
     url: "/models/props/lake/lake-lantern-float.glb",
     scale: 0.5,
     minY: -0.952,
-    draft: 0.06,
+    draft: 0.0,
     lapSec: 380,
     u0: 0.74,
     longAxisX: false,
@@ -214,20 +254,44 @@ function Drifter({spec, cloneScene}: {spec: DrifterSpec; cloneScene: boolean}) {
   const {scene} = useGLTF(spec.url, true, true, extendGltfLoader);
   const root = useMemo(() => prepare(scene, cloneScene), [scene, cloneScene]);
   const groupRef = useRef<Group | null>(null);
+  const yawRef = useRef<number | null>(null);
   const baseY = SURFACE_Y - spec.draft - spec.minY * spec.scale;
 
-  useFrame(({clock}) => {
+  useFrame(({clock}, delta) => {
     const g = groupRef.current;
-    if (!g || !CURVE) return;
+    const curve = spec.pingPong && BOAT_CURVE ? BOAT_CURVE : CURVE;
+    if (!g || !curve) return;
     const t = clock.getElapsedTime();
-    const u = (((spec.u0 + t / spec.lapSec) % 1) + 1) % 1;
-    const p = CURVE.getPointAt(u);
-    const tan = CURVE.getTangentAt(u);
-    g.position.set(p.x, baseY + Math.sin(t * 0.9 + spec.u0 * 17) * 0.018, p.z);
+    let u: number;
+    let dirSign = 1;
+    if (spec.pingPong && BOAT_CURVE) {
+      // 왕복: 0→1→0 삼각파. 돌아올 땐 진행 방향(접선 부호)도 뒤집힌다
+      const ph = ((spec.u0 + t / spec.lapSec) % 2) + (t < 0 ? 2 : 0);
+      const m = ph % 2;
+      u = m < 1 ? m : 2 - m;
+      dirSign = m < 1 ? 1 : -1;
+      u = Math.min(0.999, Math.max(0.001, u));
+    } else {
+      u = (((spec.u0 + t / spec.lapSec) % 1) + 1) % 1;
+    }
+    const p = curve.getPointAt(u);
+    const tan = curve.getTangentAt(u).multiplyScalar(dirSign);
+    // 출렁임은 **위로만** — 아래로 흔들리면 기껏 올린 흘수선이 도로 물에 잠긴다
+    g.position.set(
+      p.x,
+      baseY + (Math.sin(t * 0.9 + spec.u0 * 17) + 1) * 0.5 * 0.03,
+      p.z
+    );
     if (!spec.noYaw) {
-      g.rotation.y = spec.longAxisX
+      const target = spec.longAxisX
         ? Math.atan2(-tan.z, tan.x)
         : Math.atan2(tan.x, tan.z);
+      // 왕복 반환점에서 순간 반전하지 않게 최단 회전으로 부드럽게 돈다
+      if (yawRef.current === null) yawRef.current = target;
+      let d = target - yawRef.current;
+      d = Math.atan2(Math.sin(d), Math.cos(d));
+      yawRef.current += d * Math.min(1, delta * 1.8);
+      g.rotation.y = yawRef.current;
     } else {
       g.rotation.y = Math.sin(t * 0.11 + spec.u0 * 9) * 0.6; // 물등불은 느리게 맴돈다
     }
@@ -253,13 +317,14 @@ function Seaplane() {
   );
   const root = useMemo(() => prepare(scene, false), [scene]);
   const groupRef = useRef<Group | null>(null);
-  const baseY = SURFACE_Y - 0.03 + 0.332 * PLANE_SCALE;
+  // 플로트 바닥을 너울 마루(+0.074)보다 살짝 위에 — 아래 DRIFTERS 흘수 주석 참고
+  const baseY = SURFACE_Y + 0.05 + 0.332 * PLANE_SCALE;
 
   useFrame(({clock}) => {
     const g = groupRef.current;
     if (!g) return;
     const t = clock.getElapsedTime();
-    g.position.y = baseY + Math.sin(t * 0.8) * 0.014;
+    g.position.y = baseY + (Math.sin(t * 0.8) + 1) * 0.5 * 0.02;
     g.rotation.y = 0.8 + Math.sin(t * 0.07) * 0.1;
     g.rotation.z = Math.sin(t * 0.6) * 0.02;
   });

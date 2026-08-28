@@ -143,8 +143,10 @@ Three things make this unlike every other district:
   직진이 뚫리는 순간 목표로 복귀한다. 배회 목적지는 pickTarget 이 **가는 길까지 뚫린 곳만**
   뽑고(clearWalk), 4초간 진행이 없으면 새로 뽑는다. 연출 이동의 "막히면 직진" 최후수단은
   래치가 아니라 **1.6초 버스트**(3초 정체 시)다 — 래치는 벽·문 관통의 주범이었다.
-  수다는 두 단: **잡담**(`atelierSmallTalk.ts` 고정 대본, LLM 0회·관계 무변화, 15~35초 간격,
+  수다는 두 단: **잡담**(`atelierSmallTalk.ts` 고정 대본, LLM 0회·관계 무변화, 8~18초 간격,
   배회 중엔 걸어가서·근무 중엔 자리에서) + **마주침**(E-4 백엔드, 관계·기억, 2분 상한 유지).
+  설문·대화가 열려도 방 전체를 멈추지 않는다 — **손님을 상대 중인 식구(excludeRef)만 빼고**
+  나머지가 계속 주고받는다. 전체 정지는 "정작 손님이 방을 보는 시간에 방이 죽는" 결과였다.
 
 Two naming traps, both already guarded and locked by `tests/test_relations.py` — keep the atelier branch
 **first** in both `relations.canon()` and `chat_service._npc_profile_for_dynamic_id()`, since the existing

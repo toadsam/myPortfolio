@@ -1223,8 +1223,11 @@ interface SocialWalkApi {
  * 마을의 checkEncounter 는 거리 기반이지만 여기는 다섯이 늘 한 방이라 타이머로 간다.
  *
  * 두 단으로 돈다(2026-08-27, "같은 방인데 왜 조용하냐"는 사용자 피드백):
- * - **잡담**: `SMALL_TALK` 고정 대본, LLM 0회·관계 무변화. 입장 십몇 초 뒤부터
- *   15~35초 간격으로 계속 — 같은 방 식구의 '평소 수다'는 이걸로 채운다.
+ * - **잡담**: `SMALL_TALK` 고정 대본, LLM 0회·관계 무변화. 입장 5~11초 뒤부터
+ *   8~18초 간격으로 계속 — 같은 방 식구의 '평소 수다'는 이걸로 채운다.
+ *   설문·대화 중에도 멈추지 않는다: 손님을 상대 중인 식구(excludeRef)만 빼고
+ *   나머지가 계속 주고받는다 — 방 전체를 멈추면 정작 손님이 보고 있는 시간에
+ *   방이 죽는다.
  * - **마주침**: 백엔드 /npc/encounter — 직군별 사건 템플릿이 관계·기억·마을 소식을
  *   쌓는다. 호출 비용이 있으니 기존처럼 2분에 한 번이 상한.
  *
@@ -1234,20 +1237,18 @@ interface SocialWalkApi {
  * 어긋나도 말풍선이라 티가 안 나고, 타이머 사슬을 그대로 쓸 수 있어서다.
  */
 function useAtelierSocialLoop(
-  paused: boolean,
+  excludeRef: {current: string[]},
   atDesks: boolean,
   walkApi: {current: SocialWalkApi}
 ) {
   const [bubbles, setBubbles] = useState<Record<string, string>>({});
   const [emotes, setEmotes] = useState<Record<string, string>>({});
   const busyRef = useRef(false);
-  const smallAtRef = useRef(Date.now() + 12000 + Math.random() * 10000);
+  const smallAtRef = useRef(Date.now() + 5000 + Math.random() * 6000);
   const encounterAtRef = useRef(Date.now() + 90000); // 입장 90초 뒤 첫 마주침
   const talkUntilRef = useRef(0); // 지금 진행 중인 수다가 끝나는 시각
   const recentTalkRef = useRef<number[]>([]);
   const timersRef = useRef<number[]>([]);
-  const pausedRef = useRef(paused);
-  pausedRef.current = paused;
   const atDesksRef = useRef(atDesks);
   atDesksRef.current = atDesks;
 
@@ -1283,11 +1284,25 @@ function useAtelierSocialLoop(
       return (Math.hypot(mx - cur.x, mz - cur.z) / WALK_SPEED) * 1000 + 400;
     };
 
-    /** 고정 대본 잡담 — 최근에 나온 대본은 피해서 뽑는다 */
+    /** 고정 대본 잡담 — 최근에 나온 대본과 지금 손님을 상대 중인 식구는 피한다 */
     const smallTalk = () => {
-      let idx = Math.floor(Math.random() * SMALL_TALK.length);
-      while (recentTalkRef.current.includes(idx))
-        idx = (idx + 1) % SMALL_TALK.length;
+      const excluded = excludeRef.current;
+      const usable: number[] = [];
+      SMALL_TALK.forEach((ex, i) => {
+        if (excluded.includes(ex.pair[0]) || excluded.includes(ex.pair[1]))
+          return;
+        usable.push(i);
+      });
+      if (usable.length === 0) {
+        smallAtRef.current = Date.now() + 8000; // 다들 바쁘다 — 잠시 뒤 다시
+        return;
+      }
+      let pick = usable[Math.floor(Math.random() * usable.length)]!;
+      for (let k = 0; k < usable.length; k += 1) {
+        if (!recentTalkRef.current.includes(pick)) break;
+        pick = usable[(usable.indexOf(pick) + 1) % usable.length]!;
+      }
+      const idx = pick;
       recentTalkRef.current = [...recentTalkRef.current.slice(-5), idx];
       const ex = SMALL_TALK[idx]!;
       const a = byId.get(ex.pair[0]);
@@ -1307,14 +1322,21 @@ function useAtelierSocialLoop(
         walkApi.current.release(b.id);
       });
       talkUntilRef.current = Date.now() + endMs + 500;
-      smallAtRef.current = Date.now() + endMs + 14000 + Math.random() * 20000;
+      // 8~18초 간격 — 14~34초는 "같은 방인데 왜 이렇게 조용해"로 읽혔다
+      // (2026-08-28 사용자 피드백 2차)
+      smallAtRef.current = Date.now() + endMs + 8000 + Math.random() * 10000;
     };
 
     /** 진짜 마주침 — 결과는 규칙이 정하고 LLM 은 대사만 쓴다(E-4) */
     const encounter = async () => {
       busyRef.current = true;
       try {
-        const pick = [...team].sort(() => Math.random() - 0.5).slice(0, 2);
+        const free = team.filter(npc => !excludeRef.current.includes(npc.id));
+        if (free.length < 2) {
+          encounterAtRef.current = Date.now() + 30000;
+          return;
+        }
+        const pick = [...free].sort(() => Math.random() - 0.5).slice(0, 2);
         const [a, b] = [pick[0]!, pick[1]!];
         const res = await requestNpcEncounter(
           {npc_id: a.id, mood: "calm", energy: 55, recent_memory: []},
@@ -1350,7 +1372,7 @@ function useAtelierSocialLoop(
     };
 
     const tick = () => {
-      if (pausedRef.current || busyRef.current) return;
+      if (busyRef.current) return;
       if (typeof document !== "undefined" && document.hidden) return;
       const now = Date.now();
       if (now < talkUntilRef.current) return; // 다른 수다가 진행 중
@@ -1431,7 +1453,16 @@ export function AtelierInterior({
       : Math.PI / 2;
 
   // 설문(릴레이)·상담 중에만 수다를 쉰다 — 근무 중에는 자리에서 잡담을 이어간다
-  const social = useAtelierSocialLoop(interacting, workMode, socialApiRef);
+  // 손님을 상대 중인 식구만 수다에서 뺀다 — 예전엔 설문·대화가 열리면 방 전체가
+  // 침묵해서, 정작 손님이 방을 보고 있는 시간에 "왜 서로 얘기 안 해"가 됐다
+  // (2026-08-28 사용자 피드백). 나머지 식구는 자리에서 계속 주고받는다.
+  const excludeRef = useRef<string[]>([]);
+  excludeRef.current = [
+    focusNpcId,
+    activeNpcId,
+    pendingTalk?.npc.id ?? null
+  ].filter((id): id is string => !!id);
+  const social = useAtelierSocialLoop(excludeRef, workMode, socialApiRef);
 
   /** 클릭: 도안은 접수대에 이미 있으니 즉시, 팀원은 걸어온 뒤에 연다. */
   const handleFigureClick = (npc: NPCData) => {
