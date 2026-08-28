@@ -60,8 +60,10 @@ const HOPS = [
   },
   {
     key: "api",
-    name: "API · RDS",
-    role: "Spring Boot · MySQL",
+    name: "API · DB",
+    // PDF 11쪽은 「RDS(MySQL)」 이라고 적었지만, application-prod.properties 는
+    // postgresql:// + PostgreSQLDialect 다. MySQL 은 로컬 프로파일 쪽이다.
+    role: "Spring Boot · PostgreSQL",
     say: "화면이 뜬 뒤의 데이터 요청은 이쪽으로 간다. 접속 정보는 환경변수로만 들어온다.",
     color: "var(--mu-ok)"
   }
@@ -99,9 +101,9 @@ export function P09Infra() {
   }, [announce]);
 
   return (
-    <Page index={9} innerRef={ref} maxWidth="1120px">
+    <Page index={10} innerRef={ref} maxWidth="1120px">
       <Kicker on={on[IDX.label]} instant={instant}>
-        09 · 인프라
+        10 · 인프라
       </Kicker>
 
       <div className="mt-4">
@@ -115,9 +117,9 @@ export function P09Infra() {
       <div className="mt-6 max-w-[740px]" style={rise(on[IDX.body], instant)}>
         <Body>
           역할을 하나로 뭉쳐 놓으면 장애가 났을 때{" "}
-          <strong>어디가 문제인지 알 수가 없습니다.</strong> 그래서 도메인 · 인증서
-          · CDN · 스토리지를 각각 다른 서비스에 맡겼습니다. 아래에서 요청을 한 번
-          보내 보세요.
+          <strong>어디가 문제인지 알 수가 없습니다.</strong> 그래서 도메인 ·
+          인증서 · CDN · 스토리지를 각각 다른 서비스에 맡겼습니다. 아래에서
+          요청을 한 번 보내 보세요.
         </Body>
       </div>
 

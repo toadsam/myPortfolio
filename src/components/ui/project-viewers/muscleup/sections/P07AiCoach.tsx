@@ -96,9 +96,9 @@ export function P07AiCoach() {
   }, [announce]);
 
   return (
-    <Page index={7} innerRef={ref} maxWidth="1120px">
+    <Page index={8} innerRef={ref} maxWidth="1120px">
       <Kicker on={on[IDX.label]} instant={instant}>
-        07 · AI 코치
+        08 · AI 코치
       </Kicker>
 
       <div className="mt-4">
@@ -111,8 +111,8 @@ export function P07AiCoach() {
 
       <div className="mt-6 max-w-[740px]" style={rise(on[IDX.body], instant)}>
         <Body>
-          한 엔드포인트가 분석도 하고 루틴도 짜고 상담도 받으면, 프롬프트를 한 줄
-          고칠 때마다 나머지 둘이 같이 흔들립니다. 그래서{" "}
+          한 엔드포인트가 분석도 하고 루틴도 짜고 상담도 받으면, 프롬프트를 한
+          줄 고칠 때마다 나머지 둘이 같이 흔들립니다. 그래서{" "}
           <strong style={{color: "var(--mu-accent)"}}>
             /ai/analyze · /ai/plan · /ai/chat
           </strong>{" "}
@@ -166,22 +166,24 @@ export function P07AiCoach() {
                   background: lit
                     ? "rgba(244,114,182,0.08)"
                     : "rgba(255,255,255,0.02)",
-                  boxShadow: active
-                    ? "0 0 14px rgba(244,114,182,0.28)"
-                    : "none"
+                  boxShadow: active ? "0 0 14px rgba(244,114,182,0.28)" : "none"
                 }}
               >
                 <div className="flex items-center justify-between gap-2">
                   <span
                     className="font-mono text-[12px] font-bold"
-                    style={{color: lit ? "var(--mu-primary)" : "var(--mu-muted)"}}
+                    style={{
+                      color: lit ? "var(--mu-primary)" : "var(--mu-muted)"
+                    }}
                   >
                     {done ? "✓ " : ""}
                     {s.title}
                   </span>
                   <span
                     className="font-mono text-[10px]"
-                    style={{color: lit ? "var(--mu-accent)" : "var(--mu-faint)"}}
+                    style={{
+                      color: lit ? "var(--mu-accent)" : "var(--mu-faint)"
+                    }}
                   >
                     {s.endpoint}
                   </span>
@@ -216,12 +218,14 @@ export function P07AiCoach() {
             <CodeLine n={1}>
               <Cm>{"// desc: GPT API 연동 응답 요청"}</Cm>
             </CodeLine>
-            <CodeLine n={2}>{"HttpRequest request = HttpRequest.newBuilder()"}</CodeLine>
+            <CodeLine n={2}>
+              {"HttpRequest request = HttpRequest.newBuilder()"}
+            </CodeLine>
             <CodeLine n={3} highlight={stage >= 1}>
-              {"  .uri(URI.create(openAiBase + \"/v1/chat/completions\"))"}
+              {'  .uri(URI.create(openAiBase + "/v1/chat/completions"))'}
             </CodeLine>
             <CodeLine n={4}>
-              {"  .header(\"Authorization\", \"Bearer \" + key)"}
+              {'  .header("Authorization", "Bearer " + key)'}
             </CodeLine>
             <CodeLine n={5}>
               {"  .POST(HttpRequest.BodyPublishers.ofString("}
@@ -289,8 +293,8 @@ export function P07AiCoach() {
         <Panel label="공유는 되돌릴 수 있어야 한다">
           <p className="text-[13px] leading-6 text-[var(--mu-muted)]">
             상담 결과를 공유하면 <strong>share_slug</strong> 가 생기고, 공유를
-            끄면 <strong>null</strong> 로 되돌아갑니다. 한 번 올린 것을 못 내리는
-            구조는 만들지 않았습니다.
+            끄면 <strong>null</strong> 로 되돌아갑니다. 한 번 올린 것을 못
+            내리는 구조는 만들지 않았습니다.
           </p>
           <Caveat>
             화면 속 「분석 응답 3회 · 1.8s」 같은 숫자는 서비스 화면에 표시되는

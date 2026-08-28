@@ -34,7 +34,7 @@
 
 ### 아주대학교 — 디지털미디어학과 (전공)
 
-`2021.03 ~ 2026.02 (예정)`
+`2021.03 ~ 2027.02 (예정)`
 웹/소프트웨어 엔지니어링 중심으로 학습하며 서비스 구조 설계와 구현 역량을 확장했습니다.
 
 - 웹(React/Spring Boot) 중심 프로젝트 경험
@@ -42,14 +42,14 @@
 
 ### 아주대학교 — 인공지능 융합학과 (복수전공)
 
-`2021.03 ~ 2026.02 (예정)`
+`2021.03 ~ 2027.02 (예정)`
 AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.
 
 - 웹 개발과의 융합 관점으로 프로젝트 경험
 
 ### 아주대학교 — 메타버스기획 마이크로전공 (부전공)
 
-`2021.03 ~ 2026.02 (예정)`
+`2021.03 ~ 2027.02 (예정)`
 메타버스 플랫폼에서 상호작용 콘텐츠를 제작했습니다.
 
 - 메타버스 플랫폼 콘텐츠 제작 경험
@@ -89,7 +89,7 @@ HTML, CSS, JavaScript에 대한 기초 감각을 익혔습니다.
 | 4   | **FestFlow**                | Web      | 완료   | React, SSE, Spring Boot, PWA          |
 | 5   | **MyStock-Desk**            | Data/AI  | 완료   | React, Spring Boot, AI, Recharts      |
 | 6   | **Ajou Campus Foodmap**     | Web      | 완료   | FullStack, OAuth, Workflow            |
-| 7   | **수어지구**                | Web      | 완료   | Spring Boot, Firebase, 3D Avatar      |
+| 7   | **수어지교**                | Web      | 완료   | Spring Boot, Firebase, 3D Avatar      |
 | 8   | **MyWave**                  | Data/AI  | 완료   | React, TypeScript, Recharts           |
 | 9   | **TSEROF**                  | Game     | 운영중 | Unity, GameDev, 3D                    |
 | 10  | **아주대탐험**              | Game     | 완료   | Unity, AI, GameSystem                 |
@@ -105,7 +105,7 @@ HTML, CSS, JavaScript에 대한 기초 감각을 익혔습니다.
 4. **FestFlow** — 대학 축제 운영자를 위한 실시간 부스 관리 시스템
 5. **MyStock-Desk** — 거래 기록 기반 포트폴리오 분석과 AI 체크리스트를 제공하는 투자 기록 서비스
 6. **Ajou Campus Foodmap** — 세션 기반 OAuth 로그인과 맛집 등록 플로우를 구현한 캠퍼스 지도 서비스
-7. **수어지구** — 수어 아바타를 활용한 학습 및 표현 서비스
+7. **수어지교** — 수어 아바타를 활용한 학습 및 표현 서비스
 8. **MyWave** — 개인 자산 흐름을 한눈에 보는 금융 관리 대시보드 (컨셉/설계)
 9. **TSEROF** — 출시·배포까지 완주한 3D 액션 플랫폼 게임 프로젝트
 10. **아주대탐험** — 스킬·AI·이벤트 시스템을 통합 구현한 캐주얼 액션 어드벤처 게임
@@ -681,7 +681,7 @@ function ProtectedRoute({children}) {
 
 ---
 
-## 🤟 수어지구 (Sign-Language)
+## 🤟 수어지교 (Sign-Language)
 
 > SIGN LANGUAGE LEARNING · TEAM (BACKEND)
 

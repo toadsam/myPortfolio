@@ -3,7 +3,7 @@
 import {AnimatePresence, motion} from "framer-motion";
 import dynamic from "next/dynamic";
 import type {ComponentType} from "react";
-import {useEffect, useRef} from "react";
+import {Fragment, useEffect, useRef} from "react";
 import {getProjectTheme, type ProjectTheme} from "@/data/projectThemes";
 // 이름·직함·연락처는 이력서 데이터가 단일 출처다. 여기서 다시 적지 않는다 —
 // 예전엔 푸터에 템플릿 잔재("Sam Kim")가 하드코딩돼 있었다.
@@ -693,6 +693,92 @@ export function ProjectOnePager({
             </div>
           </section>
 
+          {/* ══════════ 개선 전 / 후 ══════════
+              문제를 말한 직후가 이 칸의 자리다 — "그래서 뭘 바꿨나" 를 아키텍처
+              설명보다 먼저 보여 준다. 심사자가 끝까지 안 읽고 나가도 여기까지는
+              본다.
+
+              두 장을 나란히 놓기만 하면 안 읽힌다. **차이를 말로 짚어 주는
+              note 가 그림보다 중요하다** — 그림은 근거고, 문장이 주장이다. */}
+          {data.beforeAfter ? (
+            <section className="reveal space-y-8 md:space-y-10">
+              <div className="section-label">Before → After</div>
+              <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_auto_1fr] lg:gap-8">
+                {(
+                  [
+                    ["Before", data.beforeAfter.before, "#f87171"],
+                    ["After", data.beforeAfter.after, theme.primary]
+                  ] as const
+                ).map(([tag, side], i) => (
+                  <Fragment key={tag}>
+                    {i === 1 ? (
+                      <div
+                        aria-hidden="true"
+                        className="mono hidden items-center justify-center self-center text-3xl font-black lg:flex"
+                        style={{color: theme.primary}}
+                      >
+                        →
+                      </div>
+                    ) : null}
+                    <div
+                      className="reveal space-y-4 rounded-xl border p-5"
+                      style={{
+                        borderColor:
+                          tag === "Before"
+                            ? "rgb(248 113 113 / 0.3)"
+                            : `${theme.primary}40`,
+                        background:
+                          tag === "Before"
+                            ? "rgb(248 113 113 / 0.04)"
+                            : `${theme.primary}0a`
+                      }}
+                    >
+                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        <span
+                          className="mono text-xs font-black uppercase tracking-widest"
+                          style={{
+                            color: tag === "Before" ? "#f87171" : theme.primary
+                          }}
+                        >
+                          {tag}
+                        </span>
+                        <span className="text-sm font-bold text-white/90">
+                          {side.label}
+                        </span>
+                      </div>
+                      {/* 세로로 긴 폰 캡처가 들어오면 카드 폭(약 558px)을 다
+                          채워 900px 넘게 솟는다. 게다가 개선 전 캡처는 원본이
+                          372px 라 늘리면 흐려진다 — 원본보다 크게 그리지 않도록
+                          폭을 묶는다. 가로로 긴 캡처는 그대로 폭을 쓴다. */}
+                      {side.shot ? (
+                        <div
+                          className={
+                            (side.shot.ratio ?? "9/16").startsWith("9/") ||
+                            (side.shot.ratio ?? "").startsWith("3/4")
+                              ? "mx-auto w-full max-w-[330px]"
+                              : "w-full"
+                          }
+                        >
+                          <Shot
+                            className="w-full"
+                            ratio={side.shot.ratio ?? "9/16"}
+                            spec={side.shot}
+                            theme={theme}
+                          />
+                        </div>
+                      ) : null}
+                      {side.note ? (
+                        <p className="text-sm leading-relaxed text-gray-400">
+                          {side.note}
+                        </p>
+                      ) : null}
+                    </div>
+                  </Fragment>
+                ))}
+              </div>
+            </section>
+          ) : null}
+
           {/* ══════════ 아키텍처 ══════════ */}
           <section className="reveal space-y-12 md:space-y-16">
             <div className="section-label">Architecture &amp; Design</div>
@@ -922,9 +1008,27 @@ export function ProjectOnePager({
             <div className="stagger-children grid grid-cols-1 gap-8 md:grid-cols-3">
               {(
                 [
-                  ["Keep", "text-green-500", "check", data.kpt.keep],
-                  ["Problem", "text-red-500", "x", data.kpt.problem],
-                  ["Try", "text-blue-500", "rocket", data.kpt.try]
+                  // 칸 이름은 프로젝트가 정할 수 있다(`kptLabels`). 두 번 만든
+                  // 프로젝트는 「1.0 에서 배운 것 / 2.0 에서 배운 것」처럼
+                  // 단계를 이름에 넣어야 목록만 읽어도 성장 방향이 보인다.
+                  [
+                    data.kptLabels?.keep ?? "Keep",
+                    "text-green-500",
+                    "check",
+                    data.kpt.keep
+                  ],
+                  [
+                    data.kptLabels?.problem ?? "Problem",
+                    "text-red-500",
+                    "x",
+                    data.kpt.problem
+                  ],
+                  [
+                    data.kptLabels?.try ?? "Try",
+                    "text-blue-500",
+                    "rocket",
+                    data.kpt.try
+                  ]
                 ] as const
               ).map(([label, color, icon, items]) => (
                 <div

@@ -166,7 +166,10 @@ export const hero: HeroContent = {
   headlineLines: ["웹을 주력으로,", "운영 문제까지 해결하는", "개발자 정재훈"],
   bullets: [
     "React · Spring Boot 기반 Full-Stack(Web) 개발",
-    "인증·보안(Refresh Token Rotation)과 운영 이슈(HTTPS·CORS) 해결 경험",
+    // 예전엔 "인증·보안(Refresh Token Rotation)" 이라고 적었다. 로테이션은
+    // 2026-04-01 에 병렬 재발급 경쟁 상태 때문에 걷어냈고 지금 코드에 없다.
+    // 대표 사례로 걸면 저장소를 연 사람이 찾다가 못 찾는다 — 겪은 문제 쪽으로 바꿨다.
+    "인증·보안(JWT 이중 쿠키 · 토큰 재발급 경쟁 상태)과 운영 이슈(HTTPS·CORS) 해결 경험",
     "Unity XR·게임 개발 경험 보유"
   ]
 };
@@ -224,7 +227,10 @@ export const skillDetails: SkillDetail[] = [
   },
   {
     area: "Auth",
-    desc: "JWT 인증/인가 + Refresh Token Rotation",
+    // stack 의 "Refresh Token Rotation" 은 남긴다 — 구현하고 운영에서 되돌리기까지
+    // 해 본 기술이라 경험은 사실이다. 다만 desc 는 서비스의 현재 동작으로 읽히므로
+    // 지금 실제로 도는 것(이중 쿠키 + 재발급 단일화)으로 적는다.
+    desc: "JWT 인증/인가 · 이중 쿠키 + 재발급 단일화",
     stack: [
       "JWT",
       "Refresh Token Rotation",
@@ -279,7 +285,7 @@ export const education: EducationItem[] = [
   {
     org: "아주대학교",
     program: "디지털미디어학과 (전공)",
-    period: "2021.03 ~ 2026.02 (예정)",
+    period: "2021.03 ~ 2027.02 (예정)",
     desc: "웹/소프트웨어 엔지니어링 중심으로 학습하며 서비스 구조 설계와 구현 역량을 확장했습니다.",
     bullets: [
       "웹(React/Spring Boot) 중심 프로젝트 경험",
@@ -289,14 +295,14 @@ export const education: EducationItem[] = [
   {
     org: "아주대학교",
     program: "인공지능 융합학과 (복수전공)",
-    period: "2021.03 ~ 2026.02 (예정)",
+    period: "2021.03 ~ 2027.02 (예정)",
     desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
     bullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
   },
   {
     org: "아주대학교",
     program: "메타버스기획 마이크로전공 (부전공)",
-    period: "2021.03 ~ 2026.02 (예정)",
+    period: "2021.03 ~ 2027.02 (예정)",
     desc: "메타버스 플랫폼에서 상호작용 콘텐츠를 제작했습니다.",
     bullets: ["메타버스 플랫폼 콘텐츠 제작 경험"]
   },
@@ -416,22 +422,32 @@ export const mainProjects: MainProjectCard[] = [
   {
     id: "muscleup",
     title: "득근득근 (MuscleUp)",
+    // 예전 부제는 "인증·보안·배포까지 설계한" 이었다. 그건 1.0 이야기다.
+    // 이 프로젝트에서 가장 흉내 내기 어려운 건 기술 스택이 아니라
+    // **사용자 말을 듣고 서비스 성격을 바꿨다**는 사실이라 그쪽을 앞에 세웠다.
     subtitle:
-      "운영을 전제로 인증·보안·배포까지 설계한 피트니스 커뮤니티 풀스택 서비스",
+      "소개형 홈페이지로 만들었다가, 사용자 피드백을 듣고 운영형 플랫폼으로 다시 만든 피트니스 커뮤니티",
     category: "web",
     status: "운영중",
-    tags: ["FullStack", "JWT", "AWS", "Security"],
+    // Realtime 을 추가했다 — Socket.IO 실시간 서버가 2.0 의 핵심인데 태그에 없었다.
+    tags: ["FullStack", "JWT", "Realtime", "AWS"],
     period: "2025.09 ~ 진행 중",
-    team: "개인 개발",
-    role: "기획 · UI 설계 · API 개발 · 인증/권한 · 배포",
+    team: "개인 개발 (1.0 → 2.0)",
+    // aClub 의 "2025 프론트 3인 → 2026 프로젝트장" 과 같은 문법.
+    // 한 프로젝트 안에서 단계가 갈렸다는 걸 이 한 줄이 말해 준다.
+    role: "1.0 기획 · UI · API · 인증/권한 · 배포 → 2.0 운영 관점 전면 개편",
     // 임시로 박아 뒀던 "누적 가입자 120 · 운동 기록 1,400" 을 지웠다.
     // 근거가 없던 숫자고, 본인 확인 결과 실제 이용 회원은 약 50명이다.
     // 배포 도메인(muscle-up.click)은 현재 일시 중단이라 링크하지 않는다.
+    // "4 → 8" 은 1.0 발표자료의 도메인 4개(사용자/커뮤니티/AI/프로그램)와
+    // 지금 소스에서 센 8개를 나란히 둔 값이다. 성장을 문장이 아니라 숫자로 보이게.
     metrics: [
       {value: "약 50명", label: "이용 회원"},
+      {value: "4 → 8", label: "도메인 (1.0 → 2.0)"},
       {value: "28", label: "백엔드 Controller"}
     ],
-    metricsSource: "운영 기간 누적 · 본인 집계",
+    metricsSource:
+      "회원 수는 본인 집계 · 도메인/Controller 는 저장소 소스 기준",
     richId: "muscleup",
     image: "/projects/muscleup.webp",
     links: [
@@ -477,14 +493,17 @@ export const mainProjects: MainProjectCard[] = [
   {
     id: "ajouchong",
     title: "아주대학교 총학생회",
+    // 1차는 "정보를 한곳에 모았다", 2차(2026.04 개편)는 "총학생회가 직접 고치게
+    // 만들었다" 다. 뒤쪽이 운영형 서비스에서 훨씬 어려운 일이라 부제에 세웠다.
     subtitle:
-      "반복 문의를 줄이고 ‘공지→확인→신청’ 동선을 명확히 만든 운영형 웹 서비스",
+      "흩어진 학생회 정보를 한곳에 모으고, 총학생회가 개발자 없이 직접 고칠 수 있게 만든 운영형 웹 서비스",
     category: "web",
     status: "운영중",
     tags: ["WebService", "Operations", "UX", "Analytics"],
     period: "2025.03 ~ 진행 중",
     team: "총학생회 IT · 프론트 3인",
-    role: "Frontend 개발 · 정보 구조 설계 · Search Console 기반 개선",
+    // 득근득근과 같은 「1차 → 2차」 문법. 두 프로젝트가 같은 방향으로 자랐다.
+    role: "1차 Frontend·정보 구조 설계 → 2차 모바일 동선 개편 · 운영자용 관리 화면 구축",
     // Search Console 실측. **검색 유입 기준**이라는 단서가 라벨에 반드시 붙어야
     // 한다 — 전체 방문자로 읽히면 과장이 된다.
     metrics: [
@@ -557,7 +576,7 @@ export const mainProjects: MainProjectCard[] = [
   },
   {
     id: "sign-language",
-    title: "수어지구",
+    title: "수어지교",
     subtitle:
       "수어 동작 영상을 보고 뜻을 익히는 학습 앱 (3D 아바타 제작은 팀원 담당)",
     category: "web",

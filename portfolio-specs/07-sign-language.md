@@ -1,4 +1,4 @@
-# 07. 수어지구 — 프롬프트 팩
+# 07. 수어지교 — 프롬프트 팩
 
 > 수어 동작 영상을 보고 뜻을 익히는 학습 앱 · Spring Boot / Firebase Firestore·Storage / Expo(React Native)
 >
@@ -29,7 +29,7 @@
 
 ## A-2. 왜 이 메타포인가
 
-수어지구는 **정보가 소리를 거치지 않고 전달되는 서비스**다.
+수어지교는 **정보가 소리를 거치지 않고 전달되는 서비스**다.
 동작을 보고 뜻을 알고, 뜻을 입력하면 동작이 나온다. 그 사이에 소리가 낄 자리가 없다.
 
 그래서 이 방은 **무음이다.** 사운드 토글 자체를 두지 않는다.
@@ -102,7 +102,7 @@ _"수어는 한국어를 손으로 옮긴 게 아닙니다. 문법이 다른 언
 
 ## A-7. 다른 9개 방과의 차별점
 
-| 축        | 수어지구                    | 나머지                    |
+| 축        | 수어지교                    | 나머지                    |
 | --------- | --------------------------- | ------------------------- |
 | 소리      | **사운드 토글 자체가 없음** | 있거나 무음 명시          |
 | 주제      | **언어 데이터 구조**        | 기능·성능·배포            |
@@ -216,7 +216,7 @@ t=1.50s  THE HAND PERFORMS ONE SIGN over 1.4s, moving through 5 keyframes with
          project does not do that.
 t=3.00s  The hand settles and dims to 55%. The lamp widens to light the text below.
 t=3.10s  TITLE:
-           Line 1, VERBATIM: "수어지구"
+           Line 1, VERBATIM: "수어지교"
              54px font-black, #7eb8ff, letter-spacing -0.02em
            Line 2, VERBATIM: "수어 학습·표현 서비스 · Spring Boot 백엔드"
              13px font-mono, rgba(255,255,255,0.46), letter-spacing 0.14em,
@@ -308,7 +308,7 @@ easing cubic-bezier(0.4,0,0.2,1) 0.3s-0.8s | rounded-md | ALL numbers tabular-nu
 Height 54px, background rgba(6,13,24,0.85), backdrop-blur(10px),
 bottom border 1px rgba(126,184,255,0.18).
   LEFT   "← 마을로"  13px font-mono rgba(255,255,255,0.46)
-  CENTER "수어지구"  14px font-black #7eb8ff
+  CENTER "수어지교"  14px font-black #7eb8ff
   RIGHT  a sign counter, format VERBATIM: "손동작 3 / 12"
          13px font-mono tabular-nums. It increments whenever the viewer plays a
          sign anywhere on the page. It is a "how much have you seen" indicator, not

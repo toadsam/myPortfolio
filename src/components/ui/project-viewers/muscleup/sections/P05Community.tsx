@@ -79,7 +79,13 @@ const INITIAL: Post[] = [
   }
 ];
 
-type Entry = {id: number; time: string; path: string; status: number; note: string};
+type Entry = {
+  id: number;
+  time: string;
+  path: string;
+  status: number;
+  note: string;
+};
 
 export function P05Community() {
   const {reducedMotion, announce} = useMuscleUp();
@@ -155,9 +161,9 @@ export function P05Community() {
   );
 
   return (
-    <Page index={5} innerRef={ref} maxWidth="1120px">
+    <Page index={6} innerRef={ref} maxWidth="1120px">
       <Kicker on={on[IDX.label]} instant={instant}>
-        05 · 커뮤니티
+        06 · 커뮤니티
       </Kicker>
 
       <div className="mt-4">
@@ -170,8 +176,8 @@ export function P05Community() {
 
       <div className="mt-6 max-w-[740px]" style={rise(on[IDX.body], instant)}>
         <Body>
-          그래서 기록 다음에 <strong>자랑글 · 댓글 · 좋아요</strong>를 붙였습니다.
-          문제는 게시판을 붙이는 순간 생깁니다 —{" "}
+          그래서 기록 다음에 <strong>자랑글 · 댓글 · 좋아요</strong>를
+          붙였습니다. 문제는 게시판을 붙이는 순간 생깁니다 —{" "}
           <strong style={{color: "var(--mu-bad)"}}>
             남의 글을 누구나 고칠 수 있으면 커뮤니티가 아니라 사고입니다.
           </strong>{" "}
@@ -339,14 +345,14 @@ export function P05Community() {
             </CodeLine>
             <CodeLine n={6}>{"}"}</CodeLine>
             <CodeLine n={7}>{""}</CodeLine>
-            <CodeLine n={8}>
-              {"boolean exists = likeRepository"}
-            </CodeLine>
+            <CodeLine n={8}>{"boolean exists = likeRepository"}</CodeLine>
             <CodeLine n={9}>
               {"    .existsByBragPost_IdAndUser_Id(postId, user.getId());"}
             </CodeLine>
             <CodeLine n={10}>
-              {"if (exists) { likeRepository.deleteByBragPost_IdAndUser_Id(...); }"}
+              {
+                "if (exists) { likeRepository.deleteByBragPost_IdAndUser_Id(...); }"
+              }
             </CodeLine>
             <CodeLine n={11}>
               {"else { likeRepository.save(BragLike.builder()...build()); }"}
@@ -356,10 +362,10 @@ export function P05Community() {
               <Cm>{"// file: SecurityConfig.java — 권한 기반 접근 제어"}</Cm>
             </CodeLine>
             <CodeLine n={14} highlight={log.length > 0}>
-              {".requestMatchers(\"/api/brags/**\").hasAnyRole(\"USER\", \"ADMIN\")"}
+              {'.requestMatchers("/api/brags/**").hasAnyRole("USER", "ADMIN")'}
             </CodeLine>
             <CodeLine n={15} highlight={admin}>
-              {".requestMatchers(\"/api/admin/**\").hasRole(\"ADMIN\")"}
+              {'.requestMatchers("/api/admin/**").hasRole("ADMIN")'}
             </CodeLine>
           </div>
         </CodePanel>

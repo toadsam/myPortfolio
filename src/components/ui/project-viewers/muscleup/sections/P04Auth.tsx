@@ -85,9 +85,9 @@ export function P04Auth() {
   const atEnd = active ? step >= active.nodes.length - 1 : false;
 
   return (
-    <Page index={4} innerRef={ref} maxWidth="1120px">
+    <Page index={5} innerRef={ref} maxWidth="1120px">
       <Kicker on={on[IDX.label]} instant={instant}>
-        04 · 인증
+        05 · 인증
       </Kicker>
 
       <div className="mt-4">
@@ -195,14 +195,16 @@ export function P04Auth() {
                 {"private final JavaMailSender mailSender;"}
               </CodeLine>
               <CodeLine n={3} highlight={path === "email" && step >= 1}>
-                {"@Value(\"${spring.mail.username}\") private String from;"}
+                {'@Value("${spring.mail.username}") private String from;'}
               </CodeLine>
               <CodeLine n={4} highlight={path === "email" && step >= 1}>
                 {"mailSender.send(message);"}
               </CodeLine>
               <CodeLine n={5}>{""}</CodeLine>
               <CodeLine n={6}>
-                <Cm>{"// file: EmailVerificationService.java — 코드 저장/전송"}</Cm>
+                <Cm>
+                  {"// file: EmailVerificationService.java — 코드 저장/전송"}
+                </Cm>
               </CodeLine>
               <CodeLine n={7} highlight={path === "email" && step >= 2}>
                 {"EmailVerification v = EmailVerification.builder()...build();"}

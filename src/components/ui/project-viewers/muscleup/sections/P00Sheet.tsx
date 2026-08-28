@@ -204,9 +204,7 @@ export function P00Sheet({
             style={{
               color: "var(--mu-accent)",
               opacity: on[IDX.motive] ? 1 : 0,
-              transition: instant
-                ? "none"
-                : "opacity 0.4s var(--mu-ease) 700ms"
+              transition: instant ? "none" : "opacity 0.4s var(--mu-ease) 700ms"
             }}
           >
             기록–커뮤니티–AI 코치를 하나의 흐름으로 묶으면 달라질까 싶었습니다.

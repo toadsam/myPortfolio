@@ -128,7 +128,7 @@ Framing: full body head to feet with even margin, nothing cropped, no perspectiv
 CHARACTER: A macaw parrot, a loud festival announcer. Tall swept-back crest feathers kept oversized, large curved blunt beak, big round eyes with pale eye-rings, soft cheeks. Wearing a staff windbreaker with a lanyard, and a tiny headset microphone beside the beak. Feathers in warm amber #F3B35B, crest tips and windbreaker in cobalt #5F7BE8.
 ```
 
-### `npc-project-sign-language` · 토끼 · 수어지구
+### `npc-project-sign-language` · 토끼 · 수어지교
 
 ```
 Stylized 3D anthropomorphic game character, full body, single figure centered, a STRICT T-POSE — this is the single most important requirement: both arms fully extended straight out to the left and right, perfectly horizontal, forming a clean capital T with the body, elbows straight, palms facing down, with wide open space between each arm and the torso. Legs straight and parallel with a visible gap between them, feet flat and fully visible, toes pointing forward. Facing the camera straight on, head level, body perfectly symmetric and upright — no leaning, no twisting, no relaxed or idle pose.
@@ -507,6 +507,66 @@ Background: flat solid #F0ECE4, completely empty, no floor, no props, no text, n
 Framing: full body head to feet with even margin, nothing cropped, no perspective distortion. Keep a clear open gap under each armpit — the arms must not be webbed to the torso. Hands are empty, holding nothing. Any tail hangs clear behind the body and does not touch the legs. The left and right halves mirror each other exactly.
 CHARACTER: A sloth, living on slow time. Flat wide face with a permanent faint smile, dark eye patches, small flat nose, shaggy fur radiating outward from the face in chunky simplified clumps, tiny hidden ears. Arms noticeably longer than the other characters, which suits the T-pose. Blunt rounded claws, not sharp. Wearing a loose knit sweater. Fur in olive-moss #A8B06A with walnut #7A5C3E patches, face pale cream.
 ```
+
+---
+
+# 플레이어 (1)
+
+### `player-jaehoon` · 정재훈(플레이어) · 걷기 모드 조종 캐릭터
+
+> **지금 걷기 모드는 남의 몸으로 걷는다.** `WarriorCharacter.tsx` 가
+> `warrior-walk.glb`·`warrior-run.glb`(Meshy 레드실드 전사)를 그린다. 마을 주인이
+> 마을을 걷는데 정작 본인이 아니다.
+
+**먼저 알아 둘 것 — 새로 안 뽑고도 바꿀 수 있다.** `jaehoon.glb` 에 이미
+`walking`·`running` 클립이 들어 있다(`characterModels.ts` 의 `jaehoon` 항목).
+`WarriorCharacter.tsx` 의 URL 상수 두 줄만 바꾸면 오늘 바로 본인이 걷는다.
+
+그런데 그러면 **광장에 서 있는 총괄 NPC 와 같은 모델**이 된다 — 걸어가서 자기
+자신과 마주치고, 대화창까지 열린다. 그래서 전용 아바타를 따로 뽑는 게 낫다:
+NPC 정재훈은 광장에 서서 마을을 소개하고, 플레이어는 그 마을을 걷는 **조금 더
+영웅다운** 본인이 된다.
+
+- 파일: `public/models/characters/raw/player-jaehoon/` 에 클립별 GLB → `merge-character.mjs`
+- **클립 3종이 필수다**: 정지(`idle`) · `walking` · `running`.
+  걷기 모드가 `MoveState` 로 이 셋을 오간다 — 하나라도 없으면 그 상태에서 얼어붙는다
+- 넣은 뒤 `WarriorCharacter.tsx` 의 `WALK_URL`/`RUN_URL` 을 병합본 한 개로 바꾼다
+  (지금은 파일 두 개를 따로 읽는 옛 구조다)
+
+**이 캐릭터만 규격이 다르다 — 일부러다.**
+
+| 항목 | 마을 캐스트 | 플레이어 | 왜 |
+| --- | --- | --- | --- |
+| 등신 | 5 | **5.5~6** | 3인칭 뒤에서 계속 보이는 유일한 캐릭터다. 조금 더 늘씬해야 걷는 맵시가 산다. **키우는 방향은 리깅에 안전하다**(무너지는 건 4등신 쪽) |
+| 근육 | `no muscle definition` | **스타일라이즈드 근육** | 요청 사항. 단 해부학이 아니라 **덩어리**로 — 힘줄·핏줄은 optimize 에서 어차피 날아간다 |
+| 얼굴 | 큰 눈 + 짧은 주둥이(귀여움) | 또렷한 턱선·직선 코(잘생김) | 사람 하나만 다른 규칙을 써도 마을이 안 깨진다. 이미 총괄 NPC 가 그 예다 |
+
+> ⚠️ **어깨가 넓어질수록 겨드랑이가 막힌다.** 리깅 실패 1순위가 이거고, 근육질은
+> 정확히 그 위험을 키운다. 이미지에서 **팔과 몸통 사이로 배경이 보이는지** 반드시
+> 확인할 것 — 안 보이면 버리고 다시 뽑는 게 리깅을 다시 하는 것보다 훨씬 싸다.
+
+```
+Stylized 3D game character, full body, single figure centered, a STRICT T-POSE — this is the single most important requirement: both arms fully extended straight out to the left and right, perfectly horizontal, forming a clean capital T with the body, elbows straight, palms facing down, with wide open space between each arm and the torso — the broad shoulders and chest must NOT close that gap, the background must be clearly visible under each armpit. Legs straight and parallel with a visible gap between them, feet flat and fully visible, toes pointing forward. Facing the camera straight on, head level, body perfectly symmetric and upright — no leaning, no twisting, no relaxed or idle pose, no heroic flexing.
+Proportions: about 5 and a half to 6 heads tall, athletic and confident build, broad shoulders tapering to a trim waist, slightly oversized rounded head, normal-length limbs with clearly readable shoulder, elbow, hip and knee joints, hands and feet simplified into clean rounded shapes.
+Muscle: clearly defined but stylized muscles built from a few large smooth masses — broad chest, rounded shoulders, defined upper arms and forearms, a simple flat abdomen. Smooth simplified surfaces only: no veins, no striations, no bodybuilder bulk, no anatomical study look.
+Appeal: handsome and friendly rather than cute — a clean jawline, straight nose, bright confident smile, warm eyes with large pupils and one soft highlight, thick simple eyebrows, short tidy black hair in a few chunky sculpted shapes swept back from the forehead.
+Art direction: hand-painted stylized game asset, chunky simplified forms, clean readable planes, low-poly friendly shapes, soft matte fabric and hair. No individual hairs, no micro-detail, no photorealism.
+Color: muted warm earthy palette, low saturation, no neon, no pure white, no pure black, no metallic sheen.
+Lighting: soft even light from front-top, very soft shading, no rim light, no strong contrast, no cast shadow on the background.
+Background: flat solid #F0ECE4, completely empty, no floor, no props, no text, no watermark, no logo, no border.
+Framing: full body head to feet with even margin, nothing cropped, no perspective distortion. Keep a clear open gap under each armpit — the arms must not be webbed to the torso. Hands are empty, holding nothing. The left and right halves mirror each other exactly.
+CHARACTER: A young Korean man in his mid-twenties, the owner of this village and the character the player walks around as. He is the same person as the village overseer NPC, so he keeps that palette — a warm gold #F5C542 work shirt with the sleeves rolled up above the forearms, worn open over a plain cream tee, dark walnut #6B4F1D trousers and a matching belt, sturdy simple boots. The rolled sleeves and open collar are what let his athletic build read at a glance. Confident, warm and approachable, standing tall.
+```
+
+> 네거티브(이미지 생성기가 받는다면):
+>
+> ```
+> photorealistic, realistic skin, cluttered background, scenery, props, weapons,
+> multiple figures, cropped, cut off, extreme perspective, fisheye, harsh shadows,
+> rim light, neon, cyberpunk, metallic, chrome, dark gloomy, blurry, motion blur,
+> text, letters, watermark, arms lowered, arms touching the body, webbed armpits,
+> legs together, dynamic pose, action pose, veins, muscle striations
+> ```
 
 ---
 

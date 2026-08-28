@@ -271,7 +271,10 @@ export function CodePanel({
   return (
     <div
       className={`flex flex-col overflow-hidden rounded-md ${className}`}
-      style={{border: `1px solid ${borderColor}`, background: "var(--mu-code-bg)"}}
+      style={{
+        border: `1px solid ${borderColor}`,
+        background: "var(--mu-code-bg)"
+      }}
     >
       <div
         className="flex h-[34px] shrink-0 items-center gap-3 px-4"
@@ -657,9 +660,7 @@ export function StatRow({
       className="flex items-center gap-3"
       style={{
         opacity: on ? 1 : 0,
-        transition: instant
-          ? "none"
-          : `opacity 0.3s var(--mu-ease) ${delay}ms`
+        transition: instant ? "none" : `opacity 0.3s var(--mu-ease) ${delay}ms`
       }}
     >
       <span className="w-[62px] shrink-0 font-mono text-[11px] text-[var(--mu-muted)]">
@@ -806,7 +807,9 @@ export function FlowNode({
         background: lit
           ? `color-mix(in srgb, ${color} 12%, transparent)`
           : "rgba(255,255,255,0.02)",
-        boxShadow: active ? `0 0 12px color-mix(in srgb, ${color} 35%, transparent)` : "none"
+        boxShadow: active
+          ? `0 0 12px color-mix(in srgb, ${color} 35%, transparent)`
+          : "none"
       }}
     >
       <div

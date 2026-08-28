@@ -100,9 +100,9 @@ export function P10OpsIssues() {
   const active = CASES.find(c => c.key === open) ?? CASES[0];
 
   return (
-    <Page index={10} innerRef={ref} maxWidth="1120px">
+    <Page index={11} innerRef={ref} maxWidth="1120px">
       <Kicker on={on[IDX.label]} instant={instant} color="var(--mu-bad)">
-        10 · 트러블슈팅 03
+        11 · 트러블슈팅 03
       </Kicker>
 
       <div className="mt-4">
@@ -138,9 +138,7 @@ export function P10OpsIssues() {
                   border: `1px solid ${
                     sel ? "var(--mu-warn)" : "rgba(255,255,255,0.14)"
                   }`,
-                  background: sel
-                    ? "rgba(251,191,36,0.12)"
-                    : "transparent",
+                  background: sel ? "rgba(251,191,36,0.12)" : "transparent",
                   color: sel ? "var(--mu-warn)" : "var(--mu-muted)"
                 }}
               >
@@ -264,8 +262,12 @@ export function P10OpsIssues() {
                   <CodeLine n={7} highlight>
                     {"spring.datasource.password=${DB_PASSWORD}"}
                   </CodeLine>
-                  <CodeLine n={8}>{"openai.api.key=${OPENAI_API_KEY:}"}</CodeLine>
-                  <CodeLine n={9}>{"google.client-id=${GOOGLE_CLIENT_ID:}"}</CodeLine>
+                  <CodeLine n={8}>
+                    {"openai.api.key=${OPENAI_API_KEY:}"}
+                  </CodeLine>
+                  <CodeLine n={9}>
+                    {"google.client-id=${GOOGLE_CLIENT_ID:}"}
+                  </CodeLine>
                   <CodeLine n={10}>
                     {"google.client-secret=${GOOGLE_CLIENT_SECRET:}"}
                   </CodeLine>
@@ -273,8 +275,12 @@ export function P10OpsIssues() {
                   <CodeLine n={12}>
                     <Cm>{"# desc: .example 로 기본값/형식만 제공"}</Cm>
                   </CodeLine>
-                  <CodeLine n={13}>{"spring.mail.username=${MAIL_USERNAME:}"}</CodeLine>
-                  <CodeLine n={14}>{"spring.mail.password=${MAIL_PASSWORD:}"}</CodeLine>
+                  <CodeLine n={13}>
+                    {"spring.mail.username=${MAIL_USERNAME:}"}
+                  </CodeLine>
+                  <CodeLine n={14}>
+                    {"spring.mail.password=${MAIL_PASSWORD:}"}
+                  </CodeLine>
                 </div>
               </CodePanel>
               <Shot

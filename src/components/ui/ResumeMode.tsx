@@ -676,6 +676,15 @@ export function ResumeMode({onEnterVillage}: Props) {
                           <div className="project-name">{p.title}</div>
                         )}
 
+                        {/* 한 줄 정체. 예전엔 `subtitle` 이 데이터에만 있고
+                            화면에는 안 나와서, 카드가 제목 다음 바로 기간으로
+                            떨어졌다 — 읽는 사람이 "이게 뭐 하는 건데?" 를
+                            프로젝트 상세를 열어야 알 수 있었다. 심사자는 카드만
+                            훑고 지나가므로 그 한 줄이 카드에 있어야 한다. */}
+                        {p.subtitle ? (
+                          <div className="project-subtitle">{p.subtitle}</div>
+                        ) : null}
+
                         {/* 기간·팀·역할 — 근거가 없는 값은 데이터에서 비어 있고,
                             비면 그 줄이 통째로 사라진다. 지어내지 않기 위해서다. */}
                         {p.period || p.team ? (

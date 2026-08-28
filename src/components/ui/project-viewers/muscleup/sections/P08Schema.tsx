@@ -31,36 +31,34 @@ const IDX = {label: 0, heading: 1, body: 2, erd: 3};
 
 type DomainKey = "user" | "community" | "ai" | "log" | "ops";
 
-const DOMAINS: Record<
-  DomainKey,
-  {label: string; color: string; why: string}
-> = {
-  user: {
-    label: "사용자",
-    color: "var(--mu-primary)",
-    why: "인증에 필요한 것만 모았다. 토큰과 인증코드는 사용자에 붙지만 수명이 달라 테이블을 나눴다."
-  },
-  community: {
-    label: "커뮤니티",
-    color: "var(--mu-accent)",
-    why: "게시글 하나에 댓글·좋아요·미디어가 따라붙는다. FK 로 묶어 두면 글이 지워질 때 딸린 것도 함께 정리된다."
-  },
-  ai: {
-    label: "AI",
-    color: "var(--mu-ray)",
-    why: "analyze / plan / chat 이 전부 한 테이블에 type 으로 구분돼 쌓인다. 맥락을 이어가려면 한 줄로 읽혀야 한다."
-  },
-  log: {
-    label: "로그",
-    color: "var(--mu-warn)",
-    why: "서비스 데이터와 섞이면 조회가 느려진다. 성격이 다른 것은 처음부터 갈라 둔다."
-  },
-  ops: {
-    label: "운영",
-    color: "var(--mu-ok)",
-    why: "제품·신청·문의처럼 운영이 들여다보는 것들. 사용자 흐름과 분리해 두면 관리 화면만 따로 손볼 수 있다."
-  }
-};
+const DOMAINS: Record<DomainKey, {label: string; color: string; why: string}> =
+  {
+    user: {
+      label: "사용자",
+      color: "var(--mu-primary)",
+      why: "인증에 필요한 것만 모았다. 토큰과 인증코드는 사용자에 붙지만 수명이 달라 테이블을 나눴다."
+    },
+    community: {
+      label: "커뮤니티",
+      color: "var(--mu-accent)",
+      why: "게시글 하나에 댓글·좋아요·미디어가 따라붙는다. FK 로 묶어 두면 글이 지워질 때 딸린 것도 함께 정리된다."
+    },
+    ai: {
+      label: "AI",
+      color: "var(--mu-ray)",
+      why: "analyze / plan / chat 이 전부 한 테이블에 type 으로 구분돼 쌓인다. 맥락을 이어가려면 한 줄로 읽혀야 한다."
+    },
+    log: {
+      label: "로그",
+      color: "var(--mu-warn)",
+      why: "서비스 데이터와 섞이면 조회가 느려진다. 성격이 다른 것은 처음부터 갈라 둔다."
+    },
+    ops: {
+      label: "운영",
+      color: "var(--mu-ok)",
+      why: "제품·신청·문의처럼 운영이 들여다보는 것들. 사용자 흐름과 분리해 두면 관리 화면만 따로 손볼 수 있다."
+    }
+  };
 
 const TABLES: {
   name: string;
@@ -111,7 +109,15 @@ const TABLES: {
   {
     name: "ai_chat_messages",
     domain: "ai",
-    cols: ["id", "user_id", "type", "question", "answer", "shared", "share_slug"],
+    cols: [
+      "id",
+      "user_id",
+      "type",
+      "question",
+      "answer",
+      "shared",
+      "share_slug"
+    ],
     core: true
   },
   {
@@ -162,9 +168,9 @@ export function P08Schema() {
   );
 
   return (
-    <Page index={8} innerRef={ref} maxWidth="1120px">
+    <Page index={9} innerRef={ref} maxWidth="1120px">
       <Kicker on={on[IDX.label]} instant={instant}>
-        08 · 스키마
+        09 · 스키마
       </Kicker>
 
       <div className="mt-4">
@@ -177,10 +183,15 @@ export function P08Schema() {
 
       <div className="mt-6 max-w-[740px]" style={rise(on[IDX.body], instant)}>
         <Body>
-          테이블 14개를 <strong>성격별로 다섯 묶음</strong>으로 갈랐습니다. 관계는
-          FK 로 묶어 무결성을 지키고, 조회가 몰리는 테이블은 인덱스와
-          페이지네이션을 전제로 설계했습니다. 아래에서 묶음을 눌러 보세요 — 왜
-          갈랐는지가 같이 나옵니다.
+          아래 ERD 는 <strong>1.0 때 그린 핵심 14개</strong>를 성격별로 다섯
+          묶음으로 가른 것입니다. 2.0 을 지나며 크루 · 캐릭터 · 이벤트가 붙어{" "}
+          <strong style={{color: "var(--mu-accent)"}}>
+            지금은 엔티티 31개 · 도메인 8개
+          </strong>
+          가 됐지만, 가르는 기준은 그대로입니다. 관계는 FK 로 묶어 무결성을
+          지키고, 조회가 몰리는 테이블은 인덱스와 페이지네이션을 전제로
+          설계했습니다. 아래에서 묶음을 눌러 보세요 — 왜 갈랐는지가 같이
+          나옵니다.
         </Body>
       </div>
 
@@ -283,7 +294,7 @@ export function P08Schema() {
       <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
         <Shot
           src="/projects/muscleup/erd.webp"
-          alt="득근득근 MySQL ERD — 도메인별로 분리한 14개 테이블"
+          alt="득근득근 ERD — 도메인별로 분리한 핵심 14개 테이블"
           caption="실제 ERD — 붉은 사각형이 「사용자가 계속 행동하게 만드는」 핵심 테이블"
           w={1600}
           h={1163}
@@ -301,7 +312,11 @@ export function P08Schema() {
           </Panel>
           <Panel label="PERFORMANCE">
             <p className="text-[13px] leading-6 text-[var(--mu-muted)]">
-              조회 중심 테이블 인덱스 및 페이지네이션 고려
+              목록 화면은 전부 페이지네이션입니다. 정렬·필터 컬럼에 인덱스가
+              없으면 한 페이지를 주려고 테이블 전체를 읽어 정렬하므로,{" "}
+              <code>brag_post(created_at)</code> ·{" "}
+              <code>character_profiles(is_public, level, updated_at)</code> 처럼
+              필터 컬럼을 앞에 둔 복합 인덱스를 걸었습니다.
             </p>
           </Panel>
         </div>

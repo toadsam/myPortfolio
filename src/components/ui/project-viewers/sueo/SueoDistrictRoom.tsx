@@ -24,7 +24,7 @@ interface Props {
   onClose: () => void;
 }
 
-// 수어지구 룸 — 엔트리 시퀀스로 시작해 아래로 읽어 내려가는 스크롤 전시실.
+// 수어지교 룸 — 엔트리 시퀀스로 시작해 아래로 읽어 내려가는 스크롤 전시실.
 // DarkLabRoom과 같은 구조(전용 룸 + 섹션 분리 + 스코프 CSS)를 따른다.
 // 헤더의 「손동작 n / 12」는 방문자가 실제로 재생한 수어 동작 수이며 섹션들이 공유한다.
 export function SueoDistrictRoom({onClose}: Props) {
@@ -149,7 +149,7 @@ export function SueoDistrictRoom({onClose}: Props) {
             </button>
           </div>
           <div className="flex-1 text-center text-[14px] font-black tracking-wide text-[var(--sd-primary)]">
-            수어지구
+            수어지교
           </div>
           <div className="flex-1 text-right font-mono text-[13px] tabular-nums text-[var(--sd-muted)]">
             손동작 <span className="text-white">{signCount}</span> /{" "}

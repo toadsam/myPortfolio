@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-label="득근득근 인증 시퀀스 — 로그인부터 access 만료, 단일 재발급, 로그아웃까지">
+  <title>득근득근 인증 흐름 시퀀스</title>
+  <desc>브라우저 쿠키, axios 인터셉터, Spring Boot 백엔드, refresh_tokens 테이블 네 축 사이의 실제 호출 순서. 로그인 시 HttpOnly 쿠키 3종 발급, access 만료 시 프론트가 재발급을 한 번만 보내고 대기하던 요청을 함께 재시도한다.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#140510"/>
+      <stop offset="1" stop-color="#0a0309"/>
+    </linearGradient>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#f9a8d4"/>
+    </marker>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#fca5a5"/>
+    </marker>
+    <style>
+      .h   { font: 700 30px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#fce7f3 }
+      .sub { font: 400 16px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#f9a8d4; opacity:.85 }
+      .lane{ font: 700 17px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#fce7f3 }
+      .lsub{ font: 400 13px ui-monospace,Menlo,monospace; fill:#f9a8d4; opacity:.6 }
+      .msg { font: 600 15px ui-monospace,Menlo,monospace; fill:#fdf2f8 }
+      .note{ font: 400 13px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#f9a8d4; opacity:.75 }
+      .bad { font: 600 15px ui-monospace,Menlo,monospace; fill:#fca5a5 }
+      .step{ font: 700 13px ui-monospace,Menlo,monospace; fill:#f472b6 }
+      .foot{ font: 400 14px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#f9a8d4; opacity:.65 }
+      .ph  { font: 700 14px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#fbcfe8 }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+
+  <text class="h" x="48" y="52">인증 흐름 — 로그인 · 만료 · 재발급 · 로그아웃</text>
+  <text class="sub" x="48" y="80">쿠키는 셋 다 HttpOnly 라 자바스크립트가 못 읽는다. access 가 만료돼도 화면은 끊기지 않는다.</text>
+
+  <!-- 레인 헤더 -->
+  <g>
+    <rect x="80"   y="104" width="220" height="52" rx="10" fill="#f472b61a" stroke="#f472b655"/>
+    <text class="lane"  x="190" y="128" text-anchor="middle">브라우저</text>
+    <text class="lsub"  x="190" y="147" text-anchor="middle">HttpOnly 쿠키 3종</text>
+
+    <rect x="440"  y="104" width="220" height="52" rx="10" fill="#f472b61a" stroke="#f472b655"/>
+    <text class="lane"  x="550" y="128" text-anchor="middle">axios 인터셉터</text>
+    <text class="lsub"  x="550" y="147" text-anchor="middle">frontend/src/lib/api.ts</text>
+
+    <rect x="800"  y="104" width="260" height="52" rx="10" fill="#f472b61a" stroke="#f472b655"/>
+    <text class="lane"  x="930" y="128" text-anchor="middle">Spring Boot</text>
+    <text class="lsub"  x="930" y="147" text-anchor="middle">JwtFilter · AuthController</text>
+
+    <rect x="1220" y="104" width="240" height="52" rx="10" fill="#f472b61a" stroke="#f472b655"/>
+    <text class="lane"  x="1340" y="128" text-anchor="middle">MySQL</text>
+    <text class="lsub"  x="1340" y="147" text-anchor="middle">refresh_tokens</text>
+  </g>
+
+  <!-- 생명선 -->
+  <g stroke="#f472b62e" stroke-dasharray="4 6">
+    <line x1="190"  y1="164" x2="190"  y2="906"/>
+    <line x1="550"  y1="164" x2="550"  y2="906"/>
+    <line x1="930"  y1="164" x2="930"  y2="906"/>
+    <line x1="1340" y1="164" x2="1340" y2="906"/>
+  </g>
+
+  <!-- ── 국면 1 · 로그인 ───────────────────────────────── -->
+  <rect x="48" y="180" width="1504" height="196" rx="12" fill="#f472b608" stroke="#f472b62a"/>
+  <text class="ph" x="66" y="204">① 로그인</text>
+
+  <g>
+    <line x1="190" y1="234" x2="920" y2="234" stroke="#f9a8d4" stroke-width="2" marker-end="url(#a)"/>
+    <text class="msg" x="200" y="226">POST /api/auth/login</text>
+
+    <line x1="930" y1="272" x2="1330" y2="272" stroke="#f9a8d4" stroke-width="2" marker-end="url(#a)"/>
+    <text class="msg" x="940" y="264">INSERT refresh_tokens</text>
+    <text class="note" x="940" y="290">issueFor() — 행을 지우지 않고 추가한다. 기기마다 한 행.</text>
+
+    <line x1="920" y1="336" x2="200" y2="336" stroke="#f9a8d4" stroke-width="2" marker-end="url(#a)"/>
+    <text class="msg" x="330" y="328">200 · Set-Cookie ×3</text>
+    <text class="note" x="330" y="356">accessToken(15분) · refreshToken · rememberMe — 전부 HttpOnly, SameSite=Lax, 운영은 Secure</text>
+  </g>
+
+  <!-- ── 국면 2 · 만료 ────────────────────────────────── -->
+  <rect x="48" y="392" width="1504" height="118" rx="12" fill="#f472b608" stroke="#f472b62a"/>
+  <text class="ph" x="66" y="416">② access 15분 만료</text>
+
+  <g>
+    <line x1="190" y1="448" x2="920" y2="448" stroke="#f9a8d4" stroke-width="2" marker-end="url(#a)"/>
+    <text class="msg" x="200" y="440">GET /api/attendance …</text>
+
+    <line x1="920" y1="486" x2="560" y2="486" stroke="#fca5a5" stroke-width="2" marker-end="url(#ar)"/>
+    <text class="bad" x="700" y="478">401</text>
+    <text class="note" x="600" y="504">JwtAuthenticationFilter 가 서명·만료를 보고 거른다</text>
+  </g>
+
+  <!-- ── 국면 3 · 재발급 ──────────────────────────────── -->
+  <rect x="48" y="526" width="1504" height="272" rx="12" fill="#f472b608" stroke="#f472b62a"/>
+  <text class="ph" x="66" y="550">③ 재발급 — 여러 요청이 동시에 401 이어도 재발급은 한 번만</text>
+
+  <!-- single-flight 강조 박스 -->
+  <rect x="420" y="562" width="260" height="72" rx="10" fill="#f472b61f" stroke="#f472b677"/>
+  <text class="step" x="550" y="586" text-anchor="middle">refreshing = true</text>
+  <text class="note" x="550" y="606" text-anchor="middle">나머지 401 요청은</text>
+  <text class="note" x="550" y="624" text-anchor="middle">waiters 큐에서 기다린다</text>
+
+  <g>
+    <line x1="550" y1="662" x2="920" y2="662" stroke="#f9a8d4" stroke-width="2" marker-end="url(#a)"/>
+    <text class="msg" x="600" y="654">POST /api/auth/refresh</text>
+    <text class="note" x="600" y="680">쿠키가 자동으로 실려 간다 — 토큰을 JS 가 만질 필요가 없다</text>
+
+    <line x1="930" y1="712" x2="1330" y2="712" stroke="#f9a8d4" stroke-width="2" marker-end="url(#a)"/>
+    <text class="msg" x="940" y="704">SELECT … WHERE token = ?</text>
+    <text class="note" x="940" y="730">rotate() — DB 에 그 행이 없으면 그 자리에서 401</text>
+
+    <line x1="920" y1="768" x2="200" y2="768" stroke="#f9a8d4" stroke-width="2" marker-end="url(#a)"/>
+    <text class="msg" x="330" y="760">200 · 새 accessToken · Set-Cookie</text>
+    <text class="note" x="330" y="788">성공하면 waiters 를 전부 깨워 원요청을 재시도하고, 실패하면 전부 reject 후 /login</text>
+  </g>
+
+  <!-- ── 국면 4 · 로그아웃 ─────────────────────────────── -->
+  <rect x="48" y="814" width="1504" height="92" rx="12" fill="#f472b608" stroke="#f472b62a"/>
+  <text class="ph" x="66" y="838">④ 로그아웃 — 여기서만 진짜로 폐기된다</text>
+
+  <g>
+    <line x1="930" y1="874" x2="1330" y2="874" stroke="#f9a8d4" stroke-width="2" marker-end="url(#a)"/>
+    <text class="msg" x="940" y="866">DELETE FROM refresh_tokens WHERE user_id = ?</text>
+    <text class="msg" x="200" y="866">쿠키 3종 Max-Age=0</text>
+  </g>
+
+  <text class="foot" x="48" y="960">근거: AuthController.java · RefreshTokenService.java · JwtUtil.java · frontend/src/lib/api.ts. access 900,000ms(15분)은 local·prod 공통.</text>
+  <text class="foot" x="48" y="984">refresh 수명은 프로파일마다 다르다 — local 1,209,600,000ms(14일) / prod 7,776,000,000ms(90일).</text>
+</svg>

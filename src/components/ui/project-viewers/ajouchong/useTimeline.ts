@@ -6,7 +6,7 @@ import {useEffect, useRef, useState, type RefObject} from "react";
  * 단계별 등장 타임라인 — delays(ms)마다 해당 인덱스가 true 로 바뀐 배열을 돌려준다.
  *
  * 룸들은 의도적으로 자족적이다(각자 css·fonts·context 를 따로 둔다). 이 훅도
- * 수어지구 것과 같은 모양이지만 방끼리 얽히지 않게 이 방 안에 둔다 —
+ * 수어지교 것과 같은 모양이지만 방끼리 얽히지 않게 이 방 안에 둔다 —
  * 한 방의 연출을 손보다가 다른 방이 깨지는 일이 없어야 한다.
  *
  * @param delays  각 단계가 켜지는 시각(ms).

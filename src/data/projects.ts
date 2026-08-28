@@ -90,7 +90,7 @@ export const projects: ProjectData[] = [
   },
   {
     id: "sign-language",
-    title: "수어지구",
+    title: "수어지교",
     description:
       "수어 동작 영상을 보고 뜻을 맞히며 익히는 학습 앱입니다. (3D 아바타 제작은 팀원 담당)",
     role: "Spring Boot 백엔드 개발, API 설계, 데이터 처리",

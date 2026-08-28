@@ -1,0 +1,318 @@
+// 득근득근 (MuscleUp) — 핵심 17개 테이블
+// backend/src/main/java/com/ajou/muscleup/entity 에서 자동 생성
+// 전체 @Entity 31개 중 이력서용으로 추린 것
+
+Enum ai_message_type {
+  ANALYZE
+  PLAN
+  CHAT
+}
+
+Enum brag_visibility {
+  PUBLIC
+  FRIENDS
+}
+
+Enum character_evolution_trigger_type {
+  STATS_UPDATED
+  MANUAL_EVALUATE
+  ATTENDANCE
+  EVENT_SUCCESS
+  REROLL
+}
+
+Enum character_tier {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
+  DIAMOND
+  MASTER
+  GRANDMASTER
+  CHALLENGER
+}
+
+Enum crew_join_policy {
+  AUTO_APPROVE
+  LEADER_APPROVE
+}
+
+Enum crew_join_request_status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+Enum gender {
+  MALE
+  FEMALE
+}
+
+Enum workout_crew_member_role {
+  LEADER
+  MEMBER
+}
+
+Table users {
+  id bigint [pk, increment]
+  name varchar(50) [not null]
+  email varchar(100) [not null, unique]
+  password varchar(255) [not null]
+  role varchar(20) [not null]
+  nickname varchar(30) [not null]
+  created_at datetime
+}
+
+Table refresh_tokens {
+  id bigint [pk, increment]
+  user_id bigint [not null]
+  token varchar(512) [not null, unique]
+  expires_at datetime [not null]
+  created_at datetime
+  updated_at datetime
+}
+
+Table email_verifications {
+  id bigint [pk, increment]
+  email varchar(100) [not null]
+  code varchar(6) [not null]
+  created_at datetime [not null]
+  expire_at datetime [not null]
+  verified boolean [not null]
+  attempts int [not null]
+
+  Indexes {
+    (email, created_at) [name: 'idx_verif_email_created']
+  }
+}
+
+Table attendance_logs {
+  id bigint [pk, increment]
+  user_id bigint [not null]
+  workout_date date [not null]
+  did_workout boolean [not null]
+  memo varchar(200)
+  share_comment varchar(280)
+  workout_types varchar(80)
+  workout_intensity varchar(16)
+  media_urls varchar(4000)
+  shared boolean [not null]
+  share_slug varchar(64) [unique]
+  cheer_count int [not null]
+  report_count int [not null]
+  hidden_by_admin boolean [not null]
+  edit_count int [not null]
+  last_edited_at datetime
+  created_at datetime
+  updated_at datetime
+
+  Indexes {
+    (user_id, workout_date) [unique]
+    (shared, report_count, updated_at) [name: 'idx_attendance_shared_report']
+  }
+}
+
+Table character_profiles {
+  id bigint [pk, increment]
+  user_id bigint [not null, unique]
+  level int [not null]
+  tier varchar(20) [not null, note: 'CharacterTier']
+  evolution_stage int [not null]
+  title varchar(40) [not null]
+  is_public boolean [not null]
+  last_evaluated_at datetime
+  attendance_points int [not null]
+  avatar_seed varchar(64)
+  style_preset varchar(32)
+  gender varchar(16) [note: 'Gender']
+  is_resting boolean [not null]
+  reroll_count int [not null]
+  created_at datetime
+  updated_at datetime
+
+  Indexes {
+    (user_id) [unique]
+    (is_public, level, updated_at) [name: 'idx_character_public_rank']
+  }
+}
+
+Table character_evolution_history {
+  id bigint [pk, increment]
+  user_id bigint [not null]
+  trigger_type varchar(30) [not null, note: 'CharacterEvolutionTriggerType']
+  before_level int [not null]
+  after_level int [not null]
+  before_tier varchar(20) [not null, note: 'CharacterTier']
+  after_tier varchar(20) [not null, note: 'CharacterTier']
+  before_stage int [not null]
+  after_stage int [not null]
+  created_at datetime
+  updated_at datetime
+}
+
+Table brag_post {
+  id bigint [pk, increment]
+  user_id bigint [not null]
+  title varchar(100) [not null]
+  content varchar(2000) [not null]
+  movement varchar(120)
+  weight varchar(60)
+  visibility varchar(16) [not null, note: 'BragVisibility']
+  created_at datetime
+  updated_at datetime
+
+  Indexes {
+    (created_at) [name: 'idx_brag_post_created']
+  }
+}
+
+Table brag_media {
+  brag_id bigint [not null]
+  media_url varchar(500)
+}
+
+Table brag_comment {
+  id bigint [pk, increment]
+  brag_post_id bigint [not null]
+  user_id bigint [not null]
+  content varchar(500) [not null]
+  created_at datetime
+  updated_at datetime
+}
+
+Table brag_like {
+  id bigint [pk, increment]
+  brag_post_id bigint [not null]
+  user_id bigint [not null]
+  created_at datetime
+  updated_at datetime
+
+  Indexes {
+    (brag_post_id, user_id) [unique]
+  }
+}
+
+Table workout_crews {
+  id bigint [pk, increment]
+  name varchar(60) [not null]
+  description varchar(300)
+  owner_id bigint [not null]
+  invite_code varchar(20) [unique]
+  join_policy varchar(24) [note: 'CrewJoinPolicy']
+  created_at datetime
+  updated_at datetime
+}
+
+Table workout_crew_members {
+  id bigint [pk, increment]
+  crew_id bigint [not null]
+  user_id bigint [not null]
+  role varchar(16) [not null, note: 'WorkoutCrewMemberRole']
+  created_at datetime
+  updated_at datetime
+
+  Indexes {
+    (crew_id, user_id) [unique]
+  }
+}
+
+Table workout_crew_join_requests {
+  id bigint [pk, increment]
+  crew_id bigint [not null]
+  user_id bigint [not null]
+  status varchar(20) [not null, note: 'CrewJoinRequestStatus']
+  decided_by_user_id bigint
+  decided_at datetime
+  created_at datetime
+  updated_at datetime
+
+  Indexes {
+    (crew_id, user_id) [unique, name: 'uk_workout_crew_join_requests_crew_user']
+  }
+}
+
+Table friend_chat_rooms {
+  id bigint [pk, increment]
+  user_low_id bigint [not null]
+  user_high_id bigint [not null]
+  created_at datetime
+  updated_at datetime
+
+  Indexes {
+    (user_low_id, user_high_id) [unique]
+  }
+}
+
+Table friend_chat_messages {
+  id bigint [pk, increment]
+  room_id bigint [not null]
+  sender_id bigint [not null]
+  content varchar(1000) [not null]
+  created_at datetime
+  updated_at datetime
+}
+
+Table friendships {
+  id bigint [pk, increment]
+  user_low_id bigint [not null]
+  user_high_id bigint [not null]
+  created_at datetime
+  updated_at datetime
+
+  Indexes {
+    (user_low_id, user_high_id) [unique]
+  }
+}
+
+Table ai_chat_messages {
+  id bigint [pk, increment]
+  user_id bigint [not null]
+  type varchar(20) [not null, note: 'AiMessageType']
+  question varchar(1000) [not null]
+  answer text [not null]
+  shared boolean [not null]
+  share_slug varchar(64) [unique]
+  created_at datetime
+  updated_at datetime
+}
+
+Table audit_logs {
+  id bigint [pk, increment]
+  user_id bigint
+  action varchar(50) [not null]
+  resource varchar(255) [not null]
+  summary varchar(1000)
+  metadata text
+  created_at datetime
+  updated_at datetime
+
+  Indexes {
+    (created_at) [name: 'idx_audit_created']
+    (user_id) [name: 'idx_audit_user']
+  }
+}
+
+Ref: refresh_tokens.user_id > users.id
+Ref: attendance_logs.user_id > users.id
+Ref: character_profiles.user_id > users.id
+Ref: character_evolution_history.user_id > users.id
+Ref: brag_post.user_id > users.id
+Ref: brag_media.brag_id > brag_post.id
+Ref: brag_comment.brag_post_id > brag_post.id
+Ref: brag_comment.user_id > users.id
+Ref: brag_like.brag_post_id > brag_post.id
+Ref: brag_like.user_id > users.id
+Ref: workout_crews.owner_id > users.id
+Ref: workout_crew_members.crew_id > workout_crews.id
+Ref: workout_crew_members.user_id > users.id
+Ref: workout_crew_join_requests.crew_id > workout_crews.id
+Ref: workout_crew_join_requests.user_id > users.id
+Ref: workout_crew_join_requests.decided_by_user_id > users.id
+Ref: friend_chat_rooms.user_low_id > users.id
+Ref: friend_chat_rooms.user_high_id > users.id
+Ref: friend_chat_messages.room_id > friend_chat_rooms.id
+Ref: friend_chat_messages.sender_id > users.id
+Ref: friendships.user_low_id > users.id
+Ref: friendships.user_high_id > users.id
+Ref: ai_chat_messages.user_id > users.id
+Ref: audit_logs.user_id > users.id

@@ -31,10 +31,12 @@ const districtColor: Record<string, {body: string; accessory: string}> = {
 // 의인화 동물 캐스팅을 하나씩 갈아끼우는 자리다 — 종별 배정표는
 // docs/NPC_CHARACTER_PROMPTS.md 에 있다.
 const buildingNpcModel: Record<string, CharacterModelId> = {
-  // 거북 — 설계상 자리는 중앙 광장인데 `central-plaza` 는 아래 filter 에서
-  // 빠져 있어 NPC 가 생기지 않는다(광장은 정재훈·루미가 이미 서 있다).
-  // 그래서 임시로 여기 붙였다. 옮기려면 이 줄의 키만 바꾸면 된다.
-  "life-timeline": "tortoise",
+  // 나무늘보 — 느린 시간을 사는 연혁 타임라인의 주인. 2026-08-27 입고 전까지
+  // 이 자리는 **거북이 임시로** 서 있었다(설계상 거북 자리는 중앙 광장인데
+  // `central-plaza` 는 아래 filter 에서 빠져 NPC 가 안 생긴다). 나무늘보가
+  // 들어오면서 거북은 갈 곳이 없어졌다 — 모델은 남아 있으니 광장에 NPC 를
+  // 세우기로 하면 그때 붙이면 된다.
+  "life-timeline": "sloth",
 
   // 프로젝트 구역
   "project-mystock": "buffalo",
@@ -57,6 +59,11 @@ const buildingNpcModel: Record<string, CharacterModelId> = {
   // 학습 구역 (전담 NPC 알고·노바)
   "study-codingtest": "tiger",
   "study-cs": "owl",
+
+  // 경험 구역 (2026-08-27~29) — 이 셋으로 건물 NPC 27채가 전부 캐스팅됐다
+  "exp-unity-ui": "magpie",
+  "exp-demo-platform": "otter",
+  "exp-portfolio": "fox",
 
   // 연락
   "post-office": "stork",

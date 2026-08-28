@@ -30,7 +30,7 @@ const STEPS = [0, 150, 550, 900, 1300];
 const IDX = {label: 0, heading: 1, learn: 2, kpt: 3, exit: 4};
 
 const REPO = "https://github.com/toadsam/Ajou_MuscleUp";
-const DEPLOY = "https://muscle-up.click";
+// 배포 주소(muscle-up.click)는 응답이 없어 링크로 걸지 않는다.
 
 export function P12Retro({onExit}: {onExit: () => void}) {
   const {reducedMotion} = useMuscleUp();
@@ -40,9 +40,9 @@ export function P12Retro({onExit}: {onExit: () => void}) {
   const instant = reducedMotion;
 
   return (
-    <Page index={12} innerRef={ref} className="pb-[140px]">
+    <Page index={13} innerRef={ref} className="pb-[140px]">
       <Kicker on={on[IDX.label]} instant={instant}>
-        12 · 회고
+        13 · 회고
       </Kicker>
 
       <div className="mt-4">
@@ -64,12 +64,14 @@ export function P12Retro({onExit}: {onExit: () => void}) {
         </Body>
         <div className="mt-4">
           <Body>
-            그때 생긴 기준이{" "}
-            <strong>역할이 다르면 처음부터 갈라 두는 것</strong>입니다. 도메인 ·
-            인증서 · CDN · 스토리지를 나눠 놓으니 장애가 났을 때 어디를 봐야
-            하는지가 바로 나왔고, 스키마도 같은 이유로 도메인별로 갈랐습니다.
-            배포에서 만난 문제들도 그때그때 때우지 않고{" "}
-            <strong>구조를 바꿔서</strong> 처리했습니다.
+            그게 <strong>1.0 에서 배운 것</strong>입니다. 그리고 한 번 더
+            만들면서{" "}
+            <strong style={{color: "var(--mu-accent)"}}>
+              배운 종류가 갈렸습니다.
+            </strong>{" "}
+            1.0 이 「어떻게 만드나」였다면 2.0 은 「왜 안 오나」였고, 답은
+            기능이 아니라 <strong>첫 화면이 무엇을 시키느냐</strong>에
+            있었습니다.
           </Body>
         </div>
       </div>
@@ -78,11 +80,13 @@ export function P12Retro({onExit}: {onExit: () => void}) {
         className="mt-9 grid grid-cols-1 gap-3 lg:grid-cols-3"
         style={rise(on[IDX.kpt], instant)}
       >
-        <Card label="KEEP" accent="var(--mu-primary)">
-          <ul className="space-y-1.5 text-[14px] leading-7">
+        <Card label="1.0 에서 배운 것 · 개발" accent="var(--mu-primary)">
+          <ul className="space-y-2 text-[14px] leading-7">
             <li>역할이 다르면 처음부터 갈라 두기</li>
-            <li>증상이 아니라 구조를 고치기</li>
             <li>비밀 값은 코드가 아니라 환경변수에</li>
+            <li>DB 문자열과 JVM 인코딩은 같이 맞춰야 한다</li>
+            <li>SPA 라우팅은 호스팅 설정 문제다</li>
+            <li>증상이 아니라 구조를 고치기</li>
           </ul>
         </Card>
 
@@ -99,9 +103,12 @@ export function P12Retro({onExit}: {onExit: () => void}) {
             <li>
               <span style={{color: "var(--mu-warn)"}}>·</span>{" "}
               <strong className="text-[var(--mu-text)]">
-                토큰 탈취를 탐지하지 못한다.
+                Refresh 로테이션을 되돌린 채로 두고 있다.
               </strong>{" "}
-              로테이션은 재사용을 막지만, 누가 먼저 썼는지는 알려주지 않는다.
+              병렬 요청이 서로의 토큰을 무효화해 로그아웃이 나서 걷어냈고,
+              클라이언트 재발급 단일화로 급한 불만 껐다. 유예 시간이나 토큰
+              계보(family)로 다시 넣는 것이 숙제로 남아 있다. 탈취 자체를
+              탐지하는 장치도 아직 없다.
             </li>
             <li>
               <span style={{color: "var(--mu-warn)"}}>·</span>{" "}
@@ -114,11 +121,13 @@ export function P12Retro({onExit}: {onExit: () => void}) {
           </ul>
         </Panel>
 
-        <Card label="TRY" accent="var(--mu-accent)">
-          <ul className="space-y-1.5 text-[14px] leading-7">
-            <li>배포 자동화 (지금은 손으로 무효화)</li>
-            <li>수집 중인 이벤트를 실제로 읽기</li>
-            <li>고치기 전후를 숫자로 남기기</li>
+        <Card label="2.0 에서 배운 것 · 운영·사용자" accent="var(--mu-accent)">
+          <ul className="space-y-2 text-[14px] leading-7">
+            <li>재방문은 기능 수가 아니라 첫 화면이 정한다</li>
+            <li>「소통하고 싶다」는 게시판으로 안 풀린다</li>
+            <li>기록은 보여 주는 게 아니라 돌려줘야 한다</li>
+            <li>로그는 읽는 화면이 있어야 의미가 생긴다</li>
+            <li>교과서 기법이 운영에선 장애가 되기도 한다</li>
           </ul>
         </Card>
       </div>
@@ -131,19 +140,9 @@ export function P12Retro({onExit}: {onExit: () => void}) {
           ...rise(on[IDX.exit], instant)
         }}
       >
+        {/* muscle-up.click 링크를 뺐다 — 응답이 없다(2026-08-28 확인).
+            방을 끝까지 본 사람이 마지막에 누르는 버튼이라 죽어 있으면 가장 나쁘다. */}
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <a
-            href={DEPLOY}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="rounded-md px-5 py-3 font-mono text-[12px] font-bold transition-colors duration-200"
-            style={{
-              border: "1px solid var(--mu-border)",
-              color: "var(--mu-muted)"
-            }}
-          >
-            muscle-up.click ↗
-          </a>
           <a
             href={REPO}
             target="_blank"

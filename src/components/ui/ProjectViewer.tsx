@@ -745,7 +745,7 @@ export function ProjectViewer({project, onClose}: Props) {
       return <DarkLabRoom key={project.id} {...shared} />;
     if (project.id === "aclub")
       return <AClubRoom key={project.id} {...shared} />;
-    // 수어지구도 단계 탭 대신 엔트리 시퀀스로 시작하는 전용 스크롤 전시실을 쓴다.
+    // 수어지교도 단계 탭 대신 엔트리 시퀀스로 시작하는 전용 스크롤 전시실을 쓴다.
     if (project.id === "sign-language")
       return <SueoDistrictRoom key={project.id} {...shared} />;
     // 아주총은 핵심이 화면이 아니라 배포 사고 두 건이라, 방문자가 직접 새로고침을

@@ -12,7 +12,7 @@ Target: Web Full-Stack / Frontend / Backend
 React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운영 이슈까지 직접 다루는 신입 개발자입니다. 기능을 만드는 데서 멈추지 않고 사용자 흐름, API 책임, 토큰/세션 유지, HTTPS/CORS 같은 운영 조건까지 확인해 실제 서비스로 닫는 개발을 지향합니다. 공개 GitHub에는 최신 웹 풀스택, 접근성/교육 서비스, 알고리즘, Unity 프로젝트가 함께 정리되어 있습니다.
 
 - React/Spring Boot 기반 웹 풀스택, 프론트엔드, 백엔드 직무 지향
-- JWT Refresh Token Rotation, OAuth/Session, CORS, HTTPS, SSE 등 운영형 문제 해결 경험
+- JWT 이중 쿠키와 토큰 재발급 경쟁 상태, OAuth/Session, CORS, HTTPS, SSE 등 운영형 문제 해결 경험
 - 공개 GitHub 44개 repository, TypeScript/Java/JavaScript/C++/C# 프로젝트 보유
 - 2026년 최신 업데이트 repo: FestFlow, Sign-Language, Ajou_MuscleUp, Algorithm
 
@@ -67,12 +67,12 @@ Stack: React, Vite, Tailwind CSS, PWA, Spring Boot 3, JPA, Spring Security, JWT,
 2025.09 - 진행 중 / 개인 개발 / Full-Stack Web  
 Role: 기획, UI 설계, API 개발, 인증/권한 구현, 배포 담당  
 Scope: 개인 개발 / 기획, UI, 백엔드 API, 인증·권한, 배포 담당  
-Stack: React, Spring Boot, JPA, JWT, Refresh Token Rotation, AWS, AI Coaching
+Stack: React, Spring Boot, JPA, JWT 이중 쿠키(HttpOnly), AWS, AI Coaching
 
 운동 기록, 커뮤니티, AI 코칭을 하나의 사용자 흐름으로 통합한 피트니스 커뮤니티 서비스입니다.
 
 - Problem: 운동 기록, 커뮤니티, AI 코칭이 분리되면 사용자가 루틴을 지속하기 어렵고 인증/배포 조건까지 고려해야 했습니다.
-- Action: React/Spring Boot 기반으로 화면과 API를 구성하고, Access/Refresh Token 분리와 Refresh Token Rotation을 적용했습니다.
+- Action: React/Spring Boot 기반으로 화면과 API를 구성하고, Access/Refresh Token을 HttpOnly 이중 쿠키로 분리했습니다. Refresh Token Rotation을 적용했다가 병렬 요청이 서로의 토큰을 무효화해 로그아웃되는 경쟁 상태를 만나, 클라이언트 재발급 단일화(single-flight)로 대체했습니다.
 - Result: AWS 배포 과정의 HTTPS, Mixed Content, CORS credentials 이슈를 해결해 운영 가능한 풀스택 서비스 형태로 완성했습니다.
 - Evidence: GitHub에 Auth, AI, Analytics, Crew, Friend, Ranking, Review 등 도메인별 controller/entity 구조와 RefreshToken 엔티티가 공개되어 있습니다.
 
@@ -124,10 +124,10 @@ BaekjoonHub 기반 알고리즘 풀이 repo를 별도로 관리하며 C++ 문제
 ## Education
 
 아주대학교, 디지털미디어학과 전공  
-2021.03 - 2026.02
+2021.03 - 2027.02
 
 아주대학교, 인공지능융합학과 복수전공, 메타버스기획마이크로전공  
-2021.03 - 2026.02
+2021.03 - 2027.02
 
 스파르타 내일배움캠프, Unity 게임개발자 양성과정  
 2023.09 - 2024.02

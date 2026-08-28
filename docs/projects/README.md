@@ -24,7 +24,7 @@
 | 3   | 아주대학교 총학생회     | 실서비스 프론트 · 배포              | ⭐⭐⭐   | [ajouchong.md](ajouchong.md)             |
 | 4   | FestFlow                | 실시간 축제 운영 · 개인 풀스택      | ⭐⭐⭐   | [festflow.md](festflow.md)               |
 | 5   | MyStock-Desk / MyWave   | 투자 대시보드 · 개인 풀스택         | ⭐⭐     | [mystock.md](mystock.md)                 |
-| 6   | 수어지구                | 접근성 · 백엔드 담당                | ⭐⭐     | [sign-language.md](sign-language.md)     |
+| 6   | 수어지교                | 접근성 · 백엔드 담당                | ⭐⭐     | [sign-language.md](sign-language.md)     |
 | 7   | Ajou Campus Foodmap     | 세션·OAuth 풀스택                   | ⭐⭐     | [foodmap.md](foodmap.md)                 |
 | 8   | TSEROF                  | **Steam 상용 출시** · 5인 팀 부팀장 | ⭐⭐⭐   | [tserof.md](tserof.md)                   |
 | 9   | 아주대탐험              | Unity 3D 액션 어드벤처 · 1인        | ⭐⭐     | [ajou-indigame.md](ajou-indigame.md)     |
@@ -63,7 +63,7 @@ FestFlow에 **AI 매칭 · 실시간 번역 · 분실물 · 예약 인증 · SMS
 
 ### 4. 팀 프로젝트 5개에 협업 증거가 하나도 없다
 
-aClub · 총학생회 · TSEROF · 수어지구 · DarkLab · The Other Side가 팀인데,
+aClub · 총학생회 · TSEROF · 수어지교 · DarkLab · The Other Side가 팀인데,
 PR·이슈·회의록이 한 장도 없다. 신입 채용에서 "팀에서 어떻게 일하나"는 기술만큼 본다.
 
 ### 5. 저장소 위생 문제

@@ -113,9 +113,9 @@ export function P06Cors() {
   const ok = originAllowed && credentials;
 
   return (
-    <Page index={6} innerRef={ref} maxWidth="1120px">
+    <Page index={7} innerRef={ref} maxWidth="1120px">
       <Kicker on={on[IDX.label]} instant={instant} color="var(--mu-bad)">
-        06 · 트러블슈팅 02
+        07 · 트러블슈팅 02
       </Kicker>
 
       <div className="mt-4">
@@ -279,14 +279,16 @@ export function P06Cors() {
         >
           <div className="py-2">
             <CodeLine n={1}>
-              <Cm>{"// desc: 허용 Origin/Method/Header 지정 + credentials 허용"}</Cm>
+              <Cm>
+                {"// desc: 허용 Origin/Method/Header 지정 + credentials 허용"}
+              </Cm>
             </CodeLine>
             <CodeLine n={2}>{"@Bean"}</CodeLine>
             <CodeLine n={3}>
               {"public CorsConfigurationSource corsConfigurationSource("}
             </CodeLine>
             <CodeLine n={4} highlight={originAllowed}>
-              {"    @Value(\"${cors.allowed-origins:http://localhost:5173}\")"}
+              {'    @Value("${cors.allowed-origins:http://localhost:5173}")'}
             </CodeLine>
             <CodeLine n={5} highlight={originAllowed}>
               {"    List<String> allowedOrigins) {"}
@@ -297,13 +299,13 @@ export function P06Cors() {
             <CodeLine n={7} highlight={originAllowed}>
               {"  allowedOrigins.forEach(cfg::addAllowedOriginPattern);"}
             </CodeLine>
-            <CodeLine n={8}>{"  cfg.addAllowedHeader(\"*\");"}</CodeLine>
-            <CodeLine n={9}>{"  cfg.addAllowedMethod(\"*\");"}</CodeLine>
+            <CodeLine n={8}>{'  cfg.addAllowedHeader("*");'}</CodeLine>
+            <CodeLine n={9}>{'  cfg.addAllowedMethod("*");'}</CodeLine>
             <CodeLine n={10} highlight={credentials}>
               {"  cfg.setAllowCredentials(true);"}
             </CodeLine>
             <CodeLine n={11}>
-              {"  source.registerCorsConfiguration(\"/**\", cfg);"}
+              {'  source.registerCorsConfiguration("/**", cfg);'}
             </CodeLine>
             <CodeLine n={12}>{"}"}</CodeLine>
           </div>

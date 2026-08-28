@@ -37,7 +37,7 @@ const IDX = {
 };
 
 // PDF 6쪽 「링크」 원문
-const DEPLOY = "https://muscle-up.click";
+// 배포 주소(muscle-up.click)는 응답이 없어 링크로 걸지 않는다 — 아래 EquipSlot 참고.
 const REPO = "https://github.com/toadsam/Ajou_MuscleUp";
 const VIDEO = "https://www.youtube.com/watch?v=y6pbAoxveQM";
 
@@ -50,9 +50,11 @@ const STATS = [
 ];
 
 // PDF 8·9쪽 「핵심 기능 1/2·2/2」에서 그대로 뽑은 것. 지어낸 기능은 없다.
+// 「Refresh 로테이션」은 뺐다 — 2026-04-01 에 걷어내서 지금 코드에 없다(P03 참고).
+// 대신 그 자리를 실제로 돌고 있는 것(재발급 단일화)으로 채웠다.
 const CHIPS = [
   "JWT 이중 쿠키",
-  "Refresh 로테이션",
+  "재발급 단일화 (single-flight)",
   "이메일 인증 (SMTP)",
   "Google OAuth2",
   "AI 4주 루틴",
@@ -152,13 +154,16 @@ export function P01Hero() {
             style={{borderTop: "1px solid rgba(244,114,182,0.14)"}}
           >
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {/* href 를 뺐다 — muscle-up.click 은 현재 응답이 없다(2026-08-28).
+                  주소는 그대로 보여 주되 누르면 죽은 페이지가 뜨는 링크는 만들지
+                  않는다. resume.ts 와 P11Result 도 같은 이유로 링크를 뺐다. */}
               <EquipSlot
                 slotLabel="배포"
-                caption="muscle-up.click"
-                href={DEPLOY}
+                caption="muscle-up.click (일시 중단)"
                 equipped={on[IDX.equip]}
                 delay={0}
                 instant={instant}
+                note="muted"
               >
                 <span
                   className="text-[22px]"
@@ -285,7 +290,8 @@ export function P01Hero() {
           >
             <MetaCell value="2025.09 –" label="진행 중" />
             <MetaCell value="1인" label="개인 개발" />
-            <MetaCell value="Spring Boot" label="React · MySQL" />
+            {/* DB 는 프로파일마다 다르다 — 로컬 MySQL, 운영 PostgreSQL. */}
+            <MetaCell value="Spring Boot" label="React · MySQL / PostgreSQL" />
             <MetaCell value="AWS" label="S3 · CloudFront · RDS" />
           </div>
 
@@ -314,7 +320,10 @@ export function P01Hero() {
       {video ? (
         <div
           className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-10"
-          style={{background: "rgba(12,3,10,0.93)", backdropFilter: "blur(8px)"}}
+          style={{
+            background: "rgba(12,3,10,0.93)",
+            backdropFilter: "blur(8px)"
+          }}
           onClick={closeVideo}
           role="dialog"
           aria-modal="true"

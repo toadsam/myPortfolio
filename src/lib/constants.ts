@@ -190,7 +190,7 @@ const projectBuildings: BuildingData[] = [
     district: "projects",
     contentId: "sign-language",
     kind: "dome",
-    name: "수어지구",
+    name: "수어지교",
     label: "Social Tech",
     description: "수어 동작 영상을 보고 뜻을 익히는 학습 앱",
     position: [-8.09, 0, -4.43],

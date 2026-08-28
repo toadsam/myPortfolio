@@ -6,24 +6,32 @@ import {createContext, useContext, type RefObject} from "react";
  * 레벨 = 이 방의 유일한 진행 지표.
  *
  * 스펙(portfolio-specs/04-muscleup.md A-5)은 Lv.1~Lv.9 의 11칸이었지만,
- * 포트폴리오 PDF(6~13쪽)의 실제 개발 내용이 더 많아 **13칸**으로 늘렸다.
+ * 포트폴리오 PDF(6~13쪽)의 실제 개발 내용이 더 많아 13칸으로 늘렸다.
  * 늘어난 칸: 스키마 설계 · AWS 인프라 · 운영 이슈가 각각 독립된 한 장이다.
  * 관람 곡선(동기 → 개발 밀도 최고조 → 정산)은 스펙 그대로 유지한다.
+ *
+ * 2026-08-28 — **02 「1.0 → 2.0」 을 넣어 14칸이 됐다.**
+ * 이 방이 통째로 1.0 발표자료(MuscleUp.pdf) 기준으로 지어져 있었는데, 실제 코드는
+ * 2.0(득근득근2.0.pdf — 캐릭터·랭킹·크루·실시간 라운지·이벤트 CMS)이었다.
+ * 1.0 p.24 의 사용자 피드백 4개와 2.0 의 기능이 1:1로 맞물려서, 그 대응 자체가
+ * 이 방에서 가장 강한 한 칸이 된다. 소개(01) 바로 뒤에 놓아 나머지 칸이
+ * "그래서 그 안의 기술은 이렇다" 로 읽히게 했다.
  */
 export const LEVELS = [
   {n: "00", label: "캐릭터 생성"},
   {n: "01", label: "소개"},
-  {n: "02", label: "서비스 루프"},
-  {n: "03", label: "트러블 01"},
-  {n: "04", label: "인증"},
-  {n: "05", label: "커뮤니티"},
-  {n: "06", label: "트러블 02"},
-  {n: "07", label: "AI 코치"},
-  {n: "08", label: "스키마"},
-  {n: "09", label: "인프라"},
-  {n: "10", label: "트러블 03"},
-  {n: "11", label: "결과"},
-  {n: "12", label: "회고"}
+  {n: "02", label: "1.0 → 2.0"},
+  {n: "03", label: "서비스 루프"},
+  {n: "04", label: "트러블 01"},
+  {n: "05", label: "인증"},
+  {n: "06", label: "커뮤니티"},
+  {n: "07", label: "트러블 02"},
+  {n: "08", label: "AI 코치"},
+  {n: "09", label: "스키마"},
+  {n: "10", label: "인프라"},
+  {n: "11", label: "트러블 03"},
+  {n: "12", label: "결과"},
+  {n: "13", label: "회고"}
 ] as const;
 
 export const LEVEL_TOTAL = LEVELS.length;
@@ -63,6 +71,8 @@ export const MuscleUpProvider = MuscleUpContext.Provider;
 export function useMuscleUp(): MuscleUpRoomApi {
   const api = useContext(MuscleUpContext);
   if (!api)
-    throw new Error("useMuscleUp는 MuscleUpRoom 내부에서만 사용할 수 있습니다.");
+    throw new Error(
+      "useMuscleUp는 MuscleUpRoom 내부에서만 사용할 수 있습니다."
+    );
   return api;
 }

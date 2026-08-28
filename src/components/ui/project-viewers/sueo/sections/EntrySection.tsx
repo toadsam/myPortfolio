@@ -170,7 +170,7 @@ export function EntrySection() {
             }}
           >
             <h1 className="text-[34px] font-black leading-none tracking-[-0.02em] text-[var(--sd-primary)] md:text-[54px]">
-              수어지구
+              수어지교
             </h1>
             <p className="mt-[12px] font-mono text-[11px] tracking-[0.14em] text-[var(--sd-muted)] md:text-[13px]">
               수어 학습·표현 서비스 · Spring Boot 백엔드

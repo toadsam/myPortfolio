@@ -1,0 +1,607 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="MuscleUp ERD">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2339" pageHeight="1654" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="TITLE" value="득근득근 (MuscleUp) ERD — 핵심 18개 테이블" style="text;html=1;fontSize=26;fontStyle=1;align=left;verticalAlign=middle;fontColor=#0f172a;" vertex="1" parent="1">
+          <mxGeometry x="40" y="-40" width="900" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="SUB" value="PK 기본키 · FK 외래키 · U 단일 UNIQUE · NN NOT NULL · UQ 복합 UNIQUE · IX 인덱스   |   JPA 엔티티 소스에서 자동 생성" style="text;html=1;fontSize=13;align=left;verticalAlign=middle;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="40" y="0" width="1400" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="T_refresh_tokens" value="refresh_tokens" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#7c3aed;strokeColor=#4c1d95;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="40" y="522" width="300" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="R_refresh_tokens_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_refresh_tokens">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_refresh_tokens_user_id" value="FK  user_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_refresh_tokens">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_refresh_tokens_token" value="U  token : varchar(512)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_refresh_tokens">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_refresh_tokens_expires_at" value="      expires_at : datetime  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_refresh_tokens">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_refresh_tokens_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_refresh_tokens">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_refresh_tokens_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_refresh_tokens">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_email_verifications" value="email_verifications" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#7c3aed;strokeColor=#4c1d95;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="40" y="750" width="300" height="226" as="geometry" />
+        </mxCell>
+        <mxCell id="R_email_verifications_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_email_verifications">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_email_verifications_email" value="      email : varchar(100)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_email_verifications">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_email_verifications_code" value="      code : varchar(6)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_email_verifications">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_email_verifications_created_at" value="      created_at : datetime  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_email_verifications">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_email_verifications_expire_at" value="      expire_at : datetime  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_email_verifications">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_email_verifications_verified" value="      verified : boolean  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_email_verifications">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_email_verifications_attempts" value="      attempts : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_email_verifications">
+          <mxGeometry y="178" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_email_verifications_i_email_created_at" value="IX  (email, created_at)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_email_verifications">
+          <mxGeometry y="202" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_audit_logs" value="audit_logs" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#57534e;strokeColor=#292524;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="380" y="462" width="300" height="274" as="geometry" />
+        </mxCell>
+        <mxCell id="R_audit_logs_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_audit_logs">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_audit_logs_user_id" value="FK  user_id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_audit_logs">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_audit_logs_action" value="      action : varchar(50)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_audit_logs">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_audit_logs_resource" value="      resource : varchar(255)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_audit_logs">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_audit_logs_summary" value="      summary : varchar(1000)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_audit_logs">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_audit_logs_metadata" value="      metadata : text" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_audit_logs">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_audit_logs_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_audit_logs">
+          <mxGeometry y="178" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_audit_logs_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_audit_logs">
+          <mxGeometry y="202" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_audit_logs_i_created_at" value="IX  (created_at)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_audit_logs">
+          <mxGeometry y="226" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_audit_logs_i_user_id" value="IX  (user_id)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_audit_logs">
+          <mxGeometry y="250" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_ai_chat_messages" value="ai_chat_messages" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#57534e;strokeColor=#292524;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="380" y="786" width="300" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="R_ai_chat_messages_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_ai_chat_messages">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_ai_chat_messages_user_id" value="FK  user_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_ai_chat_messages">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_ai_chat_messages_type" value="      type : varchar(20)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_ai_chat_messages">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_ai_chat_messages_question" value="      question : varchar(1000)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_ai_chat_messages">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_ai_chat_messages_answer" value="      answer : text  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_ai_chat_messages">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_ai_chat_messages_shared" value="      shared : boolean  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_ai_chat_messages">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_ai_chat_messages_share_slug" value="U  share_slug : varchar(64)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_ai_chat_messages">
+          <mxGeometry y="178" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_ai_chat_messages_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_ai_chat_messages">
+          <mxGeometry y="202" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_ai_chat_messages_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_ai_chat_messages">
+          <mxGeometry y="226" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_character_profiles" value="character_profiles" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#0369a1;strokeColor=#0c4a6e;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="720" y="60" width="300" height="466" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_user_id" value="FK  user_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_level" value="      level : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_tier" value="      tier : varchar(20)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_evolution_stage" value="      evolution_stage : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_title" value="      title : varchar(40)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_is_public" value="      is_public : boolean  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="178" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_last_evaluated_at" value="      last_evaluated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="202" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_attendance_points" value="      attendance_points : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="226" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_avatar_seed" value="      avatar_seed : varchar(64)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="250" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_style_preset" value="      style_preset : varchar(32)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="274" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_gender" value="      gender : varchar(16)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="298" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_is_resting" value="      is_resting : boolean  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="322" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_reroll_count" value="      reroll_count : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="346" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="370" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_profiles_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="394" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_character_profiles_u_user_id" value="UQ  (user_id)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="418" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_character_profiles_i_is_public_level_updated_at" value="IX  (is_public, level, updated_at)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_character_profiles">
+          <mxGeometry y="442" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_character_evolution_history" value="character_evolution_history" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#0369a1;strokeColor=#0c4a6e;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="720" y="576" width="300" height="298" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_evolution_history_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_character_evolution_history">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_evolution_history_user_id" value="FK  user_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_evolution_history">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_evolution_history_trigger_type" value="      trigger_type : varchar(30)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_evolution_history">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_evolution_history_before_level" value="      before_level : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_evolution_history">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_evolution_history_after_level" value="      after_level : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_evolution_history">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_evolution_history_before_tier" value="      before_tier : varchar(20)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_evolution_history">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_evolution_history_after_tier" value="      after_tier : varchar(20)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_evolution_history">
+          <mxGeometry y="178" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_evolution_history_before_stage" value="      before_stage : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_evolution_history">
+          <mxGeometry y="202" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_evolution_history_after_stage" value="      after_stage : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_evolution_history">
+          <mxGeometry y="226" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_evolution_history_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_evolution_history">
+          <mxGeometry y="250" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_character_evolution_history_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_character_evolution_history">
+          <mxGeometry y="274" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_attendance_logs" value="attendance_logs" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#0369a1;strokeColor=#0c4a6e;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="720" y="924" width="300" height="514" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_user_id" value="FK  user_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_workout_date" value="      workout_date : date  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_did_workout" value="      did_workout : boolean  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_memo" value="      memo : varchar(200)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_share_comment" value="      share_comment : varchar(280)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_workout_types" value="      workout_types : varchar(80)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="178" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_workout_intensity" value="      workout_intensity : varchar(16)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="202" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_media_urls" value="      media_urls : varchar(4000)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="226" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_shared" value="      shared : boolean  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="250" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_share_slug" value="U  share_slug : varchar(64)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="274" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_cheer_count" value="      cheer_count : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="298" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_report_count" value="      report_count : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="322" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_hidden_by_admin" value="      hidden_by_admin : boolean  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="346" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_edit_count" value="      edit_count : int  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="370" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_last_edited_at" value="      last_edited_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="394" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="418" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_attendance_logs_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="442" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_attendance_logs_u_user_id_workout_date" value="UQ  (user_id, workout_date)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="466" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_attendance_logs_i_shared_report_count_updated_at" value="IX  (shared, report_count, updated_at)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_attendance_logs">
+          <mxGeometry y="490" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_users" value="users" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#be185d;strokeColor=#831843;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="648" width="300" height="202" as="geometry" />
+        </mxCell>
+        <mxCell id="R_users_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_users">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_users_name" value="      name : varchar(50)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_users">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_users_email" value="U  email : varchar(100)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_users">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_users_password" value="      password : varchar(255)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_users">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_users_role" value="      role : varchar(20)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_users">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_users_nickname" value="      nickname : varchar(30)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_users">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_users_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_users">
+          <mxGeometry y="178" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_brag_post" value="brag_post" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#b45309;strokeColor=#78350f;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="318" width="300" height="274" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_post_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_brag_post">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_post_user_id" value="FK  user_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_post">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_post_title" value="      title : varchar(100)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_post">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_post_content" value="      content : varchar(2000)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_post">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_post_movement" value="      movement : varchar(120)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_post">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_post_weight" value="      weight : varchar(60)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_post">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_post_visibility" value="      visibility : varchar(16)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_post">
+          <mxGeometry y="178" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_post_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_post">
+          <mxGeometry y="202" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_post_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_post">
+          <mxGeometry y="226" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_brag_post_i_created_at" value="IX  (created_at)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_brag_post">
+          <mxGeometry y="250" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_brag_media" value="brag_media" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#b45309;strokeColor=#78350f;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="642" width="300" height="82" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_media_brag_id" value="FK  brag_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_media">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_media_media_url" value="      media_url : varchar(500)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_media">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_brag_comment" value="brag_comment" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#b45309;strokeColor=#78350f;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="774" width="300" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_comment_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_brag_comment">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_comment_brag_post_id" value="FK  brag_post_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_comment">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_comment_user_id" value="FK  user_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_comment">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_comment_content" value="      content : varchar(500)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_comment">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_comment_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_comment">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_comment_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_comment">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_brag_like" value="brag_like" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#b45309;strokeColor=#78350f;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="1002" width="300" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_like_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_brag_like">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_like_brag_post_id" value="FK  brag_post_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_like">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_like_user_id" value="FK  user_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_like">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_like_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_like">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_brag_like_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_brag_like">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_brag_like_u_brag_post_id_user_id" value="UQ  (brag_post_id, user_id)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_brag_like">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_workout_crews" value="workout_crews" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#15803d;strokeColor=#14532d;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1740" y="360" width="300" height="226" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crews_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_workout_crews">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crews_name" value="      name : varchar(60)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crews">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crews_description" value="      description : varchar(300)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crews">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crews_owner_id" value="FK  owner_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crews">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crews_invite_code" value="U  invite_code : varchar(20)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crews">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crews_join_policy" value="      join_policy : varchar(24)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crews">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crews_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crews">
+          <mxGeometry y="178" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crews_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crews">
+          <mxGeometry y="202" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_workout_crew_members" value="workout_crew_members" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#15803d;strokeColor=#14532d;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1740" y="636" width="300" height="202" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_members_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_workout_crew_members">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_members_crew_id" value="FK  crew_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_members">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_members_user_id" value="FK  user_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_members">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_members_role" value="      role : varchar(16)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_members">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_members_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_members">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_members_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_members">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_workout_crew_members_u_crew_id_user_id" value="UQ  (crew_id, user_id)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_workout_crew_members">
+          <mxGeometry y="178" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_workout_crew_join_requests" value="workout_crew_join_requests" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#15803d;strokeColor=#14532d;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="1740" y="888" width="300" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_join_requests_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_workout_crew_join_requests">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_join_requests_crew_id" value="FK  crew_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_join_requests">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_join_requests_user_id" value="FK  user_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_join_requests">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_join_requests_status" value="      status : varchar(20)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_join_requests">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_join_requests_decided_by_user_id" value="FK  decided_by_user_id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_join_requests">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_join_requests_decided_at" value="      decided_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_join_requests">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_join_requests_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_join_requests">
+          <mxGeometry y="178" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_workout_crew_join_requests_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_workout_crew_join_requests">
+          <mxGeometry y="202" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_workout_crew_join_requests_u_crew_id_user_id" value="UQ  (crew_id, user_id)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_workout_crew_join_requests">
+          <mxGeometry y="226" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_friendships" value="friendships" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#0f766e;strokeColor=#134e4a;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2080" y="432" width="300" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friendships_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_friendships">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friendships_user_low_id" value="FK  user_low_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friendships">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friendships_user_high_id" value="FK  user_high_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friendships">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friendships_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friendships">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friendships_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friendships">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_friendships_u_user_low_id_user_high_id" value="UQ  (user_low_id, user_high_id)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_friendships">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_friend_chat_rooms" value="friend_chat_rooms" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#0f766e;strokeColor=#134e4a;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2080" y="660" width="300" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friend_chat_rooms_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_friend_chat_rooms">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friend_chat_rooms_user_low_id" value="FK  user_low_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friend_chat_rooms">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friend_chat_rooms_user_high_id" value="FK  user_high_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friend_chat_rooms">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friend_chat_rooms_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friend_chat_rooms">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friend_chat_rooms_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friend_chat_rooms">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="X_friend_chat_rooms_u_user_low_id_user_high_id" value="UQ  (user_low_id, user_high_id)" style="text;strokeColor=none;fillColor=#f8fafc;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;rotatable=0;whiteSpace=wrap;html=1;fontSize=10;fontColor=#64748b;fontStyle=2;" vertex="1" parent="T_friend_chat_rooms">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="T_friend_chat_messages" value="friend_chat_messages" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fontSize=13;fillColor=#0f766e;strokeColor=#134e4a;fontColor=#ffffff;swimlaneFillColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="2080" y="888" width="300" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friend_chat_messages_id" value="PK  id : bigint" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;fontStyle=1;" vertex="1" parent="T_friend_chat_messages">
+          <mxGeometry y="34" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friend_chat_messages_room_id" value="FK  room_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friend_chat_messages">
+          <mxGeometry y="58" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friend_chat_messages_sender_id" value="FK  sender_id : bigint  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friend_chat_messages">
+          <mxGeometry y="82" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friend_chat_messages_content" value="      content : varchar(1000)  NN" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friend_chat_messages">
+          <mxGeometry y="106" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friend_chat_messages_created_at" value="      created_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friend_chat_messages">
+          <mxGeometry y="130" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="R_friend_chat_messages_updated_at" value="      updated_at : datetime" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=8;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=11;" vertex="1" parent="T_friend_chat_messages">
+          <mxGeometry y="154" width="300" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="E1" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_refresh_tokens_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E2" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_attendance_logs_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E3" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_character_profiles_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E4" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_character_evolution_history_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E5" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_brag_post_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E6" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_brag_media_brag_id" target="R_brag_post_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E7" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_brag_comment_brag_post_id" target="R_brag_post_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E8" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_brag_comment_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E9" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_brag_like_brag_post_id" target="R_brag_post_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E10" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_brag_like_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E11" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_workout_crews_owner_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E12" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_workout_crew_members_crew_id" target="R_workout_crews_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E13" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_workout_crew_members_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E14" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_workout_crew_join_requests_crew_id" target="R_workout_crews_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E15" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_workout_crew_join_requests_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E16" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_workout_crew_join_requests_decided_by_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E17" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_friend_chat_rooms_user_low_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E18" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_friend_chat_rooms_user_high_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E19" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_friend_chat_messages_room_id" target="R_friend_chat_rooms_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E20" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_friend_chat_messages_sender_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E21" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_friendships_user_low_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E22" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_friendships_user_high_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E23" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_ai_chat_messages_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E24" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;strokeColor=#94a3b8;strokeWidth=1;jumpStyle=arc;jumpSize=10;" edge="1" parent="1" source="R_audit_logs_user_id" target="R_users_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

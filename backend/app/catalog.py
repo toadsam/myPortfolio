@@ -24,7 +24,7 @@ PROJECTS = {
         "tech": ["React", "Spring Boot", "SSE", "PWA", "React Leaflet"],
     },
     "sign-language": {
-        "title": "수어지구",
+        "title": "수어지교",
         "building_id": "project-sign-language",
         "npc_id": "project-npc",
         "summary": "수어 아바타를 활용한 학습 및 표현 서비스입니다.",

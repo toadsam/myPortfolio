@@ -86,10 +86,29 @@ export interface RichProject {
    */
   testimonial?: {q: string; who: string};
   beforeCode?: CodeSpec;
+  /**
+   * 「무엇이 어떻게 바뀌었나」를 한 화면에서 보여 주는 자리.
+   *
+   * 원래 `screen`(목업)만 받았는데, **실제 개선 전/후 캡처가 있으면 목업보다
+   * 훨씬 세다** — 목업은 내가 그린 그림이고 캡처는 있었던 일이다. 그래서
+   * `shot`(실제 이미지)을 받도록 넓혔다. 둘 다 없으면 그 칸은 그리지 않는다.
+   *
+   * `note` 는 "그래서 뭐가 달라졌는지" 한 줄. 이게 없으면 관람자가 두 그림을
+   * 눈으로 비교하다 포기한다 — Before/After 는 차이를 말로 짚어 줘야 읽힌다.
+   */
   beforeAfter?: {
-    before: {label: string; screen: ScreenSpec};
-    after: {label: string; screen: ScreenSpec};
+    before: {label: string; screen?: ScreenSpec; shot?: ImgSpec; note?: string};
+    after: {label: string; screen?: ScreenSpec; shot?: ImgSpec; note?: string};
   };
+  /**
+   * KPT 칸 이름. 기본은 Keep / Problem / Try 다.
+   *
+   * 두 번 만든 프로젝트(득근득근·총학생회)는 **배운 것의 종류가 단계마다
+   * 다르다** — 1차는 만드는 법, 2차는 운영·사용자 관점. 그럴 때 칸 이름을
+   * 「1.0 에서 배운 것 / 2.0 에서 배운 것」으로 바꿔 주면 목록만 읽어도
+   * 성장의 방향이 보인다. Keep/Try 라는 이름표로는 그게 안 읽힌다.
+   */
+  kptLabels?: {keep: string; problem: string; try: string};
   hypothesis: string;
   process: {t: string; d: string}[];
   architecture: {name: string; desc: string; tag: string}[];
@@ -820,38 +839,42 @@ function BeforeAfter({
   theme: ProjectTheme;
   ba: NonNullable<RichProject["beforeAfter"]>;
 }) {
+  const side = (
+    s: NonNullable<RichProject["beforeAfter"]>["before"],
+    tone: string,
+    tag: string
+  ) => (
+    <div
+      className="flex flex-col rounded-xl border p-3"
+      style={{borderColor: `${tone}33`, background: `${tone}0a`}}
+    >
+      <p
+        className="mb-2 font-mono text-[11px] font-black uppercase tracking-wide"
+        style={{color: tone}}
+      >
+        {tag} · {s.label}
+      </p>
+      {s.shot ? (
+        <ImageSlot theme={theme} spec={s.shot} />
+      ) : s.screen ? (
+        <MockScreen theme={theme} spec={s.screen} />
+      ) : null}
+      {s.note ? (
+        <p className="mt-2.5 text-[13px] leading-6 text-white/70">{s.note}</p>
+      ) : null}
+    </div>
+  );
+
   return (
     <div className="grid items-stretch gap-3 sm:grid-cols-[1fr_28px_1fr]">
-      <div
-        className="rounded-xl border p-3"
-        style={{borderColor: "#f8717133", background: "#f871710a"}}
-      >
-        <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-wide text-[#f87171]">
-          Before · {ba.before.label}
-        </p>
-        <MockScreen theme={theme} spec={ba.before.screen} />
-      </div>
+      {side(ba.before, "#f87171", "Before")}
       <div
         className="flex items-center justify-center font-mono text-lg font-black"
         style={{color: theme.primary}}
       >
         →
       </div>
-      <div
-        className="rounded-xl border p-3"
-        style={{
-          borderColor: `${theme.primary}40`,
-          background: `${theme.primary}0a`
-        }}
-      >
-        <p
-          className="mb-2 font-mono text-[11px] font-black uppercase tracking-wide"
-          style={{color: theme.primary}}
-        >
-          After · {ba.after.label}
-        </p>
-        <MockScreen theme={theme} spec={ba.after.screen} />
-      </div>
+      {side(ba.after, theme.primary, "After")}
     </div>
   );
 }

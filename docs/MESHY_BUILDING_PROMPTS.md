@@ -49,7 +49,7 @@ study-cs                 지식 서고
 
 ### 18채를 넣으면서 배운 것
 
-- **간판은 프롬프트대로 크게 나왔고 한글도 멀쩡합니다.** 아주총학·수어지구 다 읽힙니다.
+- **간판은 프롬프트대로 크게 나왔고 한글도 멀쩡합니다.** 아주총학·수어지교 다 읽힙니다.
   GPT-4o/nano banana를 쓰면 한글 실패는 사실상 없습니다.
 - **텍스처 예산이 삼각형보다 먼저 터집니다.** 17채를 넣자 318MB(예산 250)가 됐는데,
   범인은 건물이 아니라 파이프라인을 한 번도 안 탄 `environment/statue.glb` 였습니다
@@ -209,7 +209,7 @@ bold high-contrast cheerful letters, the sign is a dominant feature of the
 facade and clearly legible, golden yellow accents, clearly wider than tall
 ```
 
-### 3. `project-sign-language.glb` — 수어지구 · 수어 학습 앱
+### 3. `project-sign-language.glb` — 수어지교 · 수어 학습 앱
 
 비율: 둥근 돔 (2.0 / 1.8 / 2.0) · 포인트 색: 하늘색
 
@@ -217,7 +217,7 @@ facade and clearly legible, golden yellow accents, clearly wider than tall
 a soft rounded dome cottage with smooth curved white plaster walls, a stylized
 open hand shape sculpted as a large decorative relief on the dome, gentle
 circular windows, teal roof trim, a very large prominent rounded wooden
-signboard spanning most of the front width above the door, reading "수어지구"
+signboard spanning most of the front width above the door, reading "수어지교"
 in big bold high-contrast Korean letters, the sign is a dominant feature of
 the facade and clearly legible, light sky blue accents, calm welcoming shape
 ```

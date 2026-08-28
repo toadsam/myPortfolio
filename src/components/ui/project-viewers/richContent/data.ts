@@ -760,8 +760,65 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "득근득근 메인 화면",
       ratio: "16/9"
     },
-    problemShot: {label: "작심삼일로 끊기던 기존 운동 기록", ratio: "4/3"},
+    // 1.0 발표자료(MuscleUp.pdf) p.24 에 실제 사용자 피드백 4개가 있고,
+    // 2.0 발표자료(득근득근2.0.pdf)가 그중 셋을 어떻게 고쳤는지를 보여 준다.
+    // Before/After 를 지어낼 필요가 없었다 — 문서 두 개가 서로를 증명한다.
+    problemShot: {
+      src: "/projects/muscleup/v2/home-lobby.webp",
+      label: "1.0 의 문제 — 와도 뭘 해야 할지 모르는 첫 화면",
+      ratio: "2/1",
+      caption:
+        "1.0 은 기능을 「소개」하는 랜딩이었다. 사용자 피드백 원문: “처음 사용할 때 어디서 뭘 해야 할지 몰랐어요.” 2.0 에서 첫 화면을 「오늘 출석 시작」 한 번으로 시작되는 로비로 바꿨다."
+    },
+    // 컨트롤러 28개를 세어만 두면 "28"이 숫자로만 남는다. 8개 도메인으로 묶어
+    // 그리니 프로틴 공유·이벤트 CMS 처럼 사이트에 없던 기능이 드러났다.
+    // 근거는 전부 소스다 — @RequestMapping 과 @*Mapping 을 센 값.
+    resultShot: {
+      src: "/projects/muscleup/api-map.svg",
+      label: "백엔드 API 도메인 지도 — 컨트롤러 28개 · 엔드포인트 136개",
+      ratio: "21/9",
+      caption:
+        "controller/*.java 28개를 8개 도메인으로 묶었다. 크루 하나가 15개로 가장 크고, 자랑방은 글(BragPost)과 반응(BragInteraction)을 컨트롤러로 갈라 뒀다."
+    },
     gallery: [
+      {
+        src: "/projects/muscleup/auth-sequence.svg",
+        label: "인증 시퀀스 — 로그인 · 만료 · 재발급",
+        ratio: "16/10",
+        caption:
+          "access 가 15분에 만료돼도 화면은 끊기지 않는다. 여러 요청이 동시에 401 을 받아도 재발급은 axios 인터셉터에서 한 번만 나가고(single-flight), 나머지는 큐에서 기다렸다가 함께 재시도된다."
+      },
+      // ── 2.0 화면 ──
+      // 출처는 2.0 발표자료(득근득근2.0.pdf)에 실린 실제 캡처다. 새로 찍은 것은 없다.
+      // 홈 화면 배너에 참여자 얼굴이 있어 그 구간은 잘라내고 썼다.
+      {
+        src: "/projects/muscleup/v2/lounge.webp",
+        label: "실시간 라운지 — Socket.IO",
+        ratio: "16/10",
+        caption:
+          "1.0 피드백 “다른 사람들과 더 많이 소통하고 싶어요” 에 대한 답. 접속자 수·핑·미니맵이 좌상단에 뜨고, 캐릭터 위치와 이모트가 실시간 동기화된다. REST 로는 못 해서 실시간 서버를 :4001 로 따로 뺐다."
+      },
+      {
+        src: "/projects/muscleup/v2/character.webp",
+        label: "캐릭터 성장 — 레벨 · 티어 · 진화 단계",
+        ratio: "6/5",
+        caption:
+          "“내 운동 데이터를 더 자세히 보고 싶어요” 에 대한 답. 화면의 MASTER·Stage 8·Level 85 가 ERD 의 character_profiles(tier, level, evolution_stage, title) 그대로다."
+      },
+      {
+        src: "/projects/muscleup/v2/admin.webp",
+        label: "관리자 콘솔 — 탭 5개",
+        ratio: "16/12",
+        caption:
+          "개요·행동 추적·검수/콘텐츠·출석 기록·운영 자동화. analytics_events 와 audit_logs 를 읽는 화면이 여기다 — 테이블만 있고 안 보던 것을 2.0 에서 화면으로 세웠다."
+      },
+      {
+        src: "/projects/muscleup/v2/inbody.webp",
+        label: "인바디 AI 분석",
+        ratio: "16/10",
+        caption:
+          "이미지·PDF 를 올리면 OCR 로 읽어 현재 대 목표를 고정 축으로 비교하고 탄단지 비율을 낸다. 1.0 의 루틴 추천에서 체성분 정밀 분석으로 올라간 지점."
+      },
       {
         src: "/projects/op/muscleup-erd.webp",
         label: "도메인 ERD",
@@ -777,12 +834,15 @@ export const RICH_DATA: Record<string, RichProject> = {
         k: "무엇을",
         v: "운동 기록을 게임처럼 지속하게 만드는 피트니스 커뮤니티 플랫폼"
       },
-      {k: "왜", v: "운동 앱은 기록은 되지만 ‘다시 오게’ 만드는 장치가 약함"},
+      {
+        k: "왜",
+        v: "1.0 은 기능을 소개하는 랜딩이었다. 써 본 사람들이 “어디서 뭘 해야 할지 모르겠다”고 했다"
+      },
       {
         k: "결과",
-        v: "REST 백엔드 + Socket.IO 실시간 서버를 분리한 3-tier 구조"
+        v: "홈=로비 · 출석=성장데이터 · 관리자=운영콘솔로 성격을 바꿨다. 도메인 4→8 · 엔티티 31 · 컨트롤러 28"
       },
-      {k: "내 역할", v: "1인 풀스택 — 기획·프론트·백엔드·실시간 서버"}
+      {k: "내 역할", v: "1인 풀스택 — 1.0 기획·개발 → 2.0 운영 관점 개편"}
     ],
     demo: {repo: "https://github.com/toadsam/Ajou_MuscleUp"},
     meta: [
@@ -1269,16 +1329,34 @@ export const RICH_DATA: Record<string, RichProject> = {
       {n: "Socket.IO", l: "실시간 서버"},
       {n: "1인", l: "풀스택"}
     ],
+    kptLabels: {
+      keep: "1.0 에서 배운 것 · 개발",
+      problem: "아직 남은 것",
+      try: "2.0 에서 배운 것 · 운영·사용자"
+    },
+    // 두 번 만들었고, 두 번의 배움이 종류가 다르다.
+    // KEEP = 1.0(개발), TRY = 2.0(운영·사용자). 이 갈라짐 자체가 이 카드의 요점이다.
     kpt: {
       keep: [
-        "실시간을 REST와 분리한 아키텍처",
-        "인증을 환경 차이까지 흡수하게 설계"
+        "1.0 · 프로필과 비밀 값은 처음부터 갈라 둔다 — 하드코딩 때문에 배포가 부팅부터 실패했다",
+        "1.0 · DB 커넥션 문자열과 JVM 인코딩은 같이 맞춰야 한다 — 환경마다 한글이 깨졌다",
+        "1.0 · SPA 라우팅은 프론트가 아니라 호스팅 설정 문제다 — CloudFront 403",
+        "1.0 · 실시간은 실시간 서버로, 데이터는 REST 로 책임을 나눈다"
       ],
-      problem: ["AI 인바디 정확도 검증 부족", "온보딩이 다소 복잡"],
-      try: ["웨어러블 연동", "크루 챌린지 고도화"]
+      problem: [
+        "AI 응답 속도는 아직 손대지 못했다 — 사용자가 지적한 넷 중 유일하게 안 고친 것",
+        "Refresh 로테이션을 되돌린 채로 두고 있다 (병렬 재발급 경쟁 상태)",
+        "analytics_events 를 쌓고는 있지만 그걸로 판단한 적은 없다"
+      ],
+      try: [
+        "2.0 · 재방문은 기능 수가 아니라 첫 화면이 무엇을 시키느냐가 정한다 — 홈을 로비로",
+        "2.0 · ‘소통하고 싶다’는 게시판으로 안 풀린다 — 같이 있다는 감각이 필요했다",
+        "2.0 · 기록은 보여 주는 게 아니라 돌려줘야 한다 — 캐릭터·티어·랭킹",
+        "2.0 · 로그 테이블은 읽는 화면이 있어야 의미가 생긴다 — 관리자 콘솔"
+      ]
     },
     learning:
-      "기능을 많이 만드는 것보다 ‘실시간은 실시간 서버로, 데이터는 REST로’처럼 책임을 나누는 아키텍처 판단이 서비스 안정성을 좌우한다는 걸 배웠다."
+      "1.0 에서는 **만드는 법**을 배웠다 — 배포·인증·인코딩처럼 안 되면 아무것도 안 되는 것들. 2.0 에서는 그게 다가 아니라는 걸 배웠다. 사용자 넷이 남긴 말 중 셋이 기능이 아니라 **동선과 관계**에 대한 것이었고, 고친 것도 그쪽이었다. 사람이 다시 오게 만드는 건 기능 개수가 아니라 첫 화면이 무엇을 시키느냐였다."
   },
 
   // ════════════════════════════ ACLUB / AjouClub FE (platform · 팀) ══════════
@@ -1540,8 +1618,67 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "총학생회 메인",
       ratio: "16/9"
     },
-    problemShot: {label: "인스타 등에 흩어져 있던 학생회 공지", ratio: "4/3"},
+    // 학생들은 폰으로 본다. 그런데 1차 모바일은 주요 메뉴가 햄버거 안에만
+    // 있었다 — 「정보 탐색 효율 개선」이라고 적어만 두고 근거가 없던 그 지점이다.
+    problemShot: {
+      src: "/projects/ajouchong/v2/mobile-before.webp",
+      label: "1차 모바일 — 메뉴가 햄버거 안에만 있었다",
+      ratio: "9/16",
+      caption:
+        "첫 화면에 있는 건 대여사업 카드 하나뿐. 소개·소식·소통·자료실·학생복지로 가려면 오른쪽 위 햄버거를 먼저 눌러야 했다."
+    },
+    // 2026.04 개편 — 개선 전/후 캡처가 실제로 남아 있다(업데이트 자료 3차례분).
+    beforeAfter: {
+      before: {
+        label: "햄버거를 눌러야 메뉴가 보인다",
+        shot: {
+          src: "/projects/ajouchong/v2/mobile-before.webp",
+          label: "개편 전 모바일 메인",
+          ratio: "9/16"
+        },
+        note: "탭 한 번을 더 써야 목적지가 나온다. 어디로 갈 수 있는지조차 첫 화면에 안 보인다."
+      },
+      after: {
+        label: "첫 화면에 여섯 갈래를 편다",
+        shot: {
+          src: "/projects/ajouchong/v2/mobile-after.webp",
+          label: "개편 후 모바일 메인",
+          ratio: "9/16"
+        },
+        note: "소개·소식·소통·자료실·학생복지·ACENTIA 를 아이콘 카드로 히어로 바로 밑에 놨다. 메뉴 구조를 바꾼 게 아니라 안 눌러도 보이게 한 것이다."
+      }
+    },
     gallery: [
+      // ── 2026.04 개편 이후 ──
+      // 이 넷의 공통점: 전부 **총학생회가 직접 고치는 화면**이다.
+      // 1차 때는 물품 수량 하나 바꾸려 해도 개발자가 배포해야 했다.
+      {
+        src: "/projects/ajouchong/v2/rental.webp",
+        label: "대여사업 — 실시간 수량",
+        ratio: "21/10",
+        caption:
+          "총 품목·대여 가능·재고 임박·최종 업데이트를 한 줄에 세우고, 품목마다 남은 수량을 막대로 보여 준다. 「지금 빌릴 수 있나」를 묻지 않고 알 수 있게 한 화면."
+      },
+      {
+        src: "/projects/ajouchong/v2/rental-admin.webp",
+        label: "대여 물품 관리 — 운영자가 직접",
+        ratio: "21/10",
+        caption:
+          "수량 옆 −/+ 로 바로 조정하고 「35 (변경됨)」처럼 저장 전 상태를 표시한다. 확인 대화상자로 한 번 더 묻는다 — 실수로 재고가 틀어지면 학생이 헛걸음한다."
+      },
+      {
+        src: "/projects/ajouchong/v2/chatbot.webp",
+        label: "안내 봇 — 문의를 사람이 받지 않게",
+        ratio: "21/10",
+        caption:
+          "공지·대여사업·제휴복지·Q&A·건의로 가는 길을 먼저 제시하고, 그래도 없으면 의견을 남긴다. 반복 문의가 사람에게 도달하기 전에 걸러지는 자리."
+      },
+      {
+        src: "/projects/ajouchong/v2/feedback.webp",
+        label: "피드백 관리 화면",
+        ratio: "21/10",
+        caption: "학생이 남긴 의견을 총학생회가 열어 보는 곳."
+      },
       {
         src: "/projects/op/ajouchong-notice.webp",
         label: "공지 상세 페이지",
@@ -1723,16 +1860,36 @@ export const RICH_DATA: Record<string, RichProject> = {
       {n: "0", l: "새로고침 404"}
     ],
     metricsNote: "Google Search Console · 검색 유입 기준 (전체 방문자 아님)",
+    kptLabels: {
+      keep: "1차에서 배운 것 · 개발·배포",
+      problem: "아직 남은 것",
+      try: "2차에서 배운 것 · 운영·사용자"
+    },
+    // KEEP/TRY 를 「1차에서 배운 것 / 2차에서 배운 것」으로 갈랐다.
+    // 이 프로젝트도 두 번 만들었고, 두 번의 배움이 서로 다른 종류다.
     kpt: {
-      keep: ["실제 배포까지 끝낸 경험", "환경을 Docker로 고정"],
-      problem: ["모바일 최적화 미흡", "접근성 보강 필요"],
-      try: ["알림 기능", "관리자 통계"]
+      keep: [
+        "1차 · 배포까지 끝내야 서비스가 된다 — Docker/Nginx 로 환경을 고정",
+        "1차 · SPA 는 새로고침에서 깨진다 — Nginx try_files 로 404 를 없앰",
+        "1차 · 정보 구조를 먼저 정하면 화면은 따라온다"
+      ],
+      // 「모바일 최적화 미흡」은 1차 회고에 스스로 적어 둔 문제였고, 2차에서 고쳤다.
+      problem: [
+        "링크허브는 개편했지만 실데이터로 다시 채우는 중이다",
+        "개편 효과를 Search Console 로 아직 재보지 않았다",
+        "접근성(대비·포커스)은 여전히 보강이 필요하다"
+      ],
+      try: [
+        "2차 · 메뉴를 늘리는 게 아니라 안 눌러도 보이게 한다 — 모바일 첫 화면에 6갈래",
+        "2차 · 운영자가 직접 고치게 만든다 — 수량·공지·링크·피드백을 관리 화면으로",
+        "2차 · 반복 문의는 사람에게 닿기 전에 안내 봇이 먼저 받는다"
+      ]
     },
     learning:
-      "‘만드는 것’을 넘어 ‘배포해서 진짜 쓰이게 하는 것’까지 해보며 Docker·Nginx 같은 운영 지식과 SPA 배포의 함정(폴백)을 몸으로 배웠다."
+      "1차에서는 ‘배포해서 진짜 쓰이게 하는 것’(Docker·Nginx·SPA 폴백)을 배웠고, 2차에서는 그 다음을 배웠다 — 학생은 폰으로 들어와 햄버거를 안 누르고, 총학생회는 물품 수량 하나 바꾸려고 개발자를 부르고 싶어 하지 않는다. 화면을 예쁘게 고치는 것보다 **쓰는 사람이 스스로 할 수 있게 만드는 것**이 운영형 서비스의 개선이었다."
   },
 
-  // ════════════════════════════ 수어지구 / Sign-Language (platform · 팀) ══════
+  // ════════════════════════════ 수어지교 / Sign-Language (platform · 팀) ══════
   "sign-language": {
     tagline: "SIGN LANGUAGE LEARNING · TEAM (BACKEND)",
     problemShot: {label: "영상만 보며 따라하던 기존 학습 방식", ratio: "4/3"},

@@ -216,6 +216,38 @@ export const characterModels: Record<CharacterModelId, CharacterModel> = {
     height: NPC_HEIGHT,
     clipOverrides: {idle: ["breathe"], special: ["collect"]}
   },
+  // ─── EXPERIENCE·LIFE 구역 마무리 (2026-08-27~29) ─────────────────────────
+  //
+  // 이 넷으로 **건물 NPC 캐스팅이 끝났다** — 로봇으로 서 있는 NPC 는 이제 없다.
+  fox: {
+    // 클립: running / walking / breathe / sword_judgment
+    // idle ← 숨쉬기. special ← 검 판결(Professor Foxglove 로 온 모델이라
+    // 특기 클립이 이것뿐이다 — 차분한 동작이 들어오면 갈아끼울 것).
+    url: "/models/characters/fox.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["breathe"], special: ["sword"]}
+  },
+  magpie: {
+    // 클립: running / walking / breathe / ymca_dance
+    // idle ← 숨쉬기. special ← YMCA 춤이 가끔 (UI 를 만든 까치의 흥).
+    url: "/models/characters/magpie.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["breathe"], special: ["ymca"]}
+  },
+  sloth: {
+    // 클립: running / walking / breathe / mage_soell_cast_3 (원본 오타 그대로)
+    // idle ← 숨쉬기. special ← 주문 시전 — 연혁을 읽어 주는 손짓으로 쓴다.
+    url: "/models/characters/sloth.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["breathe"], special: ["mage_"]}
+  },
+  otter: {
+    // 클립: running / walking / breathe / denim_pop_dance / lie_down_hands_spread
+    // idle ← 숨쉬기. special ← 춤 + 벌러덩 눕기(수달이 배를 드러내고 뜨는 그 자세).
+    url: "/models/characters/otter.glb",
+    height: NPC_HEIGHT,
+    clipOverrides: {idle: ["breathe"], special: ["denim", "lie_down"]}
+  },
   jaehoon: {
     // 클립: big_wave_hello / talk_passionately / talk_with_right_hand_open
     //       / walking / running

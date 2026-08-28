@@ -25,7 +25,7 @@ import {useTimeline} from "../../_kit/useTimeline";
 const STEPS = [0, 150, 550, 900, 1300];
 const IDX = {label: 0, heading: 1, body: 2, shots: 3, meta: 4};
 
-const DEPLOY = "https://muscle-up.click";
+// muscle-up.click 은 현재 응답이 없어 링크로 걸지 않는다(위 MetaCell 주석 참고).
 const REPO = "https://github.com/toadsam/Ajou_MuscleUp";
 const VIDEO = "https://www.youtube.com/watch?v=y6pbAoxveQM";
 
@@ -62,7 +62,7 @@ const SHOTS: ShotDef[] = [
   },
   {
     src: "/projects/muscleup/erd.webp",
-    alt: "MySQL ERD",
+    alt: "ERD — 핵심 테이블",
     caption: "ERD — 08장에서 다섯 묶음으로 갈랐던 그 14개 테이블",
     w: 1600,
     h: 1163,
@@ -116,14 +116,14 @@ export function P11Result() {
   );
 
   return (
-    <Page index={11} innerRef={ref} maxWidth="1120px">
+    <Page index={12} innerRef={ref} maxWidth="1120px">
       <Kicker on={on[IDX.label]} instant={instant}>
-        11 · 결과
+        12 · 결과
       </Kicker>
 
       <div className="mt-4">
         <Heading
-          text="지금 켜져 있는 서비스입니다"
+          text="실제로 돌던 서비스입니다"
           on={on[IDX.heading]}
           instant={instant}
         />
@@ -132,8 +132,11 @@ export function P11Result() {
       <div className="mt-6 max-w-[740px]" style={rise(on[IDX.body], instant)}>
         <Body>
           여기까지 오시면서 조작하신 것들은 설명을 위한 재현이었습니다. 아래는
-          실제로 돌아가는 화면이고, 주소를 누르면 지금 바로 들어가실 수 있습니다.
-          지금 위쪽 게이지는{" "}
+          실제로 돌아갔던 화면입니다. 다만{" "}
+          <strong style={{color: "var(--mu-warn)"}}>
+            배포(muscle-up.click)는 현재 내려가 있어
+          </strong>{" "}
+          주소 대신 저장소와 시연 영상을 걸어 둡니다. 지금 위쪽 게이지는{" "}
           <strong style={{color: "var(--mu-accent)"}}>
             Lv.{level + 1} / {LEVEL_TOTAL}
           </strong>{" "}
@@ -163,16 +166,19 @@ export function P11Result() {
         className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4"
         style={rise(on[IDX.meta], instant)}
       >
-        <MetaCell value="배포 중" label="muscle-up.click" />
+        {/* muscle-up.click 은 응답이 없다(2026-08-28 확인). "배포 중" 이라고
+            적고 "서비스 열기" 버튼을 걸어 두면 심사자가 눌렀을 때 바로 들통난다.
+            resume.ts 는 이미 같은 이유로 이 링크를 빼 두었는데 이 방만 남아 있었다. */}
+        <MetaCell value="일시 중단" label="muscle-up.click" />
         <MetaCell value="2025.09 –" label="진행 중" />
         <MetaCell value="1인" label="기획 · UI · API · 인증 · 배포" />
-        <MetaCell value="14" label="MySQL 테이블" />
+        {/* PDF 10쪽 ERD 캡처에 그려진 핵심 테이블 수다. 전체 @Entity 는 31개. */}
+        <MetaCell value="14" label="핵심 테이블 (전체 31)" />
       </div>
 
       <div className="mt-6 flex flex-wrap gap-2">
         {[
-          {href: DEPLOY, label: "서비스 열기 ↗", primary: true},
-          {href: VIDEO, label: "시연 영상 ↗", primary: false},
+          {href: VIDEO, label: "시연 영상 ↗", primary: true},
           {href: REPO, label: "GitHub ↗", primary: false}
         ].map(l => (
           <a
@@ -208,7 +214,10 @@ export function P11Result() {
       {zoom ? (
         <div
           className="fixed inset-0 z-[80] flex cursor-zoom-out items-center justify-center p-4 sm:p-10"
-          style={{background: "rgba(12,3,10,0.93)", backdropFilter: "blur(8px)"}}
+          style={{
+            background: "rgba(12,3,10,0.93)",
+            backdropFilter: "blur(8px)"
+          }}
           onClick={close}
           role="dialog"
           aria-modal="true"

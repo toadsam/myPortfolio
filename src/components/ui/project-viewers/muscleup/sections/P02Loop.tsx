@@ -124,9 +124,9 @@ export function P02Loop() {
   const done = step >= LOOP.length - 1;
 
   return (
-    <Page index={2} innerRef={ref} maxWidth="1120px">
+    <Page index={3} innerRef={ref} maxWidth="1120px">
       <Kicker on={on[IDX.label]} instant={instant}>
-        02 · 서비스 루프
+        03 · 서비스 루프
       </Kicker>
 
       <div className="mt-4">
@@ -194,7 +194,11 @@ export function P02Loop() {
                 color: "var(--mu-accent)"
               }}
             >
-              {step < 0 ? "루프 돌려보기 ▶" : done ? "한 바퀴 끝" : "다음 단계 ▶"}
+              {step < 0
+                ? "루프 돌려보기 ▶"
+                : done
+                ? "한 바퀴 끝"
+                : "다음 단계 ▶"}
             </button>
             {step >= 0 ? (
               <button
@@ -210,7 +214,9 @@ export function P02Loop() {
               </button>
             ) : null}
             <span className="font-mono text-[10px] text-[var(--mu-faint)]">
-              {step >= 0 ? LOOP[step].log : "아직 아무 요청도 나가지 않았습니다"}
+              {step >= 0
+                ? LOOP[step].log
+                : "아직 아무 요청도 나가지 않았습니다"}
             </span>
           </div>
 
@@ -267,7 +273,7 @@ export function P02Loop() {
               <Cm>{"// desc: 체성문 분석 + 4주 루틴 생성"}</Cm>
             </CodeLine>
             <CodeLine n={2} highlight={step >= 1}>
-              {"@PostMapping(\"/analyze\")"}
+              {'@PostMapping("/analyze")'}
             </CodeLine>
             <CodeLine n={3} highlight={step >= 1}>
               {"  String content = aiService.requestCompletion("}
@@ -283,7 +289,7 @@ export function P02Loop() {
             </CodeLine>
             <CodeLine n={7}>{""}</CodeLine>
             <CodeLine n={8} highlight={step >= 2}>
-              {"@PostMapping(\"/plan\")"}
+              {'@PostMapping("/plan")'}
             </CodeLine>
             <CodeLine n={9} highlight={step >= 2}>
               {"  String content = aiService.requestCompletion("}
@@ -311,7 +317,7 @@ export function P02Loop() {
               {"  message.setShareSlug(UUID.randomUUID()"}
             </CodeLine>
             <CodeLine n={18} highlight={step >= 4}>
-              {"      .toString().replace(\"-\", \"\"));"}
+              {'      .toString().replace("-", ""));'}
             </CodeLine>
             <CodeLine n={19}>{"}"}</CodeLine>
           </div>

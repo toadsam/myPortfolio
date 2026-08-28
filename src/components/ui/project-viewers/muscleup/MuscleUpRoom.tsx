@@ -15,6 +15,7 @@ import {muMono, muSans} from "./fonts";
 import "./muscleup.css";
 import {P00Sheet} from "./sections/P00Sheet";
 import {P01Hero} from "./sections/P01Hero";
+import {P02Evolution} from "./sections/P02Evolution";
 import {P02Loop} from "./sections/P02Loop";
 import {P03Refresh} from "./sections/P03Refresh";
 import {P04Auth} from "./sections/P04Auth";
@@ -149,7 +150,10 @@ export function MuscleUpRoom({onClose}: Props) {
     });
   }, []);
 
-  const announce = useCallback((message: string) => setLiveMessage(message), []);
+  const announce = useCallback(
+    (message: string) => setLiveMessage(message),
+    []
+  );
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -254,6 +258,7 @@ export function MuscleUpRoom({onClose}: Props) {
 
         <main>
           <P01Hero />
+          <P02Evolution />
           <P02Loop />
           <P03Refresh />
           <P04Auth />
