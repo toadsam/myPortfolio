@@ -10,6 +10,7 @@ import {
   useTransform
 } from "framer-motion";
 import {useCallback, useEffect, useRef, useState} from "react";
+import {createPortal} from "react-dom";
 import type {DiagramSpec} from "./ArchitectureDiagram";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
@@ -1019,6 +1020,21 @@ export function ImageSlot({
 }) {
   const [open, setOpen] = useState(false);
   const ratio = spec.ratio ?? "16/9";
+  // 확대 창은 화면이 허락하는 만큼 커져야 한다. 가로만 제한하면 세로로 긴
+  // 그림이 화면 밖으로 나가고, 세로만 제한하면 가로로 긴 그림이 작아진다.
+  // 비율을 알고 있으니 둘 다 지킨 최대 크기를 직접 계산한다.
+  const ratioNum = (() => {
+    const [w, h] = ratio.split("/").map(Number);
+    return h > 0 ? w / h : 16 / 9;
+  })();
+  // 확대 창은 **body 로 내보내야** 화면 전체를 쓴다.
+  // position:fixed 는 조상에 transform 이 있으면 화면이 아니라 그 조상을
+  // 기준으로 잡힌다. 이 화면은 framer-motion 이 곳곳에 transform 을 걸어
+  // 두어서, inset-0 짜리 확대 창이 실제로는 본문 칸(1216x805) 안에 갇혀
+  // 있었다. 그래서 전체폭으로 그린 다이어그램은 **누르면 오히려 작아졌다**
+  // (1214 -> 1134). 포털로 빼면 조상의 transform 과 무관해진다.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!open) return;
@@ -1088,51 +1104,74 @@ export function ImageSlot({
         ) : null}
       </motion.figure>
 
-      <AnimatePresence>
-        {open ? (
-          <motion.div
-            className="fixed inset-0 z-[80] flex cursor-zoom-out items-center justify-center p-6 sm:p-10"
-            style={{
-              background: "rgba(2,4,8,0.86)",
-              backdropFilter: "blur(4px)"
-            }}
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
-            exit={{opacity: 0}}
-            onClick={() => setOpen(false)}
-          >
-            <motion.figure
-              className="relative m-0 w-full max-w-5xl overflow-hidden rounded-2xl border"
-              style={{borderColor: `${theme.primary}40`, background: "#070d12"}}
-              initial={{scale: 0.92, opacity: 0}}
-              animate={{scale: 1, opacity: 1}}
-              exit={{scale: 0.92, opacity: 0}}
-              transition={{type: "spring", stiffness: 260, damping: 26}}
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="relative w-full" style={{aspectRatio: ratio}}>
-                {spec.src ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={spec.src}
-                    alt={spec.label}
-                    className="h-full w-full object-contain"
-                  />
-                ) : (
-                  <ImgPlaceholder theme={theme} spec={spec} large />
-                )}
-              </div>
-              <figcaption
-                className="flex items-center justify-between border-t px-4 py-3 font-mono text-[12px] text-white/55"
-                style={{borderColor: `${theme.primary}20`}}
-              >
-                <span>{spec.caption ?? spec.label}</span>
-                <span className="text-white/30">ESC · 클릭으로 닫기</span>
-              </figcaption>
-            </motion.figure>
-          </motion.div>
-        ) : null}
-      </AnimatePresence>
+      {mounted
+        ? createPortal(
+            <AnimatePresence>
+              {open ? (
+                <motion.div
+                  className="fixed inset-0 z-[80] flex cursor-zoom-out items-center justify-center p-6 sm:p-10"
+                  style={{
+                    background: "rgba(2,4,8,0.86)",
+                    backdropFilter: "blur(4px)"
+                  }}
+                  initial={{opacity: 0}}
+                  animate={{opacity: 1}}
+                  exit={{opacity: 0}}
+                  onClick={() => setOpen(false)}
+                >
+                  <motion.figure
+                    className="relative m-0 overflow-hidden rounded-2xl border"
+                    style={{
+                      borderColor: `${theme.primary}40`,
+                      background: "#070d12",
+                      // 예전엔 max-w-5xl(1024px) 고정이었다. 갤러리의 전체폭
+                      // 다이어그램은 이미 1214px 로 그려져서, 확대를 누르면
+                      // **더 작아졌다.** 이제 가로 95vw 와 세로 80vh 중 먼저
+                      // 걸리는 쪽까지 커진다.
+                      width: `min(95vw, ${(ratioNum * 80).toFixed(1)}vh)`
+                    }}
+                    initial={{scale: 0.92, opacity: 0}}
+                    animate={{scale: 1, opacity: 1}}
+                    exit={{scale: 0.92, opacity: 0}}
+                    transition={{type: "spring", stiffness: 260, damping: 26}}
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <div
+                      className="relative w-full"
+                      style={{aspectRatio: ratio}}
+                    >
+                      {spec.src ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={spec.src}
+                          alt={spec.label}
+                          className="h-full w-full object-contain"
+                        />
+                      ) : (
+                        <ImgPlaceholder theme={theme} spec={spec} large />
+                      )}
+                    </div>
+                    {/* 캡션이 길면 닫기 안내를 밀어내 두 줄로 쪼개지고 서로
+                        겹쳤다. 캡션만 줄어들게 하고 안내는 한 줄로 고정한다.
+                        한글 캡션이라 모노도 뺀다(자간이 고정폭에 눌린다). */}
+                    <figcaption
+                      className="flex items-start justify-between gap-6 border-t px-4 py-3 text-[12px] leading-relaxed text-white/70"
+                      style={{borderColor: `${theme.primary}20`}}
+                    >
+                      <span className="min-w-0 flex-1">
+                        {spec.caption ?? spec.label}
+                      </span>
+                      <span className="mono shrink-0 whitespace-nowrap text-[11px] text-white/40">
+                        ESC · 클릭으로 닫기
+                      </span>
+                    </figcaption>
+                  </motion.figure>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>,
+            document.body
+          )
+        : null}
     </>
   );
 }
