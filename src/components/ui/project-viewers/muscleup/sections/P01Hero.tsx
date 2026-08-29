@@ -292,7 +292,9 @@ export function P01Hero() {
             <MetaCell value="1인" label="개인 개발" />
             {/* DB 는 프로파일마다 다르다 — 로컬 MySQL, 운영 PostgreSQL. */}
             <MetaCell value="Spring Boot" label="React · MySQL / PostgreSQL" />
-            <MetaCell value="AWS" label="S3 · CloudFront · RDS" />
+            {/* RDS 는 1.0 때 쓰다 주석 처리된 옛 로컬 설정에만 남아 있다 —
+                운영 DB 는 PostgreSQL 이다(P09Infra 와 같은 사실). */}
+            <MetaCell value="AWS" label="S3 · CloudFront" />
           </div>
 
           <div className="mt-7 flex flex-wrap gap-2">
