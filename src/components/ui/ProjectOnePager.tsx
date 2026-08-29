@@ -19,8 +19,9 @@ import type {
 } from "./project-viewers/richContent/shared";
 import {
   CodeLine,
-  CountUp,
-  ImageSlot
+  CompareBars,
+  ImageSlot,
+  MockScreen
 } from "./project-viewers/richContent/shared";
 import "./ProjectDetail.css";
 
@@ -250,6 +251,9 @@ function Shot({
   if (spec?.src) {
     return <ImageSlot className={className} spec={spec} theme={theme} />;
   }
+  // 슬롯 자체가 없으면 아무것도 그리지 않는다. spec 은 있는데 src 만 없으면
+  // "채울 예정" 이므로 점선 상자를 남긴다.
+  if (!spec) return null;
   return (
     <div
       className={`placeholder-box ${className}`}
@@ -260,7 +264,7 @@ function Shot({
         className={`${big ? "h-12 w-12" : "h-8 w-8"} mb-2 opacity-20`}
         name={iconName}
       />
-      <p className="px-4 text-center text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.45)] md:text-xs">
+      <p className="px-4 text-center text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.72)] md:text-xs">
         {spec?.label ?? "이미지 자리"}
       </p>
     </div>
@@ -415,7 +419,7 @@ export function ProjectOnePager({
         <dl className="flex flex-wrap gap-x-8 gap-y-3 rounded-lg border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] px-6 py-4">
           {factRows.map(m => (
             <div key={m.label}>
-              <dt className="mono text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.6)]">
+              <dt className="mono text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.74)]">
                 {m.label}
               </dt>
               <dd className="text-sm text-gray-200">{m.value}</dd>
@@ -509,7 +513,7 @@ export function ProjectOnePager({
               목록으로
             </button>
 
-            <div className="mono hidden items-center gap-6 text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.45)] md:flex">
+            <div className="mono hidden items-center gap-6 text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.72)] md:flex">
               {/* 상태는 `demo.live` 하나만 근거로 삼는다. 예전엔 "Deployed" 가
                   9개 전부에 하드코딩돼, 배포라는 말이 성립하지 않는 Unity
                   게임에까지 붙었다. 근거가 없으면 아무 말도 하지 않는다. */}
@@ -526,7 +530,7 @@ export function ProjectOnePager({
 
             <div className="flex shrink-0 items-center gap-2">
               {typeof index === "number" && typeof total === "number" ? (
-                <span className="mono hidden text-[11px] text-[rgb(169,189,214,0.45)] sm:inline">
+                <span className="mono hidden text-[11px] text-[rgb(169,189,214,0.72)] sm:inline">
                   {index + 1} / {total}
                 </span>
               ) : null}
@@ -565,16 +569,25 @@ export function ProjectOnePager({
           </div>
         </nav>
 
-        <main className="mx-auto max-w-7xl space-y-24 px-5 pb-20 pt-10 md:px-8 md:space-y-32">
+        <main className="mx-auto max-w-7xl space-y-20 px-5 pb-20 pt-10 md:space-y-24 md:px-8">
           {/* ══════════ HERO ══════════ */}
           {/* 히어로는 늘 12단이다. 오른쪽 5칸에 들어가는 게 달라질 뿐 —
               데모가 없으면 대표 화면(Shot), 있으면 사실표·뱃지·CTA 가 온다.
               데모를 오른쪽에 넣지 않는 이유: 데모 내부가 3단 그리드라
               약 500px 칸에서는 부스 이름이 줄바꿈돼 찌그러진다. */}
-          <section className="anim-fade-up grid grid-cols-1 items-start gap-12 lg:grid-cols-12">
-            <div className="anim-slide-left delay-1 space-y-8 lg:col-span-7">
-              <div>
-                <h1 className="op-title mb-4 text-4xl md:text-5xl lg:text-7xl">
+          <section className="anim-fade-up space-y-10 md:space-y-12">
+            {/* 윗단: 제목과 대표 화면을 마주 놓는다.
+                예전엔 왼쪽 7칸에 제목·요약·메타·칩·버튼을 다 넣고 오른쪽
+                5칸에 이미지 하나만 뒀다. 왼쪽이 900px 인데 오른쪽 이미지는
+                270px 라, **오른쪽 열 아래 2/3 가 통째로 빈 공간**이었다.
+                제목과 이미지를 같은 줄에 두면 둘 다 자기 무게를 갖는다. */}
+            <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
+              <div
+                className={`anim-slide-left delay-1 ${
+                  hasHeroShot ? "lg:col-span-6" : "lg:col-span-12"
+                }`}
+              >
+                <h1 className="op-title mb-4 text-4xl md:text-5xl lg:text-6xl">
                   {titleMatch ? (
                     <>
                       {titleMatch[1]}{" "}
@@ -589,9 +602,24 @@ export function ProjectOnePager({
                 </p>
               </div>
 
-              {/* 핵심 요약 */}
-              <div className="rounded-lg border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6">
-                <div className="section-label mb-4">Core Summary</div>
+              {hasHeroShot ? (
+                <div className="anim-slide-right delay-2 lg:col-span-6">
+                  <Shot
+                    big
+                    className="w-full rounded-xl"
+                    ratio="16/9"
+                    spec={data.heroImage}
+                    theme={theme}
+                  />
+                </div>
+              ) : null}
+            </div>
+
+            {/* 아랫단: 요약표(7) + 사실 묶음(5). 요약표가 전체폭에 가까워져
+                「왜」 행이 두 줄로 접히지 않는다. */}
+            <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
+              <div className="anim-slide-left delay-2 rounded-lg border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6 lg:col-span-7">
+                <h2 className="section-label mb-4">Core Summary</h2>
                 <table className="cyber-table w-full text-sm">
                   <tbody>
                     {data.tldr.map(r => (
@@ -610,33 +638,45 @@ export function ProjectOnePager({
                 </table>
               </div>
 
-              {asideOnRight ? null : heroAside}
-            </div>
-
-            {/* 오른쪽 5칸 — 대표 이미지가 있으면 이미지, 없으면 사실 묶음.
-                이미지 쪽에 높이를 강제하지 않는 이유: ImageSlot 안쪽이
-                `aspectRatio` 로 16:9 를 잡는데 바깥에서 h-full/min-h 를 주면
-                그 차이만큼 이미지 아래가 검게 남았다 (총학생회에서 약 400px). */}
-            {asideOnRight ? (
-              <div className="anim-slide-right delay-2 space-y-8 lg:col-span-5">
+              <div className="anim-slide-right delay-3 space-y-6 lg:col-span-5">
                 {heroAside}
               </div>
-            ) : (
-              <div className="anim-slide-right delay-2 lg:col-span-5">
-                <Shot
-                  big
-                  className="w-full rounded-xl"
-                  ratio="16/9"
-                  spec={data.heroImage}
-                  theme={theme}
-                />
-              </div>
-            )}
+            </div>
           </section>
+
+          {/* ══════════ 핵심 지표 ══════════
+              결과 섹션(문서 76% 지점)에 있던 것을 여기로 올렸다. 이 페이지는
+              11,000px 이라 3화면 보고 닫는 사람이 숫자를 한 번도 못 봤다.
+              출처 줄을 반드시 붙여 둔다 — 숫자만 큰 타일은 광고로 읽힌다. */}
+          <section className="reveal space-y-6">
+            <h2 className="section-label">Key Numbers</h2>
+            <div className="stagger-children grid grid-cols-2 gap-6 lg:grid-cols-4">
+              {data.metrics.map(m => (
+                <div className="stat-tile reveal" key={m.l}>
+                  <div className="mono mb-1 text-[11px] uppercase tracking-widest text-muted">
+                    {m.l}
+                  </div>
+                  {/* 카운트업 연출을 뺐다. 이 페이지의 주제가 "숫자에 출처가
+                      있다" 인데, 굴러가는 도중 "약 49명"(실제 50) 처럼 **틀린
+                      값이 보인다.** 정확한 값이 요점인 자리에서 연출이 값을
+                      깎아먹으면 연출을 버리는 게 맞다. */}
+                  <span className="mono block text-3xl font-black text-accent md:text-4xl">
+                    {m.n}
+                  </span>
+                </div>
+              ))}
+            </div>
+            {data.metricsNote ? (
+              <p className="mono text-[11px] leading-relaxed text-muted">
+                {data.metricsNote}
+              </p>
+            ) : null}
+          </section>
+
           {/* ══════════ 라이브 데모 ══════════ */}
           {Signature ? (
-            <section className="reveal space-y-6">
-              <div className="section-label">Live Demo</div>
+            <section className="demo-stage reveal space-y-6">
+              <h2 className="section-label">Live Demo</h2>
               {/* 전체 폭(1,216px)에 15px 글자면 한 줄 80자가 넘는다 — 눈이
                   다음 줄 첫머리를 못 찾는다. 한국어는 35~45자가 적당하다. */}
               <p className="max-w-2xl text-sm text-gray-400">
@@ -648,31 +688,15 @@ export function ProjectOnePager({
           ) : null}
 
           {/* ══════════ 문제 정의 ══════════ */}
-          <section className="reveal grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-16">
-            <div className="reveal-left order-2 space-y-4 lg:order-1 lg:col-span-5">
-              <Shot
-                className="w-full"
-                ratio="4/3"
-                spec={data.problemShot}
-                theme={theme}
-              />
-              {/* 리서치 인용 — 목업엔 없지만 근거 자료라 이미지 아래에 배치 */}
-              {data.research.quotes.map(q => (
-                <blockquote
-                  className="border-l-2 border-[rgb(122,90,56,0.45)] pl-4 text-sm italic leading-relaxed text-gray-500"
-                  key={q.who}
-                >
-                  “{q.q}”
-                  <span className="mono mt-1 block not-italic text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.45)]">
-                    — {q.who}
-                  </span>
-                </blockquote>
-              ))}
-            </div>
-
-            <div className="reveal-right order-1 space-y-8 lg:order-2 lg:col-span-7">
-              <div className="section-label">Context</div>
-              <div className="space-y-6">
+          {/* 예전엔 왼쪽 5칸에 problemShot + 인용, 오른쪽 7칸에 Problem 이었다.
+              그 이미지를 Before→After 로 옮기면서 왼쪽에 인용문만 남았고,
+              위아래로 400px 가까운 구멍이 생겼다. 게다가 사용자의 말이
+              Problem 문단과 떨어져 있어 **근거로 읽히지 않았다.**
+              문제 → 사용자의 말(근거) → 가설 순서로 한 흐름에 세운다. */}
+          <section className="reveal space-y-8">
+            <h2 className="section-label">Context</h2>
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
+              <div className="reveal-left space-y-6 lg:col-span-7">
                 <h3 className="flex items-center gap-3 text-2xl font-bold md:text-3xl">
                   <Icon className="h-7 w-7 text-red-500" name="alert" />
                   Problem
@@ -680,12 +704,28 @@ export function ProjectOnePager({
                 <p className="text-base leading-relaxed text-gray-400 md:text-lg">
                   {data.problem}
                 </p>
+                {/* 사용자가 실제로 한 말. Problem 바로 밑에 둬야 근거로 읽힌다. */}
+                <div className="space-y-4 pt-2">
+                  {data.research.quotes.map(q => (
+                    <blockquote
+                      className="border-l-2 border-[rgb(122,90,56,0.45)] pl-4 text-sm italic leading-relaxed text-gray-500"
+                      key={q.who}
+                    >
+                      “{q.q}”
+                      <span className="mono mt-1 block not-italic text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.72)]">
+                        — {q.who}
+                      </span>
+                    </blockquote>
+                  ))}
+                </div>
+              </div>
 
-                <div className="highlight-box mt-12 p-6 md:p-8">
+              <div className="reveal-right lg:col-span-5">
+                <div className="highlight-box p-6 md:p-8">
                   <h4 className="mono mb-4 text-xs uppercase tracking-widest text-accent">
                     Hypothesis
                   </h4>
-                  <blockquote className="text-lg font-light italic leading-snug text-white md:text-2xl">
+                  <blockquote className="text-lg font-light italic leading-snug text-white md:text-xl">
                     {data.hypothesis}
                   </blockquote>
                 </div>
@@ -702,7 +742,7 @@ export function ProjectOnePager({
               note 가 그림보다 중요하다** — 그림은 근거고, 문장이 주장이다. */}
           {data.beforeAfter ? (
             <section className="reveal space-y-8 md:space-y-10">
-              <div className="section-label">Before → After</div>
+              <h2 className="section-label">Before → After</h2>
               <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_auto_1fr] lg:gap-8">
                 {(
                   [
@@ -767,6 +807,12 @@ export function ProjectOnePager({
                           />
                         </div>
                       ) : null}
+                      {/* 캡처가 남아 있지 않은 쪽. 없는 화면을 그럴듯한 가짜
+                          스크린샷으로 채우면 확대하는 순간 들통난다 —
+                          창 제목에 출처(파일·커밋)를 박은 요약 패널로 그린다. */}
+                      {!side.shot && side.screen ? (
+                        <MockScreen spec={side.screen} theme={theme} />
+                      ) : null}
                       {side.note ? (
                         <p className="text-sm leading-relaxed text-gray-400">
                           {side.note}
@@ -781,7 +827,7 @@ export function ProjectOnePager({
 
           {/* ══════════ 아키텍처 ══════════ */}
           <section className="reveal space-y-12 md:space-y-16">
-            <div className="section-label">Architecture &amp; Design</div>
+            <h2 className="section-label">Architecture &amp; Design</h2>
 
             <div className="stagger-children grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               {data.architecture.map((layer, i) => {
@@ -805,9 +851,9 @@ export function ProjectOnePager({
                         name={ARCH_ICONS[i % ARCH_ICONS.length]}
                       />
                     </div>
-                    <h4 className="mb-2 text-sm font-bold uppercase tracking-wider">
+                    <h3 className="mb-2 text-sm font-bold uppercase tracking-wider">
                       {layer.tag}
-                    </h4>
+                    </h3>
                     <p
                       className={`text-xs leading-relaxed ${
                         hero ? "font-bold text-gray-400" : "text-gray-500"
@@ -827,12 +873,22 @@ export function ProjectOnePager({
             {data.diagrams?.map(dg => (
               // 좁은 화면에서 폭에 맞추면 350px 로 줄어 글자가 3px 이 된다.
               // 최소 폭을 주고 가로로 굴린다 — 아래 결정 표와 같은 방식.
-              <div
-                className="reveal -mx-5 overflow-x-auto px-5 md:mx-0 md:px-0"
-                key={dg.title ?? dg.caption}
-              >
-                <div className="min-w-[880px]">
-                  <ArchitectureDiagram spec={dg} theme={theme} />
+              <div className="reveal" key={dg.title ?? dg.caption}>
+                {/* 좁은 화면에서는 가로로 굴러간다. 굴러간다는 걸 말해 주지
+                    않으면 잘린 그림으로 보이고, tabIndex 가 없으면 키보드로는
+                    아예 오른쪽을 볼 수 없다(스크롤 영역의 기본 규칙). */}
+                <p className="mono mb-2 text-[11px] text-muted md:hidden">
+                  → 옆으로 밀면 전체 구성도가 보입니다
+                </p>
+                <div
+                  aria-label={dg.title ?? "시스템 구성도"}
+                  className="-mx-5 overflow-x-auto px-5 md:mx-0 md:px-0"
+                  role="region"
+                  tabIndex={0}
+                >
+                  <div className="min-w-[880px]">
+                    <ArchitectureDiagram spec={dg} theme={theme} />
+                  </div>
                 </div>
               </div>
             )) ?? null}
@@ -841,7 +897,15 @@ export function ProjectOnePager({
               <h3 className="text-xl font-bold tracking-tight md:text-2xl">
                 Technical Decision Table
               </h3>
-              <div className="overflow-x-auto rounded-lg border border-[rgb(122,90,56,0.45)]">
+              <p className="mono -mt-4 text-[11px] text-muted md:hidden">
+                → 옆으로 밀면 「이유 / 대안」 칸이 보입니다
+              </p>
+              <div
+                aria-label="기술 의사결정 표"
+                className="overflow-x-auto rounded-lg border border-[rgb(122,90,56,0.45)]"
+                role="region"
+                tabIndex={0}
+              >
                 <table className="w-full min-w-[640px] border-collapse text-left text-sm">
                   <thead className="mono bg-[rgb(11,22,38,0.75)] text-[11px] uppercase tracking-widest text-accent">
                     <tr>
@@ -878,7 +942,7 @@ export function ProjectOnePager({
           {/* ══════════ 핵심 구현 ══════════ */}
           {data.coreCode.length > 0 ? (
             <section className="reveal space-y-12">
-              <div className="section-label">Implementation</div>
+              <h2 className="section-label">Implementation</h2>
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 {data.coreCode.map((c, i) => (
                   <div
@@ -901,19 +965,29 @@ export function ProjectOnePager({
           {/* ══════════ 트러블슈팅 ══════════ */}
           {data.challenges.length > 0 ? (
             <section className="reveal space-y-12">
-              <div className="section-label">Troubleshooting</div>
+              <h2 className="section-label">Troubleshooting</h2>
 
               <div className="stagger-children grid grid-cols-1 gap-8 lg:grid-cols-2">
-                {data.challenges.map(c => (
+                {data.challenges.map((c, ci) => (
                   <div
-                    className="reveal flex flex-col overflow-hidden rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)]"
+                    className={`reveal flex flex-col overflow-hidden rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] ${
+                      // 2칸 격자에서 항목이 홀수면 마지막 줄 오른쪽이 통째로
+                      // 빈다(화면 절반). 마지막 하나를 펴서 그 구멍을 없앤다.
+                      ci === data.challenges.length - 1 &&
+                      data.challenges.length % 2 === 1
+                        ? "lg:col-span-2"
+                        : ""
+                    }`}
                     key={c.title}
                   >
                     <div className="border-b border-red-500/20 bg-red-500/10 p-6">
-                      <h5 className="mono mb-2 text-[11px] uppercase tracking-widest text-red-500">
+                      <p
+                        aria-hidden="true"
+                        className="mono mb-2 text-[11px] uppercase tracking-widest text-red-300"
+                      >
                         [PROBLEM]
-                      </h5>
-                      <p className="font-bold text-gray-200">{c.title}</p>
+                      </p>
+                      <h3 className="font-bold text-gray-200">{c.title}</h3>
                     </div>
                     <div className="flex-grow space-y-4 p-6">
                       <p className="text-sm leading-relaxed text-gray-400">
@@ -936,6 +1010,28 @@ export function ProjectOnePager({
                 ))}
               </div>
 
+              {/* 측정값은 산문에서 꺼내 막대로 세운다. 위 카드의 문단에
+                  숫자가 아홉 개 묻혀 있어 아무도 안 읽었다. 맨 아랫줄이
+                  논점이다 — 쿼리 막대는 사라지는데 페이지 막대는 3분의 1만
+                  준다. 그림이 문장보다 그걸 빨리 말한다. */}
+              {data.perf ? (
+                <div className="reveal rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6 md:p-8">
+                  <h3 className="mono mb-6 text-xs uppercase tracking-widest text-accent">
+                    인덱스 전 → 후 · 실측
+                  </h3>
+                  <CompareBars
+                    lowerBetter
+                    rows={data.perf.rows}
+                    theme={theme}
+                  />
+                  {data.perf.note ? (
+                    <p className="mt-6 border-t border-[rgb(122,90,56,0.26)] pt-4 text-[12px] leading-relaxed text-muted">
+                      {data.perf.note}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
+
               <Shot
                 big
                 className="w-full rounded-xl"
@@ -951,7 +1047,7 @@ export function ProjectOnePager({
 
           {/* ══════════ 결과 & 회고 ══════════ */}
           <section className="reveal space-y-12 md:space-y-16">
-            <div className="section-label">Results &amp; Retrospective</div>
+            <h2 className="section-label">Results &amp; Retrospective</h2>
 
             {/* 사용자 반응 — 지표보다 먼저 온다.
                 "몇 명이 왔다" 보다 "그래서 무슨 일이 벌어졌다" 가 세다. */}
@@ -966,33 +1062,14 @@ export function ProjectOnePager({
               </blockquote>
             ) : null}
 
-            {/* 지표 */}
-            <div className="stagger-children grid grid-cols-2 gap-6 lg:grid-cols-4">
-              {data.metrics.map(m => (
-                <div className="stat-tile reveal" key={m.l}>
-                  <div className="mono mb-1 text-[11px] uppercase tracking-widest text-muted">
-                    {m.l}
-                  </div>
-                  <CountUp
-                    className="mono block text-3xl font-black text-accent md:text-4xl"
-                    value={m.n}
-                  />
-                </div>
-              ))}
-            </div>
-
-            {/* 지표 출처·기간 */}
-            {data.metricsNote ? (
-              <p className="mono -mt-6 text-[11px] text-muted">
-                {data.metricsNote}
-              </p>
-            ) : null}
-
             {/* 결과 스크린샷 */}
             {data.gallery && data.gallery.length > 0 ? (
-              <div className="stagger-children grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="stagger-children grid grid-cols-1 gap-6 md:grid-cols-2">
                 {data.gallery.map(g => (
-                  <div className="reveal" key={g.label}>
+                  <div
+                    className={`reveal ${g.wide ? "md:col-span-2" : ""}`}
+                    key={g.label}
+                  >
                     <Shot
                       className="w-full"
                       ratio={g.ratio ?? "16/10"}
@@ -1035,11 +1112,11 @@ export function ProjectOnePager({
                   className="reveal rounded-lg border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6"
                   key={label}
                 >
-                  <h6
+                  <h3
                     className={`mono mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${color}`}
                   >
                     <Icon className="h-4 w-4" name={icon} /> {label}
-                  </h6>
+                  </h3>
                   <ul className="space-y-3 text-sm leading-relaxed text-gray-400">
                     {items.map(it => (
                       <li key={it}>• {it}</li>
@@ -1072,7 +1149,7 @@ export function ProjectOnePager({
                   "Fullstack Developer: Sam Kim" 이 그대로 남아, 프로젝트 상세
                   9개 전부의 푸터에 다른 사람 이름이 찍히고 있었다.
                   이제 이력서 데이터 한 곳(`hero`)에서 가져온다. */}
-              <p className="mono text-xs uppercase tracking-widest text-[rgb(169,189,214,0.45)]">
+              <p className="mono text-xs uppercase tracking-widest text-[rgb(169,189,214,0.72)]">
                 {hero.name} · {hero.roleTag}
               </p>
             </div>
@@ -1083,7 +1160,7 @@ export function ProjectOnePager({
               <a
                 // 이메일은 uppercase 를 걸지 않는다 — 대문자로 찍힌 주소는
                 // 동작은 해도 잘못 옮겨 적기 쉽다.
-                className="mono flex items-center gap-2 text-[11px] tracking-wider text-[rgb(169,189,214,0.6)] transition-colors hover:text-accent"
+                className="mono flex items-center gap-2 text-[11px] tracking-wider text-[rgb(169,189,214,0.74)] transition-colors hover:text-accent"
                 href={`mailto:${contact.email}`}
               >
                 <span className="h-2 w-2 rounded-full bg-accent" />

@@ -55,6 +55,18 @@ export interface ImgSpec {
   ratio?: string;
   /** 이미지 하단 캡션 */
   caption?: string;
+  /**
+   * 채움 방식. 기본 "cover" 는 상자 비율에 맞춰 **잘라낸다** — 사진은 괜찮지만
+   * 다이어그램·ERD 는 표 이름과 화살표가 잘려 나간다(실측: ERD 원본 1.38 을
+   * 1.60 상자에 넣어 14% 잘림). 그림에는 "contain" 을 줄 것.
+   */
+  fit?: "cover" | "contain";
+  /**
+   * 갤러리에서 한 줄(3칸)을 다 쓴다. 3칸 격자의 한 칸은 387px 인데,
+   * 1600×1000 짜리 시퀀스 다이어그램을 거기 넣으면 **0.24배**로 줄어
+   * 글자를 읽을 수 없다(실측). 그림은 읽으라고 그린 것이다.
+   */
+  wide?: boolean;
 }
 
 export interface RichProject {
@@ -159,7 +171,7 @@ export function CodeLine({line, theme}: {line: string; theme: ProjectTheme}) {
   while ((m = re.exec(line))) {
     if (m.index > last) segs.push({text: line.slice(last, m.index)});
     let color: string | undefined;
-    if (m[1]) color = "#5e8c6a";
+    if (m[1]) color = "#74a888";
     else if (m[2]) color = "#d9a45b";
     else if (m[3]) color = theme.primary;
     else if (m[4]) color = "#b58cf0";
@@ -325,7 +337,7 @@ export function MockScreen({
         <span className="h-2 w-2 rounded-full bg-[#ff5f56]" />
         <span className="h-2 w-2 rounded-full bg-[#ffbd2e]" />
         <span className="h-2 w-2 rounded-full bg-[#27c93f]" />
-        <div className="ml-2 flex-1 truncate rounded bg-white/5 px-2 py-0.5 font-mono text-[10px] text-white/35">
+        <div className="ml-2 flex-1 truncate rounded bg-white/5 px-2 py-0.5 font-mono text-[10px] text-white/70">
           {spec.title}
         </div>
       </div>
@@ -406,11 +418,11 @@ export function MockScreen({
                 className="rounded-lg border p-2"
                 style={{borderColor: `${theme.primary}1a`}}
               >
-                <p className="font-mono text-[10px] font-bold text-white/75">
+                <p className="font-mono text-[11px] font-bold text-white/90">
                   {c.l}
                 </p>
                 {c.sub ? (
-                  <p className="mt-0.5 font-mono text-[8px] text-white/40">
+                  <p className="mt-0.5 font-mono text-[10px] leading-snug text-white/65">
                     {c.sub}
                   </p>
                 ) : null}
@@ -606,7 +618,7 @@ function ChallengeCard({
   );
 }
 
-function CompareBars({
+export function CompareBars({
   theme,
   rows,
   lowerBetter
@@ -619,9 +631,14 @@ function CompareBars({
     <div className="flex flex-col gap-4">
       {rows.map((r, i) => {
         const peak = Math.max(r.before, r.after);
-        const delta = lowerBetter
-          ? Math.round((1 - r.after / r.before) * 100)
-          : Math.round((r.after / r.before - 1) * 100);
+        // 낮을수록 좋은 값에서 "+100%" 는 두 번 틀린다 — 증가처럼 읽히고,
+        // 실제 99.8% 를 100%(= 0 이 됐다) 로 부풀린다. 부호를 빼고,
+        // 99% 를 넘으면 소수점 한 자리까지 남긴다.
+        const raw = lowerBetter
+          ? (1 - r.after / r.before) * 100
+          : (r.after / r.before - 1) * 100;
+        const delta =
+          lowerBetter && raw > 99 ? Number(raw.toFixed(1)) : Math.round(raw);
         return (
           <div key={r.label}>
             <div className="mb-1.5 flex items-center justify-between">
@@ -632,7 +649,7 @@ function CompareBars({
                 className="font-mono text-[11px] font-black"
                 style={{color: theme.primary}}
               >
-                {delta >= 0 ? "+" : ""}
+                {lowerBetter ? "" : delta >= 0 ? "+" : ""}
                 {delta}% {lowerBetter ? "↓" : "↑"}
               </span>
             </div>
@@ -1025,6 +1042,18 @@ export function ImageSlot({
         transition={{duration: 0.45}}
         whileHover={{y: -4, boxShadow: `0 12px 32px ${theme.primary}22`}}
         onClick={() => setOpen(true)}
+        /* 확대가 마우스 전용이었다. 갤러리 그림은 0.24~0.36배로 줄어 있어서
+           확대 없이는 글자를 못 읽는다 — 키보드 사용자는 다이어그램 9장을
+           하나도 볼 수 없었다는 뜻이다. */
+        role="button"
+        tabIndex={0}
+        aria-label={`${spec.label} — 크게 보기`}
+        onKeyDown={e => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setOpen(true);
+          }
+        }}
       >
         <div
           className="relative w-full overflow-hidden"
@@ -1035,13 +1064,15 @@ export function ImageSlot({
             <img
               src={spec.src}
               alt={spec.label}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+              className={`h-full w-full transition-transform duration-500 group-hover:scale-[1.04] ${
+                spec.fit === "contain" ? "object-contain" : "object-cover"
+              }`}
             />
           ) : (
             <ImgPlaceholder theme={theme} spec={spec} />
           )}
           <span
-            className="pointer-events-none absolute right-2 top-2 rounded px-2 py-1 font-mono text-[10px] font-bold opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            className="pointer-events-none absolute right-2 top-2 rounded px-2 py-1 font-mono text-[10px] font-bold opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 [@media(hover:none)]:opacity-100"
             style={{background: "rgba(0,0,0,0.55)", color: theme.accent}}
           >
             ⤢ 확대
@@ -1049,7 +1080,7 @@ export function ImageSlot({
         </div>
         {spec.caption ? (
           <figcaption
-            className="border-t px-4 py-2 font-mono text-[11px] text-white/45"
+            className="border-t px-4 py-3 text-[12px] leading-relaxed text-white/70"
             style={{borderColor: `${theme.primary}15`}}
           >
             {spec.caption}
@@ -1120,7 +1151,10 @@ export function CountUp({
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, {once: true, margin: "-30px"});
   const motionVal = useMotionValue(0);
-  const match = value.match(/-?\d+\.?\d*/);
+  // 구분자가 들어간 값("3 / 4", "8 × 5", "4 → 8")은 굴리지 않는다 —
+  // 굴러가는 중간이 "0 / 4"(하나도 안 했다)로 읽혀 뜻이 뒤집힌다.
+  const compound = /[/×→~]/.test(value);
+  const match = compound ? null : value.match(/-?\d+\.?\d*/);
   const target = match ? parseFloat(match[0]) : 0;
   const decimals = match ? (match[0].split(".")[1] ?? "").length : 0;
   const prefix = match ? value.slice(0, match.index) : value;

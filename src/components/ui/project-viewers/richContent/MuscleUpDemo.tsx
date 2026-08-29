@@ -88,7 +88,7 @@ export function MuscleUpDemo({theme}: {theme: ProjectTheme}) {
                 {level}
               </motion.div>
               <div>
-                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/40">
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/65">
                   LEVEL
                 </p>
                 <p className="font-mono text-sm font-black text-white">
@@ -106,7 +106,7 @@ export function MuscleUpDemo({theme}: {theme: ProjectTheme}) {
               >
                 🔥 {streak}일
               </motion.p>
-              <p className="font-mono text-[10px] text-white/40">출석 스트릭</p>
+              <p className="font-mono text-[10px] text-white/65">출석 스트릭</p>
             </div>
           </div>
 
