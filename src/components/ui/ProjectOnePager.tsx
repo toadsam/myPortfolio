@@ -21,6 +21,7 @@ import {
   CodeLine,
   CompareBars,
   ImageSlot,
+  isLightboxOpen,
   MockScreen
 } from "./project-viewers/richContent/shared";
 import "./ProjectDetail.css";
@@ -370,6 +371,10 @@ export function ProjectOnePager({
   useEffect(() => {
     if (!project) return;
     function onKey(e: KeyboardEvent) {
+      // 그림 확대창이 떠 있으면 그쪽이 먼저다. 예전엔 ESC 한 번에 확대창과
+      // 이 화면이 같이 닫혀 목록까지 나갔고, 화살표는 확대 중에 뒤에서
+      // 프로젝트를 넘겼다.
+      if (isLightboxOpen()) return;
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowRight") onNext?.();
       if (e.key === "ArrowLeft") onPrev?.();

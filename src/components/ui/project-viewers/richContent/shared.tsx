@@ -1009,6 +1009,21 @@ function ImgPlaceholder({
   );
 }
 
+/**
+ * 열려 있는 확대창의 수.
+ *
+ * 확대창과 프로젝트 상세가 **각자** window 에 keydown 을 걸고 있어서,
+ * 확대 중에 ESC 를 한 번 누르면 둘 다 닫혀 이력서 목록까지 나가 버렸다.
+ * 화살표도 마찬가지로 뒤에서 프로젝트가 넘어갔다. 뒤 화면이 이 값을 보고
+ * 자기 단축키를 쉬게 한다. (stopPropagation 은 같은 target 에 걸린 리스너
+ * 사이에서는 듣지 않는다 — 등록 순서에 기대는 방법은 더 약하다.)
+ */
+let openLightboxCount = 0;
+
+export function isLightboxOpen() {
+  return openLightboxCount > 0;
+}
+
 export function ImageSlot({
   theme,
   spec,
@@ -1038,11 +1053,18 @@ export function ImageSlot({
 
   useEffect(() => {
     if (!open) return;
+    // 확대창이 열려 있는 동안은 뒤 화면의 단축키가 듣지 않아야 한다.
+    // window 에 걸린 리스너 둘은 서로를 모르므로, 열림 여부를 밖에서
+    // 물어볼 수 있게 남긴다(아래 isLightboxOpen).
+    openLightboxCount += 1;
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setOpen(false);
     }
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      openLightboxCount = Math.max(0, openLightboxCount - 1);
+      window.removeEventListener("keydown", onKey);
+    };
   }, [open]);
 
   return (
