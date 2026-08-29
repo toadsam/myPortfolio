@@ -755,20 +755,51 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ MuscleUp (realtime) ═════════════════════════
   muscleup: {
     tagline: "GAMIFIED FITNESS · 3-TIER FULL-STACK",
+    // 대표 이미지가 **1.0 랜딩의 AI 목업**이었다. 이 페이지가 바로 그 화면을
+    // "둘러보라고만 하는 첫 화면"이라고 비판하는데, 맨 위에 그걸 걸어 두고
+    // 있었다. 게다가 확대하면 한글이 깨져 있다("목툐, 재형, 종증 투틴").
+    // 2.0 의 실제 캡처로 바꾼다 — 「지금 해야 할 일」이 이 페이지의 주장이다.
     heroImage: {
-      src: "/projects/muscleup.webp",
-      label: "득근득근 메인 화면",
-      ratio: "16/9"
+      // 1번 패널만 잘라 크게 쓰는 것도 해 봤다(227×349). 패널은 선명해지지만
+      // **세로 사진이 히어로에 900px 로 솟아** 제목을 아래로 밀고 CORE SUMMARY
+      // 를 첫 화면 밖으로 내보냈다(페이지도 600px 늘었다). 3패널 가로 합성이
+      // 제목과 마주 놓기에 맞는 비율이다 — 선명함보다 첫 화면이 먼저다.
+      src: "/projects/muscleup/v2/home-todo.webp",
+      label: "2.0 홈 — 지금 해야 할 일",
+      ratio: "2/1"
     },
     // 1.0 발표자료(MuscleUp.pdf) p.24 에 실제 사용자 피드백 4개가 있고,
     // 2.0 발표자료(득근득근2.0.pdf)가 그중 셋을 어떻게 고쳤는지를 보여 준다.
     // Before/After 를 지어낼 필요가 없었다 — 문서 두 개가 서로를 증명한다.
-    problemShot: {
-      src: "/projects/muscleup/v2/home-lobby.webp",
-      label: "1.0 의 문제 — 와도 뭘 해야 할지 모르는 첫 화면",
-      ratio: "2/1",
-      caption:
-        "1.0 은 기능을 「소개」하는 랜딩이었다. 사용자 피드백 원문: “처음 사용할 때 어디서 뭘 해야 할지 몰랐어요.” 2.0 에서 첫 화면을 「오늘 출석 시작」 한 번으로 시작되는 로비로 바꿨다."
+    // 1.0 의 첫 화면은 **캡처가 남아 있지 않다.** 발표자료(MuscleUp.pdf p.13~15)의
+    // "화면"은 전부 AI 가 그린 목업이라 한글이 깨져 있다("목툐, 재형, 종증 투틴") —
+    // 그걸 실제 화면인 척 올리면 확대하는 순간 주장 전체가 무너진다.
+    // 대신 **저장소 코드**에서 복원했다. 아래 문자열은 전부
+    // frontend/src/pages/Home.tsx @1093e53 (2025-12-03) 원문이다.
+    beforeAfter: {
+      before: {
+        label: "1.0 — 둘러보라고 하는 첫 화면",
+        screen: {
+          title: "Home.tsx @ 1.0 (2025-12-03)",
+          kind: "cards",
+          cards: [
+            {l: "AI 상담·루틴 받기", sub: "첫 번째 버튼 → /ai"},
+            {l: "커뮤니티 둘러보기", sub: "두 번째 버튼 → /brag"},
+            {l: "180+ 활동 회원", sub: "const stats — 코드에 박힌 상수"},
+            {l: "45 · 24", sub: "주간 운동 · 체크인 (역시 상수)"}
+          ]
+        },
+        note: "버튼 둘 다 「받기·둘러보기」다. 오늘 뭘 하라는 말은 없다. 아래 숫자 셋은 서버가 아니라 소스에 적혀 있었다."
+      },
+      after: {
+        label: "2.0 — 오늘 할 일을 시키는 로비",
+        shot: {
+          src: "/projects/muscleup/v2/home-lobby.webp",
+          label: "2.0 홈 — 게임형 피트니스 로비",
+          ratio: "2/1"
+        },
+        note: "첫 버튼이 「오늘 출석 시작」 하나로 좁혀졌고, 숫자는 metrics.todayAttendanceCount 처럼 서버에서 읽는다 — 서비스 자랑이 아니라 오늘 내가 한 것."
+      }
     },
     // 컨트롤러 28개를 세어만 두면 "28"이 숫자로만 남는다. 8개 도메인으로 묶어
     // 그리니 프로틴 공유·이벤트 CMS 처럼 사이트에 없던 기능이 드러났다.
@@ -785,6 +816,8 @@ export const RICH_DATA: Record<string, RichProject> = {
         src: "/projects/muscleup/auth-sequence.svg",
         label: "인증 시퀀스 — 로그인 · 만료 · 재발급",
         ratio: "16/10",
+        wide: true,
+        fit: "contain",
         caption:
           "access 가 15분에 만료돼도 화면은 끊기지 않는다. 여러 요청이 동시에 401 을 받아도 재발급은 axios 인터셉터에서 한 번만 나가고(single-flight), 나머지는 큐에서 기다렸다가 함께 재시도된다."
       },
@@ -793,6 +826,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 홈 화면 배너에 참여자 얼굴이 있어 그 구간은 잘라내고 썼다.
       {
         src: "/projects/muscleup/v2/lounge.webp",
+        fit: "contain",
         label: "실시간 라운지 — Socket.IO",
         ratio: "16/10",
         caption:
@@ -807,6 +841,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         src: "/projects/muscleup/v2/admin.webp",
+        fit: "contain",
         label: "관리자 콘솔 — 탭 5개",
         ratio: "16/12",
         caption:
@@ -814,16 +849,19 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         src: "/projects/muscleup/v2/inbody.webp",
+        fit: "contain",
         label: "인바디 AI 분석",
         ratio: "16/10",
         caption:
           "이미지·PDF 를 올리면 OCR 로 읽어 현재 대 목표를 고정 축으로 비교하고 탄단지 비율을 낸다. 1.0 의 루틴 추천에서 체성분 정밀 분석으로 올라간 지점."
-      },
-      {
-        src: "/projects/op/muscleup-erd.webp",
-        label: "도메인 ERD",
-        ratio: "16/10"
       }
+      // 옛 ERD 캡처(`op/muscleup-erd.webp`)도 뺐다. 1.0 때 dbdiagram.io 로 그린
+      // 것이라 **테이블이 14개뿐**이고 크루·친구채팅·캐릭터·출석·이벤트가 통째로
+      // 빠져 있다 — 같은 페이지가 "31 테이블 / 8 도메인" 이라고 말하는 옆에
+      // 두면 그 자체로 모순이다. 게다가 발표용 빨간 동그라미와 손글씨가
+      // 얹힌 흰 배경 슬라이드라 어두운 페이지에서 혼자 튄다.
+      // 도메인 구조는 바로 위 Architecture 의 **코드에서 뽑은** 인라인
+      // 다이어그램이 이미, 더 정확하게 보여 준다.
       // AWS 콘솔 캡처(`muscleup-aws.webp`)를 뺐다. 배포 구성을 보여 주려던
       // 자료였지만 실제로는 CloudFront 콘솔 화면이라, distribution ARN에
       // **계정 ID가 그대로 노출**돼 있었고 화면 절반이 요금 안내였다.
@@ -840,7 +878,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "결과",
-        v: "홈=로비 · 출석=성장데이터 · 관리자=운영콘솔로 성격을 바꿨다. 도메인 4→8 · 엔티티 31 · 컨트롤러 28"
+        v: "홈=로비 · 출석=성장데이터 · 관리자=운영콘솔로 성격을 바꿨다. 1.0 에서 들은 피드백 4건 중 3건을 기능으로 반영했고, 안 고친 1건은 그대로 적어 뒀다"
       },
       {k: "내 역할", v: "1인 풀스택 — 1.0 기획·개발 → 2.0 운영 관점 개편"}
     ],
@@ -884,21 +922,25 @@ export const RICH_DATA: Record<string, RichProject> = {
     research: {
       quotes: [
         {
-          q: "3일 쓰고 안 열게 된다 — 기록만 쌓이고 변화가 안 느껴져서.",
-          who: "문제 정의 (README)"
+          q: "처음 사용할 때 어디서 뭘 해야 할지 몰랐어요",
+          who: "1.0 사용자 피드백 · 발표자료 p.24 원문"
         },
         {
-          q: "라운지처럼 자주 바뀌는 상태를 REST로 처리하면 서버가 버틴다는 보장이 없다.",
-          who: "설계 관점"
+          q: "다른 사람들과 더 많이 소통하고 싶어요",
+          who: "같은 자료, 두 번째 피드백"
+        },
+        {
+          q: "AI 답변이 나올 때까지 기다리는 게 길어요",
+          who: "같은 자료 — 넷 중 유일하게 아직 못 고친 것"
         }
       ],
-      stat: {n: "3", l: "frontend · backend · realtime(Socket.IO) 실행 단위"}
+      stat: {n: "4", l: "1.0 사용자 피드백 원문 · 그중 셋을 2.0 에서 고쳤다"}
     },
     hypothesis:
       "“운동 기록을 캐릭터 성장·랭킹·라운지로 즉시 연결하고, 빈번히 바뀌는 실시간 상태(위치·채팅·이모트)는 Socket.IO 서버로 분리하면 — 사용자가 ‘다시 오는’ 이유가 생기면서 서버도 감당 가능하다.”",
     process: [
       {t: "루프 기획", d: "기록→성장"},
-      {t: "REST 도메인", d: "16 prefix"},
+      {t: "REST 도메인", d: "8 도메인 · 28 컨트롤러"},
       {t: "인증", d: "JWT+OAuth"},
       {t: "실시간 분리", d: "Socket.IO :4001"},
       {t: "AI", d: "OpenAI·PDF"}
@@ -957,8 +999,9 @@ export const RICH_DATA: Record<string, RichProject> = {
           },
           {
             id: "db",
-            label: "MySQL / RDS",
-            note: "JPA · Entity 46",
+            label: "PostgreSQL",
+            note: "운영 · JPA · Entity 31",
+            sub: "로컬은 MySQL",
             x: 880,
             y: 70,
             w: 260,
@@ -1207,7 +1250,11 @@ export const RICH_DATA: Record<string, RichProject> = {
         name: "Node + Socket.IO",
         desc: "라운지 위치·채팅·이모트 (:4001)"
       },
-      {tag: "DB", name: "MySQL / PostgreSQL", desc: "유저·기록·크루·이벤트"}
+      {
+        tag: "DB",
+        name: "PostgreSQL (운영) · MySQL (로컬)",
+        desc: "유저·기록·크루·이벤트 · Entity 31"
+      }
     ],
     decisions: [
       {
@@ -1227,6 +1274,12 @@ export const RICH_DATA: Record<string, RichProject> = {
         pick: "TanStack Query",
         why: "캐시·재검증으로 서버 상태 일원화",
         alt: "수동 fetch(중복 상태)"
+      },
+      {
+        area: "AI 검증",
+        pick: "표본 8건 × 5축 품질 하네스",
+        why: "프롬프트를 고칠 때 좋아졌는지 숫자로 본다",
+        alt: "눈으로 확인(회귀를 못 잡음)"
       },
       {
         area: "파일",
@@ -1290,6 +1343,57 @@ export const RICH_DATA: Record<string, RichProject> = {
             "// BE: 쿠키/Bearer 둘 다 파싱 → 환경 차이 흡수"
           ]
         }
+      },
+      {
+        title: "교과서대로 넣은 Refresh 로테이션을 다시 걷어냈다",
+        problem:
+          "재발급 때 기존 토큰을 폐기하는 로테이션을 넣었더니, 화면 여러 곳이 동시에 401 을 받는 순간 서로의 토큰을 무효화해 멀쩡히 쓰던 사용자가 로그아웃됐다. 보안을 위해 넣은 장치가 실사용에서 서비스를 끊은 것이다.",
+        solution:
+          "서버 쪽 로테이션을 되돌리고, 대신 클라이언트에서 재발급을 한 번만 내보내도록 바꿨다(single-flight — refreshing 플래그 + 대기 큐). 지금은 여러 요청이 동시에 만료를 만나도 재발급은 한 번이고 나머지는 큐에서 기다렸다 함께 재시도된다. 로테이션이 필요해지면 grace period 나 refresh token family 로 다시 접근할 생각이다.",
+        code: {
+          filename: "RefreshTokenService.java (지금 코드)",
+          lines: [
+            "// Keep refresh token stable to prevent race-condition",
+            "// logouts when parallel requests trigger refresh.",
+            "return current.getToken();"
+          ]
+        }
+      },
+      {
+        title: "인덱스를 넣고 재 보니, 정작 느린 건 다른 쪽이었다",
+        problem:
+          "자랑방 목록 · 캐릭터 랭킹 · 공유 인증 관리 · 프로그램 신청은 모두 정렬 페이지네이션인데 정렬·필터 컬럼에 인덱스가 없었다. 지금 회원은 약 50명이라 화면에서는 아무 문제가 없다 — 티가 나기 전에 확인해 두는 편이 낫다고 봤다.",
+        solution:
+          "정렬이 사라지고 인덱스를 거꾸로 훑는 계획으로 바뀐다. 다만 여기서 멈추면 틀린 결론이다 — Spring Data 의 Page 는 목록과 함께 count 를 날리는데 인덱스는 그걸 못 고친다. 그래서 쿼리는 400배 넘게 줄어도 한 페이지가 그려지는 시간은 3.2배만 빨라진다. 다음 병목은 정렬이 아니라 count 이고, 커서 페이지네이션이나 근사 카운트로 접근할 문제다. 인덱스 넷이 쓰는 디스크는 합쳐 21MB 였다.",
+        code: {
+          filename: "EXPLAIN — 자랑방 목록 (20만 행)",
+          lines: [
+            "// 인덱스 없음 — 22.8ms",
+            "Limit  (cost=18080.15..18081.32 rows=10)",
+            "  -> Gather Merge  (rows=166666)   // 전체 정렬",
+            "",
+            "// 인덱스 있음 — 0.052ms",
+            "Limit  (cost=0.42..3.57 rows=10)",
+            "  -> Index Scan Backward using idx_brag_post_created"
+          ]
+        }
+      },
+      {
+        title: "AI 답변이 맞는 말인지 사람이 매번 읽어 볼 수 없었다",
+        problem:
+          "인바디 분석은 체성분 수치를 받아 운동·식단을 권하는 기능이라, 모델이 그럴듯하지만 위험한 조언을 해도 화면상으로는 멀쩡해 보인다. 프롬프트를 고칠 때마다 결과가 나아졌는지 나빠졌는지 판단할 근거가 없었다.",
+        solution:
+          "테스트로 품질 하네스를 만들었다. 체형·목표가 다른 표본 8건을 고정해 두고 매번 같은 입력을 넣은 뒤, 응답을 구조·진단 적합·우선순위·설명 깊이·안전성 5개 축으로 채점해 마크다운 리포트로 뽑는다. OPENAI_API_KEY 가 없으면 스스로 건너뛰므로 키 없는 환경의 빌드를 깨지 않는다.",
+        code: {
+          filename: "AiInbodyQualityHarnessTest.java",
+          lines: [
+            'scores.put("structure", scoreStructure(...));',
+            'scores.put("diagnosisFit", scoreDiagnosisFit(...));',
+            'scores.put("priorityFit", scorePriorityFit(...));',
+            'scores.put("detailDepth", scoreDepth(...));',
+            'scores.put("safety", scoreSafety(...));'
+          ]
+        }
       }
     ],
     tech: [
@@ -1324,11 +1428,31 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     ],
     metrics: [
-      {n: "3", l: "실행 단위"},
-      {n: "16", l: "API 도메인"},
-      {n: "Socket.IO", l: "실시간 서버"},
-      {n: "1인", l: "풀스택"}
+      {n: "약 50명", l: "이용 회원"},
+      {n: "3 / 4", l: "반영한 사용자 피드백"},
+      {n: "3.2배", l: "목록 페이지 응답 (20만 행 기준)"},
+      {n: "8 × 5", l: "AI 응답 품질 자동 채점 (표본 × 축)"}
     ],
+    // 이 숫자들이 원래 12줄짜리 문단 안에 아홉 개가 묻혀 있었다.
+    // 막대로 빼면 마지막 줄("한 페이지 전체")이 스스로 논점을 말한다 —
+    // 쿼리 막대는 사라지는데 페이지 막대는 3분의 1만 준다.
+    perf: {
+      rows: [
+        {label: "자랑방 목록", before: 22.79, after: 0.05, unit: "ms"},
+        {label: "캐릭터 랭킹", before: 14.14, after: 0.07, unit: "ms"},
+        {label: "공유 인증 관리", before: 11.56, after: 0.07, unit: "ms"},
+        {label: "프로그램 신청", before: 15.7, after: 0.08, unit: "ms"},
+        {
+          label: "한 페이지 전체 (목록 + count)",
+          before: 32.8,
+          after: 10.1,
+          unit: "ms"
+        }
+      ],
+      note: "PostgreSQL 16 · 표당 20만 행 합성 데이터 · 각 7회 중앙값. 맨 아랫줄이 사용자가 기다리는 시간이다 — 인덱스가 못 고치는 count 가 남아 있다."
+    },
+    metricsNote:
+      "회원 수는 본인 집계 · 피드백 4건은 1.0 발표자료 p.24 원문 · 응답 시간은 PostgreSQL 16 에 표당 20만 행을 넣은 합성 데이터에서 각 7회 측정한 중앙값(현재 실사용 규모에서는 차이가 없다) · 품질 하네스는 AiInbodyQualityHarnessTest",
     kptLabels: {
       keep: "1.0 에서 배운 것 · 개발",
       problem: "아직 남은 것",
@@ -1346,17 +1470,20 @@ export const RICH_DATA: Record<string, RichProject> = {
       problem: [
         "AI 응답 속도는 아직 손대지 못했다 — 사용자가 지적한 넷 중 유일하게 안 고친 것",
         "Refresh 로테이션을 되돌린 채로 두고 있다 (병렬 재발급 경쟁 상태)",
-        "analytics_events 를 쌓고는 있지만 그걸로 판단한 적은 없다"
+        "analytics_events 를 쌓고는 있지만 그걸로 판단한 적은 없다",
+        "테스트가 AI 품질 하네스와 컨텍스트 로드 둘뿐이다 — 인증·출석 도메인부터 붙이는 게 다음 순서다",
+        "CI 가 없어 지금은 로컬에서만 돌린다 (GitHub Actions 로 하네스부터 올릴 계획)"
       ],
       try: [
         "2.0 · 재방문은 기능 수가 아니라 첫 화면이 무엇을 시키느냐가 정한다 — 홈을 로비로",
         "2.0 · ‘소통하고 싶다’는 게시판으로 안 풀린다 — 같이 있다는 감각이 필요했다",
         "2.0 · 기록은 보여 주는 게 아니라 돌려줘야 한다 — 캐릭터·티어·랭킹",
-        "2.0 · 로그 테이블은 읽는 화면이 있어야 의미가 생긴다 — 관리자 콘솔"
+        "2.0 · 로그 테이블은 읽는 화면이 있어야 의미가 생긴다 — 관리자 콘솔",
+        "2.0 · 느린 쪽을 고치기 전에 재 봐야 한다 — 정렬을 400배 줄여도 페이지는 3.2배만 빨라졌다(count 가 남아서)"
       ]
     },
     learning:
-      "1.0 에서는 **만드는 법**을 배웠다 — 배포·인증·인코딩처럼 안 되면 아무것도 안 되는 것들. 2.0 에서는 그게 다가 아니라는 걸 배웠다. 사용자 넷이 남긴 말 중 셋이 기능이 아니라 **동선과 관계**에 대한 것이었고, 고친 것도 그쪽이었다. 사람이 다시 오게 만드는 건 기능 개수가 아니라 첫 화면이 무엇을 시키느냐였다."
+      "1.0 에서는 「만드는 법」을 배웠다 — 배포·인증·인코딩처럼 안 되면 아무것도 안 되는 것들. 2.0 에서는 그게 다가 아니라는 걸 배웠다. 사용자 넷이 남긴 말 중 셋이 기능이 아니라 「동선과 관계」에 대한 것이었고, 고친 것도 그쪽이었다. 사람이 다시 오게 만드는 건 기능 개수가 아니라 첫 화면이 무엇을 시키느냐였다."
   },
 
   // ════════════════════════════ ACLUB / AjouClub FE (platform · 팀) ══════════

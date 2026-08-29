@@ -449,7 +449,9 @@ export const mainProjects: MainProjectCard[] = [
     metricsSource:
       "회원 수는 본인 집계 · 도메인/Controller 는 저장소 소스 기준",
     richId: "muscleup",
-    image: "/projects/muscleup.webp",
+    // 옛 이미지(`/projects/muscleup.webp`)는 1.0 랜딩의 AI 목업이라 한글이
+    // 깨져 있었다. 목록 카드는 심사자가 가장 먼저 보는 그림이다.
+    image: "/projects/muscleup/v2/home-todo.webp",
     links: [
       {label: "GitHub", href: "https://github.com/toadsam/Ajou_MuscleUp"},
       {
