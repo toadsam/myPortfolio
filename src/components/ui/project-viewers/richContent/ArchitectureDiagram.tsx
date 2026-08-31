@@ -102,7 +102,7 @@ export function ArchitectureDiagram({
   return (
     <figure className="m-0">
       {spec.title ? (
-        <figcaption className="section-label mb-4">{spec.title}</figcaption>
+        <figcaption className="block-label">{spec.title}</figcaption>
       ) : null}
       <svg
         aria-label={spec.caption}

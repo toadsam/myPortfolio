@@ -143,6 +143,28 @@
   background-color: var(--text-muted);
 }
 
+/* ── 블록 라벨 (섹션 안의 한 단 아래) ──────────────────────────────────
+   같은 층위 제목 셋이 서로 다른 옷을 입고 있었다:
+
+     Technical Decision Table   24px Pretendard bold 흰색   ← 섹션보다 크다
+     System Architecture        17px 고운바탕 금색          ← 섹션과 같다
+     인덱스 전 → 후 · 실측       13px JetBrains Mono         ← 카드 라벨만 하다
+
+   전부 「섹션 안의 블록」이라 층위가 하나여야 한다. 위계는 크기가 아니라
+   **색과 장식**으로 가른다 — 섹션 라벨은 금색에 앞줄(—)이 붙고, 블록
+   라벨은 종이색에 앞줄이 없다. 크기를 두 단으로 벌리면 고운바탕 세리프가
+   15px 아래에서 흐려져 오히려 안 읽힌다. */
+.op-detail .block-label {
+  margin: 0 0 1rem;
+  font-family: var(--font-display), "Gowun Batang", serif;
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  text-transform: none;
+  color: rgb(var(--v-paper) / 0.9);
+}
+
 /* ════════════════════════════════════════════════════════════════════
    ③ 카드 위계 — 맨살 / 음각 / 양각
    ────────────────────────────────────────────────────────────────────

@@ -899,9 +899,7 @@ export function ProjectOnePager({
             )) ?? null}
 
             <div className="reveal space-y-8">
-              <h3 className="text-xl font-bold tracking-tight md:text-2xl">
-                Technical Decision Table
-              </h3>
+              <h3 className="block-label">Technical Decision Table</h3>
               <p className="mono -mt-4 text-[11px] text-muted md:hidden">
                 → 옆으로 밀면 「이유 / 대안」 칸이 보입니다
               </p>
@@ -1021,9 +1019,7 @@ export function ProjectOnePager({
                   준다. 그림이 문장보다 그걸 빨리 말한다. */}
               {data.perf ? (
                 <div className="reveal rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6 md:p-8">
-                  <h3 className="mono mb-6 text-xs uppercase tracking-widest text-accent">
-                    인덱스 전 → 후 · 실측
-                  </h3>
+                  <h3 className="block-label mb-6">인덱스 전 → 후 · 실측</h3>
                   <CompareBars
                     lowerBetter
                     rows={data.perf.rows}
