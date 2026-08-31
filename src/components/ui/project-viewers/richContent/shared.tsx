@@ -148,6 +148,17 @@ export interface RichProject {
     rows: {label: string; before: number; after: number; unit: string}[];
     note?: string;
   };
+  /**
+   * 사용자가 한 말과, 그래서 한 것.
+   *
+   * 「넷 중 셋을 반영했다」를 지표로 내세우는 프로젝트는 **그 넷을 한자리에서**
+   * 검증할 수 있어야 한다. 예전엔 인용 셋이 Context 에, 나머지 하나가 8스크린
+   * 뒤 갤러리 캡션에 흩어져 있어서, 심사자가 3/4 를 확인하려면 스크롤을
+   * 왕복해야 했다.
+   *
+   * done: false 인 줄을 지우지 말 것 — 안 고친 하나가 나머지 셋을 믿게 만든다.
+   */
+  feedbackMap?: {said: string; did: string; done: boolean}[];
   tech: string[];
   resultScreens: ScreenSpec[];
   metrics: {n: string; l: string}[];

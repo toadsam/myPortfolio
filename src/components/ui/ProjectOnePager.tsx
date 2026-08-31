@@ -709,8 +709,15 @@ export function ProjectOnePager({
                 <p className="text-base leading-relaxed text-gray-400 md:text-lg">
                   {data.problem}
                 </p>
-                {/* 사용자가 실제로 한 말. Problem 바로 밑에 둬야 근거로 읽힌다. */}
-                <div className="space-y-4 pt-2">
+                {/* 사용자가 실제로 한 말. Problem 바로 밑에 둬야 근거로 읽힌다.
+                    단, 아래 「들은 말 n, 한 것 m」 표가 같은 인용을 전부 싣는
+                    프로젝트에서는 여기서 반복하지 않는다 — 표가 더 많은 걸
+                    말하므로 표만 남긴다. */}
+                <div
+                  className={
+                    "space-y-4 pt-2 " + (data.feedbackMap ? "hidden" : "")
+                  }
+                >
                   {data.research.quotes.map(q => (
                     <blockquote
                       className="border-l-2 border-[rgb(122,90,56,0.45)] pl-4 text-sm italic leading-relaxed text-gray-500"
@@ -736,6 +743,49 @@ export function ProjectOnePager({
                 </div>
               </div>
             </div>
+
+            {/* 들은 말 넷과 한 것 — Key Numbers 의 「3 / 4」를 여기서 검증한다.
+                인용만 흩어 두면 심사자가 세어 볼 수가 없다. 마지막 줄(안 고친
+                것)을 흐리게 두되 지우지 않는 게 이 표의 요점이다. */}
+            {data.feedbackMap && data.feedbackMap.length > 0 ? (
+              <div className="reveal">
+                <h3 className="block-label">
+                  들은 말 {data.feedbackMap.length}, 한 것{" "}
+                  {data.feedbackMap.filter(f => f.done).length}
+                </h3>
+                <ul className="divide-y divide-[rgb(122,90,56,0.32)] overflow-hidden rounded-lg border border-[rgb(122,90,56,0.45)]">
+                  {data.feedbackMap.map(f => (
+                    <li
+                      className={
+                        "grid grid-cols-1 gap-1 p-4 md:grid-cols-12 md:items-baseline md:gap-6 " +
+                        (f.done ? "" : "bg-[rgb(255,157,56,0.05)]")
+                      }
+                      key={f.said}
+                    >
+                      <p className="text-sm italic leading-relaxed text-gray-400 md:col-span-5">
+                        “{f.said}”
+                      </p>
+                      <p
+                        className={
+                          "flex gap-2 text-sm leading-relaxed md:col-span-7 " +
+                          (f.done ? "text-white" : "text-accent")
+                        }
+                      >
+                        <span aria-hidden className="mono select-none opacity-60">
+                          →
+                        </span>
+                        {f.did}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-3 text-[12px] leading-relaxed text-muted">
+                  {data.research.quotes[0]?.who
+                    ? "출처: " + data.research.quotes[0].who
+                    : null}
+                </p>
+              </div>
+            ) : null}
           </section>
 
           {/* ══════════ 개선 전 / 후 ══════════
