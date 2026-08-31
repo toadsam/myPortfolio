@@ -628,10 +628,22 @@ export function CompareBars({
   rows: {label: string; before: number; after: number; unit: string}[];
   lowerBetter: boolean;
 }) {
+  // 막대 길이는 읽는 사람에게 **양(量)** 이다. 행마다 따로 정규화하면
+  // (peak = max(r.before, r.after)) 모든 before 막대가 예외 없이 꽉 찬
+  // 길이로 그려져, 11.56ms 와 32.8ms 가 화면에서 같은 길이가 된다.
+  // 하필 이 그래프가 놓이는 자리가 "재고 나서 말한다"를 주장하는
+  // 섹션이라, 그림이 숫자를 배신하면 그 위 논증까지 같이 의심받는다.
+  //
+  // 단위가 모두 같을 때만 전체 최대값에 맞춘다. 단위가 섞인 표에서
+  // 전체 정규화는 ms 와 개수를 같은 자로 재는 셈이라 더 틀린다 —
+  // 그때는 행 단위로 되돌린다.
+  const sameUnit = rows.every(r => r.unit === rows[0]?.unit);
+  const globalPeak = Math.max(...rows.map(r => Math.max(r.before, r.after)));
+
   return (
     <div className="flex flex-col gap-4">
       {rows.map((r, i) => {
-        const peak = Math.max(r.before, r.after);
+        const peak = sameUnit ? globalPeak : Math.max(r.before, r.after);
         // 낮을수록 좋은 값에서 "+100%" 는 두 번 틀린다 — 증가처럼 읽히고,
         // 실제 99.8% 를 100%(= 0 이 됐다) 로 부풀린다. 부호를 빼고,
         // 99% 를 넘으면 소수점 한 자리까지 남긴다.
