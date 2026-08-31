@@ -948,6 +948,28 @@ export const RICH_DATA: Record<string, RichProject> = {
       ],
       stat: {n: "4", l: "1.0 사용자 피드백 원문 · 그중 셋을 2.0 에서 고쳤다"}
     },
+    feedbackMap: [
+      {
+        said: "처음 사용할 때 어디서 뭘 해야 할지 몰랐어요",
+        did: "홈을 로비로 — 첫 화면 CTA 를 「오늘 출석 시작」 하나로",
+        done: true
+      },
+      {
+        said: "다른 사람들과 더 많이 소통하고 싶어요",
+        did: "실시간 라운지(Socket.IO) + 크루 챌린지",
+        done: true
+      },
+      {
+        said: "내 운동 데이터를 더 자세히 보고 싶어요",
+        did: "캐릭터 레벨·티어·진화 + 공개 랭킹 + 인바디 OCR 분석",
+        done: true
+      },
+      {
+        said: "AI 답변이 나올 때까지 기다리는 게 길어요",
+        did: "아직 안 했다 — 넷 중 유일하게 못 고친 것",
+        done: false
+      }
+    ],
     hypothesis:
       "“운동 기록을 캐릭터 성장·랭킹·라운지로 즉시 연결하고, 빈번히 바뀌는 실시간 상태(위치·채팅·이모트)는 Socket.IO 서버로 분리하면 — 사용자가 ‘다시 오는’ 이유가 생기면서 서버도 감당 가능하다.”",
     process: [
@@ -1336,27 +1358,6 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     challenges: [
       {
-        title: "자주 바뀌는 라운지 상태를 REST로 처리하기 어려웠다",
-        problem:
-          "위치·채팅·이모트처럼 초당 여러 번 바뀌는 상태를 REST로 다루니 지연·부하가 컸다.",
-        solution:
-          "실시간 상태만 담당하는 Socket.IO 서버(:4001)를 REST 백엔드와 분리해, 각자 잘하는 일을 하도록 아키텍처를 나눴다."
-      },
-      {
-        title: "브라우저·배포 환경에서 인증 방식이 달랐다",
-        problem:
-          "쿠키 기반과 Bearer 토큰 기반 환경이 섞여 로그인 유지가 불안정했다.",
-        solution:
-          "요청 인터셉터에서 access 토큰을 자동 첨부하고 401 시 refresh로 재발급하며, 백엔드가 쿠키·Bearer를 모두 처리하도록 했다.",
-        code: {
-          filename: "auth-note",
-          lines: [
-            "// FE: access 자동 첨부 + 401 → refresh 재시도",
-            "// BE: 쿠키/Bearer 둘 다 파싱 → 환경 차이 흡수"
-          ]
-        }
-      },
-      {
         title: "교과서대로 넣은 Refresh 로테이션을 다시 걷어냈다",
         problem:
           "재발급 때 기존 토큰을 폐기하는 로테이션을 넣었더니, 화면 여러 곳이 동시에 401 을 받는 순간 서로의 토큰을 무효화해 멀쩡히 쓰던 사용자가 로그아웃됐다. 보안을 위해 넣은 장치가 실사용에서 서비스를 끊은 것이다.",
@@ -1404,6 +1405,20 @@ export const RICH_DATA: Record<string, RichProject> = {
             'scores.put("priorityFit", scorePriorityFit(...));',
             'scores.put("detailDepth", scoreDepth(...));',
             'scores.put("safety", scoreSafety(...));'
+          ]
+        }
+      },
+      {
+        title: "브라우저·배포 환경에서 인증 방식이 달랐다",
+        problem:
+          "쿠키 기반과 Bearer 토큰 기반 환경이 섞여 로그인 유지가 불안정했다.",
+        solution:
+          "요청 인터셉터에서 access 토큰을 자동 첨부하고 401 시 refresh로 재발급하며, 백엔드가 쿠키·Bearer를 모두 처리하도록 했다.",
+        code: {
+          filename: "auth-note",
+          lines: [
+            "// FE: access 자동 첨부 + 401 → refresh 재시도",
+            "// BE: 쿠키/Bearer 둘 다 파싱 → 환경 차이 흡수"
           ]
         }
       }
