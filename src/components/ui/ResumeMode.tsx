@@ -245,8 +245,21 @@ export function ResumeMode({onEnterVillage}: Props) {
   const firstSecondTierId = mainProjects.find(p => !p.featured)?.id;
 
   const HERO_ACTIVE_USERS = "3,500";
+  // 한 번 뺐다가 되돌렸다. 뺀 이유는 "웹 지원인데 네 칸 중 하나를 게임이 쓴다" 였고,
+  // **게임이 지원 직무가 되면서 그 이유가 사라졌다**(2026-09-01). 지금 다섯 칸은
+  // 웹 넷 + 게임 하나다. 이 이력서에서 가장 검증하기 쉬운 주장이라 링크를 건다.
   const STEAM_URL =
     "https://store.steampowered.com/app/2743860/TSEROF/?l=koreana";
+  // `Steam 출시 01` 이 있던 자리다. 검산이 가장 쉬운 주장이라 오래 뒀는데,
+  // **웹 직무 지원에서 히어로 네 칸 중 하나를 게임 출시가 쓰고 있었다.** Steam 은
+  // 아래 TSEROF 카드의 「출시」 뱃지와 스토어 링크에서 이미 빛나고, 거기가 제자리다.
+  // 바꾸고 나면 히어로 넷이 전부 "사람이 썼다" 로 선다 — 3,500 · 34,200 · 169 · 02.
+  // 카드 지표에서 끌어오므로 데이터가 바뀌면 따라온다. 값에 붙은 "명" 은 떼고
+  // 숫자만 쓴다(옆 칸들이 전부 순수 숫자라 단위가 붙으면 줄이 어긋난다).
+  const HERO_FIELD_USERS = mainProjects
+    .find(p => p.id === "festflow")
+    ?.metrics?.find(m => m.label === "AI Match 등록자")
+    ?.value.replace(/[^0-9,]/g, "");
   // 총학생회 Search Console 실측. `Public Repos 44` 가 있던 자리다.
   //
   // 저장소 개수를 뺀 이유: **누구나 채울 수 있는 숫자라 변별력이 없다.** 오히려
@@ -553,9 +566,16 @@ export function ResumeMode({onEnterVillage}: Props) {
                   <dd>{hero.availability}</dd>
                 </div>
               </dl>
+              {/* 첫 화면의 한 문장.
+                「4개 운영 → 그중 2개는 지금도」 순서가 중요하다. 4 만 쓰면 바로 아래
+                지표의 `02 LIVE` 와 충돌해 보이고, 2 만 쓰면 실제로 운영해 본 규모가
+                줄어 보인다. 이 문장이 **02 가 왜 2인지를 설명하는 자리**다.
+                4 = 득근득근 · aClub · 총학 · FestFlow (운영해 본 것)
+                2 = 지금 사이트 링크가 살아 있는 것 = liveServiceCount 와 같은 규칙 */}
               <div className="hero-tagline reveal reveal-delay-3">
-                웹 아키텍처와 XR 인터랙션을 결합해, 운영에서 생기는 마찰을
-                풀스택 구현으로 해결합니다.
+                만드는 데서 끝내지 않습니다. 서비스 4개를 운영하며 사용자 말을
+                듣고 고쳤고, 그중 2개는 지금도 열려 있습니다. 축제 현장에서는
+                하루 동안 직접 돌렸습니다.
               </div>
             </div>
           </main>
@@ -584,7 +604,8 @@ export function ResumeMode({onEnterVillage}: Props) {
           {/* 히어로 지표 — 심사자가 2분을 쓴다면 사실상 이 화면만 본다.
               예전엔 "주요 13 · 사이드 11 · 학력 06 · 저장소 44" 로 **넷 다
               개수**였다. 개수는 누구나 채울 수 있어서 변별력이 없다.
-              지금은 넷 중 셋이 눌러서 확인되는 사실이다. */}
+              지금은 다섯 다 사실이고, 그중 셋은 눌러서 확인된다.
+              배치가 곧 포지셔닝이다 — 앞 넷이 웹, 마지막 하나가 게임이다. */}
           <footer className="reveal reveal-delay-3">
             <div className="status-module">
               <span className="status-title">실사용자</span>
@@ -594,23 +615,20 @@ export function ResumeMode({onEnterVillage}: Props) {
               </div>
             </div>
             <div className="vertical-divider" />
-            {/* 스팀 출시는 이 이력서에서 가장 검증하기 쉬운 주장이다.
-                주장 옆에 확인 경로를 붙인다. */}
-            <a
-              className="status-module status-link"
-              href={STEAM_URL}
-              rel="noreferrer"
-              target="_blank"
-            >
-              <span className="status-title">Steam 출시</span>
-              <div className="status-data">
-                <span className="status-number">
-                  {String(shippedCount).padStart(2, "0")}
-                </span>
-                <span className="status-unit">TSEROF ↗</span>
-              </div>
-            </a>
-            <div className="vertical-divider" />
+            {/* 축제 현장 실사용자. 눌러서 확인되는 URL 이 없어 링크는 걸지 않는다 —
+                이 값의 확인 경로는 FestFlow 전용 전시실(P11Field)이다. */}
+            {HERO_FIELD_USERS ? (
+              <>
+                <div className="status-module">
+                  <span className="status-title">현장 실사용자</span>
+                  <div className="status-data">
+                    <span className="status-number">{HERO_FIELD_USERS}</span>
+                    <span className="status-unit">대동제 · 2026.05</span>
+                  </div>
+                </div>
+                <div className="vertical-divider" />
+              </>
+            ) : null}
             <div className="status-module">
               <span className="status-title">운영 중 서비스</span>
               <div className="status-data">
@@ -639,6 +657,22 @@ export function ResumeMode({onEnterVillage}: Props) {
                 </div>
               </a>
             ) : null}
+            <div className="vertical-divider" />
+            {/* 다섯째 칸 = 게임. 웹 넷 뒤에 두는 것이 곧 주력 순서다. */}
+            <a
+              className="status-module status-link"
+              href={STEAM_URL}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <span className="status-title">Steam 출시</span>
+              <div className="status-data">
+                <span className="status-number">
+                  {String(shippedCount).padStart(2, "0")}
+                </span>
+                <span className="status-unit">TSEROF ↗</span>
+              </div>
+            </a>
           </footer>
         </div>
 

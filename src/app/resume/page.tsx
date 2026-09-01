@@ -32,7 +32,9 @@
 import type {Metadata} from "next";
 import {ResumeClient} from "./ResumeClient";
 
-const title = "정재훈 | Full-Stack (Web) · Unity XR Developer — 이력서";
+// 히어로 `roleTag` 와 같은 말로 맞춘다(src/data/resume.ts). 검색 결과와 탭 제목이
+// 화면 속 제목과 다르면 같은 사람의 다른 이력서처럼 보인다.
+const title = "정재훈 | Web Full-Stack · Unity 게임/XR Developer — 이력서";
 const description =
   "React · Spring Boot 기반 웹 풀스택 개발자 정재훈의 이력서. 인증/보안(Refresh Token Rotation)과 배포 운영 이슈(HTTPS · Mixed Content · CORS) 해결 경험, 운영 중인 서비스 3개를 포함한 주요 프로젝트 12건.";
 
