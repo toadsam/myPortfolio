@@ -59,8 +59,8 @@ Stack: React, Vite, Tailwind CSS, PWA, Spring Boot 3, JPA, Spring Security, JWT,
 
 - Problem: 축제 현장에서는 부스 위치, 혼잡도, 공연 상태, 공지, 분실물, 관리자 운영 데이터가 빠르게 바뀌어 실시간성과 운영 권한이 중요합니다.
 - Action: React(Vite)와 Tailwind 기반 PWA, Spring Boot 3/JPA/Security/JWT, MySQL 구조로 사용자 기능과 관리자 API를 분리했습니다.
-- Result: SSE 기반 혼잡도·공연·공지 스트림, 관리자 CRUD/CSV 업로드, KPI/감사 로그, GPS 기반 혼잡도 계산, 분석 API까지 포함한 운영형 구조를 구현했습니다.
-- Evidence: README 기준 SSE 스트림 3개, 관리자 보호 API, CSV 일괄 업로드, KPI, 감사 로그, PWA/오프라인 페이지 구조가 공개되어 있습니다.
+- Result: SSE 기반 혼잡도·공연·공지 스트림, 관리자 CRUD/CSV 업로드, KPI/감사 로그, GPS 기반 혼잡도 계산, 분석 API까지 포함한 운영형 구조를 구현했고, 2026.05 아주대학교 대동제에서 AI Match 기능을 1일간 실제 운영했습니다.
+- Evidence: 현장 운영 실측(2026.05 아주대학교 대동제 · 1일): AI Match 등록자 169명, 매칭 신청 424건, 성사 매칭 36건, 관리자 처리 30건 이상, QA 참여 15명. 저장소에는 SSE 스트림, 관리자 보호 API, CSV 일괄 업로드, KPI, 감사 로그, PWA/오프라인 페이지 구조가 공개되어 있습니다.
 
 ### 득근득근 MuscleUp
 

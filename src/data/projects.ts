@@ -40,7 +40,7 @@ export const projects: ProjectData[] = [
       "MyWave 자산 흐름 대시보드 화면 구현"
     ],
     result:
-      "사용자가 입력한 데이터만으로 포트폴리오 상태와 자산 흐름, AI 점검 결과를 확인할 수 있는 프로토타입을 완성했습니다.",
+      "거래 기록만 넣으면 수익률·자산 비중·자산 흐름(MyWave)이 한 화면에서 이어지는 프로토타입까지 갔습니다. AI 는 매수·매도 추천이 아니라 리스크·편중·기록 누락을 짚는 체크리스트로 역할을 못 박았고, 시세·뉴스 API 가 실패해도 화면이 비지 않도록 폴백 경로를 뒀습니다.",
     nextStep:
       "실시간 시세 API와 자동 포트폴리오 업데이트 기능을 추가할 예정입니다.",
     links: [{label: "GitHub", href: "https://github.com/toadsam/MyStock-Desk"}]
@@ -84,7 +84,7 @@ export const projects: ProjectData[] = [
       "PWA 설정과 오프라인 대응"
     ],
     result:
-      "운영자와 스태프가 실시간으로 부스 현황을 공유하고 관리할 수 있는 축제 운영 서비스 구조를 완성했습니다.",
+      "운영자가 고치면 현장 화면이 새로고침 없이 따라오는 구조까지 갔습니다 — 부스 혼잡도·공연 상태·공지 등이 각각 SSE 채널 7개로 흐릅니다. 백엔드 컨트롤러 26개로 사용자용과 관리자용 기능을 한 서비스 안에서 닫았습니다.",
     nextStep: "SMS 알림, 매출 집계, 현장 QR 체크인 기능을 추가할 예정입니다.",
     links: [{label: "GitHub", href: "https://github.com/toadsam/FestFlow"}]
   },
@@ -122,7 +122,7 @@ export const projects: ProjectData[] = [
       "퀴즈 채점·오답 집계와 영상 URL 폴백 로직 구현"
     ],
     result:
-      "수어 단어를 반복 학습하고 틀린 단어를 되짚어볼 수 있는 앱 프로토타입을 만들었습니다.",
+      "반복 학습과 오답 되짚기까지 동작하는 앱 프로토타입으로, 30개 이상의 수어 단어를 학습 흐름에 올렸습니다. 영상 저장소와 메타데이터 저장소가 나뉘어 있어 조회 경로를 백엔드에서 하나로 모았고, 영상 URL 이 없을 때의 폴백까지 처리했습니다.",
     nextStep: "학습 콘텐츠 확장과 실제 사용자 테스트를 진행할 예정입니다.",
     links: [{label: "GitHub", href: "https://github.com/toadsam/Sign-Language"}]
   },
@@ -157,7 +157,7 @@ export const projects: ProjectData[] = [
       "공통 컴포넌트와 라우팅 구조 정리"
     ],
     result:
-      "동아리 정보 탐색부터 모집 지원까지 하나의 서비스에서 처리할 수 있는 플랫폼 프론트엔드를 완성했습니다.",
+      "2025년 프론트 3인 중 한 명으로 참여한 뒤, 그 결과로 2026년 프로젝트장을 맡아 개편했습니다. GA4 실측(2026.01–03) 기준 활성 사용자 3,500명 · 조회수 8.8만 · 세션 참여율 93.4%로 운영 중입니다.",
     nextStep: "백엔드 API 연동과 실제 배포를 진행할 예정입니다.",
     links: [
       {label: "GitHub (2026)", href: "https://github.com/aClub2026/FE"},
@@ -196,7 +196,7 @@ export const projects: ProjectData[] = [
       "점수 시스템과 localStorage 저장 구현"
     ],
     result:
-      "PC와 모바일 브라우저에서 바로 플레이할 수 있는 캠퍼스 테마 캐주얼 게임을 완성했습니다.",
+      "PC 와 모바일 브라우저에서 설치 없이 바로 도는 상태까지 갔습니다. 자동 생성되는 발판을 화면 밖에서 즉시 걷어내 긴 플레이에도 오브젝트가 쌓이지 않게 했고, 최고 점수는 localStorage 에 남아 다음 방문으로 이어집니다.",
     nextStep: "리더보드와 공유 기능을 추가할 예정입니다.",
     links: [
       {label: "GitHub", href: "https://github.com/toadsam/Ajou_Mini_Game"}
@@ -231,7 +231,7 @@ export const projects: ProjectData[] = [
       "Docker + Nginx 배포 설정"
     ],
     result:
-      "학생들이 총학생회 정보를 한곳에서 확인하고 Q&A를 주고받을 수 있는 실제 웹 서비스를 배포했습니다.",
+      "총학생회가 개발자를 거치지 않고 공지와 정보를 직접 고칠 수 있게 됐습니다. Search Console 기준(검색 유입) 노출 34,200회 · 클릭 1,080회(CTR 3.2%)로, 학생들이 검색을 통해 실제로 들어오고 있습니다.",
     nextStep: "알림 기능과 모바일 최적화를 추가할 예정입니다.",
     links: [
       {label: "GitHub", href: "https://github.com/ajouchong-dev/ajouchong-web"}
@@ -268,8 +268,12 @@ export const projects: ProjectData[] = [
       "Socket.IO 기반 실시간 라운지(접속자 위치·채팅) 구현",
       "AI 인바디 분석 연동과 리포트 화면 구현"
     ],
+    // `result` 는 **만든 것이 아니라 바뀐 것**을 적는다. "…를 완성했습니다" 는
+    // 심사자에게 아무 정보도 주지 않는다 — 완성은 이 목록에 있다는 사실 자체로
+    // 이미 전제이기 때문이다. 숫자가 있으면 숫자와 출처를, 없으면 어떤 상태까지
+    // 갔는지와 그 과정에서 내린 판단을 쓴다. 지어내지는 않는다.
     result:
-      "운동 기록, 커뮤니티, AI 분석을 하나의 흐름으로 연결한 풀스택 피트니스 플랫폼을 완성했습니다.",
+      "사용자 피드백을 근거로 서비스 성격 자체를 바꿔 다시 만들었습니다 — 소개형 홈페이지(도메인 4개)에서 출석·캐릭터 성장·실시간 라운지가 도는 운영형 플랫폼(도메인 8개 · 백엔드 Controller 28개)으로. 현재 약 50명이 이용 중입니다.",
     nextStep: "실사용자 테스트와 웨어러블 기기 연동을 검토할 예정입니다.",
     links: [
       {label: "시연 영상", href: "https://www.youtube.com/watch?v=y6pbAoxveQM"},
@@ -305,7 +309,7 @@ export const projects: ProjectData[] = [
       "ScriptableObject 기반 상태 데이터 설계"
     ],
     result:
-      "탐색, 상호작용, 연출이 유기적으로 연결된 3D 공포 게임 프로토타입을 완성했습니다.",
+      "탐색 → 상호작용 → 연출이 끊기지 않고 이어지는 3인 팀 프로토타입까지 갔습니다. 캐릭터 상태를 ScriptableObject 로 빼 데이터와 로직을 분리했고, 덕분에 팀원이 스크립트나 씬을 건드리지 않고 값만 바꿔 가며 밸런스를 볼 수 있었습니다.",
     nextStep:
       "퍼즐 요소와 엔딩 시퀀스를 추가해 챕터형 게임으로 확장할 예정입니다.",
     links: [{label: "GitHub", href: "https://github.com/toadsam/DarkLab"}]
@@ -341,7 +345,7 @@ export const projects: ProjectData[] = [
       "팀 Git 작업 구조 정리"
     ],
     result:
-      "스테이지 탐색과 진행 저장 구조를 갖춘 3D 플랫폼 게임 프로토타입을 완성했습니다.",
+      "5인 팀에서 부팀장으로 참여해 Steam 스토어 출시까지 완주했습니다. 학내 과제로 끝나지 않고 누구나 상점에서 내려받을 수 있는 상태까지 간 유일한 프로젝트입니다.",
     nextStep: "추가 스테이지와 보스 패턴 설계의 완성도를 높일 예정입니다.",
     links: [
       {

@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Fragment,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -183,6 +184,32 @@ export function ResumeMode({onEnterVillage}: Props) {
     );
   }, []);
 
+  // 떠 있는 마을 섬(three + GLB 1.45MB)을 **가까이 왔을 때만** 마운트한다.
+  // 한 화면 앞(rootMargin)에서 미리 켜므로, 도착했을 땐 이미 그려져 있다.
+  // 한 번 켜지면 끄지 않는다 — 스크롤을 오르내릴 때마다 WebGL 컨텍스트를
+  // 만들고 버리는 쪽이 훨씬 비싸다.
+  const isleSlotRef = useRef<HTMLDivElement>(null);
+  const [isleNear, setIsleNear] = useState(false);
+  useEffect(() => {
+    const el = isleSlotRef.current;
+    if (!el) return;
+    // **root 를 넘기지 않는다(= 뷰포트).** `.resume-terminal` 은
+    // `position: fixed; inset: 0` 이라 뷰포트와 사각형이 같으므로 판정이
+    // 같고, 바로 위 reveal 관찰자도 같은 이유로 root 없이 돈다 — 이 파일에서
+    // 검증된 쪽에 맞춘다.
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries.some(e => e.isIntersecting)) {
+          setIsleNear(true);
+          observer.disconnect();
+        }
+      },
+      {rootMargin: "100% 0px"}
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const eduMain = useMemo(
     () => education.filter(e => isAcademic(e.program)),
     []
@@ -211,6 +238,12 @@ export function ResumeMode({onEnterVillage}: Props) {
 
   // 히어로 지표. **개수가 아니라 사실**만 올린다.
   // 3,500 은 aClub GA4 실측(2026.01~03) — 카드 지표와 같은 출처다.
+  // 2단이 시작되는 카드. 여기 앞에 구분 라벨을 끼운다 — 크기가 왜 줄었는지
+  // 말해 주지 않으면 심사자는 위계가 아니라 깨진 레이아웃으로 읽는다.
+  // 세는 값이라 `featured` 를 하나 켜고 끄면 라벨 숫자가 알아서 따라온다.
+  const secondTierCount = mainProjects.filter(p => !p.featured).length;
+  const firstSecondTierId = mainProjects.find(p => !p.featured)?.id;
+
   const HERO_ACTIVE_USERS = "3,500";
   const STEAM_URL =
     "https://store.steampowered.com/app/2743860/TSEROF/?l=koreana";
@@ -628,6 +661,15 @@ export function ResumeMode({onEnterVillage}: Props) {
               className에 gridView를 섞으면 리렌더마다 class 속성이 통째로 새로 쓰이고,
               IntersectionObserver가 명령형으로 붙여둔 .active가 지워져 opacity:0으로
               사라진다(토글할 때 프로젝트가 사라졌다 뒤늦게 다시 나타나던 원인). */}
+            {/* 그리드에서는 **크기가 곧 순위다.** 대표 4건은 넓게(2열),
+                나머지는 좁게(3열) 세운다. 접어서 감추는 방식을 먼저 만들었다가
+                걷어냈다 — 40초를 훑는 심사자는 "더 보기" 를 누르지 않아서,
+                감춘 9건이 정작 가장 중요한 독자에게만 없는 것이 됐다.
+                크기 위계는 전부 남기면서 "무엇이 중요한지 내가 안다" 를
+                주장이 아니라 배치로 보인다.
+
+                캐러셀은 건드리지 않는다 — 13장이 같은 크기로 도는 연출이고,
+                효과가 마운트 때 센 `.project-card` 개수로 각도를 나눈다. */}
             <div
               className="carousel-wrapper reveal reveal-delay-1"
               data-grid={isGrid ? "true" : "false"}
@@ -643,138 +685,165 @@ export function ResumeMode({onEnterVillage}: Props) {
                     const shownMetrics = (p.metrics ?? []).filter(m => m.value);
                     const links = p.links.filter(l => l.href);
                     return (
-                      <div
-                        key={p.id}
-                        className={`project-card${
-                          p.richId ? " clickable" : ""
-                        }`}
-                        onClick={() => {
-                          // 문턱 10px. 브라우저가 클릭으로 인정하는 흔들림 폭과
-                          // 비슷하게 잡는다 — 6px 는 손 떨림도 드래그로 봤다.
-                          if (dragMovedRef.current > 10) return;
-                          openProject(p);
-                        }}
-                      >
-                        <div className="project-card-header">
-                          <span
-                            className="project-category"
-                            style={{"--cat": cat.color} as CSSProperties}
-                          >
-                            {cat.label}
-                          </span>
-                          <span
-                            className={`project-status ${
-                              p.status === "출시"
-                                ? "status-shipped"
-                                : p.status === "운영중"
-                                ? "status-active"
-                                : "status-complete"
-                            }`}
-                          >
-                            {p.status}
-                          </span>
-                        </div>
-                        <div className="project-card-image">
-                          {p.image ? (
-                            <img
-                              src={p.image}
-                              alt={p.title}
-                              loading="lazy"
-                              decoding="async"
-                            />
-                          ) : (
-                            <span className="project-card-image-empty">
-                              {p.title}
+                      <Fragment key={p.id}>
+                        {/* 2단 시작 표지. 트랙 안에 있어야 그리드 흐름에
+                            끼어들 수 있고, 캐러셀에서는 CSS 로 감춘다. */}
+                        {p.id === firstSecondTierId ? (
+                          <div className="tier-divider" aria-hidden="true">
+                            <span>그 밖의 작업</span>
+                            <span className="tier-divider-count">
+                              {secondTierCount}건
                             </span>
+                          </div>
+                        ) : null}
+                        <div
+                          className={`project-card${
+                            p.richId ? " clickable" : ""
+                          }${p.featured ? " is-featured" : ""}`}
+                          onClick={() => {
+                            // 문턱 10px. 브라우저가 클릭으로 인정하는 흔들림 폭과
+                            // 비슷하게 잡는다 — 6px 는 손 떨림도 드래그로 봤다.
+                            if (dragMovedRef.current > 10) return;
+                            openProject(p);
+                          }}
+                        >
+                          <div className="project-card-header">
+                            <span
+                              className="project-category"
+                              style={{"--cat": cat.color} as CSSProperties}
+                            >
+                              {cat.label}
+                            </span>
+                            <span
+                              className={`project-status ${
+                                p.status === "출시"
+                                  ? "status-shipped"
+                                  : p.status === "운영중"
+                                  ? "status-active"
+                                  : "status-complete"
+                              }`}
+                            >
+                              {p.status}
+                            </span>
+                          </div>
+                          <div className="project-card-image">
+                            {p.image ? (
+                              <img
+                                src={p.image}
+                                alt={p.title}
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            ) : (
+                              <span className="project-card-image-empty">
+                                {p.title}
+                              </span>
+                            )}
+                          </div>
+                          {p.richId ? (
+                            <button
+                              type="button"
+                              className="project-name project-name-btn"
+                              onClick={e => {
+                                e.stopPropagation();
+                                openProject(p);
+                              }}
+                            >
+                              {p.title}
+                            </button>
+                          ) : (
+                            <div className="project-name">{p.title}</div>
                           )}
-                        </div>
-                        {p.richId ? (
-                          <button
-                            type="button"
-                            className="project-name project-name-btn"
-                            onClick={e => {
-                              e.stopPropagation();
-                              openProject(p);
-                            }}
-                          >
-                            {p.title}
-                          </button>
-                        ) : (
-                          <div className="project-name">{p.title}</div>
-                        )}
 
-                        {/* 한 줄 정체. 예전엔 `subtitle` 이 데이터에만 있고
+                          {/* 한 줄 정체. 예전엔 `subtitle` 이 데이터에만 있고
                             화면에는 안 나와서, 카드가 제목 다음 바로 기간으로
                             떨어졌다 — 읽는 사람이 "이게 뭐 하는 건데?" 를
                             프로젝트 상세를 열어야 알 수 있었다. 심사자는 카드만
                             훑고 지나가므로 그 한 줄이 카드에 있어야 한다. */}
-                        {p.subtitle ? (
-                          <div className="project-subtitle">{p.subtitle}</div>
-                        ) : null}
+                          {p.subtitle ? (
+                            <div className="project-subtitle">{p.subtitle}</div>
+                          ) : null}
 
-                        {/* 기간·팀·역할 — 근거가 없는 값은 데이터에서 비어 있고,
+                          {/* 기간·팀·역할 — 근거가 없는 값은 데이터에서 비어 있고,
                             비면 그 줄이 통째로 사라진다. 지어내지 않기 위해서다. */}
-                        {p.period || p.team ? (
-                          <div className="project-meta">
-                            {[p.period, p.team].filter(Boolean).join(" · ")}
-                          </div>
-                        ) : null}
-                        {p.role ? (
-                          <div className="project-role">{p.role}</div>
-                        ) : null}
+                          {p.period || p.team ? (
+                            <div className="project-meta">
+                              {[p.period, p.team].filter(Boolean).join(" · ")}
+                            </div>
+                          ) : null}
+                          {p.role ? (
+                            <div className="project-role">{p.role}</div>
+                          ) : null}
 
-                        {shownMetrics.length > 0 ? (
-                          <div className="project-metrics">
-                            {shownMetrics.map(m => (
-                              <span className="project-metric" key={m.label}>
-                                <b>{m.value}</b>
-                                {m.label}
-                                {m.provisional ? (
-                                  <i
-                                    className="metric-provisional"
-                                    title="아직 실측하지 않은 임시 수치입니다"
-                                  >
-                                    잠정
-                                  </i>
-                                ) : null}
+                          {shownMetrics.length > 0 ? (
+                            <div className="project-metrics">
+                              {shownMetrics.map(m => (
+                                <span className="project-metric" key={m.label}>
+                                  <b>{m.value}</b>
+                                  {m.label}
+                                  {m.provisional ? (
+                                    <i
+                                      className="metric-provisional"
+                                      title="아직 실측하지 않은 임시 수치입니다"
+                                    >
+                                      잠정
+                                    </i>
+                                  ) : null}
+                                </span>
+                              ))}
+                            </div>
+                          ) : null}
+                          {/* 출처·기간. 지표가 있을 때만, 지표 바로 아래. */}
+                          {shownMetrics.length > 0 && p.metricsSource ? (
+                            <div className="metric-source">
+                              {p.metricsSource}
+                            </div>
+                          ) : null}
+
+                          <div className="project-tags">
+                            {p.tags.map(t => (
+                              <span className="project-tag" key={t}>
+                                {t}
                               </span>
                             ))}
                           </div>
-                        ) : null}
-                        {/* 출처·기간. 지표가 있을 때만, 지표 바로 아래. */}
-                        {shownMetrics.length > 0 && p.metricsSource ? (
-                          <div className="metric-source">{p.metricsSource}</div>
-                        ) : null}
 
-                        <div className="project-tags">
-                          {p.tags.map(t => (
-                            <span className="project-tag" key={t}>
-                              {t}
-                            </span>
-                          ))}
+                          {/* 클릭 신호. 지금까지 「눌린다」는 사실은 hover 색
+                            변화와 제목 버튼뿐이었는데, 3초 훑는 사람은 **마우스를
+                            올리기 전에** 지나간다. 정지 상태에서도 보이는 줄이
+                            하나 있어야 카드가 요약으로 읽히고, 없으면 결론처럼
+                            닫혀 보인다. 상세가 있는 카드에만 붙인다 — 없는 카드에
+                            붙이면 눌러 보고 아무 일도 안 일어난다. */}
+                          {p.richId ? (
+                            <div className="project-open" aria-hidden="true">
+                              자세히 보기
+                              <span className="project-open-arrow">→</span>
+                            </div>
+                          ) : null}
+
+                          {links.length > 0 ? (
+                            <div className="project-links">
+                              {links.map(l => (
+                                <a
+                                  key={l.label}
+                                  className="project-link"
+                                  href={l.href}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  onClick={e => e.stopPropagation()}
+                                >
+                                  {l.label} ↗
+                                </a>
+                              ))}
+                            </div>
+                          ) : null}
                         </div>
-
-                        {links.length > 0 ? (
-                          <div className="project-links">
-                            {links.map(l => (
-                              <a
-                                key={l.label}
-                                className="project-link"
-                                href={l.href}
-                                target="_blank"
-                                rel="noreferrer"
-                                onClick={e => e.stopPropagation()}
-                              >
-                                {l.label} ↗
-                              </a>
-                            ))}
-                          </div>
-                        ) : null}
-                      </div>
+                      </Fragment>
                     );
                   })}
                 </div>
               </div>
+
               <div className="carousel-controls">
                 <button
                   type="button"
@@ -1203,8 +1272,18 @@ export function ResumeMode({onEnterVillage}: Props) {
             </div>
 
             {/* 떠 있는 마을 섬 — 바로 위 「3D 개발자 마을 탐험하기」 버튼의 예고편.
-                밤 숲길을 걸어 내려온 끝에 마을이 보인다는 흐름을 여기서 닫는다. */}
-            <FloatingIsle />
+                밤 숲길을 걸어 내려온 끝에 마을이 보인다는 흐름을 여기서 닫는다.
+
+                **가까이 와야 불러온다.** `dynamic(ssr:false)` 는 서버 렌더만
+                막을 뿐 청크는 마운트 즉시 받는다 — 이 장식 하나 때문에 이력서
+                첫 화면에서 three.js 전체와 GLB 3개(central-plaza 533KB ·
+                life-library 459KB · post-office 492KB = 1.45MB)가 내려왔다.
+                대부분의 방문자는 8,600px 아래 이 자리까지 오지도 않는다.
+                자리(예약 높이)는 아래 div 가 미리 잡아 두므로 나타날 때
+                레이아웃이 밀리지 않는다. */}
+            <div ref={isleSlotRef} className="isle-slot">
+              {isleNear ? <FloatingIsle /> : null}
+            </div>
           </div>
         </section>
       </div>

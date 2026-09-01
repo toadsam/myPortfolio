@@ -129,6 +129,16 @@ export interface MainProjectCard {
   richId?: string;
   /** public/ 기준 카드 대표 이미지 경로. 없으면 플레이스홀더 표시. */
   image?: string;
+  /**
+   * 대표 프로젝트. 그리드에서 **이 넷만 펼쳐 두고** 나머지는 "전체 N건 보기"
+   * 뒤로 접는다.
+   *
+   * 13건을 한 번에 펼치면 "많이 해봤다" 가 아니라 **"하나도 깊게 안 해봤다"**
+   * 로 읽힌다 — 특히 직함이 Full-Stack(Web) 인데 화면의 절반이 게임이면
+   * 심사자의 첫 질문이 "그래서 무슨 직무죠?" 가 된다. 지운 게 아니라 순서를
+   * 준 것이다: 접힌 목록도 한 번의 클릭으로 다 열린다.
+   */
+  featured?: boolean;
   links: ResumeLink[];
 }
 
@@ -435,12 +445,16 @@ export const workExperience: WorkItem[] = [
 export const mainProjects: MainProjectCard[] = [
   {
     id: "muscleup",
+    featured: true,
     title: "득근득근 (MuscleUp)",
     // 예전 부제는 "인증·보안·배포까지 설계한" 이었다. 그건 1.0 이야기다.
     // 이 프로젝트에서 가장 흉내 내기 어려운 건 기술 스택이 아니라
     // **사용자 말을 듣고 서비스 성격을 바꿨다**는 사실이라 그쪽을 앞에 세웠다.
+    // 어순을 뒤집었다. 카드는 3초 안에 부제의 **앞 7글자만** 읽힌다. 예전 문장은
+    // 그 자리를 "소개형 홈페이지"(가장 약한 사실)가 쓰고 있었고, 무기인
+    // "사용자 말을 듣고 방향을 바꿨다"가 20자 뒤에 있었다. 내용은 그대로다.
     subtitle:
-      "소개형 홈페이지로 만들었다가, 사용자 피드백을 듣고 운영형 플랫폼으로 다시 만든 피트니스 커뮤니티",
+      "사용자 피드백을 듣고 소개형 홈페이지를 운영형 플랫폼으로 다시 만든 피트니스 커뮤니티",
     category: "web",
     status: "운영중",
     // Realtime 을 추가했다 — Socket.IO 실시간 서버가 2.0 의 핵심인데 태그에 없었다.
@@ -463,9 +477,19 @@ export const mainProjects: MainProjectCard[] = [
     metricsSource:
       "회원 수는 본인 집계 · 도메인/Controller 는 저장소 소스 기준",
     richId: "muscleup",
-    // 옛 이미지(`/projects/muscleup.webp`)는 1.0 랜딩의 AI 목업이라 한글이
-    // 깨져 있었다. 목록 카드는 심사자가 가장 먼저 보는 그림이다.
-    image: "/projects/muscleup/v2/home-todo.webp",
+    // 목록 카드는 심사자가 가장 먼저 보는 그림이다. 그래서 두 번 갈아탔다.
+    //
+    // ① `/projects/muscleup.webp` — 1.0 랜딩의 AI 목업. 확대하면 한글이 깨져 있었다.
+    // ② `v2/home-todo.webp` — 2.0 실제 캡처이긴 한데 **로그아웃 상태**였다.
+    //    화면에 "캐릭터 준비 중 · 로그인 후 캐릭터가 표시됩니다", 연속 출석 0일,
+    //    오늘 상태 대기, 이번 주 0/7 이 찍혀 있다. 원페이지는 같은 이유로 이걸
+    //    이미 히어로에서 걷어냈는데(richContent/data.ts `muscleup.heroImage` 주석)
+    //    **카드만 계속 쓰고 있었다** — 운영형 플랫폼이라 말하면서 첫 그림이
+    //    아무도 안 온 화면이었다.
+    // ③ 지금: `v2/home-lobby.webp` — 로그인 상태 로비. 브랜드·태그라인·CTA 와
+    //    함께 살아 있는 카운터(라운지 누적 25 · 오늘 출석 1 · 3대 합 8,605kg)가
+    //    같이 찍혀 있다. 2:1 로 잘려 있어 카드 그림 상자(2.08:1)와도 맞는다.
+    image: "/projects/muscleup/v2/home-lobby.webp",
     links: [
       {label: "GitHub", href: "https://github.com/toadsam/Ajou_MuscleUp"},
       {
@@ -476,12 +500,16 @@ export const mainProjects: MainProjectCard[] = [
   },
   {
     id: "aclub",
+    featured: true,
     title: "aClub",
     subtitle:
       "실사용 운영에서 ‘문의 감소·참여 동선 명확화’를 목표로 만든 운영형 웹 서비스",
     category: "web",
     status: "운영중",
-    tags: ["WebService", "Operations", "UX", "Analytics"],
+    // 예전엔 총학 카드와 태그 4개가 **글자까지 똑같아서**, 훑는 사람 눈에 두 카드가
+    // 같은 프로젝트로 보였다. 4장은 각각 다른 이유로 눌려야 하므로 축을 갈랐다 —
+    // 이쪽은 「실측 규모 + 총괄」, 총학은 「운영자에게 권한을 넘긴 설계」다.
+    tags: ["실사용 서비스", "GA4 개선", "프로젝트 총괄", "UX"],
     // 두 번 했다. 2025 는 프론트 3인 중 한 명, 그게 잘 되어서 2026 에
     // 프로젝트장을 맡아 개편했다 — 저장소가 둘인 이유다.
     period: "2025.01 ~ 진행 중",
@@ -496,7 +524,10 @@ export const mainProjects: MainProjectCard[] = [
     ],
     metricsSource: "Google Analytics 4 · 2026.01–03",
     richId: "aclub",
-    image: "/projects/aclub.webp",
+    // 카드 그림 상자는 2.08:1 인데 옛 `aclub.webp` 는 640×445(1.44:1)라
+    // `object-fit: cover` 가 위아래를 크게 잘라 냈다. 이건 상자에 맞춰 만든
+    // 2.08:1 합성본이다. 옛 파일은 원페이지 히어로가 아직 쓰고 있어 남겨 둔다.
+    image: "/projects/aclub-cover.webp",
     links: [
       {label: "사이트", href: "https://aclub.co.kr/"},
       {label: "GitHub (2026)", href: "https://github.com/aClub2026/FE"},
@@ -508,14 +539,17 @@ export const mainProjects: MainProjectCard[] = [
   },
   {
     id: "ajouchong",
+    featured: true,
     title: "아주대학교 총학생회",
     // 1차는 "정보를 한곳에 모았다", 2차(2026.04 개편)는 "총학생회가 직접 고치게
     // 만들었다" 다. 뒤쪽이 운영형 서비스에서 훨씬 어려운 일이라 부제에 세웠다.
+    // 득근득근과 같은 이유로 어순을 뒤집었다. "정보를 한곳에 모았다"는 흔한 일이라
+    // 앞자리를 줄 수 없고, 앞에 서야 하는 건 개발자를 빼도 굴러가게 만든 쪽이다.
     subtitle:
-      "흩어진 학생회 정보를 한곳에 모으고, 총학생회가 개발자 없이 직접 고칠 수 있게 만든 운영형 웹 서비스",
+      "총학생회가 개발자 없이 직접 고칠 수 있게 만든, 흩어진 학생회 정보 통합 서비스",
     category: "web",
     status: "운영중",
-    tags: ["WebService", "Operations", "UX", "Analytics"],
+    tags: ["운영자 도구", "정보 구조", "모바일 개편", "Analytics"],
     period: "2025.03 ~ 진행 중",
     team: "총학생회 IT · 프론트 3인",
     // 득근득근과 같은 「1차 → 2차」 문법. 두 프로젝트가 같은 방향으로 자랐다.
@@ -542,22 +576,45 @@ export const mainProjects: MainProjectCard[] = [
   },
   {
     id: "festflow",
+    featured: true,
     title: "FestFlow",
-    subtitle: "대학 축제 운영자를 위한 실시간 부스 관리 시스템",
+    // "~를 위한 시스템" 은 **만들었다**는 뜻일 뿐이고, 이 프로젝트에서 가장 센
+    // 사실은 **실제로 돌았다**는 것이다(아주대 대동제 2026.05, AI Match 1일 운영).
+    // 4장 중 실사용 현장 기록이 있는 유일한 카드인데 그 말이 카드에 없었다.
+    subtitle:
+      "아주대 대동제에서 하루 동안 실제 운영한 축제 부스·매칭 관리 시스템",
     category: "web",
     status: "완료",
-    tags: ["React", "SSE", "Spring Boot", "PWA", "scikit-learn"],
+    // 여기만 순수 기술 나열이라 다른 3장과 축이 어긋나 있었다. 맨 앞에 성격
+    // 태그를 세우고 기술은 뒤로 — scikit-learn(혼잡 예측)은 role 줄에 남아 있다.
+    tags: ["현장 운영", "실시간(SSE)", "Spring Boot", "PWA"],
     period: "~ 2026.06",
     team: "개인 개발",
     role: "사용자·관리자 기능 전체 구현 (React · Spring Boot · JWT · SSE · PWA) · 혼잡 예측 모델 연동",
-    // "SSE 3" 으로 적혀 있었는데 StreamController.java 의 엔드포인트는 7개다.
-    // 컨트롤러 26개도 저장소에서 센 값(*Controller.java).
+    // 예전 지표는 "SSE 7 채널 · 백엔드 컨트롤러 26" 이었다. 둘 다 저장소에서 실제로
+    // 센 값이라 틀린 건 아니지만, **코드량은 심사자에게 능력으로 읽히지 않는다** —
+    // 사람이 쓴 흔적이 있는데도 4장 중 첫 인상이 가장 약한 카드가 되어 있었다.
+    // 셋 다 현장 실측이다(전용 전시실 P01Hero 타일 · P11Field 와 같은 출처).
+    // 기술 숫자는 버린 게 아니라 상세로 내려갔다.
     metrics: [
-      {value: "7", label: "SSE 실시간 채널"},
-      {value: "26", label: "백엔드 컨트롤러"}
+      {value: "169명", label: "AI Match 등록자"},
+      {value: "424건", label: "매칭 신청"},
+      {value: "36건", label: "성사 매칭"}
     ],
-    metricsSource: "저장소 소스 집계 · 2026.06 기준",
+    metricsSource: "아주대 대동제 2026.05 · AI Match 1일 현장 운영 집계",
     richId: "festflow",
+    // 현장 캡처 합성본(`festflow-field.webp`, scripts/build-festflow-card.mjs)으로
+    // 한 번 갈아탔다가 이 소개 이미지로 되돌렸다. 부제·지표가 이미 "실제로 돌았다"를
+    // 말하고 있으므로, 그림까지 같은 말을 반복하는 것보다 **제품이 어떻게 생겼는지**
+    // 보여 주는 편이 카드 한 장에 담기는 정보가 넓다는 판단이다(본인 결정).
+    // 현장 캡처본은 지운 게 아니라 public/projects/festflow-field.webp 에 남아 있다 —
+    // 쓰고 싶어지면 이 줄만 바꾸면 되고, 원본이 바뀌면 스크립트로 다시 뽑는다.
+    //
+    // 다만 이 그림은 **데모 데이터 화면**이다("총 방문자 12,345" 는 가상값이고,
+    // 화면 안에 DEMO 배지가 붙어 있다). 카드 크기(≈340px)로 줄면 배지 글자는
+    // 뭉개지고 숫자만 읽히므로, 바로 아래 지표 줄의 실측값(169·424·36)과
+    // 섞여 보일 수 있다. 지표에 출처를 명시해 둔 이유이기도 하다.
+    image: "/projects/festflow.webp",
     links: [{label: "GitHub", href: "https://github.com/toadsam/FestFlow"}]
   },
   {
@@ -571,24 +628,10 @@ export const mainProjects: MainProjectCard[] = [
     team: "개인 개발 (풀스택 1인)",
     role: "도메인 설계 · 프론트 · 백엔드 전부",
     metrics: [{value: "13", label: "백엔드 도메인"}],
+    // 마지막 남은 플레이스홀더였다. 실제 화면 캡처가 아니라 **소개용 키 아트**다.
+    image: "/projects/mystock.webp",
     richId: "mystock",
     links: [{label: "GitHub", href: "https://github.com/toadsam/MyStock-Desk"}]
-  },
-  {
-    id: "foodmap",
-    title: "Ajou Campus Foodmap",
-    subtitle:
-      "세션 기반 OAuth 로그인과 맛집 등록 플로우를 구현한 캠퍼스 지도 서비스",
-    category: "web",
-    status: "완료",
-    tags: ["FullStack", "OAuth", "Workflow"],
-    period: "2024.10 ~ 2024.12",
-    role: "Passport Local + Google/Naver OAuth 통합 · MongoStore 세션 유지 · CORS allowlist",
-    image: "/projects/foodmap.webp",
-    links: [
-      {label: "Client", href: "https://github.com/toadsam/pwd-week6-client"},
-      {label: "Server", href: "https://github.com/toadsam/pwd-week6-server"}
-    ]
   },
   {
     id: "sign-language",
@@ -603,6 +646,9 @@ export const mainProjects: MainProjectCard[] = [
     role: "Expo/React Native 프론트 · Spring Boot 백엔드 · OAuth2/JWT/Firebase 인증",
     metrics: [{value: "30+", label: "학습 수어 단어"}],
     richId: "sign-language",
+    // 그림이 없어 플레이스홀더 상자가 떠 있던 자리. 실제 앱 캡처가 아니라
+    // **소개용 키 아트**다 — 화면을 그린 게 아니라 서비스가 무엇인지 말한다.
+    image: "/projects/sign-language.webp",
     links: [{label: "GitHub", href: "https://github.com/toadsam/Sign-Language"}]
   },
   {
@@ -631,33 +677,6 @@ export const mainProjects: MainProjectCard[] = [
         href: "https://www.youtube.com/watch?v=1Lm-lpVsmq8"
       }
     ]
-  },
-  {
-    id: "ajou-adventure",
-    title: "아주분투",
-    subtitle:
-      "캠퍼스를 네온 톤으로 재해석한 Phaser 3 기반 2D 러닝 게임 (발판 6종·낮/밤 전환)",
-    category: "game",
-    status: "완료",
-    tags: ["TypeScript", "Phaser 3", "Vite"],
-    team: "개인 개발 (전담)",
-    richId: "ajou-adventure",
-    image: "/projects/ajou-adventure.webp",
-    links: [
-      {label: "GitHub", href: "https://github.com/toadsam/Ajou_Mini_Game"}
-    ]
-  },
-  {
-    id: "darklab",
-    title: "DarkLab",
-    subtitle: "1인칭 탐색 기반 3D 공포 어드벤처 게임 프로토타입",
-    category: "game",
-    status: "완료",
-    tags: ["Unity", "C#", "Cinemachine", "Horror"],
-    period: "2024-1 학기",
-    team: "3인 — 프로그래밍 담당",
-    richId: "darklab",
-    links: [{label: "GitHub", href: "https://github.com/toadsam/DarkLab"}]
   },
   {
     id: "otherside-vr",
@@ -707,6 +726,18 @@ export const mainProjects: MainProjectCard[] = [
     period: "2024.08 ~ 2024.12",
     team: "개인 개발 (1인)",
     role: "게임 시스템 설계·구현 — 코어 루프 · 전투 AI · UI · 이벤트",
+    // 카드는 **소개용 키 아트**로 간다(`ajou-indigame.webp`).
+    //
+    // 직전까지 `ajou-adventure.webp`(실제 인게임 캡처)를 걸고 있었다. 그건 원래
+    // 아주분투 카드에 잘못 붙어 있던 걸 여기로 되돌린 것이었다 — 파일 이름이
+    // 이 프로젝트(아주대"탐험")를 가리키는데
+    // 하필 아주분투의 id 가 `ajou-adventure` 라서 이름만 보고 짝지어졌다.
+    // 화면 내용이 증거다 — 3D 캠퍼스·체력바·포탈은 Unity 로 만든 이쪽이고,
+    // 아주분투는 Phaser 3 2D 러너다. **이름이 아니라 그림을 보고 붙일 것.**
+    //
+    // 그 실제 캡처가 사라진 건 아니다 — 원페이지(`ajou/` 전용 뷰어)가
+    // `/projects/ajou-adventure/` 폴더의 진짜 화면들을 그대로 쓴다.
+    image: "/projects/ajou-indigame.webp",
     links: [
       {
         label: "플레이 영상",
@@ -722,6 +753,35 @@ export const mainProjects: MainProjectCard[] = [
 // 예전처럼 눌리지 않는 GitHub/Demo/Notion 라벨 25개를 띄우지 않기 위해서다.
 
 export const subProjects: SubProjectCard[] = [
+  // 아래 둘은 주요 프로젝트에 있다가 내려왔다(2026-09-01). 만든 사실은 그대로고
+  // **어느 칸에 두느냐만 바뀐다** — 주요 칸이 짧을수록 거기 있는 것들이 세진다.
+  {
+    title: "Ajou Campus Foodmap",
+    desc: "세션 기반 OAuth 로그인과 맛집 등록 플로우를 구현한 캠퍼스 지도 서비스 (2024.10~12)",
+    image: "/projects/foodmap.webp",
+    links: [
+      {label: "Client", href: "https://github.com/toadsam/pwd-week6-client"},
+      {label: "Server", href: "https://github.com/toadsam/pwd-week6-server"}
+    ]
+  },
+  {
+    // 주요에서 내려왔다(2026-09-01). The Other Side (VR) 와 **같은 칸을 두고
+    // 겹쳤다** — 둘 다 Unity 로 만든 3D 공포 팀 프로젝트라, 나란히 두면 심사자
+    // 눈에는 한 사람이 비슷한 걸 두 번 한 것으로 읽힌다. 공포·Unity 자리는
+    // VR/XR 까지 간 The Other Side 하나가 대표한다.
+    title: "DarkLab",
+    desc: "1인칭 탐색 기반 3D 공포 어드벤처 게임 프로토타입 (2024-1 학기 · 3인 — 프로그래밍 담당)",
+    links: [{label: "GitHub", href: "https://github.com/toadsam/DarkLab"}]
+  },
+  {
+    // 그림을 안 붙였다. 리포에 있는 "아주분투" 이미지는 전부 아주대탐험
+    // 것이었다(위 mainProjects 주석 참고) — 없는 그림을 남의 것으로 채우지 않는다.
+    title: "아주분투",
+    desc: "캠퍼스를 네온 톤으로 재해석한 Phaser 3 기반 2D 러닝 게임 (발판 6종·낮/밤 전환)",
+    links: [
+      {label: "GitHub", href: "https://github.com/toadsam/Ajou_Mini_Game"}
+    ]
+  },
   {
     title: "고양이로부터 지켜라",
     desc: "타워 디펜스 게임 1인 개발",
