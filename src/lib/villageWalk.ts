@@ -32,6 +32,16 @@ import {villageBuildings} from "./constants";
  * (예전엔 이 값이 곧 경계였다: 원반 r 18. 껍질 최소 반지름이 21.3 이라
  *  지금 범위는 그때의 순수 확장이다 — 잃는 땅이 없다.)
  */
+/**
+ * 클릭으로 칠 수 있는 포인터 이동 거리(px). 이보다 많이 끌었으면 **드래그**로
+ * 보고 클릭 판정을 버린다.
+ *
+ * 걷기 모드에 드래그 시점이 생기면서(2026-08-29) 이 가드가 바닥뿐 아니라
+ * NPC·건물에도 필요해졌다. 화면을 돌리려고 NPC 위에서 끌기 시작했다가 손을
+ * 떼면 대화창이 열리고, 건물 위에서였다면 그 건물 안으로 들어가 버린다.
+ */
+export const CLICK_MAX_DELTA = 5;
+
 export const WALK_RADIUS = 35;
 
 /** 캐릭터 몸 반지름 — 막는 것들의 반경에 이만큼 더해 판정한다 */
@@ -99,10 +109,34 @@ function radiusFor(glb: string): number {
   return 0;
 }
 
+/**
+ * **플레이어만 통과하는 것들** (주민은 그대로 막힌다).
+ *
+ * 걷기 모드로 실제로 돌아다녀 보면 몸이 걸리는 건 건물이 아니라 길가에 늘어선
+ * 울타리 188토막·담장 117토막과 들판의 덤불·바위다. 길 폭이 1.88 인데 양옆을
+ * 울타리가 먹고, 블록을 가로지르려면 담장을 빙 돌아야 한다 — "뭐에 자꾸 막힌다"의
+ * 정체가 이것이다.
+ *
+ * 그렇다고 주민까지 통과시키면 **담장을 뚫고 걸어 다니는 주민**이 보인다. 주민은
+ * 늘 화면 안에서 천천히 움직이니까 관통이 그대로 눈에 띄는데, 플레이어는 자기가
+ * 조종하는 몸이라 살짝 스쳐 지나가는 걸 알아채기 어렵다. 그래서 **비대칭**이 맞다.
+ *
+ * **나무도 통과시킨다** (2026-08-29). 굵어서 관통이 티가 날 줄 알았는데, 실제로
+ * 걸어 보면 들판을 가로지를 때 제일 자주 걸리는 게 나무다 — 마을 안팎에 350그루가
+ * 넘고 그 사이가 좁다. 잠깐 스치는 어색함보다 길이 막히는 답답함이 훨씬 크다.
+ *
+ * 민가·분수·우물·풍차·문기둥·건물은 양쪽 다 막는다 — 통과해서 안으로 들어가면
+ * 스치는 정도가 아니라 "안에 갇힌" 그림이 된다.
+ */
+const SOFT_FOR_PLAYER =
+  /^(wall-low|wall-ivy|fence-rail|fence|bush-|rock-|boulder|tree-|far-oak|far-pine|far-sakura)/;
+
 interface Blocker {
   x: number;
   z: number;
   r: number;
+  /** 플레이어는 통과, 주민은 막힘 */
+  soft?: boolean;
 }
 
 /**
@@ -132,6 +166,8 @@ interface WallSeg {
   z: number;
   ax: number;
   az: number;
+  /** 플레이어는 통과, 주민은 막힘 */
+  soft?: boolean;
 }
 const wallSegs: WallSeg[] = [];
 
@@ -199,6 +235,15 @@ interface BridgeSpan {
 }
 const BRIDGE_SPANS: BridgeSpan[] = [];
 
+/** 채움 민가 — 건물만큼 시야를 가리는데 상자가 아니라 원으로 들고 있다 */
+interface ViewDisc {
+  x: number;
+  z: number;
+  r: number;
+  top: number;
+}
+const viewDiscs: ViewDisc[] = [];
+
 // 장식물 — 걷는 범위 근처만 담는다. 나머지는 어차피 갈 수 없다.
 for (const p of propsLayout.props as Array<{
   glb: string;
@@ -228,7 +273,13 @@ for (const p of propsLayout.props as Array<{
   }
   if (WALL_KINDS.test(name)) {
     const a = p.rotationY ?? 0;
-    wallSegs.push({x, z, ax: Math.cos(a), az: Math.sin(a)});
+    wallSegs.push({
+      x,
+      z,
+      ax: Math.cos(a),
+      az: Math.sin(a),
+      soft: SOFT_FOR_PLAYER.test(name)
+    });
     continue;
   }
   // 성문(gate-arch)은 가운데가 길이다 — 원 하나로 막으면 길이 통째로 메워진다.
@@ -246,8 +297,16 @@ for (const p of propsLayout.props as Array<{
     addBlocker({x: x - ox, z: z - oz, r: 0.12 * s});
     continue;
   }
+  // 민가는 시야도 가린다 (건물과 같은 취급). 높이는 실측 대신 넉넉히 2.0 —
+  // 카메라가 지붕 위로 넘어가면 어차피 안 가린다.
+  if (/^house-[abc]$/.test(name))
+    viewDiscs.push({x, z, r: 1.15, top: terrainHeightAt(x, z) + 2});
+
   const r = radiusFor(p.glb);
-  if (r > 0) addBlocker({x, z, r});
+  // soft 를 여기서 **반드시** 같이 넣어야 한다. 담장(wallSegs)에만 달고 여기를
+  // 빼먹었더니 나무·덤불·바위가 그대로 막혀서, 통과되는 건 울타리뿐이었다
+  // (2026-08-29 사용자 보고 "꽃이나 바위가 아직도 막힌다").
+  if (r > 0) addBlocker({x, z, r, soft: SOFT_FOR_PLAYER.test(name)});
 }
 
 // ─── 물 ───────────────────────────────────────────────────────────────────────
@@ -313,10 +372,7 @@ const DECK_CELLS: DeckCell[] = (() => {
     const L = Math.max(span, 0.001);
     // 끝 칸 너머 1 유닛의 지면이 은행 높이 — 표본이 물이면 단 높이로 대체
     const bank = (p: {x: number; z: number}, q: {x: number; z: number}) => {
-      const h = terrainHeightAt(
-        p.x + (p.x - q.x) / L,
-        p.z + (p.z - q.z) / L
-      );
+      const h = terrainHeightAt(p.x + (p.x - q.x) / L, p.z + (p.z - q.z) / L);
       return h > 0.2 ? h : PLAZA_RING.deck;
     };
     const hA = bank(A, B);
@@ -413,6 +469,100 @@ const boxes = villageBuildings
     };
   });
 
+// ─── 카메라 시야 ─────────────────────────────────────────────────────────────
+//
+// 3인칭 카메라가 건물 뒤로 넘어가면 캐릭터가 벽에 가려 안 보인다. 흔한 해법이
+// **스프링 암**이다 — 캐릭터에서 카메라 자리까지 선을 그어, 막히면 맞은 지점
+// 앞까지 카메라를 당긴다.
+//
+// three 의 레이캐스터는 **여기서 쓸 수 없다.** 이 리포는 "히트박스만 레이캐스트"
+// 규칙이라 건물 GLB 메시가 전부 `raycast = noop` 이다(포인터 판정을 투명 상자에
+// 몰아 준 구조). 쏴 봐야 건물에 안 맞는다.
+//
+// 대신 걷기 판정이 이미 갖고 있는 **회전된 상자**를 그대로 쓴다. 선 위의 점 몇
+// 개를 찍어 상자 안에 들어가는지만 보면 되고, 상자가 27개뿐이라 매 프레임 돌려도
+// 공짜다.
+//
+// **막는 것은 건물과 민가뿐이다.** 나무·울타리는 캐릭터가 통과하도록 열어 뒀는데
+// (SOFT_FOR_PLAYER) 카메라만 그걸로 당겨지면 들판에서 화면이 계속 요동친다.
+// 통과시키기로 한 것은 카메라도 무시하는 게 일관된다.
+
+interface ViewBox {
+  x: number;
+  z: number;
+  hw: number;
+  hd: number;
+  cos: number;
+  sin: number;
+  top: number;
+}
+
+const viewBoxes: ViewBox[] = villageBuildings
+  .filter(b => Math.hypot(b.position[0], b.position[2]) < WALK_RADIUS + 10)
+  .map(b => {
+    const r = b.rotationY ?? 0;
+    return {
+      x: b.position[0],
+      z: b.position[2],
+      hw: b.size[0] / 2,
+      hd: b.size[2] / 2,
+      cos: Math.cos(r),
+      sin: Math.sin(r),
+      top: terrainHeightAt(b.position[0], b.position[2]) + b.size[1]
+    };
+  });
+
+function insideView(x: number, y: number, z: number): boolean {
+  for (const b of viewBoxes) {
+    if (y > b.top) continue; // 지붕 위로 넘어간 카메라는 안 가린다
+    const dx = x - b.x;
+    const dz = z - b.z;
+    if (Math.abs(dx) > 7 || Math.abs(dz) > 7) continue;
+    const lx = b.cos * dx - b.sin * dz;
+    const lz = b.sin * dx + b.cos * dz;
+    if (Math.abs(lx) < b.hw && Math.abs(lz) < b.hd) return true;
+  }
+  for (const d of viewDiscs) {
+    if (y > d.top) continue;
+    const dx = x - d.x;
+    const dz = z - d.z;
+    if (dx * dx + dz * dz < d.r * d.r) return true;
+  }
+  return false;
+}
+
+/**
+ * 캐릭터(from)에서 카메라 자리(to)까지 **트여 있는 비율**. 1 이면 그대로 두면
+ * 되고, 0.4 면 40% 지점까지만 물러날 수 있다는 뜻이다.
+ *
+ * 선을 따라 점을 찍어 본다. 정확한 선-상자 교차식을 풀 수도 있지만, 표본이면
+ * 높이 판정(지붕 위는 안 가림)이 공짜로 따라오고 코드가 절반이다. 표본 간격이
+ * 0.35 라 벽 두께(최소 1.2)를 지나칠 수 없다.
+ */
+export function viewClearFraction(
+  fromX: number,
+  fromY: number,
+  fromZ: number,
+  toX: number,
+  toY: number,
+  toZ: number
+): number {
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const dz = toZ - fromZ;
+  const len = Math.hypot(dx, dy, dz);
+  if (len < 0.01) return 1;
+  const steps = Math.max(4, Math.ceil(len / 0.35));
+  for (let i = 1; i <= steps; i++) {
+    const t = i / steps;
+    if (insideView(fromX + dx * t, fromY + dy * t, fromZ + dz * t)) {
+      // 맞기 **직전** 표본까지가 안전하다
+      return Math.max(0, (i - 1) / steps);
+    }
+  }
+  return 1;
+}
+
 /**
  * 그 자리에 설 수 있나. 컨트롤러가 매 프레임 다음 위치로 물어본다.
  *
@@ -421,6 +571,18 @@ const boxes = villageBuildings
  * 그게 전부 그냥 통과됐다. "캐릭터가 건물을 통과한다"의 정체가 이것이다.
  */
 export function isWalkable(x: number, z: number): boolean {
+  return walkableWith(x, z, false);
+}
+
+/**
+ * 플레이어 전용 판정 — 위 `SOFT_FOR_PLAYER` 는 통과한다.
+ * 섬 경계·건물·민가·분수 같은 큰 것만 그대로 막힌다.
+ */
+export function isWalkablePlayer(x: number, z: number): boolean {
+  return walkableWith(x, z, true);
+}
+
+function walkableWith(x: number, z: number, asPlayer: boolean): boolean {
   // **섬 밖으로는 못 나간다.** 경계는 석호 껍질(볼록 10각형) — 껍질 안은
   // 물이든 단이든 어디든 다니고, 껍질 밖은 벌판이라 발을 딛을 수 없다.
   // 울타리 프롭은 이 경계를 눈에 보이게 그린 것일 뿐, 막는 건 이 한 줄이다 —
@@ -444,6 +606,7 @@ export function isWalkable(x: number, z: number): boolean {
   const near = grid.get(key(Math.floor(x / CELL), Math.floor(z / CELL)));
   if (near) {
     for (const b of near) {
+      if (asPlayer && b.soft) continue;
       const rr = b.r + CHARACTER_RADIUS;
       const dx = x - b.x;
       const dz = z - b.z;
@@ -452,6 +615,7 @@ export function isWalkable(x: number, z: number): boolean {
   }
 
   for (const w of wallSegs) {
+    if (asPlayer && w.soft) continue;
     const dx = x - w.x;
     const dz = z - w.z;
     if (Math.abs(dx) > 1.6 || Math.abs(dz) > 1.6) continue; // 멀면 각도 계산도 생략
@@ -479,7 +643,9 @@ export function slideTo(
   toX: number,
   toZ: number
 ): {x: number; z: number} {
-  return slideWith(isWalkable, fromX, fromZ, toX, toZ);
+  // **플레이어 판정이다.** 주민은 slideToDry/steerDry 를 쓰고 그쪽은 엄격한
+  // isWalkable 을 본다 — 울타리·덤불을 뚫고 다니는 주민이 안 생기도록.
+  return slideWith(isWalkablePlayer, fromX, fromZ, toX, toZ);
 }
 
 /**

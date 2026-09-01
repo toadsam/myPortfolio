@@ -1,3 +1,5 @@
+import {villageMusic, type SceneHint} from "./villageMusic";
+
 // 에셋 없이 Web Audio로 생성하는 UI 신스 사운드.
 // 브라우저 자동재생 정책상 첫 사용자 제스처에서 AudioContext가 활성화된다.
 
@@ -43,116 +45,13 @@ function tone(
   o.stop(t0 + dur + 0.02);
 }
 
-// 앰비언트 드론 (Developer City 이식) — 저역 사인 2개 + lowpass
-let drone: {osc1: OscillatorNode; osc2: OscillatorNode; gain: GainNode} | null =
-  null;
-
-// ── 생성형 마을 배경음악 — 코드 패드 + 스파스 벨 아르페지오 + 에코 (에셋 없음) ──
-// 잔잔한 코드 진행을 천천히 순환하며, 위에 벨이 띄엄띄엄 떨어진다.
-const PROGRESSION: number[][] = [
-  [130.81, 196.0, 246.94, 329.63], // Cmaj7 (밝은 보이싱)
-  [123.47, 196.0, 293.66, 369.99], // Gmaj7
-  [130.81, 220.0, 261.63, 329.63], // Am7
-  [174.61, 220.0, 261.63, 329.63] // Fmaj7
-];
-const CHORD_DUR = 6; // 초 (살짝 경쾌하게)
-
-let music: {master: GainNode; lp: BiquadFilterNode; delay: DelayNode} | null =
-  null;
-let musicTimer: ReturnType<typeof setInterval> | null = null;
-let chordIdx = 0;
-
-function playChord() {
-  const c = getCtx();
-  if (!c || !music || muted) return;
-  const chord = PROGRESSION[chordIdx % PROGRESSION.length]!;
-  chordIdx += 1;
-  const t0 = c.currentTime;
-
-  // 패드 (코드 구성음을 부드럽게)
-  for (const f of chord) {
-    const o = c.createOscillator();
-    const g = c.createGain();
-    o.type = "triangle";
-    o.frequency.value = f;
-    o.detune.value = (Math.random() - 0.5) * 6;
-    g.gain.setValueAtTime(0, t0);
-    g.gain.linearRampToValueAtTime(0.022, t0 + 1.6);
-    g.gain.linearRampToValueAtTime(0.018, t0 + CHORD_DUR - 1.5);
-    g.gain.linearRampToValueAtTime(0.0001, t0 + CHORD_DUR);
-    o.connect(g);
-    g.connect(music.lp);
-    o.start(t0);
-    o.stop(t0 + CHORD_DUR + 0.1);
-  }
-
-  // 벨 아르페지오 (한 옥타브 위에서 띄엄띄엄)
-  const notes = chord.map(f => f * 2);
-  const hits = 5;
-  for (let i = 0; i < hits; i += 1) {
-    if (Math.random() < 0.18) continue; // 가끔 쉼 (밝게 — 더 자주)
-    const at = 0.4 + i * (CHORD_DUR / hits) + Math.random() * 0.5;
-    const f = notes[Math.floor(Math.random() * notes.length)]!;
-    const o = c.createOscillator();
-    const g = c.createGain();
-    o.type = "triangle";
-    o.frequency.value = f;
-    const ts = t0 + at;
-    g.gain.setValueAtTime(0, ts);
-    g.gain.linearRampToValueAtTime(0.03, ts + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, ts + 1.4);
-    o.connect(g);
-    g.connect(music.delay); // 에코
-    g.connect(music.lp);
-    o.start(ts);
-    o.stop(ts + 1.6);
-  }
-}
-
-function startMusic() {
-  if (muted || music) return;
-  const c = getCtx();
-  if (!c) return;
-  const master = c.createGain();
-  master.gain.setValueAtTime(0, c.currentTime);
-  master.connect(c.destination);
-  const lp = c.createBiquadFilter();
-  lp.type = "lowpass";
-  lp.frequency.value = 3200; // 더 개방적(밝게)
-  lp.connect(master);
-  const delay = c.createDelay(1.0);
-  delay.delayTime.value = 0.38;
-  const fb = c.createGain();
-  fb.gain.value = 0.28;
-  delay.connect(fb);
-  fb.connect(delay);
-  delay.connect(master);
-  music = {master, lp, delay};
-  master.gain.linearRampToValueAtTime(0.5, c.currentTime + 2.2);
-  chordIdx = 0;
-  playChord();
-  musicTimer = setInterval(playChord, CHORD_DUR * 1000);
-}
-
-function stopMusic() {
-  if (musicTimer) {
-    clearInterval(musicTimer);
-    musicTimer = null;
-  }
-  if (!music) return;
-  const c = getCtx();
-  const m = music;
-  music = null;
-  if (!c) return;
-  m.master.gain.linearRampToValueAtTime(0, c.currentTime + 0.8);
-  setTimeout(() => {
-    try {
-      m.master.disconnect();
-    } catch {
-      /* noop */
-    }
-  }, 1000);
-}
+// 마을 배경음악은 villageMusic 이 맡는다.
+//
+// 예전에는 여기에 **드론 + 난수 벨**이 있었다: 110/165Hz 사인 둘을 lowpass 420 로
+// 깔고, 그 위에 6초마다 코드를 바꾸며 벨을 아무 데나 떨어뜨렸다. 멜로디도 리듬도
+// 없어서 "웅—" 하는 소음으로 들렸고, 실제로 꺼 두고 쓰셨다. 2026-08-30 에
+// 화성 진행·모티프 멜로디·리버브를 갖춘 생성형 스코어로 갈아탔다.
+// 짧은 UI 효과음(hover/click/enter/tick)은 그대로 이 파일이 낸다.
 
 export const sfx = {
   setMuted(v: boolean) {
@@ -162,53 +61,23 @@ export const sfx = {
   isMuted() {
     return muted;
   },
-  // 잔잔한 배경 드론 시작/정지
+  // 마을 배경음악 시작/정지
   startAmbient() {
-    if (muted || drone) return;
-    const c = getCtx();
-    if (!c) return;
-    const g = c.createGain();
-    g.gain.setValueAtTime(0, c.currentTime);
-    g.connect(c.destination);
-    const lp = c.createBiquadFilter();
-    lp.type = "lowpass";
-    lp.frequency.value = 420;
-    lp.connect(g);
-    const o1 = c.createOscillator();
-    o1.type = "sine";
-    o1.frequency.value = 110;
-    const o2 = c.createOscillator();
-    o2.type = "sine";
-    o2.frequency.value = 165;
-    o2.detune.value = 4;
-    o1.connect(lp);
-    o2.connect(lp);
-    o1.start();
-    o2.start();
-    g.gain.linearRampToValueAtTime(0.04, c.currentTime + 1.4);
-    drone = {osc1: o1, osc2: o2, gain: g};
-    // 드론 위에 잔잔한 마을 배경음악을 얹는다
-    startMusic();
+    if (muted) return;
+    // 자동재생 정책 — 첫 제스처 전에는 컨텍스트가 잠들어 있다.
+    // getCtx 가 resume 을 부르므로 여기서 한 번 깨워 준다.
+    getCtx();
+    villageMusic.start();
   },
   stopAmbient() {
-    stopMusic();
-    if (!drone) return;
-    const c = getCtx();
-    const d = drone;
-    drone = null;
-    if (!c) return;
-    d.gain.gain.linearRampToValueAtTime(0, c.currentTime + 0.5);
-    setTimeout(() => {
-      try {
-        d.osc1.stop();
-        d.osc2.stop();
-      } catch {
-        /* already stopped */
-      }
-    }, 600);
+    villageMusic.stop();
   },
   isAmbientOn() {
-    return drone !== null || music !== null;
+    return villageMusic.isPlaying();
+  },
+  /** 걷기 모드 여부 등 — 편성이 따라 바뀐다 */
+  setScene(hint: SceneHint) {
+    villageMusic.setScene(hint);
   },
   // 짧은 호버 블립
   hover() {

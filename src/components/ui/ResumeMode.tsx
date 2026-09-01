@@ -20,7 +20,6 @@ import {
   hero,
   mainProjects,
   resumePdf,
-  githubEvidence,
   skillChips,
   skillDetails,
   subProjects,
@@ -147,7 +146,13 @@ export function ResumeMode({onEnterVillage}: Props) {
     return () => observer.disconnect();
   }, []);
 
-  const [gridView, setGridView] = useState(false);
+  // **기본값은 그리드다.** 캐러셀이 기본이던 시절, 이 화면에서 가장 중요한
+  // 섹션이 가장 안 읽혔다 — 한 번에 온전히 읽히는 카드가 1장이고 양옆은 원근
+  // 왜곡으로 글자가 뭉갰다. 결정적으로 **그리드가 캐러셀보다 정보가 많다**:
+  // 카드 안의 성과 타일 세 번째 값(세션 참여율·검색 CTR·Controller 수)과
+  // 링크가 그리드에서만 다 보인다. 기본값이 열등한 뷰일 이유가 없다.
+  // 캐러셀은 토글로 남긴다 — 연출로서는 여전히 값이 있다.
+  const [gridView, setGridView] = useState(true);
   const [selectedRich, setSelectedRich] = useState<number | null>(null);
 
   // 좁은 화면에서는 **3D 고리가 성립하지 않는다.** 카드 폭이 화면 폭에 육박하면
@@ -209,6 +214,20 @@ export function ResumeMode({onEnterVillage}: Props) {
   const HERO_ACTIVE_USERS = "3,500";
   const STEAM_URL =
     "https://store.steampowered.com/app/2743860/TSEROF/?l=koreana";
+  // 총학생회 Search Console 실측. `Public Repos 44` 가 있던 자리다.
+  //
+  // 저장소 개수를 뺀 이유: **누구나 채울 수 있는 숫자라 변별력이 없다.** 오히려
+  // 채용 쪽에서는 "칸을 채우려 애썼다" 로 읽힌다. 그 자리를 두 번째 운영 서비스의
+  // 검색 유입으로 바꾸면, 히어로 넷이 "사람이 얼마나 닿았나" 둘 + "정말 나갔나"
+  // 둘로 선다. 저장소 44개는 05 가치관("성실")과 연락처 GitHub 링크에 남아 있다.
+  //
+  // 라벨에 "검색 노출" 을 박아 둔다 — 전체 방문자로 읽히면 과장이 된다.
+  const HERO_SEARCH_IMPRESSIONS = mainProjects
+    .find(p => p.id === "ajouchong")
+    ?.metrics?.find(m => m.label === "검색 노출")?.value;
+  const AJOUCHONG_URL = mainProjects
+    .find(p => p.id === "ajouchong")
+    ?.links.find(l => l.label === "사이트")?.href;
   // 세는 값이라 데이터가 바뀌면 따라온다.
   const shippedCount = mainProjects.filter(p => p.status === "출시").length;
   const liveServiceCount = mainProjects.filter(
@@ -296,7 +315,13 @@ export function ResumeMode({onEnterVillage}: Props) {
     let currentAngle = 0;
     let isDragging = false;
     let startX = 0;
-    let autoRotate = true;
+    // 누르는 순간의 x. 클릭인지 드래그인지는 **이 지점 대비 순변위**로 가른다.
+    let pressX = 0;
+
+    // 자동 회전은 걷어냈다. 읽는 중에 카드가 계속 옆으로 흘러서, 조준한 카드를
+    // 누르면 그 사이 다른 카드가 그 자리에 와 있었다 — 이 화면에서 제일 중요한
+    // 동작(프로젝트 상세 열기)이 운에 맡겨져 있었다는 뜻이다. 캐러셀은 이제
+    // 끌거나 좌우 버튼을 눌러야만 돈다.
 
     cards.forEach((card, i) => {
       card.dataset.baseAngle = String(angleStep * i);
@@ -331,31 +356,30 @@ export function ResumeMode({onEnterVillage}: Props) {
     update();
     updateRef.current = update;
 
-    let raf = 0;
-    const animate = () => {
-      if (!gridRef.current && autoRotate && !isDragging) {
-        currentAngle -= 0.06;
-        update();
-      }
-      raf = requestAnimationFrame(animate);
-    };
-    raf = requestAnimationFrame(animate);
-
     const pointerX = (e: MouseEvent | TouchEvent) =>
       "touches" in e ? e.touches[0]?.clientX ?? startX : e.clientX;
 
     const onDown = (e: MouseEvent | TouchEvent) => {
       if (gridRef.current) return;
       isDragging = true;
-      autoRotate = false;
       dragMovedRef.current = 0;
       startX = pointerX(e);
+      pressX = startX;
     };
     const onMove = (e: MouseEvent | TouchEvent) => {
       if (!isDragging) return;
       const x = pointerX(e);
       const d = x - startX;
-      dragMovedRef.current += Math.abs(d);
+      // **누른 지점 대비 순변위의 최댓값**을 기록한다.
+      //
+      // 예전엔 `+= Math.abs(d)` 로 이동 "경로 총합" 을 쌓았다. 그래서 손이 좌우로
+      // 떨기만 해도(왕복이라 순변위는 0) 값이 계속 커졌고, 문턱 6px 를 넘긴 순간
+      // 클릭이 조용히 무효가 됐다 — 트랙패드·터치에서는 사실상 매번. 이 화면에서
+      // 제일 중요한 동작이 손 떨림에 걸려 있었다.
+      dragMovedRef.current = Math.max(
+        dragMovedRef.current,
+        Math.abs(x - pressX)
+      );
       currentAngle += d * 0.3;
       startX = x;
       update();
@@ -363,18 +387,11 @@ export function ResumeMode({onEnterVillage}: Props) {
     const onUp = () => {
       if (!isDragging) return;
       isDragging = false;
-      window.setTimeout(() => {
-        autoRotate = true;
-      }, 3000);
     };
 
     rotateRef.current = (dir: number) => {
-      autoRotate = false;
       currentAngle += dir * angleStep;
       update();
-      window.setTimeout(() => {
-        autoRotate = true;
-      }, 3000);
     };
 
     // 화면을 돌리거나 창을 줄이면 반지름을 다시 잰다.
@@ -394,7 +411,6 @@ export function ResumeMode({onEnterVillage}: Props) {
     window.addEventListener("resize", onResize);
 
     return () => {
-      cancelAnimationFrame(raf);
       track.removeEventListener("mousedown", onDown);
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
@@ -489,15 +505,22 @@ export function ResumeMode({onEnterVillage}: Props) {
                 <span className="typing-text">{hero.roleTag}</span>
                 <span className="cursor-blink" />
               </div>
-              <div
-                className="reveal reveal-delay-3"
-                style={{
-                  maxWidth: 400,
-                  fontSize: 12,
-                  color: "#666",
-                  lineHeight: 1.8
-                }}
-              >
+              {/* 지원 직무 · 가능 시점.
+                  채용 담당이 이름 다음으로 확인하는 두 가지인데, 예전엔 화면
+                  어디에도 없었다 — 졸업 예정일을 알려면 03 학력까지 스크롤해야
+                  했고, "웹 지원인지 게임 지원인지" 는 끝까지 안 나왔다.
+                  이름 바로 아래, 읽는 눈이 반드시 지나는 자리에 둔다. */}
+              <dl className="hero-availability reveal reveal-delay-3">
+                <div>
+                  <dt>지원 직무</dt>
+                  <dd>{hero.target}</dd>
+                </div>
+                <div>
+                  <dt>가능 시점</dt>
+                  <dd>{hero.availability}</dd>
+                </div>
+              </dl>
+              <div className="hero-tagline reveal reveal-delay-3">
                 웹 아키텍처와 XR 인터랙션을 결합해, 운영에서 생기는 마찰을
                 풀스택 구현으로 해결합니다.
               </div>
@@ -565,22 +588,24 @@ export function ResumeMode({onEnterVillage}: Props) {
               </div>
             </div>
             <div className="vertical-divider" />
-            {/* 공개 저장소 수는 이 화면에서 **누구나 눌러서 확인할 수 있는**
-                몇 안 되는 숫자다. 그래서 잠정 표시 없이 그대로 세운다. */}
-            <a
-              className="status-module status-link"
-              href={contact.github}
-              rel="noreferrer"
-              target="_blank"
-            >
-              <span className="status-title">Public Repos</span>
-              <div className="status-data">
-                <span className="status-number">
-                  {githubEvidence.repoCount}
-                </span>
-                <span className="status-unit">GITHUB ↗</span>
-              </div>
-            </a>
+            {/* 두 번째 운영 서비스의 검색 유입. 사이트가 열려 있어 눌러서
+                확인된다 — 히어로에 올리는 값의 조건은 "검산 가능" 이다. */}
+            {HERO_SEARCH_IMPRESSIONS && AJOUCHONG_URL ? (
+              <a
+                className="status-module status-link"
+                href={AJOUCHONG_URL}
+                rel="noreferrer"
+                target="_blank"
+              >
+                <span className="status-title">검색 노출</span>
+                <div className="status-data">
+                  <span className="status-number">
+                    {HERO_SEARCH_IMPRESSIONS}
+                  </span>
+                  <span className="status-unit">총학 · GSC ↗</span>
+                </div>
+              </a>
+            ) : null}
           </footer>
         </div>
 
@@ -624,7 +649,9 @@ export function ResumeMode({onEnterVillage}: Props) {
                           p.richId ? " clickable" : ""
                         }`}
                         onClick={() => {
-                          if (dragMovedRef.current > 6) return;
+                          // 문턱 10px. 브라우저가 클릭으로 인정하는 흔들림 폭과
+                          // 비슷하게 잡는다 — 6px 는 손 떨림도 드래그로 봤다.
+                          if (dragMovedRef.current > 10) return;
                           openProject(p);
                         }}
                       >

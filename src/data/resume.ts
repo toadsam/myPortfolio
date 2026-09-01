@@ -26,6 +26,16 @@ export interface ResumeLink {
 export interface HeroContent {
   name: string;
   roleTag: string;
+  /**
+   * 지원 직무. 이력서 원본 머리말의 `Target:` 줄이 근거다.
+   * `roleTag`("무엇을 하는 사람인가")와 다르다 — 이건 "어느 자리에 지원하는가".
+   */
+  target: string;
+  /**
+   * 채용 담당이 이름 다음으로 확인하는 값. 예전엔 화면 어디에도 없어서,
+   * 졸업 예정일을 찾으려면 03 학력 섹션까지 스크롤해야 했다.
+   */
+  availability: string;
   headlineLines: string[];
   bullets: string[];
 }
@@ -163,6 +173,10 @@ export const CATEGORY_META: Record<
 export const hero: HeroContent = {
   name: "정재훈",
   roleTag: "Full-Stack (Web) · Unity XR Developer",
+  // 이력서 원본 머리말 `Target: Web Full-Stack / Frontend / Backend` 그대로.
+  target: "Web Full-Stack · Frontend · Backend",
+  // 졸업 예정일은 학력 절의 사실이고, 인턴/정규 가능 여부는 본인 확인(2026-09-01).
+  availability: "2027.02 졸업 예정 · 인턴 / 정규 입사 모두 가능",
   headlineLines: ["웹을 주력으로,", "운영 문제까지 해결하는", "개발자 정재훈"],
   bullets: [
     "React · Spring Boot 기반 Full-Stack(Web) 개발",

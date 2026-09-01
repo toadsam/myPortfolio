@@ -30,7 +30,13 @@
   --bg: transparent;
   --fg: rgb(var(--v-paper));
   --accent: rgb(var(--v-lantern));
-  --muted: rgb(var(--v-moon) / 0.55);
+  /* **본문 대비의 바닥.** 0.55 였을 때 밤 배경(--v-night) 위에서 3.69:1 로
+     WCAG AA(4.5:1)에 미달했다 — 기간·날짜·라벨이 전부 이 값이라, 밝은 사무실
+     모니터나 회의실 빔에서 "언제 무엇을 했는지" 가 통째로 안 읽혔다.
+     0.70 = 5.21:1. 뒤에 숲 일러스트가 비쳐 배경이 국소적으로 밝아지므로
+     기준선(4.5)에 딱 맞추지 않고 여유를 둔다. 라벨용이니 더 올리지는 않는다. */
+  --muted: rgb(var(--v-moon) / 0.7);
+  /* 테두리는 글자가 아니라서 대비 기준을 적용하지 않는다(그대로 0.55). */
   --border: rgb(var(--v-wood) / 0.55);
 
   --serif: var(--font-display), "Gowun Batang", serif;
@@ -305,11 +311,55 @@
   pointer-events: none;
 }
 
+/* 지원 직무 · 가능 시점.
+   히어로에서 이름 다음으로 눈이 가야 하는 줄이라 등불색 왼쪽 선을 세우되,
+   글자는 본문 톤으로 둔다 — 이름·직함과 강조를 다투면 셋 다 안 읽힌다. */
+.resume-terminal .hero-availability {
+  margin: 0 0 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 28px;
+  padding-left: 14px;
+  border-left: 2px solid rgb(var(--v-lantern) / 0.55);
+  /* 히어로 왼쪽 글자단의 폭. 이걸 안 걸면 두 항목이 한 줄로 뻗어 오른쪽
+     기술 별자리(절대 배치 500px) 위로 올라타 글자끼리 겹친다. */
+  max-width: 400px;
+}
+
+.resume-terminal .hero-availability > div {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.resume-terminal .hero-availability dt {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: rgb(var(--v-lantern) / 0.9);
+  white-space: nowrap;
+}
+
+.resume-terminal .hero-availability dd {
+  margin: 0;
+  font-size: 14px;
+  color: rgb(var(--v-paper) / 0.92);
+}
+
+/* 한 줄 소개. 예전엔 인라인 `color:#666` 12px 였다 = 3.26:1 로 AA 미달인데,
+   하필 "이 사람이 무엇을 하는 사람인가" 를 요약하는 유일한 문장이었다. */
+.resume-terminal .hero-tagline {
+  max-width: 400px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
 .resume-terminal .hero-sub {
   font-family: var(--mono);
   font-size: 16px;
   color: var(--accent);
-  margin-bottom: 40px;
+  margin-bottom: 24px;
   display: flex;
   align-items: center;
   gap: 15px;
@@ -364,9 +414,11 @@
   bottom: 6%;
   transform: translateX(-50%);
   white-space: nowrap;
-  font-size: 11px;
+  /* 11px / 0.42 였다 = 2.67:1. 화면에서 가장 안 읽히는 글자였는데, 하필
+     "여기는 끌어서 돌리는 곳" 이라는 유일한 조작 안내였다. */
+  font-size: 12px;
   letter-spacing: 0.14em;
-  color: rgb(var(--v-moon) / 0.42);
+  color: rgb(var(--v-moon) / 0.7);
   pointer-events: none;
   transition: opacity 0.5s ease;
 }
@@ -446,7 +498,7 @@
 
 .resume-terminal .spec-label {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   text-transform: uppercase;
 }
@@ -475,7 +527,7 @@
 
 .resume-terminal .status-title {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -494,7 +546,7 @@
 }
 
 .resume-terminal .status-unit {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
 }
 
@@ -675,7 +727,7 @@
 
 .resume-terminal .proficiency-note {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
   font-weight: 400;
 }
@@ -767,7 +819,7 @@
 
 .resume-terminal .edu-tag {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--accent);
   border: 1px solid var(--accent);
   padding: 2px 8px;
@@ -974,8 +1026,8 @@
   align-items: center;
   justify-content: center;
   font-family: var(--mono);
-  font-size: 11px;
-  color: rgb(var(--v-moon) / 0.6);
+  font-size: 12px;
+  color: rgb(var(--v-moon) / 0.75);
   margin-bottom: 12px;
   overflow: hidden;
   position: relative;
@@ -1177,7 +1229,7 @@
 
 .resume-terminal .carousel-hint {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--muted);
 }
 
@@ -1381,7 +1433,7 @@
 }
 
 .resume-terminal .side-project-desc {
-  font-size: 11px;
+  font-size: 12px;
   color: rgb(var(--v-moon) / 0.72);
   line-height: 1.5;
   flex: 1;
@@ -1517,7 +1569,7 @@
 
 .resume-terminal .contact-link-label {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   margin-right: 8px;
 }
@@ -1747,7 +1799,9 @@
   font-family: var(--serif);
   font-size: 15px;
   line-height: 1.5;
-  color: rgb(var(--v-moon) / 0.5);
+  /* "옅게" 는 0.5(3.28:1)가 아니라 0.72(5.44:1)로도 충분히 옅다 —
+     이 글자는 그림 대신 서 있는 프로젝트 제목이라 읽혀야 한다. */
+  color: rgb(var(--v-moon) / 0.72);
   letter-spacing: 0;
 }
 
@@ -1774,7 +1828,7 @@
 /* ── 카드: 기간 · 팀 · 역할 ── */
 .resume-terminal .project-meta {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   color: rgb(var(--v-gold) / 0.9);
   margin-bottom: 6px;
   letter-spacing: 0.2px;
@@ -1799,7 +1853,7 @@
   display: inline-flex;
   align-items: baseline;
   gap: 5px;
-  font-size: 11px;
+  font-size: 12px;
   color: rgb(var(--v-moon) / 0.75);
   background: rgb(var(--v-night) / 0.5);
   border: 1px solid rgb(var(--v-wood) / 0.4);
@@ -1820,7 +1874,7 @@
    달빛 70% 는 밤하늘 위 대비 5.2 로 AA 를 넘긴다. */
 .resume-terminal .metric-source {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
   margin-top: 8px;
   color: rgb(var(--v-moon) / 0.7);

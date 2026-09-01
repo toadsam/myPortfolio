@@ -1,6 +1,16 @@
 "use client";
 
 import {Billboard, Html, useCursor} from "@react-three/drei";
+import {canGreet, pickGreeting} from "@/data/villageGreetings";
+import {
+  claimGreeting,
+  GREET_APPROACH_SECONDS,
+  GREET_DURATION_MS,
+  GREET_RADIUS,
+  GREET_STAND_DIST,
+  markMet,
+  readMet
+} from "@/lib/villageGreeting";
 import {useFrame} from "@react-three/fiber";
 import {memo, Suspense, useEffect, useMemo, useRef, useState} from "react";
 import {PooledLight} from "./LightPool";
@@ -9,7 +19,12 @@ import type {ThreeEvent} from "@react-three/fiber";
 import type {Group, Vector3} from "three";
 import type {NpcBehaviorProfile} from "@/data/npcBehaviors";
 import {moodLabel} from "@/lib/liveState";
-import {isWalkableDry, steerDry, walkHeightAt} from "@/lib/villageWalk";
+import {
+  CLICK_MAX_DELTA,
+  isWalkableDry,
+  steerDry,
+  walkHeightAt
+} from "@/lib/villageWalk";
 import type {
   NpcActionState,
   NpcAnimationKey,
@@ -73,6 +88,14 @@ interface NPCProps {
   emote?: string;
   /** 관계 기반 사회적 목표 — 친한 NPC를 찾아가거나 화해하러 갈 지점 */
   socialTarget?: Vector3Tuple | null;
+  /**
+   * 걷기 모드일 때 조종 캐릭터의 **살아 있는 위치**. 이게 있으면 옆을 지나갈 때
+   * 인사를 건넨다. 마을(카메라) 모드에서는 undefined — 인사할 상대가 없다.
+   *
+   * state 가 아니라 ref 인 이유: 캐릭터는 매 프레임 움직이는데 state 로 올리면
+   * 그때마다 NPC 30명이 통째로 다시 렌더된다.
+   */
+  playerPosRef?: React.MutableRefObject<Vector3Tuple | null>;
 }
 
 function NPCImpl({
@@ -98,10 +121,23 @@ function NPCImpl({
   commandSlot,
   commandTotal,
   emote,
-  socialTarget
+  socialTarget,
+  playerPosRef
 }: NPCProps) {
   const groupRef = useRef<Group | null>(null);
   const elapsedRef = useRef(0);
+  /** 지금 띄우고 있는 인사 (없으면 null) */
+  const [greeting, setGreeting] = useState<string | null>(null);
+  /** 직전 프레임에 사정거리 안이었나 — **들어오는 순간**에만 인사한다 */
+  const nearRef = useRef(false);
+  /** 인사 판정은 프레임마다 할 필요가 없다 */
+  const greetCheckRef = useRef(0);
+  /** 이 시각(elapsed)까지 손님에게 다가가 인사한다 */
+  const greetUntilRef = useRef(0);
+  /** 이번 인사에서 이미 손을 흔들었나 */
+  const greetWavedRef = useRef(false);
+  /** NpcCharacter 에게 "지금 특기 동작 한 번" 을 알리는 신호 */
+  const specialNowRef = useRef(false);
   /** 구역 단차에서 현재 밟고 있는 단 높이 (한 단 오를 때 순간이동 안 하게 감쇠) */
   const groundYRef = useRef(0);
   const targetRef = useRef<Vector3Tuple>(behavior?.home ?? npc.position);
@@ -326,6 +362,56 @@ function NPCImpl({
       return;
     }
 
+    // ── 인사: 손님이 지나가면 다가와서 손을 흔든다 ────────────────────────
+    // 단체 명령보다 **뒤**여야 한다 — 집결 중에 각자 인사하러 흩어지면 명령이
+    // 깨진다. 그래서 command 가 있으면 아래 블록으로 넘긴다.
+    const greetAt = playerPosRef?.current;
+    if (
+      greetAt &&
+      !command &&
+      !currentAction &&
+      elapsedRef.current < greetUntilRef.current
+    ) {
+      const g = groupRef.current;
+      const px = greetAt[0];
+      const pz = greetAt[2];
+      // 손님 코앞까지 가면 화면을 가린다 — 조금 떨어져 선다
+      const ox = g.position.x - px;
+      const oz = g.position.z - pz;
+      const od = Math.hypot(ox, oz) || 1;
+      const tx = px + (ox / od) * GREET_STAND_DIST;
+      const tz = pz + (oz / od) * GREET_STAND_DIST;
+      const dx = tx - g.position.x;
+      const dz = tz - g.position.z;
+      const dist = Math.hypot(dx, dz);
+
+      if (dist > 0.22) {
+        const step = Math.min(2.6 * delta, dist);
+        // 배회와 같은 조향을 쓴다 — 인사하겠다고 건물을 뚫고 오면 안 된다
+        const moved = stepToward(g, dx, dz, step);
+        moveStateRef.current = moved ? "walk" : "idle";
+        g.position.y =
+          settleGround(g, delta) + bobUp(elapsedRef.current * 8, 0.05);
+      } else {
+        moveStateRef.current = "idle";
+        // 손님을 바라본다
+        const targetRot = Math.atan2(px - g.position.x, pz - g.position.z);
+        let d = targetRot - g.rotation.y;
+        d = Math.atan2(Math.sin(d), Math.cos(d));
+        g.rotation.y += d * Math.min(1, delta * 7);
+        // 도착하면 **한 번만** 특기 동작(손 흔들기·춤…)을 튼다
+        if (!greetWavedRef.current) {
+          greetWavedRef.current = true;
+          specialNowRef.current = true;
+        }
+        // 가볍게 통통 — 서 있기만 하면 다가온 게 무색해진다
+        g.position.y =
+          settleGround(g, delta) +
+          Math.abs(Math.sin(elapsedRef.current * 5.4)) * 0.09;
+      }
+      return;
+    }
+
     // ── 단체 명령: 집결 / 단체사진 / 파티 / 따라오기 / 인사 ──
     if (command) {
       const g = groupRef.current;
@@ -507,6 +593,44 @@ function NPCImpl({
       ]);
       reportAtRef.current = now + 0.4;
     }
+
+    // ─── 옆을 지나가면 인사 ────────────────────────────────────────────────
+    // **들어오는 순간에만** 건다(`nearRef`). 사정거리 안에 있는 동안 계속
+    // 판정하면, 옆에 서 있기만 해도 쿨다운이 풀릴 때마다 말을 건다.
+    const player = playerPosRef?.current;
+    if (player && now > greetCheckRef.current) {
+      greetCheckRef.current = now + 0.2;
+      const dx = player[0] - groupRef.current.position.x;
+      const dz = player[2] - groupRef.current.position.z;
+      const near = dx * dx + dz * dz < GREET_RADIUS * GREET_RADIUS;
+
+      if (
+        near &&
+        !nearRef.current &&
+        !isActive &&
+        !bubbleText &&
+        canGreet(npc)
+      ) {
+        if (claimGreeting(npc.id)) {
+          const met = readMet(npc.id);
+          const hour = new Date().getHours();
+          setGreeting(
+            pickGreeting(npc, met.n, {
+              first: met.n === 0,
+              longTime: met.at > 0 && Date.now() - met.at > 86_400_000,
+              night: hour >= 18 || hour < 5
+            })
+          );
+          markMet(npc.id);
+          // 말풍선만 띄우면 "지나가다 혼잣말" 처럼 보인다. 하던 일을 멈추고
+          // 손님 앞까지 걸어와 손을 흔들어야 인사로 읽힌다.
+          greetUntilRef.current = elapsedRef.current + GREET_APPROACH_SECONDS;
+          greetWavedRef.current = false;
+          window.setTimeout(() => setGreeting(null), GREET_DURATION_MS);
+        }
+      }
+      nearRef.current = near;
+    }
   });
 
   function handlePointer(
@@ -519,8 +643,16 @@ function NPCImpl({
 
   function handleClick(event: ThreeEvent<MouseEvent>) {
     event.stopPropagation();
+    // 시점을 돌리려고 NPC 위에서 끌기 시작했다가 손을 뗀 것이면 대화를 열지
+    // 않는다. 걷기 모드의 드래그 시점이 생기면서 필요해졌다 — 바닥은 예전부터
+    // 같은 가드를 쓰고 있었다(GroundClickCatcher).
+    if (event.delta > CLICK_MAX_DELTA) return;
     onSelect(npc);
   }
+
+  // NPC 틱이 내려 준 말풍선이 인사보다 우선이다 — 그쪽은 오늘 활동·관계가 실린
+  // 내용이고, 인사는 스쳐 지나갈 때의 인사치레다.
+  const shownBubble = bubbleText ?? greeting ?? undefined;
 
   return (
     <group ref={groupRef} position={home}>
@@ -531,7 +663,11 @@ function NPCImpl({
         scale={highlighted ? 1.08 : 1}
       >
         <Suspense fallback={null}>
-          <NpcCharacter stateRef={moveStateRef} modelId={npc.model} />
+          <NpcCharacter
+            modelId={npc.model}
+            specialNowRef={specialNowRef}
+            stateRef={moveStateRef}
+          />
         </Suspense>
         {currentAction ? (
           <NpcActionEffect
@@ -584,7 +720,7 @@ function NPCImpl({
           </Html>
         </Billboard>
       ) : null}
-      {bubbleText ? (
+      {shownBubble ? (
         <Billboard position={[0, 2.28, 0]}>
           <Html
             center
@@ -596,7 +732,7 @@ function NPCImpl({
               className="rounded-xl border border-[#e2c078]/40 bg-[#0b1626]/92 px-3 py-2 text-center text-[11px] font-bold leading-5 text-[#f3e6c8] shadow-2xl"
               style={{width: 180, whiteSpace: "normal", wordBreak: "keep-all"}}
             >
-              {bubbleText}
+              {shownBubble}
             </div>
           </Html>
         </Billboard>
@@ -617,7 +753,7 @@ function NPCImpl({
           </Html>
         </Billboard>
       ) : null}
-      {emote && !command && !bubbleText ? (
+      {emote && !command && !shownBubble ? (
         <Billboard position={[0, 2.4, 0]}>
           <Html
             center

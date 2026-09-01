@@ -1148,28 +1148,6 @@
       "id": "ground-grass-1",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
-        -18.759,
-        0.06,
-        9.374
-      ],
-      "rotationY": 6.132,
-      "scale": 0.889
-    },
-    {
-      "id": "ground-grass-2",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
-        -18.458,
-        0.06,
-        8.552
-      ],
-      "rotationY": 1.786,
-      "scale": 0.817
-    },
-    {
-      "id": "ground-grass-3",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
         -1.493,
         0.06,
         -18.836
@@ -1178,7 +1156,7 @@
       "scale": 0.854
     },
     {
-      "id": "ground-grass-4",
+      "id": "ground-grass-2",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
         -7.596,
@@ -1189,18 +1167,7 @@
       "scale": 0.705
     },
     {
-      "id": "ground-grass-5",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
-        -6.901,
-        0.06,
-        -18.465
-      ],
-      "rotationY": 5.016,
-      "scale": 0.864
-    },
-    {
-      "id": "ground-grass-6",
+      "id": "ground-grass-3",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
         -9.909,
@@ -1211,7 +1178,7 @@
       "scale": 0.986
     },
     {
-      "id": "ground-grass-7",
+      "id": "ground-grass-4",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
         1.669,
@@ -1222,18 +1189,7 @@
       "scale": 0.822
     },
     {
-      "id": "ground-grass-8",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
-        1.521,
-        0.06,
-        -20.316
-      ],
-      "rotationY": 6.256,
-      "scale": 0.71
-    },
-    {
-      "id": "ground-grass-9",
+      "id": "ground-grass-5",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
         3.997,
@@ -1244,18 +1200,7 @@
       "scale": 0.964
     },
     {
-      "id": "ground-grass-10",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
-        3.721,
-        0.06,
-        -28.489
-      ],
-      "rotationY": 4.636,
-      "scale": 0.857
-    },
-    {
-      "id": "ground-grass-11",
+      "id": "ground-grass-6",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
         25.551,
@@ -1266,29 +1211,7 @@
       "scale": 0.926
     },
     {
-      "id": "ground-grass-12",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
-        25.604,
-        0.06,
-        -20.702
-      ],
-      "rotationY": 1.081,
-      "scale": 1.095
-    },
-    {
-      "id": "ground-grass-13",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
-        25.56,
-        0.06,
-        -21.012
-      ],
-      "rotationY": 4.433,
-      "scale": 0.741
-    },
-    {
-      "id": "ground-grass-14",
+      "id": "ground-grass-7",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
         16.184,
@@ -1299,7 +1222,7 @@
       "scale": 0.665
     },
     {
-      "id": "ground-grass-15",
+      "id": "ground-grass-8",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
         -20.104,
@@ -1310,18 +1233,7 @@
       "scale": 0.712
     },
     {
-      "id": "ground-grass-16",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
-        -19.568,
-        0.06,
-        -4.025
-      ],
-      "rotationY": 2.69,
-      "scale": 0.782
-    },
-    {
-      "id": "ground-grass-17",
+      "id": "ground-grass-9",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
         -13.735,
@@ -1332,18 +1244,7 @@
       "scale": 0.829
     },
     {
-      "id": "ground-grass-18",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
-        -13.498,
-        0.06,
-        -16.394
-      ],
-      "rotationY": 4.475,
-      "scale": 0.903
-    },
-    {
-      "id": "ground-grass-19",
+      "id": "ground-grass-10",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
         23.771,
@@ -1354,29 +1255,7 @@
       "scale": 0.735
     },
     {
-      "id": "ground-grass-20",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
-        22.914,
-        0.06,
-        8.392
-      ],
-      "rotationY": 2.341,
-      "scale": 0.764
-    },
-    {
-      "id": "ground-grass-21",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
-        24.503,
-        0.06,
-        8.453
-      ],
-      "rotationY": 3.097,
-      "scale": 0.946
-    },
-    {
-      "id": "ground-grass-22",
+      "id": "ground-grass-11",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
         25.687,
@@ -1387,7 +1266,7 @@
       "scale": 0.84
     },
     {
-      "id": "ground-grass-23",
+      "id": "ground-grass-12",
       "glb": "/models/props/ground-flat/v2/grass-patch.glb",
       "position": [
         14.447,
@@ -1396,17 +1275,6 @@
       ],
       "rotationY": 2.789,
       "scale": 1.05
-    },
-    {
-      "id": "ground-grass-24",
-      "glb": "/models/props/ground-flat/v2/grass-patch.glb",
-      "position": [
-        15.037,
-        0.06,
-        10.467
-      ],
-      "rotationY": 0.864,
-      "scale": 1.096
     },
     {
       "id": "decor-arch-study",

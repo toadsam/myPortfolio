@@ -80,10 +80,13 @@ const _tmp = new Vector3();
 
 function NpcCharacterImpl({
   stateRef,
-  modelId = DEFAULT_NPC_MODEL
+  modelId = DEFAULT_NPC_MODEL,
+  specialNowRef
 }: {
   stateRef: MutableRefObject<NpcMoveState>;
   modelId?: CharacterModelId;
+  /** 밖에서 특기 동작을 한 번 트리거한다 (인사하러 다가와 도착한 순간) */
+  specialNowRef?: MutableRefObject<boolean>;
 }) {
   const innerRef = useRef<Group>(null);
   const {camera} = useThree();
@@ -267,6 +270,13 @@ function NpcCharacterImpl({
     // 평소엔 숨쉬기 idle 이 돌고, SPECIAL_GAP 마다 직업 동작(손짓·춤·경계…)이
     // 클립 길이만큼 한 번 나온 뒤 다시 idle 로 돌아온다. 걷기 시작하면 즉시 중단.
     if (target === "idle" && specials.length > 0) {
+      // 밖에서 "지금 한 번 해" 하고 부르는 경우 — 인사하러 다가온 주민이
+      // 도착해서 손을 흔드는 순간이 이거다. 예약 시각을 현재로 당기면 아래
+      // 분기가 곧바로 특기 동작을 고른다.
+      if (specialNowRef?.current) {
+        specialNowRef.current = false;
+        specialAtRef.current = now;
+      }
       if (specialAtRef.current === 0)
         specialAtRef.current = now + 8 + Math.random() * 20;
       const cur = playingRef.current;

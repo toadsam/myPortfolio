@@ -85,7 +85,7 @@ import {
   WATER_FULL_DEPTH,
   waterHalfAt
 } from "@/lib/villageTerrain";
-import {isWalkable, walkHeightAt} from "@/lib/villageWalk";
+import {CLICK_MAX_DELTA, isWalkable, walkHeightAt} from "@/lib/villageWalk";
 import buildingModels from "@/data/buildingModels.json";
 import {buildBuildingStateMap, buildNpcStateMap} from "@/lib/liveState";
 import type {NpcRuntimeState, VillageState} from "@/types/live";
@@ -103,6 +103,7 @@ import {Building} from "./Building";
 import {BuildingNetwork} from "./BuildingNetwork";
 import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
+import {WalkEmoteBar} from "./WalkEmoteBar";
 import {LightPool} from "./LightPool";
 import {NPC, type NpcCommand} from "./NPC";
 import {PerfHudPanel, PerfProbe} from "./PerfHud";
@@ -229,7 +230,6 @@ const ISLAND_RADIUS = 53;
 // 바닥 클릭 이동이 먹는 범위 — 걸어 다니는 섬(반지름 40)까지. 물을 찍으면 무시.
 const GROUND_CLICK_RADIUS = 41;
 // 이보다 많이 움직인 뒤 떼면 드래그(회전)지 클릭이 아니다 (px)
-const GROUND_CLICK_MAX_DELTA = 5;
 
 /**
  * 바닥 클릭 이동용 투명 판 하나 + 클릭 지점 링.
@@ -261,7 +261,7 @@ function GroundClickCatcher({
   });
 
   function handleClick(event: ThreeEvent<MouseEvent>) {
-    if (event.delta > GROUND_CLICK_MAX_DELTA) return; // 드래그 회전의 끝
+    if (event.delta > CLICK_MAX_DELTA) return; // 드래그 회전의 끝
     const {x, z} = event.point;
     // 물 위는 이동 목적지가 아니다 — 저공 카메라가 물만 가득 보게 되고,
     // 처음 온 사람은 빠른 이동 메뉴를 모르면 돌아올 방법이 없다 (2026-08-28 점검).
@@ -3021,6 +3021,13 @@ function VillageSceneImpl({
   onDepartIsland
 }: VillageSceneProps) {
   const isWalkMode = explorationMode === "walk";
+  // 걷기 모드의 클릭/탭 이동 목적지. state 가 아니라 ref 인 이유는 매 프레임
+  // useFrame 안에서만 읽히기 때문이다 — state 로 두면 클릭 한 번에 마을 전체가
+  // 다시 렌더된다(정적 자식들이 memo 인 이유와 같은 사정).
+  const walkTargetRef = useRef<Vector3Tuple | null>(null);
+  // 조종 캐릭터의 살아 있는 위치. CharacterController 가 매 프레임 쓰고,
+  // 주민들이 읽어 "옆을 지나가는지"를 스스로 판단한다.
+  const playerPosRef = useRef<Vector3Tuple | null>(null);
   const propsApi = usePropsEditor();
   const editing = propsApi.enabled && propsApi.editMode;
   const sky = VILLAGE_PALETTE;
@@ -3336,6 +3343,7 @@ function VillageSceneImpl({
                   runtimeMemory={npcRuntimeStates[npc.id]?.memory}
                   currentAction={npcRuntimeStates[npc.id]?.currentAction}
                   onPositionChange={onNpcPositionChange}
+                  playerPosRef={isWalkMode ? playerPosRef : undefined}
                   onSelect={onSelectNpc}
                   facePoint={npcRuntimeStates[npc.id]?.facePoint}
                   holdUntil={npcRuntimeStates[npc.id]?.holdUntil}
@@ -3480,7 +3488,22 @@ function VillageSceneImpl({
           )}
 
           {isWalkMode ? (
-            <CharacterController />
+            <>
+              <CharacterController
+                playerPosRef={playerPosRef}
+                walkTargetRef={walkTargetRef}
+              />
+              {/* 걷기 모드에서도 바닥을 찍으면 그리로 걸어간다. 마을 모드의
+                  카메라 이동과 **같은 판정면**을 쓴다 — 드래그로 시점을 돌리다
+                  손을 떼는 건 `event.delta` 가 걸러 준다. 모바일이 이걸로 덮인다. */}
+              {!editing ? (
+                <GroundClickCatcher
+                  onGroundClick={point => {
+                    walkTargetRef.current = point;
+                  }}
+                />
+              ) : null}
+            </>
           ) : (
             <>
               <CameraController
@@ -3511,21 +3534,26 @@ function VillageSceneImpl({
       </Canvas>
 
       {isWalkMode ? (
-        <div className="pointer-events-none absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-1.5 rounded-xl border border-[#7a5a38]/55 bg-[#0b1626]/85 px-4 py-2.5 backdrop-blur-md">
-          {[
-            ["W", "앞"],
-            ["A", "왼쪽"],
-            ["S", "뒤"],
-            ["D", "오른쪽"]
-          ].map(([key, label]) => (
-            <span className="flex flex-col items-center gap-0.5" key={key}>
-              <kbd className="rounded border border-[#e2c078]/50 bg-[#13223a] px-2 py-0.5 font-mono text-xs font-black text-[#e2c078]">
-                {key}
-              </kbd>
-              <span className="text-[10px] text-[#a9bdd6]/70">{label}</span>
-            </span>
-          ))}
-        </div>
+        <>
+          <WalkEmoteBar />
+          <div className="pointer-events-none absolute bottom-5 left-1/2 flex -translate-x-1/2 flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-xl border border-[#7a5a38]/55 bg-[#0b1626]/85 px-4 py-2.5 backdrop-blur-md">
+            {[
+              ["WASD", "이동"],
+              ["Shift", "달리기"],
+              ["드래그", "시점"],
+              ["휠", "줌"],
+              ["클릭", "그리로 가기"],
+              ["1~6", "동작"]
+            ].map(([key, label]) => (
+              <span className="flex flex-col items-center gap-0.5" key={key}>
+                <kbd className="rounded border border-[#e2c078]/50 bg-[#13223a] px-2 py-0.5 font-mono text-xs font-black text-[#e2c078]">
+                  {key}
+                </kbd>
+                <span className="text-[10px] text-[#a9bdd6]/70">{label}</span>
+              </span>
+            ))}
+          </div>
+        </>
       ) : (
         <div className="pointer-events-none absolute right-4 top-4 rounded-full border border-[#7a5a38]/55 bg-[#0b1626]/85 px-3 py-1.5 text-[11px] font-black text-[#e2c078]/85 backdrop-blur-md">
           {sky.label === "밤"

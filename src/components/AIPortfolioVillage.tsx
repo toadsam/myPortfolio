@@ -253,7 +253,8 @@ const WELCOME_SPOT: Vector3Tuple = ((): Vector3Tuple => {
     if (!isWalkableDry(x, z)) return false;
     for (let k = 0; k < 8; k += 1) {
       const a = (k / 8) * Math.PI * 2;
-      if (!isWalkableDry(x + Math.cos(a) * r, z + Math.sin(a) * r)) return false;
+      if (!isWalkableDry(x + Math.cos(a) * r, z + Math.sin(a) * r))
+        return false;
     }
     return true;
   };
@@ -264,9 +265,11 @@ const WELCOME_SPOT: Vector3Tuple = ((): Vector3Tuple => {
   // 프롭에서도 가장 멀리 떨어진 자리**를 고른다. 바닥 무늬(포장·타일)와 머리 위
   // 현수막만 빼고 전부 장애물로 세고, 성문은 문짝까지 넓게 잡는다.
   const obstacles: Array<readonly [number, number, number]> = [];
-  for (const p of (propsLayout as {
-    props: {glb: string; position: number[]}[];
-  }).props) {
+  for (const p of (
+    propsLayout as {
+      props: {glb: string; position: number[]}[];
+    }
+  ).props) {
     const px = p.position[0];
     const pz = p.position[2];
     if (Math.hypot(px, pz) > 16) continue;
@@ -304,10 +307,7 @@ const WELCOME_SPOT: Vector3Tuple = ((): Vector3Tuple => {
         // 5.6(시네마틱 카메라까지)으로 재면 남쪽 어디에도 자리가 없다 —
         // 시네마틱 카메라는 대신 y 를 높여 프롭 위로 넘겨 본다.
         const t = Math.max(0, Math.min(1, (oz - z) / 3.2));
-        score = Math.min(
-          score,
-          Math.hypot(ox - x, oz - (z + 3.2 * t)) - orad
-        );
+        score = Math.min(score, Math.hypot(ox - x, oz - (z + 3.2 * t)) - orad);
       }
       if (score > bestScore) {
         bestScore = score;
@@ -1270,6 +1270,12 @@ export function AIPortfolioVillage() {
       projectSound?.setEnabled(false);
     }
   }, [viewMode, soundOn]);
+
+  // 걷기 모드면 가벼운 타악이 붙는다 — 서 있는 화면에 박자가 깔리면 재촉당하는
+  // 느낌이 들어서, 실제로 돌아다닐 때만 넣는다.
+  useEffect(() => {
+    sfx.setScene({walking: explorationMode === "walk"});
+  }, [explorationMode]);
 
   // 컨시어지: 마을 진입 시 루미가 달려오게 트리거 (접속할 때마다 1회)
   //

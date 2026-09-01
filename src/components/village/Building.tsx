@@ -1,5 +1,7 @@
 "use client";
 
+import {CLICK_MAX_DELTA} from "@/lib/villageWalk";
+
 import {Html, useCursor, useGLTF} from "@react-three/drei";
 import {memo, useMemo, useRef, useState} from "react";
 import {useFrame, type ThreeEvent} from "@react-three/fiber";
@@ -1080,6 +1082,9 @@ function BuildingImpl({
 
   function handleClick(event: ThreeEvent<MouseEvent>) {
     event.stopPropagation();
+    // 드래그로 시점을 돌리다 건물 위에서 손을 뗀 것이면 들어가지 않는다.
+    // 실수로 들어가면 마을이 통째로 언마운트되고 다시 들어와야 한다.
+    if (event.delta > CLICK_MAX_DELTA) return;
     onRequestEnter(building.id);
   }
 
