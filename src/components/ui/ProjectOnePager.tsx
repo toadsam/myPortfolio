@@ -886,54 +886,72 @@ export function ProjectOnePager({
               <h2 className="section-label">Troubleshooting</h2>
 
               <div className="stagger-children grid grid-cols-1 gap-8 lg:grid-cols-2">
-                {challenges.map((c, ci) => (
-                  <div
-                    className={`reveal flex flex-col overflow-hidden rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] ${
-                      // 2칸 격자에서 항목이 홀수면 마지막 줄 오른쪽이 통째로
-                      // 빈다(화면 절반). 마지막 하나를 펴서 그 구멍을 없앤다.
-                      ci === challenges.length - 1 &&
-                      challenges.length % 2 === 1
-                        ? "lg:col-span-2"
-                        : ""
-                    }`}
-                    key={c.title}
-                  >
-                    <div className="border-b border-red-500/20 bg-red-500/10 p-6">
-                      <p
-                        aria-hidden="true"
-                        className="mono mb-2 text-xs uppercase tracking-widest text-red-300"
-                      >
-                        [PROBLEM]
-                      </p>
-                      <h3 className="font-bold text-gray-200">{c.title}</h3>
-                    </div>
-                    <div className="flex-grow space-y-4 p-6">
-                      {/* 카드가 홀수면 마지막 하나가 전폭(1,216px)으로 펴진다.
-                          14px 글자로 한 줄 80자가 넘어 눈이 다음 줄 첫머리를
-                          놓친다 — 한국어는 40~45자가 적당하다. 반폭 카드는
-                          애초에 580px 라 이 제한에 걸리지 않는다. */}
-                      <p className="max-w-[62ch] text-sm leading-relaxed text-gray-400">
-                        {c.problem}
-                      </p>
-                      <div className="flex items-center gap-2 text-accent">
-                        <Icon className="h-4 w-4" name="arrowRight" />
-                        <span className="text-xs font-bold uppercase tracking-widest">
-                          Solution
-                        </span>
+                {challenges.map((c, ci) => {
+                  // 2칸 격자에서 항목이 홀수면 마지막 줄 오른쪽이 통째로
+                  // 빈다(화면 절반). 마지막 하나를 펴서 그 구멍을 없앤다.
+                  const isWide =
+                    ci === challenges.length - 1 && challenges.length % 2 === 1;
+                  return (
+                    <div
+                      className={`reveal flex flex-col overflow-hidden rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] ${
+                        isWide ? "lg:col-span-2" : ""
+                      }`}
+                      key={c.title}
+                    >
+                      <div className="border-b border-red-500/20 bg-red-500/10 p-6">
+                        <p
+                          aria-hidden="true"
+                          className="mono mb-2 text-xs uppercase tracking-widest text-red-300"
+                        >
+                          [PROBLEM]
+                        </p>
+                        <h3 className="font-bold text-gray-200">{c.title}</h3>
                       </div>
-                      {/* whitespace-pre-line — 문단 안의 빈 줄을 살린다.
-                          긴 해결 서술은 한 덩이로 두면 14줄이 줄바꿈 없이 이어져
-                          마지막 문장(대개 가장 센 결론)이 묻힌다. 데이터 쪽에서
-                          빈 줄을 넣은 것만 나뉘고, 나머지는 그대로 한 문단이다. */}
-                      <p className="max-w-[62ch] whitespace-pre-line rounded border-l-2 border-accent bg-accent/5 p-4 text-sm leading-relaxed text-gray-200">
-                        {c.solution}
-                      </p>
-                      {c.code ? (
-                        <CodeWindow spec={c.code} theme={theme} />
-                      ) : null}
+                      {/* 전폭 카드는 글을 세로로만 쌓으면 오른쪽 절반(565×480)이
+                        통째로 빈다. 글 왼쪽 · 코드 오른쪽으로 나눈다. 부수 효과로
+                        카드가 940 → 608px 로 줄었다.
+
+                        ⚠️ 여기 들어가는 코드 줄에는 폭 예산이 있다. 절반 칸이
+                        565px, 코드창 안쪽은 패딩 빼고 **514px** 다. 넘으면 가로
+                        스크롤바가 생긴다 — 실제로 FestFlow 의 자바 한 줄(565px)이
+                        걸려서 데이터 쪽에서 줄을 접었다. 새 코드를 넣을 땐
+                        가장 긴 줄을 재 볼 것. */}
+                      <div
+                        className={
+                          isWide && c.code
+                            ? "grid flex-grow grid-cols-1 items-start gap-6 p-6 lg:grid-cols-2 lg:gap-8"
+                            : "flex-grow space-y-4 p-6"
+                        }
+                      >
+                        <div className="space-y-4">
+                          {/* 카드가 홀수면 마지막 하나가 전폭(1,216px)으로 펴진다.
+                            14px 글자로 한 줄 80자가 넘어 눈이 다음 줄 첫머리를
+                            놓친다 — 한국어는 40~45자가 적당하다. 반폭 카드는
+                            애초에 580px 라 이 제한에 걸리지 않는다. */}
+                          <p className="max-w-[62ch] text-sm leading-relaxed text-gray-400">
+                            {c.problem}
+                          </p>
+                          <div className="flex items-center gap-2 text-accent">
+                            <Icon className="h-4 w-4" name="arrowRight" />
+                            <span className="text-xs font-bold uppercase tracking-widest">
+                              Solution
+                            </span>
+                          </div>
+                          {/* whitespace-pre-line — 문단 안의 빈 줄을 살린다.
+                            긴 해결 서술은 한 덩이로 두면 14줄이 줄바꿈 없이 이어져
+                            마지막 문장(대개 가장 센 결론)이 묻힌다. 데이터 쪽에서
+                            빈 줄을 넣은 것만 나뉘고, 나머지는 그대로 한 문단이다. */}
+                          <p className="max-w-[62ch] whitespace-pre-line rounded border-l-2 border-accent bg-accent/5 p-4 text-sm leading-relaxed text-gray-200">
+                            {c.solution}
+                          </p>
+                        </div>
+                        {c.code ? (
+                          <CodeWindow spec={c.code} theme={theme} />
+                        ) : null}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* 측정값은 산문에서 꺼내 막대로 세운다. 위 카드의 문단에

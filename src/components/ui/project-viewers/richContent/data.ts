@@ -691,10 +691,17 @@ export const RICH_DATA: Record<string, RichProject> = {
           "모델을 별도 프로세스로 떼어 내고, 강등 조건 셋(설정 off · 스크립트/모델 파일 없음 · 20초 초과)에서 규칙 기반 점수로 자동으로 내려가게 했다. 화면은 어느 쪽이든 같은 라벨을 받는다.",
         code: {
           filename: "PythonCongestionModelService.java",
+          // 줄을 접어 뒀다. 이 카드가 전폭이 되면 코드가 오른쪽 절반(안쪽 514px)에
+          // 들어가는데, 원래 첫 줄은 565px 라 가로 스크롤바가 생겼다.
           lines: [
-            "if (!enabled || !Files.exists(script) || !Files.exists(model)) return Map.of();",
-            "boolean finished = process.waitFor(timeout.toMillis(), MILLISECONDS); // 20s",
-            "// 비어서 돌아오면 AiCongestionService 가 fallback(…, MODEL_UNAVAILABLE)"
+            "if (!enabled || !Files.exists(script)",
+            "    || !Files.exists(model)) return Map.of();",
+            "",
+            "boolean finished = process.waitFor(",
+            "    timeout.toMillis(), MILLISECONDS);  // 20초",
+            "",
+            "// 비어서 돌아오면 AiCongestionService 가",
+            "// fallback(…, MODEL_UNAVAILABLE)"
           ]
         }
       }
