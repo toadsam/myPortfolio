@@ -40,6 +40,11 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {projects} from "@/data/projects";
 import {autonomousNpcs} from "@/data/npcRoster";
+import {portfolioLinks} from "@/data/links";
+// **`@/data/resume` 가 아니라 `@/data/hero` 다.** 이력서 모듈에서 가져오면 상수
+// 하나를 써도 이력서 데이터가 통째로 이 화면 번들에 딸려온다(측정: 216→221KB).
+// 자세한 건 `data/hero.ts` 머리 주석.
+import {hero, resumePdf} from "@/data/hero";
 import {villageBuildings} from "@/lib/constants";
 import "./TicketLanding.css";
 
@@ -108,7 +113,17 @@ export function TicketLanding({
   const stageRef = useRef<HTMLDivElement>(null);
   const ticketRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const [index, setIndex] = useState(0);
+  // **가운데는 이력서다.** `tickets` 는 마을(0)·이력서(1)·공방(2) 순이라 1 이 곧
+  // 가운데다 — 왼쪽에 마을, 오른쪽에 공방이 놓인다.
+  //
+  // 배열 순서를 바꾸지 않고 여기만 옮기는 이유가 있다. 배열을 이력서 먼저로
+  // 돌리면 가운데 기준 왼쪽이 공방이 되어 「둘러보기 ↔ 의뢰」의 좌우가 뒤집히고,
+  // 앞면의 `NO. 00X` 일련번호까지 같이 흔들린다.
+  //
+  // 0(마을)이 기본이던 동안 이력서 표는 58° 돌아간 채 `blur 1.4px`·밝기 64%·
+  // `tabIndex -1` 이었다. 이 사이트의 첫 독자가 채용 심사자라면, 그가 찾는 표가
+  // 정확히 화면에서 가장 안 읽히는 자리에 있었다는 뜻이다.
+  const [index, setIndex] = useState(1);
   const [ready, setReady] = useState(false);
   const [lit, setLit] = useState(false);
   const [flipped, setFlipped] = useState(false);
@@ -436,6 +451,8 @@ export function TicketLanding({
   }, [index, ready]);
 
   const ink = tickets[index].ink;
+  // 주소는 `data/links.ts` 것을 쓴다 — 여기 또 적으면 언젠가 한쪽만 바뀐다.
+  const github = portfolioLinks.find(l => l.label === "GitHub");
 
   return (
     <div
@@ -446,6 +463,23 @@ export function TicketLanding({
       <div className={`tl-desk${lit ? " is-lit" : ""}`} />
       <div className="tl-lantern" />
       <div className="tl-dust" ref={dustRef} />
+
+      {/* ── 신원 ──────────────────────────────────────────────────────────────
+          표만 있던 시절, 이 화면에서 「누가 · 무슨 직무인가」를 말하는 것은 발밑
+          11px 푸터 한 줄뿐이었다. 채용 심사자는 30초 안에 그 둘을 확인하러
+          오는데, 첫 화면이 그 시간을 은유(표·도장·랜턴)를 이해시키는 데 썼다.
+
+          **여기서 새로 지어내는 문장은 없다.** 세 줄 전부 `data/resume.ts` 의
+          `hero` 를 그대로 읽는다 — 이력서와 한 소스라서, 직무명을 고치면 두 곳이
+          같이 바뀐다. 따로 적어 두면 언젠가 반드시 어긋난다.
+
+          표(700ms)보다 먼저 `lit`(120ms)에 붙는다. 연출이 끝나기 전에 사실이 먼저
+          읽혀야 한다. 이 화면의 유일한 `h1` 이기도 하다. */}
+      <header className={`tl-head${lit ? " is-in" : ""}`}>
+        <h1 className="tl-name">{hero.name}</h1>
+        <p className="tl-role">{hero.roleTag}</p>
+        <p className="tl-avail">{hero.availability}</p>
+      </header>
 
       <div className="tl-stage" ref={stageRef}>
         {tickets.map((t, i) => {
@@ -546,17 +580,27 @@ export function TicketLanding({
         ))}
       </div>
 
+      {/* ── 발밑 ──────────────────────────────────────────────────────────────
+          예전 푸터는 `정재훈 · 건물 27 · 주민 32 · 프로젝트 9` 였다. 이름은 이제
+          머리글에 있고, **건물·주민은 마을 표 뒷면이 이미 같은 말로 한다**
+          (`${counts.buildings}채가 서 있고 …`) — 푸터에서 한 번 더 세는 건 중복인
+          데다, 그 둘은 경력이 아니라 이 사이트를 자랑하는 숫자다.
+
+          대신 **PDF 를 여기 둔다.** 대기업 서류 심사는 첨부 PDF 가 본체라 사이트를
+          안 열고 파일만 받아 가는 경우가 실제로 많은데, 지금까지 그러려면
+          `/resume` 까지 한 번 더 건너가야 했다(`ResumeMode` 헤더의 같은 버튼). */}
       <div className="tl-foot">
-        <span>정재훈 · 3D 포트폴리오 마을</span>
-        <span>
-          건물 <b>{counts.buildings}</b>
-        </span>
-        <span>
-          주민 <b>{counts.npcs}</b>
-        </span>
         <span>
           프로젝트 <b>{counts.projects}</b>
         </span>
+        {github ? (
+          <a href={github.href} rel="noreferrer" target="_blank">
+            {github.value}
+          </a>
+        ) : null}
+        <a className="tl-pdf" download href={resumePdf}>
+          ⬇ PDF 이력서
+        </a>
       </div>
 
       <div className="tl-veil" />

@@ -47,9 +47,19 @@ There is no lint script and no JS/TS test runner in this repo currently — don'
 
 ### Frontend entry and data flow
 
-**Three top-level routes, split by weight.** `/` (`src/app/page.tsx`) is a landing screen — `LandingScreen.tsx` (the old `IntroOverlay`) plus three buttons: 마을 보기 / 이력서 보기 / 작업 의뢰하기. It imports **no three.js at all** (measured: 0 GLB, ~214 KB JS). `/village` (`src/app/village/page.tsx`) is the heavy one: `AIPortfolioVillage.tsx`, the app's state machine (`viewMode` = `village | interior | project-interior | resume | atelier`, plus panel, NPC selection, sound, and the NPC-tick/encounter loops), with `VillageScene.tsx` `dynamic`-imported (`ssr: false`) since Three.js needs a browser. `/resume` (`src/app/resume/page.tsx`) is `ResumeMode` alone, split out because it pulls raw `three` for a decorative background.
+**Three top-level routes, split by weight.** `/` (`src/app/page.tsx`) is a landing screen — `TicketLanding.tsx`, three destinations as three tickets: 마을 보기 / 이력서 보기 / 작업 의뢰하기 (`LandingScreen.tsx`, the old `IntroOverlay`, is no longer what `/` renders). It imports **no three.js at all** (measured: 0 GLB, 215.6 KB JS; hovering the 마을 ticket is what pulls three, 215→920 KB). `/village` (`src/app/village/page.tsx`) is the heavy one: `AIPortfolioVillage.tsx`, the app's state machine (`viewMode` = `village | interior | project-interior | resume | atelier`, plus panel, NPC selection, sound, and the NPC-tick/encounter loops), with `VillageScene.tsx` `dynamic`-imported (`ssr: false`) since Three.js needs a browser. `/resume` (`src/app/resume/page.tsx`) is `ResumeMode` alone, split out because it pulls raw `three` for a decorative background.
 
 **That split is the only thing keeping the landing light — don't collapse it.** The intro used to be an overlay rendered on top of a live village, so every visitor downloaded 87 GLBs (20.7 MB) just to read the intro. Every workaround for that (arming the scene on hover, a static backdrop, a spacer div) existed to paper over the structure, and one of them broke the first screen outright — `AIPortfolioVillage`'s `<section>` has no height of its own, so removing `VillageScene` collapsed it to `pt-[65px]`. Landing weight is now a routing property, not a flag someone has to remember. `/` warms the village on hover via `router.prefetch` **plus** an explicit `import("@/components/village/VillageScene")` — the prefetch alone only fetches the route shell, not the nested dynamic scene chunk.
+
+**착륙장의 첫 독자는 대기업 채용 심사자다 (2026-09-02).** 그래서 가운데 표는 이력서고
+(`TicketLanding` 의 `useState(1)` — 배열 순서는 그대로 둔다), 표 위에는 이름·직무·입사 가능
+시점이 `data/hero.ts` 에서 그대로 나오며, 푸터에는 PDF 내려받기가 있다(서류 심사는 첨부 PDF 가
+본체다). 함정 둘: **① 신원 머리글은 흐름이 아니라 절대 배치여야 한다** — `.tl-root` 가 세로
+가운데 정렬이라, 흐름에 넣으면 무대 높이를 아무리 줄여도 표가 머리글의 절반만큼 내려앉아
+점(`.tl-dots`)을 덮는다(360×700 실측 56px). 세로가 짧은 화면은 `max-height` 쿼리로 가능
+시점 → 직무 순으로 줄을 접는다. **② 이름 한 줄 때문에 `@/data/resume` 를 import 하면 안 된다** —
+한 덩어리 모듈이라 이력서 데이터가 통째로 첫 화면 번들에 들어온다(실측 216→221 KB). 그래서
+`data/hero.ts` 로 분리했고 `resume.ts` 가 그것을 재수출한다.
 
 Buildings and NPCs are **generated, not hand-listed 1:1**: `src/lib/constants.ts` defines `villageBuildings` (position/size/color/kind per building), then `src/data/npcRoster.ts` auto-derives one dedicated NPC per building as `npc-${building.id}` — adding a building building automatically gets it a guide NPC. Coordinates in `constants.ts` are authored small and scaled up via `spread()` (`SPREAD` constant) at module load.
 

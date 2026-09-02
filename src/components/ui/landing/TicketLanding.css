@@ -96,6 +96,62 @@
   opacity: 0.18;
 }
 
+/* ── 신원 ─────────────────────────────────────────────────────────────────
+   표 위, 눈이 가장 먼저 닿는 자리. 무엇을 쓰는지는 TSX 쪽 주석에 있다.
+
+   **흐름에서 빼 놓은 게 핵심이다.** 처음엔 무대 위에 얹고 무대 높이를 그만큼
+   줄였는데, 그러면 안 된다 — `.tl-root` 가 세로 가운데 정렬이라 표의 중심은
+   **머리글 높이의 절반만큼 아래로 내려간다.** 무대를 아무리 줄여도 그 절반은
+   남는다(계산이 아니라 실측: 360×700 에서 표가 56px 내려앉아 점을 덮었다).
+
+   그래서 절대 배치다. 무대와 표의 기하는 머리글이 없던 때와 **한 픽셀도 같고**,
+   대신 세로가 짧아 표 위 공간이 없어지는 화면에서는 아래 미디어쿼리가 줄을
+   하나씩 접는다. */
+.tl-head {
+  position: absolute;
+  z-index: 22;
+  top: 26px;
+  right: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 20px;
+  gap: 7px;
+  text-align: center;
+  word-break: keep-all;
+  /* 표 위를 덮는 자리라 클릭을 가로채면 안 된다. 안에 누를 것도 없다. */
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.tl-head.is-in {
+  opacity: 1;
+  transform: none;
+}
+.tl-name {
+  margin: 0;
+  font-family: var(--font-display), "Gowun Batang", serif;
+  font-size: 30px;
+  line-height: 1.1;
+  color: rgb(var(--v-paper));
+  text-shadow: 0 0 24px rgb(var(--v-lantern) / 0.32);
+}
+.tl-role {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgb(var(--v-gold) / 0.92);
+}
+.tl-avail {
+  margin: 0;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: rgb(var(--v-moon) / 0.62);
+}
+
 /* ── 무대 ─────────────────────────────────────────────────────────────────── */
 .tl-stage {
   position: relative;
@@ -488,6 +544,24 @@
   color: rgb(var(--v-gold) / 0.85);
   font-weight: 700;
 }
+.tl-foot a {
+  border-bottom: 1px solid rgb(var(--v-moon) / 0.24);
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.tl-foot a:hover {
+  border-color: rgb(var(--v-gold) / 0.6);
+  color: rgb(var(--v-gold));
+}
+.tl-foot a:focus-visible {
+  outline: 2px solid var(--tl-glow);
+  outline-offset: 3px;
+}
+.tl-pdf {
+  color: rgb(var(--v-gold) / 0.85);
+  font-weight: 700;
+}
 
 .tl-veil {
   position: absolute;
@@ -499,6 +573,16 @@
 }
 
 @media (max-width: 768px) {
+  .tl-name {
+    font-size: 25px;
+  }
+  .tl-role {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+  }
+  .tl-avail {
+    font-size: 10.5px;
+  }
   .tl-ticket {
     width: 258px;
     height: 418px;
@@ -527,15 +611,47 @@
   }
 }
 
+/* 세로가 짧아 표 위 공간이 없어지는 화면. 표는 화면 가운데에 고정돼 있으므로
+   (위 `.tl-head` 주석) 남는 자리는 화면 높이가 정한다 — 폭이 아니라 **높이**로
+   가른다. 지우는 순서는 덜 중요한 것부터: 가능 시점 → 직무. 이름은 남긴다. */
+@media (max-height: 780px) {
+  .tl-head {
+    top: 16px;
+    gap: 4px;
+  }
+  .tl-name {
+    font-size: 24px;
+  }
+  .tl-avail {
+    display: none;
+  }
+}
+@media (max-height: 620px) {
+  .tl-head {
+    top: 10px;
+  }
+  .tl-name {
+    font-size: 20px;
+  }
+  .tl-role {
+    display: none;
+  }
+}
+
 /* 모션을 줄인 사용자: 부유·먼지·스캔라인 전부 멈춘다. 이 리포의 규칙이다. */
 @media (prefers-reduced-motion: reduce) {
   .tl-ticket,
   .tl-inner,
   .tl-desk,
+  .tl-head,
   .tl-nav,
   .tl-dots,
   .tl-foot {
     transition-duration: 0.001s !important;
+  }
+  /* 미끄러져 들어오는 것도 모션이다 — 신원은 처음부터 제자리에 있게. */
+  .tl-head {
+    transform: none !important;
   }
   .tl-mote,
   .tl-scan {
