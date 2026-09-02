@@ -1206,7 +1206,15 @@ export function ProjectOnePager({
           {codes.length > 0 ? (
             <section className="reveal space-y-12">
               <h2 className="section-label">Implementation</h2>
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+              {/* 2칸 격자는 코드가 둘일 때만 쓴다. 하나인 프로젝트(득근득근·총학
+                  ·MyStock)는 왼쪽 절반만 차고 오른쪽 620px 가 통째로 비었다.
+                  전폭 코드창은 트레일링 공백이 남지만 그건 편집기와 같은 모습이라
+                  구멍으로 안 읽힌다 — 창 옆이 비는 것과 창 안이 비는 것은 다르다. */}
+              <div
+                className={`grid grid-cols-1 gap-8 ${
+                  codes.length > 1 ? "lg:grid-cols-2" : ""
+                }`}
+              >
                 {codes.map((c, i) => (
                   <div
                     className={`space-y-4 ${

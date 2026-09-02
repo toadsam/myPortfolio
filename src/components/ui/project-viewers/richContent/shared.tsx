@@ -706,7 +706,12 @@ export function CompareBars({
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-16 shrink-0 text-right font-mono text-[10px] text-white/35">
+              {/* 예전엔 10px · white/35 였다. 대비를 재 보니 3.22:1 로 AA(4.5)
+                  미달인데, 하필 **비교하라고 놓은 숫자**가 이 페이지에서 가장
+                  흐렸다. 55% 로 올리고 11px 로 키운다(w-16=64px 안에 "51435ms"
+                  까지 들어간다). 아래 after 숫자와 크기를 맞춰야 둘이 한 쌍으로
+                  읽힌다. */}
+              <span className="w-16 shrink-0 text-right font-mono text-[11px] text-white/55">
                 {r.before}
                 {r.unit}
               </span>
@@ -721,7 +726,7 @@ export function CompareBars({
             </div>
             <div className="mt-1 flex items-center gap-2">
               <span
-                className="w-16 shrink-0 text-right font-mono text-[10px] font-black"
+                className="w-16 shrink-0 text-right font-mono text-[11px] font-black"
                 style={{color: theme.primary}}
               >
                 {r.after}
