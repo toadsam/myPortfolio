@@ -143,10 +143,32 @@ export interface RichProject {
     problem: string;
     solution: string;
     code?: CodeSpec;
+    /**
+     * 아래 `perf` 막대를 **이 카드 바로 뒤**에 붙인다.
+     *
+     * perf 는 프로젝트 단위 필드라 예전엔 카드 세 장을 전부 지나서 그려졌다.
+     * 그런데 득근득근의 막대는 「인덱스」 카드의 증거인데, 그 사이에 실시간
+     * 카드가 통째로 끼어 있어서 **근거가 주장에서 한 카드 떨어져 있었다.**
+     *
+     * 표시 안 하면 예전처럼 카드 뒤에 그린다 — 총학의 막대(맡기 전/후 검색
+     * 노출)는 특정 카드의 증거가 아니라 프로젝트 전체 결과라 그게 맞다.
+     */
+    perfAfter?: boolean;
   }[];
   perf?: {
     rows: {label: string; before: number; after: number; unit: string}[];
     note?: string;
+    /**
+     * 이 칸은 원래 「인덱스 전 → 후」 전용이었다. 그런데 전/후를 실측으로
+     * 들이대는 자리는 성능만이 아니다 — 총학은 **맡기 전과 맡은 뒤의 검색
+     * 노출**이 같은 모양의 주장이다. 그래서 제목과 방향만 열었다.
+     *
+     * 기본값은 옛 동작 그대로다(제목 고정 · 작을수록 좋음). 안 넘기면
+     * 기존 프로젝트는 한 글자도 안 바뀐다.
+     */
+    title?: string;
+    /** 기본 true(작을수록 좋음). 노출·매출처럼 클수록 좋은 값이면 false. */
+    lowerBetter?: boolean;
   };
   /**
    * 사용자가 한 말과, 그래서 한 것.
@@ -1792,14 +1814,16 @@ export function RichSection({
           <div className="flex flex-col gap-6">
             {data.perf ? (
               <div>
-                <SubLabel theme={theme}>성능 개선 · 측정 기반</SubLabel>
+                <SubLabel theme={theme}>
+                  {data.perf.title ?? "성능 개선 · 측정 기반"}
+                </SubLabel>
                 <div
                   className="rounded-xl border p-4"
                   style={{borderColor: `${theme.primary}22`}}
                 >
                   <CompareBars
                     theme={theme}
-                    lowerBetter
+                    lowerBetter={data.perf.lowerBetter ?? true}
                     rows={data.perf.rows}
                   />
                   {data.perf.note ? (

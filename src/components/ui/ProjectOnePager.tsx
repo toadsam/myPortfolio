@@ -509,6 +509,34 @@ export function ProjectOnePager({
     ? data.coreCode.filter(c => codePick.includes(c.filename))
     : data.coreCode.slice(0, 2);
 
+  // 전/후 막대를 **주장 바로 밑**에 세운다.
+  //
+  // perf 는 프로젝트 단위 필드라 카드 세 장을 전부 지난 뒤에 그려졌다. 그런데
+  // 득근득근의 막대는 「인덱스」 카드의 증거인데 그 사이에 실시간 카드가 통째로
+  // 끼어 있어서, 근거가 주장에서 한 카드 떨어져 있었다. 카드가
+  // `perfAfter` 를 달면 그 카드 뒤(격자 안 전폭 칸)에 그린다.
+  //
+  // 아무도 안 달면 예전처럼 격자 뒤에 그린다 — 총학의 막대(맡기 전/후 검색
+  // 노출)는 특정 카드의 증거가 아니라 프로젝트 전체 결과라 그 자리가 맞다.
+  const perfClaimedByCard = challenges.some(c => c.perfAfter);
+  const perfBlock = data.perf ? (
+    <div className="reveal rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6 md:p-8">
+      <h3 className="block-label mb-6">
+        {data.perf.title ?? "인덱스 전 → 후 · 실측"}
+      </h3>
+      <CompareBars
+        lowerBetter={data.perf.lowerBetter ?? true}
+        rows={data.perf.rows}
+        theme={theme}
+      />
+      {data.perf.note ? (
+        <p className="mt-6 border-t border-[rgb(122,90,56,0.26)] pt-4 text-[12px] leading-relaxed text-muted">
+          {data.perf.note}
+        </p>
+      ) : null}
+    </div>
+  ) : null;
+
   // `Signature`(라이브 데모)와 `heroLayer`(아키텍처 강조 카드)가 여기 있었다.
   // 두 자리 다 걷어내면서 죽은 선언이 됐다. SIGNATURE_DEMO 지도와 ARCH_ICONS 는
   // 남겨 둔다 — 되살릴 때 필요한 건 이 두 줄뿐이다.
@@ -905,7 +933,7 @@ export function ProjectOnePager({
                   // 빈다(화면 절반). 마지막 하나를 펴서 그 구멍을 없앤다.
                   const isWide =
                     ci === challenges.length - 1 && challenges.length % 2 === 1;
-                  return (
+                  const card = (
                     <div
                       className={`reveal flex flex-col overflow-hidden rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] ${
                         isWide ? "lg:col-span-2" : ""
@@ -965,28 +993,27 @@ export function ProjectOnePager({
                       </div>
                     </div>
                   );
+                  // 이 카드가 막대를 데리고 있으면 바로 뒤 전폭 칸에 세운다.
+                  // 격자 안에 넣어야 카드와 같은 흐름으로 읽힌다 — 격자 밖으로
+                  // 빼면 "카드 다음에 나오는 별개의 그림" 이 된다.
+                  return c.perfAfter && perfBlock ? (
+                    <Fragment key={c.title}>
+                      {card}
+                      <div className="lg:col-span-2">{perfBlock}</div>
+                    </Fragment>
+                  ) : (
+                    card
+                  );
                 })}
               </div>
 
               {/* 측정값은 산문에서 꺼내 막대로 세운다. 위 카드의 문단에
                   숫자가 아홉 개 묻혀 있어 아무도 안 읽었다. 맨 아랫줄이
-                  논점이다 — 쿼리 막대는 사라지는데 페이지 막대는 3분의 1만
-                  준다. 그림이 문장보다 그걸 빨리 말한다. */}
-              {data.perf ? (
-                <div className="reveal rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6 md:p-8">
-                  <h3 className="block-label mb-6">인덱스 전 → 후 · 실측</h3>
-                  <CompareBars
-                    lowerBetter
-                    rows={data.perf.rows}
-                    theme={theme}
-                  />
-                  {data.perf.note ? (
-                    <p className="mt-6 border-t border-[rgb(122,90,56,0.26)] pt-4 text-[12px] leading-relaxed text-muted">
-                      {data.perf.note}
-                    </p>
-                  ) : null}
-                </div>
-              ) : null}
+                  논점이다 — 쿼리 막대는 사라지는데 페이지 막대는 절반에서
+                  멈춘다. 그림이 문장보다 그걸 빨리 말한다.
+
+                  어느 카드가 `perfAfter` 로 데려갔으면 여기서는 안 그린다. */}
+              {perfClaimedByCard ? null : perfBlock}
 
               <Shot
                 big
