@@ -231,6 +231,20 @@ function Icon({name, className}: {name: string; className?: string}) {
 
 const ARCH_ICONS = ["layout", "server", "zap", "database"];
 
+// 결론 한 줄의 크기를 글 길이에서 뽑는다.
+//
+// 프로젝트마다 손으로 정하면 그게 또 제각각이 되고, 반대로 전부 30px 로 고정하면
+// 44자짜리와 57자짜리가 같은 크기로 나와 한쪽은 한 줄, 한쪽은 세 줄이 된다.
+// 어느 길이든 **두 줄 안팎**으로 떨어지게 잡은 값이다 —
+// 상자 안쪽(max-w-3xl = 768px) 기준으로 30px→25자/줄, 24px→32자/줄, 20px→38자/줄.
+// 지금 아홉 개의 결론은 42~57자에 있다.
+function leadSize(text: string) {
+  const n = text.length;
+  if (n <= 44) return "text-xl md:text-2xl lg:text-3xl";
+  if (n <= 56) return "text-lg md:text-xl lg:text-2xl";
+  return "text-base md:text-lg lg:text-xl";
+}
+
 // 코드 블록은 프로젝트당 **최대 2개**, 그것도 "남들이 안 겪은 것"만 고른다.
 //
 // 예전엔 `coreCode` 를 전부 그렸다. 그런데 aClub 의 `useClubs` 는
@@ -1229,14 +1243,37 @@ export function ProjectOnePager({
                 데이터(`kpt` · `kptLabels`)는 지우지 않았다 — 되살리려면 이 자리에
                 다시 그리면 된다. */}
 
-            {/* 핵심 배움 */}
-            <div className="reveal-scale space-y-4 rounded-2xl border border-accent/20 bg-accent/10 p-8 text-center md:p-12">
-              <div className="mono mb-2 text-xs uppercase tracking-widest text-accent">
+            {/* 핵심 배움 — 결론 한 줄(크게) + 근거(작게, 왼쪽 정렬)
+                예전엔 learning 한 문자열을 30px 가운데 정렬로 통째로 그렸다.
+                짧은 프로젝트(76~106자)는 2줄이라 괜찮았는데 긴 쪽(181~194자)은
+                4줄이 됐고, 줄마다 시작 x 가 달라 눈이 매번 왼쪽 끝을 다시 찾아야
+                했다. 게다가 진짜 결론(마지막 문장)이 나머지와 **같은 크기로**
+                맨 끝에 묻혀서, 크기는 큰데 위계가 없었다.
+                양식은 아홉 프로젝트가 같고, 크기만 글 길이에서 뽑는다. */}
+            <div className="reveal-scale space-y-6 rounded-2xl border border-accent/20 bg-accent/10 p-8 text-center md:p-12">
+              <div className="mono text-xs uppercase tracking-widest text-accent">
                 The Core Takeaway
               </div>
-              <p className="text-lg font-light leading-snug md:text-2xl lg:text-3xl">
-                {data.learning}
-              </p>
+              {data.learningLead ? (
+                <>
+                  <p
+                    className={`mx-auto max-w-3xl font-light leading-snug ${leadSize(
+                      data.learningLead
+                    )}`}
+                  >
+                    {data.learningLead}
+                  </p>
+                  {/* 근거는 왼쪽 정렬이다. 가운데 정렬은 한두 줄짜리 인용구에서만
+                      읽히고, 여러 줄 산문에서는 줄 시작점이 흔들린다. */}
+                  <p className="mx-auto max-w-[62ch] text-left text-sm leading-relaxed text-gray-400 md:text-base">
+                    {data.learning}
+                  </p>
+                </>
+              ) : (
+                <p className="mx-auto max-w-3xl text-lg font-light leading-snug md:text-2xl lg:text-3xl">
+                  {data.learning}
+                </p>
+              )}
             </div>
           </section>
         </main>

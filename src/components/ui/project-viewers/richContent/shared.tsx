@@ -167,6 +167,12 @@ export interface RichProject {
     note?: string;
   };
   kpt: {keep: string[]; problem: string[]; try: string[]};
+  // 배운 점은 두 조각이다 — 결론 한 줄(learningLead)과 그 근거(learning).
+  // 예전엔 한 문자열이었는데, 원페이저에서 30px 가운데 정렬로 통째로 그리다 보니
+  // 긴 프로젝트(181~194자)는 4줄이 되고 **결론이 맨 끝에 같은 크기로 묻혔다.**
+  // 크기는 큰데 위계가 없어서 "글씨만 크다" 로 읽혔다. 결론을 앞으로 뺀다.
+  // 마을(3D) 뷰는 예전처럼 한 덩이로 이어 붙여 쓴다.
+  learningLead?: string;
   learning: string;
 }
 
@@ -1919,8 +1925,13 @@ export function RichSection({
                 background: `${theme.primary}08`
               }}
             >
+              {/* 마을 뷰는 위계를 나눌 자리가 아니라 한 덩이로 읽는 칸이다.
+                  데이터가 둘로 갈렸어도 여기서는 다시 붙여 쓴다 —
+                  안 그러면 결론 문장이 이 화면에서만 사라진다. */}
               <RevealText
-                text={data.learning}
+                text={[data.learningLead, data.learning]
+                  .filter(Boolean)
+                  .join(" ")}
                 className="text-sm leading-7 text-white/75"
                 highlight={data.tech}
                 theme={theme}
