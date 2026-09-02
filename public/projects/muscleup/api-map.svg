@@ -89,7 +89,7 @@
       <text class="c" y="0">CrewController</text><text class="n" x="332" y="0" text-anchor="end">15</text>
       <text class="p" y="18">/api/crew</text>
     </g>
-    <text class="note" x="20" y="140">단일 컨트롤러 중 가장 크다.</text>
+    <text class="note" x="20" y="140">도메인 하나가 컨트롤러 하나에 들어 있다.</text>
     <text class="note" x="20" y="158">생성 · 초대코드 · 가입 신청 ·</text>
     <text class="note" x="20" y="176">승인/거절 · 멤버 역할 · 챌린지가</text>
     <text class="note" x="20" y="194">한 곳에 모여 있다.</text>

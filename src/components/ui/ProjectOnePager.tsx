@@ -231,6 +231,77 @@ function Icon({name, className}: {name: string; className?: string}) {
 
 const ARCH_ICONS = ["layout", "server", "zap", "database"];
 
+// 코드 블록은 프로젝트당 **최대 2개**, 그것도 "남들이 안 겪은 것"만 고른다.
+//
+// 예전엔 `coreCode` 를 전부 그렸다. 그런데 aClub 의 `useClubs` 는
+// useState + useEffect + fetch 로 요청 취소도 에러 처리도 없고, 스택에 적어 둔
+// React Query 를 정작 여기서 안 쓴다 — 심사자가 파고들면 가점이 아니라 **감점
+// 재료**다. `RequireAuth` · `ProtectedRoute` 도 교과서 예제라 읽을 이유가 없다.
+// 반대로 토큰 재발급 단일화, SSE 재연결, nginx try_files 404, 20만 행 EXPLAIN
+// 같은 건 겪어 본 사람만 쓸 수 있어서 그대로 면접 질문이 된다.
+//
+// 파일명으로 고른다. 목록에 없는 프로젝트는 앞에서 둘만 쓴다(데이터 순서가 곧 우선순위).
+// 빈 배열은 "이 프로젝트는 보여줄 코드가 없다" 는 뜻이고, 그건 부끄러운 게 아니라
+// 약한 카드를 안 내미는 판단이다. 데이터는 그대로 있으므로 되살리기 쉽다.
+// (한 번 틀렸다: 처음엔 RefreshTokenService·reconnect.ts·StorageVideoCache 를
+//  골랐는데 그것들은 `coreCode` 가 아니라 `challenges[].code` 에 있다. 그 결과
+//  득근득근 Implementation 이 통째로 0개가 됐다. **여기 이름은 반드시 coreCode
+//  배열에 있는 것이어야 한다.** 그리고 오히려 잘된 면도 있다 — 가장 센 스니펫들이
+//  원래 트러블슈팅 안에 있었고, 그 절이 이제 두 번째로 올라왔다.)
+// 절별 상한. **프로젝트마다 하나씩 확인하며 넣는다** — 여기 없는 프로젝트는
+// 지금까지처럼 전부 그린다. 틀은 같게 두고 적용만 차례로 하기 위한 구조다.
+//
+// 왜 상한이 필요한가: 원페이지 길이를 절별로 재 보니 득근득근이 10.3화면이었고,
+// 그중 트러블슈팅 3.5 + 결과 갤러리 2.5 = 6화면이었다. 나머지 다섯 절을 합쳐도
+// 2.3화면이니 군더더기는 이 둘에만 있다.
+//
+//   challenges 3 — 트러블슈팅은 개수가 아니라 깊이로 읽힌다. 3건까지는 "문제를
+//     파는 사람", 5건부터는 "목록"이 된다. 득근득근의 앞 3건(Refresh 로테이션
+//     철회 · 인덱스 넣고 보니 느린 건 다른 쪽 · 실시간 부하 미측정)이 가장 세고,
+//     빠지는 「브라우저·배포 인증 차이」는 1번과 같은 인증 주제라 중복이다.
+//   gallery 2 — 이력서에서 값이 있는 이미지는 **결과를 증명하는 것**과 **구조를
+//     설명하는 것** 둘뿐이다. 3번째부터는 전부 "기능이 이렇게 생겼다" 인데 그건
+//     GitHub README 와 실사이트 링크의 몫이다. 이 페이지엔 이미 히어로 1 +
+//     Before→After 1 + 다이어그램 2 + 트러블슈팅 결과 화면 1이 있다.
+//
+// 데이터는 자르지 않는다 — 숫자만 지우면 전부 돌아온다.
+const SECTION_LIMIT: Record<
+  string,
+  {challenges?: number; gallery?: number; galleryPick?: string[]}
+> = {
+  muscleup: {
+    challenges: 3,
+    // 갤러리는 개수가 아니라 **이름으로** 고른다. 앞에서 둘을 자르면 1번이
+    // 「인증 시퀀스」인데, 그 이야기는 Troubleshooting 첫 카드가 코드까지 붙여
+    // 이미 했다 — 같은 걸 페이지에서 두 번 말하게 된다. 2.0 에서 새로 생긴
+    // 화면 둘로 바꾼다(실시간 라운지 · 캐릭터 성장). 둘 다 1.0 피드백에
+    // 1:1 로 대응하는 캡션이 붙어 있어 Context 의 「들은 말 4, 한 것 3」 표를
+    // 그림으로 받는다.
+    galleryPick: [
+      "실시간 라운지 — Socket.IO",
+      "캐릭터 성장 — 레벨 · 티어 · 진화 단계"
+    ]
+  }
+};
+
+const CODE_PICK: Record<string, string[]> = {
+  // useClubs 는 useState+useEffect+fetch, RequireAuth 는 교과서 예제라 둘 다 뺀다.
+  aclub: [],
+  // ProtectedRoute.js 는 교과서다. nginx try_files 404 는 실제로 겪은 것이라 남긴다.
+  ajouchong: ["nginx.conf"],
+  // `axios-interceptor.ts` 를 뺐다. 401 이면 refresh 후 재요청하는 **순진한 버전**
+  // 이라 대기 큐도 refreshing 플래그도 없는데, 바로 위 Troubleshooting 첫 카드가
+  // "그렇게 하면 여러 요청이 동시에 401 을 받는 순간 서로를 무효화한다" 며 그걸
+  // 걷어낸 이야기를 한다. 같은 페이지에서 문제를 설명하고 그 문제를 가진 코드를
+  // 보여 주면 "그래서 지금 코드는 어느 쪽이냐" 가 된다. 실시간 분리 쪽만 남긴다.
+  muscleup: ["server.ts (realtime)"],
+  // PortfolioService 는 "요청마다 스냅샷 갱신" 이라 평범하다. 시세 소스를
+  // 인터페이스로 뺀 쪽만 남긴다(Yahoo/Demo 교체 가능 — 설계 판단이 보인다).
+  mystock: ["MarketDataProvider.java"]
+  // festflow(SSE 7채널 분리 · GPS 80m 판정), muscleup(실시간 서버 분리 · 401 재발급),
+  // darklab, tserof 는 둘 다 특색이 있어 기본값(앞에서 둘)을 그대로 쓴다.
+};
+
 // ─── 이미지 자리 ──────────────────────────────────────────────────────────────
 // src가 있으면 기존 ImageSlot(확대 보기 지원)을, 없으면 목업의 점선 플레이스홀더를 쓴다.
 
@@ -265,7 +336,7 @@ function Shot({
         className={`${big ? "h-12 w-12" : "h-8 w-8"} mb-2 opacity-20`}
         name={iconName}
       />
-      <p className="px-4 text-center text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.72)] md:text-xs">
+      <p className="px-4 text-center text-xs uppercase tracking-widest text-[rgb(169,189,214,0.72)] md:text-xs">
         {spec?.label ?? "이미지 자리"}
       </p>
     </div>
@@ -284,7 +355,7 @@ function CodeWindow({spec, theme}: {spec: CodeSpec; theme: ProjectTheme}) {
           <div className="dot" />
           <div className="dot" />
         </div>
-        <span className="mono text-[11px] text-gray-500">{spec.filename}</span>
+        <span className="mono text-xs text-gray-500">{spec.filename}</span>
       </div>
       <pre className="mono overflow-x-auto p-6 text-xs leading-relaxed text-[rgb(243,230,200,0.9)]">
         {spec.lines.map((line, i) => (
@@ -404,14 +475,27 @@ export function ProjectOnePager({
     .map(label => data.meta.find(m => m.label === label))
     .filter((m): m is (typeof data.meta)[number] => Boolean(m?.value));
   const roleRow = (k: string) => k.includes("역할");
-  // 실시간 계층처럼 핵심이 되는 계층은 목업처럼 강조 카드로.
-  // 시그니처 데모가 있으면 히어로의 "대표 화면" 칸은 그리지 않는다 —
-  // 데모 내부가 3단 그리드라 5/12 칸(약 500px)에 넣으면 찌그러진다.
-  // 대신 히어로 바로 아래 전체 폭에 놓는다.
-  const Signature = SIGNATURE_DEMO[project.id];
-  const heroLayer = data.architecture.findIndex(l =>
-    /realtime|실시간|socket/i.test(`${l.tag} ${l.name} ${l.desc}`)
-  );
+  const limit = SECTION_LIMIT[project.id] ?? {};
+  const challenges = limit.challenges
+    ? data.challenges.slice(0, limit.challenges)
+    : data.challenges;
+  const galleryAll = data.gallery ?? [];
+  // 지역 변수로 받아 둔다 — 콜백 안에서는 `limit.galleryPick` 의 좁힘이 풀린다.
+  const galleryPick = limit.galleryPick;
+  const gallery = galleryPick
+    ? galleryAll.filter(g => galleryPick.includes(g.label))
+    : limit.gallery
+    ? galleryAll.slice(0, limit.gallery)
+    : galleryAll;
+
+  const codePick = CODE_PICK[project.id];
+  const codes = codePick
+    ? data.coreCode.filter(c => codePick.includes(c.filename))
+    : data.coreCode.slice(0, 2);
+
+  // `Signature`(라이브 데모)와 `heroLayer`(아키텍처 강조 카드)가 여기 있었다.
+  // 두 자리 다 걷어내면서 죽은 선언이 됐다. SIGNATURE_DEMO 지도와 ARCH_ICONS 는
+  // 남겨 둔다 — 되살릴 때 필요한 건 이 두 줄뿐이다.
 
   // 히어로 오른쪽(또는 데모가 없을 때 왼쪽 아래)에 오는 사실 묶음.
   // 두 자리에서 같은 것을 그리므로 변수로 한 번만 적는다.
@@ -424,7 +508,7 @@ export function ProjectOnePager({
         <dl className="flex flex-wrap gap-x-8 gap-y-3 rounded-lg border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] px-6 py-4">
           {factRows.map(m => (
             <div key={m.label}>
-              <dt className="mono text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.74)]">
+              <dt className="mono text-xs uppercase tracking-widest text-[rgb(169,189,214,0.74)]">
                 {m.label}
               </dt>
               <dd className="text-sm text-gray-200">{m.value}</dd>
@@ -518,7 +602,7 @@ export function ProjectOnePager({
               목록으로
             </button>
 
-            <div className="mono hidden items-center gap-6 text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.72)] md:flex">
+            <div className="mono hidden items-center gap-6 text-xs uppercase tracking-widest text-[rgb(169,189,214,0.72)] md:flex">
               {/* 상태는 `demo.live` 하나만 근거로 삼는다. 예전엔 "Deployed" 가
                   9개 전부에 하드코딩돼, 배포라는 말이 성립하지 않는 Unity
                   게임에까지 붙었다. 근거가 없으면 아무 말도 하지 않는다. */}
@@ -535,7 +619,7 @@ export function ProjectOnePager({
 
             <div className="flex shrink-0 items-center gap-2">
               {typeof index === "number" && typeof total === "number" ? (
-                <span className="mono hidden text-[11px] text-[rgb(169,189,214,0.72)] sm:inline">
+                <span className="mono hidden text-xs text-[rgb(169,189,214,0.72)] sm:inline">
                   {index + 1} / {total}
                 </span>
               ) : null}
@@ -658,7 +742,7 @@ export function ProjectOnePager({
             <div className="stagger-children grid grid-cols-2 gap-6 lg:grid-cols-4">
               {data.metrics.map(m => (
                 <div className="stat-tile reveal" key={m.l}>
-                  <div className="mono mb-1 text-[11px] uppercase tracking-widest text-muted">
+                  <div className="mono mb-1 text-xs uppercase tracking-widest text-muted">
                     {m.l}
                   </div>
                   {/* 카운트업 연출을 뺐다. 이 페이지의 주제가 "숫자에 출처가
@@ -672,23 +756,106 @@ export function ProjectOnePager({
               ))}
             </div>
             {data.metricsNote ? (
-              <p className="mono text-[11px] leading-relaxed text-muted">
+              <p className="mono text-xs leading-relaxed text-muted">
                 {data.metricsNote}
               </p>
             ) : null}
           </section>
 
-          {/* ══════════ 라이브 데모 ══════════ */}
-          {Signature ? (
-            <section className="demo-stage reveal space-y-6">
-              <h2 className="section-label">Live Demo</h2>
-              {/* 전체 폭(1,216px)에 15px 글자면 한 줄 80자가 넘는다 — 눈이
-                  다음 줄 첫머리를 못 찾는다. 한국어는 35~45자가 적당하다. */}
-              <p className="max-w-2xl text-sm text-gray-400">
-                설명 대신 직접 눌러 보세요. 아래는 실제 동작을 그대로 옮긴
-                시연입니다.
-              </p>
-              <Signature theme={theme} />
+          {/* 라이브 데모(가짜 데이터 목업)가 있던 자리다. 세 번째 섹션 — 이 페이지에서
+              가장 좋은 자리를 쓰고 있었는데, 내용이 "사운드웨이브 음악·24명" 같은
+              **지어낸 데이터**였다. aClub·총학은 바로 위에 실제 사이트 링크가 있는데
+              목업을 앞세우면 심사자가 "이건 진짜인가" 에서 한 번 멈춘다.
+              그 자리에 Troubleshooting 을 올렸다 — 면접 질문이 실제로 나오는 곳인데
+              예전엔 7번째, 5화면 아래에 있어서 대부분 못 보고 닫았다.
+              데모 컴포넌트(SIGNATURE_DEMO)는 지우지 않았다. */}
+
+          {/* ══════════ 트러블슈팅 ══════════ */}
+          {challenges.length > 0 ? (
+            <section className="reveal space-y-12">
+              <h2 className="section-label">Troubleshooting</h2>
+
+              <div className="stagger-children grid grid-cols-1 gap-8 lg:grid-cols-2">
+                {challenges.map((c, ci) => (
+                  <div
+                    className={`reveal flex flex-col overflow-hidden rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] ${
+                      // 2칸 격자에서 항목이 홀수면 마지막 줄 오른쪽이 통째로
+                      // 빈다(화면 절반). 마지막 하나를 펴서 그 구멍을 없앤다.
+                      ci === challenges.length - 1 &&
+                      challenges.length % 2 === 1
+                        ? "lg:col-span-2"
+                        : ""
+                    }`}
+                    key={c.title}
+                  >
+                    <div className="border-b border-red-500/20 bg-red-500/10 p-6">
+                      <p
+                        aria-hidden="true"
+                        className="mono mb-2 text-xs uppercase tracking-widest text-red-300"
+                      >
+                        [PROBLEM]
+                      </p>
+                      <h3 className="font-bold text-gray-200">{c.title}</h3>
+                    </div>
+                    <div className="flex-grow space-y-4 p-6">
+                      {/* 카드가 홀수면 마지막 하나가 전폭(1,216px)으로 펴진다.
+                          14px 글자로 한 줄 80자가 넘어 눈이 다음 줄 첫머리를
+                          놓친다 — 한국어는 40~45자가 적당하다. 반폭 카드는
+                          애초에 580px 라 이 제한에 걸리지 않는다. */}
+                      <p className="max-w-[62ch] text-sm leading-relaxed text-gray-400">
+                        {c.problem}
+                      </p>
+                      <div className="flex items-center gap-2 text-accent">
+                        <Icon className="h-4 w-4" name="arrowRight" />
+                        <span className="text-xs font-bold uppercase tracking-widest">
+                          Solution
+                        </span>
+                      </div>
+                      {/* whitespace-pre-line — 문단 안의 빈 줄을 살린다.
+                          긴 해결 서술은 한 덩이로 두면 14줄이 줄바꿈 없이 이어져
+                          마지막 문장(대개 가장 센 결론)이 묻힌다. 데이터 쪽에서
+                          빈 줄을 넣은 것만 나뉘고, 나머지는 그대로 한 문단이다. */}
+                      <p className="max-w-[62ch] whitespace-pre-line rounded border-l-2 border-accent bg-accent/5 p-4 text-sm leading-relaxed text-gray-200">
+                        {c.solution}
+                      </p>
+                      {c.code ? (
+                        <CodeWindow spec={c.code} theme={theme} />
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 측정값은 산문에서 꺼내 막대로 세운다. 위 카드의 문단에
+                  숫자가 아홉 개 묻혀 있어 아무도 안 읽었다. 맨 아랫줄이
+                  논점이다 — 쿼리 막대는 사라지는데 페이지 막대는 3분의 1만
+                  준다. 그림이 문장보다 그걸 빨리 말한다. */}
+              {data.perf ? (
+                <div className="reveal rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6 md:p-8">
+                  <h3 className="block-label mb-6">인덱스 전 → 후 · 실측</h3>
+                  <CompareBars
+                    lowerBetter
+                    rows={data.perf.rows}
+                    theme={theme}
+                  />
+                  {data.perf.note ? (
+                    <p className="mt-6 border-t border-[rgb(122,90,56,0.26)] pt-4 text-[12px] leading-relaxed text-muted">
+                      {data.perf.note}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
+
+              <Shot
+                big
+                className="w-full rounded-xl"
+                iconName="chart"
+                ratio="21/9"
+                spec={
+                  data.resultShot ?? {label: "개선 결과 화면", ratio: "21/9"}
+                }
+                theme={theme}
+              />
             </section>
           ) : null}
 
@@ -724,7 +891,7 @@ export function ProjectOnePager({
                       key={q.who}
                     >
                       “{q.q}”
-                      <span className="mono mt-1 block not-italic text-[11px] uppercase tracking-widest text-[rgb(169,189,214,0.72)]">
+                      <span className="mono mt-1 block not-italic text-xs uppercase tracking-widest text-[rgb(169,189,214,0.72)]">
                         — {q.who}
                       </span>
                     </blockquote>
@@ -771,7 +938,10 @@ export function ProjectOnePager({
                           (f.done ? "text-white" : "text-accent")
                         }
                       >
-                        <span aria-hidden className="mono select-none opacity-60">
+                        <span
+                          aria-hidden
+                          className="mono select-none opacity-60"
+                        >
                           →
                         </span>
                         {f.did}
@@ -884,42 +1054,12 @@ export function ProjectOnePager({
           <section className="reveal space-y-12 md:space-y-16">
             <h2 className="section-label">Architecture &amp; Design</h2>
 
-            <div className="stagger-children grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {data.architecture.map((layer, i) => {
-                const hero = i === heroLayer;
-                return (
-                  <div
-                    className={`arch-card reveal ${
-                      hero ? "border-accent bg-accent/5" : ""
-                    }`}
-                    key={layer.name}
-                  >
-                    <div
-                      className={`mb-4 flex h-10 w-10 items-center justify-center rounded ${
-                        hero
-                          ? "bg-accent text-black"
-                          : "bg-accent/10 text-accent"
-                      }`}
-                    >
-                      <Icon
-                        className="h-5 w-5"
-                        name={ARCH_ICONS[i % ARCH_ICONS.length]}
-                      />
-                    </div>
-                    <h3 className="mb-2 text-sm font-bold uppercase tracking-wider">
-                      {layer.tag}
-                    </h3>
-                    <p
-                      className={`text-xs leading-relaxed ${
-                        hero ? "font-bold text-gray-400" : "text-gray-500"
-                      }`}
-                    >
-                      {layer.name}: {layer.desc}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
+            {/* 4칸 레이어 카드(ROUTE / DATA / API / UI)를 걷어냈다.
+                내용이 "React Router 로 라우팅", "axios 모듈", "공통 컴포넌트 재사용"
+                처럼 **아키텍처가 아니라 폴더 구조**였다. 신입 프로젝트면 거의 다
+                그렇게 생겼으므로 변별력이 없는데 한 화면을 썼다. 진짜 설계 이야기는
+                아래 Technical Decision Table(선택 / 이유 / 대안)에 있다.
+                데이터(`architecture`)는 그대로 두었다. */}
 
             {/* 다이어그램이 있으면 그린다. 없으면 **아무것도 안 그린다** —
                 예전엔 여기가 "시스템 아키텍처 다이어그램" 이라고 적힌
@@ -932,7 +1072,7 @@ export function ProjectOnePager({
                 {/* 좁은 화면에서는 가로로 굴러간다. 굴러간다는 걸 말해 주지
                     않으면 잘린 그림으로 보이고, tabIndex 가 없으면 키보드로는
                     아예 오른쪽을 볼 수 없다(스크롤 영역의 기본 규칙). */}
-                <p className="mono mb-2 text-[11px] text-muted md:hidden">
+                <p className="mono mb-2 text-xs text-muted md:hidden">
                   → 옆으로 밀면 전체 구성도가 보입니다
                 </p>
                 <div
@@ -950,7 +1090,7 @@ export function ProjectOnePager({
 
             <div className="reveal space-y-8">
               <h3 className="block-label">Technical Decision Table</h3>
-              <p className="mono -mt-4 text-[11px] text-muted md:hidden">
+              <p className="mono -mt-4 text-xs text-muted md:hidden">
                 → 옆으로 밀면 「이유 / 대안」 칸이 보입니다
               </p>
               <div
@@ -960,7 +1100,7 @@ export function ProjectOnePager({
                 tabIndex={0}
               >
                 <table className="w-full min-w-[640px] border-collapse text-left text-sm">
-                  <thead className="mono bg-[rgb(11,22,38,0.75)] text-[11px] uppercase tracking-widest text-accent">
+                  <thead className="mono bg-[rgb(11,22,38,0.75)] text-xs uppercase tracking-widest text-accent">
                     <tr>
                       <th className="border-b border-[rgb(122,90,56,0.45)] p-4">
                         영역
@@ -993,11 +1133,11 @@ export function ProjectOnePager({
           </section>
 
           {/* ══════════ 핵심 구현 ══════════ */}
-          {data.coreCode.length > 0 ? (
+          {codes.length > 0 ? (
             <section className="reveal space-y-12">
               <h2 className="section-label">Implementation</h2>
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                {data.coreCode.map((c, i) => (
+                {codes.map((c, i) => (
                   <div
                     className={`space-y-4 ${
                       i % 2 === 0 ? "reveal-left" : "reveal-right"
@@ -1015,87 +1155,6 @@ export function ProjectOnePager({
             </section>
           ) : null}
 
-          {/* ══════════ 트러블슈팅 ══════════ */}
-          {data.challenges.length > 0 ? (
-            <section className="reveal space-y-12">
-              <h2 className="section-label">Troubleshooting</h2>
-
-              <div className="stagger-children grid grid-cols-1 gap-8 lg:grid-cols-2">
-                {data.challenges.map((c, ci) => (
-                  <div
-                    className={`reveal flex flex-col overflow-hidden rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] ${
-                      // 2칸 격자에서 항목이 홀수면 마지막 줄 오른쪽이 통째로
-                      // 빈다(화면 절반). 마지막 하나를 펴서 그 구멍을 없앤다.
-                      ci === data.challenges.length - 1 &&
-                      data.challenges.length % 2 === 1
-                        ? "lg:col-span-2"
-                        : ""
-                    }`}
-                    key={c.title}
-                  >
-                    <div className="border-b border-red-500/20 bg-red-500/10 p-6">
-                      <p
-                        aria-hidden="true"
-                        className="mono mb-2 text-[11px] uppercase tracking-widest text-red-300"
-                      >
-                        [PROBLEM]
-                      </p>
-                      <h3 className="font-bold text-gray-200">{c.title}</h3>
-                    </div>
-                    <div className="flex-grow space-y-4 p-6">
-                      <p className="text-sm leading-relaxed text-gray-400">
-                        {c.problem}
-                      </p>
-                      <div className="flex items-center gap-2 text-accent">
-                        <Icon className="h-4 w-4" name="arrowRight" />
-                        <span className="text-xs font-bold uppercase tracking-widest">
-                          Solution
-                        </span>
-                      </div>
-                      <p className="rounded border-l-2 border-accent bg-accent/5 p-4 text-sm leading-relaxed text-gray-200">
-                        {c.solution}
-                      </p>
-                      {c.code ? (
-                        <CodeWindow spec={c.code} theme={theme} />
-                      ) : null}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* 측정값은 산문에서 꺼내 막대로 세운다. 위 카드의 문단에
-                  숫자가 아홉 개 묻혀 있어 아무도 안 읽었다. 맨 아랫줄이
-                  논점이다 — 쿼리 막대는 사라지는데 페이지 막대는 3분의 1만
-                  준다. 그림이 문장보다 그걸 빨리 말한다. */}
-              {data.perf ? (
-                <div className="reveal rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6 md:p-8">
-                  <h3 className="block-label mb-6">인덱스 전 → 후 · 실측</h3>
-                  <CompareBars
-                    lowerBetter
-                    rows={data.perf.rows}
-                    theme={theme}
-                  />
-                  {data.perf.note ? (
-                    <p className="mt-6 border-t border-[rgb(122,90,56,0.26)] pt-4 text-[12px] leading-relaxed text-muted">
-                      {data.perf.note}
-                    </p>
-                  ) : null}
-                </div>
-              ) : null}
-
-              <Shot
-                big
-                className="w-full rounded-xl"
-                iconName="chart"
-                ratio="21/9"
-                spec={
-                  data.resultShot ?? {label: "개선 결과 화면", ratio: "21/9"}
-                }
-                theme={theme}
-              />
-            </section>
-          ) : null}
-
           {/* ══════════ 결과 & 회고 ══════════ */}
           <section className="reveal space-y-12 md:space-y-16">
             <h2 className="section-label">Results &amp; Retrospective</h2>
@@ -1107,16 +1166,16 @@ export function ProjectOnePager({
                 <p className="text-lg font-light italic leading-snug text-white md:text-2xl">
                   “{data.testimonial.q}”
                 </p>
-                <footer className="mono mt-4 text-[11px] uppercase tracking-widest text-muted">
+                <footer className="mono mt-4 text-xs uppercase tracking-widest text-muted">
                   — {data.testimonial.who}
                 </footer>
               </blockquote>
             ) : null}
 
             {/* 결과 스크린샷 */}
-            {data.gallery && data.gallery.length > 0 ? (
+            {gallery.length > 0 ? (
               <div className="stagger-children grid grid-cols-1 gap-6 md:grid-cols-2">
-                {data.gallery.map(g => (
+                {gallery.map(g => (
                   <div
                     className={`reveal ${g.wide ? "md:col-span-2" : ""}`}
                     key={g.label}
@@ -1132,50 +1191,14 @@ export function ProjectOnePager({
               </div>
             ) : null}
 
-            {/* KPT */}
-            <div className="stagger-children grid grid-cols-1 gap-8 md:grid-cols-3">
-              {(
-                [
-                  // 칸 이름은 프로젝트가 정할 수 있다(`kptLabels`). 두 번 만든
-                  // 프로젝트는 「1.0 에서 배운 것 / 2.0 에서 배운 것」처럼
-                  // 단계를 이름에 넣어야 목록만 읽어도 성장 방향이 보인다.
-                  [
-                    data.kptLabels?.keep ?? "Keep",
-                    "text-green-500",
-                    "check",
-                    data.kpt.keep
-                  ],
-                  [
-                    data.kptLabels?.problem ?? "Problem",
-                    "text-red-500",
-                    "x",
-                    data.kpt.problem
-                  ],
-                  [
-                    data.kptLabels?.try ?? "Try",
-                    "text-blue-500",
-                    "rocket",
-                    data.kpt.try
-                  ]
-                ] as const
-              ).map(([label, color, icon, items]) => (
-                <div
-                  className="reveal rounded-lg border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6"
-                  key={label}
-                >
-                  <h3
-                    className={`mono mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest ${color}`}
-                  >
-                    <Icon className="h-4 w-4" name={icon} /> {label}
-                  </h3>
-                  <ul className="space-y-3 text-sm leading-relaxed text-gray-400">
-                    {items.map(it => (
-                      <li key={it}>• {it}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
+            {/* KEEP / PROBLEM / TRY 세 칸을 걷어냈다.
+                회고 습관 자체는 좋지만, **약점을 스스로 목록으로 만들어 마지막에
+                보여주는 건** 이력서에서 불리하게만 읽힌다("테스트 부족", "디자인
+                시스템이 후반에 정리됨"). 심사자는 그 줄을 읽고 질문을 만들지
+                않는다 — 판단을 내린다. 배운 것은 바로 아래 THE CORE TAKEAWAY
+                한 문장이 더 세게 말한다.
+                데이터(`kpt` · `kptLabels`)는 지우지 않았다 — 되살리려면 이 자리에
+                다시 그리면 된다. */}
 
             {/* 핵심 배움 */}
             <div className="reveal-scale space-y-4 rounded-2xl border border-accent/20 bg-accent/10 p-8 text-center md:p-12">
@@ -1211,7 +1234,7 @@ export function ProjectOnePager({
               <a
                 // 이메일은 uppercase 를 걸지 않는다 — 대문자로 찍힌 주소는
                 // 동작은 해도 잘못 옮겨 적기 쉽다.
-                className="mono flex items-center gap-2 text-[11px] tracking-wider text-[rgb(169,189,214,0.74)] transition-colors hover:text-accent"
+                className="mono flex items-center gap-2 text-xs tracking-wider text-[rgb(169,189,214,0.74)] transition-colors hover:text-accent"
                 href={`mailto:${contact.email}`}
               >
                 <span className="h-2 w-2 rounded-full bg-accent" />
