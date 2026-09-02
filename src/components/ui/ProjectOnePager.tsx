@@ -294,7 +294,9 @@ const CODE_PICK: Record<string, string[]> = {
   // "그렇게 하면 여러 요청이 동시에 401 을 받는 순간 서로를 무효화한다" 며 그걸
   // 걷어낸 이야기를 한다. 같은 페이지에서 문제를 설명하고 그 문제를 가진 코드를
   // 보여 주면 "그래서 지금 코드는 어느 쪽이냐" 가 된다. 실시간 분리 쪽만 남긴다.
-  muscleup: ["server.ts (realtime)"],
+  // ⚠️ 이 문자열은 data.ts 의 coreCode[].filename 과 **정확히** 같아야 한다.
+  // 한 번 어긋나서 Implementation 이 통째로 0개가 된 적이 있다.
+  muscleup: ["realtime/src/server.ts"],
   // PortfolioService 는 "요청마다 스냅샷 갱신" 이라 평범하다. 시세 소스를
   // 인터페이스로 뺀 쪽만 남긴다(Yahoo/Demo 교체 가능 — 설계 판단이 보인다).
   mystock: ["MarketDataProvider.java"]
@@ -740,16 +742,22 @@ export function ProjectOnePager({
           <section className="reveal space-y-6">
             <h2 className="section-label">Key Numbers</h2>
             <div className="stagger-children grid grid-cols-2 gap-6 lg:grid-cols-4">
+              {/* h-full: 한 줄 안에서 타일 높이를 맞춘다. 값이 두 줄이 되는 타일이
+                  하나라도 있으면 옆 타일과 밑변이 어긋나 계단처럼 보였다.
+                  break-keep: 한국어 라벨이 단어 중간에서 끊기는 걸 막는다. */}
               {data.metrics.map(m => (
-                <div className="stat-tile reveal" key={m.l}>
-                  <div className="mono mb-1 text-xs uppercase tracking-widest text-muted">
+                <div className="stat-tile reveal h-full" key={m.l}>
+                  <div className="mono mb-1 break-keep text-xs uppercase tracking-widest text-muted">
                     {m.l}
                   </div>
                   {/* 카운트업 연출을 뺐다. 이 페이지의 주제가 "숫자에 출처가
                       있다" 인데, 굴러가는 도중 "약 49명"(실제 50) 처럼 **틀린
                       값이 보인다.** 정확한 값이 요점인 자리에서 연출이 값을
                       깎아먹으면 연출을 버리는 게 맞다. */}
-                  <span className="mono block text-3xl font-black text-accent md:text-4xl">
+                  {/* whitespace-nowrap: 375px 2단 격자에서 "약 50명" 이 "약 50" /
+                      "명" 으로 갈라졌다. 숫자와 단위가 끊기면 값이 아니라 문장으로
+                      읽힌다. 모바일에서만 한 단계 작게 잡아 안 넘치게 한다. */}
+                  <span className="mono block whitespace-nowrap text-2xl font-black text-accent sm:text-3xl md:text-4xl">
                     {m.n}
                   </span>
                 </div>
@@ -762,109 +770,16 @@ export function ProjectOnePager({
             ) : null}
           </section>
 
-          {/* 라이브 데모(가짜 데이터 목업)가 있던 자리다. 세 번째 섹션 — 이 페이지에서
-              가장 좋은 자리를 쓰고 있었는데, 내용이 "사운드웨이브 음악·24명" 같은
-              **지어낸 데이터**였다. aClub·총학은 바로 위에 실제 사이트 링크가 있는데
-              목업을 앞세우면 심사자가 "이건 진짜인가" 에서 한 번 멈춘다.
-              그 자리에 Troubleshooting 을 올렸다 — 면접 질문이 실제로 나오는 곳인데
-              예전엔 7번째, 5화면 아래에 있어서 대부분 못 보고 닫았다.
-              데모 컴포넌트(SIGNATURE_DEMO)는 지우지 않았다. */}
-
-          {/* ══════════ 트러블슈팅 ══════════ */}
-          {challenges.length > 0 ? (
-            <section className="reveal space-y-12">
-              <h2 className="section-label">Troubleshooting</h2>
-
-              <div className="stagger-children grid grid-cols-1 gap-8 lg:grid-cols-2">
-                {challenges.map((c, ci) => (
-                  <div
-                    className={`reveal flex flex-col overflow-hidden rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] ${
-                      // 2칸 격자에서 항목이 홀수면 마지막 줄 오른쪽이 통째로
-                      // 빈다(화면 절반). 마지막 하나를 펴서 그 구멍을 없앤다.
-                      ci === challenges.length - 1 &&
-                      challenges.length % 2 === 1
-                        ? "lg:col-span-2"
-                        : ""
-                    }`}
-                    key={c.title}
-                  >
-                    <div className="border-b border-red-500/20 bg-red-500/10 p-6">
-                      <p
-                        aria-hidden="true"
-                        className="mono mb-2 text-xs uppercase tracking-widest text-red-300"
-                      >
-                        [PROBLEM]
-                      </p>
-                      <h3 className="font-bold text-gray-200">{c.title}</h3>
-                    </div>
-                    <div className="flex-grow space-y-4 p-6">
-                      {/* 카드가 홀수면 마지막 하나가 전폭(1,216px)으로 펴진다.
-                          14px 글자로 한 줄 80자가 넘어 눈이 다음 줄 첫머리를
-                          놓친다 — 한국어는 40~45자가 적당하다. 반폭 카드는
-                          애초에 580px 라 이 제한에 걸리지 않는다. */}
-                      <p className="max-w-[62ch] text-sm leading-relaxed text-gray-400">
-                        {c.problem}
-                      </p>
-                      <div className="flex items-center gap-2 text-accent">
-                        <Icon className="h-4 w-4" name="arrowRight" />
-                        <span className="text-xs font-bold uppercase tracking-widest">
-                          Solution
-                        </span>
-                      </div>
-                      {/* whitespace-pre-line — 문단 안의 빈 줄을 살린다.
-                          긴 해결 서술은 한 덩이로 두면 14줄이 줄바꿈 없이 이어져
-                          마지막 문장(대개 가장 센 결론)이 묻힌다. 데이터 쪽에서
-                          빈 줄을 넣은 것만 나뉘고, 나머지는 그대로 한 문단이다. */}
-                      <p className="max-w-[62ch] whitespace-pre-line rounded border-l-2 border-accent bg-accent/5 p-4 text-sm leading-relaxed text-gray-200">
-                        {c.solution}
-                      </p>
-                      {c.code ? (
-                        <CodeWindow spec={c.code} theme={theme} />
-                      ) : null}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* 측정값은 산문에서 꺼내 막대로 세운다. 위 카드의 문단에
-                  숫자가 아홉 개 묻혀 있어 아무도 안 읽었다. 맨 아랫줄이
-                  논점이다 — 쿼리 막대는 사라지는데 페이지 막대는 3분의 1만
-                  준다. 그림이 문장보다 그걸 빨리 말한다. */}
-              {data.perf ? (
-                <div className="reveal rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6 md:p-8">
-                  <h3 className="block-label mb-6">인덱스 전 → 후 · 실측</h3>
-                  <CompareBars
-                    lowerBetter
-                    rows={data.perf.rows}
-                    theme={theme}
-                  />
-                  {data.perf.note ? (
-                    <p className="mt-6 border-t border-[rgb(122,90,56,0.26)] pt-4 text-[12px] leading-relaxed text-muted">
-                      {data.perf.note}
-                    </p>
-                  ) : null}
-                </div>
-              ) : null}
-
-              <Shot
-                big
-                className="w-full rounded-xl"
-                iconName="chart"
-                ratio="21/9"
-                spec={
-                  data.resultShot ?? {label: "개선 결과 화면", ratio: "21/9"}
-                }
-                theme={theme}
-              />
-            </section>
-          ) : null}
-
           {/* ══════════ 문제 정의 ══════════ */}
-          {/* 예전엔 왼쪽 5칸에 problemShot + 인용, 오른쪽 7칸에 Problem 이었다.
-              그 이미지를 Before→After 로 옮기면서 왼쪽에 인용문만 남았고,
-              위아래로 400px 가까운 구멍이 생겼다. 게다가 사용자의 말이
-              Problem 문단과 떨어져 있어 **근거로 읽히지 않았다.**
-              문제 → 사용자의 말(근거) → 가설 순서로 한 흐름에 세운다. */}
+          {/* 예전엔 Troubleshooting 이 여기(3번째)에 있고 Context 가 그 뒤였다.
+              이력서 카드가 약속하는 건 「사용자 피드백을 듣고 다시 만들었다」인데,
+              그걸 보고 누른 사람이 처음 만나는 게 JWT·EXPLAIN·부하시험 4.2화면이었다.
+              좋은 이야기지만 **약속한 이야기가 아니다.** 클릭한 이유를 먼저 갚는다 —
+              가설과 「들은 말 4, 한 것 3」 이 48% 지점에서 15% 지점으로 올라온다.
+
+              Context 안의 순서(문제 → 사용자의 말 → 가설)는 그대로다. 예전엔 왼쪽에
+              problemShot 이 있었는데 Before→After 로 옮기면서 구멍이 생겼고, 사용자의
+              말이 Problem 문단과 떨어져 **근거로 읽히지 않아서** 한 흐름에 세웠다. */}
           <section className="reveal space-y-8">
             <h2 className="section-label">Context</h2>
             <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-16">
@@ -957,6 +872,102 @@ export function ProjectOnePager({
               </div>
             ) : null}
           </section>
+
+          {/* ══════════ 트러블슈팅 ══════════ */}
+          {/* 라이브 데모(가짜 데이터 목업)가 있던 자리다. 내용이 「사운드웨이브
+              음악·24명」 같은 **지어낸 데이터**였는데, 바로 위에 실제 사이트 링크가
+              있는 페이지에서 목업을 앞세우면 심사자가 「이건 진짜인가」 에서 멈춘다.
+              그래서 Troubleshooting 을 올렸다 — 예전엔 7번째, 5화면 아래라 대부분
+              못 보고 닫았다. 지금은 Context 다음이다: 무엇을 왜 만들었는지 먼저
+              말하고, 그 다음에 「만들면서 뭐가 깨졌나」 로 간다.
+              데모 컴포넌트(SIGNATURE_DEMO)는 지우지 않았다. */}
+          {challenges.length > 0 ? (
+            <section className="reveal space-y-12">
+              <h2 className="section-label">Troubleshooting</h2>
+
+              <div className="stagger-children grid grid-cols-1 gap-8 lg:grid-cols-2">
+                {challenges.map((c, ci) => (
+                  <div
+                    className={`reveal flex flex-col overflow-hidden rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] ${
+                      // 2칸 격자에서 항목이 홀수면 마지막 줄 오른쪽이 통째로
+                      // 빈다(화면 절반). 마지막 하나를 펴서 그 구멍을 없앤다.
+                      ci === challenges.length - 1 &&
+                      challenges.length % 2 === 1
+                        ? "lg:col-span-2"
+                        : ""
+                    }`}
+                    key={c.title}
+                  >
+                    <div className="border-b border-red-500/20 bg-red-500/10 p-6">
+                      <p
+                        aria-hidden="true"
+                        className="mono mb-2 text-xs uppercase tracking-widest text-red-300"
+                      >
+                        [PROBLEM]
+                      </p>
+                      <h3 className="font-bold text-gray-200">{c.title}</h3>
+                    </div>
+                    <div className="flex-grow space-y-4 p-6">
+                      {/* 카드가 홀수면 마지막 하나가 전폭(1,216px)으로 펴진다.
+                          14px 글자로 한 줄 80자가 넘어 눈이 다음 줄 첫머리를
+                          놓친다 — 한국어는 40~45자가 적당하다. 반폭 카드는
+                          애초에 580px 라 이 제한에 걸리지 않는다. */}
+                      <p className="max-w-[62ch] text-sm leading-relaxed text-gray-400">
+                        {c.problem}
+                      </p>
+                      <div className="flex items-center gap-2 text-accent">
+                        <Icon className="h-4 w-4" name="arrowRight" />
+                        <span className="text-xs font-bold uppercase tracking-widest">
+                          Solution
+                        </span>
+                      </div>
+                      {/* whitespace-pre-line — 문단 안의 빈 줄을 살린다.
+                          긴 해결 서술은 한 덩이로 두면 14줄이 줄바꿈 없이 이어져
+                          마지막 문장(대개 가장 센 결론)이 묻힌다. 데이터 쪽에서
+                          빈 줄을 넣은 것만 나뉘고, 나머지는 그대로 한 문단이다. */}
+                      <p className="max-w-[62ch] whitespace-pre-line rounded border-l-2 border-accent bg-accent/5 p-4 text-sm leading-relaxed text-gray-200">
+                        {c.solution}
+                      </p>
+                      {c.code ? (
+                        <CodeWindow spec={c.code} theme={theme} />
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 측정값은 산문에서 꺼내 막대로 세운다. 위 카드의 문단에
+                  숫자가 아홉 개 묻혀 있어 아무도 안 읽었다. 맨 아랫줄이
+                  논점이다 — 쿼리 막대는 사라지는데 페이지 막대는 3분의 1만
+                  준다. 그림이 문장보다 그걸 빨리 말한다. */}
+              {data.perf ? (
+                <div className="reveal rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6 md:p-8">
+                  <h3 className="block-label mb-6">인덱스 전 → 후 · 실측</h3>
+                  <CompareBars
+                    lowerBetter
+                    rows={data.perf.rows}
+                    theme={theme}
+                  />
+                  {data.perf.note ? (
+                    <p className="mt-6 border-t border-[rgb(122,90,56,0.26)] pt-4 text-[12px] leading-relaxed text-muted">
+                      {data.perf.note}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
+
+              <Shot
+                big
+                className="w-full rounded-xl"
+                iconName="chart"
+                ratio="21/9"
+                spec={
+                  data.resultShot ?? {label: "개선 결과 화면", ratio: "21/9"}
+                }
+                theme={theme}
+              />
+            </section>
+          ) : null}
 
           {/* ══════════ 개선 전 / 후 ══════════
               문제를 말한 직후가 이 칸의 자리다 — "그래서 뭘 바꿨나" 를 아키텍처

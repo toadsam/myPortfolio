@@ -1338,15 +1338,24 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     coreCode: [
       {
-        filename: "server.ts (realtime)",
-        caption: "라운지 상태는 Socket.IO 서버가 전담 — REST와 분리",
-        highlightLines: [2],
+        filename: "realtime/src/server.ts",
+        caption:
+          "이동은 올 때마다 보내지 않는다 — 60ms 틱에서 변한 게 있을 때만 한 번. 램프 표의 브로드캐스트/s 가 상한 16.7Hz 에 못 미치는 것도, 사람이 늘수록 그 값이 올라가는 것도 이 게이트 때문이다",
+        highlightLines: [10],
         lines: [
-          'io.on("connection", (socket) => {',
-          '  socket.on("move", (p) => room.update(socket.id, p)); // 위치',
-          '  socket.on("chat", (m) => io.to(room.id).emit("chat", m));',
-          '  socket.on("disconnect", () => room.leave(socket.id));',
-          "});"
+          'socket.on("player:move", (payload) => {',
+          "  // …좌표 유효성 검사 생략",
+          "  const updated = updatePlayerPosition(socket.id, payload.x, payload.y);",
+          "  if (!updated) return;",
+          '  scheduleBroadcast();            // "보낼 게 있다"고 표시만 한다',
+          "});",
+          "",
+          "let pendingBroadcast = false;",
+          "setInterval(() => {",
+          "  if (!pendingBroadcast) return;  // 변한 게 없으면 아예 안 보낸다",
+          "  pendingBroadcast = false;",
+          "  broadcastPlayers();             // lounge:players 로 방 전원에게",
+          "}, 60);"
         ]
       },
       {
@@ -1505,8 +1514,15 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 가장 센 분석인데 3화면 아래 긴 문단 속에 있었다 — 그걸 첫 화면으로 올린다.
       // 처음엔 "100명 p95 50ms" 로 적었는데, 스크립트를 저장소에 넣고 실제로
       // 재 보니 100명은 p95 85ms 로 이미 설계 주기(60ms)를 넘겼다. 짐작이 틀렸다.
-      // 회원 약 50명이 전원 동시 접속하는 지점 — 여기서는 p95 9ms 로 여유가 있다.
-      {n: "50명", l: "동시접속 p95 9ms"}
+      //
+      // 그 다음에 "50명 / 동시접속 p95 9ms" 로 고쳤다가 다시 바꾼다. 두 가지가
+      // 걸렸다 — (1) 첫 타일이 이미 "약 50명"이라 **같은 숫자가 두 번** 나왔고,
+      // (2) 나머지 셋은 「이름 / 숫자」인데 이것만 「숫자가 든 이름 / 조건」으로
+      // 방향이 뒤집혀 있었다. 훑는 사람은 "50명 = 회원 수"로 읽고 지나간다.
+      //
+      // 재서 한계를 찾았다는 것 자체가 이 프로젝트에서 제일 희귀한 대목이라,
+      // 자랑이 되는 숫자(9ms) 대신 한계(100명)를 적는다. 근거는 아래 램프 표다.
+      {n: "100명", l: "실측한 동시접속 한계"}
     ],
     // 이 숫자들이 원래 12줄짜리 문단 안에 아홉 개가 묻혀 있었다.
     // 막대로 빼면 마지막 줄("한 페이지 전체")이 스스로 논점을 말한다 —
