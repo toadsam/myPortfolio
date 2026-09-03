@@ -1174,7 +1174,7 @@ export function ImageSlot({
         </div>
         {spec.caption ? (
           <figcaption
-            className="border-t px-4 py-3 text-[12px] leading-relaxed text-white/70"
+            className="border-t px-4 py-3 text-[13px] leading-relaxed text-white/70"
             style={{borderColor: `${theme.primary}15`}}
           >
             {spec.caption}
@@ -1233,7 +1233,7 @@ export function ImageSlot({
                         겹쳤다. 캡션만 줄어들게 하고 안내는 한 줄로 고정한다.
                         한글 캡션이라 모노도 뺀다(자간이 고정폭에 눌린다). */}
                     <figcaption
-                      className="flex items-start justify-between gap-6 border-t px-4 py-3 text-[12px] leading-relaxed text-white/70"
+                      className="flex items-start justify-between gap-6 border-t px-4 py-3 text-[13px] leading-relaxed text-white/70"
                       style={{borderColor: `${theme.primary}20`}}
                     >
                       <span className="min-w-0 flex-1">

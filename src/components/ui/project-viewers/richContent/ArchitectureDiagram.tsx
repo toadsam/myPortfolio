@@ -289,7 +289,7 @@ export function ArchitectureDiagram({
           </g>
         ))}
       </svg>
-      <figcaption className="mono mt-3 text-[11px] leading-relaxed text-muted">
+      <figcaption className="mono mt-3 text-[13px] leading-relaxed text-muted">
         {spec.caption}
       </figcaption>
     </figure>

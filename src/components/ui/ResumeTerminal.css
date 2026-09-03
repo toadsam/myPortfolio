@@ -508,40 +508,6 @@
   background: var(--accent);
 }
 
-.resume-terminal .spec-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.resume-terminal .spec-item {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  opacity: 0;
-  transform: translateX(-20px);
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.resume-terminal .spec-item.visible {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.resume-terminal .spec-label {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--muted);
-  text-transform: uppercase;
-}
-
-.resume-terminal .spec-value {
-  font-size: 13px;
-  font-weight: 400;
-  color: rgb(var(--v-moon));
-}
-
 .resume-terminal footer {
   grid-column: 1 / 4;
   grid-row: 3;
@@ -2421,8 +2387,7 @@
 
   /* 등장 애니메이션은 인쇄 시점에 IntersectionObserver 가 돌지 않아
      opacity:0 인 채로 굳는다 — 전부 보이게 고정한다. */
-  .resume-terminal .reveal,
-  .resume-terminal .spec-item {
+  .resume-terminal .reveal {
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;

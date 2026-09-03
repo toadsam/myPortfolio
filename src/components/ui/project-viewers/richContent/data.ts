@@ -837,7 +837,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "백엔드 API 도메인 지도 — 컨트롤러 28개 · 엔드포인트 136개",
       ratio: "21/9",
       caption:
-        "controller/*.java 28개를 8개 도메인으로 묶었다. 크루는 생성·초대코드·가입 신청·승인·멤버 역할·챌린지가 컨트롤러 하나(15개)에 다 들어 있고, 자랑방은 반대로 글(BragPost)과 반응(BragInteraction)을 둘로 갈라 뒀다 — 같은 저장소 안에 상반된 두 선택이 있다."
+        "컨트롤러 28개를 8개 도메인으로 묶었다. 크루는 여섯 기능이 컨트롤러 하나에 다 들어 있고, 자랑방은 글과 반응을 둘로 갈랐다 — 같은 저장소 안에 상반된 두 선택이다."
     },
     gallery: [
       {
@@ -858,14 +858,14 @@ export const RICH_DATA: Record<string, RichProject> = {
         label: "실시간 라운지 — Socket.IO",
         ratio: "16/10",
         caption:
-          "1.0 피드백 “다른 사람들과 더 많이 소통하고 싶어요” 에 대한 답. 접속자 수·핑·미니맵이 좌상단에 뜨고, 캐릭터 위치와 이모트가 실시간 동기화된다. REST 로는 못 해서 실시간 서버를 :4001 로 따로 뺐다."
+          "“다른 사람들과 더 많이 소통하고 싶어요” 에 대한 답. 캐릭터 위치와 이모트가 실시간 동기화된다 — REST 로는 못 해서 서버를 따로 뺐다."
       },
       {
         src: "/projects/muscleup/v2/character.webp",
         label: "캐릭터 성장 — 레벨 · 티어 · 진화 단계",
         ratio: "6/5",
         caption:
-          "“내 운동 데이터를 더 자세히 보고 싶어요” 에 대한 답. 화면의 MASTER·Stage 8·Level 85 가 ERD 의 character_profiles(tier, level, evolution_stage, title) 그대로다."
+          "“내 운동 데이터를 더 자세히 보고 싶어요” 에 대한 답. 화면의 MASTER·Stage 8·Level 85 가 ERD 의 character_profiles 컬럼 그대로다."
       },
       {
         src: "/projects/muscleup/v2/admin.webp",
@@ -1025,7 +1025,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         title: "System Architecture",
         viewBox: [1180, 470],
         caption:
-          "왼쪽에서 경로가 갈라지는 게 이 설계의 요점 — 자주 바뀌는 상태(위치·채팅)만 Socket.IO 가 받고 나머지는 REST 로 간다. 박스 크기 차이도 실제다(백엔드 Controller 28개 vs 실시간 서버 소스 3개). 점선 상자는 내가 만들지 않은 것.",
+          "요점은 왼쪽에서 경로가 갈라지는 것 — 자주 바뀌는 상태(위치·채팅)만 Socket.IO 가 받고 나머지는 REST 로 간다. 점선 상자는 내가 만들지 않은 것.",
         groups: [
           {label: "BROWSER", x: 20, y: 60, w: 250, h: 330},
           {label: "MY SERVERS", x: 360, y: 30, w: 400, h: 400},
@@ -1146,7 +1146,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         title: "Data Model — 31 tables / 8 domains",
         viewBox: [1200, 656],
         caption:
-          "저장소의 @Entity 클래스 31개를 전부 읽어 도메인별로 묶은 것 — 표 이름·개수·FK 수는 코드에서 센 값이다. users 한 곳으로 관계가 28개 모이는 허브 구조이고, 그래서 회원 탈퇴·권한 변경이 전 도메인에 걸린다. 선 위 숫자는 그 도메인이 users 를 참조하는 횟수.",
+          "@Entity 31개를 도메인별로 묶은 것 — 표·개수·FK 는 코드에서 센 값이다. users 한 곳으로 관계 28개가 모이는 허브라, 탈퇴·권한 변경이 전 도메인에 걸린다.",
         nodes: [
           {
             id: "users",
@@ -1565,7 +1565,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           unit: "ms"
         }
       ],
-      note: "PostgreSQL 17.4 · 표당 20만 행 합성 데이터 · 각 7회 중앙값 · 인덱스 넷 합쳐 21MB. 맨 아랫줄이 사용자가 기다리는 시간이다 — 목록 막대는 사라지는데 페이지 막대는 절반에서 멈춘다. 남은 57.5ms 가 인덱스로는 못 고치는 count 다."
+      note: "맨 아랫줄이 사용자가 기다리는 시간이다 — 목록 막대는 사라지는데 페이지 막대는 절반에서 멈춘다. 남은 57.5ms 가 인덱스로 못 고치는 count 다. (PostgreSQL 17.4 · 20만 행 · 7회 중앙값)"
     },
     metricsNote:
       // 130자가 넘었다. 지표 넷 바로 아래 — 첫 화면급 자리에서 그 길이는 무겁다.

@@ -530,7 +530,7 @@ export function ProjectOnePager({
         theme={theme}
       />
       {data.perf.note ? (
-        <p className="mt-6 border-t border-[rgb(122,90,56,0.26)] pt-4 text-[12px] leading-relaxed text-muted">
+        <p className="mt-6 border-t border-[rgb(122,90,56,0.26)] pt-4 text-[13px] leading-relaxed text-muted">
           {data.perf.note}
         </p>
       ) : null}
@@ -906,7 +906,7 @@ export function ProjectOnePager({
                     </li>
                   ))}
                 </ul>
-                <p className="mt-3 text-[12px] leading-relaxed text-muted">
+                <p className="mt-3 text-[13px] leading-relaxed text-muted">
                   {data.research.quotes[0]?.who
                     ? "출처: " + data.research.quotes[0].who
                     : null}
