@@ -602,7 +602,7 @@ function DecisionTable({
           >
             {r.pick}
           </span>
-          <span className="text-[11px] leading-5 text-white/70">
+          <span className="text-[12px] leading-5 text-white">
             {r.why}
             <span className="mt-0.5 block text-white/35">↔ {r.alt}</span>
           </span>
@@ -642,7 +642,7 @@ function ChallengeCard({
         <span className="shrink-0 font-mono text-[11px] font-black text-[#f87171]">
           문제
         </span>
-        <p className="text-[13px] leading-6 text-white/70">{c.problem}</p>
+        <p className="text-[13px] leading-6 text-white">{c.problem}</p>
       </div>
       <div className="mb-3 flex gap-2">
         <span
@@ -934,7 +934,7 @@ function BeforeAfter({
         <MockScreen theme={theme} spec={s.screen} />
       ) : null}
       {s.note ? (
-        <p className="mt-2.5 text-[13px] leading-6 text-white/70">{s.note}</p>
+        <p className="mt-2.5 text-[13px] leading-6 text-white">{s.note}</p>
       ) : null}
     </div>
   );
@@ -1174,7 +1174,7 @@ export function ImageSlot({
         </div>
         {spec.caption ? (
           <figcaption
-            className="border-t px-4 py-3 text-[13px] leading-relaxed text-white/70"
+            className="border-t px-4 py-3 text-[13px] leading-relaxed text-white"
             style={{borderColor: `${theme.primary}15`}}
           >
             {spec.caption}
@@ -1233,7 +1233,7 @@ export function ImageSlot({
                         겹쳤다. 캡션만 줄어들게 하고 안내는 한 줄로 고정한다.
                         한글 캡션이라 모노도 뺀다(자간이 고정폭에 눌린다). */}
                     <figcaption
-                      className="flex items-start justify-between gap-6 border-t px-4 py-3 text-[13px] leading-relaxed text-white/70"
+                      className="flex items-start justify-between gap-6 border-t px-4 py-3 text-[13px] leading-relaxed text-white"
                       style={{borderColor: `${theme.primary}20`}}
                     >
                       <span className="min-w-0 flex-1">
@@ -1807,7 +1807,7 @@ export function RichSection({
                       >
                         ✓
                       </span>
-                      <span className="text-[12px] leading-5 text-white/70">
+                      <span className="text-[12px] leading-5 text-white">
                         {it}
                       </span>
                     </div>
