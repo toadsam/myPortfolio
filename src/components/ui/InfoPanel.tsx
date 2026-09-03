@@ -254,6 +254,7 @@ function ProjectsPanel({
       {projects.map(project => (
         <motion.div key={project.id} variants={fadeUp}>
           <ProjectCard
+            color={color}
             onEnter3d={onEnterProject ? p => onEnterProject(p.id) : undefined}
             onOpen={setSelectedProject}
             project={project}

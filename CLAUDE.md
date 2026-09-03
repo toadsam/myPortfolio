@@ -259,6 +259,16 @@ so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottlene
   호버 = `focusBuildingId` 로 **그 한 채만** 강조(구역 전체가 이미 켜져 있어 더 켜는 건 안 보인다).
   3D 간판(`v-sign`)은 구역 카메라 거리에서 2~3px 라 읽히지 않아 2D 로 한 번 더 적는 것. 프로젝트 카드의
   "3D 전시실 들어가기"는 `enterProjectRoom` → `handleRequestEnter`(contentId ↔ project.id).
+- **HUD 는 두 단계다.** `hudUnlocked=false` 로 시작해 첫 화면엔 헤더·환영 카드·이동·지도·제작 의뢰만
+  두고, 첫 행동(건물 입장·NPC 대화·독/지도 이동·바닥 클릭·안내인 선택·투어 종료)에서 `unlockHud()` 가
+  마을 소식·지휘·NPC 독·엿듣기·걷기 모드를 꺼낸다. 조작 힌트(`ControlsHint active`)는 환영 카드가
+  **닫힌 뒤** 7초 — 마운트 기준이면 카드가 덮고 있는 동안 지나가 아무도 못 본다. 할 수 있는 것 세 가지
+  (건물=내용·사람=대화·바닥=이동)는 환영 카드 바닥 한 줄에 고정.
+- **"채용 담당자예요"는 마을 안 4정류장 투어다**(`TOUR_STOPS` 프로젝트→기술→경험→연락, 8초 자동 진행,
+  마지막은 자동으로 안 넘김, `TourCard`). 이력서 화면으로 곧장 보내던 예전 동작은 카드의 "이력서로
+  바로 가기" 링크로 남겼다. 투어는 다른 행동이 시작되면 `endTour()` 로 끝난다 — 카메라를 두 주인이
+  끌면 화면이 튄다. 독·지도·모바일 메뉴의 이동은 `userTravel`(endTour+unlock+travelTo)이고 투어 자체는
+  `travelTo` 를 직접 쓴다 — travelTo 안에서 투어를 끝내면 투어가 스스로를 죽인다.
 
 ### Project detail viewer routing
 

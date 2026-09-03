@@ -25,10 +25,13 @@ const CHIPS: {
 export function ConciergePanel({
   onPick,
   onAskAI,
+  onResume,
   onClose
 }: {
   onPick: (intent: ConciergeIntent) => void;
   onAskAI: () => void;
+  /** 투어 없이 이력서로 곧장 — 급한 심사자용 작은 링크 */
+  onResume: () => void;
   onClose: () => void;
 }) {
   return (
@@ -100,6 +103,22 @@ export function ConciergePanel({
             루미와 대화 (AI)
           </span>
         </motion.button>
+      </div>
+
+      {/* 이 마을에서 할 수 있는 것의 전체 목록 — 실제로 이 셋이 전부라 한 줄로 끝난다.
+          조작 힌트(ControlsHint)는 이 카드가 닫힌 뒤에야 뜨므로, 카드가 열려 있는
+          동안의 안내는 이 줄이 맡는다. */}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[#e2c078]/15 pt-3 text-[11px] font-bold text-[#a9bdd6]/80">
+        <span>
+          🏠 건물을 누르면 내용 · 🙂 사람을 누르면 대화 · 📍 바닥을 누르면 이동
+        </span>
+        <button
+          type="button"
+          onClick={onResume}
+          className="underline-offset-2 transition hover:text-[#f3e6c8] hover:underline"
+        >
+          이력서로 바로 가기 →
+        </button>
       </div>
     </motion.div>
   );

@@ -2,78 +2,77 @@ import type {ProjectData} from "@/types/portfolio";
 
 interface ProjectCardProps {
   project: ProjectData;
+  /** 구역 강조색(districtTone) — 액자 안 다른 카드와 같은 톤을 쓴다 */
+  color: string;
   onOpen: (project: ProjectData) => void;
   /** 마을 안에서만 넘어온다 — 이 프로젝트 건물의 3D 전시실로 바로 입장. */
   onEnter3d?: (project: ProjectData) => void;
 }
 
-export function ProjectCard({onEnter3d, onOpen, project}: ProjectCardProps) {
+/**
+ * 프로젝트 구역 패널의 목록 카드.
+ *
+ * 예전엔 크림색 종이 + 초록 글씨였다 — 남색·금테 액자 안에서 그 카드만 다른
+ * 앱처럼 튀었다(사용자 지적, 2026-09-03). 액자 안의 다른 카드(`InfoPanel Card`,
+ * 기술 스택 그룹)와 같은 `#081222` 바탕·구역 강조색 칩으로 맞춘다.
+ *
+ * 목록 카드는 **메뉴**다 — 제목·한 줄 설명·기술 칩·버튼까지만. 역할·핵심 기능·
+ * 배운 점은 "자세히 보기"(ProjectDetail) 몫이라 여기서 다 펼치지 않는다.
+ * 9장을 다 펼치면 스크롤이 길어져 목록으로 읽히지 않는다.
+ */
+export function ProjectCard({
+  color,
+  onEnter3d,
+  onOpen,
+  project
+}: ProjectCardProps) {
   return (
-    <article className="rounded-lg border border-[#e0ce98] bg-[#fffdf6] p-4 shadow-[0_10px_34px_rgba(79,72,49,0.08)]">
-      <div className="mb-4 border-b border-[#eadfbf] pb-4">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-[#5e9b5b]">
-          Project Case
-        </p>
-        <h3 className="mt-1 text-xl font-black text-[#1f2a24]">
-          {project.title}
-        </h3>
-        <p className="mt-2 text-sm leading-6 text-[#63705f]">
-          {project.description}
-        </p>
+    <article
+      className="rounded-lg border bg-[#081222] p-5 transition"
+      style={{borderColor: `${color}26`}}
+    >
+      <p
+        className="text-[11px] font-black uppercase tracking-[0.16em]"
+        style={{color}}
+      >
+        Project Case
+      </p>
+      <h3 className="v-serif mt-1 text-xl leading-tight text-[#f3e6c8]">
+        {project.title}
+      </h3>
+      <p className="mt-2 text-sm leading-6 text-[#a9bdd6]">
+        {project.description}
+      </p>
+
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {project.tech.map(tech => (
+          <span
+            className="rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-black"
+            key={tech}
+            style={{
+              borderColor: `${color}40`,
+              color,
+              background: `${color}12`
+            }}
+          >
+            {tech}
+          </span>
+        ))}
       </div>
 
-      <dl className="grid gap-4 text-sm">
-        <div>
-          <dt className="font-black text-[#356e43]">담당 역할</dt>
-          <dd className="mt-1 leading-6 text-[#374238]">{project.role}</dd>
-        </div>
-
-        <div>
-          <dt className="font-black text-[#356e43]">사용 기술</dt>
-          <dd className="mt-2 flex flex-wrap gap-2">
-            {project.tech.map(tech => (
-              <span
-                className="rounded-full border border-[#c7dd9a] bg-[#eef8db] px-2.5 py-1 text-xs font-black text-[#3f6e35]"
-                key={tech}
-              >
-                {tech}
-              </span>
-            ))}
-          </dd>
-        </div>
-
-        <div>
-          <dt className="font-black text-[#356e43]">핵심 기능</dt>
-          <dd className="mt-2">
-            <ul className="grid gap-1.5 text-[#374238]">
-              {project.features.map(feature => (
-                <li className="flex gap-2" key={feature}>
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#79b95e]" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </dd>
-        </div>
-
-        <div>
-          <dt className="font-black text-[#356e43]">배운 점</dt>
-          <dd className="mt-1 leading-6 text-[#374238]">{project.learning}</dd>
-        </div>
-      </dl>
-
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
         {onEnter3d ? (
           <button
-            className="rounded-md border border-[#3d2a17] bg-[#3d2a17] px-3 py-2 text-xs font-black tracking-[0.06em] text-[#fdf3df] transition hover:bg-[#5a3f24]"
+            className="rounded-lg border px-3 py-2 text-[12px] font-black text-[#0b1626] transition hover:brightness-110 active:scale-95"
             onClick={() => onEnter3d(project)}
+            style={{borderColor: color, background: color}}
             type="button"
           >
             🏠 3D 전시실 들어가기
           </button>
         ) : null}
         <button
-          className="rounded-md border border-[#6fac58] bg-[#6fac58] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-white transition hover:bg-[#5f9b4d]"
+          className="rounded-lg border border-[#e2c078]/30 bg-white/[0.03] px-3 py-2 text-[12px] font-black text-[#eef2f8] transition hover:border-[#e2c078]/60 hover:bg-[#e2c078]/10 active:scale-95"
           onClick={() => onOpen(project)}
           type="button"
         >
@@ -81,13 +80,13 @@ export function ProjectCard({onEnter3d, onOpen, project}: ProjectCardProps) {
         </button>
         {project.links.map(link => (
           <a
-            className="rounded-md border border-[#cdbb81] bg-[#fff7df] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#3c473b] transition hover:border-[#6fac58] hover:bg-[#eef8db]"
+            className="text-[11px] font-bold text-[#a9bdd6]/80 underline-offset-2 transition hover:text-[#f3e6c8] hover:underline"
             href={link.href}
             key={link.label}
             rel="noreferrer"
             target="_blank"
           >
-            {link.label}
+            {link.label} ↗
           </a>
         ))}
       </div>

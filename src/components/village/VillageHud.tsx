@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {autonomousNpcs} from "@/data/npcRoster";
 import type {NpcCommand} from "@/components/village/NPC";
 import {Crest} from "@/components/ui/Crest";
@@ -1138,13 +1138,26 @@ export function KonamiBurst() {
   );
 }
 
-export function ControlsHint() {
-  const [show, setShow] = useState(true);
+/**
+ * 조작 힌트. **`active` 가 처음 true 가 되는 순간부터** 7초 — 마운트 기준이
+ * 아니다. 예전엔 마운트 후 7초였는데, 그 7초 내내 루미의 환영 카드가 같은
+ * 자리를 덮고 있어서 사실상 아무도 못 봤다. 한 번 보이고 나면 다시 안 뜬다.
+ */
+export function ControlsHint({active}: {active: boolean}) {
+  const [show, setShow] = useState(false);
+  const shownOnce = useRef(false);
 
   useEffect(() => {
+    if (!active || shownOnce.current) return;
+    shownOnce.current = true;
+    setShow(true);
     const t = setTimeout(() => setShow(false), 7000);
-    return () => clearTimeout(t);
-  }, []);
+    return () => {
+      clearTimeout(t);
+      // 도중에 다른 연출(투어 등)이 시작되면 바로 접는다
+      setShow(false);
+    };
+  }, [active]);
 
   if (!show) return null;
 

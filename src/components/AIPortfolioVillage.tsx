@@ -15,6 +15,7 @@ import {Header} from "@/components/ui/Header";
 import {Crest} from "@/components/ui/Crest";
 import {VoyageOverlay} from "@/components/ui/VoyageOverlay";
 import {InfoPanel} from "@/components/ui/InfoPanel";
+import {TourCard} from "@/components/ui/TourCard";
 import {SceneTransition} from "@/components/ui/SceneTransition";
 import {SectionTabs} from "@/components/ui/SectionTabs";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
@@ -49,6 +50,7 @@ import {
 } from "@/components/village/VillageHud";
 import {sound as projectSound} from "@/components/ui/project-viewers/sound";
 import {cameraTargets, villageBuildings} from "@/lib/constants";
+import {resumePdf} from "@/data/hero";
 import {
   useVillageEntered,
   VillageLoadingVeil
@@ -449,6 +451,22 @@ export function AIPortfolioVillage() {
   } | null>(null);
   // 구역 띠(DistrictStrip)에서 올려 둔 건물 — 그 한 채만 강조된다.
   const [focusBuildingId, setFocusBuildingId] = useState<string | null>(null);
+  /**
+   * HUD 두 단계. **처음엔 최소**(헤더·환영 카드·이동·지도·제작 의뢰)만 두고,
+   * 방문자가 첫 행동(건물 입장·NPC 대화·이동·바닥 클릭·안내인 선택)을 하면
+   * 마을 소식·지휘·NPC 독·엿듣기·걷기 모드가 따라 나온다. 첫 3초에 진입점이
+   * 스무 개면 어느 것도 눌리지 않는다 — 두 번째 겹의 재미는 두 번째에 준다.
+   */
+  const [hudUnlocked, setHudUnlocked] = useState(false);
+  // 채용 담당자 3분 코스 — 현재 정류장 index, null 이면 투어 아님
+  const [tourIndex, setTourIndex] = useState<number | null>(null);
+  const tourTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (tourTimerRef.current) clearTimeout(tourTimerRef.current);
+    },
+    []
+  );
   // 안내인 카드 선택 → 카메라 도착 뒤 목록 패널을 여는 타이머
   const arriveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
@@ -1346,6 +1364,7 @@ export function AIPortfolioVillage() {
   function arriveAndOpen(sectionId: SectionId) {
     const point = TRAVEL_POINTS.find(p => p.sectionId === sectionId);
     if (!point) return;
+    unlockHud();
     travelTo(point);
     if (arriveTimerRef.current) clearTimeout(arriveTimerRef.current);
     // 카메라 lerp(0.062/frame) 가 눈에 띄게 멈추는 데 1초 남짓 — 그 뒤에 연다.
@@ -1355,11 +1374,66 @@ export function AIPortfolioVillage() {
     }, 1100);
   }
 
+  function unlockHud() {
+    setHudUnlocked(true);
+  }
+
+  // ── 채용 담당자 3분 코스 ──
+  // 프로젝트 → 기술 → 경험 → 연락. 정류장마다 카메라가 섬 위로 가고 TourCard 가
+  // 구역 설명 한 줄을 띄운다. 자동 진행은 TOUR_STOP_MS, 마지막 정류장은 자동으로
+  // 넘어가지 않는다 — 이력서로 갈지는 방문자가 정한다.
+  const TOUR_STOPS: SectionId[] = [
+    "projects",
+    "github",
+    "experience",
+    "contact"
+  ];
+  const TOUR_STOP_MS = 8000;
+
+  function goTourStop(index: number) {
+    const point = TRAVEL_POINTS.find(p => p.sectionId === TOUR_STOPS[index]);
+    if (!point) return;
+    setSelectedNpc(null);
+    setIsPanelOpen(false);
+    travelTo(point);
+    setTourIndex(index);
+    if (tourTimerRef.current) clearTimeout(tourTimerRef.current);
+    tourTimerRef.current =
+      index + 1 < TOUR_STOPS.length
+        ? setTimeout(() => goTourStop(index + 1), TOUR_STOP_MS)
+        : null;
+  }
+
+  function startTour() {
+    trackVisitorEvent({
+      event_type: "tour_start",
+      target_id: "recruiter",
+      label: "채용 담당자 3분 코스"
+    });
+    goTourStop(0);
+  }
+
+  /** 투어 종료. 방문자가 다른 행동(입장·대화·이동·바닥 클릭)을 해도 끝난다 —
+   *  카메라를 두 주인이 끌면 화면이 튄다. 투어를 봤으면 HUD 도 풀어 준다. */
+  function endTour() {
+    if (tourTimerRef.current) clearTimeout(tourTimerRef.current);
+    tourTimerRef.current = null;
+    if (tourIndex !== null) unlockHud();
+    setTourIndex(null);
+  }
+
+  /** 이동 독·지도·모바일 메뉴에서 온 이동 — 투어의 travelTo 와 구분한다. */
+  function userTravel(point: TravelPoint) {
+    endTour();
+    unlockHud();
+    travelTo(point);
+  }
+
   function handleConciergePick(intent: ConciergeIntent) {
     markConciergeSeen();
     setConciergeStage("closed");
     if (intent === "recruit") {
-      openResume();
+      startTour();
     } else if (intent === "projects") {
       arriveAndOpen("projects");
     } else if (intent === "skills") {
@@ -1701,6 +1775,8 @@ export function AIPortfolioVillage() {
       metadata: {sectionId, contentId: contentId ?? ""}
     });
     dismissConcierge();
+    unlockHud();
+    endTour();
     setTravelCam(null);
     setActiveSection(sectionId);
     setActiveContentId(contentId);
@@ -1714,6 +1790,11 @@ export function AIPortfolioVillage() {
     (point: Vector3Tuple) => {
       if (conciergeStage === "running") return;
       if (conciergeStage === "panel") setConciergeStage("closed");
+      // 바닥을 찍은 것도 첫 행동이다 — HUD 를 풀고, 투어 중이면 끝낸다
+      setHudUnlocked(true);
+      if (tourTimerRef.current) clearTimeout(tourTimerRef.current);
+      tourTimerRef.current = null;
+      setTourIndex(null);
       setSelectedNpc(null);
       setIsPanelOpen(false);
       setTravelCam(null);
@@ -1918,6 +1999,8 @@ export function AIPortfolioVillage() {
     // 환영 카드가 열려 있으면 먼저 닫는다 — 안 닫으면 카드와 대화창이 같이 뜨고,
     // 카메라도 컨시어지 클로즈업이 우선이라 이 NPC 에게 날아가지 않는다.
     dismissConcierge();
+    unlockHud();
+    endTour();
     // 대화 시작 시점의 NPC 위치를 스냅샷 → 상반신 클로즈업 카메라
     const pos = npcPositionsRef.current[npc.id] ?? npc.position;
     setTravelCam(null);
@@ -2023,6 +2106,8 @@ export function AIPortfolioVillage() {
     const building = villageBuildings.find(b => b.id === buildingId);
     if (!building) return;
 
+    unlockHud();
+    endTour();
     trackVisitorEvent({
       event_type:
         building.district === "projects" ? "project_open" : "building_enter",
@@ -2175,25 +2260,27 @@ export function AIPortfolioVillage() {
               }
             />
           </section>
-          <button
-            type="button"
-            onClick={() => {
-              setExplorationMode(m => (m === "walk" ? "click" : "walk"));
-              setIsPanelOpen(false);
-              setSelectedNpc(null);
-            }}
-            className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 active:scale-95 md:bottom-6"
-          >
-            {explorationMode === "walk" ? (
-              <>
-                <span>🖱️</span> 클릭 모드로
-              </>
-            ) : (
-              <>
-                <span>🚶</span> 직접 이동 (WASD)
-              </>
-            )}
-          </button>
+          {hudUnlocked ? (
+            <button
+              type="button"
+              onClick={() => {
+                setExplorationMode(m => (m === "walk" ? "click" : "walk"));
+                setIsPanelOpen(false);
+                setSelectedNpc(null);
+              }}
+              className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 active:scale-95 md:bottom-6"
+            >
+              {explorationMode === "walk" ? (
+                <>
+                  <span>🖱️</span> 클릭 모드로
+                </>
+              ) : (
+                <>
+                  <span>🚶</span> 직접 이동 (WASD)
+                </>
+              )}
+            </button>
+          ) : null}
           <button
             type="button"
             aria-label={soundOn ? "사운드 끄기" : "사운드 켜기"}
@@ -2209,21 +2296,28 @@ export function AIPortfolioVillage() {
           >
             {soundOn ? "🔊" : "🔇"}
           </button>
-          <LiveStatusPanel
-            error={liveError}
-            villageState={villageState}
-            news={villageNews}
-            favors={npcFavors}
-            onGoToNpc={goToNpc}
+          {hudUnlocked ? (
+            <LiveStatusPanel
+              error={liveError}
+              villageState={villageState}
+              news={villageNews}
+              favors={npcFavors}
+              onGoToNpc={goToNpc}
+            />
+          ) : null}
+          <ControlsHint
+            active={conciergeStage === "closed" && tourIndex === null}
           />
-          <ControlsHint />
-          <NpcQuickDock activeNpcId={selectedNpc?.id} onSelect={openNpc} />
+          {hudUnlocked ? (
+            <NpcQuickDock activeNpcId={selectedNpc?.id} onSelect={openNpc} />
+          ) : null}
           {!isPanelOpen ? (
-            <QuickTravelDock activeKey={activeSection} onTravel={travelTo} />
+            <QuickTravelDock activeKey={activeSection} onTravel={userTravel} />
           ) : null}
           {!isPanelOpen &&
           !selectedNpc &&
           conciergeStage === "closed" &&
+          tourIndex === null &&
           activeSection !== "intro" ? (
             <DistrictStrip
               sectionId={activeSection}
@@ -2232,21 +2326,23 @@ export function AIPortfolioVillage() {
             />
           ) : null}
           {!isPanelOpen ? (
-            <Minimap activeKey={activeSection} onTravel={travelTo} />
+            <Minimap activeKey={activeSection} onTravel={userTravel} />
           ) : null}
-          <CommandDock
-            command={npcCommand}
-            onCommand={issueCommand}
-            onGreet={commandGreet}
-            onGroupTalk={commandGroupTalk}
-            groupTalkBusy={groupChatBusy}
-            onBackToWork={backToWork}
-            onOpenRelations={() => setRelOpen(true)}
-          />
+          {hudUnlocked ? (
+            <CommandDock
+              command={npcCommand}
+              onCommand={issueCommand}
+              onGreet={commandGreet}
+              onGroupTalk={commandGroupTalk}
+              groupTalkBusy={groupChatBusy}
+              onBackToWork={backToWork}
+              onOpenRelations={() => setRelOpen(true)}
+            />
+          ) : null}
           {!isPanelOpen ? (
             <MobileHud
               activeKey={activeSection}
-              onTravel={travelTo}
+              onTravel={userTravel}
               command={npcCommand}
               onCommand={issueCommand}
               onGreet={commandGreet}
@@ -2271,13 +2367,39 @@ export function AIPortfolioVillage() {
             <ConciergePanel
               onPick={handleConciergePick}
               onAskAI={handleConciergeAsk}
+              onResume={() => {
+                markConciergeSeen();
+                setConciergeStage("closed");
+                openResume();
+              }}
               onClose={() => {
                 markConciergeSeen();
                 setConciergeStage("closed");
               }}
             />
           ) : null}
-          {eavesdrop && !eavesOpen ? (
+          {tourIndex !== null && !isPanelOpen && !selectedNpc ? (
+            <TourCard
+              index={tourIndex}
+              total={TOUR_STOPS.length}
+              sectionId={TOUR_STOPS[tourIndex] ?? "projects"}
+              stopMs={TOUR_STOP_MS}
+              resumeHref={resumePdf}
+              onNext={() => goTourStop(tourIndex + 1)}
+              onDetail={() => {
+                // 카메라는 이미 그 섬 위 — travelCam 을 지우지 않고 패널만 연다
+                endTour();
+                setActiveContentId(undefined);
+                setIsPanelOpen(true);
+              }}
+              onResume={() => {
+                endTour();
+                openResume();
+              }}
+              onEnd={endTour}
+            />
+          ) : null}
+          {hudUnlocked && eavesdrop && !eavesOpen ? (
             <EavesdropButton
               aName={eavesdrop.aName}
               bName={eavesdrop.bName}
