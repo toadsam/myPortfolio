@@ -928,21 +928,6 @@
 }
 
 /* ── Projects ── */
-.resume-terminal .projects-category {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--accent);
-  margin-bottom: 40px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.resume-terminal .projects-category::before {
-  content: ">";
-  color: var(--accent);
-}
-
 .resume-terminal .carousel-wrapper {
   width: 100%;
   /* 카드가 520px 이 되면서 앞쪽(가까운) 카드의 투영 높이가 ~650px 이다. */
@@ -1129,19 +1114,19 @@
   overflow-wrap: break-word;
 }
 
-.resume-terminal .project-tags {
+/* 제목 줄 — 이름과 기간·팀 한 토막이 한 줄에 선다. 좁으면 토막이 다음 줄로
+   내려간다(aClub 의 "2025 프론트 3인 → 2026 프로젝트장" 은 길다). 2026-09-03
+   카드를 11층 → 6층으로 줄이면서, 제목 아래 두 줄이던 기간·역할을 여기로
+   당겼다(역할은 상세 페이지로). */
+.resume-terminal .project-title-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  align-items: baseline;
+  gap: 2px 10px;
+  margin-bottom: 5px;
 }
-
-.resume-terminal .project-tag {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--muted);
-  padding: 3px 8px;
-  border: 1px solid rgb(var(--v-wood) / 0.35);
-  border-radius: 4px;
+.resume-terminal .project-title-row .project-name {
+  margin-bottom: 0;
 }
 
 /* ── 고리 위의 카드: 훑는 자리 ──
@@ -1161,17 +1146,6 @@
 
 .resume-terminal .carousel-wrapper[data-grid="false"] .project-card > * {
   flex-shrink: 0;
-}
-
-/* 남는 자리는 한 군데로 모은다. space-between 으로 두면 짧은 카드에서 여덟 개
-   틈이 제각각 벌어져 글 덩어리가 흩어진다 — 태그 줄만 바닥에 붙인다.
-   카드 키는 고정인데 내용 길이는 제각각이라, 짧은 카드에는 29~130px 의 빈자리가
-   생긴다(실측). 실선 하나를 그어 그 자리를 "덜 채운 곳"이 아니라 "기술 태그 단"
-   으로 읽히게 한다 — 여백은 없앨 수 없으니 의미를 준다. */
-.resume-terminal .carousel-wrapper[data-grid="false"] .project-tags {
-  margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid rgb(var(--v-wood) / 0.3);
 }
 
 .resume-terminal .carousel-wrapper[data-grid="false"] .project-name {
@@ -1197,26 +1171,11 @@
   overflow: hidden;
 }
 
-/* 역할 줄은 고리에서 뺀다. 부제가 이미 "무엇을 만들었나"를 말하고 있어
-   200px 폭에서는 같은 말을 두 번 하느라 두 줄을 쓴다 — 그 48px 를 기술 태그에
-   준다. 태그는 심사자가 실제로 훑는 것이고, 한 줄만 보이면 다섯 중 둘만
-   읽히기 때문이다(실측: 3개가 잘려 있었다). 역할 전문은 그리드와 상세에 있다. */
-.resume-terminal .carousel-wrapper[data-grid="false"] .project-role {
-  display: none;
-}
-
 /* 지표는 카드에서 가장 센 것이라 남기되, 세 번째부터는 접는다.
    상자 하나가 30px 이라 셋이면 그림 자리만큼 먹는다. */
 .resume-terminal
   .carousel-wrapper[data-grid="false"]
   .project-metric:nth-of-type(n + 3) {
-  display: none;
-}
-
-/* 출처 각주는 **읽는 자리의 것**이다. 돌아가는 카드에서
-   "Google Analytics 4 · 2026.01-03" 을 읽을 사람은 없다.
-   그리드와 상세에는 그대로 있다. */
-.resume-terminal .carousel-wrapper[data-grid="false"] .metric-source {
   display: none;
 }
 
@@ -1228,14 +1187,6 @@
   .project-card.clickable
   .project-links {
   display: none;
-}
-
-/* 태그는 두 줄까지. 세 줄째부터는 카드 밖으로 밀린다.
-   box-sizing 이 border-box 라 위 단 여백(12+1)까지 이 값 안에 든다 —
-   57 로 두면 두 줄이 아니라 **한 줄**만 남는다(태그 3개가 사라졌다). */
-.resume-terminal .carousel-wrapper[data-grid="false"] .project-tags {
-  max-height: 70px;
-  overflow: hidden;
 }
 
 /* 예전엔 `bottom: 0` 이라 고리 위에 얹혀 있었다. 카드에 지표와 출처 줄이
@@ -1315,23 +1266,31 @@
   height: auto;
 }
 
-/* **6칸 격자 하나로 두 크기를 낸다.** 대표는 3칸(= 한 줄에 2장), 나머지는
-   2칸(= 한 줄에 3장). 컨테이너를 둘로 쪼개지 않는 이유는 캐러셀 때문이다 —
-   효과가 `.carousel-track` 안의 `.project-card` 를 한 번에 훑어 고리 각도를
-   나누므로, 카드가 두 부모로 갈라지면 고리가 깨진다. */
+/* **가운데 704px 만 쓰는 2열 격자.** 대표는 한 칸(340px), 전폭 카드는 두 칸,
+   그 밖의 작업은 두 칸을 통째로 쓰는 한 줄 목록이다. 양옆 ~250px 은 일부러
+   비운다 — 1,200px 을 꽉 채우던 때는 카드가 590px 이라 두 줄이 화면 1.7개였고,
+   "여백을 디자인으로 쓰자" 는 결정으로 좁혔다(2026-09-03). 컨테이너를 둘로
+   쪼개지 않는 이유는 캐러셀 때문이다 — 효과가 `.carousel-track` 안의
+   `.project-card` 를 한 번에 훑어 고리 각도를 나누므로, 카드가 두 부모로
+   갈라지면 고리가 깨진다. */
 .resume-terminal .carousel-wrapper[data-grid="true"] .carousel-track {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 20px;
+  /* 6칸, 한 칸 = 340px 카드 절반. 어필·메인 모두 2칸(한 줄 3장). 폭 1,068 =
+     340×3 + 24×2 — 양옆 66px 씩 비운다. (704px 2열이던 것을 2026-09-03 에
+     "어필도 가로 3장" 으로 바꿨다.) */
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 24px;
   width: 100%;
+  max-width: 1068px;
+  margin: 0 auto;
   height: auto;
   transform: none;
   cursor: default;
 }
 
 .resume-terminal .carousel-wrapper[data-grid="true"] .project-card.is-featured {
-  grid-column: span 3;
+  grid-column: span 2;
 }
 
 .resume-terminal
@@ -1365,50 +1324,33 @@
   color: var(--muted);
 }
 
-/* ── 2단 카드: 크기만이 아니라 **담는 정보도** 줄인다 ──
-   1단을 그냥 축소하면 CSS 버그로 읽히고, 방금 올려 둔 대비도 도로 무너진다.
-   남는 것: 그림(작게) · 제목 · 한 줄 · 기간 · 태그 · 링크.
-   빠지는 것: 성과 타일 · 지표 출처 · 역할 — 검산할 숫자는 1단의 몫이다. */
-.resume-terminal
-  .carousel-wrapper[data-grid="true"]
-  .project-card:not(.is-featured) {
-  padding: 18px;
-}
-
-/* 2단에서 빼는 건 **성과 타일·출처·역할** 뿐이다.
-   그림은 남긴다 — 여기 9건은 게임·AR 이 대부분이라 **화면 한 장이 문장
-   열 줄보다 빠르게 읽힌다.** 위계는 그림을 없애서가 아니라 그림을 작게
-   해서 낸다(200px → 130px, 카드 폭 비율에 맞춘 값). */
+/* ── 2단 카드 ──
+   대표와 같은 340px 카드에 사진·이름·한 줄 설명·링크. 성과 타일만 없다 —
+   검산할 숫자는 1단의 몫이다. 위계는 2단 시작 표지(.tier-divider)와 내용의
+   차이로 낸다. (한때 사진 없는 한 줄 목록으로 바꿨다가 되돌렸다, 2026-09-03 —
+   여기 6건도 사진과 설명이 있어야 하는 프로젝트다.) */
 .resume-terminal
   .carousel-wrapper[data-grid="true"]
   .project-card:not(.is-featured)
-  .project-metrics,
-.resume-terminal
-  .carousel-wrapper[data-grid="true"]
-  .project-card:not(.is-featured)
-  .metric-source,
-.resume-terminal
-  .carousel-wrapper[data-grid="true"]
-  .project-card:not(.is-featured)
-  .project-role {
+  .project-metrics {
   display: none;
 }
 
+/* 218px 에서 접는 것들. 사진은 폭에 맞춰 2:1, 설명은 두 줄에서 자르고(나머지는
+   상세), 기간·팀 중 팀은 숨긴다 — 수어지교의 "4인 (FE 1 · BE 2 · 3D 아바타 1)" 이
+   이 폭에서 세 줄이었다. 데이터는 그대로고 화면에서만 접는다. */
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card:not(.is-featured) {
+  padding: 16px;
+}
 .resume-terminal
   .carousel-wrapper[data-grid="true"]
   .project-card:not(.is-featured)
   .project-card-image {
-  height: 165px;
+  height: 150px;
+  margin-bottom: 10px;
 }
-
-/* 그림이 없는 카드의 대체 제목은 좁아진 상자에 맞춰 한 단 줄인다. */
-.resume-terminal
-  .carousel-wrapper[data-grid="true"]
-  .project-card:not(.is-featured)
-  .project-card-image-empty {
-  font-size: 13px;
-}
-
 .resume-terminal
   .carousel-wrapper[data-grid="true"]
   .project-card:not(.is-featured)
@@ -1417,7 +1359,22 @@
   .carousel-wrapper[data-grid="true"]
   .project-card:not(.is-featured)
   .project-name-btn {
-  font-size: 17px;
+  font-size: 15px;
+}
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card:not(.is-featured)
+  .project-team {
+  display: none;
+}
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card:not(.is-featured)
+  .project-subtitle {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .resume-terminal .carousel-wrapper[data-grid="true"] .project-card {
@@ -1435,17 +1392,49 @@
   backface-visibility: visible;
   /* 고리에서만 자르면 된다. 그리드는 높이가 자유로우므로 다 보여준다. */
   overflow: visible;
-  padding: 24px;
+  padding: 20px;
 }
 
-/* 그림 높이 = 카드 세로 길이.
-   200px 였을 때 안쪽 폭(542px) 대비 **2.95:1 레터박스**라, 스크린샷이 위아래로
-   심하게 잘리고 카드는 납작해 보였다. 260px 로 올리면 2.08:1 이 되어 화면이
-   제대로 보이고 카드도 세로로 선다 — **여백이 아니라 내용으로 늘린다.**
-   2단(165px / 안쪽 351px = 2.13:1)과 비율을 맞춰, 크기는 달라도 잘린 정도는
-   같게 한다. 두 값은 같이 움직여야 한다. */
+/* 대표 카드의 비율은 590×658 시절 그대로(약 9:10) — 크기를 340px 로 줄이면서
+   모양은 유지하기로 했다. 내용이 이 비율보다 길어지면 잘리지 않고 카드가
+   늘어난다(min-height 로 건다). `hero` 카드도 이제 보통 카드라 같이 건다. */
+.resume-terminal .carousel-wrapper[data-grid="true"] .project-card.is-featured {
+  min-height: calc(340px * 658 / 590);
+  justify-content: flex-start;
+  gap: 0;
+}
+
+/* 그림 높이. 카드 안쪽 폭 300px 에 150px = 2:1. 590px 카드 시절엔 260px
+   (2.08:1)이었다 — 카드가 줄어든 만큼 같은 비율로 따라 줄인 값이라,
+   스크린샷이 잘리는 정도는 예전과 같다. */
 .resume-terminal .carousel-wrapper[data-grid="true"] .project-card-image {
-  height: 260px;
+  height: 150px;
+}
+
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card.is-featured
+  .project-name,
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card.is-featured
+  .project-name-btn {
+  font-size: 18px;
+}
+
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card.is-featured
+  .project-subtitle {
+  font-size: 14px;
+}
+
+/* ── `hero` 카드 ──
+   한때 전폭(6칸, 사진 왼쪽·본문 오른쪽)이었다. 2026-09-03 "보통 카드로, 3+2"
+   결정으로 다른 어필 카드와 같은 2칸 카드가 됐다. 데이터의 `hero` 플래그는
+   그대로 두고(순서·의미는 데이터 쪽 주석) 격자에서만 특별 대우를 뺀다. */
+.resume-terminal .carousel-wrapper[data-grid="true"] .project-card.is-hero {
+  grid-column: span 2;
 }
 
 .resume-terminal .carousel-wrapper[data-grid="true"] .carousel-controls {
@@ -1531,22 +1520,25 @@
   color: var(--accent);
 }
 
-/* ── Sub Projects ── */
+/* ── Sub Projects ──
+   세 단 중 가장 작은 단. 2026-09-03 에 한 단 더 줄였다(5열 227px → 6열 ~186px,
+   사진 16:10 → 16:9, 여백·글자 한 단 아래). 어필·메인·사이드가 크기로
+   갈리게 하려는 것이고, 글자는 12px 아래로는 안 내린다. */
 .resume-terminal .side-projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
 }
 
 .resume-terminal .side-project-card {
   background: rgb(var(--v-night) / 0.6);
   border: 1px solid rgb(var(--v-wood) / 0.35);
   border-radius: 6px;
-  padding: 20px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   transition: all 0.2s ease;
 }
 
@@ -1557,7 +1549,7 @@
 
 .resume-terminal .side-project-image {
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   border-radius: 4px;
   overflow: hidden;
   border: 1px solid rgb(var(--v-wood) / 0.35);
@@ -1572,22 +1564,28 @@
 }
 
 .resume-terminal .side-project-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--fg);
   line-height: 1.4;
 }
 
+/* 두 줄에서 자른다. 186px 폭에서 긴 설명은 네 줄이 되어 카드 키가 제각각이었다.
+   전문은 데이터에 그대로 있다. */
 .resume-terminal .side-project-desc {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--fg);
   line-height: 1.5;
   flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .resume-terminal .side-project-links {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
@@ -1596,7 +1594,7 @@
   font-size: 12px;
   color: var(--muted);
   border: 1px solid rgb(var(--v-wood) / 0.35);
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 4px;
   text-decoration: none;
   transition: all 0.2s;
@@ -1894,15 +1892,17 @@
   .resume-terminal .values-grid {
     grid-template-columns: 1fr;
   }
-  /* 6칸 → 2칸. 대표는 한 줄 한 장(2칸), 나머지는 한 줄 두 장(1칸)으로
-     위계가 유지된다. */
+  /* 좁은 화면: 대표는 한 줄 한 장, 목록 줄은 그대로 전폭. 가운데 704px 제한은
+     화면이 그보다 좁으니 뜻이 없어 푼다. */
   .resume-terminal .carousel-wrapper[data-grid="true"] .carousel-track {
     grid-template-columns: repeat(2, 1fr);
+    max-width: none;
   }
   .resume-terminal
     .carousel-wrapper[data-grid="true"]
     .project-card.is-featured {
     grid-column: span 2;
+    min-height: 0;
   }
   .resume-terminal
     .carousel-wrapper[data-grid="true"]
@@ -2017,22 +2017,14 @@
   color: rgb(var(--v-gold));
 }
 
-/* ── 카드: 기간 · 팀 · 역할 ── */
+/* ── 카드: 기간 · 팀 ── 제목 옆 한 토막(.project-title-row 안). */
 .resume-terminal .project-meta {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 12px;
   color: rgb(var(--v-gold) / 0.9);
-  margin-bottom: 6px;
   /* 한글 라벨이라 자간을 뺀다 — 기간 · 팀. 자간을 주면 낱자가 흩어져
      한 낱말로 안 읽힌다(한글은 네모틀이라 이미 맞물려 있다). */
   letter-spacing: normal;
-}
-
-.resume-terminal .project-role {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--fg-2);
-  margin-bottom: 12px;
 }
 
 /* ── 카드: 성과 타일 ── */
@@ -2064,16 +2056,6 @@
 
 /* 아직 실측하지 않은 값. 임시 숫자가 그대로 제출돼도 거짓 주장이 되지 않도록
    화면에서 스스로 밝힌다 — 데이터에서 provisional 을 지우면 사라진다. */
-/* 지표 출처·기간 — 숫자를 뒷받침하는 줄이라 눈에 띄되 숫자를 이기면 안 된다.
-   달빛 70% 는 밤하늘 위 대비 5.2 로 AA 를 넘긴다. */
-.resume-terminal .metric-source {
-  font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1.5;
-  margin-top: 8px;
-  color: var(--muted);
-}
-
 .resume-terminal .metric-provisional {
   font-family: var(--mono);
   font-style: normal;
@@ -2083,31 +2065,6 @@
   border-radius: 3px;
   color: rgb(var(--v-night));
   background: rgb(var(--v-gold) / 0.85);
-}
-
-/* ── 카드: 「눌린다」는 신호 ──
-   hover 색 변화는 마우스를 올린 뒤에야 보인다. 훑는 사람에게는 그 전이 승부라
-   정지 상태에서 보이는 줄이 필요하다. 화살표만 hover 에서 움직여 «더 있다»를
-   말한다 — 카드 전체를 흔들면 캐러셀 드래그와 싸운다. */
-.resume-terminal .project-open {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid rgb(var(--v-wood) / 0.35);
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  color: rgb(var(--v-gold) / 0.9);
-}
-
-.resume-terminal .project-open-arrow {
-  transition: transform 0.2s;
-}
-
-.resume-terminal .project-card:hover .project-open-arrow {
-  transform: translateX(4px);
 }
 
 /* ── 카드: 외부 링크 ── */
@@ -2309,13 +2266,6 @@
     height: 120px;
   }
 
-  /* 고리의 옆 카드는 원래 화면 가장자리를 스치며 지나간다. 다만 이 폭에서는
-     역할 문장이 카드 높이를 크게 밀어 올려서, 카드 안에서만 줄인다. */
-  .resume-terminal .project-role {
-    font-size: 12px;
-    margin-bottom: 8px;
-  }
-
   /* 모바일에서 카드는 210px 짜리 가로 스와이프 카드다. 한 줄 정체가 여섯 줄로
      늘어지면 카드 안에서 그것만 보이고 지표·태그가 밀린다. 세 줄로 묶는다 —
      전체 문장은 상세를 열면 나온다. */
@@ -2337,7 +2287,6 @@
    "프론트 3인" 이 "프론트 3 / 인" 으로 갈라져 `인` 한 글자가 다음 줄로 넘어갔다.
    `keep-all` 은 어절 단위로만 끊는다. 좁은 카드 안 글에 특히 중요하다. */
 .resume-terminal .project-meta,
-.resume-terminal .project-role,
 .resume-terminal .project-name,
 .resume-terminal .card-metric,
 .resume-terminal .side-project-desc,
@@ -2487,13 +2436,8 @@
   }
 
   /* 고리 전용으로 접어둔 것들을 종이에서는 전부 편다. data-grid="false" 인 채로
-     인쇄를 누르면(= 캐러셀을 보다가 PDF 를 뽑으면) 역할·출처·링크가 통째로
+     인쇄를 누르면(= 캐러셀을 보다가 PDF 를 뽑으면) 링크·지표가 통째로
      빠진 이력서가 나온다. 종이는 훑는 자리가 아니라 읽는 자리다. */
-  .resume-terminal .carousel-wrapper .project-role,
-  .resume-terminal .carousel-wrapper .metric-source {
-    display: block !important;
-  }
-
   .resume-terminal .carousel-wrapper .project-links {
     display: flex !important;
   }
@@ -2510,16 +2454,9 @@
     overflow: visible !important;
   }
 
-  .resume-terminal .carousel-wrapper .project-tags {
+  /* 격자에서 목록으로 접힌 2단 카드도 종이에서는 사진 있는 카드로 편다. */
+  .resume-terminal .carousel-wrapper .project-card-image {
     display: flex !important;
-    max-height: none !important;
-    overflow: visible !important;
-    margin-top: 12px !important;
-    padding-top: 0 !important;
-    border-top: 0 !important;
-  }
-
-  .resume-terminal .project-card-image {
     height: 120px !important;
   }
 
@@ -2535,7 +2472,6 @@
   }
 
   .resume-terminal .project-meta,
-  .resume-terminal .project-role,
   .resume-terminal .edu-desc,
   .resume-terminal .about-item,
   .resume-terminal .value-desc,

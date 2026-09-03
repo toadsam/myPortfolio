@@ -14,7 +14,7 @@ React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운
 - React/Spring Boot 기반 웹 풀스택, 프론트엔드, 백엔드 직무 지향
 - JWT 이중 쿠키와 토큰 재발급 경쟁 상태, OAuth/Session, CORS, HTTPS, SSE 등 운영형 문제 해결 경험
 - 공개 GitHub 44개 repository, TypeScript/Java/JavaScript/C++/C# 프로젝트 보유
-- 2026년 최신 업데이트 repo: FestFlow, Sign-Language, Ajou_MuscleUp, Algorithm
+- 2026년 최신 업데이트 repo: myPortfolio, FestFlow, Sign-Language, Ajou_MuscleUp, Algorithm
 
 ## Technical Skills
 
@@ -32,6 +32,7 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 
 ## Project Links
 
+- myPortfolio (AI 포트폴리오 마을): https://github.com/toadsam/myPortfolio
 - FestFlow: https://github.com/toadsam/FestFlow
 - Ajou_MuscleUp: https://github.com/toadsam/Ajou_MuscleUp
 - Sign-Language: https://github.com/toadsam/Sign-Language
@@ -47,6 +48,20 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 - 대표 트러블슈팅: CORS credentials, 쿠키 기반 세션 유지, HTTPS/Mixed Content, Refresh Token 재발급, SSE 연결처럼 프론트와 서버 설정을 함께 봐야 하는 문제를 다뤘습니다.
 
 ## Core Projects
+
+### AI 포트폴리오 마을 (myPortfolio)
+
+2026.06 - 진행 중 / 개인 개발 / Full-Stack Web + 3D  
+Role: Next.js 프론트, FastAPI 백엔드, 관리자 페이지, OpenAI NPC 연동(규칙 기반 폴백), 3D 성능 예산 전부 담당  
+Scope: 개인 개발 / 공개 GitHub repo / 이 이력서가 실려 있는 사이트 자체  
+Stack: Next.js 16, React 19, TypeScript, React Three Fiber, FastAPI, SQLAlchemy, SQLite, OpenAI API, pytest, Playwright
+
+관리자가 적은 "오늘의 활동"이 3D 마을의 건물 불빛과 AI NPC의 기분·대화로 바뀌는, 살아 있는 포트폴리오 사이트입니다. 채용 담당자용 이력서 화면과 방문자가 웹사이트 제작을 의뢰하는 공방까지 한 서비스에 있습니다.
+
+- Problem: 정적 포트폴리오는 한 번 만들면 갱신이 끊기고, 읽는 사람이 질문할 수 없습니다. 활동이 화면에 반영되고 방문자가 물어볼 수 있는 구조가 필요했습니다.
+- Action: 관리자 페이지 입력을 FastAPI 서비스가 건물 밝기·NPC 기분으로 변환하고, NPC 대화는 OpenAI로 생성하되 키가 없거나 실패하면 규칙 기반 대사로 폴백해 서비스가 멈추지 않게 했습니다. 첫 화면은 three.js를 전혀 싣지 않는 별도 라우트로 분리하고(JS 215KB, 3D 모델 0개), 마을은 마우스를 올리는 순간 미리 받습니다.
+- Result: 공개·관리자 API 63개, 순수 로직 pytest 258개. 방문자가 쓰는 유일한 경로(제작 의뢰)는 허니팟, 전용 레이트리밋, 견적 상·하한 클램프로 막았고, 텍스처 VRAM과 실광원 수를 측정해 예산으로 잠갔습니다.
+- Evidence: 저장소가 공개되어 있고, 이 이력서가 실린 사이트가 실행 결과입니다. 첫 화면 무게와 3D 모델 수는 빌드 산출물에서 측정한 값입니다.
 
 ### FestFlow
 

@@ -20,9 +20,11 @@ import type {
 import {
   CodeLine,
   CompareBars,
+  FitScale,
   ImageSlot,
   isLightboxOpen,
-  MockScreen
+  MockScreen,
+  ZoomableBlock
 } from "./project-viewers/richContent/shared";
 import "./ProjectDetail.css";
 
@@ -1135,28 +1137,32 @@ export function ProjectOnePager({
                 예전엔 여기가 "시스템 아키텍처 다이어그램" 이라고 적힌
                 1216×521 빈 점선 상자였다. 9개 전부에 있었으니, 없는 걸
                 아홉 번 광고하고 있었던 셈이다. */}
-            {data.diagrams?.map(dg => (
-              // 좁은 화면에서 폭에 맞추면 350px 로 줄어 글자가 3px 이 된다.
-              // 최소 폭을 주고 가로로 굴린다 — 아래 결정 표와 같은 방식.
-              <div className="reveal" key={dg.title ?? dg.caption}>
-                {/* 좁은 화면에서는 가로로 굴러간다. 굴러간다는 걸 말해 주지
-                    않으면 잘린 그림으로 보이고, tabIndex 가 없으면 키보드로는
-                    아예 오른쪽을 볼 수 없다(스크롤 영역의 기본 규칙). */}
-                <p className="mono mb-2 text-xs text-muted md:hidden">
-                  → 옆으로 밀면 전체 구성도가 보입니다
-                </p>
-                <div
-                  aria-label={dg.title ?? "시스템 구성도"}
-                  className="-mx-5 overflow-x-auto px-5 md:mx-0 md:px-0"
-                  role="region"
-                  tabIndex={0}
-                >
-                  <div className="min-w-[880px]">
-                    <ArchitectureDiagram spec={dg} theme={theme} />
+            {/* 구성도와 ERD 를 나란히 둔다.
+                예전엔 둘이 전폭으로 세로로 쌓여 554 + 735 = 1,289px 를 썼다.
+                둘 다 **읽는 글이 아니라 참고 그림**이라, 통째로 다 보여 주는
+                것보다 모양만 보이고 필요하면 눌러 크게 보는 쪽이 맞다.
+                나란히 두면 735px — 554px 가 준다.
+
+                ⚠️ 순서가 있다. 예전엔 좁으면 가로로 굴려서 **잘린 그림**을
+                보여 줬고 확대가 없었다. 줄이기만 하면 되찾을 방법이 사라진다.
+                그래서 FitScale(칸에 맞게 축소) + ZoomableBlock(눌러서 확대)을
+                먼저 붙였다. 둘 중 하나만 있으면 안 된다. */}
+            {data.diagrams?.length ? (
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-6">
+                {data.diagrams.map(dg => (
+                  <div className="reveal" key={dg.title ?? dg.caption}>
+                    <ZoomableBlock
+                      label={dg.title ?? "시스템 구성도"}
+                      theme={theme}
+                    >
+                      <FitScale>
+                        <ArchitectureDiagram spec={dg} theme={theme} />
+                      </FitScale>
+                    </ZoomableBlock>
                   </div>
-                </div>
+                ))}
               </div>
-            )) ?? null}
+            ) : null}
 
             <div className="reveal space-y-8">
               <h3 className="block-label">Technical Decision Table</h3>

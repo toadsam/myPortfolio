@@ -824,8 +824,8 @@
               </div>
               <div class="compact-item">
                 <span>Current Web Repos</span>
-                <strong>FestFlow · Sign-Language · Ajou_MuscleUp</strong>
-                <p>Spring Boot, React/Vite, TypeScript, JWT, SSE, PWA, Expo 기반 프로젝트 코드와 README가 공개되어 있습니다.</p>
+                <strong>myPortfolio · FestFlow · Sign-Language · Ajou_MuscleUp</strong>
+                <p>Next.js/FastAPI, Spring Boot, React/Vite, TypeScript, JWT, SSE, PWA, Expo 기반 프로젝트 코드와 README가 공개되어 있습니다.</p>
               </div>
             </div>
           </section>
@@ -835,6 +835,7 @@
             <div class="side-block">
               <h3>Verified Links</h3>
               <div class="link-list">
+                <a href="https://github.com/toadsam/myPortfolio">github.com/toadsam/myPortfolio</a>
                 <a href="https://github.com/toadsam/FestFlow">github.com/toadsam/FestFlow</a>
                 <a href="https://github.com/toadsam/Ajou_MuscleUp">github.com/toadsam/Ajou_MuscleUp</a>
                 <a href="https://github.com/toadsam/Sign-Language">github.com/toadsam/Sign-Language</a>
@@ -909,6 +910,43 @@
 
           <section>
             <h2>Core Projects</h2>
+
+            <article class="project primary">
+              <div class="project-head">
+                <div>
+                  <h3>AI 포트폴리오 마을 (myPortfolio)</h3>
+                  <div class="project-meta">2026.06 - 진행 중 · 개인 개발 · Full-Stack Web + 3D</div>
+                </div>
+                <div class="role">Next.js / FastAPI
+관리자 페이지 / AI NPC</div>
+              </div>
+              <p class="project-desc">
+                관리자가 적은 "오늘의 활동"이 3D 마을의 건물 불빛과 AI NPC의 기분·대화로 바뀌는, 살아 있는 포트폴리오 사이트입니다. 채용 담당자용 이력서 화면과 방문자가 웹사이트 제작을 의뢰하는 공방까지 한 서비스에 있습니다.
+              </p>
+              <div class="project-grid">
+                <strong>Scope</strong>
+                <span>개인 개발 / 공개 GitHub repo / 이 이력서가 실려 있는 사이트 자체</span>
+                <strong>Problem</strong>
+                <span>정적 포트폴리오는 한 번 만들면 갱신이 끊기고, 읽는 사람이 질문할 수 없습니다. 활동이 화면에 반영되고 방문자가 물어볼 수 있는 구조가 필요했습니다.</span>
+                <strong>Action</strong>
+                <span>관리자 페이지 입력을 FastAPI 서비스가 건물 밝기·NPC 기분으로 변환하고, NPC 대화는 OpenAI로 생성하되 키가 없거나 실패하면 규칙 기반 대사로 폴백해 서비스가 멈추지 않게 했습니다. 첫 화면은 three.js를 전혀 싣지 않는 별도 라우트로 분리하고(JS 215KB, 3D 모델 0개), 마을은 마우스를 올리는 순간 미리 받습니다.</span>
+                <strong>Result</strong>
+                <span>공개·관리자 API 63개, 순수 로직 pytest 258개. 방문자가 쓰는 유일한 경로(제작 의뢰)는 허니팟, 전용 레이트리밋, 견적 상·하한 클램프로 막았고, 텍스처 VRAM과 실광원 수를 측정해 예산으로 잠갔습니다.</span>
+                <strong class="screen-detail">Evidence</strong>
+                <span>저장소가 공개되어 있고, 이 이력서가 실린 사이트가 실행 결과입니다. 첫 화면 무게와 3D 모델 수는 빌드 산출물에서 측정한 값입니다.</span>
+              </div>
+              <div class="chips">
+                <span>Next.js 16</span>
+                <span>React 19</span>
+                <span>TypeScript</span>
+                <span>React Three Fiber</span>
+                <span>FastAPI</span>
+                <span>SQLAlchemy</span>
+                <span>OpenAI API</span>
+                <span>pytest</span>
+                <span>Playwright</span>
+              </div>
+            </article>
 
             <article class="project primary">
               <div class="project-head">

@@ -124,6 +124,13 @@ export interface MainProjectCard {
    * 준 것이다: 접힌 목록도 한 번의 클릭으로 다 열린다.
    */
   featured?: boolean;
+  /**
+   * 전폭 카드. 대표가 다섯이 되면서 2열 격자에 한 장이 남게 됐다 — 빈 반 칸을
+   * 두는 대신 **이 사이트 자신**을 첫 자리에 한 줄로 편다. "지금 보고 있는
+   * 화면이 이 프로젝트" 라는 카드라 첫 자리와 큰 크기가 둘 다 맞다. 격자에서만
+   * 뜻이 있고 캐러셀은 무시한다(`ResumeTerminal.css .is-hero`).
+   */
+  hero?: boolean;
   links: ResumeLink[];
 }
 
@@ -406,6 +413,45 @@ export const workExperience: WorkItem[] = [
 // 기간·역할·팀은 `resume/jaehoon-jeong-resume.md` 기준. 원본에 없으면 비운다.
 
 export const mainProjects: MainProjectCard[] = [
+  {
+    // 이 사이트 자체. 2026-09-03 에 대표 다섯 번째로 넣었다(교체가 아니라 추가).
+    // 심사자가 지금 보고 있는 화면이 곧 증거라, 다른 카드처럼 링크를 눌러야
+    // 확인되는 것과 층이 다르다.
+    //
+    // **제목이 "3D 마을" 이면 게임 직무로 읽힌다.** 무기는 관리자 입력 → 마을
+    // 상태 → AI NPC 로 이어지는 데이터 파이프라인이고 3D 는 표현층이다. 그래서
+    // 제목은 "AI 포트폴리오 마을", 부제 앞머리는 "관리자가 적은" 으로 시작한다.
+    id: "village-portfolio",
+    featured: true,
+    hero: true,
+    title: "AI 포트폴리오 마을 (이 사이트)",
+    subtitle:
+      "관리자가 적은 오늘의 활동이 3D 마을의 불빛과 AI NPC 대화로 바뀌는, 살아 있는 포트폴리오",
+    category: "web",
+    status: "운영중",
+    tags: ["FullStack", "Next.js", "FastAPI", "AI"],
+    // 첫 커밋 2026-06-26 "기본적인 세팅 추가". 2026-06 이후 커밋은 전부 본인.
+    period: "2026.06 ~ 진행 중",
+    team: "개인 개발",
+    role: "Next.js 프론트 · FastAPI 백엔드 · 관리자 페이지 · OpenAI NPC(규칙 폴백) · 3D 성능 예산",
+    // 사용자 수가 없는 프로젝트다. FestFlow 에서 "코드량은 능력으로 읽히지
+    // 않는다" 며 뺀 기준이 있으므로, **판단의 흔적**(첫 화면을 3D 없이 215KB 로
+    // 지킨 것)을 1순위에 두고 API·테스트 수는 규모 근거로 뒤에 둔다.
+    // 63 은 backend/app/main.py 의 라우트 수, 258 은 backend/tests 의 test 함수 수.
+    metrics: [
+      {value: "215 KB", label: "첫 화면 JS · 3D 모델 0개"},
+      {value: "63", label: "공개·관리자 API"},
+      {value: "258", label: "백엔드 테스트"}
+    ],
+    metricsSource: "저장소 소스 기준 · 첫 화면 무게는 빌드 청크 실측 (2026.09)",
+    image: "/projects/village-portfolio/card.webp",
+    // 배포 주소가 정해지면 여기 "사이트" 링크를 하나 더 단다. 지금은 상대 경로라
+    // 어디에 올라가든 같은 사이트의 마을로 간다.
+    links: [
+      {label: "3D 마을 열기", href: "/village"},
+      {label: "GitHub", href: "https://github.com/toadsam/myPortfolio"}
+    ]
+  },
   {
     id: "muscleup",
     featured: true,

@@ -303,11 +303,6 @@ export function ResumeMode({onEnterVillage}: Props) {
     root
       .querySelectorAll(".viewport .reveal")
       .forEach(el => el.classList.add("active"));
-    const timers = Array.from(
-      root.querySelectorAll<HTMLElement>(".spec-item")
-    ).map((item, i) =>
-      window.setTimeout(() => item.classList.add("visible"), 400 + i * 200)
-    );
 
     const observer = new IntersectionObserver(
       entries => {
@@ -335,10 +330,7 @@ export function ResumeMode({onEnterVillage}: Props) {
       .querySelectorAll("section .reveal, section .section-header")
       .forEach(el => observer.observe(el));
 
-    return () => {
-      observer.disconnect();
-      timers.forEach(t => window.clearTimeout(t));
-    };
+    return () => observer.disconnect();
   }, []);
 
   // ── 3D 캐러셀 (자동 회전 + 드래그) ──
@@ -566,40 +558,35 @@ export function ResumeMode({onEnterVillage}: Props) {
                   <dd>{hero.availability}</dd>
                 </div>
               </dl>
-              {/* 첫 화면의 한 문장.
-                「4개 운영 → 그중 2개는 지금도」 순서가 중요하다. 4 만 쓰면 바로 아래
-                지표의 `02 LIVE` 와 충돌해 보이고, 2 만 쓰면 실제로 운영해 본 규모가
-                줄어 보인다. 이 문장이 **02 가 왜 2인지를 설명하는 자리**다.
-                4 = 득근득근 · aClub · 총학 · FestFlow (운영해 본 것)
-                2 = 지금 사이트 링크가 살아 있는 것 = liveServiceCount 와 같은 규칙 */}
-              <div className="hero-tagline reveal reveal-delay-3">
-                만드는 데서 끝내지 않습니다. 서비스 4개를 운영하며 사용자 말을
-                듣고 고쳤고, 그중 2개는 지금도 열려 있습니다. 축제 현장에서는
-                하루 동안 직접 돌렸습니다.
+              {/* 헤드라인 — 이 화면의 유일한 주장.
+                  2026-09-03 까지는 오른쪽 350px 패널(`.spec-panel`)에 따로 있었다.
+                  그러면 심사자의 눈이 왼쪽 열(누구인가)을 다 읽고 화면 폭만큼
+                  건너가야 주장을 만나고, 그 주장을 풀어 쓴 문단은 다시 왼쪽 아래에
+                  있어 셋이 서로 떨어져 있었다. 이름 바로 아래로 옮겨
+                  「누구 → 주장 → 근거(지표)」가 위에서 아래로 한 줄이 되게 했다.
+                  패널에 같이 있던 `[ MODULE_01~03 ]` 불릿은 지표 바·헤드라인과
+                  같은 말이라 그때 함께 지웠다(근거는 카드와 전용 전시실에 남아 있다).
+
+                  이 아래에 풀이 문단이 하나 더 있었다 — 「만드는 데서 끝내지
+                  않습니다. 서비스 4개를 운영하며 사용자 말을 듣고 고쳤고, 그중
+                  2개는 지금도 열려 있습니다. 축제 현장에서는 하루 동안 직접
+                  돌렸습니다.」 헤드라인이 바로 위로 오자 같은 말의 반복이 됐고,
+                  안의 사실 셋(4개 운영 / 2개 live / 축제 현장)은 카드 뱃지·
+                  `운영 중 서비스` 타일·`현장 실사용자` 타일에 각각 있어서 지웠다.
+                  원래 이 문장은 "02 가 왜 2인지(4개 운영, 지금 열린 건 2개)" 를
+                  설명하는 자리였다 — 그 설명이 필요해지면 문장을 되살리기보다
+                  그 타일의 캡션(`LIVE`)을 손보는 쪽이 맞다. 히어로에는 이제
+                  산문이 없다: 이름·직무·지원/시점·헤드라인·숫자 다섯. */}
+              <div className="quote-block reveal reveal-delay-2">
+                {hero.headlineLines.map((line, i) => (
+                  <span key={line}>
+                    {line}
+                    {i < hero.headlineLines.length - 1 ? <br /> : null}
+                  </span>
+                ))}
               </div>
             </div>
           </main>
-
-          <aside className="spec-panel">
-            <div className="quote-block reveal reveal-delay-2">
-              {hero.headlineLines.map((line, i) => (
-                <span key={line}>
-                  {line}
-                  {i < hero.headlineLines.length - 1 ? <br /> : null}
-                </span>
-              ))}
-            </div>
-            <ul className="spec-list">
-              {hero.bullets.map((b, i) => (
-                <li className="spec-item" key={b}>
-                  <span className="spec-label">
-                    [ MODULE_{String(i + 1).padStart(2, "0")} ]
-                  </span>
-                  <span className="spec-value">{b}</span>
-                </li>
-              ))}
-            </ul>
-          </aside>
 
           {/* 히어로 지표 — 심사자가 2분을 쓴다면 사실상 이 화면만 본다.
               예전엔 "주요 13 · 사이드 11 · 학력 06 · 저장소 44" 로 **넷 다
@@ -687,23 +674,28 @@ export function ResumeMode({onEnterVillage}: Props) {
               </h2>
             </header>
 
-            <div className="projects-category reveal reveal-delay-1">
-              카테고리: Web Service · Data/AI · Game · AR/XR · Ops
-            </div>
+            {/* 「카테고리: Web Service · Data/AI · …」 범례 줄이 여기 있었다.
+                배지가 카드마다 카테고리를 이미 말하고 있어서 지웠다(2026-09-03). */}
 
             {/* 그리드 상태는 class가 아니라 data 속성으로 둔다.
               className에 gridView를 섞으면 리렌더마다 class 속성이 통째로 새로 쓰이고,
               IntersectionObserver가 명령형으로 붙여둔 .active가 지워져 opacity:0으로
               사라진다(토글할 때 프로젝트가 사라졌다 뒤늦게 다시 나타나던 원인). */}
-            {/* 그리드에서는 **크기가 곧 순위다.** 대표 4건은 넓게(2열),
-                나머지는 좁게(3열) 세운다. 접어서 감추는 방식을 먼저 만들었다가
-                걷어냈다 — 40초를 훑는 심사자는 "더 보기" 를 누르지 않아서,
-                감춘 9건이 정작 가장 중요한 독자에게만 없는 것이 됐다.
-                크기 위계는 전부 남기면서 "무엇이 중요한지 내가 안다" 를
-                주장이 아니라 배치로 보인다.
+            {/* 그리드에서는 **크기가 곧 순위다.** 대표 5건은 카드(전폭 1 + 2×2),
+                나머지는 사진 없는 **한 줄 목록**이다. 접어서 감추는 방식을 먼저
+                만들었다가 걷어냈다 — 40초를 훑는 심사자는 "더 보기" 를 누르지
+                않아서, 감춘 9건이 정작 가장 중요한 독자에게만 없는 것이 됐다.
 
-                캐러셀은 건드리지 않는다 — 13장이 같은 크기로 도는 연출이고,
-                효과가 마운트 때 센 `.project-card` 개수로 각도를 나눈다. */}
+                2026-09-03: 카드 안을 11층 → 6층으로 줄였다(역할 상세 · 기술 칩 ·
+                출처 각주 · "자세히 보기" 를 뺌). 줄인 게 아니라 뺀 것이다 — 카드를
+                절반으로 "축소" 하면 12px 글자가 7px 이 된다. 빠진 것은 전부 다른
+                곳에 있다: 역할은 상세 페이지, 칩은 기술 스택 절, 출처는 숫자 줄의
+                title 툴팁, 클릭은 카드 전체가 받는다. 격자는 가운데 704px 만 쓰고
+                양옆을 대칭으로 비운다 — 여백을 디자인으로 쓰기로 한 결정.
+
+                캐러셀은 건드리지 않는다 — 카드가 같은 크기로 도는 연출이고,
+                효과가 마운트 때 센 `.project-card` 개수로 각도를 나눈다. 목록화도
+                격자 모드 CSS 만으로 해서 마크업은 두 모드가 같다. */}
             <div
               className="carousel-wrapper reveal reveal-delay-1"
               data-grid={isGrid ? "true" : "false"}
@@ -733,7 +725,9 @@ export function ResumeMode({onEnterVillage}: Props) {
                         <div
                           className={`project-card${
                             p.richId ? " clickable" : ""
-                          }${p.featured ? " is-featured" : ""}`}
+                          }${p.featured ? " is-featured" : ""}${
+                            p.hero ? " is-hero" : ""
+                          }`}
                           onClick={() => {
                             // 문턱 10px. 브라우저가 클릭으로 인정하는 흔들림 폭과
                             // 비슷하게 잡는다 — 6px 는 손 떨림도 드래그로 봤다.
@@ -774,20 +768,42 @@ export function ResumeMode({onEnterVillage}: Props) {
                               </span>
                             )}
                           </div>
-                          {p.richId ? (
-                            <button
-                              type="button"
-                              className="project-name project-name-btn"
-                              onClick={e => {
-                                e.stopPropagation();
-                                openProject(p);
-                              }}
-                            >
-                              {p.title}
-                            </button>
-                          ) : (
-                            <div className="project-name">{p.title}</div>
-                          )}
+                          {/* 제목 줄: 이름 + 기간·팀 한 토막. 예전엔 기간·팀과
+                            역할 상세가 제목 아래 두 줄이었다 — 역할 상세는 상세
+                            페이지에 그대로 있어 카드에서 뺐고(2026-09-03), 기간·팀은
+                            제목 옆으로 붙였다. 근거 없는 값은 데이터에서 비어 있고,
+                            비면 그 토막이 사라진다. 지어내지 않기 위해서다. */}
+                          <div className="project-title-row">
+                            {p.richId ? (
+                              <button
+                                type="button"
+                                className="project-name project-name-btn"
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  openProject(p);
+                                }}
+                              >
+                                {p.title}
+                              </button>
+                            ) : (
+                              <div className="project-name">{p.title}</div>
+                            )}
+                            {p.period || p.team ? (
+                              <span className="project-meta">
+                                {p.period ? (
+                                  <span className="project-period">
+                                    {p.period}
+                                  </span>
+                                ) : null}
+                                {p.period && p.team ? (
+                                  <span className="project-team"> · </span>
+                                ) : null}
+                                {p.team ? (
+                                  <span className="project-team">{p.team}</span>
+                                ) : null}
+                              </span>
+                            ) : null}
+                          </div>
 
                           {/* 한 줄 정체. 예전엔 `subtitle` 이 데이터에만 있고
                             화면에는 안 나와서, 카드가 제목 다음 바로 기간으로
@@ -798,19 +814,15 @@ export function ResumeMode({onEnterVillage}: Props) {
                             <div className="project-subtitle">{p.subtitle}</div>
                           ) : null}
 
-                          {/* 기간·팀·역할 — 근거가 없는 값은 데이터에서 비어 있고,
-                            비면 그 줄이 통째로 사라진다. 지어내지 않기 위해서다. */}
-                          {p.period || p.team ? (
-                            <div className="project-meta">
-                              {[p.period, p.team].filter(Boolean).join(" · ")}
-                            </div>
-                          ) : null}
-                          {p.role ? (
-                            <div className="project-role">{p.role}</div>
-                          ) : null}
-
+                          {/* 출처·기간(`metricsSource`)은 화면에서 뺐다 — 카드에서
+                            12px 각주를 읽는 사람은 없다. 대신 숫자 줄의 title 로
+                            남겨, 마우스를 올리면 "어디서 언제 잰 값인지" 가 뜬다.
+                            상세 페이지에는 이 값이 없으므로 이게 유일한 자리다. */}
                           {shownMetrics.length > 0 ? (
-                            <div className="project-metrics">
+                            <div
+                              className="project-metrics"
+                              title={p.metricsSource || undefined}
+                            >
                               {shownMetrics.map(m => (
                                 <span className="project-metric" key={m.label}>
                                   <b>{m.value}</b>
@@ -827,33 +839,10 @@ export function ResumeMode({onEnterVillage}: Props) {
                               ))}
                             </div>
                           ) : null}
-                          {/* 출처·기간. 지표가 있을 때만, 지표 바로 아래. */}
-                          {shownMetrics.length > 0 && p.metricsSource ? (
-                            <div className="metric-source">
-                              {p.metricsSource}
-                            </div>
-                          ) : null}
 
-                          <div className="project-tags">
-                            {p.tags.map(t => (
-                              <span className="project-tag" key={t}>
-                                {t}
-                              </span>
-                            ))}
-                          </div>
-
-                          {/* 클릭 신호. 지금까지 「눌린다」는 사실은 hover 색
-                            변화와 제목 버튼뿐이었는데, 3초 훑는 사람은 **마우스를
-                            올리기 전에** 지나간다. 정지 상태에서도 보이는 줄이
-                            하나 있어야 카드가 요약으로 읽히고, 없으면 결론처럼
-                            닫혀 보인다. 상세가 있는 카드에만 붙인다 — 없는 카드에
-                            붙이면 눌러 보고 아무 일도 안 일어난다. */}
-                          {p.richId ? (
-                            <div className="project-open" aria-hidden="true">
-                              자세히 보기
-                              <span className="project-open-arrow">→</span>
-                            </div>
-                          ) : null}
+                          {/* 기술 칩(`tags`)과 「자세히 보기 →」 줄이 여기 있었다.
+                            칩은 기술 스택 절이 전부 말하고, 클릭은 카드 전체와
+                            제목 버튼이 받는다. 카드에서 뺐다(2026-09-03). */}
 
                           {links.length > 0 ? (
                             <div className="project-links">

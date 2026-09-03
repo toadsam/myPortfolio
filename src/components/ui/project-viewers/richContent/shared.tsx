@@ -1080,6 +1080,162 @@ export function isLightboxOpen() {
   return openLightboxCount > 0;
 }
 
+/**
+ * 고정 폭으로 그려진 것을 **칸에 맞게 줄여** 통째로 보여 준다.
+ *
+ * 구성도·ERD 는 880px 기준으로 그려져 있다. 예전엔 좁으면 `overflow-x-auto` 로
+ * 가로로 굴렸는데, 그러면 **잘린 그림**이 보인다 — 전체 모양을 못 본다.
+ * 줄여서 통째로 보여 주고, 읽고 싶으면 눌러서 확대하게 한다(ZoomableBlock).
+ *
+ * transform: scale 은 자리를 안 줄이므로(원래 크기만큼 자리를 차지한다)
+ * 바깥 상자 높이를 직접 잡아 준다. ResizeObserver 로 칸 폭과 내용 높이를
+ * 둘 다 지켜본다 — 내용은 폰트가 늦게 붙으면 높이가 바뀐다.
+ */
+export function FitScale({
+  children,
+  base = 880
+}: {
+  children: React.ReactNode;
+  base?: number;
+}) {
+  const outer = useRef<HTMLDivElement>(null);
+  const inner = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  const [boxH, setBoxH] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const o = outer.current;
+    const i = inner.current;
+    if (!o || !i) return;
+    const measure = () => {
+      const k = Math.min(1, o.clientWidth / base);
+      setScale(k);
+      setBoxH(i.scrollHeight * k);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(o);
+    ro.observe(i);
+    return () => ro.disconnect();
+  }, [base]);
+
+  return (
+    <div className="overflow-hidden" ref={outer} style={{height: boxH}}>
+      <div
+        ref={inner}
+        style={{
+          width: base,
+          transform: `scale(${scale})`,
+          transformOrigin: "top left"
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * 아무 내용이나 눌러서 크게 볼 수 있게 감싼다.
+ *
+ * 라이트박스는 원래 ImageSlot 안에만 있었고 **이미지 전용**이었다. 그래서
+ * 구성도·ERD 는 줄여 놓으면 되찾을 방법이 없었다. 같은 장치를 children 을
+ * 받는 형태로 한 겹 빼낸다.
+ *
+ * ⚠️ 확대 창은 반드시 **body 로 포털**해야 한다. position:fixed 는 조상에
+ * transform 이 있으면 화면이 아니라 그 조상 기준이 되는데, 이 화면은
+ * framer-motion 이 곳곳에 transform 을 건다 — 포털 없이 만들었을 때
+ * 확대 창이 본문 칸 안에 갇혀 **누르면 오히려 작아졌다.**
+ */
+export function ZoomableBlock({
+  theme,
+  label,
+  className,
+  children
+}: {
+  theme: ProjectTheme;
+  label: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (!open) return;
+    openLightboxCount += 1;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => {
+      openLightboxCount = Math.max(0, openLightboxCount - 1);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <>
+      <div
+        aria-label={`${label} — 크게 보기`}
+        className={`group relative cursor-zoom-in ${className ?? ""}`}
+        onClick={() => setOpen(true)}
+        onKeyDown={e => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setOpen(true);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+      >
+        {children}
+        {/* 마우스가 없는 기기에서는 늘 보인다 — hover 로만 알리면 폰에서는
+            확대가 있다는 걸 아무도 모른다. */}
+        <span
+          className="pointer-events-none absolute right-2 top-2 rounded px-2 py-1 font-mono text-[10px] font-bold opacity-0 transition-opacity duration-300 group-focus-visible:opacity-100 group-hover:opacity-100 [@media(hover:none)]:opacity-100"
+          style={{background: "rgba(0,0,0,0.55)", color: theme.accent}}
+        >
+          ⤢ 확대
+        </span>
+      </div>
+
+      {mounted
+        ? createPortal(
+            <AnimatePresence>
+              {open ? (
+                <motion.div
+                  animate={{opacity: 1}}
+                  className="fixed inset-0 z-[80] flex cursor-zoom-out items-start justify-center overflow-auto p-4 sm:p-8"
+                  exit={{opacity: 0}}
+                  initial={{opacity: 0}}
+                  onClick={() => setOpen(false)}
+                  style={{
+                    background: "rgba(2,4,8,0.86)",
+                    backdropFilter: "blur(4px)"
+                  }}
+                >
+                  <div
+                    className="m-auto w-max max-w-none rounded-2xl border p-4 sm:p-6"
+                    onClick={e => e.stopPropagation()}
+                    style={{
+                      borderColor: `${theme.primary}40`,
+                      background: "#070d12"
+                    }}
+                  >
+                    {children}
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>,
+            document.body
+          )
+        : null}
+    </>
+  );
+}
+
 export function ImageSlot({
   theme,
   spec,

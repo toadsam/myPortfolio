@@ -12,8 +12,25 @@
 // 4) HUD(마을 소식)를 펼친다
 import {chromium} from "playwright-core";
 
+// 번들 크로미움이 없으면(버전이 오르면 다시 받아야 한다) 설치된 Chrome → Edge 로
+// 내려간다. 캡처·검증용이라 어느 크로미움이든 같다. PW_CHANNEL 로 못박을 수 있다.
+export async function launchChromium(options = {}) {
+  const channels = process.env.PW_CHANNEL
+    ? [process.env.PW_CHANNEL]
+    : ["chromium", "chrome", "msedge"];
+  let lastError;
+  for (const channel of channels) {
+    try {
+      return await chromium.launch({channel, headless: true, ...options});
+    } catch (e) {
+      lastError = e;
+    }
+  }
+  throw lastError;
+}
+
 export async function launch() {
-  const browser = await chromium.launch({channel: "chromium", headless: true});
+  const browser = await launchChromium();
   const context = await browser.newContext({
     viewport: {width: 1280, height: 800}
   });

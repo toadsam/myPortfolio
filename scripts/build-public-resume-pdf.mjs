@@ -11,7 +11,7 @@
 import {readFile, writeFile, unlink} from "node:fs/promises";
 import {join, dirname} from "node:path";
 import {fileURLToPath, pathToFileURL} from "node:url";
-import {chromium} from "playwright";
+import {launchChromium} from "./e2e/lib.mjs";
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const SRC = join(root, "resume/jaehoon-jeong-resume.html");
@@ -35,7 +35,7 @@ if (/6428-6247|tel:/.test(stripped)) {
 
 await writeFile(TMP, stripped, "utf8");
 
-const browser = await chromium.launch({channel: "chromium"});
+const browser = await launchChromium();
 const page = await browser.newPage();
 await page.goto(pathToFileURL(TMP).href, {waitUntil: "networkidle"});
 await page.pdf({
