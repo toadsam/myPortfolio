@@ -3,9 +3,11 @@ import type {ProjectData} from "@/types/portfolio";
 interface ProjectCardProps {
   project: ProjectData;
   onOpen: (project: ProjectData) => void;
+  /** 마을 안에서만 넘어온다 — 이 프로젝트 건물의 3D 전시실로 바로 입장. */
+  onEnter3d?: (project: ProjectData) => void;
 }
 
-export function ProjectCard({onOpen, project}: ProjectCardProps) {
+export function ProjectCard({onEnter3d, onOpen, project}: ProjectCardProps) {
   return (
     <article className="rounded-lg border border-[#e0ce98] bg-[#fffdf6] p-4 shadow-[0_10px_34px_rgba(79,72,49,0.08)]">
       <div className="mb-4 border-b border-[#eadfbf] pb-4">
@@ -61,6 +63,15 @@ export function ProjectCard({onOpen, project}: ProjectCardProps) {
       </dl>
 
       <div className="mt-4 flex flex-wrap gap-2">
+        {onEnter3d ? (
+          <button
+            className="rounded-md border border-[#3d2a17] bg-[#3d2a17] px-3 py-2 text-xs font-black tracking-[0.06em] text-[#fdf3df] transition hover:bg-[#5a3f24]"
+            onClick={() => onEnter3d(project)}
+            type="button"
+          >
+            🏠 3D 전시실 들어가기
+          </button>
+        ) : null}
         <button
           className="rounded-md border border-[#6fac58] bg-[#6fac58] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-white transition hover:bg-[#5f9b4d]"
           onClick={() => onOpen(project)}

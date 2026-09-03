@@ -144,6 +144,12 @@ interface VillageSceneProps {
   overseerTarget?: Vector3Tuple | null;
   onEditingChange?: (editing: boolean) => void;
   npcSocialTargets?: Record<string, Vector3Tuple>;
+  /**
+   * 구역 띠(DistrictStrip)의 칩에 마우스를 올린 건물. 있으면 **그 한 채만**
+   * 강조되고 같은 구역의 나머지는 강조가 꺼진다 — 구역 전체가 켜진 상태에선
+   * 한 채를 더 켜도 구분이 안 되기 때문에, 대비는 끄는 쪽으로 만든다.
+   */
+  focusBuildingId?: string | null;
   /** 지하 의뢰 공방 해치를 눌렀을 때 */
   onEnterAtelier?: () => void;
   /** 갓생 섬 선착장. 주인(관리자 토큰)일 때만 넘어온다 — 없으면 부두를 안 그린다. */
@@ -3017,6 +3023,7 @@ function VillageSceneImpl({
   overseerTarget,
   onEditingChange,
   npcSocialTargets,
+  focusBuildingId,
   onEnterAtelier,
   onDepartIsland
 }: VillageSceneProps) {
@@ -3296,7 +3303,11 @@ function VillageSceneImpl({
                   key={building.id}
                   building={merged}
                   buildingState={buildingStateMap.get(building.id)}
-                  isActive={activeSection === building.sectionId}
+                  isActive={
+                    focusBuildingId
+                      ? focusBuildingId === building.id
+                      : activeSection === building.sectionId
+                  }
                   onRequestEnter={
                     isWalkMode || editing ? noopRequestEnter : onRequestEnter
                   }

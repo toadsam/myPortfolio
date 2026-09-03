@@ -22,6 +22,8 @@ interface InfoPanelProps {
   activeContentId?: string;
   isOpen: boolean;
   onClose: () => void;
+  /** 프로젝트 카드의 "3D 전시실 들어가기". 마을에서만 넘어온다(이력서 모드엔 방이 없다). */
+  onEnterProject?: (projectId: string) => void;
 }
 
 // 구역 색은 constants.ts 의 DISTRICT_TONE 하나가 정한다 — 예전엔 여기와
@@ -45,7 +47,8 @@ export function InfoPanel({
   activeSection,
   activeContentId,
   isOpen,
-  onClose
+  onClose,
+  onEnterProject
 }: InfoPanelProps) {
   const section =
     sectionMeta.find(item => item.id === activeSection) ?? sectionMeta[0]!;
@@ -119,6 +122,7 @@ export function InfoPanel({
                 <ProjectsPanel
                   color={color}
                   initialProjectId={activeContentId}
+                  onEnterProject={onEnterProject}
                 />
               )}
               {activeSection === "github" && (
@@ -214,10 +218,12 @@ function IntroPanel({color}: {color: string}) {
 
 function ProjectsPanel({
   color,
-  initialProjectId
+  initialProjectId,
+  onEnterProject
 }: {
   color: string;
   initialProjectId?: string;
+  onEnterProject?: (projectId: string) => void;
 }) {
   const initial = initialProjectId
     ? projects.find(project => project.id === initialProjectId) ?? null
@@ -240,13 +246,18 @@ function ProjectsPanel({
       <Card color={color}>
         <h3 className="font-black text-[#f3e6c8]">대표 프로젝트</h3>
         <p className="mt-2 text-sm leading-6 text-[#a9bdd6]">
-          목록에서 프로젝트를 열어 자세한 설명을 보거나, 마을에서 프로젝트 건물
-          안으로 들어가 3D 전시 화면을 볼 수 있습니다.
+          {onEnterProject
+            ? '카드의 "3D 전시실 들어가기"를 누르면 그 프로젝트 건물 안으로 바로 들어갑니다. 글로 먼저 보려면 "자세히 보기".'
+            : "목록에서 프로젝트를 열어 자세한 설명을 보거나, 마을에서 프로젝트 건물 안으로 들어가 3D 전시 화면을 볼 수 있습니다."}
         </p>
       </Card>
       {projects.map(project => (
         <motion.div key={project.id} variants={fadeUp}>
-          <ProjectCard onOpen={setSelectedProject} project={project} />
+          <ProjectCard
+            onEnter3d={onEnterProject ? p => onEnterProject(p.id) : undefined}
+            onOpen={setSelectedProject}
+            project={project}
+          />
         </motion.div>
       ))}
     </div>

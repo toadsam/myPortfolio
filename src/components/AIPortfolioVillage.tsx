@@ -29,6 +29,7 @@ import {
 import type {NpcCommand} from "@/components/village/NPC";
 import {
   CommandDock,
+  DistrictStrip,
   CORE_NPC_IDS,
   ControlsHint,
   EavesdropButton,
@@ -42,6 +43,7 @@ import {
   Minimap,
   NpcQuickDock,
   QuickTravelDock,
+  TRAVEL_POINTS,
   RelationshipViewer,
   type TravelPoint
 } from "@/components/village/VillageHud";
@@ -445,6 +447,16 @@ export function AIPortfolioVillage() {
     position: Vector3Tuple;
     lookAt: Vector3Tuple;
   } | null>(null);
+  // 구역 띠(DistrictStrip)에서 올려 둔 건물 — 그 한 채만 강조된다.
+  const [focusBuildingId, setFocusBuildingId] = useState<string | null>(null);
+  // 안내인 카드 선택 → 카메라 도착 뒤 목록 패널을 여는 타이머
+  const arriveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (arriveTimerRef.current) clearTimeout(arriveTimerRef.current);
+    },
+    []
+  );
   // 바닥 클릭 이동 목적지. nonce 로 같은 자리 재클릭도 구분한다.
   const [groundTarget, setGroundTarget] = useState<{
     point: Vector3Tuple;
@@ -1320,10 +1332,27 @@ export function AIPortfolioVillage() {
     }
   }
 
-  function focusDistrict(sectionId: SectionId) {
-    setSelectedNpc(null);
-    setIsPanelOpen(false);
-    setActiveSection(sectionId);
+  /**
+   * 안내인 카드의 선택 = **도착 + 목록**.
+   *
+   * 예전엔 활성 구역 값만 바꿨다(`focusDistrict`). 카메라는 거의 그 자리,
+   * 패널도 안 열려서 "프로젝트 보러"를 누른 사람이 광장 분수만 보고 있었다 —
+   * 질문은 했는데 답을 안 준 셈. 이제 빠른 이동과 같은 카메라로 섬 위로 날아가고,
+   * 도착할 즈음 오른쪽 액자에 그 구역의 목록을 연다.
+   *
+   * `openSection` 을 쓰지 않는 이유: 그 함수는 travelCam 을 지운다. 여기서
+   * 지우면 카메라가 섬으로 가다 멈추고 섹션 기본 시점으로 되돌아간다.
+   */
+  function arriveAndOpen(sectionId: SectionId) {
+    const point = TRAVEL_POINTS.find(p => p.sectionId === sectionId);
+    if (!point) return;
+    travelTo(point);
+    if (arriveTimerRef.current) clearTimeout(arriveTimerRef.current);
+    // 카메라 lerp(0.062/frame) 가 눈에 띄게 멈추는 데 1초 남짓 — 그 뒤에 연다.
+    arriveTimerRef.current = setTimeout(() => {
+      setActiveContentId(undefined);
+      setIsPanelOpen(true);
+    }, 1100);
   }
 
   function handleConciergePick(intent: ConciergeIntent) {
@@ -1332,13 +1361,21 @@ export function AIPortfolioVillage() {
     if (intent === "recruit") {
       openResume();
     } else if (intent === "projects") {
-      focusDistrict("projects");
+      arriveAndOpen("projects");
     } else if (intent === "skills") {
-      focusDistrict("github");
+      arriveAndOpen("github");
     } else if (intent === "experience") {
-      focusDistrict("experience");
+      arriveAndOpen("experience");
     }
     // browse → 그냥 닫고 자유 탐험
+  }
+
+  /** 프로젝트 목록 카드의 "3D 전시실 들어가기" — 건물 클릭과 같은 길. */
+  function enterProjectRoom(projectId: string) {
+    const building = villageBuildings.find(
+      b => b.district === "projects" && b.contentId === projectId
+    );
+    if (building) handleRequestEnter(building.id);
   }
 
   function handleConciergeAsk() {
@@ -2114,6 +2151,7 @@ export function AIPortfolioVillage() {
               npcCommandTargets={npcCommandTargets}
               overseerTarget={overseerTarget}
               npcSocialTargets={npcSocialTargets}
+              focusBuildingId={focusBuildingId}
               onEnterAtelier={stableEnterAtelier}
               onDepartIsland={isOwner ? stableDepartIsland : undefined}
               onEditingChange={stableSetEditing}
@@ -2183,6 +2221,16 @@ export function AIPortfolioVillage() {
           {!isPanelOpen ? (
             <QuickTravelDock activeKey={activeSection} onTravel={travelTo} />
           ) : null}
+          {!isPanelOpen &&
+          !selectedNpc &&
+          conciergeStage === "closed" &&
+          activeSection !== "intro" ? (
+            <DistrictStrip
+              sectionId={activeSection}
+              onEnter={handleRequestEnter}
+              onFocus={setFocusBuildingId}
+            />
+          ) : null}
           {!isPanelOpen ? (
             <Minimap activeKey={activeSection} onTravel={travelTo} />
           ) : null}
@@ -2249,6 +2297,7 @@ export function AIPortfolioVillage() {
             activeContentId={activeContentId}
             isOpen={isPanelOpen}
             onClose={() => setIsPanelOpen(false)}
+            onEnterProject={enterProjectRoom}
           />
           <DialogueBox
             npc={selectedNpc}

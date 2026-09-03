@@ -1017,6 +1017,90 @@ export function Minimap({
   );
 }
 
+/**
+ * 구역에 도착하면 화면 아래에 뜨는 **"이 구역의 건물" 띠**.
+ *
+ * 3D 간판(`Building.tsx` v-sign)은 거리에 비례해 줄어들어, 섬을 내려다보는
+ * 카메라 거리(광장 쪽 13 뒤·높이 9)에서는 글자가 2~3px 다 — 사실상 없는 것과
+ * 같다. 그래서 간판을 키우는 대신 2D 로 한 번 더 적는다: 이름 + 꼬리표, 누르면
+ * 바로 입장, 올리면 **그 건물만** 강조(`focusBuildingId`). 마우스가 없는 화면
+ * 에서도 똑같이 읽히고 눌린다.
+ *
+ * 광장에선 안 뜬다(광장은 "구역"이 아니다). 패널·대화창·환영 카드가 떠 있을
+ * 때도 숨긴다 — 같은 자리에 두 장이 겹친다.
+ */
+export function DistrictStrip({
+  sectionId,
+  onEnter,
+  onFocus
+}: {
+  sectionId: SectionId;
+  onEnter: (buildingId: string) => void;
+  onFocus: (buildingId: string | null) => void;
+}) {
+  const buildings = villageBuildings.filter(
+    b => b.sectionId === sectionId && b.district !== "plaza"
+  );
+  // 띠가 사라질 때 강조도 같이 풀어야 한다 — 안 풀면 마지막에 올렸던 건물
+  // 한 채만 켜진 채로 남는다.
+  useEffect(() => () => onFocus(null), [onFocus]);
+
+  const first = buildings[0];
+  if (!first) return null;
+  const key = DISTRICT_TO_TRAVEL_KEY[first.district] ?? sectionId;
+  const point = TRAVEL_POINTS.find(p => p.key === key);
+  const tone = districtTone(key);
+  const label = point?.label ?? first.district;
+
+  return (
+    <VillageFrame
+      bodyClassName="flex flex-col gap-2 px-3 py-2.5"
+      className="fixed bottom-3 left-1/2 z-30 w-[min(94vw,700px)] -translate-x-1/2 transform-gpu animate-[fadeIn_0.3s_ease] will-change-[backdrop-filter,transform] md:bottom-6"
+      variant="plaque"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <p className="v-panel-title flex items-center gap-1.5 text-[12px]">
+          <Crest name={tone.crest as CrestName} size={14} /> {label} 구역 ·{" "}
+          {buildings.length}채
+        </p>
+        <p className="text-[11px] font-bold text-[#a9bdd6]/70">
+          건물을 고르면 바로 들어갑니다
+        </p>
+      </div>
+      <div className="flex max-h-[64px] flex-wrap gap-1.5 overflow-y-auto md:max-h-[96px]">
+        {buildings.map(b => (
+          <button
+            key={b.id}
+            type="button"
+            onClick={() => onEnter(b.id)}
+            onMouseEnter={() => onFocus(b.id)}
+            onMouseLeave={() => onFocus(null)}
+            onFocus={() => onFocus(b.id)}
+            onBlur={() => onFocus(null)}
+            className="flex items-center gap-2 rounded-lg border border-[#e2c078]/25 bg-white/[0.04] px-2.5 py-1.5 text-left transition hover:border-[#e2c078]/70 hover:bg-[#e2c078]/10 active:scale-95"
+          >
+            <span
+              className="h-2 w-2 shrink-0 rounded-full"
+              style={{
+                background: b.accentColor,
+                boxShadow: `0 0 6px ${b.accentColor}`
+              }}
+            />
+            <span className="flex flex-col leading-tight">
+              <span className="text-[12px] font-black text-[#eef2f8]">
+                {b.name}
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#a9bdd6]/70">
+                {b.label}
+              </span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </VillageFrame>
+  );
+}
+
 export function KonamiBurst() {
   const emojis = ["🎉", "✨", "🏘️", "🤖", "🌟", "💾", "🚀", "🎮", "🛸", "⭐"];
   const pieces = Array.from({length: 40}, (_, i) => ({

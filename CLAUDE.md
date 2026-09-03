@@ -249,6 +249,17 @@ so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottlene
 - `VillageScene`의 정적 자식(지형·물·하늘·등불·프롭 인스턴싱)은 `memo`다 — `npcRuntimeStates`가 1~2초마다 바뀌어 부모가 재렌더된다.
 - 렉 보고는 **prod 빌드로 재라**(`npm run build && npm run start -- -p 3100`, launch.json `prod`). dev는 StrictMode 이중 렌더로 롱태스크가 남는다.
 
+### First-visit wayfinding (2026-09-03)
+
+- **루미 카드의 선택은 도착 + 목록이다.** `arriveAndOpen(sectionId)` = `travelTo` 로 섬 위로 → 1.1초 뒤
+  오른쪽 액자에 그 구역 목록. **`openSection` 을 여기 쓰면 안 된다** — 그 함수는 `setTravelCam(null)` 을
+  해서 카메라가 섹션 기본 시점으로 되돌아간다. 예전 `focusDistrict` 는 activeSection 만 바꿔 "프로젝트
+  보러"를 눌러도 광장 분수만 보였다.
+- **구역에 도착하면 하단에 `DistrictStrip`**(VillageHud) — 그 구역 건물의 이름·꼬리표 칩. 클릭 = 입장,
+  호버 = `focusBuildingId` 로 **그 한 채만** 강조(구역 전체가 이미 켜져 있어 더 켜는 건 안 보인다).
+  3D 간판(`v-sign`)은 구역 카메라 거리에서 2~3px 라 읽히지 않아 2D 로 한 번 더 적는 것. 프로젝트 카드의
+  "3D 전시실 들어가기"는 `enterProjectRoom` → `handleRequestEnter`(contentId ↔ project.id).
+
 ### Project detail viewer routing
 
 Each project has a `ProjectCategory` (`dashboard | realtime | platform | game`) set in `src/data/projectThemes.ts`, which `ProjectViewer.tsx` uses to dispatch to one of 4 category-specific viewer components. Games skip `ProjectIntro` (they have their own boot sequence) but every category gets `SoundToggle`. On top of the category viewer, `richContent/index.tsx`'s `SIGNATURE` map layers a bespoke interactive demo per project id (e.g. `festflow` → `FestFlowLiveDemo`) shown as step 0. `ProjectViewer` is reused verbatim by both the 3D `ProjectInterior` scene and the flat `ResumeMode` fallback — don't fork it per caller.
