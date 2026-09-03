@@ -28,14 +28,31 @@
   /* 기존 이름은 그대로 두고 값만 마을 토큰으로 다시 배선한다 —
      1,400줄이 이 네 변수를 참조하고 있어, 여기만 바꾸면 전체 톤이 따라온다 */
   --bg: transparent;
-  --fg: rgb(var(--v-paper));
+
+  /* ── 글자 색은 세 단계다. 그 이상 쓰지 않는다. ──
+     재 보니 달빛(#a9bdd6) 하나를 투명도만 바꿔 0.70/0.72/0.75/0.80/0.85/0.86/
+     1.00 **일곱 단계**로 쓰고 있었다. 합쳐 4,700자, 본문의 대부분이다.
+     0.72 와 0.75 는 눈으로 구분되지 않는다 — 단계는 일곱인데 실제로는 하나였고,
+     그래서 무엇도 도드라지지 않았다. 위계가 없는 게 아니라 위계를 만들려던
+     수단이 안 먹히고 있었다.
+
+     게다가 팔레트 정의와 반대로 쓰고 있었다. globals.css 는 달빛을 「보조
+     텍스트」, 양피지를 「밝은 텍스트」로 정의하는데 정작 본문이 달빛이었다.
+     따뜻한 밤 배경 위에서 파란 회색 본문은 가라앉는다.
+
+     이제 셋뿐이다(배경 --v-night 기준 대비):
+       --fg     흰색      16.7  읽는 글 — 본문·제목
+       --fg-2   달빛 100%  9.5  보조 — 메타·역할·라벨
+       --muted  달빛 80%   6.5  약함 — 날짜·출처·각주
+     세 값이 서로 1.5배 이상 벌어져 눈으로 구분된다. */
+  --fg: #fff;
+  --fg-2: rgb(var(--v-moon));
   --accent: rgb(var(--v-lantern));
-  /* **본문 대비의 바닥.** 0.55 였을 때 밤 배경(--v-night) 위에서 3.69:1 로
-     WCAG AA(4.5:1)에 미달했다 — 기간·날짜·라벨이 전부 이 값이라, 밝은 사무실
-     모니터나 회의실 빔에서 "언제 무엇을 했는지" 가 통째로 안 읽혔다.
-     0.70 = 5.21:1. 뒤에 숲 일러스트가 비쳐 배경이 국소적으로 밝아지므로
-     기준선(4.5)에 딱 맞추지 않고 여유를 둔다. 라벨용이니 더 올리지는 않는다. */
-  --muted: rgb(var(--v-moon) / 0.7);
+  /* **본문 대비의 바닥.** 0.55 였을 때 밤 배경 위에서 3.69:1 로 WCAG AA(4.5)에
+     미달했고, 0.70(5.21)으로 한 번 올렸다. 지금은 0.80(6.46)이다 — 뒤에 숲
+     일러스트가 비쳐 배경이 국소적으로 밝아지는 데다, 위의 --fg-2 와 한 눈에
+     구분되려면 이만큼 벌어져야 한다. 라벨용이니 더 올리지는 않는다. */
+  --muted: rgb(var(--v-moon) / 0.8);
   /* 테두리는 글자가 아니라서 대비 기준을 적용하지 않는다(그대로 0.55). */
   --border: rgb(var(--v-wood) / 0.55);
 
@@ -57,7 +74,13 @@
   overflow-y: auto;
   /* 투명 — 뒤의 ForestWorld 가 보여야 한다 */
   background-color: var(--bg);
-  color: rgb(var(--v-moon));
+  /* 기본색이 달빛이었다. 자기 색을 안 정한 것들 — 표(td)·목록(li)·프로젝트
+     제목 버튼 — 이 전부 여기서 상속받아 **보조 색으로 본문을 그리고** 있었다.
+     특히 .project-name-btn 은 `color: inherit` 라, 위에서 .project-name 에
+     양피지를 줘 놓고도 나중 규칙이 이겨서 제목이 설명보다 흐렸다.
+     기본을 읽는 색(흰색)으로 두고, 흐려야 하는 것만 따로 --fg-2/--muted 를
+     명시한다. 기본값이 예외가 되면 안 된다. */
+  color: var(--fg);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
 }
@@ -123,19 +146,24 @@
   content: none;
 }
 
-/* ── 히어로 뷰포트 ── */
+/* ── 히어로 뷰포트 ──
+   2열이다: 왼쪽 레일 80px + 본문. 2026-09-03 까지는 오른쪽에 350px 패널
+   (`.spec-panel`)이 하나 더 있어 헤드라인이 거기 살았다. 세 덩어리(누구·주장·
+   근거)가 세 방향에 흩어져 읽는 순서가 없었고, 패널이 차지하던 폭만큼 별자리는
+   글자 열 위로 넘어와 있었다. 패널을 없애고 헤드라인을 이름 아래로 내리자
+   본문 오른쪽 절반이 통째로 별자리 자리가 된다. */
 .resume-terminal .viewport {
   position: relative;
   width: 100%;
   height: 100vh;
   display: grid;
-  grid-template-columns: 80px 1fr 350px;
+  grid-template-columns: 80px 1fr;
   grid-template-rows: 80px 1fr 120px;
   padding: 20px;
 }
 
 .resume-terminal header {
-  grid-column: 1 / 4;
+  grid-column: 1 / 3;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -254,15 +282,21 @@
   grid-row: 2;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  /* 헤드라인·풀이가 이 열로 내려오면서 글자단이 길어졌다. 바닥 정렬이면
+     이름이 헤더 밑에 붙고 아래만 비므로 세로 가운데로 둔다. */
+  justify-content: center;
   padding: 60px;
   position: relative;
   overflow: hidden;
 }
 
+/* 왼쪽 글자단. 본문 폭의 절반 남짓만 쓰고 나머지는 별자리(절대 배치, left 52%)
+   자리다 — 둘의 경계가 여기 한 값과 아래 `.xr-canvas-container` 의 left 로
+   정해지므로 한쪽만 바꾸면 겹친다. */
 .resume-terminal .main-title-wrap {
   position: relative;
   z-index: 2;
+  max-width: 560px;
 }
 
 .resume-terminal .hero-name {
@@ -272,7 +306,10 @@
      폴백이 고운바탕이라 새 폰트가 늦게 붙어도 계열이 안 바뀐다. */
   font-family: var(--font-display-heavy), var(--serif);
 
-  font-size: clamp(76px, 9vw, 132px);
+  /* 132px 였다. 이름이 화면 세로의 1/3 을 쓰는 동안은 그 아래 헤드라인이
+     커질 자리가 없었다 — 이름은 여전히 가장 크지만, 주장(헤드라인 26px)이
+     두 번째로 큰 글자가 되도록 한 단 내린다. */
+  font-size: clamp(64px, 6.6vw, 96px);
 
   /* **700 이다. 900 이 아니다.** Gowun Batang 은 400 과 700 만 배포된다.
      900 을 주면 브라우저가 700 위에 가짜 굵기를 덧칠(faux bold)하고, 명조의
@@ -338,15 +375,14 @@
    히어로에서 이름 다음으로 눈이 가야 하는 줄이라 등불색 왼쪽 선을 세우되,
    글자는 본문 톤으로 둔다 — 이름·직함과 강조를 다투면 셋 다 안 읽힌다. */
 .resume-terminal .hero-availability {
-  margin: 0 0 22px;
+  margin: 0;
   display: flex;
   flex-wrap: wrap;
   gap: 6px 28px;
   padding-left: 14px;
   border-left: 2px solid rgb(var(--v-lantern) / 0.55);
-  /* 히어로 왼쪽 글자단의 폭. 이걸 안 걸면 두 항목이 한 줄로 뻗어 오른쪽
-     기술 별자리(절대 배치 500px) 위로 올라타 글자끼리 겹친다. */
-  max-width: 400px;
+  /* 글자단 폭은 `.main-title-wrap` 이 정한다(560px). 예전엔 여기서 400px 로
+     따로 막았다 — 별자리가 500px 고정 상자로 글자 열 위에 걸쳐 있던 때의 값. */
 }
 
 .resume-terminal .hero-availability > div {
@@ -372,15 +408,6 @@
   /* 한글 기본 줄바꿈은 글자 단위라 좁은 화면에서 "즉시 입|사 가능" 처럼
      낱말 한가운데가 끊긴다. 어절 단위로 끊는다. */
   word-break: keep-all;
-}
-
-/* 한 줄 소개. 예전엔 인라인 `color:#666` 12px 였다 = 3.26:1 로 AA 미달인데,
-   하필 "이 사람이 무엇을 하는 사람인가" 를 요약하는 유일한 문장이었다. */
-.resume-terminal .hero-tagline {
-  max-width: 400px;
-  font-size: 13px;
-  line-height: 1.8;
-  color: var(--muted);
 }
 
 .resume-terminal .hero-sub {
@@ -423,13 +450,17 @@
 
 .resume-terminal .xr-canvas-container {
   position: absolute;
-  top: 8%;
-  right: 0%;
-  width: 500px;
-  height: 500px;
+  /* 본문 오른쪽 절반을 통째로 쓴다. 예전엔 `top 8% / right 0 / 500×500` 고정
+     상자였고 오른쪽 패널이 있던 시절엔 그게 "빈 가운데" 였다 — 패널이 없어진
+     지금 같은 값이면 글자 열 위로 올라탄다. left 52% 는 `.main-title-wrap`
+     의 560px 과 한 쌍이다(1440 에서 글자단 오른끝 620 < 별자리 왼끝 686).
+     크기는 TechConstellation 이 ResizeObserver 로 상자를 따라온다. */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 52%;
   /* 예전엔 pointer-events: none 이었다 — 그냥 도는 장식이었으니까.
-     지금은 끌어서 돌리고 별에 마우스를 올려 이름을 보는 곳이라 조작을 받는다.
-     이 상자는 히어로의 빈 가운데를 덮을 뿐 글자와는 안 겹친다. */
+     지금은 끌어서 돌리고 별에 마우스를 올려 이름을 보는 곳이라 조작을 받는다. */
   pointer-events: auto;
   cursor: grab;
   touch-action: none;
@@ -451,7 +482,7 @@
   /* 한글 라벨이라 자간을 뺀다 — 끌어서 돌려보기 · 별에 올리면 기술 이름. 자간을 주면 낱자가 흩어져
      한 낱말로 안 읽힌다(한글은 네모틀이라 이미 맞물려 있다). */
   letter-spacing: normal;
-  color: rgb(var(--v-moon) / 0.7);
+  color: var(--muted);
   pointer-events: none;
   transition: opacity 0.5s ease;
 }
@@ -479,23 +510,19 @@
   height: 100%;
 }
 
-.resume-terminal .spec-panel {
-  grid-column: 3;
-  grid-row: 2;
-  border-left: 1px solid var(--border);
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-}
-
+/* 헤드라인 — 이름 다음으로 큰 글자. 오른쪽 패널에 18px 로 있던 것을 이름
+   아래로 옮기며 26px 로 올렸다(`.viewport` 주석). 주황 왼쪽 선은 그대로 —
+   이 화면에서 "주장" 을 표시하는 유일한 장치다. */
 .resume-terminal .quote-block {
-  font-size: 18px;
+  /* 글자단의 마지막 요소다(풀이 문단은 지웠다) — 아래 여백은 두지 않는다. */
+  margin: 30px 0 0;
+  font-size: 26px;
   font-weight: 500;
-  line-height: 1.6;
+  line-height: 1.45;
   color: rgb(var(--v-paper));
   position: relative;
   padding-left: 20px;
+  word-break: keep-all;
 }
 
 .resume-terminal .quote-block::before {
@@ -508,8 +535,24 @@
   background: var(--accent);
 }
 
+/* 세로가 짧은 창. 글자단(이름 → 직무 → 지원/시점 → 헤드라인 → 풀이)이 900px
+   기준 약 440px 라 760px 아래에서는 헤더·지표 바를 빼면 넘친다. 한 단씩 내린다. */
+@media (max-height: 760px) and (min-width: 901px) {
+  .resume-terminal main {
+    padding: 36px 60px;
+  }
+  .resume-terminal .hero-name {
+    font-size: clamp(56px, 5.6vw, 76px);
+    margin-bottom: 14px;
+  }
+  .resume-terminal .quote-block {
+    margin: 20px 0 12px;
+    font-size: 22px;
+  }
+}
+
 .resume-terminal footer {
-  grid-column: 1 / 4;
+  grid-column: 1 / 3;
   grid-row: 3;
   border-top: 1px solid var(--border);
   display: flex;
@@ -812,7 +855,7 @@
 .resume-terminal .edu-name {
   font-size: 16px;
   font-weight: 600;
-  color: rgb(var(--v-paper));
+  color: var(--fg);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -836,7 +879,7 @@
 
 .resume-terminal .edu-desc {
   font-size: 14px;
-  color: rgb(var(--v-moon));
+  color: var(--fg);
   line-height: 1.6;
   margin-bottom: 12px;
 }
@@ -850,7 +893,7 @@
 
 .resume-terminal .edu-detail li {
   font-size: 13px;
-  color: rgb(var(--v-moon) / 0.7);
+  color: var(--muted);
   padding-left: 16px;
   position: relative;
 }
@@ -1028,7 +1071,7 @@
   justify-content: center;
   font-family: var(--mono);
   font-size: 12px;
-  color: rgb(var(--v-moon) / 0.75);
+  color: var(--muted);
   margin-bottom: 12px;
   overflow: hidden;
   position: relative;
@@ -1066,7 +1109,7 @@
 .resume-terminal .project-name {
   font-size: 15px;
   font-weight: 700;
-  color: rgb(var(--v-paper));
+  color: var(--fg);
   /* 아래에 한 줄 정체(.project-subtitle)가 붙으므로 제목의 아래 여백을 줄인다.
      둘은 한 덩어리로 읽혀야 한다 — 제목만 보고 넘어가면 카드가 이름표가 된다. */
   margin-bottom: 5px;
@@ -1079,7 +1122,7 @@
 .resume-terminal .project-subtitle {
   font-size: 13px;
   line-height: 1.65;
-  color: rgb(var(--v-moon) / 0.86);
+  color: var(--fg);
   margin-bottom: 10px;
   /* 한글은 기본값에서 어절 가운데가 끊긴다. */
   word-break: keep-all;
@@ -1095,7 +1138,7 @@
 .resume-terminal .project-tag {
   font-family: var(--mono);
   font-size: 12px;
-  color: rgb(var(--v-moon) / 0.72);
+  color: var(--muted);
   padding: 3px 8px;
   border: 1px solid rgb(var(--v-wood) / 0.35);
   border-radius: 4px;
@@ -1319,7 +1362,7 @@
 }
 
 .resume-terminal .tier-divider-count {
-  color: rgb(var(--v-moon) / 0.5);
+  color: var(--muted);
 }
 
 /* ── 2단 카드: 크기만이 아니라 **담는 정보도** 줄인다 ──
@@ -1531,13 +1574,13 @@
 .resume-terminal .side-project-name {
   font-size: 13px;
   font-weight: 600;
-  color: rgb(var(--v-moon) / 0.7);
+  color: var(--fg);
   line-height: 1.4;
 }
 
 .resume-terminal .side-project-desc {
   font-size: 13px;
-  color: rgb(var(--v-moon) / 0.72);
+  color: var(--fg);
   line-height: 1.5;
   flex: 1;
 }
@@ -1551,7 +1594,7 @@
 .resume-terminal .side-project-link {
   font-family: var(--mono);
   font-size: 12px;
-  color: rgb(var(--v-moon) / 0.72);
+  color: var(--muted);
   border: 1px solid rgb(var(--v-wood) / 0.35);
   padding: 3px 8px;
   border-radius: 4px;
@@ -1602,7 +1645,7 @@
 
 .resume-terminal .value-desc {
   font-size: 14px;
-  color: rgb(var(--v-moon));
+  color: var(--fg);
   line-height: 1.6;
 }
 
@@ -1615,7 +1658,7 @@
 
 .resume-terminal .about-item {
   font-size: 16px;
-  color: rgb(var(--v-moon));
+  color: var(--fg);
   line-height: 1.8;
   padding-left: 20px;
   position: relative;
@@ -1625,7 +1668,7 @@
   content: "›";
   position: absolute;
   left: 0;
-  color: var(--accent);
+  color: var(--fg);
   font-family: var(--mono);
 }
 
@@ -1824,9 +1867,11 @@
   .resume-terminal main {
     padding: 20px 8px;
   }
-  .resume-terminal .spec-panel {
-    border-left: none;
-    padding: 20px 8px;
+  .resume-terminal .main-title-wrap {
+    max-width: none;
+  }
+  .resume-terminal .quote-block {
+    font-size: 22px;
   }
   /* 히어로 지표가 다섯이 되면서(웹 넷 + 게임 하나) 좁은 화면의 `flex-wrap` 이
      「1 / 2 / 2」 로 갈라졌다 — 첫 줄에 한 칸만 덩그러니 남아 레이아웃이 깨진
@@ -1948,7 +1993,7 @@
   line-height: 1.5;
   /* "옅게" 는 0.5(3.28:1)가 아니라 0.72(5.44:1)로도 충분히 옅다 —
      이 글자는 그림 대신 서 있는 프로젝트 제목이라 읽혀야 한다. */
-  color: rgb(var(--v-moon) / 0.72);
+  color: var(--muted);
   letter-spacing: 0;
 }
 
@@ -1986,7 +2031,7 @@
 .resume-terminal .project-role {
   font-size: 13px;
   line-height: 1.5;
-  color: rgb(var(--v-moon) / 0.8);
+  color: var(--fg-2);
   margin-bottom: 12px;
 }
 
@@ -2003,7 +2048,7 @@
   align-items: baseline;
   gap: 5px;
   font-size: 13px;
-  color: rgb(var(--v-moon) / 0.75);
+  color: var(--muted);
   background: rgb(var(--v-night) / 0.5);
   border: 1px solid rgb(var(--v-wood) / 0.4);
   border-radius: 4px;
@@ -2026,7 +2071,7 @@
   font-size: 13px;
   line-height: 1.5;
   margin-top: 8px;
-  color: rgb(var(--v-moon) / 0.7);
+  color: var(--muted);
 }
 
 .resume-terminal .metric-provisional {
@@ -2076,7 +2121,7 @@
 .resume-terminal .project-link {
   font-family: var(--mono);
   font-size: 12px;
-  color: rgb(var(--v-moon) / 0.85);
+  color: var(--muted);
   border: 1px solid rgb(var(--v-wood) / 0.5);
   border-radius: 4px;
   padding: 4px 9px;
@@ -2153,13 +2198,13 @@
 .resume-terminal .work-date {
   font-family: var(--mono);
   font-size: 12px;
-  color: rgb(var(--v-moon) / 0.7);
+  color: var(--muted);
 }
 
 .resume-terminal .work-desc {
   font-size: 13px;
   line-height: 1.6;
-  color: rgb(var(--v-moon) / 0.75);
+  color: var(--fg);
 }
 
 @media (max-width: 720px) {
@@ -2176,7 +2221,7 @@
   border-top: 1px dashed rgb(var(--v-wood) / 0.45);
   font-size: 13px;
   line-height: 1.6;
-  color: rgb(var(--v-moon) / 0.75);
+  color: var(--fg);
 }
 
 /* ── 개발 기록 ── */
@@ -2211,14 +2256,14 @@
 .resume-terminal .record-title {
   font-size: 15px;
   font-weight: 700;
-  color: rgb(var(--v-paper));
+  color: var(--fg-2);
   margin-bottom: 8px;
 }
 
 .resume-terminal .record-desc {
   font-size: 13px;
   line-height: 1.6;
-  color: rgb(var(--v-moon) / 0.75);
+  color: var(--fg);
 }
 
 /* ── 키보드 초점 ──
@@ -2318,7 +2363,7 @@
   line-height: 1;
   padding: 5px 9px;
   border-radius: 4px;
-  color: rgb(var(--v-moon) / 0.85);
+  color: var(--fg-2);
   background: rgb(var(--v-night) / 0.55);
   border: 1px solid rgb(var(--v-wood) / 0.4);
 }
@@ -2484,6 +2529,8 @@
   .resume-terminal .career-heading,
   .resume-terminal .record-title,
   .resume-terminal .hero-name {
+    /* 종이는 흰 바탕이다. 화면 토큰(--fg/--fg-2)을 여기 쓰면 안 된다 —
+       흰 글자나 옅은 달빛이 그대로 인쇄되어 아무것도 안 남는다. */
     color: #111 !important;
   }
 

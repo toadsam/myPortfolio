@@ -21,7 +21,8 @@
   --border-soft: rgb(var(--v-wood) / 0.26);
   /* 0.62 였을 때 밤하늘 위 대비가 4.37 로 AA(4.5)에 못 미쳤다.
      0.70 이면 5.22 — 섹션 라벨·뱃지가 10~12px 라 여유를 둔다. */
-  --text-muted: rgb(var(--v-moon) / 0.7);
+  /* 0.7(5.22) -> 0.8(6.46). 위 달빛 100%(9.45)와 한 눈에 구분되려면 이만큼 벌어져야 한다. */
+  --text-muted: rgb(var(--v-moon) / 0.8);
   --problem: #ef4444; /* 경고는 의미색이라 마을 팔레트 밖에 둔다 */
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas,
     var(--font-body-kr), monospace;
@@ -29,7 +30,7 @@
     system-ui, sans-serif;
 
   background-color: var(--bg);
-  color: rgb(var(--v-moon));
+  color: #fff;
   font-family: var(--sans);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -50,20 +51,27 @@
 /* Tailwind 회색/흰색 유틸리티를 마을 팔레트로 갈아끼운다.
    `.op-detail .text-white`(0,2,0)가 `.text-white`(0,1,0)를 이긴다 —
    TSX 30여 곳을 일일이 고치는 대신 여기서 한 번에 잡는다. */
+/* 이력서(ResumeTerminal.css)와 같은 세 단계다. 그쪽에서 달빛 하나를 일곱
+   단계 투명도로 쓰다가 무엇도 도드라지지 않았던 것과 같은 문제가 여기에도
+   있었다 — 양피지 0.92 / 달빛 0.92 / 0.78 / 0.7 이 눈으로 구분되지 않는다.
+     읽는 글  → 흰색      (본문·해결 서술)
+     보조     → 달빛 100%  (부제·라벨)
+     약함     → 달빛 80%   (각주·출처)
+   text-gray-400 이 트러블슈팅 problem 문단이라 흰색 쪽으로 올린다. */
 .op-detail .text-white {
-  color: rgb(var(--v-paper));
+  color: #fff;
 }
 .op-detail .text-gray-200 {
-  color: rgb(var(--v-paper) / 0.92);
+  color: #fff;
 }
 .op-detail .text-gray-300 {
-  color: rgb(var(--v-moon) / 0.92);
+  color: rgb(var(--v-moon));
 }
 .op-detail .text-gray-400 {
-  color: rgb(var(--v-moon) / 0.78);
+  color: #fff;
 }
 .op-detail .text-gray-500 {
-  color: rgb(var(--v-moon) / 0.7);
+  color: rgb(var(--v-moon) / 0.8);
 }
 /* 흰 버튼 → 양피지 버튼. 밤하늘 위의 순백은 이력서 어디에도 없다. */
 .op-detail .bg-white {
