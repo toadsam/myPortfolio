@@ -1,5 +1,0 @@
-realtime/src: ['realtime/src/rooms.ts', 'realtime/src/server.ts', 'realtime/src/types.ts']
-frontend 최상위 src 폴더: {'pages': 38, 'components': 23, 'utils': 6, 'assets': 5, 'styles': 5, 'services': 4, 'layouts': 3, 'lib': 3, 'types': 3}
-backend 설정: ['backend/src/main/resources/application-local.example.properties', 'backend/src/main/resources/application-prod.properties', 'backend/src/main/resources/application-test.properties', 'backend/src/main/resources/application.properties', 'backend/src/test/resources/application.properties']
-config/security 파일: ['CorsConfig.java', 'SecurityConfig.java', 'WebMvcStaticConfig.java']
-README: ['README.md', 'frontend/README.md', 'realtime/node_modules/@esbuild/win32-x64/README.md', 'realtime/node_modules/@socket.io/component-emitter/Readme.md', 'realtime/node_modules/@types/cors/README.md']

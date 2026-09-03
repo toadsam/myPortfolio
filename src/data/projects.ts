@@ -231,7 +231,7 @@ export const projects: ProjectData[] = [
       "Docker + Nginx 배포 설정"
     ],
     result:
-      "총학생회가 개발자를 거치지 않고 공지와 정보를 직접 고칠 수 있게 됐습니다. Search Console 기준(검색 유입) 노출 34,200회 · 클릭 1,080회(CTR 3.2%)로, 학생들이 검색을 통해 실제로 들어오고 있습니다.",
+      "총학생회가 개발자를 거치지 않고 공지와 정보를 직접 고칠 수 있게 됐습니다. Search Console 기준(검색 유입, 2025.05~2026.08 16개월) 노출 12,314회 · 클릭 1,694회(CTR 13.8%) · 평균 게재순위 6.7로, 학생들이 검색을 통해 실제로 들어오고 있습니다.",
     nextStep: "알림 기능과 모바일 최적화를 추가할 예정입니다.",
     links: [
       {label: "GitHub", href: "https://github.com/ajouchong-dev/ajouchong-web"}

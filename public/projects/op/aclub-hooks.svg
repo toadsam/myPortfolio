@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 720" width="1680" height="720" role="img" aria-label="aClub 프론트엔드 구조 — 화면마다 따로 부르던 데이터와 권한 체크를 도메인 커스텀 훅과 보호 라우트로 모은 그림">
+  <title>aClub — 화면마다 따로에서 한 번 정의해 재사용으로</title>
+  <desc>왼쪽(Before)은 탐색·상세·마이페이지가 각자 fetch 하고 각자 권한을 분기하던 구조, 오른쪽(After)은 세 화면이 도메인 커스텀 훅(useClubs·useRecruitments·useMypageData)과 axios 모듈을 공유하고 권한은 RequireAuth·AdminRoute 라우트 계층에서 한 번에 처리하는 구조.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1626"/>
+      <stop offset="1" stop-color="#070f1a"/>
+    </linearGradient>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#e2c078" opacity=".8"/>
+    </marker>
+    <marker id="arR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#f87171" opacity=".8"/>
+    </marker>
+    <style>
+      .h   { font: 700 30px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#f3e6c8 }
+      .sub { font: 400 17px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#f3e6c8; opacity:.85 }
+      .pt  { font: 700 19px "Pretendard","Noto Sans KR",system-ui,sans-serif }
+      .bar { font: 600 15px "Pretendard","Noto Sans KR",system-ui,sans-serif }
+      .s   { font: 600 17px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#f3e6c8 }
+      .bh  { font: 700 15px "Pretendard","Noto Sans KR",system-ui,sans-serif }
+      .c   { font: 600 15px ui-monospace,"SFMono-Regular",Menlo,monospace; fill:#f3e6c8 }
+      .p   { font: 400 14px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#f3e6c8; opacity:.68 }
+      .note{ font: 400 15px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#f3e6c8; opacity:.82 }
+      .foot{ font: 400 14px "Pretendard","Noto Sans KR",system-ui,sans-serif; fill:#e2c078; opacity:.72 }
+    </style>
+  </defs>
+
+  <rect width="1680" height="720" fill="url(#bg)"/>
+
+  <text class="h" x="48" y="54">화면마다 따로 → 한 번 정의해 재사용</text>
+  <text class="sub" x="48" y="84">탐색·상세·마이페이지가 같은 데이터를 각자 부르고 권한도 각자 보던 구조를, 도메인 훅 하나와 보호 라우트로 모았다.</text>
+
+  <!-- ══════════ BEFORE ══════════ -->
+  <g transform="translate(48,112)">
+    <rect width="740" height="520" rx="16" fill="#f871710a" stroke="#f8717140"/>
+    <text class="pt" x="22" y="36" fill="#f87171">BEFORE — 화면마다 따로</text>
+
+    <!-- 권한이 화면 안에 흩어져 있다 -->
+    <rect x="22" y="56" width="696" height="46" rx="10" fill="#f871710f" stroke="#f8717145" stroke-dasharray="5 4"/>
+    <text class="bar" x="42" y="85" fill="#f87171">권한 체크가 화면 안에 흩어져 있다 — 한 곳에서 빠뜨리면 그대로 통과한다</text>
+
+    <!-- 화면 3 -->
+    <g>
+      <rect x="22" y="140" width="150" height="68" rx="10" fill="#f3e6c80d" stroke="#f3e6c833"/>
+      <text class="s" x="97" y="180" text-anchor="middle">탐색 · 필터</text>
+      <rect x="22" y="232" width="150" height="68" rx="10" fill="#f3e6c80d" stroke="#f3e6c833"/>
+      <text class="s" x="97" y="272" text-anchor="middle">모집 상세</text>
+      <rect x="22" y="324" width="150" height="68" rx="10" fill="#f3e6c80d" stroke="#f3e6c833"/>
+      <text class="s" x="97" y="364" text-anchor="middle">마이페이지</text>
+    </g>
+
+    <g stroke="#f87171" stroke-width="1.6" opacity=".75" marker-end="url(#arR)" fill="none">
+      <line x1="172" y1="174" x2="206" y2="174"/>
+      <line x1="172" y1="266" x2="206" y2="266"/>
+      <line x1="172" y1="358" x2="206" y2="358"/>
+    </g>
+
+    <!-- 같은 요청 로직이 화면 수만큼 복사돼 있다 -->
+    <g>
+      <rect x="212" y="140" width="270" height="68" rx="10" fill="#f871710f" stroke="#f8717145"/>
+      <text class="c" x="232" y="170">fetch + 로딩 · 에러 상태</text>
+      <text class="p" x="232" y="192">+ 권한 분기</text>
+      <rect x="212" y="232" width="270" height="68" rx="10" fill="#f871710f" stroke="#f8717145"/>
+      <text class="c" x="232" y="262">fetch + 로딩 · 에러 상태</text>
+      <text class="p" x="232" y="284">+ 권한 분기</text>
+      <rect x="212" y="324" width="270" height="68" rx="10" fill="#f871710f" stroke="#f8717145"/>
+      <text class="c" x="232" y="354">fetch + 로딩 · 에러 상태</text>
+      <text class="p" x="232" y="376">+ 권한 분기</text>
+    </g>
+
+    <g stroke="#f87171" stroke-width="1.6" opacity=".6" marker-end="url(#arR)" fill="none">
+      <path d="M482 174 H502 V266 H516"/>
+      <path d="M482 266 H516"/>
+      <path d="M482 358 H502 V266 H516"/>
+    </g>
+
+    <rect x="522" y="140" width="196" height="252" rx="12" fill="#f3e6c80a" stroke="#f3e6c82e"/>
+    <text class="bh" x="620" y="260" text-anchor="middle" fill="#f3e6c8" opacity=".8">API</text>
+    <text class="p" x="620" y="286" text-anchor="middle">동아리 · 모집 · 사용자</text>
+
+    <line x1="22" y1="430" x2="718" y2="430" stroke="#f8717126"/>
+    <text class="note" x="22" y="462">같은 요청이 세 곳에 복사된다 — 한 곳만 고치면 나머지 둘의 상태가 어긋난다.</text>
+  </g>
+
+  <!-- 가운데 화살표 -->
+  <g transform="translate(788,112)">
+    <line x1="26" y1="266" x2="82" y2="266" stroke="#e2c078" stroke-width="2.4" opacity=".85" marker-end="url(#ar)"/>
+    <text class="p" x="54" y="246" text-anchor="middle" fill="#e2c078" opacity=".85">모은다</text>
+  </g>
+
+  <!-- ══════════ AFTER ══════════ -->
+  <g transform="translate(892,112)">
+    <rect width="740" height="520" rx="16" fill="#e2c0780c" stroke="#e2c07845"/>
+    <text class="pt" x="22" y="36" fill="#e2c078">AFTER — 한 번 정의해 재사용</text>
+
+    <!-- 권한은 라우팅 계층에서 한 번 -->
+    <rect x="22" y="56" width="696" height="46" rx="10" fill="#e2c07814" stroke="#e2c07855"/>
+    <text class="bar" x="42" y="85" fill="#e2c078">RequireAuth · AdminRoute — 라우팅 계층에서 한 번에 막는다</text>
+
+    <g>
+      <rect x="22" y="140" width="150" height="68" rx="10" fill="#f3e6c80d" stroke="#f3e6c833"/>
+      <text class="s" x="97" y="180" text-anchor="middle">탐색 · 필터</text>
+      <rect x="22" y="232" width="150" height="68" rx="10" fill="#f3e6c80d" stroke="#f3e6c833"/>
+      <text class="s" x="97" y="272" text-anchor="middle">모집 상세</text>
+      <rect x="22" y="324" width="150" height="68" rx="10" fill="#f3e6c80d" stroke="#f3e6c833"/>
+      <text class="s" x="97" y="364" text-anchor="middle">마이페이지</text>
+    </g>
+
+    <g stroke="#e2c078" stroke-width="1.6" opacity=".8" marker-end="url(#ar)" fill="none">
+      <path d="M172 174 H192 V266 H206"/>
+      <path d="M172 266 H206"/>
+      <path d="M172 358 H192 V266 H206"/>
+    </g>
+
+    <rect x="212" y="140" width="270" height="252" rx="12" fill="#e2c07812" stroke="#e2c07855"/>
+    <text class="bh" x="232" y="170" fill="#e2c078">도메인 커스텀 훅</text>
+    <line x1="232" y1="184" x2="462" y2="184" stroke="#e2c07833"/>
+    <text class="c" x="232" y="216">useClubs</text>
+    <text class="c" x="232" y="248">useRecruitments</text>
+    <text class="c" x="232" y="280">useMypageData</text>
+    <text class="p" x="232" y="312">… 재사용 데이터 훅 6+</text>
+    <text class="p" x="232" y="358">요청 · 상태를 여기 한 곳에</text>
+
+    <line x1="482" y1="266" x2="516" y2="266" stroke="#e2c078" stroke-width="1.6" opacity=".8" marker-end="url(#ar)" fill="none"/>
+
+    <rect x="522" y="140" width="196" height="252" rx="12" fill="#f3e6c80a" stroke="#f3e6c82e"/>
+    <text class="bh" x="542" y="170" fill="#f3e6c8" opacity=".8">axios 모듈</text>
+    <line x1="542" y1="184" x2="698" y2="184" stroke="#f3e6c826"/>
+    <text class="c" x="542" y="216">auth</text>
+    <text class="c" x="542" y="248">club</text>
+    <text class="c" x="542" y="280">recruitment</text>
+    <text class="c" x="542" y="312">user</text>
+
+    <line x1="22" y1="430" x2="718" y2="430" stroke="#e2c07826"/>
+    <text class="note" x="22" y="462">요청 · 상태가 훅 한 곳에 모인다 — 화면 셋을 프론트 3인이 동시에 만들 수 있다.</text>
+  </g>
+
+  <text class="foot" x="48" y="676">근거 — 저장소 구조: 도메인 커스텀 훅 6+ · React Router 보호 라우트(RequireAuth · AdminRoute) · axios 모듈 4(auth · club · recruitment · user)</text>
+</svg>

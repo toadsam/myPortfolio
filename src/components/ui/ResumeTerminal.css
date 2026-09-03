@@ -294,22 +294,24 @@
   width: fit-content;
 }
 
-/* ── 이름: 등불빛 ──
-   화면 왼쪽 위에 실제로 걸려 있는 등불이 광원이다.
-   글자는 등불 쪽이 따뜻하고 멀어질수록 달빛으로 식는다. 각도(108deg)는
-   등불의 위치에서 나온 값이지 장식용 그라디언트가 아니다. */
+/* ── 이름: 흰색 단색 ──
+   예전엔 등불(#ff9d38) → 간판금 → 양피지 → 달빛(#a9bdd6) 4색 그라디언트를
+   108deg 로 깔았다. 등불 위치에서 나온 값이라 근거는 있었지만, 이름 넉 자에
+   색이 넷이면 글자마다 다른 색이 되어 한 덩어리로 안 읽힌다.
+
+   단색으로 바꾸면서 간판금(#e2c078)을 먼저 대 봤는데 132px 로 키우니 채도
+   낮은 노랑이 그대로 드러나 바래 보였다. 작은 라벨에서 멀쩡하던 색이 크게
+   쓰면 무너지는 경우다 — 강조색은 면적이 커질수록 채도가 눈에 띈다.
+
+   흰색으로 간다. 배경이 짙은 남색 숲이라 대비가 가장 크고, 색을 안 쓰는 만큼
+   뒤에 깔린 등불 후광(::before)의 따뜻함이 오히려 살아난다. 간판금은 지표·
+   섹션 라벨 같은 작은 자리에 그대로 남는다.
+
+   background-clip: text 를 통째로 걷어냈다. `background` 만 지우고 clip 을
+   남기면 배경 상자가 그대로 칠해지고, `-webkit-text-fill-color: transparent`
+   를 남기면 WebKit 에서 글자가 아예 안 보인다 — 셋은 한 세트다. */
 .resume-terminal .hero-name {
-  background: linear-gradient(
-    108deg,
-    rgb(var(--v-lantern)) 0%,
-    rgb(var(--v-gold)) 22%,
-    rgb(var(--v-paper)) 52%,
-    rgb(var(--v-moon)) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  color: #fff;
 }
 
 /* 글자 뒤에 깔리는 등불 후광. 그라디언트 글자에는 text-shadow 를 쓸 수 없어
@@ -2531,15 +2533,11 @@
     color: #333 !important;
   }
 
-  /* 히어로 이름은 화면에서 등불 그라디언트를 background-clip:text 로 입는다.
-     글자색이 transparent 라서, 위의 `color: #111` 만으로는 종이에 아무것도 안
-     찍힌다 — 배경을 걷어내고 채움색을 되돌려야 한다. */
-  .resume-terminal .hero-name {
-    background: none !important;
-    -webkit-text-fill-color: #111 !important;
-    text-shadow: none !important;
-  }
-
+  /* 예전엔 여기서 `background: none` 과 `-webkit-text-fill-color: #111` 로
+     등불 그라디언트를 걷어내야 했다. 화면 글자색이 transparent 라 위의
+     `color: #111` 만으로는 종이에 아무것도 안 찍혔기 때문이다.
+     지금은 화면도 단색이라 그 보정이 필요 없다 — 위 규칙 하나로 끝난다.
+     이름 뒤 등불 후광(::before)은 종이에서 회색 얼룩이 되므로 계속 숨긴다. */
   .resume-terminal .hero-name::before,
   .resume-terminal .hero-name::after {
     display: none !important;
