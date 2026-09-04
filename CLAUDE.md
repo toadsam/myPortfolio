@@ -19,6 +19,7 @@ npm run format        # prettier --write
 npm run check-format  # prettier -c (CI-safe check)
 npm run optimize      # scripts/optimize-glb.mjs — compress GLB models in public/models
 npm run atelier       # 의뢰 공방 직군 에이전트 (no args = list commissions)
+npm run resume:pdf    # scripts/build-public-resume-pdf.mjs — src/data/resume.ts 에서 A4 2장 PDF 를 찍는다 (--private 는 전화번호 포함 사본도)
 ```
 
 Backend:
