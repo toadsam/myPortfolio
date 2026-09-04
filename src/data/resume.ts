@@ -433,7 +433,7 @@ export const mainProjects: MainProjectCard[] = [
     // 첫 커밋 2026-06-26 "기본적인 세팅 추가". 2026-06 이후 커밋은 전부 본인.
     period: "2026.06 ~ 진행 중",
     team: "개인 개발",
-    role: "Next.js 프론트 · FastAPI 백엔드 · 관리자 페이지 · OpenAI NPC(규칙 폴백) · 3D 성능 예산",
+    role: "Next.js 프론트 · FastAPI 백엔드 · 관리자 페이지 · OpenAI NPC(규칙 폴백) · Claude Agent SDK 공방 · 3D 성능 예산",
     // 사용자 수가 없는 프로젝트다. FestFlow 에서 "코드량은 능력으로 읽히지
     // 않는다" 며 뺀 기준이 있으므로, **판단의 흔적**(첫 화면을 3D 없이 215KB 로
     // 지킨 것)을 1순위에 두고 API·테스트 수는 규모 근거로 뒤에 둔다.
@@ -444,6 +444,7 @@ export const mainProjects: MainProjectCard[] = [
       {value: "258", label: "백엔드 테스트"}
     ],
     metricsSource: "저장소 소스 기준 · 첫 화면 무게는 빌드 청크 실측 (2026.09)",
+    richId: "village-portfolio",
     image: "/projects/village-portfolio/card.webp",
     // 배포 주소가 정해지면 여기 "사이트" 링크를 하나 더 단다. 지금은 상대 경로라
     // 어디에 올라가든 같은 사이트의 마을로 간다.
@@ -514,7 +515,7 @@ export const mainProjects: MainProjectCard[] = [
       {label: "GitHub", href: "https://github.com/toadsam/Ajou_MuscleUp"},
       {
         label: "시연 영상",
-        href: "https://www.youtube.com/watch?v=y6pbAoxveQM"
+        href: "https://youtu.be/0X-BIADC1eQ"
       }
     ]
   },
@@ -554,9 +555,9 @@ export const mainProjects: MainProjectCard[] = [
     image: "/projects/aclub-cover.webp",
     links: [
       {label: "사이트", href: "https://aclub.co.kr/"},
-      {label: "GitHub (2026)", href: "https://github.com/aClub2026/FE"},
+      {label: "GitHub (2026 · 총괄)", href: "https://github.com/aClub2026/FE"},
       {
-        label: "GitHub (2025)",
+        label: "GitHub (2025 · 팀원)",
         href: "https://github.com/DBProject-24-2/DB_Project_FE"
       }
     ]
@@ -577,11 +578,13 @@ export const mainProjects: MainProjectCard[] = [
       "총학생회가 개발자 없이 직접 고칠 수 있게 만든, 흩어진 학생회 정보 통합 서비스",
     category: "web",
     status: "운영중",
-    tags: ["운영자 도구", "정보 구조", "모바일 개편", "Analytics"],
+    tags: ["운영자 도구", "대여·링크허브", "모바일 개편", "Spring Boot API"],
     period: "2025.03 ~ 진행 중",
-    team: "총학생회 IT · 프론트 3인",
-    // 득근득근과 같은 「1차 → 2차」 문법. 두 프로젝트가 같은 방향으로 자랐다.
-    role: "1차 Frontend·정보 구조 설계 → 2차 모바일 동선 개편 · 운영자용 관리 화면 구축",
+    // 2026-09-04 사실 대조: 2025 는 프론트 3인 중 한 명(화면 일부), 2026.04 부터는
+    // 혼자 맡아 프론트·백엔드 API·배포를 다 했다(org 저장소 두 곳의 PR 이 증거).
+    // "1차/2차" 대신 연도로 적는다 — 시점이 곧 역할의 경계라서.
+    team: "2025 프론트 3인 → 2026 단독 담당",
+    role: "2025 프론트 화면 일부 → 2026 단독 담당: UI 전면 개편 · 대여사업 · 링크허브 · 관리자 화면 · Spring Boot API",
     // Search Console 실측. **검색 유입 기준**이라는 단서가 라벨에 반드시 붙어야
     // 한다 — 전체 방문자로 읽히면 과장이 된다.
     //
@@ -605,11 +608,22 @@ export const mainProjects: MainProjectCard[] = [
       "Google Search Console · 2025.05~2026.08(16개월) · 검색 유입 기준",
     richId: "ajouchong",
     image: "/projects/ajouchong.webp",
+    // 2026 작업은 두 org 저장소 모두 main 이 아니라 develop 에 있다. 심사자가
+    // 저장소 첫 화면(main)만 보면 2025 커밋 5개밖에 못 찾는다 — 그래서 PR 을 직접
+    // 건다. #36 전면 디자인 개편(+2,547줄), #70 대여·링크 API(+644줄), 둘 다 본인 PR.
     links: [
       {label: "사이트", href: "https://ajouchong.com"},
       {
         label: "GitHub",
         href: "https://github.com/ajouchong-dev/ajouchong-web"
+      },
+      {
+        label: "개편 PR (프론트 · 2026)",
+        href: "https://github.com/ajouchong-dev/ajouchong-web/pull/36"
+      },
+      {
+        label: "대여·링크 API PR (백엔드 · 2026)",
+        href: "https://github.com/ajouchong-dev/ajouchong/pull/70"
       }
     ]
   },
@@ -719,28 +733,34 @@ export const mainProjects: MainProjectCard[] = [
   },
   {
     id: "otherside-vr",
+    // 상세(원페이지)는 2026-09-03 에 PDF 43–48쪽 + 저장소 코드로 새로 만들었다.
+    richId: "otherside-vr",
     title: "The Other Side (VR)",
     subtitle: "XR Interaction Toolkit 기반 VR 공포 퍼즐 탈출 게임",
     category: "ar",
     status: "완료",
     tags: ["VR", "XR", "Unity"],
+    // 기간·팀은 포트폴리오 PDF(정재훈이력서긴버전, 43쪽 개요 · 5쪽 연표) 기준
+    // (2026-09-03 본인 확인). 팀 규모 4인은 본인 확인(2026-09-04) — AR 과 같은 팀원.
+    period: "2025.04 ~ 2025.06",
+    team: "4인 팀 (AR 과 같은 팀원)",
     role: "AI 몬스터 시스템 · 감지 로직 · 중앙 제어 구조 설계",
     image: "/projects/otherside-vr.webp",
-    links: [
-      {
-        label: "플레이 영상",
-        href: "https://www.youtube.com/watch?v=sK9OoBNCVvc"
-      },
-      {label: "GitHub", href: "https://github.com/kbwon/IMP_VR"}
-    ]
+    links: [{label: "GitHub", href: "https://github.com/kbwon/IMP_VR"}]
   },
   {
     id: "monsterpoint-ar",
+    // 상세(원페이지)는 2026-09-03 에 PDF 49–55쪽 + 저장소 코드로 새로 만들었다.
+    richId: "monsterpoint-ar",
     title: "INTO MONSTER POINT (AR)",
     subtitle: "AR Plane 스캔 기반 전투 공간 생성 슈터 데모 프로젝트",
     category: "ar",
     status: "완료",
     tags: ["AR", "Unity", "Shooter"],
+    // 기간은 포트폴리오 PDF(49쪽 개요 · 5쪽 연표) 기준 (2026-09-03 본인 확인).
+    // 팀 규모는 PDF 에 없어 비워 둔다 — 지어내지 않는다.
+    period: "2025.03 ~ 2025.04",
+    team: "4인 팀 (VR 과 같은 팀원)",
     role: "무기 제작 · 스폰 시스템 · 게임 루프 설계",
     image: "/projects/monsterpoint-ar.webp",
     links: [
@@ -756,6 +776,12 @@ export const mainProjects: MainProjectCard[] = [
     // 2D 러너고, 이건 Unity 3D 액션 어드벤처다. 저장소도 Ajou_Mini_Game /
     // Ajou_IndiGame 으로 따로다 — 이름이 비슷해 한 번 섞을 뻔했다.
     id: "ajou-indigame",
+    // **`richId: "ajou-adventure"` 를 달지 말 것.** projects.ts 의 `ajou-adventure` 는
+    // 이 카드가 아니라 **아주분투**(Phaser 2D 러너)의 상세다 — 이름이 비슷해
+    // 2026-09-03 에 실제로 잘못 연결했다가 상세를 열어 보고 되돌렸다. 아주대탐험의
+    // 원페이지는 같은 날 `ajou-indigame` 으로 따로 만들었다(PDF 27–34쪽 +
+    // 저장소 코드, 그림은 마을 전시실이 쓰던 /projects/ajou-adventure/ 의 것).
+    richId: "ajou-indigame",
     title: "아주대탐험",
     subtitle:
       "1인칭↔탑다운 시점 전환과 랜덤 스킬 성장을 얹은 Unity 3D 액션 어드벤처",

@@ -11,6 +11,561 @@ import type {RichProject} from "./shared";
 //   - demo.live: 실제 배포 URL이 있으면 추가 (지금은 repo만).
 //   - meta '기간': 실제 진행 기간으로 수정.
 export const RICH_DATA: Record<string, RichProject> = {
+  // ═══════════════ AI 포트폴리오 마을 (이 사이트 · platform · 개인) ═══════════════
+  // 사실 출처: docs/PORTFOLIO_INTERVIEW_STORIES.md(STAR 6편) · docs/VILLAGE_OVERHAUL_REPORT.md
+  // (전/후 표) · CLAUDE.md(첫 화면 215.6KB · 87 GLB 20.7MB · 견적 클램프) ·
+  // backend/app/services/village_service.py(밝기 규칙). 사용자 수·방문자 수는
+  // 계측이 없어 어디에도 적지 않는다 — testimonial · feedbackMap 도 그래서 비어 있다.
+  "village-portfolio": {
+    tagline: "LIVING PORTFOLIO · NEXT.JS + R3F + FASTAPI (SOLO)",
+    heroImage: {
+      src: "/projects/village-portfolio/village.webp",
+      label: "3D 마을 광장 — 관리자 기록이 건물 불빛으로",
+      ratio: "16/9"
+    },
+    problemShot: {
+      src: "/projects/village-portfolio/admin.webp",
+      label: "관리자 페이지 — 오늘의 활동 입력",
+      ratio: "16/9"
+    },
+    gallery: [
+      {
+        src: "/projects/village-portfolio/atelier.webp",
+        label: "의뢰 공방 3D 방 — 식구 4명이 릴레이로 묻는다",
+        ratio: "16/9"
+      },
+      {
+        src: "/projects/village-portfolio/resume.webp",
+        label: "이력서 화면 — 지금 읽고 있는 이 페이지",
+        ratio: "16/9"
+      },
+      {
+        src: "/projects/village-portfolio/admin.webp",
+        label: "관리자 배전반 — 활동 입력과 마을 반응 미리보기",
+        ratio: "16/9"
+      }
+    ],
+    tldr: [
+      {
+        k: "무엇을",
+        v: "관리자가 적은 오늘의 활동이 3D 마을의 불빛과 AI NPC 대화로 바뀌는 포트폴리오 사이트 (이 사이트)"
+      },
+      {
+        k: "왜",
+        v: "정적 포트폴리오는 갱신이 끊기고, 읽는 사람이 질문할 수 없다"
+      },
+      {
+        k: "결과",
+        v: "3D 다운로드 −44% · 첫 화면 3D 모델 20.7MB→0 · 입장 최악 프레임 7,325→233ms"
+      },
+      {
+        k: "내 역할",
+        v: "프론트·백엔드·관리자·3D 성능 예산 전부 (1인, Claude Code 와 짝으로)"
+      }
+    ],
+    demo: {live: "/village", repo: "https://github.com/toadsam/myPortfolio"},
+    meta: [
+      {label: "기간", value: "2026.06 ~ 진행 중"},
+      {label: "팀", value: "개인 개발"},
+      {
+        label: "스택",
+        value: "Next.js 16 · React Three Fiber · FastAPI · SQLite · OpenAI API"
+      },
+      {label: "배포", value: "배포 준비 중 (주소 미정)"},
+      {
+        label: "AI",
+        value:
+          "제품: OpenAI NPC(규칙 폴백) · Claude Agent SDK 공방 에이전트 4직군 / 과정: Claude Code 짝 개발"
+      }
+    ],
+    heroScreen: {
+      title: "VILLAGE · TODAY",
+      kind: "stats",
+      stats: [
+        {n: "27동", l: "건물 · 각 1명의 안내 NPC"},
+        {n: "63", l: "공개·관리자 API"},
+        {n: "258", l: "백엔드 테스트"},
+        {n: "0", l: "첫 화면 3D 모델"}
+      ]
+    },
+    impact: [
+      {n: "−44%", l: "3D 다운로드 54.0→30.3MB"},
+      {n: "215 KB", l: "첫 화면 JS · 3D 모델 0개"},
+      {n: "233 ms", l: "입장 최악 프레임 (7,325ms에서)"}
+    ],
+    metricsNote:
+      "빌드 산출물 크기와 Playwright 계측(Intel Arc, 1280×800) · 2026.08~09 · 방문자 수는 계측하지 않았다",
+    features: [
+      {
+        t: "활동 → 마을 상태",
+        d: "커밋·공부·코딩·운동 기록이 건물 밝기 4단계와 NPC 기분으로"
+      },
+      {
+        t: "AI NPC 대화 + 규칙 폴백",
+        d: "OpenAI 로 대사 생성, 키가 없거나 실패하면 규칙 대사로 — 서비스가 멈추지 않는다"
+      },
+      {
+        t: "NPC 관계 사회",
+        d: "마주침의 결과는 규칙이 정하고 모델은 대사만 쓴다 · 기억·뒷담화·부탁"
+      },
+      {
+        t: "의뢰 공방",
+        d: "식구 4명이 릴레이로 묻는 설문 · 견적은 규칙 기준선의 0.6~1.8× 안에서만"
+      },
+      {
+        t: "이력서 모드",
+        d: "채용 담당자용 단일 스크롤 · 3D 없이 별도 라우트"
+      },
+      {
+        t: "성능 예산",
+        d: "실광원 풀 고정 · 텍스처 VRAM 실측표 · 배치 정합성 검사 15종"
+      },
+      {
+        t: "직군 에이전트 4명 (Claude Agent SDK)",
+        d: "기획·디자인·프론트·백엔드가 실제 파일을 쓴다 · 진행 권한은 사람의 게이트 함수 하나"
+      }
+    ],
+    problem:
+      "정적 포트폴리오는 한 번 만들면 갱신이 끊기고, 읽는 사람은 궁금해도 물어볼 수 없다. 활동이 그날그날 화면에 반영되고, 방문자가 건물마다 있는 NPC 에게 물어볼 수 있는 구조가 필요했다. 동시에 첫 화면을 여는 채용 담당자에게 20MB 짜리 3D 를 내려받게 할 수는 없었다.",
+    research: {
+      quotes: [
+        {
+          q: "인트로가 살아 있는 마을 위의 오버레이였다. 인트로를 읽으려는 모든 방문자가 87개 GLB(20.7MB)를 내려받았다.",
+          who: "설계 메모 (CLAUDE.md · 영어 원문을 옮김)"
+        },
+        {
+          q: "화면 라벨 74개를 숨기자 8.9→42.6fps. 그런데 원복해서 다시 재니 아무것도 안 바꿨는데 47.9fps 였다.",
+          who: "마을 오버홀 보고서 §6 · 측정이 나를 속였다"
+        }
+      ],
+      stat: {
+        n: "15종",
+        l: "커밋 전 배치 정합성 검사 (충돌 0쌍 · 보행 도달 26/26동)"
+      }
+    },
+    hypothesis:
+      "“활동이 화면을 바꾸고 방문자가 물어볼 수 있으면 포트폴리오는 살아 있다 — 단, 첫 화면은 3D 한 조각도 싣지 않아야 채용 담당자가 끝까지 읽는다.”",
+    process: [
+      {t: "마을 배치", d: "육각 방위 원반 섬 · 검사 15종"},
+      {t: "데이터 파이프라인", d: "관리자 → village_service → 마을"},
+      {t: "NPC 사회", d: "규칙이 결과 · 모델은 대사"},
+      {t: "의뢰 공방", d: "릴레이 설문 · 견적 클램프"},
+      {t: "성능 예산", d: "광원 풀 · VRAM · 라우트 분리"}
+    ],
+    architecture: [
+      {
+        tag: "Frontend",
+        name: "Next.js 16 · 3 라우트",
+        desc: "/ (0 GLB) · /village (R3F) · /resume"
+      },
+      {
+        tag: "3D",
+        name: "React Three Fiber",
+        desc: "건물 27동 · 히트박스만 레이캐스트 · 광원 풀"
+      },
+      {
+        tag: "Backend",
+        name: "FastAPI · 63 엔드포인트",
+        desc: "village_service · chat_service · commission_service"
+      },
+      {
+        tag: "Data",
+        name: "SQLite (SQLAlchemy)",
+        desc: "DailyActivity · NpcMemory · Commission"
+      },
+      {
+        tag: "AI",
+        name: "OpenAI API",
+        desc: "NPC 대사 · 견적 초안 — 전부 규칙 폴백 있음"
+      },
+      {
+        tag: "Agents",
+        name: "Claude Agent SDK · 공방 3단계",
+        desc: "4직군이 산출물을 쓴다 · can_use_tool 샌드박스 · 게이트 테스트 36"
+      },
+      {
+        tag: "Tooling",
+        name: "Playwright · pytest",
+        desc: "헤드리스 렌더 계측 · 순수 로직 258 테스트"
+      }
+    ],
+    diagrams: [
+      {
+        title: "활동이 마을이 되는 길",
+        viewBox: [1180, 470],
+        caption:
+          "쓰는 쪽은 관리자(와 의뢰 공방 접수) 뿐이고, 마을·이력서·공방은 읽기만 한다. 규칙(village_service)이 상태를 정하고 모델(chat_service)은 그 위에 말만 얹는다 — 모델이 죽어도 마을은 켜져 있다.",
+        groups: [
+          {label: "쓰는 쪽", x: 16, y: 40, w: 300, h: 376},
+          {label: "FastAPI", x: 400, y: 40, w: 380, h: 376, dashed: true},
+          {label: "보는 쪽 (Next.js)", x: 864, y: 40, w: 300, h: 376}
+        ],
+        nodes: [
+          {
+            id: "adm",
+            label: "관리자 페이지",
+            note: "오늘의 활동 · 코딩테스트 · CS 노트",
+            x: 34,
+            y: 78,
+            w: 264,
+            h: 76
+          },
+          {
+            id: "gh",
+            label: "GitHub 동기화",
+            note: "커밋 · repo (토큰 없으면 건너뜀)",
+            x: 34,
+            y: 190,
+            w: 264,
+            h: 76
+          },
+          {
+            id: "atl",
+            label: "의뢰 공방 접수",
+            note: "유일한 외부 쓰기 · 허니팟 · 리밋",
+            x: 34,
+            y: 302,
+            w: 264,
+            h: 76
+          },
+          {
+            id: "vs",
+            label: "village_service",
+            note: "활동 → 건물 밝기 4단계 · NPC 기분",
+            x: 420,
+            y: 78,
+            w: 340,
+            h: 84,
+            accent: true
+          },
+          {
+            id: "cs",
+            label: "chat_service",
+            note: "OpenAI 대사 · 실패·무키면 규칙 폴백",
+            x: 420,
+            y: 196,
+            w: 340,
+            h: 84
+          },
+          {
+            id: "db",
+            label: "SQLite",
+            note: "DailyActivity · NpcMemory · Commission",
+            x: 420,
+            y: 318,
+            w: 340,
+            h: 76
+          },
+          {
+            id: "vil",
+            label: "3D 마을",
+            note: "R3F · 87 GLB · 광원 풀",
+            x: 882,
+            y: 78,
+            w: 264,
+            h: 76
+          },
+          {
+            id: "res",
+            label: "이력서",
+            note: "3D 0개 · 215 KB",
+            x: 882,
+            y: 190,
+            w: 264,
+            h: 76
+          },
+          {
+            id: "ate",
+            label: "공방 3D 방",
+            note: "GLB 5종 1.7 MB · 릴레이 설문",
+            x: 882,
+            y: 302,
+            w: 264,
+            h: 76
+          }
+        ],
+        edges: [
+          {from: [298, 116], to: [420, 116], label: "활동 저장"},
+          {from: [298, 228], to: [420, 134], bendX: 360, label: "커밋 수"},
+          {from: [298, 340], to: [420, 356], label: "의뢰"},
+          {from: [590, 162], to: [590, 196], kind: "double"},
+          {from: [590, 280], to: [590, 318], kind: "double"},
+          {from: [760, 120], to: [882, 116], label: "밝기 · 기분"},
+          {from: [760, 238], to: [882, 228], label: "NPC 대사", kind: "dashed"},
+          {from: [760, 356], to: [882, 340], label: "견적 · 진행"}
+        ]
+      }
+    ],
+    decisions: [
+      {
+        area: "첫 화면",
+        pick: "3D 없는 별도 라우트",
+        why: "인트로를 읽는 모든 방문자가 20.7MB 를 받고 있었다 · hover 때만 마을을 미리 받는다",
+        alt: "마을 위 오버레이 인트로 (모두가 3D 다운로드)"
+      },
+      {
+        area: "NPC 대사",
+        pick: "OpenAI + 규칙 폴백",
+        why: "키가 없거나 호출이 실패해도 NPC 가 답한다 · 실패가 방문자에게 보이지 않음",
+        alt: "모델 실패를 그대로 노출"
+      },
+      {
+        area: "클릭 판정",
+        pick: "투명 히트박스만 레이캐스트",
+        why: "GLB 메시 수천 개를 매 프레임 검사하지 않는다 · 보이지 않는 메시도 판정된다",
+        alt: "GLB 메시에 직접 핸들러"
+      },
+      {
+        area: "밤 조명",
+        pick: "상주 광원 풀 (개수 고정)",
+        why: "광원 개수가 바뀔 때마다 전 재질 셰이더 재컴파일 3초 · 개수가 많은 건 실측상 거의 공짜",
+        alt: "가짜 빛으로 개수 줄이기 (화질 희생)"
+      },
+      {
+        area: "견적",
+        pick: "규칙 기준선의 0.6~1.8× 클램프",
+        why: "모델의 숫자를 그대로 손님에게 보이면 책임질 수 없는 금액이 나간다",
+        alt: "모델 견적 신뢰"
+      },
+      {
+        area: "에이전트 권한",
+        pick: "진행은 게이트 함수 하나 · 모델은 review 까지",
+        why: "'끝까지 가지 마라' 를 프롬프트로 부탁하면 언젠가는 간다 · 순수 함수라 테스트 36개가 잠근다",
+        alt: "프롬프트로 자제 요청 (언젠가 어긴다)"
+      },
+      {
+        area: "개발 방식",
+        pick: "Claude Code 와 짝 · 계획 승인 뒤 착수",
+        why: "판단 기준과 함정을 CLAUDE.md 291줄에 적어 두면 다음 세션이 같은 실수를 안 한다 · 실측·검증은 사람이 쥔다",
+        alt: "혼자 전부 (속도 ↓) 또는 AI 에 전권 (검증 ↓)"
+      }
+    ],
+    coreCode: [
+      {
+        filename: "backend/app/services/village_service.py",
+        caption:
+          "활동 → 점수 → 밝기 4단계. 규칙이 상태를 정한다 (실제 코드 발췌)",
+        highlightLines: [6, 8, 10],
+        lines: [
+          "commit_score = min(activity.github_commits * 18, 100)",
+          "study_score = min(activity.study_minutes // 2 + len(activity.study_topics or []) * 8, 100)",
+          "workout_score = min(activity.workout_minutes * 2, 100) if activity.workout_done else 0",
+          "",
+          "def _light_for_score(score: int) -> str:",
+          "    if score <= 0:",
+          '        return "dark"',
+          "    if score < 35:",
+          '        return "dim"',
+          "    if score < 75:",
+          '        return "normal"',
+          '    return "bright"'
+        ]
+      },
+      {
+        filename: "src/app/page.tsx",
+        caption:
+          "hover 때 마을을 미리 받는다 — prefetch 는 라우트 껍질만 가져오므로 씬 청크는 따로 import",
+        highlightLines: [2],
+        lines: [
+          'router.prefetch("/village");',
+          'void import("@/components/village/VillageScene");'
+        ]
+      },
+      {
+        filename: "src/components/village/LightPool.tsx",
+        caption:
+          "끄는 것은 intensity 0 이지 visible=false 가 아니다 — three 는 안 보이는 광원을 개수에서 빼서 재컴파일이 되돌아온다",
+        highlightLines: [3],
+        lines: [
+          "if (!slot) {",
+          "  // **끄는 것은 intensity 0 이지 visible=false 가 아니다** (위 주석 참고)",
+          "  light.intensity = 0;",
+          "  continue;",
+          "}",
+          "light.color.set(slot.req.color);",
+          "light.intensity = slot.req.intensity;"
+        ]
+      },
+      {
+        filename: "backend/app/agents/runner.py",
+        caption:
+          "샌드박스는 이 네 줄이 한 세트다 — 하나만 바꾸면 can_use_tool 이 조용히 건너뛰어진다 (실제 코드 발췌)",
+        highlightLines: [2, 3, 5, 6],
+        lines: [
+          "# ↓ 이 네 줄이 세트다. 하나만 바꾸면 경로 검사가 무력화된다(파일 상단 주석 참고).",
+          '"permission_mode": "default",',
+          '"allowed_tools": list(_ALLOWED_TOOLS),',
+          '"disallowed_tools": list(_DISALLOWED),',
+          '"can_use_tool": _build_guard(root),',
+          '"setting_sources": [],',
+          '"max_turns": settings.agent_max_turns,'
+        ]
+      }
+    ],
+    work: [
+      {
+        g: "프론트",
+        items: [
+          "3 라우트 분리 (첫 화면 0 GLB)",
+          "R3F 마을 · 히트박스 픽킹 · 광원 풀"
+        ]
+      },
+      {
+        g: "백엔드",
+        items: [
+          "FastAPI 63 엔드포인트",
+          "village_service · NPC 관계 규칙 · 견적 클램프"
+        ]
+      },
+      {
+        g: "운영 도구",
+        items: ["관리자 배전반 (활동 입력)", "GLB 텍스처 WebP 수술 스크립트"]
+      },
+      {
+        g: "검증",
+        items: [
+          "pytest 258 (순수 로직)",
+          "Playwright 헤드리스 렌더 계측 · 배치 검사 15종"
+        ]
+      },
+      {
+        g: "AI 협업",
+        items: [
+          "Claude Agent SDK 4직군 에이전트 · 게이트 · can_use_tool 샌드박스",
+          "개발은 Claude Code 와 짝으로 — 계획 승인 → 실측 → 검증은 사람이 · CLAUDE.md 291줄"
+        ]
+      }
+    ],
+    challenges: [
+      {
+        title: "첫 접속에 빈 하늘만 수 초 — 3D 모델 54MB",
+        problem:
+          "서빙 GLB 합계 54.0MB 의 약 8할이 내장 JPEG 텍스처였다. 지오메트리는 이미 Draco 압축이라 더 줄일 게 없었고, 표준 도구(gltf-transform)는 하위 라이브러리가 이 환경에서 깨져 있었다.",
+        solution:
+          "GLB 컨테이너를 직접 열어 이미지 청크만 WebP 로 바꾸는 스크립트를 만들었다(노멀 q92 · 그 외 q85 · 원본의 0.97배보다 크면 원본 유지). 지오메트리는 1바이트도 건드리지 않아 54.0→30.3MB(−44%), 헤드리스 A/B 캡처로 화질 무손실 확인. VRAM 283MB 는 그대로라는 한계도 함께 적었다.",
+        code: {
+          filename: "scripts/compress-glb-webp.mjs",
+          lines: [
+            "// ② 더 작아진 것만 채택",
+            "const webp = readFileSync(j.dst);",
+            "const bv = json.bufferViews[json.images[j.i].bufferView];",
+            "if (webp.length < bv.byteLength * 0.97) replaced.set(j.i, webp);"
+          ]
+        }
+      },
+      {
+        title: "마을 입장 렉 3초 — 처음 지목한 범인이 틀렸다",
+        problem:
+          "라벨 74개를 숨기자 8.9→42.6fps 라 라벨을 범인으로 잡았다. 그런데 원복해서 다시 재니 아무것도 안 바꿨는데 47.9fps — 처리 효과가 아니라 시간 효과였다. 번갈아 3라운드 재니 차이가 잡음으로 사라졌다.",
+        solution:
+          "측정을 고치고 프레임마다 광원 수·셰이더 프로그램 수를 함께 기록하자 상관이 보였다. 광원이 하나 늘 때마다 셰이더 프로그램이 19개씩 늘고 3초 멈춤이 왔다 — three 는 광원 개수가 바뀌면 전 재질을 재컴파일한다. 개수를 줄이는 대신 상주 광원 풀로 고정했다(광원 11 · 프로그램 57 고정).",
+        perfAfter: true
+      },
+      {
+        title: "첫 화면이 20.7MB 짜리 3D 를 내려받고 있었다",
+        problem:
+          "인트로가 살아 있는 마을 위의 오버레이였다. 인트로만 읽으려는 방문자도 GLB 87개(20.7MB)를 받았다. 이를 피하려던 우회(hover 때 씬 켜기 · 정적 배경 · 자리 채우기 div)는 전부 구조를 덧대는 것이었고, 그중 하나는 씬을 빼자 높이가 없는 section 이 65px 로 접혀 첫 화면을 통째로 깨뜨렸다.",
+        solution:
+          "무게를 플래그가 아니라 라우팅 속성으로 만들었다 — 착륙장·마을·이력서를 세 라우트로 갈라 첫 화면에는 three.js 를 한 줄도 싣지 않는다(JS 215.6KB · GLB 0). 마을 표에 마우스를 올리면 prefetch 와 씬 import 두 줄로 미리 받는다(prefetch 만으로는 라우트 껍질 5개 약 300KB 만 오고 씬 청크는 안 온다). 이름 한 줄을 위해 이력서 모듈을 import 했더니 첫 화면이 216→221KB 가 된 것도 잡아, 신원만 hero.ts 로 분리했다.",
+        code: {
+          filename: "src/app/page.tsx",
+          lines: [
+            "const prepareVillage = useCallback(() => {",
+            '  router.prefetch("/village");',
+            '  void import("@/components/village/VillageScene");',
+            "}, [router]);"
+          ]
+        }
+      },
+      {
+        title: "에이전트가 4분 일하고 빈손으로 끝났다",
+        problem:
+          "Claude Agent SDK 의 can_use_tool 은 문자열 프롬프트를 거부해 AsyncIterable 로 바꿨는데, 한 번 yield 하고 끝나면 SDK 가 stdin 을 닫는다. 권한 승인 응답이 그 채널로 되돌아오기 때문에 첫 Write 부터 AbortError: Stream closed — 에이전트는 4분을 일하고 '파일 쓰기가 안 됩니다' 라고 성실히 보고하며 빈손으로 끝났다. 에러 없이 조용히 실패한 값이 $0.72 였다.",
+        solution:
+          "query() 대신 ClaudeSDKClient 컨텍스트로 응답이 끝날 때까지 채널을 유지했다. 같은 부류의 조용한 무력화를 셋 더 찾아 한 세트로 잠갔다 — permission_mode 는 default, allowed_tools 는 빈 튜플, setting_sources 는 빈 배열이어야 콜백이 매 호출에 불리고, 읽기(Read/Glob/Grep)도 경로 검사를 태워야 절대경로로 이 저장소가 산출물에 새지 않는다. 실측: 한 건(4직군) 약 $1.1 · 8분.",
+        code: {
+          filename: "backend/app/agents/runner.py",
+          lines: [
+            "async with ClaudeSDKClient(options=options) as client:",
+            "    await client.query(prompt)",
+            "    async for message in client.receive_response():"
+          ]
+        }
+      }
+    ],
+    perf: {
+      title: "전 → 후 (작을수록 좋음)",
+      rows: [
+        {label: "3D 다운로드", before: 54.0, after: 30.3, unit: "MB"},
+        {label: "첫 화면 3D 모델", before: 20.7, after: 0, unit: "MB"},
+        {label: "입장 최악 프레임", before: 7325, after: 233, unit: "ms"}
+      ],
+      note: "다운로드는 서빙 폴더 실측 · 첫 화면 3D 는 옛 오버레이 인트로가 받던 87 GLB(20.7MB) → 라우트 분리 뒤 0 · 프레임은 Playwright 5초 구간 최악값(예열 40초 뒤)이고, 입장 직후 한 번 남는 3.1초 초기 컴파일은 그대로다"
+    },
+    tech: [
+      "Next.js 16",
+      "React 19",
+      "TypeScript",
+      "React Three Fiber",
+      "FastAPI",
+      "SQLAlchemy",
+      "SQLite",
+      "OpenAI API",
+      "Playwright",
+      "pytest"
+    ],
+    resultScreens: [
+      {
+        // 지어낸 값이 아니다 — 커밋 3 · 공부 60분 · 코딩 90분 · 프로젝트 40분 ·
+        // 운동 30분 · 메모 있음을 실제 derive_village_state 에 넣은 출력(2026-09-03 검산).
+        title: "LIGHTS · 커밋3 공부60 코딩90 프로젝트40 운동 메모",
+        kind: "bars",
+        bars: [
+          {l: "중앙 광장", p: 100, v: "bright"},
+          {l: "프로젝트 건물", p: 58, v: "normal"},
+          {l: "기술관", p: 30, v: "dim"},
+          {l: "경험 기록관", p: 35, v: "normal"},
+          {l: "우체국", p: 50, v: "normal"}
+        ]
+      },
+      {
+        title: "BUDGET · FIXED",
+        kind: "stats",
+        stats: [
+          {n: "11", l: "광원 (고정)"},
+          {n: "57", l: "셰이더 프로그램"},
+          {n: "15/15", l: "배치 검사"},
+          {n: "26/26", l: "보행 도달"}
+        ]
+      }
+    ],
+    metrics: [
+      {n: "−44%", l: "3D 다운로드"},
+      {n: "215 KB", l: "첫 화면 JS"},
+      {n: "233 ms", l: "최악 프레임"},
+      {n: "258", l: "백엔드 테스트"}
+    ],
+    kpt: {
+      keep: [
+        "감 대신 실측 — 병목도, 처방의 효과도 숫자로",
+        "규칙이 결과를 정하고 모델은 대사만 — 모델이 죽어도 서비스가 산다",
+        "AI 는 구조로 통제한다 — 제품에서는 게이트·클램프·폴백, 과정에서는 계획 승인 뒤 착수"
+      ],
+      problem: [
+        "VRAM 283MB 는 그대로 (WebP 는 디코드 후 동일) — KTX2 는 다음 과제",
+        "방문자 지표를 계측하지 않아 '누가 얼마나 봤나' 를 말할 수 없다"
+      ],
+      try: [
+        "배포 후 방문 계측 · 이력서 PDF 내려받기 수",
+        "UASTC(KTX2) 로 VRAM 4× 절감 — 다운로드 2.5× 증가와 맞바꿀지 실측으로 결정"
+      ]
+    },
+    learningLead:
+      "내 측정이 나를 속일 수 있다 — 첫 결론을 그대로 보고했다면 엉뚱한 곳을 고쳤을 것이다.",
+    learning:
+      "라벨을 범인으로 지목한 첫 측정은 시간 효과였다. 예열 뒤 번갈아 재고, 프레임마다 광원·셰이더 수를 함께 기록한 뒤에야 진짜 원인이 보였다. 그리고 '성능을 위해 화질을 희생한다' 는 통념은 재 보니 이 장면에선 거짓이었다 — 개수가 바뀌는 것이 재앙이고 많은 것은 공짜였다."
+  },
+
   // ════════════════════════════ MyStock-Desk / StockFlow (dashboard) ═════════
   mystock: {
     tagline: "INVESTMENT PORTFOLIO · FULL-STACK WEB APP",
@@ -1610,10 +2165,15 @@ export const RICH_DATA: Record<string, RichProject> = {
 
   // ════════════════════════════ ACLUB / AjouClub FE (platform · 팀) ══════════
   aclub: {
-    tagline: "CLUB DISCOVERY · TEAM FRONTEND",
+    tagline: "CLUB DISCOVERY · FE 3 → 2026 PROJECT LEAD",
+    // 예전 히어로(`aclub.webp`)는 **2025 옛 사이트**(ACM 로고, 소학회 카테고리
+    // 상단 배치)였다. 내가 총괄한 2026 디자인이 페이지에 한 장도 없었던 셈이다.
+    // 2026 사이트는 폰 폭 앱이라 캡처가 세로로 길다 — 세 장을 한 장(16/9)에
+    // 합성한다. 만드는 법: `scripts/build-aclub-screens.mjs`(원본은 리포 밖).
+    // 2025 화면은 페이지에서 뺐다. GitHub (2025 · 팀원) 링크가 그 몫이다.
     heroImage: {
-      src: "/projects/aclub.webp",
-      label: "동아리 탐색 홈",
+      src: "/projects/aclub-2026-screens.webp",
+      label: "2026 실제 화면 — 홈 · 모집공고 목록 · 모집공고 상세",
       ratio: "16/9"
     },
     problemShot: {label: "에타·인스타·단톡에 흩어진 동아리 모집", ratio: "4/3"},
@@ -1634,8 +2194,11 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "화면마다 따로 → 한 번 정의해 재사용",
       ratio: "21/9",
       fit: "contain",
+      // 캡션은 그림이 말하지 않는 것만 적는다 — 그림 안 부제가 이미 "무엇을
+      // 어떻게 모았나" 를 말하므로, 여기는 **그 이름들이 어디서 왔는지**(저장소
+      // 실측)만. 예전엔 부제·이 캡션·SVG 발치 줄이 같은 문장 세 벌이었다.
       caption:
-        "탐색·상세·마이페이지가 같은 데이터를 각자 부르고 권한도 각자 보던 구조를, 도메인 커스텀 훅 하나와 보호 라우트로 모았다. 요청 로직이 한 곳에 모이자 화면 셋을 프론트 3인이 동시에 만들 수 있게 됐다."
+        "그림의 이름은 전부 저장소 실측이다 — 도메인 커스텀 훅 6+ · 보호 라우트 2(RequireAuth · AdminRoute) · axios 모듈 4(auth · club · recruitment · user)."
     },
     gallery: [
       // ⚠️ 이 갤러리의 비율은 **원본 픽셀 그대로** 적는다. 셋 다 16/10 으로
@@ -1676,9 +2239,9 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         src: "/projects/op/aclub-ga4-home.webp",
         label: "올해 누계 — GA4 · 2026.01.01–03.15",
-        ratio: "790/442",
+        ratio: "790/368",
         caption:
-          "위 지표 타일의 활성 사용자 3,500과 조회수 8.8만이 나온 화면. 1~2월이 바닥이고 3월에 솟는 모양이 옆 장과 같다."
+          "위 지표 타일의 활성 사용자 3,500과 조회수 8.8만이 나온 화면(2026.01.01–03.15 누계)."
       },
       // Troubleshooting 마지막 카드의 첫 문장("1주 뒤 재방문이 5.4%였다")의
       // 근거다. 원본은 대시보드 한 판이었는데 코호트 표만 잘라 냈다 — 옆 카드들
@@ -1687,7 +2250,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         src: "/projects/op/aclub-ga4-cohort.webp",
         label: "주차별 재방문 유지율 — GA4 · 3월 14일에 끝나는 6주",
-        ratio: "552/404",
+        ratio: "552/352",
         caption:
           "1주째 5.4% · 2주째 4.3% · 4주째 1.8%. 이 표를 보고 재방문을 끌어올리는 대신, 애초에 한 번 오는 서비스라는 쪽으로 판단을 바꿨다."
       },
@@ -1719,7 +2282,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     tldr: [
       {
         k: "무엇을",
-        v: "동아리 탐색·모집을 한 곳에서 하는 플랫폼 프론트엔드 (AjouClub)"
+        v: "동아리 탐색·모집을 한 곳에서 하는 플랫폼 프론트엔드 (aClub)"
       },
       {k: "왜", v: "동아리 정보가 여러 채널에 흩어져 탐색·지원이 번거로움"},
       {k: "결과", v: "탐색→상세→지원까지 한 흐름으로 처리하는 FE 완성"},
@@ -1742,13 +2305,16 @@ export const RICH_DATA: Record<string, RichProject> = {
     meta: [
       {label: "기간", value: "2025.01 ~ 진행 중 (2025 팀원 → 2026 프로젝트장)"},
       {label: "팀", value: "프론트엔드 3인 (본인 포함)"},
+      // Core Summary 의 「내 역할」(직함: 팀원 → 프로젝트장)과 같은 말을 두 번
+      // 하고 있었다. 여기는 **맡은 화면과 코드**만 적는다.
       {
         label: "역할",
-        value: "2025 화면·훅 담당 → 2026 프로젝트 총괄 · 프론트 리드"
+        value:
+          "탐색·필터·상세 화면 · 데이터 훅 · 보호 라우트 (2026 부터 개편 총괄)"
       },
       {
         label: "스택",
-        value: "React · TypeScript · Vite · Tailwind · React Router · axios"
+        value: "React · TypeScript · Vite · Tailwind · React Router · Axios"
       },
       {label: "배포", value: "GitHub Pages (커스텀 도메인 · CNAME)"}
     ],
@@ -1781,13 +2347,12 @@ export const RICH_DATA: Record<string, RichProject> = {
       "동아리 정보는 에브리타임·인스타·단톡 등 여러 채널에 흩어져 있어 학생들이 원하는 동아리를 탐색하고 지원 현황을 관리하기 어려웠다.",
     research: {
       quotes: [
+        // 예전엔 「FE 설계 관점」 인용이 하나 더 있었다 — 남의 말이 아니라 내
+        // 생각을 따옴표에 넣은 것이라 뺐다. 그 내용은 Hypothesis 와
+        // Troubleshooting 첫 카드가 이미 말한다.
         {
           q: "동아리 찾으려면 에타·인스타·단톡을 다 봐야 한다.",
           who: "사용자(학생) 관점"
-        },
-        {
-          q: "여러 화면에서 같은 데이터를 부르니, 요청 로직을 훅으로 모아야 했다.",
-          who: "FE 설계 관점"
         }
       ],
       stat: {n: "6+", l: "useClubs·useRecruitments 등 재사용 데이터 훅 수"}
@@ -1904,10 +2469,14 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 세션 5,311 과 채널 94% 는 aclub-ga4-channels.webp.
       {
         title: "1주 뒤 재방문이 5.4%였다",
+        // [PROBLEM]/Solution 틀에 넣으면 "고쳤다" 로 읽히는데, 여기서 한 일은
+        // **안 고치기로 판단한 것**이다. 라벨만 바꾸고 자리는 그대로 둔다.
+        problemLabel: "[OBSERVATION]",
+        solutionLabel: "Decision",
         problem:
           "GA4 코호트에서 1주 유지율이 5.4%, 4주 뒤엔 1.8%였다. 보통이면 재방문을 끌어올릴 궁리를 한다. 그런데 28일 세션 5,311건이 사실상 3월 1~5일 닷새에 몰려 있었고, 유입의 94%가 Referral·Direct — 에브리타임과 인스타그램 링크였다.",
         solution:
-          "동아리 모집은 1년에 한 번이고, 학생은 동아리를 정하고 나면 돌아올 이유가 없다. 낮은 재방문은 실패가 아니라 이 서비스의 정상 상태였다.\n\n목표를 재방문이 아니라 「그 닷새 안에 원하는 동아리를 찾게 하는 것」으로 잡고, 분야 카테고리를 쪼개 필터를 조합할 수 있게 했다. 2025 에 도입하고, 2026 에 총괄을 맡으면서 한 번 더 세분화했다."
+          "동아리 모집은 1년에 한 번이고, 학생은 동아리를 정하고 나면 돌아올 이유가 없다. 낮은 재방문은 실패가 아니라 이 서비스의 정상 상태였다.\n\n목표를 재방문이 아니라 「그 닷새 안에 원하는 동아리를 찾게 하는 것」으로 잡고, 분야 카테고리를 쪼개 필터를 조합할 수 있게 했다. 2025에 도입하고, 2026에 총괄을 맡으면서 한 번 더 세분화했다."
       }
     ],
     tech: [
@@ -1916,7 +2485,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       "Vite",
       "TailwindCSS",
       "React Router",
-      "axios"
+      "Axios"
     ],
     resultScreens: [
       {
@@ -1981,17 +2550,27 @@ export const RICH_DATA: Record<string, RichProject> = {
 
   // ════════════════════════════ 아주총학 / ajouchong-web (platform · 팀) ══════
   ajouchong: {
-    tagline: "STUDENT COUNCIL · TEAM SPA + DEPLOY",
+    // 2026-09-04 사실 대조(저장소·실서비스 API 기준)로 다시 썼다.
+    //   · 2025: 프론트 3인 중 한 명, 화면 일부(대여사업 검색창·정책집·조직도). 백엔드는 안 만졌다.
+    //   · 2026.04~: 혼자 맡았다. 프론트 org 저장소 develop 에 23개 커밋(PR #35 대여 UX·피드백,
+    //     #36 전면 디자인 개편), 백엔드 org 저장소 develop 에 RentalItem·RentalRecord·Link
+    //     엔티티/서비스/컨트롤러(PR #69·#70). 프론트 main 브랜치엔 2025 것만 있으니
+    //     링크는 PR 로 건다 — 심사자가 main 만 보면 2026 작업을 못 찾는다.
+    //   · "안내 봇"은 봇이 아니다. 퀵 메뉴 5개 + 의견 폼(Q&A API). LLM 없음. 그렇게 적는다.
+    //   · 학생은 온라인으로 예약하지 않는다. 학생 화면은 수량 조회만, 대여·반납 기록은
+    //     관리자가 남긴다. "예약"이라 쓰면 사이트에서 확인하는 순간 어긋난다.
+    //   · 실서비스(2026-09-04 공개 API): 대여 품목 10종 124개, 링크허브 링크 11개.
+    tagline: "STUDENT COUNCIL · 2025 FRONT MEMBER → 2026 SOLE MAINTAINER",
     heroImage: {
       src: "/projects/ajouchong.webp",
       label: "총학생회 메인",
       ratio: "16/9"
     },
-    // 학생들은 폰으로 본다. 그런데 1차 모바일은 주요 메뉴가 햄버거 안에만
+    // 학생들은 폰으로 본다. 그런데 2025 모바일은 주요 메뉴가 햄버거 안에만
     // 있었다 — 「정보 탐색 효율 개선」이라고 적어만 두고 근거가 없던 그 지점이다.
     problemShot: {
       src: "/projects/ajouchong/v2/mobile-before.webp",
-      label: "1차 모바일 — 메뉴가 햄버거 안에만 있었다",
+      label: "2025 모바일 — 메뉴가 햄버거 안에만 있었다",
       ratio: "9/16",
       caption:
         "첫 화면에 있는 건 대여사업 카드 하나뿐. 소개·소식·소통·자료실·학생복지로 가려면 오른쪽 위 햄버거를 먼저 눌러야 했다."
@@ -2014,50 +2593,43 @@ export const RICH_DATA: Record<string, RichProject> = {
           label: "개편 후 모바일 메인",
           ratio: "9/16"
         },
-        note: "소개·소식·소통·자료실·학생복지·ACENTIA 를 아이콘 카드로 히어로 바로 밑에 놨다. 메뉴 구조를 바꾼 게 아니라 안 눌러도 보이게 한 것이다."
+        note: "소개·소식·소통·자료실·학생복지·ACENTIA(아주대 축제)를 아이콘 카드로 히어로 바로 밑에 놨다. 메뉴 구조를 바꾼 게 아니라 안 눌러도 보이게 한 것이다."
       }
     },
     gallery: [
       // ── 2026.04 개편 이후 ──
-      // 이 넷의 공통점: 전부 **총학생회가 직접 고치는 화면**이다.
-      // 1차 때는 물품 수량 하나 바꾸려 해도 개발자가 배포해야 했다.
+      // 공통점: 전부 **총학생회가 직접 고치는 화면**이거나 **학생이 오기 전에 보는 화면**이다.
+      // 2025 때는 물품 수량 하나 바꾸려 해도 개발자가 배포해야 했다.
       {
         src: "/projects/ajouchong/v2/rental.webp",
-        label: "대여사업 — 실시간 수량",
+        label: "대여사업 — 남은 수량을 오기 전에",
         ratio: "21/10",
         caption:
-          "총 품목·대여 가능·재고 임박·최종 업데이트를 한 줄에 세우고, 품목마다 남은 수량을 막대로 보여 준다. 「지금 빌릴 수 있나」를 묻지 않고 알 수 있게 한 화면."
+          "총 품목·대여 가능·재고 임박·최종 업데이트를 한 줄에 세우고, 품목마다 남은 수량을 막대로 보여 준다. 총학생회실 문 앞에서 「남아 있어요?」를 묻던 학생이 오기 전에 알 수 있게 한 화면. 대여·반납 기록은 창구에서 관리자가 남긴다."
       },
       {
         src: "/projects/ajouchong/v2/rental-admin.webp",
         label: "대여 물품 관리 — 운영자가 직접",
         ratio: "21/10",
         caption:
-          "수량 옆 −/+ 로 바로 조정하고 「35 (변경됨)」처럼 저장 전 상태를 표시한다. 확인 대화상자로 한 번 더 묻는다 — 실수로 재고가 틀어지면 학생이 헛걸음한다."
+          "수량 옆 −/+ 로 바로 조정하고 「35 (변경됨)」처럼 저장 전 상태를 표시한다. 확인 대화상자로 한 번 더 묻고, 서버는 0 미만·총량 초과를 거부한다 — 실수로 재고가 틀어지면 학생이 헛걸음한다."
+      },
+      {
+        src: "/projects/ajouchong/v2/linkhub.webp",
+        label: "링크허브 — 인스타 프로필 링크 한도를 우회",
+        ratio: "16/10",
+        caption:
+          "인스타그램 프로필에는 링크를 몇 개밖에 못 걸어, 접수 폼이 새로 생길 때마다 뭔가를 내려야 했다. 프로필엔 이 페이지 하나만 걸고, 안에서 접수 창구·공모전·수요조사 링크 11개를 모아 보여 준다. 링크는 관리자 화면에서 총학생회가 직접 넣고 뺀다."
       },
       {
         src: "/projects/ajouchong/v2/chatbot.webp",
-        label: "안내 봇 — 문의를 사람이 받지 않게",
+        label: "홈페이지 도우미 — 퀵 메뉴 + 의견 접수",
         ratio: "21/10",
         caption:
-          "공지·대여사업·제휴복지·Q&A·건의로 가는 길을 먼저 제시하고, 그래도 없으면 의견을 남긴다. 반복 문의가 사람에게 도달하기 전에 걸러지는 자리."
-      },
-      {
-        src: "/projects/ajouchong/v2/feedback.webp",
-        label: "피드백 관리 화면",
-        ratio: "21/10",
-        caption: "학생이 남긴 의견을 총학생회가 열어 보는 곳."
-      },
-      {
-        src: "/projects/op/ajouchong-notice.webp",
-        label: "공지 상세 페이지",
-        ratio: "16/10"
-      },
-      {
-        src: "/projects/op/ajouchong-detail.webp",
-        label: "세부 안내 페이지",
-        ratio: "16/10"
+          "챗봇이 아니다. 공지·대여사업·제휴복지·Q&A·건의 다섯 갈래로 보내는 버튼과, 그래도 못 찾으면 의견을 남기는 폼이다. 의견은 Q&A API 로 들어가 관리자 화면에 쌓인다."
       }
+      // 피드백 관리 화면(빈 화면 — "접수된 피드백이 없습니다")과 2025 공지 상세(44대
+      // 퇴임사 글, 본인 작업이 안 보임)는 2026-09-04 에 뺐다. 증거가 아니라 자리 채움이었다.
     ],
     // 이 이력서에서 **「내가 맡은 뒤 좋아졌다」를 숫자로 보여 주는 유일한 자리**다.
     //
@@ -2065,11 +2637,15 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 단순 전후 비교는 계절을 개선으로 착각하게 만든다. 개편 시점(2026.04) 기준
     // 전/후로 자르면 335일 vs 152일에 계절도 달라 아무 말도 못 한다.
     //
+    // 제목의 「참여 → 단독」은 시점 충돌을 막는 말이다. 예전 제목 "맡기 전 → 맡은 뒤"는
+    // 기간(2025.03~)·역할(2025 프론트)과 부딪혔다 — 2025년에도 팀에 있었으니까.
+    //
     // note 에서 CTR 하락을 **먼저** 밝힌다. 숨기면 심사자가 직접 계산해서 찾아내고,
     // 그때는 나머지 숫자까지 같이 의심받는다. 밝히고 이유를 대면 지표를 읽을 줄
     // 안다는 증거가 된다.
     perf: {
-      title: "맡기 전 → 맡은 뒤 · 같은 달 검색 노출 (GSC 실측)",
+      title:
+        "팀원으로 참여한 2025 → 혼자 맡은 2026 · 같은 달 검색 노출 (GSC 실측)",
       lowerBetter: false,
       rows: [
         {label: "5월", before: 839, after: 2371, unit: ""},
@@ -2077,58 +2653,58 @@ export const RICH_DATA: Record<string, RichProject> = {
         {label: "7월", before: 490, after: 843, unit: ""},
         {label: "8월", before: 390, after: 945, unit: ""}
       ],
-      note: "Google Search Console 내보내기 487일치(2025-05-01~2026-08-30) 실합계. 계절성을 빼려고 2025년과 2026년의 같은 달만 맞대 놨다. 4개월 합계로 노출 2,290 → 5,392(×2.35), 클릭 321 → 491(×1.53). CTR 은 14.0% → 9.1% 로 내려갔는데, 노출이 넓어지면 덜 관련된 검색어에도 뜨기 시작해 분모가 먼저 커진다 — 클릭 절대수는 늘었다. 늘어난 이유를 개편만으로 돌릴 수는 없다(행사·외부 링크·검색 알고리즘). 확실한 건 시점뿐이다: 2026년부터 이 사이트를 맡았다."
+      note: "Google Search Console 내보내기 487일치(2025-05-01~2026-08-30) 실합계. 계절성을 빼려고 2025년과 2026년의 같은 달만 맞대 놨다. 4개월 합계로 노출 2,290 → 5,392(×2.35), 클릭 321 → 491(×1.53). CTR 은 14.0% → 9.1% 로 내려갔는데, 노출이 넓어지면 덜 관련된 검색어에도 뜨기 시작해 분모가 먼저 커진다 — 클릭 절대수는 늘었다. 늘어난 이유를 개편만으로 돌릴 수는 없다(행사·외부 링크·검색 알고리즘). 확실한 건 시점뿐이다: 2026년 4월부터 이 사이트를 혼자 맡았다."
     },
-    // 이 넷만 읽고 나가는 심사자가 있다. 예전엔 여기가 **1차 얘기만** 하고 있었는데,
-    // 아래 Results 4장과 THE CORE TAKEAWAY 는 전부 2차(운영자 도구) 얘기였다 —
-    // 요약과 본문이 다른 프로젝트를 말하던 셈이다. 목록 카드와 같은 「1차 → 2차」 문법으로 맞춘다.
+    // 이 넷만 읽고 나가는 심사자가 있다. 요약·본문·결론이 같은 프로젝트를 말해야 한다 —
+    // 예전엔 요약은 2차, 본문(가설·트러블슈팅·결정표)은 전부 2025 얘기였다.
     tldr: [
       {
         k: "무엇을",
-        v: "아주대 총학생회 공식 웹사이트 — 1차 구축·배포, 2차 모바일 동선·운영자 도구"
+        v: "아주대 총학생회 공식 웹 — 2025년엔 프론트 3인 중 한 명, 2026년부터 혼자 맡아 UI 전면 개편 · 대여사업 · 링크허브 · 관리자 화면을 프론트부터 API까지"
       },
       {
         k: "왜",
-        v: "정보가 여러 채널에 흩어져 있었고, 물품 수량 하나 고치는 데도 개발자가 필요했다"
+        v: "학생은 물품이 남았는지 몰라 총학생회실까지 왔고, 인스타 프로필엔 링크를 몇 개밖에 못 걸었고, 수량 하나 고치는 데도 개발자가 필요했다"
       },
       {
         k: "결과",
-        v: "한 SPA로 모아 Docker + Nginx로 배포하고, 고치는 권한을 총학생회에 넘겼다"
+        v: "학생은 오기 전에 수량을 보고, 총학생회는 수량·링크·의견을 관리 화면에서 직접 고친다 — 품목 10종 · 링크 11개가 실서비스에서 돌아가는 중"
       },
       {
         k: "내 역할",
-        v: "3인 팀 프론트엔드 · 배포 담당 → 2차 모바일 개편 · 관리 화면 구축"
+        v: "2025 프론트 화면 일부 → 2026 단독: React 화면 + Spring Boot API(대여·링크·권한) + 배포"
       }
     ],
     demo: {
       live: "https://ajouchong.com",
       // 실서비스는 조직 저장소다(본인 확인). 개인 포크가 아니라 이쪽을 건다.
+      // 2026 작업은 main 이 아니라 develop 에 있다 — PR 링크는 resume.ts links 에.
       repo: "https://github.com/ajouchong-dev/ajouchong-web"
     },
     meta: [
-      // 목록 카드(resume.ts)와 **같은 값이어야 한다**. 예전엔 여기만 2025.01 이었는데,
-      // 그건 바로 위 aClub 카드의 기간이다 — 복붙이 그대로 남아 있었다.
+      // 목록 카드(resume.ts)와 **같은 값이어야 한다**.
       {label: "기간", value: "2025.03 ~ 진행 중"},
-      {label: "팀", value: "총학생회 IT · 프론트 3인"},
+      {label: "팀", value: "2025 프론트 3인 → 2026 단독 담당"},
       {
         label: "역할",
         value:
-          "1차 SPA 라우팅·화면 · Docker/Nginx 배포 → 2차 모바일 동선 개편 · 운영자용 관리 화면"
+          "2025 프론트 화면 일부 → 2026 UI 전면 개편 · 대여사업 · 링크허브 · 관리자 화면 · 백엔드 API"
       },
       {
         label: "스택",
-        value: "React 18 · CRA · JavaScript · React Router · Docker · Nginx"
+        value:
+          "React 18 · CRA · React Router · Spring Boot 3 · JPA · PostgreSQL · JWT · Docker · Nginx"
       },
-      {label: "배포", value: "Docker + Nginx (실서비스 구성)"}
+      {label: "배포", value: "Docker + Nginx · 이미지는 S3 (실서비스 구성)"}
     ],
     heroScreen: {
       title: "ajou-council",
       kind: "feed",
       feed: [
+        "[대여] 매트 돗자리 28/35",
+        "[링크허브] 접수 창구 11개",
         "[공지] 총회 일정 안내",
-        "[Q&A] 학식 환불 문의",
-        "[복지] 제휴 업체 추가",
-        "[자료] 회의록"
+        "[의견] 도우미로 접수"
       ]
     },
     // Search Console 실측. 라벨에 **"검색"** 을 반드시 남긴다 —
@@ -2140,168 +2716,237 @@ export const RICH_DATA: Record<string, RichProject> = {
       {n: "13.8%", l: "검색 CTR"}
     ],
     features: [
-      {t: "공지·소개", d: "메인·소개·공지 목록/상세"},
-      {t: "Q&A", d: "학생 문의 작성·조회"},
-      {t: "자료실", d: "회칙·회의록·감사 자료"},
-      {t: "복지/제휴", d: "제휴·대여·캠퍼스맵 안내"}
+      {t: "대여사업", d: "품목별 남은 수량 · 관리자 −/+ · 대여/반납 기록"},
+      {t: "링크허브", d: "접수 폼·공모전 링크 모음 · 관리자가 직접 편집"},
+      {t: "관리자 화면", d: "대여·링크·공지·피드백 · ADMIN 권한만"},
+      {t: "공지·Q&A·자료실", d: "2025 구조 위에 UI 전면 개편"}
     ],
     problem:
-      "총학생회 정보가 인스타·공지 등 여러 채널에 분산되어 학생들이 공지·Q&A·복지·자료를 한 곳에서 확인하기 어려웠고, 실제로 배포해 ‘쓰이는 서비스’로 만들어야 했다.",
+      "학생은 물품이 남았는지 몰라 총학생회실까지 와서야 없다는 말을 들었고, 인스타 프로필에는 링크를 몇 개밖에 못 걸어 접수 폼·공모전 링크가 매번 밀려났다. 사이트는 있었지만 수량 하나, 링크 하나 바꾸는 데도 개발자가 배포해야 했다.",
     research: {
       quotes: [
-        {q: "공지가 인스타에만 올라와서 놓치면 끝이다.", who: "학생 관점"},
         {
-          q: "SPA는 새로고침하면 서버가 경로 파일을 못 찾아 404가 난다.",
-          who: "배포에서 실제 마주친 문제"
+          q: "물품이 남았는지 몰라 총학생회실까지 와서야 없다는 말을 듣는 학생이 많았다.",
+          who: "생활복지국원으로 창구에서 본 것"
+        },
+        {
+          q: "인스타 프로필에는 링크를 몇 개밖에 못 건다 — 접수 폼이 새로 생길 때마다 뭔가를 내려야 했다.",
+          who: "소통개발국 운영에서 마주친 문제"
         }
       ],
-      stat: {n: "3", l: "함께 개발한 프론트엔드 팀 인원"}
+      stat: {
+        n: "10 · 11",
+        l: "실서비스 대여 품목 · 링크허브 링크 (2026.09 공개 API 기준)"
+      }
     },
     hypothesis:
-      "“핵심 정보를 하나의 SPA로 모으고 Docker + Nginx로 환경을 고정해 배포하면 — 학생 정보 접근성이 오르고, ‘내 컴퓨터에선 되는데’ 문제 없이 안정적으로 운영된다.”",
+      "“학생이 오기 전에 수량을 볼 수 있고, 총학생회가 개발자 없이 수량·링크·의견을 직접 고칠 수 있으면 — 헛걸음이 줄고, 사이트는 개발자가 떠나도 살아 있다.”",
     process: [
-      {t: "정보구조", d: "메뉴 설계"},
-      {t: "라우팅·화면", d: "공지·Q&A·자료"},
-      {t: "인증", d: "AuthContext"},
-      {t: "컨테이너화", d: "Docker"},
-      {t: "서빙", d: "Nginx"}
+      {t: "2025", d: "프론트 화면 일부"},
+      {t: "UI 개편", d: "모바일 6갈래"},
+      {t: "대여사업", d: "API + 화면"},
+      {t: "링크허브", d: "Link 테이블 + 관리"},
+      {t: "관리자", d: "ADMIN 권한"},
+      {t: "배포", d: "Docker · Nginx"}
     ],
     architecture: [
       {
-        tag: "Route",
+        tag: "Front",
         name: "React Router SPA",
-        desc: "공지/Q&A/자료/복지 라우팅"
+        desc: "학생 화면 + /admin 관리자 화면 (ADMIN role 만)"
+      },
+      {
+        tag: "API",
+        name: "Spring Boot · JPA",
+        desc: "RentalItem·RentalRecord·Link — 사용자/관리자 컨트롤러 분리"
       },
       {
         tag: "Auth",
-        name: "AuthContext",
-        desc: "로그인 상태 전역·ProtectedRoute"
+        name: "JWT · role",
+        desc: "관리자 API 는 ADMIN 권한만 · 학생 조회는 공개"
       },
-      {tag: "Serve", name: "Nginx", desc: "정적 서빙 · SPA try_files 폴백"},
-      {tag: "Ship", name: "Docker", desc: "빌드·실행 환경 고정"}
+      {
+        tag: "Ship",
+        name: "Docker + Nginx",
+        desc: "SPA try_files 폴백 · 이미지 S3"
+      }
     ],
     decisions: [
-      {area: "구조", pick: "SPA", why: "빠른 화면 전환", alt: "MPA(새로고침)"},
+      {
+        area: "수량",
+        pick: "서버가 delta 검증",
+        why: "0 미만·총량 초과를 API 에서 거부",
+        alt: "화면에서만 검사(우회 가능)"
+      },
+      {
+        area: "대여",
+        pick: "학생은 조회만",
+        why: "대여·반납은 관리자 기록으로만 — 실물과 수량이 안 어긋남",
+        alt: "온라인 예약(노쇼·중복 관리 ↑)"
+      },
+      {
+        area: "링크허브",
+        pick: "DB + 관리 화면",
+        why: "링크는 매주 바뀐다 — 개발자 없이 갈아끼움",
+        alt: "코드에 하드코딩(배포 필요)"
+      },
+      {
+        area: "도우미",
+        pick: "퀵 메뉴 + 의견 폼",
+        why: "길 안내와 접수면 충분 — 답 품질 책임이 없음",
+        alt: "LLM 챗봇(과함)"
+      },
       {
         area: "서빙",
-        pick: "Nginx",
-        why: "정적+폴백 안정적",
+        pick: "Nginx try_files",
+        why: "SPA 새로고침 404 (2025)",
         alt: "Node 서버(과함)"
-      },
-      {
-        area: "배포",
-        pick: "Docker",
-        why: "환경 일관성 확보",
-        alt: "수동 배포(실수 ↑)"
-      },
-      {
-        area: "인증",
-        pick: "Context",
-        why: "단순 로그인 상태에 충분",
-        alt: "라이브러리(과함)"
       }
     ],
     coreCode: [
       {
+        filename: "RentalService.java",
+        caption:
+          "수량 조정은 서버가 검증한다 — 0 미만·총량 초과 거부 (2026 · 백엔드)",
+        highlightLines: [6, 7],
+        lines: [
+          "@Transactional",
+          "public RentalItemResponseDto adjustCurrentQuantity(Long id, Integer delta) {",
+          '  if (delta == null || delta == 0) throw new IllegalArgumentException("delta 는 0 이 아니어야");',
+          "  RentalItem item = rentalItemRepository.findById(id).orElseThrow(...);",
+          "  int next = item.getCurrentQuantity() + delta;",
+          '  if (next < 0) throw new IllegalArgumentException("현재 수량은 0보다 작아질 수 없습니다.");',
+          '  if (next > item.getTotalQuantity()) throw new IllegalArgumentException("총 수량을 초과할 수 없습니다.");',
+          "  item.setCurrentQuantity(next);",
+          "  return toItemDto(rentalItemRepository.save(item));",
+          "}"
+        ]
+      },
+      {
         filename: "nginx.conf",
-        caption: "SPA 새로고침 404 방지 — try_files 폴백",
+        caption: "SPA 새로고침 404 방지 — try_files 폴백 (2025)",
         highlightLines: [2],
         lines: [
           "location / {",
           "  try_files $uri $uri/ /index.html; # 없는 경로는 SPA로",
           "}"
         ]
-      },
-      {
-        filename: "ProtectedRoute.js",
-        caption: "로그인 상태에 따른 보호 라우트",
-        lines: [
-          "function ProtectedRoute({ children }) {",
-          "  const { user } = useContext(AuthContext);",
-          "  return user ? children : <Navigate to='/login' />;",
-          "}"
-        ]
       }
     ],
     work: [
-      {g: "라우팅", items: ["SPA 라우팅 구조", "보호 라우트"]},
-      {g: "화면", items: ["공지·Q&A·자료실 화면"]},
-      {g: "인증", items: ["AuthContext 로그인 상태"]},
-      {g: "배포", items: ["Docker 이미지", "Nginx 설정"]}
+      {g: "2025 프론트", items: ["대여사업 검색창", "정책집", "조직도"]},
+      {
+        g: "2026 화면",
+        items: [
+          "UI 전면 개편 · 모바일 6갈래",
+          "대여사업 · 링크허브",
+          "관리자(대여·링크·공지·피드백) · 도우미 위젯"
+        ]
+      },
+      {
+        g: "2026 API",
+        items: [
+          "RentalItem · RentalRecord · Link 엔티티/서비스/컨트롤러",
+          "사용자/관리자 컨트롤러 분리 · ADMIN 권한"
+        ]
+      },
+      {g: "배포", items: ["Docker · Nginx", "이미지 S3 업로드"]}
     ],
     challenges: [
       {
-        title: "새로고침하면 404가 떴다",
+        title: "학생이 총학생회실까지 와서야 「없다」는 말을 들었다",
+        problem:
+          "물품 수량이 어디에도 안 보였다. 사이트에 올려도 개발자가 배포해야 바뀌니, 결국 안 올렸다.",
+        solution:
+          "RentalItem 에 총량·현재 수량을 두고, 관리자 화면의 −/+ 가 PATCH /quantity 로 바로 반영되게 했다. 서버가 0 미만·총량 초과를 거부하고, 대여·반납은 RentalRecord 로 남아 수량을 움직인다. 학생 화면은 그 수량을 읽기만 한다."
+      },
+      {
+        title: "인스타 프로필에 링크를 다 못 걸었다",
+        problem:
+          "프로필 링크 칸이 몇 개 안 돼, 접수 폼·공모전·수요조사가 생길 때마다 이전 링크를 내려야 했다.",
+        solution:
+          "/linkHub 한 페이지와 Link 테이블, 관리 화면을 만들었다. 프로필엔 이 페이지 하나만 걸고, 링크는 총학생회가 직접 넣고 뺀다. 지금 11개가 걸려 있다."
+      },
+      {
+        title: "새로고침하면 404가 떴다 (2025)",
         problem:
           "SPA 라우트에서 새로고침 시 Nginx가 실제 파일을 못 찾아 404를 반환했다.",
         solution:
           "try_files로 모든 경로를 index.html로 폴백시켜 클라이언트 라우터가 처리하게 했다."
-      },
-      {
-        title: "로컬은 되는데 서버에선 달랐다",
-        problem: "환경 차이로 빌드·실행이 다르게 동작했다.",
-        solution:
-          "Docker로 빌드·실행 환경을 고정해 ‘내 컴퓨터에선 되는데’ 문제를 없앴다."
       }
     ],
-    tech: ["React 18", "JavaScript", "React Router", "Docker", "Nginx"],
+    tech: [
+      "React 18",
+      "React Router",
+      "Spring Boot 3",
+      "JPA",
+      "PostgreSQL",
+      "JWT",
+      "Docker",
+      "Nginx"
+    ],
     resultScreens: [
       {
-        title: "ajou-council/notice",
-        kind: "feed",
-        feed: ["총회 일정 안내", "학식 운영 변경", "장학 신청 안내"]
+        title: "ajou-council/welfare/rental",
+        kind: "bars",
+        bars: [
+          {l: "매트 돗자리", p: 80, v: "28/35"},
+          {l: "은박 돗자리", p: 96, v: "46/48"},
+          {l: "우산", p: 50, v: "2/4"},
+          {l: "의자", p: 0, v: "0/21"}
+        ]
       },
       {
-        title: "ajou-council/welfare",
+        title: "ajou-council/linkHub",
         kind: "cards",
         cards: [
-          {l: "제휴 카페", sub: "할인"},
-          {l: "물품 대여", sub: "우산·충전기"},
-          {l: "제휴 식당", sub: "신규"},
-          {l: "캠퍼스맵", sub: "안내"}
+          {l: "통합 소통 창구", sub: "forms"},
+          {l: "굿즈 공모전", sub: "docs"},
+          {l: "가을축제 수요조사", sub: "forms"},
+          {l: "100인 안건 상정제", sub: "site"}
         ]
       }
     ],
     metrics: [
       // Search Console 실측. 라벨의 **"검색"** 은 지우면 안 된다 —
       // 전체 방문자로 읽히면 과장이 된다.
-      // 앞의 셋은 GSC 실적, 마지막 하나는 위 Troubleshooting 의 결론이다.
+      // 앞의 셋은 GSC 실적, 마지막 하나는 공개 API 응답을 센 것(2026-09-04).
+      // 예전 네 번째 "새로고침 404: 0" 은 채워 넣은 숫자라 뺐다.
       {n: "12,314", l: "검색 노출"},
       {n: "1,694", l: "검색 클릭"},
       {n: "13.8%", l: "검색 CTR"},
-      {n: "0", l: "새로고침 404"}
+      {n: "10 · 11", l: "대여 품목 · 링크 (실서비스)"}
     ],
     metricsNote:
-      "Google Search Console · 2025.05~2026.08(16개월) · 검색 유입 기준 (전체 방문자 아님)",
+      "검색 셋은 Google Search Console · 2025.05~2026.08(16개월) · 검색 유입 기준 (전체 방문자 아님). 품목·링크 수는 2026.09.04 공개 API 응답을 센 것.",
     kptLabels: {
-      keep: "1차에서 배운 것 · 개발·배포",
+      keep: "2025에서 배운 것 · 개발·배포",
       problem: "아직 남은 것",
-      try: "2차에서 배운 것 · 운영·사용자"
+      try: "2026에서 배운 것 · 운영·사용자"
     },
-    // KEEP/TRY 를 「1차에서 배운 것 / 2차에서 배운 것」으로 갈랐다.
-    // 이 프로젝트도 두 번 만들었고, 두 번의 배움이 서로 다른 종류다.
+    // KEEP/TRY 를 「2025에서 배운 것 / 2026에서 배운 것」으로 갈랐다.
+    // 두 해의 배움이 서로 다른 종류다. (원페이저에는 안 그린다 — ProjectOnePager 참고)
     kpt: {
       keep: [
-        "1차 · 배포까지 끝내야 서비스가 된다 — Docker/Nginx 로 환경을 고정",
-        "1차 · SPA 는 새로고침에서 깨진다 — Nginx try_files 로 404 를 없앰",
-        "1차 · 정보 구조를 먼저 정하면 화면은 따라온다"
+        "2025 · 배포까지 끝내야 서비스가 된다 — Docker/Nginx 로 환경을 고정",
+        "2025 · SPA 는 새로고침에서 깨진다 — Nginx try_files 로 404 를 없앰",
+        "2025 · 남의 구조 안에서 화면 일부를 만지며 정보 구조를 배웠다"
       ],
-      // 「모바일 최적화 미흡」은 1차 회고에 스스로 적어 둔 문제였고, 2차에서 고쳤다.
       problem: [
-        "링크허브는 개편했지만 실데이터로 다시 채우는 중이다",
-        "개편 효과를 Search Console 로 아직 재보지 않았다",
+        "대여 신청 자체는 아직 창구에서 받는다 — 온라인은 수량 조회까지",
+        "개편 효과는 검색 노출로만 봤다 — 헛걸음 문의가 얼마나 줄었는지는 세지 않았다",
         "접근성(대비·포커스)은 여전히 보강이 필요하다"
       ],
       try: [
-        "2차 · 메뉴를 늘리는 게 아니라 안 눌러도 보이게 한다 — 모바일 첫 화면에 6갈래",
-        "2차 · 운영자가 직접 고치게 만든다 — 수량·공지·링크·피드백을 관리 화면으로",
-        "2차 · 반복 문의는 사람에게 닿기 전에 안내 봇이 먼저 받는다"
+        "2026 · 메뉴를 늘리는 게 아니라 안 눌러도 보이게 한다 — 모바일 첫 화면에 6갈래",
+        "2026 · 운영자가 직접 고치게 만든다 — 수량·링크·공지·피드백을 관리 화면으로",
+        "2026 · 검증은 서버에 둔다 — 화면의 −/+ 는 우회되고 API 의 거부는 안 된다"
       ]
     },
     learningLead:
       "화면을 예쁘게 고치는 것보다, 쓰는 사람이 스스로 할 수 있게 만드는 것이 운영형 서비스의 개선이었다.",
     learning:
-      "1차에서는 ‘배포해서 진짜 쓰이게 하는 것’(Docker·Nginx·SPA 폴백)을 배웠고, 2차에서는 그 다음을 배웠다 — 학생은 폰으로 들어와 햄버거를 안 누르고, 총학생회는 물품 수량 하나 바꾸려고 개발자를 부르고 싶어 하지 않는다."
+      "2025년엔 남의 구조 안에서 화면 일부를 만졌고, 2026년에 혼자 맡아 프론트·API·배포를 다 잡고 나서야 알았다 — 학생은 폰으로 들어와 햄버거를 안 누르고, 총학생회실 문 앞에서 「남아 있어요?」를 묻고, 총학생회는 수량 하나 바꾸려고 개발자를 부르고 싶어 하지 않는다."
   },
 
   // ════════════════════════════ 수어지교 / Sign-Language (platform · 팀) ══════
@@ -3166,5 +3811,928 @@ export const RICH_DATA: Record<string, RichProject> = {
       "조작감 문제를 시간(코요테 타임)으로 덮으려다 실패하고 나서야, 원인이 판정 위치였다는 걸 알았다.",
     learning:
       "팀 협업에서 ‘기술’만큼 ‘충돌 안 나게 일 나누는 구조’가 중요하다는 걸 배웠다."
+  },
+
+  // ════════════════════════════ The Other Side / 이면 (game · VR · 팀) ═══════
+  // 2026-09-03 신설. 문장은 포트폴리오 PDF 43–48쪽, 코드는 kbwon/IMP_VR 의
+  // Assets/JJH/JJH/Scripts(본인 스크립트)에서 그대로 가져왔다. 특수 카메라
+  // (CameraController/Manager)는 팀원(KBW) 스크립트라 **설명만 하고 코드는 싣지 않는다.**
+  // 숫자는 전부 코드에서 센 값이다 — 사용자 수·플레이 수 같은 건 없다.
+  "otherside-vr": {
+    tagline: "VR HORROR PUZZLE · UNITY XR (TEAM)",
+    heroImage: {
+      src: "/projects/otherside-vr.webp",
+      label: "The Other Side 플레이",
+      ratio: "16/9"
+    },
+    problemShot: {
+      src: "/projects/op/vr-chase.webp",
+      label: "추격 중인 몬스터 (Bookhead)",
+      ratio: "16/9",
+      fit: "contain"
+    },
+    // 카메라 화면 셋을 한 장으로 줄였다(2026-09-04). 특수 카메라는 팀원 코드라
+    // 그 화면이 갤러리를 채우면 "이거 직접 만들었냐"는 질문에 아니라고 답해야
+    // 하는 페이지가 된다. 내 몫(감지·AI·중앙 제어)의 결과 화면은 아직 없다 —
+    // 배회 → 손전등 감지 → 추격 3컷을 찍으면 resultShot 으로 넣는다.
+    gallery: [
+      {
+        src: "/projects/op/vr-camera-clue.webp",
+        label: "특수 카메라로 본 숨은 단서 (카메라 시스템은 팀원 담당)",
+        ratio: "16/9",
+        wide: true,
+        caption:
+          "특수 카메라·PostFX 는 팀원 담당. 내 몫은 이 화면 아래에서 도는 쪽이다 — 카메라·손전등 상태를 감지기가 판정하고, GameManager 가 그 판정으로 몬스터를 켜고 끈다."
+      }
+    ],
+    tldr: [
+      {
+        k: "무엇을",
+        v: "특수 카메라로만 보이는 단서를 찾고, 손전등을 켜면 들키는 VR 공포 퍼즐·추격 게임"
+      },
+      {k: "왜", v: "VR 에서 ‘보이는 것’ 자체를 게임 규칙으로 설계하고 싶었음"},
+      {
+        k: "결과",
+        v: "퍼즐이 풀릴 때만 추격이 켜진다 — 감지기는 판정만 하고, GameManager 가 몬스터 2종을 켜고 끈다"
+      },
+      {
+        k: "내 역할",
+        v: "AI 몬스터 시스템 · 감지 로직 · 중앙 제어 구조 설계 (몬스터 개발 · 메인 기획)"
+      }
+    ],
+    // 플레이 영상은 PDF 의 링크(sK9OoBNCVvc)가 2026-09-04 기준 404(비공개·삭제)라 뺐다. 공개되면 video: 를 되살린다.
+    demo: {
+      repo: "https://github.com/kbwon/IMP_VR"
+    },
+    meta: [
+      {label: "기간", value: "2025.04 – 2025.06"},
+      {
+        label: "팀",
+        value: "4인 팀 (AR 과 같은 팀원) · 특수 카메라 시스템은 팀원 담당"
+      },
+      {label: "역할", value: "AI 몬스터 · 감지 로직 · 중앙 제어 · 메인 기획"},
+      {label: "스택", value: "Unity · XR Interaction Toolkit · C# · NavMesh"},
+      {
+        label: "비고",
+        value: "저장소는 팀원 소유(kbwon) · 내 스크립트는 Assets/JJH"
+      }
+    ],
+    heroScreen: {
+      title: "THE OTHER SIDE",
+      kind: "title",
+      titleText: "이면",
+      subText: "▶ 특수 카메라 착용"
+    },
+    impact: [
+      {n: "2종", l: "몬스터 AI · Doll / Bookhead"},
+      {n: "2", l: "감지기 · 시야각 / 손전등 빛"},
+      {n: "5초", l: "시야를 벗어난 뒤 추격 해제"}
+    ],
+    metricsNote:
+      "수치는 Assets/JJH 스크립트에서 센 값(MonsterType 2 · Detector 2 · loseSightDelay 5f)",
+    features: [
+      {
+        t: "특수 카메라 단서",
+        d: "정상 시야로는 안 보이는 퍼즐 요소를 카메라 모드로 발견"
+      },
+      {
+        t: "손전등 리스크",
+        d: "켜면 빛 원뿔까지 감지 대상 — 시야 확보 vs 들킬 위험"
+      },
+      {t: "FOV 추격", d: "적 시야각 안에 들어오면 추적, 벗어나면 5초 뒤 해제"},
+      {
+        t: "퍼즐 ↔ 추격 연동",
+        d: "GameManager 토글로 퍼즐 진행에 따라 몬스터 활성화"
+      }
+    ],
+    problem:
+      "단순 추격만으로는 공포의 템포를 조절할 수 없었다. 그리고 감지 로직과 AI 로직이 직접 결합되면, 퍼즐 조건이 하나 늘 때마다 몬스터 코드를 고쳐야 해서 유지보수가 어려웠다.",
+    research: {
+      quotes: [
+        {
+          q: "단순 추격만으로는 공포 템포 조절 불가.",
+          who: "문제 정의 — MonsterAI"
+        },
+        {
+          q: "감지 로직과 AI 로직이 직접 결합되면 유지보수 어려움.",
+          who: "문제 정의 — GameManager"
+        }
+      ]
+    },
+    hypothesis:
+      "“감지기는 감지만 하고, 행동은 GameManager 가 중앙에서 켜고 끄면 — 퍼즐 진행에 따라 추격을 제어할 수 있고, 트리거가 늘어도 결합도는 낮게 유지된다.”",
+    process: [
+      {t: "탐색", d: "어두운 저택"},
+      {t: "발견", d: "카메라 모드"},
+      {t: "위협", d: "퍼즐 → 적 활성화"},
+      {t: "회피", d: "FOV 추격 대응"}
+    ],
+    architecture: [
+      {
+        tag: "Detect",
+        name: "EnemyDetector",
+        desc: "시야각(90°)·거리(10m) + 손전등 빛 원뿔 10점 샘플링"
+      },
+      {
+        tag: "Detect",
+        name: "EnemyLightZoneDetector",
+        desc: "손전등 ON + 반경 7m — 두 번째 몬스터용 규칙"
+      },
+      {
+        tag: "Control",
+        name: "GameManager (싱글톤)",
+        desc: "몬스터 오브젝트·추격 여부를 중앙에서 토글"
+      },
+      {
+        tag: "AI",
+        name: "MonsterAI",
+        desc: "NavMesh · Wander → Chase → Attack, 타입별 활성 플래그"
+      },
+      {
+        tag: "Team",
+        name: "CameraController / Manager",
+        desc: "VR 트리거로 카메라 모드 토글 · PostFX + 숨은 오브젝트 렌더링 (팀원)"
+      }
+    ],
+    decisions: [
+      {
+        area: "구조",
+        pick: "감지 / 행동 분리",
+        why: "퍼즐 조건 추가 시 몬스터 코드 무변경",
+        alt: "감지기가 AI 를 직접 호출 (결합 ↑)"
+      },
+      {
+        area: "손전등 감지",
+        pick: "빛 원뿔을 10점으로 샘플링",
+        why: "빛줄기 일부만 시야에 걸려도 들킴 — 손전등이 진짜 리스크가 됨",
+        alt: "플레이어 위치만 검사 (손전등 무의미)"
+      },
+      {
+        area: "추격 해제",
+        pick: "시야 이탈 후 5초 지연",
+        why: "코너 하나 돌았다고 바로 풀리면 긴장이 끊김",
+        alt: "즉시 해제"
+      },
+      {
+        area: "퍼즐 연동",
+        pick: "Enable 토글",
+        why: "퍼즐 진행 단계마다 추격 ON/OFF 로 템포 제어",
+        alt: "항상 추격 (템포 조절 불가)"
+      }
+    ],
+    coreCode: [
+      {
+        filename: "EnemyDetector.cs",
+        caption:
+          "플레이어 본체뿐 아니라 손전등 빛 원뿔을 10점으로 샘플링해 시야각 안에 걸리는지 본다",
+        highlightLines: [1, 2, 8, 9, 10],
+        lines: [
+          "bool seesPlayer = IsPlayerInFOV();",
+          "bool seesFlashlight = flashlight.IsEnabled() && IsLightConeInFOV();",
+          "",
+          "private bool IsLightConeInFOV() {",
+          "  Vector3 coneOrigin = flashlight.GetConeOrigin();",
+          "  Vector3 coneDir = flashlight.GetConeDirection();",
+          "  float coneRange = flashlight.GetConeRange();",
+          "  for (int i = 0; i <= 10; i++) {",
+          "    Vector3 samplePoint = coneOrigin + coneDir * coneRange * (i / 10f);",
+          "    if (InRangeAndAngle(samplePoint)) return true;",
+          "  }",
+          "  return false;",
+          "}"
+        ]
+      },
+      {
+        filename: "GameManager.cs",
+        caption:
+          "감지기는 이 두 메서드만 부른다 — 몬스터를 켜고 끄는 건 여기 한 곳",
+        highlightLines: [3, 4],
+        lines: [
+          "public void ToggleDollBehavior(bool on) {",
+          "  if (dollMonsterObject == null) return;",
+          "  dollMonsterObject.SetActive(on);",
+          "  dollMonster?.SetChaseAndAttackEnabled(on);",
+          "}",
+          "// EnemyDetector:  seesPlayer || seesFlashlight → ToggleDollBehavior(true)",
+          "// 5초 동안 안 보이면               → ToggleDollBehavior(false)"
+        ]
+      },
+      {
+        filename: "MonsterAI.cs",
+        caption: "거리 기반 상태 전환 — 활성 플래그가 꺼져 있으면 배회만 한다",
+        highlightLines: [1, 5, 9],
+        lines: [
+          "bool isEnabled = monsterType == MonsterType.Doll ? dollCanChaseAndAttack : bookheadCanChaseAndAttack;",
+          "float d = Vector3.Distance(transform.position, player.position);",
+          "",
+          "if (isEnabled && d <= attackDistance && !isAttacking) {",
+          "  agent.SetDestination(transform.position); SetAnimation(false, true);   // Attack",
+          "  StartCoroutine(EndAttackAfter(attackDuration));",
+          "}",
+          "else if (isEnabled && d <= chaseDistance && !isAttacking) {",
+          "  agent.SetDestination(player.position); animator.speed = 3f;           // Chase",
+          "}",
+          "else { /* wanderTimer 마다 RandomNavSphere 로 배회 */ }"
+        ]
+      }
+    ],
+    work: [
+      {
+        g: "AI",
+        items: [
+          "MonsterAI — 배회/추격/공격 상태",
+          "타입별 활성 플래그 (Doll · Bookhead)"
+        ]
+      },
+      {
+        g: "감지",
+        items: [
+          "EnemyDetector — 시야각 + 손전등 원뿔",
+          "EnemyLightZoneDetector — 반경 + 손전등"
+        ]
+      },
+      {
+        g: "제어",
+        items: [
+          "GameManager 싱글톤 · 중앙 토글",
+          "PlayerFlashlight — 상태·원뿔 정보"
+        ]
+      },
+      {g: "기획", items: ["메인 기획 · 게임 흐름 (탐색 → 발견 → 위협 → 회피)"]}
+    ],
+    challenges: [
+      {
+        title:
+          "감지와 행동이 붙어 있으면 퍼즐이 늘 때마다 몬스터를 고쳐야 했다",
+        problem:
+          "감지기가 몬스터를 직접 부르면, 트리거·퍼즐 조건이 하나 추가될 때마다 AI 코드에 손이 간다.",
+        solution:
+          "감지기(EnemyDetector · EnemyLightZoneDetector)는 ‘봤다/놓쳤다’만 판정하고 GameManager.Instance 의 토글 메서드만 부른다. 몬스터를 켜고 끄는 코드는 GameManager 한 곳에만 있다.",
+        code: {
+          filename: "EnemyLightZoneDetector.cs",
+          lines: [
+            "bool flashlightOn = flashlight.IsEnabled();",
+            "bool inRange = Vector3.Distance(transform.position, playerTransform.position) <= detectionRadius;",
+            "if (flashlightOn && inRange) GameManager.Instance.ToggleBookheadBehavior(true);",
+            "else if (++loseSightTimer >= loseSightDelay) GameManager.Instance.ToggleBookheadBehavior(false);"
+          ]
+        }
+      },
+      {
+        title: "손전등이 그냥 조명이면 ‘켤지 말지’가 선택이 안 된다",
+        problem:
+          "시야 확보와 들킬 위험이 맞바꿔지지 않으면 손전등은 항상 켜 두는 물건이 된다.",
+        solution:
+          "PlayerFlashlight 가 빛 원뿔(원점·방향·범위)을 내주고, 감지기가 그 원뿔을 따라 10점을 찍어 적 시야각 안에 걸리는지 검사한다. 빛줄기 끝만 걸려도 추격이 시작된다."
+      }
+    ],
+    tech: ["Unity", "XR Interaction Toolkit", "C#", "NavMesh"],
+    resultScreens: [
+      {
+        title: "THE OTHER SIDE · SYSTEMS",
+        kind: "stats",
+        stats: [
+          {n: "2", l: "감지기"},
+          {n: "2종", l: "몬스터 AI"},
+          {n: "1", l: "중앙 제어"},
+          {n: "5초", l: "추격 해제 지연"}
+        ]
+      },
+      {
+        title: "THE OTHER SIDE · CAMERA",
+        kind: "title",
+        titleText: "CAMERA ON",
+        subText: "숨은 단서 표시"
+      }
+    ],
+    metrics: [
+      {n: "2종", l: "몬스터 AI"},
+      {n: "2", l: "감지기"},
+      {n: "5초", l: "추격 해제"},
+      {n: "4인", l: "팀"}
+    ],
+    kpt: {
+      keep: [
+        "감지 / 행동 / 제어를 세 파일로 나눈 구조",
+        "손전등을 조명이 아니라 리스크로 만든 규칙"
+      ],
+      problem: [
+        "시야각·거리·5초 같은 값이 스크립트에 하드코딩",
+        "몬스터가 2종 — 규칙 조합의 여지가 적음"
+      ],
+      try: ["감지 규칙을 ScriptableObject 로", "몬스터·퍼즐 조건 추가"]
+    },
+    learningLead:
+      "VR 공포에서 무서운 건 몬스터가 아니라 ‘내가 켠 손전등 때문에 들킬 수 있다’는 규칙이었다.",
+    learning:
+      "감지기는 감지만, 몬스터는 행동만, 켜고 끄는 건 한 곳에서 — 이렇게 나누고 나서야 퍼즐 조건을 늘리는 일이 몬스터 코드를 건드리지 않는 일이 됐다."
+  },
+
+  // ════════════════════════════ INTO MONSTER POINT (game · AR · 팀) ═════════
+  // 2026-09-03 신설. 문장은 포트폴리오 PDF 49–55쪽, 코드는 toadsam/IMP 의
+  // Weapon2_JJH 브랜치(AdjustmentSystem.cs · Spawner.cs)에서 가져왔다. 무기
+  // 발사 코드는 저장소에서 원문을 찾지 못해 PDF 의 설명(입력 방향 있을 때만 발사 ·
+  // nextFire 쿨타임 · isUnlocked 차단)까지만 적고 코드는 싣지 않는다.
+  "monsterpoint-ar": {
+    tagline: "AR WAVE SHOOTER · AR FOUNDATION (TEAM)",
+    heroImage: {
+      src: "/projects/monsterpoint-ar.webp",
+      label: "현실 공간에 등장한 몬스터",
+      ratio: "16/9"
+    },
+    problemShot: {
+      src: "/projects/op/ar-scan-after.webp",
+      label: "스캔 후 전투 공간 고정",
+      ratio: "3/4",
+      fit: "contain"
+    },
+    // 트러블슈팅 1·2번의 결과를 순서대로 — 스캔 전 → 스캔 후 → 바닥·벽 → 보스.
+    // PDF 51–54쪽 캡처 4장을 한 줄로 붙였다(2026-09-04). 바닥·벽·보스 컷은
+    // 여기로 옮겼으니 갤러리에서 뺐다 — 같은 사진을 두 번 보이지 않는다.
+    resultShot: {
+      src: "/projects/op/ar-result-4cut.webp",
+      label: "스캔 전 → 스캔 후 → 바닥·벽 생성 → 보스 등장",
+      ratio: "2/1",
+      caption:
+        "스캔이 끝나면 평면 boundary 를 월드 좌표로 바꿔 X·Z min/max 로 바닥을 깔고 4방향 벽을 세운다. 그 안에서 처치 수가 10에 닿으면 보스가 나온다."
+    },
+    gallery: [
+      {
+        src: "/projects/op/ar-spawn.webp",
+        label: "바닥 꼭짓점 기준 랜덤 스폰",
+        ratio: "3/4",
+        fit: "contain"
+      },
+      {
+        src: "/projects/op/ar-play-bow.webp",
+        label: "활 — 조이스틱 방향으로 발사",
+        ratio: "3/4",
+        fit: "contain"
+      },
+      {
+        src: "/projects/op/ar-play-sword.webp",
+        label: "칼 — 근접 무기",
+        ratio: "3/4",
+        fit: "contain"
+      },
+      {
+        src: "/projects/op/ar-weapon-gun.webp",
+        label: "총 — 잠금 해제 무기",
+        ratio: "3/4",
+        fit: "contain"
+      }
+    ],
+    tldr: [
+      {
+        k: "무엇을",
+        v: "현실 공간을 스캔해 전장으로 고정하고, 그 안에서 웨이브로 몬스터를 사냥하는 AR 생존 슈터"
+      },
+      {k: "왜", v: "방마다 다른 현실 공간을 그대로 전투 무대로 쓰고 싶었음"},
+      {
+        k: "결과",
+        v: "평면 boundary → 바닥·벽 → 스폰 → 웨이브 → 보스로 이어지는 루프 · 무기 4종"
+      },
+      {
+        k: "내 역할",
+        v: "무기 제작 · 스폰 시스템 · 게임 루프 설계 (개발 · 기획)"
+      }
+    ],
+    demo: {
+      video: "https://www.youtube.com/watch?v=9Lf2K1qBJ2E",
+      repo: "https://github.com/toadsam/IMP"
+    },
+    meta: [
+      {label: "기간", value: "2025.03 – 2025.04"},
+      {label: "팀", value: "4인 팀 (VR 과 같은 팀원)"},
+      {label: "역할", value: "무기 제작 · 스폰 시스템 · 게임 루프 설계 · 기획"},
+      {label: "스택", value: "Unity · AR Foundation · C#"},
+      {
+        label: "비고",
+        value: "스크립트는 Weapon-JJH / Weapon2_JJH 브랜치 (main 은 템플릿만)"
+      }
+    ],
+    heroScreen: {
+      title: "INTO MONSTER POINT",
+      kind: "title",
+      titleText: "SCAN",
+      subText: "▶ 바닥을 비추세요"
+    },
+    impact: [
+      {n: "4", l: "무기 · 활 / 칼 / 마법 / 총"},
+      {n: "10", l: "처치 시 보스 등장 (counterBoss)"},
+      {n: "4", l: "방향 벽 — 스캔 boundary 에서 생성"}
+    ],
+    metricsNote:
+      "수치는 Spawner.cs(counterBoss = 10) · AdjustmentSystem.cs(CreateWall ×4) · WeaponShooterWithJoystick.cs(무기 4종) 기준 · 사용자 수 같은 값은 없다",
+    features: [
+      {
+        t: "전투 공간 고정",
+        d: "Plane Detection 스캔 종료 시 boundary 를 월드 좌표로 변환"
+      },
+      {t: "바닥·벽 자동 생성", d: "min/max 로 크기를 정하고 4방향 벽을 세움"},
+      {t: "웨이브 스폰", d: "spawnInterval 마다 스폰, 처치 수 누적 → 보스"},
+      {t: "무기 4종", d: "조이스틱 방향이 있을 때만 발사 · 쿨타임 · 잠금"}
+    ],
+    problem:
+      "현실 공간은 플레이할 때마다 크기와 모양이 다르다. 전장·스폰 위치·경계를 고정값으로 두면 어떤 방에서는 벽 밖에 몬스터가 생기고 어떤 방에서는 전장이 방을 넘는다.",
+    research: {
+      quotes: [
+        {
+          q: "실제 공간이 전투 무대가 됨. 플레이 환경에 따라 전투 경험이 달라짐.",
+          who: "설계 방향 — 현실 기반 전장"
+        },
+        {
+          q: "거리·방향·공간 크기에 따라 몬스터 스폰 위치가 유동적으로 결정.",
+          who: "설계 방향 — 스폰 규칙"
+        }
+      ]
+    },
+    hypothesis:
+      "“스캔한 평면의 boundary 하나에서 바닥·벽·스폰 위치를 전부 파생시키면 — 어떤 방에서 켜도 전장이 그 방 크기에 맞는다.”",
+    process: [
+      {t: "스캔", d: "Plane Detection"},
+      {t: "고정", d: "boundary → 바닥·벽"},
+      {t: "스폰", d: "꼭짓점 기준"},
+      {t: "웨이브", d: "처치 수 → 보스"},
+      {t: "무기", d: "4종 · 잠금"}
+    ],
+    architecture: [
+      {
+        tag: "AR",
+        name: "AdjustmentSystem",
+        desc: "ARPlaneManager trackables → boundary 월드 변환 → 바닥 스케일 · 벽 4개"
+      },
+      {
+        tag: "Spawn",
+        name: "Spawner",
+        desc: "spawnInterval 코루틴 · 처치 카운트 · counterBoss 도달 시 보스"
+      },
+      {
+        tag: "Weapon",
+        name: "무기 4종",
+        desc: "조이스틱 입력 · fireRate/힘/딜레이 분리 · isUnlocked 차단"
+      },
+      {
+        tag: "Hit",
+        name: "ProjectileDamage",
+        desc: "Monster 태그 충돌 시 데미지 · 소멸 여부 플래그"
+      }
+    ],
+    decisions: [
+      {
+        area: "전장 크기",
+        pick: "boundary min/max 사각형",
+        why: "어떤 방에서도 바닥·벽이 스캔 결과를 따라감",
+        alt: "고정 크기 전장 (방보다 크거나 작음)"
+      },
+      {
+        area: "카메라 포함",
+        pick: "카메라 위치 ±1m 를 범위에 합침",
+        why: "플레이어가 선 자리가 전장 밖이 되는 일을 막음",
+        alt: "평면만으로 계산"
+      },
+      {
+        area: "보스 트리거",
+        pick: "처치 수 누적 (counterBoss)",
+        why: "시간이 아니라 플레이 성과로 웨이브가 넘어감",
+        alt: "타이머"
+      },
+      {
+        area: "발사 조건",
+        pick: "입력 방향이 있을 때만",
+        why: "조준 없는 난사 방지 · 조작감",
+        alt: "버튼 누르면 항상 발사"
+      }
+    ],
+    coreCode: [
+      {
+        filename: "AdjustmentSystem.cs",
+        caption:
+          "스캔 종료 — 바닥 평면들의 boundary 를 월드 좌표로 모아 min/max 로 전장 크기를 정한다",
+        highlightLines: [2, 3, 4, 9, 10],
+        lines: [
+          "foreach (var plane in planeManager.trackables)",
+          "  if (plane.alignment == PlaneAlignment.HorizontalUp)",
+          "    foreach (var point in plane.boundary)",
+          "      allWorldPoints.Add(plane.transform.TransformPoint(new Vector3(point.x, 0f, point.y)));",
+          "",
+          "// min/max X·Z (+ 카메라 위치 ±1m)",
+          "float width = maxX - minX, length = maxZ - minZ;",
+          "GameObject floor = Instantiate(floorPrefab, new Vector3(centerX, minY, centerZ), Quaternion.identity);",
+          "floor.transform.localScale = new Vector3(width / 10f, 1f, length / 10f); // Plane 은 10×10 단위",
+          "CreateWall(c[0], c[1]); CreateWall(c[1], c[2]); CreateWall(c[2], c[3]); CreateWall(c[3], c[0]);"
+        ]
+      },
+      {
+        filename: "Spawner.cs",
+        caption:
+          "일정 간격 스폰 → 처치 수가 counterBoss 에 닿으면 보스 웨이브로 전환",
+        highlightLines: [2, 3, 9, 10],
+        lines: [
+          "IEnumerator SpawnEnemy1() {",
+          "  while (enemy1Spawned) { SpawnMonster(enemy1Prefab); yield return new WaitForSeconds(spawnInterval); }",
+          "}",
+          "",
+          "public void OnEnemy1Slained() {",
+          "  slainedMoster++;",
+          "  if (slainedMoster >= counterBoss && !boss1Spawned) {",
+          "    enemy1Spawned = false;",
+          "    boss1Spawned = true;",
+          "    StartCoroutine(SpawnBoss1());",
+          "    slainedMoster = 0;",
+          "  }",
+          "}"
+        ]
+      }
+    ],
+    work: [
+      {
+        g: "AR",
+        items: [
+          "Plane Scan 토글 · 스캔 종료 처리",
+          "boundary → 바닥 · 4방향 벽"
+        ]
+      },
+      {
+        g: "스폰",
+        items: ["꼭짓점 기준 스폰 위치", "spawnInterval 루프 · 보스 트리거"]
+      },
+      {g: "무기", items: ["활 · 칼 · 마법 · 총", "발사 조건 · 쿨타임 · 잠금"]},
+      {g: "기획", items: ["게임 루프 설계"]}
+    ],
+    challenges: [
+      {
+        title: "방마다 크기가 달라 전장을 고정할 수 없었다",
+        problem:
+          "스캔된 평면은 여러 조각으로 들어오고 크기도 매번 다르다. 어디까지가 전장인지 코드가 정해야 했다.",
+        solution:
+          "바닥 평면들의 boundary 점을 전부 월드 좌표로 바꿔 X·Z 의 min/max 를 잡고, 그 사각형으로 바닥을 스케일링한 뒤 네 꼭짓점을 이어 벽을 세웠다. 카메라 위치 ±1m 도 범위에 넣어 플레이어가 전장 밖에 서지 않게 했다.",
+        code: {
+          filename: "AdjustmentSystem.cs",
+          lines: [
+            "void CreateWall(Vector3 start, Vector3 end) {",
+            "  Vector3 mid = (start + end) / 2; float dist = (end - start).magnitude;",
+            "  GameObject wall = Instantiate(wallPrefab, mid, Quaternion.identity);",
+            "  wall.transform.localScale = new Vector3(0.01f, 1f, dist);",
+            "  wall.transform.rotation = Quaternion.LookRotation(end - start);",
+            "}"
+          ]
+        }
+      },
+      {
+        title: "웨이브가 시간으로 넘어가면 플레이와 무관해진다",
+        problem:
+          "타이머로 보스를 내보내면 못 잡고 있어도 보스가 온다. 압박은 플레이어의 성과에서 나와야 했다.",
+        solution:
+          "Spawner 가 처치 콜백(OnEnemyNSlained)으로 카운트를 누적하고, counterBoss(10)에 닿으면 일반 스폰을 멈추고 보스를 소환한다. 보스마다 카운트를 0 으로 되돌려 다음 웨이브로 잇는다."
+      }
+    ],
+    tech: ["Unity", "AR Foundation", "C#"],
+    resultScreens: [
+      {
+        title: "INTO MONSTER POINT · LOOP",
+        kind: "stats",
+        stats: [
+          {n: "스캔", l: "전장 고정"},
+          {n: "4", l: "벽"},
+          {n: "10", l: "처치 → 보스"},
+          {n: "4", l: "무기"}
+        ]
+      },
+      {
+        title: "INTO MONSTER POINT · BOSS",
+        kind: "title",
+        titleText: "BOSS WAVE",
+        subText: "counterBoss 도달"
+      }
+    ],
+    metrics: [
+      {n: "4", l: "무기"},
+      {n: "10", l: "처치 → 보스"},
+      {n: "4", l: "방향 벽"},
+      {n: "4인", l: "팀"}
+    ],
+    kpt: {
+      keep: [
+        "전장·스폰·벽을 전부 스캔 결과에서 파생",
+        "처치 수 기반 웨이브 전환"
+      ],
+      problem: [
+        "보스 3종이 같은 counterBoss 값 — 난이도 곡선 없음",
+        "무기 잠금 해제 조건이 단순"
+      ],
+      try: ["웨이브별 난이도 데이터화", "무기 해제 조건을 성과와 연결"]
+    },
+    learningLead:
+      "AR 에서 플레이 공간은 내가 정하는 게 아니라 스캔이 정한다 — 그래서 모든 값이 boundary 에서 나와야 했다.",
+    learning:
+      "고정값 하나 없이 스캔 결과만으로 전장·벽·스폰이 서게 만들고 나니, 어떤 방에서 켜도 같은 게임이 됐다."
+  },
+
+  // ════════════════════════════ 아주대탐험 / Ajou Indie Game (game · 1인) ═══
+  // 2026-09-03 신설. 「아주분투」(ajou-adventure, Phaser 2D 러너)와 **다른 게임**이다.
+  // 문장은 포트폴리오 PDF 27–34쪽, 코드는 toadsam/Ajou_IndiGame 의 Assets/Script.
+  // 그림은 마을 전시실(AjouRoom)이 이미 쓰던 /projects/ajou-adventure/ 의 것 —
+  // 폴더 이름은 옛 것이지만 내용은 이 게임(치토·원천관·시점 전환)이다.
+  "ajou-indigame": {
+    tagline: "3D ACTION ADVENTURE · UNITY (SOLO)",
+    heroImage: {
+      src: "/projects/ajou-adventure/title.webp",
+      label: "아주대탐험 타이틀",
+      ratio: "16/9"
+    },
+    problemShot: {
+      src: "/projects/ajou-adventure/view-fp.webp",
+      label: "1인칭 시점 — 탐색",
+      ratio: "16/9"
+    },
+    // 트러블슈팅 세 건과 1:1 — 시점 전환(위 두 장) · 랜덤 스킬 3택 · 캐릭터 선택 UI.
+    // PDF 30–33쪽 캡처(저장소 ajou-adventure/ 와 같은 원본)를 2×2 로 붙였다
+    // (2026-09-04). 여기 쓴 세 컷은 갤러리에서 뺐다.
+    resultShot: {
+      src: "/projects/op/ajou-result-4cut.webp",
+      label: "1인칭↔탑다운 · 레벨업 랜덤 3택 · 캐릭터 선택",
+      ratio: "16/9",
+      caption:
+        "위: 같은 캠퍼스를 1인칭(탐색)과 탑다운(전투)으로 오간다. 아래 왼쪽: 레벨업마다 전체 목록에서 랜덤 3개를 제시하고 고르는 동안 시간을 멈춘다. 아래 오른쪽: 선택한 캐릭터만 활성화되는 선택 화면."
+    },
+    gallery: [
+      {
+        src: "/projects/ajou-adventure/boss-appear.webp",
+        label: "보스 등장",
+        ratio: "16/9"
+      },
+      {
+        src: "/projects/ajou-adventure/quest-ui.webp",
+        label: "돌발 퀘스트 알림",
+        ratio: "16/9"
+      },
+      {
+        src: "/projects/ajou-adventure/portal.webp",
+        label: "포탈 — 씬 전환",
+        ratio: "16/9"
+      }
+    ],
+    tldr: [
+      {
+        k: "무엇을",
+        v: "아주대 캠퍼스에서 마스코트 ‘치토’가 졸업을 목표로 성장하는 Unity 3D 액션 어드벤처"
+      },
+      {k: "왜", v: "퍼즐 탐색과 전투에 서로 다른 시야·조작을 주고 싶었음"},
+      {
+        k: "결과",
+        v: "1인칭↔탑다운을 조작 충돌·카메라 튐 없이 오가고, 레벨업마다 랜덤 3택으로 매 판 다른 빌드가 나온다"
+      },
+      {k: "내 역할", v: "시스템 설계 / UI / AI / 전투 / 성장 전부 (1인)"}
+    ],
+    demo: {
+      video: "https://www.youtube.com/watch?v=mtIiIWmrSdg",
+      repo: "https://github.com/toadsam/Ajou_IndiGame"
+    },
+    meta: [
+      {label: "기간", value: "2024.08 – 2024.12"},
+      {label: "팀", value: "개인 개발 (1인)"},
+      {
+        label: "역할",
+        value: "코어 루프 · AI · UI · 전투 · 성장 시스템 설계/구현"
+      },
+      {label: "스택", value: "Unity · C# · NavMesh"}
+    ],
+    heroScreen: {
+      title: "AJOU INDIE GAME",
+      kind: "title",
+      titleText: "아주대탐험",
+      subText: "▶ 치토, 졸업을 향해"
+    },
+    impact: [
+      {n: "1인", l: "설계 · UI · AI · 전투 · 성장 전부"},
+      {n: "2", l: "시점 · 1인칭 ↔ 탑다운"},
+      {n: "3", l: "레벨업 랜덤 스킬 제시"}
+    ],
+    metricsNote:
+      "수치는 저장소 스크립트 기준(PlayerMode enum 2 · randomSkills[3] · WaveManager case 1–5)",
+    features: [
+      {
+        t: "시점 전환",
+        d: "1인칭 탐색 ↔ 탑다운 전투 — 카메라·컨트롤러·물리 제약을 함께 전환"
+      },
+      {t: "랜덤 스킬 성장", d: "레벨업 시 시간 정지 → 3개 중 선택 → 즉시 반영"},
+      {t: "상태 기반 AI", d: "NavMesh 일반 몬스터 · 예고 있는 랜덤 패턴 보스"},
+      {
+        t: "이벤트 시스템",
+        d: "돌발 퀘스트 · 포탈 씬 전환 · 소환 스킬(20초/쿨 20초)"
+      }
+    ],
+    problem:
+      "퍼즐 탐색과 전투는 요구하는 시야와 조작이 다르다. 하나의 카메라·컨트롤러로 둘을 다 하면 어느 쪽도 몰입이 안 되고, 기능을 하나씩 붙이면 서로 얽혀 확장이 어려워진다.",
+    research: {
+      quotes: [
+        {
+          q: "단순 연출이 아닌 게임 시스템으로서 시점 전환 기능 구현.",
+          who: "설계 방향 — 시점 전환"
+        },
+        {
+          q: "매 판 다른 빌드를 만들 수 있도록 랜덤 스킬 선택 도입, 반복 플레이 동기 강화.",
+          who: "설계 방향 — 성장 루프"
+        }
+      ],
+      stat: {n: "5", l: "시스템 모듈 · Player / Skill / AI / UI / Event"}
+    },
+    hypothesis:
+      "“카메라·컨트롤러·물리 제약을 ‘모드’ 단위로 함께 바꾸면 — 한 캐릭터로 탐색과 전투를 오가면서도 조작이 겹치거나 화면이 튀지 않는다.”",
+    process: [
+      {t: "탐색", d: "1인칭"},
+      {t: "전투", d: "탑다운 · 웨이브"},
+      {t: "경험치", d: "적 처치"},
+      {t: "레벨업", d: "스킬 3택"},
+      {t: "다음 웨이브", d: "난이도 ↑"}
+    ],
+    architecture: [
+      {
+        tag: "Player",
+        name: "PlayerModeManager",
+        desc: "FirstPerson / TopDown — 컨트롤러 enable 전환 · 카메라 Parent · Y축 잠금"
+      },
+      {
+        tag: "Skill",
+        name: "InGameSkillManager",
+        desc: "레벨업 → 랜덤 3개 제시 → 획득/강화"
+      },
+      {
+        tag: "AI",
+        name: "MonsterAI · WaveManager",
+        desc: "Idle → Move → Chase → Attack · 웨이브 1–4 + 보스(5)"
+      },
+      {
+        tag: "UI",
+        name: "인벤토리 · 캐릭터 선택",
+        desc: "선택 결과가 게임 오브젝트 활성/비활성으로 즉시 반영"
+      },
+      {
+        tag: "Event",
+        name: "Portal · RobotSummoner · 돌발 퀘스트",
+        desc: "코루틴 기반 시간 제어 · 씬 로딩"
+      }
+    ],
+    decisions: [
+      {
+        area: "시점 전환",
+        pick: "컨트롤러 2개를 켜고 끄기",
+        why: "모드 전환 시 동시 입력·오작동 방지",
+        alt: "한 컨트롤러에 분기 (얽힘)"
+      },
+      {
+        area: "카메라",
+        pick: "1인칭은 플레이어 자식으로, 탑다운은 분리",
+        why: "시점이 튀지 않게 고정 · localPosition 0 리셋",
+        alt: "위치를 매 프레임 계산"
+      },
+      {
+        area: "탑다운 물리",
+        pick: "3초 뒤 Y축 Freeze",
+        why: "전환 직후 흔들림 방지 · 이후 평면 이동 고정",
+        alt: "즉시 고정 (전환 순간 튐)"
+      },
+      {
+        area: "성장",
+        pick: "레벨업마다 랜덤 3택",
+        why: "매 판 다른 빌드 · 반복 플레이 동기",
+        alt: "고정 스킬 트리"
+      }
+    ],
+    coreCode: [
+      {
+        filename: "PlayerModeManager.cs",
+        caption:
+          "시점 전환은 카메라만 옮기는 게 아니다 — 컨트롤러·물리 제약·카메라 부모를 한 번에 바꾼다",
+        highlightLines: [3, 4, 6, 7, 11, 12],
+        lines: [
+          "switch (mode) {",
+          "  case PlayerMode.FirstPerson:",
+          "    firstPersonController.enabled = true;  topDownController.enabled = false;",
+          "    UnlockYPosition();",
+          "    mainCamera.transform.SetParent(firstPersonCameraParent);",
+          "    mainCamera.transform.localPosition = Vector3.zero;",
+          "    mainCamera.transform.localRotation = Quaternion.identity;",
+          "    break;",
+          "  case PlayerMode.TopDown:",
+          "    firstPersonController.enabled = false; topDownController.enabled = true;",
+          "    StartCoroutine(LockYPositionAfterDelay(3f));",
+          "    mainCamera.transform.SetParent(null); topDownCameraFollow.enabled = true;",
+          "    break;",
+          "}"
+        ]
+      },
+      {
+        filename: "InGameSkillManager.cs",
+        caption:
+          "레벨업 → 랜덤 3개 제시 → 이미 가진 스킬이면 강화, 아니면 획득",
+        highlightLines: [3, 8, 9],
+        lines: [
+          "for (int i = 0; i < 3; i++) {",
+          "  randomSkills[i] = availableSkills[Random.Range(0, availableSkills.Count)];",
+          "  int index = i; // 클로저 캡처",
+          "  skillButtons[i].onClick.AddListener(() => SelectSkill(index));",
+          "}",
+          "",
+          "void SelectSkill(int index) {",
+          "  var s = randomSkills[index];",
+          "  if (acquiredSkills.Contains(s)) s.Upgrade(); else { acquiredSkills.Add(s); s.ActivateEffectStage(1); }",
+          "  skillSelectionUI.SetActive(false);",
+          "}"
+        ]
+      },
+      {
+        filename: "MonsterAI.cs",
+        caption:
+          "상태 하나가 곧 메서드 하나 — 거리 조건으로만 다음 상태를 정한다",
+        highlightLines: [1, 7, 8],
+        lines: [
+          "private enum AIState { Idle, Move, Chase, Attack, TakeDamage, Die }",
+          "",
+          "void Update() {",
+          "  switch (currentState) { case AIState.Idle: Idle(); break; case AIState.Chase: ChasePlayer(); break; /* … */ }",
+          "}",
+          "void ChasePlayer() {",
+          "  agent.SetDestination(player.position);",
+          "  if (IsPlayerInRange(attackRange)) currentState = AIState.Attack;",
+          "  else if (!IsPlayerInRange(detectionRange)) currentState = AIState.Idle;",
+          "}"
+        ]
+      }
+    ],
+    work: [
+      {
+        g: "Player",
+        items: ["1인칭 ↔ 탑다운 전환", "카메라 Parent · Y축 잠금 · 포탈 트리거"]
+      },
+      {g: "Skill", items: ["레벨업 랜덤 3택", "획득 / 강화 분기"]},
+      {
+        g: "AI",
+        items: ["Idle/Move/Chase/Attack 상태 AI", "웨이브 5단계 · 보스"]
+      },
+      {
+        g: "UI · Event",
+        items: ["인벤토리 · 캐릭터 선택 연동", "돌발 퀘스트 · 포탈 · 소환 스킬"]
+      }
+    ],
+    challenges: [
+      {
+        title: "시점을 바꾸면 조작이 겹치고 카메라가 튀었다",
+        problem:
+          "1인칭과 탑다운이 같은 입력을 동시에 받으면 오작동이 나고, 카메라를 위치로만 옮기면 전환 순간 시점이 튄다.",
+        solution:
+          "컨트롤러 두 개를 모드에 따라 enable/disable 로 갈라 동시 입력을 막고, 1인칭 카메라는 플레이어의 자식으로 붙여 localPosition 을 0 으로 리셋했다. 탑다운은 3초 지연 뒤 Y축을 Freeze 해 전환 직후 흔들림을 넘겼다.",
+        code: {
+          filename: "PlayerModeManager.cs",
+          lines: [
+            "IEnumerator LockYPositionAfterDelay(float delay) {",
+            "  yield return new WaitForSeconds(delay);",
+            "  playerRigidbody.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;",
+            "}"
+          ]
+        }
+      }
+    ],
+    tech: ["Unity", "C#", "NavMesh"],
+    resultScreens: [
+      {
+        title: "AJOU INDIE GAME · SYSTEMS",
+        kind: "stats",
+        stats: [
+          {n: "2", l: "시점"},
+          {n: "3", l: "스킬 3택"},
+          {n: "5", l: "웨이브"},
+          {n: "20초", l: "소환 / 쿨타임"}
+        ]
+      },
+      {
+        title: "AJOU INDIE GAME · BOSS",
+        kind: "title",
+        titleText: "BOSS",
+        subText: "다섯 번째 웨이브"
+      }
+    ],
+    metrics: [
+      {n: "2", l: "시점 전환"},
+      {n: "3", l: "랜덤 스킬"},
+      {n: "5", l: "웨이브"},
+      {n: "1인", l: "전담"}
+    ],
+    kpt: {
+      keep: [
+        "시스템 5개를 독립 모듈로 나눈 구조",
+        "시점 전환을 연출이 아닌 시스템으로"
+      ],
+      problem: [
+        "웨이브마다 몬스터 1마리 — 분량이 얇음",
+        "값(3초·20초·범위)이 스크립트에 박혀 있음"
+      ],
+      try: ["건물별 스테이지 테마 · 최종 보스 ‘졸업’", "밸런스 값 데이터화"]
+    },
+    learningLead:
+      "기능을 붙이는 게 아니라 시스템을 나누는 것이 1인 개발에서도 확장의 전부였다.",
+    learning:
+      "Player · Skill · AI · UI · Event 를 각자 독립시켜 두니, 새 스킬이나 새 상태를 붙일 때 다른 시스템을 열어 볼 일이 없어졌다."
   }
 };

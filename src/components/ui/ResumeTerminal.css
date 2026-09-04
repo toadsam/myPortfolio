@@ -1344,11 +1344,73 @@
   .project-card:not(.is-featured) {
   padding: 16px;
 }
+
+/* 340 → 300 (2026-09-03 "조금만 더"). 격자 칸은 340 그대로라 카드를 칸 가운데에
+   세운다. 가로세로 비율(340×371)은 사진 높이와 min-height 를 같은 비율로 줄여
+   지킨다 — 폭만 줄이면 글이 더 접혀 카드가 오히려 길어진다. */
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card:not(.is-featured) {
+  width: 300px;
+  justify-self: center;
+  min-height: calc(300px * 371 / 340);
+}
+
+/* 300px 에서 이름·기간이 두 줄로 접히면 카드마다 키가 달라져 비율이 깨진다
+   (실측: 한 행 389, 다른 행 335). 제목 줄을 세로로 세우고 이름·기간을 한 줄씩
+   말줄임한다 — 전문은 카드를 누르면 상세에 있다. */
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card:not(.is-featured)
+  .project-title-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+}
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card:not(.is-featured)
+  .project-name,
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card:not(.is-featured)
+  .project-name-btn,
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card:not(.is-featured)
+  .project-meta {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+/* 링크 줄도 한 줄. TSEROF 는 링크가 셋(Steam · GitHub · 플레이 영상)이라 300px
+   에서 두 줄로 접혀 그 행만 36px 컸다 — 행 높이는 가장 큰 카드가 정하므로 카드
+   여섯의 비율이 행마다 달라졌다. 칩을 한 단 줄여 한 줄에 세운다. */
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card:not(.is-featured)
+  .project-links {
+  flex-wrap: nowrap;
+  gap: 6px;
+  overflow: hidden;
+}
+.resume-terminal
+  .carousel-wrapper[data-grid="true"]
+  .project-card:not(.is-featured)
+  .project-link {
+  font-size: 11px;
+  padding: 3px 7px;
+  white-space: nowrap;
+}
 .resume-terminal
   .carousel-wrapper[data-grid="true"]
   .project-card:not(.is-featured)
   .project-card-image {
-  height: 150px;
+  height: 132px;
   margin-bottom: 10px;
 }
 .resume-terminal
@@ -1908,6 +1970,9 @@
     .carousel-wrapper[data-grid="true"]
     .project-card:not(.is-featured) {
     grid-column: span 1;
+    width: auto;
+    justify-self: stretch;
+    min-height: 0;
   }
 }
 

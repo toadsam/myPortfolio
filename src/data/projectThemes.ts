@@ -17,6 +17,15 @@ export interface ProjectTheme {
 }
 
 export const projectThemes: Record<string, ProjectTheme> = {
+  // 이 사이트 자체. 마을 간판금 · 밤하늘 — globals.css 의 --v-gold / --v-night 와 같은 값.
+  "village-portfolio": {
+    category: "platform",
+    primary: "#e2c078",
+    secondary: "#c5a059",
+    bg: "#0b1626",
+    accent: "#f0d99a"
+  },
+
   // 대시보드형 프로젝트
   mywave: {
     category: "dashboard",
@@ -96,6 +105,32 @@ export const projectThemes: Record<string, ProjectTheme> = {
     secondary: "#059669",
     bg: "#04120d",
     accent: "#6ee7b7"
+  },
+  // 2026-09-03 — 이력서 카드에서 열리는 상세(원페이지)가 없던 셋. 내용은 전부
+  // 포트폴리오 PDF(정재훈이력서긴버전 27–34 · 43–55쪽)와 저장소 코드에서 왔다.
+  "otherside-vr": {
+    category: "game",
+    mood: "horror",
+    primary: "#a78bfa",
+    secondary: "#7c3aed",
+    bg: "#0b0716",
+    accent: "#c4b5fd"
+  },
+  "monsterpoint-ar": {
+    category: "game",
+    mood: "arcade",
+    primary: "#fb923c",
+    secondary: "#ea580c",
+    bg: "#140a04",
+    accent: "#fdba74"
+  },
+  "ajou-indigame": {
+    category: "game",
+    mood: "arcade",
+    primary: "#fbbf24",
+    secondary: "#d97706",
+    bg: "#120d03",
+    accent: "#fde68a"
   }
 };
 

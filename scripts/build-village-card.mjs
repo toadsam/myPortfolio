@@ -140,6 +140,51 @@ async function captureAdmin(page, out) {
   await page.unroute(`${API}/**`);
 }
 
+// 원페이저용 16:9 컷. 카드(2.08:1)와 달리 잘리는 게 거의 없다.
+async function saveWide(src, name) {
+  const out = p(`public/projects/village-portfolio/${name}.webp`);
+  await sharp(src)
+    .resize(1600, 900, {fit: "cover", position: "top"})
+    .webp({quality: 82})
+    .toFile(out);
+  console.log(`생성: ${path.relative(root, out)}`);
+}
+
+// /atelier — 데스크톱 판정(min-width 1024 + pointer:fine)이면 3D 공방이 뜬다.
+async function captureAtelier(page, out) {
+  await page.goto(`${BASE}/atelier`, {
+    waitUntil: "domcontentloaded",
+    timeout: 90000
+  });
+  await page
+    .waitForFunction(
+      () => (window.__three?.gl?.info?.memory?.geometries ?? 0) > 20,
+      null,
+      {timeout: 90000, polling: 500}
+    )
+    .catch(() => {});
+  for (let i = 0; i < 12; i++) {
+    await clickIfAny(page, page.getByText("눌러서 들어가기"));
+    await clickIfAny(page, page.getByRole("button", {name: "건너뛰기"}));
+    await page.waitForTimeout(500);
+  }
+  await page.waitForTimeout(3000);
+  await page.screenshot({path: out});
+}
+
+// /resume — 대표 카드 구간(전폭 카드가 맨 위에 오도록 스크롤).
+async function captureResume(page, out) {
+  await page.goto(`${BASE}/resume`, {waitUntil: "networkidle"});
+  await page.waitForTimeout(1500);
+  await page.evaluate(() => {
+    document
+      .querySelector(".project-card.is-hero")
+      ?.scrollIntoView({block: "start"});
+  });
+  await page.waitForTimeout(1500);
+  await page.screenshot({path: out});
+}
+
 async function main() {
   await mkdir(p(".tmp"), {recursive: true});
   await mkdir(p("public/projects/village-portfolio"), {recursive: true});
@@ -155,6 +200,19 @@ async function main() {
     await captureVillage(page, village);
     const admin = p(".tmp/village-card-admin.png");
     await captureAdmin(page, admin);
+
+    // 원페이저 컷은 16:9 화면으로 다시 잡는다.
+    await page.setViewportSize({width: 1600, height: 900});
+    const villageWide = p(".tmp/village-card-village-wide.png");
+    await captureVillage(page, villageWide);
+    const atelier = p(".tmp/village-card-atelier.png");
+    await captureAtelier(page, atelier);
+    const resume = p(".tmp/village-card-resume.png");
+    await captureResume(page, resume);
+    await saveWide(villageWide, "village");
+    await saveWide(admin, "admin");
+    await saveWide(atelier, "atelier");
+    await saveWide(resume, "resume");
 
     const left = await sharp(village)
       .resize(HALF, H, {fit: "cover", position: "centre"})

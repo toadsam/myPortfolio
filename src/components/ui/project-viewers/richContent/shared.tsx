@@ -144,6 +144,15 @@ export interface RichProject {
     solution: string;
     code?: CodeSpec;
     /**
+     * 머리글 라벨. 기본은 "[PROBLEM]" / "Solution".
+     *
+     * 카드가 늘 「깨진 것 → 고친 것」은 아니다 — aClub 의 재방문 5.4% 카드는
+     * 지표를 보고 **안 고치기로 판단한** 이야기라, 같은 틀에 넣으면 고쳤다고
+     * 읽힌다. 그런 카드만 "[OBSERVATION]" / "Decision" 으로 바꾼다.
+     */
+    problemLabel?: string;
+    solutionLabel?: string;
+    /**
      * 아래 `perf` 막대를 **이 카드 바로 뒤**에 붙인다.
      *
      * perf 는 프로젝트 단위 필드라 예전엔 카드 세 장을 전부 지나서 그려졌다.

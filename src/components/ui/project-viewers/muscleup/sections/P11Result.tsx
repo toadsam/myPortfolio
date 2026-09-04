@@ -27,7 +27,7 @@ const IDX = {label: 0, heading: 1, body: 2, shots: 3, meta: 4};
 
 // muscle-up.click 은 현재 응답이 없어 링크로 걸지 않는다(위 MetaCell 주석 참고).
 const REPO = "https://github.com/toadsam/Ajou_MuscleUp";
-const VIDEO = "https://www.youtube.com/watch?v=y6pbAoxveQM";
+const VIDEO = "https://youtu.be/0X-BIADC1eQ";
 
 interface ShotDef {
   src: string;

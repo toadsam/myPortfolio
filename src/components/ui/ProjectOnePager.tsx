@@ -3,7 +3,7 @@
 import {AnimatePresence, motion} from "framer-motion";
 import dynamic from "next/dynamic";
 import type {ComponentType} from "react";
-import {Fragment, useEffect, useRef} from "react";
+import {Fragment, useEffect, useRef, useState} from "react";
 import {getProjectTheme, type ProjectTheme} from "@/data/projectThemes";
 // 이름·직함·연락처는 이력서 데이터가 단일 출처다. 여기서 다시 적지 않는다 —
 // 예전엔 푸터에 템플릿 잔재("Sam Kim")가 하드코딩돼 있었다.
@@ -41,10 +41,13 @@ function getBrief(id: string): RichProject | null {
   return null;
 }
 
+// 상단바에 id 대문자 대신 쓸 브랜드 표기. 실서비스 이름의 대소문자를 따른다.
+const BRAND_CASE: Record<string, string> = {aclub: "aClub"};
+
 const CATEGORY_LABEL: Record<string, string> = {
   dashboard: "DASHBOARD",
   realtime: "REALTIME",
-  platform: "PLATFORM",
+  platform: "WEB PLATFORM",
   game: "GAME"
 };
 
@@ -59,6 +62,13 @@ const CATEGORY_LABEL: Record<string, string> = {
 const SIGNATURE_DEMO: Partial<
   Record<string, ComponentType<{theme: ProjectTheme}>>
 > = {
+  "village-portfolio": dynamic(
+    () =>
+      import("./project-viewers/richContent/VillageDemo").then(
+        m => m.VillageDemo
+      ),
+    {ssr: false}
+  ),
   festflow: dynamic(
     () =>
       import("./project-viewers/richContent/FestFlowLiveDemo").then(
@@ -198,6 +208,7 @@ function Icon({name, className}: {name: string; className?: string}) {
         <path d="M15 9l-6 6M9 9l6 6" />
       </>
     ),
+    play: <path d="M8 5v14l11-7z" />,
     rocket: (
       <>
         <path d="M5 13l-2 6 6-2 8.5-8.5A4 4 0 0012 3L5 13z" />
@@ -303,8 +314,9 @@ const SECTION_LIMIT: Record<
 const CODE_PICK: Record<string, string[]> = {
   // useClubs 는 useState+useEffect+fetch, RequireAuth 는 교과서 예제라 둘 다 뺀다.
   aclub: [],
-  // ProtectedRoute.js 는 교과서다. nginx try_files 404 는 실제로 겪은 것이라 남긴다.
-  ajouchong: ["nginx.conf"],
+  // 2026 백엔드의 수량 검증(실제 코드)을 앞에, 2025 의 nginx try_files 를 뒤에.
+  // ProtectedRoute.js 는 교과서라 데이터에서 아예 뺐다.
+  ajouchong: ["RentalService.java", "nginx.conf"],
   // `axios-interceptor.ts` 를 뺐다. 401 이면 refresh 후 재요청하는 **순진한 버전**
   // 이라 대기 큐도 refreshing 플래그도 없는데, 바로 위 Troubleshooting 첫 카드가
   // "그렇게 하면 여러 요청이 동시에 401 을 받는 순간 서로를 무효화한다" 며 그걸
@@ -358,6 +370,63 @@ function Shot({
         {spec?.label ?? "이미지 자리"}
       </p>
     </div>
+  );
+}
+
+// ─── 플레이 영상 ──────────────────────────────────────────────────────────────
+// 게임은 스크린샷으로 안 읽힌다 — 움직여야 설득된다. 그런데 YouTube iframe 을
+// 처음부터 박으면 상세를 여는 것만으로 유튜브 스크립트 1MB 가 내려온다.
+// 그래서 썸네일(img.youtube.com)만 보여 주고, 누르면 그때 iframe 을 끼운다.
+function youtubeId(url?: string): string | null {
+  if (!url) return null;
+  const m = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+function PlayVideo({id, theme}: {id: string; theme: ProjectTheme}) {
+  const [playing, setPlaying] = useState(false);
+  return (
+    <section className="reveal space-y-4">
+      <h2 className="section-label">Play Video</h2>
+      <div
+        className="relative w-full overflow-hidden rounded-xl border border-white/10 bg-black"
+        style={{aspectRatio: "16 / 9"}}
+      >
+        {playing ? (
+          <iframe
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute inset-0 h-full w-full"
+            src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`}
+            title="플레이 영상"
+          />
+        ) : (
+          <button
+            aria-label="플레이 영상 재생"
+            className="group absolute inset-0 h-full w-full"
+            onClick={() => setPlaying(true)}
+            type="button"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt=""
+              className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100"
+              loading="lazy"
+              src={`https://img.youtube.com/vi/${id}/hqdefault.jpg`}
+            />
+            <span
+              className="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-black shadow-lg transition-transform group-hover:scale-110"
+              style={{background: theme.accent}}
+            >
+              <Icon className="ml-1 h-7 w-7" name="play" />
+            </span>
+          </button>
+        )}
+      </div>
+      <p className="mono text-xs text-muted">
+        YouTube · 누르면 이 자리에서 재생됩니다
+      </p>
+    </section>
   );
 }
 
@@ -481,6 +550,7 @@ export function ProjectOnePager({
   const repoHref = data.demo.repo ?? project.links[0]?.href;
   // 실제로 열리는 주소가 있을 때만 "운영 중" 이라고 말하고, 그 주소로 보낸다.
   const liveHref = data.demo.live;
+  const videoId = youtubeId(data.demo.video);
   // 오른쪽 5칸에 무엇을 둘지: 대표 이미지가 실제로 있으면 그걸 쓴다.
   // 없을 때만 사실 묶음을 올린다 — 예전엔 여기가 "이미지 자리" 라고 적힌
   // 빈 점선 상자였고, 이미지가 0장인 프로젝트에서는 첫 화면 절반이 그거였다.
@@ -505,6 +575,12 @@ export function ProjectOnePager({
     : limit.gallery
     ? galleryAll.slice(0, limit.gallery)
     : galleryAll;
+  const galleryPortrait =
+    gallery.length > 0 &&
+    gallery.every(g => {
+      const [w, h] = (g.ratio ?? "16/10").split("/").map(Number);
+      return h > w;
+    });
 
   const codePick = CODE_PICK[project.id];
   const codes = codePick
@@ -659,7 +735,13 @@ export function ProjectOnePager({
               ) : null}
               <span className="text-accent">
                 {CATEGORY_LABEL[theme.category] ?? "PROJECT"} ·{" "}
-                {project.id.toUpperCase()}
+                {/* 바깥 div 가 uppercase 라 브랜드 표기(aClub)가 ACLUB 으로
+                    찍혔다 — 페이지 나머지가 전부 aClub 인데 상단바만 달랐다.
+                    표기가 정해진 이름만 normal-case 로 빼고, 나머지는 예전처럼
+                    id 대문자. */}
+                <span className="normal-case">
+                  {BRAND_CASE[project.id] ?? project.id.toUpperCase()}
+                </span>
               </span>
             </div>
 
@@ -814,6 +896,12 @@ export function ProjectOnePager({
             ) : null}
           </section>
 
+          {/* ══════════ 플레이 영상 ══════════
+              숫자 다음, 문제 정의 앞. 게임 셋(VR·AR·아주대탐험)은 사용자 수
+              같은 성과 숫자가 없어서 "그래서 뭐가 됐는데" 에 답하는 게 이 영상
+              하나다. 먼저 보고 나서 읽게 한다. */}
+          {videoId ? <PlayVideo id={videoId} theme={theme} /> : null}
+
           {/* ══════════ 문제 정의 ══════════ */}
           {/* 예전엔 Troubleshooting 이 여기(3번째)에 있고 Context 가 그 뒤였다.
               이력서 카드가 약속하는 건 「사용자 피드백을 듣고 다시 만들었다」인데,
@@ -947,7 +1035,7 @@ export function ProjectOnePager({
                           aria-hidden="true"
                           className="mono mb-2 text-xs uppercase tracking-widest text-red-300"
                         >
-                          [PROBLEM]
+                          {c.problemLabel ?? "[PROBLEM]"}
                         </p>
                         <h3 className="font-bold text-gray-200">{c.title}</h3>
                       </div>
@@ -978,7 +1066,7 @@ export function ProjectOnePager({
                           <div className="flex items-center gap-2 text-accent">
                             <Icon className="h-4 w-4" name="arrowRight" />
                             <span className="text-xs font-bold uppercase tracking-widest">
-                              Solution
+                              {c.solutionLabel ?? "Solution"}
                             </span>
                           </div>
                           {/* whitespace-pre-line — 문단 안의 빈 줄을 살린다.
@@ -1017,14 +1105,15 @@ export function ProjectOnePager({
                   어느 카드가 `perfAfter` 로 데려갔으면 여기서는 안 그린다. */}
               {perfClaimedByCard ? null : perfBlock}
 
+              {/* resultShot 이 없으면 아무것도 안 그린다 (Shot 이 null). 예전엔
+                  "개선 결과 화면" 회색 상자를 남겼는데, 11개 중 8개 페이지가
+                  그 상자를 달고 있어 미완성으로 읽혔다 (2026-09-04). */}
               <Shot
                 big
                 className="w-full rounded-xl"
                 iconName="chart"
                 ratio="21/9"
-                spec={
-                  data.resultShot ?? {label: "개선 결과 화면", ratio: "21/9"}
-                }
+                spec={data.resultShot}
                 theme={theme}
               />
             </section>
@@ -1166,12 +1255,29 @@ export function ProjectOnePager({
 
             <div className="reveal space-y-8">
               <h3 className="block-label">Technical Decision Table</h3>
-              <p className="mono -mt-4 text-xs text-muted md:hidden">
-                → 옆으로 밀면 「이유 / 대안」 칸이 보입니다
-              </p>
+              {/* 좁은 화면: 행마다 세로로 쌓는다. 예전엔 표를 가로 스크롤에
+                  넣고 "옆으로 밀면 보입니다" 라고 적어 뒀는데, 셋째 열(이유 /
+                  대안)이 표에서 제일 중요한 칸이라 숨기면 표가 남는 게 없다. */}
+              <ul className="divide-y divide-[rgb(122,90,56,0.45)] rounded-lg border border-[rgb(122,90,56,0.45)] md:hidden">
+                {data.decisions.map(d => (
+                  <li className="space-y-1 p-4" key={d.area}>
+                    <div className="flex items-baseline gap-3">
+                      <span className="mono text-xs uppercase tracking-widest text-muted">
+                        {d.area}
+                      </span>
+                      <span className="font-bold text-accent">{d.pick}</span>
+                    </div>
+                    <p className="text-sm leading-relaxed text-gray-400">
+                      {d.why}
+                      <span className="mx-1 opacity-60">↔</span>
+                      {d.alt}
+                    </p>
+                  </li>
+                ))}
+              </ul>
               <div
                 aria-label="기술 의사결정 표"
-                className="overflow-x-auto rounded-lg border border-[rgb(122,90,56,0.45)]"
+                className="hidden overflow-x-auto rounded-lg border border-[rgb(122,90,56,0.45)] md:block"
                 role="region"
                 tabIndex={0}
               >
@@ -1256,9 +1362,17 @@ export function ProjectOnePager({
               </blockquote>
             ) : null}
 
-            {/* 결과 스크린샷 */}
+            {/* 결과 스크린샷. 전부 세로(폰 캡처)면 4열 — 2열에 세로 사진을
+                놓으면 한 장이 790px 높이가 되어 네 장이 화면 두 장을 먹는다
+                (AR, 2026-09-04). */}
             {gallery.length > 0 ? (
-              <div className="stagger-children grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div
+                className={`stagger-children grid gap-6 ${
+                  galleryPortrait
+                    ? "grid-cols-2 md:grid-cols-4"
+                    : "grid-cols-1 md:grid-cols-2"
+                }`}
+              >
                 {gallery.map(g => (
                   <div
                     className={`reveal ${g.wide ? "md:col-span-2" : ""}`}

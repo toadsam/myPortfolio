@@ -598,7 +598,7 @@ export function ResumeMode({onEnterVillage}: Props) {
               <span className="status-title">실사용자</span>
               <div className="status-data">
                 <span className="status-number">{HERO_ACTIVE_USERS}</span>
-                <span className="status-unit">ACLUB · GA4</span>
+                <span className="status-unit">aClub · GA4</span>
               </div>
             </div>
             <div className="vertical-divider" />

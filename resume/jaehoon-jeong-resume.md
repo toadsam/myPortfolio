@@ -39,6 +39,8 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 - Algorithm: https://github.com/toadsam/Algorithm
 - aClub: https://aclub.co.kr/
 - Ajou Student Council: https://ajouchong.com
+- Ajou Student Council 2026 개편 PR (프론트): https://github.com/ajouchong-dev/ajouchong-web/pull/36
+- Ajou Student Council 대여·링크 API PR (백엔드): https://github.com/ajouchong-dev/ajouchong/pull/70
 
 ## Hiring Signals
 
@@ -52,14 +54,14 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 ### AI 포트폴리오 마을 (myPortfolio)
 
 2026.06 - 진행 중 / 개인 개발 / Full-Stack Web + 3D  
-Role: Next.js 프론트, FastAPI 백엔드, 관리자 페이지, OpenAI NPC 연동(규칙 기반 폴백), 3D 성능 예산 전부 담당  
+Role: Next.js 프론트, FastAPI 백엔드, 관리자 페이지, OpenAI NPC 연동(규칙 기반 폴백), Claude Agent SDK 직군 에이전트, 3D 성능 예산 전부 담당  
 Scope: 개인 개발 / 공개 GitHub repo / 이 이력서가 실려 있는 사이트 자체  
-Stack: Next.js 16, React 19, TypeScript, React Three Fiber, FastAPI, SQLAlchemy, SQLite, OpenAI API, pytest, Playwright
+Stack: Next.js 16, React 19, TypeScript, React Three Fiber, FastAPI, SQLAlchemy, SQLite, OpenAI API, Claude Agent SDK, pytest, Playwright
 
 관리자가 적은 "오늘의 활동"이 3D 마을의 건물 불빛과 AI NPC의 기분·대화로 바뀌는, 살아 있는 포트폴리오 사이트입니다. 채용 담당자용 이력서 화면과 방문자가 웹사이트 제작을 의뢰하는 공방까지 한 서비스에 있습니다.
 
 - Problem: 정적 포트폴리오는 한 번 만들면 갱신이 끊기고, 읽는 사람이 질문할 수 없습니다. 활동이 화면에 반영되고 방문자가 물어볼 수 있는 구조가 필요했습니다.
-- Action: 관리자 페이지 입력을 FastAPI 서비스가 건물 밝기·NPC 기분으로 변환하고, NPC 대화는 OpenAI로 생성하되 키가 없거나 실패하면 규칙 기반 대사로 폴백해 서비스가 멈추지 않게 했습니다. 첫 화면은 three.js를 전혀 싣지 않는 별도 라우트로 분리하고(JS 215KB, 3D 모델 0개), 마을은 마우스를 올리는 순간 미리 받습니다.
+- Action: 관리자 페이지 입력을 FastAPI 서비스가 건물 밝기·NPC 기분으로 변환하고, NPC 대화는 OpenAI로 생성하되 키가 없거나 실패하면 규칙 기반 대사로 폴백해 서비스가 멈추지 않게 했습니다. 첫 화면은 three.js를 전혀 싣지 않는 별도 라우트로 분리하고(JS 215KB, 3D 모델 0개), 마을은 마우스를 올리는 순간 미리 받습니다. 의뢰 공방은 Claude Agent SDK로 네 직군 에이전트가 실제 산출물을 쓰되, 진행 권한은 관리자의 게이트 함수 하나에만 두고 도구 호출은 콜백 샌드박스로 막았습니다. 개발 자체도 Claude Code와 짝으로 하되 계획 승인·실측·검증은 사람이 쥐었습니다.
 - Result: 공개·관리자 API 63개, 순수 로직 pytest 258개. 방문자가 쓰는 유일한 경로(제작 의뢰)는 허니팟, 전용 레이트리밋, 견적 상·하한 클램프로 막았고, 텍스처 VRAM과 실광원 수를 측정해 예산으로 잠갔습니다.
 - Evidence: 저장소가 공개되어 있고, 이 이력서가 실린 사이트가 실행 결과입니다. 첫 화면 무게와 3D 모델 수는 빌드 산출물에서 측정한 값입니다.
 
@@ -108,16 +110,16 @@ Stack: TypeScript, Expo, React Native, Spring Boot, Spring Security, OAuth2, JWT
 ### 운영형 웹사이트 개선: aClub / 아주대학교 총학생회
 
 2025.01 - 진행 중 / 운영형 홍보·정보 제공 웹  
-Role: Frontend 개발, 정보 구조 설계, GA4/GSC 기반 개선  
-Scope: Frontend 개발 / 정보 구조 설계 / GA4·GSC 기반 운영 개선  
-Stack: React, Vite, Axios, GA4, GSC, UX, Operations
+Role: Frontend 개발, 정보 구조 설계, GA4/GSC 기반 개선 · 총학생회는 2026년부터 단독 담당(프론트 + Spring Boot API + 배포)  
+Scope: Frontend 개발 / 정보 구조 설계 / GA4·GSC 기반 운영 개선 / 총학생회 대여사업·링크허브·관리자 화면 · 백엔드 API  
+Stack: React, Vite, Axios, Spring Boot, JPA, PostgreSQL, JWT, Docker, Nginx, GA4, GSC
 
-동아리와 총학생회 정보를 공지, 모집, 행사, 자료, 신청 흐름으로 정리하고 운영 피드백과 분석 지표로 개선한 웹사이트입니다.
+동아리와 총학생회 정보를 공지, 모집, 행사, 자료, 신청 흐름으로 정리하고 운영 피드백과 분석 지표로 개선한 웹사이트입니다. 총학생회 웹은 2025년 프론트 3인 중 한 명으로 화면 일부를 맡았고, 2026년 4월부터 혼자 맡아 UI 전면 개편·대여사업·링크허브·관리자 화면을 프론트부터 API까지 만들었습니다.
 
-- Problem: 학생 사용자가 필요한 정보를 찾고 신청/문의까지 이동하는 과정에서 메뉴, 공지, 링크 구조가 명확해야 했습니다.
-- Action: 페이지 단위 정보 구조와 상세 CTA를 재배치하고, GA4/GSC와 운영 문의를 기준으로 문구·배치·링크 흐름을 반복 수정했습니다.
-- Result: 실사용 운영에서 반복 문의가 생기는 지점을 개선하고, 공지 확인부터 신청/문의까지의 행동 동선을 짧게 만들었습니다.
-- Evidence: aClub과 아주대학교 총학생회 서비스 URL이 공개되어 있으며, 포트폴리오에 GA4/GSC와 운영 피드백 기반 개선 기록을 정리했습니다.
+- Problem: 학생은 물품이 남았는지 몰라 총학생회실까지 와서야 없다는 말을 들었고, 인스타 프로필에는 링크를 몇 개밖에 못 걸어 접수 폼 링크가 매번 밀려났습니다. 수량 하나, 링크 하나 바꾸는 데도 개발자가 배포해야 했습니다.
+- Action: Spring Boot로 대여 품목·대여 기록·링크 엔티티와 사용자/관리자 API를 만들고(수량 조정은 서버가 0 미만·총량 초과를 거부, 관리자 API는 ADMIN 권한만), 학생 화면은 남은 수량을 읽고 관리자 화면은 −/+로 바로 반영되게 했습니다. 링크허브 한 페이지로 인스타 프로필 링크 한도를 우회하고, 모바일 첫 화면에 여섯 갈래를 폈습니다.
+- Result: 학생은 오기 전에 수량을 보고, 총학생회는 수량·링크·의견을 개발자 없이 직접 고칩니다. 2026.09 기준 대여 품목 10종·링크 11개가 실서비스에서 운영 중이고, Search Console 기준(검색 유입, 2025.05~2026.08) 노출 12,314회·클릭 1,694회(CTR 13.8%)입니다.
+- Evidence: aClub과 아주대학교 총학생회 서비스 URL이 공개되어 있고, 총학생회 2026 작업은 조직 저장소 PR(프론트 #36, 백엔드 #70)로 확인할 수 있습니다. 포트폴리오에 GA4/GSC와 운영 피드백 기반 개선 기록을 정리했습니다.
 
 ## Additional Technical Projects
 
@@ -152,7 +154,7 @@ BaekjoonHub 기반 알고리즘 풀이 repo를 별도로 관리하며 C++ 문제
 
 ## Collaboration
 
-헬스 동아리 회장, 정보통신대학교 학생회 대외협력국, 총학생회 생활복지국·소통발전국 활동을 통해 일정, 역할, 문의, 피드백을 정리해 실행으로 연결한 경험이 있습니다.
+헬스 동아리 회장, 정보통신대학교 학생회 대외협력국, 총학생회 생활복지국·소통발전국·소통개발국장 활동을 통해 일정, 역할, 문의, 피드백을 정리해 실행으로 연결한 경험이 있습니다.
 
 ## Positioning
 

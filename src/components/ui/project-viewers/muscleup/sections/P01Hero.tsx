@@ -39,7 +39,7 @@ const IDX = {
 // PDF 6쪽 「링크」 원문
 // 배포 주소(muscle-up.click)는 응답이 없어 링크로 걸지 않는다 — 아래 EquipSlot 참고.
 const REPO = "https://github.com/toadsam/Ajou_MuscleUp";
-const VIDEO = "https://www.youtube.com/watch?v=y6pbAoxveQM";
+const VIDEO = "https://youtu.be/0X-BIADC1eQ";
 
 // PDF 6쪽 「기술 스택」 원문
 const STATS = [
@@ -341,7 +341,7 @@ export function P01Hero() {
           >
             <div style={{aspectRatio: "16 / 9"}}>
               <iframe
-                src="https://www.youtube-nocookie.com/embed/y6pbAoxveQM"
+                src="https://www.youtube-nocookie.com/embed/0X-BIADC1eQ"
                 title="득근득근 시연 영상"
                 allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture"
                 allowFullScreen

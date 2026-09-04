@@ -4,6 +4,7 @@ import type {ProjectTheme} from "@/data/projectThemes";
 export type AmbientVariant = "horror" | "energy" | "data" | "arcade" | "calm";
 
 const BY_ID: Record<string, AmbientVariant> = {
+  "village-portfolio": "calm",
   mywave: "energy",
   mystock: "data",
   festflow: "data",

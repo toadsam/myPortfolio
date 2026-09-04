@@ -137,5 +137,4 @@
     <text class="note" x="22" y="462">요청 · 상태가 훅 한 곳에 모인다 — 화면 셋을 프론트 3인이 동시에 만들 수 있다.</text>
   </g>
 
-  <text class="foot" x="48" y="676">근거 — 저장소 구조: 도메인 커스텀 훅 6+ · React Router 보호 라우트(RequireAuth · AdminRoute) · axios 모듈 4(auth · club · recruitment · user)</text>
 </svg>
