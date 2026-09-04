@@ -440,9 +440,9 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         title: "첫 접속에 빈 하늘만 수 초 — 3D 모델 54MB",
         problem:
-          "서빙 GLB 합계 54.0MB 의 약 8할이 내장 JPEG 텍스처였다. 지오메트리는 이미 Draco 압축이라 더 줄일 게 없었고, 표준 도구(gltf-transform)는 하위 라이브러리가 이 환경에서 깨져 있었다.",
+          "서빙 GLB 54.0MB 의 8할이 내장 JPEG 텍스처였다. 지오메트리는 이미 Draco 라 더 줄일 게 없었고, 표준 도구는 이 환경에서 깨져 있었다.",
         solution:
-          "GLB 컨테이너를 직접 열어 이미지 청크만 WebP 로 바꾸는 스크립트를 만들었다(노멀 q92 · 그 외 q85 · 원본의 0.97배보다 크면 원본 유지). 지오메트리는 1바이트도 건드리지 않아 54.0→30.3MB(−44%), 헤드리스 A/B 캡처로 화질 무손실 확인. VRAM 283MB 는 그대로라는 한계도 함께 적었다.",
+          "GLB 를 직접 열어 이미지 청크만 WebP 로 바꿨다(더 작아진 것만 채택). 54.0→30.3MB, A/B 캡처로 화질 차이 없음. VRAM 283MB 는 그대로라는 한계도 적었다.",
         code: {
           filename: "scripts/compress-glb-webp.mjs",
           lines: [
@@ -456,17 +456,17 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         title: "마을 입장 렉 3초 — 처음 지목한 범인이 틀렸다",
         problem:
-          "라벨 74개를 숨기자 8.9→42.6fps 라 라벨을 범인으로 잡았다. 그런데 원복해서 다시 재니 아무것도 안 바꿨는데 47.9fps — 처리 효과가 아니라 시간 효과였다. 번갈아 3라운드 재니 차이가 잡음으로 사라졌다.",
+          "라벨 74개를 숨기자 8.9→42.6fps 라 라벨을 범인으로 잡았다. 원복하고 다시 재니 47.9fps — 처리 효과가 아니라 시간 효과였다.",
         solution:
-          "측정을 고치고 프레임마다 광원 수·셰이더 프로그램 수를 함께 기록하자 상관이 보였다. 광원이 하나 늘 때마다 셰이더 프로그램이 19개씩 늘고 3초 멈춤이 왔다 — three 는 광원 개수가 바뀌면 전 재질을 재컴파일한다. 개수를 줄이는 대신 상주 광원 풀로 고정했다(광원 11 · 프로그램 57 고정).",
+          "프레임마다 광원·셰이더 수를 같이 기록하자 원인이 보였다. 광원 개수가 바뀔 때마다 전 재질이 재컴파일된다. 줄이는 대신 광원 풀로 개수를 고정했다(광원 11 · 프로그램 57).",
         perfAfter: true
       },
       {
         title: "첫 화면이 20.7MB 짜리 3D 를 내려받고 있었다",
         problem:
-          "인트로가 살아 있는 마을 위의 오버레이였다. 인트로만 읽으려는 방문자도 GLB 87개(20.7MB)를 받았다. 이를 피하려던 우회(hover 때 씬 켜기 · 정적 배경 · 자리 채우기 div)는 전부 구조를 덧대는 것이었고, 그중 하나는 씬을 빼자 높이가 없는 section 이 65px 로 접혀 첫 화면을 통째로 깨뜨렸다.",
+          "인트로가 마을 위 오버레이라, 인트로만 읽는 방문자도 GLB 87개(20.7MB)를 받았다. 우회 세 가지는 구조를 덧대는 것이었고 하나는 첫 화면을 깨뜨렸다.",
         solution:
-          "무게를 플래그가 아니라 라우팅 속성으로 만들었다 — 착륙장·마을·이력서를 세 라우트로 갈라 첫 화면에는 three.js 를 한 줄도 싣지 않는다(JS 215.6KB · GLB 0). 마을 표에 마우스를 올리면 prefetch 와 씬 import 두 줄로 미리 받는다(prefetch 만으로는 라우트 껍질 5개 약 300KB 만 오고 씬 청크는 안 온다). 이름 한 줄을 위해 이력서 모듈을 import 했더니 첫 화면이 216→221KB 가 된 것도 잡아, 신원만 hero.ts 로 분리했다.",
+          "착륙장·마을·이력서를 세 라우트로 갈라 첫 화면엔 three.js 를 싣지 않는다(215.6KB · GLB 0). 마을은 hover 때 prefetch 와 씬 import 두 줄로 미리 받는다.",
         code: {
           filename: "src/app/page.tsx",
           lines: [
@@ -480,9 +480,9 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         title: "에이전트가 4분 일하고 빈손으로 끝났다",
         problem:
-          "Claude Agent SDK 의 can_use_tool 은 문자열 프롬프트를 거부해 AsyncIterable 로 바꿨는데, 한 번 yield 하고 끝나면 SDK 가 stdin 을 닫는다. 권한 승인 응답이 그 채널로 되돌아오기 때문에 첫 Write 부터 AbortError: Stream closed — 에이전트는 4분을 일하고 '파일 쓰기가 안 됩니다' 라고 성실히 보고하며 빈손으로 끝났다. 에러 없이 조용히 실패한 값이 $0.72 였다.",
+          "SDK 가 권한 응답 채널을 한 번 yield 뒤 닫아 첫 Write 부터 Stream closed. 에이전트는 4분 일하고 '쓰기가 안 됩니다' 라 보고하며 빈손으로 끝났다($0.72).",
         solution:
-          "query() 대신 ClaudeSDKClient 컨텍스트로 응답이 끝날 때까지 채널을 유지했다. 같은 부류의 조용한 무력화를 셋 더 찾아 한 세트로 잠갔다 — permission_mode 는 default, allowed_tools 는 빈 튜플, setting_sources 는 빈 배열이어야 콜백이 매 호출에 불리고, 읽기(Read/Glob/Grep)도 경로 검사를 태워야 절대경로로 이 저장소가 산출물에 새지 않는다. 실측: 한 건(4직군) 약 $1.1 · 8분.",
+          "ClaudeSDKClient 로 응답이 끝날 때까지 채널을 유지했다. 같은 부류의 조용한 무력화(permission_mode · allowed_tools · setting_sources)를 한 세트로 잠그고, 읽기도 경로 검사를 태웠다.",
         code: {
           filename: "backend/app/agents/runner.py",
           lines: [
