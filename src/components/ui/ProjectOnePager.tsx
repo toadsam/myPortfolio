@@ -1010,6 +1010,59 @@ export function ProjectOnePager({
             ) : null}
           </section>
 
+          {/* ══════════ 운영 당일 ══════════
+              Context 바로 뒤, Troubleshooting 앞. 카드가 「하루 동안 실제 운영」을
+              약속하면 누른 사람이 처음 만나야 하는 건 그날 이야기다 — SSE 재연결이
+              아니라. 줄마다 출처를 그대로 보여 준다. 숫자만 큰 절은 광고로 읽히고,
+              출처 없는 회고는 지어낸 것으로 읽힌다. */}
+          {data.fieldDay ? (
+            <section className="reveal space-y-8">
+              <h2 className="section-label">Field Day</h2>
+              <div className="reveal-left space-y-3">
+                <h3 className="text-2xl font-bold md:text-3xl">
+                  {data.fieldDay.title}
+                </h3>
+                <p className="text-base leading-relaxed text-gray-400 md:text-lg">
+                  {data.fieldDay.lead}
+                </p>
+              </div>
+              <ul className="reveal divide-y divide-[rgb(122,90,56,0.32)] overflow-hidden rounded-lg border border-[rgb(122,90,56,0.45)]">
+                {data.fieldDay.items.map((it, i) => (
+                  <li
+                    className="grid grid-cols-1 gap-3 p-5 md:grid-cols-12 md:gap-6"
+                    key={it.t}
+                  >
+                    <div className="md:col-span-4">
+                      <p
+                        aria-hidden="true"
+                        className="mono text-xs uppercase tracking-widest text-red-300"
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </p>
+                      <h4 className="mt-1 font-bold leading-snug text-gray-200">
+                        {it.t}
+                      </h4>
+                    </div>
+                    <div className="space-y-3 md:col-span-8">
+                      <p className="text-sm leading-relaxed text-gray-400">
+                        {it.happened}
+                      </p>
+                      <p className="flex gap-3 text-sm leading-relaxed text-white">
+                        <span className="mono shrink-0 select-none text-xs uppercase tracking-widest text-accent">
+                          지금이라면
+                        </span>
+                        {it.now}
+                      </p>
+                      <p className="mono text-[11px] leading-relaxed text-muted">
+                        출처: {it.source}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
           {/* ══════════ 트러블슈팅 ══════════ */}
           {/* 라이브 데모(가짜 데이터 목업)가 있던 자리다. 내용이 「사운드웨이브
               음악·24명」 같은 **지어낸 데이터**였는데, 바로 위에 실제 사이트 링크가

@@ -190,6 +190,21 @@ export interface RichProject {
    * done: false 인 줄을 지우지 말 것 — 안 고친 하나가 나머지 셋을 믿게 만든다.
    */
   feedbackMap?: {said: string; did: string; done: boolean}[];
+  /**
+   * 실제로 돌린 날 벌어진 일.
+   *
+   * feedbackMap 이 「사용자가 한 말 → 한 것」이라면 이건 「예상 → 실제 → 지금이라면」
+   * 이다. 실사용 기록이 있는 프로젝트(FestFlow)의 카드는 「하루 동안 실제 운영」을
+   * 약속하는데, 상세에 그날 이야기가 한 줄도 없어서 심사자가 클릭한 이유를 못 갚았다.
+   *
+   * 줄마다 `source` 를 반드시 단다 — 로그·코드·문서 어디서 확인되는지. 근거가
+   * 경험뿐인 줄은 "본인 서술" 이라고 적는다. 추정은 싣지 않는다.
+   */
+  fieldDay?: {
+    title: string;
+    lead: string;
+    items: {t: string; happened: string; now: string; source: string}[];
+  };
   tech: string[];
   resultScreens: ScreenSpec[];
   metrics: {n: string; l: string}[];

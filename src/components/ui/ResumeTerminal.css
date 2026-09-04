@@ -297,6 +297,12 @@
   position: relative;
   z-index: 2;
   max-width: 560px;
+  /* 시작선을 아래 섹션들의 1200px 컨테이너에 맞춘다(2026-09-04). 예전엔
+     레일(80) + 여백(60) = 160px 에서 시작해, 1920 화면에서 아래 본문(353)보다
+     190px 왼쪽에 매달려 첫 화면만 왼쪽으로 튀어나가 보였다.
+     50% 는 main 콘텐츠 폭의 절반. 컨테이너 왼끝 = 이 폭/2 − 640 이 되도록
+     식을 풀었고, 1440 이하에서는 음수라 0 — 예전 배치 그대로다. */
+  margin-left: max(0px, calc(50% - 640px));
 }
 
 .resume-terminal .hero-name {
@@ -557,6 +563,9 @@
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
+  /* 다섯 지표를 가운데 모은다. 왼쪽 정렬이면 넓은 화면에서 띠의 오른쪽
+     절반이 비어 히어로 본문(왼쪽 열)에 딸린 것처럼 보였다(2026-09-04). */
+  justify-content: center;
   padding: 0 40px;
   gap: 60px;
 }

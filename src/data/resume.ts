@@ -131,6 +131,18 @@ export interface MainProjectCard {
    * 뜻이 있고 캐러셀은 무시한다(`ResumeTerminal.css .is-hero`).
    */
   hero?: boolean;
+  /**
+   * PDF 이력서(`scripts/build-public-resume-pdf.mjs`)에만 쓰는 제목. 화면 제목에
+   * 붙은 "(이 사이트)" 같은 꼬리는 종이 위에서는 뜻이 없다. 없으면 `title`.
+   */
+  printTitle?: string;
+  /**
+   * PDF 이력서의 성과 줄 2~3개. 화면 카드는 지표 타일과 전용 전시실이 말해 주지만
+   * 종이에는 그 둘이 없으므로 "무엇을 어떻게 해서 어떻게 됐나"를 문장으로 적는다.
+   * 출처는 `resume/jaehoon-jeong-resume.md` — 거기 없는 사실은 적지 않는다.
+   * 비어 있으면 PDF 에서 subtitle 한 줄만 나간다.
+   */
+  highlights?: string[];
   links: ResumeLink[];
 }
 
@@ -176,6 +188,30 @@ export const CATEGORY_META: Record<
 // 딸려간다. 그래서 `data/hero.ts` 로 내리고 여기서는 다시 내보내기만 한다
 // — 이유는 그 파일 머리 주석에.
 export {hero, heroSummary, resumePdf} from "./hero";
+
+// ─── PDF 머리 요약 ────────────────────────────────────────────────────────────
+// PDF 이력서 첫 화면의 요약. 화면(ResumeMode)은 헤드라인 세 줄과 지표 바가 이
+// 역할을 하지만 종이에는 그게 없다. 문장은 이력서 원본 md 의 Summary 와
+// Hiring Signals 를 합쳐 세 줄로 줄인 것 — 예전 PDF 는 같은 주장을 요약 문단·
+// 3칸 스트립·시그널 카드 4장에서 세 번 반복했다.
+
+export const printSummary = {
+  lead: "React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운영 이슈까지 직접 다루는 신입 개발자입니다. 기능을 만드는 데서 멈추지 않고 사용자 흐름, API 책임, 토큰/세션 유지, HTTPS/CORS 같은 운영 조건까지 확인해 실제 서비스로 닫는 개발을 지향합니다.",
+  points: [
+    {
+      head: "서비스 전체 흐름을 구현합니다.",
+      body: "화면, API, 인증, DB, 배포 환경을 따로 보지 않고 사용자가 실제로 지나가는 흐름 기준으로 설계합니다."
+    },
+    {
+      head: "배포 후 드러나는 문제를 재현하고 고쳐 봤습니다.",
+      body: "HTTPS, Mixed Content, CORS credentials, 토큰 재발급 경쟁 상태, 세션 저장소, SSE 연결처럼 프론트와 서버 설정을 함께 봐야 하는 문제를 다뤘습니다."
+    },
+    {
+      head: "실사용 피드백과 지표로 고칩니다.",
+      body: "GA4/GSC 지표와 운영 문의를 근거로 정보 구조, CTA, 링크 흐름, 문구를 개선했습니다."
+    }
+  ]
+};
 
 // ─── Skills ───────────────────────────────────────────────────────────────────
 
@@ -452,6 +488,12 @@ export const mainProjects: MainProjectCard[] = [
     image: "/projects/village-portfolio/card-art.webp",
     // 배포 주소가 정해지면 여기 "사이트" 링크를 하나 더 단다. 지금은 상대 경로라
     // 어디에 올라가든 같은 사이트의 마을로 간다.
+    printTitle: "AI 포트폴리오 마을 (myPortfolio)",
+    highlights: [
+      "관리자 입력을 FastAPI 가 건물 밝기·NPC 기분으로 변환하고, NPC 대화는 OpenAI 로 생성하되 키가 없거나 실패하면 규칙 기반 대사로 폴백해 서비스가 멈추지 않게 했습니다.",
+      "첫 화면은 three.js 를 전혀 싣지 않는 별도 라우트로 분리하고(JS 215KB · 3D 모델 0개), 마을은 마우스를 올리는 순간 미리 받습니다.",
+      "의뢰 공방은 Claude Agent SDK 로 네 직군 에이전트가 산출물을 쓰되 진행 권한은 관리자 게이트 하나에만 두고 도구 호출은 콜백 샌드박스로 막았습니다. 유일한 공개 쓰기 경로는 허니팟·전용 레이트리밋·견적 상하한 클램프로 보호합니다."
+    ],
     links: [
       {label: "3D 마을 열기", href: "/village"},
       {label: "GitHub", href: "https://github.com/toadsam/myPortfolio"}
@@ -515,6 +557,11 @@ export const mainProjects: MainProjectCard[] = [
     //    함께 살아 있는 카운터(라운지 누적 25 · 오늘 출석 1 · 3대 합 8,605kg)가
     //    같이 찍혀 있다. 2:1 로 잘려 있어 카드 그림 상자(2.08:1)와도 맞는다.
     image: "/projects/muscleup/v2/home-lobby.webp",
+    highlights: [
+      "운동 기록·커뮤니티·AI 코칭을 한 사용자 흐름으로 묶고, Access/Refresh 토큰을 HttpOnly 이중 쿠키로 분리했습니다.",
+      "Refresh Token Rotation 이 병렬 요청에서 서로의 토큰을 무효화해 로그아웃되는 경쟁 상태를 만나, 클라이언트 재발급 단일화(single-flight)로 대체했습니다.",
+      "AWS 배포에서 HTTPS·Mixed Content·CORS credentials 문제를 해결해 운영 상태로 완성했고, 1.0 사용자 피드백 4건 중 3건을 2.0 에 반영했습니다."
+    ],
     links: [
       {label: "GitHub", href: "https://github.com/toadsam/Ajou_MuscleUp"},
       {
@@ -557,6 +604,10 @@ export const mainProjects: MainProjectCard[] = [
     // `object-fit: cover` 가 위아래를 크게 잘라 냈다. 이건 상자에 맞춰 만든
     // 2.08:1 합성본이다. 옛 파일은 원페이지 히어로가 아직 쓰고 있어 남겨 둔다.
     image: "/projects/aclub-cover.webp",
+    highlights: [
+      "동아리 정보를 공지·모집·행사·자료·신청 흐름으로 정리해 학생이 찾는 순서대로 화면을 다시 짰습니다.",
+      "GA4 지표와 운영 문의를 근거로 정보 구조·CTA·링크 흐름·문구를 고쳤습니다. 2025 년 프론트 3인 중 한 명에서 2026 년 프로젝트 총괄·프론트 리드가 됐습니다."
+    ],
     links: [
       {label: "사이트", href: "https://aclub.co.kr/"},
       {label: "GitHub (2026 · 총괄)", href: "https://github.com/aClub2026/FE"},
@@ -615,6 +666,10 @@ export const mainProjects: MainProjectCard[] = [
     // 2026 작업은 두 org 저장소 모두 main 이 아니라 develop 에 있다. 심사자가
     // 저장소 첫 화면(main)만 보면 2025 커밋 5개밖에 못 찾는다 — 그래서 PR 을 직접
     // 건다. #36 전면 디자인 개편(+2,547줄), #70 대여·링크 API(+644줄), 둘 다 본인 PR.
+    highlights: [
+      "학생은 물품이 남았는지 몰라 학생회실까지 와서야 없다는 말을 들었고, 수량·링크 하나 바꾸는 데도 개발자가 배포해야 했습니다. Spring Boot 로 대여 품목·대여 기록·링크 엔티티와 사용자/관리자 API 를 만들어(수량 조정은 서버가 0 미만·총량 초과 거부, 관리자 API 는 ADMIN 권한만) 총학생회가 개발자 없이 직접 고치게 했습니다.",
+      "링크허브 한 페이지로 인스타 프로필 링크 한도를 우회하고 모바일 첫 화면에 여섯 갈래를 폈습니다. 2026.09 기준 대여 품목 10종·링크 11개가 실서비스에서 운영 중입니다."
+    ],
     links: [
       {label: "사이트", href: "https://ajouchong.com"},
       {
@@ -672,6 +727,11 @@ export const mainProjects: MainProjectCard[] = [
     // 뭉개지고 숫자만 읽히므로, 바로 아래 지표 줄의 실측값(169·424·36)과
     // 섞여 보일 수 있다. 지표에 출처를 명시해 둔 이유이기도 하다.
     image: "/projects/festflow.webp",
+    highlights: [
+      "React(Vite)+Tailwind PWA, Spring Boot 3/JPA/Security/JWT, MySQL 구조로 사용자 기능과 관리자 API 를 분리했습니다.",
+      "SSE 기반 혼잡도·공연·공지 스트림, 관리자 CRUD/CSV 업로드, KPI/감사 로그, GPS 기반 혼잡도 계산, 분석 API 까지 운영형 구조로 구현했습니다.",
+      "2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영했습니다(QA 참여 15명)."
+    ],
     links: [{label: "GitHub", href: "https://github.com/toadsam/FestFlow"}]
   },
   {

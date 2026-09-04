@@ -1081,34 +1081,36 @@ export function ResumeMode({onEnterVillage}: Props) {
                 </ul>
               </div>
             ) : null}
-          </div>
 
-          {/* 교육 이수. 예전엔 학력 바로 밑, 즉 **활동·경력보다 위**에
+            {/* 교육 이수. 예전엔 학력 바로 밑, 즉 **활동·경력보다 위**에
                 있었다 — "2021 코딩캠프에서 기초를 익혔습니다" 가 현직
                 총학생회 소통개발국장보다 먼저 읽혔다. 부수적인 이력이라
-                맨 아래로 내린다. */}
-          {eduExternal.length > 0 ? (
-            <div className="career-block reveal reveal-delay-2">
-              <h3 className="career-heading">교육 이수</h3>
-              <div className="career-list">
-                {eduExternal.map(e => (
-                  <article
-                    className="career-card"
-                    key={`${e.org}-${e.program}`}
-                  >
-                    <div className="edu-header">
-                      <h4 className="edu-name">
-                        {e.org}
-                        <span className="edu-tag">{e.program}</span>
-                      </h4>
-                      <span className="edu-date">{e.period}</span>
-                    </div>
-                    <p className="edu-desc">{e.desc}</p>
-                  </article>
-                ))}
+                맨 아래로 내린다. education-container **안**에 있어야 한다 —
+                내릴 때 컨테이너 밖에 두는 바람에 이 블록만 1200px 가운데
+                정렬을 못 받고 화면 왼쪽 끝에 붙어 있었다(2026-09-04). */}
+            {eduExternal.length > 0 ? (
+              <div className="career-block reveal reveal-delay-2">
+                <h3 className="career-heading">교육 이수</h3>
+                <div className="career-list">
+                  {eduExternal.map(e => (
+                    <article
+                      className="career-card"
+                      key={`${e.org}-${e.program}`}
+                    >
+                      <div className="edu-header">
+                        <h4 className="edu-name">
+                          {e.org}
+                          <span className="edu-tag">{e.program}</span>
+                        </h4>
+                        <span className="edu-date">{e.period}</span>
+                      </div>
+                      <p className="edu-desc">{e.desc}</p>
+                    </article>
+                  ))}
+                </div>
               </div>
-            </div>
-          ) : null}
+            ) : null}
+          </div>
         </section>
 
         {/* ══════════ 04 Sub Projects ══════════ */}
