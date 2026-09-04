@@ -445,7 +445,11 @@ export const mainProjects: MainProjectCard[] = [
     ],
     metricsSource: "저장소 소스 기준 · 첫 화면 무게는 빌드 청크 실측 (2026.09)",
     richId: "village-portfolio",
-    image: "/projects/village-portfolio/card.webp",
+    // 카드 그림은 콘셉트 아트(2026-09-04, 본인 선택). 실제 화면 합성본(card.webp,
+    // scripts/build-village-card.mjs)은 파일로 남겨 두었다 — 상세 페이지의 실물
+    // 캡처가 그 역할을 하고, 목록에서는 그림 한 장이 더 강하다. 2:1 원본이라
+    // 2.08:1 상자에서 위아래 2% 만 잘린다.
+    image: "/projects/village-portfolio/card-art.webp",
     // 배포 주소가 정해지면 여기 "사이트" 링크를 하나 더 단다. 지금은 상대 경로라
     // 어디에 올라가든 같은 사이트의 마을로 간다.
     links: [

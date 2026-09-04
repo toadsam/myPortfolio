@@ -18,13 +18,10 @@ export const RICH_DATA: Record<string, RichProject> = {
   // 계측이 없어 어디에도 적지 않는다 — testimonial · feedbackMap 도 그래서 비어 있다.
   "village-portfolio": {
     tagline: "LIVING PORTFOLIO · NEXT.JS + R3F + FASTAPI (SOLO)",
-    // 히어로는 마을 콘셉트 아트(2026-09-04, 본인 선택). 실제 화면 캡처(village.webp)는
-    // 갤러리 첫 장으로 내려 "그림"과 "실물"이 둘 다 보이게 한다. 2:1 원본이라
-    // ratio 를 맞춰 잘리는 곳이 없게 한다.
     heroImage: {
-      src: "/projects/village-portfolio/hero.webp",
-      label: "AI 포트폴리오 마을 — 콘셉트 아트",
-      ratio: "2/1"
+      src: "/projects/village-portfolio/village.webp",
+      label: "3D 마을 광장 — 관리자 기록이 건물 불빛으로",
+      ratio: "16/9"
     },
     problemShot: {
       src: "/projects/village-portfolio/admin.webp",
@@ -33,11 +30,6 @@ export const RICH_DATA: Record<string, RichProject> = {
     },
     gallery: [
       {
-        src: "/projects/village-portfolio/village.webp",
-        label: "실제 화면 — 3D 마을 광장, 관리자 기록이 건물 불빛으로",
-        ratio: "16/9"
-      },
-      {
         src: "/projects/village-portfolio/atelier.webp",
         label: "의뢰 공방 3D 방 — 식구 4명이 릴레이로 묻는다",
         ratio: "16/9"
@@ -45,6 +37,11 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         src: "/projects/village-portfolio/resume.webp",
         label: "이력서 화면 — 지금 읽고 있는 이 페이지",
+        ratio: "16/9"
+      },
+      {
+        src: "/projects/village-portfolio/admin.webp",
+        label: "관리자 배전반 — 활동 입력과 마을 반응 미리보기",
         ratio: "16/9"
       }
     ],
