@@ -5,9 +5,9 @@
 // 회장 전원 섭외 · 저녁 6시 에타 업로드 · 문의 응대 — 는 글로만 있었다.
 // 그 저녁이 찍힌 캡처 둘을 갤러리 카드로 만든다.
 //
-//   1) aclub-launch-post.webp  — 에브리타임 게시글 (03/03 18:44). 실시간 인기 글
-//      2위, 인앱 브라우저 안내문까지. 게시판 오른쪽 열(교수 실명이 있는
-//      강의평)은 잘라 낸다.
+//   1) aclub-launch-post.webp  — 에브리타임 게시글 (03/03 18:44) 위에, 그날
+//      댓글 세 줄(19:08 로그인 문의 둘 → 19:41 운영진 답변)을 아래 붙인 한 장.
+//      게시판 오른쪽 열(교수 실명이 있는 강의평)은 잘라 낸다.
 //   2) aclub-launch-replies.webp — 그날 저녁 회장들의 답장 목록 두 화면.
 //      「○○ 회장님2026」은 직함이라 두고, 개인 실명 행은 잘라 내며, 프로필
 //      사진 열은 흐린다.
@@ -45,16 +45,41 @@ async function blurRegions(buf, regions) {
   return sharp(buf).composite(patches).png().toBuffer();
 }
 
-// ── 1) 에타 게시글 ────────────────────────────────────────────────────────
+// ── 1) 에타 게시글 + 그날 댓글 ────────────────────────────────────────────
 {
   const out = "public/projects/op/aclub-launch-post.webp";
-  // 제목(18:44)부터 인앱 브라우저 안내문까지. 위쪽 게시판 머리글과 아래
-  // 「스크랩 한 번」 독려 문구는 뺀다 — 근거는 시각·본문·안내문이다.
+  // 위: 제목(18:44)부터 링크 줄까지. 본문 끝의 인앱 브라우저 안내문은 뺀다 —
+  // 아래에 붙는 운영진 답변이 같은 글이라, 두 번 읽히면 하나가 가짜로 보인다.
   const post = await crop(
     "스크린샷 2026-03-03 205255.png",
-    [122, 150, 1040, 950]
+    [122, 150, 1040, 680]
   );
-  await sharp(post).webp({quality: 88}).toFile(out);
+  // 아래: 댓글 세 줄. 「로그인이안돼 19:08」「로그인 어케함 19:08」은 붙어 있고,
+  // 그 사이의 무관한 댓글 한 줄(19:12)을 건너뛰어 「aClub운영진 19:41」을 잇는다.
+  // 원본은 2026-09-04 에 다시 찍은 댓글창(스크린샷 2026-09-04 173515.png).
+  const qFile = "스크린샷 2026-09-04 173515.png";
+  const q1 = await crop(qFile, [0, 143, 1038, 255]);
+  const q2 = await crop(qFile, [0, 525, 1038, 160]);
+  const W = 1040,
+    GAP = 14,
+    H = 680 + GAP + 255 + 160;
+  await sharp({
+    create: {width: W, height: H, channels: 3, background: "#ffffff"}
+  })
+    .composite([
+      {input: post, left: 0, top: 0},
+      {
+        input: Buffer.from(
+          `<svg width="${W}" height="${GAP}"><rect width="${W}" height="${GAP}" fill="#eef0f3"/></svg>`
+        ),
+        left: 0,
+        top: 680
+      },
+      {input: q1, left: 1, top: 680 + GAP},
+      {input: q2, left: 1, top: 680 + GAP + 255}
+    ])
+    .webp({quality: 88})
+    .toFile(out);
   const m = await sharp(out).metadata();
   console.log(out, m.width, m.height);
 }
