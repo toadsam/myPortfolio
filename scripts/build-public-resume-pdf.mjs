@@ -55,6 +55,7 @@ const {
   skillDetails,
   githubEvidence,
   education,
+  awards,
   careers,
   mainProjects,
   devRecords,
@@ -77,9 +78,17 @@ function groupEducation(items) {
   const out = [];
   for (const e of items) {
     const prev = out[out.length - 1];
-    if (prev && prev.org === e.org && prev.period === e.period)
+    if (prev && prev.org === e.org && prev.period === e.period) {
       prev.programs.push(e.program);
-    else out.push({org: e.org, period: e.period, programs: [e.program]});
+      if (e.gpa && !prev.gpa) prev.gpa = e.gpa;
+    } else {
+      out.push({
+        org: e.org,
+        period: e.period,
+        programs: [e.program],
+        gpa: e.gpa
+      });
+    }
   }
   return out;
 }
@@ -191,7 +200,8 @@ function renderProject(p) {
 }
 
 function renderProjects() {
-  const featured = mainProjects.filter(p => p.featured);
+  // printCompact 는 화면 대표를 종이에서만 한 줄 목록으로 내린다(2장 예산).
+  const featured = mainProjects.filter(p => p.featured && !p.printCompact);
   return `<section class="sec">
   <h2>주요 프로젝트</h2>
 ${featured.map(renderProject).join("\n")}
@@ -199,7 +209,7 @@ ${featured.map(renderProject).join("\n")}
 }
 
 function renderOtherProjects() {
-  const rest = mainProjects.filter(p => !p.featured);
+  const rest = mainProjects.filter(p => !p.featured || p.printCompact);
   const rows = rest.map(p => {
     const gh =
       p.links.find(l => /github\.com/.test(l.href)) ??
@@ -251,11 +261,36 @@ function renderEducation() {
   const rows = groupEducation(education).map(
     e => `    <li>
       <span class="when">${esc(e.period)}</span>
-      <div><b>${esc(e.org)}</b> ${esc(e.programs.join(" · "))}</div>
+      <div><b>${esc(e.org)}</b> ${esc(
+      join_([e.programs.join(" · "), e.gpa])
+    )}</div>
     </li>`
   );
   return `<section class="sec">
   <h2>학력 · 교육</h2>
+  <ul class="tl">
+${rows.join("\n")}
+  </ul>
+</section>`;
+}
+
+/**
+ * 전폭 한 줄씩. 학력 칸 안에 넣으면(폭 절반) 항목마다 두 줄로 접혀 4건이 8줄인데,
+ * 전폭이면 한 줄씩이라 절반이다 — 2장 예산에서 그 차이가 쪽을 가른다.
+ */
+function renderAwards() {
+  if (!awards.length) return "";
+  const rows = awards.map(
+    a => `    <li>
+      <span class="when">${esc(a.date)}</span>
+      <div><b>${esc(a.title)}</b> ${esc(a.org)}${
+      // 팀명이 이어진 프로젝트 이름에 이미 들어 있으면 한 번만 적는다.
+      a.team && !(a.ledTo ?? "").startsWith(a.team) ? ` · ${esc(a.team)}` : ""
+    }${a.ledTo ? ` <i class="led">↳ ${esc(a.ledTo)}</i>` : ""}</div>
+    </li>`
+  );
+  return `<section class="sec">
+  <h2>수상 · 수료</h2>
   <ul class="tl">
 ${rows.join("\n")}
   </ul>
@@ -291,9 +326,9 @@ const CSS = `
   --navy: #16324f;
   --wash: #f3f6fa;
 }
-@page { size: A4; margin: 12mm 14mm 13mm; }
+@page { size: A4; margin: 11mm 14mm 12mm; }
 * { box-sizing: border-box; }
-html { font-size: 9.2pt; }
+html { font-size: 9pt; }
 body {
   margin: 0;
   color: var(--ink);
@@ -329,9 +364,9 @@ h1 { margin: 0; font-size: 24pt; line-height: 1.1; color: var(--navy); letter-sp
 .contact dd { margin: 0; color: var(--ink); }
 
 /* 절 */
-.sec { margin-top: 9px; break-inside: auto; }
+.sec { margin-top: 8px; break-inside: auto; }
 h2 {
-  margin: 0 0 5px;
+  margin: 0 0 4px;
   padding-bottom: 3px;
   border-bottom: 1px solid var(--line);
   color: var(--navy);
@@ -350,7 +385,8 @@ h2 {
    남는다. 제목·메타·부제는 붙여 두고, 성과 줄 사이에서는 나뉘게 둔다. */
 .proj { padding: 5px 0 6px; border-top: 1px dashed var(--line); orphans: 2; widows: 2; }
 .proj-head, .meta, .sub { break-after: avoid; }
-.hl li { break-inside: avoid; }
+/* 성과 줄은 나뉘어도 된다(orphans/widows 2) — 통째로 넘기면 앞쪽 끝에 5줄 빈칸이 남았다. */
+.hl li { break-inside: auto; orphans: 2; widows: 2; }
 .proj:first-of-type { border-top: 0; padding-top: 2px; }
 .proj-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
 .proj h3 { margin: 0; font-size: 11pt; font-weight: 800; color: var(--ink); }
@@ -387,7 +423,7 @@ h2 {
 .gh a { color: var(--body); }
 
 /* 학력·활동 */
-.two { display: grid; grid-template-columns: minmax(0, 9fr) minmax(0, 11fr); gap: 0 20px; }
+.two { display: grid; grid-template-columns: minmax(0, 9fr) minmax(0, 11fr); gap: 0 18px; }
 .tl { margin: 0; padding: 0; list-style: none; }
 .tl li { display: grid; grid-template-columns: max-content 1fr; gap: 8px; padding: 1px 0; line-height: 1.32; font-size: 8.9pt; color: var(--body); break-inside: avoid; }
 .tl .when { color: var(--muted); font-size: 8.3pt; padding-top: 1px; white-space: nowrap; }
@@ -415,6 +451,7 @@ ${renderSummary()}
 ${renderProjects()}
 ${renderOtherProjects()}
 ${renderSkills()}
+${renderAwards()}
 <div class="two">
 ${renderEducation()}
 ${renderCareers()}

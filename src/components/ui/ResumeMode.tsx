@@ -15,6 +15,7 @@ import {
   CATEGORY_META,
   FACET_META,
   aboutMe,
+  awards,
   careers,
   contact,
   devRecords,
@@ -782,6 +783,11 @@ export function ResumeMode({onEnterVillage}: Props) {
                                 <span
                                   key={f}
                                   className="project-facet"
+                                  style={
+                                    {
+                                      "--fc": FACET_META[f].color
+                                    } as CSSProperties
+                                  }
                                   title={FACET_META[f].hint}
                                 >
                                   {FACET_META[f].label}
@@ -1072,7 +1078,10 @@ export function ResumeMode({onEnterVillage}: Props) {
                           {e.org} — {name}
                           {tag ? <span className="edu-tag">{tag}</span> : null}
                         </h3>
-                        <span className="edu-date">{e.period}</span>
+                        <span className="edu-date">
+                          {e.period}
+                          {e.gpa ? ` · ${e.gpa}` : null}
+                        </span>
                       </div>
                       <p className="edu-desc">{e.desc}</p>
                       <ul className="edu-detail">
@@ -1109,6 +1118,50 @@ export function ResumeMode({onEnterVillage}: Props) {
                           <p className="career-led">
                             <span aria-hidden="true">↳</span> 이어진 프로젝트 ·{" "}
                             <b>{c.ledTo}</b>
+                          </p>
+                        ) : null}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {/* 수상·수료. 활동 바로 아래, 근무 경험보다 위 — 심사자에게는 상이
+                아르바이트보다 먼저다. 증빙 파일이 있는 것만 데이터에 있다
+                (`awards[].evidence`), 상장 이미지는 팀원 실명 때문에 싣지 않는다. */}
+            {awards.length > 0 ? (
+              <div className="career-block reveal reveal-delay-2">
+                <h3 className="career-heading">수상 · 수료</h3>
+                <div className="career-list">
+                  {awards.map(a => (
+                    <article
+                      className="career-card"
+                      key={`${a.title}-${a.date}`}
+                    >
+                      <OrgLogo fill={a.logoFill} org={a.org} src={a.logo} />
+                      <div className="edu-body">
+                        <div className="edu-header">
+                          <h4 className="edu-name">
+                            {a.title}
+                            <span
+                              className={`edu-tag award-tag award-${
+                                a.kind === "수상" ? "prize" : "cert"
+                              }`}
+                            >
+                              {a.kind}
+                            </span>
+                          </h4>
+                          <span className="edu-date">{a.date}</span>
+                        </div>
+                        <p className="edu-desc">
+                          {a.org}
+                          {a.team ? ` · ${a.team}` : ""}
+                        </p>
+                        {a.ledTo ? (
+                          <p className="career-led">
+                            <span aria-hidden="true">↳</span> 이어진 프로젝트 ·{" "}
+                            <b>{a.ledTo}</b>
                           </p>
                         ) : null}
                       </div>

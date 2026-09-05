@@ -18,9 +18,10 @@ export type ResumeCategory = "web" | "data" | "game" | "ar" | "ops";
 // 그러면 웹 카드 다섯이 서로 뭐가 다른지 안 보인다(2026-09-05). facet 은 "안에
 // 무슨 기술이 핵심으로 도는가" — 어휘는 이 넷으로 고정한다. 늘리면 화면에서
 // 뺀 `tags`(스택 나열 = 잡음)와 구분이 없어진다. 해당 없는 카드는 비워 둔다.
-// "게임 요소" 같은 칩은 두지 않는다 — 마을 사이트가 게임으로 읽히지 않게 제목까지
-// 손본 이력이 있다(village-portfolio 주석). 게임이라는 말은 game 배지에만.
-export type ResumeFacet = "ai" | "3d" | "realtime" | "data";
+// "game" 칩은 웹 서비스 안의 게임 장치(캐릭터 성장·랭킹 같은 것)를 말한다 — 첫 지원처가
+// 게임 회사라 그 장치를 안 보이게 두는 게 손해다(본인 결정 2026-09-05). 다만 마을 사이트에는
+// 달지 않는다: 3D 표현층이 곧 게임은 아니고, 게임으로 읽히지 않게 제목까지 손본 카드다.
+export type ResumeFacet = "ai" | "game" | "3d" | "realtime" | "data";
 // "출시" 는 Steam 에 상용 출시한 TSEROF 전용이다. 운영중/완료와 층이 다르다 —
 // 심사자에게 "만들어 봤다" 와 "상점에 올라가 있다" 는 완전히 다르게 읽힌다.
 export type ProjectStatus = "운영중" | "완료" | "출시";
@@ -58,6 +59,8 @@ export interface EducationItem {
   period: string;
   desc: string;
   bullets: string[];
+  /** 증빙 파일(사용자 PC). 화면·PDF 에 안 그리고 제출 요청이 올 때 찾는 용도. */
+  evidence?: string;
   /**
    * 기관 로고(`public/logos/*`). 학력·교육 항목의 로고는 증거가 아니라 **표식**이다 —
    * 심사자가 이미 아는 이미지라 글을 읽기 전에 "어디서"가 먼저 잡힌다.
@@ -71,6 +74,12 @@ export interface EducationItem {
    * 스파르타·FIT)는 잘리므로 켜지 않는다.
    */
   logoFill?: boolean;
+  /**
+   * 학점. 전공 카드 한 곳에만 적는다(복수전공·마이크로전공 카드에 반복하지 않는다).
+   * 만점을 반드시 붙인다 — 4.3 만점 학교도 있어 만점이 없으면 환산이 안 된다.
+   * 전공 학점만 적는 건 본인 결정(2026-09-05).
+   */
+  gpa?: string;
 }
 
 /** 활동·경력 — 학력과 섞으면 "경력 없음"으로 읽힌다. */
@@ -90,6 +99,8 @@ export interface CareerItem {
    * 사람이 국장이 되어 그 웹서비스를 맡았다. 그 선을 화면에 그린다.
    */
   ledTo?: string;
+  /** 증빙 파일(사용자 PC). 화면·PDF 에 안 그린다. */
+  evidence?: string;
 }
 
 /** 근무 경험(아르바이트). 개발 이력과 섞지 않고 따로 한 줄씩만 적는다. */
@@ -97,6 +108,29 @@ export interface WorkItem {
   place: string;
   period: string;
   desc: string;
+}
+
+/**
+ * 수상·수료. **증빙 파일이 있는 것만** 적는다 — 출처는 각 항목의 `evidence`
+ * (사용자 PC 의 증서 PDF, 리포에는 넣지 않는다: 상장에 팀원 실명이 있다).
+ * `kind` 가 "수상" 이면 상 이름을, "수료" 면 과정 이름을 `title` 에 쓴다.
+ */
+export interface AwardItem {
+  kind: "수상" | "수료";
+  title: string;
+  /** 주최·발급 기관. */
+  org: string;
+  /** 수여일(증서에 찍힌 날짜). */
+  date: string;
+  /** 팀으로 받은 것이면 팀명. 개인이면 비운다. */
+  team?: string;
+  /** 어느 프로젝트가 이 결과로 이어졌나. `careers[].ledTo` 와 같은 뜻. */
+  ledTo?: string;
+  /** 증서 파일명·인증번호 — 화면에 안 그리고, 제출 전 대조용. */
+  evidence: string;
+  /** 주최 기관 로고(`public/logos/*`). 학력·활동과 같은 규칙 — 실제 로고만. */
+  logo?: string;
+  logoFill?: boolean;
 }
 
 /**
@@ -158,6 +192,14 @@ export interface MainProjectCard {
    */
   hero?: boolean;
   /**
+   * PDF 에서는 대표(상세 항목)가 아니라 「그 밖의 프로젝트」 한 줄 목록으로 내린다.
+   * 화면의 featured 와 종이의 예산은 다른 문제다 — PDF 는 A4 2장이 고정 예산이고,
+   * 대표 항목 하나(약 25mm)가 늘면 2쪽 끝의 학력·활동 두 칸 블록(약 40mm, 격자라
+   * 쪽을 가르지 못한다)이 3쪽으로 통째 밀린다(2026-09-05 TSEROF 실측). 종이에서도
+   * 상세로 올리려면 이 플래그를 빼고 `npm run resume:pdf` 뒤 쪽수를 확인할 것.
+   */
+  printCompact?: boolean;
+  /**
    * PDF 이력서(`scripts/build-public-resume-pdf.mjs`)에만 쓰는 제목. 화면 제목에
    * 붙은 "(이 사이트)" 같은 꼬리는 종이 위에서는 뜻이 없다. 없으면 `title`.
    */
@@ -208,11 +250,30 @@ export const CATEGORY_META: Record<
   ops: {label: "Ops", color: "#a9bdd6"}
 };
 
-export const FACET_META: Record<ResumeFacet, {label: string; hint: string}> = {
-  ai: {label: "AI", hint: "LLM·모델이 핵심 기능인 프로젝트"},
-  "3d": {label: "3D", hint: "Three.js·Unity 등 3D 표현층"},
-  realtime: {label: "실시간", hint: "SSE·소켓 등 실시간 통신"},
-  data: {label: "데이터", hint: "GA4·분석·대시보드로 개선한 프로젝트"}
+// color 는 칩 색(테두리·바탕 색조·글자). 카테고리 배지 색과 겹치지 않게 골랐다 —
+// web 배지가 하늘색이라 data 는 하늘색을 피해 금색.
+export const FACET_META: Record<
+  ResumeFacet,
+  {label: string; hint: string; color: string}
+> = {
+  ai: {label: "AI", hint: "LLM·모델이 핵심 기능인 프로젝트", color: "#c9a7ff"},
+  game: {
+    // "게임 요소" 는 칩 셋 + 배지가 1920 폭에서도 두 줄로 넘쳤다. 뜻은 hint 가 말한다.
+    label: "게임",
+    hint: "캐릭터 성장·랭킹 등 게임 장치가 들어간 서비스",
+    color: "#ff8fa3"
+  },
+  "3d": {label: "3D", hint: "Three.js·Unity 등 3D 표현층", color: "#7fe0b8"},
+  realtime: {
+    label: "실시간",
+    hint: "SSE·소켓 등 실시간 통신",
+    color: "#ff9f6e"
+  },
+  data: {
+    label: "데이터",
+    hint: "GA4·분석·대시보드로 개선한 프로젝트",
+    color: "#f2d675"
+  }
 };
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
@@ -355,6 +416,7 @@ export const education: EducationItem[] = [
     logoFill: true,
     program: "디지털미디어학과 (전공)",
     period: "2021.03 ~ 2027.02 (예정)",
+    gpa: "전공 학점 4.05 / 4.5",
     desc: "웹/소프트웨어 엔지니어링 중심으로 학습하며 서비스 구조 설계와 구현 역량을 확장했습니다.",
     bullets: [
       "웹(React/Spring Boot) 중심 프로젝트 경험",
@@ -384,6 +446,8 @@ export const education: EducationItem[] = [
     logo: "/logos/sparta.png",
     program: "Unity 게임개발자 양성과정",
     period: "2023.09 ~ 2024.02",
+    evidence:
+      "바탕 화면/정재훈의 포트폴리오 모음집/수료증 및 증거/유니티 캠프 수료.png (+ 유니티 수료2.png)",
     desc: "Unity 기반 게임 개발 역량을 확장했습니다.",
     bullets: ["Unity 기반 게임 개발 프로젝트 경험"]
   },
@@ -458,6 +522,7 @@ export const careers: CareerItem[] = [
     logoFill: true,
     role: "만기 전역",
     period: "2021.12 ~ 2023.06",
+    evidence: "바탕 화면/기타파일/기타/전역증.pdf · 훈련확인증.png",
     desc: "군 복무를 마치고 만기 전역했습니다."
   },
   {
@@ -471,6 +536,69 @@ export const careers: CareerItem[] = [
 
 // ─── 근무 경험 ────────────────────────────────────────────────────────────────
 // 개발 이력과 섞지 않는다. 다만 **헬스장 근무는 득근득근의 도메인 근거**라서 뺄 수 없다.
+
+// ─── Awards ───────────────────────────────────────────────────────────────────
+// 2026-09-05 에 사용자 PC 에서 찾은 증서 두 장이 근거다. 예전엔 이력서 어디에도
+// 수상·수료 항목이 없었다 — 있는 걸 안 적은 것이지 없던 게 아니다.
+// 결과 증빙이 없는 것(GEEKS 2024 글로벌 게임 챌린지 신청서, 모각소 2024 하계·
+// 2025 하계 신청서/보고서 양식)은 적지 않았다 — `PENDING_BEFORE_SUBMIT` 에 있다.
+// 상장 사진에는 팀원 실명이 있다 — 리포·사이트에 올리지 않는다.
+
+export const awards: AwardItem[] = [
+  // 최신순. 종이에서는 이 순서 그대로 나간다.
+  {
+    kind: "수료",
+    title: "혁신 아이디어 MVP 기획 공모전(Zero to One) 수료",
+    org: "블레이버스 주최",
+    // 로고 둘(blaybus·startupcode)은 우수상 상장 PDF 에 박힌 이미지를 그대로 뽑은 것.
+    logo: "/logos/blaybus.png",
+    date: "2026.03.16",
+    team: "득근득근",
+    ledTo: "득근득근 (MuscleUp)",
+    evidence:
+      "바탕 화면/정재훈의 포트폴리오 모음집/수료증 및 증거/혁신 아이디어 MVP 공모전_수료증-정재훈.pdf · 인증번호 A0057-00002 · 진행 2026.02.26~03.07"
+  },
+  {
+    kind: "수상",
+    title: "비즈니스 아이디어 공모전 우수상",
+    org: "스타트업코드 · 블레이버스 주최",
+    // 스타트업코드 워드마크(startupcode.png)는 9:1 이라 56px 원에서 실선으로만
+    // 보인다. 공동 주최인 블레이버스 로고를 쓴다.
+    logo: "/logos/blaybus.png",
+    date: "2025.05.14",
+    team: "데모션 (3인)",
+    // 같은 공모전의 "참가 수료증"도 있지만 따로 줄을 만들지 않는다 — 우수상이
+    // 참가를 포함하고, 나란히 적으면 채우기로 읽힌다.
+    evidence:
+      "바탕 화면/정재훈의 포트폴리오 모음집/수료증 및 증거/[비즈니스아이디어공모전]우수상_데모션.pdf · 인증번호 B026-00004 · 참가 수료증(정재훈) 같은 폴더"
+  },
+  {
+    kind: "수상",
+    title: "2024 동계 모각소 장려상",
+    org: "아주대학교 SW융합교육원",
+    logo: "/logos/ajou.png",
+    logoFill: true,
+    // 상장에 수여일이 안 보인다(사진). 증서 번호 제2025-127호, 사진 촬영 2025-03-12.
+    date: "2025.03",
+    team: "현재민보 (4인)",
+    evidence:
+      "바탕 화면/정재훈의 포트폴리오 모음집/수료증 및 증거/KakaoTalk_20250312_145126267.jpg · 제2025-127호 · 수여일은 원본 상장에서 확인할 것"
+  },
+  {
+    kind: "수상",
+    title:
+      "미디어데이 미디어 시제품 콘텐츠 경진대회 우수상 (디지털미디어학과장상)",
+    // 상장 발행처. 패널에는 "지식재산융합인재양성사업" 이 같이 적혀 있다(evidence).
+    org: "아주대학교 디지털미디어학과",
+    logo: "/logos/ajou.png",
+    logoFill: true,
+    date: "2024.12.05",
+    team: "정재훈 · 이민훈 (2인)",
+    ledTo: "아주대탐험",
+    evidence:
+      "바탕 화면/정재훈의 포트폴리오 모음집/수료증 및 증거/KakaoTalk_20241205_181441149_02.jpg (상장·우수상 패널 사진, 상금 500,000원) · 발표 pptx: 바탕 화면/2024 2학년 2학기/정재훈, 이민훈 공모전 대회.pptx"
+  }
+];
 
 export const workExperience: WorkItem[] = [
   {
@@ -558,7 +686,8 @@ export const mainProjects: MainProjectCard[] = [
     subtitle:
       "사용자 피드백을 듣고 소개형 홈페이지를 운영형 플랫폼으로 다시 만든 피트니스 커뮤니티",
     category: "web",
-    facets: ["realtime"],
+    // 캐릭터 레벨·티어·진화·랭킹 = 게임 장치, AI 인바디 상담(OpenAI), Socket.IO 실시간
+    facets: ["game", "ai", "realtime"],
     status: "운영중",
     // Realtime 을 추가했다 — Socket.IO 실시간 서버가 2.0 의 핵심인데 태그에 없었다.
     tags: ["FullStack", "JWT", "Realtime", "AWS"],
@@ -744,7 +873,8 @@ export const mainProjects: MainProjectCard[] = [
     subtitle:
       "아주대 대동제에서 하루 동안 실제 운영한 축제 부스·매칭 관리 시스템",
     category: "web",
-    facets: ["realtime", "data"],
+    // AI 챗봇·혼잡 예측(RandomForest)·AI Match, SSE 7채널, 운영 집계
+    facets: ["ai", "realtime", "data"],
     status: "완료",
     // 여기만 순수 기술 나열이라 다른 3장과 축이 어긋나 있었다. 맨 앞에 성격
     // 태그를 세우고 기술은 뒤로 — scikit-learn(혼잡 예측)은 role 줄에 남아 있다.
@@ -794,25 +924,28 @@ export const mainProjects: MainProjectCard[] = [
     // 한 프레임으로 들어오고, 그 비율이 곧 서비스 직군 지원자의 비율이다. 게임을
     // 앞으로 당기면 "그럼 왜 서비스로 넣었나" 를 스스로 묻게 만든다.
     // 부제는 "레벨 디자인" 이 아니라 **기획→출시 완주**를 앞세운다 — 서비스 독자에게
-    // 읽히는 건 릴리즈까지 간 경험이다. 5개월·5인·부팀장은 이력서 원본과 상세
-    // 전시실(richContent tserof.impact)에 같은 값이 있다.
+    // 읽히는 건 릴리즈까지 간 경험이다. 4개월(2023.11–2024.02)·5인·부팀장은 상세
+    // 전시실(richContent tserof.impact)에 같은 값이 있다 — 기간은 저장소 이력으로
+    // 확인한 값이고, 예전 "2023.07–11 · 5개월" 은 근거가 없었다(2026-09-05 교정).
     featured: true,
+    // 종이에서는 한 줄 목록(2장 예산). 사유는 printCompact 타입 주석에.
+    printCompact: true,
     title: "TSEROF",
     subtitle:
-      "5인 팀 부팀장으로 기획부터 Steam 스토어 출시까지 5개월에 완주한 3D 액션 플랫폼 게임",
+      "5인 팀 부팀장으로 기획부터 Steam 스토어 출시까지 4개월에 완주한 3D 액션 플랫폼 게임",
     category: "game",
     facets: ["3d"],
     status: "출시",
     tags: ["Unity", "GameDev", "3D", "Steam"],
-    period: "2023.07 ~ 2023.11",
+    period: "2023.11 ~ 2024.02",
     team: "5인 팀 — 부팀장",
     role: "레벨 디자인 · 장애물/기믹 구현 · 기획",
     metrics: [
       {value: "Steam", label: "스토어 출시"},
-      {value: "5개월", label: "기획 → 출시"}
+      {value: "4개월", label: "기획 → 출시"}
     ],
     metricsSource:
-      "출시는 Steam 스토어 페이지 · 기간·팀은 이력서 원본 (2023.07–11)",
+      "출시는 Steam 스토어 페이지 · 기간(2023.11–2024.02)은 저장소 이력 · 팀은 이력서 원본",
     richId: "tserof",
     image: "/projects/tserof.webp",
     // "Steam 출시" 라고 적어 놓고 정작 스토어 링크가 없었다.
@@ -1139,5 +1272,9 @@ export const PENDING_BEFORE_SUBMIT = [
   "[잠정] ajouchong: 월 방문자 5,800 / 공지 열람률 62%",
   "[비어 있음] devRecords: 블로그 URL · Notion URL",
   "[비어 있음] period: mystock · ajou-adventure · otherside-vr · monsterpoint-ar",
-  "[확인 요망] darklab period '2024-1 학기' — 이력서 원본이 아닌 data.ts 출처"
+  "[확인 요망] darklab period '2024-1 학기' — 이력서 원본이 아닌 data.ts 출처",
+  "[확인 요망] awards: GEEKS 2024 글로벌 게임 챌린지(아주대탐험, 2024.11) — 신청서만 있고 결과 증빙 없음",
+  "[확인 요망] awards: 아주대 모각소 2024 하계, 2025 하계 — 신청서/보고서 양식만 있고 수료 증빙 없음 (2024 동계는 장려상으로 확인)",
+  "[확인 요망] awards: 2024 동계 모각소 장려상 수여일 — 상장 사진에 날짜가 안 보임(제2025-127호)",
+  "[확인 요망] awards: 데모션(2025-1 미디어프로젝트, Demotion-BE 저장소) 이 프로젝트 목록에 없다 — 공모전 우수상의 실체"
 ] as const;
