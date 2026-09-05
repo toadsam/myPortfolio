@@ -13,6 +13,7 @@ import {projects} from "@/data/projects";
 import {getTechIcon} from "@/data/techIcons";
 import {
   CATEGORY_META,
+  FACET_META,
   aboutMe,
   careers,
   contact,
@@ -48,6 +49,38 @@ const TechConstellation = dynamic(
 );
 
 // 학력: "학과명 (전공)" 에서 태그 분리
+/**
+ * 기관 로고 원. 이미지가 없거나(파일 미배치) 못 읽으면 기관명 첫 글자로 대신한다 —
+ * 빈 원이나 깨진 이미지 아이콘이 남으면 로고를 안 단 것보다 나쁘다.
+ * 로고는 흰 원판 위에 얹는다: 대학 엠블럼·코드잇 보라·구름 검정처럼 배경이 제각각인
+ * 이미지가 어두운 바닥에 바로 놓이면 크기가 달라 보인다.
+ */
+function OrgLogo({
+  org,
+  src,
+  fill = false
+}: {
+  org: string;
+  src?: string;
+  fill?: boolean;
+}) {
+  const [broken, setBroken] = useState(false);
+  const initial = org.trim().charAt(0);
+  if (!src || broken) {
+    return (
+      <span aria-hidden="true" className="org-logo org-logo-fallback">
+        {initial}
+      </span>
+    );
+  }
+  return (
+    <span className={fill ? "org-logo is-fill" : "org-logo"}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img alt="" loading="lazy" onError={() => setBroken(true)} src={src} />
+    </span>
+  );
+}
+
 function parseEdu(program: string): {name: string; tag: string | null} {
   const m = program.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
   return m ? {name: m[1], tag: m[2]} : {name: program, tag: null};
@@ -589,6 +622,9 @@ export function ResumeMode({onEnterVillage}: Props) {
           </main>
 
           {/* 히어로 지표 — 심사자가 2분을 쓴다면 사실상 이 화면만 본다.
+              칸 사이 구분선은 CSS(.status-module border-left) — 예전엔
+              <div class="vertical-divider"/> 를 사이사이 끼웠는데, 값이 비어
+              칸이 빠지면 선이 둘 겹쳤다(2026-09-05 정리).
               예전엔 "주요 13 · 사이드 11 · 학력 06 · 저장소 44" 로 **넷 다
               개수**였다. 개수는 누구나 채울 수 있어서 변별력이 없다.
               지금은 다섯 다 사실이고, 그중 셋은 눌러서 확인된다.
@@ -601,7 +637,6 @@ export function ResumeMode({onEnterVillage}: Props) {
                 <span className="status-unit">aClub · GA4</span>
               </div>
             </div>
-            <div className="vertical-divider" />
             {/* 축제 현장 실사용자. 눌러서 확인되는 URL 이 없어 링크는 걸지 않는다 —
                 이 값의 확인 경로는 FestFlow 전용 전시실(P11Field)이다. */}
             {HERO_FIELD_USERS ? (
@@ -613,7 +648,6 @@ export function ResumeMode({onEnterVillage}: Props) {
                     <span className="status-unit">대동제 · 2026.05</span>
                   </div>
                 </div>
-                <div className="vertical-divider" />
               </>
             ) : null}
             <div className="status-module">
@@ -625,7 +659,6 @@ export function ResumeMode({onEnterVillage}: Props) {
                 <span className="status-unit">LIVE</span>
               </div>
             </div>
-            <div className="vertical-divider" />
             {/* 두 번째 운영 서비스의 검색 유입. 사이트가 열려 있어 눌러서
                 확인된다 — 히어로에 올리는 값의 조건은 "검산 가능" 이다. */}
             {HERO_SEARCH_IMPRESSIONS && AJOUCHONG_URL ? (
@@ -644,7 +677,6 @@ export function ResumeMode({onEnterVillage}: Props) {
                 </div>
               </a>
             ) : null}
-            <div className="vertical-divider" />
             {/* 다섯째 칸 = 게임. 웹 넷 뒤에 두는 것이 곧 주력 순서다. */}
             <a
               className="status-module status-link"
@@ -736,12 +768,26 @@ export function ResumeMode({onEnterVillage}: Props) {
                           }}
                         >
                           <div className="project-card-header">
-                            <span
-                              className="project-category"
-                              style={{"--cat": cat.color} as CSSProperties}
-                            >
-                              {cat.label}
-                            </span>
+                            {/* 배지(산출물) + 칩(핵심 기술). 두 축을 배지 하나에
+                                합치지 않는다 — 마을 사이트를 "AI" 배지로 바꾸면 웹
+                                풀스택 근거가 하나 줄어 보이고 지원 직무와 어긋난다. */}
+                            <div className="project-badges">
+                              <span
+                                className="project-category"
+                                style={{"--cat": cat.color} as CSSProperties}
+                              >
+                                {cat.label}
+                              </span>
+                              {(p.facets ?? []).map(f => (
+                                <span
+                                  key={f}
+                                  className="project-facet"
+                                  title={FACET_META[f].hint}
+                                >
+                                  {FACET_META[f].label}
+                                </span>
+                              ))}
+                            </div>
                             <span
                               className={`project-status ${
                                 p.status === "출시"
@@ -1019,19 +1065,22 @@ export function ResumeMode({onEnterVillage}: Props) {
                     className="edu-card reveal reveal-delay-1"
                     key={`${e.org}-${e.program}`}
                   >
-                    <div className="edu-header">
-                      <h3 className="edu-name">
-                        {e.org} — {name}
-                        {tag ? <span className="edu-tag">{tag}</span> : null}
-                      </h3>
-                      <span className="edu-date">{e.period}</span>
+                    <OrgLogo fill={e.logoFill} org={e.org} src={e.logo} />
+                    <div className="edu-body">
+                      <div className="edu-header">
+                        <h3 className="edu-name">
+                          {e.org} — {name}
+                          {tag ? <span className="edu-tag">{tag}</span> : null}
+                        </h3>
+                        <span className="edu-date">{e.period}</span>
+                      </div>
+                      <p className="edu-desc">{e.desc}</p>
+                      <ul className="edu-detail">
+                        {e.bullets.map(b => (
+                          <li key={b}>{b}</li>
+                        ))}
+                      </ul>
                     </div>
-                    <p className="edu-desc">{e.desc}</p>
-                    <ul className="edu-detail">
-                      {e.bullets.map(b => (
-                        <li key={b}>{b}</li>
-                      ))}
-                    </ul>
                   </article>
                 );
               })}
@@ -1045,21 +1094,24 @@ export function ResumeMode({onEnterVillage}: Props) {
                 <div className="career-list">
                   {careers.map(c => (
                     <article className="career-card" key={`${c.org}-${c.role}`}>
-                      <div className="edu-header">
-                        <h4 className="edu-name">
-                          {c.org}
-                          <span className="edu-tag">{c.role}</span>
-                        </h4>
-                        <span className="edu-date">{c.period}</span>
+                      <OrgLogo fill={c.logoFill} org={c.org} src={c.logo} />
+                      <div className="edu-body">
+                        <div className="edu-header">
+                          <h4 className="edu-name">
+                            {c.org}
+                            <span className="edu-tag">{c.role}</span>
+                          </h4>
+                          <span className="edu-date">{c.period}</span>
+                        </div>
+                        <p className="edu-desc">{c.desc}</p>
+                        {/* 활동과 프로젝트가 같은 자리에서 나왔다는 걸 한 줄로 잇는다. */}
+                        {c.ledTo ? (
+                          <p className="career-led">
+                            <span aria-hidden="true">↳</span> 이어진 프로젝트 ·{" "}
+                            <b>{c.ledTo}</b>
+                          </p>
+                        ) : null}
                       </div>
-                      <p className="edu-desc">{c.desc}</p>
-                      {/* 활동과 프로젝트가 같은 자리에서 나왔다는 걸 한 줄로 잇는다. */}
-                      {c.ledTo ? (
-                        <p className="career-led">
-                          <span aria-hidden="true">↳</span> 이어진 프로젝트 ·{" "}
-                          <b>{c.ledTo}</b>
-                        </p>
-                      ) : null}
                     </article>
                   ))}
                 </div>
@@ -1097,14 +1149,17 @@ export function ResumeMode({onEnterVillage}: Props) {
                       className="career-card"
                       key={`${e.org}-${e.program}`}
                     >
-                      <div className="edu-header">
-                        <h4 className="edu-name">
-                          {e.org}
-                          <span className="edu-tag">{e.program}</span>
-                        </h4>
-                        <span className="edu-date">{e.period}</span>
+                      <OrgLogo fill={e.logoFill} org={e.org} src={e.logo} />
+                      <div className="edu-body">
+                        <div className="edu-header">
+                          <h4 className="edu-name">
+                            {e.org}
+                            <span className="edu-tag">{e.program}</span>
+                          </h4>
+                          <span className="edu-date">{e.period}</span>
+                        </div>
+                        <p className="edu-desc">{e.desc}</p>
                       </div>
-                      <p className="edu-desc">{e.desc}</p>
                     </article>
                   ))}
                 </div>

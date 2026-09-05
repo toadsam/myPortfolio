@@ -14,6 +14,13 @@
 // ─── 타입 ─────────────────────────────────────────────────────────────────────
 
 export type ResumeCategory = "web" | "data" | "game" | "ar" | "ops";
+// 카드의 두 번째 축. `category` 는 "무엇을 만들었나(산출물)" 라 웹은 전부 web 이고,
+// 그러면 웹 카드 다섯이 서로 뭐가 다른지 안 보인다(2026-09-05). facet 은 "안에
+// 무슨 기술이 핵심으로 도는가" — 어휘는 이 넷으로 고정한다. 늘리면 화면에서
+// 뺀 `tags`(스택 나열 = 잡음)와 구분이 없어진다. 해당 없는 카드는 비워 둔다.
+// "게임 요소" 같은 칩은 두지 않는다 — 마을 사이트가 게임으로 읽히지 않게 제목까지
+// 손본 이력이 있다(village-portfolio 주석). 게임이라는 말은 game 배지에만.
+export type ResumeFacet = "ai" | "3d" | "realtime" | "data";
 // "출시" 는 Steam 에 상용 출시한 TSEROF 전용이다. 운영중/완료와 층이 다르다 —
 // 심사자에게 "만들어 봤다" 와 "상점에 올라가 있다" 는 완전히 다르게 읽힌다.
 export type ProjectStatus = "운영중" | "완료" | "출시";
@@ -51,6 +58,19 @@ export interface EducationItem {
   period: string;
   desc: string;
   bullets: string[];
+  /**
+   * 기관 로고(`public/logos/*`). 학력·교육 항목의 로고는 증거가 아니라 **표식**이다 —
+   * 심사자가 이미 아는 이미지라 글을 읽기 전에 "어디서"가 먼저 잡힌다.
+   * 파일이 없거나 못 읽으면 화면은 기관명 첫 글자 원으로 대신한다(ResumeMode).
+   * 실제 로고만 쓴다 — 생성 이미지 금지.
+   */
+  logo?: string;
+  /**
+   * 로고가 원을 **꽉 채우게** 그린다(여백 0 · cover). 아주대 엠블럼처럼 그 자체가
+   * 원이거나, 어썸처럼 바탕이 밝은 정사각 그림에 쓴다. 워드마크(코드잇·구름·
+   * 스파르타·FIT)는 잘리므로 켜지 않는다.
+   */
+  logoFill?: boolean;
 }
 
 /** 활동·경력 — 학력과 섞으면 "경력 없음"으로 읽힌다. */
@@ -59,6 +79,10 @@ export interface CareerItem {
   role: string;
   period: string;
   desc: string;
+  /** 기관 로고. EducationItem.logo 와 같은 규칙. */
+  logo?: string;
+  /** EducationItem.logoFill 과 같다. */
+  logoFill?: boolean;
   /**
    * 이 활동이 어느 프로젝트로 이어졌는지. 이 이력서에서 가장 강한 사실은
    * **활동과 프로젝트가 같은 자리에서 나왔다**는 것이다 — 헬스 동아리 회장이자
@@ -93,6 +117,8 @@ export interface MainProjectCard {
   title: string;
   subtitle: string;
   category: ResumeCategory;
+  /** 핵심 기술 축. 배지 옆 작은 칩. 근거는 부제·지표에 이미 있는 것만. */
+  facets?: ResumeFacet[];
   status: ProjectStatus;
   tags: string[];
   /** 이력서 원본 기준. 근거가 없으면 비운다. */
@@ -180,6 +206,13 @@ export const CATEGORY_META: Record<
   game: {label: "Game", color: "#6fd6a6"},
   ar: {label: "AR / XR", color: "#ffb457"},
   ops: {label: "Ops", color: "#a9bdd6"}
+};
+
+export const FACET_META: Record<ResumeFacet, {label: string; hint: string}> = {
+  ai: {label: "AI", hint: "LLM·모델이 핵심 기능인 프로젝트"},
+  "3d": {label: "3D", hint: "Three.js·Unity 등 3D 표현층"},
+  realtime: {label: "실시간", hint: "SSE·소켓 등 실시간 통신"},
+  data: {label: "데이터", hint: "GA4·분석·대시보드로 개선한 프로젝트"}
 };
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
@@ -318,6 +351,8 @@ export const githubEvidence = {
 export const education: EducationItem[] = [
   {
     org: "아주대학교",
+    logo: "/logos/ajou.png",
+    logoFill: true,
     program: "디지털미디어학과 (전공)",
     period: "2021.03 ~ 2027.02 (예정)",
     desc: "웹/소프트웨어 엔지니어링 중심으로 학습하며 서비스 구조 설계와 구현 역량을 확장했습니다.",
@@ -328,6 +363,8 @@ export const education: EducationItem[] = [
   },
   {
     org: "아주대학교",
+    logo: "/logos/ajou.png",
+    logoFill: true,
     program: "인공지능 융합학과 (복수전공)",
     period: "2021.03 ~ 2027.02 (예정)",
     desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
@@ -335,6 +372,8 @@ export const education: EducationItem[] = [
   },
   {
     org: "아주대학교",
+    logo: "/logos/ajou.png",
+    logoFill: true,
     program: "메타버스기획 마이크로전공 (부전공)",
     period: "2021.03 ~ 2027.02 (예정)",
     desc: "메타버스 플랫폼에서 상호작용 콘텐츠를 제작했습니다.",
@@ -342,6 +381,7 @@ export const education: EducationItem[] = [
   },
   {
     org: "스파르타 내일배움캠프",
+    logo: "/logos/sparta.png",
     program: "Unity 게임개발자 양성과정",
     period: "2023.09 ~ 2024.02",
     desc: "Unity 기반 게임 개발 역량을 확장했습니다.",
@@ -349,6 +389,7 @@ export const education: EducationItem[] = [
   },
   {
     org: "구름(goorm)",
+    logo: "/logos/goorm.png",
     program: "군장병 AI/SW 역량강화",
     period: "2023.03 ~ 2023.12",
     desc: "HTML, CSS, JavaScript에 대한 기초 감각을 익혔습니다.",
@@ -356,6 +397,7 @@ export const education: EducationItem[] = [
   },
   {
     org: "코드잇",
+    logo: "/logos/codeit.png",
     program: "대학생 코딩캠프",
     period: "2021.03 ~ 2021.04",
     desc: "프로그래밍에 대한 기초 이해와 웹 개발 전반에 대한 감각을 익혔습니다.",
@@ -378,27 +420,26 @@ export const careers: CareerItem[] = [
   // "개발을 덜 했나" 로 읽힐 여지까지 있었다).
   //
   // 정답 문서도 이걸 한 줄로 요약한다 — resume/jaehoon-jeong-resume.md 「Collaboration」.
-  // 중앙비상대책위원회·FIT 학생회는 **다른 조직이라 합치지 않는다.** 합치면 사실이
-  // 뭉개진다. 대수(제43~45대)와 승진 경로를 role 에 그대로 남겨 두었으므로,
-  // 면접에서 어느 대에 무엇을 했는지 물으면 답이 화면에 이미 있다.
+  // 중앙비상대책위원회는 44대와 45대 사이(2026.01~03)의 같은 학생자치 이력이라
+  // **한 칸에 넣는다**(본인 결정 2026-09-04, 순서 43 → 44 → 비대위 → 45).
+  // FIT 학생회는 다른 조직이라 그대로 따로 둔다. 대수와 경로를 role 에 그대로
+  // 남겨 두었으므로, 면접에서 어느 대에 무엇을 했는지 물으면 답이 화면에 있다.
   //
   // 재직 여부: 지원서 표에는 `26.03.01~26.05.10` 으로 적혀 있지만 그건 작성 시점
   // 스탬프고, 본인 확인 결과 **지금도 재직 중**이다(2026-08-25).
   {
-    org: "아주대학교 총학생회 (제43~45대)",
-    role: "생활복지국원(43대) → 소통발전국원(44대) → 소통개발국장(45대)",
+    org: "아주대학교 총학생회 · 중앙비상대책위원회 (제43~45대)",
+    // 제45대 총학생회 '어썸' 로고 (본인 제공, 2026-09-04)
+    logo: "/logos/awesome.png",
+    logoFill: true,
+    role: "생활복지국원(43대) → 소통발전국원(44대) → 비대위 집행국원 → 소통개발국장(45대)",
     period: "2024.03 ~ 재직 중",
-    desc: "3년 연속 학생자치 기구에서 활동하며 국원에서 국장이 됐습니다. 학우 대상 온라인 서비스 운영과 정보 전달 구조 개선, 웹 서비스 기획·관리를 맡고 있고, 복지 창구에서 직접 들은 불편이 총학생회 웹으로 이어졌습니다.",
+    desc: "3년 연속 학생자치 기구에서 활동하며 국원에서 국장이 됐습니다. 학우 대상 온라인 서비스 운영과 정보 전달 구조 개선, 웹 서비스 기획·관리를 맡고 있고, 복지 창구에서 직접 들은 불편이 총학생회 웹으로 이어졌습니다. 2026.01~03에는 중앙비상대책위원회 집행국원으로 학생자치 운영·공지 전달·행사·행정 업무를 맡았습니다.",
     ledTo: "아주대학교 총학생회 웹 서비스"
   },
   {
-    org: "아주대학교 중앙비상대책위원회",
-    role: "집행국원",
-    period: "2026.01 ~ 2026.03",
-    desc: "학생자치 운영, 공지 전달, 행사·행정 업무를 맡아 조직 내 협업과 책임 있는 업무 처리 경험을 쌓았습니다."
-  },
-  {
     org: "헬스 동아리 ‘득근득근’",
+    logo: "/logos/muscleup.png",
     role: "회장",
     period: "2025.09 ~ 2026.05",
     desc: "동아리 운영·회원 관리·운동 프로그램 기획을 맡아, 회원이 운동 습관을 이어가도록 활동 방향을 설계했습니다. ‘어떻게 다시 오게 만들까’ 라는 이 질문이 그대로 득근득근 서비스의 출발점이 되었습니다.",
@@ -406,18 +447,22 @@ export const careers: CareerItem[] = [
   },
   {
     org: "코딩·디자인 동아리 ‘두잇’",
+    logo: "/logos/doit.png",
     role: "부원",
     period: "2024.03 ~ 2024.06",
     desc: "디자인 협업 도구 Figma로 프레임 구성, 도형·텍스트 배치, 기본 UI 요소 제작 등 화면 설계 과정을 익혔습니다."
   },
   {
     org: "육군 제50보병사단 제121보병여단 3대대",
+    logo: "/logos/army.png",
+    logoFill: true,
     role: "만기 전역",
     period: "2021.12 ~ 2023.06",
     desc: "군 복무를 마치고 만기 전역했습니다."
   },
   {
     org: "제25대 정보통신대학 학생회 ‘FIT’",
+    logo: "/logos/fit.png",
     role: "대외소통국원",
     period: "2021.03 ~ 2021.12",
     desc: "학과·단과대 학생 대상 공지 전달과 홍보 콘텐츠 제작, 대외 소통 업무를 수행했습니다."
@@ -464,6 +509,7 @@ export const mainProjects: MainProjectCard[] = [
     subtitle:
       "관리자가 적은 오늘의 활동이 3D 마을의 불빛과 AI NPC 대화로 바뀌는, 살아 있는 포트폴리오",
     category: "web",
+    facets: ["ai", "3d"],
     status: "운영중",
     tags: ["FullStack", "Next.js", "FastAPI", "AI"],
     // 첫 커밋 2026-06-26 "기본적인 세팅 추가". 2026-06 이후 커밋은 전부 본인.
@@ -512,6 +558,7 @@ export const mainProjects: MainProjectCard[] = [
     subtitle:
       "사용자 피드백을 듣고 소개형 홈페이지를 운영형 플랫폼으로 다시 만든 피트니스 커뮤니티",
     category: "web",
+    facets: ["realtime"],
     status: "운영중",
     // Realtime 을 추가했다 — Socket.IO 실시간 서버가 2.0 의 핵심인데 태그에 없었다.
     tags: ["FullStack", "JWT", "Realtime", "AWS"],
@@ -581,6 +628,7 @@ export const mainProjects: MainProjectCard[] = [
     subtitle:
       "프론트 3인 중 한 명으로 시작해 총괄까지 맡은, 활성 사용자 3,500명의 동아리 운영 서비스",
     category: "web",
+    facets: ["data"],
     status: "운영중",
     // 예전엔 총학 카드와 태그 4개가 **글자까지 똑같아서**, 훑는 사람 눈에 두 카드가
     // 같은 프로젝트로 보였다. 4장은 각각 다른 이유로 눌려야 하므로 축을 갈랐다 —
@@ -696,6 +744,7 @@ export const mainProjects: MainProjectCard[] = [
     subtitle:
       "아주대 대동제에서 하루 동안 실제 운영한 축제 부스·매칭 관리 시스템",
     category: "web",
+    facets: ["realtime", "data"],
     status: "완료",
     // 여기만 순수 기술 나열이라 다른 3장과 축이 어긋나 있었다. 맨 앞에 성격
     // 태그를 세우고 기술은 뒤로 — scikit-learn(혼잡 예측)은 role 줄에 남아 있다.
@@ -735,11 +784,58 @@ export const mainProjects: MainProjectCard[] = [
     links: [{label: "GitHub", href: "https://github.com/toadsam/FestFlow"}]
   },
   {
+    id: "tserof",
+    // 2026-09-05 대표 여섯째로. 배열 순서가 곧 격자 순서다 — 2단 표지(tier-divider)는
+    // "첫 비대표 카드" 앞에 끼워지므로 대표는 반드시 비대표들보다 앞에 있어야 한다(처음엔
+    // featured 만 켜고 자리를 안 옮겨 표지 아래에 그려졌다). 히어로 띠 다섯째 칸이 "Steam 출시 01" 인데 그
+    // 게임이 접힌 목록에 있으면 숫자는 자랑하고 카드는 숨기는 꼴이었다. 첫 지원처가
+    // 게임 회사(서비스 직군)라 "게임을 안에서 만들어 상점까지 올려 봤다" 는 신호가
+    // 첫 화면에 있어야 한다. 자리는 **마지막** — 웹 다섯 + 게임 하나가 3열 두 줄에
+    // 한 프레임으로 들어오고, 그 비율이 곧 서비스 직군 지원자의 비율이다. 게임을
+    // 앞으로 당기면 "그럼 왜 서비스로 넣었나" 를 스스로 묻게 만든다.
+    // 부제는 "레벨 디자인" 이 아니라 **기획→출시 완주**를 앞세운다 — 서비스 독자에게
+    // 읽히는 건 릴리즈까지 간 경험이다. 5개월·5인·부팀장은 이력서 원본과 상세
+    // 전시실(richContent tserof.impact)에 같은 값이 있다.
+    featured: true,
+    title: "TSEROF",
+    subtitle:
+      "5인 팀 부팀장으로 기획부터 Steam 스토어 출시까지 5개월에 완주한 3D 액션 플랫폼 게임",
+    category: "game",
+    facets: ["3d"],
+    status: "출시",
+    tags: ["Unity", "GameDev", "3D", "Steam"],
+    period: "2023.07 ~ 2023.11",
+    team: "5인 팀 — 부팀장",
+    role: "레벨 디자인 · 장애물/기믹 구현 · 기획",
+    metrics: [
+      {value: "Steam", label: "스토어 출시"},
+      {value: "5개월", label: "기획 → 출시"}
+    ],
+    metricsSource:
+      "출시는 Steam 스토어 페이지 · 기간·팀은 이력서 원본 (2023.07–11)",
+    richId: "tserof",
+    image: "/projects/tserof.webp",
+    // "Steam 출시" 라고 적어 놓고 정작 스토어 링크가 없었다.
+    // 출시작이라는 주장은 눌러서 확인될 때만 무게가 있다.
+    links: [
+      {
+        label: "Steam 스토어",
+        href: "https://store.steampowered.com/app/2743860/TSEROF/?l=koreana"
+      },
+      {label: "GitHub", href: "https://github.com/KimEoJin24/TSEROF"},
+      {
+        label: "플레이 영상",
+        href: "https://www.youtube.com/watch?v=1Lm-lpVsmq8"
+      }
+    ]
+  },
+  {
     id: "mystock",
     title: "MyStock-Desk / MyWave",
     subtitle:
       "거래 기록 기반 포트폴리오 분석·AI 체크리스트와 자산 흐름 대시보드(MyWave)를 담은 투자 기록 서비스",
     category: "data",
+    facets: ["ai"],
     status: "완료",
     tags: ["React", "Spring Boot", "AI", "Recharts"],
     team: "개인 개발 (풀스택 1인)",
@@ -767,33 +863,6 @@ export const mainProjects: MainProjectCard[] = [
     // **소개용 키 아트**다 — 화면을 그린 게 아니라 서비스가 무엇인지 말한다.
     image: "/projects/sign-language.webp",
     links: [{label: "GitHub", href: "https://github.com/toadsam/Sign-Language"}]
-  },
-  {
-    id: "tserof",
-    title: "TSEROF",
-    subtitle: "출시·배포까지 완주한 3D 액션 플랫폼 게임 프로젝트",
-    category: "game",
-    status: "출시",
-    tags: ["Unity", "GameDev", "3D", "Steam"],
-    period: "2023.07 ~ 2023.11",
-    team: "5인 팀 — 부팀장",
-    role: "레벨 디자인 · 장애물/기믹 구현 · 기획",
-    metrics: [{value: "Steam", label: "스토어 출시"}],
-    richId: "tserof",
-    image: "/projects/tserof.webp",
-    // "Steam 출시" 라고 적어 놓고 정작 스토어 링크가 없었다.
-    // 출시작이라는 주장은 눌러서 확인될 때만 무게가 있다.
-    links: [
-      {
-        label: "Steam 스토어",
-        href: "https://store.steampowered.com/app/2743860/TSEROF/?l=koreana"
-      },
-      {label: "GitHub", href: "https://github.com/KimEoJin24/TSEROF"},
-      {
-        label: "플레이 영상",
-        href: "https://www.youtube.com/watch?v=1Lm-lpVsmq8"
-      }
-    ]
   },
   {
     id: "otherside-vr",
