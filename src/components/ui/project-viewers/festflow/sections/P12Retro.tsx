@@ -58,8 +58,7 @@ export function P12Retro({onExit}: {onExit: () => void}) {
           축제는 <strong>하루</strong>입니다. 배포하고 나서 고칠 시간이 없고,
           장애가 나면 다음 기회도 없습니다. 그래서 이 프로젝트에서는{" "}
           <span style={{color: "var(--ff-accent)"}}>
-            &ldquo;가장 잘 되는 상태&rdquo;가 아니라 &ldquo;가장 안 죽는
-            상태&rdquo;
+            가장 잘 되는 상태가 아니라 가장 안 죽는 상태
           </span>
           를 기준으로 골랐습니다.
         </Body>
@@ -68,10 +67,9 @@ export function P12Retro({onExit}: {onExit: () => void}) {
             더 정확한 XGBoost 대신 RandomForest 를 올린 것도, AI 가 죽어도
             지도·예약·QR 은 돌게 만든 것도 같은 이유입니다. 그리고 실제로
             축제장에 올려 보니{" "}
-            <strong>
-              내가 예상한 문제와 사람들이 겪는 문제가 달랐습니다
-            </strong>{" "}
-            — QA 46명이 짚어준 건 알고리즘이 아니라 버튼 위치와 숫자 읽기였습니다.
+            <strong>내가 예상한 문제와 사람들이 겪는 문제가 달랐습니다</strong>{" "}
+            — QA 46명이 짚어준 건 알고리즘이 아니라 버튼 위치와 숫자
+            읽기였습니다.
           </Body>
         </div>
       </div>
@@ -95,8 +93,8 @@ export function P12Retro({onExit}: {onExit: () => void}) {
               <strong className="text-[var(--ff-text)]">
                 학습 데이터가 시뮬레이션이다.
               </strong>{" "}
-              HYBRID_SIMULATED(2,520행)로 학습했고, 실제 축제 로그로 재학습하지는
-              못했다. 예측 정확도의 현장 성능은 아직 모른다.
+              HYBRID_SIMULATED(2,520행)로 학습했고, 실제 축제 로그로
+              재학습하지는 못했다. 예측 정확도의 현장 성능은 아직 모른다.
             </li>
             <li>
               <span style={{color: "var(--ff-stale)"}}>·</span>{" "}

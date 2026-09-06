@@ -189,8 +189,8 @@ function IntroPanel({color}: {color: string}) {
           정재훈의 Developer&apos;s City
         </h3>
         <p className="mt-3 text-sm leading-7 text-[#a9bdd6]">
-          프로젝트, 기술, 경험, 연락처를 하나의 3D 마을로 구성했습니다. 건물은
-          콘텐츠를 열고, NPC는 방문자의 질문에 맞춰 포트폴리오를 설명합니다.
+          프로젝트, 기술, 경험, 연락처를 3D 마을 하나에 담았습니다. 건물에
+          들어가면 내용이 열리고, NPC에게 물으면 포트폴리오를 설명해 줍니다.
         </p>
       </Card>
       <div className="grid grid-cols-2 gap-3">
@@ -248,7 +248,7 @@ function ProjectsPanel({
         <p className="mt-2 text-sm leading-6 text-[#a9bdd6]">
           {onEnterProject
             ? '카드의 "3D 전시실 들어가기"를 누르면 그 프로젝트 건물 안으로 바로 들어갑니다. 글로 먼저 보려면 "자세히 보기".'
-            : "목록에서 프로젝트를 열어 자세한 설명을 보거나, 마을에서 프로젝트 건물 안으로 들어가 3D 전시 화면을 볼 수 있습니다."}
+            : "목록에서 프로젝트를 열면 설명이, 마을에서 건물에 들어가면 3D 전시가 나옵니다."}
         </p>
       </Card>
       {projects.map(project => (
@@ -464,7 +464,7 @@ function LifeCard({
 }
 
 function LifePlaceholder() {
-  return <p>아직 실제 내용을 채우지 못한 카드예요 — 곧 채워질 예정입니다.</p>;
+  return <p>아직 내용을 채우지 못한 카드입니다. 곧 채웁니다.</p>;
 }
 
 function LifePanel({
@@ -849,7 +849,7 @@ function ContactPanel({color}: {color: string}) {
     <div className="grid gap-4">
       <Card color={color}>
         <p className="text-sm leading-7 text-[#a9bdd6]">
-          협업, 인터뷰, 프로젝트 제안은 아래 링크를 통해 연결할 수 있습니다.
+          협업, 인터뷰, 프로젝트 제안은 아래 링크로 연락 주세요.
         </p>
       </Card>
       <div className="grid gap-2">

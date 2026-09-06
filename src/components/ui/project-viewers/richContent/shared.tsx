@@ -1770,7 +1770,7 @@ export function RichSection({
         <div className="grid items-start gap-6 lg:grid-cols-2">
           <TldrBanner theme={theme} rows={data.tldr} />
           <div>
-            <SubLabel theme={theme}>데모 · 직접 확인</SubLabel>
+            <SubLabel theme={theme}>데모</SubLabel>
             <DemoCTA theme={theme} demo={data.demo} />
           </div>
         </div>
@@ -1852,7 +1852,7 @@ export function RichSection({
         <div className="grid items-start gap-6 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
             <div>
-              <SubLabel theme={theme}>PROBLEM · 무엇이 문제였나</SubLabel>
+              <SubLabel theme={theme}>무엇이 문제였나</SubLabel>
               <RevealText
                 text={data.problem}
                 className="text-base leading-8 text-white/85"
@@ -1933,16 +1933,16 @@ export function RichSection({
     return (
       <div className="flex flex-col gap-6 py-2">
         <div>
-          <SubLabel theme={theme}>PROCESS · 진행 과정</SubLabel>
+          <SubLabel theme={theme}>진행 과정</SubLabel>
           <ProcessTimeline theme={theme} steps={data.process} />
         </div>
         <div className="grid items-start gap-6 lg:grid-cols-2">
           <div>
-            <SubLabel theme={theme}>ARCHITECTURE · 구조</SubLabel>
+            <SubLabel theme={theme}>구조</SubLabel>
             <ArchDiagram theme={theme} layers={data.architecture} />
           </div>
           <div>
-            <SubLabel theme={theme}>기술 의사결정 · 왜 이걸 골랐나</SubLabel>
+            <SubLabel theme={theme}>기술 의사결정</SubLabel>
             <DecisionTable theme={theme} rows={data.decisions} />
           </div>
         </div>
@@ -1965,7 +1965,7 @@ export function RichSection({
       <div className="flex flex-col gap-6 py-2">
         <div className="grid items-start gap-6 lg:grid-cols-2">
           <div>
-            <SubLabel theme={theme}>WORK · 직접 만든 것</SubLabel>
+            <SubLabel theme={theme}>직접 만든 것</SubLabel>
             <div className="grid gap-2 sm:grid-cols-2">
               {data.work.map(group => (
                 <div
@@ -2000,7 +2000,7 @@ export function RichSection({
             {data.perf ? (
               <div>
                 <SubLabel theme={theme}>
-                  {data.perf.title ?? "성능 개선 · 측정 기반"}
+                  {data.perf.title ?? "측정한 값"}
                 </SubLabel>
                 <div
                   className="rounded-xl border p-4"
@@ -2049,7 +2049,7 @@ export function RichSection({
         </div>
         <Divider />
         <div>
-          <SubLabel theme={theme}>가장 어려웠던 문제 · Challenge</SubLabel>
+          <SubLabel theme={theme}>가장 어려웠던 문제</SubLabel>
           <div className="grid gap-3 xl:grid-cols-2">
             {data.challenges.map((c, i) => (
               <ChallengeCard key={c.title} theme={theme} index={i + 1} c={c} />
@@ -2064,7 +2064,7 @@ export function RichSection({
   return (
     <div className="flex flex-col gap-6 py-2">
       <div>
-        <SubLabel theme={theme}>RESULT · 완성된 화면</SubLabel>
+        <SubLabel theme={theme}>완성된 화면</SubLabel>
         <div className="grid gap-3 sm:grid-cols-2">
           {data.resultScreens.map(s => (
             <MockScreen key={s.title} theme={theme} spec={s} />
@@ -2149,7 +2149,7 @@ export function RichSection({
           </div>
         </div>
         <div>
-          <SubLabel theme={theme}>회고 · KPT</SubLabel>
+          <SubLabel theme={theme}>회고</SubLabel>
           <div className="grid gap-3 sm:grid-cols-3">
             {(
               [

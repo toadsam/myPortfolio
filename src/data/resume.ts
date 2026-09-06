@@ -295,11 +295,11 @@ export {hero, heroSummary, resumePdf} from "./hero";
 // 3칸 스트립·시그널 카드 4장에서 세 번 반복했다.
 
 export const printSummary = {
-  lead: "React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운영 이슈까지 직접 다루는 신입 개발자입니다. 기능을 만드는 데서 멈추지 않고 사용자 흐름, API 책임, 토큰/세션 유지, HTTPS/CORS 같은 운영 조건까지 확인해 실제 서비스로 닫는 개발을 지향합니다.",
+  lead: "React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운영 이슈까지 직접 다루는 신입 개발자입니다. 기능을 만든 뒤 토큰/세션 유지, HTTPS/CORS 같은 배포 조건까지 직접 확인해 왔습니다.",
   points: [
     {
       head: "서비스 전체 흐름을 구현합니다.",
-      body: "화면, API, 인증, DB, 배포 환경을 따로 보지 않고 사용자가 실제로 지나가는 흐름 기준으로 설계합니다."
+      body: "FestFlow 와 총학생회 웹에서 사용자 화면과 관리자 API 를 한 서비스 안에서 함께 만들었습니다."
     },
     {
       head: "배포 후 드러나는 문제를 재현하고 고쳐 봤습니다.",
@@ -323,7 +323,7 @@ export const skillDetails: SkillDetail[] = [
   // backend/requirements.txt) — 심사자가 지금 보고 있는 결과물의 기술이 목록에 없었다.
   {
     area: "Frontend",
-    desc: "React/TypeScript 기반 SPA 설계 및 구현 — 컴포넌트 구조화, 상태 흐름 설계, API 연동",
+    desc: "React/TypeScript 기반 SPA 화면 구현과 API 연동",
     core: ["React", "TypeScript", "Next.js"],
     stack: [
       "React",
@@ -416,11 +416,8 @@ export const education: EducationItem[] = [
     program: "디지털미디어학과 (전공)",
     period: "2021.03 ~ 2027.02 (예정)",
     gpa: "전공 학점 4.05 / 4.5",
-    desc: "웹/소프트웨어 엔지니어링 중심으로 학습하며 서비스 구조 설계와 구현 역량을 확장했습니다.",
-    bullets: [
-      "웹(React/Spring Boot) 중심 프로젝트 경험",
-      "Unity XR/AR 프로젝트로 인터랙션 경험 확장"
-    ]
+    desc: "웹/소프트웨어 엔지니어링을 중심으로 공부했습니다.",
+    bullets: ["React/Spring Boot 웹 프로젝트", "Unity XR/AR 인터랙션 프로젝트"]
   },
   {
     org: "아주대학교",
@@ -428,8 +425,10 @@ export const education: EducationItem[] = [
     logoFill: true,
     program: "인공지능 융합학과 (복수전공)",
     period: "2021.03 ~ 2027.02 (예정)",
-    desc: "AI/데이터 기반 개발 역량을 함께 확장하고 있습니다.",
-    bullets: ["웹 개발과의 융합 관점으로 프로젝트 경험"]
+    desc: "인공지능 융합학과를 복수전공으로 이수 중입니다.",
+    bullets: [
+      "웹 프로젝트에 AI 기능 결합 (FestFlow 혼잡 예측 · 득근득근 AI 인바디 상담)"
+    ]
   },
   {
     org: "아주대학교",
@@ -437,8 +436,8 @@ export const education: EducationItem[] = [
     logoFill: true,
     program: "메타버스기획 마이크로전공 (부전공)",
     period: "2021.03 ~ 2027.02 (예정)",
-    desc: "메타버스 플랫폼에서 상호작용 콘텐츠를 제작했습니다.",
-    bullets: ["메타버스 플랫폼 콘텐츠 제작 경험"]
+    desc: "메타버스 플랫폼용 상호작용 콘텐츠를 만들었습니다.",
+    bullets: ["메타버스 플랫폼 콘텐츠 제작"]
   },
   {
     // 기간·과정명은 HRD-Net 훈련확인증 기준(2026-09-06 확인). 예전 "2023.09 ~ 2024.02" 는
@@ -453,8 +452,8 @@ export const education: EducationItem[] = [
     period: "2023.08.07 ~ 2023.12.15",
     evidence:
       "바탕 화면/기타파일/기타/훈련확인증.png (HRD-Net · 1,080시간 · 수료일 2023-12-15) · 유니티 캠프 수료.png / 유니티 수료2.png 는 바탕 화면/개발/유니티 게임/ (OneDrive 클라우드 전용)",
-    desc: "Unity 기반 게임 개발 역량을 확장했습니다.",
-    bullets: ["Unity 기반 게임 개발 프로젝트 경험"]
+    desc: "Unity 게임 개발 과정을 1,080시간 수료했습니다.",
+    bullets: ["최종 팀 프로젝트 TSEROF — Steam 출시"]
   },
   {
     // 수료증 2장(2026-09-06 확인): "입문 - 용사가 되자"(ARMY-2302011836) ·
@@ -467,7 +466,7 @@ export const education: EducationItem[] = [
     evidence:
       "바탕 화면/정재훈의 포트폴리오 모음집/수료증 및 증거/GEC_oirkdcipjD_fri-jun-16-2023-18-11-08_kor.pdf (입문) · GEC_orplXCyDGT_fri-jun-16-2023-18-21-57_kor.pdf (SW개발 초급과정 2) · 발행 2023-06-16",
     desc: "군 복무 중 온라인으로 입문 과정과 SW개발 초급과정 2를 수료하며 HTML, CSS, JavaScript 기초를 익혔습니다.",
-    bullets: ["프론트엔드 기초 감각 확장"]
+    bullets: ["수료증 2장 (입문 · SW개발 초급과정 2)"]
   },
   {
     // 2021년 상반기 기수별 기간(링커리어 공고, 2026-09-06 조사): 1기 02.17~03.15 ·
@@ -477,8 +476,8 @@ export const education: EducationItem[] = [
     logo: "/logos/codeit.png",
     program: "대학생 코딩캠프",
     period: "2021.03 ~ 2021.04",
-    desc: "프로그래밍에 대한 기초 이해와 웹 개발 전반에 대한 감각을 익혔습니다.",
-    bullets: ["프로그래밍에 대한 기초 이해 확장"]
+    desc: "프로그래밍과 웹 개발 기초를 배웠습니다.",
+    bullets: ["웹 개발 기초"]
   }
 ];
 
@@ -1220,25 +1219,25 @@ export const devRecords: DevRecord[] = [
 export const values: ValueItem[] = [
   {
     title: "소통",
-    desc: "생각과 상황을 공유하며 방향을 맞춥니다.",
+    desc: "문의와 지표를 근거로 고칠 순서를 정합니다.",
     evidence:
       "총학생회·aClub 운영 문의를 흘려보내지 않고 GA4/GSC 지표와 함께 읽어, 정보 구조를 고칠 순서를 정했습니다."
   },
   {
     title: "협력",
-    desc: "역할을 존중하며 함께 더 나은 결과를 만듭니다.",
+    desc: "팀에서 맡은 몫을 출시까지 끝냅니다.",
     evidence:
       "TSEROF 5인 팀에서 부팀장으로 레벨·기믹을 나눠 맡아 출시까지 완주했습니다."
   },
   {
     title: "성실",
-    desc: "작은 기록과 반복을 통해 꾸준히 성장합니다.",
+    desc: "알고리즘 풀이를 저장소에 계속 쌓습니다.",
     evidence:
       "BaekjoonHub 로 알고리즘 풀이를 별도 저장소에 지속 축적하고, 공개 저장소 44개를 관리하고 있습니다."
   },
   {
     title: "도전",
-    desc: "익숙함에 머무르지 않고 새로운 시도를 선택합니다.",
+    desc: "주력 밖의 영역도 끝까지 만들어 봤습니다.",
     evidence:
       "웹 풀스택을 주력으로 하면서 Unity XR·AR, 수어 접근성 서비스처럼 낯선 영역까지 완성해 봤습니다."
   }
@@ -1247,9 +1246,9 @@ export const values: ValueItem[] = [
 // ─── About / Contact ──────────────────────────────────────────────────────────
 
 export const aboutMe = [
-  "작은 기능도 끝까지 다듬어 ‘운영 가능한 상태’로 만듭니다.",
+  "총학생회 웹의 관리자 화면과 FestFlow 현장 운영까지, 만든 기능을 실제로 쓰이는 데까지 가져갔습니다.",
   "배포 후 생기는 HTTPS·CORS 같은 문제를 로그/설정/네트워크까지 파고들어 해결해왔습니다.",
-  "저는 운영과 사용자 소통까지 이어져야 비로소 ‘완성된 개발’이라고 생각합니다.",
+  "aClub 은 GA4 지표와 운영 문의를 근거로 정보 구조와 문구를 고쳤습니다.",
   "웹이 주력이지만, Unity XR 경험으로 인터랙션 영역도 다룰 수 있습니다."
 ];
 

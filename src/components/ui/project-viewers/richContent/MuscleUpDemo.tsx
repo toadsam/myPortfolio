@@ -56,9 +56,11 @@ export function MuscleUpDemo({theme}: {theme: ProjectTheme}) {
       }
       footer={
         <p className="font-mono text-[11px] leading-5 text-white/45">
-          💡 운동을 기록할수록{" "}
-          <span style={{color: theme.primary}}>경험치가 쌓이고 레벨업</span> —
-          꾸준함을 게임처럼 보상합니다.
+          운동을 기록하면{" "}
+          <span style={{color: theme.primary}}>
+            경험치가 쌓이고 레벨이 오릅니다
+          </span>
+          . 꾸준히 기록한 만큼 게임처럼 보상하는 구조입니다.
         </p>
       }
     >

@@ -204,7 +204,7 @@ export function LiveStatusPanel({
       {!collapsed ? (
         error ? (
           <p className="mt-2 leading-5 text-[#ff9a6c]">
-            {error}. 기본 마을 화면으로 표시 중입니다.
+            {error}. 지금은 기본 마을 화면이에요.
           </p>
         ) : villageState ? (
           <>
@@ -1064,7 +1064,7 @@ export function DistrictStrip({
           {buildings.length}채
         </p>
         <p className="text-[11px] font-bold text-[#a9bdd6]/70">
-          건물을 고르면 바로 들어갑니다
+          건물을 고르면 바로 들어가요
         </p>
       </div>
       <div className="flex max-h-[64px] flex-wrap gap-1.5 overflow-y-auto md:max-h-[96px]">

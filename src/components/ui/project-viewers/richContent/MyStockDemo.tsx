@@ -66,11 +66,11 @@ export function MyStockDemo({theme}: {theme: ProjectTheme}) {
       }
       footer={
         <p className="font-mono text-[11px] leading-5 text-white/45">
-          💡 매수/매도하면{" "}
+          매수·매도를 넣으면{" "}
           <span style={{color: theme.primary}}>
             평가액 · 수익률 · 자산 비중
           </span>
-          이 즉시 다시 계산됩니다 — 외부 연동 없이 입력만으로.
+          이 바로 다시 계산됩니다. 외부 시세 연동 없이 입력값만으로 돌아갑니다.
         </p>
       }
     >

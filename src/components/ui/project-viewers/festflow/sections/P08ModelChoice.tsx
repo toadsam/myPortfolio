@@ -52,7 +52,7 @@ const REASONS = [
   {
     n: "4",
     t: "예측 근거를 제시하기 쉽다",
-    d: "feature importance 를 통해 어떤 입력값이 혼잡도 예측에 영향을 줬는지 설명 가능"
+    d: "feature importance 로 어떤 입력값이 혼잡도 예측에 영향을 줬는지 설명 가능"
   }
 ] as const;
 
@@ -94,10 +94,12 @@ export function P08ModelChoice() {
 
       <div className="mt-6 max-w-[740px]" style={rise(on[IDX.body], instant)}>
         <Body>
-          두 모델을 다 학습시켜 재 봤고, <strong>XGBoost 가 더 높았습니다.</strong>{" "}
-          그런데 운영에 올린 건 RandomForest 입니다.{" "}
+          두 모델을 다 학습시켜 재 봤고,{" "}
+          <strong>XGBoost 가 더 높았습니다.</strong> 그런데 운영에 올린 건
+          RandomForest 입니다.{" "}
           <span style={{color: "var(--ff-accent)"}}>
-            숫자가 0.016 높은 것보다, 축제 당일에 안 죽는 게 중요했기 때문입니다.
+            숫자가 0.016 높은 것보다, 축제 당일에 안 죽는 게 중요했기
+            때문입니다.
           </span>
         </Body>
       </div>
@@ -146,7 +148,9 @@ export function P08ModelChoice() {
                   <div key={n} className="flex items-center gap-3">
                     <span
                       className="w-[92px] shrink-0 font-mono text-[11px]"
-                      style={{color: sel ? "var(--ff-primary)" : "var(--ff-muted)"}}
+                      style={{
+                        color: sel ? "var(--ff-primary)" : "var(--ff-muted)"
+                      }}
                     >
                       {n}
                     </span>
@@ -162,7 +166,9 @@ export function P08ModelChoice() {
                     </div>
                     <span
                       className="w-[54px] shrink-0 text-right font-mono text-[12px] font-bold tabular-nums"
-                      style={{color: sel ? "var(--ff-accent)" : "var(--ff-muted)"}}
+                      style={{
+                        color: sel ? "var(--ff-accent)" : "var(--ff-muted)"
+                      }}
                     >
                       {v.toFixed(4).replace(/0+$/, "").replace(/\.$/, "")}
                     </span>
@@ -208,9 +214,10 @@ export function P08ModelChoice() {
           </div>
 
           <Hint>
-            <strong>평가 지표를 둘 다 본 이유</strong> — 혼잡도 예측은 다중 클래스
-            분류이고, 운영상 BUSY / VERY_BUSY 를 놓치지 않는 게 중요하므로 전체
-            정확도(Accuracy)와 클래스 균형 성능(Macro F1)을 함께 평가했습니다.
+            <strong>평가 지표를 둘 다 본 이유</strong> — 혼잡도 예측은 다중
+            클래스 분류이고, 운영상 BUSY / VERY_BUSY 를 놓치지 않는 게
+            중요하므로 전체 정확도(Accuracy)와 클래스 균형 성능(Macro F1)을 함께
+            평가했습니다.
           </Hint>
         </div>
 
@@ -260,10 +267,11 @@ export function P08ModelChoice() {
         />
         <Panel label="여기서 배운 것">
           <p className="text-[13px] leading-6 text-[var(--ff-muted)]">
-            모델을 고르는 기준이 <strong className="text-[var(--ff-text)]">
-            숫자 하나</strong>가 아니라는 걸 이때 알았습니다. 배포 난이도, 추론
-            안정성, 설명 가능성까지 같이 놓고 봐야 &ldquo;운영할 수 있는
-            모델&rdquo;이 나옵니다. 0.016 을 포기하고 얻은 게 그거였습니다.
+            모델을 고르는 기준이{" "}
+            <strong className="text-[var(--ff-text)]">숫자 하나</strong>가
+            아니라는 걸 이때 알았습니다. 배포 난이도, 추론 안정성, 설명
+            가능성까지 같이 놓고 봐야 &ldquo;운영할 수 있는 모델&rdquo;이
+            나옵니다. 0.016 을 포기하고 얻은 게 그거였습니다.
           </p>
         </Panel>
       </div>

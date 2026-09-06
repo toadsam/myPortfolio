@@ -714,6 +714,6 @@ export function collectAskedPairs(
 export function depthWrapupLine(): string {
   return (
     "여기까지예요, 고생하셨어요! 주신 답은 전부 저장됐고 정재훈이 그대로 이어받아요.\n" +
-    "더 하실 말씀이 있으면 아래에 언제든 남겨 주세요 — 이 페이지는 계속 열려 있어요."
+    "생각나는 게 더 있으면 아래에 적어 주세요. 이 페이지는 닫히지 않아요."
   );
 }

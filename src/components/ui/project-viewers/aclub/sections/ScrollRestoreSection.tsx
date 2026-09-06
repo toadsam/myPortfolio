@@ -343,9 +343,9 @@ export function ScrollRestoreSection() {
                     {detailClub?.name}
                   </h3>
                   <p className="text-[14px] leading-7 text-[rgba(255,255,255,0.6)]">
-                    이 동아리는 매주 정기적으로 모임을 가지며, 다양한 활동을
-                    통해 회원들의 성장을 도모합니다. 신입 회원이라도 누구나 쉽게
-                    참여할 수 있는 분위기를 지향합니다.
+                    매주 목요일 저녁에 모입니다. 학기 초에는 스터디, 학기 중에는
+                    프로젝트를 하나씩 합니다. 신입 회원도 첫 주부터 같이
+                    참여합니다.
                   </p>
                   <p className="text-[14px] leading-7 text-[rgba(255,255,255,0.6)]">
                     학기 중에는 주 1회 정기 모임을 필수로 참여해야 하며, 방학
@@ -417,8 +417,8 @@ export function ScrollRestoreSection() {
         <Reveal className="mt-8">
           <NoteBox label="원인" tone="warn">
             <p className="text-[16px] leading-8 text-[rgba(255,255,255,0.88)]">
-              문제는 두 겹이었다. 첫째, 위치를 저장하는 곳이 없었다. 둘째,
-              저장해도{" "}
+              문제는 두 겹이었다. 하나는 위치를 저장하는 곳이 없었고, 다른
+              하나는 저장해도{" "}
               <strong className="font-bold text-[#fbbf24]">
                 복원 시점이 틀렸다.
               </strong>{" "}

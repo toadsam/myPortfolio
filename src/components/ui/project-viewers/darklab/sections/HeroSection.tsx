@@ -4,8 +4,8 @@ import {useEffect, useState} from "react";
 import {useDarkLab} from "../context";
 import {IconPlay} from "../parts";
 
-const HEADLINE_1 = "어두운 방에서 무서운 건 무언가가 있어서가 아니다.";
-const HEADLINE_2 = "있는지 없는지 모르기 때문이다.";
+const HEADLINE_1 = "손전등 반경 밖은";
+const HEADLINE_2 = "있는지 없는지 모르게 만들었다.";
 
 const META = [
   {value: "6", label: "기술 스택"},

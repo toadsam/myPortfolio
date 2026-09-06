@@ -26,9 +26,9 @@ export function DarkLabReveal({theme}: {theme: ProjectTheme}) {
       tag="FLASHLIGHT"
       footer={
         <p className="font-mono text-[11px] leading-5 text-white/45">
-          🔦 마우스를 움직여{" "}
-          <span style={{color: theme.primary}}>어둠 속을 비춰보세요</span> —
-          1인칭 탐색의 긴장감을 그대로.
+          🔦 마우스를 움직이면 손전등이 따라옵니다.{" "}
+          <span style={{color: theme.primary}}>어둠 속을 비춰야</span> 숨은
+          내용이 보입니다.
         </p>
       }
     >

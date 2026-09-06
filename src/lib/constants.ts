@@ -7,7 +7,7 @@ export const sectionMeta: SectionMeta[] = [
     navLabel: "Intro",
     title: "중앙 광장",
     description:
-      "Developer's City의 시작 지점입니다. 건물을 클릭하면 프로젝트, 기술 스택, 경험, 연락처 공간으로 이동할 수 있습니다."
+      "Developer's City의 시작 지점입니다. 건물을 클릭하면 그 구역으로 들어갑니다."
   },
   {
     id: "projects",
@@ -15,23 +15,21 @@ export const sectionMeta: SectionMeta[] = [
     navLabel: "Projects",
     title: "프로젝트 구역",
     description:
-      "각 건물은 하나의 대표 프로젝트입니다. 건물 안으로 들어가면 문제, 접근 방식, 기여도, 결과를 3D 전시처럼 볼 수 있습니다."
+      "각 건물이 대표 프로젝트 하나입니다. 안으로 들어가면 문제와 결과를 3D 전시로 봅니다."
   },
   {
     id: "github",
     label: "Skills District",
     navLabel: "Skills",
     title: "기술 스택 구역",
-    description:
-      "프론트엔드, 백엔드, 3D/모션, 게임/XR, 개발 워크플로를 묶어 정리한 구역입니다."
+    description: "프론트엔드부터 3D, 게임까지 쓰는 기술을 정리한 구역입니다."
   },
   {
     id: "experience",
     label: "Experience Archive",
     navLabel: "Archive",
     title: "경험 기록관",
-    description:
-      "프로젝트를 만들며 쌓은 구현 경험, 협업 경험, 성장 과정을 시간순으로 정리합니다."
+    description: "프로젝트를 만들며 쌓은 경험을 시간순으로 정리한 곳입니다."
   },
   {
     id: "study",
@@ -39,15 +37,14 @@ export const sectionMeta: SectionMeta[] = [
     navLabel: "Study",
     title: "학습 구역",
     description:
-      "매일 푼 코딩테스트 풀이와 공부한 CS 전공지식을 기록하는 구역입니다. 알고리즘 도장과 지식 서고에서 최근 학습 기록을 확인할 수 있습니다."
+      "매일 푼 코딩테스트와 공부한 CS 지식을 기록하는 구역입니다. 알고리즘 도장과 지식 서고에 최근 기록이 있습니다."
   },
   {
     id: "contact",
     label: "Contact Post",
     navLabel: "Contact",
     title: "연락 우체국",
-    description:
-      "이메일, GitHub, 블로그 링크를 통해 다음 협업으로 이어지는 동선을 제공합니다."
+    description: "이메일, GitHub, 블로그 링크가 있습니다."
   },
   {
     id: "life",
@@ -55,7 +52,7 @@ export const sectionMeta: SectionMeta[] = [
     navLabel: "Life",
     title: "인생·일상 구역",
     description:
-      "운동, 학습, 가치관, 투자, 음악, 연혁처럼 프로젝트 밖의 일상을 모아둔 구역입니다. 일부 카드는 아직 내용을 채우는 중입니다."
+      "운동, 가치관, 연혁처럼 프로젝트 밖의 일상을 모아 둔 구역입니다. 일부 카드는 아직 채우는 중입니다."
   }
 ];
 
@@ -436,7 +433,7 @@ const experienceBuildings: BuildingData[] = [
     kind: "townhouse",
     name: "2026 AI Portfolio",
     label: "2026",
-    description: "3D 마을을 통해 프로젝트와 기술 경험을 탐색하는 포트폴리오",
+    description: "프로젝트와 기술 경험을 3D 마을로 둘러보는 포트폴리오",
     position: [-6.96, 0, -0.97],
     size: [3.47, 3.3, 3.14],
     rotationY: -0.4464,
@@ -477,7 +474,7 @@ const lifeBuildings: BuildingData[] = [
     kind: "minimal-office",
     name: "가치관 비석",
     label: "Values",
-    description: "내가 왜 개발하는가 — 일하는 원칙과 가치관.",
+    description: "일하는 원칙과 가치관.",
     position: [6.68, 0, 1.91],
     size: [1.72, 1.72, 1.72],
     rotationY: -0.5448,
@@ -562,7 +559,7 @@ const lifeBuildings: BuildingData[] = [
     kind: "tower",
     name: "연혁 타임라인",
     label: "Timeline",
-    description: "입학·전향·첫 커밋·프로젝트 — 내 인생의 순간들.",
+    description: "입학, 전향, 첫 커밋 같은 인생의 순간들.",
     position: [3.89, 0, 8.33],
     size: [2.53, 4.09, 2.53],
     rotationY: 2.8668,

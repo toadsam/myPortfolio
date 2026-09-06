@@ -413,9 +413,9 @@ export function FestFlowLiveDemo({theme}: {theme: ProjectTheme}) {
         }}
       >
         <p className="font-mono text-[11px] leading-5 text-white/45">
-          💡 당신이 바꾼 상태가{" "}
+          바꾼 상태가{" "}
           <span style={{color: theme.primary}}>피드 · 지도 · 현황</span>에 1초
-          안에 반영됩니다 — 이것이 SSE 브로드캐스트입니다.
+          안에 반영됩니다. 실제 서비스에서는 이 전파를 SSE 로 합니다.
         </p>
       </div>
     </motion.div>

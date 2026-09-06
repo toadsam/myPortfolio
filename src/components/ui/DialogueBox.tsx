@@ -82,7 +82,7 @@ function uniqueItems(items: string[]) {
 }
 
 function introLine(npc: NPCData) {
-  return `안녕하세요! ${npc.name}입니다. ${npc.role} 담당이에요. 무엇이든 편하게 물어보세요 :)`;
+  return `${npc.name}. ${npc.role} 쪽을 맡고 있어요.`;
 }
 
 /** 백엔드 relations.canon 의 contact 판정과 같은 규칙 — 두 곳이 어긋나면 안 된다. */

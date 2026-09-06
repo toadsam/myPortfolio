@@ -15,12 +15,12 @@ export function HonestCostSection() {
         </div>
         <h2 className="dl-fade-up mb-6 text-[32px] font-black leading-tight">
           버그는 공포보다 <br />
-          <span className="text-[#ef4444]">더 집요하게</span> 따라붙었습니다.
+          <span className="text-[#ef4444]">더 집요하게</span> 따라붙었다.
         </h2>
         <p className="dl-fade-up mb-12 text-[16px] leading-8 text-[rgba(255,255,255,0.82)]">
-          앞서 말한 &lsquo;제어권 반환 실패&rsquo;는 단순한 코딩 실수가
-          아니었습니다. 플레이어가 시네마틱 연출 도중 강제 종료를 하거나, 예기치
-          못한 트리거가 중첩될 때 발생하는 상태 관리의 허점이었습니다.
+          앞서 말한 &lsquo;제어권 반환 실패&rsquo;는 상태 관리에 난 구멍이었다.
+          연출 도중에 플레이어가 강제 종료하거나 트리거 두 개가 겹치면 그
+          구멍으로 빠졌다.
         </p>
 
         <div className="dl-fade-up mb-12 overflow-hidden rounded-md border border-[rgba(255,255,255,0.10)] bg-[#0b0708] shadow-2xl">
@@ -48,8 +48,8 @@ export function HonestCostSection() {
               Problem: State Deadlock
             </h4>
             <p className="text-[14px] leading-6 text-[rgba(255,255,255,0.42)]">
-              이벤트 도중 씬이 로드되거나 객체가 파괴될 때, 코루틴이 중단되면서
-              Input.enabled = true 문에 도달하지 못하는 현상.
+              이벤트 도중 씬이 로드되거나 객체가 파괴되면 코루틴이 끊겨서
+              Input.enabled = true 줄까지 가지 못했다.
             </p>
           </div>
           <div className="rounded-md border border-[#4ade80]/30 bg-white/[0.02] p-6">
@@ -57,8 +57,8 @@ export function HonestCostSection() {
               Solution: Global Safety Net
             </h4>
             <p className="text-[14px] leading-6 text-[rgba(255,255,255,0.42)]">
-              싱글톤 매니저가 객체 생명주기와 무관하게 모든 비정상 종료 시점을
-              추적하여 강제 해제 명령을 하달.
+              싱글톤 매니저가 객체 생명주기와 상관없이 비정상 종료를 감지해
+              입력을 강제로 풀어 준다.
             </p>
           </div>
         </div>

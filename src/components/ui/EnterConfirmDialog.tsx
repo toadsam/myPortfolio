@@ -130,8 +130,8 @@ export function EnterConfirmDialog({buildingId, onConfirm, onCancel}: Props) {
                   Enter
                 </p>
                 <p className="mt-1 text-sm leading-6 text-white/72">
-                  이 건물로 들어가면 관련 콘텐츠가 열립니다. Enter로 입장하고
-                  ESC로 취소할 수 있습니다.
+                  이 건물로 들어가면 관련 콘텐츠가 열립니다. Enter로 입장, ESC로
+                  취소.
                 </p>
               </div>
 

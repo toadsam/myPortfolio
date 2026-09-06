@@ -138,8 +138,8 @@ export function Trouble01Section() {
             className="text-[22px] font-black leading-tight transition-opacity duration-700"
             style={{opacity: showContent ? 1 : 0}}
           >
-            방금 스크롤이 잠겼습니다. 게임에서는 이것 때문에{" "}
-            <span className="text-[#ff5a4d]">3일을 썼습니다.</span>
+            방금 스크롤이 잠겼다. 게임에서는 이것 때문에{" "}
+            <span className="text-[#ff5a4d]">3일을 썼다.</span>
           </div>
         </div>
 

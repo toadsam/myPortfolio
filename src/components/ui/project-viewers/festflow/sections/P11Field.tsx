@@ -44,7 +44,8 @@ const STATS = [
 const QA = [
   {
     t: "모바일 사용성 QA",
-    problem: "주요 버튼 위치가 불편해 사용 흐름이 끊김 · 다음 행동을 찾기 어려움",
+    problem:
+      "주요 버튼 위치가 불편해 사용 흐름이 끊김 · 다음 행동을 찾기 어려움",
     fix: "하단 고정 CTA 적용"
   },
   {
@@ -77,10 +78,7 @@ export function P11Field() {
   // 0 → 1 로 차오르며 지표가 올라간다. 화면 밖·탭 숨김이면 멈춘다(스펙 A-8).
   useEffect(() => {
     if (instant || !onScreen || !visible || t >= 1) return;
-    const id = window.setInterval(
-      () => setT(v => Math.min(1, v + 0.045)),
-      40
-    );
+    const id = window.setInterval(() => setT(v => Math.min(1, v + 0.045)), 40);
     return () => window.clearInterval(id);
   }, [instant, onScreen, visible, t]);
 
@@ -156,8 +154,8 @@ export function P11Field() {
 
       <div className="mt-4">
         <Hint>
-          <strong>424건이 들어와서 36건이 성사</strong>됐고, 그 사이 144건이 응답
-          대기 상태였습니다. 관리자 화면이 그걸 실시간으로 세고 있었습니다.
+          <strong>424건이 들어와서 36건이 성사</strong>됐고, 그 사이 144건이
+          응답 대기 상태였습니다. 관리자 화면이 그걸 실시간으로 세고 있었습니다.
         </Hint>
       </div>
 
@@ -241,7 +239,9 @@ export function P11Field() {
                 color: qa === 0 ? "var(--ff-down)" : "var(--ff-live)"
               }}
             >
-              {qa === 0 ? "BEFORE — QA 에서 발견한 문제" : "AFTER — 반영된 개선"}
+              {qa === 0
+                ? "BEFORE — QA 에서 발견한 문제"
+                : "AFTER — 반영된 개선"}
             </div>
             <ul className="mt-3 space-y-2.5">
               {QA.map(q => (
@@ -298,22 +298,22 @@ export function P11Field() {
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-3 lg:grid-cols-3">
-          <Card label="검증 01" accent="var(--ff-live)">
+          <Card label="실측 01" accent="var(--ff-live)">
             <p className="text-[13px] leading-6">
-              <strong>실제 운영 검증 완료</strong> — 축제 현장에서 1일간 실
-              운영하며 신청부터 매칭까지 전 과정을 검증
+              축제 1일 동안 <strong>169명이 등록하고 424건을 신청</strong>해
+              36건이 성사됐습니다.
             </p>
           </Card>
-          <Card label="검증 02" accent="var(--ff-primary)">
+          <Card label="실측 02" accent="var(--ff-primary)">
             <p className="text-[13px] leading-6">
-              <strong>관리자 처리 흐름 확인</strong> — 관리자 대시보드로 신청
-              현황, 매칭 처리, 운영 효율을 확인
+              관리자 화면에서 <strong>대기 144건</strong>을 보며 당일 30건
+              이상을 처리했습니다.
             </p>
           </Card>
-          <Card label="검증 03" accent="var(--ff-accent)">
+          <Card label="실측 03" accent="var(--ff-accent)">
             <p className="text-[13px] leading-6">
-              <strong>사용자 참여 경험 검증</strong> — 사용자 화면을 통해 매칭
-              탐색과 신청 경험을 현장에서 검증
+              <strong>QA 46명</strong>이 짚은 문제 가운데 세 가지를 화면에
+              반영했습니다.
             </p>
           </Card>
         </div>

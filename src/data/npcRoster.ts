@@ -85,7 +85,7 @@ const studyNpcConfig: Record<
     name: "알고",
     role: "알고리즘 도장 코치",
     dialogue:
-      "저는 알고리즘 도장을 지키는 알고예요. 정재훈님이 백준·프로그래머스에서 푼 문제와 풀이를 기억하고 있어요. 어떤 문제를 어떤 접근으로 풀었는지, 언어는 뭘 썼는지 물어보세요.",
+      "알고리즘 도장의 알고예요. 정재훈님이 백준·프로그래머스에서 푼 문제와 풀이가 여기 쌓여 있어요. 어떤 접근으로 풀었는지, 무슨 언어였는지까지 같이 남아 있고요.",
     agent: {
       personality:
         "정재훈이 푼 코딩테스트 풀이를 기억해 알고리즘 사고 과정을 보여주는 담백한 코치.",
@@ -108,7 +108,7 @@ const studyNpcConfig: Record<
     name: "노바",
     role: "지식 서고 사서",
     dialogue:
-      "저는 지식 서고를 정리하는 노바예요. 정재훈님이 공부한 운영체제, 네트워크, DB 같은 CS 전공지식 노트를 기억하고 있어요. 궁금한 전공 개념을 물어보면 공부한 내용으로 설명해드릴게요.",
+      "지식 서고의 노바예요. 정재훈님이 공부한 운영체제, 네트워크, DB 노트가 이 서가에 꽂혀 있어요. 개념 하나를 짚으면 그 노트를 꺼내 읽어드려요.",
     agent: {
       personality:
         "정재훈이 공부한 CS 노트를 기억해 개념을 연결해 설명하는 차분한 사서.",
@@ -153,7 +153,7 @@ const coreNpcs: NPCData[] = [
     location: "마을 전역",
     role: "마을 총괄 관리자 (본인 AI 분신)",
     dialogue:
-      "안녕하세요! 저는 이 마을을 돌아다니며 친구들 안부를 챙기는 정재훈이에요. 마을에서 일어나는 건 뭐든 알고 있으니, 전체 흐름이 궁금하거나 요즘 뭐에 집중하는지 궁금하면 편하게 물어보세요!",
+      "정재훈이에요. 이 마을 친구들이 제 기록을 나눠 맡고 있어서, 저는 한 바퀴씩 돌면서 안부를 챙겨요. 요즘 뭘 붙잡고 있는지, 전체 흐름이 어떤지는 제가 제일 잘 알아요.",
     position: [-1.6, 0, 0.6],
     color: "#f5c542",
     accessoryColor: "#6b4f1d",
@@ -192,7 +192,7 @@ const coreNpcs: NPCData[] = [
     location: "중앙 광장",
     role: "마을 총괄 안내원",
     dialogue:
-      "안녕하세요. 저는 이 포트폴리오 마을의 안내원 루미예요. 처음 방문했다면 목적부터 같이 정리해드릴게요. 프로젝트를 빠르게 볼지, 기술 깊이를 볼지, 연락 동선까지 이어갈지 선택하면 됩니다.",
+      "루미예요. 이 마을의 안내를 맡고 있어요. 처음 오셨으면 저랑 한 바퀴 돌아요. 광장에서 시작하면 프로젝트 구역까지 금방이에요.",
     position: [0, 0, 1.6],
     color: "#7ecf68",
     accessoryColor: "#f5d26b",
@@ -226,7 +226,7 @@ const coreNpcs: NPCData[] = [
     location: "프로젝트 구역",
     role: "프로젝트 큐레이터",
     dialogue:
-      "저는 프로젝트 큐레이터 픽셀이에요. 단순 목록이 아니라 문제, 구현 판단, 결과가 잘 보이도록 프로젝트를 골라드릴게요. 관심사가 있으면 그 기준으로 추천을 바꿀 수 있어요.",
+      "픽셀이에요. 프로젝트 큐레이터. 목록은 안 읊어요. 어디서 막혔고 어떻게 넘어갔는지, 그게 보이는 것부터 꺼내요. 끌리는 게 있으면 말해요, 순서를 바꿀게요.",
     position: [-2.6, 0, -20.2],
     color: "#f3b35b",
     accessoryColor: "#5f7be8",
@@ -260,7 +260,7 @@ const coreNpcs: NPCData[] = [
     location: "기술 스택 구역",
     role: "기술 멘토",
     dialogue:
-      "저는 기술 멘토 테오예요. React, Next.js, Three.js, FastAPI, Spring Boot, Unity 경험을 단순 나열이 아니라 실제 프로젝트 판단과 연결해서 설명해드릴게요.",
+      "테오예요. 기술 쪽을 봐요. React 를 왜 골랐고 Spring Boot 를 어디에 썼는지, 이름보다 그 이유부터 얘기해요. 스택을 줄줄 읊는 건 제 취향이 아니에요.",
     position: [18, 0, -12.9],
     color: "#68c7cf",
     accessoryColor: "#253342",
@@ -294,7 +294,7 @@ const coreNpcs: NPCData[] = [
     location: "경험 기록관",
     role: "성장 기록 관리자",
     dialogue:
-      "저는 기록 관리자 아카예요. 프로젝트 결과만 보지 않고, 어떤 시행착오를 겪었고 무엇을 배웠는지 성장 흐름으로 정리해드릴게요.",
+      "아카예요. 기록관을 지키고 있어요. 여기엔 결과보다 그 전의 일이 남아 있어요. 어디서 틀렸고, 그 뒤에 뭐가 달라졌는지요. 천천히 보셔도 돼요.",
     position: [-18.4, 0, -11.7],
     color: "#c69af0",
     accessoryColor: "#8b5a35",
@@ -328,7 +328,7 @@ const coreNpcs: NPCData[] = [
     location: "연락 우체국",
     role: "연락 담당",
     dialogue:
-      "저는 연락 담당 포스트예요. 이메일, GitHub, 협업 문의처럼 다음 행동으로 이어지는 정보를 간결하게 안내해드릴게요.",
+      "포스트예요. 우체국 창구예요. 메일 주소, GitHub, 협업 문의. 필요한 것만 짧게 드려요. 우표는 제가 붙일게요.",
     position: [0, 0, 21.9],
     color: "#ef8f72",
     accessoryColor: "#e8f2ff",
@@ -473,7 +473,7 @@ export const autonomousNpcs: NPCData[] = [
         name: `${building.name} 안내원`,
         location: building.name,
         role: `${building.name} 공간 안내`,
-        dialogue: `${building.name} 건물을 맡고 있어요. 이 공간에서 어떤 문제를 다뤘고 어떤 기술을 썼는지 방문자의 관심사에 맞춰 설명해드릴게요.`,
+        dialogue: `${building.name} 앞을 지켜요. 안에서 무슨 문제를 다뤘는지는 제가 알아요.`,
         position,
         color: color.body,
         accessoryColor: color.accessory,

@@ -60,7 +60,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "내 역할",
-        v: "1인 개발 — 설계·구현·운영·검증 전부. 코드는 Claude Code 와 짝으로 썼고, 무엇을 만들지·실측·검증은 내가 했다."
+        v: "1인 개발. 설계·구현·운영·검증 전부. 코드는 Claude Code 와 짝으로 썼고, 무엇을 만들지·실측·검증은 내가 했다."
       }
     ],
     demo: {live: "/village", repo: "https://github.com/toadsam/myPortfolio"},
@@ -102,7 +102,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         t: "AI NPC 대화 + 규칙 폴백",
-        d: "OpenAI 로 대사 생성, 키가 없거나 실패하면 규칙 대사로 — 서비스가 멈추지 않는다"
+        d: "OpenAI 로 대사 생성, 키가 없거나 실패하면 규칙 대사로 바꿔 서비스가 멈추지 않는다"
       },
       {
         t: "NPC 관계 사회",
@@ -135,7 +135,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         },
         {
           q: "화면 라벨 74개를 숨기자 8.9→42.6fps. 그런데 원복해서 다시 재니 아무것도 안 바꿨는데 47.9fps 였다.",
-          who: "마을 오버홀 보고서 §6 · 측정이 나를 속였다"
+          who: "마을 오버홀 보고서 §6"
         }
       ],
       stat: {
@@ -144,7 +144,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     },
     hypothesis:
-      "“활동이 화면을 바꾸고 방문자가 물어볼 수 있으면 포트폴리오는 살아 있다 — 단, 첫 화면은 3D 한 조각도 싣지 않아야 채용 담당자가 끝까지 읽는다.”",
+      "활동이 화면에 반영되고 방문자가 물어볼 수 있으면 포트폴리오는 갱신이 끊기지 않는다. 첫 화면에는 3D 를 한 조각도 싣지 않는다.",
     process: [
       {t: "마을 배치", d: "육각 방위 원반 섬 · 검사 15종"},
       {t: "데이터 파이프라인", d: "관리자 → village_service → 마을"},
@@ -176,7 +176,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         tag: "AI",
         name: "OpenAI API",
-        desc: "NPC 대사 · 견적 초안 — 전부 규칙 폴백 있음"
+        desc: "NPC 대사 · 견적 초안 (전부 규칙 폴백 있음)"
       },
       {
         tag: "Agents",
@@ -194,7 +194,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         title: "활동이 마을이 되는 길",
         viewBox: [1180, 470],
         caption:
-          "쓰는 쪽은 관리자(와 의뢰 공방 접수) 뿐이고, 마을·이력서·공방은 읽기만 한다. 규칙(village_service)이 상태를 정하고 모델(chat_service)은 그 위에 말만 얹는다 — 모델이 죽어도 마을은 켜져 있다.",
+          "쓰는 쪽은 관리자(와 의뢰 공방 접수) 뿐이고, 마을·이력서·공방은 읽기만 한다. 규칙(village_service)이 상태를 정하고 모델(chat_service)은 그 위에 말만 얹는다. 모델 호출이 실패해도 마을은 켜져 있다.",
         groups: [
           {label: "쓰는 쪽", x: 16, y: 40, w: 300, h: 376},
           {label: "FastAPI", x: 400, y: 40, w: 380, h: 376, dashed: true},
@@ -364,7 +364,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "src/app/page.tsx",
         caption:
-          "hover 때 마을을 미리 받는다 — prefetch 는 라우트 껍질만 가져오므로 씬 청크는 따로 import",
+          "hover 때 마을을 미리 받는다. prefetch 는 라우트 껍질만 가져오므로 씬 청크는 따로 import",
         highlightLines: [2],
         lines: [
           'router.prefetch("/village");',
@@ -374,7 +374,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "src/components/village/LightPool.tsx",
         caption:
-          "끄는 것은 intensity 0 이지 visible=false 가 아니다 — three 는 안 보이는 광원을 개수에서 빼서 재컴파일이 되돌아온다",
+          "끄는 것은 intensity 0 이지 visible=false 가 아니다. three 는 안 보이는 광원을 개수에서 빼서 재컴파일이 되돌아온다",
         highlightLines: [3],
         lines: [
           "if (!slot) {",
@@ -389,7 +389,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "backend/app/agents/runner.py",
         caption:
-          "샌드박스는 이 네 줄이 한 세트다 — 하나만 바꾸면 can_use_tool 이 조용히 건너뛰어진다 (실제 코드 발췌)",
+          "샌드박스는 이 네 줄이 한 세트다. 하나만 바꾸면 can_use_tool 이 조용히 건너뛰어진다 (실제 코드 발췌)",
         highlightLines: [2, 3, 5, 6],
         lines: [
           "# ↓ 이 네 줄이 세트다. 하나만 바꾸면 경로 검사가 무력화된다(파일 상단 주석 참고).",
@@ -432,13 +432,13 @@ export const RICH_DATA: Record<string, RichProject> = {
         g: "AI 협업",
         items: [
           "Claude Agent SDK 4직군 에이전트 · 게이트 · can_use_tool 샌드박스",
-          "개발은 Claude Code 와 짝으로 — 계획 승인 → 실측 → 검증은 사람이 · CLAUDE.md 291줄"
+          "개발은 Claude Code 와 짝으로. 계획 승인·실측·검증은 사람이 · CLAUDE.md 291줄"
         ]
       }
     ],
     challenges: [
       {
-        title: "첫 접속에 빈 하늘만 수 초 — 3D 모델 54MB",
+        title: "첫 접속에 빈 하늘만 수 초, 3D 모델이 54MB 였다",
         problem:
           "서빙 GLB 54.0MB 의 8할이 내장 JPEG 텍스처였다. 지오메트리는 이미 Draco 라 더 줄일 게 없었고, 표준 도구는 이 환경에서 깨져 있었다.",
         solution:
@@ -454,9 +454,9 @@ export const RICH_DATA: Record<string, RichProject> = {
         }
       },
       {
-        title: "마을 입장 렉 3초 — 처음 지목한 범인이 틀렸다",
+        title: "마을 입장 렉 3초. 처음 지목한 원인이 틀렸다",
         problem:
-          "라벨 74개를 숨기자 8.9→42.6fps 라 라벨을 범인으로 잡았다. 원복하고 다시 재니 47.9fps — 처리 효과가 아니라 시간 효과였다.",
+          "라벨 74개를 숨기자 8.9→42.6fps 라 라벨을 범인으로 잡았다. 원복하고 다시 재니 47.9fps 였다. 처리 효과가 아니라 시간 효과였다.",
         solution:
           "프레임마다 광원·셰이더 수를 같이 기록하자 원인이 보였다. 광원 개수가 바뀔 때마다 전 재질이 재컴파일된다. 줄이는 대신 광원 풀로 개수를 고정했다(광원 11 · 프로그램 57).",
         perfAfter: true
@@ -547,23 +547,23 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     kpt: {
       keep: [
-        "감 대신 실측 — 병목도, 처방의 효과도 숫자로",
-        "규칙이 결과를 정하고 모델은 대사만 — 모델이 죽어도 서비스가 산다",
-        "AI 는 구조로 통제한다 — 제품에서는 게이트·클램프·폴백, 과정에서는 계획 승인 뒤 착수"
+        "병목과 처방 효과를 Playwright 프레임 계측으로 확인한 것",
+        "NPC 대사에 규칙 폴백을 둬서 OpenAI 호출이 실패해도 마을이 멈추지 않은 것",
+        "에이전트 진행은 게이트 함수 하나, 견적은 0.6~1.8× 클램프로 묶은 것"
       ],
       problem: [
-        "VRAM 283MB 는 그대로 (WebP 는 디코드 후 동일) — KTX2 는 다음 과제",
+        "VRAM 283MB 는 그대로다 (WebP 는 디코드 후 동일). KTX2 는 다음 과제",
         "방문자 지표를 계측하지 않아 '누가 얼마나 봤나' 를 말할 수 없다"
       ],
       try: [
         "배포 후 방문 계측 · 이력서 PDF 내려받기 수",
-        "UASTC(KTX2) 로 VRAM 4× 절감 — 다운로드 2.5× 증가와 맞바꿀지 실측으로 결정"
+        "UASTC(KTX2) 로 VRAM 4× 절감. 다운로드 2.5× 증가와 맞바꿀지 실측으로 결정"
       ]
     },
     learningLead:
-      "내 측정이 나를 속일 수 있다 — 첫 결론을 그대로 보고했다면 엉뚱한 곳을 고쳤을 것이다.",
+      "라벨 74개를 숨겨 얻은 8.9→42.6fps 는 예열 시간 효과였다. 진짜 원인은 광원 개수가 바뀔 때의 셰이더 재컴파일이었다.",
     learning:
-      "라벨을 범인으로 지목한 첫 측정은 시간 효과였다. 예열 뒤 번갈아 재고, 프레임마다 광원·셰이더 수를 함께 기록한 뒤에야 진짜 원인이 보였다. 그리고 '성능을 위해 화질을 희생한다' 는 통념은 재 보니 이 장면에선 거짓이었다 — 개수가 바뀌는 것이 재앙이고 많은 것은 공짜였다."
+      "예열 뒤 번갈아 재고, 프레임마다 광원·셰이더 수를 함께 기록한 뒤에야 원인이 보였다. 광원은 많은 것이 아니라 개수가 바뀌는 것이 문제였고, 화질을 희생할 필요가 없었다."
   },
 
   // ════════════════════════════ MyStock-Desk / StockFlow (dashboard) ═════════
@@ -599,7 +599,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         label: "스택",
         value: "React · TS · Vite · Spring Boot · JPA · H2/MySQL · Recharts"
       },
-      {label: "실행", value: "Gradle bootRun + Vite · 데모 계정 제공"}
+      {label: "실행", value: "Gradle bootRun + Vite · 데모 계정 있음"}
     ],
     heroScreen: {
       title: "stockflow/portfolio",
@@ -631,7 +631,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       quotes: [
         {
           q: "종목이 늘어날수록 엑셀로는 평균 매입가·수익률 관리가 무너진다.",
-          who: "프로젝트 문제 정의"
+          who: "문제 정의 (본인)"
         },
         {
           q: "AI가 ‘사라/팔라’를 말하면 오히려 신뢰가 떨어진다 — 판단은 사용자 몫이어야 한다.",
@@ -654,7 +654,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       ]
     },
     hypothesis:
-      "“거래 기록을 도메인별로 나눠 서버에서 집계하고, AI는 ‘판단’이 아니라 ‘정리’ 역할로 한정하며, 외부 시세가 실패해도 Demo Provider로 폴백하면 — 실연동 없이도 신뢰할 수 있는 포트폴리오 분석을 제공할 수 있다.”",
+      "입력한 거래 기록만으로 서버가 집계하고, AI 는 정리 역할로만 두는 것이 이 앱의 전제였다. 시세는 Yahoo 가 실패하면 Demo Provider 로 폴백한다.",
     process: [
       {t: "도메인 설계", d: "13개 모듈"},
       {t: "백엔드 API", d: "JPA·Security"},
@@ -709,7 +709,8 @@ export const RICH_DATA: Record<string, RichProject> = {
     coreCode: [
       {
         filename: "MarketDataProvider.java",
-        caption: "시세 소스를 인터페이스로 추상화 — Yahoo/Demo 교체 가능",
+        caption:
+          "시세 소스를 인터페이스로 추상화해 Yahoo/Demo 를 교체할 수 있게",
         highlightLines: [1],
         lines: [
           "public interface MarketDataProvider {",
@@ -814,9 +815,9 @@ export const RICH_DATA: Record<string, RichProject> = {
       try: ["실시간 시세 연동", "포트폴리오 자동 갱신"]
     },
     learningLead:
-      "AI 를 ‘판단 주체’가 아니라 ‘정리 도구’로 제한했을 때 오히려 신뢰가 올라갔다.",
+      "AI 응답을 리스크·뉴스 변화 정리 스키마로 한정하고 판단은 사용자에게 남겼다.",
     learning:
-      "외부 의존은 반드시 폴백을 두어야 화면이 살아있다는 것도 같이 배웠다."
+      "Yahoo 시세·뉴스 RSS 가 실패하면 대시보드가 비어서, Provider 인터페이스에 Demo 폴백을 뒀다."
   },
 
   // ════════════════════════════ FestFlow / Fest-A (realtime) ════════════════
@@ -862,7 +863,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         src: "/projects/op/festflow-g-lost.webp",
         label: "분실물 센터",
         ratio: "4/5",
-        caption: "7개 SSE 채널 중 lost-items — 등록·반환 상태가 즉시 전파된다"
+        caption: "7개 SSE 채널 중 lost-items. 등록·반환 상태가 즉시 전파된다"
       }
     ],
     tldr: [
@@ -879,7 +880,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 코드량이 돌아와 있으면 카드 쪽이 과장으로 읽힌다. 코드량은 metricsNote 에.
       {
         k: "결과",
-        v: "아주대 대동제에서 AI Match 를 하루 실제 운영 — 등록 169명 · 신청 424건 · 성사 36건"
+        v: "아주대 대동제에서 AI Match 를 하루 실제 운영. 등록 169명 · 신청 424건 · 성사 36건"
       },
       {k: "내 역할", v: "1인 풀스택 (프론트 전체 + Spring Boot 백엔드 + 모델)"}
     ],
@@ -950,7 +951,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     },
     hypothesis:
-      "“상태 변화를 종류별 SSE 채널로 분리해 즉시 푸시하고, 실제 지도 위에서 GPS 반경으로 부스를 판정하면 — 관리자·스태프·방문자가 같은 현황을 실시간으로 공유할 수 있다.”",
+      "상태 변화는 종류별 SSE 채널로 즉시 푸시하고, 부스는 실제 지도 위 GPS 반경으로 판정한다. 관리자·스태프·방문자가 같은 현황을 보게 하는 것이 목표였다.",
     process: [
       {t: "요구분석", d: "운영 흐름"},
       {t: "SSE 채널 설계", d: "7종 분리"},
@@ -975,7 +976,7 @@ export const RICH_DATA: Record<string, RichProject> = {
             "같은 상대에게 중복 신청만 막았을 뿐, 한 사람이 여러 명에게 계속 신청할 수 있었다. 신청이 하루 424건까지 몰렸고, 신청마다 상대에게 알림 문자가 나가는 구조라 그만큼 발송이 시도됐다.",
           now: "1인당 하루 신청 상한과 문자 발송 예산 상한을 코드에 둔다.",
           source:
-            "저장소 AiMatchService — 같은 상대 중복 대기 검사만 있음 · 본인 서술"
+            "저장소 AiMatchService (같은 상대 중복 대기 검사만 있음) · 본인 서술"
         },
         {
           t: "문자가 장문으로 나가 오후 4시에 잔액이 바닥났다",
@@ -1005,7 +1006,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         title: "Realtime Fan-out",
         viewBox: [1180, 470],
         caption:
-          "요점은 가운데서 한 번 모였다가 종류별로 갈라진다는 것 — 상태를 한 채널로 다 밀면 관심 없는 이벤트까지 모두가 받는다. 엔드포인트 7개는 StreamController.java 에 그대로 있다.",
+          "요점은 가운데서 한 번 모였다가 종류별로 갈라진다는 것이다. 상태를 한 채널로 다 밀면 관심 없는 이벤트까지 모두가 받는다. 엔드포인트 7개는 StreamController.java 에 그대로 있다.",
         groups: [
           {label: "상태를 바꾸는 쪽 (쓰기)", x: 16, y: 40, w: 300, h: 376},
           {label: "구독하는 쪽 (읽기)", x: 864, y: 40, w: 300, h: 376}
@@ -1098,10 +1099,10 @@ export const RICH_DATA: Record<string, RichProject> = {
         ]
       },
       {
-        title: "Congestion Prediction — Fallback First",
+        title: "Congestion Prediction: Fallback First",
         viewBox: [1180, 460],
         caption:
-          "모델이 있으면 쓰고, 없으면 규칙으로 내려간다. 강등 조건은 셋 — 설정으로 꺼져 있거나, 스크립트·모델 파일이 없거나, 20초 안에 못 끝내거나. 정확도는 시뮬레이션 데이터 2,520건 기준이지 실제 축제 데이터가 아니다.",
+          "모델이 있으면 쓰고, 없으면 규칙으로 내려간다. 강등 조건은 셋이다. 설정으로 꺼져 있거나, 스크립트·모델 파일이 없거나, 20초 안에 못 끝내거나. 정확도는 시뮬레이션 데이터 2,520건 기준이지 실제 축제 데이터가 아니다.",
         nodes: [
           {
             id: "req",
@@ -1337,7 +1338,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {n: "46명", l: "현장 QA 참여"}
     ],
     metricsNote:
-      "2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영한 집계다 — 관리자 화면 실측(활성 프로필 115 / 전체 169명 · 누적 신청 424 · 성사 36)과 현장 QA 참여 46명. 저장소 규모는 따로다: 백엔드 컨트롤러 26 · SSE 채널 7 · 예측 feature 24 (*Controller.java · StreamController.java · congestion_training_profile.json 에서 직접 셌다). 혼잡 예측 모델 정확도는 규칙 기반 0.70 → RandomForest 0.80(macro-F1 0.68 → 0.79)이지만, 운영 경험으로 만든 시뮬레이션 데이터 2,520건 기준이고 실제 축제 데이터로 검증한 값이 아니다.",
+      "2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영한 집계다. 관리자 화면 실측(활성 프로필 115 / 전체 169명 · 누적 신청 424 · 성사 36)과 현장 QA 참여 46명. 저장소 규모는 따로다: 백엔드 컨트롤러 26 · SSE 채널 7 · 예측 feature 24 (*Controller.java · StreamController.java · congestion_training_profile.json 에서 직접 셌다). 혼잡 예측 모델 정확도는 규칙 기반 0.70 → RandomForest 0.80(macro-F1 0.68 → 0.79)이지만, 운영 경험으로 만든 시뮬레이션 데이터 2,520건 기준이고 실제 축제 데이터로 검증한 값이 아니다.",
     kpt: {
       keep: [
         "상태를 종류별 채널로 분리한 설계",
@@ -1360,9 +1361,9 @@ export const RICH_DATA: Record<string, RichProject> = {
       ]
     },
     learningLead:
-      "정확도를 올리는 것보다, 모델이 없을 때 무엇이 남는지를 먼저 정하는 게 서비스에서는 더 급했다.",
+      "혼잡 예측 모델을 별도 프로세스로 떼고 규칙 기반 폴백을 먼저 만들었다. 파이썬이 없거나 20초를 넘겨도 부스 목록 API 는 멈추지 않는다.",
     learning:
-      "‘실시간’이라고 무조건 WebSocket 이 아니라, 단방향 푸시에는 SSE 를 종류별로 나누는 게 더 단순하고 안정적이었다. 위치 판정도 ‘정확함’보다 ‘현장에서 말이 되는가’가 중요했다."
+      "단방향 푸시라 WebSocket 대신 SSE 를 종류별로 나눴고, 부스 판정은 정확한 좌표 대신 반경 80m 로 잡았다. 실제 운영에서는 신청 상한과 문자 예산 상한이 없다는 게 먼저 드러났다."
   },
 
   // ════════════════════════════ MuscleUp (realtime) ═════════════════════════
@@ -1427,7 +1428,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           ratio: "2/1"
         },
         // before 의 note 와 **같은 두 가지**를 짚는다 — 버튼과 숫자.
-        note: "「받기·둘러보기」가 시키는 일 하나로 바뀌었다 — 데스크톱은 「지금 해야 할 일」 카드, 모바일은 화면 아래 고정 「출석하기」. 숫자도 소스 상수가 아니라 서버에서 읽는다(연속 출석 2일 · 이번 주 2/7)."
+        note: "「받기·둘러보기」가 시키는 일 하나로 바뀌었다. 데스크톱은 「지금 해야 할 일」 카드, 모바일은 화면 아래 고정 「출석하기」. 숫자도 소스 상수가 아니라 서버에서 읽는다(연속 출석 2일 · 이번 주 2/7)."
       }
     },
     // 컨트롤러 28개를 세어만 두면 "28"이 숫자로만 남는다. 8개 도메인으로 묶어
@@ -1438,7 +1439,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "백엔드 API 도메인 지도 — 컨트롤러 28개 · 엔드포인트 136개",
       ratio: "21/9",
       caption:
-        "컨트롤러 28개를 8개 도메인으로 묶었다. 크루는 여섯 기능이 컨트롤러 하나에 다 들어 있고, 자랑방은 글과 반응을 둘로 갈랐다 — 같은 저장소 안에 상반된 두 선택이다."
+        "컨트롤러 28개를 8개 도메인으로 묶었다. 크루는 여섯 기능이 컨트롤러 하나에 다 들어 있고, 자랑방은 글과 반응을 둘로 갈랐다. 같은 저장소 안에 상반된 두 선택이다."
     },
     gallery: [
       // 갤러리는 2열 격자다 — 세로 폰 캡처를 한 칸에 넣으면 그 한 장이 926px
@@ -1471,7 +1472,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         label: "실시간 라운지 — Socket.IO",
         ratio: "16/10",
         caption:
-          "“다른 사람들과 더 많이 소통하고 싶어요” 에 대한 답. 캐릭터 위치와 이모트가 실시간 동기화된다 — REST 로는 못 해서 서버를 따로 뺐다."
+          "“다른 사람들과 더 많이 소통하고 싶어요” 에 대한 답. 캐릭터 위치와 이모트가 실시간 동기화된다. REST 로는 못 해서 서버를 따로 뺐다."
       },
       {
         src: "/projects/muscleup/v2/character.webp",
@@ -1486,7 +1487,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         label: "관리자 콘솔 — 탭 5개",
         ratio: "16/12",
         caption:
-          "개요·행동 추적·검수/콘텐츠·출석 기록·운영 자동화. analytics_events 와 audit_logs 를 읽는 화면이 여기다 — 테이블만 있고 안 보던 것을 2.0 에서 화면으로 세웠다."
+          "개요·행동 추적·검수/콘텐츠·출석 기록·운영 자동화. analytics_events 와 audit_logs 를 읽는 화면이 여기다. 테이블만 있고 안 보던 것을 2.0 에서 화면으로 세웠다."
       },
       {
         src: "/projects/muscleup/v2/inbody.webp",
@@ -1526,7 +1527,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         k: "결과",
         v: "홈=로비 · 출석=성장데이터 · 관리자=운영콘솔로 성격을 바꿨다. 1.0 에서 들은 피드백 4건 중 3건을 기능으로 반영했고, 안 고친 1건은 그대로 적어 뒀다"
       },
-      {k: "내 역할", v: "1인 풀스택 — 1.0 기획·개발 → 2.0 운영 관점 개편"}
+      {k: "내 역할", v: "1인 풀스택. 1.0 기획·개발 → 2.0 운영 관점 개편"}
     ],
     demo: {repo: "https://github.com/toadsam/Ajou_MuscleUp"},
     meta: [
@@ -1577,7 +1578,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         },
         {
           q: "AI 답변이 나올 때까지 기다리는 게 길어요",
-          who: "같은 자료 — 넷 중 유일하게 아직 못 고친 것"
+          who: "같은 자료, 네 번째 피드백"
         }
       ],
       stat: {n: "4", l: "1.0 사용자 피드백 원문 · 그중 셋을 2.0 에서 고쳤다"}
@@ -1585,7 +1586,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     feedbackMap: [
       {
         said: "처음 사용할 때 어디서 뭘 해야 할지 몰랐어요",
-        did: "홈을 로비로 — 첫 화면 CTA 를 「오늘 출석 시작」 하나로",
+        did: "홈을 로비로. 첫 화면 CTA 를 「오늘 출석 시작」 하나로",
         done: true
       },
       {
@@ -1611,12 +1612,12 @@ export const RICH_DATA: Record<string, RichProject> = {
         //
         // "몰랐다" 에서 끝나면 실력 부족으로 읽히고, "지금은 원인을 안다" 까지
         // 가면 알아낸 사람이 된다. 신입에게는 후자가 훨씬 세다.
-        did: "그땐 방법을 몰라 못 했다. 원인은 나중에 알았다 — 응답을 통째로 기다리는 동기 호출이라, 스트리밍으로 바꿔야 하는 일이었다",
+        did: "그땐 방법을 몰라 못 했다. 원인은 나중에 알았다. 응답을 통째로 기다리는 동기 호출이라, 스트리밍으로 바꿔야 하는 일이었다",
         done: false
       }
     ],
     hypothesis:
-      "“운동 기록을 캐릭터 성장·랭킹·라운지로 즉시 연결하고, 빈번히 바뀌는 실시간 상태(위치·채팅·이모트)는 Socket.IO 서버로 분리하면 — 사용자가 ‘다시 오는’ 이유가 생기면서 서버도 감당 가능하다.”",
+      "운동 기록이 캐릭터 성장·랭킹·라운지로 바로 이어져야 다시 올 이유가 생긴다고 봤다. 자주 바뀌는 위치·채팅·이모트를 Socket.IO 서버로 분리하면 서버도 감당 가능하다.",
     process: [
       {t: "루프 기획", d: "기록→성장"},
       {t: "REST 도메인", d: "8 도메인 · 28 컨트롤러"},
@@ -1638,7 +1639,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         title: "System Architecture",
         viewBox: [1180, 470],
         caption:
-          "요점은 왼쪽에서 경로가 갈라지는 것 — 자주 바뀌는 상태(위치·채팅)만 Socket.IO 가 받고 나머지는 REST 로 간다. 점선 상자는 내가 만들지 않은 것.",
+          "요점은 왼쪽에서 경로가 갈라지는 것이다. 자주 바뀌는 상태(위치·채팅)만 Socket.IO 가 받고 나머지는 REST 로 간다. 점선 상자는 내가 만들지 않은 것.",
         groups: [
           {label: "BROWSER", x: 20, y: 60, w: 250, h: 330},
           {label: "MY SERVERS", x: 360, y: 30, w: 400, h: 400},
@@ -1756,10 +1757,10 @@ export const RICH_DATA: Record<string, RichProject> = {
         ]
       },
       {
-        title: "Data Model — 31 tables / 8 domains",
+        title: "Data Model · 31 tables / 8 domains",
         viewBox: [1200, 656],
         caption:
-          "@Entity 31개를 도메인별로 묶은 것 — 표·개수·FK 는 코드에서 센 값이다. users 한 곳으로 관계 28개가 모이는 허브라, 탈퇴·권한 변경이 전 도메인에 걸린다.",
+          "@Entity 31개를 도메인별로 묶은 것이다. 표·개수·FK 는 코드에서 센 값이다. users 한 곳으로 관계 28개가 모이는 허브라, 탈퇴·권한 변경이 전 도메인에 걸린다.",
         nodes: [
           {
             id: "users",
@@ -1949,7 +1950,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         // 실제로 내린 결정(로테이션 철회 · 클라이언트 single-flight)을 적는다.
         area: "인증",
         pick: "JWT access/refresh · 로테이션은 철회",
-        why: "동시 401 이 서로의 토큰을 무효화했다 — 클라이언트 single-flight 로 대체",
+        why: "동시 401 이 서로의 토큰을 무효화해 클라이언트 single-flight 로 대체",
         alt: "교과서적 refresh 로테이션(경쟁 상태) · 자체 세션(스케일 ↓)"
       },
       {
@@ -1975,7 +1976,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "realtime/src/server.ts",
         caption:
-          "이동은 올 때마다 보내지 않는다 — 60ms 틱에서 변한 게 있을 때만 한 번. 램프 표의 브로드캐스트/s 가 상한 16.7Hz 에 못 미치는 것도, 사람이 늘수록 그 값이 올라가는 것도 이 게이트 때문이다",
+          "이동은 올 때마다 보내지 않는다. 60ms 틱에서 변한 게 있을 때만 한 번. 램프 표의 브로드캐스트/s 가 상한 16.7Hz 에 못 미치는 것도, 사람이 늘수록 그 값이 올라가는 것도 이 게이트 때문이다",
         highlightLines: [10],
         lines: [
           'socket.on("player:move", (payload) => {',
@@ -2036,9 +2037,9 @@ export const RICH_DATA: Record<string, RichProject> = {
         // 지나서 그려져, 실시간 카드가 주장과 근거 사이에 통째로 끼어 있었다.
         perfAfter: true,
         problem:
-          "아래 목록 네 곳이 모두 정렬 페이지네이션인데 정렬·필터 컬럼에 인덱스가 없었다. 회원 50명이라 화면에서는 문제가 없다 — 티가 나기 전에 확인해 두는 편이 낫다고 봤다.",
+          "아래 목록 네 곳이 모두 정렬 페이지네이션인데 정렬·필터 컬럼에 인덱스가 없었다. 회원 50명이라 화면에서는 문제가 없다. 티가 나기 전에 확인해 두는 편이 낫다고 봤다.",
         solution:
-          "정렬이 사라지고 인덱스를 거꾸로 훑는 계획으로 바뀐다 — 목록 네 개가 668~2472배. 다만 여기서 멈추면 틀린 결론이다. Page 는 목록과 함께 count 를 날리는데 인덱스가 그걸 못 고친다(57.2 → 57.4ms). 다음 병목은 정렬이 아니라 여기이고, 커서 페이지네이션이나 근사 카운트로 접근할 문제다. 인덱스 넷은 21MB 를 쓴다.",
+          "정렬이 사라지고 인덱스를 거꾸로 훑는 계획으로 바뀐다. 목록 네 개가 668~2472배. 다만 여기서 멈추면 틀린 결론이다. Page 는 목록과 함께 count 를 날리는데 인덱스가 그걸 못 고친다(57.2 → 57.4ms). 다음 병목은 정렬이 아니라 여기이고, 커서 페이지네이션이나 근사 카운트로 접근할 문제다. 인덱스 넷은 21MB 를 쓴다.",
         code: {
           filename: "EXPLAIN (ANALYZE) — 자랑방 목록 20만 행 · 7회 중앙값",
           lines: [
@@ -2059,9 +2060,9 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         title: "실시간 분리는 했는데, 몇 명까지 버티는지는 안 재 봤다",
         problem:
-          "인덱스는 표당 20만 행까지 재 놓고, 정작 이 프로젝트를 대표하는 아키텍처 결정 — 위 가설의 뒤 절반 「서버도 감당 가능하다」 — 은 한 번도 재지 않았다.",
+          "인덱스는 표당 20만 행까지 재 놓고, 정작 이 프로젝트를 대표하는 아키텍처 결정(위 가설의 뒤 절반 「서버도 감당 가능하다」)은 한 번도 재지 않았다.",
         solution:
-          "동시 접속을 25 → 300 으로 올리며 앱이 이미 가진 ping:check 로 왕복 시간을 쟀다. 50명까지 p95 9ms — 회원 전원이 들어와도 여유가 크다. 다만 100명에서 p95 85ms 로 설계 주기 60ms 를 이미 넘는다. 재기 전 내가 짐작한 한계는 훨씬 위였다.\n\n150에서 꺾이고 200부터 무너진다(p95 1.1초). 원인은 구조다 — 매 틱 전원에게 전원 목록을 보내니 바이트가 N² 로 큰다. 다음 병목은 서버가 아니라 페이로드이고, 뷰포트 컬링과 델타 전송이 먼저다.",
+          "동시 접속을 25 → 300 으로 올리며 앱이 이미 가진 ping:check 로 왕복 시간을 쟀다. 50명까지 p95 9ms. 회원 전원이 들어와도 여유가 크다. 다만 100명에서 p95 85ms 로 설계 주기 60ms 를 이미 넘는다. 재기 전 내가 짐작한 한계는 훨씬 위였다.\n\n150에서 꺾이고 200부터 무너진다(p95 1.1초). 원인은 구조다. 매 틱 전원에게 전원 목록을 보내니 바이트가 N² 로 큰다. 다음 병목은 서버가 아니라 페이로드이고, 뷰포트 컬링과 델타 전송이 먼저다.",
         code: {
           filename: "동시접속 램프 — 16초 × 3회 중앙값 (한 대·루프백)",
           lines: [
@@ -2178,7 +2179,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           unit: "ms"
         }
       ],
-      note: "맨 아랫줄이 사용자가 기다리는 시간이다 — 목록 막대는 사라지는데 페이지 막대는 절반에서 멈춘다. 남은 57.5ms 가 인덱스로 못 고치는 count 다. (PostgreSQL 17.4 · 20만 행 · 7회 중앙값)"
+      note: "맨 아랫줄이 사용자가 기다리는 시간이다. 목록 막대는 사라지는데 페이지 막대는 절반에서 멈춘다. 남은 57.5ms 가 인덱스로 못 고치는 count 다. (PostgreSQL 17.4 · 20만 행 · 7회 중앙값)"
     },
     metricsNote:
       // 130자가 넘었다. 지표 넷 바로 아래 — 첫 화면급 자리에서 그 길이는 무겁다.
@@ -2195,30 +2196,30 @@ export const RICH_DATA: Record<string, RichProject> = {
     // KEEP = 1.0(개발), TRY = 2.0(운영·사용자). 이 갈라짐 자체가 이 카드의 요점이다.
     kpt: {
       keep: [
-        "1.0 · 프로필과 비밀 값은 처음부터 갈라 둔다 — 하드코딩 때문에 배포가 부팅부터 실패했다",
-        "1.0 · DB 커넥션 문자열과 JVM 인코딩은 같이 맞춰야 한다 — 환경마다 한글이 깨졌다",
-        "1.0 · SPA 라우팅은 프론트가 아니라 호스팅 설정 문제다 — CloudFront 403",
-        "1.0 · 실시간은 실시간 서버로, 데이터는 REST 로 책임을 나눈다"
+        "1.0 · 비밀 값을 하드코딩했다가 배포가 부팅부터 실패해, 프로필과 비밀 값을 갈라 뒀다",
+        "1.0 · 환경마다 한글이 깨져서 DB 커넥션 문자열과 JVM 인코딩을 같이 맞췄다",
+        "1.0 · SPA 새로고침의 CloudFront 403 은 호스팅 설정에서 풀었다",
+        "1.0 · 위치·채팅은 Socket.IO 서버, 나머지는 REST 로 나눴다"
       ],
       problem: [
-        "AI 응답 속도는 아직 손대지 못했다 — 사용자가 지적한 넷 중 유일하게 안 고친 것",
+        "AI 응답 속도는 아직 손대지 못했다 (피드백 넷 중 유일하게 안 고친 것)",
         "Refresh 로테이션을 되돌린 채로 두고 있다 (병렬 재발급 경쟁 상태)",
         "analytics_events 를 쌓고는 있지만 그걸로 판단한 적은 없다",
-        "테스트가 AI 품질 하네스와 컨텍스트 로드 둘뿐이다 — 인증·출석 도메인부터 붙이는 게 다음 순서다",
+        "테스트가 AI 품질 하네스와 컨텍스트 로드 둘뿐이다. 인증·출석 도메인부터 붙일 차례다",
         "CI 가 없어 지금은 로컬에서만 돌린다 (GitHub Actions 로 하네스부터 올릴 계획)"
       ],
       try: [
-        "2.0 · 재방문은 기능 수가 아니라 첫 화면이 무엇을 시키느냐가 정한다 — 홈을 로비로",
-        "2.0 · ‘소통하고 싶다’는 게시판으로 안 풀린다 — 같이 있다는 감각이 필요했다",
-        "2.0 · 기록은 보여 주는 게 아니라 돌려줘야 한다 — 캐릭터·티어·랭킹",
-        "2.0 · 로그 테이블은 읽는 화면이 있어야 의미가 생긴다 — 관리자 콘솔",
-        "2.0 · 느린 쪽을 고치기 전에 재 봐야 한다 — 정렬을 700배 줄여도 페이지는 2.0배만 빨라졌다(count 가 남아서)"
+        "2.0 · 홈을 로비로 바꿔 첫 버튼을 「오늘 출석 시작」 하나로 줄였다",
+        "2.0 · ‘소통하고 싶다’는 말에 게시판 대신 실시간 라운지로 답했다",
+        "2.0 · 운동 기록을 캐릭터 레벨·티어·랭킹으로 돌려줬다",
+        "2.0 · 쌓기만 하던 analytics_events·audit_logs 를 관리자 콘솔에서 읽게 했다",
+        "2.0 · 인덱스로 정렬을 700배 줄여도 페이지는 2.0배만 빨라졌다. count 가 남아서다"
       ]
     },
     learningLead:
-      "사람이 다시 오게 만드는 건 기능 개수가 아니라 첫 화면이 무엇을 시키느냐였다.",
+      "2.0 에서 제일 먼저 고친 것은 홈 첫 화면이었다. 버튼 둘을 「오늘 출석 시작」 하나로 줄였다.",
     learning:
-      "1.0 에서는 「만드는 법」을 배웠다 — 배포·인증·인코딩처럼 안 되면 아무것도 안 되는 것들. 2.0 에서는 그게 다가 아니라는 걸 배웠다. 사용자 넷이 남긴 말 중 셋이 기능이 아니라 「동선과 관계」에 대한 것이었고, 고친 것도 그쪽이었다."
+      "1.0 에서는 만드는 법을 배웠다. 배포·인증·인코딩처럼 안 되면 아무것도 안 되는 것들이다. 2.0 에서는 사용자 넷이 남긴 말 중 셋이 기능이 아니라 동선과 관계에 대한 것이었고, 고친 것도 그쪽이었다."
   },
 
   // ════════════════════════════ ACLUB / AjouClub FE (platform · 팀) ══════════
@@ -2256,7 +2257,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 어떻게 모았나" 를 말하므로, 여기는 **그 이름들이 어디서 왔는지**(저장소
       // 실측)만. 예전엔 부제·이 캡션·SVG 발치 줄이 같은 문장 세 벌이었다.
       caption:
-        "그림의 이름은 전부 저장소 실측이다 — 도메인 커스텀 훅 6+ · 보호 라우트 2(RequireAuth · AdminRoute) · axios 모듈 4(auth · club · recruitment · user)."
+        "그림의 이름은 전부 저장소 실측이다. 도메인 커스텀 훅 6+ · 보호 라우트 2(RequireAuth · AdminRoute) · axios 모듈 4(auth · club · recruitment · user)."
     },
     gallery: [
       // ⚠️ 이 갤러리의 비율은 **원본 픽셀 그대로** 적는다. 셋 다 16/10 으로
@@ -2292,7 +2293,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         label: "유입 채널과 트래픽 분포 — GA4 · 2026.02.16–03.15",
         ratio: "1502/840",
         caption:
-          "28일 중 세션 5,311건이 사실상 3월 1~5일에 몰렸다. 유입은 Referral 54.8% + Direct 39.3% = 94%, 검색은 3.8%. 동아리 모집은 1년에 한 번이고 학생은 링크를 타고 들어온다 — 이 서비스의 정상 상태다."
+          "28일 중 세션 5,311건이 사실상 3월 1~5일에 몰렸다. 유입은 Referral 54.8% + Direct 39.3% = 94%, 검색은 3.8%. 동아리 모집은 1년에 한 번이고 학생은 링크를 타고 들어온다. 이 서비스의 정상 상태다."
       },
       {
         src: "/projects/op/aclub-ga4-home.webp",
@@ -2337,14 +2338,14 @@ export const RICH_DATA: Record<string, RichProject> = {
         // 공감·스크랩 수는 2026-09-04 에 페이지에서 읽은 값(캡처는 없음).
         ratio: "1040/1109",
         caption:
-          "사람이 몰리는 저녁 6시대에 올렸고 같은 날 밤 실시간 인기 글 2위. 24분 뒤 「로그인이 안 돼」가 두 건 달렸고, 33분 뒤 운영진 댓글로 「크롬·사파리로 열어 달라」고 답했다 — 에타 앱 안에서 열면 로그인 버튼이 사라지는 문제였다. 2026-09-04 기준 공감 109 · 스크랩 155."
+          "사람이 몰리는 저녁 6시대에 올렸고 같은 날 밤 실시간 인기 글 2위. 24분 뒤 「로그인이 안 돼」가 두 건 달렸고, 33분 뒤 운영진 댓글로 「크롬·사파리로 열어 달라」고 답했다. 에타 앱 안에서 열면 로그인 버튼이 사라지는 문제였다. 2026-09-04 기준 공감 109 · 스크랩 155."
       },
       {
         src: "/projects/op/aclub-eta.webp",
         label: "직접 알리고 섭외한 기록",
         ratio: "1200/796",
         caption:
-          "만들어 두고 기다리지 않았다 — 에브리타임에 직접 알려 스크랩 111·댓글 12를 받았고, 동아리 회장에게 등록을 요청해 승낙을 받았다."
+          "만들어 두고 기다리지 않았다. 에브리타임에 직접 알려 스크랩 111·댓글 12를 받았고, 동아리 회장에게 등록을 요청해 승낙을 받았다."
       }
       // `aclub-detail.webp`(동아리 상세·저장)를 여기서 뺐다. 네 장이면 2칸
       // 격자에서 마지막 한 장이 혼자 남아 오른쪽 절반이 빈다. 그리고 넷 중
@@ -2431,13 +2432,13 @@ export const RICH_DATA: Record<string, RichProject> = {
         // Troubleshooting 첫 카드가 이미 말한다.
         {
           q: "동아리 찾으려면 에타·인스타·단톡을 다 봐야 한다.",
-          who: "사용자(학생) 관점"
+          who: "학생 사용자 관점"
         }
       ],
       stat: {n: "6+", l: "useClubs·useRecruitments 등 재사용 데이터 훅 수"}
     },
     hypothesis:
-      "“탐색·필터·상세·지원을 한 흐름으로 묶고, 데이터 요청을 도메인별 커스텀 훅으로 모으면 — 학생은 한 곳에서 동아리를 찾고, 팀은 화면을 병렬로 개발할 수 있다.”",
+      "탐색·필터·상세·지원을 한 흐름으로 묶고, 데이터 요청은 도메인별 커스텀 훅으로 모은다. 학생은 한 곳에서 동아리를 찾고 팀은 화면을 병렬로 만들 수 있다.",
     process: [
       {t: "IA 설계", d: "화면 흐름"},
       {t: "공통 컴포넌트", d: "Card·Chip·Field"},
@@ -2542,13 +2543,13 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 문의 시각(19:08 댓글 → 19:41 운영진 답변)은 댓글창 캡처에서 읽은 것이다.
       // 그 캡처는 리포 밖(채팅으로만 받음)이라 갤러리에는 없다.
       {
-        title: "2026 — 만들어 두면 쓰일 줄 알았다",
+        title: "2026, 만들어 두면 쓰일 줄 알았다",
         problemLabel: "[LAUNCH]",
         solutionLabel: "Action",
         problem:
           "개편을 끝낸 3월, 사이트는 있었지만 안에 아무것도 없었다. 모집공고는 회장이 올려야 생기고, 학생은 링크가 있어야 들어온다. 프로젝트장으로서 맡은 건 코드가 아니라 이 두 줄을 채우는 일이었다.",
         solution:
-          "동아리 회장 전원에게 직접 연락해 등록을 요청하고, 백엔드 팀원과 출시 일정을 맞췄다. 에브리타임 글은 사람이 몰리는 저녁 6시대에 올리고(03/03 18:44) 카톡·인스타로 같이 알렸다 — 그날 밤 실시간 인기 글에 올랐고, 회장들의 답장이 줄지어 왔다.\n\n문의도 직접 받았다. 올린 지 24분 만에 「로그인이 안 돼」 댓글이 달렸다 — 에타 앱 안에서 링크를 열면 로그인 버튼이 사라지는 문제였다. 원인을 파는 대신 33분 뒤 운영진 댓글로 「크롬·사파리로 열어 달라」 안내를 먼저 달고, 게시글 본문에도 붙였다. 출시 저녁엔 고치는 것보다 쓰게 하는 게 먼저였다. 그 링크로 들어온 유입이 28일 세션의 94%다."
+          "동아리 회장 전원에게 직접 연락해 등록을 요청하고, 백엔드 팀원과 출시 일정을 맞췄다. 에브리타임 글은 사람이 몰리는 저녁 6시대에 올리고(03/03 18:44) 카톡·인스타로 같이 알렸다. 그날 밤 실시간 인기 글에 올랐고, 회장들의 답장이 줄지어 왔다.\n\n문의도 직접 받았다. 올린 지 24분 만에 「로그인이 안 돼」 댓글이 달렸다. 에타 앱 안에서 링크를 열면 로그인 버튼이 사라지는 문제였다. 원인을 파는 대신 33분 뒤 운영진 댓글로 「크롬·사파리로 열어 달라」 안내를 먼저 달고, 게시글 본문에도 붙였다. 출시 저녁엔 고치는 것보다 쓰게 하는 게 먼저였다. 그 링크로 들어온 유입이 28일 세션의 94%다."
       },
       // 앞의 둘은 **만들면서 깨진 것**, 셋째는 **내놓은 날 한 것**이고, 이건 **배포한 뒤에 사용자가
       // 예상과 다르게 쓴 것**이다. 결이 달라서 마지막에 둔다 — 심사자가 여기까지
@@ -2570,7 +2571,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         problemLabel: "[OBSERVATION]",
         solutionLabel: "Decision",
         problem:
-          "GA4 코호트에서 1주 유지율이 5.4%, 4주 뒤엔 1.8%였다. 보통이면 재방문을 끌어올릴 궁리를 한다. 그런데 28일 세션 5,311건이 사실상 3월 1~5일 닷새에 몰려 있었고, 유입의 94%가 Referral·Direct — 에브리타임과 인스타그램 링크였다.",
+          "GA4 코호트에서 1주 유지율이 5.4%, 4주 뒤엔 1.8%였다. 보통이면 재방문을 끌어올릴 궁리를 한다. 그런데 28일 세션 5,311건이 사실상 3월 1~5일 닷새에 몰려 있었고, 유입의 94%가 Referral·Direct, 에브리타임과 인스타그램 링크였다.",
         solution:
           "동아리 모집은 1년에 한 번이고, 학생은 동아리를 정하고 나면 돌아올 이유가 없다. 낮은 재방문은 실패가 아니라 이 서비스의 정상 상태였다.\n\n목표를 재방문이 아니라 「그 닷새 안에 원하는 동아리를 찾게 하는 것」으로 잡고, 분야 카테고리를 쪼개 필터를 조합할 수 있게 했다. 2025에 도입하고, 2026에 총괄을 맡으면서 한 번 더 세분화했다."
       }
@@ -2640,9 +2641,10 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 게다가 이력서 첫 화면의 주제문은 「말 없이 참고 넘기던 불편 하나에서 떠난다 —
     // 그 하나까지 찾아내는」(2026-09-05 개정, 그 전엔 「쓰는 사람 말을 듣고
     // 고치는」)이다. 대표 프로젝트의 결론이 그 주제문과 다른 이야기를 하고 있었다.
-    learningLead: "지표가 나쁘다고 다 고칠 일은 아니었다.",
+    learningLead:
+      "1주 재방문 5.4% 를 보고도 재방문을 올리는 대신 닷새 안의 탐색을 고쳤다.",
     learning:
-      "재방문율은 낮았지만 그건 1년에 한 번 쓰는 서비스의 정상 상태였다. 고칠 것은 재방문이 아니라 그 닷새 안의 탐색이었다."
+      "재방문율은 낮았지만 1년에 한 번 쓰는 서비스의 정상 상태였다. 세션 94% 가 링크로 들어오는 닷새 동안 원하는 동아리를 찾게 하는 쪽으로 카테고리 필터를 쪼갰다."
   },
 
   // ════════════════════════════ 아주총학 / ajouchong-web (platform · 팀) ══════
@@ -2709,7 +2711,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         label: "대여 물품 관리 — 운영자가 직접",
         ratio: "21/10",
         caption:
-          "수량 옆 −/+ 로 바로 조정하고 「35 (변경됨)」처럼 저장 전 상태를 표시한다. 확인 대화상자로 한 번 더 묻고, 서버는 0 미만·총량 초과를 거부한다 — 실수로 재고가 틀어지면 학생이 헛걸음한다."
+          "수량 옆 −/+ 로 바로 조정하고 「35 (변경됨)」처럼 저장 전 상태를 표시한다. 확인 대화상자로 한 번 더 묻고, 서버는 0 미만·총량 초과를 거부한다. 실수로 재고가 틀어지면 학생이 헛걸음한다."
       },
       {
         src: "/projects/ajouchong/v2/linkhub.webp",
@@ -2750,7 +2752,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         {label: "7월", before: 490, after: 843, unit: ""},
         {label: "8월", before: 390, after: 945, unit: ""}
       ],
-      note: "Google Search Console 내보내기 487일치(2025-05-01~2026-08-30) 실합계. 계절성을 빼려고 2025년과 2026년의 같은 달만 맞대 놨다. 4개월 합계로 노출 2,290 → 5,392(×2.35), 클릭 321 → 491(×1.53). CTR 은 14.0% → 9.1% 로 내려갔는데, 노출이 넓어지면 덜 관련된 검색어에도 뜨기 시작해 분모가 먼저 커진다 — 클릭 절대수는 늘었다. 늘어난 이유를 개편만으로 돌릴 수는 없다(행사·외부 링크·검색 알고리즘). 확실한 건 시점뿐이다: 2026년 4월부터 이 사이트를 혼자 맡았다."
+      note: "Google Search Console 내보내기 487일치(2025-05-01~2026-08-30) 실합계. 계절성을 빼려고 2025년과 2026년의 같은 달만 맞대 놨다. 4개월 합계로 노출 2,290 → 5,392(×2.35), 클릭 321 → 491(×1.53). CTR 은 14.0% → 9.1% 로 내려갔는데, 노출이 넓어지면 덜 관련된 검색어에도 뜨기 시작해 분모가 먼저 커진다. 클릭 절대수는 늘었다. 늘어난 이유를 개편만으로 돌릴 수는 없다(행사·외부 링크·검색 알고리즘). 확실한 건 시점뿐이다: 2026년 4월부터 이 사이트를 혼자 맡았다."
     },
     // 이 넷만 읽고 나가는 심사자가 있다. 요약·본문·결론이 같은 프로젝트를 말해야 한다 —
     // 예전엔 요약은 2차, 본문(가설·트러블슈팅·결정표)은 전부 2025 얘기였다.
@@ -2765,7 +2767,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "결과",
-        v: "학생은 오기 전에 수량을 보고, 총학생회는 수량·링크·의견을 관리 화면에서 직접 고친다 — 품목 10종 · 링크 11개가 실서비스에서 돌아가는 중"
+        v: "학생은 오기 전에 수량을 보고, 총학생회는 수량·링크·의견을 관리 화면에서 직접 고친다. 품목 10종 · 링크 11개가 실서비스에서 돌아가는 중"
       },
       {
         k: "내 역할",
@@ -2824,11 +2826,11 @@ export const RICH_DATA: Record<string, RichProject> = {
       quotes: [
         {
           q: "물품이 남았는지 몰라 총학생회실까지 와서야 없다는 말을 듣는 학생이 많았다.",
-          who: "생활복지국원으로 창구에서 본 것"
+          who: "생활복지국 창구 경험 (본인)"
         },
         {
           q: "인스타 프로필에는 링크를 몇 개밖에 못 건다 — 접수 폼이 새로 생길 때마다 뭔가를 내려야 했다.",
-          who: "소통개발국 운영에서 마주친 문제"
+          who: "소통개발국 운영 경험 (본인)"
         }
       ],
       stat: {
@@ -2837,7 +2839,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     },
     hypothesis:
-      "“학생이 오기 전에 수량을 볼 수 있고, 총학생회가 개발자 없이 수량·링크·의견을 직접 고칠 수 있으면 — 헛걸음이 줄고, 사이트는 개발자가 떠나도 살아 있다.”",
+      "학생이 오기 전에 수량을 보고, 총학생회가 개발자 없이 수량·링크·의견을 직접 고칠 수 있어야 한다. 그래야 헛걸음이 줄고 개발자가 떠나도 사이트가 돌아간다.",
     process: [
       {t: "2025", d: "프론트 화면 일부"},
       {t: "UI 개편", d: "모바일 6갈래"},
@@ -2855,7 +2857,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         tag: "API",
         name: "Spring Boot · JPA",
-        desc: "RentalItem·RentalRecord·Link — 사용자/관리자 컨트롤러 분리"
+        desc: "RentalItem·RentalRecord·Link · 사용자/관리자 컨트롤러 분리"
       },
       {
         tag: "Auth",
@@ -2878,19 +2880,19 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         area: "대여",
         pick: "학생은 조회만",
-        why: "대여·반납은 관리자 기록으로만 — 실물과 수량이 안 어긋남",
+        why: "대여·반납은 관리자 기록으로만, 실물과 수량이 안 어긋남",
         alt: "온라인 예약(노쇼·중복 관리 ↑)"
       },
       {
         area: "링크허브",
         pick: "DB + 관리 화면",
-        why: "링크는 매주 바뀐다 — 개발자 없이 갈아끼움",
+        why: "링크는 매주 바뀌어 개발자 없이 갈아끼움",
         alt: "코드에 하드코딩(배포 필요)"
       },
       {
         area: "도우미",
         pick: "퀵 메뉴 + 의견 폼",
-        why: "길 안내와 접수면 충분 — 답 품질 책임이 없음",
+        why: "길 안내와 접수면 충분, 답 품질 책임이 없음",
         alt: "LLM 챗봇(과함)"
       },
       {
@@ -2904,7 +2906,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "RentalService.java",
         caption:
-          "수량 조정은 서버가 검증한다 — 0 미만·총량 초과 거부 (2026 · 백엔드)",
+          "수량 조정은 서버가 검증한다. 0 미만·총량 초과 거부 (2026 · 백엔드)",
         highlightLines: [6, 7],
         lines: [
           "@Transactional",
@@ -2921,7 +2923,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         filename: "nginx.conf",
-        caption: "SPA 새로고침 404 방지 — try_files 폴백 (2025)",
+        caption: "SPA 새로고침 404 방지. try_files 폴백 (2025)",
         highlightLines: [2],
         lines: [
           "location / {",
@@ -3025,25 +3027,25 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 두 해의 배움이 서로 다른 종류다. (원페이저에는 안 그린다 — ProjectOnePager 참고)
     kpt: {
       keep: [
-        "2025 · 배포까지 끝내야 서비스가 된다 — Docker/Nginx 로 환경을 고정",
-        "2025 · SPA 는 새로고침에서 깨진다 — Nginx try_files 로 404 를 없앰",
+        "2025 · Docker/Nginx 로 배포 환경을 고정했다",
+        "2025 · SPA 새로고침 404 를 Nginx try_files 로 없앴다",
         "2025 · 남의 구조 안에서 화면 일부를 만지며 정보 구조를 배웠다"
       ],
       problem: [
-        "대여 신청 자체는 아직 창구에서 받는다 — 온라인은 수량 조회까지",
-        "개편 효과는 검색 노출로만 봤다 — 헛걸음 문의가 얼마나 줄었는지는 세지 않았다",
+        "대여 신청은 아직 창구에서 받는다 (온라인은 수량 조회까지)",
+        "개편 효과는 검색 노출로만 봤다. 헛걸음 문의가 얼마나 줄었는지는 세지 않았다",
         "접근성(대비·포커스)은 여전히 보강이 필요하다"
       ],
       try: [
-        "2026 · 메뉴를 늘리는 게 아니라 안 눌러도 보이게 한다 — 모바일 첫 화면에 6갈래",
-        "2026 · 운영자가 직접 고치게 만든다 — 수량·링크·공지·피드백을 관리 화면으로",
-        "2026 · 검증은 서버에 둔다 — 화면의 −/+ 는 우회되고 API 의 거부는 안 된다"
+        "2026 · 모바일 첫 화면에 여섯 갈래를 펴서 햄버거를 안 눌러도 보이게 했다",
+        "2026 · 수량·링크·공지·피드백을 총학생회가 관리 화면에서 직접 고친다",
+        "2026 · 수량 검증을 서버에 뒀다. 화면의 −/+ 는 우회할 수 있어도 API 의 거부는 못 한다"
       ]
     },
     learningLead:
-      "화면을 예쁘게 고치는 것보다, 쓰는 사람이 스스로 할 수 있게 만드는 것이 운영형 서비스의 개선이었다.",
+      "수량 하나 바꾸는 데 개발자 배포가 필요했던 것을 관리 화면으로 없앤 것이 2026 개편의 핵심이었다.",
     learning:
-      "2025년엔 남의 구조 안에서 화면 일부를 만졌고, 2026년에 혼자 맡아 프론트·API·배포를 다 잡고 나서야 알았다 — 학생은 폰으로 들어와 햄버거를 안 누르고, 총학생회실 문 앞에서 「남아 있어요?」를 묻고, 총학생회는 수량 하나 바꾸려고 개발자를 부르고 싶어 하지 않는다."
+      "2025년엔 남의 구조 안에서 화면 일부를 만졌고, 2026년에 혼자 맡아 프론트·API·배포를 다 잡고 나서야 알았다. 학생은 폰으로 들어와 햄버거를 안 누르고, 총학생회실 문 앞에서 「남아 있어요?」를 묻고, 총학생회는 수량 하나 바꾸려고 개발자를 부르고 싶어 하지 않는다."
   },
 
   // ════════════════════════════ 수어지교 / Sign-Language (platform · 팀) ══════
@@ -3068,7 +3070,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         k: "결과",
         v: "동작 보고 의미 맞히기 + 텍스트→수어 변환 시제품 (30+ 단어)"
       },
-      {k: "내 역할", v: "4인 팀의 백엔드 — Spring Boot 서버·API·데이터 처리"}
+      {k: "내 역할", v: "4인 팀의 백엔드 (Spring Boot 서버·API·데이터 처리)"}
     ],
     demo: {repo: "https://github.com/toadsam/Sign-Language"},
     meta: [
@@ -3113,13 +3115,13 @@ export const RICH_DATA: Record<string, RichProject> = {
         },
         {
           q: "영상은 Storage에, 단어 정보는 Firestore에 따로 쌓여서 조회 경로를 하나로 모아야 했다.",
-          who: "백엔드 담당(본인) 관점"
+          who: "백엔드 담당 (본인)"
         }
       ],
       stat: {n: "30+", l: "시제품 목표 학습 단어 수 (README 기준)"}
     },
     hypothesis:
-      "“동작을 먼저 보여주고 뜻을 고르게 하는 구조 + 단어-영상 조회 경로를 단일 소스로 두면 — 처음 배우는 사람도 반복으로 수어를 ‘읽는’ 감각을 기를 수 있다.”",
+      "동작을 먼저 보여주고 뜻을 고르게 하면 처음 배우는 사람도 반복으로 수어를 읽는 감각을 기를 수 있다. 단어-영상 조회 경로는 단일 소스로 둔다.",
     process: [
       {t: "요구분석", d: "학습 흐름"},
       {t: "API 설계", d: "학습·판정·변환"},
@@ -3189,7 +3191,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         filename: "StorageVideoCache.java",
-        caption: "Storage에 없으면 Firestore URL로 폴백 — 조회 경로를 하나로",
+        caption: "Storage에 없으면 Firestore URL로 폴백해 조회 경로를 하나로",
         highlightLines: [2, 6],
         lines: [
           "public String findUrlOrFallback(String word, String fallbackUrl) {",
@@ -3262,8 +3264,9 @@ export const RICH_DATA: Record<string, RichProject> = {
       try: ["단어 100개+ 확장", "동작 인식(카메라) 도입"]
     },
     learningLead:
-      "프론트·아바타·백엔드가 얽힌 협업에서는 ‘데이터 계약을 단일 소스로 통일하는 것’이 가장 중요했다.",
-    learning: "백엔드는 결국 신뢰할 수 있는 계약을 내려주는 역할이었다."
+      "영상은 Storage, 단어 정보는 Firestore 에 따로 있어서 조회 경로를 백엔드 한 곳으로 모았다.",
+    learning:
+      "선택지 ID 의 대소문자·공백 차이로 맞은 답이 오답이 되던 것도 채점 전 정규화로 잡았다."
   },
 
   // ════════════════════════════ DarkLab (game · horror · 팀) ═════════════════
@@ -3317,19 +3320,22 @@ export const RICH_DATA: Record<string, RichProject> = {
       {t: "상태 데이터 분리", d: "ScriptableObject로 캐릭터·상태 관리"}
     ],
     problem:
-      "공포 게임의 긴장감은 단순한 점프스케어보다 공간 탐색과 오브젝트 상호작용에서 나온다. 이를 자연스럽게 구현하는 카메라 연출과 이벤트 흐름, 그리고 다국어 지원까지 필요했다.",
+      "공포 게임의 긴장감은 단순한 점프스케어보다 공간 탐색과 오브젝트 상호작용에서 나온다. 이를 자연스럽게 구현하는 카메라 연출과 이벤트 흐름, 그리고 다국어 대응까지 필요했다.",
     research: {
       quotes: [
         {
           q: "점프스케어만 있는 공포는 금방 질린다 — 탐색이 무서워야 한다.",
-          who: "장르 문제 정의"
+          who: "문제 정의 (본인)"
         },
-        {q: "뭘 상호작용할 수 있는지 안 보이면 답답하다.", who: "플레이 관점"}
+        {
+          q: "뭘 상호작용할 수 있는지 안 보이면 답답하다.",
+          who: "플레이어 관점 (본인)"
+        }
       ],
       stat: {n: "3", l: "지원 언어 (Unity Localization: en/ja/ko-KR)"}
     },
     hypothesis:
-      "“레이캐스트 상호작용 + Cinemachine 시야 연출을 결합하면, 점프스케어 없이도 탐색 자체로 긴장감을 만들 수 있다.”",
+      "레이캐스트 상호작용과 Cinemachine 시야 연출만으로도 점프스케어 없이 탐색 자체가 긴장을 만든다고 봤다.",
     process: [
       {t: "프로토", d: "그레이박스"},
       {t: "상호작용", d: "레이캐스트"},
@@ -3396,7 +3402,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         filename: "PlayerState.cs",
-        caption: "상태를 ScriptableObject로 분리 — 씬 간 공유",
+        caption: "상태를 ScriptableObject로 분리해 씬 간 공유",
         lines: [
           "[CreateAssetMenu]",
           "public class PlayerState : ScriptableObject {",
@@ -3426,7 +3432,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         title: "무엇을 상호작용할지 안 보였다",
         problem: "플레이어가 조사 가능한 오브젝트를 인지 못 해 답답해했다.",
         solution:
-          "레이캐스트가 IInteractable에 닿으면 미세한 하이라이트/커서 변화를 줘 단서를 제공했다.",
+          "레이캐스트가 IInteractable에 닿으면 미세한 하이라이트/커서 변화로 단서를 줬다.",
         code: {
           filename: "Highlight.cs",
           lines: [
@@ -3478,8 +3484,9 @@ export const RICH_DATA: Record<string, RichProject> = {
       try: ["퍼즐·엔딩 시퀀스 추가", "세이브 시스템"]
     },
     learningLead:
-      "공포는 ‘놀래키기’가 아니라 ‘플레이어가 스스로 긴장하게 만드는 설계’였다.",
-    learning: "연출 도구(Cinemachine)를 잘 위임하는 것도 실력이었다."
+      "조사 가능한 오브젝트가 안 보여 답답하다는 문제는 레이캐스트가 닿을 때 커서를 바꾸는 것으로 풀었다.",
+    learning:
+      "카메라 전환은 손으로 옮기는 대신 Cinemachine 가상 카메라 우선순위 블렌딩에 맡겼다."
   },
 
   // ════════════════════════════ 아주분투 / Ajou_Mini_Game (game · arcade) ════
@@ -3530,7 +3537,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {t: "최고 점수 저장", d: "localStorage 기반 기록 유지"}
     ],
     problem:
-      "쉬는 시간에 잠깐 즐길, 대학생이 공감할 가벼운 웹 게임이 의외로 없었다. 캠퍼스 감성을 살리되(공식 로고 없이 도형 기반) 조작이 매끄럽고 끊기지 않는 러너가 필요했다.",
+      "쉬는 시간에 잠깐 즐길, 대학생이 공감할 가벼운 웹 게임이 의외로 없었다. 캠퍼스 감성을 살리되(공식 로고 없이 도형 기반) 조작이 끊기지 않는 러너가 필요했다.",
     research: {
       quotes: [
         {
@@ -3539,13 +3546,13 @@ export const RICH_DATA: Record<string, RichProject> = {
         },
         {
           q: "발판·아이템을 매 프레임 생성/파괴하면 GC로 끊긴다.",
-          who: "구현에서 마주친 문제"
+          who: "구현 메모 (본인)"
         }
       ],
       stat: {n: "3", l: "점수 구간 배경(낮 0 / 노을 1500 / 밤 3500)"}
     },
     hypothesis:
-      "“게임을 Scene/Object/System 레이어로 나누고, 발판·아이템을 재사용(풀링)하면 — 혼자서도 유지보수 가능하고 끊기지 않는 러너를 만들 수 있다.”",
+      "게임을 Scene/Object/System 레이어로 나누고 발판·아이템을 풀링하는 것이 혼자 유지보수하면서 끊김을 없애는 길이었다.",
     process: [
       {t: "기획", d: "캠퍼스 테마"},
       {t: "모듈 구조", d: "Scene/Obj/Sys"},
@@ -3600,7 +3607,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     coreCode: [
       {
         filename: "Player.ts",
-        caption: "2단 점프 — 지상/공중 점프 횟수로 제어",
+        caption: "2단 점프를 점프 횟수로 제어",
         highlightLines: [3],
         lines: [
           "private jumpCount = 0;",
@@ -3679,9 +3686,9 @@ export const RICH_DATA: Record<string, RichProject> = {
       try: ["리더보드·소셜 공유", "와이어 액션 완성·스테이지 다양화"]
     },
     learningLead:
-      "1인 게임도 Scene/Object/System 으로 나누면 유지보수가 완전히 달라졌다.",
+      "발판·아이템을 매 프레임 만들고 부수면 GC 로 끊겨서, 재사용(풀링)으로 바꿨다.",
     learning:
-      "플레이 감을 ‘느낌’이 아니라 자동 플레이테스트 로그로 검증하니 튜닝이 훨씬 빨라졌다."
+      "점프·발판 간격은 자동 플레이테스트가 뽑은 스크린샷과 JSON 로그로 검증했다."
   },
 
   // ════════════════════════════ TSEROF (game · platformer · 팀 · 비공개) ═════
@@ -3751,7 +3758,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     features: [
       {t: "WASD + 2단 점프", d: "조작감 있는 플레이어 컨트롤"},
       {t: "스테이지 잠금 해제", d: "클리어 시 다음 스테이지 오픈"},
-      {t: "진행상황 저장", d: "이어하기 지원"},
+      {t: "진행상황 저장", d: "클리어 뒤 이어하기"},
       {t: "숨겨진 아이템", d: "탐색형 클리어 조건"}
     ],
     problem:
@@ -3760,16 +3767,16 @@ export const RICH_DATA: Record<string, RichProject> = {
       quotes: [
         {
           q: "점프 조작이 어색하면 그 게임은 바로 끄게 된다.",
-          who: "장르 문제 정의"
+          who: "문제 정의 (본인)"
         },
         {
           q: "스테이지 진행 중 오브젝트의 생성과 파괴가 지속적으로 발생하여 CPU 부담 증가",
-          who: "Unity Profiler 로 찾은 병목 — 포트폴리오 기록 원문"
+          who: "포트폴리오 PDF 원문 (Unity Profiler 병목)"
         }
       ]
     },
     hypothesis:
-      "“정확한 2단 점프 컨트롤 + 스테이지 잠금/저장을 갖추고, 생성·파괴·레이캐스트·충돌처럼 매 프레임 도는 비용을 Profiler 로 찾아 줄이면 — 조작감·진행감을 살리면서 출시 빌드의 성능과 저장 안정성도 지킬 수 있다.”",
+      "2단 점프와 스테이지 잠금·저장을 갖춘 뒤, 매 프레임 도는 생성·파괴·레이캐스트·충돌 비용을 Profiler 로 찾아 줄인다. 조작감과 출시 빌드의 성능을 같이 지키는 순서였다.",
     process: [
       {t: "기획", d: "레벨 구성"},
       {t: "컨트롤러", d: "이동·점프"},
@@ -3812,8 +3819,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     coreCode: [
       {
         filename: "ForceReceiver.cs",
-        caption:
-          "접지를 한 점이 아니라 발 4방향으로 검사 — 가장자리 점프 씹힘 해결",
+        caption: "접지를 발 4방향으로 검사해 가장자리 점프 씹힘을 해결",
         highlightLines: [2, 3, 4, 5, 9],
         lines: [
           "Ray[] rays = new Ray[4]",
@@ -3832,7 +3838,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "FileDataHandler.cs",
         caption:
-          "세이브 파일을 XOR로 난독화 — 메모장으로 열어 고치는 것만 막는 수준",
+          "세이브 파일을 XOR로 난독화. 메모장으로 열어 고치는 것만 막는 수준",
         highlightLines: [4],
         lines: [
           "private string EncryptDecrypt(string data) {",
@@ -3936,7 +3942,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     },
     // PDF 「배운 점」 원문을 문장으로 다듬었다. 3D 전시실 P12Retro 와 같은 출처.
     learningLead:
-      "출시 과정에서 성능과 안정성(저장·충돌·레이캐스트)이 품질을 좌우한다는 걸 배웠고, Unity Profiler 로 병목을 찾아 고치는 습관이 생겼다.",
+      "출시 빌드에서는 생성·파괴, RaycastAll, 충돌 연산이 병목이었고, Unity Profiler 로 찾아 풀링·NonAlloc·콜라이더 단순화로 고쳤다.",
     learning:
       "다음 프로젝트에서는 로딩/리소스 관리(Addressables)와 세이브 데이터 버전 관리까지 넓혀 더 안정적인 운영을 목표로 한다."
   },
@@ -3970,7 +3976,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         ratio: "16/9",
         wide: true,
         caption:
-          "특수 카메라·PostFX 는 팀원 담당. 내 몫은 이 화면 아래에서 도는 쪽이다 — 카메라·손전등 상태를 감지기가 판정하고, GameManager 가 그 판정으로 몬스터를 켜고 끈다."
+          "특수 카메라·PostFX 는 팀원 담당. 내 몫은 이 화면 아래에서 도는 쪽이다. 카메라·손전등 상태를 감지기가 판정하고, GameManager 가 그 판정으로 몬스터를 켜고 끈다."
       }
     ],
     tldr: [
@@ -3981,7 +3987,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {k: "왜", v: "VR 에서 ‘보이는 것’ 자체를 게임 규칙으로 설계하고 싶었음"},
       {
         k: "결과",
-        v: "퍼즐이 풀릴 때만 추격이 켜진다 — 감지기는 판정만 하고, GameManager 가 몬스터 2종을 켜고 끈다"
+        v: "퍼즐이 풀릴 때만 추격이 켜진다. 감지기는 판정만 하고, GameManager 가 몬스터 2종을 켜고 끈다"
       },
       {
         k: "내 역할",
@@ -4025,7 +4031,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         t: "손전등 리스크",
-        d: "켜면 빛 원뿔까지 감지 대상 — 시야 확보 vs 들킬 위험"
+        d: "켜면 빛 원뿔까지 감지 대상. 시야 확보 vs 들킬 위험"
       },
       {t: "FOV 추격", d: "적 시야각 안에 들어오면 추적, 벗어나면 5초 뒤 해제"},
       {
@@ -4039,16 +4045,16 @@ export const RICH_DATA: Record<string, RichProject> = {
       quotes: [
         {
           q: "단순 추격만으로는 공포 템포 조절 불가.",
-          who: "문제 정의 — MonsterAI"
+          who: "문제 정의 (MonsterAI)"
         },
         {
           q: "감지 로직과 AI 로직이 직접 결합되면 유지보수 어려움.",
-          who: "문제 정의 — GameManager"
+          who: "문제 정의 (GameManager)"
         }
       ]
     },
     hypothesis:
-      "“감지기는 감지만 하고, 행동은 GameManager 가 중앙에서 켜고 끄면 — 퍼즐 진행에 따라 추격을 제어할 수 있고, 트리거가 늘어도 결합도는 낮게 유지된다.”",
+      "감지기는 감지만 하고 행동은 GameManager 가 중앙에서 켜고 끈다. 퍼즐 진행에 따라 추격을 제어할 수 있고, 트리거가 늘어도 결합도는 낮게 유지된다.",
     process: [
       {t: "탐색", d: "어두운 저택"},
       {t: "발견", d: "카메라 모드"},
@@ -4064,7 +4070,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         tag: "Detect",
         name: "EnemyLightZoneDetector",
-        desc: "손전등 ON + 반경 7m — 두 번째 몬스터용 규칙"
+        desc: "손전등 ON + 반경 7m · 두 번째 몬스터용 규칙"
       },
       {
         tag: "Control",
@@ -4092,7 +4098,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         area: "손전등 감지",
         pick: "빛 원뿔을 10점으로 샘플링",
-        why: "빛줄기 일부만 시야에 걸려도 들킴 — 손전등이 진짜 리스크가 됨",
+        why: "빛줄기 일부만 시야에 걸려도 들켜 손전등이 진짜 리스크가 됨",
         alt: "플레이어 위치만 검사 (손전등 무의미)"
       },
       {
@@ -4133,7 +4139,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "GameManager.cs",
         caption:
-          "감지기는 이 두 메서드만 부른다 — 몬스터를 켜고 끄는 건 여기 한 곳",
+          "감지기는 이 두 메서드만 부른다. 몬스터를 켜고 끄는 건 여기 한 곳",
         highlightLines: [3, 4],
         lines: [
           "public void ToggleDollBehavior(bool on) {",
@@ -4147,7 +4153,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         filename: "MonsterAI.cs",
-        caption: "거리 기반 상태 전환 — 활성 플래그가 꺼져 있으면 배회만 한다",
+        caption: "거리 기반 상태 전환. 활성 플래그가 꺼져 있으면 배회만 한다",
         highlightLines: [1, 5, 9],
         lines: [
           "bool isEnabled = monsterType == MonsterType.Doll ? dollCanChaseAndAttack : bookheadCanChaseAndAttack;",
@@ -4246,14 +4252,14 @@ export const RICH_DATA: Record<string, RichProject> = {
       ],
       problem: [
         "시야각·거리·5초 같은 값이 스크립트에 하드코딩",
-        "몬스터가 2종 — 규칙 조합의 여지가 적음"
+        "몬스터가 2종이라 규칙 조합의 여지가 적음"
       ],
       try: ["감지 규칙을 ScriptableObject 로", "몬스터·퍼즐 조건 추가"]
     },
     learningLead:
-      "VR 공포에서 무서운 건 몬스터가 아니라 ‘내가 켠 손전등 때문에 들킬 수 있다’는 규칙이었다.",
+      "손전등 빛 원뿔을 10점 샘플링해 적 시야각 검사에 넣자, 손전등을 켜는 것 자체가 들킬 위험이 됐다.",
     learning:
-      "감지기는 감지만, 몬스터는 행동만, 켜고 끄는 건 한 곳에서 — 이렇게 나누고 나서야 퍼즐 조건을 늘리는 일이 몬스터 코드를 건드리지 않는 일이 됐다."
+      "감지기는 판정만, 몬스터는 행동만, 켜고 끄는 건 GameManager 한 곳에 뒀다. 그 뒤로 퍼즐 조건을 늘려도 몬스터 코드를 건드리지 않는다."
   },
 
   // ════════════════════════════ INTO MONSTER POINT (game · AR · 팀) ═════════
@@ -4367,16 +4373,16 @@ export const RICH_DATA: Record<string, RichProject> = {
       quotes: [
         {
           q: "실제 공간이 전투 무대가 됨. 플레이 환경에 따라 전투 경험이 달라짐.",
-          who: "설계 방향 — 현실 기반 전장"
+          who: "설계 방향 (현실 기반 전장)"
         },
         {
           q: "거리·방향·공간 크기에 따라 몬스터 스폰 위치가 유동적으로 결정.",
-          who: "설계 방향 — 스폰 규칙"
+          who: "설계 방향 (스폰 규칙)"
         }
       ]
     },
     hypothesis:
-      "“스캔한 평면의 boundary 하나에서 바닥·벽·스폰 위치를 전부 파생시키면 — 어떤 방에서 켜도 전장이 그 방 크기에 맞는다.”",
+      "스캔한 평면의 boundary 하나에서 바닥·벽·스폰 위치를 전부 파생시킨다. 어떤 방에서 켜도 전장이 그 방 크기에 맞는다.",
     process: [
       {t: "스캔", d: "Plane Detection"},
       {t: "고정", d: "boundary → 바닥·벽"},
@@ -4546,15 +4552,15 @@ export const RICH_DATA: Record<string, RichProject> = {
         "처치 수 기반 웨이브 전환"
       ],
       problem: [
-        "보스 3종이 같은 counterBoss 값 — 난이도 곡선 없음",
+        "보스 3종이 같은 counterBoss 값이라 난이도 곡선이 없음",
         "무기 잠금 해제 조건이 단순"
       ],
       try: ["웨이브별 난이도 데이터화", "무기 해제 조건을 성과와 연결"]
     },
     learningLead:
-      "AR 에서 플레이 공간은 내가 정하는 게 아니라 스캔이 정한다 — 그래서 모든 값이 boundary 에서 나와야 했다.",
+      "전장 크기·벽·스폰 위치를 전부 스캔한 평면의 boundary 에서 계산했다. 고정값을 두면 방에 따라 벽 밖에 몬스터가 생겼다.",
     learning:
-      "고정값 하나 없이 스캔 결과만으로 전장·벽·스폰이 서게 만들고 나니, 어떤 방에서 켜도 같은 게임이 됐다."
+      "보스는 타이머가 아니라 처치 수 10 에 닿을 때 나오게 해, 웨이브가 플레이 성과를 따라가게 했다."
   },
 
   // ════════════════════════════ 아주대탐험 / Ajou Indie Game (game · 1인) ═══
@@ -4642,7 +4648,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     features: [
       {
         t: "시점 전환",
-        d: "1인칭 탐색 ↔ 탑다운 전투 — 카메라·컨트롤러·물리 제약을 함께 전환"
+        d: "1인칭 탐색 ↔ 탑다운 전투, 카메라·컨트롤러·물리 제약을 함께 전환"
       },
       {t: "랜덤 스킬 성장", d: "레벨업 시 시간 정지 → 3개 중 선택 → 즉시 반영"},
       {t: "상태 기반 AI", d: "NavMesh 일반 몬스터 · 예고 있는 랜덤 패턴 보스"},
@@ -4657,17 +4663,17 @@ export const RICH_DATA: Record<string, RichProject> = {
       quotes: [
         {
           q: "단순 연출이 아닌 게임 시스템으로서 시점 전환 기능 구현.",
-          who: "설계 방향 — 시점 전환"
+          who: "설계 방향 (시점 전환)"
         },
         {
           q: "매 판 다른 빌드를 만들 수 있도록 랜덤 스킬 선택 도입, 반복 플레이 동기 강화.",
-          who: "설계 방향 — 성장 루프"
+          who: "설계 방향 (성장 루프)"
         }
       ],
       stat: {n: "5", l: "시스템 모듈 · Player / Skill / AI / UI / Event"}
     },
     hypothesis:
-      "“카메라·컨트롤러·물리 제약을 ‘모드’ 단위로 함께 바꾸면 — 한 캐릭터로 탐색과 전투를 오가면서도 조작이 겹치거나 화면이 튀지 않는다.”",
+      "카메라·컨트롤러·물리 제약을 모드 단위로 함께 바꿔야 한 캐릭터로 탐색과 전투를 오가면서도 조작이 겹치거나 화면이 튀지 않는다.",
     process: [
       {t: "탐색", d: "1인칭"},
       {t: "전투", d: "탑다운 · 웨이브"},
@@ -4679,7 +4685,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         tag: "Player",
         name: "PlayerModeManager",
-        desc: "FirstPerson / TopDown — 컨트롤러 enable 전환 · 카메라 Parent · Y축 잠금"
+        desc: "FirstPerson / TopDown · 컨트롤러 enable 전환 · 카메라 Parent · Y축 잠금"
       },
       {
         tag: "Skill",
@@ -4732,7 +4738,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "PlayerModeManager.cs",
         caption:
-          "시점 전환은 카메라만 옮기는 게 아니다 — 컨트롤러·물리 제약·카메라 부모를 한 번에 바꾼다",
+          "시점 전환은 카메라만 옮기지 않는다. 컨트롤러·물리 제약·카메라 부모를 한 번에 바꾼다",
         highlightLines: [3, 4, 6, 7, 11, 12],
         lines: [
           "switch (mode) {",
@@ -4773,7 +4779,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "MonsterAI.cs",
         caption:
-          "상태 하나가 곧 메서드 하나 — 거리 조건으로만 다음 상태를 정한다",
+          "상태 하나가 곧 메서드 하나. 거리 조건으로만 다음 상태를 정한다",
         highlightLines: [1, 7, 8],
         lines: [
           "private enum AIState { Idle, Move, Chase, Attack, TakeDamage, Die }",
@@ -4853,13 +4859,13 @@ export const RICH_DATA: Record<string, RichProject> = {
         "시점 전환을 연출이 아닌 시스템으로"
       ],
       problem: [
-        "웨이브마다 몬스터 1마리 — 분량이 얇음",
+        "웨이브마다 몬스터 1마리라 분량이 얇음",
         "값(3초·20초·범위)이 스크립트에 박혀 있음"
       ],
       try: ["건물별 스테이지 테마 · 최종 보스 ‘졸업’", "밸런스 값 데이터화"]
     },
     learningLead:
-      "기능을 붙이는 게 아니라 시스템을 나누는 것이 1인 개발에서도 확장의 전부였다.",
+      "시점 전환은 카메라만 옮기지 않고 컨트롤러·물리 제약·카메라 부모를 한 번에 바꿨다. 그래야 조작이 겹치거나 화면이 튀지 않았다.",
     learning:
       "Player · Skill · AI · UI · Event 를 각자 독립시켜 두니, 새 스킬이나 새 상태를 붙일 때 다른 시스템을 열어 볼 일이 없어졌다."
   }

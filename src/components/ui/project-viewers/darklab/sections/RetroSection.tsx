@@ -38,7 +38,7 @@ export function RetroSection({onExit}: {onExit: () => void}) {
               06 · 회고
             </div>
             <h2 className="text-[32px] font-black leading-tight">
-              무섭게 만드는 건 감각이 아니라 목록이었다
+              무섭게 만드는 데는 감보다 목록이 필요했다
             </h2>
           </header>
 
@@ -65,8 +65,8 @@ export function RetroSection({onExit}: {onExit: () => void}) {
           </div>
 
           <p className="dl-fade-up mb-8 max-w-[720px] text-[15px] leading-8 text-[rgba(255,255,255,0.62)]">
-            다음은 퍼즐과 엔딩 시퀀스를 붙여 챕터형으로 확장하는 것입니다. 그
-            전에 프로파일러를 켜 둔 채로 만드는 습관부터 들일 생각입니다.
+            다음은 퍼즐과 엔딩 시퀀스를 붙여 챕터형으로 늘리는 것이다. 그 전에
+            프로파일러를 켜 둔 채로 만드는 습관부터 들일 생각이다.
           </p>
 
           <a

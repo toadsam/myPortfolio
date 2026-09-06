@@ -53,9 +53,9 @@ export function P12Retro({onExit}: {onExit: () => void}) {
 
       <div className="mt-6" style={rise(on[IDX.learn], instant)}>
         <Body>
-          스테이지를 다 만들었을 때 저는 끝났다고 생각했습니다. 실제로 남은 일은{" "}
-          <strong>저장 · 충돌 · 레이캐스트</strong>였습니다. 셋 다 새 기능이
-          아니고 플레이어가 눈으로 볼 수 있는 것도 아닌데,{" "}
+          스테이지를 다 만들고 출시 직전에 걸린 건{" "}
+          <strong>저장 · 충돌 · 레이캐스트</strong> 세 가지였습니다. 새 기능도
+          아니고 플레이어 눈에 보이는 것도 아니었지만,{" "}
           <span className="text-[var(--ts-accent)]">
             그게 안 되면 올릴 수가 없었습니다.
           </span>
@@ -95,9 +95,9 @@ export function P12Retro({onExit}: {onExit: () => void}) {
             <li>
               <span style={{color: "var(--ts-warn)"}}>·</span>{" "}
               <strong className="text-[var(--ts-text)]">
-                개선 폭을 수치로 남기지 않았다.
+                Profiler 화면을 남기지 않았다.
               </strong>{" "}
-              Profiler 로 확인만 하고 기록하지 않아, 지금은
+              병목을 고치기 전후 값을 기록하지 않아, 지금은
               &ldquo;좋아졌다&rdquo; 고밖에 말할 수 없다.
             </li>
             <li>
@@ -114,7 +114,7 @@ export function P12Retro({onExit}: {onExit: () => void}) {
           <ul className="space-y-1.5 text-[14px] leading-7">
             <li>로딩 · 리소스 관리 (Addressables)</li>
             <li>세이브 데이터 버전 관리</li>
-            <li>증상이 아니라 매커니즘을 고치기</li>
+            <li>점프 매커니즘을 오브젝트 이동 없이 고치기</li>
           </ul>
         </Card>
       </div>

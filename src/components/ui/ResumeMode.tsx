@@ -548,7 +548,7 @@ export function ResumeMode({onEnterVillage}: Props) {
                 className="village-btn"
                 onClick={onEnterVillage}
               >
-                🏘 3D 마을 탐험 →
+                🏘 3D 마을 들어가기 →
               </button>
             </div>
           </header>
@@ -1401,7 +1401,7 @@ export function ResumeMode({onEnterVillage}: Props) {
                 onClick={onEnterVillage}
                 style={{padding: "16px 32px"}}
               >
-                🏘 3D 개발자 마을 탐험하기 →
+                🏘 3D 마을 들어가기 →
               </button>
               {touchOnly ? (
                 <p
@@ -1412,8 +1412,8 @@ export function ResumeMode({onEnterVillage}: Props) {
                     opacity: 0.55
                   }}
                 >
-                  마을은 마우스·키보드로 돌아다니는 곳이라, PC에서 훨씬 잘
-                  동작해요. (약 25MB를 내려받습니다)
+                  마을은 마우스·키보드로 돌아다니는 곳이라 PC에서 훨씬 잘
+                  동작합니다. (약 25MB를 내려받습니다)
                 </p>
               ) : null}
             </div>

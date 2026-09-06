@@ -80,8 +80,8 @@ export function AjouAdventureDemo({theme}: {theme: ProjectTheme}) {
       }
       footer={
         <p className="font-mono text-[11px] leading-5 text-white/45">
-          🏃 <span style={{color: theme.primary}}>무대를 클릭하면 점프</span> —
-          캠퍼스 배경이 패럴럭스로 흐릅니다.
+          🏃 무대를 클릭하면 캐릭터가 점프합니다. 뒤로는 캠퍼스 배경이{" "}
+          <span style={{color: theme.primary}}>패럴럭스로</span> 흐릅니다.
         </p>
       }
     >

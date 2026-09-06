@@ -52,9 +52,10 @@ export function SignLanguageDemo({theme}: {theme: ProjectTheme}) {
       tag="SIGN AVATAR"
       footer={
         <p className="font-mono text-[11px] leading-5 text-white/45">
-          💡 단어를 누르면{" "}
-          <span style={{color: theme.primary}}>아바타가 해당 수어 동작</span>을
-          재생합니다. (실제 모션 데이터로 교체 예정)
+          단어를 누르면{" "}
+          <span style={{color: theme.primary}}>아바타가 그 수어 동작</span>을
+          재생합니다. 지금 동작은 자리표시용이고, 실제 모션 데이터로 바꿀
+          예정입니다.
         </p>
       }
     >

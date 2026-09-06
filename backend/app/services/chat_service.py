@@ -304,7 +304,7 @@ def answer_without_ai(
     cs_notes = cs_notes or []
 
     if _is_overseer(npc_id):
-        parts = ["안녕하세요! 마을 곳곳 돌아보고 오는 길이에요. 다들 잘 지내고 있답니다."]
+        parts = ["마을 한 바퀴 돌고 오는 길이에요. 다들 잘 지내요."]
         if activity_history:
             s = _activity_stats(activity_history)
             parts.append(
@@ -313,12 +313,12 @@ def answer_without_ai(
         parts.append(f"지금까지 코딩테스트 {len(coding_tests)}개, CS 노트 {len(cs_notes)}개가 쌓였어요.")
         if village_state is not None:
             parts.append(f"마을은 지금 — {village_state.summary}")
-        parts.append("더 자세한 건 담당 친구(테오·픽셀·알고·노바 등)에게 안내해드릴게요. 무엇이 궁금하세요?")
+        parts.append("세부는 그걸 맡은 친구가 저보다 잘 알아요. 기술이면 테오, 프로젝트면 픽셀이요.")
         return " ".join(parts)
 
     if _is_coding_npc(npc_id):
         if not coding_tests:
-            return "아직 기록된 코딩테스트 풀이가 없어요. /admin에서 푼 문제를 기록하면 어떤 문제를 어떻게 풀었는지 설명해드릴게요."
+            return "아직 도장에 남은 풀이가 없어요. /admin에서 푼 문제를 기록하면 여기부터 채워져요."
         latest = coding_tests[0]
         platform = latest.platform or "코딩테스트"
         diff = f" {latest.difficulty}" if latest.difficulty else ""
@@ -326,30 +326,30 @@ def answer_without_ai(
         approach = f" 풀이 접근은 '{latest.approach.strip()}'였어요." if latest.approach.strip() else ""
         return (
             f"가장 최근에는 {latest.solved_date}에 {platform}{diff} '{latest.title}' 문제를{lang} 풀었어요.{approach} "
-            f"지금까지 기록된 풀이는 총 {len(coding_tests)}개예요. 특정 문제나 언어를 말해주면 풀이를 더 자세히 설명할게요."
+            f"지금까지 쌓인 풀이는 총 {len(coding_tests)}개예요. 문제 이름이나 언어를 짚으면 그 풀이를 꺼내 볼게요."
         )
 
     if _is_cs_npc(npc_id):
         if not cs_notes:
-            return "아직 기록된 CS 전공지식 노트가 없어요. /admin에서 공부한 내용을 기록하면 그 개념을 정리해서 설명해드릴게요."
+            return "아직 서가에 꽂힌 CS 노트가 없어요. /admin에서 공부한 내용을 기록하면 여기부터 채워져요."
         latest = cs_notes[0]
         category = f"[{latest.category}] " if latest.category else ""
         return (
             f"최근에는 {latest.study_date}에 {category}'{latest.title}'를 공부했어요. "
-            f"지금까지 정리된 노트는 총 {len(cs_notes)}개예요. 궁금한 전공 주제를 말해주면 공부한 내용을 바탕으로 설명할게요."
+            f"지금까지 정리된 노트는 총 {len(cs_notes)}개예요. 전공 주제 하나를 짚으면 그 노트를 펼쳐요."
         )
 
     if _is_life_npc(npc_id):
         workout = (
-            "오늘 운동까지 완료했어요. 개발 기록만큼 몸 관리도 꾸준한 편이에요."
+            "오늘 운동까지 마쳤어요. 개발 기록만큼 몸 관리도 꾸준한 편이에요."
             if activity.workout_done
-            else "오늘 운동 기록은 아직이에요. 그래도 습관으로 챙기는 중이랍니다."
+            else "오늘 운동 기록은 아직이에요. 그래도 습관으로 챙기는 중이에요."
         )
         memo = f" 오늘 남긴 메모는 '{activity.memo}'예요." if activity.memo else ""
         return (
             f"여기는 정재훈의 개발 밖 일상을 담은 라이프 구역이에요. {workout}{memo} "
-            "가치관, 운동, 투자 공부, 서재, 음악, 성장 타임라인 건물을 둘러보면 "
-            "어떤 사람인지 보일 거예요. 개발 이야기가 궁금하면 픽셀이나 테오에게 안내해드릴게요."
+            "운동이나 서재처럼 개발 밖 건물들을 천천히 돌아보면 어떤 사람인지 보일 거예요. "
+            "개발 얘기는 픽셀이나 테오 몫이에요."
         )
 
     project = _project_for_npc_or_message(npc_id, message)
@@ -359,15 +359,15 @@ def answer_without_ai(
             "채용자에게 먼저 보여줄 대표 프로젝트는 MyStock-Desk, FestFlow, 근근 MuscleUp 순서가 좋아요. "
             "MyStock-Desk는 도메인 데이터 모델링과 자산 대시보드(MyWave)의 정보 구조화가 잘 보이고, "
             "FestFlow는 실시간 운영 UX와 권한 분리가 드러나요. "
-            "근근 MuscleUp은 인증, SSE, 커뮤니티, AI 분석을 하나의 풀스택 흐름으로 묶은 점이 강합니다."
+            "근근 MuscleUp은 인증부터 AI 분석까지 하나의 풀스택 흐름으로 묶은 점이 강해요."
         )
 
     if _contains(message, ["강점", "요약", "strength", "장점"]):
         return (
-            "정재훈의 강점은 세 가지로 정리할 수 있어요. "
-            "첫째, 기능 목록보다 사용자의 흐름을 먼저 잡고 화면 구조로 풀어냅니다. "
-            "둘째, React/TypeScript 프론트엔드와 Spring Boot/FastAPI 백엔드를 함께 다뤄 실제 서비스 흐름을 만들 수 있습니다. "
-            "셋째, Three.js와 Unity 경험이 있어 포트폴리오 자체를 3D 인터랙션으로 표현할 만큼 시각 구현 감각이 있습니다."
+            "정재훈은 기능 목록보다 사용자의 흐름을 먼저 잡고, 그걸 화면 구조로 풀어내는 사람이에요. "
+            "화면은 React 로, 서버는 Spring Boot 로 짜 봤고요. FastAPI 도 이 마을 백엔드에서 쓰고 있어요. "
+            "그래서 프론트와 백엔드를 이어 실제 서비스 흐름을 끝까지 만들 수 있어요. "
+            "Three.js 와 Unity 를 만져 본 덕에 포트폴리오 자체를 3D 로 세울 만큼 시각 구현 감각도 있고요."
         )
 
     if project:
@@ -375,54 +375,58 @@ def answer_without_ai(
 
     if _contains(message, ["기술", "스택", "stack", "개발", "아키텍처", "구조"]):
         return (
-            "주요 기술은 React, TypeScript, Next.js, Three.js/R3F, FastAPI, Spring Boot, Unity/C#입니다. "
-            "프론트엔드는 화면 상태와 사용자 흐름을 설계하는 쪽이 강하고, 백엔드는 인증, API, 실시간 SSE 같은 서비스 기능 연결 경험이 있습니다. "
-            "이 포트폴리오 마을도 Next.js 화면, Three.js 3D 월드, FastAPI 라이브 상태, NPC 대화 API가 함께 연결된 구조예요."
+            "이름을 늘어놓기보다 쓰임으로 말할게요. "
+            "화면은 React 와 Next.js 로 짜고, 거기서 화면 상태와 사용자 흐름을 설계하는 쪽이 강해요. "
+            "서버 쪽은 Spring Boot 나 FastAPI 로 인증, API, 실시간 연결을 붙여 봤고요. "
+            "3D 는 Three.js, 게임은 Unity 예요. "
+            "이 마을도 그 조합이에요. Next.js 와 Three.js 로 화면을 올리고, 마을 상태와 NPC 대화는 FastAPI 가 받쳐요."
         )
 
     if _contains(message, ["협업", "팀", "소통", "역할", "collaboration"]):
         return (
             "협업에서는 역할을 화면 단위와 데이터 흐름 단위로 나누는 편이에요. "
             "ACLUB, 아주총학, FestFlow 같은 프로젝트에서 사용자 흐름, 권한, 배포 구조를 나눠 생각했고, "
-            "Unity 프로젝트에서는 충돌을 줄이기 위해 기능 단위로 작업 범위를 분리한 경험이 있습니다."
+            "Unity 프로젝트에서는 충돌을 줄이려고 기능 단위로 작업 범위를 갈랐어요."
         )
 
     if _contains(message, ["오늘", "상태", "활동", "today", "커밋", "공부", "운동"]):
         workout = "운동까지 완료되어 마을 분위기가 더 활기차요" if activity.workout_done else "운동 기록은 아직 없어 광장 에너지는 차분해요"
-        memo = f" 오늘 메모는 '{activity.memo}'입니다." if activity.memo else ""
+        memo = f" 오늘 메모는 '{activity.memo}'예요." if activity.memo else ""
         return (
             f"오늘 기록은 GitHub 커밋 {activity.github_commits}개, 공부 {activity.study_minutes}분이에요. "
-            f"{workout}.{memo} 이 값은 건물 조명, NPC 기분, 잠금 장식에 반영되어 방문자가 현재 컨디션을 볼 수 있게 설계되어 있어요."
+            f"{workout}.{memo} 이 값이 건물 조명과 NPC 기분, 잠금 장식으로 번져서 지금 컨디션이 마을 모양으로 보여요."
         )
 
     if _contains(message, ["연락", "메일", "github", "contact", "채용", "문의"]):
         return (
-            "연락은 toadsam@naver.com 으로 보낼 수 있고, GitHub는 https://github.com/toadsam 입니다. "
-            "채용자 관점에서는 MyStock-Desk, FestFlow, 근근 MuscleUp을 먼저 본 뒤 기술 질문은 테오에게 이어서 물어보는 흐름이 가장 빠릅니다."
+            "연락은 toadsam@naver.com, 코드는 https://github.com/toadsam 이에요. "
+            "채용자라면 MyStock-Desk, FestFlow, 근근 MuscleUp을 먼저 보고, 기술 질문은 테오에게 넘기는 길이 가장 빨라요."
         )
 
     if npc_id == "developer-npc" or "skill" in npc_id:
         return (
-            "기술 질문이라면 프로젝트와 연결해서 보는 게 좋아요. "
-            "MyStock-Desk는 React/TypeScript와 도메인 계산 로직, FestFlow는 Spring Boot와 SSE 실시간 흐름, "
-            "이 포트폴리오는 Next.js와 Three.js/FastAPI 연결 경험을 보여줍니다."
+            "기술은 프로젝트에 붙여서 봐야 왜 골랐는지가 보여요. "
+            "MyStock-Desk 는 React 화면 뒤에 도메인 계산 로직이 있는 쪽이고요. "
+            "FestFlow 는 Spring Boot 위에 SSE 를 얹어 실시간 흐름을 만든 쪽이에요. "
+            "이 마을은 Next.js 화면과 FastAPI 를 이은 경우고, 3D 는 Three.js 예요. "
+            "어느 걸 왜 썼는지는 그 프로젝트 얘기로 들어가야 제대로 나와요."
         )
 
     if npc_id == "archivist-npc" or "exp" in npc_id:
         return (
-            "기록 관점에서 보면 정재훈은 결과만 남기는 타입보다 문제, 접근, 기여, 배운 점을 같이 묶는 타입이에요. "
-            "그 흐름이 프로젝트 상세 페이지와 오늘의 마을 상태에 함께 반영되어 있습니다."
+            "기록을 보면 정재훈은 결과만 남기는 사람이 아니에요. 어디서 틀렸고 그 다음에 뭐가 달라졌는지를 같이 적어 두는 쪽이에요. "
+            "그 흐름이 프로젝트 상세 페이지와 오늘의 마을 상태에 그대로 남아 있어요."
         )
 
     if npc_id == "contact-npc" or "post" in npc_id:
         return (
-            "다음 행동은 간단해요. 코드를 보고 싶다면 github.com/toadsam, 직접 연락하려면 toadsam@naver.com 으로 이어가면 됩니다. "
-            "관심 프로젝트를 함께 적어주면 대화가 더 빠르게 이어질 거예요."
+            "코드는 github.com/toadsam, 연락은 toadsam@naver.com 이에요. "
+            "관심 프로젝트를 한 줄 적어 보내면 답이 빨라요."
         )
 
     return (
-        "이 마을은 정재훈의 프로젝트, 기술, 경험, 오늘 활동을 하나의 3D 공간으로 묶은 포트폴리오예요. "
-        "처음이라면 빠른 이력서로 전체를 훑고, 그다음 MyStock-Desk나 FestFlow 건물에 들어가 상세 전시를 보는 흐름을 추천해요."
+        "여기는 정재훈의 포트폴리오를 마을 모양으로 펼쳐 놓은 곳이에요. "
+        "처음이면 빠른 이력서로 훑고, 그다음 MyStock-Desk나 FestFlow 건물에 들어가 보면 돼요."
     )
 
 
@@ -431,7 +435,7 @@ def _project_answer(project: dict[str, Any]) -> str:
     return (
         f"{project['title']}는 {project['summary']} "
         f"정재훈의 역할은 {project['role']}였고, 핵심 난점은 {project['hard_part']} "
-        f"사용 기술은 {tech}입니다. 채용자 관점에서는 {project.get('recruiter_value', '구현 경험을 확인하기 좋은 프로젝트입니다.')}"
+        f"쓴 기술은 {tech} 쪽이에요. 채용자 눈으로 보면 — {project.get('recruiter_value', '구현 경험을 확인하기 좋은 프로젝트예요.')}"
     )
 
 

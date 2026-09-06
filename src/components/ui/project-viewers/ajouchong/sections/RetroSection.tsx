@@ -43,9 +43,8 @@ export function RetroSection({onExit}: {onExit: () => void}) {
 
       <div className="mt-6" style={rise(on[IDX.learn], instant)}>
         <Body>
-          화면을 다 만들었을 때 저는 끝났다고 생각했습니다. 실제로는
-          거기서부터가 절반이었습니다. 새로고침 한 번에 404가 뜨고, 내
-          노트북에서만 되는 빌드를 마주하고 나서야{" "}
+          새로고침 한 번에 404가 떴습니다. 그다음엔 제 노트북에서만 되는 빌드를
+          마주했습니다. 화면을 다 만든 뒤에 만난 이 두 사고에서{" "}
           <strong>&lsquo;배포&rsquo;가 별도의 기술 영역</strong>
           이라는 걸 알았습니다.
         </Body>

@@ -152,12 +152,12 @@ export function VillageDemo({theme}: {theme: ProjectTheme}) {
       }
       footer={
         <p className="font-mono text-[11px] leading-5 text-white/45">
-          💡 왼쪽은 관리자 배전반, 오른쪽은 마을의 축소판 — 점수식과 문턱값(0 ·
-          35 · 75)은{" "}
+          왼쪽은 관리자 배전반, 오른쪽은 마을의 축소판입니다. 점수식과 문턱값(0
+          · 35 · 75)은{" "}
           <span style={{color: theme.primary}}>
-            서버의 village_service.py 와 같다
+            서버의 village_service.py 와 같고
           </span>
-          . 모델(OpenAI)은 이 결정에 관여하지 않고 그 위에 대사만 얹는다.
+          , 모델(OpenAI)은 이 결정에 관여하지 않고 그 위에 대사만 얹습니다.
         </p>
       }
     >

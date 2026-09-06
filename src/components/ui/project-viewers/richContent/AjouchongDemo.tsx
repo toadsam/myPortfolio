@@ -49,8 +49,8 @@ export function AjouchongDemo({theme}: {theme: ProjectTheme}) {
       tag="OFFICIAL SPA"
       footer={
         <p className="font-mono text-[11px] leading-5 text-white/45">
-          💡 상단 <span style={{color: theme.primary}}>공지 티커</span>가
-          흐르고, 탭으로 게시판이 전환됩니다.
+          상단에는 <span style={{color: theme.primary}}>공지 티커</span>가
+          흐릅니다. 탭을 누르면 게시판이 바뀝니다.
         </p>
       }
     >

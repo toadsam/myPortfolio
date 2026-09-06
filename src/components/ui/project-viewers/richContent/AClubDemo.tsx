@@ -50,9 +50,11 @@ export function AClubDemo({theme}: {theme: ProjectTheme}) {
       tag="CLUB DISCOVERY"
       footer={
         <p className="font-mono text-[11px] leading-5 text-white/45">
-          💡 태그를 누르면 동아리 카드가{" "}
-          <span style={{color: theme.primary}}>실시간으로 필터·재배치</span>
-          됩니다.
+          태그를 누르면 동아리 카드가{" "}
+          <span style={{color: theme.primary}}>
+            그 자리에서 걸러지고 다시 배치
+          </span>
+          됩니다. 다른 태그를 누르면 목록이 바뀝니다.
         </p>
       }
     >

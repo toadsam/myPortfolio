@@ -249,7 +249,7 @@ export function P07Collision() {
                 : {text: "미적용", color: "var(--ts-faint)"}
             }
             borderColor={guarded ? "rgba(52,211,153,0.4)" : "var(--ts-border)"}
-            footer="Success 를 통해 충돌 체크 여부 확인"
+            footer="Success 값으로 충돌 체크 여부 확인"
           >
             <div className="py-2">
               <CodeLine n={1}>{"private void GetSuccess()"}</CodeLine>
@@ -279,7 +279,7 @@ export function P07Collision() {
                 : {text: "미적용", color: "var(--ts-faint)"}
             }
             borderColor={guarded ? "rgba(52,211,153,0.4)" : "var(--ts-border)"}
-            footer="ignorePlayerStatus 를 통해 충돌 체크 여부 확인"
+            footer="ignorePlayerStatus 값으로 충돌 체크 여부 확인"
           >
             <div className="py-2">
               <CodeLine n={1}>{"private void Update()"}</CodeLine>

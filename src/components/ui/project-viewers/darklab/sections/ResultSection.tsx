@@ -101,7 +101,7 @@ export function ResultSection() {
           style={{opacity: momentOn || lightsOn ? 1 : 0}}
         >
           <p className="text-[20px] font-medium text-[#ff5a4d]">
-            여기부터는 불을 켜고 이야기하겠습니다.
+            여기부터는 불을 켜고 이야기하겠다.
           </p>
           <div className="mt-12 font-mono text-[11px] uppercase tracking-[0.25em] text-[rgba(255,255,255,0.42)]">
             05 · 결과
@@ -144,8 +144,8 @@ export function ResultSection() {
 
         {/* 측정하지 못한 것을 숨기지 않는다 */}
         <p className="dl-fade-up mb-24 w-full text-center font-mono text-[11px] leading-6 text-[rgba(255,255,255,0.42)]">
-          이 프로젝트는 지표를 수집하지 않았습니다. 아래 숫자는 성과가 아니라
-          구성 요소의 개수입니다.
+          이 프로젝트는 지표를 수집하지 않았다. 아래 숫자는 구성 요소의 개수일
+          뿐, 성과가 아니다.
         </p>
 
         <div className="mb-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-3">

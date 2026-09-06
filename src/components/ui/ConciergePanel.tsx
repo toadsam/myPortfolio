@@ -50,7 +50,7 @@ export function ConciergePanel({
           <div>
             <p className="v-panel-title text-[13px]">루미 · 마을 안내인</p>
             <p className="mt-0.5 text-sm font-bold text-[#f3e6c8]">
-              안녕하세요! 어떤 목적으로 오셨어요?
+              광장에 잘 오셨어요. 오늘은 어디부터 볼까요?
             </p>
           </div>
         </div>
@@ -110,7 +110,7 @@ export function ConciergePanel({
           동안의 안내는 이 줄이 맡는다. */}
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[#e2c078]/15 pt-3 text-[11px] font-bold text-[#a9bdd6]/80">
         <span>
-          🏠 건물을 누르면 내용 · 🙂 사람을 누르면 대화 · 📍 바닥을 누르면 이동
+          건물을 누르면 내용 · 사람을 누르면 대화 · 바닥을 누르면 이동
         </span>
         <button
           type="button"

@@ -5,7 +5,7 @@ import {useDarkLab} from "../context";
 
 // 4초 안에 "왜 만들었나"를 읽히는 게 이 페이지의 유일한 목적이다.
 const MOTIVATION =
-  "공포 게임에서 제일 어려운 건 무서운 걸 만드는 게 아니라, 아무것도 없는 방을 무섭게 만드는 일이었다. 그게 궁금해서 만들었다.";
+  "아무것도 없는 방을 무섭게 만드는 게 제일 어려웠다. 그게 궁금해서 만들었다.";
 
 export function EntrySection() {
   const {reducedMotion} = useDarkLab();
