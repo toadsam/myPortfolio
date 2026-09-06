@@ -241,7 +241,9 @@ function renderSkills() {
 ${skillDetails
   .map(
     s =>
-      `    <tr><th>${esc(s.area)}</th><td>${esc(s.stack.join(", "))}</td></tr>`
+      `    <tr><th>${esc(s.area)}</th><td>${s.stack
+        .map(x => (s.core?.includes(x) ? `<b>${esc(x)}</b>` : esc(x)))
+        .join(", ")}</td></tr>`
   )
   .join("\n")}
   </table>

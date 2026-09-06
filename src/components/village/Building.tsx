@@ -366,7 +366,13 @@ function BuildingLabel({
             }}
             title={lead.tech}
           >
-            <svg viewBox="0 0 24 24" width={19} height={19} aria-hidden="true">
+            {/* viewBox 는 아이콘 표를 따른다 — Devicon 계열(Java)은 128 좌표계다. */}
+            <svg
+              aria-hidden="true"
+              height={19}
+              viewBox={lead.icon.viewBox ?? "0 0 24 24"}
+              width={19}
+            >
               <path
                 d={lead.icon.d}
                 {...(lead.icon.stroke

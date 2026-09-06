@@ -2503,6 +2503,14 @@
   background: rgb(var(--v-night) / 0.55);
   border: 1px solid rgb(var(--v-wood) / 0.4);
 }
+/* 주력 칩(SkillDetail.core). 간판 금색 테두리 + 밝은 글자. 나머지는 위 흐린 칩 그대로 —
+   두 단계면 충분하다. 세 단계부터는 다시 숙련도 막대가 된다. */
+.resume-terminal .skill-stack-item.is-core {
+  color: var(--accent);
+  border-color: rgb(var(--v-gold) / 0.7);
+  background: rgb(var(--v-gold) / 0.1);
+  font-weight: 700;
+}
 
 /* ── 히어로 지표: GitHub 저장소 수 ──
    눌러서 확인되는 숫자라 링크다. 나머지 모듈과 생김새는 같게 둔다. */

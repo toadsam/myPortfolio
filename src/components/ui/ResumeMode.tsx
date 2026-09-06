@@ -965,6 +965,8 @@ export function ResumeMode({onEnterVillage}: Props) {
               </h2>
             </header>
 
+            {/* 로고 칩 줄 — 주력만. 예전엔 13개(HTML5·CSS3 포함)라 아래 표와
+                9개가 겹쳤다. 지금은 표의 core 에서 파생한 8개(2026-09-06). */}
             <div className="skill-tags reveal reveal-delay-1">
               {skillChips.map(s => {
                 const icon = getTechIcon(s);
@@ -987,7 +989,7 @@ export function ResumeMode({onEnterVillage}: Props) {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={icon.stroke ? 1.8 : undefined}
-                        viewBox="0 0 24 24"
+                        viewBox={icon.viewBox ?? "0 0 24 24"}
                       >
                         <path d={icon.d} />
                       </svg>
@@ -1010,7 +1012,14 @@ export function ResumeMode({onEnterVillage}: Props) {
                             했는지가 안 보여서, 심사자가 스택을 못 센다. */}
                         <span className="skill-stack">
                           {d.stack.map(s => (
-                            <span className="skill-stack-item" key={s}>
+                            <span
+                              className={
+                                d.core?.includes(s)
+                                  ? "skill-stack-item is-core"
+                                  : "skill-stack-item"
+                              }
+                              key={s}
+                            >
                               {s}
                             </span>
                           ))}

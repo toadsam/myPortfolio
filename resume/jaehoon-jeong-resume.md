@@ -18,9 +18,10 @@ React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운
 
 ## Technical Skills
 
-Frontend: React, Vite, TypeScript, JavaScript, React Query, Axios, Expo, React Native, Tailwind CSS, Responsive UI  
-Backend: Java, Spring Boot, Spring Security, JPA, REST API, Express, Passport, Session  
-Auth / Infra / Data: JWT, Refresh Token Rotation, OAuth2, AWS, CloudFront, S3, CORS, HTTPS, SSE, Firebase, MySQL, MongoDB  
+Frontend: React, TypeScript, Next.js, Three.js (R3F), Vite, React Query, Tailwind CSS, Expo, React Native
+Backend: Spring Boot, Java, JPA, Spring Security, Node.js, Express, FastAPI (Python)
+Auth: JWT, Refresh Token Rotation, OAuth2, Passport, Firebase Auth
+Infra / Data: AWS, S3, CloudFront, MySQL, MongoDB, Firebase
 Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Pooling
 
 ## GitHub Evidence
@@ -146,11 +147,14 @@ BaekjoonHub 기반 알고리즘 풀이 repo를 별도로 관리하며 C++ 문제
 아주대학교, 인공지능융합학과 복수전공, 메타버스기획마이크로전공  
 2021.03 - 2027.02
 
-스파르타 내일배움캠프, Unity 게임개발자 양성과정  
-2023.09 - 2024.02
+스파르타 내일배움캠프(팀스파르타), 실무형 Unity 게임개발자 양성과정 (1,080시간)  
+2023.08.07 - 2023.12.15 (HRD-Net 훈련확인증 기준)
 
-코드잇 · 구름, 웹 개발 및 AI/SW 역량 강화 과정  
-2021 - 2023
+구름(goorm) · 카카오엔터프라이즈, 군 장병 맞춤형 온라인 AI·SW 교육 — 입문 과정 · SW개발 초급과정 2 수료  
+2023.03.08 - 2023.12.31 (수료증 기재 교육 기간, 발행 2023.06.16)
+
+코드잇, 대학생 코딩캠프  
+2021.03 - 2021.04 (기수 미확인 — 3기 2021.03.14~04.12 로 추정)
 
 ## Collaboration
 
