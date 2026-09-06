@@ -154,7 +154,7 @@ export function P11Result() {
         style={rise(on[IDX.stats], instant)}
       >
         <StatCard n="Steam" l="상용 플랫폼 출시" accent="var(--ts-primary)" />
-        <StatCard n="4개월" l="2023.07 — 2023.11" accent="var(--ts-accent)" />
+        <StatCard n="4개월" l="2023.11 — 2024.02" accent="var(--ts-accent)" />
         <StatCard n="4건" l="유저테스트 반영" accent="var(--ts-accent)" />
         <StatCard n="부팀장" l="레벨 · 기믹 · 기획" accent="var(--ts-ray)" />
       </div>
