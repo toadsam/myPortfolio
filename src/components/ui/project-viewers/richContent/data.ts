@@ -4,7 +4,7 @@ import type {RichProject} from "./shared";
 // 원칙: 검증 불가능한 수치(성능 %, 사용자 테스트 점수 등)는 넣지 않는다.
 //   - metrics/impact 는 리포에서 셀 수 있는 값(도메인 수·API 수·모듈 수 등)만 사용.
 //   - perf/usability(측정치) 필드는 실측이 없으므로 비워 둠(의도적).
-// 기간·역할·팀은 `resume/jaehoon-jeong-resume.md`(이력서 원본) 기준. 원본에 근거가
+// 기간·역할·팀은 `resume/jeong-jaehun-resume.md`(이력서 원본) 기준. 원본에 근거가
 // 없는 프로젝트(mystock · ajou-adventure)는 기간 행 자체를 두지 않는다 — 예전엔
 // 그 자리에 `"[확인필요] 개인 프로젝트"` 라는 글자가 그대로 들어 있었고, 원페이저가
 // 기간 행을 렌더하는 순간 그게 화면에 나갈 뻔했다. 지어내느니 비운다.

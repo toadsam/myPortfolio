@@ -71,7 +71,7 @@ export const metadata: Metadata = {
     "WebGL",
     "게임"
   ],
-  authors: [{name: "정재훈 (Jaehoon Jung)"}],
+  authors: [{name: "정재훈 (Jeong Jaehun)"}],
   // 2026-09-06 — 파비콘을 JH 마크(본인 생성 이미지)로 교체. svg 는 그 png 를 품은
   // 래퍼이고, 브라우저가 svg 를 못 쓰면 png/ico 로 떨어진다.
   icons: {

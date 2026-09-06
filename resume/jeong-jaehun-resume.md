@@ -4,12 +4,12 @@ Full-Stack Web Developer
 Email: toadsam@naver.com  
 Phone: 010-6428-6247  
 GitHub: https://github.com/toadsam  
-Portfolio: https://toadsam.github.io/myPortfolio/  
+Portfolio: https://my-portfolio-5ow2.vercel.app/  
 Target: Web Full-Stack / Frontend / Backend
 
 ## Summary
 
-React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운영 이슈까지 직접 다루는 신입 개발자입니다. 기능을 만드는 데서 멈추지 않고 사용자 흐름, API 책임, 토큰/세션 유지, HTTPS/CORS 같은 운영 조건까지 확인해 실제 서비스로 닫는 개발을 지향합니다. 공개 GitHub에는 최신 웹 풀스택, 접근성/교육 서비스, 알고리즘, Unity 프로젝트가 함께 정리되어 있습니다.
+React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운영 이슈까지 직접 다루는 신입 개발자입니다. 만든 기능은 배포한 뒤 HTTPS, CORS, 토큰 재발급에서 생긴 문제까지 직접 재현해 고쳐 왔습니다. 공개 GitHub에는 최신 웹 풀스택, 접근성/교육 서비스, 알고리즘, Unity 프로젝트가 함께 정리되어 있습니다.
 
 - React/Spring Boot 기반 웹 풀스택, 프론트엔드, 백엔드 직무 지향
 - JWT 이중 쿠키와 토큰 재발급 경쟁 상태, OAuth/Session, CORS, HTTPS, SSE 등 운영형 문제 해결 경험
@@ -45,10 +45,9 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 
 ## Hiring Signals
 
-- 서비스 전체 흐름 구현: 화면, API, 인증, DB, 배포 환경을 분리해서 보지 않고 사용자가 실제로 지나가는 흐름 기준으로 설계합니다.
-- 운영 중 문제 해결: HTTPS, Mixed Content, CORS credentials, Refresh Token 재발급, 세션 저장소, SSE 실시간 스트림처럼 배포 후 드러나는 문제를 직접 재현하고 수정했습니다.
+- 서비스 전체 흐름 구현: 화면부터 API, 인증, DB, 배포까지 사용자가 지나가는 한 흐름으로 이어서 만듭니다.
+- 운영 중 문제 해결: HTTPS/Mixed Content, CORS credentials, Refresh Token 재발급, 세션 저장소, SSE 연결처럼 배포 후에 드러나고 프론트와 서버 설정을 함께 봐야 하는 문제를 직접 재현해 수정했습니다.
 - 실사용 피드백 반영: GA4/GSC 지표와 운영 피드백을 바탕으로 정보 구조, CTA, 링크 흐름, 문구를 개선했습니다.
-- 대표 트러블슈팅: CORS credentials, 쿠키 기반 세션 유지, HTTPS/Mixed Content, Refresh Token 재발급, SSE 연결처럼 프론트와 서버 설정을 함께 봐야 하는 문제를 다뤘습니다.
 
 ## Core Projects
 
@@ -76,7 +75,7 @@ Stack: React, Vite, Tailwind CSS, PWA, Spring Boot 3, JPA, Spring Security, JWT,
 대학교 축제 운영을 위한 웹앱으로, 사용자 지도/부스 탐색과 관리자 운영, 실시간 공지·혼잡도·공연 상태를 함께 다루는 서비스입니다.
 
 - Problem: 축제 현장에서는 부스 위치, 혼잡도, 공연 상태, 공지, 분실물, 관리자 운영 데이터가 빠르게 바뀌어 실시간성과 운영 권한이 중요합니다.
-- Action: React(Vite)와 Tailwind 기반 PWA, Spring Boot 3/JPA/Security/JWT, MySQL 구조로 사용자 기능과 관리자 API를 분리했습니다.
+- Action: 현장에서 바뀌는 혼잡도·공연·공지를 SSE 스트림으로 흘리고, 사용자 기능과 관리자 API를 분리했습니다. 스택은 React(Vite)·Tailwind PWA, Spring Boot 3/JPA/Security/JWT, MySQL입니다.
 - Result: SSE 기반 혼잡도·공연·공지 스트림, 관리자 CRUD/CSV 업로드, KPI/감사 로그, GPS 기반 혼잡도 계산, 분석 API까지 포함한 운영형 구조를 구현했고, 2026.05 아주대학교 대동제에서 AI Match 기능을 1일간 실제 운영했습니다.
 - Evidence: 현장 운영 실측(2026.05 아주대학교 대동제 · 1일): AI Match 등록자 169명, 매칭 신청 424건, 성사 매칭 36건, 관리자 처리 30건 이상, QA 참여 46명(본인 확인 2026-09-06 — 발표자료 15장의 15명은 등록자 47명·신청 23건과 같은 초기 스냅샷). 저장소에는 SSE 스트림, 관리자 보호 API, CSV 일괄 업로드, KPI, 감사 로그, PWA/오프라인 페이지 구조가 공개되어 있습니다.
 
@@ -104,7 +103,7 @@ Stack: TypeScript, Expo, React Native, Spring Boot, Spring Security, OAuth2, JWT
 수어 아바타 기반 퀴즈 학습과 텍스트 입력 기반 수어 표현을 결합한 접근성/교육 목적 서비스입니다.
 
 - Problem: 수어를 처음 접하는 사용자는 동작과 의미를 반복적으로 연결해 학습할 도구가 부족하고, 입력한 표현을 즉시 수어로 확인하기 어렵습니다.
-- Action: Expo/React Native 프론트와 Spring Boot 백엔드를 구성하고, Google OAuth2, JWT, Firebase, 퀴즈/번역 API 흐름을 설계했습니다.
+- Action: 수어 아바타 퀴즈로 동작과 의미를 반복해 맞히고 정답 피드백을 받는 학습 흐름과, 입력한 텍스트를 수어 표현으로 보여주는 흐름을 Expo/React Native 앱과 Spring Boot API(Google OAuth2, JWT, Firebase)로 만들었습니다.
 - Result: 수어 읽기 학습, 정답 피드백, 텍스트 기반 수어 표현, 사용자 인증을 포함한 시제품 구조를 공개 repo로 관리했습니다.
 - Evidence: README에 30개 이상 기본 수어 단어 학습 콘텐츠와 텍스트 기반 수어 표현 기능 목표가 정리되어 있고, backend/frontendcodes 구조가 공개되어 있습니다.
 
@@ -132,12 +131,12 @@ Passport Local과 Google/Naver OAuth를 통합하고 MongoStore, withCredentials
 ### Algorithm
 
 2026.03 업데이트 / C++  
-BaekjoonHub 기반 알고리즘 풀이 repo를 별도로 관리하며 C++ 문제 풀이 기록을 지속적으로 축적했습니다.
+BaekjoonHub로 C++ 문제 풀이를 별도 repo에 기록하고 있습니다.
 
 ### TSEROF · INTO MONSTER POINT · 아주대탐험
 
 2023.11 - 2025.05 / Unity, C#, AR  
-출시/배포 게임, AR Plane 기반 전투 공간 생성, NavMesh AI, 스킬 선택, Object Pooling, Raycast 최적화 등 인터랙션과 게임 시스템 구현 경험을 쌓았습니다.
+출시/배포한 게임에서 AR Plane 기반 전투 공간 생성, NavMesh AI, 스킬 선택, Object Pooling, Raycast 최적화를 구현했습니다.
 
 ## Education
 
@@ -158,8 +157,8 @@ BaekjoonHub 기반 알고리즘 풀이 repo를 별도로 관리하며 C++ 문제
 
 ## Collaboration
 
-헬스 동아리 회장, 정보통신대학교 학생회 대외협력국, 총학생회 생활복지국·소통발전국·소통개발국장 활동을 통해 일정, 역할, 문의, 피드백을 정리해 실행으로 연결한 경험이 있습니다.
+헬스 동아리 회장, 정보통신대학교 학생회 대외협력국, 총학생회 생활복지국·소통발전국·소통개발국장을 맡아 일정과 역할을 나누고 문의·피드백을 받아 처리했습니다.
 
 ## Positioning
 
-신입이지만 단순 기능 구현보다 운영 가능한 서비스 완성을 기준으로 사고하는 개발자입니다. 웹 직무에서는 React/Spring Boot 기반 구현력과 인증/배포 이슈 해결 경험을, 협업에서는 실제 운영 피드백을 제품 개선으로 연결한 경험을 강점으로 제공합니다.
+신입이지만 운영 가능한 서비스 완성을 기준으로 일하는 개발자입니다. React/Spring Boot 구현력과 인증/배포 이슈 해결 경험, 운영 피드백을 제품 개선으로 연결한 경험이 있습니다.

@@ -1,7 +1,7 @@
 // 이력서 PDF 생성 — `src/data/resume.ts` 를 그대로 읽어 A4 인쇄용 HTML 을 만들고 찍는다.
 //
 // ── 왜 데이터에서 만드나 ─────────────────────────────────────────────────────
-// 예전에는 `resume/jaehoon-jeong-resume.html` 이라는 손으로 쓴 웹페이지(1060px,
+// 예전에는 `resume/jeong-jaehun-resume.html` 이라는 손으로 쓴 웹페이지(1060px,
 // 사이드바 2단)를 A4 로 인쇄했다. 두 가지가 무너졌다:
 //   1. 사이드바가 1쪽에서 끝나 2·3쪽 왼쪽 절반이 백지였고, 학력 한 줄이 쪽 경계에
 //      잘렸다 — 화면 레이아웃을 종이에 그대로 넣은 결과.
@@ -17,8 +17,8 @@
 // (`public/`)은 번호 없이 찍은 뒤 텍스트 레이어에 번호가 없는지 다시 검사한다.
 // (PDF 를 사후 편집해 글자를 지우는 건 텍스트 레이어가 남아 안전하지 않다.)
 //
-// 실행:  npm run resume:pdf              → public/jeong-jaehoon-resume.pdf (번호 없음)
-//        npm run resume:pdf -- --private → resume/jaehoon-jeong-resume.pdf (번호 있음) 도 함께
+// 실행:  npm run resume:pdf              → public/jeong-jaehun-resume.pdf (번호 없음)
+//        npm run resume:pdf -- --private → resume/jeong-jaehun-resume.pdf (번호 있음) 도 함께
 //        npm run resume:pdf -- --html    → PDF 는 안 찍고 .tmp/resume-print/*.html 만 만든다
 
 import {mkdir, readFile, writeFile} from "node:fs/promises";
@@ -30,9 +30,9 @@ const args = new Set(process.argv.slice(2));
 const PRIVATE = args.has("--private");
 const HTML_ONLY = args.has("--html");
 
-const OUT_PUBLIC = join(root, "public/jeong-jaehoon-resume.pdf");
-const OUT_PRIVATE = join(root, "resume/jaehoon-jeong-resume.pdf");
-const SRC_MD = join(root, "resume/jaehoon-jeong-resume.md");
+const OUT_PUBLIC = join(root, "public/jeong-jaehun-resume.pdf");
+const OUT_PRIVATE = join(root, "resume/jeong-jaehun-resume.pdf");
+const SRC_MD = join(root, "resume/jeong-jaehun-resume.md");
 const TMP_DIR = join(root, ".tmp/resume-print");
 
 // ── 데이터 ───────────────────────────────────────────────────────────────────
@@ -102,8 +102,8 @@ function renderContact(phone) {
     ["GitHub", esc(bare(contact.github)), contact.github],
     [
       "Portfolio",
-      "toadsam.github.io/myPortfolio",
-      "https://toadsam.github.io/myPortfolio/"
+      "my-portfolio-5ow2.vercel.app",
+      "https://my-portfolio-5ow2.vercel.app/"
     ]
   ].filter(Boolean);
   return `<dl class="contact">
@@ -521,10 +521,10 @@ const {launchChromium} = await import("./e2e/lib.mjs");
 const browser = await launchChromium();
 try {
   await printPdf(browser, publicHtml, OUT_PUBLIC);
-  console.log(`생성: public/jeong-jaehoon-resume.pdf`);
+  console.log(`생성: public/jeong-jaehun-resume.pdf`);
   if (privateHtml) {
     await printPdf(browser, privateHtml, OUT_PRIVATE);
-    console.log(`생성: resume/jaehoon-jeong-resume.pdf (전화번호 포함)`);
+    console.log(`생성: resume/jeong-jaehun-resume.pdf (전화번호 포함)`);
   }
 } finally {
   await browser.close();

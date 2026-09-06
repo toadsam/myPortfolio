@@ -82,4 +82,4 @@ export const hero: HeroContent = {
 export const heroSummary = "웹 주력 + 운영 이슈 해결 중심";
 
 /** public/ 기준. 전화번호를 지운 사본이다(원본은 `resume/` 폴더). */
-export const resumePdf = "/jeong-jaehoon-resume.pdf";
+export const resumePdf = "/jeong-jaehun-resume.pdf";

@@ -2,7 +2,7 @@
 //
 // ## 사실관계의 출처
 //
-// **`resume/jaehoon-jeong-resume.md`(본인이 쓴 이력서 원본)가 정답이다.**
+// **`resume/jeong-jaehun-resume.md`(본인이 쓴 이력서 원본)가 정답이다.**
 // 기간·역할·팀 규모·외부 링크는 전부 거기서 가져왔고, 거기 없는 값은
 // **지어내지 않고 비워 둔다**(`period`·`role` 이 없으면 화면에 그 줄이 안 그려진다).
 // 예전에는 이 파일이 배포본(toadsam.github.io) 텍스트만 옮겨와서 기간도 역할도
@@ -212,7 +212,7 @@ export interface MainProjectCard {
   /**
    * PDF 이력서의 성과 줄 2~3개. 화면 카드는 지표 타일과 전용 전시실이 말해 주지만
    * 종이에는 그 둘이 없으므로 "무엇을 어떻게 해서 어떻게 됐나"를 문장으로 적는다.
-   * 출처는 `resume/jaehoon-jeong-resume.md` — 거기 없는 사실은 적지 않는다.
+   * 출처는 `resume/jeong-jaehun-resume.md` — 거기 없는 사실은 적지 않는다.
    * 비어 있으면 PDF 에서 subtitle 한 줄만 나간다.
    */
   highlights?: string[];
@@ -496,7 +496,7 @@ export const careers: CareerItem[] = [
   // 그 사실이 세 칸에 흩어져 있어서 안 보였다(활동 8건 중 5건이 학생자치라
   // "개발을 덜 했나" 로 읽힐 여지까지 있었다).
   //
-  // 정답 문서도 이걸 한 줄로 요약한다 — resume/jaehoon-jeong-resume.md 「Collaboration」.
+  // 정답 문서도 이걸 한 줄로 요약한다 — resume/jeong-jaehun-resume.md 「Collaboration」.
   // 중앙비상대책위원회는 44대와 45대 사이(2026.01~03)의 같은 학생자치 이력이라
   // **한 칸에 넣는다**(본인 결정 2026-09-04, 순서 43 → 44 → 비대위 → 45).
   // FIT 학생회는 다른 조직이라 그대로 따로 둔다. 대수와 경로를 role 에 그대로
@@ -632,7 +632,7 @@ export const workExperience: WorkItem[] = [
 ];
 
 // ─── Main Projects ────────────────────────────────────────────────────────────
-// 기간·역할·팀은 `resume/jaehoon-jeong-resume.md` 기준. 원본에 없으면 비운다.
+// 기간·역할·팀은 `resume/jeong-jaehun-resume.md` 기준. 원본에 없으면 비운다.
 
 export const mainProjects: MainProjectCard[] = [
   {

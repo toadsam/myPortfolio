@@ -691,7 +691,7 @@
   <body>
     <article class="sheet">
       <div class="toolbar">
-        <a href="./jaehoon-jeong-resume.md">ATS Markdown</a>
+        <a href="./jeong-jaehun-resume.md">ATS Markdown</a>
         <button type="button" onclick="window.print()">PDF 저장</button>
       </div>
 
@@ -702,9 +702,8 @@
           <p class="headline">Full-Stack Web Developer</p>
           <p class="summary">
             React와 Spring Boot를 중심으로 <strong>서비스 구현, 인증/보안, 배포 운영 이슈</strong>까지
-            직접 다루는 신입 개발자입니다. 기능을 만드는 데서 멈추지 않고
-            사용자 흐름, API 책임, 토큰/세션 유지, HTTPS/CORS 같은 운영 조건까지
-            확인해 실제 서비스로 닫는 개발을 지향합니다. 공개 GitHub에는 최신 웹 풀스택,
+            직접 다루는 신입 개발자입니다. 만든 기능은 배포한 뒤 HTTPS, CORS,
+            토큰 재발급에서 생긴 문제까지 직접 재현해 고쳐 왔습니다. 공개 GitHub에는 최신 웹 풀스택,
             접근성/교육 서비스, 알고리즘, Unity 프로젝트가 함께 정리되어 있습니다.
           </p>
           <div class="signal-row">
@@ -741,8 +740,8 @@
             <div>
               <dt>Portfolio</dt>
               <dd>
-                <a href="https://toadsam.github.io/myPortfolio/">
-                  toadsam.github.io/myPortfolio
+                <a href="https://my-portfolio-5ow2.vercel.app/">
+                  my-portfolio-5ow2.vercel.app
                 </a>
               </dd>
             </div>
@@ -860,14 +859,14 @@
                 <p>인공지능융합학과 복수전공, 메타버스기획마이크로전공</p>
               </div>
               <div class="compact-item">
-                <span>2023.09 - 2024.02</span>
+                <span>2023.08 - 2023.12</span>
                 <strong>스파르타 내일배움캠프</strong>
-                <p>Unity 게임개발자 양성과정</p>
+                <p>실무형 Unity 게임개발자 양성과정 (1,080시간)</p>
               </div>
               <div class="compact-item">
                 <span>2021 - 2023</span>
                 <strong>코드잇 · 구름</strong>
-                <p>웹 개발 및 AI/SW 역량 강화 과정</p>
+                <p>대학생 코딩캠프 · 군 장병 맞춤형 온라인 AI·SW 교육(입문 과정, SW개발 초급과정 2 수료)</p>
               </div>
             </div>
           </section>
@@ -878,8 +877,8 @@
               <strong>학생회·동아리 운영 경험</strong>
               <p>
                 헬스 동아리 회장, 정보통신대학교 학생회 대외협력국,
-                총학생회 생활복지국·소통발전국·소통개발국장 활동을 통해 일정, 역할, 문의,
-                피드백을 정리해 실행으로 연결한 경험이 있습니다.
+                총학생회 생활복지국·소통발전국·소통개발국장을 맡아 일정과 역할을 나누고
+                문의·피드백을 받아 처리했습니다.
               </p>
             </div>
           </section>
@@ -891,19 +890,15 @@
             <div class="metric-list">
               <div class="metric">
                 <strong>서비스 전체 흐름을 구현합니다.</strong>
-                <span>화면, API, 인증, DB, 배포 환경을 분리해서 보지 않고 사용자가 실제로 지나가는 흐름 기준으로 설계합니다.</span>
+                <span>화면부터 API, 인증, DB, 배포까지 사용자가 지나가는 한 흐름으로 이어서 만듭니다.</span>
               </div>
               <div class="metric">
                 <strong>운영 중 터지는 문제를 해결해 본 경험이 있습니다.</strong>
-                <span>HTTPS, Mixed Content, CORS credentials, Refresh Token 재발급, 세션 저장소처럼 배포 후 드러나는 문제를 직접 재현하고 수정했습니다.</span>
+                <span>HTTPS/Mixed Content, CORS credentials, Refresh Token 재발급, 세션 저장소, SSE 연결처럼 배포 후에 드러나고 프론트와 서버 설정을 함께 봐야 하는 문제를 직접 재현해 수정했습니다.</span>
               </div>
               <div class="metric">
                 <strong>실사용 피드백을 제품 개선으로 연결합니다.</strong>
                 <span>GA4/GSC 지표와 운영 피드백을 바탕으로 정보 구조, CTA, 링크 흐름, 문구를 개선했습니다.</span>
-              </div>
-              <div class="metric">
-                <strong>대표 트러블슈팅을 설명할 수 있습니다.</strong>
-                <span>CORS credentials, 쿠키 기반 세션 유지, HTTPS/Mixed Content, Refresh Token 재발급, SSE 연결처럼 프론트와 서버 설정을 함께 봐야 하는 문제를 다뤘습니다.</span>
               </div>
             </div>
           </section>
@@ -967,7 +962,7 @@ JWT / SSE / PWA</div>
                 <strong>Problem</strong>
                 <span>축제 현장에서는 부스 위치, 혼잡도, 공연 상태, 공지, 분실물, 관리자 운영 데이터가 빠르게 바뀌어 실시간성과 운영 권한이 중요합니다.</span>
                 <strong>Action</strong>
-                <span>React(Vite)와 Tailwind 기반 PWA, Spring Boot 3/JPA/Security/JWT, MySQL 구조로 사용자 기능과 관리자 API를 분리했습니다.</span>
+                <span>현장에서 바뀌는 혼잡도·공연·공지를 SSE 스트림으로 흘리고, 사용자 기능과 관리자 API를 분리했습니다. 스택은 React(Vite)·Tailwind PWA, Spring Boot 3/JPA/Security/JWT, MySQL입니다.</span>
                 <strong>Result</strong>
                 <span>SSE 기반 혼잡도·공연·공지 스트림, 관리자 CRUD/CSV 업로드, KPI/감사 로그, GPS 기반 혼잡도 계산, 분석 API까지 포함한 운영형 구조를 구현했고, 2026.05 아주대학교 대동제에서 AI Match 기능을 1일간 실제 운영했습니다.</span>
                 <strong class="screen-detail">Evidence</strong>
@@ -1039,7 +1034,7 @@ OAuth2 / JWT / Firebase</div>
                 <strong>Problem</strong>
                 <span>수어를 처음 접하는 사용자는 동작과 의미를 반복적으로 연결해 학습할 도구가 부족하고, 입력한 표현을 즉시 수어로 확인하기 어렵습니다.</span>
                 <strong>Action</strong>
-                <span>Expo/React Native 프론트와 Spring Boot 백엔드를 구성하고, Google OAuth2, JWT, Firebase, 퀴즈/번역 API 흐름을 설계했습니다.</span>
+                <span>수어 아바타 퀴즈로 동작과 의미를 반복해 맞히고 정답 피드백을 받는 학습 흐름과, 입력한 텍스트를 수어 표현으로 보여주는 흐름을 Expo/React Native 앱과 Spring Boot API(Google OAuth2, JWT, Firebase)로 만들었습니다.</span>
                 <strong>Result</strong>
                 <span>수어 읽기 학습, 정답 피드백, 텍스트 기반 수어 표현, 사용자 인증을 포함한 시제품 구조를 공개 repo로 관리했습니다.</span>
                 <strong class="screen-detail">Evidence</strong>
@@ -1113,15 +1108,15 @@ OAuth2 / JWT / Firebase</div>
                 <span>2026.03 업데이트 · C++</span>
                 <strong>Algorithm</strong>
                 <p>
-                  BaekjoonHub 기반 알고리즘 풀이 repo를 별도로 관리하며 C++ 문제 풀이 기록을 지속적으로 축적했습니다.
+                  BaekjoonHub로 C++ 문제 풀이를 별도 repo에 기록하고 있습니다.
                 </p>
               </div>
               <div class="compact-item">
                 <span>2023.11 - 2025.05 · Unity / C# / AR</span>
                 <strong>TSEROF · INTO MONSTER POINT · 아주대탐험</strong>
                 <p>
-                  출시/배포 게임, AR Plane 기반 전투 공간 생성, NavMesh AI, 스킬 선택, Object Pooling,
-                  Raycast 최적화 등 인터랙션과 게임 시스템 구현 경험을 쌓았습니다.
+                  출시/배포한 게임에서 AR Plane 기반 전투 공간 생성, NavMesh AI, 스킬 선택, Object Pooling,
+                  Raycast 최적화를 구현했습니다.
                 </p>
               </div>
             </div>
@@ -1132,8 +1127,8 @@ OAuth2 / JWT / Firebase</div>
       <footer class="footer">
         <strong>Positioning</strong>
         <span>
-          정재훈은 신입이지만 단순 기능 구현보다 운영 가능한 서비스 완성을 기준으로 사고하는 개발자입니다.
-          웹 직무에서는 React/Spring Boot 기반 구현력과 인증/배포 이슈 해결 경험을, 협업에서는 실제 운영 피드백을 제품 개선으로 연결한 경험을 강점으로 제공합니다.
+          정재훈은 신입이지만 운영 가능한 서비스 완성을 기준으로 일하는 개발자입니다.
+          React/Spring Boot 구현력과 인증/배포 이슈 해결 경험, 운영 피드백을 제품 개선으로 연결한 경험이 있습니다.
         </span>
       </footer>
     </article>
