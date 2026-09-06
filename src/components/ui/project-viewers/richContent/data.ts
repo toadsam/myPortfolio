@@ -60,7 +60,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "내 역할",
-        v: "프론트·백엔드·관리자·3D 성능 예산 전부 (1인, Claude Code 와 짝으로)"
+        v: "1인 개발 — 설계·구현·운영·검증 전부. 코드는 Claude Code 와 짝으로 썼고, 무엇을 만들지·실측·검증은 내가 했다."
       }
     ],
     demo: {live: "/village", repo: "https://github.com/toadsam/myPortfolio"},
