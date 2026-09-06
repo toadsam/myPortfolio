@@ -35,11 +35,19 @@ function readLayout(): PropsLayout {
   }
 }
 
+// 프로덕션에서는 404 — preview 페이지들이 notFound() 로 막는 것과 같은 관례.
+// 배포본에 이 라우트가 열려 있으면 서버 파일 목록 조회와 쓰기 시도가 공개된다.
+function notInDev() {
+  return process.env.NODE_ENV !== "development";
+}
+
 export function GET() {
+  if (notInDev()) return NextResponse.json({error: "not found"}, {status: 404});
   return NextResponse.json({assets: listAssets(), layout: readLayout()});
 }
 
 export async function POST(req: Request) {
+  if (notInDev()) return NextResponse.json({error: "not found"}, {status: 404});
   let body: PropsLayout;
   try {
     body = (await req.json()) as PropsLayout;

@@ -1,3 +1,4 @@
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pathlib import Path
 
@@ -48,6 +49,18 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None   # 없으면 Claude Code CLI 로그인을 그대로 쓴다
 
     model_config = SettingsConfigDict(env_file=BACKEND_DIR / ".env", env_file_encoding="utf-8", extra="ignore")
+
+    @field_validator("database_url")
+    @classmethod
+    def _use_psycopg3_scheme(cls, value: str) -> str:
+        # Railway·Heroku 류 호스트는 Postgres 주소를 postgres:// 또는 postgresql:// 로 준다.
+        # SQLAlchemy 는 그 스킴을 psycopg2 드라이버로 해석하는데 여기 설치된 건 psycopg 3 이라,
+        # 그대로 두면 서버가 시작하자마자 "No module named psycopg2" 로 죽는다.
+        # sqlite:// 등 다른 스킴은 건드리지 않는다.
+        for prefix in ("postgres://", "postgresql://"):
+            if value.startswith(prefix):
+                return "postgresql+psycopg://" + value[len(prefix):]
+        return value
 
 
 settings = Settings()
