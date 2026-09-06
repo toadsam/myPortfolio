@@ -416,7 +416,7 @@ h2 {
 .row-body .tail { color: var(--faint); font-size: 8.3pt; margin-left: 4px; }
 
 /* 기술 */
-.skills { border-collapse: collapse; width: 100%; font-size: 9.2pt; }
+.skills { border-collapse: collapse; width: 100%; font-size: 9pt; }
 .skills tr { break-inside: avoid; }
 .skills th { text-align: left; vertical-align: top; width: 92px; padding: 1px 8px 1px 0; color: var(--navy); font-weight: 700; white-space: nowrap; }
 .skills td { padding: 1px 0; color: var(--body); }

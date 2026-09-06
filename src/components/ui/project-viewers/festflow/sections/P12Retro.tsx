@@ -71,7 +71,7 @@ export function P12Retro({onExit}: {onExit: () => void}) {
             <strong>
               내가 예상한 문제와 사람들이 겪는 문제가 달랐습니다
             </strong>{" "}
-            — QA 15명이 짚어준 건 알고리즘이 아니라 버튼 위치와 숫자 읽기였습니다.
+            — QA 46명이 짚어준 건 알고리즘이 아니라 버튼 위치와 숫자 읽기였습니다.
           </Body>
         </div>
       </div>

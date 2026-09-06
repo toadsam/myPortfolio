@@ -22,7 +22,7 @@ import {useOnScreen, usePageVisible, useTimeline} from "../../_kit/useTimeline";
 //
 // 개발 실체: 발표자료 27장 「실제 축제 적용 사례: AI MATCH」 · 28장 「QA 진행 및 주요 개선 사례」
 //   1일 운영 · AI Match 등록자 169명 · 매칭 신청 424건 · 성사 매칭 36건
-//   관리자 처리 30+건 · QA 참여 15명
+//   관리자 처리 30+건 · QA 참여 46명 (발표자료 15장의 15명은 초기 스냅샷 — 본인 확인 2026-09-06)
 //   관리자 화면 실측: 활성 프로필 115 / 전체 신청 424 / 대기중 144 / 성사된 매치 36
 // 연출 장치: 지표가 0에서 실측값까지 올라가고, QA 는 Before/After 를 직접 뒤집는다
 //
@@ -38,7 +38,7 @@ const STATS = [
   {v: 424, unit: "건", l: "매칭 신청", c: "var(--ff-primary)"},
   {v: 36, unit: "건", l: "성사 매칭", c: "var(--ff-accent)"},
   {v: 30, unit: "+", l: "관리자 처리", c: "var(--ff-ray)"},
-  {v: 15, unit: "명", l: "QA 참여", c: "var(--ff-stale)"}
+  {v: 46, unit: "명", l: "QA 참여", c: "var(--ff-stale)"}
 ] as const;
 
 const QA = [

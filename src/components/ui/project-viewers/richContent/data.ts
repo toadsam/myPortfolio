@@ -1334,10 +1334,10 @@ export const RICH_DATA: Record<string, RichProject> = {
       {n: "169명", l: "AI Match 등록자"},
       {n: "424건", l: "매칭 신청"},
       {n: "36건", l: "성사 매칭"},
-      {n: "15명", l: "현장 QA 참여"}
+      {n: "46명", l: "현장 QA 참여"}
     ],
     metricsNote:
-      "2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영한 집계다 — 관리자 화면 실측(활성 프로필 115 / 전체 169명 · 누적 신청 424 · 성사 36)과 현장 QA 참여 15명. 저장소 규모는 따로다: 백엔드 컨트롤러 26 · SSE 채널 7 · 예측 feature 24 (*Controller.java · StreamController.java · congestion_training_profile.json 에서 직접 셌다). 혼잡 예측 모델 정확도는 규칙 기반 0.70 → RandomForest 0.80(macro-F1 0.68 → 0.79)이지만, 운영 경험으로 만든 시뮬레이션 데이터 2,520건 기준이고 실제 축제 데이터로 검증한 값이 아니다.",
+      "2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영한 집계다 — 관리자 화면 실측(활성 프로필 115 / 전체 169명 · 누적 신청 424 · 성사 36)과 현장 QA 참여 46명. 저장소 규모는 따로다: 백엔드 컨트롤러 26 · SSE 채널 7 · 예측 feature 24 (*Controller.java · StreamController.java · congestion_training_profile.json 에서 직접 셌다). 혼잡 예측 모델 정확도는 규칙 기반 0.70 → RandomForest 0.80(macro-F1 0.68 → 0.79)이지만, 운영 경험으로 만든 시뮬레이션 데이터 2,520건 기준이고 실제 축제 데이터로 검증한 값이 아니다.",
     kpt: {
       keep: [
         "상태를 종류별 채널로 분리한 설계",

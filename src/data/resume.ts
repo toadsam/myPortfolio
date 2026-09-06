@@ -922,7 +922,7 @@ export const mainProjects: MainProjectCard[] = [
     highlights: [
       "React(Vite)+Tailwind PWA, Spring Boot 3/JPA/Security/JWT, MySQL 구조로 사용자 기능과 관리자 API 를 분리했습니다.",
       "SSE 기반 혼잡도·공연·공지 스트림, 관리자 CRUD/CSV 업로드, KPI/감사 로그, GPS 기반 혼잡도 계산, 분석 API 까지 운영형 구조로 구현했습니다.",
-      "2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영했습니다(QA 참여 15명)."
+      "2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영했습니다(QA 참여 46명)."
     ],
     links: [{label: "GitHub", href: "https://github.com/toadsam/FestFlow"}]
   },
