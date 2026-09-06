@@ -10,7 +10,7 @@
 |---|---|
 | 기간 | 2026.06 ~ 진행 중 (Next.js 마을 첫 커밋 2026-06-26 · `final` 브랜치 내 본인 커밋 296) |
 | 인원 | 1명 — 기획 · 3D 씬 · 프론트 · FastAPI 백엔드 · 관리자 · 배포. 개발은 Claude Code 와 짝으로 했고 계획 승인·실측·검증은 사람이 했다 — [`CLAUDE.md`](CLAUDE.md) 가 그 작업 규약이다 |
-| 배포 | https://my-portfolio-5ow2.vercel.app (프론트 Vercel · 백엔드 Railway + PostgreSQL) |
+| 배포 | https://jaehun.co.kr (프론트 Vercel · 백엔드 Railway + PostgreSQL) |
 
 ## 5분만 있다면
 
@@ -128,6 +128,6 @@ docs/               PROJECT_DOCUMENTATION · NPC_SOCIETY · COMMISSION_ATELIER �
 
 ## 만든 사람
 
-정재훈 — 아주대학교. 다른 작업은 [GitHub](https://github.com/toadsam) 에 있고, 이 사이트의 [이력서 화면](https://my-portfolio-5ow2.vercel.app/resume) 에서 한 장으로 볼 수 있다.
+정재훈 — 아주대학교. 다른 작업은 [GitHub](https://github.com/toadsam) 에 있고, 이 사이트의 [이력서 화면](https://jaehun.co.kr/resume) 에서 한 장으로 볼 수 있다.
 
 코드와 화면은 포트폴리오 공개 목적이며, 별도 표기 전까지 무단 사용·복제·배포를 허용하지 않는다.
