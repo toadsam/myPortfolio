@@ -57,7 +57,7 @@ const description =
   "건물을 클릭하고 AI NPC와 대화하며 둘러보는 3D 포트폴리오 마을. Next.js · React Three Fiber · Framer Motion으로 만든 풀스택/3D/게임/XR 작업 모음.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://toadsam.github.io/myPortfolio/"),
+  metadataBase: new URL("https://my-portfolio-5ow2.vercel.app/"),
   title,
   description,
   keywords: [
