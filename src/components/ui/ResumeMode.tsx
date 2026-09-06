@@ -258,8 +258,9 @@ export function ResumeMode({onEnterVillage}: Props) {
   const areaWeights = useMemo(() => {
     const groups: {label: string; cats: ResumeCategory[]}[] = [
       {label: "웹 서비스 · 데이터", cats: ["web", "data", "ops"]},
-      {label: "게임", cats: ["game"]},
-      {label: "AR / XR", cats: ["ar"]}
+      // 게임과 AR/XR 을 한 막대로(본인 결정 2026-09-05). 둘 다 Unity 이고 2건씩이라
+      // 따로 세우면 웹 7 대 게임 2·XR 2 로 세 갈래처럼 읽혔다 — 실제는 웹 대 Unity 다.
+      {label: "게임 · AR/XR", cats: ["game", "ar"]}
     ];
     return groups
       .map(g => ({
@@ -274,8 +275,6 @@ export function ResumeMode({onEnterVillage}: Props) {
   // 3,500 은 aClub GA4 실측(2026.01~03) — 카드 지표와 같은 출처다.
   // 2단이 시작되는 카드. 여기 앞에 구분 라벨을 끼운다 — 크기가 왜 줄었는지
   // 말해 주지 않으면 심사자는 위계가 아니라 깨진 레이아웃으로 읽는다.
-  // 세는 값이라 `featured` 를 하나 켜고 끄면 라벨 숫자가 알아서 따라온다.
-  const secondTierCount = mainProjects.filter(p => !p.featured).length;
   const firstSecondTierId = mainProjects.find(p => !p.featured)?.id;
 
   const HERO_ACTIVE_USERS = "3,500";
@@ -702,8 +701,8 @@ export function ResumeMode({onEnterVillage}: Props) {
             <header className="section-header reveal">
               <span className="section-id">## 01</span>
               <h2 className="section-title">
-                주요 프로젝트{" "}
-                <span className="section-subtitle">(Main Projects)</span>
+                대표 프로젝트{" "}
+                <span className="section-subtitle">(Featured Projects)</span>
               </h2>
             </header>
 
@@ -746,14 +745,20 @@ export function ResumeMode({onEnterVillage}: Props) {
                     return (
                       <Fragment key={p.id}>
                         {/* 2단 시작 표지. 트랙 안에 있어야 그리드 흐름에
-                            끼어들 수 있고, 캐러셀에서는 CSS 로 감춘다. */}
+                            끼어들 수 있고, 캐러셀에서는 CSS 로 감춘다.
+                            2026-09-05 — "그 밖의 작업 5건" 한 줄이던 것을 대표
+                            프로젝트와 같은 섹션 머리글(번호·제목·영문 부제)로
+                            올렸다. 본인 요청: 두 단이 같은 급의 제목을 가질 것. */}
                         {p.id === firstSecondTierId ? (
-                          <div className="tier-divider" aria-hidden="true">
-                            <span>그 밖의 작업</span>
-                            <span className="tier-divider-count">
-                              {secondTierCount}건
-                            </span>
-                          </div>
+                          <header className="section-header tier-header reveal">
+                            <span className="section-id">## 02</span>
+                            <h2 className="section-title">
+                              주요 프로젝트{" "}
+                              <span className="section-subtitle">
+                                (Main Projects)
+                              </span>
+                            </h2>
+                          </header>
                         ) : null}
                         <div
                           className={`project-card${
@@ -954,7 +959,7 @@ export function ResumeMode({onEnterVillage}: Props) {
         <section id="resume-history">
           <div className="skills-container">
             <header className="section-header reveal">
-              <span className="section-id">## 02</span>
+              <span className="section-id">## 03</span>
               <h2 className="section-title">
                 기술 스택 <span className="section-subtitle">(Skills)</span>
               </h2>
@@ -1026,7 +1031,7 @@ export function ResumeMode({onEnterVillage}: Props) {
               <h3 className="proficiency-title">
                 작업 비중{" "}
                 <span className="proficiency-note">
-                  (주요 프로젝트 {mainProjects.length}건 기준)
+                  (대표·주요 프로젝트 {mainProjects.length}건 기준)
                 </span>
               </h3>
               <div className="proficiency-list">
@@ -1057,7 +1062,7 @@ export function ResumeMode({onEnterVillage}: Props) {
         <section>
           <div className="education-container">
             <header className="section-header reveal">
-              <span className="section-id">## 03</span>
+              <span className="section-id">## 04</span>
               <h2 className="section-title">
                 학력 · 경력{" "}
                 <span className="section-subtitle">(Education)</span>
@@ -1225,7 +1230,7 @@ export function ResumeMode({onEnterVillage}: Props) {
         <section>
           <div className="side-projects-container">
             <header className="section-header reveal">
-              <span className="section-id">## 04</span>
+              <span className="section-id">## 05</span>
               <h2 className="section-title">
                 사이드 프로젝트{" "}
                 <span className="section-subtitle">(Sub Projects)</span>
@@ -1276,7 +1281,7 @@ export function ResumeMode({onEnterVillage}: Props) {
         <section>
           <div className="values-container">
             <header className="section-header reveal">
-              <span className="section-id">## 05</span>
+              <span className="section-id">## 06</span>
               <h2 className="section-title">
                 일하는 태도{" "}
                 <span className="section-subtitle">(Values I Believe In)</span>
@@ -1304,7 +1309,7 @@ export function ResumeMode({onEnterVillage}: Props) {
           <section>
             <div className="records-container">
               <header className="section-header reveal">
-                <span className="section-id">## 06</span>
+                <span className="section-id">## 07</span>
                 <h2 className="section-title">
                   개발 기록{" "}
                   <span className="section-subtitle">
@@ -1338,7 +1343,7 @@ export function ResumeMode({onEnterVillage}: Props) {
         <section>
           <div className="about-container">
             <header className="section-header reveal">
-              <span className="section-id">## 07</span>
+              <span className="section-id">## 08</span>
               <h2 className="section-title">About Me</h2>
             </header>
             <div className="about-list reveal reveal-delay-1">
@@ -1355,7 +1360,7 @@ export function ResumeMode({onEnterVillage}: Props) {
         <section id="resume-contact">
           <div className="contact-container">
             <header className="section-header reveal">
-              <span className="section-id">## 08</span>
+              <span className="section-id">## 09</span>
               <h2 className="section-title">
                 연락처 <span className="section-subtitle">(Contact)</span>
               </h2>

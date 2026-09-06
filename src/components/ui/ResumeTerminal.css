@@ -1091,6 +1091,10 @@
   padding: 4px 10px;
   border-radius: 100px;
   border: 1px solid;
+  /* 왼쪽 칩이 세 개가 되면 좁은 카드에서 이 배지가 밀려 "운영/중" 으로 꺾였다.
+     배지는 안 줄고 안 꺾인다 — 칩 무리(.project-badges)가 대신 줄을 바꾼다. */
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .resume-terminal .project-status.status-active {
@@ -1371,26 +1375,23 @@
 /* ── 2단 시작 표지 ──
    크기가 줄어드는 이유를 말해 주는 한 줄. 이게 없으면 위계가 아니라
    깨진 레이아웃으로 읽힌다. 캐러셀에서는 격자가 없으므로 감춘다. */
-.resume-terminal .tier-divider {
+/* 2단 머리글(2026-09-05). 섹션 머리글과 같은 생김새(.section-header)를 격자 안에
+   전폭으로 끼운다. 격자 안이라 margin 이 곧 대표 카드 밑 간격이다. */
+.resume-terminal .tier-header {
   display: none;
 }
-
-.resume-terminal .carousel-wrapper[data-grid="true"] .tier-divider {
+.resume-terminal .carousel-wrapper[data-grid="true"] .tier-header {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
   grid-column: 1 / -1;
-  margin: 26px 0 2px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgb(var(--v-wood) / 0.4);
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: normal;
-  color: var(--muted);
+  margin: 64px 0 26px;
 }
-
-.resume-terminal .tier-divider-count {
-  color: var(--muted);
+/* 트랙(최대 1068px)이 컨테이너(1200px)보다 좁아, 그 안에 두면 대표 프로젝트
+   머리글보다 66px 안쪽에서 시작한다. 컨테이너가 트랙보다 넓어지는 폭(1188px)부터
+   그 차이의 절반만큼 양옆으로 내밀어 두 머리글의 시작선을 맞춘다. */
+@media (min-width: 1188px) {
+  .resume-terminal .carousel-wrapper[data-grid="true"] .tier-header {
+    margin-inline: calc(-1 * min(66px, (100vw - 1188px) / 2));
+  }
 }
 
 /* ── 2단 카드 ──
@@ -2111,9 +2112,9 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   /* 오른쪽 상태 배지(운영중/완료/출시)와 부딛히지 않게 */
-  margin-right: 10px;
+  margin-right: 6px;
 }
 
 .resume-terminal .project-category {
@@ -2130,17 +2131,24 @@
 
 /* 성격 칩(FACET_META). 배지가 "무엇을 만들었나(산출물)" 라면 칩은 "안에 무슨
    기술이 핵심으로 도는가" 다 — 웹 서비스 다섯이 전부 Web Service 배지라
-   서로 뭐가 다른지 안 보이던 걸 메운다(2026-09-05). 배지보다 한 톤 죽인
-   테두리만: 주 분류가 먼저 읽히고 칩은 그 뒤에 따라와야 한다. 칩이 없는
-   카드는 비워 둔다 — 억지로 채우면 다시 태그 나열(잡음)이 된다. */
+   서로 뭐가 다른지 안 보이던 걸 메운다(2026-09-05). 처음엔 회색 테두리만
+   줬는데 "AI·3D 가 눈에 안 띈다" — 칩마다 제 색(--fc, FACET_META.color)을
+   주고 배지와 같은 크기·같은 채움 방식으로 올렸다. 배지와 구분은 색으로만
+   한다. 칩이 없는 카드는 비워 둔다 — 억지로 채우면 다시 태그 나열이 된다. */
 .resume-terminal .project-facet {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.3px;
-  color: var(--muted);
-  border: 1px solid rgb(var(--v-wood) / 0.45);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  color: var(--fc, var(--muted));
+  border: 1px solid color-mix(in srgb, var(--fc, #a9bdd6) 70%, transparent);
+  background: color-mix(in srgb, var(--fc, #a9bdd6) 16%, transparent);
   border-radius: 100px;
-  padding: 3px 8px;
+  /* 배지보다 작고 좁다 — 1200px 격자(카드 헤더 298px)에서 배지 99 + 칩 셋 +
+     상태 배지 55 가 한 줄에 들어가는 한계. 실측: 12px/8px 이면 득근득근 239 ·
+     FestFlow 250 으로 가용 235 를 넘어 둘째 줄이 생기고, 그 카드만 그림이
+     30px 내려앉아 줄이 어긋난다. */
+  padding: 4px 7px;
   white-space: nowrap;
 }
 
@@ -2287,6 +2295,13 @@
 }
 .resume-terminal .career-card .org-logo-fallback {
   font-size: 17px;
+}
+
+/* 수상·수료 꼬리표. 수상은 금색, 수료는 기본 태그색 — 둘을 같은 색으로 두면
+   "장려상" 과 "참가 수료" 가 같은 무게로 읽힌다. */
+.resume-terminal .award-prize {
+  color: rgb(var(--v-gold));
+  border-color: rgb(var(--v-gold) / 0.6);
 }
 
 /* 활동 → 프로젝트 연결선. 이 이력서에서 가장 강한 사실이라 눈에 걸리게 둔다. */

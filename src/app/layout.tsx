@@ -72,8 +72,14 @@ export const metadata: Metadata = {
     "게임"
   ],
   authors: [{name: "정재훈 (Jaehoon Jung)"}],
+  // 2026-09-06 — 파비콘을 JH 마크(본인 생성 이미지)로 교체. svg 는 그 png 를 품은
+  // 래퍼이고, 브라우저가 svg 를 못 쓰면 png/ico 로 떨어진다.
   icons: {
-    icon: "/favicon.svg",
+    icon: [
+      {url: "/favicon.svg", type: "image/svg+xml"},
+      {url: "/favicon-32x32.png", sizes: "32x32", type: "image/png"},
+      {url: "/favicon-16x16.png", sizes: "16x16", type: "image/png"}
+    ],
     shortcut: "/favicon.ico",
     apple: "/apple-touch-icon.png"
   },
