@@ -102,8 +102,8 @@ function renderContact(phone) {
     ["GitHub", esc(bare(contact.github)), contact.github],
     [
       "Portfolio",
-      "my-portfolio-5ow2.vercel.app",
-      "https://my-portfolio-5ow2.vercel.app/"
+      "jaehun.co.kr",
+      "https://jaehun.co.kr/"
     ]
   ].filter(Boolean);
   return `<dl class="contact">

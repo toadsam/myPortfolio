@@ -4,7 +4,7 @@ Full-Stack Web Developer
 Email: toadsam@naver.com  
 Phone: 010-6428-6247  
 GitHub: https://github.com/toadsam  
-Portfolio: https://my-portfolio-5ow2.vercel.app/  
+Portfolio: https://jaehun.co.kr/  
 Target: Web Full-Stack / Frontend / Backend
 
 ## Summary
