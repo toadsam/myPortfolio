@@ -41,6 +41,9 @@ const CASES: {
   fix: string;
   detail: string;
 }[] = [
+  // 아래 muscle-up.click 은 **그때의 도메인**이다(지금 주소는 musclehub.co.kr).
+  // 사고 기록이라 당시 이름 그대로 둔다 — 캡처의 인증서 이름과도 맞아야 한다.
+  // 왜 주소가 다른지는 앞 장(P09Infra)의 한 줄이 미리 답한다.
   {
     key: "acm",
     no: "ISSUE 01",

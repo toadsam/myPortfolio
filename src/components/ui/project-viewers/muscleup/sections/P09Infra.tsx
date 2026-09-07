@@ -123,6 +123,21 @@ export function P09Infra() {
         </Body>
       </div>
 
+      {/* 아래 흐름과 다음 장의 인증서 사고에는 muscle-up.click 이 나온다.
+          그때 쓰던 도메인이고, 이후 그것을 놓아 주고 musclehub.co.kr 을 새로
+          샀다. 주소가 어긋난 채로 두면 심사자가 "어느 쪽이 진짜냐" 를 먼저
+          묻게 되므로 한 줄로 미리 답한다.
+          ※ 지금 musclehub.co.kr 의 응답 헤더는 server: Vercel 이다(2026-09-05
+          확인). 즉 이 절의 CloudFront/S3 구성이 오늘도 그대로인지는 확인되지
+          않았다 — 확인되기 전까지 이 절은 **그때의 구성**으로만 읽어야 한다. */}
+      <div className="mt-4 max-w-[740px]" style={rise(on[IDX.body], instant)}>
+        <Hint>
+          아래 흐름에 나오는 주소는 muscle-up.click 입니다. 당시 쓰던
+          도메인이고, 지금은 그 도메인을 놓아 주고 musclehub.co.kr 을 새로
+          샀습니다. 구조 이야기는 그대로고 주소만 다릅니다.
+        </Hint>
+      </div>
+
       <div
         ref={boxRef}
         className="mt-9 rounded-md p-5"
