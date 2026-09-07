@@ -346,14 +346,14 @@ const CSS = `
   --navy: #16324f;
   --wash: #f3f6fa;
 }
-@page { size: A4; margin: 15mm 16mm 14mm; }
+@page { size: A4; margin: 19mm 18mm 17mm; }
 * { box-sizing: border-box; }
 html { font-size: 9.8pt; }
 body {
   margin: 0;
   color: var(--ink);
   font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-  line-height: 1.62;
+  line-height: 1.75;
   word-break: keep-all;
   overflow-wrap: anywhere;
   -webkit-print-color-adjust: exact;
@@ -368,7 +368,7 @@ b { font-weight: 700; }
   grid-template-columns: 1fr auto;
   gap: 0 28px;
   align-items: end;
-  padding-bottom: 8px;
+  padding-bottom: 13px;
   border-bottom: 2px solid var(--navy);
 }
 .head-role { margin: 0 0 2px; color: var(--navy); font-size: 9.5pt; font-weight: 700; letter-spacing: 0.02em; }
@@ -385,10 +385,10 @@ h1 { margin: 0; font-size: 24pt; line-height: 1.1; color: var(--navy); letter-sp
 
 /* 절 — 쪽수 예산을 없앤 뒤(2026-09-07) 절 사이 간격이 가장 큰 읽기 장치다.
    심사자는 먼저 절 제목만 훑어 지도를 그린 다음 필요한 절로 들어간다. */
-.sec { margin-top: 22px; break-inside: auto; }
+.sec { margin-top: 32px; break-inside: auto; }
 h2 {
-  margin: 0 0 10px;
-  padding-bottom: 5px;
+  margin: 0 0 15px;
+  padding-bottom: 7px;
   border-bottom: 1px solid var(--line);
   color: var(--navy);
   font-size: 11pt;
@@ -396,9 +396,9 @@ h2 {
   letter-spacing: 0.04em;
   break-after: avoid;
 }
-.lead { margin: 0 0 9px; color: var(--body); }
+.lead { margin: 0 0 13px; color: var(--body); }
 .points { margin: 0; padding-left: 15px; }
-.points li { margin: 5px 0; color: var(--body); }
+.points li { margin: 8px 0; color: var(--body); }
 .points b { color: var(--ink); }
 
 /* 프로젝트 */
@@ -407,7 +407,7 @@ h2 {
    그대로 남는다(2026-09-07 실측: 1쪽 아래 30% 공백 + 총 5쪽). 쪽수가 자유로워도
    빈칸은 여백이 아니라 구멍이다. 그래서 제목·기간·부제만 붙여 두고 성과 줄 사이에서는
    갈라지게 둔다. 다만 지표·출처·링크는 한 덩어리로 묶어 이것만은 안 갈라지게 한다. */
-.proj { padding: 15px 0 16px; border-top: 1px dashed var(--line); orphans: 2; widows: 2; }
+.proj { padding: 21px 0 23px; border-top: 1px dashed var(--line); orphans: 2; widows: 2; }
 .proj-head, .meta, .sub { break-after: avoid; }
 .hl li { break-inside: auto; orphans: 2; widows: 2; }
 .payoff { break-inside: avoid; }
@@ -416,24 +416,24 @@ h2 {
 .proj h3 { margin: 0; font-size: 12.5pt; font-weight: 800; color: var(--ink); letter-spacing: -0.01em; }
 .meta { margin: 3px 0 0; color: var(--muted); font-size: 9pt; }
 .sub { margin: 7px 0 0; color: var(--body); font-weight: 600; }
-.hl { margin: 8px 0 0; padding-left: 15px; color: var(--body); }
-.hl li { margin: 5px 0; }
+.hl { margin: 11px 0 0; padding-left: 15px; color: var(--body); }
+.hl li { margin: 8px 0; }
 /* 지표 줄은 이 이력서에서 가장 강한 부분인데 예전엔 출처 문구와 같은 크기로 붙어
    흐려 보였다. 옅은 판 위에 올리고 값을 키워 눈이 먼저 닿게 한다. 출처는 아래로 내린다. */
 .metrics {
-  margin: 10px 0 0; padding: 7px 11px; background: var(--wash); border-radius: 3px;
+  margin: 14px 0 0; padding: 11px 14px; background: var(--wash); border-radius: 3px;
   display: flex; flex-wrap: wrap; gap: 4px 22px; font-size: 9.2pt; color: var(--body); align-items: baseline;
 }
 .metrics b { color: var(--navy); font-size: 13pt; margin-right: 4px; letter-spacing: -0.01em; }
 .metrics .prov { color: #a15c07; font-style: normal; font-size: 7.8pt; }
-.src-line { margin: 4px 0 0; color: var(--faint); font-size: 8.2pt; }
-.links { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 3px 18px; font-size: 8.8pt; color: var(--muted); }
+.src-line { margin: 6px 0 0; color: var(--faint); font-size: 8.2pt; }
+.links { margin: 11px 0 0; display: flex; flex-wrap: wrap; gap: 3px 18px; font-size: 8.8pt; color: var(--muted); }
 .links b { font-weight: 600; margin-right: 4px; }
 .links a { color: var(--body); }
 
 /* 한 줄 목록 */
 .rows { margin: 0; padding: 0; list-style: none; }
-.rows li { padding: 8px 0; line-height: 1.5; border-top: 1px dashed var(--line); break-inside: avoid; }
+.rows li { padding: 11px 0; line-height: 1.6; border-top: 1px dashed var(--line); break-inside: avoid; }
 .rows li:first-child { border-top: 0; padding-top: 2px; }
 .row-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
 .row-head b { font-size: 10pt; }
@@ -445,8 +445,8 @@ h2 {
 /* 기술 */
 .skills { border-collapse: collapse; width: 100%; font-size: 9.4pt; }
 .skills tr { break-inside: avoid; }
-.skills th { text-align: left; vertical-align: top; width: 96px; padding: 5px 10px 5px 0; color: var(--navy); font-weight: 700; white-space: nowrap; }
-.skills td { padding: 5px 0; color: var(--body); }
+.skills th { text-align: left; vertical-align: top; width: 96px; padding: 8px 12px 8px 0; color: var(--navy); font-weight: 700; white-space: nowrap; }
+.skills td { padding: 8px 0; color: var(--body); }
 .skills .desc { color: var(--muted); font-size: 8.6pt; }
 .gh { margin: 10px 0 0; color: var(--muted); font-size: 8.8pt; }
 .gh a { color: var(--body); }
@@ -454,7 +454,7 @@ h2 {
 /* 학력·활동 — 예전엔 여기가 문서에서 가장 빽빽했다(글자는 제일 작고 밀도는 제일 높음). */
 .two { display: grid; grid-template-columns: minmax(0, 9fr) minmax(0, 11fr); gap: 0 26px; }
 .tl { margin: 0; padding: 0; list-style: none; }
-.tl li { display: grid; grid-template-columns: max-content 1fr; gap: 10px; padding: 5px 0; line-height: 1.5; font-size: 9.2pt; color: var(--body); break-inside: avoid; }
+.tl li { display: grid; grid-template-columns: max-content 1fr; gap: 12px; padding: 8px 0; line-height: 1.6; font-size: 9.2pt; color: var(--body); break-inside: avoid; }
 .tl .when { color: var(--muted); font-size: 8.6pt; padding-top: 1px; white-space: nowrap; }
 .tl b { color: var(--ink); }
 .tl .led { color: var(--navy); font-style: normal; font-size: 8.3pt; }
