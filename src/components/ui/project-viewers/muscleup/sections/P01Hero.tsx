@@ -37,7 +37,11 @@ const IDX = {
 };
 
 // PDF 6쪽 「링크」 원문
-// 배포 주소(muscle-up.click)는 응답이 없어 링크로 걸지 않는다 — 아래 EquipSlot 참고.
+// 배포 주소는 **musclehub.co.kr** 이다. 오래 muscle-up.click 으로 적어 두고
+// "응답이 없다"며 링크를 빼 놨는데, 서비스는 내내 열려 있었고 주소가 달랐다.
+// 2026-09-05 직접 확인: muscle-up.click 계열은 DNS 가 풀리지 않고, musclehub.co.kr
+// 은 200 에 첫 화면이 이 방의 캡처와 글자까지 같다.
+const SITE = "https://musclehub.co.kr";
 const REPO = "https://github.com/toadsam/Ajou_MuscleUp";
 const VIDEO = "https://youtu.be/0X-BIADC1eQ";
 
@@ -154,12 +158,12 @@ export function P01Hero() {
             style={{borderTop: "1px solid rgba(244,114,182,0.14)"}}
           >
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {/* href 를 뺐다 — muscle-up.click 은 현재 응답이 없다(2026-08-28).
-                  주소는 그대로 보여 주되 누르면 죽은 페이지가 뜨는 링크는 만들지
-                  않는다. resume.ts 와 P11Result 도 같은 이유로 링크를 뺐다. */}
+              {/* href 를 되살렸다 — 죽은 주소를 적어 뒀던 것이지 서비스가
+                  죽었던 게 아니다(위 SITE 주석). */}
               <EquipSlot
                 slotLabel="배포"
-                caption="muscle-up.click (일시 중단)"
+                caption="musclehub.co.kr"
+                href={SITE}
                 equipped={on[IDX.equip]}
                 delay={0}
                 instant={instant}

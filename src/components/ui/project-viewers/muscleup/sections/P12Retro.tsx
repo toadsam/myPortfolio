@@ -30,7 +30,8 @@ const STEPS = [0, 150, 550, 900, 1300];
 const IDX = {label: 0, heading: 1, learn: 2, kpt: 3, exit: 4};
 
 const REPO = "https://github.com/toadsam/Ajou_MuscleUp";
-// 배포 주소(muscle-up.click)는 응답이 없어 링크로 걸지 않는다.
+// 배포 주소는 musclehub.co.kr (2026-09-05 확인 · P01Hero SITE 주석 참고).
+const SITE = "https://musclehub.co.kr";
 
 export function P12Retro({onExit}: {onExit: () => void}) {
   const {reducedMotion} = useMuscleUp();
@@ -140,9 +141,21 @@ export function P12Retro({onExit}: {onExit: () => void}) {
           ...rise(on[IDX.exit], instant)
         }}
       >
-        {/* muscle-up.click 링크를 뺐다 — 응답이 없다(2026-08-28 확인).
-            방을 끝까지 본 사람이 마지막에 누르는 버튼이라 죽어 있으면 가장 나쁘다. */}
+        {/* 방을 끝까지 본 사람이 마지막에 누르는 버튼이다. 오래 저장소만 걸려
+            있었는데, 그건 주소를 잘못 알고 있어서였다(P01Hero SITE 주석). */}
         <div className="flex flex-wrap items-center justify-center gap-3">
+          <a
+            href={SITE}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="rounded-md px-5 py-3 font-mono text-[12px] font-bold transition-colors duration-200"
+            style={{
+              border: "1px solid rgba(244,114,182,0.45)",
+              color: "var(--mu-accent)"
+            }}
+          >
+            서비스 열기 ↗
+          </a>
           <a
             href={REPO}
             target="_blank"

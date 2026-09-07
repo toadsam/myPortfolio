@@ -360,6 +360,8 @@ export const projects: ProjectData[] = [
       "사용자 피드백을 근거로 소개형 홈페이지(도메인 4개)를 출석·캐릭터 성장·실시간 라운지가 도는 운영형 플랫폼(도메인 8개 · 백엔드 Controller 28개)으로 다시 만들었습니다. 현재 약 50명이 이용 중입니다.",
     nextStep: "실사용자 테스트와 웨어러블 기기 연동을 검토할 예정입니다.",
     links: [
+      // 배포 주소는 musclehub.co.kr (muscle-up.click 아님, 2026-09-05 확인).
+      {label: "서비스 열기", href: "https://musclehub.co.kr"},
       {label: "시연 영상", href: "https://youtu.be/0X-BIADC1eQ"},
       {label: "GitHub", href: "https://github.com/toadsam/Ajou_MuscleUp"}
     ]

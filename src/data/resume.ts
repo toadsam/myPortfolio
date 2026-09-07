@@ -711,7 +711,9 @@ export const mainProjects: MainProjectCard[] = [
     role: "1.0 기획 · UI · API · 인증/권한 · 배포 → 2.0 운영 관점 전면 개편",
     // 임시로 박아 뒀던 "누적 가입자 120 · 운동 기록 1,400" 을 지웠다.
     // 근거가 없던 숫자고, 본인 확인 결과 실제 이용 회원은 약 50명이다.
-    // 배포 도메인(muscle-up.click)은 현재 일시 중단이라 링크하지 않는다.
+    // 배포 도메인은 musclehub.co.kr 이다. 오래 muscle-up.click 으로 알고 있어
+    // "일시 중단" 이라 적고 링크를 빼 뒀는데, 주소가 틀렸던 것이지 서비스가
+    // 내려갔던 게 아니다(2026-09-05 확인 — 200, 첫 화면이 카드 그림과 같다).
     // "4 → 8" 은 1.0 발표자료의 도메인 4개(사용자/커뮤니티/AI/프로그램)와
     // 지금 소스에서 센 8개를 나란히 둔 값이다. 성장을 문장이 아니라 숫자로 보이게.
     // 순서와 구성을 바꿨다. 부제가 "사용자 피드백을 듣고" 로 시작하는데 지표
@@ -751,7 +753,9 @@ export const mainProjects: MainProjectCard[] = [
       "Refresh Token Rotation 이 병렬 요청에서 서로의 토큰을 무효화해 로그아웃되는 경쟁 상태를 만나, 클라이언트 재발급 단일화(single-flight)로 대체했습니다.",
       "AWS 배포에서 HTTPS·Mixed Content·CORS credentials 문제를 해결해 운영 상태로 완성했고, 1.0 사용자 피드백 4건 중 3건을 2.0 에 반영했습니다."
     ],
+    // 링크 순서는 심사자가 누를 확률 순이다 — 돌아가는 서비스가 먼저다.
     links: [
+      {label: "서비스 열기", href: "https://musclehub.co.kr"},
       {label: "GitHub", href: "https://github.com/toadsam/Ajou_MuscleUp"},
       {
         label: "시연 영상",

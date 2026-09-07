@@ -25,7 +25,8 @@ import {useTimeline} from "../../_kit/useTimeline";
 const STEPS = [0, 150, 550, 900, 1300];
 const IDX = {label: 0, heading: 1, body: 2, shots: 3, meta: 4};
 
-// muscle-up.click 은 현재 응답이 없어 링크로 걸지 않는다(위 MetaCell 주석 참고).
+// 배포 주소는 musclehub.co.kr (2026-09-05 확인 · P01Hero SITE 주석 참고).
+const SITE = "https://musclehub.co.kr";
 const REPO = "https://github.com/toadsam/Ajou_MuscleUp";
 const VIDEO = "https://youtu.be/0X-BIADC1eQ";
 
@@ -132,11 +133,10 @@ export function P11Result() {
       <div className="mt-6 max-w-[740px]" style={rise(on[IDX.body], instant)}>
         <Body>
           여기까지 오시면서 조작하신 것들은 설명을 위한 재현이었습니다. 아래는
-          실제로 돌아갔던 화면입니다. 다만{" "}
-          <strong style={{color: "var(--mu-warn)"}}>
-            배포(muscle-up.click)는 현재 내려가 있어
-          </strong>{" "}
-          주소 대신 저장소와 시연 영상을 걸어 둡니다. 지금 위쪽 게이지는{" "}
+          실제로 돌아가고 있는 화면입니다. 서비스는{" "}
+          <strong style={{color: "var(--mu-accent)"}}>musclehub.co.kr</strong>{" "}
+          에서 열려 있고, 저장소와 시연 영상도 함께 걸어 둡니다. 지금 위쪽
+          게이지는{" "}
           <strong style={{color: "var(--mu-accent)"}}>
             Lv.{level + 1} / {LEVEL_TOTAL}
           </strong>{" "}
@@ -166,10 +166,10 @@ export function P11Result() {
         className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4"
         style={rise(on[IDX.meta], instant)}
       >
-        {/* muscle-up.click 은 응답이 없다(2026-08-28 확인). "배포 중" 이라고
-            적고 "서비스 열기" 버튼을 걸어 두면 심사자가 눌렀을 때 바로 들통난다.
-            resume.ts 는 이미 같은 이유로 이 링크를 빼 두었는데 이 방만 남아 있었다. */}
-        <MetaCell value="일시 중단" label="muscle-up.click" />
+        {/* 값 자리는 상태, 라벨 자리는 주소다(옆 칸들과 같은 문법).
+            "눌렀을 때 들통난다" 던 예전 주석의 걱정은 주소가 틀렸던 것이지
+            서비스가 죽었던 게 아니다 — 지금은 눌러서 확인했다. */}
+        <MetaCell value="운영 중" label="musclehub.co.kr" />
         <MetaCell value="2025.09 –" label="진행 중" />
         <MetaCell value="1인" label="기획 · UI · API · 인증 · 배포" />
         {/* PDF 10쪽 ERD 캡처에 그려진 핵심 테이블 수다. 전체 @Entity 는 31개. */}
