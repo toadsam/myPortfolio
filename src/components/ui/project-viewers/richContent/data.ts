@@ -572,15 +572,40 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ MyStock-Desk / StockFlow (dashboard) ═════════
   mystock: {
     tagline: "INVESTMENT PORTFOLIO · FULL-STACK WEB APP",
-    problemShot: {
-      label: "엑셀로 수익률을 직접 관리하던 기존 방식",
-      ratio: "4/3"
+    // 저장소 README 의 실제 화면(1440×900, 정확히 16/10). 라벨은 찍힌 것만
+    // 적는다 — 예전 라벨의 "자산 비중 차트" 는 실제로는 소비 비중 도넛이었다.
+    // 문제 단계 그림은 뺐다("엑셀로 관리하던 방식" 을 찍은 자료가 없다).
+    heroImage: {
+      src: "/projects/mystock/home.webp",
+      label: "MyWave 홈 — 이번 달 목표 달성률 · 총자산 · 소비 위험도",
+      ratio: "16/10"
     },
     gallery: [
-      {label: "보유 종목 · 수익률 화면", ratio: "16/10"},
-      {label: "자산 비중 차트", ratio: "16/10"},
-      {label: "AI 체크포인트(리서치) 리포트", ratio: "16/10"},
-      {label: "MyWave 자산 흐름 대시보드", ratio: "16/10"}
+      {
+        src: "/projects/mystock/transactions.webp",
+        label: "투자 거래 기록 — 매수 · 매도 · 배당과 보유 종목",
+        ratio: "16/10",
+        caption:
+          "증권사 연동 없이 직접 넣은 거래로 평가금액·수익률을 계산한다. 거래마다 「투자 이유」와 태그를 함께 적는다."
+      },
+      {
+        src: "/projects/mystock/spending.webp",
+        label:
+          "소비 분석 — 카테고리 비중 · 월별 추이 · 목표를 방해하는 소비 TOP 3",
+        ratio: "16/10"
+      },
+      {
+        src: "/projects/mystock/goals.webp",
+        label: "목표 관리 — 달성률 · 예상 완료일 · 달성 확률",
+        ratio: "16/10"
+      },
+      {
+        src: "/projects/mystock/coach.webp",
+        label: "AI코치 — 종목 추천 대신 재무 상태를 정리한다",
+        ratio: "16/10",
+        caption:
+          "「지금 뭐 사야 돼? 종목 추천해줘」에 종목을 대지 않는다. 총자산과 남은 생활비를 들어 이번 달 순서를 정리해 준다 — 판단은 사용자 몫으로 남긴다."
+      }
     ],
     tldr: [
       {
@@ -2238,7 +2263,8 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "2026 실제 화면 — 홈 · 모집공고 목록 · 모집공고 상세",
       ratio: "16/9"
     },
-    problemShot: {label: "에타·인스타·단톡에 흩어진 동아리 모집", ratio: "4/3"},
+    // 「흩어진 모집 공고」를 찍어 둔 자료가 없어 이미지 자리를 뺐다(2026-09-07).
+    // 회색 상자가 서 있는 것보다 없는 편이 낫다.
     // Troubleshooting 두 카드(중복 fetch · 흩어진 권한 체크)가 끝나는 자리다.
     // 예전엔 여기가 빈 점선 상자였다 — 문제 둘을 말해 놓고 "그래서 어떻게
     // 됐는데" 를 안 보여 주고 결론으로 넘어갔다는 뜻이다.
@@ -3054,11 +3080,48 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ 수어지교 / Sign-Language (platform · 팀) ══════
   "sign-language": {
     tagline: "SIGN LANGUAGE LEARNING · TEAM (BACKEND)",
-    problemShot: {label: "영상만 보며 따라하던 기존 학습 방식", ratio: "4/3"},
+    // 배포본(GitHub Pages)에서 그대로 찍은 화면 다섯 장. 폰 비율(500×1023)이라
+    // 16/10 상자에 cover 로 넣으면 위아래가 잘려 아무것도 안 보인다 — 상자를
+    // 세로로 두고 contain 으로 넣어 화면 전체가 남게 한다.
+    // 문제 단계 그림(problemShot)은 뺐다. "기존 학습 방식" 을 찍은 사진이
+    // 없어서 회색 상자만 서 있었고, 없는 그림 자리를 비워 두는 편이 낫다.
+    heroImage: {
+      src: "/projects/sign-language/quiz.webp",
+      label: "퀴즈 — 아바타 동작을 보고 뜻 고르기",
+      ratio: "1/1",
+      fit: "contain",
+      caption:
+        "동작을 먼저 보여주고 보기 4개 중 뜻을 고르게 한다. 문항마다 난이도와 정답률이 붙고, 표본이 적으면 그 사실을 화면에 적어 둔다."
+    },
     gallery: [
-      {label: "수어 단어 학습·퀴즈", ratio: "16/10"},
-      {label: "수어 동작 영상 재생", ratio: "16/10"},
-      {label: "정답 피드백·반복 학습", ratio: "16/10"}
+      {
+        src: "/projects/sign-language/learn.webp",
+        label: "학습 과정 — 기초 단어 · 오답 복습 · 일상 회화 · 상황별 표현",
+        ratio: "3/4",
+        fit: "contain"
+      },
+      {
+        src: "/projects/sign-language/translator.webp",
+        label: "통역기 — 한국어 문장을 수어 단어 순서로",
+        ratio: "3/4",
+        fit: "contain"
+      },
+      {
+        src: "/projects/sign-language/translate-detail.webp",
+        label: "변환 결과 — 매칭된 토큰 · 사전에 없는 토큰 · 영상이 없는 단어",
+        ratio: "3/4",
+        fit: "contain",
+        caption:
+          "영상 저장소와 단어 메타데이터가 나뉘어 있어 한쪽에만 있는 단어는 재생이 비었다. 그래서 조회 결과를 이렇게 갈라 보여준다 — 사전에는 있지만 영상이 없는 단어가 화면에 드러난다."
+      },
+      {
+        src: "/projects/sign-language/home.webp",
+        label: "홈 — 오늘의 목표 · 최근 7일 풀이 그래프",
+        ratio: "3/4",
+        fit: "contain",
+        caption:
+          "기록이 없는 새 계정으로 들어간 화면이라 그래프가 0이다. 「로그인 없이 시작」으로 바로 들어올 수 있다."
+      }
     ],
     tldr: [
       {
@@ -3075,7 +3138,10 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {k: "내 역할", v: "4인 팀의 백엔드 (Spring Boot 서버·API·데이터 처리)"}
     ],
-    demo: {repo: "https://github.com/toadsam/Sign-Language"},
+    demo: {
+      live: "https://toadsam.github.io/Sign-Language/home",
+      repo: "https://github.com/toadsam/Sign-Language"
+    },
     meta: [
       {label: "기간", value: "~ 2026.05 · 파란학기제 (한 학기)"},
       {label: "팀", value: "4인 (FE 1 · BE 2 · 3D 아바타 1)"},
@@ -3275,11 +3341,32 @@ export const RICH_DATA: Record<string, RichProject> = {
   // ════════════════════════════ DarkLab (game · horror · 팀) ═════════════════
   darklab: {
     tagline: "FIRST-PERSON HORROR · UNITY (TEAM)",
-    problemShot: {label: "초기 그레이박스 프로토타입", ratio: "4/3"},
+    // 스크린샷이 남아 있지 않아 플레이 영상(Unity Game 뷰 녹화)에서 프레임을
+    // 뽑았다. 에디터 크롬은 잘라냈다. 「초기 그레이박스 프로토타입」 자리는
+    // 뺐다 — 그때 화면을 찍어 둔 자료가 없다.
+    heroImage: {
+      src: "/projects/darklab/title.webp",
+      label: "타이틀 — Threshold",
+      ratio: "16/9"
+    },
     gallery: [
-      {label: "1인칭 탐색 플레이", ratio: "16/9"},
-      {label: "URP 라이팅·분위기 연출", ratio: "16/9"},
-      {label: "상호작용·이벤트 구간", ratio: "16/9"}
+      {
+        src: "/projects/darklab/explore.webp",
+        label: "1인칭 탐색 — 오른쪽 위 시계가 밤을 민다 (11:53 PM)",
+        ratio: "16/9"
+      },
+      {
+        src: "/projects/darklab/room-night.webp",
+        label: "같은 방, 12:37 AM — 시간이 지나면 방이 달라져 있다",
+        ratio: "16/9"
+      },
+      {
+        src: "/projects/darklab/figure.webp",
+        label: "01:04 AM — 침대 옆에 형체가 서 있다",
+        ratio: "16/9",
+        caption:
+          "같은 방을 세 번 찍은 것이다. 시계가 넘어갈수록 가구가 늘고, 마지막엔 없던 것이 서 있다."
+      }
     ],
     tldr: [
       {
@@ -3500,7 +3587,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "인게임 플레이",
       ratio: "16/9"
     },
-    problemShot: {label: "도형 기반 초기 프로토타입", ratio: "4/3"},
+    // 도형 프로토타입 시절 캡처가 없어 이미지 자리를 뺐다(2026-09-07).
     gallery: [
       {src: "/projects/op/aa-title.webp", label: "타이틀 화면", ratio: "16/9"},
       {src: "/projects/op/aa-levelup.webp", label: "레벨업 UI", ratio: "16/9"},
@@ -3702,7 +3789,9 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "TSEROF 타이틀",
       ratio: "16/9"
     },
-    problemShot: {label: "그레이박스 레벨 프로토타입", ratio: "4/3"},
+    // 그레이박스 시절 캡처는 남아 있지 않아 「문제」 그림 자리는 비웠다.
+    // 대신 내가 맡은 기믹의 전후 비교를 갤러리 끝에 넣는다 — problemShot 은
+    // 원페이저에서 렌더되지 않아 이력서로 들어온 사람은 못 본다.
     gallery: [
       {
         src: "/projects/op/tserof-difficulty.webp",
@@ -3714,6 +3803,14 @@ export const RICH_DATA: Record<string, RichProject> = {
         src: "/projects/op/tserof-feedback.webp",
         label: "유저 피드백 반영",
         ratio: "16/9"
+      },
+      {
+        src: "/projects/tserof/gimmick-icicle.webp",
+        label: "낙하물(고드름) 기믹 — 매번 만들고 부수던 것을 위치 재사용으로",
+        ratio: "834/776",
+        fit: "contain",
+        caption:
+          "떨어질 때마다 Instantiate/Destroy 하던 코드를, 대기 시간을 캐싱하고 SetPositionAndRotation 으로 제자리에 돌려놓는 방식으로 바꿨다. 포트폴리오 원본 자료(2025-12)."
       }
     ],
     // 2026-09-06 담당 교정. 예전 본문은 플레이어 컨트롤러(발 4방향 접지 레이)·저장(XOR)·

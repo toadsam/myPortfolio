@@ -602,19 +602,30 @@ export function ReviewLoopSection() {
         </ul>
       </NoteBox>
 
-      {/* ── 화면 캡처 자리 ── */}
+      {/* ── 화면 캡처 ── 배포본(GitHub Pages)에서 찍은 실제 화면.
+          폰 비율(500×1023)이 상자(9:16)보다 길어서 contain 으로 넣는다 —
+          cover 로 두면 문항 보기 네 개 중 아래 둘이 잘린다. */}
       <div className="mt-[36px] flex flex-col gap-[14px] sm:flex-row">
         {[
-          {id: "IMG-01", cap: "실제 퀴즈 화면"},
-          {id: "IMG-02", cap: "오답 직후 화면 · 정답을 바로 보여준다"}
+          {
+            src: "/projects/sign-language/quiz.webp",
+            cap: "실제 퀴즈 화면 · 동작을 보고 보기 4개 중 뜻을 고른다"
+          },
+          {
+            src: "/projects/sign-language/learn.webp",
+            cap: "오답 복습 퀴즈 · 틀린 문제만 모아 다시 낸다"
+          }
         ].map(shot => (
           <div
-            key={shot.id}
+            key={shot.src}
             className="relative flex aspect-[9/16] flex-1 flex-col overflow-hidden rounded-md border border-[rgba(126,184,255,0.18)] bg-[var(--sd-code-bg)] sm:aspect-auto sm:h-[400px]"
           >
-            <div className="flex flex-1 items-center justify-center font-mono text-[12px] text-[rgba(255,255,255,0.2)]">
-              [{shot.id}] · 9:16
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={shot.src}
+              alt={shot.cap}
+              className="h-full w-full object-contain"
+            />
             <div className="absolute bottom-0 w-full border-t border-[rgba(126,184,255,0.18)] bg-[rgba(6,13,24,0.8)] p-[10px_14px] backdrop-blur-sm">
               <span className="font-mono text-[11px] text-[rgba(255,255,255,0.48)]">
                 {shot.cap}

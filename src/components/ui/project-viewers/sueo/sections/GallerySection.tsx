@@ -19,6 +19,28 @@ const STATS: {n: string; l: string; warn?: boolean}[] = [
   {n: "미감수", l: "수어 표현 검증", warn: true}
 ];
 
+// 액자를 누르면 뜨는 실제 화면. 배포본(GitHub Pages)에서 그대로 찍었다.
+// 예전엔 이 자리가 「데모 영상 자리 · 16:9 · 자막 필수」라는 빈 상자였고,
+// 명패에는 「1분 28초」라고 적혀 있었다 — 그런 영상은 없다.
+const SHOTS = [
+  {
+    src: "/projects/sign-language/quiz.webp",
+    cap: "퀴즈 — 동작을 보고 뜻 고르기"
+  },
+  {
+    src: "/projects/sign-language/learn.webp",
+    cap: "학습 과정 — 기초 단어 · 오답 복습 · 일상 회화"
+  },
+  {
+    src: "/projects/sign-language/translator.webp",
+    cap: "통역기 — 문장을 수어 단어 순서로"
+  },
+  {
+    src: "/projects/sign-language/translate-detail.webp",
+    cap: "변환 결과 — 사전에 없는 토큰 · 영상이 없는 단어"
+  }
+];
+
 // 원안 스크립트의 schedule(초) 순서를 ms로 옮긴다.
 const STEPS = [
   0, // 0 벽
@@ -44,7 +66,10 @@ const STEPS = [
   3150,
   3350,
   3650, // 20~22 액자 C
-  3800 // 23 힌트
+  3450,
+  3650,
+  3950, // 23~25 액자 D
+  4100 // 26 힌트
 ];
 
 const IDX = {
@@ -58,7 +83,8 @@ const IDX = {
   a: 14,
   b: 17,
   c: 20,
-  hint: 23
+  d: 23,
+  hint: 26
 };
 
 /** 등장 전 상태(투명 + 아래로 10px)를 인라인 스타일로 표현한다. */
@@ -170,7 +196,7 @@ export function GallerySection() {
       bumpSignCount();
       setDemoPlayed(true);
     }
-    announce("데모 영상을 열었습니다. Esc 키로 닫을 수 있습니다.");
+    announce("실제 화면 4장을 열었습니다. Esc 키로 닫을 수 있습니다.");
   }
 
   // 라이트박스: Esc 닫기 + 포커스 이동
@@ -330,7 +356,7 @@ export function GallerySection() {
             />
           </Piece>
 
-          {/* 데모 영상 */}
+          {/* 실제 화면 — 누르면 배포본 캡처 4장이 뜬다 */}
           <Piece className="z-10 h-[220px] w-full sm:w-[320px] lg:absolute lg:left-[280px] lg:top-0">
             <FrameLight
               on={t[IDX.a] || rm}
@@ -346,54 +372,26 @@ export function GallerySection() {
                 boxShadow: "0 40px 50px -15px rgba(0,0,0,0.7)"
               }}
             >
-              <div className="pointer-events-none absolute inset-0 border border-[var(--sd-frame)]" />
-              <div className="pointer-events-none relative flex h-full w-full flex-col items-center justify-center">
-                <svg
-                  width="56"
-                  height="56"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--sd-hand)"
-                  strokeWidth="1.2"
-                  className="mb-4 opacity-80"
-                  aria-hidden="true"
-                >
-                  <path d="M7 10v6s0 3 5 3 5-3 5-3v-6" strokeLinecap="round" />
-                  <path d="M12 2v7" strokeLinecap="round" />
-                  <path d="M9 3v6" strokeLinecap="round" />
-                  <path d="M15 3v6" strokeLinecap="round" />
-                  <path
-                    d="M6 13c-1.5 0-2-1-2-1V9l3 1"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <div className="font-mono text-[10px] text-[var(--sd-accent)]">
-                  「배우다」
-                </div>
-                <span className="sr-only">수어 동작: 배우다</span>
-
-                <div className="absolute inset-0 z-10 flex items-center justify-center">
-                  <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full border border-[rgba(191,219,254,0.15)] bg-[rgba(191,219,254,0.12)] backdrop-blur-[2px]">
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="var(--sd-accent)"
-                      className="ml-1"
-                      aria-hidden="true"
-                    >
-                      <polygon points="8,5 19,12 8,19" />
-                    </svg>
-                  </div>
+              <div className="pointer-events-none absolute inset-0 z-20 border border-[var(--sd-frame)]" />
+              {/* 폰 화면이라 가로 액자에 다 안 들어간다. 위쪽(아바타가 동작을
+                  보여주는 칸)을 보여주고 나머지는 라이트박스에서 본다. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/projects/sign-language/quiz.webp"
+                alt="수어지교 퀴즈 화면 — 아바타가 동작을 보여준다"
+                className="pointer-events-none h-full w-full object-cover object-top"
+              />
+              <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-[rgba(4,9,16,0.35)]">
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full border border-[rgba(191,219,254,0.15)] bg-[rgba(191,219,254,0.12)] font-mono text-[18px] text-[var(--sd-accent)] backdrop-blur-[2px]">
+                  ⤢
                 </div>
               </div>
             </button>
             <Plate
               on={t[IDX.a + 2] || rm}
               instant={rm}
-              title="데모 영상"
-              sub="1분 28초 · 퀴즈 학습과 문장 변환"
+              title="실제 화면"
+              sub="배포본 캡처 4장 · 눌러서 크게"
             />
           </Piece>
 
@@ -428,6 +426,41 @@ export function GallerySection() {
             />
           </Piece>
 
+          {/* 라이브 데모 — 배포된 웹 빌드를 그대로 연다 */}
+          <Piece className="h-[150px] w-full sm:w-[240px] lg:absolute lg:left-[20px] lg:top-[300px]">
+            <FrameLight
+              on={t[IDX.d] || rm}
+              instant={rm}
+              className="-top-[30px] h-[60px] w-[130px]"
+            />
+            <a
+              href="https://toadsam.github.io/Sign-Language/home"
+              target="_blank"
+              rel="noreferrer"
+              className={FRAME_CLASS}
+              style={{
+                ...rise(t[IDX.d + 1] || rm, rm),
+                boxShadow: "0 20px 30px -10px rgba(0,0,0,0.5)"
+              }}
+            >
+              <div className="pointer-events-none absolute inset-0 border border-[var(--sd-frame)]" />
+              <div className="pointer-events-none flex h-full w-full flex-col items-center justify-center gap-3 font-mono">
+                <span className="text-[24px] leading-none text-[rgba(255,255,255,0.78)]">
+                  ↗
+                </span>
+                <span className="text-[10px] tracking-[0.1em] text-[var(--sd-accent)]">
+                  WEB
+                </span>
+              </div>
+            </a>
+            <Plate
+              on={t[IDX.d + 2] || rm}
+              instant={rm}
+              title="라이브 데모"
+              sub="GitHub Pages 배포본 · 학습·퀴즈"
+            />
+          </Piece>
+
           <div
             className="pointer-events-none mt-8 w-full text-center font-mono text-[10px] text-[rgba(255,255,255,0.35)] lg:absolute lg:-bottom-[40px] lg:left-0 lg:mt-0"
             style={{
@@ -448,7 +481,7 @@ export function GallerySection() {
           className="fixed inset-0 z-[70]"
           role="dialog"
           aria-modal="true"
-          aria-label="데모 영상"
+          aria-label="실제 화면"
         >
           <div
             className="absolute inset-0 bg-[rgba(4,9,16,0.94)] backdrop-blur-[8px]"
@@ -457,7 +490,7 @@ export function GallerySection() {
           <div className="relative flex h-full w-full flex-col items-center justify-center p-6">
             <div className="mb-4 flex w-full max-w-[1000px] items-center justify-between">
               <span className="font-mono text-[10px] text-[rgba(255,255,255,0.55)]">
-                자막 포함
+                배포본(GitHub Pages)에서 찍은 화면
               </span>
               <button
                 ref={closeRef}
@@ -468,10 +501,23 @@ export function GallerySection() {
                 닫기 [Esc]
               </button>
             </div>
-            <div className="flex aspect-video w-full max-w-[1000px] items-center justify-center border border-[rgba(126,184,255,0.18)] bg-[var(--sd-panel)] shadow-2xl">
-              <span className="font-mono text-[13px] text-[var(--sd-muted)]">
-                데모 영상 자리 · 16:9 · 자막 필수
-              </span>
+            <div className="grid w-full max-w-[1000px] grid-cols-2 gap-4 sm:grid-cols-4">
+              {SHOTS.map(shot => (
+                <figure
+                  key={shot.src}
+                  className="m-0 flex flex-col overflow-hidden rounded-md border border-[rgba(126,184,255,0.18)] bg-[var(--sd-panel)] shadow-2xl"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={shot.src}
+                    alt={shot.cap}
+                    className="max-h-[56vh] w-full object-contain"
+                  />
+                  <figcaption className="border-t border-[rgba(126,184,255,0.18)] px-3 py-2 font-mono text-[10px] leading-[1.6] text-[rgba(255,255,255,0.55)]">
+                    {shot.cap}
+                  </figcaption>
+                </figure>
+              ))}
             </div>
           </div>
         </div>
