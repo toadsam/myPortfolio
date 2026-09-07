@@ -109,7 +109,7 @@ Stack: TypeScript, Expo, React Native, Spring Boot, Spring Security, OAuth2, JWT
 
 ### 운영형 웹사이트 개선: aClub / 아주대학교 총학생회
 
-2025.01 - 진행 중 (aClub 은 2026.03 동아리 박람회까지, 총학생회 웹은 진행 중) / 운영형 홍보·정보 제공 웹  
+2025.01 - 진행 중 (aClub 2025.01–2026.03 동아리 박람회까지 · 총학생회 웹 2025.03–진행 중) / 운영형 홍보·정보 제공 웹  
 Role: Frontend 개발, 정보 구조 설계, GA4/GSC 기반 개선 · 총학생회는 2026년부터 단독 담당(프론트 + Spring Boot API + 배포)  
 Scope: Frontend 개발 / 정보 구조 설계 / GA4·GSC 기반 운영 개선 / 총학생회 대여사업·링크허브·관리자 화면 · 백엔드 API  
 Stack: React, Vite, Axios, Spring Boot, JPA, PostgreSQL, JWT, Docker, Nginx, GA4, GSC
