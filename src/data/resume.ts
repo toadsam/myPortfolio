@@ -681,6 +681,7 @@ export const mainProjects: MainProjectCard[] = [
       "의뢰 공방은 Claude Agent SDK 로 네 직군 에이전트가 산출물을 쓰되 진행 권한은 관리자 게이트 하나에만 두고 도구 호출은 콜백 샌드박스로 막았습니다. 유일한 공개 쓰기 경로는 허니팟·전용 레이트리밋·견적 상하한 클램프로 보호합니다."
     ],
     links: [
+      {label: "사이트", href: "https://jaehun.co.kr"},
       {label: "3D 마을 열기", href: "/village"},
       {label: "GitHub", href: "https://github.com/toadsam/myPortfolio"}
     ]

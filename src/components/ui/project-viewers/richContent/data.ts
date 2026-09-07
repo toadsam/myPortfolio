@@ -63,7 +63,10 @@ export const RICH_DATA: Record<string, RichProject> = {
         v: "1인 개발. 설계·구현·운영·검증 전부. 코드는 Claude Code 와 짝으로 썼고, 무엇을 만들지·실측·검증은 내가 했다."
       }
     ],
-    demo: {live: "/village", repo: "https://github.com/toadsam/myPortfolio"},
+    demo: {
+      live: "https://jaehun.co.kr",
+      repo: "https://github.com/toadsam/myPortfolio"
+    },
     meta: [
       {label: "기간", value: "2026.06 ~ 진행 중"},
       {label: "팀", value: "개인 개발"},
@@ -71,7 +74,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         label: "스택",
         value: "Next.js 16 · React Three Fiber · FastAPI · SQLite · OpenAI API"
       },
-      {label: "배포", value: "배포 준비 중 (주소 미정)"},
+      {label: "배포", value: "https://jaehun.co.kr"},
       {
         label: "AI",
         value:
