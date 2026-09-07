@@ -100,11 +100,7 @@ function renderContact(phone) {
     ["Email", esc(contact.email), `mailto:${contact.email}`],
     phone ? ["Phone", esc(phone), `tel:${phone}`] : null,
     ["GitHub", esc(bare(contact.github)), contact.github],
-    [
-      "Portfolio",
-      "jaehun.co.kr",
-      "https://jaehun.co.kr/"
-    ]
+    ["Portfolio", "jaehun.co.kr", "https://jaehun.co.kr/"]
   ].filter(Boolean);
   return `<dl class="contact">
 ${rows
@@ -159,10 +155,11 @@ function renderMetrics(p) {
         }</span>`
     )
     .join("");
+  // 출처는 지표와 같은 줄에 두면 값과 같은 무게로 읽혀 지표를 흐린다. 밑줄로 내린다.
   const src = p.metricsSource
-    ? `<span class="src">${esc(p.metricsSource)}</span>`
+    ? `\n  <p class="src-line">${esc(p.metricsSource)}</p>`
     : "";
-  return `<p class="metrics">${cells}${src}</p>`;
+  return `<p class="metrics">${cells}</p>${src}`;
 }
 
 function renderProject(p) {
@@ -175,14 +172,17 @@ function renderProject(p) {
         .map(h => `<li>${esc(h)}</li>`)
         .join("")}</ul>`
     : "";
+  // 오른쪽 정렬 태그(FullStack · Next.js …)는 뺐다(2026-09-07) — 같은 말이 부제,
+  // 성과 줄, 아래 「기술 스택」 표에 이미 세 번 나온다. 제목 옆 자리를 비워 두는
+  // 편이 제목을 크게 쓸 수 있어 훑을 때 눈에 걸린다.
   return `<article class="proj">
   <div class="proj-head">
     <h3>${esc(p.printTitle ?? p.title)}</h3>
-    <span class="tags">${esc(p.tags.join(" · "))}</span>
   </div>
   ${meta ? `<p class="meta">${esc(meta)}</p>` : ""}
   <p class="sub">${esc(p.subtitle)}</p>
   ${hl}
+  <div class="payoff">
   ${renderMetrics(p)}
   ${
     links.length
@@ -196,16 +196,25 @@ function renderProject(p) {
           .join("")}</p>`
       : ""
   }
+  </div>
 </article>`;
 }
 
 function renderProjects() {
-  // printCompact 는 화면 대표를 종이에서만 한 줄 목록으로 내린다(2장 예산).
+  // printCompact 는 화면 대표를 종이에서만 한 줄 목록으로 내린다(지금 쓰는 항목 없음).
   const featured = mainProjects.filter(p => p.featured && !p.printCompact);
   return `<section class="sec">
   <h2>주요 프로젝트</h2>
 ${featured.map(renderProject).join("\n")}
 </section>`;
+}
+
+/** 압축 줄의 꼬리 링크. 두 번째(`labelOnly`)는 라벨만 찍는다 — 한 줄에 주소를
+ *  둘 넣으면 줄이 접혀 A4 2장을 넘긴다(실측 3쪽). 화면 원페이저에는 둘 다 있다. */
+function tail(link, labelOnly = false) {
+  if (!link) return "";
+  const text = labelOnly ? link.label : bare(link.href);
+  return ` <a class="tail" href="${esc(link.href)}">${esc(text)}</a>`;
 }
 
 function renderOtherProjects() {
@@ -214,15 +223,24 @@ function renderOtherProjects() {
     const gh =
       p.links.find(l => /github\.com/.test(l.href)) ??
       p.links.find(l => isExternal(l.href) && bare(l.href).length <= 48);
+    // 저장소 말고 **바로 열리는 화면**이 따로 있으면 그것도 싣는다 — 서류를
+    // 보는 사람은 저장소보다 열리는 주소를 먼저 누른다. 영상은 뺀다(주소가 길다).
+    const VIDEO_HOSTS = ["youtube.com", "youtu.be", "vimeo.com"];
+    const extra = p.links.find(
+      l =>
+        isExternal(l.href) &&
+        bare(l.href).length <= 48 &&
+        l.href !== gh?.href &&
+        !VIDEO_HOSTS.some(h => l.href.includes(h))
+    );
     return `    <li>
       <div class="row-head"><b>${esc(
         p.printTitle ?? p.title
       )}</b><span class="when">${esc(join_([p.period, p.team]))}</span></div>
-      <div class="row-body">${esc(p.subtitle)}${
-      gh
-        ? ` <a class="tail" href="${esc(gh.href)}">${esc(bare(gh.href))}</a>`
-        : ""
-    }</div>
+      <div class="row-body">${esc(p.subtitle)}${tail(gh)}${tail(
+      extra,
+      true
+    )}</div>
     </li>`;
   });
   // 소품(`subProjects`)은 싣지 않는다 — 2쪽 예산 밖이고 화면 원페이저에 있다.
@@ -328,14 +346,14 @@ const CSS = `
   --navy: #16324f;
   --wash: #f3f6fa;
 }
-@page { size: A4; margin: 11mm 14mm 12mm; }
+@page { size: A4; margin: 15mm 16mm 14mm; }
 * { box-sizing: border-box; }
-html { font-size: 9pt; }
+html { font-size: 9.8pt; }
 body {
   margin: 0;
   color: var(--ink);
   font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-  line-height: 1.4;
+  line-height: 1.62;
   word-break: keep-all;
   overflow-wrap: anywhere;
   -webkit-print-color-adjust: exact;
@@ -365,70 +383,79 @@ h1 { margin: 0; font-size: 24pt; line-height: 1.1; color: var(--navy); letter-sp
 .contact dt { color: var(--muted); font-weight: 600; }
 .contact dd { margin: 0; color: var(--ink); }
 
-/* 절 */
-.sec { margin-top: 8px; break-inside: auto; }
+/* 절 — 쪽수 예산을 없앤 뒤(2026-09-07) 절 사이 간격이 가장 큰 읽기 장치다.
+   심사자는 먼저 절 제목만 훑어 지도를 그린 다음 필요한 절로 들어간다. */
+.sec { margin-top: 22px; break-inside: auto; }
 h2 {
-  margin: 0 0 4px;
-  padding-bottom: 3px;
+  margin: 0 0 10px;
+  padding-bottom: 5px;
   border-bottom: 1px solid var(--line);
   color: var(--navy);
-  font-size: 10.5pt;
+  font-size: 11pt;
   font-weight: 800;
   letter-spacing: 0.04em;
   break-after: avoid;
 }
-.lead { margin: 0 0 5px; color: var(--body); }
-.points { margin: 0; padding-left: 14px; }
-.points li { margin: 1px 0; color: var(--body); }
+.lead { margin: 0 0 9px; color: var(--body); }
+.points { margin: 0; padding-left: 15px; }
+.points li { margin: 5px 0; color: var(--body); }
 .points b { color: var(--ink); }
 
 /* 프로젝트 */
-/* 카드를 통째로 안 나누면(break-inside: avoid) 앞쪽 끝에 카드 하나 크기의 빈칸이
-   남는다. 제목·메타·부제는 붙여 두고, 성과 줄 사이에서는 나뉘게 둔다. */
-.proj { padding: 5px 0 6px; border-top: 1px dashed var(--line); orphans: 2; widows: 2; }
+/* 카드를 통째로 안 나눈다(break-inside: avoid)는 규칙은 두 번 시도해서 두 번 다
+   버렸다 — 카드 하나가 한 쪽의 3분의 1이라, 안 들어가면 앞쪽 끝에 그만한 빈칸이
+   그대로 남는다(2026-09-07 실측: 1쪽 아래 30% 공백 + 총 5쪽). 쪽수가 자유로워도
+   빈칸은 여백이 아니라 구멍이다. 그래서 제목·기간·부제만 붙여 두고 성과 줄 사이에서는
+   갈라지게 둔다. 다만 지표·출처·링크는 한 덩어리로 묶어 이것만은 안 갈라지게 한다. */
+.proj { padding: 15px 0 16px; border-top: 1px dashed var(--line); orphans: 2; widows: 2; }
 .proj-head, .meta, .sub { break-after: avoid; }
-/* 성과 줄은 나뉘어도 된다(orphans/widows 2) — 통째로 넘기면 앞쪽 끝에 5줄 빈칸이 남았다. */
 .hl li { break-inside: auto; orphans: 2; widows: 2; }
+.payoff { break-inside: avoid; }
 .proj:first-of-type { border-top: 0; padding-top: 2px; }
 .proj-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.proj h3 { margin: 0; font-size: 11pt; font-weight: 800; color: var(--ink); }
-.tags { color: var(--muted); font-size: 8.5pt; white-space: nowrap; }
-.meta { margin: 1px 0 0; color: var(--muted); font-size: 8.8pt; }
-.sub { margin: 3px 0 0; color: var(--body); font-weight: 600; }
-.hl { margin: 3px 0 0; padding-left: 14px; color: var(--body); }
-.hl li { margin: 1px 0; }
-.metrics { margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 3px 14px; font-size: 9pt; color: var(--body); align-items: baseline; }
-.metrics b { color: var(--navy); font-size: 10pt; margin-right: 3px; }
-.metrics .src { color: var(--faint); font-size: 8pt; }
-.metrics .prov { color: #a15c07; font-style: normal; font-size: 7.5pt; }
-.links { margin: 3px 0 0; display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 8.5pt; color: var(--muted); }
-.links b { font-weight: 600; margin-right: 3px; }
+.proj h3 { margin: 0; font-size: 12.5pt; font-weight: 800; color: var(--ink); letter-spacing: -0.01em; }
+.meta { margin: 3px 0 0; color: var(--muted); font-size: 9pt; }
+.sub { margin: 7px 0 0; color: var(--body); font-weight: 600; }
+.hl { margin: 8px 0 0; padding-left: 15px; color: var(--body); }
+.hl li { margin: 5px 0; }
+/* 지표 줄은 이 이력서에서 가장 강한 부분인데 예전엔 출처 문구와 같은 크기로 붙어
+   흐려 보였다. 옅은 판 위에 올리고 값을 키워 눈이 먼저 닿게 한다. 출처는 아래로 내린다. */
+.metrics {
+  margin: 10px 0 0; padding: 7px 11px; background: var(--wash); border-radius: 3px;
+  display: flex; flex-wrap: wrap; gap: 4px 22px; font-size: 9.2pt; color: var(--body); align-items: baseline;
+}
+.metrics b { color: var(--navy); font-size: 13pt; margin-right: 4px; letter-spacing: -0.01em; }
+.metrics .prov { color: #a15c07; font-style: normal; font-size: 7.8pt; }
+.src-line { margin: 4px 0 0; color: var(--faint); font-size: 8.2pt; }
+.links { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 3px 18px; font-size: 8.8pt; color: var(--muted); }
+.links b { font-weight: 600; margin-right: 4px; }
 .links a { color: var(--body); }
 
 /* 한 줄 목록 */
 .rows { margin: 0; padding: 0; list-style: none; }
-.rows li { padding: 2px 0; line-height: 1.35; border-top: 1px dashed var(--line); break-inside: avoid; }
-.rows li:first-child { border-top: 0; }
+.rows li { padding: 8px 0; line-height: 1.5; border-top: 1px dashed var(--line); break-inside: avoid; }
+.rows li:first-child { border-top: 0; padding-top: 2px; }
 .row-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
-.row-head .when { color: var(--muted); font-size: 8.5pt; white-space: nowrap; }
-.row-body { color: var(--body); font-size: 8.9pt; }
+.row-head b { font-size: 10pt; }
+.row-head .when { color: var(--muted); font-size: 8.8pt; white-space: nowrap; }
+.row-body { color: var(--body); font-size: 9.2pt; margin-top: 2px; }
 .row-body .role { color: var(--muted); }
 .row-body .tail { color: var(--faint); font-size: 8.3pt; margin-left: 4px; }
 
 /* 기술 */
-.skills { border-collapse: collapse; width: 100%; font-size: 9pt; }
+.skills { border-collapse: collapse; width: 100%; font-size: 9.4pt; }
 .skills tr { break-inside: avoid; }
-.skills th { text-align: left; vertical-align: top; width: 92px; padding: 1px 8px 1px 0; color: var(--navy); font-weight: 700; white-space: nowrap; }
-.skills td { padding: 1px 0; color: var(--body); }
-.skills .desc { color: var(--muted); font-size: 8.3pt; }
-.gh { margin: 6px 0 0; color: var(--muted); font-size: 8.5pt; }
+.skills th { text-align: left; vertical-align: top; width: 96px; padding: 5px 10px 5px 0; color: var(--navy); font-weight: 700; white-space: nowrap; }
+.skills td { padding: 5px 0; color: var(--body); }
+.skills .desc { color: var(--muted); font-size: 8.6pt; }
+.gh { margin: 10px 0 0; color: var(--muted); font-size: 8.8pt; }
 .gh a { color: var(--body); }
 
-/* 학력·활동 */
-.two { display: grid; grid-template-columns: minmax(0, 9fr) minmax(0, 11fr); gap: 0 18px; }
+/* 학력·활동 — 예전엔 여기가 문서에서 가장 빽빽했다(글자는 제일 작고 밀도는 제일 높음). */
+.two { display: grid; grid-template-columns: minmax(0, 9fr) minmax(0, 11fr); gap: 0 26px; }
 .tl { margin: 0; padding: 0; list-style: none; }
-.tl li { display: grid; grid-template-columns: max-content 1fr; gap: 8px; padding: 1px 0; line-height: 1.32; font-size: 8.9pt; color: var(--body); break-inside: avoid; }
-.tl .when { color: var(--muted); font-size: 8.3pt; padding-top: 1px; white-space: nowrap; }
+.tl li { display: grid; grid-template-columns: max-content 1fr; gap: 10px; padding: 5px 0; line-height: 1.5; font-size: 9.2pt; color: var(--body); break-inside: avoid; }
+.tl .when { color: var(--muted); font-size: 8.6pt; padding-top: 1px; white-space: nowrap; }
 .tl b { color: var(--ink); }
 .tl .led { color: var(--navy); font-style: normal; font-size: 8.3pt; }
 

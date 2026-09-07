@@ -198,10 +198,12 @@ export interface MainProjectCard {
   hero?: boolean;
   /**
    * PDF 에서는 대표(상세 항목)가 아니라 「그 밖의 프로젝트」 한 줄 목록으로 내린다.
-   * 화면의 featured 와 종이의 예산은 다른 문제다 — PDF 는 A4 2장이 고정 예산이고,
-   * 대표 항목 하나(약 25mm)가 늘면 2쪽 끝의 학력·활동 두 칸 블록(약 40mm, 격자라
-   * 쪽을 가르지 못한다)이 3쪽으로 통째 밀린다(2026-09-05 TSEROF 실측). 종이에서도
-   * 상세로 올리려면 이 플래그를 빼고 `npm run resume:pdf` 뒤 쪽수를 확인할 것.
+   *
+   * 2026-09-07 이전에는 "A4 2장" 이 고정 예산이라 자리가 모자라면 대표를 여기로
+   * 내렸다(그때 TSEROF 가 내려갔다). **그 예산은 없앴다** — 빽빽해서 안 읽히는
+   * 2장보다 여백 있는 3장이 낫고, 쪽수는 목표가 아니라 결과여야 한다는 판단이다.
+   * 그래서 지금 이 플래그를 쓰는 항목은 없다. 화면 대표인데 종이에서는 줄여야 할
+   * 이유가 생겼을 때만 붙이고, 그 이유를 여기 적을 것.
    */
   printCompact?: boolean;
   /**
@@ -949,8 +951,6 @@ export const mainProjects: MainProjectCard[] = [
     // 교정, 2026-09-06 시작월 10월로 재교정). role 도 같은 날 실제 담당으로 고쳤다 —
     // 저장소 README 기여자 표 기준 플레이어는 박지원, 저장은 김어진, 본인은 스테이지 2·기믹·퍼즐.
     featured: true,
-    // 종이에서는 한 줄 목록(2장 예산). 사유는 printCompact 타입 주석에.
-    printCompact: true,
     title: "TSEROF",
     subtitle:
       "5인 팀 부팀장으로 기획부터 Steam 스토어 출시까지 4개월에 완주한 3D 액션 플랫폼 게임",
@@ -1016,7 +1016,12 @@ export const mainProjects: MainProjectCard[] = [
     // 그림이 없어 플레이스홀더 상자가 떠 있던 자리. 실제 앱 캡처가 아니라
     // **소개용 키 아트**다 — 화면을 그린 게 아니라 서비스가 무엇인지 말한다.
     image: "/projects/sign-language.webp",
-    links: [{label: "GitHub", href: "https://github.com/toadsam/Sign-Language"}]
+    // 라벨이 "사이트" 가 아닌 이유: GitHub Pages 에 올린 웹 빌드고, 운영 중인
+    // 서비스가 아니다. "사이트" 라벨은 운영 서비스 수를 세는 데 쓰인다.
+    links: [
+      {label: "웹 데모", href: "https://toadsam.github.io/Sign-Language/home"},
+      {label: "GitHub", href: "https://github.com/toadsam/Sign-Language"}
+    ]
   },
   {
     id: "otherside-vr",
