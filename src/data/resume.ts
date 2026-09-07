@@ -662,7 +662,7 @@ export const mainProjects: MainProjectCard[] = [
     // 63 은 backend/app/main.py 의 라우트 수, 258 은 backend/tests 의 test 함수 수.
     metrics: [
       {value: "215 KB", label: "첫 화면 JS · 3D 모델 0개"},
-      {value: "63", label: "공개·관리자 API"},
+      {value: "65", label: "공개·관리자 API"},
       {value: "258", label: "백엔드 테스트"}
     ],
     metricsSource: "저장소 소스 기준 · 첫 화면 무게는 빌드 청크 실측 (2026.09)",
