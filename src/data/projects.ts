@@ -179,7 +179,13 @@ export const projects: ProjectData[] = [
     result:
       "반복 학습과 오답 되짚기까지 동작하는 앱 프로토타입으로, 30개 이상의 수어 단어를 학습 흐름에 올렸습니다. 영상 저장소와 메타데이터 저장소가 나뉘어 있어 조회 경로를 백엔드에서 하나로 모았고, 영상 URL 이 없을 때의 폴백까지 처리했습니다.",
     nextStep: "학습 콘텐츠 확장과 실제 사용자 테스트를 진행할 예정입니다.",
-    links: [{label: "GitHub", href: "https://github.com/toadsam/Sign-Language"}]
+    links: [
+      {
+        label: "웹 데모 열기",
+        href: "https://toadsam.github.io/Sign-Language/home"
+      },
+      {label: "GitHub", href: "https://github.com/toadsam/Sign-Language"}
+    ]
   },
   {
     id: "aclub",

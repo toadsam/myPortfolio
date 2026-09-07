@@ -554,6 +554,9 @@ export function ProjectOnePager({
   const repoHref = data.demo.repo ?? project.links[0]?.href;
   // 실제로 열리는 주소가 있을 때만 "운영 중" 이라고 말하고, 그 주소로 보낸다.
   const liveHref = data.demo.live;
+  // 같은 주소가 CTA 줄에 두 번 서지 않게 한다 — 카드 목록에서는 링크 칩이
+  // 필요하고(거기엔 demo.live 가 없다), 여기서는 위의 버튼이 이미 그 주소다.
+  const extraLinks = project.links.filter(l => l.href !== liveHref);
   const videoId = youtubeId(data.demo.video);
   // 오른쪽 5칸에 무엇을 둘지: 대표 이미지가 실제로 있으면 그걸 쓴다.
   // 없을 때만 사실 묶음을 올린다 — 예전엔 여기가 "이미지 자리" 라고 적힌
@@ -672,7 +675,7 @@ export function ProjectOnePager({
             라이브 사이트 열기
           </a>
         ) : null}
-        {project.links.map((link, i) => {
+        {extraLinks.map((link, i) => {
           // 라벨로 아이콘을 고른다. 링크가 GitHub 하나뿐이던 시절엔 전부
           // 깃허브 아이콘이었는데, 이제 스팀 스토어·시연 영상이 섞인다.
           const icon = /영상|video/i.test(link.label)
