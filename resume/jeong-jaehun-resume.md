@@ -67,7 +67,7 @@ Stack: Next.js 16, React 19, TypeScript, React Three Fiber, FastAPI, SQLAlchemy,
 
 ### FestFlow
 
-2026.05 업데이트 / 공개 GitHub repo / Full-Stack Festival Management Web App  
+2026.04 - 2026.06 / 개인 프로젝트 · 공개 GitHub repo / Full-Stack Festival Management Web App  
 Role: React, Spring Boot, JWT, SSE, PWA 기반 사용자/관리자 기능 구현  
 Scope: 개인 프로젝트 / 공개 GitHub repo / 사용자·관리자 양쪽 기능 구현  
 Stack: React, Vite, Tailwind CSS, PWA, Spring Boot 3, JPA, Spring Security, JWT, SSE, MySQL
@@ -95,7 +95,7 @@ Stack: React, Spring Boot, JPA, JWT 이중 쿠키(HttpOnly), AWS, AI Coaching
 
 ### Sign-Language
 
-2026.05 업데이트 / 공개 GitHub repo / 수어 학습·표현 서비스  
+2026.01 - 2026.05 / 파란학기제 4인 팀 · 공개 GitHub repo / 수어 학습·표현 서비스  
 Role: Expo/React Native 프론트, Spring Boot 백엔드, OAuth2/JWT/Firebase 기반 인증·학습 API 구성  
 Scope: 팀 도전과제 시제품 / Expo 앱과 Spring Boot API 기반 학습·표현 흐름 구현  
 Stack: TypeScript, Expo, React Native, Spring Boot, Spring Security, OAuth2, JWT, Firebase
@@ -135,8 +135,8 @@ BaekjoonHub로 C++ 문제 풀이를 별도 repo에 기록하고 있습니다.
 
 ### TSEROF · INTO MONSTER POINT · 아주대탐험
 
-2023.11 - 2025.05 / Unity, C#, AR  
-출시/배포한 게임에서 AR Plane 기반 전투 공간 생성, NavMesh AI, 스킬 선택, Object Pooling, Raycast 최적화를 구현했습니다.
+2023.10 - 2025.04 / Unity, C#, AR (TSEROF 2023.10–2024.02 · 아주대탐험 2024.09–12 · INTO MONSTER POINT 2025.03–04)  
+TSEROF(Steam 출시, 5인 팀 부팀장)에서는 스테이지 2 통합 씬(구간별 Cinemachine 카메라·리스폰·클리어), 3×3 패턴 퍼즐, 속성 큐브, 대포·낙하물·회전·가시·레버 등 장애물 기믹과 기믹 인터페이스 도입을 맡았고, INTO MONSTER POINT·아주대탐험에서는 AR Plane 기반 전투 공간 생성, NavMesh AI, 스킬 선택 등 인터랙션과 게임 시스템 구현 경험을 쌓았습니다.
 
 ## Education
 

@@ -3716,24 +3716,39 @@ export const RICH_DATA: Record<string, RichProject> = {
         ratio: "16/9"
       }
     ],
+    // 2026-09-06 담당 교정. 예전 본문은 플레이어 컨트롤러(발 4방향 접지 레이)·저장(XOR)·
+    // 풀링을 내 일처럼 적었는데, 저장소 README 기여자 표와 커밋 이력상 플레이어는 박지원,
+    // 저장·게임 매니저·씬 전환은 김어진, 스테이지 선택·옵션·사운드는 김형중 작업이다.
+    // 내 몫(커밋 216/1,204건, 2023.10.23~12.13)은 스테이지 2 전체 + 기믹(README
+    // 「Gimmick(정재훈)」 UML) + 3×3 퍼즐. 아래 코드·결정·트러블은 전부 내 브랜치
+    // (JJH_Stage2 · JJH_CodeClean · JJH_PJW_EndingScene)의 스크립트와 커밋에서 가져왔다.
     tldr: [
       {
         k: "무엇을",
         v: "잃어버린 아이템을 찾아 스테이지를 클리어하는 3D 플랫포머"
       },
-      {k: "왜", v: "이동 조작감과 스테이지 진행감을 동시에 살리고 싶었음"},
+      {
+        k: "왜",
+        v: "스테이지 하나를 통째로 맡아 구간·장애물·퍼즐이 한 흐름으로 이어지게 하고 싶었음"
+      },
       {
         k: "결과",
         v: "5인 팀에서 부팀장으로 Steam 스토어 출시까지 완주 (기획 → 출시 4개월)"
       },
-      {k: "내 역할", v: "부팀장 — 레벨 디자인·장애물/기믹 구현·기획"}
+      {
+        k: "내 역할",
+        v: "부팀장 — 스테이지 2 전체 · 장애물/기믹 · 3×3 패턴 퍼즐 · 기획"
+      }
     ],
     demo: {repo: "https://github.com/KimEoJin24/TSEROF"},
     meta: [
-      {label: "기간", value: "2023.11 – 2024.02"},
+      {label: "기간", value: "2023.10 – 2024.02"},
       {label: "팀", value: "5인 팀 프로젝트"},
-      {label: "역할", value: "레벨 디자인 · 장애물/기믹 구현 · 기획 · 부팀장"},
-      {label: "스택", value: "Unity 2022.3 · C#"},
+      {
+        label: "역할",
+        value: "스테이지 2 · 장애물/기믹 · 3×3 퍼즐 · 기획 · 부팀장"
+      },
+      {label: "스택", value: "Unity 2022.3 · C# · Cinemachine"},
       {label: "출시", value: "Steam 스토어 출시"},
       {
         label: "비고",
@@ -3754,156 +3769,216 @@ export const RICH_DATA: Record<string, RichProject> = {
       {n: "5인", l: "팀 · 부팀장"},
       {n: "4개월", l: "기획 → 출시"}
     ],
-    // 기간은 2023.11–2024.02 — 저장소 커밋 이력으로 확인한 값(portfolio-specs/10-tserof.md
-    // FIX-02)이고 본인이 2026-09-05 재확인했다. 예전 "2023.07–11 · 5개월" 은 근거가 없었다.
+    // 기간은 2023.10–2024.02 — 첫 커밋 2023.10.23, Steam 출시 2024.02.10 (2026-09-06 교정.
+    // 예전 "2023.11–" 은 커밋 이력을 늦게 잡은 값, 그 전의 "2023.07–11 · 5개월" 은 근거가 없었다).
     metricsNote:
-      "출시 사실은 Steam 스토어 페이지에서 직접 확인할 수 있다 · 팀 규모와 기간(2023.11–2024.02)은 저장소 이력 기준",
+      "출시 사실은 Steam 스토어 페이지에서 직접 확인할 수 있다 · 기간(2023.10–2024.02)은 첫 커밋과 Steam 출시일 · 담당은 저장소 README 기여자 표와 커밋 이력 기준",
     features: [
-      {t: "WASD + 2단 점프", d: "조작감 있는 플레이어 컨트롤"},
-      {t: "스테이지 잠금 해제", d: "클리어 시 다음 스테이지 오픈"},
-      {t: "진행상황 저장", d: "클리어 뒤 이어하기"},
-      {t: "숨겨진 아이템", d: "탐색형 클리어 조건"}
+      {t: "스테이지 2 통합 씬", d: "구간별 카메라·리스폰·클리어 판정"},
+      {t: "3×3 패턴 퍼즐", d: "정답 패턴 5종을 주기적으로 교체"},
+      {t: "속성 큐브", d: "마그마·용암·물·얼음·얼음벽"},
+      {t: "장애물 기믹", d: "대포·낙하물·회전·가시·레버·토네이도"}
     ],
     problem:
-      "3D 플랫포머에서 스테이지 진행감과 탐색 재미를 동시에 살리려면 이동 조작과 스테이지 구조가 잘 맞물려야 하고, 저장·이어하기까지 고려해야 한다.",
+      "스테이지 2 는 처음에 2-1·2-2·2-3 세 씬이었다. 구간을 넘길 때마다 씬을 로드했고 카메라·리스폰·클리어 판정이 구간마다 흩어져 있어, 장애물과 퍼즐을 늘릴수록 한 곳에서 관리할 뼈대가 필요했다.",
     research: {
       quotes: [
         {
-          q: "점프 조작이 어색하면 그 게임은 바로 끄게 된다.",
-          who: "문제 정의 (본인)"
+          q: "스테이지 2 통합 씬 생성 (-재훈)",
+          who: "2023-11-27 커밋 메시지 — JJH_Stage2 브랜치"
         },
         {
-          q: "스테이지 진행 중 오브젝트의 생성과 파괴가 지속적으로 발생하여 CPU 부담 증가",
-          who: "포트폴리오 PDF 원문 (Unity Profiler 병목)"
+          q: "Player 의 Jump 범위에 문제가 생기지 않게 임시적으로 오브젝트의 위치를 수정함.",
+          who: "유저 테스트 조치 기록 — 내가 놓은 장애물에 대한 피드백"
         }
       ]
     },
     hypothesis:
-      "2단 점프와 스테이지 잠금·저장을 갖춘 뒤, 매 프레임 도는 생성·파괴·레이캐스트·충돌 비용을 Profiler 로 찾아 줄인다. 조작감과 출시 빌드의 성능을 같이 지키는 순서였다.",
+      "“세 씬을 한 씬으로 합쳐 카메라·리스폰·클리어를 매니저 하나에 모으고, 큐브·퍼즐·장애물을 같은 규약으로 묶으면 — 기믹을 늘려도 구간 전환이 끊기지 않고 팀원도 같은 방식으로 붙일 수 있다.”",
     process: [
-      {t: "기획", d: "레벨 구성"},
-      {t: "컨트롤러", d: "이동·점프"},
-      {t: "스테이지", d: "잠금 해제"},
-      {t: "저장", d: "이어하기"},
-      {t: "빌드", d: "PC"}
+      {t: "기획", d: "스테이지 2 구성"},
+      {t: "씬 통합", d: "2-1·2-2·2-3"},
+      {t: "기믹", d: "큐브·장애물"},
+      {t: "퍼즐", d: "3×3 패턴"},
+      {t: "정리", d: "인터페이스"}
     ],
     architecture: [
-      {tag: "Input", name: "Player Controller", desc: "이동·2단 점프"},
-      {tag: "Flow", name: "Stage Manager", desc: "선택·잠금 해제·전환"},
-      {tag: "Save", name: "Progress Save", desc: "클리어·이어하기"},
-      {tag: "Git", name: "Team Workflow", desc: "씬 분리로 머지 충돌 최소화"}
+      {
+        tag: "Stage",
+        name: "Stage2Manager",
+        desc: "구간 on/off · Cinemachine 카메라 · 리스폰 · 클리어"
+      },
+      {tag: "Puzzle", name: "PuzzleManager", desc: "정답 5종 교체 · 순서 비교"},
+      {
+        tag: "Gimmick",
+        name: "CubeType · Obstacles",
+        desc: "enum 분기 · 장애물 반응"
+      },
+      {
+        tag: "Contract",
+        name: "IMovable 외 4종",
+        desc: "기믹 공통 인터페이스 (12월 정리)"
+      }
     ],
     decisions: [
       {
-        area: "접지 판정",
-        pick: "발 4방향 레이",
-        why: "가장자리에서만 정확히 접지로 잡힘",
-        alt: "코요테 타임(공중 점프 부작용)"
+        area: "스테이지 2 구성",
+        pick: "한 씬 + 구간 그룹 on/off",
+        why: "구간 전환에 씬 로드가 없고 카메라·리스폰만 바뀜",
+        alt: "씬 3개(전환마다 로드 · 상태 유지 어려움)"
       },
       {
-        area: "레이캐스트",
-        pick: "RaycastNonAlloc + Layer 마스크",
-        why: "배열을 미리 잡아 매 프레임 할당 0",
-        alt: "RaycastAll(프레임마다 배열 생성)"
+        area: "퍼즐 판정",
+        pick: "int[9] 정답 배열 순서 비교",
+        why: "정답 추가가 배열 하나 · 판정은 SequenceEqual 한 줄",
+        alt: "칸별 개별 판정"
       },
       {
-        area: "저장",
-        pick: "직렬화 저장",
-        why: "구조적 진행 저장·디버그",
-        alt: "PlayerPrefs(구조 빈약)"
+        area: "큐브 속성",
+        pick: "enum 하나로 switch 분기",
+        why: "큐브 종류마다 스크립트를 늘리지 않음",
+        alt: "큐브 종류별 스크립트"
       },
       {
-        area: "협업",
-        pick: "씬 분리",
-        why: "머지 충돌 최소화",
-        alt: "단일 씬(충돌 ↑)"
+        area: "무한 코루틴",
+        pick: "WaitForSeconds 캐싱",
+        why: "루프마다 new 하지 않아 할당 감소",
+        alt: "매 루프 new WaitForSeconds"
       }
     ],
     coreCode: [
       {
-        filename: "ForceReceiver.cs",
-        caption: "접지를 발 4방향으로 검사해 가장자리 점프 씹힘을 해결",
-        highlightLines: [2, 3, 4, 5, 9],
+        filename: "Stage2Manager.cs",
+        caption:
+          "구간 하나가 켜질 때 리스폰 지점과 Cinemachine 카메라가 같이 바뀐다 — 씬 로드 없이 2-1 → 2-2",
+        highlightLines: [3, 4, 6],
         lines: [
-          "Ray[] rays = new Ray[4]",
+          "public void Stage2Start()",
           "{",
-          "  new Ray(transform.position + transform.forward * 0.25f + Vector3.up * 0.01f, Vector3.down),",
-          "  new Ray(transform.position - transform.forward * 0.25f + Vector3.up * 0.01f, Vector3.down),",
-          "  new Ray(transform.position + transform.right   * 0.25f + Vector3.up * 0.01f, Vector3.down),",
-          "  new Ray(transform.position - transform.right   * 0.25f + Vector3.up * 0.01f, Vector3.down)",
-          "};",
-          "",
-          "for (int i = 0; i < rays.Length; i++)",
-          '  if (Physics.Raycast(rays[i], maxDistance, LayerMask.GetMask("Ground")))',
-          "  { if (!isGrounded) EnterGround(); return; }"
+          "    _stage2.SetActive(true);",
+          "    curRespawnPosition = stage2RespawnPosition.transform.position;",
+          "    _stage1Camera.enabled = false;",
+          "    _stage2Camera.enabled = true;",
+          "    _stage3Camera.enabled = false;",
+          "    isStage1 = false;",
+          "    isStage2 = true;",
+          "    isStage3 = false;",
+          "}"
         ]
       },
       {
-        filename: "FileDataHandler.cs",
+        filename: "PatternSign.cs · PuzzleManager.cs",
         caption:
-          "세이브 파일을 XOR로 난독화. 메모장으로 열어 고치는 것만 막는 수준",
-        highlightLines: [4],
+          "정답 패턴 5종을 25초마다 무작위로 바꾸고, 플레이어가 놓은 배열을 정답과 순서대로 비교",
+        highlightLines: [3, 7, 11],
         lines: [
-          "private string EncryptDecrypt(string data) {",
-          '  string modifiedData = "";',
-          "  for (int i = 0; i < data.Length; i++)",
-          "    modifiedData += (char)(data[i] ^ _encryptionCodeWord[i % _encryptionCodeWord.Length]);",
-          "  return modifiedData;",
+          "public IEnumerator PatternChange()",
+          "{",
+          "    var deleyTime = new WaitForSeconds(25f); // 무한 코루틴 — 할당을 줄이려 캐싱",
+          "    while (true)",
+          "    {",
+          "        yield return deleyTime;",
+          "        _random = Random.Range(0, 5);",
+          "        _puzzleObjects.SettingObject(_patterns[_random]);",
+          "    }",
+          "}",
+          "bool isRight = puzzleObjects.QuestionPattern().SequenceEqual(patternSign.AnswerPattern());"
+        ]
+      },
+      {
+        filename: "CubeType.cs",
+        caption:
+          "큐브 하나에 enum 하나 — 마그마는 튕기고, 용암·물은 리스폰, 얼음은 코루틴으로 떨어졌다 되돌아온다",
+        highlightLines: [1, 5, 8, 11],
+        lines: [
+          "public enum Cube { Magma, Luva, Ice, Water, IceWall }",
+          "",
+          "switch (_cube)",
+          "{",
+          "    case Cube.Magma:",
+          "        forceReceiver.StartGimmick(Gimmicks.AddVelocity, rb, 0, _magmaJumpPower, 0, 30f);",
+          "        break;",
+          "    case Cube.Luva: case Cube.Water:",
+          "        SwichPos();",
+          "        break;",
+          "    case Cube.Ice:",
+          "        StartCoroutine(IceMoveStart());",
+          "        break;",
+          "    case Cube.IceWall:",
+          "        StartCoroutine(IceWallMove());",
+          "        break;",
           "}"
         ]
       }
     ],
     work: [
-      {g: "제어", items: ["이동·2단 점프 컨트롤러", "4방향 레이 접지 판정"]},
-      {g: "스테이지", items: ["선택·잠금 해제 시스템"]},
       {
-        g: "성능",
+        g: "스테이지 2",
         items: [
-          "오브젝트 풀링 · WaitForSeconds 캐싱",
-          "RaycastNonAlloc + Layer 마스크",
-          "콜라이더 단순화 · 조건부 충돌 검사"
+          "2-1·2-2·2-3 씬을 한 씬으로 통합",
+          "Stage2Manager — 구간별 Cinemachine 카메라 전환 · 리스폰 지점 · 클리어 판정",
+          "스테이지 2 카메라 회전 (CamPos)"
         ]
       },
       {
-        g: "저장",
-        items: ["진행상황 직렬화·이어하기", "XOR 저장 데이터 난독화"]
-      },
-      {g: "협업", items: ["씬 분리 작업 구조"]}
-    ],
-    // 포트폴리오 PDF 「트러블슈팅」 네 건을 순서 그대로 옮겼다. 3D 전시실
-    // (tserof/sections P04·P05·P07·P08)과 같은 원문이다 — 예전의 「씬 머지 충돌」은
-    // 기록에 없는 이야기였고(_UNKNOWNS B-3), 「가장자리 점프」는 트러블이 아니라
-    // 의사결정표·Implementation 의 ForceReceiver.cs 로 남는다.
-    challenges: [
-      {
-        title: "스테이지 진행 중 생성·파괴가 계속 일어나 CPU 부담이 늘었다",
-        problem:
-          "고드름·발판 같은 오브젝트가 스테이지 진행 중 계속 생성되고 파괴되어 CPU 부담이 증가했다.",
-        solution:
-          "새로 생성하거나 파괴하는 대신 기존 오브젝트를 재활용하는 오브젝트 풀링으로 바꿨다. Coroutine 에서 쓰는 WaitForSeconds 객체도 캐싱해 재사용했다."
+        g: "퍼즐",
+        items: [
+          "3×3 패턴 퍼즐 — PuzzleManager · PatternSign · PuzzleButton · PuzzleObjects 등 7개 스크립트"
+        ]
       },
       {
-        title: "매 프레임 RaycastAll 이 배열을 새로 만들고 있었다",
-        problem:
-          "프레임마다 RaycastAll 을 호출하며 충돌 오브젝트 정보를 담은 배열을 매번 생성해 썼다.",
-        solution:
-          "미리 만든 배열을 넘겨 받는 RaycastNonAlloc 으로 바꾸고, Layer 마스크로 필요한 Layer 와만 충돌을 감지하게 했다."
+        g: "기믹",
+        items: [
+          "속성 큐브 CubeType (마그마·용암·물·얼음·얼음벽)",
+          "대포 · 낙하물 · 회전 장애물 · 측면 가시 · 투명 가시(F키)",
+          "레버 · 나뭇잎 탑승 · 토네이도 · 히든맵"
+        ]
       },
       {
-        title: "잦은 충돌 연산으로 성능이 떨어졌다",
-        problem: "플랫포머 특성상 충돌 연산이 잦아 성능 저하가 발생했다.",
-        solution:
-          "여러 Collider 를 구·캡슐 같은 단순한 형태로 간소화하고, 조건문으로 특정 조건을 만족할 때만 충돌을 확인하도록 바꿨다."
-      },
-      {
-        title: "세이브 파일이 그냥 열리는 텍스트였다",
-        problem:
-          "JSON 으로 저장하면 유저가 파일 안의 데이터를 바꾸거나 지울 수 있고, 암호화 방식과 무관하게 보안 취약점은 남는다.",
-        solution:
-          "처리 속도가 빠른 XOR 암호화로 세이브 데이터를 암호화해, 데이터를 바꿀 가능성을 시각적으로 낮췄다. 메모장으로 열어 고치는 것을 막는 수준이라는 한계는 그대로 적었다."
+        g: "정리",
+        items: [
+          "IMovable·IRotatable·IDisturbing·IPlayerRespawnable·IInteractable 도입 (박지원과, 12월)",
+          "엔딩 씬 일부"
+        ]
       }
     ],
-    tech: ["Unity 2022.3", "C#"],
+    // 2026-09-06 교정. 예전 네 건(풀링·NonAlloc·콜라이더·XOR)은 포트폴리오 PDF 「트러블슈팅」을
+    // 옮긴 것이었는데, 저장소상 XOR 저장(FileDataHandler)은 김어진, 점프 이펙트 풀링은 이홍준
+    // 작업이라 내 몫으로 적을 수 없다. 아래는 내 브랜치 커밋 메시지와 코드에서 확인되는 것만.
+    // 3D 전시실(tserof/sections P04·P05·P07·P08)은 아직 예전 네 건을 그대로 보여 준다.
+    challenges: [
+      {
+        title:
+          "스테이지 2 가 세 씬으로 갈라져 구간을 넘길 때마다 씬을 로드했다",
+        problem:
+          "2-1·2-2·2-3 이 별도 씬이라 구간마다 카메라·리스폰·클리어 판정을 따로 들고 있었고, 씬을 넘기는 순간 상태가 끊겼다.",
+        solution:
+          "세 씬을 Stage2Scene 하나로 합치고(11.27 통합 씬 생성 → 11.28 씬 합치기 → 11.29 씬 넘어가는 문제 해결), Stage2Manager 가 구간 오브젝트 그룹 on/off · Cinemachine 카메라 enable · 현재 리스폰 지점을 한 곳에서 바꾸게 했다."
+      },
+      {
+        title: "패턴 퍼즐은 정답이 하나뿐이면 한 번 본 뒤에는 퍼즐이 아니었다",
+        problem:
+          "3×3 발판에 얼음·물을 맞추는 퍼즐인데 정답이 고정이면 반복 플레이에서 퍼즐 구실을 못 했다.",
+        solution:
+          "정답 패턴 5종을 int[9] 배열로 두고 코루틴이 25초마다 무작위로 바꾸며 표지판을 갱신했다. 판정은 플레이어 배열과 정답 배열의 순서 비교(SequenceEqual) 한 줄로 끝냈다."
+      },
+      {
+        title:
+          "큐브 종류마다 스크립트를 만들면 프리팹이 늘 때마다 파일이 늘었다",
+        problem:
+          "마그마·용암·물·얼음·얼음벽이 각각 다른 반응(튕김·리스폰·낙하 후 복귀)을 해야 했다.",
+        solution:
+          "CubeType 하나에 enum 으로 속성을 두고 충돌 시 switch 로 분기했다. 얼음은 코루틴으로 잠시 뒤 떨어졌다가 kinematic 을 되돌려 원위치하고, 마그마는 점프력을 주기적으로 바꿨다."
+      },
+      {
+        title: "기믹이 늘수록 이동·회전·리스폰 처리 방식이 스크립트마다 달랐다",
+        problem:
+          "장애물마다 움직임·회전·플레이어 리스폰을 제각각 구현해 놓아 팀원이 붙이기 어려웠다.",
+        solution:
+          "12월 초 박지원과 코드 정리 브랜치(JJH_PJW_CodeClean)에서 IMovable·IRotatable·IDisturbing·IPlayerRespawnable·IInteractable 인터페이스를 도입해 기믹을 같은 규약으로 묶었다."
+      }
+    ],
+    tech: ["Unity 2022.3", "C#", "Cinemachine"],
     resultScreens: [
       {
         title: "TSEROF · STAGE",
@@ -3937,17 +4012,19 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     kpt: {
       keep: [
-        "4방향 접지 판정으로 조작감 개선",
-        "Profiler 로 병목을 찾아 풀링·NonAlloc·콜라이더 단순화로 개선"
+        "세 씬을 한 씬으로 합쳐 카메라·리스폰·클리어를 Stage2Manager 한 곳에 모음",
+        "기믹을 인터페이스 5종으로 묶어 팀원이 같은 방식으로 붙이게 함"
       ],
       problem: ["스테이지 분량 부족", "밸런싱 시간 부족"],
-      try: ["Addressables 로딩/리소스 관리", "세이브 데이터 버전 관리"]
+      try: [
+        "퍼즐 패턴을 코드 배열이 아니라 데이터로 분리",
+        "인터페이스 기반으로 장애물 종류 확장"
+      ]
     },
-    // PDF 「배운 점」 원문을 문장으로 다듬었다. 3D 전시실 P12Retro 와 같은 출처.
     learningLead:
-      "출시 빌드에서는 생성·파괴, RaycastAll, 충돌 연산이 병목이었고, Unity Profiler 로 찾아 풀링·NonAlloc·콜라이더 단순화로 고쳤다.",
+      "스테이지 하나를 통째로 맡아 보니, 기믹은 하나씩 만드는 것보다 리스폰·카메라·클리어 같은 공통 뼈대를 먼저 세워야 나중에 붙이기 쉽다는 걸 배웠다.",
     learning:
-      "다음 프로젝트에서는 로딩/리소스 관리(Addressables)와 세이브 데이터 버전 관리까지 넓혀 더 안정적인 운영을 목표로 한다."
+      "12월 코드 정리에서 인터페이스로 묶은 것도 그 연장이었다. 다음에는 퍼즐 패턴처럼 코드에 박힌 데이터를 처음부터 분리해 기획이 직접 바꿀 수 있게 하는 걸 목표로 한다."
   },
 
   // ════════════════════════════ The Other Side / 이면 (game · VR · 팀) ═══════

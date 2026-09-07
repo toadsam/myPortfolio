@@ -898,7 +898,7 @@ export const mainProjects: MainProjectCard[] = [
     // 여기만 순수 기술 나열이라 다른 3장과 축이 어긋나 있었다. 맨 앞에 성격
     // 태그를 세우고 기술은 뒤로 — scikit-learn(혼잡 예측)은 role 줄에 남아 있다.
     tags: ["현장 운영", "실시간(SSE)", "Spring Boot", "PWA"],
-    period: "~ 2026.06",
+    period: "2026.04 ~ 2026.06",
     team: "개인 개발",
     role: "사용자·관리자 기능 전체 구현 (React · Spring Boot · JWT · SSE · PWA) · 혼잡 예측 모델 연동",
     // 예전 지표는 "SSE 7 채널 · 백엔드 컨트롤러 26" 이었다. 둘 다 저장소에서 실제로
@@ -943,9 +943,11 @@ export const mainProjects: MainProjectCard[] = [
     // 한 프레임으로 들어오고, 그 비율이 곧 서비스 직군 지원자의 비율이다. 게임을
     // 앞으로 당기면 "그럼 왜 서비스로 넣었나" 를 스스로 묻게 만든다.
     // 부제는 "레벨 디자인" 이 아니라 **기획→출시 완주**를 앞세운다 — 서비스 독자에게
-    // 읽히는 건 릴리즈까지 간 경험이다. 4개월(2023.11–2024.02)·5인·부팀장은 상세
-    // 전시실(richContent tserof.impact)에 같은 값이 있다 — 기간은 저장소 이력으로
-    // 확인한 값이고, 예전 "2023.07–11 · 5개월" 은 근거가 없었다(2026-09-05 교정).
+    // 읽히는 건 릴리즈까지 간 경험이다. 4개월(2023.10–2024.02)·5인·부팀장은 상세
+    // 전시실(richContent tserof.impact)에 같은 값이 있다 — 기간은 첫 커밋(2023.10.23)과
+    // Steam 출시일(2024.02.10)이고, 예전 "2023.07–11 · 5개월" 은 근거가 없었다(2026-09-05
+    // 교정, 2026-09-06 시작월 10월로 재교정). role 도 같은 날 실제 담당으로 고쳤다 —
+    // 저장소 README 기여자 표 기준 플레이어는 박지원, 저장은 김어진, 본인은 스테이지 2·기믹·퍼즐.
     featured: true,
     // 종이에서는 한 줄 목록(2장 예산). 사유는 printCompact 타입 주석에.
     printCompact: true,
@@ -956,15 +958,15 @@ export const mainProjects: MainProjectCard[] = [
     facets: ["3d"],
     status: "출시",
     tags: ["Unity", "GameDev", "3D", "Steam"],
-    period: "2023.11 ~ 2024.02",
+    period: "2023.10 ~ 2024.02",
     team: "5인 팀 — 부팀장",
-    role: "레벨 디자인 · 장애물/기믹 구현 · 기획",
+    role: "스테이지 2 · 장애물/기믹 · 3×3 퍼즐 구현 · 기획",
     metrics: [
       {value: "Steam", label: "스토어 출시"},
       {value: "4개월", label: "기획 → 출시"}
     ],
     metricsSource:
-      "출시는 Steam 스토어 페이지 · 기간(2023.11–2024.02)은 저장소 이력 · 팀은 이력서 원본",
+      "출시는 Steam 스토어 페이지 · 기간(2023.10–2024.02)은 첫 커밋과 Steam 출시일 · 담당은 저장소 README 기여자 표",
     richId: "tserof",
     image: "/projects/tserof.webp",
     // "Steam 출시" 라고 적어 놓고 정작 스토어 링크가 없었다.
@@ -1073,7 +1075,8 @@ export const mainProjects: MainProjectCard[] = [
     category: "game",
     status: "완료",
     tags: ["Unity", "C#", "NavMesh", "Roguelike"],
-    period: "2024.08 ~ 2024.12",
+    // 지원서(2026-09-07)와 저장소 첫 커밋(2024.09.23) 기준. PDF 의 2024.08 은 근거가 약했다.
+    period: "2024.09 ~ 2024.12",
     team: "개인 개발 (1인)",
     role: "게임 시스템 설계·구현 — 코어 루프 · 전투 AI · UI · 이벤트",
     // 카드는 **소개용 키 아트**로 간다(`ajou-indigame.webp`).
@@ -1234,7 +1237,7 @@ export const values: ValueItem[] = [
     title: "협력",
     desc: "팀에서 맡은 몫을 출시까지 끝냅니다.",
     evidence:
-      "TSEROF 5인 팀에서 부팀장으로 레벨·기믹을 나눠 맡아 출시까지 완주했습니다."
+      "TSEROF 5인 팀에서 부팀장으로 스테이지 2와 장애물·기믹을 맡아 출시까지 완주했습니다."
   },
   {
     title: "성실",
