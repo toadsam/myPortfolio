@@ -73,6 +73,18 @@ const bare = href => href.replace(/^https?:\/\//, "").replace(/\/$/, "");
 const isExternal = href => /^https?:\/\//.test(href);
 const join_ = (xs, sep = " · ") => xs.filter(Boolean).join(sep);
 
+/**
+ * 기간 줄 꼬리. 화면은 상태 뱃지와 리뉴얼 칩이 말하지만 종이에는 둘 다 없다.
+ * "운영 중" 은 period 가 이미 "진행 중" 으로 끝나면 겹치므로 생략한다.
+ */
+const stateTail = p =>
+  join_([
+    p.status === "운영중" && !(p.period ?? "").includes("진행 중")
+      ? "운영 중"
+      : "",
+    p.renewal ? "리뉴얼 예정" : ""
+  ]);
+
 /** 학력은 같은 기관·같은 기간이면 한 줄로 묶는다(아주대 전공 셋). */
 function groupEducation(items) {
   const out = [];
@@ -166,7 +178,7 @@ function renderProject(p) {
   const links = p.links.filter(l => l.href && isExternal(l.href));
   const hasHl = (p.highlights ?? []).length > 0;
   // 성과 줄이 "무엇을 했나"를 말하므로 그때는 role 을 겹쳐 적지 않는다.
-  const meta = join_([p.period, p.team, hasHl ? "" : p.role]);
+  const meta = join_([p.period, p.team, hasHl ? "" : p.role, stateTail(p)]);
   const hl = hasHl
     ? `<ul class="hl">${p.highlights
         .map(h => `<li>${esc(h)}</li>`)
@@ -236,7 +248,9 @@ function renderOtherProjects() {
     return `    <li>
       <div class="row-head"><b>${esc(
         p.printTitle ?? p.title
-      )}</b><span class="when">${esc(join_([p.period, p.team]))}</span></div>
+      )}</b><span class="when">${esc(
+      join_([p.period, p.team, stateTail(p)])
+    )}</span></div>
       <div class="row-body">${esc(p.subtitle)}${tail(gh)}${tail(
       extra,
       true

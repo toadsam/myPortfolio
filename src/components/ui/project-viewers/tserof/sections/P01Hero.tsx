@@ -32,7 +32,7 @@ const IDX = {
   hint: 7
 };
 
-const REPO = "https://github.com/KimEoJin24/TSEROF";
+// 저장소 링크(KimEoJin24/TSEROF)는 2026-09-08 뺐다 — 팀장이 비공개로 돌려 404.
 const VIDEO = "https://www.youtube.com/watch?v=1Lm-lpVsmq8";
 
 /** 위/아래 두 줄로 나눈 경로 — 7칸 + 6칸. */
@@ -202,7 +202,7 @@ export function P01Hero() {
 
         {/* 특별 슬롯 2칸 — 링크 줄을 대신한다 */}
         <div
-          className="mt-6 grid grid-cols-1 gap-3 border-t pt-5 sm:grid-cols-2"
+          className="mt-6 grid grid-cols-1 gap-3 border-t pt-5"
           style={{
             borderColor: "rgba(52,211,153,0.12)",
             ...fade(on[IDX.special], instant)
@@ -236,36 +236,6 @@ export function P01Hero() {
               </span>
             </span>
           </button>
-
-          <a
-            href={REPO}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="flex items-center gap-4 rounded-md px-4 py-4 text-left transition-transform duration-200 hover:-translate-y-1"
-            style={{
-              border: "1px solid var(--ts-accent)",
-              background: "rgba(110,231,183,0.08)"
-            }}
-          >
-            <span
-              className="font-mono text-[20px] leading-none"
-              style={{color: "rgba(255,255,255,0.80)"}}
-              aria-hidden="true"
-            >
-              &lt; &gt;
-            </span>
-            <span>
-              <span className="block font-mono text-[11px] font-bold text-[var(--ts-text)]">
-                GitHub 저장소
-              </span>
-              <span
-                className="mt-0.5 block font-mono text-[10px]"
-                style={{color: "var(--ts-warn)"}}
-              >
-                팀원 소유 · 접근 제한 가능
-              </span>
-            </span>
-          </a>
         </div>
 
         {!passed ? (

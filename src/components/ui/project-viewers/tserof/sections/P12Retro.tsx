@@ -28,7 +28,7 @@ import {useTimeline} from "../useTimeline";
 const STEPS = [0, 150, 550, 900, 1300];
 const IDX = {label: 0, heading: 1, learn: 2, kpt: 3, exit: 4};
 
-const REPO = "https://github.com/KimEoJin24/TSEROF";
+// 저장소 링크(KimEoJin24/TSEROF)는 2026-09-08 뺐다 — 팀장이 비공개로 돌려 404.
 
 export function P12Retro({onExit}: {onExit: () => void}) {
   const {reducedMotion} = useTserof();
@@ -128,18 +128,6 @@ export function P12Retro({onExit}: {onExit: () => void}) {
         }}
       >
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <a
-            href={REPO}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="rounded-md px-5 py-3 font-mono text-[12px] font-bold transition-colors duration-200"
-            style={{
-              border: "1px solid var(--ts-border)",
-              color: "var(--ts-muted)"
-            }}
-          >
-            GitHub 저장소 ↗
-          </a>
           <button
             type="button"
             onClick={onExit}

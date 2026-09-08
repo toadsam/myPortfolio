@@ -86,8 +86,9 @@ function parseEdu(program: string): {name: string; tag: string | null} {
   const m = program.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
   return m ? {name: m[1], tag: m[2]} : {name: program, tag: null};
 }
+// 마이크로전공은 부전공이 아니지만 학위 과정 안의 이수라 학력 칸에 둔다.
 const isAcademic = (program: string) =>
-  /\((전공|복수전공|부전공)\)/.test(program);
+  /\((전공|복수전공|부전공|마이크로전공)\)/.test(program);
 
 // 상단 탭. 7개 섹션 전부를 태우면 캡슐이 터지므로 문서의 세 덩이만 짚는다 —
 // 기술/학력(=이력), 프로젝트(=작업), 연락처. id 는 <section id="resume-{id}"> 과 짝.
@@ -309,8 +310,14 @@ export function ResumeMode({onEnterVillage}: Props) {
     ?.links.find(l => l.label === "사이트")?.href;
   // 세는 값이라 데이터가 바뀌면 따라온다.
   const shippedCount = mainProjects.filter(p => p.status === "출시").length;
+  // "운영 중" 은 뱃지만으로 세지 않고 **눌러서 열리는 서비스 링크**가 있어야 센다.
+  // 라벨은 둘 — 득근득근은 "서비스 열기" 라서 예전 `label === "사이트"` 기준에서
+  // 살아 있는 서비스가 빠지고, 닫힌 aClub 이 세어지고 있었다(2026-09-08).
+  const LIVE_LINK_LABELS = new Set(["사이트", "서비스 열기"]);
   const liveServiceCount = mainProjects.filter(
-    p => p.status === "운영중" && p.links.some(l => l.label === "사이트")
+    p =>
+      p.status === "운영중" &&
+      p.links.some(l => l.href && LIVE_LINK_LABELS.has(l.label))
   ).length;
 
   const richList = useMemo(
@@ -799,16 +806,29 @@ export function ResumeMode({onEnterVillage}: Props) {
                                 </span>
                               ))}
                             </div>
-                            <span
-                              className={`project-status ${
-                                p.status === "출시"
-                                  ? "status-shipped"
-                                  : p.status === "운영중"
-                                  ? "status-active"
-                                  : "status-complete"
-                              }`}
-                            >
-                              {p.status}
+                            {/* 상태 + 리뉴얼 예정. 리뉴얼은 상태의 종류가 아니라
+                                덧붙는 사실이라 뱃지를 하나 더 만들지 않고 옆에 작은
+                                칩으로 둔다(2026-09-08). */}
+                            <span className="project-state">
+                              {p.renewal ? (
+                                <span
+                                  className="project-renewal"
+                                  title="리뉴얼을 준비 중인 프로젝트"
+                                >
+                                  리뉴얼 예정
+                                </span>
+                              ) : null}
+                              <span
+                                className={`project-status ${
+                                  p.status === "출시"
+                                    ? "status-shipped"
+                                    : p.status === "운영중"
+                                    ? "status-active"
+                                    : "status-complete"
+                                }`}
+                              >
+                                {p.status}
+                              </span>
                             </span>
                           </div>
                           <div className="project-card-image">

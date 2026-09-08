@@ -623,6 +623,8 @@ export const RICH_DATA: Record<string, RichProject> = {
     meta: [
       {label: "팀", value: "개인 프로젝트 (풀스택 1인)"},
       {label: "역할", value: "도메인 설계 · 프론트 · 백엔드 전부"},
+      // 기간은 근거가 없어 여전히 비운다. 상태만 적는다(본인 확인 2026-09-08).
+      {label: "상태", value: "완료 · MyWave 리뉴얼 예정"},
       {
         label: "스택",
         value: "React · TS · Vite · Spring Boot · JPA · H2/MySQL · Recharts"
@@ -914,7 +916,8 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     demo: {repo: "https://github.com/toadsam/FestFlow"},
     meta: [
-      {label: "기간", value: "~ 2026.06"},
+      // 카드(resume.ts)와 같은 값. 개발은 2026.06 까지, 지금도 운영 중 · 리뉴얼 예정(2026-09-08).
+      {label: "기간", value: "2026.04 ~ 2026.06 · 운영 중 · 리뉴얼 예정"},
       {label: "팀", value: "개인 프로젝트 (풀스택 1인)"},
       {label: "역할", value: "프론트 전체 · SSE·GPS 백엔드 · 혼잡 예측 모델"},
       {
@@ -1559,7 +1562,8 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     demo: {repo: "https://github.com/toadsam/Ajou_MuscleUp"},
     meta: [
-      {label: "기간", value: "2025.09 ~ 진행 중"},
+      // 이력서 카드(resume.ts)와 같은 값. 개발·운영 참여는 2026.06 까지(본인 확인 2026-09-07).
+      {label: "기간", value: "2025.09 ~ 2026.06"},
       {label: "팀", value: "개인 프로젝트 (풀스택 1인)"},
       {label: "역할", value: "핵심 루프 설계 · 프론트 · 백엔드 · 실시간 서버"},
       {
@@ -2400,10 +2404,8 @@ export const RICH_DATA: Record<string, RichProject> = {
         v: "2025 프론트 3인 중 1인 → 2026 프로젝트장 · 프론트 리드"
       }
     ],
-    demo: {
-      live: "https://aclub.co.kr/",
-      repo: "https://github.com/aClub2026/FE"
-    },
+    // live(aclub.co.kr)는 뺐다 — 모집이 끝나 도메인을 닫았다(2026-09-08, 404).
+    demo: {repo: "https://github.com/aClub2026/FE"},
     // 서비스를 쓴 동아리 회장이 보내온 실제 메시지. **익명으로 적는다** —
     // 공개될 걸 알고 보낸 사적인 메시지가 아니라서, 단체명·직함·캡처는 쓰지
     // 않고 벌어진 일만 옮긴다. 지표 여섯 개보다 이 한 문장이 세다.
@@ -2412,7 +2414,8 @@ export const RICH_DATA: Record<string, RichProject> = {
       who: "서비스에 등록한 한 동아리 회장"
     },
     meta: [
-      {label: "기간", value: "2025.01 ~ 진행 중 (2025 팀원 → 2026 프로젝트장)"},
+      // 이력서 카드와 같은 값. 2026.03 동아리 박람회까지 운영하고 손을 뗐다.
+      {label: "기간", value: "2025.01 ~ 2026.03 (2025 팀원 → 2026 프로젝트장)"},
       {label: "팀", value: "프론트엔드 3인 (본인 포함)"},
       // Core Summary 의 「내 역할」(직함: 팀원 → 프로젝트장)과 같은 말을 두 번
       // 하고 있었다. 여기는 **맡은 화면과 코드**만 적는다.
@@ -3143,7 +3146,11 @@ export const RICH_DATA: Record<string, RichProject> = {
       repo: "https://github.com/toadsam/Sign-Language"
     },
     meta: [
-      {label: "기간", value: "~ 2026.05 · 파란학기제 (한 학기)"},
+      // 카드와 같은 값. 현재 운영 중 · 리뉴얼 예정(본인 확인 2026-09-08).
+      {
+        label: "기간",
+        value: "2026.01 ~ 2026.05 · 파란학기제 · 운영 중 · 리뉴얼 예정"
+      },
       {label: "팀", value: "4인 (FE 1 · BE 2 · 3D 아바타 1)"},
       {label: "역할", value: "백엔드 — 서버 구축·API 설계·입력 데이터 처리"},
       {
@@ -3837,7 +3844,8 @@ export const RICH_DATA: Record<string, RichProject> = {
         v: "부팀장 — 스테이지 2 전체 · 장애물/기믹 · 3×3 패턴 퍼즐 · 기획"
       }
     ],
-    demo: {repo: "https://github.com/KimEoJin24/TSEROF"},
+    // 저장소(KimEoJin24/TSEROF)는 팀장이 비공개로 돌려 404 다 — 링크를 걸지 않는다(2026-09-08).
+    demo: {},
     meta: [
       {label: "기간", value: "2023.10 – 2024.02"},
       {label: "팀", value: "5인 팀 프로젝트"},
@@ -4801,7 +4809,8 @@ export const RICH_DATA: Record<string, RichProject> = {
       repo: "https://github.com/toadsam/Ajou_IndiGame"
     },
     meta: [
-      {label: "기간", value: "2024.08 – 2024.12"},
+      // 카드(resume.ts)와 같은 값 — 지원서·첫 커밋(2024.09.23) 기준. 2024.08 은 근거가 약했다.
+      {label: "기간", value: "2024.09 – 2024.12"},
       {label: "팀", value: "개인 개발 (1인)"},
       {
         label: "역할",

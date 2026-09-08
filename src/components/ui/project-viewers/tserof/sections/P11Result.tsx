@@ -25,7 +25,7 @@ const IDX = {label: 0, heading: 1, body: 2, shots: 3, stats: 4};
 
 const STEAM = "https://store.steampowered.com/app/2743860/TSEROF/?l=koreana";
 const VIDEO = "https://www.youtube.com/watch?v=1Lm-lpVsmq8";
-const REPO = "https://github.com/KimEoJin24/TSEROF";
+// 저장소 링크(KimEoJin24/TSEROF)는 2026-09-08 뺐다 — 팀장이 비공개로 돌려 404.
 
 interface ShotDef {
   src: string;
@@ -162,8 +162,7 @@ export function P11Result() {
       <div className="mt-6 flex flex-wrap gap-2">
         {[
           {href: STEAM, label: "Steam 스토어 ↗", primary: true},
-          {href: VIDEO, label: "플레이 영상 ↗", primary: false},
-          {href: REPO, label: "GitHub ↗", primary: false}
+          {href: VIDEO, label: "플레이 영상 ↗", primary: false}
         ].map(l => (
           <a
             key={l.href}

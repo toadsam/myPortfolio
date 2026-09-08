@@ -38,7 +38,7 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 - Ajou_MuscleUp: https://github.com/toadsam/Ajou_MuscleUp
 - Sign-Language: https://github.com/toadsam/Sign-Language
 - Algorithm: https://github.com/toadsam/Algorithm
-- aClub: https://aclub.co.kr/
+- aClub: https://github.com/aClub2026/FE (aclub.co.kr 은 2026.03 모집 종료 후 닫음)
 - Ajou Student Council: https://ajouchong.com
 - Ajou Student Council 2026 개편 PR (프론트): https://github.com/ajouchong-dev/ajouchong-web/pull/36
 - Ajou Student Council 대여·링크 API PR (백엔드): https://github.com/ajouchong-dev/ajouchong/pull/70
@@ -119,7 +119,7 @@ Stack: React, Vite, Axios, Spring Boot, JPA, PostgreSQL, JWT, Docker, Nginx, GA4
 - Problem: 학생은 물품이 남았는지 몰라 총학생회실까지 와서야 없다는 말을 들었고, 인스타 프로필에는 링크를 몇 개밖에 못 걸어 접수 폼 링크가 매번 밀려났습니다. 수량 하나, 링크 하나 바꾸는 데도 개발자가 배포해야 했습니다.
 - Action: Spring Boot로 대여 품목·대여 기록·링크 엔티티와 사용자/관리자 API를 만들고(수량 조정은 서버가 0 미만·총량 초과를 거부, 관리자 API는 ADMIN 권한만), 학생 화면은 남은 수량을 읽고 관리자 화면은 −/+로 바로 반영되게 했습니다. 링크허브 한 페이지로 인스타 프로필 링크 한도를 우회하고, 모바일 첫 화면에 여섯 갈래를 폈습니다.
 - Result: 학생은 오기 전에 수량을 보고, 총학생회는 수량·링크·의견을 개발자 없이 직접 고칩니다. 2026.09 기준 대여 품목 10종·링크 11개가 실서비스에서 운영 중이고, Search Console 기준(검색 유입, 2025.05~2026.08) 노출 12,314회·클릭 1,694회(CTR 13.8%)입니다.
-- Evidence: aClub과 아주대학교 총학생회 서비스 URL이 공개되어 있고, 총학생회 2026 작업은 조직 저장소 PR(프론트 #36, 백엔드 #70)로 확인할 수 있습니다. 포트폴리오에 GA4/GSC와 운영 피드백 기반 개선 기록을 정리했습니다.
+- Evidence: 아주대학교 총학생회 서비스 URL이 공개되어 있고(aClub 은 2026.03 운영 종료 · 저장소 공개), 총학생회 2026 작업은 조직 저장소 PR(프론트 #36, 백엔드 #70)로 확인할 수 있습니다. 포트폴리오에 GA4/GSC와 운영 피드백 기반 개선 기록을 정리했습니다.
 
 ## Additional Technical Projects
 

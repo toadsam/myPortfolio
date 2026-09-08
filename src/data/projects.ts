@@ -453,8 +453,8 @@ export const projects: ProjectData[] = [
       {
         label: "플레이 영상",
         href: "https://www.youtube.com/watch?v=1Lm-lpVsmq8"
-      },
-      {label: "GitHub", href: "https://github.com/KimEoJin24/TSEROF"}
+      }
+      // GitHub(KimEoJin24/TSEROF)는 비공개로 바뀌어 404 — 링크를 걸지 않는다(2026-09-08).
     ]
   },
 

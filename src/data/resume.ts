@@ -159,6 +159,12 @@ export interface MainProjectCard {
   /** 핵심 기술 축. 배지 옆 작은 칩. 근거는 부제·지표에 이미 있는 것만. */
   facets?: ResumeFacet[];
   status: ProjectStatus;
+  /**
+   * 리뉴얼 예정(본인 확인 2026-09-08: FestFlow · MyWave · 수어지교). 상태 뱃지 옆에
+   * 작은 칩으로, PDF 에서는 기간 줄 꼬리로 붙는다. 상태와 별개의 축이다 —
+   * "운영중이면서 리뉴얼 예정" 도, "완료인데 리뉴얼 예정" 도 있다.
+   */
+  renewal?: boolean;
   tags: string[];
   /** 이력서 원본 기준. 근거가 없으면 비운다. */
   period?: string;
@@ -436,7 +442,10 @@ export const education: EducationItem[] = [
     org: "아주대학교",
     logo: "/logos/ajou.png",
     logoFill: true,
-    program: "메타버스기획 마이크로전공 (부전공)",
+    // 마이크로전공은 학칙상 부전공이 아니다 — 2026-09-08 까지 "(부전공)" 으로
+    // 적혀 있었고, 학력은 서류에서 검증되는 항목이라 표기를 원본(md)대로 고쳤다.
+    // 괄호 안이 화면의 꼬리표(ResumeMode isAcademic)이자 PDF 의 학력 줄이다.
+    program: "메타버스기획 (마이크로전공)",
     period: "2021.03 ~ 2027.02 (예정)",
     desc: "메타버스 플랫폼용 상호작용 콘텐츠를 만들었습니다.",
     bullets: ["메타버스 플랫폼 콘텐츠 제작"]
@@ -778,14 +787,18 @@ export const mainProjects: MainProjectCard[] = [
       "프론트 3인 중 한 명으로 시작해 총괄까지 맡은, 활성 사용자 3,500명의 동아리 운영 서비스",
     category: "web",
     facets: ["data"],
-    status: "운영중",
+    // 2026-09-08 "완료" 로 내렸다. 2026.03 동아리 박람회까지 운영했고 모집이 끝나
+    // 도메인(aclub.co.kr)을 닫았다(본인 확인). 닫힌 사이트에 "운영중" 뱃지와
+    // "사이트" 링크가 남아 있으면 심사자가 가장 먼저 누르는 링크가 404 가 된다.
+    // 지표(GA4 2026.01–03)는 운영 당시 실측이라 그대로 둔다.
+    status: "완료",
     // 예전엔 총학 카드와 태그 4개가 **글자까지 똑같아서**, 훑는 사람 눈에 두 카드가
     // 같은 프로젝트로 보였다. 4장은 각각 다른 이유로 눌려야 하므로 축을 갈랐다 —
     // 이쪽은 「실측 규모 + 총괄」, 총학은 「운영자에게 권한을 넘긴 설계」다.
     tags: ["실사용 서비스", "GA4 개선", "프로젝트 총괄", "UX"],
     // 두 번 했다. 2025 는 프론트 3인 중 한 명, 그게 잘 되어서 2026 에
     // 프로젝트장을 맡아 개편했다 — 저장소가 둘인 이유다.
-    // 본인 확인(2026-09-07): 2026.03 동아리 박람회까지 운영하고 손을 뗐다. 서비스는 계속 떠 있으므로 status 는 그대로.
+    // 본인 확인(2026-09-07): 2026.03 동아리 박람회까지 운영하고 손을 뗐다.
     period: "2025.01 ~ 2026.03",
     team: "2025 프론트 3인 → 2026 프로젝트장",
     role: "2025 Frontend 개발 → 2026 프로젝트 총괄 · 프론트 리드 · GA4 기반 개선",
@@ -806,8 +819,9 @@ export const mainProjects: MainProjectCard[] = [
       "동아리 정보를 공지·모집·행사·자료·신청 흐름으로 정리해 학생이 찾는 순서대로 화면을 다시 짰습니다.",
       "GA4 지표와 운영 문의를 근거로 정보 구조·CTA·링크 흐름·문구를 고쳤습니다. 2025 년 프론트 3인 중 한 명에서 2026 년 프로젝트 총괄·프론트 리드가 됐습니다."
     ],
+    // "사이트"(aclub.co.kr) 링크는 뺐다 — 도메인을 닫아 404 다. 링크가 없으면
+    // 라벨을 만들지 않는 게 이 파일의 규칙이다.
     links: [
-      {label: "사이트", href: "https://aclub.co.kr/"},
       {label: "GitHub (2026 · 총괄)", href: "https://github.com/aClub2026/FE"},
       {
         label: "GitHub (2025 · 팀원)",
@@ -896,7 +910,11 @@ export const mainProjects: MainProjectCard[] = [
     category: "web",
     // AI 챗봇·혼잡 예측(RandomForest)·AI Match, SSE 7채널, 운영 집계
     facets: ["ai", "realtime", "data"],
-    status: "완료",
+    // 2026-09-08 본인 확인: 지금도 운영 중이고 리뉴얼 예정. period 는 개발 기간이라
+    // 그대로 둔다. 공개 URL 이 없어 히어로 "운영 중 서비스" 카운트에는 안 들어간다 —
+    // 주소가 생기면 links 에 "사이트" 를 달면 자동으로 센다.
+    status: "운영중",
+    renewal: true,
     // 여기만 순수 기술 나열이라 다른 3장과 축이 어긋나 있었다. 맨 앞에 성격
     // 태그를 세우고 기술은 뒤로 — scikit-learn(혼잡 예측)은 role 줄에 남아 있다.
     tags: ["현장 운영", "실시간(SSE)", "Spring Boot", "PWA"],
@@ -971,12 +989,14 @@ export const mainProjects: MainProjectCard[] = [
     image: "/projects/tserof.webp",
     // "Steam 출시" 라고 적어 놓고 정작 스토어 링크가 없었다.
     // 출시작이라는 주장은 눌러서 확인될 때만 무게가 있다.
+    // GitHub(KimEoJin24/TSEROF) 링크는 2026-09-08 뺐다 — 팀장이 저장소를 비공개로
+    // 돌렸고 되돌릴 수 없다(본인 확인). 404 링크는 없는 것보다 나쁘다. 팀원 계정의
+    // 공개 사본 dlghdwns97/TSEROF_Code(README 에 기여자 이름)가 있지만 아직 안 건다.
     links: [
       {
         label: "Steam 스토어",
         href: "https://store.steampowered.com/app/2743860/TSEROF/?l=koreana"
       },
-      {label: "GitHub", href: "https://github.com/KimEoJin24/TSEROF"},
       {
         label: "플레이 영상",
         href: "https://www.youtube.com/watch?v=1Lm-lpVsmq8"
@@ -991,6 +1011,8 @@ export const mainProjects: MainProjectCard[] = [
     category: "data",
     facets: ["ai"],
     status: "완료",
+    // 2026-09-08 본인 확인: MyWave 리뉴얼 예정.
+    renewal: true,
     tags: ["React", "Spring Boot", "AI", "Recharts"],
     team: "개인 개발 (풀스택 1인)",
     role: "도메인 설계 · 프론트 · 백엔드 전부",
@@ -1006,7 +1028,9 @@ export const mainProjects: MainProjectCard[] = [
     subtitle:
       "수어 동작 영상을 보고 뜻을 익히는 학습 앱 (3D 아바타 제작은 팀원 담당)",
     category: "web",
-    status: "완료",
+    // 2026-09-08 본인 확인: 현재 운영 중이고 리뉴얼 예정.
+    status: "운영중",
+    renewal: true,
     tags: ["Spring Boot", "Firebase", "Expo", "React Native"],
     period: "2026.01 ~ 2026.05 · 파란학기제",
     team: "4인 (FE 1 · BE 2 · 3D 아바타 1)",
@@ -1016,10 +1040,10 @@ export const mainProjects: MainProjectCard[] = [
     // 그림이 없어 플레이스홀더 상자가 떠 있던 자리. 실제 앱 캡처가 아니라
     // **소개용 키 아트**다 — 화면을 그린 게 아니라 서비스가 무엇인지 말한다.
     image: "/projects/sign-language.webp",
-    // 라벨이 "사이트" 가 아닌 이유: GitHub Pages 에 올린 웹 빌드고, 운영 중인
-    // 서비스가 아니다. "사이트" 라벨은 운영 서비스 수를 세는 데 쓰인다.
+    // 예전 라벨은 "웹 데모"(운영 서비스가 아니라는 뜻)였다. 2026-09-08 본인 확인으로
+    // 운영 중이 되면서 "사이트" 로 — 이 라벨이 히어로 "운영 중 서비스" 를 세는 기준이다.
     links: [
-      {label: "웹 데모", href: "https://toadsam.github.io/Sign-Language/home"},
+      {label: "사이트", href: "https://toadsam.github.io/Sign-Language/home"},
       {label: "GitHub", href: "https://github.com/toadsam/Sign-Language"}
     ]
   },

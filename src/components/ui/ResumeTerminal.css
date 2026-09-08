@@ -1097,6 +1097,25 @@
   flex-shrink: 0;
 }
 
+/* 상태 뱃지와 "리뉴얼 예정" 칩을 오른쪽에 한 무리로. 칩은 점선·연한 글자로 상태
+   뱃지보다 한 단 낮게 — 같은 무게면 상태가 둘로 읽힌다. */
+.resume-terminal .project-state {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.resume-terminal .project-renewal {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 100px;
+  border: 1px dashed rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.62);
+  white-space: nowrap;
+}
+
 .resume-terminal .project-status.status-active {
   color: rgb(var(--v-lantern));
   border-color: rgb(var(--v-lantern));
