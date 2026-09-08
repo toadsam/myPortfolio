@@ -106,54 +106,210 @@ function groupEducation(items) {
 }
 
 // ── 조각 ─────────────────────────────────────────────────────────────────────
+//
+// 2026-09-08 양식 교체. 예전 틀(절 제목 + 밑줄 + 본문)은 구분이 약하고 빽빽했다.
+// 지금은 F-Lab 공개 이력서의 틀 — **왼쪽 라벨 열 + 오른쪽 키-값 행, 절마다 두 열
+// 모두 위에 굵은 가로줄, 여백 넉넉, 완전 흑백** — 을 따른다. 쪽수는 결과이지
+// 목표가 아니다(본인 결정). 문장·숫자·링크는 예전 PDF 와 같은 집합이다.
 
-function renderContact(phone) {
-  const rows = [
-    ["Email", esc(contact.email), `mailto:${contact.email}`],
-    phone ? ["Phone", esc(phone), `tel:${phone}`] : null,
-    ["GitHub", esc(bare(contact.github)), contact.github],
-    ["Portfolio", "jaehun.co.kr", "https://jaehun.co.kr/"]
-  ].filter(Boolean);
-  return `<dl class="contact">
-${rows
-  .map(
-    ([k, v, href]) =>
-      `  <div><dt>${k}</dt><dd><a href="${esc(href)}">${v}</a></dd></div>`
-  )
-  .join("\n")}
-</dl>`;
+const isAcademic = program =>
+  /\((전공|복수전공|부전공|마이크로전공)\)/.test(program);
+
+/** 라벨 열 한 절. `keep` 이면 쪽 경계에서 통째로 안 갈라진다(짧은 절만). */
+function row(label, body, {keep = true} = {}) {
+  return `<section class="row${keep ? " keep" : ""}">
+  <h2>${esc(label)}</h2>
+  <div class="cell">
+${body}
+  </div>
+</section>`;
 }
 
-function renderHeader(phone) {
-  // 헤드라인 마지막 줄이 "개발자 정재훈" 으로 끝난다 — h1 바로 아래라 이름이
-  // 두 번 보이므로 끝의 이름만 뗀다.
+/** 키-값 행 묶음. 값이 빈 행은 그리지 않는다. `raw` 는 이미 HTML 인 값. */
+function kv(pairs, cls = "kv") {
+  const rows = pairs
+    .filter(([, v]) => v)
+    .map(
+      ([k, v, raw]) =>
+        `    <div><dt>${esc(k)}</dt><dd>${raw ? v : esc(v)}</dd></div>`
+    );
+  return `<dl class="${cls}">\n${rows.join("\n")}\n  </dl>`;
+}
+
+const link = (href, text) =>
+  `<a href="${esc(href)}">${esc(text ?? bare(href))}</a>`;
+
+function renderTitle() {
+  // 헤드라인 마지막 줄이 "개발자 정재훈" 으로 끝난다 — 바로 위가 이름이라 끝의
+  // 이름만 뗀다.
   const headline = hero.headlineLines
     .join(" ")
     .replace(new RegExp(`\\s*${hero.name}$`), "");
-  return `<header class="head">
-  <div class="head-main">
-    <p class="head-role">${esc(hero.roleTag)}</p>
-    <h1>${esc(hero.name)}</h1>
-    <p class="head-line">${esc(headline)}</p>
-    <dl class="head-facts">
-      <div><dt>지원 직무</dt><dd>${esc(hero.target)}</dd></div>
-      <div><dt>가능 시점</dt><dd>${esc(hero.availability)}</dd></div>
-    </dl>
-  </div>
-  ${renderContact(phone)}
+  return `<header class="title">
+  <p class="title-kicker">이력서:</p>
+  <h1>${esc(hero.name)}</h1>
+  <p class="title-role">${esc(hero.roleTag)}</p>
+  <p class="title-line">${esc(headline)}</p>
 </header>`;
 }
 
+function renderProfile(phone) {
+  return row(
+    "인적사항",
+    kv([
+      ["성명", hero.name],
+      ["E-mail", link(`mailto:${contact.email}`, contact.email), true],
+      phone
+        ? ["휴대전화", link(`tel:${phone}`, phone), true]
+        : ["휴대전화", ""],
+      ["GitHub", link(contact.github), true],
+      ["Portfolio", link("https://jaehun.co.kr/", "jaehun.co.kr"), true],
+      ["지원 직무", hero.target],
+      ["가능 시점", hero.availability]
+    ])
+  );
+}
+
 function renderSummary() {
-  return `<section class="sec">
-  <h2>요약</h2>
-  <p class="lead">${esc(printSummary.lead)}</p>
-  <ul class="points">
-${printSummary.points
-  .map(p => `    <li><b>${esc(p.head)}</b> ${esc(p.body)}</li>`)
-  .join("\n")}
-  </ul>
-</section>`;
+  const points = printSummary.points
+    .map(
+      p =>
+        `    <div class="pt"><b>${esc(p.head)}</b><p>${esc(p.body)}</p></div>`
+    )
+    .join("\n");
+  return row(
+    "요약",
+    `    <p class="lead">${esc(printSummary.lead)}</p>\n${points}`,
+    {keep: false}
+  );
+}
+
+const isService = c => c.role === "만기 전역";
+
+function renderMilitary() {
+  const m = careers.find(isService);
+  if (!m) return "";
+  return row(
+    "병역",
+    kv([
+      ["기간", m.period],
+      ["소속", m.org],
+      ["구분", m.role]
+    ])
+  );
+}
+
+function renderEducation() {
+  const groups = groupEducation(education);
+  const uni = groups.filter(g => g.programs.some(isAcademic));
+  const body = uni
+    .map(
+      g => `    <div class="item">
+${kv([
+  ["기간", g.period],
+  ["학교", g.org],
+  ["전공", g.programs.join(" · ")],
+  ["학점", g.gpa]
+])}
+    </div>`
+    )
+    .join("\n");
+  return row("학력사항", body);
+}
+
+function renderCourses() {
+  const rest = education.filter(e => !isAcademic(e.program));
+  if (!rest.length) return "";
+  const body = rest
+    .map(
+      e => `    <div class="item">
+${kv([
+  ["기간", e.period],
+  ["기관", e.org],
+  ["과정", e.program]
+])}
+    </div>`
+    )
+    .join("\n");
+  // 통째로 묶지 않는다 — 묶으면 앞 쪽 끝에 그만한 공백이 남는다(실측). 항목 단위로만.
+  return row("교육", body, {keep: false});
+}
+
+function renderCareers() {
+  const list = careers.filter(c => !isService(c));
+  const body = list
+    .map(
+      c => `    <div class="item">
+${kv([
+  ["기간", c.period],
+  ["소속", c.org],
+  ["역할", c.role],
+  ["이어진 프로젝트", c.ledTo ? `↳ ${c.ledTo}` : ""]
+])}
+    </div>`
+    )
+    .join("\n");
+  // 항목이 여럿이라 절 통째로는 안 묶고(다음 쪽 앞이 비게 된다) 항목 단위로만 묶는다.
+  return row("활동 내역", body, {keep: false});
+}
+
+function renderAwards() {
+  if (!awards.length) return "";
+  const body = awards
+    .map(
+      a => `    <div class="item">
+${kv([
+  ["일자", a.date],
+  [a.kind, a.title],
+  ["주최", a.org],
+  // 팀명이 이어진 프로젝트 이름에 이미 들어 있으면 한 번만 적는다.
+  ["팀", a.team && !(a.ledTo ?? "").startsWith(a.team) ? a.team : ""],
+  ["이어진 프로젝트", a.ledTo ? `↳ ${a.ledTo}` : ""]
+])}
+    </div>`
+    )
+    .join("\n");
+  return row("수상 · 수료", body, {keep: false});
+}
+
+function renderSkills() {
+  const rows = skillDetails.map(
+    s =>
+      `    <div><dt>${esc(s.area)}</dt><dd>${s.stack
+        .map(x => (s.core?.includes(x) ? `<b>${esc(x)}</b>` : esc(x)))
+        .join(", ")}</dd></div>`
+  );
+  const gh = `    <p class="gh">공개 저장소 ${
+    githubEvidence.repoCount
+  }개 (${esc(githubEvidence.languages.join(", "))})${
+    devRecords[0]?.href
+      ? ` · 알고리즘 풀이 기록 ${link(devRecords[0].href)}`
+      : ""
+  }</p>`;
+  // 통째로 묶었더니 3쪽 아래 40% 가 비고 이 절 하나가 4쪽을 혼자 썼다(실측). 행 단위로만.
+  return row(
+    "보유 기술",
+    `<dl class="kv tech">\n${rows.join("\n")}\n  </dl>\n${gh}`,
+    {keep: false}
+  );
+}
+
+// ── 포트폴리오 ───────────────────────────────────────────────────────────────
+
+function projectFacts(p, {withRole = true} = {}) {
+  const links = p.links
+    .filter(l => l.href && isExternal(l.href))
+    .map(l => [l.label, link(l.href), true]);
+  return kv(
+    [
+      ["기간", p.period],
+      ["팀", p.team],
+      withRole ? ["담당", p.role] : ["담당", ""],
+      ["상태", stateTail(p)],
+      ...links
+    ],
+    "kv facts"
+  );
 }
 
 function renderMetrics(p) {
@@ -167,184 +323,53 @@ function renderMetrics(p) {
         }</span>`
     )
     .join("");
-  // 출처는 지표와 같은 줄에 두면 값과 같은 무게로 읽혀 지표를 흐린다. 밑줄로 내린다.
   const src = p.metricsSource
-    ? `\n  <p class="src-line">${esc(p.metricsSource)}</p>`
+    ? `\n  <p class="src">${esc(p.metricsSource)}</p>`
     : "";
-  return `<p class="metrics">${cells}</p>${src}`;
+  return `  <h4>성과</h4>
+  <div class="metrics">${cells}</div>${src}`;
 }
 
 function renderProject(p) {
-  const links = p.links.filter(l => l.href && isExternal(l.href));
+  // 성과 문단이 "무엇을 했나"를 말하므로 그때는 담당 줄을 겹쳐 적지 않는다.
   const hasHl = (p.highlights ?? []).length > 0;
-  // 성과 줄이 "무엇을 했나"를 말하므로 그때는 role 을 겹쳐 적지 않는다.
-  const meta = join_([p.period, p.team, hasHl ? "" : p.role, stateTail(p)]);
   const hl = hasHl
-    ? `<ul class="hl">${p.highlights
-        .map(h => `<li>${esc(h)}</li>`)
-        .join("")}</ul>`
+    ? `  <h4>진행 내용</h4>\n${p.highlights
+        .map(h => `  <p>${esc(h)}</p>`)
+        .join("\n")}`
     : "";
-  // 오른쪽 정렬 태그(FullStack · Next.js …)는 뺐다(2026-09-07) — 같은 말이 부제,
-  // 성과 줄, 아래 「기술 스택」 표에 이미 세 번 나온다. 제목 옆 자리를 비워 두는
-  // 편이 제목을 크게 쓸 수 있어 훑을 때 눈에 걸린다.
   return `<article class="proj">
   <div class="proj-head">
     <h3>${esc(p.printTitle ?? p.title)}</h3>
+${projectFacts(p, {withRole: !hasHl})}
   </div>
-  ${meta ? `<p class="meta">${esc(meta)}</p>` : ""}
-  <p class="sub">${esc(p.subtitle)}</p>
-  ${hl}
-  <div class="payoff">
-  ${renderMetrics(p)}
-  ${
-    links.length
-      ? `<p class="links">${links
-          .map(
-            l =>
-              `<span><b>${esc(l.label)}</b> <a href="${esc(l.href)}">${esc(
-                bare(l.href)
-              )}</a></span>`
-          )
-          .join("")}</p>`
-      : ""
-  }
-  </div>
+  <h4>프로젝트 개요</h4>
+  <p>${esc(p.subtitle)}</p>
+${hl}
+${renderMetrics(p)}
 </article>`;
 }
 
-function renderProjects() {
-  // printCompact 는 화면 대표를 종이에서만 한 줄 목록으로 내린다(지금 쓰는 항목 없음).
+function renderProjectCompact(p) {
+  return `<article class="proj compact">
+  <div class="proj-head">
+    <h3>${esc(p.printTitle ?? p.title)}</h3>
+${projectFacts(p)}
+  </div>
+  <p>${esc(p.subtitle)}</p>
+</article>`;
+}
+
+function renderPortfolio() {
+  // printCompact 는 화면 대표를 종이에서만 축약판으로 내린다(지금 쓰는 항목 없음).
   const featured = mainProjects.filter(p => p.featured && !p.printCompact);
-  return `<section class="sec">
-  <h2>주요 프로젝트</h2>
-${featured.map(renderProject).join("\n")}
-</section>`;
-}
-
-/** 압축 줄의 꼬리 링크. 두 번째(`labelOnly`)는 라벨만 찍는다 — 한 줄에 주소를
- *  둘 넣으면 줄이 접혀 A4 2장을 넘긴다(실측 3쪽). 화면 원페이저에는 둘 다 있다. */
-function tail(link, labelOnly = false) {
-  if (!link) return "";
-  const text = labelOnly ? link.label : bare(link.href);
-  return ` <a class="tail" href="${esc(link.href)}">${esc(text)}</a>`;
-}
-
-function renderOtherProjects() {
   const rest = mainProjects.filter(p => !p.featured || p.printCompact);
-  const rows = rest.map(p => {
-    const gh =
-      p.links.find(l => /github\.com/.test(l.href)) ??
-      p.links.find(l => isExternal(l.href) && bare(l.href).length <= 48);
-    // 저장소 말고 **바로 열리는 화면**이 따로 있으면 그것도 싣는다 — 서류를
-    // 보는 사람은 저장소보다 열리는 주소를 먼저 누른다. 영상은 뺀다(주소가 길다).
-    const VIDEO_HOSTS = ["youtube.com", "youtu.be", "vimeo.com"];
-    const extra = p.links.find(
-      l =>
-        isExternal(l.href) &&
-        bare(l.href).length <= 48 &&
-        l.href !== gh?.href &&
-        !VIDEO_HOSTS.some(h => l.href.includes(h))
-    );
-    return `    <li>
-      <div class="row-head"><b>${esc(
-        p.printTitle ?? p.title
-      )}</b><span class="when">${esc(
-      join_([p.period, p.team, stateTail(p)])
-    )}</span></div>
-      <div class="row-body">${esc(p.subtitle)}${tail(gh)}${tail(
-      extra,
-      true
-    )}</div>
-    </li>`;
-  });
-  // 소품(`subProjects`)은 싣지 않는다 — 2쪽 예산 밖이고 화면 원페이저에 있다.
-  return `<section class="sec">
-  <h2>그 밖의 프로젝트</h2>
-  <ul class="rows">
-${rows.join("\n")}
-  </ul>
-</section>`;
-}
-
-function renderSkills() {
-  return `<section class="sec">
-  <h2>기술 스택</h2>
-  <table class="skills">
-${skillDetails
-  .map(
-    s =>
-      `    <tr><th>${esc(s.area)}</th><td>${s.stack
-        .map(x => (s.core?.includes(x) ? `<b>${esc(x)}</b>` : esc(x)))
-        .join(", ")}</td></tr>`
-  )
-  .join("\n")}
-  </table>
-  <p class="gh">공개 저장소 ${githubEvidence.repoCount}개 (${esc(
-    githubEvidence.languages.join(", ")
-  )})${
-    devRecords[0]?.href
-      ? ` · 알고리즘 풀이 기록 <a href="${esc(devRecords[0].href)}">${esc(
-          bare(devRecords[0].href)
-        )}</a>`
-      : ""
-  }</p>
-</section>`;
-}
-
-function renderEducation() {
-  const rows = groupEducation(education).map(
-    e => `    <li>
-      <span class="when">${esc(e.period)}</span>
-      <div><b>${esc(e.org)}</b> ${esc(
-      join_([e.programs.join(" · "), e.gpa])
-    )}</div>
-    </li>`
-  );
-  return `<section class="sec">
-  <h2>학력 · 교육</h2>
-  <ul class="tl">
-${rows.join("\n")}
-  </ul>
-</section>`;
-}
-
-/**
- * 전폭 한 줄씩. 학력 칸 안에 넣으면(폭 절반) 항목마다 두 줄로 접혀 4건이 8줄인데,
- * 전폭이면 한 줄씩이라 절반이다 — 2장 예산에서 그 차이가 쪽을 가른다.
- */
-function renderAwards() {
-  if (!awards.length) return "";
-  const rows = awards.map(
-    a => `    <li>
-      <span class="when">${esc(a.date)}</span>
-      <div><b>${esc(a.title)}</b> ${esc(a.org)}${
-      // 팀명이 이어진 프로젝트 이름에 이미 들어 있으면 한 번만 적는다.
-      a.team && !(a.ledTo ?? "").startsWith(a.team) ? ` · ${esc(a.team)}` : ""
-    }${a.ledTo ? ` <i class="led">↳ ${esc(a.ledTo)}</i>` : ""}</div>
-    </li>`
-  );
-  return `<section class="sec">
-  <h2>수상 · 수료</h2>
-  <ul class="tl">
-${rows.join("\n")}
-  </ul>
-</section>`;
-}
-
-function renderCareers() {
-  const rows = careers.map(
-    c => `    <li>
-      <span class="when">${esc(c.period)}</span>
-      <div><b>${esc(c.org)}</b> ${esc(c.role)}${
-      c.ledTo ? ` <i class="led">↳ ${esc(c.ledTo)}</i>` : ""
-    }</div>
-    </li>`
-  );
-  return `<section class="sec">
-  <h2>활동</h2>
-  <ul class="tl">
-${rows.join("\n")}
-  </ul>
+  // 소품(`subProjects`)은 싣지 않는다 — 화면 원페이저에 있다.
+  return `<section class="part">
+  <h1 class="part-title">포트폴리오</h1>
+${featured.map(renderProject).join("\n")}
+  <h2 class="part-sub">그 밖의 프로젝트</h2>
+${rest.map(renderProjectCompact).join("\n")}
 </section>`;
 }
 
@@ -352,22 +377,20 @@ ${rows.join("\n")}
 
 const CSS = `
 :root {
-  --ink: #111827;
-  --body: #2b3648;
-  --muted: #6b7280;
-  --faint: #9aa3b2;
-  --line: #d9dee6;
-  --navy: #16324f;
-  --wash: #f3f6fa;
+  --ink: #111;
+  --body: #333;
+  --muted: #6b6b6b;
+  --rule: #111;
+  --hair: #cfcfcf;
 }
-@page { size: A4; margin: 19mm 18mm 17mm; }
+@page { size: A4; margin: 20mm 18mm 18mm; }
 * { box-sizing: border-box; }
-html { font-size: 9.8pt; }
+html { font-size: 10.5pt; }
 body {
   margin: 0;
   color: var(--ink);
   font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-  line-height: 1.75;
+  line-height: 1.78;
   word-break: keep-all;
   overflow-wrap: anywhere;
   -webkit-print-color-adjust: exact;
@@ -375,108 +398,90 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 b { font-weight: 700; }
+p { margin: 0; }
 
-/* 머리 */
-.head {
+/* 제목 — F-Lab 첫 화면: "이력서:" 한 줄, 이름 한 줄 */
+.title { margin: 4px 0 36px; }
+.title-kicker { font-size: 22pt; font-weight: 800; line-height: 1.25; }
+h1 { margin: 0 0 12px; font-size: 30pt; font-weight: 800; line-height: 1.2; letter-spacing: -0.01em; }
+.title-role { color: var(--muted); font-size: 10pt; }
+.title-line { margin-top: 4px; color: var(--body); }
+
+/* 라벨 열 절 — 두 열 모두 위에 굵은 줄. 이 줄이 문서의 구분 장치 전부다. */
+.row {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 0 28px;
-  align-items: end;
-  padding-bottom: 13px;
-  border-bottom: 2px solid var(--navy);
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 0 26px;
+  margin-top: 26px;
 }
-.head-role { margin: 0 0 2px; color: var(--navy); font-size: 9.5pt; font-weight: 700; letter-spacing: 0.02em; }
-h1 { margin: 0; font-size: 24pt; line-height: 1.1; color: var(--navy); letter-spacing: -0.01em; }
-.head-line { margin: 5px 0 0; font-size: 10.5pt; color: var(--body); }
-.head-facts { margin: 6px 0 0; font-size: 8.8pt; color: var(--body); }
-.head-facts div { display: grid; grid-template-columns: 52px 1fr; gap: 6px; line-height: 1.55; }
-.head-facts dt { color: var(--muted); font-weight: 600; }
-.head-facts dd { margin: 0; }
-.contact { margin: 0; font-size: 9pt; }
-.contact div { display: grid; grid-template-columns: 58px 1fr; gap: 6px; line-height: 1.65; }
-.contact dt { color: var(--muted); font-weight: 600; }
-.contact dd { margin: 0; color: var(--ink); }
-
-/* 절 — 쪽수 예산을 없앤 뒤(2026-09-07) 절 사이 간격이 가장 큰 읽기 장치다.
-   심사자는 먼저 절 제목만 훑어 지도를 그린 다음 필요한 절로 들어간다. */
-.sec { margin-top: 32px; break-inside: auto; }
-h2 {
-  margin: 0 0 15px;
-  padding-bottom: 7px;
-  border-bottom: 1px solid var(--line);
-  color: var(--navy);
+.row.keep { break-inside: avoid; }
+.row h2 {
+  margin: 0;
+  padding-top: 11px;
+  border-top: 2px solid var(--rule);
   font-size: 11pt;
   font-weight: 800;
-  letter-spacing: 0.04em;
-  break-after: avoid;
+  line-height: 1.6;
 }
-.lead { margin: 0 0 13px; color: var(--body); }
-.points { margin: 0; padding-left: 15px; }
-.points li { margin: 8px 0; color: var(--body); }
-.points b { color: var(--ink); }
+.row .cell { padding-top: 11px; border-top: 2px solid var(--rule); }
 
-/* 프로젝트 */
-/* 카드를 통째로 안 나눈다(break-inside: avoid)는 규칙은 두 번 시도해서 두 번 다
-   버렸다 — 카드 하나가 한 쪽의 3분의 1이라, 안 들어가면 앞쪽 끝에 그만한 빈칸이
-   그대로 남는다(2026-09-07 실측: 1쪽 아래 30% 공백 + 총 5쪽). 쪽수가 자유로워도
-   빈칸은 여백이 아니라 구멍이다. 그래서 제목·기간·부제만 붙여 두고 성과 줄 사이에서는
-   갈라지게 둔다. 다만 지표·출처·링크는 한 덩어리로 묶어 이것만은 안 갈라지게 한다. */
-.proj { padding: 21px 0 23px; border-top: 1px dashed var(--line); orphans: 2; widows: 2; }
-.proj-head, .meta, .sub { break-after: avoid; }
-.hl li { break-inside: auto; orphans: 2; widows: 2; }
-.payoff { break-inside: avoid; }
-.proj:first-of-type { border-top: 0; padding-top: 2px; }
-.proj-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-.proj h3 { margin: 0; font-size: 12.5pt; font-weight: 800; color: var(--ink); letter-spacing: -0.01em; }
-.meta { margin: 3px 0 0; color: var(--muted); font-size: 9pt; }
-.sub { margin: 7px 0 0; color: var(--body); font-weight: 600; }
-.hl { margin: 11px 0 0; padding-left: 15px; color: var(--body); }
-.hl li { margin: 8px 0; }
-/* 지표 줄은 이 이력서에서 가장 강한 부분인데 예전엔 출처 문구와 같은 크기로 붙어
-   흐려 보였다. 옅은 판 위에 올리고 값을 키워 눈이 먼저 닿게 한다. 출처는 아래로 내린다. */
-.metrics {
-  margin: 14px 0 0; padding: 11px 14px; background: var(--wash); border-radius: 3px;
-  display: flex; flex-wrap: wrap; gap: 4px 22px; font-size: 9.2pt; color: var(--body); align-items: baseline;
-}
-.metrics b { color: var(--navy); font-size: 13pt; margin-right: 4px; letter-spacing: -0.01em; }
-.metrics .prov { color: #a15c07; font-style: normal; font-size: 7.8pt; }
-.src-line { margin: 6px 0 0; color: var(--faint); font-size: 8.2pt; }
-.links { margin: 11px 0 0; display: flex; flex-wrap: wrap; gap: 3px 18px; font-size: 8.8pt; color: var(--muted); }
-.links b { font-weight: 600; margin-right: 4px; }
-.links a { color: var(--body); }
+/* 키-값 행 */
+.kv { margin: 0; }
+.kv div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 0 12px; }
+.kv dt { color: var(--muted); font-size: 9.5pt; padding-top: 1px; }
+.kv dd { margin: 0; }
 
-/* 한 줄 목록 */
-.rows { margin: 0; padding: 0; list-style: none; }
-.rows li { padding: 11px 0; line-height: 1.6; border-top: 1px dashed var(--line); break-inside: avoid; }
-.rows li:first-child { border-top: 0; padding-top: 2px; }
-.row-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
-.row-head b { font-size: 10pt; }
-.row-head .when { color: var(--muted); font-size: 8.8pt; white-space: nowrap; }
-.row-body { color: var(--body); font-size: 9.2pt; margin-top: 2px; }
-.row-body .role { color: var(--muted); }
-.row-body .tail { color: var(--faint); font-size: 8.3pt; margin-left: 4px; }
+/* 절 안의 항목 — 항목마다 얇은 회색 선. 절이 쪽을 넘어가도 이어짐이 읽힌다. */
+.item { padding: 9px 0; border-top: 1px solid var(--hair); break-inside: avoid; }
+.item:first-child { padding-top: 0; border-top: 0; }
+
+/* 요약 */
+.lead { margin-bottom: 12px; }
+.pt { margin-top: 10px; break-inside: avoid; }
+.pt b { display: block; }
+.pt p { color: var(--body); }
 
 /* 기술 */
-.skills { border-collapse: collapse; width: 100%; font-size: 9.4pt; }
-.skills tr { break-inside: avoid; }
-.skills th { text-align: left; vertical-align: top; width: 96px; padding: 8px 12px 8px 0; color: var(--navy); font-weight: 700; white-space: nowrap; }
-.skills td { padding: 8px 0; color: var(--body); }
-.skills .desc { color: var(--muted); font-size: 8.6pt; }
-.gh { margin: 10px 0 0; color: var(--muted); font-size: 8.8pt; }
-.gh a { color: var(--body); }
+.tech div { grid-template-columns: 110px minmax(0, 1fr); padding: 3px 0; break-inside: avoid; }
+.tech dt { color: var(--ink); font-weight: 700; font-size: 10.5pt; padding-top: 0; }
+.tech dd { color: var(--body); }
+.gh { margin-top: 12px; color: var(--muted); font-size: 9.5pt; }
 
-/* 학력·활동 — 예전엔 여기가 문서에서 가장 빽빽했다(글자는 제일 작고 밀도는 제일 높음). */
-.two { display: grid; grid-template-columns: minmax(0, 9fr) minmax(0, 11fr); gap: 0 26px; }
-.tl { margin: 0; padding: 0; list-style: none; }
-.tl li { display: grid; grid-template-columns: max-content 1fr; gap: 12px; padding: 8px 0; line-height: 1.6; font-size: 9.2pt; color: var(--body); break-inside: avoid; }
-.tl .when { color: var(--muted); font-size: 8.6pt; padding-top: 1px; white-space: nowrap; }
-.tl b { color: var(--ink); }
-.tl .led { color: var(--navy); font-style: normal; font-size: 8.3pt; }
+/* 포트폴리오 — 새 쪽 */
+.part { break-before: page; }
+.part-title { margin: 4px 0 34px; }
+.part-sub { margin: 36px 0 0; padding-top: 11px; border-top: 2px solid var(--rule); font-size: 13pt; font-weight: 800; break-after: avoid; }
+.proj { margin-top: 38px; }
+.part-title + .proj { margin-top: 0; }
+.part-sub + .proj { margin-top: 20px; }
+/* 제목과 키-값 줄은 한 덩어리. 문단 사이에서는 갈라져도 된다 — 통째로 묶으면
+   앞 쪽 끝에 그만한 구멍이 남는다(예전 틀에서 실측). */
+.proj-head { break-inside: avoid; break-after: avoid; }
+.proj h3 { margin: 0 0 8px; font-size: 14pt; font-weight: 800; line-height: 1.4; }
+.proj h4 { margin: 20px 0 6px; font-size: 11pt; font-weight: 800; break-after: avoid; }
+.proj p { margin-bottom: 10px; color: var(--body); orphans: 2; widows: 2; }
+/* 링크 라벨("개편 PR (프론트 · 2026)")이 길어 키 칸을 넓힌다 — 96px 에서는 세 줄로 접혔다. */
+.proj .facts div { grid-template-columns: 176px minmax(0, 1fr); }
+.proj .facts dd a { color: var(--ink); }
+.compact { margin-top: 26px; }
+.compact h3 { font-size: 12pt; }
+.compact .proj-head { margin-bottom: 8px; }
+
+/* 성과 — 흑백이라 판 대신 위아래 얇은 선으로 묶는다. 값만 굵고 크다. */
+.metrics {
+  display: flex; flex-wrap: wrap; gap: 4px 30px; align-items: baseline;
+  padding: 10px 0; border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair);
+  color: var(--body); break-inside: avoid;
+}
+.metrics b { color: var(--ink); font-size: 12.5pt; margin-right: 5px; letter-spacing: -0.01em; }
+.metrics .prov { color: var(--muted); font-style: normal; font-size: 8.5pt; }
+.src { margin-top: 6px; color: var(--muted); font-size: 9pt; }
 
 /* 화면 미리보기용 — 인쇄엔 무관 */
 @media screen {
   html { background: #e9edf2; }
-  body { max-width: 210mm; margin: 24px auto; padding: 13mm 14mm; background: #fff; box-shadow: 0 12px 40px rgba(0,0,0,.12); min-height: 297mm; }
+  body { max-width: 210mm; margin: 24px auto; padding: 14mm 14mm; background: #fff; box-shadow: 0 12px 40px rgba(0,0,0,.12); min-height: 297mm; }
+  .part { margin-top: 60px; padding-top: 40px; border-top: 1px dashed #bbb; }
 }
 `;
 
@@ -489,16 +494,16 @@ function renderDocument({phone} = {}) {
 <style>${CSS}</style>
 </head>
 <body>
-${renderHeader(phone)}
+${renderTitle()}
+${renderProfile(phone)}
 ${renderSummary()}
-${renderProjects()}
-${renderOtherProjects()}
-${renderSkills()}
-${renderAwards()}
-<div class="two">
+${renderMilitary()}
 ${renderEducation()}
+${renderCourses()}
 ${renderCareers()}
-</div>
+${renderAwards()}
+${renderSkills()}
+${renderPortfolio()}
 </body>
 </html>
 `;
