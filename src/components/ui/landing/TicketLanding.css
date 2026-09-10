@@ -337,7 +337,8 @@
   right: -34px;
   bottom: 34px;
   transform: rotate(-90deg);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+    var(--font-body-kr), monospace;
   font-size: 10px;
   letter-spacing: 1px;
   color: rgb(0 0 0 / 0.25);
