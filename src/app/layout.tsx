@@ -1,5 +1,10 @@
 import type {Metadata, Viewport} from "next";
-import {Gowun_Batang, Noto_Sans_KR, Noto_Serif_KR} from "next/font/google";
+import {
+  Gowun_Batang,
+  Inter,
+  Noto_Sans_KR,
+  Noto_Serif_KR
+} from "next/font/google";
 import {Providers} from "@/components/Providers";
 import {CustomCursor} from "@/components/ui/CustomCursor";
 import "./globals.css";
@@ -50,6 +55,26 @@ const notoSerifKr = Noto_Serif_KR({
   variable: "--font-display-heavy",
   display: "swap",
   preload: false
+});
+
+// 본문 라틴 — 사이트 전역 산세리프. globals.css 의 body 스택과 tailwind 의
+// font-sans 가 이 서체를 이름으로 부르고 있었는데 정작 싣는 곳이 없어서,
+// 영문·숫자가 전부 system-ui(윈도우 Segoe UI · 맥 SF)로 떨어지고 있었다.
+//
+// 위 한글 서체들과 달리 preload 를 켜 둔다: 라틴 서브셋은 조각이 몇 개뿐이라
+// 한글에서 문제가 됐던 "안 쓰는 94조각까지 선반입" 이 일어나지 않고, 첫 화면
+// 본문이 이 서체로 그려지므로 미리 받는 편이 낫다.
+//
+// weight 를 적지 않는 이유는 가변 폰트라서다 — 100~900 축이 파일 하나에 들어
+// 있어 굵기를 나열하는 것보다 작고, 어떤 font-weight 값을 써도 그려진다.
+//
+// 주의: next/font 는 실제 family 이름을 해시로 만든다(__Inter_xxxx). 스택에
+// 그냥 `Inter` 라고 적으면 이 폰트가 아니라 "방문자 PC 에 설치된 Inter" 를
+// 찾으므로, 반드시 var(--font-inter) 로 참조해야 한다.
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap"
 });
 
 const title = "정재훈 | Developer's City — 3D 인터랙티브 포트폴리오";
@@ -119,7 +144,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${gowunBatang.variable} ${notoSerifKr.variable} ${notoSansKr.variable}`}
+      className={`${gowunBatang.variable} ${notoSerifKr.variable} ${notoSansKr.variable} ${inter.variable}`}
     >
       <body>
         <Providers>{children}</Providers>

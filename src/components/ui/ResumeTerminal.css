@@ -64,8 +64,8 @@
      한글만 뒤의 Noto Sans KR 로 떨어진다. */
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, var(--font-body-kr),
     monospace;
-  --sans: Inter, var(--font-body-kr), ui-sans-serif, system-ui, -apple-system,
-    sans-serif;
+  --sans: var(--font-inter), var(--font-body-kr), ui-sans-serif, system-ui,
+    -apple-system, sans-serif;
 
   position: fixed;
   inset: 0;

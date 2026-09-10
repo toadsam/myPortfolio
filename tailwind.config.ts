@@ -26,11 +26,9 @@ const config: Config = {
         glow: "0 0 40px rgba(143, 207, 104, 0.35)"
       },
       fontFamily: {
-        // --font-inter 는 이 저장소 어디에서도 정의되지 않는다(Inter 를 next/font
-        // 로 싣는 곳이 없다). 정의되지 않은 var 는 통째로 무시되므로 font-sans 는
-        // 사실상 system-ui 로 떨어진다 — 그 자체는 기존 동작이라 건드리지 않되,
-        // 한글이 OS 기본 폰트로 빠지던 것만 막는다. 라틴보다 뒤에 둬야
-        // 영문·숫자는 그대로 두고 한글만 Noto Sans KR 이 가져간다.
+        // 둘 다 layout.tsx 에서 next/font 로 싣고 <html> 에 변수로 붙인다.
+        // 순서가 중요하다 — 라틴(Inter)을 앞에 둬야 영문·숫자는 Inter 가 그리고,
+        // Inter 에 없는 한글만 뒤의 Noto Sans KR 로 떨어진다.
         sans: [
           "var(--font-inter)",
           "var(--font-body-kr)",
