@@ -28,6 +28,7 @@ body {
   margin: 0;
   font:
     19px / 23px "Montserrat",
+    "Noto Sans KR",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

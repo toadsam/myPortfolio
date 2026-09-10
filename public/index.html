@@ -41,11 +41,22 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     
     <!--
-      Fonts are loaded through the @font-face rules in src/index.css.
-      Preload tags are intentionally omitted: CRA content-hashes these assets
-      at build time (static/media/Montserrat-Regular.<hash>.ttf), so no static
-      path written here can resolve to the emitted file.
+      Latin faces (Montserrat, Agustina) are loaded through the @font-face
+      rules in src/index.css. Preload tags for those are intentionally
+      omitted: CRA content-hashes them at build time
+      (static/media/Montserrat-Regular.<hash>.ttf), so no static path written
+      here can resolve to the emitted file.
+
+      Noto Sans KR supplies the Hangul glyphs that Montserrat and Agustina do
+      not have. Google serves it split by unicode-range, so a browser only
+      downloads the subsets a page actually uses.
     -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap"
+    >
     
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-135618960-2"></script>
