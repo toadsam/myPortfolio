@@ -32,7 +32,7 @@
   scroll-behavior: smooth;
   background-color: var(--ts-bg);
   color: var(--ts-text);
-  font-family: var(--ts-font-sans), "Pretendard", "Apple SD Gothic Neo",
+  font-family: var(--font-body-kr), "Pretendard", "Apple SD Gothic Neo",
     system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   font-variant-numeric: tabular-nums;

@@ -6,7 +6,7 @@ import type {ProjectData} from "@/types/portfolio";
 import {sound} from "../sound";
 import "./ajouchong.css";
 import {AjouProvider, NOTICE_TOTAL, type AjouRoomApi} from "./context";
-import {ajMono, ajSans} from "./fonts";
+import {ajMono} from "./fonts";
 import {ArchitectureSection} from "./sections/ArchitectureSection";
 import {AuthSection} from "./sections/AuthSection";
 import {DecisionSection} from "./sections/DecisionSection";
@@ -124,9 +124,7 @@ export function AjouchongRoom({onClose}: Props) {
     <AjouProvider value={api}>
       <div
         ref={rootRef}
-        className={`aj-root ${ajSans.variable} ${ajMono.variable} ${
-          deployFixed ? "aj-lit" : ""
-        }`}
+        className={`aj-root ${ajMono.variable} ${deployFixed ? "aj-lit" : ""}`}
       >
         <div aria-live="polite" className="sr-only">
           {liveMessage}

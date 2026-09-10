@@ -23,7 +23,7 @@
   scrollbar-width: none;
   background-color: var(--dl-bg-dark);
   color: var(--dl-text);
-  font-family: var(--dl-font-sans), "Noto Sans KR", "Apple SD Gothic Neo",
+  font-family: var(--font-body-kr), "Noto Sans KR", "Apple SD Gothic Neo",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.9s cubic-bezier(0.4, 0, 0.2, 1);
