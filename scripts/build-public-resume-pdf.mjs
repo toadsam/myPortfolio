@@ -56,6 +56,7 @@ const {
   githubEvidence,
   education,
   awards,
+  certifications,
   careers,
   mainProjects,
   devRecords,
@@ -182,6 +183,23 @@ function renderSummary() {
     `    <p class="lead">${esc(printSummary.lead)}</p>\n${points}`,
     {keep: false}
   );
+}
+
+function renderCertifications() {
+  if (!certifications.length) return "";
+  // 기관과 등급은 둘 다 "이 자격이 얼마나 무거운가"를 말하므로 한 줄에 둔다.
+  const body = certifications
+    .map(
+      c => `    <div class="item">
+${kv([
+  ["취득", c.date],
+  ["자격", c.name],
+  ["발급", join_([c.org, c.grade])]
+])}
+    </div>`
+    )
+    .join("\n");
+  return row("자격증", body);
 }
 
 const isService = c => c.role === "만기 전역";
@@ -412,18 +430,18 @@ h1 { margin: 0 0 12px; font-size: 30pt; font-weight: 800; line-height: 1.2; lett
   display: grid;
   grid-template-columns: 130px minmax(0, 1fr);
   gap: 0 26px;
-  margin-top: 26px;
+  margin-top: 24px;
 }
 .row.keep { break-inside: avoid; }
 .row h2 {
   margin: 0;
-  padding-top: 11px;
+  padding-top: 10px;
   border-top: 2px solid var(--rule);
   font-size: 11pt;
   font-weight: 800;
   line-height: 1.6;
 }
-.row .cell { padding-top: 11px; border-top: 2px solid var(--rule); }
+.row .cell { padding-top: 10px; border-top: 2px solid var(--rule); }
 
 /* 키-값 행 */
 .kv { margin: 0; }
@@ -432,7 +450,7 @@ h1 { margin: 0 0 12px; font-size: 30pt; font-weight: 800; line-height: 1.2; lett
 .kv dd { margin: 0; }
 
 /* 절 안의 항목 — 항목마다 얇은 회색 선. 절이 쪽을 넘어가도 이어짐이 읽힌다. */
-.item { padding: 9px 0; border-top: 1px solid var(--hair); break-inside: avoid; }
+.item { padding: 8px 0; border-top: 1px solid var(--hair); break-inside: avoid; }
 .item:first-child { padding-top: 0; border-top: 0; }
 
 /* 요약 */
@@ -442,10 +460,10 @@ h1 { margin: 0 0 12px; font-size: 30pt; font-weight: 800; line-height: 1.2; lett
 .pt p { color: var(--body); }
 
 /* 기술 */
-.tech div { grid-template-columns: 110px minmax(0, 1fr); padding: 3px 0; break-inside: avoid; }
+.tech div { grid-template-columns: 110px minmax(0, 1fr); padding: 2px 0; break-inside: avoid; }
 .tech dt { color: var(--ink); font-weight: 700; font-size: 10.5pt; padding-top: 0; }
 .tech dd { color: var(--body); }
-.gh { margin-top: 12px; color: var(--muted); font-size: 9.5pt; }
+.gh { margin-top: 10px; color: var(--muted); font-size: 9.5pt; }
 
 /* 포트폴리오 — 새 쪽 */
 .part { break-before: page; }
@@ -497,6 +515,7 @@ function renderDocument({phone} = {}) {
 ${renderTitle()}
 ${renderProfile(phone)}
 ${renderSummary()}
+${renderCertifications()}
 ${renderMilitary()}
 ${renderEducation()}
 ${renderCourses()}

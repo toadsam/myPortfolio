@@ -17,6 +17,7 @@ import {
   aboutMe,
   awards,
   careers,
+  certifications,
   contact,
   devRecords,
   education,
@@ -1093,10 +1094,36 @@ export function ResumeMode({onEnterVillage}: Props) {
             <header className="section-header reveal">
               <span className="section-id">## 04</span>
               <h2 className="section-title">
-                학력 · 경력{" "}
-                <span className="section-subtitle">(Education)</span>
+                자격 · 학력 · 경력{" "}
+                <span className="section-subtitle">(Credentials)</span>
               </h2>
             </header>
+            {/* 자격증. 학력보다 **위**다 — 금융권·대기업 서류는 자격증에 별도
+                배점 칸이 있어서, 학력 뒤에 두면 심사자가 찾다가 지나친다
+                (본인 결정 2026-09-11). 로고는 붙이지 않는다: 기관 로고 파일이
+                없고 생성 이미지는 금지라, OrgLogo 가 기관명 첫 글자로 대신 그린다. */}
+            {certifications.length > 0 ? (
+              <div className="career-block reveal reveal-delay-1">
+                <h3 className="career-heading">자격증</h3>
+                <div className="career-list">
+                  {certifications.map(c => (
+                    <article className="career-card" key={c.name}>
+                      <OrgLogo org={c.org} />
+                      <div className="edu-body">
+                        <div className="edu-header">
+                          <h4 className="edu-name">
+                            {c.name}
+                            <span className="edu-tag">{c.grade}</span>
+                          </h4>
+                          <span className="edu-date">{c.date}</span>
+                        </div>
+                        <p className="edu-desc">{c.org}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            ) : null}
             <div className="education-list">
               {eduMain.map(e => {
                 const {name, tag} = parseEdu(e.program);
