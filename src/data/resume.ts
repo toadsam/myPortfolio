@@ -157,6 +157,14 @@ export interface CertificationItem {
    * 브라우저 번들에 들어간다(전화번호를 `resume/` md 에만 두는 것과 같은 이유).
    */
   evidence: string;
+  /**
+   * 표식 이미지(`public/logos/*`). 학력·활동의 `logo` 와 같은 규칙 — 실제 로고만
+   * 쓰고 생성 이미지는 금지다. 둘 다 **재훈 님이 준 증서 원본에서 뽑았다**:
+   * 기관 CI 를 웹에서 받아 오면 출처가 불확실한데, 증서에 찍힌 표식은 그 자격의
+   * 공식 표식이면서 출처가 명확하다.
+   */
+  logo?: string;
+  logoFill?: boolean;
 }
 
 /**
@@ -659,6 +667,12 @@ export const certifications: CertificationItem[] = [
     // 증서 명의는 과학기술정보통신부이고, 한국산업인력공단 이사장이 위탁받아
     // 확인·발급한다. 서류에서 통용되는 쪽(공단)을 적고 명의는 evidence 에 남긴다.
     org: "한국산업인력공단",
+    // 자격증 상단의 **국가기술자격 엠블럼**(오얏꽃). 공단 CI 가 아니라 자격 자체의
+    // 표식이라 `grade` 와 짝이 맞는다 — 위키미디어·공식 사이트 어디에도 공단 로고가
+    // 깨끗하게 없었고, 증서 배경에서 뽑아 무늬를 지우고 대비만 올렸다(형태는 원본).
+    logo: "/logos/hrdk.png",
+    // 엠블럼 자체가 원형이라 원을 꽉 채운다(아주대 엠블럼과 같은 이유).
+    logoFill: true,
     grade: "국가기술자격",
     date: "2026.09.11",
     evidence:
@@ -667,6 +681,9 @@ export const certifications: CertificationItem[] = [
   {
     name: "SQL 개발자 (SQLD)",
     org: "한국데이터산업진흥원",
+    // 자격증 상단의 Kdata 워드마크 — PDF 에 박힌 이미지 원본을 그대로 키운 것.
+    // 워드마크라 `logoFill` 은 켜지 않는다(켜면 좌우가 잘린다).
+    logo: "/logos/kdata.png",
     grade: "국가공인",
     date: "2026.09.11",
     evidence:
