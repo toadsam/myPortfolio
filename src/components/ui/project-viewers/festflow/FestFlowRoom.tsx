@@ -11,7 +11,7 @@ import {
   type FestFlowRoomApi
 } from "./context";
 import "./festflow.css";
-import {ffMono, ffSans} from "./fonts";
+import {ffMono} from "./fonts";
 import {P00Boot} from "./sections/P00Boot";
 import {P01Hero} from "./sections/P01Hero";
 import {P02Sse} from "./sections/P02Sse";
@@ -102,7 +102,10 @@ export function FestFlowRoom({onClose}: Props) {
     });
   }, []);
 
-  const announce = useCallback((message: string) => setLiveMessage(message), []);
+  const announce = useCallback(
+    (message: string) => setLiveMessage(message),
+    []
+  );
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -146,10 +149,7 @@ export function FestFlowRoom({onClose}: Props) {
 
   return (
     <FestFlowProvider value={api}>
-      <div
-        ref={rootRef}
-        className={`ff-root ${ffSans.variable} ${ffMono.variable}`}
-      >
+      <div ref={rootRef} className={`ff-root ${ffMono.variable}`}>
         <div aria-live="polite" className="sr-only">
           {liveMessage}
         </div>

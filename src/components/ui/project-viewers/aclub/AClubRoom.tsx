@@ -6,7 +6,7 @@ import type {ProjectData} from "@/types/portfolio";
 import {sound} from "../sound";
 import "./aclub.css";
 import {AClubProvider} from "./context";
-import {aClubMono, aClubSans} from "./fonts";
+import {aClubMono} from "./fonts";
 import {ComponentSection} from "./sections/ComponentSection";
 import {FilterSection} from "./sections/FilterSection";
 import {HeroSection} from "./sections/HeroSection";
@@ -101,9 +101,9 @@ export function AClubRoom({onClose}: Props) {
     <AClubProvider value={api}>
       <div
         ref={rootRef}
-        className={`ac-root ${aClubSans.variable} ${aClubMono.variable} ${
-          lit ? "ac-lit" : ""
-        } ${introDone ? "" : "ac-locked"}`}
+        className={`ac-root ${aClubMono.variable} ${lit ? "ac-lit" : ""} ${
+          introDone ? "" : "ac-locked"
+        }`}
       >
         <div ref={liveRef} aria-live="polite" className="sr-only" />
 

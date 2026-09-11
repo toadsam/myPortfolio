@@ -26,7 +26,15 @@ const config: Config = {
         glow: "0 0 40px rgba(143, 207, 104, 0.35)"
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"]
+        // 둘 다 layout.tsx 에서 next/font 로 싣고 <html> 에 변수로 붙인다.
+        // 순서가 중요하다 — 라틴(Inter)을 앞에 둬야 영문·숫자는 Inter 가 그리고,
+        // Inter 에 없는 한글만 뒤의 Noto Sans KR 로 떨어진다.
+        sans: [
+          "var(--font-inter)",
+          "var(--font-body-kr)",
+          "system-ui",
+          "sans-serif"
+        ]
       }
     }
   },

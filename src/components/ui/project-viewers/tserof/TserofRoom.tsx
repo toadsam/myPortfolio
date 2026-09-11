@@ -11,7 +11,7 @@ import {
   UNLOCK_KEY,
   type TserofRoomApi
 } from "./context";
-import {tsMono, tsSans} from "./fonts";
+import {tsMono} from "./fonts";
 import {P00Boot} from "./sections/P00Boot";
 import {P01Hero} from "./sections/P01Hero";
 import {P02Jump} from "./sections/P02Jump";
@@ -149,10 +149,7 @@ export function TserofRoom({onClose}: Props) {
 
   return (
     <TserofProvider value={api}>
-      <div
-        ref={rootRef}
-        className={`ts-root ${tsSans.variable} ${tsMono.variable}`}
-      >
+      <div ref={rootRef} className={`ts-root ${tsMono.variable}`}>
         <div aria-live="polite" className="sr-only">
           {liveMessage}
         </div>

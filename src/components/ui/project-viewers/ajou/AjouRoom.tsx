@@ -12,7 +12,7 @@ import {
   STAGE_TOTAL,
   type AjouRoomApi
 } from "./context";
-import {ajMono, ajSans} from "./fonts";
+import {ajMono} from "./fonts";
 import {P00Attract} from "./sections/P00Attract";
 import {P01Hero} from "./sections/P01Hero";
 import {P02Loop} from "./sections/P02Loop";
@@ -112,7 +112,10 @@ export function AjouRoom({onClose}: Props) {
     });
   }, []);
 
-  const announce = useCallback((message: string) => setLiveMessage(message), []);
+  const announce = useCallback(
+    (message: string) => setLiveMessage(message),
+    []
+  );
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -156,10 +159,7 @@ export function AjouRoom({onClose}: Props) {
 
   return (
     <AjouProvider value={api}>
-      <div
-        ref={rootRef}
-        className={`aj-root ${ajSans.variable} ${ajMono.variable}`}
-      >
+      <div ref={rootRef} className={`aj-root ${ajMono.variable}`}>
         <div aria-live="polite" className="sr-only">
           {liveMessage}
         </div>

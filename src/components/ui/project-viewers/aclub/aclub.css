@@ -25,7 +25,7 @@
   scrollbar-width: none;
   background-color: var(--ac-bg);
   color: var(--ac-text);
-  font-family: var(--ac-font-sans), "Pretendard", "Apple SD Gothic Neo",
+  font-family: var(--font-body-kr), "Pretendard", "Apple SD Gothic Neo",
     system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   transition: background-color 1.2s var(--ac-ease);

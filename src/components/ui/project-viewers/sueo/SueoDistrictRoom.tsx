@@ -4,7 +4,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import type {ProjectTheme} from "@/data/projectThemes";
 import type {ProjectData} from "@/types/portfolio";
 import {SIGN_TOTAL, SueoProvider, type SueoRoomApi} from "./context";
-import {sueoMono, sueoSans} from "./fonts";
+import {sueoMono} from "./fonts";
 import {ArchitectureSection} from "./sections/ArchitectureSection";
 import {EntrySection} from "./sections/EntrySection";
 import {GallerySection} from "./sections/GallerySection";
@@ -123,10 +123,7 @@ export function SueoDistrictRoom({onClose}: Props) {
 
   return (
     <SueoProvider value={api}>
-      <div
-        ref={rootRef}
-        className={`sd-root ${sueoSans.variable} ${sueoMono.variable}`}
-      >
+      <div ref={rootRef} className={`sd-root ${sueoMono.variable}`}>
         <div aria-live="polite" className="sr-only">
           {liveMessage}
         </div>

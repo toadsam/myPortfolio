@@ -11,7 +11,7 @@ import {
   MuscleUpProvider,
   type MuscleUpRoomApi
 } from "./context";
-import {muMono, muSans} from "./fonts";
+import {muMono} from "./fonts";
 import "./muscleup.css";
 import {P00Sheet} from "./sections/P00Sheet";
 import {P01Hero} from "./sections/P01Hero";
@@ -198,10 +198,7 @@ export function MuscleUpRoom({onClose}: Props) {
 
   return (
     <MuscleUpProvider value={api}>
-      <div
-        ref={rootRef}
-        className={`mu-root mu-glow ${muSans.variable} ${muMono.variable}`}
-      >
+      <div ref={rootRef} className={`mu-root mu-glow ${muMono.variable}`}>
         <div aria-live="polite" className="sr-only">
           {liveMessage}
         </div>

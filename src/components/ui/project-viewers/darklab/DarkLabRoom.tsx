@@ -6,7 +6,7 @@ import type {ProjectData} from "@/types/portfolio";
 import {sound} from "../sound";
 import {DarkLabProvider, type FlashPatch, type SequenceKey} from "./context";
 import "./darklab.css";
-import {darkLabMono, darkLabSans} from "./fonts";
+import {darkLabMono} from "./fonts";
 import {IconVolume} from "./parts";
 import {ArchitectureSection} from "./sections/ArchitectureSection";
 import {CinemachineSection} from "./sections/CinemachineSection";
@@ -315,7 +315,7 @@ export function DarkLabRoom({onClose}: Props) {
     <DarkLabProvider value={api}>
       <div
         ref={rootRef}
-        className={`dl-root ${darkLabSans.variable} ${darkLabMono.variable} ${
+        className={`dl-root ${darkLabMono.variable} ${
           lightsOn ? "dl-lit" : ""
         }`}
         style={{
