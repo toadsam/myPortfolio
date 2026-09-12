@@ -41,6 +41,7 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 - Sign-Language: https://github.com/toadsam/Sign-Language
 - Algorithm: https://github.com/toadsam/Algorithm
 - codebase-anatomy (Claude Code 스킬): https://github.com/toadsam/codebase-anatomy
+- myPortfolio 코드 해부도 (위 스킬로 만든 산출물): https://claude.ai/code/artifact/57bc2150-402b-47f8-b186-ea2d8ad759f7
 - aClub: https://github.com/aClub2026/FE (aclub.co.kr 은 2026.03 모집 종료 후 닫음)
 - Ajou Student Council: https://ajouchong.com
 - Ajou Student Council 2026 개편 PR (프론트): https://github.com/ajouchong-dev/ajouchong-web/pull/36

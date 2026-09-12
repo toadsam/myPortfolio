@@ -797,10 +797,19 @@ export const mainProjects: MainProjectCard[] = [
       "첫 화면은 three.js 를 전혀 싣지 않는 별도 라우트로 분리하고(JS 215KB · 3D 모델 0개), 마을은 마우스를 올리는 순간 미리 받습니다.",
       "의뢰 공방은 Claude Agent SDK 로 네 직군 에이전트가 산출물을 쓰되 진행 권한은 관리자 게이트 하나에만 두고 도구 호출은 콜백 샌드박스로 막았습니다. 유일한 공개 쓰기 경로는 허니팟·전용 레이트리밋·견적 상하한 클램프로 보호합니다."
     ],
+    // "코드 해부도" 는 이 프로젝트를 직접 분석한 문서다(codebase-anatomy 스킬 산출물).
+    // **대표 프로젝트의 외부 링크는 PDF 에 실린다**(build-public-resume-pdf.mjs
+    // projectFacts). 서브 프로젝트 카드는 PDF 에 안 들어가므로, 1쪽 요약의
+    // "AI 코딩 도구를 통제하면서 개발했습니다" 를 종이에서 확인할 수 있는 경로가
+    // 여기뿐이다.
     links: [
       {label: "사이트", href: "https://jaehun.co.kr"},
       {label: "3D 마을 열기", href: "/village"},
-      {label: "GitHub", href: "https://github.com/toadsam/myPortfolio"}
+      {label: "GitHub", href: "https://github.com/toadsam/myPortfolio"},
+      {
+        label: "코드 해부도",
+        href: "https://claude.ai/code/artifact/57bc2150-402b-47f8-b186-ea2d8ad759f7"
+      }
     ]
   },
   {
@@ -1248,7 +1257,11 @@ export const subProjects: SubProjectCard[] = [
     title: "codebase-anatomy (Claude Code 스킬)",
     desc: "코드베이스를 실제 소스에서 읽어 인터랙티브 HTML 해부도를 만드는 스킬. 모든 구조적 주장에 file:line 증거를 요구하고, 추측으로 쓴 도표를 금지한다 (2026.08)",
     links: [
-      {label: "GitHub", href: "https://github.com/toadsam/codebase-anatomy"}
+      {label: "GitHub", href: "https://github.com/toadsam/codebase-anatomy"},
+      {
+        label: "만든 결과물",
+        href: "https://claude.ai/code/artifact/57bc2150-402b-47f8-b186-ea2d8ad759f7"
+      }
     ]
   },
   // 아래 둘은 주요 프로젝트에 있다가 내려왔다(2026-09-01). 만든 사실은 그대로고
