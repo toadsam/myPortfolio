@@ -331,8 +331,19 @@ export {hero, heroSummary, resumePdf} from "./hero";
 // Hiring Signals 를 합쳐 세 줄로 줄인 것 — 예전 PDF 는 같은 주장을 요약 문단·
 // 3칸 스트립·시그널 카드 4장에서 세 번 반복했다.
 
+// 2026-09-12: points 를 4개로 늘리면서 lead 의 둘째 문장("기능을 만든 뒤 토큰/세션
+// 유지, HTTPS/CORS 같은 배포 조건까지…")을 지웠다. 바로 아래 2번 항목이 같은 말을
+// 더 자세히 하고 있었다 — hero.ts 가 헤드라인 밑 bullets 를 지운 것과 같은 이유다.
+//
+// **이 절은 쪽수에 직접 걸린다.** 1부(인적사항~보유 기술)는 3쪽에 꽉 차 있어서
+// 여기서 한 줄만 늘어도 전체가 8쪽 → 9쪽이 된다. 실측(인쇄 폭 657px 기준):
+// 8쪽 한계 2900~2924px, 4번째 항목을 넣으면 2924px.
+//
+// **쪽수는 반드시 `-- --private` 로 확인할 것.** 제출용 사본은 인적사항에
+// 휴대전화 줄이 하나 더 붙어 공개본보다 25px(한 줄) 길다. 공개본만 보고
+// 8쪽이라 안심했다가 제출용이 9쪽이었다(2026-09-12). **제출용이 기준이다.**
 export const printSummary = {
-  lead: "React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운영 이슈까지 직접 다루는 신입 개발자입니다. 기능을 만든 뒤 토큰/세션 유지, HTTPS/CORS 같은 배포 조건까지 직접 확인해 왔습니다.",
+  lead: "React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운영 이슈까지 직접 다루는 신입 개발자입니다.",
   points: [
     {
       head: "서비스 전체 흐름을 구현합니다.",
@@ -340,11 +351,15 @@ export const printSummary = {
     },
     {
       head: "배포 후 드러나는 문제를 재현하고 고쳐 봤습니다.",
-      body: "HTTPS, Mixed Content, CORS credentials, 토큰 재발급 경쟁 상태, 세션 저장소, SSE 연결처럼 프론트와 서버 설정을 함께 봐야 하는 문제를 다뤘습니다."
+      body: "HTTPS/Mixed Content, CORS credentials, 토큰 재발급 경쟁 상태, SSE 연결처럼 프론트와 서버를 함께 봐야 하는 문제를 다뤘습니다."
     },
     {
       head: "실사용 피드백과 지표로 고칩니다.",
       body: "GA4/GSC 지표와 운영 문의를 근거로 정보 구조, CTA, 링크 흐름, 문구를 개선했습니다."
+    },
+    {
+      head: "AI 코딩 도구를 통제하면서 개발했습니다.",
+      body: "겪은 실패를 문서로 고정해 반복을 막고, 도구가 제안한 값은 직접 측정해 확인했습니다."
     }
   ]
 };
@@ -410,17 +425,35 @@ export const skillDetails: SkillDetail[] = [
     stack: ["AWS", "S3", "CloudFront", "MySQL", "MongoDB", "Firebase"]
   },
   {
+    // 2026-09-12 추가. **"AI 를 활용한다" 가 아니라 "AI 출력을 신뢰하지 않는
+    // 구조를 만든다" 로 적는다.** 신입이 혼자 만든 큰 결과물에서 활용을 앞세우면
+    // 심사자의 첫 반응이 "본인이 짠 게 맞나" 라서 방향이 반대로 간다.
+    // desc 의 세 가지는 전부 이 저장소에 실물이 있다:
+    //   검증  agents/gate.py (진행 권한은 관리자 게이트 하나)
+    //   보정  commission_service._clamp_estimate (규칙 기준의 0.6~1.8배)
+    //   폴백  chat_service (키 없거나 실패하면 규칙 기반 대사)
+    // 셋 다 backend/tests 가 잠그고 있다.
+    area: "AI / LLM",
+    desc: "LLM 응답을 규칙으로 검증·보정하고, 실패해도 멈추지 않게 설계",
+    core: ["OpenAI API", "Claude Agent SDK"],
+    // **stack 은 4개까지다(한 줄).** PDF 기술 표는 1부(인적사항~보유 기술)의
+    // 마지막 절이고, 1부는 3쪽에 한 줄 여유도 없이 차 있다(실측 2865px / 3쪽
+    // 한계 945~955px). 5개로 늘리면 dd 가 두 줄이 되어 1부가 4쪽으로 넘어가고,
+    // 포트폴리오가 어차피 새 쪽에서 시작하므로 전체가 8쪽 → 9쪽이 된다.
+    // "도구 호출 샌드박스"는 그래서 뺐다 — 같은 사실이 원본 md 의 Hiring Signals
+    // 와 village-portfolio 카드 highlights 에 문장으로 들어 있다.
+    stack: ["OpenAI API", "Claude Agent SDK", "규칙 기반 폴백", "출력 클램프"]
+  },
+  {
     area: "Unity XR/AR",
     desc: "인터랙션 및 상태/AI 제어 경험",
+    // 2026-09-12: "NavMesh"·"Object Pooling" 을 뺐다. 위 AI / LLM 행을 넣으면서
+    // 1부가 한 줄 넘쳤고, 이 둘이 표에서 가장 값이 싼 항목이라서다 — **도구가
+    // 아니라 기법**이고, 이 파일 맨 위 주석이 같은 기준으로 개념·프로토콜 칩
+    // (REST API·HTTPS·CORS·SSE·Session)을 이미 뺐다. 원본 md 의 Technical Skills
+    // 에는 그대로 남아 있다(그쪽이 완전한 기록이고, 여기는 인쇄되는 쪽이다).
     core: ["Unity", "C#"],
-    stack: [
-      "Unity",
-      "C#",
-      "AR Foundation",
-      "XR Interaction Toolkit",
-      "NavMesh",
-      "Object Pooling"
-    ]
+    stack: ["Unity", "C#", "AR Foundation", "XR Interaction Toolkit"]
   }
 ];
 
@@ -428,9 +461,14 @@ export const skillDetails: SkillDetail[] = [
  * 표 위의 로고 칩 줄. 예전엔 손으로 적은 13개(HTML5·CSS3 포함)였고 아래 표와 9개가
  * 겹쳤다. 2026-09-06 부터 **주력(core)에서 파생**한다 — 표와 어긋날 수 없고, 주력을
  * 바꾸면 칩 줄이 따라온다. Auth 는 뺀다(JWT 는 언어·프레임워크 칩이 아니다).
+ *
+ * AI / LLM 도 뺀다. 로고가 없어서가 아니라 **틀린 로고가 붙어서**다 —
+ * `getTechIcon` 은 정확히 일치하지 않으면 startsWith 로 찾는데 "C#" 이
+ * 정규화되면 "c" 한 글자라, "Claude Agent SDK" 가 C# 아이콘을 집어 온다.
+ * 칩 줄에 세우려면 techIcons 에 진짜 아이콘을 먼저 넣어야 한다.
  */
 export const skillChips = skillDetails
-  .filter(d => d.area !== "Auth")
+  .filter(d => d.area !== "Auth" && d.area !== "AI / LLM")
   .flatMap(d => d.core ?? []);
 
 /**
@@ -1203,6 +1241,16 @@ export const mainProjects: MainProjectCard[] = [
 // 예전처럼 눌리지 않는 GitHub/Demo/Notion 라벨 25개를 띄우지 않기 위해서다.
 
 export const subProjects: SubProjectCard[] = [
+  {
+    // 2026-09-12 공개. 요약 4번째 항목("AI 코딩 도구를 통제하면서 개발했습니다")의
+    // **검증 가능한 근거**다 — 그 전까지는 ~/.claude/skills/ 안에만 있어서
+    // 심사자가 확인할 방법이 없었다. 그림은 없다(없는 그림을 지어내지 않는다).
+    title: "codebase-anatomy (Claude Code 스킬)",
+    desc: "코드베이스를 실제 소스에서 읽어 인터랙티브 HTML 해부도를 만드는 스킬. 모든 구조적 주장에 file:line 증거를 요구하고, 추측으로 쓴 도표를 금지한다 (2026.08)",
+    links: [
+      {label: "GitHub", href: "https://github.com/toadsam/codebase-anatomy"}
+    ]
+  },
   // 아래 둘은 주요 프로젝트에 있다가 내려왔다(2026-09-01). 만든 사실은 그대로고
   // **어느 칸에 두느냐만 바뀐다** — 주요 칸이 짧을수록 거기 있는 것들이 세진다.
   {
@@ -1356,6 +1404,7 @@ export const aboutMe = [
   "총학생회 웹의 관리자 화면과 FestFlow 현장 운영까지, 만든 기능을 실제로 쓰이는 데까지 가져갔습니다.",
   "배포 후 생기는 HTTPS·CORS 같은 문제를 로그/설정/네트워크까지 파고들어 해결해왔습니다.",
   "aClub 은 GA4 지표와 운영 문의를 근거로 정보 구조와 문구를 고쳤습니다.",
+  "AI 기능은 모델 응답을 그대로 내보내지 않습니다. 진행 권한은 사람 쪽에 두고, 호출이 실패해도 규칙 기반 경로로 이어지게 만들었습니다.",
   "웹이 주력이지만, Unity XR 경험으로 인터랙션 영역도 다룰 수 있습니다."
 ];
 

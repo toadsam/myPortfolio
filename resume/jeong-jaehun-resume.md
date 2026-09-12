@@ -13,6 +13,7 @@ React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운
 
 - React/Spring Boot 기반 웹 풀스택, 프론트엔드, 백엔드 직무 지향
 - JWT 이중 쿠키와 토큰 재발급 경쟁 상태, OAuth/Session, CORS, HTTPS, SSE 등 운영형 문제 해결 경험
+- LLM 연동 시 응답 검증, 상하한 제한, 규칙 기반 폴백을 두는 신뢰성 설계 경험
 - 공개 GitHub 44개 repository, TypeScript/Java/JavaScript/C++/C# 프로젝트 보유
 - 2026년 최신 업데이트 repo: myPortfolio, FestFlow, Sign-Language, Ajou_MuscleUp, Algorithm
 
@@ -22,6 +23,7 @@ Frontend: React, TypeScript, Next.js, Three.js (R3F), Vite, React Query, Tailwin
 Backend: Spring Boot, Java, JPA, Spring Security, Node.js, Express, FastAPI (Python)
 Auth: JWT, Refresh Token Rotation, OAuth2, Passport, Firebase Auth
 Infra / Data: AWS, S3, CloudFront, MySQL, MongoDB, Firebase
+AI / LLM: OpenAI API, Claude Agent SDK, 구조화 출력(JSON), 규칙 기반 폴백, 도구 호출 샌드박스
 Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Pooling
 
 ## GitHub Evidence
@@ -38,6 +40,7 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 - Ajou_MuscleUp: https://github.com/toadsam/Ajou_MuscleUp
 - Sign-Language: https://github.com/toadsam/Sign-Language
 - Algorithm: https://github.com/toadsam/Algorithm
+- codebase-anatomy (Claude Code 스킬): https://github.com/toadsam/codebase-anatomy
 - aClub: https://github.com/aClub2026/FE (aclub.co.kr 은 2026.03 모집 종료 후 닫음)
 - Ajou Student Council: https://ajouchong.com
 - Ajou Student Council 2026 개편 PR (프론트): https://github.com/ajouchong-dev/ajouchong-web/pull/36
@@ -48,6 +51,8 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 - 서비스 전체 흐름 구현: 화면부터 API, 인증, DB, 배포까지 사용자가 지나가는 한 흐름으로 이어서 만듭니다.
 - 운영 중 문제 해결: HTTPS/Mixed Content, CORS credentials, Refresh Token 재발급, 세션 저장소, SSE 연결처럼 배포 후에 드러나고 프론트와 서버 설정을 함께 봐야 하는 문제를 직접 재현해 수정했습니다.
 - 실사용 피드백 반영: GA4/GSC 지표와 운영 피드백을 바탕으로 정보 구조, CTA, 링크 흐름, 문구를 개선했습니다.
+- AI 코딩 도구 운용: 프로젝트 규칙과 이미 겪은 실패를 문서로 고정해 같은 실수가 반복되지 않게 했습니다(규칙 문서는 3개월간 24회 갱신). 도구가 제안한 값은 번들 크기, 텍스처 VRAM처럼 직접 측정해 확인한 뒤 반영했습니다. 반복되는 분석 작업은 Claude Code 스킬로 만들어 공개했습니다(codebase-anatomy).
+- AI 기능의 신뢰성 설계: 에이전트에 진행 권한을 주지 않고 상태 전이를 순수 함수와 관리자 게이트로 분리했습니다. 모델이 낸 견적은 규칙 기반 기준의 0.6~1.8배로 제한하고, API 키가 없거나 호출이 실패하면 규칙 기반 응답으로 이어갑니다. 이 규칙들은 백엔드 테스트로 잠가 두었습니다.
 
 ## Core Projects
 
@@ -169,4 +174,4 @@ SQL 개발자 SQLD (국가공인), 한국데이터산업진흥원
 
 ## Positioning
 
-신입이지만 운영 가능한 서비스 완성을 기준으로 일하는 개발자입니다. React/Spring Boot 구현력과 인증/배포 이슈 해결 경험, 운영 피드백을 제품 개선으로 연결한 경험이 있습니다.
+신입이지만 운영 가능한 서비스 완성을 기준으로 일하는 개발자입니다. React/Spring Boot 구현력과 인증/배포 이슈 해결 경험, 운영 피드백을 제품 개선으로 연결한 경험이 있습니다. AI 기능도 같은 기준으로 다룹니다. 모델 응답을 그대로 내보내지 않고, 틀리거나 호출이 실패했을 때의 경로를 먼저 만듭니다.
