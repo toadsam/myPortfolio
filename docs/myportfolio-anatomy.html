@@ -1,0 +1,1383 @@
+<title>myPortfolio 해부도</title>
+
+<!--
+  codebase-anatomy kit
+  이 파일을 복사해서 채워 쓰세요.
+  - CSS: 그대로 두기 (라이트/다크 3상태 + 모바일 검증됨)
+  - 마크업: <section id="..." data-nav="..."> 로 장을 추가
+  - 데이터: 아래 DATA 블록의 배열을 채우기
+  - 장 번호와 상호참조({{sectionId}})는 런타임에 자동 계산됨
+-->
+
+<style>
+  :root {
+    --paper:#EDEBE5; --surface:#F6F5F1; --surface-2:#E4E1D9;
+    --ink:#171A1C; --ink-soft:#4B5254; --ink-faint:#7A8083;
+    --rule:#C6C4BC; --rule-soft:#DAD8D1;
+    --signal:#0B6E62; --signal-bg:#DDEAE6;
+    --alert:#AF4023;  --alert-bg:#F3E0DA;
+    --warn:#8E6410;   --warn-bg:#F0E7D2;
+    --code-bg:#E4E2DA;
+    --shadow:0 1px 2px rgba(23,26,28,.06), 0 8px 24px -12px rgba(23,26,28,.18);
+    --mono: ui-monospace,"SFMono-Regular","SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,"D2Coding",monospace;
+    --sans:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR",system-ui,sans-serif;
+    --measure:68ch; --wide:1080px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#141719; --surface:#1C2023; --surface-2:#262B2E;
+      --ink:#E7E6E1; --ink-soft:#A9AFB1; --ink-faint:#767D80;
+      --rule:#31383C; --rule-soft:#262C30;
+      --signal:#4FD1BC; --signal-bg:#14312D;
+      --alert:#E8836A;  --alert-bg:#35201A;
+      --warn:#D7A33F;   --warn-bg:#32280F;
+      --code-bg:#101315;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#141719; --surface:#1C2023; --surface-2:#262B2E;
+    --ink:#E7E6E1; --ink-soft:#A9AFB1; --ink-faint:#767D80;
+    --rule:#31383C; --rule-soft:#262C30;
+    --signal:#4FD1BC; --signal-bg:#14312D;
+    --alert:#E8836A;  --alert-bg:#35201A;
+    --warn:#D7A33F;   --warn-bg:#32280F;
+    --code-bg:#101315;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing:border-box; }
+  body {
+    background:var(--paper); color:var(--ink); font-family:var(--sans);
+    font-size:16px; line-height:1.75; margin:0;
+    -webkit-font-smoothing:antialiased; word-break:keep-all; overflow-wrap:anywhere;
+  }
+  ::selection { background:var(--signal); color:var(--paper); }
+  :focus-visible { outline:2px solid var(--signal); outline-offset:3px; border-radius:2px; }
+
+  .shell { display:grid; grid-template-columns:210px minmax(0,1fr); max-width:1400px; margin:0 auto; }
+
+  .rail {
+    position:sticky; top:0; align-self:start; height:100vh;
+    padding:40px 0 40px 28px; border-right:1px solid var(--rule);
+    display:flex; flex-direction:column; gap:22px; overflow-y:auto;
+  }
+  .rail-brand { font-family:var(--mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); line-height:1.5; padding-right:20px; }
+  .rail-nav { display:flex; flex-direction:column; gap:1px; }
+  .rail-link {
+    position:relative; display:grid; grid-template-columns:26px 1fr; align-items:baseline; gap:8px;
+    padding:5px 16px 5px 0; font-family:var(--mono); font-size:11.5px;
+    color:var(--ink-faint); text-decoration:none; border:0; background:none;
+    text-align:left; cursor:pointer; transition:color .18s;
+  }
+  .rail-link .tk { color:var(--rule); transition:color .18s; }
+  .rail-link:hover { color:var(--ink); }
+  .rail-link:hover .tk { color:var(--signal); }
+  .rail-link[aria-current="true"] { color:var(--ink); font-weight:600; }
+  .rail-link[aria-current="true"] .tk { color:var(--signal); }
+  .rail-link[aria-current="true"]::before { content:""; position:absolute; left:-29px; top:50%; width:20px; height:1px; background:var(--signal); transform:translateY(-50%); }
+  .rail-foot { margin-top:auto; padding-right:20px; font-family:var(--mono); font-size:10px; color:var(--ink-faint); line-height:1.7; }
+  .theme-btn { font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; background:none; border:1px solid var(--rule); color:var(--ink-soft); padding:5px 10px; cursor:pointer; margin-bottom:12px; transition:border-color .18s,color .18s; }
+  .theme-btn:hover { border-color:var(--signal); color:var(--signal); }
+
+  .main { padding:0 48px 140px; min-width:0; }
+  .col { max-width:var(--measure); }
+  .wide { max-width:var(--wide); }
+  section { padding-top:88px; scroll-margin-top:24px; }
+
+  .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--signal); margin:0 0 14px; display:flex; align-items:center; gap:10px; }
+  .eyebrow::after { content:""; flex:1; height:1px; background:var(--rule); }
+
+  h1 { font-size:clamp(38px,6vw,66px); line-height:1.04; letter-spacing:-.03em; font-weight:800; margin:0 0 24px; text-wrap:balance; }
+  h2 { font-size:clamp(25px,3.2vw,34px); line-height:1.2; letter-spacing:-.022em; font-weight:750; margin:0 0 18px; text-wrap:balance; }
+  h3 { font-size:18.5px; line-height:1.4; letter-spacing:-.012em; font-weight:700; margin:40px 0 12px; text-wrap:balance; }
+  h4 { font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); font-weight:600; margin:0 0 10px; }
+  p { margin:0 0 18px; }
+  .lead { font-size:19px; line-height:1.7; color:var(--ink-soft); margin-bottom:28px; }
+  strong { font-weight:700; color:var(--ink); }
+  a { color:var(--signal); text-underline-offset:3px; }
+
+  code,.m { font-family:var(--mono); font-size:.875em; background:var(--code-bg); padding:.12em .38em; border-radius:2px; letter-spacing:-.01em; }
+  .path { font-family:var(--mono); font-size:12px; color:var(--ink-faint); letter-spacing:-.01em; background:none; padding:0; }
+  .path b { color:var(--signal); font-weight:600; }
+
+  ul,ol { margin:0 0 18px; padding-left:22px; }
+  li { margin-bottom:8px; }
+  li::marker { color:var(--ink-faint); }
+
+  .hero { padding-top:76px; }
+  .hero-sub { font-family:var(--mono); font-size:12.5px; color:var(--ink-faint); letter-spacing:.02em; margin-bottom:30px; }
+  .hero-note { border-left:2px solid var(--signal); padding:2px 0 2px 20px; margin:0 0 44px; color:var(--ink-soft); max-width:60ch; }
+
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(126px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); margin-bottom:8px; }
+  .stat { background:var(--surface); padding:16px 18px 14px; }
+  .stat-n { font-family:var(--mono); font-size:25px; font-weight:600; letter-spacing:-.03em; font-variant-numeric:tabular-nums; display:block; line-height:1.1; }
+  .stat-l { font-family:var(--mono); font-size:10.5px; letter-spacing:.07em; color:var(--ink-faint); text-transform:uppercase; margin-top:6px; display:block; }
+  .stats-cap { font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); letter-spacing:.03em; }
+
+  .panel { border:1px solid var(--rule); background:var(--surface); margin:28px 0; }
+  .panel-head { display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:11px 16px; border-bottom:1px solid var(--rule); background:var(--surface-2); }
+  .panel-title { font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); font-weight:600; }
+  .panel-meta { font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); margin-left:auto; font-variant-numeric:tabular-nums; }
+
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; }
+  .tab { font-family:var(--mono); font-size:11.5px; padding:6px 12px; border:1px solid var(--rule); background:var(--surface); color:var(--ink-soft); cursor:pointer; transition:all .15s; white-space:nowrap; }
+  .tab:hover { border-color:var(--signal); color:var(--ink); }
+  .tab[aria-selected="true"] { background:var(--signal); border-color:var(--signal); color:var(--paper); font-weight:600; }
+
+  .lx { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); }
+  @media (max-width:860px){ .lx{ grid-template-columns:1fr; } }
+  .lx-stack { border-right:1px solid var(--rule); padding:16px; display:flex; flex-direction:column; gap:4px; }
+  @media (max-width:860px){ .lx-stack{ border-right:0; border-bottom:1px solid var(--rule); } }
+  .lx-row { display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px; width:100%; padding:11px 13px; border:1px solid var(--rule-soft); background:var(--paper); cursor:pointer; text-align:left; font-family:var(--mono); font-size:12.5px; color:var(--ink-soft); transition:all .15s; }
+  .lx-row:hover { border-color:var(--signal); color:var(--ink); }
+  .lx-row[aria-selected="true"] { border-color:var(--signal); background:var(--signal-bg); color:var(--ink); font-weight:600; }
+  .lx-row .cnt { font-size:11px; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+  .lx-row[aria-selected="true"] .cnt { color:var(--signal); }
+  .lx-arrow { text-align:center; font-family:var(--mono); font-size:13px; color:var(--rule); line-height:1; margin:-1px 0; user-select:none; }
+  .lx-detail { padding:18px 18px 22px; min-width:0; }
+  .lx-detail h5 { font-family:var(--mono); font-size:15px; margin:0 0 4px; letter-spacing:-.01em; font-weight:700; }
+  .lx-role { font-size:14px; color:var(--ink-soft); margin-bottom:16px; line-height:1.65; }
+  .lx-kv { display:grid; grid-template-columns:76px 1fr; gap:7px 12px; font-size:13px; align-items:baseline; }
+  .lx-kv dt { font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); padding-top:2px; }
+  .lx-kv dd { margin:0; color:var(--ink-soft); line-height:1.6; }
+  .lx-files { margin-top:16px; display:flex; flex-wrap:wrap; gap:4px; }
+  .lx-file { font-family:var(--mono); font-size:10.5px; padding:3px 7px; background:var(--code-bg); color:var(--ink-soft); border-radius:2px; }
+
+  .tr-controls { display:flex; align-items:center; gap:8px; padding:12px 16px; border-bottom:1px solid var(--rule); flex-wrap:wrap; }
+  .btn { font-family:var(--mono); font-size:11.5px; padding:6px 13px; border:1px solid var(--rule); background:var(--surface); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
+  .btn:hover:not(:disabled) { border-color:var(--signal); color:var(--signal); }
+  .btn:disabled { opacity:.38; cursor:not-allowed; }
+  .btn-go { background:var(--signal); border-color:var(--signal); color:var(--paper); font-weight:600; }
+  .btn-go:hover:not(:disabled) { color:var(--paper); opacity:.88; }
+  .tr-count { font-family:var(--mono); font-size:11px; color:var(--ink-faint); font-variant-numeric:tabular-nums; margin-left:auto; }
+  .tr-body { display:grid; grid-template-columns:250px minmax(0,1fr); }
+  @media (max-width:900px){ .tr-body{ grid-template-columns:1fr; } }
+  .tr-steps { border-right:1px solid var(--rule); padding:12px; display:flex; flex-direction:column; gap:2px; }
+  @media (max-width:900px){ .tr-steps{ border-right:0; border-bottom:1px solid var(--rule); } }
+  .tr-step { display:grid; grid-template-columns:20px 1fr; gap:9px; align-items:start; padding:8px 10px; border:1px solid transparent; background:none; cursor:pointer; text-align:left; font-family:var(--mono); font-size:11.5px; line-height:1.5; color:var(--ink-faint); transition:all .15s; }
+  .tr-step:hover { color:var(--ink); background:var(--surface-2); }
+  .tr-step[aria-selected="true"] { border-color:var(--signal); background:var(--signal-bg); color:var(--ink); font-weight:600; }
+  .tr-step .n { font-variant-numeric:tabular-nums; color:var(--rule); padding-top:1px; }
+  .tr-step[aria-selected="true"] .n, .tr-step.done .n { color:var(--signal); }
+  .tr-view { padding:20px 20px 24px; min-width:0; }
+  .tr-where { display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; padding:4px 9px; background:var(--surface-2); color:var(--ink-soft); margin-bottom:12px; border-radius:2px; }
+  .tr-where .dot { width:6px; height:6px; border-radius:50%; background:var(--signal); }
+  .tr-where.front .dot { background:var(--warn); }
+  .tr-where.rt .dot { background:var(--alert); }
+  .tr-where.ext .dot { background:var(--ink-faint); }
+  .tr-title { font-size:18px; font-weight:700; margin:0 0 8px; letter-spacing:-.015em; line-height:1.35; }
+  .tr-desc { font-size:14.5px; color:var(--ink-soft); line-height:1.7; margin:0 0 16px; }
+  .tr-file { font-family:var(--mono); font-size:11.5px; color:var(--signal); margin-bottom:10px; word-break:break-all; }
+
+  pre { margin:0 0 14px; background:var(--code-bg); border:1px solid var(--rule-soft); padding:13px 15px; overflow-x:auto; font-family:var(--mono); font-size:12px; line-height:1.65; color:var(--ink); letter-spacing:-.01em; }
+  pre code { background:none; padding:0; font-size:inherit; }
+  .cmt { color:var(--ink-faint); }
+
+  .tr-note { font-size:13.5px; line-height:1.7; padding:11px 14px; background:var(--signal-bg); border-left:2px solid var(--signal); color:var(--ink-soft); }
+  .tr-note b { color:var(--ink); }
+
+  .fx { display:flex; flex-direction:column; gap:1px; background:var(--rule); border:1px solid var(--rule); }
+  .fx-item { background:var(--surface); }
+  .fx-btn { width:100%; display:grid; grid-template-columns:auto auto 1fr auto; align-items:center; gap:12px; padding:13px 16px; background:none; border:0; cursor:pointer; text-align:left; color:var(--ink); font-family:var(--sans); font-size:14.5px; line-height:1.5; transition:background .15s; }
+  .fx-btn:hover { background:var(--surface-2); }
+  .fx-id { font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); font-variant-numeric:tabular-nums; }
+  .sev { font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; padding:3px 7px; font-weight:600; border-radius:2px; white-space:nowrap; }
+  .sev.high { background:var(--alert-bg); color:var(--alert); }
+  .sev.mid { background:var(--warn-bg); color:var(--warn); }
+  .sev.low { background:var(--surface-2); color:var(--ink-faint); }
+  .fx-tog { font-family:var(--mono); font-size:15px; color:var(--ink-faint); line-height:1; }
+  .fx-panel { display:none; padding:0 16px 20px; }
+  .fx-item.open .fx-panel { display:block; }
+  .fx-item.open .fx-tog { color:var(--signal); }
+  .fx-panel h6 { font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin:16px 0 7px; font-weight:600; }
+  .fx-panel p { font-size:14px; margin:0; color:var(--ink-soft); line-height:1.7; }
+
+  .erd { display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); }
+  .erd-g { background:var(--surface); padding:15px 16px 17px; }
+  .erd-g h5 { font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin:0 0 4px; color:var(--signal); font-weight:600; }
+  .erd-g .cap { font-size:12.5px; color:var(--ink-faint); margin:0 0 11px; line-height:1.55; }
+  .erd-g ul { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:3px; }
+  .erd-g li { font-family:var(--mono); font-size:11px; color:var(--ink-soft); margin:0; }
+  .erd-g li b { color:var(--ink); font-weight:600; }
+
+  .callout { border:1px solid var(--rule); border-left:2px solid var(--signal); background:var(--surface); padding:17px 20px; margin:26px 0; }
+  .callout.warn { border-left-color:var(--warn); }
+  .callout.alert { border-left-color:var(--alert); }
+  .callout p:last-child { margin-bottom:0; }
+  .callout h4 { color:var(--signal); }
+  .callout.warn h4 { color:var(--warn); }
+  .callout.alert h4 { color:var(--alert); }
+
+  .term { border:0; background:none; padding:0; font:inherit; color:inherit; cursor:help; border-bottom:1px dashed var(--signal); }
+  .term:hover { background:var(--signal-bg); }
+  #pop { position:absolute; z-index:60; max-width:330px; background:var(--surface); border:1px solid var(--signal); padding:12px 14px; box-shadow:var(--shadow); font-size:13.5px; line-height:1.65; color:var(--ink-soft); display:none; }
+  #pop.on { display:block; }
+  #pop b { display:block; font-family:var(--mono); font-size:11.5px; color:var(--signal); margin-bottom:5px; }
+
+  .tw { overflow-x:auto; margin:22px 0; border:1px solid var(--rule); }
+  table { border-collapse:collapse; width:100%; font-size:13.5px; }
+  th,td { text-align:left; padding:10px 14px; border-bottom:1px solid var(--rule-soft); vertical-align:top; }
+  th { font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); background:var(--surface-2); font-weight:600; white-space:nowrap; }
+  td { color:var(--ink-soft); }
+  tr:last-child td { border-bottom:0; }
+  td .m { font-size:11.5px; }
+
+  .split { display:grid; grid-template-columns:repeat(auto-fit,minmax(255px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); margin:26px 0; }
+  .split > div { background:var(--surface); padding:17px 18px 19px; }
+  .split h4 { margin-bottom:8px; }
+  .split p { font-size:13.5px; margin:0; color:var(--ink-soft); line-height:1.68; }
+
+  /* ---- concept cards ---- */
+  .cc { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); }
+  .cc-card { background:var(--surface); padding:0; }
+  .cc-btn { width:100%; text-align:left; background:none; border:0; padding:15px 17px; cursor:pointer; color:var(--ink); font-family:var(--sans); transition:background .15s; }
+  .cc-btn:hover { background:var(--surface-2); }
+  .cc-btn .k { display:block; font-family:var(--mono); font-size:12.5px; color:var(--signal); font-weight:600; margin-bottom:5px; }
+  .cc-btn .s { display:block; font-size:13px; color:var(--ink-soft); line-height:1.6; }
+  .cc-card .body { display:none; padding:0 17px 18px; }
+  .cc-card.open .body { display:block; }
+  .cc-card .body p { font-size:13.5px; color:var(--ink-soft); line-height:1.7; margin:0 0 12px; }
+  .cc-card .body pre { font-size:11.5px; margin-bottom:0; }
+
+  /* ---- calculator ---- */
+  .calc { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+  @media (max-width:880px){ .calc{ grid-template-columns:1fr; } }
+  .calc-in { padding:18px; border-right:1px solid var(--rule); display:flex; flex-direction:column; gap:14px; }
+  @media (max-width:880px){ .calc-in{ border-right:0; border-bottom:1px solid var(--rule); } }
+  .fld { display:grid; grid-template-columns:1fr auto; gap:4px 10px; align-items:baseline; }
+  .fld label { font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); }
+  .fld .val { font-family:var(--mono); font-size:13px; font-weight:600; color:var(--signal); font-variant-numeric:tabular-nums; }
+  .fld input[type=range] { grid-column:1/-1; width:100%; accent-color:var(--signal); height:20px; }
+  .seg { display:flex; gap:4px; }
+  .seg button { flex:1; font-family:var(--mono); font-size:11px; padding:6px; border:1px solid var(--rule); background:var(--surface); color:var(--ink-soft); cursor:pointer; transition:all .15s; }
+  .seg button[aria-pressed="true"] { background:var(--signal); border-color:var(--signal); color:var(--paper); font-weight:600; }
+  .calc-out { padding:18px; min-width:0; }
+  .score-hero { display:flex; align-items:baseline; gap:12px; margin-bottom:4px; }
+  .score-n { font-family:var(--mono); font-size:52px; font-weight:700; letter-spacing:-.04em; line-height:1; font-variant-numeric:tabular-nums; }
+  .score-max { font-family:var(--mono); font-size:14px; color:var(--ink-faint); }
+  .score-meta { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 18px; }
+  .pill { font-family:var(--mono); font-size:11px; padding:4px 10px; background:var(--signal-bg); color:var(--signal); font-weight:600; border-radius:2px; }
+  .pill.g { background:var(--surface-2); color:var(--ink-soft); }
+  .bar-row { display:grid; grid-template-columns:96px 1fr 52px; gap:10px; align-items:center; margin-bottom:7px; font-family:var(--mono); font-size:10.5px; }
+  .bar-row .lbl { color:var(--ink-faint); letter-spacing:.04em; }
+  .bar-track { height:9px; background:var(--surface-2); border:1px solid var(--rule-soft); position:relative; overflow:hidden; }
+  .bar-fill { position:absolute; inset:0 auto 0 0; background:var(--signal); transition:width .2s; }
+  .bar-fill.att { background:var(--warn); }
+  .bar-row .num { text-align:right; color:var(--ink); font-variant-numeric:tabular-nums; font-weight:600; }
+  .calc-note { font-size:12.5px; color:var(--ink-faint); line-height:1.65; margin-top:16px; padding-top:14px; border-top:1px solid var(--rule-soft); }
+
+  /* ---- timeline ---- */
+  .tl { display:flex; flex-direction:column; gap:1px; background:var(--rule); border:1px solid var(--rule); }
+  .tl-row { background:var(--surface); display:grid; grid-template-columns:74px 1fr; gap:14px; padding:9px 15px; align-items:center; }
+  .tl-row.peak { background:var(--signal-bg); }
+  .tl-row.evt { background:var(--alert-bg); }
+  .tl-m { font-family:var(--mono); font-size:11px; color:var(--ink-faint); font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+  .tl-row.peak .tl-m, .tl-row.evt .tl-m { color:var(--ink); font-weight:600; }
+  .tl-bar { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; min-width:0; }
+  .tl-fill { height:11px; background:var(--signal); opacity:.55; }
+  .tl-row.peak .tl-fill { opacity:1; }
+  .tl-row.evt .tl-fill { background:var(--alert); opacity:1; }
+  .tl-n { font-family:var(--mono); font-size:11px; font-variant-numeric:tabular-nums; color:var(--ink-soft); min-width:26px; text-align:right; }
+  .tl-cap { font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); padding:10px 15px 0; line-height:1.6; }
+
+  /* ---- dependency graph ---- */
+  .dep { padding:20px 18px; overflow-x:auto; }
+  .dep pre { background:none; border:0; padding:0; margin:0; font-size:12px; line-height:1.9; color:var(--ink-soft); }
+  .dep pre b { color:var(--signal); font-weight:600; }
+  .dep pre i { color:var(--alert); font-style:normal; font-weight:600; }
+  .hub { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1px; background:var(--rule); border-top:1px solid var(--rule); }
+  .hub > div { background:var(--surface); padding:13px 15px 15px; }
+  .hub h6 { font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); margin:0 0 6px; font-weight:600; }
+  .hub .big { font-family:var(--mono); font-size:15px; font-weight:700; color:var(--signal); display:block; margin-bottom:4px; }
+  .hub p { font-size:12.5px; margin:0; color:var(--ink-soft); line-height:1.6; }
+
+  /* ---- quiz ---- */
+  .qz { display:flex; flex-direction:column; gap:1px; background:var(--rule); border:1px solid var(--rule); }
+  .qz-item { background:var(--surface); padding:16px 18px 18px; }
+  .qz-q { display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:start; margin-bottom:12px; }
+  .qz-n { font-family:var(--mono); font-size:11px; color:var(--ink-faint); font-variant-numeric:tabular-nums; padding-top:4px; }
+  .qz-t { font-size:15.5px; font-weight:650; line-height:1.55; letter-spacing:-.01em; }
+  .qz-opts { display:flex; flex-direction:column; gap:5px; margin:0 0 12px 32px; }
+  .qz-opt {
+    text-align:left; font-family:var(--sans); font-size:13.5px; line-height:1.55;
+    padding:9px 13px; border:1px solid var(--rule-soft); background:var(--paper);
+    color:var(--ink-soft); cursor:pointer; transition:all .15s;
+    display:grid; grid-template-columns:18px 1fr; gap:9px; align-items:start;
+  }
+  .qz-opt .mk { font-family:var(--mono); font-size:11px; color:var(--ink-faint); padding-top:2px; }
+  .qz-opt:hover:not(:disabled) { border-color:var(--signal); color:var(--ink); }
+  .qz-opt:disabled { cursor:default; }
+  .qz-opt.right { border-color:var(--signal); background:var(--signal-bg); color:var(--ink); font-weight:600; }
+  .qz-opt.right .mk { color:var(--signal); }
+  .qz-opt.wrong { border-color:var(--alert); background:var(--alert-bg); color:var(--ink); }
+  .qz-opt.wrong .mk { color:var(--alert); }
+  .qz-ans { display:none; margin-left:32px; padding:12px 15px; background:var(--surface-2); border-left:2px solid var(--signal); font-size:13.5px; line-height:1.7; color:var(--ink-soft); }
+  .qz-item.done .qz-ans { display:block; }
+  .qz-ans b { color:var(--ink); }
+  .qz-ans .src { display:block; font-family:var(--mono); font-size:11px; color:var(--signal); margin-top:8px; }
+  .qz-score { display:flex; align-items:baseline; gap:10px; padding:14px 18px; border:1px solid var(--rule); background:var(--surface-2); margin-bottom:0; }
+  .qz-score .n { font-family:var(--mono); font-size:26px; font-weight:700; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
+  .qz-score .l { font-family:var(--mono); font-size:11px; color:var(--ink-faint); letter-spacing:.06em; text-transform:uppercase; }
+  .qz-score .msg { margin-left:auto; font-size:13px; color:var(--ink-soft); text-align:right; }
+
+  /* ---- recipe steps ---- */
+  .rcp { counter-reset:rcp; display:flex; flex-direction:column; gap:1px; background:var(--rule); border:1px solid var(--rule); }
+  .rcp > div { background:var(--surface); padding:16px 18px 18px; position:relative; }
+  .rcp > div::before {
+    counter-increment:rcp; content:counter(rcp);
+    font-family:var(--mono); font-size:10.5px; color:var(--signal); font-weight:700;
+    letter-spacing:.08em; display:block; margin-bottom:6px;
+  }
+  .rcp h5 { font-size:15.5px; font-weight:700; margin:0 0 4px; letter-spacing:-.012em; }
+  .rcp .lyr { font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); letter-spacing:.06em; text-transform:uppercase; margin-bottom:10px; }
+  .rcp p { font-size:13.5px; color:var(--ink-soft); line-height:1.7; margin:0 0 10px; }
+  .rcp pre { margin-bottom:0; font-size:11.5px; }
+
+  /* ---- step-by-step build (기초 설명) ---- */
+  .bld { display:flex; flex-direction:column; gap:1px; background:var(--rule); border:1px solid var(--rule); margin:26px 0; }
+  .bld > div { background:var(--surface); padding:17px 19px 19px; }
+  .bld .q { font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--alert); margin-bottom:8px; }
+  .bld .a { font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--signal); margin:14px 0 8px; }
+  .bld h5 { font-size:16px; font-weight:700; margin:0 0 8px; letter-spacing:-.012em; line-height:1.45; }
+  .bld p { font-size:14px; color:var(--ink-soft); line-height:1.75; margin:0 0 12px; }
+  .bld p:last-child { margin-bottom:0; }
+  .bld pre { font-size:11.5px; }
+
+  /* ---- JWT decoder ---- */
+  .jwt-tok { padding:16px 18px; border-bottom:1px solid var(--rule); font-family:var(--mono); font-size:12px; line-height:2; word-break:break-all; background:var(--code-bg); }
+  .jp { padding:2px 3px; border-radius:2px; }
+  .jp.h { background:var(--signal-bg); color:var(--signal); font-weight:600; }
+  .jp.p { background:var(--warn-bg); color:var(--warn); font-weight:600; }
+  .jp.s { background:var(--alert-bg); color:var(--alert); font-weight:600; }
+  .jwt-parts { display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:1px; background:var(--rule); border-bottom:1px solid var(--rule); }
+  .jwt-part { background:var(--surface); padding:14px 16px 16px; min-width:0; }
+  .jwt-part h6 { font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; margin:0 0 8px; font-weight:600; }
+  .jwt-part.h h6 { color:var(--signal); }
+  .jwt-part.p h6 { color:var(--warn); }
+  .jwt-part.s h6 { color:var(--alert); }
+  .jwt-part pre { font-size:11px; margin:0 0 9px; background:var(--code-bg); }
+  .jwt-part .note { font-size:12.5px; color:var(--ink-soft); line-height:1.6; margin:0; }
+  .jwt-verdict { padding:14px 18px; font-size:14px; line-height:1.7; display:flex; gap:11px; align-items:flex-start; }
+  .jwt-verdict.ok { background:var(--signal-bg); color:var(--ink); }
+  .jwt-verdict.bad { background:var(--alert-bg); color:var(--ink); }
+  .jwt-verdict .ic { font-family:var(--mono); font-weight:700; font-size:15px; line-height:1.5; }
+  .jwt-verdict.ok .ic { color:var(--signal); }
+  .jwt-verdict.bad .ic { color:var(--alert); }
+
+  /* ---- attack player ---- */
+  .atk-steps { display:flex; flex-direction:column; gap:1px; background:var(--rule); }
+  .atk-s { background:var(--surface); padding:15px 18px 17px; display:grid; grid-template-columns:26px 1fr; gap:13px; }
+  .atk-s .ic {
+    font-family:var(--mono); font-size:10px; font-weight:700; text-align:center;
+    padding:3px 0; border-radius:2px; height:fit-content; letter-spacing:.02em;
+  }
+  .atk-s.bad .ic { background:var(--alert-bg); color:var(--alert); }
+  .atk-s.ok  .ic { background:var(--signal-bg); color:var(--signal); }
+  .atk-s.mid .ic { background:var(--warn-bg); color:var(--warn); }
+  .atk-s h6 { font-size:14.5px; font-weight:650; margin:0 0 6px; line-height:1.5; color:var(--ink); font-family:var(--sans); letter-spacing:-.008em; }
+  .atk-s p { font-size:13.5px; color:var(--ink-soft); line-height:1.72; margin:0 0 9px; }
+  .atk-s p:last-child { margin-bottom:0; }
+  .atk-s pre { font-size:11.5px; margin-bottom:9px; }
+  .atk-out { padding:15px 18px; font-size:14px; line-height:1.7; }
+  .atk-out.safe { background:var(--signal-bg); border-top:1px solid var(--rule); }
+  .atk-out.risk { background:var(--alert-bg); border-top:1px solid var(--rule); }
+
+  hr { border:0; border-top:1px solid var(--rule); margin:60px 0 0; }
+  .end { font-family:var(--mono); font-size:11px; color:var(--ink-faint); line-height:1.8; padding-top:26px; }
+
+  @media (max-width:940px) {
+    .shell { grid-template-columns:1fr; }
+    .rail { position:static; height:auto; border-right:0; border-bottom:1px solid var(--rule); padding:24px 24px 20px; }
+    .rail-nav { flex-direction:row; flex-wrap:wrap; gap:3px; }
+    .rail-link { grid-template-columns:auto auto; padding:4px 10px; border:1px solid var(--rule-soft); }
+    .rail-link[aria-current="true"]::before { display:none; }
+    .rail-foot { margin-top:18px; }
+    .main { padding:0 24px 100px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *{ transition:none !important; animation:none !important; scroll-behavior:auto !important; } }
+</style>
+
+<div class="shell">
+  <nav class="rail" aria-label="목차">
+    <div class="rail-brand">PROJECT<br>NAME<br>해부도</div>
+    <div class="rail-nav" id="railNav"></div>
+    <div class="rail-foot">
+      <button class="theme-btn" id="themeBtn" type="button">테마 전환</button>
+      <div>읽는 순서대로<br>내려가면 됩니다</div>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <section id="s0" class="hero" data-nav="시작">
+      <div class="col">
+        <p class="hero-sub">코드베이스 해부 · 실제 소스에서 추출</p>
+        <h1>myPortfolio 해부도</h1>
+        <p class="lead">3D 마을로 걸어 다니는 포트폴리오. 이 문서는 그 마을이 <strong>실제로 어떻게 만들어져 있는지</strong>를, 폴더 이름이 아니라 소스를 열어서 정리한 것입니다. 잘 된 곳과 깨진 곳을 같은 기준으로 적었습니다.</p>
+        <div class="hero-note">
+          <p style="margin:0">근거 약속: 모든 구조적 주장에 <span class="path"><b>파일:줄번호</b></span>가 붙습니다. 문서가 거짓말을 하는지 직접 확인할 수 있어야 합니다.</p>
+        </div>
+      </div>
+      <div class="wide">
+        <div class="stats" id="stats"></div>
+        <p class="stats-cap">git 추적 파일만 셌습니다(<span class="m">git ls-files</span>). node_modules · .next · backend.venv 는 제외. 라우트는 <span class="path">backend/app/main.py</span> 의 <span class="m">@app.*</span> 데코레이터, 테이블은 <span class="m">__tablename__</span>, 테스트는 <span class="m">def test_</span> 개수입니다.</p>
+      </div>
+    </section>
+
+    <section id="sBIO" data-nav="프로젝트 전기">
+      <div class="col">
+        <p class="eyebrow">00 — 이력</p>
+        <h2>이 저장소에는 프로젝트가 둘 있습니다</h2>
+        <p>커밋 783개가 2019년 10월부터 쌓여 있는데, 월별로 세어 보면 <strong>가운데가 비어 있습니다</strong>. 2024년 10월부터 2025년 12월까지 커밋이 한 개도 없습니다.</p>
+        <p>앞쪽 절반(2019~2024, 약 450커밋)은 Create React App 으로 만든 옛 포트폴리오입니다. 지금도 <span class="path">src/App.js</span> · <span class="path">src/containers/</span> 로 남아 있지만 Next.js 빌드 대상이 아닙니다. 뒤쪽(2026-01, 2026-06~09)이 지금 돌아가는 마을입니다.</p>
+        <p><strong>이 사실이 중요한 이유는 품질 편차를 설명하기 때문입니다.</strong> 2026년 8월 한 달에만 123커밋이 들어갔습니다. 마을 작업 전체의 약 39%가 한 달에 몰렸습니다. 같은 사람이 다른 속도로 쓴 코드가 한 저장소에 섞여 있고, 뒤에 나올 {{sFIND}}장의 문제들은 대부분 그 속도 구간에서 나왔습니다. 게으름이 아니라 속도의 흔적입니다.</p>
+      </div>
+      <div class="wide"><div class="tl" id="tl"></div></div>
+      <div class="col">
+        <div class="callout">
+          <h4>읽는 법</h4>
+          <p>막대의 절대 높이보다 <strong>모양</strong>을 보세요. 2019~2020 의 완만한 언덕은 학습용 프로젝트의 리듬이고, 2026-08 의 절벽은 마감을 향해 달린 구간입니다. 절벽 구간의 코드는 빠르게 읽고 넘어가지 말고, 뒤의 결함 장과 함께 보면 어디를 먼저 손볼지가 보입니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="sWHAT" data-nav="무엇이 도는가">
+      <div class="col">
+        <p class="eyebrow">00 — 실행 단위</p>
+        <h2>하나가 아니라 셋이 돕니다</h2>
+        <p>"사이트 하나"로 보이지만 실제로는 <strong>독립된 프로그램 세 개</strong>입니다. 디버깅은 거의 항상 "셋 중 어느 것이 안 떴나"에서 시작하므로, 이걸 먼저 구분할 수 있어야 합니다.</p>
+      </div>
+      <div class="wide"><div class="split">
+        <div>
+          <h4>1 · Next.js (프론트)</h4>
+          <p><span class="m">npm run dev</span> → 3000번. 화면 전부와 3D 마을. <span class="path">package.json</span> 의 <span class="m">dev / build / start</span>.</p>
+        </div>
+        <div>
+          <h4>2 · FastAPI (백엔드)</h4>
+          <p><span class="m">npm run backend:dev</span> → 8000번. 라우트 65개와 DB. <span class="path">backend/app/main.py</span>.</p>
+        </div>
+        <div>
+          <h4>3 · 공방 에이전트 워커</h4>
+          <p><span class="m">npm run atelier</span>. 웹 서버와 <strong>일부러 분리된</strong> 별도 프로세스입니다. <span class="path">scripts/atelier-worker.mjs</span>.</p>
+        </div>
+      </div></div>
+      <div class="col">
+        <p>세 번째가 왜 분리돼 있는지가 설계의 핵심입니다. 에이전트는 파일을 씁니다. 공개 배포된 웹 서버 안에서 파일을 쓰는 프로세스가 돌면 안 되므로, 그 경로는 기본으로 꺼져 있습니다.</p>
+        <div class="callout">
+          <h4>직접 확인</h4>
+          <p><span class="path">backend/app/config.py:44</span> 의 <span class="m">agent_worker_enabled: bool = False</span>. 기본값이 <b>False</b> 입니다. 켜야만 웹 프로세스 안에서 에이전트가 돕니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="sLAYER" data-nav="구조">
+      <div class="col"><p class="eyebrow">00 — 파일 구조</p><h2>층과 책임</h2>
+        <p>아래 목록은 <span class="m">git ls-files</span> 로 센 실제 파일 수와 줄 수입니다. 클릭하면 그 층이 무엇을 하고 무엇을 부를 수 있는지 나옵니다.</p>
+      </div>
+      <div class="wide"><div class="panel">
+        <div class="panel-head"><span class="panel-title">레이어 탐색기</span><span class="panel-meta">추적 소스 약 131,000줄</span></div>
+        <div class="lx">
+          <div class="lx-stack" id="lxStack" role="listbox"></div>
+          <div class="lx-detail" id="lxDetail"></div>
+        </div>
+      </div></div>
+      <div class="col">
+        <h3>가장 많이 불리는 파일 = 가장 위험한 파일</h3>
+        <p>내부 import 를 전부 세어 봤습니다. 추측이 아니라 <span class="m">grep -ohE 'from "@/…"'</span> 의 결과입니다.</p>
+      </div>
+      <div class="wide"><div class="dep"><pre><span class="cmt"># 내부 import 횟수 (상위 7개)</span>
+<b>@/types/portfolio</b>      54   <span class="cmt">← 허브. 여기를 고치면 54곳이 영향받는다</span>
+<b>@/data/projectThemes</b>   39
+@/types/live             23
+@/lib/liveApi            18   <span class="cmt">백엔드와 말하는 유일한 창구</span>
+@/lib/constants          18
+@/data/projects          14
+<i>@/lib/villageWalk</i>         5   <span class="cmt">← 잎사귀. 고쳐도 파장이 작다</span></pre></div>
+        <div class="hub">
+          <div><b>허브</b><span>@/types/portfolio — 타입 하나 바꾸면 54개 파일이 다시 컴파일됩니다. 가장 조심할 곳.</span></div>
+          <div><b>관문</b><span>@/lib/liveApi — 프론트가 백엔드와 말하는 유일한 통로. 여기만 보면 API 사용처를 다 압니다.</span></div>
+          <div><b>안전지대</b><span>@/lib/villageWalk 같은 잎사귀 모듈. 실험은 여기서 하세요.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sCALC" data-nav="핵심 공식">
+      <div class="col">
+        <p class="eyebrow">00 — 알고리즘</p>
+        <h2>오늘의 활동이 불빛이 되는 공식</h2>
+        <p>이 제품의 약속은 한 문장입니다. <em>관리자가 적은 오늘의 활동이 마을의 밝기로 바뀐다.</em> 그 변환을 실제로 하는 것은 순수 함수 하나입니다 — <span class="path"><b>backend/app/services/village_service.py:69</b></span> 의 <span class="m">derive_village_state</span>.</p>
+        <p>아래 계산기는 그 함수를 <strong>그대로 옮긴 것</strong>입니다. 근사치가 아니라 같은 식이고, 파이썬의 <span class="m">//</span>(내림 나눗셈)까지 맞췄습니다. 값을 움직여서 어떤 입력이 밝기를 지배하는지 직접 보세요.</p>
+      </div>
+      <div class="wide"><div class="calc">
+        <div class="calc-in" id="calcIn"></div>
+        <div class="calc-out" id="calcOut"></div>
+      </div></div>
+      <div class="col">
+        <h3>가중치가 곧 설계 결정입니다</h3>
+        <p>최종 점수는 여섯 조각의 합인데 <strong>조각마다 나누는 수가 다릅니다</strong>. 커밋과 공부는 반으로 깎이고, 운동은 3분의 1, 집중도는 4분의 1만 들어갑니다. 코딩 시간만 <b>깎이지 않고 그대로</b> 들어갑니다.</p>
+        <p>그리고 메모는 내용과 무관하게 <b>한 글자만 있으면 35점</b>입니다. 공부 시간으로 35점을 받으려면 140분이 필요합니다. <strong>메모 한 줄 = 공부 2시간 20분</strong>이라는 뜻입니다. 의도한 것이라면 "기록하는 습관"에 준 가산점이고, 의도하지 않았다면 {{sFIND}}장의 F-02 가 그 결과입니다.</p>
+        <div class="callout warn">
+          <h4>직접 해 보세요</h4>
+          <p>계산기에서 <b>커밋 3 · 공부 30분 · 주제 1 · 코딩 60분 · 집중 50 · 메모 있음</b>을 넣어 보세요. 대단할 것 없는 하루인데 <b>100점 · bright</b> 가 나옵니다. 상한이 100이라 그 위로는 아무리 일해도 화면이 똑같습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="sTRACE" data-nav="요청 추적기">
+      <div class="col"><p class="eyebrow">00 — 딥 트레이스</p><h2>요청 하나가 지나가는 길</h2>
+        <p>층이 추상적으로 느껴진다면 이 장이 해결합니다. 관리자가 오늘의 활동을 저장했을 때 그 값이 마을 불빛이 되기까지, 한 단계마다 실제 파일과 줄 번호를 붙여 따라갑니다.</p>
+      </div>
+      <div class="wide"><div class="panel">
+        <div class="panel-head"><span class="panel-title">요청 추적기</span><div class="tabs" id="trTabs" role="tablist"></div></div>
+        <div class="tr-controls">
+          <button class="btn" id="trPrev" type="button">← 이전</button>
+          <button class="btn btn-go" id="trPlay" type="button">▶ 재생</button>
+          <button class="btn" id="trNext" type="button">다음 →</button>
+          <span class="tr-count" id="trCount"></span>
+        </div>
+        <div class="tr-body">
+          <div class="tr-steps" id="trSteps" role="listbox"></div>
+          <div class="tr-view" id="trView"></div>
+        </div>
+      </div></div>
+    </section>
+
+    <section id="sAUTH" data-nav="관리자 인증">
+      <div class="col">
+        <p class="eyebrow">00 — 기초부터</p>
+        <h2>관리자 인증, 맨바닥에서</h2>
+        <p>이 장은 사전 지식 없이 읽을 수 있게 씁니다. 관리자 라우트가 <b>65개 중 23개</b>라, 여기가 새면 새는 건 코드가 아니라 <strong>의뢰인의 이름·이메일·전화번호</strong>입니다.</p>
+      </div>
+      <div class="wide"><div class="bld">
+        <div><span class="q">문제</span><p><b>HTTP 는 당신을 기억하지 못합니다.</b> 요청 하나하나가 완전한 남남입니다. 방금 비밀번호를 맞혔어도 다음 요청은 그 사실을 모릅니다.</p></div>
+        <div><span class="a">그래서</span><p><b>토큰이 생겼습니다.</b> 로그인에 성공하면 "이 사람 확인됨"이라는 쪽지를 주고, 이후 요청마다 그 쪽지를 같이 보냅니다. 이 프로젝트는 <span class="m">X-Admin-Token</span> 헤더에 담습니다.</p></div>
+        <div><span class="q">그런데</span><p><b>쪽지는 손님이 고칠 수 있습니다.</b> 브라우저에 저장된 값이라 사용자가 직접 바꿔 쓸 수 있습니다. "만료: 2099년"이라고 적어 보내면요?</p></div>
+        <div><span class="a">그래서</span><p><b>서명이 생겼습니다.</b> 서버만 아는 비밀키로 쪽지에 도장을 찍습니다(HMAC-SHA256). 내용을 한 글자라도 고치면 도장이 안 맞습니다. <span class="path">backend/app/security.py:59</span></p></div>
+        <div><span class="q">그런데</span><p><b>비밀키가 공개돼 있다면?</b> 도장을 아무나 찍을 수 있습니다. 비밀번호를 걸어 둔 의미가 사라집니다. 그리고 이건 <strong>겉보기에 정상 동작합니다</strong> — 로그인도 되고 화면도 열립니다.</p></div>
+        <div><span class="a">그래서</span><p><b>이 프로젝트는 그걸 막아 둡니다.</b> 비밀번호는 걸었는데 서명키가 예시 기본값이면 <strong>인증을 아예 통과시키지 않습니다</strong>. <span class="path">backend/app/security.py:40</span> 의 <span class="m">assert_secret_usable</span>. 잘 만든 부분입니다.</p></div>
+      </div></div>
+      <div class="col">
+        <h3>그런데 문 하나가 덜 잠겨 있습니다</h3>
+        <p>위의 방어는 전부 <strong>비밀번호가 설정돼 있을 때</strong>만 작동합니다. 비어 있으면 <span class="m">require_admin</span> 은 검사 없이 통과시킵니다. 아래 시나리오를 따라가 보세요.</p>
+      </div>
+      <div class="wide">
+        <div class="tabs" id="atkTabs"></div><div id="atkBox"></div>
+      </div>
+      <div class="col">
+        <div class="callout alert">
+          <h4>확인 결과</h4>
+          <p><b>확인 완료(2026-09-12):</b> 배포 환경에 ADMIN_PASSWORD 와 ADMIN_SECRET 이 모두 설정돼 있어 <b>지금은 열려 있지 않습니다.</b> 그래도 이 장을 남긴 이유는, 지금 안전한 근거가 코드가 아니라 <b>설정 하나</b>이기 때문입니다. 새 환경을 만들 때마다 같은 확인이 필요합니다. 자세한 내용은 {{sFIND}}장 F-01.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="sDATA" data-nav="데이터">
+      <div class="col"><p class="eyebrow">00 — 저장</p><h2>테이블 19개가 하는 일</h2>
+        <p><span class="path">backend/app/models.py</span> 의 <span class="m">__tablename__</span> 을 센 결과입니다. 역할별로 묶으면 이 제품이 무엇을 기억하려 하는지가 보입니다.</p>
+      </div>
+      <div class="wide"><div class="erd" id="erd"></div></div>
+      <div class="col">
+        <p>눈여겨볼 것은 <strong>NPC 사회에만 테이블 5개가 쓰였다</strong>는 점입니다. 관계·기억·유대·부탁·마일스톤. 포트폴리오 사이트가 굳이 이만큼을 기억할 이유는 없습니다. 이건 요구사항이 아니라 <em>취향</em>이고, 면접에서 이야기할 거리이기도 합니다.</p>
+      </div>
+    </section>
+
+    <section id="sAPI" data-nav="API 지도">
+      <div class="col"><p class="eyebrow">00 — 참고</p><h2>라우트 65개</h2>
+        <p>산문이 아니라 찾아보는 표입니다. 전부 <span class="path">backend/app/main.py</span> 한 파일에 선언돼 있고, 각 라우트는 <span class="m">services/*_service.py</span> 에 일을 넘깁니다.</p>
+      </div>
+      <div class="wide"><div class="tw"><table>
+        <thead><tr><th>접두어</th><th>수</th><th>보호</th><th>하는 일</th></tr></thead>
+        <tbody id="apimap"></tbody>
+      </table></div></div>
+    </section>
+
+    <section id="sFIND" data-nav="발견된 문제">
+      <div class="col"><p class="eyebrow">00 — 정직한 부분</p><h2>실제로 발견된 문제</h2>
+        <p>심각도 순입니다. 각 항목에 근거 파일과 줄, 무엇이 문제인지, <strong>무슨 결과가 나는지</strong>, 어떻게 고치는지를 적었습니다. 완화해서 쓰지 않았습니다.</p>
+      </div>
+      <div class="wide"><div class="fx" id="fx"></div></div>
+      <div class="col">
+        <h3>무엇부터 할까</h3>
+        <div class="rcp">
+          <div><b>F-01 을 코드로 막기.</b> 배포 확인은 끝났고 결과는 안전입니다. 남은 일은 require_admin 을 require_island 처럼 fail-closed 로 바꾸는 것 — 세 줄이고 본보기가 같은 파일에 있습니다.</div>
+          <div><b>F-03 CORS 정리.</b> 세 줄 삭제. 지금 하면 잊지 않습니다.</div>
+          <div><b>F-02 공식 재조정.</b> 제품의 핵심 약속에 관한 것이라 시간을 들일 값이 있습니다. 다만 급하지는 않습니다.</div>
+          <div><b>F-04 는 미뤄도 됩니다.</b> 혼자 쓰는 동안은 비용이 거의 없습니다. 두 번째 사람이 오면 그때 쪼개세요.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sGOOD" data-nav="잘 된 부분">
+      <div class="col"><p class="eyebrow">00 — 균형</p><h2>잘 되어 있는 것</h2>
+        <p>결함과 같은 증거 기준으로 골랐습니다. 아래는 전부 <strong>의도가 코드에 남아 있는</strong> 것들이고, 면접에서 이야기할 재료이기도 합니다.</p>
+      </div>
+      <div class="wide"><div class="split" id="good"></div></div>
+    </section>
+
+    <section id="sQZ" data-nav="이해도 퀴즈">
+      <div class="col"><p class="eyebrow">00 — 확인</p><h2>정말 이해했는지 확인</h2>
+        <p>읽으면 이해한 것처럼 느껴지지만 아닙니다. 답을 <strong>꺼내 보는</strong> 것이 이해입니다. 틀린 문제가 한 장에 몰리면 그 장을 다시 읽으세요.</p>
+      </div>
+      <div class="wide">
+        <div class="qz-score" id="qzScore"></div>
+        <div class="qz" id="qz"></div>
+      </div>
+    </section>
+
+    <section id="sGLOSS" data-nav="용어 사전">
+      <div class="col"><p class="eyebrow">00 — 참고</p><h2>용어</h2></div>
+      <div class="wide"><div class="tw"><table>
+        <thead><tr><th>용어</th><th>뜻</th></tr></thead>
+        <tbody id="glossary"></tbody>
+      </table></div></div>
+      <div class="col"><hr><p class="end">작성 기준 — 브랜치 <strong>final</strong> · 커밋 <strong>7170f7f</strong> · 2026-09-12<br>문서와 코드가 다르면 <strong>코드가 맞습니다</strong></p></div>
+    </section>
+
+  </main>
+</div>
+
+<div id="pop" role="tooltip"></div>
+
+<script>
+/* ============================================================
+   DATA — myPortfolio 해부도
+   모든 숫자는 실행한 명령의 출력입니다(캡션에 방법 표기).
+   ============================================================ */
+
+var STATS = [
+  ["1,284", "git 추적 파일"],
+  ["131k", "추적 소스 줄"],
+  ["65", "API 라우트"],
+  ["19", "DB 테이블"],
+  ["258", "백엔드 테스트"],
+  ["783", "커밋 (2019~)"]
+];
+
+var LAYERS = [
+  { name:"src/components/ui", n:189, role:"화면을 그리는 React 컴포넌트 전부. 이력서 화면, 프로젝트 뷰어, 관리자 위젯이 여기 있습니다. 저장소에서 가장 큰 덩어리(69,685줄)입니다.",
+    calls:"src/data · src/lib · src/types", rule:"브라우저 API 를 쓰므로 거의 전부 \"use client\" 입니다.",
+    files:["ResumeMode.tsx","ProjectOnePager.tsx (1,548줄)","project-viewers/richContent/data.ts (4,978줄)","…186개 더"] },
+  { name:"src/components/village", n:20, role:"3D 마을 자체. Three.js(R3F) 씬, 건물, NPC, 지형. 파일 수는 20개뿐인데 12,386줄로 파일당 밀도가 가장 높습니다.",
+    calls:"src/lib (지형·재질·보행) · src/data", rule:"GLB 메시는 레이캐스트를 끄고, 포인터 판정은 투명 히트박스만 합니다.",
+    files:["VillageScene.tsx (3,628줄)","VillageHud.tsx (1,623줄)","NPC.tsx","Building.tsx","…16개 더"] },
+  { name:"src/app", n:37, role:"Next.js 라우트. / (착륙장) · /village · /resume · /atelier · /admin 다섯 입구가 여기서 갈립니다.",
+    calls:"src/components · src/data", rule:"/ 는 three.js 를 전혀 싣지 않습니다. 이 분리가 첫 화면 무게를 지킵니다.",
+    files:["page.tsx (착륙장)","village/page.tsx","resume/page.tsx","admin/page.tsx (3,091줄)","…33개 더"] },
+  { name:"src/lib", n:25, role:"계산과 통신. 백엔드 호출(liveApi), 마을 좌표·지형 수학, 재질 통일, GLB 로더.",
+    calls:"외부 API · src/types", rule:"liveApi 가 백엔드와 말하는 유일한 창구입니다.",
+    files:["liveApi.ts","constants.ts","villageTerrain.ts","villageMaterial.ts","…21개 더"] },
+  { name:"src/data", n:22, role:"내용물. 이력서 데이터, 프로젝트 설명, NPC 명단, 공방 대본. 코드가 아니라 원고에 가깝습니다.",
+    calls:"src/types 만", rule:"여기를 고치면 화면과 PDF 가 같이 바뀝니다. 다른 파일은 안 건드려도 됩니다.",
+    files:["resume.ts (1,400줄)","hero.ts","projectThemes.ts","npcRoster.ts","…18개 더"] },
+  { name:"backend/app", n:36, role:"FastAPI 서버. 라우트 선언은 main.py 한 곳뿐이고 실제 일은 services/ 가 합니다.",
+    calls:"SQLAlchemy · OpenAI · Claude Agent SDK", rule:"라우트는 얇게, 로직은 services/*_service.py 에.",
+    files:["main.py (라우트 65개)","models.py (테이블 19개)","security.py","services/commission_service.py (1,743줄)","agents/gate.py","…31개 더"] },
+  { name:"backend/tests", n:20, role:"pytest. 순수 로직만 덮습니다 — 마을 상태 계산, NPC 관계 규칙, 공방 게이트. 라우트와 OpenAI 호출 경로는 덮지 않습니다.",
+    calls:"backend/app (인메모리 SQLite)", rule:"테스트 258개. 규칙이 바뀌면 여기가 먼저 깨져야 합니다.",
+    files:["test_relations.py","test_commission_gates.py","test_relationship_rules.py","…17개 더"] },
+  { name:"scripts", n:37, role:"자동화. GLB 압축, 지형 배치 생성, 이력서 PDF 생성, 백엔드 개발 서버, 공방 에이전트 실행.",
+    calls:"파일시스템 · Playwright · gltf-transform", rule:"앱이 아니라 도구입니다. 빌드 대상이 아닙니다.",
+    files:["optimize-glb.mjs","build-public-resume-pdf.mjs","generate-decor-layout.mjs (3,178줄)","atelier-worker.mjs","…33개 더"] }
+];
+
+var SEC = [];
+var CONCEPTS = [];
+
+var TIMELINE = [
+  {m:"2019-10",n:3},{m:"2019-11",n:73},{m:"2019-12",n:30},
+  {m:"2020-01",n:20},{m:"2020-02",n:8},{m:"2020-03",n:47},{m:"2020-04",n:38},
+  {m:"2020-05",n:39},{m:"2020-06",n:19},{m:"2020-07",n:7},{m:"2020-08",n:25},
+  {m:"2020-09",n:10},{m:"2020-10",n:7},{m:"2020-12",n:9},
+  {m:"2021-01",n:8},{m:"2021-02",n:11},{m:"2021-03",n:6},{m:"2021-04",n:1},
+  {m:"2021-05",n:6},{m:"2021-06",n:7},{m:"2021-07",n:2},{m:"2021-08",n:2},
+  {m:"2021-09",n:7},{m:"2021-10",n:15},{m:"2021-11",n:4},
+  {m:"2022-01",n:1},{m:"2022-03",n:9},{m:"2022-08",n:7},{m:"2022-09",n:6},{m:"2022-10",n:11},
+  {m:"2023-01",n:10},{m:"2023-02",n:2},{m:"2023-08",n:2},{m:"2023-09",n:1},{m:"2023-10",n:1},
+  {m:"2024-04",n:1},{m:"2024-05",n:1},{m:"2024-10",n:5},
+  {m:"2026-01",n:62},{m:"2026-05",n:3},
+  {m:"2026-06",n:54},{m:"2026-07",n:15},{m:"2026-08",n:123,peak:true},{m:"2026-09",n:65}
+];
+
+var TRACES = [
+  { id:"activity", tab:"활동 저장 → 마을 불빛", steps:[
+    { w:"front", wl:"프론트 · 관리자 화면", t:"오늘의 활동을 입력한다",
+      f:"src/app/admin/page.tsx", d:"커밋 수, 공부 시간, 공부 주제, 코딩 시간, 운동, 집중도, 메모를 폼에 적습니다. 이 화면 하나가 3,091줄로 저장소에서 세 번째로 큰 파일입니다.",
+      c:"// 관리자 페이지 — 마을에 들어갈 오늘의 숫자를 사람이 직접 적는 유일한 곳",
+      note:null },
+    { w:"front", wl:"프론트 · src/lib", t:"liveApi 가 백엔드로 보낸다",
+      f:"src/lib/liveApi.ts:50", d:"프론트에서 백엔드로 나가는 모든 요청은 이 파일을 지납니다. 주소는 환경변수이고, 없으면 localhost:8000 으로 떨어집니다.",
+      c:"process.env.NEXT_PUBLIC_API_BASE_URL ?? \"http://localhost:8000\";",
+      note:"<b>여기가 유일한 창구입니다.</b> 백엔드 호출이 어디서 일어나는지 알고 싶으면 이 파일만 보면 됩니다. 컴포넌트가 직접 fetch 하지 않습니다." },
+    { w:"back", wl:"백엔드 · 라우트", t:"POST /activity — 관리자만",
+      f:"backend/app/main.py:241", d:"라우트 선언에 AdminGuard 가 붙어 있습니다. 인증이 켜져 있으면 X-Admin-Token 헤더가 없으면 401 로 막힙니다.",
+      c:"@app.post(\"/activity\", response_model=ActivityOut, dependencies=[AdminGuard])\ndef save_activity(payload: ActivityIn, db: Session = Depends(get_db)):",
+      note:"<b>단, 인증이 켜져 있을 때만입니다.</b> ADMIN_PASSWORD 가 비어 있으면 이 가드는 통과시킵니다(<b>발견된 문제</b> 장 F-01)." },
+    { w:"back", wl:"백엔드 · service", t:"오늘 행을 upsert 한다",
+      f:"backend/app/services/activity_service.py", d:"하루에 한 행입니다. 같은 날 다시 저장하면 새로 만들지 않고 덮어씁니다.",
+      c:"# DailyActivity — 날짜당 한 행. 다시 저장하면 갱신된다.",
+      note:null },
+    { w:"front", wl:"프론트 · 마을 화면", t:"마을이 상태를 물어본다",
+      f:"src/lib/liveApi.ts:112", d:"마을 화면이 뜨면 현재 마을 상태를 받아옵니다. cache: no-store 라 항상 최신입니다.",
+      c:"return requestJson<VillageState>(\"/village-state\", {cache: \"no-store\"});",
+      note:null },
+    { w:"back", wl:"백엔드 · 라우트", t:"GET /village-state — 공개",
+      f:"backend/app/main.py:382", d:"이 라우트에는 가드가 없습니다. 마을은 누구나 봐야 하므로 의도된 공개입니다.",
+      c:"@app.get(\"/village-state\", response_model=VillageState)\ndef village_state(db: Session = Depends(get_db)):",
+      note:"<b>가드가 없는 것이 여기서는 맞습니다.</b> 나가는 값이 밝기 등급뿐이고 개인정보가 아니기 때문입니다. 가드 유무는 습관이 아니라 나가는 데이터로 정해야 합니다." },
+    { w:"back", wl:"백엔드 · 순수 함수", t:"숫자가 점수가 된다",
+      f:"backend/app/services/village_service.py:69", d:"derive_village_state 가 오늘의 숫자를 건물별 점수로 바꿉니다. DB 도 네트워크도 안 건드리는 순수 함수라 테스트가 쉽고, 그래서 실제로 테스트가 붙어 있습니다.",
+      c:"overall_score = min(\n    commit_score // 2 + study_score // 2 + coding_score\n    + workout_score // 3 + focus_score // 4 + memo_score,\n    100,\n)",
+      note:"<b>여기가 이 제품의 심장입니다.</b> <b>핵심 공식</b> 장의 계산기가 바로 이 식입니다. 그리고 이 식이 너무 쉽게 100 에 닿는 것이 F-02 입니다." },
+    { w:"back", wl:"백엔드 · 순수 함수", t:"점수가 밝기 등급이 된다",
+      f:"backend/app/services/village_service.py:59", d:"연속된 점수를 네 등급으로 자릅니다. 화면이 실제로 쓰는 것은 이 등급입니다.",
+      c:"def _light_for_score(score: int) -> str:\n    if score <= 0:  return \"dark\"\n    if score < 35:  return \"dim\"\n    if score < 75:  return \"normal\"\n    return \"bright\"",
+      note:"등급이 네 개뿐이라, 점수가 76 이든 100 이든 <b>화면은 똑같습니다</b>. 100 에서 잘리는 상한과 합쳐지면 신호가 두 번 뭉개집니다." },
+    { w:"front", wl:"프론트 · 3D", t:"건물에 불이 켜진다",
+      f:"src/components/village/VillageScene.tsx", d:"건물마다 받은 등급으로 조명 강도를 정합니다. 실제 pointLight 는 4개로 고정돼 있고, 나머지는 바닥에 깔린 원반으로 흉내 냅니다.",
+      c:"// 실광원 개수가 바뀌면 모든 재질이 다시 컴파일된다 — 그래서 풀로 고정한다",
+      note:"<b>성능 때문에 생긴 제약입니다.</b> 광원을 하나 더 켜면 셰이더가 전부 재컴파일되어 프레임이 끊깁니다. 그래서 '가짜 빛'을 씁니다." }
+  ]}
+];
+
+var FINDINGS = [
+  { id:"F-01", sev:"mid", sevL:"중간 (확인 전 높음)",
+    t:"관리자 인증이 fail-open 이다 — 비밀번호가 비면 라우트 23개가 검사 없이 통과한다",
+    ev:"backend/app/security.py:87-93",
+    code:"def require_admin(x_admin_token: str | None = Header(default=None)) -> None:\n    \"\"\"보호된 관리자 엔드포인트용 의존성. 인증 비활성 시 통과.\"\"\"\n    if not auth_enabled():\n        return                      # ← 비밀번호가 비면 검사 없이 통과\n    assert_secret_usable()\n    if not verify_admin_token(x_admin_token):\n        raise HTTPException(status_code=401, ...)",
+    what:"auth_enabled() 는 ADMIN_PASSWORD 가 비었는지만 봅니다(security.py:36). 비어 있으면 require_admin 이 아무 검사 없이 return 합니다. 로컬 개발 편의를 위한 의도된 동작이지만, <b>배포 서버에서 환경변수를 빠뜨리면 같은 코드가 그대로 fail-open 으로 작동합니다.</b> 에러도 경고도 없습니다.",
+    why:"관리자 라우트는 65개 중 23개입니다. 그 안에는 의뢰 공방의 접수 내역이 들어 있고, 거기에는 <b>외부인이 남긴 이름·이메일·전화번호</b>가 있습니다. 내 기록이 새는 것과 남의 연락처가 새는 것은 무게가 다릅니다. 더구나 실패가 조용합니다 — 화면은 평소처럼 열리므로 뚫린 줄 모릅니다.<br><br>같은 파일 security.py:45 에 이미 이 걱정이 적혀 있습니다. \"공방이 생긴 뒤로 여기가 새면 나가는 건 내 기록이 아니라 방문자의 이름·이메일·전화번호와 의뢰 산출물\". 그런데 그 문장이 있는 assert_secret_usable 은 <b>인증이 켜져 있을 때만 호출됩니다.</b> 정작 비밀번호를 깜빡한 경우에는 실행되지 않습니다.<br><br><b>2026-09-12 확인:</b> 배포된 Railway 환경에 ADMIN_PASSWORD 와 ADMIN_SECRET 이 <b>둘 다 설정되어 있습니다</b>(소유자 직접 확인, 서명키는 긴 무작위 문자열). 따라서 <b>지금 열려 있지 않습니다.</b> 심각도를 높음에서 중간으로 내린 것은 완화가 아니라 &quot;지금 악용 가능&quot;이 아니게 되었기 때문입니다. 다만 <b>구조는 그대로입니다.</b> 새 환경을 만들거나, 호스트를 옮기거나, 변수를 지우거나, 두 번째 사람이 배포하면 같은 실패가 조용히 재현됩니다. 지금 안전한 근거가 <b>코드가 아니라 설정 하나</b>라는 점이 이 항목이 남아 있는 이유입니다.",
+    fix:"1) <b>배포 상태 확인 — 완료(2026-09-12).</b> 두 값 모두 들어 있습니다. 다만 새 환경을 만들 때마다 같은 확인이 필요합니다. 백엔드 주소를 알고 있다면 <span class=\"m\">curl -s -o /dev/null -w \"%{http_code}\\n\" https://&lt;백엔드&gt;/admin/overview</span> 를 토큰 없이 실행합니다. <b>401 이면 안전</b>, 200 이면 지금 열려 있습니다.<br>2) 구조적으로 막으려면 require_island 의 방식을 그대로 가져오면 됩니다(security.py:96). 그 함수는 비밀번호가 없으면 <b>403 으로 거부합니다</b> — \"편의보다 까먹고 배포라는 실패 모드를 없애는 쪽이 중요하다\"는 주석과 함께요. 공방 데이터가 들어온 지금, 관리자에도 같은 기준을 적용할 이유가 섬보다 큽니다.<br>3) 최소한 서버 시작 시 경고 로그라도 남기세요." },
+
+  { id:"F-02", sev:"mid", sevL:"중간",
+    t:"중앙 광장 점수가 너무 쉽게 100 에 닿아, 제품의 핵심 약속이 신호를 잃는다",
+    ev:"backend/app/services/village_service.py:82-86",
+    code:"overall_score = min(\n    commit_score // 2 + study_score // 2 + coding_score\n    + workout_score // 3 + focus_score // 4 + memo_score,\n    100,\n)",
+    what:"여섯 조각의 이론적 최대는 50+50+100+33+25+35 = <b>293</b> 인데 상한은 100 입니다. 실제로 계산해 보면 <b>커밋 3개 · 공부 30분 · 주제 1개 · 코딩 1시간 · 집중 50 · 메모 있음</b> 이라는 평범한 하루가 이미 <b>105 → 100</b> 입니다. 그리고 아무 일도 안 하고 메모 한 줄만 써도 35점이라 등급이 dim 이 아니라 normal 입니다.",
+    why:"이 제품의 한 줄 약속은 \"오늘의 활동이 마을 밝기로 바뀐다\" 입니다. 그런데 실제로 일한 날은 거의 전부 bright 로 같고, 밝기 등급도 네 단계뿐이라 <b>변화가 보이지 않습니다.</b> 방문자 입장에서는 마을이 항상 똑같아 보이고, 관리자 입장에서는 숫자를 성실히 적을 이유가 사라집니다. 기능이 고장 난 것이 아니라 <b>기능이 전달하려던 의미가 사라진</b> 경우라, 테스트로는 절대 안 잡힙니다.",
+    fix:"세 방향이 있습니다. (a) 상한을 100 이 아니라 실제 분포의 상위값으로 올리고 조각별 나눗수를 다시 잡기. (b) 등급 임계(35/75)를 실제 기록 분포에 맞춰 조정하기 — 지금 임계는 점수 분포를 보지 않고 정한 값으로 보입니다. (c) 절대 점수가 아니라 <b>최근 7일 대비 상대값</b>으로 밝기를 매기기. 셋 중 (c) 가 \"오늘\"이라는 제품 컨셉에 가장 맞습니다. 어느 쪽이든 먼저 할 일은 실제 DailyActivity 행들의 점수 분포를 뽑아 보는 것입니다." },
+
+  { id:"F-03", sev:"mid", sevL:"중간",
+    t:"프로덕션 CORS 허용 목록에 localhost 세 개가 남아 있다",
+    ev:"backend/app/main.py:183-193",
+    code:"app.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\n        settings.frontend_origin,\n        \"http://127.0.0.1:3000\",\n        \"http://localhost:3001\",\n        \"http://127.0.0.1:3001\",\n    ],\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)",
+    what:"와일드카드를 안 쓴 것은 잘한 것입니다. 다만 개발용 주소 세 개가 배포본에도 그대로 들어갑니다. 코드에 하드코딩돼 있어 환경으로 갈라지지 않습니다.",
+    why:"당장 뚫리는 구멍은 아닙니다. 공격자가 피해자의 브라우저를 localhost 출처로 만들려면 피해자 기기에서 뭔가를 이미 돌리고 있어야 합니다. 그래도 <b>allow_credentials=True 와 함께 있는 개발용 출처</b>는 남겨 둘 이유가 없고, 보안 점검에서 반드시 지적받는 종류입니다. 그리고 frontend_origin 이 하나뿐이라 <b>www 붙은 주소와 안 붙은 주소 중 하나만 통과합니다</b> — 배포 후 \"어떤 주소로 들어가면 API 가 안 된다\"의 흔한 원인입니다.",
+    fix:"localhost 세 줄을 설정값으로 옮기고 개발 환경에서만 추가하세요. 동시에 frontend_origin 을 콤마 구분 목록으로 받아 apex 와 www 를 둘 다 넣으면 두 번째 문제도 같이 없어집니다." },
+
+  { id:"F-04", sev:"low", sevL:"낮음",
+    t:"한 파일이 4,978줄 — 데이터와 화면이 한 덩어리다",
+    ev:"src/components/ui/project-viewers/richContent/data.ts",
+    code:"$ git ls-files | grep -E '\\.(ts|tsx)$' | xargs wc -l | sort -rn | head -3\n   4978 src/components/ui/project-viewers/richContent/data.ts\n   3628 src/components/village/VillageScene.tsx\n   3091 src/app/admin/page.tsx",
+    what:"프로젝트별 상세 내용이 한 파일에 모여 있습니다. 같은 폴더의 mywave.tsx(1,520줄), shared.tsx(2,206줄)까지 합치면 이 한 폴더가 8,700줄입니다.",
+    why:"혼자 쓰는 동안은 비용이 거의 없습니다. 문제는 두 곳에서 나옵니다. 하나는 <b>번들</b> — 한 덩어리 모듈이라 프로젝트 하나만 보려 해도 전부 실려 옵니다. 이 저장소는 이미 같은 문제를 겪고 고친 적이 있습니다(이력서 데이터가 첫 화면 번들에 딸려 와서 hero.ts 로 분리, 실측 216→221KB). 다른 하나는 <b>충돌</b> — 두 번째 사람이 오면 거의 매번 같은 파일을 건드립니다.",
+    fix:"급하지 않습니다. 손볼 때가 되면 프로젝트 id 별 파일로 쪼개고 동적 import 로 바꾸세요. hero.ts 를 분리했을 때와 같은 방식이고, 그때 효과를 실측으로 확인한 전례가 이미 있습니다." }
+];
+
+var GOOD = [
+  { h:"에이전트에게 진행 권한을 주지 않았다",
+    p:"AI 에이전트가 할 수 있는 일은 작업을 <b>review 까지</b> 옮기는 것뿐이고, 그다음 문은 관리자가 부르는 함수 하나뿐입니다. 파일 첫 문단이 이유를 밝힙니다 — \"프롬프트로 부탁하면 언젠가는 간다. 그래서 진행 권한 자체를 모델에게 주지 않는다.\" 상태 전이를 DB 세션 없는 순수 함수로 빼서 테스트가 직접 규칙을 잠급니다. <span class='path'>backend/app/agents/gate.py:166</span>" },
+  { h:"기본 서명키면 인증을 아예 막는다",
+    p:"비밀번호만 바꾸고 서명키를 예시값으로 두는 실수가 가장 흔한데, 그때 겉보기에는 로그인이 정상 동작해 뚫린 줄 모릅니다. 그래서 조용히 넘어가지 않고 <b>500 으로 거부</b>합니다. 실패를 눈에 보이게 만든 선택입니다. <span class='path'>backend/app/security.py:40</span>" },
+  { h:"섬은 일부러 더 엄격하다",
+    p:"require_admin 은 비밀번호가 없으면 통과시키지만, 개인 기록이 들어 있는 /island 는 <b>비밀번호가 없으면 로컬에서도 안 열립니다</b>. \"편의보다 까먹고 배포라는 실패 모드를 없애는 쪽이 중요하다.\" 같은 판단을 관리자에도 적용하면 F-01 이 사라집니다. <span class='path'>backend/app/security.py:96</span>" },
+  { h:"레이트리밋이 실제 사고에서 배웠다",
+    p:"의뢰 접수는 <b>시도</b>와 <b>성공</b>을 따로 셉니다. 주석에 이유가 남아 있습니다 — 둘을 묶었더니 이메일 오타 두어 번에 멀쩡한 손님이 한 시간 잠겼다고요. 검증에 걸려 되돌아간 요청은 받은편지함에 아무것도 안 남기므로 성공 할당량을 깎으면 안 됩니다. <span class='path'>backend/app/security.py:156-210</span>" },
+  { h:"AI 가 실패해도 서비스가 안 멈춘다",
+    p:"OpenAI 키가 없거나 호출이 실패하면 NPC 는 규칙 기반 대사로 답합니다. GitHub 토큰이 없으면 동기화를 조용히 건너뜁니다. Discord 웹훅이 없으면 알림만 생략합니다. <b>외부 의존성이 전부 선택사항</b>으로 설계돼 있습니다. <span class='path'>backend/app/config.py</span>" },
+  { h:"순수 로직에 테스트 258개가 붙어 있다",
+    p:"라우트나 OpenAI 경로가 아니라 <b>규칙</b>을 덮습니다. 마을 상태 계산, NPC 관계 규칙, 공방 게이트. 인메모리 SQLite 로 돌아 .env 없이도 실행됩니다. 덮는 범위를 정직하게 고른 결과입니다. <span class='path'>backend/tests/ (20개 파일)</span>" },
+  { h:"비밀이 한 번도 커밋되지 않았다",
+    p:"<span class='m'>git ls-files</span> 로 확인했습니다. .env · *.db · .venv 중 추적되는 것이 <b>하나도 없습니다</b>. 히스토리를 다시 쓴 흔적도 없습니다 — 처음부터 안 올린 것입니다. 흔히 실패하는 지점인데 깨끗합니다." },
+  { h:"결정의 이유가 코드에 남아 있다",
+    p:"이 저장소의 주석은 \"무엇\"이 아니라 <b>\"왜 이렇게 안 했는가\"</b>를 적습니다. 실측 숫자까지 함께요(ETC1S 26.4dB 라 쓰지 않음, 첫 화면 215KB 유지, 광원 4개 고정). 이 해부도를 쓰는 동안 가장 도움이 된 것이 그 주석들이었습니다." }
+];
+
+var ERD = [
+  { g:"오늘의 활동", cap:"마을을 밝히는 입력. 하루에 한 행씩 쌓입니다.",
+    items:["<b>daily_activity</b> 커밋·공부·코딩·운동·집중도·메모. 마을 밝기의 원천",
+           "<b>coding_test_log</b> 푼 문제 기록 (학습 구역)",
+           "<b>cs_note_log</b> CS 정리 기록 (지식 서고)",
+           "<b>coach_note</b> 갓생 섬 코치 메모"] },
+  { g:"NPC 사회", cap:"테이블 5개. 요구사항이 아니라 취향입니다.",
+    items:["<b>npc_relationship</b> 실제 NPC 쌍의 친밀도. 종류 쌍이 아니라 개체 쌍",
+           "<b>npc_memory</b> NPC 당 30개 상한. 마주침·사건·뒷담화·방문자",
+           "<b>visitor_bond</b> 익명 방문자와의 단골 관계",
+           "<b>npc_favor</b> NPC 가 방문자에게 하는 부탁",
+           "<b>relationship_milestone</b> 싸움·화해 같은 사건의 영구 기록",
+           "<b>village_event</b> 마을 소식 피드 (500개에서 정리)"] },
+  { g:"의뢰 공방", cap:"외부인이 쓰는 유일한 쓰기 경로. 개인정보가 여기 있습니다.",
+    items:["<b>commission_request</b> 접수 본체. 이름·이메일·연락처 포함",
+           "<b>commission_message</b> 접수 대화 기록",
+           "<b>commission_task</b> 직군별 작업. 게이트 2 를 통과해야 생성됨",
+           "<b>commission_artifact</b> 산출물. shared 플래그로 공유 제어"] },
+  { g:"마을 운영", cap:"관리자가 손으로 덮어쓰는 값들.",
+    items:["<b>managed_project</b> 프로젝트 메타 관리",
+           "<b>village_building_override</b> 건물 밝기 수동 지정",
+           "<b>npc_preset_setting</b> NPC 성격 프리셋",
+           "<b>npc_conversation_log</b> 대화 로그",
+           "<b>visitor_event</b> 방문자 행동 기록"] }
+];
+
+var APIMAP = [
+  ["/admin/*", "23", "<b>AdminGuard</b>", "활동 저장, 프로젝트 관리, 공방 심사·게이트, NPC 사회 초기화. <b>비밀번호 미설정 시 무방비</b>(<b>발견된 문제</b> 장 F-01)"],
+  ["/npc/*", "9", "일부 AiRateLimit", "NPC 대화·자율 행동·마주침·소식·기억·부탁"],
+  ["/island/*", "9", "<b>IslandGuard</b>", "갓생 섬. 개인 기록이라 비밀번호 없으면 <b>로컬에서도 거부</b>"],
+  ["/commission/*", "7", "CommissionRateLimit", "의뢰 접수·상담·추적. <b>외부인이 쓰는 유일한 쓰기 경로</b>"],
+  ["/activity", "3", "AdminGuard", "오늘의 활동 저장·조회·이력"],
+  ["/village-state", "1", "공개", "마을 밝기. 나가는 값이 등급뿐이라 공개가 맞음"],
+  ["/cs-notes · /coding-tests", "2", "혼합", "학습 구역 기록"],
+  ["/github · /analytics · /health", "3", "혼합", "GitHub 동기화, 방문 통계, 헬스체크"]
+];
+
+var ATTACKS = [
+  { tab:"관리자 비밀번호 미설정", title:"ADMIN_PASSWORD 를 빠뜨리고 배포했다면",
+    steps:[
+      { k:"mid", ic:"상황", h:"환경변수를 하나 빠뜨린다",
+        p:"배포 호스트에 ADMIN_PASSWORD 를 설정하지 않았습니다. 서버는 <b>정상적으로 시작합니다.</b> 에러도 경고도 없습니다.",
+        c:"admin_password: str = \"\"   # config.py:25 기본값" },
+      { k:"bad", ic:"결과", h:"가드가 검사 없이 통과시킨다",
+        p:"auth_enabled() 가 False 를 돌려주므로 require_admin 은 첫 줄에서 return 합니다. 토큰을 보내지 않아도 통과합니다.",
+        c:"if not auth_enabled():\n    return          # ← security.py:89" },
+      { k:"bad", ic:"노출", h:"관리자 라우트 23개가 열린다",
+        p:"주소만 알면 누구나 부를 수 있습니다. 그중에는 의뢰 접수 내역이 있고, 거기에는 <b>외부인이 남긴 이름·이메일·전화번호</b>가 들어 있습니다.",
+        c:"curl https://<백엔드>/admin/commissions      # 토큰 없이" },
+      { k:"ok", ic:"대조", h:"같은 저장소가 섬은 이렇게 막았다",
+        p:"/island 는 정반대로 동작합니다. 비밀번호가 없으면 <b>403 으로 거부</b>합니다. 같은 판단을 관리자에도 적용하면 이 시나리오가 통째로 사라집니다.",
+        c:"if not auth_enabled():\n    raise HTTPException(status_code=403, ...)   # security.py:105" }
+    ],
+    out:"safe",
+    msg:"<b>지금은 이 시나리오가 성립하지 않습니다.</b> 2026-09-12 확인 결과 ADMIN_PASSWORD 와 ADMIN_SECRET 이 배포 환경에 들어 있습니다. 그래도 위 단계들을 막고 있는 것은 코드가 아니라 <b>환경변수</b>입니다. <span style='opacity:.6'>(원래 판정:  코드만으로는 안전하다고 말할 수 없습니다. 토큰 없이 <span class='m'>/admin/overview</span> 를 호출해 <b>401 이 오는지</b> 확인하세요. 200 이 오면 즉시 ADMIN_PASSWORD 와 ADMIN_SECRET 을 설정해야 합니다.)</span> 코드로 막으려면 4단계의 require_island 방식을 그대로 가져오면 됩니다." }
+];
+
+var GLOSSARY = {
+  "fail-open": "검사에 필요한 설정이 없을 때 <b>막는 대신 통과시키는</b> 동작. 편하지만 설정을 빠뜨리면 조용히 무방비가 됩니다. 반대는 fail-closed(없으면 거부).",
+  "가드 / Depends": "FastAPI 에서 라우트가 실행되기 전에 먼저 돌리는 검사 함수. 여기서 예외를 던지면 라우트 본문은 아예 실행되지 않습니다.",
+  "HMAC-SHA256": "비밀키로 데이터에 도장을 찍는 방법. 내용을 고치면 도장이 안 맞습니다. 암호화가 아니라서 <b>내용은 읽히지만 위조는 막습니다</b>.",
+  "순수 함수": "같은 입력이면 항상 같은 결과를 내고, DB나 네트워크를 건드리지 않는 함수. 테스트하기 쉬워서 규칙을 여기 몰아넣습니다.",
+  "CORS": "브라우저가 \"이 사이트가 저 서버를 불러도 되나\"를 확인하는 규칙. 서버가 허용 출처 목록을 정합니다.",
+  "레이트리밋": "같은 사람이 짧은 시간에 너무 많이 부르지 못하게 막는 장치. 비용과 스팸을 동시에 막습니다.",
+  "upsert": "있으면 고치고 없으면 만드는 저장. 이 프로젝트는 하루에 한 행이라 같은 날 다시 저장하면 덮어씁니다.",
+  "GLB": "3D 모델 파일 형식. 이 저장소에 196개가 추적되고 있습니다.",
+  "포화(saturation)": "값이 상한에 닿아 더 올라가지 않는 상태. 입력이 늘어도 결과가 안 변하므로 <b>신호가 사라집니다</b>. F-02 가 이 경우입니다.",
+  "허브 모듈": "다른 파일들이 가장 많이 가져다 쓰는 파일. 고치면 파장이 가장 크므로 가장 조심할 곳입니다."
+};
+
+var QUIZ = [
+  { q:"배포 서버에 ADMIN_PASSWORD 를 설정하지 않으면 어떻게 되나?",
+    o:["서버가 시작하지 않는다","경고 로그를 남기고 인증을 강제한다","관리자 라우트 23개가 검사 없이 열린다","관리자 화면만 막히고 API 는 정상 동작한다"],
+    a:2,
+    e:"require_admin 은 auth_enabled() 가 False 면 <b>첫 줄에서 return</b> 합니다. 서버는 정상 시작하고 에러도 경고도 없어서, 화면상으로는 아무 문제가 없어 보입니다. 그게 이 결함이 위험한 이유입니다. \"서버가 시작하지 않는다\"가 그럴듯한 이유는 보통 그렇게 만드는 게 맞기 때문인데, 여기서는 <b>로컬 개발 편의</b>를 위해 반대로 되어 있습니다.",
+    src:"backend/app/security.py:87-93" },
+  { q:"/island 라우트는 /admin 과 무엇이 다른가?",
+    o:["더 느슨하다. 개인용이라 검사를 줄였다","같다. 둘 다 require_admin 을 쓴다","더 엄격하다. 비밀번호가 없으면 로컬에서도 거부한다","인증이 아예 없다"],
+    a:2,
+    e:"require_island 는 비밀번호가 없으면 <b>403 으로 거부</b>합니다. 주석에 이유가 적혀 있습니다 — \"편의보다 까먹고 배포라는 실패 모드를 없애는 쪽이 중요하다.\" 개인 기록이라 더 느슨할 것 같지만 정반대입니다. 그리고 이 판단을 /admin 에도 적용하면 F-01 이 사라집니다.",
+    src:"backend/app/security.py:96-112" },
+  { q:"커밋 3개 · 공부 30분 · 주제 1개 · 코딩 1시간 · 집중 50 · 메모 있음. 중앙 광장의 밝기는?",
+    o:["dim","normal","bright (최대)","dark"],
+    a:2,
+    e:"27+11+20+0+12+35 = <b>105 → 상한 100</b> 이라 bright 입니다. 평범한 하루가 이미 최대치라는 뜻이고, 그 위로 아무리 더 일해도 화면은 똑같습니다. 이게 F-02 입니다. 계산기에서 직접 넣어 보면 바로 확인됩니다.",
+    src:"backend/app/services/village_service.py:82" },
+  { q:"아무 일도 안 하고 메모 한 글자만 적으면 중앙 광장은?",
+    o:["dark (0점)","dim","normal","bright"],
+    a:2,
+    e:"memo_score 는 내용과 무관하게 <b>35점 고정</b>입니다. 임계가 <span class='m'>score &lt; 35 → dim</span> 이라 35 는 dim 을 <b>아슬아슬하게 넘겨</b> normal 이 됩니다. 공부로 35점을 받으려면 140분이 필요합니다.",
+    src:"backend/app/services/village_service.py:59, 81" },
+  { q:"이 프로젝트에서 프론트가 백엔드를 부르는 통로는?",
+    o:["컴포넌트마다 직접 fetch 한다","src/lib/liveApi.ts 한 곳뿐이다","Next.js API 라우트를 거친다","백엔드를 직접 부르지 않는다"],
+    a:1,
+    e:"내부 import 를 세어 보면 liveApi 가 18곳에서 불립니다. 컴포넌트가 직접 fetch 하지 않으므로, <b>백엔드 호출을 다 보고 싶으면 이 파일 하나만 읽으면 됩니다</b>. \"Next.js API 라우트\"가 그럴듯한 이유는 실제로 하나 있기 때문인데(props 편집기), 그건 개발 전용이고 백엔드와 무관합니다.",
+    src:"src/lib/liveApi.ts:50" },
+  { q:"AI 에이전트가 의뢰 작업을 완료 상태로 바꿀 수 있나?",
+    o:["있다. 작업을 끝내면 자동으로 완료된다","없다. review 까지만 옮길 수 있고 그다음은 관리자만","있다. 단 재시도 횟수 안에서만","설정에 따라 다르다"],
+    a:1,
+    e:"에이전트가 할 수 있는 건 <b>review 까지</b>입니다. 그다음 문은 apply_gate() 하나뿐이고 자동 호출 경로가 코드 어디에도 없습니다. 이유도 파일 첫 문단에 적혀 있습니다 — \"프롬프트로 부탁하면 언젠가는 간다. 그래서 진행 권한 자체를 모델에게 주지 않는다.\" 이건 설정으로 바꿀 수 있는 게 아니라 <b>구조</b>입니다.",
+    src:"backend/app/agents/gate.py:166" },
+  { q:"OpenAI API 키가 없으면 NPC 대화는?",
+    o:["500 에러가 난다","빈 문자열을 돌려준다","규칙 기반 대사로 답한다","대화창이 안 열린다"],
+    a:2,
+    e:"키가 없거나 호출이 실패하면 규칙 기반 폴백으로 넘어갑니다. GitHub 토큰, Discord 웹훅도 같은 방식으로 <b>전부 선택사항</b>입니다. 외부 의존성이 하나도 필수가 아니게 설계돼 있습니다.",
+    src:"backend/app/config.py" },
+  { q:"이 저장소에서 고치면 파장이 가장 큰 파일은?",
+    o:["VillageScene.tsx (3,628줄로 가장 큼)","@/types/portfolio (54곳에서 import)","backend/app/main.py (라우트 65개)","src/data/resume.ts"],
+    a:1,
+    e:"크기와 파장은 다릅니다. VillageScene 은 크지만 <b>부르는 쪽</b>이라 잎사귀에 가깝고, types/portfolio 는 작지만 54개 파일이 의존합니다. 타입 하나를 바꾸면 54곳이 다시 컴파일되고 그중 일부가 깨집니다. <b>위험도는 줄 수가 아니라 들어오는 화살표 수로 잽니다.</b>",
+    src:"grep -ohE 'from \"@/…\"' 집계" },
+  { q:"프로덕션 CORS 설정의 문제는?",
+    o:["allow_origins 가 * 로 열려 있다","localhost 주소 세 개가 배포본에도 들어간다","allow_credentials 가 꺼져 있다","CORS 설정이 아예 없다"],
+    a:1,
+    e:"와일드카드를 안 쓴 것은 <b>잘한 부분</b>입니다. 문제는 개발용 주소가 코드에 하드코딩돼 배포본에도 그대로 실린다는 것입니다. 당장 뚫리지는 않지만 남길 이유가 없고, 같은 줄의 frontend_origin 이 하나뿐이라 www 유무 중 한쪽만 통과하는 문제도 함께 있습니다.",
+    src:"backend/app/main.py:183-193" },
+  { q:"의뢰 접수 레이트리밋이 시도와 성공을 따로 세는 이유는?",
+    o:["통계를 내려고","이메일 오타로 재시도한 정상 손님이 잠기는 일이 실제로 났기 때문","성능 때문에","봇 탐지 정확도를 높이려고"],
+    a:1,
+    e:"주석에 사고 기록이 그대로 남아 있습니다. 둘을 하나로 묶었더니 오타 두어 번에 멀쩡한 손님이 한 시간 잠겼다고요. 검증에 걸려 되돌아간 요청은 받은편지함에 아무것도 안 남기므로 <b>성공 할당량을 깎으면 안 됩니다</b>. 겪어 보지 않으면 안 나오는 설계입니다.",
+    src:"backend/app/security.py:156-166" },
+  { q:"2026년 8월에 커밋 123개가 몰린 사실이 이 문서에서 갖는 의미는?",
+    o:["그 달 코드가 가장 좋다","품질 편차를 설명한다 — 같은 사람이 다른 속도로 쓴 것","그 달에 팀원이 합류했다","특별한 의미는 없다"],
+    a:1,
+    e:"전체 마을 작업의 약 39%가 한 달에 들어갔습니다. 이 문서의 결함들은 대부분 그 구간에서 나왔는데, 그건 실력이 아니라 <b>속도의 흔적</b>입니다. 히스토그램을 넣는 이유가 이것입니다 — 결함 장을 비난이 아니라 맥락으로 읽게 만듭니다.",
+    src:"git log --format=%ad --date=format:%Y-%m | sort | uniq -c" },
+  { q:"GET /village-state 에 인증 가드가 없는 것은 결함인가?",
+    o:["결함이다. 모든 라우트는 보호돼야 한다","결함이 아니다. 나가는 값이 밝기 등급뿐이라 공개가 맞다","결함이다. 레이트리밋이라도 붙여야 한다","판단할 수 없다"],
+    a:1,
+    e:"가드 유무는 습관이 아니라 <b>나가는 데이터</b>로 정합니다. 이 라우트가 돌려주는 건 건물별 밝기 등급이고 개인정보가 없습니다. 마을은 누구나 봐야 하므로 공개가 의도된 설계입니다. 반대로 같은 기준을 적용하면 /admin 이 개인정보를 내보내므로 F-01 이 심각한 것입니다.",
+    src:"backend/app/main.py:382" }
+];
+
+var JWTS = [];
+
+/* ── 계산기 — village_service.derive_village_state 를 그대로 옮긴 것 ──
+   파이썬의 // (내림 나눗셈) 을 Math.floor 로 맞췄습니다. 근사치 아님. */
+(function () {
+  var host = document.getElementById("calcIn");
+  var out = document.getElementById("calcOut");
+  if (!host || !out) return;
+
+  var F = [
+    { k:"commits",   label:"GitHub 커밋",   min:0, max:20,  val:3,  unit:"개" },
+    { k:"studyMin",  label:"공부 시간",     min:0, max:300, val:30, unit:"분" },
+    { k:"topics",    label:"공부 주제",     min:0, max:8,   val:1,  unit:"개" },
+    { k:"codingMin", label:"코딩 시간",     min:0, max:400, val:60, unit:"분" },
+    { k:"projMin",   label:"프로젝트 시간", min:0, max:400, val:0,  unit:"분" },
+    { k:"workoutMin",label:"운동 시간",     min:0, max:120, val:0,  unit:"분" },
+    { k:"focus",     label:"집중도",        min:0, max:100, val:50, unit:"점" }
+  ];
+  var memoOn = true;
+
+  function compute(v) {
+    var c  = Math.min(v.commits * 18, 100);
+    var s  = Math.min(Math.floor(v.studyMin / 2) + v.topics * 8, 100);
+    var cd = Math.min(Math.floor(v.codingMin / 3) + Math.floor(v.projMin / 4), 100);
+    var w  = v.workoutMin > 0 ? Math.min(v.workoutMin * 2, 100) : 0;
+    var f  = Math.max(0, Math.min(v.focus, 100));
+    var m  = memoOn ? 35 : 0;
+    var parts = [
+      { n:"커밋 ÷2",     v:Math.floor(c / 2),  raw:c },
+      { n:"공부 ÷2",     v:Math.floor(s / 2),  raw:s },
+      { n:"코딩 (그대로)", v:cd,                raw:cd },
+      { n:"운동 ÷3",     v:Math.floor(w / 3),  raw:w },
+      { n:"집중 ÷4",     v:Math.floor(f / 4),  raw:f },
+      { n:"메모 (고정)",  v:m,                  raw:m }
+    ];
+    var sum = parts.reduce(function (a, p) { return a + p.v; }, 0);
+    return { parts:parts, sum:sum, overall:Math.min(sum, 100) };
+  }
+
+  function light(score) {
+    if (score <= 0) return { k:"dark",   t:"dark · 꺼짐" };
+    if (score < 35) return { k:"dim",    t:"dim · 희미함" };
+    if (score < 75) return { k:"normal", t:"normal · 보통" };
+    return { k:"bright", t:"bright · 최대" };
+  }
+
+  function values() {
+    var v = {};
+    F.forEach(function (f) { v[f.k] = f.val; });
+    return v;
+  }
+
+  function render() {
+    var r = compute(values());
+    var L = light(r.overall);
+    var max = Math.max.apply(null, r.parts.map(function (p) { return p.v; })) || 1;
+
+    out.innerHTML =
+      '<div class="fld"><label>중앙 광장 점수</label><span class="val">' + r.overall + ' / 100</span></div>' +
+      '<div class="fld" style="margin-bottom:16px"><label>밝기 등급</label><span class="val">' + L.t + '</span></div>' +
+      r.parts.map(function (p) {
+        return '<div class="bar-row"><span class="lbl">' + p.n + '</span>' +
+               '<div class="bar-track"><div class="bar-fill' + (p.n.indexOf("메모") === 0 ? " att" : "") +
+               '" style="width:' + Math.round(p.v / max * 100) + '%"></div></div>' +
+               '<span class="num">' + p.v + '</span></div>';
+      }).join("") +
+      '<p class="calc-note">' +
+      (r.sum > 100
+        ? '조각의 합은 <b>' + r.sum + '</b> 인데 상한 100 에서 잘렸습니다. <b>여기서부터는 더 일해도 화면이 똑같습니다.</b>'
+        : '상한까지 ' + (100 - r.sum) + '점 남았습니다.') +
+      ' 등급 경계는 35 와 75 뿐이라, 점수가 76 이든 100 이든 마을은 같아 보입니다.</p>';
+  }
+
+  host.innerHTML =
+    F.map(function (f, i) {
+      return '<div class="fld"><label>' + f.label + '</label>' +
+             '<span class="val" data-out="' + i + '">' + f.val + f.unit + '</span>' +
+             '<input type="range" min="' + f.min + '" max="' + f.max + '" value="' + f.val + '" data-i="' + i + '"></div>';
+    }).join("") +
+    '<div class="fld"><label>메모</label><span class="val" id="calcMemoOut">있음 (+35)</span>' +
+    '<label style="grid-column:1/-1;font-size:12px;display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0">' +
+    '<input type="checkbox" id="calcMemo" checked> 메모를 한 글자라도 적었다</label></div>';
+
+  host.querySelectorAll('input[type=range]').forEach(function (el) {
+    el.addEventListener("input", function () {
+      var i = +el.dataset.i;
+      F[i].val = +el.value;
+      host.querySelector('[data-out="' + i + '"]').textContent = el.value + F[i].unit;
+      render();
+    });
+  });
+  var mk = document.getElementById("calcMemo");
+  mk.addEventListener("change", function () {
+    memoOn = mk.checked;
+    document.getElementById("calcMemoOut").textContent = memoOn ? "있음 (+35)" : "없음 (0)";
+    render();
+  });
+
+  render();
+})();
+
+</script>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- helpers ---------- */
+  function el(t, c, h) { var e = document.createElement(t); if (c) e.className = c; if (h != null) e.innerHTML = h; return e; }
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function $(id) { return document.getElementById(id); }
+  function has(id, data) {
+    if (!$(id)) return false;
+    if (!data) return true;
+    return Array.isArray(data) ? data.length > 0 : Object.keys(data).length > 0;
+  }
+
+  var sections = Array.prototype.slice.call(document.querySelectorAll("section[data-nav]"));
+
+  /* ---------- chapter numbers + {{xref}} ---------- */
+  var chapNo = {};
+  sections.forEach(function (sec, i) { chapNo[sec.id] = String(i).padStart(2, "0"); });
+
+  function resolveStr(s) {
+    return s.replace(/\{\{([A-Za-z0-9_]+)\}\}/g, function (w, id) {
+      return chapNo[id] !== undefined ? chapNo[id] : w;
+    });
+  }
+  (function deepResolve(v) {
+    if (Array.isArray(v)) { v.forEach(deepResolve); return; }
+    if (v && typeof v === "object") {
+      Object.keys(v).forEach(function (k) {
+        if (typeof v[k] === "string") v[k] = resolveStr(v[k]);
+        else deepResolve(v[k]);
+      });
+    }
+  })([LAYERS, SEC, CONCEPTS, TRACES, FINDINGS, GOOD, ERD, APIMAP, GLOSSARY, QUIZ, JWTS, ATTACKS, STATS, TIMELINE]);
+
+  /* ---------- {{xref}} in static markup ---------- */
+  (function (root) {
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), hits = [], n;
+    while ((n = w.nextNode())) if (n.nodeValue.indexOf("{{") !== -1) hits.push(n);
+    hits.forEach(function (x) { x.nodeValue = resolveStr(x.nodeValue); });
+  })(document.body);
+
+  /* eyebrow 번호는 섹션 순서에서 자동 생성 */
+  sections.forEach(function (sec, i) {
+    var eb = sec.querySelector(".eyebrow");
+    if (!eb) return;
+    eb.textContent = String(i).padStart(2, "0") + " — " + eb.textContent.replace(/^\s*\d+\s*—\s*/, "").trim();
+  });
+
+  /* ---------- rail nav ---------- */
+  var navHost = $("railNav"), navLinks = [];
+  if (navHost) {
+    sections.forEach(function (sec, i) {
+      var a = el("a", "rail-link");
+      a.href = "#" + sec.id;
+      a.innerHTML = '<span class="tk">' + String(i).padStart(2, "0") + "</span><span>" + sec.dataset.nav + "</span>";
+      navHost.appendChild(a); navLinks.push(a);
+    });
+    if (typeof IntersectionObserver === "function") {
+      var obs = new IntersectionObserver(function (es) {
+        es.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          var idx = sections.indexOf(en.target);
+          navLinks.forEach(function (l, i) { l.setAttribute("aria-current", i === idx ? "true" : "false"); });
+        });
+      }, { rootMargin: "-20% 0px -70% 0px" });
+      sections.forEach(function (s) { obs.observe(s); });
+    }
+  }
+
+  /* ---------- theme ---------- */
+  if ($("themeBtn")) {
+    $("themeBtn").addEventListener("click", function () {
+      var r = document.documentElement, cur = r.getAttribute("data-theme");
+      if (!cur) cur = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      r.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
+    });
+  }
+
+  /* ---------- stats ---------- */
+  if (has("stats", STATS)) {
+    STATS.forEach(function (s) {
+      $("stats").appendChild(el("div", "stat",
+        '<span class="stat-n">' + esc(s[0]) + '</span><span class="stat-l">' + esc(s[1]) + "</span>"));
+    });
+  }
+
+  /* ---------- layer / filter stacks ---------- */
+  function buildStack(stackId, detailId, data) {
+    if (!has(stackId, data) || !$(detailId)) return;
+    var host = $(stackId), detail = $(detailId), rows = [];
+    data.forEach(function (L, i) {
+      var b = el("button", "lx-row");
+      b.type = "button"; b.setAttribute("role", "option");
+      b.innerHTML = "<span>" + esc(L.name) + "</span><span class='cnt'>" +
+                    (typeof L.n === "number" ? L.n + " files" : esc(L.n || "")) + "</span>";
+      b.addEventListener("click", function () { select(i); });
+      host.appendChild(b); rows.push(b);
+      if (i < data.length - 1) host.appendChild(el("div", "lx-arrow", "↓"));
+    });
+    function select(i) {
+      rows.forEach(function (r, j) { r.setAttribute("aria-selected", j === i ? "true" : "false"); });
+      var L = data[i];
+      detail.innerHTML = "<h5>" + esc(L.name) + "</h5><p class='lx-role'>" + esc(L.role) + "</p>" +
+        "<dl class='lx-kv'><dt>부르는 곳</dt><dd>" + esc(L.calls) + "</dd>" +
+        "<dt>핵심 규칙</dt><dd>" + esc(L.rule) + "</dd></dl>" +
+        "<div class='lx-files'>" + (L.files || []).map(function (f) {
+          return "<span class='lx-file'>" + esc(f) + "</span>"; }).join("") + "</div>";
+    }
+    select(0);
+  }
+  buildStack("lxStack", "lxDetail", LAYERS);
+  buildStack("secStack", "secDetail", SEC);
+
+  /* ---------- concept cards ---------- */
+  if (has("cc", CONCEPTS)) {
+    CONCEPTS.forEach(function (C) {
+      var card = el("div", "cc-card");
+      var btn = el("button", "cc-btn", "<span class='k'>" + esc(C.k) + "</span><span class='s'>" + esc(C.s) + "</span>");
+      btn.type = "button"; btn.setAttribute("aria-expanded", "false");
+      btn.addEventListener("click", function () {
+        btn.setAttribute("aria-expanded", card.classList.toggle("open") ? "true" : "false");
+      });
+      card.appendChild(btn); card.appendChild(el("div", "body", C.b)); $("cc").appendChild(card);
+    });
+  }
+
+  /* ---------- request tracer ---------- */
+  var stopTracer = function () {};
+  if (has("trTabs", TRACES) && $("trSteps") && $("trView")) {
+    var trTabs = $("trTabs"), trSteps = $("trSteps"), trView = $("trView"),
+        trCount = $("trCount"), trPrev = $("trPrev"), trNext = $("trNext"), trPlay = $("trPlay");
+    var curT = 0, curS = 0, timer = null;
+
+    TRACES.forEach(function (T, i) {
+      var b = el("button", "tab", esc(T.tab));
+      b.type = "button"; b.setAttribute("role", "tab");
+      b.addEventListener("click", function () { stop(); curT = i; curS = 0; renderTrace(); });
+      trTabs.appendChild(b);
+    });
+    function stop() { if (timer) { clearInterval(timer); timer = null; } if (trPlay) trPlay.textContent = "▶ 재생"; }
+    stopTracer = stop;
+    function renderTrace() {
+      Array.prototype.forEach.call(trTabs.children, function (b, i) { b.setAttribute("aria-selected", i === curT ? "true" : "false"); });
+      trSteps.innerHTML = "";
+      TRACES[curT].steps.forEach(function (s, i) {
+        var b = el("button", "tr-step");
+        b.type = "button"; b.setAttribute("role", "option");
+        b.innerHTML = "<span class='n'>" + String(i + 1).padStart(2, "0") + "</span><span>" + esc(s.t) + "</span>";
+        b.addEventListener("click", function () { stop(); curS = i; renderStep(); });
+        trSteps.appendChild(b);
+      });
+      renderStep();
+    }
+    function renderStep() {
+      var T = TRACES[curT], s = T.steps[curS];
+      Array.prototype.forEach.call(trSteps.children, function (b, i) {
+        b.setAttribute("aria-selected", i === curS ? "true" : "false");
+        b.classList.toggle("done", i < curS);
+      });
+      trView.innerHTML =
+        "<span class='tr-where " + s.w + "'><span class='dot'></span>" + esc(s.wl) + "</span>" +
+        "<h3 class='tr-title'>" + esc(s.t) + "</h3>" +
+        "<div class='tr-file'>" + esc(s.f) + "</div>" +
+        "<p class='tr-desc'>" + esc(s.d) + "</p>" +
+        "<pre><code>" + esc(s.c) + "</code></pre>" +
+        (s.note ? "<div class='tr-note'>" + s.note + "</div>" : "");
+      if (trCount) trCount.textContent = (curS + 1) + " / " + T.steps.length;
+      if (trPrev) trPrev.disabled = curS === 0;
+      if (trNext) trNext.disabled = curS === T.steps.length - 1;
+      var a = trSteps.children[curS];
+      if (a && a.scrollIntoView) a.scrollIntoView({ block: "nearest" });
+    }
+    if (trPrev) trPrev.addEventListener("click", function () { stop(); if (curS > 0) { curS--; renderStep(); } });
+    if (trNext) trNext.addEventListener("click", function () { stop(); if (curS < TRACES[curT].steps.length - 1) { curS++; renderStep(); } });
+    if (trPlay) trPlay.addEventListener("click", function () {
+      if (timer) { stop(); return; }
+      if (curS >= TRACES[curT].steps.length - 1) { curS = 0; renderStep(); }
+      trPlay.textContent = "❚❚ 정지";
+      timer = setInterval(function () {
+        if (curS >= TRACES[curT].steps.length - 1) { stop(); return; }
+        curS++; renderStep();
+      }, 4600);
+    });
+    renderTrace();
+  }
+
+  /* ---------- findings ---------- */
+  if (has("fx", FINDINGS)) {
+    FINDINGS.forEach(function (F) {
+      var item = el("div", "fx-item"), btn = el("button", "fx-btn");
+      btn.type = "button"; btn.setAttribute("aria-expanded", "false");
+      btn.innerHTML = "<span class='fx-id'>" + esc(F.id) + "</span><span class='sev " + F.sev + "'>" +
+                      esc(F.sevL) + "</span><span>" + esc(F.t) + "</span><span class='fx-tog'>+</span>";
+      var panel = el("div", "fx-panel",
+        "<h6>근거</h6><div class='tr-file'>" + esc(F.ev) + "</div><pre><code>" + esc(F.code) + "</code></pre>" +
+        "<h6>무엇이 문제인가</h6><p>" + esc(F.what) + "</p>" +
+        "<h6>왜 중요한가</h6><p>" + esc(F.why) + "</p>" +
+        "<h6>어떻게 고치나</h6><p>" + esc(F.fix) + "</p>");
+      btn.addEventListener("click", function () {
+        var open = item.classList.toggle("open");
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+        btn.querySelector(".fx-tog").textContent = open ? "−" : "+";
+      });
+      item.appendChild(btn); item.appendChild(panel); $("fx").appendChild(item);
+    });
+  }
+
+  /* ---------- good / erd / apimap / glossary ---------- */
+  if (has("good", GOOD)) GOOD.forEach(function (G) {
+    $("good").appendChild(el("div", null, "<h4>" + esc(G.h) + "</h4><p>" + G.p + "</p>"));
+  });
+
+  if (has("erd", ERD)) ERD.forEach(function (G) {
+    $("erd").appendChild(el("div", "erd-g", "<h5>" + esc(G.g) + "</h5><p class='cap'>" + esc(G.cap) +
+      "</p><ul>" + G.items.map(function (i) { return "<li>" + i + "</li>"; }).join("") + "</ul>"));
+  });
+
+  if (has("apimap", APIMAP)) APIMAP.forEach(function (r) {
+    var tr = el("tr");
+    tr.innerHTML = "<td><span class='m'>" + r[0] + "</span></td><td><span class='m'>" + r[1] +
+                   "</span></td><td>" + r[2] + "</td><td>" + r[3] + "</td>";
+    $("apimap").appendChild(tr);
+  });
+
+  if (has("glossary", GLOSSARY)) Object.keys(GLOSSARY).forEach(function (k) {
+    var tr = el("tr");
+    tr.innerHTML = "<td><span class='m'>" + esc(k) + "</span></td><td>" + esc(GLOSSARY[k]) + "</td>";
+    $("glossary").appendChild(tr);
+  });
+
+  /* ---------- timeline ---------- */
+  if (has("tl", TIMELINE)) {
+    var max = Math.max.apply(null, TIMELINE.map(function (t) { return t.n; })) || 1;
+    TIMELINE.forEach(function (T) {
+      var row = el("div", "tl-row" + (T.peak ? " peak" : "") + (T.evt ? " evt" : ""));
+      row.innerHTML = "<span class='tl-m'>" + esc(T.m) + "</span><span class='tl-bar'>" +
+        "<span class='bar-track' style='border:0;background:none;height:11px'>" +
+        "<span class='tl-fill' style='display:block;width:" + (T.n / max * 100).toFixed(1) + "%'></span></span>" +
+        "<span class='tl-n'>" + T.n + "</span></span>";
+      $("tl").appendChild(row);
+    });
+  }
+
+  /* ---------- token decoder ---------- */
+  if (has("jwtTabs", JWTS) && $("jwtBox")) {
+    JWTS.forEach(function (J, i) {
+      var b = el("button", "tab", esc(J.tab));
+      b.type = "button"; b.setAttribute("role", "tab");
+      b.addEventListener("click", function () { showJwt(i); });
+      $("jwtTabs").appendChild(b);
+    });
+    var showJwt = function (i) {
+      Array.prototype.forEach.call($("jwtTabs").children, function (b, k) { b.setAttribute("aria-selected", k === i ? "true" : "false"); });
+      var J = JWTS[i];
+      $("jwtBox").innerHTML =
+        "<div class='jwt-tok'><span class='jp h'>" + J.h + "</span>.<span class='jp p'>" + J.p +
+        "</span>.<span class='jp s'>" + J.s + "</span></div>" +
+        "<div class='jwt-parts'>" +
+          "<div class='jwt-part h'><h6>① 헤더</h6><pre><code>" + esc(J.hj) + "</code></pre><p class='note'>" + J.hn + "</p></div>" +
+          "<div class='jwt-part p'><h6>② 내용</h6><pre><code>" + esc(J.pj) + "</code></pre><p class='note'>" + J.pn + "</p></div>" +
+          "<div class='jwt-part s'><h6>③ 서명</h6><pre><code>" + esc(J.s.slice(0, 22) + "…") + "</code></pre><p class='note'>" + J.sn + "</p></div>" +
+        "</div><div class='jwt-verdict " + (J.ok ? "ok" : "bad") + "'><span class='ic'>" +
+        (J.ok ? "OK" : "X") + "</span><span>" + J.msg + "</span></div>";
+    };
+    showJwt(0);
+  }
+
+  /* ---------- attack scenarios ---------- */
+  if (has("atkTabs", ATTACKS) && $("atkBox")) {
+    ATTACKS.forEach(function (A, i) {
+      var b = el("button", "tab", esc(A.tab));
+      b.type = "button"; b.setAttribute("role", "tab");
+      b.addEventListener("click", function () { showAtk(i); });
+      $("atkTabs").appendChild(b);
+    });
+    var showAtk = function (i) {
+      Array.prototype.forEach.call($("atkTabs").children, function (b, k) { b.setAttribute("aria-selected", k === i ? "true" : "false"); });
+      var A = ATTACKS[i];
+      $("atkBox").innerHTML = "<div class='atk-steps'>" + A.steps.map(function (s) {
+        return "<div class='atk-s " + s.k + "'><span class='ic'>" + esc(s.ic) + "</span><div><h6>" +
+               esc(s.h) + "</h6><p>" + s.p + "</p>" + (s.c ? "<pre><code>" + esc(s.c) + "</code></pre>" : "") + "</div></div>";
+      }).join("") + "</div><div class='atk-out " + A.out + "'>" + A.msg + "</div>";
+    };
+    showAtk(0);
+  }
+
+  /* ---------- quiz ---------- */
+  if (has("qz", QUIZ)) {
+    var answered = 0, correct = 0, MARKS = ["A", "B", "C", "D"];
+    var paintScore = function () {
+      if (!$("qzScore")) return;
+      var msg;
+      if (answered === 0) msg = "답을 먼저 정한 뒤 눌러보세요";
+      else if (answered < QUIZ.length) msg = (QUIZ.length - answered) + "문항 남음";
+      else if (correct === QUIZ.length) msg = "전부 맞혔습니다.";
+      else if (correct >= QUIZ.length * 0.8) msg = "충분히 설명할 수 있는 수준입니다.";
+      else msg = "틀린 문항의 장을 다시 보세요.";
+      $("qzScore").innerHTML = "<span class='n'>" + correct + "</span><span class='l'>/ " +
+                               QUIZ.length + " 정답</span><span class='msg'>" + msg + "</span>";
+    };
+    paintScore();
+    QUIZ.forEach(function (Q, i) {
+      var item = el("div", "qz-item");
+      item.innerHTML = "<div class='qz-q'><span class='qz-n'>" + String(i + 1).padStart(2, "0") +
+                       "</span><span class='qz-t'>" + esc(Q.q) + "</span></div>";
+      var opts = el("div", "qz-opts"), buttons = [];
+      Q.o.forEach(function (text, j) {
+        var b = el("button", "qz-opt", "<span class='mk'>" + MARKS[j] + "</span><span>" + esc(text) + "</span>");
+        b.type = "button";
+        b.addEventListener("click", function () {
+          if (item.classList.contains("done")) return;
+          item.classList.add("done"); answered++;
+          if (j === Q.a) correct++;
+          buttons.forEach(function (bb, k) {
+            bb.disabled = true;
+            if (k === Q.a) bb.classList.add("right");
+            else if (k === j) bb.classList.add("wrong");
+          });
+          paintScore();
+        });
+        opts.appendChild(b); buttons.push(b);
+      });
+      item.appendChild(opts);
+      item.appendChild(el("div", "qz-ans", Q.e + "<span class='src'>" + esc(Q.src) + "</span>"));
+      $("qz").appendChild(item);
+    });
+  }
+
+  /* ---------- glossary popover ---------- */
+  var pop = $("pop");
+  function hidePop() { if (pop) pop.classList.remove("on"); }
+  if (pop) {
+    document.addEventListener("click", function (e) {
+      var t = e.target.closest ? e.target.closest(".term") : null;
+      if (!t) { hidePop(); return; }
+      e.preventDefault();
+      var def = GLOSSARY[t.dataset.t];
+      if (!def) { hidePop(); return; }
+      pop.innerHTML = "<b>" + esc(t.dataset.t) + "</b>" + esc(def);
+      pop.classList.add("on");
+      var r = t.getBoundingClientRect();
+      pop.style.top = (window.scrollY + r.bottom + 8) + "px";
+      pop.style.left = Math.max(8, Math.min(window.scrollX + r.left,
+        window.scrollX + document.documentElement.clientWidth - 350)) + "px";
+    });
+    window.addEventListener("scroll", hidePop, { passive: true });
+  }
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { hidePop(); stopTracer(); } });
+
+})();
+</script>
