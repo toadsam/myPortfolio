@@ -1349,7 +1349,6 @@ export const subProjects: SubProjectCard[] = [
 
 // ─── Development Records ──────────────────────────────────────────────────────
 // href 가 빈 카드는 화면에 그리지 않는다. 지금은 Algorithm 만 실제 URL 이 있다.
-
 export const devRecords: DevRecord[] = [
   {
     title: "코딩 테스트 문제 풀이 기록",
@@ -1417,32 +1416,21 @@ export const contact = {
 
 // ─── 제출 전 채울 것 ──────────────────────────────────────────────────────────
 //
-// 두 종류가 섞여 있다.
+// **이 배열은 코드 어디서도 읽지 않는다.** 화면에도 PDF 에도 안 들어간다 —
+// 제출 전에 사람이 한 번 훑어보라고 둔 쪽지다. 그래서 **끝난 항목은 바로 지운다.**
+// 남아 있는 줄이 전부 진짜여야 다음에 이 목록을 믿고 쓸 수 있다.
 //
-// **(A) `provisional: true` 인 임시 숫자** — 실측하지 않은 값이라 화면에 "잠정"
-// 꼬리표가 붙는다. 실제 수치로 바꾸고 `provisional: true` 줄을 지우면 끝이다.
-//   1. muscleup   — 누적 가입자 120 · 누적 운동 기록 1,400
-//   2. aclub      — 월 방문자 2,300 · 문의 감소 40%      (GA4 에서 확인)
-//   3. ajouchong  — 월 방문자 5,800 · 공지 열람률 62%     (GA4 에서 확인)
-//
-// **(B) 아예 비어 있는 값** — 빈 값은 화면에 안 그려지므로 지금도 거짓은 아니다.
-//   4. devRecords[1].href  — 개발 기록 블로그 URL
-//   5. devRecords[2].href  — 개발 개념 정리 Notion URL
-//   6. period 미확인       — mystock · ajou-adventure · otherside-vr
-//                            · monsterpoint-ar
-//                            (darklab 의 "2024-1 학기" 는 이력서 원본이 아니라
-//                             richContent/data.ts 에 이미 있던 값이다. 한 번 확인해 주세요.)
+// 2026-09-12 정리: 10줄 중 9줄이 이미 해결된 것이었는데 목록만 남아 있었다.
+// 그 상태의 목록은 "aclub 방문자 2,300 은 잠정"처럼 사실이 아닌 말을 하고 있어서,
+// 제출 전 점검 때 전부 다시 확인하게 만든다. 그럴 거면 없는 편이 낫다.
+//   · 잠정 수치 3건 — muscleup(피드백 3/4 · 도메인 4→8), aclub(GA4 3,500 · 8.8만
+//     · 93.4%), ajouchong(GSC 12,314 · 1,694 · 13.8%) 로 전부 실측 교체 완료
+//   · period 미확인 4건 — mystock · 아주대탐험 · otherside-vr · monsterpoint-ar 기입 완료
+//   · darklab period — 서브 프로젝트로 내려가 period 칸 자체가 없어져 해당 없음
+//   · awards 확인 요망 4건 — 증빙 확인(GEEKS 2024.12.05 · 동계 모각소 2025.03 ·
+//     데모션=비즈니스 아이디어 공모전 우수상) 또는 제외(모각소 하계 2건) 로 정리 완료
 //
 // 값 하나만 넣으면 카드·원페이저에 바로 반영된다. 다른 파일은 손댈 필요 없다.
 export const PENDING_BEFORE_SUBMIT = [
-  "[잠정] muscleup: 누적 가입자 120 / 누적 운동 기록 1,400",
-  "[잠정] aclub: 월 방문자 2,300 / 문의 감소 40%",
-  "[잠정] ajouchong: 월 방문자 5,800 / 공지 열람률 62%",
-  "[비어 있음] devRecords: 블로그 URL · Notion URL",
-  "[비어 있음] period: mystock · ajou-adventure · otherside-vr · monsterpoint-ar",
-  "[확인 요망] darklab period '2024-1 학기' — 이력서 원본이 아닌 data.ts 출처",
-  "[확인 요망] awards: GEEKS 2024 글로벌 게임 챌린지(아주대탐험, 2024.11) — 신청서만 있고 결과 증빙 없음",
-  "[확인 요망] awards: 아주대 모각소 2024 하계, 2025 하계 — 신청서/보고서 양식만 있고 수료 증빙 없음 (2024 동계는 장려상으로 확인)",
-  "[확인 요망] awards: 2024 동계 모각소 장려상 수여일 — 상장 사진에 날짜가 안 보임(제2025-127호)",
-  "[확인 요망] awards: 데모션(2025-1 미디어프로젝트, Demotion-BE 저장소) 이 프로젝트 목록에 없다 — 공모전 우수상의 실체"
+  "[비어 있음] devRecords: 개발 기록 블로그 URL · 개발 개념 정리 Notion URL (둘 다 채울 예정 — 2026-09-12 본인 확인)"
 ] as const;
