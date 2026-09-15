@@ -5,6 +5,7 @@ import {
   Noto_Sans_KR,
   Noto_Serif_KR
 } from "next/font/google";
+import {Analytics} from "@vercel/analytics/next";
 import {Providers} from "@/components/Providers";
 import {CustomCursor} from "@/components/ui/CustomCursor";
 import "./globals.css";
@@ -157,6 +158,9 @@ export default function RootLayout({
       <body>
         <Providers>{children}</Providers>
         <CustomCursor />
+        {/* Vercel Web Analytics — 페이지 조회만 보낸다(Hobby 는 커스텀 이벤트 없음).
+            주소가 바뀔 때만 1건이라 마을 안 건물·NPC 이동은 세지 않는다. */}
+        <Analytics />
       </body>
     </html>
   );
