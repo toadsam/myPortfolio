@@ -697,6 +697,14 @@ function placeInDistrict(
   ];
 }
 
+/** 구역 섬 중심(hub)의 월드 좌표. 광장·모르는 구역은 null. */
+export function districtHubWorld(district: string): [number, number] | null {
+  const hub = districtHub[district];
+  if (!hub) return null;
+  const [x, , z] = placeInDistrict([hub[0], 0, hub[1]], district);
+  return [x, z];
+}
+
 // 카메라/미니맵이 구역을 가리킬 때 쓰는 view-key → district 매핑
 const viewKeyDistrict: Record<string, string> = {
   intro: "plaza",

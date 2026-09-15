@@ -1017,85 +1017,139 @@ export function Minimap({
   );
 }
 
+/** 구역 띠의 탭 — 광장은 "구역"이 아니라 뺀다. */
+const STRIP_TABS = TRAVEL_POINTS.filter(p => p.key !== "intro");
+
 /**
- * 구역에 도착하면 화면 아래에 뜨는 **"이 구역의 건물" 띠**.
+ * 화면 아래의 **건물 바로가기 띠**. 윗줄 = 구역 탭, 아랫줄 = 그 구역 건물.
  *
  * 3D 간판(`Building.tsx` v-sign)은 거리에 비례해 줄어들어, 섬을 내려다보는
  * 카메라 거리(광장 쪽 13 뒤·높이 9)에서는 글자가 2~3px 다 — 사실상 없는 것과
- * 같다. 그래서 간판을 키우는 대신 2D 로 한 번 더 적는다: 이름 + 꼬리표, 누르면
- * 바로 입장, 올리면 **그 건물만** 강조(`focusBuildingId`). 마우스가 없는 화면
- * 에서도 똑같이 읽히고 눌린다.
+ * 같다. 그래서 간판을 키우는 대신 2D 로 한 번 더 적는다.
  *
- * 광장에선 안 뜬다(광장은 "구역"이 아니다). 패널·대화창·환영 카드가 떠 있을
- * 때도 숨긴다 — 같은 자리에 두 장이 겹친다.
+ * - 탭은 **목록만** 바꾼다. 구역 단위 이동은 이동 독·지도가 맡는다.
+ * - 칩 첫 클릭 = 그 건물 앞으로 이동(`onPick`), 같은 칩 다시 클릭 = 입장.
+ *   예전엔 누르자마자 입장이라, 건물이 어디 있는지 보지도 못하고 들어갔다.
+ * - 올리면 **그 건물만** 강조(`onFocus`), 떼면 고른 건물 강조로 돌아간다.
+ *
+ * 광장에서도 뜬다 — 첫 화면이 광장이라, 여기서 숨기면 처음 온 사람은 이 띠를
+ * 영영 못 본다. 광장에 있을 땐 첫 독자(채용 심사자)를 위해 프로젝트 탭을 연다.
+ * 패널·대화창·환영 카드가 떠 있을 때는 숨긴다 — 같은 자리에 두 장이 겹친다.
+ * 모바일은 두 줄 다 한 줄 가로 스크롤이다 — 줄바꿈하면 왼쪽 걷기 버튼까지 올라온다.
  */
 export function DistrictStrip({
   sectionId,
+  pickedBuildingId,
+  onPick,
   onEnter,
   onFocus
 }: {
   sectionId: SectionId;
+  pickedBuildingId: string | null;
+  onPick: (buildingId: string) => void;
   onEnter: (buildingId: string) => void;
   onFocus: (buildingId: string | null) => void;
 }) {
-  const buildings = villageBuildings.filter(
-    b => b.sectionId === sectionId && b.district !== "plaza"
-  );
+  const tabFor = (id: SectionId) =>
+    STRIP_TABS.some(t => t.key === id) ? id : "projects";
+  const [tab, setTab] = useState<string>(() => tabFor(sectionId));
+
+  // 다른 길(독·지도·NPC)로 구역이 바뀌면 탭도 따라간다. 광장으로 돌아왔을 땐
+  // 보던 탭을 그대로 둔다.
+  useEffect(() => {
+    if (sectionId !== "intro") setTab(tabFor(sectionId));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sectionId]);
+
   // 띠가 사라질 때 강조도 같이 풀어야 한다 — 안 풀면 마지막에 올렸던 건물
   // 한 채만 켜진 채로 남는다.
   useEffect(() => () => onFocus(null), [onFocus]);
 
-  const first = buildings[0];
-  if (!first) return null;
-  const key = DISTRICT_TO_TRAVEL_KEY[first.district] ?? sectionId;
-  const point = TRAVEL_POINTS.find(p => p.key === key);
-  const tone = districtTone(key);
-  const label = point?.label ?? first.district;
+  const buildings = villageBuildings.filter(
+    b => (DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro") === tab
+  );
 
   return (
     <VillageFrame
-      bodyClassName="flex flex-col gap-2 px-3 py-2.5"
-      className="fixed bottom-3 left-1/2 z-30 w-[min(94vw,700px)] -translate-x-1/2 transform-gpu animate-[fadeIn_0.3s_ease] will-change-[backdrop-filter,transform] md:bottom-6"
+      // 모바일은 여백을 한 단 줄인다 — 띠 윗변이 왼쪽 걷기 버튼(bottom-28)과
+      // 오른쪽 제작 의뢰 버튼 아래에 머물러야 한다(104px 일 때 둘 다 겹쳤다).
+      bodyClassName="flex flex-col gap-1.5 px-3 py-1.5 md:gap-2 md:py-2.5"
+      className="fixed bottom-2 left-1/2 z-30 w-[min(94vw,720px)] -translate-x-1/2 transform-gpu animate-[fadeIn_0.3s_ease] will-change-[backdrop-filter,transform] md:bottom-6"
       variant="plaque"
     >
-      <div className="flex items-center justify-between gap-3">
-        <p className="v-panel-title flex items-center gap-1.5 text-[12px]">
-          <Crest name={tone.crest as CrestName} size={14} /> {label} 구역 ·{" "}
-          {buildings.length}채
-        </p>
-        <p className="text-[11px] font-bold text-[#a9bdd6]/70">
-          건물을 고르면 바로 들어가요
+      <div className="flex items-center gap-1 overflow-x-auto">
+        {STRIP_TABS.map(point => {
+          const active = point.key === tab;
+          return (
+            <button
+              key={point.key}
+              type="button"
+              onClick={() => {
+                // 사라지는 칩은 mouseleave 를 못 받는다 — 강조를 여기서 푼다
+                onFocus(null);
+                setTab(point.key);
+              }}
+              className={
+                active
+                  ? "v-panel-title flex shrink-0 items-center gap-1.5 rounded-md border border-[#e2c078]/55 bg-[#e2c078]/12 px-2.5 py-0.5 text-[12px] md:py-1"
+                  : "flex shrink-0 items-center gap-1.5 rounded-md border border-transparent px-2.5 py-0.5 text-[12px] font-bold md:py-1 text-[#a9bdd6]/80 transition hover:bg-white/[0.05] hover:text-[#f3e6c8]"
+              }
+            >
+              <Crest
+                name={districtTone(point.key).crest as CrestName}
+                size={13}
+              />
+              {point.label}
+            </button>
+          );
+        })}
+        <p className="ml-auto hidden shrink-0 pl-2 text-[11px] font-bold text-[#a9bdd6]/70 md:block">
+          {pickedBuildingId
+            ? "한 번 더 누르면 들어가요"
+            : "건물을 고르면 그 앞으로 가요"}
         </p>
       </div>
-      <div className="flex max-h-[64px] flex-wrap gap-1.5 overflow-y-auto md:max-h-[96px]">
-        {buildings.map(b => (
-          <button
-            key={b.id}
-            type="button"
-            onClick={() => onEnter(b.id)}
-            onMouseEnter={() => onFocus(b.id)}
-            onMouseLeave={() => onFocus(null)}
-            onFocus={() => onFocus(b.id)}
-            onBlur={() => onFocus(null)}
-            className="flex items-center gap-2 rounded-lg border border-[#e2c078]/25 bg-white/[0.04] px-2.5 py-1.5 text-left transition hover:border-[#e2c078]/70 hover:bg-[#e2c078]/10 active:scale-95"
-          >
-            <span
-              className="h-2 w-2 shrink-0 rounded-full"
-              style={{
-                background: b.accentColor,
-                boxShadow: `0 0 6px ${b.accentColor}`
-              }}
-            />
-            <span className="flex flex-col leading-tight">
-              <span className="text-[12px] font-black text-[#eef2f8]">
-                {b.name}
+      <div className="flex gap-1.5 overflow-x-auto md:max-h-[96px] md:flex-wrap md:overflow-y-auto md:overflow-x-visible">
+        {buildings.map(b => {
+          const picked = b.id === pickedBuildingId;
+          return (
+            <button
+              key={b.id}
+              type="button"
+              onClick={() => (picked ? onEnter(b.id) : onPick(b.id))}
+              onMouseEnter={() => onFocus(b.id)}
+              onMouseLeave={() => onFocus(null)}
+              onFocus={() => onFocus(b.id)}
+              onBlur={() => onFocus(null)}
+              className={
+                picked
+                  ? "flex shrink-0 items-center gap-2 rounded-lg border border-[#ff9d38]/70 bg-[#ff9d38]/14 px-2.5 py-1 text-left transition active:scale-95 md:py-1.5"
+                  : "flex shrink-0 items-center gap-2 rounded-lg border border-[#e2c078]/25 bg-white/[0.04] px-2.5 py-1 text-left md:py-1.5 transition hover:border-[#e2c078]/70 hover:bg-[#e2c078]/10 active:scale-95"
+              }
+            >
+              <span
+                className="h-2 w-2 shrink-0 rounded-full"
+                style={{
+                  background: b.accentColor,
+                  boxShadow: `0 0 6px ${b.accentColor}`
+                }}
+              />
+              <span className="flex flex-col leading-tight">
+                <span className="whitespace-nowrap text-[12px] font-black text-[#eef2f8]">
+                  {b.name}
+                </span>
+                <span className="whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.12em] text-[#a9bdd6]/70">
+                  {b.label}
+                </span>
               </span>
-              <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-[#a9bdd6]/70">
-                {b.label}
-              </span>
-            </span>
-          </button>
-        ))}
+              {picked ? (
+                <span className="whitespace-nowrap pl-1 text-[11px] font-black text-[#ffd9ae]">
+                  들어가기 →
+                </span>
+              ) : null}
+            </button>
+          );
+        })}
       </div>
     </VillageFrame>
   );

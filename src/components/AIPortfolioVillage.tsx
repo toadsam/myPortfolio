@@ -49,7 +49,11 @@ import {
   type TravelPoint
 } from "@/components/village/VillageHud";
 import {sound as projectSound} from "@/components/ui/project-viewers/sound";
-import {cameraTargets, villageBuildings} from "@/lib/constants";
+import {
+  cameraTargets,
+  districtHubWorld,
+  villageBuildings
+} from "@/lib/constants";
 import {resumePdf} from "@/data/hero";
 import {
   useVillageEntered,
@@ -69,7 +73,7 @@ import {
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
 import {isWalkableDry} from "@/lib/villageWalk";
-import {onPlazaDais} from "@/lib/villageTerrain";
+import {onPlazaDais, terrainHeightAt} from "@/lib/villageTerrain";
 import propsLayout from "@/data/propsLayout.json";
 import type {
   DailyActivity,
@@ -372,6 +376,50 @@ function closeUp(pos: Vector3Tuple): {
   };
 }
 
+// 구역 띠에서 고른 건물을 비추는 카메라.
+//
+// **섬 중심(hub) 쪽에서 본다.** 건물은 hub 를 두른 고리로 서 있어 hub(미니광장)
+// 가 트여 있다 — 광장 쪽에서 보면 앞줄 건물이 뒷줄을 가린다. hub 와 건물이
+// 붙어 있으면(연락 우체국처럼 한 채짜리 구역) 방향이 흔들리므로 광장(원점) 쪽.
+// 이 계산이 constants.ts 에 없는 이유: 거기서 villageTerrain 을 부르면
+// constants → villageTerrain → villageRelief → constants 순환이 생긴다.
+function buildingShot(building: {
+  position: Vector3Tuple;
+  size: Vector3Tuple;
+  district: string;
+}): {position: Vector3Tuple; lookAt: Vector3Tuple} {
+  const [bx, , bz] = building.position;
+  const hub = districtHubWorld(building.district);
+  let dx = (hub ? hub[0] : 0) - bx;
+  let dz = (hub ? hub[1] : 0) - bz;
+  let room = Math.hypot(dx, dz);
+  if (room < 2.5) {
+    dx = -bx;
+    dz = -bz;
+    room = Infinity; // 광장 쪽은 물·데크라 트여 있다
+  }
+  const len = Math.hypot(dx, dz);
+  if (len < 0.001) {
+    dx = 0;
+    dz = 1;
+  } else {
+    dx /= len;
+    dz /= len;
+  }
+  const [sx, sy, sz] = building.size;
+  const lift = terrainHeightAt(bx, bz);
+  // **수평으로는 hub 를 넘지 않는다.** 넘으면 섬 반대편 건물들 사이에 서서
+  // 코앞의 남의 지붕만 보인다(첫 시험에서 MyStock 을 고르자 그렇게 됐다).
+  // 모자란 거리는 높이로 벌어 내려다본다.
+  const want = Math.max(sx, sy, sz) * 1.6 + 4;
+  const dist = Math.max(4, Math.min(want, room));
+  const rise = sy + 2 + (want - dist) * 0.8;
+  return {
+    position: [bx + dx * dist, lift + rise, bz + dz * dist],
+    lookAt: [bx, lift + sy * 0.4, bz]
+  };
+}
+
 const CONVO_STEP = 2600; // NPC 간 대화 한 턴 길이(ms)
 
 // 두 NPC를 옆에서 함께 담는 투샷 카메라 (엿듣기 장면)
@@ -451,6 +499,9 @@ export function AIPortfolioVillage() {
   } | null>(null);
   // 구역 띠(DistrictStrip)에서 올려 둔 건물 — 그 한 채만 강조된다.
   const [focusBuildingId, setFocusBuildingId] = useState<string | null>(null);
+  // 구역 띠에서 한 번 눌러 카메라가 가 있는 건물. 같은 칩을 또 누르면 입장한다.
+  // 호버가 없을 때는 이 건물이 강조된다.
+  const [pickedBuildingId, setPickedBuildingId] = useState<string | null>(null);
   /**
    * HUD 두 단계. **처음엔 최소**(헤더·환영 카드·이동·지도·제작 의뢰)만 두고,
    * 방문자가 첫 행동(건물 입장·NPC 대화·이동·바닥 클릭·안내인 선택)을 하면
@@ -1778,6 +1829,7 @@ export function AIPortfolioVillage() {
     unlockHud();
     endTour();
     setTravelCam(null);
+    setPickedBuildingId(null);
     setActiveSection(sectionId);
     setActiveContentId(contentId);
     setSelectedNpc(null);
@@ -1798,6 +1850,7 @@ export function AIPortfolioVillage() {
       setSelectedNpc(null);
       setIsPanelOpen(false);
       setTravelCam(null);
+      setPickedBuildingId(null);
       setGroundTarget({point, nonce: Date.now()});
     },
     [conciergeStage]
@@ -1814,6 +1867,7 @@ export function AIPortfolioVillage() {
     });
     setSelectedNpc(null);
     setIsPanelOpen(false);
+    setPickedBuildingId(null);
     dismissConcierge();
     if (point.sectionId) setActiveSection(point.sectionId);
     // 매번 새 객체로 만들어 카메라 전환을 다시 트리거
@@ -1821,6 +1875,34 @@ export function AIPortfolioVillage() {
       position: [...target.position] as Vector3Tuple,
       lookAt: [...target.lookAt] as Vector3Tuple
     });
+  }
+
+  /**
+   * 구역 띠의 건물 칩 첫 클릭 — 그 건물 앞으로 날아가 강조만 한다. 입장은 같은
+   * 칩을 한 번 더 눌렀을 때(`handleRequestEnter`).
+   *
+   * `travelTo` 를 거치지 않는다 — 거기선 선택을 지운다. 걷기 모드면 클릭 모드로
+   * 돌린다: 걷기 모드엔 CameraController 가 없어서 travelCam 이 먹지 않는다.
+   */
+  function pickBuilding(buildingId: string) {
+    const building = villageBuildings.find(b => b.id === buildingId);
+    if (!building) return;
+    trackVisitorEvent({
+      event_type: "building_pick",
+      target_id: building.id,
+      label: building.name,
+      metadata: {district: building.district}
+    });
+    endTour();
+    unlockHud();
+    dismissConcierge();
+    setSelectedNpc(null);
+    setTalkCam(null);
+    setIsPanelOpen(false);
+    setExplorationMode("click");
+    setActiveSection(building.sectionId);
+    setTravelCam(buildingShot(building));
+    setPickedBuildingId(building.id);
   }
 
   // ── NPC 단체 명령 ──
@@ -2004,6 +2086,7 @@ export function AIPortfolioVillage() {
     // 대화 시작 시점의 NPC 위치를 스냅샷 → 상반신 클로즈업 카메라
     const pos = npcPositionsRef.current[npc.id] ?? npc.position;
     setTravelCam(null);
+    setPickedBuildingId(null);
     setTalkCam(closeUp(pos));
     setSelectedNpc(npc);
     setActiveSection(npc.sectionId);
@@ -2108,6 +2191,7 @@ export function AIPortfolioVillage() {
 
     unlockHud();
     endTour();
+    setPickedBuildingId(null);
     trackVisitorEvent({
       event_type:
         building.district === "projects" ? "project_open" : "building_enter",
@@ -2236,7 +2320,7 @@ export function AIPortfolioVillage() {
               npcCommandTargets={npcCommandTargets}
               overseerTarget={overseerTarget}
               npcSocialTargets={npcSocialTargets}
-              focusBuildingId={focusBuildingId}
+              focusBuildingId={focusBuildingId ?? pickedBuildingId}
               onEnterAtelier={stableEnterAtelier}
               onDepartIsland={isOwner ? stableDepartIsland : undefined}
               onEditingChange={stableSetEditing}
@@ -2317,10 +2401,11 @@ export function AIPortfolioVillage() {
           {!isPanelOpen &&
           !selectedNpc &&
           conciergeStage === "closed" &&
-          tourIndex === null &&
-          activeSection !== "intro" ? (
+          tourIndex === null ? (
             <DistrictStrip
               sectionId={activeSection}
+              pickedBuildingId={pickedBuildingId}
+              onPick={pickBuilding}
               onEnter={handleRequestEnter}
               onFocus={setFocusBuildingId}
             />

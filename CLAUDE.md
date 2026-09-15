@@ -256,8 +256,15 @@ so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottlene
   오른쪽 액자에 그 구역 목록. **`openSection` 을 여기 쓰면 안 된다** — 그 함수는 `setTravelCam(null)` 을
   해서 카메라가 섹션 기본 시점으로 되돌아간다. 예전 `focusDistrict` 는 activeSection 만 바꿔 "프로젝트
   보러"를 눌러도 광장 분수만 보였다.
-- **구역에 도착하면 하단에 `DistrictStrip`**(VillageHud) — 그 구역 건물의 이름·꼬리표 칩. 클릭 = 입장,
-  호버 = `focusBuildingId` 로 **그 한 채만** 강조(구역 전체가 이미 켜져 있어 더 켜는 건 안 보인다).
+- **하단 `DistrictStrip`(VillageHud)은 두 단 건물 바로가기다(2026-09-15)** — 윗줄 구역 탭(목록만 바꿈,
+  카메라는 이동 독·지도 몫), 아랫줄 그 구역 건물 칩. **광장에서도 뜬다**(첫 화면이 광장이라 숨기면 아무도
+  못 본다, 광장이면 프로젝트 탭). 칩 첫 클릭 = `pickBuilding` → `buildingShot` 카메라로 그 건물 앞 이동 +
+  `pickedBuildingId` 강조, 같은 칩 재클릭 = `handleRequestEnter`. 호버(`focusBuildingId`)가 선택보다 우선
+  (그 한 채만 강조 — 구역 전체가 이미 켜져 있어 더 켜는 건 안 보인다). 선택은 `travelTo`·바닥 클릭·
+  `openSection`·입장·NPC 대화에서 풀린다. 걷기 모드엔 CameraController 가 없어 travelCam 이 안 먹으므로
+  pick 이 클릭 모드로 돌린다. `buildingShot` 은 **섬 hub 쪽에서, 수평으로 hub 를 넘지 않고** 모자란 거리는
+  높이로 번다 — 넘으면 섬 반대편 건물 사이에 선다(경험 구역은 건물 안). 이 함수가 `AIPortfolioVillage` 에
+  있는 건 constants → villageTerrain → villageRelief → constants 순환 때문이다.
   3D 간판(`v-sign`)은 구역 카메라 거리에서 2~3px 라 읽히지 않아 2D 로 한 번 더 적는 것. 프로젝트 카드의
   "3D 전시실 들어가기"는 `enterProjectRoom` → `handleRequestEnter`(contentId ↔ project.id).
 - **HUD 는 두 단계다.** `hudUnlocked=false` 로 시작해 첫 화면엔 헤더·환영 카드·이동·지도·제작 의뢰만
