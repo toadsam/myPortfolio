@@ -2,43 +2,66 @@
 
 import {useCallback, useEffect, useRef, useState} from "react";
 import {useSueo} from "../context";
-import {CodePanel, fade, Kicker, NoteBox, rise, WordHeading} from "../parts";
+import {
+  Caveat,
+  CodePanel,
+  fade,
+  Kicker,
+  NoteBox,
+  rise,
+  WordHeading
+} from "../parts";
+import {
+  answerOf,
+  QUIZ_ITEMS,
+  QUIZ_QUESTION_TEXT,
+  type QuizItem
+} from "../signData";
 import {useInView, useTimeline} from "../useTimeline";
 
-const STEPS = [0, 150, 700, 1200, 1800, 2300, 2700];
-const IDX = {
-  label: 0,
-  heading: 1,
-  intro: 2,
-  quiz: 3,
-  queue: 4,
-  code: 5,
-  hint: 6
-};
+// 04 · 반복 학습
+// 기준: GitHub 저장소 toadsam/Sign-Language (main).
+// - 세션: 활성 문항을 섞어서 N개(QuizService, 앱은 10개를 요청). 응답에 정답 ID 가 없다.
+// - 채점: POST /api/quiz/answer 에서 서버가 correctChoiceId 와 비교한다.
+// - 복습: GET /api/quiz/session/wrong 이 사용자 문서의 incorrectQuestionCounts 를
+//   많이 틀린 순으로 정렬해 다시 뽑는다(getWrongQuizIds).
+// 이 도메인은 류태원 코드다. 정재훈 몫은 카테고리 필터와 문항 업로드 스크립트(133eb9a).
+// 시연은 5문항으로 줄였고, 아바타 영상 대신 손 그림을 쓴다.
 
-const POOL = [
-  "감사합니다",
-  "안녕하세요",
-  "사랑합니다",
-  "미안합니다",
-  "괜찮습니다",
-  "이름",
-  "만나다",
-  "반갑다",
-  "수어",
-  "배우다",
-  "잘",
-  "부탁합니다"
-].map((word, i) => ({id: i + 1, word}));
+const STEPS = [0, 150, 700, 1200, 1800, 2300];
+const IDX = {label: 0, heading: 1, intro: 2, quiz: 3, side: 4, notes: 5};
 
-type QueueItem = {sign: (typeof POOL)[number]; status: "new" | "review"};
+const SESSION_SIZE = 5;
+
+const CHECK = `// QuizService.java:82-91
+String correctChoiceId = normalizeChoiceId(doc.getString("correctChoiceId"));
+...
+List<String> choices = toStringList(doc.get("choices"));
+String selectedChoiceId = normalizeChoiceId(request.selectedChoiceId());
+boolean isCorrect = correctChoiceId.equals(selectedChoiceId);
+updateQuizStats(request.quizId(), isCorrect);   // FieldValue.increment`;
+
+const WRONG = `// QuizService.java:174-189
+Map<String, Integer> wrongCounts = toStringIntegerMap(userDoc.get("incorrectQuestionCounts"));
+if (!wrongCounts.isEmpty()) {
+  List<Map.Entry<String, Integer>> entries = new ArrayList<>(wrongCounts.entrySet());
+  entries.sort(
+      Comparator.comparingInt((Map.Entry<String, Integer> entry) -> entry.getValue()).reversed()
+          .thenComparing(Map.Entry::getKey));
+  ...
+}`;
 
 function shuffle<T>(arr: T[]): T[] {
-  return [...arr].sort(() => 0.5 - Math.random());
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
-/** 흔들며 인사하는 손 — 문제로 제시되는 동작. */
-function QuizHand({playKey, rm}: {playKey: number; rm: boolean}) {
+/** 아바타 영상 자리 — 실제 앱은 팀원이 만든 3D 아바타 영상을 튼다. */
+function StandInHand({playKey, rm}: {playKey: number; rm: boolean}) {
   const gRef = useRef<SVGGElement>(null);
 
   useEffect(() => {
@@ -46,7 +69,6 @@ function QuizHand({playKey, rm}: {playKey: number; rm: boolean}) {
     if (!g || rm) return;
     let raf = 0;
     let t0: number | null = null;
-
     function tick(now: number) {
       if (t0 === null) t0 = now;
       const p = now - t0;
@@ -58,13 +80,12 @@ function QuizHand({playKey, rm}: {playKey: number; rm: boolean}) {
       if (p < 1200) raf = requestAnimationFrame(tick);
       else g!.style.transform = "translate(0,0) rotate(0deg)";
     }
-
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [playKey, rm]);
 
   return (
-    <svg width="120" height="120" viewBox="0 0 100 100" aria-hidden="true">
+    <svg width="110" height="110" viewBox="0 0 100 100" aria-hidden="true">
       <g
         ref={gRef}
         stroke="var(--sd-hand)"
@@ -85,125 +106,82 @@ export function ReviewLoopSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const inView = useInView(sectionRef, {threshold: 0.1});
   const t = useTimeline(STEPS, inView, rm);
+  const on = (i: number) => t[i] || rm;
 
-  const [queue, setQueue] = useState<QueueItem[]>([]);
+  const [mode, setMode] = useState<"normal" | "wrong">("normal");
+  const [queue, setQueue] = useState<QuizItem[]>([]);
   const [index, setIndex] = useState(0);
-  const [options, setOptions] = useState<(typeof POOL)[number][]>([]);
-  const [answered, setAnswered] = useState<null | {
-    pickedId: number;
-    ok: boolean;
-  }>(null);
-  const [history, setHistory] = useState<{word: string; ok: boolean}[]>([]);
-  const [stats, setStats] = useState({correct: 0, wrong: 0, waiting: 0});
+  const [picked, setPicked] = useState<string | null>(null);
+  const [stats, setStats] = useState({attempt: 0, correct: 0});
+  const [wrongCounts, setWrongCounts] = useState<Record<string, number>>({});
   const [done, setDone] = useState(false);
   const [playKey, setPlayKey] = useState(0);
-  const [insertedIdx, setInsertedIdx] = useState(-1);
-  const [touched, setTouched] = useState(false);
-  const nextBtnRef = useRef<HTMLButtonElement>(null);
 
   const current = queue[index];
 
-  const buildOptions = useCallback((answer: (typeof POOL)[number]) => {
-    const wrong = shuffle(POOL.filter(s => s.id !== answer.id)).slice(0, 3);
-    setOptions(shuffle([...wrong, answer]));
-  }, []);
-
-  const startSession = useCallback(() => {
-    const initial: QueueItem[] = shuffle(POOL)
-      .slice(0, 5)
-      .map(sign => ({sign, status: "new" as const}));
-    setQueue(initial);
-    setIndex(0);
-    setAnswered(null);
-    setHistory([]);
-    setStats({correct: 0, wrong: 0, waiting: 0});
-    setDone(false);
-    setInsertedIdx(-1);
-    buildOptions(initial[0].sign);
-    setPlayKey(k => k + 1);
-  }, [buildOptions]);
+  const start = useCallback(
+    (m: "normal" | "wrong", counts: Record<string, number>) => {
+      let next: QuizItem[];
+      if (m === "wrong") {
+        const ids = Object.entries(counts)
+          .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+          .map(([id]) => id);
+        next = ids
+          .map(id => QUIZ_ITEMS.find(q => q.id === id))
+          .filter((q): q is QuizItem => Boolean(q));
+      } else {
+        next = shuffle(QUIZ_ITEMS).slice(0, SESSION_SIZE);
+      }
+      setMode(m);
+      setQueue(next);
+      setIndex(0);
+      setPicked(null);
+      setDone(false);
+      setPlayKey(k => k + 1);
+    },
+    []
+  );
 
   useEffect(() => {
-    if (inView && !queue.length) startSession();
-  }, [inView, queue.length, startSession]);
+    if (inView && !queue.length) start("normal", {});
+  }, [inView, queue.length, start]);
 
-  function answer(picked: (typeof POOL)[number]) {
-    if (answered || !current) return;
-    setTouched(true);
-    const ok = picked.id === current.sign.id;
-    setAnswered({pickedId: picked.id, ok});
-    setHistory(h => [...h, {word: current.sign.word, ok}]);
+  function answer(choiceIdx: number) {
+    if (picked || !current) return;
+    const letter = "ABCD"[choiceIdx];
+    const ok = letter === current.correct;
+    setPicked(letter);
+    setStats(s => ({
+      attempt: s.attempt + 1,
+      correct: s.correct + (ok ? 1 : 0)
+    }));
     bumpSignCount();
-
-    if (ok) {
-      setStats(s => ({...s, correct: s.correct + 1}));
-      announce("정답입니다.");
-    } else {
-      setStats(s => ({...s, wrong: s.wrong + 1, waiting: s.waiting + 1}));
-      // 오답은 두 문제 뒤에 다시 낸다 — 바로 다음에 내면 외운 게 아니라 방금 본 것이다.
-      const at = index + 2;
-      setQueue(q => {
-        const next = [...q];
-        next.splice(at, 0, {sign: current.sign, status: "review"});
-        return next;
-      });
-      setInsertedIdx(at);
-      announce(
-        `오답입니다. 정답은 ${current.sign.word}입니다. 복습 목록에 추가되었습니다.`
-      );
+    if (!ok) {
+      setWrongCounts(c => ({...c, [current.id]: (c[current.id] ?? 0) + 1}));
     }
+    announce(
+      ok
+        ? "정답입니다."
+        : `오답입니다. 정답은 ${answerOf(
+            current
+          )}입니다. 오답 횟수에 기록했습니다.`
+    );
   }
 
   function next() {
-    const at = index + 1;
-    if (at >= queue.length) {
+    if (index + 1 >= queue.length) {
       setDone(true);
-      announce(
-        "세션이 종료되었습니다. 틀린 단어는 다음에 접속해도 먼저 나옵니다."
-      );
+      announce("세션이 끝났습니다.");
       return;
     }
-    setIndex(at);
-    setAnswered(null);
-    setInsertedIdx(-1);
-    buildOptions(queue[at].sign);
+    setIndex(i => i + 1);
+    setPicked(null);
     setPlayKey(k => k + 1);
   }
 
-  useEffect(() => {
-    if (!answered) return;
-    const timer = window.setTimeout(() => nextBtnRef.current?.focus(), 1400);
-    return () => window.clearTimeout(timer);
-  }, [answered]);
-
-  // 숫자키 1~4로 답하고, Enter/Space로 다음 문제.
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (!inView || done) return;
-      if (answered) {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          next();
-        }
-        return;
-      }
-      const n = parseInt(e.key, 10);
-      if (n >= 1 && n <= 4 && options[n - 1]) {
-        e.preventDefault();
-        answer(options[n - 1]);
-      }
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  });
-
-  const waitingCount = queue.filter(
-    (q, i) => i >= index && q.status === "new"
-  ).length;
-  const reviewCount = queue.filter(
-    (q, i) => i >= index && q.status === "review"
-  ).length;
-  const on = (i: number) => t[i] || rm;
+  const wrongList = Object.entries(wrongCounts).sort(
+    (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+  );
 
   return (
     <section
@@ -211,7 +189,6 @@ export function ReviewLoopSection() {
       data-sd-section
       className="mx-auto w-full max-w-[1120px] px-6 py-[100px] lg:px-8"
     >
-      {/* ── 도입 ── */}
       <div className="mb-12">
         <Kicker
           on={on(IDX.label)}
@@ -222,398 +199,246 @@ export function ReviewLoopSection() {
           04 · 반복 학습
         </Kicker>
         <WordHeading
-          text="한 번 맞혔다고 아는 게 아니다"
+          text="채점은 서버가 하고, 많이 틀린 문제부터 다시 낸다"
           on={on(IDX.heading)}
           instant={rm}
-          className="mb-5 text-[28px] font-black leading-tight"
+          stepMs={60}
+          className="mb-5 text-[26px] font-black leading-tight md:text-[28px]"
         />
         <p
-          className="max-w-[740px] text-[16px] leading-[36px]"
+          className="max-w-[760px] text-[16px] leading-[36px]"
           style={rise(on(IDX.intro), rm)}
         >
-          처음엔 문제를 무작위로 냈다. 그러니 이미 아는 단어가 계속 나오고,
-          헷갈리는 단어는 어쩌다 한 번 나왔다.
-          <br />
-          <span className="font-bold text-[var(--sd-accent)]">
-            틀린 걸 다시 보여주는 게 학습
-          </span>
-          이지, 문제를 많이 푸는 게 학습은 아니었다.
+          동작 영상을 보여주고 보기 네 개 중 뜻을 고르게 한다. 세션을 줄 때
+          정답은 빼고 보내고, 고른 보기를 받아{" "}
+          <span className="font-bold text-[var(--sd-accent)]">서버가 채점</span>
+          한다. 틀리면 사용자 문서에 문항별 오답 횟수가 쌓이고, 오답 복습은 그
+          횟수가 큰 문항부터 다시 뽑는다. 이 흐름은 프론트 담당 팀원이 화면과
+          API 를 함께 만들었고, 나는 기초 단어·일상 회화 카테고리 필터와 20문항
+          업로드 스크립트를 붙였다.
         </p>
       </div>
 
       <div className="flex flex-col gap-[20px] lg:flex-row">
         {/* ── 퀴즈 ── */}
         <div
-          className="relative flex h-[480px] w-full flex-col rounded-md border border-[rgba(126,184,255,0.18)] bg-[var(--sd-panel)] p-5 shadow-lg shadow-black/20 lg:h-[520px] lg:w-[54%]"
+          className="relative flex min-h-[480px] w-full flex-col rounded-md border border-[rgba(126,184,255,0.18)] bg-[var(--sd-panel)] p-5 lg:w-[56%]"
           style={rise(on(IDX.quiz), rm)}
         >
           {done ? (
-            <div className="flex h-full flex-col items-center justify-center">
-              <h3 className="mb-6 text-[16px] font-bold">세션 결과</h3>
-              <div className="mb-8 w-full max-w-[280px] space-y-2">
-                {history.map((h, i) => (
-                  <div
-                    key={`${h.word}-${i}`}
-                    className="flex items-center justify-between border-b border-[rgba(126,184,255,0.12)] py-2"
-                  >
-                    <span className="font-mono text-[12px] text-[var(--sd-muted)]">
-                      {i + 1}. {h.word}
-                    </span>
-                    <span
-                      className="font-mono text-[12px]"
-                      style={{color: h.ok ? "var(--sd-ok)" : "var(--sd-bad)"}}
-                    >
-                      {h.ok ? "✓" : "✕"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <p className="mb-8 text-center text-[15px] leading-8">
-                틀린 단어는 다음에 접속해도 먼저 나옵니다.
+            <div className="flex h-full flex-1 flex-col items-center justify-center gap-5 text-center">
+              <h3 className="text-[16px] font-bold">
+                {mode === "wrong" ? "오답 복습 끝" : "세션 끝"}
+              </h3>
+              <p className="max-w-[340px] text-[15px] leading-8 text-[var(--sd-muted)]">
+                {wrongList.length
+                  ? "틀린 문항이 오답 횟수로 쌓였습니다. 복습 세션은 그 횟수가 큰 문항부터 뽑습니다."
+                  : "틀린 문항이 없어 복습 세션은 비어 있습니다. 일부러 틀려 보셔도 됩니다."}
               </p>
-              <button
-                type="button"
-                onClick={startSession}
-                className="flex items-center gap-2 rounded border border-[rgba(126,184,255,0.18)] bg-[var(--sd-bg)] px-4 py-2 font-mono text-[11px] text-[var(--sd-muted)] transition-colors hover:text-white"
-              >
-                <span>↻</span> 다시 풀기
-              </button>
+              <div className="flex flex-wrap justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => start("normal", wrongCounts)}
+                  className="rounded border border-[rgba(126,184,255,0.3)] px-4 py-2 font-mono text-[11px] text-[var(--sd-muted)] hover:text-white"
+                >
+                  ↻ 새 세션 · GET /api/quiz/session
+                </button>
+                <button
+                  type="button"
+                  disabled={!wrongList.length}
+                  onClick={() => start("wrong", wrongCounts)}
+                  className="rounded border border-[var(--sd-warn)] px-4 py-2 font-mono text-[11px] text-[var(--sd-warn)] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  오답 복습 · GET /api/quiz/session/wrong
+                </button>
+              </div>
             </div>
           ) : current ? (
             <>
-              <div className="mb-2 flex h-[34px] items-center justify-between">
+              <div className="mb-2 flex items-center justify-between">
                 <span className="font-mono text-[11px] tabular-nums text-[rgba(255,255,255,0.72)]">
-                  문제 {index + 1} / {queue.length}
+                  {mode === "wrong" ? "오답 복습 " : ""}
+                  {index + 1} / {queue.length} · {current.id}
                 </span>
-                <span className="font-mono text-[11px] tabular-nums text-[var(--sd-muted)]">
-                  맞음 {stats.correct} · 틀림 {stats.wrong} · 복습 대기{" "}
-                  {stats.waiting}
+                <span className="font-mono text-[11px] text-[var(--sd-muted)]">
+                  {current.category === "basic" ? "기초 단어" : "일상 회화"}
                 </span>
               </div>
 
-              <div className="relative flex flex-1 flex-col">
-                <div className="relative mb-4 flex flex-1 items-center justify-center overflow-hidden rounded border border-[rgba(126,184,255,0.1)] bg-[var(--sd-bg)]">
-                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(126,184,255,0.08)_0%,transparent_70%)]" />
+              <div className="relative mb-3 flex h-[170px] items-center justify-center overflow-hidden rounded border border-[rgba(126,184,255,0.1)] bg-[var(--sd-bg)]">
+                <StandInHand playKey={playKey} rm={rm} />
+                <span className="absolute left-2 top-2 rounded bg-white/5 px-1.5 py-0.5 font-mono text-[9px] text-[var(--sd-muted)]">
+                  아바타 영상 자리 · 재현
+                </span>
+                {mode === "wrong" ? (
+                  <span className="absolute right-2 top-2 rounded border border-[rgba(251,191,36,0.3)] bg-[rgba(251,191,36,0.08)] px-1.5 py-0.5 font-mono text-[9px] text-[var(--sd-warn)]">
+                    틀린 횟수 {wrongCounts[current.id] ?? 0}
+                  </span>
+                ) : null}
+              </div>
 
-                  <div
-                    className="absolute left-1/2 top-4 -translate-x-1/2 rounded border border-[rgba(251,191,36,0.2)] bg-[rgba(251,191,36,0.1)] px-2 py-1 font-mono text-[10px] text-[var(--sd-warn)] transition-opacity"
-                    style={{opacity: current.status === "review" ? 1 : 0}}
-                  >
-                    아까 틀린 문제입니다
-                  </div>
+              <p className="mb-3 text-[15px] font-bold">
+                {QUIZ_QUESTION_TEXT[current.category]}
+              </p>
 
-                  <QuizHand playKey={playKey} rm={rm} />
-
-                  <div
-                    className="absolute bottom-16 left-1/2 -translate-x-1/2 text-[16px] font-bold tracking-wide text-white transition-opacity"
-                    style={{opacity: answered ? 1 : 0}}
-                  >
-                    {current.sign.word}
-                  </div>
-
-                  <div className="absolute bottom-3 flex w-full items-end justify-between px-4">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {current.choices.map((c, i) => {
+                  const letter = "ABCD"[i];
+                  const isAnswer = letter === current.correct;
+                  const showOk = picked && isAnswer;
+                  const showBad = picked === letter && !isAnswer;
+                  return (
                     <button
+                      key={c}
                       type="button"
-                      onClick={() => setPlayKey(k => k + 1)}
-                      className="font-mono text-[11px] text-[var(--sd-muted)] transition-colors hover:text-[var(--sd-text)]"
+                      disabled={!!picked}
+                      onClick={() => answer(i)}
+                      className="rounded-md border p-[10px_14px] text-left font-mono text-[12px] transition-colors"
+                      style={{
+                        borderColor: showOk
+                          ? "var(--sd-ok)"
+                          : showBad
+                          ? "var(--sd-bad)"
+                          : "rgba(126,184,255,0.22)",
+                        background: showOk
+                          ? "rgba(74,222,128,0.1)"
+                          : showBad
+                          ? "rgba(248,113,113,0.1)"
+                          : "rgba(255,255,255,0.02)",
+                        color: showOk
+                          ? "var(--sd-ok)"
+                          : showBad
+                          ? "var(--sd-bad)"
+                          : "var(--sd-text)"
+                      }}
                     >
-                      ↻ 다시 보기
+                      <span className="mr-2 text-[var(--sd-muted)]">
+                        {letter}
+                      </span>
+                      {c}
                     </button>
-                    <div className="flex gap-2">
-                      <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-[var(--sd-muted)]">
-                        0.5x
-                      </span>
-                      <span className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-[10px] text-[var(--sd-text)]">
-                        1x
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                  );
+                })}
+              </div>
 
-                <div className="mb-2 flex h-[30px] items-center justify-between px-1">
-                  <div
-                    className="font-mono text-[11px] transition-opacity"
-                    style={{
-                      opacity: answered ? 1 : 0,
-                      color: answered?.ok ? "var(--sd-ok)" : "var(--sd-warn)"
-                    }}
-                  >
-                    {answered?.ok ? "맞았습니다" : "복습 목록에 추가했습니다"}
-                  </div>
-                  <button
-                    ref={nextBtnRef}
-                    type="button"
-                    onClick={next}
-                    className="font-mono text-[12px] text-[var(--sd-primary)] transition-opacity hover:text-white"
-                    style={{
-                      opacity: answered ? 1 : 0,
-                      pointerEvents: answered ? "auto" : "none"
-                    }}
-                  >
-                    다음 문제 →
-                  </button>
-                </div>
-
-                <div
-                  className="grid grid-cols-1 gap-3 sm:grid-cols-2"
-                  aria-label="다음 수어의 의미를 선택하세요. 동작 설명: 손을 들어 가볍게 흔드는 동작"
+              <div className="mt-3 flex min-h-[40px] items-center justify-between gap-3">
+                <span className="font-mono text-[10px] leading-4 text-[var(--sd-muted)]">
+                  {picked
+                    ? `POST /api/quiz/answer {selectedChoiceId:"${picked}"} → isCorrect=${
+                        picked === current.correct
+                      }`
+                    : "보기를 고르면 서버가 채점합니다"}
+                </span>
+                <button
+                  type="button"
+                  onClick={next}
+                  className="shrink-0 font-mono text-[12px] text-[var(--sd-primary)] hover:text-white"
+                  style={{
+                    opacity: picked ? 1 : 0,
+                    pointerEvents: picked ? "auto" : "none"
+                  }}
                 >
-                  {options.map((opt, i) => {
-                    const isAnswer = opt.id === current.sign.id;
-                    const picked = answered?.pickedId === opt.id;
-                    const showOk = answered && isAnswer;
-                    const showBad = answered && picked && !isAnswer;
-                    return (
-                      <button
-                        key={opt.id}
-                        type="button"
-                        disabled={!!answered}
-                        onClick={() => answer(opt)}
-                        className="relative w-full rounded-md border p-[10px_14px] text-left font-mono text-[12px] transition-colors"
-                        style={{
-                          borderColor: showOk
-                            ? "var(--sd-ok)"
-                            : showBad
-                            ? "var(--sd-bad)"
-                            : "rgba(126,184,255,0.22)",
-                          background: showOk
-                            ? "rgba(74,222,128,0.1)"
-                            : showBad
-                            ? "rgba(248,113,113,0.1)"
-                            : "rgba(255,255,255,0.02)",
-                          color: showOk
-                            ? "var(--sd-ok)"
-                            : showBad
-                            ? "var(--sd-bad)"
-                            : "var(--sd-text)"
-                        }}
-                      >
-                        {answered ? (
-                          <span className="flex w-full items-center justify-between">
-                            <span>{opt.word}</span>
-                            {showOk ? (
-                              <span className="text-[14px]">✓</span>
-                            ) : null}
-                            {showBad ? (
-                              <span className="text-[14px]">✕</span>
-                            ) : null}
-                          </span>
-                        ) : (
-                          <>
-                            <span className="mr-2 text-[var(--sd-muted)]">
-                              {i + 1}.
-                            </span>
-                            <span>{opt.word}</span>
-                          </>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <div
-                  className="absolute -bottom-7 left-0 w-full text-center font-mono text-[10px] text-[rgba(255,255,255,0.35)] transition-opacity"
-                  style={{opacity: !touched && on(IDX.hint) ? 1 : 0}}
-                >
-                  일부러 틀려보셔도 됩니다. 그게 이 페이지의 요점입니다.
-                </div>
+                  다음 →
+                </button>
               </div>
             </>
           ) : null}
         </div>
 
-        {/* ── 대기열 + 코드 ── */}
-        <div className="flex w-full flex-col gap-[20px] lg:w-[46%]">
-          <div
-            className="relative flex h-[230px] flex-col rounded-md border border-[rgba(126,184,255,0.18)] bg-[var(--sd-panel)] p-[18px] shadow-lg shadow-black/20"
-            style={fade(on(IDX.queue), rm)}
-          >
-            <div className="mb-3 shrink-0 font-mono text-[10px] tracking-[0.18em] text-[var(--sd-muted)]">
-              출제 대기열
+        {/* ── 기록 + 코드 ── */}
+        <div
+          className="flex w-full flex-col gap-[20px] lg:w-[44%]"
+          style={fade(on(IDX.side), rm)}
+        >
+          <div className="rounded-md border border-[rgba(126,184,255,0.18)] bg-[var(--sd-panel)] p-[18px]">
+            <div className="mb-3 font-mono text-[10px] tracking-[0.12em] text-[var(--sd-muted)]">
+              users/{"{uid}"} · incorrectQuestionCounts
             </div>
-            <div className="relative flex-1 overflow-hidden">
-              <div className="pointer-events-none absolute inset-0 z-10 h-full w-full bg-gradient-to-b from-[var(--sd-panel)] via-transparent to-[var(--sd-panel)] opacity-60" />
-              <div className="flex h-full flex-col gap-2 overflow-y-auto px-1 pb-6 pt-2">
-                {queue.map((item, i) => {
-                  const past = i < index;
-                  const cur = i === index;
-                  const label = past
-                    ? "완료"
-                    : item.status === "new"
-                    ? "처음"
-                    : "복습";
-                  const color = past
-                    ? "rgba(255,255,255,0.2)"
-                    : item.status === "new"
-                    ? "rgba(255,255,255,0.55)"
-                    : "var(--sd-warn)";
+            {wrongList.length ? (
+              <div className="flex flex-col gap-1.5">
+                {wrongList.map(([id, n]) => {
+                  const q = QUIZ_ITEMS.find(x => x.id === id)!;
                   return (
                     <div
-                      key={`${item.sign.id}-${i}`}
-                      className={`flex items-center justify-between rounded p-[7px_12px] transition-all duration-300 ${
-                        past
-                          ? "opacity-30"
-                          : cur
-                          ? "bg-[rgba(126,184,255,0.1)] opacity-100 ring-1 ring-[rgba(126,184,255,0.5)]"
-                          : "bg-white/5 opacity-80"
-                      }`}
-                      style={
-                        i === insertedIdx && !rm
-                          ? {
-                              animation:
-                                "sd-slide-in-right 0.4s cubic-bezier(0.4,0,0.2,1)"
-                            }
-                          : undefined
-                      }
+                      key={id}
+                      className="flex items-center justify-between rounded bg-white/5 px-3 py-1.5 font-mono text-[11px]"
                     >
-                      <span className="font-mono text-[11px] text-white">
-                        {item.sign.word}
+                      <span>
+                        {id} · {answerOf(q)}
                       </span>
-                      <span className="font-mono text-[10px]" style={{color}}>
-                        {label}
-                      </span>
+                      <span className="text-[var(--sd-warn)]">{n}회</span>
                     </div>
                   );
                 })}
               </div>
-            </div>
-            <div className="mt-3 shrink-0 font-mono text-[10px] tabular-nums text-[var(--sd-muted)]">
-              대기 {waitingCount} · 복습 {reviewCount}
+            ) : (
+              <div className="font-mono text-[11px] text-[rgba(255,255,255,0.35)]">
+                아직 틀린 문항이 없습니다
+              </div>
+            )}
+            <div className="mt-3 font-mono text-[10px] tabular-nums text-[var(--sd-muted)]">
+              이 세션 · 시도 {stats.attempt} · 정답 {stats.correct}
             </div>
           </div>
 
-          <div style={rise(on(IDX.code), rm)}>
-            <CodePanel
-              filename="QuizScheduler.java"
-              className="min-h-[260px] flex-1"
-            >
-              <div className="flex-1 overflow-x-auto p-4 font-mono text-[11px] leading-relaxed sm:text-[12px]">
-                <pre className="m-0 text-[var(--sd-muted)]">
-                  <code className="block">
-                    <span className="sd-key">public class</span> QuizScheduler{" "}
-                    {"{"}
-                    {"\n\n  "}
-                    <span className="sd-key">public</span> Session{" "}
-                    <span className="text-[var(--sd-accent)]">
-                      buildSession
-                    </span>
-                    (Learner state, Pool pool) {"{"}
-                    {"\n    List<Sign> dueReviews = pool."}
-                    <span className="text-[var(--sd-accent)]">getReviews</span>
-                    (state);
-                    {"\n    List<Sign> unseen = pool."}
-                    <span className="text-[var(--sd-accent)]">getUnseen</span>
-                    (state);
-                    {"\n\n    Session s = "}
-                    <span className="sd-key">new</span> Session(MAX_ITEMS);
-                    {"\n    s."}
-                    <span className="text-[var(--sd-accent)]">add</span>
-                    (dueReviews);
-                    {"\n    s."}
-                    <span className="text-[var(--sd-accent)]">fillWith</span>
-                    (unseen);
-                    {"\n    "}
-                    <span className="sd-key">return</span> s;
-                    {"\n  }\n\n  "}
-                    <span className="sd-key">public void</span>{" "}
-                    <span className="text-[var(--sd-accent)]">
-                      onWrongAnswer
-                    </span>
-                    (Sign sign, Session current) {"{"}
-                    {"\n    sign."}
-                    <span className="text-[var(--sd-accent)]">
-                      markForReview
-                    </span>
-                    ();
-                    {"\n"}
-                  </code>
-                </pre>
-                <div className="-mx-4 my-0.5 border-l-2 border-[var(--sd-primary)] bg-[rgba(126,184,255,0.12)] px-4 py-0.5">
-                  <pre className="m-0">
-                    <code>
-                      <span className="sd-com">
-                        {
-                          "// 같은 세션에서 연속으로 맞히는 건 외운 게 아니라 방금 본 것이다"
-                        }
-                      </span>
-                      {"\n    current."}
-                      <span className="text-[var(--sd-accent)]">insertAt</span>
-                      (current.index() + <span className="sd-num">2</span>,
-                      sign);
-                    </code>
-                  </pre>
-                </div>
-                <pre className="m-0 text-[var(--sd-muted)]">
-                  <code className="block">
-                    {"  }\n\n  "}
-                    <span className="sd-key">public void</span>{" "}
-                    <span className="text-[var(--sd-accent)]">onCorrect</span>
-                    (Sign sign) {"{"}
-                    {"\n    "}
-                    <span className="sd-key">if</span>{" "}
-                    {"(sign.consecutiveDays() >= "}
-                    <span className="sd-num">3</span>
-                    {") {"}
-                    {"\n      sign."}
-                    <span className="text-[var(--sd-accent)]">markLearned</span>
-                    ();
-                    {"\n    }\n  }\n}"}
-                  </code>
-                </pre>
-              </div>
-            </CodePanel>
-          </div>
+          <CodePanel
+            filename="QuizService.java · 팀원 코드"
+            footer="// 정답은 세션 응답에 없고, 채점은 여기서만 한다"
+          >
+            <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed text-[var(--sd-text)]">
+              {CHECK}
+            </pre>
+          </CodePanel>
+          <CodePanel filename="QuizService.getWrongQuizIds · 팀원 코드">
+            <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed text-[var(--sd-text)]">
+              {WRONG}
+            </pre>
+          </CodePanel>
         </div>
       </div>
+      <Caveat>
+        보기와 정답은 update_quiz_items.py 의 실제 20문항입니다. 시연은
+        5문항으로 줄였고(앱은 10문항), 기록은 이 브라우저 안에서만 흉내 냅니다.
+      </Caveat>
 
-      {/* ── 일부러 넣지 않은 것 ── */}
-      <NoteBox
-        label="일부러 넣지 않은 것"
-        accent="#7eb8ff"
-        className="mt-[44px]"
+      <div
+        className="mt-[40px] flex flex-col gap-4"
+        style={fade(on(IDX.notes), rm)}
       >
-        <ul className="space-y-3 text-[15px] leading-8">
-          <li className="flex items-start">
-            <span className="mr-2">·</span>
-            <span>
-              연속 정답 기록(스트릭)을 넣지 않았다. 하루 빠졌다고 압박을 주고
-              싶지 않았다.
-            </span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">·</span>
-            <span>
-              점수 순위표를 넣지 않았다. 배우는 속도는 사람마다 다르다.
-            </span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">·</span>
-            <span>
-              틀렸을 때 정답을 바로 보여준다. 다시 맞힐 기회를 주는 것보다 지금
-              알려주는 게 낫다.
-            </span>
-          </li>
-          <li className="flex items-start">
-            <span className="mr-2">·</span>
-            <span>
-              정답 효과음을 넣지 않았다. 이 서비스는 소리로 정보를 주지 않는다.
-            </span>
-          </li>
-        </ul>
-      </NoteBox>
+        <NoteBox label="코드가 말하는 약점" accent="#fbbf24">
+          <ul className="space-y-2 text-[15px] leading-8">
+            <li>
+              · 채점은 서버가 하지만, 사용자 기록을 남기는{" "}
+              <span className="font-mono text-[13px]">
+                PATCH /api/users/{"{uid}"}/tryQuestion
+              </span>{" "}
+              은 앱이 보낸 isCorrect 를 그대로 믿습니다. 인증도 없어서 누구든
+              정답이라고 보낼 수 있습니다.
+            </li>
+            <li>
+              · 문항 통계는 FieldValue.increment 로 원자적으로 올리지만, 사용자
+              기록은 문서를 읽고 고쳐 다시 쓰기 때문에 동시 요청에서 갱신이
+              사라질 수 있습니다.
+            </li>
+            <li>
+              · 통계 저장이 실패하면 채점 흐름을 막지 않으려고 예외를 삼키는데,
+              로그를 남기지 않아 틀어져도 알 방법이 없습니다.
+            </li>
+          </ul>
+        </NoteBox>
+      </div>
 
       {/* ── 화면 캡처 ── 배포본(GitHub Pages)에서 찍은 실제 화면.
-          폰 비율(500×1023)이 상자(9:16)보다 길어서 contain 으로 넣는다 —
-          cover 로 두면 문항 보기 네 개 중 아래 둘이 잘린다. */}
+          폰 비율(500×1023)이라 contain 으로 넣는다. */}
       <div className="mt-[36px] flex flex-col gap-[14px] sm:flex-row">
         {[
           {
             src: "/projects/sign-language/quiz.webp",
-            cap: "실제 퀴즈 화면 · 동작을 보고 보기 4개 중 뜻을 고른다"
+            cap: "실제 퀴즈 화면 · 아바타 영상을 보고 보기 4개 중 뜻을 고른다"
           },
           {
             src: "/projects/sign-language/learn.webp",
-            cap: "오답 복습 퀴즈 · 틀린 문제만 모아 다시 낸다"
+            cap: "학습하기 · 기초 단어 · 오답 복습 · 일상 회화"
           }
         ].map(shot => (
           <div

@@ -10,95 +10,95 @@ const IDX = {label: 0, heading: 1, body: 2};
 
 type Owner = "mine" | "mate" | "team";
 
+// 기준: GitHub 저장소 toadsam/Sign-Language (main) 의 git 기록.
 const NODES: {id: number; label: string; owner: Owner; tag?: string}[] = [
-  {id: 1, label: "React 화면", owner: "team", tag: "공동"},
-  {id: 2, label: "Spring Boot API", owner: "mine"},
-  {id: 3, label: "형태소 분석 · 어순 재배열", owner: "mine"},
-  {id: 4, label: "수어 사전 (Firebase)", owner: "mine"},
-  {id: 5, label: "시퀀스 조립 · 전환 생성", owner: "mine"},
-  {id: 6, label: "3D 아바타 렌더링", owner: "mate", tag: "팀원"},
-  {id: 7, label: "화면 표시", owner: "team", tag: "공동"}
+  {id: 1, label: "Expo 앱", owner: "team", tag: "공동"},
+  {id: 2, label: "Spring Boot API", owner: "team", tag: "공동"},
+  {id: 3, label: "세 갈래 선택 · 정규화", owner: "mine"},
+  {id: 4, label: "영상 조회 캐시", owner: "mine"},
+  {id: 5, label: "Firestore 퀴즈·사용자", owner: "mate", tag: "팀원"},
+  {id: 6, label: "3D 아바타 영상", owner: "mate", tag: "팀원"},
+  {id: 7, label: "화면 재생", owner: "team", tag: "공동"}
 ];
 
 const EDGES: [number, number][] = [
   [1, 2],
   [2, 3],
   [3, 4],
-  [4, 5],
-  [5, 2],
-  [2, 4],
+  [4, 2],
+  [2, 5],
+  [5, 4],
   [1, 6],
   [6, 7]
 ];
 
 const FLOWS = {
   word: {
-    path: [1, 2, 4, 2, 1, 6, 7],
+    path: [1, 2, 5, 4, 2, 1, 6, 7],
     notes: [
-      "단어 id 요청",
-      "요청 수신",
-      "키프레임 조회",
-      "응답 조립",
-      "데이터 수신",
-      "아바타에 적용",
+      "퀴즈 세션 요청",
+      "/api/quiz/session",
+      "활성 문항 읽기",
+      "정답 단어로 영상 조회",
+      "정답 뺀 문항 응답",
+      "문항 수신",
+      "영상 주소 로드",
       "재생"
     ]
   },
   sentence: {
-    path: [1, 2, 3, 4, 5, 2, 1, 6, 7],
+    path: [1, 2, 3, 4, 2, 1, 6, 7],
     notes: [
       "문장 전송",
-      "요청 수신",
-      "어순 재배열",
-      "단어별 키프레임 조회",
-      "전환 프레임 삽입",
-      "타임라인 응답",
-      "데이터 수신",
-      "아바타에 적용",
-      "재생"
+      "POST /translate",
+      "사전 적중 수로 선택",
+      "단어별 영상 조회",
+      "items[] 응답",
+      "재생 목록 수신",
+      "영상 주소 로드",
+      "재생 · 없으면 글자"
     ]
   }
 } as const;
 
 const SCOPE: {title: string; items: string[]}[] = [
   {
-    title: "API 설계",
-    items: [
-      "Spring Boot 기반 백엔드 서버 구현",
-      "단어 조회와 문장 변환 엔드포인트 설계",
-      "응답에 전환 프레임을 포함하도록 구조 변경"
-    ]
-  },
-  {
-    title: "데이터",
-    items: [
-      "수어 데이터 입력 처리와 스키마 설계",
-      "단어별 인정 표현 목록 구축",
-      "Firebase 컬렉션 구조 정리"
-    ]
-  },
-  {
-    title: "학습 로직",
-    items: [
-      "퀴즈 정답 판정과 피드백 로직 구현",
-      "오답 기반 재출제 스케줄링",
-      "학습 상태 저장 구조 설계"
-    ]
-  },
-  {
     title: "문장 변환",
     items: [
-      "형태소 분석 연동",
-      "수어 어순 재배열 규칙 구현",
-      "사전에 없는 단어의 지문자 폴백"
+      "번역 API 와 사전 로더 첫 뼈대 (b86a1e8)",
+      "OpenAI 기본형 정규화, 두 갈래 선택을 세 갈래로 확장 (e34d174)",
+      "활용형을 기본형으로 되돌리는 어미 표 (c68e41c)"
+    ]
+  },
+  {
+    title: "영상 조회",
+    items: [
+      "단어별 지연 조회와 없는 단어 캐시 (8fdd313 · c68e41c)",
+      "정답 단어로 찾고 Firestore 주소로 폴백 (8fdd313)",
+      "영상 없는 단어도 순서를 지키는 재생 목록 items[] (133eb9a)"
+    ]
+  },
+  {
+    title: "배포",
+    items: [
+      "Dockerfile 과 Cloud Run 배포 (51e4b01)",
+      "GitHub Pages 배포 워크플로 (e94c200 외 3건)",
+      "CORS 허용 목록과 웹 로그인 팝업 처리 (bc692f8)"
+    ]
+  },
+  {
+    title: "퀴즈 데이터",
+    items: [
+      "기초 단어 · 일상 회화 카테고리 필터 (133eb9a)",
+      "20문항 Firestore 업로드 스크립트 (133eb9a)"
     ]
   }
 ];
 
 const ownerColor = (id: number) =>
-  id === 6
+  id === 5 || id === 6
     ? "#c4b5fd"
-    : id === 1 || id === 7
+    : id === 1 || id === 2 || id === 7
     ? "rgba(255,255,255,0.8)"
     : "#7eb8ff";
 
@@ -223,8 +223,8 @@ export function ArchitectureSection() {
     setRunning(false);
     announce(
       type === "word"
-        ? "단어 조회 경로를 재생했습니다."
-        : "문장 변환 경로를 재생했습니다."
+        ? "퀴즈 문항 경로를 재생했습니다."
+        : "통역기 문장 경로를 재생했습니다."
     );
   }
 
@@ -249,15 +249,16 @@ export function ArchitectureSection() {
           className="mb-[20px] break-keep text-[28px] font-black leading-tight"
           style={rise(on(IDX.heading), rm)}
         >
-          제가 만든 건 아바타가 아니라, 아바타가 읽는 데이터였습니다
+          제가 만든 건 아바타가 아니라, 문장을 영상으로 잇는 길이었습니다
         </h1>
         <p
           className="max-w-[740px] break-keep text-[16px] leading-[36px] text-[var(--sd-muted)]"
           style={rise(on(IDX.body), rm)}
         >
-          팀 프로젝트였고 저는 백엔드를 맡았습니다. 화면에서 제일 눈에 띄는 3D
-          아바타는 팀원이 만들었습니다. 아래에서 요청을 하나 보내보면, 어느
-          구간이 누구 몫이었는지 보입니다.
+          네 명이 한 프로젝트였고 저는 백엔드 둘 중 하나였습니다. 화면에서 제일
+          눈에 띄는 3D 아바타 영상과 앱 화면 대부분은 팀원이 만들었습니다.
+          아래에서 요청을 하나 보내보면, 어느 구간이 누구 몫이었는지 git
+          기록대로 보입니다.
         </p>
       </div>
 
@@ -266,10 +267,11 @@ export function ArchitectureSection() {
         aria-label="요청 처리 경로 시각화 다이어그램"
       >
         <p className="sr-only">
-          시스템 구조와 담당 범위를 보여줍니다. 단어 조회 경로는 React 화면 →
-          Spring Boot API → 수어 사전 → API → 화면 → 3D 아바타 → 표시 순서이고,
-          문장 변환 경로는 그 사이에 형태소 분석·어순 재배열과 시퀀스 조립
-          단계가 들어갑니다. 3D 아바타 렌더링은 팀원이 만든 부분입니다.
+          시스템 구조와 담당 범위를 보여줍니다. 퀴즈 경로는 Expo 앱 → Spring
+          Boot API → Firestore 문항 → 영상 조회 캐시 → API → 앱 → 3D 아바타 영상
+          → 재생 순서이고, 통역기 경로는 Firestore 대신 세 갈래 선택과 정규화를
+          거칩니다. 세 갈래 선택과 영상 조회 캐시가 제 코드이고, Firestore
+          퀴즈·사용자 도메인과 3D 아바타 영상은 팀원이 만든 부분입니다.
         </p>
 
         {/* 컨트롤 */}
@@ -300,7 +302,7 @@ export function ArchitectureSection() {
                     : {color: "var(--sd-muted)"}
                 }
               >
-                {k === "word" ? "단어 조회" : "문장 변환"}
+                {k === "word" ? "퀴즈 문항" : "통역기 문장"}
               </button>
             ))}
           </div>
@@ -403,7 +405,8 @@ export function ArchitectureSection() {
 
         <div className="absolute bottom-[26px] left-[26px] z-10">
           <span className="font-mono text-[9px] text-white/30">
-            구간별 응답 시간은 측정하지 않았습니다
+            통역기 왕복 중앙값 101ms(규칙 경로)만 쟀고 구간별 시간은 재지
+            않았습니다
           </span>
         </div>
 
@@ -451,14 +454,16 @@ export function ArchitectureSection() {
           제가 만들지 않은 것
         </div>
         <p className="break-keep text-[15px] leading-[32px]">
-          3D 아바타 모델과 렌더링, 애니메이션 적용은 팀원이 만들었습니다.
-          화면에서 제일 먼저 보이는 부분이라 오해되기 쉬운데,{" "}
+          3D 아바타 모델과 수어 동작 애니메이션은 박가원이 만들었고, 앱이 트는
+          영상이 그 결과물입니다. 화면에서 제일 먼저 보이는 부분이라 오해되기
+          쉬운데,{" "}
           <span className="font-bold text-[#c4b5fd]">
             그건 제 작업이 아닙니다
           </span>
-          . 저는 그 아바타가 무엇을 언제 어떻게 움직여야 하는지를 정의한
-          데이터와, 그 데이터를 만들어 내려보내는 서버를 맡았습니다. 프론트엔드
-          화면도 팀에서 나눠서 작업했습니다.
+          . 앱 화면 대부분과 퀴즈·오답노트·통계, 규칙 단순화기와 외부 사전
+          연동은 류태원이, Google 로그인과 Firestore 사용자 저장, Storage 첫
+          연결은 박지헌이 만들었습니다. 저는 그 영상을 단어마다 찾아 순서대로
+          넘기는 서버 쪽 길과 배포를 맡았습니다.
         </p>
       </div>
     </section>

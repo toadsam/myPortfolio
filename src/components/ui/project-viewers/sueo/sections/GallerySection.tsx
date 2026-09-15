@@ -12,10 +12,11 @@ import {useInView, useTimeline} from "../useTimeline";
 
 const HEADLINE = ["수어는", "손", "모양이", "아니라"];
 
+// 기준: GitHub 저장소 toadsam/Sign-Language (main).
 const STATS: {n: string; l: string; warn?: boolean}[] = [
-  {n: "5", l: "기술 스택"},
-  {n: "4", l: "핵심 기능"},
-  {n: "백엔드", l: "담당 범위"},
+  {n: "4명", l: "팀 인원"},
+  {n: "70", l: "main 커밋"},
+  {n: "백엔드", l: "내 담당"},
   {n: "미감수", l: "수어 표현 검증", warn: true}
 ];
 
@@ -272,13 +273,13 @@ export function GallerySection() {
             className="mt-[22px] max-w-[520px] break-keep text-[16px] leading-[36px]"
             style={rise(t[IDX.summary] || rm, rm)}
           >
-            아바타가 동작을 보여주고, 사용자가 뜻을 맞히고, 틀린 건 다시 나온다.
-            반대로 문장을 입력하면 그 문장의 수어 동작을 이어서 보여준다. 저는
-            그{" "}
+            아바타 영상이 동작을 보여주고, 사용자가 보기 네 개 중 뜻을 고르고,
+            많이 틀린 문제는 복습으로 다시 나온다. 반대로 문장을 입력하면 수어
+            단어 순서로 영상을 이어서 보여준다. 저는 그{" "}
             <strong className="font-bold text-[var(--sd-accent)]">
-              동작 데이터와 판정 로직
+              문장 변환과 영상 조회
             </strong>
-            을 만드는 백엔드를 맡았습니다.
+            를 만드는 백엔드와 배포를 맡았습니다.
           </p>
 
           <div className="mt-[28px] grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -352,7 +353,7 @@ export function GallerySection() {
               on={t[IDX.b + 2] || rm}
               instant={rm}
               title="GitHub 저장소"
-              sub="Spring Boot · Firebase · React"
+              sub="Spring Boot · Firebase · Expo"
             />
           </Piece>
 
@@ -412,9 +413,9 @@ export function GallerySection() {
             >
               <div className="pointer-events-none absolute inset-0 border border-[var(--sd-frame)]" />
               <div className="flex h-full w-full flex-col justify-center px-5 font-mono text-[10px] leading-[2.2] text-[rgba(255,255,255,0.62)]">
-                <p>담당: 백엔드</p>
-                <p>수어 데이터 API 설계</p>
-                <p>정답 판정 로직</p>
+                <p>담당: 백엔드 · 배포</p>
+                <p>문장 변환 · 세 갈래 선택</p>
+                <p>단어별 영상 조회</p>
                 <p>3D 아바타는 팀원 작업</p>
               </div>
             </div>

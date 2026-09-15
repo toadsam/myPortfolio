@@ -2,7 +2,7 @@
 
 import {useRef} from "react";
 import {useSueo} from "../context";
-import {fade, Kicker, WordHeading} from "../parts";
+import {fade, Kicker, LimitList, WordHeading} from "../parts";
 import {useInView, useTimeline} from "../useTimeline";
 
 const STEPS = [0, 150, 800, 1400, 1800, 2400, 2900, 3200];
@@ -27,9 +27,9 @@ type Plate = {
 
 const PLATES: Plate[] = [
   {
-    title: "동작의 정확성",
+    title: "영상 속 동작의 정확성",
     detail:
-      "공개 자료를 참고해 제가 키프레임을 만들었습니다. 원어민 검토는 없었습니다.",
+      "팀원이 만든 3D 아바타 영상입니다. 농인 당사자나 수어 전문가의 검토는 없었습니다.",
     icon: (
       <svg
         className="h-10 w-10 opacity-55"
@@ -46,7 +46,8 @@ const PLATES: Plate[] = [
   },
   {
     title: "문장 어순 규칙",
-    detail: "규칙 세 개로 재배열합니다. 실제 문법은 이보다 훨씬 복잡합니다.",
+    detail:
+      "시간·장소·주어·목적어·서술어 다섯 칸에 줄 세웁니다. 실제 문법은 훨씬 복잡합니다.",
     icon: (
       <svg
         className="h-12 w-12 opacity-55"
@@ -67,8 +68,9 @@ const PLATES: Plate[] = [
     )
   },
   {
-    title: "인정 표현 목록",
-    detail: "같은 뜻으로 인정할 표현을 제가 판단해서 넣었습니다.",
+    title: "세 갈래 선택 기준",
+    detail:
+      "사전에 몇 개 맞았는지로 고릅니다. 옳은지가 아니라 재생할 수 있는지를 셉니다.",
     icon: (
       <svg
         className="h-9 w-9 opacity-55"
@@ -91,24 +93,50 @@ const PLATES: Plate[] = [
   },
   {
     title: "지역·세대별 차이",
-    detail: "표현은 지역과 세대에 따라 다릅니다. 하나의 표준만 담았습니다.",
+    detail:
+      "표현은 지역과 세대에 따라 다릅니다. 사전은 표기 하나만 담았습니다.",
     empty: true
   }
 ];
 
+// 왼쪽 열은 GitHub 저장소의 코드와 커밋으로 확인되는 것만 적는다.
 const CLAIMS: [string, string][] = [
-  ["동작을 시계열 데이터로 설계했다", "그 동작이 정확한 한국수어인지"],
-  ["정답 판정을 표현 집합으로 다시 짰다", "그 표현 집합이 충분한지"],
-  ["어순 재배열 파이프라인을 만들었다", "그 결과가 자연스러운 문장인지"],
-  ["전환 구간을 서버에서 생성했다", "그 전환이 의미를 해치지 않는지"],
-  ["학습 반복 구조를 설계했다", "이 방식이 실제로 학습에 효과적인지"]
+  [
+    "문장을 수어 단어 순서의 재생 목록으로 바꾸는 서버 경로를 만들었다",
+    "그 순서가 자연스러운 한국수어인지"
+  ],
+  [
+    "세 분석기 결과를 사전 적중 수로 고르게 했다",
+    "그 기준이 정확도를 올리는지"
+  ],
+  [
+    "단어마다 영상을 찾고, 없는 단어도 기억하게 했다",
+    "영상이 없는 나머지 103단어가 언제 채워질지"
+  ],
+  [
+    "앱을 GitHub Pages 에, 서버를 Cloud Run 에 올렸다",
+    "실제 사용자가 몇 명이고 학습에 도움이 됐는지"
+  ],
+  [
+    "운영 서버에서 영상 있는 단어 17개와 왕복 101ms 를 쟀다",
+    "외부 분석기를 켠 상태의 속도와 정확도"
+  ]
+];
+
+const DEBTS = [
+  "로그인은 토큰을 발급까지만 하고, 요청마다 검증하는 자리가 없습니다. 사용자 API 가 인증 없이 열려 있습니다. 팀 전체가 채우지 못한 부분입니다.",
+  "자동화된 테스트가 contextLoads() 하나뿐입니다.",
+  "정규화가 손으로 쓴 어미 표입니다. 표에 없는 활용형은 외부 분석기가 받아 주지 않으면 사전에서 빠집니다.",
+  "저장소에 .idea/ 와 빌드 산출물, 쓰이지 않는 퀴즈 mp4 20개(90MB)가 커밋돼 있습니다.",
+  "커밋 메시지가 한동안 「1」, 「]1」이었습니다."
 ];
 
 const NEXT_TIME = [
   "데이터를 만들기 전에 검토해줄 사람을 먼저 구한다",
   "단어 수를 늘리는 것보다 있는 단어를 검증받는 것을 우선한다",
   "표정을 다룰 수 없다면, 다룰 수 없다는 걸 화면에 표시한다",
-  "학습 효과는 주장하지 않고, 사용자에게 물어본 결과만 말한다"
+  "학습 효과는 주장하지 않고, 사용자에게 물어본 결과만 말한다",
+  "로그인을 붙이는 날, 요청마다 토큰을 검증하는 필터까지 한 번에 끝낸다"
 ];
 
 export function LimitsSection() {
@@ -137,10 +165,10 @@ export function LimitsSection() {
         className="mt-5 max-w-[740px] text-[16px] leading-[2.25]"
         style={fade(on(IDX.intro), rm, "0.6s")}
       >
-        학교 프로젝트였고, 공개된 자료를 참고해서 데이터를 만들었습니다. 농인
-        당사자나 수어 통역사에게 검토받은 적은 없습니다. 그래서 이 서비스가
-        보여주는 동작이 정확한지, 자연스러운지를 제가 보증할 수 없습니다. 이건
-        기술적인 한계가 아니라{" "}
+        학교 프로젝트였고, 앱이 트는 수어 영상은 팀원이 만든 3D 아바타로
+        채웠습니다. 농인 당사자나 수어 전문가에게 검토받은 적은 없습니다. 그래서
+        이 서비스가 보여주는 동작과 문장 순서가 정확한지, 자연스러운지를 보증할
+        수 없습니다. 이건 기술적인 한계가 아니라{" "}
         <span className="font-bold text-[var(--sd-warn)]">
           만드는 과정에서 빠뜨린 절차입니다.
         </span>
@@ -259,7 +287,7 @@ export function LimitsSection() {
         </div>
 
         <p className="mt-[24px] text-[15px] leading-[2]">
-          왼쪽은 제가 한 일이고 증명할 수 있습니다.
+          왼쪽은 저장소의 코드와 커밋으로 확인할 수 있는 일입니다.
           <br className="hidden sm:block" />
           오른쪽은 이 프로젝트가 답할 수 없는 질문들입니다.
           <br className="hidden sm:block" />
@@ -269,6 +297,9 @@ export function LimitsSection() {
           </span>
         </p>
       </div>
+
+      {/* ── 코드가 가진 빚 (README 「알고 있는 빚」) ── */}
+      <LimitList className="mt-[40px]" label="코드가 가진 빚" items={DEBTS} />
 
       {/* ── 다시 한다면 ── */}
       <div className="mt-[40px] flex flex-col rounded-md border border-[rgba(126,184,255,0.24)] border-l-[3px] border-l-[var(--sd-primary)] bg-[rgba(126,184,255,0.04)] p-[24px]">

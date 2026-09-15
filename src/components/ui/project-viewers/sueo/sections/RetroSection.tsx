@@ -13,9 +13,9 @@ const KPT: {key: string; color: string; items: string[]}[] = [
     key: "Keep",
     color: "#4ade80",
     items: [
-      "동작을 시계열로 설계한 것",
-      "정답을 하나가 아니라 표현 집합으로 바꾼 것",
-      "전환 구간을 서버에서 정한 것"
+      "정답 데이터가 없을 때 셀 수 있는 기준(사전 적중 수)을 정하고, 그 대가를 적어 둔 것",
+      "실패를 사전에 없음과 영상만 없음으로 나눠, 화면이 이유를 보여줄 수 있게 한 것",
+      "배포본에 직접 물어 영상 17개와 규칙 경로만 돈다는 사실을 잰 것"
     ]
   },
   {
@@ -23,17 +23,17 @@ const KPT: {key: string; color: string; items: string[]}[] = [
     color: "#f87171",
     items: [
       "수어 표현을 검증할 사람을 끝까지 구하지 않았다",
-      "표정을 다루지 않으면서 그 사실을 화면에 표시하지 않았다",
-      "단어 수를 늘리는 데 시간을 더 썼다"
+      "로그인을 토큰 발급까지만 붙이고, 요청마다 검증하는 자리를 비워 뒀다",
+      "빈 영상 주소나 외부 호출 실패처럼 조용히 실패하는 곳에 테스트도 로그도 두지 않았다"
     ]
   },
   {
     key: "Try",
     color: "#fbbf24",
     items: [
-      "학습 콘텐츠 확장과 실제 사용자 테스트 진행",
-      "감수 절차를 개발 일정 안에 넣기",
-      "다룰 수 없는 부분을 화면에 명시하기"
+      "감수해 줄 사람과 문장 몇십 개의 정답을 개발 전에 구하기",
+      "인증은 발급과 검증을 한 단위로 끝내기",
+      "커밋 메시지에 무엇을 왜 고쳤는지 남기기"
     ]
   }
 ];
@@ -69,8 +69,9 @@ export function RetroSection({onExit}: {onExit: () => void}) {
           className="mt-[20px] text-[16px] leading-[36px]"
           style={rise(on(IDX.intro), rm)}
         >
-          데이터 구조를 잘 짜는 건 제가 할 수 있는 일이었습니다.
-          <br className="hidden md:block" /> 그런데 그 데이터가 맞는지는 저
+          문장을 수어 순서로 바꾸고, 영상을 찾고, 배포하는 건 제가 할 수 있는
+          일이었습니다.
+          <br className="hidden md:block" /> 그런데 그 결과가 맞는 수어인지는 저
           혼자서는 알 수 없는 일이었고,
           <br className="hidden md:block" /> 그걸 프로젝트가 끝날 때까지
           미뤄뒀습니다.
@@ -132,8 +133,9 @@ export function RetroSection({onExit}: {onExit: () => void}) {
         </span>
         <p className="mt-[12px] text-[16px] leading-[32px]">
           학습 콘텐츠 확장과 실제 사용자 테스트를 진행할 예정입니다.
-          <br className="hidden md:block" /> 다만 단어를 더 넣기 전에, 지금 있는
-          12개부터 검토받는 게 먼저라고 생각합니다.
+          <br className="hidden md:block" /> 다만 단어를 더 넣기 전에, 요청마다
+          토큰을 검증하는 인증부터 채우고 영상이 있는 17개 단어부터 검토받는 게
+          먼저라고 생각합니다.
         </p>
       </div>
 

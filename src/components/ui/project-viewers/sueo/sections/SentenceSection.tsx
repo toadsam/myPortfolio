@@ -1,763 +1,438 @@
 "use client";
 
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useRef, useState} from "react";
 import {useSueo} from "../context";
-import {CodePanel, fade, Kicker, NoteBox, rise, WordHeading} from "../parts";
 import {
-  cellDuration,
-  convert,
-  PRESET_KEYS,
-  type Conversion,
-  type Token
+  Caveat,
+  CodePanel,
+  fade,
+  Kicker,
+  LimitList,
+  NoteBox,
+  rise,
+  WordHeading
+} from "../parts";
+import {
+  IN_DICTIONARY,
+  SENTENCES,
+  SOURCE_LABEL,
+  SOURCE_PRIORITY,
+  type StreamSource
 } from "../sentenceData";
 import {useInView, useTimeline} from "../useTimeline";
 
-const STEPS = [0, 150, 700, 1200, 1500, 1900, 3000, 3400];
+// 02 · 문장 변환
+// 기준: GitHub 저장소 toadsam/Sign-Language (main).
+// 한 문장을 규칙 · ETRI · OpenAI 세 갈래로 따로 쪼갠 뒤, 사전에 몇 개나 맞았는지로
+// 이긴 쪽을 쓴다(TranslationService.chooseTokenStream). 두 갈래(규칙·ETRI) 비교는 류태원이
+// 먼저 만들었고(dae303b), OpenAI 갈래와 동점 우선순위는 정재훈이 붙였다(e34d174).
+// 어순 규칙(SignSentenceSimplifier)은 류태원 코드다.
+
+const STEPS = [0, 150, 700, 1200, 1700, 2200, 2700];
 const IDX = {
   label: 0,
   heading: 1,
-  p1: 2,
-  p2: 3,
-  input: 4,
-  rows: 5,
-  code: 6,
-  hint: 7
+  intro: 2,
+  pipe: 3,
+  demo: 4,
+  code: 5,
+  notes: 6
 };
 
-const PIPELINE = [
-  {t: "문장 입력", d: "원문 그대로"},
-  {t: "형태소 분석", d: "단어와 품사 분리"},
-  {t: "불필요 요소 제거", d: "조사·어미 제거"},
-  {t: "수어 어순 재배열", d: "시간·장소를 앞으로"},
-  {t: "동작 시퀀스 조립", d: "각 단어의 키프레임을 이어 붙임"}
+const PIPELINE: {
+  n: string;
+  title: string;
+  file: string;
+  mine: boolean;
+  note?: string;
+}[] = [
+  {n: "①", title: "규칙 단순화", file: "SignSentenceSimplifier", mine: false},
+  {n: "②", title: "ETRI 형태소", file: "ExternalLexiconApiClient", mine: false},
+  {
+    n: "③",
+    title: "OpenAI 기본형",
+    file: "OpenAiMorphologyNormalizerService",
+    mine: true
+  },
+  {
+    n: "④",
+    title: "사전 적중 수로 선택",
+    file: "TranslationService.chooseTokenStream",
+    mine: true,
+    note: "두 갈래 → 세 갈래 확장"
+  },
+  {
+    n: "⑤",
+    title: "단어별 영상 조회",
+    file: "StorageVideoCache.findUrl",
+    mine: true,
+    note: "첫 연결은 박지헌"
+  }
 ];
 
-// 파이프라인 단계별로 밝히는 코드 줄 번호(1-based).
-const STAGE_LINES: number[][] = [
-  [],
-  [1, 2],
-  [4, 5, 6, 7],
-  [9, 10, 11],
-  [13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
-];
-
-// 항상 옅게 강조해 두는 줄 — 이 페이지의 핵심 주장.
-const STATIC_LINES = [10, 11, 18, 19];
-
-const CODE: {n: number; body: React.ReactNode}[] = [
-  {n: 1, body: <span className="sd-com">{"  // 1. 형태소 분석"}</span>},
-  {
-    n: 2,
-    body: (
-      <>
-        {"  "}
-        <span className="sd-key">List</span>
-        {" tokens = nlpService.tokenize(sentence);"}
-      </>
-    )
-  },
-  {n: 3, body: " "},
-  {
-    n: 4,
-    body: (
-      <span className="sd-com">
-        {"  // 2. 수어에 없는 품사 제거 (조사, 어미 등)"}
-      </span>
-    )
-  },
-  {
-    n: 5,
-    body: (
-      <>
-        {"  "}
-        <span className="sd-key">List</span>
-        {" meaningfulTokens = tokens.stream()"}
-      </>
-    )
-  },
-  {n: 6, body: "      .filter(t -> !GrammarRule.isRemovableParticle(t))"},
-  {n: 7, body: "      .collect(Collectors.toList());"},
-  {n: 8, body: " "},
-  {
-    n: 9,
-    body: (
-      <span className="sd-com">
-        {"  // 3. 수어 어순 재배열 (단순화된 규칙 적용)"}
-      </span>
-    )
-  },
-  {
-    n: 10,
-    body: (
-      <>
-        {"  "}
-        <span className="sd-key">List</span>
-        {" orderedTokens = ruleEngine.apply(meaningfulTokens,"}
-      </>
-    )
-  },
-  {
-    n: 11,
-    body: (
-      <>
-        {"      "}
-        <span className="sd-key">OrderRule</span>
-        {".TIME_FIRST, "}
-        <span className="sd-key">OrderRule</span>
-        {".PLACE_SECOND, "}
-        <span className="sd-key">OrderRule</span>
-        {".VERB_LAST);"}
-      </>
-    )
-  },
-  {n: 12, body: " "},
-  {
-    n: 13,
-    body: <span className="sd-com">{"  // 4. 모션 데이터 매핑 및 조립"}</span>
-  },
-  {
-    n: 14,
-    body: (
-      <>
-        {"  "}
-        <span className="sd-key">Sequence</span>
-        {" sequence = "}
-        <span className="sd-key">new</span>
-        {" Sequence();"}
-      </>
-    )
-  },
-  {
-    n: 15,
-    body: (
-      <>
-        {"  "}
-        <span className="sd-key">for</span>
-        {" (Token t : orderedTokens) {"}
-      </>
-    )
-  },
-  {n: 16, body: "      SignData sign = dict.lookup(t.getWord());"},
-  {
-    n: 17,
-    body: (
-      <>
-        {"      "}
-        <span className="sd-key">if</span>
-        {" (sign == "}
-        <span className="sd-key">null</span>
-        {") {"}
-      </>
-    )
-  },
-  {
-    n: 18,
-    body: (
-      <span className="sd-com">
-        {"          // 사전에 없으면 지문자(Fingerspelling) 시퀀스로 대체"}
-      </span>
-    )
-  },
-  {n: 19, body: "          sign = FingerspellGen.generate(t.getWord());"},
-  {n: 20, body: "      }"},
-  {n: 21, body: "      sequence.append(sign, TransitionConfig.SMOOTH);"},
-  {n: 22, body: "  }"}
-];
-
-/** 셀에 들어가는 손 픽토그램. */
-function CellHand() {
-  return (
-    <svg
-      viewBox="0 0 100 100"
-      className="h-[64px] w-[64px]"
-      overflow="visible"
-      aria-hidden="true"
-    >
-      <g
-        fill="var(--sd-hand)"
-        stroke="var(--sd-hand)"
-        strokeWidth="8"
-        strokeLinecap="round"
-      >
-        <path d="M35,90 L35,50 C35,45 40,45 40,50 L40,80" fill="none" />
-        <path d="M45,85 L45,35 C45,30 50,30 50,35 L50,80" fill="none" />
-        <path d="M55,85 L55,40 C55,35 60,35 60,40 L60,80" fill="none" />
-        <path d="M65,90 L65,55 C65,50 70,50 70,55 L70,80" fill="none" />
-        <path
-          d="M25,75 C20,70 25,65 30,70 L40,80"
-          fill="none"
-          strokeWidth="9"
-        />
-        <path d="M30,95 Q50,110 70,95 L65,75 L35,75 Z" stroke="none" />
-      </g>
-    </svg>
-  );
+const CHOOSE = `TokenStreamChoice best = choices.get(0);
+int bestHits = countDictionaryHits(best.tokens());
+for (TokenStreamChoice choice : choices.subList(1, choices.size())) {
+  int hits = countDictionaryHits(choice.tokens());
+  if (hits > bestHits || (hits == bestHits && shouldPreferTie(choice.source(), best.source()))) {
+    best = choice;
+    bestHits = hits;
+  }
 }
+return best;`;
 
-function SignCell({item, dimmed}: {item: Token; dimmed: boolean}) {
-  return (
-    <div
-      className={`sd-sign-cell relative flex h-[100px] w-[96px] shrink-0 flex-col items-center justify-end ${
-        dimmed ? "opacity-40" : ""
-      }`}
-      data-dur={cellDuration(item)}
-    >
-      <div
-        className="z-10 mb-2 flex h-[64px] w-[64px] items-center justify-center"
-        data-hand
-      >
-        <CellHand />
-      </div>
-      <div className="z-10 font-mono text-[10px] text-[var(--sd-accent)]">
-        {item.w}
-      </div>
+const PRIORITY = `private int sourcePriority(String source) {
+  return switch (source) {
+    case "openai" -> 3;
+    case "etri" -> 2;
+    default -> 1;
+  };
+}`;
 
-      <div
-        className="absolute bottom-0 left-[10px] right-[10px] h-[2px] overflow-hidden rounded bg-[rgba(255,255,255,0.1)] opacity-0 transition-opacity"
-        data-bar
-      >
-        <div className="h-full w-0 bg-[var(--sd-primary)]" data-fill />
-      </div>
+const ORDER = `List<String> orderedTokens = new ArrayList<>();
+orderedTokens.addAll(timeTokens);       // 시간
+orderedTokens.addAll(placeTokens);      // 장소
+orderedTokens.addAll(subjectTokens);    // 주어
+orderedTokens.addAll(objectTokens);     // 목적어
+orderedTokens.addAll(predicateTokens);  // 서술어`;
 
-      {dimmed ? (
-        <>
-          <div className="absolute left-[20px] right-[20px] top-[30%] z-20 h-[2px] rotate-12 bg-[var(--sd-bad)]" />
-          <div className="absolute top-[-10px] z-20 rounded border border-[var(--sd-bad)] bg-[var(--sd-bg)] px-1 font-mono text-[9px] text-[var(--sd-bad)]">
-            수어에 없음
-          </div>
-        </>
-      ) : item.unknown ? (
-        <div className="absolute top-[-10px] z-20 rounded border border-[var(--sd-warn)] bg-[#1a1708] px-1 font-mono text-[9px] text-[var(--sd-warn)]">
-          지문자
-        </div>
-      ) : null}
-    </div>
-  );
+const SOURCES: StreamSource[] = ["rule", "etri", "openai"];
+
+function hits(tokens: string[]) {
+  return tokens.filter(t => IN_DICTIONARY.has(t)).length;
 }
 
 export function SentenceSection() {
   const {reducedMotion: rm, bumpSignCount, announce} = useSueo();
   const sectionRef = useRef<HTMLElement>(null);
-  const inView = useInView(sectionRef, {threshold: 0.1});
+  const inView = useInView(sectionRef, {threshold: 0.08});
   const t = useTimeline(STEPS, inView, rm);
-
-  const [text, setText] = useState("내일 학교에 갑니다");
-  const [data, setData] = useState<Conversion>(() =>
-    convert("내일 학교에 갑니다")
-  );
-  const [playedOnce, setPlayedOnce] = useState(false);
-  const [converting, setConverting] = useState(false);
-  const [stage, setStage] = useState(-1);
-
-  const strip1 = useRef<HTMLDivElement>(null);
-  const strip2 = useRef<HTMLDivElement>(null);
-  const pipeRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLDivElement>(null);
-  const nodeRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const anims = useRef<
-    {
-      id: number;
-      seq: {el: HTMLElement; start: number; end: number; dur: number}[];
-      t0: number;
-      total: number;
-      active: number;
-    }[]
-  >([]);
-  const rafRef = useRef(0);
-
-  const dur1 = data.kor.reduce((a, x) => a + cellDuration(x), 0);
-  const dur2 = data.sign.reduce((a, x) => a + cellDuration(x), 0);
-  const hasUnknown = [...data.kor, ...data.sign].some(x => x.unknown);
-  const movedIdx = data.sign.findIndex(x => x.movedFront);
-
-  const cleanCell = useCallback((el: HTMLElement | undefined) => {
-    if (!el) return;
-    el.classList.remove("sd-cell-playing");
-    const bar = el.querySelector<HTMLElement>("[data-bar]");
-    const fill = el.querySelector<HTMLElement>("[data-fill]");
-    const hand = el.querySelector<HTMLElement>("[data-hand]");
-    if (bar) bar.style.opacity = "0";
-    if (fill) fill.style.width = "0%";
-    if (hand) hand.style.transform = "none";
-  }, []);
-
-  const loop = useCallback(
-    (now: number) => {
-      let running = false;
-
-      for (let i = anims.current.length - 1; i >= 0; i--) {
-        const a = anims.current[i];
-        const elapsed = now - a.t0;
-
-        if (elapsed >= a.total) {
-          cleanCell(a.seq[a.active]?.el);
-          anims.current.splice(i, 1);
-          continue;
-        }
-        running = true;
-
-        const next = a.seq.findIndex(
-          s => elapsed >= s.start && elapsed < s.end
-        );
-        if (next !== a.active) {
-          cleanCell(a.seq[a.active]?.el);
-          a.active = next;
-          const el = a.seq[next]?.el;
-          if (el) {
-            if (!rm) el.classList.add("sd-cell-playing");
-            const bar = el.querySelector<HTMLElement>("[data-bar]");
-            if (bar) bar.style.opacity = "1";
-          }
-        }
-
-        if (a.active !== -1) {
-          const cur = a.seq[a.active];
-          const p = (elapsed - cur.start) / cur.dur;
-          const fill = cur.el.querySelector<HTMLElement>("[data-fill]");
-          if (fill) fill.style.width = `${p * 100}%`;
-          if (!rm && !cur.el.classList.contains("opacity-40")) {
-            const hand = cur.el.querySelector<HTMLElement>("[data-hand]");
-            if (hand) {
-              const rot = Math.sin(p * Math.PI * 2) * 15;
-              const sy = 1 - Math.sin(p * Math.PI) * 0.1;
-              hand.style.transform = `rotate(${rot}deg) scaleY(${sy})`;
-            }
-          }
-        }
-      }
-
-      if (running) {
-        rafRef.current = requestAnimationFrame(loop);
-      } else {
-        rafRef.current = 0;
-        if (!playedOnce) {
-          setPlayedOnce(true);
-          bumpSignCount();
-        }
-      }
-    },
-    [cleanCell, rm, playedOnce, bumpSignCount]
-  );
-
-  useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
-
-  function playRow(rowId: 1 | 2) {
-    if (anims.current.some(a => a.id === rowId)) return;
-    const strip = (rowId === 1 ? strip1 : strip2).current;
-    if (!strip) return;
-
-    const cells = Array.from(
-      strip.querySelectorAll<HTMLElement>(".sd-sign-cell")
-    );
-    let acc = 0;
-    const seq = cells.map(el => {
-      const d = parseInt(el.dataset.dur || "1000", 10);
-      const entry = {el, start: acc, end: acc + d, dur: d};
-      acc += d;
-      return entry;
-    });
-    if (!seq.length) return;
-
-    anims.current.push({
-      id: rowId,
-      seq,
-      t0: performance.now(),
-      total: acc,
-      active: -1
-    });
-    if (!rafRef.current) rafRef.current = requestAnimationFrame(loop);
-  }
-
-  function playBoth() {
-    if (anims.current.length) return;
-    playRow(1);
-    playRow(2);
-  }
-
-  // ── 변환: 파이프라인 점이 5단계를 지나간 뒤 결과를 갈아끼운다 ──────────────
-  function runConvert(input: string) {
-    if (converting) return;
-    anims.current = [];
-    [strip1, strip2].forEach(r =>
-      r.current
-        ?.querySelectorAll<HTMLElement>(".sd-sign-cell")
-        .forEach(cleanCell)
-    );
-
-    if (rm) {
-      setData(convert(input));
-      return;
-    }
-
-    setConverting(true);
-    let step = 0;
-    const tick = () => {
-      if (step >= PIPELINE.length) {
-        setStage(-1);
-        setConverting(false);
-        const next = convert(input);
-        setData(next);
-        announce(
-          `수어 어순으로 ${next.sign.length}개 단어가 배열되었습니다. 조사 ${
-            next.kor.filter(x => x.drop).length
-          }개가 제외되었습니다.`
-        );
-        if (dotRef.current) dotRef.current.style.opacity = "0";
-        return;
-      }
-
-      const node = nodeRefs.current[step];
-      const box = pipeRef.current;
-      if (node && box && dotRef.current) {
-        const r = node.getBoundingClientRect();
-        const c = box.getBoundingClientRect();
-        dotRef.current.style.opacity = "1";
-        dotRef.current.style.transform = `translate(${
-          r.left - c.left + r.width / 2 - 4
-        }px, ${r.top - c.top + r.height / 2 - 4 - 15}px)`;
-      }
-      setStage(step);
-      step++;
-      window.setTimeout(tick, 500);
-    };
-    tick();
-  }
-
   const on = (i: number) => t[i] || rm;
+
+  const [idx, setIdx] = useState(0);
+  const [keys, setKeys] = useState(true);
+  const s = SENTENCES[idx];
+
+  const alive = SOURCES.filter(src => src === "rule" || keys);
+  let best: {src: StreamSource; h: number} | null = null;
+  for (const src of alive) {
+    const h = hits(s[src]);
+    if (
+      !best ||
+      h > best.h ||
+      (h === best.h && SOURCE_PRIORITY[src] > SOURCE_PRIORITY[best.src])
+    ) {
+      best = {src, h};
+    }
+  }
+
+  function pick(i: number) {
+    setIdx(i);
+    bumpSignCount();
+    announce(`「${SENTENCES[i].text}」 문장을 골랐습니다.`);
+  }
+
+  function toggleKeys() {
+    const next = !keys;
+    setKeys(next);
+    announce(
+      next
+        ? "외부 키가 있는 개발 환경입니다."
+        : "외부 키가 없는 운영 배포본 상태입니다."
+    );
+  }
 
   return (
     <section
       ref={sectionRef}
       data-sd-section
-      className="mx-auto flex w-full max-w-[1080px] flex-col items-center px-6 py-[100px]"
+      className="mx-auto flex w-full max-w-[1080px] flex-col px-6 py-[100px]"
     >
       {/* ── 도입 ── */}
-      <div className="mb-[36px] w-full max-w-[740px] text-center">
+      <div className="mb-[36px] w-full max-w-[760px]">
         <Kicker on={on(IDX.label)} instant={rm} className="mb-4">
           02 · 문장 변환
         </Kicker>
         <WordHeading
-          text="단어를 하나씩 바꿔 넣으면 말이 안 된다"
+          text="누가 옳은지 모를 때, 셀 수 있는 것으로 골랐다"
           on={on(IDX.heading)}
           instant={rm}
-          className="mb-8 justify-center text-[28px] font-black leading-tight"
+          stepMs={60}
+          className="mb-8 text-[26px] font-black leading-tight md:text-[28px]"
         />
-        <div className="space-y-[18px] text-left">
-          <p
-            className="text-[16px] leading-[36px]"
-            style={rise(on(IDX.p1), rm)}
-          >
-            처음엔 문장을 단어로 쪼개서 각 단어의 동작을 순서대로 이어 붙였다.
-            문법적으로 틀린 문장이 나왔다.
+        <div className="space-y-[18px]" style={rise(on(IDX.intro), rm)}>
+          <p className="text-[16px] leading-[36px]">
+            한국수어는 한국어를 손으로 옮긴 게 아니라 문법이 다른 언어다. 조사가
+            없고, 시간과 장소가 앞에 오고, 의문사는 뒤로 간다. 그리고 우리
+            사전에는 기본형만 있다. 그래서 「지하철역은 어디야?」를 영상으로
+            바꾸려면 조사를 떼고, 「어디야」를 「어디」로 되돌리고, 어순을
+            바꿔야 한다.
           </p>
-          <p
-            className="text-[16px] leading-[36px]"
-            style={rise(on(IDX.p2), rm)}
-          >
-            한국수어는 한국어를 손으로 옮긴 게 아니라{" "}
-            <strong className="font-bold text-[var(--sd-primary)]">
-              문법이 다른 별개의 언어다.
-            </strong>{" "}
-            시간 표현이 앞에 오고, 조사가 없고, 어순이 다르다. 아래에서 같은
-            문장을 두 가지 순서로 나란히 재생해보세요.
+          <p className="text-[16px] leading-[36px]">
+            방법은 셋이었다. 손으로 쓴 규칙, ETRI 형태소 분석 API, OpenAI.{" "}
+            <span className="font-bold text-[var(--sd-accent)]">
+              어느 쪽이 옳은지 채점할 정답 데이터가 없었다.
+            </span>{" "}
+            대신 셀 수 있는 게 하나 있었다. 결과가 우리 사전에 몇 개나
+            들어가는가. 사전에 있어야 영상을 틀 수 있기 때문이다. 이 기준은
+            팀원이 규칙과 ETRI 두 갈래를 비교하려고 먼저 만들었고, 나는 여기에
+            OpenAI 갈래를 붙이고 동점일 때의 우선순위(OpenAI, ETRI, 규칙 순)를
+            넣어 세 갈래로 넓혔다.
           </p>
         </div>
       </div>
 
-      {/* ── 입력 ── */}
+      {/* ── 파이프라인 ── */}
       <div
-        className="mb-[36px] flex w-full max-w-[640px] flex-col items-center gap-4"
-        style={rise(on(IDX.input), rm)}
+        className="grid grid-cols-1 gap-2 sm:grid-cols-5"
+        style={fade(on(IDX.pipe), rm)}
       >
-        <div className="flex w-full gap-2">
-          <input
-            type="text"
-            value={text}
-            onChange={e => setText(e.target.value)}
-            onKeyDown={e => {
-              if (e.key === "Enter") runConvert(text);
+        {PIPELINE.map(p => (
+          <div
+            key={p.n}
+            className="rounded-md border p-3"
+            style={{
+              borderColor: p.mine
+                ? "rgba(126,184,255,0.45)"
+                : "rgba(196,181,253,0.35)",
+              background: p.mine
+                ? "rgba(126,184,255,0.06)"
+                : "rgba(196,181,253,0.04)"
             }}
-            placeholder="문장을 입력하세요"
-            aria-label="변환할 문장"
-            className="flex-1 rounded-md border border-[rgba(126,184,255,0.22)] bg-[rgba(255,255,255,0.04)] px-[14px] py-[11px] font-mono text-[13px] text-white transition-colors focus:border-[var(--sd-primary)]"
-          />
+          >
+            <div className="font-mono text-[11px] text-[var(--sd-muted)]">
+              {p.n}
+            </div>
+            <div className="mt-1 text-[14px] font-bold">{p.title}</div>
+            <div className="mt-1 break-all font-mono text-[9px] text-[rgba(255,255,255,0.4)]">
+              {p.file}
+            </div>
+            <div
+              className="mt-2 font-mono text-[9px]"
+              style={{color: p.mine ? "var(--sd-primary)" : "#c4b5fd"}}
+            >
+              {p.mine
+                ? p.note
+                  ? `내 코드 · ${p.note}`
+                  : "내 코드"
+                : "팀원 코드"}
+            </div>
+          </div>
+        ))}
+      </div>
+      <Caveat>
+        ①~③은 따로 돌고 ④가 셋 중 하나를 고릅니다. 외부 키가 없으면 ②·③은 조용히
+        빠집니다. 사전에 없는 토큰을 사전 API 로 한 번 더 찾는 단계는 그림에서
+        생략했습니다.
+      </Caveat>
+
+      {/* ── 세 갈래 경쟁 ── */}
+      <div
+        className="mt-[36px] rounded-md border border-[rgba(126,184,255,0.18)] bg-[var(--sd-panel)] p-[22px]"
+        style={rise(on(IDX.demo), rm)}
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[rgba(126,184,255,0.1)] pb-3">
+          <div
+            className="flex flex-wrap gap-2"
+            role="group"
+            aria-label="문장 고르기"
+          >
+            {SENTENCES.map((p, i) => (
+              <button
+                key={p.text}
+                type="button"
+                aria-pressed={idx === i}
+                onClick={() => pick(i)}
+                className="rounded-full border px-[14px] py-[6px] font-mono text-[12px] transition-colors"
+                style={
+                  idx === i
+                    ? {
+                        background: "rgba(126,184,255,0.14)",
+                        color: "var(--sd-primary)",
+                        borderColor: "var(--sd-primary)"
+                      }
+                    : {borderColor: "rgba(126,184,255,0.24)"}
+                }
+              >
+                {p.text}
+              </button>
+            ))}
+          </div>
           <button
             type="button"
-            onClick={() => runConvert(text)}
-            disabled={converting}
-            className="shrink-0 rounded-md bg-[var(--sd-primary)] px-[20px] py-[10px] font-mono text-[12px] font-black text-[var(--sd-bg)] transition-colors hover:bg-[var(--sd-accent)] disabled:opacity-50"
+            aria-pressed={keys}
+            onClick={toggleKeys}
+            className="rounded-md border px-3 py-1.5 font-mono text-[11px] transition-colors"
+            style={{
+              borderColor: keys ? "var(--sd-primary)" : "var(--sd-warn)",
+              color: keys ? "var(--sd-primary)" : "var(--sd-warn)"
+            }}
           >
-            변환하기
+            {keys ? "외부 키 있음 · 개발 환경" : "외부 키 없음 · 운영 배포본"}
           </button>
         </div>
-        <div className="flex flex-wrap justify-center gap-2">
-          {PRESET_KEYS.map(p => (
-            <button
-              key={p}
-              type="button"
-              onClick={() => {
-                setText(p);
-                runConvert(p);
-              }}
-              className="rounded-full border border-[rgba(126,184,255,0.24)] px-[13px] py-[6px] font-mono text-[11px] text-[var(--sd-muted)] transition-colors hover:text-white"
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-      </div>
 
-      {/* ── 두 줄 비교 ── */}
-      <div className="relative mb-[48px] flex w-full flex-col gap-[14px]">
-        <div className="z-20 mb-2 flex flex-col items-center">
-          <div className="relative">
-            <button
-              type="button"
-              onClick={playBoth}
-              className={`rounded-md border border-[rgba(126,184,255,0.45)] px-[20px] py-[9px] font-mono text-[12px] font-black text-[var(--sd-primary)] transition-all duration-500 hover:bg-[rgba(126,184,255,0.1)] ${
-                !playedOnce && on(IDX.hint) && !rm ? "sd-play-pulse" : ""
-              }`}
-              style={{
-                opacity: on(IDX.rows) ? 1 : 0,
-                transform: on(IDX.rows) ? "translateY(0)" : "translateY(1rem)"
-              }}
-            >
-              두 줄 같이 재생
-            </button>
-          </div>
-          <div
-            className="absolute top-[44px] font-mono text-[10px] text-[rgba(255,255,255,0.35)] transition-opacity"
-            style={{opacity: !playedOnce && on(IDX.hint) ? 1 : 0}}
-          >
-            두 줄을 같이 재생해보세요
-          </div>
-        </div>
-
-        {/* 한국어 순서 */}
-        <div
-          className="flex h-auto flex-col gap-4 overflow-hidden rounded-md border border-[rgba(255,255,255,0.14)] bg-[var(--sd-panel)] p-[18px] sm:h-[180px] sm:flex-row"
-          style={rise(on(IDX.rows), rm)}
-        >
-          <div className="flex w-full shrink-0 flex-col justify-between sm:w-[150px]">
-            <div>
-              <h3 className="mb-1 font-mono text-[13px] text-[rgba(255,255,255,0.72)]">
-                한국어 순서 그대로
-              </h3>
-              <p className="font-mono text-[10px] text-[var(--sd-muted)]">
-                단어를 그대로 치환
-              </p>
-            </div>
-            <div className="mt-4 flex items-center justify-between sm:mt-0 sm:flex-col sm:items-start sm:gap-2">
-              <div className="flex items-center gap-1 font-mono text-[12px] text-[var(--sd-bad)]">
-                <span aria-hidden="true">✕</span> 문법에 맞지 않음
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => playRow(1)}
-                  aria-label="한국어 순서 재생"
-                  className="flex h-[28px] w-[28px] items-center justify-center rounded border border-[rgba(255,255,255,0.2)] hover:bg-[rgba(255,255,255,0.1)]"
-                >
-                  ▶
-                </button>
-                <span className="font-mono text-[10px] tabular-nums text-[var(--sd-muted)]">
-                  {(dur1 / 1000).toFixed(1)}초
-                </span>
-              </div>
-            </div>
-          </div>
-          <div
-            ref={strip1}
-            className="relative flex flex-1 items-center overflow-x-auto pl-2 pt-4 sm:pt-0"
-          >
-            {data.kor.map((item, i) => (
-              <SignCell
-                key={`${item.w}-${i}`}
-                item={item}
-                dimmed={!!item.drop}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* 수어 순서 */}
-        <div
-          className="flex h-auto flex-col gap-4 overflow-hidden rounded-md border border-[rgba(126,184,255,0.35)] bg-[var(--sd-panel)] p-[18px] sm:h-[180px] sm:flex-row"
-          style={rise(on(IDX.rows), rm)}
-        >
-          <div className="flex w-full shrink-0 flex-col justify-between sm:w-[150px]">
-            <div>
-              <h3 className="mb-1 font-mono text-[13px] text-[var(--sd-primary)]">
-                수어 순서
-              </h3>
-              <p className="font-mono text-[10px] text-[var(--sd-muted)]">
-                시간 → 장소 → 동작
-              </p>
-            </div>
-            <div className="mt-4 flex items-center justify-between sm:mt-0 sm:flex-col sm:items-start sm:gap-2">
-              <div className="flex items-center gap-1 font-mono text-[12px] text-[var(--sd-ok)]">
-                <span aria-hidden="true">✓</span> 수어 어순
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => playRow(2)}
-                  aria-label="수어 순서 재생"
-                  className="flex h-[28px] w-[28px] items-center justify-center rounded border border-[rgba(126,184,255,0.3)] text-[var(--sd-primary)] hover:bg-[rgba(126,184,255,0.1)]"
-                >
-                  ▶
-                </button>
-                <span className="font-mono text-[10px] tabular-nums text-[var(--sd-muted)]">
-                  {(dur2 / 1000).toFixed(1)}초
-                </span>
-              </div>
-            </div>
-          </div>
-          <div
-            ref={strip2}
-            className="relative flex flex-1 items-center overflow-x-auto pl-2 pt-6 sm:pt-4"
-          >
-            {movedIdx >= 0 ? (
+        <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
+          {SOURCES.map(src => {
+            const off = !(src === "rule" || keys);
+            const win = best?.src === src;
+            const tokens = s[src];
+            return (
               <div
-                className="pointer-events-none absolute top-0 z-0 flex items-center whitespace-nowrap font-mono text-[9px] text-[var(--sd-primary)] transition-opacity"
-                style={{left: `${movedIdx * 96 + 30}px`, opacity: 1}}
-              >
-                <svg
-                  width="60"
-                  height="12"
-                  viewBox="0 0 60 12"
-                  fill="none"
-                  className="mr-2"
-                >
-                  <path
-                    d="M60 11C40 11 20 11 5 11C5 11 5 5 5 5L1 5L5 1L9 5L5 5"
-                    stroke="var(--sd-primary)"
-                    strokeWidth="1"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                시간 표현이 앞으로
-              </div>
-            ) : null}
-            {data.sign.map((item, i) => (
-              <SignCell key={`${item.w}-${i}`} item={item} dimmed={false} />
-            ))}
-          </div>
-        </div>
-
-        <div
-          className="mt-2 h-[20px] text-center transition-opacity"
-          style={{opacity: hasUnknown ? 1 : 0}}
-        >
-          <span className="font-mono text-[11px] text-[var(--sd-warn)]">
-            사전에 없는 단어는 지문자로 처리합니다
-          </span>
-        </div>
-
-        <p
-          className="mx-auto mt-4 max-w-[700px] text-center text-[15px] leading-[32px] transition-opacity"
-          style={{opacity: playedOnce ? 1 : 0}}
-        >
-          위쪽은 단어를 그대로 이어 붙인 것이고, 아래쪽이 실제 수어 어순입니다.
-          <br />
-          조사는 아예 사라지고, 시간을 나타내는 말이 맨 앞으로 옵니다.
-        </p>
-      </div>
-
-      {/* ── 변환 단계 ── */}
-      <div className="relative mb-[40px] w-full rounded-md border border-[rgba(126,184,255,0.18)] bg-[var(--sd-panel)] p-6">
-        <div className="mb-6 font-mono text-[10px] tracking-[0.18em] text-[var(--sd-primary)]">
-          변환 단계
-        </div>
-        <div
-          ref={pipeRef}
-          className="relative flex flex-col items-center justify-between gap-6 md:flex-row md:gap-0"
-        >
-          <div ref={dotRef} className="sd-pipe-dot" aria-hidden="true" />
-          <div className="absolute left-[75px] right-[75px] top-[25px] z-0 hidden h-px bg-[rgba(126,184,255,0.2)] md:block" />
-
-          {PIPELINE.map((node, i) => (
-            <div
-              key={node.t}
-              ref={el => {
-                nodeRefs.current[i] = el;
-              }}
-              className="relative z-10 flex w-[150px] flex-col items-center"
-            >
-              <div
-                className="flex h-[50px] w-full items-center justify-center rounded border bg-[var(--sd-bg)] font-mono text-[12px] transition-colors duration-300"
+                key={src}
+                className="rounded-md border p-[14px] transition-all duration-300"
                 style={{
-                  borderColor:
-                    stage === i ? "var(--sd-primary)" : "rgba(126,184,255,0.3)",
-                  background:
-                    stage === i ? "rgba(126,184,255,0.12)" : "var(--sd-bg)"
+                  opacity: off ? 0.4 : 1,
+                  borderColor: win
+                    ? "var(--sd-primary)"
+                    : "rgba(255,255,255,0.12)",
+                  background: win
+                    ? "rgba(126,184,255,0.08)"
+                    : "rgba(255,255,255,0.02)"
                 }}
               >
-                {node.t}
+                <div className="font-mono text-[11px] text-[var(--sd-accent)]">
+                  {SOURCE_LABEL[src]}
+                  {src !== "rule" ? (
+                    <span className="ml-1 text-[var(--sd-muted)]">(가정)</span>
+                  ) : null}
+                </div>
+                <div className="mt-3 flex min-h-[32px] flex-wrap gap-1.5">
+                  {off ? (
+                    <span className="font-mono text-[11px] text-[var(--sd-muted)]">
+                      키 없음 · 호출 안 함
+                    </span>
+                  ) : (
+                    tokens.map((tok, i) => {
+                      const hit = IN_DICTIONARY.has(tok);
+                      return (
+                        <span
+                          key={`${tok}-${i}`}
+                          className="rounded border px-2 py-0.5 font-mono text-[12px]"
+                          style={{
+                            borderColor: hit
+                              ? "var(--sd-ok)"
+                              : "rgba(255,255,255,0.18)",
+                            color: hit
+                              ? "var(--sd-ok)"
+                              : "rgba(255,255,255,0.45)",
+                            textDecoration: hit ? undefined : "line-through"
+                          }}
+                        >
+                          {tok}
+                        </span>
+                      );
+                    })
+                  )}
+                </div>
+                <div className="mt-3 font-mono text-[10px] text-[var(--sd-muted)]">
+                  {off
+                    ? "Optional.empty()"
+                    : `사전 적중 ${hits(tokens)}개${win ? " · 선택됨" : ""}`}
+                </div>
               </div>
-              <div className="mt-2 text-center font-mono text-[9px] text-[var(--sd-muted)]">
-                {node.d}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+
+        <div className="mt-4 rounded-md bg-[var(--sd-code-bg)] p-3 font-mono text-[12px] leading-[22px]">
+          <div>
+            chooseTokenStream() →{" "}
+            <span className="text-[var(--sd-ok)]">{best?.src}</span> ({best?.h}
+            개)
+          </div>
+          <div className="text-[var(--sd-muted)]">
+            {keys
+              ? s.note
+              : "운영 배포본에는 외부 키가 없어 규칙 흐름 하나만 남습니다. 경쟁 없이 규칙 결과가 그대로 쓰입니다."}
+          </div>
+          {s.verified && !keys ? (
+            <div className="mt-1 text-[var(--sd-warn)]">
+              운영 서버 실제 응답: appliedRules [
+              {s.verified.appliedRules.join(", ")}] · noVideoWords [
+              {s.verified.noVideoWords.join(", ")}]
+            </div>
+          ) : null}
+        </div>
+        <Caveat>
+          초록 테두리는 sign_dictionary.json 에 실제로 있는 단어입니다. 규칙
+          흐름은 코드를 따라 계산했고, ETRI·OpenAI 결과는 실제 응답이 남아 있지
+          않아 가정값입니다.
+        </Caveat>
       </div>
 
       {/* ── 코드 ── */}
-      <div className="w-full" style={rise(on(IDX.code), rm)}>
+      <div
+        className="mt-[40px] flex flex-col gap-4"
+        style={rise(on(IDX.code), rm)}
+      >
+        <div className="flex flex-col gap-4 lg:flex-row">
+          <CodePanel
+            filename="TranslationService.java:131-157 · 세 갈래 확장(e34d174)"
+            className="flex-[3]"
+            footer="// 옳은지가 아니라 사전에 몇 개 맞았는지를 센다"
+          >
+            <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed text-[var(--sd-text)] sm:text-[12px]">
+              {CHOOSE}
+            </pre>
+          </CodePanel>
+          <CodePanel
+            filename="TranslationService.java:203-209"
+            className="flex-[2]"
+          >
+            <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed text-[var(--sd-text)] sm:text-[12px]">
+              {PRIORITY}
+            </pre>
+          </CodePanel>
+        </div>
         <CodePanel
-          filename="SignSentenceService.java"
-          footer="// 규칙 몇 개로 어순을 맞춘 것이지, 문법을 구현한 게 아니다"
+          filename="SignSentenceSimplifier.java:113-118 · 팀원 코드"
+          borderColor="rgba(196,181,253,0.3)"
+          footer="// 부정이면 끝에 「아니다」, 과거면 「끝」, 의문사는 맨 뒤로 붙인다"
         >
-          <div className="flex-1 overflow-x-auto p-4 font-mono text-[12px] leading-relaxed">
-            <table className="w-full border-collapse">
-              <tbody>
-                {CODE.map(line => {
-                  const lit =
-                    stage >= 0 && STAGE_LINES[stage]?.includes(line.n);
-                  const staticLit = STATIC_LINES.includes(line.n);
-                  return (
-                    <tr
-                      key={line.n}
-                      className="transition-colors duration-300"
-                      style={{
-                        backgroundColor: lit
-                          ? "rgba(126,184,255,0.14)"
-                          : staticLit
-                          ? "rgba(126,184,255,0.12)"
-                          : "transparent"
-                      }}
-                    >
-                      <td className="sd-gutter">{line.n}</td>
-                      <td className="whitespace-pre pl-4">{line.body}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-relaxed text-[var(--sd-text)] sm:text-[12px]">
+            {ORDER}
+          </pre>
         </CodePanel>
+      </div>
 
-        <NoteBox label="이 방식의 한계" accent="#fbbf24" className="mt-[32px]">
-          <ul className="space-y-1 text-[15px] leading-[32px]">
+      {/* ── 대가와 한계 ── */}
+      <div
+        className="mt-[40px] flex flex-col gap-4"
+        style={fade(on(IDX.notes), rm)}
+      >
+        <NoteBox label="이 선택의 대가" accent="#fbbf24">
+          <ul className="space-y-2 text-[15px] leading-8">
             <li>
-              · 어순 규칙이 세 개뿐이다. 실제 한국수어 문법은 이보다 훨씬
-              복잡하다.
+              · 요청 하나에 외부 호출이 최대 두 번 붙습니다. OpenAI 에는 10초
+              타임아웃을 걸었지만 ETRI 호출에는 따로 걸지 않았습니다.
             </li>
             <li>
-              · 표정과 비수지 신호를 다루지 않아서, 의문문과 평서문을 구분하지
-              못한다.
+              · 정확도가 아니라{" "}
+              <span className="font-bold text-[var(--sd-warn)]">
+                재생할 수 있는 토큰 수
+              </span>
+              를 최대로 만듭니다. 사전에 있는 엉뚱한 단어가 사전에 없는 옳은
+              단어를 이길 수 있습니다.
             </li>
             <li>
-              · 문맥에 따라 달라지는 표현을 처리하지 못한다. 단어 단위 사전만
-              본다.
-            </li>
-            <li>
-              · 이 변환 결과가 자연스러운 수어인지 확인해줄 사람이 없었다.
+              · 운영 배포본에는 외부 키가 없어 규칙 흐름만 돕니다. 응답의
+              appliedRules 에 OpenAI 규칙이 한 번도 붙지 않는 것으로
+              확인했습니다. 같은 문장 왕복 중앙값 101ms(7회)는 이 상태에서 잰
+              값입니다.
             </li>
           </ul>
         </NoteBox>
+
+        <LimitList
+          label="이 방식의 한계"
+          items={[
+            "어순은 시간·장소·주어·목적어·서술어 다섯 칸에 줄 세우는 것까지입니다. 실제 한국수어 문법은 훨씬 복잡합니다.",
+            "조사가 없는 단어는 기본값으로 목적어 칸에 들어가서, 서술어 판정까지 가지 못합니다.",
+            "표정과 비수지 신호를 다루지 않습니다. 사전에 없는 단어를 지문자로 바꾸는 기능도 없고, 영상이 없는 단어는 앱이 글자 카드로 4초 보여주고 넘어갑니다.",
+            "세 흐름 중 어느 쪽이 얼마나 자주 이기는지 기록한 적이 없고, 결과가 자연스러운 수어인지 확인해줄 사람도 없었습니다."
+          ]}
+        />
       </div>
     </section>
   );

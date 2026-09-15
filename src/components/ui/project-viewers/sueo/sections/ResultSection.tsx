@@ -16,44 +16,41 @@ const IDX = {
   note: 10
 };
 
+// 배포본(GitHub Pages)에서 찍은 실제 화면 5장. GitHub 저장소 README 의 캡처와 같다.
+// 폰 비율(500×1023)이라 상자를 세로로 두고 contain 으로 넣는다.
 const SHOTS = [
   {
-    tag: "01 · 단어 학습",
-    id: "IMG-03",
-    ratio: "16/10",
-    cap: "동작을 보고 뜻을 맞히는 화면",
-    wide: true
+    tag: "01 · 홈",
+    src: "/projects/sign-language/home.webp",
+    cap: "오늘의 목표 · 오늘의 챌린지 · 최근 7일 풀이"
   },
   {
-    tag: "02 · 퀴즈 · 모바일",
-    id: "IMG-04",
-    ratio: "9/16",
-    cap: "틀린 단어는 다시 나온다"
+    tag: "02 · 퀴즈",
+    src: "/projects/sign-language/quiz.webp",
+    cap: "아바타 영상을 보고 보기 4개 중 뜻 고르기"
   },
   {
-    tag: "03 · 문장 변환",
-    id: "IMG-05",
-    ratio: "16/10",
-    cap: "입력한 문장이 수어 어순으로 재배열된다"
+    tag: "03 · 학습하기",
+    src: "/projects/sign-language/learn.webp",
+    cap: "기초 단어 · 오답 복습 · 일상 회화"
   },
   {
-    tag: "04 · 데이터 구조",
-    id: "IMG-06",
-    ratio: "16/10",
-    cap: "동작 하나가 저장되는 형태"
+    tag: "04 · 통역기",
+    src: "/projects/sign-language/translator.webp",
+    cap: "문장을 수어 단어 순서로 · 영상 없는 단어는 글자"
   },
   {
-    tag: "05 · 학습 기록",
-    id: "IMG-07",
-    ratio: "16/10",
-    cap: "무엇을 얼마나 봤는지"
+    tag: "05 · 변환 결과",
+    src: "/projects/sign-language/translate-detail.webp",
+    cap: "매칭된 토큰 · 사전에 없는 토큰 · 영상이 없는 단어"
   }
 ];
 
+// 기준: 저장소 파일을 센 값, 17 만 운영 서버(2026-09-07)에서 센 값.
 const COUNTERS = [
-  {to: 12, l: "등록한 수어 단어"},
-  {to: 5, l: "단어당 키프레임"},
-  {to: 4, l: "변환 파이프라인 단계"},
+  {to: 120, l: "사전 단어 · sign_dictionary.json"},
+  {to: 17, l: "그중 영상이 있는 단어", warn: true},
+  {to: 20, l: "퀴즈 문항 · update_quiz_items.py"},
   {to: 0, l: "전문가 감수 횟수", warn: true}
 ];
 
@@ -142,22 +139,21 @@ export function ResultSection() {
           className="max-w-[740px] text-[16px] leading-[36px]"
           style={rise(on(IDX.intro), rm)}
         >
-          수어 단어를 학습하고, 텍스트를 수어 표현으로 확인할 수 있는 서비스
-          프로토타입을 만들었습니다. 제가 맡은 백엔드에서는 동작 데이터 구조,
-          문장 변환 파이프라인, 정답 판정과 반복 학습 로직을 담당했습니다.
+          수어 영상을 보고 뜻을 고르며 익히고, 문장을 넣으면 수어 단어 순서로
+          이어 보는 앱을 네 명이 만들어 GitHub Pages 와 Cloud Run 에 올렸습니다.
+          제 몫은 문장 변환의 세 갈래 선택과 정규화, 단어별 영상 조회, 그리고
+          앱과 서버의 배포였습니다. 아래는 배포본에서 찍은 실제 화면입니다.
         </p>
       </div>
 
       {/* ── 갤러리 ── */}
-      <div className="mb-[56px] grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div className="mb-[56px] grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
         {SHOTS.map((s, i) => (
           <button
-            key={s.id}
+            key={s.src}
             type="button"
             onClick={() => setLightbox(i)}
-            className={`group flex w-full flex-col overflow-hidden rounded-md border border-[rgba(126,184,255,0.18)] bg-[#101f33] text-left transition-all duration-[350ms] hover:-translate-y-1 hover:border-[rgba(126,184,255,0.45)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sd-primary)] ${
-              s.wide ? "lg:col-span-2" : "lg:col-span-1"
-            }`}
+            className="group flex w-full flex-col overflow-hidden rounded-md border border-[rgba(126,184,255,0.18)] bg-[#101f33] text-left transition-all duration-[350ms] hover:-translate-y-1 hover:border-[rgba(126,184,255,0.45)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sd-primary)]"
             style={rise(on(IDX.shot + i), rm)}
           >
             <div className="flex h-[30px] items-center justify-between border-b border-[rgba(126,184,255,0.1)] px-3">
@@ -168,13 +164,15 @@ export function ResultSection() {
             </div>
             <div
               className="relative w-full overflow-hidden bg-[var(--sd-bg)]"
-              style={{aspectRatio: s.ratio}}
+              style={{aspectRatio: "500/1023"}}
             >
-              <div className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(to_right,rgba(126,184,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(126,184,255,0.05)_1px,transparent_1px)] bg-[length:24px_24px] transition-transform duration-[350ms] group-hover:scale-[1.03]">
-                <span className="font-mono text-[12px] text-[rgba(255,255,255,0.35)]">
-                  [{s.id}] · {s.ratio.replace("/", ":")}
-                </span>
-              </div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={s.src}
+                alt={s.cap}
+                loading="lazy"
+                className="h-full w-full object-contain transition-transform duration-[350ms] group-hover:scale-[1.03]"
+              />
             </div>
             <div className="mt-auto border-t border-[rgba(126,184,255,0.1)] p-[12px_14px]">
               <p className="font-mono text-[11px] text-[var(--sd-muted)]">
@@ -226,8 +224,8 @@ export function ResultSection() {
         className="mt-[14px] rounded-md border border-[rgba(255,255,255,0.10)] bg-[rgba(255,255,255,0.02)] p-[14px_18px] font-mono text-[11px] leading-[1.6] text-[rgba(255,255,255,0.45)]"
         style={rise(on(IDX.note), rm)}
       >
-        위 숫자는 구현 범위를 센 것입니다. 사용자 수나 학습 효과에 대한 데이터는
-        없습니다.
+        120·20·0 은 저장소 파일을 센 값이고, 17 은 사전 단어를 운영 서버에 넣어
+        센 값입니다(2026-09-07). 사용자 수나 학습 효과에 대한 데이터는 없습니다.
       </div>
 
       {/* ── 라이트박스 ── */}
@@ -254,13 +252,13 @@ export function ResultSection() {
                 닫기 [Esc]
               </button>
             </div>
-            <div
-              className="flex w-full items-center justify-center overflow-hidden rounded-md border border-[rgba(126,184,255,0.18)] bg-[var(--sd-bg)] shadow-2xl"
-              style={{aspectRatio: shot.ratio}}
-            >
-              <span className="font-mono text-[14px] text-[rgba(255,255,255,0.35)] sm:text-[18px]">
-                [{shot.id}] · {shot.ratio.replace("/", ":")} (확대)
-              </span>
+            <div className="flex max-h-[76vh] w-full items-center justify-center overflow-hidden rounded-md border border-[rgba(126,184,255,0.18)] bg-[var(--sd-bg)] shadow-2xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={shot.src}
+                alt={shot.cap}
+                className="max-h-[76vh] w-auto object-contain"
+              />
             </div>
             <p className="mt-4 w-full text-center font-mono text-[12px] text-[var(--sd-muted)]">
               {shot.cap}
