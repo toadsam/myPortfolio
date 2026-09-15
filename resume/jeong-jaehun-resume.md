@@ -21,7 +21,7 @@ React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운
 
 Frontend: React, TypeScript, Next.js, Three.js (R3F), Vite, React Query, Tailwind CSS, Expo, React Native
 Backend: Spring Boot, Java, JPA, Spring Security, Node.js, Express, FastAPI (Python)
-Auth: JWT, Refresh Token Rotation, OAuth2, Passport, Firebase Auth
+Auth: JWT, Refresh Token Rotation (적용 후 롤백), OAuth2, Passport, Firebase Auth
 Infra / Data: AWS, S3, CloudFront, MySQL, MongoDB, Firebase
 AI / LLM: OpenAI API, Claude Agent SDK, 구조화 출력(JSON), 규칙 기반 폴백, 도구 호출 샌드박스
 Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Pooling
