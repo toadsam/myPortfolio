@@ -503,10 +503,11 @@ export function AIPortfolioVillage() {
   // 호버가 없을 때는 이 건물이 강조된다.
   const [pickedBuildingId, setPickedBuildingId] = useState<string | null>(null);
   /**
-   * HUD 두 단계. **처음엔 최소**(헤더·환영 카드·이동·지도·제작 의뢰)만 두고,
+   * HUD 두 단계. **처음엔 최소**(헤더·환영 카드·이동·지도·걷기·제작 의뢰)만 두고,
    * 방문자가 첫 행동(건물 입장·NPC 대화·이동·바닥 클릭·안내인 선택)을 하면
-   * 마을 소식·지휘·NPC 독·엿듣기·걷기 모드가 따라 나온다. 첫 3초에 진입점이
+   * 마을 소식·지휘·NPC 독·엿듣기가 따라 나온다. 첫 3초에 진입점이
    * 스무 개면 어느 것도 눌리지 않는다 — 두 번째 겹의 재미는 두 번째에 준다.
+   * 걷기는 2026-09-20 에 1단계로 내렸다(버튼 옆 주석).
    */
   const [hudUnlocked, setHudUnlocked] = useState(false);
   // 채용 담당자 3분 코스 — 현재 정류장 index, null 이면 투어 아님
@@ -2344,27 +2345,31 @@ export function AIPortfolioVillage() {
               }
             />
           </section>
-          {hudUnlocked ? (
-            <button
-              type="button"
-              onClick={() => {
-                setExplorationMode(m => (m === "walk" ? "click" : "walk"));
-                setIsPanelOpen(false);
-                setSelectedNpc(null);
-              }}
-              className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 active:scale-95 md:bottom-6"
-            >
-              {explorationMode === "walk" ? (
-                <>
-                  <span>🖱️</span> 클릭 모드로
-                </>
-              ) : (
-                <>
-                  <span>🚶</span> 직접 이동 (WASD)
-                </>
-              )}
-            </button>
-          ) : null}
+          {/* 걷기만 1단계에 남는다 (2026-09-20). 원래는 2단계 묶음이었는데,
+              탭만 만지다 나가면 마을을 직접 걸을 수 있다는 걸 끝내 모른다 —
+              만든 사람조차 "버튼이 사라졌나" 했다. 진입점을 줄이자는 두 단계의
+              취지는 소식·지휘·독·엿듣기로 지키고, 이 마을의 본 재미인 걷기는
+              첫 화면에 둔다. 누르는 것 자체가 첫 행동이라 HUD 도 같이 푼다. */}
+          <button
+            type="button"
+            onClick={() => {
+              unlockHud();
+              setExplorationMode(m => (m === "walk" ? "click" : "walk"));
+              setIsPanelOpen(false);
+              setSelectedNpc(null);
+            }}
+            className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 active:scale-95 md:bottom-6"
+          >
+            {explorationMode === "walk" ? (
+              <>
+                <span>🖱️</span> 클릭 모드로
+              </>
+            ) : (
+              <>
+                <span>🚶</span> 직접 이동 (WASD)
+              </>
+            )}
+          </button>
           <button
             type="button"
             aria-label={soundOn ? "사운드 끄기" : "사운드 켜기"}
