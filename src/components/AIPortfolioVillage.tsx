@@ -1839,6 +1839,17 @@ export function AIPortfolioVillage() {
 
   // 바닥 클릭 — 카메라만 그 자리로. 열려 있던 대화·패널은 닫는다(빈 땅을 누른 건
   // "이제 다른 데 볼래"라는 뜻이니까). 컨시어지 연출 중엔 무시.
+  // WASD 로 날기 시작한 것도 첫 행동이다. 바닥 클릭과 달리 travelCam 은 건드리지
+  // 않는다 — 시네마틱 목적지가 바뀌면 키를 떼는 순간 카메라가 그리로 끌려간다.
+  const handleFreeFlyStart = useCallback(() => {
+    if (conciergeStage === "panel") setConciergeStage("closed");
+    setHudUnlocked(true);
+    if (tourTimerRef.current) clearTimeout(tourTimerRef.current);
+    tourTimerRef.current = null;
+    setTourIndex(null);
+    setPickedBuildingId(null);
+  }, [conciergeStage]);
+
   const handleGroundClick = useCallback(
     (point: Vector3Tuple) => {
       if (conciergeStage === "running") return;
@@ -2327,6 +2338,16 @@ export function AIPortfolioVillage() {
               onEditingChange={stableSetEditing}
               groundTarget={groundTarget}
               onGroundClick={handleGroundClick}
+              // 방향키는 패널 스크롤에, 글자는 대화 입력에 쓰여야 한다. 환영 연출이
+              // 달려오는 동안도 카메라 주인은 연출이다.
+              flyEnabled={
+                villageEntered &&
+                conciergeStage !== "running" &&
+                !selectedNpc &&
+                !isPanelOpen &&
+                !eavesOpen
+              }
+              onFreeFlyStart={handleFreeFlyStart}
               hideOverlays={
                 // 환영 연출·NPC 대화 클로즈업 동안만 — 엿듣기는 말풍선이
                 // 주인공이라 숨기지 않는다

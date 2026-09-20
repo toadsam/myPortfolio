@@ -144,6 +144,9 @@ interface VillageSceneProps {
   groundTarget?: {point: Vector3Tuple; nonce: number} | null;
   /** 바닥(섬 안)을 클릭했을 때. 드래그 끝 클릭은 걸러서 넘긴다. */
   onGroundClick?: (point: Vector3Tuple) => void;
+  /** 자유비행(WASD) 허용 여부와 시작 알림 — CameraController 주석 참고. */
+  flyEnabled?: boolean;
+  onFreeFlyStart?: () => void;
   /**
    * 클로즈업 연출(환영·NPC 대화·엿듣기) 중이면 true — 간판·말풍선 같은
    * DOM 오버레이(`v-sign`)를 잠깐 숨긴다. 멀리 있는 건물 간판이 연출의
@@ -3175,6 +3178,8 @@ function VillageSceneImpl({
   cinematic,
   groundTarget,
   onGroundClick,
+  flyEnabled = true,
+  onFreeFlyStart,
   hideOverlays,
   npcCommand,
   npcCommandTargets,
@@ -3695,6 +3700,8 @@ function VillageSceneImpl({
                 lockRotate={false}
                 cinematic={cinematic}
                 groundTarget={groundTarget}
+                flyEnabled={flyEnabled}
+                onFreeFlyStart={onFreeFlyStart}
               />
               {onGroundClick && !editing ? (
                 <GroundClickCatcher onGroundClick={onGroundClick} />

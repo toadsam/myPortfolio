@@ -278,7 +278,12 @@ so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottlene
   layers만 본다) — 그래서 되는 구조다. 새 상호작용 오브젝트를 달 때 GLB 자체에 핸들러를 붙이지 말 것.
 - **`<AdaptiveEvents/>` 는 쓰지 않는다.** regress 중 포인터 이벤트를 통째로 꺼서 "입장 직후 클릭이 안 되는" 증상을 만들었다.
 - NPC는 hover 0.45초면 대화가 열린다(연출 중 `hoverToTalk=false`). 바닥 클릭은 `CameraController.groundTarget`(현재 오프셋 유지).
-  자유비행 WASD는 `FREE_FLY_ENABLED`(dev 전용).
+  **자유비행(WASD·방향키·QE + 우클릭 마우스룩, Shift 가속)은 2026-09-20 부터 배포본에도 켜져 있다**(`FREE_FLY_ENABLED` 상수는 없앴다).
+  켜짐은 부모가 `flyEnabled` 로 정한다 — 입장 전·환영 연출(`running`)·NPC 대화·정보 패널·엿듣기 중에는 끈다(방향키는 패널 스크롤에
+  쓰여야 한다). 첫 키 입력은 `onFreeFlyStart` → 환영 카드 닫기·HUD 풀기·투어 끝내기(`handleFreeFlyStart`)이고, **`travelCam` 은 건드리지
+  않는다** — 시네마틱 목적지가 바뀌면 키를 떼는 순간 카메라가 끌려간다. 같은 이유로 `CameraController` 의 목적지 effect 는 나는 중엔
+  전환을 걸지 않고, `flyEnabled` 가 꺼지며 내려올 때 대신 건다. 창이 포커스를 잃으면 keyup 이 안 오므로 `blur` 에서 키를 비운다.
+  걷기 모드에는 CameraController 가 없어 WASD 가 캐릭터 이동으로 간다. 조작 힌트(`ControlsHint`)에 데스크톱 폭에서만 한 칸 적었다.
 - **N8AO의 `transparencyAware`는 반드시 false.** 래퍼가 prop으로 안 넘기므로 `VillageScene`이 ref로 직접 쓴다. 자동 감지가 켜지면
   매 프레임 씬을 두 번 더 렌더한다(CPU 20%).
 - `VillageScene`의 정적 자식(지형·물·하늘·등불·프롭 인스턴싱)은 `memo`다 — `npcRuntimeStates`가 1~2초마다 바뀌어 부모가 재렌더된다.

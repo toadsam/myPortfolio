@@ -24,6 +24,12 @@ interface CameraControllerProps {
   /** 바닥 클릭 이동 — 이 지점을 바라보도록, 지금의 거리·각도를 유지한 채 옮긴다.
    *  같은 자리를 다시 눌러도 움직이게 nonce 로 구분한다. */
   groundTarget?: {point: Vector3Tuple; nonce: number} | null;
+  /** 자유비행(WASD·방향키 + 우클릭 마우스룩)을 받을지. 대화창·정보 패널·환영 연출이
+   *  떠 있는 동안은 부모가 끈다 — 방향키는 패널 스크롤에 쓰여야 하고, 연출 카메라와
+   *  주인이 둘이 되면 화면이 튄다. 기본 true. */
+  flyEnabled?: boolean;
+  /** 자유비행이 시작된 순간(키를 처음 눌렀을 때) 한 번. 부모가 투어를 끝내고 HUD 를 푼다. */
+  onFreeFlyStart?: () => void;
 }
 
 // 바닥 클릭 이동 때 유지할 카메라-타깃 거리 범위. 끝까지 당겨 섬 전체를 보다가
@@ -74,9 +80,10 @@ const WHEEL_MAX_Y = 45;
 const WHEEL_MAX_RADIUS = 60;
 const _wheelFwd = new Vector3();
 
-// 자유비행(WASD/QE + 우클릭 마우스룩)은 개발할 때 씬을 둘러보는 용도다. 방문자에겐
-// 안내도 없는 키를 누르면 카메라가 하늘로 날아오르는 꼴이라 빼 둔다.
-const FREE_FLY_ENABLED = process.env.NODE_ENV === "development";
+// 자유비행(WASD/QE + 우클릭 마우스룩). 원래는 개발용이라 prod 에서 꺼 뒀는데
+// ("안내도 없는 키를 누르면 카메라가 날아오른다"), 2026-09-20 에 방문자에게도 열었다.
+// 그때의 걱정은 이렇게 막는다: 조작 힌트에 키를 적고(VillageHud ControlsHint),
+// 패널·대화·연출 중에는 `flyEnabled` 로 끄고, 범위는 아래 useFrame 의 클램프가 잡는다.
 
 // 방향키 → WASD 별칭
 const KEY_ALIAS: Record<string, string> = {
@@ -109,7 +116,9 @@ export function CameraController({
   activeSection,
   lockRotate = false,
   cinematic = null,
-  groundTarget = null
+  groundTarget = null,
+  flyEnabled = true,
+  onFreeFlyStart
 }: CameraControllerProps) {
   const controlsRef = useRef<OrbitController | null>(null);
   const {camera, gl} = useThree();
@@ -124,11 +133,20 @@ export function CameraController({
 
   const isTransitioning = useRef(true);
   const prevSection = useRef(activeSection);
+  const flying = useRef(false);
+  // 리스너는 한 번만 달고, 켜짐 여부와 콜백은 ref 로 읽는다
+  const releaseRef = useRef<(() => void) | null>(null);
+  const flyEnabledRef = useRef(flyEnabled);
+  flyEnabledRef.current = flyEnabled;
+  const onFreeFlyStartRef = useRef(onFreeFlyStart);
+  onFreeFlyStartRef.current = onFreeFlyStart;
 
   useEffect(() => {
     desiredCamera.current.set(...target.position);
     desiredLookAt.current.set(...target.lookAt);
-    isTransitioning.current = true;
+    // 날고 있는 중에 목적지가 바뀌면(자유비행이 환영 카드를 닫으면 cinematic 이
+    // 풀린다) 전환을 걸지 않는다 — 걸어 두면 키를 떼는 순간 카메라가 끌려간다.
+    if (!flying.current) isTransitioning.current = true;
   }, [target.position, target.lookAt]);
 
   // 바닥 클릭: 지금 카메라가 타깃을 보는 방향·거리를 그대로 들어 클릭 지점에 놓는다.
@@ -149,7 +167,6 @@ export function CameraController({
   }, [groundTarget, camera]);
 
   // ── 자유 카메라 (WASD/QE 이동 + 우클릭 마우스룩 + Shift 가속) ──
-  const flying = useRef(false);
   const keys = useRef<Set<string>>(new Set());
   const shift = useRef(false);
   const rmb = useRef(false); // 우클릭 홀드 = 마우스룩
@@ -157,12 +174,12 @@ export function CameraController({
   const pitch = useRef(0);
 
   useEffect(() => {
-    if (!FREE_FLY_ENABLED) return;
     const dom = gl.domElement;
 
     function enterFree() {
       if (flying.current) return;
       flying.current = true;
+      onFreeFlyStartRef.current?.();
       isTransitioning.current = false;
       if (controlsRef.current) controlsRef.current.enabled = false;
       const euler = new Euler().setFromQuaternion(camera.quaternion, "YXZ");
@@ -193,6 +210,7 @@ export function CameraController({
     }
 
     function onPointerDown(e: PointerEvent) {
+      if (!flyEnabledRef.current) return;
       if (e.button !== 2) return; // 우클릭만 마우스룩
       e.preventDefault();
       rmb.current = true;
@@ -223,7 +241,10 @@ export function CameraController({
     }
 
     function onKeyDown(e: KeyboardEvent) {
+      if (!flyEnabledRef.current) return;
       if (isTyping()) return;
+      // Ctrl+S·Alt+← 같은 브라우저 단축키는 건드리지 않는다
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key.toLowerCase() === "shift") {
         shift.current = true;
         return;
@@ -248,7 +269,17 @@ export function CameraController({
       }
     }
 
+    // 창이 포커스를 잃으면 keyup 이 안 온다 — 눌린 채로 남아 혼자 날아간다
+    function release() {
+      keys.current.clear();
+      shift.current = false;
+      rmb.current = false;
+      exitFree();
+    }
+    releaseRef.current = release;
+
     dom.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("blur", release);
     window.addEventListener("pointerup", onPointerUp);
     window.addEventListener("mousemove", onMouseMove);
     dom.addEventListener("contextmenu", onContextMenu);
@@ -257,6 +288,7 @@ export function CameraController({
 
     return () => {
       dom.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("blur", release);
       window.removeEventListener("pointerup", onPointerUp);
       window.removeEventListener("mousemove", onMouseMove);
       dom.removeEventListener("contextmenu", onContextMenu);
@@ -265,6 +297,16 @@ export function CameraController({
       dom.style.cursor = "";
     };
   }, [camera, gl]);
+
+  // 날던 중에 패널·대화가 열리면 그 자리에서 내려놓는다
+  useEffect(() => {
+    if (flyEnabled) return;
+    const wasFlying = flying.current;
+    releaseRef.current?.();
+    // 위 목적지 effect 는 "나는 중"이라 전환을 걸지 않고 지나갔다 — 여기서 건다.
+    // (대화 클로즈업·패널 시점으로 가야 하는데 카메라가 제자리에 남는 것을 막는다)
+    if (wasFlying) isTransitioning.current = true;
+  }, [flyEnabled]);
 
   useEffect(() => {
     if (prevSection.current !== activeSection) {

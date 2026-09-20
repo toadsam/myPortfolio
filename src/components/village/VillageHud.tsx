@@ -1228,6 +1228,11 @@ export function ControlsHint({active}: {active: boolean}) {
       <span className="flex items-center gap-1.5">
         <span className="text-sm">🔄</span> 드래그·휠로 둘러보기
       </span>
+      {/* 키보드가 있는 화면에서만 — 모바일 폭에선 줄만 길어진다 */}
+      <span className="hidden text-[#a9bdd6]/30 md:inline">·</span>
+      <span className="hidden items-center gap-1.5 md:flex">
+        <span className="text-sm">⌨️</span> WASD 로 날아다니기
+      </span>
     </div>
   );
 }
