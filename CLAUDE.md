@@ -6,6 +6,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Next.js portfolio that renders as an explorable 3D village (React Three Fiber). Buildings map to portfolio sections (projects/skills/experience/contact); each has an AI NPC visitors can chat with. A FastAPI backend turns an admin-entered "today's activity" log into live village state (building light levels, NPC moods) and generates NPC dialogue via OpenAI, with rule-based fallback when no API key / on failure. See `docs/PROJECT_DOCUMENTATION.md` for an exhaustive (Korean, beginner-oriented) walkthrough of nearly every file — read it before deep-diving into an unfamiliar subsystem instead of re-deriving architecture from scratch.
 
+## 작업을 끝낼 때마다: 기존 md 를 최신화한다 (항상)
+
+코드 작업이 끝나면 **시키지 않아도** 그 내용을 기존 문서에 반영한다. 이 파일 한 곳만 고치고 끝내지 않는다.
+이 리포의 md 는 실제로 읽힌다 — `README.md`(채용 심사자가 보는 결정·실측·빚), `docs/PORTFOLIO_INTERVIEW_STORIES.md`(면접 답변 원고),
+`docs/*_REPORT.md`(수치 증명), `docs/PROJECT_DOCUMENTATION.md`(초보자용 해설, 존댓말). 문서가 옛 결론을 말하면 면접에서 틀린 말을 하게 된다.
+
+- 그 서브시스템을 언급하는 md 를 `grep` 으로 전부 찾아 **해당 절을 고친다**(새 md 를 늘리지 않는다).
+- 이번 작업이 옛 결론을 뒤집었으면 그 문장도 찾아 고친다 — 코드 주석 포함.
+- `README.md` 의 `파일.tsx#L12-L34` 줄 번호 링크는 그 파일 위쪽에 줄을 넣으면 밀린다. 고친 파일을 가리키는 앵커를 확인한다.
+- 수치는 실측만, 조건(빌드·기기·날짜)과 한계를 같이. 문구는 평서체, 본문 대시·격언·삼항 나열 금지.
+
 ## Commands
 
 Frontend (run from repo root):
