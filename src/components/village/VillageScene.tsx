@@ -5,7 +5,6 @@ import {
   Billboard,
   ContactShadows,
   Html,
-  Preload,
   useGLTF,
   useProgress,
   useTexture
@@ -18,13 +17,22 @@ import {
   ToneMapping
 } from "@react-three/postprocessing";
 import {ToneMappingMode} from "postprocessing";
-import {memo, Suspense, useEffect, useMemo, useRef, useState} from "react";
+import {
+  memo,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore
+} from "react";
 import {
   AdditiveBlending,
   BackSide,
   BufferGeometry,
   CanvasTexture,
   Color,
+  CubeCamera,
   Float32BufferAttribute,
   type Mesh,
   MeshBasicMaterial,
@@ -33,7 +41,10 @@ import {
   SphereGeometry,
   SpriteMaterial,
   SRGBColorSpace,
-  Vector3
+  type Texture,
+  Vector3,
+  WebGLCubeRenderTarget,
+  WebGLRenderTarget
 } from "three";
 import propsLayout from "@/data/propsLayout.json";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
@@ -104,7 +115,7 @@ import {BuildingNetwork} from "./BuildingNetwork";
 import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
 import {WalkEmoteBar} from "./WalkEmoteBar";
-import {LightPool} from "./LightPool";
+import {LightPool, PooledLight} from "./LightPool";
 import {NPC, type NpcCommand} from "./NPC";
 import {PerfHudPanel, PerfProbe} from "./PerfHud";
 import {LakeProps} from "./LakeProps";
@@ -893,6 +904,160 @@ function useVillageReady() {
   return ready;
 }
 
+// ─── 셰이더 사전 컴파일 (첫 방문 렉의 정체) ─────────────────────────────────
+// 실측(prod · 셰이더 캐시 없음): 타이틀까지 18~22초, 그중 **12초가 셰이더 링크
+// 대기**였다. MeshStandard 변종 19개가 각 0.6초인데, GLB 가 Suspense 물결마다
+// 도착해 처음 그려지는 프레임에 **하나씩 직렬로** 링크하고 끝날 때까지 메인
+// 스레드를 막았다 — 5~6초씩 프레임이 0개라 로딩 베일 애니메이션도 얼었다.
+// (캐시가 찬 두 번째 방문은 8초. 차이가 전부 이것이다.)
+//
+// 그래서 순서를 바꾼다:
+//   1. 세 묶음(프롭·건물·주민)이 다 올 때까지 **아예 그리지 않는다**
+//      (frameloop="never" — 어차피 베일이 덮고 있다. 그리면 그 프레임이 막힌다)
+//   2. 다 오면 `compileAsync` 한 번 — 전 변종을 한꺼번에 맡기고
+//      KHR_parallel_shader_compile 로 **막지 않고** 끝나기를 기다린다
+//   3. 그리기를 켜고 숨은 워밍업(전 방위 큐브 패스 + 몇 프레임) 뒤에 타이틀 공개
+//
+// drei `<Preload all/>` 은 뺐다. 두 가지로 헛돌고 있었다: ① 바깥 Suspense 에
+// 있어 건물·프롭·주민이 **오기 전에** 한 번 돌고 끝났고, ② 렌더 타깃 없이
+// `gl.compile` 을 불러 **엉뚱한 변종**을 컴파일했다(아래 SceneWarmup 주석).
+//
+// **전제: 실광원 개수가 컴파일 뒤에 바뀌면 전부 무효다.** 조건부 pointLight 를
+// 새로 달지 말 것 — `PooledLight` 를 쓴다(LightPool.tsx).
+const WARM_GROUPS = ["props", "buildings", "npcs"] as const;
+type WarmGroup = (typeof WARM_GROUPS)[number];
+
+const warmSignal = {
+  groups: new Set<WarmGroup>(),
+  rendering: false,
+  subs: new Set<() => void>()
+};
+
+function emitWarm() {
+  for (const fn of warmSignal.subs) fn();
+}
+
+function subscribeWarm(fn: () => void) {
+  warmSignal.subs.add(fn);
+  return () => {
+    warmSignal.subs.delete(fn);
+  };
+}
+
+function resetWarmSignal() {
+  warmSignal.groups.clear();
+  warmSignal.rendering = false;
+}
+
+function startRendering() {
+  if (warmSignal.rendering) return;
+  warmSignal.rendering = true;
+  emitWarm();
+}
+
+const allGroupsIn = () => warmSignal.groups.size === WARM_GROUPS.length;
+const isSceneRendering = () => warmSignal.rendering;
+const serverFalse = () => false;
+
+/** 자기 Suspense 경계가 풀렸음을 알린다. 씬에는 아무것도 그리지 않는다. */
+function GroupProbe({name}: {name: WarmGroup}) {
+  useEffect(() => {
+    warmSignal.groups.add(name);
+    emitWarm();
+  }, [name]);
+  return null;
+}
+
+// 워밍업 프레임 수. 첫 프레임에 그림자 depth 재질과 후처리 패스 셰이더가
+// 컴파일된다(compile() 이 못 잡는 것들 — 실측 합 1.3초 안팎). 그게 베일 뒤에서
+// 끝나도록 몇 프레임 돌린 뒤에 타이틀을 연다.
+const WARM_FRAMES = 4;
+// 묶음 하나가 영영 안 오거나(404) 컴파일 약속이 안 풀려도 **그리기는 켠다**.
+// 베일의 25초 안전장치가 타이틀을 열었을 때 멈춘 마을로 들어가면 안 된다.
+const WARM_FALLBACK_MS = 24000;
+
+function SceneWarmup({offscreenTarget}: {offscreenTarget: boolean}) {
+  const gl = useThree(s => s.gl);
+  const scene = useThree(s => s.scene);
+  const camera = useThree(s => s.camera);
+  const loaded = useSyncExternalStore(subscribeWarm, allGroupsIn, serverFalse);
+  const rendering = useSyncExternalStore(
+    subscribeWarm,
+    isSceneRendering,
+    serverFalse
+  );
+
+  useEffect(() => {
+    const t = window.setTimeout(startRendering, WARM_FALLBACK_MS);
+    return () => window.clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    // **렌더 타깃을 묶고 컴파일해야 한다.** three 는 프로그램 변종을 가를 때
+    // "타깃 없음 → outputColorSpace sRGB / 타깃 있음 → Linear" 를 본다
+    // (WebGLPrograms.getParameters). 데스크톱은 EffectComposer 의 버퍼에 그리므로
+    // Linear 변종이 진짜다 — 타깃 없이 컴파일하면 안 쓰는 변종만 만들고, 진짜는
+    // 첫 렌더가 예전처럼 동기로 치른다. 모바일은 컴포저가 없어 캔버스 그대로.
+    const rt = offscreenTarget ? new WebGLRenderTarget(1, 1) : null;
+    const prev = gl.getRenderTarget();
+    let compiled: Promise<unknown>;
+    try {
+      gl.setRenderTarget(rt);
+      compiled = gl.compileAsync(scene, camera);
+    } catch {
+      compiled = Promise.resolve();
+    } finally {
+      gl.setRenderTarget(prev);
+    }
+    compiled.then(startRendering, startRendering).finally(() => rt?.dispose());
+  }, [loaded, gl, scene, camera, offscreenTarget]);
+
+  const frames = useRef(0);
+  useFrame(() => {
+    if (!rendering || frames.current > WARM_FRAMES) return;
+    frames.current += 1;
+    if (frames.current === 2) {
+      // 첫 프레임과 **같은 틱에 하지 않는다** — 첫 프레임은 버퍼·텍스처 업로드와
+      // 후처리 셰이더로 이미 무겁다(실측 한 덩어리 1.65초). 나눠야 베일이 덜 언다.
+      //
+      // 전 방위 한 바퀴 — 카메라 밖 건물의 텍스처까지 지금 올린다. 안 그러면
+      // 입장 뒤 시점을 돌릴 때마다 처음 잡히는 건물에서 한 번씩 끊긴다.
+      // (drei Preload 가 하던 일. 프로그램은 이미 준비돼 있어 링크 대기는 없다.)
+      if (offscreenTarget) {
+        const cubeTarget = new WebGLCubeRenderTarget(128);
+        const cube = new CubeCamera(0.01, 100000, cubeTarget);
+        cube.update(gl, scene);
+        cubeTarget.dispose();
+      } else {
+        // **모바일은 큐브 패스를 돌리면 안 된다.** 큐브 타깃에 그리는 순간 Linear·
+        // 톤매핑 없음 변종이 되는데, 모바일은 캔버스에 바로 그리므로 그건 **한 번
+        // 쓰고 버릴** 변종이다 — 19개를 동기로 컴파일하느라 6.6초 멈췄다(실측).
+        // 텍스처만 직접 올린다.
+        const seen = new Set<Texture>();
+        scene.traverse(object => {
+          const material = (object as Mesh).material;
+          if (!material) return;
+          for (const m of Array.isArray(material) ? material : [material]) {
+            for (const value of Object.values(m)) {
+              const texture = value as Texture | null;
+              if (texture?.isTexture && !seen.has(texture)) {
+                seen.add(texture);
+                gl.initTexture(texture);
+              }
+            }
+          }
+        });
+      }
+    }
+    // 묶음이 다 안 왔는데 여기까지 왔다면 안전장치가 켠 것이다 — 그때도
+    // 타이틀은 열어 준다(예전 25초 동작과 같다).
+    if (frames.current > WARM_FRAMES) markVillageReady();
+  });
+
+  return null;
+}
+
 // ─── 입장 화면 ───────────────────────────────────────────────────────────────
 // 화면은 VillageLoadingVeil / VillageTitleCard 가 그린다(같은 로딩 액자를
 // AIPortfolioVillage 의 dynamic 폴백도 쓴다 — 그 파일 주석에 왜 나눴는지 적어 뒀다).
@@ -907,8 +1072,9 @@ function useVillageReady() {
 // three 의 로딩 매니저는 "지금 등록된 것"만 세는데, GLB 는 Suspense 경계별로
 // 나눠 내려오므로 묶음 사이 빈 틈에서 active=false, progress=100 이 된다.
 //
-// 그래서 **건물 Suspense 가 실제로 풀린 순간**(=Building 들이 마운트된 순간)을
-// 신호로 쓴다. ready 는 그 경계 안의 SceneReadyProbe 가 올려 준다.
+// 그래서 **Suspense 가 실제로 풀린 순간**을 신호로 쓴다. 세 묶음의 GroupProbe 가
+// 다 올라오면 SceneWarmup 이 셰이더를 미리 컴파일하고, 숨은 프레임 몇 장을
+// 돌린 뒤에 ready 를 올린다(위 "셰이더 사전 컴파일" 주석).
 //
 // 안전장치: 25초가 지나면 **타이틀까지 넘긴다**(예전엔 막을 그냥 지웠다).
 // GLB 하나가 404 나면 건물 Suspense 가 영영 안 풀려 갇히는데, 이젠 사용자가
@@ -920,6 +1086,7 @@ function LoadingVeilImpl() {
   if (firstRef.current) {
     firstRef.current = false;
     villageReadySignal.done = false;
+    resetWarmSignal();
     resetVillageEntry();
   }
 
@@ -1004,15 +1171,6 @@ function LoadingVeilImpl() {
       <VillageLoadingVeil progress={display} fading={ready} reduced={reduced} />
     </>
   );
-}
-
-// 건물 Suspense 안에서만 마운트된다 — 이게 곧 "마을이 섰다"는 신호다.
-// 씬에는 아무것도 그리지 않는다.
-function SceneReadyProbe() {
-  useEffect(() => {
-    markVillageReady();
-  }, []);
-  return null;
 }
 
 // 물·바람이 쓰는 시계를 한 곳에서 돌린다. 재질마다 useFrame 을 걸면 해자와
@@ -2871,11 +3029,12 @@ function ActiveRouteImpl({activeSection}: {activeSection: SectionId}) {
           <ringGeometry args={[1.55, 1.66, 64]} />
           <meshBasicMaterial color="#53cdff" transparent opacity={0.22} />
         </mesh>
-        <pointLight
+        {/* 풀에서 빌린다 — 걷기 모드에서 ActiveRoute 가 내려갈 때 실광원이
+            하나 줄면 전 재질이 재컴파일된다(LightPool.tsx). */}
+        <PooledLight
           color="#53cdff"
           intensity={0.5}
           distance={4}
-          decay={2}
           position={[0, 0.4, 0]}
         />
       </group>
@@ -2908,11 +3067,10 @@ function ActiveRouteImpl({activeSection}: {activeSection: SectionId}) {
           opacity={0.28}
         />
       </mesh>
-      <pointLight
+      <PooledLight
         color={building.accentColor}
         intensity={0.6}
         distance={4}
-        decay={2}
         position={[x, 0.6, z]}
       />
     </group>
@@ -2948,11 +3106,12 @@ function LiveDecorationsImpl({
               emissiveIntensity={0.18}
             />
           </mesh>
-          <pointLight
+          {/* villageState 는 입장 뒤에 도착한다 — 진짜 pointLight 를 달면 그
+              순간 광원 수가 바뀌어 전 재질이 재컴파일된다. 풀에서 빌린다. */}
+          <PooledLight
             color="#d4bf47"
             intensity={0.8}
             distance={3}
-            decay={2}
             position={[0, 1.1, 0]}
           />
         </group>
@@ -2972,11 +3131,10 @@ function LiveDecorationsImpl({
             <sphereGeometry args={[0.16, 18, 18]} />
             <meshBasicMaterial color="#53cdff" />
           </mesh>
-          <pointLight
+          <PooledLight
             color="#53cdff"
             intensity={1.5}
             distance={5}
-            decay={2}
             position={[0, 1.2, 0]}
           />
         </group>
@@ -3038,6 +3196,11 @@ function VillageSceneImpl({
   const propsApi = usePropsEditor();
   const editing = propsApi.enabled && propsApi.editMode;
   const sky = VILLAGE_PALETTE;
+  const sceneRendering = useSyncExternalStore(
+    subscribeWarm,
+    isSceneRendering,
+    serverFalse
+  );
 
   // ─── N8AO 투명 패스 끄기 ───────────────────────────────────────────────
   // n8ao 는 씬에 transparent 재질이 하나라도 있으면 `transparencyAware` 를
@@ -3125,6 +3288,8 @@ function VillageSceneImpl({
       <Canvas
         camera={{fov: 40, position: [4, 14, 16]}}
         dpr={isMobile ? [1, 1] : [1, 1.25]}
+        // 셰이더 컴파일이 끝날 때까지 그리지 않는다(SceneWarmup 주석).
+        frameloop={sceneRendering ? "always" : "never"}
         performance={{min: isMobile ? 0.4 : 0.5}}
         // toneMappingExposure — 마을 전체 밝기의 유일한 손잡이. 자세한 이유는
         // timePalette 주석 참고(요약: 1.0에서는 잔디가 ACES 어깨에 붙어 그림자가 눌린다).
@@ -3135,11 +3300,14 @@ function VillageSceneImpl({
         }}
         // 모바일은 끈다 — 섀도맵 패스가 통째로 한 번 더 도는 비용이 크다.
         //
-        // 데스크톱은 기본값(PCF). 처음엔 "soft"(PCFSoftShadowMap)로 뒀는데 이 three
-        // 버전에서 폐기돼 매 로드마다 경고를 뱉고 어차피 PCF로 대체된다.
+        // 데스크톱은 PCF 를 **이름으로 못박는다**. r3f 는 `shadows={true}` 를
+        // PCFSoftShadowMap 으로 옮기는데, 이 three 버전은 그걸 폐기해 **첫 그림자
+        // 패스에서야** PCF 로 바꾼다. 그 전에 도는 셰이더 사전 컴파일(SceneWarmup)이
+        // SHADOWMAP_TYPE_BASIC 변종을 만들고, 첫 렌더가 PCF 변종 19개를 도로
+        // 동기 컴파일했다(실측 — 사전 컴파일이 통째로 헛돌았다). 그림은 같다.
         // 2048 섀도맵을 68유닛에 펴 발라 텍셀이 3cm다. 그림자 경계가 거슬리면
         // mapSize 를 올리는 쪽이 낫다.
-        shadows={!isMobile}
+        shadows={isMobile ? false : "percentage"}
       >
         {/* 움직일 땐 해상도/이벤트 자동 저하 → 멈추면 선명하게 */}
         {/* <AdaptiveDpr/> 를 뺐다 — 해상도 조절이 두 겹이 되어 곱해지고 있었다.
@@ -3155,6 +3323,7 @@ function VillageSceneImpl({
             GLB 는 raycast 를 끄고 투명 박스/캡슐만 판정한다. */}
         {/* 개발 모드 계기판 — Suspense 밖이라 로딩 중에도 계측된다 */}
         <PerfProbe />
+        <SceneWarmup offscreenTarget={!isMobile} />
         <color args={[sky.skyHorizon]} attach="background" />
         <fog args={[sky.fog, sky.near, sky.far]} attach="fog" />
         <ambientLight color="#ffffff" intensity={sky.amb} />
@@ -3290,6 +3459,7 @@ function VillageSceneImpl({
               같은 로딩 시간이 "짓는 중"으로 보인다. */}
           <Suspense fallback={null}>
             <PropsLayer api={propsApi} />
+            <GroupProbe name="props" />
           </Suspense>
 
           <Suspense fallback={null}>
@@ -3333,8 +3503,8 @@ function VillageSceneImpl({
                 />
               );
             })}
-            {/* 건물들과 같은 경계 안 — 이게 마운트되는 순간이 곳 "마을이 섬"이다. */}
-            <SceneReadyProbe />
+            {/* 건물들과 같은 경계 안 — 이게 마운트되는 순간이 곧 "건물이 다 옴"이다. */}
+            <GroupProbe name="buildings" />
           </Suspense>
 
           {/* 배치 편집 중엔 주민을 통째로 내린다 — 돌아다니는 몸이 클릭을
@@ -3382,6 +3552,7 @@ function VillageSceneImpl({
                   commandTotal={autonomousNpcs.length}
                 />
               ))}
+              <GroupProbe name="npcs" />
             </Suspense>
           )}
 
@@ -3530,17 +3701,6 @@ function VillageSceneImpl({
               ) : null}
             </>
           )}
-
-          {/* ─── 셰이더 사전 컴파일 ───────────────────────────────────────
-              three 는 어떤 재질이 **처음 화면에 잡히는 프레임**에 그 셰이더를
-              컴파일·링크한다. 컴파일은 메인 스레드를 막으므로, 마을에 막
-              들어와 카메라가 움직이며 건물이 하나씩 시야에 들어올 때마다
-              한 번씩 툭툭 끊긴다("들어가자마자 막 끊기는" 증상의 정체다).
-
-              Preload 는 그 컴파일을 **로딩 베일 뒤로 옮긴다** — 어차피 기다리는
-              구간이라 체감 비용이 없다. 총 대기 시간은 조금 늘지만, 놀고 있는
-              동안의 끊김이 사라진다. */}
-          <Preload all />
         </Suspense>
       </Canvas>
 

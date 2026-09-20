@@ -237,6 +237,29 @@ so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottlene
   예전엔 uvicorn 리로드가 Windows "일괄 작업을 끝내시겠습니까" 프롬프트에 걸려 죽었다. 로그에 `[backend-dev] restart: <file>` 가 찍힌다.
   (수동으로 `uvicorn --reload` 를 띄웠다면 그 문제는 그대로다.)
 
+### First-visit shader precompile (2026-09-20)
+
+첫 방문(셰이더 캐시 없음) 렉의 정체는 **MeshStandard 변종 19개 × 0.6초의 동기 링크 대기**였다 — GLB 가
+도착해 처음 그려지는 프레임마다 하나씩 직렬로. `VillageScene.tsx` 의 `SceneWarmup` 이 순서를 바꾼다:
+세 묶음(`GroupProbe` props/buildings/npcs)이 다 올 때까지 `frameloop="never"` → `gl.compileAsync` 한 번
+(전 변종 병렬, 실측 0.7초) → 숨은 워밍업 4프레임 → `markVillageReady`. prod 실측 타이틀까지
+**데스크톱 18~22초 → 6~7초, 모바일 뷰 12.5초 → 6초**, 최장 멈춤 5.5~6초 → 1.2~1.4초.
+
+사전 컴파일은 **렌더 때와 변종 키가 한 글자라도 다르면 조용히 헛돈다**(에러 없이 두 벌을 컴파일). 이미 밟은 셋:
+
+- **렌더 타깃**: three 는 타깃이 있으면 outputColorSpace=Linear·톤매핑 없음, 없으면 sRGB·ACES 변종을 만든다.
+  데스크톱은 EffectComposer 버퍼에 그리므로 더미 `WebGLRenderTarget` 을 묶고 컴파일, 모바일은 묶지 않는다.
+  같은 이유로 **모바일에선 큐브 패스를 돌리지 않는다**(한 번 쓰고 버릴 변종 19개, 6.6초) — `gl.initTexture` 로 대신한다.
+  drei `<Preload all/>` 은 이 두 가지를 다 틀려서 뺐다.
+- **그림자 종류**: `shadows={true}` 는 r3f 가 PCFSoft 로 옮기고, three r183 은 그걸 **첫 그림자 패스에서야** PCF 로
+  바꾼다 → 그 전에 컴파일하면 `SHADOWMAP_TYPE_BASIC` 변종. 그래서 `shadows="percentage"` 로 못박았다.
+- **실광원 개수**: 컴파일 뒤에 바뀌면 전부 무효. `ActiveRoute`(걷기 모드에서 언마운트)와 `LiveDecorations`
+  (`villageState` 가 입장 뒤에 도착)의 조건부 `pointLight` 를 `PooledLight` 로 옮겼다. 새로 달지 말 것.
+
+어긋났는지는 화면으로 못 본다. `%LOCALAPPDATA%\Temp\claude\village-first-load-measure.mjs`(GL 훅)로
+"총 링크 수"와 "입장 뒤 링크 0"을 본다 — 데스크톱 47 · 모바일 36 이 기준이고, 늘었으면 어딘가 두 벌이다.
+포인트 광원 수(현재 10)는 FPS 엔 공짜지만 **컴파일 시간엔 비례한다**(10→1 실험에서 변종당 600→200ms).
+
 ### Pointer picking, camera, and render budget (2026-08-22)
 
 - **포인터 판정은 투명 히트박스만 한다.** NPC 캡슐(`NPC.tsx`)·건물 박스(`Building.tsx`)·바닥 클릭 원반(`GroundClickCatcher`).
