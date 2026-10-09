@@ -31,7 +31,7 @@ const IDX = {label: 0, heading: 1, learn: 2, kpt: 3, exit: 4};
 // 저장소 비공개(2026-10). 열람 요청 메일로 둔다.
 const REPO =
   "mailto:toadsam@naver.com?subject=FestFlow%20%EC%A0%80%EC%9E%A5%EC%86%8C%20%EC%97%B4%EB%9E%8C%20%EC%9A%94%EC%B2%AD";
-const VIDEO = "https://www.youtube.com/watch?v=-RomuYp93TQ";
+const VIDEO = "https://www.youtube.com/watch?v=Jdo5ZNDG8Uk";
 const DEPLOY = "https://fest-flow-smoky.vercel.app";
 
 export function P12Retro({onExit}: {onExit: () => void}) {

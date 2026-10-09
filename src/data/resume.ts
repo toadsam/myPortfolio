@@ -1099,6 +1099,8 @@ export const mainProjects: MainProjectCard[] = [
     // 404 가 되는 GitHub 링크 대신 "요청 시 공개" 메일 링크를 둔다.
     links: [
       {label: "사이트", href: "https://www.ajoufesta.com"},
+      // 2026-10-09 가을축제 버전 시연 영상(제목 "AjouFesta"). 5월판 -RomuYp93TQ 를 대체.
+      {label: "시연 영상", href: "https://www.youtube.com/watch?v=Jdo5ZNDG8Uk"},
       {
         label: "코드 (비공개 · 요청 시 공개)",
         href: "mailto:toadsam@naver.com?subject=FestFlow%20%EC%A0%80%EC%9E%A5%EC%86%8C%20%EC%97%B4%EB%9E%8C%20%EC%9A%94%EC%B2%AD"

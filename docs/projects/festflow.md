@@ -7,7 +7,7 @@
 > 있다.** "이미지 0장"이 아니라 "안 가져온 것"이었다.
 
 - 저장소 `toadsam/FestFlow` · 기간 2026.04 ~ 2026.10 · 개인 풀스택 · 현장 운영 두 번(2026.05 대동제, 2026.10.07–08 가을축제 "바람")
-- 배포 https://www.ajoufesta.com · 시연 영상 https://www.youtube.com/watch?v=-RomuYp93TQ · 가을축제 수치와 출처는 저장소 `docs/festflow/축제-결산.md` (2026-10-09 갱신, 아래 본문은 5월판 조사 기록)
+- 배포 https://www.ajoufesta.com · 시연 영상 https://www.youtube.com/watch?v=Jdo5ZNDG8Uk (2026-10 가을축제 버전, 5월판은 -RomuYp93TQ) · 가을축제 수치와 출처는 저장소 `docs/festflow/축제-결산.md` (2026-10-09 갱신, 아래 본문은 5월판 조사 기록)
 
 ---
 

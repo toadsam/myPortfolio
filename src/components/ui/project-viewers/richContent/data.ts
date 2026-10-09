@@ -913,7 +913,11 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     // 저장소는 2026-10 에 비공개로 돌렸다(DB 덤프 CSV 와 원본 사진이 기록에 남아 있다).
     // 링크는 운영 사이트로 대신하고, 코드는 요청하면 공개한다(카드 links 의 메일 링크).
-    demo: {live: "https://www.ajoufesta.com"},
+    demo: {
+      live: "https://www.ajoufesta.com",
+      // 2026-10-09 가을축제 버전 시연 영상. 있으면 Key Numbers 뒤에 영상 절이 생긴다.
+      video: "https://www.youtube.com/watch?v=Jdo5ZNDG8Uk"
+    },
     meta: [
       // 카드(resume.ts)와 같은 값. 2026-10-09 가을축제 개편까지 반영(리뉴얼 예정 → 끝).
       {label: "기간", value: "2026.04 ~ 2026.10 · 축제 두 번 현장 운영"},
