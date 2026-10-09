@@ -279,7 +279,7 @@ api.interceptors.response.use(ok, async err => {
 - **팀:** 개인 프로젝트 (풀스택 1인)
 - **역할:** 프론트 전체 · SSE·GPS 백엔드
 - **스택:** React · Vite · Leaflet · PWA · Spring Boot 3 · JWT · SSE · MySQL
-- **저장소:** https://github.com/toadsam/FestFlow
+- **저장소:** 비공개, 요청 시 공개 (2026-10 비공개 전환) · 사이트 https://www.ajoufesta.com
 
 **문제**
 대학 축제는 수십 개 부스가 동시에 운영되는데, 혼잡도·품절·공지·분실물 같은 상태를 실시간으로 공유하고 역할별로 접근할 도구가 없어 전화·메신저로 처리하고 있었다.

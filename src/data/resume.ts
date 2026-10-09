@@ -194,6 +194,12 @@ export interface MainProjectCard {
    * "운영중이면서 리뉴얼 예정" 도, "완료인데 리뉴얼 예정" 도 있다.
    */
   renewal?: boolean;
+  /**
+   * 리뉴얼을 마친 시점("2026.10"). 예정(renewal)과 다른 사실이라 필드를 나눴다.
+   * 화면에서는 강조색 칩 「2026.10 리뉴얼」, PDF 에서는 기간 줄 꼬리로 붙는다.
+   * 처음 쓴 곳은 AjouFesta(5월 첫 운영 뒤 전면 리뉴얼, 2026-10-09).
+   */
+  renewed?: string;
   tags: string[];
   /** 이력서 원본 기준. 근거가 없으면 비운다. */
   period?: string;
@@ -355,10 +361,10 @@ export {hero, heroSummary, resumePdf} from "./hero";
 export const printSummary = {
   lead: "React · Spring Boot 중심 웹 풀스택. 인증/보안과 배포 운영 이슈까지 직접 다룹니다.",
   points: [
-    "화면부터 API · 인증 · DB · 배포까지 한 흐름으로 구현합니다 (FestFlow · 총학생회 웹)",
+    "화면부터 API · 인증 · DB · 배포까지 한 흐름으로 구현합니다 (AjouFesta · 총학생회 웹)",
     "배포 후 드러나는 문제를 재현해 고칩니다 (HTTPS · CORS credentials · 토큰 재발급 경쟁 상태)",
     "실사용 피드백과 GA4/GSC 지표를 근거로 고칩니다 (aClub · 총학생회 웹)",
-    "AI 코딩 도구가 낸 값은 직접 측정해 확인하고 씁니다"
+    "AI 코딩 도구가 낸 결과는 테스트와 실측으로 확인하고 씁니다 (AjouFesta · 이 포트폴리오)"
   ]
 };
 
@@ -482,7 +488,8 @@ export const skillChips = skillDetails
  */
 export const githubEvidence = {
   repoCount: 44,
-  recent: ["FestFlow", "Sign-Language", "Ajou_MuscleUp", "Algorithm"],
+  // FestFlow 는 2026-10 에 비공개로 돌려서 공개 저장소 목록에서 뺐다.
+  recent: ["Sign-Language", "Ajou_MuscleUp", "Algorithm"],
   languages: ["TypeScript", "Java", "JavaScript", "C++", "C#"]
 };
 
@@ -507,7 +514,7 @@ export const education: EducationItem[] = [
     period: "2021.03 ~ 2027.02 (예정)",
     desc: "인공지능 융합학과를 복수전공으로 이수 중입니다.",
     bullets: [
-      "웹 프로젝트에 AI 기능 결합 (FestFlow 혼잡 예측 · 득근득근 AI 인바디 상담)"
+      "웹 프로젝트에 AI 기능 결합 (AjouFesta 혼잡 예측 · 득근득근 AI 인바디 상담)"
     ]
   },
   {
@@ -830,13 +837,17 @@ export const mainProjects: MainProjectCard[] = [
     // 어순을 뒤집었다. 카드는 3초 안에 부제의 **앞 7글자만** 읽힌다. 예전 문장은
     // 그 자리를 "소개형 홈페이지"(가장 약한 사실)가 쓰고 있었고, 무기인
     // "사용자 말을 듣고 방향을 바꿨다"가 20자 뒤에 있었다. 내용은 그대로다.
+    // 2026-10-09: "다시 만든" → "전면 리뉴얼한". 앞 7글자(사용자 피드백)는 그대로 둔다.
     subtitle:
-      "사용자 피드백을 듣고 소개형 홈페이지를 운영형 플랫폼으로 다시 만든 피트니스 커뮤니티",
+      "사용자 피드백을 듣고 소개형 홈페이지를 운영형 플랫폼으로 전면 리뉴얼한 피트니스 커뮤니티",
     category: "web",
     // 캐릭터 레벨·티어·진화·랭킹 = 게임 장치, AI 인바디 상담(OpenAI), Socket.IO 실시간
     facets: ["game", "ai", "realtime"],
     status: "운영중",
     // Realtime 을 추가했다 — Socket.IO 실시간 서버가 2.0 의 핵심인데 태그에 없었다.
+    // 2.0 리뉴얼 시점. 저장소 커밋이 2026-02-22 ~ 03-30 에 몰려 있다(3월 111개,
+    // 이벤트·챌린지·출석·캐릭터·라운지·관리자 개편). 2026-10-09 추가.
+    renewed: "2026.03",
     tags: ["FullStack", "JWT", "Realtime", "AWS"],
     // 본인 확인(2026-09-07): 개발·운영 참여는 2026.06 까지. 9월 push 는 정리본 업로드라 기간에 안 넣는다.
     period: "2025.09 ~ 2026.06",
@@ -1024,37 +1035,46 @@ export const mainProjects: MainProjectCard[] = [
   {
     id: "festflow",
     featured: true,
-    title: "FestFlow",
+    // 2026-10-09 이름을 AjouFesta 로 바꿨다(배포 주소 ajoufesta.com). 괄호의 옛 이름은
+    // 5월 이야기 · 저장소 이름(toadsam/FestFlow) · 면접 원고와 이어 주려고 남긴다.
+    // 상세 화면은 괄호 부분만 강조색으로 그린다(ProjectOnePager titleMatch).
+    title: "AjouFesta (구 FestFlow)",
     // "~를 위한 시스템" 은 **만들었다**는 뜻일 뿐이고, 이 프로젝트에서 가장 센
-    // 사실은 **실제로 돌았다**는 것이다(아주대 대동제 2026.05, AI Match 1일 운영).
-    // 4장 중 실사용 현장 기록이 있는 유일한 카드인데 그 말이 카드에 없었다.
+    // 사실은 **실제로 돌았다**는 것이다. 2026-10-09 에 "대동제에서 하루" 에서 바꿨다 —
+    // 같은 앱을 가을축제 "바람"(10.07–08)에서 이틀 더 돌렸고, 주점 주문·스태프 화면까지
+    // 총학생회 운영 전체가 이 앱 위에서 돌았다. 근거는 저장소 docs/festflow/축제-결산.md.
+    // 2026-10-09: 카드는 부제 앞 몇 글자만 읽힌다. 「리뉴얼」을 앞에 세웠다.
     subtitle:
-      "아주대 대동제에서 하루 동안 실제 운영한 축제 부스·매칭 관리 시스템",
+      "5월 첫 운영 뒤 전면 리뉴얼해 가을축제를 이틀 운영한 아주대 축제 앱",
     category: "web",
     // AI 챗봇·혼잡 예측(RandomForest)·AI Match, SSE 7채널, 운영 집계
     facets: ["ai", "realtime", "data"],
-    // 2026-09-08 본인 확인: 지금도 운영 중이고 리뉴얼 예정. period 는 개발 기간이라
-    // 그대로 둔다. 공개 URL 이 없어 히어로 "운영 중 서비스" 카운트에는 안 들어간다 —
-    // 주소가 생기면 links 에 "사이트" 를 달면 자동으로 센다.
+    // 2026-09-08 에 "리뉴얼 예정" 이었고, 10월 가을축제 개편으로 그 리뉴얼이 끝났다
+    // (2026-10-09 renewal 을 renewed 로). 공개 주소(www.ajoufesta.com)가 생겨 links 에
+    // "사이트" 를 달았으므로 히어로 "운영 중 서비스" 카운트에 들어간다.
     status: "운영중",
-    renewal: true,
+    renewed: "2026.10",
     // 여기만 순수 기술 나열이라 다른 3장과 축이 어긋나 있었다. 맨 앞에 성격
     // 태그를 세우고 기술은 뒤로 — scikit-learn(혼잡 예측)은 role 줄에 남아 있다.
-    tags: ["현장 운영", "실시간(SSE)", "Spring Boot", "PWA"],
-    period: "2026.04 ~ 2026.06",
+    // 2026-10-09 "Claude Code" 추가. 가을축제 버전 커밋 130개 중 129개가 Claude 공동 작성이다.
+    tags: ["현장 운영", "실시간(SSE)", "Spring Boot", "PWA", "Claude Code"],
+    // 첫 커밋 2026-04-01, 가을축제 결산 커밋 2026-10-09 (저장소 README 기간 줄과 같다).
+    period: "2026.04 ~ 2026.10",
     team: "개인 개발",
-    role: "사용자·관리자 기능 전체 구현 (React · Spring Boot · JWT · SSE · PWA) · 혼잡 예측 모델 연동",
+    role: "기획 · 개발 · 배포 · 현장 운영 1인 (React · Spring Boot · JWT · SSE · PWA)",
     // 예전 지표는 "SSE 7 채널 · 백엔드 컨트롤러 26" 이었다. 둘 다 저장소에서 실제로
     // 센 값이라 틀린 건 아니지만, **코드량은 심사자에게 능력으로 읽히지 않는다** —
     // 사람이 쓴 흔적이 있는데도 4장 중 첫 인상이 가장 약한 카드가 되어 있었다.
-    // 셋 다 현장 실측이다(전용 전시실 P01Hero 타일 · P11Field 와 같은 출처).
-    // 기술 숫자는 버린 게 아니라 상세로 내려갔다.
+    // 2026-10-09 에 5월 대동제 수치(169명 · 424건 · 36건)에서 가을축제 수치로 바꿨다.
+    // 5월 수치는 highlights 첫 줄과 상세 화면(「운영 당일」 절)에 남아 있다.
+    // 방문자는 Vercel 집계 기간이 10.02–09 라 "축제 주간" 이라고 적는다.
     metrics: [
-      {value: "169명", label: "AI Match 등록자"},
-      {value: "424건", label: "매칭 신청"},
-      {value: "36건", label: "성사 매칭"}
+      {value: "7,078명", label: "축제 주간 방문자"},
+      {value: "142건", label: "주점 첫날 주문"},
+      {value: "322명", label: "사주 소개팅 가입"}
     ],
-    metricsSource: "아주대 대동제 2026.05 · AI Match 1일 현장 운영 집계",
+    metricsSource:
+      "아주대 가을축제 2026.10.07–08 · Vercel Web Analytics(10.02–09) · 주문 CSV · 소개팅 통계 (저장소 docs/festflow/축제-결산.md)",
     richId: "festflow",
     // 현장 캡처 합성본(`festflow-field.webp`, scripts/build-festflow-card.mjs)으로
     // 한 번 갈아탔다가 이 소개 이미지로 되돌렸다. 부제·지표가 이미 "실제로 돌았다"를
@@ -1067,13 +1087,23 @@ export const mainProjects: MainProjectCard[] = [
     // 화면 안에 DEMO 배지가 붙어 있다). 카드 크기(≈340px)로 줄면 배지 글자는
     // 뭉개지고 숫자만 읽히므로, 바로 아래 지표 줄의 실측값(169·424·36)과
     // 섞여 보일 수 있다. 지표에 출처를 명시해 둔 이유이기도 하다.
-    image: "/projects/festflow.webp",
+    // 2026-10-09: 10월 실제 화면 4종 합성으로 바꿨다(운영 매뉴얼 연습 서버 화면).
+    // 위 주석의 데모 대시보드(festflow.webp)는 5월판 소개 그림이라 지금 앱과 다르다.
+    image: "/projects/festflow/oct/festflow-oct-screens.webp",
     highlights: [
-      "React(Vite)+Tailwind PWA, Spring Boot 3/JPA/Security/JWT, MySQL 구조로 사용자 기능과 관리자 API 를 분리했습니다.",
-      "SSE 기반 혼잡도·공연·공지 스트림, 관리자 CRUD/CSV 업로드, KPI/감사 로그, GPS 기반 혼잡도 계산, 분석 API 까지 운영형 구조로 구현했습니다.",
-      "2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영했습니다(QA 참여 46명)."
+      "2026.05 대동제에서 AI 소개팅을 하루 운영했습니다(등록 169명, 신청 424건, 성사 36건). 그날 신청 상한이 없어 문자 244통이 잔액 부족으로 실패했고, 10월에는 1인당 신청 3건 제한과 문자 실패를 저장과 분리하는 처리로 고쳤습니다.",
+      "2026.10 가을축제에서는 주점 QR 주문과 메뉴별 요리사 창, 사주 소개팅, 스태프 화면을 이틀 동안 서버 장애 없이 운영했습니다. 첫날 주점 입금 확인 매출은 2,462,000원, 소개팅 성사는 97쌍입니다.",
+      "React(Vite) PWA와 Spring Boot 3/JPA/JWT, MySQL 구조에 현장 상태를 SSE로 보냈고, 축제 전 점검을 세 번 해서 당일 사고가 날 만한 것 20개 정도를 미리 고쳤습니다."
     ],
-    links: [{label: "GitHub", href: "https://github.com/toadsam/FestFlow"}]
+    // 저장소는 2026-10 에 비공개로 돌렸다(DB 덤프 CSV 와 원본 사진이 커밋 기록에 남아 있다).
+    // 404 가 되는 GitHub 링크 대신 "요청 시 공개" 메일 링크를 둔다.
+    links: [
+      {label: "사이트", href: "https://www.ajoufesta.com"},
+      {
+        label: "코드 (비공개 · 요청 시 공개)",
+        href: "mailto:toadsam@naver.com?subject=FestFlow%20%EC%A0%80%EC%9E%A5%EC%86%8C%20%EC%97%B4%EB%9E%8C%20%EC%9A%94%EC%B2%AD"
+      }
+    ]
   },
   {
     id: "tserof",
@@ -1421,7 +1451,7 @@ export const values: ValueItem[] = [
 // ─── About / Contact ──────────────────────────────────────────────────────────
 
 export const aboutMe = [
-  "총학생회 웹의 관리자 화면과 FestFlow 현장 운영까지, 만든 기능을 실제로 쓰이는 데까지 가져갔습니다.",
+  "총학생회 웹의 관리자 화면과 AjouFesta 현장 운영까지, 만든 기능을 실제로 쓰이는 데까지 가져갔습니다.",
   "배포 후 생기는 HTTPS·CORS 같은 문제를 로그/설정/네트워크까지 파고들어 해결해왔습니다.",
   "aClub 은 GA4 지표와 운영 문의를 근거로 정보 구조와 문구를 고쳤습니다.",
   "AI 기능은 모델 응답을 그대로 내보내지 않습니다. 진행 권한은 사람 쪽에 두고, 호출이 실패해도 규칙 기반 경로로 이어지게 만들었습니다.",

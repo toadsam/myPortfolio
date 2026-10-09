@@ -102,7 +102,7 @@ export const projects: ProjectData[] = [
   },
   {
     id: "festflow",
-    title: "FestFlow",
+    title: "AjouFesta (구 FestFlow)",
     description: "대학 축제 운영자를 위한 실시간 부스 관리 시스템입니다.",
     role: "프론트엔드 중심 풀스택 개발",
     tech: [
@@ -141,7 +141,14 @@ export const projects: ProjectData[] = [
     result:
       "운영자가 고치면 현장 화면이 새로고침 없이 따라오는 구조까지 갔습니다. 부스 혼잡도·공연 상태·공지 등이 각각 SSE 채널 7개로 흐릅니다. 백엔드 컨트롤러 26개로 사용자용과 관리자용 기능을 한 서비스 안에서 닫았습니다.",
     nextStep: "SMS 알림, 매출 집계, 현장 QR 체크인 기능을 추가할 예정입니다.",
-    links: [{label: "GitHub", href: "https://github.com/toadsam/FestFlow"}]
+    // 저장소 비공개(2026-10). 사이트와 "요청 시 공개" 메일 링크로 대신한다.
+    links: [
+      {label: "사이트", href: "https://www.ajoufesta.com"},
+      {
+        label: "코드 (비공개 · 요청 시 공개)",
+        href: "mailto:toadsam@naver.com?subject=FestFlow%20%EC%A0%80%EC%9E%A5%EC%86%8C%20%EC%97%B4%EB%9E%8C%20%EC%9A%94%EC%B2%AD"
+      }
+    ]
   },
   {
     id: "sign-language",

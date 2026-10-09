@@ -551,7 +551,12 @@ export function ProjectOnePager({
 
   // "득근득근 (MuscleUp)"처럼 괄호가 붙은 제목은 괄호 부분만 강조색으로.
   const titleMatch = project.title.match(/^(.*?)\s*(\([^)]*\))\s*$/);
-  const repoHref = data.demo.repo ?? project.links[0]?.href;
+  // 저장소 아이콘은 GitHub 주소일 때만 단다. 예전엔 links[0] 으로 떨어졌는데,
+  // 저장소가 비공개라 링크를 뺀 프로젝트(FestFlow)에서는 links[0] 이 사이트라
+  // GitHub 아이콘이 사이트로 가는 버튼이 됐다.
+  const repoHref =
+    data.demo.repo ??
+    project.links.find(l => l.href.includes("github.com"))?.href;
   // 실제로 열리는 주소가 있을 때만 "운영 중" 이라고 말하고, 그 주소로 보낸다.
   const liveHref = data.demo.live;
   // 같은 주소가 CTA 줄에 두 번 서지 않게 한다 — 카드 목록에서는 링크 칩이
@@ -903,6 +908,12 @@ export function ProjectOnePager({
             ) : null}
           </section>
 
+          {/* ══════════ 리뉴얼 (두 번째 운영) ══════════
+              2026-10-09 Key Numbers 바로 뒤로 올렸다. 예전엔 Field Day(5월) 뒤라 한참
+              내려가야 보였는데, 리뉴얼한 결과가 지금 이 프로젝트의 본편이다. 5월 이야기는
+              비교표의 5월 열과 아래 Field Day 가 맡는다. */}
+          {data.secondRun ? <SecondRun run={data.secondRun} /> : null}
+
           {/* ══════════ 플레이 영상 ══════════
               숫자 다음, 문제 정의 앞. 게임 셋(VR·AR·아주대탐험)은 사용자 수
               같은 성과 숫자가 없어서 "그래서 뭐가 됐는데" 에 답하는 게 이 영상
@@ -1051,7 +1062,7 @@ export function ProjectOnePager({
                       </p>
                       <p className="flex gap-3 text-sm leading-relaxed text-white">
                         <span className="mono shrink-0 select-none text-xs uppercase tracking-widest text-accent">
-                          지금이라면
+                          {data.fieldDay?.nowLabel ?? "지금이라면"}
                         </span>
                         {it.now}
                       </p>
@@ -1544,5 +1555,272 @@ export function ProjectOnePager({
         </footer>
       </motion.div>
     </AnimatePresence>
+  );
+}
+
+/* ══════════ 두 번째 운영 ══════════
+   Field Day(첫 현장에서 깨진 것) 바로 뒤. 같은 서비스를 다음 현장에서 다시 돌린
+   결과를 숫자, 범위 비교, 화면, 다시 만든 것, 새로 만든 것, 준비, 남은 것 순서로
+   세운다. 다시 만든 것과 새로 만든 것은 한 표에 섞지 않는다. */
+function SecondRun({run}: {run: NonNullable<RichProject["secondRun"]>}) {
+  return (
+    <section className="reveal space-y-10">
+      <h2 className="section-label">Renewal · Second Run</h2>
+      <div className="reveal-left space-y-3">
+        <h3 className="text-2xl font-bold md:text-3xl">{run.title}</h3>
+        <p className="text-base leading-relaxed text-gray-400 md:text-lg">
+          {run.lead}
+        </p>
+      </div>
+
+      <div className="stagger-children grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {run.stats.map(m => (
+          <div className="stat-tile reveal h-full" key={m.l}>
+            <div className="mono mb-1 break-keep text-xs uppercase tracking-widest text-muted">
+              {m.l}
+            </div>
+            <span className="mono block whitespace-nowrap text-xl font-black text-accent sm:text-2xl md:text-3xl">
+              {m.n}
+            </span>
+            <div className="mono mt-1 text-[10px] text-muted">{m.s}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="reveal overflow-x-auto rounded-lg border border-[rgb(122,90,56,0.45)]">
+        <table className="w-full min-w-[560px] text-left text-sm">
+          <thead>
+            <tr className="mono text-xs uppercase tracking-widest text-muted">
+              <th className="w-[22%] p-4 font-normal" />
+              <th className="w-[39%] p-4 font-normal">2026.05 대동제</th>
+              <th className="w-[39%] p-4 font-normal text-accent">
+                2026.10 가을축제
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-[rgb(122,90,56,0.32)]">
+            {run.scope.map(r => (
+              <tr key={r.k}>
+                <th className="break-keep p-4 align-top font-bold text-gray-200">
+                  {r.k}
+                </th>
+                <td className="p-4 align-top leading-relaxed text-gray-400">
+                  {r.before}
+                </td>
+                <td className="p-4 align-top leading-relaxed text-white">
+                  {r.after}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="reveal grid grid-cols-2 items-start gap-4 md:grid-cols-4">
+        {run.shots.map(s => (
+          <figure className="space-y-2" key={s.src}>
+            {/* 자르지 않는다. 예전엔 9/14 상자에 object-cover 로 넣어 폰 캡처의
+                아래 절반이 잘렸다. 화면 전체가 증거라 원본 비율 그대로 둔다. */}
+            <div className="overflow-hidden rounded-lg border border-[rgb(122,90,56,0.45)] bg-black/30">
+              <img
+                alt={s.alt}
+                className="block h-auto w-full"
+                loading="lazy"
+                src={s.src}
+              />
+            </div>
+            <figcaption className="mono text-xs text-muted">
+              {s.label}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <div className="space-y-4">
+        <h4 className="block-label">{run.remadeTitle}</h4>
+        <ul className="reveal divide-y divide-[rgb(122,90,56,0.32)] overflow-hidden rounded-lg border border-[rgb(122,90,56,0.45)]">
+          {run.remade.map(it => (
+            <li
+              className="grid grid-cols-1 gap-3 p-5 md:grid-cols-12 md:gap-6"
+              key={it.t}
+            >
+              <h5 className="font-bold leading-snug text-gray-200 md:col-span-3">
+                {it.t}
+              </h5>
+              <div className="space-y-2 md:col-span-9">
+                <p className="flex gap-3 text-sm leading-relaxed text-gray-400">
+                  <span className="mono w-10 shrink-0 select-none text-xs tracking-widest text-red-300">
+                    5월
+                  </span>
+                  {it.before}
+                </p>
+                <p className="flex gap-3 text-sm leading-relaxed text-white">
+                  <span className="mono w-10 shrink-0 select-none text-xs tracking-widest text-accent">
+                    10월
+                  </span>
+                  {it.after}
+                </p>
+                <p className="mono text-[11px] leading-relaxed text-muted">
+                  출처: {it.source}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="space-y-4">
+        <h4 className="block-label">새로 만들어 함께 운영한 것</h4>
+        <div className="reveal grid grid-cols-1 gap-4 md:grid-cols-2">
+          {run.added.map(a => (
+            <div
+              className="rounded-lg border border-[rgb(122,90,56,0.45)] p-5"
+              key={a.t}
+            >
+              <p className="font-bold text-gray-200">{a.t}</p>
+              <p className="mt-2 text-sm leading-relaxed text-gray-400">
+                {a.what}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-white">
+                {a.result}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {run.ai ? <AiWork ai={run.ai} /> : null}
+
+      <div className="reveal grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="space-y-2">
+          <h4 className="block-label">준비</h4>
+          <p className="text-sm leading-relaxed text-gray-300">{run.prep}</p>
+        </div>
+        <div className="space-y-2">
+          <h4 className="block-label">아직 남은 것</h4>
+          <ul className="list-disc space-y-1 pl-5 text-sm leading-relaxed text-gray-400">
+            {run.gaps.map(g => (
+              <li key={g}>{g}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <p className="mono text-xs leading-relaxed text-muted">{run.source}</p>
+    </section>
+  );
+}
+
+/* AI 와 같이 만든 방식. Renewal 절 안, 「준비 · 아직 남은 것」 바로 위에 둔다.
+   역할 표 → 고른 것 → 확인한 방법 → 바로잡은 것 → 규칙 순서다. 「AI가 썼다」 보다
+   「무엇을 직접 정했고 결과를 어떻게 확인했나」 가 먼저 보이게. */
+function AiWork({
+  ai
+}: {
+  ai: NonNullable<NonNullable<RichProject["secondRun"]>["ai"]>;
+}) {
+  return (
+    <div className="reveal space-y-6 rounded-xl border border-[rgb(122,90,56,0.45)] bg-[rgb(169,189,214,0.045)] p-6 md:p-8">
+      <div className="space-y-2">
+        <h4 className="block-label">{ai.title}</h4>
+        <p className="text-sm leading-relaxed text-gray-300 md:text-base">
+          {ai.lead}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {ai.stats.map(m => (
+          <div className="stat-tile h-full" key={m.l}>
+            <div className="mono mb-1 break-keep text-xs tracking-widest text-muted">
+              {m.l}
+            </div>
+            <span className="mono block whitespace-nowrap text-xl font-black text-accent md:text-2xl">
+              {m.n}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {(
+          [
+            ["직접 정한 것", ai.roles.mine, "text-accent"],
+            ["AI에 맡긴 것", ai.roles.ai, "text-gray-400"]
+          ] as const
+        ).map(([label, list, tone]) => (
+          <div
+            className="rounded-lg border border-[rgb(122,90,56,0.32)] p-4"
+            key={label}
+          >
+            <p className={`mono mb-2 text-xs tracking-widest ${tone}`}>
+              {label}
+            </p>
+            <ul className="list-disc space-y-1 pl-5 text-sm leading-relaxed text-gray-300">
+              {list.map(x => (
+                <li key={x}>{x}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-2">
+        <p className="mono text-xs tracking-widest text-muted">
+          수십 개 중 넷만 고른 기준
+        </p>
+        <p className="text-sm leading-relaxed text-gray-300">
+          {ai.triage.lead}
+        </p>
+        <ol className="list-decimal space-y-1 pl-5 text-sm leading-relaxed text-white">
+          {ai.triage.items.map(x => (
+            <li key={x}>{x}</li>
+          ))}
+        </ol>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="space-y-2">
+          <p className="mono text-xs tracking-widest text-muted">
+            AI가 고쳤다고 한 것을 확인한 방법
+          </p>
+          <ul className="space-y-2 text-sm leading-relaxed">
+            {ai.verify.map(v => (
+              <li key={v.t}>
+                <span className="font-bold text-gray-200">{v.t}.</span>{" "}
+                <span className="text-gray-400">{v.d}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="space-y-2">
+          <p className="mono text-xs tracking-widest text-muted">
+            AI 결과를 바로잡은 것
+          </p>
+          <ul className="space-y-2 text-sm leading-relaxed">
+            {ai.corrected.map(v => (
+              <li key={v.t}>
+                <span className="font-bold text-gray-200">{v.t}.</span>{" "}
+                <span className="text-gray-400">{v.d}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <p className="mono text-xs tracking-widest text-muted">
+          AI에 준 작업 규칙
+        </p>
+        <ul className="list-disc space-y-1 pl-5 text-sm leading-relaxed text-gray-400">
+          {ai.rules.map(x => (
+            <li key={x}>{x}</li>
+          ))}
+        </ul>
+      </div>
+
+      <p className="mono text-[11px] leading-relaxed text-muted">
+        출처: {ai.source}
+      </p>
+    </div>
   );
 }

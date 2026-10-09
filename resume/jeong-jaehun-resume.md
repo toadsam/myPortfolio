@@ -2,7 +2,6 @@
 
 Full-Stack Web Developer  
 Email: toadsam@naver.com  
-Phone: 010-6428-6247  
 GitHub: https://github.com/toadsam  
 Portfolio: https://jaehun.co.kr/  
 Target: Web Full-Stack / Frontend / Backend
@@ -29,14 +28,14 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 ## GitHub Evidence
 
 - Public Profile: 44 public repositories
-- Current Web Repos: FestFlow, Sign-Language, Ajou_MuscleUp
+- Current Web Repos: Sign-Language, Ajou_MuscleUp (FestFlow 는 2026.10 부터 비공개, 요청 시 공개)
 - Public repo languages: TypeScript, Java, JavaScript, C++, C#, ShaderLab, HTML, Svelte, GDScript
 - Recent evidence: FestFlow updated in May 2026, Sign-Language updated in May 2026, Ajou_MuscleUp updated in April 2026, Algorithm updated in March 2026
 
 ## Project Links
 
 - myPortfolio (AI 포트폴리오 마을): https://github.com/toadsam/myPortfolio
-- FestFlow: https://github.com/toadsam/FestFlow
+- AjouFesta (구 FestFlow): https://www.ajoufesta.com (저장소는 비공개, 요청 시 공개)
 - Ajou_MuscleUp: https://github.com/toadsam/Ajou_MuscleUp
 - Sign-Language: https://github.com/toadsam/Sign-Language
 - Algorithm: https://github.com/toadsam/Algorithm
@@ -52,7 +51,7 @@ Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Po
 - 서비스 전체 흐름 구현: 화면부터 API, 인증, DB, 배포까지 사용자가 지나가는 한 흐름으로 이어서 만듭니다.
 - 운영 중 문제 해결: HTTPS/Mixed Content, CORS credentials, Refresh Token 재발급, 세션 저장소, SSE 연결처럼 배포 후에 드러나고 프론트와 서버 설정을 함께 봐야 하는 문제를 직접 재현해 수정했습니다.
 - 실사용 피드백 반영: GA4/GSC 지표와 운영 피드백을 바탕으로 정보 구조, CTA, 링크 흐름, 문구를 개선했습니다.
-- AI 코딩 도구 운용: 프로젝트 규칙과 이미 겪은 실패를 문서로 고정해 같은 실수가 반복되지 않게 했습니다(규칙 문서는 3개월간 24회 갱신). 도구가 제안한 값은 번들 크기, 텍스처 VRAM처럼 직접 측정해 확인한 뒤 반영했습니다. 반복되는 분석 작업은 Claude Code 스킬로 만들어 공개했습니다(codebase-anatomy).
+- AI 코딩 도구 운용: 프로젝트 규칙과 이미 겪은 실패를 문서로 고정해 같은 실수가 반복되지 않게 했습니다(규칙 문서는 3개월간 24회 갱신). 도구가 제안한 값은 번들 크기, 텍스처 VRAM처럼 직접 측정해 확인한 뒤 반영했습니다. 반복되는 분석 작업은 Claude Code 스킬로 만들어 공개했습니다(codebase-anatomy). AjouFesta 가을축제 버전은 커밋 130개 중 129개를 Claude Code와 같이 작성했고, 기능과 우선순위는 직접 정했습니다. 총점검에서는 AI 네 개가 영역별로 찾은 문제 수십 개 중 운영 전에 고칠 4개만 골랐고, 고친 것은 재현 테스트(서버 테스트 3개에서 23개 파일)와 두 기기 동시 테스트로 확인했습니다.
 - AI 기능의 신뢰성 설계: 에이전트에 진행 권한을 주지 않고 상태 전이를 순수 함수와 관리자 게이트로 분리했습니다. 모델이 낸 견적은 규칙 기반 기준의 0.6~1.8배로 제한하고, API 키가 없거나 호출이 실패하면 규칙 기반 응답으로 이어갑니다. 이 규칙들은 백엔드 테스트로 잠가 두었습니다.
 
 ## Core Projects
@@ -71,19 +70,20 @@ Stack: Next.js 16, React 19, TypeScript, React Three Fiber, FastAPI, SQLAlchemy,
 - Result: 공개·관리자 API 65개, 순수 로직 pytest 258개. 방문자가 쓰는 유일한 경로(제작 의뢰)는 허니팟, 전용 레이트리밋, 견적 상·하한 클램프로 막았고, 텍스처 VRAM과 실광원 수를 측정해 예산으로 잠갔습니다.
 - Evidence: 저장소가 공개되어 있고, 이 이력서가 실린 사이트가 실행 결과입니다. 첫 화면 무게와 3D 모델 수는 빌드 산출물에서 측정한 값입니다.
 
-### FestFlow
+### AjouFesta (구 FestFlow)
 
-2026.04 - 2026.06 / 개인 프로젝트 · 공개 GitHub repo / Full-Stack Festival Management Web App  
-Role: React, Spring Boot, JWT, SSE, PWA 기반 사용자/관리자 기능 구현  
-Scope: 개인 프로젝트 / 공개 GitHub repo / 사용자·관리자 양쪽 기능 구현  
-Stack: React, Vite, Tailwind CSS, PWA, Spring Boot 3, JPA, Spring Security, JWT, SSE, MySQL
+2026.04 - 2026.10 / 개인 프로젝트 · 공개 GitHub repo / 아주대 축제 앱 (두 번 현장 운영)  
+Role: 기획, 개발, 배포, 현장 운영 1인 (React · Spring Boot · JWT · SSE · PWA)  
+Scope: 개인 프로젝트 / 공개 GitHub repo / 손님 · 주점 스태프 · 소개팅 운영진 · 총괄 화면 전부  
+Stack: React, Vite, Tailwind CSS, PWA, Spring Boot 3, JPA, Spring Security, JWT, SSE, MySQL, S3  
+Site: https://www.ajoufesta.com
 
-대학교 축제 운영을 위한 웹앱으로, 사용자 지도/부스 탐색과 관리자 운영, 실시간 공지·혼잡도·공연 상태를 함께 다루는 서비스입니다.
+아주대학교 축제에서 총학생회가 실제로 쓴 축제 앱입니다. 손님은 타임테이블, 주점 QR 주문, 사주 소개팅, 분실물을 보고, 주점 스태프와 소개팅 운영진, 전체 스태프는 각자의 화면을 씁니다.
 
-- Problem: 축제 현장에서는 부스 위치, 혼잡도, 공연 상태, 공지, 분실물, 관리자 운영 데이터가 빠르게 바뀌어 실시간성과 운영 권한이 중요합니다.
-- Action: 현장에서 바뀌는 혼잡도·공연·공지를 SSE 스트림으로 흘리고, 사용자 기능과 관리자 API를 분리했습니다. 스택은 React(Vite)·Tailwind PWA, Spring Boot 3/JPA/Security/JWT, MySQL입니다.
-- Result: SSE 기반 혼잡도·공연·공지 스트림, 관리자 CRUD/CSV 업로드, KPI/감사 로그, GPS 기반 혼잡도 계산, 분석 API까지 포함한 운영형 구조를 구현했고, 2026.05 아주대학교 대동제에서 AI Match 기능을 1일간 실제 운영했습니다.
-- Evidence: 현장 운영 실측(2026.05 아주대학교 대동제 · 1일): AI Match 등록자 169명, 매칭 신청 424건, 성사 매칭 36건, 관리자 처리 30건 이상, QA 참여 46명(본인 확인 2026-09-06 — 발표자료 15장의 15명은 등록자 47명·신청 23건과 같은 초기 스냅샷). 저장소에는 SSE 스트림, 관리자 보호 API, CSV 일괄 업로드, KPI, 감사 로그, PWA/오프라인 페이지 구조가 공개되어 있습니다.
+- Problem: 2026.05 대동제에서 AI 소개팅을 하루 운영했을 때 신청 상한이 없고 신청마다 문자가 나가서, 오후에 문자 잔액이 떨어져 244통이 실패했습니다. 만남 시간은 운영진이 전화로 잡았습니다.
+- Action: 10월 가을축제 전에 1인당 신청 3건 제한, 문자 실패를 신청 저장과 분리하는 처리, 앱 안의 시간 제안·확정·알림을 넣었습니다. 주점 QR 주문과 메뉴별 요리사 창, 스태프 화면을 새로 만들고, 눌러 보는 운영 매뉴얼로 7개 흐름을 끝까지 돌려 본 뒤 축제 전 점검 세 번으로 당일 사고가 날 만한 것 20개 정도를 미리 고쳤습니다.
+- Result: 2026.10.07–08 가을축제 "바람"을 이틀 동안 서버 장애 없이 운영했습니다. 축제 주간 방문자 7,078명, 주점 첫날 주문 142건과 입금 확인 매출 2,462,000원, 사주 소개팅 가입 322명과 성사 97쌍, 부스 만남 30쌍입니다.
+- Evidence: 5월 수치는 관리자 화면과 Solapi 로그(등록 169명, 신청 424건, 성사 36건, 문자 435통 시도 중 244통 실패), 10월 수치는 Vercel Web Analytics(10.02–09), 주문 콘솔 CSV, 소개팅 관리자 통계입니다. 저장소 docs/festflow/축제-결산.md 에 출처와 한계를 함께 적었습니다.
 
 ### 득근득근 MuscleUp
 

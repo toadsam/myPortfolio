@@ -13,7 +13,7 @@ export const experienceItems: ExperienceItem[] = [
     year: "2025",
     title: "풀스택 웹 서비스 개발 (개인·팀)",
     description:
-      "StockFlow·FestFlow·MuscleUp 의 Spring Boot 백엔드와 React 프론트를 만들었습니다. SSE·Socket.IO 실시간 통신과 JWT/OAuth 인증까지 직접 붙였습니다."
+      "StockFlow·AjouFesta·MuscleUp 의 Spring Boot 백엔드와 React 프론트를 만들었습니다. SSE·Socket.IO 실시간 통신과 JWT/OAuth 인증까지 직접 붙였습니다."
   },
   {
     year: "2026",

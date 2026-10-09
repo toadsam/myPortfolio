@@ -819,6 +819,14 @@ export function ResumeMode({onEnterVillage}: Props) {
                                   리뉴얼 예정
                                 </span>
                               ) : null}
+                              {p.renewed ? (
+                                <span
+                                  className="project-renewed"
+                                  title="첫 운영 뒤 전면 리뉴얼을 마친 프로젝트"
+                                >
+                                  {p.renewed} 리뉴얼
+                                </span>
+                              ) : null}
                               <span
                                 className={`project-status ${
                                   p.status === "출시"

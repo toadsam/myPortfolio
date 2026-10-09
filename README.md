@@ -108,7 +108,7 @@ npm install
 npm run dev          # http://localhost:3000
 npm run build && npm run start
 npm run typecheck    # tsc --noEmit — lint 스크립트와 JS 테스트 러너는 없다
-npm run resume:pdf   # src/data/resume.ts 에서 A4 2장 PDF
+npm run resume:pdf   # src/data/resume.ts 에서 A4 PDF(현재 5쪽). --private 는 resume/phone.local.txt 의 번호를 넣은 제출용 사본(커밋 안 함)
 npm run optimize     # public/models 의 GLB 압축 (scripts/optimize-glb.mjs)
 ```
 

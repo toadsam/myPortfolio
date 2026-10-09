@@ -204,6 +204,44 @@ export interface RichProject {
     title: string;
     lead: string;
     items: {t: string; happened: string; now: string; source: string}[];
+    /** `now` 앞 라벨. 없으면 「지금이라면」(계획). 실제로 고친 뒤면 「10월에는」처럼 쓴다. */
+    nowLabel?: string;
+  };
+  /**
+   * 「두 번째 운영」. 같은 서비스를 현장에서 한 번 더 돌린 기록이다.
+   *
+   * fieldDay 가 「그날 무엇이 깨졌나」 라면 이건 「그래서 다음 현장에서 어떻게 됐나」 다.
+   * 다시 만든 것(remade, 전과 후)과 새로 만든 것(added, 비교 대상 없음)을 섞지 않는다.
+   * 섞으면 「기능이 많아졌다」 로만 읽힌다. 숫자마다 출처(s)를 단다.
+   */
+  secondRun?: {
+    title: string;
+    lead: string;
+    stats: {n: string; l: string; s: string}[];
+    scope: {k: string; before: string; after: string}[];
+    shots: {label: string; src: string; alt: string}[];
+    remadeTitle: string;
+    remade: {t: string; before: string; after: string; source: string}[];
+    added: {t: string; what: string; result: string}[];
+    prep: string;
+    gaps: string[];
+    source: string;
+    /**
+     * AI 코딩 에이전트와 같이 만든 방식. 저장소가 비공개라 원문(AI-활용.md)을
+     * 심사자가 못 읽으므로 핵심을 여기로 꺼낸다. 「AI가 썼다」 가 아니라
+     * 「무엇을 직접 정했고 AI 결과를 어떻게 확인했나」 가 요점이다.
+     */
+    ai?: {
+      title: string;
+      lead: string;
+      stats: {n: string; l: string}[];
+      roles: {mine: string[]; ai: string[]};
+      triage: {lead: string; items: string[]};
+      verify: {t: string; d: string}[];
+      corrected: {t: string; d: string}[];
+      rules: string[];
+      source: string;
+    };
   };
   tech: string[];
   resultScreens: ScreenSpec[];

@@ -245,7 +245,7 @@ const coreNpcs: NPCData[] = [
       ],
       presetQuestions: [
         "대표 프로젝트 3개만 골라줘",
-        "FestFlow가 왜 중요한 프로젝트야?",
+        "AjouFesta가 왜 중요한 프로젝트야?",
         "가장 구현 난이도가 높았던 건 뭐야?",
         "채용자 관점에서 볼 프로젝트 추천해줘"
       ]

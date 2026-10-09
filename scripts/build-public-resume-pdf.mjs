@@ -13,7 +13,7 @@
 //
 // ── 전화번호 ─────────────────────────────────────────────────────────────────
 // 번호는 코드 어디에도 없다(`resume.ts` 는 브라우저 번들에 들어간다). `--private`
-// 일 때만 원본 md 의 `Phone:` 줄에서 읽어 `resume/` 사본에 넣고, 공개본
+// 일 때만 `resume/phone.local.txt`(gitignore, 한 줄)에서 읽어 `resume/` 사본에 넣고, 공개본
 // (`public/`)은 번호 없이 찍은 뒤 텍스트 레이어에 번호가 없는지 다시 검사한다.
 // (PDF 를 사후 편집해 글자를 지우는 건 텍스트 레이어가 남아 안전하지 않다.)
 //
@@ -83,7 +83,8 @@ const stateTail = p =>
     p.status === "운영중" && !(p.period ?? "").includes("진행 중")
       ? "운영 중"
       : "",
-    p.renewal ? "리뉴얼 예정" : ""
+    p.renewal ? "리뉴얼 예정" : "",
+    p.renewed ? `${p.renewed} 리뉴얼` : ""
   ]);
 
 /** 학력은 같은 기관·같은 기간이면 한 줄로 묶는다(아주대 전공 셋). */
@@ -624,11 +625,21 @@ ${renderPortfolio()}
 
 // ── 실행 ─────────────────────────────────────────────────────────────────────
 
+// 2026-10-09: 번호를 원고 md 에서 뺐다. 저장소가 공개라 md 와 제출본 PDF 에 있던
+// 번호가 누구에게나 보였다. 지금은 gitignore 된 로컬 파일 한 줄에서 읽는다.
+// 예전처럼 md 에 `Phone:` 줄이 있으면 그것도 받는다.
+const PHONE_FILE = join(root, "resume/phone.local.txt");
+
 async function readPhone() {
+  const local = await readFile(PHONE_FILE, "utf8").catch(() => "");
+  const fromFile = local.match(/([0-9][0-9-]{8,})/);
+  if (fromFile) return fromFile[1];
   const md = await readFile(SRC_MD, "utf8");
   const m = md.match(/^Phone:\s*([0-9-]+)/m);
   if (!m) {
-    console.error("원본 md 에서 Phone: 줄을 찾지 못했습니다.");
+    console.error(
+      "전화번호를 찾지 못했습니다. resume/phone.local.txt 에 번호 한 줄을 넣어 주세요(저장소에는 안 올라갑니다)."
+    );
     process.exit(1);
   }
   return m[1];

@@ -24,7 +24,8 @@ import {useTimeline} from "../../_kit/useTimeline";
 const STEPS = [0, 400, 800, 1100, 1500, 1900, 2400];
 const IDX = {wall: 0, kicker: 1, line1: 2, line2: 3, summary: 4, chips: 5, tiles: 6};
 
-const REPO = "https://github.com/toadsam/FestFlow";
+// 저장소는 2026-10 에 비공개로 돌렸다. GitHub 주소는 바깥에서 404 라 열람 요청 메일로 둔다.
+const REPO = "mailto:toadsam@naver.com?subject=FestFlow%20%EC%A0%80%EC%9E%A5%EC%86%8C%20%EC%97%B4%EB%9E%8C%20%EC%9A%94%EC%B2%AD";
 const VIDEO = "https://www.youtube.com/watch?v=-RomuYp93TQ";
 const DEPLOY = "https://fest-flow-smoky.vercel.app";
 
@@ -55,7 +56,7 @@ const TILES: Tile[] = [
     kind: "link",
     label: "MON B",
     value: "< >",
-    sub: "GitHub · 183 커밋",
+    sub: "코드 · 비공개, 요청 시 공개",
     href: REPO,
     icon: "code"
   },

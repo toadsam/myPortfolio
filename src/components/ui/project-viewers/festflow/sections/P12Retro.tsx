@@ -28,7 +28,9 @@ import {useTimeline} from "../../_kit/useTimeline";
 const STEPS = [0, 150, 550, 900, 1300];
 const IDX = {label: 0, heading: 1, learn: 2, kpt: 3, exit: 4};
 
-const REPO = "https://github.com/toadsam/FestFlow";
+// 저장소 비공개(2026-10). 열람 요청 메일로 둔다.
+const REPO =
+  "mailto:toadsam@naver.com?subject=FestFlow%20%EC%A0%80%EC%9E%A5%EC%86%8C%20%EC%97%B4%EB%9E%8C%20%EC%9A%94%EC%B2%AD";
 const VIDEO = "https://www.youtube.com/watch?v=-RomuYp93TQ";
 const DEPLOY = "https://fest-flow-smoky.vercel.app";
 
@@ -185,7 +187,7 @@ export function P12Retro({onExit}: {onExit: () => void}) {
               color: "var(--ff-muted)"
             }}
           >
-            GitHub ↗
+            코드 열람 요청 ↗
           </a>
           <button
             type="button"

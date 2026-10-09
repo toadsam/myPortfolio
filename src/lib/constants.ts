@@ -170,7 +170,7 @@ const projectBuildings: BuildingData[] = [
     district: "projects",
     contentId: "festflow",
     kind: "flat-hub",
-    name: "FestFlow",
+    name: "AjouFesta",
     label: "Festival",
     description: "대학 축제 운영을 위한 실시간 부스 관리 시스템",
     position: [-0.13, 0, -7.29],

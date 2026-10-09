@@ -15,12 +15,13 @@ export const skills: SkillData[] = [
   {
     name: "React",
     group: "Frontend",
-    description: "FestFlow 와 이 사이트의 화면을 React 컴포넌트로 만들었습니다."
+    description:
+      "AjouFesta 와 이 사이트의 화면을 React 컴포넌트로 만들었습니다."
   },
   {
     name: "Tailwind CSS",
     group: "Frontend",
-    description: "FestFlow PWA 와 이 사이트의 반응형 레이아웃에 썼습니다."
+    description: "AjouFesta PWA 와 이 사이트의 반응형 레이아웃에 썼습니다."
   },
   {
     name: "Three.js",
@@ -51,7 +52,7 @@ export const skills: SkillData[] = [
     name: "Spring Boot",
     group: "Backend",
     description:
-      "FestFlow·StockFlow·득근득근의 REST API, 인증, 실시간 기능을 Spring Boot 로 만들었습니다."
+      "AjouFesta·StockFlow·득근득근의 REST API, 인증, 실시간 기능을 Spring Boot 로 만들었습니다."
   },
   {
     name: "PostgreSQL",
