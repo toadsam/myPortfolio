@@ -215,6 +215,15 @@ export interface RichProject {
    * 섞으면 「기능이 많아졌다」 로만 읽힌다. 숫자마다 출처(s)를 단다.
    */
   secondRun?: {
+    /** 절 이름. 기본 "Renewal · Second Run". */
+    label?: string;
+    /** 비교표 머리와 항목 앞 짧은 꼬리표. 기본은 AjouFesta 의 5월/10월. */
+    beforeHead?: string;
+    afterHead?: string;
+    beforeTag?: string;
+    afterTag?: string;
+    addedTitle?: string;
+    prepTitle?: string;
     title: string;
     lead: string;
     stats: {n: string; l: string; s: string}[];

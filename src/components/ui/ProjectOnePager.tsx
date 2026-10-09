@@ -1565,7 +1565,7 @@ export function ProjectOnePager({
 function SecondRun({run}: {run: NonNullable<RichProject["secondRun"]>}) {
   return (
     <section className="reveal space-y-10">
-      <h2 className="section-label">Renewal · Second Run</h2>
+      <h2 className="section-label">{run.label ?? "Renewal · Second Run"}</h2>
       <div className="reveal-left space-y-3">
         <h3 className="text-2xl font-bold md:text-3xl">{run.title}</h3>
         <p className="text-base leading-relaxed text-gray-400 md:text-lg">
@@ -1592,9 +1592,11 @@ function SecondRun({run}: {run: NonNullable<RichProject["secondRun"]>}) {
           <thead>
             <tr className="mono text-xs uppercase tracking-widest text-muted">
               <th className="w-[22%] p-4 font-normal" />
-              <th className="w-[39%] p-4 font-normal">2026.05 대동제</th>
+              <th className="w-[39%] p-4 font-normal">
+                {run.beforeHead ?? "2026.05 대동제"}
+              </th>
               <th className="w-[39%] p-4 font-normal text-accent">
-                2026.10 가을축제
+                {run.afterHead ?? "2026.10 가을축제"}
               </th>
             </tr>
           </thead>
@@ -1650,13 +1652,13 @@ function SecondRun({run}: {run: NonNullable<RichProject["secondRun"]>}) {
               <div className="space-y-2 md:col-span-9">
                 <p className="flex gap-3 text-sm leading-relaxed text-gray-400">
                   <span className="mono w-10 shrink-0 select-none text-xs tracking-widest text-red-300">
-                    5월
+                    {run.beforeTag ?? "5월"}
                   </span>
                   {it.before}
                 </p>
                 <p className="flex gap-3 text-sm leading-relaxed text-white">
                   <span className="mono w-10 shrink-0 select-none text-xs tracking-widest text-accent">
-                    10월
+                    {run.afterTag ?? "10월"}
                   </span>
                   {it.after}
                 </p>
@@ -1670,7 +1672,9 @@ function SecondRun({run}: {run: NonNullable<RichProject["secondRun"]>}) {
       </div>
 
       <div className="space-y-4">
-        <h4 className="block-label">새로 만들어 함께 운영한 것</h4>
+        <h4 className="block-label">
+          {run.addedTitle ?? "새로 만들어 함께 운영한 것"}
+        </h4>
         <div className="reveal grid grid-cols-1 gap-4 md:grid-cols-2">
           {run.added.map(a => (
             <div
@@ -1693,7 +1697,7 @@ function SecondRun({run}: {run: NonNullable<RichProject["secondRun"]>}) {
 
       <div className="reveal grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="space-y-2">
-          <h4 className="block-label">준비</h4>
+          <h4 className="block-label">{run.prepTitle ?? "준비"}</h4>
           <p className="text-sm leading-relaxed text-gray-300">{run.prep}</p>
         </div>
         <div className="space-y-2">
