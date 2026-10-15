@@ -1478,7 +1478,7 @@ export function ProjectOnePager({
                 양식은 아홉 프로젝트가 같고, 크기만 글 길이에서 뽑는다. */}
             <div className="reveal-scale space-y-6 rounded-2xl border border-accent/20 bg-accent/10 p-8 text-center md:p-12">
               <div className="mono text-xs uppercase tracking-widest text-accent">
-                The Core Takeaway
+                회고
               </div>
               {data.learningLead ? (
                 <>

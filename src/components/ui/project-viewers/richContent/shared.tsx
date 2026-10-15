@@ -2173,7 +2173,7 @@ export function RichSection({
             </div>
           ) : null}
           <div>
-            <SubLabel theme={theme}>배운 점</SubLabel>
+            <SubLabel theme={theme}>회고</SubLabel>
             <div
               className="rounded-xl border-l-2 p-4"
               style={{

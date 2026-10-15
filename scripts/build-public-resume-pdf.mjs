@@ -179,7 +179,7 @@ function renderTitle() {
   // 이력서라는 건 파일명·내용·문맥이 이미 말한다.
   const headline = hero.headlineLines
     .join(" ")
-    .replace(new RegExp(`\\s*${hero.name}$`), "");
+    .replace(new RegExp(`\\s*(?:개발자\\s*)?${hero.name}$`), "");
   return `<header class="title">
   <h1>${esc(hero.name)}</h1>
   <p class="title-role">${esc(hero.roleTag)}</p>

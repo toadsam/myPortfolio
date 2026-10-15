@@ -457,7 +457,7 @@ export const skillDetails: SkillDetail[] = [
   },
   {
     area: "Unity XR/AR",
-    desc: "인터랙션 및 상태/AI 제어 경험",
+    desc: "시점 전환 · 몬스터 AI · AR 전장 생성 구현",
     // 2026-09-12: "NavMesh"·"Object Pooling" 을 뺐다. 위 AI / LLM 행을 넣으면서
     // 1부가 한 줄 넘쳤고, 이 둘이 표에서 가장 값이 싼 항목이라서다 — **도구가
     // 아니라 기법**이고, 이 파일 맨 위 주석이 같은 기준으로 개념·프로토콜 칩
@@ -603,7 +603,7 @@ export const careers: CareerItem[] = [
     // 말만 고쳤다 — 학생자치 기구는 재직하는 곳이 아니라, 인사담당이 경력 용어의
     // 부정확으로 읽는다.
     period: "2024.03 ~ 활동 중",
-    desc: "3년 연속 학생자치 기구에서 활동하며 국원에서 국장이 됐습니다. 학우 대상 온라인 서비스 운영과 정보 전달 구조 개선, 웹 서비스 기획·관리를 맡고 있고, 복지 창구에서 직접 들은 불편이 총학생회 웹으로 이어졌습니다. 2026.01~03에는 중앙비상대책위원회 집행국원으로 학생자치 운영·공지 전달·행사·행정 업무를 맡았습니다.",
+    desc: "3년 연속 학생자치 기구에서 활동하며 국원에서 국장이 됐습니다. 학우 대상 온라인 서비스 운영과 정보 전달 구조 개선, 웹 서비스 기획·관리를 맡고 있고, 복지 문의를 받으며 확인한 불편을 웹사이트 개선에 반영했습니다. 2026.01~03에는 중앙비상대책위원회 집행국원으로 학생자치 운영·공지 전달·행사·행정 업무를 맡았습니다.",
     ledTo: "아주대학교 총학생회 웹 서비스"
   },
   {
@@ -611,7 +611,7 @@ export const careers: CareerItem[] = [
     logo: "/logos/muscleup.png",
     role: "회장",
     period: "2025.09 ~ 2026.05",
-    desc: "동아리 운영·회원 관리·운동 프로그램 기획을 맡아, 회원이 운동 습관을 이어가도록 활동 방향을 설계했습니다. ‘어떻게 다시 오게 만들까’ 라는 이 질문이 그대로 득근득근 서비스의 출발점이 되었습니다.",
+    desc: "동아리 운영, 회원 관리, 운동 프로그램 기획을 맡았습니다. 이 경험을 바탕으로 운동 기록과 커뮤니티 기능을 제공하는 득근득근을 개발했습니다.",
     ledTo: "득근득근 (MuscleUp)"
   },
   {
@@ -748,7 +748,7 @@ export const workExperience: WorkItem[] = [
   {
     place: "헬스장 인포",
     period: "2025.12 ~ 2026.04",
-    desc: "아침 6시 근무. 회원 응대·출입 관리·시설 및 운동 공간 관리. 득근득근을 만드는 동안 매일 그 사용자들을 마주한 자리입니다."
+    desc: "아침 6시 근무. 회원 응대·출입 관리·시설 및 운동 공간 관리. 득근득근 개발 기간에 헬스장 안내 업무를 병행했습니다."
   },
   {
     place: "노래방",
@@ -779,7 +779,7 @@ export const mainProjects: MainProjectCard[] = [
     hero: true,
     title: "AI 포트폴리오 마을 (이 사이트)",
     subtitle:
-      "관리자가 적은 오늘의 활동이 3D 마을의 불빛과 AI NPC 대화로 바뀌는, 살아 있는 포트폴리오",
+      "관리자 활동 기록을 건물 불빛과 AI NPC 대화에 반영하는 3D 포트폴리오 사이트입니다.",
     category: "web",
     facets: ["ai", "3d"],
     status: "운영중",
@@ -839,7 +839,7 @@ export const mainProjects: MainProjectCard[] = [
     // "사용자 말을 듣고 방향을 바꿨다"가 20자 뒤에 있었다. 내용은 그대로다.
     // 2026-10-09: "다시 만든" → "전면 리뉴얼한". 앞 7글자(사용자 피드백)는 그대로 둔다.
     subtitle:
-      "사용자 피드백을 듣고 소개형 홈페이지를 운영형 플랫폼으로 전면 리뉴얼한 피트니스 커뮤니티",
+      "사용자 피드백을 반영해 동아리 소개 홈페이지에 운동 기록·커뮤니티·AI 코칭 기능을 추가했습니다.",
     category: "web",
     // 캐릭터 레벨·티어·진화·랭킹 = 게임 장치, AI 인바디 상담(OpenAI), Socket.IO 실시간
     facets: ["game", "ai", "realtime"],
@@ -918,7 +918,7 @@ export const mainProjects: MainProjectCard[] = [
     // "문의 감소 40%" 를 걷어내며 낮춘 표현이라 이유는 옳았지만, 새 성과를 주장하지
     // 않고도 결과형으로 쓸 수 있다 — 기간·팀·GA4 는 이미 이 카드에 있는 사실이다.
     subtitle:
-      "프론트 3인 중 한 명으로 시작해 총괄까지 맡은, 활성 사용자 3,500명의 동아리 운영 서비스",
+      "활성 사용자 3,500명의 동아리 탐색·모집 서비스입니다. 2025년 프론트 개발에 참여하고 2026년에는 프로젝트 총괄을 맡았습니다.",
     category: "web",
     facets: ["data"],
     // 2026-09-08 "완료" 로 내렸다. 2026.03 동아리 박람회까지 운영했고 모집이 끝나
@@ -976,7 +976,7 @@ export const mainProjects: MainProjectCard[] = [
     // 득근득근과 같은 이유로 어순을 뒤집었다. "정보를 한곳에 모았다"는 흔한 일이라
     // 앞자리를 줄 수 없고, 앞에 서야 하는 건 개발자를 빼도 굴러가게 만든 쪽이다.
     subtitle:
-      "총학생회가 개발자 없이 직접 고칠 수 있게 만든, 흩어진 학생회 정보 통합 서비스",
+      "학생이 대여 물품 수량과 신청 링크를 확인하고, 총학생회가 직접 관리하는 웹사이트입니다.",
     category: "web",
     status: "운영중",
     tags: ["운영자 도구", "대여·링크허브", "모바일 개편", "Spring Boot API"],
@@ -1045,7 +1045,7 @@ export const mainProjects: MainProjectCard[] = [
     // 총학생회 운영 전체가 이 앱 위에서 돌았다. 근거는 저장소 docs/festflow/축제-결산.md.
     // 2026-10-09: 카드는 부제 앞 몇 글자만 읽힌다. 「리뉴얼」을 앞에 세웠다.
     subtitle:
-      "5월 첫 운영 뒤 전면 리뉴얼해 가을축제를 이틀 운영한 아주대 축제 앱",
+      "5월 첫 운영에서 확인한 문제를 개선하고, 10월 가을축제에서 이틀간 운영한 아주대 축제 앱입니다.",
     category: "web",
     // AI 챗봇·혼잡 예측(RandomForest)·AI Match, SSE 7채널, 운영 집계
     facets: ["ai", "realtime", "data"],
@@ -1126,7 +1126,7 @@ export const mainProjects: MainProjectCard[] = [
     featured: true,
     title: "TSEROF",
     subtitle:
-      "5인 팀 부팀장으로 기획부터 Steam 스토어 출시까지 4개월에 완주한 3D 액션 플랫폼 게임",
+      "5인 팀의 부팀장으로 참여해 4개월간 개발하고 Steam에 출시한 3D 액션 플랫폼 게임입니다.",
     category: "game",
     facets: ["3d"],
     status: "출시",
@@ -1162,7 +1162,7 @@ export const mainProjects: MainProjectCard[] = [
     id: "mystock",
     title: "MyStock-Desk / MyWave",
     subtitle:
-      "거래 기록 기반 포트폴리오 분석·AI 체크리스트와 자산 흐름 대시보드(MyWave)를 담은 투자 기록 서비스",
+      "거래 기록으로 포트폴리오를 분석하고 AI 체크리스트와 자산 흐름 대시보드(MyWave)를 제공하는 투자 기록 서비스입니다.",
     category: "data",
     facets: ["ai"],
     status: "완료",
@@ -1181,7 +1181,7 @@ export const mainProjects: MainProjectCard[] = [
     id: "sign-language",
     title: "수어지교",
     subtitle:
-      "수어 동작 영상을 보고 뜻을 익히는 학습 앱 (3D 아바타 제작은 팀원 담당)",
+      "수어 동작 영상을 보고 뜻을 익히는 학습 앱입니다. 3D 아바타 제작은 팀원이 담당했습니다.",
     category: "web",
     // 2026-09-08 본인 확인: 현재 운영 중이고 리뉴얼 예정.
     status: "운영중",
@@ -1295,7 +1295,7 @@ export const subProjects: SubProjectCard[] = [
     // **검증 가능한 근거**다 — 그 전까지는 ~/.claude/skills/ 안에만 있어서
     // 심사자가 확인할 방법이 없었다. 그림은 없다(없는 그림을 지어내지 않는다).
     title: "codebase-anatomy (Claude Code 스킬)",
-    desc: "코드베이스를 실제 소스에서 읽어 인터랙티브 HTML 해부도를 만드는 스킬. 모든 구조적 주장에 file:line 증거를 요구하고, 추측으로 쓴 도표를 금지한다 (2026.08)",
+    desc: "코드 구조를 인터랙티브 HTML로 시각화하고, 설명마다 근거가 되는 파일과 줄 번호를 표시하는 Claude Code 스킬을 개발했습니다. (2026.08)",
     links: [
       {label: "GitHub", href: "https://github.com/toadsam/codebase-anatomy"},
       {
@@ -1328,7 +1328,7 @@ export const subProjects: SubProjectCard[] = [
     // 그림을 안 붙였다. 리포에 있는 "아주분투" 이미지는 전부 아주대탐험
     // 것이었다(위 mainProjects 주석 참고) — 없는 그림을 남의 것으로 채우지 않는다.
     title: "아주분투",
-    desc: "캠퍼스를 네온 톤으로 재해석한 Phaser 3 기반 2D 러닝 게임 (발판 6종·낮/밤 전환)",
+    desc: "아주대 캠퍼스를 배경으로 한 네온 스타일의 Phaser 3 2D 러닝 게임입니다. (발판 6종·낮/밤 전환)",
     links: [
       {label: "GitHub", href: "https://github.com/toadsam/Ajou_Mini_Game"}
     ]
@@ -1353,7 +1353,7 @@ export const subProjects: SubProjectCard[] = [
   },
   {
     title: "스파르타 던전 배틀 (Text 게임)",
-    desc: "나만의 캐릭터를 생성하고, 그 캐릭터를 활용한 텍스트 게임",
+    desc: "캐릭터를 생성해 플레이하는 텍스트 게임입니다.",
     image: "/projects/sub/dungeon-battle.webp",
     links: []
   },
@@ -1426,38 +1426,38 @@ export const devRecords: DevRecord[] = [
 export const values: ValueItem[] = [
   {
     title: "소통",
-    desc: "문의와 지표를 근거로 고칠 순서를 정합니다.",
+    desc: "운영 문의와 이용 지표를 확인해 개선할 항목을 정했습니다.",
     evidence:
-      "총학생회·aClub 운영 문의를 흘려보내지 않고 GA4/GSC 지표와 함께 읽어, 정보 구조를 고칠 순서를 정했습니다."
+      "총학생회·aClub의 운영 문의와 GA4/GSC 지표를 확인해 정보 구조와 문구를 수정했습니다."
   },
   {
     title: "협력",
-    desc: "팀에서 맡은 몫을 출시까지 끝냅니다.",
+    desc: "팀 프로젝트에서 담당 기능을 구현하고 출시했습니다.",
     evidence:
-      "TSEROF 5인 팀에서 부팀장으로 스테이지 2와 장애물·기믹을 맡아 출시까지 완주했습니다."
+      "TSEROF 5인 팀의 부팀장으로 스테이지 2와 장애물·기믹을 구현했고, 게임을 Steam에 출시했습니다."
   },
   {
     title: "성실",
-    desc: "알고리즘 풀이를 저장소에 계속 쌓습니다.",
+    desc: "알고리즘 문제 풀이를 저장소에 기록하고 있습니다.",
     evidence:
-      "BaekjoonHub 로 알고리즘 풀이를 별도 저장소에 지속 축적하고, 공개 저장소 44개를 관리하고 있습니다."
+      "BaekjoonHub로 백준 문제 풀이를 별도 저장소에 자동 커밋하고 있습니다."
   },
   {
     title: "도전",
-    desc: "주력 밖의 영역도 끝까지 만들어 봤습니다.",
+    desc: "웹 외에 Unity AR·VR 프로젝트와 수어 학습 앱도 개발했습니다.",
     evidence:
-      "웹 풀스택을 주력으로 하면서 Unity XR·AR, 수어 접근성 서비스처럼 낯선 영역까지 완성해 봤습니다."
+      "Unity 프로젝트에서 몬스터 AI·감지 로직·AR 전장 생성을 구현하고, 수어 학습 앱에서는 백엔드 API와 데이터 처리를 맡았습니다."
   }
 ];
 
 // ─── About / Contact ──────────────────────────────────────────────────────────
 
 export const aboutMe = [
-  "총학생회 웹의 관리자 화면과 AjouFesta 현장 운영까지, 만든 기능을 실제로 쓰이는 데까지 가져갔습니다.",
-  "배포 후 생기는 HTTPS·CORS 같은 문제를 로그/설정/네트워크까지 파고들어 해결해왔습니다.",
+  "총학생회 웹의 관리자 기능을 개발하고, AjouFesta는 축제 현장에서 직접 운영했습니다.",
+  "배포 후 HTTPS·CORS 문제를 로그와 배포 설정, 네트워크 기록을 확인해 수정했습니다.",
   "aClub 은 GA4 지표와 운영 문의를 근거로 정보 구조와 문구를 고쳤습니다.",
-  "AI 기능은 모델 응답을 그대로 내보내지 않습니다. 진행 권한은 사람 쪽에 두고, 호출이 실패해도 규칙 기반 경로로 이어지게 만들었습니다.",
-  "웹이 주력이지만, Unity XR 경험으로 인터랙션 영역도 다룰 수 있습니다."
+  "공방의 다음 단계 진행은 관리자가 승인하도록 했습니다. 모델 응답을 검증하고, 호출이 실패하면 규칙 기반 응답을 반환하도록 구현했습니다.",
+  "웹을 주력으로 개발하며, Unity AR·VR 프로젝트에서 시점 전환과 몬스터 감지·추격 기능도 구현했습니다."
 ];
 
 export const contact = {
