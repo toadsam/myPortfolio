@@ -112,6 +112,8 @@ Frontend mirror: `constants.ts` (sectionMeta + buildings + cameraTargets) → `t
   "오늘"이 어제가 되고 `addDays` 가 하루씩 어긋나 연속 기록이 틀렸다.
 - 서랍은 처음 열 때 마운트하고 닫아도 유지한다(목록 재요청 방지). 배전반·서랍 탭도 `hidden` 으로 숨겨 마운트 유지.
 - 불꽃(`.ab-spark`·`.sw-burst`)은 body 에 붙으므로 `--sw-*` 변수가 안 닿는다 — 색은 값으로 적는다.
+- 설치형 앱: `admin/layout.tsx` 가 `/admin` 에서만 `public/admin.webmanifest` 를 건다(서비스 워커 없음, 오프라인 불가).
+  루트 layout 에 걸면 손님에게도 설치 버튼이 뜨니 옮기지 말 것. 옛 `public/manifest.json` 은 CRA 흔적이라 아무도 안 쓴다.
 - 확인은 `.claude/launch.json` 의 `backend-verify`(인증 끔 + 임시 SQLite)로 한다. 실 dev DB 를 건드리지 않는다.
 
 ### Commission atelier (의뢰 공방) — the one public write path

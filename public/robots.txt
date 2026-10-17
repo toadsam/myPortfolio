@@ -3,3 +3,5 @@ User-agent: *
 
 # 갓생 섬은 나만 쓰는 비공개 공간이라 색인하지 않는다.
 Disallow: /island
+# 관리자 배전반도 본인 전용이다(layout 의 noindex 가 실제 방어선).
+Disallow: /admin

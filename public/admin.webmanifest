@@ -1,0 +1,40 @@
+{
+  "name": "마을 배전반",
+  "short_name": "배전반",
+  "description": "오늘 기록과 작업 지시서로 Developer's City 의 불을 켜는 관리자 앱",
+  "id": "/admin",
+  "start_url": "/admin",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "ko",
+  "theme_color": "#12161c",
+  "background_color": "#12161c",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "마을 보기",
+      "url": "/village",
+      "icons": [{"src": "/android-chrome-192x192.png", "sizes": "192x192"}]
+    }
+  ]
+}
