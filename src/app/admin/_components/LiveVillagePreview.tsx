@@ -54,6 +54,10 @@ interface Props {
   highlightIds?: string[];
   /** 건물을 누르면 그 건물을 켜는 회로로 데려간다 */
   onPickBuilding?: (buildingId: string) => void;
+  /** 아래 한 줄. 송전 결과 화면에서는 "미리보기"가 아니므로 바꿔 단다. */
+  caption?: string;
+  /** 지도 판의 가로세로 비. 지도는 판 안에서 정사각으로 그려지니 넓혀도 찌그러지지 않는다. */
+  wide?: boolean;
 }
 
 /** 등급별 색. 마을 팔레트와 같은 값이라 화면끼리 어긋나지 않는다. */
@@ -70,7 +74,9 @@ export function LiveVillagePreview({
   overrides,
   onHoverBuilding,
   highlightIds,
-  onPickBuilding
+  onPickBuilding,
+  caption = "저장하기 전 미리보기입니다",
+  wide = false
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -310,7 +316,9 @@ export function LiveVillagePreview({
   return (
     <div className="grid gap-2">
       <div
-        className="relative aspect-square w-full overflow-hidden rounded-lg"
+        className={`relative w-full overflow-hidden rounded-lg ${
+          wide ? "aspect-[16/10]" : "aspect-square"
+        }`}
         ref={wrapRef}
         style={{background: "rgb(13 17 22)"}}
       >
@@ -327,7 +335,7 @@ export function LiveVillagePreview({
       </div>
       <p className="text-center text-xs text-[#8b94a0]">
         불이 들어온 건물 <b className="text-[#ff9d38]">{lit}</b> / {scores.size}
-        <span className="ml-2 opacity-70">· 저장하기 전 미리보기입니다</span>
+        <span className="ml-2 opacity-70">· {caption}</span>
       </p>
     </div>
   );

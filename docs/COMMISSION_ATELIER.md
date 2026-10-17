@@ -118,7 +118,7 @@ DELETE /admin/commissions/{id}      관리자
 | `src/components/interior/AtelierInterior.tsx` | 지하 3D 공방 씬                                       |
 | `src/components/village/AtelierHatch.tsx`     | 마을 광장 옆 숨은 입구                                |
 | `src/components/AIPortfolioVillage.tsx`       | `viewMode: "atelier"` · 진입/복귀 · NPC 라우팅        |
-| `src/app/admin/page.tsx`                      | 의뢰 접수함 섹션                                      |
+| `src/app/admin/_drawers/CommissionAdmin.tsx`  | 의뢰 접수함 서랍 · 맨 위 대기 알림                    |
 | `src/lib/liveApi.ts` · `src/types/live.ts`    | API·타입                                              |
 
 ---

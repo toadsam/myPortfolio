@@ -92,9 +92,27 @@ backend/app/models.py            (table)
     + _npc_profile_for_dynamic_id routing
 ```
 
-Frontend mirror: `constants.ts` (sectionMeta + buildings + cameraTargets) → `types/portfolio.ts` (SectionId/District unions) → `npcRoster.ts` (district NPC type/color + dedicated NPC config) → `Header` (nav) → `InfoPanel` (per-section panel) → `AIPortfolioVillage.handleRequestEnter` (district routing) → `liveApi.ts`/`types/live.ts` (fetch/create/delete) → `admin/page.tsx` (input form).
+Frontend mirror: `constants.ts` (sectionMeta + buildings + cameraTargets) → `types/portfolio.ts` (SectionId/District unions) → `npcRoster.ts` (district NPC type/color + dedicated NPC config) → `Header` (nav) → `InfoPanel` (per-section panel) → `AIPortfolioVillage.handleRequestEnter` (district routing) → `liveApi.ts`/`types/live.ts` (fetch/create/delete) → `admin/_drawers/*Admin.tsx` (input form, one drawer per district, listed in `admin/_tabs/DrawerTab.tsx`).
 
 **Critical convention**: auto NPC id is `npc-${building.id}`. The backend routes to a dedicated profile by matching a substring of that id (e.g. `study-codingtest` → matches `"codingtest"`), so name new building ids so the substring match stays unambiguous.
+
+### 관리자 배전반 2.0 (2026-10-17, 화면별 설명은 `docs/copy-admin.md`)
+
+`/admin` 은 휴대폰에서 매일 쓰는 앱이다. `page.tsx` 는 상태·서버 왕복만 든 셸이고, 화면은 `_tabs/`
+(배전반 · 지시서 · 기록실 · 서랍), 서랍 속 옛 도구는 `_drawers/`, 순수 함수·효과음·지시서 훅은 `_lib/`.
+저장은 가운데 송전 버튼 **0.9초 꾹 누르기**다(하루 전체를 덮어쓰는 동작이라 스쳐서 일어나면 안 된다).
+
+- **작업 지시서(`PlanItem`) 완료는 `upsert_activity` 를 쓰지 않는다.** `plan_service._apply` 가 그날 행의
+  한 칸만 더하고 뺀다(운동은 `workout_done` 도 켬, 프로젝트는 dict 를 새로 대입). 프론트는 같은 분량을
+  폼에도 더하므로 뒤이어 송전해도 값이 맞는다. 완료된 지시서의 날짜·회로·분량 변경은 409.
+  `tests/test_plan_items.py` 가 잠근다.
+- **kWh·등급은 저장하지 않는다**(`_lib/power.ts`). 기록에서 매번 다시 센다. 계기판 빗금 = 폼이 저장된 그날
+  기록보다 더 켜진 만큼.
+- **날짜는 로컬 기준**(`_lib/activity.ts ymd`). 예전 `toISOString().slice(0,10)` 은 UTC 라 한국에서 아침 9시 전
+  "오늘"이 어제가 되고 `addDays` 가 하루씩 어긋나 연속 기록이 틀렸다.
+- 서랍은 처음 열 때 마운트하고 닫아도 유지한다(목록 재요청 방지). 배전반·서랍 탭도 `hidden` 으로 숨겨 마운트 유지.
+- 불꽃(`.ab-spark`·`.sw-burst`)은 body 에 붙으므로 `--sw-*` 변수가 안 닿는다 — 색은 값으로 적는다.
+- 확인은 `.claude/launch.json` 의 `backend-verify`(인증 끔 + 임시 SQLite)로 한다. 실 dev DB 를 건드리지 않는다.
 
 ### Commission atelier (의뢰 공방) — the one public write path
 

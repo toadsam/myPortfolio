@@ -466,6 +466,60 @@ class CsNoteOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+# ─────────────────────────── 작업 지시서 (관리자의 하루 계획) ───────────────────────────
+
+_PLAN_CIRCUITS = {"none", "workout", "study", "coding"}
+
+
+def _check_circuit(value: str) -> str:
+    value = value.strip()
+    if value in _PLAN_CIRCUITS:
+        return value
+    if value.startswith("project:") and len(value) > len("project:"):
+        return value
+    raise ValueError("circuit 은 none / workout / study / coding / project:<id> 중 하나여야 합니다")
+
+
+class PlanItemIn(BaseModel):
+    date: dt_date | None = None
+    title: str = Field(min_length=1, max_length=200)
+    circuit: str = "none"
+    minutes: int = Field(default=0, ge=0, le=600)
+    due_label: str | None = Field(default=None, max_length=40)
+
+    _circuit = field_validator("circuit")(_check_circuit)
+
+
+class PlanItemUpdate(BaseModel):
+    """모든 칸이 선택이다. 완료(`done`)와 내일로 미루기(`date`)가 둘 다 이걸로 온다."""
+
+    date: dt_date | None = None
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    circuit: str | None = None
+    minutes: int | None = Field(default=None, ge=0, le=600)
+    due_label: str | None = Field(default=None, max_length=40)
+    done: bool | None = None
+
+    @field_validator("circuit")
+    @classmethod
+    def _circuit(cls, value: str | None) -> str | None:
+        return None if value is None else _check_circuit(value)
+
+
+class PlanItemOut(BaseModel):
+    id: int
+    date: dt_date
+    title: str
+    circuit: str
+    minutes: int
+    due_label: str | None
+    done: bool
+    done_at: datetime | None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
 # ─────────────────────────── 홈페이지 제작 의뢰 (의뢰 공방) ───────────────────────────
 
 # 3단계 게이트가 지나가는 길. 전이 규칙은 app/agents/gate.py 가 유일한 출처다.

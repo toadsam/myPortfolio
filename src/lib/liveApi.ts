@@ -39,6 +39,9 @@ import type {
   NpcPresetInput,
   NpcTickRequest,
   NpcTickResponse,
+  PlanItem,
+  PlanItemInput,
+  PlanItemUpdate,
   VillageBuildingOverride,
   VillageBuildingOverrideInput,
   VillageState,
@@ -414,6 +417,39 @@ export function updateCsNote(
 
 export function deleteCsNote(noteId: number): Promise<{ok: boolean}> {
   return requestJson<{ok: boolean}>(`/admin/cs-notes/${noteId}`, {
+    method: "DELETE"
+  });
+}
+
+/* ── 작업 지시서 ── 개인 계획이라 조회까지 관리자 전용이다. */
+
+export function fetchPlanItems(date: string): Promise<PlanItem[]> {
+  return requestJson<PlanItem[]>(
+    `/admin/plan-items?date=${encodeURIComponent(date)}`,
+    {cache: "no-store"}
+  );
+}
+
+export function createPlanItem(payload: PlanItemInput): Promise<PlanItem> {
+  return requestJson<PlanItem>("/admin/plan-items", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+/** 완료(`done`)와 내일로 미루기(`date`)가 모두 이 한 경로다. */
+export function updatePlanItem(
+  itemId: number,
+  payload: PlanItemUpdate
+): Promise<PlanItem> {
+  return requestJson<PlanItem>(`/admin/plan-items/${itemId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function deletePlanItem(itemId: number): Promise<{ok: boolean}> {
+  return requestJson<{ok: boolean}>(`/admin/plan-items/${itemId}`, {
     method: "DELETE"
   });
 }

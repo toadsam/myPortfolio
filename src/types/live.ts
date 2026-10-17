@@ -421,6 +421,34 @@ export interface CsNoteInput {
   content: string;
 }
 
+/* ── 작업 지시서 (관리자의 하루 계획) ──
+   완료하면 걸어 둔 분량이 그날 DailyActivity 의 해당 칸에 더해진다(서버가 한다). */
+
+/** `none` · `workout` · `study` · `coding` · `project:<project id>` */
+export type PlanCircuit = string;
+
+export interface PlanItem {
+  id: number;
+  date: string;
+  title: string;
+  circuit: PlanCircuit;
+  minutes: number;
+  due_label: string | null;
+  done: boolean;
+  done_at: string | null;
+  created_at: string;
+}
+
+export interface PlanItemInput {
+  date?: string;
+  title: string;
+  circuit: PlanCircuit;
+  minutes: number;
+  due_label?: string | null;
+}
+
+export type PlanItemUpdate = Partial<PlanItemInput & {done: boolean}>;
+
 /* ── 의뢰 공방 (홈페이지 제작 의뢰) ──
    마을에서 유일하게 외부인이 데이터를 쓰는 경로다. */
 

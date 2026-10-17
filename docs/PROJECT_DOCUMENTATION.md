@@ -2240,10 +2240,17 @@ export function ResumeMode({onEnterVillage}: Props) {
 파일 위치:
 
 ```text
-src/app/admin/page.tsx
+src/app/admin/page.tsx        상태와 서버 왕복만 맡는 셸
+src/app/admin/_tabs/*.tsx     화면 네 개(배전반 · 지시서 · 기록실 · 서랍)
+src/app/admin/_drawers/*.tsx  서랍 안 도구(의뢰 접수함 · 코딩테스트 · CS 노트 · NPC 사회)
+src/app/admin/_lib/*.ts       순수 함수(날짜·통계·전력 계산), 효과음, 지시서 훅
 ```
 
-관리자 페이지는 오늘의 활동을 입력하는 곳입니다.
+관리자 페이지는 오늘의 활동을 입력하고 그날의 계획을 적는 곳입니다. 2026-10-17 에 휴대폰에서 매일 쓰는 앱으로 바꿨습니다. 아래 탭 네 개와 가운데 **꾹 눌러 송전**(저장) 버튼으로 이루어져 있고, 화면별 설명은 `docs/copy-admin.md` 에 있습니다.
+
+새로 생긴 것은 **작업 지시서**(그날의 계획 한 줄)입니다. 지시서마다 회로(운동·공부·코딩·프로젝트)와 분량을 걸어 두고, 완료하면 서버가 그날 기록의 그 칸에 분량을 더해 줍니다. 이때 하루 전체를 덮어쓰는 `upsert_activity` 대신 한 칸만 고치는 방식(`backend/app/services/plan_service.py`)을 씁니다. 그래야 그날 적어 둔 메모나 커밋 수가 지워지지 않습니다.
+
+아래 21.1~21.3 의 스니펫은 개편 전 모양이지만, 폼을 불러오고 저장하는 흐름은 지금도 같습니다(`page.tsx` 의 `formFrom` · `loadAll` · `handleSave`).
 
 입력 가능한 항목:
 
@@ -2912,6 +2919,10 @@ def on_startup() -> None:
 | PUT    | `/admin/npc/presets/{npc_id}`            | NPC 추천 질문 수정      |
 | GET    | `/admin/village/overrides`               | 건물 override 목록      |
 | PUT    | `/admin/village/overrides/{building_id}` | 건물 override 수정      |
+| GET    | `/admin/plan-items?date=`                | 그날 작업 지시서 목록   |
+| POST   | `/admin/plan-items`                      | 작업 지시서 발행        |
+| PUT    | `/admin/plan-items/{id}`                 | 완료·취소·내일로 미루기 |
+| DELETE | `/admin/plan-items/{id}`                 | 작업 지시서 지우기      |
 
 ---
 

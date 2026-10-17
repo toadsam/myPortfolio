@@ -1,3 +1,4 @@
+from datetime import date as dt_date
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -64,6 +65,9 @@ from app.schemas import (
     TaskRejectIn,
     CsNoteIn,
     CsNoteOut,
+    PlanItemIn,
+    PlanItemOut,
+    PlanItemUpdate,
     GithubSyncOut,
     ManagedProjectIn,
     ManagedProjectOut,
@@ -157,6 +161,7 @@ from app.services.learning_service import (
     update_cs_note,
 )
 from app.services import memory_service, relay_service
+from app.services import plan_service
 from app.services.npc_brain_service import generate_group_chat, generate_npc_encounter, generate_npc_tick
 from app.services.relationship_rules import decide_outcome, josa
 from app.services.relationship_service import (
@@ -870,6 +875,38 @@ def admin_update_cs_note(note_id: int, payload: CsNoteIn, db: Session = Depends(
 def admin_delete_cs_note(note_id: int, db: Session = Depends(get_db)):
     if not delete_cs_note(db, note_id):
         raise HTTPException(status_code=404, detail="해당 CS 노트를 찾을 수 없습니다.")
+    return {"ok": True}
+
+
+# ─────────────────────────── 작업 지시서 (관리자의 하루 계획) ───────────────────────────
+#
+# 개인 계획이라 조회까지 관리자 전용이다. 완료하면 그날 DailyActivity 에 분량이 더해진다.
+
+@app.get("/admin/plan-items", response_model=list[PlanItemOut], dependencies=[AdminGuard])
+def admin_plan_items(date: dt_date | None = None, db: Session = Depends(get_db)):
+    return plan_service.list_plan_items(db, date)
+
+
+@app.post("/admin/plan-items", response_model=PlanItemOut, dependencies=[AdminGuard])
+def admin_create_plan_item(payload: PlanItemIn, db: Session = Depends(get_db)):
+    return plan_service.create_plan_item(db, payload)
+
+
+@app.put("/admin/plan-items/{item_id}", response_model=PlanItemOut, dependencies=[AdminGuard])
+def admin_update_plan_item(item_id: int, payload: PlanItemUpdate, db: Session = Depends(get_db)):
+    try:
+        item = plan_service.update_plan_item(db, item_id, payload)
+    except plan_service.PlanItemLocked as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    if not item:
+        raise HTTPException(status_code=404, detail="해당 지시서를 찾을 수 없습니다.")
+    return item
+
+
+@app.delete("/admin/plan-items/{item_id}", dependencies=[AdminGuard])
+def admin_delete_plan_item(item_id: int, db: Session = Depends(get_db)):
+    if not plan_service.delete_plan_item(db, item_id):
+        raise HTTPException(status_code=404, detail="해당 지시서를 찾을 수 없습니다.")
     return {"ok": True}
 
 

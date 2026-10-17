@@ -380,6 +380,28 @@ class CsNoteLog(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
 
+class PlanItem(Base):
+    """관리자의 작업 지시서 — 그날의 계획 한 줄.
+
+    회로(`circuit`)와 걸어 둔 분량(`minutes`)이 있고, 완료하면 그 분량이 그날
+    DailyActivity 의 해당 칸에 더해진다(`plan_service`). 새 테이블이라 init_db 의
+    create_all 이 Postgres 에서도 만들어 준다.
+    """
+
+    __tablename__ = "plan_item"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    date: Mapped[date] = mapped_column(Date, index=True)
+    title: Mapped[str] = mapped_column(String(200), default="")
+    # none / workout / study / coding / project:<project id>
+    circuit: Mapped[str] = mapped_column(String(80), default="none")
+    minutes: Mapped[int] = mapped_column(Integer, default=0)
+    due_label: Mapped[str | None] = mapped_column(String(40), nullable=True)
+    done: Mapped[bool] = mapped_column(Boolean, default=False)
+    done_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+
+
 class CoachNote(Base):
     """갓생 섬 코치의 '오늘의 한마디'. 하루 한 줄.
 
