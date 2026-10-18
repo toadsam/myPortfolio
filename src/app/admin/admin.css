@@ -516,6 +516,34 @@ body:has(.admin-switchboard) {
 .sw-dial.is-spinning .sw-dial-face {
   animation: sw-dial-roll 0.26s cubic-bezier(0.4, 0, 0.2, 1);
 }
+/* 다이얼 묶음 + 아래 직접 입력칸 */
+.sw-dial-stack {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+.admin-switchboard .sw-dial-input {
+  width: 100%;
+  max-width: 260px;
+  padding: 9px 12px;
+  border: 1px solid var(--sw-etch);
+  border-radius: 6px;
+  background: #0d1116;
+  color: var(--sw-lantern);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 16px; /* 16px 미만이면 iOS 가 입력할 때 화면을 확대한다 */
+  letter-spacing: 0.4em;
+  text-align: center;
+}
+.admin-switchboard .sw-dial-input::placeholder {
+  color: var(--sw-dim);
+  letter-spacing: 0.02em;
+  font-size: 12px;
+}
+.admin-switchboard .sw-dial-input:focus-visible {
+  outline: 2px solid rgb(255 157 56 / 0.6);
+  outline-offset: 2px;
+}
 @keyframes sw-dial-roll {
   0% {
     transform: translateY(-100%);

@@ -19,6 +19,10 @@
  * - ←/→ 로 칸을 옮긴다
  * - Backspace 로 앞 칸으로
  *
+ * 휴대폰에서는 버튼에 포커스해도 키보드가 안 뜬다. 그래서 다이얼 아래에 **숫자 입력칸**을
+ * 하나 더 둔다(`inputMode="numeric"`). 거기 치면 다이얼이 따라 돌고, 다이얼을 누르면
+ * 입력칸이 따라온다 — 둘은 같은 네 자리를 본다. 비밀번호라 `type="password"` 로 가린다.
+ *
  * ## 돌리는 것과 여는 것은 다른 동작이다
  *
  * 처음엔 네 자리가 차면 바로 시도하게 만들었는데, 클릭으로 돌릴 때는 "다 돌렸다"를
@@ -47,6 +51,8 @@ export function VaultDials({
   shake: number;
 }) {
   const [digits, setDigits] = useState<number[]>(Array(SIZE).fill(0));
+  /** 입력칸에 친 글자. 다이얼이 돌면 그 네 자리로 맞춘다. */
+  const [typed, setTyped] = useState("");
   const [spinning, setSpinning] = useState<number | null>(null);
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const spinTimer = useRef(0);
@@ -57,6 +63,7 @@ export function VaultDials({
   useEffect(() => {
     if (!shake) return;
     setDigits(Array(SIZE).fill(0));
+    setTyped("");
     onChange("0000");
     refs.current[0]?.focus();
   }, [shake, onChange]);
@@ -78,6 +85,7 @@ export function VaultDials({
     const next = [...digits];
     next[index] = ((value % 10) + 10) % 10;
     commit(next);
+    setTyped(next.join(""));
     if (advance && index < SIZE - 1) refs.current[index + 1]?.focus();
   }
 
@@ -108,30 +116,63 @@ export function VaultDials({
     }
   }
 
+  /** 입력칸에 친 숫자를 다이얼에 옮긴다. 덜 친 칸은 0 으로 둔다. */
+  function onTyped(raw: string) {
+    if (busy) return;
+    const clean = raw.replace(/D/g, "").slice(0, SIZE);
+    setTyped(clean);
+    const next = Array.from({length: SIZE}, (_, i) =>
+      i < clean.length ? Number(clean[i]) : 0
+    );
+    commit(next);
+  }
+
   const still =
     typeof window !== "undefined" && window.matchMedia(REDUCED).matches;
 
   return (
-    <div className="sw-dials" role="group" aria-label="금고 다이얼 네 자리">
-      {digits.map((digit, index) => (
-        <button
-          aria-label={`${index + 1}번째 다이얼, 현재 ${digit}`}
-          className={`sw-dial${
-            spinning === index && !still ? " is-spinning" : ""
-          }`}
-          disabled={busy}
-          key={index}
-          onClick={() => setDigit(index, digit + 1, false)}
-          onKeyDown={event => onKeyDown(index, event)}
-          ref={el => {
-            refs.current[index] = el;
-          }}
-          type="button"
-        >
-          <span className="sw-dial-face">{digit}</span>
-          <span aria-hidden="true" className="sw-dial-notch" />
-        </button>
-      ))}
+    <div className="sw-dial-stack">
+      <div className="sw-dials" role="group" aria-label="금고 다이얼 네 자리">
+        {digits.map((digit, index) => (
+          <button
+            aria-label={`${index + 1}번째 다이얼, 현재 ${digit}`}
+            className={`sw-dial${
+              spinning === index && !still ? " is-spinning" : ""
+            }`}
+            disabled={busy}
+            key={index}
+            onClick={() => setDigit(index, digit + 1, false)}
+            onKeyDown={event => onKeyDown(index, event)}
+            ref={el => {
+              refs.current[index] = el;
+            }}
+            type="button"
+          >
+            <span className="sw-dial-face">{digit}</span>
+            <span aria-hidden="true" className="sw-dial-notch" />
+          </button>
+        ))}
+      </div>
+      <input
+        aria-label="비밀번호 네 자리 직접 입력"
+        autoComplete="current-password"
+        className="sw-dial-input"
+        disabled={busy}
+        id="vault-code"
+        inputMode="numeric"
+        maxLength={SIZE}
+        onChange={event => onTyped(event.target.value)}
+        onKeyDown={event => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            onSubmit();
+          }
+        }}
+        pattern="[0-9]*"
+        placeholder="또는 번호 직접 입력"
+        type="password"
+        value={typed}
+      />
     </div>
   );
 }

@@ -154,7 +154,9 @@ export function AdminGate({onUnlocked}: {onUnlocked: () => void}) {
         </p>
 
         <p className="mt-1 text-center font-mono text-[0.58rem] uppercase tracking-[0.16em] text-[#5b646e]">
-          {busy ? "회로 확인 중…" : "다이얼을 맞추고 레버를 당기세요 · Enter"}
+          {busy
+            ? "회로 확인 중…"
+            : "다이얼을 돌리거나 번호를 치고, 레버를 당기세요 · Enter"}
         </p>
 
         <a
