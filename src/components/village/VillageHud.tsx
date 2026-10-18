@@ -552,7 +552,8 @@ export function MobileHud({
   onOpenRelations,
   onCommission,
   walkMode,
-  onToggleWalk
+  onToggleWalk,
+  landscape = false
 }: {
   activeKey: string;
   onTravel: (point: TravelPoint) => void;
@@ -568,6 +569,9 @@ export function MobileHud({
   /** 걷기 모드 토글. 터치 기기엔 WASD 단추를 숨기므로 여기서 켠다(바닥 탭으로 걷는다) */
   walkMode?: boolean;
   onToggleWalk?: () => void;
+  /** 가로 휴대폰(812×375) — 폭이 md 를 넘어 `md:hidden` 이 숨겨 버리므로 강제로
+   *  보이고, 단추는 오른쪽 위(사운드 아래)에 둔다. 아래는 조이스틱·들어가기가 쓴다. */
+  landscape?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"travel" | "command" | "map">("travel");
@@ -612,14 +616,16 @@ export function MobileHud({
       : "flex items-center gap-2 rounded-lg border border-[#e2c078]/15 bg-white/[0.04] px-3 py-2.5 text-left text-sm font-bold text-[#c9d6e8] active:scale-95";
 
   return (
-    <div className="md:hidden">
+    <div className={landscape ? "" : "md:hidden"}>
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
         aria-label="이동·지휘·지도 메뉴"
-        // 건물 띠(bottom-2, 실측 86px) 바로 위 오른쪽. 예전 bottom-[15rem] 은
-        // 화면 한가운데 떠서 마을을 가렸다.
-        className="fixed bottom-[6.4rem] right-2.5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-[#7a5a38]/60 bg-[#0b1626]/90 text-lg shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] active:scale-90"
+        // 세로: 건물 띠(bottom-2, 실측 86px) 바로 위 오른쪽. 예전 bottom-[15rem] 은
+        // 화면 한가운데 떠서 마을을 가렸다. 가로: 오른쪽 위, 사운드 단추 아래.
+        className={`fixed z-40 flex h-11 w-11 items-center justify-center rounded-full border border-[#7a5a38]/60 bg-[#0b1626]/90 text-lg shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] active:scale-90 ${
+          landscape ? "right-3 top-[52px]" : "bottom-[6.4rem] right-2.5"
+        }`}
       >
         🎛️
       </button>

@@ -32,3 +32,22 @@ export const PHONE_QUERY = "(max-width: 767px)";
 export function usePhoneLayout(): boolean | null {
   return useMediaFlag(PHONE_QUERY);
 }
+
+/**
+ * 가로로 든 휴대폰 — 폭은 `md` 를 넘지만(812px) 높이가 520px 이하이고 손가락
+ * 기기다. 폭 기준 `md:` 클래스가 데스크톱 배치를 켜 버리므로 따로 본다.
+ * 걷기 모드(조이스틱)는 이 상태를 전제로 짰다(2026-10-19).
+ */
+export const TOUCH_LANDSCAPE_QUERY =
+  "(pointer: coarse) and (orientation: landscape) and (max-height: 520px)";
+
+export function useTouchLandscape(): boolean | null {
+  return useMediaFlag(TOUCH_LANDSCAPE_QUERY);
+}
+
+/** 세로로 든 손가락 기기 — 가로 안내 문을 띄우는 조건 */
+export const COARSE_PORTRAIT_QUERY =
+  "(pointer: coarse) and (orientation: portrait) and (max-width: 767px)";
+
+/** VillageScene 의 가벼운 렌더 설정이 보는 기준 — 세로 휴대폰 + 가로 휴대폰 */
+export const MOBILE_SCENE_QUERY = `${PHONE_QUERY}, ${TOUCH_LANDSCAPE_QUERY}`;

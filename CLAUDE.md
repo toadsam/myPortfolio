@@ -368,6 +368,12 @@ so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottlene
   2.375) 안에 선다. `viewClearFraction` 으로 물러설 수 있는 거리를 점수에 넣었다. 높이는 `walkHeightAt` 을 더한 **발 기준**이다 —
   NPC 위치는 y 0 으로 보고되는데 광장 단은 +1.1 이라 절대 높이로 찍으면 머리가 잘린다. 휴대폰은 4.6 뒤·y 2.2·허리 높이 시선이라
   NPC 가 위쪽 절반에 서고, 대화창은 `max-h-[52dvh]` 로 아래 절반만 쓴다.
+- **휴대폰의 본편은 가로 걷기 모드다(같은 날).** 들어온 뒤 세로면 `LandscapeGate`("가로로 돌려 주세요", 안드로이드는 전체
+  화면 + `orientation.lock`), 가로면 환영 연출을 건너뛰고 `explorationMode="walk"` 로 시작한다. 조작은 `VirtualJoystick`(왼쪽) →
+  `lib/touchWalk.ts` 모듈 전역 → `CharacterController` 가 키와 같은 축에 더한다. 두 손가락 줌은 `touchZoom`, 메뉴 「이동」은
+  `requestTeleport`(걷기 모드엔 travelCam 이 없다). 건물 입장은 `WalkEnterPrompt`(상자 가장자리 1.6 안). **가로 휴대폰은 폭이
+  812 라 `md:` 가 켜진다** — `useTouchLandscape()` 로 따로 잡고 `phoneWalk` 일 때 데스크톱 HUD 를 전부 안 그린다. `VillageScene.isMobile`
+  도 `MOBILE_SCENE_QUERY`(세로 폰 + 가로 폰)를 본다. 둘러보기(클릭) 모드로 바꾸면 가로 폰에 데스크톱 HUD 가 뜬다 — 미정리.
 - `ProjectInterior` 는 휴대폰에서 3D 방을 건너뛰고 `ProjectViewer` 를 바로 연다(닫기 = 마을로). `ProjectViewer` 는 휴대폰에서
   사이드바를 접고 한 줄 머리글을 쓴다. 옛 `SectionTabs` 는 지웠다(늘 다른 것 밑에 가려 있었다).
 - 확인은 prod 빌드 375×812. **인앱 브라우저 패널이 숨어 있으면 rAF 가 멈춰 루미가 도착하지 않는다** — 그땐 스크래치패드에

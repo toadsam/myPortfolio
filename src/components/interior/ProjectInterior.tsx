@@ -9,7 +9,7 @@ import type {Group, Mesh, PerspectiveCamera} from "three";
 import {ProjectViewer} from "@/components/ui/ProjectViewer";
 import {getProjectTheme} from "@/data/projectThemes";
 import {projects} from "@/data/projects";
-import {usePhoneLayout} from "@/hooks/useMediaFlag";
+import {usePhoneLayout, useTouchLandscape} from "@/hooks/useMediaFlag";
 import {trackVisitorEvent} from "@/lib/liveApi";
 import type {ProjectData} from "@/types/portfolio";
 
@@ -387,7 +387,13 @@ export function ProjectInterior({projectId, onBack}: ProjectInteriorProps) {
   // 휴대폰은 3D 방을 건너뛰고 2D 상세(ProjectViewer)를 바로 연다. 375px 폭에선
   // 홀로 패널이 화면 밖으로 나가고 손가락 드래그가 회전과 스크롤 사이에서
   // 싸운다(2026-10-19). 상세를 닫으면 그대로 마을로 돌아간다.
-  const phone = usePhoneLayout();
+  // 가로로 든 휴대폰도 같다(812×375 에선 홀로 패널 글이 서로 겹친다, 실측).
+  const portraitPhone = usePhoneLayout();
+  const landscapePhone = useTouchLandscape();
+  const phone =
+    portraitPhone === null && landscapePhone === null
+      ? null
+      : portraitPhone === true || landscapePhone === true;
 
   // 휴대폰 경로는 「상세 보기」 판을 거치지 않으니 여기서 같은 방문 이벤트를 남긴다
   useEffect(() => {

@@ -44,6 +44,7 @@ import {
   NpcQuickDock,
   QuickTravelDock,
   TRAVEL_POINTS,
+  DISTRICT_TO_TRAVEL_KEY,
   RelationshipViewer,
   type TravelPoint
 } from "@/components/village/VillageHud";
@@ -54,7 +55,14 @@ import {
   villageBuildings
 } from "@/lib/constants";
 import {resumePdf} from "@/data/hero";
-import {usePhoneLayout} from "@/hooks/useMediaFlag";
+import {
+  COARSE_PORTRAIT_QUERY,
+  useMediaFlag,
+  usePhoneLayout,
+  useTouchLandscape
+} from "@/hooks/useMediaFlag";
+import {LandscapeGate} from "@/components/ui/LandscapeGate";
+import {requestTeleport} from "@/lib/touchWalk";
 import {
   useVillageEntered,
   VillageLoadingVeil
@@ -75,7 +83,9 @@ import {sfx} from "@/lib/sfx";
 import {
   isWalkableDry,
   viewClearFraction,
-  walkHeightAt
+  walkHeightAt,
+  isWalkablePlayer,
+  SPAWN
 } from "@/lib/villageWalk";
 import {onPlazaDais, terrainHeightAt} from "@/lib/villageTerrain";
 import propsLayout from "@/data/propsLayout.json";
@@ -476,6 +486,11 @@ function buildingShot(
   };
 }
 
+// 빠른 이동 key → 구역(걷기 모드 순간이동용). DISTRICT_TO_TRAVEL_KEY 의 역.
+const TRAVEL_KEY_TO_DISTRICT: Record<string, string> = Object.fromEntries(
+  Object.entries(DISTRICT_TO_TRAVEL_KEY).map(([d, k]) => [k, d])
+);
+
 const CONVO_STEP = 2600; // NPC 간 대화 한 턴 길이(ms)
 
 // 두 NPC를 옆에서 함께 담는 투샷 카메라 (엿듣기 장면)
@@ -569,6 +584,14 @@ export function AIPortfolioVillage() {
   // 휴대폰 레이아웃(md 미만). 클로즈업 구도·HUD 배치가 갈린다. 첫 렌더는 null →
   // 데스크톱 구도로 두고, 실제로 카메라가 잡히는 시점(입장 뒤)엔 정해져 있다.
   const phone = usePhoneLayout() === true;
+  // 가로로 든 휴대폰. 폭이 md 를 넘어 `md:` 클래스가 데스크톱 배치를 켜므로,
+  // 데스크톱 전용 HUD 는 아래 `phoneAny` 로 따로 끈다(2026-10-19).
+  const touchLandscape = useTouchLandscape() === true;
+  const phoneAny = phone || touchLandscape;
+  // 세로로 든 손가락 기기 — 가로로 돌리라는 안내 문
+  const coarsePortrait = useMediaFlag(COARSE_PORTRAIT_QUERY) === true;
+  // 휴대폰 걷기 모드 — 데스크톱 전용 HUD 를 끄는 스위치(아래 렌더 주석 참고)
+  const phoneWalk = phoneAny && explorationMode === "walk";
   // 채용 담당자 3분 코스 — 현재 정류장 index, null 이면 투어 아님
   const [tourIndex, setTourIndex] = useState<number | null>(null);
   const tourTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1426,8 +1449,19 @@ export function AIPortfolioVillage() {
   useEffect(() => {
     if (!villageEntered) return;
     if (conciergeStage !== "idle") return;
+    // 휴대폰은 걷기 모드로 시작한다(2026-10-19). 걷기 모드엔 카메라 연출이 없어
+    // 루미가 달려오는 장면·환영 카드를 건너뛰고, 조이스틱 안내(TouchWalkHint)가
+    // 대신 뜬다. 루미와는 광장에서 탭하면 이야기한다.
+    if (phoneAny) {
+      markConciergeSeen();
+      setConciergeStage("closed");
+      setHudUnlocked(true);
+      setExplorationMode("walk");
+      return;
+    }
     setConciergeStage("running");
-  }, [villageEntered, conciergeStage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [villageEntered, conciergeStage, phoneAny]);
 
   // 루미가 안 도착해도 패널이 뜨도록 안전망
   useEffect(() => {
@@ -1537,6 +1571,38 @@ export function AIPortfolioVillage() {
   function userTravel(point: TravelPoint) {
     endTour();
     unlockHud();
+    // 걷기 모드엔 CameraController 가 없어 travelCam 이 안 먹는다 — 캐릭터를
+    // 그 구역 섬 가운데(hub)로 옮긴다. 광장은 출발 지점.
+    if (explorationMode === "walk") {
+      const district = TRAVEL_KEY_TO_DISTRICT[point.key] ?? "plaza";
+      const hub = district === "plaza" ? null : districtHubWorld(district);
+      const [hx, hz] = hub ?? [SPAWN[0], SPAWN[1]];
+      // hub 자체가 막혀 있으면(가구·소품) 주변 8방위에서 설 자리를 찾는다
+      let at: [number, number] = [hx, hz];
+      if (!isWalkablePlayer(hx, hz)) {
+        for (let r = 1; r <= 3 && !isWalkablePlayer(at[0], at[1]); r += 1)
+          for (let k = 0; k < 8; k += 1) {
+            const a = (k / 8) * Math.PI * 2;
+            const x = hx + Math.cos(a) * r;
+            const z = hz + Math.sin(a) * r;
+            if (isWalkablePlayer(x, z)) {
+              at = [x, z];
+              break;
+            }
+          }
+      }
+      requestTeleport(at[0], at[1]);
+      setSelectedNpc(null);
+      setIsPanelOpen(false);
+      if (point.sectionId) setActiveSection(point.sectionId);
+      trackVisitorEvent({
+        event_type: "quick_travel",
+        target_id: point.key,
+        label: point.label,
+        metadata: {mode: "walk"}
+      });
+      return;
+    }
     travelTo(point);
   }
 
@@ -2360,13 +2426,19 @@ export function AIPortfolioVillage() {
             activeSection={activeSection}
             onSelectSection={stableOpenSection}
           />
+          {/* 세로로 든 휴대폰: 들어온 뒤부터 "가로로 돌려 주세요". 걷기 모드는
+              가로 전제다(LandscapeGate 주석). 로딩 베일은 그 전이라 그대로. */}
+          {coarsePortrait && villageEntered ? <LandscapeGate /> : null}
           {/* 휴대폰은 섹션이 화면 전체(h-dvh)다 — 헤더는 떠 있는 명패라 그 밑으로
               마을이 이어진다. 예전엔 pt-[65px] + 48vh 라 812px 화면에서 캔버스가
               y 66~454 만 차지하고 아래 350px 가 빈 검정이었다(2026-10-19 실측).
               데스크톱은 그대로 헤더 띠 아래 h-screen. */}
           <section
             className={
-              isPanelOpen
+              phoneAny
+                ? // 가로 휴대폰은 폭이 md 라 md: 를 쓰면 65px 띠 + h-screen 으로 스크롤이 생긴다
+                  "relative h-dvh"
+                : isPanelOpen
                 ? "relative h-dvh transition-[padding] duration-300 md:h-auto md:pt-[65px] md:pr-[460px]"
                 : "relative h-dvh transition-[padding] duration-300 md:h-auto md:pt-[65px]"
             }
@@ -2469,11 +2541,18 @@ export function AIPortfolioVillage() {
             }}
             // 휴대폰은 오른쪽 위(명패 옆) — 아래쪽은 건물 띠·메뉴가 쓴다.
             // 데스크톱은 그대로 왼쪽 아래 걷기 버튼 위.
-            className="fixed right-3 top-3 z-30 flex h-9 w-9 items-center justify-center rounded-xl border border-[#5b8fd6]/40 bg-[#050d1a]/85 text-base shadow-2xl backdrop-blur-md transition hover:border-[#86b0e6] hover:bg-[#5b8fd6]/12 active:scale-90 md:bottom-[8.75rem] md:left-4 md:right-auto md:top-auto md:h-10 md:w-10"
+            className={`fixed z-30 flex items-center justify-center rounded-xl border border-[#5b8fd6]/40 bg-[#050d1a]/85 text-base shadow-2xl backdrop-blur-md transition hover:border-[#86b0e6] hover:bg-[#5b8fd6]/12 active:scale-90 ${
+              phoneAny
+                ? "right-3 top-3 h-9 w-9"
+                : "right-3 top-3 h-9 w-9 md:bottom-[8.75rem] md:left-4 md:right-auto md:top-auto md:h-10 md:w-10"
+            }`}
           >
             {soundOn ? "🔊" : "🔇"}
           </button>
-          {hudUnlocked ? (
+          {/* 가로 휴대폰은 폭이 md 라 데스크톱 전용 패널(md:block)이 전부 켜진다 —
+              375px 높이엔 들어갈 자리가 없어 걷기 모드 HUD(조이스틱·들어가기·
+              메뉴 단추)만 남긴다. `phoneWalk` 가 그 스위치다. */}
+          {hudUnlocked && !phoneWalk ? (
             <LiveStatusPanel
               error={liveError}
               villageState={villageState}
@@ -2483,20 +2562,23 @@ export function AIPortfolioVillage() {
             />
           ) : null}
           <ControlsHint
-            active={conciergeStage === "closed" && tourIndex === null}
+            active={
+              conciergeStage === "closed" && tourIndex === null && !phoneWalk
+            }
           />
           {/* 휴대폰은 정보 시트(78%)가 독을 덮으므로 그동안 숨긴다 — 안 숨기면
               독(z-30)이 시트(z-20) 위에 떠서 글을 가린다(2026-10-19 실측). */}
-          {hudUnlocked && !(phone && isPanelOpen) ? (
+          {hudUnlocked && !(phone && isPanelOpen) && !phoneWalk ? (
             <NpcQuickDock activeNpcId={selectedNpc?.id} onSelect={openNpc} />
           ) : null}
-          {!isPanelOpen ? (
+          {!isPanelOpen && !phoneWalk ? (
             <QuickTravelDock activeKey={activeSection} onTravel={userTravel} />
           ) : null}
           {!isPanelOpen &&
           !selectedNpc &&
           conciergeStage === "closed" &&
-          tourIndex === null ? (
+          tourIndex === null &&
+          !phoneWalk ? (
             <DistrictStrip
               sectionId={activeSection}
               pickedBuildingId={pickedBuildingId}
@@ -2506,10 +2588,10 @@ export function AIPortfolioVillage() {
               onCommission={() => openCommission("건물 띠")}
             />
           ) : null}
-          {!isPanelOpen ? (
+          {!isPanelOpen && !phoneWalk ? (
             <Minimap activeKey={activeSection} onTravel={userTravel} />
           ) : null}
-          {hudUnlocked ? (
+          {hudUnlocked && !phoneWalk ? (
             <CommandDock
               command={npcCommand}
               onCommand={issueCommand}
@@ -2527,6 +2609,7 @@ export function AIPortfolioVillage() {
           conciergeStage === "closed" &&
           tourIndex === null ? (
             <MobileHud
+              landscape={touchLandscape}
               activeKey={activeSection}
               onTravel={userTravel}
               command={npcCommand}
@@ -2637,7 +2720,7 @@ export function AIPortfolioVillage() {
               발견의 재미는 포스트 대화 쪽 두 번째 입구가 맡는다.
               휴대폰에선 이 떠 있는 단추를 안 쓴다 — 건물 띠의 「인생·일상」 칩과
               겹쳤다(2026-10-19). 대신 건물 띠 끝 칸과 메뉴 시트 안에 있다. */}
-          {!isPanelOpen && !selectedNpc ? (
+          {!isPanelOpen && !selectedNpc && !phoneAny ? (
             <button
               type="button"
               onClick={() => openCommission("상시 버튼")}
