@@ -87,7 +87,7 @@ Site: https://www.ajoufesta.com
 
 ### 득근득근 MuscleUp
 
-2025.09 - 진행 중 / 개인 개발 / Full-Stack Web  
+2025.09 - 진행 중 / 개인 개발 (1.0 소개형 → 2.0 게임형 → 3.0 디자인·모임 구조·인증 재설계, 2026.10) / Full-Stack Web  
 Role: 기획, UI 설계, API 개발, 인증/권한 구현, 배포 담당  
 Scope: 개인 개발 / 기획, UI, 백엔드 API, 인증·권한, 배포 담당  
 Stack: React, Spring Boot, JPA, JWT 이중 쿠키(HttpOnly), AWS(1.0) → Railway · Vercel · S3, AI Coaching
