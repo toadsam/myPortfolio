@@ -3269,7 +3269,9 @@ function VillageSceneImpl({
 
   return (
     <div
-      className={`relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#7a5a38]/35 bg-[#0b1626] shadow-[inset_0_-30px_70px_rgba(255,157,56,0.06)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r${
+      // 휴대폰은 화면 전체(h-dvh — 주소창이 접히고 펴져도 바닥까지). 예전
+      // 48vh 는 812px 화면에서 아래 350px 를 빈 검정으로 남겼다(2026-10-19).
+      className={`relative h-dvh overflow-hidden bg-[#0b1626] shadow-[inset_0_-30px_70px_rgba(255,157,56,0.06)] md:h-screen md:min-h-[720px] md:border-r${
         hideOverlays ? " v-hide-overlays" : ""
       }`}
       onDragOver={editing ? e => e.preventDefault() : undefined}
@@ -3733,7 +3735,9 @@ function VillageSceneImpl({
           </div>
         </>
       ) : (
-        <div className="pointer-events-none absolute right-4 top-4 rounded-full border border-[#7a5a38]/55 bg-[#0b1626]/85 px-3 py-1.5 text-[11px] font-black text-[#e2c078]/85 backdrop-blur-md">
+        // 휴대폰은 씬이 화면 맨 위부터라 명패·사운드 단추와 같은 줄이 된다 —
+        // 그 아래로 내린다. 데스크톱은 씬이 헤더 밑에서 시작하니 top-4 그대로.
+        <div className="pointer-events-none absolute right-3 top-14 rounded-full border border-[#7a5a38]/55 bg-[#0b1626]/85 px-3 py-1.5 text-[11px] font-black text-[#e2c078]/85 backdrop-blur-md md:right-4 md:top-4">
           {sky.label === "밤"
             ? "🌙"
             : sky.label === "새벽"

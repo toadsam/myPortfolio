@@ -668,3 +668,26 @@ canvas {
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+/* 가로 스크롤 띠의 양끝 페이드 — "오른쪽에 더 있다"를 보여 준다. 휴대폰 건물 띠처럼
+   칩이 화면 밖으로 잘리는 줄에 쓴다. 마스크라 배경색과 무관하게 먹는다. */
+.v-hscroll {
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 14px,
+    #000 calc(100% - 22px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 14px,
+    #000 calc(100% - 22px),
+    transparent 100%
+  );
+  scrollbar-width: none;
+}
+.v-hscroll::-webkit-scrollbar {
+  display: none;
+}

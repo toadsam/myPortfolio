@@ -295,7 +295,10 @@ export function DialogueBox({
       {npc ? (
         <motion.aside
           animate={{opacity: 1, y: 0}}
-          className="v-panel fixed bottom-24 left-4 z-30 flex max-h-[70vh] w-[min(calc(100vw-32px),400px)] flex-col overflow-hidden md:bottom-6 md:left-6"
+          // 휴대폰은 바닥에 붙이고 높이를 화면의 52% 로 막는다 — 클로즈업
+          // 카메라(closeUp portrait)가 NPC 를 위쪽 절반에 세우므로, 대화창이
+          // 그 아래만 쓰면 말하는 상대가 보인다. 데스크톱은 그대로.
+          className="v-panel fixed bottom-2 left-2 z-30 flex max-h-[52dvh] w-[min(calc(100vw-16px),400px)] flex-col overflow-hidden md:bottom-6 md:left-6 md:max-h-[70vh]"
           exit={{opacity: 0, y: 18}}
           initial={{opacity: 0, y: 18}}
           role="dialog"

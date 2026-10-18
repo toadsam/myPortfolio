@@ -1,16 +1,33 @@
 "use client";
 
 import {Float, Html, OrbitControls} from "@react-three/drei";
-import {Canvas, useFrame} from "@react-three/fiber";
+import {Canvas, useFrame, useThree} from "@react-three/fiber";
 import {motion} from "framer-motion";
 import {useEffect, useRef, useState} from "react";
 import type {ReactNode} from "react";
-import type {Group, Mesh} from "three";
+import type {Group, Mesh, PerspectiveCamera} from "three";
 import {ProjectViewer} from "@/components/ui/ProjectViewer";
 import {getProjectTheme} from "@/data/projectThemes";
 import {projects} from "@/data/projects";
+import {usePhoneLayout} from "@/hooks/useMediaFlag";
 import {trackVisitorEvent} from "@/lib/liveApi";
 import type {ProjectData} from "@/types/portfolio";
+
+/**
+ * 세로로 긴 창(태블릿 세로·좁은 데스크톱 창)에서 홀로 패널 셋이 화면 밖으로
+ * 나간다 — fov 50 은 가로 1.5 이상을 가정한 값이다. 종횡비가 그보다 좁으면
+ * 그만큼 카메라를 뒤로 뺀다(0.75 → 약 11.2). 휴대폰은 애초에 이 방을 안 거친다.
+ */
+function AspectCamera() {
+  const camera = useThree(s => s.camera) as PerspectiveCamera;
+  const aspect = useThree(s => s.viewport.aspect);
+  useEffect(() => {
+    const z = 8 * Math.max(1, 1.5 / Math.max(0.5, aspect));
+    camera.position.set(0, 3.5 * (z / 8), z);
+    camera.updateProjectionMatrix();
+  }, [aspect, camera]);
+  return null;
+}
 
 interface ProjectInteriorProps {
   projectId: string;
@@ -367,6 +384,21 @@ export function ProjectInterior({projectId, onBack}: ProjectInteriorProps) {
   const project = projects.find(item => item.id === projectId);
   const theme = getProjectTheme(projectId);
   const [viewerOpen, setViewerOpen] = useState(false);
+  // 휴대폰은 3D 방을 건너뛰고 2D 상세(ProjectViewer)를 바로 연다. 375px 폭에선
+  // 홀로 패널이 화면 밖으로 나가고 손가락 드래그가 회전과 스크롤 사이에서
+  // 싸운다(2026-10-19). 상세를 닫으면 그대로 마을로 돌아간다.
+  const phone = usePhoneLayout();
+
+  // 휴대폰 경로는 「상세 보기」 판을 거치지 않으니 여기서 같은 방문 이벤트를 남긴다
+  useEffect(() => {
+    if (!phone || !project) return;
+    trackVisitorEvent({
+      event_type: "project_view",
+      target_id: `project-${project.id}`,
+      label: project.title,
+      metadata: {projectId: project.id, via: "phone"}
+    });
+  }, [phone, project]);
 
   if (!project) return null;
   const activeProject = project;
@@ -379,6 +411,22 @@ export function ProjectInterior({projectId, onBack}: ProjectInteriorProps) {
       metadata: {projectId: activeProject.id}
     });
     setViewerOpen(true);
+  }
+
+  if (phone === null) {
+    // 화면을 아직 모른다(첫 렌더) — 3D 를 띄웠다가 걷어내면 GLB 없는 방이라도
+    // 캔버스 한 번은 만든다. 배경만 두고 한 프레임 기다린다.
+    return (
+      <div className="fixed inset-0 z-40" style={{background: theme.bg}} />
+    );
+  }
+
+  if (phone) {
+    return (
+      <div className="fixed inset-0 z-40" style={{background: theme.bg}}>
+        <ProjectViewer project={project} onClose={onBack} />
+      </div>
+    );
   }
 
   return (
@@ -425,7 +473,12 @@ export function ProjectInterior({projectId, onBack}: ProjectInteriorProps) {
         }}
         transition={{delay: 1.2}}
       >
-        drag to rotate / scroll to zoom / ESC closes detail
+        <span className="pointer-coarse:hidden">
+          드래그로 돌려보기 · 휠로 확대 · ESC 로 상세 닫기
+        </span>
+        <span className="hidden pointer-coarse:inline">
+          끌어서 돌려보기 · 두 손가락으로 확대 · 가운데 판을 탭하면 상세
+        </span>
       </motion.div>
 
       <Canvas
@@ -433,6 +486,7 @@ export function ProjectInterior({projectId, onBack}: ProjectInteriorProps) {
         dpr={[1, 1.5]}
         gl={{antialias: true, powerPreference: "high-performance"}}
       >
+        <AspectCamera />
         <ProjectScene project={project} onOpenViewer={openViewer} />
       </Canvas>
 

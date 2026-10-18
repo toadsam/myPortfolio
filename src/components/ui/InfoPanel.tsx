@@ -63,7 +63,10 @@ export function InfoPanel({
           // 화면 가장자리에 붙은 사각 판이 아니라, 마을에 걸린 **액자**다.
           // md 이상에서 상하좌우로 여백을 두고 떠 있게 하고, 스크롤은 액자
           // 안쪽(v-frame-body)이 맡는다 — 액자째 스크롤하면 금테가 같이 밀린다.
-          className="relative z-20 w-full p-3 md:fixed md:bottom-3 md:right-3 md:top-[71px] md:w-[468px] md:p-0"
+          // 휴대폰은 바닥에서 올라오는 시트(화면의 78%)다. 예전엔 흐름 안에서
+          // 캔버스 **아래**에 붙었는데, 캔버스가 화면 전체가 되면서(2026-10-19)
+          // 그 자리는 화면 밖이 됐다 — 건물을 눌러도 아무 일도 없는 것처럼 보인다.
+          className="fixed inset-x-0 bottom-0 z-20 h-[78dvh] p-1.5 md:inset-x-auto md:bottom-3 md:right-3 md:top-[71px] md:h-auto md:w-[468px] md:p-0"
           exit={{opacity: 0, x: 44}}
           initial={{opacity: 0, x: 44}}
           transition={{duration: 0.32, ease: [0.22, 1, 0.36, 1]}}
@@ -71,7 +74,7 @@ export function InfoPanel({
           <VillageFrame
             // md:h-full 이 없으면 내용이 짧을 때 안쪽 판이 줄어들어 액자
             // 바닥에 금색 띠가 그대로 드러난다(실제로 그랬다).
-            bodyClassName="overflow-y-auto p-5 md:h-full md:p-6"
+            bodyClassName="h-full overflow-y-auto p-4 md:p-6"
             className="h-full"
             variant="grand"
           >

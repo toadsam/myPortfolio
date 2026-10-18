@@ -286,7 +286,7 @@ export function PlatformProjectViewer({project, theme, onClose}: Props) {
           {STEPS.map((item, index) => (
             <button
               key={item.id}
-              className="relative px-4 py-2.5 font-mono text-xs font-black transition"
+              className="relative whitespace-nowrap px-2.5 py-2.5 font-mono text-xs font-black transition md:px-4"
               onClick={() => setStep(index)}
               style={{
                 color: index === step ? theme.primary : "rgba(255,255,255,0.35)"

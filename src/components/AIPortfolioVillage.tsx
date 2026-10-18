@@ -17,7 +17,6 @@ import {VoyageOverlay} from "@/components/ui/VoyageOverlay";
 import {InfoPanel} from "@/components/ui/InfoPanel";
 import {TourCard} from "@/components/ui/TourCard";
 import {SceneTransition} from "@/components/ui/SceneTransition";
-import {SectionTabs} from "@/components/ui/SectionTabs";
 import {npcBehaviorProfiles} from "@/data/npcBehaviors";
 import {autonomousNpcs} from "@/data/npcRoster";
 import {
@@ -55,6 +54,7 @@ import {
   villageBuildings
 } from "@/lib/constants";
 import {resumePdf} from "@/data/hero";
+import {usePhoneLayout} from "@/hooks/useMediaFlag";
 import {
   useVillageEntered,
   VillageLoadingVeil
@@ -72,7 +72,11 @@ import {
 } from "@/lib/liveApi";
 import {getNpcState} from "@/lib/liveState";
 import {sfx} from "@/lib/sfx";
-import {isWalkableDry} from "@/lib/villageWalk";
+import {
+  isWalkableDry,
+  viewClearFraction,
+  walkHeightAt
+} from "@/lib/villageWalk";
 import {onPlazaDais, terrainHeightAt} from "@/lib/villageTerrain";
 import propsLayout from "@/data/propsLayout.json";
 import type {
@@ -155,7 +159,7 @@ const VillageScene = dynamic(
   () => import("@/components/village/VillageScene").then(m => m.VillageScene),
   {
     loading: () => (
-      <div className="relative h-[54vh] min-h-[420px] overflow-hidden bg-[#050d1a] md:h-screen">
+      <div className="relative h-dvh overflow-hidden bg-[#050d1a] md:h-screen">
         <VillageLoadingVeil progress={0} />
       </div>
     ),
@@ -342,14 +346,40 @@ const CONCIERGE_CAM: {position: Vector3Tuple; lookAt: Vector3Tuple} = {
 // 8방위를 훑어 **걷기 판정이 트인 쪽**에서 찍는다 — 건물·가구·가로등이 전부
 // 걷기 블로커라 "걸을 수 있는 방향"이 곧 시야가 빈 방향이다. 동률이면 광장
 // (원점) 쪽 — 마을은 안쪽이 대체로 트여 있다.
-function closeUp(pos: Vector3Tuple): {
+//
+// **카메라 자리까지 트였는지도 본다 (2026-10-19).** 걷기 표본은 2.7 까지인데
+// 카메라는 3.6 에 선다. 루미가 광장 남쪽(z≈5~6)에 서면 "광장 쪽" 가산점 때문에
+// 북쪽이 뽑히고, 카메라가 z≈2 — 중앙 기념비(central-plaza.glb, 반지름 ≈3·높이
+// ≈8) **안**에 들어가 분수 내부만 보였다. 걷기 상자(4.75)는 모델보다 0.6 좁아
+// 걷기 표본만으로는 못 잡는다. 그래서 NPC→카메라 선분(+0.8 여유)이 건물
+// 시야 상자(`viewClearFraction`)를 뚫지 않는 방향만 후보로 두고, 전부 막히면
+// 트인 비율만큼만 물러선다.
+//
+// `portrait` — 휴대폰 세로 화면. 대화창이 아래 절반을 덮으므로 한 발 더 물러나
+// 시선을 낮춰 NPC 가 화면 **위쪽 절반**에 서게 한다. 데스크톱 구도는 그대로.
+function closeUp(
+  pos: Vector3Tuple,
+  portrait = false
+): {
   position: Vector3Tuple;
   lookAt: Vector3Tuple;
 } {
+  // NPC 위치는 y 0 으로 보고된다(NPC.tsx onPositionChange). 광장 단(+1.1)·다리
+  // 위에 선 NPC 를 땅 높이 기준으로 찍으면 시선이 발밑 단을 향해 머리가 잘리거나
+  // (휴대폰 실측) 다리 옆면만 보인다. 바닥 높이를 더해 **발 기준**으로 잡는다.
+  // 광장 바닥은 0.57 이라 옛 절대값(y 2.5·시선 1.2)은 발 기준 1.93·0.63 이었다 —
+  // 그 구도를 그대로 발 기준으로 옮긴다(시선 0.63 = 허리, 머리는 약 1.3).
+  const base = Math.max(0, walkHeightAt(pos[0], pos[2]));
+  const dist = portrait ? 4.6 : 3.6;
+  const camY = base + (portrait ? 2.2 : 1.93);
+  const lookY = base + (portrait ? 0.7 : 0.63);
+  // 카메라 자리 너머 0.8 까지 비어 있어야 "벽에 등을 대고" 찍지 않는다
+  const reach = dist + 0.8;
   const toCenterLen = Math.hypot(pos[0], pos[2]) || 1;
   let bestDx = 0;
   let bestDz = 1;
   let bestScore = -Infinity;
+  let bestD = dist;
   for (let k = 0; k < 8; k += 1) {
     const a = (k / 8) * Math.PI * 2;
     const dx = Math.sin(a);
@@ -359,20 +389,39 @@ function closeUp(pos: Vector3Tuple): {
       if (!isWalkableDry(pos[0] + dx * d, pos[2] + dz * d)) break; // 이어진 공터만
       open += 1;
     }
+    const clear = viewClearFraction(
+      pos[0],
+      base + 0.8,
+      pos[2],
+      pos[0] + dx * reach,
+      camY,
+      pos[2] + dz * reach
+    );
+    // 이 방향에서 실제로 물러설 수 있는 거리. 막히면 맞기 0.4 전까지만.
+    const usable = clear >= 1 ? dist : Math.min(dist, reach * clear - 0.4);
     const centerBias = -(pos[0] * dx + pos[2] * dz) / toCenterLen;
-    const score = open + centerBias * 0.25;
+    // **카메라가 온전히 물러설 수 있는 비율**(0~3)이 으뜸, 공터 표본(0~1.8)과
+    // 광장 쪽 가산은 그다음 — 반쯤 막힌 방향은 공터가 아무리 넓어도 트인 방향에
+    // 진다(반 거리에서 찍으면 머리가 잘린다). 코앞(1.2 미만)은 후보에서 뺀다.
+    const score =
+      usable < 1.2
+        ? -Infinity
+        : (usable / dist) * 3 + open * 0.6 + centerBias * 0.25;
     if (score > bestScore) {
       bestScore = score;
       bestDx = dx;
       bestDz = dz;
+      bestD = usable;
     }
   }
+  // 여덟 방향이 다 코앞이면 광장 쪽(초기값) 1.6 — 벽 속보다는 낫다
+  const d = bestScore === -Infinity ? 1.6 : bestD;
   // y 1.4·거리 3 이던 저시점은 가슴 높이에서 올려다봐 머리가 잘렸다
   // ("카메라 시점이 너무 아래", 2026-08-28). 살짝 부감 + 한 발 뒤로 —
   // 전신과 주변 바닥이 같이 들어온다.
   return {
-    position: [pos[0] + bestDx * 3.6, 2.5, pos[2] + bestDz * 3.6],
-    lookAt: [pos[0], 1.2, pos[2]]
+    position: [pos[0] + bestDx * d, camY, pos[2] + bestDz * d],
+    lookAt: [pos[0], lookY, pos[2]]
   };
 }
 
@@ -383,11 +432,18 @@ function closeUp(pos: Vector3Tuple): {
 // 붙어 있으면(연락 우체국처럼 한 채짜리 구역) 방향이 흔들리므로 광장(원점) 쪽.
 // 이 계산이 constants.ts 에 없는 이유: 거기서 villageTerrain 을 부르면
 // constants → villageTerrain → villageRelief → constants 순환이 생긴다.
-function buildingShot(building: {
-  position: Vector3Tuple;
-  size: Vector3Tuple;
-  district: string;
-}): {position: Vector3Tuple; lookAt: Vector3Tuple} {
+//
+// `portrait`(휴대폰 세로): 화면이 좁고 길어 같은 거리면 건물이 폭을 꽉 채우고
+// 2D 이름표(건물 위)가 화면 위로 나간다(2026-10-19 실측 top −10px). 한 발 더
+// 물러나고 시선을 건물 위쪽으로 올려 건물이 화면 가운데 아래에 서게 한다.
+function buildingShot(
+  building: {
+    position: Vector3Tuple;
+    size: Vector3Tuple;
+    district: string;
+  },
+  portrait = false
+): {position: Vector3Tuple; lookAt: Vector3Tuple} {
   const [bx, , bz] = building.position;
   const hub = districtHubWorld(building.district);
   let dx = (hub ? hub[0] : 0) - bx;
@@ -411,12 +467,12 @@ function buildingShot(building: {
   // **수평으로는 hub 를 넘지 않는다.** 넘으면 섬 반대편 건물들 사이에 서서
   // 코앞의 남의 지붕만 보인다(첫 시험에서 MyStock 을 고르자 그렇게 됐다).
   // 모자란 거리는 높이로 벌어 내려다본다.
-  const want = Math.max(sx, sy, sz) * 1.6 + 4;
+  const want = (Math.max(sx, sy, sz) * 1.6 + 4) * (portrait ? 1.35 : 1);
   const dist = Math.max(4, Math.min(want, room));
   const rise = sy + 2 + (want - dist) * 0.8;
   return {
     position: [bx + dx * dist, lift + rise, bz + dz * dist],
-    lookAt: [bx, lift + sy * 0.4, bz]
+    lookAt: [bx, lift + sy * (portrait ? 0.9 : 0.4), bz]
   };
 }
 
@@ -510,6 +566,9 @@ export function AIPortfolioVillage() {
    * 걷기는 2026-09-20 에 1단계로 내렸다(버튼 옆 주석).
    */
   const [hudUnlocked, setHudUnlocked] = useState(false);
+  // 휴대폰 레이아웃(md 미만). 클로즈업 구도·HUD 배치가 갈린다. 첫 렌더는 null →
+  // 데스크톱 구도로 두고, 실제로 카메라가 잡히는 시점(입장 뒤)엔 정해져 있다.
+  const phone = usePhoneLayout() === true;
   // 채용 담당자 3분 코스 — 현재 정류장 index, null 이면 투어 아님
   const [tourIndex, setTourIndex] = useState<number | null>(null);
   const tourTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1913,7 +1972,7 @@ export function AIPortfolioVillage() {
     setIsPanelOpen(false);
     setExplorationMode("click");
     setActiveSection(building.sectionId);
-    setTravelCam(buildingShot(building));
+    setTravelCam(buildingShot(building, phone));
     setPickedBuildingId(building.id);
   }
 
@@ -2099,7 +2158,7 @@ export function AIPortfolioVillage() {
     const pos = npcPositionsRef.current[npc.id] ?? npc.position;
     setTravelCam(null);
     setPickedBuildingId(null);
-    setTalkCam(closeUp(pos));
+    setTalkCam(closeUp(pos, phone));
     setSelectedNpc(npc);
     setActiveSection(npc.sectionId);
     setIsPanelOpen(false);
@@ -2108,7 +2167,7 @@ export function AIPortfolioVillage() {
   // 루미가 도착하면 멈춘 자리로 카메라 클로즈업 + 패널
   function handleGuideArrive() {
     const pos = npcPositionsRef.current[GUIDE_ID] ?? WELCOME_SPOT;
-    setConciergeCam(closeUp(pos));
+    setConciergeCam(closeUp(pos, phone));
     setConciergeStage(s => (s === "running" ? "panel" : s));
   }
 
@@ -2117,7 +2176,7 @@ export function AIPortfolioVillage() {
     if (npc.id === GUIDE_ID) {
       setSelectedNpc(null);
       const pos = npcPositionsRef.current[GUIDE_ID] ?? WELCOME_SPOT;
-      setConciergeCam(closeUp(pos));
+      setConciergeCam(closeUp(pos, phone));
       setConciergeStage("panel");
       return;
     }
@@ -2294,23 +2353,27 @@ export function AIPortfolioVillage() {
   });
 
   return (
-    <main className="min-h-screen bg-[#050d1a] pb-24 text-white md:pb-0">
+    <main className="min-h-screen bg-[#050d1a] text-white">
       {viewMode === "village" ? (
         <>
           <Header
             activeSection={activeSection}
             onSelectSection={stableOpenSection}
           />
+          {/* 휴대폰은 섹션이 화면 전체(h-dvh)다 — 헤더는 떠 있는 명패라 그 밑으로
+              마을이 이어진다. 예전엔 pt-[65px] + 48vh 라 812px 화면에서 캔버스가
+              y 66~454 만 차지하고 아래 350px 가 빈 검정이었다(2026-10-19 실측).
+              데스크톱은 그대로 헤더 띠 아래 h-screen. */}
           <section
             className={
               isPanelOpen
-                ? "relative pt-[65px] transition-[padding] duration-300 md:pr-[460px]"
-                : "relative pt-[65px] transition-[padding] duration-300"
+                ? "relative h-dvh transition-[padding] duration-300 md:h-auto md:pt-[65px] md:pr-[460px]"
+                : "relative h-dvh transition-[padding] duration-300 md:h-auto md:pt-[65px]"
             }
           >
-            {/* 이 섹션은 자기 높이가 없다 — VillageScene 루트(h-[48vh] …
-                md:h-screen)가 높이를 만든다. 그래서 여기서 씬을 조건부로 떼면
-                섹션이 pt-[65px]만 남아 접힌다(실제로 한 번 그렇게 깨졌다).
+            {/* 데스크톱에서 이 섹션은 자기 높이가 없다 — VillageScene 루트
+                (h-dvh md:h-screen)가 높이를 만든다. 그래서 여기서 씬을 조건부로
+                떼면 섹션이 pt-[65px]만 남아 접힌다(실제로 한 번 그렇게 깨졌다).
                 무게는 이제 라우트로 가른다(`/` 착륙장 / `/village` 마을) —
                 이 자리에서 다시 조건을 걸 이유가 없다. */}
             <VillageScene
@@ -2379,7 +2442,9 @@ export function AIPortfolioVillage() {
               setIsPanelOpen(false);
               setSelectedNpc(null);
             }}
-            className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 active:scale-95 md:bottom-6"
+            // 키보드가 없는 기기(pointer:coarse)에선 숨긴다 — "WASD" 버튼이 휴대폰에
+            // 떠 있으면 눌러도 걸을 수 없는 모드로 들어가 마을이 멈춘 것처럼 보인다.
+            className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 active:scale-95 pointer-coarse:hidden md:bottom-6"
           >
             {explorationMode === "walk" ? (
               <>
@@ -2402,7 +2467,9 @@ export function AIPortfolioVillage() {
                 return next;
               });
             }}
-            className="fixed bottom-[14.5rem] left-4 z-30 flex h-10 w-10 items-center justify-center rounded-xl border border-[#5b8fd6]/40 bg-[#050d1a]/85 text-base shadow-2xl backdrop-blur-md transition hover:border-[#86b0e6] hover:bg-[#5b8fd6]/12 active:scale-90 md:bottom-[8.75rem]"
+            // 휴대폰은 오른쪽 위(명패 옆) — 아래쪽은 건물 띠·메뉴가 쓴다.
+            // 데스크톱은 그대로 왼쪽 아래 걷기 버튼 위.
+            className="fixed right-3 top-3 z-30 flex h-9 w-9 items-center justify-center rounded-xl border border-[#5b8fd6]/40 bg-[#050d1a]/85 text-base shadow-2xl backdrop-blur-md transition hover:border-[#86b0e6] hover:bg-[#5b8fd6]/12 active:scale-90 md:bottom-[8.75rem] md:left-4 md:right-auto md:top-auto md:h-10 md:w-10"
           >
             {soundOn ? "🔊" : "🔇"}
           </button>
@@ -2418,7 +2485,9 @@ export function AIPortfolioVillage() {
           <ControlsHint
             active={conciergeStage === "closed" && tourIndex === null}
           />
-          {hudUnlocked ? (
+          {/* 휴대폰은 정보 시트(78%)가 독을 덮으므로 그동안 숨긴다 — 안 숨기면
+              독(z-30)이 시트(z-20) 위에 떠서 글을 가린다(2026-10-19 실측). */}
+          {hudUnlocked && !(phone && isPanelOpen) ? (
             <NpcQuickDock activeNpcId={selectedNpc?.id} onSelect={openNpc} />
           ) : null}
           {!isPanelOpen ? (
@@ -2434,6 +2503,7 @@ export function AIPortfolioVillage() {
               onPick={pickBuilding}
               onEnter={handleRequestEnter}
               onFocus={setFocusBuildingId}
+              onCommission={() => openCommission("건물 띠")}
             />
           ) : null}
           {!isPanelOpen ? (
@@ -2450,7 +2520,12 @@ export function AIPortfolioVillage() {
               onOpenRelations={() => setRelOpen(true)}
             />
           ) : null}
-          {!isPanelOpen ? (
+          {/* 메뉴 단추는 건물 띠 바로 위에 산다 — 띠가 숨는 상황(대화·환영 카드·
+              투어)에선 그 자리를 대화창·카드가 덮으므로 같이 숨긴다. */}
+          {!isPanelOpen &&
+          !selectedNpc &&
+          conciergeStage === "closed" &&
+          tourIndex === null ? (
             <MobileHud
               activeKey={activeSection}
               onTravel={userTravel}
@@ -2461,6 +2536,14 @@ export function AIPortfolioVillage() {
               groupTalkBusy={groupChatBusy}
               onBackToWork={backToWork}
               onOpenRelations={() => setRelOpen(true)}
+              onCommission={() => openCommission("모바일 메뉴")}
+              walkMode={explorationMode === "walk"}
+              onToggleWalk={() => {
+                unlockHud();
+                setExplorationMode(m => (m === "walk" ? "click" : "walk"));
+                setIsPanelOpen(false);
+                setSelectedNpc(null);
+              }}
             />
           ) : null}
           {relOpen ? (
@@ -2550,17 +2633,15 @@ export function AIPortfolioVillage() {
             onGoToNpc={goToNpc}
             aiOffline={!!liveError}
           />
-          <SectionTabs
-            activeSection={activeSection}
-            onSelectSection={openSection}
-          />
           {/* 의뢰 공방 상시 진입 — 실사용 창구라 '숨겨진 입구'만 두면 아무도 못 찾는다.
-              발견의 재미는 포스트 대화 쪽 두 번째 입구가 맡는다. */}
+              발견의 재미는 포스트 대화 쪽 두 번째 입구가 맡는다.
+              휴대폰에선 이 떠 있는 단추를 안 쓴다 — 건물 띠의 「인생·일상」 칩과
+              겹쳤다(2026-10-19). 대신 건물 띠 끝 칸과 메뉴 시트 안에 있다. */}
           {!isPanelOpen && !selectedNpc ? (
             <button
               type="button"
               onClick={() => openCommission("상시 버튼")}
-              className="v-panel fixed bottom-24 right-4 z-[52] flex items-center gap-2 px-3.5 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:brightness-125 active:scale-95 md:bottom-6"
+              className="v-panel fixed bottom-6 right-4 z-[52] hidden items-center gap-2 px-3.5 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:brightness-125 active:scale-95 md:flex"
               title="홈페이지 제작 의뢰"
             >
               <span className="v-lantern-glow flex">

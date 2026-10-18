@@ -61,7 +61,7 @@ There is no lint script and no JS/TS test runner in this repo currently — don'
 
 **Three top-level routes, split by weight.** `/` (`src/app/page.tsx`) is a landing screen — `TicketLanding.tsx`, three destinations as three tickets: 마을 보기 / 이력서 보기 / 작업 의뢰하기 (`LandingScreen.tsx`, the old `IntroOverlay`, is no longer what `/` renders). It imports **no three.js at all** (measured: 0 GLB, 215.6 KB JS; hovering the 마을 ticket is what pulls three, 215→920 KB). `/village` (`src/app/village/page.tsx`) is the heavy one: `AIPortfolioVillage.tsx`, the app's state machine (`viewMode` = `village | interior | project-interior | resume | atelier`, plus panel, NPC selection, sound, and the NPC-tick/encounter loops), with `VillageScene.tsx` `dynamic`-imported (`ssr: false`) since Three.js needs a browser. `/resume` (`src/app/resume/page.tsx`) is `ResumeMode` alone, split out because it pulls raw `three` for a decorative background.
 
-**That split is the only thing keeping the landing light — don't collapse it.** The intro used to be an overlay rendered on top of a live village, so every visitor downloaded 87 GLBs (20.7 MB) just to read the intro. Every workaround for that (arming the scene on hover, a static backdrop, a spacer div) existed to paper over the structure, and one of them broke the first screen outright — `AIPortfolioVillage`'s `<section>` has no height of its own, so removing `VillageScene` collapsed it to `pt-[65px]`. Landing weight is now a routing property, not a flag someone has to remember. `/` warms the village on hover via `router.prefetch` **plus** an explicit `import("@/components/village/VillageScene")` — the prefetch alone only fetches the route shell, not the nested dynamic scene chunk.
+**That split is the only thing keeping the landing light — don't collapse it.** The intro used to be an overlay rendered on top of a live village, so every visitor downloaded 87 GLBs (20.7 MB) just to read the intro. Every workaround for that (arming the scene on hover, a static backdrop, a spacer div) existed to paper over the structure, and one of them broke the first screen outright — `AIPortfolioVillage`'s `<section>` has no height of its own on desktop (on phones it is `h-dvh` since 2026-10-19), so removing `VillageScene` collapsed it to `pt-[65px]`. Landing weight is now a routing property, not a flag someone has to remember. `/` warms the village on hover via `router.prefetch` **plus** an explicit `import("@/components/village/VillageScene")` — the prefetch alone only fetches the route shell, not the nested dynamic scene chunk.
 
 **착륙장의 첫 독자는 대기업 채용 심사자다 (2026-09-02).** 그래서 가운데 표는 이력서고
 (`TicketLanding` 의 `useState(1)` — 배열 순서는 그대로 둔다), 표 위에는 이름·직무·입사 가능
@@ -350,6 +350,29 @@ so RDO barely helps. Turn it on only once VRAM is _confirmed_ to be the bottlene
   바로 가기" 링크로 남겼다. 투어는 다른 행동이 시작되면 `endTour()` 로 끝난다 — 카메라를 두 주인이
   끌면 화면이 튄다. 독·지도·모바일 메뉴의 이동은 `userTravel`(endTour+unlock+travelTo)이고 투어 자체는
   `travelTo` 를 직접 쓴다 — travelTo 안에서 투어를 끝내면 투어가 스스로를 죽인다.
+
+### 휴대폰 마을 배치 (2026-10-19)
+
+`/village` 는 `md` 미만(767px 이하)에서 **같은 컴포넌트를 다른 자리에** 놓는다. 데스크톱 클래스는 건드리지 않고
+휴대폰 전용 분기만 더한 것이라, 고칠 때도 `md:` 접두사 없는 쪽만 손댄다. 표는 `docs/PROJECT_DOCUMENTATION.md` 9.9.
+
+- **캔버스는 화면 전체(`h-dvh`)다.** `AIPortfolioVillage` 의 `<section>` 도 휴대폰에선 `h-dvh`, 데스크톱에선 예전처럼
+  높이 없이 `pt-[65px]` + 씬 루트 `h-screen`. 예전 `48vh` 는 812px 화면에서 캔버스가 y 66~454 만 차지하고 아래가 빈 검정이었다.
+  `dynamic` 의 `loading` div 도 같은 값을 써야 한다(씬이 오는 동안 높이가 튄다).
+- **휴대폰 여부는 `usePhoneLayout()`**(`hooks/useMediaFlag.ts`, 첫 렌더 `null`). 클로즈업 구도(`closeUp(pos, portrait)`)와
+  `ProjectInterior` 의 2D 직행이 이걸 본다. `VillageScene.isMobile`·HUD 의 `md:hidden` 과 같은 767px 기준 — 셋을 어긋나게 하지 말 것.
+- **겹침 규칙**: 걷기 단추는 `pointer-coarse:hidden`(메뉴 시트의 「걸어 다니기」가 대신, 바닥 탭으로 걷는다), 제작 의뢰는 떠 있는
+  단추 대신 건물 띠 끝 「의뢰」 칸 + 메뉴 시트, 사운드는 오른쪽 위, 🎛️ 메뉴는 건물 띠(실측 86px) 바로 위. `MobileHud` 는
+  `DistrictStrip` 과 같은 조건에서만 그린다 — 띠가 숨는 상황은 그 자리를 대화창·카드가 덮는다.
+- **클로즈업 카메라는 건물 시야 상자까지 본다.** 걷기 표본(2.7)만 보면 카메라(3.6)가 중앙 기념비(모델 반지름 ≈3, 걷기 상자
+  2.375) 안에 선다. `viewClearFraction` 으로 물러설 수 있는 거리를 점수에 넣었다. 높이는 `walkHeightAt` 을 더한 **발 기준**이다 —
+  NPC 위치는 y 0 으로 보고되는데 광장 단은 +1.1 이라 절대 높이로 찍으면 머리가 잘린다. 휴대폰은 4.6 뒤·y 2.2·허리 높이 시선이라
+  NPC 가 위쪽 절반에 서고, 대화창은 `max-h-[52dvh]` 로 아래 절반만 쓴다.
+- `ProjectInterior` 는 휴대폰에서 3D 방을 건너뛰고 `ProjectViewer` 를 바로 연다(닫기 = 마을로). `ProjectViewer` 는 휴대폰에서
+  사이드바를 접고 한 줄 머리글을 쓴다. 옛 `SectionTabs` 는 지웠다(늘 다른 것 밑에 가려 있었다).
+- 확인은 prod 빌드 375×812. **인앱 브라우저 패널이 숨어 있으면 rAF 가 멈춰 루미가 도착하지 않는다** — 그땐 스크래치패드에
+  `playwright-core` 를 깔고 헤드리스 크로뮴(`channel:"chromium"`, `isMobile`+`hasTouch`)으로 찍는다. 이 워크트리처럼 경로가
+  길면 터보팩이 `.next` 청크 경로 260자 제한에 걸리므로 `npx next build --webpack` 으로 빌드한다(배포 빌드는 터보팩 그대로).
 
 ### Project detail viewer routing
 
