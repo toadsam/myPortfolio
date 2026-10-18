@@ -39,11 +39,16 @@ export const hero: HeroContent = {
   // 웹 직무 심사자에게는 XR 이 차별화가 아니라 산만함으로 읽힐 위치였다.
   // 지우지는 않는다 — 순서로 주력을 못박고 XR 은 「보유」로 뒤에 붙인다.
   // (XR 실체는 기술 스택 절 · 작업 비중 그래프 · About Me 마지막 줄에 그대로 있다.)
-  roleTag: "Web Full-Stack Developer · Unity 게임/XR",
+  // 2026-10-18 — 당근 Backend 인턴 지원을 계기로 "Unity 게임/XR" 을 첫 줄에서
+  // 내렸다(본인 결정). 백엔드 심사자에게 첫 줄의 XR 은 차별화가 아니라 산만함으로
+  // 읽힌다는 외부 피드백과 같은 판단. XR 실체는 기술 스택 절과 프로젝트 목록에 그대로.
+  roleTag: "Web Full-Stack · Backend Developer",
   // 원본 머리말은 `Target: Web Full-Stack / Frontend / Backend` 였다. 게임 직무에도
   // 실제로 지원하므로 한 칸 더 연다(본인 확인 2026-09-01). **순서가 곧 주력이다** —
   // 웹 셋이 앞이고 게임이 뒤다. 원본 md 와 어긋나므로 그쪽도 같이 고쳐야 한다.
-  target: "Web Full-Stack · Frontend · Backend · 게임/XR",
+  // 2026-10-18 — 순서를 Backend 우선으로, 게임/XR 은 뺐다(지원 축이 백엔드로 옮겨
+  // 왔다 — 당근 Backend 인턴). 원본 md `Target:` 줄도 같이 고쳤다.
+  target: "Backend · Web Full-Stack · Frontend",
   // 졸업 예정일은 학력 절의 사실이고, 입사 가능 시점은 본인 확인(2026-09-01).
   // "모두 가능" 은 공채 담당자에게 **언제부터 출근 가능한지**를 말해 주지 않는다.
   // 본인 확인 결과 인턴·정규 둘 다 지금 바로 가능하므로 "즉시" 를 박는다 —

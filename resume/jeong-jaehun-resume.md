@@ -4,7 +4,7 @@ Full-Stack Web Developer
 Email: toadsam@naver.com  
 GitHub: https://github.com/toadsam  
 Portfolio: https://jaehun.co.kr/  
-Target: Web Full-Stack / Frontend / Backend
+Target: Backend / Web Full-Stack / Frontend
 
 ## Summary
 
