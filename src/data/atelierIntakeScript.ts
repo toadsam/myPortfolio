@@ -78,24 +78,17 @@ export interface ChoiceEffect {
   dislikes?: string[];
 }
 
-/** 반응 대사가 볼 수 있는 것. 숫자는 전부 원 단위. */
+/**
+ * 반응 대사가 볼 수 있는 것. 금액은 없다 — 2026-10-18 에 손님 화면에서 돈을 빼면서
+ * `estimate`·`withoutMostExpensive`·`fmt` 를 지웠다. 금액은 서버가 draft 에 채워
+ * 관리자 접수함에만 보인다.
+ */
 export interface ReactionContext {
   draft: CommissionDraft;
-  estimate: {
-    min: number;
-    max: number;
-    weeksMin: number;
-    weeksMax: number;
-  } | null;
-  /** 가장 비싼 기능을 뺐을 때의 견적 — 예산 조정 제안에 쓴다 */
-  withoutMostExpensive: {
-    feature: string;
-    min: number;
-    max: number;
-  } | null;
+  /** 지금까지 고른 것으로 굴린 예상 제작 기간(주). 규칙표가 없으면 null */
+  weeks: {min: number; max: number} | null;
   /** 이번에 고른 선택지들(복수 선택이면 여러 개) */
   chosen: IntakeChoice[];
-  fmt: (won: number) => string;
 }
 
 export interface Intrusion {
@@ -109,14 +102,13 @@ export interface IntakeChoice {
   label: string;
   preview?: PreviewKind;
   effect?: ChoiceEffect;
-  /** 가격 꼬리표를 만들 기능 키워드(effect.features 와 보통 같다). 없으면 꼬리표 없음 */
+  /** 기간 꼬리표("+1주")를 만들 기능 키워드(effect.features 와 보통 같다). 없으면 꼬리표 없음 */
   priceKeyword?: string;
-  /** site_type 선택지면 기준선을 꼬리표로 보여준다 */
+  /** site_type 선택지면 기준 기간("2~4주")을 꼬리표로 보여준다 */
   baseOf?: string;
   /** "직접 말할게요" — text 는 LLM 슬롯 추출, raw 는 원문 그대로(LLM 0회), list/links 는 파싱만 */
   free?: "text" | "list" | "links" | "raw";
-  /** 예산·일정 비교용 (원 / 주). 선택지에만 붙는다 */
-  budgetRange?: [number, number];
+  /** 일정 비교용(주). 선택지에만 붙는다 */
   deadlineWeeks?: number;
 }
 
@@ -265,15 +257,13 @@ const Q1: IntakeQuestion = {
     },
     DIRECT
   ],
-  reaction: ({draft, estimate, fmt}) => {
+  reaction: ({draft, weeks}) => {
     const type = draft.site_type || "홈페이지";
-    const range = estimate
-      ? ` 보통 ${fmt(estimate.min)}에서 ${fmt(
-          estimate.max
-        )} 원 사이에서 시작하는데,`
+    const range = weeks
+      ? ` 보통 ${weeks.min}주에서 ${weeks.max}주 사이에서 시작하는데,`
       : "";
     const lines: Record<string, string> = {
-      기업소개: `소개 사이트요. 제일 많이 오시는 의뢰예요.${range} 지금부터 고르시는 것에 따라 위아래로 움직여요. 저 위 숫자 보이시죠? 저게 따라다닐 거예요.`,
+      기업소개: `소개 사이트요. 제일 많이 오시는 의뢰예요.${range} 지금부터 고르시는 것에 따라 위아래로 움직여요. 저 위 기간 보이시죠? 저게 따라다닐 거예요.`,
       랜딩: `한 장짜리요. 제일 가볍고 빨라요.${range} 대신 한 장에 뭘 넣을지가 전부라 그걸 잘 정해야 해요.`,
       예약: `예약이요. 달력이랑 시간 고르는 화면이 들어가겠네요.${range} 예약이 들어오면 어디로 알려드릴지도 나중에 여쭐게요.`,
       쇼핑몰: `판매하시는군요. 결제가 붙어서 제일 꼼꼼해야 하는 유형이에요.${range} 상품이 몇 개쯤인지는 접수 뒤에 자세히 여쭐게요.`,
@@ -463,7 +453,7 @@ const Q4: IntakeQuestion = {
     if (!chosen.length)
       return "그럼 소개 중심이네요. 제일 빨리 나오는 유형이에요.";
     if (chosen.length >= 3)
-      return "욕심이 많으시네요(웃음). 다 되긴 하는데, 순서를 정하면 1차 견적이 확 내려가요. 그건 접수되고 나서 같이 정해요.";
+      return "욕심이 많으시네요(웃음). 다 되긴 하는데, 순서를 정하면 1차가 훨씬 빨리 나와요. 그건 접수되고 나서 같이 정해요.";
     return `${chosen
       .map(c => c.label.split(" (")[0])
       .join("이랑 ")} — 적었어요. 이 정도면 구조가 단단해요.`;
@@ -643,8 +633,8 @@ const Q8: IntakeQuestion = {
     const id = chosen[0]?.id;
     const lines: Record<string, string> = {
       phone:
-        "그럼 폰 화면을 먼저 그리고 컴퓨터는 넓혀요. 버튼은 엄지로 누르기 좋게 크게. 이건 돈이 아니라 순서 문제라 견적엔 안 붙어요.",
-      both: "반반이면 둘 다 똑같이 신경 써요. 기본이에요, 돈 안 붙어요.",
+        "그럼 폰 화면을 먼저 그리고 컴퓨터는 넓혀요. 버튼은 엄지로 누르기 좋게 크게. 이건 순서 문제라 기간엔 안 붙어요.",
+      both: "반반이면 둘 다 똑같이 신경 써요. 기본이에요.",
       desktop:
         "컴퓨터 위주요. 그럼 넓은 화면에 정보를 많이 보여줄 수 있어요. 표 같은 것도 편하고요."
     };
@@ -652,31 +642,13 @@ const Q8: IntakeQuestion = {
   }
 };
 
+// 예산대는 손님이 스스로 말하는 값이라 남겼다(관리자가 답장할 때 필요하다). 다만 화면이
+// 참고치와 견주어 "넘어요/맞네요" 하던 계산은 2026-10-18 에 뺐다 — 도안은 적어 두기만 한다.
 const BUDGET_CHOICES: IntakeChoice[] = [
-  {
-    id: "b1",
-    label: "100만 원 아래",
-    budgetRange: [0, 1_000_000],
-    effect: {budget_hint: "100만원 이하"}
-  },
-  {
-    id: "b2",
-    label: "100~300만 원",
-    budgetRange: [1_000_000, 3_000_000],
-    effect: {budget_hint: "100~300만원"}
-  },
-  {
-    id: "b3",
-    label: "300~600만 원",
-    budgetRange: [3_000_000, 6_000_000],
-    effect: {budget_hint: "300~600만원"}
-  },
-  {
-    id: "b4",
-    label: "600만 원 이상",
-    budgetRange: [6_000_000, 99_000_000],
-    effect: {budget_hint: "600만원 이상"}
-  },
+  {id: "b1", label: "100만 원 아래", effect: {budget_hint: "100만원 이하"}},
+  {id: "b2", label: "100~300만 원", effect: {budget_hint: "100~300만원"}},
+  {id: "b3", label: "300~600만 원", effect: {budget_hint: "300~600만원"}},
+  {id: "b4", label: "600만 원 이상", effect: {budget_hint: "600만원 이상"}},
   {id: "b0", label: "아직 모르겠어요"},
   {...DIRECT, label: "직접 적을게요"}
 ];
@@ -684,33 +656,13 @@ const BUDGET_CHOICES: IntakeChoice[] = [
 const Q9: IntakeQuestion = {
   id: "q9",
   speaker: "intake",
-  prompt: ({estimate, fmt}) =>
-    estimate
-      ? `다시 오셨네요. 식구들 얘기 다 모았어요. 지금까지 고르신 걸로 참고 견적이 ${fmt(
-          estimate.min
-        )}~${fmt(estimate.max)} 원, ${estimate.weeksMin}~${
-          estimate.weeksMax
-        }주 정도로 나와요.\n마지막 두 가지만요 — 생각하시는 예산대가 있으세요?`
-      : "다시 오셨네요. 식구들 얘기 다 모았어요. 마지막 두 가지만요 — 생각하시는 예산대가 있으세요?",
+  prompt:
+    "다시 오셨네요. 식구들 얘기 다 모았어요. 마지막 두 가지만요 — 생각하시는 예산대가 있으세요? 금액은 접수되면 제가 아니라 담당자가 직접 안내드려요.",
   choices: BUDGET_CHOICES,
-  skipLine: "괜찮아요. 견적 보시고 나중에 말씀하셔도 돼요.",
-  reaction: ({chosen, estimate, withoutMostExpensive, fmt}) => {
-    const range = chosen[0]?.budgetRange;
-    if (!range || !estimate) return "알겠어요, 적어 둘게요.";
-    const [lo, hi] = range;
-    if (hi < estimate.min) {
-      if (withoutMostExpensive) {
-        return `솔직히 말씀드리면 지금 고르신 대로면 조금 넘어요. 그런데 방법이 있어요 — '${
-          withoutMostExpensive.feature
-        }'를 2차로 미루면 ${fmt(withoutMostExpensive.min)}~${fmt(
-          withoutMostExpensive.max
-        )} 원 정도로 들어와요. 접수하시고 체리랑 순서를 정하면 돼요.`;
-      }
-      return "솔직히 말씀드리면 지금 고르신 대로면 조금 넘어요. 페이지를 줄이거나 연출을 빼면 맞출 수 있어요. 접수하시고 같이 조정해요.";
-    }
-    if (lo > estimate.max)
-      return "여유가 있으시네요. 그렇다고 비싸게 부르진 않아요(웃음). 대신 연출이나 관리자 화면 같은 걸 넣을 여지가 있다고 적어 둘게요.";
-    return "딱 맞네요. 그 안에서 잘 맞춰 볼게요.";
+  skipLine: "괜찮아요. 나중에 말씀하셔도 돼요.",
+  reaction: ({chosen}) => {
+    if (!chosen[0]?.effect?.budget_hint) return "알겠어요, 적어 둘게요.";
+    return "적어 둘게요. 그 범위 안에서 뭘 먼저 할지는 접수하시고 담당자가 같이 정해요.";
   }
 };
 
@@ -740,12 +692,12 @@ const Q10: IntakeQuestion = {
     {id: "d4", label: "날짜가 있어요 (직접 적기)", free: "text"}
   ],
   skipLine: "알겠어요. 일정은 정해지면 알려주세요.",
-  reaction: ({chosen, estimate}) => {
+  reaction: ({chosen, weeks: expected}) => {
     const weeks = chosen[0]?.deadlineWeeks;
-    if (!weeks || !estimate) return "적어 뒀어요.";
-    if (weeks < estimate.weeksMin)
+    if (!weeks || !expected) return "적어 뒀어요.";
+    if (weeks < expected.min)
       return "그 기간이면 범위를 좀 줄여야 해요. 접수는 되고, 뭘 먼저 할지 체리가 정리해서 연락드릴 거예요.";
-    if (weeks < estimate.weeksMax)
+    if (weeks < expected.max)
       return "빠듯하지만 돼요. 접수되면 순서를 먼저 정할게요.";
     return "여유 있네요. 그럼 급하게 안 하고 꼼꼼하게 갈 수 있어요.";
   }
@@ -830,6 +782,6 @@ export function wrapupLine(draft: CommissionDraft): string {
   if (draft.deadline_hint) parts.push(`일정 ${draft.deadline_hint}`);
   return (
     `정리해 드릴게요. ${parts.join(" · ")}.\n` +
-    "빠진 거나 덧붙일 말 있으세요? 없으면 바로 접수할게요. 옆에 견적이랑 접수 칸이 열려 있어요."
+    "빠진 거나 덧붙일 말 있으세요? 없으면 바로 접수할게요. 옆에 정리한 내용이랑 접수 칸이 열려 있어요."
   );
 }

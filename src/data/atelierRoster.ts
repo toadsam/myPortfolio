@@ -39,7 +39,7 @@ export const atelierNpcs: NPCData[] = [
     agent: {
       personality:
         "손님이 말로 설명하기 어려워하는 요구사항을 대신 정리해주는 설계자. 재촉하지 않고 하나씩 짚어간다.",
-      specialty: "요구사항 파악, 참고 견적 산출, 의뢰 접수",
+      specialty: "요구사항 파악, 제작 기간 가늠, 의뢰 접수",
       emotionalBias:
         "요구사항이 또렷해지면 focused, 손님이 막연해하면 calm하게 범위를 좁혀준다.",
       currentGoal: "손님의 막연한 생각을 접수 가능한 요구사항으로 바꾸기",
@@ -51,7 +51,7 @@ export const atelierNpcs: NPCData[] = [
       ],
       presetQuestions: [
         "홈페이지 제작 의뢰하고 싶어요",
-        "견적이 대략 얼마나 나와요?",
+        "기간이 대략 얼마나 걸려요?",
         "제작 기간은 얼마나 걸려요?",
         "어떤 것들을 만들 수 있어요?"
       ]

@@ -119,7 +119,8 @@ Frontend mirror: `constants.ts` (sectionMeta + buildings + cameraTargets) → `t
 ### Commission atelier (의뢰 공방) — the one public write path
 
 A hidden underground workshop where visitors commission website work: an AI receptionist (도안) extracts
-requirements and quotes a **reference** estimate, visitors submit, and the admin reviews in an inbox.
+requirements and tells them an expected build time (weeks), visitors submit, and the admin reviews in an inbox —
+which is the only place the server's **reference** estimate in KRW appears (visitors see no money since 2026-10-18).
 Four teammate NPCs (기획/디자인/프론트/백엔드) staff the room. Two docs cover it:
 **`docs/ATELIER_GUIDE.md`** (what works today, how to run a commission end to end) and
 **`docs/COMMISSION_ATELIER.md`** (design decisions and, more importantly, the traps already hit —
@@ -129,8 +130,13 @@ Three things make this unlike every other district:
 
 - It is the **only endpoint outsiders write to** (`POST /commission/consult`, `POST /commission`). Honeypot,
   a dedicated rate limit separate from the AI one, consent, and a Discord notification are all load-bearing.
-- **Estimates are clamped, not trusted.** `commission_service._clamp_estimate()` holds the model's number
-  inside 0.6–1.8× of a rule-based baseline. Never surface a figure without `ESTIMATE_DISCLAIMER`.
+- **Estimates are clamped, not trusted — and not shown to visitors.** `commission_service._clamp_estimate()`
+  holds the model's number inside 0.6–1.8× of a rule-based baseline; the figure travels with the submission to
+  the admin inbox and the Discord notice only. Since 2026-10-18 every visitor surface (choice tags, the running
+  ticker, Q9, the summary card, 도안's free-text replies in both the model prompt and the rule fallback) shows
+  **weeks only** — a recruiter reading an "AI quote desk" sees a side business, not engineering. The resume and
+  README still cite the clamp as the "don't trust model output" example; that stays true server-side. Don't put
+  `estimate_min/max` or `estimate_reason` back on screen.
 - **Entry is deliberately split**: the always-visible button opens the 2D desk directly (real intake path,
   works on mobile); the village hatch and 포스트's hint lead to the 3D room. Don't collapse these into one.
 - **Intake and elicitation happen at different times, on purpose.** Intake (1차) exists to get a quote and
@@ -157,7 +163,8 @@ Three things make this unlike every other district:
   village models and undo the whole point of the route split. The village hatch still opens the same room.
 
 - **1차 접수는 NPC 릴레이 설문이다 (2026-08-23).** 도안→체리→먹지→리코→도안이 10문항을 나눠 묻고, 선택지마다 예시
-  카드와 가격 꼬리표가 붙으며 누적 견적이 실시간으로 굴러간다. 대본은 `src/data/atelierIntakeScript.ts` **한 곳**,
+  카드와 기간 꼬리표("+1주")가 붙으며 누적 예상 기간이 실시간으로 굴러간다(`DurationTicker`. 금액 꼬리표·금액
+  카운터는 2026-10-18 에 뺐다). 대본은 `src/data/atelierIntakeScript.ts` **한 곳**,
   2D 데스크와 3D 공방(바닥 HUD + `CameraRig`)이 같은 `useIntakeFlow` 를 쓴다. 선택지 경로는 LLM 0회 — 서버는
   `GET /commission/pricing` 과 `POST /commission/estimate`(둘 다 순수 계산, 리밋 없음)만 받고, 자유 입력·말 걸기만
   `consult(speaker=…)` 로 그 식구 페르소나가 답한다. 제작 슬롯은 여전히 1차에서 묻지 않는다. 전체는

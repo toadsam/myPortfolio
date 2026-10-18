@@ -452,7 +452,7 @@ export type PlanItemUpdate = Partial<PlanItemInput & {done: boolean}>;
 /* ── 의뢰 공방 (홈페이지 제작 의뢰) ──
    마을에서 유일하게 외부인이 데이터를 쓰는 경로다. */
 
-/** 상담 중 누적되는 요구사항 + 참고 견적. 프런트가 보관하고 매 턴 백엔드에 되돌려준다. */
+/** 상담 중 누적되는 요구사항 + 참고치. 프런트가 보관하고 매 턴 백엔드에 되돌려준다. 금액 칸은 관리자용이고 손님 화면엔 기간만 찍는다(2026-10-18). */
 export interface CommissionDraft {
   site_type: string;
   summary: string;
@@ -462,7 +462,7 @@ export interface CommissionDraft {
   references: string[];
   budget_hint: string;
   deadline_hint: string;
-  /** 원 단위. 확정 견적이 아니라 참고 범위다. */
+  /** 원 단위. 확정이 아닌 참고 범위이고, 손님 화면에는 보이지 않는다(관리자 접수함만). */
   estimate_min: number;
   estimate_max: number;
   weeks_min: number;
@@ -540,7 +540,7 @@ export type CommissionSpeaker =
 
 /**
  * 견적 규칙표 — `GET /commission/pricing`.
- * 선택지마다 가산치를 보여주고 누적 견적을 굴리는 데 쓴다. 표를 프런트에 손으로
+ * 선택지마다 기간 꼬리표를 보여주고 누적 예상 기간을 굴리는 데 쓴다. 표를 프런트에 손으로
  * 옮겨 적지 않는 게 핵심이다. 금액은 원 단위.
  */
 export interface CommissionPricing {

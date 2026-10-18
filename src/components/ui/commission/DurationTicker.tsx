@@ -1,17 +1,21 @@
 "use client";
 
 /**
- * 누적 참고 견적 — RPG 상점의 소지금처럼 선택할 때마다 굴러간다.
- * 오르면 주황, 내리면 초록으로 잠깐 물든다. 금액 옆에는 **항상** 면책 문구가 붙는다.
+ * 누적 예상 제작 기간 — RPG 상점의 소지금처럼 선택할 때마다 굴러간다.
+ * 늘면 주황, 줄면 초록으로 잠깐 물든다.
+ *
+ * 2026-10-18 까지는 금액 카운터(`EstimateTicker`)였다. 금액은 서버가 계속 계산해
+ * 관리자 접수함에만 보이고, 손님 화면에는 **기간만** 남겼다. `estimate.min/max` 는
+ * 여기서 읽지 않는다.
  */
 
 import {useEffect, useRef, useState} from "react";
 
-import {formatMan, type EstimateRange} from "@/lib/commissionPricing";
+import type {EstimateRange} from "@/lib/commissionPricing";
 
-const DISCLAIMER_SHORT = "참고 범위 · 확정 견적 아님";
+const NOTE_SHORT = "참고 범위 · 확정 아님";
 
-export function EstimateTicker({
+export function DurationTicker({
   estimate,
   compact = false
 }: {
@@ -26,8 +30,12 @@ export function EstimateTicker({
     const before = prev.current;
     prev.current = estimate;
     if (!estimate || !before) return;
-    if (estimate.max === before.max && estimate.min === before.min) return;
-    setTint(estimate.max > before.max ? "up" : "down");
+    if (
+      estimate.weeksMax === before.weeksMax &&
+      estimate.weeksMin === before.weeksMin
+    )
+      return;
+    setTint(estimate.weeksMax > before.weeksMax ? "up" : "down");
     setKey(k => k + 1);
     const timer = window.setTimeout(() => setTint(null), 900);
     return () => window.clearTimeout(timer);
@@ -39,21 +47,14 @@ export function EstimateTicker({
   if (compact) {
     return (
       <div className="flex items-baseline gap-2">
-        <span className="text-[10px] text-[#a9bdd6]/70">참고 견적</span>
+        <span className="text-[10px] text-[#a9bdd6]/70">예상 기간</span>
         <span
           key={key}
           className="intake-ticker text-[14px] font-black tabular-nums transition-colors"
           style={{color}}
         >
-          {estimate
-            ? `${formatMan(estimate.min)}~${formatMan(estimate.max)} 원`
-            : "—"}
+          {estimate ? `${estimate.weeksMin}~${estimate.weeksMax}주` : "—"}
         </span>
-        {estimate ? (
-          <span className="text-[10px] text-[#a9bdd6]/70">
-            {estimate.weeksMin}~{estimate.weeksMax}주
-          </span>
-        ) : null}
       </div>
     );
   }
@@ -61,8 +62,8 @@ export function EstimateTicker({
   return (
     <div className="rounded-xl border border-[#e2c078]/25 bg-white/[0.04] px-3.5 py-3">
       <div className="flex items-center justify-between">
-        <p className="v-serif text-[12px] text-[#e2c078]">참고 견적</p>
-        <p className="text-[9px] text-[#a9bdd6]/55">{DISCLAIMER_SHORT}</p>
+        <p className="v-serif text-[12px] text-[#e2c078]">예상 제작 기간</p>
+        <p className="text-[9px] text-[#a9bdd6]/55">{NOTE_SHORT}</p>
       </div>
       <p
         key={key}
@@ -71,20 +72,15 @@ export function EstimateTicker({
       >
         {estimate ? (
           <>
-            {formatMan(estimate.min)} ~ {formatMan(estimate.max)}{" "}
-            <span className="text-[12px] font-bold text-[#a9bdd6]">원</span>
+            {estimate.weeksMin} ~ {estimate.weeksMax}{" "}
+            <span className="text-[12px] font-bold text-[#a9bdd6]">주</span>
           </>
         ) : (
           <span className="text-[13px] font-bold text-[#a9bdd6]/60">
-            어떤 사이트인지 고르면 숫자가 생겨요
+            어떤 사이트인지 고르면 기간이 잡혀요
           </span>
         )}
       </p>
-      {estimate ? (
-        <p className="mt-0.5 text-[11px] text-[#a9bdd6]">
-          제작 기간 {estimate.weeksMin}~{estimate.weeksMax}주
-        </p>
-      ) : null}
     </div>
   );
 }

@@ -168,7 +168,7 @@ export function TicketLanding({
         title: "작업 의뢰하기",
         sub: "지하 공방으로",
         backTitle: "지하 공방으로",
-        desc: "홈페이지 제작을 맡기실 분. 접수하면 도안이 요구사항을 정리하고 참고용 견적을 냅니다.",
+        desc: "홈페이지 제작을 맡기실 분. 접수하면 도안이 요구사항을 정리하고 예상 기간을 알려 드립니다.",
         ink: "var(--tl-ink-atelier)",
         seal: SealAtelier
       }

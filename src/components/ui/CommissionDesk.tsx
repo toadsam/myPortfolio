@@ -4,7 +4,9 @@
  * 의뢰 공방 — 홈페이지 제작 의뢰 접수 창구.
  *
  * 마을에서 유일하게 외부인이 데이터를 남기는 화면이라, 다른 패널과 다른 규칙이 셋 있다:
- * 1. 견적 옆에는 **항상** 면책 문구가 붙는다. AI가 부른 금액은 확정 견적이 아니다.
+ * 1. 손님 화면에는 **금액을 찍지 않는다**(2026-10-18). 서버는 참고 금액을 계속 계산해
+ *    접수와 함께 관리자 접수함에만 보내고, 여기는 예상 제작 기간(주)만 보여준다.
+ *    채용 심사자가 보는 사이트에 "AI 견적 창구"가 보이면 기술과 무관한 감점이라 뺐다.
  * 2. 연락처는 동의 체크 없이는 보내지 않는다(백엔드도 한 번 더 막는다).
  * 3. 허니팟 필드를 둔다 — 사람 눈에는 안 보이고 봇만 채우는 함정.
  *
@@ -59,7 +61,7 @@ import {
   generateCommissionQuestions,
   saveCommissionDepthAnswers
 } from "@/lib/liveApi";
-import {EstimateTicker} from "./commission/EstimateTicker";
+import {DurationTicker} from "./commission/DurationTicker";
 import {IntakeDialogue} from "./commission/IntakeDialogue";
 import {
   useDialogueFlow,
@@ -90,12 +92,6 @@ const STARTERS = [
   "회사 소개 사이트를 새로 하고 싶어요",
   "제 포트폴리오 사이트요"
 ];
-
-function formatMoney(value: number): string {
-  if (!value) return "-";
-  if (value >= 100_000_000) return `${(value / 100_000_000).toFixed(1)}억원`;
-  return `${Math.round(value / 10_000).toLocaleString()}만원`;
-}
 
 export function CommissionDesk({
   onClose,
@@ -135,7 +131,7 @@ export function CommissionDesk({
  *
  * 1층과 같은 엔진(`useDialogueFlow`)에 2층 대본(`atelierDepthScript`)을 꽂는다.
  * 다른 점 셋:
- * - 견적이 없다(`withEstimate:false`) — 심화 문답은 견적의 자리가 아니다. 문답 중
+ * - 참고치가 없다(`withEstimate:false`) — 심화 문답은 기간·비용을 다시 잡는 자리가 아니다. 문답 중
  *   새 기능이 드러나면 features 에 누적만 하고 "담당자가 다시 안내"가 규칙.
  * - 답 하나마다 `saveCommissionDepthAnswers` 로 저장한다 — 창을 닫아도 남는다.
  * - 고정 문항이 끝나면 gate 스텝이 서버에서 AI 맞춤 질문(최대 5, 1회 멱등)을 받아 온다.
@@ -229,7 +225,7 @@ function DepthRelayDesk({
           </section>
 
           <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto border-t border-[#7a5a38]/40 px-5 py-4 lg:w-[360px] lg:border-t-0">
-            <EstimateCard draft={track.draft} disclaimer={track.disclaimer} />
+            <DurationCard draft={track.draft} />
             <DepthProgress draft={flow.draft} />
             <p className="mt-4 border-t border-[#7a5a38]/40 pt-4 text-[11px] leading-relaxed text-[#a9bdd6]/60">
               여기서 주신 답은 바로 저장돼요. 중간에 닫으셔도 이어서 하실 수
@@ -276,9 +272,10 @@ function IntakeDesk({onClose}: {onClose: () => void}) {
           </section>
 
           <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto border-t border-[#7a5a38]/40 px-5 py-4 lg:w-[360px] lg:border-t-0">
-            <EstimateTicker estimate={flow.estimate} />
+            <DurationTicker estimate={flow.estimate} />
             <p className="mt-2 text-[10px] leading-relaxed text-[#a9bdd6]/55">
-              고르는 대로 숫자가 움직여요. 확정 견적이 아니라 참고 범위예요.
+              고르는 대로 기간이 움직여요. 확정이 아니라 참고 범위이고, 비용은
+              접수 뒤 담당자가 직접 안내드려요.
             </p>
             <RequirementList draft={flow.draft} />
 
@@ -403,7 +400,6 @@ function ChatDesk({
   const [draft, setDraft] = useState<CommissionDraft | null>(
     prefill?.draft ?? track?.draft ?? null
   );
-  const [disclaimer, setDisclaimer] = useState(track?.disclaimer ?? "");
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
@@ -444,7 +440,6 @@ function ChatDesk({
           ? await consultCommissionDepth(token, trimmed, history)
           : await consultCommission(trimmed, draft, history);
       setDraft(result.draft);
-      setDisclaimer(result.disclaimer);
       setLines(prev => [...prev, {role: "npc", content: result.reply}]);
     } catch {
       setError("공방과 연결이 잠시 끊겼어요. 잠시 후 다시 말씀해 주시겠어요?");
@@ -560,9 +555,9 @@ function ChatDesk({
                 </form>
               </section>
 
-              {/* ── 도면(견적·요구사항)과 접수 ── */}
+              {/* ── 도면(기간·요구사항)과 접수 ── */}
               <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto border-t border-[#7a5a38]/40 px-5 py-4 lg:w-[380px] lg:border-t-0">
-                <EstimateCard draft={draft} disclaimer={disclaimer} />
+                <DurationCard draft={draft} />
                 <RequirementList draft={draft} />
 
                 {depth ? <DepthProgress draft={draft} /> : null}
@@ -734,44 +729,32 @@ function SubmitForm({
   );
 }
 
-function EstimateCard({
-  draft,
-  disclaimer
-}: {
-  draft: CommissionDraft | null;
-  disclaimer: string;
-}) {
-  const hasEstimate = !!draft && draft.estimate_max > 0;
+/**
+ * 예상 제작 기간 카드. 2026-10-18 까지는 금액 범위 + `estimate_reason` + 서버 면책 문구를
+ * 함께 보여주던 `EstimateCard` 였다. 금액은 관리자 접수함(`CommissionAdmin`)에만 남기고
+ * 손님에게는 기간만 보여준다. `estimate_reason` 은 금액 근거라 같이 뺐다.
+ */
+function DurationCard({draft}: {draft: CommissionDraft | null}) {
+  const hasWeeks = !!draft && draft.weeks_max > 0;
 
   return (
     <div className="rounded-xl border border-[#e2c078]/25 bg-white/[0.04] p-3.5">
-      <p className="v-serif text-[12px] text-[#e2c078]">참고 견적</p>
+      <p className="v-serif text-[12px] text-[#e2c078]">예상 제작 기간</p>
 
-      {hasEstimate ? (
-        <>
-          <p className="mt-1.5 text-[18px] font-black text-[#f3e6c8]">
-            {formatMoney(draft.estimate_min)} ~{" "}
-            {formatMoney(draft.estimate_max)}
-          </p>
-          <p className="mt-0.5 text-[12px] text-[#a9bdd6]">
-            제작 기간 {draft.weeks_min}~{draft.weeks_max}주
-          </p>
-          {draft.estimate_reason ? (
-            <p className="mt-2 text-[11px] leading-relaxed text-[#a9bdd6]/70">
-              {draft.estimate_reason}
-            </p>
-          ) : null}
-        </>
+      {hasWeeks ? (
+        <p className="mt-1.5 text-[18px] font-black text-[#f3e6c8]">
+          {draft.weeks_min}~{draft.weeks_max}
+          <span className="ml-1 text-[12px] font-bold text-[#a9bdd6]">주</span>
+        </p>
       ) : (
         <p className="mt-1.5 text-[12px] text-[#a9bdd6]/60">
-          대화 내용이 쌓이면 범위를 잡아 드려요.
+          대화 내용이 쌓이면 기간을 잡아 드려요.
         </p>
       )}
 
-      {/* 금액이 보이는 곳에는 면책 문구가 반드시 따라붙는다 */}
       <p className="mt-2.5 border-t border-[#7a5a38]/40 pt-2 text-[10px] leading-relaxed text-[#a9bdd6]/60">
-        {disclaimer ||
-          "금액과 기간은 대화 내용을 바탕으로 한 참고 범위이며 확정 견적이 아닙니다."}
+        기간은 대화 내용을 바탕으로 한 참고 범위이며 확정이 아닙니다. 비용은
+        접수 뒤 담당자가 직접 안내드립니다.
       </p>
     </div>
   );

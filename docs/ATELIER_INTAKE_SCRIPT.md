@@ -3,6 +3,15 @@
 > **상태: 구현 완료 (2026-08-23).** 이 문서의 대본이 `src/data/atelierIntakeScript.ts` 에 그대로 들어 있다.
 > 대사를 고치려면 **코드 쪽을 고치고** 이 문서는 근거(왜 이렇게 물었나)로 남긴다.
 > 배경·기존 구조는 [COMMISSION_ATELIER.md](./COMMISSION_ATELIER.md), 운영은 [ATELIER_GUIDE.md](./ATELIER_GUIDE.md).
+>
+> **2026-10-18 변경: 손님 화면에서 금액을 뺐다.** 아래 대본에 적힌 금액 꼬리표(`+30~80만 원`), 누적 견적
+> 카운터, Q1 반응의 "보통 150만에서 350만 원", Q9 의 예산 vs 견적 비교(가장 비싼 기능 빼고 재계산), 견적
+> 카드, 도안 자유 답변의 금액 낭독은 전부 **기간(주)만** 남기고 지웠다 — `DurationTicker`(옛
+> `EstimateTicker`), `DurationCard`(옛 `EstimateCard`), `weeksTag`(옛 `priceTag`), `ReactionContext.weeks`.
+> 예산 문항(Q9)은 손님이 스스로 말하는 값이라 선택지만 남기고 반응은 "적어 둘게요"로 바꿨다. 서버 계산
+> (`_baseline_estimate`·`_clamp_estimate`·`GET /commission/pricing`·`POST /commission/estimate`)과 관리자
+> 접수함·디스코드 알림의 금액은 그대로다. 이유는 채용 심사자가 보는 사이트에 "AI 견적 창구"가 보이면
+> 기술과 무관한 감점이라서. 아래 본문의 금액 표기는 당시 설계 근거로 남긴다.
 
 ## 0. 한 줄
 
@@ -267,9 +276,9 @@ src/components/ui/commission/
 | `src/components/ui/commission/useIntakeFlow.ts`   | 상태기계. 선택지 경로는 LLM 0회, 서버엔 `POST /commission/estimate` 만. 자유 입력·말 걸기만 `consult(speaker)` |
 | `src/components/ui/commission/IntakeDialogue.tsx` | 대사창(타자 연출·초상화·선택지 카드·직접 입력·말 걸기). `layout="panel"`(2D) / `"hud"`(3D)                     |
 | `src/components/ui/commission/ChoicePreview.tsx`  | 예시 카드 — 전부 CSS. Q6 카드는 실제로 움직인다(`globals.css` `intake-*` 키프레임)                             |
-| `src/components/ui/commission/EstimateTicker.tsx` | 누적 참고 견적. 오르면 주황·내리면 초록                                                                        |
+| `src/components/ui/commission/DurationTicker.tsx` | 누적 예상 제작 기간(주). 늘면 주황·줄면 초록. 2026-10-18 까지는 금액 카운터 `EstimateTicker` 였다               |
 | `src/components/ui/commission/IntakeHud.tsx`      | 3D 공방 바닥 HUD. 끝나면 `CommissionDesk prefill` 로 넘긴다                                                    |
-| `src/lib/commissionPricing.ts`                    | 백엔드 `_baseline_estimate()` 의 거울. 표는 `GET /commission/pricing` 에서 받는다                              |
+| `src/lib/commissionPricing.ts`                    | 백엔드 `_baseline_estimate()` 의 거울. 표는 `GET /commission/pricing` 에서 받고, 화면엔 기간(주)만 쓴다        |
 | `src/components/ui/CommissionDesk.tsx`            | `IntakeDesk`(설문) / `ChatDesk`(심화·prefill) / `SubmitForm`(공용 폼) 으로 갈라졌다                            |
 | `src/components/interior/AtelierInterior.tsx`     | `focusNpcId` → `CameraRig` 가 식구 앞으로 카메라 이동, 인형 들림                                               |
 | `backend/app/services/commission_service.py`      | `pricing_table()`, `estimate_only()`, `consult(speaker=)`, 가산치 `스크롤연출`·`인터랙티브`                    |

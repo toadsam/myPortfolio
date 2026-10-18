@@ -9,7 +9,8 @@
  *
  * 규칙 셋:
  * - 선택지 경로는 LLM 0회. `choose/skip/next` 는 전부 동기 계산이고, 서버는
- *   `POST /commission/estimate` 로 견적만 다시 받는다(서버값이 화면값을 덮는다). 2층은
+ *   `POST /commission/estimate` 로 참고치만 다시 받는다(서버값이 화면값을 덮는다). 금액은
+ *   관리자용으로 draft 에만 실리고 화면은 기간(주)만 쓴다(2026-10-18). 2층은
  *   `withEstimate:false` 로 이 경로 전체가 꺼진다 — 심화 문답은 견적의 자리가 아니다.
  * - "직접 말할게요"·자유 대화만 `consult`(옵션 주입)를 부른다. 실패하면 원문을 담고
  *   되묻지 않고 넘어간다.
@@ -32,8 +33,6 @@ import {
 import {
   emptyCommissionDraft,
   estimateForDraft,
-  formatMan,
-  mostExpensiveFeature,
   type EstimateRange
 } from "@/lib/commissionPricing";
 import {
@@ -315,7 +314,7 @@ export function useDialogueFlow(options: DialogueFlowOptions) {
         forceRender();
       })
       .catch(() => {
-        // 가격표 없이도 설문은 돈다. 꼬리표만 사라진다.
+        // 규칙표 없이도 설문은 돈다. 기간 꼬리표만 사라진다.
       });
     return () => {
       alive = false;
@@ -343,29 +342,16 @@ export function useDialogueFlow(options: DialogueFlowOptions) {
     return localEstimate;
   }, [withEstimate, state.draft, localEstimate]);
 
+  // 반응 대사가 보는 것은 draft·예상 기간(주)·이번 선택이다. 금액과 "가장 비싼 기능
+  // 빼면" 계산은 2026-10-18 에 뺐다 — 손님 화면에 돈을 쓰지 않기로 해서 대본이 더는 읽지 않는다.
   const buildContext = useCallback(
     (draft: CommissionDraft, chosen: IntakeChoice[]): ReactionContext => {
       const est =
         pricing && draft.site_type ? estimateForDraft(pricing, draft) : null;
-      let withoutMostExpensive: ReactionContext["withoutMostExpensive"] = null;
-      if (pricing && est) {
-        const feature = mostExpensiveFeature(pricing, draft.features);
-        if (feature) {
-          const trimmed = estimateForDraft(pricing, {
-            ...draft,
-            features: draft.features.filter(
-              item => !item.toLowerCase().includes(feature)
-            )
-          });
-          withoutMostExpensive = {feature, min: trimmed.min, max: trimmed.max};
-        }
-      }
       return {
         draft,
-        estimate: est,
-        withoutMostExpensive,
-        chosen,
-        fmt: formatMan
+        weeks: est ? {min: est.weeksMin, max: est.weeksMax} : null,
+        chosen
       };
     },
     [pricing]
@@ -459,7 +445,7 @@ export function useDialogueFlow(options: DialogueFlowOptions) {
     onDraftChange?.(state.draft);
   }, [state.draft, onDraftChange]);
 
-  // 서버 견적으로 덮기 — draft 의 견적 슬롯이 바뀔 때마다. 응답이 늦게 와도 최신만 반영.
+  // 서버 참고치로 덮기 — draft 의 견적 슬롯이 바뀔 때마다. 금액은 접수와 함께 관리자에게만 간다.
   const estimateSeq = useRef(0);
   const refreshEstimate = useCallback(
     (draft: CommissionDraft) => {

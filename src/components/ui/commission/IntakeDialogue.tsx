@@ -7,7 +7,8 @@
  * 다른 것은 바깥 상자뿐이고 대사·선택지·직접 입력·말 걸기는 전부 공유한다.
  *
  * - 마지막 NPC 대사는 한 글자씩 찍힌다. 누르면 다 보인다. 다 찍혀야 선택지가 열린다.
- * - 선택지는 "내 대사" 다. 카드엔 예시 미리보기와 가격 꼬리표가 붙는다.
+ * - 선택지는 "내 대사" 다. 카드엔 예시 미리보기와 기간 꼬리표("+1주")가 붙는다.
+ *   금액 꼬리표는 2026-10-18 에 뺐다 — 금액은 서버가 계산해 관리자만 본다.
  * - 아래 입력창은 항상 열려 있다 — 지금 말하는 식구에게 아무거나 묻는다.
  */
 
@@ -22,11 +23,11 @@ import {
   SPEAKER_ROLE,
   type IntakeChoice
 } from "@/data/atelierIntakeScript";
-import {featureWeight, formatMan, priceTag} from "@/lib/commissionPricing";
+import {featureWeight, weeksTag} from "@/lib/commissionPricing";
 import type {CommissionPricing, CommissionSpeaker} from "@/types/live";
 
 import {ChoicePreview} from "./ChoicePreview";
-import {EstimateTicker} from "./EstimateTicker";
+import {DurationTicker} from "./DurationTicker";
 import type {DialogueLine, IntakeFlow} from "./useIntakeFlow";
 
 const NPC_COLOR: Record<string, string> = Object.fromEntries(
@@ -112,18 +113,12 @@ function tagFor(
   if (!pricing) return null;
   if (choice.baseOf) {
     const base = pricing.base_by_type[choice.baseOf];
-    return base
-      ? `${formatMan(base.min)}~${formatMan(base.max)} 원 · ${base.weeks_min}~${
-          base.weeks_max
-        }주`
-      : null;
+    return base ? `${base.weeks_min}~${base.weeks_max}주` : null;
   }
   if (choice.priceKeyword) {
     const w = featureWeight(pricing, choice.priceKeyword);
-    return w ? `${priceTag(w.min, w.max)} · +${w.weeks}주` : null;
+    return w ? weeksTag(w.weeks) : null;
   }
-  if (choice.effect?.features?.length || choice.effect?.pages)
-    return "추가 비용 없음";
   return null;
 }
 
@@ -339,7 +334,7 @@ export function IntakeDialogue({
 
   return (
     <div className={`${shell} ${className}`}>
-      {/* 머리 — 지금 말하는 식구 + 진행 + (hud 면) 견적 */}
+      {/* 머리 — 지금 말하는 식구 + 진행 + (hud 면) 예상 기간 */}
       <div className="flex items-center justify-between gap-3 border-b border-[#7a5a38]/40 px-4 py-2.5">
         <div className="flex items-center gap-2.5">
           <Portrait speaker={speaker} size={32} />
@@ -357,7 +352,7 @@ export function IntakeDialogue({
             </p>
           </div>
         </div>
-        {hud ? <EstimateTicker estimate={estimate} compact /> : null}
+        {hud ? <DurationTicker estimate={estimate} compact /> : null}
       </div>
 
       {/* 대사 기록 */}
