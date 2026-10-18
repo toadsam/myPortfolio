@@ -20,7 +20,8 @@ import {buzz, sfx} from "../_lib/sfx";
 
 export type DrawerId = "commission" | "coding" | "cs" | "society";
 
-export function DrawerTab({
+export function DrawerScreen({
+  onBack,
   open,
   onOpen,
   selectedDate,
@@ -30,6 +31,7 @@ export function DrawerTab({
   onOpen: (id: DrawerId | null) => void;
   selectedDate: string;
   commissionWaiting: number;
+  onBack: () => void;
 }) {
   // 한 번이라도 연 서랍. open 이 바뀌는 렌더에서 바로 더해 둔다.
   const [mounted, setMounted] = useState<Set<DrawerId>>(() => new Set());
@@ -70,7 +72,10 @@ export function DrawerTab({
   ];
 
   return (
-    <section className="ab-tab ab-drawer-tab">
+    <section className="ab-screen">
+      <button className="ab-back" onClick={onBack} type="button">
+        ← 배전반
+      </button>
       <div className="ab-sec-h">
         <h2>서랍장</h2>
         <small>매일 쓰지 않는 도구</small>

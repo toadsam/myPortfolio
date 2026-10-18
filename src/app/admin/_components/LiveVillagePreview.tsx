@@ -54,7 +54,7 @@ interface Props {
   highlightIds?: string[];
   /** 건물을 누르면 그 건물을 켜는 회로로 데려간다 */
   onPickBuilding?: (buildingId: string) => void;
-  /** 아래 한 줄. 송전 결과 화면에서는 "미리보기"가 아니므로 바꿔 단다. */
+  /** 아래 한 줄. 송전 결과 화면에서는 "미리보기"가 아니므로 바꿔 단다. 빈 문자열이면 줄 자체를 안 그린다. */
   caption?: string;
   /** 지도 판의 가로세로 비. 지도는 판 안에서 정사각으로 그려지니 넓혀도 찌그러지지 않는다. */
   wide?: boolean;
@@ -333,10 +333,13 @@ export function LiveVillagePreview({
           ref={canvasRef}
         />
       </div>
-      <p className="text-center text-xs text-[#8b94a0]">
-        불이 들어온 건물 <b className="text-[#ff9d38]">{lit}</b> / {scores.size}
-        <span className="ml-2 opacity-70">· {caption}</span>
-      </p>
+      {caption === "" ? null : (
+        <p className="text-center text-xs text-[#8b94a0]">
+          불이 들어온 건물 <b className="text-[#ff9d38]">{lit}</b> /{" "}
+          {scores.size}
+          <span className="ml-2 opacity-70">· {caption}</span>
+        </p>
+      )}
     </div>
   );
 }

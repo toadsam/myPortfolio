@@ -126,7 +126,7 @@ export function RewardOverlay({
           <button className="ab-go-btn" onClick={onClose} type="button">
             배전반으로
           </button>
-          <a className="ab-chip-btn" href="/village">
+          <a className="ab-chip" href="/village">
             마을에서 보기
           </a>
         </div>

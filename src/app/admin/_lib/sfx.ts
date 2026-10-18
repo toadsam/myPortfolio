@@ -68,8 +68,11 @@ function tone(
 const later = (ms: number, fn: () => void) => window.setTimeout(fn, ms);
 
 export const sfx = {
-  /** 눈금 하나 — 게이지·다이얼·탭 */
-  tick: () => tone(1400, 0.02, "square", 0.015),
+  /** 눈금 하나. p(0~1)를 주면 게이지가 찰수록 음이 올라간다 */
+  tick: (p?: number) =>
+    tone(p === undefined ? 1400 : 700 + p * 900, 0.025, "square", 0.017),
+  /** 회로를 끄는 소리 — 아래로 떨어진다 */
+  off: () => tone(300, 0.15, "square", 0.03, 80),
   /** 레버가 걸리는 소리 */
   clack: () => {
     tone(180, 0.06, "square", 0.05);

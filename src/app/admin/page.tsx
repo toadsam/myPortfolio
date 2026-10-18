@@ -1,16 +1,17 @@
 "use client";
 
 /**
- * 마을 배전반 2.0 — 관리자 화면의 셸.
+ * 마을 배전반 — 관리자 화면의 셸. 한 화면이다.
  *
- * 휴대폰에서 매일 쓰는 앱이 목표다. 그래서 한 화면 3단 배전반을 아래 탭 넷
- * (배전반 · 지시서 · 기록실 · 서랍)과 가운데 **꾹 눌러 송전** 버튼으로 나눴다.
- * 이 파일은 상태와 서버 왕복만 들고, 화면은 `_tabs/*` 가 그린다.
+ * 위에 붙은 지도와 루미, 회로마다 바로 아래 지시서, 맨 아래 **꾹 눌러 송전** 하나.
+ * 2026-10-17 의 탭 넷(배전반·지시서·기록실·서랍)은 손잡이가 많고 결과가 안 보여서
+ * 하루 만에 접었다. 기록실·서랍장은 더보기 시트에서 전체 화면으로 열린다.
+ * 이 파일은 상태와 서버 왕복만 들고, 화면은 `_screens/*` 가 그린다.
  *
- * 데이터 흐름은 예전 그대로다: 그날 `DailyActivity` 를 폼으로 불러와 고치고, 송전하면
- * `saveActivity` 로 하루 전체를 저장한 뒤 마을 상태를 다시 받는다. 새로 생긴 것은
- * 작업 지시서 하나 — 완료하면 서버가 그날 기록에 분량을 더하고, 같은 분량을 여기 폼에도
- * 더한다(`applyPlanMinutes`). 그래서 지시서를 끝낸 뒤 송전해도 값이 어긋나지 않는다.
+ * 데이터 흐름은 그대로다: 그날 `DailyActivity` 를 폼으로 불러와 고치고, 송전하면
+ * `saveActivity` 로 하루 전체를 저장한 뒤 마을 상태를 다시 받는다. 작업 지시서를 완료하면
+ * 서버가 그날 기록에 분량을 더하고, 같은 분량을 여기 폼에도 더한다(`applyPlanMinutes`).
+ * 그래서 지시서를 끝낸 뒤 송전해도 값이 어긋나지 않는다.
  */
 
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
@@ -26,8 +27,7 @@ import {
 import {
   diffAgainstServer,
   previewBuildingScores,
-  previewNpcMoods,
-  previewUnlocks
+  previewNpcMoods
 } from "@/lib/villageLightPreview";
 import type {
   ActivityInput,
@@ -43,7 +43,6 @@ import {RewardOverlay, type RewardInfo} from "./_components/RewardOverlay";
 import {CommissionAlert} from "./_drawers/CommissionAdmin";
 import {
   addDays,
-  buildPredictedChanges,
   computeStats,
   normalizeForm,
   prettyDate,
@@ -53,14 +52,14 @@ import {initialForm} from "./_lib/options";
 import {dayKwh, powerSummary} from "./_lib/power";
 import {buzz, sfx} from "./_lib/sfx";
 import {usePlanItems} from "./_lib/usePlanItems";
-import {BoardHud} from "./_shell/BoardHud";
-import {TabBar, type BoardTab} from "./_shell/TabBar";
-import {DrawerTab, type DrawerId} from "./_tabs/DrawerTab";
-import {LogTab} from "./_tabs/LogTab";
-import {OrdersTab, circuitLabel} from "./_tabs/OrdersTab";
-import {TodayTab} from "./_tabs/TodayTab";
+import {BoardScreen} from "./_screens/BoardScreen";
+import {DrawerScreen, type DrawerId} from "./_screens/DrawerScreen";
+import {LogScreen} from "./_screens/LogScreen";
+import {BoardHead} from "./_shell/BoardHead";
+import {MoreSheet, type MoreAction} from "./_shell/MoreSheet";
+import {SendDock} from "./_shell/SendDock";
 
-const TAB_KEY = "admin-board-tab";
+type Screen = "board" | "log" | "drawer";
 
 function formFrom(activity?: DailyActivity | null): ActivityInput {
   if (!activity) return initialForm;
@@ -84,7 +83,6 @@ function formFrom(activity?: DailyActivity | null): ActivityInput {
 export default function AdminPage() {
   const [form, setForm] = useState<ActivityInput>(initialForm);
   const [villageState, setVillageState] = useState<VillageState | null>(null);
-  const [status, setStatus] = useState("오늘의 기록을 불러오는 중입니다.");
   const [isSaving, setIsSaving] = useState(false);
   const [selectedDate, setSelectedDate] = useState(today());
   const [history, setHistory] = useState<DailyActivity[]>([]);
@@ -92,10 +90,10 @@ export default function AdminPage() {
   const [authChecked, setAuthChecked] = useState(false);
   const [locked, setLocked] = useState(false);
   const [aiUsage, setAiUsage] = useState<AiUsage | null>(null);
-  const [tab, setTab] = useState<BoardTab>("today");
+  const [screen, setScreen] = useState<Screen>("board");
+  const [more, setMore] = useState(false);
   const [drawer, setDrawer] = useState<DrawerId | null>(null);
   const [commissionWaiting, setCommissionWaiting] = useState(0);
-  const [pulseToday, setPulseToday] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef(0);
 
@@ -123,10 +121,7 @@ export default function AdminPage() {
       JSON.stringify(normalizeForm(formFrom(savedRow))),
     [form, savedRow]
   );
-
   const npcPreview = useMemo(() => previewNpcMoods(form), [form]);
-  const unlockPreview = useMemo(() => previewUnlocks(form), [form]);
-  const predictedChanges = useMemo(() => buildPredictedChanges(form), [form]);
 
   // 코딩테스트·CS 는 서랍이 저장한다. 이 폼으로는 못 움직이므로 미리보기에서 0 으로
   // 두면 실제로 켜져 있는 도장·서고가 꺼져 보인다 — 서버 값을 그대로 덮어 쓴다.
@@ -145,31 +140,13 @@ export default function AdminPage() {
     toastTimer.current = window.setTimeout(() => setToast(null), 2400);
   }, []);
 
-  /* 마지막에 보던 탭을 기억한다 — 휴대폰에서 다시 열면 보던 자리로. */
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(TAB_KEY) as BoardTab | null;
-      if (saved && ["today", "orders", "log", "drawer"].includes(saved))
-        setTab(saved);
-    } catch {
-      // 저장소가 막힌 브라우저 — 배전반부터 연다
-    }
-  }, []);
-
-  function goTab(next: BoardTab) {
-    setTab(next);
+  function goScreen(next: Screen) {
+    setScreen(next);
     window.scrollTo({top: 0});
-    try {
-      localStorage.setItem(TAB_KEY, next);
-    } catch {
-      // 기억 못 해도 화면은 그대로 된다
-    }
   }
 
   /**
    * 잠금 판정 — **들어올 때마다 금고 문이 먼저다.**
-   *
-   * ## 왜 토큰이 있어도 잠그나
    *
    * 토큰은 비밀번호가 아니라 `ADMIN_SECRET` 으로 서명되고 유효기간이 7일이라,
    * **비밀번호를 바꿔도 이미 나간 토큰은 그대로 살아 있다.** 그래서 인증이 켜져
@@ -189,7 +166,7 @@ export default function AdminPage() {
           return;
         }
       } catch {
-        // 백엔드 미응답 시엔 그냥 진행(로컬 개발 편의) — 저장 시점에 오류 표시됨
+        // 백엔드 미응답 시엔 그냥 진행(로컬 개발 편의) — 송전 때 오류가 드러난다
       }
       setAuthChecked(true);
       void loadAll();
@@ -220,13 +197,9 @@ export default function AdminPage() {
       const todayKey = today();
       setSelectedDate(todayKey);
       setForm(formFrom(hist.find(item => item.date === todayKey)));
-      setStatus("오늘의 기록을 불러왔습니다.");
     } catch {
-      setStatus(
-        "FastAPI 백엔드에 연결하지 못했습니다. 백엔드를 실행한 뒤 새로고침하세요."
-      );
+      say("백엔드에 연결하지 못했어요. 백엔드를 띄운 뒤 새로고침하세요");
     }
-
     try {
       const overview = await fetchAdminOverview();
       setAiUsage(overview.ai_usage);
@@ -238,11 +211,6 @@ export default function AdminPage() {
   function selectDate(date: string) {
     setSelectedDate(date);
     setForm(formFrom(historyByDate[date]));
-    setStatus(
-      date === today()
-        ? "오늘 기록을 편집 중입니다."
-        : `${prettyDate(date)} 기록을 편집 중입니다.`
-    );
   }
 
   function copyYesterday() {
@@ -260,8 +228,6 @@ export default function AdminPage() {
     const gained = pending;
     const savedForm = form;
     setIsSaving(true);
-    setStatus("기록을 저장하고 마을 상태를 다시 계산하는 중입니다.");
-
     try {
       await saveActivity({...normalizeForm(form), date: selectedDate});
       const [hist, state] = await Promise.all([
@@ -288,7 +254,7 @@ export default function AdminPage() {
               b.building_id !== "study-cs"
           )
         );
-        if (gaps.length) {
+        if (gaps.length)
           console.warn(
             [
               "[마을 미리보기] 서버 계산과 어긋납니다.",
@@ -296,7 +262,6 @@ export default function AdminPage() {
               ...gaps
             ].join(" | ")
           );
-        }
       }
 
       sfx.power();
@@ -310,14 +275,8 @@ export default function AdminPage() {
           levelBefore,
           levelAfter: powerSummary(hist).level
         });
-      } else {
-        say(`${prettyDate(selectedDate)} 기록을 송전했어요`);
-      }
-      setStatus(
-        "기록이 저장되었습니다. 3D 마을 조명, NPC 상태, 장식이 갱신됐습니다."
-      );
+      } else say(`${prettyDate(selectedDate)} 기록을 송전했어요`);
     } catch {
-      setStatus("기록 저장에 실패했습니다. 백엔드 상태를 확인하세요.");
       say("송전에 실패했어요. 백엔드 상태를 확인하세요");
     } finally {
       setIsSaving(false);
@@ -355,98 +314,62 @@ export default function AdminPage() {
     []
   );
 
-  /**
-   * 레버를 내렸다 다시 올릴 때 되돌릴 값.
-   *
-   * 레버는 값의 거울이라 내리면 그 회로가 0 이 된다. 직전 값을 기억해 두지 않으면
-   * 실수로 내린 사람이 숫자를 처음부터 다시 맞춰야 한다. 기억이 없을 때만 기본값으로 켠다.
-   */
-  const leverMemory = useRef<Record<string, number>>({});
-
-  function throwMinuteLever(
-    key: "study_minutes" | "coding_minutes",
-    next: boolean,
-    fallback: number
-  ) {
-    if (next) {
-      updateForm({[key]: leverMemory.current[key] || fallback});
-      return;
-    }
-    if (form[key] > 0) leverMemory.current[key] = form[key];
-    updateForm({[key]: 0});
-  }
-
-  function throwProjectLever(projectId: string, next: boolean) {
-    const memKey = `project:${projectId}`;
-    if (next) {
-      setProjectMinutes(projectId, leverMemory.current[memKey] || 30);
-      return;
-    }
-    const current = form.project_minutes[projectId] ?? 0;
-    if (current > 0) leverMemory.current[memKey] = current;
-    setProjectMinutes(projectId, 0);
-  }
-
-  /** 지시서를 완료(또는 취소)했다 — 서버가 더한 분량을 폼에도 같이 더한다. */
-  function applyPlanMinutes(item: PlanItem, delta: number) {
-    if (item.date === selectedDate && delta !== 0) {
-      setForm(current => {
-        const c = item.circuit;
-        if (c === "workout") {
-          const minutes = Math.max(
-            0,
-            (current.workout_done ? current.workout_minutes : 0) + delta
-          );
-          return {
-            ...current,
-            workout_minutes: minutes,
-            workout_done: minutes > 0
-          };
-        }
-        if (c === "study")
-          return {
-            ...current,
-            study_minutes: Math.max(0, current.study_minutes + delta)
-          };
-        if (c === "coding")
-          return {
-            ...current,
-            coding_minutes: Math.max(0, current.coding_minutes + delta)
-          };
-        if (c.startsWith("project:")) {
-          const id = c.slice("project:".length);
-          return {
-            ...current,
-            project_minutes: {
-              ...current.project_minutes,
-              [id]: Math.max(0, (current.project_minutes[id] ?? 0) + delta)
-            }
-          };
-        }
-        return current;
-      });
-      setPulseToday(n => n + 1);
-    }
-    if (delta > 0)
-      say(
-        `${circuitLabel(item.circuit)} 회로 +${delta}분 · 배전반에 반영했어요`
-      );
-    else if (delta === 0 && item.done) say("완료! 회로 없는 지시서예요");
-    // 서버가 그날 기록을 고쳤으니 기록실·송전 대기 계산도 새 값으로 맞춘다(폼은 건드리지 않는다)
-    void fetchActivityHistory(140)
-      .then(setHistory)
-      .catch(() => undefined);
-  }
+  /** 지시서를 완료(또는 취소)했다 — 서버가 더한 분량을 폼에도 같이 더한다. 연출은 회로 블록이 했다. */
+  const applyPlanMinutes = useCallback(
+    (item: PlanItem, delta: number) => {
+      if (item.date === selectedDate && delta !== 0) {
+        setForm(current => {
+          const c = item.circuit;
+          if (c === "workout") {
+            const minutes = Math.max(
+              0,
+              (current.workout_done ? current.workout_minutes : 0) + delta
+            );
+            return {
+              ...current,
+              workout_minutes: minutes,
+              workout_done: minutes > 0
+            };
+          }
+          if (c === "study")
+            return {
+              ...current,
+              study_minutes: Math.max(0, current.study_minutes + delta)
+            };
+          if (c === "coding")
+            return {
+              ...current,
+              coding_minutes: Math.max(0, current.coding_minutes + delta)
+            };
+          if (c.startsWith("project:")) {
+            const id = c.slice("project:".length);
+            return {
+              ...current,
+              project_minutes: {
+                ...current.project_minutes,
+                [id]: Math.max(0, (current.project_minutes[id] ?? 0) + delta)
+              }
+            };
+          }
+          return current;
+        });
+      }
+      // 서버가 그날 기록을 고쳤으니 기록실·송전 대기 계산도 새 값으로 맞춘다(폼은 건드리지 않는다)
+      void fetchActivityHistory(140)
+        .then(setHistory)
+        .catch(() => undefined);
+    },
+    [selectedDate]
+  );
 
   /* ── 지도 ↔ 회로 양방향 연결 ──
-   * 회로에 손을 올리면 지도의 짝 건물에 조준 고리가 걸리고, 지도의 건물을 누르면 그
-   * 건물을 켜는 회로로 스크롤한다. 짝은 `villageLightPreview.ts` 의 점수 표와 같은 id. */
+   * 지도의 건물을 누르면 그 건물을 켜는 회로로 스크롤하고, 회로가 목표선을 넘으면
+   * 지도의 짝 건물이 한 번 번쩍인다. 짝은 `villageLightPreview.ts` 의 점수 표와 같은 id. */
   const [pickedIds, setPickedIds] = useState<string[]>([]);
   const [pickNote, setPickNote] = useState<string | null>(null);
+  const [flashIds, setFlashIds] = useState<string[]>([]);
   const focusByBuilding = useRef<Map<string, () => void>>(new Map());
 
-  // 프로젝트 카드는 "모두 보기"를 켜고 끌 때 다시 마운트되므로 **나중 등록이 이긴다**.
-  // 광장은 운동 카드만 등록한다(코딩 카드는 등록하지 않음).
   const registerFocus = useCallback(
     (buildingIds: string[], focus: () => void) => {
       for (const id of buildingIds) focusByBuilding.current.set(id, focus);
@@ -468,10 +391,24 @@ export default function AdminPage() {
     window.setTimeout(() => setPickedIds([]), 1600);
   }, []);
 
+  const flashBuildings = useCallback((ids: string[]) => {
+    setFlashIds(ids);
+    window.setTimeout(() => setFlashIds([]), 700);
+  }, []);
+
   const isPicked = useCallback(
     (ids: string[]) => ids.some(id => pickedIds.includes(id)),
     [pickedIds]
   );
+
+  function onMore(action: MoreAction) {
+    if (action === "log") goScreen("log");
+    else if (action === "drawer") goScreen("drawer");
+    else if (action === "github") void handleGithubSync();
+    else if (action === "yesterday") copyYesterday();
+    else if (action === "village") window.location.href = "/village";
+    else if (action === "lock") lockBoard();
+  }
 
   if (!authChecked) {
     return (
@@ -481,9 +418,7 @@ export default function AdminPage() {
     );
   }
 
-  if (locked) {
-    return <AdminGate onUnlocked={handleUnlocked} />;
-  }
+  if (locked) return <AdminGate onUnlocked={handleUnlocked} />;
 
   return (
     <main className="admin-switchboard ab-app">
@@ -491,62 +426,52 @@ export default function AdminPage() {
         onCount={setCommissionWaiting}
         onOpen={() => {
           setDrawer("commission");
-          goTab("drawer");
+          goScreen("drawer");
         }}
       />
       <div className="ab-shell">
-        <BoardHud
-          busy={isSaving}
-          date={selectedDate}
-          hasRecord={Boolean(savedRow)}
-          isToday={isToday}
-          onCopyYesterday={copyYesterday}
-          onGithubSync={() => void handleGithubSync()}
-          onLock={lockBoard}
-          onShift={delta => {
-            sfx.tick();
-            selectDate(addDays(selectedDate, delta));
-          }}
-          onToday={() => selectDate(today())}
-          pending={pending}
-          power={power}
-          streak={stats.recordStreak}
-        />
-
-        <div hidden={tab !== "today"}>
-          <TodayTab
-            form={form}
-            isPicked={isPicked}
-            npcPreview={npcPreview}
-            onMinuteLever={throwMinuteLever}
-            onProjectLever={throwProjectLever}
-            pickBuilding={pickBuilding}
-            pickNote={pickNote}
-            predictedChanges={predictedChanges}
-            registerFocus={registerFocus}
-            setProjectMinutes={setProjectMinutes}
-            status={status}
-            studyOverrides={studyOverrides}
-            unlockPreview={unlockPreview}
-            updateForm={updateForm}
-          />
-        </div>
-        {tab === "orders" ? (
-          <OrdersTab
-            isToday={isToday}
-            onCompleted={applyPlanMinutes}
-            plan={plan}
-          />
+        {screen === "board" ? (
+          <>
+            <BoardHead
+              date={selectedDate}
+              form={form}
+              hasRecord={Boolean(savedRow)}
+              highlightIds={flashIds}
+              isToday={isToday}
+              npcPreview={npcPreview}
+              onMore={() => setMore(true)}
+              onPickBuilding={pickBuilding}
+              onShift={delta => {
+                sfx.tick(0.3);
+                selectDate(addDays(selectedDate, delta));
+              }}
+              onToday={() => selectDate(today())}
+              pending={pending}
+              pickNote={pickNote}
+              studyOverrides={studyOverrides}
+            />
+            <BoardScreen
+              form={form}
+              isPicked={isPicked}
+              onFlashBuildings={flashBuildings}
+              onOrderApplied={applyPlanMinutes}
+              plan={plan}
+              registerFocus={registerFocus}
+              setProjectMinutes={setProjectMinutes}
+              updateForm={updateForm}
+            />
+          </>
         ) : null}
-        {tab === "log" ? (
-          <LogTab
+        {screen === "log" ? (
+          <LogScreen
             aiUsage={aiUsage}
             form={form}
             history={history}
             historyByDate={historyByDate}
+            onBack={() => goScreen("board")}
             onOpenDate={date => {
               selectDate(date);
-              goTab("today");
+              goScreen("board");
             }}
             power={power}
             recordedDates={recordedDates}
@@ -554,10 +479,11 @@ export default function AdminPage() {
             stats={stats}
           />
         ) : null}
-        {/* 서랍은 열어 둔 것의 상태(편집 중인 글, 목록)를 지키려고 탭을 떠나도 마운트를 유지한다 */}
-        <div hidden={tab !== "drawer"}>
-          <DrawerTab
+        {/* 서랍은 열어 둔 것의 상태(편집 중인 글, 목록)를 지키려고 화면을 떠나도 마운트를 유지한다 */}
+        <div hidden={screen !== "drawer"}>
+          <DrawerScreen
             commissionWaiting={commissionWaiting}
+            onBack={() => goScreen("board")}
             onOpen={setDrawer}
             open={drawer}
             selectedDate={selectedDate}
@@ -565,15 +491,20 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <TabBar
-        canSend={dirty || dayKwh(form) > 0}
-        drawerAlert={commissionWaiting}
-        onSend={() => void handleSave()}
-        onTab={goTab}
-        ordersAlert={plan.items.some(i => !i.done && Boolean(i.due_label))}
-        pulseToday={pulseToday}
-        sending={isSaving}
-        tab={tab}
+      {screen === "board" ? (
+        <SendDock
+          canSend={dirty || dayKwh(form) > 0}
+          onSend={() => void handleSave()}
+          sending={isSaving}
+        />
+      ) : null}
+
+      <MoreSheet
+        busy={isSaving}
+        commissionWaiting={commissionWaiting}
+        onClose={() => setMore(false)}
+        onPick={onMore}
+        open={more}
       />
 
       {toast ? (

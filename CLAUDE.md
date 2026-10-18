@@ -96,25 +96,32 @@ Frontend mirror: `constants.ts` (sectionMeta + buildings + cameraTargets) → `t
 
 **Critical convention**: auto NPC id is `npc-${building.id}`. The backend routes to a dedicated profile by matching a substring of that id (e.g. `study-codingtest` → matches `"codingtest"`), so name new building ids so the substring match stays unambiguous.
 
-### 관리자 배전반 2.0 (2026-10-17, 화면별 설명은 `docs/copy-admin.md`)
+### 관리자 배전반 2.0 (2026-10-17 → 10-18 한 화면, 화면별 설명은 `docs/copy-admin.md`)
 
-`/admin` 은 휴대폰에서 매일 쓰는 앱이다. `page.tsx` 는 상태·서버 왕복만 든 셸이고, 화면은 `_tabs/`
-(배전반 · 지시서 · 기록실 · 서랍), 서랍 속 옛 도구는 `_drawers/`, 순수 함수·효과음·지시서 훅은 `_lib/`.
-저장은 가운데 송전 버튼 **0.9초 꾹 누르기**다(하루 전체를 덮어쓰는 동작이라 스쳐서 일어나면 안 된다).
+`/admin` 은 휴대폰에서 매일 쓰는 앱이고 **한 화면**이다. 위에 붙은 지도+루미(`_shell/BoardHead`), 회로마다
+바로 아래 그 회로의 지시서(`_components/CircuitBlock` + `OrderRow`), 맨 아래 **꾹 눌러 송전**(`_shell/SendDock`).
+기록실·서랍장은 더보기 시트(`_shell/MoreSheet`)에서 전체 화면(`_screens/*`)으로 열린다. `page.tsx` 는 상태·서버
+왕복만 든다. 10-17 의 탭 넷은 손잡이가 많고 지시서를 끝내도 게이지가 차는 게 안 보여 하루 만에 접었다.
 
+- **게이지 하나가 유일한 손잡이다.** 0 에서 탭=목표치, 켜져 있으면 탭=+15, 끌기=그 위치, 600ms 길게=0. 레버·±버튼은
+  없다. 축하(불꽃·지도 번쩍·화음)는 **손으로 목표선을 넘길 때만** — 지시서 완료는 `setMin` 을 거치지 않고 부모의
+  함수형 갱신(`applyPlanMinutes`)으로 들어가므로 축하하지 않는다.
+- **지시서 완료는 전기가 게이지에 닿은 뒤 더한다**(`fx.bolt` → `onOrderApplied`). 서버 PUT 은 밀자마자(낙관적).
+  `bolt` 는 `onfinish` 만 믿지 않는다 — 숨은 탭·절전에서 안 와서 값이 영영 안 들어갔다. 650ms 상한으로 한 번만 끝낸다.
 - **작업 지시서(`PlanItem`) 완료는 `upsert_activity` 를 쓰지 않는다.** `plan_service._apply` 가 그날 행의
-  한 칸만 더하고 뺀다(운동은 `workout_done` 도 켬, 프로젝트는 dict 를 새로 대입). 프론트는 같은 분량을
-  폼에도 더하므로 뒤이어 송전해도 값이 맞는다. 완료된 지시서의 날짜·회로·분량 변경은 409.
-  `tests/test_plan_items.py` 가 잠근다.
-- **kWh·등급은 저장하지 않는다**(`_lib/power.ts`). 기록에서 매번 다시 센다. 계기판 빗금 = 폼이 저장된 그날
+  한 칸만 더하고 뺀다(운동은 `workout_done` 도 켬, 프로젝트는 dict 를 새로 대입). 완료된 지시서의 날짜·회로·분량
+  변경은 409. `tests/test_plan_items.py` 가 잠근다.
+- **kWh·등급은 저장하지 않는다**(`_lib/power.ts`). 기록에서 매번 다시 센다. 머리의 송전 대기 = 폼이 저장된 그날
   기록보다 더 켜진 만큼.
 - **날짜는 로컬 기준**(`_lib/activity.ts ymd`). 예전 `toISOString().slice(0,10)` 은 UTC 라 한국에서 아침 9시 전
   "오늘"이 어제가 되고 `addDays` 가 하루씩 어긋나 연속 기록이 틀렸다.
-- 서랍은 처음 열 때 마운트하고 닫아도 유지한다(목록 재요청 방지). 배전반·서랍 탭도 `hidden` 으로 숨겨 마운트 유지.
-- 불꽃(`.ab-spark`·`.sw-burst`)은 body 에 붙으므로 `--sw-*` 변수가 안 닿는다 — 색은 값으로 적는다.
+- 서랍장은 처음 열 때 마운트하고 떠나도 유지한다(목록 재요청 방지). 마지막 화면은 기억하지 않는다 — 날마다 여는 건 보드다.
+- 불꽃(`.ab-spark`·`.ab-bolt`·`.sw-burst`)은 body 에 붙으므로 `--sw-*` 변수가 안 닿는다. 색은 값으로 적는다.
+- 포인터 캡처는 try/catch — 합성 이벤트나 끝난 포인터에서 `setPointerCapture` 가 던지면 탭 자체가 죽는다.
 - 설치형 앱: `admin/layout.tsx` 가 `/admin` 에서만 `public/admin.webmanifest` 를 건다(서비스 워커 없음, 오프라인 불가).
   루트 layout 에 걸면 손님에게도 설치 버튼이 뜨니 옮기지 말 것. 옛 `public/manifest.json` 은 CRA 흔적이라 아무도 안 쓴다.
 - 확인은 `.claude/launch.json` 의 `backend-verify`(인증 끔 + 임시 SQLite)로 한다. 실 dev DB 를 건드리지 않는다.
+  8000/3000 이 "사용 중"이면 지난번 `backend-dev.mjs` 감시 프로세스가 남은 것 — 그것부터 죽인다(uvicorn 만 죽이면 되살린다).
 
 ### Commission atelier (의뢰 공방) — the one public write path
 

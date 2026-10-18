@@ -83,6 +83,24 @@ export function usePlanItems(date: string, enabled: boolean) {
     }
   }
 
+  /** 분량만 바꾼다. 완료된 항목은 서버가 409 로 막는다(먼저 되돌려야 한다). */
+  async function setMinutes(item: PlanItem, minutes: number) {
+    const patched = {...item, minutes};
+    setItems(list => list.map(i => (i.id === item.id ? patched : i)));
+    try {
+      const saved = await updatePlanItem(item.id, {minutes});
+      setItems(list => list.map(i => (i.id === item.id ? saved : i)));
+      setError(null);
+    } catch (err) {
+      setItems(list => list.map(i => (i.id === item.id ? item : i)));
+      setError(
+        err instanceof ApiError && err.status === 409
+          ? "완료를 먼저 되돌려야 분량을 바꿀 수 있어요"
+          : explain(err)
+      );
+    }
+  }
+
   async function moveTo(item: PlanItem, toDate: string) {
     const fromToday = item.date === date;
     if (fromToday) {
@@ -122,6 +140,7 @@ export function usePlanItems(date: string, enabled: boolean) {
     loaded,
     create,
     toggle,
+    setMinutes,
     defer: (item: PlanItem) => moveTo(item, next),
     restore: (item: PlanItem) => moveTo(item, date),
     remove

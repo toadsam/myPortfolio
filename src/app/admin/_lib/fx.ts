@@ -79,3 +79,48 @@ export function floatText(el: Element | null, text: string) {
   document.body.appendChild(label);
   window.setTimeout(() => label.remove(), 1200);
 }
+
+/**
+ * 지시서에서 게이지까지 전기 한 방울이 날아간다. 둘이 같은 화면에 있어서 가능한 연출이다.
+ * 도착하면 `done` 을 부른다 — 값은 그때 더해야 "날아가서 채운다"가 된다. 모션 줄이기면
+ * 바로 `done`.
+ */
+export function bolt(
+  from: Element | null,
+  to: Element | null,
+  done: () => void
+) {
+  if (!from || !to || reduced()) {
+    done();
+    return;
+  }
+  const a = from.getBoundingClientRect();
+  const b = to.getBoundingClientRect();
+  const el = document.createElement("i");
+  el.className = "ab-bolt";
+  el.style.left = `${a.left + 18}px`;
+  el.style.top = `${a.top + a.height / 2}px`;
+  document.body.appendChild(el);
+  const dx = b.left + b.width * 0.5 - (a.left + 18);
+  const dy = b.top + b.height / 2 - (a.top + a.height / 2);
+  const anim = el.animate(
+    [
+      {transform: "translate(0,0) scale(1)"},
+      {transform: `translate(${dx * 0.5}px, ${dy * 0.5 - 30}px) scale(1.3)`},
+      {transform: `translate(${dx}px, ${dy}px) scale(0.6)`, opacity: 0.8}
+    ],
+    {duration: 520, easing: "cubic-bezier(.3,.6,.3,1)"}
+  );
+  // onfinish 는 숨은 탭·절전 모드에서 안 올 때가 있다. 그러면 값이 영영 안 들어가므로
+  // 시간 상한을 같이 건다. 어느 쪽이 먼저 오든 한 번만 끝낸다.
+  let fired = false;
+  const finish = () => {
+    if (fired) return;
+    fired = true;
+    el.remove();
+    done();
+  };
+  anim.onfinish = finish;
+  anim.finished.then(finish).catch(finish);
+  window.setTimeout(finish, 650);
+}

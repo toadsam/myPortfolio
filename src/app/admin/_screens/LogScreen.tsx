@@ -19,7 +19,8 @@ import {sfx} from "../_lib/sfx";
 
 const WEEK = ["일", "월", "화", "수", "목", "금", "토"];
 
-export function LogTab({
+export function LogScreen({
+  onBack,
   history,
   historyByDate,
   recordedDates,
@@ -40,6 +41,7 @@ export function LogTab({
   selectedDate: string;
   aiUsage: AiUsage | null;
   onOpenDate: (date: string) => void;
+  onBack: () => void;
 }) {
   const [picked, setPicked] = useState<string | null>(null);
   const pickedDay = picked ? historyByDate[picked] : null;
@@ -55,7 +57,29 @@ export function LogTab({
   });
 
   return (
-    <section className="ab-tab ab-narrow">
+    <section className="ab-screen">
+      <button className="ab-back" onClick={onBack} type="button">
+        ← 배전반
+      </button>
+      <div className="ab-card">
+        <div className="ab-sec-h">
+          <h2>마을 전력</h2>
+          <small>기록 {recordedDays}일 합계</small>
+        </div>
+        <div className="ab-stats">
+          <Stat label="등급" unit="" value={`Lv.${power.level}`} />
+          <Stat label="누적" unit="kWh" value={power.total.toLocaleString()} />
+          <Stat
+            label="다음 등급까지"
+            unit="kWh"
+            value={Math.max(0, power.next - power.total).toLocaleString()}
+          />
+        </div>
+        <p className="ab-hint ab-left ab-mt">
+          1분이 1kWh예요. 프로젝트는 0.8배, 커밋은 개당 5, 목표 고리 하나를 채울
+          때마다 50이 더해져요. 기록에서 매번 다시 계산합니다.
+        </p>
+      </div>
       <div className="ab-card">
         <div className="ab-sec-h">
           <h2>가동 기록</h2>
@@ -97,7 +121,7 @@ export function LogTab({
               )}
             </div>
             <button
-              className="ab-chip-btn is-more"
+              className="ab-chip is-more"
               onClick={() => onOpenDate(picked)}
               type="button"
             >
@@ -152,26 +176,6 @@ export function LogTab({
           운동 {DAILY_GOALS.workout}분 <i style={{background: "#b9a6ff"}} />
           공부 {DAILY_GOALS.study}분 <i style={{background: "#ff9d38"}} />
           코딩 {DAILY_GOALS.coding}분
-        </p>
-      </div>
-
-      <div className="ab-card">
-        <div className="ab-sec-h">
-          <h2>마을 전력</h2>
-          <small>기록 {recordedDays}일 합계</small>
-        </div>
-        <div className="ab-stats">
-          <Stat label="등급" unit="" value={`Lv.${power.level}`} />
-          <Stat label="누적" unit="kWh" value={power.total.toLocaleString()} />
-          <Stat
-            label="다음 등급까지"
-            unit="kWh"
-            value={Math.max(0, power.next - power.total).toLocaleString()}
-          />
-        </div>
-        <p className="ab-hint ab-left ab-mt">
-          1분이 1kWh예요. 프로젝트는 0.8배, 커밋은 개당 5, 목표 고리 하나를 채울
-          때마다 50이 더해져요. 기록에서 매번 다시 계산합니다.
         </p>
       </div>
 
