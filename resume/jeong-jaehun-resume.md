@@ -20,7 +20,7 @@ React와 Spring Boot를 중심으로 서비스 구현, 인증/보안, 배포 운
 
 Frontend: React, TypeScript, Next.js, Three.js (R3F), Vite, React Query, Tailwind CSS, Expo, React Native
 Backend: Spring Boot, Java, JPA, Spring Security, Node.js, Express, FastAPI (Python)
-Auth: JWT, Refresh Token Rotation (적용 후 롤백), OAuth2, Passport, Firebase Auth
+Auth: JWT, Refresh Token Rotation (유예 창 · 재사용 감지), OAuth2, Passport, Firebase Auth
 Infra / Data: AWS, S3, CloudFront, MySQL, MongoDB, Firebase
 AI / LLM: OpenAI API, Claude Agent SDK, 구조화 출력(JSON), 규칙 기반 폴백, 도구 호출 샌드박스
 Unity / XR: Unity, C#, AR Foundation, XR Interaction Toolkit, NavMesh, Object Pooling
@@ -87,16 +87,16 @@ Site: https://www.ajoufesta.com
 
 ### 득근득근 MuscleUp
 
-2025.09 - 2026.06 / 개인 개발 / Full-Stack Web  
+2025.09 - 진행 중 / 개인 개발 / Full-Stack Web  
 Role: 기획, UI 설계, API 개발, 인증/권한 구현, 배포 담당  
 Scope: 개인 개발 / 기획, UI, 백엔드 API, 인증·권한, 배포 담당  
-Stack: React, Spring Boot, JPA, JWT 이중 쿠키(HttpOnly), AWS, AI Coaching
+Stack: React, Spring Boot, JPA, JWT 이중 쿠키(HttpOnly), AWS(1.0) → Railway · Vercel · S3, AI Coaching
 
 운동 기록·커뮤니티·AI 코칭을 제공하는 피트니스 웹서비스입니다.
 
 - Problem: 동아리 회원이 운동 기록과 커뮤니티, AI 코칭을 한 사이트에서 이용하도록 만들고자 했습니다. 기술적으로는 인증 유지와 프론트엔드·API를 배포한 환경의 통신 문제를 해결해야 했습니다.
-- Action: React/Spring Boot 기반으로 화면과 API를 구성하고, Access/Refresh Token을 HttpOnly 이중 쿠키로 분리했습니다. Refresh Token Rotation을 적용했다가 병렬 요청이 서로의 토큰을 무효화해 로그아웃되는 경쟁 상태를 만나, 클라이언트 재발급 단일화(single-flight)로 대체했습니다.
-- Result: AWS 배포 후 HTTPS·Mixed Content·CORS credentials 문제를 수정했습니다.
+- Action: React/Spring Boot 기반으로 화면과 API를 구성하고, Access/Refresh Token을 HttpOnly 이중 쿠키로 분리했습니다. Refresh Token Rotation이 동시 재발급에서 로그아웃을 일으켜 2026.04에 회전을 멈췄다가, 2026.10에 폐기 후 30초 유예와 재사용 감지를 넣어 회전을 다시 도입했습니다(토큰은 해시로 저장, Refresh Token은 HttpOnly 쿠키로만 전달, 만료·폐기 토큰은 매일 정리, 테스트 5개).
+- Result: 1.0 AWS 배포에서 HTTPS·Mixed Content·CORS credentials 문제를 수정했고, 지금은 Railway(API)·Vercel(화면)·S3(사진)에서 운영합니다. 가입 회원은 55명입니다(2026.10.18 운영 API 기준).
 - Evidence: GitHub에 Auth, AI, Analytics, Crew, Friend, Ranking, Review 등 도메인별 controller/entity 구조와 RefreshToken 엔티티가 공개되어 있습니다.
 
 ### Sign-Language
