@@ -115,6 +115,9 @@ import {BuildingNetwork} from "./BuildingNetwork";
 import {CameraController} from "./CameraController";
 import {CharacterController} from "./CharacterController";
 import {WalkEmoteBar} from "./WalkEmoteBar";
+import {VirtualJoystick} from "./VirtualJoystick";
+import {WalkEnterPrompt} from "./WalkEnterPrompt";
+import {MOBILE_SCENE_QUERY, useMediaFlag} from "@/hooks/useMediaFlag";
 import {LightPool, PooledLight} from "./LightPool";
 import {NPC, type NpcCommand} from "./NPC";
 import {PerfHudPanel, PerfProbe} from "./PerfHud";
@@ -257,6 +260,21 @@ const GROUND_CLICK_RADIUS = 41;
  * 안 온다. 판정면은 삼각형 수십 개짜리 원반 한 장이라 포인터 비용은 없다시피 하다.
  * 보이지 않는 메시도 레이캐스트는 되므로(NPC 히트박스와 같은 원리) visible=false.
  */
+/** 손가락 걷기 모드 첫 안내 — 7초 뒤 사라진다. 키보드 kbd 안내의 터치판. */
+function TouchWalkHint() {
+  const [show, setShow] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setShow(false), 7000);
+    return () => clearTimeout(t);
+  }, []);
+  if (!show) return null;
+  return (
+    <div className="pointer-events-none absolute left-1/2 top-14 -translate-x-1/2 whitespace-nowrap rounded-full border border-[#7a5a38]/60 bg-[#0b1626]/90 px-4 py-2 text-[11px] font-bold text-[#c9d6e8] backdrop-blur-md">
+      🕹️ 왼쪽 스틱으로 걷기 · 🔄 오른쪽을 끌어 둘러보기 · 🤏 두 손가락으로 줌
+    </div>
+  );
+}
+
 function GroundClickCatcher({
   onGroundClick
 }: {
@@ -3231,9 +3249,11 @@ function VillageSceneImpl({
   const isMobile = useMemo(
     () =>
       typeof window !== "undefined" &&
-      window.matchMedia("(max-width: 767px)").matches,
+      window.matchMedia(MOBILE_SCENE_QUERY).matches,
     []
   );
+  // 손가락 기기 — 걷기 모드에 조이스틱·「들어가기」 단추를 붙인다(2026-10-19)
+  const touchUi = useMediaFlag("(pointer: coarse)") === true;
   // 씬이 실제로 올라온 지금에야 모델을 미리 받는다. 예전엔 이 파일들의 최상위에서
   // 바로 받았는데, Next 가 dynamic 청크를 미리 로드하는 것만으로 그게 실행돼
   // **인트로만 보고 갈 사람도 캐릭터 GLB 1.4MB 를 내려받았다.**
@@ -3269,9 +3289,13 @@ function VillageSceneImpl({
 
   return (
     <div
-      className={`relative h-[48vh] min-h-[390px] overflow-hidden border-y border-[#7a5a38]/35 bg-[#0b1626] shadow-[inset_0_-30px_70px_rgba(255,157,56,0.06)] md:h-screen md:min-h-[720px] md:border-y-0 md:border-r${
-        hideOverlays ? " v-hide-overlays" : ""
-      }`}
+      // 휴대폰은 화면 전체(h-dvh — 주소창이 접히고 펴져도 바닥까지). 예전
+      // 48vh 는 812px 화면에서 아래 350px 를 빈 검정으로 남겼다(2026-10-19).
+      // 가로 휴대폰(812×375)은 폭이 md 를 넘어 `md:` 가 켜지므로 높이는 isMobile
+      // 로 가른다 — min-h-[720px] 가 붙으면 375px 화면이 두 배로 스크롤된다.
+      className={`relative h-dvh overflow-hidden bg-[#0b1626] shadow-[inset_0_-30px_70px_rgba(255,157,56,0.06)]${
+        isMobile ? "" : " md:h-screen md:min-h-[720px] md:border-r"
+      }${hideOverlays ? " v-hide-overlays" : ""}`}
       onDragOver={editing ? e => e.preventDefault() : undefined}
       onDrop={
         editing
@@ -3714,7 +3738,23 @@ function VillageSceneImpl({
       {isWalkMode ? (
         <>
           <WalkEmoteBar />
-          <div className="pointer-events-none absolute bottom-5 left-1/2 flex -translate-x-1/2 flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-xl border border-[#7a5a38]/55 bg-[#0b1626]/85 px-4 py-2.5 backdrop-blur-md">
+          {/* 손가락 기기: 왼쪽 조이스틱 + 건물 앞 「들어가기」 + 첫 7초 안내.
+              키보드 안내(kbd)는 숨긴다. */}
+          {touchUi ? (
+            <>
+              <VirtualJoystick />
+              <WalkEnterPrompt
+                playerPosRef={playerPosRef}
+                onRequestEnter={onRequestEnter}
+              />
+              <TouchWalkHint />
+            </>
+          ) : null}
+          <div
+            className={`pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-xl border border-[#7a5a38]/55 bg-[#0b1626]/85 px-4 py-2.5 backdrop-blur-md ${
+              touchUi ? "hidden" : "flex"
+            }`}
+          >
             {[
               ["WASD", "이동"],
               ["Shift", "달리기"],
@@ -3733,7 +3773,13 @@ function VillageSceneImpl({
           </div>
         </>
       ) : (
-        <div className="pointer-events-none absolute right-4 top-4 rounded-full border border-[#7a5a38]/55 bg-[#0b1626]/85 px-3 py-1.5 text-[11px] font-black text-[#e2c078]/85 backdrop-blur-md">
+        // 휴대폰은 씬이 화면 맨 위부터라 명패·사운드 단추와 같은 줄이 된다 —
+        // 그 아래로 내린다. 데스크톱은 씬이 헤더 밑에서 시작하니 top-4 그대로.
+        <div
+          className={`pointer-events-none absolute rounded-full border border-[#7a5a38]/55 bg-[#0b1626]/85 px-3 py-1.5 text-[11px] font-black text-[#e2c078]/85 backdrop-blur-md ${
+            isMobile ? "right-3 top-14" : "right-4 top-4"
+          }`}
+        >
           {sky.label === "밤"
             ? "🌙"
             : sky.label === "새벽"

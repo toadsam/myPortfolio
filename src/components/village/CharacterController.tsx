@@ -19,6 +19,7 @@ import {
   togglePlayerEmote
 } from "@/lib/playerEmote";
 import {emoteByHotkey} from "@/data/playerEmotes";
+import {teleportRequest, touchMove, touchZoom} from "@/lib/touchWalk";
 import {WarriorCharacter, type MoveState} from "./WarriorCharacter";
 
 // ─── 조작 (2026-08-29 전면 교체) ──────────────────────────────────────────────
@@ -205,13 +206,41 @@ export function CharacterController({
   useEffect(() => {
     const el = gl.domElement;
 
+    // 두 손가락 줌(2026-10-19). 캔버스 위의 터치 포인터를 따로 세어, 둘이 되면
+    // 드래그(시점)를 멈추고 손가락 사이 거리 변화를 카메라 거리로 보낸다.
+    const touches = new Map<number, {x: number; y: number}>();
+    let pinchDist = 0;
+    const pinchGap = () => {
+      const [a, b] = [...touches.values()];
+      return a && b ? Math.hypot(a.x - b.x, a.y - b.y) : 0;
+    };
+
     function onPointerDown(e: PointerEvent) {
       if (e.pointerType === "mouse" && e.button !== 0) return;
+      if (e.pointerType === "touch") {
+        touches.set(e.pointerId, {x: e.clientX, y: e.clientY});
+        if (touches.size === 2) {
+          pinchDist = pinchGap();
+          draggingRef.current = false;
+          dragIdRef.current = null;
+          return;
+        }
+        if (touches.size > 2) return;
+      }
       draggingRef.current = true;
       dragIdRef.current = e.pointerId;
       dragPrevRef.current = {x: e.clientX, y: e.clientY};
     }
     function onPointerMove(e: PointerEvent) {
+      if (e.pointerType === "touch" && touches.has(e.pointerId)) {
+        touches.set(e.pointerId, {x: e.clientX, y: e.clientY});
+        if (touches.size === 2) {
+          const gap = pinchGap();
+          if (pinchDist > 0) touchZoom.delta += (pinchDist - gap) * 0.02;
+          pinchDist = gap;
+          return;
+        }
+      }
       if (!draggingRef.current || dragIdRef.current !== e.pointerId) return;
       const dx = e.clientX - dragPrevRef.current.x;
       const dy = e.clientY - dragPrevRef.current.y;
@@ -224,6 +253,10 @@ export function CharacterController({
       lastDragRef.current = performance.now();
     }
     function endDrag(e: PointerEvent) {
+      if (e.pointerType === "touch") {
+        touches.delete(e.pointerId);
+        pinchDist = 0;
+      }
       if (dragIdRef.current !== e.pointerId) return;
       draggingRef.current = false;
       dragIdRef.current = null;
@@ -271,6 +304,26 @@ export function CharacterController({
     const delta = Math.min(rawDelta, 0.05);
     const keys = keysRef.current;
 
+    // ─── 구역 순간이동 (휴대폰 메뉴 「이동」) ──────────────────────────────
+    // 걷기 모드엔 카메라 연출이 없어서 구역 이동은 캐릭터를 옮기는 것이다.
+    if (teleportRequest.to) {
+      const [tx, tz] = teleportRequest.to;
+      teleportRequest.to = null;
+      posRef.current.x = tx;
+      posRef.current.z = tz;
+      groundYRef.current = walkHeightAt(tx, tz);
+      if (walkTargetRef) walkTargetRef.current = null;
+    }
+
+    // ─── 두 손가락 줌 ──────────────────────────────────────────────────────
+    if (touchZoom.delta !== 0) {
+      camDistRef.current = Math.min(
+        DIST_MAX,
+        Math.max(DIST_MIN, camDistRef.current + touchZoom.delta)
+      );
+      touchZoom.delta = 0;
+    }
+
     // ─── 입력을 카메라 기준 방향으로 ─────────────────────────────────────
     const fx = -Math.sin(camYawRef.current);
     const fz = -Math.cos(camYawRef.current);
@@ -283,6 +336,14 @@ export function CharacterController({
     if (keys.has("KeyS") || keys.has("ArrowDown")) iz -= 1;
     if (keys.has("KeyD") || keys.has("ArrowRight")) ix += 1;
     if (keys.has("KeyA") || keys.has("ArrowLeft")) ix -= 1;
+
+    // 가상 조이스틱(touchWalk). 키와 같은 축이고, 끝까지 밀면 달린다.
+    const stick = Math.hypot(touchMove.x, touchMove.y);
+    if (stick > 0.12) {
+      ix += touchMove.x;
+      iz += touchMove.y;
+      if (walkTargetRef && walkTargetRef.current) walkTargetRef.current = null;
+    }
 
     let dirX = fx * iz + rx * ix;
     let dirZ = fz * iz + rz * ix;
@@ -313,7 +374,8 @@ export function CharacterController({
     // 물속에서는 느려진다 — 허리 깊이에서 절반. 감쇠 중인 groundY(음수 = 잠긴
     // 깊이)를 그대로 쓰므로 들어갈수록 서서히 무거워지고, 나오면 서서히 풀린다.
     const wade = Math.max(0, -groundYRef.current) / WADE_MAX;
-    const running = keys.has("ShiftLeft") || keys.has("ShiftRight");
+    const running =
+      keys.has("ShiftLeft") || keys.has("ShiftRight") || stick > 0.92;
     // 예전엔 달리기가 애니메이션만 바꾸고 속도는 그대로였다 — 뛰는 시늉만 했다.
     const speed =
       WALK_SPEED *

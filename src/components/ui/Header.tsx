@@ -41,7 +41,9 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
       animate={{opacity: 1, y: 0}}
       // 띠 자체는 클릭을 통과시킨다 — 명패 사이 빈 자리에서 3D 마을을 돌릴 수
       // 있어야 한다. 예전 배경 있는 바에서는 그 폭만큼 카메라가 안 잡혔다.
-      className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[65px]"
+      // 휴대폰은 띠를 얇게(52px, 명패 한 줄). 마을이 화면 맨 위부터 그려지므로
+      // 명패가 두꺼우면 그만큼 3D 를 가린다. 데스크톱 65px 예산은 그대로.
+      className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[52px] md:h-[65px]"
       initial={{opacity: 0, y: -12}}
       transition={{duration: 0.5, ease: [0.22, 1, 0.36, 1]}}
     >
@@ -52,17 +54,17 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
           variant="grand"
         >
           <motion.button
-            className="flex min-w-0 items-center gap-2.5 px-3 py-1.5 text-left md:gap-3 md:px-4"
+            className="flex min-w-0 items-center gap-2 px-2.5 py-1 text-left md:gap-3 md:px-4 md:py-1.5"
             onClick={() => onSelectSection("intro")}
             type="button"
             whileHover={{x: 1}}
             whileTap={{scale: 0.97}}
           >
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md border border-[#e2c078]/40 bg-[#131f33] shadow-[inset_0_1px_0_rgba(255,240,200,0.18)]">
-              <Crest name="compass" size={19} />
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-md border border-[#e2c078]/40 bg-[#131f33] shadow-[inset_0_1px_0_rgba(255,240,200,0.18)] md:h-8 md:w-8">
+              <Crest name="compass" size={17} />
             </span>
             <span className="min-w-0">
-              <strong className="v-serif v-emboss block truncate text-[15px] leading-tight tracking-[0.05em]">
+              <strong className="v-serif v-emboss block truncate text-[14px] leading-tight tracking-[0.05em] md:text-[15px]">
                 Developer&apos;s City
               </strong>
               <small className="hidden text-[10px] font-semibold tracking-[0.08em] text-[#a9bdd6]/65 sm:block">
