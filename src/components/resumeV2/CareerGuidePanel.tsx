@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * 쪽지 대화창. CareerGuide 가 처음 누를 때 받아 온다.
+ * 두꺼비 대화창. CareerGuide 가 처음 누를 때 받아 온다.
  *
  * 답의 종류는 서버가 정한다(`mode`):
  *   answer   근거로 만든 답. 아래에 출처 링크가 붙는다.
@@ -13,7 +13,7 @@
 import Link from "next/link";
 import {type FormEvent, useEffect, useRef, useState} from "react";
 import {ApiError, askCareer, type CareerAnswer} from "@/lib/liveApi";
-import {NoteCharacter} from "./CareerGuide";
+import {GuideCharacter} from "./CareerGuide";
 
 type Turn =
   | {who: "me"; text: string}
@@ -42,6 +42,14 @@ export default function CareerGuidePanel({
   const inputRef = useRef<HTMLInputElement>(null);
   const logRef = useRef<HTMLDivElement>(null);
   const lastQuestion = useRef<string | undefined>(undefined);
+  // 처음 열면 두꺼비가 잠깐 뜸을 들였다가 인사한다. 한 번 인사한 뒤에는 다시 열어도 그대로 있다.
+  const [greeted, setGreeted] = useState(false);
+
+  useEffect(() => {
+    if (!open || greeted) return;
+    const timer = window.setTimeout(() => setGreeted(true), 650);
+    return () => window.clearTimeout(timer);
+  }, [open, greeted]);
 
   useEffect(() => {
     if (open) inputRef.current?.focus({preventScroll: true});
@@ -83,14 +91,14 @@ export default function CareerGuidePanel({
       id="cg-panel"
       className={`cg-panel${open ? " is-open" : ""}`}
       role="dialog"
-      aria-label="경력 안내 쪽지"
+      aria-label="경력 안내 두꺼비"
       aria-hidden={!open}
       inert={!open}
     >
       <header className="cg-head">
-        <NoteCharacter size={36} thinking={busy} />
+        <GuideCharacter size={36} thinking={busy} />
         <div className="cg-head-text">
-          <strong>쪽지</strong>
+          <strong>두꺼비</strong>
           <span>이력서와 프로젝트 기록에서 찾아 답합니다</span>
         </div>
         <button
@@ -111,13 +119,24 @@ export default function CareerGuidePanel({
       </header>
 
       <div className="cg-log" ref={logRef} aria-live="polite">
-        <div className="cg-msg cg-note">
-          <p>
-            정재훈 님의 경력과 프로젝트를 물어보세요. 기록에 적힌 내용만 답하고,
-            답 아래에 근거가 된 곳을 붙입니다.
-          </p>
-        </div>
-        {turns.length === 0 ? (
+        {greeted ? (
+          <div className="cg-msg cg-note cg-hello">
+            {/* 인사말은 본인이 정한 말투다(2026-11-15). 다른 화면의 평서체 규칙과 다르다. */}
+            <p>안녕하세요~ 재훈의 기록을 들고 다니는 두꺼비예요.</p>
+            <p>프로젝트든 경력이든, 궁금한 건 뭐든 물어보세요!</p>
+            <p className="cg-notice">
+              이력서와 프로젝트 기록에 적힌 내용만 답하고, 답 아래에 근거를
+              붙여요.
+            </p>
+          </div>
+        ) : (
+          <div className="cg-msg cg-note cg-wait" aria-label="인사하는 중">
+            <i />
+            <i />
+            <i />
+          </div>
+        )}
+        {greeted && turns.length === 0 ? (
           <div className="cg-chips">
             {SUGGESTIONS.map(s => (
               <button

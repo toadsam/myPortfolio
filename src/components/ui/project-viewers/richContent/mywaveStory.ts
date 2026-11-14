@@ -1,7 +1,12 @@
-// MyWave(저장소 MyStock-Desk) 상세의 이야기 배치 시안 (2026-11-14).
-// data.ts 의 mystock 위에 덮어쓰는 층이다. 아직 data.ts 에 합치지 않았고 시안 주소
-// `/resume/mystock-story` 에서만 쓴다. 승인되면 data.ts 끝에서
-// `RICH_DATA.mystock = mywaveStory(RICH_DATA.mystock)` 로 합치고 시안 주소를 지운다.
+// MyWave(저장소 MyStock-Desk) 상세의 이야기 배치 개정분 (2026-11-15 적용).
+// data.ts 의 mystock 위에 덮어쓰는 층이다. data.ts 끝에서 `RICH_DATA.mystock = mywaveStory(RICH_DATA.mystock)` 로
+// 합쳐져 상세 페이지 · 마을 전시실 · 원페이저가 모두 이 값을 읽는다.
+//
+// 그림: 휴대폰에서 쓰는 앱이라 화면 구역 · 결과 구역 · 대표 그림을 휴대폰 캡처로 바꿨다(본인 요청).
+//   운영(mywave.day)은 구글 로그인만 받아 들어갈 수 없으므로, 2026-11-14 에 저장소 HEAD 7c5729d 를
+//   로컬에서 띄우고(H2 · DataSeeder 가 만든 데모 계정) 390×844 · 2배로 찍었다 → public/projects/mystock/m-*.webp.
+//   대표 그림 m-hero.webp 는 그 세 장(소비 · 홈 · 목표)을 16:10 연회색 판에 세운 합성이고 compact.hero 로
+//   상세 페이지에서만 쓴다(마을 전시실 · 원페이저는 data.ts 의 데스크톱 캡처 그대로).
 //
 // 새로 지어낸 사실은 없다. 문장은 data.ts 의 mystock(2026-11-13 저장소 대조본)의
 // challenges · briefs · decisions · metrics · kpt 를 표 칸에 맞게 다시 묶은 것이다.
@@ -24,7 +29,15 @@ export function mywaveStory(base: RichProject): RichProject {
     detail: {
       ...base.detail,
       compact: {
-        tiles: [0, 1, 2, 3]
+        tiles: [0, 1, 2, 3],
+        // 대표 그림은 상세 페이지에서만 휴대폰 세 장 합성으로 바꾼다(마을 전시실 · 원페이저는 data.ts 의 데스크톱 캡처 그대로).
+        hero: {
+          src: `${SHOT}/m-hero.webp`,
+          label: "소비 · 홈 · 목표",
+          ratio: "16/10",
+          caption:
+            "휴대폰에서 쓰는 앱입니다. 가운데가 홈의 오늘 더 써도 되는 돈이고 양옆이 소비와 목표입니다. 2026년 11월 14일에 저장소를 로컬에서 띄워 데모 계정으로 찍었습니다."
+        }
       },
       problems: {
         items: [
@@ -169,38 +182,37 @@ export function mywaveStory(base: RichProject): RichProject {
           eyebrow: "03 · 화면",
           title: "화면 19개 가운데 다섯 장입니다.",
           em: "다섯 장",
-          lead: "저장소 docs/screens 에 있는 캡처입니다. 데모 계정으로 2026년 10월 12일에 찍었습니다.",
-          wide: true,
+          lead: "휴대폰에서 쓰는 앱이라 휴대폰 폭으로 찍었습니다. 2026년 11월 14일에 저장소를 로컬에서 띄우고(H2, 시드로 만든 데모 계정) 390×844 로 찍은 화면입니다.",
           items: [
             {
               t: "홈",
               d: "남은 생활비를 남은 날수로 나눈 하루 예산에서 오늘 쓴 돈을 뺀 값을 크게 둡니다.",
               r: "소비를 하나 기록할 때마다 서버가 다시 계산합니다.",
-              src: `${SHOT}/repo-home.webp`
+              src: `${SHOT}/m-home.webp`
             },
             {
               t: "소비",
               d: "지난달 한 달 전체가 아니라 지난달 같은 날짜까지와 비교합니다.",
               r: "기록은 직접 입력, 퀵버튼, 카드 문자 붙여넣기, 결제 캡처로 넣습니다.",
-              src: `${SHOT}/repo-spending.webp`
+              src: `${SHOT}/m-spending.webp`
             },
             {
               t: "목표",
               d: "목표일이 가장 가까운 목표를 메인으로 두고 하루에 얼마씩 모으면 되는지 보여 줍니다.",
               r: "추천 행동은 많이 쓴 카테고리 세 곳을 20% 줄였을 때 아끼는 돈입니다.",
-              src: `${SHOT}/repo-goals.webp`
+              src: `${SHOT}/m-goals.webp`
             },
             {
-              t: "투자 상세",
+              t: "투자",
               d: "직접 넣은 매매 기록만으로 평균단가, 수익률, 비중을 계산합니다.",
               r: "거래를 고치면 보유 종목을 처음부터 다시 재생합니다.",
-              src: `${SHOT}/repo-portfolio-detail.webp`
+              src: `${SHOT}/m-invest.webp`
             },
             {
               t: "AI 코치",
               d: "이번 달 재무 상태를 요약하고 질문에 답합니다.",
-              r: "캡처는 10월 12일의 규칙 답변입니다. 11월 11일부터는 모델이 쓴 답을 코드가 검사해 내보냅니다.",
-              src: `${SHOT}/repo-coach.webp`
+              r: "캡처는 로컬 기본 설정의 규칙 답변입니다. 모델을 켜면 모델이 쓴 답을 코드가 검사해 내보냅니다.",
+              src: `${SHOT}/m-coach.webp`
             }
           ]
         },
@@ -229,6 +241,23 @@ export function mywaveStory(base: RichProject): RichProject {
           eyebrow: "05 · 결과와 남은 것",
           title: "2026년 11월 10일 mywave.day 로 공개했고, 지금 운영 중입니다.",
           em: "운영 중",
+          shots: [
+            {
+              src: `${SHOT}/m-home-lower.webp`,
+              t: "홈 아래쪽",
+              d: "이번 주 하루 예산을 일곱 잔으로 보여 주고, 오늘 나간 돈과 목표가 이어집니다."
+            },
+            {
+              src: `${SHOT}/m-allocation.webp`,
+              t: "자산 배분",
+              d: "직접 넣은 거래 기록으로 종목과 자산군 비중을 계산합니다."
+            },
+            {
+              src: `${SHOT}/m-reports.webp`,
+              t: "리포트",
+              d: "이번 달 쓴 돈과 여섯 달 소비, 예산을 한 화면에 모읍니다."
+            }
+          ],
           left: [
             "MyWave 가 쓰지 않는 엔드포인트 56개와 테이블 10개가 백엔드에 남아 있습니다.",
             "외부 시세를 범위 검증 없이 씁니다. 현재가가 평균단가의 10배로 들어와 수익률 900% 가 찍힌 적이 있습니다.",

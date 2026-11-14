@@ -566,6 +566,24 @@
   background: var(--accent-soft);
   color: var(--accent);
 }
+/* 리뉴얼 칩: 상태 뱃지 옆. 채운 인디고라 카드에서 가장 먼저 읽힌다. 예정은 테두리만. */
+.rv2 .renew {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: var(--accent);
+  color: #fff;
+  white-space: nowrap;
+  vertical-align: middle;
+  margin-left: 2px;
+}
+.rv2 .renew.soon {
+  background: none;
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
 .rv2 .ptile .short {
   display: block;
   font-size: 15px;
@@ -2158,4 +2176,16 @@
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
+}
+/* 대표 프로젝트 카드 안의 리뉴얼 칩. `.other span` 이 블록으로 펴 버리므로 여기서 되돌린다. */
+.rv2 .other b .renew {
+  display: inline-block;
+  padding: 2px 8px;
+  margin: 0 0 0 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #fff;
+}
+.rv2 .other b .renew.soon {
+  color: var(--accent);
 }

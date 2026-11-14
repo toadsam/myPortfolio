@@ -2,6 +2,7 @@ import type {RichProject} from "./shared";
 import {stripCodeLinks} from "../../../../lib/codeLinks";
 import {aclubStory} from "./aclubStory";
 import {ajouchong2026} from "./ajouchong2026";
+import {mywaveStory} from "./mywaveStory";
 import {tserofStory} from "./tserofStory";
 import {villageStory} from "./villageStory";
 
@@ -728,8 +729,10 @@ export const RICH_DATA: Record<string, RichProject> = {
         d: "Yahoo Finance · Google News RSS · OpenDART · SEC EDGAR, 응답마다 출처 문자열"
       },
       {
-        t: "데모 계정",
-        d: "로그인 화면에서 바로 들어가며, 프로필·비밀번호는 잠금"
+        // 2026-11-15: 운영은 구글 로그인만 받는다(STOCKFLOW_PASSWORD_LOGIN_ENABLED=false). 그 스위치가 데모 버튼도
+        // 같이 끄므로 「로그인 화면에서 데모 계정으로 바로 들어간다」는 옛 문장은 mywave.day 와 맞지 않았다.
+        t: "구글 로그인",
+        d: "구글 계정 하나로 가입과 로그인. 화면이 받은 ID 토큰은 서버가 구글 공개키로 직접 검증"
       }
     ],
     problem:
@@ -1463,8 +1466,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           happened:
             "같은 상대에게 중복 신청만 막았을 뿐, 한 사람이 여러 명에게 계속 신청할 수 있었습니다. 신청이 하루 424건까지 몰렸고, 신청마다 상대에게 알림 문자가 나가는 구조라 그만큼 발송이 시도됐습니다.",
           now: "1인당 신청을 3건으로 제한했습니다. 가을축제에서 신청 420건이 들어왔지만 한 사람에게 몰리지 않았습니다.",
-          source:
-            "저장소 AiMatchService (같은 상대 중복 대기 검사만 있음)"
+          source: "저장소 AiMatchService (같은 상대 중복 대기 검사만 있음)"
         },
         {
           t: "문자가 장문으로 나가 오후 4시에 잔액이 바닥났습니다",
@@ -8208,4 +8210,6 @@ RICH_DATA["village-portfolio"] = villageStory(
 );
 
 // PR · 커밋 · 코드 파일 링크는 화면에 걸지 않는다(lib/codeLinks.ts). 주소는 위 데이터에 그대로 있다.
+// MyWave 는 이야기 배치 개정분을 덮어쓴다. mywaveStory.ts 참고.
+RICH_DATA.mystock = mywaveStory(RICH_DATA.mystock as RichProject);
 stripCodeLinks(RICH_DATA);

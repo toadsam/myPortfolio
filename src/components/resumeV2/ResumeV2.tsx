@@ -51,6 +51,16 @@ function Kinds({id}: {id: string}) {
   );
 }
 
+// 리뉴얼 칩. 다시 만든 프로젝트는 카드에서 바로 보이게 한다(2026-11-15 본인 요청).
+// 값은 resume.ts 의 renewed(마친 시점) · renewal(예정)에서만 온다.
+function Renew({id}: {id: string}) {
+  const card = mainProjects.find(p => p.id === (CARD_ID[id] ?? id));
+  if (!card) return null;
+  if (card.renewed) return <span className="renew">{card.renewed} 리뉴얼</span>;
+  if (card.renewal) return <span className="renew soon">리뉴얼 예정</span>;
+  return null;
+}
+
 // 사이드 프로젝트 중 상세 페이지가 있는 것. 제목이 그 상세로 간다.
 const SUB_DETAIL: Record<string, string> = {
   DarkLab: "darklab",
@@ -606,6 +616,7 @@ export function ResumeV2() {
                       <span className={t.badgeOn ? "badge on" : "badge"}>
                         {t.badge}
                       </span>
+                      <Renew id={t.id} />
                     </span>
                     <span className="short">
                       {SHORT[t.id] ??
@@ -658,7 +669,9 @@ export function ResumeV2() {
               >
                 <img src={img(o.img)} alt="" loading="lazy" decoding="async" />
                 <Kinds id={o.img} />
-                <b>{o.title}</b>
+                <b>
+                  {o.title} <Renew id={o.img} />
+                </b>
                 <span>{o.desc}</span>
               </a>
             ))}

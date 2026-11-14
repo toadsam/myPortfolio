@@ -991,6 +991,8 @@ export const mainProjects: MainProjectCard[] = [
     // Search Console 로 검색 노출을 보고 고친 기록이 지표에 있다(2026-11-14 본인 확인).
     facets: ["data"],
     status: "운영중",
+    // 2026-09 프론트 전면 리디자인(프론트 PR #37, 87파일). 카드에 「2026.09 리뉴얼」 칩으로 보인다(2026-11-15).
+    renewed: "2026.09",
     tags: ["운영자 도구", "대여·링크허브", "모바일 개편", "Spring Boot API"],
     period: "2025.03 ~ 진행 중",
     // 2026-09-04 사실 대조: 2025 는 프론트 3인 중 한 명(화면 일부), 2026.04 부터는
@@ -1184,6 +1186,8 @@ export const mainProjects: MainProjectCard[] = [
     category: "data",
     facets: ["ai"],
     status: "운영중",
+    // 2026-10 홈을 「오늘 더 써도 되는 돈」 중심으로 다시 설계했다(저장소 README). 2026-11-15 칩 추가.
+    renewed: "2026.10",
     period: "2026.05 ~ 진행 중",
     tags: ["Spring Boot", "React", "CI · Docker", "검사받는 AI", "Railway"],
     team: "개인 개발 (풀스택 1인)",

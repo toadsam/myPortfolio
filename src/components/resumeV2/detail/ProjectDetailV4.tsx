@@ -2106,8 +2106,11 @@ export function ProjectDetailV4({
         )
       );
 
-    // 6) 결과
+    // 6) 결과. 「화면」 절에 이미 실은 그림은 여기서 다시 그리지 않는다.
     const gal = r.gallery ?? [];
+    const galRest = bt
+      ? gal.filter(g => !bt.items.some(x => x.src === g.src))
+      : gal;
     body.push(
       StorySec(
         "s-result",
@@ -2191,12 +2194,12 @@ export function ProjectDetailV4({
                 </figure>
               ))}
             </div>
-          ) : gal.length ? (
+          ) : galRest.length ? (
             <div
-              className={`p4-gal${gal.length === 3 ? " p4-gal-3" : ""}`}
+              className={`p4-gal${galRest.length === 3 ? " p4-gal-3" : ""}`}
               style={{marginTop: 28}}
             >
-              {gal.map((im, i) => (
+              {galRest.map((im, i) => (
                 <Fragment key={i}>{Figure(im, "p4-rv")}</Fragment>
               ))}
             </div>

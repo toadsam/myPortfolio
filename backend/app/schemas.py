@@ -954,7 +954,7 @@ RelayOut.model_rebuild()
 NpcRelationshipRow.model_rebuild()
 
 
-# ─────────────────────────── 경력 안내 (쪽지) ───────────────────────────
+# ─────────────────────────── 경력 안내 (두꺼비) ───────────────────────────
 
 
 class CareerAskIn(BaseModel):
