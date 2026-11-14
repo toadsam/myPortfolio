@@ -1216,7 +1216,7 @@ function renderPage(story: boolean) {
 
     /* 06 결과와 남은 것 */
     const left = r.kpt.problem as string[];
-    // 남은 것을 먼저 짧게 적고 2.0 로비 화면으로 끝낸다. API 지도는 「어떻게 짜여 있나」 접힘으로 갔다
+    // 남은 것을 먼저 짧게 적고 2.0 로비 화면으로 끝낸다. API 지도는 「시스템 구성」 접힘으로 갔다
     const rs =
       '<div class="st-left rv"><b class="k">' +
       esc(r.kptLabels.problem) +
@@ -1577,7 +1577,7 @@ function renderPage(story: boolean) {
     fold(
       "s-arch",
       "구조",
-      "어떻게 짜여 있나",
+      "시스템 구성",
       "REST 서버와 실시간 서버를 나눈 3-tier. 엔티티 31개, 컨트롤러 28개.",
       st
     )

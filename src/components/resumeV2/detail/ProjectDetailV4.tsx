@@ -3050,7 +3050,7 @@ export function ProjectDetailV4({
         FoldSection(
           `${rootId}-arch`,
           "구조",
-          "어떻게 짜여 있나",
+          "시스템 구성",
           r.detail?.summaries?.arch ??
             r.architecture.map(x => x.name).join(" · "),
           <>
