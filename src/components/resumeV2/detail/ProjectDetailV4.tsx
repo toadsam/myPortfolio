@@ -1482,6 +1482,14 @@ export function ProjectDetailV4({
               ) : null}
             </div>
           ) : null}
+          {r.tech.length ? (
+            // 기술 스택은 머리에 작게 먼저 보인다(2026-11-15 본인 요청). 예전에는 맨 아래 접힌 절 끝에 있었다.
+            <div className="p4-techrow p4-rv" aria-label="기술 스택">
+              {r.tech.map((x, i) => (
+                <span key={i}>{x}</span>
+              ))}
+            </div>
+          ) : null}
           <div className="p4-intro p4-rv">
             {intro.head ? (
               <p>
@@ -3142,15 +3150,6 @@ export function ProjectDetailV4({
               </div>
             ))}
           </dl>
-        ) : null}
-        {r.tech.length ? (
-          <div className="p4-chips p4-rv" style={{marginTop: 14}}>
-            {r.tech.map((x, i) => (
-              <span key={i} className={i < 3 ? "p4-hi" : undefined}>
-                {x}
-              </span>
-            ))}
-          </div>
         ) : null}
       </>
     );

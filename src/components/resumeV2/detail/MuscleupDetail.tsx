@@ -831,6 +831,10 @@ function renderPage(story: boolean) {
       '<div class="chipsrow rv">' +
       chips +
       "</div>" +
+      // 기술 스택은 머리에 작게 먼저 보인다(2026-11-15 본인 요청).
+      '<div class="techrow rv" aria-label="기술 스택">' +
+      r.tech.map(x => "<span>" + esc(x) + "</span>").join("") +
+      "</div>" +
       '<div class="intro rv"><p>' +
       boldIn(DATA.intro4.show, DATA.intro4.bold) +
       "</p>" +
@@ -1660,15 +1664,6 @@ function renderPage(story: boolean) {
       )
       .join("") +
     "</dl>";
-  pw +=
-    '<div class="chips rv" style="margin-top:14px">' +
-    r.tech
-      .map(
-        (x, i) =>
-          "<span" + (i < 3 ? ' class="hi"' : "") + ">" + esc(x) + "</span>"
-      )
-      .join("") +
-    "</div>";
   if (story) pw = hlBlock() + pw;
   out.push(
     fold(
