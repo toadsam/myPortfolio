@@ -335,16 +335,18 @@ function BuildingLabel({
           display: "flex",
           alignItems: "center",
           gap: 9,
-          // 나무 테두리 + 크림색 판. 위아래로 살짝 어둡게 해 판이 두꺼워 보이게 한다.
-          background: "linear-gradient(#fdf3df 0%, #f6e7c8 55%, #e8d3ac 100%)",
-          border: `3px solid ${highlighted ? color : "#8a5a33"}`,
-          borderRadius: 10,
-          padding: "7px 13px 7px 8px",
+          // 2026-11-14: 나무 테두리 크림색 판 → HUD 와 같은 어두운 판. 강조는 옅은
+          // 인디고 고리 하나(예전엔 건물 강조색 테두리였다).
+          background: "rgba(18,20,29,0.94)",
+          border: 0,
+          borderRadius: 16,
+          padding: "7px 14px 7px 7px",
           cursor: "pointer",
           boxShadow: highlighted
-            ? `0 0 0 2px ${color}66, 0 6px 14px rgba(40,24,10,0.45)`
-            : "0 4px 10px rgba(40,24,10,0.35)",
-          transition: "transform 0.18s, box-shadow 0.18s, border-color 0.18s",
+            ? "inset 0 0 0 2px #aeaaf3, 0 10px 26px rgba(0,0,0,0.5)"
+            : "inset 0 0 0 1px rgba(255,255,255,0.12), 0 8px 20px rgba(0,0,0,0.45)",
+          transition:
+            "transform 0.45s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s",
           textAlign: "left",
           opacity: 1,
           transform: highlighted ? "scale(1.08)" : "scale(1)"
@@ -359,8 +361,8 @@ function BuildingLabel({
               justifyContent: "center",
               width: 30,
               height: 30,
-              borderRadius: 8,
-              background: "#2b2118",
+              borderRadius: 10,
+              background: "rgba(255,255,255,0.1)",
               boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.12)",
               flexShrink: 0
             }}
@@ -400,11 +402,9 @@ function BuildingLabel({
           <span
             style={{
               fontFamily: "system-ui, sans-serif",
-              fontSize: 8,
+              fontSize: 9,
               fontWeight: 800,
-              letterSpacing: "0.16em",
-              textTransform: "uppercase",
-              color: "#9a6a3c",
+              color: "#c3c0f7",
               whiteSpace: "nowrap"
             }}
           >
@@ -416,10 +416,8 @@ function BuildingLabel({
               fontSize: 17,
               fontWeight: 900,
               lineHeight: 1.05,
-              color: "#3d2a17",
-              whiteSpace: "nowrap",
-              // 크림색 판 위 갈색 글씨 — 얇은 밝은 그림자로 각인된 느낌을 준다
-              textShadow: "0 1px 0 rgba(255,255,255,0.6)"
+              color: "#ffffff",
+              whiteSpace: "nowrap"
             }}
           >
             {building.name}

@@ -1,4 +1,9 @@
 import type {RichProject} from "./shared";
+import {stripCodeLinks} from "../../../../lib/codeLinks";
+import {aclubStory} from "./aclubStory";
+import {ajouchong2026} from "./ajouchong2026";
+import {tserofStory} from "./tserofStory";
+import {villageStory} from "./villageStory";
 
 // 실제 GitHub 저장소(README·소스·구조)를 근거로 작성한 콘텐츠.
 // 원칙: 검증 불가능한 수치(성능 %, 사용자 테스트 점수 등)는 넣지 않는다.
@@ -24,28 +29,28 @@ export const RICH_DATA: Record<string, RichProject> = {
     tagline: "LIVING PORTFOLIO · NEXT.JS + R3F + FASTAPI (SOLO)",
     heroImage: {
       src: "/projects/village-portfolio/village.webp",
-      label: "3D 마을 광장 — 관리자 기록이 건물 불빛으로",
+      label: "3D 마을 광장 · 관리자 기록이 건물 불빛으로",
       ratio: "16/9"
     },
     problemShot: {
       src: "/projects/village-portfolio/admin.webp",
-      label: "관리자 페이지 — 오늘의 활동 입력",
+      label: "관리자 페이지 · 오늘의 활동 입력",
       ratio: "16/9"
     },
     gallery: [
       {
         src: "/projects/village-portfolio/atelier.webp",
-        label: "의뢰 공방 — 직군 에이전트 4명의 순차 질문",
+        label: "의뢰 공방 · 직군 에이전트 4명의 순차 질문",
         ratio: "16/9"
       },
       {
         src: "/projects/village-portfolio/resume.webp",
-        label: "이력서 화면 — 지금 읽고 있는 이 페이지",
+        label: "이력서 화면 · 지금 읽고 있는 이 페이지",
         ratio: "16/9"
       },
       {
         src: "/projects/village-portfolio/admin.webp",
-        label: "관리자 배전반 — 활동 입력과 마을 반응 미리보기",
+        label: "관리자 배전반 · 활동 입력과 마을 반응 미리보기",
         ratio: "16/9"
       }
     ],
@@ -56,7 +61,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "왜",
-        v: "활동 기록을 사이트에 반영하고, 방문자가 NPC에게 프로젝트를 질문하도록 만들고자 했습니다."
+        v: "활동 기록을 사이트에 반영하고, 방문자가 NPC에게 프로젝트를 물어볼 수 있게 하려고 했습니다."
       },
       {
         k: "결과",
@@ -133,7 +138,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     ],
     problem:
-      "관리자 활동 기록을 화면에 반영하고, 방문자가 건물마다 있는 NPC에게 프로젝트에 관해 질문하도록 만들고자 했습니다. 동시에 첫 화면을 여는 채용 담당자에게 20MB 짜리 3D 를 내려받게 할 수는 없었습니다.",
+      "관리자 활동 기록을 화면에 반영하고, 방문자가 건물마다 있는 NPC에게 프로젝트를 물어볼 수 있게 하려고 했습니다. 동시에 첫 화면을 여는 채용 담당자에게 20MB 짜리 3D 를 내려받게 할 수는 없었습니다.",
     research: {
       quotes: [],
       stat: {
@@ -142,7 +147,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     },
     hypothesis:
-      "관리자 활동 기록을 화면에 반영하고 NPC 대화를 제공하도록 설계했습니다. 첫 화면은 3D를 내려받지 않는 별도 라우트로 분리했습니다.",
+      "관리자 활동 기록을 화면에 반영하고 NPC 와 대화할 수 있게 했습니다. 첫 화면은 3D를 내려받지 않는 별도 라우트로 분리했습니다.",
     process: [
       {t: "마을 배치", d: "육각 방위 원반 섬 · 검사 15종"},
       {t: "데이터 파이프라인", d: "관리자 → village_service → 마을"},
@@ -449,6 +454,11 @@ export const RICH_DATA: Record<string, RichProject> = {
             "const bv = json.bufferViews[json.images[j.i].bufferView];",
             "if (webp.length < bv.byteLength * 0.97) replaced.set(j.i, webp);"
           ]
+        },
+        evidence: {
+          status: "코드로 확인",
+          note: "압축 스크립트가 추가된 커밋입니다. 수정 전에는 이 파일이 없었어요. 화질 A/B와 용량 수치는 포트폴리오의 당시 측정 서술입니다.",
+          url: "https://github.com/toadsam/myPortfolio/blob/72d82e4a4fe02c060320672bdd2941f11c72afbf/scripts/compress-glb-webp.mjs"
         }
       },
       {
@@ -457,12 +467,17 @@ export const RICH_DATA: Record<string, RichProject> = {
           "라벨 74개를 숨기자 8.9→42.6fps 라 라벨이 원인이라고 판단했습니다. 원복하고 다시 재니 47.9fps 였습니다. 라벨 표시 여부보다 예열 시간이 측정 결과에 영향을 줬습니다.",
         solution:
           "프레임마다 광원·셰이더 수를 같이 기록하자 원인이 보였습니다. 광원 개수가 바뀔 때마다 전 재질이 재컴파일됩니다. 줄이는 대신 광원 풀로 개수를 고정했습니다(광원 11 · 프로그램 57).",
-        perfAfter: true
+        perfAfter: true,
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "2eb4362b의 Building 변경을 비교합니다. LightPool.tsx도 같은 커밋에 추가됐습니다. 고정 광원이 많으면 첫 컴파일 비용이 커질 수 있어 무조건 많을수록 좋은 것은 아닙니다.",
+          url: "https://github.com/toadsam/myPortfolio/blob/2eb4362bfdc0e2a60904b54dc19a8545a2219b1a/src/components/village/Building.tsx"
+        }
       },
       {
         title: "첫 화면이 20.7MB 짜리 3D 를 내려받고 있었습니다",
         problem:
-          "인트로가 마을 위 오버레이라, 인트로만 읽는 방문자도 GLB 87개(20.7MB)를 받았습니다. 우회 세 가지는 구조를 덧대는 것이었고 하나는 첫 화면을 깨뜨렸습니다.",
+          "인트로가 마을 위 오버레이라, 인트로만 읽는 방문자도 GLB 87개(20.7MB)를 받았습니다. 우회하는 방법 세 가지를 써 봤지만 구조는 그대로였고, 그중 하나는 첫 화면을 깨뜨렸습니다.",
         solution:
           "착륙장·마을·이력서를 세 라우트로 갈라 첫 화면엔 three.js 를 싣지 않습니다(215.6KB · GLB 0). 마을은 hover 때 prefetch 와 씬 import 두 줄로 미리 받습니다.",
         code: {
@@ -473,6 +488,11 @@ export const RICH_DATA: Record<string, RichProject> = {
             '  void import("@/components/village/VillageScene");',
             "}, [router]);"
           ]
+        },
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "c8a80a02의 실제 page.tsx 전후입니다. 모든 기기에서 항상 같은 다운로드량이라는 보장은 아닙니다.",
+          url: "https://github.com/toadsam/myPortfolio/blob/c8a80a026261f32d89a9a3f6ae839032001d9124/src/app/page.tsx"
         }
       },
       {
@@ -488,6 +508,11 @@ export const RICH_DATA: Record<string, RichProject> = {
             "    await client.query(prompt)",
             "    async for message in client.receive_response():"
           ]
+        },
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "실제 SDK를 실행하거나 파일을 쓰는 실험은 아닙니다. d6f3fcaa의 요청·응답과 권한 경로를 설명하는 모형입니다.",
+          url: "https://github.com/toadsam/myPortfolio/blob/d6f3fcaa5595c713d9020eb384f13bc10ddef9b0/backend/app/agents/runner.py"
         }
       }
     ],
@@ -555,7 +580,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       ],
       try: [
         "배포 후 방문 계측 · 이력서 PDF 내려받기 수",
-        "UASTC(KTX2) 로 VRAM 4× 절감. 다운로드 2.5× 증가와 맞바꿀지 실측으로 결정"
+        "UASTC(KTX2) 로 VRAM 4× 절감. 다운로드가 2.5× 늘어나는 것을 감수할지 실측으로 결정"
       ]
     },
     learningLead:
@@ -566,102 +591,156 @@ export const RICH_DATA: Record<string, RichProject> = {
 
   // ════════════════════════════ MyStock-Desk / StockFlow (dashboard) ═════════
   mystock: {
-    tagline: "INVESTMENT PORTFOLIO · FULL-STACK WEB APP",
-    // 저장소 README 의 실제 화면(1440×900, 정확히 16/10). 라벨은 찍힌 것만
-    // 적는다 — 예전 라벨의 "자산 비중 차트" 는 실제로는 소비 비중 도넛이었다.
-    // 문제 단계 그림은 뺐다("엑셀로 관리하던 방식" 을 찍은 자료가 없다).
+    // ── 2026-11-13 전면 갱신. 출처는 저장소 toadsam/MyStock-Desk 의 README(2026-11 판)·
+    // docs/SCREENS.md(2026-10-12 캡처)·docs/TROUBLESHOOTING.md(2026-11-10 공개일 점검).
+    // 예전 서술("StockFlow 13 도메인·9 페이지")은 2026-06 이전 것이었고, 그 뒤 UI 가 MyWave 로
+    // 바뀌고 2026-10 에 홈을 「오늘 더 써도 되는 돈」 중심으로 다시 설계했으며 2026-11-10 에
+    // mywave.day 로 공개했다(2026-11-13 200 확인). 화면 캡처는 저장소 docs/screens 의 것을
+    // 그대로 가져왔다(repo-*.webp, 1440×900 · 모바일 780×1688). 숫자는 README 표와 점검 기록의 값만.
+    // ── 2026-11-13 저녁 2차. 저장소 HEAD a5b5995(2026-11-11) 를 다시 읽고 맞췄다(docs/BACKEND_EVIDENCE.md).
+    //   ① 「AI 화면 넷 중 모델 호출은 테마 설명 하나」는 2026-11-11 5615d12 로 옛말이 됐다. 코치도 모델이 답을
+    //      쓰고 CoachAnswerGuard 가 숫자·투자 조언을 검사한다(기본 provider 는 local 이라 꺼져 있을 수 있다).
+    //   ② 테스트는 공개일 29 → 41, 다음 날 87 → 98(@Test 를 커밋별로 셈). README 의 29 는 낡았다.
+    //   ③ 운영 가드(ProductionGuard · compose 필수값 · CI 3잡)를 트러블슈팅과 장면으로 올렸다.
+    tagline: "PERSONAL FINANCE · FULL-STACK WEB APP (MyWave)",
     heroImage: {
-      src: "/projects/mystock/home.webp",
-      label: "MyWave 홈 — 이번 달 목표 달성률 · 총자산 · 소비 위험도",
-      ratio: "16/10"
+      src: "/projects/mystock/repo-home.webp",
+      label: "홈 · 오늘 더 써도 되는 돈",
+      ratio: "16/10",
+      caption:
+        "홈에는 숫자 하나만 크게 둡니다. 이번 달 남은 생활비를 남은 날수로 나눈 하루 예산에서 오늘 쓴 돈을 뺀 값이고, 소비를 하나 기록할 때마다 서버가 기록에서 다시 계산합니다. 데모 계정, 2026-10-12 캡처."
     },
     gallery: [
       {
-        src: "/projects/mystock/transactions.webp",
-        label: "투자 거래 기록 — 매수 · 매도 · 배당과 보유 종목",
+        src: "/projects/mystock/repo-spending.webp",
+        label: "소비 · 지난달 같은 날짜까지와 비교",
         ratio: "16/10",
         caption:
-          "증권사 연동 없이 직접 넣은 거래로 평가금액·수익률을 계산합니다. 거래마다 「투자 이유」와 태그를 함께 적습니다."
+          "12일까지 쓴 돈을 지난달 한 달 전체와 비교하면 매달 초에는 늘 줄어든 것으로 나오기 때문에, 지난달 같은 기간까지와 비교합니다. 기록은 직접 입력, 퀵버튼, 카드 문자 붙여넣기, 결제 캡처로 넣습니다."
       },
       {
-        src: "/projects/mystock/spending.webp",
-        label:
-          "소비 분석 — 카테고리 비중 · 월별 추이 · 목표를 방해하는 소비 TOP 3",
+        src: "/projects/mystock/repo-goals.webp",
+        label: "목표 · 메인 목표와 추천 행동",
+        ratio: "16/10",
+        caption:
+          "목표일이 가장 가까운 목표를 메인으로 두고 하루에 얼마씩 모으면 되는지 보여 줍니다. 추천 행동은 이번 달 많이 쓴 카테고리 세 곳을 20% 줄였을 때 아끼는 돈입니다."
+      },
+      {
+        src: "/projects/mystock/repo-portfolio-detail.webp",
+        label: "투자 상세 · 보유 종목과 거래 기록",
+        ratio: "16/10",
+        caption:
+          "증권사 계좌에 연결하지 않고 직접 넣은 매매 기록만으로 평균단가·수익률·비중을 계산합니다. 거래를 고치면 보유 종목을 처음부터 다시 재생합니다."
+      },
+      {
+        src: "/projects/mystock/repo-coach.webp",
+        label: "AI 코치 · 이번 달 재무 상태 요약과 대화",
+        ratio: "16/10",
+        caption:
+          "캡처 시점(2026-10-12)의 답변은 자바 규칙 4갈래였습니다. 2026-11-11 부터는 모델이 문장을 쓰고, 서버가 계산한 숫자만 쓰는지와 투자 조언이 없는지를 코드가 검사한 뒤 내보냅니다. 걸리면 이 규칙 답으로 돌아갑니다."
+      },
+      {
+        src: "/projects/mystock/repo-reports.webp",
+        label: "리포트 · 이번 달 돈 리포트 · 6개월 소비와 예산",
         ratio: "16/10"
       },
       {
-        src: "/projects/mystock/goals.webp",
-        label: "목표 관리 — 달성률 · 예상 완료일 · 달성 확률",
+        src: "/projects/mystock/repo-portfolio-allocation.webp",
+        label: "자산 비중 · 종목·자산군별",
         ratio: "16/10"
-      },
-      {
-        src: "/projects/mystock/coach.webp",
-        label: "AI코치 — 종목 추천 대신 재무 상태를 정리합니다",
-        ratio: "16/10",
-        caption:
-          "종목 추천 요청에는 특정 종목 대신 총자산과 남은 생활비를 기준으로 이번 달 재무 상태를 정리하도록 구성했습니다."
       }
     ],
     tldr: [
       {
         k: "무엇을",
-        v: "거래 기록 기반 포트폴리오 분석 + AI 체크포인트 웹앱 (StockFlow) · 자산 흐름 대시보드(MyWave) 포함"
+        v: "대학생이 매일 여는 개인 재무 웹앱(MyWave). 홈의 큰 숫자 하나 「오늘 더 써도 되는 돈」 아래에 저축 목표와 투자가 붙습니다"
       },
-      {k: "왜", v: "수익률·자산 비중·뉴스 영향을 한 곳에서 보기 어려움"},
+      {
+        k: "왜",
+        v: "수익률·자산 비중·소비를 한 곳에서 보되, 화면 어디에도 예시 숫자를 채우지 않고 기록에서만 계산되게 하려고"
+      },
       {
         k: "결과",
-        v: "증권사 실연동 없이 입력 거래만으로 포트폴리오를 계산·분석"
+        v: "2026-11-10 mywave.day 로 공개. 화면 19개, 엔드포인트 111개(MyWave 가 쓰는 것 55개), 테스트는 공개일 29 → 41개에서 다음 날 98개. 모든 push 에 CI 3잡"
       },
-      {k: "내 역할", v: "1인 풀스택 — React 프론트 + Spring Boot 백엔드"}
+      {k: "내 역할", v: "1인 · 도메인 설계 · Spring Boot API · React 화면 전부"}
     ],
-    demo: {repo: "https://github.com/toadsam/MyStock-Desk"},
+    demo: {
+      live: "https://mywave.day",
+      repo: "https://github.com/toadsam/MyStock-Desk"
+    },
     meta: [
-      {label: "팀", value: "개인 프로젝트 (풀스택 1인)"},
-      {label: "역할", value: "도메인 설계 · 프론트 · 백엔드 전부"},
-      // 기간은 근거가 없어 여전히 비운다. 상태만 적는다(본인 확인 2026-09-08).
-      {label: "상태", value: "완료 · MyWave 리뉴얼 예정"},
+      // README 표 그대로. 첫 커밋 2026-05-25 「주식 체계 프론트 디자인」.
+      {
+        label: "기간",
+        value:
+          "2026.05 ~ 진행 중 (첫 커밋 05.25 · 2026.10 홈 재설계 · 11.10 공개)"
+      },
+      {
+        label: "팀",
+        value: "1명 · 도메인 설계 · Spring Boot API · React 화면 전부"
+      },
+      {label: "상태", value: "운영 중 (mywave.day) · 2026-11-10 공개"},
       {
         label: "스택",
-        value: "React · TS · Vite · Spring Boot · JPA · H2/MySQL · Recharts"
+        value:
+          "React · TypeScript · Vite · Spring Boot · JPA · H2/MySQL · Recharts · Docker Compose / Railway"
       },
-      {label: "실행", value: "Gradle bootRun + Vite · 데모 계정 있음"}
+      {
+        label: "이름",
+        value: "저장소 MyStock-Desk · 패키지 com.stockflow · 화면 MyWave"
+      }
     ],
     heroScreen: {
-      title: "stockflow/portfolio",
+      title: "mywave/today",
       kind: "dashboard",
       kpi: [
-        {l: "도메인", v: "13"},
-        {l: "Provider", v: "Yahoo+Demo"},
-        {l: "AI", v: "정리형"}
+        {l: "화면", v: "19"},
+        {l: "엔드포인트", v: "111"},
+        {l: "테스트", v: "98"}
       ],
       chart: [20, 26, 22, 34, 30, 42, 38, 50, 58, 64]
     },
     impact: [
-      {n: "13", l: "백엔드 도메인 모듈"},
-      {n: "2", l: "시세 Provider(폴백)"},
+      {n: "19", l: "화면"},
+      {n: "111", l: "엔드포인트 (MyWave 사용 55)"},
       {n: "1인", l: "풀스택"}
     ],
     features: [
       {
-        t: "보유 종목·수익률",
-        d: "입력 거래 기반 보유 종목·평가/실현 손익 계산"
+        t: "오늘 더 써도 되는 돈",
+        d: "남은 생활비 ÷ 남은 날수 − 오늘 쓴 돈. 저장하지 않고 요청마다 계산"
       },
-      {t: "자산 비중 차트", d: "종목·비중을 Recharts로 시각화"},
-      {t: "AI 체크포인트", d: "매수/매도 추천이 아닌 리스크·뉴스 변화 ‘정리’"},
-      {t: "테마·뉴스 탐색", d: "Google News RSS 기반 관련 기사·키워드"}
+      {
+        t: "소비 기록 네 갈래",
+        d: "직접 입력 · 퀵버튼 · 카드 문자 붙여넣기 · 결제 캡처"
+      },
+      {
+        t: "입력 거래 기반 투자",
+        d: "매수는 이동평균, 매도는 수량만. 거래 수정 시 전체 재생"
+      },
+      {
+        t: "검사받는 AI 코치",
+        d: "숫자는 서버가 계산해 주고 모델은 문장만. 자료에 없는 숫자·투자 조언은 코드가 걸러 규칙 답으로"
+      },
+      {
+        t: "외부 연동 4곳",
+        d: "Yahoo Finance · Google News RSS · OpenDART · SEC EDGAR, 응답마다 출처 문자열"
+      },
+      {
+        t: "데모 계정",
+        d: "로그인 화면에서 바로 들어가며, 프로필·비밀번호는 잠금"
+      }
     ],
     problem:
-      "투자 기록을 직접 관리하면 수익률·자산 비중을 한눈에 파악하기 어렵고, 뉴스가 내 종목에 어떤 영향을 주는지 판단할 도구가 부족합니다. 실제 증권사 연동 없이도 ‘내가 입력한 데이터’만으로 분석이 되어야 했습니다.",
+      "투자 기록을 직접 관리하면 수익률·자산 비중을 한눈에 파악하기 어렵고, 소비·목표·투자가 화면마다 다른 숫자를 말하기 쉽습니다. 증권사 연동 없이 직접 입력한 기록만으로 계산되고, 기록이 없으면 0 이어야 했습니다.",
     research: {
       quotes: [],
-      stat: {
-        n: "13",
-        l: "member·stock·portfolio·transaction·research 등 도메인 모듈 수"
-      }
+      stat: {n: "19", l: "화면 수 (로그인 1 + 로그인 뒤 18 · docs/SCREENS.md)"}
     },
     beforeCode: {
       filename: "naive-pnl.ts",
-      caption: "단순 현재가 합산 — 평균 매입가/실현손익 개념이 없음",
+      caption: "단순 현재가 합산 · 평균 매입가/실현손익 개념이 없음",
       lines: [
         "// 기존: 보유 수량 × 현재가만 합산",
         "const total = holdings.reduce(",
@@ -670,122 +749,267 @@ export const RICH_DATA: Record<string, RichProject> = {
       ]
     },
     hypothesis:
-      "입력한 거래 기록만으로 서버가 집계하고, AI 는 정리 역할로만 두는 것이 이 앱의 전제였습니다. 시세는 Yahoo 가 실패하면 Demo Provider 로 폴백합니다.",
+      "숫자를 저장하지 않고 요청마다 기록에서 다시 세면 홈·소비·코치가 서로 다른 숫자를 말할 일이 없고, 예시 데이터를 화면에 깔지 않으면 「이거 내 기록 맞아?」라고 물을 일이 없다고 봤습니다.",
     process: [
-      {t: "도메인 설계", d: "13개 모듈"},
-      {t: "백엔드 API", d: "JPA·Security"},
-      {t: "프론트", d: "React·Recharts"},
-      {t: "AI 리서치", d: "정리형"},
-      {t: "시세 폴백", d: "Yahoo→Demo"}
+      {t: "도메인 설계", d: "2026.05 · 투자 기록"},
+      {t: "백엔드 API", d: "JPA · Security · 외부 연동 4곳"},
+      {t: "MyWave UI", d: "2026.06 전면 교체"},
+      {t: "홈 재설계", d: "2026.10 · 예시 숫자 제거"},
+      {t: "공개·점검", d: "2026.11.10 mywave.day"}
     ],
     architecture: [
       {
         tag: "View",
-        name: "React + Recharts",
-        desc: "포트폴리오·수익률·뉴스·리서치 화면"
+        name: "React + Vite",
+        desc: "화면 19개 · 데스크톱/모바일 같은 주소"
       },
       {
         tag: "API",
-        name: "Spring Boot REST",
-        desc: "portfolio · transaction · stock · research 등 13 도메인"
+        name: "Spring Boot + JPA",
+        desc: "엔드포인트 111개 · 요청마다 재계산"
       },
+      {tag: "Data", name: "H2 / MySQL", desc: "엔티티 24개 (MyWave 사용 14)"},
       {
-        tag: "Market",
-        name: "MarketDataProvider",
-        desc: "Yahoo Finance ↔ Demo(seed) 폴백 인터페이스"
-      },
-      {tag: "DB", name: "H2 / MySQL", desc: "JPA로 거래·보유·리서치 영속화"}
+        tag: "External",
+        name: "Yahoo · RSS · DART · EDGAR",
+        desc: "응답 DTO 마다 출처 문자열"
+      }
     ],
     decisions: [
       {
-        area: "백엔드",
-        pick: "Spring Boot",
-        why: "도메인 분리·검증·보안에 강함",
-        alt: "Express 기반 API 구성"
+        area: "숫자",
+        pick: "저장하지 않고 매번 계산",
+        why: "소비 하나 지우면 같이 고칠 숫자가 넷. 계산하는 곳이 한 곳이면 화면끼리 어긋나지 않음",
+        alt: "집계값 저장(빠르지만 하나를 빠뜨림)"
       },
       {
-        area: "AI 역할",
-        pick: "정리형",
-        why: "투자 추천의 신뢰·법적 리스크 회피",
-        alt: "추천형(리스크 ↑)"
+        area: "투자",
+        pick: "거래 수정 시 전체 재생",
+        why: "과거 거래의 단가를 고치면 뒤의 평균단가가 조용히 틀어짐. 어떤 순서로 고쳐도 결과가 하나로 수렴",
+        alt: "증분 갱신(빠르지만 틀린 걸 알 방법이 없음)"
+      },
+      {
+        area: "AI",
+        pick: "모델은 문장만, 숫자와 금지는 코드가",
+        why: "지시문만으로는 약속이 되지 않음. 답에 자료에 없는 숫자나 사라·팔라가 있으면 버리고 규칙 답으로",
+        alt: "지시문만 믿기(어림한 숫자와 투자 권유가 그대로 나감)"
       },
       {
         area: "시세",
-        pick: "Provider 추상화",
-        why: "Yahoo 실패 시 Demo로 폴백",
-        alt: "단일 연동(장애 시 빈 화면)"
-      },
-      {
-        area: "차트",
-        pick: "Recharts",
-        why: "선언적 구현·React 친화",
-        alt: "Chart.js 기반 차트 구현"
+        pick: "실패하면 건너뛰기",
+        why: "Provider 는 부팅 때 하나만 뜬다. 조회 실패 종목은 마지막 성공값을 유지",
+        alt: "실행 중 Demo 자동 폴백(처음에 그렇게 적었으나 코드엔 없음)"
       }
     ],
     coreCode: [
       {
-        filename: "MarketDataProvider.java",
+        filename: "Holding.java",
         caption:
-          "시세 소스를 인터페이스로 추상화해 Yahoo/Demo 를 교체할 수 있게",
-        highlightLines: [1],
+          "이 서비스의 숫자를 전부 결정하는 곳입니다. 매수는 이동평균, 매도는 수량만 줄이고 평균단가를 건드리지 않습니다 (L39-L52)",
+        highlightLines: [5, 6, 13],
         lines: [
-          "public interface MarketDataProvider {",
-          "  List<StockQuoteSnapshot> fetch(List<String> symbols);",
+          "public void buy(Integer buyQuantity, BigDecimal executionPrice) {",
+          "    BigDecimal previousCost = purchaseAmount();",
+          "    BigDecimal addedCost = executionPrice.multiply(BigDecimal.valueOf(buyQuantity));",
+          "    quantity += buyQuantity;",
+          "    averagePrice = previousCost.add(addedCost)",
+          "            .divide(BigDecimal.valueOf(quantity), PRICE_SCALE, RoundingMode.HALF_UP);",
           "}",
-          "// YahooFinanceMarketDataProvider · DemoMarketDataProvider 가 구현",
-          "// 설정(stockflow.market-data.provider)으로 스위치 → 실패 시 Demo 폴백"
+          "",
+          "public void sell(Integer sellQuantity) {",
+          "    if (quantity < sellQuantity) {",
+          '        throw new IllegalArgumentException("보유 수량이 부족합니다.");',
+          "    }",
+          "    quantity -= sellQuantity; // 평균단가는 그대로",
+          "}"
         ]
       },
       {
-        filename: "PortfolioService.java",
-        caption: "요청마다 스냅샷을 갱신한 뒤 포트폴리오 반환",
-        highlightLines: [3],
+        filename: "MarketDataRefreshService.java",
+        caption:
+          "조회 실패 종목은 건너뛰고 마지막 성공값을 남깁니다. 갱신을 건너뛰는 방식입니다",
+        highlightLines: [2, 3],
         lines: [
-          "@Transactional",
-          "public PortfolioDto getPortfolio() {",
-          "  Portfolio portfolio = findPortfolio();",
-          "  portfolioSnapshotService.refresh(portfolio); // 최신 시세 반영",
-          "  return PortfolioDto.from(portfolio);",
+          "StockQuoteSnapshot quote = quoteBySymbol.get(stock.getSymbol());",
+          "if (quote == null) {",
+          "    continue; // 마지막 성공값 유지",
           "}"
         ]
       }
     ],
     work: [
       {
-        g: "백엔드",
-        items: ["13개 도메인 모듈 설계", "거래 기반 보유/손익 집계"]
+        g: "도메인",
+        items: ["패키지 25개 · 컨트롤러 27개", "엔티티 24개(MyWave 사용 14)"]
       },
-      {g: "프론트", items: ["포트폴리오·수익률·비중 화면", "뉴스/리서치 화면"]},
       {
-        g: "AI/데이터",
-        items: ["리서치(정리형) 응답 설계", "Google News RSS 연동"]
+        g: "계산",
+        items: [
+          "하루 예산 · 투자 가능 금액 · 달성률을 요청마다",
+          "거래 수정 시 보유 전체 재생"
+        ]
       },
-      {g: "안정성", items: ["Provider 폴백", "데모 계정·seed 데이터"]}
+      {
+        g: "외부 연동",
+        items: [
+          "Yahoo · Google News RSS · OpenDART · SEC EDGAR",
+          "응답마다 출처·신뢰 등급"
+        ]
+      },
+      {
+        g: "공개 운영",
+        items: [
+          "mywave.day 배포(Railway) · compose · 부팅 가드",
+          "CI 3잡 · 공개일 점검 152건 · 수정 9건"
+        ]
+      }
     ],
     challenges: [
       {
-        title: "외부 시세/뉴스가 실패하면 화면이 비었습니다",
+        title: "거래 하나를 고치면 보유 종목을 처음부터 다시 계산합니다",
         problem:
-          "Yahoo Finance·뉴스 RSS 호출이 실패하면 대시보드가 빈 화면이 됐습니다.",
+          "거래 기록은 사용자가 나중에 수정하고 삭제합니다. 보유 수량과 평균단가를 그때그때 더하고 빼면, 5월 매수 기록의 단가를 고치는 순간 그 뒤에 쌓인 모든 평균단가가 조용히 틀어지고 틀린 것을 알 방법도 없습니다.",
         solution:
-          "MarketDataProvider를 인터페이스로 두고 DemoMarketDataProvider(seed)로 폴백해, 외부 시세 조회가 실패하면 데모 데이터를 표시하도록 처리했습니다.",
+          "등록·수정·삭제 세 경로 전부가 rebuildPortfolioFromTransactions() 를 부릅니다. 보유 종목을 전부 지우고, 현금을 기준값으로 되돌리고, 거래를 날짜순으로 정렬해 처음부터 다시 재생합니다. 각 거래의 실현손익도 재생 도중 다시 계산되어 저장됩니다. 대신 거래 하나를 고칠 때마다 전체 거래 수 n 에 비례해 계산합니다. 한 사람의 매매 기록이라 n 이 몇 천을 넘길 일이 잘 없습니다. 넘긴다면 스냅샷을 찍고 그 뒤만 재생하는 것이 다음 순서입니다.",
         code: {
-          filename: "provider-switch",
+          filename: "TransactionService.java",
+          caption:
+            "보유를 지우고 예수금을 기준값으로 되돌린 뒤 거래를 날짜순으로 다시 재생 (L315-L322)",
+          highlightLines: [3, 4, 8],
           lines: [
-            "// 설정으로 provider 선택, 실패 시 Demo로",
-            "provider = resolve(props.getProvider());",
-            "return provider.fetch(symbols); // Demo면 seed 반환"
+            "private void rebuildPortfolioFromTransactions(Long memberId) {",
+            "    Portfolio portfolio = findPortfolio(memberId);",
+            "    holdingRepository.deleteByPortfolioId(portfolio.getId());",
+            "    portfolio.resetForRecordRecalculation(RECORD_BASE_CASH);",
+            "    List<InvestmentTransaction> transactions = transactionRepository",
+            "            .findByMemberIdOrderByTransactionDateDescCreatedAtDesc(memberId).stream()",
+            "            .sorted(Comparator.comparing(InvestmentTransaction::getTransactionDate)",
+            "                    .thenComparing(InvestmentTransaction::getCreatedAt)).toList();",
+            "    for (InvestmentTransaction transaction : transactions) { … applyRecord(…) … }",
+            "}"
           ]
+        },
+        evidence: {
+          status: "구현 확인 · README 설계 결정",
+          note: "README 「거래를 고치면 보유를 고치지 않고 처음부터 다시 계산」 절과 TransactionService.java#L306-L332(main, 2026-11-13 확인).",
+          url: "https://github.com/toadsam/MyStock-Desk/blob/main/backend/src/main/java/com/stockflow/transaction/service/TransactionService.java"
         }
       },
       {
-        title: "AI 응답에 매수·매도 권유가 포함되는 문제가 있었습니다",
+        title: "모델이 쓴 답을 그대로 내보내지 않고 코드로 검사합니다",
         problem:
-          "프롬프트에 따라 ‘사세요/파세요’ 류 답이 섞여 신뢰를 해쳤습니다.",
+          "AI 코치가 정해진 문장 네 개로만 답해 대화가 되지 않았습니다. 모델을 붙이면 대화는 생기지만, 모델은 숫자를 어림해 만들고 투자 질문에 「사세요」라고 답하기도 합니다. 지시문만으로는 약속이 되지 않습니다.",
         solution:
-          "리서치 응답을 ‘리스크·뉴스 변화 정리’ 스키마로 한정하고, 판단 주체를 사용자로 유지했습니다."
+          "2026-11-11 에 코치 답을 모델이 쓰게 하되 모델의 일을 문장 쓰기로 줄였습니다. 숫자는 서버가 계산해 [자료]로 주고, 답이 돌아오면 CoachAnswerGuard 가 두 가지를 확인합니다. 답에 나온 세 자리 이상 숫자가 자료나 질문에 없으면 그 답을 버리고, 사라·팔라·오를 것이다 같은 표현이 있으면 정해진 거절 문장으로 바꿉니다. 「1만 3천원」처럼 한글 단위로 어림한 금액도 걸립니다. 질문에 적힌 이메일·전화번호·긴 숫자는 보내기 전에 가립니다(CoachPrivacy).\n\n한 사람 하루 30번, 전체 하루 1,500번을 넘거나 모델을 부르지 못하면 예전의 규칙 답으로 돌아가므로 코치는 언제나 답합니다. 모델을 기다리는 몇 초 동안 DB 연결을 잡지 않으려고 이 경로는 트랜잭션으로 묶지 않았습니다. 대신 맞는 답도 버려집니다. 모델이 자료의 두 숫자를 더해 말하면 그 합은 자료에 없으므로 버립니다.",
+        code: {
+          filename: "CoachAiAnswerer.java",
+          caption:
+            "모델의 답은 두 검사를 지나야 나갑니다. 걸리면 거절 문장이나 null(규칙 답) (L64-L77)",
+          highlightLines: [5, 6, 9, 11],
+          lines: [
+            "String answer = client.complete(INSTRUCTIONS, userContent);",
+            "if (answer == null) {",
+            "    return null;",
+            "}",
+            "if (CoachAnswerGuard.looksLikeInvestmentAdvice(answer)) {",
+            "    return INVESTMENT_REFUSAL;",
+            "}",
+            "String unknown = CoachAnswerGuard",
+            '        .firstUnknownNumber(answer, context + "\\n" + safeQuestion);',
+            "if (unknown != null) {",
+            "    return null; // 자료에 없는 숫자가 있으면 버린다",
+            "}",
+            "return answer;"
+          ]
+        },
+        evidence: {
+          status: "구현 확인 · 테스트 15개",
+          note: "커밋 5615d12(2026-11-11). CoachAnswerGuardTest 8개와 FinancialCoachAiIntegrationTest 7개가 모델을 가짜로 바꿔 지어낸 숫자 폐기·투자 조언 치환·개인정보 미전송·하루 한도를 확인합니다. 기본 설정은 provider: local 이라 키와 provider 를 켜야 모델이 답하고, 꺼져 있으면 규칙 답만 나갑니다.",
+          url: "https://github.com/toadsam/MyStock-Desk/blob/main/backend/src/main/java/com/stockflow/coach/service/CoachAnswerGuard.java"
+        }
+      },
+      {
+        title: "공개한 날 점검에서 데모 계정과 로그아웃 토큰이 걸렸습니다",
+        problem:
+          "2026-11-10 mywave.day 로 공개한 날 API 전수 검사 152건 중 15건이 걸렸습니다. 공개 데모 계정으로 들어온 누구나 비밀번호와 이메일을 바꿀 수 있었고(한 번 바뀌면 그 뒤 데모 로그인이 전부 실패), 로그아웃한 뒤에도 비밀번호를 바꾼 뒤에도 예전 토큰이 24시간 동안 그대로 통했습니다. AuthController.logout() 이 아무 일도 하지 않는 빈 메서드였습니다.",
+        solution:
+          "DemoAccountPolicy 를 두고 데모 계정의 프로필 수정과 비밀번호 변경을 403 으로 막았습니다(지출·목표 같은 기록은 써 보라고 둔 것이라 막지 않음). 로그아웃한 토큰은 즉시 무효가 되게 했고, 오류 문구는 Request failed with status code 400 대신 서버가 적은 한글 문장으로 바꿨습니다. 점검과 수정은 Claude Code 와 함께 했고, 걸린 항목은 코드를 열어 원인을 확인한 뒤에만 문제로 적었습니다. 쓰기 테스트는 로컬 H2 에서만 하고 운영에는 읽기와 거절되는 요청만 보냈습니다. 결과는 152건 중 통과 137 → 146, 백엔드 테스트 29 → 41개입니다(다음 날 코치 검사 테스트가 붙어 98개). 남은 6건은 없는 기록에 404 대신 400 을 주는 상태 코드 관례라 이번 범위에서 뺐습니다.",
+        evidence: {
+          status: "전후 코드로 확인 · 점검 기록",
+          note: "docs/TROUBLESHOOTING.md(2026-11-10) 「한눈에」 표. 운영에서 데모 계정으로 두 요청을 보내 403 과 안내 문구를 받은 것으로 확인했습니다.",
+          url: "https://github.com/toadsam/MyStock-Desk/blob/main/docs/TROUBLESHOOTING.md"
+        },
+        perfAfter: true
+      },
+      {
+        title: "운영 설정이 위험하면 서버가 뜨지 않게 했습니다",
+        problem:
+          "개발용 JWT 시크릿이나 H2 콘솔이 켜진 채로 운영에 올라가도 서버는 조용히 뜹니다. 설정에 기본값이 있으면 환경변수를 빠뜨린 것을 아무도 모릅니다.",
+        solution:
+          "운영 프로파일은 DB 주소·계정·JWT 시크릿에 기본값을 두지 않아 하나라도 빠지면 부팅이 멈춥니다. 뜬 뒤에는 ProductionGuard 가 다섯 가지를 한 번 더 봅니다. 시크릿이 32바이트보다 짧은지, 개발용 문자열이 들어 있는지, H2 콘솔·mock 회원·show-sql 이 켜져 있는지. 하나라도 걸리면 이유를 적고 예외로 부팅을 거부합니다.\n\ndocker-compose 도 같은 생각으로 짰습니다. 비밀값이 비면 compose 가 멈추고, MySQL 헬스체크가 통과한 뒤에 백엔드가, 백엔드 헬스체크 뒤에 nginx 가 뜨며, 밖으로 여는 포트는 nginx 하나입니다. CI 는 「필수값 없이 compose 설정이 통과하면 실패」를 push 마다 확인합니다. 아직 못 한 것이 두 가지 있습니다. Flyway 가 없어 운영도 ddl-auto: update 이고, 서버 모니터링은 헬스체크 하나뿐입니다.",
+        code: {
+          filename: "ProductionGuard.java",
+          caption:
+            "prod 프로파일에서만 도는 부팅 검사. 걸리면 서버를 띄우지 않습니다",
+          highlightLines: [2, 5, 8, 11],
+          lines: [
+            "@PostConstruct void verify() {",
+            "    if (secret.getBytes(UTF_8).length < MIN_SECRET_BYTES) problems.add(…);",
+            '    if (lower.contains("development") || lower.contains("change-before")',
+            '            || lower.startsWith("stockflow-local")) problems.add(…);',
+            "    if (h2ConsoleEnabled) problems.add(…);",
+            "    if (currentMemberProvider.hasFallbackMember()) problems.add(…);",
+            "    if (showSql) problems.add(…);",
+            "    if (!problems.isEmpty()) {",
+            "        throw new IllegalStateException(",
+            '            "운영 설정이 안전하지 않아 서버를 띄우지 않습니다." + …);',
+            "    }",
+            "}"
+          ]
+        },
+        evidence: {
+          status: "구현 확인",
+          note: "커밋 89365e1(2026-11-02) ProductionGuard · 7253002 CI 와 헬스체크 · docker-compose.yml 의 ${VAR:?…} · backend/Dockerfile(멀티스테이지 · 비루트 사용자 · 힙 512MB · HEALTHCHECK). 실제 운영은 Railway 가 같은 Dockerfile 로 띄웁니다.",
+          url: "https://github.com/toadsam/MyStock-Desk/blob/main/backend/src/main/java/com/stockflow/global/config/ProductionGuard.java"
+        }
+      },
+      {
+        title:
+          "외부 시세 조회가 실패해도 화면이 비지 않는 것은 갱신을 건너뛰기 때문이었습니다",
+        problem:
+          "처음에는 Provider 를 인터페이스로 두었으니 Yahoo 조회가 실패하면 Demo 로 자동 전환된다고 적어 두었습니다. 코드를 다시 읽으니 그렇지 않았습니다.",
+        solution:
+          "YahooFinanceMarketDataProvider 와 DemoMarketDataProvider 는 @ConditionalOnProperty 로 부팅 때 하나만 뜨고 실행 중에는 바뀌지 않습니다. 실제로 화면을 지키는 것은 두 곳입니다. 종목 조회가 실패하면 예외를 잡아 null 을 돌려주고, 갱신 루프는 null 인 종목을 건너뜁니다. 그래서 시세는 마지막으로 성공한 값 그대로 남고 화면은 비지 않습니다. 결과는 의도한 대로지만 메커니즘은 폴백이 아니라서 README 와 이 페이지의 문장을 고쳤습니다. 뉴스에는 이 안전망이 기본으로 꺼져 있어(seed-fallback.enabled=false) RSS 가 비면 빈 배열이 나갑니다.",
+        code: {
+          filename: "MarketDataRefreshService.java",
+          lines: [
+            "StockQuoteSnapshot quote = quoteBySymbol.get(stock.getSymbol());",
+            "if (quote == null) {",
+            "    continue;",
+            "}"
+          ]
+        },
+        evidence: {
+          status: "구현 확인 · 자동 폴백 주장 정정",
+          note: "YahooFinanceMarketDataProvider#L19-L21(@ConditionalOnProperty) · #L70-L72(실패 시 null) · MarketDataRefreshService#L66-L70(건너뜀). GET /api/news 를 종목 없이 호출해 [] 를 받아 뉴스 쪽도 확인했습니다.",
+          url: "https://github.com/toadsam/MyStock-Desk/blob/main/backend/src/main/java/com/stockflow/marketdata/service/MarketDataRefreshService.java"
+        }
       }
     ],
+    perf: {
+      title: "공개일 점검 전 → 후 · 2026-11-10",
+      lowerBetter: false,
+      rows: [
+        {
+          label: "API 검사 통과 (152건 중)",
+          before: 137,
+          after: 146,
+          unit: "건"
+        },
+        {label: "백엔드 테스트", before: 29, after: 41, unit: "개"}
+      ],
+      note: "컨트롤러와 요청 DTO 를 읽고 쓴 검사 스크립트로 조회 주소 56개를 전부 부르고, 막혀야 하는 요청(음수 금액 · 99조 원 · 미래 날짜 · 2만 자 메시지 · 남의 기록 수정 · 로그아웃한 토큰)을 섞어 152건을 돌렸습니다. 남은 6건은 상태 코드 관례(404 대신 400)입니다."
+    },
     tech: [
       "React",
       "TypeScript",
@@ -793,51 +1017,251 @@ export const RICH_DATA: Record<string, RichProject> = {
       "Spring Boot",
       "Spring Data JPA",
       "H2/MySQL",
-      "Recharts"
+      "Recharts",
+      "Docker"
     ],
     resultScreens: [
       {
-        title: "stockflow/portfolio",
+        title: "mywave/portfolio",
         kind: "bars",
         bars: [
-          {l: "보유 종목", p: 70, v: "다수"},
+          {l: "보유 종목", p: 70, v: "표"},
           {l: "자산 비중", p: 55, v: "차트"},
-          {l: "현금", p: 30, v: "비중"}
+          {l: "리스크", p: 30, v: "집중도"}
         ]
       },
       {
-        title: "stockflow/research",
+        title: "mywave/coach",
         kind: "feed",
         feed: [
-          "리스크 점검 항목",
-          "관련 뉴스 변화",
-          "재무지표 변화",
-          "보유 기준 영향도"
+          "이번 달 상태 요약",
+          "목표 전망",
+          "규칙 기반 답변",
+          "면책 문장(데이터)"
         ]
       }
     ],
+    // 2026-11-13 저녁: 「화면 19」 타일을 빼고 테스트·CI 를 올렸다. 화면 수는 tldr·metricsNote 에 남는다.
+    // 테스트 98 은 저장소 HEAD(a5b5995)의 @Test 를 직접 센 값이고, 꺾은선은 커밋별로 센 29 → 41 → 87 → 98 이다.
     metrics: [
-      {n: "13", l: "백엔드 도메인"},
-      {n: "9", l: "주요 페이지"},
-      {n: "2", l: "시세 Provider"},
-      {n: "1인", l: "풀스택"}
+      {
+        n: "146",
+        l: "공개일 API 검사 통과 (152건 중)",
+        sub: "점검 전 137 → 수정 후 146",
+        mini: {kind: "bars", before: 137, after: 146},
+        source:
+          "docs/TROUBLESHOOTING.md · 2026-11-10 · 남은 6건은 상태 코드 관례"
+      },
+      {
+        n: "98",
+        l: "백엔드 테스트",
+        sub: "공개일 29 → 41 · 다음 날 98",
+        mini: {kind: "line", points: [29, 41, 87, 98]},
+        source: "저장소 @Test 수 · 2026-11-11 HEAD · 통합 50 + 단위 48, H2"
+      },
+      {
+        n: "3잡",
+        l: "CI · 모든 push",
+        sub: "테스트 · lint/build · compose 검사",
+        source: ".github/workflows/ci.yml · 2026-11-02 도입 · 배포는 안 함"
+      },
+      {
+        n: "111",
+        l: "엔드포인트",
+        sub: "MyWave 가 쓰는 것 55개",
+        mini: {kind: "bars", before: 111, after: 55},
+        source: "README 규모 표 · 안 쓰는 56개는 남은 과제"
+      }
     ],
+    metricsNote:
+      "저장소 toadsam/MyStock-Desk 의 값입니다. 검사 통과 수는 docs/TROUBLESHOOTING.md(2026-11-10), 테스트 수는 2026-11-11 HEAD 의 @Test 를 직접 센 값(README 에 적힌 29 는 2026-10 수치), 엔드포인트는 README 규모 표, 화면 19개는 docs/SCREENS.md(2026-10-12)입니다. 배포본 성능을 잰 수치는 없고 서버 모니터링은 /api/health 하나입니다. 외부 연동 4곳(Yahoo Finance · Google News RSS · OpenDART · SEC EDGAR)은 2026-09-07 로컬 실행에서 각 1회 응답을 확인했습니다.",
+    detail: {
+      intro: {
+        show: "대학생이 매일 여는 개인 재무 웹앱입니다. 홈에는 숫자 하나만 크게 둡니다. 오늘 더 써도 되는 돈. 이 숫자를 포함해 하루 예산·투자 가능 금액·달성률을 저장하지 않고 요청마다 기록에서 다시 계산하고, 화면 어디에도 예시 숫자를 채우지 않습니다.",
+        bold: "하루 예산·투자 가능 금액·달성률을 저장하지 않고 요청마다 기록에서 다시 계산하고, 화면 어디에도 예시 숫자를 채우지 않습니다.",
+        more: [
+          "2026-05-25 첫 커밋 뒤 06월에 UI 를 MyWave 로 갈아엎었고, 10월에 홈을 「오늘 더 써도 되는 돈」 중심으로 다시 설계하면서 옛 화면 11장과 3,800줄짜리 MyWaveApp.tsx, 하드코딩된 투자 의견을 걷어냈습니다.",
+          "2026-11-10 mywave.day 로 공개했고, 공개한 날 API 전수 검사 152건을 돌려 데모 계정 잠금·로그아웃 토큰 무효화 등 9건을 고쳤습니다. 다음 날 AI 코치를 모델 답변으로 바꾸면서 답을 검사하는 코드와 테스트를 같이 넣었습니다.",
+          "이름이 셋입니다. 저장소 MyStock-Desk, 자바 패키지 com.stockflow, 화면 MyWave. 옛 이름은 패키지와 안 쓰는 API 에 남아 있습니다."
+        ]
+      },
+      highlights: [
+        {
+          show: "숫자를 저장하지 않고 매번 계산합니다. 하루 예산·남은 생활비·투자 가능 금액·목표 달성률은 DB 에 없고, 소비를 하나 지우면 서버가 기록에서 다시 셉니다. 거래를 고치면 보유 종목도 처음부터 다시 재생합니다.",
+          bold: true,
+          more: "계산하는 곳이 한 곳뿐이라 홈·소비 화면·코치가 서로 다른 숫자를 말할 일이 없습니다. TodayService.today() 는 날짜를 주입받은 Clock 에서 얻어 테스트가 날짜를 고정해 확인합니다. 대신 재생에는 거래 수 n 에 비례하는 시간이 듭니다."
+        },
+        {
+          show: "AI 코치는 모델이 문장을 쓰고 코드가 검사합니다. 답에 자료에 없는 숫자가 있으면 버리고, 투자 조언처럼 보이면 거절 문장으로 바꿉니다(CoachAnswerGuard · 테스트 15개).",
+          more: "숫자는 서버가 계산해 자료로 주고 개인정보는 보내기 전에 가립니다. 하루 한도를 넘거나 모델을 못 부르면 규칙 답으로 돌아가 코치는 언제나 답합니다. 기본 설정은 꺼져 있습니다(provider: local)."
+        },
+        {
+          show: "공개한 날 API 전수 검사 152건을 돌려 통과 137 → 146 으로 올렸고, 모든 push 에 CI 3잡이 돕니다. 운영 설정이 위험하면 서버가 뜨지 않습니다(ProductionGuard). 테스트는 29 → 41 → 98개.",
+          more: "쓰기 테스트는 로컬 H2 에서만 하고 운영에는 읽기와 거절되는 요청만 보냈습니다. 점검은 Claude Code 와 함께 했고, 걸린 항목은 코드를 열어 원인을 확인한 뒤에만 문제로 적었습니다. 아직 못 한 것은 Flyway 없는 ddl-auto: update 와 모니터링입니다."
+        }
+      ],
+      briefs: [
+        {
+          problem:
+            "과거 거래의 단가를 고치면 그 뒤 평균단가가 조용히 틀어지고, 틀린 걸 알 방법이 없었습니다.",
+          did: "등록·수정·삭제 세 경로가 전부 보유를 지우고 거래를 날짜순으로 처음부터 다시 재생하게 했습니다.",
+          result:
+            "어떤 순서로 고쳐도 결과가 하나로 수렴하고 실현손익도 같이 다시 계산됩니다. 비용은 거래 수에 비례하지만 한 사람의 기록이라 감수했습니다."
+        },
+        {
+          problem:
+            "정해진 문장 네 개로는 대화가 안 됐고, 모델을 붙이면 숫자를 어림하거나 「사세요」라고 답할 수 있었습니다.",
+          did: "모델은 문장만 쓰게 하고, 답에 자료에 없는 숫자가 있으면 버리고 투자 조언처럼 보이면 거절 문장으로 바꾸는 검사를 코드로 넣었습니다. 개인정보는 보내기 전에 가립니다.",
+          result:
+            "테스트 15개로 이 동작을 확인합니다. 한도를 넘거나 검사에 걸리면 규칙 답으로 돌아가 코치는 언제나 답합니다. 대신 맞는 답도 버려질 수 있습니다."
+        },
+        {
+          problem:
+            "공개한 날 전수 검사 152건 중 15건이 걸렸습니다. 데모 계정 비밀번호를 누구나 바꿀 수 있었고, 로그아웃 토큰이 24시간 살아 있었습니다.",
+          did: "DemoAccountPolicy 로 데모 계정 수정을 403, 로그아웃 토큰은 즉시 무효, 오류 문구는 서버가 적은 한글 문장으로 바꿨습니다.",
+          result:
+            "통과 137 → 146, 테스트 29 → 41(다음 날 98). 남은 6건은 상태 코드 관례라 범위에서 뺐습니다."
+        },
+        {
+          problem:
+            "개발용 시크릿이나 H2 콘솔이 켜진 채 운영에 올라가도 서버는 조용히 뜹니다.",
+          did: "운영 설정에 기본값을 두지 않고, 부팅 때 ProductionGuard 가 다섯 가지를 검사해 걸리면 예외로 멈추게 했습니다. compose 는 비밀값이 비면 멈추고 헬스체크 순서로 뜹니다.",
+          result: "CI 가 push 마다 테스트·빌드·compose 설정을 확인합니다."
+        },
+        {
+          problem:
+            "「Yahoo 가 실패하면 Demo 로 자동 전환」이라고 적어 두었는데 코드를 다시 읽으니 그렇지 않았습니다.",
+          did: "Provider 는 부팅 때 하나만 뜨고, 조회 실패 종목은 null 로 건너뛰어 마지막 성공값을 유지한다는 실제 메커니즘으로 문장을 고쳤습니다.",
+          result:
+            "화면은 비지 않지만 폴백은 아닙니다. 뉴스 쪽은 같은 안전망이 기본으로 꺼져 있어 RSS 가 비면 빈 배열이 나갑니다."
+        }
+      ],
+      summaries: {
+        arch: "React + Vite 화면 19 · Spring Boot 엔드포인트 111(사용 55) · 외부 연동 4곳 · compose(MySQL → 백엔드 → nginx) · CI 3잡.",
+        code: "Holding.buy()/sell() 의 이동평균과 MarketDataRefreshService 의 갱신 건너뛰기.",
+        proc: "2026.05 도메인 설계 → 06 MyWave UI → 10 홈 재설계 → 11.02 운영 가드·CI → 11.10 공개와 점검 → 11.11 검사받는 AI 코치."
+      },
+      scenes: [
+        {
+          place: "trouble",
+          kind: "steps",
+          title: "push 한 번이 운영 부팅까지 지나는 문 네 개",
+          steps: [
+            {t: "push", d: "모든 브랜치 · main PR"},
+            {
+              t: "CI 3잡",
+              d: "백엔드 테스트(H2) · 프론트 lint/build · compose 설정 검사",
+              alt: {
+                t: "하나라도 실패",
+                d: "main 에 올릴 상태가 아님",
+                tone: "fail"
+              }
+            },
+            {
+              t: "기동 순서",
+              d: "MySQL 헬스체크 → 백엔드 → nginx(포트 하나)",
+              alt: {
+                t: "비밀값이 비면 멈춤",
+                d: "compose 의 ${VAR:?…} · prod 설정엔 기본값 없음",
+                tone: "fail"
+              }
+            },
+            {
+              t: "부팅 가드",
+              d: "ProductionGuard 다섯 검사",
+              tone: "warn",
+              alt: {
+                t: "개발용 시크릿 · H2 콘솔",
+                d: "예외로 부팅 거부",
+                tone: "fail"
+              }
+            },
+            {t: "/api/health", d: "DB 연결 확인 · 실패 시 503", tone: "ok"}
+          ],
+          note: "CI 는 배포하지 않습니다. 운영은 Railway 가 같은 Dockerfile 과 헬스체크로 띄웁니다.",
+          source:
+            ".github/workflows/ci.yml · docker-compose.yml · ProductionGuard.java · HealthController.java (2026-11-11 HEAD)"
+        },
+        {
+          place: "result",
+          kind: "line",
+          title: "백엔드 테스트 수 · 커밋별로 센 값",
+          unit: "개",
+          points: [
+            {x: "10.12 README", y: 29},
+            {x: "11.10 공개일", y: 41},
+            {x: "11.11 코치 검사", y: 87},
+            {x: "11.11 코치 뉴스", y: 98}
+          ],
+          note: "공개일 점검에서 12개, 다음 날 AI 코치 검사와 뉴스에서 57개가 붙었습니다. 평균단가(Holding.buy/sell) 단위 테스트는 아직 없습니다.",
+          source:
+            "저장소 @Test 수를 커밋별로 셈: 80b5a1b 41 · 5615d12 87 · 5728ef2 98. 29 는 docs/TROUBLESHOOTING.md 의 점검 전 값"
+        },
+        {
+          place: "trouble",
+          kind: "steps",
+          title: "시세 갱신 경로 · 실패하면 건너뛰기",
+          steps: [
+            {
+              t: "부팅 때 Provider 하나",
+              d: "@ConditionalOnProperty 로 Yahoo 또는 Demo 중 하나만 뜸. 실행 중엔 안 바뀜",
+              alt: {
+                t: "실행 중 Demo 자동 전환",
+                d: "처음 README 에 적었던 문장. 코드에 없음",
+                tone: "fail"
+              }
+            },
+            {
+              t: "종목마다 시세 조회",
+              d: "POST /api/data/refresh → Yahoo chart"
+            },
+            {
+              t: "실패하면 null",
+              d: "예외를 잡고 null (YahooFinanceMarketDataProvider#L70-L72)",
+              tone: "warn"
+            },
+            {
+              t: "null 은 건너뜀",
+              d: "갱신 루프가 continue (MarketDataRefreshService#L66-L70)",
+              alt: {
+                t: "마지막 성공값 유지",
+                d: "그래서 화면은 비지 않음",
+                tone: "ok"
+              }
+            }
+          ],
+          note: "같은 안전망이 뉴스에는 기본으로 꺼져 있습니다(seed-fallback.enabled=false). GET /api/news 를 종목 없이 불러 [] 를 받아 확인했습니다.",
+          source:
+            "저장소 README 「외부가 죽어도 화면이 사는 방식은 폴백이 아니라 갱신 건너뛰기」 절 · 해당 파일 줄 번호"
+        }
+      ]
+    },
     kpt: {
       keep: [
-        "도메인을 먼저 나누고 화면을 붙인 순서",
-        "AI 역할을 ‘정리’로 제한",
-        "Provider 폴백 설계"
+        "숫자를 저장하지 않고 요청마다 기록에서 계산",
+        "AI 역할을 문장 쓰기로 제한하고 답은 코드가 검사",
+        "응답 DTO 마다 출처 문자열(DART OpenAPI · demo-public-disclosure · OFFICIAL/AGGREGATED)"
       ],
-      problem: ["테스트 코드 부족", "프론트 상태 관리가 후반에 복잡해짐"],
-      try: ["실시간 시세 연동", "포트폴리오 자동 갱신"]
+      problem: [
+        "MyWave 가 쓰지 않는 엔드포인트 56개·테이블 10개가 백엔드에 남아 있음",
+        "외부 시세를 범위 검증 없이 씀(현재가가 평균단가의 10배로 들어와 수익률 900% 가 찍힌 적)",
+        "평균단가·투자 가능 금액·소비 비교에 단위 테스트가 없음",
+        "스키마 마이그레이션 도구 없이 ddl-auto: update",
+        "서버 모니터링이 헬스체크 하나뿐이고 로그인 제한은 서버 메모리"
+      ],
+      try: [
+        "안 쓰는 API·테이블 정리",
+        "시세 범위 검증",
+        "Flyway 도입 후 validate 로",
+        "거래 CSV 가져오기 UI"
+      ]
     },
     learningLead:
-      "AI 응답을 리스크·뉴스 변화 정리 스키마로 한정하고 판단은 사용자에게 남겼습니다.",
+      "숫자를 저장하지 않고 요청마다 기록에서 다시 세는 쪽을 골랐습니다. 화면끼리 어긋날 자리를 없애는 대신 계산 비용을 냅니다.",
     learning:
-      "Yahoo 시세·뉴스 RSS 가 실패하면 대시보드가 비어서, Provider 인터페이스에 Demo 폴백을 뒀습니다."
+      "폴백이라고 적어 둔 것이 코드에는 갱신 건너뛰기였습니다. 결과가 같아도 메커니즘을 다르게 적으면 그 문장 하나가 나머지 숫자까지 의심받게 하므로, 다시 읽고 고쳤습니다."
   },
 
-  // ════════════════════════════ FestFlow / Fest-A (realtime) ════════════════
   festflow: {
     tagline: "REALTIME FESTIVAL OPS · FULL-STACK WEB APP",
     // 2026-10-09: 이 절의 그림 셋(heroImage · resultShot · gallery)을 5월판에서 10월판으로
@@ -852,11 +1276,34 @@ export const RICH_DATA: Record<string, RichProject> = {
       caption:
         "왼쪽은 참가자가 보는 사주 소개팅 목록, 오른쪽은 운영진이 보는 소개팅 관리자 화면입니다. 같은 앱에서 주소와 권한으로 갈립니다. 2026 가을축제 버전을 운영 매뉴얼(/guide/live)의 연습 서버 데이터로 찍었습니다."
     },
+    // 2026-11-13 밤: 5월 화면 넷과 10월 화면 넷이 같은 구도(2100×900)라 전/후 슬라이더로 묶었다.
+    // 다시 만들었다는 것이 글이 아니라 화면으로 먼저 보여야 한다는 본인 요청이다. 둘 다 실제 캡처이고
+    // 10월 쪽은 연습 서버 데이터다. compact.compareFirst 로 첫 화면 타일 바로 아래에 온다.
+    beforeAfter: {
+      before: {
+        label: "5월 대동제 · 기능을 늘어놓은 화면",
+        shot: {
+          src: "/projects/op/festflow-screens.webp",
+          label: "2026.05 화면 넷",
+          ratio: "21/9"
+        },
+        note: "기능은 많았지만 현장에서 실제로 운영한 것은 소개팅 하나였습니다."
+      },
+      after: {
+        label: "10월 가을축제 · 현장에서 쓰는 화면",
+        shot: {
+          src: "/projects/festflow/oct/festflow-oct-screens.webp",
+          label: "2026.10 화면 넷",
+          ratio: "21/9"
+        },
+        note: "주점 주문 · 분실물 · 스태프 현황판을 새로 만들었고, 주문 142건(첫날)과 소개팅 가입 322명이 이 화면으로 들어왔습니다."
+      }
+    },
     problemShot: {
       src: "/projects/festflow/problem.webp",
       label: "기획 단계에서 정의한 축제 운영의 문제",
       ratio: "16/9",
-      caption: "중간 기획 발표 자료 — 구현 전에 정리한 문제 정의"
+      caption: "중간 기획 발표 자료 · 구현 전에 정리한 문제 정의"
     },
     // 이 페이지에서 가장 넓은 자리(약 1,216px)라 세로로 긴 폰 캡처를
     // 가로로 늘어놓기에 알맞다. 갤러리(약 390px)에 넣으면 글씨가 죽는다.
@@ -913,11 +1360,13 @@ export const RICH_DATA: Record<string, RichProject> = {
       {k: "내 역할", v: "1인 풀스택 (프론트 전체 + Spring Boot 백엔드 + 모델)"}
     ],
     // 저장소는 2026-10 에 비공개로 돌렸다(DB 덤프 CSV 와 원본 사진이 기록에 남아 있다).
-    // 링크는 운영 사이트로 대신하고, 코드는 요청하면 공개한다(카드 links 의 메일 링크).
+    // 2026-11-13: 사진·DB 덤프·연락처를 빼고 가린 공개 사본 toadsam/AjouFesta 를 만들었다(한 커밋).
+    // 근거 링크는 그 사본의 파일을 가리킨다. 커밋 기록은 원본에만 있다.
     demo: {
       live: "https://www.ajoufesta.com",
       // 2026-10-09 가을축제 버전 시연 영상. 있으면 Key Numbers 뒤에 영상 절이 생긴다.
-      video: "https://www.youtube.com/watch?v=Jdo5ZNDG8Uk"
+      video: "https://www.youtube.com/watch?v=Jdo5ZNDG8Uk",
+      repo: "https://github.com/toadsam/AjouFesta"
     },
     meta: [
       // 카드(resume.ts)와 같은 값. 2026-10-09 가을축제 개편까지 반영(리뉴얼 예정 → 끝).
@@ -942,9 +1391,9 @@ export const RICH_DATA: Record<string, RichProject> = {
       ]
     },
     impact: [
-      {n: "7", l: "SSE 실시간 채널"},
-      {n: "26", l: "백엔드 컨트롤러"},
-      {n: "80m", l: "GPS 부스 판정"}
+      {n: "8", l: "SSE 실시간 채널"},
+      {n: "5곳", l: "DB 행 잠금"},
+      {n: "27", l: "요청 한도 규칙"}
     ],
     features: [
       {
@@ -1015,12 +1464,12 @@ export const RICH_DATA: Record<string, RichProject> = {
             "같은 상대에게 중복 신청만 막았을 뿐, 한 사람이 여러 명에게 계속 신청할 수 있었습니다. 신청이 하루 424건까지 몰렸고, 신청마다 상대에게 알림 문자가 나가는 구조라 그만큼 발송이 시도됐습니다.",
           now: "1인당 신청을 3건으로 제한했습니다. 가을축제에서 신청 420건이 들어왔지만 한 사람에게 몰리지 않았습니다.",
           source:
-            "저장소 AiMatchService (같은 상대 중복 대기 검사만 있음) · 본인 서술"
+            "저장소 AiMatchService (같은 상대 중복 대기 검사만 있음)"
         },
         {
           t: "문자가 장문으로 나가 오후 4시에 잔액이 바닥났습니다",
           happened:
-            "알림 문구에 링크가 붙어 있었고 문자는 전부 장문(LMS, 한 통 45원)으로 나갔습니다. 11:49 첫 발송, 15:06~15:57 사이 125통, 15:57경 잔액 0원. 그 뒤 244통이 「잔액 부족」으로 나가지 못했습니다. 예치금이 43.9원 남아 한 통에 1.1원이 모자랐습니다.",
+            "알림 문구에 링크가 붙어 있었고 문자는 전부 장문(LMS, 한 통 45원)으로 나갔습니다. 11:49 첫 발송, 15:06~15:57 사이 125통, 15:57경 잔액 0원. 그 뒤 244통이 연속으로 「잔액 부족」으로 나가지 못했습니다(그날 실패 합계는 247통). 예치금이 43.9원 남아 한 통에 1.1원이 모자랐습니다.",
           now: "문자 전송 실패는 로그만 남기고 신청 저장은 그대로 둡니다. 알림은 한 통씩 보내고 조율 문자는 번호당 2분에 한 통으로 묶었습니다. 이틀 동안 문자 문제가 없었습니다.",
           source:
             "Solapi 메시지 로그 실측 (05/22 시도 435 · 성공 188 · 잔액 부족 247)"
@@ -1031,9 +1480,52 @@ export const RICH_DATA: Record<string, RichProject> = {
             "앱 안에서 양쪽이 약속을 제안하고 확정하는 기능은 축제 사흘 전에 만들어 뒀습니다. 그러나 그 흐름을 현장에서 검증할 시간이 없어, 성사 36건은 운영진이 양쪽에 전화해 시간과 장소를 맞췄습니다. 수락 문자 문구부터 「곧 관리자가 연락해 일정을 조율해드릴게요」였습니다.",
           now: "앱에서 시간 제안, 확정, 30분 전 알림, 블라인드 채팅까지 처리했고 부스에서 30쌍이 만났습니다. 축제 전에 눌러 보는 운영 매뉴얼로 7개 흐름을 끝까지 돌려 봤습니다.",
           source:
-            "저장소 커밋 이력(05/17 meetup API·화면) · AiMatchSmsNotifier 문구 · 관리자 설명서 §5 · 본인 서술"
+            "저장소 커밋 이력(05/17 meetup API·화면) · AiMatchSmsNotifier 문구 · 관리자 설명서 §5"
         }
-      ]
+      ],
+      // 그날 문자의 시간표 (2026-11-13). 시각과 건수는 전부 Solapi 로그 집계(2026-09-04)다.
+      // 실패가 몇 시에 끝났는지는 로그에서 안 읽었으므로 끝 시각을 비운다(축 끝까지 빗금).
+      // 244 는 잔액이 바닥난 뒤의 연속 실패, 247 은 그날 실패 합계(435 − 188)다.
+      timeline: {
+        title: "그날 문자 발송 · 2026.05.22",
+        from: "11:00",
+        to: "19:00",
+        events: [
+          {
+            at: "11:49",
+            until: "15:06",
+            label: "첫 발송 뒤 3시간 17분 동안 63통",
+            detail: "그날 성공 188통 중 오후 피크 전의 몫(188 − 125)",
+            tone: "ok"
+          },
+          {
+            at: "15:06",
+            until: "15:57",
+            label: "51분 동안 125통 성공",
+            detail: "신청이 오후에 몰렸습니다. 한 통 45원(LMS).",
+            tone: "ok"
+          },
+          {
+            at: "15:57",
+            label: "잔액 0원",
+            detail: "예치금 43.9원, 한 통 45원에 1.1원 모자람",
+            tone: "warn"
+          },
+          {
+            at: "15:58",
+            label: "이후 244통 연속 「잔액 부족」 실패",
+            detail: "끝난 시각은 로그에서 집계하지 않았습니다",
+            tone: "fail"
+          }
+        ],
+        totals: [
+          {label: "성공", n: 188, tone: "ok"},
+          {label: "실패", n: 247, tone: "fail"}
+        ],
+        note: "시도 435통 중 성공 188, 실패 247. 신청 1건당 상대에게 1통, 수락 시 신청자에게 1통이 나가는 구조였고 1인당 신청 상한이 없었습니다.",
+        source:
+          "Solapi 메시지 로그(console.solapi.com) 2026.05.22, 2026-09-04 직접 집계"
+      }
     },
     // ── 두 번째 운영 ──────────────────────────────────────────────────────
     // 2026-10-09 추가. 같은 앱을 가을축제 "바람"에서 이틀 돌린 기록이다.
@@ -1115,7 +1607,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           before: "Fest-A 번개 브랜딩의 밝은 카드 목록",
           after:
             "가을축제 마스코트 치토와 사주풍 밤 테마. 명식 표, 산통 뽑기, 궁합 풀이",
-          source: "FestFlow 커밋 4ec582c 외"
+          source: "FestFlow 저장소 커밋 기록"
         },
         {
           t: "신청 상한",
@@ -1159,7 +1651,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           before: "막을 방법이 없었습니다",
           after:
             "첫날 성사 82쌍에 부스 칸이 44개뿐이라, 그날 밤 만들어 둘째 날 아침 배포했습니다. 서로 동의하면 연락처 교환, 관리자 새 가입 막기 스위치",
-          source: "FestFlow 커밋 75f6715 · 테스트-중-바꾼-것.md"
+          source: "FestFlow 저장소 · 테스트-중-바꾼-것.md"
         }
       ],
       added: [
@@ -1456,15 +1948,19 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         tag: "Stream",
-        name: "7× SseEmitter",
-        desc: "/api/stream/congestion·booths·notices·…"
+        name: "SSE 8채널",
+        desc: "커밋 뒤 발행 · 20초 하트비트 · 끊기면 15~20초 재조회"
       },
       {
-        tag: "Geo",
-        name: "BoothService",
-        desc: "GPS 로그 기반 반경 80m 지오펜싱"
+        tag: "Order",
+        name: "주문 직렬화",
+        desc: "부스 행 잠금 · 부스별 락 15초 · 20초 중복 창"
       },
-      {tag: "DB", name: "MySQL 8", desc: "부스·예약·GPS 로그·스태프"}
+      {
+        tag: "DB",
+        name: "MySQL · PostgreSQL",
+        desc: "엔티티 31 · 연결 풀 24 · 운영은 ddl-auto validate"
+      }
     ],
     decisions: [
       {
@@ -1498,51 +1994,163 @@ export const RICH_DATA: Record<string, RichProject> = {
         alt: "서버 세션 기반 인증"
       }
     ],
+    // 2026-11-13 저녁: 예전 두 장(StreamController 7채널 · GPS 반경 80m)은 5월 구조 소개였다.
+    // 10월 운영을 버틴 코드 두 장으로 바꿨다. 저장소 HEAD 11aebd6b(2026-10-09) 에서 그대로 옮겼다.
     coreCode: [
       {
-        filename: "StreamController.java",
-        caption: "상태 종류별로 SSE 채널을 분리 (7개 엔드포인트)",
-        highlightLines: [3, 4],
+        filename: "OrderController.java",
+        caption:
+          "같은 부스의 주문은 서버 안에서 한 줄로. 줄 서는 동안엔 DB 연결을 잡지 않고, 15초를 넘기면 503 (L56-L80)",
+        highlightLines: [2, 3, 5, 12],
         lines: [
-          '@RestController @RequestMapping("/api/stream")',
-          "public class StreamController {",
-          '  @GetMapping(value="/congestion", produces=TEXT_EVENT_STREAM_VALUE)',
-          "  public SseEmitter congestion() { return service.subscribeCongestion(); }",
-          "  // + /events /notices /booths /staff /lost-items /reservations",
+          "ReentrantLock lock = boothLocks",
+          "        .computeIfAbsent(boothId, ignored -> new ReentrantLock(true));",
+          "boolean locked = lock.tryLock(ORDER_QUEUE_WAIT_SECONDS, TimeUnit.SECONDS); // 15초",
+          "if (!locked) {",
+          '    throw new ResponseStatusException(SERVICE_UNAVAILABLE, "주문이 몰리고 있어요. …");',
+          "}",
+          "try {",
+          "    // DB 가 잠금 충돌로 되돌린 주문은 통째로 취소된 것이라 다시 넣어도 안전하다.",
+          "    for (int attempt = 1; ; attempt++) {",
+          "        try {",
+          "            return orderService.createOrder(boothId, requestDto);",
+          "        } catch (PessimisticLockingFailureException e) {",
+          "            if (attempt >= 3) throw e;",
+          "        }",
+          "    }",
+          "} finally {",
+          "    lock.unlock();",
           "}"
         ]
       },
       {
-        filename: "BoothService.java",
-        caption: "GPS 로그 기준 반경 80m로 부스 근접 판정",
-        highlightLines: [1],
+        filename: "StreamService.java",
+        caption:
+          "실시간 알림은 DB 커밋 뒤에 보냅니다. 롤백된 주문이 화면에 뜨지 않게 (L157-L166)",
+        highlightLines: [5, 6],
         lines: [
-          "private static final double BOOTH_RADIUS_METERS = 80.0;",
-          "// 방문자 GPS 로그와 부스 좌표 거리 계산 → 반경 안이면 ‘도착’",
-          "boolean near = distance(gps, booth) <= BOOTH_RADIUS_METERS;"
+          "if (TransactionSynchronizationManager.isSynchronizationActive()",
+          "        && TransactionSynchronizationManager.isActualTransactionActive()) {",
+          "    TransactionSynchronizationManager.registerSynchronization(",
+          "            new TransactionSynchronization() {",
+          "        @Override public void afterCommit() {",
+          "            channel.offer(json);",
+          "        }",
+          "    });",
+          "    return;",
+          "}",
+          "channel.offer(json);"
         ]
       }
     ],
     work: [
-      {g: "프론트", items: ["지도·부스·관리 화면", "7개 SSE 채널 구독"]},
-      {g: "백엔드", items: ["SseEmitter 채널 분리", "GPS 지오펜싱·예약"]},
+      {
+        g: "프론트",
+        items: ["지도·부스·관리 화면", "SSE 구독 + 15~20초 폴백 재조회"]
+      },
+      {
+        g: "백엔드",
+        items: [
+          "SSE 채널 8개 · 커밋 뒤 발행 · 20초 하트비트",
+          "주문 직렬화(행 잠금 5곳 · 부스별 락) · 레이트리밋 27규칙"
+        ]
+      },
+      {
+        g: "검증",
+        items: ["서버 테스트 127개 · CI", "축제 전 점검 3회 · 부하 시험"]
+      },
       {g: "모델", items: ["24 feature 학습·비교", "자바↔파이썬 연결·폴백"]},
       {g: "인증", items: ["JWT 관리자/스태프/방문자 분리"]},
       {g: "UX", items: ["PWA·오프라인·다국어·고대비", "카카오/네이버 길찾기"]}
     ],
     challenges: [
       {
-        title: "모바일에서 SSE 연결이 끊기면 현황이 멈췄습니다",
+        title:
+          "주문이 한꺼번에 몰려도 주문번호와 테이블 한도가 겹치지 않게 했습니다",
         problem:
-          "네트워크가 불안정하면 EventSource가 끊긴 채 복구되지 않았습니다.",
+          "주점 QR 주문은 같은 부스로 동시에 들어옵니다. 두 주문이 같은 순간에 이 부스의 다음 주문번호와 이 테이블에 남은 한도를 읽으면 번호가 겹치고 한도가 샙니다. 통신이 끊겨 응답을 못 받은 손님은 버튼을 다시 누릅니다.",
         solution:
-          "끊김 감지 시 재연결하고, 재연결 직후 스냅샷을 다시 받아 상태를 동기화하도록 했습니다.",
+          "두 겹으로 줄을 세웠습니다. DB 에서는 부스 행을 잠그고 읽어(PESSIMISTIC_WRITE) 같은 부스의 주문을 한 번에 하나씩 처리합니다. 그 앞 서버 안에서는 부스마다 공정 락을 두어 최대 15초를 기다리게 했습니다. 줄을 서는 동안에는 DB 연결을 잡지 않으므로 주문이 몰려도 다른 요청이 쓸 연결이 남습니다. 15초를 넘기면 503 과 「잠시 후 다시 눌러 주세요」를 돌려주고, DB 가 잠금 충돌로 되돌린 주문은 통째로 취소된 것이라 세 번까지 다시 넣습니다.\n\n다시 누른 손님은 20초 창으로 받았습니다. 같은 테이블·입금자·메뉴의 주문이 20초 안에 또 오면 새로 만들지 않고 먼저 만든 주문을 돌려줍니다. 주방 쪽은 주문 행을 잠그고 상태를 바꾸며, 상태를 뒤로 돌리는 요청은 409 로 거절합니다. 이 잠금이 실제로 일을 하는지는 축제 뒤에 확인했습니다. 첫날 주문 142건은 번호가 0001~0142 로 겹치지 않았지만, 가장 몰린 순간이 같은 초에 2건이라 잠금이 시험받지 않았습니다. 그래서 실제 PostgreSQL 에서 주문 100건을 스레드 20개로 동시에 넣어 봤습니다. 잠금이 있으면 번호 100개가 빈 번호 없이 나왔고, 잠금만 뺀 대조군은 100건이 전부 저장됐는데 번호가 17종뿐이었습니다(CI 러너에서는 38종). 한 테이블에 20건을 넣으면 한도인 5건만 받았고, 같은 주문을 10번 눌러도 주문은 하나였습니다. 서버 안의 락은 서버 한 대를 전제로 하고, 서버 두 대로 겹쳐 보지는 않았습니다.",
         code: {
-          filename: "reconnect.ts",
+          filename: "OrderService.java",
+          caption:
+            "부스 행을 잠그고 읽은 뒤, 20초 안에 같은 주문이 있으면 그 주문을 돌려줍니다 (L129-L131 · L173-L187)",
+          highlightLines: [2, 6, 7],
           lines: [
-            "es.onerror = () => { es.close(); setTimeout(connect, backoff()); };",
-            "// 재연결 직후 전체 스냅샷 재수신으로 상태 정합성 복구"
+            "@Transactional public BoothOrderDto createOrder(Long boothId, OrderCreateRequestDto dto) {",
+            "    Booth booth = boothRepository.findByIdForUpdate(boothId)   // 부스 행 잠금",
+            "            .orElseThrow(…);",
+            "    …",
+            "    // 통신이 끊겨 응답을 못 받고 다시 누른 경우다.",
+            "    LocalDateTime duplicateSince = LocalDateTime.now()",
+            "            .minusSeconds(DUPLICATE_WINDOW_SECONDS);           // 20초",
+            "    for (BoothOrder existing : activeOnThisTable) { … 같은 입금자 · 같은 메뉴면 return existing … }",
+            "}"
           ]
+        },
+        evidence: {
+          status: "운영 기록 확인 · 축제 뒤 테스트",
+          note: "2026-10-01 「축제 전 보안 · 동접 대비」 점검의 14항목 중 하나입니다(47파일 +1,781/−286). 10.07 주문 내역 CSV 142건에서 번호 중복 0건을 셌고, 2026-11-13 에 OrderConcurrencyTest 4개(Testcontainers PostgreSQL 16)를 더했습니다. 축제 전에 쓴 테스트가 아닙니다. 행 잠금은 주문·좌석·주방 완료·연락처 동의·전화번호 한도 다섯 곳에 있습니다. 코드는 공개 사본 toadsam/AjouFesta 에서 볼 수 있습니다(커밋 기록은 원본에만 있습니다).",
+          url: "https://github.com/toadsam/AjouFesta/blob/main/backend/src/test/java/com/festflow/backend/concurrency/OrderConcurrencyTest.java"
+        }
+      },
+      {
+        title: "SSE가 끊겨도 주문 상태를 다시 읽도록 보완했습니다",
+        problem:
+          "서버 재시작이나 통신 끊김으로 SSE 이벤트를 받지 못하면 주문 화면이 이전 상태에 머물 수 있었습니다.",
+        solution:
+          "2026년 10월 보완에서는 SSE와 별도로 폴백 폴링을 추가했습니다. 주문 상태 화면은 미완료 주문을 20초마다, 운영 콘솔은 15초마다 조건부로 다시 읽고, 화면으로 돌아올 때도 재조회하도록 했습니다. 서버에는 20초 하트비트와 DB 커밋 후 이벤트 발행을 추가했습니다. 하트비트는 연결 확인을 돕는 신호이며, 주문 데이터 갱신은 별도의 조회가 담당합니다.",
+        code: {
+          filename: "OrderStatusPage.jsx",
+          lines: [
+            "const refresh = () => {",
+            '  if (document.visibilityState === "hidden") return;',
+            "  fetchOrder(orderId, key)",
+            "    .then((data) => alive && setOrder(data))",
+            "    .catch(() => {});",
+            "};",
+            "const timer = window.setInterval(refresh, 20000);",
+            'document.addEventListener("visibilitychange", refresh);'
+          ]
+        },
+        evidence: {
+          status: "전후 코드로 확인",
+          // 저장소가 비공개(2026-10)라 커밋 링크는 404 다. 열람 요청 메일로 바꿨다(2026-11-13).
+          note: "주문 화면은 20초, 운영 콘솔은 15초마다 폴백 폴링을 하고, 서버는 20초 하트비트를 보내며 이벤트는 커밋 뒤에 발행합니다. 코드는 공개 사본 toadsam/AjouFesta 에서 볼 수 있습니다(커밋 기록은 원본에만 있습니다).",
+          url: "https://github.com/toadsam/AjouFesta/blob/main/backend/src/main/java/com/festflow/backend/service/stream/StreamService.java#L157-L166"
+        }
+      },
+      {
+        title: "AI 그림 변환이 DB 연결을 붙잡아 주문까지 멈출 수 있었습니다",
+        problem:
+          "소개팅 가입은 사진을 AI 그림으로 바꿉니다. 축제 전 점검에서 이 변환이 트랜잭션 안에서 OpenAI 를 기다리며 DB 연결을 최대 120초 붙잡는 것을 찾았습니다. 가입 10건이 겹치면 연결 풀이 비어 주점 주문까지 멈추는 구조였습니다.",
+        solution:
+          "DB 는 앞뒤로 잠깐씩만 쓰게 바꿨습니다. 짧은 트랜잭션에서 전화번호 행을 잠그고 변환 횟수를 미리 하나 잡은 뒤, 트랜잭션 밖에서 OpenAI 를 부르고, 실패하면 잡아 둔 횟수를 돌려줍니다. 동시 변환은 세마포어로 12개까지만 받고 자리가 없으면 503 을 돌려줍니다. 연결 풀은 10 에서 24 로 올렸습니다(Railway Postgres 최대 100 안쪽). 문자도 같은 원칙이라 커밋 뒤에 보내고, 전송 실패는 로그만 남기고 신청 저장은 그대로 둡니다. 5월에 문자 실패가 500 으로 올라와 신청까지 깨지던 것을 고친 자리입니다.",
+        code: {
+          filename: "AiMatchService.java",
+          caption:
+            "① 짧은 트랜잭션에서 횟수를 잡고 ② 트랜잭션 밖에서 OpenAI ③ 실패하면 되돌립니다 (L315-L349)",
+          highlightLines: [1, 3, 8, 11],
+          lines: [
+            "acquired = imageConversionSlots.tryAcquire(IMAGE_CONVERSION_WAIT_SECONDS, SECONDS);",
+            "if (!acquired) throw new ResponseStatusException(SERVICE_UNAVAILABLE, …);",
+            "int usedCount = transactionTemplate.execute(status -> {      // ① 짧게",
+            "    AiMatchPhoneUsage usage = getOrCreatePhoneUsageForUpdate(phoneNumberKey);",
+            "    usage.recordSuccessfulImageConversion();",
+            "    return usage.getSuccessfulImageConversionCount();",
+            "});",
+            "try {                                                       // ② 트랜잭션 밖",
+            "    String generated = aiImageGenerationService.generateFestivalProfileImage(…);",
+            "} catch (IOException | RuntimeException e) {",
+            "    releaseImageConversion(phoneNumberKey);                 // ③ 되돌림",
+            "    throw e;",
+            "}"
+          ]
+        },
+        evidence: {
+          status: "전후 코드로 확인 · 점검 기록",
+          note: "저장소 docs/festflow/축제-결산.md 「보안과 부하 (10월 1일)」 절에 적은 기록입니다. 같은 점검에서 부스 목록 조회를 쿼리 99개에서 3개로 줄이고 1초 캐시와 gzip 을 넣었습니다. 10월 가입 322명 동안 서버 장애는 없었습니다.",
+          url: "https://github.com/toadsam/AjouFesta/blob/main/backend/src/main/java/com/festflow/backend/service/AiMatchService.java#L315-L349"
         }
       },
       // "모든 상태를 한 채널로 밀면 부하가 컸다" 카드를 뺐다. 부하를 잰 적이 없다
@@ -1552,13 +2160,11 @@ export const RICH_DATA: Record<string, RichProject> = {
         title:
           "혼잡 예측 모델의 실행 실패나 지연이 부스 목록 API에 영향을 줄 수 있었습니다",
         problem:
-          "학습한 RandomForest 는 파이썬 자산인데, 이걸 응답 경로에 그대로 넣으면 파이썬이 없거나 느린 순간 부스 목록 API 전체가 멈춥니다. 축제 당일에는 복구할 시간이 없습니다.",
+          "Java API에서 Python 예측 결과를 사용하려면 실행 환경이나 모델 파일이 없거나 실행이 지연되는 경우에도 응답을 만들 경로가 필요했습니다.",
         solution:
-          "모델을 별도 프로세스로 떼어 내고, 강등 조건 셋(설정 off · 스크립트/모델 파일 없음 · 20초 초과)에서 규칙 기반 점수로 자동으로 내려가게 했습니다. 화면은 어느 쪽이든 같은 라벨을 받습니다.",
+          "처음 구현에 별도 Python 프로세스 실행과 기본 20초의 waitFor 제한을 넣었습니다. 설정 off·파일 없음·실행 실패 등으로 모델 결과가 비면 호출자가 규칙 기반 결과를 만듭니다. 요청 스레드는 프로세스를 기다리므로 비동기 처리나 전체 HTTP 응답의 20초 상한을 보장하는 구현은 아닙니다.",
         code: {
           filename: "PythonCongestionModelService.java",
-          // 줄을 접어 뒀다. 이 카드가 전폭이 되면 코드가 오른쪽 절반(안쪽 514px)에
-          // 들어가는데, 원래 첫 줄은 565px 라 가로 스크롤바가 생겼다.
           lines: [
             "if (!enabled || !Files.exists(script)",
             "    || !Files.exists(model)) return Map.of();",
@@ -1569,6 +2175,11 @@ export const RICH_DATA: Record<string, RichProject> = {
             "// 비어서 돌아오면 AiCongestionService 가",
             "// fallback(…, MODEL_UNAVAILABLE)"
           ]
+        },
+        evidence: {
+          status: "코드로 확인",
+          note: "처음 구현(PythonCongestionModelService.java) 기준의 설명입니다. 그 뒤에 Java 로 옮긴 경로가 추가됐습니다. 코드는 공개 사본 toadsam/AjouFesta 에서 볼 수 있습니다(커밋 기록은 원본에만 있습니다).",
+          url: "https://github.com/toadsam/AjouFesta/blob/main/backend/src/main/java/com/festflow/backend/service/PythonCongestionModelService.java"
         }
       }
     ],
@@ -1578,9 +2189,10 @@ export const RICH_DATA: Record<string, RichProject> = {
       "React Leaflet",
       "PWA",
       "Spring Boot 3",
+      "JPA",
       "JWT",
       "SSE",
-      "MySQL",
+      "MySQL / PostgreSQL",
       "scikit-learn"
     ],
     resultScreens: [
@@ -1605,16 +2217,525 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 말하는데 눌러 들어온 상세가 「컨트롤러 26」이면 카드 쪽이 과장으로 읽힌다.**
     // 게다가 이 프로젝트에서 가장 센 사실은 코드 규모가 아니라 사람이 썼다는 것이다.
     // 코드 규모는 metricsNote 와 아래 구조 절에 그대로 남는다.
+    // 2026-11-13: 타일마다 출처(source)와 보조 한 줄(sub)을 달았다. 값은 metricsNote 와
+    // 같은 곳에서 왔고 새 숫자는 없다. 322명 타일의 작은 막대는 5월 169 → 10월 322.
+    // 2026-11-13 저녁: 타일을 여덟 칸으로 늘렸다(본인 요청 「다 있었으면」). 윗줄 넷은 사람이 쓴 숫자,
+    // 아랫줄 넷은 서버가 버틴 숫자다. 격자가 4열이라 여덟이면 두 줄이 꽉 찬다.
+    // 아랫줄 출처는 전부 저장소 docs/festflow/축제-결산.md 와 README(2026-10-09), 테스트 수는 @Test 를 직접 셈.
     metrics: [
-      {n: "7,078명", l: "10월 축제 주간 방문자"},
-      {n: "142건", l: "10월 주점 첫날 주문"},
-      {n: "322명", l: "10월 소개팅 가입"},
-      {n: "169명", l: "5월 AI Match 등록자"}
+      {
+        n: "7,078명",
+        l: "10월 축제 주간 방문자",
+        sub: "Vercel 집계 10.02–09 · 축제는 10.07–08",
+        source: "Vercel Web Analytics · 10.02–09 · 축제 이틀보다 넓은 창"
+      },
+      {
+        n: "142건",
+        l: "10월 주점 첫날 주문",
+        sub: "테이블 60개 중 55개 · 포장 9건",
+        source: "주점 주문 콘솔 CSV · 10.07 하루분(10.08 CSV 없음)"
+      },
+      {
+        n: "322명",
+        l: "10월 소개팅 가입",
+        sub: "5월 169명 → 10월 322명",
+        mini: {kind: "bars", before: 169, after: 322},
+        source: "소개팅 관리자 통계 · 5월 169명은 AI Match 관리자 화면"
+      },
+      {
+        n: "169명",
+        l: "5월 AI Match 등록자",
+        sub: "신청 424건 · 성사 36건 · 하루 운영",
+        source: "AI Match 관리자 화면 · 2026.05.22 · 활성 115 / 전체 169"
+      },
+      {
+        n: "0건",
+        l: "축제 이틀 서버 장애",
+        sub: "축제 중 배포 5회",
+        source: "축제-결산.md · 10.07–08 · Railway 서버와 Vercel 사이트"
+      },
+      {
+        n: "127개",
+        l: "서버 테스트",
+        sub: "5월 3파일 → 24파일 · 4개는 축제 뒤",
+        mini: {kind: "bars", before: 3, after: 24},
+        source: "저장소 @Test 수 · 2026-11-13 · 푸시마다 CI 에서 실행"
+      },
+      {
+        n: "99 → 3",
+        l: "부스 목록 조회 쿼리",
+        sub: "축제 전 점검 · 1초 캐시와 gzip 도 같이",
+        mini: {kind: "bars", before: 99, after: 3},
+        source: "축제-결산.md 「보안과 부하」 · 2026-10-01 · 쿼리 개수"
+      },
+      {
+        n: "0.8분",
+        l: "주문 → 입금 확인 (중앙값)",
+        sub: "90%가 2.3분 안 · 서빙까지 중앙값 31분",
+        source: "축제-결산.md · 10.07 주문 142건 · 서빙은 기록된 117건"
+      }
     ],
+    // ── 상세 페이지에서 손으로 쓰는 칸 (2026-11-13) ─────────────────────
+    // 공용 틀이 projects.ts 의 5월판 설명("실시간 부스 관리 시스템")과 자동으로 자른
+    // 문장을 쓰던 자리다. 새 사실은 없고, 이 파일과 resume.ts 에 이미 있는 말을 짧게
+    // 다시 썼다. 숫자는 위 metrics · fieldDay · secondRun 과 같은 값이어야 한다.
+    detail: {
+      intro: {
+        show: "10월 가을축제 이틀 동안 주점 QR 주문·소개팅·스태프 화면을 장애 없이 운영했습니다.",
+        bold: "10월 가을축제 이틀 동안 주점 QR 주문·소개팅·스태프 화면을 장애 없이 운영했습니다.",
+        more: [
+          "아주대 축제에서 두 번 실제로 돌린 축제 운영 웹앱입니다. 5월 대동제에서 AI 소개팅을 하루 운영하며 신청 상한과 문자 예산이 없다는 걸 겪었습니다.",
+          "손님은 QR 로 주점 메뉴를 담고 입금을 확인받으며, 소개팅 신청·확정·30분 전 알림·블라인드 채팅까지 앱 안에서 끝납니다.",
+          "운영진은 총괄 화면에서 주점 상태·공지·분실물을 고치고, 공지는 SSE 로 손님 화면에 바로 닿습니다. 스태프 약 55명이 /staff 화면을 썼습니다.",
+          "React(Vite) PWA + Spring Boot 3 · JPA · JWT · SSE. 1인 풀스택이고, 10월 개편은 Claude Code 와 함께 만들었습니다(커밋 130개 중 129개 공동 작성).",
+          "서버 쪽 준비는 축제 엿새 전 한 커밋에 모여 있습니다(2026-10-01, 47파일). 주문 직렬화, 커밋 뒤 SSE 발행과 20초 하트비트, 외부 호출을 트랜잭션 밖으로, 부스 목록 쿼리 99 → 3, 연결 풀 24."
+        ]
+      },
+      highlights: [
+        {
+          show: "문자 244통 실패의 원인을 로그로 찾아, 문자가 실패해도 신청은 저장되게 했습니다.",
+          bold: true,
+          more: "장문 LMS 가 45원씩 나가 오후 3시 57분에 잔액이 0원이 됐습니다. Solapi 메시지 로그 05/22: 시도 435 · 성공 188 · 실패 247(잔액이 바닥난 뒤 연속 244). 10월에는 문자를 DB 커밋 뒤에 보내고, 전송 실패는 로그만 남기며 저장은 그대로 둡니다. 조율 문자는 번호당 2분에 한 통으로 묶었습니다."
+        },
+        {
+          show: "같은 부스로 몰리는 주문을 한 줄로 세워 주문번호와 테이블 한도가 겹치지 않게 했습니다.",
+          more: "DB 행 잠금과 부스별 락(15초 대기 후 503)을 두 겹으로 두고, 20초 안에 다시 누른 주문은 먼저 만든 주문을 돌려줍니다. 첫날 142건이 이 경로로 들어왔습니다. 행 잠금은 주문·좌석·주방 완료·연락처 동의·전화번호 한도 다섯 곳에 있고, 주문 상태를 뒤로 돌리는 요청은 409 입니다. 축제 뒤 실제 PostgreSQL 에서 100건을 겹쳐 보니 잠금이 있으면 번호가 100개, 잠금을 빼면 17개였습니다. 서버 한 대를 전제로 한 설계입니다."
+        },
+        {
+          show: "축제 엿새 전, AI 변환이 DB 연결을 붙잡는 것을 찾아 고쳤습니다.",
+          more: "변환이 연결을 최대 120초 잡던 것을 트랜잭션 밖으로 빼고, SSE 가 끊겨도 화면이 멈추지 않게 20초 하트비트와 폴백 폴링을 넣었습니다. 축제 중 배포는 5회였습니다. 1인당 신청 상한(3건)과 시간 확정·블라인드 채팅으로 5월에 사람이 전화로 하던 조율을 앱이 처리했습니다(부스에서 30쌍 만남). 부하 시험은 2026-11-13 에 스크립트를 새로 써서 다시 쟀습니다. SSE 6,000개 + 가상 방문자 600명에서 초당 1,018건, p95 938ms, 오류 0 이었습니다(로컬, 조회만)."
+        }
+      ],
+      briefs: [
+        {
+          problem:
+            "같은 부스로 주문이 동시에 들어오면 주문번호가 겹치고 테이블 한도가 샜고, 응답을 못 받은 손님은 버튼을 다시 눌렀습니다.",
+          did: "부스 행을 잠그고 읽게 하고, 그 앞에 부스별 락을 두어 DB 연결을 잡지 않은 채 최대 15초 줄을 서게 했습니다. 20초 안에 같은 주문이 또 오면 먼저 만든 주문을 돌려줍니다.",
+          result:
+            "첫날 주문 142건이 이 경로로 들어왔고, 입금 확인까지 중앙값 0.8분이었습니다. 축제 뒤 테스트에서 100건 동시 주문의 번호 중복은 0건, 잠금을 뺀 대조군은 83건이었습니다."
+        },
+        {
+          problem:
+            "서버 재시작이나 통신 끊김으로 SSE 이벤트를 놓치면 주문 화면이 옛 상태에 머물렀습니다.",
+          did: "SSE 와 별도로 폴백 폴링을 넣었습니다. 주문 화면은 미완료 주문을 20초마다, 운영 콘솔은 15초마다 다시 읽고, 화면으로 돌아올 때도 재조회합니다. 서버에는 20초 하트비트와 DB 커밋 뒤 이벤트 발행을 넣었습니다.",
+          result:
+            "이틀 운영 동안 주문 화면이 멈춘 신고가 없었습니다. 하트비트는 연결 확인용이고 데이터 갱신은 조회가 맡습니다."
+        },
+        {
+          problem:
+            "AI 그림 변환이 트랜잭션 안에서 OpenAI 를 기다리며 DB 연결을 최대 120초 잡았습니다. 가입 10건이 겹치면 주문까지 멈추는 구조였습니다.",
+          did: "횟수만 짧은 트랜잭션에서 잡고 OpenAI 는 트랜잭션 밖에서 부르게 했습니다. 동시 변환은 12개로 묶고 연결 풀은 24 로 올렸습니다. 문자는 커밋 뒤에 보냅니다.",
+          result:
+            "가입 322명 동안 서버 장애가 없었습니다. 같은 점검에서 부스 목록 쿼리를 99개에서 3개로 줄였습니다."
+        },
+        {
+          problem:
+            "Java API 가 Python 예측을 부르는데, 실행 환경이나 모델 파일이 없거나 늦어도 부스 목록 응답은 나가야 했습니다.",
+          did: "예측을 별도 Python 프로세스로 띄우고 기본 20초 waitFor 제한을 뒀습니다. 설정 off·파일 없음·실행 실패로 결과가 비면 호출자가 규칙 기반 점수를 만듭니다.",
+          result:
+            "모델이 없어도 목록 API 는 답합니다. 다만 요청 스레드가 프로세스를 기다리므로 전체 HTTP 응답 시간의 20초 상한을 보장하는 구현은 아닙니다."
+        }
+      ],
+      summaries: {
+        second:
+          "코드는 대부분 AI 가 쓰고, 무엇을 만들지와 받아들일지는 직접 정했습니다.",
+        arch: "Spring Boot REST + SSE 8채널 · 행 잠금 5곳 · 레이트리밋 27규칙.",
+        code: "부스별 주문 줄 세우기(OrderController)와 커밋 뒤 SSE 발행(StreamService).",
+        proc: "운영 흐름 분석 → SSE 채널 → 지도·GPS → 권한 → 혼잡 예측, 그리고 5월 운영 뒤 10월 개편."
+      },
+      // 2026-11-14 이야기 배치. 시안 일곱 중 본인이 고른 G(문제였던 것 → 고친 것 → 확인 표).
+      // 새 사실은 없다. 위 fieldDay · challenges · secondRun · scenes 에 있는 말을 표 한 칸 분량으로 다시 묶었다.
+      // 숫자는 그 값들과 같아야 한다.
+      story: {
+        problem: {
+          eyebrow: "문제",
+          title: "축제 정보가 실시간으로 이어지지 않았습니다.",
+          em: "실시간으로 이어지지 않았습니다.",
+          lead: "대학 축제는 수십 개 부스가 동시에 돌아갑니다. 혼잡도, 품절, 공지, 분실물 같은 상태를 함께 볼 도구가 없어서 전화와 메신저로 처리하고 있었습니다.",
+          quote:
+            "관리자, 스태프, 방문자가 같은 현황을 보게 하는 것이 목표였습니다.",
+          after:
+            "그래서 상태 변화는 종류별 SSE 채널로 바로 밀고, 부스는 실제 지도 위 GPS 반경으로 판정하기로 했습니다."
+        },
+        field: {
+          eyebrow: "5월 첫 운영 · 2026.05.22",
+          title: "하루 운영에서 문자 435통 중 244통이 실패했습니다.",
+          em: "244통이 실패했습니다.",
+          lead: "아주대 대동제에서 AI 소개팅(AI Match)을 하루 동안 실제로 돌렸습니다. 기능은 돌아갔는데, 운영에서 상한이 없다는 문제가 먼저 드러났습니다.",
+          facts: [
+            {n: "169명", l: "등록"},
+            {n: "424건", l: "신청"},
+            {n: "36건", l: "성사"}
+          ]
+        },
+        ledger: {
+          eyebrow: "겪고, 고치고, 확인한 여섯 가지",
+          title: "문제 하나에 고친 것 하나, 확인 하나.",
+          em: "고친 것 하나, 확인 하나.",
+          lead: "위 셋은 5월 운영에서 겪은 것이고, 아래 셋은 10월 축제 엿새 전 점검에서 찾은 것입니다. 가로로 한 줄씩 읽으면 됩니다.",
+          groups: [
+            {
+              label: "5월 운영에서 겪은 것 · 2026.05.22",
+              short: "5월에 겪은 것",
+              rows: [
+                {
+                  problem: {
+                    t: "신청에 1인 상한이 없었습니다",
+                    d: "같은 상대 중복만 막아서 한 사람이 여러 명에게 계속 신청할 수 있었습니다. 신청이 하루 424건까지 몰렸고, 신청마다 문자가 나갔습니다."
+                  },
+                  fix: {
+                    t: "1인당 신청 3건",
+                    d: "한 사람이 보낼 수 있는 신청을 3건으로 제한했습니다."
+                  },
+                  check: {
+                    big: "420건",
+                    d: "10월 신청 420건이 한 사람에게 몰리지 않았습니다.",
+                    src: "저장소 AiMatchService · 축제-결산.md"
+                  }
+                },
+                {
+                  problem: {
+                    t: "문자 435통 중 244통이 실패했습니다",
+                    d: "알림 문구에 링크가 붙어 문자가 전부 장문(한 통 45원)으로 나갔고 15:57 에 잔액이 0원이 됐습니다. 전송 실패가 500 에러로 올라와 신청까지 깨졌습니다."
+                  },
+                  fix: {
+                    t: "문자 실패와 신청 저장을 분리",
+                    d: "문자는 DB 커밋 뒤에 보내고, 실패는 로그만 남깁니다. 조율 문자는 번호당 2분에 한 통으로 묶었습니다."
+                  },
+                  check: {
+                    t: "이틀 동안 문자 문제가 없었습니다",
+                    src: "Solapi 로그 실측 (시도 435 · 성공 188 · 잔액 부족 247) · 축제-결산.md"
+                  }
+                },
+                {
+                  problem: {
+                    t: "성사 뒤 일정 조율을 사람이 했습니다",
+                    d: "약속 제안·확정 기능은 축제 사흘 전에 만들었지만 검증할 시간이 없었습니다. 성사 36건은 운영진이 양쪽에 전화해 맞췄습니다. 수락 문자 문구부터 「곧 관리자가 연락해 일정을 조율해드릴게요」였습니다."
+                  },
+                  fix: {
+                    t: "앱 안에서 약속까지",
+                    d: "시간 제안, 확정, 30분 전 알림, 블라인드 채팅을 앱에서 처리했습니다. 축제 전에 운영 매뉴얼로 7개 흐름을 끝까지 돌려 봤습니다."
+                  },
+                  check: {
+                    big: "30쌍",
+                    d: "부스에서 만났습니다. 성사는 97쌍(신청의 23%)이었습니다.",
+                    src: "소개팅 관리자 통계 · 커밋 이력(05/17) · 관리자 설명서"
+                  }
+                }
+              ]
+            },
+            {
+              label: "10월 축제 엿새 전 점검에서 찾은 것 · 2026.10.01",
+              short: "축제 전 점검",
+              intro:
+                "10월에는 주점 QR 주문이 새로 붙어 같은 부스로 주문이 몰립니다. 화면보다 먼저, 몰렸을 때 깨지는 자리를 찾아 고쳤습니다. 한 커밋에 모여 있습니다(47파일).",
+              rows: [
+                {
+                  problem: {
+                    t: "주문이 몰리면 번호가 겹칠 수 있었습니다",
+                    d: "같은 부스로 주문이 동시에 들어오면 주문번호가 겹치고 테이블 한도가 샜습니다. 응답을 못 받은 손님은 버튼을 다시 눌렀습니다."
+                  },
+                  fix: {
+                    t: "주문을 한 줄로",
+                    d: "부스 행을 잠그고 읽고, 그 앞에 부스별 줄(최대 15초)을 세웠습니다. 줄을 서는 동안에는 DB 연결을 잡지 않습니다. 20초 안에 같은 주문이 오면 먼저 만든 주문을 돌려줍니다."
+                  },
+                  check: {
+                    when: "축제 뒤 검증 · 2026-11-13",
+                    big: "100 대 17",
+                    d: "동시 주문 100건의 서로 다른 번호. 잠금이 있으면 100개, 빼면 17개였습니다. 축제 첫날 142건은 번호 중복 0건, 입금 확인까지 중앙값 0.8분이었습니다.",
+                    src: "OrderConcurrencyTest · 10.07 주문 CSV"
+                  },
+                  scene: "주문 한 건이 지나는 길 · 겹치지 않게 세운 줄",
+                  challenge: 0
+                },
+                {
+                  problem: {
+                    t: "AI 그림 변환이 DB 연결을 붙잡았습니다",
+                    d: "소개팅 가입은 사진을 AI 그림으로 바꿉니다. 이 변환이 트랜잭션 안에서 OpenAI 를 기다리며 연결을 최대 120초 잡았습니다. 가입 10건이 겹치면 주점 주문까지 멈추는 구조였습니다."
+                  },
+                  fix: {
+                    t: "외부 호출을 트랜잭션 밖으로",
+                    d: "횟수만 짧은 트랜잭션에서 잡고 OpenAI 는 밖에서 부릅니다. 동시 변환은 12개, 연결 풀은 10 에서 24 로 올렸습니다."
+                  },
+                  check: {
+                    big: "0건",
+                    d: "가입 322명 동안 서버 장애가 없었습니다. 같은 점검에서 부스 목록 쿼리를 99개에서 3개로 줄였습니다.",
+                    src: "축제-결산.md · 2026.10.01 점검"
+                  },
+                  challenge: 2
+                },
+                {
+                  problem: {
+                    t: "SSE 를 놓치면 화면이 옛 상태에 머물렀습니다",
+                    d: "서버 재시작이나 통신 끊김으로 이벤트를 놓치면 주문 화면이 바뀌지 않았습니다."
+                  },
+                  fix: {
+                    t: "끊겨도 다시 읽기",
+                    d: "주문 화면은 20초, 운영 콘솔은 15초마다 다시 읽고, 화면으로 돌아올 때도 읽습니다. 서버에는 20초 하트비트를 넣고 이벤트는 커밋 뒤에 발행합니다."
+                  },
+                  check: {
+                    t: "이틀 동안 주문 화면이 멈춘 신고가 없었습니다",
+                    src: "2026.10.01 점검 커밋"
+                  },
+                  challenge: 1
+                }
+              ]
+            }
+          ]
+        },
+        built: {
+          eyebrow: "새로 만든 화면",
+          title: "주점 주문과 스태프 화면을 새로 붙였습니다.",
+          em: "새로 붙였습니다.",
+          lead: "5월에는 소개팅 하나만 하루 돌렸습니다. 10월에는 총학생회 축제 운영 전체를 이 앱으로 이틀 돌렸습니다.",
+          items: [
+            {
+              t: "주점 QR 주문",
+              d: "테이블 QR 을 찍으면 메뉴를 담고 계좌이체한 뒤 상태 화면에서 조리 상황을 봅니다. 포장 주문도 같은 흐름입니다.",
+              r: "첫날 142건 · 테이블 60개 중 55개 · 포장 9건",
+              src: "/projects/festflow/oct/phone-table.webp"
+            },
+            {
+              t: "주문 콘솔",
+              d: "입금 대기 주문을 들어온 순서로 보여 주고, 새 주문이 오면 2초짜리 알림 소리를 냅니다.",
+              r: "입금 확인까지 중앙값 48초 · 90%가 2.3분 안",
+              src: "/projects/festflow/oct/phone-console.webp"
+            },
+            {
+              t: "메뉴별 요리사 창",
+              d: "축제 전날 밤 주방이 메뉴별로 4곳이라는 걸 듣고, 완료를 주문 단위에서 메뉴 줄 단위로 바꿨습니다.",
+              r: "주방에서 맡은 메뉴만 보여 편했다는 반응",
+              src: "/projects/festflow/oct/phone-kitchen.webp"
+            },
+            {
+              t: "스태프 · 총괄 화면",
+              d: "내 근무와 서로의 상태, 위치, 교대를 폰 하나로 봅니다. 총괄 화면에서 공지를 올리면 SSE 로 손님 화면이 바로 바뀝니다.",
+              r: "스태프 약 55명이 사용",
+              src: "/projects/festflow/oct/phone-admin.webp"
+            }
+          ]
+        },
+        verify: {
+          eyebrow: "검증",
+          title: "잠금을 빼면 주문번호 100개 중 83개가 겹쳤습니다.",
+          em: "83개가 겹쳤습니다.",
+          tag: "축제가 끝난 뒤에 한 검증입니다 · 2026-11-13",
+          lead: "첫날 142건은 번호가 0001부터 0142까지 겹치지 않았습니다. 그런데 가장 몰린 순간이 같은 초에 2건이라, 잠금이 실제로 일을 했는지는 알 수 없었습니다. 그래서 실제 PostgreSQL 에 주문 100건을 동시에 넣어 봤습니다.",
+          scene: "주문 100건을 동시에 넣었을 때 생긴 서로 다른 주문번호",
+          boxes: [
+            {
+              n: "5건",
+              unit: "만 받음",
+              d: "한 테이블에 20건을 동시에 넣으면 한도인 5건만 받고 15건은 거절했습니다. 같은 주문을 10번 눌러도 주문은 하나였습니다."
+            },
+            {
+              n: "127개",
+              unit: "· 푸시마다 CI",
+              d: "서버 테스트는 5월 3파일에서 24파일이 됐습니다. 이 가운데 4개가 축제 뒤에 쓴 동시 주문 테스트이고, 지금은 푸시마다 돕니다."
+            },
+            {
+              n: "1,018건",
+              unit: "/초 · 오류 0",
+              d: "SSE 6,000개와 가상 방문자 600명 조건의 부하 시험입니다. p95 938ms, 요청 61,107건에 오류 0. 로컬에서 조회만 잰 값입니다."
+            },
+            {
+              n: "99 → 3",
+              d: "부스 목록 조회 쿼리 수입니다. 축제 전 점검에서 줄였고 1초 캐시와 gzip 을 같이 넣었습니다."
+            }
+          ],
+          noteLabel: "부하 시험을 두 번 잰 사정"
+        },
+        result: {
+          eyebrow: "결과 · 2026.10.07–08",
+          title: "가을축제 이틀을 서버 장애 없이 운영했습니다.",
+          em: "서버 장애 없이",
+          // 폰 화면만 오린 그림(oct/phone-*.webp, 투명 배경). 배경은 페이지가 연회색으로 칠한다.
+          // 원래 gallery 의 남색 판 합성 그림은 마을 전시실이 쓰므로 그대로 둔다.
+          shots: [
+            {
+              src: "/projects/festflow/oct/phone-admin.webp",
+              t: "총괄 화면",
+              d: "주점 상태, 공지, 공연 일정, 분실물 등록을 한 화면에서 고칩니다. 공지를 올리면 SSE로 손님 화면이 바로 바뀝니다."
+            },
+            {
+              src: "/projects/festflow/oct/phone-table.webp",
+              t: "주점 테이블 고르기",
+              d: "테이블 QR을 찍거나 번호를 골라 주문을 시작합니다. 포장 주문도 같은 흐름이고, 첫날 포장은 9건이었습니다."
+            },
+            {
+              src: "/projects/festflow/oct/phone-match.webp",
+              t: "소개팅 데이트 신청 현황",
+              d: "받은 요청과 보낸 요청을 보는 신청함. 한 사람당 신청은 3건까지입니다."
+            }
+          ],
+          left: [
+            "성사 97쌍에 부스 시간 칸이 44개라 성사의 3분의 2가 부스에서 만나지 못했습니다.",
+            "바쁜 시간대(18~19시, 21시)에 입금 확인부터 서빙까지 30~45분이 걸렸습니다.",
+            "축제 뒤 개인정보 삭제가 수동이고, 전화번호 인증이 없습니다.",
+            "서버 모니터링은 로그뿐이고, CI 는 축제 뒤(2026-11-13)에야 붙였습니다."
+          ]
+        }
+      },
+      // 2026-11-13 줄인 배치 시안. 이 한 장만 켰다. 타일은 사람 둘(방문자 · 주문) + 서버 둘(장애 · 테스트)을
+      // 위에 두고 나머지 넷은 접는다. 대표 장면은 「주문 한 건이 지나는 길」.
+      compact: {
+        // 머리 그림: 소개팅 두 장(1:1) 대신 10월 실제 화면 넷(21:9). 주문 이야기와 맞고 높이가 절반 아래다.
+        // 2026-11-13 밤: 손님 화면 넷은 아래 전/후 슬라이더가 보여 주므로, 머리에는 운영 쪽 셋을 새로 합성했다
+        // (oct/console · kitchen · aimatch 실제 캡처, 연습 서버 데이터).
+        hero: {
+          src: "/projects/festflow/oct/festflow-oct-ops.webp",
+          label: "10월 운영 화면 셋",
+          ratio: "21/9",
+          caption: "연습 서버 데이터"
+        },
+        compareFirst: true,
+        compareTitle: "5월 → 10월 · 화면을 다시 만들었습니다",
+        // 접힌 절 머리. secondRun.title 은 마을 전시실도 읽으므로 이 배치에서만 짧게 바꾼다.
+        secondTitle: "Claude Code 와 같이 만든 방식",
+        tiles: [0, 1, 4, 5],
+        // 2026-11-13 밤, 본인 결정으로 이 페이지에서만 뺐다. 혼잡 예측은 10월에 쓰지 않았고 데이터가
+        // 시뮬레이션이라 카드(색인 3)와 구조 그림(색인 1)을, 5월 구조 설명인 결정표와 1인 개발이라
+        // 의미가 없는 「만든 순서와 맡은 일」 절을 숨긴다. 데이터는 마을 전시실이 쓰므로 남긴다.
+        hide: {challenges: [3], diagrams: [1], decisions: true, process: true},
+        scene: "주문 한 건이 지나는 길 · 겹치지 않게 세운 줄",
+        summaries: {
+          why: "수십 개 부스의 혼잡·품절·공지를 전화와 메신저로 돌리던 것을 한 앱으로.",
+          field: "문자 435통 중 244통이 실패한 날.",
+          retro: "실제 운영에서는 상한이 없는 것이 먼저 문제가 됐습니다.",
+          trouble: "주문 줄 세우기 · SSE 끊김 대비 · DB 연결을 잡던 AI 변환.",
+          result: "손님 · 운영진 · 스태프 화면과 5월 대비 10월의 저장소 수치."
+        }
+      },
+      compareTags: ["2026.05", "2026.10"],
+      // 2026-11-13 밤: 발표 자료 슬라이드(problem.webp) 대신 같은 내용을 카드로 직접 그린다. 문장은 그 슬라이드의 것.
+      problems: {
+        items: [
+          {
+            t: "방문객 정보 부족",
+            d: "부스 혼잡도, 대기 현황, 품절 여부를 현장에 가기 전에는 알기 어려웠습니다."
+          },
+          {
+            t: "운영진 소통 지연",
+            d: "카톡과 구두 전달에 의존해 정보 누락, 전달 지연, 취합 지연이 생겼습니다."
+          },
+          {
+            t: "통합 운영 도구 부재",
+            d: "방문객, 운영진, 관리자의 정보가 한 곳에서 이어지지 않았습니다."
+          }
+        ],
+        core: "축제 정보가 실시간으로 이어지지 않아 방문객과 운영진 모두 불편을 겪고 있었습니다.",
+        source: "중간 기획 발표 자료의 문제 정의 (구현 전에 정리한 것)"
+      },
+      secondTocTitle: "AI 와 만든 방식",
+      bench:
+        "부하 시험은 두 번 쟀습니다. 2026-10-01 축제 전 로컬 측정은 SSE 6,000개 + 가상 방문자 600명에서 초당 1,104건, p95 443ms, 오류 0 이었는데 스크립트를 남기지 않았습니다. 2026-11-13 에 스크립트를 새로 써서 같은 규모로 다시 재니 초당 1,018건, p95 938ms, 오류 0 / 61,107건, SSE 6,000개 유지였습니다. 방문자의 동작을 같게 맞출 수 없어 두 수치를 나란히 비교할 수는 없습니다. 스크립트와 결과 원문은 공개 사본의 scripts/load 에 있습니다.",
+      scenes: [
+        {
+          place: "trouble",
+          kind: "steps",
+          title: "주문 한 건이 지나는 길 · 겹치지 않게 세운 줄",
+          steps: [
+            {
+              t: "QR 주문",
+              d: "POST /api/booths/{id}/orders · IP 당 10분에 600건 한도",
+              alt: {t: "한도 초과", d: "429 와 Retry-After", tone: "fail"}
+            },
+            {
+              t: "부스별 줄",
+              d: "공정 락으로 최대 15초 · DB 연결은 안 잡음",
+              tone: "warn",
+              alt: {
+                t: "15초 넘김",
+                d: "503 「잠시 후 다시 눌러 주세요」",
+                tone: "fail"
+              }
+            },
+            {
+              t: "부스 행 잠금",
+              d: "주문번호 · 테이블 한도를 한 번에 하나씩",
+              alt: {
+                t: "20초 안 같은 주문",
+                d: "새로 만들지 않고 먼저 만든 주문을 돌려줌",
+                tone: "muted"
+              }
+            },
+            {t: "커밋", d: "주문 저장 · 금액은 서버 가격으로 계산"},
+            {
+              t: "커밋 뒤 SSE",
+              d: "운영 콘솔 · 요리사 창에 발행",
+              tone: "ok",
+              alt: {
+                t: "SSE 가 끊겨 있으면",
+                d: "콘솔 15초 · 주문 화면 20초마다 다시 읽음",
+                tone: "muted"
+              }
+            }
+          ],
+          note: "서버 안의 락은 서버 한 대 전제입니다. 여러 대면 DB 행 잠금만 남습니다.",
+          source:
+            "toadsam/AjouFesta · OrderController · OrderService · StreamService"
+        },
+        {
+          place: "trouble",
+          kind: "bars",
+          title: "주문 100건을 동시에 넣었을 때 생긴 서로 다른 주문번호",
+          unit: "개",
+          max: 100,
+          rows: [
+            {
+              label: "부스 행 잠금 있음",
+              value: 100,
+              text: "100개 · 0001~0100",
+              tone: "ok"
+            },
+            {
+              label: "잠금만 뺀 대조군",
+              value: 17,
+              text: "17개 · 83건이 겹침",
+              tone: "fail"
+            }
+          ],
+          note: "축제 뒤(2026-11-13)에 쓴 테스트입니다. 축제 첫날 142건은 같은 초에 최대 2건이라 잠금이 시험받지 않았습니다. 대조군은 서비스 코드를 그대로 두고 잠그고 읽는 조회만 잠그지 않는 조회로 바꿨습니다. 겹치는 정도는 기기마다 달라 제 컴퓨터에서는 14개와 17개, GitHub Actions 러너에서는 38개가 나왔고, 잠금이 있는 쪽은 어디서나 100개였습니다. 스레드 20개, PostgreSQL 16 컨테이너, 서버 한 대 조건입니다. 지금은 푸시마다 CI 에서 이 테스트가 돕니다.",
+          source:
+            "toadsam/AjouFesta OrderConcurrencyTest.java · docs/festflow/동시-주문-시험.md · 2026-10-07 주문 내역 CSV"
+        },
+        {
+          place: "result",
+          kind: "bars",
+          title: "5월에서 10월로 · 저장소에서 센 것",
+          unit: "",
+          rows: [
+            {
+              label: "서버 테스트 파일 · 5월",
+              value: 3,
+              text: "3",
+              tone: "muted"
+            },
+            {
+              label: "서버 테스트 파일 · 10월",
+              value: 23,
+              text: "23 (123개)",
+              tone: "ok"
+            },
+            {
+              label: "부스 목록 쿼리 · 점검 전",
+              value: 99,
+              text: "99",
+              tone: "fail"
+            },
+            {label: "부스 목록 쿼리 · 점검 후", value: 3, text: "3", tone: "ok"}
+          ],
+          note: "2026-10-09 에 센 값입니다. 테스트는 Mockito 단위 테스트 중심입니다. 실제 DB 를 띄우는 동시 주문 테스트 4개와 CI 는 축제 뒤(2026-11-13)에 붙였습니다.",
+          source:
+            "저장소 README 「5월 운영 이후 바뀐 것」 표 · docs/festflow/축제-결산.md · backend/src/test 의 @Test 수(2026-10-09)"
+        }
+      ]
+    },
     metricsNote:
-      '앞의 셋은 2026.10.07–08 가을축제 "바람" 집계입니다(방문자는 Vercel Web Analytics 10.02–09, 주문은 주문 콘솔 CSV, 가입은 소개팅 관리자 통계 · 저장소 docs/festflow/축제-결산.md). 넷째는 2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영한 집계입니다. 관리자 화면 실측(활성 프로필 115 / 전체 169명 · 누적 신청 424 · 성사 36)과 현장 QA 참여 46명. 저장소 규모는 별도입니다: 백엔드 컨트롤러 26 · SSE 채널 7 · 예측 feature 24 (*Controller.java · StreamController.java · congestion_training_profile.json 에서 직접 셌다). 혼잡 예측 모델 정확도는 규칙 기반 0.70 → RandomForest 0.80(macro-F1 0.68 → 0.79)이지만, 운영 경험으로 만든 시뮬레이션 데이터 2,520건 기준이고 실제 축제 데이터로 검증한 값이 아닙니다.',
+      '방문자·주문·가입 수는 2026.10.07–08 가을축제 "바람" 집계입니다(방문자는 Vercel Web Analytics 10.02–09, 주문은 주문 콘솔 CSV, 가입은 소개팅 관리자 통계 · 저장소 docs/festflow/축제-결산.md). 5월 등록자 수는 2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영한 집계입니다. 관리자 화면 실측(활성 프로필 115 / 전체 169명 · 누적 신청 424 · 성사 36)과 현장 QA 참여 46명. 서버 쪽 넷(장애 0건 · 테스트 127개 · 쿼리 99 → 3 · 입금 확인 0.8분)은 저장소 docs/festflow/축제-결산.md 와 README 의 값이고, 테스트 수는 backend/src/test 의 @Test 를 직접 셌습니다(2026-10-09, 단위 테스트 중심 · CI 없음). 저장소 규모는 별도입니다: 백엔드 컨트롤러 26 · SSE 채널 7(5월) → 8(10월) · 예측 feature 24 (*Controller.java · StreamController.java · congestion_training_profile.json 에서 직접 셌다). 혼잡 예측 모델 정확도는 규칙 기반 0.70 → RandomForest 0.80(macro-F1 0.68 → 0.79)이지만, 운영 경험으로 만든 시뮬레이션 데이터 2,520건 기준이고 실제 축제 데이터로 검증한 값이 아닙니다.',
     kpt: {
       keep: [
+        "외부 호출(OpenAI · 문자)을 트랜잭션 밖 · 커밋 뒤로 뺀 것",
         "상태를 종류별 채널로 분리한 설계",
         "모델보다 폴백을 먼저 만든 것",
         "실제 지도 + GPS로 현장성 확보"
@@ -1625,7 +2746,8 @@ export const RICH_DATA: Record<string, RichProject> = {
         "1인당 신청 상한이 없어 신청이 하루 424건까지 몰렸습니다",
         "알림 문자가 장문(LMS)으로 나가 당일 오후 잔액이 바닥났습니다",
         "만남 제안 기능을 검증하지 못해 성사 조율을 사람이 했습니다",
-        "예측 모델의 학습 데이터가 실측이 아니라 시뮬레이션"
+        "예측 모델의 학습 데이터는 시뮬레이션이고 실측이 없음",
+        "CI 는 축제 뒤(2026-11-13)에야 붙였고, 서버 모니터링은 로그뿐입니다"
       ],
       try: [
         "1인당 신청 상한 · 문자 발송 예산 상한",
@@ -1635,7 +2757,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       ]
     },
     learningLead:
-      "혼잡 예측 모델을 별도 프로세스로 떼고 규칙 기반 폴백을 먼저 만들었습니다. 파이썬이 없거나 20초를 넘겨도 부스 목록 API 는 멈추지 않습니다.",
+      "실제 운영에서는 상한이 없는 것이 먼저 문제가 됐습니다. 신청 상한과 문자 예산이 없어 5월 하루에 문자 244통이 실패했고, 10월에는 그 상한들과 외부 호출의 자리를 먼저 고쳤습니다.",
     learning:
       "단방향 푸시라 WebSocket 대신 SSE 를 종류별로 나눴고, 부스 판정은 정확한 좌표 대신 반경 80m 로 잡았습니다. 실제 운영에서는 신청 상한과 문자 예산 상한이 없다는 게 먼저 드러났습니다."
   },
@@ -1665,7 +2787,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 재촬영하는 게 남은 일이고, 그 전까지는 "흐린 진짜"가 "선명한 0"
       // 보다 낫다고 봤다.
       src: "/projects/muscleup/v2/home-lobby.webp",
-      label: "2.0 홈 — 첫 버튼이 「오늘 출석 시작」입니다",
+      label: "2.0 홈 · 첫 버튼이 「오늘 출석 시작」입니다",
       ratio: "2/1"
     },
     // 1.0 발표자료(MuscleUp.pdf) p.24 에 실제 사용자 피드백 4개가 있고,
@@ -1680,16 +2802,16 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 복원본이 맞았다는 확인이기도 하다. 브라우저 주소창만 잘라냈다.
     beforeAfter: {
       before: {
-        label: "1.0 — 둘러보라고 하는 첫 화면",
+        label: "1.0 · 둘러보라고 하는 첫 화면",
         shot: {
           src: "/projects/muscleup/v1/home-1.0.webp",
-          label: "1.0 홈 — 배포된 muscle-up.click 실제 화면",
+          label: "1.0 홈 · 배포된 muscle-up.click 실제 화면",
           ratio: "2/1"
         },
         note: "버튼 둘 다 「받기·둘러보기」다. 오늘 뭘 하라는 말은 없습니다. 아래 숫자 셋은 서버가 아니라 소스에 적혀 있었습니다."
       },
       after: {
-        label: "2.0 — 출석을 첫 동작으로 안내하는 로비",
+        label: "2.0 · 출석을 첫 동작으로 안내하는 로비",
         // 히어로 캡처(home-lobby.webp)를 걸었다가 바꿨다. 원본이 659px 라 이
         // 자리에서 1.12배로만 그려져, 옆의 1.0 캡처(1400px)보다 **자랑하려는
         // 쪽이 더 흐렸다.** 지금은 데스크톱 1428px + 모바일 452px 원본을 한 장에
@@ -1698,7 +2820,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         // 같은 결정을 유지했다는 것.
         shot: {
           src: "/projects/muscleup/v2/lobby-responsive.webp",
-          label: "2.0 로비 — 데스크톱과 모바일",
+          label: "2.0 로비 · 데스크톱과 모바일",
           ratio: "2/1"
         },
         // before 의 note 와 **같은 두 가지**를 짚는다 — 버튼과 숫자.
@@ -1710,7 +2832,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 근거는 전부 소스다 — @RequestMapping 과 @*Mapping 을 센 값.
     resultShot: {
       src: "/projects/muscleup/api-map.svg",
-      label: "백엔드 API 도메인 지도 — 컨트롤러 28개 · 엔드포인트 136개",
+      label: "백엔드 API 도메인 지도 · 컨트롤러 28개 · 엔드포인트 136개",
       ratio: "21/9",
       caption:
         "컨트롤러 28개를 8개 도메인으로 묶었습니다. 크루는 여섯 기능이 컨트롤러 하나에 다 들어 있고, 자랑방은 글과 반응을 둘로 갈랐습니다. 같은 저장소 안에 상반된 두 선택입니다."
@@ -1722,7 +2844,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 손대지 않은 실제 화면이다). 모바일은 452px 원본 그대로 — 늘리면 흐려진다.
       {
         src: "/projects/muscleup/v2/lobby-responsive.webp",
-        label: "2.0 로비 — 데스크톱과 모바일",
+        label: "2.0 로비 · 데스크톱과 모바일",
         ratio: "2/1",
         wide: true,
         caption:
@@ -1730,7 +2852,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         src: "/projects/muscleup/auth-sequence.svg",
-        label: "인증 시퀀스 — 로그인 · 만료 · 재발급",
+        label: "인증 시퀀스 · 로그인 · 만료 · 재발급",
         ratio: "16/10",
         wide: true,
         fit: "contain",
@@ -1743,14 +2865,14 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         src: "/projects/muscleup/v2/lounge.webp",
         fit: "contain",
-        label: "실시간 라운지 — Socket.IO",
+        label: "실시간 라운지 · Socket.IO",
         ratio: "16/10",
         caption:
           "“다른 사람들과 더 많이 소통하고 싶어요” 에 대한 답. 캐릭터 위치와 이모트가 실시간 동기화됩니다. 위치와 이모트 동기화는 별도 Socket.IO 서버에서 처리했습니다."
       },
       {
         src: "/projects/muscleup/v2/character.webp",
-        label: "캐릭터 성장 — 레벨 · 티어 · 진화 단계",
+        label: "캐릭터 성장 · 레벨 · 티어 · 진화 단계",
         ratio: "6/5",
         caption:
           "“내 운동 데이터를 더 자세히 보고 싶어요” 에 대한 답. 화면의 MASTER·Stage 8·Level 85 가 ERD 의 character_profiles 컬럼 그대로입니다."
@@ -1758,7 +2880,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         src: "/projects/muscleup/v2/admin.webp",
         fit: "contain",
-        label: "관리자 콘솔 — 탭 5개",
+        label: "관리자 콘솔 · 탭 5개",
         ratio: "16/12",
         caption:
           "개요·행동 추적·검수/콘텐츠·출석 기록·운영 자동화. analytics_events 와 audit_logs 를 읽는 화면이 이곳입니다. 테이블만 있고 안 보던 것을 2.0 에서 화면으로 세웠습니다."
@@ -1912,9 +3034,8 @@ export const RICH_DATA: Record<string, RichProject> = {
         {
           t: "“AI 답변이 나올 때까지 기다리는 게 길어요”",
           before: "응답을 통째로 기다리는 동기 호출이었습니다",
-          after:
-            "아직 못 고쳤습니다. 스트리밍으로 바꿔야 하는 일이라는 건 나중에 알았습니다",
-          source: "1.0 발표자료 p.24 · 본인 서술"
+          after: "아직 못 고쳤습니다. 스트리밍으로 바꿔야 풀리는 문제입니다",
+          source: "1.0 발표자료 p.24"
         }
       ],
       added: [
@@ -1984,7 +3105,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {t: "인증·운영", d: "JWT access/refresh + Google OAuth · 관리자 CMS"}
     ],
     problem:
-      "운동 기록 외에 회원이 함께 이용할 커뮤니티와 성장 기능을 추가하고자 했습니다. 기록이 캐릭터 성장·랭킹·실시간 커뮤니티로 즉시 연결되는 경험이 필요했고, 자주 바뀌는 실시간 상태를 REST와 분리해야 했습니다.",
+      "운동 기록 외에 회원이 함께 이용할 커뮤니티와 성장 기능을 추가하려고 했습니다. 기록이 캐릭터 성장·랭킹·실시간 커뮤니티로 즉시 연결되는 경험이 필요했고, 자주 바뀌는 실시간 상태를 REST와 분리해야 했습니다.",
     research: {
       quotes: [
         {
@@ -2034,7 +3155,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         //
         // "몰랐다" 에서 끝나면 실력 부족으로 읽히고, "지금은 원인을 안다" 까지
         // 가면 알아낸 사람이 된다. 신입에게는 후자가 훨씬 세다.
-        did: "그땐 방법을 몰라 못 했습니다. 원인은 나중에 알았습니다. 응답을 통째로 기다리는 동기 호출이라, 스트리밍으로 바꿔야 하는 일이었습니다",
+        did: "그땐 방법을 몰라 못 했습니다. 응답을 통째로 기다리는 동기 호출이라, 스트리밍으로 바꿔야 하는 일이었습니다",
         done: false
       }
     ],
@@ -2440,54 +3561,62 @@ export const RICH_DATA: Record<string, RichProject> = {
     challenges: [
       {
         title:
-          "Refresh Token Rotation의 경쟁 상태를 확인하고 single-flight로 변경했습니다",
+          "Refresh Token Rotation의 경쟁 조건을 줄이기 위해 기존 토큰을 유지했습니다",
         problem:
-          "재발급 때 기존 토큰을 폐기하는 로테이션을 넣었더니, 화면 여러 곳이 동시에 401 을 받는 순간 서로를 무효화해 멀쩡히 쓰던 사용자가 로그아웃됐습니다. 병렬 재발급 요청이 서로의 토큰을 무효화하는 문제였습니다.",
+          "같은 refresh 토큰을 가진 두 재발급 요청에서, A가 토큰 값을 바꿔 저장한 뒤 B가 이전 값으로 조회하면 B가 실패할 수 있었습니다. 모든 동시 요청에서 반드시 발생하는 것은 아니며 처리 순서에 따른 문제였습니다.",
         solution:
-          "서버 로테이션을 되돌리고, 클라이언트에서 재발급을 한 번만 내보내게 했습니다(single-flight — refreshing 플래그 + 대기 큐). 동시에 만료를 만나도 재발급은 한 번, 나머지는 큐에서 기다렸다 함께 재시도됩니다. 로테이션이 필요해지면 grace period 나 refresh token family 로 접근할 생각입니다.",
+          "72b38fa → bacef85에서 새 refresh 토큰 생성·기존 레코드 갱신을 제거하고 검증한 기존 토큰을 반환했습니다. 클라이언트의 single-flight(refreshing 플래그와 대기 큐)는 이미 있던 장치로, 같은 페이지에서 재발급 요청을 묶는 역할입니다. 서버 수정과 동시에 새로 도입한 것으로 설명하지 않습니다. 이후 64e41f2에는 로테이션과 유예 처리가 다시 추가됐습니다. 토큰 유지 방식과 후속 로테이션 방식을 시점별로 구분합니다.",
         code: {
-          filename: "RefreshTokenService.java (지금 코드)",
+          filename: "RefreshTokenService.java · bacef85 당시",
           lines: [
             "// Keep refresh token stable to prevent race-condition",
             "// logouts when parallel requests trigger refresh.",
             "return current.getToken();"
           ]
+        },
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "서버 토큰 유지 변경과 기존 single-flight를 분리했습니다. 후속 로테이션 도입을 현재 코드와 혼동하지 않습니다.",
+          url: "https://github.com/toadsam/Ajou_MuscleUp/commit/bacef85146739a5c915177fe12c4e0be26bfe7d2"
         }
       },
       {
         title: "인덱스를 넣고 재 보니, count 쿼리가 남은 병목이었습니다",
-        // 아래 perf 막대가 이 카드의 증거다. 표시가 없으면 카드 세 장을 전부
-        // 지나서 그려져, 실시간 카드가 주장과 근거 사이에 통째로 끼어 있었다.
         perfAfter: true,
         problem:
-          "아래 목록 네 곳이 모두 정렬 페이지네이션인데 정렬·필터 컬럼에 인덱스가 없었습니다. 회원 50명이라 화면에서는 문제가 없습니다. 데이터가 늘어날 때의 응답 시간을 확인하고자 했습니다.",
+          "아래 목록 네 곳이 모두 정렬 페이지네이션인데 정렬·필터 컬럼에 인덱스가 없었습니다. 회원 50명이라 화면에서는 문제가 없습니다. 데이터가 늘어날 때의 응답 시간을 확인하려고 했습니다.",
         solution:
-          "정렬이 사라지고 인덱스를 거꾸로 훑는 계획으로 바뀝니다. 목록 네 개가 668~2472배. 목록 쿼리 외에 페이지 전체 응답 시간도 확인했습니다. Page 는 목록과 함께 count 를 날리는데 인덱스가 그걸 못 고칩니다(57.2 → 57.4ms). 다음 병목은 정렬이 아니라 여기이고, 커서 페이지네이션이나 근사 카운트로 접근할 문제입니다. 인덱스 넷은 21MB 를 씁니다.",
+          "정렬이 사라지고 인덱스를 거꾸로 훑는 계획으로 바뀝니다. 목록 네 개가 668~2472배. 합성 데이터 20만 행·7회 중앙값으로 목록 SQL과 count SQL의 합산 시간을 확인했습니다. 이는 HTTP 요청 전체의 응답 시간이 아닙니다. Page 는 목록과 함께 count 를 날리는데 인덱스가 그걸 못 고칩니다(57.2 → 57.4ms). 다음 병목은 이 count 이고, 커서 페이지네이션이나 근사 카운트로 접근할 문제입니다. 인덱스 넷은 21MB 를 씁니다.",
         code: {
-          filename: "EXPLAIN (ANALYZE) — 자랑방 목록 20만 행 · 7회 중앙값",
+          filename: "EXPLAIN (ANALYZE) · 자랑방 목록 20만 행 · 7회 중앙값",
           lines: [
-            "// 인덱스 없음 — 60.2ms",
+            "// 인덱스 없음 · 60.2ms",
             "Limit  (cost=14445.15..14446.32 rows=10)",
             "  -> Gather Merge  (rows=166666)",
             "     -> Sort  Sort Key: created_at DESC",
             "        -> Parallel Seq Scan on brag_post   // 20만 행 전부",
             "",
-            "// 인덱스 있음 — 0.084ms  (buffers: shared hit=4)",
+            "// 인덱스 있음 · 0.084ms  (buffers: shared hit=4)",
             "Limit  (cost=0.42..2.44 rows=10)",
             "  -> Index Scan Backward using idx_brag_post_created",
             "",
             "// 그런데 같은 페이지의 count 는 57.2ms -> 57.4ms. 안 변한다."
           ]
+        },
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "인덱스 6131a20 및 벤치마크 75092f4. SQL 측정 기록이며 실제 HTTP·운영 성능 재측정은 아닙니다.",
+          url: "https://github.com/toadsam/Ajou_MuscleUp/commit/75092f449839548df22cc52e5b735c939d61e7d5"
         }
       },
       {
-        title: "실시간 분리는 했는데, 몇 명까지 버티는지는 안 재 봤습니다",
+        title: "실시간 분리는 했는데, 몇 명까지 감당하는지는 안 재 봤습니다",
         problem:
           "인덱스는 표당 20만 행 기준으로 측정했지만, 별도로 분리한 실시간 서버의 동시접속 한계는 확인하지 않은 상태였습니다.",
         solution:
-          "동시접속을 25 → 300으로 늘리며 ping:check로 왕복 시간을 측정했습니다. 50명에서 p95 9ms였고, 100명에서는 p95 85ms로 설계 주기 60ms를 넘었습니다. 측정 전 예상보다 낮은 인원에서 지연이 발생했습니다.\n\n150명부터 지연이 커지고 200명에서 p95 1.1초를 기록했습니다. 매 틱 전체 사용자 목록을 모든 사용자에게 보내 전송량이 N²에 비례해 증가했습니다. 다음 개선 과제로 뷰포트 컬링과 변경 데이터만 전송하는 방식을 검토하고 있습니다.",
+          "동시접속을 25 → 300으로 늘리며 ping:check로 왕복 시간을 측정했습니다. 50명에서 p95 9ms였고, 100명에서는 p95 85ms로 설계 주기 60ms를 넘었습니다. 측정 전 예상보다 낮은 인원에서 지연이 발생했습니다.\n\n150명부터 지연이 커지고 200명에서 p95 1.1초를 기록했습니다. 변경이 있을 때 전체 사용자 목록을 모든 사용자에게 보내 전송량이 N²에 비례해 증가했습니다. 당시 개선 과제는 뷰포트 컬링과 변경 데이터 전송이었습니다. 후속 89bd39c에는 100ms 주기로 변경분을 전송하고 변경이 없으면 반환하는 코드가 추가됐습니다. 후속 버전의 p95 개선 수치는 여기서 검증하지 않았습니다.",
         code: {
-          filename: "동시접속 램프 — 16초 × 3회 중앙값 (한 대·루프백)",
+          filename: "동시접속 램프 · 16초 × 3회 중앙값 (한 대·루프백)",
           lines: [
             "// 명     p50      p95  브로드캐스트/s   서버송신   1인수신  1인당B   CPU",
             "   25     2ms      7ms          6.4    2.7MB/s  110KB/s    795   3.0%",
@@ -2501,6 +3630,11 @@ export const RICH_DATA: Record<string, RichProject> = {
             "// 무너져도 CPU 는 안 오른다 = 연산이 아니라 송신에서 막힌다.",
             "// 재현: realtime/ 에서 npm run bench (bench/lounge-ramp.mjs)"
           ]
+        },
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "전체 목록 브로드캐스트와 후속 변경분 전송을 확인했습니다. 과거 부하 측정과 후속 개선 성능은 별개입니다.",
+          url: "https://github.com/toadsam/Ajou_MuscleUp/commit/89bd39c7eaf7c773f2393bdb33d0681296c937a9"
         }
       },
       {
@@ -2518,6 +3652,11 @@ export const RICH_DATA: Record<string, RichProject> = {
             'scores.put("detailDepth", scoreDepth(...));',
             'scores.put("safety", scoreSafety(...));'
           ]
+        },
+        evidence: {
+          status: "코드로 확인",
+          note: "8개 고정 표본·5개 규칙 채점 축의 테스트 추가. API 키가 없으면 건너뛰며 품질 통과나 개선 점수를 뜻하지 않습니다.",
+          url: "https://github.com/toadsam/Ajou_MuscleUp/commit/3380e55cfca9b57238d7d24607bc2f087ba04e97"
         }
       },
       {
@@ -2525,13 +3664,18 @@ export const RICH_DATA: Record<string, RichProject> = {
         problem:
           "쿠키 기반과 Bearer 토큰 기반 환경이 섞여 로그인 유지가 불안정했습니다.",
         solution:
-          "요청 인터셉터에서 access 토큰을 자동 첨부하고 401 시 refresh로 재발급하며, 백엔드가 쿠키·Bearer를 모두 처리하도록 했습니다.",
+          "프론트 e5a5657에서는 Authorization 헤더가 없는 요청에 저장된 access 토큰을 Bearer로 넣고, 401 재발급 경로와 연결했습니다. 백엔드 1b0e214에서는 Bearer를 우선 읽고 없으면 access 쿠키를 읽도록 했습니다. 두 변경은 별도 커밋이며 토큰 추출과 서명·만료 검증은 구분합니다. 기존 Authorization을 보존하므로 모든 재시도에서 새 토큰 사용이 보장된다고 단정하지 않습니다.",
         code: {
           filename: "auth-note",
           lines: [
             "// FE: access 자동 첨부 + 401 → refresh 재시도",
             "// BE: 쿠키/Bearer 둘 다 파싱 → 환경 차이 흡수"
           ]
+        },
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "프론트 e5a5657·백엔드 1b0e214는 별도 변경. 헤더 추출·토큰 검증·재시도 성공을 구분합니다.",
+          url: "https://github.com/toadsam/Ajou_MuscleUp/commit/1b0e2146e7798cd97d91d8bdfa14124273d3319a"
         }
       }
     ],
@@ -2647,7 +3791,15 @@ export const RICH_DATA: Record<string, RichProject> = {
 
   // ════════════════════════════ ACLUB / AjouClub FE (platform · 팀) ══════════
   aclub: {
-    tagline: "CLUB DISCOVERY · FE 3 → 2026 PROJECT LEAD",
+    // ── 2026-11-13 밤. 커밋 기록에 맞춰 전면 수정(docs/BACKEND_EVIDENCE.md 6절).
+    //   예전 상세는 「2026 프론트를 TypeScript 로 다시 짰다 · 커스텀 훅 7개 · 보호 라우트」를 본인 일로 적었다.
+    //   저장소(aClub2026/FE)를 보니 그 코드는 2025-09~11 팀원 JIYOON·YeonWoo choi 가 쓴 것이고
+    //   (useClubs bcb4fd1 · RequireAuth a3173d8 · AdminRoute b898a36 · 필터 6feb64c 전부 JIYOON),
+    //   본인은 2026-01-18 부터 프로젝트장으로 들어와 main 79 커밋 중 23개를 남겼다.
+    //   본인 것으로 확인되는 것만 남겼다: 2025 로그인·API 연동(DB_Project_FE 48/310 커밋, 머지 PR 9건),
+    //   2026 배포 워크플로 수리(9회 연속 실패 → 성공) · 출시 당일 필터 폴백 · 모집 종류 칩 · 상세 404,
+    //   그리고 커밋에 안 남는 출시·홍보·문의 응대. 문장은 본인이 쓴 저장소 README(2026-09-07)를 따랐다.
+    tagline: "CLUB DISCOVERY · 2025 FE MEMBER → 2026 PROJECT LEAD",
     // 예전 히어로(`aclub.webp`)는 **2025 옛 사이트**(ACM 로고, 소학회 카테고리
     // 상단 배치)였다. 내가 총괄한 2026 디자인이 페이지에 한 장도 없었던 셈이다.
     // 2026 사이트는 폰 폭 앱이라 캡처가 세로로 길다 — 세 장을 한 장(16/9)에
@@ -2655,7 +3807,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 2025 화면은 페이지에서 뺐다. GitHub (2025 · 팀원) 링크가 그 몫이다.
     heroImage: {
       src: "/projects/aclub-2026-screens.webp",
-      label: "2026 실제 화면 — 홈 · 모집공고 목록 · 모집공고 상세",
+      label: "2026 실제 화면 · 홈 · 모집공고 목록 · 모집공고 상세",
       ratio: "16/9"
     },
     // 「흩어진 모집 공고」를 찍어 둔 자료가 없어 이미지 자리를 뺐다(2026-09-07).
@@ -2681,7 +3833,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 어떻게 모았나" 를 말하므로, 여기는 **그 이름들이 어디서 왔는지**(저장소
       // 실측)만. 예전엔 부제·이 캡션·SVG 발치 줄이 같은 문장 세 벌이었다.
       caption:
-        "그림의 이름은 전부 저장소 실측입니다. 도메인 커스텀 훅 6+ · 보호 라우트 2(RequireAuth · AdminRoute) · axios 모듈 4(auth · club · recruitment · user)."
+        "2026 저장소의 구조입니다. 이름은 전부 저장소 실측이고(커스텀 훅 · 보호 라우트 2 · axios 모듈), 이 구조는 2025년 9~11월에 팀원들이 TypeScript 로 다시 짜며 만든 것입니다. 저는 그 위에서 2026년 1월부터 고쳤습니다."
     },
     gallery: [
       // ⚠️ 이 갤러리의 비율은 **원본 픽셀 그대로** 적는다. 셋 다 16/10 으로
@@ -2714,14 +3866,14 @@ export const RICH_DATA: Record<string, RichProject> = {
       //    맞는다 — 전폭 하나 + 반 칸 셋이면 마지막 한 장이 혼자 남는다.
       {
         src: "/projects/op/aclub-ga4-channels.webp",
-        label: "유입 채널과 트래픽 분포 — GA4 · 2026.02.16–03.15",
+        label: "유입 채널과 트래픽 분포 · GA4 · 2026.02.16–03.15",
         ratio: "1502/840",
         caption:
-          "28일 중 세션 5,311건이 사실상 3월 1~5일에 몰렸습니다. 유입은 Referral 54.8% + Direct 39.3% = 94%, 검색은 3.8%. 모집 기간에 링크로 들어오는 이용자가 많아, 해당 기간의 탐색 기능을 우선 개선했습니다."
+          "28일 중 세션 5,311건이 사실상 3월 1~5일에 몰렸습니다. 유입은 Referral 54.8% + Direct 39.3% = 94%, 검색은 3.8%. 모집 기간에 링크로 들어오는 이용자가 대부분이라, 그 기간에 화면이 깨지지 않는 쪽에 시간을 썼습니다."
       },
       {
         src: "/projects/op/aclub-ga4-home.webp",
-        label: "올해 누계 — GA4 · 2026.01.01–03.15",
+        label: "올해 누계 · GA4 · 2026.01.01–03.15",
         ratio: "790/368",
         caption:
           "위 지표 타일의 활성 사용자 3,500과 조회수 8.8만이 나온 화면(2026.01.01–03.15 누계)."
@@ -2732,10 +3884,10 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 건지 흐려진다.
       {
         src: "/projects/op/aclub-ga4-cohort.webp",
-        label: "주차별 재방문 유지율 — GA4 · 3월 14일에 끝나는 6주",
+        label: "주차별 재방문 유지율 · GA4 · 3월 14일에 끝나는 6주",
         ratio: "552/352",
         caption:
-          "1주째 5.4% · 2주째 4.3% · 4주째 1.8%. 이 표를 보고 재방문을 끌어올리는 대신, 애초에 한 번 오는 서비스라는 쪽으로 판단을 바꿨습니다."
+          "1주째 5.4% · 2주째 4.3% · 3주째 3.2% · 4주째 1.8%. 이 표를 보고 재방문 기능은 만들지 않기로 했습니다."
       },
       // 캡션이 "기존 모집 채널(에타·카톡)" 이었다. 그런데 이 그림에 실제로
       // 찍혀 있는 건 흩어진 채널이 아니라 **만든 뒤에 직접 알리고 섭외한
@@ -2749,14 +3901,14 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 둘 다 세로로 긴 편이라 같은 줄에 두는 게 격자가 덜 삐뚤다.
       {
         src: "/projects/op/aclub-launch-replies.webp",
-        label: "출시 저녁 — 회장들의 답장",
+        label: "출시 저녁 · 회장들의 답장",
         ratio: "1350/626",
         caption:
           "등록을 요청한 동아리 회장들에게서 그날 저녁 답장이 이어졌습니다. 직함만 남기고 개인 이름과 사진은 가렸습니다."
       },
       {
         src: "/projects/op/aclub-launch-post.webp",
-        label: "출시 저녁 — 에브리타임 게시글 18:44 · 문의 19:08 · 답변 19:41",
+        label: "출시 저녁 · 에브리타임 게시글 18:44 · 문의 19:08 · 답변 19:41",
         // 위는 게시글, 아래는 그날 댓글 세 줄. 게시글 본문 끝의 안내문은 잘랐다 —
         // 19:41 운영진 답변과 같은 글이라, 둘 다 있으면 하나가 베낀 것처럼 읽힌다.
         // 공감·스크랩 수는 2026-09-04 에 페이지에서 읽은 값(캡처는 없음).
@@ -2766,10 +3918,10 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         src: "/projects/op/aclub-eta.webp",
-        label: "직접 알리고 섭외한 기록",
+        label: "2025년 3월 첫 출시 · 직접 알리고 섭외한 기록",
         ratio: "1200/796",
         caption:
-          "에브리타임에 직접 알려 스크랩 111·댓글 12를 받았고, 동아리 회장에게 등록을 요청해 승낙을 받았습니다."
+          "2025년 첫 출시 때의 캡처입니다(댓글 날짜 2025-03-04). 에브리타임 글에 공감 60 · 댓글 12 · 스크랩 111 이 찍혀 있고, 소학회 회장에게 등록을 요청해 승낙을 받았습니다."
       }
       // `aclub-detail.webp`(동아리 상세·저장)를 여기서 뺐다. 네 장이면 2칸
       // 격자에서 마지막 한 장이 혼자 남아 오른쪽 절반이 빈다. 그리고 넷 중
@@ -2786,13 +3938,16 @@ export const RICH_DATA: Record<string, RichProject> = {
     tldr: [
       {
         k: "무엇을",
-        v: "동아리 탐색·모집을 한 곳에서 하는 플랫폼 프론트엔드 (aClub)"
+        v: "동아리 탐색·모집을 한 곳에서 하는 아주대 플랫폼 (aClub)"
       },
       {k: "왜", v: "동아리 정보가 여러 채널에 흩어져 탐색·지원이 번거로움"},
-      {k: "결과", v: "탐색→상세→지원까지 한 흐름으로 처리하는 FE 완성"},
+      {
+        k: "결과",
+        v: "2026년 3월 모집 시즌에 출시. 75일 동안 활성 사용자 3,500명(GA4)"
+      },
       {
         k: "내 역할",
-        v: "2025 프론트 3인 중 1인 → 2026 프로젝트장 · 프론트 리드"
+        v: "2025 프론트 3인 중 1인(로그인·API 연동) → 2026 프로젝트장(출시·홍보·운영, 배포 수리와 출시 전후 수정)"
       }
     ],
     // live(aclub.co.kr)는 뺐다 — 모집이 끝나 도메인을 닫았다(2026-09-08, 404).
@@ -2805,21 +3960,27 @@ export const RICH_DATA: Record<string, RichProject> = {
       who: "서비스에 등록한 한 동아리 회장"
     },
     meta: [
-      // 이력서 카드와 같은 값. 2026.03 동아리 박람회까지 운영하고 손을 뗐다.
       {label: "기간", value: "2025.01 ~ 2026.03 (2025 팀원 → 2026 프로젝트장)"},
-      {label: "팀", value: "프론트엔드 3인 (본인 포함)"},
-      // Core Summary 의 「내 역할」(직함: 팀원 → 프로젝트장)과 같은 말을 두 번
-      // 하고 있었다. 여기는 **맡은 화면과 코드**만 적는다.
+      {
+        label: "팀",
+        value:
+          "2025 프론트 3인 · 2026 프론트 3인 + 백엔드 (본인은 2026.01 합류)"
+      },
       {
         label: "역할",
         value:
-          "탐색·필터·상세 화면 · 데이터 훅 · 보호 라우트 (2026 부터 개편 총괄)"
+          "2025 로그인·회원정보·API 연동 → 2026 프로젝트장: 출시 일정·홍보·문의 응대 · 배포 수리 · 출시 전후 수정"
       },
       {
         label: "스택",
         value: "React · TypeScript · Vite · Tailwind · React Router · Axios"
       },
-      {label: "배포", value: "GitHub Pages (커스텀 도메인 · CNAME)"}
+      {label: "배포", value: "GitHub Pages (커스텀 도메인 · CNAME)"},
+      {
+        label: "코드",
+        value:
+          "2026 TypeScript 저장소는 2025.09~11 팀원 둘이 작성. 본인 커밋은 main 79개 중 23개"
+      }
     ],
     heroScreen: {
       title: "ajouclub/explore",
@@ -2849,20 +4010,20 @@ export const RICH_DATA: Record<string, RichProject> = {
     problem:
       "동아리 정보는 에브리타임·인스타·단톡 등 여러 채널에 흩어져 있어 학생들이 원하는 동아리를 탐색하고 지원 현황을 관리하기 어려웠습니다.",
     research: {
-      // 「FE 설계 관점」·「학생 사용자 관점」 인용 둘을 뺐다 — 남의 말이 아니라 내
-      // 생각을 따옴표에 넣은 것이었다. 흩어진 채널 이야기는 problem 이, 훅 설계는
-      // Hypothesis 와 Troubleshooting 첫 카드가 이미 같은 말을 한다.
       quotes: [],
-      stat: {n: "6+", l: "useClubs·useRecruitments 등 재사용 데이터 훅 수"}
+      stat: {
+        n: "9",
+        l: "연속으로 실패하던 배포 실행 (2026-01-13 ~ 02-01, GitHub Actions 기록)"
+      }
     },
     hypothesis:
-      "탐색·필터·상세·지원을 한 흐름으로 묶고, 데이터 요청은 도메인별 커스텀 훅으로 모읍니다. 학생은 한 곳에서 동아리를 찾고 팀은 화면을 병렬로 만들 수 있습니다.",
+      "탐색·필터·상세·지원을 한 흐름으로 묶으면 학생은 한 곳에서 동아리를 찾습니다. 이용은 모집 기간 며칠에 몰릴 것이므로, 그 며칠 동안 화면이 깨지지 않는 것이 먼저라고 봤습니다.",
     process: [
-      {t: "IA 설계", d: "화면 흐름"},
-      {t: "공통 컴포넌트", d: "Card·Chip·Field"},
-      {t: "데이터 훅", d: "useClubs 등"},
-      {t: "화면 구현", d: "탐색·상세·마이"},
-      {t: "배포", d: "GitHub Pages"}
+      {t: "2025.01~02", d: "로그인·회원정보·API 연동 (팀원)"},
+      {t: "2025.09~11", d: "팀원들이 TypeScript 로 재작성"},
+      {t: "2026.01", d: "프로젝트장 합류 · 404·정렬 수정"},
+      {t: "2026.02.01", d: "배포 워크플로 수리"},
+      {t: "2026.03.03", d: "출시 · 필터 폴백 · 문의 응대"}
     ],
     architecture: [
       {
@@ -2886,117 +4047,177 @@ export const RICH_DATA: Record<string, RichProject> = {
         desc: "Card · Chip · Field · Modal 재사용"
       }
     ],
+    // 2026-11-13 밤: 예전 표(Vite · TypeScript · 커스텀 훅 · 보호 라우트)는 팀이 2025 에 고른 것이라 뺐다.
+    // 아래 넷은 본인 커밋과 저장소 README 「결정과 근거」에서 확인되는 것이다.
     decisions: [
       {
-        area: "빌드",
-        pick: "Vite",
-        why: "빠른 HMR·경량",
-        alt: "Create React App"
+        area: "필터",
+        pick: "서버가 실패하면 전체를 받아 화면에서 거름",
+        why: "출시 당일 오후 필터 API 가 조합에 따라 가끔 실패. 학생이 들어오는 기간은 3월 첫 주뿐",
+        alt: "백엔드 수정을 기다리기(맞는 답이지만 그날 저녁 출시를 못 함)"
       },
       {
-        area: "타입",
-        pick: "TypeScript",
-        why: "여러 명이 만지는 화면의 안정성",
-        alt: "JavaScript"
+        area: "모집 칩",
+        pick: "모집 상태와 모집 종류를 다른 축으로",
+        why: "상시·수시 둘 다 마감일이 없어 전부 「상시모집」으로 찍힘",
+        alt: "칩 문구만 고치기(원인인 한 축 설계가 남음)"
       },
       {
-        area: "데이터",
-        pick: "도메인 커스텀 훅",
-        why: "요청 로직 재사용·화면 병렬 개발",
-        alt: "컴포넌트마다 fetch(중복)"
+        area: "배포",
+        pick: "알림·검증 스텝이 배포 결과를 뒤집지 않게",
+        why: "배포는 성공하는데 Discord 알림 스텝의 if 가 secrets 를 읽다 워크플로가 실패",
+        alt: "알림 스텝 삭제"
       },
       {
-        area: "권한",
-        pick: "RequireAuth/AdminRoute",
-        why: "라우트 단위 보호를 명시적으로",
-        alt: "화면 안에서 분기(누락 위험)"
+        area: "재방문",
+        pick: "올리지 않기로",
+        why: "1주 재방문 5.4% 는 모집 닷새에 한 번 오는 서비스의 성격",
+        alt: "리텐션 기능 추가"
       }
     ],
+    // 2026-11-13 밤: useClubs 훅 원형과 RequireAuth 는 팀원 코드라 뺐다. 본인 커밋 두 개로 바꿨다.
     coreCode: [
       {
-        filename: "useClubs.ts",
-        caption: "동아리 데이터 요청을 훅으로 모아 화면에서 재사용",
-        highlightLines: [2],
+        filename: "useClubs.ts · 2026.03.03",
+        caption:
+          "필터 API 가 던지면 전체 목록을 받아 같은 조건으로 화면에서 거릅니다. 출시 당일 16:14 커밋 (L68-L84)",
+        highlightLines: [5, 8, 9],
         lines: [
-          "export function useClubs(params: ClubQuery) {",
-          "  // axios 모듈 + 로딩/에러 상태를 한곳에 캡슐화",
-          "  const [data, setData] = useState<Club[]>([]);",
-          "  useEffect(() => { club.list(params).then(setData); }, [params]);",
-          "  return data;",
+          "try {",
+          "  response = await axios.get<ApiResponse<ApiClubData[]>>('/api/club/filter', {",
+          "    params: apiParams,",
+          "  });",
+          "} catch {",
+          "  // Some filter combinations intermittently fail on the filter endpoint.",
+          "  // Fallback to /all and apply identical filtering on the client.",
+          "  const allResponse = await axios.get<ApiResponse<ApiClubData[]>>('/api/club/all');",
+          "  return applyClientFilters(allResponse.data.data, filters).map(mapApiClubToClub);",
           "}"
         ]
       },
       {
-        filename: "RequireAuth.tsx",
-        caption: "로그인 여부로 보호 라우트 처리",
+        filename: "deploy.yml · 2026.02.01",
+        caption:
+          "스텝의 if 에서는 secrets 를 읽을 수 없습니다. env 로 한 번 받아 비교하게 바꿨습니다",
+        highlightLines: [2, 3, 4],
         lines: [
-          "function RequireAuth({ children }) {",
-          "  const { user } = useAuth();",
-          "  return user ? children : <Navigate to='/login' replace />;",
-          "}"
+          "- if: ${{ failure() && secrets.DISCORD_WEBHOOK_URL != '' }}",
+          "+ if: ${{ failure() && env.DISCORD_WEBHOOK_URL != '' }}",
+          "+ env:",
+          "+   DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}"
         ]
       }
     ],
     work: [
-      {g: "탐색", items: ["탐색·필터·정렬 화면", "동아리 카드 컴포넌트"]},
-      {g: "상세/지원", items: ["모집 상세·지원 바", "마이페이지 지원 현황"]},
-      {g: "데이터", items: ["도메인 커스텀 훅", "axios API 모듈"]},
-      {g: "공통", items: ["Card·Chip·Field 공통 컴포넌트", "보호 라우트"]}
+      {
+        g: "2025 팀원",
+        items: [
+          "로그인 · 회원정보 · 구글 로그인 화면 · 토큰 재발급",
+          "동아리 · 모집공고 API 연동 · 모집공고 상세"
+        ]
+      },
+      {
+        g: "2026 코드",
+        items: [
+          "배포 워크플로 수리 · 필터 폴백",
+          "모집 종류 칩 · 종류별 상세 조회 · 최신순 정렬"
+        ]
+      },
+      {
+        g: "2026 프로젝트장",
+        items: [
+          "출시 일정 조율 · 동아리 회장 섭외",
+          "에브리타임 게시 · 문의 응대"
+        ]
+      },
+      {
+        g: "판단",
+        items: ["GA4 로 이용 패턴 확인", "재방문 대신 모집 닷새에 집중"]
+      }
     ],
+    // 2026-11-13 밤: 예전 첫 두 장(커스텀 훅 · 보호 라우트)은 팀원 JIYOON 의 커밋이라 뺐다.
+    // 본인 커밋 세 건으로 바꿨고, 재방문 카드에서 6feb64c(역시 JIYOON, 2025-11)를 근거로 든 문장을 지웠다.
     challenges: [
       {
-        title: "여러 화면이 같은 데이터를 제각각 불렀습니다",
+        title: "배포가 아홉 번 연속 실패했는데, 실패한 건 배포가 아니었습니다",
         problem:
-          "탐색·상세·마이페이지가 동아리 데이터를 각자 fetch해 로직이 중복되고 상태가 어긋났습니다.",
+          "CI/CD 는 2025년 11월에 팀원이 만들어 둔 것이었고, 저장소를 조직으로 옮긴 뒤 워크플로가 계속 실패했습니다. 2026년 1월 13일부터 2월 1일까지 실행 아홉 번이 전부 실패였습니다.",
         solution:
-          "도메인별 커스텀 훅(useClubs·useRecruitments 등)으로 요청·상태를 캡슐화해 화면들이 같은 훅을 재사용하게 했습니다."
+          "세 가지가 겹쳐 있었습니다. gh-pages 브랜치에 쓸 권한(permissions: contents: write)이 없었고, 배포 검증 스텝이 옮기기 전 개인 계정 주소를 보고 있었고, 마지막 Discord 알림 스텝의 if 가 secrets 를 직접 읽고 있었습니다. 셋째가 핵심이었습니다. 배포 자체는 성공하는데 알림 스텝 때문에 워크플로가 실패로 끝났습니다.\n\n셋째는 두 번 잘못 짚었습니다. 처음엔 조건을 추가만 했고, 다음엔 ${{ }} 로 감싸면 되는 줄 알았습니다. GitHub Actions 는 스텝의 if 에서 secrets 를 읽지 못합니다. env 로 한 번 받아 env 값을 비교하게 바꾸자 통과했습니다(세 커밋이 3분 사이). 검증 스텝에는 continue-on-error 를 붙였습니다. 알림이나 검증이 실패해도 배포 결과는 바뀌지 않게 했습니다.",
+        code: {
+          filename: "deploy.yml",
+          lines: [
+            "- if: ${{ failure() && secrets.DISCORD_WEBHOOK_URL != '' }}",
+            "+ if: ${{ failure() && env.DISCORD_WEBHOOK_URL != '' }}",
+            "+ env:",
+            "+   DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}"
+          ]
+        },
+        evidence: {
+          status: "전후 코드로 확인 · Actions 기록",
+          note: "GitHub Actions 실행 기록: 2026-01-13 ~ 02-01 13:08 까지 9회 failure, 02-01 13:09 커밋부터 success, 이후 main 푸시 8회 전부 success. CI/CD 를 처음 만든 것은 팀원입니다.",
+          url: "https://github.com/aClub2026/FE/commit/31c4188"
+        }
       },
       {
-        title: "로그인/관리자 화면 접근 제어가 흩어졌습니다",
-        problem: "권한 체크를 화면마다 넣다 보니 누락이 생겼습니다.",
+        title: "출시 당일 오후, 동아리 필터가 조합에 따라 실패했습니다",
+        problem:
+          "2026년 3월 3일 오후, 동아리 목록 필터가 조합에 따라 가끔 실패했습니다. 고칠 곳은 백엔드의 필터 API 입니다. 그런데 그날 저녁 6시대에 에브리타임에 글을 올리기로 백엔드 담당과 날짜를 맞춰 둔 상태였고, 학생이 들어오는 기간은 3월 첫 주뿐이었습니다.",
         solution:
-          "RequireAuth·AdminRoute 보호 라우트로 라우팅 계층에서 한 번에 제어했습니다."
+          "필터 API 가 예외를 던지면 전체 목록을 받아 화면에서 같은 조건으로 거르게 했습니다(16:14 커밋). 같은 커밋에서 「모집 여부」 필터는 화면에서 뺐습니다. 서버와 화면의 판정이 어긋나 틀린 결과가 나오는 항목이었습니다. 18:04 에 동아리 로고와 신청 문구를 한 번 더 고치고 18:44 에 글을 올렸습니다.\n\n단점이 세 가지 있습니다. 필터를 걸 때마다 동아리 전량을 받습니다(2026년 3월 규모에서는 괜찮지만 동아리가 늘면 감당하지 못합니다). 서버 필터 버그는 그대로 남았습니다. 같은 조건 판정이 프론트와 백엔드 두 곳에 생겼습니다. 임시 방편인 걸 알고 넣었고 아직 임시 방편입니다.",
+        code: {
+          filename: "useClubs.ts",
+          lines: [
+            "} catch {",
+            "  // Fallback to /all and apply identical filtering on the client.",
+            "  const allResponse = await axios.get<ApiResponse<ApiClubData[]>>('/api/club/all');",
+            "  return applyClientFilters(allResponse.data.data, filters).map(mapApiClubToClub);",
+            "}"
+          ]
+        },
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "2026-03-03 16:14 커밋(useClubs.ts +30/−5 · ClubFilterPage.tsx −20)과 18:04 커밋입니다. 훅 자체(useClubs)는 2025-09 팀원이 만든 것이고 제가 넣은 것은 폴백과 applyClientFilters 입니다.",
+          url: "https://github.com/aClub2026/FE/commit/470135d8fc8993fe199910dc292ed9e6a81cfa3d"
+        }
       },
-      // 「2026 프로젝트장」의 근거. 앞의 두 카드는 2025 팀원 시절이고, 이 페이지
-      // 어디에도 총괄로서 한 일이 없었다 — 심사자가 "그래서 장으로서 뭘 했죠"
-      // 라고 물으면 답이 없는 구조였다. 여기 적힌 것은 전부 갤러리 캡처에 있다:
-      // 에타 게시 시각 18:44 · 실시간 인기 글 · 인앱 브라우저 안내문은
-      // aclub-launch-post.webp, 회장들의 답장은 aclub-launch-replies.webp.
-      // 답장 수는 적지 않는다 — 화면에 보이는 것보다 많다고 주장할 근거가 없다.
-      // 문의 시각(19:08 댓글 → 19:41 운영진 답변)은 댓글창 캡처에서 읽은 것이다.
-      // 그 캡처는 리포 밖(채팅으로만 받음)이라 갤러리에는 없다.
       {
-        title: "2026년 개편 후 모집공고 등록과 서비스 홍보를 진행했습니다",
+        title: "수시모집으로 올린 동아리가 전부 「상시모집」으로 찍혔습니다",
+        problem:
+          "모집 상태 칩이 마감일 계산 결과 하나만 받고 있었습니다. 상시모집도 수시모집도 마감일이 없어 둘 다 같은 값으로 떨어졌고, 칩은 그 값을 보고 무조건 「상시모집」이라고 적었습니다.",
+        solution:
+          "버그라기보다 축을 하나로 본 설계였습니다. 모집 상태(기간이 얼마 남았나)와 모집 종류(상시냐 수시냐)는 다른 축입니다. 모집 종류를 목록·카드·상세 네 화면을 지나 칩까지 넘기고, 칩은 마감일이 없을 때 넘겨받은 종류를 그대로 적게 했습니다. 칩 한 줄을 고치려고 파일 8개를 고쳐야 했습니다. 같은 시기에 동아리 상세가 404 로 떨어지던 것도 고쳤습니다. 중앙동아리와 소학회의 조회 주소가 달라, 종류를 알면 그 주소만 부르게 했습니다.",
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "2026-02-27 커밋(8파일 +44/−40, PR #3)과 2026-01-25 커밋(useClubDetails.ts)입니다. PR 은 세 건 모두 제가 열고 제가 머지했습니다.",
+          url: "https://github.com/aClub2026/FE/commit/7706ca4"
+        }
+      },
+      {
+        title: "출시 저녁, 모집공고 등록과 홍보와 문의를 직접 맡았습니다",
         problemLabel: "[LAUNCH]",
         solutionLabel: "Action",
         problem:
-          "개편을 끝낸 3월, 사이트 개편을 마쳤지만 모집공고가 등록되지 않은 상태였습니다. 모집공고 등록 요청과 학생 대상 서비스 안내가 필요했습니다. 프로젝트장으로서 개발 일정 조율과 동아리 모집공고 등록 요청, 서비스 홍보를 맡았습니다.",
+          "3월 초 사이트는 열렸지만 모집공고가 등록되지 않은 상태였습니다. 프로젝트장으로서 출시 일정 조율과 동아리 모집공고 등록 요청, 서비스 홍보를 맡았습니다.",
         solution:
-          "동아리 회장 전원에게 직접 연락해 등록을 요청하고, 백엔드 팀원과 출시 일정을 맞췄습니다. 에브리타임 글은 사람이 몰리는 저녁 6시대에 올리고(03/03 18:44) 카톡·인스타로 같이 알렸습니다. 그날 밤 게시글이 실시간 인기 글에 올랐고, 동아리 회장들에게 등록 관련 답변을 받았습니다.\n\n문의도 직접 받았습니다. 올린 지 24분 만에 「로그인이 안 돼」 댓글이 달렸습니다. 에타 앱 안에서 링크를 열면 로그인 버튼이 사라지는 문제였습니다. 문의 33분 뒤 운영진 댓글과 게시글 본문에 「크롬·사파리로 열어 달라」는 우회 방법을 안내했습니다. 28일 세션의 94%는 Referral·Direct 유입이었습니다."
+          "동아리 회장들에게 직접 연락해 등록을 요청하고, 백엔드 팀원과 출시 일정을 맞췄습니다. 에브리타임 글은 사람이 몰리는 저녁 6시대에 올리고(03/03 18:44) 카톡·인스타로 같이 알렸습니다. 그날 밤 게시글이 실시간 인기 글에 올랐고, 동아리 회장들에게 등록 관련 답변을 받았습니다.\n\n문의도 직접 받았습니다. 올린 지 24분 만에 「로그인이 안 돼」 댓글이 달렸습니다. 에타 앱 안에서 링크를 열면 구글 로그인 버튼이 뜨지 않는 문제였습니다. 문의 33분 뒤 운영진 댓글과 게시글 본문에 「크롬·사파리로 열어 달라」고 안내했습니다. 코드로는 아직 고치지 않았습니다.",
+        evidence: {
+          status: "게시글·댓글 캡처 기준 · 코드 이력 없음",
+          note: "시각은 에브리타임 게시글과 댓글 캡처에서 읽었습니다. 커밋에 남지 않는 일이라 코드 전후는 없습니다. 인앱 브라우저 로그인 문제는 저장소 README 「남은 과제」에 적혀 있습니다."
+        }
       },
-      // 앞의 둘은 **만들면서 깨진 것**, 셋째는 **내놓은 날 한 것**이고, 이건 **배포한 뒤에 사용자가
-      // 예상과 다르게 쓴 것**이다. 결이 달라서 마지막에 둔다 — 심사자가 여기까지
-      // 읽었다면 「무엇을 만들었나」는 이미 알고, 다음 질문은 「그래서 그게
-      // 쓰이던가」다.
-      //
-      // 효과 수치를 일부러 안 쓴다. 동아리별 상세 페이지가 GA4 에서 제목
-      // 하나("a Club")로 뭉쳐 잡혀 조회 분포를 뽑을 수 없고, 개편 전 기간은
-      // 트래픽이 사실상 0이라 비교할 「전」이 없다. 관찰·해석·조치까지만
-      // 사실로 쓰고 결과는 주장하지 않는다.
-      //
-      // 여기 적힌 숫자는 전부 갤러리 캡처에 찍혀 있다 —
-      // 코호트 5.4%/1.8% 는 aclub-ga4-cohort.webp,
-      // 세션 5,311 과 채널 94% 는 aclub-ga4-channels.webp.
       {
         title: "1주 뒤 재방문이 5.4%였습니다",
-        // [PROBLEM]/Solution 틀에 넣으면 "고쳤다" 로 읽히는데, 여기서 한 일은
-        // **안 고치기로 판단한 것**이다. 라벨만 바꾸고 자리는 그대로 둔다.
         problemLabel: "[OBSERVATION]",
         solutionLabel: "Decision",
         problem:
           "GA4 코호트에서 1주 유지율이 5.4%, 4주 뒤엔 1.8%였습니다. 그런데 28일 세션 5,311건이 사실상 3월 1~5일 닷새에 몰려 있었고, 유입의 94%가 Referral·Direct, 에브리타임과 인스타그램 링크였습니다.",
         solution:
-          "관측 기간의 이용은 동아리 모집 시기에 집중됐습니다. 모집 기간에 이용이 집중되는 특성을 고려해, 재방문보다 동아리 탐색 기능 개선을 우선했습니다.\n\n이용이 집중된 닷새 동안 원하는 동아리를 찾도록 분야별 카테고리와 필터 조합을 개선했습니다. 2025에 도입하고, 2026에 총괄을 맡으면서 한 번 더 세분화했습니다."
+          "이 숫자는 모집 기간에 한 번 오는 서비스라서 나오는 값이라고 봤습니다. 재방문을 끌어올리는 기능은 만들지 않기로 했고, 닷새 동안 화면이 깨지지 않는 쪽(위의 필터 폴백과 칩 수정)에 시간을 썼습니다. GA4 연동(gtag)은 2025년 11월에 팀원이 넣은 것이고, 저는 그 화면에서 수치를 읽었습니다.",
+        evidence: {
+          status: "GA4 화면 캡처 기준",
+          note: "코호트 표와 트래픽 획득 보고서 캡처(갤러리)에서 읽은 값입니다. 원천 데이터는 저장소에 없습니다."
+        }
       }
     ],
     tech: [
@@ -3029,13 +4250,261 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     ],
     metrics: [
-      // 예전엔 "커스텀 훅 6+ / FE 팀 3인 / TS / GitHub Pages" 였다 — 넷 다
-      // **내가 만든 것의 개수·이름**이지 성과가 아니다. GA4 실측으로 바꿨다.
-      {n: "3,500", l: "활성 사용자"},
-      {n: "8.8만", l: "조회수"},
-      {n: "93.4%", l: "세션 참여율"},
-      {n: "1분 28초", l: "세션당 참여"}
+      {
+        n: "3,500",
+        l: "활성 사용자",
+        sub: "2026.01.01–03.15 누계",
+        source: "GA4 홈 화면 캡처 · 75일 누계 · 연동은 팀원(2025.11)"
+      },
+      {
+        n: "8.8만",
+        l: "조회수",
+        sub: "같은 75일 누계",
+        source: "같은 GA4 홈 화면 · 75일 누계"
+      },
+      {
+        n: "93.4%",
+        l: "세션 참여율",
+        sub: "지난 28일 · 02.16–03.15",
+        source: "GA4 트래픽 획득 보고서 · 02.16–03.15 (28일)"
+      },
+      {
+        n: "1분 28초",
+        l: "세션당 참여",
+        sub: "세션 5,311건 · 3월 1~5일에 집중",
+        source: "같은 28일 보고서 · 세션은 3월 1~5일에 집중"
+      },
+      // 2026-11-13 밤: 아랫줄 넷은 본인 몫이 얼마인지를 저장소 기록으로 적는다.
+      {
+        n: "9 → 0",
+        l: "연속 실패하던 배포",
+        sub: "2026.02.01 세 커밋으로 통과",
+        mini: {kind: "bars", before: 9, after: 0},
+        source: "GitHub Actions 기록 · 01.13~02.01 · 이후 8회 전부 성공"
+      },
+      {
+        n: "23 / 79",
+        l: "2026 저장소 내 커밋",
+        sub: "2026.01.18~03.05 · 코드 20 · 머지 3",
+        source: "aClub2026/FE main · 나머지는 팀원 둘(2025.09~11)"
+      },
+      {
+        n: "48 / 310",
+        l: "2025 저장소 내 커밋",
+        sub: "2025.01~02 · 로그인 · API 연동",
+        source: "DBProject-24-2/DB_Project_FE · gh 로 셈 2026-11-13"
+      },
+      {
+        n: "9건",
+        l: "2025 머지된 PR",
+        sub: "로그인 · API 연동 · 구글 로그인",
+        source: "DB_Project_FE · 2025.01~02 · 연 것 19건 중 머지 9건"
+      }
     ],
+    // ── 상세 페이지 손글씨 칸 (2026-11-13). 저장소 수치는 gh 로 다시 셌다:
+    //   2026 aClub2026/FE: tsx 58 · ts 23 · jsx 0, src/Hooks 7개(useClubs·useClubDetails·useRecruitments·
+    //   useRecruitmentDetail·useRecruitmentPost·useMypageData·useClubActivityImages), src/api 5개.
+    //   2025 DBProject-24-2/DB_Project_FE: jsx 68 · tsx 0.
+    detail: {
+      intro: {
+        show: "동아리를 찾고 모집 공고를 올리는 아주대 플랫폼입니다. 2025년엔 프론트 3인 중 한 명으로 로그인과 API 연동을 맡았고, 2026년엔 프로젝트장으로 출시와 홍보를 맡았습니다. 코드로는 아홉 번 연속 실패하던 배포를 고치고, 출시 당일 필터가 실패하자 그날 오후에 우회로를 넣었습니다. 75일 동안 활성 사용자 3,500명이 썼습니다.",
+        bold: "코드로는 아홉 번 연속 실패하던 배포를 고치고, 출시 당일 필터가 실패하자 그날 오후에 우회로를 넣었습니다.",
+        more: [
+          "2026 저장소의 TypeScript 코드(화면·커스텀 훅·보호 라우트)는 2025년 9~11월에 팀원 둘이 다시 짠 것입니다. 저는 2026년 1월 18일에 합류해 main 커밋 79개 중 23개를 남겼고, 그중 코드 수정이 20건입니다.",
+          "이용은 모집 기간 닷새에 몰립니다. 28일 세션 5,311건이 사실상 3월 1~5일이고, 유입의 94%가 에브리타임·인스타그램 링크(Referral+Direct)였습니다. 그래서 재방문(1주 5.4%)을 올리는 기능 대신 그 닷새에 화면이 깨지지 않는 쪽에 시간을 썼습니다.",
+          "도메인 aclub.co.kr 은 2026-09-08 에 닫혔습니다(404). 코드는 GitHub(2026 aClub2026/FE · 2025 DBProject-24-2)에 있습니다."
+        ]
+      },
+      highlights: [
+        {
+          show: "아홉 번 연속 실패하던 배포 워크플로를 고쳤습니다. 배포는 성공하는데 알림 스텝의 if 가 secrets 를 읽다 실패하고 있었습니다. 두 번 잘못 짚고 세 번째 커밋에서 통과했습니다.",
+          bold: true,
+          more: "GitHub Actions 기록으로 2026-01-13 ~ 02-01 의 실패 9회와 그 뒤 성공 8회가 확인됩니다. CI/CD 를 처음 만든 것은 팀원이고(2025-11), 저는 조직 이전 뒤 고장 난 것을 고쳤습니다."
+        },
+        {
+          show: "출시 당일 오후 필터 API 가 조합에 따라 실패하자, 전체 목록을 받아 화면에서 같은 조건으로 거르는 우회로를 넣고(16:14) 그날 저녁 18:44 에 예정대로 출시했습니다.",
+          more: "임시 방편입니다. 필터마다 전량을 받고, 서버 버그는 남았고, 판정이 두 곳에 생겼습니다. 어긋나던 「모집 여부」 필터는 틀린 결과를 보여 주느니 화면에서 뺐습니다."
+        },
+        {
+          show: "출시 저녁을 직접 운영했습니다. 에브리타임에 18:44 게시 → 19:08 「로그인이 안 돼」 문의 → 19:41 운영진 답변(에타 인앱 브라우저에서 로그인 버튼이 안 뜨는 문제, 크롬·사파리 안내).",
+          more: "동아리 회장들에게 등록을 요청해 그날 저녁 답장을 받았고, 게시글은 그날 밤 실시간 인기 글에 올랐습니다. 시각은 게시글·댓글 캡처에서 읽었습니다. GA4 수치는 팀원이 연동해 둔 화면에서 읽은 값입니다."
+        }
+      ],
+      briefs: [
+        {
+          problem:
+            "조직으로 저장소를 옮긴 뒤 배포 워크플로가 아홉 번 연속 실패했습니다. 배포 자체는 성공하고 있었습니다.",
+          did: "쓰기 권한과 검증 주소를 고치고, 알림 스텝의 if 가 secrets 대신 env 를 비교하게 바꿨습니다. 검증 스텝은 실패해도 배포 결과를 뒤집지 않게 했습니다.",
+          result:
+            "2026-02-01 13:09 부터 통과했고 이후 main 푸시 8회가 전부 성공했습니다. 원인을 두 번 잘못 짚었습니다."
+        },
+        {
+          problem:
+            "출시 당일 오후 동아리 필터가 조합에 따라 가끔 실패했습니다. 저녁 출시는 이미 정해져 있었습니다.",
+          did: "필터 API 가 던지면 전체 목록을 받아 화면에서 같은 조건으로 거르게 하고, 판정이 어긋나던 「모집 여부」 필터는 뺐습니다.",
+          result:
+            "예정대로 18:44 에 출시했습니다. 임시 방편이라 서버 버그는 남았고 필터마다 전량을 받습니다."
+        },
+        {
+          problem:
+            "수시모집으로 올린 동아리가 전부 「상시모집」으로 찍혔습니다.",
+          did: "모집 상태와 모집 종류를 다른 축으로 나누고, 종류를 네 화면을 지나 칩까지 넘겼습니다.",
+          result:
+            "칩 한 줄을 고치려고 파일 8개를 건드렸습니다. 같은 시기에 동아리 상세 404 도 종류별 조회로 고쳤습니다."
+        },
+        {
+          problem:
+            "3월 초 사이트는 열렸지만 모집 공고가 등록되지 않은 상태였습니다.",
+          did: "프로젝트장으로 동아리 회장들에게 직접 등록을 요청하고, 사람이 몰리는 저녁 6시대(18:44)에 에브리타임에 올리고 카톡·인스타로 같이 알렸습니다.",
+          result:
+            "그날 밤 실시간 인기 글에 올랐고, 24분 뒤 로그인 문의에 33분 뒤 운영진 댓글로 우회 방법(크롬·사파리)을 안내했습니다. 코드로는 아직 안 고쳤습니다."
+        },
+        {
+          problem: "GA4 코호트에서 1주 유지율이 5.4%, 4주 뒤엔 1.8%였습니다.",
+          did: "이용이 모집 기간에 집중된다는 판단을 기록하고, 재방문 기능 대신 그 닷새에 화면이 깨지지 않는 쪽에 시간을 썼습니다.",
+          result: "효과를 잰 수치는 없습니다."
+        }
+      ],
+      summaries: {
+        arch: "React + TypeScript · 커스텀 훅 7 · axios 모듈 5 · 보호 라우트 2 · GitHub Pages. 이 구조는 2025.09~11 팀원 작성.",
+        code: "필터 폴백(useClubs.ts)과 배포 알림 조건(deploy.yml). 둘 다 본인 커밋.",
+        proc: "2025.01~02 로그인·API 연동 → 2025.09~11 팀원들이 TS 재작성 → 2026.01 프로젝트장 → 02.01 배포 수리 → 03.03 출시."
+      },
+      scenes: [
+        {
+          place: "why",
+          kind: "bars",
+          title: "28일 유입 채널 · 세션 5,311건",
+          unit: "%",
+          max: 100,
+          rows: [
+            {label: "Referral", value: 54.8},
+            {label: "Direct", value: 39.3},
+            {label: "검색", value: 3.8, tone: "muted"}
+          ],
+          note: "에브리타임·인스타그램 링크로 들어오는 Referral + Direct 가 94%. 검색은 3.8%입니다. 대부분 링크를 타고 닷새 안에 들어옵니다.",
+          source:
+            "GA4 트래픽 획득 보고서 2026-02-16~03-15 (갤러리 「유입 채널과 트래픽 분포」 캡처)"
+        },
+        {
+          place: "why",
+          kind: "line",
+          title: "주차별 재방문 유지율",
+          unit: "%",
+          points: [
+            {x: "1주", y: 5.4},
+            {x: "2주", y: 4.3},
+            {x: "3주", y: 3.2},
+            {x: "4주", y: 1.8}
+          ],
+          note: "5주째(0.0%)는 아직 기간이 차지 않은 칸이라 그리지 않았습니다. 이 표를 보고 재방문을 끌어올리는 기능은 만들지 않기로 했습니다.",
+          source:
+            "GA4 코호트 표, 3월 14일에 끝나는 6주 (갤러리 「주차별 재방문 유지율」 캡처)"
+        },
+        {
+          place: "trouble",
+          kind: "timeline",
+          title: "배포가 통과하기까지 · 2026.02.01",
+          from: "09:00",
+          to: "13:30",
+          events: [
+            {
+              at: "09:18",
+              until: "09:36",
+              label: "실패 네 번",
+              detail: "설정을 고치는 커밋 네 개가 연달아 실패",
+              tone: "fail"
+            },
+            {
+              at: "13:06",
+              label: "실패 · 조건만 추가",
+              detail: "if: failure() && secrets.…",
+              tone: "fail"
+            },
+            {
+              at: "13:08",
+              label: "실패 · ${{ }} 로 감쌈",
+              detail: "그래도 if 에서는 secrets 를 못 읽음",
+              tone: "fail"
+            },
+            {
+              at: "13:09",
+              label: "통과 · env 로 받아 비교",
+              detail: "env.DISCORD_WEBHOOK_URL",
+              tone: "ok",
+              href: "https://github.com/aClub2026/FE/commit/31c4188"
+            }
+          ],
+          totals: [
+            {label: "01.13 ~ 02.01 실패", n: 9, tone: "fail"},
+            {label: "그 뒤 main 푸시 성공", n: 8, tone: "ok"}
+          ],
+          note: "앞선 실패 세 번은 1월 13·19·24일입니다. 배포 자체는 성공하고 있었고, 실패한 것은 마지막 알림 스텝이었습니다.",
+          source:
+            "GitHub Actions 실행 기록 aClub2026/FE (gh run list, 2026-11-13) · 시각은 KST"
+        },
+        {
+          place: "trouble",
+          kind: "timeline",
+          title: "출시일 · 2026.03.03",
+          from: "16:00",
+          to: "20:00",
+          events: [
+            {
+              at: "16:14",
+              label: "필터 폴백 커밋",
+              detail: "필터 API 실패 시 전체를 받아 화면에서 거름",
+              tone: "warn",
+              href: "https://github.com/aClub2026/FE/commit/470135d8fc8993fe199910dc292ed9e6a81cfa3d"
+            },
+            {
+              at: "18:04",
+              label: "로고 · 신청 문구 수정",
+              detail: "출시 40분 전 마지막 커밋",
+              tone: "muted"
+            },
+            {
+              at: "18:44",
+              label: "에브리타임 게시",
+              detail: "사람이 몰리는 저녁 6시대 · 카톡·인스타 동시",
+              tone: "ok"
+            },
+            {
+              at: "19:08",
+              label: "「로그인이 안 돼」 댓글 두 건",
+              detail:
+                "게시 24분 뒤 · 에타 인앱 브라우저에서 로그인 버튼이 안 뜸",
+              tone: "warn"
+            },
+            {
+              at: "19:41",
+              label: "운영진 답변",
+              detail:
+                "문의 33분 뒤 · 「크롬·사파리로 열어 달라」 + 게시글 본문에도 안내",
+              tone: "ok"
+            }
+          ],
+          note: "같은 날 밤 실시간 인기 글 2위. 그날 저녁 동아리 회장들의 등록 답장이 이어졌습니다.",
+          source:
+            "커밋 시각은 저장소 기록(KST), 게시·문의·답변 시각은 에브리타임 게시글·댓글 캡처(갤러리 「출시 저녁」 두 장)"
+        },
+        {
+          place: "arch",
+          kind: "bars",
+          title: "두 저장소에서 내 커밋이 차지하는 몫",
+          unit: "개",
+          rows: [
+            {label: "2025 저장소 전체", value: 310, tone: "muted"},
+            {label: "2025 · 내 커밋", value: 48},
+            {label: "2026 저장소 main 전체", value: 79, tone: "muted"},
+            {label: "2026 · 내 커밋", value: 23}
+          ],
+          note: "2025 는 JSX 68개짜리 저장소였고, 2026 저장소(TSX 58 · TS 23 · Hooks 7 · api 5)는 2025년 9~11월에 팀원 둘이 다시 짠 것입니다. 제 2026 커밋은 그 위의 수정입니다.",
+          source:
+            "DBProject-24-2/DB_Project_FE(2025) · aClub2026/FE main(2026) 커밋 작성자 · 2026-11-13 gh 로 셈"
+        }
+      ]
+    },
     // 네 값의 출처가 **GA4 화면 두 개**다. 예전엔 `2026.01–03` 한 줄로
     // 뭉뚱그렸는데, 앞의 둘은 75일 누계고 뒤의 둘은 28일 값이다. 갤러리에
     // 두 캡처를 나란히 붙여 놓고 기간을 안 밝히면, 확대해 본 심사자가
@@ -3044,15 +4513,22 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 2025 를 합치면 활성 사용자가 7.8천으로 커지지만 그 해엔 프론트 3인 중
     // 하나였다. 총괄로 맡은 구간만 끊어 세는 편이 숫자는 작아도 주장은 정확하다.
     metricsNote:
-      "Google Analytics 4 — 활성 사용자·조회수는 2026.01.01–03.15 누계, 세션 참여율·세션당 참여 시간은 그중 마지막 28일(02.16–03.15) 값입니다. 트래픽이 3월 첫 주에 몰려 있어 두 창의 값은 사실상 같습니다. 2025 팀원 시절은 합산하지 않았습니다.",
+      "윗줄 넷은 Google Analytics 4 화면에서 읽은 값입니다. 활성 사용자·조회수는 2026.01.01–03.15 누계, 세션 참여율·세션당 참여 시간은 그중 마지막 28일(02.16–03.15)입니다. GA4 연동은 2025년 11월에 팀원이 넣었고 원천 데이터는 저장소에 없습니다(캡처만). 아랫줄 넷은 저장소 기록입니다. GitHub Actions 실행 기록과 aClub2026/FE · DBProject-24-2/DB_Project_FE 의 커밋·PR 수를 2026-11-13 에 gh 로 셌습니다. 2026 저장소에 테스트는 없습니다.",
     kpt: {
       keep: [
-        "데이터 요청을 훅으로 모은 것",
-        "보호 라우트로 권한 일원화",
-        "공통 컴포넌트 재사용"
+        "알림이나 검증 스텝이 배포 결과를 뒤집지 않게 한 것",
+        "틀린 결과를 보여 주느니 필터를 화면에서 뺀 것",
+        "출시 시각을 사람이 몰리는 저녁으로 잡고 문의를 직접 받은 것"
       ],
-      problem: ["디자인 시스템이 후반에 정리됨", "테스트 부족"],
-      try: ["백엔드 연동 안정화", "검색 고도화"]
+      problem: [
+        "서버 필터 버그가 그대로 남았고 판정이 프론트와 백엔드 두 곳에 있습니다",
+        "인앱 브라우저에서 구글 로그인 버튼이 안 뜨는 문제를 코드로 못 고쳤습니다",
+        "테스트가 없고, 제 PR 세 건은 리뷰 없이 제가 머지했습니다"
+      ],
+      try: [
+        "필터 버그를 백엔드에서 고치고 폴백을 걷어내기",
+        "인앱 브라우저 감지 후 외부 브라우저로 열기 안내"
+      ]
     },
     // 예전 결론은 "커스텀 훅과 보호 라우트가 그 답이었다" 였다. 그게 이 페이지의
     // 마지막 문장인 게 문제였다 — 훅으로 요청을 모으고 라우트로 권한을 막는 건
@@ -3065,9 +4541,9 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 그 하나까지 찾아내는」(2026-09-05 개정, 그 전엔 「쓰는 사람 말을 듣고
     // 고치는」)이다. 대표 프로젝트의 결론이 그 주제문과 다른 이야기를 하고 있었다.
     learningLead:
-      "1주 재방문 5.4% 를 보고도 재방문을 올리는 대신 닷새 안의 탐색을 고쳤습니다.",
+      "배포가 아홉 번 실패로 찍히는 동안 배포 자체는 성공하고 있었고, 실패한 곳은 알림 스텝이었습니다. 실패한 단계를 먼저 봤으면 한 번에 끝났을 일입니다.",
     learning:
-      "모집 기간에 이용이 집중되는 특성을 고려했습니다. 세션 94% 가 링크로 들어오는 닷새 동안 원하는 동아리를 찾게 하는 쪽으로 카테고리 필터를 쪼갰습니다."
+      "2026년의 저는 코드를 가장 많이 쓴 사람이 아니었습니다. 팀원들이 다시 짠 코드 위에서 출시를 막는 문제를 고쳤고, 출시일과 그 저녁을 맡았습니다. 맞는 해법(백엔드 수정)을 기다릴 수 없는 날에는 임시 방편을 넣고 그게 임시라는 것을 적어 두었습니다."
   },
 
   // ════════════════════════════ 아주총학 / ajouchong-web (platform · 팀) ══════
@@ -3086,13 +4562,14 @@ export const RICH_DATA: Record<string, RichProject> = {
     heroImage: {
       src: "/projects/ajouchong.webp",
       label: "총학생회 메인",
-      ratio: "16/9"
+      // 파일이 640×306 이다. 16/9 로 적으면 위아래가 잘린다(2026-11-13 실측).
+      ratio: "640/306"
     },
     // 학생들은 폰으로 본다. 그런데 2025 모바일은 주요 메뉴가 햄버거 안에만
     // 있었다 — 「정보 탐색 효율 개선」이라고 적어만 두고 근거가 없던 그 지점이다.
     problemShot: {
       src: "/projects/ajouchong/v2/mobile-before.webp",
-      label: "2025 모바일 — 메뉴가 햄버거 안에만 있었습니다",
+      label: "2025 모바일 · 메뉴가 햄버거 안에만 있었습니다",
       ratio: "9/16",
       caption:
         "첫 화면에 있는 건 대여사업 카드 하나뿐. 소개·소식·소통·자료실·학생복지로 가려면 오른쪽 위 햄버거를 먼저 눌러야 했습니다."
@@ -3124,28 +4601,28 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 2025 때는 물품 수량 하나 바꾸려 해도 개발자가 배포해야 했다.
       {
         src: "/projects/ajouchong/v2/rental.webp",
-        label: "대여사업 — 남은 수량을 오기 전에",
+        label: "대여사업 · 남은 수량을 오기 전에",
         ratio: "21/10",
         caption:
           "총 품목·대여 가능·재고 임박·최종 업데이트를 한 줄에 세우고, 품목마다 남은 수량을 막대로 보여 줍니다. 총학생회실 문 앞에서 「남아 있어요?」를 묻던 학생이 오기 전에 알 수 있게 한 화면. 대여·반납 기록은 창구에서 관리자가 남깁니다."
       },
       {
         src: "/projects/ajouchong/v2/rental-admin.webp",
-        label: "대여 물품 관리 — 운영자가 직접",
+        label: "대여 물품 관리 · 운영자가 직접",
         ratio: "21/10",
         caption:
           "수량 옆 −/+ 로 바로 조정하고 「35 (변경됨)」처럼 저장 전 상태를 표시합니다. 확인 대화상자로 한 번 더 묻고, 서버는 0 미만·총량 초과를 거부합니다. 실수로 재고가 틀어지면 학생이 헛걸음합니다."
       },
       {
         src: "/projects/ajouchong/v2/linkhub.webp",
-        label: "링크허브 — 인스타 프로필 링크 한도를 우회",
+        label: "링크허브 · 인스타 프로필 링크 한도를 우회",
         ratio: "16/10",
         caption:
           "인스타그램 프로필에는 링크를 몇 개밖에 못 걸어, 접수 폼이 새로 생길 때마다 뭔가를 내려야 했습니다. 프로필엔 이 페이지 하나만 걸고, 안에서 접수 창구·공모전·수요조사 링크 11개를 모아 보여 줍니다. 링크는 관리자 화면에서 총학생회가 직접 넣고 뺍니다."
       },
       {
         src: "/projects/ajouchong/v2/chatbot.webp",
-        label: "홈페이지 도우미 — 퀵 메뉴 + 의견 접수",
+        label: "홈페이지 도우미 · 퀵 메뉴 + 의견 접수",
         ratio: "21/10",
         caption:
           "공지·대여사업·제휴복지·Q&A·건의 메뉴로 이동하는 버튼과 의견 제출 폼을 제공했습니다. 의견은 Q&A API 로 들어가 관리자 화면에 쌓입니다."
@@ -3182,7 +4659,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     tldr: [
       {
         k: "무엇을",
-        v: "아주대 총학생회 공식 웹 — 2025년엔 프론트 3인 중 한 명, 2026년부터 혼자 맡아 UI 전면 개편 · 대여사업 · 링크허브 · 관리자 화면을 프론트부터 API까지"
+        v: "아주대 총학생회 공식 웹 · 2025년엔 프론트 3인 중 한 명, 2026년부터 혼자 맡아 UI 전면 개편 · 대여사업 · 링크허브 · 관리자 화면을 프론트부터 API까지"
       },
       {
         k: "왜",
@@ -3262,7 +4739,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {t: "대여사업", d: "API + 화면"},
       {t: "링크허브", d: "Link 테이블 + 관리"},
       {t: "관리자", d: "ADMIN 권한"},
-      {t: "배포", d: "Docker · Nginx"}
+      {t: "운영", d: "EC2 compose · 힙 384MB"}
     ],
     architecture: [
       {
@@ -3312,10 +4789,10 @@ export const RICH_DATA: Record<string, RichProject> = {
         alt: "LLM 기반 질의응답"
       },
       {
-        area: "서빙",
-        pick: "Nginx try_files",
-        why: "SPA 새로고침 404 (2025)",
-        alt: "별도 Node.js 서버"
+        area: "권한",
+        pick: "/api/admin/** 전체에 ADMIN",
+        why: "넘겨받은 규칙이 /api/admin 한 경로만 막고 있었음 (2026 · PR #69)",
+        alt: "컨트롤러마다 @PreAuthorize(빠뜨리면 열림)"
       }
     ],
     coreCode: [
@@ -3337,14 +4814,18 @@ export const RICH_DATA: Record<string, RichProject> = {
           "}"
         ]
       },
+      // 2026-11-13 저녁: nginx.conf(SPA 폴백) 카드를 뺐다. 그 파일은 팀원(y.tnwjd)이 쓴 것이다.
+      // 대신 본인 PR #69 의 한 줄 수정을 싣는다(gh 로 diff 확인).
       {
-        filename: "nginx.conf",
-        caption: "SPA 새로고침 404 방지. try_files 폴백 (2025)",
-        highlightLines: [2],
+        filename: "SecurityConfig.java · PR #69",
+        caption:
+          "관리자 규칙이 /api/admin 한 경로만 가리키고 있었습니다. 아래 경로 전체로 넓혔습니다 (2026 · 백엔드)",
+        highlightLines: [2, 3],
         lines: [
-          "location / {",
-          "  try_files $uri $uri/ /index.html; # 없는 경로는 SPA로",
-          "}"
+          '.requestMatchers("/favicon.ico", "/img/**").permitAll()',
+          '- .requestMatchers("/api/admin").hasRole(MemberRole.ADMIN.name())',
+          '+ .requestMatchers("/api/admin/**").hasRole(MemberRole.ADMIN.name())',
+          ".anyRequest().permitAll()"
         ]
       }
     ],
@@ -3365,7 +4846,13 @@ export const RICH_DATA: Record<string, RichProject> = {
           "사용자/관리자 컨트롤러 분리 · ADMIN 권한"
         ]
       },
-      {g: "배포", items: ["Docker · Nginx", "이미지 S3 업로드"]}
+      {
+        g: "2026 운영",
+        items: [
+          "Dockerfile 빌드 단계 제거 · EC2 compose 힙 384MB",
+          "전역 예외 처리 보강 · SQL 로그 끔"
+        ]
+      }
     ],
     challenges: [
       {
@@ -3373,21 +4860,68 @@ export const RICH_DATA: Record<string, RichProject> = {
         problem:
           "물품 수량이 어디에도 안 보였습니다. 사이트에 올려도 개발자가 배포해야 바뀌니, 결국 안 올렸습니다.",
         solution:
-          "RentalItem 에 총량·현재 수량을 두고, 관리자 화면의 −/+ 가 PATCH /quantity 로 바로 반영되게 했습니다. 서버가 0 미만·총량 초과를 거부하고, 대여·반납은 RentalRecord 로 남아 수량을 움직입니다. 학생 화면은 그 수량을 읽기만 합니다."
+          "RentalItem 에 총량·현재 수량을 두고, 관리자 화면의 −/+ 가 PATCH /quantity 로 바로 반영되게 했습니다. 서버가 0 미만·총량 초과를 거부하고, 대여·반납은 RentalRecord 로 남아 수량을 움직입니다. 학생 화면은 그 수량을 읽기만 합니다.",
+        evidence: {
+          status: "코드로 확인",
+          note: "수량 검증은 RentalService 에 있습니다.",
+          url: "https://github.com/ajouchong-dev/ajouchong/blob/3b26e9f0adca83c91b29ecb88a2f220397156ea4/src/main/java/com/ajouchong/service/RentalService.java"
+        }
       },
       {
         title: "인스타 프로필에 링크를 다 못 걸었습니다",
         problem:
           "프로필 링크 칸이 몇 개 안 돼, 접수 폼·공모전·수요조사가 생길 때마다 이전 링크를 내려야 했습니다.",
         solution:
-          "/linkHub 한 페이지와 Link 테이블, 관리 화면을 만들었습니다. 프로필엔 이 페이지 하나만 걸고, 링크는 총학생회가 직접 넣고 뺍니다. 지금 11개가 걸려 있습니다."
+          "/linkHub 한 페이지와 Link 테이블, 관리 화면을 만들었습니다. 프로필엔 이 페이지 하나만 걸고, 링크는 총학생회가 직접 넣고 뺍니다. 지금 11개가 걸려 있습니다.",
+        evidence: {
+          status: "코드로 확인",
+          note: "LinkHub 페이지를 추가한 커밋입니다. 코드의 url 필드는 그 뒤 link 로 바뀌었습니다.",
+          url: "https://github.com/ajouchong-dev/ajouchong-web/blob/8a4c261807a26da04c38f5d3375d32115e4430da/src/pages/LinkHub/index.js"
+        }
+      },
+      // 2026-11-13 저녁: 「새로고침하면 404 (2025)」 카드를 뺐다. nginx.conf 는 팀원이 쓴 파일이고
+      // 폴백이 없던 전 상태도 이력에서 못 찾았다. 본인 커밋으로 확인되는 2026 백엔드 두 건으로 바꿨다.
+      {
+        title: "관리자 API 의 권한 규칙이 한 경로만 막고 있었습니다",
+        problem:
+          "2026년 4월에 백엔드를 넘겨받아 대여 관리 API 를 붙이다가 Security 설정을 읽었습니다. ADMIN 규칙이 /api/admin 한 경로에만 걸려 있고 나머지는 전부 허용이라, /api/admin/ 아래에 새로 만드는 관리자 컨트롤러에는 권한 검사가 걸리지 않는 상태였습니다.",
+        solution:
+          "규칙을 /api/admin/** 로 넓혀 관리자 경로 전체에 ADMIN 권한을 요구하게 했습니다. 같은 PR 에서 관리 화면의 수량 조정이 쓰는 PATCH 를 CORS 허용 메서드에 넣고, JWT 필터가 OPTIONS 와 로그인·로그아웃 경로를 건너뛰게 했습니다. 며칠 뒤에는 전역 예외 처리에 로그와 없는 경로 404 응답을 보탰습니다. 이 PR 들에는 테스트가 없고 리뷰 없이 제가 머지했습니다. 혼자 맡은 저장소의 한계입니다.",
+        code: {
+          filename: "SecurityConfig.java",
+          lines: [
+            '- .requestMatchers("/api/admin").hasRole(MemberRole.ADMIN.name())',
+            '+ .requestMatchers("/api/admin/**").hasRole(MemberRole.ADMIN.name())',
+            "  .anyRequest().permitAll()"
+          ]
+        },
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "백엔드 PR #69(2026-04-05, 23파일 +946/−8)의 SecurityConfig.java · JwtAuthenticationFilter.java diff 입니다. 전역 예외 처리는 04-11 · 04-12 커밋입니다.",
+          url: "https://github.com/ajouchong-dev/ajouchong/pull/69/files"
+        }
       },
       {
-        title: "새로고침하면 404가 떴다 (2025)",
+        title: "배포 구성은 팀이 만든 것이고, 맡은 뒤에 서버 설정을 손봤습니다",
         problem:
-          "SPA 라우트에서 새로고침 시 Nginx가 실제 파일을 못 찾아 404를 반환했습니다.",
+          "Docker · Nginx · CI 구성은 2024~2025년에 팀원이 만들었습니다. 2026년 4월부터는 배포도 혼자 맡았습니다.",
         solution:
-          "try_files로 모든 경로를 index.html로 폴백시켜 클라이언트 라우터가 처리하게 했습니다."
+          "2026-04-12 에 배포용 Dockerfile 에서 빌드 단계를 빼고 미리 빌드한 jar 를 복사하게 바꿨습니다(.dockerignore 추가). 2026-06-30 「서버 용량 관리」 커밋에서는 EC2 용 compose 에 JVM 힙 상한(-Xms128m -Xmx384m, 메타스페이스 128m)과 컨테이너 자동 재시작(restart: unless-stopped)을 넣고, 운영에서 켜져 있던 SQL 로그(show-sql)를 껐습니다. 수치로 잰 전후는 없습니다. 메모리 사용량이나 디스크를 기록해 두지 않았습니다.",
+        code: {
+          filename: "docker-compose.ec2.yml · 2026.06.30",
+          lines: [
+            "  backend:",
+            "+   restart: unless-stopped",
+            "    environment:",
+            '+     JAVA_OPTS: "-Xms128m -Xmx384m -XX:MaxMetaspaceSize=128m"',
+            '+     SPRING_JPA_SHOW_SQL: "false"'
+          ]
+        },
+        evidence: {
+          status: "구현 확인 · 전후 수치 없음",
+          note: "2026-04-12 「도커파일 수정」과 2026-06-30 「서버 용량 관리」 커밋입니다. 그 전의 Dockerfile · nginx.conf · CI 는 팀원 작성입니다.",
+          url: "https://github.com/ajouchong-dev/ajouchong/commit/3a5ae244"
+        }
       }
     ],
     tech: [
@@ -3427,13 +4961,163 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 전체 방문자로 읽히면 과장이 된다.
       // 앞의 셋은 GSC 실적, 마지막 하나는 공개 API 응답을 센 것(2026-09-04).
       // 예전 네 번째 "새로고침 404: 0" 은 채워 넣은 숫자라 뺐다.
-      {n: "12,314", l: "검색 노출"},
-      {n: "1,694", l: "검색 클릭"},
-      {n: "13.8%", l: "검색 CTR"},
-      {n: "10 · 11", l: "대여 품목 · 링크 (실서비스)"}
+      {
+        n: "12,314",
+        l: "검색 노출",
+        sub: "GSC 487일 · 2025.05~2026.08",
+        source: "Google Search Console · 2025.05~2026.08 · 검색 유입만"
+      },
+      {
+        n: "1,694",
+        l: "검색 클릭",
+        sub: "같은 기간 · CTR 13.8%",
+        mini: {kind: "bars", before: 321, after: 491},
+        source: "같은 GSC · 막대는 5~8월 클릭 2025 321 → 2026 491"
+      },
+      {
+        n: "13.8%",
+        l: "검색 CTR",
+        sub: "같은 달 비교에서는 14.0% → 9.1%",
+        source: "16개월 전체 CTR · 같은 달 비교에선 14.0% → 9.1%"
+      },
+      {
+        n: "10 · 11",
+        l: "대여 품목 · 링크 (실서비스)",
+        sub: "품목 10종 124개 · 링크허브 11개",
+        source: "2026-09-04 ajouchong.com 공개 API 응답을 직접 셈"
+      },
+      // 2026-11-13 저녁: 아랫줄 넷은 2026 년에 혼자 맡은 뒤의 저장소 기록이다(gh 로 확인).
+      {
+        n: "2건",
+        l: "2026 백엔드 PR",
+        sub: "#69 +946줄 · #70 +644줄",
+        source: "ajouchong-dev/ajouchong · 2026.04 · 리뷰 없는 셀프 머지"
+      },
+      {
+        n: "5개",
+        l: "새로 만든 엔티티",
+        sub: "대여 품목·기록 · 제휴 · 회의록 분류·문서",
+        source: "PR #69 · #70 파일 목록 · Link 는 기존 것을 고침"
+      },
+      {
+        n: "+2,547줄",
+        l: "프론트 전면 개편 PR #36",
+        sub: "2026.04.27 develop 머지",
+        source: "ajouchong-dev/ajouchong-web PR #36 · 추가 줄 수"
+      },
+      {
+        n: "46개",
+        l: "프론트 develop 커밋",
+        sub: "전체 355개 중 · 2025.03~2026.09",
+        source:
+          "ajouchong-web develop · gh 로 셈 2026-11-13 · 백엔드는 396 중 16"
+      }
     ],
     metricsNote:
-      "검색 셋은 Google Search Console · 2025.05~2026.08(16개월) · 검색 유입 기준 (전체 방문자 아님). 품목·링크 수는 2026.09.04 공개 API 응답을 센 것.",
+      "검색 셋은 Google Search Console · 2025.05~2026.08(16개월) · 검색 유입 기준 (전체 방문자 아님). 품목·링크 수는 2026.09.04 공개 API 응답을 센 것. 아랫줄 넷은 조직 저장소 ajouchong-dev/ajouchong · ajouchong-web 의 PR 과 커밋 수이고(2026-11-13 gh 로 확인), Docker · Nginx · CI 구성은 팀원이 만든 것입니다.",
+    // ── 상세 페이지 손글씨 칸 (2026-11-13). PR 수치는 gh 로 다시 확인했다:
+    //   프론트 ajouchong-dev/ajouchong-web  #35 Jjh rental +1,274/−299 (04-10) · #36 Renew design +2,547/−71 (04-27, develop)
+    //   백엔드 ajouchong-dev/ajouchong      #69 Jjh rental +946/−8 (04-05) · #70 Jjh rental +644/−70 (04-10)
+    //   develop 브랜치의 본인 커밋 46개(2026-11-13 기준).
+    detail: {
+      compareTags: ["2025", "2026"],
+      intro: {
+        show: "아주대 총학생회 공식 사이트입니다. 2025년에는 프론트 3인 중 한 명으로 화면 일부를 맡았고, 2026년 4월부터는 혼자서 화면·Spring Boot API·배포를 전부 맡아 모바일 첫 화면 개편, 대여 수량 조회, 링크허브, 관리자 화면을 넣었습니다.",
+        bold: "2026년 4월부터는 혼자서 화면·Spring Boot API·배포를 전부 맡아 모바일 첫 화면 개편, 대여 수량 조회, 링크허브, 관리자 화면을 넣었습니다.",
+        more: [
+          "학생은 총학생회실에 오기 전에 물품이 남았는지 보고, 총학생회는 수량·링크·공지·의견을 관리 화면에서 직접 고칩니다. 수량 하나 바꾸는 데 개발자 배포가 필요하던 구조를 없앤 것이 핵심입니다.",
+          "2026 작업은 조직 저장소의 develop 브랜치에 있습니다. 프론트 PR #36(전면 디자인 개편, +2,547줄) · #35(대여 UX), 백엔드 PR #69·#70(RentalItem·RentalRecord·Link 엔티티와 API).",
+          "효과는 검색 노출로만 쟀습니다(Google Search Console). 헛걸음 문의가 얼마나 줄었는지는 세지 않았습니다.",
+          "백엔드를 넘겨받으며 관리자 권한 규칙이 한 경로만 막고 있던 것을 /api/admin/** 로 넓혔고, 배포용 Dockerfile 과 EC2 compose(JVM 힙 384MB · 자동 재시작)를 손봤습니다. Docker · Nginx · CI 구성 자체는 팀원이 만든 것입니다."
+        ]
+      },
+      highlights: [
+        {
+          show: "대여 수량을 서버가 지키게 했습니다. RentalItem 에 총량·현재 수량을 두고 관리자 화면의 −/+ 가 PATCH /quantity 로 바로 반영되며, 0 미만·총량 초과는 서버가 거부합니다.",
+          bold: true,
+          more: "대여·반납은 RentalRecord 로 남아 수량을 움직이고, 학생 화면은 그 수량을 읽기만 합니다. 화면의 −/+ 는 우회할 수 있어도 API 의 거부는 못 합니다. 백엔드 PR #69(+946줄)·#70(+644줄)."
+        },
+        {
+          show: "모바일 첫 화면에 메뉴 여섯 갈래를 펴서 햄버거를 안 눌러도 갈 곳이 보이게 했습니다(프론트 PR #36, +2,547줄, 2026-04-27 머지).",
+          more: "2025 화면은 첫 화면에 대여사업 카드 하나뿐이었고, 소개·소식·소통·자료실·학생복지로 가려면 오른쪽 위 햄버거를 먼저 눌러야 했습니다. 아래 전/후 슬라이더가 그 두 화면입니다."
+        },
+        {
+          show: "인스타 프로필엔 링크를 몇 개밖에 못 걸어서 /linkHub 한 페이지와 Link 테이블·관리 화면을 만들었습니다. 지금 11개가 걸려 있습니다.",
+          more: "링크는 총학생회가 직접 넣고 뺍니다. 2026-09-04 공개 API 로 센 값이 11개입니다."
+        }
+      ],
+      briefs: [
+        {
+          problem:
+            "물품 수량이 어디에도 안 보여 학생이 총학생회실까지 와서야 「없다」는 말을 들었습니다.",
+          did: "RentalItem 에 총량·현재 수량을 두고 관리자 −/+ 를 PATCH /quantity 로 바로 반영, 0 미만·총량 초과는 서버가 거부하게 했습니다.",
+          result:
+            "학생은 오기 전에 수량을 보고, 대여·반납은 RentalRecord 로 남습니다."
+        },
+        {
+          problem:
+            "인스타 프로필 링크 칸이 몇 개 안 돼 새 폼이 생길 때마다 이전 링크를 내려야 했습니다.",
+          did: "/linkHub 페이지와 Link 테이블, 관리 화면을 만들어 프로필엔 이 페이지 하나만 걸게 했습니다.",
+          result:
+            "총학생회가 링크를 직접 넣고 빼며, 2026-09 기준 11개가 걸려 있습니다. 초기 커밋의 url 필드는 뒤에 link 로 바뀌었습니다."
+        },
+        {
+          problem:
+            "ADMIN 규칙이 /api/admin 한 경로에만 걸려 있어 그 아래에 새로 만드는 관리자 API 에는 권한 검사가 걸리지 않았습니다.",
+          did: "규칙을 /api/admin/** 로 넓히고, 수량 조정이 쓰는 PATCH 를 CORS 에 넣고, JWT 필터가 OPTIONS 와 로그인 경로를 건너뛰게 했습니다.",
+          result:
+            "대여·제휴·회의록 관리 API 가 ADMIN 권한 뒤에 놓였습니다. PR 에 테스트는 없고 리뷰 없이 머지했습니다."
+        },
+        {
+          problem:
+            "Docker · Nginx · CI 는 팀원이 만든 구성이었고, 2026년 4월부터 배포도 혼자 맡았습니다.",
+          did: "배포용 Dockerfile 에서 빌드 단계를 빼고, EC2 compose 에 JVM 힙 384MB 상한과 자동 재시작을 넣고, 운영 SQL 로그를 껐습니다.",
+          result:
+            "설정은 커밋으로 확인되지만 메모리나 디스크의 전후 수치는 기록하지 않았습니다."
+        }
+      ],
+      summaries: {
+        arch: "React 18(CRA) · Spring Boot 3 + JPA + PostgreSQL · JWT · 팀이 만든 Docker + Nginx 구성 위에서 2026 부터 단독 운영.",
+        code: "RentalService 의 수량 검증과 SecurityConfig 의 관리자 경로 규칙.",
+        proc: "2025 팀원으로 화면 일부 → 2026.04 단독: 대여 API → 대여 UX → 전면 개편 → 링크허브."
+      },
+      scenes: [
+        {
+          place: "trouble",
+          kind: "timeline",
+          title: "2026년 4월 · 혼자 맡은 첫 달에 머지한 PR",
+          unit: "date",
+          from: "2026-04-01",
+          to: "2026-05-01",
+          events: [
+            {
+              at: "2026-04-05",
+              label: "백엔드 #69 대여 API",
+              href: "https://github.com/ajouchong-dev/ajouchong/pull/69",
+              detail: "RentalItem · RentalRecord 엔티티와 서비스 · +946줄",
+              tone: "ok"
+            },
+            {
+              at: "2026-04-10",
+              label: "프론트 #35 대여 UX · 백엔드 #70",
+              href: "https://github.com/ajouchong-dev/ajouchong-web/pull/35",
+              detail: "+1,274줄 · +644줄, 관리자 −/+ 와 PATCH /quantity",
+              tone: "ok"
+            },
+            {
+              at: "2026-04-27",
+              label: "프론트 #36 전면 디자인 개편",
+              href: "https://github.com/ajouchong-dev/ajouchong-web/pull/36",
+              detail: "+2,547줄 · develop 에 머지 · 모바일 첫 화면 여섯 갈래",
+              tone: "ok"
+            }
+          ],
+          note: "본인 커밋은 develop 브랜치에 46개(2026-11-13 기준). main 에는 2025 것만 있습니다.",
+          source:
+            "GitHub PR ajouchong-dev/ajouchong-web #35·#36, ajouchong-dev/ajouchong #69·#70 (2026-11-13 gh 로 확인)"
+        }
+      ]
+    },
     kptLabels: {
       keep: "2025에서 배운 것 · 개발·배포",
       problem: "아직 남은 것",
@@ -3443,29 +5127,35 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 두 해의 배움이 서로 다른 종류다. (원페이저에는 안 그린다 — ProjectOnePager 참고)
     kpt: {
       keep: [
-        "2025 · Docker/Nginx 로 배포 환경을 고정했습니다",
-        "2025 · SPA 새로고침 404 를 Nginx try_files 로 없앴습니다",
-        "2025 · 기존 프로젝트의 프론트엔드 일부를 담당했습니다"
+        "2025 · 기존 프로젝트의 프론트엔드 일부(대여 검색 · 정책집 · 조직도)를 담당했습니다",
+        "2025 · Docker · Nginx · CI 배포 구성은 팀원이 만든 것입니다. 2026 에 그 위에서 설정을 손봤습니다"
       ],
       problem: [
         "대여 신청은 아직 창구에서 받습니다 (온라인은 수량 조회까지)",
         "개편 효과는 검색 노출로만 봤습니다. 헛걸음 문의가 얼마나 줄었는지는 세지 않았습니다",
-        "접근성(대비·포커스)은 여전히 보강이 필요합니다"
+        "접근성(대비·포커스)은 여전히 보강이 필요합니다",
+        "백엔드에 테스트가 없고(contextLoads 하나) 2026 PR 은 리뷰 없이 머지했습니다"
       ],
       try: [
         "2026 · 모바일 첫 화면에 여섯 갈래를 펴서 햄버거를 안 눌러도 보이게 했습니다",
         "2026 · 수량·링크·공지·피드백을 총학생회가 관리 화면에서 직접 고칩니다",
-        "2026 · 수량 검증을 서버에 뒀습니다. 화면의 −/+ 는 우회할 수 있어도 API 의 거부는 못 합니다"
+        "2026 · 수량 검증을 서버에 뒀습니다. 화면의 −/+ 는 우회할 수 있어도 API 의 거부는 못 합니다",
+        "2026 · 넘겨받은 설정은 먼저 읽습니다. 관리자 규칙이 한 경로만 막고 있던 것을 그렇게 찾았습니다"
       ]
     },
     learningLead:
       "수량 하나 바꾸는 데 개발자 배포가 필요했던 것을 관리 화면으로 없앤 것이 2026 개편의 핵심이었습니다.",
     learning:
-      "2025년에는 프론트엔드 일부를 담당했고, 2026년에는 화면·API·배포를 단독으로 맡았습니다. 모바일 첫 화면에 메뉴를 배치하고, 학생의 대여 수량 조회와 총학생회의 직접 관리 기능을 구현했습니다."
+      "2025년에는 프론트엔드 일부를 담당했고, 2026년에는 화면·API·배포를 혼자 맡았습니다. 모바일 첫 화면에 메뉴를 배치하고, 학생의 대여 수량 조회와 총학생회의 직접 관리 기능을 구현했습니다."
   },
 
   // ════════════════════════════ 수어지교 / Sign-Language (platform · 팀) ══════
   "sign-language": {
+    // 2026-11-13 밤: 저장소를 줄 단위로 다시 확인했다. 「백엔드 둘 중 하나」와 git blame 수치는 맞다
+    // (TranslationService 338줄 중 158 · StorageVideoCache 177 중 128, 백엔드 자바 4,228줄 중 877줄,
+    // Dockerfile 과 deploy-pages.yml 은 본인 커밋뿐). 커밋 수(backend 32 중 8)만 보고 낮게 본 것은 틀렸다.
+    // 빠져 있던 것은 2차 작업이다. 2026.09~10 ml/ 커밋 32개 중 28개가 본인이고 실험 기록이
+    // ml/experiments.md 에 자동으로 남아 있다. 타일 넷과 꺾은선 장면 하나로 보탰다.
     tagline: "SIGN LANGUAGE LEARNING · TEAM (BACKEND)",
     // 배포본(GitHub Pages)에서 그대로 찍은 화면 다섯 장. 폰 비율(500×1023)이라
     // 16/10 상자에 cover 로 넣으면 위아래가 잘려 아무것도 안 보인다 — 상자를
@@ -3474,7 +5164,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 없어서 회색 상자만 서 있었고, 없는 그림 자리를 비워 두는 편이 낫다.
     heroImage: {
       src: "/projects/sign-language/quiz.webp",
-      label: "퀴즈 — 아바타 동작을 보고 뜻 고르기",
+      label: "퀴즈 · 아바타 동작을 보고 뜻 고르기",
       ratio: "1/1",
       fit: "contain",
       caption:
@@ -3483,19 +5173,19 @@ export const RICH_DATA: Record<string, RichProject> = {
     gallery: [
       {
         src: "/projects/sign-language/learn.webp",
-        label: "학습 과정 — 기초 단어 · 오답 복습 · 일상 회화 · 상황별 표현",
+        label: "학습 과정 · 기초 단어 · 오답 복습 · 일상 회화 · 상황별 표현",
         ratio: "3/4",
         fit: "contain"
       },
       {
         src: "/projects/sign-language/translator.webp",
-        label: "통역기 — 한국어 문장을 수어 단어 순서로",
+        label: "통역기 · 한국어 문장을 수어 단어 순서로",
         ratio: "3/4",
         fit: "contain"
       },
       {
         src: "/projects/sign-language/translate-detail.webp",
-        label: "변환 결과 — 매칭된 토큰 · 사전에 없는 토큰 · 영상이 없는 단어",
+        label: "변환 결과 · 매칭된 토큰 · 사전에 없는 토큰 · 영상이 없는 단어",
         ratio: "3/4",
         fit: "contain",
         caption:
@@ -3503,7 +5193,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         src: "/projects/sign-language/home.webp",
-        label: "홈 — 오늘의 목표 · 최근 7일 풀이 그래프",
+        label: "홈 · 오늘의 목표 · 최근 7일 풀이 그래프",
         ratio: "3/4",
         fit: "contain",
         caption:
@@ -3517,13 +5207,16 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "왜",
-        v: "수어 동작을 보고 뜻을 고르는 퀴즈로 기초 단어를 학습하도록 만들고자 했습니다."
+        v: "수어 동작을 보고 뜻을 고르는 퀴즈로 기초 단어를 익히게 하려고 했습니다."
       },
       {
         k: "결과",
-        v: "동작 보고 의미 맞히기 + 텍스트→수어 변환 시제품 (30+ 단어)"
+        v: "퀴즈 20문항과 사전 120단어로 배포. 운영 서버에서 세어 보니 영상이 있는 단어는 17개, 같은 문장 왕복 중앙값 101ms(규칙 경로)"
       },
-      {k: "내 역할", v: "4인 팀의 백엔드 (Spring Boot 서버·API·데이터 처리)"}
+      {
+        k: "내 역할",
+        v: "4인 팀 백엔드 둘 중 하나 · 텍스트→수어 변환 파이프라인·사전·영상 조회·Cloud Run/Pages 배포"
+      }
     ],
     demo: {
       live: "https://toadsam.github.io/Sign-Language/home",
@@ -3531,18 +5224,27 @@ export const RICH_DATA: Record<string, RichProject> = {
     },
     meta: [
       // 카드와 같은 값. 현재 운영 중 · 리뉴얼 예정(본인 확인 2026-09-08).
+      // README(2026-09): 첫 커밋 2026-02-01, 마지막 05-28, main 커밋 70개.
       {
         label: "기간",
-        value: "2026.01 ~ 2026.05 · 파란학기제 · 운영 중 · 리뉴얼 예정"
+        value:
+          "2026.02 ~ 2026.05 파란학기제 한 학기 · 운영 중 · 2차 ML 실험 2026.09 ~ 10"
       },
       {label: "팀", value: "4인 (FE 1 · BE 2 · 3D 아바타 1)"},
-      {label: "역할", value: "백엔드 — 서버 구축·API 설계·입력 데이터 처리"},
+      {
+        label: "역할",
+        value:
+          "백엔드 둘 중 하나(변환 파이프라인 · 사전 · 영상 조회 · 배포) · 2차 수어 동작 토큰화(VQ-VAE) 실험"
+      },
       {
         label: "스택",
         value:
           "Spring Boot(Gradle) · Firebase Firestore · Firebase Storage · Expo · React Native"
       },
-      {label: "배포", value: "GitHub Pages (프론트) · /api/health 상태 체크"}
+      {
+        label: "배포",
+        value: "GitHub Pages (앱) · Cloud Run (API, Docker 이미지)"
+      }
     ],
     heroScreen: {
       title: "sign/learn",
@@ -3556,8 +5258,8 @@ export const RICH_DATA: Record<string, RichProject> = {
     },
     impact: [
       {n: "4인", l: "팀 · 백엔드 담당"},
-      {n: "Firestore", l: "데이터·스토리지"},
-      {n: "30+", l: "학습 단어"}
+      {n: "120", l: "사전 단어 (영상 17)"},
+      {n: "101ms", l: "변환 왕복 중앙값"}
     ],
     features: [
       {t: "수어 퀴즈 학습", d: "수어 영상을 보고 보기 4개 중 뜻을 고름"},
@@ -3566,10 +5268,13 @@ export const RICH_DATA: Record<string, RichProject> = {
       {t: "학습 피드백", d: "정답률·최대 연속 정답·최다 오답 단어 집계"}
     ],
     problem:
-      "수어를 처음 배우는 사람이 동작을 보고 의미를 반복해 익힐 수 있도록, 영상과 뜻 맞히기 퀴즈를 결합한 학습 기능을 만들고자 했습니다.",
+      "수어를 처음 배우는 사람이 동작을 보고 의미를 반복해 익힐 수 있도록, 영상을 보고 뜻을 맞히는 학습 기능을 만들려고 했습니다.",
     research: {
       quotes: [],
-      stat: {n: "30+", l: "시제품 목표 학습 단어 수 (README 기준)"}
+      stat: {
+        n: "20",
+        l: "퀴즈 문항 수 (backend/scripts/update_quiz_items.py 로 Firestore 에 올림)"
+      }
     },
     hypothesis:
       "동작을 먼저 보여주고 뜻을 고르게 하면 처음 배우는 사람도 반복으로 수어를 읽는 감각을 기를 수 있습니다. 단어-영상 조회 경로는 단일 소스로 둡니다.",
@@ -3666,14 +5371,24 @@ export const RICH_DATA: Record<string, RichProject> = {
         problem:
           "클라이언트가 보낸 선택지 ID의 대소문자·공백이 저장된 정답과 달라 맞은 답이 오답이 됐습니다.",
         solution:
-          "채점 전에 양쪽 선택지 ID를 trim + 대문자로 정규화한 뒤 비교하도록 통일했습니다."
+          "채점 전에 양쪽 선택지 ID를 trim + 대문자로 정규화한 뒤 비교하도록 통일했습니다. 다만 최초 서비스에도 정규화가 있어, 정규화 없는 버전에서 버그를 고친 전후 이력은 확인되지 않았습니다.",
+        evidence: {
+          status: "코드로 확인",
+          note: "최초 구현에 이미 양쪽 정규화가 있습니다. 원문에 적힌 장애 경험과 저장소에서 확인한 최초 구현을 구분합니다.",
+          url: "https://github.com/toadsam/Sign-Language/blob/1061a603aa7247e0f2976f1389d5b27763eccace/backend/src/main/java/com/wow/signlanguage/quiz/QuizService.java"
+        }
       },
       {
         title: "단어에 맞는 수어 영상이 안 나오는 경우가 있었습니다",
         problem:
           "영상은 Firebase Storage에, 메타데이터는 Firestore에 따로 있어 한쪽에만 있는 단어는 재생이 비었습니다.",
         solution:
-          "Storage를 단어로 먼저 조회하고 없으면 Firestore의 영상 URL로 폴백하는 단일 조회 경로를 만들었습니다."
+          "Storage를 단어로 먼저 조회하고 없으면 Firestore의 영상 URL로 폴백하는 단일 조회 경로를 만들었습니다.",
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "41bff361의 실제 전후입니다. Storage·Firestore의 실제 네트워크 호출은 하지 않습니다.",
+          url: "https://github.com/toadsam/Sign-Language/blob/41bff361eefd30aee9fdebfeecbb86fb16a97e49/backend/src/main/java/com/wow/signlanguage/quiz/QuizService.java"
+        }
       }
     ],
     tech: [
@@ -3691,7 +5406,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           {n: "동작→의미", l: "퀴즈"},
           {n: "정규화", l: "판정"},
           {n: "반복", l: "학습"},
-          {n: "30+", l: "단어"}
+          {n: "120", l: "단어"}
         ]
       },
       {
@@ -3703,12 +5418,181 @@ export const RICH_DATA: Record<string, RichProject> = {
         ]
       }
     ],
+    // 2026-11-13: 저장소 README(2026-09) 「측정 결과」의 값으로 바꿨다. 예전 "30+ 단어" 는 목표치였다.
     metrics: [
-      {n: "4인", l: "팀(BE 담당)"},
-      {n: "Firestore", l: "데이터"},
-      {n: "양방향", l: "학습+변환"},
-      {n: "30+", l: "단어"}
+      {
+        n: "120",
+        l: "사전 단어",
+        sub: "영상이 있는 단어는 17개",
+        mini: {kind: "bars", before: 120, after: 17},
+        source: "README 측정 결과 · 2026-09-07 운영 서버 POST /translate"
+      },
+      {
+        n: "101ms",
+        l: "변환 왕복 중앙값",
+        sub: "같은 문장 7회 · 규칙 경로만",
+        source: "같은 날 7회 · 규칙 경로만(OpenAI 키 없음)"
+      },
+      {
+        n: "20",
+        l: "퀴즈 문항",
+        sub: "Firestore · attempt/correct 집계",
+        source: "update_quiz_items.py · Firestore attempt/correct"
+      },
+      {
+        n: "417줄",
+        l: "내가 쓴 핵심 파일 줄 (git blame)",
+        sub: "Translation 158 · Normalizer 131 · VideoCache 128",
+        source: "main HEAD git blame · 백엔드 자바 4,228줄 중 877줄"
+      },
+      // 2026-11-13 밤: 아랫줄 넷은 2차(2026.09~10) ML 작업이다. 값은 전부 저장소 ml/experiments.md 의 표.
+      {
+        n: "5회",
+        l: "수어 동작 토큰화 실험",
+        sub: "VQ-VAE · 2026.10.14~16 · GCP Spot T4",
+        source: "ml/experiments.md · 학습이 끝날 때마다 한 줄씩 자동 기록"
+      },
+      {
+        n: "27.0mm",
+        l: "손 관절 복원 오차 (test, 최저)",
+        sub: "토큰 512개 · 20만 회 · 첫 실험 28.1mm",
+        source: "ml/experiments.md E4b · 고정 평가 화자 · 관절 평균 거리"
+      },
+      {
+        n: "511 / 512",
+        l: "쓰인 토큰 (test)",
+        sub: "관문은 사용률 50% 이상",
+        source: "ml/experiments.md E4b·E5 · 코드 사용 열"
+      },
+      {
+        n: "28 / 32",
+        l: "ml/ 폴더 내 커밋",
+        sub: "2026.09.22~10.18 · 인수인계 문서까지",
+        source: "저장소 커밋 작성자 · 2026-11-13 셈 · 테스트는 팀원 작성"
+      }
     ],
+    metricsNote:
+      "전부 저장소 toadsam/Sign-Language README(2026-09) 「측정 결과」와 git blame 값입니다. 첫 커밋 2026-02-01 · 마지막 05-28 · main 커밋 70개. 농인 당사자나 수어 전문가의 감수는 받지 않았습니다.",
+    detail: {
+      intro: {
+        show: "수어 동작 영상을 보고 뜻을 맞히며 익히고, 한국어 문장을 넣으면 수어 단어 순서로 바꿔 보여 주는 학습 앱입니다. 아주대 파란학기제로 넷이 만들었고, 저는 백엔드 둘 중 하나로 텍스트를 수어로 바꾸는 파이프라인과 사전, 영상 조회, Cloud Run·Pages 배포를 맡았습니다.",
+        bold: "저는 백엔드 둘 중 하나로 텍스트를 수어로 바꾸는 파이프라인과 사전, 영상 조회, Cloud Run·Pages 배포를 맡았습니다.",
+        more: [
+          "기존 수어 서비스는 대부분 「문장을 넣으면 아바타가 보여 준다」라 이미 수어를 아는 사람을 전제합니다. 수어를 외국어처럼 읽고 익힐 언어로 놓고, 동작을 먼저 보여 준 뒤 뜻을 고르게 했습니다.",
+          "정답 데이터가 없어서 세 분석기(규칙·ETRI·OpenAI)를 다 돌리고 사전 적중 수로 이긴 쪽을 고릅니다. 이 기준은 정확도보다 재생 가능한 단어 수를 높이는 쪽이라는 한계를 README 에 적었습니다.",
+          "3D 아바타는 팀원 작업이고 이 저장소에 없습니다. 농인 당사자나 수어 전문가 감수는 받지 않았습니다.",
+          "학기가 끝난 뒤 2026년 9~10월에는 같은 저장소에서 수어 동작을 토큰 512개로 쪼개는 모델(VQ-VAE) 실험을 다섯 번 돌리고 다음 사람에게 넘기는 문서를 썼습니다. ml/ 폴더 커밋 32개 중 28개가 제 것입니다."
+        ]
+      },
+      highlights: [
+        {
+          show: "분석기 셋을 고르지 않고 셋 다 돌린 뒤 사전에 가장 많이 맞은 스트림을 씁니다(TranslationService.chooseTokenStream, 동점이면 openai → etri → 규칙).",
+          bold: true,
+          more: "단점이 두 가지 있습니다. 요청 하나에 외부 호출이 최대 두 번 나가고(OpenAI 10초 타임아웃), 정확도보다 재생 가능한 토큰 수를 높이는 쪽으로 고릅니다. 사전에 있는 엉뚱한 단어가 사전에 없는 옳은 단어를 이길 수 있습니다."
+        },
+        {
+          show: "영상이 안 나오는 경우를 둘로 갈라 내보냅니다. 사전에 단어가 없음(unknown)과 사전엔 있는데 영상만 없음(noVideoWords).",
+          more: "화면의 「세부 결과」에 두 칸이 따로 있는 이유입니다. 하나로 뭉쳤으면 사용자는 왜 안 나오는지 알 수 없었습니다."
+        },
+        {
+          show: "영상 조회는 찾은 URL 과 함께 못 찾은 단어도 캐시합니다(missingWords). 사전 120단어 중 영상이 있는 건 17개라 대부분의 조회가 결과 없이 끝나기 때문입니다.",
+          more: "대신 캐시에 만료가 없습니다. 영상을 새로 올려도 서버를 다시 띄우기 전까지는 없는 단어로 남습니다. 단어 120개 규모라 그대로 뒀습니다."
+        }
+      ],
+      briefs: [
+        {
+          problem:
+            "클라이언트가 보낸 선택지 ID 의 대소문자·공백이 저장된 정답과 달라 맞은 답이 오답이 됐습니다.",
+          did: "채점 전에 양쪽 선택지 ID 를 trim + 대문자로 정규화한 뒤 비교하게 통일했습니다.",
+          result:
+            "확인한 최초 서비스에도 정규화가 있어, 정규화 없는 버전에서 고친 전후는 확인되지 않습니다."
+        },
+        {
+          problem:
+            "영상은 Firebase Storage 에, 메타데이터는 Firestore 에 따로 있어 한쪽에만 있는 단어는 재생이 비었습니다.",
+          did: "Storage 를 단어로 먼저 조회하고 없으면 Firestore 의 영상 URL 로 폴백하는 단일 조회 경로를 만들었습니다(StorageVideoCache.findUrlOrFallback).",
+          result:
+            "41bff361 의 전후가 확인됩니다. 못 찾은 단어도 캐시하므로 만료가 없다는 대가가 있습니다."
+        }
+      ],
+      summaries: {
+        arch: "Expo(React Native) 앱 · Spring Boot API(Cloud Run) · Firestore + Storage · 세 갈래 분석기 경쟁.",
+        code: "QuizService 의 선택지 정규화와 StorageVideoCache 의 Storage → Firestore 폴백.",
+        proc: "2026.02 첫 커밋 → API 계약 먼저 → 변환 파이프라인·사전 → 05 발표·배포."
+      },
+      scenes: [
+        {
+          place: "result",
+          kind: "line",
+          title: "2차 · 동작 토큰화 실험 다섯 번의 손 복원 오차 (test)",
+          unit: "mm",
+          points: [
+            {x: "E1 512", y: 28.1},
+            {x: "E2 얼굴 포함", y: 31.7},
+            {x: "E4a 1024", y: 29.9},
+            {x: "E4b 20만 회", y: 27.0},
+            {x: "E5 단어+문장", y: 28.2}
+          ],
+          note: "토큰을 1024개로 늘리면 더 나빠졌고(29.9), 학습을 20만 회로 늘린 쪽이 1.1mm 줄였습니다(27.0). E5 는 문장 데이터를 합친 다른 분할표라 앞의 넷과 바로 비교할 수 없습니다. 수치는 학습 스크립트가 끝날 때 표에 자동으로 적은 값입니다.",
+          source:
+            "toadsam/Sign-Language ml/experiments.md (2026-10-14 ~ 16, GCP Spot T4, 고정 평가 화자)"
+        },
+        {
+          place: "trouble",
+          kind: "steps",
+          title:
+            "「지하철역은 어디야?」가 수어 단어 순서가 되기까지 · POST /translate",
+          steps: [
+            {t: "입력", d: "지하철역은 어디야?"},
+            {
+              t: "세 갈래로 쪼갬",
+              d: "규칙 · ETRI 형태소 · OpenAI 기본형(10초 타임아웃)",
+              alt: {
+                t: "운영 서버에선 규칙만",
+                d: "OpenAI 키가 없으면 그 경로는 조용히 빠짐",
+                tone: "warn"
+              }
+            },
+            {t: "사전 적중 수로 승자", d: "동점이면 openai → etri → 규칙 순"},
+            {
+              t: "토큰",
+              d: "지하철역 · 어디 (particle_removal · question_reordering · word_order)"
+            },
+            {
+              t: "영상 조회",
+              d: "Storage 접두사로 목록 조회 → 없으면 접두사 바꿔 한 번 더",
+              alt: {
+                t: "그래도 없으면 Firestore URL",
+                d: "둘 다 없으면 noVideoWords 로",
+                tone: "fail"
+              }
+            },
+            {
+              t: "응답을 둘로",
+              d: "unknown(사전에 없음) / noVideoWords(사전엔 있는데 영상 없음)",
+              tone: "ok"
+            }
+          ],
+          note: "위 예문의 실제 응답: simplifiedSentence 「지하철역 어디」, unknown [], noVideoWords [지하철역, 어디]. 두 단어 다 사전엔 있지만 영상이 없어 글자로 재생됩니다.",
+          source:
+            "저장소 README 「운영 서버에 그대로 물어본 결과」 JSON · TranslationService#L50-L67, #L131-L157, #L94-L107 · StorageVideoCache#L42-L64"
+        },
+        {
+          place: "result",
+          kind: "bars",
+          title: "사전 120단어 중 영상이 있는 단어",
+          unit: "개",
+          rows: [
+            {label: "사전 단어", value: 120, tone: "muted"},
+            {label: "영상 있음", value: 17},
+            {label: "퀴즈 문항", value: 20}
+          ],
+          note: "그래서 통역기는 대부분의 문장에서 영상 대신 글자를 보여 줍니다. 갤러리의 통역기 캡처는 지금의 기본 상태 그대로입니다.",
+          source:
+            "README 「측정 결과」 · 2026-09-07 운영 서버 POST /translate 로 열 개씩 열두 번 조회해 hasVideo 를 셈"
+        }
+      ]
+    },
     kpt: {
       keep: ["API 계약을 먼저 정해 병렬 작업", "정답 정규화로 UX 개선"],
       problem: ["단어 수가 적음", "실사용자 테스트 부족"],
@@ -3722,186 +5606,269 @@ export const RICH_DATA: Record<string, RichProject> = {
 
   // ════════════════════════════ DarkLab (game · horror · 팀) ═════════════════
   darklab: {
-    tagline: "FIRST-PERSON HORROR · UNITY (TEAM)",
-    // 스크린샷이 남아 있지 않아 플레이 영상(Unity Game 뷰 녹화)에서 프레임을
-    // 뽑았다. 에디터 크롬은 잘라냈다. 「초기 그레이박스 프로토타입」 자리는
-    // 뺐다 — 그때 화면을 찍어 둔 자료가 없다.
+    // ── 2026-11-13 담당 교정. 저장소 toadsam/DarkLab 커밋 317개 중 본인(toadsam) 126개,
+    // 기간은 첫 커밋 2024-02-24 ~ 마지막 코드 커밋 2024-09-03(README 는 "2024-1 학기 프로젝트").
+    // 본인 커밋 메시지에 "(-재훈)" 서명이 있어 담당이 읽힌다: 1인칭 조작(07-29) · 응시 판정
+    // (07-31 SeeDetector) · 할머니 NPC 공포 이벤트(GrandMaMove 6커밋 · BedEvent 2커밋) · 램프
+    // 이벤트(PulsingLamp) · 눈 UI·공포이벤트 UI · 맵 C/D 구역 · 캐릭터 애니메이션.
+    // 예전 본문의 「Cinemachine 우선순위 블렌딩」은 CameraChange.cs(hyeona 작성, SetActive 전환)와
+    // 맞지 않아 뺐고, 「레이캐스트 상호작용」은 CameraRays.cs(3인 공동 수정, 화면 중앙 레이가
+    // FocusObject 에 2초 머물면 실행)로 적는다. 숫자는 gh 로 센 값만.
+    tagline: "FIRST-PERSON HORROR · UNITY (TEAM OF 3)",
     heroImage: {
       src: "/projects/darklab/title.webp",
-      label: "타이틀 — Threshold",
-      ratio: "16/9"
+      label: "타이틀 · Threshold",
+      ratio: "16/9",
+      caption:
+        "플레이 영상(Unity Game 뷰 녹화)에서 뽑은 프레임입니다. 에디터 크롬은 잘라냈습니다."
     },
     gallery: [
       {
         src: "/projects/darklab/explore.webp",
-        label: "1인칭 탐색 — 오른쪽 위 시계가 밤을 민다 (11:53 PM)",
+        label: "1인칭 탐색 · 오른쪽 위 시계가 밤을 민다 (11:53 PM)",
         ratio: "16/9"
       },
       {
         src: "/projects/darklab/room-night.webp",
-        label: "같은 방, 12:37 AM — 시간이 지나면 방이 달라져 있다",
+        label: "같은 방, 12:37 AM · 시간이 지나면 방이 달라져 있다",
         ratio: "16/9"
       },
       {
         src: "/projects/darklab/figure.webp",
-        label: "01:04 AM — 침대 옆에 형체가 서 있다",
+        label: "01:04 AM · 침대 옆에 형체가 서 있다",
         ratio: "16/9",
         caption:
-          "같은 방을 세 번 찍은 것이다. 시계가 넘어갈수록 가구가 늘고, 마지막엔 없던 것이 서 있다."
+          "같은 방을 세 번 찍은 것입니다. 시계가 넘어갈수록 가구가 늘고, 마지막엔 없던 것이 서 있습니다."
       }
     ],
     tldr: [
       {
         k: "무엇을",
-        v: "1인칭 탐색 기반 3D 공포 어드벤처 프로토타입 (Threshold)"
+        v: "어두운 집을 1인칭으로 탐색하며 물건을 응시해 조사하는 3D 공포 프로토타입 (Threshold)"
       },
-      {k: "왜", v: "공포의 긴장감은 사운드보다 ‘공간 탐색·상호작용’에서 나옴"},
+      {
+        k: "왜",
+        v: "점프스케어보다 공간 탐색·응시·시간 경과에서 긴장이 나온다고 봤음"
+      },
       {
         k: "결과",
-        v: "탐색·상호작용·카메라 연출 + 3개국어 로컬라이즈 프로토타입"
+        v: "응시 판정 · 할머니 NPC 공포 이벤트 · 램프·침대 이벤트 · 3개국어 로컬라이즈가 든 PC 프로토타입"
       },
-      {k: "내 역할", v: "3인 팀의 게임 프로그래밍 — 제어·상호작용·연출"}
+      {
+        k: "내 역할",
+        v: "3인 팀 · 커밋 126/317 · 1인칭 조작 초기, 응시 판정, 할머니 NPC·램프·침대 공포 이벤트, UI"
+      }
     ],
     demo: {repo: "https://github.com/toadsam/DarkLab"},
     meta: [
-      {label: "기간", value: "2024-1 학기 (팀 프로젝트)"},
-      {label: "팀", value: "3인 (프로그래밍 담당)"},
-      {label: "역할", value: "플레이어 제어·상호작용·카메라 연출"},
+      {
+        label: "기간",
+        value: "2024.02 ~ 2024.09 (첫 커밋 02-24 · 마지막 코드 커밋 09-03)"
+      },
+      {label: "팀", value: "3인 (toadsam 126 · hyeona 108 · PAVDUP 83 커밋)"},
+      {
+        label: "역할",
+        value:
+          "1인칭 조작 초기 · 응시 상호작용 · 할머니 NPC 공포 이벤트 · 램프/침대 이벤트 · 눈·공포 UI · 맵 일부"
+      },
       {
         label: "스택",
         value:
-          "Unity 2022.3.2f1 · C# · URP · Cinemachine · DOTween · Localization"
+          "Unity 2022.3.2f1 · C# · URP · Input System · Cinemachine · DOTween · Localization"
       },
       {label: "플랫폼", value: "PC (프로토타입 빌드)"}
     ],
     heroScreen: {
-      title: "DARKLAB",
+      title: "THRESHOLD",
       kind: "title",
-      titleText: "DARKLAB",
-      subText: "▶ ENTER THE LAB"
+      titleText: "THRESHOLD",
+      subText: "▶ 11:53 PM"
     },
     impact: [
-      {n: "3개국어", l: "로컬라이즈(en/ja/ko)"},
-      {n: "Cinemachine", l: "카메라 연출"},
-      {n: "3인", l: "팀 협업"}
+      {n: "126", l: "내 커밋 (317 중)"},
+      {n: "2초", l: "응시 판정 시간"},
+      {n: "3개국어", l: "로컬라이즈(en/ja/ko)"}
     ],
     features: [
-      {t: "1인칭 탐색", d: "Input System 기반 이동·시점"},
-      {t: "레이캐스트 상호작용", d: "바라보는 오브젝트 조사·집기"},
-      {t: "카메라 연출", d: "Cinemachine 전환·시야 제한 + DOTween"},
-      {t: "상태 데이터 분리", d: "ScriptableObject로 캐릭터·상태 관리"}
+      {
+        t: "1인칭 탐색",
+        d: "Input System 기반 이동·시점, 상태 머신(Idle·Walk·Run·Jump·Fall)"
+      },
+      {
+        t: "응시 상호작용",
+        d: "화면 중앙 레이가 FocusObject 에 2초 머물면 조사 실행"
+      },
+      {
+        t: "할머니 NPC 이벤트",
+        d: "이동 → 플레이어 카메라 강제 주시 → 추격 → 페이드"
+      },
+      {
+        t: "램프·침대 이벤트",
+        d: "심장박동 소리와 붉은 맥동 · 흔들리다 넘어가는 침대"
+      },
+      {t: "시간 경과", d: "시계가 넘어갈수록 같은 방이 달라짐"},
+      {t: "로컬라이즈", d: "Unity Localization 3개국어 (팀원 담당)"}
     ],
     problem:
-      "공포 게임의 긴장감은 단순한 점프스케어보다 공간 탐색과 오브젝트 상호작용에서 나온다. 이를 자연스럽게 구현하는 카메라 연출과 이벤트 흐름, 그리고 다국어 대응까지 필요했다.",
+      "공포 게임의 긴장감은 점프스케어보다 공간 탐색과 오브젝트 상호작용에서 나옵니다. 플레이어가 무엇을 조사할 수 있는지, 언제 무언가가 나타나는지를 손으로 짜 넣어야 했습니다.",
     research: {
-      quotes: [],
+      quotes: [
+        {
+          q: "할머니를 머지했는데 왜 안 무서울까?",
+          who: "2024-08-01 커밋 메시지 · JJH_Grandma 브랜치"
+        }
+      ],
       stat: {n: "3", l: "지원 언어 (Unity Localization: en/ja/ko-KR)"}
     },
     hypothesis:
-      "레이캐스트 상호작용과 Cinemachine 시야 연출만으로도 점프스케어 없이 탐색 자체가 긴장을 만든다고 봤다.",
+      "조사할 수 있는 물건을 2초 응시로 고르고, NPC 와 가구가 시간에 따라 움직이면 점프스케어 없이 탐색 자체가 긴장을 만든다고 봤습니다.",
     process: [
-      {t: "프로토", d: "그레이박스"},
-      {t: "상호작용", d: "레이캐스트"},
-      {t: "카메라", d: "Cinemachine"},
-      {t: "데이터", d: "SO 분리"},
-      {t: "로컬라이즈", d: "3개국어"}
+      {t: "맵·캐릭터", d: "2024.05 C/D 구역 · 애니메이션"},
+      {t: "통합 씬", d: "06 · 포커스 상호작용 수정"},
+      {t: "1인칭 조작", d: "07.29 · 상호작용 키"},
+      {t: "응시·공포 이벤트", d: "07.31~08 · 할머니·램프·침대"},
+      {t: "마무리", d: "08 · 눈 UI · 공포이벤트 UI"}
     ],
     architecture: [
-      {tag: "Input", name: "Input System", desc: "1인칭 이동·시점"},
+      {
+        tag: "Input",
+        name: "Input System + 상태 머신",
+        desc: "PlayerStateMachine · Idle/Walk/Run/Jump/Fall"
+      },
       {
         tag: "Interact",
-        name: "Raycast Interactor",
-        desc: "IInteractable 조사·집기"
+        name: "CameraRays (응시)",
+        desc: "ViewportPointToRay → RaycastAll → FocusObject 2초"
       },
       {
-        tag: "Camera",
-        name: "Cinemachine + DOTween",
-        desc: "전환·시야 제한 연출"
+        tag: "Event",
+        name: "ScaryEvent 계층",
+        desc: "Audio · Light · PostProcessing · DOTween 효과 (팀)"
       },
       {
-        tag: "Data",
-        name: "ScriptableObject",
-        desc: "캐릭터·상태 · Localization/Addressables"
+        tag: "NPC",
+        name: "GrandMaMove · BedEvent",
+        desc: "이동·주시·추격·페이드 · 흔들림·회전 (담당)"
       }
     ],
     decisions: [
       {
-        area: "상호작용",
-        pick: "Raycast",
-        why: "직관적 ‘바라보는 것’ 조사",
-        alt: "트리거 콜라이더(부정확)"
+        area: "조사 판정",
+        pick: "응시 2초",
+        why: "키를 누르지 않고 바라보는 것만으로 조사되면 손이 비어 더 불안함. GREEN_RAY_THRESHOLD = 2.0",
+        alt: "E 키 즉시 상호작용"
       },
       {
-        area: "카메라",
-        pick: "Cinemachine",
-        why: "블렌딩·연출 강력",
-        alt: "수동 카메라(공수 ↑)"
+        area: "NPC 연출",
+        pick: "카메라 강제 주시",
+        why: "할머니가 움직이는 동안 플레이어 카메라가 할머니를 보게 하고 이동을 막음",
+        alt: "자유 시점(놓치면 연출이 안 보임)"
       },
       {
-        area: "데이터",
-        pick: "ScriptableObject",
-        why: "디자이너 친화·유지보수",
-        alt: "하드코딩(경직)"
-      },
-      {
-        area: "렌더/다국어",
-        pick: "URP + Localization",
-        why: "조명 연출 + 3개국어 대응",
-        alt: "Built-in(연출 ↓)"
+        area: "사라짐",
+        pick: "머티리얼 알파 페이드",
+        why: "렌더러 전부를 Transparent 큐로 바꿔 서서히 사라지게",
+        alt: "SetActive(false) (뚝 끊김)"
       }
     ],
     coreCode: [
       {
-        filename: "Interactor.cs",
-        caption: "화면 중앙에서 레이캐스트로 상호작용 대상 조사",
-        highlightLines: [3, 4],
+        filename: "CameraRays.cs",
+        caption:
+          "화면 중앙에서 쏜 레이가 FocusObject 에 2초 머물면 조사 실행 (3인 공동 수정)",
+        highlightLines: [3, 7, 8],
         lines: [
-          "void TryInteract() {",
-          "  Ray ray = cam.ViewportPointToRay(center);",
-          "  if (Physics.Raycast(ray, out var hit, 2.5f))",
-          "    hit.collider.GetComponent<IInteractable>()?.Interact();",
+          "ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));",
+          "ratHits = Physics.RaycastAll(ray, MAX_RAY_DISTANCE);",
+          'if (hit.collider.CompareTag("FocusObject") && !data.isComplete)',
+          "{",
+          "    greenRayDuration += Time.deltaTime;",
+          "    if (greenRayDuration >= GREEN_RAY_THRESHOLD) // 2.0f",
+          "    {",
+          "        ExecuteFunction(ratHits[0].point, hit.collider.gameObject);",
+          "        greenRayDuration = 0.0f;",
+          "    }",
           "}"
         ]
       },
       {
-        filename: "PlayerState.cs",
-        caption: "상태를 ScriptableObject로 분리해 씬 간 공유",
+        filename: "GrandMaMove.cs",
+        caption:
+          "할머니 이벤트: 앞으로 이동하는 동안 플레이어 카메라를 할머니 쪽으로 Slerp 하고, 렌더러는 미리 Transparent 큐로 바꿔 둬 페이드가 되게 (담당)",
+        highlightLines: [2, 9, 12],
         lines: [
-          "[CreateAssetMenu]",
-          "public class PlayerState : ScriptableObject {",
-          "  public int sanity;",
-          "  public bool hasKey;",
-          "}"
+          "foreach (Renderer renderer in childRenderers) {",
+          '    material.SetOverrideTag("RenderType", "Transparent");',
+          "    material.renderQueue = 3000;            // 페이드용 투명 큐",
+          "}",
+          "public void StartGrandmaEvent() {",
+          "    isGrandEvent = true;",
+          "    targetPosition = initialPosition + transform.forward * moveDistance;",
+          "    StartCoroutine(GrandmaEventSequence());",
+          "}",
+          "// GrandmaEventSequence: MoveTowards(targetPosition) 하면서",
+          "Quaternion lookRotation = Quaternion.LookRotation(transform.position - playerCamera.transform.position);",
+          "playerCamera.transform.rotation = Quaternion.Slerp(playerCamera.transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);"
         ]
       }
     ],
     work: [
-      {g: "제어", items: ["1인칭 이동·시점", "Input System 연동"]},
       {
-        g: "상호작용",
-        items: ["레이캐스트 조사·집기", "IInteractable 인터페이스"]
+        g: "조작·판정",
+        items: [
+          "1인칭 조작 초기(07-29)",
+          "응시 판정 SeeDetector(07-31) · CameraRays 수정"
+        ]
       },
-      {g: "연출", items: ["Cinemachine 카메라 전환", "DOTween 연출"]},
-      {g: "데이터", items: ["ScriptableObject 상태 설계"]}
+      {
+        g: "공포 이벤트",
+        items: [
+          "할머니 이동·주시·추격·페이드(GrandMaMove)",
+          "침대 흔들림·회전(BedEvent) · 램프 맥동(PulsingLamp)"
+        ]
+      },
+      {
+        g: "UI·맵",
+        items: ["눈 UI · 공포이벤트 UI", "맵 C/D 구역 · 캐릭터 애니메이션"]
+      }
     ],
     challenges: [
       {
-        title: "카메라 전환이 뚝뚝 끊겼다",
-        problem: "이벤트마다 카메라를 수동으로 옮기니 전환이 부자연스러웠다.",
+        title:
+          "무엇을 조사할 수 있는지 안 보여서, 바라보기만 해도 조사되게 했습니다",
+        problem:
+          "플레이어가 조사 가능한 오브젝트를 인지하지 못해 답답해했습니다. 키를 눌러야 반응하는 구조면 뭘 눌러야 하는지부터 알아야 합니다.",
         solution:
-          "Cinemachine 가상 카메라 우선순위로 블렌딩해 부드럽게 시점이 넘어가도록 했다."
+          "화면 중앙에서 레이를 쏴 FocusObject 태그에 닿으면 초록 선으로 표시하고, 2초(GREEN_RAY_THRESHOLD) 머물면 조사를 실행하게 했습니다(CameraRays.cs). 07-31 에 응시·관찰 판정을 SeeDetector 로 먼저 넣었고, 뒤에 CameraRays 로 정리됐습니다. 조사가 끝난 오브젝트(isComplete)는 다시 반응하지 않습니다.",
+        evidence: {
+          status: "구현 확인 · 3인 공동 수정 파일",
+          note: "CameraRays.cs 는 toadsam·hyeona·PAVDUP 세 사람의 커밋이 있어 단독 작업으로 적지 않습니다. 07-31 커밋 「응시, 관찰, 상호작용 (-재훈)」이 SeeDetector.cs(+134줄)를 추가했고, HEAD 에서는 주석 처리돼 있습니다.",
+          url: "https://github.com/toadsam/DarkLab/blob/6cb748fb98ed2eab610e22245a8c9a4b5eb22085/Threshold/Assets/Scripts/Characters/Player/Interaction/CameraRays.cs"
+        }
       },
       {
-        title: "무엇을 상호작용할지 안 보였다",
-        problem: "플레이어가 조사 가능한 오브젝트를 인지 못 해 답답해했다.",
+        title:
+          "할머니를 머지했는데 왜 안 무서울까. 연출을 세 단계로 다시 짰습니다",
+        problem:
+          "할머니 NPC 를 씬에 넣었더니(08-01) 그냥 서 있는 모델이었습니다. 커밋 메시지가 「할머니를 머지했는데 왜 안 무서울까?」입니다.",
         solution:
-          "레이캐스트가 IInteractable에 닿으면 미세한 하이라이트/커서 변화로 단서를 줬다.",
-        code: {
-          filename: "Highlight.cs",
-          lines: [
-            "if (hit && hit.GetComponent<IInteractable>())",
-            "  reticle.SetActive(true); // 조사 가능 신호"
-          ]
+          "GrandMaMove 는 네 단계입니다. 할머니가 이동하면 플레이어 카메라가 강제로 그쪽을 보고, 이어서 쫓아오다가(chaseSpeed) 머티리얼 알파를 내려 사라집니다. 이동하는 동안 플레이어 이동을 막고(08-28 「플레이어가 움직이는 동안 움직임 막는 거 수정」), 사라질 때는 자식 렌더러 전부를 Transparent 큐로 바꿔 서서히 지웁니다. 소리는 이동음과 추격음을 나눠 soundDelay 뒤에 틉니다.",
+        evidence: {
+          status: "구현 확인 · 본인 커밋 6건",
+          note: "GrandMaMove.cs 커밋 6건 전부 toadsam. 08-01 「할머니 이동하는 공포 이벤트 추가」 → 08-11 「할머니 사라지는 것 수정」 → 08-28 이동 막기 수정.",
+          url: "https://github.com/toadsam/DarkLab/blob/main/Threshold/Assets/Scripts/Characters/GrandMa/GrandMaMove.cs"
+        }
+      },
+      {
+        title: "침대와 램프에 시간이 지나면 달라지는 연출을 넣었습니다",
+        problem:
+          "같은 방이 밤새 똑같으면 시계가 넘어가도 긴장이 쌓이지 않았습니다.",
+        solution:
+          "BedEvent 는 자식 오브젝트를 주기적으로 흔들다가 조건이 켜지면 부모를 Z축 90도까지 회전시키고 지연 뒤 특정 오브젝트를 켭니다. PulsingLamp 는 조명 세기를 min~max 로 맥동시키며 색을 붉게 바꾸고 심장박동 소리를 틉니다. 갤러리의 세 장이 그 결과입니다.",
+        evidence: {
+          status: "구현 확인 · 본인 커밋",
+          note: "BedEvent.cs 커밋 2건 toadsam, PulsingLamp.cs 는 toadsam 2 · hyeona 1. 08-03 「침대 이벤트 추가 하지만 약간 미숙」 → 08-13 「램프 이벤트 추가 + 메인씬에 추가」.",
+          url: "https://github.com/toadsam/DarkLab/blob/main/Threshold/Assets/Scripts/Characters/GrandMa/BedEvent.cs"
         }
       }
     ],
@@ -3909,50 +5876,178 @@ export const RICH_DATA: Record<string, RichProject> = {
       "Unity 2022.3",
       "C#",
       "URP",
+      "Input System",
       "Cinemachine",
       "DOTween",
       "Localization"
     ],
     resultScreens: [
       {
-        title: "DARKLAB · LAB",
-        kind: "title",
-        titleText: "CHAPTER 1",
-        subText: "THE LAB"
-      },
-      {
-        title: "interactions",
-        kind: "feed",
-        feed: [
-          "문서 조사 — 단서",
-          "잠긴 문 — 열쇠 필요",
-          "전원 차단기 작동",
-          "복도 카메라 전환"
+        title: "threshold/clock",
+        kind: "stats",
+        stats: [
+          {n: "11:53", l: "탐색"},
+          {n: "12:37", l: "방이 달라짐"},
+          {n: "01:04", l: "형체"}
         ]
       }
     ],
     metrics: [
-      {n: "3개국어", l: "로컬라이즈"},
-      {n: "Cinemachine", l: "연출"},
-      {n: "ScriptableObject", l: "상태 구조"},
-      {n: "3인", l: "팀"}
+      {
+        n: "126",
+        l: "내 커밋 (317 중)",
+        sub: "2024.02 ~ 2024.09",
+        mini: {kind: "bars", before: 317, after: 126},
+        source: "GitHub 커밋 작성자 집계 · 2026-11-13 · 메시지에 (-재훈) 서명"
+      },
+      {
+        n: "2초",
+        l: "응시 판정",
+        sub: "GREEN_RAY_THRESHOLD = 2.0f",
+        source: "CameraRays.cs 상수 GREEN_RAY_THRESHOLD"
+      },
+      {
+        n: "3",
+        l: "공포 이벤트 스크립트",
+        sub: "GrandMaMove · BedEvent · PulsingLamp",
+        source: "커밋 작성자 · GrandMaMove 6/6 · BedEvent 2/2 · PulsingLamp 2/3"
+      },
+      {
+        n: "3개국어",
+        l: "로컬라이즈",
+        sub: "en · ja · ko-KR (팀원 담당)",
+        source: "Unity Localization · 로컬라이즈는 팀원(PAVDUP) 작업"
+      }
     ],
+    metricsNote:
+      "커밋 수·작성자는 2026-11-13 GitHub API 로 센 값입니다. 플레이 지표(테스터 수·플레이 시간)는 없습니다. 로컬라이즈와 ScaryEvent 계층은 팀원 작업이라 담당에 넣지 않았습니다.",
+    detail: {
+      intro: {
+        show: "어두운 집을 1인칭으로 탐색하며 물건을 바라봐 조사하는 3인 팀 공포 프로토타입입니다. 저는 커밋 126개로 1인칭 조작 초기, 2초 응시 판정, 그리고 할머니 NPC·램프·침대의 공포 이벤트를 맡았습니다.",
+        bold: "저는 커밋 126개로 1인칭 조작 초기, 2초 응시 판정, 그리고 할머니 NPC·램프·침대의 공포 이벤트를 맡았습니다.",
+        more: [
+          "시계가 넘어갈수록 같은 방이 달라집니다. 11:53 PM 탐색 → 12:37 AM 가구가 늘어남 → 01:04 AM 침대 옆에 형체. 갤러리와 아래 장면이 그 세 프레임입니다.",
+          "카메라 전환(CameraChange.cs)은 팀원이 작성했습니다. 담당은 커밋 메시지의 「(-재훈)」 서명으로 가렸습니다.",
+          "테스터 수나 플레이 시간 같은 지표는 없습니다. 있는 사실은 코드와 커밋뿐이라 그것만 적었습니다."
+        ]
+      },
+      highlights: [
+        {
+          show: "바라보기만 해도 조사되는 응시 판정. 화면 중앙 레이가 FocusObject 에 2초 머물면 실행(CameraRays, GREEN_RAY_THRESHOLD 2.0f). 07-31 SeeDetector 로 먼저 넣었습니다.",
+          bold: true,
+          more: "CameraRays.cs 는 세 사람의 커밋이 있는 공동 파일이라 단독 작업으로 적지 않습니다. 조사가 끝난 오브젝트는 isComplete 로 다시 반응하지 않습니다."
+        },
+        {
+          show: "할머니 NPC 공포 이벤트를 이동, 카메라 강제 주시, 추격, 페이드 네 단계로 짰습니다(GrandMaMove, 본인 커밋 6건).",
+          more: "이동하는 동안 플레이어 이동을 막고, 사라질 때는 자식 렌더러 전부를 Transparent 큐로 바꿔 서서히 지웁니다. 08-01 「할머니를 머지했는데 왜 안 무서울까?」가 출발점이었습니다."
+        },
+        {
+          show: "침대(흔들림 → Z축 90도 회전 → 지연 뒤 오브젝트)와 램프(세기 맥동 · 붉은 색 · 심장박동)로 시간 경과를 만들었습니다.",
+          more: "BedEvent 2/2 · PulsingLamp 2/3 커밋이 본인. 갤러리 세 장(11:53 PM · 12:37 AM · 01:04 AM)이 그 결과입니다."
+        }
+      ],
+      briefs: [
+        {
+          problem: "무엇을 조사할 수 있는지 안 보여 플레이어가 답답해했습니다.",
+          did: "화면 중앙 레이가 FocusObject 에 닿으면 표시하고 2초 머물면 조사를 실행하게 했습니다(CameraRays · 07-31 SeeDetector).",
+          result:
+            "키 없이 바라보는 것만으로 조사됩니다. 공동 수정 파일이라 단독 작업으로 적지 않습니다."
+        },
+        {
+          problem:
+            "할머니 NPC 를 넣었더니 그냥 서 있는 모델이었습니다(「머지했는데 왜 안 무서울까?」).",
+          did: "네 단계로 다시 짜고, 이동 중 플레이어 조작을 막았습니다.",
+          result:
+            "GrandMaMove.cs 커밋 6건 전부 본인. 08-01 → 08-11 → 08-28 로 세 번 고쳤습니다."
+        },
+        {
+          problem:
+            "같은 방이 밤새 똑같으면 시계가 넘어가도 긴장이 쌓이지 않았습니다.",
+          did: "침대는 흔들리다 넘어가고 특정 오브젝트가 켜지며, 램프는 붉게 맥동하며 심장박동 소리를 내게 했습니다.",
+          result: "같은 방을 세 시각에 찍은 프레임이 그 결과입니다."
+        }
+      ],
+      summaries: {
+        arch: "Input System 상태 머신 · CameraRays 응시 판정 · ScaryEvent 계층(팀) · GrandMaMove·BedEvent(담당).",
+        code: "CameraRays 의 2초 응시 판정과 GrandMaMove 의 주시·페이드.",
+        proc: "2024.05 맵·캐릭터 → 06 통합 씬 → 07.29 1인칭 조작 → 07.31~08 응시·공포 이벤트 → 08 UI."
+      },
+      scenes: [
+        {
+          place: "result",
+          kind: "frames",
+          title: "같은 방, 세 시각 · 손잡이를 끌어 보세요",
+          ratio: "16/9",
+          frames: [
+            {
+              src: "/projects/darklab/explore.webp",
+              label: "탐색 시작",
+              at: "11:53 PM"
+            },
+            {
+              src: "/projects/darklab/room-night.webp",
+              label: "가구가 늘어나 있다",
+              at: "12:37 AM"
+            },
+            {
+              src: "/projects/darklab/figure.webp",
+              label: "침대 옆에 형체",
+              at: "01:04 AM"
+            }
+          ],
+          note: "플레이 영상에서 뽑은 프레임 세 장입니다. 침대·램프 이벤트와 할머니 NPC 가 이 사이에서 움직입니다.",
+          source:
+            "Unity Game 뷰 녹화 프레임(public/projects/darklab) · 시각은 화면 오른쪽 위 시계"
+        },
+        {
+          place: "trouble",
+          kind: "steps",
+          title: "할머니 이벤트 네 단계 · GrandMaMove.cs",
+          steps: [
+            {
+              t: "등장·이동",
+              d: "initialPosition 에서 forward 로 moveDistance 만큼 MoveTowards"
+            },
+            {
+              t: "카메라 강제 주시",
+              d: "플레이어 카메라가 할머니를 바라보게, 이동은 막음",
+              tone: "warn"
+            },
+            {
+              t: "추격",
+              d: "chaseSpeed 로 플레이어 쪽으로 · 추격음으로 교체",
+              tone: "fail"
+            },
+            {
+              t: "페이드",
+              d: "fadeDelay 뒤 fadeDuration 동안 알파 0 으로",
+              alt: {t: "SetActive(false)", d: "뚝 끊겨서 안 씀", tone: "muted"}
+            }
+          ],
+          note: "렌더러 전부를 Transparent 큐(renderQueue 3000)로 바꿔 두기 때문에 페이드가 됩니다.",
+          source: "GrandMaMove.cs (toadsam/DarkLab main) · 본인 커밋 6건"
+        }
+      ]
+    },
     kpt: {
       keep: [
-        "연출을 Cinemachine으로 위임",
-        "상태를 데이터로 분리",
-        "다국어 대응"
+        "응시 2초로 조사 판정",
+        "NPC 연출을 이동·주시·추격·페이드로 나눔",
+        "이벤트마다 소리를 분리"
       ],
-      problem: ["퍼즐 분량 부족", "사운드 디자인 미흡"],
-      try: ["퍼즐·엔딩 시퀀스 추가", "세이브 시스템"]
+      problem: [
+        "퍼즐 분량 부족",
+        "플레이 지표 없음",
+        "공동 파일(CameraRays)에서 담당 경계가 흐림"
+      ],
+      try: ["퍼즐·엔딩 시퀀스", "세이브 시스템", "테스터 기록 남기기"]
     },
     learningLead:
-      "조사 가능한 오브젝트가 안 보여 답답하다는 문제는 레이캐스트가 닿을 때 커서를 바꾸는 것으로 풀었다.",
+      "조사 가능한 물건이 안 보이는 문제는 키 입력 대신 2초 응시로 풀었고, NPC 가 안 무서운 문제는 연출을 네 단계로 쪼개서 풀었습니다.",
     learning:
-      "카메라 전환은 손으로 옮기는 대신 Cinemachine 가상 카메라 우선순위 블렌딩에 맡겼다."
+      "저장소를 다시 읽고 담당을 커밋 서명으로 가렸습니다. 팀원이 짠 카메라 전환을 제 것처럼 적었던 문장은 뺐습니다."
   },
 
-  // ════════════════════════════ 아주분투 / Ajou_Mini_Game (game · arcade) ════
   "ajou-adventure": {
     tagline: "2D CASUAL RUNNER · PHASER 3 (SOLO)",
     heroImage: {
@@ -4099,6 +6194,11 @@ export const RICH_DATA: Record<string, RichProject> = {
             "this.setSize(38, 58);   // 스프라이트 208×140",
             "this.setOffset(85, 36); // 중앙 몸통만 판정"
           ]
+        },
+        evidence: {
+          status: "코드로 확인",
+          note: "충돌 크기 setSize(38,58)·setOffset(85,36)는 Player.ts 의 처음 커밋부터 이 값입니다.",
+          url: "https://github.com/toadsam/Ajou_Mini_Game/blob/364e72e4ead0fa2950d6ddcbeafc1b626fcb8a38/src/game/objects/Player.ts"
         }
       },
       {
@@ -4106,7 +6206,12 @@ export const RICH_DATA: Record<string, RichProject> = {
         problem:
           "점프·발판 간격 튜닝을 매번 손으로 플레이해 확인하기 번거로웠다.",
         solution:
-          "플레이를 자동 실행해 스크린샷과 로그(JSON)를 뽑는 플레이테스트 하네스를 만들어, 간격·점프 튜닝을 반복 검증했다."
+          "저장소에 자동 플레이 결과로 기록된 스크린샷과 JSON 로그가 남아 있습니다. 발판 간격 등의 상태를 기록한 산출물은 확인했지만, 이를 생성한 하네스 소스와 도입 전후 이력은 찾지 못했습니다. 자동화 구현 방식은 포트폴리오 설명 기준으로 남깁니다.",
+        evidence: {
+          status: "산출물로 확인",
+          note: "playtest-output-gap-check/gap-log.json 과 캡처 산출물로 확인했습니다. 실행 스크립트는 찾지 못했습니다.",
+          url: "https://github.com/toadsam/Ajou_Mini_Game/blob/3d62498d7351a04ac4dc469e73fdd03b3495d68e/playtest-output-gap-check/gap-log.json"
+        }
       }
     ],
     tech: ["TypeScript", "Phaser 3", "Vite"],
@@ -4151,26 +6256,34 @@ export const RICH_DATA: Record<string, RichProject> = {
     heroImage: {
       src: "/projects/tserof.webp",
       label: "TSEROF 타이틀",
-      ratio: "16/9"
+      // 파일이 630×500(1.26:1)이다. 16/9 로 적으면 위아래가 잘린다(2026-11-13 실측).
+      ratio: "630/500",
+      caption:
+        "포트폴리오 원본의 소개용 키 아트입니다(2025-12). 게임 화면은 아래 갤러리에 있습니다."
     },
     // 그레이박스 시절 캡처는 남아 있지 않아 「문제」 그림 자리는 비웠다.
     // 대신 내가 맡은 기믹의 전후 비교를 갤러리 끝에 넣는다 — problemShot 은
     // 원페이저에서 렌더되지 않아 이력서로 들어온 사람은 못 본다.
     gallery: [
+      // 비율은 파일 실측(2026-11-13): 605×388 · 530×301 · 870×497. 16/9 로 적혀 있던 것을 고쳤다.
       {
         src: "/projects/op/tserof-difficulty.webp",
         label: "난이도 선택",
-        ratio: "16/9"
+        ratio: "605/388"
       },
-      {src: "/projects/op/tserof-stage.webp", label: "스테이지", ratio: "16/9"},
+      {
+        src: "/projects/op/tserof-stage.webp",
+        label: "스테이지",
+        ratio: "530/301"
+      },
       {
         src: "/projects/op/tserof-feedback.webp",
         label: "유저 피드백 반영",
-        ratio: "16/9"
+        ratio: "870/497"
       },
       {
         src: "/projects/tserof/gimmick-icicle.webp",
-        label: "낙하물(고드름) 기믹 — 매번 만들고 부수던 것을 위치 재사용으로",
+        label: "낙하물(고드름) 기믹 · 매번 만들고 부수던 것을 위치 재사용으로",
         ratio: "834/776",
         fit: "contain",
         caption:
@@ -4190,7 +6303,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "왜",
-        v: "스테이지 2의 구간 전환·장애물·퍼즐을 통합해 관리하고자 했습니다."
+        v: "스테이지 2의 구간 전환·장애물·퍼즐을 한 곳에서 관리하려고 했습니다."
       },
       {
         k: "결과",
@@ -4198,7 +6311,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "내 역할",
-        v: "부팀장 — 스테이지 2 전체 · 장애물/기믹 · 3×3 패턴 퍼즐 · 기획"
+        v: "부팀장 · 스테이지 2 전체 · 장애물/기믹 · 3×3 패턴 퍼즐 · 기획"
       }
     ],
     // 저장소(KimEoJin24/TSEROF)는 팀장이 비공개로 돌려 404 다 — 링크를 걸지 않는다(2026-09-08).
@@ -4247,16 +6360,16 @@ export const RICH_DATA: Record<string, RichProject> = {
       quotes: [
         {
           q: "스테이지 2 통합 씬 생성 (-재훈)",
-          who: "2023-11-27 커밋 메시지 — JJH_Stage2 브랜치"
+          who: "2023-11-27 커밋 메시지 · JJH_Stage2 브랜치"
         },
         {
           q: "Player 의 Jump 범위에 문제가 생기지 않게 임시적으로 오브젝트의 위치를 수정함.",
-          who: "유저 테스트 조치 기록 — 내가 놓은 장애물에 대한 피드백"
+          who: "유저 테스트 조치 기록 · 내가 놓은 장애물에 대한 피드백"
         }
       ]
     },
     hypothesis:
-      "“세 씬을 한 씬으로 합쳐 카메라·리스폰·클리어를 매니저 하나에 모으고, 큐브·퍼즐·장애물을 같은 규약으로 묶으면 — 기믹을 늘려도 구간 전환이 끊기지 않고 팀원도 같은 방식으로 붙일 수 있다.”",
+      "“세 씬을 한 씬으로 합쳐 카메라·리스폰·클리어를 매니저 하나에 모으고, 큐브·퍼즐·장애물을 같은 규약으로 묶으면 기믹을 늘려도 구간 전환이 끊기지 않고 팀원도 같은 방식으로 붙일 수 있다.”",
     process: [
       {t: "기획", d: "스테이지 2 구성"},
       {t: "씬 통합", d: "2-1·2-2·2-3"},
@@ -4312,7 +6425,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "Stage2Manager.cs",
         caption:
-          "구간 하나가 켜질 때 리스폰 지점과 Cinemachine 카메라가 같이 바뀝니다 — 씬 로드 없이 2-1 → 2-2",
+          "구간 하나가 켜질 때 리스폰 지점과 Cinemachine 카메라가 같이 바뀝니다. 씬 로드 없이 2-1 → 2-2",
         highlightLines: [3, 4, 6],
         lines: [
           "public void Stage2Start()",
@@ -4350,7 +6463,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "CubeType.cs",
         caption:
-          "큐브 하나에 enum 하나 — 마그마는 튕기고, 용암·물은 리스폰, 얼음은 코루틴으로 떨어졌다 되돌아옵니다",
+          "큐브 하나에 enum 하나. 마그마는 튕기고, 용암·물은 리스폰, 얼음은 코루틴으로 떨어졌다 되돌아옵니다",
         highlightLines: [1, 5, 8, 11],
         lines: [
           "public enum Cube { Magma, Luva, Ice, Water, IceWall }",
@@ -4378,14 +6491,14 @@ export const RICH_DATA: Record<string, RichProject> = {
         g: "스테이지 2",
         items: [
           "2-1·2-2·2-3 씬을 한 씬으로 통합",
-          "Stage2Manager — 구간별 Cinemachine 카메라 전환 · 리스폰 지점 · 클리어 판정",
+          "Stage2Manager · 구간별 Cinemachine 카메라 전환 · 리스폰 지점 · 클리어 판정",
           "스테이지 2 카메라 회전 (CamPos)"
         ]
       },
       {
         g: "퍼즐",
         items: [
-          "3×3 패턴 퍼즐 — PuzzleManager · PatternSign · PuzzleButton · PuzzleObjects 등 7개 스크립트"
+          "3×3 패턴 퍼즐 · PuzzleManager · PatternSign · PuzzleButton · PuzzleObjects 등 7개 스크립트"
         ]
       },
       {
@@ -4399,7 +6512,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         g: "정리",
         items: [
-          "IMovable·IRotatable·IDisturbing·IPlayerRespawnable·IInteractable 도입 (박지원과, 12월)",
+          "IMovable·IRotatable·IDisturbing·IPlayerRespwanable·IInteractable 도입 (박지원과, 12월)",
           "엔딩 씬 일부"
         ]
       }
@@ -4414,22 +6527,33 @@ export const RICH_DATA: Record<string, RichProject> = {
         problem:
           "2-1·2-2·2-3 이 별도 씬이라 구간마다 카메라·리스폰·클리어 판정을 따로 들고 있었고, 씬을 넘기는 순간 상태가 끊겼습니다.",
         solution:
-          "세 씬을 Stage2Scene 하나로 합치고(11.27 통합 씬 생성 → 11.28 씬 합치기 → 11.29 씬 넘어가는 문제 해결), Stage2Manager 가 구간 오브젝트 그룹 on/off · Cinemachine 카메라 enable · 현재 리스폰 지점을 한 곳에서 바꾸게 했습니다."
+          "세 씬을 Stage2Scene 하나로 합치고(11.27 통합 씬 생성 → 11.28 씬 합치기 → 11.29 씬 넘어가는 문제 해결), Stage2Manager 가 구간 오브젝트 그룹 on/off · Cinemachine 카메라 enable · 현재 리스폰 지점을 한 곳에서 바꾸게 했습니다.",
+        evidence: {
+          status: "코드로 확인",
+          note: "257e4c1a의 통합 관리자 추가를 보여줍니다. 씬 통합 전체는 여러 커밋에 걸쳤고, 이 파일 하나로 씬 자산 병합 전체를 재현하지 않습니다. 저장소(KimEoJin24/TSEROF)는 팀장 소유 비공개라 링크를 걸지 않습니다."
+        }
       },
       {
         title: "반복 플레이에서 정답 패턴이 고정되는 문제를 개선했습니다",
         problem:
           "3×3 발판에 얼음·물을 맞추는 퍼즐인데 정답이 고정이면 반복 플레이에서 퍼즐 구실을 못 했습니다.",
         solution:
-          "정답 패턴 5종을 int[9] 배열로 두고 코루틴이 25초마다 무작위로 바꾸며 표지판을 갱신했습니다. SequenceEqual로 플레이어 배열과 정답 배열을 비교했습니다."
+          "정답 패턴 5종을 int[9] 배열로 두고 코루틴이 25초마다 무작위로 바꾸며 표지판을 갱신했습니다. SequenceEqual로 플레이어 배열과 정답 배열을 비교했습니다.",
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "850a686c의 실제 전후입니다. 판정은 별도 PuzzleManager의 SequenceEqual이며, 퍼즐의 물리 반응은 이 모형에 포함하지 않습니다."
+        }
       },
       {
-        title:
-          "큐브 종류마다 스크립트를 만들면 프리팹이 늘 때마다 파일이 늘었습니다",
+        title: "큐브 종류별 반응을 enum과 switch로 관리했습니다",
         problem:
           "마그마·용암·물·얼음·얼음벽이 각각 다른 반응(튕김·리스폰·낙하 후 복귀)을 해야 했습니다.",
         solution:
-          "CubeType 하나에 enum 으로 속성을 두고 충돌 시 switch 로 분기했습니다. 얼음은 코루틴으로 잠시 뒤 떨어졌다가 kinematic 을 되돌려 원위치하고, 마그마는 점프력을 주기적으로 바꿨습니다."
+          "CubeType 하나에 enum 으로 속성을 두고 충돌 시 switch 로 분기했습니다. 얼음은 코루틴으로 잠시 뒤 떨어졌다가 kinematic 을 되돌려 원위치하고, 마그마는 점프력을 주기적으로 바꿨습니다. 확인한 d1541371의 최초 추가본은 마그마·용암·얼음·물 네 종류입니다. 얼음벽을 포함한 서술과 최초 도입 시점은 구분합니다.",
+        evidence: {
+          status: "코드로 확인",
+          note: "d1541371의 CubeType 도입 코드입니다. 종류마다 별도 스크립트가 실제로 존재했다는 이전 구현은 확인하지 않았습니다."
+        }
       },
       {
         title:
@@ -4437,7 +6561,11 @@ export const RICH_DATA: Record<string, RichProject> = {
         problem:
           "장애물마다 움직임·회전·플레이어 리스폰을 제각각 구현해 놓아 팀원이 붙이기 어려웠습니다.",
         solution:
-          "12월 초 박지원과 코드 정리 브랜치(JJH_PJW_CodeClean)에서 IMovable·IRotatable·IDisturbing·IPlayerRespawnable·IInteractable 인터페이스를 도입해 기믹에 공통 인터페이스를 적용했습니다."
+          "코드 정리 과정에서 IMovable 등 공통 인터페이스를 적용했습니다. 281a9101에서는 MovingPlatform에 IMovable을 추가하고 private Move를 public으로 바꾼 전후가 확인됩니다. 리스폰 인터페이스의 해당 시점 실제 이름은 IPlayerRespwanable이며 빈 인터페이스입니다. 모든 인터페이스의 기능이 이 한 커밋에서 완성됐다고 설명하지 않습니다.",
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "281a9101의 전후입니다. 원문 표기와 달리 저장소에 IPlayerRespwanable이라는 철자도 있으며, 그 시점에는 빈 인터페이스였습니다."
+        }
       }
     ],
     tech: ["Unity 2022.3", "C#", "Cinemachine"],
@@ -4467,11 +6595,155 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 예전 값 넷(팀/다단계/이어하기/Unity)은 하나도 검산할 수 없는 말이었고,
     // 이 이력서에서 가장 확인하기 쉬운 사실인 Steam 출시가 빠져 있었다.
     metrics: [
-      {n: "Steam", l: "스토어 출시"},
-      {n: "5인", l: "팀 · 부팀장"},
-      {n: "4개월", l: "기획 → 출시"},
-      {n: "Unity", l: "2022.3 · C#"}
+      {
+        n: "Steam",
+        l: "스토어 출시",
+        sub: "app/2743860 · 2024.02.10",
+        source: "Steam 스토어 app/2743860"
+      },
+      {
+        n: "216",
+        l: "내 커밋 (1,204 중)",
+        sub: "2023.10.23 ~ 12.13 · 부팀장",
+        mini: {kind: "bars", before: 1204, after: 216},
+        source: "README 기여자 표·커밋 이력(2026-09-06 확인) · 지금은 비공개"
+      },
+      {
+        n: "5종",
+        l: "퍼즐 정답 패턴 · 25초 교체",
+        sub: "int[9] 배열 5개 · SequenceEqual 판정",
+        source: "PatternSign.cs 850a686c · 장면의 패턴 값은 예시"
+      },
+      {
+        n: "3 → 1",
+        l: "스테이지 2 씬 통합",
+        sub: "2-1·2-2·2-3 → Stage2Scene · 11.27~29",
+        mini: {kind: "bars", before: 3, after: 1},
+        source: "커밋 11-27~29 · Stage2Manager.cs 257e4c1a"
+      }
     ],
+    // ── 상세 페이지 손글씨 칸 (2026-11-13). 새 사실 없음 — 2026-09-06 담당 교정 때 확인한 것만.
+    detail: {
+      intro: {
+        show: "잃어버린 아이템을 찾아 스테이지를 깨는 3D 플랫포머로, 5인 팀이 4개월 만에 Steam 에 출시했습니다. 저는 부팀장으로 스테이지 2 전체와 장애물·속성 큐브 기믹, 3×3 패턴 퍼즐을 맡았고 커밋 216개가 제 몫입니다.",
+        bold: "저는 부팀장으로 스테이지 2 전체와 장애물·속성 큐브 기믹, 3×3 패턴 퍼즐을 맡았고 커밋 216개가 제 몫입니다.",
+        more: [
+          "세 씬으로 나뉘어 있던 스테이지 2 를 한 씬으로 합치고 카메라·리스폰·클리어 판정을 Stage2Manager 한 곳에 모았습니다(11.27~29).",
+          "플레이어 컨트롤러·저장(XOR)·풀링은 팀원(박지원·김어진·이홍준) 작업이라 여기 적지 않습니다. 2026-09-06 에 저장소 README 기여자 표와 커밋 이력으로 담당을 교정했습니다.",
+          "저장소는 팀장 소유 비공개라 코드 링크를 걸지 않습니다. 출시는 Steam 스토어에서 확인할 수 있습니다."
+        ]
+      },
+      highlights: [
+        {
+          show: "스테이지 2 의 세 씬(2-1·2-2·2-3)을 Stage2Scene 하나로 합치고, 구간 오브젝트 on/off · Cinemachine 카메라 enable · 리스폰 지점을 Stage2Manager 가 한 곳에서 바꾸게 했습니다.",
+          bold: true,
+          more: "11.27 통합 씬 생성 → 11.28 씬 합치기 → 11.29 씬 넘어가는 문제 해결. 씬을 넘기는 순간 상태가 끊기던 문제가 사라졌습니다."
+        },
+        {
+          show: "3×3 패턴 퍼즐의 정답을 int[9] 배열 5종으로 두고 코루틴이 25초마다 무작위로 바꾸며 표지판을 갱신, SequenceEqual 로 플레이어 배열과 비교하게 했습니다.",
+          more: "정답이 고정이면 반복 플레이에서 퍼즐 구실을 못 했습니다. 아래 장면에서 직접 눌러 볼 수 있습니다(패턴 값은 예시)."
+        },
+        {
+          show: "마그마·용암·물·얼음·얼음벽 큐브를 enum 하나와 switch 로 분기하고, 12월 코드 정리에서 IMovable 등 공통 인터페이스를 기믹에 적용했습니다.",
+          more: "확인한 최초 커밋(d1541371)은 네 종류였고 얼음벽은 뒤에 들어갔습니다. 리스폰 인터페이스는 그 시점 이름이 IPlayerRespwanable 이고 빈 인터페이스였습니다."
+        }
+      ],
+      briefs: [
+        {
+          problem:
+            "2-1·2-2·2-3 이 별도 씬이라 구간마다 카메라·리스폰·클리어 판정을 따로 들고 있었고, 씬을 넘기는 순간 상태가 끊겼습니다.",
+          did: "세 씬을 Stage2Scene 하나로 합치고 Stage2Manager 가 구간 그룹 on/off · 카메라 enable · 리스폰 지점을 한 곳에서 바꾸게 했습니다.",
+          result:
+            "11.27~29 세 커밋. 씬 자산 병합 전체는 여러 커밋에 걸쳐 있어 파일 하나로 재현되진 않습니다."
+        },
+        {
+          problem:
+            "3×3 발판 퍼즐의 정답이 고정이라 반복 플레이에서 퍼즐 구실을 못 했습니다.",
+          did: "정답 패턴 5종을 int[9] 로 두고 코루틴이 25초마다 무작위로 바꾸며 표지판을 갱신, SequenceEqual 로 비교했습니다.",
+          result:
+            "850a686c 의 전후가 확인됩니다. 퍼즐의 물리 반응은 별도입니다."
+        },
+        {
+          problem:
+            "마그마·용암·물·얼음·얼음벽이 각각 다른 반응(튕김·리스폰·낙하 후 복귀)을 해야 했습니다.",
+          did: "CubeType enum 하나로 속성을 두고 충돌 시 switch 로 분기, 얼음은 코루틴으로 떨어졌다 kinematic 을 되돌려 원위치하게 했습니다.",
+          result:
+            "최초 커밋(d1541371)은 네 종류이고 얼음벽은 뒤에 들어갔습니다. 종류별 별도 스크립트가 있었다는 이전 구현은 확인하지 않았습니다."
+        },
+        {
+          problem:
+            "장애물마다 움직임·회전·리스폰을 제각각 구현해 팀원이 붙이기 어려웠습니다.",
+          did: "12월 코드 정리에서 IMovable 등 공통 인터페이스를 적용했습니다(281a9101: MovingPlatform 에 IMovable, private Move → public).",
+          result:
+            "리스폰 인터페이스는 그 시점 이름이 IPlayerRespwanable 이고 빈 인터페이스였습니다. 모든 인터페이스가 이 한 커밋에서 완성된 건 아닙니다."
+        }
+      ],
+      moreLabel: "큐브 enum 분기 · 기믹 공통 인터페이스",
+      summaries: {
+        arch: "Unity 2022.3 · Stage2Manager 가 구간·카메라·리스폰을 한 곳에서 · 큐브는 enum/switch · 기믹은 인터페이스 5종.",
+        code: "Stage2Manager 의 구간 전환, PatternSign 의 25초 패턴 교체, CubeType 의 switch.",
+        proc: "2023.10 기획 → 11 씬 통합·기믹 → 12 코드 정리 → 2024.02 Steam 출시."
+      },
+      scenes: [
+        {
+          place: "trouble",
+          kind: "puzzle",
+          title: "3×3 패턴 퍼즐 · 표지판을 보고 발판을 맞추세요",
+          size: 3,
+          patterns: [
+            [1, 0, 1, 0, 1, 0, 1, 0, 1],
+            [0, 1, 0, 1, 1, 1, 0, 1, 0],
+            [1, 1, 1, 0, 0, 0, 1, 1, 1],
+            [1, 0, 0, 1, 0, 0, 1, 1, 1],
+            [0, 0, 1, 0, 1, 0, 1, 0, 0]
+          ],
+          interval: 25,
+          demoInterval: 10,
+          legend: ["물", "얼음"],
+          caveat:
+            "패턴 값 다섯 개는 예시입니다. 실제 int[9] 배열은 비공개 저장소에 있어 가져오지 못했습니다. 규칙(5종 · 주기 교체 · 순서대로 비교)은 PatternSign.cs·PuzzleManager.cs 그대로입니다.",
+          source:
+            "PatternSign.cs(850a686c) PatternChange 코루틴 · PuzzleManager.cs SequenceEqual 판정"
+        },
+        {
+          place: "proc",
+          kind: "timeline",
+          title: "첫 커밋에서 Steam 출시까지 · 2023.10 ~ 2024.02",
+          unit: "date",
+          from: "2023-10-15",
+          to: "2024-02-20",
+          events: [
+            {
+              at: "2023-10-23",
+              label: "첫 커밋",
+              detail: "스테이지 2 구성 기획",
+              tone: "ok"
+            },
+            {
+              at: "2023-11-27",
+              until: "2023-11-29",
+              label: "스테이지 2 세 씬을 한 씬으로",
+              detail: "통합 씬 생성 → 씬 합치기 → 씬 넘어가는 문제 해결",
+              tone: "ok"
+            },
+            {
+              at: "2023-12-13",
+              label: "내 마지막 커밋 · 코드 정리",
+              detail: "IMovable 등 공통 인터페이스 적용",
+              tone: "ok"
+            },
+            {
+              at: "2024-02-10",
+              label: "Steam 출시",
+              detail: "app/2743860",
+              tone: "warn"
+            }
+          ],
+          note: "4개월은 첫 커밋(10.23)에서 출시(02.10)까지입니다. 제 커밋은 12.13 까지 216개입니다.",
+          source: "커밋 이력(2026-09-06 확인 당시) · Steam 스토어 페이지"
+        }
+      ]
+    },
     kpt: {
       keep: [
         "세 씬을 한 씬으로 합쳐 카메라·리스폰·클리어를 Stage2Manager 한 곳에 모음",
@@ -4479,7 +6751,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       ],
       problem: ["스테이지 분량 부족", "밸런싱 시간 부족"],
       try: [
-        "퍼즐 패턴을 코드 배열이 아니라 데이터로 분리",
+        "퍼즐 패턴을 코드 배열에서 데이터로 분리",
         "인터페이스 기반으로 장애물 종류 확장"
       ]
     },
@@ -4494,18 +6766,45 @@ export const RICH_DATA: Record<string, RichProject> = {
   // Assets/JJH/JJH/Scripts(본인 스크립트)에서 그대로 가져왔다. 특수 카메라
   // (CameraController/Manager)는 팀원(KBW) 스크립트라 **설명만 하고 코드는 싣지 않는다.**
   // 숫자는 전부 코드에서 센 값이다 — 사용자 수·플레이 수 같은 건 없다.
+  // 2026-11-13 저장소(kbwon/IMP_VR develop) 대조로 고쳤다: 첫 커밋 2025-05-18 · 마지막 06-16, 커밋 161 중
+  // toadsam 25. 본인 파일은 Assets/JJH/JJH/Scripts(EnemyDetector · EnemyLightZoneDetector · PlayerFlashlight
+  // · GameManager · MonsterAI · BookheadMover 등). 「메인 기획」은 팀장 README 가 콘셉트·핵심 플레이 기획을
+  // 자기 몫으로 적고 있어 「기획 참여」로 내렸다. 「GameManager 한 곳에서만 켜고 끈다」는 develop 에서 팀원의
+  // 방 스크립트(FourthRoomManager · SixthRoomManager · ObjectDetectManager)가 몬스터를 직접 켜기도 해서 뺐다.
   "otherside-vr": {
-    tagline: "VR HORROR PUZZLE · UNITY XR (TEAM)",
+    tagline: "VR HORROR PUZZLE · UNITY XR (TEAM OF 4)",
     heroImage: {
       src: "/projects/otherside-vr.webp",
       label: "The Other Side 플레이",
-      ratio: "16/9"
+      // 파일 640×300. 16/9 로 두면 좌우 17% 가 잘렸다.
+      ratio: "640/300"
     },
     problemShot: {
       src: "/projects/op/vr-chase.webp",
       label: "추격 중인 몬스터 (Bookhead)",
-      ratio: "16/9",
+      ratio: "510/537",
       fit: "contain"
+    },
+    // 특수 카메라 꺼짐/켜짐 한 쌍(PDF 47쪽). 카메라 시스템은 팀원(kbwon) 코드라 캡션에 그렇게 적는다.
+    beforeAfter: {
+      before: {
+        label: "맨눈에는 보이지 않는 단서",
+        shot: {
+          src: "/projects/op/vr-cam-off.webp",
+          label: "카메라 끔",
+          ratio: "1072/602"
+        },
+        note: "같은 방입니다. 손전등만으로는 단서가 보이지 않고, 손전등을 켜면 제 감지기가 적에게 들키게 만듭니다."
+      },
+      after: {
+        label: "특수 카메라로 보면 나타난다",
+        shot: {
+          src: "/projects/op/vr-cam-on.webp",
+          label: "카메라 켬",
+          ratio: "1072/602"
+        },
+        note: "특수 카메라와 PostFX 는 팀원(kbwon) 담당입니다. 저는 그 카메라·손전등 상태를 읽어 몬스터를 켜고 끄는 쪽을 맡았습니다."
+      }
     },
     // 카메라 화면 셋을 한 장으로 줄였다(2026-09-04). 특수 카메라는 팀원 코드라
     // 그 화면이 갤러리를 채우면 "이거 직접 만들었냐"는 질문에 아니라고 답해야
@@ -4529,11 +6828,11 @@ export const RICH_DATA: Record<string, RichProject> = {
       {k: "왜", v: "VR 에서 ‘보이는 것’ 자체를 게임 규칙으로 설계하고 싶었음"},
       {
         k: "결과",
-        v: "퍼즐이 풀릴 때만 추격이 켜집니다. 감지기는 판정만 하고, GameManager 가 몬스터 2종을 켜고 끕니다"
+        v: "감지기 둘(시야각 · 손전등 빛 원뿔)이 봤는지 놓쳤는지만 판정하고 GameManager 가 몬스터 2종을 켜고 끕니다. 5초 못 보면 추격이 풀립니다"
       },
       {
         k: "내 역할",
-        v: "AI 몬스터 시스템 · 감지 로직 · 중앙 제어 구조 설계 (몬스터 개발 · 메인 기획)"
+        v: "AI 몬스터 2종 · 감지기 2 · GameManager 중앙 제어 (Assets/JJH, 커밋 25/161) · 기획 참여"
       }
     ],
     // 플레이 영상은 PDF 의 링크(sK9OoBNCVvc)가 2026-09-04 기준 404(비공개·삭제)라 뺐다. 공개되면 video: 를 되살린다.
@@ -4541,12 +6840,16 @@ export const RICH_DATA: Record<string, RichProject> = {
       repo: "https://github.com/kbwon/IMP_VR"
     },
     meta: [
-      {label: "기간", value: "2025.04 – 2025.06"},
+      // 저장소 첫 커밋 2025-05-18 · 마지막 06-16. 예전 "2025.04" 는 저장소에 근거가 없었다.
+      {
+        label: "기간",
+        value: "2025.05 – 2025.06 (첫 커밋 05.18 · 마지막 06.16)"
+      },
       {
         label: "팀",
         value: "4인 팀 (AR 과 같은 팀원) · 특수 카메라 시스템은 팀원 담당"
       },
-      {label: "역할", value: "AI 몬스터 · 감지 로직 · 중앙 제어 · 메인 기획"},
+      {label: "역할", value: "AI 몬스터 · 감지 로직 · 중앙 제어 · 기획 참여"},
       {label: "스택", value: "Unity · XR Interaction Toolkit · C# · NavMesh"},
       {
         label: "비고",
@@ -4587,7 +6890,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       quotes: []
     },
     hypothesis:
-      "감지기는 감지만 하고 행동은 GameManager 가 중앙에서 켜고 끕니다. 퍼즐 진행에 따라 추격을 제어할 수 있고, 트리거가 늘어도 결합도는 낮게 유지됩니다.",
+      "감지기는 감지만 하고 행동은 GameManager 가 중앙에서 켜고 끕니다. 퍼즐 진행에 따라 추격을 제어할 수 있고, 트리거가 늘어도 감지기는 GameManager 만 알면 됩니다.",
     process: [
       {t: "탐색", d: "어두운 저택"},
       {t: "발견", d: "카메라 모드"},
@@ -4598,7 +6901,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         tag: "Detect",
         name: "EnemyDetector",
-        desc: "시야각(90°)·거리(10m) + 손전등 빛 원뿔 10점 샘플링"
+        desc: "시야각(90°)·거리(10m) + 손전등 빛 원뿔 10등분·양끝 포함 11점 샘플링"
       },
       {
         tag: "Detect",
@@ -4630,7 +6933,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         area: "손전등 감지",
-        pick: "빛 원뿔을 10점으로 샘플링",
+        pick: "빛 원뿔을 10등분·양끝 포함 11점으로 샘플링",
         why: "손전등 빛이 몬스터의 시야에 들어오면 추격하도록 구현했습니다.",
         alt: "플레이어 위치만 검사 (손전등 무의미)"
       },
@@ -4651,7 +6954,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         filename: "EnemyDetector.cs",
         caption:
-          "플레이어 본체뿐 아니라 손전등 빛 원뿔을 10점으로 샘플링해 시야각 안에 걸리는지 봅니다",
+          "플레이어 본체와 함께 손전등 빛 원뿔을 10등분·양끝 포함 11점으로 샘플링해 시야각 안에 걸리는지 봅니다",
         highlightLines: [1, 2, 8, 9, 10],
         lines: [
           "bool seesPlayer = IsPlayerInFOV();",
@@ -4707,25 +7010,28 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         g: "AI",
         items: [
-          "MonsterAI — 배회/추격/공격 상태",
+          "MonsterAI · 배회/추격/공격 상태",
           "타입별 활성 플래그 (Doll · Bookhead)"
         ]
       },
       {
         g: "감지",
         items: [
-          "EnemyDetector — 시야각 + 손전등 원뿔",
-          "EnemyLightZoneDetector — 반경 + 손전등"
+          "EnemyDetector · 시야각 + 손전등 원뿔",
+          "EnemyLightZoneDetector · 반경 + 손전등"
         ]
       },
       {
         g: "제어",
         items: [
           "GameManager 싱글톤 · 중앙 토글",
-          "PlayerFlashlight — 상태·원뿔 정보"
+          "PlayerFlashlight · 상태·원뿔 정보"
         ]
       },
-      {g: "기획", items: ["메인 기획 · 게임 흐름 (탐색 → 발견 → 위협 → 회피)"]}
+      {
+        g: "기획",
+        items: ["기획 참여 · 몬스터 쪽 흐름 (탐색 → 발견 → 위협 → 회피)"]
+      }
     ],
     challenges: [
       {
@@ -4734,15 +7040,11 @@ export const RICH_DATA: Record<string, RichProject> = {
         problem:
           "감지기가 몬스터를 직접 부르면, 트리거·퍼즐 조건이 하나 추가될 때마다 AI 코드에 손이 갑니다.",
         solution:
-          "감지기(EnemyDetector · EnemyLightZoneDetector)는 ‘봤다/놓쳤다’만 판정하고 GameManager.Instance 의 토글 메서드만 부릅니다. 몬스터를 켜고 끄는 코드는 GameManager 한 곳에만 있습니다.",
-        code: {
-          filename: "EnemyLightZoneDetector.cs",
-          lines: [
-            "bool flashlightOn = flashlight.IsEnabled();",
-            "bool inRange = Vector3.Distance(transform.position, playerTransform.position) <= detectionRadius;",
-            "if (flashlightOn && inRange) GameManager.Instance.ToggleBookheadBehavior(true);",
-            "else if (++loseSightTimer >= loseSightDelay) GameManager.Instance.ToggleBookheadBehavior(false);"
-          ]
+          "감지기(EnemyDetector · EnemyLightZoneDetector)는 봤는지 놓쳤는지만 판정하고 GameManager.Instance 의 ToggleDollBehavior · ToggleBookheadBehavior 만 부릅니다. 제 코드 안에서는 몬스터를 켜고 끄는 자리가 GameManager 하나입니다. 다만 develop 의 팀원 방 스크립트(FourthRoomManager · SixthRoomManager · ObjectDetectManager)는 몬스터 오브젝트를 직접 SetActive 하기도 해서, 프로젝트 전체가 한 곳으로 모였다고는 말하지 않습니다. 확인한 최초 추가본부터 이 분리가 존재하므로 리팩터링 전후 이력과도 구분합니다.",
+        evidence: {
+          status: "코드로 확인",
+          note: "develop 계열의 8f92d0ba 코드입니다. 현재 main의 템플릿과 혼동하지 않았습니다.",
+          url: "https://github.com/kbwon/IMP_VR/blob/8f92d0ba6826dde2845652435a66e863b1c423b3/Assets/JJH/JJH/Scripts/EnemyDetector.cs"
         }
       },
       {
@@ -4750,7 +7052,12 @@ export const RICH_DATA: Record<string, RichProject> = {
         problem:
           "시야 확보와 들킬 위험이 맞바꿔지지 않으면 손전등은 항상 켜 두는 물건이 됩니다.",
         solution:
-          "PlayerFlashlight 가 빛 원뿔(원점·방향·범위)을 내주고, 감지기가 그 원뿔을 따라 10점을 찍어 적 시야각 안에 걸리는지 검사합니다. 빛줄기 끝만 걸려도 추격이 시작됩니다."
+          "PlayerFlashlight 가 빛 원뿔(원점·방향·범위)을 내주고, 감지기가 그 원뿔을 따라 10등분하고 양끝을 포함한 11점(i=0부터 i<=10)을 검사해 적 시야각 안에 걸리는지 검사합니다. 빛줄기 끝만 걸려도 추격이 시작됩니다.",
+        evidence: {
+          status: "코드로 확인",
+          note: "주 코드가 빛 정보를 넘기고 감지 알고리즘은 같은 커밋의 EnemyDetector에 있습니다. 아래 시야 도식은 단순화했으며 장애물 가림까지 재현하지 않습니다.",
+          url: "https://github.com/kbwon/IMP_VR/blob/8f92d0ba6826dde2845652435a66e863b1c423b3/Assets/JJH/JJH/Scripts/PlayerFlashlight.cs"
+        }
       }
     ],
     tech: ["Unity", "XR Interaction Toolkit", "C#", "NavMesh"],
@@ -4773,15 +7080,158 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     ],
     metrics: [
-      {n: "2종", l: "몬스터 AI"},
-      {n: "2", l: "감지기"},
-      {n: "5초", l: "추격 해제"},
-      {n: "4인", l: "팀"}
+      {
+        n: "2종",
+        l: "몬스터 AI",
+        sub: "Doll · Bookhead · 추격 8m / 공격 2m",
+        source: "MonsterAI.cs · chaseDistance 8f · attackDistance 2f (develop)"
+      },
+      {
+        n: "2",
+        l: "감지기",
+        sub: "시야각 90°·10m · 손전등 빛 7m",
+        source:
+          "EnemyDetector viewAngle 90f · viewRange 10f / EnemyLightZoneDetector 7f"
+      },
+      {
+        n: "5초",
+        l: "놓친 뒤 추격 해제",
+        sub: "loseSightDelay = 5f",
+        source: "EnemyDetector.cs 상수 · 본인 커밋 2/2"
+      },
+      {
+        n: "25",
+        l: "내 커밋 (161 중)",
+        sub: "2025.05.20 ~ 06.16 · Assets/JJH",
+        mini: {kind: "bars", before: 161, after: 25},
+        source: "GitHub kbwon/IMP_VR 전 브랜치 작성자 집계 · 2026-11-13 gh"
+      }
     ],
+    // ── 상세 페이지 손글씨 칸 (2026-11-13) ──
+    detail: {
+      compareTags: ["카메라 끔", "카메라 켬"],
+      intro: {
+        show: "특수 카메라로만 보이는 단서를 찾고, 손전등을 켜면 들키는 VR 공포 퍼즐·추격 게임입니다. 4인 팀에서 저는 몬스터 AI 2종과 감지기 2개, 그리고 그 둘을 잇는 GameManager 를 맡았습니다. 손전등 빛 원뿔을 11점으로 찍어 적 시야각에 넣는 바람에, 손전등을 켜는 것 자체가 위험이 됩니다.",
+        bold: "손전등 빛 원뿔을 11점으로 찍어 적 시야각에 넣는 바람에, 손전등을 켜는 것 자체가 위험이 됩니다.",
+        more: [
+          "특수 카메라·PostFX·방 진행은 팀원 작업입니다. 제 스크립트는 Assets/JJH/JJH/Scripts 열 개이고, 저장소 커밋 161개 중 25개가 제 몫입니다(2025-05-20 ~ 06-16).",
+          "감지기는 봤는지 놓쳤는지만 판정하고 GameManager 가 몬스터를 켜고 끕니다. 5초 동안 못 보면 추격이 풀립니다.",
+          "플레이 영상 링크는 비공개가 되어 뺐습니다. 저장소는 팀원(kbwon) 소유이고 최종본은 develop 브랜치입니다."
+        ]
+      },
+      highlights: [
+        {
+          show: "손전등 빛 원뿔(원점·방향·범위)을 10등분·양끝 포함 11점(i=0..10)으로 찍어 적 시야각(90° · 10m) 안에 걸리는지 검사합니다. 빛줄기 끝만 걸려도 추격이 시작됩니다.",
+          bold: true,
+          more: "EnemyDetector.cs 의 IsPlayerInFOV 와 샘플 루프(i <= sampleCount). 장애물 가림은 재현하지 않습니다. 본인 커밋 2/2."
+        },
+        {
+          show: "감지(EnemyDetector · EnemyLightZoneDetector) / 행동(MonsterAI) / 켜고 끄기(GameManager) 를 세 파일로 나눴습니다. 감지기는 GameManager 의 토글만 부릅니다.",
+          more: "팀원의 방 스크립트가 몬스터를 직접 켜는 경로도 develop 에 남아 있어, 프로젝트 전체가 한 곳으로 모였다고는 적지 않습니다."
+        },
+        {
+          show: "MonsterAI 는 평소엔 배회하다(RandomNavSphere) 8m 안에 들어오면 쫓고 2m 안에서 공격합니다. 놓친 뒤 5초(loseSightDelay)가 지나면 GameManager 가 추격을 끕니다.",
+          more: "chaseDistance 8f · attackDistance 2f · animator.speed 3f · loseSightDelay 5f. 전부 develop 의 Assets/JJH 스크립트 상수입니다."
+        }
+      ],
+      briefs: [
+        {
+          problem:
+            "감지기가 몬스터를 직접 부르면 퍼즐 조건이 하나 늘 때마다 AI 코드에 손이 갔습니다.",
+          did: "감지기는 봤는지 놓쳤는지만 판정하고 GameManager 의 ToggleDollBehavior · ToggleBookheadBehavior 만 부르게 했습니다.",
+          result:
+            "제 코드 안에선 켜고 끄는 자리가 GameManager 하나입니다. 팀원 방 스크립트는 몬스터를 직접 켜기도 해 전체가 한 곳은 아닙니다."
+        },
+        {
+          problem: "손전등이 그냥 조명이면 켤지 말지가 선택이 안 됩니다.",
+          did: "빛 원뿔을 11점으로 찍어 적 시야각 검사에 넣었습니다. 빛줄기 끝만 걸려도 추격이 시작됩니다.",
+          result:
+            "손전등을 켜는 것이 곧 들킬 위험이 됐습니다. 처음 추가한 커밋부터 이 로직입니다."
+        }
+      ],
+      summaries: {
+        arch: "감지기 2 → GameManager 토글 → MonsterAI 2종. 특수 카메라는 팀원.",
+        code: "EnemyDetector 의 11점 샘플링, GameManager 의 토글, MonsterAI 의 추격·공격 거리.",
+        proc: "2025.05.18 첫 커밋 → 06.05 Assets/JJH 추가 → 06.16 주석·마무리."
+      },
+      scenes: [
+        {
+          place: "trouble",
+          kind: "steps",
+          title: "들키는 순서 · EnemyDetector → GameManager → MonsterAI",
+          steps: [
+            {
+              t: "시야각 판정",
+              d: "플레이어가 10m 안 · 정면 ±45° 안이면 봤다",
+              alt: {
+                t: "손전등 켜짐",
+                d: "빛 원뿔 11점 중 하나라도 시야각 안이면 봤다",
+                tone: "warn"
+              }
+            },
+            {
+              t: "GameManager 토글",
+              d: "ToggleDollBehavior(true) · 감지기는 여기까지만"
+            },
+            {
+              t: "MonsterAI 추격",
+              d: "8m 안이면 추격 · 2m 안이면 공격 · animator.speed 3",
+              tone: "fail"
+            },
+            {
+              t: "놓치면 5초 뒤 해제",
+              d: "loseSightDelay 5f → ToggleDollBehavior(false)",
+              alt: {
+                t: "손전등 빛 구역 7m",
+                d: "EnemyLightZoneDetector → Bookhead 쪽 토글",
+                tone: "muted"
+              }
+            }
+          ],
+          note: "값은 전부 develop 브랜치 Assets/JJH 스크립트의 상수입니다. 장애물 가림은 이 그림에 없습니다.",
+          source:
+            "kbwon/IMP_VR develop · EnemyDetector.cs · EnemyLightZoneDetector.cs · MonsterAI.cs · GameManager.cs (본인 커밋)"
+        },
+        {
+          place: "proc",
+          kind: "timeline",
+          title: "내 커밋 25개 · 2025.05.20 ~ 06.16",
+          unit: "date",
+          from: "2025-05-15",
+          to: "2025-06-20",
+          events: [
+            {at: "2025-05-18", label: "저장소 시작 (팀장)", tone: "muted"},
+            {at: "2025-05-20", label: "내 첫 커밋", tone: "ok"},
+            {
+              at: "2025-06-05",
+              label: "Assets/JJH 추가 · 감지기·AI·GameManager",
+              detail:
+                "커밋 8f92d0ba 에서 EnemyDetector · PlayerFlashlight 가 처음 등장",
+              href: "https://github.com/kbwon/IMP_VR/blob/8f92d0ba6826dde2845652435a66e863b1c423b3/Assets/JJH/JJH/Scripts/EnemyDetector.cs",
+              tone: "ok"
+            },
+            {
+              at: "2025-06-06",
+              until: "2025-06-10",
+              label: "AI·감지 수정 10건",
+              tone: "ok"
+            },
+            {
+              at: "2025-06-16",
+              label: "주석 추가 · 마지막 커밋",
+              detail: "e2bc316d · 028a3e11",
+              tone: "ok"
+            }
+          ],
+          note: "커밋 메시지는 인코딩이 깨져(CP949) 읽을 수 없어 건드린 파일로 적었습니다.",
+          source: "GitHub kbwon/IMP_VR 커밋 이력(전 브랜치) · 2026-11-13 gh"
+        }
+      ]
+    },
     kpt: {
       keep: [
         "감지 / 행동 / 제어를 세 파일로 나눈 구조",
-        "손전등을 조명이 아니라 리스크로 만든 규칙"
+        "손전등을 켜면 들킬 위험이 생기게 한 규칙"
       ],
       problem: [
         "시야각·거리·5초 같은 값이 스크립트에 하드코딩",
@@ -4790,27 +7240,30 @@ export const RICH_DATA: Record<string, RichProject> = {
       try: ["감지 규칙을 ScriptableObject 로", "몬스터·퍼즐 조건 추가"]
     },
     learningLead:
-      "손전등 빛 원뿔을 10점 샘플링해 적 시야각 검사에 넣자, 손전등을 켜는 것 자체가 들킬 위험이 됐습니다.",
+      "손전등 빛 원뿔을 10등분·양끝 포함 11점 샘플링해 적 시야각 검사에 넣자, 손전등을 켜는 것 자체가 들킬 위험이 됐습니다.",
     learning:
-      "감지기는 판정만, 몬스터는 행동만, 켜고 끄는 건 GameManager 한 곳에 뒀습니다. 퍼즐 진행에 따른 몬스터 활성화 처리를 GameManager로 분리했습니다."
+      "감지기는 판정만, 몬스터는 행동만, 켜고 끄는 건 GameManager 로 모으려 했습니다. 팀원의 방 스크립트는 몬스터를 직접 켜기도 해서 끝까지 한 곳으로 모이진 않았습니다. 다음엔 팀 규약으로 먼저 정해야 할 일입니다."
   },
 
   // ════════════════════════════ INTO MONSTER POINT (game · AR · 팀) ═════════
-  // 2026-09-03 신설. 문장은 포트폴리오 PDF 49–55쪽, 코드는 toadsam/IMP 의
-  // Weapon2_JJH 브랜치(AdjustmentSystem.cs · Spawner.cs)에서 가져왔다. 무기
-  // 발사 코드는 저장소에서 원문을 찾지 못해 PDF 의 설명(입력 방향 있을 때만 발사 ·
-  // nextFire 쿨타임 · isUnlocked 차단)까지만 적고 코드는 싣지 않는다.
+  // 2026-09-03 신설, 2026-11-13 저장소(toadsam/IMP develop) 대조로 고쳤다.
+  // 예전 본문의 AdjustmentSystem.cs(바닥·벽)는 RBTylenol, Spawner.cs(스폰·보스)는 kbwon 작성이라
+  // 내 코드가 아니었다. 내 코드는 Assets/Scripts/JJH — WeaponShooterWithJoystick(커밋 11/12) ·
+  // SkillCooldown · ProjectileDamage · PlayerHealth · TimedSpawnerOnProjectile. "무기 발사 코드를
+  // 저장소에서 못 찾았다" 던 옛 주석은 틀렸다(develop 에 있다). 커밋 109 중 toadsam 51,
+  // 실제 작업 기간 2025-04-18 ~ 05-03. 무기 4종은 Assets/Scenes/Final.unity 의 heldWeaponPrefab 4개.
   "monsterpoint-ar": {
-    tagline: "AR WAVE SHOOTER · AR FOUNDATION (TEAM)",
+    tagline: "AR WAVE SHOOTER · AR FOUNDATION (TEAM OF 4)",
     heroImage: {
       src: "/projects/monsterpoint-ar.webp",
       label: "현실 공간에 등장한 몬스터",
-      ratio: "16/9"
+      // 파일 1200×577. 16/9 로 두면 좌우 14% 가 잘렸다.
+      ratio: "1200/577"
     },
     problemShot: {
       src: "/projects/op/ar-scan-after.webp",
-      label: "스캔 후 전투 공간 고정",
-      ratio: "3/4",
+      label: "스캔 후 전투 공간 고정 (바닥·벽은 팀원 코드)",
+      ratio: "160/320",
       fit: "contain"
     },
     // 트러블슈팅 1·2번의 결과를 순서대로 — 스캔 전 → 스캔 후 → 바닥·벽 → 보스.
@@ -4821,31 +7274,31 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "스캔 전 → 스캔 후 → 바닥·벽 생성 → 보스 등장",
       ratio: "2/1",
       caption:
-        "스캔이 끝나면 평면 boundary 를 월드 좌표로 바꿔 X·Z min/max 로 바닥을 깔고 4방향 벽을 세웁니다. 그 안에서 처치 수가 10에 닿으면 보스가 나옵니다."
+        "스캔이 끝나면 평면 boundary 를 월드 좌표로 바꿔 X·Z min/max 로 바닥을 깔고 4방향 벽을 세웁니다(AdjustmentSystem, 팀원 RBTylenol). 그 안에서 처치 수가 10에 닿으면 보스가 나옵니다(Spawner, 팀원 kbwon). 저는 그 안에서 쓰는 무기 네 종의 발사·전환·잠금을 맡았습니다."
     },
     gallery: [
       {
         src: "/projects/op/ar-spawn.webp",
-        label: "바닥 꼭짓점 기준 랜덤 스폰",
-        ratio: "3/4",
+        label: "바닥 꼭짓점 기준 랜덤 스폰 (스폰은 팀원 코드)",
+        ratio: "375/742",
         fit: "contain"
       },
       {
         src: "/projects/op/ar-play-bow.webp",
-        label: "활 — 조이스틱 방향으로 발사",
-        ratio: "3/4",
+        label: "활 · 조이스틱 방향으로 발사",
+        ratio: "380/584",
         fit: "contain"
       },
       {
         src: "/projects/op/ar-play-sword.webp",
-        label: "칼 — 근접 무기",
-        ratio: "3/4",
+        label: "칼 · 근접 무기",
+        ratio: "378/532",
         fit: "contain"
       },
       {
         src: "/projects/op/ar-weapon-gun.webp",
-        label: "총 — 잠금 해제 무기",
-        ratio: "3/4",
+        label: "총 · 잠금 해제 무기",
+        ratio: "378/400",
         fit: "contain"
       }
     ],
@@ -4861,7 +7314,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "내 역할",
-        v: "무기 제작 · 스폰 시스템 · 게임 루프 설계 (개발 · 기획)"
+        v: "무기 시스템(발사 · 전환 · 잠금 · 쿨타임) · 체력 · 게임 루프 기획 (Assets/Scripts/JJH, 커밋 51/109)"
       }
     ],
     demo: {
@@ -4869,13 +7322,15 @@ export const RICH_DATA: Record<string, RichProject> = {
       repo: "https://github.com/toadsam/IMP"
     },
     meta: [
-      {label: "기간", value: "2025.03 – 2025.04"},
+      // 저장소 init 2025-03-15, 실제 작업 04-18 ~ 05-03. 예전 "2025.03 – 2025.04" 는 5월을 빠뜨렸다.
+      {label: "기간", value: "2025.04 – 2025.05 (작업 04.18 ~ 05.03)"},
       {label: "팀", value: "4인 팀 (VR 과 같은 팀원)"},
-      {label: "역할", value: "무기 제작 · 스폰 시스템 · 게임 루프 설계 · 기획"},
+      {label: "역할", value: "무기 시스템 · 체력 · 게임 루프 기획"},
       {label: "스택", value: "Unity · AR Foundation · C#"},
       {
         label: "비고",
-        value: "스크립트는 Weapon-JJH / Weapon2_JJH 브랜치 (main 은 템플릿만)"
+        value:
+          "내 코드는 Assets/Scripts/JJH (develop) · 바닥·벽은 RBTylenol, 스폰은 kbwon 작업 · main 은 템플릿만"
       }
     ],
     heroScreen: {
@@ -4886,11 +7341,11 @@ export const RICH_DATA: Record<string, RichProject> = {
     },
     impact: [
       {n: "4", l: "무기 · 활 / 칼 / 마법 / 총"},
-      {n: "10", l: "처치 시 보스 등장 (counterBoss)"},
-      {n: "4", l: "방향 벽 — 스캔 boundary 에서 생성"}
+      {n: "0.5초", l: "발사 간격 (fireRate)"},
+      {n: "51", l: "내 커밋 (109 중)"}
     ],
     metricsNote:
-      "수치는 Spawner.cs(counterBoss = 10) · AdjustmentSystem.cs(CreateWall ×4) · WeaponShooterWithJoystick.cs(무기 4종) 기준",
+      "무기 4종은 Assets/Scenes/Final.unity 의 heldWeaponPrefab 4개(코드는 인스펙터 리스트라 .cs 만으로는 못 셈). fireRate 0.5f · 스킬 쿨타임 6f 는 Assets/Scripts/JJH 의 상수. 바닥·벽(CreateWall ×4)과 보스 트리거(counterBoss 10)는 팀원 코드의 값입니다.",
     features: [
       {
         t: "전투 공간 고정",
@@ -4922,8 +7377,8 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         tag: "Spawn",
-        name: "Spawner",
-        desc: "spawnInterval 코루틴 · 처치 카운트 · counterBoss 도달 시 보스"
+        name: "Spawner (팀원)",
+        desc: "spawnInterval 코루틴 · 처치 카운트 · counterBoss 도달 시 보스 · kbwon 작성"
       },
       {
         tag: "Weapon",
@@ -4952,7 +7407,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         area: "보스 트리거",
         pick: "처치 수 누적 (counterBoss)",
-        why: "시간이 아니라 플레이 성과로 웨이브가 넘어감",
+        why: "시간 대신 플레이 성과로 웨이브가 넘어감",
         alt: "타이머"
       },
       {
@@ -4964,85 +7419,91 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     coreCode: [
       {
-        filename: "AdjustmentSystem.cs",
+        filename: "WeaponShooterWithJoystick.cs",
         caption:
-          "스캔 종료 — 바닥 평면들의 boundary 를 월드 좌표로 모아 min/max 로 전장 크기를 정합니다",
-        highlightLines: [2, 3, 4, 9, 10],
+          "조이스틱 입력이 있을 때만, 무기별 fireRate 간격으로 발사 (develop · 본인 커밋 11/12)",
+        highlightLines: [3, 5, 12],
         lines: [
-          "foreach (var plane in planeManager.trackables)",
-          "  if (plane.alignment == PlaneAlignment.HorizontalUp)",
-          "    foreach (var point in plane.boundary)",
-          "      allWorldPoints.Add(plane.transform.TransformPoint(new Vector3(point.x, 0f, point.y)));",
+          "void Update() {",
+          "    WeaponData currentWeapon = weapons[currentWeaponIndex];",
+          "    if (Time.time > nextFire && (joystick.Horizontal != 0 || joystick.Vertical != 0))",
+          "    {",
+          "        nextFire = Time.time + currentWeapon.fireRate;   // 무기마다 다른 간격",
+          "        StartCoroutine(ShootWeaponWithSpawnDelay(currentWeapon));",
+          "    }",
+          "}",
           "",
-          "// min/max X·Z (+ 카메라 위치 ±1m)",
-          "float width = maxX - minX, length = maxZ - minZ;",
-          "GameObject floor = Instantiate(floorPrefab, new Vector3(centerX, minY, centerZ), Quaternion.identity);",
-          "floor.transform.localScale = new Vector3(width / 10f, 1f, length / 10f); // Plane 은 10×10 단위",
-          "CreateWall(c[0], c[1]); CreateWall(c[1], c[2]); CreateWall(c[2], c[3]); CreateWall(c[3], c[0]);"
+          "IEnumerator ShootWeaponWithSpawnDelay(WeaponData currentWeapon) {",
+          "    if (!currentWeapon.isUnlocked) {",
+          '        Debug.Log("Weapon is locked."); yield break;   // 잠긴 무기는 여기서 끝',
+          "    }",
+          "    // 애니메이션 → spawnDelay 뒤 발사체 생성 → fireSound → 2초 뒤 Destroy"
         ]
       },
       {
-        filename: "Spawner.cs",
+        filename: "SkillCooldown.cs",
         caption:
-          "일정 간격 스폰 → 처치 수가 counterBoss 에 닿으면 보스 웨이브로 전환",
-        highlightLines: [2, 3, 9, 10],
+          "쿨타임을 숫자 대신 칸(fillImages)으로 표시. chargeInterval 마다 한 칸씩 켜지고 다 차면 isSkillReady",
+        highlightLines: [3, 9],
         lines: [
-          "IEnumerator SpawnEnemy1() {",
-          "  while (enemy1Spawned) { SpawnMonster(enemy1Prefab); yield return new WaitForSeconds(spawnInterval); }",
-          "}",
+          "public GameObject[] fillImages;      // Fill_1 ~ Fill_6",
+          "public float chargeInterval = 1f;",
+          "public float cooldownTime = 6f;",
+          "private int currentIndex = 0;",
+          "public bool isSkillReady => currentIndex >= fillImages.Length;",
           "",
-          "public void OnEnemy1Slained() {",
-          "  slainedMoster++;",
-          "  if (slainedMoster >= counterBoss && !boss1Spawned) {",
-          "    enemy1Spawned = false;",
-          "    boss1Spawned = true;",
-          "    StartCoroutine(SpawnBoss1());",
-          "    slainedMoster = 0;",
-          "  }",
+          "void Update() {",
+          "    if (!isCharging || isSkillReady) return;",
+          "    timer += Time.deltaTime;             // interval 마다 다음 칸을 켠다",
           "}"
         ]
       }
     ],
     work: [
       {
-        g: "AR",
+        g: "무기",
         items: [
-          "Plane Scan 토글 · 스캔 종료 처리",
-          "boundary → 바닥 · 4방향 벽"
+          "활 · 칼 · 마법 · 총 (Final.unity)",
+          "발사 조건 · fireRate · 잠금 · 전환"
         ]
       },
       {
-        g: "스폰",
-        items: ["꼭짓점 기준 스폰 위치", "spawnInterval 루프 · 보스 트리거"]
+        g: "스킬·체력",
+        items: ["SkillCooldown 칸 UI (6초)", "PlayerHealth · ProjectileDamage"]
       },
-      {g: "무기", items: ["활 · 칼 · 마법 · 총", "발사 조건 · 쿨타임 · 잠금"]},
-      {g: "기획", items: ["게임 루프 설계"]}
+      {g: "기획", items: ["게임 루프 기획 참여"]},
+      {
+        g: "팀 시스템 (참고)",
+        items: [
+          "바닥·벽 AdjustmentSystem · RBTylenol",
+          "스폰·보스 Spawner · kbwon"
+        ]
+      }
     ],
     challenges: [
       {
-        title: "방마다 크기가 달라 전장을 고정할 수 없었습니다",
+        title: "버튼을 누르면 항상 나가는 총은 조준이 없었습니다",
         problem:
-          "스캔된 평면은 여러 조각으로 들어오고 크기도 매번 다릅니다. 어디까지가 전장인지 코드가 정해야 했습니다.",
+          "AR 화면에서 발사 버튼 하나로 쏘게 하면 방향 없이 난사가 됩니다. 조이스틱이 가리키는 쪽으로만, 무기마다 다른 간격으로 나가야 했습니다.",
         solution:
-          "바닥 평면들의 boundary 점을 전부 월드 좌표로 바꿔 X·Z 의 min/max 를 잡고, 그 사각형으로 바닥을 스케일링한 뒤 네 꼭짓점을 이어 벽을 세웠습니다. 카메라 위치 ±1m 도 범위에 넣어 플레이어가 전장 밖에 서지 않게 했습니다.",
-        code: {
-          filename: "AdjustmentSystem.cs",
-          lines: [
-            "void CreateWall(Vector3 start, Vector3 end) {",
-            "  Vector3 mid = (start + end) / 2; float dist = (end - start).magnitude;",
-            "  GameObject wall = Instantiate(wallPrefab, mid, Quaternion.identity);",
-            "  wall.transform.localScale = new Vector3(0.01f, 1f, dist);",
-            "  wall.transform.rotation = Quaternion.LookRotation(end - start);",
-            "}"
-          ]
+          "WeaponShooterWithJoystick.Update 에서 조이스틱 입력이 0 이 아니고 Time.time 이 nextFire 를 넘겼을 때만 발사하고, 발사 직후 nextFire = Time.time + currentWeapon.fireRate 로 다음 발사 시각을 무기별로 잡았습니다. 발사는 코루틴이라 무기마다 spawnDelay 뒤에 발사체가 생기고, 애니메이션과 소리는 그 앞뒤에 붙습니다.",
+        evidence: {
+          status: "구현 확인 · 본인 커밋 11/12",
+          note: "develop 의 Assets/Scripts/JJH/WeaponShooterWithJoystick.cs. 첫 커밋 5120004f(2025-04-29). 수정 계기 커밋은 메시지 인코딩이 깨져 읽지 못했습니다.",
+          url: "https://github.com/toadsam/IMP/blob/develop/Assets/Scripts/JJH/WeaponShooterWithJoystick.cs"
         }
       },
       {
-        title: "웨이브가 시간으로 넘어가면 플레이와 무관해집니다",
+        title: "무기 네 종을 한 손으로 돌리고, 잠긴 무기는 안 나가게",
         problem:
-          "타이머 기준으로는 일반 몬스터를 처치하지 못한 상태에서도 보스가 등장했습니다. 시간 대신 처치 수를 기준으로 보스가 등장하도록 설계했습니다.",
+          "무기가 넷(활·칼·마법·총)인데 화면이 좁아 버튼을 넷 둘 수 없었고, 아직 못 얻은 무기가 그냥 나가면 진행이 의미가 없었습니다.",
         solution:
-          "Spawner 가 처치 콜백(OnEnemyNSlained)으로 카운트를 누적하고, counterBoss(10)에 닿으면 일반 스폰을 멈추고 보스를 소환합니다. 보스마다 카운트를 0 으로 되돌려 다음 웨이브로 잇습니다."
+          "Next/PreviousWeapon 이 currentWeaponIndex 를 돌리며 들고 있는 프리팹을 바꾸고, WeaponData.isUnlocked 가 false 면 발사 코루틴이 첫 줄에서 yield break 합니다. UnlockWeapon(index) 가 풀어 주고 잠금 아이콘(lockImage)을 같이 다룹니다. 무기 목록은 인스펙터 리스트라 개수 4 는 Final.unity 에서 셌습니다.",
+        evidence: {
+          status: "구현 확인 · 본인 커밋",
+          note: "같은 파일의 UnlockWeapon · NextWeapon · PreviousWeapon. 잠금 해제 조건(어떤 성과로 푸는지)은 이 파일 밖이라 여기선 다루지 않습니다.",
+          url: "https://github.com/toadsam/IMP/blob/develop/Assets/Scripts/JJH/WeaponShooterWithJoystick.cs"
+        }
       }
     ],
     tech: ["Unity", "AR Foundation", "C#"],
@@ -5065,26 +7526,191 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     ],
     metrics: [
-      {n: "4", l: "무기"},
-      {n: "10", l: "처치 → 보스"},
-      {n: "4", l: "방향 벽"},
-      {n: "4인", l: "팀"}
+      {
+        n: "4",
+        l: "무기 · 활 / 칼 / 마법 / 총",
+        sub: "Final.unity 의 heldWeaponPrefab 4개",
+        source:
+          "Assets/Scenes/Final.unity · 코드의 weapons 는 인스펙터 리스트라 .cs 만으론 못 셈"
+      },
+      {
+        n: "0.5초",
+        l: "발사 간격",
+        sub: "WeaponData.fireRate 기본값 · 무기마다 다름",
+        source: "WeaponShooterWithJoystick.cs · fireRate = 0.5f (develop)"
+      },
+      {
+        n: "6초",
+        l: "스킬 쿨타임",
+        sub: "1초마다 한 칸 · 6칸 차면 준비",
+        source: "SkillCooldown.cs · chargeInterval 1f · cooldownTime 6f"
+      },
+      {
+        n: "51",
+        l: "내 커밋 (109 중)",
+        sub: "2025.04.18 ~ 05.03 · Assets/Scripts/JJH",
+        mini: {kind: "bars", before: 109, after: 51},
+        source: "GitHub toadsam/IMP 전 브랜치 작성자 집계 · 2026-11-13 gh"
+      }
     ],
+    // ── 상세 페이지 손글씨 칸 (2026-11-13) ──
+    detail: {
+      intro: {
+        show: "현실 공간을 스캔해 전장으로 고정하고 그 안에서 웨이브로 몬스터를 사냥하는 4인 팀 AR 슈터입니다. 저는 무기 네 종의 발사·전환·잠금·쿨타임과 체력을 맡았고, 조이스틱이 가리킬 때만 무기별 간격으로 나가게 만들었습니다.",
+        bold: "저는 무기 네 종의 발사·전환·잠금·쿨타임과 체력을 맡았고, 조이스틱이 가리킬 때만 무기별 간격으로 나가게 만들었습니다.",
+        more: [
+          "바닥·벽 생성(AdjustmentSystem)은 팀원 RBTylenol, 스폰과 보스 트리거(Spawner)는 팀원 kbwon 의 코드입니다.",
+          "제 코드는 develop 의 Assets/Scripts/JJH 다섯 파일입니다. 저장소 커밋 109개 중 51개가 제 몫이고 실제 작업은 2025-04-18 ~ 05-03 입니다.",
+          "무기 4종은 코드가 아니라 Final.unity 씬에서 셌습니다(weapons 가 인스펙터 리스트)."
+        ]
+      },
+      highlights: [
+        {
+          show: "조이스틱 입력이 0 이 아니고 nextFire 를 넘겼을 때만 발사, 발사 직후 nextFire = Time.time + fireRate 로 무기별 간격을 둡니다(WeaponShooterWithJoystick.Update).",
+          bold: true,
+          more: "발사는 코루틴이라 spawnDelay 뒤에 발사체가 생기고 2초 뒤 Destroy 됩니다. 본인 커밋 11/12, 첫 커밋 2025-04-29."
+        },
+        {
+          show: "잠긴 무기(isUnlocked=false)는 발사 코루틴 첫 줄에서 끝나고, Next/PreviousWeapon 이 네 무기를 한 손으로 돌립니다.",
+          more: "UnlockWeapon(index) 가 풀어 주고 lockImage 를 다룹니다. 해제 조건 자체는 이 파일 밖입니다."
+        },
+        {
+          show: "스킬 쿨타임은 숫자 대신 칸 여섯 개로 보여 줍니다. 1초마다 한 칸, 다 차면 isSkillReady(SkillCooldown).",
+          more: "chargeInterval 1f · cooldownTime 6f. 본인 커밋 2/3."
+        }
+      ],
+      briefs: [
+        {
+          problem: "발사 버튼 하나면 방향 없이 난사가 됐습니다.",
+          did: "조이스틱 입력이 있을 때만, 무기별 fireRate 간격으로 발사하게 했습니다.",
+          result:
+            "조준이 생겼고 무기마다 손맛이 달라졌습니다. 수정 계기 커밋은 메시지가 깨져 못 읽었습니다."
+        },
+        {
+          problem:
+            "무기 넷을 둘 버튼 자리가 없었고 못 얻은 무기가 그냥 나갔습니다.",
+          did: "인덱스를 돌려 전환하고 isUnlocked 가 false 면 발사를 끊었습니다.",
+          result:
+            "무기 4종(Final.unity)이 한 손으로 돌아가고 잠금 아이콘이 같이 바뀝니다."
+        }
+      ],
+      summaries: {
+        arch: "평면 스캔, 바닥과 벽, 스폰과 보스는 팀원이 만들었고 저는 그 안에서 쓰는 무기·스킬·체력을 맡았습니다.",
+        code: "WeaponShooterWithJoystick 의 발사 조건·잠금과 SkillCooldown 의 칸 UI.",
+        proc: "2025.03 init → 04.18 작업 시작 → 04.29 무기 발사 → 05.03 마무리."
+      },
+      scenes: [
+        {
+          place: "trouble",
+          kind: "steps",
+          title: "한 발이 나가기까지 · WeaponShooterWithJoystick",
+          steps: [
+            {
+              t: "조이스틱 입력?",
+              d: "Horizontal 또는 Vertical ≠ 0",
+              alt: {
+                t: "입력 없음",
+                d: "아무것도 안 함 · 난사 방지",
+                tone: "muted"
+              }
+            },
+            {
+              t: "쿨타임 지났나?",
+              d: "Time.time > nextFire",
+              alt: {t: "아직", d: "다음 프레임에 다시", tone: "muted"}
+            },
+            {
+              t: "잠긴 무기?",
+              d: "!isUnlocked 면 코루틴 첫 줄에서 yield break",
+              tone: "warn",
+              alt: {t: "잠김", d: "lockImage 표시 · 발사 없음", tone: "fail"}
+            },
+            {
+              t: "발사",
+              d: "nextFire = now + fireRate · 애니메이션 → spawnDelay → 발사체 · 소리 · 2초 뒤 Destroy",
+              tone: "ok"
+            }
+          ],
+          note: "fireRate 기본 0.5초, 무기마다 다르게 둘 수 있습니다. 발사체의 데미지 처리는 ProjectileDamage 가 맡습니다.",
+          source:
+            "toadsam/IMP develop · Assets/Scripts/JJH/WeaponShooterWithJoystick.cs Update · ShootWeaponWithSpawnDelay"
+        },
+        {
+          place: "result",
+          kind: "frames",
+          title: "무기 네 종 · 손잡이를 끌어 보세요",
+          ratio: "380/370",
+          maxWidth: 560,
+          frames: [
+            {src: "/projects/op/ar-weapon-bow.webp", label: "활", at: "1"},
+            {src: "/projects/op/ar-weapon-sword.webp", label: "칼", at: "2"},
+            {src: "/projects/op/ar-weapon-magic.webp", label: "마법", at: "3"},
+            {
+              src: "/projects/op/ar-weapon-gun.webp",
+              label: "총 · 잠금 해제 무기",
+              at: "4"
+            }
+          ],
+          note: "포트폴리오 PDF 캡처(약 380px)라 작습니다. 네 무기는 Final.unity 의 heldWeaponPrefab 4개와 일치합니다.",
+          source:
+            "public/projects/op/ar-weapon-*.webp · Assets/Scenes/Final.unity"
+        },
+        {
+          place: "proc",
+          kind: "timeline",
+          title: "내 커밋 51개 · 2025.04.18 ~ 05.03",
+          unit: "date",
+          from: "2025-04-15",
+          to: "2025-05-06",
+          events: [
+            {
+              at: "2025-04-18",
+              label: "작업 시작",
+              detail: "3월 15일 init 뒤 첫 실제 커밋",
+              tone: "ok"
+            },
+            {
+              at: "2025-04-29",
+              label: "WeaponShooterWithJoystick 첫 커밋",
+              detail: "5120004f · 조이스틱 발사 · fireRate",
+              href: "https://github.com/toadsam/IMP/commit/5120004f",
+              tone: "ok"
+            },
+            {
+              at: "2025-04-30",
+              until: "2025-05-02",
+              label: "무기 전환·잠금·스킬 쿨타임",
+              detail: "bb5f399b · 85aeb523 · 6b05ef04 · 5b816c86",
+              tone: "ok"
+            },
+            {
+              at: "2025-05-03",
+              label: "마지막 커밋 · EndUI 연결",
+              detail: "52659c9d (Spawner 에 EndUI 훅 10줄)",
+              tone: "warn"
+            }
+          ],
+          note: "커밋 메시지는 인코딩이 깨져 읽을 수 없어 건드린 파일로 적었습니다. 전체 109 커밋 중 51개.",
+          source: "GitHub toadsam/IMP 커밋 이력(전 브랜치) · 2026-11-13 gh"
+        }
+      ]
+    },
     kpt: {
       keep: [
-        "전장·스폰·벽을 전부 스캔 결과에서 파생",
-        "처치 수 기반 웨이브 전환"
+        "조이스틱 방향이 있을 때만 발사하는 조건",
+        "무기별 fireRate·spawnDelay 를 데이터(WeaponData)로 분리"
       ],
       problem: [
-        "보스 3종이 같은 counterBoss 값이라 난이도 곡선이 없음",
-        "무기 잠금 해제 조건이 단순"
+        "무기 잠금 해제 조건이 단순",
+        "무기 수가 인스펙터 리스트라 코드만으론 셀 수 없음",
+        "바닥·벽·스폰은 팀원 코드라 제가 손댈 수 없었음"
       ],
-      try: ["웨이브별 난이도 데이터화", "무기 해제 조건을 성과와 연결"]
+      try: ["무기 해제 조건을 성과와 연결", "무기 데이터를 ScriptableObject 로"]
     },
     learningLead:
-      "전장 크기·벽·스폰 위치를 전부 스캔한 평면의 boundary 에서 계산했습니다. 고정값을 두면 방에 따라 벽 밖에 몬스터가 생겼습니다.",
+      "발사를 조이스틱 방향과 무기별 쿨타임에 묶자 조준이 생겼습니다.",
     learning:
-      "보스는 타이머가 아니라 처치 수 10 에 닿을 때 나오게 해, 웨이브가 플레이 성과를 따라가게 했습니다."
+      "팀 저장소에서 제 몫은 무기·스킬·체력입니다. 바닥·벽과 스폰은 팀원의 코드입니다."
   },
 
   // ════════════════════════════ 아주대탐험 / Ajou Indie Game (game · 1인) ═══
@@ -5101,7 +7727,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     },
     problemShot: {
       src: "/projects/ajou-adventure/view-fp.webp",
-      label: "1인칭 시점 — 탐색",
+      label: "1인칭 시점 · 탐색",
       ratio: "16/9"
     },
     // 트러블슈팅 세 건과 1:1 — 시점 전환(위 두 장) · 랜덤 스킬 3택 · 캐릭터 선택 UI.
@@ -5112,7 +7738,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "1인칭↔탑다운 · 레벨업 랜덤 3택 · 캐릭터 선택",
       ratio: "16/9",
       caption:
-        "위: 같은 캠퍼스를 1인칭(탐색)과 탑다운(전투)으로 오갑니다. 아래 왼쪽: 레벨업마다 전체 목록에서 랜덤 3개를 제시하고 고르는 동안 시간을 멈춥니다. 아래 오른쪽: 선택한 캐릭터만 활성화되는 선택 화면."
+        "위: 같은 캠퍼스를 1인칭(탐색)과 탑다운(전투)으로 오갑니다. 아래 왼쪽: 레벨업마다 전체 목록에서 랜덤 3개를 제시합니다(고르는 동안 시간 정지는 Skills_JJH 브랜치에만 있고 main 은 멈추지 않습니다). 아래 오른쪽: 선택한 캐릭터만 활성화되는 선택 화면(Skills_JJH)."
     },
     gallery: [
       {
@@ -5127,7 +7753,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         src: "/projects/ajou-adventure/portal.webp",
-        label: "포탈 — 씬 전환",
+        label: "포탈 · 씬 전환",
         ratio: "16/9"
       }
     ],
@@ -5139,7 +7765,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {k: "왜", v: "퍼즐 탐색과 전투에 서로 다른 시야·조작을 주고 싶었음"},
       {
         k: "결과",
-        v: "1인칭↔탑다운을 조작 충돌·카메라 튐 없이 오가고, 레벨업마다 랜덤 3택으로 매 판 다른 빌드가 나옵니다"
+        v: "1인칭↔탑다운을 컨트롤러·카메라 부모·물리 제약 단위로 함께 바꾸고, 레벨업마다 랜덤 3택으로 매 판 다른 빌드가 나옵니다. 2024.09.23 ~ 12.30 커밋 124개 전부 혼자"
       },
       {k: "내 역할", v: "시스템 설계 / UI / AI / 전투 / 성장 전부 (1인)"}
     ],
@@ -5175,18 +7801,27 @@ export const RICH_DATA: Record<string, RichProject> = {
         t: "시점 전환",
         d: "1인칭 탐색 ↔ 탑다운 전투, 카메라·컨트롤러·물리 제약을 함께 전환"
       },
-      {t: "랜덤 스킬 성장", d: "레벨업 시 시간 정지 → 3개 중 선택 → 즉시 반영"},
-      {t: "상태 기반 AI", d: "NavMesh 일반 몬스터 · 예고 있는 랜덤 패턴 보스"},
+      {
+        t: "랜덤 스킬 성장",
+        d: "레벨업 시 3개 중 선택 → 즉시 반영 (선택 중 시간 정지는 Skills_JJH 브랜치)"
+      },
+      {
+        t: "상태 기반 AI",
+        d: "NavMesh 일반 몬스터(감지 10 · 공격 3) · 랜덤 패턴 보스 · 보스 웨이브 3초 예고 패널"
+      },
       {
         t: "이벤트 시스템",
         d: "돌발 퀘스트 · 포탈 씬 전환 · 소환 스킬(20초/쿨 20초)"
       }
     ],
     problem:
-      "퍼즐 탐색과 전투는 요구하는 시야와 조작이 다릅니다. 탐색과 전투에 서로 다른 시야와 조작 방식을 적용하고, 기능별 역할을 분리하고자 했습니다.",
+      "퍼즐 탐색과 전투는 요구하는 시야와 조작이 다릅니다. 탐색과 전투에 서로 다른 시야와 조작 방식을 적용하고, 기능별 역할을 분리하려고 했습니다.",
     research: {
       quotes: [],
-      stat: {n: "5", l: "시스템 모듈 · Player / Skill / AI / UI / Event"}
+      stat: {
+        n: "40",
+        l: "Assets/Script 파일 수 · Manager 8 · Player 13 · Monster 5 · Skills 5 · Robot 3 · Map 2 · 기타 4 (3,245줄, README)"
+      }
     },
     hypothesis:
       "카메라·컨트롤러·물리 제약을 모드 단위로 함께 바꿔야 한 캐릭터로 탐색과 전투를 오가면서도 조작이 겹치거나 화면이 튀지 않습니다.",
@@ -5332,7 +7967,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         problem:
           "1인칭과 탑다운이 같은 입력을 동시에 받으면 오작동이 나고, 카메라를 위치로만 옮기면 전환 순간 시점이 튑니다.",
         solution:
-          "컨트롤러 두 개를 모드에 따라 enable/disable 로 갈라 동시 입력을 막고, 1인칭 카메라는 플레이어의 자식으로 붙여 localPosition 을 0 으로 리셋했습니다. 탑다운은 3초 지연 뒤 Y축을 Freeze 해 전환 직후 흔들림을 넘겼습니다.",
+          "컨트롤러 enable/disable과 카메라 부모 연결·localPosition 초기화는 수정 전에도 있었습니다. 2024-11-11 커밋에서 바뀐 것은 1인칭 진입 시 Y축 잠금을 풀고, 탑다운 전환 3초 뒤 FreezePositionY와 FreezeRotation을 적용한 부분입니다.",
         code: {
           filename: "PlayerModeManager.cs",
           lines: [
@@ -5341,6 +7976,11 @@ export const RICH_DATA: Record<string, RichProject> = {
             "  playerRigidbody.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotation;",
             "}"
           ]
+        },
+        evidence: {
+          status: "전후 코드로 확인",
+          note: "2024-11-11 커밋의 전후입니다. 이 화면에서 Unity 물리나 카메라를 실제로 돌리지는 않습니다.",
+          url: "https://github.com/toadsam/Ajou_IndiGame/blob/172a051eb4986da29a703d9ac4dfb0fb0f01d8f1/Assets/Script/Manager/PlayerModeManager.cs"
         }
       }
     ],
@@ -5364,14 +8004,183 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     ],
     metrics: [
-      {n: "2", l: "시점 전환"},
-      {n: "3", l: "랜덤 스킬"},
-      {n: "5", l: "웨이브"},
-      {n: "1인", l: "전담"}
+      {
+        n: "2",
+        l: "시점 · 1인칭 ↔ 탑다운",
+        sub: "T 키 · 탑다운 3초 뒤 Y축 잠금",
+        source:
+          "PlayerModeManager.cs · enum PlayerMode · LockYPositionAfterDelay(3f)"
+      },
+      {
+        n: "3",
+        l: "레벨업 랜덤 스킬 제시",
+        sub: "randomSkills[3] · 즉시 반영",
+        source:
+          "InGameSkillManager.cs · main 브랜치 (Skills_JJH 는 중복 제거판)"
+      },
+      {
+        n: "5",
+        l: "웨이브 · 다섯 번째 보스",
+        sub: "case 1~5 · 보스 예고 패널 3초",
+        source: "WaveManager.cs · case 5 → ShowBossWavePanel"
+      },
+      {
+        n: "124",
+        l: "커밋 · 전부 혼자",
+        sub: "2024.09.23 ~ 12.30 · Assets/Script 40파일",
+        mini: {kind: "bars", before: 124, after: 124},
+        source:
+          "GitHub toadsam/Ajou_IndiGame 전 브랜치 · 2026-11-13 gh (README 의 82개는 main 만)"
+      }
     ],
+    // ── 상세 페이지 손글씨 칸 (2026-11-13) ──
+    detail: {
+      intro: {
+        show: "아주대 캠퍼스에서 마스코트 치토가 졸업을 향해 성장하는 혼자 만든 Unity 3D 액션 어드벤처입니다. 탐색은 1인칭, 전투는 탑다운으로 시점을 바꾸는데, 카메라만 옮기지 않고 컨트롤러·카메라 부모·물리 제약을 한 번에 바꿉니다.",
+        bold: "카메라만 옮기지 않고 컨트롤러·카메라 부모·물리 제약을 한 번에 바꿉니다.",
+        more: [
+          "2024-09-23 첫 커밋부터 12-30 까지 커밋 124개가 전부 제 것입니다. 스크립트 40개, 3,245줄(README).",
+          "레벨업마다 스킬 3개를 랜덤으로 제시하고, 다섯 번째 웨이브에 보스가 나옵니다. 인벤토리·캐릭터 선택·보스는 Skills_JJH 브랜치에만 있고 main 은 그 전 상태입니다.",
+          "README 에 남은 과제를 그대로 적어 뒀습니다. 플레이어가 죽지 않음, 포탈은 원천관 하나만 동작, 웨이브마다 몬스터 1마리, 3초 값은 눈대중."
+        ]
+      },
+      highlights: [
+        {
+          show: "시점 전환을 시스템으로 만들었습니다. T 키를 누르면 조작 스크립트를 바꾸고 카메라를 옮겨 붙입니다. 탑다운이면 3초 뒤 Y축 위치와 회전을 잠급니다.",
+          bold: true,
+          more: "2024-11-11 커밋에서 Y축 잠금 해제·3초 뒤 재잠금이 들어갔습니다. 포탈 태그로 바꾸는 경로는 README 가 죽은 코드라고 적고 있습니다."
+        },
+        {
+          show: "레벨업마다 전체 스킬에서 랜덤 3개를 제시합니다(randomSkills[3]). 시간 정지는 Skills_JJH 브랜치에서만 하고 main 은 멈추지 않습니다.",
+          more: "main 판은 같은 스킬이 두 칸에 나올 수 있고, Skills_JJH 는 tempAvailableSkills 로 중복을 뺐습니다. 여기 실은 코드는 main 판입니다."
+        },
+        {
+          show: "WaveManager 가 case 1~5 로 웨이브를 돌리고 5에서 보스 예고 패널을 3초 띄운 뒤 BossMonster 를 냅니다. 보스 공격은 Random.Range(1,4) 패턴이고 공격마다의 예고는 없습니다.",
+          more: "일반 몬스터는 Idle·Move·Chase·Attack·TakeDamage·Die 여섯 상태, 감지 10 · 공격 3."
+        }
+      ],
+      briefs: [
+        {
+          problem:
+            "1인칭과 탑다운이 같은 입력을 동시에 받으면 오작동이 나고, 카메라를 위치로만 옮기면 전환 순간 시점이 튀었습니다.",
+          did: "컨트롤러 enable/disable 과 카메라 부모 교체는 그 전에도 있었고, 2024-11-11 커밋에서 1인칭 진입 시 Y축 잠금 해제와 탑다운 3초 뒤 FreezePositionY·FreezeRotation 을 넣었습니다.",
+          result:
+            "두 커밋의 전후가 저장소에서 확인됩니다. 3초 값은 눈대중이고 전환은 T 키로만 확인했다고 README 에 적혀 있습니다."
+        }
+      ],
+      summaries: {
+        arch: "Manager 8 · Player 13 · Monster 5 · Skills 5 · Robot 3 · Map 2. PlayerModeManager 가 시점을, WaveManager 가 흐름을 맡습니다.",
+        code: "PlayerModeManager 의 모드 전환, InGameSkillManager 의 랜덤 3택, MonsterAI 의 여섯 상태.",
+        proc: "2024.09.23 시작 → 10.09 시점 전환 → 11.03 웨이브·스킬 → 11.11 Y축 잠금·AI → 11.29 보스 → 12.30 마지막."
+      },
+      scenes: [
+        {
+          place: "trouble",
+          kind: "steps",
+          title:
+            "T 키 한 번에 바뀌는 네 가지 · PlayerModeManager.SetPlayerMode",
+          steps: [
+            {
+              t: "T 키",
+              d: "FirstPerson ↔ TopDown 토글",
+              alt: {
+                t: "포탈 태그로 전환",
+                d: "README 가 죽은 코드라고 적음",
+                tone: "muted"
+              }
+            },
+            {
+              t: "컨트롤러 교체",
+              d: "1인칭 컨트롤러 / 탑다운 컨트롤러 enable 을 서로 반대로"
+            },
+            {
+              t: "카메라 부모",
+              d: "1인칭: SetParent(머리) + localPosition 초기화 · 탑다운: SetParent(null) + TopDownCameraFollow"
+            },
+            {
+              t: "물리 제약",
+              d: "탑다운이면 3초 뒤 FreezePositionY | FreezeRotation",
+              tone: "warn",
+              alt: {t: "1인칭 진입", d: "Y축 잠금 해제", tone: "ok"}
+            }
+          ],
+          note: "3초는 눈대중 값이고 README 에 그렇게 적혀 있습니다. 전환은 T 키로만 확인했습니다.",
+          source:
+            "toadsam/Ajou_IndiGame · Assets/Script/Manager/PlayerModeManager.cs L42-73"
+        },
+        {
+          place: "result",
+          kind: "frames",
+          title: "같은 캠퍼스, 두 시점 · 손잡이를 끌어 보세요",
+          ratio: "2/1",
+          frames: [
+            {
+              src: "/projects/ajou-adventure/view-fp.webp",
+              label: "1인칭 · 탐색",
+              at: "FP"
+            },
+            {
+              src: "/projects/ajou-adventure/view-td.webp",
+              label: "탑다운 · 전투",
+              at: "TD"
+            }
+          ],
+          note: "포트폴리오 PDF 캡처(약 440px)라 작습니다.",
+          source: "public/projects/ajou-adventure/view-fp.webp · view-td.webp"
+        },
+        {
+          place: "proc",
+          kind: "timeline",
+          title: "커밋 124개 · 2024.09.23 ~ 12.30",
+          unit: "date",
+          from: "2024-09-15",
+          to: "2025-01-05",
+          events: [
+            {
+              at: "2024-09-23",
+              label: "첫날 커밋 16개 · 프로젝트 시작",
+              tone: "ok"
+            },
+            {
+              at: "2024-10-09",
+              label: "PlayerModeManager · 시점 전환",
+              href: "https://github.com/toadsam/Ajou_IndiGame/commit/7cffe4d7",
+              tone: "ok"
+            },
+            {
+              at: "2024-11-03",
+              label: "WaveManager · InGameSkillManager",
+              detail: "b13a600f · 57170b29",
+              tone: "ok"
+            },
+            {
+              at: "2024-11-11",
+              label: "Y축 잠금 수정 · MonsterAI",
+              detail: "커밋 2건",
+              href: "https://github.com/toadsam/Ajou_IndiGame/commit/172a051e",
+              tone: "warn"
+            },
+            {
+              at: "2024-11-25",
+              until: "2024-11-29",
+              label: "캐릭터 선택 · BossMonster (Skills_JJH)",
+              tone: "ok"
+            },
+            {
+              at: "2024-12-30",
+              label: "마지막 커밋 · WaveManager",
+              detail: "ea232333",
+              tone: "ok"
+            }
+          ],
+          note: "월별 커밋 9월 17 · 10월 32 · 11월 65 · 12월 7. 커밋 메시지는 인코딩이 깨져 파일로 적었습니다.",
+          source: "GitHub toadsam/Ajou_IndiGame 전 브랜치 · 2026-11-13 gh"
+        }
+      ]
+    },
     kpt: {
       keep: [
-        "시스템 5개를 독립 모듈로 나눈 구조",
+        "스크립트 40개를 Manager·Player·Monster·Skills·Robot·Map 으로 나눈 구조",
         "시점 전환을 연출이 아닌 시스템으로"
       ],
       problem: [
@@ -5383,6 +8192,20 @@ export const RICH_DATA: Record<string, RichProject> = {
     learningLead:
       "시점 전환은 카메라만 옮기지 않고 컨트롤러·물리 제약·카메라 부모를 한 번에 바꿨습니다. 그래야 조작이 겹치거나 화면이 튀지 않았습니다.",
     learning:
-      "Player·Skill·AI·UI·Event를 분리해 각 시스템의 역할을 구분했습니다."
+      "스크립트를 Manager·Player·Monster·Skills·Robot·Map 폴더로 나눠 각 시스템의 역할을 구분했습니다. README 에 남은 과제(플레이어 불사·포탈 하나·웨이브당 몬스터 1)를 그대로 적어 두었습니다."
   }
 };
+
+// 총학생회 웹은 2026-11-14 개정분(9월 리디자인 · 새 캡처 · 이야기 배치)을 덮어쓴다. ajouchong2026.ts 참고.
+RICH_DATA.ajouchong = ajouchong2026(RICH_DATA.ajouchong as RichProject);
+// aClub 은 이야기 배치 개정분을 덮어쓴다. aclubStory.ts 참고.
+RICH_DATA.aclub = aclubStory(RICH_DATA.aclub as RichProject);
+// TSEROF 도 이야기 배치 개정분(실제 규칙의 퍼즐 포함)을 덮어쓴다. tserofStory.ts 참고.
+RICH_DATA.tserof = tserofStory(RICH_DATA.tserof as RichProject);
+// 포트폴리오 마을도 2026-11-14 개정분(다시 센 숫자 · 새 캡처 · 이야기 배치)을 덮어쓴다. villageStory.ts 참고.
+RICH_DATA["village-portfolio"] = villageStory(
+  RICH_DATA["village-portfolio"] as RichProject
+);
+
+// PR · 커밋 · 코드 파일 링크는 화면에 걸지 않는다(lib/codeLinks.ts). 주소는 위 데이터에 그대로 있다.
+stripCodeLinks(RICH_DATA);

@@ -120,7 +120,7 @@ DELETE /admin/commissions/{id}      관리자
 | 파일                                          | 역할                                                  |
 | --------------------------------------------- | ----------------------------------------------------- |
 | `src/data/atelierRoster.ts`                   | 공방 NPC 5명 **단일 출처** (id·좌석·색·성격·추천질문) |
-| `src/components/ui/CommissionDesk.tsx`        | 접수 데스크 — 상담창 + 예상 기간 카드 + 접수 폼 (금액 없음) |
+| `src/components/ui/CommissionDesk.tsx`        | 접수 데스크 — 상담창 + 예상 기간 카드 + 접수 폼 (금액 없음). 2026-11-14 부터 흰 바탕·인디고(`commission/commissionDesk.css`) |
 | `src/components/interior/AtelierInterior.tsx` | 지하 3D 공방 씬                                       |
 | `src/components/village/AtelierHatch.tsx`     | 마을 광장 옆 숨은 입구                                |
 | `src/components/AIPortfolioVillage.tsx`       | `viewMode: "atelier"` · 진입/복귀 · NPC 라우팅        |

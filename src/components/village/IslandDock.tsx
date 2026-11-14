@@ -138,7 +138,7 @@ export function IslandDock({onDepart}: {onDepart: () => void}) {
         zIndexRange={[20, 0]}
       >
         <button
-          className="v-panel whitespace-nowrap px-2.5 py-1.5 text-[11px] font-black text-[#f3e6c8] transition"
+          className="v-panel whitespace-nowrap px-2.5 py-1.5 text-[11px] font-black text-[#f5f6f8] transition"
           onClick={event => {
             event.stopPropagation();
             onDepart();

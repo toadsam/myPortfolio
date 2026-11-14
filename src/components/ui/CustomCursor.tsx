@@ -1,9 +1,30 @@
 "use client";
 
+import {usePathname} from "next/navigation";
 import {useEffect} from "react";
+import {DotRingCursor} from "./DotRingCursor";
 
 /**
- * 네온 링/닷 커스텀 커서 — 사이트 전역. 터치(coarse) 기기에서는 비활성.
+ * 커서 갈래 (2026-11-13). 흰 바탕 화면(`/` 착륙장 · `/resume*` · 2026-11-14 부터 의뢰
+ * 추적 `/commission/*`)은 인디고 점+고리
+ * (`DotRingCursor`), 나머지(마을·공방·관리자)는 아래의 금색 네온 링이다. 마을·공방 위에
+ * 뜨는 흰 의뢰 데스크 안에서는 금색 링이 안 보여 OS 기본 커서로 돌린다(`commissionDesk.css` 끝). 금색 링은 밤
+ * 마을 팔레트라 흰 이력서 위에서 혼자 튀었다. 주소가 바뀌어도 같은 갈래면 컴포넌트가
+ * 그대로 살아 있어 착륙장 → 이력서 전환 중에 커서가 깜빡이지 않는다.
+ */
+const DOT_RING_PATHS = (path: string) =>
+  path === "/" ||
+  path === "/resume" ||
+  path.startsWith("/resume/") ||
+  path.startsWith("/commission/");
+
+export function CustomCursor() {
+  const path = usePathname() ?? "/";
+  return DOT_RING_PATHS(path) ? <DotRingCursor /> : <BakedRingCursor />;
+}
+
+/**
+ * 네온 링/닷 커스텀 커서 — 마을 쪽 화면. 터치(coarse) 기기에서는 비활성.
  *
  * **이건 DOM 요소가 아니라 진짜 커서다.** 링과 닷을 캔버스에 한 번 그려 PNG 로 굽고,
  * `cursor: url(...)` 로 단다. 그리는 주체가 브라우저가 아니라 OS 라서
@@ -129,7 +150,7 @@ function bake(spec: Spec, dpr: number): string {
   return canvas.toDataURL("image/png");
 }
 
-export function CustomCursor() {
+function BakedRingCursor() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!window.matchMedia("(pointer: fine)").matches) return; // 마우스 없는 기기는 스킵

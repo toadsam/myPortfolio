@@ -44,6 +44,8 @@ from app.schemas import (
     SharedArtifactOut,
     CommissionArtifactOut,
     CommissionBoardOut,
+    CareerAskIn,
+    CareerAskOut,
     CommissionConsultIn,
     CommissionConsultOut,
     CommissionDraft,
@@ -162,6 +164,7 @@ from app.services.learning_service import (
 )
 from app.services import memory_service, relay_service
 from app.services import plan_service
+from app.services import career_service
 from app.services.npc_brain_service import generate_group_chat, generate_npc_encounter, generate_npc_tick
 from app.services.relationship_rules import decide_outcome, josa
 from app.services.relationship_service import (
@@ -908,6 +911,16 @@ def admin_delete_plan_item(item_id: int, db: Session = Depends(get_db)):
     if not plan_service.delete_plan_item(db, item_id):
         raise HTTPException(status_code=404, detail="해당 지시서를 찾을 수 없습니다.")
     return {"ok": True}
+
+
+# ─────────────────────────── 경력 안내 (쪽지) ───────────────────────────
+#
+# /resume 의 안내 캐릭터가 부른다. 이력서와 프로젝트 글에서 근거를 찾아 답하고,
+# 근거가 없으면 모델을 부르지 않는다. 질문은 저장하지 않는다.
+
+@app.post("/career/ask", response_model=CareerAskOut, dependencies=[AiRateLimit])
+async def career_ask_route(payload: CareerAskIn):
+    return await career_service.ask(payload.question, payload.previous)
 
 
 # ─────────────────────────── 의뢰 공방 (홈페이지 제작 의뢰) ───────────────────────────

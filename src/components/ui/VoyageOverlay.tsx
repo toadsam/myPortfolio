@@ -41,7 +41,7 @@ export function VoyageOverlay({href}: {href: string}) {
       initial={{opacity: 0}}
       style={{
         background:
-          "radial-gradient(120% 90% at 50% 20%, #16263c 0%, #0b1626 55%, #050b14 100%)"
+          "radial-gradient(120% 90% at 50% 20%, #16263c 0%, #12141d 55%, #050b14 100%)"
       }}
       transition={{duration: 0.35}}
     >

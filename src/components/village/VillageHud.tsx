@@ -1,5 +1,6 @@
 "use client";
 
+import {motion} from "framer-motion";
 import {useEffect, useRef, useState} from "react";
 import {autonomousNpcs} from "@/data/npcRoster";
 import type {NpcCommand} from "@/components/village/NPC";
@@ -120,8 +121,8 @@ function MapDistrictLabels({
             textAnchor="middle"
             fontSize={fontSize}
             fontWeight={800}
-            fill={activeKey === point.key ? "#ffd9ae" : "#e5d8ba"}
-            stroke="#0b1626"
+            fill={activeKey === point.key ? "#e3e1fb" : "#e5d8ba"}
+            stroke="#12141d"
             strokeWidth={2.6}
             paintOrder="stroke"
             style={{pointerEvents: "none", userSelect: "none"}}
@@ -186,13 +187,13 @@ export function LiveStatusPanel({
         <span className="v-panel-title flex items-center gap-2 text-[13px]">
           <Crest name="horn" size={15} />
           <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ff9d38] opacity-60" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#ff9d38]" />
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#8b85f0] opacity-60" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#8b85f0]" />
           </span>
           마을 소식
         </span>
         <span
-          className="text-sm text-[#a9bdd6]/50"
+          className="text-sm text-[#b4bac6]/50"
           style={{
             transform: collapsed ? "rotate(-90deg)" : "none",
             transition: "transform 0.2s"
@@ -203,7 +204,7 @@ export function LiveStatusPanel({
       </button>
       {!collapsed ? (
         error ? (
-          <p className="mt-2 leading-5 text-[#ff9a6c]">
+          <p className="mt-2 leading-5 text-[#aeaaf3]">
             {error}. 지금은 기본 마을 화면이에요.
           </p>
         ) : villageState ? (
@@ -211,7 +212,7 @@ export function LiveStatusPanel({
             {favors && favors.length > 0 ? (
               <button
                 type="button"
-                className="mt-2 flex w-full items-start gap-1.5 rounded-lg border border-[#9ad0ff]/30 bg-[#9ad0ff]/10 px-2.5 py-1.5 text-left text-[11px] leading-4 text-[#d9ecff] transition hover:bg-[#9ad0ff]/20"
+                className="mt-2 flex w-full items-start gap-1.5 rounded-2xl border border-[#c3c0f7]/30 bg-[#c3c0f7]/10 px-2.5 py-1.5 text-left text-[11px] leading-4 text-[#d9ecff] transition hover:bg-[#c3c0f7]/20"
                 onClick={() => onGoToNpc?.(favors[0]!.about_npc_id)}
                 title="눌러서 그 NPC 에게 가기"
               >
@@ -222,25 +223,25 @@ export function LiveStatusPanel({
               </button>
             ) : null}
             {digest ? (
-              <p className="mt-2 flex items-start gap-1.5 rounded-lg border border-[#e2c078]/25 bg-[#e2c078]/10 px-2.5 py-1.5 text-[11px] leading-4 text-[#f3e6c8]">
+              <p className="mt-2 flex items-start gap-1.5 rounded-2xl border border-[#c3c0f7]/25 bg-[#c3c0f7]/10 px-2.5 py-1.5 text-[11px] leading-4 text-[#f5f6f8]">
                 <span className="shrink-0">📰</span>
                 <span className="min-w-0 flex-1">{digest.text}</span>
               </p>
             ) : null}
             {feed.length > 0 ? (
               <div className="mt-2 grid gap-1">
-                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#e2c078]/70">
+                <p className="text-[10px] font-bold text-[#c3c0f7]/70">
                   NPC 들 사이에서
                 </p>
                 {feed.slice(0, 5).map(ev => (
                   <p
                     key={ev.id}
-                    className="flex items-start gap-1.5 leading-4 text-[11px] text-[#dfe7f2]"
+                    className="flex items-start gap-1.5 leading-4 text-[11px] text-[#d3d7df]"
                   >
                     <span className="shrink-0">{ev.emoji}</span>
                     <span className="min-w-0 flex-1">
                       {ev.text}
-                      <span className="ml-1 text-[#a9bdd6]/45">
+                      <span className="ml-1 text-[#b4bac6]/45">
                         {timeAgo(ev.created_at)}
                       </span>
                     </span>
@@ -252,32 +253,32 @@ export function LiveStatusPanel({
               {villageState.summary}
             </p>
             <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-              <span className="rounded-lg border border-[#e2c078]/12 bg-white/[0.04] px-2 py-2">
-                <strong className="block text-[#e2c078]">
+              <span className="rounded-2xl border border-[#c3c0f7]/12 bg-white/[0.04] px-2 py-2">
+                <strong className="block text-[#c3c0f7]">
                   {villageState.activity.github_commits}
                 </strong>
-                <span className="text-[9px] text-[#a9bdd6]/60">커밋</span>
+                <span className="text-[9px] text-[#b4bac6]/60">커밋</span>
               </span>
-              <span className="rounded-lg border border-[#e2c078]/12 bg-white/[0.04] px-2 py-2">
+              <span className="rounded-2xl border border-[#c3c0f7]/12 bg-white/[0.04] px-2 py-2">
                 <strong className="block text-[#a8d8a0]">
                   {villageState.activity.study_minutes}
                 </strong>
-                <span className="text-[9px] text-[#a9bdd6]/60">학습·분</span>
+                <span className="text-[9px] text-[#b4bac6]/60">학습·분</span>
               </span>
-              <span className="rounded-lg border border-[#e2c078]/12 bg-white/[0.04] px-2 py-2">
-                <strong className="block text-[#ff9a6c]">
+              <span className="rounded-2xl border border-[#c3c0f7]/12 bg-white/[0.04] px-2 py-2">
+                <strong className="block text-[#aeaaf3]">
                   {villageState.activity.workout_done ? "✅" : "💤"}
                 </strong>
-                <span className="text-[9px] text-[#a9bdd6]/60">운동</span>
+                <span className="text-[9px] text-[#b4bac6]/60">운동</span>
               </span>
             </div>
-            <p className="mt-2 text-[10px] leading-4 text-[#a9bdd6]/50">
+            <p className="mt-2 text-[10px] leading-4 text-[#b4bac6]/50">
               오늘의 실시간 활동 · 1분마다 갱신
             </p>
             <button
               type="button"
               onClick={resetHudLayout}
-              className="mt-2 w-full rounded-md border border-[#e2c078]/15 py-1 text-[10px] font-bold text-[#a9bdd6]/55 transition hover:border-[#e2c078]/45 hover:text-[#f3e6c8]"
+              className="mt-2 w-full rounded-xl border border-[#c3c0f7]/15 py-1 text-[10px] font-bold text-[#b4bac6]/55 transition hover:border-[#c3c0f7]/45 hover:text-[#f5f6f8]"
             >
               ⤢ 패널 배치 초기화
             </button>
@@ -312,7 +313,7 @@ export function NpcQuickDock({
         variant="plaque"
       >
         <Crest name="npc" size={15} /> AI NPC{" "}
-        <span className="text-[#a9bdd6]/50">▸</span>
+        <span className="text-[#b4bac6]/50">▸</span>
       </VillageFrame>
     );
   }
@@ -333,14 +334,14 @@ export function NpcQuickDock({
         {...drag.handleProps}
       >
         <Crest name="npc" size={14} /> AI NPC{" "}
-        <span className="text-[#a9bdd6]/50">▾</span>
+        <span className="text-[#b4bac6]/50">▾</span>
       </button>
       {coreNpcs.map(npc => (
         <button
           className={
             activeNpcId === npc.id
-              ? "shrink-0 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-3 py-1.5 text-center text-xs font-black text-[#ffe9d2] transition active:scale-95"
-              : "shrink-0 rounded-lg border border-[#e2c078]/15 bg-white/[0.04] px-3 py-1.5 text-center text-xs font-black text-[#c9d6e8] transition hover:border-[#e2c078]/45 hover:text-[#f3e6c8] active:scale-95"
+              ? "shrink-0 rounded-2xl border border-[#8b85f0]/50 bg-[#8b85f0]/15 px-3 py-1.5 text-center text-xs font-black text-[#f5f6f8] transition active:scale-95"
+              : "shrink-0 rounded-2xl border border-[#c3c0f7]/15 bg-white/[0.04] px-3 py-1.5 text-center text-xs font-black text-[#c9d6e8] transition hover:border-[#c3c0f7]/45 hover:text-[#f5f6f8] active:scale-95"
           }
           key={npc.id}
           onClick={() => onSelect(npc)}
@@ -353,10 +354,10 @@ export function NpcQuickDock({
             className="mx-auto"
             name={NPC_CREST[npc.type] ?? "npc"}
             size={16}
-            tone={activeNpcId === npc.id ? undefined : "rgba(169,189,214,0.55)"}
+            tone={activeNpcId === npc.id ? undefined : "rgba(180,186,198,0.55)"}
           />
           <span className="mt-0.5 block">{npc.name}</span>
-          <span className="block text-[9px] font-bold uppercase tracking-[0.1em] text-[#a9bdd6]/60">
+          <span className="block text-[9px] font-bold text-[#b4bac6]/60">
             {npc.type}
           </span>
         </button>
@@ -405,7 +406,7 @@ export function CommandDock({
         variant="plaque"
       >
         <Crest name="baton" size={15} /> 지휘{" "}
-        <span className="text-[#a9bdd6]/50">▸</span>
+        <span className="text-[#b4bac6]/50">▸</span>
       </VillageFrame>
     );
   }
@@ -427,7 +428,7 @@ export function CommandDock({
         <span className="flex items-center gap-1.5">
           <Crest name="baton" size={14} /> NPC 지휘
         </span>
-        <span className="text-[#a9bdd6]/50">◂</span>
+        <span className="text-[#b4bac6]/50">◂</span>
       </button>
       {modes.map(item => {
         const active = command === item.mode;
@@ -438,14 +439,14 @@ export function CommandDock({
             onClick={() => onCommand(item.mode)}
             className={
               active
-                ? "flex items-center gap-2.5 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/13 px-3 py-2 text-left text-xs font-black text-[#ffe9d2]"
-                : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
+                ? "flex items-center gap-2.5 rounded-2xl border border-[#8b85f0]/50 bg-[#8b85f0]/13 px-3 py-2 text-left text-xs font-black text-[#f5f6f8]"
+                : "flex items-center gap-2.5 rounded-2xl border border-transparent px-3 py-2 text-left text-xs font-bold text-[#b4bac6] transition hover:bg-[#c3c0f7]/10 hover:text-[#f5f6f8] active:scale-[0.98]"
             }
           >
             <Crest
               name={item.crest}
               size={15}
-              tone={active ? undefined : "rgba(169,189,214,0.62)"}
+              tone={active ? undefined : "rgba(180,186,198,0.62)"}
             />
             {item.label}
           </button>
@@ -454,9 +455,9 @@ export function CommandDock({
       <button
         type="button"
         onClick={onGreet}
-        className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
+        className="flex items-center gap-2.5 rounded-2xl border border-transparent px-3 py-2 text-left text-xs font-bold text-[#b4bac6] transition hover:bg-[#c3c0f7]/10 hover:text-[#f5f6f8] active:scale-[0.98]"
       >
-        <Crest name="wave" size={15} tone="rgba(169,189,214,0.62)" /> 인사
+        <Crest name="wave" size={15} tone="rgba(180,186,198,0.62)" /> 인사
       </button>
       <button
         type="button"
@@ -464,23 +465,23 @@ export function CommandDock({
         disabled={groupTalkBusy}
         className={
           groupTalkBusy
-            ? "flex items-center gap-2.5 rounded-lg border border-[#ff9d38]/40 bg-[#ff9d38]/10 px-3 py-2 text-left text-xs font-black text-[#ffd9ae]"
-            : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
+            ? "flex items-center gap-2.5 rounded-2xl border border-[#8b85f0]/40 bg-[#8b85f0]/10 px-3 py-2 text-left text-xs font-black text-[#e3e1fb]"
+            : "flex items-center gap-2.5 rounded-2xl border border-transparent px-3 py-2 text-left text-xs font-bold text-[#b4bac6] transition hover:bg-[#c3c0f7]/10 hover:text-[#f5f6f8] active:scale-[0.98]"
         }
       >
         <Crest
           name="chat"
           size={15}
-          tone={groupTalkBusy ? undefined : "rgba(169,189,214,0.62)"}
+          tone={groupTalkBusy ? undefined : "rgba(180,186,198,0.62)"}
         />{" "}
         {groupTalkBusy ? "수다 중…" : "다 같이 수다"}
       </button>
       <button
         type="button"
         onClick={onOpenRelations}
-        className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
+        className="flex items-center gap-2.5 rounded-2xl border border-transparent px-3 py-2 text-left text-xs font-bold text-[#b4bac6] transition hover:bg-[#c3c0f7]/10 hover:text-[#f5f6f8] active:scale-[0.98]"
       >
-        <Crest name="bond" size={15} tone="rgba(169,189,214,0.62)" /> 관계도
+        <Crest name="bond" size={15} tone="rgba(180,186,198,0.62)" /> 관계도
       </button>
       <button
         type="button"
@@ -488,14 +489,14 @@ export function CommandDock({
         disabled={!busy}
         className={
           busy
-            ? "mt-0.5 flex items-center gap-2.5 rounded-lg border border-[#e2c078]/45 bg-[#e2c078]/12 px-3 py-2 text-left text-xs font-black text-[#f3e6c8] transition hover:bg-[#e2c078]/20 active:scale-[0.98]"
-            : "mt-0.5 flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6]/35"
+            ? "mt-0.5 flex items-center gap-2.5 rounded-2xl border border-[#c3c0f7]/45 bg-[#c3c0f7]/12 px-3 py-2 text-left text-xs font-black text-[#f5f6f8] transition hover:bg-[#c3c0f7]/20 active:scale-[0.98]"
+            : "mt-0.5 flex items-center gap-2.5 rounded-2xl border border-transparent px-3 py-2 text-left text-xs font-bold text-[#b4bac6]/35"
         }
       >
         <Crest
           name="hammer"
           size={15}
-          tone={busy ? undefined : "rgba(169,189,214,0.35)"}
+          tone={busy ? undefined : "rgba(180,186,198,0.35)"}
         />{" "}
         다시 일하기
       </button>
@@ -518,15 +519,15 @@ export function GroupChatPanel({
           type="button"
           onClick={onClose}
           aria-label="단체 수다 닫기"
-          className="rounded-md border border-[#e2c078]/20 px-2 py-0.5 text-sm font-bold text-[#a9bdd6] transition hover:text-[#f3e6c8] active:scale-90"
+          className="rounded-xl border border-[#c3c0f7]/20 px-2 py-0.5 text-sm font-bold text-[#b4bac6] transition hover:text-[#f5f6f8] active:scale-90"
         >
           ✕
         </button>
       </div>
       <div className="max-h-[40vh] space-y-2 overflow-y-auto">
         {lines.map((line, index) => (
-          <div key={index} className="rounded-xl bg-white/[0.04] px-3 py-2">
-            <p className="text-[10px] font-black text-[#e2c078]/80">
+          <div key={index} className="rounded-[22px] bg-white/[0.04] px-3 py-2">
+            <p className="text-[10px] font-black text-[#c3c0f7]/80">
               {line.name}
             </p>
             <p className="mt-0.5 text-sm leading-6 text-[#e8eef7]/90">
@@ -600,8 +601,8 @@ export function MobileHud({
 
   const chip = (active: boolean) =>
     active
-      ? "flex items-center gap-2 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-3 py-2.5 text-left text-sm font-black text-[#ffe9d2]"
-      : "flex items-center gap-2 rounded-lg border border-[#e2c078]/15 bg-white/[0.04] px-3 py-2.5 text-left text-sm font-bold text-[#c9d6e8] active:scale-95";
+      ? "flex items-center gap-2 rounded-2xl border border-[#8b85f0]/50 bg-[#8b85f0]/15 px-3 py-2.5 text-left text-sm font-black text-[#f5f6f8]"
+      : "flex items-center gap-2 rounded-2xl border border-[#c3c0f7]/15 bg-white/[0.04] px-3 py-2.5 text-left text-sm font-bold text-[#c9d6e8] active:scale-95";
 
   return (
     <div className="md:hidden">
@@ -609,7 +610,7 @@ export function MobileHud({
         type="button"
         onClick={() => setOpen(o => !o)}
         aria-label="이동·지휘·지도 메뉴"
-        className="fixed bottom-[15rem] right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[#7a5a38]/60 bg-[#0b1626]/90 text-xl shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] active:scale-90"
+        className="fixed bottom-[15rem] right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[#3a3f4d]/60 bg-[#12141d]/90 text-xl shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] active:scale-90"
       >
         🎛️
       </button>
@@ -620,8 +621,8 @@ export function MobileHud({
             className="fixed inset-0 z-40 bg-black/45"
             onClick={() => setOpen(false)}
           />
-          <div className="fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[#7a5a38]/55 bg-[#0b1626]/97 p-3 pb-8 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
-            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-[#e2c078]/25" />
+          <div className="fixed inset-x-0 bottom-0 z-40 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-[#3a3f4d]/55 bg-[#12141d]/97 p-3 pb-8 shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
+            <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-[#c3c0f7]/25" />
             <div className="mb-3 flex items-center gap-1">
               {(
                 [
@@ -636,8 +637,8 @@ export function MobileHud({
                   onClick={() => setTab(t.id)}
                   className={
                     tab === t.id
-                      ? "rounded-lg bg-[#ff9d38]/15 px-3 py-2 text-xs font-black text-[#ffd9ae]"
-                      : "rounded-lg px-3 py-2 text-xs font-bold text-[#a9bdd6]/70"
+                      ? "rounded-2xl bg-[#8b85f0]/15 px-3 py-2 text-xs font-black text-[#e3e1fb]"
+                      : "rounded-2xl px-3 py-2 text-xs font-bold text-[#b4bac6]/70"
                   }
                 >
                   {t.label}
@@ -647,7 +648,7 @@ export function MobileHud({
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="메뉴 닫기"
-                className="ml-auto rounded-lg border border-[#e2c078]/20 px-3 py-2 text-sm text-[#a9bdd6]"
+                className="ml-auto rounded-2xl border border-[#c3c0f7]/20 px-3 py-2 text-sm text-[#b4bac6]"
               >
                 ✕
               </button>
@@ -712,8 +713,8 @@ export function MobileHud({
                   disabled={!busy}
                   className={
                     busy
-                      ? "col-span-2 rounded-lg border border-[#e2c078]/45 bg-[#e2c078]/12 px-3 py-2.5 text-sm font-black text-[#f3e6c8]"
-                      : "col-span-2 rounded-lg border border-[#e2c078]/12 px-3 py-2.5 text-sm font-bold text-[#a9bdd6]/40"
+                      ? "col-span-2 rounded-2xl border border-[#c3c0f7]/45 bg-[#c3c0f7]/12 px-3 py-2.5 text-sm font-black text-[#f5f6f8]"
+                      : "col-span-2 rounded-2xl border border-[#c3c0f7]/12 px-3 py-2.5 text-sm font-bold text-[#b4bac6]/40"
                   }
                 >
                   🛠️ 다시 일하기
@@ -725,7 +726,7 @@ export function MobileHud({
                   width={W}
                   height={H}
                   viewBox={`0 0 ${W} ${H}`}
-                  className="rounded-lg bg-white/[0.03]"
+                  className="rounded-2xl bg-white/[0.03]"
                 >
                   {villageBuildings.map(b => {
                     const key = DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro";
@@ -780,7 +781,7 @@ export function MobileHud({
                     fontSize={9}
                   />
                 </svg>
-                <p className="mt-2 text-[10px] text-[#a9bdd6]/60">
+                <p className="mt-2 text-[10px] text-[#b4bac6]/60">
                   구역을 누르면 그쪽으로 이동
                 </p>
               </div>
@@ -815,7 +816,7 @@ export function QuickTravelDock({
         variant="plaque"
       >
         <Crest name="compass" size={15} /> 이동{" "}
-        <span className="text-[#a9bdd6]/50">◂</span>
+        <span className="text-[#b4bac6]/50">◂</span>
       </VillageFrame>
     );
   }
@@ -837,7 +838,7 @@ export function QuickTravelDock({
         <span className="flex items-center gap-1.5">
           <Crest name="compass" size={14} /> 빠른 이동
         </span>
-        <span className="text-[#a9bdd6]/50">▴</span>
+        <span className="text-[#b4bac6]/50">▴</span>
       </button>
       {TRAVEL_POINTS.map(point => {
         const active = activeKey === point.key;
@@ -848,8 +849,8 @@ export function QuickTravelDock({
             onClick={() => onTravel(point)}
             className={
               active
-                ? "flex items-center gap-2.5 rounded-lg border border-[#ff9d38]/45 bg-[#ff9d38]/12 px-3 py-2 text-left text-xs font-black text-[#ffe9d2]"
-                : "flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-xs font-bold text-[#a9bdd6] transition hover:bg-[#e2c078]/10 hover:text-[#f3e6c8] active:scale-[0.98]"
+                ? "flex items-center gap-2.5 rounded-2xl border border-[#8b85f0]/45 bg-[#8b85f0]/12 px-3 py-2 text-left text-xs font-black text-[#f5f6f8]"
+                : "flex items-center gap-2.5 rounded-2xl border border-transparent px-3 py-2 text-left text-xs font-bold text-[#b4bac6] transition hover:bg-[#c3c0f7]/10 hover:text-[#f5f6f8] active:scale-[0.98]"
             }
           >
             <span
@@ -945,7 +946,7 @@ export function Minimap({
           type="button"
           onClick={() => setCollapsed(true)}
           aria-label="미니맵 접기"
-          className="text-[11px] font-black text-[#a9bdd6]/50 transition hover:text-[#f3e6c8]"
+          className="text-[11px] font-black text-[#b4bac6]/50 transition hover:text-[#f5f6f8]"
         >
           ▾
         </button>
@@ -954,7 +955,7 @@ export function Minimap({
         width={W}
         height={H}
         viewBox={`0 0 ${W} ${H}`}
-        className="rounded-lg bg-white/[0.03]"
+        className="rounded-2xl bg-white/[0.03]"
       >
         {villageBuildings.map(b => {
           const key = DISTRICT_TO_TRAVEL_KEY[b.district] ?? "intro";
@@ -1010,7 +1011,7 @@ export function Minimap({
           fontSize={8}
         />
       </svg>
-      <p className="mt-1.5 px-1 text-[9px] leading-tight text-[#a9bdd6]/55">
+      <p className="mt-1.5 px-1 text-[9px] leading-tight text-[#b4bac6]/55">
         구역을 누르면 그쪽으로 이동
       </p>
     </VillageFrame>
@@ -1073,8 +1074,8 @@ export function DistrictStrip({
     <VillageFrame
       // 모바일은 여백을 한 단 줄인다 — 띠 윗변이 왼쪽 걷기 버튼(bottom-28)과
       // 오른쪽 제작 의뢰 버튼 아래에 머물러야 한다(104px 일 때 둘 다 겹쳤다).
-      bodyClassName="flex flex-col gap-1.5 px-3 py-1.5 md:gap-2 md:py-2.5"
-      className="fixed bottom-2 left-1/2 z-30 w-[min(94vw,720px)] -translate-x-1/2 transform-gpu animate-[fadeIn_0.3s_ease] will-change-[backdrop-filter,transform] md:bottom-6"
+      bodyClassName="flex flex-col gap-1.5 px-2.5 py-2 md:gap-2 md:px-3 md:py-3"
+      className="fixed bottom-2 left-1/2 z-30 w-[min(94vw,760px)] -translate-x-1/2 transform-gpu animate-[fadeIn_0.3s_ease] will-change-[backdrop-filter,transform] md:bottom-6"
       variant="plaque"
     >
       <div className="flex items-center gap-1 overflow-x-auto">
@@ -1089,32 +1090,44 @@ export function DistrictStrip({
                 onFocus(null);
                 setTab(point.key);
               }}
-              className={
-                active
-                  ? "v-panel-title flex shrink-0 items-center gap-1.5 rounded-md border border-[#e2c078]/55 bg-[#e2c078]/12 px-2.5 py-0.5 text-[12px] md:py-1"
-                  : "flex shrink-0 items-center gap-1.5 rounded-md border border-transparent px-2.5 py-0.5 text-[12px] font-bold md:py-1 text-[#a9bdd6]/80 transition hover:bg-white/[0.05] hover:text-[#f3e6c8]"
-              }
+              className={`relative flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-[13.5px] font-extrabold md:h-10 ${
+                active ? "text-white" : "text-[#b4bac6] hover:text-white"
+              }`}
             >
-              <Crest
-                name={districtTone(point.key).crest as CrestName}
-                size={13}
-              />
-              {point.label}
+              {/* 고른 탭 뒤의 알약이 탭 사이를 미끄러진다(헤더 메뉴와 같은 동작) */}
+              {active ? (
+                <motion.span
+                  aria-hidden="true"
+                  className="absolute inset-0 rounded-full bg-white/[0.14]"
+                  layoutId="strip-pill"
+                  transition={{type: "spring", stiffness: 420, damping: 30}}
+                />
+              ) : null}
+              <span className="relative flex items-center gap-1.5">
+                <Crest
+                  name={districtTone(point.key).crest as CrestName}
+                  size={14}
+                  tone={active ? "#ffffff" : "#b4bac6"}
+                />
+                {point.label}
+              </span>
             </button>
           );
         })}
-        <p className="ml-auto hidden shrink-0 pl-2 text-[11px] font-bold text-[#a9bdd6]/70 md:block">
+        <p className="ml-auto hidden shrink-0 pl-2 pr-1 text-[13px] font-bold text-[#b4bac6] md:block">
           {pickedBuildingId
             ? "한 번 더 누르면 들어가요"
             : "건물을 고르면 그 앞으로 가요"}
         </p>
       </div>
-      <div className="flex gap-1.5 overflow-x-auto md:max-h-[96px] md:flex-wrap md:overflow-y-auto md:overflow-x-visible">
-        {buildings.map(b => {
+      <div className="flex gap-2 overflow-x-auto md:max-h-[116px] md:flex-wrap md:overflow-y-auto md:overflow-x-visible">
+        {buildings.map((b, i) => {
           const picked = b.id === pickedBuildingId;
           return (
             <button
-              key={b.id}
+              // 탭이 바뀌면 칩을 새로 붙여(key 에 탭) 한 장씩 튀어 오르게 한다
+              key={`${tab}-${b.id}`}
+              style={{"--i": i} as React.CSSProperties}
               type="button"
               onClick={() => (picked ? onEnter(b.id) : onPick(b.id))}
               onMouseEnter={() => onFocus(b.id)}
@@ -1123,8 +1136,8 @@ export function DistrictStrip({
               onBlur={() => onFocus(null)}
               className={
                 picked
-                  ? "flex shrink-0 items-center gap-2 rounded-lg border border-[#ff9d38]/70 bg-[#ff9d38]/14 px-2.5 py-1 text-left transition active:scale-95 md:py-1.5"
-                  : "flex shrink-0 items-center gap-2 rounded-lg border border-[#e2c078]/25 bg-white/[0.04] px-2.5 py-1 text-left md:py-1.5 transition hover:border-[#e2c078]/70 hover:bg-[#e2c078]/10 active:scale-95"
+                  ? "v-pop flex shrink-0 items-center gap-2 rounded-2xl bg-[#4f46e5] px-3 py-1.5 text-left shadow-[0_8px_22px_rgba(79,70,229,0.4)] md:py-2"
+                  : "v-pop flex shrink-0 items-center gap-2 rounded-2xl bg-white/[0.07] px-3 py-1.5 text-left hover:bg-white/[0.14] md:py-2"
               }
             >
               <span
@@ -1135,15 +1148,19 @@ export function DistrictStrip({
                 }}
               />
               <span className="flex flex-col leading-tight">
-                <span className="whitespace-nowrap text-[12px] font-black text-[#eef2f8]">
+                <span className="whitespace-nowrap text-[14px] font-black text-white">
                   {b.name}
                 </span>
-                <span className="whitespace-nowrap text-[9px] font-bold uppercase tracking-[0.12em] text-[#a9bdd6]/70">
+                <span
+                  className={`whitespace-nowrap text-[11.5px] font-bold ${
+                    picked ? "text-[#e3e1fb]" : "text-[#b4bac6]"
+                  }`}
+                >
                   {b.label}
                 </span>
               </span>
               {picked ? (
-                <span className="whitespace-nowrap pl-1 text-[11px] font-black text-[#ffd9ae]">
+                <span className="whitespace-nowrap pl-1 text-[13px] font-black text-white">
                   들어가기 →
                 </span>
               ) : null}
@@ -1215,22 +1232,24 @@ export function ControlsHint({active}: {active: boolean}) {
 
   if (!show) return null;
 
+  // w-max 가 없으면 left-1/2 때문에 쓸 수 있는 폭이 화면 절반으로 잡혀, 휴대폰에서
+  // 글자가 한 자씩 세로로 꺾였다(2026-11-14 캡처로 확인). 넘치면 줄을 바꾼다.
   return (
-    <div className="pointer-events-none fixed left-1/2 top-[80px] z-30 flex -translate-x-1/2 animate-[fadeIn_0.4s_ease] items-center gap-3 rounded-full border border-[#7a5a38]/60 bg-[#0b1626]/90 px-4 py-2 text-[11px] font-bold text-[#c9d6e8] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
-      <span className="flex items-center gap-1.5">
+    <div className="v-pop pointer-events-none fixed left-1/2 top-[80px] z-30 flex w-max max-w-[92vw] -translate-x-1/2 flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-[22px] bg-[#12141d]/92 px-5 py-2.5 text-[13px] font-extrabold text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),0_14px_40px_rgba(0,0,0,0.45)] backdrop-blur-md">
+      <span className="flex items-center gap-1.5 whitespace-nowrap">
         <span className="text-sm">🖱️</span> 건물 클릭해 입장
       </span>
-      <span className="text-[#a9bdd6]/30">·</span>
-      <span className="flex items-center gap-1.5">
+      <span className="hidden text-[#b4bac6]/40 sm:inline">·</span>
+      <span className="flex items-center gap-1.5 whitespace-nowrap">
         <span className="text-sm">📍</span> 바닥 클릭해 이동
       </span>
-      <span className="text-[#a9bdd6]/30">·</span>
-      <span className="flex items-center gap-1.5">
+      <span className="hidden text-[#b4bac6]/40 sm:inline">·</span>
+      <span className="flex items-center gap-1.5 whitespace-nowrap">
         <span className="text-sm">🔄</span> 드래그·휠로 둘러보기
       </span>
       {/* 키보드가 있는 화면에서만 — 모바일 폭에선 줄만 길어진다 */}
-      <span className="hidden text-[#a9bdd6]/30 md:inline">·</span>
-      <span className="hidden items-center gap-1.5 md:flex">
+      <span className="hidden text-[#b4bac6]/30 md:inline">·</span>
+      <span className="hidden items-center gap-1.5 whitespace-nowrap md:flex">
         <span className="text-sm">⌨️</span> WASD 로 날아다니기
       </span>
     </div>
@@ -1250,11 +1269,11 @@ export function EavesdropButton({
     <button
       type="button"
       onClick={onOpen}
-      className="fixed left-1/2 top-[112px] z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#e2c078]/45 bg-[#0b1626]/90 px-4 py-2 text-[11px] font-black text-[#ffd9ae] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:bg-[#ff9d38]/12 active:scale-95"
+      className="fixed left-1/2 top-[112px] z-30 flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#c3c0f7]/45 bg-[#12141d]/90 px-4 py-2 text-[11px] font-black text-[#e3e1fb] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] transition hover:bg-[#8b85f0]/12 active:scale-95"
     >
       <span className="relative flex h-2 w-2">
-        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ff9d38] opacity-60" />
-        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#ff9d38]" />
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#8b85f0] opacity-60" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#8b85f0]" />
       </span>
       💬 {aName} ↔ {bName} 대화 · 엿듣기
     </button>
@@ -1282,7 +1301,7 @@ export function EavesdropPanel({
           type="button"
           onClick={onClose}
           aria-label="엿듣기 닫기"
-          className="rounded-md border border-[#e2c078]/20 px-2 py-0.5 text-sm font-bold text-[#a9bdd6] transition hover:text-[#f3e6c8] active:scale-90"
+          className="rounded-xl border border-[#c3c0f7]/20 px-2 py-0.5 text-sm font-bold text-[#b4bac6] transition hover:text-[#f5f6f8] active:scale-90"
         >
           ✕
         </button>
@@ -1294,7 +1313,7 @@ export function EavesdropPanel({
             <div key={index} className={isA ? "mr-8" : "ml-8"}>
               <p
                 className={`text-[10px] font-black ${
-                  isA ? "text-[#8fb8e8]/80" : "text-[#ff9a6c]/80"
+                  isA ? "text-[#8fb8e8]/80" : "text-[#aeaaf3]/80"
                 } ${isA ? "" : "text-right"}`}
               >
                 {line.name}
@@ -1303,7 +1322,7 @@ export function EavesdropPanel({
                 className={
                   isA
                     ? "mt-0.5 rounded-2xl rounded-bl-sm bg-[#6ea8dc]/12 px-3 py-2 text-sm leading-6 text-[#e3eefa]"
-                    : "mt-0.5 rounded-2xl rounded-br-sm bg-[#ff9a6c]/12 px-3 py-2 text-sm leading-6 text-[#ffe6d8]"
+                    : "mt-0.5 rounded-2xl rounded-br-sm bg-[#aeaaf3]/12 px-3 py-2 text-sm leading-6 text-[#ffe6d8]"
                 }
               >
                 {line.text}
@@ -1318,7 +1337,7 @@ export function EavesdropPanel({
 
 export function EncounterNotice({text}: {text: string}) {
   return (
-    <div className="fixed left-1/2 top-[78px] z-30 -translate-x-1/2 rounded-lg border border-[#e2c078]/35 bg-[#0b1626]/88 px-4 py-2 text-xs font-black text-[#e2c078] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
+    <div className="fixed left-1/2 top-[78px] z-30 -translate-x-1/2 rounded-2xl border border-[#c3c0f7]/35 bg-[#12141d]/88 px-4 py-2 text-xs font-black text-[#c3c0f7] shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
       {text}
     </div>
   );
@@ -1326,9 +1345,9 @@ export function EncounterNotice({text}: {text: string}) {
 
 export function MilestoneBanner({text}: {text: string}) {
   return (
-    <div className="pointer-events-none fixed left-1/2 top-1/3 z-[60] -translate-x-1/2 animate-[fadeIn_0.4s_ease] rounded-2xl border border-[#ff9ad9]/40 bg-[#0b1626]/92 px-6 py-4 text-center shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
+    <div className="pointer-events-none fixed left-1/2 top-1/3 z-[60] -translate-x-1/2 animate-[fadeIn_0.4s_ease] rounded-2xl border border-[#ff9ad9]/40 bg-[#12141d]/92 px-6 py-4 text-center shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform]">
       <p className="v-serif text-[12px] text-[#ff9ad9]">관계 사건</p>
-      <p className="mt-1.5 text-lg font-black text-[#f3e6c8]">{text}</p>
+      <p className="mt-1.5 text-lg font-black text-[#f5f6f8]">{text}</p>
     </div>
   );
 }
@@ -1342,15 +1361,15 @@ function RelRow({r}: {r: NpcRelationshipRow}) {
   const color =
     r.affinity >= 6 ? "#7ee787" : r.affinity <= -6 ? "#ff8a8a" : "#94a3b8";
   return (
-    <div className="flex items-center justify-between rounded-lg border border-[#e2c078]/12 bg-white/[0.04] px-3 py-2">
-      <span className="text-xs font-bold text-[#dfe7f2]">
+    <div className="flex items-center justify-between rounded-2xl border border-[#c3c0f7]/12 bg-white/[0.04] px-3 py-2">
+      <span className="text-xs font-bold text-[#d3d7df]">
         {npcName(r.npc_a)} ↔ {npcName(r.npc_b)}
       </span>
       <span className="font-mono text-[11px]" style={{color}}>
         {r.vibe} ({r.affinity >= 0 ? "+" : ""}
         {r.affinity})
         {r.fights || r.reconciliations ? (
-          <span className="ml-2 text-[#a9bdd6]/60">
+          <span className="ml-2 text-[#b4bac6]/60">
             싸움 {r.fights} · 화해 {r.reconciliations}
           </span>
         ) : null}
@@ -1404,20 +1423,18 @@ function NpcTimeline({
     .slice(0, 3);
   if (!rows.length) return null;
   return (
-    <div className="mt-3 rounded-lg border border-[#e2c078]/15 bg-white/[0.03] p-3">
-      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#e2c078]/70">
-        연표
-      </p>
+    <div className="mt-3 rounded-2xl border border-[#c3c0f7]/15 bg-white/[0.03] p-3">
+      <p className="text-[10px] font-bold text-[#c3c0f7]/70">연표</p>
       <ul className="mt-1 grid gap-1">
         {rows.map(r => {
           const other = r.npc_a === npcId ? r.npc_b : r.npc_a;
           return (
             <li
               key={`${r.npc_a}:${r.npc_b}`}
-              className="text-[11px] leading-4 text-[#dfe7f2]"
+              className="text-[11px] leading-4 text-[#d3d7df]"
             >
-              <span className="font-bold text-[#f3e6c8]">{npcName(other)}</span>
-              <span className="ml-1.5 text-[#a9bdd6]/80">
+              <span className="font-bold text-[#f5f6f8]">{npcName(other)}</span>
+              <span className="ml-1.5 text-[#b4bac6]/80">
                 {r.timeline
                   .map(
                     t =>
@@ -1453,14 +1470,14 @@ function NpcMemoryList({npcId}: {npcId: string}) {
     };
   }, [npcId]);
   return (
-    <div className="mt-3 rounded-lg border border-[#e2c078]/15 bg-white/[0.03] p-3">
-      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#e2c078]/70">
+    <div className="mt-3 rounded-2xl border border-[#c3c0f7]/15 bg-white/[0.03] p-3">
+      <p className="text-[10px] font-bold text-[#c3c0f7]/70">
         {npcName(npcId)}의 기억
       </p>
       {items === null ? (
-        <p className="mt-1 text-xs text-[#a9bdd6]/60">불러오는 중…</p>
+        <p className="mt-1 text-xs text-[#b4bac6]/60">불러오는 중…</p>
       ) : items.length === 0 ? (
-        <p className="mt-1 text-xs text-[#a9bdd6]/60">
+        <p className="mt-1 text-xs text-[#b4bac6]/60">
           아직 기억나는 일이 없어요.
         </p>
       ) : (
@@ -1468,12 +1485,12 @@ function NpcMemoryList({npcId}: {npcId: string}) {
           {items.slice(0, 6).map((m, i) => (
             <li
               key={i}
-              className="flex items-start gap-1.5 text-[11px] leading-4 text-[#dfe7f2]"
+              className="flex items-start gap-1.5 text-[11px] leading-4 text-[#d3d7df]"
             >
               <span className="shrink-0">{MEMORY_ICON[m.kind] ?? "•"}</span>
               <span className="min-w-0 flex-1">
                 {m.text}
-                <span className="ml-1 text-[#a9bdd6]/45">
+                <span className="ml-1 text-[#b4bac6]/45">
                   {timeAgo(m.created_at)}
                 </span>
               </span>
@@ -1553,7 +1570,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
       >
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-xs font-bold text-[#a9bdd6]/70">
+            <p className="text-xs font-bold text-[#b4bac6]/70">
               NPC들이 지내며 쌓은 사이
             </p>
             <h2 className="v-panel-title mt-1 text-xl">마을 관계도 💞</h2>
@@ -1562,18 +1579,18 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
             type="button"
             onClick={onClose}
             aria-label="관계도 닫기"
-            className="text-[#a9bdd6]/60 transition hover:text-[#f3e6c8]"
+            className="text-[#b4bac6]/60 transition hover:text-[#f5f6f8]"
           >
             ✕
           </button>
         </div>
 
         {err ? (
-          <p className="mt-4 text-sm leading-6 text-[#a9bdd6]">
+          <p className="mt-4 text-sm leading-6 text-[#b4bac6]">
             백엔드에 연결하지 못했어요. 서버를 켜면 관계가 보여요.
           </p>
         ) : !rels ? (
-          <p className="mt-4 text-sm text-[#a9bdd6]/70">불러오는 중…</p>
+          <p className="mt-4 text-sm text-[#b4bac6]/70">불러오는 중…</p>
         ) : (
           <>
             <svg viewBox={`0 0 ${W} ${H}`} className="mt-2 w-full">
@@ -1604,7 +1621,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                         textAnchor="middle"
                       >
                         {r.fights > r.reconciliations ? "💥" : "🤝"}
-                        <tspan dy={1} fontSize={7} fill="#a9bdd6">
+                        <tspan dy={1} fontSize={7} fill="#b4bac6">
                           {history}
                         </tspan>
                       </text>
@@ -1628,7 +1645,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                       cy={p.y}
                       r={isHub ? 15 : 12}
                       fill={isHub ? "#f5c542" : isSel ? "#2b4a6f" : "#13223a"}
-                      stroke={isSel ? "#ffd27a" : "#e2c078"}
+                      stroke={isSel ? "#ffd27a" : "#c3c0f7"}
                       strokeWidth={isSel ? 2.4 : 1.2}
                     />
                     <text
@@ -1645,7 +1662,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                 );
               })}
             </svg>
-            <div className="flex items-center justify-center gap-3 text-[10px] text-[#a9bdd6]/70">
+            <div className="flex items-center justify-center gap-3 text-[10px] text-[#b4bac6]/70">
               <span>
                 <span style={{color: "#16a34a"}}>━</span> 친함
               </span>
@@ -1670,7 +1687,7 @@ export function RelationshipViewer({onClose}: {onClose: () => void}) {
                 ))}
               </div>
             ) : (
-              <p className="mt-3 text-center text-xs leading-5 text-[#a9bdd6]/70">
+              <p className="mt-3 text-center text-xs leading-5 text-[#b4bac6]/70">
                 아직 관계가 쌓이지 않았어요. 마을을 조금 지켜보면 사이가 생겨요.
               </p>
             )}

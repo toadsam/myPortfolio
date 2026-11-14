@@ -1,0 +1,4018 @@
+/* 득근득근 상세(v4 시안) 스타일. 시안 CSS 를 .mu4 아래로 가뒀다.
+   - :root·body 규칙은 .mu4 로 옮겼고 html 규칙은 뺐다.
+   - 시안의 .js 규칙은 @media (scripting:enabled) 로 바꿨다. 서버 HTML 이 첫 페인트에
+     보였다가 하이드레이션 때 사라지는 깜박임을 막는다. 선택자는 .mu4.mu4 로 원래 우선순위를 지킨다.
+   - 키프레임 이름은 mu4- 접두어로 바꿨다(앱 다른 CSS 와 충돌 방지).
+   - 맨 앞 블록은 Tailwind preflight 가 지운 브라우저 기본값을 되살린다. */
+.mu4 ul {
+  list-style: disc;
+}
+.mu4 ol {
+  list-style: decimal;
+}
+.mu4 h1 {
+  font-size: 2em;
+  font-weight: 700;
+}
+.mu4 h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+}
+.mu4 h3 {
+  font-size: 1.17em;
+  font-weight: 700;
+}
+.mu4 h4 {
+  font-weight: 700;
+}
+.mu4 a {
+  text-decoration: underline;
+}
+.mu4 table {
+  border-collapse: separate;
+  border-spacing: 2px;
+}
+.mu4 {
+  color-scheme: light;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.mu4 {
+  --bg: #ffffff;
+  --card: #f3f4f6;
+  --card-2: #eceef2;
+  --fg: #0b0c0f;
+  --sub: #5f6672;
+  --faint: #9099a6;
+  --line: #e3e6eb;
+  --accent: #4f46e5;
+  --accent-soft: #eae9fc;
+  --accent-2: #d9d7f9;
+  --on-accent: #ffffff;
+  --sans: var(--font-body-kr), "Noto Sans KR", -apple-system,
+    "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --num: var(--mu4-nunito), "Nunito", var(--font-body-kr), "Noto Sans KR",
+    sans-serif;
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur: 0.55s;
+  --dur-in: 0.7s;
+  --r: 28px;
+}
+@supports (transition-timing-function: linear(0, 1)) {
+  .mu4 {
+    --ease-pop: linear(
+      0,
+      0.009,
+      0.035 2.1%,
+      0.141,
+      0.281 6.7%,
+      0.723 12.9%,
+      0.938 16.7%,
+      1.017,
+      1.077,
+      1.121,
+      1.149 24.3%,
+      1.159,
+      1.163,
+      1.161,
+      1.154 29.9%,
+      1.129 32.8%,
+      1.051 39.6%,
+      1.017 43.1%,
+      0.991,
+      0.977 51%,
+      0.974 53.8%,
+      0.975 57.1%,
+      0.997 69.8%,
+      1.003 76.9%,
+      1.004 83.8%,
+      1
+    );
+  }
+}
+.mu4 * {
+  box-sizing: border-box;
+}
+.mu4 {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+  word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+}
+.mu4 [hidden] {
+  display: none !important;
+}
+.mu4 img {
+  max-width: 100%;
+  display: block;
+}
+.mu4 button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: inherit;
+}
+.mu4 a {
+  color: var(--accent);
+}
+.mu4 :focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+.mu4 h1,
+.mu4 h2,
+.mu4 h3,
+.mu4 h4,
+.mu4 p,
+.mu4 ul,
+.mu4 ol,
+.mu4 dl,
+.mu4 dd,
+.mu4 figure {
+  margin: 0;
+}
+.mu4 ul,
+.mu4 ol {
+  padding-left: 1.2em;
+}
+.mu4 .num {
+  font-family: var(--num);
+  font-variant-numeric: tabular-nums;
+}
+.mu4 .press {
+  transition: transform var(--dur) var(--ease-pop);
+}
+.mu4 .press:active {
+  transform: scale(0.95);
+  transition-duration: 0.09s;
+  transition-timing-function: ease-out;
+}
+.mu4 .pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 14px;
+  background: var(--card);
+  color: var(--fg);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.mu4 .pill.blue {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.mu4 .pill.soft {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.mu4 .pill svg {
+  width: 14px;
+  height: 14px;
+}
+.mu4 .top {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  padding: 10px max(12px, env(safe-area-inset-right, 0px)) 0
+    max(12px, env(safe-area-inset-left, 0px));
+  pointer-events: none;
+}
+.mu4 .topin {
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 6px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 30px rgba(10, 20, 40, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+.mu4 .topin a,
+.mu4 .topin button {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--sub);
+  text-decoration: none;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+.mu4 .topin a:hover,
+.mu4 .topin button:hover {
+  background: var(--card);
+  color: var(--fg);
+}
+.mu4 .topin .name {
+  color: var(--fg);
+  background: var(--card);
+  max-width: 46vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 36px;
+}
+.mu4 .topin .cnt {
+  color: var(--faint);
+  font-family: var(--num);
+  padding: 0 6px;
+  font-size: 13px;
+}
+.mu4 .topin .nav {
+  width: 36px;
+  padding: 0;
+  justify-content: center;
+  font-size: 16px;
+}
+.mu4 .topin .tocbtn {
+  display: none;
+}
+.mu4 .prog {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: -1px;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(0);
+}
+.mu4 .picker {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px) scale(0.96);
+  opacity: 0;
+  visibility: hidden;
+  width: min(560px, calc(100vw - 24px));
+  max-height: 70vh;
+  overflow: auto;
+  background: var(--bg);
+  border-radius: 22px;
+  box-shadow: 0 20px 60px rgba(10, 20, 40, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  transition: transform var(--dur) var(--ease-pop), opacity 0.18s,
+    visibility 0s linear var(--dur);
+}
+.mu4 .picker.open {
+  transform: translateX(-50%);
+  opacity: 1;
+  visibility: visible;
+  transition: transform var(--dur) var(--ease-pop), opacity 0.18s, visibility 0s;
+}
+.mu4 .picker button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: auto;
+  padding: 8px 10px;
+  border-radius: 14px;
+  color: var(--fg);
+  font-weight: 500;
+  font-size: 13.5px;
+  text-align: left;
+  white-space: normal;
+}
+.mu4 .picker button img {
+  width: 52px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex: none;
+  background: var(--card);
+}
+.mu4 .picker button[aria-current="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+}
+.mu4 .page {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: 84px max(16px, env(safe-area-inset-right, 0px)) 80px
+    max(16px, env(safe-area-inset-left, 0px));
+}
+.mu4 .toc {
+  display: none;
+}
+@media (min-width: 1180px) {
+  .mu4 .page {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 40px;
+    max-width: 1320px;
+  }
+  .mu4 .toc {
+    display: block;
+    position: sticky;
+    top: 84px;
+    align-self: start;
+    max-height: calc(100vh - 100px);
+    overflow: auto;
+    padding-right: 6px;
+  }
+}
+.mu4 .toc ol {
+  list-style: none;
+  padding: 0;
+  position: relative;
+}
+.mu4 .toc li a {
+  display: block;
+  padding: 7px 12px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  color: var(--sub);
+  text-decoration: none;
+  position: relative;
+  z-index: 1;
+  transition: color 0.2s;
+}
+.mu4 .toc li a[aria-current="true"] {
+  color: var(--accent);
+  font-weight: 700;
+}
+.mu4 .toc .ind {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  transition: transform var(--dur) var(--ease-pop), height 0.2s;
+  opacity: 0;
+}
+.mu4 .toc .ind.on {
+  opacity: 1;
+}
+.mu4 .toc h4 {
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  color: var(--faint);
+  font-weight: 700;
+  margin: 0 12px 6px;
+}
+.mu4 main {
+  min-width: 0;
+}
+.mu4 section.sec {
+  padding-block: 30px;
+}
+.mu4 section.sec + section.sec {
+  border-top: 1px solid var(--line);
+}
+.mu4 .eyebrow {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+.mu4 .sec-h {
+  font-size: clamp(22px, 3.6vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin-top: 4px;
+}
+.mu4 .sec-p {
+  color: var(--sub);
+  font-size: 15px;
+  margin-top: 6px;
+  max-width: 70ch;
+}
+.mu4 .sec-body {
+  margin-top: 18px;
+}
+.mu4 .grid2 {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+}
+.mu4 .grid3 {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+.mu4 .card {
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 20px;
+}
+.mu4 .card h3 {
+  font-size: 16.5px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+.mu4 .card p {
+  font-size: 14.5px;
+  color: var(--sub);
+  margin-top: 6px;
+}
+.mu4 .tag {
+  display: inline-block;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 99px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  white-space: nowrap;
+}
+.mu4 .chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.mu4 .chips span {
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: var(--card);
+  color: var(--sub);
+}
+.mu4 .chips span.hi {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+}
+.mu4 .src {
+  font-size: 12.5px;
+  color: var(--faint);
+  margin-top: 8px;
+}
+.mu4 .hero {
+  padding-top: 14px;
+}
+.mu4 .hero .grid {
+  display: grid;
+  gap: 22px;
+}
+@media (min-width: 860px) {
+  .mu4 .hero .grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: start;
+  }
+}
+.mu4 .hero h1 {
+  font-size: clamp(30px, 5.2vw, 46px);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  margin-top: 6px;
+}
+.mu4 .hero h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.mu4 .hero .tag-line {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+.mu4 .hero .chipsrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.mu4 .hero .chip {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 99px;
+  background: var(--card);
+  color: var(--sub);
+}
+.mu4 .hero .chip.ok {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.mu4 .frame {
+  border-radius: 32px;
+  overflow: hidden;
+  background: var(--card);
+  box-shadow: 0 30px 70px rgba(10, 20, 40, 0.18);
+  position: relative;
+}
+.mu4 .frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.mu4 .frame.contain img {
+  object-fit: contain;
+}
+.mu4 .frame figcaption {
+  font-size: 12.5px;
+  color: var(--sub);
+  padding: 10px 16px 12px;
+  background: var(--card);
+}
+.mu4 .tldr {
+  margin-top: 18px;
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 8px 20px;
+}
+.mu4 .tldr div {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14.5px;
+}
+.mu4 .tldr div:last-child {
+  border-bottom: 0;
+}
+.mu4 .tldr dt {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--accent);
+  padding-top: 2px;
+}
+.mu4 .tldr dd.role {
+  font-weight: 700;
+}
+.mu4 .meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 10px 24px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+.mu4 .meta div {
+  display: grid;
+  grid-template-columns: 60px minmax(0, 1fr);
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.mu4 .meta dt {
+  color: var(--faint);
+  font-weight: 700;
+  font-size: 12.5px;
+  padding-top: 2px;
+}
+.mu4 .links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.mu4 .hl {
+  margin-top: 16px;
+  padding: 16px 20px;
+  background: var(--accent-soft);
+  border-radius: 20px;
+  font-size: 14.5px;
+}
+.mu4 .hl li {
+  margin: 4px 0;
+}
+.mu4 .hl b {
+  display: block;
+  font-size: 12.5px;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.mu4 .tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (min-width: 760px) {
+  .mu4 .tiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.mu4 .tile {
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 18px 18px 14px;
+  transform-style: preserve-3d;
+  transition: transform var(--dur) var(--ease-pop), box-shadow 0.3s;
+}
+.mu4 .tile:hover {
+  box-shadow: 0 14px 30px rgba(10, 20, 40, 0.1);
+}
+.mu4 .tile .big {
+  font-family: var(--num);
+  font-size: clamp(26px, 5vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-top: 4px;
+  color: var(--fg);
+}
+.mu4 .tile .lab {
+  font-size: 13.5px;
+  color: var(--sub);
+  margin-top: 4px;
+}
+.mu4 .tile.sm .big {
+  font-size: clamp(20px, 3.6vw, 26px);
+}
+.mu4 .sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.mu4 .roll {
+  display: inline-block;
+  overflow: hidden;
+  height: 1.12em;
+  vertical-align: bottom;
+  line-height: 1.12;
+}
+.mu4 .roll i {
+  display: block;
+  font-style: normal;
+  transition: transform 1s var(--ease-pop);
+}
+.mu4 .roll b {
+  display: block;
+  font-weight: inherit;
+}
+.mu4 .code {
+  background: #0f1218;
+  color: #e6e9ef;
+  border-radius: 20px;
+  overflow: hidden;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.mu4 .code .bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #161a22;
+  color: #9aa4b3;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px;
+}
+.mu4 .code .bar::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 16px 0 0 #3e4654, 32px 0 0 #3e4654;
+  margin-right: 28px;
+}
+.mu4 .code pre {
+  margin: 0;
+  padding: 12px 0;
+  overflow: auto;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+.mu4 .code .ln {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  padding: 0 14px 0 0;
+  white-space: pre;
+}
+.mu4 .code .ln span:first-child {
+  text-align: right;
+  color: #4d5665;
+  padding-right: 12px;
+  user-select: none;
+}
+.mu4 .code .ln.hi {
+  background: rgba(79, 70, 229, 0.22);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.mu4 .code-cap {
+  font-size: 13.5px;
+  color: var(--sub);
+  margin-bottom: 8px;
+}
+.mu4 .code-cap::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.mu4 .quote {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 16px 18px;
+  font-size: 14.5px;
+}
+.mu4 .quote q {
+  quotes: "“" "”";
+}
+.mu4 .quote .who {
+  display: block;
+  font-size: 12.5px;
+  color: var(--faint);
+  margin-top: 6px;
+}
+.mu4 .hypo {
+  background: var(--accent-soft);
+  border-radius: var(--r);
+  padding: 20px;
+  font-size: 15px;
+}
+.mu4 .hypo b {
+  display: block;
+  color: var(--accent);
+  font-size: 12.5px;
+  margin-bottom: 6px;
+}
+.mu4 .fb {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  font-size: 14px;
+}
+.mu4 .fb td {
+  padding: 10px 12px;
+  background: var(--card);
+  vertical-align: top;
+}
+.mu4 .fb td:first-child {
+  border-radius: 14px 0 0 14px;
+  width: 42%;
+}
+.mu4 .fb td:last-child {
+  border-radius: 0 14px 14px 0;
+}
+.mu4 .fb tr.todo td {
+  background: var(--accent-soft);
+}
+.mu4 .fb .arrow {
+  color: var(--accent);
+  font-weight: 700;
+  padding: 0 6px;
+}
+.mu4 .fb .todo-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-left: 6px;
+}
+.mu4 .ba {
+  display: grid;
+  gap: 12px;
+}
+@media (min-width: 760px) {
+  .mu4 .ba {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.mu4 .ba .card .lbl {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--faint);
+  letter-spacing: 0.06em;
+}
+.mu4 .ba .card.after .lbl {
+  color: var(--accent);
+}
+.mu4 .ba figure {
+  margin-top: 10px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card-2);
+}
+.mu4 .ba figure.tall {
+  max-width: 330px;
+}
+.mu4 .ba figcaption {
+  font-size: 12px;
+  color: var(--faint);
+  padding: 6px 10px;
+}
+.mu4 .ba .note {
+  font-size: 14px;
+  color: var(--fg);
+  margin-top: 10px;
+}
+.mu4 .mock {
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 11.5px;
+  color: var(--sub);
+}
+.mu4 .mock .mt {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 11px;
+  color: var(--faint);
+  margin-bottom: 8px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.mu4 .mock .mt::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.mu4 .mock .kpi {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.mu4 .mock .kpi div {
+  background: var(--card);
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+.mu4 .mock .kpi b {
+  display: block;
+  font-family: var(--num);
+  font-size: 14px;
+  color: var(--fg);
+}
+.mu4 .mock svg {
+  width: 100%;
+  height: 46px;
+  display: block;
+}
+.mu4 .mock .bar {
+  display: grid;
+  grid-template-columns: 64px 1fr 36px;
+  gap: 6px;
+  align-items: center;
+  margin: 4px 0;
+}
+.mu4 .mock .bar i {
+  display: block;
+  height: 8px;
+  border-radius: 99px;
+  background: var(--accent-2);
+  overflow: hidden;
+}
+.mu4 .mock .bar i b {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 99px;
+}
+.mu4 .mock .cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.mu4 .mock .cards div {
+  background: var(--card);
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+.mu4 .mock .cards b {
+  display: block;
+  color: var(--fg);
+}
+.mu4 .mock .feed div {
+  padding: 5px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.mu4 .mock .feed div::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 6px;
+}
+.mu4 .mock .stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.mu4 .mock .stats b {
+  font-family: var(--num);
+  font-size: 18px;
+  color: var(--fg);
+  display: block;
+}
+.mu4 .mock .title b {
+  display: block;
+  font-size: 14px;
+  color: var(--fg);
+}
+.mu4 .steps {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+.mu4 .steps li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  background: var(--card);
+  border-radius: 20px;
+  padding: 16px;
+}
+.mu4 .steps .n {
+  font-family: var(--num);
+  font-weight: 800;
+  color: var(--accent);
+  font-size: 20px;
+}
+.mu4 .steps h3 {
+  font-size: 15.5px;
+  font-weight: 800;
+}
+.mu4 .steps dl {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 4px 10px;
+  font-size: 14px;
+  margin-top: 6px;
+}
+.mu4 .steps dt {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--faint);
+  padding-top: 2px;
+}
+.mu4 .tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: var(--card);
+  border-radius: 20px;
+  overflow: hidden;
+}
+.mu4 .tbl th,
+.mu4 .tbl td {
+  text-align: left;
+  padding: 12px 14px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+.mu4 .tbl th {
+  font-size: 12.5px;
+  color: var(--faint);
+  font-weight: 700;
+  background: var(--card-2);
+}
+.mu4 .tbl tr:last-child td {
+  border-bottom: 0;
+}
+.mu4 .tbl td:first-child {
+  font-weight: 700;
+  width: 22%;
+}
+.mu4 .tblwrap {
+  overflow-x: auto;
+  border-radius: 20px;
+}
+.mu4 .shots {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+}
+.mu4 .shots figure {
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.mu4 .shots img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  background: #fff;
+}
+.mu4 .shots figcaption {
+  font-size: 12.5px;
+  color: var(--sub);
+  padding: 8px 12px;
+}
+.mu4 .remade li {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin: 8px 0;
+  list-style: none;
+}
+.mu4 .remade h3 {
+  font-size: 15px;
+  font-weight: 800;
+}
+.mu4 .remade .ba2 {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+@media (min-width: 760px) {
+  .mu4 .remade .ba2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.mu4 .remade .ba2 b {
+  display: block;
+  font-size: 11.5px;
+  color: var(--faint);
+  font-weight: 700;
+}
+.mu4 .remade .ba2 div:last-child b {
+  color: var(--accent);
+}
+.mu4 .two {
+  display: grid;
+  gap: 12px;
+}
+@media (min-width: 760px) {
+  .mu4 .two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.mu4 .ai {
+  background: var(--accent-soft);
+  border-radius: var(--r);
+  padding: 22px;
+  margin-top: 14px;
+}
+.mu4 .ai h3 {
+  font-size: 18px;
+  font-weight: 800;
+}
+.mu4 .ai .card {
+  background: #fff;
+}
+.mu4 .ai ol,
+.mu4 .ai ul {
+  font-size: 14px;
+  margin-top: 6px;
+}
+.mu4 .tl {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  counter-reset: s;
+}
+.mu4 .tl li {
+  position: relative;
+  background: var(--card);
+  border-radius: 18px;
+  padding: 16px 14px 14px;
+  counter-increment: s;
+}
+.mu4 .tl li::before {
+  content: counter(s, decimal-leading-zero);
+  font-family: var(--num);
+  font-weight: 800;
+  color: var(--accent);
+  font-size: 13px;
+}
+.mu4 .tl h3 {
+  font-size: 15px;
+  font-weight: 800;
+  margin-top: 4px;
+}
+.mu4 .tl p {
+  font-size: 13.5px;
+  color: var(--sub);
+  margin-top: 4px;
+}
+.mu4 .diag {
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 16px;
+  cursor: zoom-in;
+}
+.mu4 .diag h3 {
+  font-size: 15.5px;
+  font-weight: 800;
+}
+.mu4 .diag svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-top: 10px;
+  background: #fff;
+  border-radius: 16px;
+}
+.mu4 .diag p {
+  font-size: 13.5px;
+  color: var(--sub);
+  margin-top: 10px;
+}
+.mu4 .dg-group {
+  fill: none;
+  stroke: #c7cfdb;
+  stroke-width: 2;
+  rx: 18;
+}
+.mu4 .dg-group.dashed {
+  stroke-dasharray: 8 6;
+}
+.mu4 .dg-glabel {
+  font: 700 15px var(--sans);
+  fill: #8b94a2;
+}
+.mu4 .dg-node rect {
+  fill: #f3f4f6;
+  stroke: #dfe3ea;
+  stroke-width: 2;
+  rx: 16;
+}
+.mu4 .dg-node.accent rect {
+  fill: var(--accent);
+  stroke: var(--accent);
+}
+.mu4 .dg-node text {
+  font: 700 17px var(--sans);
+  fill: #0b0c0f;
+}
+.mu4 .dg-node .note {
+  font: 500 13px var(--sans);
+  fill: var(--accent);
+}
+.mu4 .dg-node .sub {
+  font: 500 13px var(--sans);
+  fill: #5f6672;
+}
+.mu4 .dg-node.accent text {
+  fill: #fff;
+}
+.mu4 .dg-node.accent .note,
+.mu4 .dg-node.accent .sub {
+  fill: var(--accent-2);
+}
+.mu4 .dg-edge {
+  fill: none;
+  stroke: #7d8694;
+  stroke-width: 2.5;
+}
+.mu4 .dg-edge.dashed {
+  stroke-dasharray: 7 6;
+}
+.mu4 .dg-elabel {
+  font: 600 12.5px var(--sans);
+  fill: #5f6672;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+.mu4 .modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(6, 8, 14, 0.72);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s, visibility 0s linear 0.25s;
+}
+.mu4 .modal.open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s, visibility 0s;
+}
+.mu4 .modal .box {
+  background: #fff;
+  border-radius: 24px;
+  padding: 18px;
+  width: min(1200px, 96vw);
+  max-height: 92vh;
+  overflow: auto;
+  transform: scale(0.92);
+  transition: transform var(--dur) var(--ease-pop);
+}
+.mu4 .modal.open .box {
+  transform: none;
+}
+.mu4 .modal svg {
+  width: 100%;
+  height: auto;
+  min-width: 720px;
+}
+.mu4 .modal .close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+}
+.mu4 .dec {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.mu4 .dec th {
+  text-align: left;
+  font-size: 12.5px;
+  color: var(--faint);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.mu4 .dec td {
+  padding: 12px;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+}
+.mu4 .dec td.pick {
+  font-weight: 700;
+}
+.mu4 .dec .vs {
+  color: var(--faint);
+  font-size: 13px;
+}
+.mu4 .dec .vs b {
+  color: var(--accent);
+  font-weight: 700;
+}
+.mu4 .dec-cards {
+  display: none;
+}
+@media (max-width: 760px) {
+  .mu4 .dec {
+    display: none;
+  }
+  .mu4 .dec-cards {
+    display: grid;
+    gap: 10px;
+  }
+  .mu4 .dec-cards .card b.area {
+    color: var(--accent);
+    font-size: 12.5px;
+    display: block;
+  }
+}
+.mu4 .ch {
+  display: grid;
+  gap: 12px;
+}
+@media (min-width: 860px) {
+  .mu4 .ch {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.mu4 .ch .card {
+  padding: 22px;
+}
+.mu4 .ch .card.wide {
+  grid-column: 1 / -1;
+}
+.mu4 .ch .lbl {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+.mu4 .ch h3 {
+  font-size: 17px;
+  margin-top: 4px;
+}
+.mu4 .ch .p {
+  margin-top: 10px;
+  font-size: 14.5px;
+  color: var(--fg);
+}
+.mu4 .ch .s {
+  margin-top: 12px;
+  font-size: 14.5px;
+  white-space: pre-line;
+}
+.mu4 .ch .s b {
+  display: block;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.mu4 .ch .code {
+  margin-top: 14px;
+}
+.mu4 details.ev {
+  margin-top: 12px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 0 14px;
+}
+.mu4 details.ev summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 10px 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mu4 details.ev summary::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: transform var(--dur) var(--ease-pop);
+}
+.mu4 details.ev[open] summary::before {
+  transform: scale(1.6);
+}
+.mu4 details.ev .evb {
+  padding: 0 0 12px;
+  font-size: 13.5px;
+  color: var(--sub);
+}
+.mu4 details.ev a {
+  display: inline-block;
+  margin-top: 6px;
+  font-weight: 700;
+}
+.mu4 .perf {
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 22px;
+  grid-column: 1 / -1;
+}
+.mu4 .perf h3 {
+  font-size: 16px;
+  font-weight: 800;
+}
+.mu4 .perf .row {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.9fr) minmax(0, 2fr);
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 13.5px;
+}
+.mu4 .perf .bars {
+  display: grid;
+  gap: 4px;
+}
+.mu4 .perf .b {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+.mu4 .perf .b i {
+  display: block;
+  height: 12px;
+  border-radius: 99px;
+  background: var(--card-2);
+  overflow: hidden;
+}
+.mu4 .perf .b i b {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: #b9c3d3;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 1.1s var(--ease-pop);
+}
+.mu4 .perf .b.after i b {
+  background: var(--accent);
+}
+.mu4 .perf .b .k {
+  font-size: 11.5px;
+  color: var(--faint);
+  font-weight: 700;
+}
+.mu4 .perf .b .v {
+  font-family: var(--num);
+  font-weight: 700;
+  font-size: 12.5px;
+}
+.mu4 .perf .note {
+  font-size: 13px;
+  color: var(--sub);
+  margin-top: 12px;
+}
+.mu4 .rs {
+  margin-top: 14px;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--card);
+}
+.mu4 .rs img {
+  width: 100%;
+  aspect-ratio: 21/9;
+  object-fit: cover;
+}
+.mu4 .rs figcaption {
+  font-size: 13px;
+  color: var(--sub);
+  padding: 10px 16px 12px;
+}
+.mu4 .gal {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+.mu4 .gal figure {
+  background: var(--card);
+  border-radius: 22px;
+  overflow: hidden;
+}
+.mu4 .gal figure.wide {
+  grid-column: 1 / -1;
+}
+.mu4 .gal .im {
+  overflow: hidden;
+  background: var(--card-2);
+}
+.mu4 .gal img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease-pop);
+}
+.mu4 .gal img.contain {
+  object-fit: contain;
+}
+.mu4 .gal figure:hover img {
+  transform: scale(1.04);
+}
+.mu4 .gal figcaption {
+  padding: 12px 16px 14px;
+  font-size: 13.5px;
+  color: var(--sub);
+}
+.mu4 .gal figcaption b {
+  display: block;
+  color: var(--fg);
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+.mu4 .kpt {
+  display: grid;
+  gap: 12px;
+}
+@media (min-width: 760px) {
+  .mu4 .kpt {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.mu4 .kpt .card h3 {
+  color: var(--accent);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.mu4 .kpt ul {
+  margin-top: 8px;
+  font-size: 14px;
+}
+.mu4 .kpt li {
+  margin: 4px 0;
+}
+.mu4 .learn {
+  margin-top: 14px;
+  background: var(--accent-soft);
+  border-radius: var(--r);
+  padding: 26px;
+}
+.mu4 .learn .lead {
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.mu4 .learn p {
+  margin-top: 12px;
+  font-size: 15px;
+}
+.mu4 .work .card ul {
+  margin-top: 8px;
+  font-size: 14px;
+}
+.mu4 .work .card li {
+  margin: 4px 0;
+}
+.mu4 .foot {
+  border-top: 1px solid var(--line);
+  padding-top: 30px;
+}
+.mu4 .foot .nx {
+  display: grid;
+  gap: 12px;
+}
+@media (min-width: 760px) {
+  .mu4 .foot .nx {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.mu4 .foot .nx a {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  background: var(--card);
+  border-radius: 22px;
+  padding: 12px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--dur) var(--ease-pop);
+}
+.mu4 .foot .nx a:hover {
+  transform: translateY(-3px);
+}
+.mu4 .foot .nx img {
+  width: 96px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: var(--card-2);
+}
+.mu4 .foot .nx small {
+  display: block;
+  font-size: 12px;
+  color: var(--accent);
+  font-weight: 700;
+}
+.mu4 .foot .nx b {
+  font-size: 15px;
+}
+.mu4 .foot .me {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  font-size: 14px;
+  color: var(--sub);
+}
+.mu4 .foot .me .pill {
+  height: 46px;
+  font-size: 15px;
+}
+@media (scripting: enabled) {
+  .mu4.mu4 .rv {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+}
+@media (scripting: enabled) {
+  .mu4.mu4 .rv.in {
+    animation: mu4-rise var(--dur-in) var(--ease-pop) both;
+    animation-delay: var(--d, 0ms);
+  }
+}
+@keyframes mu4-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (scripting: enabled) {
+  .mu4.mu4 .hero .rv.in {
+    animation-name: mu4-pop;
+  }
+}
+@keyframes mu4-pop {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (scripting: enabled) {
+  .mu4.mu4 .code .ln {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+@media (scripting: enabled) {
+  .mu4.mu4 .code.in .ln {
+    animation: mu4-lnin 0.4s var(--ease-pop) both;
+    animation-delay: calc(var(--i) * 30ms);
+  }
+}
+@keyframes mu4-lnin {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (scripting: enabled) {
+  .mu4.mu4 .diag.in .dg-node {
+    animation: mu4-pop 0.6s var(--ease-pop) both;
+    animation-delay: calc(var(--i) * 70ms);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+}
+@media (scripting: enabled) {
+  .mu4.mu4 .diag.in .dg-edge {
+    animation: mu4-draw 1s ease-out both;
+    animation-delay: calc(var(--i) * 60ms + 300ms);
+  }
+}
+@keyframes mu4-draw {
+  from {
+    stroke-dashoffset: var(--len);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.mu4 main.out {
+  animation: mu4-out 0.22s ease-in both;
+}
+@keyframes mu4-out {
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--dir, 1) * -40px));
+  }
+}
+.mu4 main.into {
+  animation: mu4-into 0.6s var(--ease-pop) both;
+}
+@keyframes mu4-into {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--dir, 1) * 40px));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.mu4 .drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: none;
+}
+.mu4 .drawer.open {
+  display: block;
+}
+.mu4 .drawer .scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 8, 14, 0.5);
+}
+.mu4 .drawer .box {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 75vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 28px 28px 0 0;
+  padding: 18px 18px calc(18px + env(safe-area-inset-bottom, 0px));
+}
+.mu4 .drawer .box a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  color: var(--fg);
+  text-decoration: none;
+}
+.mu4 .drawer .box a[aria-current="true"] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.mu4 .toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  background: var(--fg);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 18px;
+  border-radius: 14px;
+  transform: translate(-50%, 24px) scale(0.9);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform var(--dur) var(--ease-pop), opacity 0.2s;
+}
+.mu4 .toast.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+.mu4 .burst {
+  position: fixed;
+  z-index: 70;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+}
+@media (max-width: 1179px) {
+  .mu4 .topin .tocbtn {
+    display: inline-flex;
+  }
+}
+@media (max-width: 760px) {
+  .mu4 .topin {
+    gap: 2px;
+    padding: 4px;
+  }
+  .mu4 .topin a,
+  .mu4 .topin button {
+    padding: 0 9px;
+    font-size: 12.5px;
+  }
+  .mu4 .topin .back2 {
+    display: none;
+  }
+  .mu4 .tldr div {
+    grid-template-columns: 58px 1fr;
+  }
+  .mu4 .code {
+    font-size: 11.5px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mu4 *,
+  .mu4 *::before,
+  .mu4 *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+  @media (scripting: enabled) {
+    .mu4.mu4 .rv {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (scripting: enabled) {
+    .mu4.mu4 .code .ln {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+.mu4 .intro {
+  margin-top: 16px;
+  font-size: 15.5px;
+  max-width: 62ch;
+}
+.mu4 .hl b {
+  font-size: 12.5px;
+}
+.mu4 .hl li {
+  margin: 6px 0;
+}
+.mu4 .tile {
+  text-align: left;
+  width: 100%;
+  display: block;
+}
+.mu4 .tile .tin {
+  display: block;
+  width: 100%;
+}
+.mu4 .tile .tin > .lab,
+.mu4 .tile .tin > .big {
+  display: block;
+}
+.mu4 .gal .im {
+  max-height: 300px;
+}
+.mu4 .gal figure {
+  cursor: zoom-in;
+}
+.mu4 .gal .im img.contain {
+  background: #fff;
+}
+.mu4 section.sec {
+  padding-block: 22px;
+}
+.mu4 .tile .srcbox > span {
+  display: block;
+  overflow: hidden;
+  min-height: 0;
+}
+.mu4 .hero .hl {
+  margin-top: 10px;
+}
+.mu4 .perf {
+  margin-top: 12px;
+}
+.mu4 .ba .card figure {
+  margin-top: 10px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.mu4 .tile .lab.top {
+  margin: 0 0 8px;
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 12.5px;
+  line-height: 1.3;
+}
+.mu4 .tile .big {
+  margin-top: 0;
+}
+.mu4 .tile .lab.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--faint);
+  font-size: 12.5px;
+  margin-top: 8px;
+}
+.mu4 .tile .chev {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--dur) var(--ease-pop);
+}
+.mu4 .tile[aria-expanded="true"] .chev {
+  transform: rotate(180deg);
+}
+.mu4 .tile .srcbox {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur) var(--ease-pop);
+}
+.mu4 .tile[aria-expanded="true"] .srcbox {
+  grid-template-rows: 1fr;
+}
+.mu4 .tile .srcbox > div {
+  overflow: hidden;
+  min-height: 0;
+}
+.mu4 .tile .srcbox p {
+  font-size: 12.5px;
+  color: var(--sub);
+  border-top: 1px solid var(--line);
+  margin-top: 10px;
+  padding-top: 8px;
+  line-height: 1.5;
+}
+.mu4 .tiles.sm4 .tile {
+  padding: 16px;
+}
+.mu4 .fb td:first-child {
+  font-weight: 700;
+  color: var(--fg);
+}
+.mu4 .fold .fold-h {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 28px;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  padding: 6px 0;
+}
+.mu4 .fold .fold-h > span:first-child {
+  display: grid;
+  gap: 4px;
+}
+.mu4 .fold .fold-sum {
+  font-size: 14.5px;
+  color: var(--sub);
+  margin-top: 4px;
+}
+.mu4 .fold .chev {
+  width: 28px;
+  height: 28px;
+  color: var(--accent);
+  transition: transform var(--dur) var(--ease-pop);
+}
+.mu4 .fold.open .chev {
+  transform: rotate(180deg);
+}
+.mu4 .fold-b {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.6s var(--ease-pop);
+}
+.mu4 .fold.open > .fold-b,
+.mu4 .fold-b.open {
+  grid-template-rows: 1fr;
+}
+.mu4 .fold-in {
+  overflow: hidden;
+  min-height: 0;
+}
+.mu4 .fold .sec-body {
+  margin-top: 14px;
+  padding-bottom: 6px;
+}
+.mu4 .more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 52px;
+  margin-top: 12px;
+  border-radius: 18px;
+  background: var(--card);
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--sub);
+}
+.mu4 .more .chev {
+  width: 18px;
+  height: 18px;
+  transition: transform var(--dur) var(--ease-pop);
+}
+.mu4 .more[aria-expanded="true"] .chev {
+  transform: rotate(180deg);
+}
+.mu4 .toc li a small {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 10.5px;
+  color: var(--faint);
+  font-weight: 700;
+}
+.mu4 .chips span b {
+  color: var(--fg);
+  font-family: var(--num);
+}
+.mu4 .kpt li.closed {
+  color: var(--faint);
+  text-decoration: line-through;
+  text-decoration-color: var(--accent);
+}
+.mu4 .gal figure.contain-fig .im img {
+  object-fit: contain;
+  background: #fff;
+}
+.mu4 .hero {
+  padding-top: 8px;
+}
+.mu4 .hero .grid {
+  align-items: start;
+  gap: 18px;
+}
+.mu4 .hero h1 {
+  margin-top: 4px;
+}
+.mu4 .hero .chipsrow {
+  margin-top: 10px;
+}
+.mu4 .intro {
+  margin-top: 12px;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+.mu4 .hero .links {
+  margin-top: 12px;
+}
+.mu4 .hero .tiles {
+  margin-top: 16px;
+}
+.mu4 .hero .tile {
+  padding: 14px 16px 12px;
+}
+.mu4 .hero .tile .big {
+  font-size: clamp(24px, 3.6vw, 32px);
+}
+.mu4 .hero .src {
+  margin-top: 6px;
+}
+.mu4 .hero .hl {
+  margin-top: 12px;
+  padding: 12px 18px;
+  font-size: 14px;
+}
+.mu4 .hero .hl li {
+  margin: 4px 0;
+}
+@media (max-width: 860px) {
+  .mu4 .hero .frame {
+    max-width: 520px;
+  }
+}
+@media (min-width: 1100px) {
+  .mu4 .gal {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .mu4 .gal figcaption {
+    font-size: 12.5px;
+    padding: 10px 14px 12px;
+  }
+  .mu4 .gal figure.wide {
+    grid-column: span 2;
+  }
+  .mu4 .ch {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .mu4 .ch .card.wide {
+    grid-column: auto;
+  }
+  .mu4 #moreCh .ch {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.mu4 section.sec {
+  padding-block: 26px;
+}
+.mu4 {
+  --sub: #515d70;
+  --faint: #5f6b7b;
+  --accent-ink: #2a1fe0;
+}
+.mu4 .toc .toc-t {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--faint);
+  font-weight: 700;
+  margin: 0 12px 6px;
+}
+.mu4 .toc li a {
+  font-size: 13.5px;
+  padding-left: 18px;
+}
+.mu4 .toc ol {
+  position: relative;
+}
+.mu4 .toc .track {
+  position: absolute;
+  left: 4px;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--line);
+  overflow: hidden;
+  z-index: 0;
+}
+.mu4 .toc .track i {
+  display: block;
+  width: 100%;
+  height: 0;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: height 0.25s ease-out;
+}
+.mu4 .toc li.folded a::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 4px;
+  bottom: 4px;
+  border-left: 3px dotted #c8cfdb;
+  z-index: 1;
+}
+.mu4 .toc li a small {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  font-size: 13px;
+  color: var(--faint);
+  font-weight: 700;
+}
+.mu4 .toc li a small i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  border: 2px dotted var(--faint);
+}
+.mu4 .toc li:not(.folded) a small i {
+  border-style: solid;
+  border-color: var(--accent);
+}
+.mu4 .toc .ind {
+  left: 10px;
+  width: calc(100% - 10px);
+}
+.mu4 .eyebrow,
+.mu4 .ch .lbl,
+.mu4 .ch .s b,
+.mu4 .hl b,
+.mu4 .tile .lab.top,
+.mu4 .tag,
+.mu4 .chip.ok,
+.mu4 .cmp-notes .lbl.on,
+.mu4 .fold .eyebrow,
+.mu4 .fb .todo-tag,
+.mu4 .code-cap {
+  color: var(--accent-ink);
+}
+.mu4 .ba .card.after .lbl {
+  color: var(--accent-ink);
+}
+.mu4 .src,
+.mu4 .sec-p,
+.mu4 .fold .fold-sum,
+.mu4 .gal figcaption,
+.mu4 .perf .note,
+.mu4 .perf2 .note,
+.mu4 .tl p,
+.mu4 .card p,
+.mu4 .dec td,
+.mu4 .remade .src,
+.mu4 .meta dt,
+.mu4 .tile .src {
+  color: var(--sub);
+}
+.mu4 .sec p,
+.mu4 .ch .p,
+.mu4 .ch .s,
+.mu4 .src,
+.mu4 .sec-p,
+.mu4 .lead-p,
+.mu4 .hypo,
+.mu4 .intro,
+.mu4 .learn p {
+  max-width: 72ch;
+}
+.mu4 .lead-p {
+  font-size: 16px;
+}
+.mu4 small,
+.mu4 .tile .lab.row,
+.mu4 .ba figcaption,
+.mu4 .perf .b .k,
+.mu4 .perf .b .v,
+.mu4 .chips span,
+.mu4 .dg-glabel,
+.mu4 .code,
+.mu4 .code .bar,
+.mu4 .tl li::before,
+.mu4 .toc li a small,
+.mu4 .tile .srcbox p,
+.mu4 .tile .sub,
+.mu4 .gal figcaption,
+.mu4 .cmp-lab,
+.mu4 .cmp-notes .src,
+.mu4 .tile .lab.top,
+.mu4 .ch .lbl,
+.mu4 .ch .s b,
+.mu4 .eyebrow,
+.mu4 .tag,
+.mu4 .fb .todo-tag,
+.mu4 .perf2 .pv .from,
+.mu4 .perf2 .pl,
+.mu4 .ramp .ax,
+.mu4 .seq .lane,
+.mu4 .seq .note,
+.mu4 .seq text,
+.mu4 .me span {
+  font-size: 13px;
+}
+.mu4 .code {
+  font-size: 13px;
+}
+.mu4 .ch h3 {
+  font-size: 17.5px;
+}
+.mu4 .hero .stack {
+  position: relative;
+  padding-top: 0;
+}
+.mu4 .hero .frame.back {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  transform: translateY(14px) scale(0.96);
+  opacity: 0.55;
+  box-shadow: none;
+  pointer-events: none;
+}
+.mu4 .hero .frame.front {
+  position: relative;
+  z-index: 1;
+}
+.mu4 .hero .frame figcaption b {
+  color: var(--accent-ink);
+  margin-right: 6px;
+}
+.mu4 .hero .intro {
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+.mu4 .hero .tiles {
+  margin-top: 14px;
+}
+.mu4 .hero .hl {
+  margin-top: 10px;
+  padding: 10px 16px;
+  font-size: 13.5px;
+}
+.mu4 .hero .hl li {
+  margin: 3px 0;
+}
+.mu4 .hero .src {
+  margin-top: 8px;
+  font-size: 13px;
+}
+.mu4 .tile .tin > .lab.top,
+.mu4 .tile .tin > .big,
+.mu4 .tile .tin > .sub {
+  display: block;
+}
+.mu4 .tile .lab.top {
+  position: static;
+  left: auto;
+  top: auto;
+  transform: none;
+  z-index: auto;
+  width: auto;
+  font-size: 13px;
+}
+.mu4 .tile .bigrow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mu4 .tile .sub {
+  font-size: 13px;
+  color: var(--sub);
+  margin-top: 4px;
+}
+.mu4 .mini {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 30px;
+  margin-bottom: 6px;
+  flex: none;
+}
+.mu4 .mini.dots i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--card-2);
+  border: 2px solid #c8cfdb;
+  transition: background 0.3s, border-color 0.3s, transform 0.5s var(--ease-pop);
+  transition-delay: calc(var(--i) * 160ms);
+}
+.mu4 .mini.dots i.on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.mu4 .in .mini.dots i.on {
+  transform: scale(1.12);
+}
+.mu4 .mini.bars {
+  flex-direction: column;
+  align-items: stretch;
+  width: 84px;
+  gap: 5px;
+}
+.mu4 .mini.bars i {
+  display: block;
+  height: 9px;
+  border-radius: 99px;
+  background: var(--card-2);
+  overflow: hidden;
+}
+.mu4 .mini.bars b {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  width: 100%;
+  background: #c3cbd8;
+  transition: width 1.2s cubic-bezier(0.22, 0.9, 0.3, 1);
+}
+.mu4 .mini.bars b.b2 {
+  background: var(--accent);
+}
+.mu4 .mini.line {
+  width: 110px;
+  height: 34px;
+  overflow: visible;
+}
+.mu4 .mini.line polyline {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.mu4 .mini.line .base {
+  stroke: #c8cfdb;
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+.mu4 .mini.line circle {
+  fill: #fff;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+}
+.mu4 .scene {
+  position: relative;
+  cursor: pointer;
+  border-radius: 18px;
+}
+.mu4 .scene .replay {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--faint);
+  opacity: 0;
+  transition: opacity 0.3s;
+  background: #fff;
+  border-radius: 99px;
+  padding: 3px 9px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  z-index: 2;
+  pointer-events: none;
+}
+.mu4 .scene.played:hover .replay,
+.mu4 .scene.played:focus-visible .replay {
+  opacity: 1;
+}
+.mu4 .seq {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 12px 12px 10px;
+  margin: 12px 0 4px;
+}
+.mu4 .seq svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+.mu4 .seq text {
+  font-family: var(--font);
+  font-weight: 700;
+  fill: var(--fg);
+  font-size: 16px;
+}
+.mu4 .seq .lane {
+  fill: var(--sub);
+  font-size: 16px;
+}
+.mu4 .seq .lanel {
+  stroke: var(--line);
+  stroke-width: 1.5;
+}
+.mu4 .seq .badge rect {
+  fill: #fff;
+  stroke: var(--fg);
+  stroke-width: 1.5;
+}
+.mu4 .seq .badge text {
+  text-anchor: middle;
+  font-size: 15px;
+}
+.mu4 .seq .badge.bad rect {
+  stroke: #b8322f;
+}
+.mu4 .seq .badge.bad text {
+  fill: #b8322f;
+}
+.mu4 .seq .arrow {
+  fill: none;
+  stroke: var(--fg);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.mu4 .seq .arrow.up {
+  stroke: var(--accent);
+}
+.mu4 .seq .arrow.bad {
+  stroke: #b8322f;
+  stroke-dasharray: 5 4;
+}
+.mu4 .seq .tag rect {
+  fill: var(--accent);
+}
+.mu4 .seq .tag text {
+  fill: #fff;
+  text-anchor: middle;
+  font-size: 14px;
+}
+.mu4 .seq .chip rect {
+  fill: var(--accent-soft);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+.mu4 .seq .chip text {
+  text-anchor: middle;
+  fill: var(--accent-ink);
+  font-size: 15px;
+}
+.mu4 .seq .chip.old rect {
+  fill: #f3f4f6;
+  stroke: #9aa3b2;
+}
+.mu4 .seq .chip.old text {
+  fill: var(--sub);
+}
+.mu4 .seq .chip.new rect {
+  fill: var(--accent);
+}
+.mu4 .seq .chip.new text {
+  fill: #fff;
+}
+.mu4 .seq .chip.ghost rect {
+  stroke-dasharray: 4 3;
+}
+.mu4 .seq .when {
+  fill: var(--sub);
+  text-anchor: middle;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+.mu4 .seq .note {
+  fill: var(--sub);
+  text-anchor: middle;
+  font-weight: 600;
+  font-size: 15px;
+}
+.mu4 .seq .note.bad {
+  fill: #b8322f;
+  font-weight: 700;
+}
+.mu4 .seq .ok path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mu4 .seq .ok text {
+  fill: var(--accent-ink);
+  font-size: 15px;
+}
+.mu4 .seq .grace-bg {
+  fill: #e3e6eb;
+}
+.mu4 .seq .grace {
+  fill: var(--accent);
+  transform-origin: 489px 184px;
+  transform: scaleX(1);
+}
+.mu4 .seq .grace.run {
+  animation: mu4-grace 1.6s linear forwards;
+}
+@keyframes mu4-grace {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+.mu4 .seq .x line {
+  stroke: #b8322f;
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.mu4 .seq .s1,
+.mu4 .seq .s2,
+.mu4 .seq .s3,
+.mu4 .seq .s4,
+.mu4 .seq .s5 {
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.6s var(--ease-pop);
+}
+.mu4 .seq .badge {
+  transform: translateY(6px);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.mu4 .seq[data-step="1"] .s1,
+.mu4 .seq[data-step="2"] .s1,
+.mu4 .seq[data-step="3"] .s1,
+.mu4 .seq[data-step="4"] .s1,
+.mu4 .seq[data-step="5"] .s1 {
+  opacity: 1;
+  transform: none;
+}
+.mu4 .seq[data-step="2"] .s2,
+.mu4 .seq[data-step="3"] .s2,
+.mu4 .seq[data-step="4"] .s2,
+.mu4 .seq[data-step="5"] .s2 {
+  opacity: 1;
+}
+.mu4 .seq[data-step="2"] .s2.fade,
+.mu4 .seq[data-step="3"] .s2.fade,
+.mu4 .seq[data-step="4"] .s2.fade,
+.mu4 .seq[data-step="5"] .s2.fade {
+  opacity: 0.25;
+}
+.mu4 .seq[data-step="3"] .s3,
+.mu4 .seq[data-step="4"] .s3,
+.mu4 .seq[data-step="5"] .s3 {
+  opacity: 1;
+}
+.mu4 .seq[data-step="4"] .s3,
+.mu4 .seq[data-step="5"] .s3 {
+  opacity: 0.6;
+}
+.mu4 .seq[data-step="4"] .s4,
+.mu4 .seq[data-step="5"] .s4 {
+  opacity: 1;
+}
+.mu4 .seq[data-step="5"] .s5 {
+  opacity: 1;
+}
+.mu4 .seq .s4 .chip.ghost,
+.mu4 .seq .s4 .grace,
+.mu4 .seq .s4 .grace-bg,
+.mu4 .seq .s4 .note {
+  transition: opacity 0.6s ease 0.4s;
+}
+.mu4 .seq[data-step="5"] .s4 .chip.ghost,
+.mu4 .seq[data-step="5"] .s4 .grace,
+.mu4 .seq[data-step="5"] .s4 .grace-bg {
+  opacity: 0.25;
+}
+.mu4 .seq .cap {
+  min-height: 22px;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fg);
+  text-align: center;
+}
+.mu4 .seq .dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.mu4 .seq .dots button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: none;
+  position: relative;
+}
+.mu4 .seq .dots button::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: #c8cfdb;
+  transition: transform 0.4s var(--ease-pop), background 0.2s;
+}
+.mu4 .seq .dots button[aria-selected="true"]::after {
+  background: var(--accent);
+  transform: scale(1.5);
+}
+.mu4 .perf2 {
+  background: var(--card);
+  border-radius: var(--r);
+  padding: 22px;
+}
+.mu4 .perf2 h3 {
+  font-size: 16px;
+  font-weight: 800;
+}
+.mu4 .perf2 .prow {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.8fr) minmax(0, 2fr) auto;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+}
+.mu4 .perf2 .pl {
+  font-size: 13.5px;
+  color: var(--fg);
+}
+.mu4 .perf2 .ptrack {
+  position: relative;
+  height: 14px;
+  border-radius: 99px;
+  background: var(--card-2);
+}
+.mu4 .perf2 .pbar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  border-radius: 99px;
+  background: #b9c3d3;
+  min-width: 2px;
+  width: 100%;
+}
+.mu4 .perf2 .prow.last .pbar {
+  background: var(--accent);
+}
+.mu4 .perf2 .prow.last .pl {
+  font-weight: 800;
+}
+.mu4 .perf2 .pv {
+  font-family: var(--num);
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.mu4 .perf2 .pv .from {
+  color: var(--faint);
+  font-weight: 600;
+}
+.mu4 .perf2 .pv .ar {
+  color: var(--faint);
+}
+.mu4 .perf2 .pv b {
+  font-size: 16px;
+  color: var(--fg);
+}
+.mu4 .perf2 .prow.last .pv b {
+  color: var(--accent-ink);
+  font-size: 18px;
+}
+.mu4 .perf2 .prow.last {
+  margin-top: 22px;
+}
+.mu4 .perf2 .bubble {
+  position: absolute;
+  left: 49%;
+  bottom: calc(100% + 8px);
+  transform: translateY(6px) scale(0.9);
+  transform-origin: left bottom;
+  opacity: 0;
+  background: var(--fg);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 11px;
+  border-radius: 12px;
+  white-space: nowrap;
+  transition: transform 0.6s var(--ease-pop), opacity 0.3s;
+  pointer-events: none;
+}
+.mu4 .perf2 .bubble::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 100%;
+  border: 6px solid transparent;
+  border-top-color: var(--fg);
+  border-bottom: 0;
+}
+.mu4 .perf2 .bubble b {
+  color: #9cc0ff;
+}
+.mu4 .perf2 .bubble.on {
+  opacity: 1;
+  transform: none;
+}
+.mu4 .perf2 .note {
+  font-size: 13.5px;
+  margin-top: 12px;
+}
+.mu4 .perf2 .src {
+  margin-top: 4px;
+}
+.mu4 .ramp {
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 12px 8px 6px;
+  margin: 12px 0 4px;
+}
+.mu4 .ramp svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+.mu4 .ramp text {
+  font-family: var(--font);
+  font-weight: 600;
+  fill: var(--sub);
+}
+.mu4 .ramp .ax {
+  font-size: 13px;
+}
+.mu4 .ramp .unit {
+  fill: var(--faint);
+}
+.mu4 .ramp .over {
+  fill: var(--accent-ink);
+  font-weight: 800;
+}
+.mu4 .ramp .grid {
+  stroke: var(--line);
+}
+.mu4 .ramp .base {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 5;
+}
+.mu4 .ramp .basel {
+  fill: var(--accent-ink);
+  font-weight: 800;
+  font-size: 13px;
+}
+.mu4 .ramp .line {
+  fill: none;
+  stroke: var(--fg);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.mu4 .ramp .pt {
+  fill: #fff;
+  stroke: var(--fg);
+  stroke-width: 2.5;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.mu4 .ramp.done .pt {
+  opacity: 1;
+}
+.mu4 .ramp .pt.hit {
+  stroke: var(--accent);
+  fill: var(--accent);
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0.4);
+  transition: transform 0.7s var(--ease-pop), opacity 0.3s;
+}
+.mu4 .ramp.hit .pt.hit {
+  opacity: 1;
+  transform: scale(1);
+}
+.mu4 .ramp .hitlab {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.4s ease, transform 0.7s var(--ease-pop);
+}
+.mu4 .ramp.hit .hitlab {
+  opacity: 1;
+  transform: none;
+}
+.mu4 .ramp .hitlab rect {
+  fill: var(--fg);
+}
+.mu4 .ramp .hitlab text {
+  fill: #fff;
+  font-weight: 800;
+  font-size: 13px;
+}
+.mu4 .cmp {
+  margin-top: 10px;
+  cursor: default;
+}
+.mu4 .cmp-tabs {
+  display: inline-flex;
+  background: var(--card);
+  border-radius: 99px;
+  padding: 3px;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+.mu4 .cmp-tabs button {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 99px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--sub);
+}
+.mu4 .cmp-tabs button[aria-selected="true"] {
+  background: #fff;
+  color: var(--fg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.mu4 .cmp-box {
+  position: relative;
+  width: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--card-2);
+  touch-action: pan-y;
+  user-select: none;
+  cursor: ew-resize;
+}
+.mu4 .cmp-box img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.mu4 .cmp-under,
+.mu4 .cmp-over {
+  position: absolute;
+  inset: 0;
+}
+.mu4 .cmp-over {
+  clip-path: inset(0 0 0 50%);
+}
+.mu4 .cmp-lab {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--fg);
+  padding: 4px 10px;
+  border-radius: 99px;
+}
+.mu4 .cmp-lab.r {
+  left: auto;
+  right: 12px;
+  background: var(--accent);
+  color: #fff;
+}
+.mu4 .cmp-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  z-index: 2;
+  cursor: ew-resize;
+}
+.mu4 .cmp-handle i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -1.5px;
+  width: 3px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+.mu4 .cmp-handle b {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--accent-ink);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+  transition: transform 0.4s var(--ease-pop);
+}
+.mu4 .cmp-box:active .cmp-handle b,
+.mu4 .cmp-handle:focus-visible b {
+  transform: scale(1.1);
+}
+.mu4 .cmp-notes {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+.mu4 .cmp-notes > div {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 16px 18px;
+}
+.mu4 .cmp-notes .lbl {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--sub);
+}
+.mu4 .cmp-notes h3 {
+  font-size: 16px;
+  margin-top: 4px;
+}
+.mu4 .cmp-notes p {
+  font-size: 14px;
+  margin-top: 6px;
+}
+.mu4 .cmp-notes .src {
+  margin-top: 4px;
+}
+.mu4 .ch.two {
+  display: grid;
+  gap: 14px;
+}
+.mu4 .ch .card {
+  padding: 22px;
+}
+.mu4 .ch .card .s {
+  white-space: pre-line;
+}
+.mu4 .pill.sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  margin-top: 10px;
+  font-size: 13.5px;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  border-radius: 99px;
+  text-decoration: none;
+  font-weight: 700;
+}
+.mu4 .pill.sm svg {
+  width: 12px;
+  height: 12px;
+}
+.mu4 .ev {
+  margin-top: 12px;
+}
+.mu4 .ev summary {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+.mu4 .codefold {
+  margin-top: 12px;
+}
+.mu4 .codefold summary {
+  list-style: none;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  background: var(--card-2);
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--sub);
+}
+.mu4 .codefold summary::-webkit-details-marker {
+  display: none;
+}
+.mu4 .codefold summary span {
+  font-family: ui-monospace, Consolas, monospace;
+  font-weight: 500;
+  color: var(--faint);
+  font-size: 13px;
+}
+.mu4 .codefold[open] summary {
+  margin-bottom: 8px;
+}
+.mu4 .code {
+  position: relative;
+}
+.mu4 .code .cur {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 20px;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
+  opacity: 0;
+  transition: top 0.7s var(--ease-pop), opacity 0.3s;
+}
+.mu4 .code .cur.on {
+  opacity: 1;
+}
+.mu4 .gal.two {
+  grid-template-columns: 1fr;
+}
+.mu4 .gal figure:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+.mu4 strong.h {
+  display: block;
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--fg);
+}
+.mu4 .card strong.h + p,
+.mu4 .tl strong.h + p {
+  margin-top: 4px;
+}
+.mu4 .card .res {
+  color: var(--fg);
+  font-weight: 700;
+  margin-top: 8px;
+}
+.mu4 .sub-h {
+  margin-top: 22px;
+  font-size: 18px;
+}
+.mu4 ul.plain {
+  margin-top: 8px;
+  font-size: 14px;
+  padding-left: 18px;
+}
+.mu4 .remade strong.h {
+  font-size: 15.5px;
+}
+.mu4 .fold .fold-h {
+  transition: transform 0.5s var(--ease-pop);
+}
+.mu4 .fold.open .fold-h {
+  transform: translateY(-4px);
+}
+.mu4 .fold .fold-sum {
+  font-size: 14.5px;
+}
+.mu4 .hl b,
+.mu4 .hypo b,
+.mu4 .perf2 .src,
+.mu4 .src,
+.mu4 .tbl th,
+.mu4 .dec th,
+.mu4 .meta dt,
+.mu4 .remade .src,
+.mu4 .ba2 b,
+.mu4 .shots figcaption,
+.mu4 .topin a,
+.mu4 .topin .tocbtn,
+.mu4 .frame figcaption,
+.mu4 .frame figcaption b,
+.mu4 .kpt h3,
+.mu4 .chips span,
+.mu4 .tag,
+.mu4 .dec-cards .area,
+.mu4 .tile .src,
+.mu4 .card .src,
+.mu4 .sec .src {
+  font-size: 13px;
+}
+.mu4 .kpt h3 {
+  font-size: 15px;
+}
+.mu4 .hypo b,
+.mu4 .remade .ba2 b,
+.mu4 .kpt .card h3,
+.mu4 .dec .vs b,
+.mu4 .dec-cards p b,
+.mu4 .cmp-notes .lbl.on,
+.mu4 .perf2 .prow.last .pv b,
+.mu4 .dec-cards .card .area {
+  color: var(--accent-ink);
+}
+.mu4 .remade .ba2 b,
+.mu4 .remade .ba2 div:last-child b,
+.mu4 .dec-cards .card b.area {
+  font-size: 13px;
+  color: var(--accent-ink);
+}
+.mu4 .remade .ba2 div:first-child b {
+  color: var(--sub);
+}
+.mu4 .chips span.hi {
+  background: var(--accent-ink);
+  color: #fff;
+}
+.mu4 .sec .chip.ok,
+.mu4 .chipsrow .chip.ok {
+  color: var(--accent-ink);
+}
+.mu4 .cmp-lab.r {
+  background: var(--accent-ink);
+}
+.mu4 .pill.blue {
+  background: var(--accent-ink);
+}
+.mu4 .kpt li.closed {
+  text-decoration: none;
+  color: inherit;
+}
+.mu4 .topin .name {
+  font-size: 14px;
+}
+.mu4 img {
+  height: auto;
+}
+.mu4 .frame img,
+.mu4 .cmp-box img,
+.mu4 .gal img,
+.mu4 .shots img,
+.mu4 .ba img {
+  height: 100%;
+}
+.mu4 .frame div,
+.mu4 .gal .im {
+  max-width: 100%;
+}
+@media (min-width: 760px) {
+  .mu4 .cmp-notes {
+    grid-template-columns: 1fr 1fr;
+  }
+  .mu4 .codefold summary {
+    display: none;
+  }
+  .mu4 .codefold > .code {
+    display: block;
+  }
+}
+@media (min-width: 1100px) {
+  .mu4 .ch.two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mu4 .gal.two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mu4 .gal.two figure.wide {
+    grid-column: 1 / -1;
+  }
+  .mu4 .gal figcaption {
+    font-size: 13.5px;
+  }
+  .mu4 .perf2 {
+    grid-column: auto;
+  }
+}
+@media (max-width: 759px) {
+  .mu4 .codefold summary {
+    display: flex;
+  }
+  .mu4 .codefold:not([open]) .code {
+    display: none;
+  }
+  .mu4 .seq .lane,
+  .mu4 .seq .note,
+  .mu4 .seq text {
+    font-size: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mu4 .seq .s1,
+  .mu4 .seq .s2,
+  .mu4 .seq .s3,
+  .mu4 .seq .s4,
+  .mu4 .seq .s5,
+  .mu4 .ramp .pt,
+  .mu4 .ramp .hitlab,
+  .mu4 .perf2 .bubble,
+  .mu4 .cmp-over,
+  .mu4 .cmp-handle,
+  .mu4 .mini.dots i,
+  .mu4 .mini.bars b,
+  .mu4 .code .cur {
+    transition: none !important;
+    animation: none !important;
+  }
+  .mu4 .seq .grace.run {
+    transform: scaleX(0);
+  }
+  .mu4 .hero .frame.back {
+    transform: translateY(14px) scale(0.96) !important;
+  }
+}
+.mu4 .xf {
+  display: block;
+}
+.mu4 .xf.inl {
+  display: inline;
+}
+.mu4 .xf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 28px;
+  padding: 0 11px;
+  border-radius: 99px;
+  background: var(--card-2);
+  color: var(--accent-ink);
+  font-size: 13px;
+  font-weight: 700;
+  vertical-align: middle;
+  transition: transform var(--dur) var(--ease-pop), background 0.2s;
+}
+.mu4 .xf.blk .xf-btn {
+  margin-top: 8px;
+}
+.mu4 .xf.inl .xf-btn {
+  height: 24px;
+  margin-left: 6px;
+  padding: 0 9px;
+}
+.mu4 .xf-btn:hover {
+  background: #e3e9f3;
+}
+.mu4 .xf-btn:active {
+  transform: scale(0.95);
+}
+.mu4 .xf-btn .chev {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--dur) var(--ease-pop);
+}
+.mu4 .xf-btn[aria-expanded="true"] .chev {
+  transform: rotate(180deg);
+}
+.mu4 .xf-b {
+  display: grid;
+}
+.mu4 .xf-b .fold-in,
+.mu4 .xf-in {
+  display: block;
+}
+.mu4 .xf-in {
+  padding-top: 10px;
+  color: var(--sub);
+  font-size: 14.5px;
+  line-height: 1.65;
+  max-width: 72ch;
+}
+.mu4 .xf-in p {
+  margin: 0;
+}
+.mu4 .xf-in p + p {
+  margin-top: 1.2em;
+}
+.mu4 .xf-in b.k,
+.mu4 .brief b.k {
+  display: block;
+  font-size: 13px;
+  color: var(--accent-ink);
+  margin-bottom: 2px;
+}
+.mu4 strong.key {
+  font-weight: 800;
+  color: var(--fg);
+}
+.mu4 .hero .intro p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.mu4 .hl li.key {
+  font-weight: 700;
+  color: var(--fg);
+}
+.mu4 .hl li {
+  line-height: 1.6;
+}
+.mu4 .lead-wrap .lead-p {
+  max-width: 72ch;
+}
+.mu4 .fb td .xf-in {
+  padding-top: 6px;
+  font-size: 13.5px;
+}
+.mu4 .ch .card {
+  padding: 26px;
+}
+.mu4 .ch .brief p {
+  margin: 0;
+  font-size: 15.5px;
+  line-height: 1.65;
+  max-width: 72ch;
+}
+.mu4 .ch .brief p + p,
+.mu4 .ch .brief .scene + p {
+  margin-top: 1.2em;
+}
+.mu4 .ch .brief p.key {
+  font-weight: 700;
+  color: var(--fg);
+}
+.mu4 .ch .brief .scene {
+  margin: 14px 0 0;
+}
+.mu4 .ch .card > .xf.blk .xf-btn {
+  margin-top: 14px;
+}
+.mu4 .src.bench {
+  margin-top: 16px;
+}
+.mu4 .codefold summary {
+  display: flex !important;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  padding: 10px 14px;
+  min-height: 0;
+}
+.mu4 .codefold summary .sumrow {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  white-space: nowrap;
+}
+.mu4 .codefold summary .sumrow > span:first-of-type {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mu4 .ch .card h3 {
+  margin-top: 0;
+}
+.mu4 .ch .card .brief {
+  margin-top: 12px;
+}
+.mu4 .codefold summary .sumrow .chev {
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+  transition: transform var(--dur) var(--ease-pop);
+}
+.mu4 .codefold[open] summary .sumrow .chev {
+  transform: rotate(180deg);
+}
+.mu4 .codefold summary .peek {
+  display: block;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #0f1420;
+  color: #aab4c8;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mu4 .codefold summary .peek span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mu4 .codefold[open] summary .peek {
+  display: none;
+}
+.mu4 .codefold:not([open]) > .code {
+  display: none !important;
+}
+.mu4 .codefold[open] > .code {
+  display: block;
+}
+.mu4 .cmp-notes p {
+  font-size: 14.5px;
+}
+@media (max-width: 1099px) {
+  .mu4 .ch.two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.mu4 .ch.two > *,
+.mu4 .ch .card,
+.mu4 .codefold,
+.mu4 .codefold summary,
+.mu4 .codefold summary .peek,
+.mu4 .brief,
+.mu4 .scene {
+  min-width: 0;
+  max-width: 100%;
+}
+.mu4 .codefold summary .peek span {
+  max-width: 100%;
+}
+.mu4 .fold-b > .fold-in {
+  visibility: hidden;
+  transition: visibility 0s linear 0.6s;
+}
+.mu4 .fold.open > .fold-b > .fold-in,
+.mu4 .fold-b.open > .fold-in {
+  visibility: visible;
+  transition-delay: 0s;
+}
+.mu4 .tile .srcbox > span {
+  visibility: hidden;
+  transition: visibility 0s linear var(--dur);
+}
+.mu4 .tile[aria-expanded="true"] .srcbox > span {
+  visibility: visible;
+  transition-delay: 0s;
+}
+.mu4 .gal figcaption {
+  line-height: 1.5;
+}
+@media (max-width: 759px) {
+  .mu4 .ch .brief p {
+    font-size: 15px;
+  }
+}
+
+/* ══════════════ 이야기 배치(story) · 2026-11-14 ══════════════
+   머리 아래를 접지 않고 읽는 여섯 절. 본문은 16~18px 진한 색, 회색 작은 글은 출처와 그림 설명에만.
+   장면(.scene)은 기존 것을 그대로 끼우고 여기서는 자리만 잡는다. */
+.mu4 section.sec.st {
+  padding-block: 64px 30px;
+}
+.mu4 .st .eyebrow {
+  font-size: 14px;
+}
+.mu4 .st-h {
+  font-size: clamp(25px, 3.2vw, 36px);
+  line-height: 1.32;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin-top: 10px;
+  max-width: 24em;
+  word-break: keep-all;
+}
+.mu4 .st-h em {
+  font-style: normal;
+  color: var(--accent);
+}
+.mu4 .st-lead {
+  font-size: 18px;
+  line-height: 1.75;
+  max-width: 37em;
+  margin-top: 16px;
+  color: var(--fg);
+}
+.mu4 .st-lab {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--sub);
+  margin-top: 34px;
+}
+.mu4 .st .src {
+  margin-top: 12px;
+}
+.mu4 .st-tag {
+  display: inline-block;
+  font-size: 12.5px;
+  font-weight: 800;
+  padding: 3px 11px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.mu4 .st-tag.ok {
+  background: #dcfce7;
+  color: #166534;
+}
+.mu4 .st-tag.todo {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+/* 01 피드백 넷 */
+.mu4 .st-quotes {
+  list-style: none;
+  padding: 0;
+  margin-top: 12px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+}
+.mu4 .st-quotes li {
+  background: var(--card);
+  border-radius: 22px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.35s var(--ease-pop), box-shadow 0.3s;
+}
+.mu4 .st-quotes li:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+}
+.mu4 .st-quotes .st-qn {
+  font-family: var(--num);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--accent);
+}
+.mu4 .st-quotes p {
+  font-size: 18px;
+  line-height: 1.5;
+  font-weight: 800;
+  flex: 1;
+}
+.mu4 .st-quotes .st-tag {
+  align-self: flex-start;
+}
+.mu4 .st-quotes li.todo {
+  background: #fff7ed;
+}
+.mu4 .st-hyp {
+  margin-top: 28px;
+  padding: 4px 0 4px 20px;
+  border-left: 4px solid var(--accent);
+  max-width: 44em;
+}
+.mu4 .st-hyp > .k,
+.mu4 .st-left > .k,
+.mu4 .st-ev > .k {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--accent-ink, var(--accent));
+}
+.mu4 .st-hyp p {
+  font-size: 17px;
+  line-height: 1.75;
+  margin-top: 4px;
+}
+.mu4 .st-hyp .xf-in p {
+  font-size: 15.5px;
+}
+
+/* 02 첫 화면 */
+.mu4 .st > .scene.cmp {
+  margin-top: 28px;
+}
+.mu4 .st .cmp-notes p {
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--fg);
+}
+.mu4 .st .cmp-notes .src {
+  font-size: 13px;
+  color: var(--sub);
+}
+@media (min-width: 760px) {
+  .mu4 .st .cmp-notes {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.mu4 .gal.st-one {
+  display: block;
+  margin-top: 20px;
+}
+.mu4 .st .gal figcaption {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--fg);
+}
+.mu4 .st .gal figcaption b {
+  font-size: 16.5px;
+}
+
+/* 03 표 */
+.mu4 .st-lg {
+  margin-top: 28px;
+  --lg-a: #fdf1f1;
+  --lg-b: var(--accent-soft);
+  --lg-c: #eefaf1;
+}
+.mu4 .st-lg-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.mu4 .st-lg-filter button {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 8px 15px;
+  border-radius: 99px;
+  background: var(--card);
+  color: var(--sub);
+  transition: background 0.2s, color 0.2s, transform 0.3s var(--ease-pop);
+}
+.mu4 .st-lg-filter button:active {
+  transform: scale(0.94);
+}
+.mu4 .st-lg-filter button[aria-pressed="true"] {
+  background: var(--fg);
+  color: #fff;
+}
+.mu4 .st-lg[data-show="0"] [data-st-grp="1"],
+.mu4 .st-lg[data-show="1"] [data-st-grp="0"] {
+  display: none;
+}
+.mu4 .st-lg-lab {
+  font-size: 15px;
+  font-weight: 900;
+  margin-top: 34px;
+}
+.mu4 .st-rowwrap {
+  margin-top: 14px;
+}
+.mu4 .st-row {
+  position: relative;
+}
+.mu4 .st-rt {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 0 12px;
+  font-size: 19px;
+  line-height: 1.45;
+  font-weight: 900;
+  word-break: keep-all;
+}
+.mu4 .st-rt .st-n {
+  font-family: var(--num);
+  font-size: 20px;
+  color: var(--sub);
+  flex: none;
+  min-width: 1.2em;
+}
+.mu4 .st-rt .st-tag {
+  margin-left: auto;
+  flex: none;
+  align-self: center;
+}
+.mu4 .st-cells {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.82fr);
+  column-gap: 40px;
+}
+.mu4 .st-cells p {
+  margin: 0;
+}
+.mu4 .st-cells p.key {
+  font-weight: 700;
+}
+/* 한 줄 = 화살표로 이어진 세 칸(2026-11-14, 시안 R). 세 칸의 제목과 설명은 처음부터 다 보이고
+   접는 것은 「자세한 설명과 코드」뿐이다. 줄이 화면에 들어오면 화살표가 그어지며 칸이 차례로
+   색을 얻고 결과 숫자가 튀어나온다. 스크립트가 꺼져 있으면 처음부터 색이 칠해져 있다. */
+.mu4 .st-cells > div {
+  position: relative;
+  border-radius: 20px;
+  padding: 16px 18px 18px;
+  font-size: 16px;
+  line-height: 1.7;
+  word-break: keep-all;
+  transition: background 0.5s ease var(--bd, 0s), transform 0.3s,
+    box-shadow 0.3s;
+}
+.mu4 .st-cells .st-a {
+  background: var(--lg-a);
+}
+.mu4 .st-cells .st-b {
+  background: var(--lg-b);
+}
+.mu4 .st-cells .st-c {
+  background: var(--lg-c);
+}
+.mu4 .st-row:hover .st-cells > div {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+}
+/* 칸 사이 화살표: 선(::before)과 촉(::after) */
+.mu4 .st-cells .st-b::before,
+.mu4 .st-cells .st-c::before {
+  content: "";
+  position: absolute;
+  left: -36px;
+  top: 50%;
+  width: 28px;
+  height: 2px;
+  background: #0b0c0f;
+  transform-origin: 0 50%;
+  transition: transform 0.3s ease;
+}
+.mu4 .st-cells .st-b::after,
+.mu4 .st-cells .st-c::after {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: 50%;
+  margin-top: -4px;
+  border: 5px solid transparent;
+  border-left-color: #0b0c0f;
+  border-right: 0;
+  transition: opacity 0.2s;
+}
+.mu4 .st-col {
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+  transition: color 0.5s ease var(--bd, 0s);
+}
+.mu4 .st-a .st-col {
+  color: #b91c1c;
+}
+.mu4 .st-b .st-col {
+  color: var(--accent);
+}
+.mu4 .st-c .st-col {
+  color: #15803d;
+}
+.mu4 .st-src {
+  display: block;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--sub);
+  margin-top: 8px;
+}
+@media (scripting: enabled) {
+  .mu4.mu4 .st-row:not(.in) .st-cells > div {
+    background: var(--card);
+  }
+  .mu4.mu4 .st-row:not(.in) .st-col {
+    color: var(--sub);
+  }
+  .mu4.mu4 .st-row:not(.in) .st-cells > div::before {
+    transform: scaleX(0);
+  }
+  .mu4.mu4 .st-row:not(.in) .st-cells > div::after {
+    opacity: 0;
+  }
+  .mu4.mu4 .st-row.in .st-b {
+    --bd: 0.45s;
+  }
+  .mu4.mu4 .st-row.in .st-c {
+    --bd: 0.9s;
+  }
+  .mu4.mu4 .st-row.in .st-b::before {
+    transition-delay: 0.2s;
+  }
+  .mu4.mu4 .st-row.in .st-b::after {
+    transition-delay: 0.45s;
+  }
+  .mu4.mu4 .st-row.in .st-c::before {
+    transition-delay: 0.65s;
+  }
+  .mu4.mu4 .st-row.in .st-c::after {
+    transition-delay: 0.9s;
+  }
+}
+/* 줄 아래: 장면(왼쪽)과 근거·자세한 설명·코드(오른쪽) */
+.mu4 .st-more {
+  margin-top: 10px;
+  display: grid;
+  gap: 14px;
+  align-items: start;
+}
+@media (min-width: 1000px) {
+  .mu4 .st-more:not(.solo) {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  }
+}
+.mu4 .st-more .scene {
+  margin: 0;
+}
+.mu4 .st-side {
+  min-width: 0;
+}
+.mu4 .st-more.solo .st-side {
+  max-width: 760px;
+}
+.mu4 .st-ev {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 16px 18px;
+}
+.mu4 .st-ev p {
+  font-size: 15px;
+  line-height: 1.7;
+  margin-top: 4px;
+}
+.mu4 .st-side .xf.blk .xf-btn {
+  margin-top: 12px;
+}
+.mu4 .st-side .xf-in p {
+  font-size: 15.5px;
+  line-height: 1.75;
+  color: var(--fg);
+}
+.mu4 .st-side .xf-in p + p {
+  margin-top: 0.9em;
+}
+.mu4 .gal.st-mini {
+  display: block;
+  margin-top: 12px;
+}
+.mu4 .gal.st-mini figcaption,
+.mu4 .gal.st-mini figcaption b {
+  font-size: 13.5px;
+}
+
+/* 04 새로 만든 화면. 그림은 잘리지 않게 통째로 */
+.mu4 .gal.st-built {
+  margin-top: 28px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+}
+.mu4 .gal.st-built .im {
+  aspect-ratio: 16 / 10 !important;
+  background: var(--card);
+}
+.mu4 .gal.st-built img {
+  object-fit: contain;
+}
+.mu4 .gal.st-built figcaption span {
+  display: block;
+  margin-top: 4px;
+}
+.mu4 .gal.st-built figcaption .res {
+  font-weight: 700;
+  color: var(--accent-ink, var(--accent));
+}
+
+/* 05 · 06 */
+.mu4 .st-stats {
+  margin-top: 28px;
+}
+.mu4 .st-scope {
+  margin-top: 16px;
+}
+.mu4 .st-scope .tbl td {
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+.mu4 .st-left {
+  margin-top: 28px;
+  background: #fff7ed;
+  border-radius: 22px;
+  padding: 22px 24px;
+}
+.mu4 .st-left > .k {
+  color: #c2410c;
+  font-size: 14.5px;
+}
+.mu4 .st-left ul {
+  margin-top: 8px;
+  padding-left: 1.2em;
+}
+.mu4 .st-left li {
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 46em;
+}
+.mu4 .st-left li + li {
+  margin-top: 6px;
+}
+.mu4 .st-deep {
+  margin: 56px 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--sub);
+}
+@media (min-width: 760px) {
+  .mu4 .kpt.kpt2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 859px) {
+  .mu4 section.sec.st {
+    padding-block: 44px 24px;
+  }
+  .mu4 .st-lead {
+    font-size: 17px;
+  }
+  .mu4 .st-cells {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 8px;
+  }
+  .mu4 .st-cells > div::before,
+  .mu4 .st-cells > div::after {
+    display: none;
+  }
+  .mu4 .st-rt {
+    font-size: 17.5px;
+    flex-wrap: wrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mu4.mu4 .st-cells > div,
+  .mu4.mu4 .st-cells > div::before {
+    transition: none;
+  }
+}
+/* 이야기 배치의 그림은 높이 상한을 풀어 칸 폭을 다 쓴다(상한이 있으면 비율을 지키느라 폭이 줄어 한쪽으로 쏠린다) */
+.mu4 .st .gal.st-built .im,
+.mu4 .st .gal.st-one .im {
+  max-height: none;
+}
+.mu4 .st .gal.st-built .im img.contain {
+  background: var(--card);
+}
+/* 장면이 없는 줄: 근거(왼쪽)와 자세한 설명·코드(오른쪽) */
+@media (min-width: 1000px) {
+  .mu4 .st-more.solo .st-side {
+    max-width: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+  .mu4 .st-more.solo .st-rest > .xf.blk:first-child .xf-btn {
+    margin-top: 0;
+  }
+}
+.mu4 .st-rest {
+  min-width: 0;
+}
+.mu4 .st-mini {
+  display: block;
+  margin-top: 12px;
+}
+/* 이야기 배치 2차: 접힌 비교 표 · 더 보기 · 접힘 안 그림 */
+.mu4 .st-scopefold {
+  margin-top: 14px;
+}
+.mu4 .st-scopefold .xf-in {
+  max-width: none;
+}
+.mu4 .st-scopefold .tblwrap {
+  display: block;
+  margin: 10px 0 14px;
+}
+.mu4 .st-scopefold .xf-in p {
+  font-size: 15.5px;
+  line-height: 1.75;
+  max-width: 46em;
+  color: var(--fg);
+}
+.mu4 .st-scopefold .xf-in p .k {
+  display: block;
+  font-size: 13.5px;
+  color: var(--accent-ink, var(--accent));
+}
+.mu4 .st-scopefold .xf-in p.src {
+  font-size: 13px;
+  color: var(--sub);
+}
+.mu4 .st-lg #moreBtn {
+  margin-top: 14px;
+}
+.mu4 .gal.st-one .im {
+  max-height: none;
+}
+.mu4 .fold .gal.st-one {
+  margin-top: 14px;
+}
+
+/* 누르면 커지는 그림에는 오른쪽 아래에 돋보기 표시를 단다(2026-11-14). 예전에는 구역마다
+   「그림을 누르면 커집니다」라고 글로 적었다. 색은 사진 위에서도 보이게 어두운 반투명 한 가지. */
+.mu4 .gal .im,
+.mu4 .diag {
+  position: relative;
+}
+.mu4 .gal .im::after,
+.mu4 .diag::after {
+  content: "";
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(17, 17, 26, 0.62)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M15.5 15.5 21 21M10.5 7.8v5.4M7.8 10.5h5.4'/%3E%3C/svg%3E")
+    center / 17px 17px no-repeat;
+  opacity: 0.82;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.mu4 .gal figure:hover .im::after,
+.mu4 .diag:hover::after {
+  opacity: 1;
+  transform: scale(1.08);
+}
+/* 도식은 그림 모서리에 글자가 있어 표시를 카드 제목 줄 오른쪽에 둔다. */
+.mu4 .diag::after {
+  top: 12px;
+  right: 12px;
+  bottom: auto;
+}

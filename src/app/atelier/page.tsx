@@ -95,14 +95,14 @@ export default function AtelierPage() {
   // 모바일: 3D 를 아예 올리지 않는다. 데스크만 띄우고, 닫으면 착륙장으로.
   if (forcedDesk) {
     return (
-      <main className="min-h-dvh bg-[#0b1626]">
+      <main className="min-h-dvh bg-[#12141d]">
         {deskOpen ? <CommissionDesk onClose={goHome} /> : null}
       </main>
     );
   }
 
   return (
-    <main className="min-h-dvh bg-[#0b1626]">
+    <main className="min-h-dvh bg-[#12141d]">
       <AtelierInterior
         onBack={goHome}
         onSelectNpc={selectNpc}
@@ -159,9 +159,9 @@ export default function AtelierPage() {
 /** 씬이 올라오기 전의 어둠. 흰 화면이 번쩍이지 않게 방과 같은 색을 깔아 둔다. */
 function RoomVeil() {
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-[#0b1626]">
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-[#12141d]">
       <span className="v-lantern-glow text-3xl">🕯️</span>
-      <p className="text-[12px] text-[#a9bdd6]/70">
+      <p className="text-[12px] text-[#b4bac6]/70">
         지하 공방으로 내려가는 중…
       </p>
     </div>

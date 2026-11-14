@@ -689,3 +689,31 @@ export function getVisitorSessionId(): string {
   window.localStorage.setItem(key, next);
   return next;
 }
+
+// ── 경력 안내 (쪽지) ────────────────────────────────────────────────────────
+// /resume 의 안내 캐릭터가 부른다. 서버가 이력서·프로젝트 글에서 근거를 찾아 답한다.
+
+export interface CareerSource {
+  title: string;
+  section: string;
+  href: string;
+  snippet: string;
+}
+
+export interface CareerAnswer {
+  /** answer = 근거로 만든 답 · snippets = 찾은 부분만 · none = 기록에 없음 */
+  mode: "answer" | "snippets" | "none";
+  answer: string;
+  note: string;
+  sources: CareerSource[];
+}
+
+export function askCareer(
+  question: string,
+  previous?: string
+): Promise<CareerAnswer> {
+  return requestJson<CareerAnswer>("/career/ask", {
+    method: "POST",
+    body: JSON.stringify({question, previous})
+  });
+}

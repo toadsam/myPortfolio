@@ -30,7 +30,11 @@
  */
 
 import type {Metadata} from "next";
-import {ResumeClient} from "./ResumeClient";
+import {ResumeV2} from "@/components/resumeV2/ResumeV2";
+
+// 2026-11 — 본문을 흰 바탕 판형(ResumeV2, 승인 시안 c-family-v6)으로 바꿨다.
+// 위 설명의 ResumeMode·ResumeClient 는 마을 안 이력서가 그대로 쓰므로 지우지 않는다.
+// ResumeV2 도 서버 컴포넌트라 첫 HTML 에 본문이 담기는 성질은 같다.
 
 // 히어로 `roleTag` 와 같은 말로 맞춘다(src/data/resume.ts). 검색 결과와 탭 제목이
 // 화면 속 제목과 다르면 같은 사람의 다른 이력서처럼 보인다.
@@ -51,5 +55,5 @@ export const metadata: Metadata = {
 };
 
 export default function ResumePage() {
-  return <ResumeClient />;
+  return <ResumeV2 />;
 }

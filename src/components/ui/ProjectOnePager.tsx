@@ -1148,6 +1148,24 @@ export function ProjectOnePager({
                             {c.solution}
                           </p>
                         </div>
+                        {c.evidence ? (
+                          <details className="rounded border border-white/15 p-3 text-xs leading-6 text-gray-300">
+                            <summary className="cursor-pointer">
+                              근거: {c.evidence.status}
+                            </summary>
+                            <p>{c.evidence.note}</p>
+                            {c.evidence.url ? (
+                              <a
+                                href={c.evidence.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-accent underline"
+                              >
+                                확인한 코드 보기 ↗
+                              </a>
+                            ) : null}
+                          </details>
+                        ) : null}
                         {c.code ? (
                           <CodeWindow spec={c.code} theme={theme} />
                         ) : null}

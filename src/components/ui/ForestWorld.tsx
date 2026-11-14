@@ -252,7 +252,7 @@ export function ForestWorld() {
         // shadow 는 그리기 **전에** 걸어야 첫 마리부터 발광한다
         // (원본 시안은 draw 끝에 설정해 한 박자씩 밀렸다)
         ctx.shadowBlur = 14;
-        ctx.shadowColor = "#ff9d38";
+        ctx.shadowColor = "#8b85f0";
         for (const f of flies) {
           f.angle += f.speed * dt;
           f.x += Math.sin(f.angle) * 1.6 * dt;
@@ -280,7 +280,7 @@ export function ForestWorld() {
 
           f.blink += f.blinkSpeed * dt;
           const alpha = 0.25 + (Math.sin(f.blink) + 1) * 0.32;
-          ctx.fillStyle = `rgba(255, 157, 56, ${alpha})`;
+          ctx.fillStyle = `rgba(139,133,240, ${alpha})`;
           ctx.beginPath();
           ctx.arc(f.x, f.y, f.size, 0, Math.PI * 2);
           ctx.fill();
@@ -361,7 +361,7 @@ export function ForestWorld() {
         className="absolute left-0 top-0 h-[620px] w-[620px] rounded-full opacity-0"
         style={{
           background:
-            "radial-gradient(circle, rgba(255,157,56,0.10) 0%, rgba(255,157,56,0.04) 38%, transparent 70%)",
+            "radial-gradient(circle, rgba(139,133,240,0.10) 0%, rgba(139,133,240,0.04) 38%, transparent 70%)",
           mixBlendMode: "screen"
         }}
       />
@@ -548,13 +548,13 @@ function Lamp({index}: {index: number}) {
       {/* 매다는 줄 */}
       <div className="mx-auto h-[120px] w-px bg-[rgb(var(--v-wood))]" />
       {/* 등불 몸통 */}
-      <div className="relative mx-auto h-[42px] w-[28px] rounded-[5px] border border-[rgb(var(--v-wood))] bg-[rgb(var(--v-night))] shadow-[inset_0_0_16px_rgba(255,157,56,0.35)]">
+      <div className="relative mx-auto h-[42px] w-[28px] rounded-[5px] border border-[rgb(var(--v-wood))] bg-[rgb(var(--v-night))] shadow-[inset_0_0_16px_rgba(139,133,240,0.35)]">
         {/* 빛 — screen 합성이라야 뒤 숲 위에 빛으로 얹힌다 */}
         <div
           className="absolute left-1/2 top-1/2 h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full"
           style={{
             background:
-              "radial-gradient(circle, rgba(255,157,56,0.55) 0%, rgba(255,157,56,0.16) 35%, transparent 70%)",
+              "radial-gradient(circle, rgba(139,133,240,0.55) 0%, rgba(139,133,240,0.16) 35%, transparent 70%)",
             filter: "blur(8px)",
             mixBlendMode: "screen",
             animation: `forest-breathe ${

@@ -10,6 +10,10 @@
  * - 선택지는 "내 대사" 다. 카드엔 예시 미리보기와 기간 꼬리표("+1주")가 붙는다.
  *   금액 꼬리표는 2026-10-18 에 뺐다 — 금액은 서버가 계산해 관리자만 본다.
  * - 아래 입력창은 항상 열려 있다 — 지금 말하는 식구에게 아무거나 묻는다.
+ *
+ * 톤은 둘이다(2026-11-14). `panel` 은 흰 바탕·인디고(`commissionDesk.css` 의 `.cd-*`,
+ * /resume 과 같은 값)이고 식구 색을 쓰지 않는다. `hud` 는 어두운 3D 방 위에 뜨므로
+ * 마을 HUD 와 같은 어두운 판(같은 날 금테·주황에서 인디고로 바뀜)에 식구별 색을 쓴다. 갈리는 곳은 전부 `light` 한 값으로 고른다.
  */
 
 import {motion} from "framer-motion";
@@ -35,8 +39,8 @@ const NPC_COLOR: Record<string, string> = Object.fromEntries(
 );
 
 function speakerColor(speaker: CommissionSpeaker | "visitor"): string {
-  if (speaker === "visitor") return "#ff9d38";
-  return NPC_COLOR[SPEAKER_NPC_ID[speaker]] ?? "#e2c078";
+  if (speaker === "visitor") return "#8b85f0";
+  return NPC_COLOR[SPEAKER_NPC_ID[speaker]] ?? "#c3c0f7";
 }
 
 /* ─────────────────────────── 타자 연출 ─────────────────────────── */
@@ -77,13 +81,27 @@ function useTypewriter(text: string, active: boolean, cps = 38) {
 function Portrait({
   speaker,
   size = 44,
-  active = true
+  active = true,
+  light = false
 }: {
   speaker: CommissionSpeaker;
   size?: number;
   active?: boolean;
+  /** 흰 데스크. 식구 색 대신 인디고 한 색 — active 면 채운 원, 아니면 옅은 원 */
+  light?: boolean;
 }) {
   const color = speakerColor(speaker);
+  if (light) {
+    return (
+      <div
+        className={`cd-avatar ${active ? "is-on" : ""}`}
+        style={{width: size, height: size, fontSize: size * 0.4}}
+        aria-hidden="true"
+      >
+        {SPEAKER_NAME[speaker][0]}
+      </div>
+    );
+  }
   return (
     <div
       className="relative flex shrink-0 items-center justify-center rounded-full border-2 font-black transition-all"
@@ -127,16 +145,49 @@ function ChoiceCard({
   pricing,
   selected,
   onClick,
-  compact
+  compact,
+  light
 }: {
   choice: IntakeChoice;
   pricing: CommissionPricing | null;
   selected: boolean;
   onClick: () => void;
   compact: boolean;
+  light: boolean;
 }) {
   const tag = tagFor(choice, pricing);
   const free = !!choice.free;
+  if (light) {
+    return (
+      <motion.button
+        type="button"
+        initial={{opacity: 0, y: 8}}
+        animate={{opacity: 1, y: 0}}
+        whileHover={{y: -2}}
+        whileTap={{scale: 0.97}}
+        onClick={onClick}
+        className={`cd-choice ${selected ? "is-on" : free ? "is-free" : ""}`}
+        aria-pressed={selected}
+      >
+        {choice.preview && !compact ? (
+          <div className="mb-2.5">
+            <ChoicePreview kind={choice.preview} />
+          </div>
+        ) : null}
+        <span className="cd-choice-t">
+          {free ? "✎ " : ""}
+          {choice.label}
+        </span>
+        {tag ? (
+          <span
+            className={`cd-tag ${tag === "추가 비용 없음" ? "is-free" : ""}`}
+          >
+            {tag}
+          </span>
+        ) : null}
+      </motion.button>
+    );
+  }
   return (
     <motion.button
       type="button"
@@ -147,10 +198,10 @@ function ChoiceCard({
       onClick={onClick}
       className={`group flex min-w-0 flex-col rounded-xl border text-left transition ${
         selected
-          ? "border-[#ff9d38] bg-[#ff9d38]/15"
+          ? "border-[#8b85f0] bg-[#8b85f0]/15"
           : free
-          ? "border-dashed border-[#e2c078]/35 bg-white/[0.02] hover:border-[#e2c078]/70"
-          : "border-[#e2c078]/25 bg-white/[0.04] hover:border-[#ff9d38]/70 hover:bg-[#ff9d38]/8"
+          ? "border-dashed border-[#c3c0f7]/35 bg-white/[0.02] hover:border-[#c3c0f7]/70"
+          : "border-[#c3c0f7]/25 bg-white/[0.04] hover:border-[#8b85f0]/70 hover:bg-[#8b85f0]/8"
       } ${compact ? "p-2" : "p-2.5"}`}
       aria-pressed={selected}
     >
@@ -159,8 +210,8 @@ function ChoiceCard({
           <ChoicePreview kind={choice.preview} />
         </div>
       ) : null}
-      <span className="flex items-start gap-1.5 text-[12px] font-bold leading-snug text-[#f3e6c8]">
-        <span className="mt-[1px] text-[#ff9d38]">{selected ? "◆" : "▸"}</span>
+      <span className="flex items-start gap-1.5 text-[12px] font-bold leading-snug text-[#f5f6f8]">
+        <span className="mt-[1px] text-[#8b85f0]">{selected ? "◆" : "▸"}</span>
         <span className="min-w-0 flex-1">
           {free ? "✎ " : ""}
           {choice.label}
@@ -171,7 +222,7 @@ function ChoiceCard({
           className={`mt-1 inline-block self-start rounded-full px-1.5 py-[2px] text-[10px] font-bold ${
             tag === "추가 비용 없음"
               ? "bg-[#7bd88f]/12 text-[#7bd88f]"
-              : "bg-[#ff9d38]/12 text-[#ffb865]"
+              : "bg-[#8b85f0]/12 text-[#c3c0f7]"
           }`}
         >
           {tag}
@@ -186,11 +237,13 @@ function ChoiceCard({
 function Line({
   line,
   typing,
-  onFinish
+  onFinish,
+  light
 }: {
   line: DialogueLine;
   typing: boolean;
   onFinish?: () => void;
+  light: boolean;
 }) {
   const isVisitor = line.speaker === "visitor";
   const {shown, done, finish} = useTypewriter(line.text, typing && !isVisitor);
@@ -198,7 +251,13 @@ function Line({
   if (isVisitor) {
     return (
       <div className="flex justify-end">
-        <p className="max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm border border-[#ff9d38]/35 bg-[#ff9d38]/12 px-3.5 py-2 text-[13px] leading-relaxed text-[#f3e6c8]">
+        <p
+          className={
+            light
+              ? "cd-me"
+              : "max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm border border-[#8b85f0]/35 bg-[#8b85f0]/12 px-3.5 py-2 text-[13px] leading-relaxed text-[#f5f6f8]"
+          }
+        >
           {line.text}
         </p>
       </div>
@@ -207,6 +266,43 @@ function Line({
 
   const npc = line.speaker as CommissionSpeaker;
   const color = speakerColor(npc);
+  if (light) {
+    return (
+      <div
+        className={`flex items-start gap-2.5 ${line.intrusion ? "pl-6" : ""}`}
+        onClick={() => {
+          if (!done) {
+            finish();
+            onFinish?.();
+          }
+        }}
+      >
+        <Portrait
+          speaker={npc}
+          size={line.intrusion ? 28 : 34}
+          active={false}
+          light
+        />
+        <div className="min-w-0 flex-1">
+          <p className="cd-dim text-[12.5px] font-extrabold">
+            {SPEAKER_NAME[npc]}
+            <span className="ml-1 font-semibold">{SPEAKER_ROLE[npc]}</span>
+            {line.intrusion ? (
+              <span className="ml-1 font-semibold">끼어듦</span>
+            ) : null}
+          </p>
+          <p className={`cd-npc mt-1 ${line.intrusion ? "is-aside" : ""}`}>
+            {shown}
+            {!done ? (
+              <span className="intake-caret cd-caret ml-[1px] inline-block w-[6px]">
+                ▌
+              </span>
+            ) : null}
+          </p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div
       className={`flex items-start gap-2.5 ${line.intrusion ? "pl-6" : ""}`}
@@ -225,23 +321,23 @@ function Line({
       <div className="min-w-0 flex-1">
         <p className="text-[10px] font-bold" style={{color}}>
           {SPEAKER_NAME[npc]}
-          <span className="ml-1 font-normal text-[#a9bdd6]/60">
+          <span className="ml-1 font-normal text-[#b4bac6]/60">
             {SPEAKER_ROLE[npc]}
           </span>
           {line.intrusion ? (
-            <span className="ml-1 text-[#a9bdd6]/50">끼어듦</span>
+            <span className="ml-1 text-[#b4bac6]/50">끼어듦</span>
           ) : null}
         </p>
         <p
-          className={`mt-0.5 whitespace-pre-wrap rounded-2xl rounded-tl-sm border px-3.5 py-2 text-[13px] leading-relaxed text-[#dfe7f2] ${
+          className={`mt-0.5 whitespace-pre-wrap rounded-2xl rounded-tl-sm border px-3.5 py-2 text-[13px] leading-relaxed text-[#d3d7df] ${
             line.intrusion
-              ? "border-dashed border-[#e2c078]/25 bg-white/[0.02]"
-              : "border-[#e2c078]/20 bg-white/[0.04]"
+              ? "border-dashed border-[#c3c0f7]/25 bg-white/[0.02]"
+              : "border-[#c3c0f7]/20 bg-white/[0.04]"
           }`}
         >
           {shown}
           {!done ? (
-            <span className="intake-caret ml-[1px] inline-block w-[6px] text-[#e2c078]">
+            <span className="intake-caret ml-[1px] inline-block w-[6px] text-[#c3c0f7]">
               ▌
             </span>
           ) : null}
@@ -278,6 +374,10 @@ export function IntakeDialogue({
     progress
   } = flow;
   const hud = layout === "hud";
+  const light = !hud;
+  const pct = progress.total
+    ? Math.round((progress.done / progress.total) * 100)
+    : 0;
 
   const [typedDone, setTypedDone] = useState(false);
   const [freeText, setFreeText] = useState("");
@@ -335,30 +435,56 @@ export function IntakeDialogue({
   return (
     <div className={`${shell} ${className}`}>
       {/* 머리 — 지금 말하는 식구 + 진행 + (hud 면) 예상 기간 */}
-      <div className="flex items-center justify-between gap-3 border-b border-[#7a5a38]/40 px-4 py-2.5">
-        <div className="flex items-center gap-2.5">
-          <Portrait speaker={speaker} size={32} />
-          <div>
-            <p className="text-[12px] font-black text-[#f3e6c8]">
-              {SPEAKER_NAME[speaker]}{" "}
-              <span className="text-[10px] font-bold text-[#a9bdd6]/70">
-                {SPEAKER_ROLE[speaker]}
-              </span>
-            </p>
-            <p className="text-[10px] text-[#a9bdd6]/60">
-              {phase === "done"
-                ? doneNote
-                : `${progress.done}/${progress.total} 문항`}
-            </p>
-          </div>
+      {light ? (
+        <div className="flex items-center gap-3 px-4 pb-1 pt-3.5 sm:px-6">
+          <Portrait speaker={speaker} size={38} light />
+          <p className="shrink-0 text-[15px] font-black">
+            {SPEAKER_NAME[speaker]}{" "}
+            <span className="cd-dim text-[13px] font-bold">
+              {SPEAKER_ROLE[speaker]}
+            </span>
+          </p>
+          {phase === "done" ? (
+            <p className="cd-note ml-auto text-right font-bold">{doneNote}</p>
+          ) : (
+            <>
+              <div className="cd-prog" aria-hidden="true">
+                <i style={{width: `${pct}%`}} />
+              </div>
+              <p className="cd-note shrink-0 font-extrabold tabular-nums">
+                {progress.done}/{progress.total} 문항
+              </p>
+            </>
+          )}
         </div>
-        {hud ? <DurationTicker estimate={estimate} compact /> : null}
-      </div>
+      ) : (
+        <div className="flex items-center justify-between gap-3 border-b border-[#3a3f4d]/40 px-4 py-2.5">
+          <div className="flex items-center gap-2.5">
+            <Portrait speaker={speaker} size={32} />
+            <div>
+              <p className="text-[12px] font-black text-[#f5f6f8]">
+                {SPEAKER_NAME[speaker]}{" "}
+                <span className="text-[10px] font-bold text-[#b4bac6]/70">
+                  {SPEAKER_ROLE[speaker]}
+                </span>
+              </p>
+              <p className="text-[10px] text-[#b4bac6]/60">
+                {phase === "done"
+                  ? doneNote
+                  : `${progress.done}/${progress.total} 문항`}
+              </p>
+            </div>
+          </div>
+          {hud ? <DurationTicker estimate={estimate} compact /> : null}
+        </div>
+      )}
 
       {/* 대사 기록 */}
       <div
         ref={scrollRef}
-        className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3"
+        className={`min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-3 ${
+          light ? "sm:px-6" : ""
+        }`}
       >
         {lines.map((line, index) => (
           <Line
@@ -366,10 +492,15 @@ export function IntakeDialogue({
             line={line}
             typing={index >= lastNpcIndex && line.speaker !== "visitor"}
             onFinish={() => setTypedDone(true)}
+            light={light}
           />
         ))}
         {phase === "waiting" ? (
-          <p className="pl-12 text-[11px] text-[#a9bdd6]/60">
+          <p
+            className={
+              light ? "cd-note pl-11" : "pl-12 text-[11px] text-[#b4bac6]/60"
+            }
+          >
             {SPEAKER_NAME[speaker]}이(가) 생각하는 중…
           </p>
         ) : null}
@@ -398,6 +529,7 @@ export function IntakeDialogue({
                   selected={selected.includes(choice.id)}
                   onClick={() => flow.choose(choice)}
                   compact={question.choices.length > 7}
+                  light={light}
                 />
               ))}
             </div>
@@ -406,7 +538,11 @@ export function IntakeDialogue({
                 <button
                   type="button"
                   onClick={flow.confirmMulti}
-                  className="rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-3.5 py-1.5 text-[11px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25 active:scale-95"
+                  className={
+                    light
+                      ? "cd-btn is-accent is-sm"
+                      : "rounded-lg border border-[#8b85f0]/50 bg-[#8b85f0]/15 px-3.5 py-1.5 text-[11px] font-black text-[#f5f6f8] transition hover:bg-[#8b85f0]/25 active:scale-95"
+                  }
                 >
                   {selected.length
                     ? `이 ${selected.length}개로 할게요`
@@ -417,7 +553,11 @@ export function IntakeDialogue({
                 <button
                   type="button"
                   onClick={flow.skip}
-                  className="rounded-lg border border-[#e2c078]/20 px-3 py-1.5 text-[11px] text-[#a9bdd6]/70 transition hover:border-[#e2c078]/50 hover:text-[#f3e6c8]"
+                  className={
+                    light
+                      ? "cd-btn is-sm"
+                      : "rounded-lg border border-[#c3c0f7]/20 px-3 py-1.5 text-[11px] text-[#b4bac6]/70 transition hover:border-[#c3c0f7]/50 hover:text-[#f5f6f8]"
+                  }
                 >
                   {LATER_LABEL}
                 </button>
@@ -448,20 +588,32 @@ export function IntakeDialogue({
                   ? "주소를 한 줄에 하나씩"
                   : "편하게 말씀해 주세요"
               }
-              className="w-full rounded-xl border border-[#ff9d38]/40 bg-white/[0.04] px-3.5 py-2.5 text-[13px] text-[#f3e6c8] outline-none placeholder:text-[#a9bdd6]/40 focus:border-[#ff9d38]/70"
+              className={
+                light
+                  ? "cd-area"
+                  : "w-full rounded-xl border border-[#8b85f0]/40 bg-white/[0.04] px-3.5 py-2.5 text-[13px] text-[#f5f6f8] outline-none placeholder:text-[#b4bac6]/40 focus:border-[#8b85f0]/70"
+              }
             />
             <div className="mt-1.5 flex gap-2">
               <button
                 type="submit"
                 disabled={!freeText.trim()}
-                className="rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-3.5 py-1.5 text-[11px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25 active:scale-95 disabled:opacity-40"
+                className={
+                  light
+                    ? "cd-btn is-accent is-sm"
+                    : "rounded-lg border border-[#8b85f0]/50 bg-[#8b85f0]/15 px-3.5 py-1.5 text-[11px] font-black text-[#f5f6f8] transition hover:bg-[#8b85f0]/25 active:scale-95 disabled:opacity-40"
+                }
               >
                 이렇게요
               </button>
               <button
                 type="button"
                 onClick={flow.cancelFree}
-                className="rounded-lg border border-[#e2c078]/20 px-3 py-1.5 text-[11px] text-[#a9bdd6]/70 hover:text-[#f3e6c8]"
+                className={
+                  light
+                    ? "cd-btn is-sm"
+                    : "rounded-lg border border-[#c3c0f7]/20 px-3 py-1.5 text-[11px] text-[#b4bac6]/70 hover:text-[#f5f6f8]"
+                }
               >
                 다시 고를게요
               </button>
@@ -477,10 +629,20 @@ export function IntakeDialogue({
               initial={{opacity: 0, x: 6}}
               animate={{opacity: 1, x: 0}}
               onClick={flow.next}
-              className="rounded-lg border border-[#e2c078]/35 bg-white/[0.04] px-4 py-1.5 text-[12px] font-black text-[#f3e6c8] transition hover:border-[#ff9d38]/70 hover:bg-[#ff9d38]/10 active:scale-95"
+              className={
+                light
+                  ? "cd-btn is-dark is-sm"
+                  : "rounded-lg border border-[#c3c0f7]/35 bg-white/[0.04] px-4 py-1.5 text-[12px] font-black text-[#f5f6f8] transition hover:border-[#8b85f0]/70 hover:bg-[#8b85f0]/10 active:scale-95"
+              }
             >
               다음 ▸{" "}
-              <span className="ml-1 text-[10px] font-normal text-[#a9bdd6]/60">
+              <span
+                className={
+                  light
+                    ? "ml-1.5 text-[12px] font-semibold opacity-70"
+                    : "ml-1 text-[10px] font-normal text-[#b4bac6]/60"
+                }
+              >
                 Enter
               </span>
             </motion.button>
@@ -490,7 +652,11 @@ export function IntakeDialogue({
 
       {/* 말 걸기 — 항상 열려 있다 */}
       <form
-        className="flex gap-2 border-t border-[#7a5a38]/40 px-4 py-2.5"
+        className={
+          light
+            ? "cd-bd flex gap-2 border-t px-4 py-3 sm:px-6"
+            : "flex gap-2 border-t border-[#3a3f4d]/40 px-4 py-2.5"
+        }
         onSubmit={event => {
           event.preventDefault();
           const text = chat;
@@ -503,12 +669,20 @@ export function IntakeDialogue({
           onChange={event => setChat(event.target.value)}
           disabled={phase === "waiting"}
           placeholder={`${SPEAKER_NAME[speaker]}에게 궁금한 걸 물어보세요 (선택지와 별개예요)`}
-          className="min-w-0 flex-1 rounded-lg border border-[#e2c078]/20 bg-white/[0.03] px-3 py-2 text-[12px] text-[#f3e6c8] outline-none placeholder:text-[#a9bdd6]/40 focus:border-[#ff9d38]/50 disabled:opacity-50"
+          className={
+            light
+              ? "cd-input"
+              : "min-w-0 flex-1 rounded-lg border border-[#c3c0f7]/20 bg-white/[0.03] px-3 py-2 text-[12px] text-[#f5f6f8] outline-none placeholder:text-[#b4bac6]/40 focus:border-[#8b85f0]/50 disabled:opacity-50"
+          }
         />
         <button
           type="submit"
           disabled={phase === "waiting" || !chat.trim()}
-          className="shrink-0 rounded-lg border border-[#e2c078]/30 px-3.5 py-2 text-[11px] font-black text-[#f3e6c8] transition hover:border-[#ff9d38]/60 active:scale-95 disabled:opacity-40"
+          className={
+            light
+              ? "cd-btn is-dark shrink-0"
+              : "shrink-0 rounded-lg border border-[#c3c0f7]/30 px-3.5 py-2 text-[11px] font-black text-[#f5f6f8] transition hover:border-[#8b85f0]/60 active:scale-95 disabled:opacity-40"
+          }
         >
           말 걸기
         </button>

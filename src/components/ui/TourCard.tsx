@@ -1,6 +1,6 @@
 "use client";
 
-import {motion} from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
 import {Crest} from "@/components/ui/Crest";
 import type {CrestName} from "@/data/villageCrests";
 import {districtTone, sectionMeta} from "@/lib/constants";
@@ -46,52 +46,64 @@ export function TourCard({
 
   return (
     <motion.div
-      className="v-panel fixed bottom-6 left-1/2 z-[55] w-[min(94vw,560px)] -translate-x-1/2 overflow-hidden p-4"
-      initial={{opacity: 0, y: 24}}
-      animate={{opacity: 1, y: 0}}
-      exit={{opacity: 0, y: 24}}
-      transition={{type: "spring", stiffness: 260, damping: 24}}
+      className="v-panel fixed bottom-6 left-1/2 z-[55] w-[min(94vw,600px)] -translate-x-1/2 overflow-hidden rounded-[30px]! p-5"
+      initial={{opacity: 0, y: 40, scale: 0.94}}
+      animate={{opacity: 1, y: 0, scale: 1}}
+      exit={{opacity: 0, y: 30, scale: 0.96}}
+      transition={{type: "spring", stiffness: 300, damping: 22}}
     >
       <div className="flex items-start justify-between gap-3">
-        <p className="v-panel-title text-[12px]">
+        <p className="pt-2 text-[13.5px] font-extrabold tabular-nums text-[#c3c0f7]">
           채용 담당자 3분 코스 · {index + 1}/{total}
         </p>
         <button
           type="button"
           onClick={onEnd}
-          className="shrink-0 rounded-lg border border-[#e2c078]/20 px-2.5 py-1 text-[11px] font-black text-[#a9bdd6]/70 transition hover:text-[#f3e6c8] active:scale-95"
+          className="flex h-10 shrink-0 items-center rounded-full bg-white/10 px-4 text-[13.5px] font-extrabold text-white hover:bg-white/[0.16]"
         >
           코스 끝내기
         </button>
       </div>
 
-      <div className="mt-2 flex items-start gap-3">
-        <span
-          className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg border bg-[#131f33]"
-          style={{borderColor: `${tone.accent}66`}}
-        >
-          <Crest name={tone.crest as CrestName} size={20} />
-        </span>
-        <div className="min-w-0">
-          <h3 className="v-serif text-lg leading-tight text-[#f3e6c8]">
-            {meta?.title ?? sectionId}
-          </h3>
-          <p className="mt-1 text-[13px] leading-6 text-[#c9d6e8]">
-            {meta?.description}
-          </p>
-        </div>
+      {/* 정류장이 바뀌면 글이 옆으로 밀려 나가고 다음 글이 밀려 들어온다. 카메라가
+          다음 구역으로 날아가는 것과 같은 방향이라 "넘어갔다"가 글에서도 읽힌다. */}
+      <div className="relative mt-1 min-h-[86px]">
+        <AnimatePresence initial={false} mode="popLayout">
+          <motion.div
+            key={sectionId}
+            className="flex items-start gap-3"
+            initial={{opacity: 0, x: 46}}
+            animate={{opacity: 1, x: 0}}
+            exit={{opacity: 0, x: -46}}
+            transition={{type: "spring", stiffness: 340, damping: 30}}
+          >
+            <span className="mt-1 grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-[#aeaaf3]/[0.16]">
+              <Crest name={tone.crest as CrestName} size={22} />
+            </span>
+            <div className="min-w-0">
+              <h3 className="v-serif text-[24px] leading-tight text-white">
+                {meta?.title ?? sectionId}
+              </h3>
+              <p className="mt-1 text-[15px] leading-6 text-[#d3d7df]">
+                {meta?.description}
+              </p>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      {/* 정류장 점 */}
+      {/* 정류장 점 — 지금 정류장의 긴 알약이 다음 칸으로 미끄러진다 */}
       <div className="mt-3 flex items-center gap-1.5">
         {Array.from({length: total}, (_, i) => (
-          <span
+          <motion.span
             key={i}
-            className="h-1.5 rounded-full transition-all"
+            layout
+            className="h-1.5 rounded-full"
             style={{
-              width: i === index ? 18 : 6,
-              background: i <= index ? tone.accent : "rgba(169,189,214,0.25)"
+              width: i === index ? 28 : 6,
+              background: i <= index ? "#aeaaf3" : "rgba(255,255,255,0.25)"
             }}
+            transition={{type: "spring", stiffness: 420, damping: 30}}
           />
         ))}
       </div>
@@ -100,14 +112,14 @@ export function TourCard({
         <button
           type="button"
           onClick={onDetail}
-          className="rounded-lg border border-[#e2c078]/35 bg-white/[0.04] px-3 py-2 text-[12px] font-black text-[#eef2f8] transition hover:border-[#e2c078]/70 hover:bg-[#e2c078]/10 active:scale-95"
+          className="flex h-11 items-center rounded-full bg-white/10 px-5 text-[14.5px] font-extrabold text-white hover:bg-white/[0.16]"
         >
           여기 자세히 보기
         </button>
         <button
           type="button"
           onClick={isLast ? onResume : onNext}
-          className="rounded-lg border border-[#ff9d38]/60 bg-[#ff9d38]/15 px-3 py-2 text-[12px] font-black text-[#ffd9ae] transition hover:bg-[#ff9d38]/25 active:scale-95"
+          className="flex h-11 items-center rounded-full bg-[#4f46e5] px-5 text-[14.5px] font-extrabold text-white shadow-[0_10px_26px_rgba(79,70,229,0.35)] hover:bg-[#4338ca]"
         >
           {isLast ? "이력서 보기 ▸" : "다음 정류장 ▸"}
         </button>
@@ -115,7 +127,7 @@ export function TourCard({
           href={resumeHref}
           target="_blank"
           rel="noreferrer"
-          className="ml-auto text-[11px] font-bold text-[#a9bdd6]/80 underline-offset-2 transition hover:text-[#f3e6c8] hover:underline"
+          className="ml-auto text-[13.5px] font-extrabold text-[#c3c0f7] underline-offset-2 hover:text-white hover:underline"
         >
           이력서 PDF 내려받기
         </a>
@@ -126,7 +138,7 @@ export function TourCard({
         <motion.div
           key={index}
           className="absolute inset-x-0 bottom-0 h-[3px] origin-left"
-          style={{background: tone.accent, opacity: 0.7}}
+          style={{background: "#4f46e5"}}
           initial={{scaleX: 0}}
           animate={{scaleX: 1}}
           transition={{duration: stopMs / 1000, ease: "linear"}}

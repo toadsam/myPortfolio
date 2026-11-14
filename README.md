@@ -6,7 +6,7 @@
 
 ![중앙 광장 — 밤의 마을, 건물마다 간판과 안내 NPC](docs/screenshots/village-plaza.webp)
 
-| | |
+|  |  |
 |---|---|
 | 기간 | 2026.06 ~ 진행 중 (Next.js 마을 첫 커밋 2026-06-26 · `final` 브랜치 내 본인 커밋 296) |
 | 인원 | 1명 — 기획 · 3D 씬 · 프론트 · FastAPI 백엔드 · 관리자 · 배포. 개발은 Claude Code 와 짝으로 했고 계획 승인·실측·검증은 사람이 했다 — [`CLAUDE.md`](CLAUDE.md) 가 그 작업 규약이다 |
@@ -20,14 +20,16 @@
 
 ## 무엇이 돌아가나
 
-| | |
+|  |  |
 |---|---|
 | ![착륙장 — 마을 보기 · 이력서 보기 · 작업 의뢰하기 세 장의 표](docs/screenshots/landing.jpg) | ![관리자 — 오늘의 기분·집중도·운동·공부를 적으면 오른쪽 지도에 불이 들어온다](docs/screenshots/admin.webp) |
-| 첫 화면은 마을이 아니라 **표 세 장**이다. 가운데가 이력서. three.js 는 마을 표에 마우스를 올릴 때 받기 시작한다. | 관리자 페이지. 기분·집중도·운동·공부·커밋을 적으면 저장 전 미리보기 지도에 건물 불이 켜지고, 안내 NPC 들의 기분이 바뀐다. |
+| 첫 화면은 마을이 아니라 **한 문장과 떠 있는 물건 셋**이다(2026-11-12 까지는 종이 표 세 장이었고, 이 스크린샷은 그 화면이다). 집·문서·연장이 곧 버튼이고 가운데 문서(이력서)만 인디고로 차 있다. 이력서 화면과 같은 흰 바탕·인디고 색이고, 마우스 커서도 이 두 화면에서는 인디고 점+고리로 바뀐다(마을은 금색 링 그대로). three.js 는 집에 마우스를 올릴 때 받기 시작한다. | 관리자 페이지. 기분·집중도·운동·공부·커밋을 적으면 저장 전 미리보기 지도에 건물 불이 켜지고, 안내 NPC 들의 기분이 바뀐다. |
 | ![지하 의뢰 공방 — 접수원 도안과 기획·디자인·프론트·백엔드 식구](docs/screenshots/atelier.webp) | ![이력서 화면 — 프로젝트 카드와 실측 지표](docs/screenshots/resume.webp) |
-| 의뢰 공방. 접수원과 네 직군 NPC 가 릴레이로 묻고 예상 제작 기간을 굴린다. 참고 금액은 서버가 계산해 관리자 접수함에만 보이고 손님 화면에는 없다(2026-10-18). 이 사이트에서 **바깥사람이 쓰기를 하는 유일한 경로**라 허니팟·전용 레이트리밋·견적 상하한이 붙어 있다. | 이력서. 카드 지표에는 출처 필드(`metricsSource`)가 붙고, 같은 데이터(`src/data/resume.ts`)에서 A4 2장 PDF 를 찍는다(`npm run resume:pdf`). |
+| 의뢰 공방. 접수원과 네 직군 NPC 가 릴레이로 묻고 예상 제작 기간을 굴린다. 참고 금액은 서버가 계산해 관리자 접수함에만 보이고 손님 화면에는 없다(2026-10-18). 이 사이트에서 **바깥사람이 쓰기를 하는 유일한 경로**라 허니팟·전용 레이트리밋·견적 상하한이 붙어 있다. | 이력서. 카드 지표에는 출처 필드(`metricsSource`)가 붙고, 같은 데이터(`src/data/resume.ts`)에서 A4 2장 PDF 를 찍는다(`npm run resume:pdf`). 2026-11 에 흰 바탕 판형(`src/components/resumeV2`, 강조색 인디고 `#4f46e5`)으로 바꿨고 프로젝트마다 `/resume/<id>` 상세가 생겼다. 상세는 득근득근만 전용 페이지였고 나머지는 공용 틀이 글을 자동으로 잘라 쓰고 있었는데, 2026-11-13 부터 틀에 손으로 쓰는 칸(소개·지표 출처·트러블슈팅 요약·접힌 절 요약)과 실측·저장소 기록이 있을 때만 그리는 장면(시간표·막대·꺾은선·프레임 스크러버·흐름·3×3 퍼즐·전후 슬라이더)을 두고 열 장(FestFlow·아주총학·aClub·MyWave·DarkLab·TSEROF·수어지교·The Other Side·INTO MONSTER POINT·아주대탐험)을 채웠다. MyWave 와 DarkLab 은 옛 문구 대신 저장소(README·커밋 작성자)를 다시 읽어 썼고, 그 과정에서 「폴백」(실은 갱신 건너뛰기)·「Cinemachine 블렌딩」(팀원 코드) 같은 틀린 문장을 뺐다. 이 스크린샷은 그 전 화면이다. |
 
 이 밖에 건물 27채(광장 포함) 마다 안내 NPC 가 하나씩 자동으로 붙고, NPC 끼리 마주쳐 친해지거나 다투며 그 소식이 HUD 피드에 오른다. 프로젝트 건물에 들어가면 프로젝트별 전시실이 열리고, 코딩 테스트·CS 기록을 넣는 학습 구역이 따로 있다. 상세는 [`docs/PROJECT_DOCUMENTATION.md`](docs/PROJECT_DOCUMENTATION.md), NPC 사회는 [`docs/NPC_SOCIETY.md`](docs/NPC_SOCIETY.md), 공방은 [`docs/COMMISSION_ATELIER.md`](docs/COMMISSION_ATELIER.md).
+
+이력서 화면 오른쪽 아래에는 쪽지 모양 캐릭터가 있다. 경력을 물으면 서버가 이력서와 프로젝트 글 517조각에서 근거를 찾아 답하고, 답 아래에 근거가 된 페이지를 붙인다. 기록에 없는 것은 없다고 답한다.
 
 ## 구조
 
@@ -48,7 +50,7 @@ flowchart LR
 | 프론트 | 백엔드 |
 |---|---|
 | Next.js 16 · React 19 · TypeScript · React Three Fiber 9 · three 0.183 · drei · postprocessing · framer-motion | FastAPI 0.115 · SQLAlchemy 2 · pydantic-settings · httpx · Claude Agent SDK(선택) |
-| 방문자 라우트 `/` `/village` `/resume` `/atelier` `/commission/[token]` + `/admin` (그 외 `*-preview` 는 전시실 미리보기) | 라우트 65 (2026-09-07 `main.py` 데코레이터 수) · pytest 258 |
+| 방문자 라우트 `/` `/village` `/resume` `/atelier` `/commission/[token]` + `/admin` (그 외 `*-preview` 는 전시실 미리보기) | 라우트 70 (2026-11-14 `main.py` 데코레이터 수) · pytest 함수 300 |
 
 ## 결정과 근거
 
@@ -58,7 +60,9 @@ flowchart LR
 
 **셰이더는 그리기 전에 한꺼번에 컴파일한다.** 첫 방문은 브라우저에 셰이더 캐시가 없어서 타이틀이 뜨기까지 17.6~22.5초가 걸렸고, 그중 12초가 셰이더 링크 대기였다. MeshStandard 변종 19개가 GLB 도착 순서대로 처음 그려지는 프레임마다 하나씩 동기로 링크되면서 메인 스레드를 5~6초씩 막았다. 캐시가 찬 두 번째 방문은 8초였다. 지금은 건물과 소품과 주민이 다 도착할 때까지 `frameloop="never"` 로 그리지 않고, 다 오면 `compileAsync` 를 한 번 부른다. 전 변종이 병렬로 0.7초에 끝난다. 첫 시도는 멈춤이 12.6초로 더 길어졌다. 미리 컴파일한 변종과 렌더가 쓰는 변종이 달라서 두 벌을 컴파일했기 때문이다. 셰이더 소스를 가로채 두 벌을 diff 해 보니 `SHADOWMAP_TYPE_BASIC` 과 `SHADOWMAP_TYPE_PCF` 한 줄이 달랐다. r3f 는 `shadows={true}` 를 PCFSoft 로 옮기고, 이 three 버전은 그 값을 첫 그림자 패스에서야 PCF 로 바꾼다. 같은 종류의 어긋남이 렌더 타깃 유무(데스크톱은 후처리 버퍼, 모바일은 캔버스)에도 있었다. 에러가 나지 않는 실패라 화면으로는 알 수 없고, 링크된 프로그램 수로 확인한다(데스크톱 47, 모바일 36). 이 작업을 하면서 위 문단의 결론도 고쳤다. 광원이 많은 것은 FPS 에는 영향이 없었지만 컴파일 시간에는 비례한다. three 가 광원 반복문을 소스에서 펼치기 때문이고, 포인트 광원 반복을 10개에서 1개로 자른 실험에서 변종당 600ms 가 200ms 가 됐다. [`VillageScene.tsx` 의 `SceneWarmup`](src/components/village/VillageScene.tsx).
 
-**NPC 관계는 규칙이 정하고, 모델은 대사만 쓴다.** 처음엔 두 NPC 가 마주치면 모델에게 "대사를 쓰고 둘 사이가 얼마나 바뀌었는지도 네가 정해라"고 시켰다. 모델은 소설가라 거의 언제나 훈훈하게 끝냈고, 친밀도는 오르기만 해서 전원 절친으로 수렴했다. 싸운 직후 기분을 `excited` 로 보낸 적도 있다([`docs/NPC_SOCIETY.md`](docs/NPC_SOCIETY.md)). 지금 `POST /npc/encounter`([`main.py#L522`](backend/app/main.py#L522)) 는 먼저 순수 함수 `decide_outcome` 이 결과를 정한다 — 기분 궁합, 오늘 활동의 공통 화제, 12% 확률의 사건, 공통 친구·적에 따른 편 들기를 더해 ±5 로 자른다([`relationship_rules.py#L268-L326`](backend/app/services/relationship_rules.py#L268-L326)). 모델은 그 사건이 드러나는 4줄만 쓰고, 실패하면 사건 종류별 폴백 대사가 나간다. 모델이 돌려주는 `relationship`/`state_changes` 는 읽지 않는다. 대가는 규칙이 못 만드는 사건은 생기지 않는다는 것, 얻은 것은 `tests/test_relationship_rules.py` 로 잠글 수 있다는 것. 같은 원칙이 공방 견적에도 있다 — 모델이 낸 금액은 규칙 기준선의 0.6~1.8배 안으로만 허용한다([`commission_service.py#L163-L179`](backend/app/services/commission_service.py#L163-L179)). 그 금액은 관리자 접수함에만 보이고 손님 화면에는 예상 기간만 찍는다(2026-10-18. 채용 심사자가 "AI 견적 창구"로 읽는 걸 피하려고 뺐다). 공방 3단계에서 네 직군 에이전트가 파일을 쓰더라도 진행 권한은 관리자의 [`gate.apply_gate()`](backend/app/agents/gate.py#L166-L200) 하나뿐이고, 도구 호출은 `can_use_tool` 콜백이 경로 단위로 막는다([`runner.py#L10-L22`](backend/app/agents/runner.py#L10-L22) — `acceptEdits` 나 `allowed_tools` 에 이름을 넣는 순간 콜백이 조용히 건너뛰어진다는 함정 포함).
+**NPC 관계는 규칙이 정하고, 모델은 대사만 쓴다.** 처음엔 두 NPC 가 마주치면 모델에게 "대사를 쓰고 둘 사이가 얼마나 바뀌었는지도 네가 정해라"고 시켰다. 모델은 소설가라 거의 언제나 훈훈하게 끝냈고, 친밀도는 오르기만 해서 전원 절친으로 수렴했다. 싸운 직후 기분을 `excited` 로 보낸 적도 있다([`docs/NPC_SOCIETY.md`](docs/NPC_SOCIETY.md)). 지금 `POST /npc/encounter`([`main.py#L530`](backend/app/main.py#L530)) 는 먼저 순수 함수 `decide_outcome` 이 결과를 정한다 — 기분 궁합, 오늘 활동의 공통 화제, 12% 확률의 사건, 공통 친구·적에 따른 편 들기를 더해 ±5 로 자른다([`relationship_rules.py#L268-L326`](backend/app/services/relationship_rules.py#L268-L326)). 모델은 그 사건이 드러나는 4줄만 쓰고, 실패하면 사건 종류별 폴백 대사가 나간다. 모델이 돌려주는 `relationship`/`state_changes` 는 읽지 않는다. 대가는 규칙이 못 만드는 사건은 생기지 않는다는 것, 얻은 것은 `tests/test_relationship_rules.py` 로 잠글 수 있다는 것. 같은 원칙이 공방 견적에도 있다 — 모델이 낸 금액은 규칙 기준선의 0.6~1.8배 안으로만 허용한다([`commission_service.py#L163-L179`](backend/app/services/commission_service.py#L163-L179)). 그 금액은 관리자 접수함에만 보이고 손님 화면에는 예상 기간만 찍는다(2026-10-18. 채용 심사자가 "AI 견적 창구"로 읽는 걸 피하려고 뺐다). 공방 3단계에서 네 직군 에이전트가 파일을 쓰더라도 진행 권한은 관리자의 [`gate.apply_gate()`](backend/app/agents/gate.py#L166-L200) 하나뿐이고, 도구 호출은 `can_use_tool` 콜백이 경로 단위로 막는다([`runner.py#L10-L22`](backend/app/agents/runner.py#L10-L22) — `acceptEdits` 나 `allowed_tools` 에 이름을 넣는 순간 콜백이 조용히 건너뛰어진다는 함정 포함).
+
+**경력 안내는 근거가 약하면 모델을 부르지 않고, 부른 뒤에도 답을 한 번 거른다.** 이력서에 붙인 질의응답이 틀린 경력을 말하면 이력서 전체를 못 믿게 된다. 그래서 순서를 검색, 근거 판정, 모델, 숫자 검사로 잡았다. 여러 프로젝트에 걸친 넓은 질문은 모델이 문장을 쓰지 않는다. 근거 문장에 번호를 붙여 주고 모델은 번호만 고르며, 글은 코드가 기록의 문장을 그대로 붙인다([`career_service.py`](backend/app/services/career_service.py) 의 `resolve_points`). 이렇게 바꾼 것은 68개 답을 직접 읽은 뒤다. 문자열 채점은 다 통과했는데 3개가 기록과 달랐다. 고치지 못하고 남은 3.1초를 「3.1초로 개선」이라 쓰고, 취득일을 유효기간이라 썼다. 답의 문장을 모델에게 한 번 더 검사시키는 단계도 만들어 봤지만 맞는 문장을 빼고 틀린 문장을 통과시켜서 걷어냈다. 조각이 517개라 검색은 순수 파이썬 BM25 와 256차원 임베딩의 역순위 합이고 벡터 DB 는 없다. 답에 근거 조각에 없는 숫자가 있으면 답을 버리고 찾은 조각만 보여 준다([`career_guard.py`](backend/app/services/career_guard.py)). 키가 없거나 호출이 실패해도 조각은 나온다. 임베딩 유사도만으로는 「쿠버네티스 경험」 같은 질문을 거를 수 없었다(답할 수 있는 질문 0.41~0.76, 없는 질문 0.29~0.51 로 겹친다). 문턱은 확실히 무관한 질문에서 호출을 아끼는 데만 쓰고 나머지는 모델이 근거를 읽고 없다고 답하게 했다. 말뭉치는 화면이 읽는 데이터 파일에서 만들어서 문구를 고치고 [`build-career-corpus.mjs`](scripts/build-career-corpus.mjs) 를 다시 돌리면 답도 따라온다. 처음 만든 말뭉치에는 `resume.ts` 의 증빙 파일 경로와 자격번호가 들어갔다. 지금은 그 칸을 건너뛰고, 경로나 번호 모양이 조각에 있으면 스크립트가 실패한다.
 
 ## 잰 것
 
@@ -68,11 +72,13 @@ flowchart LR
 | 라우트 분리 전 첫 화면 | GLB 87개 · 20.7 MB | 인트로 오버레이 뒤에서 마을이 통째로 뜨던 구조 |
 | 광원 개수 변동 시 | 셰이더 프로그램 +19개 · 3~7초 멈춤 · 입장 후 40초 5.5→16.9 fps | 개발 PC. NPC 행동을 막아 개수를 고정한 같은 장면은 10초 만에 44~50 fps, 최악 프레임 110~150 ms |
 | 마을 첫 방문 로딩 | 17.6~22.5초 → 6.1~7.3초 · 최장 멈춤 5.5~6.1초 → 1.2~1.4초 | 2026-09-20 프로덕션 빌드 · 셰이더 캐시 없는 새 프로필 · 개발 PC(Intel Arc) 1280×800 · 타이틀이 뜨기까지. 모바일 폭(390px)은 12.5초 → 6.0초 |
-| 백엔드 | 라우트 65 · pytest 258 | 2026-09-07 `backend/app/main.py` 데코레이터 수 · `backend/tests/` 의 `def test_` 수 |
+| 경력 안내 평가 | 68개 답을 읽어 기록과 대조: 기록과 다른 답 3 → 고친 뒤 찾지 못함. 문자열 채점: 맞추는 데 쓴 44문항 42 · 쓰지 않은 24문항 19 | 2026-11-14 로컬 · gpt-4.1-mini · 문자열 대조 채점. 13문항의 한 건은 있는 내용을 없다고 답한 것. 조건과 한계는 [`docs/CAREER_QA_REPORT.md`](docs/CAREER_QA_REPORT.md) |
+| 백엔드 | 라우트 70 · pytest 함수 300(케이스 375) | 2026-11-14 `backend/app/main.py` 데코레이터 수 · `backend/tests/` 의 `def test_` 수 · 케이스는 `pytest --collect-only` (2026-09-07 에는 65 · 258) |
 
-## 알고 있는 빚
+## 아직 못 한 것
 
-- 프론트 테스트가 없다. 백엔드 pytest 258개는 순수 로직(마을 상태 파생·관계 규칙·게이트·견적 클램프)과 일부 라우트 스모크만 덮고, OpenAI 를 부르는 경로는 안 덮는다.
+- 프론트 테스트가 없다. 백엔드 pytest 함수 286개는 순수 로직(마을 상태 파생·관계 규칙·게이트·견적 클램프)과 일부 라우트 스모크만 덮고, OpenAI 를 부르는 경로는 안 덮는다.
+- 경력 안내의 평가 문항이 68개뿐이고 채점이 문자열 대조다. 숫자 검사는 10 이하 정수를 보지 않고 문장의 뜻은 못 본다. 답을 읽고 대조한 사람은 만든 쪽이라 본인 검토가 남았다. 좁은 질문의 답은 모델이 쓴 문장이고 뜻이 근거와 맞는지 보는 장치가 없다. 넓은 질문은 기록 문장을 그대로 붙여서 틀린 내용은 없지만 질문과 덜 맞는 줄이 섞이거나 한 프로젝트만 들고 끝난다. 배포 서버에서는 아직 돌려 보지 않았고, 말뭉치는 문구를 고칠 때마다 손으로 다시 만들어야 한다.
 - 저장소가 무겁다. `public/models/props/raw/` 의 Meshy 원본 GLB 14개(217 MB)와 옛 CRA 포트폴리오 이미지 131장(158 MB)이 그대로 추적되고 있다. `.gitignore` 주석은 raw 를 넣지 말라고 적어 두고 정작 넣었다.
 - 기본 브랜치가 `master`(템플릿 포크)다. Vercel·Railway 도 처음엔 master 를 잡아 매번 손으로 `final` 로 바꿨다. 기본 브랜치 변경이 남아 있다.
 - `src/App.js`, `src/index.js`, `src/containers/`, `src/components/` 의 소문자 폴더들(`header`·`footer`·`portfolio` 등), 루트의 `fetch.js` 는 옛 CRA 포트폴리오다. 빌드 대상이 아니고(`tsconfig` 는 `src/**/*.ts(x)` 만 본다) 참고용으로 남겨 뒀다. `.github/workflows/pages.yml` 도 그 시절 것이다.
@@ -108,6 +114,7 @@ npm install
 npm run dev          # http://localhost:3000
 npm run build && npm run start
 npm run typecheck    # tsc --noEmit — lint 스크립트와 JS 테스트 러너는 없다
+npm run career:corpus -- --embed   # 경력 안내 말뭉치와 임베딩을 사이트 데이터에서 다시 만든다(문구를 고친 뒤)
 npm run resume:pdf   # src/data/resume.ts 에서 A4 PDF(현재 5쪽). --private 는 resume/phone.local.txt 의 번호를 넣은 제출용 사본(커밋 안 함)
 npm run optimize     # public/models 의 GLB 압축 (scripts/optimize-glb.mjs)
 ```
@@ -123,7 +130,7 @@ npm run optimize     # public/models 의 GLB 압축 (scripts/optimize-glb.mjs)
 src/app/            라우트 — page(착륙장) · village · resume · atelier · admin · api/props(dev 전용 배치 편집)
 src/components/     village(R3F 씬·NPC·건물·HUD) · ui(패널·전시실·공방) · interior · admin — 소문자 폴더는 옛 CRA
 src/data · src/lib  이력서·프로젝트·NPC 명단·대본 데이터 · constants(건물 배치) · liveApi(백엔드 호출)
-backend/            app/main.py(라우트 65) · app/services/(활동→마을 상태·NPC 대화·관계·공방) · app/agents/(공방 3단계) · tests/
+backend/            app/main.py(라우트 70) · app/services/(활동→마을 상태·NPC 대화·관계·공방) · app/agents/(공방 3단계) · tests/
 public/models/      최적화된 GLB(건물·소품·캐릭터) — raw/ 는 원본
 docs/               PROJECT_DOCUMENTATION · NPC_SOCIETY · COMMISSION_ATELIER · ATELIER_GUIDE · screenshots
 ```

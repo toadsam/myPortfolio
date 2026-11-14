@@ -28,7 +28,10 @@
 import dynamic from "next/dynamic";
 import {useRouter} from "next/navigation";
 import {useCallback, useState} from "react";
-import {TicketLanding} from "@/components/ui/landing/TicketLanding";
+import {pushWithTransition} from "@/components/ui/landing/pushWithTransition";
+// 2026-11-12 — 표 착륙장(`TicketLanding`)에서 카드 착륙장으로. 이력서(`ResumeV2`)와
+// 같은 흰 바탕·인디고 토큰이다. 무게 규칙(three 0, `@/data/hero` 만)은 그대로 지킨다.
+import {CardLanding} from "@/components/ui/landing/CardLanding";
 import {useImmersiveCapable} from "@/hooks/useImmersiveCapable";
 
 /**
@@ -72,7 +75,7 @@ export default function Home() {
   // 아직 모르면(첫 렌더) 2D 로 둔다 — 접수가 끝까지 되는 쪽이 안전한 기본값이다.
   const openCommission = useCallback(() => {
     if (immersive) {
-      router.push("/atelier");
+      pushWithTransition(router, "/atelier");
       return;
     }
     setCommissionOpen(true);
@@ -87,10 +90,11 @@ export default function Home() {
 
   return (
     <>
-      <TicketLanding
-        onEnterVillage={() => router.push("/village")}
+      <CardLanding
+        onEnterVillage={() => pushWithTransition(router, "/village")}
         onOpenCommission={openCommission}
-        onOpenResume={() => router.push("/resume")}
+        onOpenResume={() => pushWithTransition(router, "/resume")}
+        onPrepareResume={() => router.prefetch("/resume")}
         onPrepareVillage={prepareVillage}
         onPrepareCommission={prepareCommission}
       />

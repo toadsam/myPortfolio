@@ -31,7 +31,7 @@ function WalkEmoteBarImpl() {
   );
 
   return (
-    <div className="pointer-events-auto absolute bottom-[5.25rem] left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-xl border border-[#7a5a38]/55 bg-[#0b1626]/85 px-2.5 py-2 backdrop-blur-md md:bottom-[5.75rem]">
+    <div className="pointer-events-auto absolute bottom-[5.25rem] left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-[22px] border border-[#3a3f4d]/55 bg-[#12141d]/85 px-2.5 py-2 backdrop-blur-md md:bottom-[5.75rem]">
       {PLAYER_EMOTES.map((e: PlayerEmote, i) => {
         const on = active === e.id;
         return (
@@ -44,14 +44,14 @@ function WalkEmoteBarImpl() {
             onClick={() => togglePlayerEmote(e.id)}
             className={
               on
-                ? "relative flex h-9 w-9 items-center justify-center rounded-lg border border-[#e2c078] bg-[#e2c078]/18 text-base shadow-inner transition active:scale-90"
-                : "relative flex h-9 w-9 items-center justify-center rounded-lg border border-[#7a5a38]/55 bg-[#13223a]/80 text-base transition hover:border-[#e2c078]/80 hover:bg-[#e2c078]/10 active:scale-90"
+                ? "relative flex h-9 w-9 items-center justify-center rounded-2xl border border-[#c3c0f7] bg-[#c3c0f7]/18 text-base shadow-inner transition active:scale-90"
+                : "relative flex h-9 w-9 items-center justify-center rounded-2xl border border-[#3a3f4d]/55 bg-[#13223a]/80 text-base transition hover:border-[#c3c0f7]/80 hover:bg-[#c3c0f7]/10 active:scale-90"
             }
           >
             <span aria-hidden>{e.icon}</span>
             <span
               aria-hidden
-              className="absolute -bottom-0.5 -right-0.5 rounded bg-[#0b1626] px-1 font-mono text-[9px] font-black leading-tight text-[#e2c078]/75"
+              className="absolute -bottom-0.5 -right-0.5 rounded bg-[#12141d] px-1 font-mono text-[9px] font-black leading-tight text-[#c3c0f7]/75"
             >
               {emoteHotkey(i).replace("Digit", "")}
             </span>

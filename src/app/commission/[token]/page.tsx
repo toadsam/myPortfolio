@@ -33,6 +33,9 @@ import {CommissionDesk} from "@/components/ui/CommissionDesk";
 import {fetchCommissionTrack} from "@/lib/liveApi";
 import type {CommissionTrack} from "@/types/live";
 
+// 데스크가 뜨기 전(불러오는 중·못 찾음)에도 같은 흰 톤이어야 해서 여기서도 싣는다.
+import "@/components/ui/commission/commissionDesk.css";
+
 type LoadState =
   | {phase: "loading"}
   | {phase: "ready"; track: CommissionTrack}
@@ -69,29 +72,38 @@ export default function CommissionTrackPage() {
   const goHome = useCallback(() => router.push("/"), [router]);
 
   return (
-    <main className="min-h-dvh bg-[#0b1220]">
+    <main className="cd-page min-h-dvh">
       {state.phase === "loading" ? (
         <Centered>
-          <p className="text-[13px] text-[#a9bdd6]/70">
-            공방 문을 여는 중이에요…
-          </p>
+          <p className="cd-note text-[15px]">공방 문을 여는 중이에요…</p>
         </Centered>
       ) : null}
 
       {state.phase === "missing" ? (
         <Centered>
-          <span className="v-lantern-glow text-4xl">🕯️</span>
-          <p className="v-panel-title text-[17px]">
+          <span className="cd-ico is-lg" aria-hidden="true">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.5-3.5" />
+            </svg>
+          </span>
+          <p className="cd-title text-center text-[24px]">
             이 링크로는 접수 내역을 찾을 수 없어요
           </p>
-          <p className="max-w-[420px] text-center text-[12px] leading-relaxed text-[#a9bdd6]/70">
+          <p className="cd-note max-w-[440px] text-center text-[15px]">
             주소가 잘리진 않았는지 확인해 주세요. 접수하신 뒤 받은 링크를 그대로
             열어야 열립니다.
           </p>
-          <Link
-            href="/"
-            className="mt-1 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-5 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25"
-          >
+          <Link href="/" className="cd-btn is-accent mt-1">
             처음으로
           </Link>
         </Centered>

@@ -1,0 +1,2161 @@
+/*
+ * /resume v2 — 승인된 시안(c-family-v6.html)의 CSS 를 그대로 옮겼다.
+ *
+ * 모든 선택자는 .rv2 아래로 가뒀다. .top·.wrap·.pill 같은 흔한 이름이 다른 화면
+ * CSS 와 부딪혀 배치가 깨진 적이 있다. body/html 규칙은 두지 않고 바탕은 .rv2 가
+ * 맡는다. 키프레임 이름도 전역이라 rv2- 를 붙였다.
+ * 시안과 다른 곳: .ptile h3 → .ptile .ph3, .ntile .src p → .ntile .src .srcp
+ * (button 안에 h3·p 를 두면 React 가 중첩 경고를 낸다). Tailwind preflight 가
+ * img·svg 를 block 으로 바꾸므로 인라인 기본값을 되돌린다.
+ */
+
+/* 배치: 흰 바탕에 큼직한 굵은 글씨와 아주 둥근 모서리. 위에는 떠 있는 알약 내비게이션. 프로젝트는 화면 아래에 떠오르는 둥근 판 안에서 단계로 넘겨 본다. 밝은 한 가지 모습, 강조색은 인디고(#4f46e5) 하나. 시안은 토스 파랑(#2f6bff)이었고 2026-11-12 에 본인이 인디고로 골랐다 — 토스와 갈라지면서 심사자에게 거부감이 없는 색. */
+.rv2 {
+  color-scheme: light;
+  --bg: #ffffff;
+  --fg: #0e1116;
+  --sub: #5b6472;
+  --faint: #98a1ae;
+  --line: #eceef2;
+  --soft: #f4f5f7;
+  --accent: #4f46e5;
+  --accent-press: #2a1fe0;
+  --accent-soft: #eae9fc;
+  /* 떠 있는 물건·작은 그림의 밝은 두 단계. 강조색과 같은 색상(243°)에서 밝기만 다르다 */
+  --accent-mid: #aeaaf3;
+  --accent-light: #d9d7f9;
+  --accent-rgb: 79, 70, 229;
+  --on-accent: #ffffff;
+  --font: var(--font-nunito), var(--font-body-kr), "Noto Sans KR", -apple-system,
+    "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur: 0.55s;
+  --dur-in: 0.65s;
+}
+@supports (transition-timing-function: linear(0, 1)) {
+  .rv2 {
+    --ease-pop: linear(
+      0,
+      0.009,
+      0.035 2.1%,
+      0.141,
+      0.281 6.7%,
+      0.723 12.9%,
+      0.938 16.7%,
+      1.017,
+      1.077,
+      1.121,
+      1.149 24.3%,
+      1.159,
+      1.163,
+      1.161,
+      1.154 29.9%,
+      1.129 32.8%,
+      1.051 39.6%,
+      1.017 43.1%,
+      0.991,
+      0.977 51%,
+      0.974 53.8%,
+      0.975 57.1%,
+      0.997 69.8%,
+      1.003 76.9%,
+      1.004 83.8%,
+      1
+    );
+  }
+}
+.rv2,
+.rv2 * {
+  box-sizing: border-box;
+}
+.rv2 [hidden] {
+  display: none !important;
+}
+.rv2 img {
+  max-width: 100%;
+  display: inline;
+  vertical-align: baseline;
+}
+.rv2 svg {
+  display: inline;
+  vertical-align: baseline;
+}
+/* 시안의 body 규칙. 쌓임 맥락을 만들어 배경 점(z-index:-1)이 이 바탕 위에 그려지게 한다 */
+.rv2 {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.6;
+  word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+}
+.rv2 button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: inherit;
+}
+.rv2 a {
+  color: inherit;
+}
+.rv2 :focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 14px;
+}
+.rv2 h1,
+.rv2 h2,
+.rv2 h3,
+.rv2 p,
+.rv2 dl,
+.rv2 dd,
+.rv2 ul {
+  margin: 0;
+}
+.rv2 .wrap {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-left: max(18px, env(safe-area-inset-left, 0px));
+  padding-right: max(18px, env(safe-area-inset-right, 0px));
+}
+.rv2 .num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+.rv2 .lbl {
+  display: inline-block;
+}
+.rv2 .press {
+  transition: transform var(--dur) var(--ease-pop);
+}
+.rv2 .press:active {
+  transform: scale(0.94);
+  transition-duration: 0.09s;
+  transition-timing-function: ease-out;
+}
+
+/* 알약 내비게이션 */
+.rv2 .pill {
+  position: fixed;
+  z-index: 30;
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px;
+  max-width: calc(100% - 20px);
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 99px;
+  box-shadow: 0 0 0 1px var(--line), 0 10px 30px rgba(10, 20, 40, 0.1);
+}
+.rv2 .pill a,
+.rv2 .pill button {
+  position: relative;
+  z-index: 1;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 99px;
+  font-size: 13.5px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--sub);
+  transition: color 0.2s, transform var(--dur) var(--ease-pop);
+}
+.rv2 .pill button[aria-current="true"] {
+  color: var(--fg);
+}
+.rv2 .pill .back {
+  color: var(--faint);
+  padding: 0 10px;
+}
+.rv2 .pill .back span {
+  display: none;
+}
+.rv2 .pill .ind {
+  position: absolute;
+  z-index: 0;
+  top: 5px;
+  left: 0;
+  height: 36px;
+  width: 0;
+  border-radius: 99px;
+  background: var(--soft);
+  transition: transform var(--dur) var(--ease-pop),
+    width var(--dur) var(--ease-pop);
+}
+.rv2 .pill .pdf {
+  background: var(--fg);
+  color: var(--bg);
+  overflow: hidden;
+  margin-left: 4px;
+}
+
+/* 히어로 */
+.rv2 .hero {
+  position: relative;
+  padding-block: 112px 30px;
+  text-align: center;
+}
+.rv2 .eyebrow {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--accent);
+}
+.rv2 .hero h1 {
+  font-size: clamp(33px, 7.4vw, 60px);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 1.16;
+  max-width: 11.2em;
+  margin: 12px auto 0;
+  text-wrap: balance;
+}
+.rv2 .hero h1 .w {
+  display: inline-block;
+  white-space: pre;
+}
+.rv2 .hero h1.play .w {
+  animation: rv2-wordin var(--dur-in) var(--ease-pop) both;
+  animation-delay: calc(var(--i) * 50ms);
+}
+@keyframes rv2-wordin {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em) scale(0.9);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+.rv2 .who {
+  margin-top: 16px;
+  color: var(--sub);
+  font-size: 17px;
+}
+.rv2 .who b {
+  color: var(--fg);
+  font-weight: 800;
+}
+.rv2 .chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.rv2 .chip {
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 99px;
+  background: var(--soft);
+  color: var(--sub);
+}
+.rv2 .chip.on {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.rv2 .cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+.rv2 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 54px;
+  padding: 0 26px;
+  border-radius: 99px;
+  font-weight: 800;
+  font-size: 16px;
+  background: var(--accent);
+  color: var(--on-accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-decoration: none;
+}
+.rv2 .btn:hover {
+  background: var(--accent-press);
+}
+.rv2 .btn.soft {
+  background: var(--soft);
+  color: var(--fg);
+}
+.rv2 .btn.soft:hover {
+  background: var(--line);
+}
+.rv2 .btn.sm {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 15px;
+}
+/* 떠 있는 그림 */
+.rv2 .floaters {
+  display: flex;
+  justify-content: center;
+  margin-top: 38px;
+  padding-inline: 14px;
+}
+.rv2 .fl {
+  flex: none;
+  width: clamp(92px, 25vw, 168px);
+  margin-inline: -12px;
+  transform: translate(
+      calc(var(--px, 0) * var(--d, 1) * 1px),
+      calc(var(--py, 0) * var(--d, 1) * 1px)
+    )
+    rotate(var(--r, 0deg));
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.rv2 .fl:nth-child(n + 5) {
+  display: none;
+}
+.rv2 .fl-in {
+  display: block;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--soft);
+  box-shadow: 0 0 0 1px var(--line), 0 14px 34px rgba(10, 20, 40, 0.16);
+  animation: rv2-bob var(--t, 7s) ease-in-out infinite alternate;
+  animation-delay: var(--dl, 0s);
+}
+.rv2 .fl img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform var(--dur) var(--ease-pop);
+}
+.rv2 .fl:hover img {
+  transform: scale(1.07);
+}
+.rv2 .fl:active .fl-in {
+  scale: 0.94;
+}
+@keyframes rv2-bob {
+  from {
+    transform: translateY(-7px);
+  }
+  to {
+    transform: translateY(7px);
+  }
+}
+
+/* 구역 */
+.rv2 section {
+  padding-block: 44px 0;
+}
+.rv2 .sec-h {
+  font-size: clamp(26px, 5.2vw, 40px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  text-align: center;
+  text-wrap: balance;
+}
+.rv2 .sec-p {
+  color: var(--sub);
+  font-size: 15.5px;
+  margin-top: 6px;
+  text-align: center;
+}
+.rv2 .sec-body {
+  margin-top: 22px;
+}
+.rv2 .rv-wait {
+  opacity: 0;
+  transform: translateY(26px) scale(0.97);
+}
+.rv2 .rv-in {
+  animation: rv2-rise var(--dur-in) var(--ease-pop) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes rv2-rise {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 숫자 */
+.rv2 .nums {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.rv2 .ntile {
+  display: block;
+  width: 100%;
+  background: var(--soft);
+  border-radius: 30px;
+  padding: 20px 18px 16px;
+}
+.rv2 .ntile .from {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent);
+}
+.rv2 .ntile .big {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  margin-top: 6px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+.rv2 .ntile .big .num {
+  font-size: clamp(30px, 8vw, 50px);
+  line-height: 1;
+  display: inline-flex;
+}
+.rv2 .ntile .big .unit {
+  font-size: 16px;
+  color: var(--sub);
+  font-weight: 800;
+}
+.rv2 .dg {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+}
+.rv2 .dg-col {
+  display: block;
+  transition: transform 1s var(--ease-pop);
+  transition-delay: calc(var(--k, 0) * 70ms);
+}
+.rv2 .dg-col span {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+.rv2 .ntile .lab {
+  font-size: 14.5px;
+  color: var(--sub);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-weight: 500;
+}
+.rv2 .chev {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  transition: transform var(--dur) var(--ease-pop);
+  color: var(--faint);
+}
+.rv2 .ntile[aria-expanded="true"] .chev {
+  transform: rotate(180deg);
+}
+.rv2 .ntile .src {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--dur) var(--ease-pop);
+}
+.rv2 .ntile[aria-expanded="true"] .src {
+  grid-template-rows: 1fr;
+}
+.rv2 .ntile .src > span {
+  display: block;
+  overflow: hidden;
+  min-height: 0;
+}
+.rv2 .ntile .src .srcp {
+  display: block;
+  font-size: 12.5px;
+  color: var(--sub);
+  border-top: 1px solid var(--line);
+  margin-top: 12px;
+  padding-top: 10px;
+  line-height: 1.5;
+}
+
+/* 프로젝트 타일 */
+.rv2 .tiles {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+.rv2 .ptile {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: var(--soft);
+  border-radius: 34px;
+  overflow: hidden;
+  transition: transform var(--dur) var(--ease-pop), box-shadow 0.3s;
+}
+.rv2 .ptile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 44px rgba(10, 20, 40, 0.12);
+}
+.rv2 .ptile:active {
+  transform: scale(0.97);
+  transition-duration: 0.09s;
+}
+.rv2 .ptile .pic {
+  display: block;
+  overflow: hidden;
+  margin: 10px 10px 0;
+  border-radius: 26px;
+  background: var(--line);
+}
+.rv2 .ptile img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.6s var(--ease-pop);
+}
+.rv2 .ptile:hover img {
+  transform: scale(1.05);
+}
+.rv2 .ptile .body {
+  display: block;
+  padding: 16px 20px 20px;
+}
+.rv2 .ptile .ph3 {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.rv2 .badge {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: var(--bg);
+  color: var(--sub);
+  white-space: nowrap;
+}
+.rv2 .badge.on {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.rv2 .ptile .short {
+  display: block;
+  font-size: 15px;
+  color: var(--sub);
+  margin-top: 5px;
+}
+.rv2 .ptile .key {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--sub);
+}
+.rv2 .ptile .key b {
+  color: var(--fg);
+  font-weight: 900;
+  font-size: 18px;
+  margin-right: 6px;
+}
+
+/* 목록 카드 */
+.rv2 .card {
+  background: var(--soft);
+  border-radius: 32px;
+  padding: 8px 22px;
+}
+.rv2 .card h3 {
+  font-size: 13px;
+  color: var(--faint);
+  font-weight: 800;
+  padding: 16px 0 0;
+  letter-spacing: 0.02em;
+}
+.rv2 .row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+}
+.rv2 .row:last-child {
+  border-bottom: 0;
+}
+.rv2 .row:has(.logo) {
+  grid-template-columns: 44px minmax(0, 1fr);
+  column-gap: 13px;
+}
+.rv2 .row:has(.logo) > :not(.logo) {
+  grid-column: 2;
+}
+.rv2 .logo {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  align-self: start;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: contain;
+  padding: 4px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.rv2 .row .when {
+  font-size: 12.5px;
+  color: var(--faint);
+  font-weight: 800;
+}
+.rv2 .row .what {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+.rv2 .row .how {
+  font-size: 14.5px;
+  color: var(--sub);
+}
+.rv2 .led {
+  justify-self: start;
+  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 800;
+  padding: 8px 14px;
+  border-radius: 99px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.rv2 .led svg {
+  width: 14px;
+  height: 14px;
+}
+.rv2 .stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.rv2 .stack b,
+.rv2 .stack i {
+  font-style: normal;
+  font-size: 13px;
+  padding: 4px 11px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.rv2 .stack b {
+  background: var(--fg);
+  color: var(--bg);
+  font-weight: 800;
+}
+.rv2 .stack i {
+  background: var(--bg);
+  color: var(--sub);
+  font-weight: 500;
+}
+.rv2 .two {
+  display: grid;
+  gap: 14px;
+}
+.rv2 .others {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.rv2 .other {
+  background: var(--soft);
+  border-radius: 26px;
+  overflow: hidden;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transition: transform var(--dur, 0.55s) var(--ease-pop), box-shadow 0.3s;
+}
+.rv2 .other:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(10, 20, 40, 0.12);
+}
+.rv2 .other:hover img {
+  transform: scale(1.03);
+}
+.rv2 .other img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease-pop);
+}
+.rv2 .other b {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 800;
+  padding: 12px 14px 0;
+  line-height: 1.35;
+}
+.rv2 .other span {
+  display: block;
+  font-size: 13px;
+  color: var(--sub);
+  padding: 2px 14px 14px;
+  line-height: 1.45;
+}
+
+/* 연락 */
+.rv2 .contact {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: 40px;
+  padding: 44px 22px;
+  text-align: center;
+}
+.rv2 .contact h2 {
+  font-size: clamp(26px, 5.2vw, 40px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+.rv2 .contact p {
+  margin-top: 8px;
+  opacity: 0.86;
+}
+.rv2 .contact .cta .btn {
+  background: var(--bg);
+  color: var(--fg);
+}
+.rv2 .contact .cta .btn.line {
+  background: none;
+  color: var(--on-accent);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6);
+}
+.rv2 .note {
+  font-size: 13px;
+  color: var(--faint);
+  text-align: center;
+  padding: 26px 0 48px;
+}
+
+/* 떠오르는 판. 위치와 크기는 스크립트가 정한다 */
+.rv2 .scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(10, 14, 22, 0.42);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s;
+}
+.rv2 .scrim.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.rv2 .tray {
+  position: fixed;
+  z-index: 41;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  background: var(--bg);
+  color: var(--fg);
+  border-radius: 36px;
+  overflow: hidden;
+  visibility: hidden;
+  box-shadow: 0 0 0 1px var(--line), 0 30px 90px rgba(10, 20, 40, 0.34);
+}
+.rv2 .tray.on {
+  visibility: visible;
+}
+.rv2 .fit {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.rv2 .grab {
+  flex: none;
+  padding: 10px 0 2px;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  cursor: grab;
+}
+.rv2 .grab i {
+  width: 42px;
+  height: 5px;
+  border-radius: 99px;
+  background: var(--line);
+}
+.rv2 .tray-in {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px 22px 6px;
+  overscroll-behavior: contain;
+}
+.rv2 .tray-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--faint);
+  margin-bottom: 12px;
+}
+.rv2 .tray-top b {
+  color: var(--fg);
+  font-weight: 900;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rv2 .tray h2 {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.rv2 .tray .meta {
+  font-size: 13.5px;
+  color: var(--sub);
+  margin-top: 3px;
+}
+.rv2 .tray .lead {
+  font-size: 16px;
+  margin-top: 10px;
+}
+.rv2 .gal {
+  position: relative;
+  margin-bottom: 16px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--soft);
+}
+.rv2 .gal-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: contain;
+}
+.rv2 .gal-btn {
+  position: absolute;
+  top: 50%;
+  width: 38px;
+  height: 38px;
+  margin-top: -19px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  box-shadow: 0 2px 12px rgba(10, 20, 40, 0.2);
+  transition: transform var(--dur) var(--ease-pop);
+}
+.rv2 .gal-btn:active {
+  transform: scale(0.86);
+}
+.rv2 .gal-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.rv2 .gal-btn.prev {
+  left: 10px;
+}
+.rv2 .gal-btn.next {
+  right: 10px;
+}
+.rv2 .gal-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 9px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+.rv2 .gal-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(14, 17, 22, 0.26);
+  transition: width 0.4s var(--ease-pop);
+}
+.rv2 .gal-dots i.on {
+  width: 18px;
+  background: var(--accent);
+}
+.rv2 .tag {
+  font-size: 12.5px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  color: var(--faint);
+}
+.rv2 .tag.fix {
+  color: var(--accent);
+}
+.rv2 .pf {
+  background: var(--soft);
+  border-radius: 24px;
+  padding: 16px 18px;
+}
+.rv2 .pf.fixed {
+  background: var(--accent-soft);
+}
+.rv2 .pf p {
+  font-size: 16px;
+  margin-top: 3px;
+}
+.rv2 .arrow {
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: var(--faint);
+}
+.rv2 .arrow svg {
+  width: 18px;
+  height: 18px;
+}
+.rv2 .mets {
+  display: grid;
+  gap: 8px;
+}
+.rv2 .met {
+  background: var(--soft);
+  border-radius: 22px;
+  padding: 14px 8px;
+  text-align: center;
+}
+.rv2 .met b {
+  display: block;
+  font-size: clamp(19px, 5.4vw, 25px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.rv2 .met span {
+  display: block;
+  font-size: 12px;
+  color: var(--sub);
+  margin-top: 4px;
+  line-height: 1.35;
+}
+.rv2 .kv {
+  margin-top: 16px;
+}
+.rv2 .kv dt {
+  font-size: 12.5px;
+  font-weight: 900;
+  color: var(--faint);
+}
+.rv2 .kv dd {
+  margin: 2px 0 12px;
+  font-size: 15px;
+}
+.rv2 .kv dd:last-child {
+  margin-bottom: 0;
+}
+.rv2 .step .pf,
+.rv2 .step .met,
+.rv2 .step .lk {
+  animation: rv2-rise var(--dur-in) var(--ease-pop) both;
+  animation-delay: calc(40ms + var(--i, 0) * 70ms);
+}
+.rv2 .lks {
+  display: grid;
+  gap: 8px;
+}
+.rv2 .lk {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--soft);
+  border-radius: 20px;
+  padding: 15px 18px;
+  font-weight: 800;
+  font-size: 15.5px;
+  text-decoration: none;
+  transition: transform var(--dur) var(--ease-pop);
+}
+.rv2 .lk:active {
+  transform: scale(0.96);
+}
+.rv2 .lk svg {
+  width: 15px;
+  height: 15px;
+  color: var(--accent);
+  flex: none;
+}
+.rv2 .tray-foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px calc(16px + env(safe-area-inset-bottom, 0px));
+}
+.rv2 .sdots {
+  display: flex;
+  gap: 6px;
+  margin-right: auto;
+  padding-left: 6px;
+}
+.rv2 .sdots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 99px;
+  background: var(--line);
+  transition: width 0.45s var(--ease-pop), background 0.2s;
+}
+.rv2 .sdots i.on {
+  width: 22px;
+  background: var(--accent);
+}
+.rv2 .tray-foot .btn {
+  height: 48px;
+  padding: 0 22px;
+  font-size: 15.5px;
+}
+.rv2 .tray-foot .btn[hidden] {
+  display: none;
+}
+.rv2 .tray-foot .btn[disabled] {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+@media (min-width: 700px) {
+  .rv2 .pill .back span {
+    display: inline;
+  }
+  .rv2 .pill a,
+  .rv2 .pill button {
+    padding: 0 15px;
+    font-size: 14px;
+  }
+  .rv2 .fl:nth-child(n + 5) {
+    display: block;
+  }
+  .rv2 .fl {
+    margin-inline: -16px;
+  }
+  .rv2 section {
+    padding-block: 76px 0;
+  }
+  .rv2 .nums {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .rv2 .tiles {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .rv2 .ptile {
+    grid-column: span 6;
+  }
+  .rv2 .ptile.w7 {
+    grid-column: span 7;
+  }
+  .rv2 .ptile.w5 {
+    grid-column: span 5;
+  }
+  .rv2 .ptile img {
+    aspect-ratio: auto;
+    height: 250px;
+  }
+  .rv2 .two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+  .rv2 .others {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .rv2 .contact {
+    padding: 64px 30px;
+  }
+}
+@media (min-width: 1180px) {
+  .rv2 .hero {
+    padding-block: 150px 70px;
+  }
+  .rv2 .hero h1 {
+    max-width: 10.6em;
+  }
+  .rv2 .floaters {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    display: block;
+    pointer-events: none;
+  }
+  .rv2 .fl {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w, 186px);
+    margin: 0;
+    pointer-events: auto;
+  }
+  .rv2 .fl.r {
+    left: auto;
+    right: var(--x);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rv2 *,
+  .rv2 *::before,
+  .rv2 *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+  .rv2 .rv-wait {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ───────── v2 ───────── */
+/* 글씨: 제목만 800, 나머지는 400~700. 숫자는 둥근 글꼴 */
+.rv2 .num,
+.rv2 .met b,
+.rv2 .ptile .key b,
+.rv2 .s-num b {
+  font-family: var(--font-nunito), var(--font-body-kr), "Noto Sans KR",
+    sans-serif;
+}
+.rv2 .hero h1,
+.rv2 .sec-h,
+.rv2 .contact h2 {
+  font-weight: 800;
+}
+.rv2 .pill a,
+.rv2 .pill button,
+.rv2 .btn,
+.rv2 .eyebrow,
+.rv2 .badge,
+.rv2 .led,
+.rv2 .lk,
+.rv2 .tag,
+.rv2 .kv dt,
+.rv2 .row .when,
+.rv2 .card h3,
+.rv2 .stack b,
+.rv2 .ptile .ph3,
+.rv2 .row .what,
+.rv2 .other b {
+  font-weight: 700;
+}
+.rv2 .chip {
+  font-weight: 500;
+}
+.rv2 .who b {
+  font-weight: 700;
+}
+.rv2 .ptile .key b,
+.rv2 .met b {
+  font-weight: 800;
+}
+/* 등장은 짧고 차분하게 */
+.rv2 .rv-wait {
+  opacity: 0;
+  transform: translateY(16px);
+}
+.rv2 .rv-in {
+  animation: rv2-rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
+@keyframes rv2-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rv2 .lbl svg {
+  width: 14px;
+  height: 14px;
+  vertical-align: -2px;
+  margin-right: 3px;
+}
+
+/* 메뉴 */
+.rv2 .pill .sumbtn {
+  color: var(--accent);
+  background: var(--accent-soft);
+  margin-left: 4px;
+}
+.rv2 .pill .sumbtn span {
+  display: none;
+}
+@media (max-width: 560px) {
+  .rv2 .pill [data-go="skills"],
+  .rv2 .pill [data-go="contact"] {
+    display: none;
+  }
+}
+
+/* 숫자 표 */
+.rv2 .sec-eyebrow {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+}
+.rv2 .dg {
+  display: inline-block;
+  height: 1.2em;
+  line-height: 1.2;
+  overflow: hidden;
+}
+.rv2 .dg-col {
+  display: block;
+  transition: transform 1s var(--ease-pop);
+  transition-delay: calc(var(--k, 0) * 70ms);
+}
+.rv2 .dg-col span {
+  display: block;
+  height: 1.2em;
+  line-height: 1.2;
+}
+
+/* 기술 공 */
+.rv2 .balls-card {
+  background: var(--soft);
+  border-radius: 32px;
+  overflow: hidden;
+  margin-top: 22px;
+}
+.rv2 .balls {
+  position: relative;
+  height: 250px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-content: center;
+  justify-content: center;
+  padding: 18px;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+.rv2 .ball {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.15;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 99px;
+  user-select: none;
+  -webkit-user-select: none;
+  background: var(--bg);
+  color: var(--accent);
+  box-shadow: 0 0 0 1px var(--line);
+}
+.rv2 .ball[data-big] {
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: none;
+}
+.rv2 .ball.sel {
+  box-shadow: 0 0 0 3px var(--fg);
+}
+.rv2 .balls.live {
+  display: block;
+  padding: 0;
+}
+.rv2 .balls.live .ball {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: grab;
+  will-change: transform;
+}
+.rv2 .ball-out {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 64px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--sub);
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--line);
+  border-radius: 0 0 32px 32px;
+}
+.rv2 .pchip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 99px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 14px;
+}
+.rv2 #skills .card {
+  margin-top: 14px;
+}
+
+/* 끝 인사, 날아가는 종이, 터지는 점 */
+.rv2 .thanks {
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  padding: 34px 0 0;
+}
+.rv2 .thanks.wait {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.rv2 .thanks.in {
+  animation: rv2-rise 0.6s var(--ease-pop) both;
+}
+.rv2 .paper {
+  position: fixed;
+  z-index: 60;
+  width: 18px;
+  height: 24px;
+  border-radius: 4px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1.5px var(--accent), 0 6px 14px rgba(10, 20, 40, 0.2);
+  pointer-events: none;
+}
+.rv2 .paper::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: 8px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  box-shadow: 0 5px 0 var(--accent);
+}
+.rv2 .dot {
+  position: fixed;
+  z-index: 70;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* 판의 제목 줄 */
+.rv2 .tray-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 14px 8px 22px;
+}
+.rv2 .tray-head b {
+  flex: 1;
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rv2 .tray-head .stepname {
+  flex: none;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--faint);
+}
+.rv2 .icon-btn {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--soft);
+  display: grid;
+  place-items: center;
+}
+.rv2 .icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.rv2 .tray-in {
+  padding-top: 2px;
+}
+.rv2 .tray .meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0;
+}
+.rv2 .badge.off {
+  background: var(--soft);
+}
+.rv2 .tray .lead {
+  margin-top: 8px;
+}
+.rv2 .tray-foot .btn {
+  min-width: 96px;
+}
+/* 30초 요약 */
+.rv2 .sum h2 {
+  font-size: 22px;
+  font-weight: 800;
+}
+.rv2 .sum .s-meta {
+  font-size: 13.5px;
+  color: var(--sub);
+  margin-top: 2px;
+}
+.rv2 .s-nums {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.rv2 .s-num {
+  background: var(--soft);
+  border-radius: 16px;
+  padding: 9px 12px;
+}
+.rv2 .s-num b {
+  display: block;
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+.rv2 .s-num span {
+  display: block;
+  font-size: 11.5px;
+  color: var(--sub);
+  line-height: 1.35;
+}
+.rv2 .s-list {
+  display: grid;
+  gap: 6px;
+  margin-top: 12px;
+}
+.rv2 .s-item {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  min-height: 48px;
+  padding: 5px 12px 5px 5px;
+  border-radius: 14px;
+  background: var(--soft);
+  transition: transform var(--dur) var(--ease-pop);
+}
+.rv2 .s-item:active {
+  transform: scale(0.97);
+}
+.rv2 .s-item img {
+  width: 46px;
+  height: 38px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+.rv2 .s-item > span {
+  display: block;
+  min-width: 0;
+}
+.rv2 .s-item b {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.rv2 .s-item span span {
+  display: block;
+  font-size: 12.5px;
+  color: var(--sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rv2 .s-line {
+  font-size: 13px;
+  color: var(--sub);
+  margin-top: 12px;
+}
+.rv2 .s-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.rv2 .s-cta .btn {
+  flex: 1 1 150px;
+  height: 46px;
+  font-size: 14.5px;
+  padding: 0 14px;
+}
+
+@media (min-width: 480px) {
+  .rv2 .s-nums {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (min-width: 700px) {
+  .rv2 .pill .sumbtn span {
+    display: inline;
+  }
+  .rv2 .balls {
+    height: 300px;
+  }
+}
+@media (min-width: 1180px) {
+  .rv2 .hero {
+    padding-block: 150px 70px;
+    min-height: 670px;
+  }
+}
+@keyframes rv2-bob2 {
+  from {
+    translate: 0 -4px;
+  }
+  to {
+    translate: 0 4px;
+  }
+}
+
+/* ───────── v4 ───────── */
+/* 히어로: 파란 물건 여섯 개가 그냥 떠 있다. 할 일은 없고, 올리거나 누르면 꼬리표만 뜬다 */
+.rv2 .obs {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 28px;
+}
+.rv2 .ob {
+  position: relative;
+  flex: 1 1 0;
+  max-width: 60px;
+  aspect-ratio: 1;
+  display: block;
+  border-radius: 22px;
+  translate: var(--px, 0px) var(--py, 0px);
+}
+.rv2 .ob-in {
+  display: block;
+  width: 100%;
+  height: 100%;
+  rotate: var(--r, 0deg);
+  animation: rv2-obfloat var(--t, 7s) ease-in-out infinite alternate;
+  animation-delay: var(--dl, 0s);
+}
+.rv2 .ob svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  transition: scale var(--dur) var(--ease-pop);
+  animation: rv2-obpop 0.7s var(--ease-pop) both;
+  animation-delay: calc(160ms + var(--n, 0) * 90ms);
+}
+.rv2 .ob:hover svg,
+.rv2 .ob:focus-visible svg {
+  scale: 1.1;
+}
+.rv2 .ob:active svg {
+  scale: 0.9;
+  transition-duration: 0.09s;
+}
+@keyframes rv2-obfloat {
+  from {
+    translate: 0 -4px;
+    rotate: calc(var(--r, 0deg) - 1.6deg);
+  }
+  to {
+    translate: 0 5px;
+    rotate: calc(var(--r, 0deg) + 1.6deg);
+  }
+}
+@keyframes rv2-obpop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rv2 .tag {
+  display: none;
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 100%;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fg);
+  background: var(--bg);
+  padding: 6px 12px;
+  border-radius: 99px;
+  box-shadow: 0 0 0 1px var(--line), 0 8px 22px rgba(10, 20, 40, 0.14);
+  pointer-events: none;
+  opacity: 0;
+  translate: -50% -2px;
+  scale: 0.8;
+  transform-origin: 50% 0;
+  transition: opacity 0.15s, scale var(--dur) var(--ease-pop),
+    translate var(--dur) var(--ease-pop);
+}
+.rv2 .ob:hover .tag,
+.rv2 .ob:focus-visible .tag,
+.rv2 .ob.show .tag {
+  opacity: 1;
+  scale: 1;
+  translate: -50% 6px;
+}
+.rv2 .ob-cap {
+  min-height: 22px;
+  margin-top: 8px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  opacity: 0;
+  translate: 0 -4px;
+  transition: opacity 0.2s, translate var(--dur) var(--ease-pop);
+}
+.rv2 .ob-cap.on {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* 숫자 타일 넷 */
+.rv2 .nums {
+  max-width: 1000px;
+  margin: 22px auto 0;
+  align-items: start;
+}
+.rv2 .ntile {
+  text-align: left;
+  transition: transform var(--dur) var(--ease-pop), background 0.2s;
+}
+.rv2 .ntile:hover {
+  background: var(--accent-soft);
+}
+.rv2 .ntile .big {
+  font-weight: 800;
+}
+.rv2 .ntile .big .num {
+  font-weight: 800;
+}
+.rv2 .num.rolling {
+  display: inline-flex;
+  vertical-align: bottom;
+}
+@media (min-width: 760px) {
+  .rv2 .obs {
+    gap: 14px;
+  }
+  .rv2 .ob {
+    max-width: 76px;
+  }
+  .rv2 .nums {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .rv2 .ntile {
+    padding: 22px 22px 18px;
+  }
+}
+@media (min-width: 1180px) {
+  .rv2 .hero {
+    padding-block: 150px 70px;
+    min-height: 650px;
+  }
+  .rv2 .obs {
+    position: absolute;
+    inset: 0 22px;
+    margin: 0;
+    display: block;
+    pointer-events: none;
+  }
+  .rv2 .ob {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w, 124px);
+    height: var(--w, 124px);
+    max-width: none;
+    border-radius: 34px;
+    pointer-events: auto;
+  }
+  .rv2 .ob.r {
+    left: auto;
+    right: var(--x);
+  }
+  .rv2 .tag {
+    display: block;
+  }
+  .rv2 .ob-cap {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rv2 .ob-in,
+  .rv2 .ob svg {
+    animation: none;
+  }
+}
+
+/* ───────── v6: 더 생동감 있게 ───────── */
+/* 등장은 통통 튀게 */
+.rv2 .rv-wait {
+  opacity: 0;
+  transform: translateY(28px) scale(0.96);
+}
+.rv2 .rv-in {
+  animation: rv2-rise6 0.7s var(--ease-pop) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+@keyframes rv2-rise6 {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 입장 연출. 시작 상태는 enter·play 클래스가 있을 때만 숨긴다(서버에서 붙이고 1.4초 뒤 스크립트가 뗀다) */
+.rv2 .pill.enter {
+  animation: rv2-pilldrop 0.7s var(--ease-pop) both;
+}
+@keyframes rv2-pilldrop {
+  from {
+    opacity: 0;
+    translate: -50% -70px;
+  }
+  to {
+    opacity: 1;
+    translate: -50% 0;
+  }
+}
+.rv2 .hero h1.play .w {
+  animation: rv2-wordin 0.62s var(--ease-pop) both;
+  animation-delay: calc(90ms + var(--i) * 45ms);
+}
+.rv2 .hero.enter .eyebrow {
+  animation: rv2-rise6 0.6s var(--ease-pop) both;
+}
+.rv2 .hero.enter .who {
+  animation: rv2-rise6 0.6s var(--ease-pop) both;
+  animation-delay: 0.55s;
+}
+.rv2 .hero.enter .chips .chip {
+  animation: rv2-chipin 0.6s var(--ease-pop) both;
+  animation-delay: calc(0.62s + var(--c, 0) * 60ms);
+}
+.rv2 .hero.enter .chips .chip:nth-child(2) {
+  --c: 1;
+}
+.rv2 .hero.enter .chips .chip:nth-child(3) {
+  --c: 2;
+}
+.rv2 .hero.enter .cta .btn {
+  animation: rv2-chipin 0.65s var(--ease-pop) both;
+  animation-delay: 0.8s;
+}
+.rv2 .hero.enter .cta .btn + .btn {
+  animation-delay: 0.88s;
+}
+@keyframes rv2-chipin {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rv2 .ob svg {
+  animation-duration: 0.6s;
+  animation-delay: calc(120ms + var(--n, 0) * 70ms);
+}
+
+/* 숫자 타일: 올리면 들리며 기울고 숫자가 한 번 더 튄다 */
+.rv2 .ntile {
+  transform: perspective(700px) rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg)) translateY(var(--lift, 0px));
+  transition: transform var(--dur) var(--ease-pop), background 0.2s,
+    box-shadow 0.3s;
+  will-change: transform;
+}
+.rv2 .ntile:hover {
+  box-shadow: 0 16px 36px rgba(var(--accent-rgb), 0.14);
+}
+.rv2 .ntile:active {
+  transform: perspective(700px) rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg)) scale(0.96);
+  transition-duration: 0.09s;
+}
+.rv2 .ntile:hover .big .num {
+  animation: rv2-numpop 0.55s var(--ease-pop);
+}
+@keyframes rv2-numpop {
+  0% {
+    scale: 1;
+  }
+  40% {
+    scale: 1.1;
+  }
+  100% {
+    scale: 1;
+  }
+}
+.rv2 .ntile .src {
+  transition: grid-template-rows 0.6s var(--ease-pop);
+}
+
+/* 프로젝트 타일: 마우스 쪽으로 기울고, 그림이 커지고, 하이라이트가 따라온다 */
+.rv2 .ptile {
+  transform: perspective(900px) rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg)) translateY(var(--lift, 0px));
+  will-change: transform;
+}
+.rv2 .ptile:hover {
+  transform: perspective(900px) rotateX(var(--rx, 0deg))
+    rotateY(var(--ry, 0deg)) translateY(var(--lift, -6px));
+  box-shadow: 0 22px 50px rgba(10, 20, 40, 0.14);
+}
+.rv2 .ptile:active {
+  transform: perspective(900px) scale(0.97);
+  transition-duration: 0.09s;
+}
+.rv2 .ptile .pic {
+  position: relative;
+}
+.rv2 .ptile .shine {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at var(--hx, 50%) var(--hy, 40%),
+    rgba(255, 255, 255, 0.42),
+    rgba(255, 255, 255, 0) 52%
+  );
+  transition: opacity 0.3s;
+}
+.rv2 .ptile:hover .shine {
+  opacity: 1;
+}
+.rv2 .ptile:hover img {
+  transform: scale(1.06);
+}
+
+/* 판이 뜨면 뒤 화면이 물러난다 */
+.rv2 main {
+  transition: transform 0.55s var(--ease-pop), filter 0.4s;
+  transform-origin: 50% calc(var(--sy, 0px) + 50vh);
+}
+.rv2.pushed main {
+  transform: scale(0.98);
+  filter: brightness(0.94);
+}
+
+/* 단계 점 */
+.rv2 .sdots i {
+  transform-origin: left center;
+}
+
+/* 기술 공: 바닥에 닿으면 찌그러진다 */
+.rv2 .balls.live .ball {
+  transform-origin: 50% 100%;
+}
+
+/* 기술 표의 주력 칩은 파랑. 써 본 것은 옅은 바탕 그대로 */
+.rv2 .stack b {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* 활동 → 프로젝트 화살표 */
+.rv2 .led:hover svg {
+  animation: rv2-nudge 0.7s ease-in-out infinite;
+}
+@keyframes rv2-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+/* 연락: 큰 글씨가 통 올라온다 */
+.rv2 .contact.rv-in h2 {
+  animation: rv2-rise6 0.7s var(--ease-pop) both;
+  animation-delay: 0.12s;
+}
+.rv2 .contact.rv-in p {
+  animation: rv2-rise6 0.7s var(--ease-pop) both;
+  animation-delay: 0.22s;
+}
+
+/* 배경: 아주 옅은 파랑 점이 느리게 떠다닌다 */
+.rv2 .bgd {
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(var(--accent-rgb), 0.09),
+    rgba(var(--accent-rgb), 0) 70%
+  );
+  pointer-events: none;
+  animation: rv2-bgdrift var(--t, 28s) ease-in-out infinite alternate;
+  animation-delay: var(--dl, 0s);
+}
+@keyframes rv2-bgdrift {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(var(--dx, 40px), var(--dy, -60px)) scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rv2 .bgd {
+    animation: none;
+  }
+  .rv2 .ntile,
+  .rv2 .ptile {
+    transform: none !important;
+  }
+  .rv2 main {
+    transition: none;
+  }
+}
+.rv2 .lk.detail {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* 사이드 프로젝트 — 대표 프로젝트 카드보다 한참 작은 줄 카드 (2026-11-13 저녁).
+   44px 썸네일 + 제목 + 한 줄. 데스크톱 3열, 휴대폰 1열 */
+.rv2 .subs-h {
+  margin: 44px 0 10px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--sub, #515d70);
+}
+.rv2 .subs-h small {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--sub, #515d70);
+  opacity: 0.8;
+  margin-left: 8px;
+}
+.rv2 .subs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px 14px;
+}
+.rv2 .sub {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 9px 10px;
+  border-radius: 14px;
+  transition: background 0.25s;
+}
+.rv2 .sub:hover {
+  background: var(--soft);
+}
+.rv2 .sub-pic {
+  display: block;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  overflow: hidden;
+  background: var(--accent-soft, #eef0ff);
+}
+.rv2 .sub-pic img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* 썸네일이 없는 카드: 제목 첫 글자 판 */
+.rv2 .sub-mono {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-family: var(--num, inherit);
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--accent, #4f46e5);
+}
+.rv2 .sub-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.rv2 .sub-t {
+  font-size: 13.5px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--fg, #0b0c0f);
+  text-decoration: none;
+  word-break: keep-all;
+}
+.rv2 a.sub-t:hover {
+  color: var(--accent-ink, #2a1fe0);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rv2 .sub-d {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--sub, #515d70);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.rv2 .sub-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 3px;
+}
+.rv2 .sub-links a {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--accent-ink, #2a1fe0);
+  text-decoration: none;
+}
+.rv2 .sub-links a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (min-width: 640px) {
+  .rv2 .subs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1000px) {
+  .rv2 .subs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* 카드 꼬리표: 종류 하나(채움) + 성격 둘 이하(테두리). 제목 위 한 줄. */
+.rv2 .kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+.rv2 .kind,
+.rv2 .facet {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.4;
+  padding: 2px 9px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+.rv2 .kind {
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+}
+.rv2 .facet {
+  background: #fff;
+  color: var(--accent);
+  border: 1px solid var(--accent-soft);
+}
+.rv2 .other .kinds {
+  display: flex;
+  margin: 0;
+  padding: 12px 14px 0;
+}
+.rv2 .other .kind,
+.rv2 .other .facet {
+  display: inline-block;
+  font-size: 11px;
+  padding: 1px 8px;
+  line-height: 1.4;
+}
+.rv2 .other .kind {
+  color: #fff;
+}
+.rv2 .other .facet {
+  color: var(--accent);
+}
+.rv2 .other .kinds + b {
+  padding-top: 7px;
+}
+
+/* 위 타일 여섯은 다섯이 Web Service 라 종류가 구분이 안 된다. 강조를 성격으로 옮긴다:
+   종류는 조용한 테두리, 성격을 채운다. 아래 대표 카드 다섯은 종류가 서로 달라 그대로 둔다. */
+.rv2 .ptile .kind {
+  background: transparent;
+  color: var(--sub);
+  border-color: var(--line);
+}
+.rv2 .ptile .facet {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}

@@ -65,10 +65,10 @@ export function IntakeHud({
           <button
             type="button"
             onClick={onClose}
-            className="v-panel px-3 py-1.5 text-[11px] font-bold text-[#a9bdd6]/80 transition hover:text-[#f3e6c8]"
+            className="v-panel px-3 py-1.5 text-[11px] font-bold text-[#b4bac6]/80 transition hover:text-[#f5f6f8]"
           >
             설문 그만두기{" "}
-            <span className="ml-1 text-[10px] font-normal text-[#a9bdd6]/50">
+            <span className="ml-1 text-[10px] font-normal text-[#b4bac6]/50">
               Esc
             </span>
           </button>
@@ -77,7 +77,7 @@ export function IntakeHud({
             disabled={!ready}
             onClick={() => onFinish({draft: flow.draft, lines: flow.lines})}
             className={`v-panel px-4 py-2 text-[12px] font-black transition active:scale-95 disabled:opacity-40 ${
-              done ? "v-lantern-glow text-[#ff9d38]" : "text-[#f3e6c8]"
+              done ? "v-lantern-glow text-[#8b85f0]" : "text-[#f5f6f8]"
             }`}
           >
             {done

@@ -363,7 +363,7 @@ export const printSummary = {
   points: [
     "화면부터 API · 인증 · DB · 배포까지 한 흐름으로 구현합니다 (AjouFesta · 총학생회 웹)",
     "배포 후 드러나는 문제를 재현해 고칩니다 (HTTPS · CORS credentials · 토큰 재발급 경쟁 상태)",
-    "실사용 피드백과 GA4/GSC 지표를 근거로 고칩니다 (aClub · 총학생회 웹)",
+    "실사용 피드백과 지표를 읽고 판단합니다 (총학생회 웹은 Search Console · aClub 은 GA4)",
     "AI 코딩 도구가 낸 결과는 테스트와 실측으로 확인하고 씁니다 (AjouFesta · 이 포트폴리오)"
   ]
 };
@@ -539,7 +539,7 @@ export const education: EducationItem[] = [
     evidence:
       "바탕 화면/기타파일/기타/훈련확인증.png (HRD-Net · 1,080시간 · 수료일 2023-12-15) · 유니티 캠프 수료.png / 유니티 수료2.png 는 바탕 화면/개발/유니티 게임/ (OneDrive 클라우드 전용)",
     desc: "Unity 게임 개발 과정을 1,080시간 수료했습니다.",
-    bullets: ["최종 팀 프로젝트 TSEROF — Steam 출시"]
+    bullets: ["최종 팀 프로젝트 TSEROF · Steam 출시"]
   },
   {
     // 수료증 2장(2026-09-06 확인): "입문 - 용사가 되자"(ARMY-2302011836) ·
@@ -788,13 +788,15 @@ export const mainProjects: MainProjectCard[] = [
     // 사용자 수가 없는 프로젝트다. FestFlow 에서 "코드량은 능력으로 읽히지
     // 않는다" 며 뺀 기준이 있으므로, **판단의 흔적**(첫 화면을 3D 없이 215KB 로
     // 지킨 것)을 1순위에 두고 API·테스트 수는 규모 근거로 뒤에 둔다.
-    // 63 은 backend/app/main.py 의 라우트 수, 258 은 backend/tests 의 test 함수 수.
+    // 70 은 backend/app/main.py 의 라우트 수, 375 는 pytest 가 수집한 케이스 수(test 함수는 300).
+    // 2026-11-14 다시 셌다. 9월 값(65 · 258)이 남아 있어 상세 페이지(villageStory)와 어긋나 있었다.
     metrics: [
       {value: "215 KB", label: "첫 화면 JS · 3D 모델 0개"},
-      {value: "65", label: "공개·관리자 API"},
-      {value: "258", label: "백엔드 테스트"}
+      {value: "70", label: "공개·관리자 API"},
+      {value: "375", label: "백엔드 테스트"}
     ],
-    metricsSource: "저장소 소스 기준 · 첫 화면 무게는 빌드 청크 실측 (2026.09)",
+    metricsSource:
+      "API·테스트 수는 저장소 소스 기준 (2026.11) · 첫 화면 무게는 빌드 청크 실측 (2026.09)",
     richId: "village-portfolio",
     // 카드 그림은 콘셉트 아트(2026-09-04, 본인 선택). 실제 화면 합성본(card.webp,
     // scripts/build-village-card.mjs)은 파일로 남겨 두었다 — 상세 페이지의 실물
@@ -876,11 +878,12 @@ export const mainProjects: MainProjectCard[] = [
     // `약 50명` 은 지우지 않고 3순위로 내렸다 — 정직한 숫자지만 첫인상 자리는 아니다.
     metrics: [
       {value: "3 / 4", label: "반영한 사용자 피드백"},
-      {value: "4 → 8", label: "도메인 (1.0 → 2.0)"},
+      {value: "2.0배", label: "한 페이지 응답 · 20만 행 SQL"},
       {value: "55명", label: "가입 회원"}
     ],
+    // 2026-11-13 저녁: 「도메인 4 → 8」(규모)을 「2.0배」(측정)로 바꿨다. 도메인 수는 상세 타일에 남는다.
     metricsSource:
-      "피드백 3/4 는 1.0·2.0 발표자료 대조 · 회원 수는 운영 API 실측(2026.10.18) · 도메인은 저장소 소스 기준",
+      "피드백 3/4 는 1.0·2.0 발표자료 대조 · 2.0배는 PostgreSQL 17.4 합성 20만 행 7회 중앙값(목록+count SQL, HTTP 아님) · 회원 수는 운영 API 실측(2026.10.18)",
     richId: "muscleup",
     // 목록 카드는 심사자가 가장 먼저 보는 그림이다. 그래서 두 번 갈아탔다.
     //
@@ -919,7 +922,7 @@ export const mainProjects: MainProjectCard[] = [
     // "문의 감소 40%" 를 걷어내며 낮춘 표현이라 이유는 옳았지만, 새 성과를 주장하지
     // 않고도 결과형으로 쓸 수 있다 — 기간·팀·GA4 는 이미 이 카드에 있는 사실이다.
     subtitle:
-      "활성 사용자 3,500명의 동아리 탐색·모집 서비스입니다. 2025년 프론트 개발에 참여하고 2026년에는 프로젝트 총괄을 맡았습니다.",
+      "활성 사용자 3,500명의 동아리 탐색·모집 서비스입니다. 2025년 프론트 개발에 참여하고 2026년에는 프로젝트장으로 출시와 운영을 맡았습니다.",
     category: "web",
     facets: ["data"],
     // 2026-09-08 "완료" 로 내렸다. 2026.03 동아리 박람회까지 운영했고 모집이 끝나
@@ -930,13 +933,15 @@ export const mainProjects: MainProjectCard[] = [
     // 예전엔 총학 카드와 태그 4개가 **글자까지 똑같아서**, 훑는 사람 눈에 두 카드가
     // 같은 프로젝트로 보였다. 4장은 각각 다른 이유로 눌려야 하므로 축을 갈랐다 —
     // 이쪽은 「실측 규모 + 총괄」, 총학은 「운영자에게 권한을 넘긴 설계」다.
-    tags: ["실사용 서비스", "GA4 개선", "프로젝트 총괄", "UX"],
+    tags: ["실사용 서비스", "프로젝트장", "출시·운영", "배포 수리"],
     // 두 번 했다. 2025 는 프론트 3인 중 한 명, 그게 잘 되어서 2026 에
     // 프로젝트장을 맡아 개편했다 — 저장소가 둘인 이유다.
     // 본인 확인(2026-09-07): 2026.03 동아리 박람회까지 운영하고 손을 뗐다.
     period: "2025.01 ~ 2026.03",
     team: "2025 프론트 3인 → 2026 프로젝트장",
-    role: "2025 Frontend 개발 → 2026 프로젝트 총괄 · 프론트 리드 · GA4 기반 개선",
+    // 2026-11-13 밤: 「프론트 리드 · GA4 기반 개선」을 뺐다. 2026 TypeScript 코드는 2025.09~11 팀원 둘이 쓴 것이고
+    // GA4 연동도 팀원 커밋이다. 본인 것은 2025 로그인·API 연동(48/310 커밋)과 2026 출시·운영 + 수정 20건(23/79).
+    role: "2025 Frontend 개발(로그인 · API 연동) → 2026 프로젝트장: 출시 · 홍보 · 운영, 배포 수리와 출시 전후 수정",
     // 전부 GA4 실측이다(2026.01~03). 예전엔 "월 방문자 2,300 · 문의 감소 40%"
     // 라는 지어낸 숫자가 잠정 배지를 달고 화면에 나가고 있었다.
     metrics: [
@@ -944,20 +949,24 @@ export const mainProjects: MainProjectCard[] = [
       {value: "8.8만", label: "조회수"},
       {value: "93.4%", label: "세션 참여율"}
     ],
-    metricsSource: "Google Analytics 4 · 2026.01–03",
+    metricsSource:
+      "Google Analytics 4 화면 · 2026.01–03 (연동은 팀원, 원천 데이터는 캡처뿐)",
     richId: "aclub",
     // 카드 그림 상자는 2.08:1 인데 옛 `aclub.webp` 는 640×445(1.44:1)라
     // `object-fit: cover` 가 위아래를 크게 잘라 냈다. 이건 상자에 맞춰 만든
     // 2.08:1 합성본이다. 옛 파일은 원페이지 히어로가 아직 쓰고 있어 남겨 둔다.
     image: "/projects/aclub-cover.webp",
     highlights: [
-      "동아리 정보를 공지·모집·행사·자료·신청 흐름으로 정리해 학생이 찾는 순서대로 화면을 다시 짰습니다.",
-      "GA4 지표와 운영 문의를 근거로 정보 구조·CTA·링크 흐름·문구를 고쳤습니다. 2025 년 프론트 3인 중 한 명에서 2026 년 프로젝트 총괄·프론트 리드가 됐습니다."
+      "2026년 프로젝트장으로 출시 일정과 동아리 회장 섭외, 에브리타임 홍보, 출시 저녁의 문의 응대를 맡았습니다. 코드로는 아홉 번 연속 실패하던 배포 워크플로를 고치고, 출시 당일 필터 API 가 실패하자 전체 목록을 받아 화면에서 거르는 우회로를 넣었습니다.",
+      "2025년에는 프론트 3인 중 한 명으로 로그인·회원정보·구글 로그인 화면과 동아리·모집공고 API 연동을 맡았습니다. 2026 TypeScript 저장소는 팀원들이 다시 짠 것이고, 제 커밋은 그 위의 수정 20건입니다. GA4 수치는 팀원이 연동해 둔 화면에서 읽었습니다."
     ],
     // "사이트"(aclub.co.kr) 링크는 뺐다 — 도메인을 닫아 404 다. 링크가 없으면
     // 라벨을 만들지 않는 게 이 파일의 규칙이다.
     links: [
-      {label: "GitHub (2026 · 총괄)", href: "https://github.com/aClub2026/FE"},
+      {
+        label: "GitHub (2026 · 프로젝트장)",
+        href: "https://github.com/aClub2026/FE"
+      },
       {
         label: "GitHub (2025 · 팀원)",
         href: "https://github.com/DBProject-24-2/DB_Project_FE"
@@ -979,6 +988,8 @@ export const mainProjects: MainProjectCard[] = [
     subtitle:
       "학생이 대여 물품 수량과 신청 링크를 확인하고, 총학생회가 직접 관리하는 웹사이트입니다.",
     category: "web",
+    // Search Console 로 검색 노출을 보고 고친 기록이 지표에 있다(2026-11-14 본인 확인).
+    facets: ["data"],
     status: "운영중",
     tags: ["운영자 도구", "대여·링크허브", "모바일 개편", "Spring Boot API"],
     period: "2025.03 ~ 진행 중",
@@ -1015,7 +1026,7 @@ export const mainProjects: MainProjectCard[] = [
     // 건다. #36 전면 디자인 개편(+2,547줄), #70 대여·링크 API(+644줄), 둘 다 본인 PR.
     highlights: [
       "학생은 물품이 남았는지 몰라 학생회실까지 와서야 없다는 말을 들었고, 수량·링크 하나 바꾸는 데도 개발자가 배포해야 했습니다. Spring Boot 로 대여 품목·대여 기록·링크 엔티티와 사용자/관리자 API 를 만들어(수량 조정은 서버가 0 미만·총량 초과 거부, 관리자 API 는 ADMIN 권한만) 총학생회가 개발자 없이 직접 고치게 했습니다.",
-      "링크허브 한 페이지로 인스타 프로필 링크 한도를 우회하고 모바일 첫 화면에 여섯 갈래를 폈습니다. 2026.09 기준 대여 품목 10종·링크 11개가 실서비스에서 운영 중입니다."
+      "링크허브 한 페이지로 인스타 프로필 링크 한도를 우회했고, 2026년 9월에는 프론트 전체를 다시 디자인했습니다. 2026.11 기준 대여 품목 10종·링크 9개가 실서비스에서 운영 중입니다."
     ],
     links: [
       {label: "사이트", href: "https://ajouchong.com"},
@@ -1069,13 +1080,15 @@ export const mainProjects: MainProjectCard[] = [
     // 2026-10-09 에 5월 대동제 수치(169명 · 424건 · 36건)에서 가을축제 수치로 바꿨다.
     // 5월 수치는 highlights 첫 줄과 상세 화면(「운영 당일」 절)에 남아 있다.
     // 방문자는 Vercel 집계 기간이 10.02–09 라 "축제 주간" 이라고 적는다.
+    // 2026-11-13 저녁: 사람 숫자 셋(7,078 · 142 · 322)에서 「사람 1 + 서버 2」로 바꿨다. 평가자는 앞의
+    // 숫자로 관심을 갖고 뒤의 숫자로 점수를 준다. 142건·322명은 highlights 와 상세의 여덟 타일에 그대로 있다.
     metrics: [
       {value: "7,078명", label: "축제 주간 방문자"},
-      {value: "142건", label: "주점 첫날 주문"},
-      {value: "322명", label: "사주 소개팅 가입"}
+      {value: "장애 0건", label: "축제 이틀 · 배포 5회"},
+      {value: "100 / 100", label: "동시 주문 100건 번호 중복 0"}
     ],
     metricsSource:
-      "아주대 가을축제 2026.10.07–08 · Vercel Web Analytics(10.02–09) · 주문 CSV · 소개팅 통계 (저장소 docs/festflow/축제-결산.md)",
+      "아주대 가을축제 2026.10.07–08 · Vercel Web Analytics(10.02–09) · 저장소 docs/festflow/축제-결산.md · 동시 주문은 축제 뒤(2026-11-13) 실제 PostgreSQL 테스트, 잠금을 뺀 대조군은 번호 17종",
     richId: "festflow",
     // 현장 캡처 합성본(`festflow-field.webp`, scripts/build-festflow-card.mjs)으로
     // 한 번 갈아탔다가 이 소개 이미지로 되돌렸다. 부제·지표가 이미 "실제로 돌았다"를
@@ -1094,7 +1107,8 @@ export const mainProjects: MainProjectCard[] = [
     highlights: [
       "2026.05 대동제에서 AI 소개팅을 하루 운영했습니다(등록 169명, 신청 424건, 성사 36건). 그날 신청 상한이 없어 문자 244통이 잔액 부족으로 실패했고, 10월에는 1인당 신청 3건 제한과 문자 실패를 저장과 분리하는 처리로 고쳤습니다.",
       "2026.10 가을축제에서는 주점 QR 주문과 메뉴별 요리사 창, 사주 소개팅, 스태프 화면을 이틀 동안 서버 장애 없이 운영했습니다. 첫날 주점 입금 확인 매출은 2,462,000원, 소개팅 성사는 97쌍입니다.",
-      "React(Vite) PWA와 Spring Boot 3/JPA/JWT, MySQL 구조에 현장 상태를 SSE로 보냈고, 축제 전 점검을 세 번 해서 당일 사고가 날 만한 것 20개 정도를 미리 고쳤습니다."
+      "같은 부스로 몰리는 주문을 DB 행 잠금과 부스별 락으로 한 줄로 세우고, AI 변환과 문자 발송을 트랜잭션 밖으로 빼 DB 연결이 묶이지 않게 했습니다. 첫날 주문 142건, 소개팅 가입 322명을 받는 동안 서버 장애가 없었습니다.",
+      "React(Vite) PWA와 Spring Boot 3/JPA/JWT 구조에 현장 상태를 SSE로 보냈고, 축제 전 점검을 세 번 해서 당일 사고가 날 만한 것 20개 정도를 미리 고쳤습니다."
     ],
     // 저장소는 2026-10 에 비공개로 돌렸다(DB 덤프 CSV 와 원본 사진이 커밋 기록에 남아 있다).
     // 404 가 되는 GitHub 링크 대신 "요청 시 공개" 메일 링크를 둔다.
@@ -1103,8 +1117,8 @@ export const mainProjects: MainProjectCard[] = [
       // 2026-10-09 가을축제 버전 시연 영상(제목 "AjouFesta"). 5월판 -RomuYp93TQ 를 대체.
       {label: "시연 영상", href: "https://www.youtube.com/watch?v=Jdo5ZNDG8Uk"},
       {
-        label: "코드 (비공개 · 요청 시 공개)",
-        href: "mailto:toadsam@naver.com?subject=FestFlow%20%EC%A0%80%EC%9E%A5%EC%86%8C%20%EC%97%B4%EB%9E%8C%20%EC%9A%94%EC%B2%AD"
+        label: "GitHub (공개 사본)",
+        href: "https://github.com/toadsam/AjouFesta"
       }
     ]
   },
@@ -1133,7 +1147,7 @@ export const mainProjects: MainProjectCard[] = [
     status: "출시",
     tags: ["Unity", "GameDev", "3D", "Steam"],
     period: "2023.10 ~ 2024.02",
-    team: "5인 팀 — 부팀장",
+    team: "5인 팀 · 부팀장",
     role: "스테이지 2 · 장애물/기믹 · 3×3 퍼즐 구현 · 기획",
     metrics: [
       {value: "Steam", label: "스토어 출시"},
@@ -1162,21 +1176,39 @@ export const mainProjects: MainProjectCard[] = [
   {
     id: "mystock",
     title: "MyStock-Desk / MyWave",
+    // 2026-11-13 저장소 README(2026-11) 기준으로 고쳤다. 2026-10 홈 재설계(「오늘 더 써도 되는 돈」)가
+    // 끝났고 2026-11-10 mywave.day 로 공개했다(2026-11-13 200 확인). 예전 "완료 · 리뉴얼 예정" 과
+    // "13 백엔드 도메인" 은 2026-06 이전 StockFlow 시절 값이었다.
     subtitle:
-      "거래 기록으로 포트폴리오를 분석하고 AI 체크리스트와 자산 흐름 대시보드(MyWave)를 제공하는 투자 기록 서비스입니다.",
+      "대학생이 매일 여는 개인 재무 웹앱입니다. 홈의 숫자 하나 「오늘 더 써도 되는 돈」 아래에 저축 목표와 직접 입력한 투자 기록이 붙습니다.",
     category: "data",
     facets: ["ai"],
-    status: "완료",
-    // 2026-09-08 본인 확인: MyWave 리뉴얼 예정.
-    renewal: true,
-    tags: ["React", "Spring Boot", "AI", "Recharts"],
+    status: "운영중",
+    period: "2026.05 ~ 진행 중",
+    tags: ["Spring Boot", "React", "CI · Docker", "검사받는 AI", "Railway"],
     team: "개인 개발 (풀스택 1인)",
-    role: "도메인 설계 · 프론트 · 백엔드 전부",
-    metrics: [{value: "13", label: "백엔드 도메인"}],
-    // 마지막 남은 플레이스홀더였다. 실제 화면 캡처가 아니라 **소개용 키 아트**다.
+    role: "도메인 설계 · Spring Boot API · React 화면 전부 · 공개 운영",
+    // 2026-11-13 저녁: 「화면 19 · 엔드포인트 111」(규모) 대신 운영·검증을 세웠다.
+    // 테스트 98 은 저장소 HEAD(2026-11-11)의 @Test 를 센 값, CI 는 .github/workflows/ci.yml.
+    metrics: [
+      {value: "운영 중", label: "mywave.day · 2026.11.10 공개"},
+      {value: "137 → 146", label: "공개일 API 검사 통과 (152건)"},
+      {value: "98개", label: "백엔드 테스트 · CI 3잡"}
+    ],
+    metricsSource:
+      "docs/TROUBLESHOOTING.md(2026-11-10 공개일 점검) · 저장소 @Test 수(2026-11-11, 공개일엔 29 → 41) · .github/workflows/ci.yml",
+    highlights: [
+      "거래를 고치면 보유 종목을 처음부터 다시 재생하고, 하루 예산·투자 가능 금액은 저장하지 않고 요청마다 기록에서 계산합니다. 화면끼리 숫자가 어긋날 자리를 없앴습니다.",
+      "AI 코치는 모델이 문장만 쓰고, 답에 자료에 없는 숫자나 투자 조언이 있으면 코드가 버립니다(테스트 15개). 운영 설정이 위험하면 서버가 뜨지 않게 부팅 가드를 뒀습니다.",
+      "공개한 날 API 전수 검사 152건을 돌려 데모 계정 훼손·로그아웃 토큰 생존 등 9건을 당일 고쳤습니다. 아직 못 한 것은 Flyway 없는 스키마와 서버 모니터링입니다."
+    ],
+    // 실제 화면 캡처가 아니라 **소개용 키 아트**다. 화면은 상세 페이지에 저장소 캡처 7장이 있다.
     image: "/projects/mystock.webp",
     richId: "mystock",
-    links: [{label: "GitHub", href: "https://github.com/toadsam/MyStock-Desk"}]
+    links: [
+      {label: "사이트", href: "https://mywave.day"},
+      {label: "GitHub", href: "https://github.com/toadsam/MyStock-Desk"}
+    ]
   },
   {
     id: "sign-language",
@@ -1184,14 +1216,24 @@ export const mainProjects: MainProjectCard[] = [
     subtitle:
       "수어 동작 영상을 보고 뜻을 익히는 학습 앱입니다. 3D 아바타 제작은 팀원이 담당했습니다.",
     category: "web",
+    // 2026.09~10 ML 실험(ml/experiments.md)이 근거다(2026-11-14 본인 확인).
+    facets: ["ai"],
     // 2026-09-08 본인 확인: 현재 운영 중이고 리뉴얼 예정.
     status: "운영중",
     renewal: true,
     tags: ["Spring Boot", "Firebase", "Expo", "React Native"],
-    period: "2026.01 ~ 2026.05 · 파란학기제",
+    // 2026-11-13 저장소 README(2026-09) 기준으로 고쳤다: 첫 커밋 2026-02-01, 사전 120단어(영상 17),
+    // 왕복 중앙값 101ms. 예전 "30+ 학습 수어 단어" 는 시제품 목표치였다.
+    period: "2026.02 ~ 2026.05 · 파란학기제",
     team: "4인 (FE 1 · BE 2 · 3D 아바타 1)",
-    role: "Expo/React Native 프론트 · Spring Boot 백엔드 · OAuth2/JWT/Firebase 인증",
-    metrics: [{value: "30+", label: "학습 수어 단어"}],
+    role: "백엔드 둘 중 하나 · 텍스트→수어 변환 파이프라인 · 사전 · 영상 조회 · Cloud Run/Pages 배포 · 2차(2026.09~10) 수어 동작 토큰화 실험",
+    metrics: [
+      {value: "120", label: "사전 단어 (영상 17)"},
+      {value: "20", label: "퀴즈 문항"},
+      {value: "101ms", label: "변환 왕복 중앙값"}
+    ],
+    metricsSource:
+      "저장소 README 「측정 결과」 2026-09-07 운영 서버(Cloud Run) 실측 · 규칙 경로만 동작하는 상태",
     richId: "sign-language",
     // 그림이 없어 플레이스홀더 상자가 떠 있던 자리. 실제 앱 캡처가 아니라
     // **소개용 키 아트**다 — 화면을 그린 게 아니라 서비스가 무엇인지 말한다.
@@ -1214,9 +1256,10 @@ export const mainProjects: MainProjectCard[] = [
     tags: ["VR", "XR", "Unity"],
     // 기간·팀은 포트폴리오 PDF(정재훈이력서긴버전, 43쪽 개요 · 5쪽 연표) 기준
     // (2026-09-03 본인 확인). 팀 규모 4인은 본인 확인(2026-09-04) — AR 과 같은 팀원.
-    period: "2025.04 ~ 2025.06",
+    // 2026-11-13 저장소(kbwon/IMP_VR) 첫 커밋 2025-05-18 · 마지막 06-16. "2025.04" 는 근거가 없었다.
+    period: "2025.05 ~ 2025.06",
     team: "4인 팀 (AR 과 같은 팀원)",
-    role: "AI 몬스터 시스템 · 감지 로직 · 중앙 제어 구조 설계",
+    role: "AI 몬스터 2종 · 감지기 2 · GameManager 중앙 제어 (커밋 25/161)",
     image: "/projects/otherside-vr.webp",
     links: [{label: "GitHub", href: "https://github.com/kbwon/IMP_VR"}]
   },
@@ -1231,9 +1274,10 @@ export const mainProjects: MainProjectCard[] = [
     tags: ["AR", "Unity", "Shooter"],
     // 기간은 포트폴리오 PDF(49쪽 개요 · 5쪽 연표) 기준 (2026-09-03 본인 확인).
     // 팀 규모는 PDF 에 없어 비워 둔다 — 지어내지 않는다.
-    period: "2025.03 ~ 2025.04",
+    // 2026-11-13 저장소(toadsam/IMP) 실제 작업 2025-04-18 ~ 05-03. 스폰은 팀원(kbwon) 코드라 역할에서 뺐다.
+    period: "2025.04 ~ 2025.05",
     team: "4인 팀 (VR 과 같은 팀원)",
-    role: "무기 제작 · 스폰 시스템 · 게임 루프 설계",
+    role: "무기 시스템(발사 · 전환 · 잠금 · 쿨타임) · 체력 · 게임 루프 기획 (커밋 51/109)",
     image: "/projects/monsterpoint-ar.webp",
     links: [
       {
@@ -1263,7 +1307,7 @@ export const mainProjects: MainProjectCard[] = [
     // 지원서(2026-09-07)와 저장소 첫 커밋(2024.09.23) 기준. PDF 의 2024.08 은 근거가 약했다.
     period: "2024.09 ~ 2024.12",
     team: "개인 개발 (1인)",
-    role: "게임 시스템 설계·구현 — 코어 루프 · 전투 AI · UI · 이벤트",
+    role: "게임 시스템 설계·구현 · 코어 루프 · 전투 AI · UI · 이벤트",
     // 카드는 **소개용 키 아트**로 간다(`ajou-indigame.webp`).
     //
     // 직전까지 `ajou-adventure.webp`(실제 인게임 캡처)를 걸고 있었다. 그건 원래
@@ -1322,7 +1366,7 @@ export const subProjects: SubProjectCard[] = [
     // 눈에는 한 사람이 비슷한 걸 두 번 한 것으로 읽힌다. 공포·Unity 자리는
     // VR/XR 까지 간 The Other Side 하나가 대표한다.
     title: "DarkLab",
-    desc: "1인칭 탐색 기반 3D 공포 어드벤처 게임 프로토타입 (2024-1 학기 · 3인 — 프로그래밍 담당)",
+    desc: "1인칭 탐색 기반 3D 공포 어드벤처 게임 프로토타입 (2024-1 학기 · 3인 · 프로그래밍 담당)",
     links: [{label: "GitHub", href: "https://github.com/toadsam/DarkLab"}]
   },
   {
@@ -1429,7 +1473,7 @@ export const values: ValueItem[] = [
     title: "소통",
     desc: "운영 문의와 이용 지표를 확인해 개선할 항목을 정했습니다.",
     evidence:
-      "총학생회·aClub의 운영 문의와 GA4/GSC 지표를 확인해 정보 구조와 문구를 수정했습니다."
+      "총학생회 웹은 운영 문의와 Search Console 지표를 확인해 정보 구조와 문구를 수정했고, aClub 은 GA4 로 이용이 모집 닷새에 몰리는 것을 읽고 그 기간의 안정에 집중했습니다."
   },
   {
     title: "협력",
@@ -1456,7 +1500,7 @@ export const values: ValueItem[] = [
 export const aboutMe = [
   "총학생회 웹의 관리자 기능을 개발하고, AjouFesta는 축제 현장에서 직접 운영했습니다.",
   "배포 후 HTTPS·CORS 문제를 로그와 배포 설정, 네트워크 기록을 확인해 수정했습니다.",
-  "aClub 은 GA4 지표와 운영 문의를 근거로 정보 구조와 문구를 고쳤습니다.",
+  "aClub 은 프로젝트장으로 출시와 운영을 맡았고, 연속으로 실패하던 배포와 출시 당일의 필터 오류를 고쳤습니다.",
   "공방의 다음 단계 진행은 관리자가 승인하도록 했습니다. 모델 응답을 검증하고, 호출이 실패하면 규칙 기반 응답을 반환하도록 구현했습니다.",
   "웹을 주력으로 개발하며, Unity AR·VR 프로젝트에서 시점 전환과 몬스터 감지·추격 기능도 구현했습니다."
 ];
@@ -1486,5 +1530,5 @@ export const contact = {
 //
 // 값 하나만 넣으면 카드·원페이저에 바로 반영된다. 다른 파일은 손댈 필요 없다.
 export const PENDING_BEFORE_SUBMIT = [
-  "[비어 있음] devRecords: 개발 기록 블로그 URL · 개발 개념 정리 Notion URL (둘 다 채울 예정 — 2026-09-12 본인 확인)"
+  "[비어 있음] devRecords: 개발 기록 블로그 URL · 개발 개념 정리 Notion URL (둘 다 채울 예정 · 2026-09-12 본인 확인)"
 ] as const;

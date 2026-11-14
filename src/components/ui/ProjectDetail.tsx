@@ -7,28 +7,32 @@ interface ProjectDetailProps {
 }
 
 export function ProjectDetail({onBack, project}: ProjectDetailProps) {
+  // 2026-11-14: 크림색 종이 + 초록 글씨였다. 패널이 어두운 판으로 바뀐 뒤 이 화면만
+  // 다른 앱처럼 밝게 남아 있어 목록 카드(ProjectCard)와 같은 톤으로 맞췄다.
   return (
-    <article className="rounded-lg border border-[#d9c58a] bg-[#fffdf6] p-5 shadow-[0_10px_34px_rgba(79,72,49,0.08)]">
+    <article className="v-pop rounded-[26px] bg-white/[0.06] p-5">
       <button
-        className="mb-4 rounded-lg border border-[#d0bd81] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#68715e] hover:bg-[#f4e9c7]"
+        className="mb-4 flex h-10 items-center rounded-full bg-white/10 px-4 text-[13.5px] font-extrabold text-white hover:bg-white/[0.16]"
         onClick={onBack}
         type="button"
       >
-        프로젝트 목록으로
+        ← 프로젝트 목록으로
       </button>
 
-      <p className="text-xs font-black uppercase tracking-[0.2em] text-[#5e9b5b]">
+      <p className="text-[12.5px] font-extrabold text-[#aeaaf3]">
         Project Detail
       </p>
-      <h3 className="mt-2 text-2xl font-black text-[#1f2a24]">
+      <h3 className="v-serif mt-0.5 text-[26px] leading-tight text-white">
         {project.title}
       </h3>
-      <p className="mt-3 leading-7 text-[#465044]">{project.description}</p>
+      <p className="mt-3 text-[15px] leading-7 text-[#d3d7df]">
+        {project.description}
+      </p>
 
       <div className="mt-5 flex flex-wrap gap-2">
         {project.tech.map(tech => (
           <span
-            className="rounded-full border border-[#c7dd9a] bg-[#eef8db] px-3 py-1.5 text-xs font-black text-[#3f6e35]"
+            className="rounded-full bg-white/[0.09] px-3 py-1 text-[13px] font-bold text-[#e6e8ee]"
             key={tech}
           >
             {tech}
@@ -51,7 +55,7 @@ export function ProjectDetail({onBack, project}: ProjectDetailProps) {
 
         <DetailBlock title="결과와 배운 점">
           <p>{project.result}</p>
-          <p className="mt-2 text-[#5f6a5b]">{project.learning}</p>
+          <p className="mt-2 text-[#b4bac6]">{project.learning}</p>
         </DetailBlock>
 
         <DetailBlock title="다음 보완">
@@ -64,8 +68,8 @@ export function ProjectDetail({onBack, project}: ProjectDetailProps) {
           <a
             className={
               link.label === "Demo"
-                ? "rounded-lg border border-[#5f9f4f] bg-[#5f9f4f] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-white transition hover:bg-[#4f8d42]"
-                : "rounded-lg border border-[#cdbb81] bg-[#fff7df] px-3 py-2 text-xs font-black uppercase tracking-[0.12em] text-[#3c473b] transition hover:border-[#6fac58] hover:bg-[#eef8db]"
+                ? "flex h-11 items-center rounded-full px-5 text-[14.5px] font-extrabold text-white bg-[#4f46e5] hover:bg-[#4338ca]"
+                : "flex h-11 items-center rounded-full px-5 text-[14.5px] font-extrabold text-white bg-white/10 hover:bg-white/[0.16]"
             }
             href={link.href}
             key={link.label}
@@ -82,9 +86,11 @@ export function ProjectDetail({onBack, project}: ProjectDetailProps) {
 
 function DetailBlock({children, title}: {children: ReactNode; title: string}) {
   return (
-    <section className="rounded-lg border border-[#eadfbf] bg-white/65 p-4">
-      <h4 className="text-sm font-black text-[#356e43]">{title}</h4>
-      <div className="mt-2 text-sm leading-7 text-[#374238]">{children}</div>
+    <section className="rounded-[22px] bg-white/[0.06] p-4">
+      <h4 className="text-[15px] font-black text-[#c3c0f7]">{title}</h4>
+      <div className="mt-2 text-[15px] leading-7 text-[#e6e8ee]">
+        {children}
+      </div>
     </section>
   );
 }
@@ -94,7 +100,7 @@ function BulletList({items}: {items: string[]}) {
     <ul className="grid gap-2">
       {items.map(item => (
         <li className="flex gap-2" key={item}>
-          <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#79b95e]" />
+          <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#aeaaf3]" />
           <span>{item}</span>
         </li>
       ))}

@@ -952,3 +952,28 @@ class CoachChatIn(BaseModel):
 # 앞에서 문자열로 참조한 타입(RelayOut.news, NpcRelationshipRow.timeline)을 확정한다.
 RelayOut.model_rebuild()
 NpcRelationshipRow.model_rebuild()
+
+
+# ─────────────────────────── 경력 안내 (쪽지) ───────────────────────────
+
+
+class CareerAskIn(BaseModel):
+    question: str = Field(min_length=1, max_length=300)
+    # 바로 앞 질문. "그건 언제예요?" 같은 짧은 되묻기를 찾을 때만 붙여 쓴다.
+    previous: str | None = Field(default=None, max_length=300)
+
+
+class CareerSource(BaseModel):
+    title: str
+    section: str
+    href: str
+    snippet: str
+
+
+class CareerAskOut(BaseModel):
+    # answer = 근거로 만든 답 · snippets = 답 없이 찾은 조각만 · none = 기록에 없음
+    mode: Literal["answer", "snippets", "none"]
+    answer: str
+    note: str = ""
+    sources: list[CareerSource] = Field(default_factory=list)
+

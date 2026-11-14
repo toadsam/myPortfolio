@@ -1,32 +1,22 @@
 "use client";
 
-import {useEffect, useMemo, useRef, useState, type CSSProperties} from "react";
-import {Nanum_Myeongjo, Space_Mono} from "next/font/google";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {villageBuildings} from "@/lib/constants";
 
-// 시안 그대로의 서체. preload 는 끈다 — 한글 명조는 유니코드 구간별로 수십 조각이라
-// 미리 받으면 로딩 화면이 로딩을 늦춘다(layout.tsx 의 고운바탕 주석 참고).
-const loaderSerif = Nanum_Myeongjo({
-  subsets: ["latin"],
-  weight: ["700", "800"],
-  display: "swap",
-  preload: false,
-  variable: "--vl-serif"
-});
-
-const loaderMono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  display: "swap",
-  preload: false,
-  variable: "--vl-mono"
-});
+// 2026-11-14: 나눔명조·Space Mono 를 따로 받던 것을 뺐다. 마을 HUD 가 어두운 판 +
+// 굵은 고딕 + 인디고로 바뀌면서(globals.css 「마을 UI 토큰」) 이 화면만 금테 액자에
+// 명조로 남아 있었다. 글꼴은 루트 레이아웃이 이미 싣는 Inter + Noto Sans KR 을 쓴다.
+// 로딩 화면이 글꼴 두 벌을 더 받지 않아도 된다.
 
 /**
  * 마을 입장 화면 — 두 겹이다. 시안의 구조를 그대로 옮겼다.
  *
  *   아래층  VillageTitleCard  … 계속 깔려 있는 타이틀
- *   위층    VillageLoadingVeil … 청사진 액자. 다 지어지면 페이드아웃하며 아래를 드러낸다.
+ *   위층    VillageLoadingVeil … 청사진 판. 다 지어지면 페이드아웃하며 아래를 드러낸다.
+ *
+ * 2026-11-14 부터 모양은 금테 액자·명조가 아니라 HUD 와 같은 둥근 어두운 판이다.
+ * 두 겹 구조, 건물이 하나씩 켜지는 청사진, 「두둥」 박자는 그대로 두고 색·서체·테두리만
+ * 바꿨다. 아래 "시안" 은 8월의 금테 시안을 가리키는 옛 설명이다.
  *
  * 시안에서 타이틀 div 가 오버레이 **뒤에** 깔려 있다가 오버레이가 사라지면 드러나는
  * 그 구조다. 액자 안에서 내용을 갈아끼우는 게 아니다.
@@ -48,20 +38,25 @@ const loaderMono = Space_Mono({
  * 딸려 오지 않는다. constants 는 타입만 three 를 참조하므로 안전하다.
  */
 
-// 시안의 :root 값 — 그대로다.
+// 마을 HUD 토큰(globals.css)과 같은 값. 이 화면은 dynamic 경계 위에서도 뜨므로
+// 변수 대신 값으로 든다. 이름은 옛 것을 그대로 뒀다(lantern = 켜진 건물, gold = 옅은 글자).
 const C = {
-  night: "#040912",
-  nightVeil: "rgba(4, 9, 18, 0.94)",
-  lantern: "#ff9a3d",
-  gold: "#c5a059",
-  wood: "#3e2723",
-  moon: "#fdfbd3",
-  border: "rgba(197, 160, 89, 0.3)"
+  night: "#0a0c14",
+  nightVeil: "rgba(10, 12, 20, 0.96)",
+  panel: "#12141d",
+  lantern: "#8b85f0",
+  accent: "#4f46e5",
+  gold: "#c3c0f7",
+  wood: "rgba(255, 255, 255, 0.1)",
+  moon: "#ffffff",
+  sub: "#b4bac6",
+  border: "rgba(255, 255, 255, 0.1)"
 };
 
-// 시안 body 의 서체 스택 그대로 — 타이틀은 시스템 세리프다.
-const SERIF_STACK =
-  'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif';
+// 루트 레이아웃이 싣는 본문 글꼴 그대로.
+const SANS_STACK =
+  "var(--font-inter), var(--font-body-kr), ui-sans-serif, system-ui, sans-serif";
+const EASE_POP = "cubic-bezier(0.34, 1.56, 0.64, 1)";
 
 // 청사진 좌표계는 시안과 같은 320 정사각. 다만 px 대신 % 로 환산해 둔다 —
 // 그래야 좁은 화면에서 통째로 줄어든다(px 로 박으면 360px 기기에서 액자를 뚫는다).
@@ -74,21 +69,21 @@ const ENTRY_CSS = `
 /* 화면 전체가 버튼이라 어디에 올려도 명패가 반응해야 "여기 눌러도 되는구나"가 된다. */
 [data-village-enter]:hover [data-village-enter-plaque],
 [data-village-enter]:focus-visible [data-village-enter-plaque] {
-  background: rgba(255, 154, 61, 0.16) !important;
-  color: #fdfbd3 !important;
-  border-color: rgba(255, 154, 61, 0.95) !important;
+  background: #4338ca !important;
+}
+[data-village-enter]:active [data-village-enter-plaque] {
+  transform: scale(0.94) !important;
+  animation: none !important;
 }
 
 @keyframes villageEnterPulse {
   0%, 100% {
     transform: scale(1);
-    border-color: rgba(197, 160, 89, 0.5);
-    box-shadow: 0 0 0 rgba(255, 154, 61, 0);
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.35);
   }
   50% {
-    transform: scale(1.07);
-    border-color: rgba(255, 154, 61, 0.95);
-    box-shadow: 0 0 26px rgba(255, 154, 61, 0.3);
+    transform: scale(1.06);
+    box-shadow: 0 14px 44px rgba(79, 70, 229, 0.65);
   }
 }
 `;
@@ -211,8 +206,8 @@ export function VillageTitleCard({
           padding: 0,
           margin: 0,
           cursor: "pointer",
-          fontFamily: SERIF_STACK,
-          color: C.gold,
+          fontFamily: SANS_STACK,
+          color: C.moon,
           pointerEvents: revealed && !fading ? "auto" : "none",
           transition: reduced
             ? "none"
@@ -220,10 +215,11 @@ export function VillageTitleCard({
           opacity: fading ? 0 : 1
         }}
       >
-        {/* 가라앉은 뒤가 시안의 opacity-20 — 어둠 속에 잠긴 간판처럼 흐리게 남는다. */}
+        {/* 가라앉은 뒤엔 흐리게 남아 아래의 「눌러서 들어가기」에 눈이 가게 한다.
+            금색 시절엔 0.2 였는데 흰 글씨는 그만큼 흐리면 꺼진 화면처럼 보여 0.4 로 올렸다. */}
         <div
           style={{
-            opacity: beat === 0 ? 0 : beat === 1 ? 0.9 : 0.2,
+            opacity: beat === 0 ? 0 : beat === 1 ? 1 : 0.4,
             transform: beat === 0 ? "scale(1.05)" : "scale(1)",
             transition: reduced
               ? "none"
@@ -240,11 +236,10 @@ export function VillageTitleCard({
           <h1
             style={{
               margin: 0,
-              fontSize: "clamp(34px, 8vw, 60px)", // 시안 text-6xl
-              textTransform: "uppercase",
+              fontSize: "clamp(38px, 8.6vw, 72px)",
               // 벌어져 있다가 제자리로 모인다 — 「두둥」의 무게는 여기서 나온다.
-              letterSpacing: beat === 0 ? "0.08em" : "-0.05em", // 시안 tracking-tighter
-              fontWeight: 700,
+              letterSpacing: beat === 0 ? "0.06em" : "-0.04em",
+              fontWeight: 900,
               lineHeight: 1.05,
               transition: reduced
                 ? "none"
@@ -255,9 +250,10 @@ export function VillageTitleCard({
           </h1>
           <p
             style={{
-              margin: "16px 0 0", // 시안 mt-4
-              fontSize: "clamp(15px, 2.4vw, 20px)", // 시안 text-xl
-              fontStyle: "italic",
+              margin: "14px 0 0",
+              fontSize: "clamp(15px, 2.4vw, 20px)",
+              fontWeight: 700,
+              color: C.gold,
               // 제목보다 반 박자 늦게 따라온다.
               opacity: beat === 0 ? 0 : 1,
               transition: reduced ? "none" : "opacity 1.1s ease 0.35s"
@@ -287,27 +283,27 @@ export function VillageTitleCard({
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: 12,
-              padding: "13px 34px",
-              border: `1px solid rgba(197, 160, 89, 0.5)`,
-              background: "rgba(197, 160, 89, 0.06)",
-              fontFamily: "var(--vl-mono), ui-monospace, monospace",
-              fontSize: 12,
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
-              color: C.gold,
+              gap: 10,
+              height: 58,
+              padding: "0 34px",
+              borderRadius: 99,
+              background: C.accent,
+              fontFamily: SANS_STACK,
+              fontSize: 17,
+              fontWeight: 800,
+              color: "#ffffff",
               // 심장박동. reduced 면 가만히 있는 대신 또렷하게 둔다.
               animation:
                 reduced || beat !== 2
                   ? "none"
                   : "villageEnterPulse 2.2s ease-in-out infinite",
-              transition: "background 0.25s ease, color 0.25s ease"
+              transition: `background 0.25s ease, transform 0.45s ${EASE_POP}`
             }}
           >
-            <span aria-hidden="true" style={{fontSize: 14, lineHeight: 1}}>
-              ◈
-            </span>
             눌러서 들어가기
+            <span aria-hidden="true" style={{fontSize: 18, lineHeight: 1}}>
+              →
+            </span>
           </span>
         </span>
       </button>
@@ -352,19 +348,10 @@ export function VillageLoadingVeil({
   const built = Math.floor((clamped / 100) * total);
   const shownPct = Math.round(clamped);
 
-  const cornerBase: CSSProperties = {
-    position: "absolute",
-    width: 20,
-    height: 20,
-    zIndex: 2,
-    pointerEvents: "none"
-  };
-
   return (
     <div
       role="status"
       aria-live="polite"
-      className={`${loaderSerif.variable} ${loaderMono.variable}`}
       style={{
         position: "fixed",
         inset: 0,
@@ -390,44 +377,13 @@ export function VillageLoadingVeil({
       {/* 타이틀 없이 이 액자만 뜨는 자리(dynamic 폴백)도 있어서 여기도 넣는다. */}
       <style>{ENTRY_CSS}</style>
 
-      {/* 액자 — 시안의 .v-frame.v-frame--grand */}
-      <div
-        style={{
-          position: "relative",
-          padding: 2,
-          background: C.gold,
-          border: `1px solid ${C.gold}`,
-          outline: `4px solid ${C.night}`,
-          outlineOffset: -8,
-          boxShadow: "0 0 30px rgba(0,0,0,0.5)"
-        }}
-      >
-        {/* 꺾쇠 둘 — 시안의 ::before / ::after */}
-        <span
-          aria-hidden="true"
-          style={{
-            ...cornerBase,
-            top: -6,
-            left: -6,
-            borderTop: `2px solid ${C.gold}`,
-            borderLeft: `2px solid ${C.gold}`
-          }}
-        />
-        <span
-          aria-hidden="true"
-          style={{
-            ...cornerBase,
-            bottom: -6,
-            right: -6,
-            borderBottom: `2px solid ${C.gold}`,
-            borderRight: `2px solid ${C.gold}`
-          }}
-        />
-
+      {/* 판 — HUD 의 큰 판(.v-frame--grand)과 같은 모양. 금테와 꺾쇠는 뺐다. */}
+      <div style={{position: "relative", fontFamily: SANS_STACK}}>
         <div
           style={{
-            background: C.night,
-            border: `1px solid ${C.border}`,
+            background: C.panel,
+            borderRadius: 36,
+            boxShadow: `inset 0 0 0 1px ${C.border}, 0 30px 80px rgba(0,0,0,0.55)`,
             // 시안은 4rem 5rem 고정인데, 그러면 액자가 화면보다 커져 1280×700
             // 노트북에서 위아래가 잘린다. 높이·너비에 묶어 줄인다.
             padding: "clamp(24px, 5vh, 64px) clamp(20px, 6vw, 80px)",
@@ -440,12 +396,10 @@ export function VillageLoadingVeil({
           <h2
             style={{
               margin: 0,
-              fontFamily: "var(--vl-serif), serif",
-              fontSize: "clamp(24px, 5.4vw, 36px)", // 시안 2.25rem
-              fontWeight: 500,
-              letterSpacing: "0.15em",
-              color: C.gold,
-              textShadow: "0 2px 4px rgba(0,0,0,0.5)"
+              fontSize: "clamp(26px, 5.6vw, 38px)",
+              fontWeight: 900,
+              letterSpacing: "-0.03em",
+              color: C.moon
             }}
           >
             마을을 짓는 중
@@ -474,7 +428,7 @@ export function VillageLoadingVeil({
                 marginTop: `${-pct(60) / 2}%`,
                 border: `1.5px dashed ${C.gold}`,
                 borderRadius: "50%",
-                opacity: 0.4,
+                opacity: 0.35,
                 animationDuration: "20s"
               }}
             />
@@ -492,19 +446,18 @@ export function VillageLoadingVeil({
                     width: `${pct(12)}%`,
                     height: `${pct(18)}%`,
                     background: on ? C.lantern : C.wood,
-                    border: on
-                      ? `1px solid ${C.moon}`
-                      : "1px solid rgba(197, 160, 89, 0.2)",
+                    borderRadius: 4,
                     boxShadow: on
-                      ? `0 0 15px ${C.lantern}, 0 0 5px ${C.moon}`
+                      ? `0 0 16px rgba(139, 133, 240, 0.85), inset 0 0 0 1px rgba(255,255,255,0.55)`
                       : "none",
-                    opacity: on ? 1 : 0.6,
+                    opacity: on ? 1 : 0.9,
+                    // 켜질 때 살짝 넘쳤다가 앉는다(/resume 과 같은 튕김 곡선)
                     transform: on
-                      ? `scale(1.1) rotate(${s.rot.toFixed(2)}deg)`
-                      : `rotate(${s.rot.toFixed(2)}deg)`,
+                      ? `rotate(${s.rot.toFixed(2)}deg) scale(1.15)`
+                      : `rotate(${s.rot.toFixed(2)}deg) scale(0.9)`,
                     transition: reduced
                       ? "none"
-                      : "opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1), background-color 0.6s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.6s cubic-bezier(0.23, 1, 0.32, 1), transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)"
+                      : `opacity 0.5s ease, background-color 0.5s ease, box-shadow 0.6s ease, transform 0.7s ${EASE_POP}`
                   }}
                 />
               );
@@ -513,16 +466,47 @@ export function VillageLoadingVeil({
 
           <div
             style={{
-              fontFamily: "var(--vl-mono), ui-monospace, monospace",
-              fontSize: 14, // 시안 0.9rem
-              letterSpacing: "0.1em",
-              color: C.gold,
-              opacity: 0.8,
-              marginTop: 16,
-              fontVariantNumeric: "tabular-nums"
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 12
             }}
           >
-            건물 {built} / {total} 세움 · {shownPct}%
+            {/* 진행 막대 — 숫자만 있을 때보다 "차오른다"가 먼저 읽힌다 */}
+            <div
+              aria-hidden="true"
+              style={{
+                width: "min(260px, 100%)",
+                height: 8,
+                borderRadius: 99,
+                background: "rgba(255,255,255,0.1)",
+                overflow: "hidden"
+              }}
+            >
+              <div
+                style={{
+                  width: `${clamped}%`,
+                  height: "100%",
+                  borderRadius: 99,
+                  background: C.accent,
+                  transition: reduced
+                    ? "none"
+                    : "width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)"
+                }}
+              />
+            </div>
+            <div
+              style={{
+                fontSize: 15,
+                fontWeight: 800,
+                color: C.sub,
+                fontVariantNumeric: "tabular-nums"
+              }}
+            >
+              건물 {built} / {total} 세움 ·{" "}
+              <span style={{color: C.moon}}>{shownPct}%</span>
+            </div>
           </div>
         </div>
       </div>

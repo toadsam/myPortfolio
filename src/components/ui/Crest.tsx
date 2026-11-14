@@ -43,10 +43,10 @@ export function Crest({
       {tone ? null : (
         <defs>
           <linearGradient id={gid} x1="0" x2="0.25" y1="0" y2="1">
-            <stop offset="0%" stopColor="#fff3d2" />
-            <stop offset="34%" stopColor="#f6d68d" />
-            <stop offset="63%" stopColor="#d4a044" />
-            <stop offset="100%" stopColor="#f8e4b4" />
+            <stop offset="0%" stopColor="#ffffff" />
+            <stop offset="34%" stopColor="#dedcfb" />
+            <stop offset="63%" stopColor="#aeaaf3" />
+            <stop offset="100%" stopColor="#e6e5fc" />
           </linearGradient>
         </defs>
       )}

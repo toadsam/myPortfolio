@@ -1,5 +1,7 @@
 # DarkLab
 
+> **2026-11-13 담당 교정.** 저장소 커밋 317개 중 본인(toadsam) 126개, 첫 커밋 2024-02-24 · 마지막 코드 커밋 2024-09-03, 커밋 메시지에 "(-재훈)" 서명. 본인 파일: GrandMaMove 6/6 · BedEvent 2/2 · PulsingLamp 2/3 · PlayerInteraction 12/15, SeeDetector 추가(07-31). `CameraChange.cs`(Cinemachine 전환)는 hyeona 작성이라 「우선순위 블렌딩」 서술을 뺐고, 응시 판정은 `CameraRays.cs`(3인 공동, FocusObject 2초)로 적었다. 아래 "`.cs` 1개" 는 옛 트리 기준으로 틀렸다(HEAD 에 스크립트 90여 개).
+
 > **증명하는 것**: 3인 팀에서 **프로그래밍을 담당**해 1인칭 공포 게임 프로토타입을
 > 만든 것. 플레이어 제어 · 상호작용 · 카메라 연출.
 

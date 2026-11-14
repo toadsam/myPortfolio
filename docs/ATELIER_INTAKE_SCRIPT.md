@@ -253,6 +253,10 @@ src/components/ui/commission/
 - **3D** `AtelierInterior.tsx`: 같은 `useIntakeFlow` 를 구독해 speaker 변경 시 카메라를 `atelierRoster` 좌석으로 이동, 해당 NPC 머리 위 말풍선·`IntakeDialogue` 하단 HUD. 난입 대사는 해당 NPC가 잠깐 고개를 드는 애니메이션.
 - 예시 미리보기는 **전부 코드(CSS/SVG)** 로 그린다 — 이미지 에셋 없음, 3D GLB 없음(`/atelier` 독립성 유지).
 - 모바일: 2D 데스크만. 선택지는 세로 리스트, 예시 카드는 접었다 펼침.
+- 2026-11-14 부터 2D 데스크는 `/resume` 과 같은 흰 바탕·인디고다(`commission/commissionDesk.css` 의 `.cd-*`).
+  `IntakeDialogue` 는 `layout="panel"` 이면 흰 톤에 인디고 한 색, `layout="hud"` 면 마을 HUD 와 같은 어두운 판에 식구별 색이다.
+  `DurationTicker` 는 `tone="light"` 가 흰 데스크용이고, 휴대폰에서는 compact 한 줄이 대화 위에 붙는다.
+  대본과 흐름은 바뀌지 않았다.
 
 ## 7. 2층(심화 문답) — 개요만, 별도 계획
 

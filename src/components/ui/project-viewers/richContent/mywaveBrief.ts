@@ -5,7 +5,7 @@ import type {RichProject} from "./shared";
 // 동일 내용을 RichProject 형태로 정리한 것. (이미지/수치/링크 슬롯은 나중에 채움)
 export const MYWAVE_BRIEF: RichProject = {
   tagline: "PERSONAL FINANCE · WEB APP (컨셉/설계)",
-  heroImage: {label: "MyWave 대시보드 — 자산 흐름 화면", ratio: "16/9"},
+  heroImage: {label: "MyWave 대시보드 · 자산 흐름 화면", ratio: "16/9"},
   problemShot: {label: "거래를 표로만 나열하던 기존 방식", ratio: "4/3"},
   gallery: [
     {label: "자산 흐름 대시보드", ratio: "16/10"},
@@ -50,7 +50,7 @@ export const MYWAVE_BRIEF: RichProject = {
   features: [
     {
       t: "자산 흐름 시각화",
-      d: "거래를 누적 area 차트로 — 흐름과 목표선을 한 화면에"
+      d: "거래를 누적 area 차트로 · 흐름과 목표선을 한 화면에"
     },
     {t: "목표 기반 저축", d: "목표별 진행률·남은 금액 자동 계산"},
     {t: "소비 패턴 분석", d: "카테고리별 비중과 변화 추이"},
@@ -176,7 +176,7 @@ export const MYWAVE_BRIEF: RichProject = {
       solution:
         "흐름 데이터를 useMemo로 안정화하고, 차트의 key를 데이터 길이가 아닌 의미 단위로 고정해 불필요한 리마운트를 제거했다.",
       code: {
-        filename: "useStableFlow.ts",
+        filename: "useStableFlow.ts · 포트폴리오 설명용 예시 · 원본 미확인",
         caption: "참조 안정화로 리마운트 제거 → 부드러운 갱신",
         highlightLines: [3],
         lines: [
@@ -185,6 +185,10 @@ export const MYWAVE_BRIEF: RichProject = {
           "const stable = useMemo(() => flow, [flow.length, flow.at(-1)?.balance]);",
           "return <FlowChart data={stable} key='cashflow' />;"
         ]
+      },
+      evidence: {
+        status: "포트폴리오 기록 기준 · 코드 이력 미확인",
+        note: "별도 MyWave 소개 데이터입니다. 연결 저장소가 지정되지 않았고 useStableFlow.ts / currency.ts에 대응하는 코드 이력을 확인하지 못했습니다. 예시 코드는 설명용이며 실제 원본으로 제시하지 않습니다."
       }
     },
     {
@@ -194,7 +198,7 @@ export const MYWAVE_BRIEF: RichProject = {
       solution:
         "거래 ‘시점’의 환율로 KRW에 정규화한 뒤 누적했다. 환율은 거래에 스냅샷으로 저장해 과거 값이 흔들리지 않게 했다.",
       code: {
-        filename: "currency.ts",
+        filename: "currency.ts · 포트폴리오 설명용 예시 · 원본 미확인",
         caption: "거래 시점 환율로 KRW 정규화 (스냅샷 보존)",
         lines: [
           "export function normalizeToKRW(tx: Transaction) {",
@@ -203,6 +207,10 @@ export const MYWAVE_BRIEF: RichProject = {
           "  return Math.round(tx.amount * tx.rateAtTime);",
           "}"
         ]
+      },
+      evidence: {
+        status: "포트폴리오 기록 기준 · 코드 이력 미확인",
+        note: "별도 MyWave 소개 데이터입니다. 연결 저장소가 지정되지 않았고 useStableFlow.ts / currency.ts에 대응하는 코드 이력을 확인하지 못했습니다. 예시 코드는 설명용이며 실제 원본으로 제시하지 않습니다."
       }
     }
   ],
@@ -231,5 +239,5 @@ export const MYWAVE_BRIEF: RichProject = {
     try: ["백엔드 연동해 실데이터 검증", "온보딩 A/B 테스트"]
   },
   learning:
-    "데이터를 ‘보여주는 것’과 ‘읽히게 하는 것’은 다르다는 걸 체감했다. 같은 거래 데이터라도 흐름·목표라는 맥락을 입히자 이해가 완전히 달라졌고, 기술 선택은 ‘멋짐’이 아니라 ‘이 문제에 맞는가’로 판단해야 한다는 걸 배웠다."
+    "같은 거래 데이터라도 흐름과 목표를 같이 보여 주자 읽기가 쉬워졌다. 기술은 이 문제에 맞는지를 기준으로 골랐다."
 };

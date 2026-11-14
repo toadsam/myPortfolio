@@ -1,0 +1,68 @@
+[
+ {
+  "q": "데이터베이스를 다뤄 본 경험을 알려주세요",
+  "expect": "broad",
+  "any": [
+   "득근득근",
+   "AjouFesta",
+   "MyWave",
+   "MyStock",
+   "총학생회",
+   "수어지교",
+   "마을"
+  ],
+  "min": 2
+ },
+ {
+  "q": "여러 명이 함께 만든 프로젝트는 무엇인가요?",
+  "expect": "broad",
+  "any": [
+   "aClub",
+   "총학생회",
+   "수어지교",
+   "TSEROF",
+   "DarkLab"
+  ],
+  "min": 2
+ },
+ {
+  "q": "테스트 코드는 어떤 프로젝트에 작성했나요?",
+  "expect": "broad",
+  "any": [
+   "마을",
+   "MyWave",
+   "MyStock",
+   "AjouFesta",
+   "득근득근"
+  ],
+  "min": 2
+ },
+ {
+  "q": "사용자 피드백을 받아 고친 적이 있나요?",
+  "expect": "broad",
+  "any": [
+   "득근득근",
+   "AjouFesta",
+   "TSEROF"
+  ],
+  "min": 1
+ },
+ {
+  "q": "가장 최근에 공개한 서비스는 무엇인가요?",
+  "expect": "broad",
+  "any": [
+   "MyWave",
+   "MyStock"
+  ],
+  "min": 1
+ },
+ {
+  "q": "실시간 기능을 만든 적이 있나요?",
+  "expect": "broad",
+  "any": [
+   "득근득근",
+   "AjouFesta"
+  ],
+  "min": 1
+ }
+]

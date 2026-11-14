@@ -294,16 +294,19 @@ export function DialogueBox({
     <AnimatePresence>
       {npc ? (
         <motion.aside
-          animate={{opacity: 1, y: 0}}
-          className="v-panel fixed bottom-24 left-4 z-30 flex max-h-[70vh] w-[min(calc(100vw-32px),400px)] flex-col overflow-hidden md:bottom-6 md:left-6"
-          exit={{opacity: 0, y: 18}}
-          initial={{opacity: 0, y: 18}}
+          animate={{opacity: 1, y: 0, scale: 1}}
+          className="v-panel fixed bottom-24 left-4 z-30 flex max-h-[70vh] w-[min(calc(100vw-32px),420px)] flex-col overflow-hidden rounded-[30px]! md:bottom-6 md:left-6"
+          exit={{opacity: 0, y: 24, scale: 0.95}}
+          initial={{opacity: 0, y: 36, scale: 0.92}}
+          // 말 건 사람 쪽(왼쪽 아래)에서 튀어 올라와 앉는다
+          style={{transformOrigin: "0% 100%"}}
+          transition={{type: "spring", stiffness: 320, damping: 24}}
           role="dialog"
         >
           {/* 헤더 — 아이콘 + 이름 + 역할 + 기분 + 닫기 */}
-          <div className="flex items-center justify-between gap-3 border-b border-[#e2c078]/15 bg-[#0e1a2e] px-4 py-3">
+          <div className="flex items-center justify-between gap-3 border-b border-[#c3c0f7]/15 bg-[#1c1f2b] px-4 py-3">
             <div className="flex min-w-0 items-center gap-3">
-              <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#ff9d38]/45 bg-[#ff9d38]/10 text-lg">
+              <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#4f46e5] text-lg">
                 🤖
                 <span
                   className="absolute -bottom-1 -right-1 text-base"
@@ -317,7 +320,7 @@ export function DialogueBox({
                   <p className="v-panel-title truncate text-base">{npc.name}</p>
                   {bond && bond.level !== "처음 온 손님" ? (
                     <span
-                      className="shrink-0 rounded-full border border-[#e2c078]/40 bg-[#e2c078]/10 px-2 py-0.5 text-[9px] font-black text-[#f3e6c8]"
+                      className="shrink-0 rounded-full border border-[#c3c0f7]/40 bg-[#c3c0f7]/10 px-2 py-0.5 text-[9px] font-black text-[#f5f6f8]"
                       title={`호감 ${bond.score}`}
                     >
                       {bond.level === "단골 손님" ? "단골 ⭐" : "아는 손님"}
@@ -329,14 +332,14 @@ export function DialogueBox({
                     </span>
                   ) : null}
                 </div>
-                <p className="truncate text-[11px] font-bold text-[#a9bdd6]/80">
+                <p className="truncate text-[12.5px] font-bold text-[#b4bac6]/80">
                   {npc.role} · {moodText}
                 </p>
               </div>
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <button
-                className="rounded-md px-2 py-1 text-xs text-[#a9bdd6]/60 transition hover:text-[#f3e6c8]"
+                className="rounded-xl px-2 py-1 text-xs text-[#b4bac6]/60 transition hover:text-[#f5f6f8]"
                 onClick={clearHistory}
                 title="대화 초기화"
                 aria-label="대화 초기화"
@@ -345,7 +348,7 @@ export function DialogueBox({
                 ↺
               </button>
               <button
-                className="rounded-md border border-[#e2c078]/20 px-2.5 py-1 text-sm font-bold text-[#a9bdd6] transition hover:border-[#e2c078]/55 hover:text-[#f3e6c8]"
+                className="rounded-xl border border-[#c3c0f7]/20 px-2.5 py-1 text-sm font-bold text-[#b4bac6] transition hover:border-[#c3c0f7]/55 hover:text-[#f5f6f8]"
                 onClick={onClose}
                 title="닫기"
                 aria-label="대화창 닫기"
@@ -362,7 +365,7 @@ export function DialogueBox({
               line.role === "favor" ? (
                 <button
                   type="button"
-                  className="mx-auto w-fit max-w-full rounded-full border border-[#9ad0ff]/35 bg-[#9ad0ff]/10 px-3 py-1 text-left text-[11px] font-bold text-[#d9ecff] transition hover:bg-[#9ad0ff]/20"
+                  className="mx-auto w-fit max-w-full rounded-full border border-[#c3c0f7]/35 bg-[#c3c0f7]/10 px-3 py-1 text-left text-[12.5px] font-bold text-[#d9ecff] transition hover:bg-[#c3c0f7]/20"
                   key={`${line.role}-${index}`}
                   onClick={() => line.goTo && onGoToNpc?.(line.goTo)}
                 >
@@ -370,7 +373,7 @@ export function DialogueBox({
                 </button>
               ) : line.role === "relay" ? (
                 <div
-                  className="mx-auto w-fit rounded-full border border-[#e2c078]/35 bg-[#e2c078]/10 px-3 py-1 text-[11px] font-bold text-[#f3e6c8]"
+                  className="mx-auto w-fit rounded-full border border-[#c3c0f7]/35 bg-[#c3c0f7]/10 px-3 py-1 text-[12.5px] font-bold text-[#f5f6f8]"
                   key={`${line.role}-${index}`}
                 >
                   {line.text}
@@ -379,8 +382,8 @@ export function DialogueBox({
                 <div
                   className={
                     line.role === "visitor"
-                      ? "ml-8 rounded-2xl rounded-br-sm bg-[#ff9d38]/16 px-3 py-2 text-sm leading-6 text-[#ffe9d2]"
-                      : "mr-8 rounded-2xl rounded-bl-sm bg-white/[0.07] px-3 py-2 text-sm leading-6 text-[#e8eef7]/90"
+                      ? "v-pop ml-8 rounded-[20px] rounded-br-md bg-[#4f46e5] px-4 py-2.5 text-[15px] font-semibold leading-6 text-white"
+                      : "v-pop mr-8 rounded-[20px] rounded-bl-md bg-white/[0.09] px-4 py-2.5 text-[15px] leading-6 text-white"
                   }
                   key={`${line.role}-${index}`}
                 >
@@ -411,7 +414,7 @@ export function DialogueBox({
             <div className="flex flex-wrap gap-1.5 px-4 pb-1">
               {presetQuestions.map(preset => (
                 <button
-                  className="rounded-full border border-[#e2c078]/25 bg-[#e2c078]/8 px-3 py-1 text-xs font-semibold text-[#f0e4c8] transition hover:bg-[#e2c078]/18 active:scale-95 disabled:opacity-50"
+                  className="v-pop rounded-full bg-white/[0.09] px-4 py-2 text-[13.5px] font-bold text-white hover:bg-white/[0.16] disabled:opacity-50"
                   disabled={isSending}
                   key={preset}
                   onClick={() => void ask(preset)}
@@ -427,7 +430,7 @@ export function DialogueBox({
           <div className="space-y-2 px-4 pb-3 pt-2">
             <form className="flex gap-2" onSubmit={handleSubmit}>
               <input
-                className="min-w-0 flex-1 rounded-full border border-[#e2c078]/18 bg-white/[0.06] px-4 py-2 text-sm text-[#f3e6c8] outline-none placeholder:text-[#a9bdd6]/40 focus:border-[#ff9d38]/60"
+                className="h-11 min-w-0 flex-1 rounded-full bg-white/[0.09] px-5 text-[15px] text-white outline-none placeholder:text-[#b4bac6]/70 focus:shadow-[inset_0_0_0_2px_#8b85f0]"
                 onChange={event => setMessage(event.target.value)}
                 placeholder={`${npc.name}에게 물어보기…`}
                 aria-label={`${npc.name}에게 질문 입력`}
@@ -437,7 +440,7 @@ export function DialogueBox({
                 value={message}
               />
               <button
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#ff9d38]/50 bg-[#ff9d38]/18 text-[#ffd9ae] transition hover:bg-[#ff9d38]/28 active:scale-90 disabled:opacity-40"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#4f46e5] text-white hover:bg-[#4338ca] disabled:opacity-40"
                 disabled={isSending || !message.trim()}
                 type="submit"
                 title="보내기"
@@ -450,7 +453,7 @@ export function DialogueBox({
                 (NPCData.sectionId 는 타입을 채우려고 넣어둔 값이라 여기서 쓰면 엉뚱한 데로 간다.) */}
             {!isAtelierNpc(npc.id) ? (
               <button
-                className="w-full rounded-lg border border-[#e2c078]/30 bg-[#e2c078]/10 px-3 py-2 text-xs font-black text-[#f0e4c8] transition hover:bg-[#e2c078]/18 active:scale-[0.98]"
+                className="h-11 w-full rounded-full bg-white/10 px-4 text-[14px] font-extrabold text-white hover:bg-white/[0.16]"
                 onClick={() => onOpenSection(npc.sectionId)}
                 type="button"
               >
@@ -461,7 +464,7 @@ export function DialogueBox({
                 헤더의 상시 버튼과 달리, 대화를 나눠야 발견되는 두 번째 경로다. */}
             {onOpenCommission && isContactNpc(npc.id) ? (
               <button
-                className="w-full rounded-lg border border-[#ff9d38]/40 bg-[#ff9d38]/12 px-3 py-2 text-xs font-black text-[#ffd9ae] transition hover:bg-[#ff9d38]/22 active:scale-[0.98]"
+                className="h-11 w-full rounded-full bg-[#4f46e5] px-4 text-[14px] font-extrabold text-white hover:bg-[#4338ca]"
                 onClick={onOpenCommission}
                 type="button"
               >

@@ -1,5 +1,7 @@
 # INTO MONSTER POINT — AR
 
+> **2026-11-13 담당 교정.** 저장소 toadsam/IMP `develop` 작성자 대조: 옛 상세가 본인 코드로 적었던 `AdjustmentSystem.cs`(바닥·벽)는 RBTylenol, `Spawner.cs`(스폰·보스)는 kbwon 작성이라 트러블슈팅·핵심 코드를 **본인 코드인 `Assets/Scripts/JJH`(WeaponShooterWithJoystick 11/12 커밋 · SkillCooldown · ProjectileDamage · PlayerHealth)** 로 바꿨다. "무기 발사 코드를 저장소에서 못 찾았다" 는 옛 주석도 틀렸다. 커밋 109 중 51, 실제 작업 2025-04-18 ~ 05-03(카드 기간 2025.04~05 로). 무기 4종은 `Assets/Scenes/Final.unity` 의 heldWeaponPrefab 4개에서 셌다. 역할에서 「스폰 시스템」을 뺐다.
+
 > **증명하는 것**: AR Foundation의 **평면 인식으로 현실 공간을 전투장으로 고정**하는
 > 시스템을 만든 것. "현실 공간의 크기가 게임 난이도를 바꾼다"는 발상이 핵심이다.
 

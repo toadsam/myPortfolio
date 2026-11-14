@@ -1,0 +1,20 @@
+[
+ { "q": "수어지교에서 같은 문장을 다시 요청했을 때 왕복 시간은 얼마였나요?", "expect": "answer", "any": [  "101" ], "href": "/resume/sign-language" },
+ { "q": "MyWave에는 화면이 몇 개 있나요?", "expect": "answer", "any": [  "19" ], "href": "/resume/mystock" },
+ { "q": "10월 축제에서 AI Match로 성사된 건 몇 쌍인가요?", "expect": "answer", "any": [  "97" ], "href": "/resume/festflow" },
+ { "q": "정보처리기사는 언제 취득했나요?", "expect": "answer", "any": [  "2026.09.11",  "9월 11일" ], "href": "/resume" },
+ { "q": "TSEROF 팀은 몇 명이었나요?", "expect": "answer", "any": [  "5인",  "5명",  "다섯" ], "href": "/resume/tserof" },
+ { "q": "DarkLab은 몇 명이서 만들었나요?", "expect": "answer", "any": [  "3인",  "3명",  "세 명" ], "href": "/resume/darklab" },
+ { "q": "aClub 활성 사용자는 몇 명이었나요?", "expect": "answer", "any": [  "3,500",  "3500" ], "href": "/resume/aclub" },
+ { "q": "포트폴리오 마을에는 건물이 몇 채 있나요?", "expect": "answer", "any": [  "27" ], "href": "/resume/village-portfolio" },
+ { "q": "졸업은 언제 하나요?", "expect": "answer", "any": [  "2027" ], "href": "/resume" },
+ { "q": "총학생회 웹 검색 클릭 수는 얼마였나요?", "expect": "answer", "any": [  "1,694",  "1694" ], "href": "/resume/ajouchong" },
+ { "q": "석사 학위가 있나요?", "expect": "none" },
+ { "q": "어느 회사에 지원했나요?", "expect": "none" },
+ { "q": "군대는 다녀왔나요?", "expect": "none" },
+ { "q": "프론트엔드 경험을 요약해 주세요", "expect": "broad", "any": [  "aClub",  "총학생회",  "마을",  "득근득근",  "AjouFesta",  "MyWave",  "MyStock" ], "min": 2 },
+ { "q": "게임 개발 경험이 있나요?", "expect": "broad", "any": [  "TSEROF",  "DarkLab",  "MonsterPoint",  "Otherside",  "아주대탐험" ], "min": 2 },
+ { "q": "보안이나 인증 관련해서 한 일을 알려주세요", "expect": "broad", "any": [  "득근득근",  "총학생회",  "aClub",  "마을",  "AjouFesta" ], "min": 2 },
+ { "q": "배포와 인프라 경험을 알려주세요", "expect": "broad", "any": [  "득근득근",  "총학생회",  "aClub",  "AjouFesta",  "MyWave",  "MyStock",  "수어지교" ], "min": 2 },
+ { "q": "혼자서 끝까지 만든 프로젝트는 무엇인가요?", "expect": "broad", "any": [  "마을",  "AjouFesta",  "MyWave",  "MyStock" ], "min": 2 }
+]

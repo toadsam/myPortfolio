@@ -52,20 +52,20 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
           variant="grand"
         >
           <motion.button
-            className="flex min-w-0 items-center gap-2.5 px-3 py-1.5 text-left md:gap-3 md:px-4"
+            className="flex min-w-0 items-center gap-2.5 py-1.5 pl-2 pr-4 text-left md:gap-3 md:pr-5"
             onClick={() => onSelectSection("intro")}
             type="button"
             whileHover={{x: 1}}
             whileTap={{scale: 0.97}}
           >
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md border border-[#e2c078]/40 bg-[#131f33] shadow-[inset_0_1px_0_rgba(255,240,200,0.18)]">
-              <Crest name="compass" size={19} />
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#4f46e5]">
+              <Crest name="compass" size={19} tone="#ffffff" />
             </span>
             <span className="min-w-0">
-              <strong className="v-serif v-emboss block truncate text-[15px] leading-tight tracking-[0.05em]">
+              <strong className="v-serif block truncate text-[16px] leading-tight text-white">
                 Developer&apos;s City
               </strong>
-              <small className="hidden text-[10px] font-semibold tracking-[0.08em] text-[#a9bdd6]/65 sm:block">
+              <small className="hidden text-[12px] font-bold text-[#b4bac6] sm:block">
                 정재훈의 3D 포트폴리오
               </small>
             </span>
@@ -79,7 +79,7 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
         >
           <nav
             aria-label="Portfolio sections"
-            className="flex items-center gap-0.5 px-1.5 py-1"
+            className="flex items-center gap-0.5 p-[5px]"
           >
             {visibleNav.map(sectionId => {
               const section = sectionMeta.find(item => item.id === sectionId);
@@ -89,42 +89,39 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
 
               return (
                 <motion.button
-                  className="relative flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] transition-colors duration-200 lg:px-3"
+                  className="relative flex h-10 items-center gap-1.5 rounded-full px-3 text-[14px] font-extrabold transition-colors duration-200 lg:px-4"
                   key={section.id}
                   onClick={() => onSelectSection(section.id)}
                   style={{
-                    // 활성은 구역색이 아니라 **랜턴 호박**이다. 구역색을 배경에
-                    // 깔면 여섯 칸이 제각각 물들어 명패가 색동이 된다. 구역
-                    // 구분은 문장(아래 tone)이 맡고, "지금 여기"는 랜턴이 맡는다.
-                    color: isActive ? "#ffd9ae" : "rgba(169,189,214,0.62)",
-                    background: isActive
-                      ? "rgba(255,157,56,0.14)"
-                      : "transparent"
+                    // 활성 표시는 글자 뒤에서 미끄러지는 알약 하나다(/resume 의 알약
+                    // 메뉴와 같은 동작). 구역색을 칸마다 깔면 여섯 칸이 색동이 된다.
+                    color: isActive ? "#ffffff" : "#b4bac6"
                   }}
                   type="button"
                   // lg 미만에서는 글자를 접고 문장만 남으므로 이름을 툴팁으로
                   // 남긴다 — 문장만 있는 칸은 처음 보는 사람이 못 읽는다.
                   title={section.navLabel}
-                  whileHover={{color: "#f3e6c8", y: -1}}
+                  whileHover={{color: "#ffffff"}}
                   whileTap={{scale: 0.96}}
                 >
-                  <Crest
-                    name={tone.crest as CrestName}
-                    size={14}
-                    tone={isActive ? undefined : "rgba(169,189,214,0.5)"}
-                  />
-                  <span className="hidden lg:inline">{section.navLabel}</span>
                   {isActive ? (
                     <motion.span
-                      className="absolute inset-x-1.5 -bottom-[3px] h-[2px] rounded-full"
-                      layoutId="nav-underline"
-                      style={{
-                        background: tone.accent,
-                        boxShadow: `0 0 8px ${tone.accent}`
-                      }}
-                      transition={{type: "spring", stiffness: 380, damping: 30}}
+                      aria-hidden="true"
+                      className="absolute inset-0 rounded-full bg-white/[0.14]"
+                      layoutId="nav-pill"
+                      transition={{type: "spring", stiffness: 420, damping: 30}}
                     />
                   ) : null}
+                  <span className="relative lg:hidden">
+                    <Crest
+                      name={tone.crest as CrestName}
+                      size={16}
+                      tone={isActive ? "#ffffff" : "#b4bac6"}
+                    />
+                  </span>
+                  <span className="relative hidden lg:inline">
+                    {section.navLabel}
+                  </span>
                 </motion.button>
               );
             })}

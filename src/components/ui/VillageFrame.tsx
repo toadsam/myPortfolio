@@ -1,7 +1,10 @@
 "use client";
 
 /**
- * 장식 액자 — 마을 UI에서 '큰 것'을 담는 껍데기.
+ * 큰 판 — 마을 UI에서 '큰 것'을 담는 껍데기.
+ *
+ * 2026-11-14 부터는 금속 액자가 아니라 둥근 어두운 판이다(globals.css 의 .v-frame).
+ * 아래 설명은 액자 시절 것이고, 귀퉁이 장식은 `SHOW_CORNERS` 로 꺼 두었다.
  *
  * globals.css 의 .v-frame / .v-frame-body 가 금속 두께와 안쪽 판을 만들고,
  * 여기서는 **네 귀퉁이 당초 장식**을 얹는다.
@@ -59,6 +62,9 @@ function Corner({
   );
 }
 
+/** 귀퉁이 장식 스위치. 금테 액자로 되돌릴 때 globals.css 의 .v-frame 과 같이 켠다. */
+const SHOW_CORNERS: boolean = false;
+
 const CORNER_SIZE: Record<Variant, number> = {
   grand: 20,
   plaque: 14,
@@ -101,7 +107,9 @@ export function VillageFrame({
       {...rest}
     >
       <div className={`v-frame-body ${bodyClassName}`}>{children}</div>
-      {bare ? null : (
+      {/* 2026-11-14: 네 귀퉁이 당초 장식은 그리지 않는다. 판이 금속 액자에서 둥근
+          어두운 판으로 바뀌어 장식이 설 자리가 없다. `bare` 는 사용처가 많아 받기만 한다. */}
+      {SHOW_CORNERS && !bare ? (
         <span
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 text-[#f0d69a]/55"
@@ -111,7 +119,7 @@ export function VillageFrame({
           <Corner flipY size={size} />
           <Corner flipX flipY size={size} />
         </span>
-      )}
+      ) : null}
     </div>
   );
 }

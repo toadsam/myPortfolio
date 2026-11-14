@@ -70,6 +70,101 @@ export interface ImgSpec {
   wide?: boolean;
 }
 
+/**
+ * 상세 페이지(`/resume/<id>`) 장면 한 장의 시간표 (2026-11-13).
+ * `unit` 이 clock 이면 "HH:MM", date 면 "YYYY-MM-DD" 로 적는다. 끝 시각을 모르는 구간은
+ * `until` 을 비우면 축 끝까지 빗금으로 그린다(끝을 아는 척하지 않는다). `totals` 는 그날
+ * 합계 막대(성공/실패)로, 수치는 로그 실측만.
+ */
+export interface TimelineSpec {
+  title: string;
+  from: string;
+  to: string;
+  unit?: "clock" | "date";
+  events: {
+    at: string;
+    until?: string;
+    label: string;
+    detail?: string;
+    tone?: "ok" | "warn" | "fail" | "muted";
+    /** 그 사건의 근거 주소(PR·커밋). 있으면 라벨이 링크가 된다. */
+    href?: string;
+  }[];
+  totals?: {label: string; n: number; tone: "ok" | "fail"}[];
+  note?: string;
+  source: string;
+}
+
+/**
+ * 상세 페이지의 장면(scene). 글로 적힌 사실 하나를 움직이는 그림 하나로 보여 준다.
+ * 종류마다 데이터만 적으면 공용 틀이 그린다. **측정되거나 저장소에서 확인되는 사실에만**
+ * 붙인다 — 그림이 멋있어서 숫자를 지어내면 페이지 전체가 의심받는다. `place` 는 어느 절
+ * 끝에 붙는지(why 문제 · field 운영 · trouble 트러블슈팅 · result 결과 · arch 구조 ·
+ * proc 과정). `source` 는 필수다.
+ */
+export type SceneSpec = {
+  place: "why" | "field" | "trouble" | "result" | "arch" | "proc";
+  title: string;
+  note?: string;
+  source: string;
+} & (
+  | ({kind: "timeline"} & Omit<TimelineSpec, "title" | "note" | "source">)
+  /** 가로 막대 여러 줄. 값이 서로 비교되는 것(채널 비율·파일 수)에 쓴다. */
+  | {
+      kind: "bars";
+      unit?: string;
+      max?: number;
+      rows: {
+        label: string;
+        value: number;
+        text?: string;
+        tone?: "ok" | "muted" | "fail";
+      }[];
+    }
+  /** 꺾은선. 값이 없는 지점은 `y: null` 로 두면 선이 끊긴다(없는 값을 잇지 않는다). */
+  | {
+      kind: "line";
+      unit?: string;
+      points: {x: string; y: number | null}[];
+    }
+  /** 같은 장면의 프레임 여럿을 손잡이로 넘겨 본다(시간 경과 비교). */
+  | {
+      kind: "frames";
+      ratio?: string;
+      /** 원본이 작은 캡처면 px 폭 상한을 둔다. 없으면 칸 폭을 다 쓴다. */
+      maxWidth?: number;
+      frames: {src: string; label: string; at?: string}[];
+    }
+  /** 단계 흐름. 단계마다 `alt` 를 두면 그 단계에서 갈라지는 길(폴백·실패)을 점선으로 그린다. */
+  | {
+      kind: "steps";
+      steps: {
+        t: string;
+        d?: string;
+        tone?: "ok" | "warn" | "fail" | "muted";
+        alt?: {t: string; d?: string; tone?: "ok" | "warn" | "fail" | "muted"};
+      }[];
+    }
+  /** 3×3 패턴 퍼즐을 직접 눌러 보는 장면. patterns 는 0/1 배열(길이 size²). */
+  | {
+      kind: "puzzle";
+      size: number;
+      patterns: number[][];
+      /** 실제 교체 주기(초). 화면에는 이 값을 적고, 시연은 demoInterval 로 돈다. */
+      interval: number;
+      demoInterval?: number;
+      legend: [string, string];
+      /**
+       * 실제 게임 규칙으로 누르는 판(TSEROF). 있으면 칸을 직접 누르지 않고 줄 버튼을 누른다.
+       * `states` 는 칸 값 0..n-1 의 이름(예: 빈칸 · 얼음 · 물), `start` 는 패턴이 바뀔 때 판이 돌아가는 값,
+       * 줄 버튼 하나는 그 줄 세 칸을 한 단계씩 넘긴다(끝 값 다음은 0). 리셋은 전부 0.
+       */
+      lines?: {states: string[]; start: number; solved: string};
+      /** patterns 가 실제 값이 아니면 반드시 적는다(예: "패턴 값은 비공개 저장소에 있어 예시"). */
+      caveat?: string;
+    }
+);
+
 export interface RichProject {
   tagline: string;
   /** 개요 상단 대표 이미지 (선택) */
@@ -142,6 +237,7 @@ export interface RichProject {
     title: string;
     problem: string;
     solution: string;
+    evidence?: {status: string; note: string; url?: string};
     code?: CodeSpec;
     /**
      * 머리글 라벨. 기본은 "[PROBLEM]" / "Solution".
@@ -198,7 +294,8 @@ export interface RichProject {
    * 약속하는데, 상세에 그날 이야기가 한 줄도 없어서 심사자가 클릭한 이유를 못 갚았다.
    *
    * 줄마다 `source` 를 반드시 단다 — 로그·코드·문서 어디서 확인되는지. 근거가
-   * 경험뿐인 줄은 "본인 서술" 이라고 적는다. 추정은 싣지 않는다.
+   * 경험뿐인 줄은 확인되는 출처만 적고 "본인 서술" 꼬리표는 붙이지 않는다
+   * (2026-11-14 본인 결정: 화면에 필요 없는 말). 추정은 싣지 않는다.
    */
   fieldDay?: {
     title: string;
@@ -206,6 +303,14 @@ export interface RichProject {
     items: {t: string; happened: string; now: string; source: string}[];
     /** `now` 앞 라벨. 없으면 「지금이라면」(계획). 실제로 고친 뒤면 「10월에는」처럼 쓴다. */
     nowLabel?: string;
+    /**
+     * 그날의 시간표 한 장 (2026-11-13, `/resume/<id>` 전용). 시각이 있는 사건만 적는다.
+     * 축은 `from`~`to`(시:분), 사건은 `at`(한 시각) 또는 `at`+`until`(구간). `tone` 이
+     * 색을 정한다 — ok 인디고 · warn 호박 · fail 적갈. 끝 시각을 모르는 구간은 `until`
+     * 을 비우면 축 끝까지 흐리게 그린다(끝을 아는 척하지 않는다). `totals` 는 그날 합계
+     * 막대(성공/실패)로, 수치는 로그 실측만.
+     */
+    timeline?: TimelineSpec;
   };
   /**
    * 「두 번째 운영」. 같은 서비스를 현장에서 한 번 더 돌린 기록이다.
@@ -254,7 +359,196 @@ export interface RichProject {
   };
   tech: string[];
   resultScreens: ScreenSpec[];
-  metrics: {n: string; l: string}[];
+  /**
+   * 머리 지표. `/resume/<id>` 의 타일은 `source` 가 있으면 눌러서 출처를 펼치는 버튼이
+   * 된다(2026-11-13, 득근득근 상세와 같은 모양). `sub` 는 숫자 밑 한 줄(조건·비교),
+   * `mini` 는 숫자 옆 작은 그림 — bars 는 전→후 두 막대, dots 는 n/of 점, line 은
+   * 꺾은선. 수치가 없는 타일은 `mini` 를 비운다. 마을·원페이저는 n/l 만 읽는다.
+   */
+  metrics: {
+    n: string;
+    l: string;
+    sub?: string;
+    source?: string;
+    mini?:
+      | {kind: "bars"; before: number; after: number}
+      | {kind: "dots"; on: number; of: number}
+      | {kind: "line"; points: number[]; base?: number};
+  }[];
+  /**
+   * `/resume/<id>` 에서 **손으로 쓰는 칸** (2026-11-13). 비우면 상세 틀이 지금처럼
+   * `projects.ts` 설명·`highlights`·문장 자르기로 자동 생성한다. 득근득근 전용
+   * 페이지가 좋았던 이유가 이 칸들을 사람이 그 프로젝트를 생각하며 썼기 때문이라,
+   * 같은 자리를 틀에 뚫었다. 글은 다른 데서 복사하지 말고 짧게 다시 쓴다.
+   *
+   * - intro: 소개문. `bold` 는 show 안의 핵심 문장(굵게), `more` 는 "더 읽기" 줄들.
+   * - highlights: 「기술적으로 한 일」. `bold` 한 줄만 진하게.
+   * - briefs: 트러블슈팅 카드 요약(문제·한 일·결과), challenges 와 같은 순서.
+   *   없는 칸은 자동 자르기로 떨어진다.
+   * - summaries: 접힌 절의 한 줄 요약. 없으면 이름을 이어 붙인다.
+   * - secondTocTitle: 「두 번째 운영」 절의 목차 이름(예: "5월에서 10월로").
+   * - moreLabel: "n건 더 보기" 뒤에 붙는 짧은 말. 없으면 제목을 전부 잇는다.
+   * - bench: 트러블슈팅 끝의 "다시 잴 수 있다" 각주.
+   */
+  detail?: {
+    intro?: {show: string; bold?: string; more?: string[]};
+    highlights?: {show: string; bold?: boolean; more?: string}[];
+    briefs?: ({problem: string; did: string; result: string} | null)[];
+    summaries?: {
+      second?: string;
+      arch?: string;
+      code?: string;
+      proc?: string;
+    };
+    secondTocTitle?: string;
+    moreLabel?: string;
+    bench?: string;
+    /**
+     * 이야기 배치(2026-11-14, AjouFesta). 있으면 머리(소개 · 타일 · 전/후 슬라이더) 아래를
+     * 접지 않고 여섯 절로 펼친다: 문제 → 첫 운영 → 「문제였던 것 · 고친 것 · 확인」 표 → 새로 만든 화면
+     * → 검증 → 결과. 왜/운영/트러블슈팅/결과 절은 이 배치가 대신하고, 구조 · 코드 · 회고는 접힌 절로 남는다.
+     * 제목의 `em` 은 제목 안에서 강조할 부분 문자열이다. 표의 `scene` 은 detail.scenes 의 제목,
+     * `challenge` 는 challenges 의 색인(자세한 설명 · 근거 · 코드를 그 줄 아래에 접어 붙인다).
+     */
+    story?: {
+      /** 목차에 적을 절 이름. 없으면 AjouFesta 용 기본 이름을 쓴다. */
+      toc?: {
+        problem?: string;
+        field?: string;
+        ledger?: string;
+        built?: string;
+        verify?: string;
+        result?: string;
+      };
+      problem: {
+        eyebrow: string;
+        title: string;
+        em?: string;
+        lead: string;
+        quote?: string;
+        after?: string;
+      };
+      /** 없으면 그 절을 건너뛴다. `scene` 은 detail.scenes 의 제목(없으면 fieldDay.timeline). */
+      field?: {
+        eyebrow: string;
+        title: string;
+        em?: string;
+        lead: string;
+        facts: {n: string; l: string}[];
+        scene?: string;
+      };
+      ledger: {
+        eyebrow: string;
+        title: string;
+        em?: string;
+        lead: string;
+        /** 「전부」 버튼 글과 세 칸 이름. 없으면 AjouFesta 용 기본값. */
+        allLabel?: string;
+        cols?: [string, string, string];
+        groups: {
+          label: string;
+          short: string;
+          intro?: string;
+          rows: {
+            problem: {t: string; d: string};
+            fix: {t: string; d: string};
+            check: {
+              big?: string;
+              t?: string;
+              d?: string;
+              src?: string;
+              when?: string;
+            };
+            scene?: string;
+            challenge?: number;
+          }[];
+        }[];
+      };
+      /** 없으면 그 절을 건너뛴다(쓸 화면 캡처가 없는 프로젝트). */
+      built?: {
+        eyebrow: string;
+        title: string;
+        em?: string;
+        lead: string;
+        items: {t: string; d: string; r: string; src: string}[];
+        /** 가로로 넓은 캡처(데스크톱 화면)면 그림을 위에, 글을 아래에 둔다. */
+        wide?: boolean;
+      };
+      /** 없으면 그 절을 건너뛴다. */
+      verify?: {
+        eyebrow: string;
+        title: string;
+        em?: string;
+        tag: string;
+        lead: string;
+        scene: string;
+        boxes: {n: string; unit?: string; d: string}[];
+        noteLabel?: string;
+      };
+      result: {
+        eyebrow: string;
+        title: string;
+        em?: string;
+        left: string[];
+        /** 쓴 사람이 남긴 말. 그림 위에 한 줄로 적는다. who 는 익명으로. */
+        quote?: {q: string; who: string};
+        /** 폰 화면만 오린 그림. 있으면 gallery 대신 이것을 연회색 무대에 올린다. */
+        shots?: {src: string; t: string; d: string}[];
+      };
+    };
+    /**
+     * 「왜 만들었나」 절의 문제 카드. 있으면 problemShot(발표 자료 슬라이드 그림) 대신 이 카드를
+     * 페이지 안에 직접 그린다. 슬라이드 캡처는 글자가 작고 페이지와 생김새가 달라 본인이 뺐다(2026-11-13).
+     * `core` 는 카드 아래 한 줄 결론, `source` 는 내용의 출처.
+     */
+    problems?: {
+      items: {t: string; d: string}[];
+      core?: string;
+      source?: string;
+    };
+    /** 장면들. 절 끝에 `place` 순서대로 붙는다. */
+    scenes?: SceneSpec[];
+    /** 전/후 슬라이더의 두 꼬리표(기본 BEFORE/AFTER). beforeAfter 에 사진 둘이 있을 때만 그린다. */
+    compareTags?: [string, string];
+    /**
+     * 줄인 배치(2026-11-13 시안, AjouFesta 한 장). 있으면 첫 화면이 「소개 + 타일 넷 + 대표 장면 하나」로
+     * 끝나고, 나머지 타일은 "수치 더 보기" 뒤로, 문제·운영·트러블슈팅·결과 절은 전부 접힌 절이 된다.
+     * `tiles` 는 위에 둘 metrics 색인, `scene` 은 위로 올릴 장면의 title, `summaries` 는 접힌 절의 한 줄.
+     */
+    compact?: {
+      tiles: number[];
+      scene?: string;
+      /**
+       * 이 상세 페이지에서만 안 그릴 것. 데이터는 지우지 않는다(마을 전시실이 같은 데이터를 쓴다).
+       * `challenges`·`diagrams` 는 색인, `decisions`·`process` 는 그 덩어리 전체.
+       */
+      hide?: {
+        challenges?: number[];
+        diagrams?: number[];
+        decisions?: boolean;
+        process?: boolean;
+      };
+      /**
+       * 전/후 슬라이더(beforeAfter 에 사진 둘)를 「문제」 절이 아니라 첫 화면 타일 바로 아래에 둔다.
+       * 다시 만든 프로젝트는 화면이 어떻게 달라졌는지가 먼저 보여야 한다(본인 요청, 2026-11-13).
+       */
+      compareFirst?: boolean;
+      /** 슬라이더 위에 적는 한 줄(예: "5월 → 10월 · 화면을 다시 만들었습니다"). */
+      compareTitle?: string;
+      /** 머리 그림을 이 배치에서만 바꾼다(낮은 가로 그림이라야 타일이 첫 화면에 들어온다). */
+      hero?: ImgSpec;
+      summaries?: {
+        why?: string;
+        field?: string;
+        trouble?: string;
+        result?: string;
+        /** 「배운 것과 남은 것」 접힌 머리의 한 줄. 없으면 learningLead 전체. */
+        retro?: string;
+      };
+      /** 「두 번째 운영」 접힌 절의 제목을 이 배치에서만 바꾼다. 영어 꼬리표도 "리뉴얼" 이 된다. */
+      secondTitle?: string;
+    };
+  };
   usability?: {
     rows: {label: string; before: number; after: number; unit: string}[];
     note?: string;
@@ -690,7 +984,7 @@ function ChallengeCard({
 }: {
   theme: ProjectTheme;
   index: number;
-  c: {title: string; problem: string; solution: string; code?: CodeSpec};
+  c: RichProject["challenges"][number];
 }) {
   return (
     <motion.div
@@ -724,6 +1018,24 @@ function ChallengeCard({
         </span>
         <p className="text-[13px] leading-6 text-white/80">{c.solution}</p>
       </div>
+      {c.evidence ? (
+        <details className="mb-3 text-xs leading-6 text-white/70">
+          <summary className="cursor-pointer">
+            근거: {c.evidence.status}
+          </summary>
+          <p>{c.evidence.note}</p>
+          {c.evidence.url ? (
+            <a
+              href={c.evidence.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              확인한 코드 보기 ↗
+            </a>
+          ) : null}
+        </details>
+      ) : null}
       {c.code ? <CodeBlock theme={theme} spec={c.code} /> : null}
     </motion.div>
   );

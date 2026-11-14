@@ -1287,6 +1287,38 @@ export function sendNpcMessage(
 - 에러 처리가 통일됨
 - 컴포넌트 코드는 더 읽기 쉬워짐
 
+### 11.4 경력 안내 「쪽지」 (2026-11-14)
+
+이력서 화면(`/resume`) 오른쪽 아래에 있는 쪽지 모양 캐릭터입니다. 누르면 대화창이 열리고, 정재훈의 경력이나 프로젝트를 물어볼 수 있습니다.
+
+```ts
+export function askCareer(question: string, previous?: string): Promise<CareerAnswer> {
+  return requestJson<CareerAnswer>("/career/ask", {
+    method: "POST",
+    body: JSON.stringify({question, previous})
+  });
+}
+```
+
+이런 방식을 RAG(검색해서 답하기)라고 부릅니다. AI 에게 그냥 물으면 그럴듯한 말을 지어낼 수 있어서, 먼저 기록에서 관련된 글을 찾고 그 글만 보고 답하게 합니다.
+
+서버에서 일어나는 순서는 이렇습니다.
+
+1. 질문과 비슷한 글 조각을 기록에서 찾습니다. 낱말이 겹치는 정도와 뜻이 가까운 정도(임베딩)를 함께 봅니다.
+2. 비슷한 조각이 없으면 AI 를 부르지 않고 "기록에서 찾지 못했습니다"로 끝냅니다.
+3. 조각이 있으면 AI 에게 조각과 질문을 주고, 조각에 적힌 내용만으로 답하게 합니다.
+4. AI 가 쓴 답에 조각에 없는 숫자가 있으면 그 답을 버리고 찾은 조각만 보여 줍니다.
+
+글 조각은 `npm run career:corpus` 로 만듭니다. 이력서 화면이 읽는 데이터 파일을 그대로 읽어서 자르기 때문에, 화면 문구를 고친 뒤 이 명령을 다시 실행하면 답도 따라 바뀝니다.
+
+관련 파일:
+
+- `scripts/build-career-corpus.mjs` 글 조각 만들기
+- `backend/app/services/career_service.py` 검색과 답 만들기
+- `backend/app/services/career_guard.py` 숫자 검사
+- `src/components/resumeV2/CareerGuide.tsx`, `CareerGuidePanel.tsx` 캐릭터와 대화창
+- `docs/CAREER_QA_REPORT.md` 얼마나 잘 맞히는지 잰 결과
+
 ---
 
 ## 12. 3D 마을 렌더링

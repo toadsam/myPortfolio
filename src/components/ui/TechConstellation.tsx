@@ -31,9 +31,9 @@ import {projects} from "@/data/projects";
 /** 이 수 이상의 프로젝트에 등장한 기술은 '주요 별'로 안쪽 궤도에 크게 놓는다. */
 const MAJOR_MIN_PROJECTS = 2;
 
-const COLOR_LANTERN = 0xff9d38; // 가장 많이 쓴 기술
-const COLOR_GOLD = 0xe2c078; // 주요 기술
-const COLOR_MOON = 0xa9bdd6; // 한 번만 쓴 기술
+const COLOR_LANTERN = 0x8b85f0; // 가장 많이 쓴 기술
+const COLOR_GOLD = 0xc3c0f7; // 주요 기술
+const COLOR_MOON = 0xb4bac6; // 한 번만 쓴 기술
 
 type Node = {
   name: string;

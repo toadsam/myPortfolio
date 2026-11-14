@@ -35,6 +35,7 @@ import {
 import dynamic from "next/dynamic";
 import type {ProjectData} from "@/types/portfolio";
 import {ProjectOnePager} from "./ProjectOnePager";
+import {codeLinkOk} from "@/lib/codeLinks";
 import "./ResumeTerminal.css";
 
 // **three 를 끌고 오는 건 이 둘뿐이다.** 예전엔 이것 때문에 `/resume` 페이지
@@ -749,7 +750,7 @@ export function ResumeMode({onEnterVillage}: Props) {
                     // 넣을 수 없다 — 버튼 안의 링크는 유효하지 않은 마크업이다.
                     // 그래서 제목만 버튼으로 올리고 링크는 형제로 둔다.
                     const shownMetrics = (p.metrics ?? []).filter(m => m.value);
-                    const links = p.links.filter(l => l.href);
+                    const links = p.links.filter(l => codeLinkOk(l.href));
                     return (
                       <Fragment key={p.id}>
                         {/* 2단 시작 표지. 트랙 안에 있어야 그리드 흐름에
@@ -1318,10 +1319,10 @@ export function ResumeMode({onEnterVillage}: Props) {
                   {/* href 가 없는 라벨은 **그리지 않는다.** 예전엔 빈 슬롯을
                       `<span class="slot">` 으로 띄워서, 링크처럼 보이는데 눌리지
                       않는 GitHub/Demo/Notion 라벨이 25개 떠 있었다. */}
-                  {s.links.some(l => l.href) ? (
+                  {s.links.some(l => codeLinkOk(l.href)) ? (
                     <div className="side-project-links">
                       {s.links
-                        .filter(l => l.href)
+                        .filter(l => codeLinkOk(l.href))
                         .map(l => (
                           <a
                             key={l.label}

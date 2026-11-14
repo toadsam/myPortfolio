@@ -27,33 +27,22 @@ export function ProjectCard({
   project
 }: ProjectCardProps) {
   return (
-    <article
-      className="rounded-lg border bg-[#081222] p-5 transition"
-      style={{borderColor: `${color}26`}}
-    >
-      <p
-        className="text-[11px] font-black uppercase tracking-[0.16em]"
-        style={{color}}
-      >
+    <article className="rounded-[26px] bg-white/[0.06] p-5 transition-[background-color,transform] duration-300 hover:-translate-y-[3px] hover:bg-white/[0.09]">
+      <p className="text-[12.5px] font-extrabold" style={{color}}>
         Project Case
       </p>
-      <h3 className="v-serif mt-1 text-xl leading-tight text-[#f3e6c8]">
+      <h3 className="v-serif mt-0.5 text-[23px] leading-tight text-white">
         {project.title}
       </h3>
-      <p className="mt-2 text-sm leading-6 text-[#a9bdd6]">
+      <p className="mt-2 text-[15px] leading-[1.65] text-[#d3d7df]">
         {project.description}
       </p>
 
       <div className="mt-3 flex flex-wrap gap-1.5">
         {project.tech.map(tech => (
           <span
-            className="rounded-full border px-2.5 py-0.5 font-mono text-[11px] font-black"
+            className="rounded-full bg-white/[0.09] px-3 py-1 text-[13px] font-bold text-[#e6e8ee]"
             key={tech}
-            style={{
-              borderColor: `${color}40`,
-              color,
-              background: `${color}12`
-            }}
           >
             {tech}
           </span>
@@ -63,16 +52,15 @@ export function ProjectCard({
       <div className="mt-4 flex flex-wrap items-center gap-2">
         {onEnter3d ? (
           <button
-            className="rounded-lg border px-3 py-2 text-[12px] font-black text-[#0b1626] transition hover:brightness-110 active:scale-95"
+            className="flex h-11 items-center rounded-full bg-[#4f46e5] px-5 text-[14.5px] font-extrabold text-white shadow-[0_10px_26px_rgba(79,70,229,0.35)] hover:bg-[#4338ca]"
             onClick={() => onEnter3d(project)}
-            style={{borderColor: color, background: color}}
             type="button"
           >
             🏠 3D 전시실 들어가기
           </button>
         ) : null}
         <button
-          className="rounded-lg border border-[#e2c078]/30 bg-white/[0.03] px-3 py-2 text-[12px] font-black text-[#eef2f8] transition hover:border-[#e2c078]/60 hover:bg-[#e2c078]/10 active:scale-95"
+          className="flex h-11 items-center rounded-full bg-white/10 px-5 text-[14.5px] font-extrabold text-white hover:bg-white/[0.16]"
           onClick={() => onOpen(project)}
           type="button"
         >
@@ -80,7 +68,7 @@ export function ProjectCard({
         </button>
         {project.links.map(link => (
           <a
-            className="text-[11px] font-bold text-[#a9bdd6]/80 underline-offset-2 transition hover:text-[#f3e6c8] hover:underline"
+            className="text-[13.5px] font-extrabold text-[#c3c0f7] underline-offset-2 hover:text-white hover:underline"
             href={link.href}
             key={link.label}
             rel="noreferrer"

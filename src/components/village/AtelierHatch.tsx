@@ -176,19 +176,18 @@ export function AtelierHatch({onEnter}: {onEnter: () => void}) {
             onPointerLeave={() => setHovered(false)}
             type="button"
             style={{
-              // 마을 건물 간판과 같은 크림색 나무판 + 갈색 테두리.
-              // 여기만 다른 톤을 쓰면 "UI 칩"으로 도로 읽힌다.
-              background:
-                "linear-gradient(#fdf3df 0%, #f6e7c8 55%, #e8d3ac 100%)",
-              border: `3px solid ${hovered ? "#ff9d38" : "#8a5a33"}`,
-              borderRadius: 10,
-              padding: "6px 12px",
+              // 마을 건물 간판(Building.tsx)과 같은 판이어야 한다. 2026-11-14 에 건물
+              // 간판이 크림색 나무판에서 어두운 판으로 바뀌어 여기도 같이 바꿨다.
+              background: "rgba(18,20,29,0.94)",
+              border: 0,
+              borderRadius: 16,
+              padding: "8px 16px",
               cursor: "pointer",
               boxShadow: hovered
-                ? "0 0 0 2px rgba(255,157,56,0.4), 0 6px 14px rgba(40,24,10,0.45)"
-                : "0 4px 10px rgba(40,24,10,0.35)",
+                ? "inset 0 0 0 2px #aeaaf3, 0 10px 26px rgba(0,0,0,0.5)"
+                : "inset 0 0 0 1px rgba(255,255,255,0.12), 0 8px 20px rgba(0,0,0,0.45)",
               transition:
-                "transform 0.18s, box-shadow 0.18s, border-color 0.18s",
+                "transform 0.45s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s",
               transform: hovered ? "scale(1.08)" : "scale(1)",
               textAlign: "center",
               whiteSpace: "nowrap",
@@ -200,9 +199,8 @@ export function AtelierHatch({onEnter}: {onEnter: () => void}) {
               style={{
                 display: "block",
                 fontSize: 13,
-                fontWeight: 800,
-                color: "#4a2f18",
-                letterSpacing: "0.02em"
+                fontWeight: 900,
+                color: "#ffffff"
               }}
             >
               의뢰 공방
@@ -212,7 +210,7 @@ export function AtelierHatch({onEnter}: {onEnter: () => void}) {
                 display: "block",
                 fontSize: 10,
                 fontWeight: 700,
-                color: "#8a5a33",
+                color: "#c3c0f7",
                 marginTop: 1
               }}
             >

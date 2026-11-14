@@ -178,8 +178,8 @@ const AtelierInterior = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="fixed inset-0 z-40 flex items-center justify-center bg-[#0b1626]">
-        <span className="v-serif text-[13px] tracking-[0.2em] text-[#e2c078]/60">
+      <div className="fixed inset-0 z-40 flex items-center justify-center bg-[#12141d]">
+        <span className="v-serif text-[13px] tracking-[0.2em] text-[#c3c0f7]/60">
           지하로 내려가는 중...
         </span>
       </div>
@@ -2560,7 +2560,7 @@ export function AIPortfolioVillage() {
             <button
               type="button"
               onClick={() => openCommission("상시 버튼")}
-              className="v-panel fixed bottom-24 right-4 z-[52] flex items-center gap-2 px-3.5 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:brightness-125 active:scale-95 md:bottom-6"
+              className="v-panel fixed bottom-24 right-4 z-[52] flex items-center gap-2 px-3.5 py-2.5 text-[12px] font-black text-[#f5f6f8] transition hover:brightness-125 active:scale-95 md:bottom-6"
               title="홈페이지 제작 의뢰"
             >
               <span className="v-lantern-glow flex">

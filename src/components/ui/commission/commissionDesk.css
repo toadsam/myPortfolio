@@ -1,0 +1,442 @@
+/*
+ * 의뢰 공방 2D 데스크 · 추적 화면 — /resume v2 와 같은 흰 바탕·인디고 톤 (2026-11-14).
+ *
+ * 색은 resumeV2.css 의 토큰과 같은 값이다. 데스크는 착륙장·마을·공방 어디서든 body 가까이에
+ * 뜨는 모달이라 .rv2 의 변수가 닿지 않아 여기 한 번 더 적었다. 인디고를 바꾸면 이 파일도 같이.
+ * 3D 공방 바닥에 뜨는 대사창(IntakeDialogue layout="hud")은 어두운 방 위라 마을 HUD 의 어두운 판을 쓴다.
+ * 모든 선택자는 .cd / .cd-page 아래에만 걸린다.
+ */
+
+.cd,
+.cd-page {
+  color-scheme: light;
+  --cd-bg: #ffffff;
+  --cd-fg: #0e1116;
+  --cd-sub: #5b6472;
+  --cd-line: #eceef2;
+  --cd-soft: #f4f5f7;
+  --cd-accent: #4f46e5;
+  --cd-accent-press: #2a1fe0;
+  --cd-accent-soft: #eae9fc;
+  --cd-accent-mid: #aeaaf3;
+  --cd-ok: #15803d;
+  --cd-ok-soft: #e7f6ec;
+  --cd-warn-soft: #fdf1e1;
+  font-family: var(--font-nunito, "Nunito"), var(--font-body-kr), "Noto Sans KR",
+    -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  color: var(--cd-fg);
+  word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+}
+.cd {
+  background: rgba(14, 17, 22, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.cd-page {
+  background: var(--cd-bg);
+}
+.cd :focus-visible,
+.cd-page :focus-visible {
+  outline: 3px solid var(--cd-accent);
+  outline-offset: 2px;
+}
+
+/* 판과 머리 */
+.cd-sheet {
+  background: var(--cd-bg);
+  border-radius: 26px;
+  box-shadow: 0 30px 80px rgba(10, 20, 40, 0.28);
+}
+.cd-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--cd-line);
+}
+@media (min-width: 640px) {
+  .cd-sheet {
+    border-radius: 34px;
+  }
+  .cd-head {
+    padding: 20px 26px;
+  }
+}
+.cd-bd {
+  border-color: var(--cd-line);
+}
+.cd-ico {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: var(--cd-accent-soft);
+  color: var(--cd-accent);
+}
+.cd-ico.is-lg {
+  width: 68px;
+  height: 68px;
+  border-radius: 24px;
+}
+.cd-title {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.cd-sub {
+  margin-top: 2px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--cd-sub);
+}
+.cd-dim {
+  color: var(--cd-sub);
+}
+
+/* 버튼 */
+.cd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 99px;
+  background: var(--cd-soft);
+  color: var(--cd-fg);
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+.cd-btn:hover {
+  background: var(--cd-line);
+}
+.cd-btn:active {
+  transform: scale(0.96);
+}
+.cd-btn:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.cd-btn.is-accent {
+  background: var(--cd-accent);
+  color: #ffffff;
+}
+.cd-btn.is-accent:hover {
+  background: var(--cd-accent-press);
+}
+.cd-btn.is-dark {
+  background: var(--cd-fg);
+  color: #ffffff;
+}
+.cd-btn.is-dark:hover {
+  background: #2a2f38;
+}
+.cd-btn.is-sm {
+  height: 40px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+.cd-btn.is-block {
+  width: 100%;
+}
+.cd-link {
+  color: var(--cd-accent);
+  font-weight: 800;
+}
+.cd-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* 오른쪽 패널 */
+.cd-tile {
+  background: var(--cd-soft);
+  border-radius: 26px;
+  padding: 18px 20px;
+}
+.cd-label {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--cd-accent);
+}
+.cd-big {
+  font-size: 46px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.cd-big small,
+.cd-strip small {
+  margin-left: 4px;
+  font-size: 0.38em;
+  font-weight: 800;
+  letter-spacing: 0;
+  color: var(--cd-sub);
+}
+.cd-strip small {
+  font-size: 0.6em;
+}
+.cd-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 10px 14px 0;
+  padding: 10px 18px;
+  border-radius: 20px;
+  background: var(--cd-soft);
+}
+.cd-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--cd-sub);
+}
+.cd-h {
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+}
+.cd-dl > div {
+  display: flex;
+  gap: 12px;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+.cd-dl dt {
+  flex: none;
+  width: 60px;
+  color: var(--cd-sub);
+}
+.cd-dl dt.is-done {
+  width: 84px;
+  color: var(--cd-ok);
+  font-weight: 800;
+}
+.cd-dl dd {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-weight: 700;
+}
+.cd-okbox {
+  border-radius: 18px;
+  background: var(--cd-ok-soft);
+  color: #14532d;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.cd-err {
+  border-radius: 16px;
+  background: var(--cd-warn-soft);
+  color: #7c2d12;
+  padding: 10px 14px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.cd-code {
+  border-radius: 16px;
+  background: var(--cd-soft);
+  padding: 10px 22px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 17px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+/* 대화 */
+.cd-avatar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 99px;
+  background: var(--cd-accent-soft);
+  color: var(--cd-accent);
+  font-weight: 900;
+}
+.cd-avatar.is-on {
+  background: var(--cd-accent);
+  color: #ffffff;
+}
+.cd-prog {
+  flex: 1;
+  min-width: 24px;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--cd-soft);
+  overflow: hidden;
+}
+.cd-prog > i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--cd-accent);
+  transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.cd-me {
+  max-width: 84%;
+  background: var(--cd-accent);
+  color: #ffffff;
+  border-radius: 22px 22px 6px 22px;
+  padding: 10px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+.cd-npc {
+  display: inline-block;
+  max-width: 100%;
+  background: var(--cd-soft);
+  border-radius: 6px 22px 22px 22px;
+  padding: 11px 16px;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.cd-npc.is-aside {
+  background: var(--cd-bg);
+  border: 1.5px dashed #c9cdd6;
+}
+.cd-caret {
+  color: var(--cd-accent);
+}
+.cd-choice {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  text-align: left;
+  background: var(--cd-bg);
+  box-shadow: inset 0 0 0 1.5px var(--cd-line);
+  border-radius: 20px;
+  padding: 10px;
+  transition: box-shadow 0.2s, background 0.2s;
+}
+.cd-choice:hover {
+  box-shadow: inset 0 0 0 2px var(--cd-accent-mid);
+}
+.cd-choice.is-free {
+  box-shadow: none;
+  border: 1.5px dashed #c9cdd6;
+}
+.cd-choice.is-free:hover {
+  border-color: var(--cd-accent-mid);
+}
+.cd-choice.is-on {
+  background: var(--cd-accent-soft);
+  box-shadow: inset 0 0 0 2px var(--cd-accent);
+  color: var(--cd-accent-press);
+}
+.cd-choice-t {
+  padding: 0 4px;
+  font-size: 14.5px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+.cd-tag {
+  align-self: flex-start;
+  margin: 6px 0 0 4px;
+  border-radius: 99px;
+  padding: 2px 9px;
+  background: var(--cd-accent-soft);
+  color: var(--cd-accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+.cd-choice.is-on .cd-tag {
+  background: var(--cd-bg);
+}
+.cd-tag.is-free {
+  background: var(--cd-ok-soft);
+  color: var(--cd-ok);
+}
+.cd-chip {
+  border-radius: 99px;
+  background: var(--cd-soft);
+  padding: 9px 15px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cd-sub);
+  transition: background 0.2s, color 0.2s;
+}
+.cd-chip:hover {
+  background: var(--cd-accent-soft);
+  color: var(--cd-accent);
+}
+
+/* 입력 */
+.cd-input,
+.cd-field,
+.cd-area {
+  background: var(--cd-soft);
+  color: var(--cd-fg);
+  font-size: 15px;
+  outline: none;
+  transition: box-shadow 0.2s;
+}
+.cd-input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  border-radius: 99px;
+  padding: 0 20px;
+}
+.cd-field {
+  width: 100%;
+  height: 46px;
+  border-radius: 16px;
+  padding: 0 16px;
+}
+.cd-area {
+  width: 100%;
+  border-radius: 20px;
+  padding: 12px 16px;
+  line-height: 1.55;
+}
+.cd-input::placeholder,
+.cd-field::placeholder,
+.cd-area::placeholder {
+  color: var(--cd-sub);
+  opacity: 0.8;
+}
+.cd-input:focus,
+.cd-field:focus,
+.cd-area:focus {
+  box-shadow: inset 0 0 0 2px var(--cd-accent);
+}
+.cd-input:disabled {
+  opacity: 0.5;
+}
+.cd-flabel {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--cd-sub);
+}
+
+/*
+ * 마을·공방 위에 데스크가 뜨면 금색 네온 링(CustomCursor 의 구운 커서)이 흰 판 위에서
+ * 거의 안 보인다. 판 안에서는 OS 기본 커서로 돌린다. 그쪽 규칙이 !important 라
+ * 특이도로 이긴다(.cd 를 세 번 겹쳐 (0,4,1) 이상).
+ */
+html.custom-cursor-active .cd.cd.cd,
+html.custom-cursor-active .cd.cd.cd * {
+  cursor: auto !important;
+}
+html.custom-cursor-active .cd.cd.cd a,
+html.custom-cursor-active .cd.cd.cd button,
+html.custom-cursor-active .cd.cd.cd label {
+  cursor: pointer !important;
+}
+html.custom-cursor-active .cd.cd.cd input:not([type="checkbox"]),
+html.custom-cursor-active .cd.cd.cd textarea {
+  cursor: text !important;
+}

@@ -61,6 +61,7 @@ import {
   generateCommissionQuestions,
   saveCommissionDepthAnswers
 } from "@/lib/liveApi";
+import "./commission/commissionDesk.css";
 import {DurationTicker} from "./commission/DurationTicker";
 import {IntakeDialogue} from "./commission/IntakeDialogue";
 import {
@@ -216,7 +217,7 @@ function DepthRelayDesk({
         {track.preview ? <PreviewPane preview={track.preview} /> : null}
 
         <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-          <section className="flex min-h-0 flex-1 flex-col lg:border-r lg:border-[#7a5a38]/40">
+          <section className="flex min-h-0 flex-1 flex-col cd-bd lg:border-r">
             <IntakeDialogue
               flow={flow}
               layout="panel"
@@ -224,10 +225,10 @@ function DepthRelayDesk({
             />
           </section>
 
-          <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto border-t border-[#7a5a38]/40 px-5 py-4 lg:w-[360px] lg:border-t-0">
+          <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto cd-bd border-t px-5 py-5 lg:w-[340px] lg:border-t-0">
             <DurationCard draft={track.draft} />
             <DepthProgress draft={flow.draft} />
-            <p className="mt-4 border-t border-[#7a5a38]/40 pt-4 text-[11px] leading-relaxed text-[#a9bdd6]/60">
+            <p className="cd-note cd-bd mt-4 border-t pt-4">
               여기서 주신 답은 바로 저장돼요. 중간에 닫으셔도 이어서 하실 수
               있어요.
             </p>
@@ -267,13 +268,25 @@ function IntakeDesk({onClose}: {onClose: () => void}) {
         <CommissionReceipt ack={ack} onClose={onClose} />
       ) : (
         <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
-          <section className="flex min-h-0 flex-1 flex-col lg:border-r lg:border-[#7a5a38]/40">
+          <section className="flex min-h-0 flex-1 flex-col cd-bd lg:border-r">
+            {/* 휴대폰에서는 기간을 대화 위 한 줄로 올린다. 아래 패널까지 내려가지 않아도 보인다. */}
+            <div className="lg:hidden">
+              <DurationTicker estimate={flow.estimate} tone="light" compact />
+            </div>
             <IntakeDialogue flow={flow} layout="panel" />
           </section>
 
-          <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto border-t border-[#7a5a38]/40 px-5 py-4 lg:w-[360px] lg:border-t-0">
-            <DurationTicker estimate={flow.estimate} />
-            <p className="mt-2 text-[10px] leading-relaxed text-[#a9bdd6]/55">
+          {/* 휴대폰에서는 접수 칸이 열리기 전까지 아래 패널 높이를 묶는다. 글자가 커진 만큼
+              패널이 대화 영역을 눌러 선택지가 한 장도 안 보였다(390x844 실측). */}
+          <aside
+            className={`flex min-h-0 shrink-0 flex-col overflow-y-auto cd-bd border-t px-5 py-5 lg:w-[340px] lg:border-t-0 ${
+              formOpen ? "" : "max-lg:max-h-[22vh]"
+            }`}
+          >
+            <div className="hidden lg:block">
+              <DurationTicker estimate={flow.estimate} tone="light" />
+            </div>
+            <p className="cd-note mt-3">
               고르는 대로 기간이 움직여요. 확정이 아니라 참고 범위이고, 비용은
               접수 뒤 담당자가 직접 안내드려요.
             </p>
@@ -283,14 +296,14 @@ function IntakeDesk({onClose}: {onClose: () => void}) {
               {formOpen ? (
                 <SubmitForm draft={flow.draft} onAck={setAck} />
               ) : (
-                <p className="mt-4 border-t border-[#7a5a38]/40 pt-4 text-[11px] leading-relaxed text-[#a9bdd6]/60">
+                <p className="cd-note cd-bd mt-4 border-t pt-4">
                   {flow.draft.ready_to_submit ? (
                     <>
                       설문이 끝나면 접수 칸이 열려요.{" "}
                       <button
                         type="button"
                         onClick={() => setEarly(true)}
-                        className="font-bold text-[#e2c078] underline-offset-2 hover:underline"
+                        className="cd-link"
                       >
                         지금 바로 접수할래요
                       </button>
@@ -321,7 +334,7 @@ function DeskShell({
 }) {
   return (
     <motion.div
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 p-3 backdrop-blur-sm sm:p-6"
+      className="cd fixed inset-0 z-[70] flex items-center justify-center p-2 sm:p-6"
       initial={{opacity: 0}}
       animate={{opacity: 1}}
       exit={{opacity: 0}}
@@ -330,27 +343,34 @@ function DeskShell({
       aria-label="홈페이지 제작 의뢰 공방"
     >
       <motion.div
-        className="v-panel flex h-full max-h-[860px] w-full max-w-[1040px] flex-col overflow-hidden"
+        className="cd-sheet flex h-full max-h-[860px] w-full max-w-[1040px] flex-col overflow-hidden"
         initial={{opacity: 0, y: 24, scale: 0.98}}
         animate={{opacity: 1, y: 0, scale: 1}}
         exit={{opacity: 0, y: 24, scale: 0.98}}
         transition={{type: "spring", stiffness: 240, damping: 26}}
       >
-        <header className="flex items-center justify-between gap-3 border-b border-[#7a5a38]/50 px-5 py-3.5">
-          <div className="flex items-center gap-3">
-            <span className="v-lantern-glow flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#ff9d38]/50 bg-[#ff9d38]/12 text-lg">
-              🛠️
+        <header className="cd-head flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="cd-ico" aria-hidden="true">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M14.7 6.3a4 4 0 0 0-5.2 5.2L3 18l3 3 6.5-6.5a4 4 0 0 0 5.2-5.2l-2.6 2.6-2.4-.6-.6-2.4z" />
+              </svg>
             </span>
-            <div>
-              <p className="v-panel-title text-[15px]">의뢰 공방</p>
-              <p className="mt-0.5 text-[11px] text-[#a9bdd6]/75">{subtitle}</p>
+            <div className="min-w-0">
+              <p className="cd-title">의뢰 공방</p>
+              <p className="cd-sub">{subtitle}</p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="shrink-0 rounded-lg border border-[#e2c078]/25 px-3 py-1.5 text-[11px] font-black text-[#a9bdd6]/80 transition hover:border-[#e2c078]/60 hover:text-[#f3e6c8] active:scale-95"
-          >
+          <button type="button" onClick={onClose} className="cd-btn shrink-0">
             닫기
           </button>
         </header>
@@ -473,10 +493,10 @@ function ChatDesk({
 
             <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
               {/* ── 상담 ── */}
-              <section className="flex min-h-0 flex-1 flex-col lg:border-r lg:border-[#7a5a38]/40">
+              <section className="flex min-h-0 flex-1 flex-col cd-bd lg:border-r">
                 <div
                   ref={scrollRef}
-                  className="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 py-4"
+                  className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4 sm:px-6"
                 >
                   {lines.map((line, index) => (
                     <div
@@ -490,8 +510,8 @@ function ChatDesk({
                       <p
                         className={
                           line.role === "visitor"
-                            ? "max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm border border-[#ff9d38]/35 bg-[#ff9d38]/12 px-3.5 py-2.5 text-[13px] leading-relaxed text-[#f3e6c8]"
-                            : "max-w-[88%] whitespace-pre-wrap rounded-2xl rounded-bl-sm border border-[#e2c078]/20 bg-white/[0.04] px-3.5 py-2.5 text-[13px] leading-relaxed text-[#dfe7f2]"
+                            ? "cd-me"
+                            : "cd-npc max-w-[88%]"
                         }
                       >
                         {line.content}
@@ -500,9 +520,7 @@ function ChatDesk({
                   ))}
 
                   {sending ? (
-                    <p className="text-[12px] text-[#a9bdd6]/60">
-                      도안이 도면을 살펴보는 중…
-                    </p>
+                    <p className="cd-note">도안이 도면을 살펴보는 중…</p>
                   ) : null}
 
                   {!depth && lines.length === 1 && !sending ? (
@@ -512,7 +530,7 @@ function ChatDesk({
                           key={starter}
                           type="button"
                           onClick={() => void send(starter)}
-                          className="rounded-full border border-[#e2c078]/25 px-3 py-1.5 text-[11px] text-[#a9bdd6] transition hover:border-[#e2c078]/60 hover:text-[#f3e6c8] active:scale-95"
+                          className="cd-chip"
                         >
                           {starter}
                         </button>
@@ -522,13 +540,11 @@ function ChatDesk({
                 </div>
 
                 {error ? (
-                  <p className="mx-5 mb-2 rounded-lg border border-[#ff9d38]/40 bg-[#ff9d38]/10 px-3 py-2 text-[12px] text-[#f3e6c8]">
-                    {error}
-                  </p>
+                  <p className="cd-err mx-4 mb-2 sm:mx-6">{error}</p>
                 ) : null}
 
                 <form
-                  className="flex gap-2 border-t border-[#7a5a38]/40 px-5 py-3"
+                  className="cd-bd flex gap-2 border-t px-4 py-3 sm:px-6"
                   onSubmit={event => {
                     event.preventDefault();
                     void send(input);
@@ -543,12 +559,12 @@ function ChatDesk({
                         : "어떤 홈페이지가 필요하신가요?"
                     }
                     disabled={sending}
-                    className="min-w-0 flex-1 rounded-lg border border-[#e2c078]/25 bg-white/[0.04] px-3 py-2.5 text-[13px] text-[#f3e6c8] outline-none transition placeholder:text-[#a9bdd6]/45 focus:border-[#ff9d38]/60 disabled:opacity-50"
+                    className="cd-input"
                   />
                   <button
                     type="submit"
                     disabled={sending || !input.trim()}
-                    className="shrink-0 rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-4 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25 active:scale-95 disabled:opacity-40"
+                    className="cd-btn is-dark shrink-0"
                   >
                     보내기
                   </button>
@@ -556,7 +572,7 @@ function ChatDesk({
               </section>
 
               {/* ── 도면(기간·요구사항)과 접수 ── */}
-              <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto border-t border-[#7a5a38]/40 px-5 py-4 lg:w-[380px] lg:border-t-0">
+              <aside className="flex min-h-0 shrink-0 flex-col overflow-y-auto cd-bd border-t px-5 py-5 lg:w-[360px] lg:border-t-0">
                 <DurationCard draft={draft} />
                 <RequirementList draft={draft} />
 
@@ -568,7 +584,7 @@ function ChatDesk({
                       <SubmitForm draft={draft} onAck={setAck} />
                     ) : null
                   ) : (
-                    <p className="mt-4 border-t border-[#7a5a38]/40 pt-4 text-[11px] leading-relaxed text-[#a9bdd6]/60">
+                    <p className="cd-note cd-bd mt-4 border-t pt-4">
                       {depth
                         ? "여기서 주신 답은 바로 저장돼요. 중간에 닫으셔도 이어서 하실 수 있어요."
                         : "대화를 조금 더 나누면 접수 창이 열려요. 어떤 사이트인지, 어떤 기능이 필요한지 알려주세요."}
@@ -653,14 +669,14 @@ function SubmitForm({
     <motion.div
       initial={{opacity: 0, y: 12}}
       animate={{opacity: 1, y: 0}}
-      className="mt-4 border-t border-[#7a5a38]/40 pt-4"
+      className="cd-bd mt-5 border-t pt-5"
     >
-      <p className="v-serif mb-2 text-[13px] text-[#e2c078]">의뢰 접수하기</p>
-      <p className="mb-3 text-[11px] leading-relaxed text-[#a9bdd6]/75">
+      <p className="cd-h mb-1.5">의뢰 접수하기</p>
+      <p className="cd-note mb-3">
         남겨주시면 정재훈이 직접 내용을 확인하고 연락드려요. 이메일만 필수예요.
       </p>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         <Field
           label="이메일 *"
           value={email}
@@ -703,12 +719,12 @@ function SubmitForm({
           />
         </div>
 
-        <label className="mt-1 flex cursor-pointer items-start gap-2 text-[11px] leading-relaxed text-[#a9bdd6]">
+        <label className="cd-note mt-1 flex cursor-pointer items-start gap-2.5">
           <input
             type="checkbox"
             checked={consent}
             onChange={event => setConsent(event.target.checked)}
-            className="mt-0.5 shrink-0 accent-[#ff9d38]"
+            className="mt-1 h-4 w-4 shrink-0 accent-[#4f46e5]"
           />
           <span>
             의뢰 회신을 위해 입력한 연락처와 상담 내용을 보관하는 데 동의합니다.
@@ -720,7 +736,7 @@ function SubmitForm({
           type="button"
           onClick={() => void submit()}
           disabled={submitting || !email.trim() || !consent}
-          className="mt-1 w-full rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-4 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25 active:scale-95 disabled:opacity-40"
+          className="cd-btn is-accent is-block mt-1"
         >
           {submitting ? "접수하는 중…" : "이 내용으로 접수하기"}
         </button>
@@ -738,21 +754,19 @@ function DurationCard({draft}: {draft: CommissionDraft | null}) {
   const hasWeeks = !!draft && draft.weeks_max > 0;
 
   return (
-    <div className="rounded-xl border border-[#e2c078]/25 bg-white/[0.04] p-3.5">
-      <p className="v-serif text-[12px] text-[#e2c078]">예상 제작 기간</p>
+    <div className="cd-tile">
+      <p className="cd-label">예상 제작 기간</p>
 
       {hasWeeks ? (
-        <p className="mt-1.5 text-[18px] font-black text-[#f3e6c8]">
+        <p className="cd-big mt-2">
           {draft.weeks_min}~{draft.weeks_max}
-          <span className="ml-1 text-[12px] font-bold text-[#a9bdd6]">주</span>
+          <small>주</small>
         </p>
       ) : (
-        <p className="mt-1.5 text-[12px] text-[#a9bdd6]/60">
-          대화 내용이 쌓이면 기간을 잡아 드려요.
-        </p>
+        <p className="cd-note mt-1.5">대화 내용이 쌓이면 기간을 잡아 드려요.</p>
       )}
 
-      <p className="mt-2.5 border-t border-[#7a5a38]/40 pt-2 text-[10px] leading-relaxed text-[#a9bdd6]/60">
+      <p className="cd-note mt-3 text-[12.5px]">
         기간은 대화 내용을 바탕으로 한 참고 범위이며 확정이 아닙니다. 비용은
         접수 뒤 담당자가 직접 안내드립니다.
       </p>
@@ -776,24 +790,20 @@ function RequirementList({draft}: {draft: CommissionDraft | null}) {
   if (!rows.length && !draft.missing.length) return null;
 
   return (
-    <div className="mt-3.5">
-      <p className="v-serif mb-2 text-[12px] text-[#e2c078]">
-        도안이 정리한 내용
-      </p>
+    <div className="mt-5">
+      <p className="cd-h mb-2.5">도안이 정리한 내용</p>
 
-      <dl className="space-y-1.5">
+      <dl className="cd-dl space-y-2">
         {rows.map(row => (
-          <div key={row.label} className="flex gap-2 text-[11px]">
-            <dt className="w-12 shrink-0 text-[#a9bdd6]/60">{row.label}</dt>
-            <dd className="flex-1 leading-relaxed text-[#dfe7f2]">
-              {row.value}
-            </dd>
+          <div key={row.label}>
+            <dt>{row.label}</dt>
+            <dd>{row.value}</dd>
           </div>
         ))}
       </dl>
 
       {draft.missing.length ? (
-        <p className="mt-2.5 text-[11px] leading-relaxed text-[#a9bdd6]/55">
+        <p className="cd-note mt-3">
           아직 못 들은 것 — {draft.missing.join(" · ")}
         </p>
       ) : null}
@@ -817,29 +827,29 @@ function PreviewPane({preview}: {preview: SharedArtifact}) {
   const [open, setOpen] = useState(true);
 
   return (
-    <div className="border-b border-[#7a5a38]/40 px-5 py-3">
+    <div className="cd-bd border-b px-4 py-4 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
-          <p className="v-serif text-[13px] text-[#e2c078]">
-            먼저 만들어 본 시안이에요
-          </p>
-          <p className="mt-0.5 text-[11px] leading-relaxed text-[#a9bdd6]/75">
+          <p className="cd-h">먼저 만들어 본 시안이에요</p>
+          <p className="cd-note mt-0.5">
             아직 초안이라 사진은 색 블록이에요.{" "}
-            <strong className="text-[#f3e6c8]">어디가 아닌지</strong> 편하게
-            말씀해 주시면 그게 제일 큰 도움이 돼요.
+            <strong className="font-extrabold text-[#0e1116]">
+              어디가 아닌지
+            </strong>{" "}
+            편하게 말씀해 주시면 그게 제일 큰 도움이 돼요.
           </p>
         </div>
         <button
           type="button"
           onClick={() => setOpen(value => !value)}
-          className="shrink-0 rounded-lg border border-[#e2c078]/25 px-3 py-1.5 text-[11px] font-black text-[#a9bdd6]/80 transition hover:border-[#e2c078]/60 hover:text-[#f3e6c8] active:scale-95"
+          className="cd-btn is-sm shrink-0"
         >
           {open ? "접기" : "펼치기"}
         </button>
       </div>
 
       {open ? (
-        <div className="mt-2.5 overflow-hidden rounded-xl border border-[#e2c078]/25 bg-white">
+        <div className="cd-bd mt-3 overflow-hidden rounded-[20px] border bg-white">
           <iframe
             title="시안 미리보기"
             srcDoc={preview.content}
@@ -880,19 +890,15 @@ function DepthProgress({draft}: {draft: CommissionDraft | null}) {
   );
 
   return (
-    <div className="mt-4 border-t border-[#7a5a38]/40 pt-4">
-      <p className="v-serif mb-2 text-[13px] text-[#e2c078]">
-        제작에 필요한 것
-      </p>
+    <div className="cd-bd mt-5 border-t pt-5">
+      <p className="cd-h mb-2.5">제작에 필요한 것</p>
 
       {answered.length ? (
-        <dl className="space-y-1.5">
+        <dl className="cd-dl space-y-2">
           {answered.map(row => (
-            <div key={row.label} className="flex gap-2 text-[11px]">
-              <dt className="w-16 shrink-0 text-[#7bd88f]">✓ {row.label}</dt>
-              <dd className="flex-1 leading-relaxed text-[#dfe7f2]">
-                {row.value}
-              </dd>
+            <div key={row.label}>
+              <dt className="is-done">✓ {row.label}</dt>
+              <dd>{row.value}</dd>
             </div>
           ))}
         </dl>
@@ -900,14 +906,12 @@ function DepthProgress({draft}: {draft: CommissionDraft | null}) {
 
       {plannerAnswered.length ? (
         <>
-          <p className="mt-3 text-[11px] font-bold text-[#e2c078]/70">
-            기획자가 더 여쭌 것
-          </p>
-          <dl className="mt-1.5 space-y-1.5">
+          <p className="cd-label mt-4">기획자가 더 여쭌 것</p>
+          <dl className="mt-2 space-y-2">
             {plannerAnswered.map(item => (
-              <div key={item.id} className="text-[11px] leading-relaxed">
-                <dt className="text-[#a9bdd6]/60">{item.question}</dt>
-                <dd className="text-[#dfe7f2]">→ {item.answer}</dd>
+              <div key={item.id} className="text-[14px] leading-relaxed">
+                <dt className="cd-dim">{item.question}</dt>
+                <dd className="font-bold">→ {item.answer}</dd>
               </div>
             ))}
           </dl>
@@ -915,11 +919,11 @@ function DepthProgress({draft}: {draft: CommissionDraft | null}) {
       ) : null}
 
       {remaining.length ? (
-        <p className="mt-3 text-[11px] leading-relaxed text-[#a9bdd6]/60">
+        <p className="cd-note mt-3">
           남은 항목 {remaining.length}가지 — {remaining.join(" · ")}
         </p>
       ) : (
-        <p className="mt-3 rounded-lg border border-[#7bd88f]/30 bg-[#7bd88f]/10 px-3 py-2 text-[11px] leading-relaxed text-[#dfe7f2]">
+        <p className="cd-okbox mt-3">
           필요한 내용을 다 받았어요. 덧붙이실 게 있으면 편하게 남겨주세요.
         </p>
       )}
@@ -935,18 +939,27 @@ function CommissionReceipt({
   onClose: () => void;
 }) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 py-10 text-center">
-      <span className="v-lantern-glow text-4xl">🕯️</span>
+    <div className="flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto px-6 py-10 text-center">
+      <span className="cd-ico is-lg mt-auto" aria-hidden="true">
+        <svg
+          width="34"
+          height="34"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M5 12.5l4.5 4.5L19 7.5" />
+        </svg>
+      </span>
       <div>
-        <p className="v-panel-title text-[18px]">접수되었습니다</p>
-        <p className="mt-2 text-[13px] leading-relaxed text-[#dfe7f2]">
-          {ack.message}
-        </p>
+        <p className="cd-title text-[26px]">접수되었습니다</p>
+        <p className="mt-2 text-[15px] leading-relaxed">{ack.message}</p>
       </div>
-      <p className="rounded-lg border border-[#e2c078]/30 bg-white/[0.04] px-4 py-2 font-mono text-[14px] font-black tracking-wider text-[#e2c078]">
-        {ack.public_id}
-      </p>
-      <p className="max-w-[420px] text-[11px] leading-relaxed text-[#a9bdd6]/60">
+      <p className="cd-code">{ack.public_id}</p>
+      <p className="cd-note max-w-[440px]">
         접수번호를 적어두시면 나중에 문의하실 때 빠르게 찾을 수 있어요. 상담
         내용도 함께 저장되어 있어 처음부터 다시 설명하지 않으셔도 됩니다.
       </p>
@@ -954,33 +967,24 @@ function CommissionReceipt({
       {/* 심화 문답으로 가는 문. **접수 직후가 가장 잘 눌리는 순간이다** —
           이미 마음을 낸 참이고, 메일을 기다리는 동안 할 일이 생기는 셈이라. */}
       {ack.track_path ? (
-        <div className="w-full max-w-[440px] rounded-xl border border-[#e2c078]/25 bg-white/[0.04] p-4">
-          <p className="v-serif text-[13px] text-[#e2c078]">
-            3분만 더 — 결과가 많이 달라져요
-          </p>
-          <p className="mt-1.5 text-[11px] leading-relaxed text-[#a9bdd6]/80">
+        <div className="cd-tile w-full max-w-[460px] text-left">
+          <p className="cd-h">3분만 더 — 결과가 많이 달라져요</p>
+          <p className="cd-note mt-1.5">
             사진은 누가 준비하실지, 만든 뒤엔 누가 고치실지 같은 걸 몇 가지 더
             여쭤보고 싶어요. 실제로 만들 때 꼭 필요한 것들이라, 미리 알면 훨씬
             잘 맞춰 드릴 수 있습니다.
           </p>
-          <a
-            href={ack.track_path}
-            className="mt-3 inline-block rounded-lg border border-[#ff9d38]/50 bg-[#ff9d38]/15 px-4 py-2.5 text-[12px] font-black text-[#f3e6c8] transition hover:bg-[#ff9d38]/25 active:scale-95"
-          >
+          <a href={ack.track_path} className="cd-btn is-accent mt-3">
             도안에게 마저 알려주기
           </a>
-          <p className="mt-2 text-[10px] leading-relaxed text-[#a9bdd6]/50">
+          <p className="cd-note mt-2.5 text-[12.5px]">
             지금 안 하셔도 괜찮아요. 이 주소는 그대로 열려 있으니 나중에
             돌아오셔도 됩니다.
           </p>
         </div>
       ) : null}
 
-      <button
-        type="button"
-        onClick={onClose}
-        className="mt-1 rounded-lg border border-[#e2c078]/25 px-5 py-2.5 text-[12px] font-black text-[#a9bdd6]/80 transition hover:border-[#e2c078]/60 hover:text-[#f3e6c8] active:scale-95"
-      >
+      <button type="button" onClick={onClose} className="cd-btn mb-auto mt-1">
         마을로 돌아가기
       </button>
     </div>
@@ -1002,15 +1006,13 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-[10px] font-bold text-[#a9bdd6]/70">
-        {label}
-      </span>
+      <span className="cd-flabel">{label}</span>
       <input
         type={type}
         value={value}
         onChange={event => onChange(event.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-[#e2c078]/25 bg-white/[0.04] px-3 py-2 text-[12px] text-[#f3e6c8] outline-none transition placeholder:text-[#a9bdd6]/40 focus:border-[#ff9d38]/60"
+        className="cd-field"
       />
     </label>
   );

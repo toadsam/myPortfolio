@@ -7,267 +7,177 @@
   color: #1f2a24;
 }
 
-/* ── 마을 UI 토큰 — HUD는 '관제탑'이 아니라 '마을 안내소' ──
-   색은 전부 3D 마을에 이미 있는 것에서 추출했다:
-   lantern = LampPools 호박색, gold = 건물 간판 금박, night = 밤하늘.
+/* ── 마을 UI 토큰 — 2026-11-14 부터 /resume 과 같은 말투의 '어두운 판' ──
+   8월에 맞춘 마을 간판 언어(금테 액자·목재·고운바탕)를 걷고, 짙은 판 + 굵은 고딕 +
+   둥근 모서리 + 인디고 하나로 바꿨다. 흰 판이 아니라 어두운 판인 이유: HUD 는 밤 마을
+   위에 작은 조각으로 흩어져 있어, 흰색이면 장면보다 UI 가 먼저 보인다(시안 A·B 중 B).
+   변수 이름은 그대로 뒀다 — 쓰는 곳이 서른 군데가 넘는다. 값의 뜻만 바뀌었다:
+   lantern = 강조(밝은 인디고), gold = 제목 옆 작은 글자·옅은 선, wood = 테두리 선.
    공백 구분 RGB로 선언해 rgb(var(--v-gold) / 0.14) 꼴로 투명도를 섞는다. */
 :root {
-  --v-night: 11 22 38; /* #0b1626 밤하늘 — 패널 바탕 */
-  --v-lantern: 255 157 56; /* #ff9d38 랜턴 — 주 액센트 */
-  --v-gold: 226 192 120; /* #e2c078 간판금 — 제목·하이라이트 */
-  --v-wood: 122 90 56; /* #7a5a38 목재 — 프레임 */
-  --v-moon: 169 189 214; /* #a9bdd6 달빛 — 보조 텍스트 */
-  --v-paper: 243 230 200; /* #f3e6c8 양피지 — 밝은 텍스트 */
+  --v-night: 18 20 29; /* #12141d 판 바탕 */
+  --v-lantern: 139 133 240; /* #8b85f0 강조 — 어두운 판 위에서 읽히는 인디고 */
+  --v-gold: 195 192 247; /* #c3c0f7 옅은 인디고 — 작은 이름표·하이라이트 */
+  --v-wood: 58 63 77; /* #3a3f4d 선 */
+  --v-moon: 180 186 198; /* #b4bac6 보조 글자 */
+  --v-paper: 245 246 248; /* #f5f6f8 밝은 글자 */
+  --v-accent: 79 70 229; /* #4f46e5 채운 버튼 — /resume 의 --accent 와 같은 값 */
+  --v-ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* 떠 있는 HUD 패널의 공용 껍데기 — 나무 프레임 + 금박 안선 + 밤하늘 바탕.
-   위쪽에 은은한 금빛 그라디언트를 깔아 '랜턴 불이 위에서 비치는' 인상을 준다. */
+/* 떠 있는 HUD 패널의 공용 껍데기 — 짙은 판 + 흰 실선 한 줄 + 깊은 그림자. */
 .v-panel {
-  border: 1px solid rgb(var(--v-wood) / 0.55);
-  border-radius: 12px;
-  background: linear-gradient(
-      180deg,
-      rgb(var(--v-gold) / 0.07),
-      transparent 30%
-    ),
-    rgb(var(--v-night) / 0.88);
-  box-shadow: inset 0 0 0 1px rgb(var(--v-gold) / 0.12),
-    0 18px 50px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(10px);
+  border: 0;
+  border-radius: 22px;
+  background: rgb(var(--v-night) / 0.92);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 14px 40px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
   color: rgb(var(--v-moon));
 }
 
-/* ══ 마을 UI 실물 프레임 ══════════════════════════════════════════════
-   목표: UI를 '박스'가 아니라 마을에 걸린 '물건'(나무 현판·리본·명판)으로
-   보이게 한다. 지금은 그라디언트로 재질을 흉내 낸 근사치이고, 나중에 실제
-   그림 에셋이 들어오면 ▶ASSET 표시된 background/box-shadow 줄만 갈아끼우면
-   된다 — 레이아웃(padding·radius·글자)은 재질과 분리해 뒀으므로 교체해도
-   컴포넌트는 손댈 필요가 없다. */
-
-/* 나무 현판 — 결 무늬 + 깎인 모서리 + 아래로 떨어지는 그림자 */
+/* 예전 나무 현판·리본·귀퉁이 장식. 이름은 남기고 모양만 같은 판으로 맞춘다
+   (쓰는 곳: /island, 옛 LandingScreen). */
 .v-wood {
   position: relative;
-  /* ▶ASSET: 아래 background 한 덩어리를
-     border-image: url("/ui/plaque.png") 46 fill / 46px round; 으로 교체 */
-  background: repeating-linear-gradient(
-      97deg,
-      rgba(0, 0, 0, 0.08) 0 3px,
-      transparent 3px 9px,
-      rgba(255, 226, 180, 0.03) 9px 11px,
-      transparent 11px 19px
-    ),
-    radial-gradient(
-      118% 100% at 50% 38%,
-      rgba(0, 0, 0, 0) 28%,
-      rgba(0, 0, 0, 0.34) 100%
-    ),
-    linear-gradient(168deg, #64432a 0%, #422c1a 48%, #291908 100%);
-  border: 1px solid rgba(18, 11, 4, 0.9);
-  border-radius: 14px;
-  box-shadow: inset 0 2px 0 rgba(255, 214, 150, 0.22),
-    inset 0 -5px 12px rgba(0, 0, 0, 0.55), inset 7px 0 16px rgba(0, 0, 0, 0.26),
-    inset -7px 0 16px rgba(0, 0, 0, 0.26), 0 20px 46px rgba(0, 0, 0, 0.55);
+  background: rgb(var(--v-night) / 0.94);
+  border: 0;
+  border-radius: 22px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 14px 40px rgba(0, 0, 0, 0.45);
 }
-
-/* 현판 안쪽에 새겨진 금색 홈선 */
 .v-wood-inset::before {
-  content: "";
-  position: absolute;
-  inset: 8px;
-  border: 1px solid rgba(226, 192, 120, 0.32);
-  border-radius: 8px;
-  box-shadow: inset 0 1px 0 rgba(255, 232, 180, 0.14),
-    0 1px 0 rgba(0, 0, 0, 0.45);
-  pointer-events: none;
+  content: none;
 }
-
-/* 금박 각인 글자 — 위에서 빛을 받는 양각 */
 .v-emboss {
-  background: linear-gradient(
-    178deg,
-    #fff3d2 0%,
-    #f6d68d 34%,
-    #d4a044 63%,
-    #f8e4b4 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.22))
-    drop-shadow(0 3px 4px rgba(0, 0, 0, 0.62));
+  color: #ffffff;
 }
-
-/* 제비꼬리 리본 띠 — 양끝이 안으로 파인 배너 */
 .v-ribbon {
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    calc(100% - 18px) 50%,
-    100% 100%,
-    0 100%,
-    18px 50%
-  );
+  border-radius: 99px;
 }
-
-/* 모서리 금속 장식 (현판 네 귀퉁이) */
 .v-corner {
-  position: absolute;
-  width: 13px;
-  height: 13px;
-  background: linear-gradient(135deg, #f0d69a, #a97f36 55%, #6d4c1c);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-  border-radius: 3px;
+  display: none;
 }
 
-/* ══ 장식 액자 ══════════════════════════════════════════════════════════
-   .v-panel 보다 한 급 무거운 껍데기. 컨셉 아트의 UI는 '테두리를 그린 상자'가
-   아니라 **두께가 있는 금속 액자**다 — 빛을 받는 위쪽 모서리와 그늘진 아래쪽
-   모서리가 있고, 그 안에 밤하늘 판이 한 겹 내려앉아 있다.
+/* ══ 큰 판 ═══════════════════════════════════════════════════════════════
+   예전 금속 액자. 두께(padding)를 0 으로 해서 안쪽 판(.v-frame-body)만 남긴다.
 
-   .v-panel 을 고치지 않고 새로 만든 이유: 작은 알림·토스트·칩까지 스무 군데
-   넘게 .v-panel 을 쓰고 있어서, 거기까지 두꺼워지면 화면이 액자로 뒤덮인다.
-   큰 것만 이 급을 쓴다.
-
-   **테두리가 곧 배경이다.** border 로 두께를 만들면 모서리에서 색이 45°로
-   잘려 금속 이음매처럼 보이는데, padding 으로 만들면 그라디언트가 액자 전체를
-   한 덩어리로 흐른다. 안쪽 판(.v-frame-body)이 가운데를 덮어 액자만 남는다. */
+   **position 을 여기서 잡지 않는다.** 이 파일은 테일윈드 유틸리티보다 뒤에
+   로드돼서, position:relative 를 넣으면 사용처의 `fixed` 를 이겨 버린다.
+   실제로 그렇게 해 봤다가 화면에 떠 있어야 할 HUD 패널 다섯 개가 통째로
+   문서 흐름으로 떨어져 사라졌다. */
 .v-frame {
-  /* **position 을 여기서 잡지 않는다.** 이 파일은 테일윈드 유틸리티보다 뒤에
-     로드돼서, position:relative 를 넣으면 사용처의 `fixed` 를 이겨 버린다.
-     실제로 그렇게 해 봤다가 화면에 떠 있어야 할 HUD 패널 다섯 개가 통째로
-     문서 흐름으로 떨어져 사라졌다. 귀퉁이 장식의 기준점은 VillageFrame 이
-     클래스로 붙여 준다(사용처가 이미 위치를 잡았으면 안 붙인다). */
-  padding: 5px; /* = 액자 두께 */
-  border-radius: 16px;
-  /* ▶ASSET: 이 background 한 줄을
-     border-image: url("/ui/frame.png") 48 fill / 48px round; 로 갈아끼우면 된다 */
-  background: linear-gradient(
-    155deg,
-    #f4e0aa 0%,
-    #c99f52 20%,
-    #8a6528 46%,
-    #5d4318 68%,
-    #b08a44 86%,
-    #ecd9a4 100%
-  );
-  box-shadow: inset 0 1px 0 rgba(255, 246, 214, 0.6),
-    inset 0 -2px 3px rgba(0, 0, 0, 0.45), 0 2px 0 rgba(0, 0, 0, 0.35),
-    0 22px 48px rgba(0, 0, 0, 0.55);
+  padding: 0;
+  border-radius: 24px;
+  background: none;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
 }
-
-/* 액자 안에 내려앉은 밤하늘 판 — 위에서 랜턴빛이 비치는 그라디언트는
-   .v-panel 과 같은 것을 쓴다(둘이 나란히 있어도 같은 재질로 읽히게). */
 .v-frame-body {
   position: relative;
-  border-radius: 11px;
-  background: linear-gradient(
-      180deg,
-      rgb(var(--v-gold) / 0.08),
-      transparent 32%
-    ),
-    rgb(var(--v-night) / 0.94);
-  box-shadow: inset 0 0 0 1px rgb(var(--v-gold) / 0.26),
-    inset 0 3px 16px rgba(0, 0, 0, 0.6);
+  border-radius: inherit;
+  background: rgb(var(--v-night) / 0.94);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
 }
 
-/* 급 — 두께와 둥글기만 바꾼다. 색·글자는 사용처 유틸리티가 정한다. */
+/* 급 — 둥글기만 바꾼다. 색·글자는 사용처 유틸리티가 정한다.
+   plaque(이름판·작은 버튼)는 높이의 절반쯤이라 한 줄이면 알약이 되고,
+   펼쳐서 여러 줄이 되면 둥근 카드가 된다. */
 .v-frame--grand {
-  padding: 7px;
-  border-radius: 20px;
+  border-radius: 32px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
 }
-.v-frame--grand > .v-frame-body {
-  border-radius: 14px;
-}
-
 .v-frame--plaque {
-  padding: 4px;
-  border-radius: 13px;
+  border-radius: 24px;
 }
-.v-frame--plaque > .v-frame-body {
-  border-radius: 9px;
-}
-
 .v-frame--bar {
-  padding: 4px;
-  border-radius: 14px;
-}
-.v-frame--bar > .v-frame-body {
-  border-radius: 10px;
+  border-radius: 28px;
 }
 
-/* 다이아몬드를 물린 구분선 — 컨셉의 제목/본문 사이에 있는 그것.
-   좌우로 금선이 가늘어지며 사라지고 가운데에 마름모가 물려 있다.
-
-   **<hr> 에 쓰지 말 것.** hr 은 void 요소라 ::before/::after 가 제대로 안 그려진다
-   (실제로 마름모가 3px 짜리 납작한 가로줄로 눌려 나왔다). <div role="separator"> 로
-   쓴다 — 그래서 여기서 height 를 직접 잡는다. */
+/* 구분선 — 예전엔 가운데 마름모를 물린 금선이었다. 지금은 실선 한 줄.
+   <hr> 대신 <div role="separator"> 로 쓰는 건 그대로다. */
 .v-rule {
   position: relative;
-  height: 10px;
-}
-/* 금선 */
-.v-rule::before {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  top: 50%;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgb(var(--v-gold) / 0.5) 22%,
-    rgb(var(--v-gold) / 0.5) 78%,
-    transparent
-  );
-}
-/* 가운데 마름모 — 금선 위에 얹고, 밤하늘색 테를 둘러 선을 끊는다 */
-.v-rule::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 7px;
-  height: 7px;
-  margin: -3.5px 0 0 -3.5px;
-  transform: rotate(45deg);
-  background: linear-gradient(135deg, #f4e0aa, #b08a44 60%, #6d4c1c);
-  box-shadow: 0 0 0 3px rgb(var(--v-night)), 0 1px 2px rgba(0, 0, 0, 0.7);
+  background: rgba(255, 255, 255, 0.1);
 }
 
-/* 매달린 랜턴의 불빛 — 마을 램프와 같은 리듬으로 흔들린다 */
-@keyframes vLanternFlicker {
-  0%,
-  100% {
-    opacity: 0.82;
-  }
-  38% {
-    opacity: 1;
-  }
-  64% {
-    opacity: 0.7;
-  }
-}
-
+/* 예전 랜턴 깜빡임. 판이 차분해져서 껐다(클래스는 사용처에 남아 있다). */
 .v-lantern-glow {
-  animation: vLanternFlicker 3.6s ease-in-out infinite;
+  animation: none;
 }
 
-/* 간판 서체만 — 색·크기는 사용처의 유틸리티에 맡긴다.
-   (이 파일이 테일윈드보다 뒤에 로드돼 여기서 color/font-size를 정하면
-   text-* 유틸리티를 이겨버린다. 색을 바꿔야 하는 자리엔 v-panel-title 대신
-   이 클래스를 쓴다.) */
+/* 제목 서체 — 예전엔 고운바탕(명조). 지금은 본문과 같은 고딕을 가장 굵게.
+   색·크기는 사용처의 유틸리티에 맡긴다(이 파일이 테일윈드보다 뒤에 로드돼
+   여기서 color/font-size를 정하면 text-* 유틸리티를 이겨버린다). */
 .v-serif {
-  font-family: var(--font-display), "Gowun Batang", serif;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-family: var(--font-inter), var(--font-body-kr), ui-sans-serif, system-ui,
+    sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
 }
 
-/* 패널 제목 — 간판 서체 + 기본 금색 */
+/* 패널 제목 — 같은 서체 + 흰색 */
 .v-panel-title {
-  font-family: var(--font-display), "Gowun Batang", serif;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: rgb(var(--v-gold));
+  font-family: var(--font-inter), var(--font-body-kr), ui-sans-serif, system-ui,
+    sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+
+/* ── HUD 의 손맛 ─────────────────────────────────────────────────────────
+   판 안의 버튼·링크는 올리면 살짝 뜨고, 누르면 눌렸다가 튕겨 돌아온다
+   (/resume 의 .press 와 같은 곡선). transform 만 쓰므로 3D 장면의 프레임을
+   건드리지 않는다. framer-motion 이 transform 을 직접 쥔 요소는 인라인 스타일이
+   이기므로 겹쳐도 싸우지 않는다. */
+:where(.v-panel, .v-frame) :where(button, a[href]) {
+  transition: transform 0.45s var(--v-ease-pop), background-color 0.2s,
+    color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+:where(.v-panel, .v-frame) :where(button, a[href]):hover {
+  transform: translateY(-1px);
+}
+:where(.v-panel, .v-frame) :where(button, a[href]):active {
+  transform: scale(0.94);
+  transition-duration: 0.09s;
+  transition-timing-function: ease-out;
+}
+/* 판 자체가 버튼인 것(이동·지도·제작 의뢰 같은 한 줄짜리) */
+:where(button.v-panel, button.v-frame, a.v-panel) {
+  transition: transform 0.45s var(--v-ease-pop), box-shadow 0.25s;
+}
+:where(button.v-panel, button.v-frame, a.v-panel):hover {
+  transform: translateY(-2px);
+}
+:where(button.v-panel, button.v-frame, a.v-panel):active {
+  transform: scale(0.95);
+  transition-duration: 0.09s;
+}
+/* 판이 나타날 때 — 아래에서 살짝 커지며 튕겨 앉는다. framer 로 이미 들어오는
+   판에는 붙이지 않는다(.v-pop 을 단 곳만). */
+@keyframes vPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.v-pop {
+  animation: vPopIn 0.55s var(--v-ease-pop) both;
+  animation-delay: calc(var(--i, 0) * 55ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(.v-panel, .v-frame) :where(button, a[href]),
+  :where(button.v-panel, button.v-frame, a.v-panel) {
+    transition: none;
+  }
+  .v-pop {
+    animation: none;
+  }
 }
 
 * {
@@ -331,7 +241,10 @@ canvas {
    선택자와 data URI 를 CustomCursor.tsx 가 런타임에 만들어 <style> 로 넘긴다.
    예전엔 여기서 `cursor: none` 으로 진짜 커서를 숨기고 .cursor-ring / .cursor-dot 을
    rAF 로 옆에서 따라다니게 했는데, 그러면 프레임이 안 나오는 구간에서 커서가 멈추었다.
-   자세한 사정은 CustomCursor.tsx 상단 주석에 있다. */
+   자세한 사정은 CustomCursor.tsx 상단 주석에 있다.
+   흰 바탕 화면(`/`·`/resume*`)은 예외다 — 2026-11-13 부터 인디고 점+고리(DotRingCursor.tsx,
+   규칙은 DotRingCursor.css)를 rAF 로 따라다니게 한다. 고리가 늦게 오는 게 모양이고 그 화면엔
+   three 가 없어 프레임이 멎을 일이 없다. 갈래는 CustomCursor 가 주소로 정한다. */
 
 /* 건물 간판 — 마을에 실제로 걸린 나무 팻말.
    ▶ASSET: background/box-shadow 를 border-image 로 교체 가능 */
@@ -667,4 +580,54 @@ canvas {
 .v-hide-overlays .v-sign {
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+/* ── 착륙장 → 이력서·마을·공방 전환 (View Transition API) ──────────────────────
+   pushWithTransition 이 document.startViewTransition 으로 라우터 이동을 감싼다.
+   한 호흡(1.0초): 누른 물건의 판(cl-cover)이 화면을 채우며 커지다가, 다 채운 뒤부터는 녹으면서
+   그 밑에서 새 화면이 아래서 살짝 떠오른다. 멈추는 단계는 없다 — 판이 덮인 채 머무는 0.25초가
+   "끊긴다"로 읽혔다(2026-11-12). 문장을 이력서 h1 과 같은 이름으로 이어 주던 것도 뺐다 —
+   두 화면의 줄바꿈이 달라 글자가 겹쳐 보였다. 새 화면의 낱말 등장은 그대로 두어 판이 녹을 때
+   글자가 올라오는 것이 보이게 한다. 미지원 브라우저·모션 줄이기에서는 아예 부르지 않는다. */
+::view-transition-old(root) {
+  animation: vt-root-out 0.3s ease both;
+}
+::view-transition-new(root) {
+  animation: vt-root-in 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: 0.35s;
+}
+@keyframes vt-root-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-root-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+::view-transition-group(cl-cover) {
+  z-index: 5;
+}
+::view-transition-old(cl-cover) {
+  animation: vt-cover-grow 1s cubic-bezier(0.45, 0, 0.2, 1) both;
+}
+@keyframes vt-cover-grow {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  45% {
+    transform: scale(18);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(18);
+    opacity: 0;
+  }
 }

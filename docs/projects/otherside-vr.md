@@ -1,5 +1,7 @@
 # The Other Side (이면) — VR
 
+> **2026-11-13 갱신.** 저장소 kbwon/IMP_VR(최종본은 `develop`)을 gh 로 대조했다: 첫 커밋 2025-05-18 · 마지막 06-16, 커밋 161 중 toadsam 25. 본인 스크립트는 `Assets/JJH/JJH/Scripts` 열 개(EnemyDetector · EnemyLightZoneDetector · PlayerFlashlight · GameManager · MonsterAI · BookheadMover 등)로 아래 "MonsterAI·GameManager 를 못 찾았다" 는 옛 결론이다. 카드 기간을 2025.05~06 으로, 「메인 기획」을 「기획 참여」로(팀장 README 가 콘셉트·핵심 플레이 기획을 자기 몫으로 적음), 「GameManager 한 곳에서만 켜고 끈다」는 팀원 방 스크립트가 직접 켜는 경로가 있어 뺐다. 미사용이던 `op/vr-cam-off/on.webp` 를 전/후 슬라이더(팀원 카메라라고 캡션)로 썼고 히어로 비율은 640/300 실측.
+
 > **증명하는 것**: XR Interaction Toolkit으로 **VR 인터랙션을 시스템으로 설계**한 것.
 > "보이는 것/안 보이는 것"을 게임 규칙으로 만든 발상이 이 프로젝트의 핵심이다.
 
