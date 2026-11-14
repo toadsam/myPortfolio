@@ -1,7 +1,7 @@
-// 수어링고(구 수어지교) 상세의 이야기 배치 시안 (2026-11-15, 2차).
-// data.ts 의 sign-language 위에 덮어쓰는 층이다. 아직 data.ts 에 합치지 않았고 시안 주소
-// `/resume/sign-language-story` 에서만 쓴다. 승인되면 data.ts 끝에서
-// `RICH_DATA["sign-language"] = signStory(RICH_DATA["sign-language"])` 로 합치고 시안 주소를 지운다.
+// 수어링고(구 수어지교) 상세의 이야기 배치 개정분 (2026-11-15 적용).
+// data.ts 의 sign-language 위에 덮어쓰는 층이다. data.ts 끝에서
+// `RICH_DATA["sign-language"] = signStory(RICH_DATA["sign-language"])` 로 합쳐져
+// 상세 페이지 · 마을 전시실 · 원페이저가 모두 이 값을 읽는다.
 //
 // 이 페이지의 주제는 「바뀌기 전과 바뀐 뒤」다(본인 요청). 5월에 배포한 수어지교와, 11월에 본인이
 // 다시 그린 수어링고(색칠 마을)를 같은 구도로 나란히 놓는다. 그림은 전부 휴대폰 화면이다.
@@ -52,6 +52,8 @@ export function signStory(base: RichProject): RichProject {
   return {
     ...base,
     tagline: "SIGN LANGUAGE LEARNING · TEAM (BACKEND · ML · DESIGN)",
+    // 2학기 ml 폴더는 PyTorch 다(ml/requirements.txt · README). 머리의 기술 스택 줄에 같이 보인다.
+    tech: [...base.tech, "PyTorch"],
     tldr: [
       {
         k: "무엇을",

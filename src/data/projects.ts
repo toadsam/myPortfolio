@@ -165,10 +165,10 @@ export const projects: ProjectData[] = [
   },
   {
     id: "sign-language",
-    title: "수어지교",
+    title: "수어링고 (구 수어지교)",
     description:
-      "수어 동작 영상을 보고 뜻을 맞히며 익히는 학습 앱입니다. (3D 아바타 제작은 팀원 담당)",
-    role: "Spring Boot 백엔드 · 문장 변환 파이프라인 · 영상 조회 · 배포",
+      "수어 동작을 보고 뜻을 맞히며 익히는 학습 앱입니다. 5월에 수어지교로 배포했고 11월에 수어링고로 다시 그렸습니다.",
+    role: "1학기 백엔드(분석기 선택 · 영상 조회 · 배포) · 2학기 동작 데이터와 자모표 · 11월 디자인 개편",
     tech: [
       "Spring Boot",
       "Firebase Firestore",

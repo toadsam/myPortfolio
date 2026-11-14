@@ -3,6 +3,7 @@ import {stripCodeLinks} from "../../../../lib/codeLinks";
 import {aclubStory} from "./aclubStory";
 import {ajouchong2026} from "./ajouchong2026";
 import {mywaveStory} from "./mywaveStory";
+import {signStory} from "./signStory";
 import {tserofStory} from "./tserofStory";
 import {villageStory} from "./villageStory";
 
@@ -8212,4 +8213,8 @@ RICH_DATA["village-portfolio"] = villageStory(
 // PR · 커밋 · 코드 파일 링크는 화면에 걸지 않는다(lib/codeLinks.ts). 주소는 위 데이터에 그대로 있다.
 // MyWave 는 이야기 배치 개정분을 덮어쓴다. mywaveStory.ts 참고.
 RICH_DATA.mystock = mywaveStory(RICH_DATA.mystock as RichProject);
+// 수어링고(구 수어지교)는 이야기 배치 개정분을 덮어쓴다. signStory.ts 참고.
+RICH_DATA["sign-language"] = signStory(
+  RICH_DATA["sign-language"] as RichProject
+);
 stripCodeLinks(RICH_DATA);

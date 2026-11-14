@@ -331,8 +331,8 @@ export const OTHERS: {img: string; title: string; desc: string}[] = [
   },
   {
     img: "sign-language",
-    title: "수어지교",
-    desc: "수어 동작 영상을 보고 뜻을 익히는 학습 앱"
+    title: "수어링고 (구 수어지교)",
+    desc: "수어 동작을 보고 뜻을 익히는 학습 앱 · 11월에 디자인을 다시 그림"
   },
   {
     img: "otherside-vr",
