@@ -428,7 +428,7 @@ export const projects: ProjectData[] = [
       "눈 UI · 공포이벤트 UI · 맵 C/D 구역 · 캐릭터 애니메이션"
     ],
     result:
-      "커밋 317개 중 126개가 제 몫인 3인 팀 PC 프로토타입입니다. 응시 판정과 세 공포 이벤트가 들어갔고, 로컬라이즈(3개국어)와 ScaryEvent 계층은 팀원 작업입니다. 플레이 지표는 없습니다.",
+      "커밋 317개 중 126개를 제가 쓴 3인 팀 PC 프로토타입입니다. 응시 판정과 세 공포 이벤트가 들어갔고, 로컬라이즈(3개국어)와 ScaryEvent 계층은 팀원 작업입니다. 플레이 지표는 없습니다.",
     nextStep:
       "퍼즐 요소와 엔딩 시퀀스를 추가해 챕터형 게임으로 확장할 예정입니다.",
     links: [{label: "GitHub", href: "https://github.com/toadsam/DarkLab"}]

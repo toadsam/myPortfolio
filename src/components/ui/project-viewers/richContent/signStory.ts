@@ -376,7 +376,7 @@ export function signStory(base: RichProject): RichProject {
       story: {
         toc: {
           problem: "문제",
-          field: "내 몫",
+          field: "맡은 일",
           ledger: "문제 · 해결 · 확인",
           built: "새로 그린 화면",
           result: "결과와 남은 것"
@@ -389,7 +389,7 @@ export function signStory(base: RichProject): RichProject {
           after: base.hypothesis
         },
         field: {
-          eyebrow: "02 · 내 몫",
+          eyebrow: "02 · 맡은 일",
           title:
             "1학기에는 백엔드를, 2학기에는 데이터와 자모표를, 11월에는 디자인을 맡았습니다.",
           em: "11월에는 디자인",

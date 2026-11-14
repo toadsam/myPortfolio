@@ -248,7 +248,7 @@ export function tserofStory(base: RichProject): RichProject {
       story: {
         toc: {
           problem: "문제",
-          field: "내 몫",
+          field: "맡은 일",
           ledger: "문제 · 해결 · 확인",
           result: "결과와 남은 것"
         },
@@ -262,7 +262,7 @@ export function tserofStory(base: RichProject): RichProject {
             "세 씬을 한 씬으로 합쳐 카메라·리스폰·클리어를 매니저 하나에 모으고, 큐브·퍼즐·장애물을 같은 규약으로 묶으면 기믹을 늘려도 구간 전환이 끊기지 않는다고 봤습니다."
         },
         field: {
-          eyebrow: "02 · 내 몫",
+          eyebrow: "02 · 맡은 일",
           title: "5인 팀에서 스테이지 2 전체와 기믹, 3×3 퍼즐을 맡았습니다.",
           em: "스테이지 2 전체",
           lead: "플레이어 컨트롤러, 저장과 씬 전환, 스테이지 선택과 사운드, 스테이지 1 기믹은 팀원 넷이 맡았습니다. 담당은 저장소 README 의 기여자 표와 커밋 이력으로 확인했습니다. 저장소는 팀장 소유의 비공개 저장소입니다.",

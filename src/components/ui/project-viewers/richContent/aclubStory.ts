@@ -59,7 +59,7 @@ export function aclubStory(base: RichProject): RichProject {
       story: {
         toc: {
           problem: "문제",
-          field: "내 몫",
+          field: "맡은 일",
           ledger: "상황 · 한 일 · 결과",
           built: "화면",
           verify: "이용 기록",
@@ -75,7 +75,7 @@ export function aclubStory(base: RichProject): RichProject {
             "탐색·필터·상세·지원을 한 흐름으로 묶으면 학생은 한 곳에서 동아리를 찾습니다. 이용은 모집 기간 며칠에 몰릴 것이므로, 그 며칠 동안 화면이 깨지지 않는 것이 먼저라고 봤습니다."
         },
         field: {
-          eyebrow: "02 · 내 몫",
+          eyebrow: "02 · 맡은 일",
           title: "2026년의 저는 코드를 가장 많이 쓴 사람이 아니었습니다.",
           em: "코드를 가장 많이 쓴 사람이 아니었습니다",
           lead: "2026 저장소의 TypeScript 코드(화면, 커스텀 훅, 보호 라우트)는 2025년 9~11월에 팀원 둘이 다시 짠 것입니다. 저는 2026년 1월 18일에 프로젝트장으로 합류해 그 위에서 출시를 막는 문제를 고쳤고, 출시일과 그 저녁을 맡았습니다.",
