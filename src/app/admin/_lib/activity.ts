@@ -52,11 +52,11 @@ export function activityLevel(a?: DailyActivity | null): number {
 
 /** 활동 달력의 농도 — 등불이 진해지는 계단. 예전엔 파란 잔디였다. */
 export const LEVEL_BG = [
-  "#232b34",
-  "rgba(255,157,56,0.20)",
-  "rgba(255,157,56,0.40)",
-  "rgba(255,157,56,0.64)",
-  "rgba(255,157,56,0.90)"
+  "#e9ebef",
+  "rgba(79,70,229,0.20)",
+  "rgba(79,70,229,0.40)",
+  "rgba(79,70,229,0.64)",
+  "rgba(79,70,229,0.90)"
 ];
 
 export interface DailyStats {

@@ -96,6 +96,11 @@ export default function AdminPage() {
   const [commissionWaiting, setCommissionWaiting] = useState(0);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef(0);
+  /** 방금 송전한 것을 되돌릴 때 다시 저장할, 보내기 전 그날 기록 */
+  const [undo, setUndo] = useState<{date: string; form: ActivityInput} | null>(
+    null
+  );
+  const undoTimer = useRef(0);
 
   const isToday = selectedDate === today();
   const plan = usePlanItems(selectedDate, authChecked && !locked);
@@ -227,9 +232,17 @@ export default function AdminPage() {
     const levelBefore = power.level;
     const gained = pending;
     const savedForm = form;
+    // 되돌리기는 그날 기록이 이미 있었을 때만 — 이유는 SendDock 머리 주석.
+    const before = savedRow
+      ? {date: selectedDate, form: formFrom(savedRow)}
+      : null;
     setIsSaving(true);
     try {
       await saveActivity({...normalizeForm(form), date: selectedDate});
+      setUndo(before);
+      window.clearTimeout(undoTimer.current);
+      if (before)
+        undoTimer.current = window.setTimeout(() => setUndo(null), 20000);
       const [hist, state] = await Promise.all([
         fetchActivityHistory(140),
         fetchVillageState()
@@ -278,6 +291,29 @@ export default function AdminPage() {
       } else say(`${prettyDate(selectedDate)} 기록을 송전했어요`);
     } catch {
       say("송전에 실패했어요. 백엔드 상태를 확인하세요");
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  /** 방금 송전을 되돌린다 — 보내기 전 그날 기록으로 한 번 더 저장한다. 폼은 그대로 둔다. */
+  async function handleUndo() {
+    if (!undo) return;
+    const target = undo;
+    setUndo(null);
+    window.clearTimeout(undoTimer.current);
+    setIsSaving(true);
+    try {
+      await saveActivity({...normalizeForm(target.form), date: target.date});
+      const [hist, state] = await Promise.all([
+        fetchActivityHistory(140),
+        fetchVillageState()
+      ]);
+      setHistory(hist);
+      setVillageState(state);
+      say("송전을 되돌렸어요. 고친 내용은 화면에 그대로 있어요");
+    } catch {
+      say("되돌리지 못했어요. 백엔드 상태를 확인하세요");
     } finally {
       setIsSaving(false);
     }
@@ -412,7 +448,7 @@ export default function AdminPage() {
 
   if (!authChecked) {
     return (
-      <main className="admin-switchboard grid min-h-screen place-items-center text-[#8b94a0]">
+      <main className="admin-switchboard grid min-h-screen place-items-center text-[#5b6472]">
         <p className="font-mono text-sm">불러오는 중…</p>
       </main>
     );
@@ -495,7 +531,14 @@ export default function AdminPage() {
         <SendDock
           canSend={dirty || dayKwh(form) > 0}
           onSend={() => void handleSave()}
+          onUndo={() => void handleUndo()}
+          pending={pending}
           sending={isSaving}
+          undoLabel={
+            undo && undo.date === selectedDate && !reward
+              ? "마을에 보냈어요"
+              : null
+          }
         />
       ) : null}
 

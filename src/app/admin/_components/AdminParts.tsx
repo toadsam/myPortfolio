@@ -59,7 +59,7 @@ export function ActivityCalendar({
                   className="h-3 w-3 rounded-[3px] transition hover:scale-125"
                   style={{
                     background: LEVEL_BG[level],
-                    outline: selected ? "1.5px solid #ff9d38" : "none",
+                    outline: selected ? "1.5px solid #4f46e5" : "none",
                     outlineOffset: selected ? "1px" : undefined
                   }}
                 />
@@ -68,7 +68,7 @@ export function ActivityCalendar({
           </div>
         ))}
       </div>
-      <div className="mt-2 flex items-center justify-end gap-1.5 font-mono text-[10px] text-[#6b7580]">
+      <div className="mt-2 flex items-center justify-end gap-1.5 font-mono text-[10px] text-[#6b7280]">
         <span>적음</span>
         {LEVEL_BG.map((bg, i) => (
           <span
@@ -107,12 +107,12 @@ export function Panel({
     <section
       className={`sw-circuit${
         live ? " is-live" : ""
-      } rounded-lg border border-[#38414d] bg-[#1a2027] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.45)]`}
+      } rounded-lg border border-[#e2e4ea] bg-[#f4f5f7] p-5 shadow-[0_4px_20px_rgba(0,0,0,0.45)]`}
     >
       <div className="flex items-start gap-4">
         {lever ?? null}
         <div className="min-w-0">
-          <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#ff9d38]">
+          <p className="font-mono text-xs font-black uppercase tracking-[0.22em] text-[#4f46e5]">
             {kicker}
           </p>
           <h2 className="mt-2 text-xl font-black">{title}</h2>
@@ -126,18 +126,18 @@ export function Panel({
 export function AiUsageBar({usage}: {usage: AiUsage}) {
   const ratio =
     usage.daily_limit > 0 ? usage.today_count / usage.daily_limit : 0;
-  const color = ratio >= 0.9 ? "#b03a24" : ratio >= 0.6 ? "#e2c078" : "#ff9d38";
+  const color = ratio >= 0.9 ? "#b91c1c" : ratio >= 0.6 ? "#4f46e5" : "#4f46e5";
   return (
-    <div className="rounded-lg border border-[#38414d] bg-[#232b34] p-3">
+    <div className="rounded-lg border border-[#e2e4ea] bg-[#e9ebef] p-3">
       <div className="flex items-center justify-between">
-        <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#6b7580]">
+        <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#6b7280]">
           오늘 AI 호출
         </p>
         <p className="font-mono text-xs font-black" style={{color}}>
           {usage.today_count} / {usage.daily_limit}
         </p>
       </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#38414d]">
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#e2e4ea]">
         <div
           className="h-full rounded-full transition-[width]"
           style={{width: `${Math.min(100, ratio * 100)}%`, background: color}}

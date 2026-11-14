@@ -45,9 +45,9 @@ export function SaveStamp({stampKey, date}: {stampKey: number; date: string}) {
     >
       <div
         style={{
-          border: "3px solid rgba(255, 157, 56, 0.65)",
+          border: "3px solid rgba(79, 70, 229, 0.65)",
           borderRadius: 10,
-          color: "rgba(255, 157, 56, 0.75)",
+          color: "rgba(79, 70, 229, 0.75)",
           padding: "10px 18px",
           fontWeight: 900,
           letterSpacing: "0.08em",
@@ -109,9 +109,9 @@ export function StreakStamps({
   return (
     <div className="grid gap-2">
       <div className="flex items-baseline justify-between">
-        <span className="text-xs text-[#8b94a0]">최근 {days}일</span>
-        <span className="text-xs text-[#8b94a0]">
-          연속 <b className="text-[#ff9d38]">{streak}</b>일
+        <span className="text-xs text-[#5b6472]">최근 {days}일</span>
+        <span className="text-xs text-[#5b6472]">
+          연속 <b className="text-[#4f46e5]">{streak}</b>일
         </span>
       </div>
       <div className="flex flex-wrap gap-1.5">
@@ -128,10 +128,10 @@ export function StreakStamps({
               fontSize: 9,
               fontWeight: 800,
               border: c.on
-                ? "1.5px solid rgba(255,157,56,0.55)"
-                : "1.5px dashed rgba(107,117,128,0.55)",
-              color: c.on ? "rgba(255,157,56,0.8)" : "transparent",
-              background: c.on ? "rgba(255,157,56,0.12)" : "transparent"
+                ? "1.5px solid rgba(79,70,229,0.55)"
+                : "1.5px dashed rgba(107,114,128,0.55)",
+              color: c.on ? "rgba(79,70,229,0.8)" : "transparent",
+              background: c.on ? "rgba(79,70,229,0.12)" : "transparent"
             }}
           >
             ✓
@@ -147,13 +147,13 @@ export function StreakStamps({
    ───────────────────────────────────────────────────────────────────────────*/
 
 const MOOD_TONE: Record<string, string> = {
-  training: "#6fae6a",
-  proud: "#ff9d38",
-  sleepy: "#6b7580",
-  busy: "#ff9d38",
-  focused: "#ff9d38",
-  curious: "#9b8ac4",
-  calm: "#6b7580"
+  training: "#15803d",
+  proud: "#4f46e5",
+  sleepy: "#6b7280",
+  busy: "#4f46e5",
+  focused: "#4f46e5",
+  curious: "#6d5bd0",
+  calm: "#6b7280"
 };
 
 /** 숫자를 만지면 담당 NPC 의 기분과 한 줄이 그 자리에서 바뀐다. */
@@ -165,25 +165,25 @@ export function NpcReactions({npcs}: {npcs: NpcPreview[]}) {
           // min-w-0 이 li 에도 있어야 한다 — 안쪽 truncate 는 줄바꿈 금지라
           // 그 최소 폭이 그대로 부모의 최소 폭이 되고, 좁은 화면에서 패널을
           // 밀어내 페이지에 가로 스크롤이 생긴다.
-          className="flex min-w-0 items-start gap-2 rounded-lg border border-[#38414d] bg-[#1a2027] px-3 py-2"
+          className="flex min-w-0 items-start gap-2 rounded-lg border border-[#e2e4ea] bg-[#f4f5f7] px-3 py-2"
           key={n.id}
         >
           <span
             aria-hidden="true"
             className="mt-1.5 h-2 w-2 shrink-0 rounded-full transition-colors duration-300"
-            style={{background: MOOD_TONE[n.mood] ?? "#6b7580"}}
+            style={{background: MOOD_TONE[n.mood] ?? "#6b7280"}}
           />
           <div className="min-w-0">
             <div className="flex items-baseline gap-2">
               <b className="text-sm">{n.name}</b>
               <span
                 className="text-xs transition-colors duration-300"
-                style={{color: MOOD_TONE[n.mood] ?? "#6b7580"}}
+                style={{color: MOOD_TONE[n.mood] ?? "#6b7280"}}
               >
                 {n.moodLabel}
               </span>
             </div>
-            <p className="truncate text-xs text-[#8b94a0]">{n.line}</p>
+            <p className="truncate text-xs text-[#5b6472]">{n.line}</p>
           </div>
         </li>
       ))}

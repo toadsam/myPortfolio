@@ -99,19 +99,19 @@ export function CommissionAlert({
   if (failed || waiting.length === 0) return null;
 
   return (
-    <div className="border-b border-[#ffb15e]/40 bg-[#2a2118]">
+    <div className="border-b border-[#4f46e5]/40 bg-[#eae9fc]">
       <div className="mx-auto flex max-w-[980px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2.5">
         <span className="relative flex h-2.5 w-2.5 shrink-0">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#ffb15e] opacity-70" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#ffb15e]" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#4f46e5] opacity-70" />
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#4f46e5]" />
         </span>
-        <strong className="text-sm font-black text-[#ff9d38]">
+        <strong className="text-sm font-black text-[#4f46e5]">
           내 처리를 기다리는 의뢰 {waiting.length}건
         </strong>
         <span className="flex flex-wrap gap-2">
           {waiting.map(item => (
             <button
-              className="rounded-full border border-[#ffb15e]/40 bg-[#1a2027] px-3 py-1 font-mono text-[11px] font-black text-[#ff9d38] transition hover:bg-[#2a2118]"
+              className="rounded-full border border-[#4f46e5]/40 bg-[#f4f5f7] px-3 py-1 font-mono text-[11px] font-black text-[#4f46e5] transition hover:bg-[#eae9fc]"
               key={item.id}
               onClick={onOpen}
               type="button"
@@ -218,7 +218,7 @@ export function CommissionAdmin() {
     <div id="commission-inbox" className="scroll-mt-8">
       <Panel title="의뢰 접수함" kicker="Commission Atelier">
         <div className="mb-4 flex flex-wrap items-center gap-3">
-          <span className="rounded-full border border-[#ffb15e]/30 bg-[#2a2118] px-3 py-1.5 font-mono text-xs font-black text-[#ff9d38]">
+          <span className="rounded-full border border-[#4f46e5]/30 bg-[#eae9fc] px-3 py-1.5 font-mono text-xs font-black text-[#4f46e5]">
             내 처리 대기 {pending}건 · 전체 {items.length}건
           </span>
           <button
@@ -229,12 +229,12 @@ export function CommissionAdmin() {
             새로고침
           </button>
           {status ? (
-            <span className="text-xs text-[#8b94a0]">{status}</span>
+            <span className="text-xs text-[#5b6472]">{status}</span>
           ) : null}
         </div>
 
         {items.length === 0 ? (
-          <p className="rounded-lg border border-[#38414d] bg-[#232b34] p-4 text-sm leading-6 text-[#6b7580]">
+          <p className="rounded-lg border border-[#e2e4ea] bg-[#e9ebef] p-4 text-sm leading-6 text-[#6b7280]">
             아직 접수된 의뢰가 없습니다. 마을의 &ldquo;제작 의뢰&rdquo; 버튼으로
             방문자가 접수하면 여기에 쌓입니다.
           </p>
@@ -245,7 +245,7 @@ export function CommissionAdmin() {
               return (
                 <div
                   key={item.id}
-                  className="rounded-lg border border-[#232b34] bg-[#232b34] p-3"
+                  className="rounded-lg border border-[#e9ebef] bg-[#e9ebef] p-3"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <button
@@ -254,19 +254,19 @@ export function CommissionAdmin() {
                       type="button"
                     >
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-mono text-[11px] font-black text-[#ff9d38]">
+                        <span className="font-mono text-[11px] font-black text-[#4f46e5]">
                           {item.public_id}
                         </span>
                         <CommissionStatusBadge status={item.status} />
-                        <span className="font-mono text-[11px] text-[#6b7580]">
+                        <span className="font-mono text-[11px] text-[#6b7280]">
                           {prettyDate(item.created_at.slice(0, 10))}
                         </span>
                       </div>
-                      <p className="mt-1 truncate text-sm font-bold text-[#e8edf2]">
+                      <p className="mt-1 truncate text-sm font-bold text-[#0e1116]">
                         {item.site_type ? `[${item.site_type}] ` : ""}
                         {item.summary || "(내용 없음)"}
                       </p>
-                      <p className="mt-0.5 font-mono text-[11px] text-[#6b7580]">
+                      <p className="mt-0.5 font-mono text-[11px] text-[#6b7280]">
                         {formatWon(item.estimate_min)} ~{" "}
                         {formatWon(item.estimate_max)} · {item.weeks_min}~
                         {item.weeks_max}주 · {item.contact_email}
@@ -274,14 +274,14 @@ export function CommissionAdmin() {
                     </button>
                     <div className="flex shrink-0 items-center gap-1.5">
                       <button
-                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#ffb15e]/50 hover:text-[#ff9d38]"
+                        className="rounded-md border border-[#e2e4ea] px-2 py-1 text-xs text-[#5b6472] transition hover:border-[#4f46e5]/50 hover:text-[#4f46e5]"
                         onClick={() => void toggle(item)}
                         type="button"
                       >
                         {isOpen ? "접기" : "상세"}
                       </button>
                       <button
-                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#c2492e]/50 hover:text-[#e07a5f]"
+                        className="rounded-md border border-[#e2e4ea] px-2 py-1 text-xs text-[#5b6472] transition hover:border-[#c2492e]/50 hover:text-[#c2410c]"
                         onClick={() => void remove(item)}
                         type="button"
                       >
@@ -292,7 +292,7 @@ export function CommissionAdmin() {
 
                   {isOpen ? (
                     detail && detail.id === item.id ? (
-                      <div className="mt-3 border-t border-[#38414d] pt-3">
+                      <div className="mt-3 border-t border-[#e2e4ea] pt-3">
                         <div className="grid gap-4 lg:grid-cols-2">
                           <div className="grid gap-3">
                             <DetailRow label="연락처">
@@ -322,7 +322,7 @@ export function CommissionAdmin() {
 
                             <DepthPanel detail={detail} />
 
-                            <div className="grid gap-2 rounded-lg border border-[#38414d] bg-[#1a2027] p-3">
+                            <div className="grid gap-2 rounded-lg border border-[#e2e4ea] bg-[#f4f5f7] p-3">
                               <LabeledField label="진행 상태">
                                 <select
                                   className="field"
@@ -355,7 +355,7 @@ export function CommissionAdmin() {
                                 />
                               </LabeledField>
                               <button
-                                className="rounded-lg bg-[#ffb15e] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#0d1116] transition hover:bg-[#e2c078] disabled:opacity-45"
+                                className="rounded-lg bg-[#4f46e5] px-4 py-2.5 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#f4f5f7] transition hover:bg-[#4f46e5] disabled:opacity-45"
                                 disabled={busy}
                                 onClick={() =>
                                   void changeStatus(item, detail.status, note)
@@ -369,22 +369,22 @@ export function CommissionAdmin() {
 
                           <div>
                             <div>
-                              <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#ff9d38]/70">
+                              <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#4f46e5]/70">
                                 상담 대화 기록
                               </p>
                               {detail.messages.length === 0 ? (
-                                <p className="text-sm text-[#6b7580]">
+                                <p className="text-sm text-[#6b7280]">
                                   상담 없이 바로 접수된 건입니다.
                                 </p>
                               ) : (
-                                <div className="grid max-h-[420px] gap-1.5 overflow-y-auto rounded-lg border border-[#38414d] bg-[#1a2027] p-3">
+                                <div className="grid max-h-[420px] gap-1.5 overflow-y-auto rounded-lg border border-[#e2e4ea] bg-[#f4f5f7] p-3">
                                   {detail.messages.map(message => (
                                     <p
                                       key={message.id}
                                       className={
                                         message.role === "visitor"
-                                          ? "rounded-md bg-[#2a2118] px-2.5 py-1.5 text-xs leading-5 text-[#c9a55f]"
-                                          : "rounded-md bg-[#232b34] px-2.5 py-1.5 text-xs leading-5 text-[#9aa4b0]"
+                                          ? "rounded-md bg-[#eae9fc] px-2.5 py-1.5 text-xs leading-5 text-[#8b85f0]"
+                                          : "rounded-md bg-[#e9ebef] px-2.5 py-1.5 text-xs leading-5 text-[#5b6472]"
                                       }
                                     >
                                       <span className="mr-1.5 font-mono text-[10px] font-black opacity-60">
@@ -404,8 +404,8 @@ export function CommissionAdmin() {
                         {/* 3단계 — 게이트와 직군별 작업.
                           2단 그리드 밖에 두어 **전체 폭**을 쓴다: HTML 시안을
                           좁은 칸에서 보면 태블릿 브레이크포인트만 보여 검수가 안 된다. */}
-                        <div className="mt-4 border-t border-[#38414d] pt-4">
-                          <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#ff9d38]/70">
+                        <div className="mt-4 border-t border-[#e2e4ea] pt-4">
+                          <p className="mb-2 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#4f46e5]/70">
                             작업 지시 · 검수
                           </p>
                           <CommissionWorkboard
@@ -416,7 +416,7 @@ export function CommissionAdmin() {
                         </div>
                       </div>
                     ) : (
-                      <p className="mt-3 border-t border-[#38414d] pt-3 text-sm text-[#6b7580]">
+                      <p className="mt-3 border-t border-[#e2e4ea] pt-3 text-sm text-[#6b7280]">
                         불러오는 중…
                       </p>
                     )
@@ -447,16 +447,16 @@ export const COMMISSION_STATUS_OPTIONS: {
 ];
 
 export const COMMISSION_STATUS_STYLE: Record<CommissionStatus, string> = {
-  received: "border-[#ffb15e]/40 bg-[#2a2118] text-[#ff9d38]",
-  reviewing: "border-[#ff9d38]/30 bg-[#2a2118] text-[#e2c078]",
-  briefing: "border-[#9b8ac4]/40 bg-[#1a2027] text-[#8877b8]",
+  received: "border-[#4f46e5]/40 bg-[#eae9fc] text-[#4f46e5]",
+  reviewing: "border-[#4f46e5]/30 bg-[#eae9fc] text-[#4f46e5]",
+  briefing: "border-[#6d5bd0]/40 bg-[#f4f5f7] text-[#6d5bd0]",
   // 검수 대기는 "내가 움직여야 하는 상태"라 눈에 띄게 — 여기서 멈춰 있다는 신호다
-  brief_review: "border-[#ffb15e]/50 bg-[#2a2118] text-[#c9a55f]",
-  briefed: "border-[#9b8ac4]/40 bg-[#1a2027] text-[#8877b8]",
-  in_progress: "border-[#9b8ac4]/40 bg-[#1a2027] text-[#8877b8]",
-  artifact_review: "border-[#ffb15e]/50 bg-[#2a2118] text-[#c9a55f]",
-  delivered: "border-[#6fae8a]/35 bg-[#22301f] text-[#4d8a6a]",
-  rejected: "border-[#38414d] bg-[#232b34] text-[#6b7580]"
+  brief_review: "border-[#4f46e5]/50 bg-[#eae9fc] text-[#8b85f0]",
+  briefed: "border-[#6d5bd0]/40 bg-[#f4f5f7] text-[#6d5bd0]",
+  in_progress: "border-[#6d5bd0]/40 bg-[#f4f5f7] text-[#6d5bd0]",
+  artifact_review: "border-[#4f46e5]/50 bg-[#eae9fc] text-[#8b85f0]",
+  delivered: "border-[#15803d]/35 bg-[#e7f6ec] text-[#15803d]",
+  rejected: "border-[#e2e4ea] bg-[#e9ebef] text-[#6b7280]"
 };
 
 export function CommissionStatusBadge({status}: {status: CommissionStatus}) {
@@ -511,8 +511,8 @@ export function DepthPanel({detail}: {detail: CommissionDetail}) {
   }
 
   return (
-    <div className="grid gap-2 rounded-lg border border-[#38414d] bg-[#1a2027] p-3">
-      <p className="font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#ff9d38]/70">
+    <div className="grid gap-2 rounded-lg border border-[#e2e4ea] bg-[#f4f5f7] p-3">
+      <p className="font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#4f46e5]/70">
         제작 정보 (심화 문답)
       </p>
 
@@ -520,15 +520,15 @@ export function DepthPanel({detail}: {detail: CommissionDetail}) {
         <dl className="grid gap-1.5">
           {answers.map(([label, value]) => (
             <div key={label} className="flex gap-2 text-xs leading-5">
-              <dt className="w-20 shrink-0 font-bold text-[#ff9d38]">
+              <dt className="w-20 shrink-0 font-bold text-[#4f46e5]">
                 {label}
               </dt>
-              <dd className="flex-1 text-[#9aa4b0]">{value}</dd>
+              <dd className="flex-1 text-[#5b6472]">{value}</dd>
             </div>
           ))}
         </dl>
       ) : (
-        <p className="text-xs leading-5 text-[#6b7580]">
+        <p className="text-xs leading-5 text-[#6b7280]">
           아직 받은 게 없습니다. 아래 링크를 회신 메일에 붙여 보내면 공방
           식구들이 대신 여쭤봅니다 — 운영·수정 주체, 콘텐츠 준비, 성공 기준,
           기존 자산, 그리고 사이트 종류별 세부 문항까지.
@@ -537,16 +537,16 @@ export function DepthPanel({detail}: {detail: CommissionDetail}) {
 
       {branch.length ? (
         <>
-          <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#ff9d38]/50">
+          <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#4f46e5]/50">
             종류별 문답
           </p>
           <dl className="grid gap-1.5">
             {branch.map(([key, value]) => (
               <div key={key} className="flex gap-2 text-xs leading-5">
-                <dt className="w-20 shrink-0 font-bold text-[#ff9d38]/80">
+                <dt className="w-20 shrink-0 font-bold text-[#4f46e5]/80">
                   {key}
                 </dt>
-                <dd className="flex-1 text-[#9aa4b0]">{value}</dd>
+                <dd className="flex-1 text-[#5b6472]">{value}</dd>
               </div>
             ))}
           </dl>
@@ -555,14 +555,14 @@ export function DepthPanel({detail}: {detail: CommissionDetail}) {
 
       {aiAnswered.length ? (
         <>
-          <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#c69af0]/70">
+          <p className="mt-1 font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#6d5bd0]/70">
             AI 가 더 물은 것
           </p>
           <dl className="grid gap-1.5">
             {aiAnswered.map(item => (
               <div key={item.id} className="text-xs leading-5">
-                <dt className="text-[#c69af0]/80">{item.question}</dt>
-                <dd className="text-[#9aa4b0]">→ {item.answer}</dd>
+                <dt className="text-[#6d5bd0]/80">{item.question}</dt>
+                <dd className="text-[#5b6472]">→ {item.answer}</dd>
               </div>
             ))}
           </dl>
@@ -571,7 +571,7 @@ export function DepthPanel({detail}: {detail: CommissionDetail}) {
 
       {detail.track_path ? (
         <div className="mt-1 flex flex-wrap items-center gap-2">
-          <code className="min-w-0 flex-1 truncate rounded-md bg-[#232b34] px-2 py-1.5 font-mono text-[11px] text-[#9aa4b0]">
+          <code className="min-w-0 flex-1 truncate rounded-md bg-[#e9ebef] px-2 py-1.5 font-mono text-[11px] text-[#5b6472]">
             {link}
           </code>
           <button
@@ -596,10 +596,10 @@ export function DetailRow({
 }) {
   return (
     <div>
-      <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#6b7580]">
+      <p className="font-mono text-[10px] font-black uppercase tracking-[0.12em] text-[#6b7280]">
         {label}
       </p>
-      <div className="mt-1 text-sm leading-6 text-[#e8edf2]">{children}</div>
+      <div className="mt-1 text-sm leading-6 text-[#0e1116]">{children}</div>
     </div>
   );
 }
@@ -621,7 +621,7 @@ export function RequirementDump({value}: {value: Record<string, unknown>}) {
     <ul className="grid gap-0.5">
       {entries.map(([key, item]) => (
         <li key={key}>
-          <span className="text-[#6b7580]">{LABELS[key] ?? key}</span>{" "}
+          <span className="text-[#6b7280]">{LABELS[key] ?? key}</span>{" "}
           {Array.isArray(item) ? item.join(", ") : String(item)}
         </li>
       ))}

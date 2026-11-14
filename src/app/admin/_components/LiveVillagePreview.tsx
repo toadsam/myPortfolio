@@ -64,8 +64,8 @@ interface Props {
 const LIGHT_RGB: Record<string, [number, number, number]> = {
   dark: [40, 48, 62],
   dim: [122, 90, 56], // --v-wood
-  normal: [226, 192, 120], // --v-gold
-  bright: [255, 157, 56] // --v-lantern
+  normal: [79, 70, 229], // --v-gold
+  bright: [79, 70, 229] // --v-lantern
 };
 
 export function LiveVillagePreview({
@@ -183,7 +183,7 @@ export function LiveVillagePreview({
       const oy = (h - size) / 2;
 
       // 바닥 — 섬 느낌만 옅게
-      ctx.fillStyle = "rgba(226, 192, 120, 0.04)";
+      ctx.fillStyle = "rgba(79, 70, 229, 0.04)";
       ctx.beginPath();
       ctx.arc(w / 2, h / 2, size * 0.56, 0, Math.PI * 2);
       ctx.fill();
@@ -223,7 +223,7 @@ export function LiveVillagePreview({
 
         // 짚어 준 건물은 조준 고리를 두른다
         if (highlightRef.current.includes(p.id)) {
-          ctx.strokeStyle = "rgba(255, 157, 56, 0.95)";
+          ctx.strokeStyle = "rgba(79, 70, 229, 0.95)";
           ctx.lineWidth = 1.6;
           ctx.beginPath();
           ctx.arc(x, y, dot + 7, 0, Math.PI * 2);
@@ -334,8 +334,8 @@ export function LiveVillagePreview({
         />
       </div>
       {caption === "" ? null : (
-        <p className="text-center text-xs text-[#8b94a0]">
-          불이 들어온 건물 <b className="text-[#ff9d38]">{lit}</b> /{" "}
+        <p className="text-center text-xs text-[#5b6472]">
+          불이 들어온 건물 <b className="text-[#4f46e5]">{lit}</b> /{" "}
           {scores.size}
           <span className="ml-2 opacity-70">· {caption}</span>
         </p>

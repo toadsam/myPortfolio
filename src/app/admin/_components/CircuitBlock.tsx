@@ -5,16 +5,20 @@
  *
  * ```
  * ● 공부  기술 건물 다섯 채                 45분  상세
- *   ▮▮▮▮▯▯▯▯│▯▯▯▯▯▯▯▯   ← 게이지 하나가 유일한 손잡이
+ *   ▮▮▮▮▯▯▯▯│▯▯▯▯▯▯▯▯   ← 막대는 보여 주기만 한다
+ *   [−] [+15분] [+30분] [목표 채우기]   ← 손잡이는 이 버튼 넷
  *   ─────────────────────
  *   ☐ CS 노트: 트랜잭션 격리         30분   ← 오른쪽 밀면 완료
  *   + 공부 지시서 한 줄, Enter
  * ```
  *
- * ## 손잡이는 게이지 하나
+ * ## 손잡이는 버튼 넷이다 (2026-11-15)
  *
- * 값 0 에서 탭하면 목표치, 켜져 있으면 탭마다 +15, 끌면 그 위치, 600ms 길게 누르면 0.
- * 레버·±버튼은 뺐다. 손잡이가 넷이면 세 보이지만 매일 쓸 땐 "어느 걸 누르지"가 먼저다.
+ * 10-18 에는 게이지 하나가 유일한 손잡이였다(탭 = 목표·+15, 끌기, 600ms 길게 = 0).
+ * 동작이 눈에 안 보여 화면 아래 설명문이 필요했고, 본인이 "더 편했으면" 해서 눌러 볼 수
+ * 있는 시안 둘 중 버튼 쪽을 골랐다. 막대는 이제 값만 보여 준다.
+ *   −15 · +15분 · +30분 · 목표 채우기(목표를 넘긴 뒤엔 「끄기」)
+ * 15분보다 세밀한 값은 「상세」의 입력칸으로 넣는다.
  *
  * ## 지시서 완료는 전기가 날아간 뒤에 더한다
  *
@@ -37,7 +41,6 @@ import {OrderRow, fmtMinutes} from "./OrderRow";
 const SEGMENTS = 16;
 const STEP = 5;
 const HARD_CAP = 1440;
-const HOLD_OFF_MS = 600;
 const ADD_MINUTES = [15, 30, 45, 60, 90];
 
 export function CircuitBlock({
@@ -121,7 +124,7 @@ export function CircuitBlock({
       );
       if (next === value) return;
       if (value < goal && next >= goal) {
-        sparksAt(gaugeRef.current, 22, "#e2c078");
+        sparksAt(gaugeRef.current, 22, "#4f46e5");
         floatText(
           blockRef.current?.querySelector(".ab-c-val") ?? null,
           bonus ? "목표 달성 +50kWh" : "목표 달성"
@@ -139,73 +142,32 @@ export function CircuitBlock({
     [bonus, buildingIds, goal, onChange, onFlashBuildings, value]
   );
 
-  /* ── 게이지: 탭 = 켜기/+15, 끌기 = 맞추기, 길게 = 끄기 ── */
-  const gd = useRef<{
-    x: number;
-    moved: boolean;
-    held: boolean;
-    last: number;
-    hold: number;
-  } | null>(null);
-
-  function gaugeDown(e: React.PointerEvent<HTMLDivElement>) {
-    try {
-      e.currentTarget.setPointerCapture(e.pointerId);
-    } catch {
-      // 합성 이벤트(테스트)나 이미 끝난 포인터 — 캡처 없이도 탭은 된다
-    }
-    gd.current = {
-      x: e.clientX,
-      moved: false,
-      held: false,
-      last: -1,
-      hold: window.setTimeout(() => {
-        const d = gd.current;
-        if (!d || d.moved) return;
-        d.held = true;
-        onChange(0);
-        sfx.off();
-        buzz(30);
-        floatText(gaugeRef.current, `${name} 회로를 껐어요`);
-      }, HOLD_OFF_MS)
-    };
+  /* ── 버튼 넷 ── */
+  function add(delta: number) {
+    const next = Math.max(0, Math.min(HARD_CAP, value + delta));
+    if (next === value) return;
+    setMin(next);
+    floatText(gaugeRef.current, delta > 0 ? `+${delta}` : `${delta}`);
+    sfx.tick(delta > 0 ? 0.6 : 0.3);
+    buzz(6);
   }
-  function gaugeMove(e: React.PointerEvent<HTMLDivElement>) {
-    const d = gd.current;
-    if (!d) return;
-    if (!d.moved && Math.abs(e.clientX - d.x) < 6) return;
-    d.moved = true;
-    window.clearTimeout(d.hold);
-    const r = e.currentTarget.getBoundingClientRect();
-    const ratio = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-    const seg = Math.round(ratio * SEGMENTS);
-    if (seg !== d.last) {
-      d.last = seg;
-      sfx.tick(ratio);
-      buzz(4);
-    }
-    setMin(ratio * max);
+  function fillGoal() {
+    if (value >= goal) return;
+    setMin(goal);
   }
-  function gaugeUp() {
-    const d = gd.current;
-    gd.current = null;
-    if (!d) return;
-    window.clearTimeout(d.hold);
-    if (d.moved || d.held) return;
-    if (value === 0) setMin(goal);
-    else {
-      setMin(Math.min(HARD_CAP, value + 15));
-      floatText(gaugeRef.current, "+15");
-      sfx.tick(0.5);
-      buzz(6);
-    }
+  function turnOff() {
+    if (value === 0) return;
+    onChange(0);
+    sfx.off();
+    buzz(30);
+    floatText(gaugeRef.current, `${name} 회로를 껐어요`);
   }
 
   /* ── 지시서 완료 연출 ── */
   function toggleOrder(item: PlanItem, el: HTMLElement) {
     const willDone = !item.done;
     if (willDone) {
-      sparksAt(el.querySelector(".ab-fuse"), 12, "#7bd88f");
+      sparksAt(el.querySelector(".ab-fuse"), 12, "#15803d");
       sfx.fuse();
       buzz([10, 30, 10]);
     } else sfx.tick(0.2);
@@ -295,48 +257,70 @@ export function CircuitBlock({
           ) : null}
         </div>
         {noGauge ? null : (
-          <div
-            aria-label={`${name} 시간(분). 탭하면 켜지고, 끌어서 맞추고, 길게 누르면 꺼져요`}
-            aria-valuemax={max}
-            aria-valuemin={0}
-            aria-valuenow={value}
-            className="ab-gauge"
-            onKeyDown={e => {
-              if (e.key === "ArrowRight" || e.key === "ArrowUp") {
-                e.preventDefault();
-                setMin(value + STEP);
-              } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
-                e.preventDefault();
-                setMin(value - STEP);
-              } else if (e.key === "Delete" || e.key === "Backspace") {
-                e.preventDefault();
-                onChange(0);
-                sfx.off();
-              }
-            }}
-            onPointerCancel={gaugeUp}
-            onPointerDown={gaugeDown}
-            onPointerMove={gaugeMove}
-            onPointerUp={gaugeUp}
-            ref={gaugeRef}
-            role="slider"
-            tabIndex={0}
-          >
-            {Array.from({length: SEGMENTS}, (_, i) => (
-              <i
-                className={`ab-seg${
-                  i < onSeg ? (i >= goalSeg ? " is-on is-over" : " is-on") : ""
-                }`}
-                key={i}
-              />
-            ))}
-            <span
-              className="ab-goal"
-              style={{left: `${Math.min(100, (goal / max) * 100)}%`}}
+          <>
+            <div
+              aria-label={`${name} ${value}분, 목표 ${goal}분`}
+              aria-valuemax={max}
+              aria-valuemin={0}
+              aria-valuenow={value}
+              className="ab-gauge"
+              ref={gaugeRef}
+              role="progressbar"
             >
-              <span>목표 {goal}</span>
-            </span>
-          </div>
+              {Array.from({length: SEGMENTS}, (_, i) => (
+                <i
+                  className={`ab-seg${
+                    i < onSeg
+                      ? i >= goalSeg
+                        ? " is-on is-over"
+                        : " is-on"
+                      : ""
+                  }`}
+                  key={i}
+                />
+              ))}
+              <span
+                className="ab-goal"
+                style={{left: `${Math.min(100, (goal / max) * 100)}%`}}
+              >
+                <span>목표 {goal}</span>
+              </span>
+            </div>
+            <div className="ab-btns">
+              <button
+                aria-label={`${name} 15분 빼기`}
+                className="ab-btn is-minus"
+                disabled={value === 0}
+                onClick={() => add(-15)}
+                type="button"
+              >
+                −
+              </button>
+              <button className="ab-btn" onClick={() => add(15)} type="button">
+                +15분
+              </button>
+              <button className="ab-btn" onClick={() => add(30)} type="button">
+                +30분
+              </button>
+              {value >= goal ? (
+                <button
+                  className="ab-btn is-off"
+                  onClick={turnOff}
+                  type="button"
+                >
+                  끄기
+                </button>
+              ) : (
+                <button
+                  className="ab-btn is-go"
+                  onClick={fillGoal}
+                  type="button"
+                >
+                  목표 채우기
+                </button>
+              )}
+            </div>
+          </>
         )}
         {details && open ? <div className="ab-extra">{details}</div> : null}
       </div>

@@ -153,7 +153,7 @@ export function CsNoteAdmin({defaultDate}: {defaultDate: string}) {
         </LabeledField>
         <div className="flex flex-wrap items-center gap-3">
           <button
-            className="rounded-lg bg-[#9b8ac4] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#0d1116] transition hover:bg-[#b3a4d0] disabled:opacity-45"
+            className="rounded-lg bg-[#6d5bd0] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#f4f5f7] transition hover:bg-[#6d5bd0] disabled:opacity-45"
             disabled={busy}
             type="submit"
           >
@@ -165,7 +165,7 @@ export function CsNoteAdmin({defaultDate}: {defaultDate: string}) {
             </button>
           ) : null}
           {status ? (
-            <span className="text-xs text-[#8b94a0]">{status}</span>
+            <span className="text-xs text-[#5b6472]">{status}</span>
           ) : null}
         </div>
       </form>
@@ -177,24 +177,24 @@ export function CsNoteAdmin({defaultDate}: {defaultDate: string}) {
           onChange={e => setQuery(e.target.value)}
           placeholder="제목·분야·내용 검색"
         />
-        <span className="shrink-0 font-mono text-[11px] text-[#6b7580]">
+        <span className="shrink-0 font-mono text-[11px] text-[#6b7280]">
           {filtered.length}개
         </span>
       </div>
 
       <div className="grid gap-4">
         {groups.length === 0 ? (
-          <p className="text-sm text-[#6b7580]">노트가 없습니다.</p>
+          <p className="text-sm text-[#6b7280]">노트가 없습니다.</p>
         ) : (
           groups.map(([date, items]) => (
             <div key={date}>
-              <p className="mb-1.5 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#9b8ac4]/70">
+              <p className="mb-1.5 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#6d5bd0]/70">
                 {prettyDate(date)}
               </p>
               <div className="grid gap-2">
                 {items.map(note => (
                   <div
-                    className="flex items-center justify-between gap-3 rounded-lg border border-[#232b34] bg-[#232b34] p-3"
+                    className="flex items-center justify-between gap-3 rounded-lg border border-[#e9ebef] bg-[#e9ebef] p-3"
                     key={note.id}
                   >
                     <button
@@ -202,23 +202,23 @@ export function CsNoteAdmin({defaultDate}: {defaultDate: string}) {
                       onClick={() => startEdit(note)}
                       type="button"
                     >
-                      <p className="truncate text-sm font-bold text-[#e8edf2] hover:text-[#9b8ac4]">
+                      <p className="truncate text-sm font-bold text-[#0e1116] hover:text-[#6d5bd0]">
                         {note.title}
                       </p>
-                      <p className="mt-0.5 font-mono text-[11px] text-[#6b7580]">
+                      <p className="mt-0.5 font-mono text-[11px] text-[#6b7280]">
                         {[note.category].filter(Boolean).join(" · ")}
                       </p>
                     </button>
                     <div className="flex shrink-0 items-center gap-1.5">
                       <button
-                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#b3a4d0]/50 hover:text-[#9b8ac4]"
+                        className="rounded-md border border-[#e2e4ea] px-2 py-1 text-xs text-[#5b6472] transition hover:border-[#6d5bd0]/50 hover:text-[#6d5bd0]"
                         onClick={() => startEdit(note)}
                         type="button"
                       >
                         수정
                       </button>
                       <button
-                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#c2492e]/50 hover:text-[#e07a5f]"
+                        className="rounded-md border border-[#e2e4ea] px-2 py-1 text-xs text-[#5b6472] transition hover:border-[#c2492e]/50 hover:text-[#c2410c]"
                         onClick={() => handleDelete(note.id)}
                         type="button"
                       >

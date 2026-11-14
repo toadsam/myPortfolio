@@ -68,7 +68,7 @@ export function AdminGate({onUnlocked}: {onUnlocked: () => void}) {
   );
 
   return (
-    <main className="admin-switchboard sw-vault text-[#e8edf2]">
+    <main className="admin-switchboard sw-vault text-[#0e1116]">
       <div aria-hidden="true" className="sw-vault-gears">
         <svg viewBox="0 0 400 400">
           <g className="sw-gear-outer">
@@ -77,7 +77,7 @@ export function AdminGate({onUnlocked}: {onUnlocked: () => void}) {
               cy="200"
               fill="none"
               r="186"
-              stroke="#242c36"
+              stroke="#e9ebef"
               strokeWidth="2"
             />
             <circle
@@ -85,7 +85,7 @@ export function AdminGate({onUnlocked}: {onUnlocked: () => void}) {
               cy="200"
               fill="none"
               r="164"
-              stroke="#242c36"
+              stroke="#e9ebef"
               strokeDasharray="14 10"
               strokeWidth="8"
             />
@@ -96,7 +96,7 @@ export function AdminGate({onUnlocked}: {onUnlocked: () => void}) {
               cy="200"
               fill="none"
               r="118"
-              stroke="#232b34"
+              stroke="#e9ebef"
               strokeDasharray="6 14"
               strokeWidth="10"
             />
@@ -105,7 +105,7 @@ export function AdminGate({onUnlocked}: {onUnlocked: () => void}) {
               cy="200"
               fill="none"
               r="92"
-              stroke="#2b3440"
+              stroke="#e2e4ea"
               strokeWidth="1"
             />
           </g>
@@ -121,7 +121,7 @@ export function AdminGate({onUnlocked}: {onUnlocked: () => void}) {
         <div className="sw-plate">
           <p className="sw-plate-kicker">Village Control Board</p>
           <h1 className="mt-2 text-2xl font-black">배전반 잠김</h1>
-          <p className="mt-2 text-xs leading-6 text-[#8b94a0]">
+          <p className="mt-2 text-xs leading-6 text-[#5b6472]">
             마을의 등을 켜는 판입니다. 다이얼 네 자리를 맞춰 주세요.
           </p>
         </div>
@@ -153,14 +153,14 @@ export function AdminGate({onUnlocked}: {onUnlocked: () => void}) {
           {error}
         </p>
 
-        <p className="mt-1 text-center font-mono text-[0.58rem] uppercase tracking-[0.16em] text-[#5b646e]">
+        <p className="mt-1 text-center font-mono text-[0.58rem] uppercase tracking-[0.16em] text-[#6b7280]">
           {busy
             ? "회로 확인 중…"
             : "다이얼을 돌리거나 번호를 치고, 레버를 당기세요 · Enter"}
         </p>
 
         <a
-          className="mt-6 block text-center font-mono text-xs text-[#6b7580] transition hover:text-[#ff9d38]"
+          className="mt-6 block text-center font-mono text-xs text-[#6b7280] transition hover:text-[#4f46e5]"
           href="/"
         >
           ← 마을로 돌아가기

@@ -221,7 +221,7 @@ export function CodingTestAdmin({defaultDate}: {defaultDate: string}) {
         </LabeledField>
         <div className="flex flex-wrap items-center gap-3">
           <button
-            className="rounded-lg bg-[#ffb15e] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#1a2027] transition hover:bg-[#e2c078] disabled:opacity-45"
+            className="rounded-lg bg-[#4f46e5] px-4 py-3 font-mono text-xs font-black uppercase tracking-[0.14em] text-[#f4f5f7] transition hover:bg-[#4f46e5] disabled:opacity-45"
             disabled={busy}
             type="submit"
           >
@@ -233,7 +233,7 @@ export function CodingTestAdmin({defaultDate}: {defaultDate: string}) {
             </button>
           ) : null}
           {status ? (
-            <span className="text-xs text-[#8b94a0]">{status}</span>
+            <span className="text-xs text-[#5b6472]">{status}</span>
           ) : null}
         </div>
       </form>
@@ -245,24 +245,24 @@ export function CodingTestAdmin({defaultDate}: {defaultDate: string}) {
           onChange={e => setQuery(e.target.value)}
           placeholder="제목·플랫폼·언어 검색"
         />
-        <span className="shrink-0 font-mono text-[11px] text-[#6b7580]">
+        <span className="shrink-0 font-mono text-[11px] text-[#6b7280]">
           {filtered.length}개
         </span>
       </div>
 
       <div className="grid gap-4">
         {groups.length === 0 ? (
-          <p className="text-sm text-[#6b7580]">기록이 없습니다.</p>
+          <p className="text-sm text-[#6b7280]">기록이 없습니다.</p>
         ) : (
           groups.map(([date, items]) => (
             <div key={date}>
-              <p className="mb-1.5 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#e2c078]/70">
+              <p className="mb-1.5 font-mono text-[11px] font-black uppercase tracking-[0.12em] text-[#4f46e5]/70">
                 {prettyDate(date)}
               </p>
               <div className="grid gap-2">
                 {items.map(log => (
                   <div
-                    className="flex items-center justify-between gap-3 rounded-lg border border-[#232b34] bg-[#232b34] p-3"
+                    className="flex items-center justify-between gap-3 rounded-lg border border-[#e9ebef] bg-[#e9ebef] p-3"
                     key={log.id}
                   >
                     <button
@@ -270,10 +270,10 @@ export function CodingTestAdmin({defaultDate}: {defaultDate: string}) {
                       onClick={() => startEdit(log)}
                       type="button"
                     >
-                      <p className="truncate text-sm font-bold text-[#e8edf2] hover:text-[#e2c078]">
+                      <p className="truncate text-sm font-bold text-[#0e1116] hover:text-[#4f46e5]">
                         {log.title}
                       </p>
-                      <p className="mt-0.5 font-mono text-[11px] text-[#6b7580]">
+                      <p className="mt-0.5 font-mono text-[11px] text-[#6b7280]">
                         {[
                           log.platform,
                           log.difficulty,
@@ -286,14 +286,14 @@ export function CodingTestAdmin({defaultDate}: {defaultDate: string}) {
                     </button>
                     <div className="flex shrink-0 items-center gap-1.5">
                       <button
-                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#e2c078]/50 hover:text-[#e2c078]"
+                        className="rounded-md border border-[#e2e4ea] px-2 py-1 text-xs text-[#5b6472] transition hover:border-[#4f46e5]/50 hover:text-[#4f46e5]"
                         onClick={() => startEdit(log)}
                         type="button"
                       >
                         수정
                       </button>
                       <button
-                        className="rounded-md border border-[#38414d] px-2 py-1 text-xs text-[#8b94a0] transition hover:border-[#c2492e]/50 hover:text-[#e07a5f]"
+                        className="rounded-md border border-[#e2e4ea] px-2 py-1 text-xs text-[#5b6472] transition hover:border-[#c2492e]/50 hover:text-[#c2410c]"
                         onClick={() => handleDelete(log.id)}
                         type="button"
                       >

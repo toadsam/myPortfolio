@@ -164,7 +164,7 @@ export function BoardHead({
                   cy="14"
                   fill="none"
                   r={RING_R}
-                  stroke="#232b34"
+                  stroke="#e9ebef"
                   strokeWidth="4"
                 />
                 <circle

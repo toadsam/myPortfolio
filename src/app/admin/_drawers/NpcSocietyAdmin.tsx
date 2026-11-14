@@ -77,7 +77,7 @@ export function NpcSocietyAdmin() {
   return (
     <div className="grid gap-3">
       {status ? (
-        <p className="text-xs font-bold text-[#e2c078]">{status}</p>
+        <p className="text-xs font-bold text-[#4f46e5]">{status}</p>
       ) : null}
       <div className="grid max-h-[300px] gap-1.5 overflow-y-auto pr-1">
         {rels.map(r => (
@@ -87,7 +87,7 @@ export function NpcSocietyAdmin() {
           >
             <span className="min-w-0 flex-1 truncate">
               {nameOf(r.npc_a)} ↔ {nameOf(r.npc_b)}
-              <span className="ml-2 text-[#8b94a0]">
+              <span className="ml-2 text-[#5b6472]">
                 {r.vibe} ({r.affinity >= 0 ? "+" : ""}
                 {r.affinity})
                 {r.fights + r.reconciliations > 0
@@ -96,7 +96,7 @@ export function NpcSocietyAdmin() {
               </span>
             </span>
             <button
-              className="rounded border border-white/15 px-2 py-0.5 font-black text-[#ff8a8a] disabled:opacity-40"
+              className="rounded border border-white/15 px-2 py-0.5 font-black text-[#b91c1c] disabled:opacity-40"
               disabled={busy}
               onClick={() => void nudge(r, -10)}
               type="button"
@@ -104,7 +104,7 @@ export function NpcSocietyAdmin() {
               −10
             </button>
             <button
-              className="rounded border border-white/15 px-2 py-0.5 font-black text-[#7ee787] disabled:opacity-40"
+              className="rounded border border-white/15 px-2 py-0.5 font-black text-[#15803d] disabled:opacity-40"
               disabled={busy}
               onClick={() => void nudge(r, 10)}
               type="button"
@@ -114,11 +114,11 @@ export function NpcSocietyAdmin() {
           </div>
         ))}
         {rels.length === 0 ? (
-          <p className="text-xs text-[#5b646e]">아직 관계가 없습니다.</p>
+          <p className="text-xs text-[#6b7280]">아직 관계가 없습니다.</p>
         ) : null}
       </div>
       <button
-        className="w-fit rounded-lg border border-[#ff8a8a]/40 bg-[#ff8a8a]/10 px-3 py-1.5 text-xs font-black text-[#ff8a8a] disabled:opacity-40"
+        className="w-fit rounded-lg border border-[#b91c1c]/40 bg-[#b91c1c]/10 px-3 py-1.5 text-xs font-black text-[#b91c1c] disabled:opacity-40"
         disabled={busy}
         onClick={() => void resetSociety()}
         type="button"

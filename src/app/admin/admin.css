@@ -30,23 +30,23 @@
    페이지에서 크림 바탕이 그대로 드러난다. globals.css 를 고치지 않고, **이 화면이
    떠 있을 때만** body 를 덮는다. */
 body:has(.admin-switchboard) {
-  background-color: #12161c;
+  background-color: #ffffff;
   /* 브라우저가 스크롤바·기본 폼 컨트롤을 어두운 쪽으로 그리게 한다.
      이게 없으면 강철 판 위에 **흰 스크롤바**가 뜨는데, 화면에서 제일 밝은 게
      스크롤바가 된다. ::-webkit-scrollbar 로도 칠하지만, 이 한 줄이 있어야
      그걸 지원하지 않는 자리(브라우저 UI 쪽)까지 같이 어두워진다. */
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 .admin-switchboard {
-  --sw-steel: #12161c;
-  --sw-steel-2: #1a2027;
-  --sw-steel-3: #232b34;
-  --sw-etch: #38414d;
-  --sw-label: #9aa4b0;
-  --sw-dim: #6b7580;
-  --sw-lantern: #ff9d38;
-  --sw-gold: #e2c078;
+  --sw-steel: #ffffff;
+  --sw-steel-2: #f4f5f7;
+  --sw-steel-3: #e9ebef;
+  --sw-etch: #e2e4ea;
+  --sw-label: #5b6472;
+  --sw-dim: #6b7280;
+  --sw-lantern: #4f46e5;
+  --sw-gold: #4f46e5;
 
   background-color: var(--sw-steel);
   color: var(--sw-label);
@@ -61,7 +61,7 @@ body:has(.admin-switchboard) {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: 0;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 .admin-switchboard > * {
@@ -88,7 +88,7 @@ body:has(.admin-switchboard) {
 .admin-switchboard section.rounded-lg {
   position: relative;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03),
-    0 8px 24px rgb(0 0 0 / 0.35);
+    0 8px 24px rgb(10 20 40 / 0.07);
 }
 
 /* ── 회로: 값이 들어가면 왼쪽 모선에 전기가 흐른다 ──────────────────────── */
@@ -97,8 +97,8 @@ body:has(.admin-switchboard) {
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 .sw-circuit.is-live {
-  background: rgb(255 157 56 / 0.03);
-  box-shadow: inset 0 0 30px rgb(255 157 56 / 0.04);
+  background: rgb(79 70 229 / 0.03);
+  box-shadow: inset 0 0 30px rgb(79 70 229 / 0.04);
 }
 .sw-circuit.is-live::before {
   content: "";
@@ -130,21 +130,21 @@ body:has(.admin-switchboard) {
   min-width: 0;
   border: 1px solid var(--sw-etch);
   border-radius: 6px;
-  background: #0f1319;
-  color: #e8edf2;
+  background: #ffffff;
+  color: #0e1116;
 }
 .admin-switchboard .field:focus {
   border-color: var(--sw-lantern);
   outline: none;
-  box-shadow: 0 0 0 3px rgb(255 157 56 / 0.14);
-  background: rgb(255 157 56 / 0.04);
+  box-shadow: 0 0 0 3px rgb(79 70 229 / 0.14);
+  background: rgb(79 70 229 / 0.04);
 }
 .admin-switchboard .field:disabled {
-  background: #191f26;
+  background: #f4f5f7;
   color: var(--sw-dim);
 }
 .admin-switchboard .field::placeholder {
-  color: #5b646e;
+  color: #6b7280;
 }
 .admin-switchboard .field-label {
   color: var(--sw-label);
@@ -155,7 +155,7 @@ body:has(.admin-switchboard) {
 }
 /* 날짜 입력의 달력 아이콘은 기본이 검정이라 강철 위에서 안 보인다 */
 .admin-switchboard input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.7) sepia(1) saturate(3) hue-rotate(340deg);
+  filter: none;
   cursor: pointer;
 }
 
@@ -181,7 +181,7 @@ body:has(.admin-switchboard) {
 .admin-switchboard .sub-button:hover:not(:disabled) {
   border-color: var(--sw-lantern);
   color: var(--sw-lantern);
-  background: rgb(255 157 56 / 0.08);
+  background: rgb(79 70 229 / 0.08);
 }
 .admin-switchboard .sub-button:disabled {
   opacity: 0.4;
@@ -193,7 +193,7 @@ body:has(.admin-switchboard) {
 }
 .admin-switchboard .step-button:hover:not(:disabled) {
   border-color: var(--sw-lantern);
-  background: rgb(255 157 56 / 0.1);
+  background: rgb(79 70 229 / 0.1);
   color: var(--sw-lantern);
 }
 .admin-switchboard .step-button:active:not(:disabled) {
@@ -202,7 +202,7 @@ body:has(.admin-switchboard) {
 .admin-switchboard .sub-button:focus-visible,
 .admin-switchboard .step-button:focus-visible,
 .admin-switchboard .field:focus-visible {
-  outline: 3px solid rgb(255 157 56 / 0.45);
+  outline: 3px solid rgb(79 70 229 / 0.45);
   outline-offset: 2px;
 }
 
@@ -217,15 +217,15 @@ body:has(.admin-switchboard) {
 .admin-switchboard button[type="submit"] {
   border-radius: 4px;
   letter-spacing: 0.15em;
-  box-shadow: 0 4px 0 #a8590f;
+  box-shadow: 0 4px 0 #2a1fe0;
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.2s ease;
 }
 .admin-switchboard button[type="submit"]:active:not(:disabled) {
   transform: translateY(3px);
-  box-shadow: 0 1px 0 #a8590f;
+  box-shadow: 0 1px 0 #2a1fe0;
 }
 .admin-switchboard button[type="submit"]:focus-visible {
-  outline: 3px solid rgb(255 157 56 / 0.5);
+  outline: 3px solid rgb(79 70 229 / 0.5);
   outline-offset: 3px;
 }
 
@@ -302,9 +302,9 @@ body:has(.admin-switchboard) {
   border: 1px solid var(--sw-etch);
   border-radius: 10px;
   padding: 30px 28px 24px;
-  background: linear-gradient(180deg, #1c232b, #141a21);
+  background: linear-gradient(180deg, #ffffff, #f4f5f7);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.05),
-    0 24px 60px rgb(0 0 0 / 0.55);
+    0 24px 60px rgb(10 20 40 / 0.11);
 }
 /* 리벳 네 개 — 그림자만으로 판이 박혀 있는 느낌을 만든다 */
 .sw-door::before,
@@ -316,7 +316,7 @@ body:has(.admin-switchboard) {
   width: 6px;
   background-image: radial-gradient(
     circle at 50% 0,
-    #46515f 0 2.4px,
+    #c9cdd6 0 2.4px,
     transparent 2.6px
   );
   background-size: 6px 26px;
@@ -382,10 +382,10 @@ body:has(.admin-switchboard) {
 .sw-slot {
   width: 100%;
   margin-top: 6px;
-  background: #0b0e13;
+  background: #f4f5f7;
   border: 1px solid var(--sw-etch);
   border-radius: 4px;
-  box-shadow: inset 0 2px 10px rgb(0 0 0 / 0.75);
+  box-shadow: inset 0 2px 10px rgb(10 20 40 / 0.15);
   color: var(--sw-lantern);
   caret-color: var(--sw-lantern);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
@@ -398,11 +398,11 @@ body:has(.admin-switchboard) {
 .sw-slot:focus {
   outline: none;
   border-color: var(--sw-lantern);
-  box-shadow: inset 0 2px 10px rgb(0 0 0 / 0.75),
-    0 0 0 3px rgb(255 157 56 / 0.16), 0 0 30px rgb(255 157 56 / 0.14);
+  box-shadow: inset 0 2px 10px rgb(10 20 40 / 0.15),
+    0 0 0 3px rgb(79 70 229 / 0.16), 0 0 30px rgb(79 70 229 / 0.14);
 }
 .sw-slot::placeholder {
-  color: #3f4855;
+  color: #98a1ae;
   letter-spacing: 0.42em;
 }
 
@@ -414,8 +414,8 @@ body:has(.admin-switchboard) {
   flex: none;
   border: 1px solid var(--sw-etch);
   border-radius: 6px;
-  background: linear-gradient(180deg, #171d24, #0d1116);
-  box-shadow: inset 0 0 16px rgb(0 0 0 / 0.7);
+  background: linear-gradient(180deg, #f4f5f7, #f4f5f7);
+  box-shadow: inset 0 0 16px rgb(10 20 40 / 0.14);
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.3s ease;
 }
@@ -428,7 +428,7 @@ body:has(.admin-switchboard) {
   height: 32px;
   border-radius: 3px;
   border: 2px solid var(--sw-etch);
-  background: #2a323b;
+  background: #c9cdd6;
   transition: transform 0.35s cubic-bezier(0.68, -0.55, 0.27, 1.55),
     background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
@@ -437,7 +437,7 @@ body:has(.admin-switchboard) {
 }
 .sw-door-lever.is-armed::after {
   background: var(--sw-lantern);
-  border-color: #ffd6a8;
+  border-color: #aeaaf3;
   box-shadow: 0 0 18px var(--sw-lantern);
 }
 .sw-door-lever.is-pulled::after {
@@ -447,7 +447,7 @@ body:has(.admin-switchboard) {
   cursor: progress;
 }
 .sw-door-lever:focus-visible {
-  outline: 3px solid rgb(255 157 56 / 0.5);
+  outline: 3px solid rgb(79 70 229 / 0.5);
   outline-offset: 3px;
 }
 
@@ -471,16 +471,17 @@ body:has(.admin-switchboard) {
   height: 80px;
   border: 2px solid var(--sw-etch);
   border-radius: 6px;
-  background: linear-gradient(180deg, #232b34, #10141a 55%, #1a212a);
-  box-shadow: inset 0 6px 14px rgb(0 0 0 / 0.65),
-    inset 0 -6px 14px rgb(0 0 0 / 0.5);
+  background: linear-gradient(180deg, #e9ebef, #f4f5f7 55%, #e9ebef);
+  box-shadow: inset 0 6px 14px rgb(10 20 40 / 0.13),
+    inset 0 -6px 14px rgb(10 20 40 / 0.1);
   cursor: pointer;
   overflow: hidden;
   transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.1s ease;
 }
 .sw-dial:hover:not(:disabled) {
   border-color: var(--sw-lantern);
-  box-shadow: inset 0 6px 14px rgb(0 0 0 / 0.65), 0 0 22px rgb(255 157 56 / 0.2);
+  box-shadow: inset 0 6px 14px rgb(10 20 40 / 0.13),
+    0 0 22px rgb(79 70 229 / 0.2);
 }
 .sw-dial:active:not(:disabled) {
   transform: scale(0.95);
@@ -490,7 +491,7 @@ body:has(.admin-switchboard) {
   opacity: 0.5;
 }
 .sw-dial:focus-visible {
-  outline: 3px solid rgb(255 157 56 / 0.55);
+  outline: 3px solid rgb(79 70 229 / 0.55);
   outline-offset: 3px;
 }
 .sw-dial-face {
@@ -502,7 +503,7 @@ body:has(.admin-switchboard) {
   font-size: 1.7rem;
   font-weight: 700;
   color: var(--sw-lantern);
-  text-shadow: 0 0 12px rgb(255 157 56 / 0.45);
+  text-shadow: 0 0 12px rgb(79 70 229 / 0.45);
   font-variant-numeric: tabular-nums;
 }
 /* 눈금 한 줄 — 원통이 돌아가는 자리 */
@@ -528,7 +529,7 @@ body:has(.admin-switchboard) {
   padding: 9px 12px;
   border: 1px solid var(--sw-etch);
   border-radius: 6px;
-  background: #0d1116;
+  background: #f4f5f7;
   color: var(--sw-lantern);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 16px; /* 16px 미만이면 iOS 가 입력할 때 화면을 확대한다 */
@@ -541,7 +542,7 @@ body:has(.admin-switchboard) {
   font-size: 12px;
 }
 .admin-switchboard .sw-dial-input:focus-visible {
-  outline: 2px solid rgb(255 157 56 / 0.6);
+  outline: 2px solid rgb(79 70 229 / 0.6);
   outline-offset: 2px;
 }
 @keyframes sw-dial-roll {
@@ -618,26 +619,26 @@ body:has(.admin-switchboard) {
 }
 .admin-switchboard ::-webkit-scrollbar-track,
 .admin-switchboard::-webkit-scrollbar-track {
-  background: #0d1116;
+  background: #f4f5f7;
   box-shadow: inset 1px 0 0 rgb(255 255 255 / 0.04);
 }
 .admin-switchboard ::-webkit-scrollbar-thumb,
 .admin-switchboard::-webkit-scrollbar-thumb {
   border-radius: 6px;
   /* 트랙과 썸 사이에 홈이 보이도록 안쪽으로 물린다 */
-  border: 2px solid #0d1116;
-  background: linear-gradient(180deg, #55606e, #39424e);
+  border: 2px solid #f4f5f7;
+  background: linear-gradient(180deg, #c9cdd6, #b4bac6);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18);
 }
 .admin-switchboard ::-webkit-scrollbar-thumb:hover,
 .admin-switchboard::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #c9a55f, #8a6f42);
+  background: linear-gradient(180deg, #8b85f0, #4f46e5);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3),
-    0 0 10px rgb(255 157 56 / 0.3);
+    0 0 10px rgb(79 70 229 / 0.3);
 }
 .admin-switchboard ::-webkit-scrollbar-thumb:active,
 .admin-switchboard::-webkit-scrollbar-thumb:active {
-  background: linear-gradient(180deg, var(--sw-lantern), #b5651a);
+  background: linear-gradient(180deg, var(--sw-lantern), #2a1fe0);
 }
 /* 위아래 화살표 버튼 — 이 화면에서 쓸 일이 없고 흰 삼각형만 남는다 */
 .admin-switchboard ::-webkit-scrollbar-button,
@@ -648,7 +649,7 @@ body:has(.admin-switchboard) {
 }
 .admin-switchboard ::-webkit-scrollbar-corner,
 .admin-switchboard::-webkit-scrollbar-corner {
-  background: #0d1116;
+  background: #f4f5f7;
 }
 
 /* 문서 자체의 스크롤바(좁은 화면에서 셸이 풀렸을 때 생긴다) */
@@ -657,15 +658,15 @@ body:has(.admin-switchboard)::-webkit-scrollbar {
   height: 10px;
 }
 body:has(.admin-switchboard)::-webkit-scrollbar-track {
-  background: #0d1116;
+  background: #f4f5f7;
 }
 body:has(.admin-switchboard)::-webkit-scrollbar-thumb {
   border-radius: 6px;
-  border: 2px solid #0d1116;
-  background: linear-gradient(180deg, #55606e, #39424e);
+  border: 2px solid #f4f5f7;
+  background: linear-gradient(180deg, #c9cdd6, #b4bac6);
 }
 body:has(.admin-switchboard)::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #c9a55f, #8a6f42);
+  background: linear-gradient(180deg, #8b85f0, #4f46e5);
 }
 body:has(.admin-switchboard)::-webkit-scrollbar-button {
   display: none;

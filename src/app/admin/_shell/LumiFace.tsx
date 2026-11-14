@@ -76,26 +76,26 @@ export function LumiFace({npc}: {npc: NpcPreview | undefined}) {
       type="button"
     >
       <svg aria-hidden="true" ref={svgRef} viewBox="0 0 64 64">
-        <circle cx="32" cy="32" fill="#8fd1ff" opacity=".15" r="22" />
+        <circle cx="32" cy="32" fill="#0369a1" opacity=".15" r="22" />
         <circle
           cx="32"
           cy="32"
           fill="none"
           r="18"
-          stroke="#8fd1ff"
+          stroke="#0369a1"
           strokeWidth="1.8"
         />
         <path
           d={eyes}
           fill="none"
-          stroke="#8fd1ff"
+          stroke="#0369a1"
           strokeLinecap="round"
           strokeWidth="2.2"
         />
         <path
           d={mouth}
           fill="none"
-          stroke="#8fd1ff"
+          stroke="#0369a1"
           strokeLinecap="round"
           strokeWidth="2.2"
         />

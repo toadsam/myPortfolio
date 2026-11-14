@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#12161c",
+  themeColor: "#ffffff",
   // 설치형으로 열면 상태 표시줄 뒤까지 화면이 오므로, 계기판·탭 바의
   // env(safe-area-inset-*) 여백이 실제로 쓰인다.
   viewportFit: "cover"

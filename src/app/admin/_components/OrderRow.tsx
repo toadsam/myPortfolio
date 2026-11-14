@@ -128,7 +128,18 @@ export function OrderRow({
         }
         tabIndex={0}
       >
-        <span aria-hidden="true" className="ab-fuse" />
+        {/* 2026-11-15: 동그라미를 누르면 완료된다. 오른쪽으로 밀기도 그대로 되지만
+            밀기는 눈에 안 보이는 동작이라 누를 곳을 하나 만들었다. */}
+        <button
+          aria-label={item.done ? "완료 취소" : "완료"}
+          className="ab-fuse"
+          onClick={e => {
+            e.stopPropagation();
+            if (ref.current) onToggle(ref.current);
+          }}
+          onPointerDown={e => e.stopPropagation()}
+          type="button"
+        />
         <span className="ab-o-title">
           {item.title}
           {item.due_label ? (

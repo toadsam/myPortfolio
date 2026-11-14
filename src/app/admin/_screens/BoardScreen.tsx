@@ -247,9 +247,9 @@ export function BoardScreen({
 
       {plan.error ? <p className="ab-err">{plan.error}</p> : null}
       <p className="ab-hint">
-        게이지: 탭하면 목표만큼 켜지고, 끌면 맞춰지고, 길게 누르면 꺼져요.
+        분은 버튼으로 더하고 뺍니다. 더 세밀한 값은 「상세」에서 넣어요.
         <br />
-        지시서: 오른쪽으로 밀면 완료, 누르면 고치기.
+        지시서: 동그라미를 누르면 완료, 줄을 누르면 고치기.
       </p>
     </section>
   );
@@ -379,7 +379,7 @@ function FocusDial({
           cy="32"
           fill="none"
           r="26"
-          stroke="#232b34"
+          stroke="#e9ebef"
           strokeDasharray={`${ARC} 200`}
           strokeWidth="7"
           transform="rotate(135 32 32)"
@@ -389,7 +389,7 @@ function FocusDial({
           cy="32"
           fill="none"
           r="26"
-          stroke="#ff9d38"
+          stroke="#4f46e5"
           strokeDasharray={`${(value / 100) * ARC} 200`}
           strokeLinecap="round"
           strokeWidth="7"

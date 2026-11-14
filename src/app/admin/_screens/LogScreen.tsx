@@ -147,7 +147,7 @@ export function LogScreen({
               <div key={date}>
                 <svg aria-hidden="true" viewBox="0 0 44 44">
                   <Ring
-                    color="#8fd1ff"
+                    color="#0369a1"
                     p={
                       day?.workout_done
                         ? day.workout_minutes / DAILY_GOALS.workout
@@ -156,12 +156,12 @@ export function LogScreen({
                     r={19}
                   />
                   <Ring
-                    color="#b9a6ff"
+                    color="#6d5bd0"
                     p={(day?.study_minutes ?? 0) / DAILY_GOALS.study}
                     r={13.5}
                   />
                   <Ring
-                    color="#ff9d38"
+                    color="#4f46e5"
                     p={(day?.coding_minutes ?? 0) / DAILY_GOALS.coding}
                     r={8}
                   />
@@ -172,9 +172,9 @@ export function LogScreen({
           })}
         </div>
         <p className="ab-ring-legend">
-          <i style={{background: "#8fd1ff"}} />
-          운동 {DAILY_GOALS.workout}분 <i style={{background: "#b9a6ff"}} />
-          공부 {DAILY_GOALS.study}분 <i style={{background: "#ff9d38"}} />
+          <i style={{background: "#0369a1"}} />
+          운동 {DAILY_GOALS.workout}분 <i style={{background: "#6d5bd0"}} />
+          공부 {DAILY_GOALS.study}분 <i style={{background: "#4f46e5"}} />
           코딩 {DAILY_GOALS.coding}분
         </p>
       </div>
@@ -223,7 +223,7 @@ function Ring({r, p, color}: {r: number; p: number; color: string}) {
         cy="22"
         fill="none"
         r={r}
-        stroke="#232b34"
+        stroke="#e9ebef"
         strokeWidth="4"
       />
       <circle
