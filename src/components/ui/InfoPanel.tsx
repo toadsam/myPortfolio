@@ -858,31 +858,26 @@ function ContactPanel({color}: {color: string}) {
         </p>
       </Card>
       <div className="grid gap-2">
-        {portfolioLinks.map((link, index) => {
-          const linkColors = ["#00d4ff", "#00ff88", "#ff6600"];
-          const linkColor = linkColors[index % linkColors.length] ?? color;
+        {portfolioLinks.map(link => {
+          // 2026-11-14: 링크마다 사이안·초록·주황을 따로 쓰고 왼쪽에 색 띠를 달았었다.
+          // 패널 강조가 인디고 한 색이 되면서 여기도 같은 색으로 맞췄다.
           return (
             <motion.a
-              className="flex items-center justify-between gap-4 rounded-2xl border bg-white/[0.06] px-4 py-4 text-sm font-bold text-[#f5f6f8] transition"
+              className="flex min-h-[56px] items-center justify-between gap-4 rounded-[22px] bg-white/[0.06] px-5 py-3 text-[15px] font-bold text-white"
               href={link.href}
               key={link.label}
               rel="noreferrer"
-              style={{
-                borderColor: "rgba(255,255,255,0.06)",
-                borderLeft: `3px solid ${linkColor}`
-              }}
               target={link.href.startsWith("mailto:") ? undefined : "_blank"}
               variants={fadeUp}
-              whileHover={{
-                borderColor: `${linkColor}50`,
-                boxShadow: `0 0 16px ${linkColor}14`,
-                x: 3
-              }}
-              whileTap={{scale: 0.98}}
+              whileHover={{x: 4, backgroundColor: "rgba(255,255,255,0.1)"}}
+              whileTap={{scale: 0.97}}
             >
-              <span className="font-black text-[#f5f6f8]">{link.label}</span>
-              <span className="truncate text-xs" style={{color: linkColor}}>
-                {link.value} -&gt;
+              <span className="font-black text-white">{link.label}</span>
+              <span
+                className="truncate text-[13.5px] font-extrabold"
+                style={{color}}
+              >
+                {link.value} →
               </span>
             </motion.a>
           );

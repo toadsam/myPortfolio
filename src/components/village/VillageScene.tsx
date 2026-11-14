@@ -2981,27 +2981,38 @@ function DistrictBannerImpl({
       <div
         ref={plate}
         style={{
-          // 나무 현판 — 가운데가 밝고 위아래가 어두운 원통형 음영
-          background: `linear-gradient(180deg, ${ribbon} 0%, ${shade(
-            ribbon,
-            1.35
-          )} 45%, ${ribbon} 78%, ${shade(ribbon, 0.7)} 100%)`,
-          border: "2px solid #c79a4e",
-          borderRadius: 6,
+          // 2026-11-14: 구역색 나무 현판 + 금테 + 명조 대문자였다. HUD 가 어두운 판으로
+          // 바뀐 뒤 이것만 옛 간판으로 남아 있어 같은 알약으로 맞췄다. 구역색(ribbon)은
+          // 앞의 작은 점으로만 남긴다 — 여섯 구역을 부감에서 가려 보는 단서라 지우지 않았다.
+          display: "flex",
+          alignItems: "center",
+          gap: 7,
+          background: "rgba(18,20,29,0.94)",
+          borderRadius: 99,
           boxShadow:
-            "0 4px 10px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(0,0,0,0.22)",
-          padding: "3px 12px",
+            "inset 0 0 0 1px rgba(255,255,255,0.12), 0 8px 20px rgba(0,0,0,0.45)",
+          padding: "5px 14px 5px 11px",
           whiteSpace: "nowrap"
         }}
       >
         <span
+          aria-hidden="true"
           style={{
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            fontSize: 15,
+            width: 8,
+            height: 8,
+            borderRadius: 99,
+            background: shade(ribbon, 1.9),
+            flexShrink: 0
+          }}
+        />
+        <span
+          style={{
+            fontFamily:
+              "var(--font-inter), var(--font-body-kr), system-ui, sans-serif",
+            fontSize: 14,
             fontWeight: 900,
-            letterSpacing: "0.12em",
-            color: ink,
-            textShadow: "0 1px 0 rgba(0,0,0,0.6)"
+            letterSpacing: "0.02em",
+            color: "#ffffff"
           }}
         >
           {label}
