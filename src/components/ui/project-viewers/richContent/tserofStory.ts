@@ -32,9 +32,9 @@ export function tserofStory(base: RichProject): RichProject {
       g.src?.endsWith("gimmick-icicle.webp")
         ? {
             ...g,
-            label: "낙하물(고드름) 기믹 · 포트폴리오 원본의 전후 그림",
+            label: "낙하물(고드름) 기믹 · 전후 그림",
             caption:
-              "포트폴리오 원본 자료(2025-12)에 실은 그림입니다. 저장소 이력에서는 대기 시간(WaitForSeconds) 캐싱(2023-12-07)만 확인되고, 그림 위쪽의 만들고 부수던 코드는 커밋에 남아 있지 않습니다."
+              "대기 시간 객체를 한 번만 만들어 다시 쓰게 고쳤습니다(2023-12-07)."
           }
         : g
     ),
