@@ -452,7 +452,7 @@ export const ACT_LED: Record<string, {id: string; label: string}> = {
   "헬스 동아리 ‘득근득근’": {id: "muscleup", label: "득근득근 (MuscleUp)"}
 };
 
-/** 학력 한 줄(복수전공·마이크로전공을 합쳐 적는다) */
+/** 학력을 한 줄로 합친 것. 화면(/resume)은 2026-11-15 부터 resume.ts education 을 전공별 세 줄로 그리고, 이 값은 경력 안내 말뭉치(build-career-corpus.mjs)만 읽는다. */
 export const ACADEMIC = {
   when: "2021.03 ~ 2027.02 (예정)",
   logo: "/logos/ajou.png",

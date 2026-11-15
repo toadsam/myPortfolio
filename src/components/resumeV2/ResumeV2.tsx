@@ -67,7 +67,6 @@ const SUB_DETAIL: Record<string, string> = {
   아주분투: "ajou-adventure"
 };
 import {
-  ACADEMIC,
   ACT_LED,
   ACT_ROLE,
   AWARDS,
@@ -417,12 +416,15 @@ function Row({
   when,
   logo,
   what,
+  tag,
   how,
   children
 }: {
   when: string;
   logo?: string;
   what: string;
+  /** 이름 옆 작은 꼬리표(전공 · 복수전공 · 마이크로전공) */
+  tag?: string;
   how?: string;
   children?: ReactNode;
 }) {
@@ -438,7 +440,10 @@ function Row({
           decoding="async"
         />
       ) : null}
-      <span className="what">{what}</span>
+      <span className="what">
+        {what}
+        {tag ? <i className="rtag">{tag}</i> : null}
+      </span>
       {how ? <span className="how">{how}</span> : null}
       {children}
     </div>
@@ -858,7 +863,22 @@ export function ResumeV2() {
                 />
               ))}
               <h3>학력</h3>
-              <Row {...ACADEMIC} />
+              {/* 전공 · 복수전공 · 마이크로전공을 한 줄씩. program 의 괄호 안이 꼬리표다(resume.ts). */}
+              {education
+                .filter(e => e.org === "아주대학교")
+                .map(e => {
+                  const m = e.program.match(/^(.*?)\s*\((.+)\)$/);
+                  return (
+                    <Row
+                      when={e.period}
+                      logo={e.logo}
+                      what={`${e.org} ${m ? m[1] : e.program}`}
+                      tag={m ? m[2] : undefined}
+                      how={e.gpa ?? e.bullets?.[0] ?? e.desc}
+                      key={e.program}
+                    />
+                  );
+                })}
             </div>
             <div className="card rv" style={cv({"--i": 1})}>
               <h3>수상 · 수료</h3>
