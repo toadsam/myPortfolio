@@ -1214,9 +1214,16 @@ export function ProjectDetailV4({
   const featured = compact?.scene
     ? (r.detail?.scenes ?? []).find(x => x.title === compact.scene)
     : undefined;
+  // 이야기 배치가 이미 제자리에 놓은 장면(story 안의 scene: "제목")은 접힌 구역에서 다시 그리지 않는다.
+  const storyScenes = new Set<string>();
+  if (story)
+    JSON.stringify(story, (k, v) => {
+      if (k === "scene" && typeof v === "string") storyScenes.add(v);
+      return v;
+    });
   const ScenesAt = (place: SceneSpec["place"]) => {
     const list = (r.detail?.scenes ?? []).filter(
-      x => x.place === place && x !== featured
+      x => x.place === place && x !== featured && !storyScenes.has(x.title)
     );
     return list.length ? <>{list.map(Scene)}</> : null;
   };
@@ -3192,6 +3199,16 @@ export function ProjectDetailV4({
         ["try", L.try]
       ] as [keyof typeof r.kpt, string][]
     ).filter(([k]) => r.kpt[k].length > 0);
+    const retroSummary =
+      compact?.summaries?.retro ??
+      r.learningLead ??
+      splitHead(r.learning, 1).head;
+    // 접힌 머리의 요약 줄과 같은 문장으로 시작하면 안쪽에서는 그 문장을 뺀다.
+    const cutSummary = (p: string) =>
+      retroSummary && p.startsWith(retroSummary)
+        ? p.slice(retroSummary.length).trim()
+        : p;
+    const retroLead = r.learningLead ? cutSummary(r.learningLead) : "";
     const content = (
       <>
         <div className="p4-kpt">
@@ -3211,10 +3228,13 @@ export function ProjectDetailV4({
           ))}
         </div>
         <div className="p4-learn p4-rv">
-          {r.learningLead ? <p className="p4-lead">{r.learningLead}</p> : null}
-          {paragraphs(r.learning).map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
+          {retroLead ? <p className="p4-lead">{retroLead}</p> : null}
+          {paragraphs(r.learning)
+            .map((p, i) => (i === 0 ? cutSummary(p) : p))
+            .filter(Boolean)
+            .map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
         </div>
       </>
     );
@@ -3223,9 +3243,7 @@ export function ProjectDetailV4({
         `${rootId}-retro`,
         "회고",
         "배운 것과 남은 것",
-        compact?.summaries?.retro ??
-          r.learningLead ??
-          splitHead(r.learning, 1).head,
+        retroSummary,
         content
       )
     );

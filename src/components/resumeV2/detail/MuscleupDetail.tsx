@@ -1703,11 +1703,8 @@ function renderPage(story: boolean) {
       .join("") +
     "</div>";
   kk +=
-    '<div class="learn rv"><p class="lead">' +
-    esc(r.learningLead) +
-    "</p><p>" +
-    esc(r.learning) +
-    "</p></div>";
+    // 요약 줄(learningLead)은 접힌 머리에 이미 있어 안쪽에서 다시 그리지 않는다.
+    '<div class="learn rv"><p>' + esc(r.learning) + "</p></div>";
   out.push(fold("s-retro", "회고", "배운 것과 남은 것", r.learningLead, kk));
 
   /* 꼬리. 시안의 이력서 링크(c-family-v6.html)는 /resume 으로 바꿨다 */
