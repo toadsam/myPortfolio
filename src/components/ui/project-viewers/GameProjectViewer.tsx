@@ -915,7 +915,7 @@ export function GameProjectViewer({project, theme, onClose}: Props) {
             {STEPS.map((item, index) => (
               <button
                 key={item.id}
-                className="flex items-center gap-2 rounded px-3 py-2 font-mono text-[11px] font-black uppercase tracking-[0.1em] transition"
+                className="flex items-center gap-2 whitespace-nowrap rounded px-2 py-2 font-mono text-[10px] font-black uppercase tracking-[0.1em] transition md:px-3 md:text-[11px]"
                 onClick={() => changeStep(index)}
                 style={{
                   color:

@@ -878,9 +878,11 @@ function DefaultProjectViewer({project, onClose}: Props) {
 
           <div className="relative z-10 flex h-full w-full">
             {/* ── 왼쪽 사이드바 ── */}
+            {/* 휴대폰(md 미만)은 사이드바를 접고 아래 모바일 머리글로 대신한다 —
+                256px 사이드바가 375px 화면의 2/3 였다(2026-10-19). */}
             <motion.aside
               animate={{opacity: 1, x: 0}}
-              className="flex h-full w-64 shrink-0 flex-col border-r border-white/8 bg-black/30 p-7 backdrop-blur-md"
+              className="hidden h-full w-64 shrink-0 flex-col border-r border-white/8 bg-black/30 p-7 backdrop-blur-md md:flex"
               exit={{opacity: 0, x: -20}}
               initial={{opacity: 0, x: -20}}
               onClick={e => e.stopPropagation()}
@@ -990,9 +992,43 @@ function DefaultProjectViewer({project, onClose}: Props) {
               onClick={e => e.stopPropagation()}
               transition={{duration: 0.4, delay: 0.08}}
             >
+              {/* 휴대폰 머리글 — 닫기·제목·링크. 사이드바가 접힌 자리를 한 줄로 */}
+              <div className="flex shrink-0 items-center gap-2 border-b border-white/8 px-3 py-2 md:hidden">
+                <button
+                  className="shrink-0 rounded-lg border border-white/10 px-2.5 py-1.5 font-mono text-[11px] font-black text-white/60"
+                  onClick={onClose}
+                  type="button"
+                >
+                  ← 닫기
+                </button>
+                <h1 className="min-w-0 flex-1 truncate text-[14px] font-black text-white">
+                  {project.title}
+                </h1>
+                {project.links.slice(0, 2).map((link, i) => (
+                  <a
+                    key={link.label}
+                    className="shrink-0 rounded-lg border px-2.5 py-1.5 font-mono text-[11px] font-black"
+                    href={link.href}
+                    rel="noreferrer"
+                    style={
+                      i === 0
+                        ? {
+                            background: color,
+                            color: "#040608",
+                            borderColor: color
+                          }
+                        : {borderColor: `${color}55`, color}
+                    }
+                    target="_blank"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+
               {/* 상단 진행바 + 스텝 탭 */}
               <div className="shrink-0 border-b border-white/8">
-                <div className="px-10 pt-5">
+                <div className="px-4 pt-3 md:px-10 md:pt-5">
                   <ProgressBar
                     color={color}
                     current={currentStep}
@@ -1033,7 +1069,7 @@ function DefaultProjectViewer({project, onClose}: Props) {
                 <AnimatePresence custom={direction} mode="wait">
                   <motion.div
                     key={`${project.id}-${currentStep}`}
-                    className="absolute inset-0 overflow-y-auto px-10 py-6"
+                    className="absolute inset-0 overflow-y-auto px-4 py-4 md:px-10 md:py-6"
                     custom={direction}
                     variants={variants}
                     initial="enter"
@@ -1061,9 +1097,9 @@ function DefaultProjectViewer({project, onClose}: Props) {
               </div>
 
               {/* 하단 네비 */}
-              <div className="flex shrink-0 items-center justify-between border-t border-white/8 px-10 py-4">
+              <div className="flex shrink-0 items-center justify-between border-t border-white/8 px-4 py-3 md:px-10 md:py-4">
                 <motion.button
-                  className="flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 font-mono text-sm font-black text-white/40 disabled:opacity-20"
+                  className="flex items-center gap-2 rounded-xl border border-white/10 px-3.5 py-2.5 font-mono text-sm font-black text-white/40 disabled:opacity-20 md:px-5"
                   disabled={currentStep === 0}
                   onClick={goPrev}
                   type="button"
@@ -1097,7 +1133,7 @@ function DefaultProjectViewer({project, onClose}: Props) {
                 </div>
 
                 <motion.button
-                  className="flex items-center gap-2 rounded-xl px-5 py-2.5 font-mono text-sm font-black disabled:opacity-20"
+                  className="flex items-center gap-2 rounded-xl px-3.5 py-2.5 font-mono text-sm font-black disabled:opacity-20 md:px-5"
                   disabled={currentStep === STEPS.length - 1}
                   onClick={goNext}
                   type="button"

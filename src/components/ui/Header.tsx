@@ -41,7 +41,9 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
       animate={{opacity: 1, y: 0}}
       // 띠 자체는 클릭을 통과시킨다 — 명패 사이 빈 자리에서 3D 마을을 돌릴 수
       // 있어야 한다. 예전 배경 있는 바에서는 그 폭만큼 카메라가 안 잡혔다.
-      className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[65px]"
+      // 휴대폰은 띠를 얇게(52px, 명패 한 줄). 마을이 화면 맨 위부터 그려지므로
+      // 명패가 두꺼우면 그만큼 3D 를 가린다. 데스크톱 65px 예산은 그대로.
+      className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[52px] md:h-[65px]"
       initial={{opacity: 0, y: -12}}
       transition={{duration: 0.5, ease: [0.22, 1, 0.36, 1]}}
     >
@@ -52,17 +54,17 @@ export function Header({activeSection, onSelectSection}: HeaderProps) {
           variant="grand"
         >
           <motion.button
-            className="flex min-w-0 items-center gap-2.5 py-1.5 pl-2 pr-4 text-left md:gap-3 md:pr-5"
+            className="flex min-w-0 items-center gap-2 py-1 pl-1.5 pr-3 text-left md:gap-3 md:py-1.5 md:pl-2 md:pr-5"
             onClick={() => onSelectSection("intro")}
             type="button"
             whileHover={{x: 1}}
             whileTap={{scale: 0.97}}
           >
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#4f46e5]">
-              <Crest name="compass" size={19} tone="#ffffff" />
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#4f46e5] md:h-9 md:w-9">
+              <Crest name="compass" size={17} tone="#ffffff" />
             </span>
             <span className="min-w-0">
-              <strong className="v-serif block truncate text-[16px] leading-tight text-white">
+              <strong className="v-serif block truncate text-[14px] leading-tight text-white md:text-[16px]">
                 Developer&apos;s City
               </strong>
               <small className="hidden text-[12px] font-bold text-[#b4bac6] sm:block">

@@ -550,7 +550,11 @@ export function MobileHud({
   onGroupTalk,
   groupTalkBusy,
   onBackToWork,
-  onOpenRelations
+  onOpenRelations,
+  onCommission,
+  walkMode,
+  onToggleWalk,
+  landscape = false
 }: {
   activeKey: string;
   onTravel: (point: TravelPoint) => void;
@@ -561,6 +565,14 @@ export function MobileHud({
   groupTalkBusy: boolean;
   onBackToWork: () => void;
   onOpenRelations: () => void;
+  /** 「홈페이지 제작 의뢰」 — 휴대폰은 떠 있는 단추가 없어 이 시트가 두 번째 입구다 */
+  onCommission?: () => void;
+  /** 걷기 모드 토글. 터치 기기엔 WASD 단추를 숨기므로 여기서 켠다(바닥 탭으로 걷는다) */
+  walkMode?: boolean;
+  onToggleWalk?: () => void;
+  /** 가로 휴대폰(812×375) — 폭이 md 를 넘어 `md:hidden` 이 숨겨 버리므로 강제로
+   *  보이고, 단추는 오른쪽 위(사운드 아래)에 둔다. 아래는 조이스틱·들어가기가 쓴다. */
+  landscape?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"travel" | "command" | "map">("travel");
@@ -605,12 +617,16 @@ export function MobileHud({
       : "flex items-center gap-2 rounded-2xl border border-[#c3c0f7]/15 bg-white/[0.04] px-3 py-2.5 text-left text-sm font-bold text-[#c9d6e8] active:scale-95";
 
   return (
-    <div className="md:hidden">
+    <div className={landscape ? "" : "md:hidden"}>
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
         aria-label="이동·지휘·지도 메뉴"
-        className="fixed bottom-[15rem] right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[#3a3f4d]/60 bg-[#12141d]/90 text-xl shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] active:scale-90"
+        // 세로: 건물 띠(bottom-2, 실측 86px) 바로 위 오른쪽. 예전 bottom-[15rem] 은
+        // 화면 한가운데 떠서 마을을 가렸다. 가로: 오른쪽 위, 사운드 단추 아래.
+        className={`fixed z-40 flex h-11 w-11 items-center justify-center rounded-full border border-[#3a3f4d]/60 bg-[#12141d]/90 text-lg shadow-2xl backdrop-blur-md transform-gpu will-change-[backdrop-filter,transform] active:scale-90 ${
+          landscape ? "right-3 top-[52px]" : "bottom-[6.4rem] right-2.5"
+        }`}
       >
         🎛️
       </button>
@@ -673,6 +689,31 @@ export function MobileHud({
                     {point.label}
                   </button>
                 ))}
+                {onCommission ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      onCommission();
+                    }}
+                    className="col-span-2 flex items-center gap-2 rounded-2xl border border-[#8b85f0]/45 bg-[#8b85f0]/10 px-3 py-2.5 text-left text-sm font-black text-[#e3e1fb] active:scale-95"
+                  >
+                    <Crest name="hammer" size={15} /> 홈페이지 제작 의뢰
+                  </button>
+                ) : null}
+                {onToggleWalk ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOpen(false);
+                      onToggleWalk();
+                    }}
+                    className={`col-span-2 ${chip(!!walkMode)}`}
+                  >
+                    <span>{walkMode ? "🖱️" : "🚶"}</span>
+                    {walkMode ? "둘러보기 모드로" : "걸어 다니기 (바닥을 탭)"}
+                  </button>
+                ) : null}
               </div>
             ) : tab === "command" ? (
               <div className="grid grid-cols-2 gap-2">
@@ -1043,13 +1084,16 @@ export function DistrictStrip({
   pickedBuildingId,
   onPick,
   onEnter,
-  onFocus
+  onFocus,
+  onCommission
 }: {
   sectionId: SectionId;
   pickedBuildingId: string | null;
   onPick: (buildingId: string) => void;
   onEnter: (buildingId: string) => void;
   onFocus: (buildingId: string | null) => void;
+  /** 휴대폰 전용 「의뢰」 칸 — 떠 있는 제작 의뢰 단추가 이 띠와 겹쳐서 띠 안으로 들였다 */
+  onCommission?: () => void;
 }) {
   const tabFor = (id: SectionId) =>
     STRIP_TABS.some(t => t.key === id) ? id : "projects";
@@ -1072,55 +1116,69 @@ export function DistrictStrip({
 
   return (
     <VillageFrame
-      // 모바일은 여백을 한 단 줄인다 — 띠 윗변이 왼쪽 걷기 버튼(bottom-28)과
-      // 오른쪽 제작 의뢰 버튼 아래에 머물러야 한다(104px 일 때 둘 다 겹쳤다).
-      bodyClassName="flex flex-col gap-1.5 px-2.5 py-2 md:gap-2 md:px-3 md:py-3"
-      className="fixed bottom-2 left-1/2 z-30 w-[min(94vw,760px)] -translate-x-1/2 transform-gpu animate-[fadeIn_0.3s_ease] will-change-[backdrop-filter,transform] md:bottom-6"
+      // 휴대폰은 여백을 한 단 줄이고 바닥에 붙인다. 걷기 버튼은 터치 기기에서
+      // 숨기고 제작 의뢰는 이 띠 안 한 칸이라 위로 겹칠 것이 없다(2026-10-19).
+      bodyClassName="flex flex-col gap-1.5 px-2.5 py-1.5 md:gap-2 md:px-3 md:py-3"
+      className="fixed bottom-2 left-1/2 z-30 w-[min(96vw,760px)] -translate-x-1/2 transform-gpu animate-[fadeIn_0.3s_ease] will-change-[backdrop-filter,transform] md:bottom-6 md:w-[min(94vw,760px)]"
       variant="plaque"
     >
-      <div className="flex items-center gap-1 overflow-x-auto">
-        {STRIP_TABS.map(point => {
-          const active = point.key === tab;
-          return (
-            <button
-              key={point.key}
-              type="button"
-              onClick={() => {
-                // 사라지는 칩은 mouseleave 를 못 받는다 — 강조를 여기서 푼다
-                onFocus(null);
-                setTab(point.key);
-              }}
-              className={`relative flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-[13.5px] font-extrabold md:h-10 ${
-                active ? "text-white" : "text-[#b4bac6] hover:text-white"
-              }`}
-            >
-              {/* 고른 탭 뒤의 알약이 탭 사이를 미끄러진다(헤더 메뉴와 같은 동작) */}
-              {active ? (
-                <motion.span
-                  aria-hidden="true"
-                  className="absolute inset-0 rounded-full bg-white/[0.14]"
-                  layoutId="strip-pill"
-                  transition={{type: "spring", stiffness: 420, damping: 30}}
-                />
-              ) : null}
-              <span className="relative flex items-center gap-1.5">
-                <Crest
-                  name={districtTone(point.key).crest as CrestName}
-                  size={14}
-                  tone={active ? "#ffffff" : "#b4bac6"}
-                />
-                {point.label}
-              </span>
-            </button>
-          );
-        })}
-        <p className="ml-auto hidden shrink-0 pl-2 pr-1 text-[13px] font-bold text-[#b4bac6] md:block">
-          {pickedBuildingId
-            ? "한 번 더 누르면 들어가요"
-            : "건물을 고르면 그 앞으로 가요"}
-        </p>
+      <div className="flex items-center gap-1">
+        <div className="v-hscroll flex min-w-0 flex-1 items-center gap-1 overflow-x-auto md:[mask-image:none]">
+          {STRIP_TABS.map(point => {
+            const active = point.key === tab;
+            return (
+              <button
+                key={point.key}
+                type="button"
+                onClick={() => {
+                  // 사라지는 칩은 mouseleave 를 못 받는다 — 강조를 여기서 푼다
+                  onFocus(null);
+                  setTab(point.key);
+                }}
+                className={`relative flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-[13px] font-extrabold md:h-10 md:px-3.5 md:text-[13.5px] ${
+                  active ? "text-white" : "text-[#b4bac6] hover:text-white"
+                }`}
+              >
+                {/* 고른 탭 뒤의 알약이 탭 사이를 미끄러진다(헤더 메뉴와 같은 동작) */}
+                {active ? (
+                  <motion.span
+                    aria-hidden="true"
+                    className="absolute inset-0 rounded-full bg-white/[0.14]"
+                    layoutId="strip-pill"
+                    transition={{type: "spring", stiffness: 420, damping: 30}}
+                  />
+                ) : null}
+                <span className="relative flex items-center gap-1.5">
+                  <Crest
+                    name={districtTone(point.key).crest as CrestName}
+                    size={14}
+                    tone={active ? "#ffffff" : "#b4bac6"}
+                  />
+                  {point.label}
+                </span>
+              </button>
+            );
+          })}
+          <p className="ml-auto hidden shrink-0 pl-2 pr-1 text-[13px] font-bold text-[#b4bac6] md:block">
+            {pickedBuildingId
+              ? "한 번 더 누르면 들어가요"
+              : "건물을 고르면 그 앞으로 가요"}
+          </p>
+        </div>
+        {onCommission ? (
+          <button
+            type="button"
+            onClick={onCommission}
+            title="홈페이지 제작 의뢰"
+            className="flex h-8 shrink-0 items-center gap-1 rounded-full bg-white/[0.1] px-3 text-[12.5px] font-black text-white active:scale-95 md:hidden"
+          >
+            <Crest name="hammer" size={13} tone="#ffffff" /> 의뢰
+          </button>
+        ) : null}
       </div>
-      <div className="flex gap-2 overflow-x-auto md:max-h-[116px] md:flex-wrap md:overflow-y-auto md:overflow-x-visible">
+      {/* 휴대폰은 한 줄 가로 스크롤 + 양끝 페이드(v-hscroll) — 칩이 잘려 보여야
+          "옆에 더 있다"가 읽힌다. 데스크톱은 줄바꿈. */}
+      <div className="v-hscroll flex gap-2 overflow-x-auto md:max-h-[116px] md:flex-wrap md:overflow-y-auto md:overflow-x-visible md:[mask-image:none]">
         {buildings.map((b, i) => {
           const picked = b.id === pickedBuildingId;
           return (
@@ -1232,20 +1290,29 @@ export function ControlsHint({active}: {active: boolean}) {
 
   if (!show) return null;
 
-  // w-max 가 없으면 left-1/2 때문에 쓸 수 있는 폭이 화면 절반으로 잡혀, 휴대폰에서
-  // 글자가 한 자씩 세로로 꺾였다(2026-11-14 캡처로 확인). 넘치면 줄을 바꾼다.
+  // 휴대폰에선 한 알약에 세 문장이 안 들어간다. 예전엔 flex 가 칸마다 줄여서
+  // 글자가 **한 자씩 세로로** 쌓였다(실측 195×183px). 문장마다 nowrap 을 박고
+  // 알약 자체는 w-max + 줄바꿈(flex-wrap)·가운데 정렬로 둔다. 문구도 터치 기준으로.
+  const tap = "hidden pointer-coarse:inline";
+  const click = "pointer-coarse:hidden";
   return (
-    <div className="v-pop pointer-events-none fixed left-1/2 top-[80px] z-30 flex w-max max-w-[92vw] -translate-x-1/2 flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-[22px] bg-[#12141d]/92 px-5 py-2.5 text-[13px] font-extrabold text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),0_14px_40px_rgba(0,0,0,0.45)] backdrop-blur-md">
+    <div className="v-pop pointer-events-none fixed left-1/2 top-[60px] z-30 flex w-max max-w-[calc(100vw-24px)] -translate-x-1/2 flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-[22px] bg-[#12141d]/92 px-4 py-2 text-[12px] font-extrabold text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),0_14px_40px_rgba(0,0,0,0.45)] backdrop-blur-md md:top-[80px] md:px-5 md:py-2.5 md:text-[13px]">
       <span className="flex items-center gap-1.5 whitespace-nowrap">
-        <span className="text-sm">🖱️</span> 건물 클릭해 입장
+        <span className="text-sm">🏠</span>
+        <span className={tap}>건물을 탭해 입장</span>
+        <span className={click}>건물 클릭해 입장</span>
       </span>
-      <span className="hidden text-[#b4bac6]/40 sm:inline">·</span>
+      <span className="text-[#b4bac6]/40">·</span>
       <span className="flex items-center gap-1.5 whitespace-nowrap">
-        <span className="text-sm">📍</span> 바닥 클릭해 이동
+        <span className="text-sm">📍</span>
+        <span className={tap}>바닥을 탭해 이동</span>
+        <span className={click}>바닥 클릭해 이동</span>
       </span>
-      <span className="hidden text-[#b4bac6]/40 sm:inline">·</span>
+      <span className="text-[#b4bac6]/40">·</span>
       <span className="flex items-center gap-1.5 whitespace-nowrap">
-        <span className="text-sm">🔄</span> 드래그·휠로 둘러보기
+        <span className="text-sm">🔄</span>
+        <span className={tap}>끌어서 둘러보기</span>
+        <span className={click}>드래그·휠로 둘러보기</span>
       </span>
       {/* 키보드가 있는 화면에서만 — 모바일 폭에선 줄만 길어진다 */}
       <span className="hidden text-[#b4bac6]/30 md:inline">·</span>
