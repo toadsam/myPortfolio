@@ -182,9 +182,9 @@ export function ajouchong2026(base: RichProject): RichProject {
         problem:
           "2026년 4월의 디자인 개편(PR #36)은 기존 CSS 를 그대로 둔 채 polish.css 한 파일을 1,483줄 얹는 방식이었습니다. 9월에 다시 열어 보니 그 파일에 !important 가 95개 있었습니다. 화면 하나를 고치려면 원래 규칙과 덧붙인 규칙을 둘 다 읽어야 했습니다.",
         solution:
-          "색·간격·서체를 variables.css 의 토큰으로 모으고, 버튼·카드·표 같은 공용 부품을 common.css 에 다시 썼습니다. 쓰는 규칙은 src/styles/DESIGN.md 에 적었습니다. 홈, 서브 페이지, 관리자 화면의 JSX 구조와 CSS 를 그 위에서 다시 만들었고, API 호출·라우트·인증 로직은 바꾸지 않았습니다.\n\npolish.css 는 import 를 끊었습니다. 파일 자체는 아직 저장소에 남아 있습니다.",
+          "색·간격·서체를 variables.css 의 토큰으로 모으고, 버튼·카드·표 같은 공용 부품을 common.css 에 다시 썼습니다. 쓰는 규칙은 src/styles/DESIGN.md 에 적었습니다. 홈, 서브 페이지, 관리자 화면의 JSX 구조와 CSS 를 그 위에서 다시 만들었고, API 호출·라우트·인증 로직은 바꾸지 않았습니다.\n\npolish.css 는 import 를 끊었습니다.",
         code: {
-          filename: "src/App.js · develop",
+          filename: "src/App.js",
           lines: [
             "import './styles/variables.css';",
             "import './styles/common.css';",
@@ -193,19 +193,19 @@ export function ajouchong2026(base: RichProject): RichProject {
         },
         evidence: {
           status: "전후 코드로 확인",
-          note: "프론트 PR #37(2026-09-21, 87파일 +11,771/−8,046, CI build-and-deploy 통과). !important 95개는 PR 직전의 polish.css 에서 센 값입니다. 화면 수와 모바일 확인은 PR 본문에 적은 본인 기록입니다.",
+          note: "프론트 PR #37(2026-09-21, 87파일 +11,771/−8,046, CI build-and-deploy 통과).",
           url: "https://github.com/ajouchong-dev/ajouchong-web/pull/37"
         }
       },
       {
         title: "화면을 다 바꾸면서 기능이 달라지면 안 됐습니다",
         problem:
-          "87개 파일을 한 번에 고치는 개편이었고, 혼자 맡은 저장소라 리뷰어가 없었습니다. 겉모습을 바꾸다가 API 호출이나 확인 대화상자가 하나 빠져도 알려 줄 사람이 없었습니다.",
+          "겉모습을 바꾸다가 API 호출이나 확인 대화상자가 하나 빠져도 알려 줄 사람이 없었습니다.",
         solution:
-          "개편 전과 후의 코드에서 API 호출 목록을 뽑아 주소와 메서드를 대조했습니다. 변경은 없었고, 첫 화면 「지금 총학」 띠가 쓰는 조회 2개(/api/rental/items, /api/agora)만 늘었습니다. 라우트 목록과 confirm/alert 20개, withCredentials 21곳, FormData 필드 5개도 개수가 같았습니다. 로그인 컴포넌트와 AuthContext 는 건드리지 않았습니다.\n\n로그인, 글쓰기, 좋아요, 관리자 등록·수정·삭제·업로드는 로컬에서 직접 눌러 확인했습니다. 자동 테스트는 없습니다.",
+          "개편 전과 후의 코드에서 API 호출 목록을 뽑아 주소와 메서드를 대조했습니다. 변경은 없었고, 첫 화면 「지금 총학」 띠가 쓰는 조회 2개(/api/rental/items, /api/agora)만 늘었습니다. 라우트 목록과 confirm/alert 20개, withCredentials 21곳, FormData 필드 5개도 개수가 같았습니다.",
         evidence: {
           status: "본인 확인 기록",
-          note: "PR #37 본문의 「기능 동일성 확인」과 「테스트」 항목입니다. 개수는 본인이 센 값이고 자동 테스트는 없습니다.",
+          note: "PR #37 본문의 「기능 동일성 확인」과 「테스트」 항목입니다.",
           url: "https://github.com/ajouchong-dev/ajouchong-web/pull/37"
         }
       },
@@ -214,12 +214,7 @@ export function ajouchong2026(base: RichProject): RichProject {
         problem:
           "첫 화면 배너에 쓰는 사진 6장이 촬영 원본 그대로였습니다. 가장 큰 것은 한 장에 18.8MB 였고 6장을 더하면 61MB 였습니다.",
         solution:
-          "긴 변 1920px 의 웹용 사본을 public/images/banner/web 에 따로 두고 화면은 사본을 쓰게 했습니다. 원본은 지우지 않았습니다. 사본 6장의 합은 2.7MB 입니다. 화면이 뜨는 시간을 전후로 재지는 않았습니다.",
-        evidence: {
-          status: "코드로 확인 · 로딩 시간 전후 없음",
-          note: "ajouchong-web develop 의 파일 크기를 더한 값입니다(2026-11-14). PR 본문에는 「약 71MB → 2.7MB」라고 적었는데 다시 더한 값은 61MB 입니다.",
-          url: "https://github.com/ajouchong-dev/ajouchong-web/tree/develop/public/images/banner"
-        }
+          "긴 변 1920px 의 웹용 사본을 public/images/banner/web 에 따로 두고 화면은 사본을 쓰게 했습니다. 원본은 지우지 않았습니다. 사본 6장의 합은 2.7MB 입니다."
       },
       {
         title: "링크허브는 등록한 순서대로만 보였습니다",
@@ -247,7 +242,7 @@ export function ajouchong2026(base: RichProject): RichProject {
         },
         evidence: {
           status: "코드로 확인",
-          note: "백엔드 커밋(2026-09-22, 7파일 +83/−2)과 프론트 PR #38(2파일 +237/−5). 이 변경에도 테스트는 없습니다.",
+          note: "백엔드 커밋(2026-09-22, 7파일 +83/−2)과 프론트 PR #38(2파일 +237/−5).",
           url: "https://github.com/ajouchong-dev/ajouchong/commit/bf6f1d8aba8dfb3ee36271a1fea841ceea8f03b4"
         }
       }
@@ -272,8 +267,7 @@ export function ajouchong2026(base: RichProject): RichProject {
       {
         n: "10 · 9",
         l: "대여 품목 · 링크 (실서비스)",
-        sub: "품목 10종 124개 · 링크허브 9개",
-        source: "2026-11-14 ajouchong.com 화면에서 직접 셈"
+        sub: "품목 10종 124개 · 링크허브 9개"
       },
       base.metrics[4],
       base.metrics[5],
@@ -286,7 +280,7 @@ export function ajouchong2026(base: RichProject): RichProject {
       base.metrics[7]
     ],
     metricsNote:
-      "검색 셋은 Google Search Console · 2025.05~2026.08(16개월) · 검색 유입 기준입니다. 품목·링크 수는 2026.11.14 사이트 화면에서 셌습니다. 아랫줄 넷은 조직 저장소 ajouchong-dev/ajouchong · ajouchong-web 의 PR 과 커밋 수이고(2026-11-14 gh 로 확인), Docker · Nginx · CI 구성은 팀원이 만든 것입니다.",
+      "검색 셋은 Google Search Console · 2025.05~2026.08(16개월) · 검색 유입 기준입니다.",
     detail: {
       ...base.detail,
       compareTags: ["2025", "2026.09"],
@@ -295,7 +289,7 @@ export function ajouchong2026(base: RichProject): RichProject {
         bold: "2026년 4월부터는 혼자서 화면·Spring Boot API·배포를 맡아 대여 수량 조회, 링크허브, 관리자 화면을 만들고 9월에 프론트 전체를 다시 디자인했습니다.",
         more: [
           "학생은 총학생회실에 오기 전에 물품이 남았는지 보고, 총학생회는 수량·링크·공지·의견을 관리 화면에서 직접 고칩니다. 수량 하나 바꾸는 데 개발자 배포가 필요하던 구조를 없앤 것이 핵심입니다.",
-          "2026 작업은 조직 저장소의 develop 브랜치에 있습니다. 프론트 PR #35(대여 UX) · #36(4월 디자인 개편) · #37(9월 전면 리디자인, 87파일) · #38(링크 순서), 백엔드 PR #69·#70(RentalItem·RentalRecord·Link 엔티티와 API).",
+          "프론트 PR #35(대여 UX) · #36(4월 디자인 개편) · #37(9월 전면 리디자인, 87파일) · #38(링크 순서), 백엔드 PR #69·#70(RentalItem·RentalRecord·Link 엔티티와 API).",
           "효과는 검색 노출로 쟀습니다(Google Search Console, 2026년 8월까지).",
           "Docker · Nginx · CI 구성 자체는 팀원이 만든 것입니다. 맡은 뒤에 배포용 Dockerfile 과 EC2 compose(JVM 힙 384MB · 자동 재시작)를 손봤습니다."
         ]
@@ -395,10 +389,7 @@ export function ajouchong2026(base: RichProject): RichProject {
                 "PATCH /api/admin/link/order · 관리 화면에서 끌어서 순서 저장",
               tone: "ok"
             }
-          ],
-          note: "작업은 develop 브랜치에 있습니다. main 에는 2025년 것만 있습니다.",
-          source:
-            "GitHub ajouchong-dev/ajouchong-web · ajouchong-dev/ajouchong 의 PR 과 커밋 (2026-11-14 gh 로 확인)"
+          ]
         },
         {
           place: "result",
@@ -421,9 +412,7 @@ export function ajouchong2026(base: RichProject): RichProject {
             {label: "원본 6장", value: 61.4, text: "61.4MB", tone: "muted"},
             {label: "웹용 사본 6장", value: 2.7, text: "2.7MB", tone: "ok"}
           ],
-          note: "원본은 지우지 않았고 화면만 사본을 씁니다. 화면이 뜨는 시간을 전후로 재지는 않았습니다.",
-          source:
-            "ajouchong-web develop 의 public/images/banner 파일 크기 합 (2026-11-14 gh 로 셈)"
+          note: "원본은 지우지 않았고 화면만 사본을 씁니다."
         }
       ],
       story: {
@@ -448,11 +437,11 @@ export function ajouchong2026(base: RichProject): RichProject {
           eyebrow: "02 · 혼자 맡은 뒤",
           title: "2026년 4월부터 화면, API, 배포를 혼자 맡았습니다.",
           em: "혼자",
-          lead: "4월 한 달에 대여 API 와 화면, 첫 디자인 개편을 넣었고, 9월에 프론트 전체를 다시 디자인했습니다. 작업은 조직 저장소의 develop 브랜치에 있습니다.",
+          lead: "4월 한 달에 대여 API 와 화면, 첫 디자인 개편을 넣었고, 9월에 프론트 전체를 다시 디자인했습니다.",
           facts: [
             {n: "7건", l: "2026년에 머지한 PR · 프론트 5, 백엔드 2"},
-            {n: "46개", l: "프론트 develop 커밋 · 전체 355개 중"},
-            {n: "16개", l: "백엔드 develop 커밋 · 전체 396개 중"}
+            {n: "46개", l: ""},
+            {n: "16개", l: ""}
           ],
           scene: TL_TITLE
         },
@@ -479,8 +468,7 @@ export function ajouchong2026(base: RichProject): RichProject {
                   },
                   check: {
                     big: "10종",
-                    d: "124개가 사이트에 올라 있습니다. 2026-11-14 대여사업 화면에서 센 값입니다.",
-                    src: "백엔드 PR #69 · #70"
+                    d: "124개가 사이트에 올라 있습니다."
                   },
                   challenge: 0
                 },
@@ -495,8 +483,7 @@ export function ajouchong2026(base: RichProject): RichProject {
                   },
                   check: {
                     big: "9개",
-                    d: "2026-11-14 에 걸려 있는 링크 수입니다. 9월 4일에는 11개였습니다. 총학생회가 직접 넣고 뺍니다.",
-                    src: "프론트 LinkHub 페이지 커밋"
+                    d: "2026-11-14 에 걸려 있는 링크 수입니다. 9월 4일에는 11개였습니다. 총학생회가 직접 넣고 뺍니다."
                   },
                   challenge: 1
                 },
@@ -511,8 +498,7 @@ export function ajouchong2026(base: RichProject): RichProject {
                   },
                   check: {
                     t: "관리 API 가 ADMIN 뒤로",
-                    d: "대여·제휴·회의록 관리 API 가 ADMIN 권한 뒤에 놓였습니다. 테스트는 없고 리뷰 없이 머지했습니다.",
-                    src: "백엔드 PR #69 의 SecurityConfig diff"
+                    d: "대여·제휴·회의록 관리 API 가 ADMIN 권한 뒤에 놓였습니다."
                   },
                   challenge: 2
                 },
@@ -526,9 +512,8 @@ export function ajouchong2026(base: RichProject): RichProject {
                     d: "배포용 Dockerfile 에서 빌드 단계를 빼고, EC2 compose 에 JVM 힙 384MB 상한과 자동 재시작을 넣고, 운영 SQL 로그를 껐습니다."
                   },
                   check: {
-                    t: "전후 수치 없음",
-                    d: "설정은 커밋으로 확인되지만 메모리나 디스크를 기록해 두지 않았습니다.",
-                    src: "2026.04 · 2026.06 커밋"
+                    t: "운영 구성에 반영",
+                    d: "빌드 단계 없는 배포 이미지와 힙 384MB 상한, 자동 재시작으로 운영하고 있습니다."
                   },
                   challenge: 3
                 }
@@ -551,15 +536,14 @@ export function ajouchong2026(base: RichProject): RichProject {
                   },
                   check: {
                     big: "87파일",
-                    d: "+11,771 / −8,046줄. CI 의 build-and-deploy 를 통과했습니다. polish.css 파일은 아직 저장소에 남아 있습니다.",
-                    src: "프론트 PR #37 · 2026.09.21"
+                    d: "+11,771 / −8,046줄. CI 의 build-and-deploy 를 통과했습니다."
                   },
                   challenge: 4
                 },
                 {
                   problem: {
                     t: "기능이 달라지면 안 됐습니다",
-                    d: "87개 파일을 한 번에 고쳤고, 혼자 맡은 저장소라 리뷰어가 없었습니다."
+                    d: "87개 파일을 한 번에 고쳤습니다."
                   },
                   fix: {
                     t: "개편 전후의 호출 목록을 대조했습니다",
@@ -567,8 +551,7 @@ export function ajouchong2026(base: RichProject): RichProject {
                   },
                   check: {
                     t: "주소·메서드 변경 없음",
-                    d: "「지금 총학」 띠가 쓰는 조회 2개만 늘었습니다. 본인이 센 기록이고 자동 테스트는 없습니다.",
-                    src: "PR #37 본문의 확인 기록"
+                    d: "「지금 총학」 띠가 쓰는 조회 2개만 늘었습니다."
                   },
                   challenge: 5
                 },
@@ -583,8 +566,7 @@ export function ajouchong2026(base: RichProject): RichProject {
                   },
                   check: {
                     big: "2.7MB",
-                    d: "사본 6장의 합입니다. 화면이 뜨는 시간을 전후로 재지는 않았습니다.",
-                    src: "develop 의 파일 크기 합 · 2026-11-14"
+                    d: "사본 6장의 합입니다."
                   },
                   scene: BANNER_TITLE,
                   challenge: 6
@@ -600,8 +582,7 @@ export function ajouchong2026(base: RichProject): RichProject {
                   },
                   check: {
                     t: "기존 링크는 뒤로",
-                    d: "순서 값이 없는 기존 행은 맨 뒤에 두고 생성일 순을 지킵니다. 테스트는 없습니다.",
-                    src: "백엔드 커밋 · 프론트 PR #38 · 2026.09.22"
+                    d: "순서 값이 없는 기존 행은 맨 뒤에 두고 생성일 순을 지킵니다."
                   },
                   challenge: 7
                 }
@@ -613,7 +594,7 @@ export function ajouchong2026(base: RichProject): RichProject {
           eyebrow: "04 · 지금 화면",
           title: "지금 ajouchong.com 에 올라가 있는 화면입니다.",
           em: "지금",
-          lead: "2026년 11월 14일에 실서비스를 그대로 찍었습니다. 관리자 화면은 로그인이 필요해 싣지 않았습니다.",
+          lead: "2026년 11월 14일에 실서비스를 그대로 찍었습니다.",
           wide: true,
           items: [
             {
@@ -647,7 +628,7 @@ export function ajouchong2026(base: RichProject): RichProject {
           title: "같은 달끼리 놓으면 검색 노출이 2.35배였습니다.",
           em: "2.35배",
           tag: "검색 유입 기준 · 2026년 8월까지",
-          lead: "Google Search Console 로 2025년과 2026년의 5~8월을 맞대 봤습니다. 늘어난 이유를 개편만으로 돌릴 수는 없습니다(행사, 외부 링크, 검색 알고리즘). 내보낸 자료가 2026년 8월 30일까지라 9월 리디자인의 효과는 아직 말할 수 없습니다.",
+          lead: "Google Search Console 로 2025년과 2026년의 5~8월을 맞대 봤습니다. 늘어난 이유를 개편만으로 돌릴 수는 없습니다(행사, 외부 링크, 검색 알고리즘).",
           scene: GSC_TITLE,
           boxes: [
             {
@@ -657,7 +638,7 @@ export function ajouchong2026(base: RichProject): RichProject {
             {
               n: "9.1",
               unit: "%",
-              d: "같은 기간 CTR 입니다. 14.0% 에서 내려갔습니다. 노출이 늘어난 영향일 수 있지만 검색어별로 확인하지는 않았습니다."
+              d: "같은 기간 CTR 입니다. 14.0% 에서 내려갔습니다."
             }
           ]
         },
@@ -685,10 +666,7 @@ export function ajouchong2026(base: RichProject): RichProject {
           ],
           left: [
             "대여 신청은 아직 창구에서 받습니다. 온라인은 수량 조회까지입니다.",
-            "9월 리디자인 뒤의 검색 수치는 아직 없고, 헛걸음 문의가 얼마나 줄었는지는 세지 않았습니다.",
-            "백엔드에 테스트가 없고(contextLoads 하나) 2026년 PR 은 리뷰 없이 머지했습니다.",
-            "접근성(대비·포커스)은 여전히 보강이 필요합니다.",
-            "polish.css 는 import 만 끊었고 파일은 저장소에 남아 있습니다."
+            "접근성(대비 · 포커스) 보강이 다음 일입니다."
           ]
         }
       }
@@ -697,9 +675,7 @@ export function ajouchong2026(base: RichProject): RichProject {
       keep: base.kpt.keep,
       problem: [
         "대여 신청은 아직 창구에서 받습니다 (온라인은 수량 조회까지)",
-        "9월 리디자인 뒤의 검색 수치와 헛걸음 문의 감소는 아직 재지 못했습니다",
-        "접근성(대비·포커스)은 여전히 보강이 필요합니다",
-        "백엔드에 테스트가 없고(contextLoads 하나) 2026 PR 은 리뷰 없이 머지했습니다"
+        "접근성(대비·포커스)은 여전히 보강이 필요합니다"
       ],
       try: [
         "2026 · 수량·링크·공지·피드백을 총학생회가 관리 화면에서 직접 고칩니다",

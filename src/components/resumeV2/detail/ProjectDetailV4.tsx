@@ -2061,7 +2061,9 @@ export function ProjectDetailV4({
                               {x.after}
                             </div>
                           </div>
-                          <p className="p4-src">{x.source}</p>
+                          {x.source ? (
+                            <p className="p4-src">{x.source}</p>
+                          ) : null}
                         </li>
                       ))}
                     </ul>
@@ -2212,18 +2214,22 @@ export function ProjectDetailV4({
               ))}
             </div>
           ) : null}
-          <h3 className="p4s-sub p4-rv">아직 남은 것</h3>
-          <ul className="p4s-left">
-            {st.result.left.map((x, i) => (
-              <li
-                key={i}
-                className="p4-rv"
-                style={cssVars({"--d": `${i * 60}ms`})}
-              >
-                {x}
-              </li>
-            ))}
-          </ul>
+          {st.result.left.length ? (
+            <>
+              <h3 className="p4s-sub p4-rv">아직 남은 것</h3>
+              <ul className="p4s-left">
+                {st.result.left.map((x, i) => (
+                  <li
+                    key={i}
+                    className="p4-rv"
+                    style={cssVars({"--d": `${i * 60}ms`})}
+                  >
+                    {x}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
         </>
       )
     );
@@ -2816,7 +2822,7 @@ export function ProjectDetailV4({
                       {x.after}
                     </div>
                   </div>
-                  <p className="p4-src">{x.source}</p>
+                  {x.source ? <p className="p4-src">{x.source}</p> : null}
                 </li>
               ))}
             </ul>
@@ -2909,7 +2915,7 @@ export function ProjectDetailV4({
                 </ol>
               </div>
             ) : null}
-            <p className="p4-src">{s.ai.source}</p>
+            {s.ai.source ? <p className="p4-src">{s.ai.source}</p> : null}
           </div>
         ) : null}
         <div className="p4-two" style={{marginTop: 14}}>
@@ -2928,7 +2934,7 @@ export function ProjectDetailV4({
             </div>
           ) : null}
         </div>
-        <p className="p4-src p4-rv">{s.source}</p>
+        {s.source ? <p className="p4-src p4-rv">{s.source}</p> : null}
       </>
     );
     body.push(

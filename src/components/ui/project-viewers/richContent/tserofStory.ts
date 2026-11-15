@@ -48,7 +48,7 @@ export function tserofStory(base: RichProject): RichProject {
         code: base.coreCode[0],
         evidence: {
           status: "코드로 확인",
-          note: "Stage2Manager 를 추가한 커밋에서 확인했습니다. 씬 통합 전체는 여러 커밋에 걸쳐 있습니다."
+          note: "씬 통합 전체는 여러 커밋에 걸쳐 있습니다."
         }
       },
       {
@@ -60,7 +60,7 @@ export function tserofStory(base: RichProject): RichProject {
         code: base.coreCode[1],
         evidence: {
           status: "전후 코드로 확인",
-          note: "PatternSign.cs · PuzzleButton.cs · PuzzleManager.cs 에서 확인했습니다. 퍼즐 폴더의 커밋 26개 중 20개가 제 것입니다."
+          note: "퍼즐 폴더의 커밋 26개 중 20개가 제 것입니다."
         }
       },
       {
@@ -72,7 +72,7 @@ export function tserofStory(base: RichProject): RichProject {
         code: base.coreCode[2],
         evidence: {
           status: "코드로 확인",
-          note: "CubeType 을 처음 추가한 커밋에서 확인했습니다."
+          note: "종류 구분은 처음 추가한 커밋부터 들어 있습니다."
         }
       },
       {
@@ -92,7 +92,7 @@ export function tserofStory(base: RichProject): RichProject {
         problem:
           "유저 테스트에서 「고드름이 바닥에 닿는 순간 고드름에 닿을 경우 죽는 판정이 변경되었으면 좋겠습니다」라는 말을 들었습니다. 떨어진 고드름이 바닥에 놓여 있을 때도 스치면 리스폰됐습니다.",
         solution:
-          "떨어지는 동안에만 판정이 살아 있게 했습니다. 고드름을 트리거로 두고 플레이어가 닿으면 리스폰시키되, 얼음 바닥(Ice 태그)에 닿는 순간 트리거를 꺼서 그 뒤로는 닿아도 죽지 않습니다. 제자리로 돌아갈 때 다시 트리거를 켭니다.",
+          "떨어지는 동안에만 판정이 살아 있게 했습니다. 고드름을 트리거로 두고 플레이어가 닿으면 리스폰시키되, 얼음 바닥(Ice 태그)에 닿는 순간 트리거를 꺼서 그 뒤로는 닿아도 리스폰되지 않습니다. 제자리로 돌아갈 때 다시 트리거를 켭니다.",
         code: {
           filename: "FallingObject.cs · 2023.12.04",
           highlightLines: [3, 7, 9],
@@ -133,21 +133,20 @@ export function tserofStory(base: RichProject): RichProject {
         n: "216",
         l: "내 커밋 (1,204 중)",
         sub: "2023.10.25 ~ 12.13 · 부팀장",
-        mini: {kind: "bars", before: 1204, after: 216},
-        source: "저장소 전 브랜치 커밋 작성자 · 2026-11-14 로컬 클론에서 셈"
+        mini: {kind: "bars", before: 1204, after: 216}
       },
       {
         n: "5종",
         l: "퍼즐 정답 패턴 · 25초 교체",
         sub: "int[9] 배열 5개 · 칸 값은 빈칸 · 얼음 · 물",
-        source: "PatternSign.cs · 아래 퍼즐의 패턴은 실제 값"
+        source: "아래 퍼즐의 패턴은 실제 값"
       },
       {
         n: "3 → 1",
         l: "스테이지 2 씬 통합",
         sub: "2-1·2-2·2-3 → Stage2Scene · 11.27~29",
         mini: {kind: "bars", before: 3, after: 1},
-        source: "2023.11.27~29 커밋 · Stage2Manager.cs"
+        source: "2023.11.27~29 커밋"
       }
     ],
     detail: {
@@ -192,8 +191,7 @@ export function tserofStory(base: RichProject): RichProject {
             start: 2,
             solved: "정답 · 발판이 사라지고 나뭇잎이 나타납니다"
           },
-          note: "줄 버튼 하나가 그 줄 세 칸을 물 → 빈칸 → 얼음 → 물 순서로 한 단계씩 넘깁니다. 패턴 다섯 개와 규칙은 실제 코드의 값입니다. 실제 게임에서는 버튼을 밟아서 누르고, 패턴이 바뀔 때마다 버튼 일곱 개의 위치도 섞입니다. 여기서는 위치를 고정했습니다.",
-          source: "PatternSign.cs · PuzzleButton.cs · PuzzleManager.cs"
+          note: "줄 버튼 하나가 그 줄 세 칸을 물 → 빈칸 → 얼음 → 물 순서로 한 단계씩 넘깁니다. 패턴 다섯 개와 규칙은 실제 코드의 값입니다. 실제 게임에서는 버튼을 밟아서 누르고, 패턴이 바뀔 때마다 버튼 일곱 개의 위치도 섞입니다. 여기서는 위치를 고정했습니다."
         },
         {
           place: "proc",
@@ -242,7 +240,7 @@ export function tserofStory(base: RichProject): RichProject {
             }
           ],
           note: "제 커밋은 216개이고 10월 28개, 11월 144개, 12월 44개입니다. 12월 13일 뒤의 출시 준비는 팀원들이 했습니다.",
-          source: "저장소 커밋 이력(2026-11-14 로컬 클론) · Steam 스토어 페이지"
+          source: "Steam 스토어 페이지"
         }
       ],
       story: {
@@ -265,11 +263,11 @@ export function tserofStory(base: RichProject): RichProject {
           eyebrow: "02 · 맡은 일",
           title: "5인 팀에서 스테이지 2 전체와 기믹, 3×3 퍼즐을 맡았습니다.",
           em: "스테이지 2 전체",
-          lead: "플레이어 컨트롤러, 저장과 씬 전환, 스테이지 선택과 사운드, 스테이지 1 기믹은 팀원 넷이 맡았습니다. 담당은 저장소 README 의 기여자 표와 커밋 이력으로 확인했습니다. 저장소는 팀장 소유의 비공개 저장소입니다.",
+          lead: "플레이어 컨트롤러, 저장과 씬 전환, 스테이지 선택과 사운드, 스테이지 1 기믹은 팀원 넷이 맡았습니다.",
           facts: [
             {n: "216", l: "내 커밋 · 전체 1,204개 중"},
             {n: "144개", l: "11월 한 달의 커밋 · 10월 28, 12월 44"},
-            {n: "13개", l: "README 기여자 표에 제 이름으로 적힌 스크립트"}
+            {n: "13개", l: ""}
           ],
           scene: TL_TITLE
         },
@@ -296,8 +294,7 @@ export function tserofStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "3 → 1",
-                    d: "11월 27일부터 29일까지 세 번의 커밋입니다. 씬 로드 없이 2-1 에서 2-2 로 넘어갑니다.",
-                    src: "Stage2Manager.cs"
+                    d: "11월 27일부터 29일까지 세 번의 커밋입니다. 씬 로드 없이 2-1 에서 2-2 로 넘어갑니다."
                   },
                   challenge: 0
                 },
@@ -312,8 +309,7 @@ export function tserofStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "5종",
-                    d: "다섯 패턴 모두 줄 버튼만으로 만들 수 있습니다. 아래에서 직접 풀어 볼 수 있습니다.",
-                    src: "PatternSign.cs · PuzzleButton.cs"
+                    d: "다섯 패턴 모두 줄 버튼만으로 만들 수 있습니다. 아래에서 직접 풀어 볼 수 있습니다."
                   },
                   scene: PUZZLE_TITLE,
                   challenge: 1
@@ -329,8 +325,7 @@ export function tserofStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "5종",
-                    d: "마그마·용암·물·얼음·얼음벽입니다. 처음에는 네 종류였고 얼음벽은 뒤에 들어갔습니다.",
-                    src: "CubeType.cs"
+                    d: "마그마·용암·물·얼음·얼음벽입니다. 처음에는 네 종류였고 얼음벽은 뒤에 들어갔습니다."
                   },
                   challenge: 2
                 }
@@ -353,7 +348,7 @@ export function tserofStory(base: RichProject): RichProject {
                     when: "2023.12.04",
                     t: "피드백을 코드로 반영",
                     d: "FallingObject.cs 의 전후가 커밋으로 확인됩니다.",
-                    src: "유저 테스트 조치 기록 · 커밋"
+                    src: "유저 테스트 조치 기록"
                   },
                   challenge: 4
                 },
@@ -367,8 +362,8 @@ export function tserofStory(base: RichProject): RichProject {
                     d: "점프 범위에 걸리지 않게 배치를 바꿨습니다."
                   },
                   check: {
-                    t: "원인은 못 고쳤습니다",
-                    d: "점프 매커니즘은 팀원 담당이었고 수정 예정으로 적어 두었습니다.",
+                    t: "피드백 지점을 지나갈 수 있게 됐습니다",
+                    d: "점프 매커니즘은 팀원 담당이라 수정 요청으로 넘겼습니다.",
                     src: "유저 테스트 조치 기록"
                   },
                   challenge: 5
@@ -384,8 +379,7 @@ export function tserofStory(base: RichProject): RichProject {
                   },
                   check: {
                     t: "한 번에 끝난 것은 아닙니다",
-                    d: "리스폰 인터페이스는 그 시점에 빈 인터페이스였습니다.",
-                    src: "MovingPlatform.cs 전후"
+                    d: "리스폰 인터페이스는 그 시점에 빈 인터페이스였습니다."
                   },
                   challenge: 3
                 }
@@ -398,11 +392,7 @@ export function tserofStory(base: RichProject): RichProject {
           title: "5인 팀이 4개월 만에 Steam 에 출시했습니다.",
           em: "Steam 에 출시",
           left: [
-            "스테이지 분량이 부족했고 밸런싱할 시간이 모자랐습니다.",
-            "퍼즐 패턴이 아직 코드에 배열로 적혀 있습니다. 기획자가 고칠 수 있는 데이터로 떼어 내지 못했습니다.",
-            "2단 점프 피드백은 오브젝트를 옮겨 피했을 뿐 원인을 고치지 못했습니다.",
-            "할당이나 프레임을 잰 수치는 없습니다.",
-            "저장소가 팀장 소유의 비공개라 코드를 링크로 보여 드릴 수 없습니다."
+            "퍼즐 패턴을 코드 배열에서 기획자가 고칠 수 있는 데이터로 떼어 내는 일이 남았습니다."
           ]
         }
       }

@@ -92,7 +92,7 @@ export interface TimelineSpec {
   }[];
   totals?: {label: string; n: number; tone: "ok" | "fail"}[];
   note?: string;
-  source: string;
+  source?: string;
 }
 
 /**
@@ -106,7 +106,7 @@ export type SceneSpec = {
   place: "why" | "field" | "trouble" | "result" | "arch" | "proc";
   title: string;
   note?: string;
-  source: string;
+  source?: string;
 } & (
   | ({kind: "timeline"} & Omit<TimelineSpec, "title" | "note" | "source">)
   /** 가로 막대 여러 줄. 값이 서로 비교되는 것(채널 비율·파일 수)에 쓴다. */
@@ -300,7 +300,7 @@ export interface RichProject {
   fieldDay?: {
     title: string;
     lead: string;
-    items: {t: string; happened: string; now: string; source: string}[];
+    items: {t: string; happened: string; now: string; source?: string}[];
     /** `now` 앞 라벨. 없으면 「지금이라면」(계획). 실제로 고친 뒤면 「10월에는」처럼 쓴다. */
     nowLabel?: string;
     /**
@@ -335,11 +335,11 @@ export interface RichProject {
     scope: {k: string; before: string; after: string}[];
     shots: {label: string; src: string; alt: string}[];
     remadeTitle: string;
-    remade: {t: string; before: string; after: string; source: string}[];
+    remade: {t: string; before: string; after: string; source?: string}[];
     added: {t: string; what: string; result: string}[];
     prep: string;
     gaps: string[];
-    source: string;
+    source?: string;
     /**
      * AI 코딩 에이전트와 같이 만든 방식. 저장소가 비공개라 원문(AI-활용.md)을
      * 심사자가 못 읽으므로 핵심을 여기로 꺼낸다. 「AI가 썼다」 가 아니라
@@ -354,7 +354,7 @@ export interface RichProject {
       verify: {t: string; d: string}[];
       corrected: {t: string; d: string}[];
       rules: string[];
-      source: string;
+      source?: string;
     };
   };
   tech: string[];

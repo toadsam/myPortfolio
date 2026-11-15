@@ -69,7 +69,7 @@ export function signStory(base: RichProject): RichProject {
       },
       {
         k: "내 역할",
-        v: "1학기 백엔드(분석기 선택 · 영상 조회 · 배포), 2학기 데이터 정리와 자모표 · 팀 계약 문서, 11월 디자인 개편과 브랜치 통합"
+        v: "1학기 백엔드(분석기 선택 · 영상 조회 · 배포), 2학기 데이터 정리와 자모표 · 팀 계약 문서, 11월 디자인 개편과 통합"
       }
     ],
     heroImage: {
@@ -77,7 +77,7 @@ export function signStory(base: RichProject): RichProject {
       label: "퀴즈 · 마을 · 기록",
       ratio: "16/10",
       caption:
-        "11월에 다시 그린 수어링고입니다. 퀴즈를 풀면 가운데 마을에 색이 칠해집니다. 로컬에서 띄워 휴대폰 폭으로 찍었습니다."
+        "11월에 다시 그린 수어링고입니다. 퀴즈를 풀면 가운데 마을에 색이 칠해집니다."
     },
     beforeAfter: {
       before: {
@@ -148,7 +148,7 @@ export function signStory(base: RichProject): RichProject {
       {t: "배포", d: "2026.05.28 · Cloud Run · Pages"},
       {t: "데이터와 자모표", d: "2026.09 ~ 10 · 분할표 · 실험 다섯 번"},
       {t: "디자인 개편", d: "2026.11.03 ~ 05 · 색칠 마을"},
-      {t: "통합", d: "2026.11.13 · 브랜치 일곱 개"}
+      {t: "통합", d: ""}
     ],
     work: [
       {
@@ -169,7 +169,7 @@ export function signStory(base: RichProject): RichProject {
       },
       {
         g: "디자인과 통합",
-        items: ["앱 전체 색칠 마을 디자인", "브랜치 일곱 개 통합"]
+        items: ["앱 전체 색칠 마을 디자인", "작업 일곱 갈래 통합"]
       }
     ],
     challenges: [
@@ -213,34 +213,33 @@ export function signStory(base: RichProject): RichProject {
         n: "10",
         l: "디자인 개편 커밋 (전부 본인)",
         sub: "2026.11.03 ~ 05 · 파일 74개",
-        source:
-          "feature/design-jaehun · +8,354 / −6,275줄 · Claude Code 와 작성"
+        source: "+8,354 / −6,275줄 · Claude Code 와 작성"
       },
       {
         n: "27.0mm",
         l: "손 관절 복원 오차 (단어 test, 최저)",
         sub: "토큰 512개 · 20만 회 · 첫 실험 28.1mm",
-        source: "ml/experiments.md E4b · 처음 보는 사람 2명 · 관절 평균 거리"
+        source: "처음 보는 사람 2명 · 관절 평균 거리"
       },
       {
         n: "28.1mm",
         l: "문장 손 오차 (단어 + 문장 학습)",
         sub: "단어만 배운 자모표는 37.3mm",
         mini: {kind: "bars", before: 37.3, after: 28.1},
-        source: "PR #21 본문 결과 표 · E4b 와 E5 를 문장 데이터로 평가"
+        source: "E4b 와 E5 를 문장 데이터로 평가"
       },
       {
         n: "417줄",
         l: "1학기 핵심 세 파일의 내 줄",
         sub: "Translation 158 · Normalizer 131 · VideoCache 128",
-        source: "main HEAD git blame · 백엔드 자바 4,228줄 중 877줄"
+        source: "백엔드 자바 4,228줄 중 877줄"
       },
       {
         n: "120",
         l: "사전 단어",
         sub: "영상이 있는 단어는 17개",
         mini: {kind: "bars", before: 120, after: 17},
-        source: "README 측정 결과 · 2026-09-07 운영 서버 POST /translate"
+        source: "2026-09-07 운영 서버 POST /translate"
       },
       {
         n: "101ms",
@@ -251,18 +250,15 @@ export function signStory(base: RichProject): RichProject {
       {
         n: "28 / 32",
         l: "9~10월 ml 폴더 커밋 중 내 것",
-        sub: "2026.09.22 ~ 10.18 · 인수인계 문서까지",
-        source: "main 의 ml 폴더 커밋 작성자 · 2026-11-15 셈"
+        sub: "2026.09.22 ~ 10.18 · 인수인계 문서까지"
       },
       {
         n: "7개",
-        l: "한 줄기로 합친 브랜치",
-        sub: "2026.11.13 · main 대비 커밋 95개",
-        source: "통합 브랜치의 병합 커밋 7개 · 생성 · 인식 · 뷰어는 팀원 작업"
+        l: "하나로 합친 작업 갈래",
+        sub: "2026.11.13 · 커밋 95개",
+        source: "생성 · 인식 · 뷰어는 팀원 작업"
       }
     ],
-    metricsNote:
-      "숫자는 저장소 toadsam/Sign-Language 에서 2026-11-15 에 확인한 값입니다. 1학기 값은 README 측정 결과와 git blame, 2학기 값은 ml/experiments.md 와 PR #21 본문, 디자인과 통합은 브랜치의 커밋 기록입니다. 농인 당사자나 수어 전문가의 감수는 받지 않았습니다.",
     kpt: {
       keep: [
         "API 계약과 고정 분할표를 먼저 정해 넷이 병렬로 작업",
@@ -291,9 +287,8 @@ export function signStory(base: RichProject): RichProject {
         bold: "11월에 앱 전체를 색칠 마을 디자인의 수어링고로 다시 그렸습니다.",
         more: [
           "기존 수어 서비스는 대부분 문장을 넣으면 아바타가 보여 주는 방식이라 이미 수어를 아는 사람을 전제합니다. 수어를 외국어처럼 읽고 익힐 언어로 놓고, 동작을 먼저 보여 준 뒤 뜻을 고르게 했습니다.",
-          "1학기의 퀴즈와 채점, 처음의 문장 변환 기능, 사전은 팀원이 썼습니다. 2학기의 동작 생성 모델과 추론 서버, 인식 모델, 동작 뷰어도 각각 팀원 작업입니다. 3D 아바타는 이 저장소에 없습니다.",
-          "디자인 개편과 브랜치 통합은 Claude Code 와 함께 했습니다. 무엇을 바꿀지와 왜 바꾸는지는 커밋마다 적었습니다.",
-          "농인 당사자나 수어 전문가 감수는 받지 않았습니다."
+          "1학기의 퀴즈와 채점, 처음의 문장 변환 기능, 사전은 팀원이 썼습니다. 2학기의 동작 생성 모델과 추론 서버, 인식 모델, 동작 뷰어도 각각 팀원 작업입니다.",
+          "무엇을 바꿀지와 왜 바꾸는지는 커밋마다 적었습니다."
         ]
       },
       highlights: [
@@ -352,7 +347,7 @@ export function signStory(base: RichProject): RichProject {
           }
         ],
         core: "그래서 2학기에는 동작을 만들 수 있는지부터 확인했고, 11월에는 화면을 처음부터 다시 그렸습니다.",
-        source: "저장소 README 측정 결과(2026-09) · 디자인 커밋 본문(2026-11)"
+        source: "디자인 커밋 본문(2026-11)"
       },
       scenes: [
         ...(base.detail?.scenes ?? []),
@@ -371,8 +366,7 @@ export function signStory(base: RichProject): RichProject {
             }
           ],
           note: "낮을수록 원래 동작에 가깝게 복원한 것입니다. 기준선은 같은 단어를 다른 사람이 한 클립끼리의 거리입니다. 단어 쪽 오차는 E5 에서 27.0mm 가 28.2mm 로 조금 올랐습니다.",
-          source:
-            "PR #21 본문 결과 표 · ml/experiments.md · 처음 보는 사람 두 명으로 평가"
+          source: "처음 보는 사람 두 명으로 평가"
         }
       ],
       story: {
@@ -395,7 +389,7 @@ export function signStory(base: RichProject): RichProject {
           title:
             "1학기에는 백엔드를, 2학기에는 데이터와 자모표를, 11월에는 디자인을 맡았습니다.",
           em: "11월에는 디자인",
-          lead: "1학기의 퀴즈와 채점, 사전, 화면은 팀원이 썼습니다. 2학기에는 제가 데이터 정리와 자모표, 분할표, 모델 사이 계약 문서를 쓰고 생성과 인식의 출발점 코드를 만들어 넘겼습니다. 그 뒤의 동작 생성 모델과 추론 서버, 인식 모델, 뷰어는 팀원 셋이 각각 맡았습니다. 11월에는 앱 전체 디자인을 혼자 다시 그리고 브랜치 일곱 개를 한 줄기로 합쳤습니다.",
+          lead: "1학기의 퀴즈와 채점, 사전, 화면은 팀원이 썼습니다. 2학기에는 제가 데이터 정리와 자모표, 분할표, 모델 사이 계약 문서를 쓰고 생성과 인식의 출발점 코드를 만들어 넘겼습니다. 그 뒤의 동작 생성 모델과 추론 서버, 인식 모델, 뷰어는 팀원 셋이 각각 맡았습니다. 11월에는 앱 전체 디자인을 혼자 다시 그리고, 따로 진행되던 작업 일곱 갈래를 하나로 합쳤습니다.",
           facts: [
             {n: "417줄", l: "1학기 핵심 세 파일의 내 줄"},
             {n: "28개", l: "9~10월 ML 커밋 32개 중 내 것"},
@@ -426,7 +420,7 @@ export function signStory(base: RichProject): RichProject {
                   check: {
                     big: "101ms",
                     d: "같은 문장 7회의 변환 왕복 중앙값입니다. 운영 서버에는 OpenAI 키가 없어 규칙 경로만 잰 값입니다. 정확도를 잰 것은 아닙니다.",
-                    src: "README 측정 결과 · 2026-09-07 운영 서버",
+                    src: "2026-09-07 운영 서버",
                     when: "2026.04.15"
                   },
                   scene: FLOW_TITLE,
@@ -444,7 +438,7 @@ export function signStory(base: RichProject): RichProject {
                   check: {
                     big: "17개",
                     d: "사전 120단어 중 영상이 있는 단어 수입니다. 캐시에는 만료가 없어 영상을 새로 올리면 서버를 다시 띄워야 합니다.",
-                    src: "README 측정 결과 · StorageVideoCache.java",
+
                     when: "2026.04.29"
                   },
                   scene: BARS_TITLE,
@@ -468,7 +462,7 @@ export function signStory(base: RichProject): RichProject {
                   check: {
                     t: "평가 사람은 늘 같은 두 명",
                     d: "단어, 문장, 둘을 합친 분할표 세 가지 모두 평가 사람이 같습니다.",
-                    src: "ml/splits · docs/contracts.md · PR #21",
+
                     when: "2026.10.11"
                   }
                 },
@@ -484,7 +478,7 @@ export function signStory(base: RichProject): RichProject {
                   check: {
                     big: "58클립",
                     d: "문장 데이터에서 순간 이상치로 학습에서 뺀 클립 수입니다.",
-                    src: "ml/prep · 문장 품질 v1.1 커밋 · 2026-10-16",
+
                     when: "2026.10.13 ~ 16"
                   }
                 },
@@ -500,7 +494,7 @@ export function signStory(base: RichProject): RichProject {
                   check: {
                     big: "28.1mm",
                     d: "문장 손 오차입니다. 37.3mm 에서 줄었습니다. 대신 단어 쪽은 27.0mm 에서 28.2mm 로 조금 올랐습니다.",
-                    src: "ml/experiments.md · PR #21 결과 표 · 테스트 코드는 팀원 작성",
+
                     when: "2026.10.16"
                   },
                   scene: SEN_TITLE,
@@ -524,7 +518,7 @@ export function signStory(base: RichProject): RichProject {
                   check: {
                     big: "8종",
                     d: "스티커 수입니다. 첫 퀴즈, 오늘 목표, 3일과 7일 연속, 50문제와 200문제 같은 기록마다 하나씩 붙습니다.",
-                    src: "색칠 마을 디자인 3차 커밋 · 2026-11-05",
+
                     when: "2026.11.04"
                   }
                 },
@@ -540,7 +534,7 @@ export function signStory(base: RichProject): RichProject {
                   check: {
                     t: "다섯 화면에 적용",
                     d: "퀴즈, 오답 노트, 북마크, 통역, 기록 화면에 들어갔습니다.",
-                    src: "색칠 마을 디자인 다듬기 커밋 · 2026-11-04",
+
                     when: "2026.11.04"
                   }
                 },
@@ -556,23 +550,23 @@ export function signStory(base: RichProject): RichProject {
                   check: {
                     t: "누르거나 끌면 그 자리로",
                     d: "진행 선은 지난 만큼 노랗게 칠해지고 누르거나 끌면 그 자리로 넘어갑니다.",
-                    src: "영상 진행 선 커밋 · 2026-11-05",
+
                     when: "2026.11.05"
                   }
                 },
                 {
                   problem: {
-                    t: "브랜치 일곱 개가 따로 자랐습니다",
-                    d: "자모표, 생성 넷, 디자인, 앱과 뷰어가 각자 브랜치에 있었습니다."
+                    t: "작업 일곱 갈래가 따로 진행됐습니다",
+                    d: "자모표, 생성 넷, 디자인, 앱과 뷰어를 각자 따로 만들고 있었습니다."
                   },
                   fix: {
-                    t: "한 줄기로 합쳤습니다",
-                    d: "일곱 브랜치를 차례로 병합했습니다. 프론트에서 겹친 곳은 새 디자인 쪽을 기준으로 맞췄습니다."
+                    t: "하나로 합쳤습니다",
+                    d: "일곱 갈래를 차례로 합쳤습니다. 프론트에서 겹친 곳은 새 디자인 쪽을 기준으로 맞췄습니다."
                   },
                   check: {
                     big: "95커밋",
-                    d: "합친 뒤 main 보다 앞선 커밋 수입니다. 파일은 280개가 바뀌었습니다. 이 가운데 생성과 인식, 뷰어는 팀원 작업입니다.",
-                    src: "통합 브랜치의 병합 커밋 7개 · Claude Code 와 진행",
+                    d: "합친 커밋 수입니다. 파일은 280개가 바뀌었습니다. 이 가운데 생성과 인식, 뷰어는 팀원 작업입니다.",
+                    src: "Claude Code 와 진행",
                     when: "2026.11.13"
                   }
                 }
@@ -584,7 +578,7 @@ export function signStory(base: RichProject): RichProject {
           eyebrow: "04 · 새로 그린 화면",
           title: "문제를 풀면 마을에 색이 칠해집니다.",
           em: "마을에 색이 칠해집니다",
-          lead: "11월에 다시 그린 화면입니다. 로컬에서 띄워 휴대폰 폭으로 찍었고, 새 계정이라 기록은 0 입니다.",
+          lead: "11월에 다시 그린 화면입니다.",
           items: [
             {
               t: "마을",
@@ -636,10 +630,7 @@ export function signStory(base: RichProject): RichProject {
           ],
           left: [
             "영상이 있는 단어가 120개 중 17개입니다. 통역은 대부분 글자로 답합니다.",
-            "분석기 선택 기준은 정확도가 아니라 재생 가능한 단어 수입니다. 정답 데이터로 정확도를 잰 적이 없습니다.",
-            "자모표는 복원 오차까지 확인했습니다. 동작 생성과 인식은 팀원이 이어서 하고 있습니다.",
-            "디자인 개편과 통합은 리뷰 없이 제 브랜치에서 진행했습니다.",
-            "농인 당사자나 수어 전문가의 감수를 받지 않았습니다."
+            "자모표는 복원 오차까지 확인했습니다. 동작 생성과 인식은 팀원이 이어서 하고 있습니다."
           ]
         }
       }

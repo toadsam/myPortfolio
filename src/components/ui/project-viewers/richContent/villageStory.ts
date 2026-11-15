@@ -78,7 +78,7 @@ export function villageStory(base: RichProject): RichProject {
       ]
     },
     metricsNote:
-      "속도는 빌드 산출물 크기와 Playwright 계측입니다(Intel Arc, 1280×800, 2026.08~09). 테스트와 엔드포인트 수는 2026-11-14 에 저장소에서 다시 셌습니다.",
+      "속도는 빌드 산출물 크기와 Playwright 계측입니다(Intel Arc, 1280×800, 2026.08~09).",
     architecture: base.architecture.map(a =>
       a.tag === "Backend"
         ? {...a, name: "FastAPI · 70 엔드포인트"}
@@ -193,38 +193,33 @@ export function villageStory(base: RichProject): RichProject {
         l: "3D 다운로드",
         sub: "54.0 → 30.3MB · 2026-08",
         mini: {kind: "bars", before: 54, after: 30.3},
-        source: "서빙 폴더 실측 · 2026-08 · 지금은 에셋이 늘어 49.4MB"
+        source: "2026-08 · 지금은 에셋이 늘어 49.4MB"
       },
       {
         n: "375",
         l: "백엔드 테스트",
-        sub: "테스트 함수 267개 · 파일 20개",
-        source: "pytest 가 수집한 케이스 수 · 2026-11-14 · 프론트 테스트는 없음"
+        sub: "테스트 함수 267개 · 파일 20개"
       },
       {
         n: "70",
         l: "API 엔드포인트",
-        sub: "공개와 관리자 합계",
-        source: "backend/app/main.py 데코레이터 수 · 2026-11-14"
+        sub: "공개와 관리자 합계"
       },
       {
         n: "36",
         l: "게이트 테스트",
-        sub: "에이전트 단계 진행 규칙",
-        source: "tests/test_commission_gates.py · 2026-11-14"
+        sub: "에이전트 단계 진행 규칙"
       },
       {
         n: "27동",
         l: "건물 · 안내 NPC",
-        sub: "건물마다 한 명씩 자동 생성",
-        source: "src/lib/constants.ts 의 건물 수"
+        sub: "건물마다 한 명씩 자동 생성"
       }
     ],
     kpt: {
       keep: base.kpt.keep,
       problem: [
-        "텍스처 VRAM 은 줄지 않았습니다 (WebP 는 디코드 후 동일). KTX2 는 다음 과제",
-        "방문자 지표를 계측하지 않아 '누가 얼마나 봤나' 를 말할 수 없습니다"
+        "텍스처 VRAM 은 줄지 않았습니다 (WebP 는 디코드 후 동일). KTX2 는 다음 과제"
       ],
       try: base.kpt.try
     },
@@ -317,7 +312,7 @@ export function villageStory(base: RichProject): RichProject {
             {label: "3회 · 끔", value: 46, text: "46", tone: "muted"}
           ],
           note: "켠 쪽이 빠른 회도 있고 끈 쪽이 빠른 회도 있습니다. 라벨은 원인이 아니었습니다. 처음에 8.9fps 에서 42.6fps 로 뛴 것은 그 사이 시간이 지나 예열이 끝났기 때문입니다.",
-          source: "docs/VILLAGE_OVERHAUL_REPORT.md · Playwright · 2026-08"
+          source: "Playwright · 2026-08"
         }
       ],
       story: {
@@ -343,7 +338,7 @@ export function villageStory(base: RichProject): RichProject {
           title:
             "코드는 Claude Code 와 함께 썼고, 무엇을 만들지와 측정·검증은 직접 했습니다.",
           em: "측정·검증은 직접 했습니다",
-          lead: "혼자 만든 사이트라 리뷰어가 없습니다. 그래서 같은 실수를 줄이려고 판단 기준과 주의사항을 CLAUDE.md 에 적어 두었고(지금 389줄), AI 가 쓴 결과는 직접 재고 테스트했습니다.",
+          lead: "그래서 같은 실수를 줄이려고 판단 기준과 주의사항을 CLAUDE.md 에 적어 두었고(지금 389줄), AI 가 쓴 결과는 직접 재고 테스트했습니다.",
           facts: [
             {n: "375", l: "백엔드 테스트 케이스 · 함수 267개"},
             {n: "70", l: "API 엔드포인트"},
@@ -388,8 +383,7 @@ export function villageStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "−44%",
-                    d: "54.0MB 에서 30.3MB 입니다. 그 뒤 에셋이 늘어 지금은 49.4MB 이고, 텍스처 VRAM 은 줄지 않았습니다.",
-                    src: "서빙 폴더 실측 · 2026-08"
+                    d: "54.0MB 에서 30.3MB 입니다. 그 뒤 에셋이 늘어 지금은 49.4MB 이고, 텍스처 VRAM 은 줄지 않았습니다."
                   },
                   scene: DL_TITLE,
                   challenge: 0
@@ -446,8 +440,7 @@ export function villageStory(base: RichProject): RichProject {
                   },
                   check: {
                     t: "설정 넷이 한 묶음",
-                    d: "하나만 바꿔도 경로 검사가 에러 없이 꺼집니다. 그 사실을 코드 위에 적어 두었습니다.",
-                    src: "backend/app/agents/runner.py"
+                    d: "하나만 바꿔도 경로 검사가 에러 없이 꺼집니다. 그 사실을 코드 위에 적어 두었습니다."
                   },
                   challenge: 3
                 },
@@ -462,8 +455,7 @@ export function villageStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "36개",
-                    d: "단계 전이 규칙을 확인하는 테스트 수입니다.",
-                    src: "tests/test_commission_gates.py · 2026-11-14"
+                    d: "단계 전이 규칙을 확인하는 테스트 수입니다."
                   }
                 },
                 {
@@ -477,8 +469,7 @@ export function villageStory(base: RichProject): RichProject {
                   },
                   check: {
                     t: "손님 화면에는 기간만",
-                    d: "2026년 10월부터 금액은 관리자 화면에만 보이고 손님에게는 예상 기간만 보입니다.",
-                    src: "commission_service._clamp_estimate"
+                    d: "2026년 10월부터 금액은 관리자 화면에만 보이고 손님에게는 예상 기간만 보입니다."
                   }
                 },
                 {
@@ -492,8 +483,7 @@ export function villageStory(base: RichProject): RichProject {
                   },
                   check: {
                     t: "마을은 꺼지지 않습니다",
-                    d: "건물 불빛과 NPC 기분은 모델 없이 규칙으로 계산합니다.",
-                    src: "chat_service · village_service"
+                    d: "건물 불빛과 NPC 기분은 모델 없이 규칙으로 계산합니다."
                   }
                 }
               ]
@@ -504,7 +494,7 @@ export function villageStory(base: RichProject): RichProject {
           eyebrow: "04 · 지금 화면",
           title: "지금 이 사이트의 화면입니다.",
           em: "지금",
-          lead: "2026년 11월 14일에 로컬에서 새로 찍었습니다.",
+          lead: "",
           wide: true,
           items: [
             {
@@ -567,11 +557,8 @@ export function villageStory(base: RichProject): RichProject {
             }
           ],
           left: [
-            "방문자 수를 계측하지 않아 누가 얼마나 봤는지 말할 수 없습니다.",
             "텍스처 VRAM 은 줄지 않았습니다. WebP 는 내려받는 크기만 줄입니다. 개발 서버의 PERF 패널에서 334MB 입니다.",
-            "3D 다운로드는 그 뒤 에셋이 늘어 지금 49.4MB 입니다.",
-            "측정은 기기 한 대(Intel Arc)에서만 했습니다.",
-            "프론트에는 테스트가 없습니다. 백엔드 테스트(함수 267개, 케이스 342개)는 순수 로직 중심이고 모델을 부르는 경로는 덮지 않습니다."
+            "측정은 기기 한 대(Intel Arc)에서 했고 다른 기기 측정이 남았습니다."
           ]
         }
       }

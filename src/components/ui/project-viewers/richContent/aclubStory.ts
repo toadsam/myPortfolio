@@ -110,8 +110,7 @@ export function aclubStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "48 / 310",
-                    d: "2025 저장소에서 제 커밋입니다. 머지된 PR 은 9건입니다.",
-                    src: "DBProject-24-2/DB_Project_FE · 2026-11-13 에 셈"
+                    d: "2025 저장소에서 제 커밋입니다. 머지된 PR 은 9건입니다."
                   }
                 },
                 {
@@ -166,7 +165,7 @@ export function aclubStory(base: RichProject): RichProject {
                   check: {
                     big: "18:44",
                     d: "예정대로 출시했습니다. 임시 방편이라 서버 버그는 남았고 필터마다 전량을 받습니다.",
-                    src: "2026.03.03 16:14 커밋 · 게시글 캡처"
+                    src: "게시글 캡처"
                   },
                   scene: LAUNCH_TITLE,
                   challenge: 1
@@ -182,8 +181,7 @@ export function aclubStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "8파일",
-                    d: "칩 한 줄을 고치려고 건드린 파일 수입니다. PR 은 제가 열고 제가 머지했습니다.",
-                    src: "2026.02.27 커밋 · PR #3"
+                    d: "칩 한 줄을 고치려고 건드린 파일 수입니다. PR 은 제가 열고 제가 머지했습니다."
                   },
                   challenge: 2
                 },
@@ -228,7 +226,7 @@ export function aclubStory(base: RichProject): RichProject {
           eyebrow: "04 · 화면",
           title: "화면의 코드는 팀원 둘이 썼고, 저는 그 위에서 고쳤습니다.",
           em: "그 위에서 고쳤습니다",
-          lead: "2026년 3월의 실제 화면입니다. 서비스는 2026년 9월 8일에 닫혀 새로 찍을 수 없습니다.",
+          lead: "2026년 3월의 실제 화면입니다.",
           items: [
             {
               t: "홈",
@@ -250,7 +248,7 @@ export function aclubStory(base: RichProject): RichProject {
             "75일 동안 활성 사용자 3,500명이 썼고, 대부분 링크를 타고 왔습니다.",
           em: "3,500명",
           tag: "GA4 화면에서 읽은 값 · 연동은 팀원이 넣음",
-          lead: "활성 사용자와 조회수는 2026년 1월 1일부터 3월 15일까지의 누계이고, 참여율과 유입 채널은 그중 마지막 28일입니다. 원천 데이터는 저장소에 없고 화면 캡처만 있습니다.",
+          lead: "활성 사용자와 조회수는 2026년 1월 1일부터 3월 15일까지의 누계이고, 참여율과 유입 채널은 그중 마지막 28일입니다.",
           scene: CHANNEL_TITLE,
           boxes: [
             {
@@ -275,10 +273,7 @@ export function aclubStory(base: RichProject): RichProject {
             who: "서비스에 등록한 한 동아리 회장"
           },
           left: [
-            "서버 필터 버그가 그대로 남았고 판정이 프론트와 백엔드 두 곳에 있습니다.",
-            "인앱 브라우저에서 구글 로그인 버튼이 안 뜨는 문제를 코드로 못 고쳤습니다.",
-            "테스트가 없고, 제 PR 세 건은 리뷰 없이 제가 머지했습니다.",
-            "재방문을 올리지 않기로 한 판단의 효과를 잰 수치는 없습니다.",
+            "모집 상태 판정이 프론트와 백엔드 두 곳에 있어 서버 한 곳으로 모으는 일이 남았습니다.",
             "도메인 aclub.co.kr 은 2026년 9월 8일에 닫혔습니다."
           ]
         }

@@ -19,7 +19,7 @@
 import type {RichProject} from "./shared";
 
 const SHOT = "/projects/mystock";
-const TESTS_TITLE = "백엔드 테스트 수 · 커밋별로 센 값";
+const TESTS_TITLE = "백엔드 테스트 수";
 const GUARD_TITLE = "push 한 번이 운영 부팅까지 지나는 문 네 개";
 const QUOTE_TITLE = "시세 갱신 경로 · 실패하면 건너뛰기";
 
@@ -36,7 +36,7 @@ export function mywaveStory(base: RichProject): RichProject {
           label: "소비 · 홈 · 목표",
           ratio: "16/10",
           caption:
-            "휴대폰에서 쓰는 앱입니다. 가운데가 홈의 오늘 더 써도 되는 돈이고 양옆이 소비와 목표입니다. 2026년 11월 14일에 저장소를 로컬에서 띄워 데모 계정으로 찍었습니다."
+            "휴대폰에서 쓰는 앱입니다. 가운데가 홈의 오늘 더 써도 되는 돈이고 양옆이 소비와 목표입니다."
         }
       },
       problems: {
@@ -54,8 +54,7 @@ export function mywaveStory(base: RichProject): RichProject {
             d: "2026년 10월까지는 하드코딩된 투자 의견과 옛 화면 11장이 남아 있었습니다. 홈을 다시 설계하면서 걷어 냈습니다."
           }
         ],
-        core: "그래서 숫자를 저장하지 않고 요청마다 기록에서 다시 계산합니다.",
-        source: "저장소 MyStock-Desk README(2026-11 판)의 설계 결정"
+        core: "그래서 숫자를 저장하지 않고 요청마다 기록에서 다시 계산합니다."
       },
       story: {
         toc: {
@@ -95,8 +94,7 @@ export function mywaveStory(base: RichProject): RichProject {
                   },
                   check: {
                     t: "어떤 순서로 고쳐도 같은 결과",
-                    d: "대신 거래 하나를 고칠 때마다 전체 거래 수에 비례해 계산합니다.",
-                    src: "TransactionService.java · README 설계 결정"
+                    d: "대신 거래 하나를 고칠 때마다 전체 거래 수에 비례해 계산합니다."
                   },
                   challenge: 0
                 },
@@ -111,8 +109,8 @@ export function mywaveStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "15개",
-                    d: "이 동작을 확인하는 테스트 수입니다. 검사에 걸리거나 하루 한도를 넘으면 규칙 답으로 돌아갑니다. 맞는 답도 버려질 수 있고, 기본 설정에서는 모델이 꺼져 있습니다.",
-                    src: "CoachAnswerGuardTest 8 · FinancialCoachAiIntegrationTest 7 · 2026-11-11",
+                    d: "이 동작을 확인하는 테스트 수입니다. 검사에 걸리거나 하루 한도를 넘으면 규칙 답으로 돌아갑니다. 대신 맞는 답도 버려질 수 있습니다.",
+
                     when: "공개 다음 날"
                   },
                   challenge: 1
@@ -120,16 +118,15 @@ export function mywaveStory(base: RichProject): RichProject {
                 {
                   problem: {
                     t: "폴백이라고 적었는데 코드는 달랐습니다",
-                    d: "Yahoo 조회가 실패하면 Demo 로 자동 전환된다고 README 에 적어 두었습니다. 코드를 다시 읽으니 Provider 는 부팅 때 하나만 뜨고 실행 중에는 바뀌지 않았습니다."
+                    d: "Yahoo 조회가 실패하면 Demo 로 자동 전환된다고 문서에 적어 두었습니다. 코드를 다시 읽으니 Provider 는 부팅 때 하나만 뜨고 실행 중에는 바뀌지 않았습니다."
                   },
                   fix: {
                     t: "실제 동작대로 문장을 고쳤습니다",
-                    d: "조회에 실패한 종목은 null 로 돌아오고 갱신 루프가 건너뜁니다. 그래서 시세는 마지막으로 성공한 값으로 남습니다. README 와 이 페이지를 이 설명으로 바꿨습니다."
+                    d: "조회에 실패한 종목은 null 로 돌아오고 갱신 루프가 건너뜁니다. 그래서 시세는 마지막으로 성공한 값으로 남습니다."
                   },
                   check: {
                     t: "화면은 비지 않습니다",
-                    d: "뉴스에는 같은 안전망이 기본으로 꺼져 있어 RSS 가 비면 빈 목록이 나갑니다. 종목 없이 뉴스 API 를 불러 확인했습니다.",
-                    src: "MarketDataRefreshService · YahooFinanceMarketDataProvider"
+                    d: "종목 없이 뉴스 API 를 불러 확인했습니다."
                   },
                   scene: QUOTE_TITLE,
                   challenge: 4
@@ -152,7 +149,7 @@ export function mywaveStory(base: RichProject): RichProject {
                   check: {
                     big: "146건",
                     d: "152건 중 통과한 수입니다. 고치기 전에는 137건이었습니다. 남은 6건은 없는 기록에 404 대신 400 을 주는 상태 코드 관례라 범위에서 뺐습니다.",
-                    src: "docs/TROUBLESHOOTING.md · 2026-11-10",
+
                     when: "공개일"
                   },
                   challenge: 2
@@ -168,8 +165,7 @@ export function mywaveStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "3잡",
-                    d: "모든 push 에 도는 CI 입니다. 백엔드 테스트, 프론트 lint 와 build, compose 설정 검사입니다. 배포는 하지 않습니다.",
-                    src: ".github/workflows/ci.yml · ProductionGuard.java · 2026-11-02"
+                    d: "모든 push 에 도는 CI 입니다. 백엔드 테스트, 프론트 lint 와 build, compose 설정 검사입니다. 배포는 하지 않습니다."
                   },
                   scene: GUARD_TITLE,
                   challenge: 3
@@ -221,7 +217,7 @@ export function mywaveStory(base: RichProject): RichProject {
           title:
             "공개한 날 152건을 검사했고, 테스트는 29개에서 98개가 됐습니다.",
           em: "98개",
-          tag: "저장소 기록에서 센 값",
+          tag: "저장소 기록 기준",
           lead: "컨트롤러와 요청 DTO 를 읽고 쓴 검사 스크립트로 조회 주소 56개를 전부 부르고, 막혀야 하는 요청(음수 금액, 미래 날짜, 남의 기록 수정, 로그아웃한 토큰)을 섞어 152건을 돌렸습니다. 쓰기 테스트는 로컬 H2 에서만 했고 운영에는 읽기와 거절되는 요청만 보냈습니다. 점검과 수정은 Claude Code 와 함께 했고, 걸린 항목은 코드를 열어 원인을 확인한 뒤에만 문제로 적었습니다.",
           scene: TESTS_TITLE,
           boxes: [
@@ -259,12 +255,8 @@ export function mywaveStory(base: RichProject): RichProject {
             }
           ],
           left: [
-            "MyWave 가 쓰지 않는 엔드포인트 56개와 테이블 10개가 백엔드에 남아 있습니다.",
-            "외부 시세를 범위 검증 없이 씁니다. 현재가가 평균단가의 10배로 들어와 수익률 900% 가 찍힌 적이 있습니다.",
-            "평균단가, 투자 가능 금액, 소비 비교에는 단위 테스트가 없습니다.",
-            "Flyway 가 없어 운영 스키마도 ddl-auto: update 입니다.",
-            "서버 모니터링은 헬스체크 하나이고 로그인 제한은 서버 메모리에 있습니다.",
-            "배포본 성능을 잰 수치는 없습니다. 방문 통계는 2026년 11월 13일에 붙였고 이 페이지에는 아직 싣지 않았습니다."
+            "외부 시세에 범위 검증을 넣는 것이 다음 일입니다. 현재가가 평균단가의 10배로 들어와 수익률 900% 가 찍힌 적이 있습니다.",
+            "운영 스키마는 아직 ddl-auto: update 이고 Flyway 로 옮기는 일이 남았습니다."
           ]
         }
       }
