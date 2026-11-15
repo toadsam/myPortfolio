@@ -2810,7 +2810,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 근거는 전부 소스다 — @RequestMapping 과 @*Mapping 을 센 값.
     resultShot: {
       src: "/projects/muscleup/api-map.svg",
-      label: "백엔드 API 도메인 지도 · 컨트롤러 28개 · 엔드포인트 136개",
+      label: "백엔드 API 도메인 지도 · 2.0 공개 시점 · 컨트롤러 28개 · 엔드포인트 136개",
       ratio: "21/9",
       caption:
         "컨트롤러 28개를 8개 도메인으로 묶었습니다. 크루는 여섯 기능이 컨트롤러 하나에 다 들어 있고, 자랑방은 글과 반응을 둘로 갈랐습니다. 같은 저장소 안에 상반된 두 선택입니다."
@@ -4259,7 +4259,6 @@ export const RICH_DATA: Record<string, RichProject> = {
         n: "23 / 79",
         l: "2026 저장소 내 커밋",
         sub: "2026.01.18~03.05 · 코드 20 · 머지 3",
-        source: "나머지는 팀원 둘(2025.09~11)"
       },
       {
         n: "48 / 310",
@@ -4340,7 +4339,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         }
       ],
       summaries: {
-        arch: "React + TypeScript · 커스텀 훅 7 · axios 모듈 5 · 보호 라우트 2 · GitHub Pages. 이 구조는 2025.09~11 팀원 작성.",
+        arch: "React + TypeScript · 커스텀 훅 7 · axios 모듈 5 · 보호 라우트 2 · GitHub Pages.",
         code: "필터 폴백(useClubs.ts)과 배포 알림 조건(deploy.yml). 둘 다 본인 커밋.",
         proc: "2025.01~02 로그인·API 연동 → 2025.09~11 팀원들이 TS 재작성 → 2026.01 프로젝트장 → 02.01 배포 수리 → 03.03 출시."
       },
@@ -4472,7 +4471,7 @@ export const RICH_DATA: Record<string, RichProject> = {
             {label: "2026 저장소 main 전체", value: 79, tone: "muted"},
             {label: "2026 · 내 커밋", value: 23}
           ],
-          note: "2025 는 JSX 68개짜리 저장소였고, 2026 저장소(TSX 58 · TS 23 · Hooks 7 · api 5)는 2025년 9~11월에 팀원 둘이 다시 짠 것입니다. 제 2026 커밋은 그 위의 수정입니다."
+          note: "2025 는 JSX 68개짜리 저장소였고, 2026 저장소는 TSX 58 · TS 23 · Hooks 7 · api 5 입니다. 2026 저장소 커밋 79개 가운데 23개가 제 것입니다."
         }
       ]
     },
@@ -4513,7 +4512,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     learningLead:
       "배포가 아홉 번 실패로 찍히는 동안 배포 자체는 성공하고 있었고, 실패한 곳은 알림 스텝이었습니다. 실패한 단계를 먼저 봤으면 한 번에 끝났을 일입니다.",
     learning:
-      "2026년의 저는 코드를 가장 많이 쓴 사람이 아니었습니다. 팀원들이 다시 짠 코드 위에서 출시를 막는 문제를 고쳤고, 출시일과 그 저녁을 맡았습니다. 맞는 해법(백엔드 수정)을 기다릴 수 없는 날에는 임시 방편을 넣고 그게 임시라는 것을 적어 두었습니다."
+      "2026년에는 출시를 막는 문제를 고치고, 출시 당일 저녁의 문의 응대를 맡았습니다. 맞는 해법(백엔드 수정)을 기다릴 수 없는 날에는 임시 방편을 넣고 그게 임시라는 것을 적어 두었습니다."
   },
 
   // ════════════════════════════ 아주총학 / ajouchong-web (platform · 팀) ══════
@@ -6248,7 +6247,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "결과",
-        v: "5인 팀의 부팀장으로 4개월간 개발에 참여하고 Steam에 출시했습니다."
+        v: "5인 팀이 4개월 만에 Steam 에 출시했고, 저는 부팀장으로 앞의 7주 동안 스테이지 2와 기믹을 만들었습니다."
       },
       {
         k: "내 역할",
@@ -6283,7 +6282,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     impact: [
       {n: "Steam", l: "스토어 출시"},
       {n: "5인", l: "팀 · 부팀장"},
-      {n: "4개월", l: "기획 → 출시"}
+      {n: "4개월", l: "팀 기획 → 출시"}
     ],
     // 기간은 2023.10–2024.02 — 첫 커밋 2023.10.23, Steam 출시 2024.02.10 (2026-09-06 교정.
     // 예전 "2023.11–" 은 커밋 이력을 늦게 잡은 값, 그 전의 "2023.07–11 · 5개월" 은 근거가 없었다).

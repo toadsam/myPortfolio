@@ -61,7 +61,7 @@ export const MU4_DATA = {
       kind: "plain",
       n: "28 · 24",
       l: "인덱스 · 복합 UNIQUE",
-      sub: "엔티티 62개 선언 기준",
+      sub: "지금 저장소의 엔티티 62개 기준",
       s: "출석의 (user_id, workout_date) 처럼 중복을 막는 UNIQUE 가 날짜 범위 조회 인덱스를 겸합니다."
     },
     {
@@ -158,7 +158,7 @@ export const MU4_DATA = {
       },
       resultShot: {
         src: "/projects/muscleup/api-map.svg",
-        label: "백엔드 API 도메인 지도 · 컨트롤러 28개, 엔드포인트 136개",
+        label: "백엔드 API 도메인 지도 · 2.0 공개 시점 · 컨트롤러 28개, 엔드포인트 136개",
         ratio: "21/9",
         caption:
           "컨트롤러 28개를 8개 도메인으로 묶었습니다. 크루는 여섯 기능이 컨트롤러 하나에 다 들어 있고, 자랑방은 글과 반응을 둘로 갈랐습니다. 같은 저장소 안에 상반된 두 선택입니다."

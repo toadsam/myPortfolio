@@ -625,7 +625,7 @@ export function ResumeV2() {
                     </span>
                     <span className="short">
                       {SHORT[t.id] ??
-                        "5인 팀의 부팀장으로 참여해 4개월간 개발하고 Steam에 출시한 3D 액션 플랫폼 게임입니다."}
+                        "5인 팀이 4개월 만에 Steam 에 출시한 3D 액션 플랫폼 게임입니다. 부팀장으로 스테이지 2와 기믹을 맡았습니다."}
                     </span>
                     <span className="key">
                       <b className="num">{t.key}</b>

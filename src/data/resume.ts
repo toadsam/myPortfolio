@@ -1143,7 +1143,7 @@ export const mainProjects: MainProjectCard[] = [
     featured: true,
     title: "TSEROF",
     subtitle:
-      "5인 팀의 부팀장으로 참여해 4개월간 개발하고 Steam에 출시한 3D 액션 플랫폼 게임입니다.",
+      "5인 팀이 4개월 만에 Steam 에 출시한 3D 액션 플랫폼 게임입니다. 부팀장으로 스테이지 2와 기믹을 맡았습니다.",
     category: "game",
     facets: ["3d"],
     status: "출시",
@@ -1153,7 +1153,7 @@ export const mainProjects: MainProjectCard[] = [
     role: "스테이지 2 · 장애물/기믹 · 3×3 퍼즐 구현 · 기획",
     metrics: [
       {value: "Steam", label: "스토어 출시"},
-      {value: "4개월", label: "기획 → 출시"}
+      {value: "4개월", label: "팀 기획 → 출시"}
     ],
     metricsSource:
       "출시는 Steam 스토어 페이지 · 기간(2023.10–2024.02)은 첫 커밋과 Steam 출시일 · 담당은 저장소 README 기여자 표",

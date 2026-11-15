@@ -76,8 +76,8 @@ export function aclubStory(base: RichProject): RichProject {
         },
         field: {
           eyebrow: "02 · 맡은 일",
-          title: "2026년의 저는 코드를 가장 많이 쓴 사람이 아니었습니다.",
-          em: "코드를 가장 많이 쓴 사람이 아니었습니다",
+          title: "2026년에는 프로젝트장으로 출시를 맡았습니다.",
+          em: "프로젝트장으로 출시를 맡았습니다",
           lead: "2026 저장소의 TypeScript 코드(화면, 커스텀 훅, 보호 라우트)는 2025년 9~11월에 팀원 둘이 다시 짠 것입니다. 저는 2026년 1월 18일에 프로젝트장으로 합류해 그 위에서 출시를 막는 문제를 고쳤고, 출시일과 그 저녁을 맡았습니다.",
           facts: [
             {n: "23 / 79", l: "2026 저장소 내 커밋 · 코드 20, 머지 3"},
@@ -134,7 +134,7 @@ export function aclubStory(base: RichProject): RichProject {
               label: "2026년 · 프로젝트장",
               short: "2026",
               intro:
-                "2026년 1월 18일에 합류했습니다. 팀원들이 다시 짠 코드 위에서 고친 것과, 커밋에 남지 않는 출시 일을 같이 적습니다.",
+                "2026년 1월 18일에 합류했습니다. 코드로 고친 것과 커밋에 남지 않는 출시 일을 같이 적습니다.",
               rows: [
                 {
                   problem: {
@@ -211,8 +211,7 @@ export function aclubStory(base: RichProject): RichProject {
                     d: "모집 기간에 한 번 오는 서비스의 성격으로 읽고, 재방문 기능 대신 그 닷새에 화면이 깨지지 않는 쪽에 시간을 썼습니다."
                   },
                   check: {
-                    t: "수치는 GA4 화면에서 읽었습니다",
-                    d: "GA4 연동(gtag)은 2025년 11월에 팀원이 넣었습니다.",
+                    t: "GA4 화면에서 읽은 값입니다",
                     src: "GA4 코호트 표 캡처"
                   },
                   scene: COHORT_TITLE,
@@ -224,8 +223,8 @@ export function aclubStory(base: RichProject): RichProject {
         },
         built: {
           eyebrow: "04 · 화면",
-          title: "화면의 코드는 팀원 둘이 썼고, 저는 그 위에서 고쳤습니다.",
-          em: "그 위에서 고쳤습니다",
+          title: "화면마다 제가 고친 곳입니다.",
+          em: "제가 고친 곳",
           lead: "2026년 3월의 실제 화면입니다.",
           items: [
             {
@@ -247,7 +246,7 @@ export function aclubStory(base: RichProject): RichProject {
           title:
             "75일 동안 활성 사용자 3,500명이 썼고, 대부분 링크를 타고 왔습니다.",
           em: "3,500명",
-          tag: "GA4 화면에서 읽은 값 · 연동은 팀원이 넣음",
+          tag: "GA4 화면에서 읽은 값",
           lead: "활성 사용자와 조회수는 2026년 1월 1일부터 3월 15일까지의 누계이고, 참여율과 유입 채널은 그중 마지막 28일입니다.",
           scene: CHANNEL_TITLE,
           boxes: [
