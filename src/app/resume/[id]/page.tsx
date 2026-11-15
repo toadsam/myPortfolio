@@ -38,8 +38,20 @@ export async function generateMetadata({
   return {
     title,
     description,
-    openGraph: {title, description, type: "article", locale: "ko_KR"},
-    twitter: {card: "summary_large_image", title, description}
+    // 루트 layout 의 images 는 openGraph 를 다시 적으면 이어지지 않는다.
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      locale: "ko_KR",
+      images: ["/og-image.jpg"]
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og-image.jpg"]
+    }
   };
 }
 

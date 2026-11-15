@@ -273,7 +273,7 @@ export function ajouRunStory(base: RichProject): RichProject {
           title: "세 층으로 나누고, 자동으로 실행해 값을 맞췄습니다.",
           em: "자동으로 실행해",
           lead: "",
-          allLabel: "네 가지 전부",
+          allLabel: "세 가지 전부",
           cols: ["필요했던 것", "만든 것", "확인"],
           groups: [
             {

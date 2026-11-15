@@ -506,6 +506,15 @@ Ambient mood is separate from category: `atmosphere.ts` maps project id → `Amb
 
 `src/components/village/PropsEditor.tsx` + `src/app/api/props/route.ts` + `src/data/propsLayout.json` let you drag-place props/building overrides in the browser during `npm run dev` only (`NODE_ENV === "development"` gate); the API route reads `public/models/props/*.glb` and writes layout edits straight back to the JSON file on disk.
 
+### 배포 전 점검 (2026-11-15)
+
+배포본(`final`, 2026-10-19)과 이 브랜치(`tone-unify-with-mobile`)는 갈라져 있다. `final` 에는 휴대폰 마을 작업 두 커밋(가로 걷기 모드·조이스틱 `VirtualJoystick`·`LandscapeGate`·`WalkEnterPrompt`·`touchWalk`)이 있고 이 브랜치에는 없다. 그대로 올리면 그 기능이 빠지고, 합치면 `DialogueBox`·`Header`·`InfoPanel`·`VillageHud` 네 파일이 충돌한다. 배포 전에 이것부터 정한다.
+
+- 전 페이지 점검은 prod 빌드(3100)를 Playwright 로 훑는다. 번들 Chromium 은 버전이 안 맞아 `channel: "chrome"` 으로 띄웠다. 로컬에서 뜨는 `/_vercel/insights/script.js` 404 와 백엔드(8000) 연결 실패는 정상이다.
+- `/resume` 과 `/resume/<id>` 의 메타는 `openGraph` 를 다시 적기 때문에 루트 layout 의 `images` 가 이어지지 않는다. 그래서 두 곳에 `/og-image.jpg` 를 따로 넣었다. `/resume` 설명의 개수(운영 중 n개 · 프로젝트 n건)는 데이터에서 센다.
+- 저장소에서 다시 세어 고친 것: AjouFesta 문자는 실패 247통이고 그중 잔액 부족이 244통이다. 서버 테스트는 축제 때 23파일, 공개 사본에 동시 주문 테스트를 더해 지금 24파일이다. 아주대탐험 커밋 124개 중 3개는 2026년 README 수정이다. 퍼즐 장면은 `demoInterval` 이 실제 간격과 같으면 「실제 게임과 같이 N초마다 교체」로 적는다.
+- 본인 결정이 필요해 남긴 것: 득근득근 엔티티 수(타일 62 · 시스템 구성 31, 지금 저장소는 62 · 컨트롤러 46), TSEROF 타일의 「4개월간 개발」(본인 커밋은 7주), DarkLab 사이드 줄의 「2024-1 학기」(커밋은 2024.02~09), 이력서 PDF 의 PR 번호 두 개.
+
 ### Legacy code, not the active app
 
 `src/App.js`, `src/index.js`, `src/containers/**`, and assorted root-level `.js`/`.jsx` files are the old Create React App portfolio, kept for reference only. The live entry points are `src/app/page.tsx` (landing), `src/app/village/page.tsx`, and `src/app/resume/page.tsx`; these legacy files aren't part of the Next.js build target — don't "fix" them under the assumption they're dead code, but don't extend them either.

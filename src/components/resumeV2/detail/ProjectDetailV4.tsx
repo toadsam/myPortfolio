@@ -1096,8 +1096,11 @@ export function ProjectDetailV4({
             <i data-pz-timer="" />
           </span>
           <span className="p4-pz-note">
-            실제 게임은 {sc.interval}초마다 교체 · 여기서는{" "}
-            {sc.demoInterval ?? 8}초
+            {(sc.demoInterval ?? 8) === sc.interval
+              ? `실제 게임과 같이 ${sc.interval}초마다 교체`
+              : `실제 게임은 ${sc.interval}초마다 교체 · 여기서는 ${
+                  sc.demoInterval ?? 8
+                }초`}
           </span>
         </div>
         <div className="p4-pz-col">

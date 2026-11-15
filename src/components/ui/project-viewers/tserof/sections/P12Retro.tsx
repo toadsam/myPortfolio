@@ -88,7 +88,7 @@ export function P12Retro({onExit}: {onExit: () => void}) {
             <li>
               <span style={{color: "var(--ts-warn)"}}>·</span>{" "}
               <strong className="text-[var(--ts-text)]">
-                점프 매커니즘을 끝내 고치지 못했다.
+                점프 메커니즘을 끝내 고치지 못했다.
               </strong>{" "}
               오브젝트를 옮겨 증상만 피한 채 출시했다.
             </li>
@@ -114,7 +114,7 @@ export function P12Retro({onExit}: {onExit: () => void}) {
           <ul className="space-y-1.5 text-[14px] leading-7">
             <li>로딩 · 리소스 관리 (Addressables)</li>
             <li>세이브 데이터 버전 관리</li>
-            <li>점프 매커니즘을 오브젝트 이동 없이 고치기</li>
+            <li>점프 메커니즘을 오브젝트 이동 없이 고치기</li>
           </ul>
         </Card>
       </div>

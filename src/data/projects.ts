@@ -214,7 +214,7 @@ export const projects: ProjectData[] = [
     // 셋으로 갈려 있었다. 실서비스 이름(aclub.co.kr)을 따른다.
     title: "aClub",
     description:
-      "동아리 탐색과 모집을 연결하는 캠퍼스 플랫폼 프론트엔드입니다.",
+      "동아리 탐색과 모집을 연결하는 캠퍼스 플랫폼입니다.",
     // 2026-11-13 밤: 커밋 기록에 맞춰 고쳤다. 2026 TypeScript 화면·훅·라우트는 팀원 둘이 2025.09~11 에 쓴 것이다.
     role: "2025 프론트 팀원(로그인 · API 연동) → 2026 프로젝트장(출시 · 운영 · 배포 수리)",
     tech: ["React", "TypeScript", "Vite", "Tailwind CSS"],

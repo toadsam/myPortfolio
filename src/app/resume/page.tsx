@@ -31,6 +31,8 @@
 
 import type {Metadata} from "next";
 import {ResumeV2} from "@/components/resumeV2/ResumeV2";
+import {projects} from "@/data/projects";
+import {mainProjects} from "@/data/resume";
 
 // 2026-11 — 본문을 흰 바탕 판형(ResumeV2, 승인 시안 c-family-v6)으로 바꿨다.
 // 위 설명의 ResumeMode·ResumeClient 는 마을 안 이력서가 그대로 쓰므로 지우지 않는다.
@@ -39,8 +41,11 @@ import {ResumeV2} from "@/components/resumeV2/ResumeV2";
 // 히어로 `roleTag` 와 같은 말로 맞춘다(src/data/resume.ts). 검색 결과와 탭 제목이
 // 화면 속 제목과 다르면 같은 사람의 다른 이력서처럼 보인다.
 const title = "정재훈 | Web Full-Stack · Backend Developer — 이력서";
-const description =
-  "React · Spring Boot 기반 웹 풀스택 개발자 정재훈의 이력서. 인증/보안(Refresh Token Rotation)과 배포 운영 이슈(HTTPS · Mixed Content · CORS) 해결 경험, 운영 중인 서비스 3개를 포함한 주요 프로젝트 12건.";
+// 개수는 데이터에서 센다. "3개 · 12건" 이라고 적어 둔 값이 카드가 늘면서 틀려 있었다(2026-11-15).
+const running = mainProjects.filter(p => p.status === "운영중").length;
+const description = `React · Spring Boot 기반 웹 풀스택 개발자 정재훈의 이력서. 인증/보안(Refresh Token Rotation)과 배포 운영 이슈(HTTPS · Mixed Content · CORS) 해결 경험, 운영 중인 서비스 ${running}개를 포함한 프로젝트 ${projects.length}건.`;
+// 링크 미리보기 그림. openGraph 를 다시 적으면 루트 layout 의 images 가 이어지지 않아 따로 넣는다.
+const ogImages = ["/og-image.jpg"];
 
 export const metadata: Metadata = {
   title,
@@ -49,9 +54,10 @@ export const metadata: Metadata = {
     title,
     description,
     type: "profile",
-    locale: "ko_KR"
+    locale: "ko_KR",
+    images: ogImages
   },
-  twitter: {card: "summary_large_image", title, description}
+  twitter: {card: "summary_large_image", title, description, images: ogImages}
 };
 
 export default function ResumePage() {

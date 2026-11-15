@@ -112,7 +112,7 @@ const SCENES: {scene: string; nodes: Node[]}[] = [
         desc: "다음 목표로 남음",
         owner: "none"
       },
-      {name: "점프 매커니즘 근본 수정", desc: "임시 조치로 출시", owner: "none"}
+      {name: "점프 메커니즘 근본 수정", desc: "임시 조치로 출시", owner: "none"}
     ]
   }
 ];

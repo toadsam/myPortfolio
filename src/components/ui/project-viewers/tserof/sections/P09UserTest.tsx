@@ -42,7 +42,7 @@ const FEEDBACK: Feedback[] = [
     kind: "jump",
     who: "테스터 A",
     says: "높이가 낮은 물체에 닿은 후 2단 점프가 안 됩니다.",
-    did: "Player 의 Jump 범위에 문제가 생기지 않게 임시적으로 오브젝트의 위치를 수정함. 추후에 Jump 매커니즘을 수정할 예정.",
+    did: "Player 의 Jump 범위에 문제가 생기지 않게 임시적으로 오브젝트의 위치를 수정함. 추후에 Jump 메커니즘을 수정할 예정.",
     tag: "임시 조치"
   },
   {
@@ -522,7 +522,7 @@ export function P09UserTest() {
                 </p>
                 <p className="mt-3 text-[14px] leading-7 text-[var(--ts-muted)]">
                   첫 번째 건은 지금 봐도 <strong>임시 조치</strong>였습니다.
-                  점프 매커니즘을 고치는 대신 오브젝트를 옮겨 증상을 피했고,
+                  점프 메커니즘을 고치는 대신 오브젝트를 옮겨 증상을 피했고,
                   기록에도 &ldquo;추후 수정 예정&rdquo;이라고 남겼습니다. 출시
                   일정 안에서 내린 선택이지만 근본 수정은 아니었습니다.
                 </p>

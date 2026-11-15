@@ -602,7 +602,7 @@ export function ResumeV2() {
             겪은 불편에서 시작한 프로젝트
           </h2>
           <p className="sec-p rv">
-            타일을 누르면 그 자리에서 판이 커지고, 안에서 단계로 넘겨 봅니다.
+            타일을 누르면 그 프로젝트의 상세 페이지로 갑니다.
           </p>
           <div className="tiles sec-body">
             {TILES.map(t => {
