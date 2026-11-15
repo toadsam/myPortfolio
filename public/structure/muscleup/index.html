@@ -1,0 +1,1416 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>득근득근 화면 지도</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Big+Shoulders+Display:wght@600;800&family=IBM+Plex+Sans+KR:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* 배치: 헬스장 바닥(고무 매트) 위에 화면 카드(볼트 철판)를 구역별로 깐 지도 한 장. 오른쪽에 누른 화면의 쪽지.
+   색은 앱과 같은 국제 규격 원판 색: 빨강=주요 행동 · 노랑=성장/보상 · 파랑=라운지/정보 · 초록=AI/성공 */
+:root {
+  color-scheme: dark;
+  --floor: #141416;
+  --floor-dot: rgba(255,255,255,.035);
+  --steel: #26272B;
+  --steel-hi: #3A3D43;
+  --steel-lo: #1A1A1C;
+  --edge: #0E0E10;
+  --ink: #EEECE6;
+  --ink-soft: #A6A8AD;
+  --ink-faint: #7B7E84;
+  --red: #D9302A;
+  --red-hi: #EE8A83;
+  --yellow: #F0BE2E;
+  --green: #45AE6B;
+  --blue: #5089DD;
+  --blue-hi: #7EA7E9;
+  --chalk: #F4F2EC;
+  --f-display: 'Black Han Sans', 'IBM Plex Sans KR', 'Malgun Gothic', sans-serif;
+  --f-num: 'Big Shoulders Display', 'Arial Narrow', 'IBM Plex Sans KR', sans-serif;
+  --f-body: 'IBM Plex Sans KR', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  --f-mono: 'IBM Plex Mono', Consolas, monospace;
+  --maxw: 1400px;
+}
+* { box-sizing: border-box; }
+body {
+  background-color: var(--floor);
+  background-image: radial-gradient(var(--floor-dot) 1px, transparent 1.2px);
+  background-size: 7px 7px;
+  color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.6;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 40; background: var(--steel-lo); }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2.5px solid var(--yellow); outline-offset: 3px; border-radius: 4px; }
+svg :focus-visible { outline: none; }
+
+.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30;
+  background: var(--steel-lo); border-bottom: 3px solid var(--edge);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.top-in { max-width: var(--maxw); margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding-block: 10px; }
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand b { font-family: var(--f-display); font-weight: 400; font-size: 22px; }
+.brand span { font-family: var(--f-num); font-weight: 600; font-size: 15px; color: var(--ink-faint); letter-spacing: .06em; }
+.tabs { display: flex; gap: 6px; }
+.tab { border: 2px solid var(--edge); background: var(--steel); border-radius: 6px; padding: 4px 14px; font-weight: 600; font-size: 14px; color: var(--ink-soft); box-shadow: 0 3px 0 var(--edge); }
+.tab:hover { color: var(--ink); background: var(--steel-hi); }
+.tab[aria-selected="true"] { background: var(--red); color: #fff; }
+
+main { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 18px 60px; }
+.view { max-width: var(--maxw); margin: 0 auto; }
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px 22px; margin-bottom: 12px; }
+.head h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(24px, 3vw, 32px); line-height: 1.2; margin: 0; text-wrap: balance; }
+.head p { margin: 0; color: var(--ink-soft); max-width: 64ch; }
+
+.ctrl { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0 6px; }
+.chipbtn { border: 2px solid var(--edge); background: var(--steel); border-radius: 999px; padding: 3px 13px; font-size: 13.5px; color: var(--ink-soft); }
+.chipbtn:hover { color: var(--ink); background: var(--steel-hi); }
+.chipbtn[aria-pressed="true"] { background: var(--yellow); color: #221904; font-weight: 700; }
+.say { margin: 4px 0 10px; min-height: 1.6em; color: var(--chalk); font-weight: 600; }
+.say i { font-style: normal; color: var(--yellow); }
+
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(270px, 330px); gap: 16px; align-items: start; }
+.cols > * { min-width: 0; }
+@media (max-width: 980px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+
+.fig { margin: 0; }
+.fig-scroll { overflow-x: auto; overflow-y: hidden; border: 3px solid var(--edge); border-radius: 10px; background: rgba(0,0,0,.18); }
+.fig svg { display: block; width: 100%; height: auto; min-width: 960px; }
+.fig figcaption { font-size: 13px; color: var(--ink-faint); margin-top: 6px; }
+
+/* 쪽지 = 화이트보드 */
+.note { background: var(--chalk); color: #1A1A1C; border: 3px solid var(--edge); border-radius: 8px; padding: 14px 16px 16px; box-shadow: 0 5px 0 var(--edge); position: sticky; top: calc(env(safe-area-inset-top, 0px) + 70px); }
+.note .route { font-family: var(--f-mono); font-size: 12.5px; color: #5A5D63; }
+.note h3 { font-family: var(--f-display); font-weight: 400; font-size: 24px; margin: 0; line-height: 1.25; }
+.note p { margin: 6px 0 0; }
+.note h4 { font-size: 12.5px; color: #5A5D63; margin: 12px 0 3px; font-weight: 700; }
+.note ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 3px; }
+.note li.api { font-family: var(--f-mono); font-size: 12.5px; background: #E3E1DA; border-radius: 4px; padding: 1px 7px; word-break: break-all; }
+.note .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.note .tag { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 0 9px; border: 2px solid #1A1A1C; }
+.tag.core { background: var(--red); color: #fff; }
+.tag.pub { background: transparent; border-style: dashed; }
+.tag.rt { background: var(--blue); color: #fff; }
+.note .file { font-family: var(--f-mono); font-size: 12px; color: #5A5D63; word-break: break-all; }
+
+/* SVG */
+svg text { font-family: var(--f-body); fill: var(--ink); }
+svg .t-d { font-family: var(--f-display); }
+svg .t-n { font-family: var(--f-num); font-weight: 600; letter-spacing: .02em; }
+svg .t-m { font-family: var(--f-mono); }
+svg .soft { fill: var(--ink-soft); }
+svg .faint { fill: var(--ink-faint); }
+svg .card { cursor: pointer; transition: opacity .25s; }
+svg .card .plate { fill: var(--steel); stroke: var(--edge); stroke-width: 2.5; }
+svg .card.pub .plate { stroke: var(--ink-faint); stroke-dasharray: 6 4; }
+svg .card:hover .plate, svg .card:focus-visible .plate { fill: var(--steel-hi); }
+svg .card.sel .plate { stroke: var(--yellow); stroke-width: 3.5; stroke-dasharray: none; }
+svg .card.dim { opacity: .2; }
+svg .bolt { fill: var(--steel-hi); stroke: var(--edge); stroke-width: 1; }
+svg .edge { fill: none; stroke: var(--ink-faint); stroke-width: 1.8; stroke-linejoin: round; transition: opacity .25s; }
+svg .edge.data { stroke: var(--blue-hi); stroke-dasharray: 2 5; stroke-linecap: round; stroke-width: 2.2; }
+svg .edge.on { stroke: var(--yellow); stroke-width: 2.8; }
+svg .edge.data.on { stroke: var(--blue-hi); stroke-width: 3; }
+svg .edge.dim { opacity: .08; }
+svg .elabel { font-size: 11px; fill: var(--ink-soft); paint-order: stroke; stroke: var(--floor); stroke-width: 4px; stroke-linejoin: round; transition: opacity .25s; }
+svg .elabel.dim { opacity: 0; }
+svg .band { stroke: none; }
+svg .zlabel { font-family: var(--f-display); font-size: 14px; }
+@keyframes march { to { stroke-dashoffset: -14; } }
+svg .edge.on.data { animation: march 1s linear infinite; }
+
+/* 서버 지도 */
+.steps { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: start; padding: 6px 10px; border-radius: 6px; background: var(--steel); border: 2px solid var(--edge); transition: background .2s; }
+.steps li::before { content: counter(s); font-family: var(--f-num); font-weight: 800; font-size: 20px; line-height: 1.2; color: var(--ink-faint); text-align: center; }
+.steps li.now { background: var(--steel-hi); border-color: var(--yellow); }
+.steps li.now::before { color: var(--yellow); }
+.steps code { font-family: var(--f-mono); font-size: 12.5px; color: var(--blue-hi); word-break: break-all; }
+.steps small { display: block; color: var(--ink-faint); font-size: 12.5px; }
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 20px; }
+.rule { background: var(--steel); border: 2px solid var(--edge); border-radius: 8px; padding: 12px 14px; box-shadow: 0 4px 0 var(--edge); min-width: 0; }
+.rule b { font-family: var(--f-display); font-weight: 400; font-size: 17px; display: block; margin-bottom: 2px; }
+.rule p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.rule code { font-family: var(--f-mono); font-size: 12px; color: var(--blue-hi); word-break: break-all; }
+
+/* 중요 코드 */
+h2.sub { font-family: var(--f-display); font-weight: 400; font-size: 19px; margin: 6px 0 2px; }
+.chain { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px; margin: 6px 0 16px; }
+.chain .step { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 8px; text-align: left; background: var(--steel); border: 2px solid var(--edge); border-radius: 8px; padding: 6px 10px; box-shadow: 0 3px 0 var(--edge); min-width: 0; max-width: 260px; }
+.chain .step:hover { background: var(--steel-hi); }
+.chain .sn { grid-row: span 3; font-family: var(--f-num); font-weight: 800; font-size: 22px; line-height: 1; color: var(--yellow); }
+.chain .sf { font-weight: 700; font-size: 13.5px; overflow-wrap: anywhere; }
+.chain code { font-family: var(--f-mono); font-size: 12px; color: var(--blue-hi); overflow-wrap: anywhere; }
+.chain .ss { font-size: 12.5px; color: var(--ink-soft); }
+.chain .arrow { align-self: center; color: var(--ink-faint); font-family: var(--f-num); font-weight: 800; font-size: 18px; }
+.code-cols { grid-template-columns: minmax(0, 1fr) minmax(320px, 440px); }
+@media (max-width: 1080px) { .code-cols { grid-template-columns: minmax(0, 1fr); } }
+.lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; align-items: start; }
+.lane { display: grid; gap: 7px; min-width: 0; padding: 8px; border-radius: 10px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06); }
+.lane-h b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 16px; }
+.lane-h span { font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-faint); }
+.fcard { position: relative; display: grid; gap: 3px; text-align: left; background: var(--steel); border: 2px solid var(--edge); border-radius: 6px; padding: 8px 10px; box-shadow: 0 3px 0 var(--edge); min-width: 0; transition: opacity .2s; }
+.fcard:hover { background: var(--steel-hi); }
+.fcard.star { border-left: 6px solid var(--yellow); }
+.fcard.lit { outline: 2px solid var(--blue-hi); outline-offset: 1px; }
+.fcard.sel { outline: 3px solid var(--yellow); outline-offset: 1px; }
+.fcard.dim { opacity: .22; }
+.fcard .fn { font-family: var(--f-mono); font-size: 12.5px; font-weight: 500; padding-right: 18px; overflow-wrap: anywhere; }
+.fcard .fs { position: absolute; right: 8px; top: 5px; color: var(--yellow); font-size: 15px; }
+.fcard .fm { font-family: var(--f-mono); font-size: 11px; color: var(--ink-faint); overflow-wrap: anywhere; }
+.fcard .ftags { display: flex; flex-wrap: wrap; gap: 3px; }
+.fcard .ftags i { font-style: normal; font-size: 11px; border-radius: 3px; padding: 0 5px; background: var(--steel-lo); color: var(--ink-soft); }
+.code-note { max-height: calc(100vh - 100px); overflow: auto; }
+.code-note .cls { font-family: var(--f-mono); font-size: 12px; color: #5A5D63; word-break: break-all; }
+.code-note .tag { background: #E3E1DA; border-color: #A6A8AD; }
+.meth { border: 2px solid #1A1A1C; border-radius: 6px; margin: 6px 0; background: #fff; }
+.meth summary { cursor: pointer; padding: 6px 10px; list-style-position: inside; }
+.meth summary code { font-family: var(--f-mono); font-size: 12.5px; font-weight: 500; word-break: break-all; }
+.meth .ln { font-family: var(--f-mono); font-size: 11.5px; color: #7B7E84; margin-left: 4px; }
+.meth p { margin: 0 10px 6px; font-size: 13.5px; }
+.meth pre { margin: 0; background: #1A1A1C; color: #EEECE6; border-radius: 0 0 4px 4px; padding: 10px 12px; font-family: var(--f-mono); font-size: 11.5px; line-height: 1.55; overflow-x: auto; white-space: pre; }
+.lnk.scr { color: #961E1A; }
+.lnk + .lnk { margin-left: 10px; }
+
+/* ERD */
+.erd-cols { grid-template-columns: minmax(0, 1fr) minmax(300px, 400px); }
+@media (max-width: 980px) { .erd-cols { grid-template-columns: minmax(0, 1fr); } }
+#erd-svg { min-width: 1060px; }
+.chipbtn .st { color: var(--yellow); margin-right: 3px; }
+.chipbtn[aria-pressed="true"] .st { color: #8A640C; }
+.concept { background: var(--steel); border: 2px solid var(--edge); border-left: 8px solid var(--yellow); border-radius: 8px; padding: 12px 16px; margin: 6px 0 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px 22px; }
+.concept[hidden] { display: none; }
+.concept > div { min-width: 0; }
+.concept h3 { font-family: var(--f-display); font-weight: 400; font-size: 21px; margin: 0; grid-column: 1 / -1; }
+.concept h4 { margin: 4px 0 2px; font-size: 12.5px; color: var(--yellow); }
+.concept p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.concept pre { margin: 4px 0 0; background: var(--steel-lo); border-radius: 6px; padding: 8px 10px; font-family: var(--f-mono); font-size: 12px; color: var(--ink); overflow-x: auto; white-space: pre; }
+.concept .refs { font-family: var(--f-mono); font-size: 12px; color: var(--blue-hi); word-break: break-all; }
+.erd-note { max-height: calc(100vh - 100px); overflow: auto; }
+.erd-note .cls { font-family: var(--f-mono); font-size: 12px; color: #5A5D63; }
+.erd-note table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+.erd-note th, .erd-note td { text-align: left; padding: 3px 8px 3px 0; border-bottom: 1px solid #D9D8D3; vertical-align: top; }
+.erd-note th { font-weight: 700; color: #5A5D63; font-size: 11.5px; border-bottom: 2px solid #1A1A1C; white-space: nowrap; }
+.erd-note td.c { font-family: var(--f-mono); word-break: break-all; }
+.erd-note td.ty { font-family: var(--f-mono); color: #5A5D63; font-size: 11.5px; word-break: break-all; }
+.erd-note .ex-wrap { overflow-x: auto; border: 2px solid #1A1A1C; border-radius: 6px; background: #fff; }
+.erd-note .ex-wrap table { font-family: var(--f-mono); font-size: 11.5px; }
+.erd-note .ex-wrap th, .erd-note .ex-wrap td { white-space: nowrap; padding: 3px 10px; border-right: 1px solid #E3E1DA; }
+.ft { display: inline-block; font-family: var(--f-num); font-weight: 800; font-size: 11px; letter-spacing: .03em; border-radius: 3px; padding: 0 4px; margin: 0 2px 2px 0; line-height: 1.5; }
+.ft.PK { background: var(--yellow); color: #221904; }
+.ft.FK { background: var(--blue); color: #fff; }
+.ft.UQ { background: var(--red); color: #fff; }
+.ft.NN { background: #D9D8D3; color: #3A3D43; }
+.ft.ENUM { background: var(--green); color: #fff; }
+.ft.LIST, .ft.AUTO { background: transparent; color: #5A5D63; border: 1px solid #A6A8AD; }
+.cpt { display: inline-block; cursor: pointer; border: 2px solid #1A1A1C; border-radius: 999px; padding: 0 9px; font-size: 12px; font-weight: 700; margin: 0 4px 4px 0; background: #fff; color: #1A1A1C; }
+.cpt.star { background: var(--yellow); }
+.cpt:hover { background: #1A1A1C; color: var(--chalk); }
+.lnk { cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-family: var(--f-mono); font-size: 12.5px; background: none; border: 0; padding: 0; color: #1D4688; }
+.why { background: #FCEFC4; border-radius: 6px; padding: 6px 10px; margin-top: 6px; font-size: 13.5px; }
+svg .tb { cursor: pointer; transition: opacity .2s; }
+svg .tb .box { fill: var(--steel); stroke: var(--edge); stroke-width: 2; }
+svg .tb:hover .box, svg .tb:focus-visible .box { fill: var(--steel-hi); }
+svg .tb.sel .box { stroke: var(--yellow); stroke-width: 3.5; }
+svg .tb.rel .box { stroke: var(--blue-hi); stroke-width: 2.5; }
+svg .tb.hit .box { stroke: var(--yellow); stroke-width: 2.5; fill: #3A3420; }
+svg .tb.dim { opacity: .25; }
+svg .rl { fill: none; stroke: var(--ink-faint); stroke-width: 1.4; opacity: .55; transition: opacity .2s; }
+svg .rl.on { stroke: var(--blue-hi); stroke-width: 2.4; opacity: 1; }
+svg .rl.user { stroke: var(--yellow); stroke-width: 1.8; opacity: .9; stroke-dasharray: 3 4; }
+svg .rl.dim { opacity: .08; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+@media (max-width: 640px) { .brand span { display: none; } body { font-size: 14.5px; } }
+</style>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><b>득근득근 화면 지도</b><span>AJOU MUSCLEUP · 30 SCREENS</span></div>
+    <nav class="tabs" role="tablist" aria-label="그림 고르기">
+      <button class="tab" role="tab" type="button" data-view="flow" aria-selected="true">화면 흐름</button>
+      <button class="tab" role="tab" type="button" data-view="servers" aria-selected="false">서버 지도</button>
+      <button class="tab" role="tab" type="button" data-view="erd" aria-selected="false">ERD</button>
+      <button class="tab" role="tab" type="button" data-view="code" aria-selected="false">중요 코드</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="view" id="v-flow">
+    <div class="head">
+      <h1>앱에서 사람이 걷는 길</h1>
+      <p>화면 서른 장과 그 사이의 길. 여정을 고르면 그 길만 남고 원판이 따라 굴러간다. 화면을 누르면 오른쪽 쪽지에 하는 일과 서버에 하는 말이 뜬다.</p>
+    </div>
+    <div class="ctrl" id="trips" role="group" aria-label="여정 고르기"></div>
+    <p class="say" id="say" aria-live="polite"></p>
+    <div class="cols">
+      <figure class="fig">
+        <div class="fig-scroll"><svg id="flow-svg" viewBox="0 0 1212 800" role="img" aria-label="득근득근 앱 화면 흐름. 로그인에서 홈으로, 홈에서 오늘 운동 · 성장과 라운지 · 커뮤니티 · AI 구역으로 갈라진다."></svg></div>
+        <figcaption>위쪽 띠 색은 구역 색이다(오늘 운동 빨강 · 성장과 라운지 노랑 · 커뮤니티 파랑 · AI와 동아리 초록). 헤더 메뉴로는 어느 화면이든 바로 갈 수 있어서, 선은 화면 안의 단추로 이어지는 길만 그렸다. 휴대폰에서는 그림을 옆으로 밀어 본다.</figcaption>
+      </figure>
+      <aside class="note" id="note" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <section class="view" id="v-servers" hidden>
+    <div class="head">
+      <h1>단추 하나가 서버를 도는 길</h1>
+      <p>앱 · 백엔드 · 실시간 서버 · DB와 바깥 서비스. 장면을 고르면 요청이 어느 상자를 거치는지 순서대로 보인다.</p>
+    </div>
+    <div class="ctrl" id="traces" role="group" aria-label="장면 고르기"></div>
+    <div class="cols">
+      <figure class="fig">
+        <div class="fig-scroll"><svg id="srv-svg" viewBox="0 0 1100 560" role="img" aria-label="서버 구성도. 휴대폰 앱이 백엔드와 실시간 서버에 연결되고, 백엔드는 DB와 바깥 서비스에 연결된다."></svg></div>
+        <figcaption>선 위의 원판이 지금 단계의 요청이다. 상자 이름 아래 작은 글씨는 실제로 쓰는 기술과 배포 위치.</figcaption>
+      </figure>
+      <div>
+        <ol class="steps" id="steps"></ol>
+      </div>
+    </div>
+    <div class="rules">
+      <div class="rule"><b>리프레시 토큰은 쿠키로만</b><p>로그인 유지 토큰은 httpOnly 쿠키로만 오간다. 화면 코드는 그 값을 저장하지도 보내지도 않는다.</p></div>
+      <div class="rule"><b>라운지는 입장권으로만</b><p>백엔드가 서명한 입장권에 닉네임 · 레벨 · 방이 들어 있다. 실시간 서버는 앱이 보낸 이름을 믿지 않는다.</p></div>
+      <div class="rule"><b>"오늘"은 한국 시간</b><p>출석 · 퀘스트 날짜는 백엔드 <code>TimeConfig</code> 의 Clock(KST)으로 센다.</p></div>
+      <div class="rule"><b>남에게 가는 응답엔 이메일 없음</b><p>내 글인지는 <code>mine</code>, 신고 대상은 <code>authorId</code>. 라운지 방송에도 이메일을 싣지 않는다.</p></div>
+      <div class="rule"><b>알림은 한 곳에서</b><p><code>PushService</code> 가 하루 2개 · 밤 10시~아침 8시 금지 규칙을 지킨다.</p></div>
+      <div class="rule"><b>음식 검색은 서버 메모리</b><p>음식 데이터는 DB가 아니라 백엔드 메모리에 싣는다. 운영 DB 볼륨이 작아서다.</p></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-erd" hidden>
+    <div class="head">
+      <h1>표 59개가 사람 한 명을 둘러싼다</h1>
+      <p>DB 테이블과 그 사이의 연결. 표를 누르면 무슨 일을 하는지, 칸 목록, 예시 줄이 오른쪽에 뜬다. 별표가 붙은 표에는 면접에서 자주 묻는 개념(N+1 · 잠금 · 유니크 · 인덱스)이 실제로 들어 있다.</p>
+    </div>
+    <div class="ctrl" id="concepts" role="group" aria-label="개념 고르기"></div>
+    <div class="concept" id="concept" aria-live="polite"></div>
+    <div class="cols erd-cols">
+      <figure class="fig">
+        <div class="fig-scroll"><svg id="erd-svg" role="img" aria-label="득근득근 DB 테이블 관계도. 계정, 운영, 출석, 보상, 운동, 식단, 커뮤니티, 모임 여덟 묶음."></svg></div>
+        <figcaption>노란 점은 users 를 가리키는 표(user_id 칸이 있음)다. 거의 모든 표가 users 를 가리켜서 그 선은 표를 눌렀을 때만 그린다. 회색 선은 users 가 아닌 다른 표를 가리키는 연결. 칸 이름과 관계는 backend/entity 의 코드에서 뽑았고, 예시 값은 지어낸 것이다.</figcaption>
+      </figure>
+      <aside class="note erd-note" id="erd-note" aria-live="polite"></aside>
+    </div>
+  </section>
+  <section class="view" id="v-code" hidden>
+    <div class="head">
+      <h1>꼭 읽어야 할 파일 서른다섯 곳</h1>
+      <p>백엔드 · 프론트 · 실시간 서버에서 앱을 떠받치는 파일과 메서드. 위에서 장면을 고르면 단추 하나가 거치는 메서드가 순서대로 이어진다. 파일을 누르면 오른쪽에 하는 일과 진짜 코드 조각이 뜨고, 이어진 표나 화면을 누르면 ERD · 화면 흐름 탭으로 넘어간다.</p>
+    </div>
+    <h2 class="sub">호출 사슬</h2>
+    <div class="ctrl" id="chains" role="group" aria-label="장면 고르기"></div>
+    <div class="chain" id="chain" aria-live="polite"></div>
+    <div class="ctrl" id="code-tags" role="group" aria-label="꼬리표로 거르기"></div>
+    <div class="cols code-cols">
+      <div class="lanes" id="code-lanes"></div>
+      <aside class="note code-note" id="code-note" aria-live="polite"></aside>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const s = (tag, attrs, kids) => { const e = document.createElementNS(NS, tag); for (const k in attrs || {}) e.setAttribute(k, attrs[k]); (kids || []).forEach((c) => e.appendChild(c)); return e; };
+  const h = (tag, attrs, kids) => { const e = document.createElement(tag); for (const k in attrs || {}) { if (k === 'text') e.textContent = attrs[k]; else if (k === 'class') e.className = attrs[k]; else if (k.startsWith('on')) e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, attrs[k]); } (kids || []).forEach((c) => c && e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c)); return e; };
+  const txt = (x, y, str, o) => { o = o || {}; const t = s('text', { x, y, 'font-size': o.size || 13, 'text-anchor': o.anchor || 'start' }); if (o.cls) t.setAttribute('class', o.cls); if (o.fill) t.setAttribute('fill', o.fill); t.textContent = str; return t; };
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ───────── 화면 흐름 ───────── */
+  const CW = 148, CH = 84, X = (c) => 16 + c * 172, Y = (r) => 74 + r * 124;
+  const ZONE = {
+    entry: { c: 'var(--chalk)', name: '' },
+    today: { c: 'var(--red)', name: '오늘 운동' },
+    grow: { c: 'var(--yellow)', name: '성장 · 라운지' },
+    comm: { c: 'var(--blue)', name: '커뮤니티' },
+    ai: { c: 'var(--green)', name: 'AI · 동아리' },
+  };
+  // c,r = 칸 위치. pub = 로그인 없이 열림. core = 핵심 고리(출석 → 캐릭터 → 라운지). rt = 실시간 서버 사용
+  const SCR = [
+    { id: 'login', t: '로그인', r: '/login', z: 'entry', c: 0, row: 2, pub: 1, file: 'pages/Login.tsx',
+      what: 'Google · 카카오로 들어온다. 이메일 없이 가입한 사람도 있어서 화면에는 감춘 주소를 보여 준다.', api: ['/api/auth/…'], more: '로그인 유지(리프레시) 토큰은 httpOnly 쿠키로만 오간다.' },
+    { id: 'home', t: '홈', r: '/', z: 'entry', c: 1, row: 2, pub: 1, file: 'pages/Home.tsx',
+      what: '오늘 할 일 네 개(출석 · 라운지 · 캐릭터 · 모임), 꾸미는 내 헬스장, 그림자 줄, 오늘의 퀘스트, 이벤트, 보상 상자 바로 가기.', api: ['/api/character/me', '/api/attendance/summary', '/api/quests/today', '/api/shadow', '/api/gym-decor', '/api/metrics/lobby'] },
+    { id: 'attend', t: '출석 체크', r: '/attendance', z: 'today', c: 2, row: 0, core: 1, file: 'pages/Attendance.tsx',
+      what: '오늘 운동했다고 사진과 메모를 남긴다. 달력, 연속 출석, 주간 목표, 주간 · 월간 순위가 한 화면에 있다.', api: ['/api/attendance', '/api/attendance/today', '/api/attendance/summary', '/api/attendance/weekly-goal', '/api/attendance/rankings/weekly-streak'] },
+    { id: 'wlog', t: '운동 기록', r: '/workout', z: 'today', c: 3, row: 0, file: 'pages/Workout.tsx',
+      what: '맨 위 "운동 시작" 단추, 이번 달 운동 목록, 3대 중량 최고 기록.', api: ['/api/workouts', '/api/lifts', '/api/lifts/bests', '/api/lifts/history'] },
+    { id: 'wstart', t: '운동 고르기', r: '/workout/start', z: 'today', c: 4, row: 0, file: 'pages/WorkoutStart.tsx',
+      what: '웨이트 세션 · 러닝 · 내가 추가한 운동(필라테스 등) 가운데 하나를 고른다.', api: ['/api/activities'] },
+    { id: 'wsess', t: '운동 세션', r: '/workout/session', z: 'today', c: 5, row: 0, file: 'pages/WorkoutSession.tsx',
+      what: '종목과 세트를 눌러 가며 기록한다. 끝나면 보상과 그림자 공격 장면이 나온다. 하는 동안 1분마다 "운동 중"을 알려 라운지 운동 구역에 내 캐릭터가 보인다.', api: ['/api/workouts', '/api/workouts/previous', '/api/lifts/bests', '/api/live'] },
+    { id: 'shadow', t: '그림자 대결', r: '/shadow', z: 'today', c: 6, row: 0, file: 'pages/ShadowBoss.tsx',
+      what: '지난 기록으로 만든 그림자를 이번 주 운동으로 공격한다. 마지막 공격 다시 보기와 최근 8주 전적.', api: ['/api/shadow', '/api/shadow/history?weeks=8'] },
+    { id: 'share', t: '출석 공유 카드', r: '/attendance/share/:slug', z: 'today', c: 2, row: 1, pub: 1, file: 'pages/AttendanceShareView.tsx',
+      what: '링크만 있으면 로그인 없이 보는 출석 카드. 보는 사람이 응원을 누를 수 있다. 저장 이미지는 캔버스에 직접 그린다.', api: ['/api/attendance/share/:slug', '/api/files/proxy'] },
+    { id: 'diet', t: '식단 기록', r: '/diet', z: 'today', c: 3, row: 1, file: 'pages/Diet.tsx',
+      what: '끼니별로 음식을 넣는다. 이름 검색, 바코드, 사진, 자주 먹는 음식. 목표 대비 칼로리와 탄단지.', api: ['/api/diet/day', '/api/diet/entries', '/api/diet/foods', '/api/diet/barcode/:digits', '/api/diet/photo', '/api/diet/goal'] },
+    { id: 'activity', t: '다른 운동', r: '/activity/:id', z: 'today', c: 4, row: 1, file: 'pages/ActivitySession.tsx',
+      what: '필라테스 · 수영처럼 직접 추가한 운동. 시간과 메모만 재고, 끝내면 출석과 함께 저장한다.', api: ['/api/activities/:id', '/api/activities/:id/logs'] },
+    { id: 'run', t: '러닝', r: '/run', z: 'today', c: 5, row: 1, file: 'pages/Running.tsx',
+      what: '달린 거리 · 시간을 재고 기록한다. 끝나면 보상, 그림자 공격, 공유 카드. 달리는 동안 "러닝 중"을 알린다.', api: ['/api/runs', '/api/runs/records', '/api/live'] },
+    { id: 'mypage', t: '내 캐릭터', r: '/mypage', z: 'grow', c: 2, row: 2, core: 1, file: 'pages/MyPage.tsx',
+      what: '출석 · 운동 기록으로 자란 픽셀 캐릭터, 레벨과 티어, 통계, 알림 설정, 계정 관리(탈퇴 포함).', api: ['/api/character/me', '/api/character/evaluate', '/api/mypage', '/api/push/me'] },
+    { id: 'collection', t: '도감 · 보상 상자', r: '/collection', z: 'grow', c: 3, row: 2, file: 'pages/Collection.tsx',
+      what: '주간 목표를 채우면 확정, 운동한 날 20% 확률로 상자가 생긴다. 열면 칭호 · 민소매 색 · 카드 테두리.', api: ['/api/collection', '/api/collection/boxes/open', '/api/collection/craft', '/api/collection/equip'] },
+    { id: 'lounge', t: '라운지 광장', r: '/lounge', z: 'grow', c: 4, row: 2, core: 1, rt: 1, file: 'pages/Lounge.tsx',
+      what: '위에서 내려다보는 광장. 바닥을 누르면 걸어가고, 채팅 · 이모트를 한다. 운동 구역에는 지금 운동 중인 사람이 그 동작을 한다. 게시판 · 시상대 · 자판기가 다른 화면으로 이어진다.', api: ['/api/realtime/ticket', '/api/live'], more: '실시간: lounge:join · player:move · chat:send · social:emote. 방은 광장(square)과 모임(gym:{id}).' },
+    { id: 'rank', t: '랭킹', r: '/rankings', z: 'grow', c: 5, row: 2, file: 'pages/Rankings.tsx',
+      what: '캐릭터 랭킹. 3대 중량은 본인이 입력한 기록이다. 내 모임 안 순위도 본다.', api: ['/api/rankings/characters', '/api/gyms/mine'] },
+    { id: 'crew', t: '운동 모임', r: '/crew', z: 'comm', c: 2, row: 3, file: 'pages/CrewHub.tsx',
+      what: '인기 모임, 새 모임 만들기, 초대 코드로 참가, 모임 둘러보기.', api: ['/api/crew/groups', '/api/crew/groups/join-by-code/:code'] },
+    { id: 'challenge', t: '모임 챌린지', r: '/crew/:id/challenges', z: 'comm', c: 3, row: 3, file: 'pages/CrewChallenge.tsx',
+      what: '모임의 이번 달 챌린지와 멤버 출석률 게이지. 방장은 가입 요청 승인 · 멤버 관리 · 챌린지 편집.', api: ['/api/crew/groups/:id', '/api/crew/groups/:id/challenges', '/api/crew/groups/:id/join-requests'] },
+    { id: 'lobby', t: '모임 로비', r: '/crew/:id/lobby', z: 'comm', c: 4, row: 3, file: 'pages/CrewLobby.tsx',
+      what: '모임 멤버들의 활동 피드. 피드 종류는 왼쪽 원판 색 띠로 구분한다. 옆 화면 "하이라이트"(/crew/:id/highlights)는 이번 달 한 줄 요약.', api: ['/api/crew/groups/:id'] },
+    { id: 'gyms', t: '모임 찾기', r: '/gyms', z: 'comm', c: 5, row: 3, pub: 1, file: 'pages/Gyms.tsx',
+      what: '동아리 · 운동 모임 · 헬스장 · PT를 한곳에서 찾고 만든다. 목록은 로그인 없이 보인다.', api: ['/api/gyms', '/api/gyms/mine'] },
+    { id: 'gympage', t: '모임 페이지', r: '/g/:slug', z: 'comm', c: 6, row: 3, pub: 1, file: 'pages/GymPage.tsx',
+      what: '모임 한 곳의 공개 페이지. 비공개 모임은 멤버나 초대 링크(?code=)로 온 사람에게만 보인다. 가입 신청 · 탈퇴.', api: ['/api/gyms/:slug', '/api/crew/groups/:id/join'] },
+    { id: 'friends', t: '친구 · 채팅', r: '/friends', z: 'comm', c: 2, row: 4, rt: 1, file: 'pages/Friends.tsx',
+      what: '친구 찾기 · 요청 · 수락, 1:1 채팅. 새 메시지는 실시간 서버로 알림이 간다.', api: ['/api/friends', '/api/friends/search', '/api/friends/requests', '/api/friends/chat/rooms/:id/messages'], more: '실시간: friend:notify' },
+    { id: 'fgym', t: '친구 헬스장', r: '/friends/:userId/gym', z: 'comm', c: 3, row: 4, file: 'pages/FriendGym.tsx',
+      what: '친구가 꾸민 헬스장을 내 캐릭터로 걸어 다니며 구경하고 방명록에 한 줄 남긴다.', api: ['/api/gym-decor/friends/:id', '/api/gym-decor/friends/:id/guestbook'] },
+    { id: 'brag', t: '자랑방', r: '/brag', z: 'comm', c: 4, row: 4, file: 'pages/BragList.tsx',
+      what: '운동 사진 자랑 · 좋아요 · 댓글. 신고와 차단이 된다.', api: ['/api/brags', '/api/brags/:id/like', '/api/brags/:id/comments', '/api/blocks'] },
+    { id: 'protein', t: '단백질 공동구매', r: '/protein', z: 'comm', c: 5, row: 4, file: 'pages/Protein.tsx',
+      what: '공동구매를 열거나 참여한다. 상세 화면에 신청 현황과 참여자 채팅.', api: ['/api/proteins', '/api/proteins/:id/applications', '/api/proteins/:id/chat/messages'] },
+    { id: 'reviews', t: '단백질 리뷰', r: '/reviews', z: 'comm', c: 6, row: 4, file: 'pages/Reviews.tsx',
+      what: '제품별 별점과 후기, 요약.', api: ['/api/reviews', '/api/reviews/summary'] },
+    { id: 'ai', t: 'AI 플래너', r: '/ai', z: 'ai', c: 2, row: 5, file: 'pages/AiFitness.tsx',
+      what: '운동 계획 짜기, 몸 상태 분석, 대화. 대화는 링크로 공유할 수 있다(/ai/share/:slug).', api: ['/api/ai/plan', '/api/ai/analyze', '/api/ai/chat', '/api/ai/chat/history'] },
+    { id: 'inbody', t: '인바디 분석', r: '/ai/inbody', z: 'ai', c: 3, row: 5, file: 'pages/InbodyConsult.tsx',
+      what: '인바디 수치를 넣으면 상담 결과와 "판정 장면"(핵심 4칸 → 오늘 올린 원판)이 나온다. 권장 칼로리를 식단 목표로 저장할 수 있다.', api: ['/api/ai/inbody/consult', '/api/ai/inbody/review-consult', '/api/diet/goal'] },
+    { id: 'events', t: '이벤트', r: '/events', z: 'ai', c: 4, row: 5, pub: 1, file: 'pages/Events.tsx',
+      what: '동아리 공지와 이벤트. 운영진이 관리 화면에서 올리고 홈 배너에 고정한다.', api: ['/api/events', '/api/events/:id'] },
+    { id: 'programs', t: '반 추천 · 신청', r: '/programs', z: 'ai', c: 5, row: 5, pub: 1, file: 'pages/Programs.tsx',
+      what: '질문 몇 개로 맞는 반을 추천받고 신청한다.', api: ['/api/programs/apply'] },
+    { id: 'about', t: '동아리 소개', r: '/about', z: 'ai', c: 6, row: 5, pub: 1, file: 'pages/About.tsx',
+      what: '득근득근 소개. 운영진 · 멤버 · 갤러리 화면이 같은 묶음에 있다.', api: ['/api/metrics/lobby'] },
+  ];
+  const BY = {}; SCR.forEach((p) => { BY[p.id] = p; p.x = X(p.c); p.y = Y(p.row); p.cx = p.x + CW / 2; p.cy = p.y + CH / 2; });
+
+  // [from, to, 글, 종류] 종류 data = 화면 이동이 아니라 데이터가 이어짐
+  const LINKS = [
+    ['login', 'home', '로그인'],
+    ['home', 'attend', '출석 체크하기'],
+    ['home', 'mypage', '내 캐릭터 보기'],
+    ['home', 'lounge', '라운지 입장'],
+    ['home', 'crew', '운동 모임 가기'],
+    ['home', 'collection', '보상 상자'],
+    ['home', 'shadow', '그림자 줄'],
+    ['attend', 'wlog', '운동 기록하기'],
+    ['attend', 'share', '공유 링크'],
+    ['attend', 'mypage', '캐릭터 성장', 'data'],
+    ['wlog', 'wsess', '운동 시작'],
+    ['wlog', 'wstart', '다른 운동'],
+    ['wstart', 'wsess', ''],
+    ['wstart', 'activity', ''],
+    ['wstart', 'run', ''],
+    ['wsess', 'shadow', '그림자 공격'],
+    ['wsess', 'collection', '보상'],
+    ['wsess', 'lounge', '운동 중', 'data'],
+    ['run', 'collection', '보상'],
+    ['mypage', 'collection', ''],
+    ['lounge', 'rank', '시상대'],
+    ['lounge', 'events', '게시판'],
+    ['lounge', 'protein', '자판기'],
+    ['crew', 'challenge', ''],
+    ['challenge', 'lobby', ''],
+    ['gyms', 'gympage', ''],
+    ['friends', 'fgym', '헬스장 구경'],
+    ['protein', 'reviews', ''],
+    ['inbody', 'diet', '식단 목표', 'data'],
+  ];
+
+  const TRIPS = [
+    { id: 'all', label: '전체', say: '선은 화면 안의 단추로 가는 길, 파란 점선은 데이터가 이어지는 길이다.' },
+    { id: 'first', label: '첫날', path: ['login', 'home', 'attend', 'mypage'], say: '로그인하고 <i>출석 한 번</i>이면 캐릭터가 자란다. 이 앱의 첫 고리.' },
+    { id: 'core', label: '핵심 고리', path: ['attend', 'mypage', 'home', 'lounge'], say: '출석 → 캐릭터 성장 → 라운지. <i>자란 캐릭터를 다른 사람에게 보여 주는 곳</i>까지가 한 바퀴다.' },
+    { id: 'lift', label: '운동 한 판', path: ['home', 'attend', 'wlog', 'wsess', 'shadow'], say: '운동 세션을 끝내면 보상과 함께 <i>그림자</i>를 때리는 장면이 나온다.' },
+    { id: 'run', label: '러닝', path: ['wlog', 'wstart', 'run', 'collection'], say: '운동 고르기에서 러닝으로. 끝나면 <i>보상 상자</i>로 이어진다.' },
+    { id: 'together', label: '같이 운동', path: ['wsess', 'lounge', 'rank'], say: '내가 운동하는 동안 라운지 운동 구역에 <i>내 캐릭터가 같은 동작</i>으로 나타난다.' },
+    { id: 'crew', label: '모임', path: ['home', 'crew', 'challenge', 'lobby'], say: '모임에 들어가 이번 달 챌린지와 <i>멤버 출석률</i>을 본다.' },
+    { id: 'friend', label: '친구 집', path: ['friends', 'fgym'], say: '친구가 꾸민 헬스장을 걸어 다니고 <i>방명록</i>을 남긴다.' },
+    { id: 'brag', label: '출석 자랑', path: ['attend', 'share'], say: '출석 카드를 링크로 보내면 <i>로그인 없이</i> 보고 응원할 수 있다.' },
+    { id: 'body', label: '인바디 → 식단', path: ['inbody', 'diet'], say: '인바디 상담의 권장 칼로리가 <i>식단 목표</i>가 된다.' },
+    { id: 'protein', label: '단백질', path: ['lounge', 'protein', 'reviews'], say: '광장 자판기에서 공동구매로, 다 먹고 나면 리뷰로.' },
+  ];
+
+  // 선 경로: 이웃 칸은 곧게, 먼 칸은 칸 사이 틈(세로 · 가로 골목)을 따라 돈다
+  function route(a, b, k) {
+    const j = ((k * 5) % 9) - 4; // 같은 골목에 선이 겹치지 않게 조금씩 비킨다
+    if (a.row === b.row && Math.abs(a.c - b.c) === 1) {
+      const sx = b.c > a.c ? a.x + CW : a.x, ex = b.c > a.c ? b.x : b.x + CW;
+      return [[sx, a.cy], [ex, b.cy]];
+    }
+    if (a.c === b.c && Math.abs(a.row - b.row) === 1) {
+      const sy = b.row > a.row ? a.y + CH : a.y, ey = b.row > a.row ? b.y : b.y + CH;
+      return [[a.cx, sy], [b.cx, ey]];
+    }
+    const right = b.c >= a.c;
+    const sx = right ? a.x + CW : a.x, gx = right ? a.x + CW + 12 + j : a.x - 12 + j;
+    let gy, ey;
+    if (b.row < a.row) { gy = b.y + CH + 20 + j; ey = b.y + CH; } else { gy = b.y - 20 + j; ey = b.y; }
+    const bx = b.cx + j * 4;
+    return [[sx, a.cy + j * 2], [gx, a.cy + j * 2], [gx, gy], [bx, gy], [bx, ey]];
+  }
+  function pathD(pts) {
+    let d = 'M' + pts[0][0] + ' ' + pts[0][1];
+    for (let i = 1; i < pts.length; i++) {
+      const p = pts[i], prev = pts[i - 1], next = pts[i + 1];
+      if (!next) { d += ' L' + p[0] + ' ' + p[1]; break; }
+      const r = 8, dx1 = Math.sign(p[0] - prev[0]), dy1 = Math.sign(p[1] - prev[1]), dx2 = Math.sign(next[0] - p[0]), dy2 = Math.sign(next[1] - p[1]);
+      const l1 = Math.min(r, Math.abs(p[0] - prev[0]) + Math.abs(p[1] - prev[1])) / 1, l2 = Math.min(r, Math.abs(next[0] - p[0]) + Math.abs(next[1] - p[1]));
+      const rr = Math.min(l1, l2) / 1;
+      d += ' L' + (p[0] - dx1 * rr) + ' ' + (p[1] - dy1 * rr) + ' Q' + p[0] + ' ' + p[1] + ' ' + (p[0] + dx2 * rr) + ' ' + (p[1] + dy2 * rr);
+    }
+    return d;
+  }
+
+  const svg = document.getElementById('flow-svg');
+  svg.appendChild(s('defs', {}, [
+    s('marker', { id: 'arr', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, [s('path', { d: 'M0 0 L10 5 L0 10 z', fill: 'var(--ink-faint)' })]),
+    s('marker', { id: 'arr-on', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, [s('path', { d: 'M0 0 L10 5 L0 10 z', fill: 'var(--yellow)' })]),
+    s('marker', { id: 'arr-data', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, [s('path', { d: 'M0 0 L10 5 L0 10 z', fill: 'var(--blue-hi)' })]),
+  ]));
+
+  // 구역 띠
+  const BANDS = [['today', 0, 1], ['grow', 2, 2], ['comm', 3, 4], ['ai', 5, 5]];
+  BANDS.forEach(([z, r0, r1]) => {
+    const x = X(2) - 8, y = Y(r0) - 9, w = X(6) + CW + 8 - x, hh = Y(r1) + CH + 9 - y;
+    svg.appendChild(s('rect', { class: 'band', x, y, width: w, height: hh, rx: 10, fill: ZONE[z].c, opacity: 0.07 }));
+    svg.appendChild(s('rect', { x, y, width: 5, height: hh, rx: 2, fill: ZONE[z].c, opacity: 0.7 }));
+    svg.appendChild(txt(x + w, y - 6, ZONE[z].name, { size: 14, anchor: 'end', cls: 'zlabel', fill: ZONE[z].c }));
+  });
+
+  // 범례 (왼쪽 위 빈 곳)
+  const lg = s('g', {});
+  lg.appendChild(txt(16, 40, '보는 법', { size: 15, cls: 't-d' }));
+  const legendRows = [
+    ['plate', '화면 한 장 (누르면 설명)'],
+    ['pub', '점선 테두리 = 로그인 없이 열림'],
+    ['core', '빨간 원판 = 핵심 고리'],
+    ['rt', '파란 원판 = 실시간 서버 사용'],
+    ['line', '화면 안 단추로 가는 길'],
+    ['data', '데이터가 이어지는 길'],
+  ];
+  legendRows.forEach(([k, label], i) => {
+    const y = 70 + i * 30;
+    if (k === 'plate' || k === 'pub') lg.appendChild(s('rect', { x: 16, y: y - 11, width: 30, height: 18, rx: 4, fill: 'var(--steel)', stroke: k === 'pub' ? 'var(--ink-faint)' : 'var(--edge)', 'stroke-width': 2, 'stroke-dasharray': k === 'pub' ? '5 3' : 'none' }));
+    if (k === 'core' || k === 'rt') { lg.appendChild(s('circle', { cx: 31, cy: y - 2, r: 9, fill: k === 'core' ? 'var(--red)' : 'var(--blue)', stroke: 'var(--edge)', 'stroke-width': 2 })); lg.appendChild(s('circle', { cx: 31, cy: y - 2, r: 2.5, fill: 'var(--edge)' })); }
+    if (k === 'line') lg.appendChild(s('path', { d: 'M16 ' + (y - 2) + ' H46', class: 'edge', 'marker-end': 'url(#arr)' }));
+    if (k === 'data') lg.appendChild(s('path', { d: 'M16 ' + (y - 2) + ' H46', class: 'edge data', 'marker-end': 'url(#arr-data)' }));
+    lg.appendChild(txt(56, y + 3, label, { size: 13, cls: 'soft' }));
+  });
+  svg.appendChild(lg);
+  svg.appendChild(txt(16, Y(3) + 24, '헤더 메뉴는', { size: 15, cls: 't-d soft' }));
+  svg.appendChild(txt(16, Y(3) + 46, '어느 화면이든 바로 간다.', { size: 15, cls: 't-d soft' }));
+  svg.appendChild(txt(16, Y(3) + 74, '오늘 운동 · 라운지 · 커뮤니티 · AI', { size: 12.5, cls: 'faint' }));
+  svg.appendChild(txt(16, Y(3) + 92, '· 동아리 소식 · 내 정보 여섯 묶음', { size: 12.5, cls: 'faint' }));
+  svg.appendChild(txt(16, Y(5) + 30, '/admin (운영진) · /dev/* (개발용)', { size: 12, cls: 't-m faint' }));
+  svg.appendChild(txt(16, Y(5) + 50, '은 이 지도에서 뺐다.', { size: 12, cls: 'faint' }));
+
+  // 선
+  const edges = [];
+  const edgeLayer = s('g', {}), labelLayer = s('g', {});
+  LINKS.forEach((l, k) => {
+    const a = BY[l[0]], b = BY[l[1]], pts = route(a, b, k), data = l[3] === 'data';
+    const p = s('path', { d: pathD(pts), class: 'edge' + (data ? ' data' : ''), 'marker-end': data ? 'url(#arr-data)' : 'url(#arr)' });
+    edgeLayer.appendChild(p);
+    let lab = null;
+    if (l[2]) {
+      // 글은 가장 긴 가로 · 세로 토막 가운데에
+      let best = 0, bi = 0;
+      for (let i = 0; i < pts.length - 1; i++) { const len = Math.abs(pts[i + 1][0] - pts[i][0]) + Math.abs(pts[i + 1][1] - pts[i][1]); if (len > best) { best = len; bi = i; } }
+      const m = [(pts[bi][0] + pts[bi + 1][0]) / 2, (pts[bi][1] + pts[bi + 1][1]) / 2], vertical = pts[bi][0] === pts[bi + 1][0];
+      lab = txt(m[0] + (vertical ? 6 : 0), m[1] + (vertical ? 4 : -5), l[2], { size: 11, anchor: vertical ? 'start' : 'middle', cls: 'elabel' });
+      labelLayer.appendChild(lab);
+    }
+    edges.push({ a: l[0], b: l[1], el: p, lab, data });
+  });
+  svg.appendChild(edgeLayer);
+
+  // 화면 카드
+  const cards = {};
+  SCR.forEach((p, i) => {
+    const g = s('g', { class: 'card' + (p.pub ? ' pub' : ''), tabindex: 0, role: 'button', 'aria-label': p.t + ' 화면 설명 보기' });
+    g.appendChild(s('rect', { class: 'plate', x: p.x, y: p.y, width: CW, height: CH, rx: 6 }));
+    g.appendChild(s('rect', { x: p.x + 3, y: p.y + 3, width: CW - 6, height: 7, rx: 2, fill: ZONE[p.z].c, opacity: p.z === 'entry' ? 0.55 : 0.95 }));
+    [[8, 18], [CW - 8, 18], [8, CH - 8], [CW - 8, CH - 8]].forEach(([bx, by]) => g.appendChild(s('circle', { class: 'bolt', cx: p.x + bx, cy: p.y + by, r: 2.4 })));
+    g.appendChild(txt(p.x + 14, p.y + 40, p.t, { size: p.t.length > 7 ? 15 : 17, cls: 't-d' }));
+    g.appendChild(txt(p.x + 14, p.y + 62, p.r, { size: p.r.length > 20 ? 10 : 11.5, cls: 't-m faint' }));
+    let dx = CW - 18;
+    if (p.core) { g.appendChild(s('circle', { cx: p.x + dx, cy: p.y + 32, r: 8, fill: 'var(--red)', stroke: 'var(--edge)', 'stroke-width': 2 })); g.appendChild(s('circle', { cx: p.x + dx, cy: p.y + 32, r: 2.2, fill: 'var(--edge)' })); dx -= 20; }
+    if (p.rt) { g.appendChild(s('circle', { cx: p.x + dx, cy: p.y + 32, r: 8, fill: 'var(--blue)', stroke: 'var(--edge)', 'stroke-width': 2 })); g.appendChild(s('circle', { cx: p.x + dx, cy: p.y + 32, r: 2.2, fill: 'var(--edge)' })); }
+    g.addEventListener('click', () => pick(p));
+    g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(p); } });
+    svg.appendChild(g); cards[p.id] = g;
+  });
+  svg.appendChild(labelLayer);
+
+  // 굴러가는 원판
+  const walker = s('g', { style: 'display:none' }, [
+    s('circle', { r: 11, fill: 'var(--yellow)', stroke: 'var(--edge)', 'stroke-width': 2.5 }),
+    s('circle', { r: 6, fill: 'none', stroke: 'var(--edge)', 'stroke-width': 1.2, opacity: 0.5 }),
+    s('circle', { r: 3, fill: 'var(--edge)' }),
+  ]);
+  svg.appendChild(walker);
+
+  const note = document.getElementById('note');
+  function pick(p) {
+    Object.values(cards).forEach((c) => c.classList.remove('sel')); cards[p.id].classList.add('sel');
+    note.textContent = '';
+    note.appendChild(h('div', { class: 'route', text: p.r }));
+    note.appendChild(h('h3', { text: p.t }));
+    const tags = h('div', { class: 'tags' });
+    tags.appendChild(h('span', { class: 'tag', text: ZONE[p.z].name || '입구' }));
+    if (p.core) tags.appendChild(h('span', { class: 'tag core', text: '핵심 고리' }));
+    if (p.pub) tags.appendChild(h('span', { class: 'tag pub', text: '로그인 없이' }));
+    if (p.rt) tags.appendChild(h('span', { class: 'tag rt', text: '실시간' }));
+    note.appendChild(tags);
+    note.appendChild(h('p', { text: p.what }));
+    note.appendChild(h('h4', { text: '서버에 하는 말' }));
+    note.appendChild(h('ul', {}, p.api.map((a) => h('li', { class: 'api', text: a }))));
+    if (p.more) { note.appendChild(h('h4', { text: '더' })); note.appendChild(h('p', { text: p.more })); }
+    const outs = LINKS.filter((l) => l[0] === p.id).map((l) => BY[l[1]].t), ins = LINKS.filter((l) => l[1] === p.id).map((l) => BY[l[0]].t);
+    if (ins.length || outs.length) {
+      note.appendChild(h('h4', { text: '이어진 화면' }));
+      note.appendChild(h('p', { text: (ins.length ? '← ' + ins.join(' · ') : '') + (ins.length && outs.length ? '\n' : '') + (outs.length ? '→ ' + outs.join(' · ') : ''), style: 'white-space:pre-line' }));
+    }
+    note.appendChild(h('h4', { text: '코드' }));
+    note.appendChild(h('div', { class: 'file', text: 'frontend/src/' + p.file }));
+  }
+
+  // 여정
+  const tripBox = document.getElementById('trips'), say = document.getElementById('say');
+  let trip = TRIPS[0], segs = [], tt = 0;
+  function findEdge(a, b) { for (const e of edges) { if (e.a === a && e.b === b) return { e, rev: false }; if (e.a === b && e.b === a) return { e, rev: true }; } return null; }
+  function setTrip(t) {
+    trip = t; tt = 0; say.innerHTML = t.say;
+    tripBox.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.k === t.id ? 'true' : 'false'));
+    const on = t.path ? new Set(t.path) : null;
+    SCR.forEach((p) => cards[p.id].classList.toggle('dim', !!on && !on.has(p.id)));
+    segs = [];
+    if (t.path) for (let i = 0; i < t.path.length - 1; i++) { const f = findEdge(t.path[i], t.path[i + 1]); if (f) segs.push(f); }
+    const used = new Set(segs.map((x) => x.e));
+    edges.forEach((e) => {
+      const lit = used.has(e);
+      e.el.classList.toggle('dim', !!on && !lit); e.el.classList.toggle('on', lit);
+      e.el.setAttribute('marker-end', lit && !e.data ? 'url(#arr-on)' : e.data ? 'url(#arr-data)' : 'url(#arr)');
+      if (e.lab) e.lab.classList.toggle('dim', !!on && !lit);
+    });
+    walker.style.display = t.path && !reduce ? '' : 'none';
+    if (t.path) pick(BY[t.path[0]]);
+  }
+  TRIPS.forEach((t) => tripBox.appendChild(h('button', { type: 'button', class: 'chipbtn', 'data-k': t.id, text: t.label, onclick: () => setTrip(t) })));
+
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (trip.path && segs.length && !reduce && !document.getElementById('v-flow').hidden) {
+      tt += dt * 0.75;
+      const n = segs.length, u = tt % (n + 0.9), i = Math.min(n - 1, Math.floor(u)), f = Math.min(1, u - i), e = f * f * (3 - 2 * f);
+      const sg = segs[i], L = sg.e.el.getTotalLength(), pt = sg.e.el.getPointAtLength(sg.rev ? L * (1 - e) : L * e);
+      walker.setAttribute('transform', 'translate(' + pt.x + ' ' + pt.y + ') rotate(' + (u * 360) + ')');
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ───────── 서버 지도 ───────── */
+  const BOX = {
+    app: { x: 30, y: 190, w: 210, h: 150, t: '휴대폰 앱', sub: 'React 19 · Vite · PWA', at: 'Vercel', c: 'var(--chalk)' },
+    back: { x: 430, y: 190, w: 230, h: 150, t: '백엔드', sub: 'Spring Boot 3.5 · Java 17', at: 'Railway', c: 'var(--red)' },
+    rt: { x: 430, y: 24, w: 230, h: 110, t: '실시간 서버', sub: 'Socket.IO 라운지', at: 'Railway', c: 'var(--blue)' },
+    db: { x: 430, y: 410, w: 230, h: 110, t: 'DB', sub: 'Postgres (로컬은 MySQL)', at: 'Railway · 5GB', c: 'var(--yellow)' },
+    login: { x: 850, y: 24, w: 220, h: 70, t: 'Google · 카카오', sub: '소셜 로그인', c: 'var(--ink-faint)' },
+    ai: { x: 850, y: 112, w: 220, h: 70, t: 'OpenAI', sub: 'AI 플래너 · 인바디 · 음식 사진', c: 'var(--green)' },
+    food: { x: 850, y: 200, w: 220, h: 70, t: '식약처 C005', sub: '바코드 → 제품 이름', c: 'var(--ink-faint)' },
+    s3: { x: 850, y: 288, w: 220, h: 70, t: '파일 저장소', sub: 'S3 (끄면 서버 폴더)', c: 'var(--ink-faint)' },
+    push: { x: 850, y: 376, w: 220, h: 70, t: '웹 푸시', sub: '브라우저 알림 서비스', c: 'var(--ink-faint)' },
+  };
+  const side = (b, dir) => ({ l: [b.x, b.y + b.h / 2], r: [b.x + b.w, b.y + b.h / 2], t: [b.x + b.w / 2, b.y], b: [b.x + b.w / 2, b.y + b.h] }[dir]);
+  const WIRES = [
+    ['app', 'back', 'r', 'l', 'HTTPS /api/*'],
+    ['app', 'rt', 't', 'l', 'WebSocket'],
+    ['back', 'rt', 't', 'b', '같은 입장권 비밀값'],
+    ['back', 'db', 'b', 't', 'JPA · Flyway'],
+    ['back', 'login', 'r', 'l', ''],
+    ['back', 'ai', 'r', 'l', ''],
+    ['back', 'food', 'r', 'l', ''],
+    ['back', 's3', 'r', 'l', ''],
+    ['back', 'push', 'r', 'l', ''],
+  ];
+  function wireD(a, b, sa, sb) {
+    const p = side(BOX[a], sa), q = side(BOX[b], sb);
+    if (sa === 't' && sb === 'l') return 'M' + p[0] + ' ' + p[1] + ' V' + q[1] + ' H' + q[0];
+    if ((sa === 'r' && sb === 'l')) { const mx = (p[0] + q[0]) / 2; return 'M' + p[0] + ' ' + p[1] + ' C' + mx + ' ' + p[1] + ' ' + mx + ' ' + q[1] + ' ' + q[0] + ' ' + q[1]; }
+    return 'M' + p[0] + ' ' + p[1] + ' L' + q[0] + ' ' + q[1];
+  }
+  const ssvg = document.getElementById('srv-svg');
+  const wires = {};
+  WIRES.forEach((w) => {
+    const d = wireD(w[0], w[1], w[2], w[3]);
+    const p = s('path', { d, class: 'edge' }); ssvg.appendChild(p);
+    wires[w[0] + '>' + w[1]] = p;
+    if (w[4]) {
+      const L = p.getTotalLength ? null : null; // 위치는 아래에서
+      const mid = { 'app>back': [335, 255], 'app>rt': [135, 70], 'back>rt': [553, 166], 'back>db': [553, 380] }[w[0] + '>' + w[1]];
+      if (mid) ssvg.appendChild(txt(mid[0], mid[1], w[4], { size: 12, anchor: w[0] + '>' + w[1] === 'app>rt' ? 'start' : w[0] + '>' + w[1] === 'app>back' ? 'middle' : 'start', cls: 'elabel' }));
+    }
+  });
+  const boxes = {};
+  Object.keys(BOX).forEach((k) => {
+    const b = BOX[k], big = b.h > 100, g = s('g', {});
+    g.appendChild(s('rect', { x: b.x, y: b.y, width: b.w, height: b.h, rx: 8, fill: 'var(--steel)', stroke: 'var(--edge)', 'stroke-width': 3, class: 'sbox' }));
+    g.appendChild(s('rect', { x: b.x + 4, y: b.y + 4, width: big ? 8 : 6, height: b.h - 8, rx: 2, fill: b.c }));
+    g.appendChild(txt(b.x + (big ? 24 : 20), b.y + (big ? 40 : 30), b.t, { size: big ? 22 : 16, cls: 't-d' }));
+    g.appendChild(txt(b.x + (big ? 24 : 20), b.y + (big ? 64 : 52), b.sub, { size: big ? 13 : 12, cls: 'soft' }));
+    if (b.at) g.appendChild(txt(b.x + 24, b.y + b.h - 18, b.at.toUpperCase(), { size: 14, cls: 't-n faint' }));
+    ssvg.appendChild(g); boxes[k] = g;
+  });
+  ssvg.appendChild(txt(850, 480, '바깥 서비스 키는 백엔드에만 있다.', { size: 12.5, cls: 'faint' }));
+  ssvg.appendChild(txt(850, 498, '앱은 이 서비스들을 직접 부르지 않는다', { size: 12.5, cls: 'faint' }));
+  ssvg.appendChild(txt(850, 516, '(로그인 창만 예외).', { size: 12.5, cls: 'faint' }));
+
+  // 장면: [from, to, 할 말, 작은 글, 코드?]
+  const TRACES = [
+    { id: 'login', label: '로그인', steps: [
+      ['app', 'login', 'Google · 카카오 로그인 창으로 간다', '사용자가 직접 로그인한다'],
+      ['back', 'login', '받은 코드로 공급자에게 회원 정보를 확인한다', 'SocialLoginService: 공급자·회원 번호 → 인증된 이메일 → 새 가입 순으로 찾는다', '/api/auth/…'],
+      ['back', 'db', '사용자를 찾거나 새로 만든다', '이메일이 없으면 …@users.musclehub.invalid 로 저장'],
+      ['back', 'app', '접근 토큰을 돌려주고 리프레시 토큰은 httpOnly 쿠키로 심는다', '앱 코드는 리프레시 토큰을 만지지 않는다'],
+    ] },
+    { id: 'attend', label: '출석 체크', steps: [
+      ['app', 'back', '사진 · 메모와 함께 오늘 출석을 보낸다', '"오늘"은 백엔드가 한국 시간으로 정한다', '/api/attendance'],
+      ['back', 's3', '사진을 저장소에 올린다', '공유 카드에서는 /api/files/proxy 로 내려받아 캔버스에 그린다'],
+      ['back', 'db', '출석 기록을 한 줄 남긴다', 'attendance_logs'],
+      ['back', 'app', '출석 · 연속 일수 · 주간 목표를 돌려준다', '캐릭터는 기록으로 다시 계산된다(/api/character/me)'],
+    ] },
+    { id: 'lounge', label: '라운지 입장', steps: [
+      ['app', 'back', '라운지 입장권을 달라고 한다', '방(광장 square · 모임 gym:{id})도 이때 정한다. 모임 방은 백엔드가 멤버인지 확인', '/api/realtime/ticket'],
+      ['back', 'app', '닉네임 · 레벨 · 겉모습 · 방을 담아 서명한 입장권', '겉모습은 AvatarLookService 한 곳에서 만든다'],
+      ['app', 'rt', '입장권을 들고 소켓으로 들어간다', '실시간 서버가 서명을 확인한다', 'lounge:join'],
+      ['rt', 'app', '같은 방 사람들의 위치 · 채팅 · 이모트가 오간다', '방송에 이메일을 싣지 않는다', 'player:move · chat:send · social:emote'],
+    ] },
+    { id: 'workout', label: '운동 끝내기', steps: [
+      ['app', 'back', '운동하는 동안 1분마다 "운동 중"이라고 알린다', '서버 메모리에 3분만 둔다(LiveActivityService)', 'PUT /api/live'],
+      ['app', 'back', '끝내기를 누르면 세트 기록을 보낸다', '', '/api/workouts'],
+      ['back', 'db', '운동 · 중량 기록을 저장한다', ''],
+      ['back', 'app', '보상 상자와 그림자 공격 결과를 돌려준다', '라운지 운동 구역은 GET /api/live 로 지금 운동 중인 사람을 본다'],
+    ] },
+    { id: 'inbody', label: '인바디 상담', steps: [
+      ['app', 'back', '인바디 수치와 목표를 보낸다', '', '/api/ai/inbody/consult'],
+      ['back', 'ai', '수치를 담아 상담을 요청한다', '키는 서버 환경변수에만 있다'],
+      ['back', 'app', '상담 결과 → 맨 위 "판정 장면"', '기준값 계산은 lib/inbodyVerdict.ts 한 벌'],
+      ['app', 'back', '권장 칼로리를 식단 목표로 저장한다', '', 'PUT /api/diet/goal'],
+    ] },
+    { id: 'barcode', label: '바코드로 음식', steps: [
+      ['app', 'back', '찍은 바코드 숫자를 보낸다', '카메라는 BarcodeDetector, 없으면 zxing', '/api/diet/barcode/:digits'],
+      ['back', 'food', '식약처 C005에서 제품 이름 · 회사를 찾는다', '키가 주소에 들어가서 주소와 오류 문구를 로그에 남기지 않는다'],
+      ['back', 'back', '음식 검색 DB(서버 메모리)에서 영양값 후보를 고른다', '같은 이름 · 같은 회사 먼저(FoodCatalogService)'],
+      ['back', 'app', '영양값 후보를 돌려준다', '화면에 데이터 출처를 꼭 적는다'],
+    ] },
+    { id: 'push', label: '알림', steps: [
+      ['app', 'back', '알림을 켜면 브라우저 구독 정보를 보낸다', '', '/api/push/subscribe'],
+      ['back', 'db', '구독을 저장한다', ''],
+      ['back', 'push', '일이 생기면 PushService 가 규칙을 보고 보낸다', '하루 2개 · 종류별 끄기 · 밤 10시~아침 8시 금지'],
+      ['push', 'app', '서비스 워커(push-sw.js)가 알림을 띄운다', ''],
+    ] },
+  ];
+  const traceBox = document.getElementById('traces'), stepsEl = document.getElementById('steps');
+  const sWalker = s('g', { style: 'display:none' }, [s('circle', { r: 12, fill: 'var(--yellow)', stroke: 'var(--edge)', 'stroke-width': 2.5 }), s('circle', { r: 3.2, fill: 'var(--edge)' })]);
+  ssvg.appendChild(sWalker);
+  const center = (k) => [BOX[k].x + BOX[k].w / 2, BOX[k].y + BOX[k].h / 2];
+  function wireFor(a, b) {
+    if (wires[a + '>' + b]) return { el: wires[a + '>' + b], rev: false };
+    if (wires[b + '>' + a]) return { el: wires[b + '>' + a], rev: true };
+    return null;
+  }
+  let trace = TRACES[0], st = 0;
+  function setTrace(t) {
+    trace = t; st = 0;
+    traceBox.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.k === t.id ? 'true' : 'false'));
+    stepsEl.textContent = '';
+    t.steps.forEach((x) => {
+      const li = h('li', {}, [h('div', {}, [h('span', { text: x[2] }), x[4] ? h('code', { text: ' ' + x[4] }) : null, x[3] ? h('small', { text: x[3] }) : null])]);
+      stepsEl.appendChild(li);
+    });
+    const used = new Set();
+    t.steps.forEach((x) => { const w = wireFor(x[0], x[1]); if (w) used.add(w.el); });
+    Object.values(wires).forEach((w) => { w.classList.toggle('dim', !used.has(w)); w.classList.toggle('on', used.has(w)); });
+    const inv = new Set(); t.steps.forEach((x) => { inv.add(x[0]); inv.add(x[1]); });
+    Object.keys(boxes).forEach((k) => { boxes[k].style.opacity = inv.has(k) ? '1' : '.3'; });
+    sWalker.style.display = reduce ? 'none' : '';
+    showStep(0);
+  }
+  function showStep(i) { stepsEl.querySelectorAll('li').forEach((li, k) => li.classList.toggle('now', k === i)); }
+  TRACES.forEach((t) => traceBox.appendChild(h('button', { type: 'button', class: 'chipbtn', 'data-k': t.id, text: t.label, onclick: () => setTrace(t) })));
+  let last2 = performance.now(), shown = -1;
+  function frame2(now) {
+    const dt = Math.min(0.05, (now - last2) / 1000); last2 = now;
+    if (!document.getElementById('v-servers').hidden && !reduce) {
+      st += dt * 0.55;
+      const n = trace.steps.length, u = st % (n + 0.6), i = Math.min(n - 1, Math.floor(u)), f = Math.min(1, u - i), e = f * f * (3 - 2 * f);
+      if (i !== shown) { shown = i; showStep(i); }
+      const x = trace.steps[i], w = wireFor(x[0], x[1]);
+      let pt;
+      if (w) { const L = w.el.getTotalLength(); pt = w.el.getPointAtLength(w.rev ? L * (1 - e) : L * e); }
+      else { const c = center(x[0]); pt = { x: c[0] + Math.sin(e * Math.PI * 2) * 40, y: c[1] + 50 }; }
+      sWalker.setAttribute('transform', 'translate(' + pt.x + ' ' + pt.y + ')');
+    }
+    requestAnimationFrame(frame2);
+  }
+  requestAnimationFrame(frame2);
+
+  /* ───────── 탭 · 주소 ───────── */
+  const tabs = document.querySelectorAll('.tab');
+  function show(id) {
+    if (id !== 'servers' && id !== 'erd' && id !== 'code') id = 'flow';
+    document.getElementById('v-flow').hidden = id !== 'flow';
+    document.getElementById('v-servers').hidden = id !== 'servers';
+    document.getElementById('v-erd').hidden = id !== 'erd';
+    document.getElementById('v-code').hidden = id !== 'code';
+    tabs.forEach((t) => t.setAttribute('aria-selected', t.dataset.view === id ? 'true' : 'false'));
+  }
+  tabs.forEach((t) => t.addEventListener('click', () => { show(t.dataset.view); try { history.replaceState(null, '', '#' + t.dataset.view); } catch (e) { location.hash = t.dataset.view; } }));
+  window.addEventListener('hashchange', () => show(location.hash.slice(1)));
+  window.__show = show;
+  window.__flowPick = (id) => { if (BY[id]) pick(BY[id]); };
+  window.__screenName = (id) => (BY[id] ? BY[id].t : null);
+
+  setTrip(TRIPS[0]); pick(BY.attend);
+  setTrace(TRACES[0]);
+  show(location.hash.slice(1));
+})();
+</script>
+<script id="erd-data">
+const T = {"activity_logs":{"cls":"ActivityLog","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["activity_id","CustomActivity",["FK","NN"],"CustomActivity","activity"],["performed_on","LocalDate",["NN"],null,"performedOn"],["started_at","LocalDateTime",["NN"],null,"startedAt"],["duration_sec","int",["NN"],null,"durationSec"],["note","String",[],null,"note"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_activity_log_user_date","user_id, performed_on"]],"uq":[]},"ai_chat_messages":{"cls":"AiChatMessage","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["type","AiMessageType",["NN","ENUM"],null,"type"],["question","String",["NN"],null,"question"],["answer","String",["NN"],null,"answer"],["shared","boolean",["NN"],null,"shared"],["share_slug","String",["UQ"],null,"shareSlug"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"analytics_events":{"cls":"AnalyticsEvent","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK"],"User","user"],["page","String",["NN"],null,"page"],["action","String",["NN"],null,"action"],["metadata","String",[],null,"metadata"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"attendance_logs":{"cls":"AttendanceLog","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["workout_date","LocalDate",["NN"],null,"date"],["did_workout","boolean",["NN"],null,"didWorkout"],["memo","String",[],null,"memo"],["share_comment","String",[],null,"shareComment"],["workout_types","String",[],null,"workoutTypes"],["workout_intensity","String",[],null,"workoutIntensity"],["media_urls","String",[],null,"mediaUrls"],["shared","boolean",["NN"],null,"shared"],["share_slug","String",["UQ"],null,"shareSlug"],["cheer_count","int",["NN"],null,"cheerCount"],["report_count","int",["NN"],null,"reportCount"],["hidden_by_admin","boolean",["NN"],null,"hiddenByAdmin"],["edit_count","int",["NN"],null,"editCount"],["last_edited_at","LocalDateTime",[],null,"lastEditedAt"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_attendance_shared_report","shared, report_count, updated_at"],["idx_attendance_date_user","workout_date, user_id"]],"uq":["user_id, workout_date"]},"attendance_share_reports":{"cls":"AttendanceShareReport","cols":[["id","Long",["PK"],null,"id"],["attendance_log_id","AttendanceLog",["FK","NN"],"AttendanceLog","attendanceLog"],["user_id","User",["FK","NN"],"User","user"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["attendance_log_id, user_id"]},"audit_logs":{"cls":"AuditLog","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK"],"User","user"],["action","String",["NN"],null,"action"],["resource","String",["NN"],null,"resource"],["summary","String",[],null,"summary"],["metadata","String",[],null,"metadata"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_audit_created","createdAt"],["idx_audit_user","user_id"]],"uq":[]},"brag_comment":{"cls":"BragComment","cols":[["id","Long",["PK"],null,"id"],["brag_post_id","BragPost",["FK","NN"],"BragPost","bragPost"],["user_id","User",["FK","NN"],"User","user"],["content","String",["NN"],null,"content"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"brag_like":{"cls":"BragLike","cols":[["id","Long",["PK"],null,"id"],["brag_post_id","BragPost",["FK","NN"],"BragPost","bragPost"],["user_id","User",["FK","NN"],"User","user"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["brag_post_id, user_id"]},"brag_post":{"cls":"BragPost","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["title","String",["NN"],null,"title"],["content","String",["NN"],null,"content"],["movement","String",[],null,"movement"],["weight","String",[],null,"weight"],["brag_id","List<String>",["LIST"],null,"mediaUrls"],["visibility","BragVisibility",["NN","ENUM"],null,"visibility"],["gym_id","WorkoutCrew",["FK"],"WorkoutCrew","gym"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_brag_post_created","created_at"]],"uq":[]},"character_evolution_history":{"cls":"CharacterEvolutionHistory","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["trigger_type","CharacterEvolutionTriggerType",["NN","ENUM"],null,"triggerType"],["before_level","int",["NN"],null,"beforeLevel"],["after_level","int",["NN"],null,"afterLevel"],["before_tier","CharacterTier",["NN","ENUM"],null,"beforeTier"],["after_tier","CharacterTier",["NN","ENUM"],null,"afterTier"],["before_stage","int",["NN"],null,"beforeStage"],["after_stage","int",["NN"],null,"afterStage"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"character_profiles":{"cls":"CharacterProfile","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","UQ","NN"],"User","user"],["level","int",["NN"],null,"level"],["tier","CharacterTier",["NN","ENUM"],null,"tier"],["evolution_stage","int",["NN"],null,"evolutionStage"],["title","String",["NN"],null,"title"],["is_public","boolean",["NN"],null,"isPublic"],["last_evaluated_at","LocalDateTime",[],null,"lastEvaluatedAt"],["attendance_points","int",["NN"],null,"attendancePoints"],["avatar_seed","String",[],null,"avatarSeed"],["style_preset","String",[],null,"stylePreset"],["gender","Gender",["ENUM"],null,"gender"],["is_resting","boolean",["NN"],null,"isResting"],["reroll_count","int",["NN"],null,"rerollCount"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_character_public_rank","is_public, level, updated_at"]],"uq":["user_id"]},"club_roster_members":{"cls":"ClubRosterMember","cols":[["id","Long",["PK"],null,"id"],["name","String",["NN"],null,"name"],["sort_order","int",["NN"],null,"sortOrder"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"cms_events":{"cls":"CmsEvent","cols":[["id","Long",["PK"],null,"id"],["title","String",["NN"],null,"title"],["summary","String",["NN"],null,"summary"],["content","String",["NN"],null,"content"],["thumbnail_url","String",["NN"],null,"thumbnailUrl"],["banner_url","String",[],null,"bannerUrl"],["start_at","LocalDateTime",["NN"],null,"startAt"],["end_at","LocalDateTime",["NN"],null,"endAt"],["status","CmsEventStatus",["NN","ENUM"],null,"status"],["is_main_banner","boolean",["NN"],null,"isMainBanner"],["is_pinned","boolean",["NN"],null,"isPinned"],["priority","int",["NN"],null,"priority"],["cta_text","String",["NN"],null,"ctaText"],["cta_link","String",["NN"],null,"ctaLink"],["view_count","long",["NN"],null,"viewCount"],["click_count","long",["NN"],null,"clickCount"],["created_by","Long",[],null,"createdBy"],["gym_id","WorkoutCrew",["FK"],"WorkoutCrew","gym"],["event_id","List<String>",["NN","LIST"],null,"tags"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"content_reports":{"cls":"ContentReport","cols":[["id","Long",["PK"],null,"id"],["reporter_id","User",["FK","NN"],"User","reporter"],["target_type","ReportTargetType",["NN","ENUM"],null,"targetType"],["target_id","Long",["NN"],null,"targetId"],["target_user_id","User",["FK"],"User","targetUser"],["reason","ReportReason",["NN","ENUM"],null,"reason"],["detail","String",[],null,"detail"],["snapshot","String",[],null,"snapshot"],["status","ReportStatus",["NN","ENUM"],null,"status"],["admin_note","String",[],null,"adminNote"],["handled_at","LocalDateTime",[],null,"handledAt"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_report_status_created","status, created_at"]],"uq":["reporter_id, target_type, target_id"]},"crew_challenges":{"cls":"CrewChallenge","cols":[["id","Long",["PK"],null,"id"],["crew_id","WorkoutCrew",["FK","NN"],"WorkoutCrew","crew"],["title","String",["NN"],null,"title"],["description","String",[],null,"description"],["start_date","LocalDate",["NN"],null,"startDate"],["end_date","LocalDate",["NN"],null,"endDate"],["target_workout_days","int",["NN"],null,"targetWorkoutDays"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"custom_activities":{"cls":"CustomActivity","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["name","String",["NN"],null,"name"],["category","String",["NN"],null,"category"],["deleted","boolean",["NN"],null,"deleted"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_custom_activity_user","user_id"]],"uq":[]},"custom_exercises":{"cls":"CustomExercise","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["name","String",["NN"],null,"name"],["category","String",["NN"],null,"category"],["bodyweight","boolean",["NN"],null,"bodyweight"],["deleted","boolean",["NN"],null,"deleted"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_custom_exercise_user","user_id"]],"uq":[]},"daily_quests":{"cls":"DailyQuest","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["quest_date","LocalDate",["NN"],null,"questDate"],["cheer_done","boolean",["NN"],null,"cheerDone"],["diet_rewarded","boolean",["NN"],null,"dietRewarded"],["cheer_rewarded","boolean",["NN"],null,"cheerRewarded"],["protein_rewarded","boolean",["NN"],null,"proteinRewarded"],["all_rewarded","boolean",["NN"],null,"allRewarded"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["user_id, quest_date"]},"diet_goals":{"cls":"DietGoal","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","UQ","NN"],"User","user"],["kcal","Integer",[],null,"kcal"],["protein_g","Integer",[],null,"proteinG"],["carb_g","Integer",[],null,"carbG"],["fat_g","Integer",[],null,"fatG"],["source","DietSource",["NN","ENUM"],null,"source"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["user_id"]},"email_verifications":{"cls":"EmailVerification","cols":[["id","Long",["PK"],null,"id"],["email","String",["NN"],null,"email"],["code","String",["NN"],null,"code"],["created_at","LocalDateTime",["NN"],null,"createdAt"],["expire_at","LocalDateTime",["NN"],null,"expireAt"],["verified","boolean",["NN"],null,"verified"],["attempts","int",["NN"],null,"attempts"]],"idx":[["idx_verif_email_created","email,createdAt"]],"uq":[]},"events":{"cls":"Event","cols":[["id","Long",["PK"],null,"id"],["title","String",["NN"],null,"title"],["description","String",["NN"],null,"description"],["start_date","LocalDate",["NN"],null,"startDate"],["end_date","LocalDate",["NN"],null,"endDate"],["required_attendance_count","int",["NN"],null,"requiredAttendanceCount"],["status","EventStatus",["NN","ENUM"],null,"status"],["gym_id","WorkoutCrew",["FK"],"WorkoutCrew","gym"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"event_participants":{"cls":"EventParticipant","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["event_id","Event",["FK","NN"],"Event","event"],["joined_at","LocalDateTime",["NN"],null,"joinedAt"],["current_attendance_count","int",["NN"],null,"currentAttendanceCount"],["success","Boolean",[],null,"success"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["user_id, event_id"]},"food_items":{"cls":"FoodItem","cols":[["id","Long",["PK"],null,"id"],["source","FoodSource",["NN","ENUM"],null,"source"],["name","String",["NN"],null,"name"],["maker","String",[],null,"maker"],["search_key","String",["NN"],null,"searchKey"],["basis","String",["NN"],null,"basis"],["kcal","Double",[],null,"kcal"],["protein_g","Double",[],null,"proteinG"],["fat_g","Double",[],null,"fatG"],["carb_g","Double",[],null,"carbG"],["serving_g","Double",[],null,"servingG"],["package_g","Double",[],null,"packageG"]],"idx":[],"uq":[]},"friend_chat_messages":{"cls":"FriendChatMessage","cols":[["id","Long",["PK"],null,"id"],["room_id","FriendChatRoom",["FK","NN"],"FriendChatRoom","room"],["sender_id","User",["FK","NN"],"User","sender"],["content","String",["NN"],null,"content"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"friend_chat_rooms":{"cls":"FriendChatRoom","cols":[["id","Long",["PK"],null,"id"],["user_low_id","User",["FK","NN"],"User","userLow"],["user_high_id","User",["FK","NN"],"User","userHigh"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["user_low_id, user_high_id"]},"friend_requests":{"cls":"FriendRequest","cols":[["id","Long",["PK"],null,"id"],["requester_id","User",["FK","NN"],"User","requester"],["receiver_id","User",["FK","NN"],"User","receiver"],["status","FriendRequestStatus",["NN","ENUM"],null,"status"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"friendships":{"cls":"Friendship","cols":[["id","Long",["PK"],null,"id"],["user_low_id","User",["FK","NN"],"User","userLow"],["user_high_id","User",["FK","NN"],"User","userHigh"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["user_low_id, user_high_id"]},"gym_decor_slots":{"cls":"GymDecorSlot","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["slot","String",["NN"],null,"slot"],["item_code","String",[],null,"itemCode"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["user_id, slot"]},"gym_guestbook":{"cls":"GymGuestbookEntry","cols":[["id","Long",["PK"],null,"id"],["owner_id","User",["FK","NN"],"User","owner"],["author_id","User",["FK","NN"],"User","author"],["message","String",["NN"],null,"message"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_gym_guestbook_owner","owner_id, id"],["idx_gym_guestbook_author","author_id"]],"uq":[]},"inquiries":{"cls":"Inquiry","cols":[["id","Long",["PK"],null,"id"],["name","String",[],null,"name"],["email","String",[],null,"email"],["message","String",["NN"],null,"message"],["page","String",[],null,"page"],["user_id","Long",[],null,"userId"],["status","InquiryStatus",["ENUM"],null,"status"],["admin_note","String",[],null,"adminNote"],["handled_at","LocalDateTime",[],null,"handledAt"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"lift_entries":{"cls":"LiftEntry","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["performed_on","LocalDate",["NN"],null,"performedOn"],["exercise","String",["NN"],null,"exercise"],["weight_kg","double",["NN"],null,"weightKg"],["reps","int",["NN"],null,"reps"],["sets","int",["NN"],null,"sets"],["e1rm","double",["NN"],null,"e1rm"],["session_id","Long",[],null,"sessionId"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_lift_user_date","user_id, performed_on"],["idx_lift_user_exercise","user_id, exercise"]],"uq":[]},"lounge_visit_logs":{"cls":"LoungeVisitLog","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"meal_entries":{"cls":"MealEntry","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["eaten_on","LocalDate",["NN"],null,"eatenOn"],["meal_type","MealType",["NN","ENUM"],null,"mealType"],["name","String",["NN"],null,"name"],["amount","String",[],null,"amount"],["kcal","Integer",[],null,"kcal"],["protein_g","Double",[],null,"proteinG"],["carb_g","Double",[],null,"carbG"],["fat_g","Double",[],null,"fatG"],["source","DietSource",["NN","ENUM"],null,"source"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_meal_entry_user_day","user_id, eaten_on"]],"uq":[]},"my_foods":{"cls":"MyFood","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["name","String",["NN"],null,"name"],["amount","String",[],null,"amount"],["kcal","Integer",[],null,"kcal"],["protein_g","Double",[],null,"proteinG"],["carb_g","Double",[],null,"carbG"],["fat_g","Double",[],null,"fatG"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_my_food_user","user_id"]],"uq":[]},"program_applications":{"cls":"ProgramApplication","cols":[["id","Long",["PK"],null,"id"],["name","String",["NN"],null,"name"],["email","String",["NN"],null,"email"],["goal","String",["NN"],null,"goal"],["track","String",["NN"],null,"track"],["commitment","String",["NN"],null,"commitment"],["status","ApplicationStatus",["NN","ENUM"],null,"status"],["gym_id","WorkoutCrew",["FK"],"WorkoutCrew","gym"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_program_app_created","created_at"]],"uq":[]},"proteins":{"cls":"Protein","cols":[["id","Long",["PK"],null,"id"],["owner_id","User",["FK"],"User","owner"],["name","String",["NN"],null,"name"],["price","Integer",[],null,"price"],["days","Integer",[],null,"days"],["goal","Integer",[],null,"goal"],["image_url","String",[],null,"imageUrl"],["description","String",[],null,"description"],["category","String",[],null,"category"],["avg_rating","Double",[],null,"avgRating"],["deadline","java.time.LocalDate",[],null,"deadline"],["receipt_url","String",[],null,"receiptUrl"],["image_public","Boolean",[],null,"imagePublic"],["distribution_method","String",[],null,"distributionMethod"],["gym_id","WorkoutCrew",["FK"],"WorkoutCrew","gym"],["visibility","GroupBuyVisibility",["ENUM"],null,"visibility"],["region","String",[],null,"region"],["max_participants","Integer",[],null,"maxParticipants"]],"idx":[],"uq":[]},"protein_share_applications":{"cls":"ProteinShareApplication","cols":[["id","Long",["PK"],null,"id"],["protein_id","Protein",["FK","NN"],"Protein","protein"],["user_id","User",["FK","NN"],"User","user"],["status","ProteinShareStatus",["NN","ENUM"],null,"status"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["protein_id, user_id"]},"protein_share_messages":{"cls":"ProteinShareMessage","cols":[["id","Long",["PK"],null,"id"],["protein_id","Protein",["FK","NN"],"Protein","protein"],["user_id","User",["FK","NN"],"User","user"],["content","String",["NN"],null,"content"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"push_logs":{"cls":"PushLog","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["sent_on","LocalDate",["NN"],null,"sentOn"],["type","String",["NN"],null,"type"],["sent_at","LocalDateTime",["NN"],null,"sentAt"],["delivered","int",["NN"],null,"delivered"]],"idx":[["idx_push_log_user_day","user_id, sent_on"]],"uq":[]},"push_preferences":{"cls":"PushPreference","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["reminder","boolean",["NN"],null,"reminder"],["weekly","boolean",["NN"],null,"weekly"],["social","boolean",["NN"],null,"social"]],"idx":[],"uq":["user_id"]},"push_subscriptions":{"cls":"PushSubscription","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["endpoint","String",["NN"],null,"endpoint"],["endpoint_hash","String",["NN"],null,"endpointHash"],["p256dh","String",["NN"],null,"p256dh"],["auth","String",["NN"],null,"auth"],["last_success_at","LocalDateTime",[],null,"lastSuccessAt"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["endpoint_hash"]},"refresh_tokens":{"cls":"RefreshToken","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["token","String",["UQ","NN"],null,"token"],["expires_at","LocalDateTime",["NN"],null,"expiresAt"],["revoked_at","LocalDateTime",[],null,"revokedAt"],["replaced_by","String",[],null,"replacedBy"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"review":{"cls":"Review","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["protein_id","Protein",["FK","NN"],"Protein","protein"],["rating","int",[],null,"rating"],["content","String",[],null,"content"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"run_sessions":{"cls":"RunSession","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["performed_on","LocalDate",["NN"],null,"performedOn"],["started_at","LocalDateTime",["NN"],null,"startedAt"],["ended_at","LocalDateTime",["NN"],null,"endedAt"],["duration_sec","int",["NN"],null,"durationSec"],["distance_m","int",["NN"],null,"distanceM"],["source","String",["NN"],null,"source"],["splits","String",[],null,"splits"],["best_1k_sec","Integer",[],null,"best1kSec"],["best_5k_sec","Integer",[],null,"best5kSec"],["best_10k_sec","Integer",[],null,"best10kSec"],["record_points","int",["NN"],null,"recordPoints"],["note","String",[],null,"note"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_run_session_user_date","user_id, performed_on"]],"uq":[]},"shadow_hit":{"cls":"ShadowHit","cols":[["id","Long",["PK"],null,"id"],["week_id","ShadowWeek",["FK","NN"],"ShadowWeek","week"],["user_id","User",["FK","NN"],"User","user"],["source","String",["NN"],null,"source"],["source_id","Long",["NN"],null,"sourceId"],["hit_on","LocalDate",["NN"],null,"hitOn"],["raw","int",["NN"],null,"raw"],["damage","int",["NN"],null,"damage"],["crit","boolean",["NN"],null,"crit"],["hp_after","int",["NN"],null,"hpAfter"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"shadow_weeks":{"cls":"ShadowWeek","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["week_start","LocalDate",["NN"],null,"weekStart"],["hp","int",["NN"],null,"hp"],["damage","int",["NN"],null,"damage"],["hits","int",["NN"],null,"hits"],["crits","int",["NN"],null,"crits"],["killed_at","LocalDateTime",[],null,"killedAt"],["rewarded","boolean",["NN"],null,"rewarded"],["level_at_start","int",["NN"],null,"levelAtStart"],["rest","boolean",["NN"],null,"rest"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["user_id, week_start"]},"social_accounts":{"cls":"SocialAccount","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["provider","SocialProvider",["NN","ENUM"],null,"provider"],["provider_user_id","String",["NN"],null,"providerUserId"],["email_at_link","String",[],null,"emailAtLink"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["provider, provider_user_id"]},"users":{"cls":"User","cols":[["id","Long",["PK"],null,"id"],["name","String",["NN"],null,"name"],["email","String",["UQ","NN"],null,"email"],["password","String",["NN"],null,"password"],["role","String",["NN"],null,"role"],["nickname","String",["NN"],null,"nickname"],["created_at","LocalDateTime",[],null,"createdAt"],["email_placeholder","Boolean",[],null,"emailPlaceholder"],["deleted_at","LocalDateTime",[],null,"deletedAt"]],"idx":[],"uq":[]},"user_blocks":{"cls":"UserBlock","cols":[["id","Long",["PK"],null,"id"],["blocker_id","User",["FK","NN"],"User","blocker"],["blocked_id","User",["FK","NN"],"User","blocked"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["blocker_id, blocked_id"]},"user_body_stats":{"cls":"UserBodyStats","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","UQ","NN"],"User","user"],["height_cm","Integer",[],null,"heightCm"],["gender","Gender",["NN","ENUM"],null,"gender"],["weight_kg","Double",["NN"],null,"weightKg"],["skeletal_muscle_kg","Double",[],null,"skeletalMuscleKg"],["body_fat_percent","Double",[],null,"bodyFatPercent"],["mbti","String",[],null,"mbti"],["bench_kg","Double",[],null,"benchKg"],["squat_kg","Double",[],null,"squatKg"],["deadlift_kg","Double",[],null,"deadliftKg"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["user_id"]},"user_collections":{"cls":"UserCollection","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["boxes","int",["NN"],null,"boxes"],["shards","int",["NN"],null,"shards"],["boxes_opened","int",["NN"],null,"boxesOpened"],["equipped_title","String",[],null,"equippedTitle"],["equipped_tank","String",[],null,"equippedTank"],["equipped_frame","String",[],null,"equippedFrame"],["welcome_given","boolean",["NN"],null,"welcomeGiven"],["last_lucky_date","LocalDate",[],null,"lastLuckyDate"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["user_id"]},"user_collection_items":{"cls":"UserCollectionItem","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["item_code","String",["NN"],null,"itemCode"],["source","String",["NN"],null,"source"],["acquired_at","LocalDateTime",["NN"],null,"acquiredAt"],["seen","boolean",["NN"],null,"seen"]],"idx":[],"uq":["user_id, item_code"]},"weekly_goal_settings":{"cls":"WeeklyGoalSetting","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","UQ","NN"],"User","user"],["target","int",["NN"],null,"target"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["user_id"]},"weekly_goal_weeks":{"cls":"WeeklyGoalWeek","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["week_start","LocalDate",["NN"],null,"weekStart"],["target","int",["NN"],null,"target"],["rest","boolean",["NN"],null,"rest"],["rewarded","boolean",["NN"],null,"rewarded"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["user_id, week_start"]},"workout_crews":{"cls":"WorkoutCrew","cols":[["id","Long",["PK"],null,"id"],["name","String",["NN"],null,"name"],["description","String",[],null,"description"],["owner_id","User",["FK","NN"],"User","owner"],["invite_code","String",["UQ"],null,"inviteCode"],["join_policy","CrewJoinPolicy",["ENUM"],null,"joinPolicy"],["type","GymType",["ENUM"],null,"type"],["slug","String",["UQ"],null,"slug"],["visibility","GymVisibility",["ENUM"],null,"visibility"],["status","GymStatus",["ENUM"],null,"status"],["parent_id","WorkoutCrew",["FK"],"WorkoutCrew","parent"],["school_domain","String",[],null,"schoolDomain"],["region","String",[],null,"region"],["logo_url","String",[],null,"logoUrl"],["map_theme","String",[],null,"mapTheme"],["member_limit","Integer",[],null,"memberLimit"],["gym_id","Set<GymFeature>",["ENUM","LIST"],null,"features"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":[]},"workout_crew_join_requests":{"cls":"WorkoutCrewJoinRequest","cols":[["id","Long",["PK"],null,"id"],["crew_id","WorkoutCrew",["FK","NN"],"WorkoutCrew","crew"],["user_id","User",["FK","NN"],"User","user"],["status","CrewJoinRequestStatus",["NN","ENUM"],null,"status"],["decided_by_user_id","User",["FK"],"User","decidedBy"],["decided_at","LocalDateTime",[],null,"decidedAt"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["crew_id, user_id"]},"workout_crew_members":{"cls":"WorkoutCrewMember","cols":[["id","Long",["PK"],null,"id"],["crew_id","WorkoutCrew",["FK","NN"],"WorkoutCrew","crew"],["user_id","User",["FK","NN"],"User","user"],["role","WorkoutCrewMemberRole",["NN","ENUM"],null,"role"],["title","String",[],null,"title"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[],"uq":["crew_id, user_id"]},"workout_sessions":{"cls":"WorkoutSession","cols":[["id","Long",["PK"],null,"id"],["user_id","User",["FK","NN"],"User","user"],["performed_on","LocalDate",["NN"],null,"performedOn"],["started_at","LocalDateTime",["NN"],null,"startedAt"],["ended_at","LocalDateTime",["NN"],null,"endedAt"],["duration_sec","int",["NN"],null,"durationSec"],["total_volume","double",["NN"],null,"totalVolume"],["total_sets","int",["NN"],null,"totalSets"],["note","String",[],null,"note"],["created_at","LocalDateTime",["AUTO"],null,"createdAt"],["updated_at","LocalDateTime",["AUTO"],null,"updatedAt"]],"idx":[["idx_workout_session_user_date","user_id, performed_on"]],"uq":[]},"workout_sets":{"cls":"WorkoutSet","cols":[["id","Long",["PK"],null,"id"],["session_id","WorkoutSession",["FK","NN"],"WorkoutSession","session"],["exercise","String",["NN"],null,"exercise"],["exercise_order","int",["NN"],null,"exerciseOrder"],["set_order","int",["NN"],null,"setOrder"],["weight_kg","double",["NN"],null,"weightKg"],["reps","int",["NN"],null,"reps"]],"idx":[["idx_workout_set_session","session_id"]],"uq":[]}};
+(function () {
+  'use strict';
+  /* T(칸 · 관계 · 인덱스)는 backend/entity 코드에서 스크립트로 뽑았다. 아래 R(역할 · 예시)과 C(개념)는 손으로 썼다. */
+  const NS = 'http://www.w3.org/2000/svg';
+  const s = (tag, attrs, kids) => { const e = document.createElementNS(NS, tag); for (const k in attrs || {}) e.setAttribute(k, attrs[k]); (kids || []).forEach((c) => e.appendChild(c)); return e; };
+  const h = (tag, attrs, kids) => { const e = document.createElement(tag); for (const k in attrs || {}) { if (k === 'text') e.textContent = attrs[k]; else if (k === 'class') e.className = attrs[k]; else if (k.startsWith('on')) e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, attrs[k]); } (kids || []).forEach((c) => c != null && e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c)); return e; };
+  const txt = (x, y, str, o) => { o = o || {}; const t = s('text', { x, y, 'font-size': o.size || 13, 'text-anchor': o.anchor || 'start' }); if (o.cls) t.setAttribute('class', o.cls); if (o.fill) t.setAttribute('fill', o.fill); t.textContent = str; return t; };
+
+  // 따로 만든 목록 표(@ElementCollection) 이름 바로잡기
+  T.workout_crews.cols.forEach((c) => { if (c[2].includes('LIST')) { c[0] = 'features'; c[1] = '→ gym_features(gym_id, feature) 별도 표'; } });
+  T.cms_events.cols.forEach((c) => { if (c[2].includes('LIST')) { c[0] = 'tags'; c[1] = '→ cms_event_tags(event_id, tag) 별도 표'; } });
+
+  const DOM = {
+    acct: { name: '계정 · 로그인', c: 'var(--chalk)' },
+    ops: { name: '운영 · 알림 · AI', c: 'var(--ink-faint)' },
+    att: { name: '출석 · 캐릭터 · 목표', c: 'var(--red)' },
+    reward: { name: '보상 · 꾸미기', c: 'var(--yellow)' },
+    work: { name: '운동 · 러닝 · 그림자', c: 'var(--red)' },
+    diet: { name: '식단', c: 'var(--green)' },
+    comm: { name: '커뮤니티 · 공동구매', c: 'var(--blue)' },
+    crew: { name: '모임(짐) · 이벤트', c: 'var(--blue)' },
+  };
+  const LAYOUT = [['acct', 'ops'], ['att', 'reward'], ['work', 'diet'], ['comm'], ['crew']];
+
+  // [묶음, 한 줄 역할, 자세한 역할, 예시 줄들]
+  const R = {
+    users: ['acct', '회원 한 명', '모든 표의 중심. 거의 모든 표가 user_id 로 이 표를 가리킨다. 탈퇴하면 행을 지우지 않고 개인정보를 비운 뒤 "탈퇴한 회원"으로 남긴다(deleted_at). 소셜 로그인만 쓰는 사람도 password 칸에는 값이 들어간다.',
+      [{ id: 1, email: 'muscle@ajou.ac.kr', nickname: '근육곰', role: 'USER', deleted_at: 'null' }, { id: 2, email: 'k3312@users.musclehub.invalid', nickname: '스쿼트요정', role: 'USER', email_placeholder: 'true' }, { id: 3, email: '(지움)', nickname: '탈퇴한 회원', role: 'USER', deleted_at: '2026-10-30 21:14' }]],
+    social_accounts: ['acct', 'Google · 카카오 계정 연결', '"Google 의 몇 번 회원"으로 우리 회원을 찾는다. (provider, provider_user_id) 유니크라 같은 소셜 계정이 두 회원에 붙을 수 없다. 카카오는 이메일을 안 줄 수 있어서 이메일이 아니라 회원 번호로 찾게 바꿨다.',
+      [{ id: 1, user_id: 1, provider: 'GOOGLE', provider_user_id: '104829…', email_at_link: 'muscle@ajou.ac.kr' }, { id: 2, user_id: 2, provider: 'KAKAO', provider_user_id: '331207…', email_at_link: 'null' }]],
+    refresh_tokens: ['acct', '로그인 유지 토큰', '브라우저에 httpOnly 쿠키로 준 리프레시 토큰. DB 에는 원문이 아니라 SHA-256 해시만 둔다. 갱신할 때마다 새 토큰을 주고 옛 토큰에 revoked_at · replaced_by 를 적는다(회전). 버린 토큰이 30초 뒤 다시 오면 탈취로 보고 전부 끊는다.',
+      [{ id: 91, user_id: 1, token: '(해시) 9f3a…', expires_at: '2026-11-28 09:00', revoked_at: '2026-11-14 09:00', replaced_by: '(92번 토큰)' }, { id: 92, user_id: 1, token: '(해시) 7ac0…', expires_at: '2026-11-28 09:00', revoked_at: 'null' }]],
+    email_verifications: ['acct', '이메일 인증 번호', '이메일 가입할 때 보낸 6자리 번호. 만료 시각과 틀린 횟수(attempts)로 무작정 맞히기를 막는다. users 와 연결이 없다(가입 전이라서).',
+      [{ id: 5, email: 'new@ajou.ac.kr', code: '482913', expire_at: '10:05', verified: 'false', attempts: 1 }]],
+    user_blocks: ['acct', '차단', 'blocker 가 blocked 를 차단. 서로의 자랑방 글 · 댓글 · 친구 요청이 안 보이고 친구였으면 끊긴다. 같은 쌍은 한 줄만.',
+      [{ id: 3, blocker_id: 1, blocked_id: 7, created_at: '2026-11-02' }]],
+    user_body_stats: ['acct', '몸 정보 · 3대 중량', '키 · 몸무게 · 골격근 · 체지방 · MBTI · 3대 중량. 사람당 한 줄(1:1). 캐릭터 겉모습과 그림자 체력 계산에 쓴다.',
+      [{ user_id: 1, height_cm: 176, weight_kg: 74.2, skeletal_muscle_kg: 34.1, body_fat_percent: 15.8, mbti: 'ESTJ', squat_kg: 110 }]],
+
+    content_reports: ['ops', '신고', '글 · 댓글 · 공동구매 · 사용자 · 방명록 신고. target_type + target_id 로 여러 종류를 한 표에서 가리켜 FK 를 걸 수 없다. snapshot 에 신고한 순간 내용을 남긴다(작성자가 지워도 운영자가 볼 수 있게).',
+      [{ id: 12, reporter_id: 3, target_type: 'BRAG_POST', target_id: 57, target_user_id: 7, reason: 'SPAM', status: 'OPEN', snapshot: '"단백질 싸게 팝…"' }]],
+    audit_logs: ['ops', '관리 기록', '누가 언제 어떤 관리 행동을 했는지. 로그인 안 한 요청이면 user_id 가 비어 있다.',
+      [{ id: 801, user_id: 1, action: 'HIDE', resource: 'attendance_share', summary: '공유 출석 숨김 #331' }]],
+    analytics_events: ['ops', '화면 사용 기록', '어느 화면에서 어떤 단추를 눌렀는지. 관리 화면의 통계에 쓴다.',
+      [{ id: 9001, user_id: 2, page: '/lounge', action: 'enter', metadata: '{"room":"square"}' }]],
+    inquiries: ['ops', '문의', '고객 문의 위젯에서 보낸 글. user_id 는 FK 가 아니라 숫자만 적는다(로그인 안 한 사람도 보낼 수 있어서).',
+      [{ id: 44, name: '김아주', message: '출석이 안 눌려요', page: '/attendance', user_id: 'null', status: 'OPEN' }]],
+    push_subscriptions: ['ops', '푸시 구독(기기마다)', '브라우저 하나의 푸시 주소와 암호 키. 주소가 길어서 해시(endpoint_hash)에 유니크를 걸었다.',
+      [{ id: 7, user_id: 1, endpoint: 'https://fcm.googleapis.com/…', endpoint_hash: 'a91c…', last_success_at: '2026-11-13 19:02' }]],
+    push_preferences: ['ops', '알림 종류별 켜기', '사람당 한 줄. 없으면 다 켠 것으로 본다.',
+      [{ user_id: 1, reminder: 'true', weekly: 'true', social: 'false' }]],
+    push_logs: ['ops', '보낸 알림 기록', '하루 2개 한도를 세려고 남긴다. 내용은 남기지 않고 30일 지나면 지운다.',
+      [{ id: 5120, user_id: 1, sent_on: '2026-11-13', type: 'REMINDER', delivered: 'true' }]],
+    ai_chat_messages: ['ops', 'AI 대화 · 계획', 'AI 플래너에 물은 것과 답. 공유하면 share_slug 가 생겨 링크로 볼 수 있다.',
+      [{ id: 61, user_id: 1, type: 'PLAN', question: '주 3회 분할 짜 줘', answer: '월: 가슴 · 삼두 …', shared: 'true', share_slug: 'k2Hq9a' }]],
+
+    attendance_logs: ['att', '출석 한 번(하루 한 줄)', '앱의 핵심 고리 출발점. (user_id, workout_date) 유니크로 하루 한 번만. 사진 주소 · 메모 · 운동 종류 · 강도, 공유하면 share_slug, 응원 · 신고 수, 관리자 숨김까지.',
+      [{ id: 331, user_id: 1, workout_date: '2026-11-14', did_workout: 'true', workout_types: 'CHEST,ARMS', shared: 'true', share_slug: 'x8Kd2', cheer_count: 4 }, { id: 332, user_id: 2, workout_date: '2026-11-14', did_workout: 'false', memo: '오늘은 쉼', shared: 'false', cheer_count: 0 }]],
+    attendance_share_reports: ['att', '공유 출석 신고', '한 사람이 한 글을 한 번만 신고. 예전엔 로그인 없이 누를 때마다 신고 수가 올라 숫자를 부풀릴 수 있었다.',
+      [{ id: 2, attendance_log_id: 331, user_id: 5 }]],
+    character_profiles: ['att', '캐릭터', '레벨 · 티어 · 진화 단계 · 칭호 · 공개 여부. 사람당 한 줄(1:1). 랭킹은 is_public 으로 거르고 level 로 정렬한다.',
+      [{ user_id: 1, level: 23, tier: 'GOLD', evolution_stage: 2, title: '새벽 출석러', is_public: 'true', attendance_points: 420 }]],
+    character_evolution_history: ['att', '캐릭터 변화 기록', '레벨 · 티어 · 단계가 바뀔 때마다 전후를 남긴다. 무엇 때문에 바뀌었는지(trigger_type)도.',
+      [{ id: 88, user_id: 1, trigger_type: 'ATTENDANCE', before_level: 22, after_level: 23, before_tier: 'GOLD', after_tier: 'GOLD' }]],
+    daily_quests: ['att', '오늘 할 일 보상', '출석 · 식단 1끼 · 응원 1번. 보너스를 "줬는지"만 남긴다(출석 · 식단은 원래 기록으로 확인). 줄을 잠그고 읽어 두 번 주지 않는다.',
+      [{ id: 410, user_id: 1, quest_date: '2026-11-14', cheer_done: 'true', diet_rewarded: 'true', all_rewarded: 'false' }]],
+    weekly_goal_settings: ['att', '주간 목표 설정', '한 주에 몇 번 운동할지. 사람당 한 줄, 없으면 3번.',
+      [{ user_id: 1, target: 4 }]],
+    weekly_goal_weeks: ['att', '한 주의 목표 기록', '그 주에 적용된 목표를 그 주 첫 운동 때 박아 둔다. 주 중간에 목표를 낮춰 연속을 지키는 꼼수를 막는다.',
+      [{ id: 37, user_id: 1, week_start: '2026-11-10', target: 4, rest: 'false', rewarded: 'false' }]],
+
+    user_collections: ['reward', '도감 지갑', '안 연 상자 · 조각 · 장착한 칭호 · 민소매 · 테두리. 사람당 한 줄. 상자를 열 땐 줄을 잠그고 읽는다(두 번 눌러도 한 번만 열리게).',
+      [{ user_id: 1, boxes: 2, shards: 5, boxes_opened: 14, equipped_title: 'T_DAWN', equipped_tank: 'RED', welcome_given: 'true' }]],
+    user_collection_items: ['reward', '모은 것 하나', '도감 칸 하나. (user_id, item_code) 유니크라 같은 걸 두 번 갖지 않는다. 두 번째부터는 조각이 된다.',
+      [{ id: 301, user_id: 1, item_code: 'TANK_RED', source: 'BOX', acquired_at: '2026-11-12', seen: 'true' }]],
+    gym_decor_slots: ['reward', '홈 헬스장 자리', '꾸미기 자리 하나에 놓은 물품. 줄이 없으면 기본 물품. 물품을 "얻었는지"는 저장하지 않고 기록에서 그때그때 계산한다.',
+      [{ id: 21, user_id: 1, slot: 'corner_left', item_code: 'PLANT_BIG' }, { id: 22, user_id: 1, slot: 'wall', item_code: 'null (비워 둠)' }]],
+    gym_guestbook: ['reward', '헬스장 방명록', '친구가 내 헬스장에 와서 남긴 한 줄(60자). 주인과 쓴 사람이 지울 수 있다.',
+      [{ id: 9, owner_id: 1, author_id: 2, message: '기구 배치 미쳤다' }]],
+    lounge_visit_logs: ['reward', '라운지 들른 기록', '라운지에 들어온 사실만 한 줄. 통계와 퀘스트에 쓴다.',
+      [{ id: 7001, user_id: 2, created_at: '2026-11-14 20:11' }]],
+
+    workout_sessions: ['work', '운동 세션 한 번', '시작~끝, 총 볼륨 · 세트 수. 진행 중인 세션은 브라우저가 들고 있다가 끝낼 때 세트와 함께 한 번에 저장한다(cascade).',
+      [{ id: 120, user_id: 1, performed_on: '2026-11-14', duration_sec: 3720, total_volume: 8450, total_sets: 18 }]],
+    workout_sets: ['work', '세트 하나', '세션 안의 한 세트. 세션이 지워지면 같이 지워진다(orphanRemoval).',
+      [{ id: 2201, session_id: 120, exercise: 'BENCH', exercise_order: 1, set_order: 1, weight_kg: 70, reps: 8 }, { id: 2202, session_id: 120, exercise: 'BENCH', exercise_order: 1, set_order: 2, weight_kg: 75, reps: 6 }]],
+    lift_entries: ['work', '종목별 기록 · 개인 최고', '종목 · 무게 · 횟수 · 세트와 추정 1RM(e1rm). 개인 최고는 e1rm 으로 비교한다. 종목은 enum 이 아닌 문자열 코드.',
+      [{ id: 905, user_id: 1, exercise: 'SQUAT', weight_kg: 100, reps: 5, sets: 3, e1rm: 116.7, session_id: 120 }]],
+    custom_exercises: ['work', '내가 만든 종목', '기본 31종목에 없는 것. 코드는 "C"+id(예: C12). 지워도 행은 남긴다(deleted) — 옛 기록의 이름을 보여 주려고.',
+      [{ id: 12, user_id: 1, name: '케이블 Y레이즈', category: 'SHOULDER', bodyweight: 'false', deleted: 'false' }]],
+    custom_activities: ['work', '내가 만든 운동 종류', '필라테스 · 수영처럼 시간과 메모만 재는 운동. 지워도 행은 남긴다(deleted).',
+      [{ id: 3, user_id: 2, name: '필라테스', category: 'FLEX', deleted: 'false' }]],
+    activity_logs: ['work', '그 운동 한 번', 'custom_activities 를 한 번 한 기록. 시간 · 메모만.',
+      [{ id: 51, user_id: 2, activity_id: 3, performed_on: '2026-11-13', duration_sec: 3000, note: '코어 집중' }]],
+    run_sessions: ['work', '러닝 한 번', '거리 · 시간 · 1km 구간만 서버에 둔다. 지나간 경로(위치)는 휴대폰에만 남긴다. 가장 빠른 1 · 5 · 10km 는 저장할 때 미리 계산.',
+      [{ id: 77, user_id: 1, performed_on: '2026-11-12', distance_m: 5230, duration_sec: 1712, best_1k_sec: 309, best_5k_sec: 1640 }]],
+    shadow_weeks: ['work', '그림자 보스의 한 주', '체력(hp)은 지난 4주 힘 평균으로 정하고, 이번 주 운동 · 러닝이 damage 로 쌓인다. 행은 필요할 때 만든다(스케줄러 없음).',
+      [{ id: 5, user_id: 1, week_start: '2026-11-10', hp: 1200, damage: 860, hits: 3, crits: 1, killed_at: 'null' }]],
+    shadow_hit: ['work', '그림자 공격 한 번', '세션 · 러닝 하나가 공격 하나. source 는 문자열(SESSION · RUN), hit_on 은 한국 날짜(하루 상한 계산용).',
+      [{ id: 101, week_id: 5, user_id: 1, source: 'SESSION', source_id: 120, hit_on: '2026-11-14', damage: 340, crit: 'true', hp_after: 340 }]],
+
+    meal_entries: ['diet', '먹은 음식 한 줄', '같은 날 · 같은 끼니의 줄을 모아 한 끼로 보여 준다. 본인만 본다.',
+      [{ id: 640, user_id: 1, eaten_on: '2026-11-14', meal_type: 'LUNCH', name: '제육덮밥', kcal: 780, protein_g: 32 }, { id: 641, user_id: 1, eaten_on: '2026-11-14', meal_type: 'LUNCH', name: '프로틴 쉐이크', kcal: 130, protein_g: 25 }]],
+    my_foods: ['diet', '내 음식', '검색에 없는 집밥 · 학식 · 단골 메뉴를 영양값 그대로 저장해 두고 다시 넣는다.',
+      [{ id: 8, user_id: 1, name: '학식 A코너', amount: '1식', kcal: 690, protein_g: 28 }]],
+    diet_goals: ['diet', '하루 영양 목표', '사람당 한 줄(1:1). 직접 정하거나 인바디 상담에서 가져온다(source = INBODY).',
+      [{ user_id: 1, kcal: 2400, protein_g: 150, carb_g: 280, fat_g: 70, source: 'INBODY' }]],
+    food_items: ['diet', '쓰지 않는 빈 표', '처음엔 음식 32만 줄을 여기 넣었다가 운영 DB 볼륨이 가득 차 DB 가 멈췄다. 지금 음식 검색은 서버 메모리(FoodCatalogService). 이미 배포한 이전 SQL 때문에 표만 남겨 둔다.',
+      [{ '(비어 있음)': '데이터를 넣지 않는다' }]],
+
+    brag_post: ['comm', '자랑방 글', '운동 사진 자랑. visibility(전체 · 친구 · 모임). 사진 주소 목록은 별도 표 brag_media 에 있다. 목록은 최신순 페이지라 created_at 인덱스가 있다.',
+      [{ id: 57, user_id: 7, title: '데드 140 성공', movement: 'DEADLIFT', weight: '140', visibility: 'PUBLIC', gym_id: 'null' }]],
+    brag_comment: ['comm', '자랑방 댓글', '글 하나에 여러 댓글.',
+      [{ id: 230, brag_post_id: 57, user_id: 1, content: '폼 좋네요' }]],
+    brag_like: ['comm', '자랑방 좋아요', '좋아요 = 행이 있는지. (brag_post_id, user_id) 유니크라 한 사람이 한 번만.',
+      [{ id: 991, brag_post_id: 57, user_id: 1 }, { id: 992, brag_post_id: 57, user_id: 2 }]],
+    friendships: ['comm', '친구 관계', '두 사람 쌍을 한 줄로. id 가 작은 쪽을 user_low, 큰 쪽을 user_high 에 넣어 (1,2)와 (2,1)이 따로 생기지 않게 한다.',
+      [{ id: 14, user_low_id: 1, user_high_id: 2 }]],
+    friend_requests: ['comm', '친구 요청', '보낸 사람 · 받는 사람 · 상태(대기 · 수락 · 거절).',
+      [{ id: 30, requester_id: 2, receiver_id: 1, status: 'ACCEPTED' }, { id: 31, requester_id: 5, receiver_id: 1, status: 'PENDING' }]],
+    friend_chat_rooms: ['comm', '1:1 채팅방', '친구 관계처럼 low/high 쌍으로 한 방만.',
+      [{ id: 4, user_low_id: 1, user_high_id: 2 }]],
+    friend_chat_messages: ['comm', '채팅 메시지', '방 하나에 여러 메시지. 새 메시지는 실시간 서버가 상대에게 알린다.',
+      [{ id: 812, room_id: 4, sender_id: 2, content: '오늘 하체?' }]],
+    proteins: ['comm', '단백질 공동구매', '공동구매 한 건. 연 사람(owner), 가격 · 마감 · 최대 인원, 모임 안에서만 열 수도 있다(gym_id, visibility).',
+      [{ id: 18, owner_id: 1, name: 'WPC 2kg 초코', price: 52000, deadline: '2026-11-20', max_participants: 6, visibility: 'PUBLIC' }]],
+    protein_share_applications: ['comm', '공동구매 신청', '(protein_id, user_id) 유니크 — 한 사람이 한 번만 신청.',
+      [{ id: 70, protein_id: 18, user_id: 2, status: 'APPROVED' }]],
+    protein_share_messages: ['comm', '공동구매 채팅', '공동구매 상세의 참여자 대화.',
+      [{ id: 301, protein_id: 18, user_id: 2, content: '수령은 체육관 앞?' }]],
+    review: ['comm', '단백질 리뷰', '제품별 별점과 후기. 목록은 작성자 · 제품을 함께 읽는다.',
+      [{ id: 9, user_id: 2, protein_id: 18, rating: 5, content: '잘 녹아요' }]],
+
+    workout_crews: ['crew', '짐 = 모든 모임', '동아리 · 운동 모임 · 헬스장 · PT 를 한 표(type)로. 공개 범위 · 가입 방식 · 초대 코드 · 주소용 slug. parent_id 로 자기 자신을 가리킬 수 있다(모임 안의 모임).',
+      [{ id: 1, name: '득근득근', type: 'CLUB', owner_id: 1, slug: 'ajou-muscleup', visibility: 'PUBLIC', join_policy: 'LEADER_APPROVE', status: 'ACTIVE' }, { id: 9, name: '새벽 하체반', type: 'CREW', owner_id: 2, invite_code: 'Q7MZ2K', parent_id: 1, visibility: 'UNLISTED' }]],
+    workout_crew_members: ['crew', '모임 멤버', '누가 어느 모임에 어떤 역할(OWNER · STAFF · MEMBER)로. 권한은 GymPermissionService 한 곳에서 본다.',
+      [{ id: 40, crew_id: 1, user_id: 1, role: 'OWNER' }, { id: 41, crew_id: 1, user_id: 2, role: 'MEMBER', title: '하체 담당' }]],
+    workout_crew_join_requests: ['crew', '가입 신청', '승인제 모임의 신청. 누가 언제 승인했는지(decided_by)까지.',
+      [{ id: 6, crew_id: 1, user_id: 5, status: 'PENDING', decided_by_user_id: 'null' }]],
+    crew_challenges: ['crew', '모임 챌린지', '기간 안에 몇 일 운동하기. 멤버 출석으로 달성률을 계산한다.',
+      [{ id: 3, crew_id: 9, title: '11월 12일 출석', start_date: '2026-11-01', end_date: '2026-11-30', target_workout_days: 12 }]],
+    events: ['crew', '출석 이벤트', '기간 안에 정해진 횟수 출석하면 성공. gym_id 가 있으면 그 모임 이벤트.',
+      [{ id: 2, title: '중간고사 버티기', start_date: '2026-10-20', end_date: '2026-11-02', required_attendance_count: 8, status: 'FINISHED' }]],
+    event_participants: ['crew', '이벤트 참가', '(user_id, event_id) 유니크. 현재 출석 수와 성공 여부.',
+      [{ id: 15, user_id: 1, event_id: 2, current_attendance_count: 9, success: 'true' }]],
+    cms_events: ['crew', '공지 · 배너', '운영진이 올리는 공지 · 이벤트 글. 홈 배너 · 고정 · 우선순위, 본 수 · 누른 수.',
+      [{ id: 4, title: '11월 벤치 대회', status: 'ACTIVE', is_main_banner: 'true', priority: 10, view_count: 312, click_count: 41 }]],
+    program_applications: ['crew', '반 신청', '반 추천 · 신청 화면에서 받은 신청. 로그인 없이도 보낼 수 있어 user_id 대신 이름 · 이메일.',
+      [{ id: 27, name: '이새내기', email: 'fresh@ajou.ac.kr', goal: '체중 감량', track: 'BEGINNER', status: 'PENDING' }]],
+    club_roster_members: ['crew', '동아리 실명 명단', '예전엔 프론트 코드에 박혀 누구나 볼 수 있었다. 이제 서버에만 두고 로그인한 회원에게만 준다.',
+      [{ id: 1, name: '김득근', sort_order: 1 }]],
+  };
+
+  // 개념. star = 면접에서 자주 묻는 것
+  const C = [
+    { id: 'n1', star: 1, t: 'N+1 쿼리',
+      what: '목록 1번 읽고(1), 행마다 연결된 것을 또 읽으면(N) 쿼리가 N+1번 나간다. LAZY 연결을 반복문 안에서 꺼낼 때 생긴다. 행이 100개면 101번.',
+      here: '랭킹 · 모임 멤버 · 자랑방 좋아요 · 모임 목록 · 주간 연속 출석에서 실제로 고쳤다. 방법은 셋: ① EntityGraph / join fetch 로 같이 읽기 ② IN 으로 한 번에 세기 ③ 한 번에 읽고 메모리에서 계산.',
+      code: '// CharacterProfileRepository.java:22\n// 랭킹 행마다 user(닉네임)를 따로 읽지 않게 함께 가져온다(N+1 방지).\n@EntityGraph(attributePaths = "user")\n\n// BragPostServiceImpl.java:171 — 글마다 count 대신 한 번에\nselect bl.bragPost.id, count(bl) from BragLike bl\n where bl.bragPost.id in :ids group by bl.bragPost.id',
+      refs: 'CharacterProfileRepository.java:22 · WorkoutCrewMemberRepository.java:16 · BragLikeRepository.java:21 · BragPostServiceImpl.java:171 · CrewServiceImpl.java:85 · AttendanceServiceImpl.java:284 · AttendanceLogRepository.java:117',
+      tables: ['character_profiles', 'workout_crew_members', 'brag_like', 'brag_post', 'workout_crews', 'attendance_logs', 'proteins', 'review', 'social_accounts', 'gym_guestbook', 'activity_logs', 'event_participants'] },
+    { id: 'lazy', star: 1, t: '지연 로딩(LAZY)',
+      what: '연결된 행을 필요할 때 읽는다. 기본값이 EAGER 인 @ManyToOne 을 전부 LAZY 로 바꿔 안 쓰는 연결까지 끌려오지 않게 했다. 대신 반복문에서 꺼내면 N+1 이 되고, 트랜잭션 밖에서 꺼내면 오류가 난다.',
+      here: '이 프로젝트의 @ManyToOne · @OneToOne 은 모두 fetch = LAZY 다. 그래서 목록 쿼리마다 같이 읽을 것을 EntityGraph 로 따로 지정한다.',
+      code: '// AttendanceLog.java:42\n@ManyToOne(fetch = FetchType.LAZY, optional = false)\n@JoinColumn(name = "user_id", nullable = false)\nprivate User user;',
+      refs: 'entity/*.java 의 @ManyToOne(fetch = FetchType.LAZY)', tables: 'LAZY' },
+    { id: 'unique', star: 1, t: '유니크 제약으로 중복 막기',
+      what: '"하루 한 번", "한 사람 한 번"은 코드로 먼저 확인해도 동시에 두 요청이 오면 둘 다 통과한다. DB 유니크 제약이 마지막 방어선이다.',
+      here: '출석은 (user_id, workout_date) 유니크. 같은 사람이 거의 동시에 두 번 보내 500 이 나던 것을, 유니크 위반을 잡아 한 번 더 돌리는 식으로 고쳤다(그래도 겹치면 409).',
+      code: '// AttendanceServiceImpl.java:110\nprivate AttendanceLogResponse upsertWithRetry(Supplier<…> work) {\n  try { return tx.execute(status -> work.get()); }\n  catch (DataIntegrityViolationException first) { /* 한 번 더 */ }',
+      refs: 'AttendanceLog.java:25 · AttendanceServiceImpl.java:106-115',
+      tables: ['attendance_logs', 'brag_like', 'daily_quests', 'shadow_weeks', 'weekly_goal_weeks', 'friendships', 'friend_chat_rooms', 'content_reports', 'attendance_share_reports', 'user_collection_items', 'event_participants', 'workout_crew_members', 'workout_crew_join_requests', 'protein_share_applications', 'gym_decor_slots', 'user_blocks', 'social_accounts', 'push_subscriptions'] },
+    { id: 'lock', star: 1, t: '비관적 잠금(동시성)',
+      what: '"읽고 → 계산하고 → 쓰기" 사이에 다른 요청이 끼면 둘 다 옛 값을 보고 써 버린다. SELECT … FOR UPDATE 로 줄을 잠그면 두 번째 요청은 첫 번째가 끝날 때까지 기다린다.',
+      here: '보상 상자 열기(두 번 눌러도 한 번만)와 오늘 할 일 보너스(두 번 주지 않기)에 쓴다.',
+      code: '// UserCollectionRepository.java:15\n/** 상자 · 조각을 바꾸기 전에 잠그고 읽는다 */\n@Lock(LockModeType.PESSIMISTIC_WRITE)\n@Query("select c from UserCollection c where c.user.id = :userId")\nOptional<UserCollection> findForUpdate(Long userId);',
+      refs: 'UserCollectionRepository.java:15 · DailyQuestRepository.java:16', tables: ['user_collections', 'daily_quests'] },
+    { id: 'index', star: 1, t: '인덱스 · 복합 인덱스 순서',
+      what: '인덱스가 없으면 조건에 맞는 몇 줄을 찾으려고 표 전체를 읽는다. 여러 칸 인덱스는 순서가 중요하다: 거르는(=) 칸을 앞에, 정렬 · 범위 칸을 뒤에.',
+      here: '캐릭터 랭킹은 is_public 으로 거르고 level 로 정렬해서 (is_public, level, updated_at). 자랑방 최신순은 created_at 인덱스가 없으면 한 페이지(10건)를 주려고 전부 정렬(filesort)했다.',
+      code: '// CharacterProfile.java:20\nindexes = @Index(name = "idx_character_public_rank",\n                 columnList = "is_public, level, updated_at")',
+      refs: 'CharacterProfile.java:20 · BragPost.java:18 · AttendanceLog.java:27-33',
+      tables: ['character_profiles', 'attendance_logs', 'brag_post', 'lift_entries', 'meal_entries', 'run_sessions', 'workout_sessions', 'activity_logs', 'program_applications', 'content_reports', 'push_logs', 'audit_logs', 'gym_guestbook', 'my_foods', 'custom_activities', 'custom_exercises', 'workout_sets', 'email_verifications'] },
+    { id: 'onetoone', t: '1:1 관계', what: '사람당 정확히 한 줄인 표. user_id 에 유니크를 걸어 둘째 줄이 생기지 않게 한다.',
+      here: '캐릭터 · 몸 정보 · 식단 목표 · 도감 지갑 · 주간 목표 · 알림 설정. 처음 쓸 때 만든다.', code: '// DietGoal.java:19\n@OneToOne(fetch = FetchType.LAZY, optional = false)\n@JoinColumn(name = "user_id", nullable = false, unique = true)',
+      refs: 'DietGoal.java:19 · UserBodyStats.java:21', tables: ['character_profiles', 'user_body_stats', 'diet_goals', 'user_collections', 'weekly_goal_settings', 'push_preferences'] },
+    { id: 'cascade', t: 'cascade · orphanRemoval', what: '부모를 저장 · 삭제하면 자식도 같이. 부모 목록에서 빠진 자식은 지운다.',
+      here: '운동 세션을 끝낼 때 세트까지 한 번에 저장한다. 서버에는 끝난 세션만 있다.', code: '// WorkoutSession.java:52\n@OneToMany(mappedBy = "session", cascade = CascadeType.ALL, orphanRemoval = true)',
+      refs: 'WorkoutSession.java:52', tables: ['workout_sessions', 'workout_sets'] },
+    { id: 'pair', t: '두 사람 쌍을 한 줄로', what: '친구는 방향이 없다. (1,2)와 (2,1)을 따로 저장하면 중복이 생긴다. 작은 id 를 low, 큰 id 를 high 에 넣고 (low, high) 유니크.',
+      here: '친구 관계와 1:1 채팅방.', code: '// FriendServiceImpl.java:206\nUser low = pickLow(me, friend);\nUser high = pickHigh(me, friend);', refs: 'Friendship.java:14 · FriendServiceImpl.java:206', tables: ['friendships', 'friend_chat_rooms'] },
+    { id: 'soft', t: '지우지 않고 표시만', what: '행을 진짜 지우면 그 행을 가리키던 옛 기록이 깨진다. deleted 칸만 바꿔 목록에서 빼는 방식.',
+      here: '내가 만든 종목 · 운동은 deleted 로, 탈퇴한 회원은 deleted_at + 개인정보 비우기로. 탈퇴 때 개인 데이터는 AccountDeletionService 가 일괄 삭제.', code: '// User.java:45\n/** 탈퇴한 시각. 탈퇴하면 개인정보를 지우고 이 행은 "탈퇴한 회원"으로 남는다 */\n@Column(name = "deleted_at")', refs: 'User.java:45 · AccountDeletionService.java:37', tables: ['users', 'custom_exercises', 'custom_activities'] },
+    { id: 'poly', t: '여러 종류를 가리키는 칸', what: 'target_type + target_id 로 글 · 댓글 · 사용자 등 아무 표나 가리킨다. 편하지만 FK 를 걸 수 없어 대상이 사라져도 DB 가 모른다.',
+      here: '신고 표. 그래서 신고한 순간의 내용을 snapshot 에 같이 남긴다.', code: '// ReportTargetType\nBRAG_POST, BRAG_COMMENT, PROTEIN, USER, GYM_GUESTBOOK', refs: 'ContentReport.java · ReportTargetType.java', tables: ['content_reports', 'inquiries'] },
+    { id: 'strenum', t: 'enum 대신 문자열 칸', what: 'Hibernate 는 enum 칸에 DB 제약(Postgres CHECK, MySQL enum)을 만든다. 값을 늘리면 제약을 푸는 SQL 이 따로 필요하다.',
+      here: '종목 코드(lift_entries.exercise)와 그림자 공격 출처(shadow_hit.source)는 일부러 문자열로 뒀다. 신고 대상에 방명록을 넣을 땐 V7 SQL 로 제약을 풀었다.', code: '-- db/migration/*/V7__report_target_guestbook.sql', refs: 'LiftEntry.java · ShadowHit.java · V7__report_target_guestbook.sql', tables: ['lift_entries', 'shadow_hit', 'content_reports'] },
+    { id: 'derived', t: '저장하지 않고 계산', what: '다른 기록에서 계산할 수 있는 값을 또 저장하면 둘이 어긋날 수 있다.',
+      here: '헬스장 물품을 얻었는지, 오늘 출석 · 식단 퀘스트를 했는지는 원래 기록에서 계산한다. "보상을 줬는지"만 저장한다.', code: '// GymDecorSlot: 물품을 "얻었는지"는 저장하지 않고\n// 기록에서 그때그때 계산한다(GymDecorService).', refs: 'GymDecorSlot.java · DailyQuest.java', tables: ['gym_decor_slots', 'daily_quests'] },
+    { id: 'volume', t: '큰 참고 데이터는 DB 밖', what: '바뀌지 않는 큰 데이터를 작은 운영 DB 에 넣으면 볼륨을 다 쓴다. 한 트랜잭션으로 넣으면 WAL 까지 쌓인다.',
+      here: '음식 32만 줄을 넣다가 DB 가 1시간 30분 멈췄다. 지금은 서버 메모리에 싣고 food_items 는 빈 표로 남겼다.', code: '// FoodItem.java: 쓰지 않는 빈 표. 음식 검색 데이터는 서버 메모리(FoodCatalogService)', refs: 'FoodItem.java · docs/fixes/2026-10-12-food-search-incident.md', tables: ['food_items'] },
+    { id: 'selfref', t: '자기 참조', what: '같은 표의 다른 행을 가리킨다. 트리 구조를 한 표로.',
+      here: '모임(짐) 안의 모임: parent_id 가 workout_crews 를 다시 가리킨다.', code: '// WorkoutCrew.java\n@ManyToOne(fetch = FetchType.LAZY) private WorkoutCrew parent;', refs: 'WorkoutCrew.java', tables: ['workout_crews'] },
+  ];
+
+  /* ── 배치 ── */
+  const BW = 214, BH = 46, GAP = 7, HEAD = 34, DGAP = 28, CX = (i) => 18 + i * 252, TOP = 16;
+  const pos = {}, domTop = {};
+  let maxY = 0;
+  LAYOUT.forEach((col, ci) => {
+    let y = TOP;
+    col.forEach((d) => {
+      domTop[d] = { x: CX(ci), y };
+      y += HEAD;
+      Object.keys(R).filter((k) => R[k][0] === d).forEach((k) => { pos[k] = { x: CX(ci), y, ci }; y += BH + GAP; });
+      domTop[d].h = y - domTop[d].y;
+      y += DGAP;
+    });
+    maxY = Math.max(maxY, y);
+  });
+  const W = CX(LAYOUT.length - 1) + BW + 18, H = maxY;
+  const svg = document.getElementById('erd-svg');
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+
+  const cls2table = {}; Object.keys(T).forEach((k) => { cls2table[T[k].cls] = k; });
+  const conceptsOf = {}; C.forEach((c) => { const list = c.tables === 'LAZY' ? [] : c.tables; list.forEach((t) => { (conceptsOf[t] = conceptsOf[t] || []).push(c); }); });
+  const starred = (t) => (conceptsOf[t] || []).some((c) => c.star);
+  const refsUser = (t) => T[t].cols.some((c) => c[3] === 'User');
+  const lazyTables = Object.keys(T).filter((t) => T[t].cols.some((c) => c[2].includes('FK')));
+  C.find((c) => c.id === 'lazy').tables = lazyTables;
+  lazyTables.forEach((t) => { (conceptsOf[t] = conceptsOf[t] || []).push(C.find((c) => c.id === 'lazy')); });
+
+  // 묶음 띠
+  Object.keys(domTop).forEach((d) => {
+    const p = domTop[d];
+    svg.appendChild(s('rect', { x: p.x - 8, y: p.y - 4, width: BW + 16, height: p.h + 4, rx: 10, fill: DOM[d].c, opacity: 0.07 }));
+    svg.appendChild(s('rect', { x: p.x - 8, y: p.y - 4, width: BW + 16, height: 5, rx: 2, fill: DOM[d].c, opacity: 0.8 }));
+    svg.appendChild(txt(p.x, p.y + 20, DOM[d].name, { size: 15, cls: 't-d' }));
+  });
+
+  // 연결선 (users 가 아닌 것은 늘, users 는 고를 때만)
+  const lineLayer = s('g', {}), userLayer = s('g', {});
+  svg.appendChild(lineLayer); svg.appendChild(userLayer);
+  const rels = [];
+  function curve(a, b) {
+    const A = pos[a], B = pos[b];
+    const ay = A.y + BH / 2, by = B.y + BH / 2;
+    if (A.ci === B.ci) { const x = A.x + BW, bend = Math.min(90, 26 + Math.abs(ay - by) * 0.12); return 'M' + x + ' ' + ay + ' C' + (x + bend) + ' ' + ay + ' ' + (x + bend) + ' ' + by + ' ' + x + ' ' + by; }
+    const right = B.ci > A.ci, x1 = right ? A.x + BW : A.x, x2 = right ? B.x : B.x + BW, mx = (x1 + x2) / 2;
+    return 'M' + x1 + ' ' + ay + ' C' + mx + ' ' + ay + ' ' + mx + ' ' + by + ' ' + x2 + ' ' + by;
+  }
+  Object.keys(T).forEach((t) => {
+    T[t].cols.forEach((c) => {
+      if (!c[3]) return;
+      const to = cls2table[c[3]];
+      if (!to || !pos[t] || !pos[to]) return;
+      const isUser = to === 'users';
+      const el = s('path', { d: t === to ? 'M' + (pos[t].x + BW) + ' ' + (pos[t].y + 14) + ' c 34 -18 34 36 0 18' : curve(t, to), class: 'rl' + (isUser ? ' user' : '') });
+      if (isUser) { el.style.display = 'none'; userLayer.appendChild(el); } else lineLayer.appendChild(el);
+      rels.push({ from: t, to, col: c[0], el, isUser });
+    });
+  });
+
+  // 표 상자
+  const boxes = {};
+  Object.keys(pos).forEach((t) => {
+    const p = pos[t], g = s('g', { class: 'tb', tabindex: 0, role: 'button', 'aria-label': t + ' 표 설명 보기' });
+    g.appendChild(s('rect', { class: 'box', x: p.x, y: p.y, width: BW, height: BH, rx: 5 }));
+    if (refsUser(t) && t !== 'users') g.appendChild(s('circle', { cx: p.x, cy: p.y + BH / 2, r: 4.5, fill: 'var(--yellow)', stroke: 'var(--edge)', 'stroke-width': 1.5 }));
+    g.appendChild(txt(p.x + 11, p.y + 19, t, { size: t.length > 24 ? 11 : 12.5, cls: 't-m' }));
+    g.appendChild(txt(p.x + 11, p.y + 37, R[t][1], { size: 12, cls: 'soft' }));
+    g.appendChild(txt(p.x + BW - 9, p.y + 19, T[t].cols.length + '칸', { size: 12, anchor: 'end', cls: 't-n faint' }));
+    if (starred(t)) g.appendChild(txt(p.x + BW - 9, p.y + 38, '★', { size: 15, anchor: 'end', fill: 'var(--yellow)' }));
+    g.addEventListener('click', () => pickTable(t));
+    g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickTable(t); } });
+    svg.appendChild(g); boxes[t] = g;
+  });
+  // users 는 크게 강조
+  boxes.users.querySelector('.box').setAttribute('stroke', 'var(--yellow)');
+
+  /* ── 오른쪽 쪽지 ── */
+  const note = document.getElementById('erd-note');
+  const ftag = (f) => h('span', { class: 'ft ' + f, text: { PK: 'PK', FK: 'FK', UQ: 'UQ', NN: 'NOT NULL', ENUM: 'ENUM', LIST: '목록', AUTO: '자동' }[f] || f });
+  function pickTable(t) {
+    clearConcept(false);
+    const ins = rels.filter((r) => r.to === t), outs = rels.filter((r) => r.from === t);
+    const near = new Set([t]); ins.forEach((r) => near.add(r.from)); outs.forEach((r) => near.add(r.to));
+    Object.keys(boxes).forEach((k) => { boxes[k].classList.toggle('sel', k === t); boxes[k].classList.toggle('rel', k !== t && near.has(k)); boxes[k].classList.remove('dim', 'hit'); });
+    rels.forEach((r) => {
+      const on = r.from === t || r.to === t;
+      if (r.isUser) r.el.style.display = on ? '' : 'none';
+      r.el.classList.toggle('on', on && !r.isUser); r.el.classList.toggle('dim', !on);
+    });
+    const d = T[t], r = R[t];
+    note.textContent = '';
+    note.appendChild(h('div', { class: 'cls', text: DOM[r[0]].name + ' · ' + d.cls + '.java' }));
+    note.appendChild(h('h3', { text: t }));
+    note.appendChild(h('p', { text: r[2] }));
+    const cs = conceptsOf[t] || [];
+    if (cs.length) {
+      note.appendChild(h('h4', { text: '이 표에 들어 있는 개념' }));
+      note.appendChild(h('div', {}, cs.map((c) => h('span', { class: 'cpt' + (c.star ? ' star' : ''), role: 'button', tabindex: 0, text: (c.star ? '★ ' : '') + c.t, onclick: () => pickConcept(c, true), onkeydown: (e) => { if (e.key === 'Enter') pickConcept(c, true); } }))));
+      const why = whyFor(t);
+      if (why) note.appendChild(h('div', { class: 'why', text: why }));
+    }
+    note.appendChild(h('h4', { text: '예시 줄 (지어낸 값)' }));
+    const keys = []; r[3].forEach((row) => Object.keys(row).forEach((k) => { if (!keys.includes(k)) keys.push(k); }));
+    note.appendChild(h('div', { class: 'ex-wrap' }, [h('table', {}, [h('thead', {}, [h('tr', {}, keys.map((k) => h('th', { text: k })))]), h('tbody', {}, r[3].map((row) => h('tr', {}, keys.map((k) => h('td', { text: row[k] == null ? '' : String(row[k]) })))))])]));
+    note.appendChild(h('h4', { text: '칸 ' + d.cols.length + '개' }));
+    note.appendChild(h('table', {}, [h('thead', {}, [h('tr', {}, [h('th', { text: '칸' }), h('th', { text: '자바 타입' }), h('th', { text: '' })])]),
+      h('tbody', {}, d.cols.map((c) => h('tr', {}, [h('td', { class: 'c', text: c[0] }), h('td', { class: 'ty', text: c[3] ? '→ ' + (cls2table[c[3]] || c[3]) : c[1] }), h('td', {}, c[2].map(ftag))])))]));
+    if (d.uq.length || d.idx.length) {
+      note.appendChild(h('h4', { text: '제약 · 인덱스' }));
+      note.appendChild(h('ul', {}, d.uq.map((u) => h('li', { class: 'api', text: 'UNIQUE (' + u + ')' })).concat(d.idx.map((i) => h('li', { class: 'api', text: 'INDEX ' + i[0] + ' (' + i[1] + ')' })))));
+    }
+    if (outs.length || ins.length) {
+      note.appendChild(h('h4', { text: '연결' }));
+      const lk = (name) => h('button', { type: 'button', class: 'lnk', text: name, onclick: () => pickTable(name) });
+      const ul = h('ul', {});
+      outs.forEach((o) => ul.appendChild(h('li', {}, [o.col + ' → ', lk(o.to), ' (여러 줄이 한 줄을)'])));
+      const inMap = {}; ins.forEach((i) => { (inMap[i.from] = inMap[i.from] || []).push(i.col); });
+      Object.keys(inMap).forEach((f) => ul.appendChild(h('li', {}, [lk(f), '.' + inMap[f].join(', ') + ' 가 이 표를 가리킨다'])));
+      if (t === 'users') { ul.textContent = ''; ul.appendChild(h('li', { text: Object.keys(inMap).length + '개 표가 users 를 가리킨다. 그림에서 노란 점이 있는 표들.' })); }
+      note.appendChild(ul);
+    }
+  }
+  // 표 하나에 붙는 짧은 "왜" 설명
+  const WHY = {
+    attendance_logs: '★ 유니크 (user_id, workout_date) + 겹치면 다시 시도. ★ 주간 연속 출석 랭킹의 N+1 을 "한 번에 읽고 메모리에서 계산 + 2분 재사용"으로 바꿨다.',
+    character_profiles: '★ 랭킹은 EntityGraph 로 user 를 같이 읽는다(N+1 방지). ★ 복합 인덱스 (is_public, level, updated_at): 거르는 칸이 앞.',
+    brag_like: '★ join fetch bl.bragPost — 내가 좋아요한 글을 한 쿼리로. ★ (brag_post_id, user_id) 유니크.',
+    brag_post: '★ 좋아요 수를 글마다 세지 않고 IN + group by 한 번으로. ★ created_at 인덱스로 최신순 페이지의 filesort 를 없앴다.',
+    workout_crews: '★ 모임 목록: 모임마다 인원 · 내 가입 · 모임장을 따로 읽던 N+1 을 쿼리 3번으로(join fetch c.owner).',
+    workout_crew_members: '★ 멤버 목록은 EntityGraph("user")로 닉네임까지 한 번에.',
+    user_collections: '★ PESSIMISTIC_WRITE 로 잠그고 읽는다 — 상자를 두 번 눌러도 한 번만 열린다.',
+    daily_quests: '★ 잠그고 읽어 보너스를 두 번 주지 않는다. ★ (user_id, quest_date) 유니크.',
+  };
+  const whyFor = (t) => WHY[t] || null;
+
+  /* ── 개념 고르기 ── */
+  const cbox = document.getElementById('concepts'), cpanel = document.getElementById('concept');
+  cpanel.hidden = true;
+  function clearConcept(resetBoxes) {
+    cbox.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+    cpanel.hidden = true;
+    if (resetBoxes) Object.values(boxes).forEach((b) => b.classList.remove('dim', 'hit'));
+  }
+  function pickConcept(c, scroll) {
+    cbox.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.k === c.id ? 'true' : 'false'));
+    const set = new Set(c.tables);
+    Object.keys(boxes).forEach((k) => { boxes[k].classList.remove('sel', 'rel'); boxes[k].classList.toggle('hit', set.has(k)); boxes[k].classList.toggle('dim', !set.has(k)); });
+    rels.forEach((r) => { if (r.isUser) r.el.style.display = 'none'; r.el.classList.remove('on'); r.el.classList.toggle('dim', !(set.has(r.from) && set.has(r.to))); });
+    cpanel.hidden = false; cpanel.textContent = '';
+    cpanel.appendChild(h('h3', { text: (c.star ? '★ ' : '') + c.t }));
+    cpanel.appendChild(h('div', {}, [h('h4', { text: '무엇인가' }), h('p', { text: c.what }), h('h4', { text: '이 프로젝트에서' }), h('p', { text: c.here })]));
+    cpanel.appendChild(h('div', {}, [h('h4', { text: '코드' }), h('pre', { text: c.code }), h('h4', { text: '위치 · 표 ' + c.tables.length + '개' }), h('div', { class: 'refs', text: c.refs })]));
+    if (scroll) cpanel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+  cbox.appendChild(h('button', { type: 'button', class: 'chipbtn', 'data-k': 'none', text: '전체 보기', onclick: () => { clearConcept(true); rels.forEach((r) => { r.el.classList.remove('dim', 'on'); if (r.isUser) r.el.style.display = 'none'; }); Object.values(boxes).forEach((b) => b.classList.remove('sel', 'rel')); } }));
+  C.forEach((c) => cbox.appendChild(h('button', { type: 'button', class: 'chipbtn', 'data-k': c.id, onclick: () => pickConcept(c, false) }, [c.star ? h('span', { class: 'st', text: '★' }) : null, c.t])));
+
+  window.__erdPick = pickTable;
+  pickTable('attendance_logs');
+})();
+</script>
+<script id="code-data">
+(function () {
+  'use strict';
+  /* 중요 코드: 파일 · 메서드 · 진짜 코드 조각(저장소에서 그대로 옮기고 "…"로 줄임) */
+  const h = (tag, attrs, kids) => { const e = document.createElement(tag); for (const k in attrs || {}) { if (k === 'text') e.textContent = attrs[k]; else if (k === 'class') e.className = attrs[k]; else if (k.startsWith('on')) e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, attrs[k]); } (kids || []).forEach((c) => c != null && e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c)); return e; };
+
+  const LANES = [
+    { id: 'front', t: '프론트 · 공용 코드', sub: 'frontend/src' },
+    { id: 'gate', t: '백엔드 · 입구(보안 · 공통)', sub: 'config · security · exception' },
+    { id: 'core', t: '백엔드 · 핵심 로직', sub: 'service · push' },
+    { id: 'rt', t: '실시간 서버', sub: 'realtime/src + 입장권' },
+  ];
+  const TAGS = { sec: '보안', conc: '동시성', perf: '성능', tx: '트랜잭션', event: '이벤트', valid: '입력 검사', time: '한국 시간', privacy: '개인정보', ux: '화면 규칙' };
+
+  const F = [
+    /* ── 프론트 ── */
+    { id: 'api', lane: 'front', star: 1, file: 'frontend/src/lib/api.ts', name: 'api.ts', role: '모든 axios 요청의 출발점. 요청마다 액세스 토큰을 붙이고, 401 이 오면 리프레시 쿠키로 새 토큰을 받아 원래 요청을 다시 보낸다. 여러 요청이 동시에 401 이면 갱신은 한 번만 하고 나머지는 줄 세운다(waiters).', tags: ['sec', 'conc'], screens: ['login', 'home'],
+      methods: [
+        { sig: 'api.interceptors.request.use', line: 42, say: '요청 전에 localStorage 의 액세스 토큰을 Authorization 헤더에 붙인다.', code: 'api.interceptors.request.use((config) => {\n  const token = getStoredAccessToken();\n  if (token) {\n    config.headers.Authorization = `Bearer ${token}`;\n  }\n  return config;\n});' },
+        { sig: 'api.interceptors.response.use (401 처리)', line: 53, say: '401 → 갱신 중이면 기다렸다가 재시도, 아니면 /api/auth/refresh 를 한 번 부른다. 리프레시 토큰은 httpOnly 쿠키라 코드가 만지지 않는다.', code: 'if (refreshing) {\n  const refreshed = await new Promise<boolean>((resolve) => waiters.push(resolve));\n  if (!refreshed) return Promise.reject(error);\n  return api(originalRequest);\n}\nrefreshing = true;\noriginalRequest._retry = true;\n// 리프레시 토큰은 httpOnly 쿠키(withCredentials)로 자동 전송된다.\nconst refreshRes = await api.post("/api/auth/refresh");' },
+      ] },
+    { id: 'fetchauth', lane: 'front', file: 'frontend/src/lib/installFetchAuth.ts', name: 'installFetchAuth.ts', role: 'axios 를 안 쓰는 fetch 호출에도 같은 규칙(토큰 붙이기 · 401 이면 한 번 갱신 후 재시도)을 씌운다. 예전에 저장돼 있던 refreshToken 은 지운다(scrubStoredRefreshToken).', tags: ['sec'], screens: [],
+      methods: [{ sig: 'scrubStoredRefreshToken()', line: 23, say: '옛 버전이 localStorage 에 남긴 리프레시 토큰을 지운다. 리프레시 토큰은 쿠키로만 오가야 해서.', code: 'export function scrubStoredRefreshToken() { … }' }] },
+    { id: 'protected', lane: 'front', file: 'frontend/src/components/ProtectedRoute.tsx', name: 'ProtectedRoute.tsx', role: '로그인이 필요한 화면을 감싼다. 서버에 /api/auth/me 로 물어 확인하고, 안 되면 /login 으로 보낸다(돌아올 주소 from 을 들고).', tags: ['sec'], screens: ['login', 'mypage'],
+      methods: [{ sig: 'ProtectedRoute({ children })', line: 12, say: '상태 셋: checking → ok / unauthorized. 확인하는 동안 화면을 그리지 않는다.', code: 'type AuthState = "checking" | "ok" | "unauthorized";\n…\nconst res = await fetch(`${API_BASE}/api/auth/me`, { … });\n…\nreturn <Navigate to="/login" replace state={{ from }} />;' }] },
+    { id: 'rtlib', lane: 'front', star: 1, file: 'frontend/src/lib/realtime.ts', name: 'realtime.ts', role: '실시간 서버 연결 공용 설정. 연결 · 재연결 때마다 백엔드에서 2분짜리 입장권을 새로 받아 socket.io auth 로 넘긴다. 모임 방 입장권을 못 받으면 광장으로.', tags: ['sec'], screens: ['lounge', 'friends'],
+      methods: [
+        { sig: 'fetchRealtimeTicket(room)', line: 19, say: 'POST /api/realtime/ticket — 쿠키로 인증하고 입장권 문자열을 받는다.', code: 'const res = await fetch(url, {\n  method: "POST",\n  credentials: "include",\n  headers: { "Content-Type": "application/json" },\n  body: JSON.stringify({ room }),\n});\nif (!res.ok) throw await httpError(res, "실시간 연결을 준비하지 못했어요.");' },
+        { sig: 'realtimeAuthFor(room)', line: 44, say: '고른 방 입장권 → 실패하면 광장 입장권 → 그래도 실패하면 빈 auth(서버가 거절).', code: 'fetchRealtimeTicket(room)\n  .catch(() => (room === "square" ? Promise.reject() : fetchRealtimeTicket("square")))\n  .then((ticket) => cb({ ticket }))\n  .catch(() => cb({}));' },
+      ] },
+    { id: 'wslib', lane: 'front', star: 1, file: 'frontend/src/lib/workoutSession.ts', name: 'workoutSession.ts', role: '진행 중인 운동 세션은 이 기기(localStorage)에만 둔다. 새로고침 · 화면 꺼짐에도 이어서 하고, 끝낼 때 서버에 한 번 저장한다. 서버 표에 "진행 중" 상태가 없는 이유.', tags: ['ux'], screens: ['wsess'], tables: ['workout_sessions', 'workout_sets'],
+      methods: [{ sig: 'type ActiveSession', line: 12, say: '시작 시각 · 종목과 세트 · 휴식 타이머 · 마지막 세트 시각(끝내기를 잊었을 때 실제 끝을 짐작).', code: 'export type ActiveSession = {\n  /** 시작 시각(ms) */\n  startedAt: number;\n  exercises: ActiveExercise[];\n  rest: { endsAt: number; seconds: number } | null;\n  restSeconds: number;\n  lastDoneAt?: number;\n};' }] },
+    { id: 'livelib', lane: 'front', file: 'frontend/src/lib/live.ts', name: 'live.ts', role: '운동 · 러닝 화면이 켜져 있는 동안 1분마다 "운동 중"을 알리고, 화면을 떠나면 끝났다고 알린다. 화면이 꺼져 있으면 보내지 않는다(서버가 3분 뒤 알아서 뺀다).', tags: ['perf'], screens: ['wsess', 'run', 'lounge'],
+      methods: [{ sig: 'useLiveHeartbeat(active, activity, exercise)', line: 59, say: 'useEffect 두 개: 하나는 1분 박동, 하나는 정리(cleanup)에서 DELETE /api/live.', code: 'const beat = () => {\n  if (document.visibilityState === "hidden") return;\n  void api.put("/api/live", { activity, exercise: exercise ?? null }).catch(() => undefined);\n};\nbeat();\nconst t = window.setInterval(beat, BEAT_MS);' }] },
+    { id: 'httperr', lane: 'front', file: 'frontend/src/lib/httpError.ts', name: 'httpError.ts', role: '서버 오류를 화면에 보여 줄 한국어 문장으로 바꾸는 공용 규칙. 서버가 준 한국어 message 는 살리고, "HTTP 500" · 영어 · 스택 같은 원문은 상태 코드별 문장으로 바꾼다.', tags: ['ux'], screens: [],
+      methods: [
+        { sig: 'httpError(res, fallback)', line: 26, say: 'fetch 응답 → HttpError. 한글이 있고 120자 이하인 서버 문장만 쓴다.', code: 'const usable = serverMessage && /[가-힣]/.test(serverMessage) && serverMessage.length <= 120;\nreturn new HttpError(res.status, usable ? serverMessage\n  : BY_STATUS[res.status] ?? (res.status >= 500 ? `${fallback} 잠시 뒤에 다시 시도해 주세요.` : fallback));' },
+        { sig: 'friendlyError(err, fallback)', line: 47, say: 'catch 한 아무 값(axios 오류 · fetch 오류 · 네트워크 끊김)을 문장으로.', code: 'if (err instanceof TypeError) return "서버에 연결하지 못했어요. 인터넷 연결을 확인해 주세요.";' },
+      ] },
+    { id: 'pixel', lane: 'front', file: 'frontend/src/components/avatar/pixelAvatar.ts', name: 'pixelAvatar.ts', role: '24×32 칸에 픽셀 리프터를 그린다. 몸 정보 · 티어 · 장착한 민소매 · 운동 동작(2프레임)과 실제 무게만큼의 원판까지. 몸은 좌우 대칭이라 왼쪽만 그리고 거울로 복사한다.', tags: [], screens: ['mypage', 'lounge'], tables: ['character_profiles', 'user_body_stats', 'user_collections'],
+      methods: [{ sig: 'buildPixelAvatar(spec)', line: 143, say: '그리는 순서: 몸(뒤→앞) → 자동 외곽선 → 효과. /dev/avatars 에서 모든 변형을 본다.', code: '// 그리는 순서: 몸(뒤→앞) → 자동 외곽선(빈 칸 중 몸에 맞닿은 곳을 검정으로) → 효과(외곽선 없음).\n// 몸은 11/12 열 사이를 축으로 좌우 대칭이라 왼쪽만 그리고 거울로 복사한다.\nexport function buildPixelAvatar(spec: PixelAvatarSpec): PixelAvatarArt {' }] },
+    { id: 'photocard', lane: 'front', file: 'frontend/src/lib/photoCard.ts', name: 'photoCard.ts', role: '러닝 · 출석 공유 이미지를 캔버스에 직접 그린다(html2canvas 는 CSS filter 를 못 그려 저장본이 달랐다). 공유 파일은 미리 만들어 둔다 — navigator.share 는 누른 직후에만 열려서.', tags: ['ux'], screens: ['share', 'run'],
+      methods: [
+        { sig: 'drawPhotoCard(g, content, style)', line: 144, say: '사진 · 숫자 · 왼쪽 위 워터마크 하나를 캔버스에.', code: 'export function drawPhotoCard(g: CanvasRenderingContext2D, c: PhotoCardContent, o: PhotoCardStyle) {' },
+        { sig: 'loadCardFonts()', line: 40, say: '캔버스용 글꼴을 먼저 받는다. 안 받으면 기본 글꼴로 그려진다.', code: 'export async function loadCardFonts() {' },
+      ] },
+    { id: 'verdict', lane: 'front', file: 'frontend/src/lib/inbodyVerdict.ts', name: 'inbodyVerdict.ts', role: '인바디 "판정 장면"의 기준값 함수 한 벌. 성별 · 나이별 체지방 · BMI · 내장지방 · 골격근 기준과 점수 → 원판 등급.', tags: [], screens: ['inbody'], tables: ['diet_goals'],
+      methods: [{ sig: 'gradeForScore(score) / bodyFatStatus(pct, ctx)', line: 129, say: '숫자를 "낮음 · 적정 · 높음"과 원판 등급(5~25kg)으로.', code: 'export function getBodyFatThreshold(gender: VerdictGender, age: number) {\n…\nexport function gradeForScore(score: number): VerdictGrade {' }] },
+    { id: 'vite', lane: 'front', file: 'frontend/vite.config.ts', name: 'vite.config.ts', role: '배포 빌드는 VITE_API_BASE · VITE_REALTIME_URL 이 없으면 멈춘다. PWA: 화면 HTML 은 NetworkFirst(옛 화면이 먼저 뜨던 navigateFallback 을 껐다), 푸시는 push-sw.js 를 불러온다.', tags: ['ux'], screens: [],
+      methods: [{ sig: 'REQUIRED_PROD_ENV · workbox', line: 8, say: '주소 없이 배포해 화면이 빈 서버를 부르던 사고를 막는다.', code: "const REQUIRED_PROD_ENV = ['VITE_API_BASE', 'VITE_REALTIME_URL'] as const\n…\nnavigateFallback: null,\nimportScripts: ['push-sw.js'],\n…\nhandler: 'NetworkFirst'," }] },
+    { id: 'app', lane: 'front', file: 'frontend/src/App.tsx', name: 'App.tsx', role: '모든 주소(라우트)를 정한다. 화면은 lazy() 로 쪼개 처음 여는 화면만 받는다. 로그인 필요 화면은 ProtectedRoute, 관리자 화면은 AdminRoute 로 감싼다.', tags: ['perf'], screens: ['home'],
+      methods: [{ sig: 'lazy(() => import("./pages/…"))', line: 10, say: '코드 분할: 화면마다 따로 받는 JS 조각.', code: 'const Home = lazy(() => import("./pages/Home"));\nconst Protein = lazy(() => import("./pages/Protein"));' }] },
+
+    /* ── 백엔드 입구 ── */
+    { id: 'jwtfilter', lane: 'gate', star: 1, file: 'backend/…/config/JwtAuthenticationFilter.java', name: 'JwtAuthenticationFilter', role: '모든 요청이 컨트롤러 전에 지나가는 필터. Authorization 헤더(없으면 쿠키)에서 토큰을 꺼내, 유효한 "access" 토큰이면 SecurityContext 에 인증 정보를 넣는다. 그래서 컨트롤러가 @AuthenticationPrincipal 로 이메일을 받는다.', tags: ['sec'], screens: [],
+      methods: [
+        { sig: 'doFilterInternal(request, response, chain)', line: 28, say: '토큰 없으면 그냥 통과(공개 API 일 수 있다). 있으면 검증 → 인증 객체 등록.', code: 'String token = resolveToken(request);\nif (token == null) { filterChain.doFilter(request, response); return; }\nif (jwtUtil.validateToken(token) && "access".equals(jwtUtil.getTokenType(token))) {\n    String email = jwtUtil.getEmailFromToken(token);\n    String role = jwtUtil.getRoleFromToken(token);\n    UsernamePasswordAuthenticationToken authentication =\n        new UsernamePasswordAuthenticationToken(email, null, java.util.List.of(() -> role));\n    SecurityContextHolder.getContext().setAuthentication(authentication);\n}\nfilterChain.doFilter(request, response);' },
+        { sig: 'resolveToken(request)', line: 68, say: '"Bearer " 를 떼고 토큰만. 헤더가 없으면 쿠키에서 찾는다.', code: 'if (authHeader != null && authHeader.startsWith("Bearer ")) {\n    return authHeader.substring(7);\n}' },
+      ] },
+    { id: 'security', lane: 'gate', file: 'backend/…/config/SecurityConfig.java', name: 'SecurityConfig', role: '어떤 주소를 로그인 없이 열고 어떤 주소에 역할이 필요한지 정하는 SecurityFilterChain. JWT 필터를 끼우고, 인증 실패 · 권한 없음 응답을 JSON 으로 만든다.', tags: ['sec'], screens: [],
+      methods: [{ sig: 'securityFilterChain(http, …)', line: 55, say: '세션을 쓰지 않는(stateless) 토큰 인증.', code: 'public SecurityFilterChain securityFilterChain(HttpSecurity http, …)' }] },
+    { id: 'jwtutil', lane: 'gate', file: 'backend/…/config/JwtUtil.java', name: 'JwtUtil', role: '액세스 토큰을 만들고 검사한다. 토큰 안에 이메일 · 역할 · 종류(access)가 들어 있다.', tags: ['sec'], screens: [],
+      methods: [{ sig: 'generateAccessToken(email, role) / validateToken(token)', line: 36, say: '서명 · 만료를 확인한다.', code: 'public String generateAccessToken(String email, String role) {\n…\npublic boolean validateToken(String token) {' }] },
+    { id: 'refresh', lane: 'gate', star: 1, file: 'backend/…/service/RefreshTokenService.java', name: 'RefreshTokenService', role: '로그인 유지 토큰. 256비트 무작위 값을 쿠키로만 주고 DB 엔 SHA-256 해시만 둔다. 쓸 때마다 새 토큰으로 바꾸고(회전), 이미 버린 토큰이 30초 뒤 다시 오면 탈취로 보고 그 사람 토큰을 모두 지운다.', tags: ['sec', 'conc', 'tx'], tables: ['refresh_tokens'], screens: ['login'],
+      methods: [
+        { sig: 'rotate(rawToken)', line: 73, say: '① 만료 → 401 ② 이미 폐기 + 30초 안 → 동시에 여러 탭이 갱신한 것, 방금 만든 새 토큰을 그대로 ③ 30초 지남 → 재사용 감지, 전부 끊기 ④ 정상 → 새 토큰, 옛 토큰 폐기.', code: 'if (current.getRevokedAt() != null) {\n    boolean withinGrace = current.getRevokedAt().plusSeconds(GRACE_SECONDS).isAfter(now);\n    if (withinGrace) {\n        GraceEntry cached = graceCache.get(hash);\n        if (cached != null) return Rotation.of(cached.rawToken(), user);\n        …\n    }\n    // 유예 시간이 지난 폐기 토큰이 다시 왔다 = 누군가 예전 토큰을 들고 있다. 전부 끊는다.\n    refreshTokenRepository.deleteByUser_Id(user.getId());\n    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "보안을 위해 다시 로그인해 주세요.");\n}\nString newRaw = newRawToken();\nString newHash = save(user, newRaw);\ncurrent.setRevokedAt(now);\ncurrent.setReplacedBy(newHash);' },
+        { sig: 'purgeStale()  @Scheduled(cron = "0 30 4 * * *")', line: 133, say: '매일 새벽 4시 30분에 만료 · 오래된 폐기 토큰 정리.', code: '@Scheduled(cron = "0 30 4 * * *")\n@Transactional\npublic void purgeStale() {' },
+      ] },
+    { id: 'social', lane: 'gate', star: 1, file: 'backend/…/service/SocialLoginService.java', name: 'SocialLoginService', role: '소셜 로그인으로 들어온 사람을 우리 회원으로 찾는 유일한 곳. ① 공급자 · 회원 번호 ② 인증된 이메일 ③ 새 가입. 이메일이 없으면 …@users.musclehub.invalid 를 쓴다.', tags: ['sec', 'privacy', 'tx'], tables: ['users', 'social_accounts'], screens: ['login'],
+      methods: [{ sig: 'resolveUser(SocialProfile p)', line: 48, say: '찾는 순서가 핵심. 인증 안 된 이메일로는 기존 계정에 붙이지 않는다(남의 계정 가로채기 방지).', code: 'Optional<SocialAccount> linked = socialAccountRepository\n    .findByProviderAndProviderUserId(p.provider(), p.providerUserId());\nif (linked.isPresent()) return linked.get().getUser();\n\nString email = normalizeEmail(p.email());\nif (email != null && p.emailVerified()) {\n    Optional<User> existing = userRepository.findByEmail(email);\n    if (existing.isPresent()) { link(existing.get(), p, email); return existing.get(); }\n}\n// 새로 가입. 인증된 이메일이 비어 있지 않고 아직 아무도 안 쓰면 그 이메일, 아니면 내부용 주소\nboolean useRealEmail = email != null && p.emailVerified() && !userRepository.existsByEmail(email);\nString accountEmail = useRealEmail ? email : placeholderEmail(p);' }] },
+    { id: 'ratelimit', lane: 'gate', file: 'backend/…/security/RateLimiter.java', name: 'RateLimiter', role: '키(사용자 · IP · 기능)마다 일정 시간에 몇 번까지 허용할지 센다. 로그인 실패 잠금(recordFailure · isBlocked)도 여기서. 5분마다 지난 기록을 지운다.', tags: ['sec', 'conc'], screens: [],
+      methods: [{ sig: 'tryAcquire(key, limit, window) / check(…)', line: 40, say: 'check 는 넘치면 429 와 한국어 문장을 던진다.', code: 'public boolean tryAcquire(String key, int limit, Duration window) {\n…\n@Scheduled(fixedDelay = 300_000L)\npublic void evictExpired() {' }] },
+    { id: 'exhandler', lane: 'gate', file: 'backend/…/exception/GlobalExceptionHandler.java', name: 'GlobalExceptionHandler', role: '모든 예외를 한 모양(ApiErrorResponse)의 JSON 으로. 유니크 위반(DataIntegrityViolation)은 409, 잘못된 입력은 400. 프론트 httpError.ts 가 이 message 를 화면에 쓴다.', tags: ['ux'], screens: [],
+      methods: [{ sig: '@ExceptionHandler(DataIntegrityViolationException.class)', line: 68, say: 'DB 제약 위반을 500 이 아니라 409 로.', code: '@ExceptionHandler(ResponseStatusException.class)\npublic ResponseEntity<ApiErrorResponse> handleRSE(…)\n…\n@ExceptionHandler(DataIntegrityViolationException.class)\npublic ResponseEntity<ApiErrorResponse> handleDataIntegrity(…)' }] },
+    { id: 'timecfg', lane: 'gate', file: 'backend/…/config/TimeConfig.java', name: 'TimeConfig', role: '"오늘"은 한국 시간. Clock 빈 하나를 모든 서비스가 주입받아 LocalDate.now(clock) 으로 쓴다. 테스트에서 시계를 바꿔 끼울 수 있다.', tags: ['time'], screens: ['attend'],
+      methods: [{ sig: 'clock()', line: 29, say: 'LocalDate.now() 를 새로 쓰지 않는다(서버 시간대에 흔들림).', code: 'public static final ZoneId KST = ZoneId.of("Asia/Seoul");\n…\npublic Clock clock() {\n    return Clock.system(KST);\n}' }] },
+
+    /* ── 백엔드 핵심 ── */
+    { id: 'attendance', lane: 'core', star: 1, file: 'backend/…/service/AttendanceServiceImpl.java', name: 'AttendanceServiceImpl', role: '앱의 핵심 고리 출발점. 출석 저장 → 이벤트 진행도 → 주간 목표 보너스 → 오늘 할 일 이벤트 → 캐릭터 성장까지 한 트랜잭션. 같은 날 동시 저장은 유니크 위반을 잡아 한 번 더.', tags: ['tx', 'conc', 'perf', 'event', 'time'], tables: ['attendance_logs', 'weekly_goal_weeks', 'event_participants', 'character_profiles'], screens: ['attend'],
+      methods: [
+        { sig: 'upsertWithRetry(work)', line: 110, say: 'TransactionTemplate 로 직접 트랜잭션을 두 번까지 연다. 두 번째도 겹치면 409. 끝나면 주간 랭킹 캐시를 비운다.', code: 'TransactionTemplate tx = new TransactionTemplate(transactionManager);\ntry {\n    response = tx.execute(status -> work.get());\n} catch (DataIntegrityViolationException first) {\n    try {\n        response = tx.execute(status -> work.get());\n    } catch (DataIntegrityViolationException second) {\n        throw new ResponseStatusException(HttpStatus.CONFLICT,\n                "같은 날 출석이 동시에 저장되고 있어요. 잠시 후 다시 시도해 주세요.");\n    }\n}\nweeklyStreakSnapshot = null; // 출석이 바뀌었으니 주간 랭킹 캐시를 비운다.' },
+        { sig: 'doUpsert(email, date, request, allowCreate)', line: 127, say: '출석 한 번이 일으키는 일 전부. 이벤트(ActivityEvent)를 발행해 오늘 할 일이 따로 듣게 했다.', code: 'UpsertResult result = upsert(user, date, request, allowCreate);\nList<EventProgressResponse> eventProgress =\n    eventService.updateAttendanceProgress(user, date, result.previousDidWorkout, result.currentDidWorkout);\nWeeklyGoalService.Reward weekly = result.currentDidWorkout && !result.previousDidWorkout\n    ? weeklyGoalService.onWorkoutAdded(user, date) : null;\nint points = result.pointsEarned + (weekly == null ? 0 : weekly.bonusPoints());\nevents.publishEvent(new ActivityEvent(user.getId(), ActivityEvent.Kind.ATTENDANCE, date));\nCharacterChangeResponse change = characterGrowthService.applyAttendance(user, points);' },
+        { sig: 'getWeeklyStreakRanking(limit)', line: 291, say: '★ N+1 을 고친 곳: 회원마다 출석을 조회하던 것을 한 번에 읽고 메모리에서 계산 + 2분 재사용.', code: '/** 예전에는 회원 전체를 읽고 회원마다 출석을 한 번씩 조회(N+1)했고, 출석 화면을 열 때마다 불렸다.\n * → 이번 주 운동 기록을 한 번에 읽어 메모리에서 계산하고, 결과를 2분 동안 재사용한다. */\n@Transactional(readOnly = true)\npublic List<AttendanceRankingItemResponse> getWeeklyStreakRanking(int limit) {' },
+      ] },
+    { id: 'workout', lane: 'core', star: 1, file: 'backend/…/service/WorkoutSessionService.java', name: 'WorkoutSessionService', role: '끝난 운동 세션을 한 번에 저장한다. 시각 · 시간 · 종목 · 무게 · 횟수를 모두 서버에서 다시 검사하고(화면 값을 믿지 않음), 개인 최고 · 출석 · 그림자 공격까지 같은 트랜잭션에서.', tags: ['valid', 'tx', 'time'], tables: ['workout_sessions', 'workout_sets', 'lift_entries', 'attendance_logs', 'shadow_weeks', 'shadow_hit'], screens: ['wsess'],
+      methods: [
+        { sig: 'save(me, email, SaveRequest req)', line: 87, say: '검사 → 세션 + 세트(cascade 로 함께 저장) → 종목별 최고 기록 → (원하면) 출석 → 그림자 공격.', code: 'if (endedAt.isAfter(now.plus(CLOCK_SKEW)) || startedAt.isBefore(now.minusDays(1))) {\n    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "운동 시각이 맞지 않아요. 휴대폰 시계를 확인해 주세요.");\n}\nif (duration.compareTo(MIN_DURATION) < 0 || duration.compareTo(MAX_DURATION) > 0) { … "1분 ~ 6시간" … }\n…\nsession.getSets().add(WorkoutSet.builder().session(session).exercise(ex.code())\n        .exerciseOrder(i).setOrder(j).weightKg(w).reps(r).build());\n…\nWorkoutSession saved = sessionRepository.save(session);\n…\nShadowHitResponse shadow = shadowBossService.onSession(me, saved, !prs.isEmpty());\nreturn new SaveResult(detail(saved), prs, statUpdates, points, attendance, shadow);' },
+      ] },
+    { id: 'collection', lane: 'core', star: 1, file: 'backend/…/service/CollectionService.java', name: 'CollectionService', role: '도감과 보상 상자. 상자를 열 때 지갑 줄을 잠그고(findForUpdate) 읽어서, 두 번 눌러도 상자가 한 번만 줄어든다. 이미 가진 걸 뽑으면 조각으로.', tags: ['conc', 'tx'], tables: ['user_collections', 'user_collection_items'], screens: ['collection'],
+      methods: [{ sig: 'open(me)', line: 110, say: 'lockedWallet → 상자 수 확인 → 희귀도 뽑기 → 중복이면 조각, 아니면 도감에 추가.', code: 'UserCollection wallet = lockedWallet(me);   // SELECT … FOR UPDATE\nif (wallet.getBoxes() <= 0) {\n    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "열 상자가 없어요. 운동하고 주간 목표를 채우면 생겨요.");\n}\nwallet.setBoxes(wallet.getBoxes() - 1);\nCollectionItem.Rarity rarity = rollRarity();\n…\nboolean duplicate = itemRepository.existsByUser_IdAndItemCode(me.getId(), item.name());\nif (duplicate) { shards = rarity.duplicateShards; wallet.setShards(wallet.getShards() + shards); }' }] },
+    { id: 'quest', lane: 'core', file: 'backend/…/service/DailyQuestService.java', name: 'DailyQuestService', role: '오늘 할 일(출석 · 식단 1끼 · 응원 · 단백질). 출석 · 식단 · 응원 서비스가 ActivityEvent 를 발행하면 @EventListener 로 듣는다 — 서로 직접 부르지 않아 의존이 한 방향.', tags: ['event', 'conc', 'time'], tables: ['daily_quests'], screens: ['home'],
+      methods: [{ sig: 'on(ActivityEvent event)  @EventListener', line: 70, say: '오늘 이벤트만 처리. 줄을 잠그고 읽어 보너스를 두 번 주지 않는다. 출석 · 식단 여부는 원래 기록에서 확인.', code: '@EventListener\n@Transactional\npublic void on(ActivityEvent event) {\n    LocalDate today = LocalDate.now(clock);\n    if (event.date() == null || !event.date().equals(today)) return;\n    DailyQuest q = questRepository.findForUpdate(me.getId(), today)\n            .orElseGet(() -> questRepository.save(DailyQuest.builder().user(me).questDate(today).build()));\n    if (event.kind() == ActivityEvent.Kind.CHEER) q.setCheerDone(true);\n    int gained = settle(me, q, today);\n    if (gained > 0) characterGrowthService.applyAttendance(me, gained);\n}' }] },
+    { id: 'shadow', lane: 'core', file: 'backend/…/service/ShadowBossService.java', name: 'ShadowBossService', role: '주간 보스 "그림자". 세션 · 러닝을 저장할 때 같은 트랜잭션에서 공격을 계산한다. 그 주 줄은 처음 볼 때 만든다(스케줄러 없음).', tags: ['tx', 'time'], tables: ['shadow_weeks', 'shadow_hit'], screens: ['shadow', 'wsess', 'run'],
+      methods: [{ sig: 'onSession(user, session, hasPr)', line: 81, say: '힘 = 총 볼륨 + 맨몸 횟수. 개인 최고를 깼으면 치명타.', code: 'int bodyweightReps = 0;\nfor (WorkoutSet set : session.getSets()) {\n    ExerciseCatalog.ExerciseDef def = defs.get(set.getExercise());\n    if (def != null && def.bodyweight()) bodyweightReps += set.getReps();\n}\nint force = ShadowRules.sessionForce(session.getTotalVolume(), bodyweightReps);\nreturn attack(user, ShadowHit.SESSION, session.getId(), force, hasPr);' }] },
+    { id: 'growth', lane: 'core', file: 'backend/…/service/CharacterGrowthService.java', name: 'CharacterGrowthService', role: '점수를 받아 캐릭터 레벨 · 티어 · 진화 단계를 올리고, 바뀌면 변화 기록을 남긴다. 출석 · 퀘스트 · 이벤트 성공이 모두 여기로 모인다.', tags: ['tx'], tables: ['character_profiles', 'character_evolution_history'], screens: ['mypage'],
+      methods: [{ sig: 'applyAttendance(user, pointsEarned)', line: 23, say: '핵심 고리 "출석 → 캐릭터 성장"의 도착점.', code: '@Transactional\npublic CharacterChangeResponse applyAttendance(User user, int pointsEarned) {' }] },
+    { id: 'perm', lane: 'core', star: 1, file: 'backend/…/service/GymPermissionService.java', name: 'GymPermissionService', role: '모임(짐) 권한을 판단하는 유일한 곳. 행동 다섯 가지 × 역할 셋(OWNER · STAFF · MEMBER). 컨트롤러마다 if 문을 흩뿌리지 않는다.', tags: ['sec'], tables: ['workout_crews', 'workout_crew_members'], screens: ['challenge', 'gympage'],
+      methods: [{ sig: 'can(user, gym, action) / require(…)', line: 55, say: '관리자는 항상 허용. require 는 안 되면 403 과 역할에 맞는 문장.', code: 'static boolean allows(WorkoutCrewMemberRole role, GymAction action) {\n    return switch (action) {\n        case MANAGE_SETTINGS, MANAGE_STAFF -> role == WorkoutCrewMemberRole.OWNER;\n        case MANAGE_MEMBERS, MANAGE_CONTENT -> role == WorkoutCrewMemberRole.OWNER || role == WorkoutCrewMemberRole.STAFF;\n        case VIEW_MEMBERS -> true;\n    };\n}' }] },
+    { id: 'live', lane: 'core', file: 'backend/…/service/LiveActivityService.java', name: 'LiveActivityService', role: '"지금 운동 · 러닝 중"은 DB 가 아니라 서버 메모리(ConcurrentHashMap)에 3분만. 목록은 10초 동안 같은 걸 돌려준다. 서버를 여러 대로 늘리면 공유 저장소로 옮겨야 한다.', tags: ['perf', 'conc', 'privacy'], screens: ['lounge', 'wsess', 'run'],
+      methods: [
+        { sig: 'beat(me, LiveRequest req)', line: 69, say: '같은 사람이 다시 알리면 종목 · 마지막 시각만 바뀐다. 남의 종목 코드는 무시.', code: 'Instant now = clock.instant();\nEntry prev = live.get(me.getId());\nInstant since = prev != null && prev.activity() == activity ? prev.since() : now;\nlive.put(me.getId(), new Entry(me.getId(), activity, ex, since, now));\ncachedAt = Instant.EPOCH;' },
+        { sig: 'list(me)', line: 93, say: '3분 지난 사람을 빼고, 10초 캐시. 응답에 이메일 · 사용자 번호 · 무게를 싣지 않는다.', code: 'live.values().removeIf(e -> e.seen().plus(TTL).isBefore(now));\nif (cachedAt.plus(LIST_CACHE).isBefore(now)) { cached = build(); cachedAt = now; }' },
+      ] },
+    { id: 'look', lane: 'core', file: 'backend/…/service/AvatarLookService.java', name: 'AvatarLookService', role: '다른 사람에게 보이는 캐릭터 겉모습(장착 민소매 · 칭호 · 운동 직후 1시간 펌핑)을 만드는 한 곳. 여러 명을 IN 쿼리 두 번으로 한꺼번에 계산(N+1 없음).', tags: ['perf'], tables: ['user_collections', 'workout_sessions'], screens: ['lounge', 'friends', 'crew'],
+      methods: [{ sig: 'looks(Collection<Long> userIds)', line: 46, say: '친구 · 모임 · 라운지 입장권이 같이 쓴다.', code: 'em.createQuery("select c from UserCollection c where c.user.id in :ids", UserCollection.class)\n…\nem.createQuery("select s.user.id, max(s.endedAt) from WorkoutSession s where s.user.id in :ids and s.endedAt > :since "\n        + "and s.endedAt <= :now group by s.user.id", Object[].class)' }] },
+    { id: 'push', lane: 'core', file: 'backend/…/push/PushService.java', name: 'PushService', role: '웹 푸시는 여기서만 보낸다: 하루 2개, 종류별 끄기, 밤 10시~아침 8시 금지. 요청 중에 생긴 알림은 PushEvent 로 남기고, 커밋된 뒤 다른 스레드에서 보낸다.', tags: ['event', 'tx', 'time'], tables: ['push_subscriptions', 'push_preferences', 'push_logs'], screens: ['mypage'],
+      methods: [{ sig: 'on(PushEvent e)', line: 175, say: '@TransactionalEventListener: 원래 요청이 커밋돼야 보낸다(롤백되면 안 보냄). @Async + REQUIRES_NEW: 요청을 붙잡지 않고 따로.', code: '@Async\n@TransactionalEventListener(fallbackExecution = true)\n@Transactional(propagation = Propagation.REQUIRES_NEW)\npublic void on(PushEvent e) {\n    try {\n        send(e.userId(), e.type(), e.message());\n    } catch (RuntimeException ex) {\n        log.info("[push] 알림을 보내지 못함: {}", ex.getClass().getSimpleName());\n    }\n}' }] },
+    { id: 'deletion', lane: 'core', file: 'backend/…/service/AccountDeletionService.java', name: 'AccountDeletionService', role: '탈퇴. 개인 데이터를 표마다 일괄 삭제(JPQL bulk delete)하고 사용자 행은 "탈퇴한 회원"으로 남긴다. 사용자를 가리키는 새 표를 만들면 여기에도 넣어야 한다(AccountSafetyTest 로 확인).', tags: ['privacy', 'tx'], tables: ['users', 'brag_post', 'attendance_logs', 'meal_entries'], screens: ['mypage'],
+      methods: [{ sig: 'delete(user)', line: 50, say: '자식부터 지운다(FK 순서). 일괄 삭제는 영속성 컨텍스트를 건너뛰어서 먼저 flush.', code: 'handOverGyms(user);\n// 아래는 모두 일괄 삭제(쿼리)라 메모리의 엔티티와 어긋날 수 있다 → 먼저 쓰고, 끝나면 비운 뒤 사용자를 다시 읽는다\nem.flush();\nexec("delete from BragComment c where c.bragPost.user.id = :id", id);\nexec("delete from BragLike l where l.bragPost.user.id = :id", id);\n…\nexec("delete from AttendanceLog a where a.user.id = :id", id);' }] },
+    { id: 'food', lane: 'core', file: 'backend/…/service/FoodCatalogService.java · BarcodeService.java', name: 'FoodCatalogService · BarcodeService', role: '음식 검색 데이터는 DB 가 아니라 서버 메모리(시작할 때 foods.tsv.gz 를 읽음). 바코드는 식약처 C005 로 이름 · 회사만 찾고 영양값은 이 메모리 DB 에서. 키가 주소에 들어가서 주소 · 오류 원문을 로그에 남기지 않는다.', tags: ['perf', 'sec'], tables: ['food_items', 'meal_entries'], screens: ['diet'],
+      methods: [
+        { sig: 'FoodCatalogService.search(q)', line: 118, say: '아직 다 못 읽었으면 ready=false 로 알린다.', code: 'public record SearchResult(boolean ready, List<FoodView> items) {}\n…\npublic SearchResult search(String q) {' },
+        { sig: 'BarcodeService.lookup(me, raw)', line: 66, say: '키가 없으면 503 으로 꺼진다.', code: 'public BarcodeResult lookup(User me, String raw) {' },
+      ] },
+
+    /* ── 실시간 ── */
+    { id: 'ticket', lane: 'rt', star: 1, file: 'backend/…/controller/RealtimeTicketController.java', name: 'RealtimeTicketController', role: '라운지 입장권을 만드는 백엔드 쪽. 본문(JSON) + HMAC-SHA256 서명. 닉네임 · 레벨 · 겉모습 · 방을 서버가 채우므로 앱이 보낸 값은 믿지 않는다. 모임 방은 멤버인지 확인한 뒤에만 넣는다. 라운지에 보이는 id 도 HMAC 이라 DB id 를 알 수 없다.', tags: ['sec', 'privacy'], tables: ['workout_crew_members', 'character_profiles'], screens: ['lounge'],
+      methods: [
+        { sig: 'issue(email, TicketRequest)', line: 106, say: '2분짜리. room 은 square 또는 gym:{id}.', code: '// 형식: base64url(JSON 본문) + "." + base64url(HMAC-SHA256(본문, REALTIME_TICKET_SECRET))\nWorkoutCrew roomGym = resolveRoomGym(request == null ? null : request.room(), user);\nlong exp = now + TTL_SECONDS;\nclaims.put("pid", publicId(user.getId()));\nclaims.put("room", roomGym == null ? "square" : "gym:" + roomGym.getId());\nclaims.put("exp", exp);' },
+        { sig: 'publicId(userId)', line: 195, say: '이메일 · DB id 를 거꾸로 알아낼 수 없는 공개 id.', code: 'Mac mac = Mac.getInstance("HmacSHA256");\nmac.init(new SecretKeySpec(secret, "HmacSHA256"));' },
+      ] },
+    { id: 'rtauth', lane: 'rt', star: 1, file: 'realtime/src/auth.ts', name: 'auth.ts · verifyTicket', role: '실시간 서버가 입장권을 확인한다. 같은 비밀값으로 서명을 다시 만들어 비교하는데, timingSafeEqual 로 비교 시간을 일정하게 해서 한 글자씩 맞혀 보는 공격을 막는다. 만료 · 발급 시각 · 형식까지 검사.', tags: ['sec'], screens: ['lounge'],
+      methods: [{ sig: 'verifyTicket(raw)', line: 72, say: '서명이 맞아야 본문을 믿는다.', code: 'const expected = createHmac("sha256", secret).update(body, "ascii").digest();\n…\nif (given.length !== expected.length || !timingSafeEqual(given, expected)) return null;\n…\nif (!Number.isFinite(claims.exp) || claims.exp + CLOCK_SKEW_SECONDS < now) return null;\nif (!Number.isSafeInteger(claims.uid) || claims.uid <= 0) return null;' }] },
+    { id: 'rtserver', lane: 'rt', file: 'realtime/src/server.ts', name: 'server.ts', role: 'Socket.IO 서버. 연결할 때(handshake) 입장권을 검사하고, 방은 입장권의 room 으로만 나눈다. 위치는 움직인 사람만 모아 일정 간격으로 방마다 보낸다(매 움직임마다 보내지 않음). 방을 나누는 코드를 바꾸면 npm run check:rooms.', tags: ['sec', 'perf'], screens: ['lounge', 'friends'],
+      methods: [
+        { sig: 'io.use(handshake)', line: 188, say: '입장권이 없거나 틀리면 연결 자체를 거절(개발 모드에서만 손님 허용).', code: 'const ticket = (socket.handshake.auth as Record<string, unknown> | undefined)?.ticket;\nif (ticket !== undefined && ticket !== null && ticket !== "") {\n  const claims = verifyTicket(ticket);\n  if (!claims) { next(new Error("unauthorized")); return; }\n  socket.data.identity = claims;\n  next(); return;\n}' },
+        { sig: 'setInterval(lounge:moves)', line: 181, say: '위치 방송 묶어 보내기 — 사람이 많아도 메시지 수가 폭발하지 않게.', code: 'setInterval(() => {\n  for (const [roomKey, moves] of takeMovesByRoom()) {\n    io.to(socketRoomOf(roomKey)).emit("lounge:moves", { moves });\n  }\n}, MOVES_BROADCAST_MS);' },
+        { sig: 'on("lounge:join") / on("chat:send")', line: 264, say: '프로필은 입장권에서. 채팅은 200자로 자르고 같은 방에만.', code: 'const profile = identity ? profileFromTicket(identity) : profileFromGuestPayload(socket.id, payload);\nconst player = addPlayer(socket.id, roomKey, profile, extrasFromPayload(payload));\nsocket.join(roomName);\nbroadcastPlayers(roomKey);' },
+      ] },
+  ];
+
+  // 호출 사슬: [파일 id, 메서드, 한 줄]
+  const CHAINS = [
+    { id: 'attend', t: '출석 체크 한 번', steps: [
+      ['api', 'request 인터셉터', '토큰을 붙여 POST /api/attendance/today'],
+      ['jwtfilter', 'doFilterInternal', '토큰 확인 → 인증 정보 등록'],
+      ['attendance', 'upsertWithRetry', '트랜잭션 열기(겹치면 한 번 더)'],
+      ['attendance', 'doUpsert', '출석 저장 · 이벤트 진행도 · 주간 목표'],
+      ['quest', 'on(ActivityEvent)', '오늘 할 일 보너스(잠그고 읽기)'],
+      ['growth', 'applyAttendance', '캐릭터 레벨 · 티어'],
+    ] },
+    { id: 'workout', t: '운동 끝내기', steps: [
+      ['wslib', 'ActiveSession', '세트는 기기에만 쌓다가'],
+      ['workout', 'save', '서버에서 다시 검사하고 한 번에 저장'],
+      ['attendance', 'upsertToday', '"출석도 체크"를 골랐으면'],
+      ['shadow', 'onSession', '그림자 공격 · 치명타'],
+      ['live', 'list', '라운지 운동 구역에서 사라짐(3분)'],
+    ] },
+    { id: 'refresh', t: '로그인 유지(401)', steps: [
+      ['api', 'response 인터셉터', '401 → 갱신은 한 번만, 나머지는 줄 서기'],
+      ['refresh', 'rotate', '새 토큰 · 옛 토큰 폐기 · 재사용 감지'],
+      ['api', 'api(originalRequest)', '새 액세스 토큰으로 원래 요청 다시'],
+    ] },
+    { id: 'lounge', t: '라운지 입장', steps: [
+      ['rtlib', 'realtimeAuthFor', '연결 때마다 입장권 받기'],
+      ['ticket', 'issue', '서버가 프로필 · 방을 채우고 서명'],
+      ['rtserver', 'io.use', '연결 전에 검사'],
+      ['rtauth', 'verifyTicket', 'HMAC · 만료 확인'],
+      ['rtserver', 'lounge:join', '방에 넣고 사람 목록 방송'],
+    ] },
+    { id: 'login', t: '소셜 로그인', steps: [
+      ['social', 'resolveUser', '회원 번호 → 인증 이메일 → 새 가입'],
+      ['refresh', 'issueFor', '리프레시 토큰(쿠키) 발급'],
+      ['protected', 'ProtectedRoute', '/api/auth/me 로 확인 후 화면 열기'],
+    ] },
+    { id: 'push', t: '응원 알림', steps: [
+      ['quest', 'on(ActivityEvent)', '응원도 오늘 할 일에 반영'],
+      ['push', 'on(PushEvent)', '커밋 뒤 따로 · 하루 2개 · 밤 금지'],
+    ] },
+  ];
+
+  const BY = {}; F.forEach((f) => { BY[f.id] = f; });
+
+  /* ── 그리기 ── */
+  const laneBox = document.getElementById('code-lanes'), note = document.getElementById('code-note');
+  const chainBox = document.getElementById('chains'), chainView = document.getElementById('chain');
+  const tagBox = document.getElementById('code-tags');
+  const cards = {};
+  LANES.forEach((L) => {
+    const col = h('div', { class: 'lane' }, [h('div', { class: 'lane-h' }, [h('b', { text: L.t }), h('span', { text: L.sub })])]);
+    F.filter((f) => f.lane === L.id).forEach((f) => {
+      const c = h('button', { type: 'button', class: 'fcard' + (f.star ? ' star' : ''), onclick: () => pickFile(f.id) }, [
+        h('span', { class: 'fn', text: f.name }),
+        f.star ? h('span', { class: 'fs', text: '★', 'aria-label': '꼭 알아야 할 파일' }) : null,
+        h('span', { class: 'fm', text: f.methods.map((m) => m.sig.split('(')[0].split('  ')[0]).join(' · ') }),
+        h('span', { class: 'ftags' }, f.tags.map((t) => h('i', { text: TAGS[t] }))),
+      ]);
+      cards[f.id] = c; col.appendChild(c);
+    });
+    laneBox.appendChild(col);
+  });
+
+  function goto(view, fn) {
+    if (window.__show) window.__show(view);
+    try { history.replaceState(null, '', '#' + view); } catch (e) { /* 주소를 못 바꿔도 화면은 바뀐다 */ }
+    if (fn) setTimeout(fn, 0);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function pickFile(id, step) {
+    const f = BY[id];
+    Object.keys(cards).forEach((k) => cards[k].classList.toggle('sel', k === id));
+    note.textContent = '';
+    note.appendChild(h('div', { class: 'cls', text: f.file }));
+    note.appendChild(h('h3', { text: (f.star ? '★ ' : '') + f.name }));
+    note.appendChild(h('p', { text: f.role }));
+    if (f.tags.length) note.appendChild(h('div', { class: 'tags' }, f.tags.map((t) => h('span', { class: 'tag', text: TAGS[t] }))));
+    note.appendChild(h('h4', { text: '중요 메서드 ' + f.methods.length + '개' }));
+    f.methods.forEach((m, i) => {
+      const d = h('details', { class: 'meth' }, [
+        h('summary', {}, [h('code', { text: m.sig }), h('span', { class: 'ln', text: ':' + m.line })]),
+        h('p', { text: m.say }),
+        h('pre', { text: m.code }),
+      ]);
+      if (i === 0 || (step && m.sig.includes(step))) d.open = true;
+      note.appendChild(d);
+    });
+    if ((f.tables && f.tables.length) || (f.screens && f.screens.length)) {
+      note.appendChild(h('h4', { text: '이어진 표 · 화면' }));
+      const row = h('div', {});
+      (f.tables || []).forEach((t) => row.appendChild(h('button', { type: 'button', class: 'lnk', text: t, onclick: () => goto('erd', () => window.__erdPick && window.__erdPick(t)) })));
+      (f.screens || []).forEach((sId) => row.appendChild(h('button', { type: 'button', class: 'lnk scr', text: (window.__screenName && window.__screenName(sId)) || sId, onclick: () => goto('flow', () => window.__flowPick && window.__flowPick(sId)) })));
+      note.appendChild(row);
+    }
+  }
+
+  function pickChain(c) {
+    chainBox.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.k === c.id ? 'true' : 'false'));
+    chainView.textContent = '';
+    c.steps.forEach((st, i) => {
+      const f = BY[st[0]];
+      chainView.appendChild(h('button', { type: 'button', class: 'step', onclick: () => pickFile(st[0], st[1]) }, [
+        h('span', { class: 'sn', text: String(i + 1) }),
+        h('span', { class: 'sf', text: f.name }),
+        h('code', { text: st[1] }),
+        h('span', { class: 'ss', text: st[2] }),
+      ]));
+      if (i < c.steps.length - 1) chainView.appendChild(h('span', { class: 'arrow', 'aria-hidden': 'true', text: '→' }));
+    });
+    const lit = new Set(c.steps.map((x) => x[0]));
+    Object.keys(cards).forEach((k) => cards[k].classList.toggle('lit', lit.has(k)));
+    pickFile(c.steps[0][0], c.steps[0][1]);
+  }
+  CHAINS.forEach((c) => chainBox.appendChild(h('button', { type: 'button', class: 'chipbtn', 'data-k': c.id, text: c.t, onclick: () => pickChain(c) })));
+
+  // 꼬리표로 거르기
+  let curTag = null;
+  function setTag(t) {
+    curTag = curTag === t ? null : t;
+    tagBox.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.k === curTag ? 'true' : 'false'));
+    F.forEach((f) => cards[f.id].classList.toggle('dim', !!curTag && (curTag === 'star' ? !f.star : !f.tags.includes(curTag))));
+  }
+  tagBox.appendChild(h('button', { type: 'button', class: 'chipbtn', 'data-k': 'star', onclick: () => setTag('star') }, [h('span', { class: 'st', text: '★' }), '꼭 알아야 할 것만']));
+  Object.keys(TAGS).forEach((t) => tagBox.appendChild(h('button', { type: 'button', class: 'chipbtn', 'data-k': t, text: TAGS[t], onclick: () => setTag(t) })));
+
+  pickChain(CHAINS[0]);
+})();
+</script>
+
+<style>[data-structure-back]{position:fixed;right:12px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:70;padding:6px 12px;border-radius:999px;background:#fff;color:#1f2937;font:600 13px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.16)}@media (max-width:860px){[data-structure-back]{top:auto;right:auto;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}}</style><a href="/resume/muscleup" data-structure-back>← 프로젝트 상세</a></body></html>

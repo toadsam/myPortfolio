@@ -23,6 +23,7 @@ import type {
 } from "@/components/ui/project-viewers/richContent/shared";
 import type {DiagramSpec} from "@/components/ui/project-viewers/richContent/ArchitectureDiagram";
 import {projects} from "@/data/projects";
+import {STRUCTURE_LABEL, structureHref} from "@/data/structurePages";
 import {
   CATEGORY_META,
   FACET_META,
@@ -1404,6 +1405,13 @@ export function ProjectDetailV4({
     r.demo.video
   );
   addLink("GitHub", r.demo.repo);
+  // 「구조 한눈에 보기」는 첫 버튼 바로 다음에 둔다(structurePages 에 있는 프로젝트만).
+  const structure = structureHref(id);
+  if (structure)
+    links.splice(Math.min(1, links.length), 0, {
+      label: STRUCTURE_LABEL,
+      href: structure
+    });
   const videoLenShown =
     !r.demo.videoLen || links.some(l => l.label.includes(r.demo.videoLen!));
 

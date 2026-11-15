@@ -544,6 +544,17 @@ Ambient mood is separate from category: `atmosphere.ts` maps project id → `Amb
 
 `src/components/village/PropsEditor.tsx` + `src/app/api/props/route.ts` + `src/data/propsLayout.json` let you drag-place props/building overrides in the browser during `npm run dev` only (`NODE_ENV === "development"` gate); the API route reads `public/models/props/*.glb` and writes layout edits straight back to the JSON file on disk.
 
+### 「구조 한눈에 보기」 페이지 (2026-11-16)
+
+상세 머리의 첫 버튼 다음에 「구조 한눈에 보기」가 붙고 `/resume/<id>/structure` 로 간다. 본인이 프로젝트마다 따로 만든 한 장짜리 구조 안내(claude.ai 아티팩트)를 사이트 안에 그대로 넣은 것이다. 지금은 MyWave(`mystock`)와 득근득근(`muscleup`) 두 장이고, 나머지 프로젝트도 같은 방식으로 받기로 했다.
+
+- 들여오기: 아티팩트의 HTML 과 그림 폴더를 받아 `node scripts/import-structure.mjs <id> <html> [그림 폴더]`. 결과는 `public/structure/<id>/`. 그다음 `src/data/structurePages.ts` 의 `STRUCTURE_PAGES` 에 id 를 더하면 버튼이 생긴다(`ProjectDetailV4` 와 `MuscleupDetail` 둘 다 읽는다).
+- 주소는 `next.config.mjs` 의 rewrite 가 정적 파일로 넘긴다. Next 라우트가 아니라서 루트 layout · 두꺼비 · 커서가 붙지 않고, 버튼도 `next/link` 가 아닌 보통 링크다.
+- 스크립트는 본문을 고치지 않고 둘만 넣는다: `<base href="/structure/<id>/">`(주소가 달라 `img/…` 상대 경로가 어긋난다. 그림 폴더를 줄 때만 넣고, 득근득근처럼 한 장짜리는 넣지 않는다. SVG 의 `url(#arr)` 같은 문서 안 참조를 건드리지 않으려는 것이다)와 「← 프로젝트 상세」 링크(데스크톱 오른쪽 위, 860px 이하 왼쪽 아래). 화면 전환이 `location.hash` 라서 `<base>` 가 있어도 된다. `<a href="#…">` 를 쓰는 페이지가 오면 그 링크가 `/structure/<id>/` 로 새므로 따로 본다.
+- 들여오기 전에 읽어 볼 것: 외부 스크립트나 `window.claude` 를 쓰는지, 실명 · 키 · 비공개 경로가 있는지. MyWave 것은 구글 글꼴만 밖에서 받고, 이메일과 전화번호는 예시 값과 저장소에 공개된 데모 계정 주소뿐이었다.
+- 확인은 dev 에서 1440 과 390 폭으로 버튼 → 구조 페이지 → 돌아오기까지 눌러 봤고 오류와 깨진 그림은 없었다. prod 빌드로는 보지 않았다.
+- 득근득근 것은 예시 줄의 이메일과 이름이 지어낸 값이라고 그림 설명에 적혀 있다. 이 페이지는 「표 59개 · 화면 30장 · 파일 35곳」이라 적는데 상세 페이지는 엔티티 62개(2026.10.20)라 적는다. 세는 기준이 다른지 본인에게 물어 둔 상태이고 고치지 않았다.
+
 ### 마을 3D 배치 점검 (2026-11-15)
 
 마을을 44개 시점(부감 · 구역 앞뒤옆 · 눈높이 · 테두리)으로 찍어 보고 만들다 만 것처럼 보이는 곳을 고쳤다. 확인은 dev 서버 캡처로 했고, prod 빌드와 첫 방문 셰이더 링크 수(데스크톱 47 · 모바일 36)는 다시 재지 않았다. 밤 화면과 휴대폰도 보지 않았다.

@@ -4,6 +4,7 @@
 // 마크업을 문자열로 두는 이유는 시안 CSS·스크립트가 그 구조를 그대로 전제하기 때문이다.
 import Link from "next/link";
 import {Nunito} from "next/font/google";
+import {STRUCTURE_LABEL, structureHref} from "@/data/structurePages";
 import {MU4_DATA} from "./muscleupDetail.data";
 import {MuscleupDetailMotion} from "./MuscleupDetailMotion";
 import "./muscleupDetail.css";
@@ -818,6 +819,18 @@ function renderPage(story: boolean) {
   }
   (p.links || []).forEach(l => addL(l.label, l.href));
   if (r.demo) addL("GitHub", r.demo.repo);
+  // 「구조 한눈에 보기」: 사이트 안 주소라 새 창으로 열지 않고 첫 버튼 다음에 둔다.
+  const structure = structureHref("muscleup");
+  if (structure)
+    links.splice(
+      Math.min(1, links.length),
+      0,
+      '<a class="pill press" href="' +
+        esc(structure) +
+        '">' +
+        esc(STRUCTURE_LABEL) +
+        "</a>"
+    );
   const hi = r.heroImage,
     old = r.beforeAfter.before.shot;
   secs.push({id: "s-head", title: "소개", fold: false});
