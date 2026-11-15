@@ -5584,23 +5584,22 @@ export const RICH_DATA: Record<string, RichProject> = {
       src: "/projects/darklab/title.webp",
       label: "타이틀 · Threshold",
       ratio: "16/9",
-      caption:
-        "플레이 영상(Unity Game 뷰 녹화)에서 뽑은 프레임입니다. 에디터 크롬은 잘라냈습니다."
+      caption: "타이틀 화면입니다. 게임 안 제목은 Threshold 입니다."
     },
     gallery: [
       {
         src: "/projects/darklab/explore.webp",
-        label: "1인칭 탐색 · 오른쪽 위 시계가 밤을 민다 (11:53 PM)",
+        label: "밤 11시 53분 · 1인칭으로 탐색을 시작합니다",
         ratio: "16/9"
       },
       {
         src: "/projects/darklab/room-night.webp",
-        label: "같은 방, 12:37 AM · 시간이 지나면 방이 달라져 있다",
+        label: "12시 37분 · 같은 방에 가구가 늘어 있습니다",
         ratio: "16/9"
       },
       {
         src: "/projects/darklab/figure.webp",
-        label: "01:04 AM · 침대 옆에 형체가 서 있다",
+        label: "새벽 1시 4분 · 침대 옆에 형체가 서 있습니다",
         ratio: "16/9",
         caption:
           "같은 방을 세 번 찍은 것입니다. 시계가 넘어갈수록 가구가 늘고, 마지막엔 없던 것이 서 있습니다."
@@ -5652,7 +5651,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     impact: [
       {n: "126", l: "내 커밋 (317 중)"},
       {n: "2초", l: "응시 판정 시간"},
-      {n: "3개국어", l: "로컬라이즈(en/ja/ko)"}
+      {n: "4단계", l: "할머니 이벤트 연출"}
     ],
     features: [
       {
@@ -5872,15 +5871,13 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         n: "3",
-        l: "공포 이벤트 스크립트",
-        sub: "GrandMaMove · BedEvent · PulsingLamp",
-        source: "커밋 작성자 · GrandMaMove 6/6 · BedEvent 2/2 · PulsingLamp 2/3"
+        l: "공포 이벤트",
+        sub: "할머니 · 침대 · 램프"
       },
       {
-        n: "3개국어",
-        l: "로컬라이즈",
-        sub: "en · ja · ko-KR (팀원 담당)",
-        source: "Unity Localization · 로컬라이즈는 팀원 작업"
+        n: "4단계",
+        l: "할머니 이벤트",
+        sub: "등장 · 주시 · 추격 · 페이드"
       }
     ],
     metricsNote: "로컬라이즈와 공포 효과 계층은 팀원 작업입니다.",
@@ -6215,8 +6212,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "TSEROF 타이틀",
       // 파일이 630×500(1.26:1)이다. 16/9 로 적으면 위아래가 잘린다(2026-11-13 실측).
       ratio: "630/500",
-      caption:
-        "포트폴리오 원본의 소개용 키 아트입니다(2025-12). 게임 화면은 아래 갤러리에 있습니다."
+      caption: "소개용 키 아트입니다. 게임 화면은 아래에 있습니다."
     },
     // 그레이박스 시절 캡처는 남아 있지 않아 「문제」 그림 자리는 비웠다.
     // 대신 내가 맡은 기믹의 전후 비교를 갤러리 끝에 넣는다 — problemShot 은
@@ -6684,8 +6680,7 @@ export const RICH_DATA: Record<string, RichProject> = {
               tone: "warn"
             }
           ],
-          note: "4개월은 첫 커밋(10.23)에서 출시(02.10)까지입니다. 제 커밋은 12.13 까지 216개입니다.",
-          source: "Steam 스토어 페이지"
+          note: "4개월은 첫 커밋(10.23)에서 출시(02.10)까지입니다. 제 커밋은 12.13 까지 216개입니다."
         }
       ]
     },
@@ -6792,7 +6787,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         label: "팀",
-        value: "4인 팀 (AR 과 같은 팀원) · 특수 카메라 시스템은 팀원 담당"
+        value: "4인 팀 · 특수 카메라 시스템은 팀원 담당"
       },
       {label: "역할", value: "AI 몬스터 · 감지 로직 · 중앙 제어 · 기획 참여"},
       {label: "스택", value: "Unity · XR Interaction Toolkit · C# · NavMesh"}
@@ -7018,26 +7013,22 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         n: "2종",
         l: "몬스터 AI",
-        sub: "Doll · Bookhead · 추격 8m / 공격 2m",
-        source: "chaseDistance 8f"
+        sub: "Doll · Bookhead · 추격 8m / 공격 2m"
       },
       {
         n: "2",
         l: "감지기",
-        sub: "시야각 90°·10m · 손전등 빛 7m",
-        source:
-          "EnemyDetector viewAngle 90f · viewRange 10f / EnemyLightZoneDetector 7f"
+        sub: "시야각 90°·10m · 손전등 빛 7m"
       },
       {
         n: "5초",
-        l: "놓친 뒤 추격 해제",
-        sub: "놓친 뒤 추격을 푸는 시간",
-        source: "본인 커밋 2/2"
+        l: "추격 해제",
+        sub: "시야에서 벗어난 뒤 기다리는 시간"
       },
       {
         n: "25",
         l: "내 커밋 (161 중)",
-        sub: "2025.05.20 ~ 06.16 · Assets/JJH",
+        sub: "2025.05.20 ~ 06.16",
         mini: {kind: "bars", before: 161, after: 25}
       }
     ],
@@ -7084,7 +7075,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       summaries: {
         arch: "감지기 2 → GameManager 토글 → MonsterAI 2종. 특수 카메라는 팀원.",
         code: "EnemyDetector 의 11점 샘플링, GameManager 의 토글, MonsterAI 의 추격·공격 거리.",
-        proc: "2025.05.18 첫 커밋 → 06.05 Assets/JJH 추가 → 06.16 주석·마무리."
+        proc: "2025.05.20 첫 커밋 → 06.05 감지기 · 몬스터 AI 추가 → 06.16 마무리."
       },
       scenes: [
         {
@@ -7249,7 +7240,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     meta: [
       // 저장소 init 2025-03-15, 실제 작업 04-18 ~ 05-03. 예전 "2025.03 – 2025.04" 는 5월을 빠뜨렸다.
       {label: "기간", value: "2025.04 – 2025.05 (작업 04.18 ~ 05.03)"},
-      {label: "팀", value: "4인 팀 (VR 과 같은 팀원)"},
+      {label: "팀", value: "4인 팀"},
       {label: "역할", value: "무기 시스템 · 체력 · 게임 루프 기획"},
       {label: "스택", value: "Unity · AR Foundation · C#"}
     ],
@@ -7444,7 +7435,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     metrics: [
       {
         n: "4",
-        l: "무기 · 활 / 칼 / 마법 / 총",
+        l: "무기",
         sub: "활 · 칼 · 마법 · 총"
       },
       {
@@ -7455,13 +7446,12 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         n: "6초",
         l: "스킬 쿨타임",
-        sub: "1초마다 한 칸 · 6칸 차면 준비",
-        source: "chargeInterval 1f · cooldownTime 6f"
+        sub: "1초마다 한 칸 · 6칸 차면 준비"
       },
       {
         n: "51",
         l: "내 커밋 (109 중)",
-        sub: "2025.04.18 ~ 05.03 · Assets/Scripts/JJH",
+        sub: "2025.04.18 ~ 05.03",
         mini: {kind: "bars", before: 109, after: 51}
       }
     ],
@@ -7904,24 +7894,22 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         n: "2",
         l: "시점 · 1인칭 ↔ 탑다운",
-        sub: "T 키 · 탑다운 3초 뒤 Y축 잠금",
-        source: "PlayerModeManager.cs"
+        sub: "T 키 한 번으로 바꿉니다"
       },
       {
         n: "3",
         l: "레벨업 랜덤 스킬 제시",
-        sub: "randomSkills[3] · 즉시 반영"
+        sub: "레벨업마다 셋 가운데 하나를 고릅니다"
       },
       {
         n: "5",
         l: "웨이브 · 다섯 번째 보스",
-        sub: "case 1~5 · 보스 예고 패널 3초",
-        source: "case 5 → ShowBossWavePanel"
+        sub: "다섯 번째에 예고 3초 뒤 보스"
       },
       {
         n: "124",
         l: "커밋 · 전부 혼자",
-        sub: "2024.09.23 ~ 12.30 · Assets/Script 40파일",
+        sub: "2024.09.23 ~ 12.30 · 스크립트 40개",
         mini: {kind: "bars", before: 124, after: 124}
       }
     ],
@@ -7967,7 +7955,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           place: "trouble",
           kind: "steps",
           title:
-            "T 키 한 번에 바뀌는 네 가지 · PlayerModeManager.SetPlayerMode",
+            "T 키 한 번에 바뀌는 세 가지 · PlayerModeManager.SetPlayerMode",
           steps: [
             {
               t: "T 키",
@@ -7987,8 +7975,7 @@ export const RICH_DATA: Record<string, RichProject> = {
               tone: "warn",
               alt: {t: "1인칭 진입", d: "Y축 잠금 해제", tone: "ok"}
             }
-          ],
-          source: "PlayerModeManager.cs"
+          ]
         },
         {
           place: "result",
@@ -7998,16 +7985,15 @@ export const RICH_DATA: Record<string, RichProject> = {
           frames: [
             {
               src: "/projects/ajou-adventure/view-fp.webp",
-              label: "1인칭 · 탐색",
-              at: "FP"
+              label: "탐색할 때",
+              at: "1인칭"
             },
             {
               src: "/projects/ajou-adventure/view-td.webp",
-              label: "탑다운 · 전투",
-              at: "TD"
+              label: "전투할 때",
+              at: "탑다운"
             }
-          ],
-          source: "public/projects/ajou-adventure/view-fp.webp · view-td.webp"
+          ]
         },
         {
           place: "proc",

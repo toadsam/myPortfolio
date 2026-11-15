@@ -2797,8 +2797,8 @@
    "title": "DarkLab",
    "section": "성과",
    "href": "/resume/darklab",
-   "text": "126 · 내 커밋 (317 중)\n2초 · 응시 판정 시간\n3개국어 · 로컬라이즈(en/ja/ko)",
-   "hash": "6aecd3436bb51c80",
+   "text": "126 · 내 커밋 (317 중)\n2초 · 응시 판정 시간\n4단계 · 할머니 이벤트 연출",
+   "hash": "415c3e19f8cc719a",
    "id": "darklab-294"
   },
   {
@@ -2914,8 +2914,8 @@
    "title": "DarkLab",
    "section": "수치",
    "href": "/resume/darklab",
-   "text": "126 · 내 커밋 (317 중) · 2024.02 ~ 2024.09 · 메시지에 (-재훈) 서명\n2초 · 응시 판정 · 이만큼 바라보면 조사됩니다\n3\n공포 이벤트 스크립트\nGrandMaMove · BedEvent · PulsingLamp\n커밋 작성자 · GrandMaMove 6/6 · BedEvent 2/2 · PulsingLamp 2/3\n3개국어 · 로컬라이즈 · en · ja · ko-KR (팀원 담당) · Unity Localization · 로컬라이즈는 팀원 작업",
-   "hash": "3b0b6c5ca41df190",
+   "text": "126 · 내 커밋 (317 중) · 2024.02 ~ 2024.09 · 메시지에 (-재훈) 서명\n2초 · 응시 판정 · 이만큼 바라보면 조사됩니다\n3 · 공포 이벤트 · 할머니 · 침대 · 램프\n4단계 · 할머니 이벤트 · 등장 · 주시 · 추격 · 페이드",
+   "hash": "c6772a58d5893bda",
    "id": "darklab-307"
   },
   {
@@ -2968,8 +2968,8 @@
    "title": "DarkLab",
    "section": "상세",
    "href": "/resume/darklab",
-   "text": "무엇을 조사할 수 있는지 안 보였습니다\n키를 눌러야 반응하는 구조에서는 무엇을 눌러야 하는지부터 알아야 했습니다.\n할머니가 그냥 서 있는 모델이었습니다\nNPC 를 씬에 넣은 날의 커밋 메시지가 「할머니를 머지했는데 왜 안 무서울까?」입니다.\n같은 방이 밤새 똑같았습니다 · 시계가 넘어가도 방이 그대로면 긴장이 쌓이지 않았습니다.\n그래서 바라보는 것만으로 조사되게 하고, 시간이 지나면 방과 NPC 가 달라지게 했습니다.\n본인 커밋 메시지(2024.07 ~ 08)",
-   "hash": "4b653dfc975ca6e7",
+   "text": "무엇을 조사할 수 있는지 안 보였습니다\n키를 눌러야 반응하는 구조에서는 무엇을 눌러야 하는지부터 알아야 했습니다.\n할머니가 그냥 서 있는 모델이었습니다\nNPC 를 씬에 넣은 날의 커밋 메시지가 「할머니를 머지했는데 왜 안 무서울까?」입니다.\n같은 방이 밤새 똑같았습니다 · 시계가 넘어가도 방이 그대로면 긴장이 쌓이지 않았습니다.\n그래서 바라보는 것만으로 조사되게 하고, 시간이 지나면 방과 NPC 가 달라지게 했습니다.",
+   "hash": "ff54fe47077d71eb",
    "id": "darklab-313"
   },
   {
@@ -2986,8 +2986,8 @@
    "title": "DarkLab",
    "section": "셋 중 1인칭 조작 초기와 응시 판정, 공포 이벤트 셋을 맡았습니다.",
    "href": "/resume/darklab",
-   "text": "셋 중 1인칭 조작 초기와 응시 판정, 공포 이벤트 셋을 맡았습니다.\n커밋 317개 중 126개가 제 커밋이고, 메시지 끝의 서명으로 담당을 가렸습니다. 할머니 NPC 이벤트는 커밋 여섯 건이 전부 제 것이고, 침대 이벤트 두 건, 램프 이벤트 세 건 중 두 건이 제 것입니다. 응시 판정 파일은 셋이 함께 고쳤습니다. 카메라 전환, 로컬라이즈, 공포 효과 계층은 팀원이 맡았습니다.\n126개 · 내 커밋 · 전체 317개 중\n6건 · 할머니 이벤트 커밋 · 전부 본인\n2초 · 응시 판정 시간",
-   "hash": "6e5c21171df9f190",
+   "text": "셋 중 1인칭 조작 초기와 응시 판정, 공포 이벤트 셋을 맡았습니다.\n커밋 317개 중 126개가 제 커밋이고, 메시지 끝의 서명으로 담당을 가렸습니다. 할머니 NPC 이벤트는 커밋 여섯 건이 전부 제 것이고, 침대 이벤트 두 건, 램프 이벤트 세 건 중 두 건이 제 것입니다. 응시 판정 파일은 셋이 함께 고쳤습니다. 카메라 전환, 로컬라이즈, 공포 효과 계층은 팀원이 맡았습니다.\n126개 · 내 커밋 · 전체 317개 중\n4단계 · 할머니 이벤트 연출\n2초 · 응시 판정 시간",
+   "hash": "896fbf230cfca986",
    "id": "darklab-315"
   },
   {
@@ -3002,29 +3002,11 @@
   {
    "project": "darklab",
    "title": "DarkLab",
-   "section": "바라보면 조사되고, 시간이 지나면 방이 달라지게 했습니다. · 2024년 7~8월 · 응시와 공포 이벤트",
+   "section": "바라보면 조사되고, 시간이 지나면 방이 달라지게 했습니다.",
    "href": "/resume/darklab",
-   "text": "2024년 7~8월 · 응시와 공포 이벤트",
-   "hash": "25827b2ca98fc8b0",
+   "text": "2024년 7~8월 · 응시와 공포 이벤트\n무엇을 조사할 수 있는지 안 보였습니다\n플레이어가 조사할 수 있는 물건을 알아보지 못했습니다. 키를 눌러야 반응하면 무엇을 눌러야 하는지부터 알아야 합니다.\n2초 바라보면 조사되게 했습니다\n화면 가운데에서 쏜 선이 조사 가능한 물건에 닿으면 초록으로 표시하고, 2초 머물면 조사를 실행합니다. 조사가 끝난 물건은 다시 반응하지 않습니다.\n2초 · 응시 판정 시간입니다. 조사가 끝난 물건은 다시 반응하지 않습니다. · 2024.07.31\n할머니가 그냥 서 있는 모델이었습니다 · NPC 를 씬에 넣었지만 무섭지 않았습니다.\n연출을 네 단계로 다시 짰습니다\n할머니가 다가오면 플레이어 카메라가 강제로 그쪽을 보고, 이어서 쫓아오다가 서서히 사라집니다. 움직이는 동안 플레이어 조작을 막고, 이동음과 추격음을 나눠 틉니다.\n4단계\n등장, 카메라 주시, 추격, 페이드 순서입니다. 8월 1일에 넣고 11일과 28일에 고쳤습니다.\n2024.08\n같은 방이 밤새 똑같았습니다 · 시계가 넘어가도 방이 그대로면 긴장이 쌓이지 않았습니다.\n침대와 램프가 시간에 따라 달라집니다\n침대는 흔들리다가 옆으로 넘어가고 그 뒤에 물건 하나가 나타납니다. 램프는 붉게 맥동하며 심장박동 소리를 냅니다.\n같은 방을 세 시각에 찍었습니다 · 아래 결과 구역의 세 장이 그 화면입니다. · 2024.08",
+   "hash": "1a71582b23690681",
    "id": "darklab-317"
-  },
-  {
-   "project": "darklab",
-   "title": "DarkLab",
-   "section": "바라보면 조사되고, 시간이 지나면 방이 달라지게 했습니다. · 2024년 7~8월 · 응시와 공포 이벤트",
-   "href": "/resume/darklab",
-   "text": "무엇을 조사할 수 있는지 안 보였습니다\n플레이어가 조사할 수 있는 물건을 알아보지 못했습니다. 키를 눌러야 반응하면 무엇을 눌러야 하는지부터 알아야 합니다.\n2초 바라보면 조사되게 했습니다\n화면 가운데에서 쏜 선이 조사 가능한 물건에 닿으면 초록으로 표시하고, 2초 머물면 조사를 실행합니다. 조사가 끝난 물건은 다시 반응하지 않습니다.\n2초\n응시 판정 시간입니다. 7월 31일에 제가 먼저 넣은 판정 코드는 지금 주석으로 남아 있고, 지금 쓰는 파일은 셋이 함께 고친 것입니다.\n2024.07.31\n할머니가 그냥 서 있는 모델이었습니다 · NPC 를 씬에 넣었지만 무섭지 않았습니다.\n연출을 네 단계로 다시 짰습니다\n할머니가 다가오면 플레이어 카메라가 강제로 그쪽을 보고, 이어서 쫓아오다가 서서히 사라집니다. 움직이는 동안 플레이어 조작을 막고, 이동음과 추격음을 나눠 틉니다.\n6건\n이 이벤트의 커밋 수이고 전부 제 것입니다. 8월 1일에 넣고 11일과 28일에 고쳤습니다.\n2024.08",
-   "hash": "6c28078dfd5b2d36",
-   "id": "darklab-318"
-  },
-  {
-   "project": "darklab",
-   "title": "DarkLab",
-   "section": "바라보면 조사되고, 시간이 지나면 방이 달라지게 했습니다. · 2024년 7~8월 · 응시와 공포 이벤트",
-   "href": "/resume/darklab",
-   "text": "같은 방이 밤새 똑같았습니다 · 시계가 넘어가도 방이 그대로면 긴장이 쌓이지 않았습니다.\n침대와 램프가 시간에 따라 달라집니다\n침대는 흔들리다가 옆으로 넘어가고 그 뒤에 물건 하나가 나타납니다. 램프는 붉게 맥동하며 심장박동 소리를 냅니다.\n같은 방을 세 시각에 찍었습니다\n아래 결과 구역의 세 장이 그 화면입니다. 침대 이벤트 커밋 두 건은 제 것이고 램프는 세 건 중 두 건입니다.\n2024.08",
-   "hash": "f671fece02ced09e",
-   "id": "darklab-319"
   },
   {
    "project": "darklab",
@@ -3033,7 +3015,7 @@
    "href": "/resume/darklab",
    "text": "응시 판정과 공포 이벤트 셋이 들어간 PC 프로토타입입니다.",
    "hash": "1233c9ed6ddc115d",
-   "id": "darklab-320"
+   "id": "darklab-318"
   },
   {
    "project": "darklab",
@@ -3042,7 +3024,7 @@
    "href": "/resume/darklab",
    "text": "응시 2초로 조사 판정\nNPC 연출을 이동·주시·추격·페이드로 나눔\n이벤트마다 소리를 분리\n퍼즐·엔딩 시퀀스\n세이브 시스템\n테스터 기록 남기기",
    "hash": "8f9d96b400cea64a",
-   "id": "darklab-321"
+   "id": "darklab-319"
   },
   {
    "project": "darklab",
@@ -3051,7 +3033,7 @@
    "href": "/resume/darklab",
    "text": "조사 가능한 물건이 안 보이는 문제는 키 입력 대신 2초 응시로 풀었고, NPC 가 안 무서운 문제는 연출을 네 단계로 쪼개서 풀었습니다.",
    "hash": "0b35383a16e39ba1",
-   "id": "darklab-322"
+   "id": "darklab-320"
   },
   {
    "project": "darklab",
@@ -3060,7 +3042,7 @@
    "href": "/resume/darklab",
    "text": "카메라 전환과 로컬라이즈, 공포 효과 계층은 팀원이 맡았습니다.",
    "hash": "b74fcbd85519d98e",
-   "id": "darklab-323"
+   "id": "darklab-321"
   },
   {
    "project": "ajou-adventure",
@@ -3069,7 +3051,7 @@
    "href": "/resume/ajou-adventure",
    "text": "2D 러닝 게임 · Phaser 3 · 혼자 · 2026.05",
    "hash": "388b44c1e95c2265",
-   "id": "ajou-adventure-324"
+   "id": "ajou-adventure-322"
   },
   {
    "project": "ajou-adventure",
@@ -3078,7 +3060,7 @@
    "href": "/resume/ajou-adventure",
    "text": "무엇을 · 아주대 캠퍼스를 배경으로 한 2D 러닝 게임입니다.\n왜 · 쉬는 시간에 잠깐 하는 가벼운 웹 게임을 만들고 싶었습니다\n결과\n이틀 동안 커밋 8개로 만들었습니다. 장면 · 오브젝트 · 시스템 각 4개로 나누고, 자동 실행 기록 28회를 남겼습니다\n내 역할 · 기획과 개발을 혼자 했습니다.",
    "hash": "e5b9d268031d72f9",
-   "id": "ajou-adventure-325"
+   "id": "ajou-adventure-323"
   },
   {
    "project": "ajou-adventure",
@@ -3087,7 +3069,7 @@
    "href": "/resume/ajou-adventure",
    "text": "기간 · 2026.05.13 ~ 05.14 (이틀 · 커밋 8개)\n팀 · 개인 프로젝트\n역할 · 기획 · 개발 · 플레이 확인 전부\n스택 · TypeScript · Phaser 3 · Vite",
    "hash": "7256815eaa917021",
-   "id": "ajou-adventure-326"
+   "id": "ajou-adventure-324"
   },
   {
    "project": "ajou-adventure",
@@ -3096,7 +3078,7 @@
    "href": "/resume/ajou-adventure",
    "text": "4·4·4 · 장면 · 오브젝트 · 시스템\n8 · 커밋 · 이틀\n28 · 자동 실행 기록",
    "hash": "bdd929d5e07170fe",
-   "id": "ajou-adventure-327"
+   "id": "ajou-adventure-325"
   },
   {
    "project": "ajou-adventure",
@@ -3105,7 +3087,7 @@
    "href": "/resume/ajou-adventure",
    "text": "자동 횡스크롤 러닝 · 끊긴 발판을 계속 만들고 화면 밖으로 나가면 지웁니다\n2단 점프 · 클릭이나 스페이스로 점프, 공중에서 한 번 더\n낮 · 노을 · 밤 · 달린 거리의 45% · 80% 지점에서 배경이 바뀝니다\n최고 점수 저장 · 브라우저 localStorage 에 남깁니다",
    "hash": "f65bc12f96400d99",
-   "id": "ajou-adventure-328"
+   "id": "ajou-adventure-326"
   },
   {
    "project": "ajou-adventure",
@@ -3114,7 +3096,7 @@
    "href": "/resume/ajou-adventure",
    "text": "쉬는 시간에 잠깐 할 수 있는, 대학생이 공감할 가벼운 웹 게임을 만들고 싶었습니다. 혼자 짧은 시간에 만들면서도 나중에 고치기 쉬워야 했습니다.",
    "hash": "f765861184e66305",
-   "id": "ajou-adventure-329"
+   "id": "ajou-adventure-327"
   },
   {
    "project": "ajou-adventure",
@@ -3123,7 +3105,7 @@
    "href": "/resume/ajou-adventure",
    "text": "3 · 배경 · 낮 / 노을(거리 45%) / 밤(거리 80%)",
    "hash": "3a18e33449ff7027",
-   "id": "ajou-adventure-330"
+   "id": "ajou-adventure-328"
   },
   {
    "project": "ajou-adventure",
@@ -3132,7 +3114,7 @@
    "href": "/resume/ajou-adventure",
    "text": "게임을 장면, 오브젝트, 시스템 세 층으로 나누면 혼자서도 한 부분만 고칠 수 있습니다.",
    "hash": "c7e921e9f0488673",
-   "id": "ajou-adventure-331"
+   "id": "ajou-adventure-329"
   },
   {
    "project": "ajou-adventure",
@@ -3141,7 +3123,7 @@
    "href": "/resume/ajou-adventure",
    "text": "기획 · 캠퍼스 테마\n모듈 구조 · Scene/Obj/Sys\n코어 루프 · 러닝·점프\n연출 · 배경 전환\n플레이테스트 · 자동 하네스",
    "hash": "2ad21152e0b0b444",
-   "id": "ajou-adventure-332"
+   "id": "ajou-adventure-330"
   },
   {
    "project": "ajou-adventure",
@@ -3150,7 +3132,7 @@
    "href": "/resume/ajou-adventure",
    "text": "Scene · Boot/Menu/Game/GameOver · 씬 단위 화면 흐름\nObject · Player/Platform/Item/Obstacle · 게임 오브젝트 클래스\nSystem · Spawner/Score/Background/Input · 생성·점수·배경·입력 매니저\nStore · localStorage · 최고 점수 저장",
    "hash": "e7cb7c6d2825a9d4",
-   "id": "ajou-adventure-333"
+   "id": "ajou-adventure-331"
   },
   {
    "project": "ajou-adventure",
@@ -3159,7 +3141,7 @@
    "href": "/resume/ajou-adventure",
    "text": "엔진 · Phaser 3 · 장면, 물리, 입력이 갖춰져 있음 · Canvas 로 직접 구현(충돌과 장면 전환을 직접 써야 함)\n구조 · 장면, 오브젝트, 시스템으로 분리 · 혼자서도 한 부분만 고칠 수 있음 · 한 파일에 전부(점프 하나를 고치려 해도 전체를 읽어야 함)\n저장 · localStorage · 서버 없이 최고 점수를 남김 · 서버에 저장(최고 점수 하나에 서버가 필요해짐)\n충돌\n그림과 충돌 몸통을 따로\n208×140 그림에 38×58 몸통. 그림 전체로 부딪히면 닿지 않았는데 죽습니다\n그림 전체로 충돌",
    "hash": "1a03cca4ed66aa9b",
-   "id": "ajou-adventure-334"
+   "id": "ajou-adventure-332"
   },
   {
    "project": "ajou-adventure",
@@ -3168,16 +3150,16 @@
    "href": "/resume/ajou-adventure",
    "text": "기획\n캠퍼스 러너의 기본 흐름\n아이템과 장애물\n구현\n2단 점프\n낮 · 노을 · 밤 배경 전환\n구조\n장면 · 오브젝트 · 시스템 분리\n발판 생성과 제거\n확인 · 자동 실행으로 캡처와 기록 남기기",
    "hash": "a6096a52cacf59a2",
-   "id": "ajou-adventure-335"
+   "id": "ajou-adventure-333"
   },
   {
    "project": "ajou-adventure",
    "title": "아주대탐험",
    "section": "문제 해결",
    "href": "/resume/ajou-adventure",
-   "text": "큰 그림 전체로 부딪히면 닿지 않았는데 죽습니다\n캐릭터 그림은 208×140 인데 실제 몸은 그 가운데 일부입니다. 그림 전체로 충돌을 판정하면 몸에 닿지 않았는데 부딪힌 것으로 처리됩니다.\n그림과 충돌 몸통을 따로 두고 가운데 몸통 38×58 만 충돌하게 했습니다. 처음 커밋부터 이 값이라, 고친 전후가 남아 있는 것은 아닙니다.\n코드로 확인 · Player.ts 의 처음 커밋(2026-05-13)부터 이 값입니다.\n점프와 발판 간격을 손으로 확인하기 번거로웠습니다\n값을 바꿀 때마다 직접 플레이해서 넘어갈 수 있는 간격인지 확인해야 했습니다.\n게임을 자동으로 실행해 화면 캡처와 JSON 기록을 남겼습니다. 실행 기록은 폴더 28개, 파일 129개입니다.\n산출물로 확인 · 실행 기록 폴더 28개입니다.",
-   "hash": "0b418792708b147f",
-   "id": "ajou-adventure-336"
+   "text": "큰 그림 전체로 부딪히면 닿지 않았는데 죽습니다\n캐릭터 그림은 208×140 인데 실제 몸은 그 가운데 일부입니다. 그림 전체로 충돌을 판정하면 몸에 닿지 않았는데 부딪힌 것으로 처리됩니다.\n그림과 충돌 몸통을 따로 두고 가운데 몸통 38×58 만 충돌하게 했습니다.\n코드로 확인 · 2026-05-13 첫 커밋부터 이 값입니다.\n점프와 발판 간격을 손으로 확인하기 번거로웠습니다\n값을 바꿀 때마다 직접 플레이해서 넘어갈 수 있는 간격인지 확인해야 했습니다.\n게임을 자동으로 실행해 화면 캡처와 JSON 기록을 남겼습니다. 실행 기록은 폴더 28개, 파일 129개입니다.\n산출물로 확인 · 실행 기록 폴더 28개입니다.",
+   "hash": "3c801e6c26856b7e",
+   "id": "ajou-adventure-334"
   },
   {
    "project": "ajou-adventure",
@@ -3186,16 +3168,16 @@
    "href": "/resume/ajou-adventure",
    "text": "TypeScript\nPhaser 3\nVite",
    "hash": "a0440bb278d8596b",
-   "id": "ajou-adventure-337"
+   "id": "ajou-adventure-335"
   },
   {
    "project": "ajou-adventure",
    "title": "아주대탐험",
    "section": "수치",
    "href": "/resume/ajou-adventure",
-   "text": "4·4·4 · 장면 · 오브젝트 · 시스템 · 모듈 12개 · TypeScript 3,177줄 · objects · systems 파일 수\n8 · 커밋 · 전부 혼자 · 2026.05.13 ~ 05.14 · 이틀\n28 · 자동 실행 기록 · 캡처와 JSON 129개\n2단 · 점프 · maxJumps = 2",
-   "hash": "bb96287c4babc5e4",
-   "id": "ajou-adventure-338"
+   "text": "12개 · 모듈 · 장면 4 · 오브젝트 4 · 시스템 4\n8 · 커밋 · 전부 혼자 · 2026.05.13 ~ 05.14 · 이틀\n28회 · 자동 실행 기록 · 캡처와 JSON 129개\n2단 · 점프 · 공중에서 한 번 더",
+   "hash": "c797f4b20bc8459c",
+   "id": "ajou-adventure-336"
   },
   {
    "project": "ajou-adventure",
@@ -3204,7 +3186,7 @@
    "href": "/resume/ajou-adventure",
    "text": "게임을 세 층으로 나눈 구조\n자동 실행으로 캡처와 기록을 남긴 것\n와이어 액션 마무리\n배포 주소 만들기",
    "hash": "2e5d5f23addf5367",
-   "id": "ajou-adventure-339"
+   "id": "ajou-adventure-337"
   },
   {
    "project": "ajou-adventure",
@@ -3213,7 +3195,7 @@
    "href": "/resume/ajou-adventure",
    "text": "게임을 장면, 오브젝트, 시스템으로 나눠 두어서 이틀 동안 한 부분씩 고칠 수 있었습니다.",
    "hash": "88da6a4d7b6fc20b",
-   "id": "ajou-adventure-340"
+   "id": "ajou-adventure-338"
   },
   {
    "project": "ajou-adventure",
@@ -3222,7 +3204,7 @@
    "href": "/resume/ajou-adventure",
    "text": "점프와 발판 간격은 자동 실행이 남긴 캡처와 기록으로 확인했습니다.",
    "hash": "236f6e62e5dea662",
-   "id": "ajou-adventure-341"
+   "id": "ajou-adventure-339"
   },
   {
    "project": "ajou-adventure",
@@ -3231,7 +3213,7 @@
    "href": "/resume/ajou-adventure",
    "text": "아주대 캠퍼스를 달리며 A+ 를 모으는 2D 러닝 게임입니다. 혼자 이틀 동안 만들었습니다. 게임을 장면, 오브젝트, 시스템 세 층으로 나누고, 자동으로 실행해 캡처와 기록을 남기며 값을 맞췄습니다.\n게임을 장면, 오브젝트, 시스템 세 층으로 나누고, 자동으로 실행해 캡처와 기록을 남기며 값을 맞췄습니다.\n클릭이나 스페이스로 점프하고 공중에서 한 번 더 뛸 수 있습니다. 달린 거리에 따라 배경이 낮, 노을, 밤으로 바뀝니다.",
    "hash": "6c6a7c09091c393f",
-   "id": "ajou-adventure-342"
+   "id": "ajou-adventure-340"
   },
   {
    "project": "ajou-adventure",
@@ -3240,7 +3222,7 @@
    "href": "/resume/ajou-adventure",
    "text": "게임을 장면 4개, 오브젝트 4개, 시스템 4개로 나눴습니다. 발판을 만들고 지우는 일, 점수, 배경, 입력을 각각 다른 파일이 맡습니다.\nTypeScript 3,177줄입니다. 화면 밖으로 나간 발판과 아이템은 지웁니다.\n자동으로 실행해 화면 캡처와 JSON 기록을 남겼습니다. 저장소에 실행 기록 폴더가 28개 있습니다.\n그 가운데 13개는 와이어 액션을 조정하던 기록입니다.\n그림과 충돌 몸통을 따로 두었습니다. 그림은 208×140 이고 충돌은 가운데 38×58 만 봅니다.",
    "hash": "ce7fbc8d26a3a51e",
-   "id": "ajou-adventure-343"
+   "id": "ajou-adventure-341"
   },
   {
    "project": "ajou-adventure",
@@ -3249,16 +3231,16 @@
    "href": "/resume/ajou-adventure",
    "text": "그림 전체로 충돌을 판정하면 몸에 닿지 않았는데 부딪힌 것으로 처리됩니다.\n가운데 몸통 38×58 만 충돌하게 했습니다.\n처음 커밋부터 이 값입니다.\n값을 바꿀 때마다 직접 플레이해 확인하기 번거로웠습니다. · 자동으로 실행해 캡처와 JSON 기록을 남겼습니다. · 실행 기록은 폴더 28개입니다.",
    "hash": "154253f00ec612c4",
-   "id": "ajou-adventure-344"
+   "id": "ajou-adventure-342"
   },
   {
    "project": "ajou-adventure",
    "title": "아주대탐험",
    "section": "상세",
    "href": "/resume/ajou-adventure",
-   "text": "장면 4 · 오브젝트 4 · 시스템 4 · 최고 점수는 localStorage.\nPlayer 의 2단 점프와 충돌 몸통.\n2026.05.13 게임 추가 → 아이템 → 장애물 → 와이어 → 05.14 마지막 커밋.",
-   "hash": "47e6e437843d3358",
-   "id": "ajou-adventure-345"
+   "text": "장면 4 · 오브젝트 4 · 시스템 4 · 최고 점수는 localStorage.\nPlayer 의 2단 점프와 충돌 몸통.\n2026.05.13 게임 추가 → 아이템 → 장애물 → 05.14 마지막 커밋.",
+   "hash": "01326ca6bd7b2c47",
+   "id": "ajou-adventure-343"
   },
   {
    "project": "ajou-adventure",
@@ -3267,7 +3249,7 @@
    "href": "/resume/ajou-adventure",
    "text": "혼자 짧게 만들어도 고치기 쉬워야 했습니다 · 한 파일에 다 넣으면 점프 하나를 고치려 해도 전체를 읽어야 합니다.\n그림 크기와 몸 크기가 달랐습니다 · 캐릭터 그림은 208×140 인데 실제 몸은 그 가운데 일부입니다.\n값을 바꿀 때마다 직접 플레이해야 했습니다\n점프 높이나 발판 간격을 바꾸면 넘어갈 수 있는지 매번 손으로 확인했습니다.\n그래서 게임을 세 층으로 나누고, 자동으로 실행해 기록을 남겼습니다.",
    "hash": "47f6d2f23005fa23",
-   "id": "ajou-adventure-346"
+   "id": "ajou-adventure-344"
   },
   {
    "project": "ajou-adventure",
@@ -3276,25 +3258,25 @@
    "href": "/resume/ajou-adventure",
    "text": "쉬는 시간에 잠깐 하는 캠퍼스 러닝 게임을 만들고 싶었습니다.\n아주대 캠퍼스를 달리며 A+ 를 모으는 2D 웹 게임입니다. 혼자 만들었습니다.\n게임을 장면, 오브젝트, 시스템 세 층으로 나누면 혼자서도 한 부분만 고칠 수 있습니다.",
    "hash": "a63314415ccdb694",
-   "id": "ajou-adventure-347"
+   "id": "ajou-adventure-345"
   },
   {
    "project": "ajou-adventure",
    "title": "아주대탐험",
    "section": "이틀 동안 커밋 8개로 만들었습니다.",
    "href": "/resume/ajou-adventure",
-   "text": "이틀 동안 커밋 8개로 만들었습니다.\n2026년 5월 13일 오후에 게임을 올리고, 같은 날 아이템과 장애물, 와이어 액션을 넣었습니다. 다음 날 오전까지 값을 맞췄습니다.\n8개 · 커밋 · 전부 혼자\n12개 · 모듈 · 장면 4 · 오브젝트 4 · 시스템 4\n3,177줄 · TypeScript",
-   "hash": "2e3c77a0b6c0dd09",
-   "id": "ajou-adventure-348"
+   "text": "이틀 동안 커밋 8개로 만들었습니다.\n2026년 5월 13일 오후에 게임을 올리고, 같은 날 아이템과 장애물을 넣었습니다. 다음 날 오전까지 값을 맞췄습니다.\n8개 · 커밋 · 전부 혼자\n12개 · 모듈 · 장면 4 · 오브젝트 4 · 시스템 4\n3,177줄 · TypeScript",
+   "hash": "2d8aa2cba935a46c",
+   "id": "ajou-adventure-346"
   },
   {
    "project": "ajou-adventure",
    "title": "아주대탐험",
    "section": "세 층으로 나누고, 자동으로 실행해 값을 맞췄습니다.",
    "href": "/resume/ajou-adventure",
-   "text": "세 층으로 나누고, 자동으로 실행해 값을 맞췄습니다.\n세 가지 전부\n필요했던 것\n만든 것\n확인\n2026년 5월 13~14일\n한 부분만 고칠 수 있어야 했습니다 · 한 파일에 다 넣으면 점프 하나를 고치려 해도 전체를 읽어야 합니다.\n장면, 오브젝트, 시스템으로 나눴습니다\n화면 흐름은 장면 넷이, 캐릭터와 발판, 아이템, 장애물은 오브젝트 넷이, 발판 생성과 점수, 배경, 입력은 시스템 넷이 맡습니다.\n12개 · 모듈 수입니다. TypeScript 3,177줄입니다.\n그림 전체로 부딪히면 닿지 않았는데 죽습니다 · 캐릭터 그림은 208×140 인데 실제 몸은 그 가운데 일부입니다.\n충돌 몸통을 따로 잡았습니다\n가운데 몸통 38×58 만 충돌하게 했습니다. 점프는 공중에서 한 번 더, 두 번까지 됩니다.\n처음 커밋부터 이 값입니다 · 고친 전후가 남아 있는 것은 아닙니다.\n값을 바꿀 때마다 직접 플레이해야 했습니다\n점프 높이나 발판 간격을 바꾸면 넘어갈 수 있는지 매번 손으로 확인했습니다.\n자동으로 실행해 기록을 남겼습니다\n게임을 자동으로 돌려 단계마다 화면을 찍고 상태를 JSON 으로 남겼습니다.\n28회 · 파일은 129개입니다.",
-   "hash": "8ed2fb6996071278",
-   "id": "ajou-adventure-349"
+   "text": "세 층으로 나누고, 자동으로 실행해 값을 맞췄습니다.\n세 가지 전부\n필요했던 것\n만든 것\n확인\n2026년 5월 13~14일\n한 부분만 고칠 수 있어야 했습니다 · 한 파일에 다 넣으면 점프 하나를 고치려 해도 전체를 읽어야 합니다.\n장면, 오브젝트, 시스템으로 나눴습니다\n화면 흐름은 장면 넷이, 캐릭터와 발판, 아이템, 장애물은 오브젝트 넷이, 발판 생성과 점수, 배경, 입력은 시스템 넷이 맡습니다.\n12개 · 모듈 수입니다. TypeScript 3,177줄입니다.\n그림 전체로 부딪히면 닿지 않았는데 죽습니다 · 캐릭터 그림은 208×140 인데 실제 몸은 그 가운데 일부입니다.\n충돌 몸통을 따로 잡았습니다\n가운데 몸통 38×58 만 충돌하게 했습니다. 점프는 공중에서 한 번 더, 두 번까지 됩니다.\n38×58 · 그림 208×140 가운데 몸통만 충돌합니다.\n값을 바꿀 때마다 직접 플레이해야 했습니다\n점프 높이나 발판 간격을 바꾸면 넘어갈 수 있는지 매번 손으로 확인했습니다.\n자동으로 실행해 기록을 남겼습니다\n게임을 자동으로 돌려 단계마다 화면을 찍고 상태를 JSON 으로 남겼습니다.\n28회 · 자동 실행 횟수입니다. 캡처와 JSON 파일 129개가 남았습니다.",
+   "hash": "10cf12deec8c6a47",
+   "id": "ajou-adventure-347"
   },
   {
    "project": "ajou-adventure",
@@ -3303,7 +3285,7 @@
    "href": "/resume/ajou-adventure",
    "text": "캠퍼스를 달리며 A+ 를 모읍니다.\n타이틀 · 게임 시작과 조작 방법 두 버튼이 있습니다. · 클릭, 터치, 스페이스로 조작합니다.\n달리는 중 · 발판 위를 달리며 A+ 를 모읍니다. · 위쪽에 점수, 모은 A+ 수, 최고 점수가 보입니다.\n뒤쪽 구간 · 점수가 오를수록 나오는 아이템이 늘어납니다. · 식권은 1500점, 쿠폰은 2500점, 스티커는 3500점부터 나옵니다.\n게임 오버 · 떨어지면 끝나고 최종 점수와 최고 점수가 나옵니다. · 최고 점수는 브라우저에 저장됩니다.",
    "hash": "4752d4188962fb89",
-   "id": "ajou-adventure-350"
+   "id": "ajou-adventure-348"
   },
   {
    "project": "ajou-adventure",
@@ -3312,7 +3294,7 @@
    "href": "/resume/ajou-adventure",
    "text": "이틀 만에 끝까지 플레이되는 러닝 게임을 만들었습니다.",
    "hash": "c38cc666cc2eadd4",
-   "id": "ajou-adventure-351"
+   "id": "ajou-adventure-349"
   },
   {
    "project": "tserof",
@@ -3321,7 +3303,7 @@
    "href": "/resume/tserof",
    "text": "3D PLATFORMER · UNITY (TEAM)",
    "hash": "0ae25cff5007eb28",
-   "id": "tserof-352"
+   "id": "tserof-350"
   },
   {
    "project": "tserof",
@@ -3330,7 +3312,7 @@
    "href": "/resume/tserof",
    "text": "무엇을 · 잃어버린 아이템을 찾아 스테이지를 클리어하는 3D 플랫포머입니다.\n왜 · 스테이지 2의 구간 전환·장애물·퍼즐을 한 곳에서 관리하려고 했습니다.\n결과\n5인 팀이 4개월 만에 Steam 에 출시했고, 저는 부팀장으로 앞의 7주 동안 스테이지 2와 기믹을 만들었습니다.\n내 역할\n부팀장으로 스테이지 2 전체, 장애물과 기믹, 3×3 패턴 퍼즐, 기획을 맡았습니다.",
    "hash": "ea828d9c0384b53d",
-   "id": "tserof-353"
+   "id": "tserof-351"
   },
   {
    "project": "tserof",
@@ -3339,7 +3321,7 @@
    "href": "/resume/tserof",
    "text": "기간 · 2023.10 – 2024.02\n팀 · 5인 팀 프로젝트\n역할 · 스테이지 2 · 장애물/기믹 · 3×3 퍼즐 · 기획 · 부팀장\n스택 · Unity 2022.3 · C# · Cinemachine\n출시 · Steam 스토어 출시\n비고 · 비공개 저장소 (팀원 소유) · 링크는 접근 제한될 수 있음",
    "hash": "9b28666e2daf8c94",
-   "id": "tserof-354"
+   "id": "tserof-352"
   },
   {
    "project": "tserof",
@@ -3348,7 +3330,7 @@
    "href": "/resume/tserof",
    "text": "Steam · 스토어 출시\n5인 · 팀 · 부팀장\n4개월 · 팀 기획 → 출시",
    "hash": "276bd909de45c42d",
-   "id": "tserof-355"
+   "id": "tserof-353"
   },
   {
    "project": "tserof",
@@ -3357,7 +3339,7 @@
    "href": "/resume/tserof",
    "text": "스테이지 2 통합 씬 · 구간별 카메라·리스폰·클리어 판정\n3×3 패턴 퍼즐 · 정답 패턴 5종을 주기적으로 교체\n속성 큐브 · 마그마·용암·물·얼음·얼음벽\n장애물 기믹 · 대포·낙하물·회전·가시·레버·토네이도",
    "hash": "be753f32c308004f",
-   "id": "tserof-356"
+   "id": "tserof-354"
   },
   {
    "project": "tserof",
@@ -3366,7 +3348,7 @@
    "href": "/resume/tserof",
    "text": "스테이지 2 는 처음에 2-1·2-2·2-3 세 씬이었습니다. 구간을 넘길 때마다 씬을 로드했고 카메라·리스폰·클리어 판정이 구간마다 흩어져 있어, 장애물과 퍼즐을 늘릴수록 카메라·리스폰·클리어 판정을 통합해 관리할 필요가 있었습니다.",
    "hash": "a84b1be74a3ccdd1",
-   "id": "tserof-357"
+   "id": "tserof-355"
   },
   {
    "project": "tserof",
@@ -3375,7 +3357,7 @@
    "href": "/resume/tserof",
    "text": "스테이지 2 통합 씬 생성 (-재훈) · 2023-11-27 커밋 메시지 · JJH_Stage2 브랜치\nPlayer 의 Jump 범위에 문제가 생기지 않게 임시적으로 오브젝트의 위치를 수정함.\n유저 테스트 조치 기록 · 내가 놓은 장애물에 대한 피드백",
    "hash": "337938c6aea85d50",
-   "id": "tserof-358"
+   "id": "tserof-356"
   },
   {
    "project": "tserof",
@@ -3384,7 +3366,7 @@
    "href": "/resume/tserof",
    "text": "“세 씬을 한 씬으로 합쳐 카메라·리스폰·클리어를 매니저 하나에 모으고, 큐브·퍼즐·장애물을 같은 규약으로 묶으면 기믹을 늘려도 구간 전환이 끊기지 않고 팀원도 같은 방식으로 붙일 수 있다.”",
    "hash": "de201f1412e37698",
-   "id": "tserof-359"
+   "id": "tserof-357"
   },
   {
    "project": "tserof",
@@ -3393,7 +3375,7 @@
    "href": "/resume/tserof",
    "text": "기획 · 스테이지 2 구성\n씬 통합 · 2-1·2-2·2-3\n기믹 · 큐브·장애물\n퍼즐 · 3×3 패턴\n정리 · 인터페이스",
    "hash": "cd853f3099a5519d",
-   "id": "tserof-360"
+   "id": "tserof-358"
   },
   {
    "project": "tserof",
@@ -3402,7 +3384,7 @@
    "href": "/resume/tserof",
    "text": "Stage · Stage2Manager · 구간 on/off · Cinemachine 카메라 · 리스폰 · 클리어\nPuzzle · PuzzleManager · 정답 5종 교체 · 순서 비교\nGimmick · CubeType · Obstacles · enum 분기 · 장애물 반응\nContract · IMovable 외 4종 · 기믹 공통 인터페이스 (12월 정리)",
    "hash": "a0f79249e4a4da56",
-   "id": "tserof-361"
+   "id": "tserof-359"
   },
   {
    "project": "tserof",
@@ -3411,7 +3393,7 @@
    "href": "/resume/tserof",
    "text": "스테이지 2 구성 · 한 씬 + 구간 그룹 on/off · 구간 전환에 씬 로드가 없고 카메라·리스폰만 바뀜 · 씬 3개(전환마다 로드 · 상태 유지 어려움)\n퍼즐 판정 · int[9] 정답 배열 순서 비교 · 정답 패턴을 배열로 추가하고 SequenceEqual로 비교했습니다. · 칸별 개별 판정\n큐브 속성 · enum 하나로 switch 분기 · 큐브 종류마다 스크립트를 늘리지 않음 · 큐브 종류별 스크립트\n무한 코루틴 · WaitForSeconds 캐싱 · 루프마다 new 하지 않아 할당 감소 · 매 루프 new WaitForSeconds",
    "hash": "1a1362488d7c3328",
-   "id": "tserof-362"
+   "id": "tserof-360"
   },
   {
    "project": "tserof",
@@ -3420,7 +3402,7 @@
    "href": "/resume/tserof",
    "text": "스테이지 2\n2-1·2-2·2-3 씬을 한 씬으로 통합\nStage2Manager · 구간별 Cinemachine 카메라 전환 · 리스폰 지점 · 클리어 판정\n스테이지 2 카메라 회전 (CamPos)\n퍼즐\n3×3 패턴 퍼즐 · PuzzleManager · PatternSign · PuzzleButton · PuzzleObjects 등 7개 스크립트\n기믹\n속성 큐브 CubeType (마그마·용암·물·얼음·얼음벽)\n대포 · 낙하물 · 회전 장애물 · 측면 가시 · 투명 가시(F키)\n레버 · 나뭇잎 탑승 · 토네이도 · 히든맵\n정리\nIMovable·IRotatable·IDisturbing·IPlayerRespwanable·IInteractable 도입 (팀원과, 12월)\n엔딩 씬 일부",
    "hash": "f3baa97081489f15",
-   "id": "tserof-363"
+   "id": "tserof-361"
   },
   {
    "project": "tserof",
@@ -3429,7 +3411,7 @@
    "href": "/resume/tserof",
    "text": "세 씬으로 나뉜 스테이지 2를 하나로 통합했습니다\n2-1·2-2·2-3 이 별도 씬이라 구간마다 카메라·리스폰·클리어 판정을 따로 들고 있었고, 씬을 넘기는 순간 상태가 끊겼습니다.\n세 씬을 Stage2Scene 하나로 합치고(11.27 통합 씬 생성 → 11.28 씬 합치기 → 11.29 씬 넘어가는 문제 해결), Stage2Manager 가 구간 오브젝트 그룹 on/off · Cinemachine 카메라 enable · 현재 리스폰 지점을 한 곳에서 바꾸게 했습니다.\n구간 하나가 켜질 때 리스폰 지점과 Cinemachine 카메라가 같이 바뀝니다. 씬 로드 없이 2-1 → 2-2\n코드로 확인 · 씬 통합 전체는 여러 커밋에 걸쳐 있습니다.",
    "hash": "23843ede5aa32c9c",
-   "id": "tserof-364"
+   "id": "tserof-362"
   },
   {
    "project": "tserof",
@@ -3438,7 +3420,7 @@
    "href": "/resume/tserof",
    "text": "반복 플레이에서 정답 패턴이 고정되는 문제를 개선했습니다\n3×3 발판을 표지판과 같게 만드는 퍼즐인데, 정답이 고정이면 반복 플레이에서 퍼즐 구실을 못 했습니다.\n정답 패턴 5종을 int[9] 배열로 두고 코루틴이 25초마다 무작위로 바꾸며 표지판을 갱신했습니다. 패턴이 바뀌면 판을 전부 물로 되돌리고 버튼 일곱 개의 위치를 섞습니다.\n\n칸은 빈칸·얼음·물 세 값입니다. 가로줄과 세로줄 버튼 여섯 개가 그 줄 세 칸을 한 단계씩 넘기고, 리셋 버튼은 전부 빈칸으로 만듭니다. PuzzleManager 가 SequenceEqual 로 플레이어 배열과 정답 배열을 비교해, 맞으면 발판을 끄고 타고 갈 나뭇잎을 켭니다.\n정답 패턴 5종을 25초마다 무작위로 바꾸고, 플레이어가 놓은 배열을 정답과 순서대로 비교\n전후 코드로 확인 · 퍼즐 폴더의 커밋 26개 중 20개가 제 것입니다.",
    "hash": "1a91dc0457bceb96",
-   "id": "tserof-365"
+   "id": "tserof-363"
   },
   {
    "project": "tserof",
@@ -3447,7 +3429,7 @@
    "href": "/resume/tserof",
    "text": "큐브 종류별 반응을 enum과 switch로 관리했습니다\n마그마·용암·물·얼음·얼음벽이 각각 다른 반응(튕김·리스폰·낙하 후 복귀)을 해야 했습니다.\nCubeType 하나에 enum 으로 속성을 두고 충돌 시 switch 로 분기했습니다. 얼음은 코루틴으로 잠시 뒤 떨어졌다가 kinematic 을 되돌려 원위치하고, 마그마는 점프력을 주기적으로 바꿨습니다. 처음 추가할 때는 마그마·용암·얼음·물 네 종류였고 얼음벽은 뒤에 들어갔습니다.\n큐브 하나에 enum 하나. 마그마는 튕기고, 용암·물은 리스폰, 얼음은 코루틴으로 떨어졌다 되돌아옵니다\n코드로 확인 · 종류 구분은 처음 추가한 커밋부터 들어 있습니다.\n기믹이 늘수록 이동·회전·리스폰 처리 방식이 스크립트마다 달랐습니다\n장애물마다 움직임·회전·플레이어 리스폰을 제각각 구현해 놓아 팀원이 붙이기 어려웠습니다.\n12월 코드 정리에서 팀원과 함께 IMovable 등 공통 인터페이스를 적용했습니다. MovingPlatform 에 IMovable 을 붙이고 private Move 를 public 으로 바꾼 전후가 확인됩니다. 리스폰 인터페이스는 그 시점 이름이 IPlayerRespwanable 이고 빈 인터페이스였습니다. 모든 인터페이스의 기능이 한 커밋에서 완성된 것은 아닙니다.\n전후 코드로 확인\nMovingPlatform 의 전후에서 확인했습니다. 인터페이스 도입은 팀원과 같이 했습니다.",
    "hash": "2c88951af5a9188b",
-   "id": "tserof-366"
+   "id": "tserof-364"
   },
   {
    "project": "tserof",
@@ -3456,7 +3438,7 @@
    "href": "/resume/tserof",
    "text": "고드름이 바닥에 닿은 뒤에도 닿으면 죽었습니다\n유저 테스트에서 「고드름이 바닥에 닿는 순간 고드름에 닿을 경우 죽는 판정이 변경되었으면 좋겠습니다」라는 말을 들었습니다. 떨어진 고드름이 바닥에 놓여 있을 때도 스치면 리스폰됐습니다.\n떨어지는 동안에만 판정이 살아 있게 했습니다. 고드름을 트리거로 두고 플레이어가 닿으면 리스폰시키되, 얼음 바닥(Ice 태그)에 닿는 순간 트리거를 꺼서 그 뒤로는 닿아도 리스폰되지 않습니다. 제자리로 돌아갈 때 다시 트리거를 켭니다.\n전후 코드로 확인\n2023-12-04 커밋 「콜라이더 온오프기능 추가」입니다. 피드백 문장은 유저 테스트 조치 기록 그림에 적힌 것입니다.\n낮은 물체에 닿은 뒤 2단 점프가 안 된다는 말을 들었습니다\n유저 테스트에서 「높이가 낮은 물체에 닿은 후 2단 점프가 안 됩니다」라는 피드백이 나왔습니다. 제가 놓은 장애물에서 생긴 일이었습니다.\n점프 범위에 문제가 생기지 않게 오브젝트의 위치를 임시로 옮겼습니다. 점프 메커니즘 자체는 고치지 않았습니다. 플레이어 컨트롤러는 팀원 담당이었고, 조치 기록에도 「추후에 Jump 메커니즘을 수정할 예정」이라고 적었습니다.\n조치 기록 기준 · 유저 테스트 조치 기록 그림에 적힌 내용입니다.",
    "hash": "72c7ea5c7010378f",
-   "id": "tserof-367"
+   "id": "tserof-365"
   },
   {
    "project": "tserof",
@@ -3465,7 +3447,7 @@
    "href": "/resume/tserof",
    "text": "Unity 2022.3\nC#\nCinemachine",
    "hash": "747c9bcc3b8213d4",
-   "id": "tserof-368"
+   "id": "tserof-366"
   },
   {
    "project": "tserof",
@@ -3474,7 +3456,7 @@
    "href": "/resume/tserof",
    "text": "Steam · 스토어 출시 · app/2743860 · 2024.02.10 · Steam 스토어 app/2743860\n216 · 내 커밋 (1,204 중) · 2023.10.25 ~ 12.13 · 부팀장\n5종 · 퍼즐 정답 패턴 · 25초 교체 · int[9] 배열 5개 · 칸 값은 빈칸 · 얼음 · 물 · 아래 퍼즐의 패턴은 실제 값\n3 → 1 · 스테이지 2 씬 통합 · 2-1·2-2·2-3 → Stage2Scene · 11.27~29 · 2023.11.27~29 커밋",
    "hash": "0212a302471d0487",
-   "id": "tserof-369"
+   "id": "tserof-367"
   },
   {
    "project": "tserof",
@@ -3483,7 +3465,7 @@
    "href": "/resume/tserof",
    "text": "잃어버린 아이템을 찾아 스테이지를 깨는 3D 플랫포머로, 5인 팀이 4개월 만에 Steam 에 출시했습니다. 저는 부팀장으로 스테이지 2 전체와 장애물·속성 큐브 기믹, 3×3 패턴 퍼즐을 맡았고 커밋 216개를 제가 썼습니다.\n저는 부팀장으로 스테이지 2 전체와 장애물·속성 큐브 기믹, 3×3 패턴 퍼즐을 맡았고 커밋 216개를 제가 썼습니다.\n세 씬으로 나뉘어 있던 스테이지 2 를 한 씬으로 합치고 카메라·리스폰·클리어 판정을 Stage2Manager 한 곳에 모았습니다(11.27~29).\n출시는 Steam 스토어에서 확인할 수 있습니다.",
    "hash": "c55adaa38e65e2a9",
-   "id": "tserof-370"
+   "id": "tserof-368"
   },
   {
    "project": "tserof",
@@ -3492,7 +3474,7 @@
    "href": "/resume/tserof",
    "text": "스테이지 2 의 세 씬(2-1·2-2·2-3)을 Stage2Scene 하나로 합치고, 구간 오브젝트 on/off · Cinemachine 카메라 enable · 리스폰 지점을 Stage2Manager 가 한 곳에서 바꾸게 했습니다.\n11.27 통합 씬 생성 → 11.28 씬 합치기 → 11.29 씬 넘어가는 문제 해결. 씬을 넘기는 순간 상태가 끊기던 문제가 사라졌습니다.\n3×3 패턴 퍼즐의 정답을 int[9] 배열 5종으로 두고 코루틴이 25초마다 무작위로 바꾸며 표지판을 갱신, SequenceEqual 로 플레이어 배열과 비교하게 했습니다.\n정답이 고정이면 반복 플레이에서 퍼즐 구실을 못 했습니다. 아래 장면에서 직접 눌러 볼 수 있습니다(패턴 값은 예시).\n마그마·용암·물·얼음·얼음벽 큐브를 enum 하나와 switch 로 분기하고, 12월 코드 정리에서 IMovable 등 공통 인터페이스를 기믹에 적용했습니다.\n리스폰 인터페이스는 그 시점 이름이 IPlayerRespwanable 이고 빈 인터페이스였습니다.",
    "hash": "3c6261ae32d46e05",
-   "id": "tserof-371"
+   "id": "tserof-369"
   },
   {
    "project": "tserof",
@@ -3501,7 +3483,7 @@
    "href": "/resume/tserof",
    "text": "2-1·2-2·2-3 이 별도 씬이라 구간마다 카메라·리스폰·클리어 판정을 따로 들고 있었고, 씬을 넘기는 순간 상태가 끊겼습니다.\n세 씬을 Stage2Scene 하나로 합치고 Stage2Manager 가 구간 그룹 on/off · 카메라 enable · 리스폰 지점을 한 곳에서 바꾸게 했습니다.\n11.27~29 세 커밋. 씬 자산 병합 전체는 여러 커밋에 걸쳐 있어 파일 하나로 재현되진 않습니다.\n3×3 발판 퍼즐의 정답이 고정이라 반복 플레이에서 퍼즐 구실을 못 했습니다.\n정답 패턴 5종을 int[9] 로 두고 코루틴이 25초마다 무작위로 바꾸며 표지판을 갱신, SequenceEqual 로 비교했습니다.\n퍼즐의 물리 반응은 별도입니다.\n마그마·용암·물·얼음·얼음벽이 각각 다른 반응(튕김·리스폰·낙하 후 복귀)을 해야 했습니다.\nCubeType enum 하나로 속성을 두고 충돌 시 switch 로 분기, 얼음은 코루틴으로 떨어졌다 kinematic 을 되돌려 원위치하게 했습니다.\n처음에는 네 종류였고 얼음벽은 뒤에 추가했습니다.\n장애물마다 움직임·회전·리스폰을 제각각 구현해 팀원이 붙이기 어려웠습니다.\n12월 코드 정리에서 IMovable 등 공통 인터페이스를 적용했습니다.\n움직이는 발판부터 같은 인터페이스로 붙였습니다.",
    "hash": "54ca5449cfbc964e",
-   "id": "tserof-372"
+   "id": "tserof-370"
   },
   {
    "project": "tserof",
@@ -3510,7 +3492,7 @@
    "href": "/resume/tserof",
    "text": "큐브 enum 분기 · 기믹 공통 인터페이스",
    "hash": "820f752566365e2f",
-   "id": "tserof-373"
+   "id": "tserof-371"
   },
   {
    "project": "tserof",
@@ -3519,7 +3501,7 @@
    "href": "/resume/tserof",
    "text": "Unity 2022.3 · Stage2Manager 가 구간·카메라·리스폰을 한 곳에서 · 큐브는 enum/switch · 기믹은 인터페이스 5종.\nStage2Manager 의 구간 전환, PatternSign 의 25초 패턴 교체, CubeType 의 switch.\n2023.10 기획 → 11 씬 통합·기믹 → 12 코드 정리 → 2024.02 Steam 출시.",
    "hash": "0bd4a8ebadf73eff",
-   "id": "tserof-374"
+   "id": "tserof-372"
   },
   {
    "project": "tserof",
@@ -3528,7 +3510,7 @@
    "href": "/resume/tserof",
    "text": "구간마다 씬을 로드했습니다\n스테이지 2 는 2-1·2-2·2-3 세 씬이었고, 씬을 넘기는 순간 상태가 끊겼습니다.\n판정이 구간마다 흩어져 있었습니다 · 카메라, 리스폰, 클리어 판정을 구간마다 따로 들고 있었습니다.\n기믹마다 구현 방식이 달랐습니다\n장애물마다 움직임·회전·리스폰을 제각각 구현해 팀원이 붙이기 어려웠습니다.",
    "hash": "f1fc535c91cea530",
-   "id": "tserof-375"
+   "id": "tserof-373"
   },
   {
    "project": "tserof",
@@ -3537,16 +3519,16 @@
    "href": "/resume/tserof",
    "text": "스테이지 2 는 세 씬으로 나뉘어 있었고, 구간을 넘길 때마다 씬을 로드했습니다.\n잃어버린 아이템을 찾아 스테이지를 깨는 3D 플랫포머입니다. 5인 팀이 만들어 Steam 에 출시했고, 저는 스테이지 2 를 맡았습니다.\n세 씬을 한 씬으로 합쳐 카메라·리스폰·클리어를 매니저 하나에 모으고, 큐브·퍼즐·장애물을 같은 규약으로 묶으면 기믹을 늘려도 구간 전환이 끊기지 않는다고 봤습니다.",
    "hash": "986f6ec5a1b4e567",
-   "id": "tserof-376"
+   "id": "tserof-374"
   },
   {
    "project": "tserof",
    "title": "TSEROF",
    "section": "5인 팀에서 스테이지 2 전체와 기믹, 3×3 퍼즐을 맡았습니다.",
    "href": "/resume/tserof",
-   "text": "5인 팀에서 스테이지 2 전체와 기믹, 3×3 퍼즐을 맡았습니다.\n플레이어 컨트롤러, 저장과 씬 전환, 스테이지 선택과 사운드, 스테이지 1 기믹은 팀원 넷이 맡았습니다.\n216 · 내 커밋 · 전체 1,204개 중\n144개 · 11월 한 달의 커밋 · 10월 28, 12월 44\n13개",
-   "hash": "8074d096ad7e896b",
-   "id": "tserof-377"
+   "text": "5인 팀에서 스테이지 2 전체와 기믹, 3×3 퍼즐을 맡았습니다.\n플레이어 컨트롤러, 저장과 씬 전환, 스테이지 선택과 사운드, 스테이지 1 기믹은 팀원 넷이 맡았습니다.\n216 · 내 커밋 · 전체 1,204개 중\n144개 · 11월 한 달의 커밋 · 10월 28, 12월 44\n13개 · 맡은 스크립트",
+   "hash": "27bf2ed8a426f6a3",
+   "id": "tserof-375"
   },
   {
    "project": "tserof",
@@ -3555,7 +3537,7 @@
    "href": "/resume/tserof",
    "text": "세 씬을 하나로 합치고, 퍼즐과 큐브를 만들고, 유저 테스트에서 들은 말을 고쳤습니다.\n2번 줄 아래의 퍼즐은 실제 규칙 그대로라 직접 풀어 볼 수 있습니다.\n여섯 가지 전부",
    "hash": "095d0c7dc17f5fc2",
-   "id": "tserof-378"
+   "id": "tserof-376"
   },
   {
    "project": "tserof",
@@ -3564,16 +3546,16 @@
    "href": "/resume/tserof",
    "text": "2023년 11월 · 스테이지 2 만들기\n세 씬이라 넘길 때마다 상태가 끊겼습니다 · 카메라·리스폰·클리어 판정을 구간마다 따로 들고 있었습니다.\n한 씬으로 합치고 매니저 하나에 모았습니다\nStage2Manager 가 구간 그룹 on/off, Cinemachine 카메라, 리스폰 지점을 한 곳에서 바꿉니다.\n3 → 1\n11월 27일부터 29일까지 세 번의 커밋입니다. 씬 로드 없이 2-1 에서 2-2 로 넘어갑니다.\n정답이 고정이면 퍼즐 구실을 못 했습니다 · 3×3 발판을 표지판과 같게 만드는 퍼즐입니다.\n정답 다섯 개를 25초마다 바꿨습니다\n칸은 빈칸·얼음·물 세 값이고, 줄 버튼이 세 칸씩 한 단계 넘깁니다. 배열을 순서대로 비교해 판정합니다.\n5종\n다섯 패턴 모두 줄 버튼만으로 만들 수 있습니다. 아래에서 직접 풀어 볼 수 있습니다.\n큐브마다 반응이 달라야 했습니다 · 마그마는 튕기고, 용암과 물은 리스폰시키고, 얼음은 떨어졌다 돌아옵니다.\nenum 하나와 switch 로 나눴습니다\n큐브 종류마다 스크립트를 늘리지 않고 CubeType 하나에 속성을 뒀습니다.\n5종\n마그마·용암·물·얼음·얼음벽입니다. 처음에는 네 종류였고 얼음벽은 뒤에 들어갔습니다.",
    "hash": "d9f78476d5577d81",
-   "id": "tserof-379"
+   "id": "tserof-377"
   },
   {
    "project": "tserof",
    "title": "TSEROF",
    "section": "세 씬을 하나로 합치고, 퍼즐과 큐브를 만들고, 유저 테스트에서 들은 말을 고쳤습니다.",
    "href": "/resume/tserof",
-   "text": "2023년 12월 · 유저 테스트와 코드 정리\n바닥에 놓인 고드름에 닿아도 죽었습니다 · 유저 테스트에서 판정을 바꿔 달라는 말을 들었습니다.\n떨어지는 동안에만 판정을 켰습니다 · 고드름을 트리거로 두고, 얼음 바닥에 닿는 순간 트리거를 끕니다.\n2023.12.04 · 피드백을 코드로 반영 · FallingObject.cs 의 전후가 커밋으로 확인됩니다.\n낮은 물체에 닿으면 2단 점프가 안 됐습니다 · 제가 놓은 장애물에서 나온 피드백입니다.\n오브젝트 위치를 임시로 옮겼습니다 · 점프 범위에 걸리지 않게 배치를 바꿨습니다.\n피드백 지점을 지나갈 수 있게 됐습니다 · 점프 메커니즘은 팀원 담당이라 수정 요청으로 넘겼습니다.\n기믹마다 구현 방식이 달랐습니다 · 움직임·회전·리스폰을 제각각 구현해 팀원이 붙이기 어려웠습니다.\n공통 인터페이스를 적용했습니다 · 팀원과 함께 IMovable 등 다섯 가지를 기믹에 붙였습니다.\n한 번에 끝난 것은 아닙니다 · 리스폰 인터페이스는 그 시점에 빈 인터페이스였습니다.",
-   "hash": "e088928888723af6",
-   "id": "tserof-380"
+   "text": "2023년 12월 · 유저 테스트와 코드 정리\n바닥에 놓인 고드름에 닿아도 죽었습니다 · 유저 테스트에서 판정을 바꿔 달라는 말을 들었습니다.\n떨어지는 동안에만 판정을 켰습니다 · 고드름을 트리거로 두고, 얼음 바닥에 닿는 순간 트리거를 끕니다.\n2023.12.04 · 떨어지는 동안에만 판정 · 바닥에 놓인 고드름에는 닿아도 리스폰되지 않습니다.\n낮은 물체에 닿으면 2단 점프가 안 됐습니다 · 제가 놓은 장애물에서 나온 피드백입니다.\n오브젝트 위치를 임시로 옮겼습니다 · 점프 범위에 걸리지 않게 배치를 바꿨습니다.\n피드백 지점을 지나갈 수 있게 됐습니다 · 점프 메커니즘은 팀원 담당이라 수정 요청으로 넘겼습니다.\n기믹마다 구현 방식이 달랐습니다 · 움직임·회전·리스폰을 제각각 구현해 팀원이 붙이기 어려웠습니다.\n공통 인터페이스를 적용했습니다 · 팀원과 함께 IMovable 등 다섯 가지를 기믹에 붙였습니다.\n인터페이스 5종 · 움직임, 회전, 방해, 리스폰, 상호작용을 같은 방식으로 붙입니다.",
+   "hash": "900ee2bc6b0b05c2",
+   "id": "tserof-378"
   },
   {
    "project": "tserof",
@@ -3582,7 +3564,7 @@
    "href": "/resume/tserof",
    "text": "5인 팀이 4개월 만에 Steam 에 출시했습니다.\n퍼즐 패턴을 코드 배열에서 기획자가 고칠 수 있는 데이터로 떼어 내는 일이 남았습니다.",
    "hash": "5a4acfa752b7d327",
-   "id": "tserof-381"
+   "id": "tserof-379"
   },
   {
    "project": "tserof",
@@ -3591,7 +3573,7 @@
    "href": "/resume/tserof",
    "text": "세 씬을 한 씬으로 합쳐 카메라·리스폰·클리어를 Stage2Manager 한 곳에 모음\n기믹을 인터페이스 5종으로 묶어 팀원이 같은 방식으로 붙이게 함\n밸런싱 시간 부족\n퍼즐 패턴을 코드 배열에서 데이터로 분리\n인터페이스 기반으로 장애물 종류 확장",
    "hash": "ce466fad141509c1",
-   "id": "tserof-382"
+   "id": "tserof-380"
   },
   {
    "project": "tserof",
@@ -3600,7 +3582,7 @@
    "href": "/resume/tserof",
    "text": "카메라·리스폰·클리어 처리를 Stage2Manager로 모으고, 기믹에 공통 인터페이스를 적용했습니다.",
    "hash": "ec7cc21d2fd6d5ce",
-   "id": "tserof-383"
+   "id": "tserof-381"
   },
   {
    "project": "tserof",
@@ -3609,7 +3591,7 @@
    "href": "/resume/tserof",
    "text": "12월 코드 정리에서 팀원과 함께 공통 인터페이스를 적용했습니다. 퍼즐 패턴은 아직 코드에 정의돼 있어, 다음에는 기획자가 직접 고칠 수 있는 데이터로 떼어 내려고 합니다.",
    "hash": "fa2a1ba335e58c32",
-   "id": "tserof-384"
+   "id": "tserof-382"
   },
   {
    "project": "otherside-vr",
@@ -3618,7 +3600,7 @@
    "href": "/resume/otherside-vr",
    "text": "VR HORROR PUZZLE · UNITY XR (TEAM OF 4)",
    "hash": "9ab54e9a361f3a06",
-   "id": "otherside-vr-385"
+   "id": "otherside-vr-383"
   },
   {
    "project": "otherside-vr",
@@ -3627,7 +3609,7 @@
    "href": "/resume/otherside-vr",
    "text": "맨눈에는 보이지 않는 단서\n카메라 끔 · 1072/602\n같은 방입니다. 손전등만으로는 단서가 보이지 않고, 손전등을 켜면 제 감지기가 적에게 들키게 만듭니다.\n특수 카메라로 보면 나타난다\n카메라 켬 · 1072/602\n특수 카메라와 PostFX 는 팀원 담당입니다. 저는 그 카메라·손전등 상태를 읽어 몬스터를 켜고 끄는 쪽을 맡았습니다.",
    "hash": "b2606f6eae8077ff",
-   "id": "otherside-vr-386"
+   "id": "otherside-vr-384"
   },
   {
    "project": "otherside-vr",
@@ -3636,16 +3618,16 @@
    "href": "/resume/otherside-vr",
    "text": "무엇을\n특수 카메라로만 보이는 단서를 찾고, 손전등을 켜면 들키는 VR 공포 퍼즐 게임입니다.\n왜 · VR 에서 보이는 것 자체를 게임 규칙으로 만들려고 했습니다.\n결과\n감지기 둘(시야각 · 손전등 빛 원뿔)이 봤는지 놓쳤는지만 판정하고 GameManager 가 몬스터 2종을 켜고 끕니다. 5초 못 보면 추격이 풀립니다\n내 역할\n몬스터 AI 2종, 감지기 둘, GameManager 중앙 제어를 맡았고 기획에 참여했습니다.",
    "hash": "7a4fd28c08b609bf",
-   "id": "otherside-vr-387"
+   "id": "otherside-vr-385"
   },
   {
    "project": "otherside-vr",
    "title": "The Other Side (VR)",
    "section": "기간·역할",
    "href": "/resume/otherside-vr",
-   "text": "기간\n2025.05 – 2025.06 (첫 커밋 05.18 · 마지막 06.16)\n팀 · 4인 팀 (AR 과 같은 팀원) · 특수 카메라 시스템은 팀원 담당\n역할 · AI 몬스터 · 감지 로직 · 중앙 제어 · 기획 참여\n스택\nUnity · XR Interaction Toolkit · C# · NavMesh",
-   "hash": "a5d321bad612f879",
-   "id": "otherside-vr-388"
+   "text": "기간\n2025.05 – 2025.06 (첫 커밋 05.18 · 마지막 06.16)\n팀 · 4인 팀 · 특수 카메라 시스템은 팀원 담당\n역할 · AI 몬스터 · 감지 로직 · 중앙 제어 · 기획 참여\n스택\nUnity · XR Interaction Toolkit · C# · NavMesh",
+   "hash": "1d6f0128304a6acb",
+   "id": "otherside-vr-386"
   },
   {
    "project": "otherside-vr",
@@ -3654,7 +3636,7 @@
    "href": "/resume/otherside-vr",
    "text": "2종 · 몬스터 AI · Doll / Bookhead\n2 · 감지기 · 시야각 / 손전등 빛\n5초 · 시야를 벗어난 뒤 추격 해제",
    "hash": "9671d7911a6993d5",
-   "id": "otherside-vr-389"
+   "id": "otherside-vr-387"
   },
   {
    "project": "otherside-vr",
@@ -3663,7 +3645,7 @@
    "href": "/resume/otherside-vr",
    "text": "몬스터 두 종, 감지기 둘, 놓친 뒤 5초 기준입니다.",
    "hash": "2f5ef794dcc09ba6",
-   "id": "otherside-vr-390"
+   "id": "otherside-vr-388"
   },
   {
    "project": "otherside-vr",
@@ -3672,7 +3654,7 @@
    "href": "/resume/otherside-vr",
    "text": "특수 카메라 단서 · 정상 시야로는 안 보이는 퍼즐 요소를 카메라 모드로 발견\n손전등 리스크 · 켜면 빛 원뿔까지 감지 대상. 시야 확보 vs 들킬 위험\nFOV 추격 · 적 시야각 안에 들어오면 추적, 벗어나면 5초 뒤 해제\n퍼즐 ↔ 추격 연동 · GameManager 토글로 퍼즐 진행에 따라 몬스터 활성화",
    "hash": "5e6954f58b8da172",
-   "id": "otherside-vr-391"
+   "id": "otherside-vr-389"
   },
   {
    "project": "otherside-vr",
@@ -3681,7 +3663,7 @@
    "href": "/resume/otherside-vr",
    "text": "단순 추격만으로는 공포의 템포를 조절할 수 없었습니다. 그리고 감지 로직과 AI 로직이 직접 결합되면, 퍼즐 조건이 하나 늘 때마다 몬스터 코드를 고쳐야 해서 유지보수가 어려웠습니다.",
    "hash": "c461c65ef13be773",
-   "id": "otherside-vr-392"
+   "id": "otherside-vr-390"
   },
   {
    "project": "otherside-vr",
@@ -3690,7 +3672,7 @@
    "href": "/resume/otherside-vr",
    "text": "감지기는 감지만 하고 행동은 GameManager 가 중앙에서 켜고 끕니다. 퍼즐 진행에 따라 추격을 제어할 수 있고, 트리거가 늘어도 감지기는 GameManager 만 알면 됩니다.",
    "hash": "bf68f7725141f651",
-   "id": "otherside-vr-393"
+   "id": "otherside-vr-391"
   },
   {
    "project": "otherside-vr",
@@ -3699,7 +3681,7 @@
    "href": "/resume/otherside-vr",
    "text": "탐색 · 어두운 저택\n발견 · 카메라 모드\n위협 · 퍼즐 → 적 활성화\n회피 · FOV 추격 대응",
    "hash": "5580e20a0153c75e",
-   "id": "otherside-vr-394"
+   "id": "otherside-vr-392"
   },
   {
    "project": "otherside-vr",
@@ -3708,7 +3690,7 @@
    "href": "/resume/otherside-vr",
    "text": "Detect\nEnemyDetector\n시야각(90°)·거리(10m) + 손전등 빛 원뿔 10등분·양끝 포함 11점 샘플링\nDetect · EnemyLightZoneDetector · 손전등 ON + 반경 7m · 두 번째 몬스터용 규칙\nControl · GameManager (싱글톤) · 몬스터 오브젝트·추격 여부를 중앙에서 토글\nAI\nMonsterAI\nNavMesh · Wander → Chase → Attack, 타입별 활성 플래그\nTeam\nCameraController / Manager\nVR 트리거로 카메라 모드 토글 · PostFX + 숨은 오브젝트 렌더링 (팀원)",
    "hash": "808405ba64424c07",
-   "id": "otherside-vr-395"
+   "id": "otherside-vr-393"
   },
   {
    "project": "otherside-vr",
@@ -3717,7 +3699,7 @@
    "href": "/resume/otherside-vr",
    "text": "구조 · 감지 / 행동 분리 · 퍼즐 조건 추가 시 몬스터 코드 무변경 · 감지기가 AI 를 직접 호출 (퍼즐 조건이 늘 때마다 AI 코드를 고침)\n손전등 감지 · 빛 원뿔을 10등분·양끝 포함 11점으로 샘플링 · 손전등 빛이 몬스터의 시야에 들어오면 추격하도록 구현했습니다. · 플레이어 위치만 검사 (손전등 무의미)\n추격 해제 · 시야 이탈 후 5초 지연 · 코너 하나 돌았다고 바로 풀리면 긴장이 끊김 · 즉시 해제\n퍼즐 연동 · Enable 토글 · 퍼즐 진행 단계마다 추격 ON/OFF 로 템포 제어 · 항상 추격 (템포 조절 불가)",
    "hash": "9792bae3d700dd17",
-   "id": "otherside-vr-396"
+   "id": "otherside-vr-394"
   },
   {
    "project": "otherside-vr",
@@ -3726,7 +3708,7 @@
    "href": "/resume/otherside-vr",
    "text": "AI\nMonsterAI · 배회/추격/공격 상태\n타입별 활성 플래그 (Doll · Bookhead)\n감지\nEnemyDetector · 시야각 + 손전등 원뿔\nEnemyLightZoneDetector · 반경 + 손전등\n제어\nGameManager 싱글톤 · 중앙 토글\nPlayerFlashlight · 상태·원뿔 정보\n기획 · 기획 참여 · 몬스터 쪽 흐름 (탐색 → 발견 → 위협 → 회피)",
    "hash": "2676a6c9ecbebca5",
-   "id": "otherside-vr-397"
+   "id": "otherside-vr-395"
   },
   {
    "project": "otherside-vr",
@@ -3735,7 +3717,7 @@
    "href": "/resume/otherside-vr",
    "text": "감지와 행동이 붙어 있으면 퍼즐이 늘 때마다 몬스터를 고쳐야 했습니다\n감지기가 몬스터를 직접 부르면, 트리거·퍼즐 조건이 하나 추가될 때마다 AI 코드에 손이 갑니다.\n감지기(EnemyDetector · EnemyLightZoneDetector)는 봤는지 놓쳤는지만 판정하고 GameManager.Instance 의 ToggleDollBehavior · ToggleBookheadBehavior 만 부릅니다. 제 코드 안에서는 몬스터를 켜고 끄는 자리가 GameManager 하나입니다.\n손전등이 그냥 조명이면 ‘켤지 말지’가 선택이 안 됩니다\n시야 확보와 들킬 위험이 맞바꿔지지 않으면 손전등은 항상 켜 두는 물건이 됩니다.\nPlayerFlashlight 가 빛 원뿔(원점·방향·범위)을 내주고, 감지기가 그 원뿔을 따라 10등분하고 양끝을 포함한 11점(i=0부터 i<=10)을 검사해 적 시야각 안에 걸리는지 검사합니다. 빛줄기 끝만 걸려도 추격이 시작됩니다.\n코드로 확인\n주 코드가 빛 정보를 넘기고 감지 알고리즘은 같은 커밋의 EnemyDetector에 있습니다. 아래 시야 도식은 단순화했으며 장애물 가림까지 재현하지 않습니다.",
    "hash": "6b4fec37820060a5",
-   "id": "otherside-vr-398"
+   "id": "otherside-vr-396"
   },
   {
    "project": "otherside-vr",
@@ -3744,16 +3726,16 @@
    "href": "/resume/otherside-vr",
    "text": "Unity\nXR Interaction Toolkit\nC#\nNavMesh",
    "hash": "5257424bfd1f5678",
-   "id": "otherside-vr-399"
+   "id": "otherside-vr-397"
   },
   {
    "project": "otherside-vr",
    "title": "The Other Side (VR)",
    "section": "수치",
    "href": "/resume/otherside-vr",
-   "text": "2종 · 몬스터 AI · Doll · Bookhead · 추격 8m / 공격 2m · chaseDistance 8f\n2\n감지기\n시야각 90°·10m · 손전등 빛 7m\nEnemyDetector viewAngle 90f · viewRange 10f / EnemyLightZoneDetector 7f\n5초 · 놓친 뒤 추격 해제 · 놓친 뒤 추격을 푸는 시간 · 본인 커밋 2/2\n25 · 내 커밋 (161 중) · 2025.05.20 ~ 06.16 · Assets/JJH",
-   "hash": "502de132bede427d",
-   "id": "otherside-vr-400"
+   "text": "2종 · 몬스터 AI · Doll · Bookhead · 추격 8m / 공격 2m\n2 · 감지기 · 시야각 90°·10m · 손전등 빛 7m\n5초 · 추격 해제 · 시야에서 벗어난 뒤 기다리는 시간\n25 · 내 커밋 (161 중) · 2025.05.20 ~ 06.16",
+   "hash": "0007be7ecda87181",
+   "id": "otherside-vr-398"
   },
   {
    "project": "otherside-vr",
@@ -3762,7 +3744,7 @@
    "href": "/resume/otherside-vr",
    "text": "특수 카메라로만 보이는 단서를 찾고, 손전등을 켜면 들키는 VR 공포 퍼즐 게임입니다. 4인 팀에서 저는 몬스터 AI 2종과 감지기 2개, 그 둘을 잇는 GameManager 를 맡았습니다. 손전등 빛줄기를 11점으로 찍어 적의 시야 검사에 넣어서, 손전등을 켜는 것 자체가 위험이 됩니다.\n손전등 빛줄기를 11점으로 찍어 적의 시야 검사에 넣어서, 손전등을 켜는 것 자체가 위험이 됩니다.\n특수 카메라와 화면 효과, 방 진행은 팀원 작업입니다. 제 스크립트는 열 개이고 저장소 커밋 161개 중 25개가 제 커밋입니다.\n감지기는 봤는지 놓쳤는지만 판정하고 GameManager 가 몬스터를 켜고 끕니다. 5초 동안 못 보면 추격이 풀립니다.",
    "hash": "5c9c2476dcafba9e",
-   "id": "otherside-vr-401"
+   "id": "otherside-vr-399"
   },
   {
    "project": "otherside-vr",
@@ -3771,7 +3753,7 @@
    "href": "/resume/otherside-vr",
    "text": "손전등 빛 원뿔(원점·방향·범위)을 10등분·양끝 포함 11점(i=0..10)으로 찍어 적 시야각(90° · 10m) 안에 걸리는지 검사합니다. 빛줄기 끝만 걸려도 추격이 시작됩니다.\nEnemyDetector.cs 의 IsPlayerInFOV 와 샘플 루프(i <= sampleCount). 장애물 가림은 재현하지 않습니다. 본인 커밋 2/2.\n감지(EnemyDetector · EnemyLightZoneDetector) / 행동(MonsterAI) / 켜고 끄기(GameManager) 를 세 파일로 나눴습니다. 감지기는 GameManager 의 토글만 부릅니다.\nMonsterAI 는 평소엔 배회하다(RandomNavSphere) 8m 안에 들어오면 쫓고 2m 안에서 공격합니다. 놓친 뒤 5초(loseSightDelay)가 지나면 GameManager 가 추격을 끕니다.\nchaseDistance 8f · attackDistance 2f · animator.speed 3f · loseSightDelay 5f.",
    "hash": "c6b7031727344b17",
-   "id": "otherside-vr-402"
+   "id": "otherside-vr-400"
   },
   {
    "project": "otherside-vr",
@@ -3780,25 +3762,25 @@
    "href": "/resume/otherside-vr",
    "text": "감지기가 몬스터를 직접 부르면 퍼즐 조건이 하나 늘 때마다 AI 코드에 손이 갔습니다.\n감지기는 봤는지 놓쳤는지만 판정하고 GameManager 의 ToggleDollBehavior · ToggleBookheadBehavior 만 부르게 했습니다.\n제 코드 안에선 켜고 끄는 자리가 GameManager 하나입니다. 팀원 방 스크립트는 몬스터를 직접 켜기도 해 전체가 한 곳은 아닙니다.\n손전등이 그냥 조명이면 켤지 말지가 선택이 안 됩니다.\n빛 원뿔을 11점으로 찍어 적 시야각 검사에 넣었습니다. 빛줄기 끝만 걸려도 추격이 시작됩니다.\n손전등을 켜는 것이 곧 들킬 위험이 됐습니다. 처음 추가한 커밋부터 이 로직입니다.",
    "hash": "e50fbee62659ff82",
+   "id": "otherside-vr-401"
+  },
+  {
+   "project": "otherside-vr",
+   "title": "The Other Side (VR)",
+   "section": "상세",
+   "href": "/resume/otherside-vr",
+   "text": "감지기 2 → GameManager 토글 → MonsterAI 2종. 특수 카메라는 팀원.\nEnemyDetector 의 11점 샘플링, GameManager 의 토글, MonsterAI 의 추격·공격 거리.\n2025.05.20 첫 커밋 → 06.05 감지기 · 몬스터 AI 추가 → 06.16 마무리.",
+   "hash": "620b2a9c3387e7d1",
+   "id": "otherside-vr-402"
+  },
+  {
+   "project": "otherside-vr",
+   "title": "The Other Side (VR)",
+   "section": "상세",
+   "href": "/resume/otherside-vr",
+   "text": "추격만으로는 템포를 조절할 수 없었습니다\n몬스터가 늘 쫓아오면 퍼즐을 푸는 시간과 도망치는 시간을 나눌 수 없습니다.\n감지와 행동이 붙으면 고칠 곳이 늘어납니다\n감지기가 몬스터를 직접 부르면 퍼즐 조건이 하나 늘 때마다 몬스터 코드를 고쳐야 합니다.\n손전등이 그냥 조명이었습니다 · 켜도 손해가 없으면 손전등은 늘 켜 두는 물건이 됩니다.\n그래서 감지기는 판정만 하고, 몬스터를 켜고 끄는 일은 한 곳에서 합니다.",
+   "hash": "5c9974231607d22e",
    "id": "otherside-vr-403"
-  },
-  {
-   "project": "otherside-vr",
-   "title": "The Other Side (VR)",
-   "section": "상세",
-   "href": "/resume/otherside-vr",
-   "text": "감지기 2 → GameManager 토글 → MonsterAI 2종. 특수 카메라는 팀원.\nEnemyDetector 의 11점 샘플링, GameManager 의 토글, MonsterAI 의 추격·공격 거리.\n2025.05.18 첫 커밋 → 06.05 Assets/JJH 추가 → 06.16 주석·마무리.",
-   "hash": "2a57152eee569953",
-   "id": "otherside-vr-404"
-  },
-  {
-   "project": "otherside-vr",
-   "title": "The Other Side (VR)",
-   "section": "상세",
-   "href": "/resume/otherside-vr",
-   "text": "추격만으로는 템포를 조절할 수 없었습니다\n몬스터가 늘 쫓아오면 퍼즐을 푸는 시간과 도망치는 시간을 나눌 수 없습니다.\n감지와 행동이 붙으면 고칠 곳이 늘어납니다\n감지기가 몬스터를 직접 부르면 퍼즐 조건이 하나 늘 때마다 몬스터 코드를 고쳐야 합니다.\n손전등이 그냥 조명이었습니다 · 켜도 손해가 없으면 손전등은 늘 켜 두는 물건이 됩니다.\n그래서 감지기는 판정만 하고, 몬스터를 켜고 끄는 일은 한 곳에서 합니다.\nAssets/JJH 스크립트",
-   "hash": "8242cc970ef69c5f",
-   "id": "otherside-vr-405"
   },
   {
    "project": "otherside-vr",
@@ -3807,7 +3789,7 @@
    "href": "/resume/otherside-vr",
    "text": "보이는 것 자체를 게임 규칙으로 만들어야 했습니다.\n특수 카메라로만 보이는 단서를 찾는 VR 공포 퍼즐 게임입니다. 넷이 만들었습니다.\n감지기는 감지만 하고 행동은 GameManager 가 중앙에서 켜고 끕니다. 퍼즐 진행에 따라 추격을 제어할 수 있고, 트리거가 늘어도 감지기는 GameManager 만 알면 됩니다.",
    "hash": "7eb0042b8df65786",
-   "id": "otherside-vr-406"
+   "id": "otherside-vr-404"
   },
   {
    "project": "otherside-vr",
@@ -3816,7 +3798,7 @@
    "href": "/resume/otherside-vr",
    "text": "넷 중 몬스터 AI 와 감지기, 그 사이의 제어를 맡았습니다.\n특수 카메라와 화면 효과, 방마다의 진행은 팀원이 만들었습니다. 저는 기획에 참여했고, 코드는 몬스터 쪽을 맡았습니다. 저장소 커밋 161개 중 25개가 제 커밋이고 2025년 5월 20일부터 6월 16일까지입니다.\n25개 · 내 커밋 · 전체 161개 중\n10개 · 내 스크립트 파일\n2종 · 몬스터 AI",
    "hash": "d0cd676dd327ec2e",
-   "id": "otherside-vr-407"
+   "id": "otherside-vr-405"
   },
   {
    "project": "otherside-vr",
@@ -3825,25 +3807,16 @@
    "href": "/resume/otherside-vr",
    "text": "감지기는 판정만 하고, 몬스터를 켜고 끄는 일은 한 곳에 모았습니다.\n세 가지 전부\n필요했던 것\n만든 것\n확인",
    "hash": "a474f95a1b02962e",
-   "id": "otherside-vr-408"
+   "id": "otherside-vr-406"
   },
   {
    "project": "otherside-vr",
    "title": "The Other Side (VR)",
    "section": "감지기는 판정만 하고, 몬스터를 켜고 끄는 일은 한 곳에 모았습니다. · 2025년 6월 · 감지와 추격",
    "href": "/resume/otherside-vr",
-   "text": "퍼즐이 늘어도 몬스터 코드는 그대로여야 했습니다\n감지기가 몬스터를 직접 부르면 퍼즐 조건이 하나 늘 때마다 몬스터 코드에 손이 갑니다.\n감지, 행동, 켜고 끄기를 세 파일로 나눴습니다\n감지기 둘은 봤는지 놓쳤는지만 판정하고 GameManager 의 토글 함수만 부릅니다. 몬스터는 켜져 있을 때만 쫓고 공격합니다.\n제 코드에서는 한 곳입니다 · 감지기 둘이 모두 GameManager 의 토글 함수만 부릅니다. · 2025.06.05\n손전등을 켤지 말지가 선택이어야 했습니다 · 시야를 얻는 대신 들킬 위험이 생겨야 손전등이 규칙이 됩니다.\n빛줄기를 11점으로 찍어 시야 검사에 넣었습니다\n손전등이 빛의 시작점과 방향, 길이를 내주면 감지기가 그 선을 10등분한 11점을 적의 시야각 안에 드는지 검사합니다. 빛줄기 끝만 걸려도 추격이 시작됩니다.\n11점\n검사하는 점의 수입니다. 적의 시야는 정면 90도, 10m 입니다. 두 번째 몬스터는 손전등이 켜진 채 7m 안에 들어오면 반응합니다.\n2025.06.05",
-   "hash": "03b0b5738e52d354",
-   "id": "otherside-vr-409"
-  },
-  {
-   "project": "otherside-vr",
-   "title": "The Other Side (VR)",
-   "section": "감지기는 판정만 하고, 몬스터를 켜고 끄는 일은 한 곳에 모았습니다. · 2025년 6월 · 감지와 추격",
-   "href": "/resume/otherside-vr",
-   "text": "놓치자마자 풀리면 긴장이 끊깁니다\n모퉁이 하나를 돌았다고 추격이 바로 풀리면 쫓기는 느낌이 이어지지 않습니다.\n놓친 뒤 5초를 기다렸다가 풉니다\n몬스터는 평소에 배회하다 8m 안에 들어오면 쫓고 2m 안에서 공격합니다. 시야에서 벗어나도 5초가 지나야 GameManager 가 추격을 끕니다.\n5초\n추격을 풀기까지의 시간입니다. 8m, 2m, 5초 같은 값은 스크립트에 그대로 적혀 있습니다.",
-   "hash": "bcb63c0c9be14b1f",
-   "id": "otherside-vr-410"
+   "text": "퍼즐이 늘어도 몬스터 코드는 그대로여야 했습니다\n감지기가 몬스터를 직접 부르면 퍼즐 조건이 하나 늘 때마다 몬스터 코드에 손이 갑니다.\n감지, 행동, 켜고 끄기를 세 파일로 나눴습니다\n감지기 둘은 봤는지 놓쳤는지만 판정하고 GameManager 의 토글 함수만 부릅니다. 몬스터는 켜져 있을 때만 쫓고 공격합니다.\n몬스터를 켜고 끄는 곳은 하나입니다 · 감지기 둘이 모두 GameManager 의 토글 함수만 부릅니다. · 2025.06.05\n손전등을 켤지 말지가 선택이어야 했습니다 · 시야를 얻는 대신 들킬 위험이 생겨야 손전등이 규칙이 됩니다.\n빛줄기를 11점으로 찍어 시야 검사에 넣었습니다\n손전등이 빛의 시작점과 방향, 길이를 내주면 감지기가 그 선을 10등분한 11점을 적의 시야각 안에 드는지 검사합니다. 빛줄기 끝만 걸려도 추격이 시작됩니다.\n11점\n검사하는 점의 수입니다. 적의 시야는 정면 90도, 10m 입니다. 두 번째 몬스터는 손전등이 켜진 채 7m 안에 들어오면 반응합니다.\n2025.06.05\n놓치자마자 풀리면 긴장이 끊깁니다\n모퉁이 하나를 돌았다고 추격이 바로 풀리면 쫓기는 느낌이 이어지지 않습니다.\n놓친 뒤 5초를 기다렸다가 풉니다\n몬스터는 평소에 배회하다 8m 안에 들어오면 쫓고 2m 안에서 공격합니다. 시야에서 벗어나도 5초가 지나야 GameManager 가 추격을 끕니다.\n5초 · 추격을 풀기까지의 시간입니다.",
+   "hash": "e42804f1319e8a26",
+   "id": "otherside-vr-407"
   },
   {
    "project": "otherside-vr",
@@ -3852,7 +3825,7 @@
    "href": "/resume/otherside-vr",
    "text": "감지기 둘과 몬스터 둘, 그 사이의 제어를 만들었습니다.",
    "hash": "c3f76d5653df95ed",
-   "id": "otherside-vr-411"
+   "id": "otherside-vr-408"
   },
   {
    "project": "otherside-vr",
@@ -3861,7 +3834,7 @@
    "href": "/resume/otherside-vr",
    "text": "감지 / 행동 / 제어를 세 파일로 나눈 구조\n손전등을 켜면 들킬 위험이 생기게 한 규칙\n시야각, 거리, 5초 같은 값이 스크립트에 적혀 있음\n감지 규칙을 ScriptableObject 로\n몬스터·퍼즐 조건 추가",
    "hash": "7858bc43b9c6413a",
-   "id": "otherside-vr-412"
+   "id": "otherside-vr-409"
   },
   {
    "project": "otherside-vr",
@@ -3870,7 +3843,7 @@
    "href": "/resume/otherside-vr",
    "text": "손전등 빛 원뿔을 10등분·양끝 포함 11점 샘플링해 적 시야각 검사에 넣자, 손전등을 켜는 것 자체가 들킬 위험이 됐습니다.",
    "hash": "5d03fe00cf94e655",
-   "id": "otherside-vr-413"
+   "id": "otherside-vr-410"
   },
   {
    "project": "otherside-vr",
@@ -3879,7 +3852,7 @@
    "href": "/resume/otherside-vr",
    "text": "감지기는 판정만, 몬스터는 행동만 하고 켜고 끄는 일은 GameManager 로 모았습니다. 다음에는 이 나눔을 팀 규약으로 먼저 정하려고 합니다.",
    "hash": "3c127343a5fa02eb",
-   "id": "otherside-vr-414"
+   "id": "otherside-vr-411"
   },
   {
    "project": "monsterpoint-ar",
@@ -3888,7 +3861,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "AR WAVE SHOOTER · AR FOUNDATION (TEAM OF 4)",
    "hash": "9fd04a33b46e44e0",
-   "id": "monsterpoint-ar-415"
+   "id": "monsterpoint-ar-412"
   },
   {
    "project": "monsterpoint-ar",
@@ -3897,16 +3870,16 @@
    "href": "/resume/monsterpoint-ar",
    "text": "무엇을\n현실 공간을 스캔해 전장으로 고정하고, 그 안에서 웨이브로 몬스터를 사냥하는 AR 슈터입니다.\n왜 · 방마다 다른 현실 공간을 그대로 전투 무대로 쓰려고 했습니다.\n결과\n팀이 만든 전장(스캔, 바닥과 벽, 스폰, 보스) 위에 제가 만든 무기 4종과 스킬, 체력을 올렸습니다.\n내 역할\n무기 시스템(발사 · 전환 · 잠금 · 쿨타임)과 체력을 맡았고 게임 루프 기획에 참여했습니다.",
    "hash": "19f61955564ea61d",
-   "id": "monsterpoint-ar-416"
+   "id": "monsterpoint-ar-413"
   },
   {
    "project": "monsterpoint-ar",
    "title": "INTO MONSTER POINT (AR)",
    "section": "기간·역할",
    "href": "/resume/monsterpoint-ar",
-   "text": "기간 · 2025.04 – 2025.05 (작업 04.18 ~ 05.03)\n팀 · 4인 팀 (VR 과 같은 팀원)\n역할 · 무기 시스템 · 체력 · 게임 루프 기획\n스택 · Unity · AR Foundation · C#",
-   "hash": "cbc5e2722f221c10",
-   "id": "monsterpoint-ar-417"
+   "text": "기간 · 2025.04 – 2025.05 (작업 04.18 ~ 05.03)\n팀 · 4인 팀\n역할 · 무기 시스템 · 체력 · 게임 루프 기획\n스택 · Unity · AR Foundation · C#",
+   "hash": "02ac33d2d54c091c",
+   "id": "monsterpoint-ar-414"
   },
   {
    "project": "monsterpoint-ar",
@@ -3915,7 +3888,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "4 · 무기 · 활 / 칼 / 마법 / 총\n0.5초 · 발사 간격 (fireRate)\n51 · 내 커밋 (109 중)",
    "hash": "95d5641708c7eebd",
-   "id": "monsterpoint-ar-418"
+   "id": "monsterpoint-ar-415"
   },
   {
    "project": "monsterpoint-ar",
@@ -3924,7 +3897,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "fireRate 0.5f · 스킬 쿨타임 6f 는 Assets/Scripts/JJH 의 상수. 바닥·벽(CreateWall ×4)과 보스 트리거(counterBoss 10)는 팀원 코드의 값입니다.",
    "hash": "8d630fce5bd5671f",
-   "id": "monsterpoint-ar-419"
+   "id": "monsterpoint-ar-416"
   },
   {
    "project": "monsterpoint-ar",
@@ -3933,7 +3906,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "전투 공간 고정 (팀원)\nPlane Detection 스캔 종료 시 boundary 를 월드 좌표로 변환\n바닥·벽 자동 생성 (팀원) · min/max 로 크기를 정하고 4방향 벽을 세움\n웨이브 스폰 (팀원) · spawnInterval 마다 스폰, 처치 수 누적 → 보스\n무기 4종 · 조이스틱 방향이 있을 때만 발사 · 쿨타임 · 잠금",
    "hash": "f2072c78571ada1a",
-   "id": "monsterpoint-ar-420"
+   "id": "monsterpoint-ar-417"
   },
   {
    "project": "monsterpoint-ar",
@@ -3942,7 +3915,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "현실 공간은 플레이할 때마다 크기와 모양이 다릅니다. 전장·스폰 위치·경계를 고정값으로 두면 어떤 방에서는 벽 밖에 몬스터가 생기고 어떤 방에서는 전장이 방을 넘습니다.",
    "hash": "1987a6f39dde4a78",
-   "id": "monsterpoint-ar-421"
+   "id": "monsterpoint-ar-418"
   },
   {
    "project": "monsterpoint-ar",
@@ -3951,7 +3924,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "스캔한 평면의 boundary를 기준으로 전장 크기와 바닥·벽·스폰 위치를 계산했습니다.",
    "hash": "617b2bb48e112c0f",
-   "id": "monsterpoint-ar-422"
+   "id": "monsterpoint-ar-419"
   },
   {
    "project": "monsterpoint-ar",
@@ -3960,7 +3933,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "스캔 · Plane Detection\n고정 · boundary → 바닥·벽\n스폰 · 꼭짓점 기준\n웨이브 · 처치 수 → 보스\n무기 · 4종 · 잠금",
    "hash": "d15ad18ee97a86c1",
-   "id": "monsterpoint-ar-423"
+   "id": "monsterpoint-ar-420"
   },
   {
    "project": "monsterpoint-ar",
@@ -3969,7 +3942,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "AR\nAdjustmentSystem\nARPlaneManager trackables → boundary 월드 변환 → 바닥 스케일 · 벽 4개\nSpawn\nSpawner (팀원)\nspawnInterval 코루틴 · 처치 카운트 · counterBoss 도달 시 보스 · 팀원 작성\nWeapon\n무기 4종\n조이스틱 입력 · fireRate/힘/딜레이 분리 · isUnlocked 차단\nHit · ProjectileDamage · Monster 태그 충돌 시 데미지 · 소멸 여부 플래그",
    "hash": "256d1ef41be3fe02",
-   "id": "monsterpoint-ar-424"
+   "id": "monsterpoint-ar-421"
   },
   {
    "project": "monsterpoint-ar",
@@ -3978,7 +3951,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "무기 전환 · 다음 · 이전 버튼으로 순서대로 · 화면이 좁아 버튼 넷을 둘 자리가 없음 · 무기마다 버튼 하나\n잠금 · 발사 코루틴 첫 줄에서 끊음 · 못 얻은 무기가 나가면 진행이 의미 없어짐 · 잠긴 무기도 발사\n쿨타임 · 칸 여섯 개로 표시 · 싸우는 중에는 숫자를 읽기 어려움 · 숫자로 표시\n발사 조건 · 입력 방향이 있을 때만 · 조준 없는 난사 방지 · 조작감 · 버튼 누르면 항상 발사",
    "hash": "7d721f4b1f5eaf3e",
-   "id": "monsterpoint-ar-425"
+   "id": "monsterpoint-ar-422"
   },
   {
    "project": "monsterpoint-ar",
@@ -3987,7 +3960,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "무기\n활 · 칼 · 마법 · 총\n발사 조건 · fireRate · 잠금 · 전환\n스킬·체력\nSkillCooldown 칸 UI (6초)\nPlayerHealth · ProjectileDamage\n기획 · 게임 루프 기획 참여\n팀 시스템 (참고)\n바닥·벽 AdjustmentSystem · 팀원\n스폰·보스 Spawner · 팀원",
    "hash": "079c08689e414f77",
-   "id": "monsterpoint-ar-426"
+   "id": "monsterpoint-ar-423"
   },
   {
    "project": "monsterpoint-ar",
@@ -3996,7 +3969,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "버튼을 누르면 항상 나가는 총은 조준이 없었습니다\nAR 화면에서 발사 버튼 하나로 쏘게 하면 방향 없이 난사가 됩니다. 조이스틱이 가리키는 쪽으로만, 무기마다 다른 간격으로 나가야 했습니다.\nWeaponShooterWithJoystick.Update 에서 조이스틱 입력이 0 이 아니고 Time.time 이 nextFire 를 넘겼을 때만 발사하고, 발사 직후 nextFire = Time.time + currentWeapon.fireRate 로 다음 발사 시각을 무기별로 잡았습니다. 발사는 코루틴이라 무기마다 spawnDelay 뒤에 발사체가 생기고, 애니메이션과 소리는 그 앞뒤에 붙습니다.\n무기 네 종을 한 손으로 돌리고, 잠긴 무기는 안 나가게\n무기가 넷(활·칼·마법·총)인데 화면이 좁아 버튼을 넷 둘 수 없었고, 아직 못 얻은 무기가 그냥 나가면 진행이 의미가 없었습니다.\nNext/PreviousWeapon 이 currentWeaponIndex 를 돌리며 들고 있는 프리팹을 바꾸고, WeaponData.isUnlocked 가 false 면 발사 코루틴이 첫 줄에서 yield break 합니다. UnlockWeapon(index) 가 풀어 주고 잠금 아이콘(lockImage)을 같이 다룹니다.\n구현 확인 · 본인 커밋\n같은 파일의 UnlockWeapon · NextWeapon · PreviousWeapon.",
    "hash": "157d6590352614de",
-   "id": "monsterpoint-ar-427"
+   "id": "monsterpoint-ar-424"
   },
   {
    "project": "monsterpoint-ar",
@@ -4005,16 +3978,16 @@
    "href": "/resume/monsterpoint-ar",
    "text": "Unity\nAR Foundation\nC#",
    "hash": "0737dc61bbb5fad8",
-   "id": "monsterpoint-ar-428"
+   "id": "monsterpoint-ar-425"
   },
   {
    "project": "monsterpoint-ar",
    "title": "INTO MONSTER POINT (AR)",
    "section": "수치",
    "href": "/resume/monsterpoint-ar",
-   "text": "4 · 무기 · 활 / 칼 / 마법 / 총 · 활 · 칼 · 마법 · 총\n0.5초 · 발사 간격 · 기본값 · 무기마다 다름\n6초 · 스킬 쿨타임 · 1초마다 한 칸 · 6칸 차면 준비 · chargeInterval 1f · cooldownTime 6f\n51 · 내 커밋 (109 중) · 2025.04.18 ~ 05.03 · Assets/Scripts/JJH",
-   "hash": "6a1eb374bdcad3d3",
-   "id": "monsterpoint-ar-429"
+   "text": "4 · 무기 · 활 · 칼 · 마법 · 총\n0.5초 · 발사 간격 · 기본값 · 무기마다 다름\n6초 · 스킬 쿨타임 · 1초마다 한 칸 · 6칸 차면 준비\n51 · 내 커밋 (109 중) · 2025.04.18 ~ 05.03",
+   "hash": "8e07d1688e3c6a81",
+   "id": "monsterpoint-ar-426"
   },
   {
    "project": "monsterpoint-ar",
@@ -4023,7 +3996,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "현실 공간을 스캔해 전장으로 고정하고 그 안에서 웨이브로 몬스터를 사냥하는 4인 팀 AR 슈터입니다. 저는 무기 네 종의 발사·전환·잠금·쿨타임과 체력을 맡았고, 조이스틱이 가리킬 때만 무기별 간격으로 나가게 만들었습니다.\n저는 무기 네 종의 발사·전환·잠금·쿨타임과 체력을 맡았고, 조이스틱이 가리킬 때만 무기별 간격으로 나가게 만들었습니다.\n바닥·벽 생성(AdjustmentSystem)과 스폰 · 보스 트리거(Spawner)는 팀원 둘의 코드입니다.\n저장소 커밋 109개 중 51개가 제 커밋이고 실제 작업은 2025-04-18 ~ 05-03 입니다.",
    "hash": "b444ef2ff2f3dbe3",
-   "id": "monsterpoint-ar-430"
+   "id": "monsterpoint-ar-427"
   },
   {
    "project": "monsterpoint-ar",
@@ -4032,7 +4005,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "조이스틱 입력이 0 이 아니고 nextFire 를 넘겼을 때만 발사, 발사 직후 nextFire = Time.time + fireRate 로 무기별 간격을 둡니다(WeaponShooterWithJoystick.Update).\n발사는 코루틴이라 spawnDelay 뒤에 발사체가 생기고 2초 뒤 Destroy 됩니다. 본인 커밋 11/12, 첫 커밋 2025-04-29.\n잠긴 무기(isUnlocked=false)는 발사 코루틴 첫 줄에서 끝나고, Next/PreviousWeapon 이 네 무기를 한 손으로 돌립니다.\nUnlockWeapon(index) 가 풀어 주고 lockImage 를 다룹니다.\n스킬 쿨타임은 숫자 대신 칸 여섯 개로 보여 줍니다. 1초마다 한 칸, 다 차면 isSkillReady(SkillCooldown).\nchargeInterval 1f · cooldownTime 6f. 본인 커밋 2/3.",
    "hash": "12303c66fc2c7fa5",
-   "id": "monsterpoint-ar-431"
+   "id": "monsterpoint-ar-428"
   },
   {
    "project": "monsterpoint-ar",
@@ -4041,7 +4014,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "발사 버튼 하나면 방향 없이 난사가 됐습니다.\n조이스틱 입력이 있을 때만, 무기별 fireRate 간격으로 발사하게 했습니다.\n조준이 생겼고 무기마다 손맛이 달라졌습니다.\n무기 넷을 둘 버튼 자리가 없었고 못 얻은 무기가 그냥 나갔습니다.\n인덱스를 돌려 전환하고 isUnlocked 가 false 면 발사를 끊었습니다.\n무기 4종이 한 손으로 돌아가고 잠금 아이콘이 같이 바뀝니다.",
    "hash": "8694baf9513bade5",
-   "id": "monsterpoint-ar-432"
+   "id": "monsterpoint-ar-429"
   },
   {
    "project": "monsterpoint-ar",
@@ -4050,25 +4023,25 @@
    "href": "/resume/monsterpoint-ar",
    "text": "평면 스캔, 바닥과 벽, 스폰과 보스는 팀원이 만들었고 저는 그 안에서 쓰는 무기·스킬·체력을 맡았습니다.\nWeaponShooterWithJoystick 의 발사 조건·잠금과 SkillCooldown 의 칸 UI.\n2025.03 init → 04.18 작업 시작 → 04.29 무기 발사 → 05.03 마무리.",
    "hash": "481a5aa54ff09329",
-   "id": "monsterpoint-ar-433"
+   "id": "monsterpoint-ar-430"
   },
   {
    "project": "monsterpoint-ar",
    "title": "INTO MONSTER POINT (AR)",
    "section": "상세",
    "href": "/resume/monsterpoint-ar",
-   "text": "버튼 하나로 쏘면 조준이 없었습니다 · AR 화면에서 발사 버튼만 누르면 방향 없이 난사가 됩니다.\n무기 넷을 둘 버튼 자리가 없었습니다 · 활, 칼, 마법, 총을 써야 하는데 휴대폰 화면이 좁았습니다.\n못 얻은 무기도 그냥 나갔습니다 · 아직 얻지 못한 무기가 발사되면 진행이 의미가 없었습니다.\n그래서 조이스틱이 가리킬 때만, 무기마다 다른 간격으로 나가게 했습니다.\nAssets/Scripts/JJH",
-   "hash": "2689c165ce2907df",
-   "id": "monsterpoint-ar-434"
+   "text": "버튼 하나로 쏘면 조준이 없었습니다 · AR 화면에서 발사 버튼만 누르면 방향 없이 난사가 됩니다.\n무기 넷을 둘 버튼 자리가 없었습니다 · 활, 칼, 마법, 총을 써야 하는데 휴대폰 화면이 좁았습니다.\n못 얻은 무기도 그냥 나갔습니다 · 아직 얻지 못한 무기가 발사되면 진행이 의미가 없었습니다.\n그래서 조이스틱이 가리킬 때만, 무기마다 다른 간격으로 나가게 했습니다.",
+   "hash": "baa94dca50130557",
+   "id": "monsterpoint-ar-431"
   },
   {
    "project": "monsterpoint-ar",
    "title": "INTO MONSTER POINT (AR)",
    "section": "좁은 AR 화면에서 무기 넷을 한 손으로 다뤄야 했습니다.",
    "href": "/resume/monsterpoint-ar",
-   "text": "좁은 AR 화면에서 무기 넷을 한 손으로 다뤄야 했습니다.\n현실 공간을 스캔해 전장으로 고정하고 그 안에서 몬스터를 사냥하는 AR 슈터입니다. 넷이 만들었고, 전장을 만드는 부분은 팀원이, 그 안에서 쓰는 무기는 제가 맡았습니다.\n발사를 조이스틱 방향과 무기별 쿨타임에 묶자 조준이 생겼습니다.",
-   "hash": "56f85323b750e362",
-   "id": "monsterpoint-ar-435"
+   "text": "좁은 AR 화면에서 무기 넷을 한 손으로 다뤄야 했습니다.\n현실 공간을 스캔해 전장으로 고정하고 그 안에서 몬스터를 사냥하는 AR 슈터입니다. 넷이 만들었고, 전장을 만드는 부분은 팀원이, 그 안에서 쓰는 무기는 제가 맡았습니다.\n발사를 조이스틱 방향과 무기별 간격에 묶으면 조준이 생긴다고 봤습니다.",
+   "hash": "d61b323d6458df43",
+   "id": "monsterpoint-ar-432"
   },
   {
    "project": "monsterpoint-ar",
@@ -4077,7 +4050,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "넷 중 무기와 스킬, 체력을 맡았습니다.\n평면을 스캔해 바닥과 벽을 세우는 부분과, 몬스터를 내보내고 보스를 부르는 부분은 팀원 둘이 각각 만들었습니다. 저는 게임 흐름 기획에 참여했고, 코드는 무기 발사와 전환, 잠금, 스킬 쿨타임, 체력을 맡았습니다. 저장소 커밋 109개 중 51개가 제 커밋이고 실제 작업은 2025년 4월 18일부터 5월 3일까지입니다.\n51개 · 내 커밋 · 전체 109개 중\n5개 · 내 스크립트 파일\n4종 · 무기 · 활 · 칼 · 마법 · 총",
    "hash": "cb35cc98ab1f97c4",
-   "id": "monsterpoint-ar-436"
+   "id": "monsterpoint-ar-433"
   },
   {
    "project": "monsterpoint-ar",
@@ -4086,25 +4059,25 @@
    "href": "/resume/monsterpoint-ar",
    "text": "발사를 조이스틱 방향과 무기별 간격에 묶고, 잠긴 무기는 나가지 않게 했습니다.\n세 가지 전부",
    "hash": "7971cf5fe12dcad2",
-   "id": "monsterpoint-ar-437"
+   "id": "monsterpoint-ar-434"
   },
   {
    "project": "monsterpoint-ar",
    "title": "INTO MONSTER POINT (AR)",
    "section": "발사를 조이스틱 방향과 무기별 간격에 묶고, 잠긴 무기는 나가지 않게 했습니다.",
    "href": "/resume/monsterpoint-ar",
-   "text": "2025년 4~5월 · 무기와 스킬\n버튼을 누르면 늘 나가는 총은 조준이 없었습니다\n발사 버튼 하나로 쏘면 방향 없이 난사가 됩니다. 조이스틱이 가리키는 쪽으로만, 무기마다 다른 간격으로 나가야 했습니다.\n조이스틱이 가리킬 때만 발사합니다\n조이스틱 입력이 있고 다음 발사 시각이 지났을 때만 쏩니다. 쏜 직후 다음 발사 시각을 무기별 간격만큼 뒤로 잡습니다. 발사체는 무기마다 정한 지연 뒤에 생기고 애니메이션과 소리가 앞뒤에 붙습니다.\n0.5초\n발사 간격의 기본값입니다. 무기마다 다르게 둘 수 있습니다. 이 파일의 커밋 12건 중 11건이 제 것입니다.\n2025.04.29\n무기 넷을 둘 자리가 없고, 잠긴 무기도 나갔습니다\n화면이 좁아 버튼을 넷 둘 수 없었고, 아직 못 얻은 무기가 그냥 발사됐습니다.\n순서대로 돌리고, 잠긴 무기는 첫 줄에서 끊습니다\n다음과 이전 버튼으로 들고 있는 무기를 차례로 바꿉니다. 잠긴 무기는 발사 코루틴이 시작하자마자 끝나고 잠금 아이콘이 보입니다.\n4종 · 무기 수입니다. · 2025.04.30 ~ 05.02\n스킬을 언제 다시 쓸 수 있는지 보여야 했습니다 · 싸우는 중에는 화면을 오래 볼 수 없습니다.\n쿨타임을 칸 여섯 개로 보여 줍니다 · 1초마다 한 칸씩 켜지고 여섯 칸이 다 차면 스킬을 쓸 수 있습니다.\n6초 · 스킬 쿨타임입니다. 이 파일의 커밋 3건 중 2건이 제 것입니다.",
-   "hash": "4488157771ba59a3",
-   "id": "monsterpoint-ar-438"
+   "text": "2025년 4~5월 · 무기와 스킬\n버튼을 누르면 늘 나가는 총은 조준이 없었습니다\n발사 버튼 하나로 쏘면 방향 없이 난사가 됩니다. 조이스틱이 가리키는 쪽으로만, 무기마다 다른 간격으로 나가야 했습니다.\n조이스틱이 가리킬 때만 발사합니다\n조이스틱 입력이 있고 다음 발사 시각이 지났을 때만 쏩니다. 쏜 직후 다음 발사 시각을 무기별 간격만큼 뒤로 잡습니다. 발사체는 무기마다 정한 지연 뒤에 생기고 애니메이션과 소리가 앞뒤에 붙습니다.\n0.5초 · 발사 간격의 기본값입니다. 무기마다 다르게 둘 수 있습니다. · 2025.04.29\n무기 넷을 둘 자리가 없고, 잠긴 무기도 나갔습니다\n화면이 좁아 버튼을 넷 둘 수 없었고, 아직 못 얻은 무기가 그냥 발사됐습니다.\n순서대로 돌리고, 잠긴 무기는 첫 줄에서 끊습니다\n다음과 이전 버튼으로 들고 있는 무기를 차례로 바꿉니다. 잠긴 무기는 발사 코루틴이 시작하자마자 끝나고 잠금 아이콘이 보입니다.\n4종 · 잠긴 무기는 발사되지 않고 잠금 아이콘이 보입니다. · 2025.04.30 ~ 05.02\n스킬을 언제 다시 쓸 수 있는지 보여야 했습니다 · 싸우는 중에는 화면을 오래 볼 수 없습니다.\n쿨타임을 칸 여섯 개로 보여 줍니다 · 1초마다 한 칸씩 켜지고 여섯 칸이 다 차면 스킬을 쓸 수 있습니다.\n6초 · 스킬을 다시 쓸 수 있을 때까지의 시간입니다.",
+   "hash": "bab65dd6897f5884",
+   "id": "monsterpoint-ar-435"
   },
   {
    "project": "monsterpoint-ar",
    "title": "INTO MONSTER POINT (AR)",
    "section": "휴대폰으로 방을 비추면 그 자리가 전장이 됩니다.",
    "href": "/resume/monsterpoint-ar",
-   "text": "휴대폰으로 방을 비추면 그 자리가 전장이 됩니다.\n포트폴리오 문서에 실었던 휴대폰 화면 캡처입니다. 플레이 모습은 위의 시연 영상에 있습니다.\n활 · 조이스틱이 가리키는 쪽으로 화살이 나갑니다. · 입력이 없으면 쏘지 않습니다.\n칼 · 가까운 적을 베는 근접 무기입니다. · 무기마다 발사 간격과 지연이 다릅니다.\n마법 · 세 번째 무기입니다. · 다음과 이전 버튼으로 무기를 돌립니다.\n총 · 잠금을 풀어야 쓰는 무기입니다. · 잠겨 있으면 발사되지 않고 잠금 아이콘이 보입니다.",
-   "hash": "8f3dd2c71d5dc0bc",
-   "id": "monsterpoint-ar-439"
+   "text": "휴대폰으로 방을 비추면 그 자리가 전장이 됩니다.\n플레이 모습은 위의 플레이 영상에 있습니다.\n활 · 조이스틱이 가리키는 쪽으로 화살이 나갑니다. · 입력이 없으면 쏘지 않습니다.\n칼 · 가까운 적을 베는 근접 무기입니다. · 무기마다 발사 간격과 지연이 다릅니다.\n마법 · 세 번째 무기입니다. · 다음과 이전 버튼으로 무기를 돌립니다.\n총 · 잠금을 풀어야 쓰는 무기입니다. · 잠겨 있으면 발사되지 않고 잠금 아이콘이 보입니다.",
+   "hash": "491f9f4536ba98f4",
+   "id": "monsterpoint-ar-436"
   },
   {
    "project": "monsterpoint-ar",
@@ -4113,7 +4086,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "무기 네 종과 스킬, 체력을 팀의 AR 전장 위에 올렸습니다.\n전장 고정 · 스캔이 끝나면 바닥과 벽이 생깁니다. 팀원이 만든 부분입니다.\n몬스터 등장 · 바닥 꼭짓점을 기준으로 몬스터가 나옵니다. 팀원이 만든 부분입니다.\n무기 · 그 전장 안에서 쓰는 무기가 제가 만든 부분입니다.",
    "hash": "eeb574d4648a09aa",
-   "id": "monsterpoint-ar-440"
+   "id": "monsterpoint-ar-437"
   },
   {
    "project": "monsterpoint-ar",
@@ -4122,7 +4095,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "조이스틱 방향이 있을 때만 발사하는 조건\n무기별 fireRate·spawnDelay 를 데이터(WeaponData)로 분리\n무기 해제 조건을 성과와 연결\n무기 데이터를 ScriptableObject 로",
    "hash": "2b01f66f2bcb8e91",
-   "id": "monsterpoint-ar-441"
+   "id": "monsterpoint-ar-438"
   },
   {
    "project": "monsterpoint-ar",
@@ -4131,7 +4104,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "발사를 조이스틱 방향과 무기별 쿨타임에 묶자 조준이 생겼습니다.",
    "hash": "2dbdcb8c3f1d5b88",
-   "id": "monsterpoint-ar-442"
+   "id": "monsterpoint-ar-439"
   },
   {
    "project": "monsterpoint-ar",
@@ -4140,7 +4113,7 @@
    "href": "/resume/monsterpoint-ar",
    "text": "팀 저장소에서 제가 맡은 것은 무기·스킬·체력입니다. 바닥·벽과 스폰은 팀원의 코드입니다.",
    "hash": "b9e1a24c46f88fd9",
-   "id": "monsterpoint-ar-443"
+   "id": "monsterpoint-ar-440"
   },
   {
    "project": "ajou-indigame",
@@ -4149,7 +4122,7 @@
    "href": "/resume/ajou-indigame",
    "text": "3D ACTION ADVENTURE · UNITY (SOLO)",
    "hash": "a5c6f1113e1af53f",
-   "id": "ajou-indigame-444"
+   "id": "ajou-indigame-441"
   },
   {
    "project": "ajou-indigame",
@@ -4158,7 +4131,7 @@
    "href": "/resume/ajou-indigame",
    "text": "무엇을\n아주대 캠퍼스에서 마스코트 ‘치토’가 졸업을 목표로 성장하는 Unity 3D 액션 어드벤처입니다.\n왜 · 탐색과 전투에 서로 다른 시야와 조작을 주려고 했습니다.\n결과\n1인칭↔탑다운을 컨트롤러·카메라 부모·물리 제약 단위로 함께 바꾸고, 레벨업마다 랜덤 3택으로 매 판 다른 빌드가 나옵니다. 2024.09.23 ~ 12.30 커밋 124개 전부 혼자\n내 역할 · 시스템 설계, UI, AI, 전투, 성장을 혼자 맡았습니다.",
    "hash": "aca6785b5c75409e",
-   "id": "ajou-indigame-445"
+   "id": "ajou-indigame-442"
   },
   {
    "project": "ajou-indigame",
@@ -4167,7 +4140,7 @@
    "href": "/resume/ajou-indigame",
    "text": "기간 · 2024.09 – 2024.12\n팀 · 개인 개발 (1인)\n역할 · 코어 루프 · AI · UI · 전투 · 성장 시스템 설계/구현\n스택 · Unity · C# · NavMesh",
    "hash": "1ae91751b4367e62",
-   "id": "ajou-indigame-446"
+   "id": "ajou-indigame-443"
   },
   {
    "project": "ajou-indigame",
@@ -4176,7 +4149,7 @@
    "href": "/resume/ajou-indigame",
    "text": "1인 · 설계 · UI · AI · 전투 · 성장 전부\n2 · 시점 · 1인칭 ↔ 탑다운\n3 · 레벨업 랜덤 스킬 제시",
    "hash": "740a0e6620ec34d2",
-   "id": "ajou-indigame-447"
+   "id": "ajou-indigame-444"
   },
   {
    "project": "ajou-indigame",
@@ -4185,7 +4158,7 @@
    "href": "/resume/ajou-indigame",
    "text": "수치는 저장소 스크립트 기준(PlayerMode enum 2 · randomSkills[3] · WaveManager case 1–5)",
    "hash": "09dd0ff8c04b08dd",
-   "id": "ajou-indigame-448"
+   "id": "ajou-indigame-445"
   },
   {
    "project": "ajou-indigame",
@@ -4194,7 +4167,7 @@
    "href": "/resume/ajou-indigame",
    "text": "시점 전환 · 1인칭 탐색 ↔ 탑다운 전투, 카메라·컨트롤러·물리 제약을 함께 전환\n랜덤 스킬 성장 · 레벨업 시 3개 중 선택, 즉시 반영\n상태 기반 AI\nNavMesh 일반 몬스터(감지 10 · 공격 3) · 랜덤 패턴 보스 · 보스 웨이브 3초 예고 패널\n이벤트 시스템 · 돌발 퀘스트 · 포탈 씬 전환 · 소환 스킬(20초/쿨 20초)",
    "hash": "038bb6aacc1bf1c8",
-   "id": "ajou-indigame-449"
+   "id": "ajou-indigame-446"
   },
   {
    "project": "ajou-indigame",
@@ -4203,7 +4176,7 @@
    "href": "/resume/ajou-indigame",
    "text": "퍼즐 탐색과 전투는 요구하는 시야와 조작이 다릅니다. 탐색과 전투에 서로 다른 시야와 조작 방식을 적용하고, 기능별 역할을 분리하려고 했습니다.",
    "hash": "60eb0a98b8e0531c",
-   "id": "ajou-indigame-450"
+   "id": "ajou-indigame-447"
   },
   {
    "project": "ajou-indigame",
@@ -4212,7 +4185,7 @@
    "href": "/resume/ajou-indigame",
    "text": "40\n스크립트 파일 수 · Manager 8 · Player 13 · Monster 5 · Skills 5 · Robot 3 · Map 2 · 기타 4",
    "hash": "e022bdb68d630a97",
-   "id": "ajou-indigame-451"
+   "id": "ajou-indigame-448"
   },
   {
    "project": "ajou-indigame",
@@ -4221,7 +4194,7 @@
    "href": "/resume/ajou-indigame",
    "text": "카메라·컨트롤러·물리 제약을 모드 단위로 함께 바꿔야 한 캐릭터로 탐색과 전투를 오가면서도 조작이 겹치거나 화면이 튀지 않습니다.",
    "hash": "56cd75007ad5a34d",
-   "id": "ajou-indigame-452"
+   "id": "ajou-indigame-449"
   },
   {
    "project": "ajou-indigame",
@@ -4230,7 +4203,7 @@
    "href": "/resume/ajou-indigame",
    "text": "탐색 · 1인칭\n전투 · 탑다운 · 웨이브\n경험치 · 적 처치\n레벨업 · 스킬 3택\n다음 웨이브 · 난이도 ↑",
    "hash": "4a9e8160a5197322",
-   "id": "ajou-indigame-453"
+   "id": "ajou-indigame-450"
   },
   {
    "project": "ajou-indigame",
@@ -4239,7 +4212,7 @@
    "href": "/resume/ajou-indigame",
    "text": "Player\nPlayerModeManager\nFirstPerson / TopDown · 컨트롤러 enable 전환 · 카메라 Parent · Y축 잠금\nSkill · InGameSkillManager · 레벨업 → 랜덤 3개 제시 → 획득/강화\nAI\nMonsterAI · WaveManager\nIdle → Move → Chase → Attack · 웨이브 1–4 + 보스(5)\nUI · 인벤토리 · 캐릭터 선택 · 선택 결과가 게임 오브젝트 활성/비활성으로 즉시 반영\nEvent · Portal · RobotSummoner · 돌발 퀘스트 · 코루틴 기반 시간 제어 · 씬 로딩",
    "hash": "cce488d3a5cd37af",
-   "id": "ajou-indigame-454"
+   "id": "ajou-indigame-451"
   },
   {
    "project": "ajou-indigame",
@@ -4248,7 +4221,7 @@
    "href": "/resume/ajou-indigame",
    "text": "시점 전환 · 컨트롤러 2개를 켜고 끄기 · 모드 전환 시 동시 입력·오작동 방지 · 한 컨트롤러에 분기 (두 조작이 한 파일에 섞임)\n카메라 · 1인칭은 플레이어 자식으로, 탑다운은 분리 · 시점이 튀지 않게 고정 · localPosition 0 리셋 · 위치를 매 프레임 계산\n탑다운 물리 · 3초 뒤 Y축 Freeze · 전환 직후 흔들림 방지 · 이후 평면 이동 고정 · 즉시 고정 (전환 순간 튐)\n성장 · 레벨업마다 랜덤 3택 · 매 판 다른 빌드 · 반복 플레이 동기 · 고정 스킬 트리",
    "hash": "61e761a2f29ef27b",
-   "id": "ajou-indigame-455"
+   "id": "ajou-indigame-452"
   },
   {
    "project": "ajou-indigame",
@@ -4257,7 +4230,7 @@
    "href": "/resume/ajou-indigame",
    "text": "Player\n1인칭 ↔ 탑다운 전환\n카메라 Parent · Y축 잠금 · 포탈 트리거\nSkill\n레벨업 랜덤 3택\n획득 / 강화 분기\nAI\nIdle/Move/Chase/Attack 상태 AI\n웨이브 5단계 · 보스\nUI · Event\n인벤토리 · 캐릭터 선택 연동\n돌발 퀘스트 · 포탈 · 소환 스킬",
    "hash": "a4c934ae1d49e533",
-   "id": "ajou-indigame-456"
+   "id": "ajou-indigame-453"
   },
   {
    "project": "ajou-indigame",
@@ -4266,16 +4239,16 @@
    "href": "/resume/ajou-indigame",
    "text": "시점을 바꾸면 조작이 겹치고 카메라가 튀었습니다\n1인칭과 탑다운이 같은 입력을 동시에 받으면 오작동이 나고, 카메라를 위치로만 옮기면 전환 순간 시점이 튑니다.\n컨트롤러 enable/disable과 카메라 부모 연결·localPosition 초기화는 수정 전에도 있었습니다. 2024-11-11 커밋에서 바뀐 것은 1인칭 진입 시 Y축 잠금을 풀고, 탑다운 전환 3초 뒤 FreezePositionY와 FreezeRotation을 적용한 부분입니다.\n전후 코드로 확인 · 2024-11-11 커밋의 전후입니다.",
    "hash": "b56eeaa5e7c2e71a",
-   "id": "ajou-indigame-457"
+   "id": "ajou-indigame-454"
   },
   {
    "project": "ajou-indigame",
    "title": "아주대탐험",
    "section": "수치",
    "href": "/resume/ajou-indigame",
-   "text": "2 · 시점 · 1인칭 ↔ 탑다운 · T 키 · 탑다운 3초 뒤 Y축 잠금 · PlayerModeManager.cs\n3 · 레벨업 랜덤 스킬 제시 · randomSkills[3] · 즉시 반영\n5 · 웨이브 · 다섯 번째 보스 · case 1~5 · 보스 예고 패널 3초 · case 5 → ShowBossWavePanel\n124 · 커밋 · 전부 혼자 · 2024.09.23 ~ 12.30 · Assets/Script 40파일",
-   "hash": "b89f2f3c139ef6b6",
-   "id": "ajou-indigame-458"
+   "text": "2 · 시점 · 1인칭 ↔ 탑다운 · T 키 한 번으로 바꿉니다\n3 · 레벨업 랜덤 스킬 제시 · 레벨업마다 셋 가운데 하나를 고릅니다\n5 · 웨이브 · 다섯 번째 보스 · 다섯 번째에 예고 3초 뒤 보스\n124 · 커밋 · 전부 혼자 · 2024.09.23 ~ 12.30 · 스크립트 40개",
+   "hash": "96fb55b0621877a1",
+   "id": "ajou-indigame-455"
   },
   {
    "project": "ajou-indigame",
@@ -4284,7 +4257,7 @@
    "href": "/resume/ajou-indigame",
    "text": "아주대 캠퍼스에서 마스코트 치토가 졸업을 향해 성장하는 혼자 만든 Unity 3D 액션 어드벤처입니다. 탐색은 1인칭, 전투는 탑다운으로 시점을 바꾸는데, 카메라만 옮기지 않고 컨트롤러·카메라 부모·물리 제약을 한 번에 바꿉니다. 2024년 12월 아주대 디지털미디어학과 미디어데이 시제품 콘텐츠 경진대회에 2인 팀으로 출품해 우수상을 받았습니다. 개발은 혼자 했습니다.\n카메라만 옮기지 않고 컨트롤러·카메라 부모·물리 제약을 한 번에 바꿉니다.\n2024-09-23 첫 커밋부터 12-30 까지 커밋 124개가 전부 제 것입니다.\n레벨업마다 스킬 3개를 랜덤으로 제시하고, 다섯 번째 웨이브에 보스가 나옵니다.",
    "hash": "4f850b2e9c79d5aa",
-   "id": "ajou-indigame-459"
+   "id": "ajou-indigame-456"
   },
   {
    "project": "ajou-indigame",
@@ -4293,7 +4266,7 @@
    "href": "/resume/ajou-indigame",
    "text": "시점 전환을 시스템으로 만들었습니다. T 키를 누르면 조작 스크립트를 바꾸고 카메라를 옮겨 붙입니다. 탑다운이면 3초 뒤 Y축 위치와 회전을 잠급니다.\n2024-11-11 커밋에서 Y축 잠금 해제·3초 뒤 재잠금이 들어갔습니다.\n레벨업마다 전체 스킬에서 랜덤 3개를 제시합니다(randomSkills[3]).\nWaveManager 가 case 1~5 로 웨이브를 돌리고 5에서 보스 예고 패널을 3초 띄운 뒤 BossMonster 를 냅니다. 보스 공격은 세 가지 패턴 가운데 하나가 무작위로 나옵니다.\n일반 몬스터는 Idle·Move·Chase·Attack·TakeDamage·Die 여섯 상태, 감지 10 · 공격 3.",
    "hash": "a48194d9e5390197",
-   "id": "ajou-indigame-460"
+   "id": "ajou-indigame-457"
   },
   {
    "project": "ajou-indigame",
@@ -4302,7 +4275,7 @@
    "href": "/resume/ajou-indigame",
    "text": "1인칭과 탑다운이 같은 입력을 동시에 받으면 오작동이 나고, 카메라를 위치로만 옮기면 전환 순간 시점이 튀었습니다.\n컨트롤러 enable/disable 과 카메라 부모 교체는 그 전에도 있었고, 2024-11-11 커밋에서 1인칭 진입 시 Y축 잠금 해제와 탑다운 3초 뒤 FreezePositionY·FreezeRotation 을 넣었습니다.\n두 커밋의 전후가 저장소에서 확인됩니다.",
    "hash": "cde6c02d36742394",
-   "id": "ajou-indigame-461"
+   "id": "ajou-indigame-458"
   },
   {
    "project": "ajou-indigame",
@@ -4311,7 +4284,7 @@
    "href": "/resume/ajou-indigame",
    "text": "Manager 8 · Player 13 · Monster 5 · Skills 5 · Robot 3 · Map 2. PlayerModeManager 가 시점을, WaveManager 가 흐름을 맡습니다.\nPlayerModeManager 의 모드 전환, InGameSkillManager 의 랜덤 3택, MonsterAI 의 여섯 상태.\n2024.09.23 시작 → 10.09 시점 전환 → 11.03 웨이브·스킬 → 11.11 Y축 잠금·AI → 11.29 보스 → 12.30 마지막.",
    "hash": "a9f9a7e978e7e9da",
-   "id": "ajou-indigame-462"
+   "id": "ajou-indigame-459"
   },
   {
    "project": "ajou-indigame",
@@ -4320,7 +4293,7 @@
    "href": "/resume/ajou-indigame",
    "text": "탐색과 전투는 보는 방식이 다릅니다\n캠퍼스를 돌아다닐 때는 눈높이에서, 몰려오는 적과 싸울 때는 위에서 내려다봐야 했습니다.\n두 조작이 같은 입력을 받았습니다 · 1인칭과 탑다운 조작이 같은 키를 동시에 받으면 오작동이 났습니다.\n카메라만 옮기면 화면이 튀었습니다 · 카메라를 위치로만 옮기면 시점이 바뀌는 순간 화면이 튀었습니다.\n그래서 카메라만 옮기지 않고 조작, 카메라 부모, 물리 제약을 한 번에 바꿉니다.",
    "hash": "11d3115081444d2f",
-   "id": "ajou-indigame-463"
+   "id": "ajou-indigame-460"
   },
   {
    "project": "ajou-indigame",
@@ -4329,16 +4302,16 @@
    "href": "/resume/ajou-indigame",
    "text": "한 캐릭터로 탐색과 전투를 오가야 했습니다.\n아주대 캠퍼스에서 마스코트 치토가 졸업을 향해 성장하는 Unity 3D 액션 어드벤처입니다. 혼자 만들었습니다.\n카메라·컨트롤러·물리 제약을 모드 단위로 함께 바꿔야 한 캐릭터로 탐색과 전투를 오가면서도 조작이 겹치거나 화면이 튀지 않습니다.",
    "hash": "9c342699d2992809",
-   "id": "ajou-indigame-464"
+   "id": "ajou-indigame-461"
   },
   {
    "project": "ajou-indigame",
    "title": "아주대탐험",
-   "section": "2024년 가을 석 달 동안 혼자 커밋 124개로 만들었습니다.",
+   "section": "2024년 9월부터 12월까지 혼자 커밋 124개로 만들었습니다.",
    "href": "/resume/ajou-indigame",
-   "text": "2024년 가을 석 달 동안 혼자 커밋 124개로 만들었습니다.\n첫 커밋은 2024년 9월 23일, 마지막은 12월 30일입니다. 10월에 시점 전환을, 11월에 웨이브와 스킬, 몬스터 AI, 보스를 넣었습니다.\n124개 · 커밋 · 전부 혼자\n40개 · 스크립트 파일\n3,245줄",
-   "hash": "b7910e848a75f916",
-   "id": "ajou-indigame-465"
+   "text": "2024년 9월부터 12월까지 혼자 커밋 124개로 만들었습니다.\n첫 커밋은 2024년 9월 23일, 마지막은 12월 30일입니다. 10월에 시점 전환을, 11월에 웨이브와 스킬, 몬스터 AI, 보스를 넣었습니다.\n124개 · 커밋 · 전부 혼자\n40개 · 스크립트 파일\n3,245줄 · 스크립트 줄 수",
+   "hash": "763e05277a72aaa7",
+   "id": "ajou-indigame-462"
   },
   {
    "project": "ajou-indigame",
@@ -4347,16 +4320,16 @@
    "href": "/resume/ajou-indigame",
    "text": "시점 전환을 연출이 아니라 시스템으로 만들고, 그 위에 성장과 전투를 얹었습니다.\n네 가지 전부\n필요했던 것\n만든 것\n확인",
    "hash": "3077c769d675884a",
-   "id": "ajou-indigame-466"
+   "id": "ajou-indigame-463"
   },
   {
    "project": "ajou-indigame",
    "title": "아주대탐험",
    "section": "시점 전환을 연출이 아니라 시스템으로 만들고, 그 위에 성장과 전투를 얹었습니다.",
    "href": "/resume/ajou-indigame",
-   "text": "2024년 10~11월 · 시점과 조작\n시점을 바꿔도 조작이 겹치지 않아야 했습니다\n1인칭과 탑다운이 같은 입력을 동시에 받으면 오작동이 나고, 카메라를 위치로만 옮기면 전환 순간 시점이 튀었습니다.\nT 키 한 번에 네 가지를 같이 바꿉니다\n조작 스크립트 둘을 서로 반대로 켜고 끄고, 카메라를 캐릭터 머리에 붙이거나 떼어 냅니다. 11월 11일에는 1인칭으로 들어갈 때 Y축 잠금을 풀고, 탑다운으로 바뀐 3초 뒤 다시 잠그게 고쳤습니다.\nT 키 한 번으로 바뀝니다\n조작과 카메라, 물리 제약이 같이 바뀌어 전환 순간에 시점이 튀지 않습니다.\n2024.11.11",
-   "hash": "38f605ee8657cfab",
-   "id": "ajou-indigame-467"
+   "text": "2024년 10~11월 · 시점과 조작\n시점을 바꿔도 조작이 겹치지 않아야 했습니다\n1인칭과 탑다운이 같은 입력을 동시에 받으면 오작동이 나고, 카메라를 위치로만 옮기면 전환 순간 시점이 튀었습니다.\nT 키 한 번에 세 가지를 같이 바꿉니다\n조작 스크립트 둘을 서로 반대로 켜고 끄고, 카메라를 캐릭터 머리에 붙이거나 떼어 냅니다. 11월 11일에는 1인칭으로 들어갈 때 Y축 잠금을 풀고, 탑다운으로 바뀐 3초 뒤 다시 잠그게 고쳤습니다.\nT 키 한 번으로 바뀝니다\n조작과 카메라, 물리 제약이 같이 바뀌어 전환 순간에 시점이 튀지 않습니다.\n2024.11.11",
+   "hash": "5cc6c70569cac673",
+   "id": "ajou-indigame-464"
   },
   {
    "project": "ajou-indigame",
@@ -4365,25 +4338,25 @@
    "href": "/resume/ajou-indigame",
    "text": "2024년 11월 · 성장과 전투\n매 판 다른 성장이 필요했습니다\n웨이브가 다섯 개뿐이라, 정해진 스킬 트리를 타면 두 번째 판이 첫 판과 똑같아집니다.\n레벨업마다 스킬 셋을 무작위로 냅니다\n전체 스킬 목록에서 셋을 뽑아 보여 주고, 이미 가진 스킬을 고르면 강화, 아니면 새로 얻습니다.\n3택 · 레벨업마다 스킬 셋 가운데 하나를 고릅니다. · 2024.11.03\n전투에 흐름이 필요했습니다 · 적이 어떻게 나오고 언제 끝나는지 정해야 했습니다.\n웨이브 다섯 단계와 보스를 만들었습니다\n웨이브 관리자가 1부터 5까지 차례로 돌리고, 다섯 번째에 보스 예고 패널을 3초 띄운 뒤 보스를 냅니다. 일반 몬스터는 대기, 이동, 추격, 공격, 피격, 사망 여섯 상태로 움직입니다.\n5단계 · 다섯 번째 웨이브에 예고 패널이 3초 뜬 뒤 보스가 나옵니다. · 2024.11.03 ~ 29\n탐색 중에도 일이 벌어져야 했습니다 · 걸어 다니기만 하면 캠퍼스가 배경에 그칩니다.\n돌발 미션과 포탈, 로봇 소환을 넣었습니다\n돌발 미션은 오브젝트 찾기, 몬스터에게 도달, 몬스터 전멸 세 가지이고 성공하면 능력치가 오릅니다. 포탈에 닿으면 다음 건물로 갈지 묻는 대화창이 뜹니다. 로봇은 20초 동안 불러내고 20초 뒤에 다시 부를 수 있습니다.\n포탈에 닿으면 건물 안으로 넘어갑니다 · 원천관 포탈이 실내 씬으로 이어집니다.",
    "hash": "74eaef40dafbd509",
-   "id": "ajou-indigame-468"
+   "id": "ajou-indigame-465"
   },
   {
    "project": "ajou-indigame",
    "title": "아주대탐험",
    "section": "캠퍼스가 무대이고 마스코트 치토가 주인공입니다.",
    "href": "/resume/ajou-indigame",
-   "text": "캠퍼스가 무대이고 마스코트 치토가 주인공입니다.\n포트폴리오 문서에 실었던 캡처입니다. 플레이 모습은 위의 시연 영상에 있습니다.\n타이틀 · 아주대학교를 졸업하는 것이 목표입니다. · 시작 버튼을 누르면 본편 씬으로 넘어갑니다.\n캐릭터 선택 · 고른 캐릭터만 게임 오브젝트로 켜집니다. · 고른 캐릭터로 본편을 시작합니다.\n포탈 · 포탈에 닿으면 건물 안 씬으로 넘어갑니다. · 닿으면 대화창이 뜹니다.\n전투 · 전투가 시작되면 위에서 내려다보는 시점으로 싸웁니다. · 왼쪽 위는 체력과 레벨, 아래는 쓰고 있는 스킬입니다.",
-   "hash": "e3c71d4de0cedd5b",
-   "id": "ajou-indigame-469"
+   "text": "캠퍼스가 무대이고 마스코트 치토가 주인공입니다.\n플레이 모습은 위의 플레이 영상에 있습니다.\n타이틀 · 아주대학교를 졸업하는 것이 목표입니다. · 시작 버튼을 누르면 본편 씬으로 넘어갑니다.\n캐릭터 선택 · 고른 캐릭터만 게임 오브젝트로 켜집니다. · 고른 캐릭터로 본편을 시작합니다.\n포탈 · 포탈에 닿으면 건물 안 씬으로 넘어갑니다. · 다음 건물로 갈지 묻는 대화창이 뜹니다.\n전투 · 전투가 시작되면 위에서 내려다보는 시점으로 싸웁니다. · 왼쪽 위는 체력과 레벨, 아래는 쓰고 있는 스킬입니다.",
+   "hash": "50f072f44b65fd38",
+   "id": "ajou-indigame-466"
   },
   {
    "project": "ajou-indigame",
    "title": "아주대탐험",
    "section": "같은 캠퍼스를 1인칭과 탑다운으로 오갑니다.",
    "href": "/resume/ajou-indigame",
-   "text": "같은 캠퍼스를 1인칭과 탑다운으로 오갑니다.\n포트폴리오 문서의 캡처 · 원본 가로 약 440px\n탐색할 때는 1인칭으로 캠퍼스를 걷고, 전투가 시작되면 위에서 내려다보는 탑다운으로 바뀝니다. 손잡이를 끌면 두 시점이 넘어갑니다.\n2 · 시점 · 1인칭과 탑다운입니다. T 키로 바꿉니다.\n3 · 초 · 탑다운으로 바뀐 뒤 Y축을 잠그기까지의 시간입니다.",
-   "hash": "b704ec84fb0ee335",
-   "id": "ajou-indigame-470"
+   "text": "같은 캠퍼스를 1인칭과 탑다운으로 오갑니다.\n탐색할 때는 1인칭으로 캠퍼스를 걷고, 전투가 시작되면 위에서 내려다보는 탑다운으로 바뀝니다. 손잡이를 끌면 두 시점이 넘어갑니다.\n2 · 시점 · 1인칭과 탑다운입니다. T 키로 바꿉니다.\n3 · 초 · 탑다운으로 바뀐 뒤 Y축을 잠그기까지의 시간입니다.",
+   "hash": "16dd2dd7518329f0",
+   "id": "ajou-indigame-467"
   },
   {
    "project": "ajou-indigame",
@@ -4392,7 +4365,7 @@
    "href": "/resume/ajou-indigame",
    "text": "시점 전환, 랜덤 성장, 웨이브와 보스까지 혼자 만들었습니다.",
    "hash": "76fe7ecd9409c61a",
-   "id": "ajou-indigame-471"
+   "id": "ajou-indigame-468"
   },
   {
    "project": "ajou-indigame",
@@ -4401,7 +4374,7 @@
    "href": "/resume/ajou-indigame",
    "text": "스크립트 40개를 Manager·Player·Monster·Skills·Robot·Map 으로 나눈 구조\n시점 전환을 연출이 아닌 시스템으로\n3초, 20초, 범위 같은 값이 스크립트에 적혀 있음\n건물별 스테이지 테마 · 최종 보스 ‘졸업’\n밸런스 값 데이터화",
    "hash": "7c2f7239e1708ed9",
-   "id": "ajou-indigame-472"
+   "id": "ajou-indigame-469"
   },
   {
    "project": "ajou-indigame",
@@ -4410,7 +4383,7 @@
    "href": "/resume/ajou-indigame",
    "text": "시점 전환은 카메라만 옮기지 않고 컨트롤러·물리 제약·카메라 부모를 한 번에 바꿨습니다. 그래야 조작이 겹치거나 화면이 튀지 않았습니다.",
    "hash": "ec7b73b7d3770c29",
-   "id": "ajou-indigame-473"
+   "id": "ajou-indigame-470"
   },
   {
    "project": "ajou-indigame",
@@ -4419,7 +4392,7 @@
    "href": "/resume/ajou-indigame",
    "text": "스크립트를 Manager·Player·Monster·Skills·Robot·Map 폴더로 나눠 각 시스템의 역할을 구분했습니다.",
    "hash": "f876f79b3a008dc6",
-   "id": "ajou-indigame-474"
+   "id": "ajou-indigame-471"
   },
   {
    "project": "muscleup",
@@ -4428,7 +4401,7 @@
    "href": "/resume/muscleup",
    "text": "toadsam@naver.com\n운동 기록을 게임처럼 지속하게 만드는 피트니스 커뮤니티 플랫폼입니다. 헬스 동아리 회장으로 회원이 꾸준히 쓸 기능을 고민하며 만들었습니다. 1.0 은 기능을 소개하는 랜딩이었고, 써 본 사람들은 “어디서 뭘 해야 할지 모르겠다”고 했습니다. AI 응답 지연은 아직 남은 과제이지만, 홈을 출석과 캐릭터 성장이 보이는 로비로 바꾸고 관리자가 운영 기록을 보게 개편해 1.0 피드백 4건 중 3건을 반영했습니다.",
    "hash": "e4d62bb0584cf859",
-   "id": "muscleup-475"
+   "id": "muscleup-472"
   },
   {
    "project": "muscleup",
@@ -4437,7 +4410,7 @@
    "href": "/resume/muscleup",
    "text": "55명 · 가입 회원 · 운영 API 실측 2026.10.18 · 운영 API 로 센 가입 회원 수입니다(2026.10.18).\n3 / 4\n반영한 사용자 피드백\n남은 1건은 AI 응답 지연\n1.0 발표자료 p.24 의 피드백 원문 4건과 2.0 발표자료를 대조했습니다. 남은 1건은 AI 응답 지연입니다.\n2.0배\n한 페이지 응답 · 20만 행 SQL 실측\n목록 정렬만은 700배\nPostgreSQL 17.4, 합성 데이터 20만 행, 7회 중앙값. 목록 SQL 과 count SQL 의 합산이고 HTTP 응답 시간은 아닙니다. 한 페이지 117.4ms → 57.5ms, 목록 정렬만은 700배 빨라졌습니다.\n100명\np95 가 60ms 를 넘은 동시접속\n50명까지는 p95 9ms\n100명에서 p95 85ms 로 설계 주기 60ms 를 넘었습니다. 50명은 9ms 였습니다. 한 대, 루프백, 16초 × 3회 중앙값, 고치기 전 측정값입니다.\n130개\n서버 테스트\n32파일 · 2026.10 에 붙임\n28개 파일이 스프링을 통째로 띄우고 test 프로필이 로컬 MySQL 을 써서, CI 없이 로컬에서만 돕니다.\n28 · 24\n인덱스 · 복합 UNIQUE\n지금 저장소의 엔티티 62개 기준\n출석의 (user_id, workout_date) 처럼 중복을 막는 UNIQUE 가 날짜 범위 조회 인덱스를 겸합니다.",
    "hash": "e5c583aebb7621bf",
-   "id": "muscleup-476"
+   "id": "muscleup-473"
   },
   {
    "project": "muscleup",
@@ -4446,7 +4419,7 @@
    "href": "/resume/muscleup",
    "text": "13 + 7\nSQL 마이그레이션 · Flyway 데이터\n스키마는 아직 ddl-auto=update\nbackend/sql 의 수동 SQL 13개(2025.12~2026.08)와 Flyway 데이터 마이그레이션 V1~V7(2026.10)입니다. 스키마 자체는 아직 Hibernate ddl-auto=update 가 만듭니다.\n4 → 8\n도메인 (1.0 → 2.0)\n인증 · 커뮤니티 · 크루 · 채팅 등\n저장소 소스 기준입니다. 1.0 은 도메인 4개였고 2.0 에서 인증·커뮤니티·크루·친구 채팅·프로틴 공유·기록 AI·이벤트·운영 8개가 됐습니다.",
    "hash": "842160f07ffe5724",
-   "id": "muscleup-477"
+   "id": "muscleup-474"
   },
   {
    "project": "muscleup",
@@ -4455,7 +4428,7 @@
    "href": "/resume/muscleup",
    "text": "득근득근 (MuscleUp)\n서비스 열기\n시연 영상\nGitHub",
    "hash": "5d415d5f022d060e",
-   "id": "muscleup-478"
+   "id": "muscleup-475"
   },
   {
    "project": "muscleup",
@@ -4464,7 +4437,7 @@
    "href": "/resume/muscleup",
    "text": "득근득근 (MuscleUp)\n사용자 피드백을 반영해 동아리 소개 홈페이지에 운동 기록·커뮤니티·AI 코칭 기능을 추가했습니다.\n운영중\n2026.10\n2025.09 ~ 진행 중\n개인 개발 (1.0 → 2.0 → 3.0)\n1.0 소개형 홈페이지 · 인증/배포 → 2.0 게임형 개편(캐릭터 · 랭킹 · 라운지) → 3.0 디자인 · 모임 구조 · 인증 재설계\n3 / 4 · 반영한 사용자 피드백\n2.0배 · 한 페이지 응답 · 20만 행 SQL\n55명 · 가입 회원\n피드백 3/4 는 1.0·2.0 발표자료 대조 · 2.0배는 PostgreSQL 17.4 합성 20만 행 7회 중앙값(목록+count SQL, HTTP 아님) · 회원 수는 운영 API 실측(2026.10.18)",
    "hash": "f5a85859b318346a",
-   "id": "muscleup-479"
+   "id": "muscleup-476"
   },
   {
    "project": "muscleup",
@@ -4473,7 +4446,7 @@
    "href": "/resume/muscleup",
    "text": "Refresh Token Rotation 이 동시 재발급에서 로그아웃을 일으켜 2026.04 에 회전을 멈췄다가, 2026.10 에 폐기 후 30초 유예와 재사용 감지를 넣어 회전을 다시 도입했습니다. 토큰은 해시로만 저장하고 리프레시는 HttpOnly 쿠키로만 받으며 테스트 5개로 확인합니다.\n1.0 AWS 배포에서 HTTPS·Mixed Content·CORS credentials 문제를 해결했고(현재는 Railway · Vercel · S3), 1.0 사용자 피드백 4건 중 3건을 2.0 에 반영했습니다.\n운동 기록·커뮤니티·AI 코칭을 한 사용자 흐름으로 묶고, Access/Refresh 토큰을 HttpOnly 이중 쿠키로 분리했습니다.",
    "hash": "4118003fbea7b21a",
-   "id": "muscleup-480"
+   "id": "muscleup-477"
   },
   {
    "project": "muscleup",
@@ -4482,7 +4455,7 @@
    "href": "/resume/muscleup",
    "text": "GAMIFIED FITNESS · 3-TIER FULL-STACK\n1.0 · 둘러보라고 하는 첫 화면\n1.0 홈. 배포된 muscle-up.click 실제 화면 · 2/1\n버튼은 「받기」와 「둘러보기」 둘이고, 오늘 뭘 하라는 말이 없습니다. 아래 숫자 셋은 서버가 아니라 소스에 적힌 상수였습니다.\n2.0 · 출석을 첫 동작으로 안내하는 로비\n2.0 로비 · 데스크톱과 모바일 · 2/1\n버튼 둘이 시키는 일 하나로 바뀌었습니다. 데스크톱은 「지금 해야 할 일」 카드, 모바일은 화면 아래 고정 「출석하기」입니다. 숫자도 소스 상수가 아니라 서버에서 읽습니다(연속 출석 2일, 이번 주 2/7).",
    "hash": "02af9c30c8bc377a",
-   "id": "muscleup-481"
+   "id": "muscleup-478"
   },
   {
    "project": "muscleup",
@@ -4491,7 +4464,7 @@
    "href": "/resume/muscleup",
    "text": "Renewal · 1.0 → 2.0\n1.0 · 2025.09\n2.0 · 2026.03 리뉴얼\n1.0\n2.0\n2.0 에서 새로 만든 것\n어떻게 다시 만들었나\n동아리 소개 홈페이지에 출석·운동 기록·커뮤니티 기능 추가\n1.0 은 AI 상담, 자랑방, 프로틴, 프로그램 신청을 소개하는 정보 중심 홈페이지였습니다. 써 본 사람들의 피드백 넷을 기준으로 2026년 3월에 출석, 커뮤니티, 관리자 기능을 더했습니다. 홈은 로비, 출석은 성장 데이터, 관리자는 운영 콘솔이 됐습니다.\n3 / 4 · 반영한 1.0 피드백 · 1.0·2.0 발표자료 대조\n4 → 8 · 도메인 · 1.0 자료 · 2.0 저장소\n111개 · 2026.03 커밋 · 저장소 커밋 기록\n55명 · 가입 회원 · 운영 API 실측 2026.10.18",
    "hash": "b90adbb3d69e9b9c",
-   "id": "muscleup-482"
+   "id": "muscleup-479"
   },
   {
    "project": "muscleup",
@@ -4500,7 +4473,7 @@
    "href": "/resume/muscleup",
    "text": "실시간 라운지\n자주 바뀌는 위치, 채팅, 이모트를 실시간으로 맞추려고 Socket.IO 서버(:4001)로 따로 뺐습니다.\nREST 서버(:8080)와 실시간 서버가 갈린 3-tier 구조가 됐습니다.\n캐릭터 성장과 랭킹 · 출석과 운동 기록이 레벨, 티어, 진화 단계로 쌓입니다. · 출석과 운동 기록에 따라 캐릭터가 성장합니다.\n인바디 AI 분석\n이미지나 PDF 를 올리면 OCR 로 읽어 현재와 목표를 고정 축으로 비교하고 탄단지 비율을 냅니다.\n1.0 의 루틴 추천에서 체성분 분석으로 올라갔습니다.\n관리자 콘솔\nanalytics_events 와 audit_logs 를 읽는 탭 5개를 세웠습니다.\n운영자가 행동 추적, 검수, 출석 기록을 화면에서 봅니다.\n1.0 발표자료에 남은 사용자 피드백 원문 넷을 기준으로 무엇을 바꿀지 정했습니다. 작업은 2026년 2월 말부터 3월 말에 몰려 있고, 3월 한 달 커밋이 111개입니다. 이벤트, 챌린지, 출석, 캐릭터, 라운지, 관리자 개편 순서로 나갔습니다. 반영 결과는 1.0 과 2.0 발표자료를 대조해 확인했습니다.\nAI 응답 지연 피드백은 아직 고치지 못했습니다. 스트리밍으로 바꿔야 합니다.\n55명은 운영 API 로 센 가입 회원 수입니다.",
    "hash": "8b0fbae174f216de",
-   "id": "muscleup-483"
+   "id": "muscleup-480"
   },
   {
    "project": "muscleup",
@@ -4509,7 +4482,7 @@
    "href": "/resume/muscleup",
    "text": "1.0 MuscleUp.pdf(28쪽)와 2.0 득근득근2.0.pdf(13쪽) 대조, 저장소 toadsam/Ajou_MuscleUp 커밋 기록과 소스입니다. 화면은 두 발표자료에 실린 캡처이고, 2.0 홈 배너의 참여자 얼굴 구간은 잘라 냈습니다.",
    "hash": "746cda42144a55f9",
-   "id": "muscleup-484"
+   "id": "muscleup-481"
   },
   {
    "project": "muscleup",
@@ -4518,7 +4491,7 @@
    "href": "/resume/muscleup",
    "text": "기간 · 2025.09 ~ 진행 중\n팀 · 개인 개발 (1.0 → 2.0 → 3.0)\n역할\n1.0 소개형 홈페이지 · 인증/배포 → 2.0 게임형 개편(캐릭터 · 랭킹 · 라운지) → 3.0 디자인 · 모임 구조 · 인증 재설계\n스택\nReact 19 · TS · TanStack Query · Spring Boot 3.5 · Socket.IO · JWT/OAuth · S3\n실행\n3-tier(FE:5173 · BE:8080 · Realtime:4001)\n3 · 실행 단위(FE/BE/RT)\n28 · Controller\nSocket.IO · 실시간 라운지\n출석 & 캐릭터 성장 · 운동 기록이 캐릭터 티어·레벨·진화로 반영\n실시간 라운지 · Socket.IO로 접속자 이동·채팅·이모트 동기화\nAI 인바디 상담 · 이미지/PDF 기반 분석·계획·PDF 리포트(OpenAI·PDFBox)\n인증·운영\nJWT access/refresh + Google OAuth · 관리자 CMS\n운동 기록 말고도 회원이 함께 쓸 커뮤니티와 성장 기능을 더하려 했습니다. 기록이 캐릭터 성장, 랭킹, 실시간 커뮤니티로 바로 이어지는 경험이 필요했고, 자주 바뀌는 실시간 상태는 REST 와 떼어 내야 했습니다.",
    "hash": "80186cd55315a99d",
-   "id": "muscleup-485"
+   "id": "muscleup-482"
   },
   {
    "project": "muscleup",
@@ -4527,7 +4500,7 @@
    "href": "/resume/muscleup",
    "text": "처음 사용할 때 어디서 뭘 해야 할지 몰랐어요 · 1.0 사용자 피드백 · 발표자료 p.24 원문\n다른 사람들과 더 많이 소통하고 싶어요 · 같은 자료, 두 번째 피드백\nAI 답변이 나올 때까지 기다리는 게 길어요 · 같은 자료, 네 번째 피드백\n4 · 1.0 사용자 피드백 원문 · 그중 셋을 2.0 에서 고쳤습니다\n처음 사용할 때 어디서 뭘 해야 할지 몰랐어요 · 홈을 로비로. 첫 화면 CTA 를 「오늘 출석 시작」 하나로\n다른 사람들과 더 많이 소통하고 싶어요 · 실시간 라운지(Socket.IO) + 크루 챌린지\n내 운동 데이터를 더 자세히 보고 싶어요 · 캐릭터 레벨·티어·진화 + 공개 랭킹 + 인바디 OCR 분석\nAI 답변이 나올 때까지 기다리는 게 길어요\n그때는 방법을 몰라 못 고쳤습니다. 응답을 통째로 기다리는 동기 호출이라 스트리밍으로 바꿔야 하는 일이었습니다\n운동 기록이 캐릭터 성장, 랭킹, 라운지로 바로 이어져야 다시 올 이유가 생긴다고 봤습니다. 자주 바뀌는 위치, 채팅, 이모트를 Socket.IO 서버로 떼어 내면 실시간 통신이 REST API 를 막지 않게 됩니다.\n루프 기획 · 기록→성장\nREST 도메인 · 8 도메인 · 28 컨트롤러\n인증 · JWT+OAuth\n실시간 분리 · Socket.IO :4001\nAI · OpenAI·PDF",
    "hash": "7eb11eb560e4d4a1",
-   "id": "muscleup-486"
+   "id": "muscleup-483"
   },
   {
    "project": "muscleup",
@@ -4536,7 +4509,7 @@
    "href": "/resume/muscleup",
    "text": "View · React 19 + TanStack Query · 홈·라운지·랭킹·AI (PWA)\nAPI · Spring Boot 3.5 · Controller 28개 · JWT/OAuth · S3 · PDFBox\nRealtime · Node + Socket.IO · 라운지 위치·채팅·이모트 (:4001)\nDB · PostgreSQL (운영) · MySQL (로컬) · 유저·기록·크루·이벤트 · Entity 31\n실시간 · Socket.IO 분리 서버 · 빈번한 상태(위치·채팅)를 REST와 분리 · REST 폴링(부하·지연)\n인증\nJWT access/refresh · 회전은 멈췄다가 2026.10 재도입\n동시 401 이 서로의 토큰을 무효화해 2026.04 에 중단, 30초 유예 창과 재사용 감지를 넣어 2026.10 에 재도입\n유예 없는 회전 유지, 또는 서버 세션 방식\n서버상태 · TanStack Query · 캐시·재검증으로 서버 상태 일원화 · 수동 fetch(중복 상태)\nAI 검증 · 표본 8건 × 5축 품질 하네스 · 프롬프트를 고칠 때 좋아졌는지 숫자로 봅니다 · 응답을 수동으로 확인\n파일 · 로컬/S3 추상화 · 개발은 로컬, 배포는 S3로 전환 · S3 고정(로컬 불편)",
    "hash": "69cb7a64948a7b4f",
-   "id": "muscleup-487"
+   "id": "muscleup-484"
   },
   {
    "project": "muscleup",
@@ -4545,7 +4518,7 @@
    "href": "/resume/muscleup",
    "text": "토큰 회전을 멈췄다가, 유예 창을 넣어 다시 도입했습니다\n같은 refresh 토큰을 가진 두 재발급 요청이 겹치면, A가 토큰 값을 바꿔 저장한 뒤 B가 이전 값으로 조회해 B가 실패했습니다. 항상 나는 문제는 아니고 처리 순서에 따라 났습니다.\n2026.04 에 새 refresh 토큰 생성과 기존 레코드 갱신을 빼고, 검증한 기존 토큰을 그대로 돌려줬습니다. 클라이언트의 single-flight(refreshing 플래그와 대기 큐로 재발급 요청을 하나로 묶는 장치)는 그 전부터 있었습니다.\n\n2026.10 에 회전을 다시 넣었습니다. 폐기한 토큰에 30초 유예를 두어 여러 탭의 동시 재발급을 허용하고, 유예가 지난 뒤 재사용되면 탈취로 보고 전부 삭제합니다. 토큰은 해시로만 저장하고 리프레시는 HttpOnly 쿠키로만 받으며 테스트 5개로 확인합니다.\n전후 코드로 확인\n2026.04 에는 서버가 토큰을 유지하도록 바꿨고, single-flight 는 그 전부터 있던 클라이언트 장치입니다. 지금 코드는 2026.10 에 다시 넣은 회전 방식입니다.",
    "hash": "f4881cf7773c7e1e",
-   "id": "muscleup-488"
+   "id": "muscleup-485"
   },
   {
    "project": "muscleup",
@@ -4554,7 +4527,7 @@
    "href": "/resume/muscleup",
    "text": "인덱스로 목록은 700배, 그래도 count 57ms 가 남았습니다\n아래 목록 네 곳이 모두 정렬 페이지네이션인데 정렬·필터 컬럼에 인덱스가 없었습니다. 회원 55명이라 화면에서는 느리지 않습니다. 데이터가 늘었을 때 어떻게 되는지 재 봤습니다.\n인덱스를 넣자 실행 계획에서 정렬이 사라지고 인덱스를 거꾸로 훑습니다. 목록 네 개가 668~2472배 빨라졌습니다. 합성 데이터 20만 행, 7회 중앙값으로 목록 SQL 과 count SQL 의 합산 시간을 쟀습니다.\n\n그런데 Page 는 목록과 함께 count 를 날리고, 인덱스는 count 를 못 고칩니다(57.2 → 57.4ms). 다음 병목은 count 이고, 커서 페이지네이션이나 근사 카운트로 풀 문제입니다. 인덱스 넷은 21MB 를 씁니다.\n전후 코드로 확인 · 인덱스 커밋과 벤치마크 커밋이 따로 있습니다. SQL 을 잰 기록입니다.",
    "hash": "251cb705b4a88dec",
-   "id": "muscleup-489"
+   "id": "muscleup-486"
   },
   {
    "project": "muscleup",
@@ -4563,7 +4536,7 @@
    "href": "/resume/muscleup",
    "text": "동시접속 100명에서 p95 85ms, 원인은 N² 브로드캐스트였습니다\n인덱스는 표당 20만 행으로 쟀고, 따로 떼어 낸 실시간 서버가 몇 명까지 감당하는지는 따로 확인해야 했습니다.\n동시접속을 25 → 300 으로 늘리며 ping:check 왕복 시간을 쟀습니다. 50명에서 p95 9ms, 100명에서 p95 85ms 로 설계 주기 60ms 를 넘었습니다. 예상보다 적은 인원에서 밀렸습니다.\n\n150명부터 지연이 커지고 200명에서 p95 1.1초였습니다. 변경이 있을 때마다 전체 사용자 목록을 전원에게 보내서 전송량이 N² 으로 늘었기 때문입니다. 과제는 뷰포트 컬링과 변경분만 보내기였고, 2026.10 의 후속 커밋에서 100ms 주기로 변경분만 보내고 변경이 없으면 보내지 않게 고쳤습니다.\n전후 코드로 확인\n측정 당시 코드는 전체 목록 브로드캐스트이고 2026.10 의 후속 커밋은 변경분 전송입니다. 위 그래프와 표는 고치기 전 측정값입니다.",
    "hash": "77c0d63e62aee7d0",
-   "id": "muscleup-490"
+   "id": "muscleup-487"
   },
   {
    "project": "muscleup",
@@ -4572,7 +4545,7 @@
    "href": "/resume/muscleup",
    "text": "AI 답변이 맞는 말인지 사람이 매번 읽어 볼 수 없었습니다\n인바디 분석은 체성분 수치를 받아 운동과 식단을 권하는 기능이라, 모델이 그럴듯하지만 위험한 조언을 해도 화면은 멀쩡해 보입니다. 프롬프트를 고칠 때마다 나아졌는지 나빠졌는지 판단할 근거가 없었습니다.\n테스트 형태의 품질 하네스를 만들었습니다. 체형과 목표가 다른 표본 8건을 고정해 두고 매번 같은 입력을 넣은 뒤, 응답을 구조·진단 적합·우선순위·설명 깊이·안전성 5개 축으로 채점해 마크다운 리포트로 뽑습니다. OPENAI_API_KEY 가 없으면 스스로 건너뛰어 키 없는 환경의 빌드를 깨지 않습니다.\n코드로 확인\n고정 표본 8개와 규칙 채점 축 5개를 넣은 테스트입니다. API 키가 없으면 건너뜁니다. 통과 여부는 매기지 않고 점수만 뽑는 도구입니다.",
    "hash": "0bfe00ad5ab732d3",
-   "id": "muscleup-491"
+   "id": "muscleup-488"
   },
   {
    "project": "muscleup",
@@ -4581,7 +4554,7 @@
    "href": "/resume/muscleup",
    "text": "브라우저·배포 환경에서 인증 방식이 달랐습니다\n쿠키로 인증하는 환경과 Bearer 토큰으로 인증하는 환경이 섞여 로그인이 자주 풀렸습니다.\n프론트에서는 Authorization 헤더가 없는 요청에 저장된 access 토큰을 Bearer 로 넣고 401 재발급 경로에 연결했습니다. 백엔드에서는 Bearer 를 먼저 읽고 없으면 access 쿠키를 읽게 했습니다. 서버 쪽 변경은 토큰을 꺼내는 자리까지이고, 서명과 만료 검증은 기존 코드가 합니다. 기존 Authorization 헤더를 그대로 두기 때문에 재시도에서 옛 토큰이 다시 가는 경우가 남아 있습니다.\n전후 코드로 확인\n프론트와 백엔드 두 커밋입니다. 헤더에서 토큰을 꺼내는 부분만 바꿨고 검증 로직은 그대로입니다.",
    "hash": "0f605f2f36823116",
-   "id": "muscleup-492"
+   "id": "muscleup-489"
   },
   {
    "project": "muscleup",
@@ -4590,7 +4563,7 @@
    "href": "/resume/muscleup",
    "text": "한 번만 일어나야 하는 일은 DB 가 지키게 했습니다\n같은 사람이 같은 날 출석을 거의 동시에 두 번 보내면 (user_id, workout_date) UNIQUE 에 걸려 500 이 났습니다. 오늘 할 일 보너스와 수집 상자도 요청이 겹치면 두 번 지급될 수 있는 자리였습니다.\n출석은 UNIQUE 제약을 그대로 두고 저장을 한 번 더 시도하게 했습니다. 먼저 들어간 기록이 이미 커밋돼 있으므로 두 번째 시도는 「같은 내용」이나 「수정」 경로로 처리되고, 그래도 겹치면 409 와 안내 문구를 돌려줍니다(2026.10.11).\n\n보너스와 상자는 행을 잠그고 읽습니다. 오늘의 퀘스트 행과 수집 행을 PESSIMISTIC_WRITE 로 읽은 뒤에만 지급 여부를 정합니다(2026.10.13). 친구 관계와 채팅방은 두 사용자 id 를 작은 쪽·큰 쪽으로 정규화해 (user_low_id, user_high_id) UNIQUE 로 한 쌍에 하나만 생기게 했습니다.\n코드로 확인 · 출석 저장, 오늘의 퀘스트, 수집 세 곳에 적용했습니다.",
    "hash": "1671ced762f7a96d",
-   "id": "muscleup-493"
+   "id": "muscleup-490"
   },
   {
    "project": "muscleup",
@@ -4599,7 +4572,7 @@
    "href": "/resume/muscleup",
    "text": "React 19\nTypeScript\nTanStack Query\nSpring Boot 3.5\nSocket.IO\nJWT/OAuth\nAWS S3\n55명 · 가입 회원\n3 / 4 · 반영한 사용자 피드백\n700배 · 목록 정렬 · 한 페이지는 2.0배\n100명 · 실측한 동시접속 한계\n자랑방 목록 · ms\n캐릭터 랭킹 · ms\n공유 인증 관리 · ms\n프로그램 신청 · ms\n한 페이지 전체 (목록 + count) · ms\n맨 아랫줄이 사용자가 기다리는 시간입니다. 목록 막대는 사라지는데 페이지 막대는 절반에서 멈춥니다. 남은 57.5ms 가 인덱스로 못 고치는 count 입니다. PostgreSQL 17.4, 20만 행, 7회 중앙값.\n회원 수는 운영 API 실측(2026.10.18)입니다. 피드백 4건은 1.0 발표자료 p.24 원문입니다. 응답 시간과 동시접속은 저장소의 스크립트로 다시 잴 수 있습니다(backend/sql/bench, realtime/bench, 순서는 docs/BENCHMARKS.md).\n1.0 에서 배운 것 · 개발 · 아직 남은 것 · 2.0 에서 배운 것 · 운영·사용자",
    "hash": "ad186d70b7e7cabd",
-   "id": "muscleup-494"
+   "id": "muscleup-491"
   },
   {
    "project": "muscleup",
@@ -4608,7 +4581,7 @@
    "href": "/resume/muscleup",
    "text": "1.0 · 비밀 값을 하드코딩했다가 배포가 부팅부터 실패해, 프로필과 비밀 값을 갈라 뒀습니다\n1.0 · 환경마다 한글이 깨져서 DB 커넥션 문자열과 JVM 인코딩을 같이 맞췄습니다\n1.0 · SPA 새로고침의 CloudFront 403 은 호스팅 설정에서 풀었습니다\n1.0 · 위치와 채팅은 Socket.IO 서버, 나머지는 REST 로 나눴습니다\nAI 응답 속도는 아직 손대지 못했습니다\nanalytics_events 를 쌓고는 있지만 그것으로 판단한 적은 없습니다\n테스트는 2026.10 에 130개(32파일)로 늘었지만 28개 파일이 스프링을 통째로 띄우고 로컬 MySQL 을 요구합니다. H2 나 컨테이너 DB 로 옮겨야 CI 에 올릴 수 있습니다\nCI 가 없어 테스트는 로컬에서만 돕니다. 배포 빌드(nixpacks)도 테스트를 건너뜁니다",
    "hash": "a5dde165509d4e74",
-   "id": "muscleup-495"
+   "id": "muscleup-492"
   },
   {
    "project": "muscleup",
@@ -4617,7 +4590,7 @@
    "href": "/resume/muscleup",
    "text": "2.0 · Refresh 회전은 2026.04 에 멈췄다가 2026.10 에 30초 유예 창과 재사용 감지를 넣어 다시 켰습니다. 테스트 5개로 확인합니다\n2.0 · 홈을 로비로 바꿔 첫 버튼을 「오늘 출석 시작」 하나로 줄였습니다\n2.0 · ‘소통하고 싶다’는 말에 게시판 대신 실시간 라운지로 답했습니다\n2.0 · 운동 기록을 캐릭터 레벨, 티어, 랭킹으로 돌려줬습니다\n2.0 · 쌓기만 하던 analytics_events 와 audit_logs 를 관리자 콘솔에서 읽게 했습니다\n2.0 · 인덱스를 넣어 목록 정렬은 700배, 페이지 전체는 2.0배 빨라졌습니다. count 쿼리가 남은 병목입니다.",
    "hash": "cbef931460fb25a5",
-   "id": "muscleup-496"
+   "id": "muscleup-493"
   },
   {
    "project": "muscleup",
@@ -4626,7 +4599,7 @@
    "href": "/resume/muscleup",
    "text": "2.0 에서 제일 먼저 고친 것은 홈 첫 화면입니다. 버튼 둘을 「오늘 출석 시작」 하나로 줄였습니다.\n1.0 에서는 배포, 인증, 인코딩 문제를 풀었습니다. 2.0 에서는 첫 화면, 회원 간 소통, 운동 데이터 확인 피드백을 반영했습니다. AI 응답 지연은 아직 못 풀었습니다.",
    "hash": "299b20a9e6755c5d",
-   "id": "muscleup-497"
+   "id": "muscleup-494"
   },
   {
    "project": "muscleup",
@@ -4635,7 +4608,7 @@
    "href": "/resume/muscleup",
    "text": "운동 기록을 게임처럼 지속하게 만드는 피트니스 커뮤니티 플랫폼입니다. 1.0 사용자 피드백 4건 중 3건을 반영해 2.0 으로 다시 만들었습니다.\n1.0 사용자 피드백 4건 중 3건을 반영해 2.0 으로 다시 만들었습니다.\n헬스 동아리 회장으로 회원이 꾸준히 쓸 기능을 고민하며 만들었습니다.\n1.0 은 기능을 소개하는 랜딩이었고, 써 본 사람들은 “어디서 뭘 해야 할지 모르겠다”고 했습니다.\nAI 응답 지연은 아직 남은 과제이지만, 홈을 출석과 캐릭터 성장이 보이는 로비로 바꾸고 관리자가 운영 기록을 보게 개편해 1.0 피드백 4건 중 3건을 반영했습니다.\nRefresh Token Rotation 을 2026.04 에 멈췄다가 2026.10 에 30초 유예와 재사용 감지를 넣어 다시 도입했습니다.\n토큰은 해시로만 저장하고 리프레시는 HttpOnly 쿠키로만 받으며 테스트 5개로 확인합니다.\n1.0 AWS 배포의 HTTPS·Mixed Content·CORS credentials 문제를 해결했습니다.\n현재는 Railway · Vercel · S3 에서 돌아갑니다. 1.0 사용자 피드백 4건 중 3건을 2.0 에 반영했습니다.\nAccess/Refresh 토큰을 HttpOnly 이중 쿠키로 분리했습니다.\n운동 기록·커뮤니티·AI 코칭을 한 사용자 흐름으로 묶었습니다.",
    "hash": "a074dba5091a8f89",
-   "id": "muscleup-498"
+   "id": "muscleup-495"
   },
   {
    "project": "muscleup",
@@ -4644,7 +4617,7 @@
    "href": "/resume/muscleup",
    "text": "운동 기록이 캐릭터 성장, 랭킹, 라운지로 바로 이어지게 만들었습니다. 자주 바뀌는 위치·채팅·이모트는 Socket.IO 서버로 떼어 내 REST API 를 막지 않게 했습니다.\n자주 바뀌는 위치·채팅·이모트는 Socket.IO 서버로 떼어 내 REST API 를 막지 않게 했습니다.\n그때는 방법을 몰라 못 고쳤습니다.",
    "hash": "5ed96001f24c1493",
-   "id": "muscleup-499"
+   "id": "muscleup-496"
   },
   {
    "project": "muscleup",
@@ -4653,7 +4626,7 @@
    "href": "/resume/muscleup",
    "text": "refresh 토큰 재발급이 겹치면 뒤의 요청이 실패했습니다.\n2026.04 에 회전을 멈추고 기존 토큰을 돌려줬습니다. 2026.10 에 30초 유예와 재사용 감지를 넣어 다시 도입했습니다.\n동시 재발급은 허용하고, 유예 뒤 재사용은 탈취로 보고 전부 삭제합니다.\n정렬 페이지네이션 네 곳에 인덱스가 없었습니다.\n20만 행에 인덱스 넷을 넣고 7회 중앙값으로 쟀습니다. 목록 SQL 은 668~2472배 빨라졌습니다.\n한 페이지는 117.4ms → 57.5ms 로 2.0배이고, 남은 57ms 는 count 입니다.\n실시간 서버가 몇 명까지 감당하는지 확인해야 했습니다.\n동시접속을 25 → 300 으로 늘리며 p95 를 쟀습니다. 100명에서 85ms 로 설계 주기 60ms 를 넘었습니다.\n원인은 N² 브로드캐스트였고, 후속 커밋에서 변경분만 보내게 고쳤습니다.\nAI 인바디 조언이 맞는지 사람이 매번 읽어 볼 수 없었습니다.\n표본 8건을 고정해 같은 입력을 넣고 응답을 5개 축으로 채점하는 테스트를 만들었습니다. 결과는 마크다운 리포트로 나옵니다.\n프롬프트를 고칠 때 나아졌는지 숫자로 봅니다. 키가 없으면 건너뜁니다.",
    "hash": "c1f1a41f69db5349",
-   "id": "muscleup-500"
+   "id": "muscleup-497"
   },
   {
    "project": "muscleup",
@@ -4662,7 +4635,7 @@
    "href": "/resume/muscleup",
    "text": "쿠키 인증과 Bearer 토큰 환경이 섞여 로그인이 자주 풀렸습니다.\n프론트는 access 토큰을 Bearer 로 붙여 401 재발급에 연결하고, 백엔드는 Bearer 를 먼저 읽고 없으면 쿠키를 읽습니다.\n두 환경에서 로그인이 유지되고, 옛 토큰이 다시 가는 경우만 남았습니다.\n같은 날 출석을 거의 동시에 두 번 보내면 UNIQUE 에 걸려 500 이 났고, 보너스는 두 번 지급될 수 있었습니다.\n출석은 UNIQUE 를 그대로 두고 한 번 더 시도한 뒤 그래도 겹치면 409 를 주게 했습니다. 보너스와 수집 상자는 행을 잠그고 읽습니다.\n중복 방지를 DB 제약과 행 잠금에 맡겼습니다.",
    "hash": "b8dc356aec0253a3",
-   "id": "muscleup-501"
+   "id": "muscleup-498"
   },
   {
    "project": "muscleup",
@@ -4671,7 +4644,7 @@
    "href": "/resume/muscleup",
    "text": "2.0 에서 반영\n아직\n1.0 은 기능을 소개하는 랜딩이었고, 써 본 사람들은 “어디서 뭘 해야 할지 모르겠다”고 했습니다.\n헬스 동아리 회장으로 회원이 꾸준히 쓸 기능을 고민하며 만들었습니다. 1.0 은 AI 상담, 자랑방, 프로틴, 프로그램 신청을 소개하는 정보 중심 홈페이지였습니다.\n1.0 을 써 본 사람들이 남긴 말 넷\n그래서 세운 가설\n2.0 에서 제일 먼저 고친 것은 홈 첫 화면입니다.\n피드백 넷을 기준으로 2026년 3월 한 달, 커밋 111개로 다시 만들었습니다. 홈은 버튼 둘을 「오늘 출석 시작」 하나로 줄였습니다.\n바꾸기 전과 후 · 손잡이를 끌어 보세요\n1.0 과 2.0 을 나란히 놓은 표 보기",
    "hash": "e6b6f78bfd1be721",
-   "id": "muscleup-502"
+   "id": "muscleup-499"
   },
   {
    "project": "muscleup",
@@ -4680,7 +4653,7 @@
    "href": "/resume/muscleup",
    "text": "피드백 넷 중 셋에 기능으로 답했고, 막혔던 곳 여섯은 따로 풀었습니다.\n위 네 줄은 1.0 피드백과 2.0 에서 한 일이고, 그 아래는 막혔던 곳과 푼 방법입니다. 그림은 누르면 다시 재생됩니다.\n3건 더 보기 · AI 답변 품질 하네스, 인증 방식 차이, 한 번만 일어나야 하는 일\n전체\n1.0 피드백 4건과 2.0 에서 한 일 · 2026.03\n1.0 에서는\n2.0 에서 한 일\n결과\n막혔던 곳과 푼 방법\n문제\n한 일\n결과\n버튼 둘이 시키는 일 하나로 바뀌었습니다.\nREST 서버(:8080)와 실시간 서버가 갈린 3-tier 구조가 됐습니다.\n1.0 의 루틴 추천에서 체성분 분석으로 올라갔습니다.\n피드백 넷 중 유일하게 안 고친 것입니다.\n‘소통하고 싶다’는 말에 게시판 대신 실시간 라운지로 답했습니다.\n운동 기록은 캐릭터 레벨, 티어, 랭킹으로 돌려줬고, 쌓기만 하던 analytics_events 와 audit_logs 는 관리자 콘솔에서 읽게 했습니다.\n2.0 에서는 첫 화면, 회원 간 소통, 운동 데이터 확인 피드백을 반영했습니다. AI 응답 지연은 아직 못 풀었습니다.\n아래는 더 깊이 볼 분을 위한 자료입니다. 구조, 핵심 코드, 만든 순서, 회고가 접혀 있습니다.",
    "hash": "002a54b176d36a5c",
-   "id": "muscleup-503"
+   "id": "muscleup-500"
   },
   {
    "project": "muscleup",
@@ -4689,7 +4662,7 @@
    "href": "/resume/muscleup",
    "text": "응답 시간과 동시접속은 저장소의 스크립트로 다시 잴 수 있습니다(backend/sql/bench, realtime/bench, 순서는 docs/BENCHMARKS.md).",
    "hash": "292ca19bb9d34f55",
-   "id": "muscleup-504"
+   "id": "muscleup-501"
   },
   {
    "project": "village-portfolio",
@@ -4698,7 +4671,7 @@
    "href": "/resume/village-portfolio",
    "text": "프로젝트: AI 포트폴리오 마을 (이 사이트)\n무엇: 관리자 활동 기록을 건물 불빛과 AI NPC 대화에 반영하는 3D 포트폴리오 사이트입니다.\n상태: 운영중\n기간: 2026.06 ~ 진행 중\n인원 구성: 개인 개발\n정재훈이 맡은 일: Next.js 프론트 · FastAPI 백엔드 · 관리자 페이지 · OpenAI NPC(규칙 폴백) · Claude Agent SDK 공방 · 3D 성능 예산\n분야: FullStack / Next.js / FastAPI / AI\n수치: 215 KB (첫 화면 JS · 3D 모델 0개), 70 (공개·관리자 API), 375 (백엔드 테스트)\n수치 출처: API·테스트 수는 저장소 소스 기준 (2026.11) · 첫 화면 무게는 빌드 청크 실측 (2026.09)\n한 일: 관리자 입력을 FastAPI 가 건물 밝기·NPC 기분으로 변환하고, NPC 대화는 OpenAI 로 생성하되 키가 없거나 실패하면 규칙 기반 대사로 폴백해 서비스가 멈추지 않게 했습니다.\n한 일: 첫 화면은 three.js 를 전혀 싣지 않는 별도 라우트로 분리하고(JS 215KB · 3D 모델 0개), 마을은 마우스를 올리는 순간 미리 받습니다.",
    "hash": "3eac5d7301d65095",
-   "id": "village-portfolio-505"
+   "id": "village-portfolio-502"
   },
   {
    "project": "village-portfolio",
@@ -4707,7 +4680,7 @@
    "href": "/resume/village-portfolio",
    "text": "한 일: 의뢰 공방은 Claude Agent SDK 로 네 직군 에이전트가 산출물을 쓰되 진행 권한은 관리자 게이트 하나에만 두고 도구 호출은 콜백 샌드박스로 막았습니다. 유일한 공개 쓰기 경로는 허니팟·전용 레이트리밋·견적 상하한 클램프로 보호합니다.",
    "hash": "bc1d8a82dbbac1e6",
-   "id": "village-portfolio-506"
+   "id": "village-portfolio-503"
   },
   {
    "project": "muscleup",
@@ -4716,7 +4689,7 @@
    "href": "/resume/muscleup",
    "text": "프로젝트: 득근득근 (MuscleUp)\n무엇: 사용자 피드백을 반영해 동아리 소개 홈페이지에 운동 기록·커뮤니티·AI 코칭 기능을 추가했습니다.\n상태: 운영중\n기간: 2025.09 ~ 진행 중\n인원 구성: 개인 개발 (1.0 → 2.0 → 3.0)\n정재훈이 맡은 일: 1.0 소개형 홈페이지 · 인증/배포 → 2.0 게임형 개편(캐릭터 · 랭킹 · 라운지) → 3.0 디자인 · 모임 구조 · 인증 재설계\n분야: FullStack / JWT / Realtime / AWS\n수치: 3 / 4 (반영한 사용자 피드백), 2.0배 (한 페이지 응답 · 20만 행 SQL), 55명 (가입 회원)\n수치 출처: 피드백 3/4 는 1.0·2.0 발표자료 대조 · 2.0배는 PostgreSQL 17.4 합성 20만 행 7회 중앙값(목록+count SQL, HTTP 아님) · 회원 수는 운영 API 실측(2026.10.18)\n한 일: 운동 기록·커뮤니티·AI 코칭을 한 사용자 흐름으로 묶고, Access/Refresh 토큰을 HttpOnly 이중 쿠키로 분리했습니다.\n한 일: Refresh Token Rotation 이 동시 재발급에서 로그아웃을 일으켜 2026.04 에 회전을 멈췄다가, 2026.10 에 폐기 후 30초 유예와 재사용 감지를 넣어 회전을 다시 도입했습니다(해시 저장 · HttpOnly 쿠키 전용 · 테스트 5개).",
    "hash": "65a248e82972ac9e",
-   "id": "muscleup-507"
+   "id": "muscleup-504"
   },
   {
    "project": "muscleup",
@@ -4725,7 +4698,7 @@
    "href": "/resume/muscleup",
    "text": "한 일: 1.0 AWS 배포에서 HTTPS·Mixed Content·CORS credentials 문제를 해결했고(현재는 Railway · Vercel · S3), 1.0 사용자 피드백 4건 중 3건을 2.0 에 반영했습니다.",
    "hash": "bd9c5ad9d18a5169",
-   "id": "muscleup-508"
+   "id": "muscleup-505"
   },
   {
    "project": "aclub",
@@ -4734,7 +4707,7 @@
    "href": "/resume/aclub",
    "text": "프로젝트: aClub\n무엇: 활성 사용자 3,500명의 동아리 탐색·모집 서비스입니다. 2025년 프론트 개발에 참여하고 2026년에는 프로젝트장으로 출시와 운영을 맡았습니다.\n상태: 완료\n기간: 2025.01 ~ 2026.03\n인원 구성: 2025 프론트 3인 → 2026 프로젝트장\n정재훈이 맡은 일: 2025 Frontend 개발(로그인 · API 연동) → 2026 프로젝트장: 출시 · 홍보 · 운영, 배포 수리와 출시 전후 수정\n분야: 실사용 서비스 / 프로젝트장 / 출시·운영 / 배포 수리\n수치: 3,500 (활성 사용자), 8.8만 (조회수), 93.4% (세션 참여율)\n수치 출처: Google Analytics 4 화면 · 2026.01–03 (연동은 팀원, 원천 데이터는 캡처뿐)\n한 일: 2026년 프로젝트장으로 출시 일정과 동아리 회장 섭외, 에브리타임 홍보, 출시 저녁의 문의 응대를 맡았습니다. 코드로는 아홉 번 연속 실패하던 배포 워크플로를 고치고, 출시 당일 필터 API 가 실패하자 전체 목록을 받아 화면에서 거르는 우회로를 넣었습니다.",
    "hash": "edeab9cc64cb586a",
-   "id": "aclub-509"
+   "id": "aclub-506"
   },
   {
    "project": "aclub",
@@ -4743,7 +4716,7 @@
    "href": "/resume/aclub",
    "text": "한 일: 2025년에는 프론트 3인 중 한 명으로 로그인·회원정보·구글 로그인 화면과 동아리·모집공고 API 연동을 맡았습니다. 2026 TypeScript 저장소는 팀원들이 다시 짠 것이고, 제 커밋은 그 위의 수정 20건입니다. GA4 수치는 팀원이 연동해 둔 화면에서 읽었습니다.",
    "hash": "fb22a46cc2010e19",
-   "id": "aclub-510"
+   "id": "aclub-507"
   },
   {
    "project": "ajouchong",
@@ -4752,7 +4725,7 @@
    "href": "/resume/ajouchong",
    "text": "프로젝트: 아주대 총학생회 웹 (ajouchong.com)\n무엇: 학생이 대여 물품 수량과 신청 링크를 확인하고, 총학생회가 직접 관리하는 웹사이트입니다.\n상태: 운영중\n기간: 2025.03 ~ 진행 중\n인원 구성: 2025 프론트 3인 → 2026 단독 담당\n정재훈이 맡은 일: 2025 프론트 화면 일부 → 2026 단독 담당: UI 전면 개편 · 대여사업 · 링크허브 · 관리자 화면 · Spring Boot API\n분야: 운영자 도구 / 대여·링크허브 / 모바일 개편 / Spring Boot API\n수치: 12,314 (검색 노출), 1,694 (검색 클릭), 13.8% (검색 CTR)\n수치 출처: Google Search Console · 2025.05~2026.08(16개월) · 검색 유입 기준\n한 일: 학생은 물품이 남았는지 몰라 학생회실까지 와서야 없다는 말을 들었고, 수량·링크 하나 바꾸는 데도 개발자가 배포해야 했습니다. Spring Boot 로 대여 품목·대여 기록·링크 엔티티와 사용자/관리자 API 를 만들어(수량 조정은 서버가 0 미만·총량 초과 거부, 관리자 API 는 ADMIN 권한만) 총학생회가 개발자 없이 직접 고치게 했습니다.",
    "hash": "7073baf936f40616",
-   "id": "ajouchong-511"
+   "id": "ajouchong-508"
   },
   {
    "project": "ajouchong",
@@ -4761,7 +4734,7 @@
    "href": "/resume/ajouchong",
    "text": "한 일: 링크허브 한 페이지로 인스타 프로필 링크 한도를 우회했고, 2026년 9월에는 프론트 전체를 다시 디자인했습니다. 2026.11 기준 대여 품목 10종·링크 9개가 실서비스에서 운영 중입니다.",
    "hash": "14a54f0c35180f6a",
-   "id": "ajouchong-512"
+   "id": "ajouchong-509"
   },
   {
    "project": "festflow",
@@ -4770,7 +4743,7 @@
    "href": "/resume/festflow",
    "text": "프로젝트: AjouFesta (구 FestFlow)\n무엇: 5월 첫 운영에서 확인한 문제를 개선하고, 10월 가을축제에서 이틀간 운영한 아주대 축제 앱입니다.\n상태: 운영중\n기간: 2026.04 ~ 2026.10\n인원 구성: 개인 개발\n정재훈이 맡은 일: 기획 · 개발 · 배포 · 현장 운영 1인 (React · Spring Boot · JWT · SSE · PWA)\n분야: 현장 운영 / 실시간(SSE) / Spring Boot / PWA / Claude Code\n수치: 7,078명 (축제 주간 방문자), 장애 0건 (축제 이틀 · 배포 5회), 100 / 100 (동시 주문 100건 번호 중복 0)\n수치 출처: 아주대 가을축제 2026.10.07–08 · Vercel Web Analytics(10.02–09) · 저장소 docs/festflow/축제-결산.md · 동시 주문은 축제 뒤(2026-11-13) 실제 PostgreSQL 테스트, 잠금을 뺀 대조군은 번호 17종\n한 일: 2026.05 대동제에서 AI 소개팅을 하루 운영했습니다(등록 169명, 신청 424건, 성사 36건). 그날 신청 상한이 없어 문자 244통이 잔액 부족으로 실패했고, 10월에는 1인당 신청 3건 제한과 문자 실패를 저장과 분리하는 처리로 고쳤습니다.",
    "hash": "503b5d20e335f1bf",
-   "id": "festflow-513"
+   "id": "festflow-510"
   },
   {
    "project": "festflow",
@@ -4779,7 +4752,7 @@
    "href": "/resume/festflow",
    "text": "한 일: 2026.10 가을축제에서는 주점 QR 주문과 메뉴별 요리사 창, 사주 소개팅, 스태프 화면을 이틀 동안 서버 장애 없이 운영했습니다. 첫날 주점 입금 확인 매출은 2,462,000원, 소개팅 성사는 97쌍입니다.\n한 일: 같은 부스로 몰리는 주문을 DB 행 잠금과 부스별 락으로 한 줄로 세우고, AI 변환과 문자 발송을 트랜잭션 밖으로 빼 DB 연결이 묶이지 않게 했습니다. 첫날 주문 142건, 소개팅 가입 322명을 받는 동안 서버 장애가 없었습니다.\n한 일: React(Vite) PWA와 Spring Boot 3/JPA/JWT 구조에 현장 상태를 SSE로 보냈고, 축제 전 점검을 세 번 해서 당일 사고가 날 만한 것 20개 정도를 미리 고쳤습니다.",
    "hash": "04aef6e842df76fc",
-   "id": "festflow-514"
+   "id": "festflow-511"
   },
   {
    "project": "tserof",
@@ -4788,7 +4761,7 @@
    "href": "/resume/tserof",
    "text": "프로젝트: TSEROF\n무엇: 5인 팀이 4개월 만에 Steam 에 출시한 3D 액션 플랫폼 게임입니다. 부팀장으로 스테이지 2와 기믹을 맡았습니다.\n상태: 출시\n기간: 2023.10 ~ 2024.02\n인원 구성: 5인 팀 · 부팀장\n정재훈이 맡은 일: 스테이지 2 · 장애물/기믹 · 3×3 퍼즐 구현 · 기획\n분야: Unity / GameDev / 3D / Steam\n수치: Steam (스토어 출시), 4개월 (팀 기획 → 출시)\n수치 출처: 출시는 Steam 스토어 페이지 · 기간(2023.10–2024.02)은 첫 커밋과 Steam 출시일 · 담당은 저장소 README 기여자 표",
    "hash": "be7dd88c1a1367ca",
-   "id": "tserof-515"
+   "id": "tserof-512"
   },
   {
    "project": "mystock",
@@ -4797,7 +4770,7 @@
    "href": "/resume/mystock",
    "text": "프로젝트: MyStock-Desk / MyWave\n무엇: 대학생이 매일 여는 개인 재무 웹앱입니다. 홈의 숫자 하나 「오늘 더 써도 되는 돈」 아래에 저축 목표와 직접 입력한 투자 기록이 붙습니다.\n상태: 운영중\n기간: 2026.05 ~ 진행 중\n인원 구성: 개인 개발 (풀스택 1인)\n정재훈이 맡은 일: 도메인 설계 · Spring Boot API · React 화면 전부 · 공개 운영\n분야: Spring Boot / React / CI · Docker / 검사받는 AI / Railway\n수치: 운영 중 (mywave.day · 2026.11.10 공개), 137 → 146 (공개일 API 검사 통과 (152건)), 98개 (백엔드 테스트 · CI 3잡)\n수치 출처: docs/TROUBLESHOOTING.md(2026-11-10 공개일 점검) · 저장소 @Test 수(2026-11-11, 공개일엔 29 → 41) · .github/workflows/ci.yml\n한 일: 거래를 고치면 보유 종목을 처음부터 다시 재생하고, 하루 예산·투자 가능 금액은 저장하지 않고 요청마다 기록에서 계산합니다. 화면끼리 숫자가 어긋날 자리를 없앴습니다.\n한 일: AI 코치는 모델이 문장만 쓰고, 답에 자료에 없는 숫자나 투자 조언이 있으면 코드가 버립니다(테스트 15개). 운영 설정이 위험하면 서버가 뜨지 않게 부팅 가드를 뒀습니다.",
    "hash": "1d53cf0fe71579c4",
-   "id": "mystock-516"
+   "id": "mystock-513"
   },
   {
    "project": "mystock",
@@ -4806,7 +4779,7 @@
    "href": "/resume/mystock",
    "text": "한 일: 공개한 날 API 전수 검사 152건을 돌려 데모 계정 훼손·로그아웃 토큰 생존 등 9건을 당일 고쳤습니다. 아직 못 한 것은 Flyway 없는 스키마와 서버 모니터링입니다.",
    "hash": "87b355ed21ea5864",
-   "id": "mystock-517"
+   "id": "mystock-514"
   },
   {
    "project": "sign-language",
@@ -4815,25 +4788,25 @@
    "href": "/resume/sign-language",
    "text": "프로젝트: 수어링고 (구 수어지교)\n무엇: 수어 동작을 보고 뜻을 익히는 학습 앱입니다. 5월에 수어지교로 배포했고 11월에 수어링고로 다시 그렸습니다.\n상태: 운영중\n기간: 2026.02 ~ 진행 중 · 파란학기제\n인원 구성: 4인 (FE 1 · BE 2 · 3D 아바타 1)\n정재훈이 맡은 일: 1학기 백엔드(분석기 선택 · 영상 조회 · Cloud Run/Pages 배포) · 2학기 동작 데이터 정리와 자모표 실험 · 11월 앱 디자인 개편과 브랜치 통합\n분야: Spring Boot / Firebase / Expo / React Native\n수치: 120 (사전 단어 (영상 17)), 20 (퀴즈 문항), 101ms (변환 왕복 중앙값)\n수치 출처: 저장소 README 「측정 결과」 2026-09-07 운영 서버(Cloud Run) 실측 · 규칙 경로만 동작하는 상태",
    "hash": "5fb3f69ba462a8ca",
-   "id": "sign-language-518"
+   "id": "sign-language-515"
   },
   {
    "project": "otherside-vr",
    "title": "The Other Side (VR)",
    "section": "이력서 카드",
    "href": "/resume/otherside-vr",
-   "text": "프로젝트: The Other Side (VR)\n무엇: 손전등을 켜면 들키는 VR 공포 퍼즐 게임입니다.\n상태: 완료\n기간: 2025.05 ~ 2025.06\n인원 구성: 4인 팀 (AR 과 같은 팀원)\n정재훈이 맡은 일: AI 몬스터 2종 · 감지기 2 · GameManager 중앙 제어 (커밋 25/161)\n분야: VR / XR / Unity",
-   "hash": "e84c1b43227e62e6",
-   "id": "otherside-vr-519"
+   "text": "프로젝트: The Other Side (VR)\n무엇: 손전등을 켜면 들키는 VR 공포 퍼즐 게임입니다.\n상태: 완료\n기간: 2025.05 ~ 2025.06\n인원 구성: 4인 팀\n정재훈이 맡은 일: AI 몬스터 2종 · 감지기 2 · GameManager 중앙 제어 (커밋 25/161)\n분야: VR / XR / Unity",
+   "hash": "39c35cb03760c3a6",
+   "id": "otherside-vr-516"
   },
   {
    "project": "monsterpoint-ar",
    "title": "INTO MONSTER POINT (AR)",
    "section": "이력서 카드",
    "href": "/resume/monsterpoint-ar",
-   "text": "프로젝트: INTO MONSTER POINT (AR)\n무엇: 현실 공간을 전장으로 쓰는 AR 슈터입니다.\n상태: 완료\n기간: 2025.04 ~ 2025.05\n인원 구성: 4인 팀 (VR 과 같은 팀원)\n정재훈이 맡은 일: 무기 시스템(발사 · 전환 · 잠금 · 쿨타임) · 체력 · 게임 루프 기획 (커밋 51/109)\n분야: AR / Unity / Shooter",
-   "hash": "a459d9dc6ecebe8e",
-   "id": "monsterpoint-ar-520"
+   "text": "프로젝트: INTO MONSTER POINT (AR)\n무엇: 현실 공간을 전장으로 쓰는 AR 슈터입니다.\n상태: 완료\n기간: 2025.04 ~ 2025.05\n인원 구성: 4인 팀\n정재훈이 맡은 일: 무기 시스템(발사 · 전환 · 잠금 · 쿨타임) · 체력 · 게임 루프 기획 (커밋 51/109)\n분야: AR / Unity / Shooter",
+   "hash": "663adac97bccf752",
+   "id": "monsterpoint-ar-517"
   },
   {
    "project": "ajou-indigame",
@@ -4842,7 +4815,7 @@
    "href": "/resume/ajou-indigame",
    "text": "프로젝트: 아주대탐험\n무엇: 1인칭과 탑다운 시점을 오가는 Unity 3D 액션 어드벤처입니다.\n상태: 완료\n기간: 2024.09 ~ 2024.12\n인원 구성: 개인 개발 (1인)\n정재훈이 맡은 일: 게임 시스템 설계·구현 · 코어 루프 · 전투 AI · UI · 이벤트\n분야: Unity / C# / NavMesh / Roguelike",
    "hash": "982b33b2a652179a",
-   "id": "ajou-indigame-521"
+   "id": "ajou-indigame-518"
   },
   {
    "project": "side",
@@ -4851,7 +4824,7 @@
    "href": "/resume",
    "text": "codebase-anatomy (Claude Code 스킬)\n코드 구조를 인터랙티브 HTML로 시각화하고, 설명마다 근거가 되는 파일과 줄 번호를 표시하는 Claude Code 스킬 (2026.08)\nGitHub\n만든 결과물",
    "hash": "1ede124119c9d5d5",
-   "id": "side-522"
+   "id": "side-519"
   },
   {
    "project": "side",
@@ -4860,7 +4833,7 @@
    "href": "/resume",
    "text": "Ajou Campus Foodmap\n세션 기반 OAuth 로그인과 맛집 등록 플로우를 구현한 캠퍼스 지도 서비스 (2024.10~12)\nClient\nServer",
    "hash": "3ae478496aeacf2a",
-   "id": "side-523"
+   "id": "side-520"
   },
   {
    "project": "side",
@@ -4869,7 +4842,7 @@
    "href": "/resume",
    "text": "DarkLab\n1인칭 탐색 기반 3D 공포 어드벤처 게임 프로토타입 (2024 · 3인 팀 · 프로그래밍)\nGitHub",
    "hash": "cd83bd4fdd6a16e7",
-   "id": "side-524"
+   "id": "side-521"
   },
   {
    "project": "side",
@@ -4878,7 +4851,7 @@
    "href": "/resume",
    "text": "아주분투\n아주대 캠퍼스를 배경으로 이틀 동안 만든 Phaser 3 2D 러닝 게임 (2026.05)\nGitHub",
    "hash": "1f71cc36927be044",
-   "id": "side-525"
+   "id": "side-522"
   },
   {
    "project": "side",
@@ -4887,7 +4860,7 @@
    "href": "/resume",
    "text": "고양이로부터 지켜라 · 혼자 만든 타워 디펜스 게임",
    "hash": "a3e26866fd3eb387",
-   "id": "side-526"
+   "id": "side-523"
   },
   {
    "project": "side",
@@ -4896,7 +4869,7 @@
    "href": "/resume",
    "text": "루탄의 카드 게임 · 덱 빌딩 카드 게임",
    "hash": "3e0cfebe88e6f80a",
-   "id": "side-527"
+   "id": "side-524"
   },
   {
    "project": "side",
@@ -4905,7 +4878,7 @@
    "href": "/resume",
    "text": "내 꿈이 현실의 버그에 침식당하기 시작해서 위험해 · 잠든 개발자가 꿈속 코드 세계에서 버그를 해결하는 게임",
    "hash": "c222cebb1a0ae5a4",
-   "id": "side-528"
+   "id": "side-525"
   },
   {
    "project": "side",
@@ -4914,7 +4887,7 @@
    "href": "/resume",
    "text": "스파르타 던전 배틀 (Text 게임) · 캐릭터를 생성해 플레이하는 텍스트 게임",
    "hash": "3eea4458727f679a",
-   "id": "side-529"
+   "id": "side-526"
   },
   {
    "project": "side",
@@ -4923,7 +4896,7 @@
    "href": "/resume",
    "text": "Fossil Runner · 섬에서 자원을 모아 성장하고, 용을 처치해 현실로 돌아가는 게임",
    "hash": "5144bf428629ec7c",
-   "id": "side-530"
+   "id": "side-527"
   },
   {
    "project": "side",
@@ -4932,7 +4905,7 @@
    "href": "/resume",
    "text": "MOVYDICK · 이더리움 고래 활동 추적 및 매매 시점 예측 시스템",
    "hash": "654c8ff2d6aea055",
-   "id": "side-531"
+   "id": "side-528"
   },
   {
    "project": "side",
@@ -4941,7 +4914,7 @@
    "href": "/resume",
    "text": "NovelKub · NPC 단서 수집 기반 살인사건 추리 게임",
    "hash": "c5db19adfc8c19c0",
-   "id": "side-532"
+   "id": "side-529"
   },
   {
    "project": "side",
@@ -4950,7 +4923,7 @@
    "href": "/resume",
    "text": "time rewinder · Godot 기반 퍼즐 게임",
    "hash": "04ecab534bca6b7a",
-   "id": "side-533"
+   "id": "side-530"
   },
   {
    "project": "side",
@@ -4959,7 +4932,7 @@
    "href": "/resume",
    "text": "불빛아래 · AI 디자인을 적용한 3D 공포 게임",
    "hash": "071c295780dc8c30",
-   "id": "side-534"
+   "id": "side-531"
   },
   {
    "project": "side",
@@ -4968,7 +4941,7 @@
    "href": "/resume",
    "text": "경복궁을 지켜라 · 로블록스 기반으로 제작한 경복궁 복원 게임",
    "hash": "5358fcfc8d8856b8",
-   "id": "side-535"
+   "id": "side-532"
   },
   {
    "project": "side",
@@ -4977,7 +4950,7 @@
    "href": "/resume",
    "text": "페스트러너 · 곤충을 피해 도망가는 AR 기반 러너 게임",
    "hash": "d86239e3df2cf2e0",
-   "id": "side-536"
+   "id": "side-533"
   },
   {
    "project": "profile",
@@ -4986,7 +4959,7 @@
    "href": "/resume",
    "text": "정재훈\nWeb Full-Stack · Backend Developer\nBackend · Web Full-Stack · Frontend\n2027.02 졸업 예정 · 인턴/정규 즉시 입사 가능\n학생회와 동아리에서 직접 겪은 불편을\n웹 서비스로 해결해 왔습니다.\n개발자 정재훈\n웹 주력 + 운영 이슈 해결 중심\nReact · Spring Boot 중심 웹 풀스택. 인증/보안과 배포 운영 이슈까지 직접 다룹니다.\n화면부터 API · 인증 · DB · 배포까지 한 흐름으로 구현합니다 (AjouFesta · 총학생회 웹)\n배포 후 드러나는 문제를 재현해 고칩니다 (HTTPS · CORS credentials · 토큰 재발급 경쟁 상태)\n실사용 피드백과 지표를 읽고 판단합니다 (총학생회 웹은 Search Console · aClub 은 GA4)\nAI 코딩 도구가 낸 결과는 테스트와 실측으로 확인하고 씁니다 (AjouFesta · 이 포트폴리오)",
    "hash": "8c1d3b229a705b42",
-   "id": "profile-537"
+   "id": "profile-534"
   },
   {
    "project": "profile",
@@ -4995,7 +4968,7 @@
    "href": "/resume",
    "text": "총학생회 웹의 관리자 기능을 개발하고, AjouFesta는 축제 현장에서 직접 운영했습니다.\n배포 후 HTTPS·CORS 문제를 로그와 배포 설정, 네트워크 기록을 확인해 수정했습니다.\naClub 은 프로젝트장으로 출시와 운영을 맡았고, 연속으로 실패하던 배포와 출시 당일의 필터 오류를 고쳤습니다.\n공방의 다음 단계 진행은 관리자가 승인하도록 했습니다. 모델 응답을 검증하고, 호출이 실패하면 규칙 기반 응답을 반환하도록 구현했습니다.\n웹을 주력으로 개발하며, Unity AR·VR 프로젝트에서 시점 전환과 몬스터 감지·추격 기능도 구현했습니다.",
    "hash": "2fa62604e595a6c1",
-   "id": "profile-538"
+   "id": "profile-535"
   },
   {
    "project": "profile",
@@ -5004,7 +4977,7 @@
    "href": "/resume",
    "text": "주로 쓰는 기술 스택(주력)입니다. 영역 순서가 주력 순서입니다.\nFrontend 주력: React, TypeScript, Next.js · 써 본 것: Three.js (R3F), Vite, React Query, Tailwind CSS, Expo, React Native\nBackend 주력: Spring Boot, Java · 써 본 것: JPA, Spring Security, Node.js, Express, FastAPI (Python)\nAuth 주력: JWT · 써 본 것: Refresh Token Rotation (유예 창 · 재사용 감지), OAuth2, Passport, Firebase Auth\nInfra / Data 주력: AWS · 써 본 것: S3, CloudFront, MySQL, MongoDB, Firebase\nAI / LLM 주력: OpenAI API, Claude Agent SDK · 써 본 것: 규칙 기반 폴백, 출력 클램프\nUnity XR/AR 주력: Unity, C# · 써 본 것: AR Foundation, XR Interaction Toolkit",
    "hash": "c139d84f9feb157a",
-   "id": "profile-539"
+   "id": "profile-536"
   },
   {
    "project": "profile",
@@ -5013,7 +4986,7 @@
    "href": "/resume",
    "text": "Frontend\nReact/TypeScript 기반 SPA 화면 구현과 API 연동\nReact\nTypeScript\nNext.js\nReact\nTypeScript\nNext.js\nThree.js (R3F)\nVite\nReact Query\nTailwind CSS\nExpo\nReact Native",
    "hash": "6452f47b156077d0",
-   "id": "profile-540"
+   "id": "profile-537"
   },
   {
    "project": "profile",
@@ -5022,7 +4995,7 @@
    "href": "/resume",
    "text": "Backend\nSpring Boot + JPA로 REST API 설계/구현\nSpring Boot\nJava\nSpring Boot\nJava\nJPA\nSpring Security\nNode.js\nExpress\nFastAPI (Python)",
    "hash": "6033becd3a512b4c",
-   "id": "profile-541"
+   "id": "profile-538"
   },
   {
    "project": "profile",
@@ -5031,7 +5004,7 @@
    "href": "/resume",
    "text": "Auth\nJWT 인증/인가 · 이중 쿠키 + 유예 창 회전\nJWT\nJWT\nRefresh Token Rotation (유예 창 · 재사용 감지)\nOAuth2\nPassport\nFirebase Auth",
    "hash": "e0d4f29b936c1f4d",
-   "id": "profile-542"
+   "id": "profile-539"
   },
   {
    "project": "profile",
@@ -5040,7 +5013,7 @@
    "href": "/resume",
    "text": "Infra / Data\nAWS 배포 및 HTTPS / Mixed Content / CORS 해결\nAWS\nAWS\nS3\nCloudFront\nMySQL\nMongoDB\nFirebase",
    "hash": "0d68ab0d7972fcaa",
-   "id": "profile-543"
+   "id": "profile-540"
   },
   {
    "project": "profile",
@@ -5049,7 +5022,7 @@
    "href": "/resume",
    "text": "AI / LLM\nLLM 응답을 규칙으로 검증·보정하고, 실패해도 멈추지 않게 설계\nOpenAI API\nClaude Agent SDK\nOpenAI API\nClaude Agent SDK\n규칙 기반 폴백\n출력 클램프",
    "hash": "06123aac4286f542",
-   "id": "profile-544"
+   "id": "profile-541"
   },
   {
    "project": "profile",
@@ -5058,7 +5031,7 @@
    "href": "/resume",
    "text": "Unity XR/AR\n시점 전환 · 몬스터 AI · AR 전장 생성 구현\nUnity\nC#\nUnity\nC#\nAR Foundation\nXR Interaction Toolkit",
    "hash": "24c18576e76033a2",
-   "id": "profile-545"
+   "id": "profile-542"
   },
   {
    "project": "profile",
@@ -5067,7 +5040,7 @@
    "href": "/resume",
    "text": "Backend\nSpring Boot + JPA로 REST API 설계/구현\nSpring Boot\nJava\nJPA\nSpring Security\nNode.js\nExpress\nFastAPI (Python)\nFrontend\nReact/TypeScript 기반 SPA 화면 구현과 API 연동\nReact\nTypeScript\nNext.js\nThree.js (R3F)\nVite\nReact Query\nTailwind CSS\nExpo\nReact Native\nAuth\nJWT 인증/인가 · 이중 쿠키 + 유예 창 회전\nJWT\nRefresh Token Rotation (유예 창 · 재사용 감지)\nOAuth2\nPassport\nFirebase Auth\nInfra / Data\nAWS 배포 및 HTTPS / Mixed Content / CORS 해결\nAWS\nS3\nCloudFront\nMySQL\nMongoDB\nFirebase\nAI / LLM\nLLM 응답을 규칙으로 검증·보정하고, 실패해도 멈추지 않게 설계\nOpenAI API\nClaude Agent SDK\n규칙 기반 폴백\n출력 클램프\nUnity XR/AR\n시점 전환 · 몬스터 AI · AR 전장 생성 구현\nUnity\nC#\nAR Foundation\nXR Interaction Toolkit",
    "hash": "1200d560369ae4c7",
-   "id": "profile-546"
+   "id": "profile-543"
   },
   {
    "project": "profile",
@@ -5076,7 +5049,7 @@
    "href": "/resume",
    "text": "학교·기관: 아주대학교\n과정·전공: 디지털미디어학과 (전공)\n기간: 2021.03 ~ 2027.02 (예정)\n학점: 전공 학점 4.05 / 4.5\n내용: 웹/소프트웨어 엔지니어링을 중심으로 공부했습니다.\n세부: React/Spring Boot 웹 프로젝트 / Unity XR/AR 인터랙션 프로젝트",
    "hash": "0fa1f36bd4317afc",
-   "id": "profile-547"
+   "id": "profile-544"
   },
   {
    "project": "profile",
@@ -5085,7 +5058,7 @@
    "href": "/resume",
    "text": "학교·기관: 아주대학교\n과정·전공: 인공지능 융합학과 (복수전공)\n기간: 2021.03 ~ 2027.02 (예정)\n내용: 인공지능 융합학과를 복수전공으로 이수 중입니다.\n세부: 웹 프로젝트에 AI 기능 결합 (AjouFesta 혼잡 예측 · 득근득근 AI 인바디 상담)",
    "hash": "b54d246c1c912c95",
-   "id": "profile-548"
+   "id": "profile-545"
   },
   {
    "project": "profile",
@@ -5094,7 +5067,7 @@
    "href": "/resume",
    "text": "학교·기관: 아주대학교\n과정·전공: 메타버스기획 (마이크로전공)\n기간: 2021.03 ~ 2027.02 (예정)\n내용: 메타버스 플랫폼용 상호작용 콘텐츠를 만들었습니다.\n세부: 메타버스 플랫폼 콘텐츠 제작",
    "hash": "0db0d4670ae1a61d",
-   "id": "profile-549"
+   "id": "profile-546"
   },
   {
    "project": "profile",
@@ -5103,7 +5076,7 @@
    "href": "/resume",
    "text": "학교·기관: 스파르타 내일배움캠프\n과정·전공: 실무형 Unity 게임개발자 양성과정\n기간: 2023.08.07 ~ 2023.12.15\n내용: Unity 게임 개발 과정을 1,080시간 수료했습니다.\n세부: 최종 팀 프로젝트 TSEROF · Steam 출시",
    "hash": "9febb6ca577e5839",
-   "id": "profile-550"
+   "id": "profile-547"
   },
   {
    "project": "profile",
@@ -5112,7 +5085,7 @@
    "href": "/resume",
    "text": "학교·기관: 구름(goorm) · 카카오엔터프라이즈\n과정·전공: 군 장병 맞춤형 온라인 AI·SW 교육\n기간: 2023.03.08 ~ 2023.12.31\n내용: 군 복무 중 온라인으로 입문 과정과 SW개발 초급과정 2를 수료하며 HTML, CSS, JavaScript 기초를 익혔습니다.\n세부: 수료증 2장 (입문 · SW개발 초급과정 2)",
    "hash": "5e765db4a4f70c93",
-   "id": "profile-551"
+   "id": "profile-548"
   },
   {
    "project": "profile",
@@ -5121,7 +5094,7 @@
    "href": "/resume",
    "text": "학교·기관: 코드잇\n과정·전공: 대학생 코딩캠프\n기간: 2021.03 ~ 2021.04\n내용: 프로그래밍과 웹 개발 기초를 배웠습니다.\n세부: 웹 개발 기초",
    "hash": "18f958d84d979178",
-   "id": "profile-552"
+   "id": "profile-549"
   },
   {
    "project": "profile",
@@ -5130,7 +5103,7 @@
    "href": "/resume",
    "text": "2021.03 ~ 2027.02 (예정)\n아주대학교 디지털미디어학과\n전공 학점 4.05 / 4.5 · 인공지능 융합학과 복수전공 · 메타버스기획 마이크로전공\n1,080시간 수료 · 최종 팀 프로젝트 TSEROF를 Steam에 출시 · 군 복무 중 입문 과정과 SW개발 초급과정 2 수료 (수료증 2장) · 프로그래밍과 웹 개발 기초",
    "hash": "bb41ae04f828a84f",
-   "id": "profile-553"
+   "id": "profile-550"
   },
   {
    "project": "profile",
@@ -5139,7 +5112,7 @@
    "href": "/resume",
    "text": "기관: 아주대학교 총학생회 · 중앙비상대책위원회 (제43~45대)\n직책: 생활복지국원(43대) → 소통발전국원(44대) → 비대위 집행국원 → 소통개발국장(45대)\n기간: 2024.03 ~ 활동 중\n한 일: 3년 연속 학생자치 기구에서 활동하며 국원에서 국장이 됐습니다. 학우 대상 온라인 서비스 운영과 정보 전달 구조 개선, 웹 서비스 기획·관리를 맡고 있고, 복지 문의를 받으며 확인한 불편을 웹사이트 개선에 반영했습니다. 2026.01~03에는 중앙비상대책위원회 집행국원으로 학생자치 운영·공지 전달·행사·행정 업무를 맡았습니다.\n이어진 프로젝트: 아주대학교 총학생회 웹 서비스",
    "hash": "5cb4eaeeb8471221",
-   "id": "profile-554"
+   "id": "profile-551"
   },
   {
    "project": "profile",
@@ -5148,7 +5121,7 @@
    "href": "/resume",
    "text": "기관: 헬스 동아리 ‘득근득근’\n직책: 회장\n기간: 2025.09 ~ 활동 중\n한 일: 동아리 운영, 회원 관리, 운동 프로그램 기획을 맡았습니다. 이 경험을 바탕으로 운동 기록과 커뮤니티 기능을 제공하는 득근득근을 개발했습니다.\n이어진 프로젝트: 득근득근 (MuscleUp)",
    "hash": "3941e3267897831e",
-   "id": "profile-555"
+   "id": "profile-552"
   },
   {
    "project": "profile",
@@ -5157,7 +5130,7 @@
    "href": "/resume",
    "text": "기관: 코딩·디자인 동아리 ‘두잇’\n직책: 부원\n기간: 2024.03 ~ 2024.06\n한 일: 디자인 협업 도구 Figma로 프레임 구성, 도형·텍스트 배치, 기본 UI 요소 제작 등 화면 설계 과정을 익혔습니다.",
    "hash": "d393d7f6b251fe74",
-   "id": "profile-556"
+   "id": "profile-553"
   },
   {
    "project": "profile",
@@ -5166,7 +5139,7 @@
    "href": "/resume",
    "text": "기관: 육군 제50보병사단 제121보병여단 3대대\n직책: 만기 전역\n기간: 2021.12 ~ 2023.06\n한 일: 군 복무를 마치고 만기 전역했습니다.",
    "hash": "725c06f2eb283dcd",
-   "id": "profile-557"
+   "id": "profile-554"
   },
   {
    "project": "profile",
@@ -5175,7 +5148,7 @@
    "href": "/resume",
    "text": "기관: 제25대 정보통신대학 학생회 ‘FIT’\n직책: 대외소통국원\n기간: 2021.03 ~ 2021.12\n한 일: 학과·단과대 학생 대상 공지 전달과 홍보 콘텐츠 제작, 대외 소통 업무를 수행했습니다.",
    "hash": "4dec66f78b38e493",
-   "id": "profile-558"
+   "id": "profile-555"
   },
   {
    "project": "profile",
@@ -5184,7 +5157,7 @@
    "href": "/resume",
    "text": "생활복지국원 → 소통발전국원 → 비대위 집행국원 → 소통개발국장\n2025.12 ~ 2026.04\n헬스장 인포\n아침 6시 근무. 회원 응대·출입 관리·시설 및 운동 공간 관리. 득근득근 개발 기간에 병행했습니다.\n2025.03 ~ 2025.08 · 노래방 · 방 관리·고객 응대·기기 점검 및 간단한 고장 처리.\n2021.08 ~ 2021.11 · 편의점 (야간) · 야간 단독 근무. 매장 관리·고객 응대·재고 정리·계산.",
    "hash": "a533d64f4125451a",
-   "id": "profile-559"
+   "id": "profile-556"
   },
   {
    "project": "profile",
@@ -5193,7 +5166,7 @@
    "href": "/resume",
    "text": "근무처: 헬스장 인포\n기간: 2025.12 ~ 2026.04\n한 일: 아침 6시 근무. 회원 응대·출입 관리·시설 및 운동 공간 관리. 득근득근 개발 기간에 헬스장 안내 업무를 병행했습니다.",
    "hash": "355fe199714c983c",
-   "id": "profile-560"
+   "id": "profile-557"
   },
   {
    "project": "profile",
@@ -5202,7 +5175,7 @@
    "href": "/resume",
    "text": "근무처: 노래방\n기간: 2025.03 ~ 2025.08\n한 일: 방 관리·고객 응대·기기 점검 및 간단한 고장 처리.",
    "hash": "e602a34313698eb2",
-   "id": "profile-561"
+   "id": "profile-558"
   },
   {
    "project": "profile",
@@ -5211,7 +5184,7 @@
    "href": "/resume",
    "text": "근무처: 편의점 (야간)\n기간: 2021.08 ~ 2021.11\n한 일: 야간 단독 근무. 매장 관리·고객 응대·재고 정리·계산.",
    "hash": "18427a2504132073",
-   "id": "profile-562"
+   "id": "profile-559"
   },
   {
    "project": "profile",
@@ -5220,7 +5193,7 @@
    "href": "/resume",
    "text": "종류(수상 또는 수료): 수료\n이름: 혁신 아이디어 MVP 기획 공모전(Zero to One) 수료\n주최: 블레이버스 주최\n받은 날: 2026.03.16\n팀: 득근득근\n이어진 프로젝트: 득근득근 (MuscleUp)",
    "hash": "fd03be872fc4b78b",
-   "id": "profile-563"
+   "id": "profile-560"
   },
   {
    "project": "profile",
@@ -5229,7 +5202,7 @@
    "href": "/resume",
    "text": "종류(수상 또는 수료): 수상\n이름: 비즈니스 아이디어 공모전 우수상\n주최: 스타트업코드 · 블레이버스 주최\n받은 날: 2025.05.14\n팀: 데모션 (3인)",
    "hash": "e3322596256c3918",
-   "id": "profile-564"
+   "id": "profile-561"
   },
   {
    "project": "profile",
@@ -5238,7 +5211,7 @@
    "href": "/resume",
    "text": "종류(수상 또는 수료): 수상\n이름: 2024 동계 모각소 장려상\n주최: 아주대학교 SW융합교육원\n받은 날: 2025.03\n팀: 현재민보 (4인)",
    "hash": "89aaddcaaf5a8f43",
-   "id": "profile-565"
+   "id": "profile-562"
   },
   {
    "project": "profile",
@@ -5247,7 +5220,7 @@
    "href": "/resume",
    "text": "종류(수상 또는 수료): 수상\n이름: 미디어데이 미디어 시제품 콘텐츠 경진대회 우수상 (디지털미디어학과장상)\n주최: 아주대학교 디지털미디어학과\n받은 날: 2024.12.05\n팀: 정재훈 · 이민훈 (2인)\n이어진 프로젝트: 아주대탐험",
    "hash": "bb340e5b455c4b25",
-   "id": "profile-566"
+   "id": "profile-563"
   },
   {
    "project": "profile",
@@ -5256,7 +5229,7 @@
    "href": "/resume",
    "text": "2026.03.16 · 수료 · 혁신 아이디어 MVP 기획 공모전(Zero to One) · 블레이버스 주최 · 팀 득근득근\n2025.05.14 · 수상 · 비즈니스 아이디어 공모전 우수상 · 스타트업코드 · 블레이버스 주최\n2025.03 · 수상 · 2024 동계 모각소 장려상 · 아주대학교 SW융합교육원\n2024.12.05 · 수상 · 미디어데이 미디어 시제품 콘텐츠 경진대회 우수상 · 아주대학교 디지털미디어학과",
    "hash": "6fca1550e5379dd4",
-   "id": "profile-567"
+   "id": "profile-564"
   },
   {
    "project": "profile",
@@ -5265,7 +5238,7 @@
    "href": "/resume",
    "text": "자격증: 정보처리기사\n발급 기관: 한국산업인력공단\n구분: 국가기술자격\n취득일: 2026.09.11",
    "hash": "6e4699f3322e0542",
-   "id": "profile-568"
+   "id": "profile-565"
   },
   {
    "project": "profile",
@@ -5274,7 +5247,7 @@
    "href": "/resume",
    "text": "자격증: SQL 개발자 (SQLD)\n발급 기관: 한국데이터산업진흥원\n구분: 국가공인\n취득일: 2026.09.11",
    "hash": "bb79f7a651e0b013",
-   "id": "profile-569"
+   "id": "profile-566"
   },
   {
    "project": "profile",
@@ -5283,7 +5256,7 @@
    "href": "/resume",
    "text": "Sign-Language\nAjou_MuscleUp\nAlgorithm\nTypeScript\nJava\nJavaScript\nC++\nC#\n코딩 테스트 문제 풀이 기록\nBaekjoonHub 로 백준 풀이를 자동 커밋해, C++ 문제 풀이 기록을 꾸준히 쌓고 있습니다.\n개발 기록 · 개발 중 인상 깊었던 문제와 배운 점, 그날의 고민을 짧게 정리합니다.\n개발 개념과 구조 학습 정리 · 핵심 개념과 구조를 중심으로 학습 내용을 정리합니다.",
    "hash": "81c7311ee9765c27",
-   "id": "profile-570"
+   "id": "profile-567"
   },
   {
    "project": "profile",
@@ -5292,7 +5265,7 @@
    "href": "/resume",
    "text": "소통 · 운영 문의와 이용 지표를 확인해 개선할 항목을 정했습니다.",
    "hash": "3be4a2697bf767da",
-   "id": "profile-571"
+   "id": "profile-568"
   },
   {
    "project": "profile",
@@ -5301,7 +5274,7 @@
    "href": "/resume",
    "text": "협력 · 팀 프로젝트에서 담당 기능을 구현하고 출시했습니다.",
    "hash": "06e9b247a5b17b96",
-   "id": "profile-572"
+   "id": "profile-569"
   },
   {
    "project": "profile",
@@ -5310,7 +5283,7 @@
    "href": "/resume",
    "text": "성실 · 알고리즘 문제 풀이를 저장소에 기록하고 있습니다.",
    "hash": "974b77b2453d47ce",
-   "id": "profile-573"
+   "id": "profile-570"
   },
   {
    "project": "profile",
@@ -5319,7 +5292,7 @@
    "href": "/resume",
    "text": "도전 · 웹 외에 Unity AR·VR 프로젝트와 수어 학습 앱도 개발했습니다.",
    "hash": "287174ef8e036470",
-   "id": "profile-574"
+   "id": "profile-571"
   },
   {
    "project": "profile",
@@ -5328,7 +5301,7 @@
    "href": "/resume",
    "text": "협업/인턴/프로젝트 제안 모두 환영합니다. 가장 빠른 연락은 이메일로 부탁드립니다.\ntoadsam@naver.com",
    "hash": "68f5a109e7f3ed1c",
-   "id": "profile-575"
+   "id": "profile-572"
   }
  ]
 }

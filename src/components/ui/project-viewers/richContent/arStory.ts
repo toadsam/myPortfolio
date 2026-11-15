@@ -35,8 +35,7 @@ export function arStory(base: RichProject): RichProject {
             d: "아직 얻지 못한 무기가 발사되면 진행이 의미가 없었습니다."
           }
         ],
-        core: "그래서 조이스틱이 가리킬 때만, 무기마다 다른 간격으로 나가게 했습니다.",
-        source: "Assets/Scripts/JJH"
+        core: "그래서 조이스틱이 가리킬 때만, 무기마다 다른 간격으로 나가게 했습니다."
       },
       story: {
         toc: {
@@ -51,7 +50,8 @@ export function arStory(base: RichProject): RichProject {
           title: "좁은 AR 화면에서 무기 넷을 한 손으로 다뤄야 했습니다.",
           em: "무기 넷을 한 손으로",
           lead: "현실 공간을 스캔해 전장으로 고정하고 그 안에서 몬스터를 사냥하는 AR 슈터입니다. 넷이 만들었고, 전장을 만드는 부분은 팀원이, 그 안에서 쓰는 무기는 제가 맡았습니다.",
-          after: base.learningLead
+          after:
+            "발사를 조이스틱 방향과 무기별 간격에 묶으면 조준이 생긴다고 봤습니다."
         },
         field: {
           eyebrow: "02 · 맡은 일",
@@ -88,7 +88,7 @@ export function arStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "0.5초",
-                    d: "발사 간격의 기본값입니다. 무기마다 다르게 둘 수 있습니다. 이 파일의 커밋 12건 중 11건이 제 것입니다.",
+                    d: "발사 간격의 기본값입니다. 무기마다 다르게 둘 수 있습니다.",
 
                     when: "2025.04.29"
                   },
@@ -106,7 +106,7 @@ export function arStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "4종",
-                    d: "무기 수입니다.",
+                    d: "잠긴 무기는 발사되지 않고 잠금 아이콘이 보입니다.",
 
                     when: "2025.04.30 ~ 05.02"
                   },
@@ -123,7 +123,7 @@ export function arStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "6초",
-                    d: "스킬 쿨타임입니다. 이 파일의 커밋 3건 중 2건이 제 것입니다."
+                    d: "스킬을 다시 쓸 수 있을 때까지의 시간입니다."
                   }
                 }
               ]
@@ -134,7 +134,7 @@ export function arStory(base: RichProject): RichProject {
           eyebrow: "04 · 화면",
           title: "휴대폰으로 방을 비추면 그 자리가 전장이 됩니다.",
           em: "전장",
-          lead: "포트폴리오 문서에 실었던 휴대폰 화면 캡처입니다. 플레이 모습은 위의 시연 영상에 있습니다.",
+          lead: "플레이 모습은 위의 플레이 영상에 있습니다.",
           items: [
             {
               t: "활",

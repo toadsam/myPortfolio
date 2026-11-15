@@ -1266,7 +1266,7 @@ export const mainProjects: MainProjectCard[] = [
     // (2026-09-03 본인 확인). 팀 규모 4인은 본인 확인(2026-09-04) — AR 과 같은 팀원.
     // 2026-11-13 저장소(kbwon/IMP_VR) 첫 커밋 2025-05-18 · 마지막 06-16. "2025.04" 는 근거가 없었다.
     period: "2025.05 ~ 2025.06",
-    team: "4인 팀 (AR 과 같은 팀원)",
+    team: "4인 팀",
     role: "AI 몬스터 2종 · 감지기 2 · GameManager 중앙 제어 (커밋 25/161)",
     image: "/projects/otherside-vr.webp",
     links: [{label: "GitHub", href: "https://github.com/kbwon/IMP_VR"}]
@@ -1284,7 +1284,7 @@ export const mainProjects: MainProjectCard[] = [
     // 팀 규모는 PDF 에 없어 비워 둔다 — 지어내지 않는다.
     // 2026-11-13 저장소(toadsam/IMP) 실제 작업 2025-04-18 ~ 05-03. 스폰은 팀원(kbwon) 코드라 역할에서 뺐다.
     period: "2025.04 ~ 2025.05",
-    team: "4인 팀 (VR 과 같은 팀원)",
+    team: "4인 팀",
     role: "무기 시스템(발사 · 전환 · 잠금 · 쿨타임) · 체력 · 게임 루프 기획 (커밋 51/109)",
     image: "/projects/monsterpoint-ar.webp",
     links: [

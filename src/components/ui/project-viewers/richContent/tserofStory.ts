@@ -239,8 +239,7 @@ export function tserofStory(base: RichProject): RichProject {
               tone: "warn"
             }
           ],
-          note: "제 커밋은 216개이고 10월 28개, 11월 144개, 12월 44개입니다. 12월 13일 뒤의 출시 준비는 팀원들이 했습니다.",
-          source: "Steam 스토어 페이지"
+          note: "제 커밋은 216개이고 10월 28개, 11월 144개, 12월 44개입니다. 12월 13일 뒤의 출시 준비는 팀원들이 했습니다."
         }
       ],
       story: {
@@ -267,7 +266,7 @@ export function tserofStory(base: RichProject): RichProject {
           facts: [
             {n: "216", l: "내 커밋 · 전체 1,204개 중"},
             {n: "144개", l: "11월 한 달의 커밋 · 10월 28, 12월 44"},
-            {n: "13개", l: ""}
+            {n: "13개", l: "맡은 스크립트"}
           ],
           scene: TL_TITLE
         },
@@ -346,8 +345,8 @@ export function tserofStory(base: RichProject): RichProject {
                   },
                   check: {
                     when: "2023.12.04",
-                    t: "피드백을 코드로 반영",
-                    d: "FallingObject.cs 의 전후가 커밋으로 확인됩니다.",
+                    t: "떨어지는 동안에만 판정",
+                    d: "바닥에 놓인 고드름에는 닿아도 리스폰되지 않습니다.",
                     src: "유저 테스트 조치 기록"
                   },
                   challenge: 4
@@ -378,8 +377,8 @@ export function tserofStory(base: RichProject): RichProject {
                     d: "팀원과 함께 IMovable 등 다섯 가지를 기믹에 붙였습니다."
                   },
                   check: {
-                    t: "한 번에 끝난 것은 아닙니다",
-                    d: "리스폰 인터페이스는 그 시점에 빈 인터페이스였습니다."
+                    t: "인터페이스 5종",
+                    d: "움직임, 회전, 방해, 리스폰, 상호작용을 같은 방식으로 붙입니다."
                   },
                   challenge: 3
                 }

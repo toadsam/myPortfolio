@@ -479,7 +479,7 @@ export interface RichProject {
         eyebrow: string;
         title: string;
         em?: string;
-        tag: string;
+        tag?: string;
         lead: string;
         scene: string;
         boxes: {n: string; unit?: string; d: string}[];

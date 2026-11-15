@@ -2115,7 +2115,7 @@ export function ProjectDetailV4({
               </div>
             ) : null}
           </>,
-          <span className="p4s-tag p4-rv">{vf.tag}</span>
+          vf.tag ? <span className="p4s-tag p4-rv">{vf.tag}</span> : null
         )
       );
 

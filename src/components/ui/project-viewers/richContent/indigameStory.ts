@@ -13,7 +13,7 @@ import type {RichProject} from "./shared";
 
 const SHOT = "/projects/ajou-adventure";
 const MODE_TITLE =
-  "T 키 한 번에 바뀌는 네 가지 · PlayerModeManager.SetPlayerMode";
+  "T 키 한 번에 바뀌는 세 가지 · PlayerModeManager.SetPlayerMode";
 const VIEW_TITLE = "같은 캠퍼스, 두 시점 · 손잡이를 끌어 보세요";
 const TL_TITLE = "커밋 124개 · 2024.09.23 ~ 12.30";
 
@@ -64,13 +64,13 @@ export function indigameStory(base: RichProject): RichProject {
         },
         field: {
           eyebrow: "02 · 만든 순서",
-          title: "2024년 가을 석 달 동안 혼자 커밋 124개로 만들었습니다.",
+          title: "2024년 9월부터 12월까지 혼자 커밋 124개로 만들었습니다.",
           em: "커밋 124개",
           lead: "첫 커밋은 2024년 9월 23일, 마지막은 12월 30일입니다. 10월에 시점 전환을, 11월에 웨이브와 스킬, 몬스터 AI, 보스를 넣었습니다.",
           facts: [
             {n: "124개", l: "커밋 · 전부 혼자"},
             {n: "40개", l: "스크립트 파일"},
-            {n: "3,245줄", l: ""}
+            {n: "3,245줄", l: "스크립트 줄 수"}
           ],
           scene: TL_TITLE
         },
@@ -93,7 +93,7 @@ export function indigameStory(base: RichProject): RichProject {
                     d: "1인칭과 탑다운이 같은 입력을 동시에 받으면 오작동이 나고, 카메라를 위치로만 옮기면 전환 순간 시점이 튀었습니다."
                   },
                   fix: {
-                    t: "T 키 한 번에 네 가지를 같이 바꿉니다",
+                    t: "T 키 한 번에 세 가지를 같이 바꿉니다",
                     d: "조작 스크립트 둘을 서로 반대로 켜고 끄고, 카메라를 캐릭터 머리에 붙이거나 떼어 냅니다. 11월 11일에는 1인칭으로 들어갈 때 Y축 잠금을 풀고, 탑다운으로 바뀐 3초 뒤 다시 잠그게 고쳤습니다."
                   },
                   check: {
@@ -165,7 +165,7 @@ export function indigameStory(base: RichProject): RichProject {
           eyebrow: "04 · 화면",
           title: "캠퍼스가 무대이고 마스코트 치토가 주인공입니다.",
           em: "치토",
-          lead: "포트폴리오 문서에 실었던 캡처입니다. 플레이 모습은 위의 시연 영상에 있습니다.",
+          lead: "플레이 모습은 위의 플레이 영상에 있습니다.",
           wide: true,
           items: [
             {
@@ -183,7 +183,7 @@ export function indigameStory(base: RichProject): RichProject {
             {
               t: "포탈",
               d: "포탈에 닿으면 건물 안 씬으로 넘어갑니다.",
-              r: "닿으면 대화창이 뜹니다.",
+              r: "다음 건물로 갈지 묻는 대화창이 뜹니다.",
               src: `${SHOT}/portal.webp`
             },
             {
@@ -198,7 +198,6 @@ export function indigameStory(base: RichProject): RichProject {
           eyebrow: "05 · 두 시점",
           title: "같은 캠퍼스를 1인칭과 탑다운으로 오갑니다.",
           em: "1인칭과 탑다운",
-          tag: "포트폴리오 문서의 캡처 · 원본 가로 약 440px",
           lead: "탐색할 때는 1인칭으로 캠퍼스를 걷고, 전투가 시작되면 위에서 내려다보는 탑다운으로 바뀝니다. 손잡이를 끌면 두 시점이 넘어갑니다.",
           scene: VIEW_TITLE,
           boxes: [

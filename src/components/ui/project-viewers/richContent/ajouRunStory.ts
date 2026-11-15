@@ -102,7 +102,7 @@ export function ajouRunStory(base: RichProject): RichProject {
         problem:
           "캐릭터 그림은 208×140 인데 실제 몸은 그 가운데 일부입니다. 그림 전체로 충돌을 판정하면 몸에 닿지 않았는데 부딪힌 것으로 처리됩니다.",
         solution:
-          "그림과 충돌 몸통을 따로 두고 가운데 몸통 38×58 만 충돌하게 했습니다. 처음 커밋부터 이 값이라, 고친 전후가 남아 있는 것은 아닙니다.",
+          "그림과 충돌 몸통을 따로 두고 가운데 몸통 38×58 만 충돌하게 했습니다.",
         code: {
           filename: "Player.ts",
           lines: [
@@ -112,7 +112,7 @@ export function ajouRunStory(base: RichProject): RichProject {
         },
         evidence: {
           status: "코드로 확인",
-          note: "Player.ts 의 처음 커밋(2026-05-13)부터 이 값입니다."
+          note: "2026-05-13 첫 커밋부터 이 값입니다."
         }
       },
       {
@@ -147,10 +147,9 @@ export function ajouRunStory(base: RichProject): RichProject {
     ],
     metrics: [
       {
-        n: "4·4·4",
-        l: "장면 · 오브젝트 · 시스템",
-        sub: "모듈 12개 · TypeScript 3,177줄",
-        source: "objects · systems 파일 수"
+        n: "12개",
+        l: "모듈",
+        sub: "장면 4 · 오브젝트 4 · 시스템 4"
       },
       {
         n: "8",
@@ -158,14 +157,14 @@ export function ajouRunStory(base: RichProject): RichProject {
         sub: "2026.05.13 ~ 05.14 · 이틀"
       },
       {
-        n: "28",
+        n: "28회",
         l: "자동 실행 기록",
         sub: "캡처와 JSON 129개"
       },
       {
         n: "2단",
         l: "점프",
-        sub: "maxJumps = 2"
+        sub: "공중에서 한 번 더"
       }
     ],
     kpt: {
@@ -222,7 +221,7 @@ export function ajouRunStory(base: RichProject): RichProject {
       summaries: {
         arch: "장면 4 · 오브젝트 4 · 시스템 4 · 최고 점수는 localStorage.",
         code: "Player 의 2단 점프와 충돌 몸통.",
-        proc: "2026.05.13 게임 추가 → 아이템 → 장애물 → 와이어 → 05.14 마지막 커밋."
+        proc: "2026.05.13 게임 추가 → 아이템 → 장애물 → 05.14 마지막 커밋."
       },
       problems: {
         items: [
@@ -261,7 +260,7 @@ export function ajouRunStory(base: RichProject): RichProject {
           eyebrow: "02 · 만든 순서",
           title: "이틀 동안 커밋 8개로 만들었습니다.",
           em: "이틀",
-          lead: "2026년 5월 13일 오후에 게임을 올리고, 같은 날 아이템과 장애물, 와이어 액션을 넣었습니다. 다음 날 오전까지 값을 맞췄습니다.",
+          lead: "2026년 5월 13일 오후에 게임을 올리고, 같은 날 아이템과 장애물을 넣었습니다. 다음 날 오전까지 값을 맞췄습니다.",
           facts: [
             {n: "8개", l: "커밋 · 전부 혼자"},
             {n: "12개", l: "모듈 · 장면 4 · 오브젝트 4 · 시스템 4"},
@@ -304,8 +303,8 @@ export function ajouRunStory(base: RichProject): RichProject {
                     d: "가운데 몸통 38×58 만 충돌하게 했습니다. 점프는 공중에서 한 번 더, 두 번까지 됩니다."
                   },
                   check: {
-                    t: "처음 커밋부터 이 값입니다",
-                    d: "고친 전후가 남아 있는 것은 아닙니다."
+                    big: "38×58",
+                    d: "그림 208×140 가운데 몸통만 충돌합니다."
                   },
                   challenge: 0
                 },
@@ -320,7 +319,7 @@ export function ajouRunStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "28회",
-                    d: "파일은 129개입니다."
+                    d: "자동 실행 횟수입니다. 캡처와 JSON 파일 129개가 남았습니다."
                   },
                   challenge: 1
                 }

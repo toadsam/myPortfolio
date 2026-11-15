@@ -45,8 +45,7 @@ export function vrStory(base: RichProject): RichProject {
             d: "켜도 손해가 없으면 손전등은 늘 켜 두는 물건이 됩니다."
           }
         ],
-        core: "그래서 감지기는 판정만 하고, 몬스터를 켜고 끄는 일은 한 곳에서 합니다.",
-        source: "Assets/JJH 스크립트"
+        core: "그래서 감지기는 판정만 하고, 몬스터를 켜고 끄는 일은 한 곳에서 합니다."
       },
       story: {
         toc: {
@@ -97,7 +96,7 @@ export function vrStory(base: RichProject): RichProject {
                     d: "감지기 둘은 봤는지 놓쳤는지만 판정하고 GameManager 의 토글 함수만 부릅니다. 몬스터는 켜져 있을 때만 쫓고 공격합니다."
                   },
                   check: {
-                    t: "제 코드에서는 한 곳입니다",
+                    t: "몬스터를 켜고 끄는 곳은 하나입니다",
                     d: "감지기 둘이 모두 GameManager 의 토글 함수만 부릅니다.",
 
                     when: "2025.06.05"
@@ -133,7 +132,7 @@ export function vrStory(base: RichProject): RichProject {
                   },
                   check: {
                     big: "5초",
-                    d: "추격을 풀기까지의 시간입니다. 8m, 2m, 5초 같은 값은 스크립트에 그대로 적혀 있습니다."
+                    d: "추격을 풀기까지의 시간입니다."
                   }
                 }
               ]
