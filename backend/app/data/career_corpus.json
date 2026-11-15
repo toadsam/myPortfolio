@@ -4867,8 +4867,8 @@
    "title": "codebase-anatomy (Claude Code 스킬)",
    "section": "사이드 프로젝트",
    "href": "/resume",
-   "text": "codebase-anatomy (Claude Code 스킬)\n코드 구조를 인터랙티브 HTML로 시각화하고, 설명마다 근거가 되는 파일과 줄 번호를 표시하는 Claude Code 스킬을 개발했습니다. (2026.08)\nGitHub\n만든 결과물",
-   "hash": "d9c8a1d927764402",
+   "text": "codebase-anatomy (Claude Code 스킬)\n코드 구조를 인터랙티브 HTML로 시각화하고, 설명마다 근거가 되는 파일과 줄 번호를 표시하는 Claude Code 스킬 (2026.08)\nGitHub\n만든 결과물",
+   "hash": "1ede124119c9d5d5",
    "id": "side-524"
   },
   {
@@ -4885,8 +4885,8 @@
    "title": "DarkLab",
    "section": "사이드 프로젝트",
    "href": "/resume",
-   "text": "DarkLab\n1인칭 탐색 기반 3D 공포 어드벤처 게임 프로토타입 (2024-1 학기 · 3인 · 프로그래밍 담당)\nGitHub",
-   "hash": "a879e9981ec9e288",
+   "text": "DarkLab\n1인칭 탐색 기반 3D 공포 어드벤처 게임 프로토타입 (2024 · 3인 팀 · 프로그래밍)\nGitHub",
+   "hash": "cd83bd4fdd6a16e7",
    "id": "side-526"
   },
   {
@@ -4894,8 +4894,8 @@
    "title": "아주분투",
    "section": "사이드 프로젝트",
    "href": "/resume",
-   "text": "아주분투\n아주대 캠퍼스를 배경으로 한 네온 스타일의 Phaser 3 2D 러닝 게임입니다. (발판 6종·낮/밤 전환)\nGitHub",
-   "hash": "7d385458e603d0fc",
+   "text": "아주분투\n아주대 캠퍼스를 배경으로 이틀 동안 만든 Phaser 3 2D 러닝 게임 (2026.05)\nGitHub",
+   "hash": "1f71cc36927be044",
    "id": "side-527"
   },
   {
@@ -4903,8 +4903,8 @@
    "title": "고양이로부터 지켜라",
    "section": "사이드 프로젝트",
    "href": "/resume",
-   "text": "고양이로부터 지켜라 · 타워 디펜스 게임 1인 개발",
-   "hash": "7d5c07259d9f6a61",
+   "text": "고양이로부터 지켜라 · 혼자 만든 타워 디펜스 게임",
+   "hash": "a3e26866fd3eb387",
    "id": "side-528"
   },
   {
@@ -4912,8 +4912,8 @@
    "title": "루탄의 카드 게임",
    "section": "사이드 프로젝트",
    "href": "/resume",
-   "text": "루탄의 카드 게임 · 덱 빌딩 카드 게임 개발",
-   "hash": "47bf1a511deb0f19",
+   "text": "루탄의 카드 게임 · 덱 빌딩 카드 게임",
+   "hash": "3e0cfebe88e6f80a",
    "id": "side-529"
   },
   {
@@ -4930,8 +4930,8 @@
    "title": "스파르타 던전 배틀 (Text 게임)",
    "section": "사이드 프로젝트",
    "href": "/resume",
-   "text": "스파르타 던전 배틀 (Text 게임) · 캐릭터를 생성해 플레이하는 텍스트 게임입니다.",
-   "hash": "8426592389b21fcf",
+   "text": "스파르타 던전 배틀 (Text 게임) · 캐릭터를 생성해 플레이하는 텍스트 게임",
+   "hash": "3eea4458727f679a",
    "id": "side-531"
   },
   {
@@ -4948,8 +4948,8 @@
    "title": "MOVYDICK",
    "section": "사이드 프로젝트",
    "href": "/resume",
-   "text": "MOVYDICK · 이더리움 고래 활동 추적 및 매매 시점 예측 시스템 개발",
-   "hash": "b922ea5042db303b",
+   "text": "MOVYDICK · 이더리움 고래 활동 추적 및 매매 시점 예측 시스템",
+   "hash": "654c8ff2d6aea055",
    "id": "side-533"
   },
   {
@@ -4966,8 +4966,8 @@
    "title": "time rewinder",
    "section": "사이드 프로젝트",
    "href": "/resume",
-   "text": "time rewinder · Godot 기반 퍼즐 게임 개발",
-   "hash": "70dfbcbf1b2d95cd",
+   "text": "time rewinder · Godot 기반 퍼즐 게임",
+   "hash": "04ecab534bca6b7a",
    "id": "side-535"
   },
   {

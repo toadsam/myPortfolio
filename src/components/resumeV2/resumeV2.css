@@ -725,10 +725,11 @@
 .rv2 .other:hover img {
   transform: scale(1.03);
 }
+/* 그림 원본이 대부분 2.08:1 이라 16/10 상자에서는 양옆 글자가 잘렸다(MyWave 가 「MyWav」). 2/1 로 맞춘다. */
 .rv2 .other img {
   display: block;
   width: 100%;
-  aspect-ratio: 16/10;
+  aspect-ratio: 2/1;
   object-fit: cover;
   transition: transform 0.6s var(--ease-pop);
 }

@@ -1348,7 +1348,7 @@ export const subProjects: SubProjectCard[] = [
     // **검증 가능한 근거**다 — 그 전까지는 ~/.claude/skills/ 안에만 있어서
     // 심사자가 확인할 방법이 없었다. 그림은 없다(없는 그림을 지어내지 않는다).
     title: "codebase-anatomy (Claude Code 스킬)",
-    desc: "코드 구조를 인터랙티브 HTML로 시각화하고, 설명마다 근거가 되는 파일과 줄 번호를 표시하는 Claude Code 스킬을 개발했습니다. (2026.08)",
+    desc: "코드 구조를 인터랙티브 HTML로 시각화하고, 설명마다 근거가 되는 파일과 줄 번호를 표시하는 Claude Code 스킬 (2026.08)",
     links: [
       {label: "GitHub", href: "https://github.com/toadsam/codebase-anatomy"},
       {
@@ -1374,7 +1374,7 @@ export const subProjects: SubProjectCard[] = [
     // 눈에는 한 사람이 비슷한 걸 두 번 한 것으로 읽힌다. 공포·Unity 자리는
     // VR/XR 까지 간 The Other Side 하나가 대표한다.
     title: "DarkLab",
-    desc: "1인칭 탐색 기반 3D 공포 어드벤처 게임 프로토타입 (2024-1 학기 · 3인 · 프로그래밍 담당)",
+    desc: "1인칭 탐색 기반 3D 공포 어드벤처 게임 프로토타입 (2024 · 3인 팀 · 프로그래밍)",
     links: [{label: "GitHub", href: "https://github.com/toadsam/DarkLab"}]
   },
   {
@@ -1382,20 +1382,20 @@ export const subProjects: SubProjectCard[] = [
     // "아주분투" 이미지는 전부 아주대탐험 것이었다(위 mainProjects 주석 참고).
     title: "아주분투",
     image: "/projects/ajou-run/play.webp",
-    desc: "아주대 캠퍼스를 배경으로 한 네온 스타일의 Phaser 3 2D 러닝 게임입니다. (발판 6종·낮/밤 전환)",
+    desc: "아주대 캠퍼스를 배경으로 이틀 동안 만든 Phaser 3 2D 러닝 게임 (2026.05)",
     links: [
       {label: "GitHub", href: "https://github.com/toadsam/Ajou_Mini_Game"}
     ]
   },
   {
     title: "고양이로부터 지켜라",
-    desc: "타워 디펜스 게임 1인 개발",
+    desc: "혼자 만든 타워 디펜스 게임",
     image: "/projects/sub/cat-defense.webp",
     links: []
   },
   {
     title: "루탄의 카드 게임",
-    desc: "덱 빌딩 카드 게임 개발",
+    desc: "덱 빌딩 카드 게임",
     image: "/projects/sub/rutan-card.webp",
     links: []
   },
@@ -1407,7 +1407,7 @@ export const subProjects: SubProjectCard[] = [
   },
   {
     title: "스파르타 던전 배틀 (Text 게임)",
-    desc: "캐릭터를 생성해 플레이하는 텍스트 게임입니다.",
+    desc: "캐릭터를 생성해 플레이하는 텍스트 게임",
     image: "/projects/sub/dungeon-battle.webp",
     links: []
   },
@@ -1419,7 +1419,7 @@ export const subProjects: SubProjectCard[] = [
   },
   {
     title: "MOVYDICK",
-    desc: "이더리움 고래 활동 추적 및 매매 시점 예측 시스템 개발",
+    desc: "이더리움 고래 활동 추적 및 매매 시점 예측 시스템",
     image: "/projects/sub/movydick.webp",
     links: []
   },
@@ -1431,7 +1431,7 @@ export const subProjects: SubProjectCard[] = [
   },
   {
     title: "time rewinder",
-    desc: "Godot 기반 퍼즐 게임 개발",
+    desc: "Godot 기반 퍼즐 게임",
     image: "/projects/sub/time-rewinder.webp",
     links: []
   },
