@@ -14,6 +14,7 @@ import {
   EffectComposer,
   LUT,
   N8AO,
+  SMAA,
   ToneMapping
 } from "@react-three/postprocessing";
 import {ToneMappingMode} from "postprocessing";
@@ -480,7 +481,7 @@ function GroundImpl() {
 // 불규칙함은 바깥 테두리에서만 만든다 — 어차피 물 위에서 보이는 건 그쪽이다.
 // 안쪽을 흔들면 잔디와의 사이가 벌어져 구멍이 뚫린다.
 const CLIFF_SEGMENTS = 128;
-const CLIFF_RINGS = 6;
+const CLIFF_RINGS = 10;
 
 function IslandCliffImpl() {
   const geometry = useMemo(() => {
@@ -488,7 +489,11 @@ function IslandCliffImpl() {
     const colors: number[] = [];
     const indices: number[] = [];
 
+    // 잔디 → 모래톱 → 바위 → 물밑. 예전엔 잔디에서 곧장 바위로 떨어져, 위에서
+    // 보면 초록 원반이 칼로 자른 것처럼 끝났다. 물가에 밝은 모래 띠가 한 줄
+    // 있으면 "섬의 끝"이 해안으로 읽힌다(2026-11-15).
     const rim = new Color("#6a8557"); // 잔디와 만나는 윗단
+    const sand = new Color("#cdbb8c"); // 모래톱
     const rock = new Color("#8a7a63"); // 볕 드는 바위
     const deep = new Color("#43382f"); // 물에 잠기는 아래쪽
     const mixed = new Color();
@@ -497,19 +502,24 @@ function IslandCliffImpl() {
       const t = ri / CLIFF_RINGS;
       for (let ai = 0; ai <= CLIFF_SEGMENTS; ai++) {
         const angle = (Math.PI * 2 * ai) / CLIFF_SEGMENTS;
-        // 바깥으로 나갈수록 튀어나온 곶과 들어간 만이 생긴다
+        // 바깥으로 나갈수록 튀어나온 곶과 들어간 만이 생긴다. 주기가 다른 사인을
+        // 넷 겹쳐 해안선이 원에서 벗어나게 한다(둘만으로는 꽃잎 모양이 읽혔다).
         const jut =
-          3.2 +
-          2.6 * Math.sin(angle * 3 + 0.9) +
-          1.6 * Math.sin(angle * 7 + 2.1);
-        const radius = ISLAND_RADIUS + t * Math.max(1.2, jut);
-        // t^1.5 — 위쪽은 완만하게 시작해 아래로 갈수록 가팔라진다(벼랑 느낌)
-        const y = -CLIFF_DROP * Math.pow(t, 1.5);
+          4.6 +
+          3.0 * Math.sin(angle * 3 + 0.9) +
+          1.9 * Math.sin(angle * 7 + 2.1) +
+          1.1 * Math.sin(angle * 13 + 0.4) +
+          0.6 * Math.sin(angle * 23 + 3.3);
+        const radius = ISLAND_RADIUS + t * Math.max(1.5, jut);
+        // t^2.6 — 처음 절반은 거의 평평한 모래 선반이고 그 뒤로 가파르게 물에
+        // 든다. t^1.5 는 잔디 끝에서 바로 꺾여 내려가, 섬 안쪽에서 보면 모래가
+        // 턱 아래로 숨고 잔디가 물과 바로 맞닿아 보였다.
+        const y = -CLIFF_DROP * Math.pow(t, 2.6);
         positions.push(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
-        mixed
-          .copy(t < 0.18 ? rim : rock)
-          .lerp(deep, Math.min(1, Math.max(0, (t - 0.18) / 0.82)));
-        if (t < 0.18) mixed.copy(rim).lerp(rock, t / 0.18);
+        if (t < 0.15) mixed.copy(rim).lerp(sand, t / 0.15);
+        else if (t < 0.6) mixed.copy(sand);
+        else if (t < 0.8) mixed.copy(sand).lerp(rock, (t - 0.6) / 0.2);
+        else mixed.copy(rock).lerp(deep, (t - 0.8) / 0.2);
         colors.push(mixed.r, mixed.g, mixed.b);
       }
     }
@@ -518,7 +528,10 @@ function IslandCliffImpl() {
     for (let ri = 0; ri < CLIFF_RINGS; ri++) {
       for (let ai = 0; ai < CLIFF_SEGMENTS; ai++) {
         const a = ri * stride + ai;
-        indices.push(a, a + stride, a + 1, a + 1, a + stride, a + stride + 1);
+        // 위(+Y)·바깥을 보는 감김 순서. 예전 순서(a, a+stride, a+1)는 면이 아래를
+        // 봐서 뒷면 컬링으로 **통째로 안 그려졌다** (2026-11-15 발견, Ground 의
+        // "뒤집으면 밑에서만 보인다"와 같은 함정).
+        indices.push(a, a + 1, a + stride, a + 1, a + stride + 1, a + stride);
       }
     }
 
@@ -2694,14 +2707,15 @@ function IslandCommonsImpl() {
 // 그래서 **아무것도 배치돼 있지 않은 바깥(r ≥ 30)에만** 언덕 고리를 세운다.
 // 마을 안은 손대지 않으므로 기존 배치가 한 개도 안 깨진다.
 //
-// 삼각형 4,800개짜리 메시 하나 = draw call 1회. 나머지는 fog가 공기 원근을 만든다.
+// 삼각형 13,440개짜리 메시 하나 = draw call 1회. 나머지는 fog가 공기 원근을 만든다.
 //
 // 섬이 되면서 언덕은 **물 건너 산**이 됐다. 안쪽 반지름을 절벽(40) 한참 밖으로
 // 밀어 두 사이에 수면이 넓게 드러나게 한다 — 그 물 폭이 곧 거리감이다.
 const HILL_INNER = 62;
 const HILL_OUTER = 130;
-const HILL_RINGS = 20;
-const HILL_SEGMENTS = 120;
+const HILL_RINGS = 28;
+const HILL_SEGMENTS = 240;
+const HILL_SCALE = 0.5;
 
 function hillHeight(radius: number, angle: number) {
   // 능선 — 주기가 다른 사인 3겹. 노이즈를 쓸 만큼 정교할 필요가 없다.
@@ -2720,7 +2734,19 @@ function hillHeight(radius: number, angle: number) {
     0.6 *
       Math.max(0, (radius - HILL_INNER - 34) / 40) *
       (1.4 + Math.sin(angle * 4 + 1.1));
-  return WATER_Y - 4 + ramp * Math.max(2, ridge) * layer;
+  // 잔 능선과 골짜기. 큰 사인 셋만으로는 봉우리가 매끈한 언덕(모래 더미)이라
+  // 산으로 안 읽혔다. |sin| 은 뾰족한 능선을, 반지름이 섞인 항은 방사형이 아닌
+  // 비스듬한 골을 만든다. 물가(ramp≈0)에서는 0 이라 해안선은 그대로다.
+  const crag =
+    2.6 * Math.abs(Math.sin(angle * 17 + radius * 0.09 + 0.3)) +
+    1.7 * Math.sin(angle * 29 - radius * 0.14 + 1.9) +
+    1.2 * Math.sin(angle * 41 + radius * 0.21);
+  // HILL_SCALE — 면이 뒤집혀 안 그려지던 걸 고치고 처음 실제로 보니(2026-11-15)
+  // 능선이 최고 50 까지 솟아 부감 화면의 3분의 1 을 민둥한 덩어리가 덮었다.
+  // 절반으로 낮추면 수평선 위에 얹힌 낮은 산줄기로 읽힌다.
+  return (
+    WATER_Y - 4 + ramp * (Math.max(2, ridge) * layer + crag * ramp) * HILL_SCALE
+  );
 }
 
 function DistantHillsImpl() {
@@ -2729,9 +2755,13 @@ function DistantHillsImpl() {
     const colors: number[] = [];
     const indices: number[] = [];
 
-    // 능선이 높을수록 밝은 녹색, 골짜기는 어두운 침엽수 색. 정점 색이라 공짜다.
-    const low = new Color("#466941");
-    const high = new Color("#89a473");
+    // 정점 색 네 단: 물가 모래 → 어두운 숲 → 밝은 풀밭 → 봉우리 바위.
+    // 예전엔 초록 두 색을 높이로만 섞어 산 전체가 한 색 덩어리였다. 숲과 풀밭이
+    // 얼룩으로 갈리도록 높이와 무관한 무늬(patch)를 하나 더 섞는다.
+    const shore = new Color("#b9ac80");
+    const forest = new Color("#3d6240");
+    const meadow = new Color("#86a468");
+    const peak = new Color("#a39b84");
     const mixed = new Color();
 
     for (let ri = 0; ri <= HILL_RINGS; ri++) {
@@ -2740,9 +2770,16 @@ function DistantHillsImpl() {
         const angle = (Math.PI * 2 * ai) / HILL_SEGMENTS;
         const y = hillHeight(radius, angle);
         positions.push(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
-        mixed
-          .copy(low)
-          .lerp(high, Math.min(1, Math.max(0, (y - WATER_Y) / 22)));
+        const h = Math.min(1, Math.max(0, (y - WATER_Y) / (30 * HILL_SCALE)));
+        const patch =
+          0.5 +
+          0.5 *
+            Math.sin(angle * 19 + radius * 0.17) *
+            Math.sin(angle * 8 - radius * 0.11 + 1.3);
+        if (h < 0.06) mixed.copy(shore).lerp(forest, h / 0.06);
+        else if (h < 0.7)
+          mixed.copy(forest).lerp(meadow, patch * 0.75 + (h - 0.06) * 0.3);
+        else mixed.copy(meadow).lerp(peak, Math.min(1, (h - 0.7) / 0.25));
         colors.push(mixed.r, mixed.g, mixed.b);
       }
     }
@@ -2751,7 +2788,10 @@ function DistantHillsImpl() {
     for (let ri = 0; ri < HILL_RINGS; ri++) {
       for (let ai = 0; ai < HILL_SEGMENTS; ai++) {
         const a = ri * stride + ai;
-        indices.push(a, a + stride, a + 1, a + 1, a + stride, a + stride + 1);
+        // 위(+Y)·바깥을 보는 감김 순서. 예전 순서(a, a+stride, a+1)는 면이 아래를
+        // 봐서 뒷면 컬링으로 **통째로 안 그려졌다** (2026-11-15 발견, Ground 의
+        // "뒤집으면 밑에서만 보인다"와 같은 함정).
+        indices.push(a, a + 1, a + stride, a + 1, a + stride + 1, a + stride);
       }
     }
 
@@ -3641,7 +3681,12 @@ function VillageSceneImpl({
             // EffectComposer 의 children 타입은 Element | Element[] 라 null 도 주석
             // 슬롯(undefined)도 못 낀다. 그래서 조건부 패스는 JSX 안에서 삼항으로
             // 넣지 말고 여기처럼 배열로 만들어 넘긴다.
-            <EffectComposer enableNormalPass={false}>
+            // multisampling={0} + SMAA — 지정하지 않으면 컴포저 기본값인 **8배**
+            // MSAA 로 돈다. 내장 GPU 에서 가장 비싼 설정이었다. 1920×1080 실측
+            // (2026-11-15, dev): 8배 13~19fps · 2배 17~29(잴 때마다 흔들림) ·
+            // 끔 29~39. 그래서 MSAA 는 끄고, 가장자리 계단은 배열 맨 끝의 SMAA
+            // (화면 공간 안티에일리어싱, 전체 화면 패스 몇 번)로 다듬는다.
+            <EffectComposer enableNormalPass={false} multisampling={0}>
               {[
                 // ─── 접촉면 그늘 (앰비언트 오클루전) ──────────────────────────
                 // 그림자를 드리우는 광원이 태양 하나뿐이라, 태양이 안 닿는 곳은
@@ -3675,7 +3720,10 @@ function VillageSceneImpl({
                         intensity={sky.aoI}
                         aoRadius={1.2}
                         distanceFalloff={1}
-                        quality="medium"
+                        // medium → low (2026-11-15). 절반 해상도인데도 1920×1080
+                        // 광장·부감에서 10fps 안팎을 쓰고 있었다. low 는 표본 수만
+                        // 줄어 그늘은 남는다.
+                        quality="low"
                         halfRes
                         depthAwareUpsampling
                       />
@@ -3704,7 +3752,11 @@ function VillageSceneImpl({
                 // 보인다(밴딩). 표를 64로 키우는 것보다 이게 싸다.
                 ...(gradeLut
                   ? [<LUT key="lut" lut={gradeLut} tetrahedralInterpolation />]
-                  : [])
+                  : []),
+                // ─── 가장자리 다듬기 ───────────────────────────────────────
+                // MSAA 를 끈 자리를 메운다. 톤매핑·색보정이 끝난 최종 색에서
+                // 가장자리를 찾아야 하므로 **맨 끝**이다.
+                <SMAA key="smaa" />
               ]}
             </EffectComposer>
           )}
@@ -3779,7 +3831,9 @@ function VillageSceneImpl({
                 <kbd className="rounded-md bg-white/[0.1] px-2 py-0.5 font-mono text-xs font-black text-white">
                   {key}
                 </kbd>
-                <span className="text-[10.5px] font-bold text-[#b4bac6]">{label}</span>
+                <span className="text-[10.5px] font-bold text-[#b4bac6]">
+                  {label}
+                </span>
               </span>
             ))}
           </div>

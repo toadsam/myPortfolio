@@ -2,7 +2,12 @@
 
 import {useFrame} from "@react-three/fiber";
 import {useMemo, useRef} from "react";
-import {AdditiveBlending, NormalBlending, type Points} from "three";
+import {
+  AdditiveBlending,
+  CanvasTexture,
+  NormalBlending,
+  type Points
+} from "three";
 
 type Variant = "snow" | "petals" | "leaves" | "fireflies";
 
@@ -126,6 +131,35 @@ function Particles({variant, lite}: {variant: Variant; lite: boolean}) {
     pts.geometry.attributes.position.needsUpdate = true;
   });
 
+  // 점은 기본이 정사각형이다. 낙엽·눈이 공중에 뜬 주황 네모(디버그 점처럼)로
+  // 보였다. 둥글고 가장자리가 흐린 스프라이트를 한 장 구워 입힌다.
+  const sprite = useMemo(() => {
+    const c = document.createElement("canvas");
+    c.width = 32;
+    c.height = 32;
+    const g = c.getContext("2d");
+    if (g) {
+      const grad = g.createRadialGradient(16, 16, 0, 16, 16, 16);
+      grad.addColorStop(0, "rgba(255,255,255,1)");
+      grad.addColorStop(0.55, "rgba(255,255,255,0.9)");
+      grad.addColorStop(1, "rgba(255,255,255,0)");
+      g.fillStyle = grad;
+      g.beginPath();
+      // 낙엽·꽃잎은 살짝 길쭉하게, 눈·반딧불은 동그랗게
+      g.ellipse(
+        16,
+        16,
+        15,
+        cfg.glow || variant === "snow" ? 15 : 9,
+        0.6,
+        0,
+        Math.PI * 2
+      );
+      g.fill();
+    }
+    return new CanvasTexture(c);
+  }, [cfg.glow, variant]);
+
   return (
     <points ref={ref} frustumCulled={false}>
       <bufferGeometry>
@@ -133,6 +167,8 @@ function Particles({variant, lite}: {variant: Variant; lite: boolean}) {
       </bufferGeometry>
       <pointsMaterial
         color={cfg.color}
+        map={sprite}
+        alphaTest={0.02}
         size={cfg.size}
         transparent
         opacity={cfg.opacity}

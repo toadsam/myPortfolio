@@ -2534,6 +2534,8 @@ export async function POST(req: Request) {
 
 편집 결과는 `src/data/propsLayout.json`에 저장됩니다.
 
+같은 파일을 배치 생성 스크립트(`scripts/generate-decor-layout.mjs`)도 다시 씁니다. 편집기로 손본 소품이 생성기를 돌릴 때 계산값으로 덮이지 않게 하려면, 그 소품의 id를 생성기 끝의 `PINNED` 정규식에 넣어 두어야 합니다. 지금은 광장 다리 여섯 개(`decor-bridge-cross-*`)가 들어 있습니다(2026-11-15).
+
 현재 저장된 예:
 
 ```json

@@ -16,6 +16,7 @@ import {
   readIsland,
   readWalkRadius,
   readWaterHalf,
+  readHubs,
   obbContains
 } from "./lib/read-village.mjs";
 
@@ -329,6 +330,8 @@ function mulberry32(seed) {
   };
 }
 const rand = mulberry32(20260809);
+/** 구역 섬 중심(월드) — constants.ts districtHub 를 읽은 값 */
+const DISTRICT_HUBS = readHubs();
 
 // 부드러운 값 잡음. 숲을 균일한 확률로 뿌리면 "점묘 같은 나무밭"이 되지만,
 // 잡음으로 확률을 흔들면 빽빽한 덤불과 트인 공터가 생겨 숲처럼 읽힌다.
@@ -1027,6 +1030,13 @@ const blockRect = new Map();
         const behind = dx * out.x + dz * out.z;
         const lateral = Math.abs(dx * -out.z + dz * out.x);
         if (lateral > halfWide) continue;
+        // 섬의 **앞쪽 절반**(섬 중심보다 광장 쪽)에는 민가를 세우지 않는다.
+        // 스터디 섬은 이름 없는 집 두 채가 구역 문 양옆에 서서, 구역 카메라에서
+        // 간판 건물보다 먼저 보였다(2026-11-15). 민가는 뒷줄 배경이다.
+        const hub = DISTRICT_HUBS[district];
+        if (hub && (x - hub.x) * out.x + (z - hub.z) * out.z < 0.5) continue;
+        // 남문 대계단(0.2, 27.2) 발치 — 집이 서면 계단이 지붕으로 내려간다
+        if (Math.abs(x - 0.2) < 3.4 && z > 25.5 && z < 33) continue;
         cand.push({x, z, behind, lateral});
       }
     }
@@ -1793,6 +1803,8 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
     const steps = Math.max(80, Math.round(perim / SEG));
     let put = 0;
     let skipped = 0;
+    // 먼저 설 수 있는 자리만 모으고, 짧은 도막은 버린 뒤에 놓는다(아래).
+    const slots = [];
     for (let k = 0; k < steps; k++) {
       const angle = (k / steps) * Math.PI * 2 - Math.PI / 2;
       const drift = Math.sin(angle * 3 + 0.7) * 1.4 + Math.sin(angle * 7) * 0.5;
@@ -1819,8 +1831,50 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
         skipped++;
         continue;
       }
+      // 물가 턱에 걸친 토막은 뺀다. place() 는 돌담을 물가 검사에서 빼 주는데
+      // (섬 난간용), 테두리 담장은 난간이 아니라서 석호 물길과 만나는 자리마다
+      // 토막이 반쯤 물에 잠겨 떠내려온 돌처럼 보였다(2026-11-15).
+      if (nearShore(x, z)) {
+        skipped++;
+        continue;
+      }
       // 담장은 둘레 방향(접선)으로 눕는다
-      const rot = round3(Math.atan2(-(nx / nl), nz / nl));
+      // place() 가 물 위 토막을 거부하므로 여기서 먼저 걸러야 도막 길이가 맞게 세진다
+      if (inMoatWater(x, z) || inInnerWater(x, z)) {
+        skipped++;
+        continue;
+      }
+      // rotationY θ 는 토막의 길이축(x)을 (cosθ, −sinθ) 로 돌린다. 접선은
+      // (−nz, nx) 이므로 θ = atan2(−nx, −nz). 예전 식 atan2(−nx, nz) 는 동·서·남
+      // 에서만 맞고 **대각 방위에서는 90° 틀어져**, 담장이 이어지지 않고 사다리
+      // 가로대처럼 한 토막씩 나란히 누웠다(부감에서 회색 계단 줄로 보이던 것).
+      const rot = round3(Math.atan2(-(nx / nl), -(nz / nl)));
+      slots.push({k, x, z, rot});
+    }
+    // 물길·길·건물에 끊기고 남은 **한두 토막짜리 도막**은 담장으로 안 읽힌다.
+    // 물가에 돌덩이가 띄엄띄엄 놓인 것처럼 보였다(2026-11-15). 이어진 토막이
+    // MIN_RUN 미만이면 통째로 버린다. 고리라서 처음과 끝이 이어진 경우도 센다.
+    const MIN_RUN = 4;
+    const has = new Set(slots.map(s => s.k));
+    const runLen = k => {
+      let a = k;
+      let n = 1;
+      while (n < steps && has.has((a - 1 + steps) % steps)) {
+        a = (a - 1 + steps) % steps;
+        n++;
+      }
+      let b = k;
+      while (n < steps && has.has((b + 1) % steps)) {
+        b = (b + 1) % steps;
+        n++;
+      }
+      return n;
+    };
+    for (const {k, x, z, rot} of slots) {
+      if (runLen(k) < MIN_RUN) {
+        skipped++;
+        continue;
+      }
       // 대문(남북 참배로) 어귀 토막만 담쟁이 돌담이다. 담장이 끊기는 자리라
       // 끝단이 그대로 드러나는데, 담쟁이가 감긴 토막은 끝이 "마감"으로 읽힌다.
       // 전 구간을 못 바꾸는 이유는 KIT 의 wall-ivy 주석 참고(삼각형 바닥 2,378).
@@ -1881,16 +1935,18 @@ const MOAT_SOUTH_Z = round3(MOAT.cz + MOAT.b);
   landmarks.push({x: 24, z: -21, r: 5.5});
 
   // ─── 폭포 셋 — 섬 테두리 ───────────────────────────────────────────────────
-  // 섬(중심 0,3 · 반지름 40)의 가장자리에 세워 물이 절벽 바깥으로 떨어지게 한다.
-  // 정면(+Z)이 바깥을 봐야 조감에서 물줄기가 보인다 — 안쪽을 보게 두면 마을에서는
-  // 바위 뒷면만 보이고 정작 물은 숲에 가린다.
+  // 섬(중심 0,3 · 반지름 40)의 가장자리에 세운다.
+  // **정면(+Z)이 마을 안쪽을 본다(2026-11-15 뒤집음).** 바깥을 보게 뒀더니 구역
+  // 카메라·걷기·자유비행이 전부 마을 안에서 밖을 보는 구도라, 물줄기는 아무도
+  // 못 보고 질감 없는 검은 뒷면만 스터디·라이프·스킬 화면에 걸렸다. 모델 뒷면은
+  // 원래 안 보일 면이라 비어 있다. 뒤는 숲 띠와 먼 산이 받친다.
   const FALLS = [
     [-35.5, 5],
     [35, 0],
     [25, 28]
   ];
   FALLS.forEach(([x, z], n) => {
-    place(`waterfall-${n}`, "waterfall", x, z, faceTo(x - 0, z - 3), {
+    place(`waterfall-${n}`, "waterfall", x, z, faceTo(0 - x, 3 - z), {
       gap: 0.1,
       onWater: true
     });
@@ -3087,8 +3143,6 @@ const BELT_DEPTH = 12;
 }
 
 // ─── 쓰기 ─────────────────────────────────────────────────────────────────────
-const kept = layout.props.filter(p => !p.id.startsWith("decor-"));
-const next = {...layout, props: [...kept, ...props]};
 
 // 삼각형 청구서. 개수만 세면 "빌보드 300개"와 "원본 나무 300그루"가 같아 보인다.
 // GLB의 JSON 청크에서 인덱스 개수를 읽는다 (Draco여도 accessor.count 는 남아 있다).
@@ -3114,6 +3168,159 @@ function trianglesOf(glb) {
           : gltf.accessors[prim.attributes.POSITION].count) / 3;
   return t;
 }
+
+// ─── ⑯ 마무리 채우기 (2026-11-15) ─────────────────────────────────────────────
+// 화면으로 훑어 찾은 빈 곳 둘. **맨 끝에서, 따로 든 난수로** 돈다 — 앞 단계의
+// rand() 소비를 바꾸지 않아야 기존 배치가 통째로 흔들리지 않는다.
+{
+  const rnd = mulberry32(20261115);
+
+  // (a) 연락 섬 — 건물이 우체국 한 채라 잔디 원반이 통째로 비어 있었다.
+  //     프로젝트 섬(9채)과 나란히 보면 만들다 만 섬으로 읽힌다. 우편 소품과
+  //     나무로 채운다. 스터디 섬도 문 옆 민가 둘을 뺀 자리를 같은 식으로 메운다.
+  const DRESS = {
+    contact: [
+      "tree-sakura",
+      "bench",
+      "mailbox",
+      "flowerbed-round",
+      "scroll-barrel",
+      "tree-golden-canopy",
+      "bench",
+      "lantern-bearer",
+      "flower-pot",
+      "mailbox",
+      "flowerbed-round",
+      "scroll-barrel",
+      "market-stall",
+      "flower-pot"
+    ],
+    study: [
+      "tree-golden-canopy",
+      "bench",
+      "flowerbed-round",
+      "tree-sakura",
+      "bench",
+      "candle-tome"
+    ]
+  };
+  let put = 0;
+  for (const [district, kinds] of Object.entries(DRESS)) {
+    const hub = DISTRICT_HUBS[district];
+    if (!hub) continue;
+    const len = Math.hypot(hub.x, hub.z) || 1;
+    const toPlaza = {x: -hub.x / len, z: -hub.z / len};
+    kinds.forEach((kind, k) => {
+      const a = (k / kinds.length) * Math.PI * 2 + 0.4;
+      const r = 3.6 + (k % 3) * 1.1 + rnd() * 0.5;
+      const big = kind.startsWith("tree-") || kind === "market-stall";
+      if (
+        tryPlace(
+          `dress-${district}-${k}`,
+          kind,
+          hub.x + Math.cos(a) * r,
+          hub.z + Math.sin(a) * r,
+          big ? round3(rnd() * Math.PI * 2) : faceTo(toPlaza.x, toPlaza.z),
+          {gap: big ? 1.7 : 1.1, radius: 2.2, grow: 0.9 + rnd() * 0.2}
+        )
+      )
+        put += 1;
+    });
+  }
+
+  // (b) 바깥 띠 — 숲 띠(껍질에서 12)와 원반 끝 사이가 맨 잔디로 남아, 위에서
+  //     보면 숲 밖에 초록 고리가 한 줄 더 있었다.
+  //
+  //     처음엔 격자를 훑으며 고른 확률로 한 그루씩 흩었다. 간격이 일정해서
+  //     위에서 보면 **물방울무늬**였다 — 계산으로 뿌린 티가 그대로 났다.
+  //     사람이 심은 숲은 덩어리와 빈터로 갈린다. 큰 파장의 잡음으로 "숲 덩어리"
+  //     자리를 먼저 정하고, 그 안은 빽빽하게, 밖은 풀밭으로 비운다.
+  //       · 덩어리 한가운데일수록 촘촘하고 키가 크다 (가장자리는 덤불로 풀린다)
+  //       · 덩어리마다 침엽수 숲 / 활엽수 숲으로 갈린다 (둘째 잡음)
+  //       · 풀밭에는 덤불이 아주 드물게 하나씩
+  //     빌보드라 그루당 삼각형 8개다.
+  let rim = 0;
+  const RIM_STEP = 1.2;
+  const GROVE_AT = 0.56; // 이 값보다 잡음이 크면 숲 덩어리
+  for (let x = ISLAND.cx - ISLAND.r; x <= ISLAND.cx + ISLAND.r; x += RIM_STEP) {
+    for (
+      let z = ISLAND.cz - ISLAND.r;
+      z <= ISLAND.cz + ISLAND.r;
+      z += RIM_STEP
+    ) {
+      const px = x + (rnd() - 0.5) * RIM_STEP;
+      const pz = z + (rnd() - 0.5) * RIM_STEP;
+      const roll = rnd();
+      const pick = rnd();
+      const turn = rnd();
+      const size = rnd();
+      const d = Math.hypot(px - ISLAND.cx, pz - ISLAND.cz);
+      if (d > ISLAND.r - 1.6 || d < 26) continue;
+      if (inWalkZone(px, pz)) continue;
+      if (onRoad(px, pz, 1.2) || onBuilding(px, pz, 1.2)) continue;
+      if (nearLandmark(px, pz) || onWall(px, pz, 0.6)) continue;
+
+      const grove = noise2(px * 0.075 + 7, pz * 0.075 - 3);
+      // 0 = 덩어리 가장자리, 1 = 한가운데
+      const core = Math.min(1, Math.max(0, (grove - GROVE_AT) / 0.14));
+      let kind;
+      let grow;
+      let gap;
+      if (grove > GROVE_AT) {
+        if (roll > 0.35 + core * 0.6) continue;
+        const conifer = noise2(px * 0.045 - 11, pz * 0.045 + 5) > 0.5;
+        if (core < 0.3 && pick < 0.55) kind = "far-bush";
+        else if (conifer) kind = pick < 0.88 ? "far-pine" : "far-oak";
+        else
+          kind =
+            pick < 0.7 ? "far-oak" : pick < 0.82 ? "far-sakura" : "far-pine";
+        if (kind === "far-sakura" && core < 0.6) kind = "far-oak";
+        grow =
+          kind === "far-bush"
+            ? 0.8 + size * 0.5
+            : 0.62 + core * 0.38 + size * 0.22;
+        gap = 1.05;
+      } else {
+        // 풀밭 — 거의 비운다. 드문 덤불 하나가 "빈 게 아니라 풀밭"으로 읽히게 한다
+        if (roll > 0.018) continue;
+        kind = "far-bush";
+        grow = 0.7 + size * 0.5;
+        gap = 3;
+      }
+      // 이미 숲인 곳(안쪽 숲 띠)은 건너뛴다 — 빈 데만 메운다
+      if (!free(px, pz, gap)) continue;
+      if (
+        place(`rimfill-${rim}`, kind, px, pz, round3(turn * Math.PI * 2), {
+          grow
+        })
+      )
+        rim += 1;
+    }
+  }
+  console.log(`  마무리: 섬 채우기 ${put}개 · 바깥 띠 ${rim}그루`);
+}
+
+// ─── 손으로 고친 소품은 지킨다 ────────────────────────────────────────────────
+// 광장 다리 여섯은 편집기(PropsEditor)로 크기·자리를 직접 맞춘 값이다. 생성기를
+// 다시 돌리면 계산값으로 덮여 다리가 커지고 0.5~1 씩 밀렸다. 여기 적힌 id 는
+// 파일에 이미 있는 값을 그대로 둔다.
+const PINNED = /^decor-bridge-cross-\d+$/;
+{
+  const before = existsSync(LAYOUT)
+    ? JSON.parse(readFileSync(LAYOUT, "utf8")).props ?? []
+    : [];
+  const old = new Map(
+    before.filter(p => PINNED.test(p.id)).map(p => [p.id, p])
+  );
+  for (let k = 0; k < props.length; k++) {
+    const keep = old.get(props[k].id);
+    if (keep) props[k] = keep;
+  }
+}
+
+// 마무리 패스와 보존까지 끝난 뒤에 묶는다 — 앞에서 묶으면 그 둘이 파일에 안 들어간다
+const kept = layout.props.filter(p => !p.id.startsWith("decor-"));
+const next = {...layout, props: [...kept, ...props]};
 
 const tally = {};
 for (const p of props) {

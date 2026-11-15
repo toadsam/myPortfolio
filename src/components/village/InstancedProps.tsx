@@ -19,6 +19,7 @@ import type {ThreeEvent} from "@react-three/fiber";
 import {memo, Suspense, useLayoutEffect, useMemo, useRef} from "react";
 import {
   Euler,
+  FrontSide,
   InstancedMesh,
   Matrix4,
   Mesh,
@@ -260,6 +261,43 @@ function GlbInstancesImpl({
           color?: {setRGB: (r: number, g: number, b: number) => void};
         };
         tinted.color?.setRGB(FOLIAGE_TINT.r, FOLIAGE_TINT.g, FOLIAGE_TINT.b);
+      }
+    }
+  }, [glb, parts]);
+
+  // ─── 빌보드 나무가 검게 보이던 것 ─────────────────────────────────────────
+  // 교차 빌보드는 판 두 장이고 재질이 양면이다. 양면 재질은 뒷면에서 법선을
+  // 뒤집으므로, 해를 등진 쪽에서 본 판은 빛을 못 받아 **새까만 종이 십자**가
+  // 됐다 — 숲 띠의 절반이 검은 실루엣이었다.
+  //
+  // 법선을 전부 위로 세우고, 뒤집힌 삼각형을 한 벌 더 넣은 뒤 단면 재질로
+  // 바꾼다. 그러면 어느 쪽에서 봐도 "위를 보는 면"이라 땅과 같은 빛을 받는다.
+  // 그루당 삼각형이 4 → 8 로 늘 뿐이다.
+  useMemo(() => {
+    if (!glb.includes("impostor/")) return;
+    for (const part of parts) {
+      const geo = part.geometry;
+      if (geo.userData.__impostorLit) continue;
+      geo.userData.__impostorLit = true;
+      const normal = geo.getAttribute("normal");
+      if (normal) {
+        for (let i = 0; i < normal.count; i += 1) normal.setXYZ(i, 0, 1, 0);
+        normal.needsUpdate = true;
+      }
+      const index = geo.getIndex();
+      const src = index
+        ? Array.from(index.array as ArrayLike<number>)
+        : Array.from({length: geo.getAttribute("position").count}, (_, i) => i);
+      const both = src.slice();
+      for (let i = 0; i < src.length; i += 3)
+        both.push(src[i] ?? 0, src[i + 2] ?? 0, src[i + 1] ?? 0);
+      geo.setIndex(both);
+      const mats = Array.isArray(part.material)
+        ? part.material
+        : [part.material];
+      for (const m of mats) {
+        m.side = FrontSide;
+        m.needsUpdate = true;
       }
     }
   }, [glb, parts]);
