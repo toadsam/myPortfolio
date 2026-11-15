@@ -446,6 +446,22 @@ async def _embed_query(text: str) -> list[float] | None:
         return None
 
 
+def chat_params(model: str, max_tokens: int) -> dict[str, Any]:
+    """모델 계열마다 받는 인자가 다르다.
+
+    배포 서버는 OPENAI_MODEL 을 따로 안 두면 gpt-5-mini 를 쓰는데, 이 계열은 `max_tokens` 와
+    `temperature` 를 받지 않는다(400). 로컬은 gpt-4.1-mini 라 통과해서 배포 뒤에야 드러났다.
+    모든 질문이 "찾은 부분만 보여 드립니다"로 떨어졌다(2026-11-15).
+    """
+    if model.startswith(("gpt-5", "o1", "o3", "o4")):
+        # 추론 토큰이 같은 상한에서 빠지므로 넉넉히 준다.
+        params: dict[str, Any] = {"max_completion_tokens": max(max_tokens * 4, 2000)}
+        if model.startswith("gpt-5"):
+            params["reasoning_effort"] = "minimal"
+        return params
+    return {"temperature": 0, "max_tokens": max_tokens}  # temperature 0: 같은 질문에 같은 답
+
+
 async def _ask_model(question: str, hits: list[Hit]) -> dict[str, Any]:
     import httpx
 
@@ -459,11 +475,13 @@ async def _ask_model(question: str, hits: list[Hit]) -> dict[str, Any]:
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": f"[근거]\n{_context(hits)}\n\n[질문]\n{question}"},
                 ],
-                "temperature": 0,  # 같은 질문에 같은 답이 나오게
-                "max_tokens": 700,
+                **chat_params(settings.openai_model, 700),
                 "response_format": {"type": "json_object"},
             },
         )
+        if response.status_code >= 400:
+            # 원인을 로그에 남긴다. 예외만 삼키면 "조각만 나온다"는 증상밖에 안 보인다.
+            log.warning("경력 안내: 모델 호출 %s %s", response.status_code, response.text[:300])
         response.raise_for_status()
         return json.loads(response.json()["choices"][0]["message"]["content"])
 
@@ -492,7 +510,11 @@ def judge(
     if not answer:
         return _result("none", NONE_ANSWER, [])
 
-    used = [n for n in model_out.get("used") or [] if isinstance(n, int) and 1 <= n <= len(hits)]
+    used = [
+        int(n)
+        for n in model_out.get("used") or []
+        if (isinstance(n, int) or (isinstance(n, str) and n.isdigit())) and 1 <= int(n) <= len(hits)
+    ]
     cited = [hits[n - 1] for n in dict.fromkeys(used)] or hits[:SNIPPET_K]
 
     # 숫자는 모델에 보여 준 조각 전체와 대조한다(used 를 빠뜨리는 일이 있어 cited 만 보면 헛잡는다).
@@ -504,8 +526,54 @@ def judge(
     return _result("answer", answer, cited)
 
 
+# ───────────────────────────── 인사와 잡담 ─────────────────────────────
+#
+# "안녕" 은 경력 질문이 아니라서 검색으로 보내면 "기록에서 찾지 못했습니다"가 나온다. 틀린 답은 아니지만
+# 인사에 그렇게 답하는 캐릭터는 고장 난 것처럼 보인다. 짧은 인사·감사·"누구세요"는 규칙으로 받아 정해 둔
+# 말로 답한다. 모델을 부르지 않으니 키가 없어도, 호출이 실패해도 인사는 된다.
+
+_SMALLTALK_MAX = 16  # 이보다 긴 말은 질문일 수 있어 검색으로 보낸다
+_SMALLTALK: list[tuple[re.Pattern[str], str]] = [
+    (
+        re.compile(r"^(안녕|하이|ㅎㅇ|헬로|hello|hi|hey|반가|반갑|좋은 ?(아침|저녁|하루))"),
+        "안녕하세요~ 반가워요! 재훈이 만든 프로젝트나 맡았던 일, 기술 중에 궁금한 걸 물어보세요.",
+    ),
+    (
+        re.compile(r"(고마워|고맙|감사|땡큐|thank)"),
+        "도움이 됐다니 다행이에요! 더 궁금한 게 있으면 또 물어보세요~",
+    ),
+    (
+        re.compile(r"(넌|너는|당신은|누구|이름이|정체|뭐 ?하는|뭘 ?할 ?수|무엇을 ?할 ?수|뭘 ?물어|뭐 ?물어|어떻게 ?써|사용법|도움말)"),
+        "저는 재훈의 기록을 들고 다니는 두꺼비예요. 이력서와 프로젝트 기록에서 찾아서 답해요. "
+        "「백엔드 경험을 요약해 주세요」나 「AjouFesta 에서 무슨 문제가 있었나요?」처럼 물어보시면 돼요.",
+    ),
+    (
+        re.compile(r"^(잘 ?가|안녕히|바이|bye|수고)"),
+        "들러 주셔서 고마워요~ 좋은 하루 보내세요!",
+    ),
+    (
+        re.compile(r"^(ㅋ+|ㅎ+|ㅠ+|ㅜ+|오+|와+|굿|good|nice|좋아요?|좋네요?|귀엽|귀여워|개굴|test|테스트|\?+|\.+|!+)[.!?~ ]*$"),
+        "개굴! 재훈에 대해 궁금한 게 생기면 편하게 물어보세요~",
+    ),
+]
+
+
+def small_talk(question: str) -> str | None:
+    """짧은 인사·감사·자기소개 요청이면 정해 둔 답을, 아니면 None."""
+    text = question.strip().lower()
+    if not text or len(text) > _SMALLTALK_MAX:
+        return None
+    for pattern, reply in _SMALLTALK:
+        if pattern.search(text):
+            return reply
+    return None
+
+
 async def ask(question: str, previous: str | None = None) -> dict[str, Any]:
     question = " ".join(question.split())
+    hello = small_talk(question)
+    if hello:
+        return _result("answer", hello, [])
     index = get_index()
     # 짧은 되묻기("그건 언제예요?")는 앞 질문을 붙여서 찾는다.
     follow_up = bool(previous) and len(question) < 20

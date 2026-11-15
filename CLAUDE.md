@@ -312,6 +312,14 @@ Claude Agent SDK writes markdown + a single self-contained HTML mockup into
   「안녕하세요~ 재훈의 기록을 들고 다니는 두꺼비예요. 프로젝트든 경력이든, 궁금한 건 뭐든 물어보세요!」
   (본인이 예시로 준 문장을 바탕으로 낸 넷 중 고른 것. 버튼 글자도 「경력 물어보기」에서 「두꺼비에게 물어보기」로 바꿨다.) 이 말투는 본인이 정한 것이라
   다른 화면의 평서체 규칙을 적용해 고치지 않는다. 그 아래 작은 글씨로 기록에 적힌 내용만 답한다는 안내가 붙는다.
+- **배포하자마자 모든 답이 「찾은 부분을 그대로 보여 드립니다」로 떨어졌다 (2026-11-15).** 배포 서버는 `OPENAI_MODEL` 을 안 두면
+  `config.py` 기본값 `gpt-5-mini` 를 쓰는데, 이 계열은 `max_tokens` · `temperature` 를 받지 않아 400 이 난다. 로컬 `.env` 는
+  `gpt-4.1-mini` 라 통과했고, 평가 68문항도 전부 그 모델로 돌린 것이다. `career_service.chat_params()` 가 모델 이름을 보고
+  인자를 고른다(gpt-5 · o 계열은 `max_completion_tokens` + `reasoning_effort: minimal`, 그 밖은 `temperature 0` + `max_tokens`).
+  400 이면 응답 본문을 로그에 남긴다. **같은 `max_tokens` 를 쓰는 다른 서비스(`chat_service` · `commission_service` · `npc_brain_service` ·
+  `coach_service` · `daily_digest_service`)는 고치지 않았다.** 배포 모델이 gpt-5 계열이면 그쪽도 조용히 규칙 폴백으로 돌고 있을 수 있다.
+- **인사와 잡담은 규칙으로 받는다.** 본인이 「안녕」을 쳤더니 기록 조각이 쏟아졌다. `small_talk()` 이 16자 이하의 인사 · 감사 ·
+  「넌 누구야」 · 「ㅋㅋ」 를 정해 둔 말로 답하고 검색도 모델도 부르지 않는다. 길면 질문으로 보고 검색으로 보낸다.
 - 화면: `CareerGuide`(버튼·SVG 만, `src/app/resume/layout.tsx` 에 마운트해 상세로 넘어가도 대화가 남는다) +
   `CareerGuidePanel`(처음 누를 때 `dynamic` 으로 받는다). 스타일은 `careerGuide.css` 의 `.cg-*` 이고 `.rv2` 밖이라 색 값을
   한 번 더 적었다. z-index 35(알약 내비 30 위, 프로젝트 판 가림막 40 아래). 질문은 저장하지 않는다.

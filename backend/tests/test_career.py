@@ -301,3 +301,60 @@ def test_named_project_question_uses_the_written_answer_not_points():
         allow_points=False,
     )
     assert out["answer"] == "문자 244통이 실패했습니다."
+
+
+# ── 모델 계열별 호출 인자 ──
+
+
+def test_gpt5_family_gets_no_max_tokens_or_temperature():
+    # 배포 기본 모델(gpt-5-mini)은 이 둘을 받지 않아 모든 질문이 조각만 보여 주기로 떨어졌다.
+    params = career_service.chat_params("gpt-5-mini", 700)
+    assert "max_tokens" not in params and "temperature" not in params
+    assert params["max_completion_tokens"] >= 2000
+    assert params["reasoning_effort"] == "minimal"
+
+
+def test_gpt4_family_keeps_temperature_zero():
+    assert career_service.chat_params("gpt-4.1-mini", 700) == {"temperature": 0, "max_tokens": 700}
+
+
+def test_citation_numbers_given_as_strings_are_accepted():
+    out = career_service.judge(
+        "학력", hits(), {"answerable": True, "answer": "전공 평점은 4.05 입니다.", "used": ["3"]}
+    )
+    assert [s["section"] for s in out["sources"]] == ["학력"]
+
+
+# ── 인사와 잡담 ──
+
+
+def test_greeting_gets_a_greeting_not_a_search(monkeypatch):
+    called = False
+
+    def boom():
+        nonlocal called
+        called = True
+        raise AssertionError("인사에 검색을 돌리면 안 된다")
+
+    monkeypatch.setattr(career_service, "get_index", boom)
+    out = asyncio.run(career_service.ask("안녕"))
+    assert out["mode"] == "answer"
+    assert "반가워요" in out["answer"]
+    assert out["sources"] == []
+    assert called is False
+
+
+def test_small_talk_kinds():
+    assert "다행" in career_service.small_talk("고마워요!")
+    assert "두꺼비" in career_service.small_talk("넌 누구야?")
+    assert career_service.small_talk("ㅋㅋㅋ") is not None
+    assert career_service.small_talk("hi") is not None
+
+
+def test_real_questions_are_not_mistaken_for_small_talk():
+    assert career_service.small_talk("언제 입사할 수 있나요?") is None
+    assert career_service.small_talk("득근득근 성능") is None
+    # 인사로 시작해도 길면 질문으로 본다.
+    assert career_service.small_talk("안녕하세요, 백엔드 경험을 요약해 주실 수 있나요?") is None
+    # "누가 만들었나요" 는 사람을 묻는 경력 질문이다.
+    assert career_service.small_talk("DarkLab 은 누가 만들었나요") is None
