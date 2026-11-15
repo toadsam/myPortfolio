@@ -267,7 +267,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           {
             id: "vil",
             label: "3D 마을",
-            note: "R3F · 87 GLB · 광원 풀",
+            note: "R3F · GLB 185개 · 광원 풀",
             x: 882,
             y: 78,
             w: 264,
@@ -344,7 +344,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         area: "개발 방식",
         pick: "Claude Code 와 짝 · 계획 승인 뒤 착수",
-        why: "같은 실수를 줄이기 위해 판단 기준과 주의사항을 CLAUDE.md 291줄로 정리했습니다. AI가 작성한 결과는 직접 측정하고 테스트했습니다.",
+        why: "같은 실수를 줄이기 위해 판단 기준과 주의사항을 CLAUDE.md 에 정리했습니다. AI가 작성한 결과는 직접 측정하고 테스트했습니다.",
         alt: "전체 직접 작성 또는 AI 결과를 별도 검증 없이 반영"
       }
     ],
@@ -661,13 +661,16 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "왜",
-        v: "수익률·자산 비중·소비를 한 곳에서 보되, 화면 어디에도 예시 숫자를 채우지 않고 기록에서만 계산되게 하려고"
+        v: "수익률, 자산 비중, 소비를 한 곳에서 보되, 화면 어디에도 예시 숫자를 채우지 않고 기록에서만 계산되게 하려고 했습니다."
       },
       {
         k: "결과",
-        v: "2026-11-10 mywave.day 로 공개. 화면 19개, 엔드포인트 111개(MyWave 가 쓰는 것 55개), 테스트는 공개일 29 → 41개에서 다음 날 98개. 모든 push 에 CI 3잡"
+        v: "2026년 11월 10일 mywave.day 로 공개했습니다. 화면 19개, 엔드포인트 111개(MyWave 가 쓰는 것 55개)이고, 테스트는 공개일에 29개에서 41개, 다음 날 98개가 됐습니다. push 마다 CI 가 돕니다."
       },
-      {k: "내 역할", v: "1인 · 도메인 설계 · Spring Boot API · React 화면 전부"}
+      {
+        k: "내 역할",
+        v: "도메인 설계, Spring Boot API, React 화면을 혼자 전부 만들었습니다."
+      }
     ],
     demo: {
       live: "https://mywave.day",
@@ -1328,24 +1331,27 @@ export const RICH_DATA: Record<string, RichProject> = {
     tldr: [
       {
         k: "무엇을",
-        v: "대학 축제 부스를 실시간으로 운영·관제하는 웹앱 (Fest-A)"
+        v: "아주대 축제에서 주점 주문, 소개팅, 스태프 화면을 운영한 웹앱입니다."
       },
       {
         k: "왜",
-        v: "수십 개 부스의 상태·혼잡도·공지를 실시간 공유할 도구가 없었음"
+        v: "수십 개 부스의 상태와 공지를 함께 볼 도구가 없었습니다."
       },
       // 예전엔 "7개 SSE 채널 · 컨트롤러 26개 · 1인 구현" 이었다. 카드에서 코드량을
       // 지표에서 뺀 이유(능력으로 안 읽힌다)가 그대로 여기에도 적용된다 — 첫 표에
       // 코드량이 돌아와 있으면 카드 쪽이 과장으로 읽힌다. 코드량은 metricsNote 에.
       {
         k: "결과",
-        v: "아주대 축제에서 두 번 실제 운영. 5월 AI 소개팅 하루, 10월 가을축제 이틀(방문자 7,078명 · 주점 첫날 주문 142건 · 소개팅 가입 322명)"
+        v: "아주대 축제에서 두 번 운영했습니다. 5월에는 AI 소개팅을 하루, 10월에는 가을축제 이틀입니다(방문자 7,078명 · 주점 첫날 주문 142건 · 소개팅 가입 322명)."
       },
       {
         k: "리뉴얼",
         v: "1차 2026.05 대동제(소개팅만 하루) → 전면 리뉴얼 2026.10 가을축제(주점·소개팅·스태프 이틀)"
       },
-      {k: "내 역할", v: "1인 풀스택 (프론트 전체 + Spring Boot 백엔드 + 모델)"}
+      {
+        k: "내 역할",
+        v: "혼자 만들었습니다. 프론트 전체, Spring Boot 백엔드, 혼잡 예측 모델입니다."
+      }
     ],
     // 저장소는 2026-10 에 비공개로 돌렸다(DB 덤프 CSV 와 원본 사진이 기록에 남아 있다).
     // 2026-11-13: 사진·DB 덤프·연락처를 빼고 가린 공개 사본 toadsam/AjouFesta 를 만들었다(한 커밋).
@@ -1665,7 +1671,8 @@ export const RICH_DATA: Record<string, RichProject> = {
         "바쁜 시간대(18~19시, 21시)에 입금 확인부터 서빙까지 30~45분이 걸렸습니다.",
         "축제 뒤 개인정보 삭제가 수동이고, 전화번호 인증이 없습니다."
       ],
-      source: "저장소는 비공개이고 요청하면 공개합니다.",
+      source:
+        "원본 저장소는 비공개이고, 코드는 공개 사본 toadsam/AjouFesta 에 있습니다.",
       // 2026-10-09 추가. 원문은 FestFlow 저장소 docs/festflow/AI-활용.md(비공개).
       // 사례는 그 문서에 있는 것만 쓴다(본인 결정). 숫자도 같은 문서.
       ai: {
@@ -1740,7 +1747,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           "커밋 메시지에 무엇을 왜 바꿨는지 적습니다"
         ],
         source:
-          "FestFlow 저장소 docs/festflow/AI-활용.md · 커밋 기록(Co-Authored-By) · 테스트-중-바꾼-것.md. 저장소는 비공개이고 요청하면 공개합니다."
+          "FestFlow 저장소 docs/festflow/AI-활용.md · 커밋 기록(Co-Authored-By) · 테스트-중-바꾼-것.md. 원본 저장소는 비공개이고, 코드는 공개 사본 toadsam/AjouFesta 에 있습니다."
       }
     },
     // ── 그림 두 장이 답하는 질문 ──────────────────────────────────────────
@@ -1753,7 +1760,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         title: "Realtime Fan-out",
         viewBox: [1180, 470],
         caption:
-          "요점은 가운데서 한 번 모였다가 종류별로 갈라진다는 것입니다. 상태를 한 채널로 다 밀면 관심 없는 이벤트까지 모두가 받습니다. 엔드포인트 7개는 StreamController.java 에 그대로 있습니다.",
+          "요점은 가운데서 한 번 모였다가 종류별로 갈라진다는 것입니다. 상태를 한 채널로 다 밀면 관심 없는 이벤트까지 모두가 받습니다. 그림은 5월 구조이고 채널이 7개입니다. 10월에 주문 채널을 더해 8개가 됐습니다.",
         groups: [
           {label: "상태를 바꾸는 쪽 (쓰기)", x: 16, y: 40, w: 300, h: 376},
           {label: "구독하는 쪽 (읽기)", x: 864, y: 40, w: 300, h: 376}
@@ -2710,7 +2717,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       ]
     },
     metricsNote:
-      '방문자·주문·가입 수는 2026.10.07–08 가을축제 "바람" 집계입니다(방문자는 Vercel Web Analytics 10.02–09, 주문은 주문 콘솔 CSV, 가입은 소개팅 관리자 통계 · 저장소 docs/festflow/축제-결산.md). 5월 등록자 수는 2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영한 집계입니다. 관리자 화면 실측(활성 프로필 115 / 전체 169명 · 누적 신청 424 · 성사 36)과 현장 QA 참여 46명. 서버 쪽 넷(장애 0건 · 테스트 127개 · 쿼리 99 → 3 · 입금 확인 0.8분)은 저장소 docs/festflow/축제-결산.md 와 README 의 값이고, 테스트 수는 backend/src/test 의 @Test 를 직접 셌습니다(2026-10-09, 단위 테스트 중심 · CI 없음). 저장소 규모는 별도입니다: 백엔드 컨트롤러 26 · SSE 채널 7(5월) → 8(10월) · 예측 feature 24 (*Controller.java · StreamController.java · congestion_training_profile.json 에서 직접 셌다). 혼잡 예측 모델 정확도는 규칙 기반 0.70 → RandomForest 0.80(macro-F1 0.68 → 0.79)이지만, 운영 경험으로 만든 시뮬레이션 데이터 2,520건 기준이고 실제 축제 데이터로 검증한 값이 아닙니다.',
+      '방문자·주문·가입 수는 2026.10.07–08 가을축제 "바람" 집계입니다(방문자는 Vercel Web Analytics 10.02–09, 주문은 주문 콘솔 CSV, 가입은 소개팅 관리자 통계 · 저장소 docs/festflow/축제-결산.md). 5월 등록자 수는 2026.05 아주대학교 대동제에서 AI Match 를 1일간 실제 운영한 집계입니다. 관리자 화면 실측(활성 프로필 115 / 전체 169명 · 누적 신청 424 · 성사 36)과 QA 참여 46명. 서버 쪽 넷(장애 0건 · 테스트 127개 · 쿼리 99 → 3 · 입금 확인 0.8분)은 저장소 docs/festflow/축제-결산.md 와 README 의 값이고, 테스트 수는 backend/src/test 의 @Test 를 직접 셌습니다(단위 테스트 중심). CI 는 축제 뒤인 2026년 11월 13일에 붙였습니다. 저장소 규모는 별도입니다: 백엔드 컨트롤러 26 · SSE 채널 7(5월) → 8(10월) · 예측 feature 24 (컨트롤러 파일과 학습 설정 파일에서 직접 셌습니다). 혼잡 예측 모델 정확도는 규칙 기반 0.70 → RandomForest 0.80(macro-F1 0.68 → 0.79)이지만, 운영 경험으로 만든 시뮬레이션 데이터 2,520건 기준이고 실제 축제 데이터로 검증한 값이 아닙니다.',
     kpt: {
       keep: [
         "외부 호출(OpenAI · 문자)을 트랜잭션 밖 · 커밋 뒤로 뺀 것",
@@ -2721,16 +2728,16 @@ export const RICH_DATA: Record<string, RichProject> = {
       // 실제로 돌린 날 겪은 것으로 바꿨다. 예전 목록("부하 테스트 부족" ·
       // "마커 렌더 최적화 미흡")은 안 해 본 일이지 겪은 문제가 아니었다.
       problem: [
-        "1인당 신청 상한이 없어 신청이 하루 424건까지 몰렸습니다",
-        "알림 문자가 장문(LMS)으로 나가 당일 오후 잔액이 바닥났습니다",
-        "만남 제안 기능을 검증하지 못해 성사 조율을 사람이 했습니다",
-        "예측 모델의 학습 데이터는 시뮬레이션이고 실측이 없음",
+        "5월: 1인당 신청 상한이 없어 신청이 하루 424건까지 몰렸습니다",
+        "5월: 알림 문자가 장문(LMS)으로 나가 당일 오후에 잔액이 떨어졌습니다",
+        "5월: 만남 제안 기능을 검증하지 못해 성사 조율을 사람이 했습니다",
+        "예측 모델의 학습 데이터가 시뮬레이션이고 실측이 없습니다",
         "CI 는 축제 뒤(2026-11-13)에야 붙였고, 서버 모니터링은 로그뿐입니다"
       ],
       try: [
-        "1인당 신청 상한 · 문자 발송 예산 상한",
-        "알림 문구 90바이트 이하 · 잔액 임계 경보",
-        "만남 제안 흐름을 소수에게 먼저 검증한 뒤 현장에",
+        "축제 뒤 개인정보 삭제 자동화",
+        "전화번호 인증",
+        "서버 모니터링 붙이기",
         "실제 운영 로그로 혼잡 예측 재학습"
       ]
     },
@@ -2810,7 +2817,8 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 근거는 전부 소스다 — @RequestMapping 과 @*Mapping 을 센 값.
     resultShot: {
       src: "/projects/muscleup/api-map.svg",
-      label: "백엔드 API 도메인 지도 · 2.0 공개 시점 · 컨트롤러 28개 · 엔드포인트 136개",
+      label:
+        "백엔드 API 도메인 지도 · 2.0 공개 시점 · 컨트롤러 28개 · 엔드포인트 136개",
       ratio: "21/9",
       caption:
         "컨트롤러 28개를 8개 도메인으로 묶었습니다. 크루는 여섯 기능이 컨트롤러 하나에 다 들어 있고, 자랑방은 글과 반응을 둘로 갈랐습니다. 같은 저장소 안에 상반된 두 선택입니다."
@@ -3911,16 +3919,19 @@ export const RICH_DATA: Record<string, RichProject> = {
     tldr: [
       {
         k: "무엇을",
-        v: "동아리 탐색·모집을 한 곳에서 하는 아주대 플랫폼 (aClub)"
+        v: "동아리 탐색과 모집을 한 곳에서 하는 아주대 플랫폼입니다."
       },
-      {k: "왜", v: "동아리 정보가 여러 채널에 흩어져 탐색·지원이 번거로움"},
+      {
+        k: "왜",
+        v: "동아리 정보가 여러 채널에 흩어져 있어 찾고 지원하기 번거로웠습니다."
+      },
       {
         k: "결과",
-        v: "2026년 3월 모집 시즌에 출시. 75일 동안 활성 사용자 3,500명(GA4)"
+        v: "2026년 3월 모집 시즌에 출시했고, 75일 동안 활성 사용자 3,500명이 썼습니다(GA4)."
       },
       {
         k: "내 역할",
-        v: "2025 프론트 3인 중 1인(로그인·API 연동) → 2026 프로젝트장(출시·홍보·운영, 배포 수리와 출시 전후 수정)"
+        v: "2025년에는 프론트 3인 중 한 명으로 로그인과 API 연동을 맡았고, 2026년에는 프로젝트장으로 출시, 홍보, 운영과 배포 수리, 출시 전후 수정을 맡았습니다."
       }
     ],
     // live(aclub.co.kr)는 뺐다 — 모집이 끝나 도메인을 닫았다(2026-09-08, 404).
@@ -3951,8 +3962,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {label: "배포", value: "GitHub Pages (커스텀 도메인 · CNAME)"},
       {
         label: "코드",
-        value:
-          "2026 저장소 main 커밋 79개 중 23개가 제 것입니다"
+        value: "2026 저장소 main 커밋 79개 중 23개가 제 것입니다"
       }
     ],
     heroScreen: {
@@ -3992,7 +4002,10 @@ export const RICH_DATA: Record<string, RichProject> = {
     hypothesis:
       "탐색·필터·상세·지원을 한 흐름으로 묶으면 학생은 한 곳에서 동아리를 찾습니다. 이용은 모집 기간 며칠에 몰릴 것이므로, 그 며칠 동안 화면이 깨지지 않는 것이 먼저라고 봤습니다.",
     process: [
-      {t: "2025.01~02", d: "로그인·회원정보·API 연동 (팀원)"},
+      {
+        t: "2025.01~02",
+        d: "로그인·회원정보·API 연동 (프론트 3인 중 한 명으로)"
+      },
       {t: "2025.09~11", d: "팀원들이 TypeScript 로 재작성"},
       {t: "2026.01", d: "프로젝트장 합류 · 404·정렬 수정"},
       {t: "2026.02.01", d: "배포 워크플로 수리"},
@@ -4258,7 +4271,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         n: "23 / 79",
         l: "2026 저장소 내 커밋",
-        sub: "2026.01.18~03.05 · 코드 20 · 머지 3",
+        sub: "2026.01.18~03.05 · 코드 20 · 머지 3"
       },
       {
         n: "48 / 310",
@@ -4855,7 +4868,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         problem:
           "2026년 4월에 백엔드를 넘겨받아 대여 관리 API 를 붙이다가 Security 설정을 읽었습니다. ADMIN 규칙이 /api/admin 한 경로에만 걸려 있고 나머지는 전부 허용이라, /api/admin/ 아래에 새로 만드는 관리자 컨트롤러에는 권한 검사가 걸리지 않는 상태였습니다.",
         solution:
-          "규칙을 /api/admin/** 로 넓혀 관리자 경로 전체에 ADMIN 권한을 요구하게 했습니다. 같은 PR 에서 관리 화면의 수량 조정이 쓰는 PATCH 를 CORS 허용 메서드에 넣고, JWT 필터가 OPTIONS 와 로그인·로그아웃 경로를 건너뛰게 했습니다. 며칠 뒤에는 전역 예외 처리에 로그와 없는 경로 404 응답을 보탰습니다. 혼자 맡은 저장소의 한계입니다.",
+          "규칙을 /api/admin/** 로 넓혀 관리자 경로 전체에 ADMIN 권한을 요구하게 했습니다. 같은 PR 에서 관리 화면의 수량 조정이 쓰는 PATCH 를 CORS 허용 메서드에 넣고, JWT 필터가 OPTIONS 와 로그인·로그아웃 경로를 건너뛰게 했습니다. 며칠 뒤에는 전역 예외 처리에 로그와 없는 경로 404 응답을 보탰습니다.",
         code: {
           filename: "SecurityConfig.java",
           lines: [
@@ -5246,7 +5259,11 @@ export const RICH_DATA: Record<string, RichProject> = {
         name: "Expo (React Native)",
         desc: "퀴즈·변환 화면 · expo-video"
       },
-      {tag: "API", name: "Spring Boot", desc: "학습·정답판정·변환 API (담당)"},
+      {
+        tag: "API",
+        name: "Spring Boot",
+        desc: "변환 · 영상 조회 API (담당) · 퀴즈와 채점은 팀원"
+      },
       {
         tag: "Data",
         name: "Firebase/Firestore",
@@ -5260,16 +5277,16 @@ export const RICH_DATA: Record<string, RichProject> = {
     ],
     decisions: [
       {
-        area: "백엔드",
-        pick: "Spring Boot",
-        why: "API·검증 구조에 적합",
-        alt: "Flask 기반 API 구성"
+        area: "분석기",
+        pick: "셋 다 돌리고 사전 적중 수로 고름",
+        why: "어느 분석기가 맞는지 비교할 정답 데이터가 없었음",
+        alt: "하나만 쓰기"
       },
       {
-        area: "데이터",
-        pick: "Firestore + Storage",
-        why: "단어·에셋을 빠르게 저장·확장",
-        alt: "자체 DB 구축(공수 ↑)"
+        area: "영상 조회",
+        pick: "Storage 다음 Firestore, 못 찾은 단어도 캐시",
+        why: "사전 120단어 중 영상이 17개라 조회 대부분이 못 찾고 끝남",
+        alt: "매번 조회"
       },
       {
         area: "정답판정",
@@ -5278,10 +5295,10 @@ export const RICH_DATA: Record<string, RichProject> = {
         alt: "완전 일치(오답 ↑)"
       },
       {
-        area: "협업",
-        pick: "API 계약 우선",
-        why: "FE·아바타와 병렬 작업",
-        alt: "후순위(병목)"
+        area: "평가",
+        pick: "분할표를 파일로 고정",
+        why: "세 모델을 같은 사람으로 평가해야 결과를 나란히 놓을 수 있음",
+        alt: "모델마다 따로 나누기"
       }
     ],
     coreCode: [
@@ -5562,7 +5579,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     // 예전 본문의 「Cinemachine 우선순위 블렌딩」은 CameraChange.cs(hyeona 작성, SetActive 전환)와
     // 맞지 않아 뺐고, 「레이캐스트 상호작용」은 CameraRays.cs(3인 공동 수정, 화면 중앙 레이가
     // FocusObject 에 2초 머물면 실행)로 적는다. 숫자는 gh 로 센 값만.
-    tagline: "FIRST-PERSON HORROR · UNITY (TEAM OF 3)",
+    tagline: "1인칭 공포 프로토타입 · Unity · 3인 팀 · 2024.02 ~ 2024.09",
     heroImage: {
       src: "/projects/darklab/title.webp",
       label: "타이틀 · Threshold",
@@ -5592,19 +5609,19 @@ export const RICH_DATA: Record<string, RichProject> = {
     tldr: [
       {
         k: "무엇을",
-        v: "어두운 집을 1인칭으로 탐색하며 물건을 응시해 조사하는 3D 공포 프로토타입 (Threshold)"
+        v: "어두운 집을 1인칭으로 탐색하며 물건을 응시해 조사하는 3D 공포 프로토타입입니다. 게임 안 제목은 Threshold 입니다."
       },
       {
         k: "왜",
-        v: "점프스케어보다 공간 탐색·응시·시간 경과에서 긴장이 나온다고 봤음"
+        v: "점프스케어보다 공간 탐색, 응시, 시간 경과에서 긴장이 나온다고 봤습니다."
       },
       {
         k: "결과",
-        v: "응시 판정 · 할머니 NPC 공포 이벤트 · 램프·침대 이벤트 · 3개국어 로컬라이즈가 든 PC 프로토타입"
+        v: "응시 판정, 할머니 NPC 공포 이벤트, 램프와 침대 이벤트가 든 PC 프로토타입입니다."
       },
       {
         k: "내 역할",
-        v: "3인 팀 · 커밋 126/317 · 1인칭 조작 초기, 응시 판정, 할머니 NPC·램프·침대 공포 이벤트, UI"
+        v: "3인 팀에서 1인칭 조작 초기, 응시 판정, 할머니 NPC · 램프 · 침대 공포 이벤트, UI 를 맡았습니다."
       }
     ],
     demo: {repo: "https://github.com/toadsam/DarkLab"},
@@ -5613,7 +5630,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         label: "기간",
         value: "2024.02 ~ 2024.09 (첫 커밋 02-24 · 마지막 코드 커밋 09-03)"
       },
-      {label: "팀", value: "3인 (toadsam 126 · hyeona 108 · PAVDUP 83 커밋)"},
+      {label: "팀", value: "3인 (제 커밋 126 · 팀원 108 · 83)"},
       {
         label: "역할",
         value:
@@ -5803,7 +5820,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           "GrandMaMove 는 네 단계입니다. 할머니가 이동하면 플레이어 카메라가 강제로 그쪽을 보고, 이어서 쫓아오다가(chaseSpeed) 머티리얼 알파를 내려 사라집니다. 이동하는 동안 플레이어 이동을 막고(08-28 「플레이어가 움직이는 동안 움직임 막는 거 수정」), 사라질 때는 자식 렌더러 전부를 Transparent 큐로 바꿔 서서히 지웁니다. 소리는 이동음과 추격음을 나눠 soundDelay 뒤에 틉니다.",
         evidence: {
           status: "구현 확인 · 본인 커밋 6건",
-          note: "GrandMaMove.cs 커밋 6건 전부 toadsam. 08-01 「할머니 이동하는 공포 이벤트 추가」 → 08-11 「할머니 사라지는 것 수정」 → 08-28 이동 막기 수정.",
+          note: "GrandMaMove.cs 커밋 6건이 전부 제 것입니다. 08-01 「할머니 이동하는 공포 이벤트 추가」 → 08-11 「할머니 사라지는 것 수정」 → 08-28 이동 막기 수정.",
           url: "https://github.com/toadsam/DarkLab/blob/main/Threshold/Assets/Scripts/Characters/GrandMa/GrandMaMove.cs"
         }
       },
@@ -5863,7 +5880,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         n: "3개국어",
         l: "로컬라이즈",
         sub: "en · ja · ko-KR (팀원 담당)",
-        source: "Unity Localization · 로컬라이즈는 팀원(PAVDUP) 작업"
+        source: "Unity Localization · 로컬라이즈는 팀원 작업"
       }
     ],
     metricsNote: "로컬라이즈와 공포 효과 계층은 팀원 작업입니다.",
@@ -5989,7 +6006,7 @@ export const RICH_DATA: Record<string, RichProject> = {
   },
 
   "ajou-adventure": {
-    tagline: "2D CASUAL RUNNER · PHASER 3 (SOLO)",
+    tagline: "2D 러닝 게임 · Phaser 3 · 혼자 · 2026.05",
     heroImage: {
       src: "/projects/ajou-adventure.webp",
       label: "인게임 플레이",
@@ -6071,14 +6088,14 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         area: "엔진",
         pick: "Phaser 3",
-        why: "2D 웹게임 표준·빠른 개발",
-        alt: "Canvas 직접(공수 ↑)"
+        why: "장면, 물리, 입력이 갖춰져 있음",
+        alt: "Canvas 로 직접 구현(충돌과 장면 전환을 직접 써야 함)"
       },
       {
         area: "구조",
-        pick: "Scene/Object/System 분리",
-        why: "1인 유지보수·확장 용이",
-        alt: "단일 파일(스파게티)"
+        pick: "장면, 오브젝트, 시스템으로 분리",
+        why: "혼자서도 한 부분만 고칠 수 있음",
+        alt: "한 파일에 전부(점프 하나를 고치려 해도 전체를 읽어야 함)"
       },
       {
         area: "충돌",
@@ -6089,8 +6106,8 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         area: "저장",
         pick: "localStorage",
-        why: "서버 없이 기록 유지",
-        alt: "백엔드(과함)"
+        why: "서버 없이 최고 점수를 남김",
+        alt: "서버에 저장(최고 점수 하나에 서버가 필요해짐)"
       }
     ],
     coreCode: [
@@ -6239,7 +6256,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     tldr: [
       {
         k: "무엇을",
-        v: "잃어버린 아이템을 찾아 스테이지를 클리어하는 3D 플랫포머"
+        v: "잃어버린 아이템을 찾아 스테이지를 클리어하는 3D 플랫포머입니다."
       },
       {
         k: "왜",
@@ -6251,7 +6268,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       },
       {
         k: "내 역할",
-        v: "부팀장 · 스테이지 2 전체 · 장애물/기믹 · 3×3 패턴 퍼즐 · 기획"
+        v: "부팀장으로 스테이지 2 전체, 장애물과 기믹, 3×3 패턴 퍼즐, 기획을 맡았습니다."
       }
     ],
     // 저장소(KimEoJin24/TSEROF)는 팀장이 비공개로 돌려 404 다 — 링크를 걸지 않는다(2026-09-08).
@@ -6450,7 +6467,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         g: "정리",
         items: [
-          "IMovable·IRotatable·IDisturbing·IPlayerRespwanable·IInteractable 도입 (박지원과, 12월)",
+          "IMovable·IRotatable·IDisturbing·IPlayerRespwanable·IInteractable 도입 (팀원과, 12월)",
           "엔딩 씬 일부"
         ]
       }
@@ -6686,7 +6703,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     learningLead:
       "카메라·리스폰·클리어 처리를 Stage2Manager로 모으고, 기믹에 공통 인터페이스를 적용했습니다.",
     learning:
-      "12월 코드 정리에서 팀원과 함께 공통 인터페이스를 적용했습니다. 퍼즐 패턴은 아직 코드에 정의돼 있어, 다음에는 기획자가 직접 수정할 수 있는 데이터로 분리하고자 합니다."
+      "12월 코드 정리에서 팀원과 함께 공통 인터페이스를 적용했습니다. 퍼즐 패턴은 아직 코드에 정의돼 있어, 다음에는 기획자가 직접 고칠 수 있는 데이터로 떼어 내려고 합니다."
   },
 
   // ════════════════════════════ The Other Side / 이면 (game · VR · 팀) ═══════
@@ -6731,7 +6748,7 @@ export const RICH_DATA: Record<string, RichProject> = {
           label: "카메라 켬",
           ratio: "1072/602"
         },
-        note: "특수 카메라와 PostFX 는 팀원(kbwon) 담당입니다. 저는 그 카메라·손전등 상태를 읽어 몬스터를 켜고 끄는 쪽을 맡았습니다."
+        note: "특수 카메라와 PostFX 는 팀원 담당입니다. 저는 그 카메라·손전등 상태를 읽어 몬스터를 켜고 끄는 쪽을 맡았습니다."
       }
     },
     // 카메라 화면 셋을 한 장으로 줄였다(2026-09-04). 특수 카메라는 팀원 코드라
@@ -6751,16 +6768,16 @@ export const RICH_DATA: Record<string, RichProject> = {
     tldr: [
       {
         k: "무엇을",
-        v: "특수 카메라로만 보이는 단서를 찾고, 손전등을 켜면 들키는 VR 공포 퍼즐·추격 게임"
+        v: "특수 카메라로만 보이는 단서를 찾고, 손전등을 켜면 들키는 VR 공포 퍼즐 게임입니다."
       },
-      {k: "왜", v: "VR 에서 ‘보이는 것’ 자체를 게임 규칙으로 설계하고 싶었음"},
+      {k: "왜", v: "VR 에서 보이는 것 자체를 게임 규칙으로 만들려고 했습니다."},
       {
         k: "결과",
         v: "감지기 둘(시야각 · 손전등 빛 원뿔)이 봤는지 놓쳤는지만 판정하고 GameManager 가 몬스터 2종을 켜고 끕니다. 5초 못 보면 추격이 풀립니다"
       },
       {
         k: "내 역할",
-        v: "AI 몬스터 2종 · 감지기 2 · GameManager 중앙 제어 (Assets/JJH, 커밋 25/161) · 기획 참여"
+        v: "몬스터 AI 2종, 감지기 둘, GameManager 중앙 제어를 맡았고 기획에 참여했습니다."
       }
     ],
     // 플레이 영상은 PDF 의 링크(sK9OoBNCVvc)가 2026-09-04 기준 404(비공개·삭제)라 뺐다. 공개되면 video: 를 되살린다.
@@ -6852,7 +6869,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         area: "구조",
         pick: "감지 / 행동 분리",
         why: "퍼즐 조건 추가 시 몬스터 코드 무변경",
-        alt: "감지기가 AI 를 직접 호출 (결합 ↑)"
+        alt: "감지기가 AI 를 직접 호출 (퍼즐 조건이 늘 때마다 AI 코드를 고침)"
       },
       {
         area: "손전등 감지",
@@ -7028,7 +7045,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     detail: {
       compareTags: ["카메라 끔", "카메라 켬"],
       intro: {
-        show: "특수 카메라로만 보이는 단서를 찾고, 손전등을 켜면 들키는 VR 공포 퍼즐·추격 게임입니다. 4인 팀에서 저는 몬스터 AI 2종과 감지기 2개, 그리고 그 둘을 잇는 GameManager 를 맡았습니다. 손전등 빛 원뿔을 11점으로 찍어 적 시야각에 넣는 바람에, 손전등을 켜는 것 자체가 위험이 됩니다.",
+        show: "특수 카메라로만 보이는 단서를 찾고, 손전등을 켜면 들키는 VR 공포 퍼즐 게임입니다.입니다. 4인 팀에서 저는 몬스터 AI 2종과 감지기 2개, 그리고 그 둘을 잇는 GameManager 를 맡았습니다. 손전등 빛 원뿔을 11점으로 찍어 적 시야각에 넣는 바람에, 손전등을 켜는 것 자체가 위험이 됩니다.",
         bold: "손전등 빛 원뿔을 11점으로 찍어 적 시야각에 넣는 바람에, 손전등을 켜는 것 자체가 위험이 됩니다.",
         more: [
           "특수 카메라·PostFX·방 진행은 팀원 작업입니다. 제 스크립트는 Assets/JJH/JJH/Scripts 열 개이고, 저장소 커밋 161개 중 25개가 제 커밋입니다(2025-05-20 ~ 06-16).",
@@ -7141,21 +7158,18 @@ export const RICH_DATA: Record<string, RichProject> = {
         "감지 / 행동 / 제어를 세 파일로 나눈 구조",
         "손전등을 켜면 들킬 위험이 생기게 한 규칙"
       ],
-      problem: [
-        "시야각·거리·5초 같은 값이 스크립트에 하드코딩",
-        "몬스터가 2종이라 규칙 조합의 여지가 적음"
-      ],
+      problem: ["시야각, 거리, 5초 같은 값이 스크립트에 적혀 있음"],
       try: ["감지 규칙을 ScriptableObject 로", "몬스터·퍼즐 조건 추가"]
     },
     learningLead:
       "손전등 빛 원뿔을 10등분·양끝 포함 11점 샘플링해 적 시야각 검사에 넣자, 손전등을 켜는 것 자체가 들킬 위험이 됐습니다.",
     learning:
-      "감지기는 판정만, 몬스터는 행동만, 켜고 끄는 건 GameManager 로 모으려 했습니다. 다음엔 팀 규약으로 먼저 정해야 할 일입니다."
+      "감지기는 판정만, 몬스터는 행동만 하고 켜고 끄는 일은 GameManager 로 모았습니다. 다음에는 이 나눔을 팀 규약으로 먼저 정하려고 합니다."
   },
 
   // ════════════════════════════ INTO MONSTER POINT (game · AR · 팀) ═════════
   // 2026-09-03 신설, 2026-11-13 저장소(toadsam/IMP develop) 대조로 고쳤다.
-  // 예전 본문의 AdjustmentSystem.cs(바닥·벽)는 RBTylenol, Spawner.cs(스폰·보스)는 kbwon 작성이라
+  // 예전 본문의 AdjustmentSystem.cs(바닥·벽)는 RBTylenol, Spawner.cs(스폰·보스)는 팀원 작성이라
   // 내 코드가 아니었다. 내 코드는 Assets/Scripts/JJH — WeaponShooterWithJoystick(커밋 11/12) ·
   // SkillCooldown · ProjectileDamage · PlayerHealth · TimedSpawnerOnProjectile. "무기 발사 코드를
   // 저장소에서 못 찾았다" 던 옛 주석은 틀렸다(develop 에 있다). 커밋 109 중 toadsam 51,
@@ -7182,7 +7196,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       label: "스캔 전 → 스캔 후 → 바닥·벽 생성 → 보스 등장",
       ratio: "2/1",
       caption:
-        "스캔이 끝나면 평면 boundary 를 월드 좌표로 바꿔 X·Z min/max 로 바닥을 깔고 4방향 벽을 세웁니다(AdjustmentSystem, 팀원 RBTylenol). 그 안에서 처치 수가 10에 닿으면 보스가 나옵니다(Spawner, 팀원 kbwon). 저는 그 안에서 쓰는 무기 네 종의 발사·전환·잠금을 맡았습니다."
+        "스캔이 끝나면 평면 boundary 를 월드 좌표로 바꿔 X·Z min/max 로 바닥을 깔고 4방향 벽을 세웁니다(AdjustmentSystem, 팀원). 그 안에서 처치 수가 10에 닿으면 보스가 나옵니다(Spawner, 팀원). 저는 그 안에서 쓰는 무기 네 종의 발사·전환·잠금을 맡았습니다."
     },
     gallery: [
       {
@@ -7213,16 +7227,19 @@ export const RICH_DATA: Record<string, RichProject> = {
     tldr: [
       {
         k: "무엇을",
-        v: "현실 공간을 스캔해 전장으로 고정하고, 그 안에서 웨이브로 몬스터를 사냥하는 AR 생존 슈터"
+        v: "현실 공간을 스캔해 전장으로 고정하고, 그 안에서 웨이브로 몬스터를 사냥하는 AR 슈터입니다."
       },
-      {k: "왜", v: "방마다 다른 현실 공간을 그대로 전투 무대로 쓰고 싶었음"},
+      {
+        k: "왜",
+        v: "방마다 다른 현실 공간을 그대로 전투 무대로 쓰려고 했습니다."
+      },
       {
         k: "결과",
-        v: "평면 boundary → 바닥·벽 → 스폰 → 웨이브 → 보스로 이어지는 루프 · 무기 4종"
+        v: "팀이 만든 전장(스캔, 바닥과 벽, 스폰, 보스) 위에 제가 만든 무기 4종과 스킬, 체력을 올렸습니다."
       },
       {
         k: "내 역할",
-        v: "무기 시스템(발사 · 전환 · 잠금 · 쿨타임) · 체력 · 게임 루프 기획 (Assets/Scripts/JJH, 커밋 51/109)"
+        v: "무기 시스템(발사 · 전환 · 잠금 · 쿨타임)과 체력을 맡았고 게임 루프 기획에 참여했습니다."
       }
     ],
     demo: {
@@ -7251,11 +7268,17 @@ export const RICH_DATA: Record<string, RichProject> = {
       "fireRate 0.5f · 스킬 쿨타임 6f 는 Assets/Scripts/JJH 의 상수. 바닥·벽(CreateWall ×4)과 보스 트리거(counterBoss 10)는 팀원 코드의 값입니다.",
     features: [
       {
-        t: "전투 공간 고정",
+        t: "전투 공간 고정 (팀원)",
         d: "Plane Detection 스캔 종료 시 boundary 를 월드 좌표로 변환"
       },
-      {t: "바닥·벽 자동 생성", d: "min/max 로 크기를 정하고 4방향 벽을 세움"},
-      {t: "웨이브 스폰", d: "spawnInterval 마다 스폰, 처치 수 누적 → 보스"},
+      {
+        t: "바닥·벽 자동 생성 (팀원)",
+        d: "min/max 로 크기를 정하고 4방향 벽을 세움"
+      },
+      {
+        t: "웨이브 스폰 (팀원)",
+        d: "spawnInterval 마다 스폰, 처치 수 누적 → 보스"
+      },
       {t: "무기 4종", d: "조이스틱 방향이 있을 때만 발사 · 쿨타임 · 잠금"}
     ],
     problem:
@@ -7281,7 +7304,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {
         tag: "Spawn",
         name: "Spawner (팀원)",
-        desc: "spawnInterval 코루틴 · 처치 카운트 · counterBoss 도달 시 보스 · kbwon 작성"
+        desc: "spawnInterval 코루틴 · 처치 카운트 · counterBoss 도달 시 보스 · 팀원 작성"
       },
       {
         tag: "Weapon",
@@ -7295,23 +7318,25 @@ export const RICH_DATA: Record<string, RichProject> = {
       }
     ],
     decisions: [
+      // 2026-11-15: 전장 크기 · 카메라 포함 · 보스 트리거 세 줄은 팀원 코드의 결정이라 뺐다.
+      // 아래 셋은 본문(challenges)에 적힌 본인 결정이다.
       {
-        area: "전장 크기",
-        pick: "boundary min/max 사각형",
-        why: "어떤 방에서도 바닥·벽이 스캔 결과를 따라감",
-        alt: "고정 크기 전장 (방보다 크거나 작음)"
+        area: "무기 전환",
+        pick: "다음 · 이전 버튼으로 순서대로",
+        why: "화면이 좁아 버튼 넷을 둘 자리가 없음",
+        alt: "무기마다 버튼 하나"
       },
       {
-        area: "카메라 포함",
-        pick: "카메라 위치 ±1m 를 범위에 합침",
-        why: "플레이어가 선 자리가 전장 밖이 되는 일을 막음",
-        alt: "평면만으로 계산"
+        area: "잠금",
+        pick: "발사 코루틴 첫 줄에서 끊음",
+        why: "못 얻은 무기가 나가면 진행이 의미 없어짐",
+        alt: "잠긴 무기도 발사"
       },
       {
-        area: "보스 트리거",
-        pick: "처치 수 누적 (counterBoss)",
-        why: "시간 대신 플레이 성과로 웨이브가 넘어감",
-        alt: "타이머"
+        area: "쿨타임",
+        pick: "칸 여섯 개로 표시",
+        why: "싸우는 중에는 숫자를 읽기 어려움",
+        alt: "숫자로 표시"
       },
       {
         area: "발사 조건",
@@ -7373,10 +7398,7 @@ export const RICH_DATA: Record<string, RichProject> = {
       {g: "기획", items: ["게임 루프 기획 참여"]},
       {
         g: "팀 시스템 (참고)",
-        items: [
-          "바닥·벽 AdjustmentSystem · RBTylenol",
-          "스폰·보스 Spawner · kbwon"
-        ]
+        items: ["바닥·벽 AdjustmentSystem · 팀원", "스폰·보스 Spawner · 팀원"]
       }
     ],
     challenges: [
@@ -7449,7 +7471,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         show: "현실 공간을 스캔해 전장으로 고정하고 그 안에서 웨이브로 몬스터를 사냥하는 4인 팀 AR 슈터입니다. 저는 무기 네 종의 발사·전환·잠금·쿨타임과 체력을 맡았고, 조이스틱이 가리킬 때만 무기별 간격으로 나가게 만들었습니다.",
         bold: "저는 무기 네 종의 발사·전환·잠금·쿨타임과 체력을 맡았고, 조이스틱이 가리킬 때만 무기별 간격으로 나가게 만들었습니다.",
         more: [
-          "바닥·벽 생성(AdjustmentSystem)은 팀원 RBTylenol, 스폰과 보스 트리거(Spawner)는 팀원 kbwon 의 코드입니다.",
+          "바닥·벽 생성(AdjustmentSystem)과 스폰 · 보스 트리거(Spawner)는 팀원 둘의 코드입니다.",
           "저장소 커밋 109개 중 51개가 제 커밋이고 실제 작업은 2025-04-18 ~ 05-03 입니다."
         ]
       },
@@ -7580,7 +7602,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         "조이스틱 방향이 있을 때만 발사하는 조건",
         "무기별 fireRate·spawnDelay 를 데이터(WeaponData)로 분리"
       ],
-      problem: ["바닥·벽·스폰은 팀원 코드라 제가 손댈 수 없었음"],
+      problem: [],
       try: ["무기 해제 조건을 성과와 연결", "무기 데이터를 ScriptableObject 로"]
     },
     learningLead:
@@ -7635,14 +7657,14 @@ export const RICH_DATA: Record<string, RichProject> = {
     tldr: [
       {
         k: "무엇을",
-        v: "아주대 캠퍼스에서 마스코트 ‘치토’가 졸업을 목표로 성장하는 Unity 3D 액션 어드벤처"
+        v: "아주대 캠퍼스에서 마스코트 ‘치토’가 졸업을 목표로 성장하는 Unity 3D 액션 어드벤처입니다."
       },
-      {k: "왜", v: "퍼즐 탐색과 전투에 서로 다른 시야·조작을 주고 싶었음"},
+      {k: "왜", v: "탐색과 전투에 서로 다른 시야와 조작을 주려고 했습니다."},
       {
         k: "결과",
         v: "1인칭↔탑다운을 컨트롤러·카메라 부모·물리 제약 단위로 함께 바꾸고, 레벨업마다 랜덤 3택으로 매 판 다른 빌드가 나옵니다. 2024.09.23 ~ 12.30 커밋 124개 전부 혼자"
       },
-      {k: "내 역할", v: "시스템 설계 / UI / AI / 전투 / 성장 전부 (1인)"}
+      {k: "내 역할", v: "시스템 설계, UI, AI, 전투, 성장을 혼자 맡았습니다."}
     ],
     demo: {
       video: "https://www.youtube.com/watch?v=mtIiIWmrSdg",
@@ -7739,7 +7761,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         area: "시점 전환",
         pick: "컨트롤러 2개를 켜고 끄기",
         why: "모드 전환 시 동시 입력·오작동 방지",
-        alt: "한 컨트롤러에 분기 (얽힘)"
+        alt: "한 컨트롤러에 분기 (두 조작이 한 파일에 섞임)"
       },
       {
         area: "카메라",
@@ -7854,7 +7876,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         },
         evidence: {
           status: "전후 코드로 확인",
-          note: "2024-11-11 커밋의 전후입니다. 이 화면에서 Unity 물리나 카메라를 실제로 돌리지는 않습니다.",
+          note: "2024-11-11 커밋의 전후입니다.",
           url: "https://github.com/toadsam/Ajou_IndiGame/blob/172a051eb4986da29a703d9ac4dfb0fb0f01d8f1/Assets/Script/Manager/PlayerModeManager.cs"
         }
       }
@@ -7906,7 +7928,7 @@ export const RICH_DATA: Record<string, RichProject> = {
     // ── 상세 페이지 손글씨 칸 (2026-11-13) ──
     detail: {
       intro: {
-        show: "아주대 캠퍼스에서 마스코트 치토가 졸업을 향해 성장하는 혼자 만든 Unity 3D 액션 어드벤처입니다. 탐색은 1인칭, 전투는 탑다운으로 시점을 바꾸는데, 카메라만 옮기지 않고 컨트롤러·카메라 부모·물리 제약을 한 번에 바꿉니다.",
+        show: "아주대 캠퍼스에서 마스코트 치토가 졸업을 향해 성장하는 혼자 만든 Unity 3D 액션 어드벤처입니다. 탐색은 1인칭, 전투는 탑다운으로 시점을 바꾸는데, 카메라만 옮기지 않고 컨트롤러·카메라 부모·물리 제약을 한 번에 바꿉니다. 2024년 12월 아주대 디지털미디어학과 미디어데이 시제품 콘텐츠 경진대회에 2인 팀으로 출품해 우수상을 받았습니다. 개발은 혼자 했습니다.",
         bold: "카메라만 옮기지 않고 컨트롤러·카메라 부모·물리 제약을 한 번에 바꿉니다.",
         more: [
           "2024-09-23 첫 커밋부터 12-30 까지 커밋 124개가 전부 제 것입니다.",
@@ -8039,7 +8061,7 @@ export const RICH_DATA: Record<string, RichProject> = {
         "스크립트 40개를 Manager·Player·Monster·Skills·Robot·Map 으로 나눈 구조",
         "시점 전환을 연출이 아닌 시스템으로"
       ],
-      problem: ["값(3초·20초·범위)이 스크립트에 박혀 있음"],
+      problem: ["3초, 20초, 범위 같은 값이 스크립트에 적혀 있음"],
       try: ["건물별 스테이지 테마 · 최종 보스 ‘졸업’", "밸런스 값 데이터화"]
     },
     learningLead:

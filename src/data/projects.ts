@@ -213,8 +213,7 @@ export const projects: ProjectData[] = [
     // 표기는 aClub 하나로 — 히어로·푸터·카드·본문이 ACLUB / aClub / AjouClub
     // 셋으로 갈려 있었다. 실서비스 이름(aclub.co.kr)을 따른다.
     title: "aClub",
-    description:
-      "동아리 탐색과 모집을 연결하는 캠퍼스 플랫폼입니다.",
+    description: "동아리 탐색과 모집을 연결하는 캠퍼스 플랫폼입니다.",
     // 2026-11-13 밤: 커밋 기록에 맞춰 고쳤다. 2026 TypeScript 화면·훅·라우트는 팀원 둘이 2025.09~11 에 쓴 것이다.
     role: "2025 프론트 팀원(로그인 · API 연동) → 2026 프로젝트장(출시 · 운영 · 배포 수리)",
     tech: ["React", "TypeScript", "Vite", "Tailwind CSS"],
@@ -460,13 +459,13 @@ export const projects: ProjectData[] = [
       "세 씬을 한 씬으로 합치고 Stage2Manager 가 구간별 Cinemachine 카메라 전환·리스폰 지점·클리어 판정을 맡게 했습니다.",
       "3×3 패턴 퍼즐은 정답 패턴 5종을 코루틴으로 주기적으로 바꾸고, 플레이어가 놓은 배열을 정답과 순서대로 비교해 판정했습니다.",
       "속성 큐브는 마그마·용암·물·얼음·얼음벽을 enum 하나로 분기해 큐브 종류마다 스크립트를 따로 두지 않았습니다.",
-      "12월 초 박지원과 함께 IMovable·IRotatable·IDisturbing·IPlayerRespawnable·IInteractable 인터페이스를 도입해 기믹을 같은 규약으로 묶었습니다."
+      "12월 초 팀원과 함께 IMovable·IRotatable·IDisturbing·IPlayerRespawnable·IInteractable 인터페이스를 도입해 기믹을 같은 규약으로 묶었습니다."
     ],
     contribution: [
       "스테이지 2 전체 · 씬 통합 · Stage2Manager · 스테이지 2 카메라",
       "3×3 패턴 퍼즐 · PuzzleManager·PatternSign·PuzzleButton·PuzzleObjects 등 7개 스크립트",
       "속성 큐브 CubeType 과 장애물 기믹 · 대포·낙하물·회전·측면/투명 가시·레버·나뭇잎·토네이도·히든맵",
-      "기믹 인터페이스 도입과 코드 정리(박지원과 공동) · 엔딩 씬 일부"
+      "기믹 인터페이스 도입과 코드 정리(팀원과 공동) · 엔딩 씬 일부"
     ],
     result:
       "5인 팀에서 부팀장으로 참여해 Steam 스토어 출시까지 완주했습니다. 학내 과제로 끝나지 않고 누구나 상점에서 내려받을 수 있는 상태까지 간 유일한 프로젝트입니다.",
@@ -554,7 +553,7 @@ export const projects: ProjectData[] = [
       "WeaponShooterWithJoystick · 조이스틱 방향 발사 · fireRate · 무기 4종 전환 · 잠금",
       "SkillCooldown · 6초 쿨타임 칸 UI",
       "PlayerHealth · ProjectileDamage",
-      "게임 루프 기획 참여 (바닥·벽은 RBTylenol, 스폰·보스는 kbwon 작성)"
+      "게임 루프 기획 참여 (바닥·벽과 스폰·보스는 팀원 작성)"
     ],
     result:
       "스캔한 방 크기대로 바닥과 벽이 서고, 그 안에서 일반 몬스터 10마리를 처치할 때마다 보스가 나오는 웨이브 루프까지 동작합니다. 무기는 활·칼·마법·총 네 종류입니다.",

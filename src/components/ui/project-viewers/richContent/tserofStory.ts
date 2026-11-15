@@ -84,7 +84,7 @@ export function tserofStory(base: RichProject): RichProject {
           "12월 코드 정리에서 팀원과 함께 IMovable 등 공통 인터페이스를 적용했습니다. MovingPlatform 에 IMovable 을 붙이고 private Move 를 public 으로 바꾼 전후가 확인됩니다. 리스폰 인터페이스는 그 시점 이름이 IPlayerRespwanable 이고 빈 인터페이스였습니다. 모든 인터페이스의 기능이 한 커밋에서 완성된 것은 아닙니다.",
         evidence: {
           status: "전후 코드로 확인",
-          note: "MovingPlatform 의 전후에서 확인했습니다. 인터페이스 도입은 팀원 박지원과 같이 했습니다."
+          note: "MovingPlatform 의 전후에서 확인했습니다. 인터페이스 도입은 팀원과 같이 했습니다."
         }
       },
       {

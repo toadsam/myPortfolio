@@ -1258,7 +1258,7 @@ export const mainProjects: MainProjectCard[] = [
     // 상세(원페이지)는 2026-09-03 에 PDF 43–48쪽 + 저장소 코드로 새로 만들었다.
     richId: "otherside-vr",
     title: "The Other Side (VR)",
-    subtitle: "XR Interaction Toolkit 기반 VR 공포 퍼즐 탈출 게임",
+    subtitle: "손전등을 켜면 들키는 VR 공포 퍼즐 게임입니다.",
     category: "ar",
     status: "완료",
     tags: ["VR", "XR", "Unity"],
@@ -1276,7 +1276,7 @@ export const mainProjects: MainProjectCard[] = [
     // 상세(원페이지)는 2026-09-03 에 PDF 49–55쪽 + 저장소 코드로 새로 만들었다.
     richId: "monsterpoint-ar",
     title: "INTO MONSTER POINT (AR)",
-    subtitle: "AR Plane 스캔 기반 전투 공간 생성 슈터 데모 프로젝트",
+    subtitle: "현실 공간을 전장으로 쓰는 AR 슈터입니다.",
     category: "ar",
     status: "완료",
     tags: ["AR", "Unity", "Shooter"],
@@ -1307,8 +1307,7 @@ export const mainProjects: MainProjectCard[] = [
     // 저장소 코드, 그림은 마을 전시실이 쓰던 /projects/ajou-adventure/ 의 것).
     richId: "ajou-indigame",
     title: "아주대탐험",
-    subtitle:
-      "1인칭↔탑다운 시점 전환과 랜덤 스킬 성장을 얹은 Unity 3D 액션 어드벤처",
+    subtitle: "1인칭과 탑다운 시점을 오가는 Unity 3D 액션 어드벤처입니다.",
     category: "game",
     status: "완료",
     tags: ["Unity", "C#", "NavMesh", "Roguelike"],

@@ -3179,12 +3179,19 @@ export function ProjectDetailV4({
 
   // ── 9. 회고 (접힘) ──
   {
-    const L = r.kptLabels ?? {keep: "Keep", problem: "Problem", try: "Try"};
-    const cols: [keyof typeof r.kpt, string][] = [
-      ["keep", L.keep],
-      ["problem", L.problem],
-      ["try", L.try]
-    ];
+    const L = r.kptLabels ?? {
+      keep: "잘한 것",
+      problem: "아쉬운 것",
+      try: "다음에 할 것"
+    };
+    // 내용이 없는 칸은 제목째 그리지 않는다(DarkLab · 아주분투에 빈 제목이 떠 있었다).
+    const cols = (
+      [
+        ["keep", L.keep],
+        ["problem", L.problem],
+        ["try", L.try]
+      ] as [keyof typeof r.kpt, string][]
+    ).filter(([k]) => r.kpt[k].length > 0);
     const content = (
       <>
         <div className="p4-kpt">

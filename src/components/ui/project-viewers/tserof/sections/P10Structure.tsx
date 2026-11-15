@@ -99,7 +99,7 @@ const SCENES: {scene: string; nodes: Node[]}[] = [
       {name: "세이브 · 이어하기", desc: "직렬화 + XOR", owner: "team"},
       {
         name: "기믹 인터페이스 · 코드 정리",
-        desc: "IMovable 외 4종 · 박지원과 공동",
+        desc: "IMovable 외 4종 · 팀원과 공동",
         owner: "me"
       },
       {
@@ -226,8 +226,8 @@ export function P10Structure() {
 
         <Caveat>
           팀 인원(5인)과 씬 구성, 담당은 저장소 README 기여자 표와 커밋 이력
-          기준입니다 — 플레이어 박지원 · 저장 김어진 · 스테이지 선택 김형중 ·
-          스테이지 1 기믹 이홍준. 위 분류는 제 담당을 중심으로 정리한 것이라
+          기준입니다. 플레이어, 저장, 스테이지 선택, 스테이지 1 기믹은 팀원
+          넷이 맡았습니다. 위 분류는 제 담당을 중심으로 정리한 것이라
           팀원 쪽은 묶어서 표시했습니다.
         </Caveat>
       </div>

@@ -92,7 +92,7 @@ export function ajouchong2026(base: RichProject): RichProject {
     tldr: [
       {
         k: "무엇을",
-        v: "아주대 총학생회 공식 웹. 2025년엔 프론트 3인 중 한 명, 2026년 4월부터 혼자 맡아 대여사업 · 링크허브 · 관리자 화면을 프론트부터 API까지 만들고 9월에 프론트 전체를 다시 디자인"
+        v: "아주대 총학생회 공식 웹사이트입니다. 2025년에는 프론트 3인 중 한 명이었고, 2026년 4월부터 혼자 맡아 대여사업, 링크허브, 관리자 화면을 프론트부터 API까지 만들었습니다. 9월에는 프론트 전체를 다시 디자인했습니다."
       },
       base.tldr[1],
       {
@@ -101,7 +101,7 @@ export function ajouchong2026(base: RichProject): RichProject {
       },
       {
         k: "내 역할",
-        v: "2025 프론트 화면 일부 → 2026 단독: React 화면 + Spring Boot API(대여·링크·권한) + 배포 + 9월 전면 리디자인"
+        v: "2025년에는 프론트 화면 일부를 맡았고, 2026년부터는 React 화면, Spring Boot API(대여 · 링크 · 권한), 배포, 9월 전면 리디자인을 혼자 맡았습니다."
       }
     ],
     meta: base.meta.map(m =>
