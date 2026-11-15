@@ -2516,7 +2516,10 @@ export function AIPortfolioVillage() {
             }}
             // 키보드가 없는 기기(pointer:coarse)에선 숨긴다 — "WASD" 버튼이 휴대폰에
             // 떠 있으면 눌러도 걸을 수 없는 모드로 들어가 마을이 멈춘 것처럼 보인다.
-            className="fixed bottom-28 left-4 z-30 flex items-center gap-2 rounded-xl border border-[#00ff88]/35 bg-[#050d1a]/85 px-4 py-2.5 font-mono text-xs font-black text-white shadow-2xl backdrop-blur-md transition hover:border-[#00ff88] hover:bg-[#00ff88]/12 active:scale-95 pointer-coarse:hidden md:bottom-6"
+            // 좁은 창에서는 정보 패널이 바닥 시트라 이 버튼이 그 위에 떴다. 시트가 열리면 숨긴다.
+            className={`fixed bottom-28 left-4 z-30 items-center gap-2 rounded-full border border-[#3a3f4d]/60 bg-[#12141d]/90 px-4 py-2.5 text-[12.5px] font-extrabold text-white shadow-2xl backdrop-blur-md transition hover:bg-[#1b1e2b] active:scale-95 pointer-coarse:hidden md:bottom-6 md:flex ${
+              isPanelOpen ? "hidden" : "flex"
+            }`}
           >
             {explorationMode === "walk" ? (
               <>

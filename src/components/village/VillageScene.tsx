@@ -3762,8 +3762,9 @@ function VillageSceneImpl({
             </>
           ) : null}
           <div
-            className={`pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-xl border border-[#7a5a38]/55 bg-[#0b1626]/85 px-4 py-2.5 backdrop-blur-md ${
-              touchUi ? "hidden" : "flex"
+            // 키 안내는 폭이 넉넉한 화면에서만. 좁은 창에서는 줄이 접혀 동작 버튼 줄과 겹쳤다.
+            className={`pointer-events-none absolute bottom-5 left-1/2 -translate-x-1/2 flex-wrap items-center justify-center gap-x-3 gap-y-1.5 rounded-[18px] border border-[#3a3f4d]/55 bg-[#12141d]/88 px-4 py-2.5 backdrop-blur-md ${
+              touchUi ? "hidden" : "hidden md:flex"
             }`}
           >
             {[
@@ -3775,10 +3776,10 @@ function VillageSceneImpl({
               ["1~6", "동작"]
             ].map(([key, label]) => (
               <span className="flex flex-col items-center gap-0.5" key={key}>
-                <kbd className="rounded border border-[#e2c078]/50 bg-[#13223a] px-2 py-0.5 font-mono text-xs font-black text-[#e2c078]">
+                <kbd className="rounded-md bg-white/[0.1] px-2 py-0.5 font-mono text-xs font-black text-white">
                   {key}
                 </kbd>
-                <span className="text-[10px] text-[#a9bdd6]/70">{label}</span>
+                <span className="text-[10.5px] font-bold text-[#b4bac6]">{label}</span>
               </span>
             ))}
           </div>
@@ -3787,7 +3788,7 @@ function VillageSceneImpl({
         // 휴대폰은 씬이 화면 맨 위부터라 명패·사운드 단추와 같은 줄이 된다 —
         // 그 아래로 내린다. 데스크톱은 씬이 헤더 밑에서 시작하니 top-4 그대로.
         <div
-          className={`pointer-events-none absolute rounded-full border border-[#7a5a38]/55 bg-[#0b1626]/85 px-3 py-1.5 text-[11px] font-black text-[#e2c078]/85 backdrop-blur-md ${
+          className={`pointer-events-none absolute rounded-full border border-[#3a3f4d]/55 bg-[#12141d]/88 px-3 py-1.5 text-[11px] font-black text-[#c3c0f7] backdrop-blur-md ${
             isMobile ? "right-3 top-14" : "right-4 top-4"
           }`}
         >

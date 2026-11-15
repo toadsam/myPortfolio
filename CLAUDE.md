@@ -539,6 +539,7 @@ Ambient mood is separate from category: `atmosphere.ts` maps project id → `Amb
 
 배포본(`final`, 2026-10-19)과 이 브랜치(`tone-unify-with-mobile`)는 갈라져 있었다. `final` 에만 휴대폰 마을 작업 두 커밋(가로 걷기 모드·조이스틱 `VirtualJoystick`·`LandscapeGate`·`WalkEnterPrompt`·`touchWalk`)이 있어서, 그대로 올리면 그 기능이 빠질 뻔했다. 같은 날 `final` 을 이 브랜치에 합쳤다. 충돌은 일곱 파일 13곳(`globals.css`·`AIPortfolioVillage`·`ConciergePanel`·`DialogueBox`·`Header`·`InfoPanel`·`VillageHud`)이었고, 푼 원칙은 하나다: **배치와 크기는 휴대폰 작업 쪽, 색과 모션은 새 톤 쪽.** 휴대폰 부품 셋에 남아 있던 금색·주황 값도 인디고로 옮겼다. 휴대폰 가로(조이스틱)·세로(돌려 달라는 안내)·데스크톱을 prod 캡처로 확인했다.
 
+- 병합 뒤 휴대폰 화면 확인(같은 날). 휴대폰은 걷기 모드로 시작해 환영 카드를 건너뛰므로, 환영 카드 · 정보 패널 시트 · 대화창의 좁은 배치는 **터치가 아닌 좁은 창(390px)** 에서 「클릭 모드로」 → 「AI NPC」 → 루미 순으로 눌러 띄워 봤다. 캔버스의 NPC 를 좌표로 눌러 여는 것은 안 됐다. 셋 다 화면 안에 들어오고 새 톤이다. 휴대폰 가로의 메뉴 시트와 정보 패널도 정상. 같이 고친 것: 「직접 이동」 버튼이 좁은 창에서 정보 패널 시트 위에 떠서 시트가 열리면 숨긴다. 걷기 모드 키 안내 판 · 시간대 알약 · 그 버튼의 금테와 초록 테두리를 어두운 판으로 옮기고, 키 안내는 `md` 이상에서만 보인다. 남은 것: 데스크톱 걷기 모드에서 건물 띠가 동작 버튼 줄과 키 안내를 가린다(병합 전부터 그랬다).
 - `.v-hscroll` 의 양끝 페이드는 `globals.css` 에서 `max-width: 767px` 안에만 건다. 이 파일은 레이어 밖이라 Tailwind 의 `md:[mask-image:none]` 이 이기지 못해 데스크톱 건물 띠의 안내 글자가 흐려졌다.
 - 전 페이지 점검은 prod 빌드(3100)를 Playwright 로 훑는다. 번들 Chromium 은 버전이 안 맞아 `channel: "chrome"` 으로 띄웠다. 로컬에서 뜨는 `/_vercel/insights/script.js` 404 와 백엔드(8000) 연결 실패는 정상이다.
 - `/resume` 과 `/resume/<id>` 의 메타는 `openGraph` 를 다시 적기 때문에 루트 layout 의 `images` 가 이어지지 않는다. 그래서 두 곳에 `/og-image.jpg` 를 따로 넣었다. `/resume` 설명의 개수(운영 중 n개 · 프로젝트 n건)는 데이터에서 센다.
