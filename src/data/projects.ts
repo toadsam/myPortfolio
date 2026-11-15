@@ -287,7 +287,7 @@ export const projects: ProjectData[] = [
       "점수 시스템과 localStorage 저장 구현"
     ],
     result:
-      "PC 와 모바일 브라우저에서 설치 없이 바로 도는 상태까지 갔습니다. 자동 생성되는 발판을 화면 밖에서 즉시 걷어내 긴 플레이에도 오브젝트가 쌓이지 않게 했고, 최고 점수는 localStorage 에 남아 다음 방문으로 이어집니다.",
+      "이틀 만에 끝까지 플레이되는 브라우저 2D 러닝 게임을 만들었습니다. 화면 밖으로 나간 발판은 바로 지워 긴 플레이에도 오브젝트가 쌓이지 않고, 최고 점수는 localStorage 에 남습니다.",
     nextStep: "리더보드와 공유 기능을 추가할 예정입니다.",
     links: [
       {label: "GitHub", href: "https://github.com/toadsam/Ajou_Mini_Game"}

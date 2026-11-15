@@ -1,7 +1,5 @@
-// 아주분투(저장소 Ajou_Mini_Game) 상세의 이야기 배치 시안 (2026-11-15).
-// data.ts 의 ajou-adventure 위에 덮어쓰는 층이다. 아직 data.ts 에 합치지 않았고 시안 주소
-// `/resume/ajou-adventure-story` 에서만 쓴다. 승인되면 data.ts 끝에서
-// `RICH_DATA["ajou-adventure"] = ajouRunStory(RICH_DATA["ajou-adventure"])` 로 합치고 시안 주소를 지운다.
+// 아주분투(저장소 Ajou_Mini_Game) 상세의 이야기 배치 (2026-11-15 적용).
+// data.ts 의 같은 id 위에 덮어쓰는 층이다. data.ts 끝에서 합친다.
 //
 // 이 항목은 저장소와 대조한 적이 없는 원고였다. 2026-11-15 에 toadsam/Ajou_Mini_Game 을 내려받아 확인한 것:
 //   · 커밋 8개, 전부 본인. 2026-05-13 14:46 ~ 05-14 10:39 의 이틀. src 의 TypeScript 는 3,177줄.

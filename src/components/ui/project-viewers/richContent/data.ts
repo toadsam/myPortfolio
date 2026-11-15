@@ -1,6 +1,11 @@
 import type {RichProject} from "./shared";
 import {stripCodeLinks} from "../../../../lib/codeLinks";
 import {aclubStory} from "./aclubStory";
+import {ajouRunStory} from "./ajouRunStory";
+import {arStory} from "./arStory";
+import {darklabStory} from "./darklabStory";
+import {indigameStory} from "./indigameStory";
+import {vrStory} from "./vrStory";
 import {ajouchong2026} from "./ajouchong2026";
 import {mywaveStory} from "./mywaveStory";
 import {signStory} from "./signStory";
@@ -8062,5 +8067,17 @@ RICH_DATA.mystock = mywaveStory(RICH_DATA.mystock as RichProject);
 // 수어링고(구 수어지교)는 이야기 배치 개정분을 덮어쓴다. signStory.ts 참고.
 RICH_DATA["sign-language"] = signStory(
   RICH_DATA["sign-language"] as RichProject
+);
+// 게임 다섯 쪽도 이야기 배치 개정분을 덮어쓴다(2026-11-15 적용). 각 층 파일 참고.
+RICH_DATA["ajou-indigame"] = indigameStory(
+  RICH_DATA["ajou-indigame"] as RichProject
+);
+RICH_DATA.darklab = darklabStory(RICH_DATA.darklab as RichProject);
+RICH_DATA["otherside-vr"] = vrStory(RICH_DATA["otherside-vr"] as RichProject);
+RICH_DATA["monsterpoint-ar"] = arStory(
+  RICH_DATA["monsterpoint-ar"] as RichProject
+);
+RICH_DATA["ajou-adventure"] = ajouRunStory(
+  RICH_DATA["ajou-adventure"] as RichProject
 );
 stripCodeLinks(RICH_DATA);

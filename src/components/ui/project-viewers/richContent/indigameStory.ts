@@ -1,7 +1,5 @@
-// 아주대탐험(저장소 Ajou_IndiGame) 상세의 이야기 배치 시안 (2026-11-15).
-// data.ts 의 ajou-indigame 위에 덮어쓰는 층이다. 아직 data.ts 에 합치지 않았고 시안 주소
-// `/resume/ajou-indigame-story` 에서만 쓴다. 승인되면 data.ts 끝에서
-// `RICH_DATA["ajou-indigame"] = indigameStory(RICH_DATA["ajou-indigame"])` 로 합치고 시안 주소를 지운다.
+// 아주대탐험(저장소 Ajou_IndiGame) 상세의 이야기 배치 (2026-11-15 적용).
+// data.ts 의 같은 id 위에 덮어쓰는 층이다. data.ts 끝에서 합친다.
 //
 // 새로 지어낸 사실은 없다. data.ts 의 ajou-indigame(2026-11-13 저장소 대조본)의 highlights · briefs · decisions ·
 // metrics · kpt 와 README 의 남은 과제를 표 칸에 맞게 다시 묶었다.

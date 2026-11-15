@@ -1,7 +1,5 @@
-// DarkLab(Threshold) 상세의 이야기 배치 시안 (2026-11-15).
-// data.ts 의 darklab 위에 덮어쓰는 층이다. 아직 data.ts 에 합치지 않았고 시안 주소
-// `/resume/darklab-story` 에서만 쓴다. 승인되면 data.ts 끝에서
-// `RICH_DATA.darklab = darklabStory(RICH_DATA.darklab)` 로 합치고 시안 주소를 지운다.
+// DarkLab(Threshold) 상세의 이야기 배치 (2026-11-15 적용).
+// data.ts 의 같은 id 위에 덮어쓰는 층이다. data.ts 끝에서 합친다.
 //
 // 새로 지어낸 사실은 없다. data.ts 의 darklab(2026-11-13 저장소 대조본: 커밋 317개 중 본인 126개,
 // 메시지의 「(-재훈)」 서명으로 담당을 가림)의 challenges · briefs · metrics · kpt 를 표 칸에 맞게 다시 묶었다.

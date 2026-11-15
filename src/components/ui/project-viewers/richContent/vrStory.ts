@@ -1,7 +1,5 @@
-// The Other Side (VR) 상세의 이야기 배치 시안 (2026-11-15).
-// data.ts 의 otherside-vr 위에 덮어쓰는 층이다. 아직 data.ts 에 합치지 않았고 시안 주소
-// `/resume/otherside-vr-story` 에서만 쓴다. 승인되면 data.ts 끝에서
-// `RICH_DATA["otherside-vr"] = vrStory(RICH_DATA["otherside-vr"])` 로 합치고 시안 주소를 지운다.
+// The Other Side (VR) 상세의 이야기 배치 (2026-11-15 적용).
+// data.ts 의 같은 id 위에 덮어쓰는 층이다. data.ts 끝에서 합친다.
 //
 // 새로 지어낸 사실은 없다. data.ts 의 otherside-vr(2026-11-13 저장소 kbwon/IMP_VR 대조본: 커밋 161개 중 본인 25개,
 // Assets/JJH 스크립트 열 개)의 challenges · briefs · decisions · metrics · kpt 를 표 칸에 맞게 다시 묶었다.

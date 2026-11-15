@@ -1,7 +1,5 @@
-// INTO MONSTER POINT (AR) 상세의 이야기 배치 시안 (2026-11-15).
-// data.ts 의 monsterpoint-ar 위에 덮어쓰는 층이다. 아직 data.ts 에 합치지 않았고 시안 주소
-// `/resume/monsterpoint-ar-story` 에서만 쓴다. 승인되면 data.ts 끝에서
-// `RICH_DATA["monsterpoint-ar"] = arStory(RICH_DATA["monsterpoint-ar"])` 로 합치고 시안 주소를 지운다.
+// INTO MONSTER POINT (AR) 상세의 이야기 배치 (2026-11-15 적용).
+// data.ts 의 같은 id 위에 덮어쓰는 층이다. data.ts 끝에서 합친다.
 //
 // 새로 지어낸 사실은 없다. data.ts 의 monsterpoint-ar(2026-11-13 저장소 toadsam/IMP develop 대조본:
 // 커밋 109개 중 본인 51개, Assets/Scripts/JJH 다섯 파일)의 challenges · briefs · highlights · metrics · kpt 를 다시 묶었다.

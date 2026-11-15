@@ -1378,9 +1378,10 @@ export const subProjects: SubProjectCard[] = [
     links: [{label: "GitHub", href: "https://github.com/toadsam/DarkLab"}]
   },
   {
-    // 그림을 안 붙였다. 리포에 있는 "아주분투" 이미지는 전부 아주대탐험
-    // 것이었다(위 mainProjects 주석 참고) — 없는 그림을 남의 것으로 채우지 않는다.
+    // 그림은 저장소(Ajou_Mini_Game)의 자동 실행 캡처다(2026-11-15). 예전에 리포에 있던
+    // "아주분투" 이미지는 전부 아주대탐험 것이었다(위 mainProjects 주석 참고).
     title: "아주분투",
+    image: "/projects/ajou-run/play.webp",
     desc: "아주대 캠퍼스를 배경으로 한 네온 스타일의 Phaser 3 2D 러닝 게임입니다. (발판 6종·낮/밤 전환)",
     links: [
       {label: "GitHub", href: "https://github.com/toadsam/Ajou_Mini_Game"}
