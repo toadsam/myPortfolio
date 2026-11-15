@@ -31,7 +31,8 @@ export const IMG: Record<string, string> = {
   "muscleup-4": "/projects/muscleup/v2/inbody.webp",
   mystock: "/projects/mystock.webp",
   "otherside-vr": "/projects/otherside-vr.webp",
-  "sign-language": "/projects/sign-language.webp",
+  // 2026-11-15: 옛 그림에는 「수어지교」가 크게 적혀 있다. 상세 머리와 같은 새 화면 보드로.
+  "sign-language": "/projects/sign-language/v2/card.webp",
   tserof: "/projects/tserof.webp",
   "tserof-2": "/projects/tserof/gimmick-icicle.webp",
   village: "/projects/village-portfolio/card-art.webp",
@@ -234,12 +235,9 @@ export const NUMS: [string, string, string, string][] = [
     "총학생회 웹",
     "Google Search Console · 2025.05~2026.08(16개월) · 검색 유입 기준"
   ],
-  [
-    "215KB",
-    "첫 화면 JS",
-    "이 포트폴리오",
-    "3D 모델 0개 · 빌드 청크 실측 (2026.09)"
-  ]
+  // 2026-11-15: 직함이 Backend Developer 인데 네 칸이 전부 방문 · 노출 · 용량이라
+  // 넷째 칸을 서버 숫자로 바꿨다(본인이 시안에서 고름). 215KB 는 아래 마을 타일에 남는다.
+  ["375개", "백엔드 테스트", "이 포트폴리오", "pytest 수집 기준 · 2026.11"]
 ];
 
 /** 프로젝트 타일과 30초 요약의 짧은 줄 */
