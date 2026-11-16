@@ -521,6 +521,44 @@
   transform: scale(0.97);
   transition-duration: 0.09s;
 }
+/* 누른 뒤 상세가 뜰 때까지: 눌린 채로 두고 인디고 테두리를 두른다(ResumeV2Motion 이 is-going 을 붙인다) */
+/* 누른 직후 0.2~0.4초 동안 브라우저가 상세를 그리느라 화면 그리기가 멎는다. 그동안에도 움직이려면
+   크기(transform)와 투명도(opacity)만 쓰는 애니메이션이어야 한다. 이 둘은 그리기가 멎어도 따로 돈다.
+   box-shadow · filter 를 서서히 바꾸면 첫 프레임에서 굳고, 한 번에 바꾸면 뚝 끊겨 보였다(둘 다 해 봤다).
+   그래서 테두리는 미리 그려 둔 ::after 를 투명도로 드러낸다. */
+.rv2 .ptile.is-going,
+.rv2 .other.is-going {
+  position: relative;
+  pointer-events: none;
+  transition: none;
+  animation: rv2-going 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.rv2 .ptile.is-going::after,
+.rv2 .other.is-going::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 3px var(--accent);
+  pointer-events: none;
+  animation: rv2-going-ring 0.3s ease-out both;
+}
+@keyframes rv2-going {
+  to {
+    transform: scale(0.965);
+  }
+}
+@keyframes rv2-going-ring {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.rv2 a.is-going:not(.ptile):not(.other) {
+  color: var(--accent);
+}
 .rv2 .ptile .pic {
   display: block;
   overflow: hidden;
@@ -2205,4 +2243,10 @@
   line-height: 1.5;
   vertical-align: 2px;
   white-space: nowrap;
+}
+
+/* 상세의 「← 이력서」는 /resume#projects 로 온다. 알약 내비가 제목을 덮지 않게, 내비의
+   「프로젝트」 버튼이 서는 자리(구역 위 70px)와 같은 곳에 세운다. */
+.rv2 #projects {
+  scroll-margin-top: 70px;
 }

@@ -544,6 +544,39 @@ Ambient mood is separate from category: `atmosphere.ts` maps project id → `Amb
 
 `src/components/village/PropsEditor.tsx` + `src/app/api/props/route.ts` + `src/data/propsLayout.json` let you drag-place props/building overrides in the browser during `npm run dev` only (`NODE_ENV === "development"` gate); the API route reads `public/models/props/*.glb` and writes layout edits straight back to the JSON file on disk.
 
+### `/resume` 타일을 눌러 상세로 넘어갈 때 (2026-11-16)
+
+본인이 「누르면 멈췄다가 되는 느낌」이라고 해서 쟀다. 배포본에서 타일을 누른 뒤 상세 본문이 뜨기까지 0.40~0.77초(일곱 장, 세 번씩의 가운데 값),
+첫 그림까지 0.69~1.46초였고 그동안 화면에 아무 변화가 없었다. 4G 수준으로 묶으면 본문 0.75~1.31초.
+
+- **시간은 둘로 나뉜다.** 받는 시간(0.1~0.2초, 처음 연결이면 0.5~0.8초)과 상세를 그리는 긴 작업 하나(0.2~0.4초, 화면 그리기가 멎는다).
+  타일이 `next/link` 가 아니라 `<a data-detail>` 를 `ResumeV2Motion` 이 `router.push` 로 옮기는 구조라 미리 받기가 없었다.
+- **미리 받기**: 상세 링크가 화면 200px 안에 들어오거나 포인터·포커스·터치가 닿으면 `router.prefetch(href, {kind: "full"})`.
+  `kind` 를 안 주면 껍데기만 받는다. 프로덕션 빌드에서만 동작하므로 dev 에서는 확인할 수 없다(`npm run build` 후 `prod` 3100).
+  로컬 prod 에서 누른 뒤 페이지 데이터·스타일·스크립트 요청이 사라지고 긴 작업이 0.03~0.07초 만에 시작하는 것을 확인했다.
+  배포본에서 얼마나 줄었는지는 올린 뒤 다시 재야 한다.
+- **눌린 상태**: 누르면 그 링크에 `is-going` 이 붙어 0.34초 동안 살짝 줄고 인디고 테두리가 떠오른다(4초 뒤 풀린다).
+  **움직임은 `transform` 과 `opacity` 키프레임으로만 만든다**(`rv2-going` · `rv2-going-ring`, 테두리는 `::after`). 이 둘은 긴 작업으로
+  그리기가 멎어도 계속 움직인다. 처음에는 0.09초 `transition` 을 뒀더니 첫 프레임에 거의 안 바뀐 채로 굳었고, 전환을 없애니
+  본인이 「누르면서 끊기는 느낌」이라고 했다. `box-shadow` 나 `border-color` 를 직접 전환하는 식으로 되돌리지 말 것.
+- **장막**: 같은 순간 `startLeaveVeil()` 이 body 에 흰 판을 붙여 0.82 까지 옅게 덮고, 상세 본문(`.pd4, .mu4`)이 DOM 에 올라오면 0.3초에 걷는다.
+  밟은 것 둘. ① 이동을 `requestAnimationFrame` 두 번 뒤로만 미뤘더니 숨은 탭에서 이동 자체가 안 됐다. 120ms 타이머를 같이 건다.
+  ② 상세가 올라온 순간은 긴 작업의 끝이라 애니메이션 시계가 뒤처져 있어 장막이 한 번에 사라졌다. 걷기는 다음 프레임에 시작하고
+  그때의 투명도는 흐른 시간으로 직접 계산한다. View Transition API 는 옛 화면을 그림으로 굳혀 누름 동작까지 멎으므로 쓰지 않았다.
+  모션 줄이기 설정이면 장막을 만들지 않는다.
+- **연출이 도착을 늦추지는 않는다**(2026-11-16, 로컬 prod 3100 · 헤드리스 Chrome · 실제 GPU · 번갈아 다섯 번씩의 가운데 값).
+  본문이 뜨기까지 연출 끔 1,145 · 1,033 · 935ms, 켬 1,132 · 924 · 889ms(AjouFesta · 득근득근 · MyWave). 차이는 잴 때마다 흔들리는 폭 안이다.
+  이날 이 PC 는 긴 작업이 0.6~0.8초로 평소(0.2~0.4초)보다 느렸으니 절대값은 배포본 수치와 비교하지 않는다.
+  **켜고 끄는 비교를 `reducedMotion` 으로 하면 안 된다.** 이력서 화면의 다른 움직임까지 꺼져서 연출이 0.1~0.3초 늦추는 것처럼 나왔다.
+  누름 애니메이션은 CSS 로, 장막은 `Element.prototype.animate` 를 비워서 이것만 끈다.
+- **상세 머리의 「← 이력서」는 `/resume#projects` 로 간다**(두 틀 모두). 맨 위로 돌아가면 다음 프로젝트를 보려고 다시 내려가야 했다.
+  `#projects` 에 `scroll-margin-top: 70px` 를 줘서 알약 내비의 「프로젝트」 버튼이 서는 자리와 같다(없으면 휴대폰에서 제목이 내비에 가린다).
+  본인이 정한 범위는 이 버튼 하나다. 맨 아래 「이력서로 돌아가기」와 브라우저 뒤로 가기는 그대로다.
+- **남은 것**: 그리는 시간 0.2~0.4초는 미리 받기로 줄지 않는다. 상세 페이지가 길고(1만 px 안팎) 한 번에 다 그리기 때문이다.
+  줄이려면 상세 쪽을 가볍게 해야 한다. 두꺼비가 기다리는 동안 뛰는 연출(시안 C)은 본인이 B·D 를 먼저 보고 정하기로 했다.
+- 재는 스크립트는 세션 스크래치패드에만 있다. 방법: Playwright 로 `/resume` 을 열고 타일을 눌러 `MutationObserver` 로 `.pd4, .mu4` 가
+  생기는 때를 잡고, `PerformanceObserver` 의 `longtask` 와 누른 뒤의 요청 종류를 같이 적는다.
+
 ### 「구조 한눈에 보기」 페이지 (2026-11-16)
 
 상세 머리의 첫 버튼 다음에 「구조 한눈에 보기」가 붙고 `/resume/<id>/structure` 로 간다. 본인이 프로젝트마다 따로 만든 한 장짜리 구조 안내(claude.ai 아티팩트)를 사이트 안에 그대로 넣은 것이다. 지금은 MyWave(`mystock`) · 득근득근(`muscleup`) · AjouFesta(`festflow`) · 마을(`village-portfolio`) 네 장이고, 나머지 프로젝트도 같은 방식으로 받기로 했다. 앞의 셋은 본인이 만든 것을 옮겼고, 마을 것은 이 저장소에서 만든다(아래 마지막 항목).

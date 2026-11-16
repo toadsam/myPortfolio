@@ -1788,7 +1788,7 @@ export function MuscleupDetail({story = false}: {story?: boolean}) {
       <header className="top">
         <div className="topin">
           {/* 시안의 「시안 목록」 링크는 빼고, 이력서로 가는 링크를 휴대폰에서도 보이게 남겼다 */}
-          <Link href="/resume">← 이력서</Link>
+          <Link href="/resume#projects">← 이력서</Link>
           <span className="name" style={{cursor: "default"}}>
             {c.title}
           </span>

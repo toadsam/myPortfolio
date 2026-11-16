@@ -3330,7 +3330,8 @@ export function ProjectDetailV4({
     >
       <header className="p4-top">
         <div className="p4-topin">
-          <Link href="/resume">← 이력서</Link>
+          {/* 맨 위가 아니라 프로젝트 구역으로 돌아간다. 다음 프로젝트를 보려고 다시 내려가지 않게. */}
+          <Link href="/resume#projects">← 이력서</Link>
           <span className="p4-name">{title}</span>
           <button type="button" className="p4-tocbtn" data-drawer-open="">
             목차

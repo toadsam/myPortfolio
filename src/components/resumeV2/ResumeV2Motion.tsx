@@ -15,6 +15,7 @@
 
 import {useEffect, useRef} from "react";
 import {useRouter} from "next/navigation";
+import type {PrefetchKind} from "next/dist/client/components/router-reducer/router-reducer-types";
 import {
   BALLP,
   GAL,
@@ -1121,7 +1122,24 @@ export function ResumeV2Motion({name, sumMeta, email, pdf}: Props) {
           !e.altKey
         ) {
           e.preventDefault();
-          routerRef.current.push(dl.getAttribute("href") ?? "/resume");
+          // 누른 타일을 눌린 채로 둔다. 상세가 뜨기까지 0.4~0.8초(2026-11-16 배포본 실측) 동안
+          // 화면에 아무 변화가 없어 멈춘 것처럼 보였다. 뒤로 돌아왔을 때 남지 않게 잠시 뒤 푼다.
+          dl.classList.add("is-going");
+          later(() => dl.classList.remove("is-going"), 4000);
+          const href = dl.getAttribute("href") ?? "/resume";
+          const leave = startLeaveVeil();
+          // 두 프레임 뒤에 이동한다. 누름 동작과 장막이 먼저 화면에 올라가 있어야, 상세를 그리느라
+          // 그리기가 멎는 동안에도 계속 움직인다. 프레임이 안 오는 경우(숨은 탭)에는 이동 자체가
+          // 안 됐다. 그래서 타이머로도 한 번 건다. 먼저 오는 쪽이 이동한다.
+          let gone = false;
+          const go = () => {
+            if (gone) return;
+            gone = true;
+            routerRef.current.push(href);
+            leave();
+          };
+          requestAnimationFrame(() => requestAnimationFrame(go));
+          window.setTimeout(go, 120);
         }
         return;
       }
@@ -1129,6 +1147,112 @@ export function ResumeV2Motion({name, sumMeta, email, pdf}: Props) {
       if (b) openTray(b.getAttribute("data-open") ?? "", b);
     });
     on(scrim, "click", closeTray);
+
+    // ── 상세로 넘어갈 때의 장막 ──
+    // 타일을 누르면 흰 장막이 서서히 덮이고, 상세가 뜨면 걷힌다. 화면이 통째로 뚝 바뀌던 것을
+    // 「옅어졌다가 드러난다」로 잇는다. 바탕이 흰색이라 흰 장막이 곧 옅어지는 것으로 보인다.
+    // View Transition API 를 안 쓴 이유: 그 방식은 옛 화면을 찍어 둔 그림으로 바꿔서, 기다리는
+    // 동안 누름 동작까지 멎는다. 장막은 body 에 붙어 이 컴포넌트가 사라진 뒤에도 남아야 하므로
+    // 정리 장부에 넣지 않고 스스로 지운다.
+    const startLeaveVeil = () => {
+      const reduce = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+      if (reduce || typeof Element.prototype.animate !== "function")
+        return () => undefined;
+      const veil = document.createElement("div");
+      veil.setAttribute("aria-hidden", "true");
+      veil.style.cssText =
+        "position:fixed;inset:0;z-index:2147482000;background:#ffffff;opacity:0;pointer-events:none;will-change:opacity";
+      document.body.appendChild(veil);
+      const PEAK = 0.82;
+      const IN_DELAY = 110;
+      const IN_MS = 300;
+      const startedAt = performance.now();
+      const fadeIn = veil.animate([{opacity: 0}, {opacity: PEAK}], {
+        duration: IN_MS,
+        delay: IN_DELAY,
+        easing: "ease-out",
+        fill: "forwards"
+      });
+      let closed = false;
+      let lifting = false;
+      const remove = () => veil.remove();
+      // 걷는 동작은 다음 프레임에 시작한다. 상세가 DOM 에 올라오는 순간은 긴 작업의 끝이라
+      // 브라우저의 애니메이션 시계가 0.3초쯤 뒤처져 있다. 그 자리에서 바로 시작하면
+      // ① getComputedStyle 이 아직 0 을 돌려주고 ② 새 애니메이션이 시작하자마자 끝난 것으로 계산돼
+      // 장막이 한 번에 사라졌다. 그래서 지금 투명도는 흐른 시간으로 직접 계산한다.
+      const beginLift = () => {
+        if (lifting) return;
+        lifting = true;
+        const p = Math.min(
+          1,
+          Math.max(0, (performance.now() - startedAt - IN_DELAY) / IN_MS)
+        );
+        const from = PEAK * (1 - (1 - p) * (1 - p));
+        fadeIn.cancel();
+        veil.style.opacity = String(from);
+        const out = veil.animate([{opacity: from}, {opacity: 0}], {
+          duration: 300,
+          easing: "ease-out",
+          fill: "forwards"
+        });
+        out.onfinish = remove;
+        window.setTimeout(remove, 700);
+      };
+      const lift = () => {
+        if (closed) return;
+        closed = true;
+        mo.disconnect();
+        window.clearTimeout(giveUp);
+        requestAnimationFrame(beginLift);
+        window.setTimeout(beginLift, 120);
+      };
+      // 상세 본문(.pd4 · .mu4)이 DOM 에 올라오면 걷는다.
+      const mo = new MutationObserver(() => {
+        if (document.querySelector(".pd4, .mu4")) lift();
+      });
+      const giveUp = window.setTimeout(lift, 3000);
+      // 이동을 시작한 뒤에 지켜보기 시작한다(반환한 함수를 부른다).
+      return () => mo.observe(document.body, {childList: true, subtree: true});
+    };
+
+    // ── 상세 페이지 미리 받기 ──
+    // 타일은 next/link 가 아니라 보통 <a> 를 라우터로 옮기는 것이라, 누르는 순간에야 상세의
+    // 데이터·스타일·글꼴을 받기 시작했다. 화면에 들어오거나(휴대폰에는 올리는 동작이 없다)
+    // 포인터가 올라오면 미리 받아 둔다. prefetch 는 프로덕션 빌드에서만 동작한다.
+    const DETAIL_LINK = "a.lk.detail, a[data-detail]";
+    const prefetched = new Set<string>();
+    const warm = (a: Element | null) => {
+      const href = a?.getAttribute("href") ?? "";
+      if (!href.startsWith("/resume/") || prefetched.has(href)) return;
+      prefetched.add(href);
+      try {
+        // 기본값은 껍데기만 받아서, 눌렀을 때 본문 요청(_rsc)이 다시 나갔다. 통째로 받는다.
+        routerRef.current.prefetch(href, {kind: "full" as PrefetchKind});
+      } catch {
+        prefetched.delete(href);
+      }
+    };
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        entries => {
+          for (const en of entries) {
+            if (!en.isIntersecting) continue;
+            warm(en.target);
+            io.unobserve(en.target);
+          }
+        },
+        {rootMargin: "200px"}
+      );
+      root.querySelectorAll(DETAIL_LINK).forEach(a => io.observe(a));
+      observers.push(io);
+    }
+    const warmFromEvent = (e: Event) =>
+      warm((e.target as Element | null)?.closest?.(DETAIL_LINK) ?? null);
+    on(root, "pointerover", warmFromEvent, {passive: true});
+    on(root, "focusin", warmFromEvent);
+    on(root, "touchstart", warmFromEvent, {passive: true});
     on(document, "keydown", (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (curP) closeTray();
