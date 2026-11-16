@@ -579,14 +579,17 @@ Ambient mood is separate from category: `atmosphere.ts` maps project id → `Amb
 
 ### 「구조 한눈에 보기」 페이지 (2026-11-16)
 
-상세 머리의 첫 버튼 다음에 「구조 한눈에 보기」가 붙고 `/resume/<id>/structure` 로 간다. 본인이 프로젝트마다 따로 만든 한 장짜리 구조 안내(claude.ai 아티팩트)를 사이트 안에 그대로 넣은 것이다. 지금은 MyWave(`mystock`) · 득근득근(`muscleup`) · AjouFesta(`festflow`) · 마을(`village-portfolio`) 네 장이고, 나머지 프로젝트도 같은 방식으로 받기로 했다. 앞의 셋은 본인이 만든 것을 옮겼고, 마을 것은 이 저장소에서 만든다(아래 마지막 항목).
+상세 머리의 첫 버튼 다음에 「구조 한눈에 보기」가 붙고 `/resume/<id>/structure` 로 간다. 본인이 프로젝트마다 따로 만든 한 장짜리 구조 안내(claude.ai 아티팩트)를 사이트 안에 그대로 넣은 것이다. 지금은 MyWave(`mystock`) · 득근득근(`muscleup`) · AjouFesta(`festflow`) · 마을(`village-portfolio`) · 수어링고(`sign-language`) 다섯 장이고, 나머지 프로젝트도 같은 방식으로 받기로 했다. 앞의 셋은 본인이 만든 것을 옮겼고, 마을 것은 이 저장소에서 만든다(아래 마지막 항목).
 
-- 들여오기: 아티팩트의 HTML 과 그림 폴더를 받아 `node scripts/import-structure.mjs <id> <html> [그림 폴더]`. 결과는 `public/structure/<id>/`. 그다음 `src/data/structurePages.ts` 의 `STRUCTURE_PAGES` 에 id 를 더하면 버튼이 생긴다(`ProjectDetailV4` 와 `MuscleupDetail` 둘 다 읽는다).
+- 들여오기: 아티팩트의 HTML 과 딸린 파일을 받아 `node scripts/import-structure.mjs <id> <html> [딸린 폴더나 파일 …]`. 수어링고 것은 파일이 13개라(`js/` 11개와 `style.css`) 폴더와 파일을 여러 개 받게 고쳤다. 결과는 `public/structure/<id>/`. 그다음 `src/data/structurePages.ts` 의 `STRUCTURE_PAGES` 에 id 를 더하면 버튼이 생긴다(`ProjectDetailV4` 와 `MuscleupDetail` 둘 다 읽는다).
 - 주소는 `next.config.mjs` 의 rewrite 가 정적 파일로 넘긴다. Next 라우트가 아니라서 루트 layout · 두꺼비 · 커서가 붙지 않고, 버튼도 `next/link` 가 아닌 보통 링크다.
 - 스크립트는 본문을 고치지 않고 둘만 넣는다: `<base href="/structure/<id>/">`(주소가 달라 `img/…` 상대 경로가 어긋난다. 그림 폴더를 줄 때만 넣고, 득근득근처럼 한 장짜리는 넣지 않는다. SVG 의 `url(#arr)` 같은 문서 안 참조를 건드리지 않으려는 것이다)와 「← 프로젝트 상세」 링크(늘 왼쪽 아래. 처음에는 데스크톱에서 오른쪽 위에 뒀는데 AjouFesta 는 탭이 오른쪽 위라 마지막 탭 「중요 코드」가 가려져 눌리지 않았다). 화면 전환이 `location.hash` 라서 `<base>` 가 있어도 된다. `<a href="#…">` 를 쓰는 페이지가 오면 그 링크가 `/structure/<id>/` 로 새므로 따로 본다.
 - 들여오기 전에 읽어 볼 것: 외부 스크립트나 `window.claude` 를 쓰는지, 실명 · 키 · 비공개 경로가 있는지. MyWave 것은 구글 글꼴만 밖에서 받고, 이메일과 전화번호는 예시 값과 저장소에 공개된 데모 계정 주소뿐이었다.
 - 확인은 dev 에서 1440 과 390 폭으로 버튼 → 구조 페이지 → 돌아오기까지 눌러 봤고 오류와 깨진 그림은 없었다. prod 빌드로는 보지 않았다.
 - 득근득근 것은 예시 줄의 이메일과 이름이 지어낸 값이라고 그림 설명에 적혀 있다. 이 페이지는 「표 59개 · 화면 30장 · 파일 35곳」이라 적는데 상세 페이지는 엔티티 62개(2026.10.20)라 적는다. 세는 기준이 다른지 본인에게 물어 둔 상태이고 고치지 않았다.
+- 수어링고 것은 학기 발표용으로 만든 지도라 「팀과 계약」 그림과 일정표에 팀원 세 명의 실명이 적혀 있다. 상세 페이지의 규칙(팀원 실명을 쓰지 않는다)과 달라서 본인에게 물었고, 사이트에 넣은 사본(`public/structure/sign-language/js/`)에서만 실명을 역할로 바꿨다(「받아쓰기 담당」 「읽는 모델 담당」 「화면 담당」, 팀 줄은 「정재훈 외 3명」). 원본 아티팩트에는 실명이 그대로 있으므로 **다시 들여오면 같은 치환을 다시 해야 한다.** 「보고서 모드」의 그림 저장은 claude.ai 안에서만 되고 사이트에서는 버튼이 나오지 않는다. 화면에 그리는 뼈대 동작은 수식으로 만든 예시이고 원본 좌표는 들어 있지 않다고 코드에 적혀 있다.
+- **마을 구조 지도는 `scripts/village-structure/` 가 만든다.** `template.html`(화면 · 서버 · 표 설명과 그리는 코드)에 `build.py` 가 저장소에서 센 값(백엔드 주소 수, 표, pytest 수집 건수, 건물 수)과 코드 발췌 11곳을 채운다. 순서는 `build.py` 머리 주석에 있다. 발췌는 줄 번호로 자르므로 그 파일 위쪽이 바뀌면 밀린다. 다시 만들 때 첫 줄과 끝 줄을 본다. 2026-11-16 에 센 값은 주소 70 · 표 20 · 테스트 381건(파일 21개)이고, 이력서 타일과 마을 상세에는 아직 375 로 적혀 있다. `/island` 는 지도에서 뺐다. 시안은 https://claude.ai/artifact/VjHfvyV461Rk1zi1MQAGy1 (겉 틀 없이 올린 판, `--bare`).
+- AjouFesta 것은 제목이 「FestFlow 화면 지도」이고, 지도 아래 출처 칸에 기준 브랜치 이름과 커밋 해시가 적혀 있다. 상세 페이지의 규칙(브랜치 · 해시를 적지 않는다)과 다르지만 본인이 만든 글이라 그대로 넣었고, 본인에게 알렸다.
 
 ### 마을 3D 배치 점검 (2026-11-15)
 

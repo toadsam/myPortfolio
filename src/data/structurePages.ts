@@ -9,7 +9,8 @@ export const STRUCTURE_PAGES: readonly string[] = [
   "mystock",
   "muscleup",
   "festflow",
-  "village-portfolio"
+  "village-portfolio",
+  "sign-language"
 ];
 
 export const STRUCTURE_LABEL = "구조 한눈에 보기";
