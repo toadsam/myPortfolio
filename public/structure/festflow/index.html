@@ -1,0 +1,1115 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>FestFlow 화면 지도</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Jua&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* 배치: 낮 하늘 위에 화면 카드(캠코더 뷰파인더 틀)를 구역별로 놓은 약도 한 장. 길을 고르면 종이비행기가 그 길을 난다.
+   오른쪽에는 누른 화면의 쪽지. 맨 아래에는 바람에 흔들리는 갈대. 어두운 테마는 해 질 녘 하늘. */
+:root {
+  --sky-top: #8fc4f7;
+  --sky-mid: #cfe6fb;
+  --sky-low: #fdf1df;
+  --sheet: rgba(255, 255, 255, .58);
+  --sheet-line: rgba(255, 255, 255, .9);
+  --card: #ffffff;
+  --card-hi: #f2f8ff;
+  --card-line: #d6e2ef;
+  --ink: #17212e;
+  --ink-soft: #4a5a6e;
+  --ink-faint: #7d8c9f;
+  --wire: #93a4b8;
+  --blue: #2f7bea;       /* 손님 */
+  --blue-deep: #1b5fc9;
+  --sunset: #e8842c;     /* 주점 주문 */
+  --reed: #9a7a35;       /* 운영 */
+  --plum: #7b55c7;       /* 사주 소개팅 */
+  --data: #0b93a0;       /* 데이터가 이어지는 길 */
+  --rec: #e5484d;
+  --halo: #eaf3fc;       /* 선 위 글자 뒤 바탕 */
+  --plane: #ffffff;
+  --reed-blade: #b7985a;
+  --reed-plume: #e3cf9f;
+  --shadow: 0 10px 28px rgba(40, 80, 130, .14);
+  --f-brush: 'Nanum Brush Script', 'Jua', cursive;
+  --f-display: 'Jua', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  --f-body: 'Noto Sans KR', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  --f-mono: 'JetBrains Mono', Consolas, monospace;
+  --maxw: 1400px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sky-top: #131c3a; --sky-mid: #3a2f5c; --sky-low: #a85a3c;
+    --sheet: rgba(14, 20, 40, .52); --sheet-line: rgba(255, 255, 255, .12);
+    --card: #1c2542; --card-hi: #27325a; --card-line: #3a4670;
+    --ink: #f1f4fa; --ink-soft: #c1c9da; --ink-faint: #93a0b8; --wire: #6f7da0;
+    --blue: #6fb0ff; --blue-deep: #9cc8ff; --sunset: #ffab5c; --reed: #dcbf7c; --plum: #b79bf2; --data: #4fd0d8; --rec: #ff6b6f;
+    --halo: #232a4c; --plane: #fff7e6; --reed-blade: #6d5a34; --reed-plume: #c7a86a;
+    --shadow: 0 10px 28px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --sky-top: #131c3a; --sky-mid: #3a2f5c; --sky-low: #a85a3c;
+  --sheet: rgba(14, 20, 40, .52); --sheet-line: rgba(255, 255, 255, .12);
+  --card: #1c2542; --card-hi: #27325a; --card-line: #3a4670;
+  --ink: #f1f4fa; --ink-soft: #c1c9da; --ink-faint: #93a0b8; --wire: #6f7da0;
+  --blue: #6fb0ff; --blue-deep: #9cc8ff; --sunset: #ffab5c; --reed: #dcbf7c; --plum: #b79bf2; --data: #4fd0d8; --rec: #ff6b6f;
+  --halo: #232a4c; --plane: #fff7e6; --reed-blade: #6d5a34; --reed-plume: #c7a86a;
+  --shadow: 0 10px 28px rgba(0, 0, 0, .35);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { min-height: 100%; }
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 46%, var(--sky-low) 100%) fixed var(--sky-mid);
+  color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.6;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 40; background: var(--sky-top); }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2.5px solid var(--blue-deep); outline-offset: 3px; border-radius: 6px; }
+svg :focus-visible { outline: none; }
+
+/* 갈대밭: 화면 맨 아래에 붙어 있고 내용 뒤에서 흔들린다 */
+.reeds { position: fixed; left: 0; right: 0; bottom: 0; height: 150px; z-index: 0; pointer-events: none; opacity: .55; }
+.reeds svg { display: block; width: 100%; height: 100%; }
+.reeds g { transform-origin: 50% 100%; animation: sway 6s ease-in-out infinite alternate; }
+.reeds g:nth-child(2) { animation-duration: 7.5s; animation-delay: -2s; }
+.reeds g:nth-child(3) { animation-duration: 9s; animation-delay: -4s; }
+@keyframes sway { from { transform: skewX(-4deg); } to { transform: skewX(5deg); } }
+
+.top, main { position: relative; z-index: 1; }
+.top { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.top-in { max-width: var(--maxw); margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; padding-block: 14px 4px; }
+.brand { display: flex; align-items: baseline; gap: 12px; }
+.brand b { font-family: var(--f-brush); font-weight: 400; font-size: 46px; line-height: 1; color: var(--blue-deep); }
+.brand strong { font-family: var(--f-display); font-weight: 400; font-size: 20px; }
+.brand span { font-family: var(--f-mono); font-size: 12px; color: var(--ink-soft); letter-spacing: .04em; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+.tab { border: 1.5px solid var(--sheet-line); background: var(--sheet); border-radius: 999px; padding: 4px 14px; font-weight: 500; font-size: 14px; color: var(--ink-soft); }
+.tab[aria-selected="true"] { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 700; }
+.tab[disabled] { cursor: default; opacity: .7; }
+.tab small { font-size: 11px; margin-left: 4px; }
+
+main { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 10px 170px; }
+.view { max-width: var(--maxw); margin: 0 auto; }
+.head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px 22px; margin-bottom: 12px; }
+.head h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(25px, 3.2vw, 34px); line-height: 1.2; margin: 0; text-wrap: balance; }
+.head p { margin: 0; color: var(--ink-soft); max-width: 62ch; }
+
+.ctrl { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 4px 0 6px; }
+.chipbtn { border: 1.5px solid var(--card-line); background: var(--card); border-radius: 999px; padding: 3px 13px; font-size: 13.5px; color: var(--ink-soft); transition: transform .15s; }
+.chipbtn:hover { color: var(--ink); background: var(--card-hi); transform: translateY(-1px); }
+.chipbtn[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 700; }
+.say { margin: 6px 0 10px; min-height: 1.6em; font-weight: 500; }
+.say i { font-style: normal; color: var(--blue-deep); font-weight: 700; }
+
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); gap: 16px; align-items: start; }
+.cols > * { min-width: 0; }
+@media (max-width: 980px) { .cols { grid-template-columns: minmax(0, 1fr); } }
+
+.fig { margin: 0; }
+.fig-scroll { overflow-x: auto; overflow-y: hidden; border: 1.5px solid var(--sheet-line); border-radius: 18px; background: var(--sheet); box-shadow: var(--shadow); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.fig svg { display: block; width: 100%; height: auto; min-width: 980px; }
+.fig figcaption { font-size: 13px; color: var(--ink-soft); margin-top: 8px; max-width: 90ch; }
+
+/* 쪽지: 뷰파인더 틀이 있는 흰 종이 */
+.note { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 14px); background: var(--card); border: 1.5px solid var(--card-line); border-radius: 16px; padding: 18px 18px 18px; box-shadow: var(--shadow); max-height: calc(100vh - 28px); overflow: auto; }
+@media (max-width: 980px) { .note { position: static; max-height: none; } }
+.note .rec { display: flex; align-items: center; gap: 6px; font-family: var(--f-mono); font-size: 11.5px; color: var(--rec); letter-spacing: .08em; }
+.note .rec::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--rec); animation: blink 1.4s steps(2, jump-none) infinite; }
+@keyframes blink { 50% { opacity: .2; } }
+.note .route { font-family: var(--f-mono); font-size: 12.5px; color: var(--ink-soft); margin-top: 8px; word-break: break-all; }
+.note h3 { font-family: var(--f-display); font-weight: 400; font-size: 25px; margin: 0; line-height: 1.25; }
+.note p { margin: 8px 0 0; }
+.note h4 { font-size: 12.5px; color: var(--ink-faint); margin: 14px 0 4px; font-weight: 700; }
+.note ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.note li.api { font-family: var(--f-mono); font-size: 12px; background: var(--card-hi); border-radius: 6px; padding: 2px 8px; word-break: break-all; }
+.note li.api b { font-weight: 500; color: var(--data); margin-right: 4px; }
+.note .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.note .tag { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 0 9px; border: 1.5px solid var(--card-line); color: var(--ink-soft); }
+.note .tag.zone { color: #fff; border-color: transparent; }
+.note .tag.live { color: var(--data); border-color: var(--data); }
+.note .tag.key { border-style: dashed; border-color: var(--ink-faint); }
+.note .file { font-family: var(--f-mono); font-size: 12px; color: var(--ink-soft); word-break: break-all; }
+.note .links { white-space: pre-line; }
+
+/* SVG */
+svg text { font-family: var(--f-body); fill: var(--ink); }
+svg .t-d { font-family: var(--f-display); }
+svg .t-m { font-family: var(--f-mono); }
+svg .soft { fill: var(--ink-soft); }
+svg .faint { fill: var(--ink-faint); }
+svg .card { cursor: pointer; transition: opacity .3s; }
+svg .card .plate { fill: var(--card); stroke: var(--card-line); stroke-width: 1.5; transition: fill .2s; }
+svg .card.key .plate { stroke: var(--ink-faint); stroke-dasharray: 5 4; }
+svg .card:hover .plate, svg .card:focus-visible .plate { fill: var(--card-hi); }
+svg .card .vf { fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+svg .card .recdot { fill: var(--rec); opacity: 0; }
+svg .card.sel .plate { stroke: var(--rec); stroke-width: 2.2; stroke-dasharray: none; }
+svg .card.sel .recdot { opacity: 1; animation: blink 1.4s steps(2, jump-none) infinite; }
+svg .card.dim { opacity: .22; }
+svg .card .lift { transition: transform .2s; }
+svg .card:hover .lift { transform: translateY(-2px); }
+svg .livedot { fill: var(--data); }
+svg .livering { fill: none; stroke: var(--data); stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: ping 2s ease-out infinite; }
+@keyframes ping { from { transform: scale(.6); opacity: .9; } to { transform: scale(2.2); opacity: 0; } }
+svg .edge { fill: none; stroke: var(--wire); stroke-width: 1.7; stroke-linejoin: round; transition: opacity .3s; }
+svg .edge.data { stroke: var(--data); stroke-dasharray: 2 6; stroke-linecap: round; stroke-width: 2.3; }
+svg .edge.on { stroke: var(--blue-deep); stroke-width: 2.8; stroke-dasharray: 9 6; animation: march 1s linear infinite; }
+svg .edge.data.on { stroke: var(--data); stroke-width: 3; stroke-dasharray: 2 6; animation: march 1s linear infinite; }
+svg .edge.dim { opacity: .1; }
+@keyframes march { to { stroke-dashoffset: -30; } }
+svg .elabel { font-size: 11px; fill: var(--ink-soft); paint-order: stroke; stroke: var(--halo); stroke-width: 4px; stroke-linejoin: round; transition: opacity .3s; }
+svg .elabel.dim { opacity: 0; }
+svg .zlabel { font-family: var(--f-display); font-size: 14px; }
+svg .plane-body { fill: var(--plane); stroke: var(--blue-deep); stroke-width: 1.6; stroke-linejoin: round; }
+svg .plane-fold { fill: none; stroke: var(--blue-deep); stroke-width: 1.2; }
+
+.hidden-list { margin: 22px 0 0; padding: 14px 18px; border-radius: 16px; background: var(--sheet); border: 1.5px solid var(--sheet-line); display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 8px 26px; }
+.hidden-list h2 { grid-column: 1 / -1; font-family: var(--f-display); font-weight: 400; font-size: 19px; margin: 0; }
+.hidden-list div { min-width: 0; }
+.hidden-list b { display: block; font-size: 14px; }
+.hidden-list code { font-family: var(--f-mono); font-size: 12px; color: var(--ink-soft); word-break: break-all; }
+.hidden-list p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+
+/* ───── 서버 지도 ───── */
+:root { --code-bg: #16203a; --code-fg: #e8eefb; --code-dim: #8fa0c4; }
+svg .sbox { fill: var(--card); stroke: var(--card-line); stroke-width: 1.5; transition: stroke .2s, fill .2s; }
+svg .sbox.inner { fill: var(--card-hi); stroke-dasharray: 5 4; stroke: var(--data); }
+svg g.now .sbox { stroke: var(--rec); stroke-width: 2.6; }
+svg .edge.broken { stroke: var(--rec); stroke-dasharray: 3 7; opacity: .9; }
+svg .xmark { stroke: var(--rec); stroke-width: 3; stroke-linecap: round; }
+.steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; padding: 8px 12px; border-radius: 12px; background: var(--card); border: 1.5px solid var(--card-line); cursor: pointer; transition: border-color .2s, transform .2s; }
+.steps li::before { content: counter(s); font-family: var(--f-display); font-size: 20px; line-height: 1.25; color: var(--ink-faint); text-align: center; }
+.steps li.now { border-color: var(--rec); transform: translateX(-3px); box-shadow: var(--shadow); }
+.steps li.now::before { color: var(--rec); }
+.steps code { font-family: var(--f-mono); font-size: 12px; color: var(--data); word-break: break-all; }
+.steps small { display: block; color: var(--ink-faint); font-size: 12.5px; }
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr)); gap: 12px; margin-top: 20px; }
+.rule { background: var(--sheet); border: 1.5px solid var(--sheet-line); border-radius: 14px; padding: 12px 15px; min-width: 0; }
+.rule b { font-family: var(--f-display); font-weight: 400; font-size: 17px; display: block; margin-bottom: 2px; }
+.rule p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.rule code { font-family: var(--f-mono); font-size: 12px; color: var(--blue-deep); word-break: break-all; }
+
+/* ───── ERD ───── */
+.erd-cols { grid-template-columns: minmax(0, 1fr) minmax(300px, 400px); }
+@media (max-width: 980px) { .erd-cols { grid-template-columns: minmax(0, 1fr); } }
+#erd-svg { min-width: 900px; }
+svg .tb { cursor: pointer; transition: opacity .25s; }
+svg .tb .box { fill: var(--card); stroke: var(--card-line); stroke-width: 1.5; transition: fill .2s; }
+svg .tb:hover .box, svg .tb:focus-visible .box { fill: var(--card-hi); }
+svg .tb.sel .box { stroke: var(--rec); stroke-width: 2.4; }
+svg .tb.rel .box { stroke: var(--blue-deep); stroke-width: 2.2; }
+svg .tb.hit .box { stroke: var(--sunset); stroke-width: 2.6; }
+svg .tb.dim { opacity: .25; }
+svg .rl { fill: none; stroke: var(--wire); stroke-width: 1.6; transition: opacity .25s; }
+svg .rl.loose { stroke-dasharray: 4 5; }
+svg .rl.on { stroke: var(--blue-deep); stroke-width: 2.6; }
+svg .rl.dim { opacity: .12; }
+.concept { background: var(--card); border: 1.5px solid var(--card-line); border-radius: 14px; padding: 14px 18px; margin: 6px 0 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 6px 26px; box-shadow: var(--shadow); }
+.concept > div { min-width: 0; }
+.concept h3 { font-family: var(--f-display); font-weight: 400; font-size: 21px; margin: 0; grid-column: 1 / -1; }
+.concept h4 { margin: 4px 0 2px; font-size: 12.5px; color: var(--sunset); }
+.concept p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.concept .refs { font-family: var(--f-mono); font-size: 12px; color: var(--blue-deep); word-break: break-all; }
+.erd-note .cls { font-family: var(--f-mono); font-size: 12px; color: var(--ink-soft); }
+.erd-note table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+.erd-note th, .erd-note td { text-align: left; padding: 3px 8px 3px 0; border-bottom: 1px solid var(--card-line); vertical-align: top; }
+.erd-note th { font-weight: 700; color: var(--ink-faint); font-size: 11.5px; white-space: nowrap; }
+.erd-note td.c { font-family: var(--f-mono); word-break: break-all; }
+.erd-note td.ty { font-family: var(--f-mono); color: var(--ink-soft); font-size: 11.5px; word-break: break-all; }
+.ft { display: inline-block; font-family: var(--f-mono); font-weight: 500; font-size: 10.5px; border-radius: 4px; padding: 0 4px; margin: 0 2px 2px 0; line-height: 1.6; border: 1px solid var(--card-line); color: var(--ink-soft); }
+.ft.PK { background: var(--sunset); border-color: var(--sunset); color: #fff; }
+.ft.FK { background: var(--blue); border-color: var(--blue); color: #fff; }
+.ft.UQ { background: var(--rec); border-color: var(--rec); color: #fff; }
+.lnk { cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-size: 13px; background: none; border: 0; padding: 0; color: var(--blue-deep); margin: 0 10px 2px 0; text-align: left; }
+.lnk.mono { font-family: var(--f-mono); font-size: 12.5px; }
+
+/* ───── 중요 코드 ───── */
+.chain { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin: 8px 0 16px; padding: 0; list-style: none; counter-reset: ch; }
+.chain li { counter-increment: ch; min-width: 0; max-width: 250px; flex: 1 1 170px; }
+.chain button { width: 100%; height: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 9px; text-align: left; background: var(--card); border: 1.5px solid var(--card-line); border-radius: 12px; padding: 7px 11px; transition: transform .15s; }
+.chain button:hover { background: var(--card-hi); transform: translateY(-2px); }
+.chain button::before { content: counter(ch); grid-row: span 2; font-family: var(--f-display); font-size: 22px; line-height: 1.1; color: var(--blue-deep); }
+.chain .sf { font-family: var(--f-mono); font-size: 12px; font-weight: 500; overflow-wrap: anywhere; }
+.chain .ss { font-size: 12.5px; color: var(--ink-soft); }
+.code-cols { grid-template-columns: minmax(0, 1fr) minmax(320px, 470px); }
+@media (max-width: 1080px) { .code-cols { grid-template-columns: minmax(0, 1fr); } }
+.lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; align-items: start; }
+.lane { display: grid; gap: 8px; min-width: 0; padding: 10px; border-radius: 14px; background: var(--sheet); border: 1.5px solid var(--sheet-line); }
+.lane-h b { display: block; font-family: var(--f-display); font-weight: 400; font-size: 17px; }
+.lane-h span { font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-soft); }
+.fcard { display: grid; gap: 2px; text-align: left; background: var(--card); border: 1.5px solid var(--card-line); border-radius: 10px; padding: 8px 11px; min-width: 0; transition: opacity .2s, transform .15s; }
+.fcard:hover { background: var(--card-hi); transform: translateY(-2px); }
+.fcard.sel { border-color: var(--rec); border-width: 2.4px; }
+.fcard.lit { border-color: var(--blue-deep); }
+.fcard.dim { opacity: .3; }
+.fcard .fn { font-family: var(--f-mono); font-size: 12.5px; font-weight: 500; overflow-wrap: anywhere; }
+.fcard .fd { font-size: 12.5px; color: var(--ink-soft); }
+.code-note .at { font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-soft); margin: 10px 0 0; word-break: break-all; }
+.code-note pre { margin: 3px 0 0; background: var(--code-bg); color: var(--code-fg); border-radius: 10px; padding: 11px 13px; font-family: var(--f-mono); font-size: 11.5px; line-height: 1.6; overflow-x: auto; white-space: pre; tab-size: 2; }
+.code-note pre .ln { color: var(--code-dim); user-select: none; margin-right: 12px; }
+.why { background: var(--card-hi); border-radius: 10px; padding: 7px 11px; margin-top: 8px; font-size: 13.5px; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+@media (max-width: 640px) { .brand span { display: none; } .brand b { font-size: 38px; } body { font-size: 14.5px; } .tabs { margin-left: 0; } }
+</style>
+
+<div class="reeds" aria-hidden="true"><svg id="reeds" viewBox="0 0 1600 150" preserveAspectRatio="xMidYMax slice"></svg></div>
+
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><b>바람</b><strong>FestFlow 화면 지도</strong><span>2026 아주대학교 가을축제 · 화면 23장</span></div>
+    <nav class="tabs" role="tablist" aria-label="그림 고르기">
+      <button class="tab" role="tab" type="button" id="tab-flow" data-view="flow" aria-selected="true">화면 흐름</button>
+      <button class="tab" role="tab" type="button" id="tab-servers" aria-selected="false">서버 지도</button>
+      <button class="tab" role="tab" type="button" id="tab-erd" aria-selected="false">ERD</button>
+      <button class="tab" role="tab" type="button" id="tab-code" aria-selected="false">중요 코드</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="view" id="v-flow">
+    <div class="head">
+      <h1>축제장에서 사람이 걷는 길</h1>
+      <p>손님, 주점, 사주 소개팅, 운영진이 쓰는 화면 스물세 장과 그 사이의 길입니다. 길을 고르면 그 길만 남고 종이비행기가 따라 납니다. 화면을 누르면 오른쪽 쪽지에 하는 일과 서버에 하는 말이 뜹니다.</p>
+    </div>
+    <div class="ctrl" id="trips" role="group" aria-label="길 고르기"></div>
+    <p class="say" id="say" aria-live="polite"></p>
+    <div class="cols">
+      <figure class="fig">
+        <div class="fig-scroll"><svg id="flow-svg" viewBox="0 0 1212 606" role="img" aria-label="FestFlow 화면 흐름. 축제 첫 화면에서 주점 주문, 사주 소개팅, 분실물로 갈라지고, 운영진 화면이 데이터로 이어진다."></svg></div>
+        <figcaption>모서리 틀 색이 구역입니다(손님 파랑, 주점 주문 주황, 운영 갈대색, 사주 소개팅 보라). 손님 화면 아래 탭으로는 축제, 주점, 사주 소개팅, 분실물 네 곳을 어디서든 바로 갈 수 있어서, 선은 화면 안의 단추로 이어지는 길만 그렸습니다. 사주 소개팅 화면들은 주소가 모두 /ai-match 하나이고 그 안에서 화면이 바뀝니다. 휴대폰에서는 그림을 옆으로 밀어 봅니다.</figcaption>
+      </figure>
+      <aside class="note" id="note" aria-live="polite"></aside>
+    </div>
+
+    <div class="hidden-list">
+      <h2>지도에서 뺀 화면</h2>
+      <div><b>탭에서만 뺀 손님 화면</b><p>이번 축제에서는 지우지 않고 탭에서만 뺐습니다. 주소로 치면 그대로 열립니다.</p><code>/events · /events/lineup · /stage-map · /analytics · /chat · /more · /home-v1 · /booths/all</code></div>
+      <div><b>예전 운영 화면</b><p>시뮬레이션과 예전 스태프 화면입니다. /ops/master 는 /admin 으로 넘어갑니다.</p><code>/admin/simulation · /staff-v1 · /ops/master</code></div>
+      <div><b>출처</b><p>화면과 주소는 frontend/src/main.jsx 의 라우트, 서버에 하는 말은 frontend/src/api.js 에서 읽었습니다. 기준은 main 브랜치 11aebd6 입니다.</p></div>
+    </div>
+  </section>
+  <section class="view" id="v-servers" hidden>
+    <div class="head">
+      <h1>요청이 서버를 거치는 길</h1>
+      <p>웹 앱, 백엔드, DB와 바깥 서비스입니다. 장면을 고르면 요청이 어느 상자를 어떤 순서로 거치는지 종이비행기가 보여 줍니다. 오른쪽 단계를 누르면 그 단계에서 멈춥니다.</p>
+    </div>
+    <div class="ctrl" id="traces" role="group" aria-label="장면 고르기"></div>
+    <div class="cols">
+      <figure class="fig">
+        <div class="fig-scroll"><svg id="srv-svg" viewBox="0 0 1100 500" role="img" aria-label="서버 구성도. 웹 앱이 백엔드에 요청을 보내고 방송을 듣는다. 백엔드는 DB, 문자 서비스, OpenAI, 파일 저장소에 연결된다."></svg></div>
+        <figcaption>실선은 앱이 묻고 서버가 답하는 길, 청록 점선은 서버가 먼저 알려 주는 방송(SSE)입니다. 방송실은 따로 뜬 서버가 아니라 백엔드 안에 있습니다. 상자 아래 작은 글씨는 실제로 쓰는 기술과 배포 위치입니다.</figcaption>
+      </figure>
+      <div>
+        <ol class="steps" id="steps"></ol>
+      </div>
+    </div>
+    <div class="rules">
+      <div class="rule"><b>방송은 저장이 끝난 뒤에</b><p>주문을 저장하는 중에 방송하면 화면이 아직 없는 주문을 보게 됩니다. <code>StreamService.publish</code> 는 트랜잭션이 커밋된 뒤에만 내보냅니다.</p></div>
+      <div class="rule"><b>방송에는 개인정보를 싣지 않음</b><p>주문 방송은 누구나 들을 수 있어서 입금자 이름과 전화번호를 뺀 모양(<code>forPublicStream</code>)으로만 나갑니다.</p></div>
+      <div class="rule"><b>방송이 끊겨도 화면은 맞춰짐</b><p>주문 상태는 20초, 요리사 창은 15초마다 서버에 다시 묻습니다. 다른 앱에 갔다가 돌아올 때도 한 번 묻습니다.</p></div>
+      <div class="rule"><b>문 세 개</b><p>관리자는 로그인해서 받은 토큰, 주점과 스태프 화면은 부스 암호, 소개팅은 닉네임과 비밀번호로 들어옵니다.</p></div>
+      <div class="rule"><b>주소마다 횟수 제한</b><p>가입, 로그인, 주문 같은 공개 주소는 <code>PublicApiRateLimitFilter</code> 가 IP마다 정해진 횟수까지만 받습니다.</p></div>
+      <div class="rule"><b>바깥 서비스 열쇠는 서버에만</b><p>문자, OpenAI, 파일 저장소의 열쇠는 백엔드 환경변수에 있습니다. 앱은 이 서비스들을 직접 부르지 않습니다.</p></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-erd" hidden>
+    <div class="head">
+      <h1>DB 표 서른한 개</h1>
+      <p>표와 그 사이의 연결입니다. 표를 누르면 무슨 일을 하는지와 칸 목록이 오른쪽에 뜹니다. 위의 개념을 고르면 그 개념이 실제로 쓰인 표에 불이 들어옵니다.</p>
+    </div>
+    <div class="ctrl" id="concepts" role="group" aria-label="개념 고르기"></div>
+    <div class="concept" id="concept" aria-live="polite" hidden></div>
+    <div class="cols erd-cols">
+      <figure class="fig">
+        <div class="fig-scroll"><svg id="erd-svg" viewBox="0 0 1004 630" role="img" aria-label="FestFlow DB 표 관계도. 주점 주문, 자리 예약, 사주 소개팅, 축제 안내, 운영, 스태프 여섯 묶음."></svg></div>
+        <figcaption>실선은 DB가 지켜 주는 연결(외래 키)이고, 점선은 번호만 적어 두고 코드가 맞춰 주는 연결입니다. 표 이름, 칸, 연결은 backend 의 entity 코드에서 스크립트로 뽑았습니다. 예시 값은 싣지 않았습니다.</figcaption>
+      </figure>
+      <aside class="note erd-note" id="erd-note" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <section class="view" id="v-code" hidden>
+    <div class="head">
+      <h1>꼭 읽을 코드 열네 곳</h1>
+      <p>화면과 서버에서 이 앱을 떠받치는 메서드입니다. 장면을 고르면 단추 하나가 거치는 코드가 순서대로 이어집니다. 카드를 누르면 오른쪽에 하는 일과 저장소의 진짜 코드가 뜨고, 이어진 표나 화면을 누르면 그 탭으로 넘어갑니다.</p>
+    </div>
+    <div class="ctrl" id="chains" role="group" aria-label="장면 고르기"></div>
+    <ol class="chain" id="chain" aria-live="polite"></ol>
+    <div class="cols code-cols">
+      <div class="lanes" id="code-lanes"></div>
+      <aside class="note code-note" id="code-note" aria-live="polite"></aside>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const s = (tag, attrs, kids) => { const e = document.createElementNS(NS, tag); for (const k in attrs || {}) e.setAttribute(k, attrs[k]); (kids || []).forEach((c) => e.appendChild(c)); return e; };
+  const h = (tag, attrs, kids) => { const e = document.createElement(tag); for (const k in attrs || {}) { if (k === 'text') e.textContent = attrs[k]; else if (k === 'class') e.className = attrs[k]; else if (k.startsWith('on')) e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, attrs[k]); } (kids || []).forEach((c) => c && e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c)); return e; };
+  const txt = (x, y, str, o) => { o = o || {}; const t = s('text', { x, y, 'font-size': o.size || 13, 'text-anchor': o.anchor || 'start' }); if (o.cls) t.setAttribute('class', o.cls); if (o.fill) t.setAttribute('fill', o.fill); t.textContent = str; return t; };
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ───────── 갈대밭 ───────── */
+  (function reeds() {
+    const box = document.getElementById('reeds');
+    let seed = 20261007; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const groups = [s('g'), s('g'), s('g')];
+    for (let i = 0; i < 96; i++) {
+      const x = (i / 96) * 1600 + rnd() * 16, ht = 50 + rnd() * 85, lean = (rnd() - 0.4) * 34, g = groups[i % 3];
+      const tx = x + lean, ty = 150 - ht;
+      g.appendChild(s('path', { d: 'M' + x + ' 150 Q' + (x + lean * 0.2) + ' ' + (150 - ht * 0.55) + ' ' + tx + ' ' + ty, fill: 'none', stroke: 'var(--reed-blade)', 'stroke-width': 1.3 + rnd() * 0.9, 'stroke-linecap': 'round' }));
+      if (rnd() > 0.3) g.appendChild(s('ellipse', { cx: tx + lean * 0.12, cy: ty - 7, rx: 3.2 + rnd() * 1.8, ry: 11 + rnd() * 6, fill: 'var(--reed-plume)', transform: 'rotate(' + (lean * 0.9 + 8) + ' ' + tx + ' ' + ty + ')' }));
+    }
+    groups.forEach((g) => box.appendChild(g));
+  })();
+
+  /* ───────── 화면 흐름 ───────── */
+  const CW = 148, CH = 84, X = (c) => 16 + c * 172, Y = (r) => 46 + r * 114;
+  const ZONE = {
+    guest: { c: 'var(--blue)', name: '손님' },
+    order: { c: 'var(--sunset)', name: '주점 주문' },
+    ops: { c: 'var(--reed)', name: '운영' },
+    match: { c: 'var(--plum)', name: '사주 소개팅' },
+  };
+  // c,row = 칸 위치. key = 암호나 로그인이 있어야 열림. live = 서버가 밀어 주는 소식(SSE)을 듣는 화면
+  const SCR = [
+    { id: 'fest', t: '축제 살펴보기', r: '/', z: 'guest', c: 1, row: 0, live: 1, file: 'pages/FestivalPage.jsx',
+      what: '앱을 열면 처음 보는 화면입니다. 공지, 오늘 일정, 총학 주점 카드, 사주 소개팅과 분실물로 가는 단추가 있습니다.',
+      api: ['GET /api/booths', 'GET /api/events', 'GET /api/notices/active', 'POST /api/notices/:id/view', 'SSE /api/stream/events', 'SSE /api/stream/notices', 'SSE /api/stream/booths'] },
+    { id: 'lost', t: '분실물', r: '/lost-found', z: 'guest', c: 2, row: 0, live: 1, file: 'pages/LostFoundPage.jsx',
+      what: '보관 중인 물건을 보여 주는 안내판입니다. 주인이 보고 직접 찾으러 옵니다. 학생증은 이름을 가려서, 잡화는 상자 사진 한 장으로 올립니다.',
+      api: ['GET /api/lost-items', 'SSE /api/stream/lost-items'], more: '손님이 직접 등록하는 기능과 "내 물건이에요" 요청은 이번 축제에서 꺼 두었습니다(config/festival.js).' },
+    { id: 'admin', t: '관리자', r: '/admin', z: 'ops', c: 3, row: 0, key: 1, file: 'pages/AdminPage.jsx',
+      what: '운영진이 로그인해서 쓰는 화면입니다. 부스, 공연, 공지, 분실물을 관리하고 방문 지표와 고친 기록을 봅니다.',
+      api: ['POST /api/auth/login', 'GET /api/admin/dashboard/kpis', 'POST /api/admin/notices', 'PUT /api/admin/booths/:id', 'POST /api/lost-items', 'PUT /api/lost-items/:id/status', 'GET /api/admin/audit-logs'] },
+    { id: 'staff', t: '스태프', r: '/staff', z: 'ops', c: 4, row: 0, key: 1, file: 'pages/StaffCrewPage.jsx',
+      what: '부스 암호로 여는 스태프 명단입니다. 누가 지금 어디서 무엇을 하는지, 시간표가 어떻게 되는지 보고 고칩니다. 고친 기록이 남습니다.',
+      api: ['GET /api/ops/crew', 'PUT /api/ops/crew/members/:id/status', 'PUT /api/ops/crew/members/:id/location', 'POST /api/ops/crew/slots', 'PUT /api/ops/crew/slots/:id'] },
+    { id: 'guide', t: '눌러 보는 매뉴얼', r: '/guide/live', z: 'ops', c: 5, row: 0, file: 'pages/LiveGuidePage.jsx',
+      what: '진짜 화면을 틀 안에 띄우고 연습 서버를 붙여서, 스태프가 직접 눌러 보며 배우는 매뉴얼입니다. 주점 주문, 포장, 자리, 분실물, 공지, 소개팅, 연락처 일곱 흐름이 있습니다.',
+      api: ['서버를 부르지 않음 (frontend/src/demo 의 연습 서버가 대신 답함)'], more: '주소 뒤에 ?flow=takeout 처럼 붙이면 그 흐름으로 바로 열립니다.' },
+
+    { id: 'booth', t: '총학 주점', r: '/booths/:id', z: 'order', c: 1, row: 1, live: 1, file: 'pages/BoothDetailPage.jsx',
+      what: '주점 탭을 누르면 총학 주점으로 바로 옵니다. 메뉴판, 지금 빈 자리, 포장 주문하기 단추가 있습니다. 자리에서는 테이블 QR을 찍어 주문합니다.',
+      api: ['GET /api/booths/:id', 'GET /api/booths/:id/order-menu', 'GET /api/booths/:id/reservations', 'SSE /api/stream/booths', 'SSE /api/stream/reservations'], more: '주점이 하나뿐이라 /booths 는 이 화면으로 넘어갑니다.' },
+    { id: 'pick', t: '테이블 고르기', r: '/order/:boothId', z: 'order', c: 2, row: 1, file: 'pages/order/TablePickPage.jsx',
+      what: '공용 QR을 찍으면 오는 화면입니다. 테이블 번호판에서 내 자리를 누릅니다. 맨 위에 "포장해 갈게요"가 있습니다.',
+      api: ['GET /api/booths/:id', 'GET /api/booths/:id/reservations'] },
+    { id: 'menu', t: '메뉴 담기', r: '/order/:boothId/:table', z: 'order', c: 3, row: 1, file: 'pages/order/TableOrderPage.jsx',
+      what: '메뉴를 골라 담습니다. 최소 주문 금액에 못 미치면 아래 띠가 얼마 더 담아야 하는지 알려 줍니다.',
+      api: ['GET /api/booths/:id/order-menu'], more: '포장은 테이블 이름이 "포장"인 주문입니다. 포장이 안 되는 메뉴와 용기값이 따로 있습니다.' },
+    { id: 'checkout', t: '주문 확인', r: '/order/…/checkout', z: 'order', c: 4, row: 1, file: 'pages/order/OrderCheckoutPage.jsx',
+      what: '담은 메뉴와 금액을 확인하고 입금자 이름을 적어 주문을 넣습니다. 결제는 계좌이체이고 스태프가 입금을 확인합니다.',
+      api: ['GET /api/booths/:id/order-menu', 'POST /api/booths/:id/orders'] },
+    { id: 'status', t: '주문 상태', r: '/orders/:orderId', z: 'order', c: 5, row: 1, live: 1, file: 'pages/order/OrderStatusPage.jsx',
+      what: '내 주문이 지금 어디까지 왔는지 보여 줍니다. 입금 확인과 준비 완료가 새로고침 없이 바뀝니다.',
+      api: ['GET /api/orders/:orderId', 'SSE /api/stream/orders'], more: '주문 소식 방송에는 입금자 이름과 전화번호를 싣지 않습니다.' },
+
+    { id: 'qr', t: '테이블 QR 인쇄', r: '/ops/booth/:id/table-qr', z: 'ops', c: 2, row: 2, key: 1, file: 'pages/order/TableQrPage.jsx',
+      what: '테이블마다 붙일 QR을 인쇄하는 화면입니다. 테이블 이름은 자리 현황에 등록된 이름을 그대로 씁니다.',
+      api: ['GET /api/booths/:id', 'GET /api/booths/:id/reservations'] },
+    { id: 'tables', t: '자리 현황판', r: '/ops/booth/:id/tables', z: 'ops', c: 3, row: 2, key: 1, live: 1, file: 'pages/OpsTableBoardPage.jsx',
+      what: '입구 스태프가 한 손으로 쓰는 전체 화면입니다. 테이블을 한 번 누르면 손님이 앉았다, 다시 누르면 비었다로 바뀝니다.',
+      api: ['GET /api/ops/booth/:id/reservations', 'PUT /api/ops/booth/:id/reservations/tables/:tableId/occupy', 'PUT /api/ops/booth/:id/reservations/tables/:tableId/release', 'SSE /api/stream/reservations'] },
+    { id: 'console', t: '주문 콘솔', r: '/ops/booth/:id', z: 'ops', c: 4, row: 2, key: 1, live: 1, file: 'pages/OpsBoothPage.jsx',
+      what: '주점 스태프가 부스 암호로 엽니다. 들어온 주문의 입금을 확인하고, 나간 주문은 서빙 완료를 누릅니다. 메뉴판과 계좌, 하루 정산도 여기서 봅니다.',
+      api: ['GET /api/ops/booth/:id/bootstrap', 'GET /api/ops/booth/:id/orders', 'PUT /api/ops/booth/:id/orders/:orderId/status', 'PUT /api/ops/booth/:id/orders/config', 'GET /api/ops/booth/:id/orders/history.csv', 'SSE /api/stream/orders'] },
+    { id: 'kitchen', t: '요리사 창', r: '/ops/booth/:id/kitchen', z: 'ops', c: 5, row: 2, key: 1, live: 1, file: 'pages/OpsKitchenPage.jsx',
+      what: '주방 태블릿에 띄워 두는 화면입니다. 입금이 확인된 주문을 메뉴별로, 입금 순서대로 보여 줍니다. 메뉴 하나를 끝낼 때마다 완료를 누르고, 5초 안에는 되돌릴 수 있습니다.',
+      api: ['GET /api/ops/booth/:id/orders', 'PUT /api/ops/booth/:id/orders/:orderId/items/:lineNo/done', 'SSE /api/stream/orders'], more: '서버가 메뉴 줄마다 끝난 시각을 적고, 모든 줄이 끝나면 주문이 준비 완료가 됩니다.' },
+
+    { id: 'intro', t: '소개팅 입구', r: '/ai-match', z: 'match', c: 1, row: 3, file: 'pages/AiMatchPage.jsx',
+      what: '사주 소개팅 첫 화면입니다. 처음이면 가입으로, 가입한 사람은 닉네임과 비밀번호로 들어갑니다.',
+      api: ['GET /api/ai-match/status', 'POST /api/ai-match/profiles/access'], sub: 'renderIntroScreen' },
+    { id: 'register', t: '가입', r: '/ai-match · 가입', z: 'match', c: 2, row: 3, file: 'pages/AiMatchPage.jsx',
+      what: '닉네임, 전화번호, 생년월일, 사진을 넣습니다. 생년월일을 넣으면 사주 미리보기가 바로 나옵니다.',
+      api: ['GET /api/ai-match/nickname-check', 'GET /api/ai-match/phone-check', 'GET /api/ai-match/saju-preview', 'POST /api/ai-match/image-preview', 'POST /api/ai-match/profiles'], more: '만세력은 서버가 규칙으로 계산합니다. 관리자가 새 가입을 막아 둘 수 있습니다.', sub: 'renderRegisterScreen' },
+    { id: 'people', t: '사람 둘러보기', r: '/ai-match · 목록', z: 'match', c: 3, row: 3, file: 'pages/AiMatchPage.jsx',
+      what: '가입한 사람들의 카드와 나와 궁합이 잘 맞는 세 사람을 보여 줍니다. 마음에 드는 사람은 찜해 둡니다.',
+      api: ['POST /api/ai-match/profiles/access', 'POST /api/ai-match/profiles/:id/favorite'], sub: 'renderPeopleScreen' },
+    { id: 'detail', t: '궁합 상세', r: '/ai-match · 상세', z: 'match', c: 4, row: 3, file: 'pages/AiMatchPage.jsx',
+      what: '한 사람과의 궁합 풀이를 봅니다. 두 사람의 명식과 점수의 근거가 나오고, 여기서 데이트를 신청합니다.',
+      api: ['POST /api/ai-match/profiles/:id/requests', 'POST /api/ai-match/profiles/:id/report'], more: '한 사람이 보낼 수 있는 신청 수에는 상한이 있습니다.', sub: 'renderDetailScreen' },
+    { id: 'requests', t: '신청함', r: '/ai-match · 신청함', z: 'match', c: 5, row: 3, file: 'pages/AiMatchPage.jsx',
+      what: '내가 보낸 신청과 받은 신청이 모입니다. 받은 신청은 수락하거나 거절하고, 성사되면 약속 잡기나 연락처 주고받기로 이어집니다.',
+      api: ['POST /api/ai-match/profiles/inbox', 'POST /api/ai-match/requests/:id/accept', 'POST /api/ai-match/requests/:id/reject', 'POST /api/ai-match/requests/:id/cancel'], more: '신청함은 15초마다 서버에 새 소식을 물어봅니다.', sub: 'renderRequestsScreen' },
+    { id: 'my', t: 'MY', r: '/ai-match · MY', z: 'match', c: 6, row: 3, file: 'pages/AiMatchPage.jsx',
+      what: '내 프로필과 내 명식을 보고 고칩니다. 탈퇴도 여기서 합니다.',
+      api: ['PUT /api/ai-match/profiles/:id', 'POST /api/ai-match/profiles/:id/delete'], sub: 'renderMyScreen' },
+
+    { id: 'aiadmin', t: '소개팅 관리자', r: '/ai-match/admin', z: 'ops', c: 2, row: 4, key: 1, file: 'pages/AiMatchAdminPage.jsx',
+      what: '소개팅 부스 운영진 화면입니다. 약속 시간표를 보고, 도착한 사람의 단계를 바꾸고, 두 사람이 부스에 오면 채팅을 시작시킵니다. 새 가입을 막는 스위치와 신고 처리도 있습니다.',
+      api: ['GET /api/admin/ai-match/meetup-schedule', 'PUT /api/admin/ai-match/requests/:id/escort', 'POST /api/admin/ai-match/requests/:id/chat/start', 'POST /api/admin/ai-match/requests/:id/no-show', 'PUT /api/admin/ai-match/registration'] },
+    { id: 'chat', t: '블라인드 채팅', r: '/ai-match · 채팅', z: 'match', c: 3, row: 4, file: 'components/MeetupChat.jsx',
+      what: '부스에서 얼굴을 가린 채 앱으로 글자 채팅을 합니다. 끝나면 각자 얼굴을 볼지 고르고, 둘 다 좋다고 해야 가림막을 걷습니다.',
+      api: ['POST /api/ai-match/requests/:id/chat/enter', 'GET /api/ai-match/chat/state', 'POST /api/ai-match/chat/messages', 'POST /api/ai-match/chat/choice'], more: '채팅은 스태프가 시작 단추를 눌러야 열립니다. 화면은 1초마다 서버에 새 글을 물어봅니다.' },
+    { id: 'escort', t: '약속 당일', r: '/ai-match · 티켓', z: 'match', c: 4, row: 4, file: 'components/MeetupEscort.jsx',
+      what: '약속 티켓과 당일 단계 바입니다. 기다리는 곳에 오면 "도착했어요"를 누르고, 스태프가 부스로 데려갑니다.',
+      api: ['POST /api/ai-match/requests/:id/meetup/arrived'], more: '약속 30분 전에 알림 문자가 한 번 갑니다.' },
+    { id: 'meetup', t: '약속 잡기', r: '/ai-match · 시간표', z: 'match', c: 5, row: 4, file: 'components/MeetupScheduler.jsx',
+      what: '부스에서 만날 시간을 고릅니다. 한 사람이 칸을 제안하면 상대가 확정합니다. 확정한 약속은 참가자가 바꾸거나 취소할 수 없습니다.',
+      api: ['GET /api/ai-match/meetup-slots', 'POST /api/ai-match/requests/:id/meetup/propose', 'POST /api/ai-match/requests/:id/meetup/confirm', 'POST /api/ai-match/requests/:id/meetup/cancel'], more: '한 칸에는 한 쌍만 들어갑니다. 같은 칸을 동시에 골라도 서버가 한 쌍만 받습니다.' },
+    { id: 'contact', t: '연락처 주고받기', r: '/ai-match · 신청함', z: 'match', c: 6, row: 4, file: 'pages/AiMatchPage.jsx',
+      what: '성사된 두 사람이 모두 동의하면 서로의 전화번호가 열립니다. 한 사람만 동의한 동안에는 아무것도 보이지 않습니다.',
+      api: ['POST /api/ai-match/requests/:id/contact/consent'], more: '부스 약속을 확정한 쌍은 대상이 아닙니다.' },
+  ];
+  const BY = {}; SCR.forEach((p) => { BY[p.id] = p; p.x = X(p.c); p.y = Y(p.row); p.cx = p.x + CW / 2; p.cy = p.y + CH / 2; });
+
+  // [from, to, 글, 종류] 종류 data = 화면 이동이 아니라 데이터가 이어짐
+  const LINKS = [
+    ['fest', 'lost', ''],
+    ['fest', 'booth', '주점 카드'],
+    ['fest', 'intro', '사주 소개팅'],
+    ['admin', 'lost', '등록', 'data'],
+    ['admin', 'fest', '공지 올리기', 'data'],
+    ['booth', 'menu', '포장 주문하기'],
+    ['pick', 'menu', ''],
+    ['menu', 'checkout', ''],
+    ['checkout', 'status', ''],
+    ['qr', 'pick', '공용 QR', 'data'],
+    ['qr', 'menu', '테이블 QR', 'data'],
+    ['checkout', 'console', '새 주문', 'data'],
+    ['console', 'kitchen', '입금', 'data'],
+    ['kitchen', 'status', '준비 완료', 'data'],
+    ['console', 'tables', ''],
+    ['tables', 'booth', '빈 자리', 'data'],
+    ['intro', 'register', ''],
+    ['register', 'people', ''],
+    ['people', 'detail', ''],
+    ['detail', 'requests', '신청'],
+    ['requests', 'meetup', '약속'],
+    ['requests', 'contact', '동의'],
+    ['meetup', 'escort', '확정'],
+    ['escort', 'chat', ''],
+    ['aiadmin', 'chat', '시작', 'data'],
+    ['aiadmin', 'escort', '단계 바꾸기', 'data'],
+  ];
+
+  const TRIPS = [
+    { id: 'all', label: '전체', say: '실선은 화면 안의 단추로 가는 길, 청록 점선은 데이터가 이어지는 길입니다.' },
+    { id: 'pub', label: '주문 한 건', path: ['qr', 'menu', 'checkout', 'console', 'kitchen', 'status'], say: '테이블 QR을 찍고 주문하면 <i>주문 콘솔</i>에서 입금을 확인하고, <i>요리사 창</i>에서 메뉴를 끝낼 때 손님 화면이 바뀝니다.' },
+    { id: 'guest', label: '손님이 보는 주문', path: ['pick', 'menu', 'checkout', 'status'], say: '공용 QR로 들어와 <i>테이블을 고르고</i>, 담고, 주문을 넣고, 상태를 지켜봅니다.' },
+    { id: 'takeout', label: '포장', path: ['fest', 'booth', 'menu', 'checkout', 'status'], say: '주점 화면의 <i>포장 주문하기</i>는 테이블 이름이 "포장"인 주문으로 이어집니다.' },
+    { id: 'seat', label: '빈 자리', path: ['console', 'tables', 'booth'], say: '입구 스태프가 현황판을 누르면 손님 화면의 <i>지금 빈 자리</i>가 따라 바뀝니다.' },
+    { id: 'match', label: '소개팅 신청', path: ['fest', 'intro', 'register', 'people', 'detail', 'requests'], say: '가입하고, 둘러보고, 궁합을 본 뒤 <i>데이트를 신청</i>합니다.' },
+    { id: 'meet', label: '부스 만남', path: ['requests', 'meetup', 'escort', 'chat'], say: '성사되면 시간을 잡고, 당일에 도착을 알리고, 부스에서 <i>얼굴을 가린 채 채팅</i>합니다.' },
+    { id: 'booth-staff', label: '부스 스태프', path: ['aiadmin', 'chat'], say: '두 사람이 부스에 오면 스태프가 <i>채팅 시작</i>을 눌러야 채팅이 열립니다.' },
+    { id: 'contact', label: '연락처', path: ['requests', 'contact'], say: '부스에서 만나지 않는 쌍은 <i>둘 다 동의하면</i> 번호가 열립니다.' },
+    { id: 'lost', label: '분실물', path: ['admin', 'lost'], say: '운영진이 보관 물건을 올리면 손님의 <i>분실물 안내판</i>에 바로 뜹니다.' },
+    { id: 'notice', label: '공지', path: ['admin', 'fest'], say: '관리자가 올린 공지는 열려 있는 손님 화면에 <i>새로고침 없이</i> 나타납니다.' },
+  ];
+
+  // 선 경로: 이웃 칸은 곧게, 먼 칸은 칸 사이 골목을 따라 돈다
+  function route(a, b, k) {
+    const j = ((k * 5) % 9) - 4; // 같은 골목에서 선이 겹치지 않게 조금씩 비킨다
+    if (a.row === b.row && Math.abs(a.c - b.c) === 1) {
+      const sx = b.c > a.c ? a.x + CW : a.x, ex = b.c > a.c ? b.x : b.x + CW;
+      return [[sx, a.cy], [ex, b.cy]];
+    }
+    if (a.c === b.c && Math.abs(a.row - b.row) === 1) {
+      const sy = b.row > a.row ? a.y + CH : a.y, ey = b.row > a.row ? b.y : b.y + CH;
+      return [[a.cx + j * 3, sy], [a.cx + j * 3, ey]];
+    }
+    const right = b.c > a.c || (b.c === a.c && a.c < 3);
+    const sx = right ? a.x + CW : a.x, gx = right ? a.x + CW + 12 + j : a.x - 12 + j;
+    let gy, ey;
+    if (b.row < a.row) { gy = b.y + CH + 15 + j; ey = b.y + CH; } else if (b.row > a.row) { gy = b.y - 15 + j; ey = b.y; } else { gy = b.y - 15 + j; ey = b.y; }
+    const bx = b.cx + j * 4;
+    return [[sx, a.cy + j * 2], [gx, a.cy + j * 2], [gx, gy], [bx, gy], [bx, ey]];
+  }
+  function pathD(pts) {
+    let d = 'M' + pts[0][0] + ' ' + pts[0][1];
+    for (let i = 1; i < pts.length; i++) {
+      const p = pts[i], prev = pts[i - 1], next = pts[i + 1];
+      if (!next) { d += ' L' + p[0] + ' ' + p[1]; break; }
+      const dx1 = Math.sign(p[0] - prev[0]), dy1 = Math.sign(p[1] - prev[1]), dx2 = Math.sign(next[0] - p[0]), dy2 = Math.sign(next[1] - p[1]);
+      const l1 = Math.abs(p[0] - prev[0]) + Math.abs(p[1] - prev[1]), l2 = Math.abs(next[0] - p[0]) + Math.abs(next[1] - p[1]);
+      const rr = Math.min(9, l1 / 2, l2 / 2);
+      d += ' L' + (p[0] - dx1 * rr) + ' ' + (p[1] - dy1 * rr) + ' Q' + p[0] + ' ' + p[1] + ' ' + (p[0] + dx2 * rr) + ' ' + (p[1] + dy2 * rr);
+    }
+    return d;
+  }
+
+  const svg = document.getElementById('flow-svg');
+  const mk = (id, fill) => s('marker', { id, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, [s('path', { d: 'M0 0 L10 5 L0 10 z', fill })]);
+  svg.appendChild(s('defs', {}, [mk('arr', 'var(--wire)'), mk('arr-on', 'var(--blue-deep)'), mk('arr-data', 'var(--data)')]));
+
+  // 구역 바탕: [구역, 첫 칸, 끝 칸, 첫 줄, 끝 줄, 이름을 적을지]
+  const BANDS = [
+    ['guest', 1, 2, 0, 0, 'tl'], ['ops', 3, 5, 0, 0, 'tr'],
+    ['order', 1, 5, 1, 1, 'r'],
+    ['ops', 2, 5, 2, 2, 'r'],
+    ['match', 1, 6, 3, 3, 'tr'], ['match', 3, 6, 4, 4, ''], ['ops', 2, 2, 4, 4, ''],
+  ];
+  BANDS.forEach(([z, c0, c1, r0, r1, named]) => {
+    const x = X(c0) - 8, y = Y(r0) - 8, w = X(c1) + CW + 8 - x, hh = Y(r1) + CH + 8 - y;
+    svg.appendChild(s('rect', { x, y, width: w, height: hh, rx: 14, fill: ZONE[z].c, opacity: 0.09 }));
+    if (named === 'tr') svg.appendChild(txt(x + w - 4, y - 5, ZONE[z].name, { size: 14, anchor: 'end', cls: 'zlabel', fill: ZONE[z].c }));
+    if (named === 'tl') svg.appendChild(txt(x + 4, y - 5, ZONE[z].name, { size: 14, cls: 'zlabel', fill: ZONE[z].c }));
+    if (named === 'r') svg.appendChild(txt(x + w + 10, y + hh / 2 + 5, ZONE[z].name, { size: 14, cls: 'zlabel', fill: ZONE[z].c }));
+  });
+
+  // 보는 법 (왼쪽 빈 칸)
+  const lg = s('g', {});
+  lg.appendChild(txt(16, 62, '보는 법', { size: 17, cls: 't-d' }));
+  [
+    ['plate', '화면 한 장'],
+    ['key', '점선 틀은 암호 필요'],
+    ['live', '실시간으로 바뀜'],
+    ['line', '단추로 가는 길'],
+    ['data', '데이터가 가는 길'],
+  ].forEach(([k, label], i) => {
+    const y = 92 + i * 27;
+    if (k === 'plate' || k === 'key') lg.appendChild(s('rect', { x: 16, y: y - 11, width: 28, height: 17, rx: 4, fill: 'var(--card)', stroke: k === 'key' ? 'var(--ink-faint)' : 'var(--card-line)', 'stroke-width': 1.5, 'stroke-dasharray': k === 'key' ? '4 3' : 'none' }));
+    if (k === 'live') { lg.appendChild(s('circle', { class: 'livedot', cx: 30, cy: y - 2, r: 4 })); lg.appendChild(s('circle', { class: 'livering', cx: 30, cy: y - 2, r: 4 })); }
+    if (k === 'line') lg.appendChild(s('path', { d: 'M16 ' + (y - 2) + ' H44', class: 'edge', 'marker-end': 'url(#arr)' }));
+    if (k === 'data') lg.appendChild(s('path', { d: 'M16 ' + (y - 2) + ' H44', class: 'edge data', 'marker-end': 'url(#arr-data)' }));
+    lg.appendChild(txt(52, y + 3, label, { size: 12, cls: 'soft' }));
+  });
+  svg.appendChild(lg);
+  svg.appendChild(txt(16, Y(2) + 26, '아래 탭 네 개는', { size: 15, cls: 't-d soft' }));
+  svg.appendChild(txt(16, Y(2) + 47, '어디서든 바로 간다.', { size: 15, cls: 't-d soft' }));
+  svg.appendChild(txt(16, Y(2) + 70, '축제 · 주점', { size: 12.5, cls: 'faint' }));
+  svg.appendChild(txt(16, Y(2) + 88, '사주 소개팅 · 분실물', { size: 12.5, cls: 'faint' }));
+
+  // 선
+  const edges = [];
+  const edgeLayer = s('g', {}), labelLayer = s('g', {});
+  LINKS.forEach((l, k) => {
+    const a = BY[l[0]], b = BY[l[1]], pts = route(a, b, k), data = l[3] === 'data';
+    const p = s('path', { d: pathD(pts), class: 'edge' + (data ? ' data' : ''), 'marker-end': data ? 'url(#arr-data)' : 'url(#arr)' });
+    edgeLayer.appendChild(p);
+    let lab = null;
+    if (l[2]) {
+      let best = 0, bi = 0; // 글은 가장 긴 토막 가운데에
+      for (let i = 0; i < pts.length - 1; i++) { const len = Math.abs(pts[i + 1][0] - pts[i][0]) + Math.abs(pts[i + 1][1] - pts[i][1]); if (len > best) { best = len; bi = i; } }
+      const m = [(pts[bi][0] + pts[bi + 1][0]) / 2, (pts[bi][1] + pts[bi + 1][1]) / 2], vertical = pts[bi][0] === pts[bi + 1][0];
+      lab = txt(m[0] + (vertical ? 6 : 0), m[1] + (vertical ? 4 : -5), l[2], { size: 11, anchor: vertical ? 'start' : 'middle', cls: 'elabel' });
+      labelLayer.appendChild(lab);
+    }
+    edges.push({ a: l[0], b: l[1], el: p, lab, data });
+  });
+  svg.appendChild(edgeLayer);
+
+  // 화면 카드: 흰 판 + 구역 색 뷰파인더 모서리
+  const cards = {};
+  SCR.forEach((p) => {
+    const g = s('g', { class: 'card' + (p.key ? ' key' : ''), tabindex: 0, role: 'button', 'aria-label': p.t + ' 화면 설명 보기' });
+    const lift = s('g', { class: 'lift' });
+    lift.appendChild(s('rect', { class: 'plate', x: p.x, y: p.y, width: CW, height: CH, rx: 10 }));
+    const L = 11, i = 6, x0 = p.x + i, y0 = p.y + i, x1 = p.x + CW - i, y1 = p.y + CH - i;
+    lift.appendChild(s('path', { class: 'vf', stroke: ZONE[p.z].c, d:
+      'M' + x0 + ' ' + (y0 + L) + ' V' + y0 + ' H' + (x0 + L) + ' M' + (x1 - L) + ' ' + y0 + ' H' + x1 + ' V' + (y0 + L) +
+      ' M' + x1 + ' ' + (y1 - L) + ' V' + y1 + ' H' + (x1 - L) + ' M' + (x0 + L) + ' ' + y1 + ' H' + x0 + ' V' + (y1 - L) }));
+    lift.appendChild(txt(p.x + 18, p.y + 39, p.t, { size: p.t.length > 7 ? 15 : 17, cls: 't-d' }));
+    const shortR = p.r.length > 18 ? p.r.replace('/ops/booth/:id', '/ops/…').replace('/order/:boothId', '/order/…') : p.r; // 카드에는 줄인 주소, 쪽지에는 온전한 주소
+    lift.appendChild(txt(p.x + 18, p.y + 60, shortR, { size: shortR.length > 18 ? 10 : 11, cls: 't-m faint' }));
+    lift.appendChild(s('circle', { class: 'recdot', cx: p.x + 22, cy: p.y + 17, r: 3.2 }));
+    if (p.live) { lift.appendChild(s('circle', { class: 'livedot', cx: p.x + CW - 20, cy: p.y + 20, r: 3.6 })); lift.appendChild(s('circle', { class: 'livering', cx: p.x + CW - 20, cy: p.y + 20, r: 3.6 })); }
+    g.appendChild(lift);
+    g.addEventListener('click', () => pick(p));
+    g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(p); } });
+    svg.appendChild(g); cards[p.id] = g;
+  });
+  svg.appendChild(labelLayer);
+
+  // 길을 따라 나는 종이비행기
+  const walker = s('g', {}, [
+    s('path', { class: 'plane-body', d: 'M15 0 L-12 -9 L-6 0 L-12 9 Z' }),
+    s('path', { class: 'plane-fold', d: 'M15 0 L-6 0' }),
+  ]);
+  walker.setAttribute('visibility', 'hidden');
+  svg.appendChild(walker);
+
+  const note = document.getElementById('note');
+  const zoneTag = (p) => h('span', { class: 'tag zone', text: ZONE[p.z].name, style: 'background:' + ZONE[p.z].c });
+  function pick(p) {
+    Object.values(cards).forEach((c) => c.classList.remove('sel')); cards[p.id].classList.add('sel');
+    note.textContent = '';
+    note.appendChild(h('div', { class: 'rec', text: 'REC' }));
+    note.appendChild(h('div', { class: 'route', text: p.r }));
+    note.appendChild(h('h3', { text: p.t }));
+    const tags = h('div', { class: 'tags' }, [zoneTag(p)]);
+    if (p.live) tags.appendChild(h('span', { class: 'tag live', text: '실시간' }));
+    if (p.key) tags.appendChild(h('span', { class: 'tag key', text: '암호 · 로그인' }));
+    note.appendChild(tags);
+    note.appendChild(h('p', { text: p.what }));
+    note.appendChild(h('h4', { text: '서버에 하는 말' }));
+    note.appendChild(h('ul', {}, p.api.map((a) => { const sp = a.indexOf(' '), verb = a.slice(0, sp); return /^(GET|POST|PUT|DELETE|SSE)$/.test(verb) ? h('li', { class: 'api' }, [h('b', { text: verb }), a.slice(sp + 1)]) : h('li', { class: 'api', text: a }); })));
+    if (p.more) { note.appendChild(h('h4', { text: '더' })); note.appendChild(h('p', { text: p.more, style: 'margin-top:0' })); }
+    const outs = LINKS.filter((l) => l[0] === p.id).map((l) => BY[l[1]].t), ins = LINKS.filter((l) => l[1] === p.id).map((l) => BY[l[0]].t);
+    if (ins.length || outs.length) {
+      note.appendChild(h('h4', { text: '이어진 화면' }));
+      note.appendChild(h('p', { class: 'links', style: 'margin-top:0', text: (ins.length ? '← ' + ins.join(', ') : '') + (ins.length && outs.length ? '\n' : '') + (outs.length ? '→ ' + outs.join(', ') : '') }));
+    }
+    note.appendChild(h('h4', { text: '코드' }));
+    note.appendChild(h('div', { class: 'file', text: 'frontend/src/' + p.file + (p.sub ? ' · ' + p.sub + '()' : '') }));
+  }
+
+  // 길 고르기
+  const tripBox = document.getElementById('trips'), say = document.getElementById('say');
+  let trip = TRIPS[0], segs = [], tt = 0;
+  function findEdge(a, b) { for (const e of edges) { if (e.a === a && e.b === b) return { e, rev: false }; if (e.a === b && e.b === a) return { e, rev: true }; } return null; }
+  function setTrip(t) {
+    trip = t; tt = 0; say.innerHTML = t.say;
+    tripBox.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.k === t.id ? 'true' : 'false'));
+    const on = t.path ? new Set(t.path) : null;
+    SCR.forEach((p) => cards[p.id].classList.toggle('dim', !!on && !on.has(p.id)));
+    segs = [];
+    if (t.path) for (let i = 0; i < t.path.length - 1; i++) { const f = findEdge(t.path[i], t.path[i + 1]); if (f) segs.push(f); }
+    const used = new Set(segs.map((x) => x.e));
+    edges.forEach((e) => {
+      const lit = used.has(e);
+      e.el.classList.toggle('dim', !!on && !lit); e.el.classList.toggle('on', lit);
+      e.el.setAttribute('marker-end', e.data ? 'url(#arr-data)' : lit ? 'url(#arr-on)' : 'url(#arr)');
+      if (e.lab) e.lab.classList.toggle('dim', !!on && !lit);
+    });
+    walker.setAttribute('visibility', t.path && !reduce ? 'visible' : 'hidden');
+    pick(BY[t.path ? t.path[0] : 'fest']);
+  }
+  TRIPS.forEach((t) => tripBox.appendChild(h('button', { type: 'button', class: 'chipbtn', id: 'trip-' + t.id, 'data-k': t.id, text: t.label, onclick: () => setTrip(t) })));
+
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
+    if (trip.path && segs.length && !reduce && !document.getElementById('v-flow').hidden) {
+      tt += dt * 0.7;
+      const n = segs.length, u = tt % (n + 0.8), i = Math.min(n - 1, Math.floor(u)), f = Math.min(1, u - i), e = f * f * (3 - 2 * f);
+      const sg = segs[i], L = sg.e.el.getTotalLength(), at = (q) => sg.e.el.getPointAtLength(sg.rev ? L * (1 - q) : L * q);
+      const pt = at(e), ahead = at(Math.min(1, e + 0.02)), back = at(Math.max(0, e - 0.02));
+      const ang = Math.atan2(ahead.y - back.y, ahead.x - back.x) * 180 / Math.PI;
+      const bob = Math.sin(now / 260) * 2.2; // 바람을 타듯 살짝 오르내린다
+      walker.setAttribute('transform', 'translate(' + pt.x + ' ' + (pt.y + bob) + ') rotate(' + ang + ')');
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  setTrip(TRIPS[1]);
+  // 다른 탭에서 화면 이름을 누르면 이 지도로 넘어와 그 화면을 고른다
+  window.FF = { pickScreen: (id) => { if (BY[id]) { setTrip(TRIPS[0]); pick(BY[id]); } }, screenName: (id) => (BY[id] ? BY[id].t : id) };
+})();
+</script>
+<script>window.__ERD = [{"cls":"AdminUser","t":"admin_users","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"username","ty":"String","f":["UQ","NN"],"ref":null},{"c":"password","ty":"String","f":["NN"],"ref":null},{"c":"role","ty":"String","f":["NN"],"ref":null}]},{"cls":"AiMatchChatMessage","t":"ai_match_chat_messages","uq":[],"ix":["request_id, id"],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"request_id","ty":"Long","f":["NN"],"ref":null},{"c":"sender_profile_id","ty":"Long","f":["NN"],"ref":null},{"c":"type","ty":"String","f":["NN"],"ref":null},{"c":"content","ty":"String","f":["NN"],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null}]},{"cls":"AiMatchFavorite","t":"ai_match_favorites","uq":[["requester_profile_id","favorite_profile_id"]],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"requester_profile_id","ty":"AiMatchProfile","f":["FK","NN"],"ref":"AiMatchProfile"},{"c":"favorite_profile_id","ty":"AiMatchProfile","f":["FK","NN"],"ref":"AiMatchProfile"},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null}]},{"cls":"AiMatchMeetupSlot","t":"ai_match_meetup_slots","uq":[["slot_at"],["request_id"]],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"slot_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"request_id","ty":"Long","f":["NN"],"ref":null},{"c":"held_until","ty":"LocalDateTime","f":[],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null}]},{"cls":"AiMatchPhoneUsage","t":"ai_match_phone_usages","uq":[["phone_number"]],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"phone_number","ty":"String","f":["UQ","NN"],"ref":null},{"c":"successful_image_conversion_count","ty":"int","f":["NN"],"ref":null},{"c":"blocked","ty":"boolean","f":["NN"],"ref":null},{"c":"blocked_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"cooldown_until","ty":"LocalDateTime","f":[],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"updated_at","ty":"LocalDateTime","f":["NN"],"ref":null}]},{"cls":"AiMatchProfile","t":"ai_match_profiles","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"nickname","ty":"String","f":["NN"],"ref":null},{"c":"gender","ty":"String","f":["NN"],"ref":null},{"c":"intro","ty":"String","f":["NN"],"ref":null},{"c":"pin_hash","ty":"String","f":[],"ref":null},{"c":"phone_number","ty":"String","f":[],"ref":null},{"c":"meet_place","ty":"String","f":["NN"],"ref":null},{"c":"original_image_url","ty":"String","f":["NN"],"ref":null},{"c":"generated_image_url","ty":"String","f":["NN"],"ref":null},{"c":"consent","ty":"boolean","f":["NN"],"ref":null},{"c":"status","ty":"String","f":["NN"],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"real_name","ty":"String","f":[],"ref":null},{"c":"birth_date","ty":"LocalDate","f":[],"ref":null},{"c":"birth_time","ty":"LocalTime","f":[],"ref":null},{"c":"saju_reading","ty":"String","f":[],"ref":null},{"c":"hidden","ty":"Boolean","f":[],"ref":null},{"c":"hidden_reason","ty":"String","f":[],"ref":null},{"c":"photo_review","ty":"String","f":[],"ref":null}]},{"cls":"AiMatchReport","t":"ai_match_reports","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"reporter_profile_id","ty":"Long","f":[],"ref":null},{"c":"reporter_nickname","ty":"String","f":[],"ref":null},{"c":"target_profile_id","ty":"Long","f":["NN"],"ref":null},{"c":"target_nickname","ty":"String","f":[],"ref":null},{"c":"reason","ty":"String","f":["NN"],"ref":null},{"c":"detail","ty":"String","f":[],"ref":null},{"c":"status","ty":"String","f":["NN"],"ref":null},{"c":"resolution","ty":"String","f":[],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"resolved_at","ty":"LocalDateTime","f":[],"ref":null}]},{"cls":"AiMatchRequest","t":"ai_match_requests","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"profile_id","ty":"AiMatchProfile","f":["FK","NN"],"ref":"AiMatchProfile"},{"c":"requester_profile_id","ty":"AiMatchProfile","f":["FK"],"ref":"AiMatchProfile"},{"c":"requester_nickname","ty":"String","f":["NN"],"ref":null},{"c":"meet_place","ty":"String","f":["NN"],"ref":null},{"c":"message","ty":"String","f":["NN"],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"status","ty":"String","f":[],"ref":null},{"c":"status_reason","ty":"String","f":[],"ref":null},{"c":"connection_status","ty":"String","f":[],"ref":null},{"c":"admin_note","ty":"String","f":[],"ref":null},{"c":"updated_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"meetup_place","ty":"String","f":[],"ref":null},{"c":"meetup_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"meetup_proposer_profile_id","ty":"Long","f":[],"ref":null},{"c":"meetup_proposer_nickname","ty":"String","f":[],"ref":null},{"c":"requester_arrived_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"profile_arrived_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"requester_staff_departed_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"requester_picked_up_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"requester_at_booth_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"profile_staff_departed_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"profile_picked_up_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"profile_at_booth_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"meetup_reminder_sent_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"chat_started_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"requester_reveal","ty":"String","f":[],"ref":null},{"c":"profile_reveal","ty":"String","f":[],"ref":null},{"c":"meetup_outcome","ty":"String","f":[],"ref":null},{"c":"requester_contact_consent_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"profile_contact_consent_at","ty":"LocalDateTime","f":[],"ref":null}]},{"cls":"AppSetting","t":"app_settings","uq":[],"ix":[],"cols":[{"c":"setting_key","ty":"String","f":["PK"],"ref":null},{"c":"setting_value","ty":"String","f":[],"ref":null},{"c":"updated_at","ty":"LocalDateTime","f":[],"ref":null}]},{"cls":"AuditLog","t":"audit_logs","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"admin_username","ty":"String","f":["NN"],"ref":null},{"c":"action","ty":"String","f":["NN"],"ref":null},{"c":"target_type","ty":"String","f":["NN"],"ref":null},{"c":"target_id","ty":"Long","f":[],"ref":null},{"c":"details","ty":"String","f":["NN"],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null}]},{"cls":"Booth","t":"booths","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"name","ty":"String","f":["NN"],"ref":null},{"c":"latitude","ty":"double","f":["NN"],"ref":null},{"c":"longitude","ty":"double","f":["NN"],"ref":null},{"c":"description","ty":"String","f":["NN"],"ref":null},{"c":"display_order","ty":"Integer","f":["NN"],"ref":null},{"c":"image_url","ty":"String","f":["NN"],"ref":null},{"c":"estimated_wait_minutes","ty":"Integer","f":[],"ref":null},{"c":"remaining_stock","ty":"Integer","f":[],"ref":null},{"c":"live_status_message","ty":"String","f":[],"ref":null},{"c":"live_status_updated_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"max_reservation_minutes","ty":"Integer","f":[],"ref":null},{"c":"booth_intro","ty":"String","f":[],"ref":null},{"c":"menu_image_url","ty":"String","f":[],"ref":null},{"c":"menu_board_json","ty":"String","f":[],"ref":null},{"c":"category","ty":"String","f":[],"ref":null},{"c":"day_part","ty":"String","f":[],"ref":null},{"c":"open_time","ty":"LocalTime","f":[],"ref":null},{"c":"close_time","ty":"LocalTime","f":[],"ref":null},{"c":"tags","ty":"String","f":[],"ref":null},{"c":"content_json","ty":"String","f":[],"ref":null},{"c":"reservation_enabled","ty":"Boolean","f":[],"ref":null},{"c":"order_enabled","ty":"Boolean","f":[],"ref":null},{"c":"bank_account","ty":"String","f":[],"ref":null},{"c":"bank_holder","ty":"String","f":[],"ref":null}]},{"cls":"BoothOrder","t":"booth_orders","uq":[],"ix":["booth_id, createdAt","clientKey"],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"booth_id","ty":"Booth","f":["FK","NN"],"ref":"Booth"},{"c":"table_label","ty":"String","f":["NN"],"ref":null},{"c":"order_no","ty":"String","f":[],"ref":null},{"c":"client_key","ty":"String","f":["NN"],"ref":null},{"c":"depositor_name","ty":"String","f":["NN"],"ref":null},{"c":"phone_number","ty":"String","f":[],"ref":null},{"c":"request","ty":"String","f":[],"ref":null},{"c":"payment_method","ty":"PaymentMethod","f":["NN","ENUM"],"ref":null},{"c":"status","ty":"OrderStatus","f":["NN","ENUM"],"ref":null},{"c":"total_amount","ty":"Integer","f":["NN"],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"paid_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"ready_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"completed_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"canceled_at","ty":"LocalDateTime","f":[],"ref":null}]},{"cls":"BoothOrderItem","t":"booth_order_items","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"order_id","ty":"BoothOrder","f":["FK","NN"],"ref":"BoothOrder"},{"c":"line_no","ty":"Integer","f":["NN"],"ref":null},{"c":"name","ty":"String","f":["NN"],"ref":null},{"c":"unit_price","ty":"Integer","f":["NN"],"ref":null},{"c":"quantity","ty":"Integer","f":["NN"],"ref":null},{"c":"done_at","ty":"LocalDateTime","f":[],"ref":null}]},{"cls":"BoothReservation","t":"booth_reservations","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"booth_id","ty":"Booth","f":["FK","NN"],"ref":"Booth"},{"c":"table_id","ty":"BoothReservationTable","f":["FK","NN"],"ref":"BoothReservationTable"},{"c":"user_key","ty":"String","f":["NN"],"ref":null},{"c":"seat_count","ty":"Integer","f":["NN"],"ref":null},{"c":"status","ty":"ReservationStatus","f":["NN","ENUM"],"ref":null},{"c":"reserved_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"expires_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"checked_in_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"expired_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"called_at","ty":"LocalDateTime","f":[],"ref":null}]},{"cls":"BoothReservationTable","t":"booth_reservation_tables","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"booth_id","ty":"Booth","f":["FK","NN"],"ref":"Booth"},{"c":"table_name","ty":"String","f":["NN"],"ref":null},{"c":"total_seats","ty":"Integer","f":["NN"],"ref":null},{"c":"available_seats","ty":"Integer","f":["NN"],"ref":null},{"c":"display_order","ty":"Integer","f":["NN"],"ref":null},{"c":"walk_in_occupied","ty":"boolean","f":["NN"],"ref":null},{"c":"walk_in_since","ty":"java.time.LocalDateTime","f":[],"ref":null}]},{"cls":"CrewLog","t":"crew_logs","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"at","ty":"Instant","f":["NN"],"ref":null},{"c":"actor","ty":"String","f":["NN"],"ref":null},{"c":"text","ty":"String","f":["NN"],"ref":null}]},{"cls":"CrewMember","t":"crew_members","uq":[["name"]],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"name","ty":"String","f":["NN"],"ref":null},{"c":"dept","ty":"String","f":["NN"],"ref":null},{"c":"role","ty":"String","f":["NN"],"ref":null},{"c":"phone","ty":"String","f":["NN"],"ref":null},{"c":"sort_order","ty":"int","f":["NN"],"ref":null},{"c":"status","ty":"String","f":[],"ref":null},{"c":"status_memo","ty":"String","f":[],"ref":null},{"c":"status_at","ty":"Instant","f":[],"ref":null},{"c":"relief_name","ty":"String","f":[],"ref":null},{"c":"location_name","ty":"String","f":[],"ref":null},{"c":"location_at","ty":"Instant","f":[],"ref":null}]},{"cls":"CrewNotice","t":"crew_notices","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"day","ty":"LocalDate","f":["NN"],"ref":null},{"c":"text","ty":"String","f":["NN"],"ref":null}]},{"cls":"CrewSlot","t":"crew_slots","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"day","ty":"LocalDate","f":["NN"],"ref":null},{"c":"place","ty":"String","f":["NN"],"ref":null},{"c":"booth","ty":"String","f":["NN"],"ref":null},{"c":"start_min","ty":"int","f":["NN"],"ref":null},{"c":"end_min","ty":"int","f":["NN"],"ref":null},{"c":"members","ty":"String","f":["NN"],"ref":null},{"c":"note","ty":"String","f":[],"ref":null},{"c":"sort_order","ty":"int","f":["NN"],"ref":null},{"c":"updated_at","ty":"Instant","f":["NN"],"ref":null},{"c":"updated_by","ty":"String","f":[],"ref":null}]},{"cls":"CrewSnapshot","t":"crew_snapshots","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"at","ty":"Instant","f":["NN"],"ref":null},{"c":"actor","ty":"String","f":["NN"],"ref":null},{"c":"reason","ty":"String","f":["NN"],"ref":null},{"c":"payload","ty":"String","f":["NN"],"ref":null}]},{"cls":"FestivalEvent","t":"events","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"title","ty":"String","f":["NN"],"ref":null},{"c":"start_time","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"end_time","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"status","ty":"String","f":["NN"],"ref":null},{"c":"status_override","ty":"String","f":[],"ref":null},{"c":"image_url","ty":"String","f":[],"ref":null},{"c":"image_credit","ty":"String","f":[],"ref":null},{"c":"image_focus","ty":"String","f":[],"ref":null},{"c":"live_message","ty":"String","f":[],"ref":null},{"c":"delay_minutes","ty":"Integer","f":[],"ref":null},{"c":"status_updated_at","ty":"LocalDateTime","f":[],"ref":null}]},{"cls":"GpsLog","t":"gps_logs","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"latitude","ty":"double","f":["NN"],"ref":null},{"c":"longitude","ty":"double","f":["NN"],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null}]},{"cls":"LostItem","t":"lost_items","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"title","ty":"String","f":["NN"],"ref":null},{"c":"description","ty":"String","f":["NN"],"ref":null},{"c":"category","ty":"String","f":["NN"],"ref":null},{"c":"found_location","ty":"String","f":["NN"],"ref":null},{"c":"finder_contact","ty":"String","f":[],"ref":null},{"c":"image_url","ty":"String","f":[],"ref":null},{"c":"status","ty":"String","f":["NN"],"ref":null},{"c":"reporter_type","ty":"String","f":["NN"],"ref":null},{"c":"reporter_ref","ty":"String","f":["NN"],"ref":null},{"c":"resolve_note","ty":"String","f":[],"ref":null},{"c":"claimant_name","ty":"String","f":[],"ref":null},{"c":"claimant_contact","ty":"String","f":[],"ref":null},{"c":"claimant_note","ty":"String","f":[],"ref":null},{"c":"claimed_at","ty":"LocalDateTime","f":[],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"updated_at","ty":"LocalDateTime","f":["NN"],"ref":null}]},{"cls":"Notice","t":"notices","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"title","ty":"String","f":["NN"],"ref":null},{"c":"content","ty":"String","f":["NN"],"ref":null},{"c":"category","ty":"String","f":["NN"],"ref":null},{"c":"active","ty":"boolean","f":["NN"],"ref":null},{"c":"view_count","ty":"Long","f":[],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"updated_at","ty":"LocalDateTime","f":["NN"],"ref":null}]},{"cls":"ReservationAuthSession","t":"reservation_auth_sessions","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"user_account_id","ty":"ReservationUserAccount","f":["FK","NN"],"ref":"ReservationUserAccount"},{"c":"token","ty":"String","f":["UQ","NN"],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"expires_at","ty":"LocalDateTime","f":["NN"],"ref":null}]},{"cls":"ReservationCheckInToken","t":"reservation_checkin_tokens","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"reservation_id","ty":"BoothReservation","f":["FK","NN"],"ref":"BoothReservation"},{"c":"token","ty":"String","f":["UQ","NN"],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"expires_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"used_at","ty":"LocalDateTime","f":[],"ref":null}]},{"cls":"ReservationUserAccount","t":"reservation_user_accounts","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"phone_number","ty":"String","f":["UQ","NN"],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"last_verified_at","ty":"LocalDateTime","f":["NN"],"ref":null}]},{"cls":"ReservationUserState","t":"reservation_user_states","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"user_key","ty":"String","f":["UQ","NN"],"ref":null},{"c":"no_show_count","ty":"Integer","f":["NN"],"ref":null},{"c":"blocked_until","ty":"LocalDateTime","f":[],"ref":null}]},{"cls":"ReservationVerificationCode","t":"reservation_verification_codes","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"phone_number","ty":"String","f":["NN"],"ref":null},{"c":"code","ty":"String","f":["NN"],"ref":null},{"c":"expires_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"failed_attempts","ty":"Integer","f":[],"ref":null},{"c":"used_at","ty":"LocalDateTime","f":[],"ref":null}]},{"cls":"StaffMember","t":"staff_members","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"staff_no","ty":"String","f":["UQ","NN"],"ref":null},{"c":"pin_hash","ty":"String","f":["NN"],"ref":null},{"c":"name","ty":"String","f":["NN"],"ref":null},{"c":"team","ty":"String","f":["NN"],"ref":null},{"c":"status","ty":"StaffStatus","f":["NN","ENUM"],"ref":null},{"c":"current_task","ty":"String","f":[],"ref":null},{"c":"current_note","ty":"String","f":[],"ref":null},{"c":"assigned_booth_id","ty":"Long","f":[],"ref":null},{"c":"latitude","ty":"Double","f":[],"ref":null},{"c":"longitude","ty":"Double","f":[],"ref":null},{"c":"location_sharing_enabled","ty":"Boolean","f":[],"ref":null},{"c":"last_updated_at","ty":"LocalDateTime","f":["NN"],"ref":null}]},{"cls":"StaffSession","t":"staff_sessions","uq":[],"ix":[],"cols":[{"c":"id","ty":"Long","f":["PK"],"ref":null},{"c":"staff_member_id","ty":"StaffMember","f":["FK","NN"],"ref":"StaffMember"},{"c":"token","ty":"String","f":["UQ","NN"],"ref":null},{"c":"created_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"expires_at","ty":"LocalDateTime","f":["NN"],"ref":null},{"c":"last_seen_at","ty":"LocalDateTime","f":["NN"],"ref":null}]}];
+window.__SNIP = {"minorder":{"file":"frontend/src/pages/order/TableOrderPage.jsx","line":234,"code":"{cartSummary.total \u003c minOrderAmount ? (\n  // 최소 주문 금액에 못 미침: 얼마 더 담아야 하는지 보여 주고 넘어가지 않는다(서버도 같은 값으로 거절한다).\n  \u003cbutton type=\"button\" className=\"od-cartbar od-cartbar--short\" disabled>\n    \u003cspan className=\"od-cartbar__meta\">\n      \u003csmall>{cartSummary.count}개 담김 · {formatWon(cartSummary.total)}\u003c/small>\n      \u003cstrong>{formatWon(minOrderAmount)}부터 주문 · {formatWon(minOrderAmount - cartSummary.total)} 더 담아 주세요\u003c/strong>\n    \u003c/span>\n  \u003c/button>\n) : ("},"orderstream":{"file":"frontend/src/pages/order/OrderStatusPage.jsx","line":54,"code":"  const stream = createOrderStream();\n  stream.addEventListener(\"orders\", (event) => {\n    try {\n      const payload = JSON.parse(event.data);\n      if (String(payload.id) !== String(orderId)) return;\n      const patch = Object.fromEntries(Object.entries(payload).filter(([, value]) => value !== null && value !== undefined));\n      setOrder((current) => ({ ...(current || {}), ...patch, clientKey: current?.clientKey ?? key }));\n    } catch {\n      // ignore\n    }\n  });\n  return () => stream.close();\n  // eslint-disable-next-line react-hooks/exhaustive-deps\n}, [orderId, Boolean(order)]);\n\n// 실시간 연결은 서버 재시작 · 통신 끊김으로 조용히 멈출 수 있다. 끝나지 않은 주문은 20초마다, 화면으로 돌아올 때 다시 읽는다.\nconst finished = order?.status === \"COMPLETED\" || order?.status === \"CANCELED\";\nuseEffect(() => {\n  if (!order || finished) return undefined;\n  let alive = true;\n  const refresh = () => {\n    if (document.visibilityState === \"hidden\") return;\n    fetchOrder(orderId, key)\n      .then((data) => alive && setOrder(data))\n      .catch(() => {});\n  };\n  const timer = window.setInterval(refresh, 20000);\n  document.addEventListener(\"visibilitychange\", refresh);\n  return () => {\n    alive = false;"},"undo1":{"file":"frontend/src/pages/OpsKitchenPage.jsx","line":16,"code":"// '완료'를 잘못 눌렀을 때 되돌릴 수 있는 시간. 서버는 끝난 줄을 되돌리지 못해서, 이 시간이 지난 뒤에야 서버로 보낸다.\nconst UNDO_MS = 5000;"},"undo2":{"file":"frontend/src/pages/OpsKitchenPage.jsx","line":253,"code":"function finish(orderId, lineNo) {\n  const lineId = lineKey(orderId, lineNo);\n  if (pendingTimers.current.has(lineId)) return;\n  pendingTimers.current.set(lineId, window.setTimeout(() => commit(orderId, lineNo), UNDO_MS));\n  setPending((current) => ({ ...current, [lineId]: performance.now() + UNDO_MS }));\n}"},"navtabs":{"file":"frontend/src/App.jsx","line":12,"code":"/*\n * 이번 축제(바람)에서 여는 탭은 네 개뿐이다.\n * 지도·공연·혼잡도·채팅·스태프 등은 지우지 않고 탭에서만 뺐다. 주소로 치면 그대로 열린다.\n */\nconst navTabs = [\n  { to: \"/\", label: \"축제\", icon: IconFlag, end: true, match: [\"/\", \"/home-v1\", \"/events\", \"/stage-map\", \"/analytics\"] },\n  { to: \"/booths\", label: \"주점\", icon: IconBeer, match: [\"/booths\"] },\n  { to: \"/ai-match\", label: \"사주 소개팅\", icon: IconHeartSaju, match: [\"/ai-match\"] },\n  { to: \"/lost-found\", label: \"분실물\", icon: IconBox, match: [\"/lost-found\"] },\n];"},"create":{"file":"backend/src/main/java/com/festflow/backend/service/OrderService.java","line":130,"code":"public BoothOrderDto createOrder(Long boothId, OrderCreateRequestDto requestDto) {\n    // 같은 부스의 주문은 한 번에 하나씩 처리한다(부스 행 잠금). 동시에 들어와도 주문번호가 겹치지 않고 테이블 한도가 새지 않는다.\n    Booth booth = boothRepository.findByIdForUpdate(boothId)\n            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, \"부스를 찾을 수 없습니다.\"));\n    if (!booth.isOrderEnabled()) {\n        throw new ResponseStatusException(CONFLICT, \"이 부스는 지금 주문을 받지 않습니다.\");\n    }\n\n    PaymentMethod method = requestDto.paymentMethod() == null ? PaymentMethod.BANK_TRANSFER : requestDto.paymentMethod();\n    if (method != PaymentMethod.BANK_TRANSFER) {\n        throw new ResponseStatusException(BAD_REQUEST, \"지금은 계좌이체만 가능합니다.\");\n    }\n\n    String tableLabel = normalizeTableLabel(requestDto.tableLabel());\n    if (tableLabel.isBlank()) {\n        throw new ResponseStatusException(BAD_REQUEST, \"테이블 번호가 없습니다.\");\n    }\n    List\u003cString> tableNames = boothReservationTableRepository.findByBoothIdOrderByDisplayOrderAscIdAsc(boothId).stream()\n            .map(BoothReservationTable::getTableName)\n            .filter(Objects::nonNull)\n            .toList();\n    boolean takeout = TAKEOUT_LABEL.equals(tableLabel);\n    if (!takeout && !tableNames.isEmpty() && !tableNames.contains(tableLabel)) {\n        throw new ResponseStatusException(BAD_REQUEST, \"없는 테이블 번호입니다. 테이블의 QR을 다시 찍어 주세요.\");\n    }"},"status":{"file":"backend/src/main/java/com/festflow/backend/service/OrderService.java","line":440,"code":"public BoothOrderDto updateStatus(Long boothId, Long orderId, OrderStatus next) {\n    BoothOrder order = boothOrderRepository.findByIdAndBoothIdForUpdate(orderId, boothId)\n            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, \"주문을 찾을 수 없습니다.\"));\n    OrderStatus current = order.getStatus();\n\n    if (current.isTerminal()) {\n        throw new ResponseStatusException(CONFLICT, \"이미 끝난 주문입니다.\");\n    }\n    if (next != OrderStatus.CANCELED && next.ordinal() \u003c= current.ordinal()) {\n        throw new ResponseStatusException(CONFLICT, \"주문 상태는 뒤로 돌릴 수 없습니다.\");\n    }\n\n    order.transitionTo(next, LocalDateTime.now());\n    BoothOrder saved = boothOrderRepository.save(order);\n    BoothOrderDto dto = toDto(saved).withoutClientKey();\n    streamService.publishOrders(dto.forPublicStream());\n    return dto;\n}"},"done":{"file":"backend/src/main/java/com/festflow/backend/service/OrderService.java","line":459,"code":"/**\n * 메뉴별 요리사 창에서 한 줄(메뉴)을 '완료'. 입금이 확인된 주문(PAID · PREPARING)만 받는다.\n * 첫 줄이 끝나면 PREPARING(조리 중), 모든 줄이 끝나면 READY(서빙할 것). 이미 끝난 줄을 다시 눌러도 그대로 둔다.\n */\n@Transactional\npublic BoothOrderDto markItemDone(Long boothId, Long orderId, int lineNo) {\n    BoothOrder order = boothOrderRepository.findByIdAndBoothIdForUpdate(orderId, boothId)\n            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, \"주문을 찾을 수 없습니다.\"));\n    BoothOrderItem item = order.getItems().stream()\n            .filter(line -> line.getLineNo() != null && line.getLineNo() == lineNo)\n            .findFirst()\n            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, \"주문에 없는 메뉴입니다.\"));\n    OrderStatus current = order.getStatus();\n    if (current.isTerminal()) {\n        throw new ResponseStatusException(CONFLICT, \"이미 끝난 주문입니다.\");\n    }\n    if (current == OrderStatus.PENDING_PAYMENT) {\n        throw new ResponseStatusException(CONFLICT, \"아직 입금 확인 전 주문입니다.\");\n    }\n    if (item.isDone()) {\n        return toDto(order).withoutClientKey();\n    }\n    LocalDateTime now = LocalDateTime.now();\n    item.markDone(now);\n    if (order.allItemsDone()) {\n        order.transitionTo(OrderStatus.READY, now);\n    } else if (current == OrderStatus.PAID) {\n        order.transitionTo(OrderStatus.PREPARING, now);\n    }\n    BoothOrder saved = boothOrderRepository.save(order);\n    BoothOrderDto dto = toDto(saved).withoutClientKey();\n    streamService.publishOrders(dto.forPublicStream());\n    return dto;\n}\n\n// ---------- 내부 ----------"},"request":{"file":"backend/src/main/java/com/festflow/backend/service/AiMatchService.java","line":1202,"code":"public AiMatchRequestResponseDto createRequest(Long profileId, AiMatchRequestCreateDto requestDto) {\n    AiMatchProfile profile = profileRepository.findById(profileId)\n            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, \"AI match profile not found.\"));\n    if (!\"ACTIVE\".equals(profile.getStatus())) {\n        throw new ResponseStatusException(NOT_FOUND, \"존재하지 않는 프로필입니다.\");\n    }\n    AiMatchProfile requesterProfile = authenticateProfile(requestDto.requesterNickname(), requestDto.requesterPin());\n    if (requesterProfile.getId().equals(profile.getId())) {\n        throw new ResponseStatusException(BAD_REQUEST, \"자기 자신에게는 데이트 신청을 보낼 수 없습니다.\");\n    }\n    if (requestRepository.existsByRequesterProfileIdAndProfileIdAndStatus(requesterProfile.getId(), profile.getId(), \"PENDING\")) {\n        throw new ResponseStatusException(CONFLICT, \"이미 대기 중인 데이트 신청이 있습니다.\");\n    }\n    List\u003cAiMatchRequest> sentRequests = requestRepository.findAllByRequesterProfileIdOrderByCreatedAtDesc(requesterProfile.getId());\n    closeRequestsWithInactiveParticipants(sentRequests);\n    if (toRequestQuotaDto(sentRequests).remaining() \u003c= 0) {\n        throw new ResponseStatusException(\n                CONFLICT,\n                \"데이트 신청은 한 사람당 \" + MAX_SENT_REQUESTS_PER_PROFILE + \"번까지만 보낼 수 있어요. 이미 다 썼어요.\"\n        );\n    }\n    String meetPlace = trimRequired(requestDto.meetPlace(), \"meetPlace\", 120);\n    String message = trimRequired(requestDto.message(), \"message\", 500);"},"hold":{"file":"backend/src/main/java/com/festflow/backend/service/AiMatchMeetupSlotService.java","line":282,"code":"/** 이 신청 이름으로 슬롯을 임시로 잡는다. 이미 잡아 둔 슬롯이 있으면 놓고 새로 잡는다. */\n@Transactional\npublic AiMatchMeetupSlot hold(Long requestId, LocalDateTime slotAt) {\n    validateSlotTime(slotAt);\n    purge();\n    slotRepository.deleteByRequestIdNow(requestId);\n    if (slotRepository.findBySlotAt(slotAt).isPresent()) {\n        throw new ResponseStatusException(CONFLICT, \"방금 다른 커플이 먼저 잡은 시간이에요. 다른 시간을 골라 주세요.\");\n    }\n    boolean overlapsOther = slotRepository\n            .findAllBySlotAtGreaterThanEqualAndSlotAtLessThanOrderBySlotAtAsc(\n                    slotAt.minusMinutes(SLOT_MINUTES - 1L), slotAt.plusMinutes(SLOT_MINUTES))\n            .stream()\n            .anyMatch(other -> !requestId.equals(other.getRequestId()));\n    if (overlapsOther) {\n        throw new ResponseStatusException(CONFLICT, \"다른 커플의 약속과 겹치는 시간이에요. 다른 시간을 골라 주세요.\");\n    }\n    try {\n        return slotRepository.saveAndFlush(\n                new AiMatchMeetupSlot(slotAt, requestId, holdDeadline(LocalDateTime.now(), slotAt, holdMinutes, leadMinutes))\n        );\n    } catch (DataIntegrityViolationException exception) {\n        // 확인과 저장 사이에 다른 쌍이 끼어든 경우. DB 유니크 제약이 막아 준다.\n        throw new ResponseStatusException(CONFLICT, \"방금 다른 커플이 먼저 잡은 시간이에요. 다른 시간을 골라 주세요.\");\n    }\n}\n\n/** 상대가 확정. 임시 잠금이 이미 풀렸으면 empty. */"},"consent":{"file":"backend/src/main/java/com/festflow/backend/service/AiMatchService.java","line":1373,"code":"public AiMatchRequestResponseDto consentContactShare(Long requestId, AiMatchProfileAccessRequestDto requestDto) {\n    AiMatchProfile profile = authenticateProfile(requestDto.nickname(), requestDto.pin());\n    // 두 사람이 동시에 눌러도 한 줄로: 행을 잠그고 읽어야 먼저 저장된 상대 동의가 안 지워진다.\n    AiMatchRequest request = requestRepository.findByIdForUpdate(requestId)\n            .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, \"데이트 신청을 찾을 수 없습니다.\"));\n    ensureParticipating(request, profile);\n    ensureRequestParticipantsActive(request);\n    if (!isMatchedStatus(request.getStatus())) {\n        throw new ResponseStatusException(CONFLICT, \"성사된 매치에서만 연락처를 주고받을 수 있어요.\");\n    }\n    if (\"CONFIRMED\".equals(request.getStatus())) {\n        throw new ResponseStatusException(CONFLICT, \"부스 약속이 잡혀 있어요. 약속 시간에 부스에서 만나 주세요.\");\n    }\n    boolean requesterSide = isRequesterSide(request, profile);\n    if (request.hasContactConsent(requesterSide)) {\n        return toRequestDto(request, profile);\n    }\n    request.consentContactShare(requesterSide);\n    String partnerPhone = partnerPhoneNumber(request, profile);\n    String myPhone = profile.getPhoneNumber() == null ? \"\" : profile.getPhoneNumber();\n    if (request.isContactShared()) {\n        afterCommit(() -> {\n            aiMatchSmsNotifier.notifyContactShared(partnerPhone);\n            aiMatchSmsNotifier.notifyContactShared(myPhone);\n        });\n    } else {\n        afterCommit(() -> aiMatchSmsNotifier.notifyContactShareAsked(partnerPhone));\n    }\n    return toRequestDto(request, profile);\n}"},"publish":{"file":"backend/src/main/java/com/festflow/backend/service/stream/StreamService.java","line":148,"code":"private void publish(Channel channel, Object payload) {\n    final String json;\n    try {\n        json = objectMapper.writeValueAsString(payload);\n    } catch (Exception e) {\n        // 실시간 알림은 부가 기능이다. 실패해도 부른 쪽(주문 · 예약 저장)을 깨뜨리지 않는다.\n        log.warn(\"SSE payload 직렬화 실패 ({}): {}\", channel.name, e.toString());\n        return;\n    }\n    if (TransactionSynchronizationManager.isSynchronizationActive()\n            && TransactionSynchronizationManager.isActualTransactionActive()) {\n        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {\n            @Override\n            public void afterCommit() {\n                channel.offer(json);\n            }\n        });\n        return;\n    }\n    channel.offer(json);\n}"},"fill":{"file":"backend/src/main/java/com/festflow/backend/init/CouncilBoothSync.java","line":98,"code":"static boolean fillBooth(Booth booth) {\n    boolean changed = false;\n\n    if (booth.getOpenTime() == null && booth.getCloseTime() == null) {\n        booth.updateContentInfo(booth.getCategory(), booth.getDayPart(), OPEN_TIME, CLOSE_TIME,\n                booth.getTags(), booth.getContentJson(), booth.getReservationEnabled());\n        changed = true;\n    }"},"opskey":{"file":"backend/src/main/java/com/festflow/backend/security/OpsKeyService.java","line":33,"code":"public Optional\u003cOpsIdentity> authenticate(String key, String requestUri) {\n    if (key == null || key.isBlank()) {\n        return Optional.empty();\n    }\n\n    String trimmed = key.trim();\n    if (!masterKey.isBlank() && masterKey.equals(trimmed)) {\n        return Optional.of(new OpsIdentity(\"ops-master\", \"OPS_MASTER\", null));\n    }\n\n    if (!sharedBoothKey.isBlank() && sharedBoothKey.equals(trimmed)) {\n        if (requestUri != null && CREW_URI_PATTERN.matcher(requestUri).matches()) {\n            return Optional.of(new OpsIdentity(\"ops-crew\", \"OPS_CREW\", null));\n        }\n        return boothIdFromUri(requestUri)\n                .map(boothId -> new OpsIdentity(\"ops-booth-\" + boothId, \"OPS_BOOTH\", boothId));\n    }\n\n    Long boothId = boothKeyToBoothId.get(trimmed);\n    if (boothId != null) {\n        return Optional.of(new OpsIdentity(\"ops-booth-\" + boothId, \"OPS_BOOTH\", boothId));\n    }\n\n    return Optional.empty();\n}"},"ratelimit":{"file":"backend/src/main/java/com/festflow/backend/security/PublicApiRateLimitFilter.java","line":62,"code":"protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)\n        throws ServletException, IOException {\n    Rule rule = findRule(request);\n    if (rule == null) {\n        filterChain.doFilter(request, response);\n        return;\n    }\n\n    String key = ClientIp.of(request) + \":\" + rule.key();\n    Bucket bucket = buckets.computeIfAbsent(key, ignored -> new Bucket(Instant.now(), 0));\n    Instant now = Instant.now();\n\n    boolean allowed;\n    long retryAfterSeconds;\n    synchronized (bucket) {\n        if (Duration.between(bucket.windowStart(), now).compareTo(rule.window()) >= 0) {\n            bucket.reset(now);\n        }\n\n        allowed = bucket.count() \u003c rule.maxRequests();\n        if (allowed) {\n            bucket.increment();\n            retryAfterSeconds = 0;\n        } else {\n            retryAfterSeconds = Math.max(\n                    1,\n                    rule.window().minus(Duration.between(bucket.windowStart(), now)).toSeconds()\n            );\n        }\n    }\n\n    if (!allowed) {\n        response.setStatus(429);\n        response.setHeader(\"Retry-After\", String.valueOf(retryAfterSeconds));"}};</script>
+<script>
+(function () {
+  'use strict';
+  const NS = 'http://www.w3.org/2000/svg';
+  const s = (tag, attrs, kids) => { const e = document.createElementNS(NS, tag); for (const k in attrs || {}) e.setAttribute(k, attrs[k]); (kids || []).forEach((c) => e.appendChild(c)); return e; };
+  const h = (tag, attrs, kids) => { const e = document.createElement(tag); for (const k in attrs || {}) { if (k === 'text') e.textContent = attrs[k]; else if (k === 'class') e.className = attrs[k]; else if (k.startsWith('on')) e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, attrs[k]); } (kids || []).forEach((c) => c && e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c)); return e; };
+  const txt = (x, y, str, o) => { o = o || {}; const t = s('text', { x, y, 'font-size': o.size || 13, 'text-anchor': o.anchor || 'start' }); if (o.cls) t.setAttribute('class', o.cls); if (o.fill) t.setAttribute('fill', o.fill); t.textContent = str; return t; };
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ERD = window.__ERD || [], SNIP = window.__SNIP || {};
+  const plane = () => s('g', { visibility: 'hidden' }, [s('path', { class: 'plane-body', d: 'M15 0 L-12 -9 L-6 0 L-12 9 Z' }), s('path', { class: 'plane-fold', d: 'M15 0 L-6 0' })]);
+
+  /* ───────── 탭 ───────── */
+  const VIEWS = ['flow', 'servers', 'erd', 'code'];
+  function showView(v, keepHash) {
+    if (!VIEWS.includes(v)) v = 'flow';
+    VIEWS.forEach((k) => { document.getElementById('v-' + k).hidden = k !== v; document.getElementById('tab-' + k).setAttribute('aria-selected', k === v ? 'true' : 'false'); });
+    if (!keepHash) { try { history.replaceState(null, '', '#' + v); } catch (e) { location.hash = v; } }
+  }
+  VIEWS.forEach((k) => document.getElementById('tab-' + k).addEventListener('click', () => showView(k)));
+  window.addEventListener('hashchange', () => showView(location.hash.slice(1), true));
+
+  /* ───────── 서버 지도 ───────── */
+  const BOX = {
+    app: { x: 30, y: 130, w: 220, h: 200, t: '웹 앱', sub: 'React 18 · Vite', at: 'Vercel', c: 'var(--blue)', big: 1 },
+    back: { x: 430, y: 40, w: 260, h: 290, t: '백엔드', sub: 'Spring Boot 3.3 · Java 17', at: 'Railway', c: 'var(--sunset)', big: 1 },
+    sse: { x: 446, y: 222, w: 228, h: 62, t: '방송실', sub: 'SSE 채널 8개', c: 'var(--data)', inner: 1 },
+    db: { x: 430, y: 390, w: 260, h: 84, t: 'DB', sub: 'Postgres (로컬은 MySQL), 표 31개', at: 'Railway', c: 'var(--reed)', big: 1 },
+    sms: { x: 860, y: 40, w: 210, h: 70, t: '문자 서비스', sub: '솔라피 (설정으로 고름)', c: 'var(--plum)' },
+    ai: { x: 860, y: 136, w: 210, h: 70, t: 'OpenAI', sub: '사진 변환 · 안내 글', c: 'var(--plum)' },
+    files: { x: 860, y: 232, w: 210, h: 70, t: '파일 저장소', sub: 'S3 (끄면 서버 폴더)', c: 'var(--plum)' },
+  };
+  const WIRE = {
+    req: { d: 'M250 180 H430', label: 'HTTPS /api/*', lx: 340, ly: 172 },
+    sse: { d: 'M446 253 H250', label: 'SSE /api/stream/*', lx: 340, ly: 245, data: 1 },
+    db: { d: 'M560 330 V390', label: 'JPA', lx: 568, ly: 365, start: 1 },
+    sms: { d: 'M690 110 C775 110 775 75 860 75' },
+    ai: { d: 'M690 171 H860' },
+    files: { d: 'M690 232 C775 232 775 267 860 267' },
+  };
+  // 단계: [선, 거꾸로?, 글, 코드 자리] 선이 없으면 상자(box) 안에서 일어나는 일
+  const TRACES = [
+    { id: 'order', label: '주문 넣기', steps: [
+      { w: 'req', t: '손님이 주문 확인 화면에서 주문을 넣습니다.', c: 'POST /api/booths/:id/orders' },
+      { w: 'db', t: '부스 행을 잠그고 테이블 이름과 메뉴를 확인한 뒤 주문을 저장합니다.', c: 'OrderService.createOrder' },
+      { box: 'sse', t: '저장이 끝나면(커밋 뒤) 주문 소식을 방송에 올립니다. 이름과 전화번호는 뺍니다.', c: 'StreamService.publishOrders' },
+      { w: 'sse', t: '주문 콘솔과 요리사 창이 새 주문을 받습니다.', c: 'SSE /api/stream/orders' },
+    ] },
+    { id: 'done', label: '메뉴 완료', steps: [
+      { w: 'req', t: '요리사가 메뉴 한 줄의 완료를 누르고 5초가 지나면 서버로 갑니다.', c: 'PUT /api/ops/booth/:id/orders/:orderId/items/:lineNo/done' },
+      { w: 'db', t: '주문 행을 잠그고 그 줄에 끝난 시각을 적습니다. 모든 줄이 끝났으면 주문을 준비 완료로 바꿉니다.', c: 'OrderService.markItemDone' },
+      { box: 'sse', t: '바뀐 주문을 방송에 올립니다.', c: 'StreamService.publishOrders' },
+      { w: 'sse', t: '손님의 주문 상태 화면이 새로고침 없이 바뀝니다.', c: 'SSE /api/stream/orders' },
+    ] },
+    { id: 'fallback', label: '방송이 끊겼을 때', broken: 'sse', steps: [
+      { box: 'app', t: '와이파이가 흔들려 방송 연결이 끊겼습니다. 화면은 방송만 믿지 않습니다.', c: 'OrderStatusPage.jsx' },
+      { w: 'req', t: '주문 상태는 20초, 요리사 창은 15초마다 서버에 다시 묻습니다. 화면으로 돌아올 때도 묻습니다.', c: 'GET /api/orders/:orderId' },
+      { w: 'db', t: '서버는 DB에서 지금 상태를 읽습니다.', c: 'OrderService.getOrderForCustomer' },
+      { w: 'req', rev: 1, t: '최신 상태가 돌아와 화면이 맞춰집니다. 늦어도 20초 안입니다.', c: '200 OK' },
+    ] },
+    { id: 'slot', label: '약속 칸 잡기', steps: [
+      { w: 'req', t: '성사된 한 사람이 부스에서 만날 시간을 제안합니다.', c: 'POST /api/ai-match/requests/:id/meetup/propose' },
+      { w: 'db', t: '그 시각에 이미 다른 쌍이 있는지 보고 칸을 저장합니다. 동시에 들어오면 DB의 유니크 제약이 한 쌍만 받습니다.', c: 'AiMatchMeetupSlotService.hold' },
+      { w: 'sms', t: '상대에게 시간 제안이 왔다는 문자를 보냅니다.', c: 'AiMatchSmsNotifier' },
+      { w: 'req', rev: 1, t: '늦은 쪽은 "방금 다른 커플이 먼저 잡은 시간이에요"를 받습니다.', c: '409 Conflict' },
+    ] },
+    { id: 'contact', label: '연락처 동의', steps: [
+      { w: 'req', t: '한 사람이 연락처 공유에 동의합니다.', c: 'POST /api/ai-match/requests/:id/contact/consent' },
+      { w: 'db', t: '신청 행을 잠그고 동의한 시각을 적습니다. 둘이 동시에 눌러도 한 줄씩 처리됩니다.', c: 'AiMatchService.consentContactShare' },
+      { w: 'sms', t: '저장이 끝난 뒤 문자를 보냅니다. 한 사람만 동의했으면 상대에게, 둘 다 동의했으면 두 사람 모두에게 갑니다.', c: 'AiMatchSmsNotifier' },
+      { w: 'req', rev: 1, t: '둘 다 동의한 뒤에야 응답에 상대 번호가 실립니다.', c: 'contactShared' },
+    ] },
+    { id: 'photo', label: '가입 사진', steps: [
+      { w: 'req', t: '가입 화면에서 사진을 올립니다.', c: 'POST /api/ai-match/image-preview' },
+      { w: 'ai', t: '서버가 OpenAI에 사진을 그림으로 바꿔 달라고 합니다. 열쇠는 서버에만 있습니다.', c: 'AiImageGenerationService' },
+      { w: 'files', t: '받은 그림을 파일 저장소에 넣습니다.', c: 'UploadStorageService' },
+      { w: 'req', rev: 1, t: '앱에는 그림의 주소만 돌아갑니다.', c: 'generatedImageUrl' },
+    ] },
+    { id: 'login', label: '관리자 로그인', steps: [
+      { w: 'req', t: '관리자가 아이디와 비밀번호를 보냅니다.', c: 'POST /api/auth/login' },
+      { w: 'db', t: '서버가 관리자 표에서 계정을 확인합니다.', c: 'admin_users' },
+      { w: 'req', rev: 1, t: '맞으면 토큰(JWT)을 돌려줍니다.', c: 'JwtService' },
+      { w: 'req', t: '그 뒤 관리자 요청에는 이 토큰이 머리말에 붙습니다.', c: 'Authorization: Bearer …' },
+    ] },
+  ];
+
+  const ssvg = document.getElementById('srv-svg');
+  const mk = (id, fill) => s('marker', { id, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, [s('path', { d: 'M0 0 L10 5 L0 10 z', fill })]);
+  ssvg.appendChild(s('defs', {}, [mk('s-arr', 'var(--wire)'), mk('s-arr-on', 'var(--blue-deep)'), mk('s-arr-data', 'var(--data)')]));
+  const wires = {}, sboxes = {};
+  Object.keys(BOX).filter((k) => !BOX[k].inner).concat(['sse']).forEach((k) => {
+    const b = BOX[k], g = s('g', {});
+    g.appendChild(s('rect', { class: 'sbox' + (b.inner ? ' inner' : ''), x: b.x, y: b.y, width: b.w, height: b.h, rx: 14 }));
+    const L = 12, i = 7, x0 = b.x + i, y0 = b.y + i, x1 = b.x + b.w - i, y1 = b.y + b.h - i;
+    if (!b.inner) g.appendChild(s('path', { fill: 'none', stroke: b.c, 'stroke-width': 2.6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', d: 'M' + x0 + ' ' + (y0 + L) + ' V' + y0 + ' H' + (x0 + L) + ' M' + (x1 - L) + ' ' + y0 + ' H' + x1 + ' V' + (y0 + L) + ' M' + x1 + ' ' + (y1 - L) + ' V' + y1 + ' H' + (x1 - L) + ' M' + (x0 + L) + ' ' + y1 + ' H' + x0 + ' V' + (y1 - L) }));
+    const big = b.big, tx = b.x + (b.inner ? 16 : 22);
+    g.appendChild(txt(tx, b.y + (big ? 46 : b.inner ? 27 : 32), b.t, { size: big ? 23 : 16, cls: 't-d', fill: b.inner ? 'var(--data)' : undefined }));
+    g.appendChild(txt(tx, b.y + (big ? 70 : b.inner ? 47 : 52), b.sub, { size: big ? 13 : 12, cls: 'soft' }));
+    if (b.at) g.appendChild(txt(b.x + b.w - 22, b.y + 30, b.at.toUpperCase(), { size: 12, cls: 't-m faint', anchor: 'end' }));
+    ssvg.appendChild(g); sboxes[k] = g;
+  });
+  ssvg.appendChild(txt(52, 232, '손님, 주점 스태프, 운영진이', { size: 12.5, cls: 'faint' }));
+  ssvg.appendChild(txt(52, 250, '같은 앱을 주소만 달리해 씁니다.', { size: 12.5, cls: 'faint' }));
+  ssvg.appendChild(txt(452, 142, '주문, 소개팅, 자리, 분실물, 공지,', { size: 12.5, cls: 'faint' }));
+  ssvg.appendChild(txt(452, 160, '스태프 명단을 한 서버가 맡습니다.', { size: 12.5, cls: 'faint' }));
+  ssvg.appendChild(txt(860, 340, '바깥 서비스는 백엔드만 부릅니다.', { size: 12.5, cls: 'faint' }));
+  ssvg.appendChild(txt(860, 358, '열쇠는 서버 환경변수에 있습니다.', { size: 12.5, cls: 'faint' }));
+  Object.keys(WIRE).forEach((k) => {
+    const w = WIRE[k];
+    const p = s('path', { d: w.d, class: 'edge' + (w.data ? ' data' : ''), 'marker-end': w.data ? 'url(#s-arr-data)' : 'url(#s-arr)' });
+    ssvg.appendChild(p); wires[k] = p;
+    if (w.label) ssvg.appendChild(txt(w.lx, w.ly, w.label, { size: 12, anchor: w.start ? 'start' : 'middle', cls: 'elabel t-m' }));
+  });
+  const xmark = s('g', { visibility: 'hidden' }, [s('path', { class: 'xmark', d: 'M332 245 L348 261 M348 245 L332 261' })]);
+  ssvg.appendChild(xmark);
+  const splane = plane(); ssvg.appendChild(splane);
+
+  const traceBox = document.getElementById('traces'), stepsEl = document.getElementById('steps');
+  let trace = TRACES[0], stepI = 0, stepT = 0, held = false;
+  function showStep(i) {
+    stepI = i; stepT = 0;
+    const st = trace.steps[i];
+    stepsEl.querySelectorAll('li').forEach((li, k) => li.classList.toggle('now', k === i));
+    Object.keys(wires).forEach((k) => {
+      const on = st.w === k, broken = trace.broken === k;
+      wires[k].classList.toggle('on', on); wires[k].classList.toggle('broken', broken);
+      wires[k].setAttribute('marker-end', WIRE[k].data ? 'url(#s-arr-data)' : on ? 'url(#s-arr-on)' : 'url(#s-arr)');
+    });
+    Object.keys(sboxes).forEach((k) => sboxes[k].classList.toggle('now', st.box === k));
+    splane.setAttribute('visibility', st.w && !reduce ? 'visible' : 'hidden');
+  }
+  function setTrace(t) {
+    trace = t; held = false;
+    traceBox.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.k === t.id ? 'true' : 'false'));
+    xmark.setAttribute('visibility', t.broken ? 'visible' : 'hidden');
+    stepsEl.textContent = '';
+    t.steps.forEach((st, i) => stepsEl.appendChild(h('li', { tabindex: 0, role: 'button', onclick: () => { held = true; showStep(i); }, onkeydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); held = true; showStep(i); } } }, [h('div', {}, [st.t, h('small', {}, [h('code', { text: st.c })])])])));
+    showStep(0);
+  }
+  TRACES.forEach((t) => traceBox.appendChild(h('button', { type: 'button', class: 'chipbtn', id: 'trace-' + t.id, 'data-k': t.id, text: t.label, onclick: () => setTrace(t) })));
+  setTrace(TRACES[0]);
+
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.max(0, Math.min(0.05, (now - last) / 1000)); last = now;
+    if (!document.getElementById('v-servers').hidden && !reduce) {
+      stepT += dt;
+      const st = trace.steps[stepI], DUR = 2.4;
+      if (st.w) {
+        const f = Math.min(1, stepT / (DUR - 0.5)), e = f * f * (3 - 2 * f), p = wires[st.w], L = p.getTotalLength();
+        const at = (q) => p.getPointAtLength(st.rev ? L * (1 - q) : L * q);
+        const pt = at(e), a = at(Math.min(1, e + 0.03)), b = at(Math.max(0, e - 0.03));
+        splane.setAttribute('transform', 'translate(' + pt.x + ' ' + (pt.y + Math.sin(now / 260) * 2) + ') rotate(' + (Math.atan2(a.y - b.y, a.x - b.x) * 180 / Math.PI) + ')');
+      }
+      if (stepT > DUR && !held) showStep((stepI + 1) % trace.steps.length);
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ───────── ERD ───────── */
+  const EW = 172, EH = 46, EX = (c) => 16 + c * 200, EY = (r) => 44 + r * 74;
+  const GROUPS = {
+    pub: { name: '주점 주문', c: 'var(--sunset)', rect: [0, 1, 0, 1] },
+    seat: { name: '자리 예약', c: 'var(--blue)', rect: [0, 1, 2, 4] },
+    match: { name: '사주 소개팅', c: 'var(--plum)', rect: [2, 3, 0, 3] },
+    fest: { name: '축제 안내', c: 'var(--blue)', rect: [4, 4, 0, 3] },
+    ops: { name: '운영', c: 'var(--reed)', rect: [0, 1, 5, 6] },
+    crew: { name: '스태프', c: 'var(--reed)', rect: [2, 4, 5, 7] },
+  };
+  // 표마다: [묶음, 칸, 줄, 하는 일]
+  const TB = {
+    booths: ['pub', 0, 0, '부스 한 곳입니다. 이번 축제에서는 총학 주점 하나가 주인공입니다. 메뉴판과 계좌, 여는 시간, 주문을 받는지가 여기 있습니다.'],
+    booth_orders: ['pub', 1, 0, '주문 한 건입니다. 테이블 이름, 입금자 이름, 금액, 상태와 함께 입금 확인, 준비 완료, 서빙 완료, 취소 시각을 따로 적습니다.'],
+    booth_reservation_tables: ['pub', 0, 1, '주점의 테이블입니다. 자리 현황판에서 누르면 손님이 앉았는지가 여기 적히고, 주문할 때 테이블 이름이 맞는지도 이 표로 확인합니다.'],
+    booth_order_items: ['pub', 1, 1, '주문에 담긴 메뉴 한 줄입니다. 요리사 창에서 완료를 누르면 그 줄에 끝난 시각이 적힙니다.'],
+    booth_reservations: ['seat', 0, 2, '전화번호로 미리 잡는 자리 예약입니다. 이번 축제 운영 서버에서는 꺼 두었습니다.'],
+    reservation_checkin_tokens: ['seat', 1, 2, '예약한 손님이 입구에서 보여 주는 QR의 토큰입니다.'],
+    reservation_user_accounts: ['seat', 0, 3, '예약할 때 문자로 확인한 전화번호입니다.'],
+    reservation_auth_sessions: ['seat', 1, 3, '전화번호 확인을 마친 손님의 로그인 토큰입니다.'],
+    reservation_verification_codes: ['seat', 0, 4, '문자로 보낸 인증 번호와 틀린 횟수입니다.'],
+    reservation_user_states: ['seat', 1, 4, '예약하고 오지 않은 횟수를 셉니다.'],
+    ai_match_profiles: ['match', 2, 0, '소개팅에 가입한 사람입니다. 닉네임, 소개 글, 사진, 생년월일과 사주 풀이가 있습니다. 실명과 전화번호는 화면에 나가는 응답에 담지 않습니다.'],
+    ai_match_requests: ['match', 3, 0, '데이트 신청 한 건입니다. 수락과 거절부터 약속 시간, 당일 도착 단계, 채팅, 얼굴 보기 선택, 연락처 동의까지 한 쌍의 진행이 모두 이 한 줄에 쌓입니다.'],
+    ai_match_favorites: ['match', 2, 1, '찜한 사람입니다. 같은 사람을 두 번 찜할 수 없습니다.'],
+    ai_match_meetup_slots: ['match', 3, 1, '부스 약속 칸입니다. 한 시각에는 한 쌍만 들어갑니다. 제안만 하고 확정하지 않으면 잠금 시간이 지나 풀립니다.'],
+    ai_match_reports: ['match', 2, 2, '프로필 신고와 처리 결과입니다.'],
+    ai_match_chat_messages: ['match', 3, 2, '부스 블라인드 채팅의 글입니다. 며칠 뒤 자동으로 지워집니다.'],
+    ai_match_phone_usages: ['match', 2, 3, '전화번호마다 사진 변환을 몇 번 썼는지, 다시 가입할 수 있는지 적습니다. 탈퇴한 뒤 바로 다시 가입하는 것을 막습니다.'],
+    events: ['fest', 4, 0, '공연과 일정입니다. 지연 시간과 현장 한마디를 운영진이 바꿉니다.'],
+    notices: ['fest', 4, 1, '공지입니다. 켜진 공지만 손님 화면에 나가고 조회 수를 셉니다.'],
+    lost_items: ['fest', 4, 2, '보관 중인 분실물입니다. 주인 확인 요청 칸이 있지만 이번 축제에서는 그 기능을 꺼 두었습니다.'],
+    gps_logs: ['fest', 4, 3, '혼잡도를 재려고 모으던 위치 기록입니다. 이번 축제 화면에서는 쓰지 않습니다.'],
+    admin_users: ['ops', 0, 5, '관리자 계정입니다. 비밀번호는 해시로 저장합니다.'],
+    audit_logs: ['ops', 1, 5, '관리자가 무엇을 바꿨는지 남기는 기록입니다.'],
+    app_settings: ['ops', 0, 6, '서버를 다시 띄우지 않고 바꾸는 운영 스위치입니다. 소개팅 새 가입을 막는 스위치가 여기 있습니다.'],
+    crew_members: ['crew', 2, 5, '스태프 명단입니다. 지금 상태와 있는 곳을 본인이나 동료가 바꿉니다.'],
+    crew_slots: ['crew', 3, 5, '스태프 시간표의 한 칸입니다. 누가 언제 어디를 맡는지 적습니다.'],
+    crew_notices: ['crew', 4, 5, '날짜별 스태프 공지입니다.'],
+    crew_logs: ['crew', 2, 6, '스태프 화면에서 누가 무엇을 고쳤는지 남깁니다.'],
+    crew_snapshots: ['crew', 3, 6, '명단과 시간표를 통째로 바꾸기 전에 떠 두는 사본입니다.'],
+    staff_members: ['crew', 2, 7, '예전 스태프 화면(/staff-v1)의 계정입니다.'],
+    staff_sessions: ['crew', 3, 7, '예전 스태프 화면의 로그인 토큰입니다.'],
+  };
+  const LOOSE = [['ai_match_meetup_slots', 'ai_match_requests', 'request_id'], ['ai_match_chat_messages', 'ai_match_requests', 'request_id'], ['ai_match_reports', 'ai_match_profiles', 'target_profile_id']];
+  const SCREENS_OF = {
+    booths: ['booth', 'console'], booth_orders: ['checkout', 'status', 'console'], booth_order_items: ['kitchen'], booth_reservation_tables: ['tables', 'pick'],
+    ai_match_profiles: ['register', 'people', 'my'], ai_match_requests: ['requests', 'escort', 'contact'], ai_match_favorites: ['people'], ai_match_meetup_slots: ['meetup'], ai_match_chat_messages: ['chat'], ai_match_reports: ['detail', 'aiadmin'],
+    notices: ['fest', 'admin'], lost_items: ['lost', 'admin'], crew_members: ['staff'], crew_slots: ['staff'], app_settings: ['aiadmin'], admin_users: ['admin'],
+  };
+  const CONCEPTS = [
+    { id: 'lock', label: '행 잠금', title: '행 잠금: 동시에 들어와도 한 줄씩', hit: ['booths', 'booth_orders', 'ai_match_requests'],
+      what: '읽는 순간 그 줄을 잠가서, 다른 요청은 앞 요청이 끝날 때까지 기다리게 합니다.',
+      why: '같은 부스에 주문이 동시에 들어와도 주문 번호가 겹치지 않습니다. 콘솔과 요리사 창이 같은 주문을 동시에 바꿔도 한쪽 변경이 사라지지 않고, 두 사람이 연락처 동의를 동시에 눌러도 둘 다 남습니다.',
+      refs: 'findByIdForUpdate (OrderService.createOrder, updateStatus, markItemDone, AiMatchService.consentContactShare)' },
+    { id: 'unique', label: '유니크 제약', title: '유니크 제약: 마지막 방어선은 DB', hit: ['ai_match_meetup_slots', 'ai_match_favorites', 'ai_match_phone_usages', 'crew_members', 'admin_users'],
+      what: '같은 값이 두 번 들어가면 DB가 저장을 거부합니다.',
+      why: '코드가 "비어 있나?" 하고 확인한 직후에 다른 요청이 끼어들 수 있습니다. 약속 칸은 slot_at 이 유니크라서 두 쌍이 같은 시각을 동시에 골라도 한 쌍만 저장됩니다.',
+      refs: 'ai_match_meetup_slots.slot_at, ai_match_favorites(requester_profile_id + favorite_profile_id), ai_match_phone_usages.phone_number' },
+    { id: 'stamp', label: '시각으로 적는 상태', title: '시각으로 적는 상태: 했는지와 언제 했는지를 한 칸에', hit: ['booth_orders', 'booth_order_items', 'ai_match_requests'],
+      what: '참과 거짓 대신 일이 일어난 시각을 적습니다. 비어 있으면 아직 안 한 것입니다.',
+      why: '주문에서 입금 확인까지 걸린 시간, 입금에서 서빙까지 걸린 시간을 나중에 바로 계산할 수 있습니다. 축제 결산의 숫자가 여기서 나왔습니다.',
+      refs: 'booth_orders.paid_at, ready_at, completed_at / booth_order_items.done_at / ai_match_requests.*_arrived_at, *_contact_consent_at' },
+    { id: 'loose', label: '외래 키 없는 연결', title: '외래 키 없는 연결: 번호만 적어 둔 관계', hit: ['ai_match_meetup_slots', 'ai_match_chat_messages', 'ai_match_reports'],
+      what: '다른 표의 번호를 적어 두지만 DB에는 그 관계를 알리지 않았습니다. 지도의 점선입니다.',
+      why: '지울 때 순서를 덜 따져도 되어 편합니다. 대신 신청이 지워져도 약속 칸이나 채팅 글이 남을 수 있어서, 지우는 코드가 직접 같이 지워야 합니다.',
+      refs: 'ai_match_meetup_slots.request_id, ai_match_chat_messages.request_id, ai_match_reports.target_profile_id' },
+    { id: 'json', label: '칸 하나에 JSON', title: '칸 하나에 JSON: 표를 늘리지 않고 담기', hit: ['booths', 'crew_snapshots'],
+      what: '메뉴판 전체를 글자 한 덩어리로 칸 하나에 넣습니다.',
+      why: '메뉴 표를 따로 만들지 않아 빨리 만들 수 있었습니다. 대신 DB는 메뉴 이름이나 가격을 모릅니다. 그래서 주문 줄에는 주문 당시의 이름과 단가를 복사해 둡니다.',
+      refs: 'booths.menu_board_json, booths.content_json, crew_snapshots.payload' },
+    { id: 'pii', label: '개인정보가 있는 표', title: '개인정보가 있는 표: 축제 뒤에 정리할 곳', hit: ['ai_match_profiles', 'ai_match_requests', 'ai_match_phone_usages', 'booth_orders', 'lost_items', 'crew_members', 'reservation_user_accounts'],
+      what: '실명, 전화번호, 생년월일, 사진 주소처럼 사람을 알아볼 수 있는 칸이 있는 표입니다.',
+      why: '화면에 나가는 응답과 방송에서는 이 칸들을 뺍니다. 축제가 끝나면 통계만 남기고 지워야 하는 표이기도 합니다.',
+      refs: 'ai_match_profiles.real_name, phone_number, birth_date / booth_orders.depositor_name, phone_number / crew_members.phone' },
+  ];
+
+  const esvg = document.getElementById('erd-svg');
+  const byT = {}, byCls = {};
+  ERD.forEach((t) => { byT[t.t] = t; byCls[t.cls] = t.t; });
+  const pos = (t) => { const m = TB[t]; return { c: m[1], r: m[2], x: EX(m[1]), y: EY(m[2]), cx: EX(m[1]) + EW / 2, cy: EY(m[2]) + EH / 2 }; };
+  Object.keys(GROUPS).forEach((k) => {
+    const g = GROUPS[k], [c0, c1, r0, r1] = g.rect, x = EX(c0) - 8, y = EY(r0) - 8, w = EX(c1) + EW + 8 - x, hh = EY(r1) + EH + 8 - y;
+    esvg.appendChild(s('rect', { x, y, width: w, height: hh, rx: 14, fill: g.c, opacity: 0.09 }));
+    esvg.appendChild(txt(x + 4, y - 5, g.name, { size: 14, cls: 'zlabel', fill: g.c }));
+  });
+  const rels = [];
+  const seen = new Set();
+  ERD.forEach((t) => t.cols.forEach((col) => { if (col.ref && byCls[col.ref] && TB[t.t] && TB[byCls[col.ref]]) { const key = t.t + '>' + byCls[col.ref]; if (!seen.has(key)) { seen.add(key); rels.push({ a: t.t, b: byCls[col.ref], col: col.c, loose: false }); } else rels.find((r) => r.a + '>' + r.b === key).col += ', ' + col.c; } }));
+  LOOSE.forEach((l) => rels.push({ a: l[0], b: l[1], col: l[2], loose: true }));
+  function relPath(a, b) {
+    if (a.r === b.r) { const sx = b.c > a.c ? a.x + EW : a.x, ex = b.c > a.c ? b.x : b.x + EW; return 'M' + sx + ' ' + a.cy + ' L' + ex + ' ' + b.cy; }
+    if (a.c === b.c && Math.abs(a.r - b.r) === 1) { const sy = b.r > a.r ? a.y + EH : a.y, ey = b.r > a.r ? b.y : b.y + EH; return 'M' + a.cx + ' ' + sy + ' L' + b.cx + ' ' + ey; }
+    if (a.c === b.c) { const left = a.c % 2 === 0, x = left ? a.x : a.x + EW, bx = x + (left ? -30 : 30); return 'M' + x + ' ' + a.cy + ' C' + bx + ' ' + a.cy + ' ' + bx + ' ' + b.cy + ' ' + x + ' ' + b.cy; }
+    return 'M' + a.cx + ' ' + a.cy + ' L' + b.cx + ' ' + b.cy;
+  }
+  rels.forEach((r) => { r.el = s('path', { class: 'rl' + (r.loose ? ' loose' : ''), d: relPath(pos(r.a), pos(r.b)) }); esvg.appendChild(r.el); });
+  const tbs = {};
+  Object.keys(TB).forEach((t) => {
+    if (!byT[t]) return;
+    const p = pos(t), g = s('g', { class: 'tb', tabindex: 0, role: 'button', 'aria-label': t + ' 표 설명 보기' });
+    g.appendChild(s('rect', { class: 'box', x: p.x, y: p.y, width: EW, height: EH, rx: 9 }));
+    g.appendChild(txt(p.x + 11, p.y + 20, t, { size: t.length > 24 ? 9.5 : t.length > 19 ? 10.5 : 12, cls: 't-m' }));
+    g.appendChild(txt(p.x + 11, p.y + 36, '칸 ' + byT[t].cols.length + '개', { size: 11, cls: 'faint' }));
+    g.addEventListener('click', () => pickTable(t));
+    g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickTable(t); } });
+    esvg.appendChild(g); tbs[t] = g;
+  });
+
+  const erdNote = document.getElementById('erd-note');
+  const shortTy = (ty) => ty.replace('LocalDateTime', '날짜와 시각').replace('LocalDate', '날짜').replace('LocalTime', '시각').replace('Instant', '날짜와 시각').replace(/^String$/, '글자').replace(/^(Long|Integer|int|long)$/, '숫자').replace(/^(double|Double)$/, '소수').replace(/^(boolean|Boolean)$/, '참거짓');
+  const FLAG = { PK: 'PK', FK: 'FK', UQ: '유니크', NN: '필수', ENUM: '정해진 값', VER: '버전', TEXT: '긴 글' };
+  let curConcept = null;
+  function pickTable(t) {
+    const T = byT[t], m = TB[t];
+    const near = new Set(); rels.forEach((r) => { const on = r.a === t || r.b === t; r.el.classList.toggle('on', on); if (on) { near.add(r.a); near.add(r.b); } });
+    Object.keys(tbs).forEach((k) => { tbs[k].classList.toggle('sel', k === t); tbs[k].classList.toggle('rel', k !== t && near.has(k)); });
+    erdNote.textContent = '';
+    erdNote.appendChild(h('div', { class: 'rec', text: 'REC' }));
+    erdNote.appendChild(h('div', { class: 'cls', text: 'entity/' + T.cls + '.java', style: 'margin-top:8px' }));
+    erdNote.appendChild(h('h3', { text: t, style: 'font-family:var(--f-mono);font-size:19px;font-weight:500;word-break:break-all' }));
+    erdNote.appendChild(h('div', { class: 'tags' }, [h('span', { class: 'tag zone', text: GROUPS[m[0]].name, style: 'background:' + GROUPS[m[0]].c })]));
+    erdNote.appendChild(h('p', { text: m[3] }));
+    const out = rels.filter((r) => r.a === t), inn = rels.filter((r) => r.b === t);
+    if (out.length || inn.length) {
+      erdNote.appendChild(h('h4', { text: '이어진 표' }));
+      const box = h('div', {});
+      out.forEach((r) => box.appendChild(h('button', { type: 'button', class: 'lnk mono', text: '→ ' + r.b + ' (' + r.col + (r.loose ? ', 외래 키 없음' : '') + ')', onclick: () => pickTable(r.b) })));
+      inn.forEach((r) => box.appendChild(h('button', { type: 'button', class: 'lnk mono', text: '← ' + r.a, onclick: () => pickTable(r.a) })));
+      erdNote.appendChild(box);
+    }
+    if (T.uq.length || T.ix.length) {
+      erdNote.appendChild(h('h4', { text: '제약과 인덱스' }));
+      T.uq.forEach((u) => erdNote.appendChild(h('div', { class: 'file', text: '유니크: ' + u.join(' + ') })));
+      T.ix.forEach((u) => erdNote.appendChild(h('div', { class: 'file', text: '인덱스: ' + u })));
+    }
+    erdNote.appendChild(h('h4', { text: '칸 ' + T.cols.length + '개' }));
+    const tbody = h('tbody', {}, T.cols.map((c) => h('tr', {}, [h('td', { class: 'c', text: c.c }), h('td', { class: 'ty', text: c.ref ? byCls[c.ref] || c.ref : shortTy(c.ty) }), h('td', {}, c.f.map((f) => h('span', { class: 'ft ' + f, text: FLAG[f] || f })))])));
+    erdNote.appendChild(h('table', {}, [h('thead', {}, [h('tr', {}, [h('th', { text: '칸' }), h('th', { text: '담는 것' }), h('th', { text: '표시' })])]), tbody]));
+    const codes = CODE.filter((c) => (c.tables || []).includes(t)), scr = SCREENS_OF[t] || [];
+    if (codes.length) { erdNote.appendChild(h('h4', { text: '이 표를 만지는 코드' })); const b = h('div', {}); codes.forEach((c) => b.appendChild(h('button', { type: 'button', class: 'lnk mono', text: c.fn, onclick: () => { showView('code'); pickCode(c); } }))); erdNote.appendChild(b); }
+    if (scr.length) { erdNote.appendChild(h('h4', { text: '이 표를 쓰는 화면' })); const b = h('div', {}); scr.forEach((id) => b.appendChild(h('button', { type: 'button', class: 'lnk', text: window.FF.screenName(id), onclick: () => { showView('flow'); window.FF.pickScreen(id); } }))); erdNote.appendChild(b); }
+  }
+  const conceptBox = document.getElementById('concepts'), conceptEl = document.getElementById('concept');
+  function setConcept(c) {
+    curConcept = curConcept === c ? null : c;
+    conceptBox.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', curConcept && b.dataset.k === curConcept.id ? 'true' : 'false'));
+    const hit = curConcept ? new Set(curConcept.hit) : null;
+    Object.keys(tbs).forEach((k) => { tbs[k].classList.toggle('hit', !!hit && hit.has(k)); tbs[k].classList.toggle('dim', !!hit && !hit.has(k)); });
+    rels.forEach((r) => r.el.classList.toggle('dim', !!hit));
+    conceptEl.hidden = !curConcept; conceptEl.textContent = '';
+    if (!curConcept) return;
+    conceptEl.appendChild(h('h3', { text: curConcept.title }));
+    conceptEl.appendChild(h('div', {}, [h('h4', { text: '무엇인가' }), h('p', { text: curConcept.what })]));
+    conceptEl.appendChild(h('div', {}, [h('h4', { text: '이 앱에서 왜 썼나' }), h('p', { text: curConcept.why })]));
+    conceptEl.appendChild(h('div', {}, [h('h4', { text: '어디에 있나' }), h('p', { class: 'refs', text: curConcept.refs })]));
+  }
+  CONCEPTS.forEach((c) => conceptBox.appendChild(h('button', { type: 'button', class: 'chipbtn', id: 'concept-' + c.id, 'data-k': c.id, text: c.label, onclick: () => setConcept(c) })));
+
+  /* ───────── 중요 코드 ───────── */
+  const LANES = [['ui', '화면', 'frontend/src'], ['order', '주문 서버', 'backend · OrderService'], ['match', '소개팅 서버', 'backend · AiMatch*'], ['common', '공통과 보안', 'backend · stream, security, init']];
+  const CODE = [
+    { id: 'minorder', lane: 'ui', fn: 'TableOrderPage 최소 주문 띠', short: '모자란 금액을 알려 주는 띠', snips: ['minorder'], screens: ['menu'], tables: [],
+      what: '담은 금액이 최소 주문 금액에 못 미치면 주문 단추 대신 얼마를 더 담아야 하는지 보여 줍니다.',
+      why: '최소 금액은 서버가 메뉴와 함께 내려 주는 값(minOrderAmount)이라 운영 중에 바꿀 수 있습니다. 축제 전날 14,000원으로 정해졌습니다.' },
+    { id: 'orderstream', lane: 'ui', fn: 'OrderStatusPage 구독과 폴백', short: '방송을 듣고, 끊기면 다시 묻기', snips: ['orderstream'], screens: ['status'], tables: ['booth_orders'],
+      what: '주문 방송을 듣다가 내 주문 번호가 나오면 화면을 바꿉니다. 그와 별개로 20초마다, 그리고 화면으로 돌아올 때마다 서버에 다시 묻습니다.',
+      why: '축제장 와이파이에서는 방송 연결이 조용히 끊깁니다. 방송만 믿으면 "준비 완료"를 놓친 손님이 계속 기다리게 됩니다.' },
+    { id: 'undo', lane: 'ui', fn: 'OpsKitchenPage 5초 되돌리기', short: '완료를 5초 뒤에 서버로', snips: ['undo1', 'undo2'], screens: ['kitchen'], tables: ['booth_order_items'],
+      what: '완료를 누르면 바로 서버로 보내지 않고 5초를 기다립니다. 그동안은 되돌리기 단추가 보이고, 5초가 지나야 서버로 갑니다.',
+      why: '서버는 끝난 줄을 되돌리지 못합니다. 주방에서 장갑 낀 손으로 잘못 누르는 일이 잦아서, 되돌릴 틈을 화면 쪽에 두었습니다.' },
+    { id: 'navtabs', lane: 'ui', fn: 'App 탭 네 개', short: '이번 축제에 여는 탭', snips: ['navtabs'], screens: ['fest', 'booth', 'intro', 'lost'], tables: [],
+      what: '손님 화면 아래 탭을 정하는 목록입니다. 축제, 주점, 사주 소개팅, 분실물 네 개만 있습니다.',
+      why: '지도, 혼잡도, 채팅 화면은 지우지 않고 이 목록에서만 뺐습니다. 다음 축제에 다시 열 때는 여기에 한 줄을 더하면 됩니다.' },
+    { id: 'create', lane: 'order', fn: 'OrderService.createOrder', short: '주문 받기', snips: ['create'], screens: ['checkout'], tables: ['booths', 'booth_orders', 'booth_order_items', 'booth_reservation_tables'],
+      what: '부스 행을 잠근 뒤 주문을 받는 부스인지, 계좌이체인지, 테이블 이름이 등록된 이름인지 차례로 확인하고 주문을 만듭니다.',
+      why: '테이블 이름을 확인하지 않으면 주소만 바꿔서 없는 테이블로 주문을 쏟아 넣을 수 있습니다. 부스 행 잠금은 동시에 들어온 주문의 번호가 겹치지 않게 합니다.' },
+    { id: 'status', lane: 'order', fn: 'OrderService.updateStatus', short: '입금 확인, 서빙 완료', snips: ['status'], screens: ['console'], tables: ['booth_orders'],
+      what: '주문 콘솔의 단추가 부르는 곳입니다. 끝난 주문은 못 바꾸고, 취소가 아니면 상태를 뒤로 돌릴 수 없습니다.',
+      why: '여러 스태프의 폰이 같은 주문을 동시에 누릅니다. 행을 잠그고 "앞으로만 간다"는 규칙을 서버에 두어서, 누가 늦게 눌러도 주문이 뒤로 가지 않습니다.' },
+    { id: 'done', lane: 'order', fn: 'OrderService.markItemDone', short: '메뉴 한 줄 완료', snips: ['done'], screens: ['kitchen', 'status'], tables: ['booth_orders', 'booth_order_items'],
+      what: '메뉴 한 줄에 끝난 시각을 적습니다. 첫 줄이 끝나면 주문이 조리 중으로, 모든 줄이 끝나면 준비 완료로 바뀝니다. 이미 끝난 줄을 다시 눌러도 그대로 둡니다.',
+      why: '주방마다 맡은 메뉴가 달라서 주문 단위가 아니라 줄 단위로 끝냅니다. 같은 줄을 두 번 눌러도 결과가 같아서, 폴백으로 다시 보내도 안전합니다.' },
+    { id: 'request', lane: 'match', fn: 'AiMatchService.createRequest', short: '데이트 신청', snips: ['request'], screens: ['detail', 'requests'], tables: ['ai_match_requests', 'ai_match_profiles'],
+      what: '닉네임과 비밀번호로 본인을 확인한 뒤 데이트 신청을 만듭니다. 한 사람이 보낼 수 있는 신청은 세 번까지입니다.',
+      why: '5월 축제에서는 신청에 상한이 없어서 한 사람이 수십 명에게 보냈습니다. 상한을 서버에 두어 화면을 우회해도 넘지 못합니다.' },
+    { id: 'hold', lane: 'match', fn: 'AiMatchMeetupSlotService.hold', short: '약속 칸 잡기', snips: ['hold'], screens: ['meetup'], tables: ['ai_match_meetup_slots'],
+      what: '고른 시각에 다른 쌍이 있는지 확인하고 칸을 임시로 잡습니다. 확인과 저장 사이에 다른 쌍이 끼어들면 DB의 유니크 제약이 막고, 그 오류를 친절한 안내로 바꿔 돌려줍니다.',
+      why: '부스는 하나이고 한 번에 한 쌍만 만날 수 있습니다. "확인하고 저장"만으로는 동시에 들어온 두 요청을 막지 못해서 마지막 판정을 DB에 맡겼습니다.' },
+    { id: 'consent', lane: 'match', fn: 'AiMatchService.consentContactShare', short: '연락처 동의', snips: ['consent'], screens: ['contact'], tables: ['ai_match_requests'],
+      what: '신청 행을 잠그고 내 쪽 동의 시각을 적습니다. 성사된 쌍만 할 수 있고, 부스 약속을 확정한 쌍은 할 수 없습니다. 문자는 저장이 끝난 뒤에 보냅니다.',
+      why: '두 사람이 동시에 누르면 나중에 저장한 쪽이 먼저 저장된 동의를 지울 수 있습니다. 그래서 읽을 때부터 잠급니다. 축제 둘째 날 아침에 넣은 기능입니다.' },
+    { id: 'publish', lane: 'common', fn: 'StreamService.publish', short: '저장 뒤에 방송', snips: ['publish'], screens: ['status', 'kitchen', 'fest'], tables: [],
+      what: '방송할 내용을 글자로 바꾼 뒤, 트랜잭션 안이면 커밋된 뒤에 내보내도록 예약합니다. 글자로 바꾸다 실패해도 주문 저장은 깨지지 않습니다.',
+      why: '저장 도중에 방송하면 화면이 소식을 듣고 서버에 물었을 때 아직 주문이 없을 수 있습니다. 방송은 부가 기능이라 실패해도 본래 일을 막지 않게 했습니다.' },
+    { id: 'fill', lane: 'common', fn: 'CouncilBoothSync.fillBooth', short: '빈 칸만 채우는 기본값', snips: ['fill'], screens: ['booth'], tables: ['booths'],
+      what: '서버가 뜰 때 총학 주점의 여는 시간 같은 확정 정보를 넣습니다. 이미 값이 있는 칸은 건드리지 않습니다.',
+      why: '총학의 확정 정보가 늦게, 여러 번 왔습니다. 배포할 때마다 덮어쓰면 스태프가 콘솔에서 고친 값이 사라지므로 비어 있는 칸만 채웁니다.' },
+    { id: 'opskey', lane: 'common', fn: 'OpsKeyService.authenticate', short: '부스 암호 확인', snips: ['opskey'], screens: ['console', 'kitchen', 'tables', 'staff'], tables: [],
+      what: '주점과 스태프 화면이 보낸 암호가 총괄 암호인지, 공용 부스 암호인지, 부스마다 따로 준 암호인지 차례로 봅니다.',
+      why: '스태프 수십 명에게 계정을 만들어 줄 시간이 없어서 암호 하나로 열었습니다. 공용 암호는 주소에 적힌 부스 번호를 그대로 믿는다는 약점이 있고, 해부도의 결함 목록에 올라 있습니다.' },
+    { id: 'ratelimit', lane: 'common', fn: 'PublicApiRateLimitFilter', short: '주소마다 횟수 제한', snips: ['ratelimit'], screens: ['register', 'checkout'], tables: [],
+      what: '공개 주소로 들어오는 요청을 IP와 규칙별로 세어서, 정해진 시간 안에 정해진 횟수를 넘으면 받지 않습니다.',
+      why: '가입, 로그인, 주문은 로그인 없이 부를 수 있습니다. 캠퍼스 와이파이는 여러 사람이 같은 IP로 나가기 때문에 한도를 너무 낮게 잡으면 멀쩡한 손님이 막힙니다.' },
+  ];
+  const CHAINS = [
+    { id: 'all', label: '전체' },
+    { id: 'pub', label: '주문 한 건', path: ['minorder', 'create', 'publish', 'status', 'undo', 'done', 'orderstream'] },
+    { id: 'match', label: '소개팅 성사 뒤', path: ['request', 'hold', 'consent'] },
+    { id: 'door', label: '문 앞에서', path: ['navtabs', 'ratelimit', 'opskey'] },
+    { id: 'boot', label: '서버가 뜰 때', path: ['fill'] },
+  ];
+  const lanesEl = document.getElementById('code-lanes'), codeNote = document.getElementById('code-note'), chainEl = document.getElementById('chain'), chainsBox = document.getElementById('chains');
+  const fcards = {}, byCode = {}; CODE.forEach((c) => { byCode[c.id] = c; });
+  LANES.forEach(([k, name, sub]) => {
+    const lane = h('div', { class: 'lane' }, [h('div', { class: 'lane-h' }, [h('b', { text: name }), h('span', { text: sub })])]);
+    CODE.filter((c) => c.lane === k).forEach((c) => { const b = h('button', { type: 'button', class: 'fcard', id: 'code-' + c.id, onclick: () => pickCode(c) }, [h('span', { class: 'fn', text: c.fn }), h('span', { class: 'fd', text: c.short })]); lane.appendChild(b); fcards[c.id] = b; });
+    lanesEl.appendChild(lane);
+  });
+  function pickCode(c) {
+    Object.keys(fcards).forEach((k) => fcards[k].classList.toggle('sel', k === c.id));
+    codeNote.textContent = '';
+    codeNote.appendChild(h('div', { class: 'rec', text: 'REC' }));
+    codeNote.appendChild(h('h3', { text: c.fn, style: 'font-family:var(--f-mono);font-size:18px;font-weight:500;margin-top:8px;word-break:break-all' }));
+    codeNote.appendChild(h('p', { text: c.what }));
+    codeNote.appendChild(h('div', { class: 'why' }, [h('b', { text: '왜 이렇게 했나  ' }), c.why]));
+    c.snips.forEach((id) => {
+      const sn = SNIP[id]; if (!sn) return;
+      codeNote.appendChild(h('div', { class: 'at', text: sn.file + ':' + sn.line }));
+      const pre = h('pre', {});
+      sn.code.split('\n').forEach((ln, i) => { pre.appendChild(h('span', { class: 'ln', text: String(sn.line + i).padStart(4, ' ') })); pre.appendChild(document.createTextNode(ln + '\n')); });
+      codeNote.appendChild(pre);
+    });
+    if (c.tables.length) { codeNote.appendChild(h('h4', { text: '만지는 표' })); const b = h('div', {}); c.tables.forEach((t) => b.appendChild(h('button', { type: 'button', class: 'lnk mono', text: t, onclick: () => { showView('erd'); pickTable(t); } }))); codeNote.appendChild(b); }
+    if (c.screens.length) { codeNote.appendChild(h('h4', { text: '이어진 화면' })); const b = h('div', {}); c.screens.forEach((id) => b.appendChild(h('button', { type: 'button', class: 'lnk', text: window.FF.screenName(id), onclick: () => { showView('flow'); window.FF.pickScreen(id); } }))); codeNote.appendChild(b); }
+  }
+  function setChain(ch) {
+    chainsBox.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', b.dataset.k === ch.id ? 'true' : 'false'));
+    const on = ch.path ? new Set(ch.path) : null;
+    Object.keys(fcards).forEach((k) => { fcards[k].classList.toggle('dim', !!on && !on.has(k)); fcards[k].classList.toggle('lit', !!on && on.has(k)); });
+    chainEl.textContent = ''; chainEl.hidden = !ch.path;
+    if (ch.path) { ch.path.forEach((id) => chainEl.appendChild(h('li', {}, [h('button', { type: 'button', onclick: () => pickCode(byCode[id]) }, [h('span', { class: 'sf', text: byCode[id].fn }), h('span', { class: 'ss', text: byCode[id].short })])]))); pickCode(byCode[ch.path[0]]); }
+  }
+  CHAINS.forEach((ch) => chainsBox.appendChild(h('button', { type: 'button', class: 'chipbtn', id: 'chain-' + ch.id, 'data-k': ch.id, text: ch.label, onclick: () => setChain(ch) })));
+
+  pickTable('booth_orders');
+  setChain(CHAINS[1]);
+  showView(location.hash.slice(1) || 'flow', true);
+})();
+</script>
+
+<style>[data-structure-back]{position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:70;padding:6px 12px;border-radius:999px;background:#fff;color:#1f2937;font:600 13px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.16)}</style><a href="/resume/festflow" data-structure-back>← 프로젝트 상세</a></body></html>

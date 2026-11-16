@@ -37,12 +37,11 @@ if (imgDir && !html.includes("<base ")) {
   }
   html = html.replace(/<head[^>]*>/i, m => m + base);
 }
-// 좁은 화면에서는 위쪽 탭을 가리므로 왼쪽 아래로 내린다.
+// 늘 왼쪽 아래에 둔다. 위쪽은 페이지마다 탭이 있는 자리라 가린다(AjouFesta 는 탭이 오른쪽 위였다).
 const back =
-  `<style>[data-structure-back]{position:fixed;right:12px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:70;` +
+  `<style>[data-structure-back]{position:fixed;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:70;` +
   `padding:6px 12px;border-radius:999px;background:#fff;color:#1f2937;font:600 13px system-ui,sans-serif;` +
-  `text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.16)}` +
-  `@media (max-width:860px){[data-structure-back]{top:auto;right:auto;left:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}}</style>` +
+  `text-decoration:none;box-shadow:0 2px 10px rgba(0,0,0,.16)}</style>` +
   `<a href="/resume/${id}" data-structure-back>← 프로젝트 상세</a>`;
 if (!html.includes("data-structure-back")) {
   const i = html.lastIndexOf("</body>");

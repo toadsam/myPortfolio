@@ -5,7 +5,11 @@
  * 그 주소는 next.config.mjs 의 rewrite 가 `public/structure/<id>/index.html` 로 넘긴다.
  * 파일은 `node scripts/import-structure.mjs <id> <html> [그림 폴더]` 로 들여온다.
  */
-export const STRUCTURE_PAGES: readonly string[] = ["mystock", "muscleup"];
+export const STRUCTURE_PAGES: readonly string[] = [
+  "mystock",
+  "muscleup",
+  "festflow"
+];
 
 export const STRUCTURE_LABEL = "구조 한눈에 보기";
 
